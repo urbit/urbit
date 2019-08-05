@@ -272,7 +272,7 @@
           (expect-eq !>(~[/http-blah]) !>(duct))
         ::
         %+  expect-gall-deal
-          :+  /run-app/app1  [~nul ~nul]
+          :+  /run-app-request/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
@@ -287,7 +287,7 @@
       now=~1111.1.4
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/run-app/app1  duct=~[/http-blah]
+        :*  wire=/run-app-request/app1  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)
             :-  *type
             :*  %g  %unto  %http-response
@@ -359,7 +359,7 @@
           (expect-eq !>(~[/http-blah]) !>(duct))
         ::
         %+  expect-gall-deal
-          :+  /run-app/app1  [~nul ~nul]
+          :+  /run-app-request/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
@@ -374,7 +374,7 @@
       now=~1111.1.4
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/run-app/app1  duct=~[/http-blah]
+        :*  wire=/run-app-request/app1  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)
             :-  *type
             :*  %g  %unto  %coup  ~
@@ -449,7 +449,7 @@
           (expect-eq !>(~[/http-blah]) !>(duct))
         ::
         %+  expect-gall-deal
-          :+  /run-app/app1  [~nul ~nul]
+          :+  /run-app-request/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
@@ -464,7 +464,7 @@
       now=~1111.1.4
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/run-app/app1  duct=~[/http-blah]
+        :*  wire=/run-app-request/app1  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)  :-  *type
             :*  %g  %unto  %http-response
                 %start
@@ -485,7 +485,7 @@
       now=~1111.1.4
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/run-app/app1  duct=~[/http-blah]
+        :*  wire=/run-app-request/app1  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)  :-  *type
             :*  %g  %unto  %http-response
                 [%continue [~ (as-octs:mimes:html 'ya!')] %.y]
@@ -556,7 +556,7 @@
           (expect-eq !>(~[/http-blah]) !>(duct))
         ::
         %+  expect-gall-deal
-          :+  /run-app/app1  [~nul ~nul]
+          :+  /run-app-request/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/~landscape/inner-path' ~ ~]])
@@ -571,7 +571,7 @@
       now=~1111.1.4
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/run-app/app1  duct=~[/http-blah]
+        :*  wire=/run-app-request/app1  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)  :-  *type
             :*  %g  %unto  %http-response
                 [%start [307 ['location' '/~/login?redirect=/~landscape/inner-path']~] ~ %.y]
@@ -624,7 +624,7 @@
         ::  expect authenticated=%.y in the handle below
         ::
         %+  expect-gall-deal
-          :+  /run-app/app1  [~nul ~nul]
+          :+  /run-app-request/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
                   !>  :*
@@ -1814,7 +1814,7 @@
           (expect-eq !>(~[/http-blah]) !>(duct))
         ::
         %+  expect-gall-deal
-          :+  /run-app/app1  [~nul ~nul]
+          :+  /run-app-request/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
@@ -1848,12 +1848,30 @@
           (expect-eq !>(~[/http-blah]) !>(duct))
         ::
         %+  expect-gall-deal
-          :+  /run-app/app1  [~nul ~nul]
+          :+  /run-app-cancel/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-cancel
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
           card
+    ==
+  ::  app1 doesn't have a %handle-http-cancel arm, but that's fine and doesn't
+  ::  crash eyre when it sends its error coup back because we take no action on
+  ::  the response to handle-http-cancel.
+  ::
+  =^  results5  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
+      now=~1111.1.4
+      scry=scry-provides-code
+      ^=  take-args
+        :*  wire=/run-app-cancel/app1  duct=~[/http-blah]
+            ^-  (hypo sign:http-server-gate)  :-  *type
+            :*  %g  %unto  %coup
+                `[[%leaf "error! error! error!"] ~]
+            ==
+         ==
+      expected-move=~
     ==
   ::
   ;:  weld
@@ -1861,6 +1879,7 @@
     results2
     results3
     results4
+    results5
   ==
 ::
 ++  http-server-call

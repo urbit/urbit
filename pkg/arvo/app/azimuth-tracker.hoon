@@ -299,7 +299,7 @@
       =*  walk-loop  $
       ?:  (gth number.state number.id.latest-block)
         ;<  now=@da  bind:m  get-time:stdio
-        ;<  ~        bind:m  (wait-effect:stdio (add now ~s10))
+        ;<  ~        bind:m  (wait-effect:stdio (add now ~m5))
         (pure:m state)
       ;<  =block  bind:m  (get-block-by-number url.state number.state)
       ;<  [=new=pending-udiffs new-blocks=(lest ^block)]  bind:m

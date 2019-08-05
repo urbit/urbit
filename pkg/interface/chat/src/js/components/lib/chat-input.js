@@ -161,7 +161,7 @@ export class ChatInput extends Component {
         </div>
         <div className="fr h-100 flex" style={{ flexGrow: 1, height: 40 }}>
           <input className="ml2 bn"
-            style={{ flexGrow: 1 }}
+            style={{ flexGrow: 1, height: 40 }}
             ref={this.textareaRef}
             placeholder={props.placeholder}
             value={state.message}
