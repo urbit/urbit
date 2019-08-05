@@ -1,19 +1,25 @@
-/-  lens
-/+  *server, base64
+/-  lens,   *sole
+/+  base64, *server
 /=  lens-mark  /:  /===/mar/lens/command
                    /!noun/
 =,  format
 |%
-:: +move: output effect
+::  +lens-out: json or named octet-stream
+::
++$  lens-out
+  $%  [%json =json]
+      [%mime =mime]
+  ==
+::  +move: output effect
 ::
 +$  move  [bone card]
-:: +card: output effect payload
+::  +card: output effect payload
 ::
 +$  card
   $%  [%connect wire binding:eyre term]
       [%http-response =http-event:http]
       [%peer wire dock path]
-      [%peel wire dock mark path]
+      [%peer wire dock path]
       [%poke wire dock poke]
       [%pull wire dock ~]
   ==
@@ -80,16 +86,74 @@
     [ost.bow %poke /import [our.bow app.source.com] %import c]~
   ::
   :_  this(job.state (some [ost.bow com]))
-  [ost.bow %peel /sole [our.bow %dojo] %lens-json /sole]~
+  [ost.bow %peer /sole [our.bow %dojo] /sole]~
 ::
-++  diff-lens-json
-  |=  [=wire jon=json]
+++  diff-sole-effect
+  |=  [=wire fec=sole-effect]
   ^-  (quip move _this)
-  ?~  jon
+  =/  out
+    |-  ^-  (unit lens-out)
+    =*  loop  $
+    ?+  -.fec
+      ~
+    ::
+        %tan
+      %-  some
+      :-  %json
+      %-  wall:enjs:format
+      (turn (flop p.fec) |=(=tank ~(ram re tank)))
+    ::
+        %txt
+      (some %json s+(crip p.fec))
+    ::
+        %sag
+      %-  some
+      [%mime p.fec (as-octs:mimes:html (jam q.fec))]
+    ::
+        %sav
+      ::  XX use +en:base64 or produce %mime a la %sag
+      ::
+      %-  some
+      :-  %json
+      %-  pairs:enjs:format
+      :~  file+s+(crip <`path`p.fec>)
+          data+s+(crip (en-base64:mimes:html q.fec))
+      ==
+    ::
+        %mor
+      =/  all  `(list lens-out)`(murn p.fec |=(a=sole-effect loop(fec a)))
+      ?~  all  ~
+      ~|  [%multiple-effects all]
+      ?>  ?=(~ t.all)
+      (some i.all)
+    ==
+  ::
+  ?~  out
     [~ this]
   ?>  ?=(^ job.state)
   :_  this(job.state ~)
-  [bone.u.job.state %http-response (json-response:app (json-to-octs jon))]~
+  :_  ~
+  :+  bone.u.job.state
+    %http-response
+  ?-  -.u.out
+      %json
+    (json-response:app (json-to-octs json.u.out))
+  ::
+      %mime
+    :*  %start
+        :~  200
+            ['content-type' 'application/octet-stream']
+            ?>  ?=([@ @ ~] p.mime.u.out)
+            :-  'content-disposition'
+            ^-  @t
+            %^  cat  3
+              'attachment; filename='
+            (rap 3 '"' i.p.mime.u.out '.' i.t.p.mime.u.out '"' ~)
+        ==
+        (some q.mime.u.out)
+        %.y
+    ==
+  ==
 ::
 ++  diff-export
   |=  [=wire data=*]
@@ -132,6 +196,8 @@
   ?>  ?=(^ job.state)
   :_  this
   :~  [ost.bow %poke /sole [our.bow %dojo] %lens-command com.u.job.state]
+      ::  XX move to +diff-sole-effect?
+      ::
       [ost.bow %pull /sole [our.bow %dojo] ~]
   ==
 ::
