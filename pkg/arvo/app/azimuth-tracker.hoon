@@ -332,7 +332,7 @@
       |=  [=pending-udiffs =number:block]
       =/  m  (async:stdio ,^pending-udiffs)
       ^-  form:m
-      =/  rel-number  (sub number 1)
+      =/  rel-number  (sub number 30)
       =/  =udiffs:point  (~(get ja pending-udiffs) rel-number)
       ;<  ~  bind:m  (jael-update udiffs)
       (pure:m (~(del by pending-udiffs) rel-number))
@@ -373,7 +373,7 @@
       |=  [state=app-state =latest=number:block]
       =/  m  (async:stdio ,app-state)
       ^-  form:m
-      =/  zoom-margin=number:block  3
+      =/  zoom-margin=number:block  100
       ?:  (lth latest-number (add number.state zoom-margin))
         (pure:m state)
       =/  to-number=number:block  (sub latest-number zoom-margin)
