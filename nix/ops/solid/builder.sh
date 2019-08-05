@@ -19,6 +19,7 @@ trap cleanup EXIT
 #
 herb ./pier -p hood -d "+hood/mount /=home="
 
+cp $ARVO/app/lens.hoon ./pier/home/app/
 cp $ARVO/lib/pill.hoon ./pier/home/lib/
 chmod -R u+rw ./pier/home/lib/
 
