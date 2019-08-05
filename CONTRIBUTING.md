@@ -118,7 +118,7 @@ You can boot from one of these pills by passing the path to an Arvo working copy
 
 ```
 $ git clone https://github.com/urbit/urbit
-$ urbit -F zod -sA urbit/pkg/arvo -s my-fake-zod
+$ urbit -F zod -sA urbit/pkg/arvo -c my-fake-zod
 ```
 
 ### Creating a pill
