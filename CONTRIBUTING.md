@@ -2,13 +2,13 @@
 
 Thank you for your interest in contributing to Urbit.
 
-If you're new, see [https://urbit.org/docs/getting-started][Getting Started] in the Urbit documentation for basic orientation and usage instructions.
+If you're new, see [https://urbit.org/docs/getting-started](Getting Started) in the Urbit documentation for basic orientation and usage instructions.
 
 Urbit development has two general concerns: the kernel and userspace development streams. Interested in [Arvo and its vanes](https://urbit.org/docs/learn/arvo/), [Vere](https://urbit.org/docs/learn/vere/), [or the Hoon language specification itself](https://github.com/urbit/urbit/blob/master/pkg/arvo/sys/hoon.hoon)? You'll be working with the kernel. Interested in building a Landscape or Gall app on Urbit? Then you're in userspace.
 
 First, the basics of Urbit development practices.
 
-### Using a fake ("development") ship
+### Using a fake (or "development") ship
 
 You may have an identity on the live network, but doing all your development on the live network would be cumbersome and unnecessary.  Standard practice in Urbit development is to work on a fake `~zod`.  Fake ships (sometimes just called "development ships") use deterministic keys (derived from the ship address) and don't talk to the live network. They *can* talk to each other over the local loopback.
 
