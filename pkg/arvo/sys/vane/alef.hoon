@@ -1155,13 +1155,12 @@
     |=  our=ship
     ^+  event-core
     ::
-    =~  ?:  =(%czar (clan:title our))
-          event-core(sponsor.ames-state our)
-        (emit duct %pass /public-keys %k %public-keys [n=our ~ ~])
+    =.  event-core  (emit duct %pass /turf %k %turf ~)
+    =.  event-core  (emit duct %pass /private-keys %k %private-keys ~)
     ::
-        (emit duct %pass /private-keys %k %private-keys ~)
-        (emit duct %pass /turf %k %turf ~)
-    ==
+    ?:  =(%czar (clan:title our))
+      event-core(sponsor.ames-state our)
+    (emit duct %pass /public-keys %k %public-keys [n=our ~ ~])
   ::  +on-priv: set our private key to jael's response
   ::
   ++  on-priv
