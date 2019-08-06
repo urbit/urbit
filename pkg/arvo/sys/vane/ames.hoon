@@ -1460,7 +1460,6 @@
           =/  a-point=(unit point:able:kale)
             (~(get by points.public-keys-result.sih) her)
           ?~  a-point
-            ~&  [%no-keys our=our her=her]
             ~
           =/  a-pass=pass  pass:(~(got by keys.u.a-point) life.u.a-point)
           `[life.u.a-point a-pass oath=~]
@@ -1471,7 +1470,6 @@
         `[life.a-key-update pass.a-key-update oath=~]
       ?~  ded
         [~ +>.$]
-      ~&  [%installing-deed her u.ded]
       =.  lew.wod.dur.diz  `u.ded
       =.  ton.fox  (~(su go ton.fox) (nux:gus diz))
       [~ +>.$]

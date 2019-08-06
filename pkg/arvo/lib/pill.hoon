@@ -6,6 +6,27 @@
 ::
 ::    sys: full path to /sys directory
 ::
++$  pill
+  [boot-ova=* kernel-ova=(list unix-event) userspace-ova=(list unix-event)]
+::
++$  unix-event
+  %+  pair  wire
+  $%  [%wack p=@]
+      [%whom p=ship]
+      [%boot $%([%fake p=ship] [%dawn p=dawn-event])]
+      unix-task
+  ==
+::
++$  dawn-event
+  $:  =seed:able:jael
+      spon=[=ship point:azimuth]
+      czar=(map ship [=rift =life =pass])
+      turf=(list turf)
+      bloq=@ud
+      node=(unit purl:eyre)
+      snap=(unit snapshot:jael)
+  ==
+::
 ++  module-ova
   |=  sys=path
   ^-  (list [wire [%veer term path cord]])

@@ -146,11 +146,12 @@
         ~&  >  'HI DOWN DONE'
         ;<  ~  bind:m  (send-hi ~linnup-torsyx-linnup-torsyx ~marbud)
         ~&  >  'HI UP DONE'
-        ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
-        ~&  >  'HI OVER UP DONE'
-        ;<  ~  bind:m  (send-hi ~linnup-torsyx-linnup-torsyx ~dev)
-        ::  ~&  >  'HI OVER DOWN DONE'
+        ::  ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
+        ::  ~&  >  'DEV DONE'
+        ::  ;<  ~  bind:m  (send-hi ~linnup-torsyx-linnup-torsyx ~dev)
+        ::  ~&  >  'HI OVER UP DONE'
         ::  ;<  ~  bind:m  (send-hi ~dev ~linnup-torsyx-linnup-torsyx)
+        ::  ~&  >  'HI OVER DOWN DONE'
         (pure:m ~)
       (pure:m ~)
     ::

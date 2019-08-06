@@ -415,7 +415,14 @@
     %-  add-logs
     :_  ~
     (broke-continuity:lo who rut)
-  ?:((~(has by lives) ~fes) (cycle-keys ~fes) (spawn ~fes))
+  (spam-logs 30)
+::
+++  spam-logs
+  |=  n=@
+  ?:  =(n 0)
+    this-az
+  =.  this-az  ?:((~(has by lives) ~fes) (cycle-keys ~fes) (spawn ~fes))
+  $(n (dec n))
 ::
 ++  get-keys
   |=  [who=@p lyfe=life]
