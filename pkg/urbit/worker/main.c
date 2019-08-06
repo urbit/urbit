@@ -916,6 +916,15 @@ main(c3_i argc, c3_c* argv[])
     u3C.slog_f = _worker_send_slog;
   }
 
+  //  Ignore SIGPIPE signals.
+  //
+  {
+    struct sigaction sig_s = {{0}};
+    sigemptyset(&(sig_s.sa_mask));
+    sig_s.sa_handler = SIG_IGN;
+    sigaction(SIGPIPE, &sig_s, 0);
+  }
+
   /* configure pipe to daemon process
   */
   {

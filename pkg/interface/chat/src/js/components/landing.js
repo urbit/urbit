@@ -27,8 +27,34 @@ export class LandingScreen extends Component {
   }
 
   onClickSubscribe() {
+    const { props } = this;
+    
     let station = props.match.params.ship + '/' + props.match.params.station;
-    this.props.api.source(station, true);
+    let  actions = [
+        {
+          create: {
+            nom: 'hall-internal-' + props.match.params.station,
+            des: "chatroom",
+            sec: "channel"
+          }
+        },
+        {
+          source: {
+            nom: "inbox",
+            sub: true,
+            srs: [station]
+          }
+        },
+        {
+          source: {
+            nom: "inbox",
+            sub: true,
+            srs: [`~${window.ship}/hall-internal-${props.match.params.station}`]
+          }
+        }
+    ];
+
+    this.props.api.chat(actions);
     this.props.history.push('/~chat');
   }
 
@@ -50,7 +76,7 @@ export class LandingScreen extends Component {
         <br />
         <button
           onClick={this.onClickSubscribe.bind(this)}
-          className="label-r"
+          className="label-regular fw-bold pointer"
         >Subscribe</button>
         </div>
       </div>

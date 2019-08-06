@@ -7,7 +7,7 @@ daemon = $(wildcard daemon/*.c)
 worker = $(wildcard worker/*.c)
 
 common  = $(jets) $(noun) $(vere)
-headers = $(shell find include -type f) include/ca-bundle.h include/ivory.h
+headers = $(shell find include -type f)
 
 common_objs = $(shell echo $(common) | sed 's/\.c/.o/g')
 daemon_objs = $(shell echo $(daemon) | sed 's/\.c/.o/g')
@@ -22,14 +22,6 @@ all_exes = ./build/mug_tests ./build/ames_tests ./build/jam_tests ./build/hashta
 # -Werror promotes all warnings that are enabled into errors (this is on)
 # -Wall issues all types of errors.  This is off (for now)
 CFLAGS := $(CFLAGS)
-
-ifeq ($(SSL_CERT_FILE),)
-  $(error SSL_CERT_FILE is undefined)
-endif
-
-ifeq ($(IVORY),)
-  $(error IVORY is undefined)
-endif
 
 ################################################################################
 
@@ -49,7 +41,7 @@ clean:
 	rm -f ./tags $(all_objs) $(all_exes)
 
 mrproper: clean
-	rm -f config.mk include/config.h include/ca-bundle.h include/ivory.h
+	rm -f config.mk include/config.h
 
 ################################################################################
 

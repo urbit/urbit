@@ -547,6 +547,17 @@
   :^  ~  ~  %noun
   `(list ship)`(turn ~(tap by piers) head)
 ::
+::
+::
+++  peek-x-pill
+  |=  pax=path
+  ^-  (unit (unit [%pill pill]))
+  =/  pill-size  (met 3 (jam pil))
+  ?:  (lth pill-size 100)
+    ~&  [%no-pill size=pill-size]
+    [~ ~]
+  ``pill+pil
+::
 ::  Trivial scry for mock
 ::
 ++  scry  |=([* *] ~)

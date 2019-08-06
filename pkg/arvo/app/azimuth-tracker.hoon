@@ -78,7 +78,9 @@
         =/  m  (async:stdio ,(unit json))
         ^-  form:m
         ?>  ?=(%finished -.client-response)
-        =/  body=@t  q.data:(need full-file.client-response)
+        ?~  full-file.client-response
+          (pure:m ~)
+        =/  body=@t  q.data.u.full-file.client-response
         =/  jon=(unit json)  (de-json:html body)
         ?~  jon
           (pure:m ~)
@@ -254,7 +256,6 @@
       =*  loop  $
       ?~  udiffs
         (pure:m ~)
-      ~&  [%sending-event i.udiffs]
       =/  =path  /(scot %p ship.i.udiffs)
       ;<  ~  bind:m  (give-result:stdio / %azimuth-udiff i.udiffs)
       ;<  ~  bind:m  (give-result:stdio path %azimuth-udiff i.udiffs)
@@ -298,7 +299,7 @@
       =*  walk-loop  $
       ?:  (gth number.state number.id.latest-block)
         ;<  now=@da  bind:m  get-time:stdio
-        ;<  ~        bind:m  (wait-effect:stdio (add now ~s10))
+        ;<  ~        bind:m  (wait-effect:stdio (add now ~m5))
         (pure:m state)
       ;<  =block  bind:m  (get-block-by-number url.state number.state)
       ;<  [=new=pending-udiffs new-blocks=(lest ^block)]  bind:m
@@ -317,7 +318,6 @@
       =/  m  (async:stdio ,[pending-udiffs (lest ^block)])
       ^-  form:m
       ?:  &(?=(^ blocks) !=(parent-hash.block hash.id.i.blocks))
-        ~&  %rewinding
         (rewind url a-pending-udiffs block blocks)
       ;<  =b=pending-udiffs  bind:m
         (release-old-events a-pending-udiffs number.id.block)
@@ -344,7 +344,6 @@
       =/  m  (async:stdio ,[^pending-udiffs (lest ^block)])
       |-  ^-  form:m
       =*  loop  $
-      ~&  [%wind block ?~(blocks ~ i.blocks)]
       ?~  blocks
         (pure:m pending-udiffs block blocks)
       ?:  =(parent-hash.block hash.id.i.blocks)
@@ -374,7 +373,7 @@
       |=  [state=app-state =latest=number:block]
       =/  m  (async:stdio ,app-state)
       ^-  form:m
-      =/  zoom-margin=number:block  3
+      =/  zoom-margin=number:block  100
       ?:  (lth latest-number (add number.state zoom-margin))
         (pure:m state)
       =/  to-number=number:block  (sub latest-number zoom-margin)
@@ -395,7 +394,6 @@
   |=  =in-poke-data
   =/  m  tapp-async
   ^-  form:m
-  ~&  [%azimuth-tracker our.bowl number.state in-poke-data]
   ?-  +<.in-poke-data
     %listen  (listen state +>.in-poke-data)
     %watch   (pure:m state(url url.in-poke-data))

@@ -496,7 +496,7 @@ static void
 _pier_work_bail(void*       vod_p,
                 const c3_c* err_c)
 {
-  fprintf(stderr, "pier: work error: %s\r\n", err_c);
+  fprintf(stderr, "\rpier: work error: %s\r\n", err_c);
 }
 
 /* _pier_work_boot(): prepare for boot.
@@ -838,11 +838,15 @@ _pier_work_exit(uv_process_t* req_u,
   u3_controller* god_u = (void *) req_u;
   u3_pier* pir_u = god_u->pir_u;
 
-  u3l_log("pier: exit: status %" PRIu64 ", signal %d\r\n", sas_i, sig_i);
+  fprintf(stderr, "\rpier: work exit: status %" PRId64 ", signal %d\r\n",
+                  sas_i, sig_i);
   uv_close((uv_handle_t*) req_u, 0);
 
-  u3_pier_db_shutdown(pir_u);
-  _pier_work_shutdown(pir_u);
+  //  XX dispose
+  //
+  pir_u->god_u = 0;
+
+  u3_pier_bail();
 }
 
 /* _pier_work_poke(): handle subprocess result.  transfer nouns.
@@ -1803,10 +1807,12 @@ u3_pier_interrupt(u3_pier* pir_u)
 static void
 _pier_exit_done(u3_pier* pir_u)
 {
-  u3l_log("pier: exit\r\n");
-
   u3_pier_db_shutdown(pir_u);
-  _pier_work_shutdown(pir_u);
+
+  if ( 0 != pir_u->god_u ) {
+    _pier_work_shutdown(pir_u);
+  }
+
   _pier_loop_exit(pir_u);
 
   //  XX uninstall pier from u3K.tab_u, dispose

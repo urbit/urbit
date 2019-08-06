@@ -4525,18 +4525,12 @@
   ::
   ?:  ?=([%sinks ~] tea)
     ?>  ?=(%public-keys +<.q.hin)
-    ~&  'XXX'
-    ~&  our=our
     ?:  ?=(%full -.public-keys-result.q.hin)
-      ~&  %clay-sinks-full
       [~ ..^$]
     ?.  ?=(%rift -.diff.public-keys-result.q.hin)
       [~ ..^$]
-    ~&  rift=public-keys-result.q.hin
     =/  who  who.public-keys-result.q.hin
     =/  to-rift  to.diff.public-keys-result.q.hin
-    ~&  desks=(turn ~(tap by dos.rom.ruf) head)
-    ~&  hoy=(turn ~(tap by hoy.ruf) head)
     ::
     ?:  =(our who)
       [~ ..^$]
@@ -4545,11 +4539,8 @@
     =/  foreign-desk=(unit rung)
       (~(get by hoy.ruf) who)
     ?~  foreign-desk
-      ~&  [%never-heard-of-her who]
       [~ ..^$]
-    ~&  old-rift=rit.u.foreign-desk
     ?:  (gte rit.u.foreign-desk to-rift)
-      ~&  'replaying sunk, so not clearing state'
       [~ ..^$]
     =/  cancel-ducts=(list duct)
       %-  zing  ^-  (list (list duct))

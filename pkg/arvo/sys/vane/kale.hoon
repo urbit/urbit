@@ -252,6 +252,7 @@
         %dawn
       ::  single-homed
       ::
+      ~|  [our who.seed.tac]
       ?>  =(our who.seed.tac)
       ::  save our boot block
       ::
@@ -742,6 +743,8 @@
           ^-  (unit [spon=ship child=ship])
           ?.  =(%earl (clan:title who))
             ~
+          ?:  (~(has by ship-sources) who)
+            ~
           `[(^sein:title who) who]
         =/  moonl=(list [spon=ship ships=(set ship)])
           ~(tap by moons)
@@ -751,6 +754,8 @@
         ?.  =(our spon.i.moonl)
           =.  ..feed  (sources:feel ships.i.moonl [%& spon.i.moonl])
           $(moonl t.moonl)
+        ::  Our moon
+        ::
         =/  sec  (~(got by jaw.own.pki) lyf.own.pki)
         =/  points=(map ship point)
           =/  our-moonl  ~(tap in ships.i.moonl)
@@ -758,8 +763,8 @@
           |-  ^-  (list [ship point])
           ?~  our-moonl
             ~
-          =/  moon-sec  (shaf %earl (sham our lyf.own.pki i.our-moonl))
-          =/  cub  (nol:nu:crub:crypto moon-sec)
+          =/  moon-sec  (shaf %earl (sham our lyf.own.pki sec i.our-moonl))
+          =/  cub  (pit:nu:crub:crypto 128 moon-sec)
           =/  =pass  pub:ex:cub
           :-  [i.our-moonl 1 1 (malt [1 1 pass] ~) `our]
           $(our-moonl t.our-moonl)
@@ -959,12 +964,12 @@
 ++  load                                                ::  upgrade
   |=  $:  ::  old: previous state
           ::
-          old/*
-          ::  old/state
+          ::  old/*
+          old/state
       ==
   ^+  ..^$
-  ..^$
-  ::  ..^$(lex old)
+  ::  ..^$
+  ..^$(lex old)
 ::                                                      ::  ++scry
 ++  scry                                                ::  inspect
   |=  $:  ::  fur: event security
@@ -1076,15 +1081,13 @@
     !>  [u.lyf pass.u.pas ~]
   ::
       %earl
-    ?.  ?=([@ @ @ ~] tyl)  [~ ~]
+    ?.  ?=([@ @ ~] tyl)  [~ ~]
     ?.  =([%& our] why)
       [~ ~]
     =/  who  (slaw %p i.tyl)
     =/  lyf  (slaw %ud i.t.tyl)
-    =/  pub  (slaw %ux i.t.t.tyl)
     ?~  who  [~ ~]
     ?~  lyf  [~ ~]
-    ?~  pub  [~ ~]
     ?:  (gth u.lyf lyf.own.pki.lex)
       ~
     ?:  (lth u.lyf lyf.own.pki.lex)
@@ -1092,9 +1095,10 @@
     :: XX check that who/lyf hasn't been booted
     ::
     =/  sec  (~(got by jaw.own.pki.lex) u.lyf)
-    =/  cub  (nol:nu:crub:crypto sec)
-    =/  sig  (sign:as:cub (shaf %earl (sham u.who u.lyf u.pub)))
-    ``[%atom !>(sig)]
+    =/  moon-sec  (shaf %earl (sham our u.lyf sec u.who))
+    =/  cub  (pit:nu:crub:crypto 128 moon-sec)
+    =/  =seed  [u.who 1 sec:ex:cub ~]
+    ``[%seed !>(seed)]
   ::
       %sein
     ?.  ?=([@ ~] tyl)  [~ ~]
