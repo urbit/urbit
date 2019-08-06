@@ -18,7 +18,7 @@
       ames-gate
       now=~1234.5.6
       call-args=[duct type=*type %soft %init ~nul]
-      expected-moves=[[duct %pass wire %j %vein ~] [duct %pass / %j %turf ~] ~]
+      expected-moves=[[duct %pass wire %k %private-keys ~] [duct %pass / %k %turf ~] ~]
     ==
   ::
   results1
@@ -56,7 +56,7 @@
     %:  ames-take
       ames-gate
       now
-      take-args=[wire duct -:!>([%j %vein vein-data]) [%j %vein vein-data]]
+      take-args=[wire duct -:!>([%k %private-keys vein-data]) [%k %private-keys vein-data]]
       expected-moves=~
     ==
   ::
@@ -67,7 +67,7 @@
       ames-gate
       now
       call-args=[duct type=*type %soft [%want ~nul /foo 1]]
-      :~  [duct %pass /pubs/~nul %j %pubs ~nul]
+      :~  [duct %pass /pubs/~nul %k %public-keys (silt ~nul ~)]
           [duct %give %send *lane:ames pact1]
           ::  XX why ~s4 ??
           ::
