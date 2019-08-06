@@ -24,6 +24,7 @@ do
   sleep 1
 done
 
+cp $ARVO/app/lens.hoon ./pier/home/app/
 cp $ARVO/lib/pill.hoon ./pier/home/lib/
 chmod -R u+rw ./pier/home/lib/
 
