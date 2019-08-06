@@ -1248,7 +1248,7 @@
       ?~  sponsor
         ~|  %lost-sponsor^our^ship  !!
       ::
-      ?:  =(our ship)
+      ?:  &(=(our ship) !=(our u.sponsor))
         =.  sponsor.ames-state  u.sponsor
         =.  event-core  set-sponsor-ping-timer
         ping-sponsor
@@ -1273,7 +1273,8 @@
           =+  ^-  [=ship =point]  i.points
           ::  (re)start sponsor ping on new sponsor
           ::
-          =?  event-core  &(=(our ship) ?=(^ sponsor.point))
+          =?    event-core
+              &(=(our ship) ?=(^ sponsor.point) !=(our u.sponsor.point))
             =.  sponsor.ames-state  u.sponsor.point
             =.  event-core  set-sponsor-ping-timer
             ping-sponsor
