@@ -395,6 +395,7 @@
 +$  ames-state
   $:  peers=(map ship ship-state)
       =unix=duct
+      sponsor-ping-timer=(unit [=duct date=@da])
       =life
       sponsor=ship
       crypto-core=acru:ames
@@ -924,12 +925,13 @@
     ^+  event-core
     ::
     ?:  =(/ping wire)
-      set-sponsor-heartbeat-timer
+      ~&  %ames-take-ping-done
+      set-sponsor-ping-timer
     ::
     =+  ^-  [her=ship =bone]  (parse-bone-wire wire)
     ::
     =/  =peer-state  (got-peer-state her)
-    =/  =channel     [[our her] now +>.ames-state -.peer-state]
+    =/  =channel     [[our her] now |3.ames-state -.peer-state]
     =/  peer-core    (make-peer-core peer-state channel)
     ::  if processing succeded, send positive ack packet and exit
     ::
@@ -1078,7 +1080,7 @@
     ::    and their public key using elliptic curve Diffie-Hellman.
     ::
     =/  =peer-state   +.u.sndr-state
-    =/  =channel      [[our sndr.packet] now +>.ames-state -.peer-state]
+    =/  =channel      [[our sndr.packet] now |3.ames-state -.peer-state]
     =/  =shut-packet  (decrypt symmetric-key.channel content.packet)
     ::  ward against replay attacks
     ::
@@ -1103,7 +1105,7 @@
     =+  ^-  [her=ship =bone]  (parse-bone-wire wire)
     ::
     =/  =peer-state  (got-peer-state her)
-    =/  =channel     [[our her] now +>.ames-state -.peer-state]
+    =/  =channel     [[our her] now |3.ames-state -.peer-state]
     ~&  %ames-take-boon^our^her^bone=bone
     ::
     abet:(on-memo:(make-peer-core peer-state channel) bone payload)
@@ -1121,7 +1123,7 @@
       todos(snd-messages [[duct plea] snd-messages.todos])
     ::
     =/  =peer-state  +.u.ship-state
-    =/  =channel     [[our ship] now +>.ames-state -.peer-state]
+    =/  =channel     [[our ship] now |3.ames-state -.peer-state]
     ::
     =^  =bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
     ~&  %ames-plea^our^ship^[bone=bone]^vane.plea^path.plea
@@ -1134,12 +1136,13 @@
     ^+  event-core
     ::
     ?:  =(/ping wire)
+      =.  sponsor-ping-timer.ames-state  ~
       ping-sponsor
     ::
     =+  ^-  [her=ship =bone]  (parse-pump-timer-wire wire)
     ::
     =/  =peer-state  (got-peer-state her)
-    =/  =channel     [[our her] now +>.ames-state -.peer-state]
+    =/  =channel     [[our her] now |3.ames-state -.peer-state]
     ::
     abet:(on-wake:(make-peer-core peer-state channel) bone error)
   ::  +on-init: first boot; subscribe to our info from jael
@@ -1236,14 +1239,15 @@
       |=  [=ship sponsor=(unit ship)]
       ^+  event-core
       ::
+      ?~  sponsor
+        ~|  %lost-sponsor^our^ship  !!
+      ::
       ?:  =(our ship)
-        =.  sponsor.ames-state  ship
+        =.  sponsor.ames-state  u.sponsor
+        =.  event-core  set-sponsor-ping-timer
         ping-sponsor
       ::
       =/  =peer-state  (got-peer-state ship)
-      ::
-      ?~  sponsor
-        ~|  %lost-sponsor^our^ship  !!
       ::
       =.  sponsor.peer-state  u.sponsor
       ::
@@ -1260,7 +1264,13 @@
       |^  ^+  event-core
           ?~  points  event-core
           ::
-          =+  [ship point]=i.points
+          =+  ^-  [=ship =point]  i.points
+          ::  (re)start sponsor ping on new sponsor
+          ::
+          =?  event-core  &(=(our ship) ?=(^ sponsor.point))
+            =.  sponsor.ames-state  u.sponsor.point
+            =.  event-core  set-sponsor-ping-timer
+            ping-sponsor
           ::
           =.  event-core
             ?~  ship-state=(~(get by peers.ames-state) ship)
@@ -1270,6 +1280,7 @@
             ?:  ?=([~ %alien *] ship-state)
               ~&  %alef-meet-alien^ship^point
               (meet-alien ship point +.u.ship-state)
+            ::
             ~&  %alef-update-known^ship^point
             (update-known ship point +.u.ship-state)
           ::
@@ -1416,13 +1427,29 @@
     ?:  already-pending
       event-core
     (emit duct %pass /public-keys %k %public-keys [n=ship ~ ~])
-  ::  +set-sponsor-heartbeat-timer: trigger sponsor ping after timeout
+  ::  +set-sponsor-ping-timer: trigger sponsor ping after timeout
   ::
-  ++  set-sponsor-heartbeat-timer
+  ++  set-sponsor-ping-timer
+    ^+  event-core
+    ::  make sure there's never more than one timer
+    ::
+    =.  event-core  unset-sponsor-ping-timer
+    ::  set new timer in state and emit request to behn
+    ::
+    =/  date=@da                       (add now ~m1)
+    =.  sponsor-ping-timer.ames-state  `[duct date]
+    ::
+    ~&  %ames-set-sponsor-timer^now^date
+    (emit duct %pass /ping %b %wait date)
+  ::  +unset-sponsor-ping-timer: cancel timer to ping sponsor
+  ::
+  ++  unset-sponsor-ping-timer
     ^+  event-core
     ::
-    ~&  %ames-set-sponsor-timer^now
-    (emit duct %pass /ping %b %wait `@da`(add now ~m1))
+    ?~  timer=sponsor-ping-timer.ames-state
+      event-core
+    ~&  %ames-unset-sponsor-ping-timer
+    (emit duct.u.timer %pass /ping %b %rest date.u.timer)
   ::  +ping-sponsor: message our sponsor so they know our lane
   ::
   ++  ping-sponsor
@@ -1448,22 +1475,22 @@
       todos(snd-packets (~(put in snd-packets.todos) blob))
     ::
     =/  =peer-state  +.u.ship-state
-    =/  =channel     [[our ship] now +>.ames-state -.peer-state]
+    =/  =channel     [[our ship] now |3.ames-state -.peer-state]
     ::
-    =*  try-next-sponsor
+    ?~  route=route.peer-state
       ?:  =(ship her-sponsor.channel)
         event-core
       $(ship her-sponsor.channel)
-    ::
-    ?~  route=route.peer-state
-      try-next-sponsor
     ::
     =.  event-core
       (emit unix-duct.ames-state %give %send lane.u.route blob)
     ::
     ?:  direct.u.route
       event-core
-    try-next-sponsor
+    ::
+    ?:  =(ship her-sponsor.channel)
+      event-core
+    $(ship her-sponsor.channel)
   ::  +attestation-packet: generate signed self-attestation for .her
   ::
   ::    Sent by a comet on first contact with a peer.  Not acked.
