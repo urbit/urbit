@@ -325,21 +325,23 @@
   |=  who=@p
   ?<  (~(has by lives) who)
   =.  lives  (~(put by lives) who [1 0])
-  %-  add-logs
-  %+  welp
-    ?:  =(%czar (clan:title who))
-      ~
-    ~[(spawned:lo (^sein:title who) who)]
-  :~  (activated:lo who)
-      (owner-changed:lo who 0xdead.beef)
-      %-  changed-keys:lo
-      :*  who
-          (get-public who 1 %crypt)
-          (get-public who 1 %auth)
-          1
-          1
-      ==
-  ==
+  =.  this-az
+    %-  add-logs
+    %+  welp
+      ?:  =(%czar (clan:title who))
+        ~
+      ~[(spawned:lo (^sein:title who) who)]
+    :~  (activated:lo who)
+        (owner-changed:lo who 0xdead.beef)
+        %-  changed-keys:lo
+        :*  who
+            (get-public who 1 %crypt)
+            (get-public who 1 %auth)
+            1
+            1
+        ==
+    ==
+  (spam-logs 30)
 ::
 ::  our: host ship
 ::  who: cycle keys
