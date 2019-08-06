@@ -806,7 +806,6 @@
       |%
       ++  public-keys
         |=  whos=(set ship)
-        ~&  [%fake-1 whos]
         =/  whol=(list ship)  ~(tap in whos)
         =/  passes
           |-  ^-  (list [who=ship =pass])
@@ -815,15 +814,12 @@
           =/  cub  (pit:nu:crub:crypto 512 i.whol)
           :-  [i.whol pub:ex:cub]
           $(whol t.whol)
-        ~&  [%fake-2 passes]
         =/  points=(list (pair ship point))
           %+  turn  passes
           |=  [who=ship =pass]
           ^-  [who=ship =point]
           [who [rift=1 life=1 (my [1 1 pass] ~) `(^sein:title who)]]
-        ~&  [%fake-3 points]
         =.  moz  [[hen %give %public-keys %full (my points)] moz]
-        ~&  [%fake-4 moz]
         ..feel
       --
     --

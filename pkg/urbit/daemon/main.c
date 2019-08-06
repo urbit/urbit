@@ -327,8 +327,8 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   if ( u3_Host.ops_u.sap_c == 0 && u3_Host.ops_u.can == c3n ) {
 
-    u3_Host.ops_u.sap_c =
-        "https://bootstrap.urbit.org/urbit-" URBIT_VERSION ".snap";
+    u3_Host.ops_u.sap_c = 0;
+        // "https://bootstrap.urbit.org/urbit-" URBIT_VERSION ".snap";
   }
 
   if ( u3_Host.ops_u.url_c != 0 && u3_Host.ops_u.pil_c != 0 ) {
