@@ -50,11 +50,7 @@
       :-  %o
       =/  number  (hex-to-num:ethereum (get-first-param req))
       =/  hash  (number-to-hash number)
-      ~&  who=who.pin
-      ~&  number=number
-      ~&  hash=hash
       =/  parent-hash  (number-to-hash ?~(number number (dec number)))
-      ~&  parent-hash=parent-hash
       %-  malt
       ^-  (list (pair term json))
       :~  hash+s+(crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 hash)))
@@ -202,7 +198,6 @@
       ?:  (lth to-block launch:contracts:azimuth)
         ~
       %+  swag
-        ~&  [%logs-by-range from-block to-block launch:contracts:azimuth]
         ?:  (lth from-block launch:contracts:azimuth)
            [0 +((sub to-block launch:contracts:azimuth))]
         :-  (sub from-block launch:contracts:azimuth)
@@ -212,7 +207,7 @@
     ++  logs-by-hash
       |=  =hash:block:able:kale
       =/  =number:block:able:kale  (hash-to-number hash)
-      (logs-by-range number +(number))
+      (logs-by-range number number)
     ::
     ++  logs-to-json
       |=  [count=@ud selected-logs=(list az-log)]

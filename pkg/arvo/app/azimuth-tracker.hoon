@@ -322,7 +322,6 @@
       ;<  =b=pending-udiffs  bind:m
         (release-old-events a-pending-udiffs number.id.block)
       ;<  =new=udiffs:point  bind:m  (get-logs-by-hash url whos hash.id.block)
-      ~?  !=(~ new-udiffs)  [%adding-diffs new-udiffs]
       =.  b-pending-udiffs  (~(put by b-pending-udiffs) number.id.block new-udiffs)
       (pure:m b-pending-udiffs block blocks)
     ::
