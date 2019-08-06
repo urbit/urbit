@@ -1147,12 +1147,19 @@
     abet:(on-wake:(make-peer-core peer-state channel) bone error)
   ::  +on-init: first boot; subscribe to our info from jael
   ::
+  ::    A non-galaxy ship makes a %public-keys subscription to stay
+  ::    updated about its sponsor.  A galaxy is its own sponsor, so it
+  ::    does not make such a request.
+  ::
   ++  on-init
     |=  our=ship
     ^+  event-core
     ::
-    =~  (emit duct %pass /private-keys %k %private-keys ~)
+    =~  ?:  =(%czar (clan:title our))
+          event-core(sponsor.ames-state our)
         (emit duct %pass /public-keys %k %public-keys [n=our ~ ~])
+    ::
+        (emit duct %pass /private-keys %k %private-keys ~)
         (emit duct %pass /turf %k %turf ~)
     ==
   ::  +on-priv: set our private key to jael's response
