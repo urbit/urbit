@@ -28,10 +28,10 @@
   %-  produce
   :-  %tang  :_  ~
   leaf+"can't create keys for {(scow %p mon)}, which belongs to {(scow %p seg)}"
-=/  lyf=life  .^(@ud k+/(scot %p our)/life/(scot %da now)/(scot %p our))
-=/  sed=seed:able:kale
-  .^  seed:able:kale
-      k+/(scot %p our)/earl/(scot %da now)/(scot %p mon)/(scot %ud lyf)
+=/  lyf=life  .^(@ud j+/(scot %p our)/life/(scot %da now)/(scot %p our))
+=/  sed=seed:able:jael
+  .^  seed:able:jael
+      j+/(scot %p our)/earl/(scot %da now)/(scot %p mon)/(scot %ud lyf)
   ==
 %+  print    leaf+"moon: {(scow %p mon)}"
 %-  produce  [%atom (scot %uw (jam sed))]

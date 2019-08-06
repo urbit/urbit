@@ -40,9 +40,8 @@
       $%  [%bonk wire ~]                                ::
           {$conf wire dock $load ship term}             ::
           {$flog wire flog:dill}                        ::
-          [%mint wire p=ship q=safe:rights:jael]
           {$nuke wire ship}                             ::
-          [%serve wire binding:eyre generator:eyre]
+          [%serve wire binding:eyre generator:eyre]     ::
           {$poke wire dock pear}                        ::
           {$rest wire @da}                              ::
           {$wait wire @da}                              ::
@@ -86,7 +85,8 @@
   ::  our new private key, as a +tree of +rite
   ::
   =/  rit  (sy [%jewel (my [lyf.u.sed key.u.sed] ~)] ~)
-  (emit %mint / our rit)
+  ~&  %rekey-not-implemented
+  +>.$
 ::
 ++  poke-nuke                                         ::  initialize
   |=  him/ship  =<  abet

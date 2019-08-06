@@ -61,7 +61,7 @@
         [%i /vane/iris]
         ::  sys/vane/jael: security
         ::
-        [%k /vane/kale]
+        [%j /vane/jael]
     ==
   |=  [=term =path]
   =/  pax  (weld sys path)

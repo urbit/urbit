@@ -20,13 +20,13 @@
       $:  %d                                            ::    to %dill
           $>(%flog task:able:dill)                      ::  log output
       ==                                                ::
-      $:  %k                                            ::    to %jael
+      $:  %j                                            ::    to %jael
           $>  $?  %meet                                 ::  neighbor
                   %public-keys                          ::  view public keys
                   %turf                                 ::  view domains
                   %private-keys                         ::  view private keys
               ==                                        ::
-          task:able:kale                                ::
+          task:able:jael                                ::
       ==                                                ::
       $:  @tas                                          ::    to any
           $>(%west task:able)                           ::  deliver message
@@ -36,12 +36,12 @@
   $%  $:  %b                                            ::    from %behn
           $>(%wake gift:able:behn)                      ::  timer activate
       ==                                                ::
-      $:  %k                                            ::    from %jael
+      $:  %j                                            ::    from %jael
           $>  $?  %public-keys                          ::  public keys
                   %turf                                 ::  bind to domains
                   %private-keys                         ::  private keys
               ==                                        ::
-          gift:able:kale                                ::
+          gift:able:jael                                ::
       ==                                                ::
       $:  %g                                            ::    from %gall
           $%  [%mean p=ares]                            ::  XX obsolete
@@ -573,7 +573,7 @@
       %-  (sloy-light ski)
       =/  pur=spur
         /(scot %ud lyf)/(scot %p who)
-      [[151 %noun] %k our %deed da+now pur]
+      [[151 %noun] %j our %deed da+now pur]
     ::  +life-scry: for a +life
     ::
     ++  life-scry
@@ -586,7 +586,7 @@
       %-  (sloy-light ski)
       =/  pur=spur
         /(scot %p who)
-      [[151 %noun] %k our %life da+now pur]
+      [[151 %noun] %j our %life da+now pur]
     ::  +sein-scry: for sponsor
     ::
     ++  sein-scry
@@ -595,7 +595,7 @@
       ;;  ship
       %-  need  %-  need
       %-  (sloy-light ski)
-      [[151 %noun] %k our %sein da+now /(scot %p who)]
+      [[151 %noun] %j our %sein da+now /(scot %p who)]
     ::  +saxo-scry: for sponsorship chain
     ::
     ++  saxo-scry
@@ -604,7 +604,7 @@
       ;;  (list ship)
       %-  need  %-  need
       %-  (sloy-light ski)
-      [[151 %noun] %k our %saxo da+now /(scot %p who)]
+      [[151 %noun] %j our %saxo da+now /(scot %p who)]
     ::  +turf-scry: for network domains
     ::
     ++  turf-scry
@@ -613,7 +613,7 @@
       |.  ;;  (list turf)
       %-  need  %-  need
       %-  (sloy-light ski)
-      [[151 %noun] %k our %turf da+now ~]
+      [[151 %noun] %j our %turf da+now ~]
     ::
     ++  vein                                            ::    vein:am
       ~/  %vein
@@ -1341,7 +1341,7 @@
     ?-    -.bon
         %beer
       =/  =wire  /pubs/(scot %p p.bon)
-      :_  fox  [hen [%pass wire %k %public-keys (silt p.bon ~)]]~
+      :_  fox  [hen [%pass wire %j %public-keys (silt p.bon ~)]]~
     ::
         %bock
       ::  ignore %turf if we haven't yet learned a unix duct
@@ -1354,7 +1354,7 @@
       [gad.fox %give %turf tuf.fox]~
     ::
         %brew
-      :_  fox  [hen [%pass / %k %turf ~]]~
+      :_  fox  [hen [%pass / %j %turf ~]]~
     ::
         %cake
       ::  ~?  ?=(^ r.bon)  [%cake-woot-bad hen r.bon]
@@ -1369,7 +1369,7 @@
         %milk
       ::  ~&  [%milk p.bon q.bon]
       ?>  ?=([@ @ *] q.q.bon)
-      ?>  ?=(?(%a %c %e %g %j %k) i.q.q.bon)
+      ?>  ?=(?(%a %c %e %g %j %j) i.q.q.bon)
       =/  =wire  [(scot %p our) (scot %p p.bon) q.q.bon]
       :_  fox  [hen %pass wire i.q.q.bon %west p.bon t.q.q.bon r.bon]~
     ::
@@ -1400,11 +1400,11 @@
     ::
         %raki
       :_  fox
-      [hen [%pass / %k %meet who=p.bon life=q.bon pass=r.bon]]~
+      [hen [%pass / %j %meet who=p.bon life=q.bon pass=r.bon]]~
     ::
         %sake
       =/  =wire  /our/(scot %p our)
-      :_  fox  [hen [%pass wire %k %private-keys ~]]~
+      :_  fox  [hen [%pass wire %j %private-keys ~]]~
     ::
         %wine
       [[(print hen p.bon q.bon) ~] fox]
@@ -1457,7 +1457,7 @@
       =/  ded=(unit deed)
         ?:  ?=(%full -.public-keys-result.sih)
           ~|  [her=her public-keys-result=public-keys-result.sih]
-          =/  a-point=(unit point:able:kale)
+          =/  a-point=(unit point:able:jael)
             (~(get by points.public-keys-result.sih) her)
           ?~  a-point
             ~
@@ -1465,7 +1465,7 @@
           `[life.u.a-point a-pass oath=~]
         ?>  ?=(%keys -.diff.public-keys-result.sih)
         ?>  =(her who.public-keys-result.sih)
-        =/  a-key-update=key-update:point:able:kale
+        =/  a-key-update=key-update:point:able:jael
           to.diff.public-keys-result.sih
         `[life.a-key-update pass.a-key-update oath=~]
       ?~  ded
