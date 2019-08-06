@@ -322,13 +322,7 @@
   =.  lives  (~(put by lives) who [1 0])
   =.  this-az
     %-  add-logs
-    %+  welp
-      ?:  =(%czar (clan:title who))
-        ~
-      ~[(spawned:lo (^sein:title who) who)]
-    :~  (activated:lo who)
-        (owner-changed:lo who 0xdead.beef)
-        %-  changed-keys:lo
+    :~  %-  changed-keys:lo
         :*  who
             (get-public who 1 %crypt)
             (get-public who 1 %auth)
@@ -409,9 +403,7 @@
   =/  rut  +(rut.prev)
   =.  lives  (~(put by lives) who [lyfe.prev rut])
   =.  this-az
-    %-  add-logs
-    :_  ~
-    (broke-continuity:lo who rut)
+    (add-logs (broke-continuity:lo who rut) ~)
   (spam-logs 30)
 ::
 ++  spam-logs
@@ -440,11 +432,6 @@
 ++  lo
   =,  azimuth-events:azimuth
   |%
-  ++  activated
-    |=  who=ship
-    ^-  az-log
-    [~[^activated who] '']
-  ::
   ++  broke-continuity
     |=  [who=ship rut=rift]
     ^-  az-log
@@ -465,15 +452,5 @@
         (render-hex-bytes:ethereum 32 `@`crypto)
         (render-hex-bytes:ethereum 32 `@`lyfe)
     ==
-  ::
-  ++  owner-changed
-    |=  [who=ship owner=@ux]
-    ^-  az-log
-    [~[^owner-changed who owner] '']
-  ::
-  ++  spawned
-    |=  [par=ship who=ship]
-    ^-  az-log
-    [~[^spawned par who] '']
   --
 --
