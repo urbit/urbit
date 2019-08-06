@@ -112,8 +112,6 @@ $ git lfs pull
 
 [git-lfs]: https://git-lfs.github.com
 
-Pills are also cached at `https://bootstrap.urbit.org` and are indexed by the first 10 characters of the `git` SHA1 of the relevant commit, i.e. as `git-[sha1].pill`.  The continuous integration build uploads these pills for any successful build of a commit or pull request that affects the `pkg/arvo/sys/` directory.
-
 You can boot from one of these pills by passing the path to an Arvo working copy with `-A` (and `-s` for *search*):
 
 ```
