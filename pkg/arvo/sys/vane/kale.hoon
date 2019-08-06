@@ -538,7 +538,6 @@
       +>.$
     ::
         [%a %boon *]
-      =.  moz  [[hen %give %done ~] moz]
       =+  ;;  res=message-response  payload.hin
       ?>  ?=(%public-keys-result -.res)
       ::
