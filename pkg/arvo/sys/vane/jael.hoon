@@ -39,7 +39,6 @@
   $:  ver=$0                                            ::  vane version
       pki=state-pki                                     ::
       etn=state-eth-node                                ::  eth connection state
-      sap=state-snapshots                               ::  state snapshots
   ==                                                    ::
 +$  state-pki                                           ::  urbit metadata
   $:  $=  own                                           ::  vault (vein)
@@ -58,13 +57,6 @@
             dns=dnses                                   ::  on-chain dns state
             pos=(map ship point)                        ::  on-chain ship state
         ==                                              ::
-  ==                                                    ::
-+$  state-snapshots                                     ::  rewind points
-  $:  interval=_100                                     ::  block interval
-      max-count=_10                                     ::  max snaps
-      count=@ud                                         ::  length of snaps
-      last-block=@ud                                    ::  number of last snap
-      snaps=(qeu [block-number=@ud snap=snapshot])      ::  old states
   ==                                                    ::
 +$  message                                             ::  message to her jael
   $%  [%nuke whos=(set ship)]                           ::  cancel trackers
@@ -256,12 +248,7 @@
       ::  save our parent signature (only for moons)
       ::
       =.  sig.own.pki  sig.seed.tac
-      ::  if we're given a snapshot, restore it
-      ::
-      =.  +>.$
-        ?~  snap.tac  +>.$
-        (restore-snap hen u.snap.tac |)
-      ::  load our initial public key, overriding snapshot
+      ::  load our initial public key
       ::
       =.  pos.zim.pki
         =/  cub  (nol:nu:crub:crypto key.seed.tac)
@@ -298,7 +285,7 @@
         (~(put by points) ship.spon.tac spon-point)
       =.  +>.$
         %-  curd  =<  abet
-        (public-keys:~(feel su hen our pki etn sap) %full points)
+        (public-keys:~(feel su hen our pki etn) %full points)
       ::
       ::  start subscriptions
       ::
@@ -307,16 +294,16 @@
         ?-    (clan:title our)
             %czar
           %-  curd  =<  abet
-          (sources:~(feel su hen our pki etn sap) ~ [%| %azimuth-tracker])
+          (sources:~(feel su hen our pki etn) ~ [%| %azimuth-tracker])
         ::
             *
           =.  +>.$
             %-  curd  =<  abet
-            %+  sources:~(feel su hen our pki etn sap)
+            %+  sources:~(feel su hen our pki etn)
               (silt ship.spon.tac ~)
             [%| %azimuth-tracker]
           %-  curd  =<  abet
-          (sources:~(feel su hen our pki etn sap) ~ [%& ship.spon.tac])
+          (sources:~(feel su hen our pki etn) ~ [%& ship.spon.tac])
         ==
       ::
       =.  moz
@@ -394,7 +381,7 @@
         %listen
       ~&  [%jael-listen whos source]:tac
       %-  curd  =<  abet
-      (sources:~(feel su hen our pki etn sap) [whos source]:tac)
+      (sources:~(feel su hen our pki etn) [whos source]:tac)
     ::
     ::  cancel all trackers from duct
     ::    {$nuke whos=(set ship)}
@@ -425,18 +412,13 @@
     ::
         %public-keys
       %-  curd  =<  abet
-      (~(public-keys ~(feed su hen our pki etn sap) hen) ships.tac)
+      (~(public-keys ~(feed su hen our pki etn) hen) ships.tac)
     ::
     ::  seen after breach
     ::    [%meet our=ship who=ship]
     ::
         %meet
       +>.$
-    ::
-    ::  restore snapshot
-    ::    [%snap snap=snapshot kick=?]
-        %snap
-      (restore-snap hen snap.tac kick.tac)
     ::
     ::  XX should be a subscription
     ::  XX reconcile with .dns.eth
@@ -461,7 +443,7 @@
     ::    {$private-keys $~}
     ::
         %private-keys
-      (curd abet:~(private-keys ~(feed su hen our pki etn sap) hen))
+      (curd abet:~(private-keys ~(feed su hen our pki etn) hen))
     ::
         %wegh
       %_    +>
@@ -473,7 +455,6 @@
         :+  %jael  %|
         :~  pki+&+pki
             etn+&+etn
-            sap+&+sap
             dot+&+lex
         ==
       ==
@@ -506,14 +487,8 @@
           %public-keys-result
         =.  moz  [[hen %give %mack ~] moz]
         %-  curd  =<  abet
-        (public-keys:~(feel su hen our pki etn sap) public-keys-result.mes)
+        (public-keys:~(feel su hen our pki etn) public-keys-result.mes)
       ==
-    ::
-    ::  rewind to snapshot
-    ::    {$wind p/@ud}
-    ::
-        %wind
-      (wind hen p.tac)
     ==
   ::
   ++  take
@@ -555,7 +530,7 @@
         %.  [hen tea app]
         =<  pump
         %-  curd  =<  abet
-        (~(new-event su hen our pki etn sap) peer-sign)
+        (~(new-event su hen our pki etn) peer-sign)
       ==
     ==
   ::                                                    ::  ++curd:of
@@ -563,34 +538,12 @@
     |=  $:  moz/(list move)
             pki/state-pki
             etn/state-eth-node
-            sap/state-snapshots
         ==
-    +>(pki pki, etn etn, sap sap, moz (weld (flop moz) ^moz))
+    +>(pki pki, etn etn, moz (weld (flop moz) ^moz))
   ::                                                    ::  ++wind:of
   ++  pump
     |=  [hen=duct =wire app=term]
     (emit [hen %pass wire %g %deal [our our] app %pump ~])
-  ::
-  ++  wind                                              ::  rewind to snap
-    |=  [hen=duct block=@ud]
-    ^+  +>
-    ::  XX  what do
-    !!
-  ::                                                    ::  ++restore-block:of
-  ++  restore-block                                     ::  rewind before block
-    |=  [hen=duct block=@ud]
-    !!
-    ::  %+  cute  hen  =<  abet
-    ::  XX
-    ::  (~(restore-block et hen our now sub.lex etn.lex sap.lex) block)
-  ::                                                    ::  ++restore-snap:of
-  ++  restore-snap                                      ::  restore snapshot
-    |=  [hen=duct snap=snapshot look=?]
-    !!
-    ::  %+  cute  hen  =<  abet
-    ::  XX
-    ::  %-  ~(restore-snap et hen our now sub.lex etn.lex sap.lex)
-    ::  [snap look]
   --
 ::                                                      ::  ++su
 ::::                    ## relative^heavy               ::  subjective engine
@@ -609,19 +562,17 @@
           our=ship
           state-pki
           state-eth-node
-          state-snapshots
       ==
   ::  moz: moves in reverse order
   ::  pki: relative urbit state
   ::
   =*  pki  ->+<
-  =*  etn  ->+>-
-  =*  sap  ->+>+
+  =*  etn  ->+>
   |%
   ++  this-su  .
   ::                                                    ::  ++abet:su
   ++  abet                                              ::  resolve
-    [(flop moz) pki etn sap]
+    [(flop moz) pki etn]
   ::                                                    ::  ++exec:su
   ++  emit
     |=  =move
@@ -710,10 +661,6 @@
     ?~  a-diff
       this-su
     (public-keys:feel %diff a-ship u.a-diff)
-  ::
-  ++  extract-snap                                      ::  extract rewind point
-    ^-  snapshot
-    ~
   ::
   ++  feed
     |_  ::  hen: subscription source
@@ -1112,18 +1059,6 @@
     ?.  ?=(~ tyl)  [~ ~]
     :^  ~  ~  %noun  !>
     etn.lex
-  ::
-      %snap
-    ?.  ?=(~ tyl)  [~ ~]
-    ?:  =(~ snaps.sap.lex)
-      `~
-    :^  ~  ~  %noun  !>
-    |-  ^-  snapshot
-    =^  snap=[@ud snap=snapshot]  snaps.sap.lex
-      ~(get to snaps.sap.lex)
-    ?:  =(~ snaps.sap.lex)
-      snap.snap
-    $
   ::
       %turf
     ?.  ?=(~ tyl)  [~ ~]

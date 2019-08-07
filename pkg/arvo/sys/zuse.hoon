@@ -2078,7 +2078,6 @@
               turf=(list turf)                          ::    domains
               bloq=@ud                                  ::    block number
               node=(unit purl:eyre)                     ::    gateway url
-              snap=(unit snapshot)                      ::    head start
           ==                                            ::
           [%fake =ship]                                 ::  fake boot
           [%listen whos=(set ship) =source]             ::  set ethereum source
@@ -2087,12 +2086,10 @@
           [%private-keys ~]                             ::  sub to privates
           [%public-keys ships=(set ship)]               ::  sub to publics
           [%meet =ship =life =pass]                     ::  met after breach
-          [%snap snap=snapshot kick=?]                  ::  load snapshot
           [%turf ~]                                     ::  view domains
           $>(%vega vane-task)                           ::  report upgrade
           $>(%wegh vane-task)                           ::  memory usage request
           $>(%west vane-task)                           ::  remote request
-          [%wind p=@ud]                                 ::  rewind before block
       ==                                                ::
     ::
     ++  block
@@ -2223,7 +2220,6 @@
     ::                                                  ::
   +$  source  (each ship term)
   +$  source-id  @udsourceid
-  +$  snapshot  ~
   ::
   ::  +state-eth-node: state of a connection to an ethereum node
   ::
@@ -8970,36 +8966,6 @@
       =?  tuf  !(~(has by tuf) q.i.dom)
         (~(put by tuf) q.i.dom p.i.dom)
       $(dom t.dom)
-    --
-  ::  |snap:dawn restore from snapshot
-  ::
-  ++  snap
-    !:
-    |%
-    ::  +bloq:snap:dawn: extract block number
-    ::
-    ++  bloq
-      |=  snap=snapshot:jael
-      ^-  (unit @ud)
-      ~
-    ::  +czar:snap:dawn: extract galaxy table
-    ::
-    ++  czar
-      |=  snap=snapshot:jael
-      ^-  (unit (map ship [=life =pass]))
-      ~
-    ::  +point:snap:dawn: extract ship's contract state
-    ::
-    ++  point
-      |=  [who=ship snap=snapshot:jael]
-      ^-  (unit point:azimuth)
-      ~
-    ::  +turf:snap:dawn: extract network domains
-    ::
-    ++  turf
-      |=  snap=snapshot:jael
-      ^-  (unit (list ^turf))
-      ~
     --
   ::  +veri:dawn: validate keys, life, discontinuity, &c
   ::

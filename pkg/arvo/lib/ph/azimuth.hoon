@@ -296,7 +296,6 @@
       ~[~['arvo' 'netw' 'ork']]
       0
       `(need (de-purl:html 'http://localhost:8545'))
-      ~
   ==
 ::
 ::  Should only do galaxies

@@ -24,7 +24,6 @@
       turf=(list turf)
       bloq=@ud
       node=(unit purl:eyre)
-      snap=(unit snapshot:jael)
   ==
 ::
 ++  module-ova

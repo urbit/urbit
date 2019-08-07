@@ -1342,7 +1342,6 @@
         %ogre  `%c
         %perm  `%c
         %rest  `%b
-        %snap  `%j
         %wait  `%b
         %want  `%a
         %warp  `%c
