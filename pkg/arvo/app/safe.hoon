@@ -53,7 +53,7 @@
         ::  sent when the host community either doesn't exist or the requester
         ::  isn't allowed to access it.
         ::
-        [%community-not-found ~]
+        [%not-found ~]
     ==
   ++  tapp   (^tapp app-state peek-data in-poke-data out-poke-data in-peer-data out-peer-data)
   ++  stdio  (^stdio out-poke-data out-peer-data)
@@ -260,7 +260,6 @@
 |_  [=bowl:gall =app-state]
 ::
 ++  handle-peek  handle-peek:default-tapp
-++  handle-take  handle-take:default-tapp
 ::
 ++  handle-init
   =/  m  tapp-async
@@ -353,6 +352,7 @@
   =/  m  tapp-async
   ^-  form:m
   ::
+  ~|  path
   ?>  ?=(^ path)
   ::
   =/  community-name=@t  i.path
@@ -360,19 +360,29 @@
   ::  ensure the community exists
   ::
   ?~  community=(~(get by server-communities.app-state) community-name)
-    ;<  ~  bind:m  (give-result path [%community-not-found ~])
+    ;<  ~  bind:m  (give-result path [%not-found ~])
     ;<  ~  bind:m  (quit-app [src.bowl %safe] path)
     (pure:m app-state)
   ::  ensure the requester has access
   ::
   ?.  (~(has in invited:(need top-state:(need snapshot.u.community))) src.bowl)
-    ;<  ~  bind:m  (give-result path [%community-not-found ~])
+    ;<  ~  bind:m  (give-result path [%not-found ~])
     ;<  ~  bind:m  (quit-app [src.bowl %safe] path)
     (pure:m app-state)
-  ::  TODO: send a current snapshot of the requested path back to the sender as
-  ::  the first thing in the peer.
+  ::  send a full snapshot of route
   ::
-  ~&  [%safe-take-peer path]
+  =/  full-snapshot=(unit peer-diff:common)
+    (get-snapshot-as-peer-diff route u.community)
+  ::  if the community doesn't exist, send a community not found event.
+  ::
+  ?~  full-snapshot
+    ;<  ~  bind:m  (give-result path [%not-found ~])
+    ;<  ~  bind:m  (quit-app [src.bowl %safe] path)
+    (pure:m app-state)
+  ::  send the snapshot as the first of many events
+  ::
+  ;<  ~  bind:m  (give-result path u.full-snapshot)
+  ::
   (pure:m app-state)
 ::
 ++  handle-diff
@@ -382,9 +392,43 @@
   ::
   ?>  ?=(^ path)
   ::
-
-  ::  ?>  ?=(%comments -.data)
-  ::  ~&  subscriber-got-data=(lent comments.data)
+  =/  community-name=@t  i.path
+  =/  route=^path        t.path
+  ::
+  ?:  ?=(%not-found -.data)
+    ::  TODO: Some real error handling here. If we're pending for a send
+    ::  operation, then we'll need to error the send operation.
+    ::
+    ~&  [%not-found community-name path]
+    ::
+    (pure:m app-state)
+  ::  TODO: If this node is pending, we'll need to keep track of that before we
+  ::  apply the diff
+  ::
+  =/  is-pending=?  %.n
+  ::  our data is a peer diff, apply it to our state
+  ::
+  =.  app-state
+    %-  update-client-communities  :*
+      her
+      community-name
+      route
+      app-state
+      (apply-peer-diff-to-client data)
+    ==
+  ::
+  ?:  is-pending
+    ::  TODO: if we were pending for some reason, we'll have to notify what
+    ::  we're waiting on to complete.
+    ::
+    (pure:m app-state)
+  ::
+  ::  TODO: MUCH LATER we probably want to forward on the update to any of our
+  ::  http subscribed clients.
   (pure:m app-state)
+::
+::  TODO: Handle +quit so that it sets a community back to %unsubscribed.
+::
+++  handle-take  handle-take:default-tapp
 --
 
