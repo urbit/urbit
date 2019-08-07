@@ -1336,16 +1336,15 @@
         %look  `%j
         %listen  `%j
         %merg  `%c
-        %mint  `%j
         %mont  `%c
         %nuke  `%a
         %ogre  `%c
         %perm  `%c
         %rest  `%b
+        %rekey  `%j
         %wait  `%b
         %want  `%a
         %warp  `%c
-        %wind  `%j
         %wipe  `%f
       ::
         %request         `%i

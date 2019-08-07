@@ -407,6 +407,12 @@
         yen.own.pki  (~(del in yen.own.pki) hen)
       ==
     ::
+    ::  update private keys
+    ::
+        %rekey
+      %-  curd  =<  abet
+      (private-keys:~(feel su hen our pki etn) life.tac ring.tac)
+    ::
     ::  watch public keys
     ::    [%public-keys ships=(set ship)]
     ::

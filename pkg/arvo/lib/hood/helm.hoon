@@ -45,6 +45,7 @@
           {$poke wire dock pear}                        ::
           {$rest wire @da}                              ::
           {$wait wire @da}                              ::
+          {$rekey wire life ring}                       ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  pear                                            ::  poke fruit
@@ -85,7 +86,7 @@
   ::  our new private key, as a +tree of +rite
   ::
   =/  rit  (sy [%jewel (my [lyf.u.sed key.u.sed] ~)] ~)
-  ~&  %rekey-not-implemented
+  (emit %rekey / lyf.u.sed key.u.sed)
   +>.$
 ::
 ++  poke-nuke                                         ::  initialize

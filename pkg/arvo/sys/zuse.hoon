@@ -2082,10 +2082,11 @@
           [%fake =ship]                                 ::  fake boot
           [%listen whos=(set ship) =source]             ::  set ethereum source
           ::TODO  %next for generating/putting new private key
+          [%meet =ship =life =pass]                     ::  met after breach
           [%nuke whos=(set ship)]                       ::  cancel tracker from
           [%private-keys ~]                             ::  sub to privates
           [%public-keys ships=(set ship)]               ::  sub to publics
-          [%meet =ship =life =pass]                     ::  met after breach
+          [%rekey =life =ring]                          ::  update private keys
           [%turf ~]                                     ::  view domains
           $>(%vega vane-task)                           ::  report upgrade
           $>(%wegh vane-task)                           ::  memory usage request
