@@ -5,7 +5,7 @@ module Noun.Conversions
   , Word128, Word256, Word512
   , Bytes(..), Octs(..), File(..)
   , Cord(..), Knot(..), Term(..), Tape(..), BigTape(..), Tour(..)
-  , Decimal(..), Base32, UV(..)
+  , UD(..), UV(..)
   , Tank(..), Tang, Plum(..)
   , Mug(..), Path(..), EvilPath(..), Ship(..)
   , Lenient(..)
@@ -83,23 +83,21 @@ instance FromNoun Cord where
 
 -- Decimal Cords ---------------------------------------------------------------
 
-newtype Decimal = Decimal { unDecimal :: Word }
+newtype UD = UD { unUD :: Word }
   deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num)
 
-instance ToNoun Decimal where
-  toNoun = toNoun . Cord . tshow . unDecimal
+instance ToNoun UD where
+  toNoun = toNoun . Cord . tshow . unUD
 
-instance FromNoun Decimal where
-  parseNoun n = named "Decimal" do
+instance FromNoun UD where
+  parseNoun n = named "UD" do
     Cord t <- parseNoun n
     readMay t & \case
-      Nothing -> fail ("invalid decimal atom: " <> unpack t)
-      Just vl -> pure (Decimal vl)
+      Nothing -> fail ("invalid decimal atom: " <> unpack (filter (/= '.') t))
+      Just vl -> pure (UD vl)
 
 
 --------------------------------------------------------------------------------
-
-type Base32 = UV
 
 -- @uv
 newtype UV = UV { unUV :: Atom }
@@ -118,8 +116,9 @@ instance FromNoun UV where
 fromUV :: String -> Maybe Atom
 fromUV = go (0, 0)
   where
-    go (i, acc) []     = pure acc
-    go (i, acc) (c:cs) = do
+    go (i, acc) []         = pure acc
+    go (i, acc) ('.' : cs) = go (i, acc) cs
+    go (i, acc) (c   : cs) = do
         n <- uvCharNum c
         go (i+1, i*n) cs
 
@@ -388,7 +387,7 @@ instance FromNoun Bytes where
 -- Octs ------------------------------------------------------------------------
 
 newtype Octs = Octs { unOcts :: ByteString }
-  deriving newtype (Eq, Ord, Show)
+  deriving newtype (Eq, Ord, Show, IsString)
 
 instance ToNoun Octs where
   toNoun (Octs bs) =
@@ -413,7 +412,7 @@ instance FromNoun Octs where
 -- File Contents -- Don't Print ------------------------------------------------
 
 newtype File = File { unFile :: Octs }
-  deriving newtype (Eq, Ord, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, IsString, ToNoun, FromNoun)
 
 instance Show File where
   show (File (Octs bs)) = show (take 32 bs <> "...")

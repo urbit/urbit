@@ -78,7 +78,7 @@ instance Show Noun where
       showAtom a =
           let mTerm = do
                 t <- utf8AtomToText (Atom a)
-                let ok = \x -> (x=='-' || C.isAlphaNum x)
+                let ok = \x -> (C.isPrint x)
                 if (all ok (t :: Text))
                     then pure ("\"" <> unpack t <> "\"")
                     else Left "Don't show as text."

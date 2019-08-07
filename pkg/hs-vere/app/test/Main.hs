@@ -64,7 +64,7 @@ tryPlayShip :: FilePath -> IO ()
 tryPlayShip shipPath = do
     runAcquire $ do
         sls <- Pier.resumed shipPath serfFlags
-        Pier.pier Nothing sls
+        Pier.pier shipPath Nothing sls
 
 tryResume :: FilePath -> IO ()
 tryResume shipPath = do
@@ -156,7 +156,7 @@ collectAllFx top = do
 main :: IO ()
 main = runInBoundThread $ do
     let pillPath = "/home/benjamin/r/urbit/bin/solid.pill"
-        shipPath = "/home/benjamin/r/urbit/s/zod/"
+        shipPath = "/home/benjamin/r/urbit/s/dev/"
         ship     = zod
 
     -- collectAllFx "/home/benjamin/r/urbit/s/testnet-zod/"

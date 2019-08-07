@@ -26,8 +26,8 @@ import qualified Vere.Log as Log
 
 -- Utils -----------------------------------------------------------------------
 
-pid :: KingInstance
-pid = KingInst 0
+pid :: KingId
+pid = KingId 0
 
 turfEf :: NewtEf
 turfEf = NewtEfTurf (0, ()) []

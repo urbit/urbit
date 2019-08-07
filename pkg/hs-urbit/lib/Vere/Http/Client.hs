@@ -9,11 +9,10 @@ import ClassyPrelude
 
 import Noun
 import Vere.Http
-import Arvo (Header(..), ResponseHeader(..))
+import Arvo (ResponseHeader(..))
 
-import qualified Data.CaseInsensitive as CI
-import qualified Network.HTTP.Client  as H
-import qualified Network.HTTP.Types   as HT
+import qualified Network.HTTP.Client as H
+import qualified Network.HTTP.Types  as HT
 
 
 -- Types -----------------------------------------------------------------------
@@ -39,10 +38,9 @@ data State = State
 cvtReq :: Request -> Maybe H.Request
 cvtReq r =
   H.parseRequest (unpack (unCord $ url r)) <&> \init -> init
-    { H.method = encodeUtf8 $ tshow (method r),
-      H.requestHeaders =
-        headerList r <&> \(Header k v) -> (CI.mk (unBytes k), unBytes v),
-      H.requestBody =
+    { H.method = encodeUtf8 $ tshow (method r)
+    , H.requestHeaders = unconvertHeaders (headerList r)
+    , H.requestBody =
         H.RequestBodyBS $ case body r of
                             Nothing        -> ""
                             Just (Octs bs) -> bs

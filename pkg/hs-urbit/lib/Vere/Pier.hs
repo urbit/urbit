@@ -12,6 +12,7 @@ import System.Directory   (createDirectoryIfMissing)
 import System.Posix.Files (ownerModes, setFileMode)
 import Vere.Ames          (ames)
 import Vere.Behn          (behn)
+import Vere.Http.Server   (serv)
 import Vere.Log           (EventLog)
 import Vere.Serf          (Serf, SerfState(..), doJob)
 
@@ -106,20 +107,21 @@ resumed top flags = do
 
 -- Run Pier --------------------------------------------------------------------
 
-pier :: Maybe Port
+pier :: FilePath
+     -> Maybe Port
      -> (Serf, EventLog, SerfState)
      -> Acquire ()
-pier mPort (serf, log, ss) = do
+pier pierPath mPort (serf, log, ss) = do
     computeQ <- newTQueueIO :: Acquire (TQueue Ev)
     persistQ <- newTQueueIO :: Acquire (TQueue (Job, FX))
     executeQ <- newTQueueIO :: Acquire (TQueue FX)
 
-    inst <- liftIO (KingInst <$> randomIO)
+    inst <- liftIO (KingId . UV . fromIntegral <$> randomIO @Word32)
 
     let ship = who (Log.identity log)
 
     let (bootEvents, startDrivers) =
-          drivers inst ship mPort (writeTQueue computeQ)
+          drivers pierPath inst ship mPort (writeTQueue computeQ)
 
     liftIO $ atomically $ for_ bootEvents (writeTQueue computeQ)
 
@@ -156,23 +158,25 @@ data Drivers = Drivers
     , dTerm       :: EffCb TermEf
     }
 
-drivers :: KingInstance
+drivers :: FilePath
+        -> KingId
         -> Ship
         -> Maybe Port
         -> (Ev -> STM ())
         -> ([Ev], Acquire Drivers)
-drivers inst who mPort plan =
+drivers pierPath inst who mPort plan =
     (initialEvents, runDrivers)
   where
     (behnBorn, runBehn) = behn inst plan
     (amesBorn, runAmes) = ames inst who mPort plan
-    initialEvents       = mconcat [behnBorn, amesBorn]
+    (httpBorn, runHttp) = serv pierPath inst plan
+    initialEvents       = mconcat [behnBorn, amesBorn, httpBorn]
     runDrivers          = do
         dNewt       <- runAmes
         dBehn       <- runBehn
         dAmes       <- pure $ const $ pure ()
         dHttpClient <- pure $ const $ pure ()
-        dHttpServer <- pure $ const $ pure ()
+        dHttpServer <- runHttp
         dSync       <- pure $ const $ pure ()
         dTerm       <- pure $ const $ pure ()
         pure (Drivers{..})

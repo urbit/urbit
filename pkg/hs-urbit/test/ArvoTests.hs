@@ -1,18 +1,19 @@
 module ArvoTests (tests) where
 
+import Arvo
 import Data.Acquire
-import Test.QuickCheck       hiding ((.&.))
+import Data.Conduit
+import Data.Conduit.List
+import Data.Ord.Unicode
+import Network.HTTP.Types.Method
+import Test.QuickCheck           hiding ((.&.))
 import Test.Tasty
 import Test.Tasty.QuickCheck
 import Test.Tasty.TH
+import Urbit.Time
 import UrbitPrelude
 import Vere.Log
 import Vere.Pier.Types
-import Data.Conduit
-import Data.Conduit.List
-import Arvo
-import Urbit.Time
-import Data.Ord.Unicode
 
 import Network.Socket     (tupleToHostAddress)
 import Control.Concurrent (threadDelay, runInBoundThread)
@@ -147,6 +148,17 @@ instance Arbitrary VaneEv where
 
 instance Arbitrary ZuseEv where
   arbitrary = ZEVeer () <$> arb <*> arb <*> arb
+
+instance Arbitrary StdMethod where
+  arbitrary = oneof $ pure <$> [ minBound .. maxBound ]
+
+instance Arbitrary Header where
+  arbitrary = Header <$> arb <*> arb
+
+instance Arbitrary ServId where arbitrary = ServId <$> arb
+
+instance Arbitrary UD where arbitrary = UD <$> arb
+instance Arbitrary UV where arbitrary = UV <$> arb
 
 
 -- Generate Arbitrary Values ---------------------------------------------------

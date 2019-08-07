@@ -53,7 +53,7 @@ destSockAddr m = \case
     ADGala _ g   -> SockAddrInet (galaxyPort m g) localhost
     ADIpv4 _ p a -> SockAddrInet (fromIntegral p) (unIpv4 a)
 
-barnEv :: KingInstance -> Ev
+barnEv :: KingId -> Ev
 barnEv inst =
   EvBlip $ BlipEvNewt $ NewtEvBarn (fromIntegral inst, ()) ()
 
@@ -89,9 +89,9 @@ _turfText = intercalate "." . reverse . fmap unCord . unTurf
 
     TODO log when `sendTo` sent fewer bytes than requested.
 
-    TODO verify that the KingInstances match on effects.
+    TODO verify that the KingIds match on effects.
 -}
-ames :: KingInstance -> Ship -> Maybe Port -> QueueEv
+ames :: KingId -> Ship -> Maybe Port -> QueueEv
      -> ([Ev], Acquire (EffCb NewtEf))
 ames inst who mPort enqueueEv =
     (initialEvents, runAmes)

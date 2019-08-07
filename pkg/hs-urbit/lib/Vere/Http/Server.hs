@@ -1,7 +1,5 @@
 {-
-    TODO Implement ports file.
-
-    TODO What is this abount?
+    TODO What is this about?
 
         //  if we don't explicitly set this field, h2o will send with
         //  transfer-encoding: chunked
@@ -11,7 +9,7 @@
                                       0 : gen_u->bod_u->len_w;
         }
 
-    TODO Does this matter, is is using WAI's default behavior ok.
+    TODO Does this matter, is is using WAI's default behavior ok?
 
         rec_u->res.reason = (status < 200) ? "weird" :
                             (status < 300) ? "ok" :
@@ -31,6 +29,7 @@ import Vere.Pier.Types
 import Data.Binary.Builder (Builder, fromByteString)
 import Data.Bits           (shiftL, (.|.))
 import Network.Socket      (SockAddr(..))
+import System.Directory    (doesFileExist, removeFile)
 import System.Random       (randomIO)
 import Vere.Http           (convertHeaders, unconvertHeaders)
 
@@ -41,7 +40,10 @@ import qualified Network.Wai.Handler.Warp    as W
 import qualified Network.Wai.Handler.WarpTLS as W
 
 
--- RespAction -- Reorganized HttpEvent for Cleaner Processing ------------------
+-- Internal Types --------------------------------------------------------------
+
+type ReqId = UD
+type SeqId = UD -- Unused, always 1
 
 {-
     The sequence of actions on a given request *should* be:
@@ -57,15 +59,44 @@ import qualified Network.Wai.Handler.WarpTLS as W
       Response" with an empty response body.
 -}
 data RespAction
-    = RAHead ResponseHeader
+    = RAHead ResponseHeader File
+    | RAFull ResponseHeader File
     | RABloc File
     | RADone
+  deriving (Eq, Ord, Show)
+
+data LiveReqs = LiveReqs
+    { nextReqId  :: ReqId
+    , activeReqs :: Map ReqId (TQueue RespAction)
+    }
+
+data Ports = Ports
+    { pHttps :: Maybe Port
+    , pHttp  :: Port
+    , pLoop  :: Port
+    }
+  deriving (Eq, Ord, Show)
+
+newtype Drv = Drv { unDrv :: MVar (Maybe Serv) }
+
+data Serv = Serv
+    { sServId    :: ServId
+    , sConfig    :: HttpServerConf
+    , sLoopTid   :: Async ()
+    , sHttpTid   :: Async ()
+    , sHttpsTid  :: Maybe (Async ())
+    , sPorts     :: Ports
+    , sPortsFile :: FilePath
+    , sLiveReqs  :: TVar LiveReqs
+    }
+
+
+-- RespAction -- Reorganized HttpEvent for Cleaner Processing ------------------
 
 reorgHttpEvent :: HttpEvent -> [RespAction]
 reorgHttpEvent = \case
-    Start head mBlk isDone -> [RAHead head]
-                           <> toList (RABloc <$> mBlk)
-                           <> if isDone then [RADone] else []
+    Start head mBlk True   -> [RAFull head (fromMaybe "" mBlk)]
+    Start head mBlk False  -> [RAHead head (fromMaybe "" mBlk)]
     Cancel ()              -> [RADone]
     Continue mBlk isDone   -> toList (RABloc <$> mBlk)
                            <> if isDone then [RADone] else []
@@ -83,34 +114,36 @@ reorgHttpEvent = \case
 
     - Keeps the MVar lock until the restart process finishes.
 -}
-restartService :: forall s r
+restartService :: forall s
                 . MVar (Maybe s)
-               -> IO (s, r)
+               -> IO s
                -> (s -> IO ())
-               -> IO (Either SomeException r)
+               -> IO (Either SomeException s)
 restartService vServ sstart kkill = do
+    putStrLn "restartService"
     modifyMVar vServ $ \case
         Nothing -> doStart
         Just sv -> doRestart sv
   where
-    doRestart :: s -> IO (Maybe s, Either SomeException r)
-    doRestart serv =
+    doRestart :: s -> IO (Maybe s, Either SomeException s)
+    doRestart serv = do
+        putStrLn "doStart"
         try (kkill serv) >>= \case
             Left exn -> pure (Nothing, Left exn)
             Right () -> doStart
 
-    doStart :: IO (Maybe s, Either SomeException r)
-    doStart =
+    doStart :: IO (Maybe s, Either SomeException s)
+    doStart = do
+        putStrLn "doStart"
         try sstart <&> \case
-            Right (s,r) -> (Just s,  Right r)
-            Left exn    -> (Nothing, Left exn)
+            Right s  -> (Just s,  Right s)
+            Left exn -> (Nothing, Left exn)
 
-
-stopService :: forall s
-             . MVar (Maybe s)
+stopService :: MVar (Maybe s)
             -> (s -> IO ())
             -> IO (Either SomeException ())
 stopService vServ kkill = do
+    putStrLn "stopService"
     modifyMVar vServ $ \case
         Nothing -> pure (Nothing, Right ())
         Just sv -> do res <- try (kkill sv)
@@ -118,14 +151,6 @@ stopService vServ kkill = do
 
 
 -- Live Requests Table -- All Requests Still Waiting for Responses -------------
-
-type ReqId = Decimal
-type SeqId = Decimal -- TODO Unused. Why is this a thing?
-
-data LiveReqs = LiveReqs
-    { nextReqId  :: ReqId
-    , activeReqs :: Map ReqId (TMVar RespAction)
-    }
 
 emptyLiveReqs :: LiveReqs
 emptyLiveReqs = LiveReqs 1 mempty
@@ -135,23 +160,43 @@ respondToLiveReq var req ev = do
     mVar <- lookup req . activeReqs <$> readTVar var
     case mVar of
         Nothing -> pure ()
-        Just tv -> putTMVar tv ev
+        Just tv -> writeTQueue tv ev
 
 rmLiveReq :: TVar LiveReqs -> ReqId -> STM ()
 rmLiveReq var reqId = do
     liv <- readTVar var
     writeTVar var (liv { activeReqs = deleteMap reqId (activeReqs liv) })
 
-newLiveReq :: TVar LiveReqs -> STM (ReqId, TMVar RespAction)
+newLiveReq :: TVar LiveReqs -> STM (ReqId, TQueue RespAction)
 newLiveReq var = do
     liv <- readTVar var
-    tmv <- newEmptyTMVar
+    tmv <- newTQueue
 
     let (nex, act) = (nextReqId liv, activeReqs liv)
 
     writeTVar var (LiveReqs (nex+1) (insertMap nex tmv act))
 
     pure (nex, tmv)
+
+
+-- Ports File ------------------------------------------------------------------
+
+removePortsFile :: FilePath -> IO ()
+removePortsFile pax =
+    doesFileExist pax >>= \case
+        True  -> removeFile pax
+        False -> pure ()
+
+portsFileText :: Ports -> Text
+portsFileText Ports{..} =
+  unlines $ catMaybes
+    [ pHttps <&> \p -> (tshow p <> " secure public")
+    , Just (tshow (unPort pHttp) <> " insecure public")
+    , Just (tshow (unPort pLoop) <> " insecure loopback")
+    ]
+
+writePortsFile :: FilePath -> Ports -> IO ()
+writePortsFile f = writeFile f . encodeUtf8 . portsFileText
 
 
 -- Random Helpers --------------------------------------------------------------
@@ -211,9 +256,9 @@ bornEv :: KingId -> Ev
 bornEv king =
     servEv $ HttpServerEvBorn (king, ()) ()
 
-liveEv :: ServId -> Port -> Maybe Port -> Ev
-liveEv sId non sec =
-    servEv $ HttpServerEvLive (sId, ()) non sec
+liveEv :: ServId -> Ports -> Ev
+liveEv sId Ports{..} =
+    servEv $ HttpServerEvLive (sId, ()) pHttp pHttps
 
 cancelEv :: ServId -> ReqId -> Ev
 cancelEv sId reqId =
@@ -233,6 +278,11 @@ reqEv sId reqId which addr req =
 
 -- Http Server Flows -----------------------------------------------------------
 
+data Req
+    = RHead ResponseHeader [File]
+    | RFull ResponseHeader [File]
+    | RNone
+
 {-
     This accepts all action orderings so that there are no edge-cases
     to be handled:
@@ -240,40 +290,48 @@ reqEv sId reqId which addr req =
     - If %bloc before %head, collect it and wait for %head.
     - If %done before %head, ignore all chunks and produce Nothing.
 -}
-getHead :: TMVar RespAction -> IO (Maybe (ResponseHeader, [File]))
-getHead tmv = go []
+getReq :: TQueue RespAction -> IO Req
+getReq tmv = go []
   where
-    go çunks = atomically (readTMVar tmv) >>= \case
-                 RAHead head -> pure $ Just (head, reverse çunks)
-                 RABloc çunk -> go (çunk : çunks)
-                 RADone      -> pure Nothing
+    go çunks = atomically (readTQueue tmv) >>= \case
+                 RAHead head ç -> pure $ RHead head $ reverse (ç : çunks)
+                 RAFull head ç -> pure $ RFull head $ reverse (ç : çunks)
+                 RABloc ç      -> go (ç : çunks)
+                 RADone        -> pure RNone
 
 {-
     - Immediatly yield all of the initial chunks
     - Yield the data from %bloc action.
     - Close the stream when we hit a %done action.
 -}
-streamBlocks :: [File] -> TMVar RespAction -> ConduitT () (Flush Builder) IO ()
+streamBlocks :: [File] -> TQueue RespAction -> ConduitT () (Flush Builder) IO ()
 streamBlocks init tmv =
     for_ init yieldÇunk >> go
   where
     yieldFlush = \x -> yield (Chunk x) >> yield Flush
-    yieldÇunk  = yieldFlush . fromByteString . unOcts . unFile
     logDupHead = putStrLn "Multiple %head actions on one request"
 
-    go = atomically (readTMVar tmv) >>= \case
-           RAHead head -> logDupHead >> go
-           RABloc çunk -> yieldÇunk çunk
-           RADone      -> pure ()
+    yieldÇunk  = \case
+      "" -> pure ()
+      c  -> (yieldFlush . fromByteString . unOcts . unFile) c
+
+    go = atomically (readTQueue tmv) >>= \case
+           RAHead head c -> logDupHead >> yieldÇunk c >> go
+           RAFull head c -> logDupHead >> yieldÇunk c >> go
+           RABloc c      -> yieldÇunk c
+           RADone        -> pure ()
 
 sendResponse :: (W.Response -> IO W.ResponseReceived)
-            -> TMVar RespAction
+            -> TQueue RespAction
             -> IO W.ResponseReceived
 sendResponse cb tmv = do
-    getHead tmv >>= \case
-      Nothing    -> do cb $ W.responseLBS (H.mkStatus 444 "No Response") [] ""
-      Just (h,i) -> do let çunks = streamBlocks i tmv
-                       cb $ W.responseSource (hdrStatus h) (hdrHeaders h) çunks
+    getReq tmv >>= \case
+      RNone     -> cb $ W.responseLBS (H.mkStatus 444 "No Response") []
+                      $ ""
+      RFull h f -> cb $ W.responseLBS (hdrStatus h) (hdrHeaders h)
+                      $ fromStrict $ concat $ unOcts . unFile <$> f
+      RHead h i -> cb $ W.responseSource (hdrStatus h) (hdrHeaders h)
+                      $ streamBlocks i tmv
   where
     hdrHeaders :: ResponseHeader -> [H.Header]
     hdrHeaders = unconvertHeaders . headers
@@ -281,7 +339,7 @@ sendResponse cb tmv = do
     hdrStatus :: ResponseHeader -> H.Status
     hdrStatus = toEnum . fromIntegral . statusCode
 
-liveReq :: TVar LiveReqs -> Acquire (ReqId, TMVar RespAction)
+liveReq :: TVar LiveReqs -> Acquire (ReqId, TQueue RespAction)
 liveReq vLiv = mkAcquire ins del
   where
     ins = atomically (newLiveReq vLiv)
@@ -302,32 +360,22 @@ app sId liv plan which req respond = do
         try (sendResponse respond respVar) >>= \case
           Right rr -> pure rr
           Left exn -> do atomically $ plan (cancelEv sId reqId)
+                         putStrLn ("Exception during request" <> tshow exn)
                          throwIO (exn :: SomeException)
 
 
 -- Top-Level Driver Interface --------------------------------------------------
 
-newtype Drv = Drv { unDrv :: MVar (Maybe Serv) }
-
-data Serv = Serv
-    { sServId   :: ServId
-    , sConfig   :: HttpServerConf
-    , sLoopTid  :: Async ()
-    , sHttpTid  :: Async ()
-    , sHttpsTid :: Async ()
-    , sLiveReqs :: TVar LiveReqs
-    }
-
 {-
     TODO Need to find an open port.
 -}
-startServ :: HttpServerConf -> (Ev -> STM ())
-            -> IO (Serv, (ServId, Port, Maybe Port))
-startServ conf plan = do
-  tls <- case (hscSecure conf) of
-      Nothing -> error "HACK: Implement support for missing PEMs"
-      Just (PEM key, PEM cert) ->
-        pure (W.tlsSettingsMemory (cordBytes cert) (cordBytes key))
+startServ :: FilePath -> HttpServerConf -> (Ev -> STM ())
+            -> IO Serv
+startServ pierPath conf plan = do
+  putStrLn "startServ"
+
+  let tls = hscSecure conf <&> \(PEM key, PEM cert) ->
+              (W.tlsSettingsMemory (cordBytes cert) (cordBytes key))
 
   sId <- ServId . UV . fromIntegral <$> (randomIO :: IO Word32)
   liv <- newTVarIO emptyLiveReqs
@@ -342,23 +390,34 @@ startServ conf plan = do
       httpOpts  = W.defaultSettings & W.setPort (fromIntegral httpPort)
       httpsOpts = W.defaultSettings & W.setPort (fromIntegral httpsPort)
 
+  putStrLn "Starting loopback server"
   loopTid  <- async $ W.runSettings loopOpts $ app sId liv plan Loopback
+
+  putStrLn "Starting HTTP server"
   httpTid  <- async $ W.runSettings httpOpts $ app sId liv plan Insecure
-  httpsTid <- async $ W.runTLS tls httpsOpts $ app sId liv plan Secure
 
-  let res = (sId, Port httpPort, Just $ Port httpsPort)
+  putStrLn "Starting HTTPS server"
+  httpsTid <- for tls $ \tlsOpts ->
+                async $ W.runTLS tlsOpts httpsOpts $ app sId liv plan Secure
 
-  pure (Serv sId conf loopTid httpTid httpsTid liv, res)
+  let por = Ports (tls <&> const httpsPort) httpPort loopPort
+      fil = pierPath <> "/.http.ports"
 
+  print (sId, por, fil)
+
+  putStrLn "END startServ"
+
+  pure $ Serv sId conf loopTid httpTid httpsTid por fil liv
 
 killServ :: Serv -> IO ()
-killServ Serv{sLoopTid, sHttpTid, sHttpsTid} = do
+killServ Serv{..} = do
     cancel sLoopTid
     cancel sHttpTid
-    cancel sHttpsTid
-    wait sLoopTid
-    wait sHttpTid
-    wait sHttpsTid
+    traverse_ cancel sHttpsTid
+    removePortsFile sPortsFile
+    (void . waitCatch) sLoopTid
+    (void . waitCatch) sHttpTid
+    traverse_ (void . waitCatch) sHttpsTid
 
 kill :: Drv -> IO ()
 kill (Drv v) = stopService v killServ >>= fromEither
@@ -367,11 +426,12 @@ respond :: Drv -> ReqId -> HttpEvent -> IO ()
 respond (Drv v) reqId ev = do
     readMVar v >>= \case
         Nothing -> pure ()
-        Just sv -> atomically $ for_ (reorgHttpEvent ev) $
-                                    respondToLiveReq (sLiveReqs sv) reqId
+        Just sv -> do (print (reorgHttpEvent ev))
+                      for_ (reorgHttpEvent ev) $
+                        atomically . respondToLiveReq (sLiveReqs sv) reqId
 
-serv :: KingId -> QueueEv -> ([Ev], Acquire (EffCb HttpServerEf))
-serv king plan =
+serv :: FilePath -> KingId -> QueueEv -> ([Ev], Acquire (EffCb HttpServerEf))
+serv pier king plan =
     (initialEvents, runHttpServer)
   where
     initialEvents :: [Ev]
@@ -380,16 +440,26 @@ serv king plan =
     runHttpServer :: Acquire (EffCb HttpServerEf)
     runHttpServer = handleEf <$> mkAcquire (Drv <$> newMVar Nothing) kill
 
-    restart :: Drv -> HttpServerConf -> IO (ServId, Port, Maybe Port)
+    restart :: Drv -> HttpServerConf -> IO Serv
     restart (Drv var) conf = do
-        fromEither =<< restartService var (startServ conf plan) killServ
+        putStrLn "Restarting http server"
+        res <- fromEither =<< restartService var (startServ pier conf plan) killServ
+        putStrLn "Done restating http server"
+        pure res
 
     handleEf :: Drv -> HttpServerEf -> IO ()
     handleEf drv = \case
-        HSESetConfig (i, ()) conf ->
-            when (i == fromIntegral king) $ do
-                (sId, insecurePort, securePort) <- restart drv conf
-                atomically $ plan (liveEv sId insecurePort securePort)
-        HSEResponse (i, req, _seq, ()) ev ->
-            when (i == fromIntegral king) $
+        HSESetConfig (i, ()) conf -> do
+            -- print (i, king)
+            -- when (i == fromIntegral king) $ do
+                putStrLn "restarting"
+                Serv{..} <- restart drv conf
+                putStrLn "Enqueue %live"
+                atomically $ plan (liveEv sServId sPorts)
+                putStrLn "Write ports file"
+                writePortsFile sPortsFile sPorts
+        HSEResponse (i, req, _seq, ()) ev -> do
+            -- print (i, king)
+            -- when (i == fromIntegral king) $ do
+                putStrLn "respond"
                 respond drv (fromIntegral req) ev

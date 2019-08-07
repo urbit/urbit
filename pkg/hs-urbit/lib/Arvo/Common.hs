@@ -27,16 +27,16 @@ import qualified Network.HTTP.Types.Method as H
 newtype Turf = Turf { unTurf :: [Cord] }
   deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
-newtype KingId = KingId { unKingId :: Base32 }
+newtype KingId = KingId { unKingId :: UV }
   deriving newtype (Eq, Ord, Show, Num, Real, Enum, Integral, FromNoun, ToNoun)
 
-newtype ServId = ServId { unServId :: Base32 }
+newtype ServId = ServId { unServId :: UV }
   deriving newtype (Eq, Ord, Show, Num, Enum, Integral, Real, FromNoun, ToNoun)
 
 
 -- Http Common -----------------------------------------------------------------
 
-data Header = Header Bytes Bytes
+data Header = Header Cord Cord
   deriving (Eq, Ord, Show)
 
 data ResponseHeader = ResponseHeader

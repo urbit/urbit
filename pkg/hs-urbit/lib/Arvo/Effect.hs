@@ -3,6 +3,7 @@ module Arvo.Effect where
 import Urbit.Time
 import UrbitPrelude
 
+import Arvo.Common (KingId(..), ServId(..))
 import Arvo.Common (Header, HttpEvent, HttpServerConf, Method, Mime)
 import Arvo.Common (AmesDest, Turf)
 import Arvo.Common (ReOrg(..), reorgThroughNoun)
@@ -52,8 +53,8 @@ deriveNoun ''HttpClientEf
     %response   -- Respond to an active HTTP request.
 -}
 data HttpServerEf
-    = HSESetConfig (Atom, ())                   HttpServerConf
-    | HSEResponse  (Atom, Decimal, Decimal, ()) HttpEvent
+    = HSESetConfig (ServId, ())         HttpServerConf
+    | HSEResponse  (ServId, UD, UD, ()) HttpEvent
   deriving (Eq, Ord, Show)
 
 deriveNoun ''HttpServerEf
@@ -100,7 +101,7 @@ deriveNoun ''AmesEf
     %void -- Nasty hack to make the parser not treat this as a record.
 -}
 data BehnEf
-    = BehnEfDoze (Atom, ()) (Maybe Wen)
+    = BehnEfDoze (KingId, ()) (Maybe Wen)
     | BehnEfVoid Void
   deriving (Eq, Ord, Show)
 
@@ -140,8 +141,8 @@ data Blit
 -}
 data TermEf
     = TermEfBbye Path ()
-    | TermEfBlit (Decimal, ()) [Blit]
-    | TermEfInit (Decimal, ()) ()
+    | TermEfBlit (UD, ()) [Blit]
+    | TermEfInit (UD, ()) ()
     | TermEfLogo Path ()
     | TermEfMass Path Noun -- Irrelevant
     | TermEfSend Path AmesDest Bytes

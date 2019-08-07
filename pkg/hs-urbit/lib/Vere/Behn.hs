@@ -13,19 +13,19 @@ import qualified Urbit.Timer as Timer
 
 -- Behn Stuff ------------------------------------------------------------------
 
-bornEv :: KingInstance -> Ev
-bornEv inst = EvBlip $ BlipEvBehn $ BehnEvBorn (fromIntegral inst, ()) ()
+bornEv :: KingId -> Ev
+bornEv king = EvBlip $ BlipEvBehn $ BehnEvBorn (king, ()) ()
 
 wakeEv :: Ev
 wakeEv = EvBlip $ BlipEvBehn $ BehnEvWake () ()
 
 sysTime = view Time.systemTime
 
-behn :: KingInstance -> QueueEv -> ([Ev], Acquire (EffCb BehnEf))
-behn inst enqueueEv =
+behn :: KingId -> QueueEv -> ([Ev], Acquire (EffCb BehnEf))
+behn king enqueueEv =
     (initialEvents, runBehn)
   where
-    initialEvents = [bornEv inst]
+    initialEvents = [bornEv king]
 
     runBehn :: Acquire (EffCb BehnEf)
     runBehn = do
@@ -36,7 +36,7 @@ behn inst enqueueEv =
     handleEf b = \case
         BehnEfVoid v            -> absurd v
         BehnEfDoze (i, ()) mWen -> do
-            when (i == fromIntegral inst) (doze b mWen)
+            when (i == king) (doze b mWen)
 
     doze :: Timer -> Maybe Wen -> IO ()
     doze tim = \case

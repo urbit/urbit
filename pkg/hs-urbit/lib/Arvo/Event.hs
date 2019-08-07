@@ -123,11 +123,11 @@ data HttpClientEv
   deriving (Eq, Ord, Show)
 
 data HttpServerEv
-    = HttpServerEvRequest       (ServId, Decimal, Decimal, ()) HttpServerReq
-    | HttpServerEvCancelRequest (ServId, Decimal, Decimal, ()) ()
-    | HttpServerEvRequestLocal  (ServId, Decimal, Decimal, ()) HttpServerReq
-    | HttpServerEvLive          (ServId, ())                   Port (Maybe Port)
-    | HttpServerEvBorn          (KingId, ())                   ()
+    = HttpServerEvRequest       (ServId, UD, UD, ()) HttpServerReq
+    | HttpServerEvCancelRequest (ServId, UD, UD, ()) ()
+    | HttpServerEvRequestLocal  (ServId, UD, UD, ()) HttpServerReq
+    | HttpServerEvLive          (ServId, ())         Port (Maybe Port)
+    | HttpServerEvBorn          (KingId, ())         ()
   deriving (Eq, Ord, Show)
 
 deriveNoun ''Address
@@ -173,7 +173,7 @@ deriveNoun ''BoatEv
 
 data BehnEv
     = BehnEvWake ()        ()
-    | BehnEvBorn (Atom, ()) ()
+    | BehnEvBorn (KingId, ()) ()
   deriving (Eq, Ord, Show)
 
 deriveNoun ''BehnEv
