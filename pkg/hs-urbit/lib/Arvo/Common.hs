@@ -27,10 +27,10 @@ import qualified Network.HTTP.Types.Method as H
 newtype Turf = Turf { unTurf :: [Cord] }
   deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
-newtype KingId = KingId { unKingId :: Word32}
+newtype KingId = KingId { unKingId :: Base32 }
   deriving newtype (Eq, Ord, Show, Num, Real, Enum, Integral, FromNoun, ToNoun)
 
-newtype ServId = ServId { unServId :: Word32 }
+newtype ServId = ServId { unServId :: Base32 }
   deriving newtype (Eq, Ord, Show, Num, Enum, Integral, Real, FromNoun, ToNoun)
 
 

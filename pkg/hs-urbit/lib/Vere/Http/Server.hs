@@ -18,9 +18,6 @@
                             (status < 400) ? "moved" :
                             (status < 500) ? "missing" :
                             "hosed";
-
-
-
 -}
 
 module Vere.Http.Server where
@@ -122,8 +119,8 @@ stopService vServ kkill = do
 
 -- Live Requests Table -- All Requests Still Waiting for Responses -------------
 
-type ReqId = Word
-type SeqId = Word -- TODO Unused. Why is this a thing?
+type ReqId = Decimal
+type SeqId = Decimal -- TODO Unused. Why is this a thing?
 
 data LiveReqs = LiveReqs
     { nextReqId  :: ReqId
@@ -218,6 +215,10 @@ liveEv :: ServId -> Port -> Maybe Port -> Ev
 liveEv sId non sec =
     servEv $ HttpServerEvLive (sId, ()) non sec
 
+cancelEv :: ServId -> ReqId -> Ev
+cancelEv sId reqId =
+    servEv $ HttpServerEvCancelRequest (sId, reqId, 1, ()) ()
+
 reqEv :: ServId -> ReqId -> WhichServer -> Address -> HttpRequest -> Ev
 reqEv sId reqId which addr req =
     case which of
@@ -280,14 +281,15 @@ sendResponse cb tmv = do
     hdrStatus :: ResponseHeader -> H.Status
     hdrStatus = toEnum . fromIntegral . statusCode
 
+liveReq :: TVar LiveReqs -> Acquire (ReqId, TMVar RespAction)
+liveReq vLiv = mkAcquire ins del
+  where
+    ins = atomically (newLiveReq vLiv)
+    del = atomically . rmLiveReq vLiv . fst
+
 app :: ServId -> TVar LiveReqs -> (Ev -> STM ()) -> WhichServer -> W.Application
 app sId liv plan which req respond = do
-
-    (reqId, respVar) <- atomically (newLiveReq liv)
-
-    let clearLiveReq = atomically (rmLiveReq liv reqId)
-
-    bracket_ pass clearLiveReq $ do
+   with (liveReq liv) $ \(reqId, respVar) -> do
         body <- reqBody req
         meth <- maybe (error "bad method") pure (cookMeth req)
 
@@ -297,7 +299,10 @@ app sId liv plan which req respond = do
 
         atomically $ plan (reqEv sId reqId which addr evReq)
 
-        sendResponse respond respVar
+        try (sendResponse respond respVar) >>= \case
+          Right rr -> pure rr
+          Left exn -> do atomically $ plan (cancelEv sId reqId)
+                         throwIO (exn :: SomeException)
 
 
 -- Top-Level Driver Interface --------------------------------------------------
@@ -324,7 +329,7 @@ startServ conf plan = do
       Just (PEM key, PEM cert) ->
         pure (W.tlsSettingsMemory (cordBytes cert) (cordBytes key))
 
-  sId <- ServId <$> randomIO
+  sId <- ServId . UV . fromIntegral <$> (randomIO :: IO Word32)
   liv <- newTVarIO emptyLiveReqs
 
   let httpPort  = 8080  -- 80 if real ship

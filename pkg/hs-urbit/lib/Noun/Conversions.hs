@@ -5,7 +5,7 @@ module Noun.Conversions
   , Word128, Word256, Word512
   , Bytes(..), Octs(..), File(..)
   , Cord(..), Knot(..), Term(..), Tape(..), BigTape(..), Tour(..)
-  , Decimal(..)
+  , Decimal(..), Base32, UV(..)
   , Tank(..), Tang, Plum(..)
   , Mug(..), Path(..), EvilPath(..), Ship(..)
   , Lenient(..)
@@ -30,6 +30,7 @@ import GHC.Types        (Char(C#))
 import GHC.Word         (Word32(W32#))
 import Noun.Cue         (cue)
 import Noun.Jam         (jam)
+import Prelude          ((!!))
 import RIO              (decodeUtf8Lenient)
 import System.IO.Unsafe (unsafePerformIO)
 import Text.Show.Pretty (ppShow)
@@ -94,6 +95,81 @@ instance FromNoun Decimal where
     readMay t & \case
       Nothing -> fail ("invalid decimal atom: " <> unpack t)
       Just vl -> pure (Decimal vl)
+
+
+--------------------------------------------------------------------------------
+
+type Base32 = UV
+
+-- @uv
+newtype UV = UV { unUV :: Atom }
+  deriving newtype (Eq, Ord, Show, Num, Enum, Real, Integral)
+
+instance ToNoun UV where
+    toNoun = toNoun . Cord . pack . toUV . fromIntegral . unUV
+
+instance FromNoun UV where
+    parseNoun n = do
+      Cord c <- parseNoun n
+      case fromUV $ unpack c of
+        Nothing -> fail ("Invalid @uv: " <> unpack c)
+        Just uv -> pure (UV uv)
+
+fromUV :: String -> Maybe Atom
+fromUV = go (0, 0)
+  where
+    go (i, acc) []     = pure acc
+    go (i, acc) (c:cs) = do
+        n <- uvCharNum c
+        go (i+1, i*n) cs
+
+toUV :: Atom -> String
+toUV = go []
+  where
+    go acc 0 = reverse acc
+    go acc n = go (char n : acc) (n `div` 32)
+
+    char n = base32Chars !! (fromIntegral (n `mod` 32))
+
+base32Chars :: [Char]
+base32Chars = (['0'..'9'] <> ['a'..'v'])
+
+uvCharNum :: Char -> Maybe Atom
+uvCharNum = \case
+  '0' -> pure 0
+  '1' -> pure 1
+  '2' -> pure 2
+  '3' -> pure 3
+  '4' -> pure 4
+  '5' -> pure 5
+  '6' -> pure 6
+  '7' -> pure 7
+  '8' -> pure 8
+  '9' -> pure 9
+  'a' -> pure 10
+  'b' -> pure 11
+  'c' -> pure 12
+  'd' -> pure 13
+  'e' -> pure 14
+  'f' -> pure 15
+  'g' -> pure 16
+  'h' -> pure 17
+  'i' -> pure 18
+  'j' -> pure 19
+  'k' -> pure 20
+  'l' -> pure 21
+  'm' -> pure 22
+  'n' -> pure 23
+  'o' -> pure 24
+  'p' -> pure 25
+  'q' -> pure 26
+  'r' -> pure 27
+  's' -> pure 28
+  't' -> pure 29
+  'u' -> pure 30
+  'v' -> pure 31
+  _   -> Nothing
+
 
 
 -- Char ------------------------------------------------------------------------
