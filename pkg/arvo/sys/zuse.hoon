@@ -72,9 +72,9 @@
 ++  life  @ud                                           ::  ship key revision
 ++  rift  @ud                                           ::  ship continuity
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
-::  
 ::
-::    TODO: Rename to +mime once the current +mime and +mite are gone. The 
+::
+::    TODO: Rename to +mime once the current +mime and +mite are gone. The
 ::
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
 ++  sock  {p/ship q/ship}                               ::  outgoing [our his]
@@ -214,7 +214,7 @@
       [%west p=ship q=path r=*]
   ==
 ::                                                      ::::
-::::                      ++http                        ::  
+::::                      ++http                        ::
   ::                                                    ::::
 ::  http: shared representations of http concepts
 ::
@@ -7594,21 +7594,20 @@
       ::  #  diffs
       ::
       ++  update
-        $%  [%full ships=(map ship point) dns=dnses heard=events]  ::TODO  keys
+        $%  [%full ships=(map ship point) dns=dnses heard=events]
             [%difs dis=(list (pair event-id diff-azimuth))]
         ==
       ::
       ::  #  constants
       ::
       ::  contract addresses
-      ::TODO  values below are for ropsten, update for mainnet
-      ++  contracts
+      ++  contracts  mainnet-contracts
+      ++  mainnet-contracts
         |%
         ::  azimuth: data contract
         ::
-        ++  azimuth  0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb  ::  mainnet
-        ::  ++  azimuth  0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579  ::  ropsten
-        ::  ++  azimuth  0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381  ::  local bridge
+        ++  azimuth
+          0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb
         ::
         ++  linear-star-release
           0x86cd.9cd0.992f.0423.1751.e376.1de4.5cec.ea5d.1801
@@ -7619,13 +7618,23 @@
         ::  launch: block number of azimuth deploy
         ::
         ++  launch  6.784.800
-        ::  ++  launch  4.601.630
         ::
         ::  public: block number of azimuth becoming independent
         ::
         ++  public  7.033.765
         --
       ::
+      ::  Testnet contract addresses
+      ::
+      ++  ropsten-contracts
+        |%
+        ++  azimuth
+          0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579
+        ::
+        ++  launch  4.601.630
+        --
+      ::
+        ::  ++  azimuth  0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381  ::  local bridge
       ::  hashes of ship event signatures
       ++  azimuth-events
         |%

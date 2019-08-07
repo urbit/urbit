@@ -36,6 +36,11 @@ herb ./pier -p hood -d "+hood/unmount %home"
 herb ./pier -p hood -d '+hood/merge %stage our %home'
 herb ./pier -p hood -d "+hood/mount /=stage="
 
+until [ -d ./pier/stage ]
+do
+  sleep 1
+done
+
 rm -rf ./pier/stage
 cp -r $ARVO ./pier/stage
 chmod -R u+rw ./pier/stage

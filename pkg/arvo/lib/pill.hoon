@@ -75,7 +75,7 @@
   =/  directories
     `(list path)`~[/app /gen /lib /mar /ren /sec /sur /sys /tests /web]
   |=  bas=path
-  ^-  ovum
+  ^-  unix-event
   ::
   ::    /app    %gall applications
   ::    /gen    :dojo generators
@@ -92,7 +92,7 @@
   |=  ::  sal: all spurs to load from
       ::
       sal/(list spur)
-  ^-  ovum
+  ^-  unix-event
   ::
   ::  hav: all user files
   ::

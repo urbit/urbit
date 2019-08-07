@@ -1369,7 +1369,7 @@
         %milk
       ::  ~&  [%milk p.bon q.bon]
       ?>  ?=([@ @ *] q.q.bon)
-      ?>  ?=(?(%a %c %e %g %j %j) i.q.q.bon)
+      ?>  ?=(?(%a %c %e %g %j) i.q.q.bon)
       =/  =wire  [(scot %p our) (scot %p p.bon) q.q.bon]
       :_  fox  [hen %pass wire i.q.q.bon %west p.bon t.q.q.bon r.bon]~
     ::
