@@ -325,12 +325,6 @@ _main_getopt(c3_i argc, c3_c** argv)
     u3_Host.ops_u.eth_c = "http://eth-mainnet.urbit.org:8545";
   }
 
-  if ( u3_Host.ops_u.sap_c == 0 && u3_Host.ops_u.can == c3n ) {
-
-    u3_Host.ops_u.sap_c = 0;
-        // "https://bootstrap.urbit.org/urbit-" URBIT_VERSION ".snap";
-  }
-
   if ( u3_Host.ops_u.url_c != 0 && u3_Host.ops_u.pil_c != 0 ) {
     fprintf(stderr, "-B and -u cannot be used together\n");
     return c3n;

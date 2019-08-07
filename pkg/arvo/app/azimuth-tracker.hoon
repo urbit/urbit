@@ -39,12 +39,19 @@
 =>  |%
     ++  topics
       |=  ships=(set ship)
+      ^-  (list ?(@ux (list @ux)))
+      ::  The first topic should be one of these event types
+      ::
       :-  =>  azimuth-events:azimuth
           :~  broke-continuity
               changed-keys
               lost-sponsor
               escape-accepted
           ==
+      ::  If we're looking for a specific set of ships, specify them as
+      ::  the second topic.  Otherwise don't specify the second topic so
+      ::  we will match all ships.
+      ::
       ?:  =(~ ships)
         ~
       [(turn ~(tap in ships) ,@) ~]
