@@ -255,7 +255,7 @@
       ::  XX if active clam contracts only to abort transaction?
       ::
       ::  ~&  [%tapp-reset dap.bowl]
-      :: `this-tapp
+      ::  `this-tapp
       ~|  [%tapp-load-incompatible dap.bowl]
       !!
     ::
@@ -412,10 +412,10 @@
     ^-  (quip move _this-tapp)
     (take-async bowl `[wire %bound success binding])
   ::
-  ::  Receive source update from kale
+  ::  Receive source update from jael
   ::
   ++  source
-    |=  [=wire whos=(set ship) =source:kale]
+    |=  [=wire whos=(set ship) =source:jael]
     ^-  (quip move _this-tapp)
     =.  waiting  (~(put to waiting) ost.bowl [%take %source whos source])
     ?^  active

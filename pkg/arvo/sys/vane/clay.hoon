@@ -497,6 +497,9 @@
                   %wipe                                 ::
               ==                                        ::
           task:able:ford                                ::
+      ==                                                ::
+      $:  %j                                            ::  by %jael
+          $>(%public-keys task:able:jael)               ::
   ==  ==                                                ::
 ++  riot  (unit rant)                                   ::  response+complete
 ++  sign                                                ::  in result $<-
@@ -523,6 +526,9 @@
       ==                                                ::
       $:  %f                                            ::  by %ford
           $>(%made gift:able:ford)                      ::
+      ==                                                ::
+      $:  %j                                            ::  by %jael
+          $>(%public-keys gift:able:jael)               ::
       ==                                                ::
       $:  @tas                                          ::  by any
           $>(%crud vane-task)                           ::  XX strange
@@ -2402,7 +2408,6 @@
     ::    Must uni the old-lat into the new-lat so that if we recreate
     ::    the same blob hash, we use the old blob not the new one.  Else
     ::    you get mutually recurring %delta blobs.
-    ::
     ++  add-blobs
       |=  [new-blobs=(map path blob) old-lat=(map lobe blob)]
       ^-  (map lobe blob)
@@ -2632,22 +2637,24 @@
   ::
   =*  ruf  |4.+6.^$
   ::
-  =+  ^-  [hun=(unit duct) rede]
+  =+  ^-  [mow=(list move) hun=(unit duct) rede]
       ?.  =(our her)
         ::  no duct, foreign +rede or default
         ::
-        :-  ~
+        :+  ?:  (~(has by hoy.ruf) her)
+              ~
+            [hun.rom.ruf %pass /sinks %j %public-keys (silt her ~)]~
+          ~
         =/  rus  rus:(~(gut by hoy.ruf) her *rung)
         %+  ~(gut by rus)  syd
         [lim=~2000.1.1 ref=`*rind qyx=~ dom=*dome per=~ pew=~]
       ::  administrative duct, domestic +rede
       ::
-      :-  `hun.rom.ruf
+      :+  ~  `hun.rom.ruf
       =/  jod  (~(gut by dos.rom.ruf) syd *dojo)
       [lim=now ref=~ [qyx dom per pew]:jod]
   ::
-  =*  red=rede  ->
-  =|  mow/(list move)
+  =*  red=rede  ->+
   |%
   ++  abet                                              ::  resolve
     ^-  [(list move) raft]
@@ -4107,7 +4114,7 @@
       %boat
     :_  ..^$
     [hen %give %hill (turn ~(tap by mon.ruf) head)]~
-  ::.
+  ::
       %cred
     =.  cez.ruf
       ?~  cew.req  (~(del by cez.ruf) nom.req)
@@ -4305,49 +4312,6 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
-      %sunk
-    ~&  rift=[p.req q.req]
-    ~&  desks=(turn ~(tap by dos.rom.ruf) head)
-    ~&  hoy=(turn ~(tap by hoy.ruf) head)
-    ::
-    ?:  =(our p.req)
-      [~ ..^$]
-    ::  Cancel subscriptions
-    ::
-    =/  foreign-desk=(unit rung)
-      (~(get by hoy.ruf) p.req)
-    ?~  foreign-desk
-      ~&  [%never-heard-of-her p.req q.req]
-      [~ ..^$]
-    ~&  old-rift=rit.u.foreign-desk
-    ?:  (gte rit.u.foreign-desk q.req)
-      ~&  'replaying sunk, so not clearing state'
-      [~ ..^$]
-    =/  cancel-ducts=(list duct)
-      %-  zing  ^-  (list (list duct))
-      %+  turn  ~(tap by rus.u.foreign-desk)
-      |=  [=desk =rede]
-      ^-  (list duct)  %-  zing  ^-  (list (list duct))
-      %+  turn  ~(tap by qyx.rede)
-      |=  [=wove ducts=(set duct)]
-      ::  ~&  [%sunk-wove desk (print-wove wove) ducts]
-      ~(tap in ducts)
-    =/  cancel-moves=(list move)
-      %+  turn  cancel-ducts
-      |=  =duct
-      [duct %slip %b %drip !>([%writ ~])]
-    ::  Clear ford cache
-    ::
-    =/  clear-ford-cache-moves=(list move)
-      :~  [hen %pass /clear/keep %f %keep 0 1]
-          [hen %pass /clear/wipe %f %wipe 100]
-          [hen %pass /clear/kep %f %keep 2.048 64]
-      ==
-    ::  delete local state of foreign desk
-    ::
-    =.  hoy.ruf  (~(del by hoy.ruf) p.req)
-    [(weld clear-ford-cache-moves cancel-moves) ..^$]
-  ::
       %vega  [~ ..^$]
   ::
       ?(%warp %werp)
@@ -4446,30 +4410,30 @@
 ::
 ++  stay  [%1 ruf]
 ++  take                                              ::  accept response
-  |=  {tea/wire hen/duct hin/(hypo sign)}
+  |=  [tea=wire hen=duct hin=(hypo sign)]
   ^+  [*(list move) ..^$]
-  ?:  ?=({$commit @ *} tea)
+  ?:  ?=([%commit @ *] tea)
     =*  syd  i.t.tea
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our syd)
       abet:(take-commit:den q.hin)
     [mos ..^$]
   ::
-  ?:  ?=({$merge @ *} tea)
+  ?:  ?=([%merge @ *] tea)
     =*  syd  i.t.tea
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our syd)
       abet:(take-merge:den q.hin)
     [mos ..^$]
   ::
-  ?:  ?=({$mount @ *} tea)
+  ?:  ?=([%mount @ *] tea)
     =*  syd  i.t.tea
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our syd)
       abet:(take-mount:den q.hin)
     [mos ..^$]
   ::
-  ?:  ?=({%foreign-request @ @ @ *} tea)
+  ?:  ?=([%foreign-request @ @ @ *] tea)
     =/  her  (slav %p i.t.tea)
     =/  syd  (slav %tas i.t.t.tea)
     =/  inx  (slav %ud i.t.t.t.tea)
@@ -4478,7 +4442,7 @@
       abet:(take-foreign-request:den inx q.hin)
     [mos ..^$]
   ::
-  ?:  ?=({%foreign-update @ @ *} tea)
+  ?:  ?=([%foreign-update @ @ *] tea)
     =/  her  (slav %p i.t.tea)
     =/  syd  (slav %tas i.t.t.tea)
     =^  mos  ruf
@@ -4486,8 +4450,8 @@
       abet:(take-foreign-update:den q.hin)
     [mos ..^$]
   ::
-  ?:  ?=({$blab care @ @ *} tea)
-    ?>  ?=($made +<.q.hin)
+  ?:  ?=([%blab care @ @ *] tea)
+    ?>  ?=(%made +<.q.hin)
     ?.  ?=([%complete %success *] result.q.hin)
       ~|  %blab-fail
       ~>  %mean.|.((made-result-as-error:ford result.q.hin))
@@ -4495,14 +4459,59 @@
     :_  ..^$  :_  ~
     :*  hen  %slip  %b  %drip  !>
     :*  %writ  ~
-        ^-  {care case @tas}
+        ^-  [care case @tas]
         [i.t.tea ;;(case +>:(slay i.t.t.tea)) i.t.t.t.tea]
     ::
         `path`t.t.t.t.tea
         `cage`(result-to-cage:ford build-result.result.q.hin)
     ==  ==
   ::
+  ?:  ?=([%sinks ~] tea)
+    ?>  ?=(%public-keys +<.q.hin)
+    ?:  ?=(%full -.public-keys-result.q.hin)
+      [~ ..^$]
+    ?.  ?=(%rift -.diff.public-keys-result.q.hin)
+      [~ ..^$]
+    =/  who  who.public-keys-result.q.hin
+    =/  to-rift  to.diff.public-keys-result.q.hin
+    ::
+    ?:  =(our who)
+      [~ ..^$]
+    ::  Cancel subscriptions
+    ::
+    =/  foreign-desk=(unit rung)
+      (~(get by hoy.ruf) who)
+    ?~  foreign-desk
+      [~ ..^$]
+    ?:  (gte rit.u.foreign-desk to-rift)
+      [~ ..^$]
+    =/  cancel-ducts=(list duct)
+      %-  zing  ^-  (list (list duct))
+      %+  turn  ~(tap by rus.u.foreign-desk)
+      |=  [=desk =rede]
+      ^-  (list duct)  %-  zing  ^-  (list (list duct))
+      %+  turn  ~(tap by qyx.rede)
+      |=  [=wove ducts=(set duct)]
+      ::  ~&  [%sunk-wove desk (print-wove wove) ducts]
+      ~(tap in ducts)
+    =/  cancel-moves=(list move)
+      %+  turn  cancel-ducts
+      |=  =duct
+      [duct %slip %b %drip !>([%writ ~])]
+    ::  Clear ford cache
+    ::
+    =/  clear-ford-cache-moves=(list move)
+      :~  [hen %pass /clear/keep %f %keep 0 1]
+          [hen %pass /clear/wipe %f %wipe 100]
+          [hen %pass /clear/kep %f %keep 2.048 64]
+      ==
+    ::  delete local state of foreign desk
+    ::
+    =.  hoy.ruf  (~(del by hoy.ruf) who)
+    [(weld clear-ford-cache-moves cancel-moves) ..^$]
+  ::
   ?-    -.+.q.hin
+      %public-keys  ~|([%public-keys-raw tea] !!)
       %init-clad
     ~|(%clad-not-real !!)
   ::
