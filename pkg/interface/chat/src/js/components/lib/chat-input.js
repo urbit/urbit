@@ -310,7 +310,7 @@ export class ChatInput extends Component {
             className={'ml2 mt2 mr2 bn ' +
               this.getSpeechStyle(state.messageType, state.clipboard)
             }
-            style={{ flexGrow: 1, resize: 'none' }}
+            style={{ flexGrow: 1, height: 40, resize: 'none' }}
             ref={this.textareaRef}
             placeholder={props.placeholder}
             value={state.message}

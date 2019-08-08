@@ -425,7 +425,12 @@ url = "http://localhost:%s" % PORT
 
 r = requests.post(url, data=json.dumps(payload))
 
-if r.text[0] == '"':
+if r.headers.get('content-type') == 'application/octet-stream':
+    name = r.headers.get('content-disposition').split('filename=',1)[1][1:-1]
+    with open(name, 'wb') as f:
+        for block in r.iter_content(1024):
+            f.write(block)
+elif r.text[0] == '"':
     print r.text[1:-1].encode('utf-8').decode('string_escape')
 elif r.text[0] == '{':
     # print r.text

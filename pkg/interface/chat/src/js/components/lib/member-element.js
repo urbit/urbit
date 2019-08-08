@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import { Sigil } from '/components/lib/icons/sigil';
 
 
 export class MemberElement extends Component {
@@ -23,7 +24,7 @@ export class MemberElement extends Component {
       `~${window.ship}` === props.host) {
       actionElem = (
         <a onClick={this.onRemove.bind(this)}
-           className="w-40 dib underline black btn-font">
+           className="w-40 dib list-ship black underline label-small-mono pointer">
            Remove
         </a>
       );
@@ -34,10 +35,11 @@ export class MemberElement extends Component {
     }
 
     return (
-      <div>
+      <div className="flex mb2">
+        <Sigil ship={props.ship} size={32} />
         <p
           className={
-            "w-60 dib black pr3 mb2 label-small-mono label-regular"
+            "w-60 dib v-mid black pr3 ml2 nowrap label-small-mono list-ship label-regular"
           }>
           {props.ship}
         </p>

@@ -1597,10 +1597,14 @@ _mug_push(c3_ys mov,
   //  (off==0 means we're on a north road)
   //
   if ( 0 == off ) {
-    c3_assert(u3R->cap_p > u3R->hat_p);
+    if( !(u3R->cap_p > u3R->hat_p) ) {
+      u3m_bail(c3__meme);
+    }
   }
   else {
-    c3_assert(u3R->cap_p < u3R->hat_p);
+    if( !(u3R->cap_p < u3R->hat_p) ) {
+      u3m_bail(c3__meme);
+    }
   }
 
   mugframe* fam_u = u3to(mugframe, u3R->cap_p + off);
