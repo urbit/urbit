@@ -135,7 +135,7 @@
     ::  If we don't know anything about this community, we need to go remote
     ::  subscribe to it.
     ::
-    (enqueue-message-and-subscribe host name path `msg app-state)
+    (enqueue-message-and-subscribe host name / `msg app-state)
   ::
   =/  e  (sign-user-event our.bowl now.bowl eny.bowl path msg u.community safe-applets)
   ::  check if we made the signature. when we can't make the signature because
@@ -149,7 +149,7 @@
       =.  app-state  (local-subscribe our.bowl name p.e app-state)
       loop
     ::
-    (enqueue-message-and-subscribe host name path `msg app-state)
+    (enqueue-message-and-subscribe host name p.e `msg app-state)
   ::
   ?:  =(host our.bowl)
     ::  we do the special case where we synchronously call ourselves for
@@ -410,7 +410,7 @@
   =/  m  tapp-async
   ^-  form:m
   ::
-  ~&  [%handle-diff path]
+  ~&  [%handle-diff path tagged-data]
   ::
   ?>  ?=(^ path)
   ::
@@ -436,6 +436,9 @@
       app-state
       (apply-peer-diff-to-client data)
     ==
+  ::
+  ::
+  ~&  [%new-app-state app-state]
   ::  for every pending message in the :pending-messages-to-send, try to send
   ::  it again.
   ::
