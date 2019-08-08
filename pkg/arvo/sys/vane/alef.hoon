@@ -1133,9 +1133,9 @@
   ++  on-plea
     |=  [=ship =plea]
     ^+  event-core
-    ::  if .plea is a sponsor ping; ack it
+    ::  if .plea is a sponsor ping, ack it
     ::
-    ?:  =([%a /ping ~] plea)
+    ?:  =([our %a /ping ~] [ship plea])
       ~&  %ames-ack-ping^our^ship
       (emit duct %give %done ~)
     ::  .plea is from local vane to foreign ship
