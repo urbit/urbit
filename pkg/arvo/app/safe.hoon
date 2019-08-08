@@ -188,6 +188,8 @@
   =/  m  tapp-async
   ^-  form:m
   ::
+  ~&  [%enque host name path maybe-msg]
+  ::
   =?  pending-messages-to-send.app-state  ?=(^ maybe-msg)
     (~(put ju pending-messages-to-send.app-state) [host name path] u.maybe-msg)
   ::
@@ -201,6 +203,8 @@
       app-state
       (set-subscription-state-on-client %pending)
     ==
+  ::
+  ~&  [%peer-app (weld [name ~] path)]
   ::
   ;<  ~  bind:m  (peer-app [host %safe] (weld [name ~] path))
   ::
@@ -419,6 +423,8 @@
   =/  m  tapp-async
   ^-  form:m
   ::
+  ~&  [%receiving-diff data]
+  ::
   ?>  ?=(^ path)
   ::
   =/  community-name=@t  i.path
@@ -458,6 +464,13 @@
 ::
 ::  TODO: Handle +quit so that it sets a community back to %unsubscribed.
 ::
-++  handle-take  handle-take:default-tapp
+++  handle-take
+  |=  =sign:tapp
+  =/  m  tapp-async
+  ^-  form:m
+  ::
+  ~&  sign
+  ::
+  (pure:m app-state)
 --
 

@@ -185,45 +185,66 @@
           route         t.route
           client-state  u.u.children-state
         ==
+      ::  if we're blocked 
+      ::
       ?:  ?=([%& *] ret-val)
         [%& p.ret-val]
       ::
       ?~  p.ret-val
-        [%| (get-for-node built-route client-state)]
+        =/  n  (get-for-node built-route client-state)
+        ?-  -.n
+          %&  [%& p.n]
+          %|  [%| p.n]
+        ==
+      ::
       [%| p.ret-val]
     ::
-    [%| (get-for-node built-route client-state)]
+    =/  n  (get-for-node built-route client-state)
+    ?-  -.n
+      %&  [%& p.n]
+      %|  [%| p.n]
+    ==
+::    [%| (get-for-node built-route client-state)]
   ::
   ++  get-for-node
     |=  [built-route=path client-state=node]
-    ^-  (unit signature-request:common)
+    ^-  (each path (unit signature-request:common))
+    ::  if we don't have the root state, we can't do anything here.
     ::
-    =/  =top-state:common  (need top-state:(need snapshot.root-state))
+    ?~  snapshot.root-state
+      [%& /]
+    ::
+    ?~  top-state.u.snapshot.root-state
+      [%& /]
+    ::
+    =/  =top-state:common  u.top-state.u.snapshot.root-state
     ::
     =/  =snapshot:common   (need snapshot.client-state)
     ?-    signature-type.snapshot
         %ship
-      `[%ship ~]
+      [%| `[%ship ~]]
     ::
         %unlinked
-      `[%unlinked invited.top-state]
+      [%| `[%unlinked invited.top-state]]
     ::
         %community
-      :*  ~
+      :*  %|
+          ~
           %linked
           [community-name.top-state original-host.top-state /]
           invited.top-state
       ==
     ::
         %self
-      :*  ~
+      :*  %|
+          ~
           %linked
           [community-name.top-state original-host.top-state built-route]
           invited.top-state
       ==
     ::
         %inherit
-      ~
+      [%| ~]
     ==
   --
 ::  +sign-user-event: signs a user event for sending to the server

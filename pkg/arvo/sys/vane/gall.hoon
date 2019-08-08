@@ -923,6 +923,7 @@
         [%| (ap-suck "mess: malformed target")]
       =+  pux=((soft path) p.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
+        ~&  [%bad-path pux]
         [%| (ap-suck "mess: malformed path")]
       [%& [(scot %p q.q.vax) %out r.q.vax u.pux] q.q.vax r.q.vax]
     ::
