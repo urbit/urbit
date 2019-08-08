@@ -21,9 +21,9 @@
         ::
         local-subscriptions=(set [name=@t =path])
         ::  messages that we intend to send, but that we lack up-to-date data
-        ::  in our client-communities state
+        ::  in our client-communities state.
         ::
-        pending-messages-to-send=(jug [host=@p name=@t =path] msg=*)
+        pending-messages-to-send=(jug [host=@p name=@t =path] [route=path msg=*])
     ==
   +$  peek-data  _!!
   +$  in-poke-data
@@ -127,6 +127,8 @@
   =/  m  tapp-async
   ^-  form:m
   ::
+  ~&  [%safe-send-message host name path msg]
+  ::
   |-
   =*  loop  $
   ::  Using our client copy of the state, perform verification.
@@ -135,7 +137,7 @@
     ::  If we don't know anything about this community, we need to go remote
     ::  subscribe to it.
     ::
-    (enqueue-message-and-subscribe host name / `msg app-state)
+    (enqueue-message-and-subscribe host name / path msg app-state)
   ::
   =/  e  (sign-user-event our.bowl now.bowl eny.bowl path msg u.community safe-applets)
   ::  check if we made the signature. when we can't make the signature because
@@ -149,7 +151,7 @@
       =.  app-state  (local-subscribe our.bowl name p.e app-state)
       loop
     ::
-    (enqueue-message-and-subscribe host name p.e `msg app-state)
+    (enqueue-message-and-subscribe host name p.e path msg app-state)
   ::
   ?:  =(host our.bowl)
     ::  we do the special case where we synchronously call ourselves for
@@ -165,12 +167,12 @@
 ::  +enqueue-message-and-subscribe
 ::
 ++  enqueue-message-and-subscribe
-  |=  [host=@p name=@t =path maybe-msg=(unit *) =app-state]
+  |=  [host=@p name=@t subscribe-path=path send-path=path msg=* =app-state]
   =/  m  tapp-async
   ^-  form:m
   ::
-  =?  pending-messages-to-send.app-state  ?=(^ maybe-msg)
-    (~(put ju pending-messages-to-send.app-state) [host name path] u.maybe-msg)
+  =.  pending-messages-to-send.app-state
+    (~(put ju pending-messages-to-send.app-state) [host name subscribe-path] [send-path msg])
   ::
   ::  TODO: If we're already %pending, don't send a second peer.
   ::
@@ -178,19 +180,19 @@
     %-  update-client-communities  :*
       host
       name
-      path
+      subscribe-path
       app-state
       (set-subscription-state-on-client %pending)
     ==
   ::  TODO: Make library fun where peer will wait for first diff and return.
   ::
-  ;<  ~  bind:m  (peer-app [host %safe] (weld [name ~] path))
+  ;<  ~  bind:m  (peer-app [host %safe] (weld [name ~] subscribe-path))
   ::
   (pure:m app-state)
 ::  +retry-sending-messages:
 ::
 ++  retry-sending-messages
-  |=  [=bowl:gall host=@p name=@t =path msgs=(list *) =app-state]
+  |=  [=bowl:gall host=@p name=@t =path msgs=(list [route=path msg=*]) =app-state]
   =/  m  tapp-async
   ::
   |-  ^-  form:m
@@ -200,7 +202,7 @@
     (pure:m app-state)
   ::
   ;<  new-state=^app-state  bind:m
-    (send-message bowl host name path i.msgs app-state)
+    (send-message bowl host name route.i.msgs msg.i.msgs app-state)
   ::
   loop(msgs t.msgs, app-state new-state)
 ::  +receive-message: receives a message to apply to our server state
@@ -442,7 +444,7 @@
   ::  for every pending message in the :pending-messages-to-send, try to send
   ::  it again.
   ::
-  =/  to-send=(set *)
+  =/  to-send=(set [route=^path msg=*])
     (~(get ju pending-messages-to-send.app-state) [her community-name route])
   ::
   =.  pending-messages-to-send.app-state

@@ -271,6 +271,8 @@
   |=  [our=@p now=@da eny=@uvJ route=path user-event=* client-state=node app-map=(map @t vase)]
   ^-  (each path client-to-server:common)
   ::
+  ~&  [%sign-user-event route user-event]
+  ::
   =/  root-request  (signature-request-for / client-state)
   ?:  ?=([%& *] root-request)
     [%& p.root-request]
