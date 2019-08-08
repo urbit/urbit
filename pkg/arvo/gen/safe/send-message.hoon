@@ -3,4 +3,4 @@
         [host=@p name=@t =path msg=* ~]
         ~
     ==
-[%send-message host name path msg]
+[%safe-poke %send-message host name path msg]

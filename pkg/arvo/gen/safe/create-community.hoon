@@ -6,4 +6,4 @@
         [name=@t ~]
         ~
     ==
-[%create-community name (sy [~littel-ponnys ~rovnys-ricfer ~palfun-foslup ~rapfyr-diglyt ~])]
+[%safe-poke %create-community name (sy [~littel-ponnys ~rovnys-ricfer ~palfun-foslup ~rapfyr-diglyt ~])]

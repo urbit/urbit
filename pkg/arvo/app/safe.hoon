@@ -1,4 +1,4 @@
-/-  safe-client, safe-server
+/-  safe-gall, safe-client, safe-server
 /+  tapp, stdio, safe-applets, *safe-server, *safe-client
 =>
   |%
@@ -27,38 +27,19 @@
     ==
   +$  peek-data  _!!
   +$  in-poke-data
-    $%  ::  a local action which can only be done by :our
-        ::
-        [%create-community name=@t initial-invitees=(set @p)]
-        ::  a local action which can only be done by :our
-        ::
-        [%send-message host=@p name=@t =path data=*]
-        ::  a poke which anyone can do.
-        ::
-        [%receive-message name=@t =client-to-server:common]
-    ==
+    poke:safe-gall
   +$  out-poke-data
     $%  ::  receive message to be sent to a foreign :safe server.
         ::
-        [%receive-message name=@t =client-to-server:common]
+        [%safe-poke %receive-message name=@t =client-to-server:common]
         ::  unlink ourselves as soon as we start.
         ::
         [%drum-unlink =dock]
     ==
   +$  out-peer-data
-    in-peer-data
+    peer:safe-gall
   +$  in-peer-data
-    $%  ::  from +peer-diff:common
-        ::
-        [%snapshot id=@u snapshot=transport-snapshot:common]
-        ::  from +peer-diff:common
-        ::
-        [%event id=@u event=transport-event-log-item:common]
-        ::  sent when the host community either doesn't exist or the requester
-        ::  isn't allowed to access it.
-        ::
-        [%not-found ~]
-    ==
+    peer:safe-gall
   ++  tapp   (^tapp app-state peek-data in-poke-data out-poke-data in-peer-data out-peer-data)
   ++  stdio  (^stdio out-poke-data out-peer-data)
   --
@@ -179,7 +160,7 @@
   ::  sends to a remote server.
   ::
   ~&  %sending-remotely
-  ;<  ~  bind:m  (poke-app [host %safe] %receive-message name p.e)
+  ;<  ~  bind:m  (poke-app [host %safe] %safe-poke %receive-message name p.e)
   (pure:m app-state)
 ::  +enqueue-message-and-subscribe
 ::
@@ -187,8 +168,6 @@
   |=  [host=@p name=@t =path maybe-msg=(unit *) =app-state]
   =/  m  tapp-async
   ^-  form:m
-  ::
-  ~&  [%enque host name path maybe-msg]
   ::
   =?  pending-messages-to-send.app-state  ?=(^ maybe-msg)
     (~(put ju pending-messages-to-send.app-state) [host name path] u.maybe-msg)
@@ -203,8 +182,7 @@
       app-state
       (set-subscription-state-on-client %pending)
     ==
-  ::
-  ~&  [%peer-app (weld [name ~] path)]
+  ::  TODO: Make library fun where peer will wait for first diff and return.
   ::
   ;<  ~  bind:m  (peer-app [host %safe] (weld [name ~] path))
   ::
@@ -283,7 +261,7 @@
   ?~  changes
     (pure:m app-state)
   ::
-  ;<  ~  bind:m  (give-result (weld [name ~] path.i.changes) peer-diff.i.changes)
+  ;<  ~  bind:m  (give-result (weld [name ~] path.i.changes) %safe-peer peer-diff.i.changes)
   ::
   loop(changes t.changes)
 --
@@ -305,16 +283,19 @@
   |=  =in-poke-data
   =/  m  tapp-async
   ^-  form:m
-  ?-    -.in-poke-data
+  ::
+  =/  command  command.in-poke-data
+  ::
+  ?-    -.command
       %create-community
     ::
     ?.  =(our.bowl src.bowl)
-      ~&  [%remote-cant-create-community src.bowl name.in-poke-data]
+      ~&  [%remote-cant-create-community src.bowl name.command]
       (pure:m app-state)
     ::  if the community already exists
     ::
-    ?:  (~(has by server-communities.app-state) name.in-poke-data)
-      ~&  [%community-already-exists name.in-poke-data]
+    ?:  (~(has by server-communities.app-state) name.command)
+      ~&  [%community-already-exists name.command]
       (pure:m app-state)
     ::  create the server side community
     ::
@@ -327,13 +308,13 @@
             %auth
             %community
             :*  ~
-                initial-invitees.in-poke-data
-                name.in-poke-data
+                initial-invitees.command
+                name.command
                 our.bowl
         ==  ==
     ::
     =.  server-communities.app-state
-      %+  ~(put by server-communities.app-state)  name.in-poke-data
+      %+  ~(put by server-communities.app-state)  name.command
       initial-toplevel-server-state
     ::  create the client side community
     ::
@@ -343,9 +324,9 @@
     ::    owns this server almost certainly wants to participate in the
     ::    community but their archive shouldn't be public.
     ::
-    =.  app-state  (local-subscribe our.bowl name.in-poke-data / app-state)
+    =.  app-state  (local-subscribe our.bowl name.command / app-state)
     ::
-    ~&  [%created-community name.in-poke-data initial-invitees.in-poke-data]
+    ~&  [%created-community name.command initial-invitees.command]
     ::
     ~&  [%client-communities client-communities.app-state]
     ::
@@ -362,10 +343,10 @@
     ::
     %-  send-message  :*
       bowl
-      host.in-poke-data
-      name.in-poke-data
-      path.in-poke-data
-      data.in-poke-data
+      host.command
+      name.command
+      path.command
+      data.command
       app-state
     ==
   ::
@@ -374,8 +355,8 @@
     ::
     %-  receive-message  :*
       our.bowl
-      name.in-poke-data
-      client-to-server.in-poke-data
+      name.command
+      client-to-server.command
       app-state
     ==
   ==
@@ -385,7 +366,9 @@
   =/  m  tapp-async
   ^-  form:m
   ::
-  ~&  [%handle-peer path]
+  ?:  =(/sole path)
+    ;<  ~  bind:m  (poke-app:stdio [[our %hood] [%drum-unlink our dap]]:bowl)
+    (pure:m app-state)
   ::
   ?>  ?=(^ path)
   ::
@@ -395,14 +378,14 @@
   ::
   ?~  community=(~(get by server-communities.app-state) community-name)
     ~&  [%no-community community-name]
-    ;<  ~  bind:m  (give-result path [%not-found ~])
+    ;<  ~  bind:m  (give-result path %safe-peer %not-found ~)
     ;<  ~  bind:m  (quit-app [src.bowl %safe] path)
     (pure:m app-state)
   ::  ensure the requester has access
   ::
   ?.  (~(has in invited:(need top-state:(need snapshot.u.community))) src.bowl)
     ~&  [%bad-access path src.bowl]
-    ;<  ~  bind:m  (give-result path [%not-found ~])
+    ;<  ~  bind:m  (give-result path %safe-peer %not-found ~)
 ::    ;<  ~  bind:m  (quit-app [src.bowl %safe] path)
     (pure:m app-state)
   ::  send a full snapshot of route
@@ -413,26 +396,28 @@
   ::
   ?~  full-snapshot
     ~&  [%node-not-found route]
-    ;<  ~  bind:m  (give-result path [%not-found ~])
+    ;<  ~  bind:m  (give-result path %safe-peer %not-found ~)
     ;<  ~  bind:m  (quit-app [src.bowl %safe] path)
     (pure:m app-state)
   ::  send the snapshot as the first of many events
   ::
-  ;<  ~  bind:m  (give-result path u.full-snapshot)
+  ;<  ~  bind:m  (give-result path %safe-peer u.full-snapshot)
   ::
   (pure:m app-state)
 ::
 ++  handle-diff
-  |=  [[her=ship app=term] =path data=in-peer-data]
+  |=  [[her=ship app=term] =path tagged-data=in-peer-data]
   =/  m  tapp-async
   ^-  form:m
   ::
-  ~&  [%receiving-diff data]
+  ~&  [%handle-diff path]
   ::
   ?>  ?=(^ path)
   ::
   =/  community-name=@t  i.path
   =/  route=^path        t.path
+  ::
+  =/  data  command.tagged-data
   ::
   ?:  ?=(%not-found -.data)
     ::  TODO: Some real error handling here. If we're pending for a send
@@ -468,13 +453,6 @@
 ::
 ::  TODO: Handle +quit so that it sets a community back to %unsubscribed.
 ::
-++  handle-take
-  |=  =sign:tapp
-  =/  m  tapp-async
-  ^-  form:m
-  ::
-  ~&  sign
-  ::
-  (pure:m app-state)
+++  handle-take  handle-take:default-tapp
 --
 
