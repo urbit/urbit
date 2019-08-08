@@ -125,4 +125,29 @@
     results1
     results2
   ==
+::
+++  test-put-zero
+  ::
+  =|  q=(capped-queue @u)
+  =.  max-size.q  0
+  ::  specialize type
+  ::
+  =+  to-capped-queue=(to-capped-queue @u)
+  ::  push enough values to evict one
+  ::
+  ::
+  =^  maybe1  q  (~(put to-capped-queue q) 5)
+  =/  results1
+    %+  expect-eq
+      !>  [~ 5]
+      !>  maybe1
+  =/  results2
+    %+  expect-eq
+      !>  0
+      !>  size.q
+  ::
+  ;:  weld
+    results1
+    results2
+  ==
 --

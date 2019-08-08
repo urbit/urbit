@@ -7046,6 +7046,10 @@
         =.  size.queue   +(size.queue)
         ::
         [~ queue]
+      ::  max is zero, the oldest item to return is the one which just went in.
+      ::
+      ?:  =(~ queue.queue)
+        [`item queue]
       ::  we're at max capacity, so pop before pushing; size is unchanged
       ::
       =^  oldest  queue.queue  ~(get to queue.queue)

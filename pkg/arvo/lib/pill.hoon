@@ -117,7 +117,7 @@
   =?  hav  ?=(^ fil.lon)
       ::  XX  this whitelist needs to be reviewed
       ::
-      ?.  ?=  ?($css $hoon $json $md $txt $udon $umd)
+      ?.  ?=  ?($css $hoon $html $js $json $md $png $txt $udon $umd)
           -.tyl
         ::
         ::  install only files with whitelisted marks
