@@ -1424,6 +1424,11 @@
     ^+  event-core
     ::
     =.  unix-duct.ames-state  duct
+    ::  clear sponsor ping timer and ping now
+    ::
+    =?  event-core  !=(%czar (clan:title our))
+      =>  unset-sponsor-ping-timer
+      ping-sponsor
     ::
     =/  turfs
       ;;  (list turf)
