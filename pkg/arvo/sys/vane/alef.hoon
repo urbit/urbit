@@ -1587,12 +1587,7 @@
       ^+  peer-core
       ::  update and print connection status
       ::
-      =.  peer-core  %-  update-qos
-        ?-  -.qos.peer-state
-          %unborn  [%live last-contact=now]
-          %live    [%live last-contact=now]
-          %dead    ~|  %undead-peer^her.channel  !!
-        ==
+      =.  peer-core  (update-qos %live last-contact=now)
       ::
       =/  =bone  bone.shut-packet
       ::
