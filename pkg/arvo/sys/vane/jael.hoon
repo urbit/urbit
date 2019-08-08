@@ -413,6 +413,18 @@
       %-  curd  =<  abet
       (private-keys:~(feel su hen our pki etn) life.tac ring.tac)
     ::
+    ::  update private keys
+    ::
+        %moon
+      ?.  =(%earl (clan:title ship.tac))
+        ~&  [%not-moon ship.tac]
+        +>.$
+      ?.  =(our (^sein:title ship.tac))
+        ~&  [%not-our-moon ship.tac]
+        +>.$
+      %-  curd  =<  abet
+      (~(new-event su hen our pki etn) [ship udiff]:tac)
+    ::
     ::  watch public keys
     ::    [%public-keys ships=(set ship)]
     ::
@@ -697,24 +709,10 @@
         |-  ^+  ..feed
         ?~  moonl
           ..feed
-        ?.  =(our spon.i.moonl)
-          =.  ..feed  (sources:feel ships.i.moonl [%& spon.i.moonl])
+        ?:  =(our spon.i.moonl)
           $(moonl t.moonl)
-        ::  Our moon
-        ::
-        =/  sec  (~(got by jaw.own.pki) lyf.own.pki)
-        =/  points=(map ship point)
-          =/  our-moonl  ~(tap in ships.i.moonl)
-          %-  malt
-          |-  ^-  (list [ship point])
-          ?~  our-moonl
-            ~
-          =/  moon-sec  (shaf %earl (sham our lyf.own.pki sec i.our-moonl))
-          =/  cub  (pit:nu:crub:crypto 128 moon-sec)
-          =/  =pass  pub:ex:cub
-          :-  [i.our-moonl 1 1 (malt [1 1 pass] ~) `our]
-          $(our-moonl t.our-moonl)
-        (public-keys-give (sy hen ~) [%full points])
+        =.  ..feed  (sources:feel ships.i.moonl [%& spon.i.moonl])
+        $(moonl t.moonl)
       ::  Add to subscriber list
       ::
       =.  ney.zim
@@ -829,6 +827,8 @@
       =.  lyf.own  life
       =.  jaw.own  (~(put by jaw.own) life ring)
       (exec yen.own [%give %private-keys lyf.own jaw.own])
+    ::
+    ::  Change sources for ships
     ::
     ++  sources
       |=  [whos=(set ship) =source]

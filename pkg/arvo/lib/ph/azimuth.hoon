@@ -252,13 +252,19 @@
   |=  who=ship
   =/  m  (ph ,~)
   ^-  form:m
-  ;<  now=@da  bind:m
-    |=  pin=ph-input
-    [& ~ %done now.pin]
-  (raw-ship:(ph-tests our) who `(dawn who now))
+  ?.  =(%earl (clan:title who))
+    (raw-ship:(ph-tests our) who `(dawn who ~))
+  =/  spon=ship  (^sein:title who)
+  =/  cub  (pit:nu:crub:crypto 128 (sham who life=1 %entropy))
+  =/  =seed:able:jael
+    [who 1 sec:ex:cub ~]
+  =/  =pass  pub:ex:cub
+  =/  com=tape  "|moon {(scow %p who)}, =public-key {(scow %uw pass)}"
+  ;<  ~  bind:m  (just-events:(ph-tests our) (dojo spon com))
+  (raw-ship:(ph-tests our) who `(dawn who `seed))
 ::
 ++  dawn
-  |=  [who=ship now=@da]
+  |=  [who=ship seed=(unit seed:able:jael)]
   ^-  dawn-event
   =/  spon
     =/  =ship  (^sein:title who)
@@ -279,14 +285,8 @@
       `[life=life pass rift spon-spon ~]
     ~
   =/  =seed:able:jael
-    ?:  =(%earl (clan:title who))
-      =/  pax
-        ;:  weld
-          /i/(scot %p ship.spon)/j/(scot %p ship.spon)/earl/(scot %da now)
-          /(scot %p who)/(scot %ud life.spon)
-          /noun
-        ==
-      (need (scry-aqua (unit seed:able:jael) our now pax))
+    ?^  seed
+      u.seed
     =/  life-rift  (~(got by lives) who)
     =/  =life  lyfe.life-rift
     [who life sec:ex:(get-keys who life) ~]

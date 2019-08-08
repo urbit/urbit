@@ -1337,6 +1337,7 @@
         %listen  `%j
         %merg  `%c
         %mont  `%c
+        %moon  `%j
         %nuke  `%a
         %ogre  `%c
         %perm  `%c

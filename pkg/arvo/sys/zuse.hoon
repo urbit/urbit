@@ -2083,6 +2083,7 @@
           [%listen whos=(set ship) =source]             ::  set ethereum source
           ::TODO  %next for generating/putting new private key
           [%meet =ship =life =pass]                     ::  met after breach
+          [%moon =ship =udiff:point]                    ::  register moon keys
           [%nuke whos=(set ship)]                       ::  cancel tracker from
           [%private-keys ~]                             ::  sub to privates
           [%public-keys ships=(set ship)]               ::  sub to publics
