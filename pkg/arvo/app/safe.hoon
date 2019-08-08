@@ -385,7 +385,8 @@
   =/  m  tapp-async
   ^-  form:m
   ::
-  ~|  path
+  ~&  [%handle-peer path]
+  ::
   ?>  ?=(^ path)
   ::
   =/  community-name=@t  i.path
@@ -393,14 +394,16 @@
   ::  ensure the community exists
   ::
   ?~  community=(~(get by server-communities.app-state) community-name)
+    ~&  [%no-community community-name]
     ;<  ~  bind:m  (give-result path [%not-found ~])
     ;<  ~  bind:m  (quit-app [src.bowl %safe] path)
     (pure:m app-state)
   ::  ensure the requester has access
   ::
   ?.  (~(has in invited:(need top-state:(need snapshot.u.community))) src.bowl)
+    ~&  [%bad-access path src.bowl]
     ;<  ~  bind:m  (give-result path [%not-found ~])
-    ;<  ~  bind:m  (quit-app [src.bowl %safe] path)
+::    ;<  ~  bind:m  (quit-app [src.bowl %safe] path)
     (pure:m app-state)
   ::  send a full snapshot of route
   ::
@@ -409,6 +412,7 @@
   ::  if the community doesn't exist, send a community not found event.
   ::
   ?~  full-snapshot
+    ~&  [%node-not-found route]
     ;<  ~  bind:m  (give-result path [%not-found ~])
     ;<  ~  bind:m  (quit-app [src.bowl %safe] path)
     (pure:m app-state)
