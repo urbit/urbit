@@ -1,7 +1,7 @@
 /-  safe-gall
-|_  s/peer:safe-gall
+|_  s/peer-command:safe-gall
 ++  grab
   |%
-  ++  noun  peer:safe-gall
+  ++  noun  peer-command:safe-gall
   --
 --

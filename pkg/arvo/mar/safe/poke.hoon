@@ -1,7 +1,7 @@
 /-  safe-gall
-|_  s/poke:safe-gall
+|_  s/poke-command:safe-gall
 ++  grab
   |%
-  ++  noun  poke:safe-gall
+  ++  noun  poke-command:safe-gall
   --
 --

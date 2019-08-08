@@ -453,6 +453,11 @@
 ::
 ::  TODO: Handle +quit so that it sets a community back to %unsubscribed.
 ::
-++  handle-take  handle-take:default-tapp
+++  handle-take
+  |=  =sign:tapp
+  =/  m  tapp-async
+  ^-  form:m
+  ~&  [%s sign]
+  (pure:m app-state)
 --
 
