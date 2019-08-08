@@ -386,7 +386,7 @@
   ?.  (~(has in invited:(need top-state:(need snapshot.u.community))) src.bowl)
     ~&  [%bad-access path src.bowl]
     ;<  ~  bind:m  (give-result path %safe-peer %not-found ~)
-::    ;<  ~  bind:m  (quit-app [src.bowl %safe] path)
+    ;<  ~  bind:m  (quit-app [src.bowl %safe] path)
     (pure:m app-state)
   ::  send a full snapshot of route
   ::

@@ -3,7 +3,7 @@
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
-        [name=@t ~]
+        [name=@t members=(list @p) ~]
         ~
     ==
-[%safe-poke %create-community name (sy [~littel-ponnys ~rovnys-ricfer ~palfun-foslup ~rapfyr-diglyt ~])]
+[%safe-poke %create-community name (sy members)]
