@@ -20,6 +20,10 @@
         ::    community and the server copy in the current application.
         ::
         local-subscriptions=(set [name=@t =path])
+        ::  messages that we intend to send, but that we lack up-to-date data
+        ::  in our client-communities state
+        ::
+        pending-messages-to-send=(jug [host=@p name=@t =path] msg=*)
     ==
   +$  peek-data  _!!
   +$  in-poke-data
@@ -146,9 +150,13 @@
   =*  loop  $
   ::  Using our client copy of the state, perform verification.
   ::
-  =/  community  (~(got by client-communities.app-state) [host name])
+  ?~  community=(~(get by client-communities.app-state) [host name])
+    ::  If we don't know anything about this community, we need to go remote
+    ::  subscribe to it.
+    ::
+    (enqueue-message-and-subscribe host name path `msg app-state)
   ::
-  =/  e  (sign-user-event our.bowl now.bowl eny.bowl path msg community safe-applets)
+  =/  e  (sign-user-event our.bowl now.bowl eny.bowl path msg u.community safe-applets)
   ::  check if we made the signature. when we can't make the signature because
   ::  we're lacking information, we make a subscription and then try again.
   ::
@@ -159,27 +167,8 @@
     ?:  =(our.bowl host)
       =.  app-state  (local-subscribe our.bowl name p.e app-state)
       loop
-    ::    TODO: This still isn't exactly correct? we need to not just
-    ::    +peer-app, but wait for the first response from the peer-app.
     ::
-    ::    Instead of "loop"-ing, we'll have to add this to some sort of queue,
-    ::    where we then retry the +send-message when we get our first %diff
-    ::    back.
-    ::
-    ::    TODO: The whole %subscribed/%pending thing in client-state needs a
-    ::    way to remove %pending nodes which turn out to not actually exist.
-    =.  app-state
-      %-  update-client-communities  :*
-        host
-        name
-        path
-        app-state
-        (set-subscription-state-on-client %pending)
-      ==
-    ::
-    ;<  ~  bind:m  (peer-app [host %safe] (weld [name ~] path))
-    ::
-    loop
+    (enqueue-message-and-subscribe host name path `msg app-state)
   ::
   ?:  =(host our.bowl)
     ::  we do the special case where we synchronously call ourselves for
@@ -192,6 +181,46 @@
   ~&  %sending-remotely
   ;<  ~  bind:m  (poke-app [host %safe] %receive-message name p.e)
   (pure:m app-state)
+::  +enqueue-message-and-subscribe
+::
+++  enqueue-message-and-subscribe
+  |=  [host=@p name=@t =path maybe-msg=(unit *) =app-state]
+  =/  m  tapp-async
+  ^-  form:m
+  ::
+  =?  pending-messages-to-send.app-state  ?=(^ maybe-msg)
+    (~(put ju pending-messages-to-send.app-state) [host name path] u.maybe-msg)
+  ::
+  ::  TODO: If we're already %pending, don't send a second peer.
+  ::
+  =.  app-state
+    %-  update-client-communities  :*
+      host
+      name
+      path
+      app-state
+      (set-subscription-state-on-client %pending)
+    ==
+  ::
+  ;<  ~  bind:m  (peer-app [host %safe] (weld [name ~] path))
+  ::
+  (pure:m app-state)
+::  +retry-sending-messages:
+::
+++  retry-sending-messages
+  |=  [=bowl:gall host=@p name=@t =path msgs=(list *) =app-state]
+  =/  m  tapp-async
+  ::
+  |-  ^-  form:m
+  =*  loop  $
+  ::
+  ?~  msgs
+    (pure:m app-state)
+  ::
+  ;<  new-state=^app-state  bind:m
+    (send-message bowl host name path i.msgs app-state)
+  ::
+  loop(msgs t.msgs, app-state new-state)
 ::  +receive-message: receives a message to apply to our server state
 ::
 ::    This first applies a message to our server state, which may then produce
@@ -402,10 +431,6 @@
     ~&  [%not-found community-name path]
     ::
     (pure:m app-state)
-  ::  TODO: If this node is pending, we'll need to keep track of that before we
-  ::  apply the diff
-  ::
-  =/  is-pending=?  %.n
   ::  our data is a peer diff, apply it to our state
   ::
   =.  app-state
@@ -416,16 +441,20 @@
       app-state
       (apply-peer-diff-to-client data)
     ==
+  ::  for every pending message in the :pending-messages-to-send, try to send
+  ::  it again.
   ::
-  ?:  is-pending
-    ::  TODO: if we were pending for some reason, we'll have to notify what
-    ::  we're waiting on to complete.
-    ::
-    (pure:m app-state)
+  =/  to-send=(set *)
+    (~(get ju pending-messages-to-send.app-state) [her community-name route])
   ::
-  ::  TODO: MUCH LATER we probably want to forward on the update to any of our
-  ::  http subscribed clients.
-  (pure:m app-state)
+  =.  pending-messages-to-send.app-state
+    (~(del by pending-messages-to-send.app-state) [her community-name route])
+  ::
+  (retry-sending-messages bowl her community-name route ~(tap by to-send) app-state)
+  ::  ::
+  ::  ::  TODO: MUCH LATER we probably want to forward on the update to any of our
+  ::  ::  http subscribed clients.
+  ::  (pure:m app-state)
 ::
 ::  TODO: Handle +quit so that it sets a community back to %unsubscribed.
 ::
