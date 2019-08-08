@@ -412,6 +412,20 @@
   =/  m  tapp-async
   ^-  form:m
   ::
+  ::  TODO: We have intership communication issues here. We get into some sort
+  ::  of loop where we receive a diff and that makes us send a diff and then
+  ::  this loops.
+  ::
+  ::  Assuming ~nec is sending messages to ~zod:
+  ::
+  ::  - When trying to sign a message, we repeatedly try to subscribe to / on
+  ::  ~zod. We're making repeated subscriptions then? And then we're never
+  ::  really get to signing the outbound message?
+  ::
+  ::  - We don't deal in update-client-communities where we get multiple
+  ::  snapshots which are the same. If we get snapshot 1, we shouldn't add
+  ::  another shapshot 1.
+  ::
   ~&  [%handle-diff path tagged-data]
   ::
   ?>  ?=(^ path)
