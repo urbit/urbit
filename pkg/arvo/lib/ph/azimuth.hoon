@@ -255,7 +255,7 @@
   ?.  =(%earl (clan:title who))
     (raw-ship:(ph-tests our) who `(dawn who ~))
   =/  spon=ship  (^sein:title who)
-  =/  cub  (pit:nu:crub:crypto 128 (sham who life=1 %entropy))
+  =/  cub  (pit:nu:crub:crypto 512 (shaz (jam who life=1 %entropy)))
   =/  =seed:able:jael
     [who 1 sec:ex:cub ~]
   =/  =pass  pub:ex:cub

@@ -34,7 +34,7 @@
 =/  =pass
   ?.  =(*pass public-key)
     public-key
-  =/  cub  (pit:nu:crub:crypto 128 (sham mon life eny))
+  =/  cub  (pit:nu:crub:crypto 512 (shaz (jam mon life eny)))
   =/  =seed:able:jael
     [mon 1 sec:ex:cub ~]
   %-  %-  slog
