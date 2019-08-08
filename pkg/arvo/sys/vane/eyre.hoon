@@ -374,6 +374,9 @@
              #topborder {
                border-top: 3px #fff solid;
              }
+             #ship-name {
+               font-family: 'Source Code Pro', monospace, sans-serif;
+             }
              h1 {
                line-height: 77px;
                font-size: 64px;
@@ -425,7 +428,7 @@
       ;div#main
         ;div#inner
           ;h1#topborder:"Welcome"
-          ;h1:"{(scow %p our)}"
+          ;h1#ship-name:"{(scow %p our)}"
           ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
             ;input(type "password", name "password", placeholder "passcode", autofocus "true");
             ;input(type "hidden", name "redirect", value redirect-str);
