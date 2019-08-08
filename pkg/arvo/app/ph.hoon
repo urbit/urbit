@@ -140,10 +140,29 @@
         (send-hi ~bud ~marbud)
       (pure:m ~)
     ::
+      :+  %hi-linnup-az
+        ~[~bud ~marbud ~linnup-torsyx]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      =.  eth-node  (spawn:eth-node ~linnup-torsyx)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~linnup-torsyx)
+        ~&  >  'LINNUP DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~marbud)
+        ~&  >  'MARBUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
+        ~&  >  'BUD-DONE'
+        ;<  ~  bind:m  (send-hi ~linnup-torsyx ~marbud)
+        ~&  >  'HI DONE-------------------------------'
+        (pure:m ~)
+      (pure:m ~)
+    ::
       :+  %moon-az
         ~[~bud ~marbud ~linnup-torsyx ~linnup-torsyx-linnup-torsyx ~dev]
       =.  eth-node  (spawn:eth-node ~marbud)
       =.  eth-node  (spawn:eth-node ~linnup-torsyx)
+      =.  eth-node  (spawn:eth-node ~dev)
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
@@ -159,12 +178,12 @@
         ~&  >  'HI DOWN DONE'
         ;<  ~  bind:m  (send-hi ~linnup-torsyx-linnup-torsyx ~marbud)
         ~&  >  'HI UP DONE'
-        ::  ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
-        ::  ~&  >  'DEV DONE'
-        ::  ;<  ~  bind:m  (send-hi ~linnup-torsyx-linnup-torsyx ~dev)
-        ::  ~&  >  'HI OVER UP DONE'
-        ::  ;<  ~  bind:m  (send-hi ~dev ~linnup-torsyx-linnup-torsyx)
-        ::  ~&  >  'HI OVER DOWN DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~dev)
+        ~&  >  'DEV DONE'
+        ;<  ~  bind:m  (send-hi ~linnup-torsyx-linnup-torsyx ~dev)
+        ~&  >  'HI OVER UP DONE'
+        ;<  ~  bind:m  (send-hi ~dev ~linnup-torsyx-linnup-torsyx)
+        ~&  >  'HI OVER DOWN DONE'
         (pure:m ~)
       (pure:m ~)
     ::

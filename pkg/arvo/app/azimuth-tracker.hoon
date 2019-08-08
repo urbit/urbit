@@ -322,7 +322,6 @@
       ;<  =b=pending-udiffs  bind:m
         (release-old-events a-pending-udiffs number.id.block)
       ;<  =new=udiffs:point  bind:m  (get-logs-by-hash url whos hash.id.block)
-      ~?  !=(~ new-udiffs)  [%adding-diffs new-udiffs]
       =.  b-pending-udiffs  (~(put by b-pending-udiffs) number.id.block new-udiffs)
       (pure:m b-pending-udiffs block blocks)
     ::
@@ -332,7 +331,7 @@
       |=  [=pending-udiffs =number:block]
       =/  m  (async:stdio ,^pending-udiffs)
       ^-  form:m
-      =/  rel-number  (sub number 1)
+      =/  rel-number  (sub number 30)
       =/  =udiffs:point  (~(get ja pending-udiffs) rel-number)
       ;<  ~  bind:m  (jael-update udiffs)
       (pure:m (~(del by pending-udiffs) rel-number))

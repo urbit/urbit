@@ -419,8 +419,6 @@
     ::    [%meet our=ship who=ship]
     ::
         %meet
-      ::  XX what do
-      ~&  %meet-kale
       +>.$
     ::
     ::  restore snapshot

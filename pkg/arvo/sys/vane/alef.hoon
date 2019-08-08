@@ -423,6 +423,7 @@
 ::  $peer-state: state for a peer with known life and keys
 ::
 ::    route: transport-layer destination for packets to peer
+::    qos: quality of service; connection status to peer
 ::    ossuary: bone<->duct mapper
 ::    snd: per-bone message pumps to send messages as fragments
 ::    rcv: per-bone message stills to assemble messages from fragments
@@ -444,10 +445,19 @@
           sponsor=ship
       ==
       route=(unit [direct=? =lane])
+      =qos
       =ossuary
       snd=(map bone message-pump-state)
       rcv=(map bone message-still-state)
       nax=(set [=bone =message-num])
+  ==
+::  $qos: quality of service; how is our connection to a peer doing?
+::
++$  qos
+  $~  [%unborn ~]
+  $%  [%live last-contact=@da]
+      [%dead last-contact=@da]
+      [%unborn ~]
   ==
 ::  $ossuary: bone<->duct bijection and .next-bone to map to a duct
 ::
@@ -622,6 +632,9 @@
   $%  $:  %b
       $%  [%wait date=@da]
           [%rest date=@da]
+      ==  ==
+      $:  %d
+      $%  [%flog flog:dill]
       ==  ==
       $:  %k
       $%  [%private-keys ~]
@@ -855,9 +868,7 @@
     =<  abet
     ?-  -.task
       %born  on-born:event-core
-      %crud  ~&  %ames-crud^our^p.task
-             %-  (slog q.task)
-             event-core
+      %crud  (on-crud:event-core [p q]:task)
       %hear  (on-hear:event-core [lane blob]:task)
       %hole  (on-hole:event-core [lane blob]:task)
       %init  (on-init:event-core ship=p.task)
@@ -915,18 +926,18 @@
   |%
   ++  event-core  .
   ++  abet  [(flop moves) ames-state]
-  ++  emit
-    |=  =move
-    event-core(moves [move moves])
+  ++  emit  |=(=move event-core(moves [move moves]))
   ::  +on-take-done: handle notice from vane that it processed a message
   ::
   ++  on-take-done
     |=  [=wire error=(unit error)]
     ^+  event-core
+    ::  if /ping wire, sponsor acked our ping; reset timer
     ::
     ?:  =(/ping wire)
       ~&  %ames-take-ping-done
       set-sponsor-ping-timer
+    ::  otherwise, we need to relay the vane ack to the foreign peer
     ::
     =+  ^-  [her=ship =bone]  (parse-bone-wire wire)
     ::
@@ -950,12 +961,17 @@
     =/  nack-trace-bone=^bone  (mix 0b10 bone)
     ::
     abet:(run-message-pump:peer-core nack-trace-bone %memo message-blob)
+  ::  +on-crud: handle event failure; print to dill
+  ::
+  ++  on-crud
+    |=  =error
+    ^+  event-core
+    (emit duct %pass /crud %d %flog %crud error)
   ::  +on-hear: handle raw packet receipt
   ::
   ++  on-hear
     |=  [=lane =blob]
     ^+  event-core
-    ::
     (on-hear-packet lane (decode-packet blob) ok=%.y)
   ::  +on-hole: handle packet crash notification
   ::
@@ -1089,10 +1105,13 @@
     ::
     ?>  =(sndr-life.shut-packet her-life.channel)
     ?>  =(rcvr-life.shut-packet our-life.channel)
-    ::  set .lane as new route to peer since packet is valid
+    ::  non-galaxy: update route with heard lane or forwarded lane
     ::
     =?  route.peer-state  !=(%czar (clan:title her.channel))
-      `[direct=%.y lane]
+      ?~  origin.packet
+        `[direct=%.n lane]
+      `[direct=%.n u.origin.packet]
+    ::  perform peer-specific handling of packet
     ::
     =/  peer-core  (make-peer-core peer-state channel)
     abet:(on-hear-shut-packet:peer-core lane shut-packet ok)
@@ -1114,6 +1133,12 @@
   ++  on-plea
     |=  [=ship =plea]
     ^+  event-core
+    ::  if .plea is a sponsor ping; ack it
+    ::
+    ?:  =([%a /ping ~] plea)
+      ~&  %ames-ack-ping^our^ship
+      (emit duct %give %done ~)
+    ::  .plea is from local vane to foreign ship
     ::
     =/  ship-state  (~(get by peers.ames-state) ship)
     ::
@@ -1536,6 +1561,7 @@
     |%
     ++  peer-core  .
     ++  emit  |=(move peer-core(event-core (^emit +<)))
+    ::
     ++  abet
       ^+  event-core
       ::
@@ -1543,11 +1569,30 @@
         (~(put by peers.ames-state) her.channel %known peer-state)
       ::
       event-core
+    ::  +update-qos: update and maybe print connection status
+    ::
+    ++  update-qos
+      |=  =new=qos
+      ^+  peer-core
+      ::
+      =^  old-qos  qos.peer-state  [qos.peer-state new-qos]
+      ::
+      ?~  text=(qos-update-text her.channel old-qos new-qos)
+        peer-core
+      (emit duct %pass /qos %d %flog %text u.text)
     ::  +on-hear-shut-packet: handle receipt of ack or message fragment
     ::
     ++  on-hear-shut-packet
       |=  [=lane =shut-packet ok=?]
       ^+  peer-core
+      ::  update and print connection status
+      ::
+      =.  peer-core  %-  update-qos
+        ?-  -.qos.peer-state
+          %unborn  [%live last-contact=now]
+          %live    [%live last-contact=now]
+          %dead    ~|  %undead-peer^her.channel  !!
+        ==
       ::
       =/  =bone  bone.shut-packet
       ::
@@ -1571,9 +1616,16 @@
       ^+  peer-core
       ::  if we previously errored out, print and try again
       ::
-      %-  ?~  error
-            same
-          (slog >%ames-wake-fail< u.error)
+      =?  peer-core  ?=(^ error)
+        (emit duct %pass /wake-fail %d %flog %crud %ames-wake u.error)
+      ::  update and print connection state
+      ::
+      =.  peer-core  %-  update-qos
+        ?.  ?&  ?=(%live -.qos.peer-state)
+                (gte now (add ~s30 last-contact.qos.peer-state))
+            ==
+          qos.peer-state
+        [%dead last-contact.qos.peer-state]
       ::  expire direct route
       ::
       ::    Since a packet's timer expired, mark the .lane.route as
@@ -1823,31 +1875,17 @@
         |=  [=message-num message=*]
         ^+  peer-core
         ~&  %ames-still-plea^our^bone=bone
-        ::  don't accept requests for arbitrary vanes
-        ::
-        =+  ;;  =plea  message
-        ::  %a /ping means sponsor ping timer; send ack
-        ::
-        ?:  ?=(%a vane.plea)
-          ::  validate ping message and send ack
-          ::
-          ::    TODO: treat ames as client vane and go through arvo?
-          ::          removes reentrancy and could nack more easily
-          ::
-          ~&  ?:  =([/ping ~] +.plea)
-                %ames-ping
-              %ames-ping-lame
-          ::
-          (run-message-still bone %done ok=%.y)
-        ::  not a sponsor ping; relay .plea to .vane
-        ::
-        =/  =wire  (make-bone-wire her.channel bone)
         ::  is this the first time we're trying to process this message?
         ::
         ?.  ?=([%hear * * ok=%.n] task)
           ::  fresh plea; pass to client vane
           ::
-          ?+  vane.plea  ~|  %ames-evil-vane^vane.plea  !!
+          =+  ;;  =plea  message
+          ::
+          =/  =wire  (make-bone-wire her.channel bone)
+          ::
+          ?+  vane.plea  ~|  %ames-evil-vane^our^her.channel^vane.plea  !!
+            %a  (emit duct %pass wire %a %plea her.channel plea)
             %c  (emit duct %pass wire %c %plea her.channel plea)
             %g  (emit duct %pass wire %g %plea her.channel plea)
             %k  (emit duct %pass wire %k %plea her.channel plea)
@@ -2419,7 +2457,7 @@
       ?:  is-last-fragment
         ::  drop last packet since we don't know whether to ack or nack
         ::
-        ~&  %repeat-last-unprocessed^our.channel^seq^last-heard.state
+        ~&  %repeat-last-unprocessed^our.channel^her.channel^seq^last-heard.state^pending-vane-ack.state
         message-still
       ::  ack all other packets
       ::
@@ -2523,6 +2561,19 @@
     ::
     message-still
   --
+::  +qos-update-text: notice text for if connection state changes
+::
+++  qos-update-text
+  |=  [=ship old=qos new=qos]
+  ^-  (unit tape)
+  ::
+  ?+  [-.old -.new]  ~
+    [%unborn %live]  `"; {(scow %p ship)} is your neighbor"
+    [%live %dead]    `"; {(scow %p ship)} not responding still trying"
+    [%dead %live]    `"; {(scow %p ship)} is ok"
+    [%live %unborn]  `"; {(scow %p ship)} is dead"
+    [%dead %unborn]  `"; {(scow %p ship)} is dead"
+  ==
 ::  +split-message: split message into kilobyte-sized fragments
 ::
 ++  split-message
