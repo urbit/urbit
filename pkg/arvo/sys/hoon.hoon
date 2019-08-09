@@ -6753,6 +6753,7 @@
   ::                                            ::::::  special
     {$zpcm p/hoon q/hoon}                               ::  !,
     {$zpbn p/hoon}                                      ::  !>
+    {$zpgl p/spec q/hoon}                               ::  !<
     {$zpmc p/hoon q/hoon}                               ::  !;
     {$zpts p/hoon}                                      ::  !=
     {$zpvt p/(list wing) q/hoon r/hoon}                 ::  !@
@@ -10302,6 +10303,28 @@
       =+  ref=p:$(gol %noun, gen p.gen)
       [(nice (cell ref p.vos)) (cons [%1 burp(sut p.vos)] q.vos)]
     ::
+        {$zpgl *}
+      =+  ^=  typ
+          %-  nice
+          %-  fork
+          :~  [%atom %n `0]
+              [%cell [%atom %n `0] [%face %u (play [%kttr p.gen])]]
+          ==
+      =+  ^=  val
+          =<  q
+          %_    $
+              gol  %noun
+              gen
+            :^    %wtcl
+                :+  %cncl  [%limb %levi]
+                :~  [%tsbn [%zpbn [%kttr p.gen]] [%$ 2]]
+                    [%tsbn q.gen [%$ 2]]
+                ==
+              [%clhp [%bust %null] [%tsbn q.gen [%$ 3]]]
+            [%bust %null]
+          ==
+      [typ val]
+    ::
         {$zpts *}   [(nice %noun) [%1 q:$(vet |, gen p.gen)]]
         {$zpvt *}   ?:((feel p.gen) $(gen q.gen) $(gen r.gen))
     ::
@@ -10463,6 +10486,14 @@
         {$zpmc *}
       =+  vos=$(gol %noun, gen q.gen)       ::  XX validate!
       [(nice (cell (play p.gen) p.vos)) (cell (play(sut dox) p.gen) q.vos)]
+    ::
+        {$zpgl *}
+      ::  XX is this right?
+      %-  beth
+      %-  fork
+      :~  [%atom %n `0]
+          [%cell [%atom %n `0] [%face %u (play [%kttr p.gen])]]
+      ==
     ::
         {$zpvt *}
       =+  [(feel p.gen) (feel(sut dox) p.gen)]
@@ -10767,6 +10798,10 @@
       {$zpcm *}  $(gen p.gen)
       {$lost *}  %void
       {$zpmc *}  (cell $(gen p.gen) $(gen q.gen))
+      {$zpgl *}  %-  fork
+                 :~  [%atom %n `0]
+                     [%cell [%atom %n `0] [%face %u (play [%kttr p.gen])]]
+                 ==
       {$zpts *}  %noun
       {$zpvt *}  ?:((feel p.gen) $(gen q.gen) $(gen r.gen))
       {$zpzp *}  %void
@@ -11532,6 +11567,10 @@
 ++  cain  sell                                          ::  $-(vase tank)
 ++  noah  text                                          ::  $-(vase tape)
 ++  onan  seer                                          ::  $-(vise vase)
+++  levi                                                ::  $-([type type] ?)
+  |=  [a=type b=type]
+  (~(nest ut a) | b)
+::
 ++  text                                                ::  tape pretty-print
   |=  vax/vase  ^-  tape
   ~(ram re (sell vax))
@@ -14108,6 +14147,7 @@
         [%wtzp *]  (rune '?!' ~ `['!' '' ''] (hoons ~[p]:x))
         [%zpcm *]  (rune '!,' ~ ~ (hoons ~[p q]:x))
         [%zpbn *]  (rune '!>' ~ ~ (hoons ~[p]:x))
+        [%zpgl *]  (rune '!<' ~ ~ (spec p.x) (hoons ~[q]:x))
         [%zpmc *]  (rune '!;' ~ ~ (hoons ~[p q]:x))
         [%zpts *]  (rune '!=' ~ ~ (hoons ~[p]:x))
         [%zpvt *]  (rune '!@' ~ ~ (wingseq p.x) (hoons ~[q r]:x))
@@ -16739,6 +16779,7 @@
                   [',' (rune com %zpcm expb)]
                   [';' (rune mic %zpmc expb)]
                   ['>' (rune ban %zpbn expa)]
+                  ['<' (rune led %zpgl exqc)]
                   ['@' (rune vat %zpvt expy)]
                   ['=' (rune tis %zpts expa)]
                   ['?' (rune wut %zpwt hinh)]
