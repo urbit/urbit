@@ -93,10 +93,9 @@
     =/  snapshot=snapshot:common
       (snapshot:from-transport app-map snapshot.peer-diff)
     ::
-    ::  TODO: When we get a snapshot, we need to reconstruct the :children and
-    ::  :archived state here from the embedded snapshot, archiving all nodes
-    ::  that we have data about which are missing from the snapshot, and adding
-    ::  information about
+    ::  TODO: When we get a snapshot, we need to reconstruct the :archived
+    ::  state here from the embedded snapshot, archiving all nodes that we have
+    ::  data about which are missing from the snapshot.
     ::
     %_    node
         partial-event-log
@@ -105,6 +104,26 @@
     ::
         snapshot
       [~ snapshot]
+    ::
+        children
+      =/  pairs=(list (pair @t (unit ^node)))  ~(tap by children.node)
+      ::  we remove any children which aren't in snapshot-children.
+      ::
+      =.  pairs  (skim pairs |=([a=@t *] (~(has in children.snapshot) a)))
+      ::  we add any children which aren't in pairs
+      ::
+      =/  m=(map @t (unit ^node))  (my pairs)
+      =/  to-add=(list @t)  ~(tap in children.snapshot)
+      |-
+      ?~  to-add
+        m
+      ::
+      ?:  (~(has by m) i.to-add)
+        $(to-add t.to-add)
+      ::
+      $(to-add t.to-add, m (~(put by m) i.to-add ~))
+    ::
+    ::  TODO: Also modify the archive state once I have archiving working.
     ==
   ::
       %event
@@ -171,7 +190,7 @@
       ::  subscribe to the parent because we must first learn if it exists.
       ?~  children-state=(~(get by children.client-state) i.route)
         [%& built-route]
-      ::  update the built-route so we're looking at the 
+      ::  update the built-route so we're looking at the child node.
       ::
       =.  built-route  (weld built-route [i.route ~])
       ::  if we do know that children.client-state exists, but know nothing
@@ -185,7 +204,7 @@
           route         t.route
           client-state  u.u.children-state
         ==
-      ::  if we're blocked 
+      ::  if we're blocked, propagate the block
       ::
       ?:  ?=([%& *] ret-val)
         [%& p.ret-val]
@@ -204,7 +223,6 @@
       %&  [%& p.n]
       %|  [%| p.n]
     ==
-::    [%| (get-for-node built-route client-state)]
   ::
   ++  get-for-node
     |=  [built-route=path client-state=node]

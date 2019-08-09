@@ -144,6 +144,7 @@
   ::  we're lacking information, we make a subscription and then try again.
   ::
   ?:  ?=([%& *] e)
+    ~&  [%send-message-blocked-on p.e]
     ::  if the missing information is on our own local server state, then we
     ::  can just go and fetch it synchronously.
     ::
@@ -174,7 +175,9 @@
   =.  pending-messages-to-send.app-state
     (~(put ju pending-messages-to-send.app-state) [host name subscribe-path] [send-path msg])
   ::
-  ::  TODO: If we're already %pending, don't send a second peer.
+  ::  TODO: If we're already %pending, don't send a second peer. This was what
+  ::  caused the out of control message spam when I had the incorrect children
+  ::  calculation. It's theoretically triggerable during natural usage, too.
   ::
   =.  app-state
     %-  update-client-communities  :*
@@ -452,9 +455,6 @@
       app-state
       (apply-peer-diff-to-client data)
     ==
-  ::
-  ::
-  ~&  [%new-app-state app-state]
   ::  for every pending message in the :pending-messages-to-send, try to send
   ::  it again.
   ::
