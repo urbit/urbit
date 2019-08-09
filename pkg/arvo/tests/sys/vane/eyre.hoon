@@ -208,12 +208,11 @@
                 %give
                 %response
                 %start
-                :-  404
-                :~  ['content-type' 'text/html']
-                    ['content-length' '156']
-                ==
+              ::
+                %+  complete-http-start-event
+                  :-  404
+                  ['content-type' 'text/html']~
                 [~ (error-page:http-server-gate 404 %.n '/' ~)]
-                complete=%.y
         ==  ==
     ==
   ::
@@ -384,12 +383,11 @@
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %give  %response
                 %start
-                :-  500
-                :~  ['content-type' 'text/html']
-                    ['content-length' '180']
-                ==
+              ::
+                %+  complete-http-start-event
+                  :-  500
+                  ['content-type' 'text/html']~
                 [~ (internal-server-error:http-server-gate %.n '/' ~)]
-                complete=%.y
     ==  ==  ==
   ::
   ;:  weld
@@ -736,14 +734,13 @@
          ==
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %give  %response
-                :*  %start
-                    :-  200
-                    :~  ['content-type' 'text/plain']
-                        ['content-length' '13']
-                    ==
-                    `[13 'one two three']
-                    %.y
-    ==  ==  ==  ==
+                %start
+              ::
+                %+  complete-http-start-event
+                  :-  200
+                  ['content-type' 'text/plain']~
+                `[13 'one two three']
+    ==  ==  ==
   ::
   ;:  weld
     results1
@@ -870,11 +867,10 @@
                 %give
                 %response
                 %start
-                :-  403
-                :~  ['content-type' 'text/html']
-                    ['content-length' '182']
-                ==
               ::
+                %+  complete-http-start-event
+                  :-  403
+                  ['content-type' 'text/html']~
                 :-  ~
                 %-  error-page:http-server-gate  :*
                   403
@@ -882,8 +878,6 @@
                   '/~/channel/1234567890abcdef'
                   ~
                 ==
-              ::
-                complete=%.y
         ==  ==
     ==
   ::
@@ -2050,12 +2044,11 @@
                 %give
                 %response
                 %start
-                :-  200
-                :~  ['content-type' 'text/html']
-                    ['content-length' '1752']
-                ==
+              ::
+                %+  complete-http-start-event
+                  :-  200
+                  ['content-type' 'text/html']~
                 [~ (login-page:http-server-gate `'/~landscape/inner-path' ~nul)]
-                complete=%.y
         ==  ==
     ==
   ::  a response post redirects back to the application, setting cookie
@@ -2201,4 +2194,12 @@
   ::  This is the default code for a fakeship.
   ::
   [~ ~ %noun !>(.~lidlut-tabwed-savheb-loslux)]
+::  produce the body of a %start http-event with the correct content-length
+::
+++  complete-http-start-event
+  |=  [response-header:http data=(unit octs)]
+  =-  [[status-code -] data %.y]
+  ?~  data  headers
+  %+  weld  headers
+  ['content-length' (crip ((d-co:co 1) p.u.data))]~
 --
