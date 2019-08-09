@@ -1,4 +1,6 @@
-/+  *server, launch
+/-  launch
+/+  *server
+::
 /=  index
   /^  $-(marl manx)
   /:  /===/app/launch/index  /!noun/
@@ -22,6 +24,21 @@
 ::
 =,  launch
 ::
+|%
++$  state
+  $%  [%0 tiles=(set tile) data=tile-data path-to-tile=(map path @tas)]
+  ==
+::
++$  move  [bone card]
+::
++$  card
+  $%  [%http-response =http-event:http]
+      [%connect wire binding:eyre term]
+      [%peer wire dock path]
+      [%diff %json json]
+  ==
+--
+::
 |_  [bol=bowl:gall sta=state]
 ::
 ++  this  .
@@ -35,7 +52,7 @@
   [~ this(sta u.old)]
 ::
 ++  poke-launch-action
-  |=  act=action:launch
+  |=  act=action
   ^-  (quip move _this)
   =/  beforedata  (~(get by data.sta) name.act)
   =/  newdata
