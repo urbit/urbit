@@ -451,23 +451,20 @@ static c3_c* _141_pen_loot_ha[] = {
     0
   };
   static u3j_harm _141_pen__ut_nest_a[] = {{".2", u3wfu_nest}, {}};
+  static c3_c* _141_pen__ut_nest_ha[] = {0};
       static u3j_harm _141_pen__ut_nest_dext_a[] = {{".2", u3wfu_nest_dext}, {}};
+      static c3_c* _141_pen__ut_nest_dext_ha[] = {0};
     static u3j_core _141_pen__ut_nest_in_d[] =
       {
-        // TODO: compute hash
-        { "nest-dext", 3, _141_pen__ut_nest_dext_a, 0, 0 },
+        { "nest-dext", 3, _141_pen__ut_nest_dext_a, 0, _141_pen__ut_nest_dext_ha },
         {}
       };
+    static c3_c* _141_pen__ut_nest_in_ha[] = {0};
   static u3j_core _141_pen__ut_nest_d[] =
     {
-      // TODO: Compute hash for nest-in.
-      { "nest-in", 7, 0, _141_pen__ut_nest_in_d, 0 },
+      { "nest-in", 7, 0, _141_pen__ut_nest_in_d, _141_pen__ut_nest_in_ha },
       {}
     };
-  static c3_c* _141_pen__ut_nest_ha[] = {
-    "a55b695cdba00e7fa8f2c74a332880c877701555b2909b5b3028aea5839d62cd",
-    0
-  };
   static u3j_harm _141_pen__ut_peek_a[] = {{".2", u3wfu_peek}, {}};
   static c3_c* _141_pen__ut_peek_ha[] = {
     "904ff7359e89d1886f884c4409f104269cdb8dfb4683f116ff00bc98a4720df7",

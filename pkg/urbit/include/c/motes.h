@@ -298,6 +298,7 @@
 #   define c3__delc   c3_s4('d','e','l','c')
 #   define c3__delt   c3_s4('d','e','l','t')
 #   define c3__dept   c3_s4('d','e','p','t')
+#   define c3__dext   c3_s4('d','e','x','t')
 #   define c3__dgdp   c3_s4('d','g','d','p')
 #   define c3__dgkt   c3_s4('d','g','k','t')
 #   define c3__dgnp   c3_s4('d','g','n','p')

@@ -23,9 +23,7 @@
     {
       return u3m_bail(c3__fail);
     } else {
-      // XX Maybe it'd be nicer to use a different mote than c3__nest
-      // here. Meh.
-      c3_m    fun_m = 141 + c3__nest + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+      c3_m    fun_m = 141 + c3__dext + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
       u3_noun pro   = u3z_find_2(fun_m, sut, ref);
 
       if ( u3_none != pro ) {
