@@ -69,20 +69,7 @@
   =/  snapshot-type=vase       (slap new-item-vase [%limb %snapshot])
   =/  private-state-type=vase  (slap new-item-vase [%limb %private-state])
   ::
-  =/  first-event=event-log-item:common
-    ?~  top-state
-      [%init route type signature-type]
-    ::
-    :*  %toplevel-init
-        invited.u.top-state
-        community-name.u.top-state
-        original-host.u.top-state
-        type
-        signature-type
-    ==
-  ::
-  :*  [[0 first-event] ~]
-      1
+  :*  1
       :*  type
           top-state
           signature-type
@@ -337,9 +324,6 @@
           next-event-id.state
           (event-log-item:to-transport log-entry)
       ==
-    ::
-    =.  event-log.state
-      [[next-event-id.state log-entry] event-log.state]
     =.  next-event-id.state  +(next-event-id.state)
     ::
     =.  snapshot.state
