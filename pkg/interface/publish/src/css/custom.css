@@ -23,6 +23,12 @@ pre {
   background-color: #f9f9f9;
 }
 
+code {
+  padding: 8px;
+  background-color: #f9f9f9;
+  white-space: pre-wrap;
+}
+
 a {
   color: inherit;
   text-decoration: inherit;

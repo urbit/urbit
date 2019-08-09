@@ -15904,7 +15904,6 @@
         |*  tem=rule
         %-  star
         ;~  pose
-          whit
           ;~(pfix bas tem)
           ;~(less tem prn)
         ==
