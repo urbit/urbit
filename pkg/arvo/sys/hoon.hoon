@@ -10559,6 +10559,7 @@
             gil/(set {p/type q/type})                   ::  assume nest
         ==
     =<  dext
+    ~%  %nest-in  ..$  ~
     |%
     ++  deem
       |=  {mel/vair ram/vair}
@@ -10595,12 +10596,16 @@
       ==  ==  ==
     ::
     ++  dext
+      =<  $
+      ~%  %nest-dext  +  ~
+      |.
       ^-  ?
       =-  ?:  -  &
           ?.  tel  |
           ::  ~_  (dunk %need)
           ::  ~_  (dunk(sut ref) %have)
-          ~>(%mean.[%leaf "nest-fail"] !!)
+          ~_  [%leaf "nest-fail"]
+          !!
       ?:  =(sut ref)  &
       ?-  sut
         $void      sint
