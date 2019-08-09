@@ -334,15 +334,6 @@
       ::  fake keys are deterministically derived from the ship
       ::
       =/  cub  (pit:nu:crub:crypto 512 our)
-      ::  save our parent signature (only for moons)
-      ::
-      ::    XX move logic to zuse
-      ::
-      =.  sig.own.pki
-        ?.  ?=(%earl (clan:title our))
-          ~
-        =/  yig  (pit:nu:crub:crypto 512 (^sein:title our))
-        [~ (sign:as:yig (shaf %earl (sham our 1 pub:ex:cub)))]
       ::  our initial public key
       ::
       =.  pos.zim.pki
@@ -975,6 +966,18 @@
     ?~  pos  ~
     ``[%atom !>(rift.u.pos)]
   ::
+      %vein
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  &(?=(%& -.why) =(p.why our))
+      [~ ~]
+    =/  lyf  (slaw %ud i.tyl)
+    ?~  lyf  [~ ~]
+    ::
+    ?~  r=(~(get by jaw.own.pki.lex) u.lyf)
+      [~ ~]
+    ::
+    [~ ~ %noun !>(u.r)]
+  ::
       %deed
     ?.  ?=([@ @ ~] tyl)  [~ ~]
     ?.  &(?=(%& -.why) =(p.why our))
@@ -983,8 +986,13 @@
     =/  lyf  (slaw %ud i.t.tyl)
     ?~  who  [~ ~]
     ?~  lyf  [~ ~]
-    =/  rac  (clan:title u.who)
     ::
+    ?:  fak.own.pki.lex
+      =/  cub  (pit:nu:crub:crypto 512 u.who)
+      :^  ~  ~  %noun
+      !>  `deed:ames`[1 pub:ex:cub ~]
+    ::
+    =/  rac  (clan:title u.who)
     ?:  ?=(%pawn rac)
       ?.  =(u.who p.why)
         [~ ~]
@@ -996,19 +1004,6 @@
       :^  ~  ~  %noun
       !>  ^-  deed:ames
       [1 pub:ex:cub `sig]
-    ::
-    ?:  ?=(%earl rac)
-      ?.  =(u.who p.why)
-        [~ ~]
-      ?:  (gth u.lyf lyf.own.pki.lex)
-        ~
-      ?:  (lth u.lyf lyf.own.pki.lex)
-        [~ ~]
-      =/  sec  (~(got by jaw.own.pki.lex) u.lyf)
-      =/  cub  (nol:nu:crub:crypto sec)
-      :^  ~  ~  %noun
-      !>  ^-  deed:ames
-      [u.lyf pub:ex:cub sig.own.pki.lex]
     ::
     =/  pub  (~(get by pos.zim.pki.lex) u.who)
     ?~  pub
