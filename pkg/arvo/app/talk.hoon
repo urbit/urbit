@@ -842,7 +842,23 @@
         ::
           ;~((glue ace) (perk %read ~) cire dem:ag)
         ::
-          ;~((glue ace) (perk %join ~) ;~(plug sorz (punt ;~(pfix ace glyph))))
+          ;~  (glue ace)  (perk %join ~)
+            ;~  pose  sorz
+            ;~  pfix  mic
+            %+  sear
+              |=  num=$@(@ud {p/@u q/@ud})
+              ^-  (unit (map circle range))
+              =+  n=?@(num num q.num)
+              ?:  (gte n count)
+                ~
+              =+  speech=sep.+:(snag n grams)
+              ?+  speech  ~
+                {%inv %.y *}  (some (my [[cir.speech ~] ~]))
+              ==
+              pick
+            ==
+            ==
+          ==
         ::
           ;~((glue ace) (perk %leave ~) cirs)
         ::
