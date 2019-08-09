@@ -337,6 +337,7 @@
         c3_c*         dns_c;                //  domain XX multiple/fallback
         c3_w          imp_w[256];           //  imperial IPs
         time_t        imp_t[256];           //  imperial IP timestamps
+        c3_o          imp_o[256];           //  imperial print status
       } u3_ames;
 
     /* u3_save: checkpoint control.
@@ -562,14 +563,12 @@
         c3_w    kno_w;                      //  -K, kernel version
         c3_c*   key_c;                      //  -k, private key file
         c3_o    net;                        //  -L, local-only networking
-        c3_c*   sap_c;                      //  -m, eth snapshot url
         c3_o    pro;                        //  -P, profile
         c3_s    por_s;                      //  -p, ames port
         c3_o    qui;                        //  -q, quiet
         c3_o    rep;                        //  -R, report build info
         c3_o    has;                        //  -S, Skip battery hashes
         c3_o    git;                        //  -s, pill url from arvo git hash
-        c3_o    etn;                        //  -t, trust snapshot for pre-boot
         c3_c*   url_c;                      //  -u, pill url
         c3_o    vno;                        //  -V, replay without reboots
         c3_o    veb;                        //  -v, verbose (inverse of -q)

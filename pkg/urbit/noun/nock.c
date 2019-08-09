@@ -1345,6 +1345,22 @@ static inline void
 _n_push(c3_ys mov, c3_ys off, u3_noun a)
 {
   u3R->cap_p += mov;
+
+  //  XX stack sanity-check disabled for performance
+  //
+#if 0
+  if ( 0 == off ) {
+    if( !(u3R->cap_p > u3R->hat_p) ) {
+      u3m_bail(c3__meme);
+    }
+  }
+  else {
+    if( !(u3R->cap_p < u3R->hat_p) ) {
+      u3m_bail(c3__meme);
+    }
+  }
+#endif
+
   u3_noun* p = u3to(u3_noun, u3R->cap_p + off);
   *p = a;
 }

@@ -72,9 +72,9 @@
 ++  life  @ud                                           ::  ship key revision
 ++  rift  @ud                                           ::  ship continuity
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
-::  
 ::
-::    TODO: Rename to +mime once the current +mime and +mite are gone. The 
+::
+::    TODO: Rename to +mime once the current +mime and +mite are gone. The
 ::
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
 ++  sock  {p/ship q/ship}                               ::  outgoing [our his]
@@ -203,9 +203,6 @@
       ::  boot completed (XX legacy)
       ::
       [%init p=ship]
-      ::  peer discontinuity
-      ::
-      [%sunk p=ship q=rift]
       ::  kernel upgraded
       ::
       [%vega ~]
@@ -217,7 +214,7 @@
       [%west p=ship q=path r=*]
   ==
 ::                                                      ::::
-::::                      ++http                        ::  
+::::                      ++http                        ::
   ::                                                    ::::
 ::  http: shared representations of http concepts
 ::
@@ -393,7 +390,6 @@
           $>(%init vane-task)                           ::  report install
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
-          $>(%sunk vane-task)                           ::  report death
           $>(%vega vane-task)                           ::  report upgrade
           {$wake ~}                                     ::  timer activate
           $>(%wegh vane-task)                           ::  report memory
@@ -628,7 +624,6 @@
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm des/desk pax/path rit/rite}            ::  change permissions
-          $>(%sunk vane-task)                           ::  report death
           $>(%vega vane-task)                           ::  report upgrade
           {$warp wer/ship rif/riff}                     ::  internal file req
           {$werp who/ship wer/ship rif/riff}            ::  external file req
@@ -795,7 +790,6 @@
           $>(%init vane-task)                           ::  after gall ready
           {$lyra p/@t q/@t}                             ::  upgrade kernel
           {$noop ~}                                     ::  no operation
-          $>(%sunk vane-task)                           ::  report death
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
@@ -1182,9 +1176,6 @@
           ::  %kill: stop a build; send on same duct as original %build request
           ::
           [%kill ~]
-          ::  %sunk: receive a report that a foreign ship has lost continuity
-          ::
-          $>(%sunk vane-task)
           ::  %vega: report kernel upgrade
           ::
           $>(%vega vane-task)
@@ -1879,7 +1870,6 @@
       $%  {$conf p/dock q/culm}                         ::  configure app
           $>(%init vane-task)                           ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
-          $>(%sunk vane-task)                           ::  report death
           $>(%vega vane-task)                           ::  report upgrade
           $>(%west vane-task)                           ::  network request
           $>(%wegh vane-task)                           ::  report memory
@@ -2061,257 +2051,48 @@
     ::                                                  ::::
   ++  able  ^?
     =,  pki
-    =,  rights
     |%
-    ::  %jael has two general kinds of task: changes
-    ::  and change subscriptions.
-    ::
-    ::  change tasks are designed to match high-level
-    ::  operations - for instance, we have %burn, %mint,
-    ::  and %move, not just a single delta operation.
-    ::  more of these operations will probably be added,
-    ::  and invariants enforced at transaction end.
-    ::
-    ::  subscriptions are also user-focused - for instance,
-    ::  %vein sends all the information needed to maintain
-    ::  the secure channel, both rights and certificates.
-    ::  the security-critical tasks (%veil, %vein, %vine)
-    ::  should probably be bound to a whitelisted duct set.
-    ::  (all secrets are redacted from %vest gifts.)
-    ::
-    ::  %jael only talks to %ames and %behn.  we send messages
-    ::  through %ames and use %behn timers.
-    ::
-    ++  logs                                            ::  on-chain changes
-      %+  map  event-id:ethereum-types                  ::  per event log
-      diff-azimuth:azimuth-types                        ::  the change
-    ++  action                                          ::  balance change
-      %+  pair  ship                                    ::  partner
-      %+  each  bump                                    ::  &/liability change
-      bump                                              ::  |/asset change
+    +$  public-keys-result
+      $%  [%full points=(map ship point)]
+          [%diff who=ship =diff:point]
+      ==
     ::                                                  ::
-    ++  balance                                         ::  balance sheet
-      %+  pair                                          ::
-        (map ship safe)                                 ::  liabilities
-      (map ship safe)                                   ::  assets
-    ::                                                  ::
-    ++  vent-result                                     ::  %vent result
-      $%  [%snap snap=snapshot:jael]                    ::  restore snapshot
-          [%chain can=chain]                            ::  get new events
-      ==                                                ::
-    ::                                                  ::
-    ++  chain                                           ::  batch of changes
-      %+  each  logs                                    ::  & all events
-      logs                                              ::  | new events
-    ++  change                                          ::  urbit change
-      $%  [%ethe can=chain]                             ::  on-chain change
-          [%meet who=ship =life =pass]                  ::  meet in new era
-          $:  %rite                                     ::  rights change
-              rex/ship                                  ::  issuer
-              pal/ship                                  ::  issued to
-              del/bump                                  ::  change
-      ==  ==                                            ::
     ++  gift                                            ::  out result <-$
       $%  [%init p=ship]                                ::  report install unix
           [%mass p=mass]                                ::  memory usage report
           [%mack p=(unit tang)]                         ::  message n/ack
-          [%pubs public]                                ::  public keys
           [%turf turf=(list turf)]                      ::  domains
-          [%vest p=tally]                               ::  balance update
-          [%vein =life vein=(map life ring)]            ::  private keys
-          [%vine p=(list change)]                       ::  all raw changes
-          [%vent p=vent-result]                         ::  ethereum changes
+          [%private-keys =life vein=(map life ring)]    ::  private keys
+          [%public-keys =public-keys-result]            ::  ethereum changes
       ==                                                ::
-    ::                                                  ::
-    ++  public                                          ::  public key state
-      $:  life=life                                     ::  current key number
-          pubs=(map life pass)                          ::  pubkeys by number
-      ==                                                ::
-    ++  remote                                          ::  remote notification
-      %+  each  safe                                    ::  &/addition
-      safe                                              ::  |/replacement
     ::  +seed: private boot parameters
     ::
     +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
     ::
-    ++  tally                                           ::  balance update
-      %+  each  balance                                 ::  complete
-      action                                            ::  change
-    ::
     +=  task                                            ::  in request ->$
       $~  [%vega ~]                                     ::
-      $%  [%burn p=ship q=safe]                         ::  destroy rights
-          [%hail p=ship q=remote]                       ::  remote update
-          $:  %dawn                                     ::  boot from keys
+      $%  $:  %dawn                                     ::  boot from keys
               =seed:able:jael                           ::    identity params
-              spon=ship                                 ::    sponsor
-              czar=(map ship [=life =pass])             ::    galaxy table
+              spon=[=ship point:azimuth-types]          ::    sponsor
+              czar=(map ship [=rift =life =pass])       ::    galaxy table
               turf=(list turf)                          ::    domains
               bloq=@ud                                  ::    block number
               node=(unit purl:eyre)                     ::    gateway url
-              snap=(unit snapshot)                      ::    head start
           ==                                            ::
           [%fake =ship]                                 ::  fake boot
-          [%look src=(each ship purl:eyre)]             ::  set ethereum source
-          [%mint p=ship q=safe]                         ::  create rights
-          [%move p=ship q=ship r=safe]                  ::  transfer from=to
+          [%listen whos=(set ship) =source]             ::  set ethereum source
           ::TODO  %next for generating/putting new private key
-          [%nuke ~]                                     ::  cancel tracker from
-          [%pubs =ship]                                 ::  view public keys
           [%meet =ship =life =pass]                     ::  met after breach
-          [%snap snap=snapshot kick=?]                  ::  load snapshot
+          [%moon =ship =udiff:point]                    ::  register moon keys
+          [%nuke whos=(set ship)]                       ::  cancel tracker from
+          [%private-keys ~]                             ::  sub to privates
+          [%public-keys ships=(set ship)]               ::  sub to publics
+          [%rekey =life =ring]                          ::  update private keys
           [%turf ~]                                     ::  view domains
           $>(%vega vane-task)                           ::  report upgrade
-          [%vein ~]                                     ::  view signing keys
-          [%vent ~]                                     ::  view ethereum events
-          [%vest ~]                                     ::  view public balance
-          [%vine ~]                                     ::  view secret history
           $>(%wegh vane-task)                           ::  memory usage request
           $>(%west vane-task)                           ::  remote request
-          [%wind p=@ud]                                 ::  rewind before block
       ==                                                ::
-    --                                                  ::
-  ::                                                    ::
-  ::::                                                  ::
-    ::                                                  ::
-  ++  node-src                                          ::  ethereum node comms
-    $:  node=purl:eyre                                  ::  node url
-        filter-id=@ud                                   ::  current filter
-        poll-timer=@da                                  ::  next filter poll
-    ==                                                  ::
-  ++  snapshot                                          ::  rewind point
-    =,  azimuth-types                                   ::
-    $:  kyz=(map ship public:able)                      ::  public key state
-        $=  eth                                         ::
-          $:  dns=dnses                                 ::  on-chain dns state
-              pos=(map ship point)                      ::  on-chain ship state
-        ==                                              ::
-        eth-bookmark
-    ==
-  ::  +eth-bookmark: cursor into the ethereum chain
-  ::
-  ++  eth-bookmark
-    $:  heard=(set event-id:ethereum-types)
-        latest-block=@ud
-    ==
-  ::  +state-eth-node: state of a connection to an ethereum node
-  ::
-  ++  state-eth-node                                    ::  node config + meta
-    $:  source=(each ship node-src)                     ::  learning from
-        foreign-block=@ud                               ::  node's latest block
-        eth-bookmark
-    ==                                                  ::
-  ::                                                    ::
-  ::::                  ++pki:jael                      ::  (1h2) certificates
-    ::                                                  ::::
-  ++  pki  ^?
-    |%
-    ::TODO  update to fit azimuth-style keys
-    ::  the urbit meta-certificate (++will) is a sequence
-    ::  of certificates (++cert).  each cert in a will
-    ::  revokes and replaces the previous cert.  the
-    ::  version number of a ship is a ++life.
-    ::
-    ::  the deed contains an ++arms, a definition
-    ::  of cosmetic identity; a semi-trusted parent,
-    ::  which signs the initial certificate and provides
-    ::  routing services; and a dirty bit.  if the dirty
-    ::  bit is set, the new life of this ship may have
-    ::  lost information that the old life had.
-    ::
-    ++  hand  @uvH                                      ::  128-bit hash
-    ++  mind  {who/ship lyf/life}                       ::  key identifier
-    ++  name  (pair @ta @t)                             ::  ascii / unicode
-    ++  oath  @                                         ::  signature
-    --  ::  pki
-  ::                                                    ::
-  ::::                  ++rights:jael                   ::  (1h3) claims
-    ::                                                  ::::
-  ++  rights  ^?
-    =,  pki
-    |%
-    ::  %jael tracks promises (++rite) from ship to ship.
-    ::  a rite may be any right, badge, asset, secret, etc.
-    ::  un-shared secret or private asset is stored as a
-    ::  rite from self to self.
-    ::
-    ::  each rite is really a class of rights, and often
-    ::  has its own internal set or map structure.
-    ::
-    ::  present kinds of rite:
-    ::
-    ::    %apple: application secret for a web api.
-    ::    %block: the promisee is banned.
-    ::    %email: email tied to promissee's ship.
-    ::    %final: ship/ticket pair, ready to launch.
-    ::    %fungi: fungible, countable asset.
-    ::    %guest: permission to adopt foreign child.
-    ::    %hotel: block of unissued children.
-    ::    %jewel: urbit private keys.
-    ::    %login: user's login passcode.
-    ::    %pword: password for a website/api.
-    ::    %token: user access token for a web api.
-    ::    %urban: symmetric key for urbit networking.
-    ::
-    ::  %fungi keys can be anything, but don't reuse
-    ::  currency codes.  codes for urbit invitations:
-    ::  %ugl == galaxy, %usr == star, %upl == planet
-    ::
-    ::  you can think of [our her rite] as an rdf triple.
-    ::
-    ++  bill  (pair @da @)                              ::  expiring value
-    ++  bump                                            ::  rights change
-      $:  mor/safe                                      ::  add rights
-          les/safe                                      ::  lose rights
-      ==                                                ::
-    ++  dorm  (pair ship bloq)                          ::  issuing group
-    ++  pile  (tree (pair @ @))                         ::  efficient ship set
-    ++  rite                                            ::  urbit commitment
-      $%  {$apple p/(map site @)}                       ::  web api key
-          {$block ~}                                    ::  banned
-          {$email p/(set @t)}                           ::  email addresses
-          {$final p/(map ship @pG)}                     ::  ticketed ships
-          {$fungi p/(map term @ud)}                     ::  fungibles
-          {$guest ~}                                    ::  refugee visa
-          {$hotel p/(map dorm pile)}                    ::  reserved block
-          {$jewel p/(map life ring)}                    ::  private keyring
-          {$login p/(set @pG)}                          ::  login secret
-          {$pword p/(map site (map @t @t))}             ::  web passwd by user
-          {$token p/(map site (map @t @t))}             ::  app tokens by user
-          {$urban p/(map hand bill)}                    ::  urbit symmetric keys
-      ==                                                ::
-    ++  site  (list @ta)                                ::  [%com %yahoo %www ~]
-    ++  safe  (tree rite)                               ::  rights set
-    --  ::  rights
-  --  ::  jael
-::                                                      ::::
-::::                    ++kale                          ::  (1h) security
-  ::                                                    ::::
-++  kale  ^?
-  |%
-  ::                                                    ::
-  ::::                  ++able:kale                     ::  (1h1) arvo moves
-    ::                                                  ::::
-  ++  able  ^?
-    =,  pki
-    |%
-    ::  %kale has two general kinds of task: changes
-    ::  and change subscriptions.
-    ::
-    ::  change tasks are designed to match high-level
-    ::  operations - for instance, we have %burn, %mint,
-    ::  and %move, not just a single delta operation.
-    ::  more of these operations will probably be added,
-    ::  and invariants enforced at transaction end.
-    ::
-    ::  subscriptions are also user-focused - for instance,
-    ::  %vein sends all the information needed to maintain
-    ::  the secure channel, both rights and certificates.
-    ::  the security-critical tasks (%veil, %vein, %vine)
-    ::  should probably be bound to a whitelisted duct set.
-    ::  (all secrets are redacted from %vest gifts.)
-    ::
-    ::  %kale only talks to %ames and itself.
     ::
     ++  block
       =<  block
@@ -2378,13 +2159,17 @@
       ::
       ++  udiff-to-diff
         |=  [=a=udiff =a=point]
-        ^-  diff
+        ^-  (unit diff)
         ?-    +<.a-udiff
             %disavow  ~|(%udiff-to-diff-disavow !!)
-            %rift     [%rift rift.a-point rift.a-udiff]
-            %spon     [%spon sponsor.a-point sponsor.a-udiff]
+            %spon     `[%spon sponsor.a-point sponsor.a-udiff]
+            %rift
+          ?:  =(rift.a-udiff +(rift.a-point))
+            `[%rift rift.a-point rift.a-udiff]
+          ~
+        ::
             %keys
-          :+  %keys
+          :^  ~  %keys
             [life.a-point (~(gut by keys.a-point) life.a-point *[@ud pass])]
           [life crypto-suite pass]:a-udiff
         ==
@@ -2431,71 +2216,17 @@
           a-point(sponsor to.diff)
         ==
       --
-    ::
-    +$  public-keys-result
-      $%  [%full points=(map ship point)]
-          [%diff who=ship =diff:point]
-      ==
-    ::                                                  ::
-    ++  gift                                            ::  out result <-$
-      $%  [%init p=ship]                                ::  report install unix
-          [%mass p=mass]                                ::  memory usage report
-          [%mack p=(unit tang)]                         ::  message n/ack
-          [%source whos=(set ship) src=source]          ::
-          [%turf turf=(list turf)]                      ::  domains
-          [%private-keys =life vein=(map life ring)]    ::  private keys
-          [%public-keys =public-keys-result]            ::  ethereum changes
-      ==                                                ::
-    ::  +seed: private boot parameters
-    ::
-    +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
-    ::
-    +=  task                                            ::  in request ->$
-      $~  [%vega ~]                                     ::
-      $%  $:  %dawn                                     ::  boot from keys
-              =seed:able:kale                           ::    identity params
-              spon=ship                                 ::    sponsor
-              czar=(map ship [=life =pass])             ::    galaxy table
-              turf=(list turf)                          ::    domains
-              bloq=@ud                                  ::    block number
-              node=(unit purl:eyre)                     ::    gateway url
-              snap=(unit snapshot)                      ::    head start
-          ==                                            ::
-          [%fake =ship]                                 ::  fake boot
-          [%listen whos=(set ship) =source]             ::  set ethereum source
-          ::TODO  %next for generating/putting new private key
-          [%nuke whos=(set ship)]                       ::  cancel tracker from
-          [%private-keys ~]                             ::  sub to privates
-          [%public-keys ships=(set ship)]               ::  sub to publics
-          [%sources ~]
-          [%meet =ship =life =pass]                     ::  met after breach
-          [%snap snap=snapshot kick=?]                  ::  load snapshot
-          [%turf ~]                                     ::  view domains
-          [%new-event =ship =udiff:point]               ::  update from app
-          $>(%vega vane-task)                           ::  report upgrade
-          $>(%wegh vane-task)                           ::  memory usage request
-          $>(%west vane-task)                           ::  remote request
-          [%wind p=@ud]                                 ::  rewind before block
-      ==                                                ::
     --                                                  ::
   ::                                                    ::
   ::::                                                  ::
     ::                                                  ::
-  +$  node-src                                          ::  ethereum node comms
-    $:  node=purl:eyre                                  ::  node url
-        filter-id=@ud                                   ::  current filter
-        poll-timer=@da                                  ::  next filter poll
-    ==                                                  ::
-  ::
-  +$  source  (each ship node-src)
+  +$  source  (each ship term)
   +$  source-id  @udsourceid
-  +$  snapshot  ~
   ::
   ::  +state-eth-node: state of a connection to an ethereum node
   ::
   +$  state-eth-node                                    ::  node config + meta
-    $:  yen=(set duct)
-        top-source-id=source-id
+    $:  top-source-id=source-id
         sources=(map source-id source)
         sources-reverse=(map source source-id)
         default-source=source-id
@@ -2503,7 +2234,7 @@
         ship-sources-reverse=(jug source-id ship)
     ==                                                  ::
   ::                                                    ::
-  ::::                  ++pki:kale                      ::  (1h2) certificates
+  ::::                  ++pki:jael                      ::  (1h2) certificates
     ::                                                  ::::
   ++  pki  ^?
     |%
@@ -2525,7 +2256,7 @@
     ++  name  (pair @ta @t)                             ::  ascii / unicode
     ++  oath  @                                         ::  signature
     --  ::  pki
-  --  ::  kale
+  --  ::  jael
 ::                                                      ::::
 ::::                    ++xmas                            ::  (1i) new network
   ::                                                    ::::
@@ -7315,6 +7046,10 @@
         =.  size.queue   +(size.queue)
         ::
         [~ queue]
+      ::  max is zero, the oldest item to return is the one which just went in.
+      ::
+      ?:  =(~ queue.queue)
+        [`item queue]
       ::  we're at max capacity, so pop before pushing; size is unchanged
       ::
       =^  oldest  queue.queue  ~(get to queue.queue)
@@ -7728,7 +7463,6 @@
       {$g gift:able:gall}
       [%i gift:able:iris]
       {$j gift:able:jael}
-      {$k gift:able:kale}
   ==
 ::
 +$  unix-task                                           ::  input from unix
@@ -7862,21 +7596,20 @@
       ::  #  diffs
       ::
       ++  update
-        $%  [%full ships=(map ship point) dns=dnses heard=events]  ::TODO  keys
+        $%  [%full ships=(map ship point) dns=dnses heard=events]
             [%difs dis=(list (pair event-id diff-azimuth))]
         ==
       ::
       ::  #  constants
       ::
       ::  contract addresses
-      ::TODO  values below are for ropsten, update for mainnet
-      ++  contracts
+      ++  contracts  mainnet-contracts
+      ++  mainnet-contracts
         |%
         ::  azimuth: data contract
         ::
-        ++  azimuth  0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb  ::  mainnet
-        ::  ++  azimuth  0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579  ::  ropsten
-        ::  ++  azimuth  0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381  ::  local bridge
+        ++  azimuth
+          0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb
         ::
         ++  linear-star-release
           0x86cd.9cd0.992f.0423.1751.e376.1de4.5cec.ea5d.1801
@@ -7893,6 +7626,17 @@
         ++  public  7.033.765
         --
       ::
+      ::  Testnet contract addresses
+      ::
+      ++  ropsten-contracts
+        |%
+        ++  azimuth
+          0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579
+        ::
+        ++  launch  4.601.630
+        --
+      ::
+        ::  ++  azimuth  0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381  ::  local bridge
       ::  hashes of ship event signatures
       ++  azimuth-events
         |%
@@ -9071,7 +8815,7 @@
         `(cat 3 'gal-' (scot %ud gal))
       :+  %eth-call
         =-  [from=~ to=tract gas=~ price=~ value=~ data=-]
-        (encode-call 'getKeys(uint32)' [%uint gal]~)
+        (encode-call 'points(uint32)' [%uint gal]~)
       [%number boq]
     ::  +point:give:dawn: Eth RPC for ship's contract state
     ::
@@ -9132,7 +8876,7 @@
     ::
     ++  czar
       |=  rep=octs
-      ^-  (unit (map ship [=life =pass]))
+      ^-  (unit (map ship [=rift =life =pass]))
       =/  jon=(unit json)  (de-json:html q.rep)
       ?~  jon
         ~&([%czar-take-dawn %invalid-json] ~)
@@ -9140,27 +8884,31 @@
         ((ar (ot id+so result+so ~)) u.jon)
       ?~  res
         ~&([%czar-take-dawn %invalid-response rep] ~)
-      =/  dat=(unit (list [who=ship enc=octs aut=octs sut=@ud rev=@ud]))
+      =/  dat=(unit (list [who=@p point:azimuth-types]))
         =-  ?:(?=(%| -.out) ~ (some p.out))
         ^=  out  %-  mule  |.
         %+  turn  u.res
         |=  [id=@t result=@t]
-        ^-  [who=ship enc=octs aut=octs sut=@ud rev=@ud]
-        :-  `@p`(slav %ud (rsh 3 4 id))
+        ^-  [who=ship point:azimuth-types]
+        =/  who  `@p`(slav %ud (rsh 3 4 id))
+        :-  who
+        %+  point-from-eth
+          who
+        :_  *deed:eth-noun
         %+  decode-results
           result
-        ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
+        point:eth-type
       ?~  dat
         ~&([%bloq-take-dawn %invalid-galaxy-table] ~)
       :-  ~
       %+  roll  u.dat
-      |=  $:  [who=ship enc=octs aut=octs sut=@ud rev=@ud]
-              kyz=(map ship [=life =pass])
+      |=  $:  [who=ship =point:azimuth-types]
+              kyz=(map ship [=rift =life =pass])
           ==
       ^+  kyz
-      =/  pub=pass
-        (pass-from-eth enc aut sut)
-      (~(put by kyz) who [rev pub])
+      ?~  net.point
+        kyz
+      (~(put by kyz) who [continuity-number life pass]:u.net.point)
     ::  +point:take:dawn: parse ship's contract state
     ::
     ++  point
@@ -9225,56 +8973,6 @@
         (~(put by tuf) q.i.dom p.i.dom)
       $(dom t.dom)
     --
-  ::  |snap:dawn restore from snapshot
-  ::
-  ++  snap
-    !:
-    |%
-    ::  +bloq:snap:dawn: extract block number
-    ::
-    ++  bloq
-      |=  snap=snapshot:jael
-      ^-  (unit @ud)
-      =-  ?:(?=(%| -.out) ~ (some p.out))
-      ^=  out  %-  mule  |.
-      latest-block.snap
-    ::  +czar:snap:dawn: extract galaxy table
-    ::
-    ++  czar
-      |=  snap=snapshot:jael
-      ^-  (unit (map ship [=life =pass]))
-      =-  ?:(?=(%| -.out) ~ (some p.out))
-      ^=  out  %-  mule  |.
-      %-  ~(gas by *(map ship [=life =pass]))
-      %+  turn  (gulf 0 255)
-      |=  gal=@
-      ^-  [ship [life pass]]
-      :-  gal
-      ~|  czar-gal=gal
-      [life pass]:(need net:(~(got by pos.eth.snap) gal))
-    ::  +point:snap:dawn: extract ship's contract state
-    ::
-    ++  point
-      |=  [who=ship snap=snapshot:jael]
-      ^-  (unit point:azimuth)
-      (~(get by pos.eth.snap) who)
-    ::  +turf:snap:dawn: extract network domains
-    ::
-    ++  turf
-      |=  snap=snapshot:jael
-      ^-  (unit (list ^turf))
-      =-  ?:(?=(%| -.out) ~ (some p.out))
-      ^=  out  %-  mule  |.
-      %+  murn
-        ^-  (list host:eyre)
-        %+  murn
-          ^-  (list @t)
-          ~[pri sec ter]:dns.eth.snap
-        |=  dom=@t
-        ^-  (unit host:eyre)
-        (rush dom thos:de-purl:html)
-      |=(a=host:eyre ?:(?=(%| -.a) ~ (some p.a)))
-    --
   ::  +veri:dawn: validate keys, life, discontinuity, &c
   ::
   ++  veri
@@ -9299,28 +8997,10 @@
       [%& (^sein:title who.seed)]
     ::
         %earl
-      ::  a moon must be signed by the parent
-      ::
-      ?~  sig.seed
-        [%| %missing-sig]
       ::  the parent must be launched
       ::
       ?~  net.point
         [%| %parent-not-keyed]
-      ::  life must match parent's
-      ::
-      ?.  =(lyf.seed life.u.net.point)
-        [%| %life-mismatch]
-      =/  loy  (com:nu:crub:crypto pass.u.net.point)
-      =/  hax  (shaf %earl (sham who.seed lyf.seed pub:ex:cub))
-      ::  the signature must be valid
-      ::
-      ?.  =((some hax) (sure:as:loy u.sig.seed))
-        [%| %invalid-sig]
-      ::  XX revisit for rekey
-      ::
-      ?^  live
-        [%| %already-booted]
       [%& (^sein:title who.seed)]
     ::
         *

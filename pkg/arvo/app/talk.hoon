@@ -66,9 +66,9 @@
       ==                                                ::
     ++  work                                            ::  interface action
       $%  ::  circle management                         ::
-          {$join (map circle range)}                    ::  subscribe to
+          {$join (map circle range) (unit char)}        ::  subscribe to
           {$leave audience}                             ::  unsubscribe from
-          {$create security name cord}                  ::  create circle
+          {$create security name cord (unit char)}      ::  create circle
           {$delete name (unit cord)}                    ::  delete circle
           {$depict name cord}                           ::  change description
           {$filter name ? ?}                            ::  change message rules
@@ -716,8 +716,12 @@
       ++  circ                                          ::  circle
         ;~  pose
           (cold incir col)
-          ;~(pfix cen (stag self urs:ab))
           ;~(pfix net (stag (^sein:title self) urs:ab))
+          ;~  pfix  cen
+            %+  stag  self
+            %+  sear  |=(circ=name ?:(=('' circ) ~ (some circ)))
+            urs:ab
+          ==
         ::
           %+  cook
             |=  {a/@p b/(unit term)}
@@ -838,14 +842,14 @@
         ::
           ;~((glue ace) (perk %read ~) cire dem:ag)
         ::
-          ;~((glue ace) (perk %join ~) sorz)
+          ;~((glue ace) (perk %join ~) ;~(plug sorz (punt ;~(pfix ace glyph))))
         ::
           ;~((glue ace) (perk %leave ~) cirs)
         ::
           ;~  (glue ace)  (perk %create ~)
             pore
             cire
-            qut
+            ;~(plug qut (punt ;~(pfix ace glyph)))
           ==
         ::
           ;~  plug  (perk %delete ~)
@@ -1186,9 +1190,11 @@
         ::  change local mailbox config to include
         ::  subscriptions to {pas}.
         ::
-        |=  pos/(map circle range)
+        |=  {pos/(map circle range) gyf/(unit char)}
         ^+  ..sh-work
         =+  pas=~(key by pos)
+        =?  ..sh-work  ?=(^ gyf)
+          (bind u.gyf `pas)
         =.  ..sh-work
           sh-prod(active.she pas)
         ::  default to a day of backlog
@@ -1226,11 +1232,11 @@
         ::
         ::  creates circle {nom} with specified config.
         ::
-        |=  {sec/security nom/name txt/cord}
+        |=  {sec/security nom/name txt/cord gyf/(unit char)}
         ^+  ..sh-work
         =.  ..sh-work
           (sh-act %create nom txt sec)
-        (join [[[self nom] ~] ~ ~])
+        (join [[[self nom] ~] ~ ~] gyf)
       ::
       ++  delete
         ::    %delete
@@ -1922,7 +1928,7 @@
         $(dif [%filter fit.cof.dif])
       ?:  ?=($remove -.dif)
         (sh-note (weld "rip " (~(cr-show cr cir) ~)))
-      ?:  ?=($usage -.dif)  +>
+      ?:  ?=(?($usage $read) -.dif)  +>
       %-  sh-note
       %+  weld
         (weld ~(cr-phat cr cir) ": ")
@@ -1933,9 +1939,6 @@
       ::
           $caption
         "cap: {(trip cap.dif)}"
-      ::
-          $read
-        ""
       ::
           $filter
         ;:  weld
@@ -2314,7 +2317,15 @@
       url+(crip (apix:en-purl:html url.sep))
     ::
         $exp
-      mor+~[txt+"# {(trip exp.sep)}" tan+res.sep]
+      =/  texp=tape  ['>' ' ' (trip exp.sep)]
+      :-  %mor
+      |-  ^-  (list sole-effect:sole-sur)
+      ?:  =("" texp)  [tan+res.sep ~]
+      =/  newl  (find "\0a" texp)
+      ?~  newl  [txt+texp $(texp "")]
+      =+  (trim u.newl texp)
+      :-  txt+(scag u.newl texp)
+      $(texp [' ' ' ' (slag +(u.newl) texp)])
     ::
         $ire
       =+  num=(~(get by known) top.sep)
@@ -2399,7 +2410,11 @@
       ==
     ::
         $exp
-      :-  (tr-chow wyd '#' ' ' (trip exp.sep))
+      =+  texp=(trip exp.sep)
+      =+  newline=(find "\0a" texp)
+      =?  texp  ?=(^ newline)
+        (weld (scag u.newline texp) "  ...")
+      :-  (tr-chow wyd '#' ' ' texp)
       ?~  res.sep  ~
       =-  [' ' (tr-chow (dec wyd) ' ' -)]~
       ~(ram re (snag 0 `(list tank)`res.sep))

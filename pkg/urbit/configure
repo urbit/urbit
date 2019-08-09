@@ -2,11 +2,15 @@
 
 set -e
 
-URBIT_VERSION=0.8.0
+URBIT_VERSION=0.8.1
 
 deps="                                                                    \
   curl gmp sigsegv argon2 ed25519 ent h2o scrypt sni uv murmur3 secp256k1 \
   softfloat3 ncurses ssl crypto z lmdb ge-additions                       \
+"
+
+headers="             \
+  ivory.h ca-bundle.h \
 "
 
 echo '#pragma once' >include/config.h
@@ -75,6 +79,10 @@ esac
 for dep in ${osdeps-} $deps
 do LDFLAGS="${LDFLAGS-} -l$dep"
    ${PKG_CONFIG-pkg-config} --cflags --libs $dep 2>/dev/null || true
+done
+
+for header in $headers
+do LDFLAGS="${LDFLAGS-} -I$header"
 done
 
 cat >config.mk <<EOF

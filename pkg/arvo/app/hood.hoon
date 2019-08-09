@@ -161,6 +161,7 @@
 ++  poke-helm-send-hi         (wrap poke-send-hi):from-helm
 ++  poke-helm-verb            (wrap poke-verb):from-helm
 ++  poke-helm-rekey           (wrap poke-rekey):from-helm
+++  poke-helm-moon            (wrap poke-moon):from-helm
 ++  poke-helm-nuke            (wrap poke-nuke):from-helm
 ++  poke-helm-automass        (wrap poke-automass):from-helm
 ++  poke-helm-cancel-automass  (wrap poke-cancel-automass):from-helm

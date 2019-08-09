@@ -191,13 +191,29 @@ export class ChatScreen extends Component {
         .slice(messages.length - (50 * state.numPages), messages.length);
     }
 
-    let chatMessages = messages.reverse().map((msg) => {
+    let reversedMessages = messages.reverse();
+    let chatMessages = reversedMessages.map((msg, i) => {
+      // Render sigil if previous message is not by the same sender
+      let gamAut = ['gam', 'aut'];      
+      let renderSigil =
+        _.get(reversedMessages[i + 1], gamAut) !== _.get(msg, gamAut);
+
+      // More padding top if previous message is not by the same sender
+      let paddingTop = renderSigil;
+      // More padding bot if next message is not by the same sender
+      let paddingBot =
+        _.get(reversedMessages[i - 1], gamAut) !== _.get(msg, gamAut);
+
       return (
         <Message
           key={msg.gam.uid}
-          msg={msg.gam} />
+          msg={msg.gam}
+          renderSigil={renderSigil}
+          paddingTop={paddingTop}
+          paddingBot={paddingBot} />
       );
     });
+
     let peers = props.peers[state.station] || [window.ship];
 
     return (
@@ -210,8 +226,8 @@ export class ChatScreen extends Component {
             numPeers={peers.length} />
         </div>
         <div
-          className="overflow-y-scroll pt3 flex flex-column-reverse"
-          style={{ height: 'calc(100% - 157px)' }}
+          className="overflow-y-scroll pt3 pb2 flex flex-column-reverse"
+          style={{ height: 'calc(100% - 157px)', resize: 'vertical' }}
           onScroll={this.onScroll}>
           <div ref={ el => { this.scrollElement = el; }}></div>
           {chatMessages}

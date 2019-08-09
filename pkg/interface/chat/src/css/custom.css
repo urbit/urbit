@@ -4,6 +4,7 @@ p, h1, h2, h3, h4, h5, h6, a, input, textarea, button {
   -webkit-margin-before: unset;
   -webkit-margin-after: unset;
   font-family: Inter, sans-serif;
+  padding: 0;
 }
 
 textarea, select, input, button {
@@ -87,6 +88,14 @@ h2 {
   font-weight: bold;
 }
 
+.fs-italic {
+  font-style: italic;
+}
+
+.td-underline {
+  text-decoration: underline;
+}
+
 .bg-v-light-gray {
   background-color: #f9f9f9;
 }
@@ -115,6 +124,24 @@ h2 {
   -webkit-box-orient: vertical;
 }
 
+.clamp-message {
+  max-width: calc(100% - 36px - 1.5rem);
+}
+
+.clamp-attachment {
+  overflow: scroll;
+  max-height: 10em;
+  max-width: 100%;
+}
+
 .lh-16 {
   line-height: 16px;
+}
+
+.mono {
+  font-family: "Source Code Pro", monospace;
+}
+
+.label-small-mono.list-ship {
+  line-height: 29px;
 }

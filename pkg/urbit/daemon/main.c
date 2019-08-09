@@ -75,7 +75,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.can = c3n;
   u3_Host.ops_u.dem = c3n;
   u3_Host.ops_u.dry = c3n;
-  u3_Host.ops_u.etn = c3n;
   u3_Host.ops_u.gab = c3n;
   u3_Host.ops_u.git = c3n;
 
@@ -95,7 +94,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "G:J:B:K:A:H:I:w:u:e:E:f:F:k:m:p:LjabcCdgqstvxPDRS")) )
+                 "G:J:B:K:A:H:I:w:u:e:E:f:F:k:p:LjabcCdgqsvxPDRS")) )
   {
     switch ( ch_i ) {
       case 'J': {
@@ -164,10 +163,6 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.key_c = strdup(optarg);
         break;
       }
-      case 'm': {
-        u3_Host.ops_u.sap_c = strdup(optarg);
-        break;
-      }
       case 'p': {
         if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
           return c3n;
@@ -192,7 +187,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'v': { u3_Host.ops_u.veb = c3y; break; }
       case 's': { u3_Host.ops_u.git = c3y; break; }
       case 'S': { u3_Host.ops_u.has = c3y; break; }
-      case 't': { u3_Host.ops_u.etn = c3y; break; }
       case '?': default: {
         return c3n;
       }
@@ -298,24 +292,6 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
-  if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.sap_c != 0 ) {
-    fprintf(stderr, "-m only makes sense when bootstrapping a new instance\n");
-    return c3n;
-  }
-
-  if ( u3_Host.ops_u.fak_c != 0 && u3_Host.ops_u.sap_c != 0 ) {
-    fprintf(stderr, "-m and -F cannot be used together\n");
-    return c3n;
-  }
-
-  if ( u3_Host.ops_u.ets_c != 0 && u3_Host.ops_u.sap_c != 0 ) {
-    fprintf(stderr, "-m and -E cannot be used together\n");
-    return c3n;
-  }
-  if ( u3_Host.ops_u.can == c3y && u3_Host.ops_u.sap_c != 0 ) {
-    fprintf(stderr, "-m and -C cannot be used together\n");
-    return c3n;
-  }
   if ( u3_Host.ops_u.can == c3y && u3_Host.ops_u.ets_c != 0 ) {
     fprintf(stderr, "-C and -E cannot be used together\n");
     return c3n;
@@ -323,12 +299,6 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   if ( u3_Host.ops_u.eth_c == 0 && imp_t ) {
     u3_Host.ops_u.eth_c = "http://eth-mainnet.urbit.org:8545";
-  }
-
-  if ( u3_Host.ops_u.sap_c == 0 && u3_Host.ops_u.can == c3n ) {
-
-    u3_Host.ops_u.sap_c =
-        "https://bootstrap.urbit.org/urbit-" URBIT_VERSION ".snap";
   }
 
   if ( u3_Host.ops_u.url_c != 0 && u3_Host.ops_u.pil_c != 0 ) {
@@ -509,10 +479,10 @@ _stop_exit(c3_i int_i)
   u3_daemon_bail();
 }
 
-/* _stop_trace(): print trace on SIGABRT.
+/* _stop_signal(): handle termination signal.
 */
 static void
-_stop_trace(c3_i int_i)
+_stop_signal(c3_i int_i)
 {
   //  if we have a pier, unmap the event log before dumping core
   //
@@ -673,7 +643,7 @@ main(c3_i   argc,
 
   //  Cleanup on SIGABRT.
   //
-  signal(SIGABRT, _stop_trace);
+  signal(SIGABRT, _stop_signal);
 
   printf("~\n");
   //  printf("welcome.\n");

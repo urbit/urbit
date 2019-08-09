@@ -208,12 +208,11 @@
                 %give
                 %response
                 %start
-                :-  404
-                :~  ['content-type' 'text/html']
-                    ['content-length' '156']
-                ==
+              ::
+                %+  complete-http-start-event
+                  :-  404
+                  ['content-type' 'text/html']~
                 [~ (error-page:http-server-gate 404 %.n '/' ~)]
-                complete=%.y
         ==  ==
     ==
   ::
@@ -272,7 +271,7 @@
           (expect-eq !>(~[/http-blah]) !>(duct))
         ::
         %+  expect-gall-deal
-          :+  /run-app/app1  [~nul ~nul]
+          :+  /run-app-request/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
@@ -287,7 +286,7 @@
       now=~1111.1.4
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/run-app/app1  duct=~[/http-blah]
+        :*  wire=/run-app-request/app1  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)
             :-  *type
             :*  %g  %unto  %http-response
@@ -359,7 +358,7 @@
           (expect-eq !>(~[/http-blah]) !>(duct))
         ::
         %+  expect-gall-deal
-          :+  /run-app/app1  [~nul ~nul]
+          :+  /run-app-request/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
@@ -374,7 +373,7 @@
       now=~1111.1.4
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/run-app/app1  duct=~[/http-blah]
+        :*  wire=/run-app-request/app1  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)
             :-  *type
             :*  %g  %unto  %coup  ~
@@ -384,12 +383,11 @@
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %give  %response
                 %start
-                :-  500
-                :~  ['content-type' 'text/html']
-                    ['content-length' '180']
-                ==
+              ::
+                %+  complete-http-start-event
+                  :-  500
+                  ['content-type' 'text/html']~
                 [~ (internal-server-error:http-server-gate %.n '/' ~)]
-                complete=%.y
     ==  ==  ==
   ::
   ;:  weld
@@ -449,7 +447,7 @@
           (expect-eq !>(~[/http-blah]) !>(duct))
         ::
         %+  expect-gall-deal
-          :+  /run-app/app1  [~nul ~nul]
+          :+  /run-app-request/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
@@ -464,7 +462,7 @@
       now=~1111.1.4
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/run-app/app1  duct=~[/http-blah]
+        :*  wire=/run-app-request/app1  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)  :-  *type
             :*  %g  %unto  %http-response
                 %start
@@ -485,7 +483,7 @@
       now=~1111.1.4
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/run-app/app1  duct=~[/http-blah]
+        :*  wire=/run-app-request/app1  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)  :-  *type
             :*  %g  %unto  %http-response
                 [%continue [~ (as-octs:mimes:html 'ya!')] %.y]
@@ -556,7 +554,7 @@
           (expect-eq !>(~[/http-blah]) !>(duct))
         ::
         %+  expect-gall-deal
-          :+  /run-app/app1  [~nul ~nul]
+          :+  /run-app-request/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/~landscape/inner-path' ~ ~]])
@@ -571,7 +569,7 @@
       now=~1111.1.4
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/run-app/app1  duct=~[/http-blah]
+        :*  wire=/run-app-request/app1  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)  :-  *type
             :*  %g  %unto  %http-response
                 [%start [307 ['location' '/~/login?redirect=/~landscape/inner-path']~] ~ %.y]
@@ -624,7 +622,7 @@
         ::  expect authenticated=%.y in the handle below
         ::
         %+  expect-gall-deal
-          :+  /run-app/app1  [~nul ~nul]
+          :+  /run-app-request/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
                   !>  :*
@@ -736,14 +734,13 @@
          ==
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %give  %response
-                :*  %start
-                    :-  200
-                    :~  ['content-type' 'text/plain']
-                        ['content-length' '13']
-                    ==
-                    `[13 'one two three']
-                    %.y
-    ==  ==  ==  ==
+                %start
+              ::
+                %+  complete-http-start-event
+                  :-  200
+                  ['content-type' 'text/plain']~
+                `[13 'one two three']
+    ==  ==  ==
   ::
   ;:  weld
     results1
@@ -870,11 +867,10 @@
                 %give
                 %response
                 %start
-                :-  403
-                :~  ['content-type' 'text/html']
-                    ['content-length' '182']
-                ==
               ::
+                %+  complete-http-start-event
+                  :-  403
+                  ['content-type' 'text/html']~
                 :-  ~
                 %-  error-page:http-server-gate  :*
                   403
@@ -882,8 +878,6 @@
                   '/~/channel/1234567890abcdef'
                   ~
                 ==
-              ::
-                complete=%.y
         ==  ==
     ==
   ::
@@ -1814,7 +1808,7 @@
           (expect-eq !>(~[/http-blah]) !>(duct))
         ::
         %+  expect-gall-deal
-          :+  /run-app/app1  [~nul ~nul]
+          :+  /run-app-request/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
@@ -1848,12 +1842,30 @@
           (expect-eq !>(~[/http-blah]) !>(duct))
         ::
         %+  expect-gall-deal
-          :+  /run-app/app1  [~nul ~nul]
+          :+  /run-app-cancel/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-cancel
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
           card
+    ==
+  ::  app1 doesn't have a %handle-http-cancel arm, but that's fine and doesn't
+  ::  crash eyre when it sends its error coup back because we take no action on
+  ::  the response to handle-http-cancel.
+  ::
+  =^  results5  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
+      now=~1111.1.4
+      scry=scry-provides-code
+      ^=  take-args
+        :*  wire=/run-app-cancel/app1  duct=~[/http-blah]
+            ^-  (hypo sign:http-server-gate)  :-  *type
+            :*  %g  %unto  %coup
+                `[[%leaf "error! error! error!"] ~]
+            ==
+         ==
+      expected-move=~
     ==
   ::
   ;:  weld
@@ -1861,6 +1873,7 @@
     results2
     results3
     results4
+    results5
   ==
 ::
 ++  http-server-call
@@ -2031,12 +2044,11 @@
                 %give
                 %response
                 %start
-                :-  200
-                :~  ['content-type' 'text/html']
-                    ['content-length' '1752']
-                ==
+              ::
+                %+  complete-http-start-event
+                  :-  200
+                  ['content-type' 'text/html']~
                 [~ (login-page:http-server-gate `'/~landscape/inner-path' ~nul)]
-                complete=%.y
         ==  ==
     ==
   ::  a response post redirects back to the application, setting cookie
@@ -2182,4 +2194,12 @@
   ::  This is the default code for a fakeship.
   ::
   [~ ~ %noun !>(.~lidlut-tabwed-savheb-loslux)]
+::  produce the body of a %start http-event with the correct content-length
+::
+++  complete-http-start-event
+  |=  [response-header:http data=(unit octs)]
+  =-  [[status-code -] data %.y]
+  ?~  data  headers
+  %+  weld  headers
+  ['content-length' (crip ((d-co:co 1) p.u.data))]~
 --

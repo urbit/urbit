@@ -127,7 +127,6 @@ class Clock extends Component {
   }
 
   render() {
-    console.log('hi')
     return <div style={{position:'relative'}}>
 
         <svg style={{position:'absolute'}} width="218" height="218" viewBox="0 0 234 234" fill="none" xmlns="http://www.w3.org/2000/svg">
