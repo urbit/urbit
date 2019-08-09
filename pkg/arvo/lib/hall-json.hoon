@@ -65,7 +65,7 @@
   ++  lank                                              :::  tank as string arr
     |=  a/tank
     ^-  json
-    a+(turn (wash [0 1.024] a) tape)
+    a+(turn (wash [0 80] a) tape)
   ::
   ++  dank                                              :::  tank
     |=  a/tank
@@ -577,7 +577,7 @@
     :+  ~  u.exp
     =+  res=((ot res+(ar dank) ~) a)
     ?^  res  u.res
-    p:(mule |.([(sell (slap !>(..zuse) (ream u.exp)))]~))  ::TODO  oldz
+    p:(mule |.([(sell (slap !>(..^zuse) (ream u.exp)))]~))  ::TODO  oldz
   ::
   ++  atta                                              :::  attache
     ^-  $-(json (unit attache))
