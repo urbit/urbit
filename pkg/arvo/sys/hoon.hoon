@@ -481,12 +481,12 @@
   |*  {a/(unit) b/(unit)}
   ?~  b  a
   ?~  a  b
-  ?.(=(u.a u.b) ~>(%mean.[%leaf "mate"] !!) a)
+  ?.(=(u.a u.b) ~>(%mean.'mate' !!) a)
 ::
 ++  need                                                ::  demand
   ~/  %need
   |*  a/(unit)
-  ?~  a  ~>(%mean.[%leaf "need"] !!)
+  ?~  a  ~>(%mean.'need' !!)
   u.a
 ::
 ++  some                                                ::  lift (pure)
@@ -8927,7 +8927,7 @@
         *           gen
     ==
   ::
-  ++  rake  ~>(%mean.[%leaf "rake-hoon"] (need reek))
+  ++  rake  ~>(%mean.'rake-hoon' (need reek))
   ++  reek
     ^-  (unit wing)
     ?+  gen  ~
@@ -8941,7 +8941,7 @@
     ^-  term
     =+  wig=rake
     ?.  ?=({@ ~} wig)
-      ~>(%mean.[%leaf "rusk-hoon"] !!)
+      ~>(%mean.'rusk-hoon' !!)
     i.wig
   --
 ::
@@ -9089,7 +9089,7 @@
             %void      %void
             %noun      [%atom p.base.skin ~]
             [%atom *]  ?.  (fitz p.base.skin p.ref)
-                          ~>(%mean.[%leaf "atom-mismatch"] !!)
+                          ~>(%mean.'atom-mismatch' !!)
                        :+  %atom
                          (max p.base.skin p.ref)
                        q.ref
@@ -9134,7 +9134,7 @@
           [%atom *]  ?:  &(?=(^ q.ref) !=(atom.skin u.q.ref))
                        %void
                      ?.  (fitz aura.skin p.ref)
-                        ~>(%mean.[%leaf "atom-mismatch"] !!)
+                        ~>(%mean.'atom-mismatch' !!)
                      :+  %atom
                        (max aura.skin p.ref)
                      `atom.skin
@@ -9626,14 +9626,14 @@
     ++  play
       ^-  type
       =+  lug=(find %read hyp)
-      ?:  ?=(%| -.lug)  ~>(%mean.[%leaf "hoon"] ?>(?=(~ rig) p.p.lug))
+      ?:  ?=(%| -.lug)  ~>(%mean.'hoon' ?>(?=(~ rig) p.p.lug))
       (elbo p.lug rig)
     ::
     ++  mint
       |=  gol/type
       ^-  (pair type nock)
       =+  lug=(find %read hyp)
-      ?:  ?=(%| -.lug)  ~>(%mean.[%leaf "hoon"] ?>(?=(~ rig) p.lug))
+      ?:  ?=(%| -.lug)  ~>(%mean.'hoon' ?>(?=(~ rig) p.lug))
       =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
       (etco p.lug rig)
     ::
@@ -9902,7 +9902,7 @@
     :-  %hold
     ?.  ?=({$core *} p)
       ~_  (dunk %fire-type)
-      ~>(%mean.[%leaf "fire-core"] !!)
+      ~>(%mean.'fire-core' !!)
     =+  dox=[%core q.q.p q.p(r.p %gold)]
     ?:  ?=($dry -.q)
       ::  ~_  (dunk(sut [%cell q.q.p p.p]) %fire-dry)
@@ -9934,7 +9934,7 @@
         [%3 %0 axe]
       (flan $(sut p.sut, axe (peg axe 2)) $(sut q.sut, axe (peg axe 3)))
     ::
-        {$core *}   ~>(%mean.[%leaf "fish-core"] !!)
+        {$core *}   ~>(%mean.'fish-core' !!)
         {$face *}   $(sut q.sut)
         {$fork *}   =+  yed=~(tap in p.sut)
                     |-  ^-  nock
@@ -9942,7 +9942,7 @@
         {$hint *}   $(sut q.sut)
         {$hold *}
       ?:  (~(has in vot) sut)
-        ~>(%mean.[%leaf "fish-loop"] !!)
+        ~>(%mean.'fish-loop' !!)
       =>  %=(. vot (~(put in vot) sut))
       $(sut repo)
     ==
@@ -9980,7 +9980,7 @@
         {$hint *}  (hint p.sut $(sut q.sut))
         {$hold *}
       ?:  (~(has in bix) [sut ref])
-        ~>(%mean.[%leaf "fuse-loop"] !!)
+        ~>(%mean.'fuse-loop' !!)
       $(sut repo, bix (~(put in bix) [sut ref]))
     ::
         $noun       ref
@@ -10185,7 +10185,7 @@
     |^  ^-  {p/type q/nock}
     ?:  ?&(=(%void sut) !?=({$dbug *} gen))
       ?.  |(!vet ?=({$lost *} gen) ?=({$zpzp *} gen))
-        ~>(%mean.[%leaf "mint-vain"] !!)
+        ~>(%mean.'mint-vain' !!)
       [%void %0 0]
     ?-    gen
     ::
@@ -10267,7 +10267,7 @@
         {$wthx *}
       :-  (nice bool)
       =+  fid=(find %read [[%& 1] q.gen])
-      ~>  %mean.[%leaf "mint-fragment"]
+      ~>  %mean.'mint-fragment'
       ?>  &(?=(%& -.fid) ?=(%& -.q.p.fid))
       (~(fish ar `type`p.q.p.fid `skin`p.gen) (tend p.p.fid))
     ::
@@ -10294,7 +10294,7 @@
         {$lost *}
       ?:  vet
         ~_  (dunk(sut (play p.gen)) 'lost')
-        ~>(%mean.[%leaf "mint-lost"] !!)
+        ~>(%mean.'mint-lost' !!)
       [%void [%0 0]]
     ::
         {$zpmc *}
@@ -10311,7 +10311,7 @@
       =+  doz=~(open ap gen)
       ?:  =(doz gen)
         ~_  (show [%c 'hoon'] [%q gen])
-        ~>(%mean.[%leaf "mint-open"] !!)
+        ~>(%mean.'mint-open' !!)
       $(gen doz)
     ==
     ::
@@ -10349,7 +10349,7 @@
     |=  {gol/type dox/type gen/hoon}
     |^  ^-  {p/type q/type}
     ?:  =(%void sut)
-      ~>(%mean.[%leaf "mull-none"] !!)
+      ~>(%mean.'mull-none' !!)
     ?-    gen
     ::
         {^ *}
@@ -10414,9 +10414,9 @@
             :-  %void
             ?:  =(%void q.fex)
               %void
-            ~>(%mean.[%leaf "if-z"] (play(sut q.fex) q.gen))
+            ~>(%mean.'if-z' (play(sut q.fex) q.gen))
           ?:  =(%void q.fex)
-            ~>(%mean.[%leaf "mull-bonk-b"] !!)
+            ~>(%mean.'mull-bonk-b' !!)
           $(sut p.fex, dox q.fex, gen q.gen)
       =+  ^=  ran  ^-  {p/type q/type}
           =+  wux=[p=(lose p.gen) q=(lose(sut dox) p.gen)]
@@ -10424,9 +10424,9 @@
             :-  %void
             ?:  =(%void q.wux)
               %void
-            ~>(%mean.[%leaf "if-a"] (play(sut q.wux) r.gen))
+            ~>(%mean.'if-a' (play(sut q.wux) r.gen))
           ?:  =(%void q.wux)
-            ~>(%mean.[%leaf "mull-bonk-c"] !!)
+            ~>(%mean.'mull-bonk-c' !!)
           $(sut p.wux, dox q.wux, gen r.gen)
       [(nice (fork p.hiq p.ran ~)) (fork q.hiq q.ran ~)]
     ::
@@ -10436,11 +10436,11 @@
                    q=(cove q:(mint(sut dox) %noun [%wing q.gen]))
       =+  pov=[p=(fish(sut p.waz) p.syx) q=(fish(sut q.waz) q.syx)]
       ?.  &(=(p.syx q.syx) =(p.pov q.pov))
-        ~>(%mean.[%leaf "mull-bonk-a"] !!)
+        ~>(%mean.'mull-bonk-a' !!)
       (beth bool)
     ::
         {$wthx *}
-      ~>  %mean.[%leaf "mull-bonk-x"]
+      ~>  %mean.'mull-bonk-x'
       =+  :-  =+  (find %read [[%& 1] q.gen])
               ?>  &(?=(%& -.-) ?=(%& -.q.p.-))
               new=[type=p.q.p.- axis=(tend p.p.-)]
@@ -10456,7 +10456,7 @@
         {$lost *}
       ?:  vet
         ::  ~_  (dunk(sut (play p.gen)) 'also')
-        ~>(%mean.[%leaf "mull-skip"] !!)
+        ~>(%mean.'mull-skip' !!)
       (beth %void)
     ::
         {$zpts *}  (beth %noun)
@@ -10468,7 +10468,7 @@
         {$zpvt *}
       =+  [(feel p.gen) (feel(sut dox) p.gen)]
       ?.  =(-< ->)
-        ~>(%mean.[%leaf "mull-bonk-f"] !!)
+        ~>(%mean.'mull-bonk-f' !!)
       ?:  -<
         $(gen q.gen)
       $(gen r.gen)
@@ -10478,7 +10478,7 @@
       =+  doz=~(open ap gen)
       ?:  =(doz gen)
         ~_  (show [%c 'hoon'] [%q gen])
-        ~>(%mean.[%leaf "mull-open"] !!)
+        ~>(%mean.'mull-open' !!)
       $(gen doz)
     ==
     ::
@@ -10604,7 +10604,7 @@
           ?.  tel  |
           ::  ~_  (dunk %need)
           ::  ~_  (dunk(sut ref) %have)
-          ~_  [%leaf "nest-fail"]
+          ~>  %mean.'nest-fail'
           !!
       ?:  =(sut ref)  &
       ?-  sut
@@ -10774,7 +10774,8 @@
       *          =+  doz=~(open ap gen)
                  ?:  =(doz gen)
                    ~_  (show [%c 'hoon'] [%q gen])
-                   ~>(%mean.[%leaf "play-open"] !!)
+                   ~>  %mean.'play-open'
+                   !!
                  $(gen doz)
     ==
   ::                                                    ::
@@ -11002,7 +11003,7 @@
       {$hint *}   q.sut
       {$hold *}   (rest [[p.sut q.sut] ~])
       $noun       (fork [%atom %$ ~] [%cell %noun %noun] ~)
-      *           ~>(%mean.[%leaf "repo-fltt"] !!)
+      *           ~>(%mean.'repo-fltt' !!)
     ==
   ::
   ++  rest
@@ -11010,7 +11011,7 @@
     |=  leg/(list {p/type q/hoon})
     ^-  type
     ?:  (lien leg |=({p/type q/hoon} (~(has in fan) [p q])))
-      ~>(%mean.[%leaf "rest-loop"] !!)
+      ~>(%mean.'rest-loop' !!)
     =>  .(fan (~(gas in fan) leg))
     %-  fork
     %~  tap  in
@@ -14132,14 +14133,14 @@
       ::
       ::  Here's an example of what a hint looks like.
       ::
-      ::      ~>(%mean.[%leaf "need"] !!)
+      ::      ~>(%mean.'need' !!)
       ::
       ::  The actual form that we're printing here looks something like this:
       ::
-      ::      %mean.[%leaf "need"]
+      ::      %mean.'need'
       ::
-      ::  XX I'm not sure if the `[%leaf "need"]` bit represents a literal
-      ::  AST fragment or an expression that evaluates to `[%leaf "need"]. I'm
+      ::  XX I'm not sure if the `'neeed` bit represents a literal
+      ::  AST fragment or an expression that evaluates to `'need'`. I'm
       ::  going to assume the latter for now.
       ::
       ++  tiscol-to-plum
