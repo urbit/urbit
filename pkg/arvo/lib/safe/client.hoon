@@ -92,6 +92,13 @@
     ::
     =/  snapshot=snapshot:common
       (snapshot:from-transport app-map snapshot.peer-diff)
+    ::  if the sequence id in this peer-diff is the same as the latest, we can
+    ::  ignore this peer-diff because we already know its contents.
+    ::
+    ?:  ?&  ?=(^ partial-event-log.node)
+            =(id.peer-diff id.i.partial-event-log.node)
+        ==
+      node
     ::
     ::  TODO: When we get a snapshot, we need to reconstruct the :archived
     ::  state here from the embedded snapshot, archiving all nodes that we have
