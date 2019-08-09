@@ -14133,14 +14133,14 @@
       ::
       ::  Here's an example of what a hint looks like.
       ::
-      ::      ~>(%mean.'need' !!)
+      ::      ~>(%mean.[%leaf "need"] !!)
       ::
       ::  The actual form that we're printing here looks something like this:
       ::
-      ::      %mean.'need'
+      ::      %mean.[%leaf "need"]
       ::
-      ::  XX I'm not sure if the `'neeed` bit represents a literal
-      ::  AST fragment or an expression that evaluates to `'need'`. I'm
+      ::  XX I'm not sure if the `[%leaf "need"]` bit represents a literal
+      ::  AST fragment or an expression that evaluates to `[%leaf "need"]`. I'm
       ::  going to assume the latter for now.
       ::
       ++  tiscol-to-plum
