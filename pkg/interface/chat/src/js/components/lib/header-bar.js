@@ -7,7 +7,7 @@ export class HeaderBar extends Component {
   render() {
     let spin = (this.props.spinner)
       ?  <div className="absolute"
-           style={{width: 16, height: 16, top: 16, right: 16}}>
+           style={{width: 16, height: 16, top: 16, left: 55}}>
            <IconSpinner/>
          </div>
       :  null;
