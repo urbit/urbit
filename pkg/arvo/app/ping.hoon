@@ -81,13 +81,7 @@
 ++  send-ping
   ^-  [(list move) _app-core]
   ::
-  =/  our=@ta  (scot %p our.bowl)
-  =/  now=@ta  (scot %da now.bowl)
-  =/  =life    .^(life %k /[our]/life/[now]/[our])
-  =/  =point   .^(point %k /[our]/deed/[now]/[our]/(scot %ud life))
-  ::  TODO: handle missing sponsor case
-  ::
-  =/  sponsor=ship  (need sponsor.point)
+  =/  sponsor=ship  (sein:title [our now our]:bowl)
   ::
   :_  app-core
   [ost.bowl %poke /ping-send [sponsor %ping] %ping ~]~
