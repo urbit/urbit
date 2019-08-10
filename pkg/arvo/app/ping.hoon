@@ -43,9 +43,10 @@
 ::  +coup-ping-send: handle ames ack
 ::
 ++  coup-ping-send
-  |=  error=(unit tang)
+  |=  [=wire error=(unit tang)]
   ^-  [(list move) _app-core]
   ::
+  ?>  =(/send-ping wire)
   %-  (print-error "ping: coup" error)
   set-timer
 ::  +wake: handle timer firing
