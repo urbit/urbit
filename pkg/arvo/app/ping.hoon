@@ -8,7 +8,7 @@
           [%wait =wire date=@da]
       ==
     +$  action
-      $%  [%ping ~]
+      $%  [%noun ~]
       ==
     --
 ::
@@ -59,10 +59,7 @@
 ::  +poke-noun: handle request; no-op to ack, crash to nack
 ::
 ++  poke-noun
-  |=  input=*
-  ^-  [(list move) _app-core]
-  ::
-  ?>  ?=([%ping ~] input)
+  |=  *
   [~ app-core]
 ::
 +|  %helpers
@@ -83,5 +80,5 @@
   =/  sponsor=ship  (sein:title [our now our]:bowl)
   ::
   :_  app-core
-  [ost.bowl %poke /ping-send [sponsor %ping] %ping ~]~
+  [ost.bowl %poke /ping-send [sponsor %ping] %noun ~]~
 --
