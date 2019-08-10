@@ -46,16 +46,14 @@
   |=  [=wire error=(unit tang)]
   ^-  [(list move) _app-core]
   ::
-  ?>  =(/ping-send wire)
   %-  (print-error "ping: coup" error)
   set-timer
 ::  +wake: handle timer firing
 ::
-++  wake
+++  wake-ping-wait
   |=  [=wire error=(unit tang)]
   ^-  [(list move) _app-core]
   ::
-  ?>  =(/ping-wait wire)
   %-  (print-error "ping: wake" error)
   send-ping
 ::  +poke-noun: handle request; no-op to ack, crash to nack
