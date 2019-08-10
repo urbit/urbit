@@ -1882,6 +1882,7 @@
           $>(%sunk vane-task)                           ::  report death
           $>(%vega vane-task)                           ::  report upgrade
           $>(%west vane-task)                           ::  network request
+          [%wash ~]                                     ::  clear caches
           $>(%wegh vane-task)                           ::  report memory
       ==                                                ::
     --  ::able
