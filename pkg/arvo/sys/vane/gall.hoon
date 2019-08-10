@@ -486,7 +486,6 @@
     |=  {him/@p dap/dude num/@ud rok/rook}
     =?  +>  ?=(%u -.rok)  (mo-give %done ~)
     %+  mo-pass
-      =-  ~&  %gall-pass^-  -
       [%sys %req (scot %p him) dap (scot %ud num) ~]
     ^-  note-arvo
     ?-  -.rok
@@ -1292,13 +1291,11 @@
     [~ ..^$(sys.mast.all hen)]
   ::
       %plea
-    ~&  %gall-plea-path^path.plea.q.hic
     ?>  ?=([%ge @ ~] path.plea.q.hic)
     =/  him=ship  ship.q.hic
     =*  dap  i.t.path.plea.q.hic
     ::
     =+  mes=;;([@ud rook] payload.plea.q.hic)
-    ~&  %gall-plea-coerced
     =<  mo-abet
     (mo-gawk:(mo-abed:mo hen) him dap mes)
   ::

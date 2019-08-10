@@ -755,7 +755,6 @@
         ?.  ?=(%soft -.wrapped-task)
           wrapped-task
         ;;(task p.wrapped-task)
-      ~&  %ames-call^our^-.task
       ::  %born: set .unix-duct and start draining .queued-events
       ::
       ?:  ?=(%born -.task)
@@ -765,14 +764,12 @@
         ::  if no events were queued up, metamorphose
         ::
         ?~  queued-events
-          ~&  %alef-larva-metamorphose
+          ~>  %slog.0^leaf/"ames: metamorphosis"
           [moves adult-gate]
-        ~&  %alef-larva-kick
         ::  kick off a timer to process the first of .queued-events
         ::
         =.  moves  :_(moves [duct %pass /larva %b %wait now])
         [moves larval-gate]
-      ~&  %alef-larva-call
       ::  any other event: enqueue it until we have a .unix-duct
       ::
       =.  queued-events  (~(put to queued-events) %call duct type task)
@@ -781,19 +778,16 @@
     ::
     ++  take
       |=  [=wire =duct type=* =sign]
-      ~&  %ames-take^our^-.sign
       ::  enqueue event if not a larval drainage timer
       ::
       ?.  =(/larva wire)
-        ~&  %alef-larva-take
         =.  queued-events  (~(put to queued-events) %take wire duct type sign)
         [~ larval-gate]
       ::  larval event drainage timer; pop and process a queued event
       ::
       ?.  ?=([%b %wake *] sign)
-        ~&  %alef-larva-wtf
+        ~>  %slog.0^leaf/"ames: larva: strange sign"
         [~ larval-gate]
-      ~&  %alef-larva-wake
       =^  first-event  queued-events  ~(get to queued-events)
       =^  moves  adult-gate
         ?-  -.first-event
@@ -803,9 +797,9 @@
       ::  .queued-events has been cleared; metamorphose
       ::
       ?~  queued-events
-        ~&  %alef-metamorphosis
+        ~>  %slog.0^leaf/"ames: metamorphosis"
         [moves adult-gate]
-      ~&  %alef-larva-drain
+      ~>  %slog.0^leaf/"ames: larva: drain"
       ::  set timer to drain next event
       ::
       =.  moves  :_(moves [duct %pass /larva %b %wait now])
@@ -815,7 +809,7 @@
     ::  TODO: don't coerce the old state
     ::
     ++  scry  scry:adult-core
-    ++  stay  ~&  %alef-larva-stay  [%larva queued-events ames-state.adult-gate]
+    ++  stay  [%larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  [%larva events=_queued-events state=_ames-state.adult-gate]
@@ -824,11 +818,10 @@
       ::
       ?-    -.old
           %adult
-        ~&  %alef-load
         (load:adult-core state.old)
       ::
           %larva
-        ~&  %alef-load-larva
+        ~>  %slog.0^leaf/"ames: larva: load"
         =.  queued-events  events.old
         =.  adult-gate     (load:adult-core state.old)
         larval-gate
@@ -967,7 +960,7 @@
     |=  [=lane =blob]
     ^+  event-core
     ::
-    ~&  %ames-hole
+    ~>  %slog.0^leaf/"ames: %hole"
     (on-hear-packet lane (decode-packet blob) ok=%.n)
   ::  +on-hear-packet: handle mildly processed packet receipt
   ::
@@ -976,7 +969,6 @@
     ^+  event-core
     ::
     ?:  =(our sndr.packet)
-      ::~&  %alef-self
       event-core
     ::
     %.  +<
@@ -1113,7 +1105,6 @@
     ::
     =/  =peer-state  (got-peer-state her)
     =/  =channel     [[our her] now |2.ames-state -.peer-state]
-    ~&  %ames-take-boon^our^her^bone=bone
     ::
     abet:(on-memo:(make-peer-core peer-state channel) bone payload)
   ::  +on-plea: handle request to send message
@@ -1134,7 +1125,7 @@
     =/  =channel     [[our ship] now |2.ames-state -.peer-state]
     ::
     =^  =bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
-    ~&  %ames-plea^our^ship^[bone=bone]^vane.plea^path.plea
+    ~>  %slog.0^leaf/"ames: plea {<our^ship^bone^vane.plea^path.plea>}"
     ::
     abet:(on-memo:(make-peer-core peer-state channel) bone plea)
   ::  +on-take-wake: receive wakeup or error notification from behn
@@ -1221,7 +1212,7 @@
       |=  [=ship =rift]
       ^+  event-core
       ::
-      ~&  %alef-breach^our^ship^rift
+      ~>  %slog.0^leaf/"ames: breach {<our^ship^rift>}"
       =.  peers.ames-state  (~(del by peers.ames-state) ship)
       event-core
     ::  +on-publ-rekey: handle new key for peer
@@ -1236,7 +1227,7 @@
           ==
       ^+  event-core
       ::
-      ~&  %alef-rekey^our^ship^life^public-key
+      ~>  %slog.0^leaf/"ames: rekey {<our^ship^life>}"
       (insert-peer-state ship (got-peer-state ship) life public-key)
     ::  +on-publ-sponsor: handle new or lost sponsor for peer
     ::
@@ -1247,7 +1238,7 @@
       ^+  event-core
       ::
       ?~  sponsor
-        ~|  %lost-sponsor^our^ship  !!
+        ~|  %ames-lost-sponsor^our^ship  !!
       ::
       =/  =peer-state         (got-peer-state ship)
       =.  sponsor.peer-state  u.sponsor
@@ -1259,7 +1250,6 @@
     ++  on-publ-full
       |=  points=(map ship point)
       ^+  event-core
-      ~&  %alef-on-publ-full^our
       ::
       =>  .(points ~(tap by points))
       |^  ^+  event-core
@@ -1269,14 +1259,14 @@
           ::
           =.  event-core
             ?~  ship-state=(~(get by peers.ames-state) ship)
-              ~&  %alef-fresh-peer^ship^point
+              ~>  %slog.0^leaf/"ames: new peer {<ship>}"
               (fresh-peer ship point)
             ::
             ?:  ?=([~ %alien *] ship-state)
-              ~&  %alef-meet-alien^ship^point
+              ~>  %slog.0^leaf/"ames: met alien {<ship>}"
               (meet-alien ship point +.u.ship-state)
             ::
-            ~&  %alef-update-known^ship^point
+            ~>  %slog.0^leaf/"ames: update peer {<ship>}"
             (update-known ship point +.u.ship-state)
           ::
           $(points t.points)
@@ -1757,7 +1747,7 @@
       ++  on-still-boon
         |=  [=message-num message=*]
         ^+  peer-core
-        ~&  %ames-still-boon^our^bone=bone
+        ~>  %slog.0^leaf/"ames: %boon {<our^%from^her.channel^bone>}"
         ::  send ack unconditionally
         ::
         =.  peer-core  (run-message-still bone %done ok=%.y)
@@ -1769,7 +1759,7 @@
       ++  on-still-nack-trace
         |=  [=message-num message=*]
         ^+  peer-core
-        ~&  %ames-still-nack-trace^our^bone=bone
+        ~>  %slog.0^leaf/"ames: nack trace {<our^%from^her.channel^bone>}"
         ::
         =+  ;;  [=failed=^message-num =error]  message
         ::  ack nack-trace message (only applied if we don't later crash)
@@ -1802,7 +1792,7 @@
       ++  on-still-plea
         |=  [=message-num message=*]
         ^+  peer-core
-        ~&  %ames-still-plea^our^bone=bone
+        ~>  %slog.0^leaf/"ames: rcvd %plea {<our^%from^her.channel^bone>}"
         ::  is this the first time we're trying to process this message?
         ::
         ?.  ?=([%hear * * ok=%.n] task)
@@ -1919,7 +1909,7 @@
     =?    unsent-fragments.state
         &(=(current next) ?=(^ unsent-fragments)):state
       ::
-      ~&  %early-message-ack^ok^her.channel
+      ~>  %slog.0^leaf/"ames: early message ack {<ok^her.channel>}"
       ~
     ::  clear all packets from this message from the packet pump
     ::
@@ -2162,7 +2152,7 @@
     =-  ::  if no sent packet matches the ack, don't apply mutations or effects
         ::
         ?.  found.-
-          ~&  %alef-hear-noop
+          ~>  %slog.0^leaf/"ames: hear: no-op"
           packet-pump
         ::~&  %alef-hear-ack^message-num^fragment-num
         ::
@@ -2362,7 +2352,7 @@
     ::  ignore messages from far future; limit to 10 in progress
     ::
     ?:  (gte seq (add 10 last-acked.state))
-      ~&  %ignoring-packet-from-future^seq^last-acked.state
+      ~>  %slog.0^leaf/"ames: future %hear {<seq^last-acked.state>}"
       message-still
     ::
     =/  is-last-fragment=?  =(+(fragment-num) num-fragments)
@@ -2372,12 +2362,12 @@
       ?.  is-last-fragment
         ::  single packet ack
         ::
-        ~&  %send-dupe-ack^our.channel^seq^fragment-num
+        ~>  %slog.0^leaf/"ames: send dupe ack {<our.channel^seq^fragment-num>}"
         (give %send seq %& fragment-num)
       ::  whole message (n)ack
       ::
       =/  ok=?  (~(has in nax.state) seq)
-      ~&  %send-dupe-ack-whole-message^our.channel^seq
+      ~>  %slog.0^leaf/"ames: send dupe message ack {<our.channel^seq}"
       (give %send seq %| ok lag=`@dr`0)
     ::  last-acked<seq<=last-heard; heard message, unprocessed
     ::
@@ -2385,7 +2375,7 @@
       ?:  is-last-fragment
         ::  drop last packet since we don't know whether to ack or nack
         ::
-        ~&  %repeat-last-unprocessed^our.channel^her.channel^seq^last-heard.state^pending-vane-ack.state
+        ~>  %slog.0^leaf/"ames: %hear last {<our.channel^her.channel^seq>}"
         message-still
       ::  ack all other packets
       ::
@@ -2411,9 +2401,9 @@
     ::
     ?:  already-heard-fragment
       ?:  is-last-fragment
-        ~&  %already-heard-last-fragment^our.channel^seq^fragment-num
+        ~>  %slog.0^leaf/"ames: %hear last dupe {<our.channel^her.channel^seq>}"
         message-still
-      ~&  %send-dupe-ack-fragment^our.channel^seq^fragment-num
+      ~>  %slog.0^leaf/"ames: dupe {<our.channel^her.channel^seq^fragment-num>}"
       (give %send seq %& fragment-num)
     ::  new fragment; store in state and check if message is done
     ::
@@ -2450,7 +2440,7 @@
     =.  last-heard.state     +(last-heard.state)
     =.  live-messages.state  (~(del by live-messages.state) seq)
     ::
-    ~&  %ames-still-rcv-kb-on^our.channel^%from^her.channel^seq^num-fragments.u.live
+    ~>  %slog.0^leaf/"ames: rcv {<num-fragment.u.live>}kb from {<her.channel>}"
     =/  message=*  (assemble-fragments [num-fragments fragments]:u.live)
     =.  message-still  (enqueue-to-vane seq message)
     ::
