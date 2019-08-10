@@ -845,7 +845,7 @@
   =/  =task
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
-    ~|  %alef-bad-task^p.wrapped-task
+    ~|  %ames-bad-task^p.wrapped-task
     ;;(task p.wrapped-task)
   ::
   =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
@@ -1747,7 +1747,7 @@
       ++  on-still-boon
         |=  [=message-num message=*]
         ^+  peer-core
-        ~>  %slog.0^leaf/"ames: %boon {<our^%from^her.channel^bone>}"
+        ~>  %slog.0^leaf/"ames: boon {<her.channel^bone>}"
         ::  send ack unconditionally
         ::
         =.  peer-core  (run-message-still bone %done ok=%.y)
@@ -1759,7 +1759,7 @@
       ++  on-still-nack-trace
         |=  [=message-num message=*]
         ^+  peer-core
-        ~>  %slog.0^leaf/"ames: nack trace {<our^%from^her.channel^bone>}"
+        ~>  %slog.0^leaf/"ames: nack trace {<her.channel^bone>}"
         ::
         =+  ;;  [=failed=^message-num =error]  message
         ::  ack nack-trace message (only applied if we don't later crash)
@@ -1792,7 +1792,7 @@
       ++  on-still-plea
         |=  [=message-num message=*]
         ^+  peer-core
-        ~>  %slog.0^leaf/"ames: rcvd %plea {<our^%from^her.channel^bone>}"
+        ~>  %slog.0^leaf/"ames: plea {<her.channel^bone>}"
         ::  is this the first time we're trying to process this message?
         ::
         ?.  ?=([%hear * * ok=%.n] task)
@@ -2093,7 +2093,7 @@
     ^+  [fragments gifts state]
     ::  return unsent back to caller and reverse effects to finalize
     ::
-    =-  ::~&  %alef-feed^(lent fragments)^%unsent^(lent unsent)
+    =-  ::~&  %ames-feed^(lent fragments)^%unsent^(lent unsent)
         [unsent (flop gifts) state]
     ::
     ^+  [unsent=fragments packet-pump]
@@ -2154,7 +2154,7 @@
         ?.  found.-
           ~>  %slog.0^leaf/"ames: hear: no-op"
           packet-pump
-        ::~&  %alef-hear-ack^message-num^fragment-num
+        ::~&  %ames-hear-ack^message-num^fragment-num
         ::
         =.  metrics.state  metrics.-
         =.  live.state     live.-
@@ -2362,12 +2362,12 @@
       ?.  is-last-fragment
         ::  single packet ack
         ::
-        ~>  %slog.0^leaf/"ames: send dupe ack {<our.channel^seq^fragment-num>}"
+        ~>  %slog.0^leaf/"ames: send dupe ack {<seq^fragment-num>}"
         (give %send seq %& fragment-num)
       ::  whole message (n)ack
       ::
       =/  ok=?  (~(has in nax.state) seq)
-      ~>  %slog.0^leaf/"ames: send dupe message ack {<our.channel^seq>}"
+      ~>  %slog.0^leaf/"ames: send dupe message ack {<seq>}"
       (give %send seq %| ok lag=`@dr`0)
     ::  last-acked<seq<=last-heard; heard message, unprocessed
     ::
@@ -2375,7 +2375,7 @@
       ?:  is-last-fragment
         ::  drop last packet since we don't know whether to ack or nack
         ::
-        ~>  %slog.0^leaf/"ames: %hear last {<our.channel^her.channel^seq>}"
+        ~>  %slog.0^leaf/"ames: hear last in-progress {<her.channel^seq>}"
         message-still
       ::  ack all other packets
       ::
@@ -2401,9 +2401,9 @@
     ::
     ?:  already-heard-fragment
       ?:  is-last-fragment
-        ~>  %slog.0^leaf/"ames: %hear last dupe {<our.channel^her.channel^seq>}"
+        ~>  %slog.0^leaf/"ames: hear last dupe {<her.channel^seq>}"
         message-still
-      ~>  %slog.0^leaf/"ames: dupe {<our.channel^her.channel^seq^fragment-num>}"
+      ~>  %slog.0^leaf/"ames: send dupe ack {<her.channel^seq^fragment-num>}"
       (give %send seq %& fragment-num)
     ::  new fragment; store in state and check if message is done
     ::
@@ -2440,7 +2440,7 @@
     =.  last-heard.state     +(last-heard.state)
     =.  live-messages.state  (~(del by live-messages.state) seq)
     ::
-    ~>  %slog.0^leaf/"ames: rcv {<num-fragments.u.live>}kb from {<her.channel>}"
+    ~>  %slog.0^leaf/"ames: hear {<her.channel>} {<num-fragments.u.live>}kb"
     =/  message=*  (assemble-fragments [num-fragments fragments]:u.live)
     =.  message-still  (enqueue-to-vane seq message)
     ::
