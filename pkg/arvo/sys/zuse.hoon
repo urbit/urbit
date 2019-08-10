@@ -1872,6 +1872,7 @@
           {$deal p/sock q/cush}                         ::  full transmission
           $>(%vega vane-task)                           ::  report upgrade
           $>(%west vane-task)                           ::  network request
+          [%wash ~]                                     ::  clear caches
           $>(%wegh vane-task)                           ::  report memory
       ==                                                ::
     --  ::able
