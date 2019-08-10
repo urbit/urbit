@@ -79,16 +79,18 @@
   =+  myr=(clan:title our)
   ::
   ?:  ?=($pawn myr)
-  :~  [%home %lens]
-      [%base %hall]
-      [%base %talk]
-      [%base %dojo]
-      [%base %modulo]
-  ==
+    :~  [%home %lens]
+        [%base %hall]
+        [%base %talk]
+        [%base %dojo]
+        [%base %ping]
+        [%base %modulo]
+    ==
   :~  [%home %lens]
       [%home %acme]
       [%home %dns]
       [%home %dojo]
+      [%home %ping]
       [%home %hall]
       [%home %talk]
       [%home %modulo]

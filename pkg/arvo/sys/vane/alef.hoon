@@ -2367,7 +2367,7 @@
       ::  whole message (n)ack
       ::
       =/  ok=?  (~(has in nax.state) seq)
-      ~>  %slog.0^leaf/"ames: send dupe message ack {<our.channel^seq}"
+      ~>  %slog.0^leaf/"ames: send dupe message ack {<our.channel^seq>}"
       (give %send seq %| ok lag=`@dr`0)
     ::  last-acked<seq<=last-heard; heard message, unprocessed
     ::
@@ -2440,7 +2440,7 @@
     =.  last-heard.state     +(last-heard.state)
     =.  live-messages.state  (~(del by live-messages.state) seq)
     ::
-    ~>  %slog.0^leaf/"ames: rcv {<num-fragment.u.live>}kb from {<her.channel>}"
+    ~>  %slog.0^leaf/"ames: rcv {<num-fragments.u.live>}kb from {<her.channel>}"
     =/  message=*  (assemble-fragments [num-fragments fragments]:u.live)
     =.  message-still  (enqueue-to-vane seq message)
     ::
