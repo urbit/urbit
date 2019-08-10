@@ -1,6 +1,6 @@
-::  Kiln: wipe ford cache
+::  Kiln: clear Gall compiler caches
 ::
-::::  /hoon/wipe-ford/hood/gen
+::::  /hoon/wash-gall/hood/gen
   ::
 /?    310
 ::
