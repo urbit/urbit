@@ -1,7 +1,7 @@
 ::
 ::
-/-  hall
-/+  chat, hall-json
+/-  chat, hall
+/+  hall-json
 ::
 |_  act=action:chat
 ++  grow

@@ -41,6 +41,25 @@
 ::
 =,  chat
 ::
+|%
++$  state
+  $%  [%0 str=streams]
+  ==
+::
++$  move  [bone card]
+::
++$  card
+  $%  [%http-response =http-event:http]
+      [%connect wire binding:eyre term]
+      [%peer wire dock path]
+      [%quit ~]
+      [%poke wire dock poke]
+      [%peer wire dock path]
+      [%pull wire dock ~]
+      [%diff diff]
+  ==
+--
+::
 |_  [bol=bowl:gall sta=state]
 ::
 ++  this  .
@@ -56,7 +75,7 @@
     =/  inboxpat  /circle/inbox/config/group
     =/  circlespat  /circles/[(scot %p our.bol)]
     =/  inboxwir  /circle/[(scot %p our.bol)]/inbox/config/group
-    =/  inboxi/poke 
+    =/  inboxi/poke
       :-  %hall-action
       [%source %inbox %.y (silt [[our.bol %i] ~]~)]
     =/  fakeannounce=poke
@@ -71,10 +90,10 @@
     =/  dev=poke
       :-  %hall-action
       [%create %urbit-dev 'Chat about developing on Urbit' %channel]
-    =/  sourcefakeannounce/poke 
+    =/  sourcefakeannounce/poke
       :-  %hall-action
       [%source %inbox %.y (silt [[our.bol %hall-internal-announcements] ~]~)]
-    =/  sourceannounce/poke 
+    =/  sourceannounce/poke
       :-  %hall-action
       [%source %inbox %.y (silt [[~marzod %announcements] ~]~)]
     =/  hallactions=(list move)
@@ -99,7 +118,7 @@
         [ost.bol %poke /chat [our.bol %launch] launcha]
     ==
     :_  this
-    %+  weld  moves  hallactions  
+    %+  weld  moves  hallactions
   :-  [ost.bol %poke /chat [our.bol %launch] launcha]~
   this(sta u.old)
 ::
@@ -115,8 +134,8 @@
       =/  last  (snag (dec (lent lis)) `(list envelope:hall)`lis)
       [cir (add num.last 1)]
   =/  maptjson=(map @t json)
-    %-  my 
-    :~  ['config' (config-to-json str)] 
+    %-  my
+    :~  ['config' (config-to-json str)]
         ['numbers' (numbers-to-json numbers)]
     ==
   [%o maptjson]
@@ -142,7 +161,7 @@
     ?~  envs
       ~
     =/  length/@  (lent u.envs)
-    =/  start/@  
+    =/  start/@
       ?:  (gte length 100)
         (sub length 100)
       0
@@ -247,7 +266,7 @@
           ^-  [circle:hall (list envelope:hall)]
           [cir ~]
         ::
-        =/  localpeers/(set @p)  
+        =/  localpeers/(set @p)
           %-  silt  %+  turn  ~(tap by loc.pes.piz)
           |=  [shp=@p stat=status:hall]
           shp
@@ -281,7 +300,7 @@
     ::
       =*  messages  messages.str.sta
       =/  circle/circle:hall  [`@p`(slav %p &2:wir) &3:wir]
-      =/  localpeers/(set @p)  
+      =/  localpeers/(set @p)
         %-  silt  %+  turn  ~(tap by loc.pes.piz)
         |=  [shp=@p stat=status:hall]
         shp
@@ -391,7 +410,7 @@
     ?+  -.dif.sto
       [~ this]
       ::
-      ::  %full: set all of config without side effects 
+      ::  %full: set all of config without side effects
       ::
           %full
         =*  conf  cof.dif.sto
