@@ -34,6 +34,15 @@
   /:  /===/app/publish/img  /_  /png/
 ::
 |%
++$  state
+  $:  pubs=(map @tas collection)
+      subs=(map [ship @tas] collection)
+      awaiting=(map @tas [builds=(set wire) partial=(unit delta)])
+      latest=(list [who=ship coll=@tas post=@tas])
+      unread=(set [who=ship coll=@tas post=@tas])
+      invites=(map [who=ship coll=@tas] title=@t)
+      outgoing=(map path bone)
+  ==
 ::
 +$  move  [bone card]
 ::
@@ -268,7 +277,7 @@
         (~(get by subs.sat) who.del col.del)
       =/  new=collection
         ?~  old
-          :*  [0 %.n ~]  (my [pos.del ost.bol dat.del] ~)  ~ 
+          :*  [0 %.n ~]  (my [pos.del ost.bol dat.del] ~)  ~
               [~ ~]  [%white ~]  ~  now.bol
           ==
         %=  u.old
@@ -348,7 +357,7 @@
             [~ da-this]
           =.  subs.sat  (~(del by subs.sat) who.del col.del)
           :-  ~(tap in ~(key by pos.u.old))
-          %-  da-emil 
+          %-  da-emil
           :-  [ost.bol %pull /collection/[col.del] [who.del %publish] ~]
           (affection-primary del)
         ::  iterate through post ids collected before, removing each from
@@ -373,7 +382,7 @@
         da-this
       ?.  (~(has in ~(key by pos.u.old)) u.pos.del)
         da-this
-      =/  new=collection 
+      =/  new=collection
         %=  u.old
           pos  (~(del by pos.u.old) u.pos.del)
           com  (~(del by com.u.old) u.pos.del)
@@ -392,7 +401,7 @@
   ++  da-remove-unread
     |=  [who=@p coll=@tas post=@tas]
     ^+  da-this
-    =.  unread.sat  (~(del in unread.sat) who coll post) 
+    =.  unread.sat  (~(del in unread.sat) who coll post)
     (da-emil make-tile-moves)
   ::
   ++  da-remove-latest
@@ -482,7 +491,7 @@
     ^+  da-this
     =/  new-post=post-info  (need (get-post-info-by-index who coll post))
     =/  col=collection  (need (get-coll-by-index who coll))
-    :: 
+    ::
     =/  pre=(list @tas)  ~
     =/  suf=(list @tas)
       ?:  pinned.new-post
@@ -635,7 +644,7 @@
       ::  1st part of multi-part, store partial delta and don't process it
       ::
       =/  del=delta
-        :*  %total  our.bol  col  [ost.bol dat] 
+        :*  %total  our.bol  col  [ost.bol dat]
             ~  ~  [~ ~]  [%white ~]  ~  now.bol
         ==
       =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
@@ -648,7 +657,7 @@
       =/  del=delta
         :*  %total
             our.bol
-            col 
+            col
             [ost.bol dat]
             pos.dat.u.partial.u.awa
             com.dat.u.partial.u.awa
@@ -665,7 +674,7 @@
     =/  del=delta
       :*  %total
           our.bol
-          col 
+          col
           [ost.bol dat]
           pos.dat.u.partial.u.awa
           com.dat.u.partial.u.awa
@@ -733,8 +742,8 @@
     =/  del=delta
       :*  %total
           our.bol
-          col 
-          col.dat.u.partial.u.awa 
+          col
+          col.dat.u.partial.u.awa
           (~(put by pos.dat.u.partial.u.awa) pos [ost.bol dat])
           com.dat.u.partial.u.awa
           [~ ~]
@@ -784,8 +793,8 @@
       =/  del=delta
         :*  %total
             our.bol
-            col 
-            col.dat.u.partial.u.awa 
+            col
+            col.dat.u.partial.u.awa
             pos.dat.u.partial.u.awa
             (~(put by com.dat.u.partial.u.awa) pos [ost.bol dat])
             [~ ~]
@@ -801,8 +810,8 @@
     =/  del=delta
       :*  %total
           our.bol
-          col 
-          col.dat.u.partial.u.awa 
+          col
+          col.dat.u.partial.u.awa
           pos.dat.u.partial.u.awa
           (~(put by com.dat.u.partial.u.awa) pos [ost.bol dat])
           [~ ~]
@@ -881,7 +890,7 @@
     =/  pax=path  /web/publish/[name.act]/publish-info
     =/  blog-perms=card
       :*  %perm  /perms  q.byk.bol
-          /web/publish/[name.act] 
+          /web/publish/[name.act]
           %rw  `read.perm.act  `write.perm.act
       ==
     =/  info-perms=card
@@ -999,7 +1008,7 @@
     =/  del=delta  [%remove our.bol coll.act ~]
     =^  moves  this  (bake del)
     ::
-    :-  
+    :-
     ;:  welp
       kills
       moves
@@ -1194,7 +1203,7 @@
     =/  del=delta  [%remove our.bol coll.act ~]
     =^  moves  this  (bake del)
     ::
-    :-  
+    :-
     ;:  welp
       moves
       make-tile-moves
@@ -1359,6 +1368,68 @@
     :_  this
     [ost.bol %http-response (manx-response:app hym)]~
   ::
+  ==
+::
+++  state-to-json
+  |=  sat=state
+  ^-  json
+  %-  pairs:enjs:format
+  :~  :+  %pubs
+        %o
+      %+  roll  ~(tap by pubs.sat)
+      |=  [[nom=@tas col=collection] out=(map @t json)]
+      %+  ~(put by out)
+        nom
+      (total-build-to-json col)
+  ::
+      :+  %subs
+        %o
+      %-  ~(rep by subs.sat)
+      |=  $:  [[who=@p nom=@tas] col=collection]
+              out=(map @t [%o (map @t json)])
+          ==
+      =/  shp=@t  (rsh 3 1 (scot %p who))
+      ?:  (~(has by out) shp)
+        %+  ~(put by out)
+          shp
+        :-  %o
+        %+  ~(put by +:(~(got by out) shp))
+          nom
+        (total-build-to-json col)
+      %+  ~(put by out)
+        shp
+      :-  %o
+      (my [nom (total-build-to-json col)] ~)
+  ::
+      :+  %latest
+        %a
+      %+  turn  latest.sat
+      |=  [who=@p coll=@tas post=@tas]
+      %-  pairs:enjs:format
+      :~  who+(ship:enjs:format who)
+          coll+s+coll
+          post+s+post
+      ==
+  ::
+      :+  %unread
+        %a
+      %+  turn  ~(tap in unread.sat)
+      |=  [who=@p coll=@tas post=@tas]
+      %-  pairs:enjs:format
+      :~  who+(ship:enjs:format who)
+          coll+s+coll
+          post+s+post
+      ==
+  ::
+      :+  %invites
+        %a
+      %+  turn  ~(tap in invites.sat)
+      |=  [[who=@p coll=@tas] title=@t]
+      %-  pairs:enjs:format
+      :~  who+(ship:enjs:format who)
+          coll+s+coll
+          title+s+title
+      ==
   ==
 ::
 ++  make-tile-moves
