@@ -29,7 +29,8 @@ export default class WeatherTile extends Component {
 
     this.state = {
       latlng: '',
-      manualEntry: false
+      manualEntry: false,
+      error: false
     };
   }
 
@@ -63,7 +64,10 @@ export default class WeatherTile extends Component {
       api.action('weather', 'json', latlng)
       this.setState({manualEntry: !this.state.manualEntry})
     }
-    else return false
+    else {
+      this.setState({error: true})
+      return false
+    }
   }
 
   keyPress(e) {
@@ -86,10 +90,15 @@ export default class WeatherTile extends Component {
   }
 
   renderManualEntry() {
+    let error;
+    if (this.state.error === true) {
+     error = <p className="label-small red pt1">Incorrect latitude/longitude formatting. Please try again. <br/>(eg. "29.558107,-95.089023")</p>
+    }
     return this.renderWrapper((
       <div>
         <a style={{"color": "white", "cursor": "pointer"}} onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>&lt;&#45;</a>
         <p className="label-regular white pt2">Please enter your <a href="https://latitudeandlongitude.org/" target="_blank">latitude and longitude</a>.</p>
+        {error}
         <form className="flex absolute" style={{"bottom": "0"}}><input id="gps" className="white pb1 bg-transparent outline-0 bn bb-ns b--white" type="text" placeholder="29.558107,-95.089023" onKeyDown={this.keyPress}></input> <input className="bg-transparent inter white w-20 outliner-0 bn pointer" type="submit" onClick={() => this.manualLocationSubmit()} value="->"></input></form>
       </div>
     ))
