@@ -28,25 +28,6 @@
   %-  crip
   %+  weld  "0x"
   (render-hex-bytes:ethereum 20 `@`azimuth:contracts:^azimuth)
-::  snapshot
-::
-++  snap
-  =|  =snapshot:jael
-  %_    snapshot
-      kyz  ~
-  ::
-      dns.eth
-    ['urbit.org' 'urbit.org' '']
-  ::
-      pos.eth
-    %-  malt
-    :*  ~zod^pot
-        ~marzod^pot
-        (turn (gulf 1 255) |=(gal=@ gal^pot))
-    ==
-  ::
-      latest-block  4.230.000
-  ==
 ::
 ++  test-give-bloq
   =/  oct
@@ -116,16 +97,34 @@
           '3defb87516f42ce4327820b588002aa53e52527af8d23bee4aa215fa296bdf5f'
           '0000000000000000000000000000000000000000000000000000000000000001'
           '0000000000000000000000000000000000000000000000000000000000000001'
+          '0000000000000000000000000000000000000000000000000000000000000000'
+          '0000000000000000000000000000000000000000000000000000000000000000'
+          '0000000000000000000000000000000000000000000000000000000000000000'
+          '0000000000000000000000000000000000000000000000000000000000000001'
+          '0000000000000000000000000000000000000000000000000000000000000001'
+          '0000000000000000000000000000000000000000000000000000000000000002'
         '"},{"id":"gal-1","jsonrpc":"2.0","result":"'
         '0xb727e38d031162e50913b2e37a2e29d4ba457eff4f7fd4ac47dc68fcb54260d3'
           'b8bfe4789483c171f7fa359438cdcc8d268d40fe08d6c1d8b36267748d2139f8'
           '0000000000000000000000000000000000000000000000000000000000000001'
           '0000000000000000000000000000000000000000000000000000000000000001'
+          '0000000000000000000000000000000000000000000000000000000000000000'
+          '0000000000000000000000000000000000000000000000000000000000000000'
+          '0000000000000000000000000000000000000000000000000000000000000000'
+          '0000000000000000000000000000000000000000000000000000000000000001'
+          '0000000000000000000000000000000000000000000000000000000000000001'
+          '0000000000000000000000000000000000000000000000000000000000000003'
         '"},{"id":"gal-2","jsonrpc":"2.0","result":"'
         '0x0000000000000000000000000000000000000000000000000000000000000000'
           '0000000000000000000000000000000000000000000000000000000000000000'
+          '0000000000000000000000000000000000000000000000000000000000000001'
+          '0000000000000000000000000000000000000000000000000000000000000001'
           '0000000000000000000000000000000000000000000000000000000000000000'
           '0000000000000000000000000000000000000000000000000000000000000000'
+          '0000000000000000000000000000000000000000000000000000000000000000'
+          '0000000000000000000000000000000000000000000000000000000000000001'
+          '0000000000000000000000000000000000000000000000000000000000000001'
+          '0000000000000000000000000000000000000000000000000000000000000004'
         '"}]'
     ==
   =/  kyz
@@ -139,8 +138,8 @@
     823.313.739.767.009.446.819.531.923.255.637.798.148.055.143.938.146
   %+  expect-eq
     !>  :-  ~
-        %-  ~(gas by *(map ship [=life =pass]))
-        [[~zod 1 zod.kyz] [~nec 1 nec.kyz] [~bud 0 'b'] ~]
+        %-  ~(gas by *(map ship [=rift =life =pass]))
+        [[~zod 2 1 zod.kyz] [~nec 3 1 nec.kyz] [~bud 4 1 'b'] ~]
     !>  (czar:take:dawn oct)
 ::
 ++  test-take-point
@@ -185,26 +184,6 @@
   %+  expect-eq
     !>  [~ [/org/urbit ~]]
     !>  (turf:take:dawn oct)
-::
-++  test-snap-bloq
-  %+  expect-eq
-    !>  [~ 4.230.000]
-    !>  (bloq:snap:dawn snap)
-::
-++  test-snap-point
-  %+  expect-eq
-    !>  [~ pot]
-    !>  (point:snap:dawn ~zod snap)
-::
-++  test-snap-czar
-  %+  expect-eq
-    !>  256
-    !>  ~(wyt by (need (czar:snap:dawn snap)))
-::
-++  test-snap-turf
-  %+  expect-eq
-    !>  [~ `(list turf)`~[~['org' 'urbit'] ~['org' 'urbit']]]
-    !>  (turf:snap:dawn snap)
 ::
 ++  test-veri-good
   =/  sed  [~zod 1 sec ~]
@@ -254,15 +233,6 @@
     !>  [%& (^sein:title who)]
     !>  (veri:dawn sed pot ~)
 ::
-++  test-veri-earl-missing-sig
-  =/  cub  (pit:nu:crub:crypto 24 %foo)
-  =/  who  ~simtel-mithet-dozzod-dozzod
-  =/  sed
-    [who 1 sec:ex:cub ~]
-  %+  expect-eq
-    !>  [%| %missing-sig]
-    !>  (veri:dawn sed pot ~)
-::
 ++  test-veri-earl-parent-not-keyed
   =/  cub  (pit:nu:crub:crypto 24 %foo)
   =/  who  ~simtel-mithet-dozzod-dozzod
@@ -274,53 +244,6 @@
   %+  expect-eq
     !>  [%| %parent-not-keyed]
     !>  (veri:dawn sed =>(pot .(net ~)) ~)
-::
-++  test-veri-earl-life-mismatch
-  =/  cub  (pit:nu:crub:crypto 24 %foo)
-  =/  who  ~simtel-mithet-dozzod-dozzod
-  =/  sed
-    =/  sig
-      %-  sign:as:(nol:nu:crub:crypto sec)
-      (shaf %earl (sham who 1 pub:ex:cub))
-    [who 2 sec:ex:cub `sig]
-  %+  expect-eq
-    !>  [%| %life-mismatch]
-    !>  (veri:dawn sed pot ~)
-::
-++  test-veri-earl-invalid-sig
-  =/  cub  (pit:nu:crub:crypto 24 %foo)
-  =/  who  ~simtel-mithet-dozzod-dozzod
-  ;:  weld
-    =/  sed
-      =/  sig
-        %-  sign:as:cub
-        (shaf %earl (sham who 1 pub:ex:cub))
-      [who 1 sec:ex:cub `sig]
-    %+  expect-eq
-      !>  [%| %invalid-sig]
-      !>  (veri:dawn sed pot ~)
-  ::
-    =/  sed
-      =/  sig
-        %-  sign:as:(nol:nu:crub:crypto sec)
-        (shaf %earl (sham who 2 pub:ex:cub))
-      [who 1 sec:ex:cub `sig]
-    %+  expect-eq
-      !>  [%| %invalid-sig]
-      !>  (veri:dawn sed pot ~)
-  ==
-::
-++  test-veri-earl-already-booted
-  =/  cub  (pit:nu:crub:crypto 24 %foo)
-  =/  who  ~simtel-mithet-dozzod-dozzod
-  =/  sed
-    =/  sig
-      %-  sign:as:(nol:nu:crub:crypto sec)
-      (shaf %earl (sham who 1 pub:ex:cub))
-    [who 1 sec:ex:cub `sig]
-  %+  expect-eq
-    !>  [%| %already-booted]
-    !>  (veri:dawn sed pot `[1 |])
 ::
 ++  test-veri-pawn-good
   =/  cub  (pit:nu:crub:crypto 24 %foo)

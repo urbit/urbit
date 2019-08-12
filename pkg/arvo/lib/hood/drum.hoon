@@ -97,6 +97,7 @@
       [%home %publish]
       [%home %clock]
       [%home %weather]
+      [%home %azimuth-tracker]
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -105,7 +106,7 @@
   ^-  (list gill:gall)
   [[our %talk] [our %dojo] ~]
 ::
-++  make                                           ::  initial part
+++  make                                                ::  initial part
   |=  our/ship
   ^-  part
   :*  %drum

@@ -169,7 +169,7 @@
     =.  ..abet-pe
       =/  sof  ((soft unix-effect) i.effects)
       ?~  sof
-        ~?  aqua-debug=|  [who=who %unknown-effect i.effects]
+        ~?  aqua-debug=&  [who=who %unknown-effect i.effects]
         ..abet-pe
       (publish-effect u.sof)
     $(effects t.effects)
@@ -366,7 +366,7 @@
           %e  %eyre
           %f  %ford
           %g  %gall
-          %j  %ford
+          %j  %jael
         ==
       =/  pax
         /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/[vane]
@@ -435,8 +435,9 @@
             [%fake who.ae]
           [%dawn u.keys.ae]
           -.userspace-ova.pil
-          [//http/0v1n.2m9vh %born ~]
-          [//http/0v1n.2m9vh %live 8.080 `8.445]
+          [//http-client/0v1n.2m9vh %born ~]
+          [//http-server/0v1n.2m9vh %born ~]
+          [//http-server/0v1n.2m9vh %live 8.080 `8.445]
       ==
     =.  this  abet-pe:initted
     (pe who.ae)
@@ -544,6 +545,17 @@
     ~
   :^  ~  ~  %noun
   `(list ship)`(turn ~(tap by piers) head)
+::
+::
+::
+++  peek-x-pill
+  |=  pax=path
+  ^-  (unit (unit [%pill pill]))
+  =/  pill-size  (met 3 (jam pil))
+  ?:  (lth pill-size 100)
+    ~&  [%no-pill size=pill-size]
+    [~ ~]
+  ``pill+pil
 ::
 ::  Trivial scry for mock
 ::

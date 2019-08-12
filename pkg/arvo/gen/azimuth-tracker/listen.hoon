@@ -1,14 +1,14 @@
 =>  |%
     +$  src
       $%  [%ship =ship ~]
-          [%node url=@t ~]
+          [%app =term ~]
       ==
     --
 :-  %say
-|=  [* [whos=(set ship) =src] ~]
-=/  =source:kale
+|=  [* [whos=(list ship) =src] ~]
+=/  =source:jael
   ?-  -.src
     %ship  [%& ship.src]
-    %node  [%| ~|(%parsing-url (need (de-purl:html url.src))) *@ud *@da]
+    %app   [%| term.src]
   ==
 [%azimuth-tracker-poke %listen whos source]

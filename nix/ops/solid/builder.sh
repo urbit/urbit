@@ -20,6 +20,11 @@ trap cleanup EXIT
 
 herb ./pier -p hood -d "+hood/mount /=home="
 
+until [ -d ./pier/home ]
+do
+  sleep 1
+done
+
 #  update :lens, :dojo and dependencies
 #
 #    XX reduce this list
@@ -53,6 +58,11 @@ sleep 10
 #
 herb ./pier -p hood -d '+hood/merge %stage our %home'
 herb ./pier -p hood -d "+hood/mount /=stage="
+
+until [ -d ./pier/stage ]
+do
+  sleep 1
+done
 
 rm -rf ./pier/stage
 cp -r $ARVO ./pier/stage
