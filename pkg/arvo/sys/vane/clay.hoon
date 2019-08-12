@@ -4158,17 +4158,15 @@
     [[[hen %slip %d %flog req] ~] ..^$]
   ::
       %drop
-      ?:  =(~ act.ruf)
-        ~&  %clay-idle
-        [~ ..^$]
-      ~&  :-  %clay-cancelling
-          ?>  ?=(^ act.ruf)
-          [hen -.req -.eval-data]:u.act.ruf
-      =.  act.ruf  ~
-      ?~  cue.ruf
-        [~ ..^$]
-      =/  =duct  duct:(need ~(top to cue.ruf))
-      [[duct %pass /queued-request %b %wait now]~ ..^$]
+    ~?  =(~ act.ruf)
+      [%clay-idle cue-length=~(wyt in cue.ruf)]
+    ~?  ?=(^ act.ruf)
+      [%clay-cancelling hen -.req -.eval-data]:u.act.ruf
+    =.  act.ruf  ~
+    ?~  cue.ruf
+      [~ ..^$]
+    =/  =duct  duct:(need ~(top to cue.ruf))
+    [[duct %pass /queued-request %b %wait now]~ ..^$]
   ::
       %info
     ?:  =(%$ des.req)
