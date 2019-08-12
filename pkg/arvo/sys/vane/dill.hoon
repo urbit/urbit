@@ -297,7 +297,6 @@
         [[151 %noun] %j our %sein da+now /(scot %p who)]
       ::
       ++  init                                          ::  initialize
-        ~&  [%dill-init our ram]
         ^+  .
         =.  moz
           :_  moz
@@ -305,7 +304,6 @@
         .
       ::
       ++  mere                                          ::  continue init
-        ~&  [%dill-mere our ram]
         ^+  .
         =/  myt  (flop (fall tem ~))
         =/  can  (clan:title our)
@@ -514,6 +512,8 @@
     =/  boot
       ((soft $>($?(%dawn %fake) task:able:jael)) p.task)
     ?~  boot
+      ~&  %dill-no-boot
+      ~&  p.task
       ~|  invalid-boot-event+hen  !!
     :_(..^$ [hen %pass / %j u.boot]~)
   ::  we are subsequently initialized. single-home
@@ -539,10 +539,6 @@
     =?  p.task  ?=([%crud %hax-heft ~] p.task)  [%heft ~]
     ::
     $(hen u.hey.all, wrapped-task p.task)
-  ::  a %sunk notification from %jail comes in on an unfamiliar duct
-  ::
-  ?:  ?=(%sunk -.task)
-    [~ ..^$]
   ::  a %vega notification on kernel upgrade comes in on an unfamiliar duct
   ::
   ?:  ?=(%vega -.task)

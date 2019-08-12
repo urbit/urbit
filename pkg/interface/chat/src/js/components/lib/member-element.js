@@ -16,7 +16,7 @@ export class MemberElement extends Component {
     let actionElem;
     if (`~${props.ship}` === props.host) {
       actionElem = (
-        <p className="dib w-40 underline black label-small-mono label-regular">
+        <p className="dib w-10 underline black label-small-mono label-regular">
           Host
         </p>
       );
@@ -24,7 +24,7 @@ export class MemberElement extends Component {
       `~${window.ship}` === props.host) {
       actionElem = (
         <a onClick={this.onRemove.bind(this)}
-           className="w-40 dib list-ship black underline label-small-mono pointer">
+           className="w-10 dib list-ship black underline label-small-mono pointer">
            Remove
         </a>
       );
@@ -39,7 +39,7 @@ export class MemberElement extends Component {
         <Sigil ship={props.ship} size={32} />
         <p
           className={
-            "w-60 dib v-mid black pr3 ml2 nowrap label-small-mono list-ship label-regular"
+            "w-80 dib v-mid black ml2 nowrap label-small-mono list-ship label-regular"
           }>
           {props.ship}
         </p>

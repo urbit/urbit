@@ -80,13 +80,12 @@
 ::
 ::  Check if given effect is an http request; extract
 ::
-++  extract-thus-to
+++  extract-request
   |=  [uf=unix-effect dest=@t]
-  ^-  (unit [num=@ud mot=moth:eyre])
-  ?.  ?=(%thus -.q.uf)  ~
-  ?~  q.q.uf  ~
-  ?.  =(p.u.q.q.uf (rash dest auri:de-purl:html))  ~
-  `[p.q.uf q.u.q.q.uf]
+  ^-  (unit [num=@ud =request:http])
+  ?.  ?=(%request -.q.uf)  ~
+  ?.  =(dest url.request.q.uf)  ~
+  `[id.q.uf request.q.uf]
 ::
 ::  Scry into a running aqua ship
 ::

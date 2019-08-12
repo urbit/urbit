@@ -716,8 +716,12 @@
       ++  circ                                          ::  circle
         ;~  pose
           (cold incir col)
-          ;~(pfix cen (stag self urs:ab))
           ;~(pfix net (stag (^sein:title self) urs:ab))
+          ;~  pfix  cen
+            %+  stag  self
+            %+  sear  |=(circ=name ?:(=('' circ) ~ (some circ)))
+            urs:ab
+          ==
         ::
           %+  cook
             |=  {a/@p b/(unit term)}
@@ -2313,7 +2317,15 @@
       url+(crip (apix:en-purl:html url.sep))
     ::
         $exp
-      mor+~[txt+"# {(trip exp.sep)}" tan+res.sep]
+      =/  texp=tape  ['>' ' ' (trip exp.sep)]
+      :-  %mor
+      |-  ^-  (list sole-effect:sole-sur)
+      ?:  =("" texp)  [tan+res.sep ~]
+      =/  newl  (find "\0a" texp)
+      ?~  newl  [txt+texp $(texp "")]
+      =+  (trim u.newl texp)
+      :-  txt+(scag u.newl texp)
+      $(texp [' ' ' ' (slag +(u.newl) texp)])
     ::
         $ire
       =+  num=(~(get by known) top.sep)
@@ -2398,7 +2410,11 @@
       ==
     ::
         $exp
-      :-  (tr-chow wyd '#' ' ' (trip exp.sep))
+      =+  texp=(trip exp.sep)
+      =+  newline=(find "\0a" texp)
+      =?  texp  ?=(^ newline)
+        (weld (scag u.newline texp) "  ...")
+      :-  (tr-chow wyd '#' ' ' texp)
       ?~  res.sep  ~
       =-  [' ' (tr-chow (dec wyd) ' ' -)]~
       ~(ram re (snag 0 `(list tank)`res.sep))

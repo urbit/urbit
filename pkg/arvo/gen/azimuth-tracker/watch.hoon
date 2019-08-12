@@ -1,6 +1,6 @@
 =>  |%
     +$  config
-      [url=@ta =from=number:block:able:kale]
+      [url=@ta =from=number:block:able:jael]
     --
 :-  %say
 |=  [* config ~]

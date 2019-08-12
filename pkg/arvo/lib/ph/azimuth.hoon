@@ -1,9 +1,10 @@
 ::  Mock Azimuth
 ::
-/+  ph, ph-util, ph-philter
+/+  ph, ph-util, ph-philter, ph-tests
 =,  ph
 =,  ph-util
 =,  ph-philter
+|=  our=ship
 =>  |%
     +$  az-log  [topics=(lest @) data=@t]
     --
@@ -30,22 +31,39 @@
     |=  pin=ph-input
     ^-  output:n
     =,  enjs:format
-    =/  thus  (extract-thus-to uf.pin 'http://localhost:8545')
-    ?~  thus
+    =/  ask  (extract-request uf.pin 'http://localhost:8545/')
+    ?~  ask
       [& ~ %wait ~]
-    ?~  r.mot.u.thus
+    ?~  body.request.u.ask
       [& ~ %wait ~]
-    =/  req  q.u.r.mot.u.thus
+    =/  req  q.u.body.request.u.ask
     |^  ^-  output:n
     =/  method  (get-method req)
+    ::  =;  a  ~&  [%give-azimuth-response a]  -
     ?:  =(method 'eth_blockNumber')
       :-  |  :_  [%wait ~]
       %+  answer-request  req
       s+(crip (num-to-hex:ethereum latest-block))
+    ?:  =(method 'eth_getBlockByNumber')
+      :-  |  :_  [%wait ~]
+      %+  answer-request  req
+      :-  %o
+      =/  number  (hex-to-num:ethereum (get-first-param req))
+      =/  hash  (number-to-hash number)
+      =/  parent-hash  (number-to-hash ?~(number number (dec number)))
+      %-  malt
+      ^-  (list (pair term json))
+      :~  hash+s+(crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 hash)))
+          number+s+(crip (num-to-hex:ethereum number))
+          'parentHash'^s+(crip (num-to-hex:ethereum parent-hash))
+      ==
     ?:  =(method 'eth_getLogs')
       :-  |  :_  [%wait ~]
       %+  answer-request  req
-      %+  logs-to-json
+      ?^  (get-param-obj-maybe req 'blockHash')
+        %-  logs-by-hash
+        (get-param-obj req 'blockHash')
+      %+  logs-by-range
         (get-param-obj req 'fromBlock')
       (get-param-obj req 'toBlock')
     ?:  =(method 'eth_newFilter')
@@ -67,7 +85,7 @@
       :+  |
         %+  answer-request  req
         ~|  [eth-filters latest-block]
-        (logs-to-json from-block.u.fil latest-block)
+        (logs-by-range from-block.u.fil latest-block)
       =.  last-block.u.fil  latest-block
       [%cont ..stay]
     ?:  =(method 'eth_getFilterChanges')
@@ -77,16 +95,17 @@
         ~|(%no-filter-not-implemented !!)
       :+  |
         %+  answer-request  req
-        (logs-to-json last-block.u.fil latest-block)
+        (logs-by-range last-block.u.fil latest-block)
       =.  all.eth-filters
         %+  ~(put by all.eth-filters)
           fil-id
         u.fil(last-block latest-block)
       [%cont ..stay]
+    ~&  [%ph-azimuth-miss req]
     [& ~ %wait ~]
     ::
     ++  latest-block
-      (add launch:contracts:azimuth (lent logs))
+      (add launch:contracts:azimuth (dec (lent logs)))
     ::
     ++  get-id
       |=  req=@t
@@ -110,6 +129,20 @@
       ?>  ?=([* ~] array)
       i.array
     ::
+    ++  get-param-obj-maybe
+      |=  [req=@t param=@t]
+      ^-  (unit @ud)
+      =,  dejs-soft:format
+      =/  array
+        %.  (need (de-json:html req))
+        (ot params+(ar (ot param^so ~)) ~)
+      ?~  array
+        ~
+      :-  ~
+      ?>  ?=([* ~] u.array)
+      %-  hex-to-num:ethereum
+      i.u.array
+    ::
     ++  get-filter-id
       |=  req=@t
       =,  dejs:format
@@ -119,6 +152,14 @@
         (ot params+(ar so) ~)
       ?>  ?=([* ~] id)
       i.id
+    ::
+    ++  get-first-param
+      |=  req=@t
+      =,  dejs:format
+      =/  id
+        %.  (need (de-json:html req))
+        (ot params+(at so bo ~) ~)
+      -.id
     ::
     ++  answer-request
       |=  [req=@t result=json]
@@ -136,19 +177,42 @@
           who.pin
           //http-client/0v1n.2m9vh
           %receive
-          num.u.thus
+          num.u.ask
           [%start [200 ~] `(as-octs:mimes:html resp) &]
       ==
     ::
-    ++  logs-to-json
+    ++  number-to-hash
+      |=  =number:block:able:jael
+      ^-  @
+      ?:  (lth number launch:contracts:azimuth)
+        (cat 3 0x5364 (sub launch:contracts:azimuth number))
+      (cat 3 0x5363 (sub number launch:contracts:azimuth))
+    ::
+    ++  hash-to-number
+      |=  =hash:block:able:jael
+      (add launch:contracts:azimuth (div hash 0x1.0000))
+    ::
+    ++  logs-by-range
       |=  [from-block=@ud to-block=@ud]
+      %+  logs-to-json  (max launch:contracts:azimuth from-block)
+      ?:  (lth to-block launch:contracts:azimuth)
+        ~
+      %+  swag
+        ?:  (lth from-block launch:contracts:azimuth)
+           [0 +((sub to-block launch:contracts:azimuth))]
+        :-  (sub from-block launch:contracts:azimuth)
+        +((sub to-block from-block))
+      logs
+    ::
+    ++  logs-by-hash
+      |=  =hash:block:able:jael
+      =/  =number:block:able:jael  (hash-to-number hash)
+      (logs-by-range number number)
+    ::
+    ++  logs-to-json
+      |=  [count=@ud selected-logs=(list az-log)]
       ^-  json
       :-  %a
-      =/  selected-logs
-        %+  swag
-          [(sub from-block launch:contracts:azimuth) (sub to-block from-block)]
-        logs
-      =/  count  from-block
       |-  ^-  (list json)
       ?~  selected-logs
         ~
@@ -160,7 +224,8 @@
           (crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 `@`0x5362)))
         ::
           :+  'blockHash'  %s
-          (crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 `@`0x5363)))
+          =/  hash  (number-to-hash count)
+          (crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 hash)))
         ::
           :+  'blockNumber'  %s
           (crip (num-to-hex:ethereum count))
@@ -183,23 +248,60 @@
     --
   --
 ::
-++  dawn
+++  raw-real-ship
   |=  who=ship
+  =/  m  (ph ,~)
+  ^-  form:m
+  ?.  =(%earl (clan:title who))
+    (raw-ship:(ph-tests our) who `(dawn who ~))
+  =/  spon=ship  (^sein:title who)
+  =/  cub  (pit:nu:crub:crypto 512 (shaz (jam who life=1 %entropy)))
+  =/  =seed:able:jael
+    [who 1 sec:ex:cub ~]
+  =/  =pass  pub:ex:cub
+  =/  com=tape  "|moon {(scow %p who)}, =public-key {(scow %uw pass)}"
+  ;<  ~  bind:m  (just-events:(ph-tests our) (dojo spon com))
+  (raw-ship:(ph-tests our) who `(dawn who `seed))
+::
+++  dawn
+  |=  [who=ship seed=(unit seed:able:jael)]
   ^-  dawn-event
-  =/  lyfe  lyfe:(~(got by lives) who)
-  :*  [who lyfe sec:ex:(get-keys who lyfe) ~]
-      (^sein:title who)
+  =/  spon
+    =/  =ship  (^sein:title who)
+    =/  spon-spon
+      ?:  ?=(%czar (clan:title ship))
+        [| ~zod]
+      [& (^sein:title ship)]
+    =/  life-rift  ~|([ship lives] (~(got by lives) ship))
+    =/  =life  lyfe.life-rift
+    =/  =rift  rut.life-rift
+    =/  =pass
+      %^    pass-from-eth:azimuth
+          (as-octs:mimes:html (get-public ship life %crypt))
+        (as-octs:mimes:html (get-public ship life %auth))
+      1
+    :^    ship=ship
+        *[address address address address]:azimuth
+      `[life=life pass rift spon-spon ~]
+    ~
+  =/  =seed:able:jael
+    ?^  seed
+      u.seed
+    =/  life-rift  (~(got by lives) who)
+    =/  =life  lyfe.life-rift
+    [who life sec:ex:(get-keys who life) ~]
+  :*  seed
+      spon
       get-czars
       ~[~['arvo' 'netw' 'ork']]
       0
       `(need (de-purl:html 'http://localhost:8545'))
-      ~
   ==
 ::
 ::  Should only do galaxies
 ::
 ++  get-czars
-  ^-  (map ship [life pass])
+  ^-  (map ship [rift life pass])
   %-  malt
   %+  murn
     ~(tap by lives)
@@ -207,7 +309,7 @@
   ?.  =(%czar (clan:title who))
     ~
   %-  some
-  :+  who  lyfe
+  :^  who  rut  lyfe
   %^    pass-from-eth:azimuth
       (as-octs:mimes:html (get-public who lyfe %crypt))
     (as-octs:mimes:html (get-public who lyfe %auth))
@@ -217,21 +319,17 @@
   |=  who=@p
   ?<  (~(has by lives) who)
   =.  lives  (~(put by lives) who [1 0])
-  %-  add-logs
-  %+  welp
-    ?:  =(%czar (clan:title who))
-      ~
-    ~[(spawned:lo (^sein:title who) who)]
-  :~  (activated:lo who)
-      (owner-changed:lo who 0xdead.beef)
-      %-  changed-keys:lo
-      :*  who
-          (get-public who 1 %crypt)
-          (get-public who 1 %auth)
-          1
-          1
-      ==
-  ==
+  =.  this-az
+    %-  add-logs
+    :~  %-  changed-keys:lo
+        :*  who
+            (get-public who 1 %crypt)
+            (get-public who 1 %auth)
+            1
+            1
+        ==
+    ==
+  (spam-logs 30)
 ::
 ::  our: host ship
 ::  who: cycle keys
@@ -303,9 +401,16 @@
   =/  prev  (~(got by lives) who)
   =/  rut  +(rut.prev)
   =.  lives  (~(put by lives) who [lyfe.prev rut])
-  %-  add-logs
-  :_  ~
-  (broke-continuity:lo who rut)
+  =.  this-az
+    (add-logs (broke-continuity:lo who rut) ~)
+  (spam-logs 30)
+::
+++  spam-logs
+  |=  n=@
+  ?:  =(n 0)
+    this-az
+  =.  this-az  ?:((~(has by lives) ~fes) (cycle-keys ~fes) (spawn ~fes))
+  $(n (dec n))
 ::
 ++  get-keys
   |=  [who=@p lyfe=life]
@@ -326,11 +431,6 @@
 ++  lo
   =,  azimuth-events:azimuth
   |%
-  ++  activated
-    |=  who=ship
-    ^-  az-log
-    [~[^activated who] '']
-  ::
   ++  broke-continuity
     |=  [who=ship rut=rift]
     ^-  az-log
@@ -351,15 +451,5 @@
         (render-hex-bytes:ethereum 32 `@`crypto)
         (render-hex-bytes:ethereum 32 `@`lyfe)
     ==
-  ::
-  ++  owner-changed
-    |=  [who=ship owner=@ux]
-    ^-  az-log
-    [~[^owner-changed who owner] '']
-  ::
-  ++  spawned
-    |=  [par=ship who=ship]
-    ^-  az-log
-    [~[^spawned par who] '']
   --
 --
