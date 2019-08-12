@@ -1346,6 +1346,7 @@
         %wait  `%b
         %want  `%a
         %warp  `%c
+        %wash  `%g
         %wipe  `%f
       ::
         %request         `%i
@@ -1392,6 +1393,10 @@
     =+  mes=;;({@ud roon} r.q.hic)
     =<  mo-abet
     (mo-gawd:(mo-abed:mo hen) him dap mes)
+  ::
+      %wash
+    =.  bum.mast.all  (~(run by bum.mast.all) |=(=seat seat(vel *worm)))
+    [~ ..^$]
   ::
       $wegh
     =/  =mass
