@@ -1,6 +1,10 @@
-/-  *ring
+/-  *ring, tapp-sur=tapp
 ::  ring signatures over the edwards curve
 ::
+/+  async, stdio
+=/  stdio  (stdio ,_!! ,_!!)
+=*  scry  scry:stdio
+=+  (async [sign card contract]:(tapp-sur ,_!! ,_!!))
 |%
 ::  +raw is the raw internal ring signature implementation. +raw does not deal
 ::  with urbit ship identities or urbit nouns and is low level. It only deals
@@ -312,9 +316,9 @@
     ::
     =(ch0.signature (head challenges))
   --
-::  +detail: details about getting keys from Azimuth
+::  +detail-raw: manipulate keys
 ::
-++  detail
+++  detail-raw
   |%
   ::  +seed-to-private-key-scalar: keyfile form to scalar we can multiply with
   ::
@@ -343,6 +347,12 @@
     =+  [c=(rsh 8 1 bod) s=(end 8 1 bod)]
     ::  todo: do we puck here?
     [c s]
+  --
+::  +detail: details about getting keys from Azimuth
+::
+++  detail
+  =>  detail-raw
+  |%
   ::  +ship-life-to-pubid: fetches public key information from jael
   ::
   ++  ship-life-to-pubid
@@ -399,6 +409,75 @@
       (~(put in keys) pubkey)
     ::
     $(invited t.invited)
+  --
+::  +detail-async: details about getting keys from Azimuth
+::
+++  detail-async
+  =>  detail-raw
+  |%
+  ::  +ship-life-to-pubid: fetches public key information from jael
+  ::
+  ++  ship-life-to-pubid
+    |=  [our=@p now=@da ship=@p =life]
+    =/  m  (async ,@udpoint)
+    ^-  form:m
+    ::
+    ;<  d=deed:ames  bind:m
+      %-  (scry ,deed:ames)
+      j+/(scot %p our)/deed/(scot %da now)/(scot %p ship)/(scot %ud life)
+    ::  we have the deed which has pass, which is several numbers +cat-ed
+    ::  together; pull out the keys
+    ::
+    =/  x=[crypt=@ auth=@]  (get-public-key-from-pass pass.d)
+    ::
+    %-  pure:m
+    `@udpoint`auth.x
+  ::
+  ++  build-signing-participants
+    |=  [our=@p now=@da invited=(list @p)]
+    =/  m  (async ,[(set [@p life]) (set @udpoint)])
+    ^-  form:m
+    ::
+    =|  participants=(set [@p life])
+    =|  keys=(set @udpoint)
+    ::
+    |-  ^-  form:m
+    =*  loop  $
+    ?~  invited
+      (pure:m [participants keys])
+    ::
+    ;<  =life  bind:m
+      ((scry ,life) j+/(scot %p our)/life/(scot %da now)/(scot %p i.invited))
+    ::
+    ?:  =(life 0)
+      loop(invited t.invited)
+    ::
+    ;<  pubkey=@udpoint  bind:m  (ship-life-to-pubid our now i.invited life)
+    ::
+    =.  participants  (~(put in participants) [i.invited life])
+    =.  keys          (~(put in keys) pubkey)
+    ::
+    loop(invited t.invited)
+  ::
+  ::
+  ++  build-verifying-participants
+    |=  [our=@p now=@da invited=(list [ship=@p =life])]
+    =/  m  (async ,(set @udpoint))
+    ^-  form:m
+    ::
+    =|  keys=(set @udpoint)
+    ::
+    |-  ^-  form:m
+    =*  loop  $
+    ?~  invited
+      (pure:m keys)
+    ::
+    ;<  pubkey=@udpoint  bind:m
+      (ship-life-to-pubid our now ship.i.invited life.i.invited)
+    =.  keys
+      (~(put in keys) pubkey)
+    ::
+    loop(invited t.invited)
   --
 --
 ::  public interface
@@ -466,5 +545,72 @@
   =/  msg-hash=@  (shaz (jam message))
   =/  link-hash=(unit @)  (bind link-scope.ring-signature |=(a=* (shaz (jam a))))
   ::
+  (verify:raw msg-hash link-hash keys raw.ring-signature)
+::  +sign-async: ring-signs a message using the current ship
+::
+++  sign-async
+  |=  $:  our=@p
+          now=@da
+          eny=@uvJ
+      ::
+          message=*
+          link-scope=(unit *)
+          anonymity-set=(set @p)
+      ==
+  =/  m  (async ,ring-signature)
+  ^-  form:m
+  ::  if our is not in @p, we must be in @p.
+  ::
+  =.  anonymity-set  (~(put in anonymity-set) our)
+  ::
+  =/  msg-hash=@  (shaz (jam message))
+  =/  link-hash=(unit @)  (bind link-scope |=(a=* (shaz (jam a))))
+  ::  get everyone's public keys
+  ::
+  ;<  p=[participants=(set [ship=@p =life]) keys=(set @udpoint)]  bind:m
+    (build-signing-participants:detail-async our now ~(tap in anonymity-set))
+  ::  get our ships' current life
+  ::
+  ;<  our-life=life  bind:m
+    ((scry ,life) %j /(scot %p our)/life/(scot %da now)/(scot %p our))
+  ::  get our ships' secret keyfile ring
+  ::
+  ;<  secret-ring=ring  bind:m
+    ((scry ,ring) %j /(scot %p our)/vein/(scot %da now)/(scot %ud our-life))
+  ::  fetch the encoded auth seed from the ring
+  ::
+  =/  secret-auth-seed=@
+    +:(get-private-key-from-ring:detail-async secret-ring)
+  ::  get our ships' public key
+  ::
+  ;<  public-key=@udpoint  bind:m
+    (ship-life-to-pubid:detail-async our now our our-life)
+  ::
+  %-  pure:m
+  :-  participants.p
+  :-  link-scope
+  %-  sign:raw  :*
+    msg-hash
+    link-hash
+    keys.p
+    public-key
+    (seed-to-private-key-scalar:detail-async secret-auth-seed)
+    eny
+  ==
+::  +verify-async: verifies a message against a ring signature
+::
+++  verify-async
+  |=  [our=@p now=@da message=* =ring-signature]
+  =/  m  (async ,?)
+  ^-  form:m
+  ::
+  ;<  keys=(set @udpoint)  bind:m
+    %^  build-verifying-participants:detail-async  our  now
+    ~(tap in participants.ring-signature)
+  ::
+  =/  msg-hash=@  (shaz (jam message))
+  =/  link-hash=(unit @)  (bind link-scope.ring-signature |=(a=* (shaz (jam a))))
+  ::
+  %-  pure:m
   (verify:raw msg-hash link-hash keys raw.ring-signature)
 --
