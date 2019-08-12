@@ -5,8 +5,8 @@ module Noun.Conversions
   , Word128, Word256, Word512
   , Bytes(..), Octs(..), File(..)
   , Cord(..), Knot(..), Term(..), Tape(..), BigTape(..), Tour(..)
+  , Wall
   , UD(..), UV(..)
-  , Tank(..), Tang, Plum(..)
   , Mug(..), Path(..), EvilPath(..), Ship(..)
   , Lenient(..)
   ) where
@@ -328,6 +328,11 @@ instance FromNoun Tape where
         Right tx -> pure (Tape tx)
 
 
+-- Wall -- Text Lines ----------------------------------------------------------
+
+type Wall = [Tape]
+
+
 -- Big Tape -- Don't Print -----------------------------------------------------
 
 newtype BigTape = BigTape Tape
@@ -335,41 +340,6 @@ newtype BigTape = BigTape Tape
 
 instance Show BigTape where
   show (BigTape (Tape t)) = show (take 32 t <> "...")
-
-
--- Pretty Printing -------------------------------------------------------------
-
-type Tang = [Tank]
-
-data Tank
-    = Leaf Tape
-    | Plum Plum
-    | Palm (Tape, Tape, Tape, Tape) [Tank]
-    | Rose (Tape, Tape, Tape) [Tank]
-  deriving (Eq, Ord, Show)
-
-data WideFmt = WideFmt { delimit :: Cord, enclose :: Maybe (Cord, Cord) }
-  deriving (Eq, Ord, Show)
-
-data TallFmt = TallFmt { intro :: Cord, indef :: Maybe (Cord, Cord) }
-  deriving (Eq, Ord, Show)
-
-data PlumFmt = PlumFmt (Maybe WideFmt) (Maybe TallFmt)
-  deriving (Eq, Ord, Show)
-
-type Plum = AtomCell Cord PlumTree
-
-data PlumTree
-    = Para Cord [Cord]
-    | Tree PlumFmt [Plum]
-    | Sbrk Plum
-  deriving (Eq, Ord, Show)
-
-deriveNoun ''WideFmt
-deriveNoun ''TallFmt
-deriveNoun ''PlumFmt
-deriveNoun ''Tank
-deriveNoun ''PlumTree
 
 
 -- Bytes -----------------------------------------------------------------------

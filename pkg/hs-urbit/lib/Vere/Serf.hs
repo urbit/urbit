@@ -127,9 +127,8 @@ deriveNoun ''Plea
 -- Utils -----------------------------------------------------------------------
 
 printTank :: Word32 -> Tank -> IO ()
-printTank pri = \case
-  Leaf (Tape s) -> serf ("[tank] " <> s)
-  t             -> serf ("[tank] " <> tshow (pri, t))
+printTank _pri tank =
+    (serf . unlines . fmap unTape . wash (WashCfg 0 80)) tank
 
 guardExn :: Exception e => Bool -> e -> IO ()
 guardExn ok = unless ok . throwIO

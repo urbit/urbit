@@ -1,12 +1,13 @@
 module Noun
-    ( module Noun.Core
-    , module Noun.Convert
-    , module Noun.Conversions
-    , module Noun.Atom
-    , module Noun.Jam
-    , module Noun.Cue
-    , module Noun.TH
+    ( module Noun.Atom
     , module Data.Word
+    , module Noun.Conversions
+    , module Noun.Convert
+    , module Noun.Core
+    , module Noun.Cue
+    , module Noun.Jam
+    , module Noun.Tank
+    , module Noun.TH
     , _Cue
     , loadFile
     ) where
@@ -14,14 +15,15 @@ module Noun
 import ClassyPrelude
 import Control.Lens
 
+import Data.Word
 import Noun.Atom
 import Noun.Conversions
 import Noun.Convert
 import Noun.Core
 import Noun.Cue
 import Noun.Jam
+import Noun.Tank
 import Noun.TH
-import Data.Word
 
 --------------------------------------------------------------------------------
 
