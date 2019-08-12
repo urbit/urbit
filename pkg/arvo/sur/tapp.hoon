@@ -4,7 +4,8 @@
 ::  Possible async calls
 ::
 +$  card
-  $%  [%wait wire @da]
+  $%  [%scry =path]
+      [%wait wire @da]
       [%rest wire @da]
       [%poke wire dock poke-data]
       [%peer wire dock path]
@@ -25,7 +26,8 @@
 ::  Possible async responses
 ::
 +$  sign
-  $%  [%wake error=(unit tang)]
+  $%  [%scry-result result=*]
+      [%wake error=(unit tang)]
       [%coup =dock error=(unit tang)]
       [%quit =dock =path]
       [%reap =dock =path error=(unit tang)]

@@ -62,6 +62,25 @@
 ::
 ::    ----
 ::
+::  Scry from the namespace.
+::
+::    Direct scrys are impossible in a tapp, so this routes around that.
+::
+++  scry
+  |*  result-type=mold
+  |=  =path
+  =/  m  (async ,result-type)
+  ;<  ~  bind:m  (send-raw-card %scry path)
+  |=  =async-input
+  :^  ~  ~  ~
+  ?~  in.async-input
+    [%wait ~]
+  ?.  ?=(%scry-result -.sign.u.in.async-input)
+    [%fail %expected-scry-result >got=-.sign< ~]
+  [%done (result-type result.sign.u.in.async-input)]
+::
+::    ----
+::
 ::  Outgoing HTTP requests
 ::
 ++  send-request
