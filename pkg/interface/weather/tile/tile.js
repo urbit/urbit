@@ -99,7 +99,7 @@ export default class WeatherTile extends Component {
         <a style={{"color": "white", "cursor": "pointer"}} onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>&lt;&#45;</a>
         <p className="label-regular white pt2">Please enter your <a href="https://latitudeandlongitude.org/" target="_blank">latitude and longitude</a>.</p>
         {error}
-        <form className="flex absolute" style={{"bottom": "0"}}><input id="gps" className="white pb1 bg-transparent outline-0 bn bb-ns b--white" type="text" placeholder="29.558107,-95.089023" onKeyDown={this.keyPress}></input> <input className="bg-transparent inter white w-20 outliner-0 bn pointer" type="submit" onClick={() => this.manualLocationSubmit()} value="->"></input></form>
+        <form className="flex absolute" style={{"bottom": "0"}}><input id="gps" className="white pb1 bg-transparent outline-0 bn bb-ns b--white" type="text" placeholder="29.558107,-95.089023" onKeyDown={this.keyPress.bind(this)}></input> <input className="bg-transparent inter white w-20 outliner-0 bn pointer" type="submit" onClick={() => this.manualLocationSubmit()} value="->"></input></form>
       </div>
     ))
   }
