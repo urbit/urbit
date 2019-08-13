@@ -39,12 +39,12 @@
 ::
 ++  poke-app
   |=  [=wire =dock =out-poke-data]
-  ^-  (move-writer ~)
+  ^-  (quip move ~)
   (tell:move-writer [ost.bowl %poke wire dock out-poke-data])
 ::
 ++  give-result
   |=  [=the=path =out-peer-data]
-  ^-  (move-writer ~)
+  ^-  (quip move ~)
   %-  rant:move-writer
   %+  turn
     ^-  (list bone)
@@ -56,26 +56,25 @@
 ::
 ++  prep
   |=  old=(unit app-state)
-  =/  m  (move-writer ,_this)
   ^-  (quip move _this)
   ?~  old
-    ;<  ~  bind:m  (poke-app /unlink [[our %hood] [%drum-unlink our dap]]:bowl)
-    (pure:m this)
-  (pure:m this(state u.old))
+    ;<  ~  bind:(move-writer ,_this)
+      (poke-app /unlink [[our %hood] [%drum-unlink our dap]]:bowl)
+    `this
+  `this(state u.old)
 ::
 ++  poke
   |=  =in-poke-data
-  =/  m  (move-writer ,_this)
   ^-  (quip move _this)
   ?-  -.in-poke-data
       %noun
     ?:  ?=(%debug noun.in-poke-data)
       ~&  bowl
       ~&  state
-      (pure:m this)
+      `this
     ::
     ~&  %poke-unknown
-    (pure:m this)
+    `this
   ::
       %dns-address
     =*  who  src.bowl
@@ -90,16 +89,18 @@
     =/  dun=(unit binding:dns)  (~(get by completed.state) who)
     ?:  &(?=(^ dun) =(adr address.u.dun))
       =.  requested.state  (~(del by requested.state) who)
-      ;<  ~  bind:m  (give-result /(scot %p who) %dns-binding u.dun)
-      (pure:m this)
+      ;<  ~  bind:(move-writer ,_this)
+        (give-result /(scot %p who) %dns-binding u.dun)
+      `this
     ::
     ?:  &(?=(^ req) =(adr u.req))
-      (pure:m this)
+      `this
     ::  XX check address?
     =/  =request:dns  [who adr]
     =.  requested.state  (~(put by requested.state) request)
-    ;<  ~  bind:m  (give-result /requests %dns-request request)
-    (pure:m this)
+    ;<  ~  bind:(move-writer ,_this)
+      (give-result /requests %dns-request request)
+    `this
   ::
       %dns-complete
     ::  XX or confirm valid binding?
@@ -116,12 +117,13 @@
             !=(adr u.req)
         ==
       ~&  %unknown-complete
-      (pure:m this)
+      `this
     =:  requested.state  (~(del by requested.state) who)
         completed.state  (~(put by completed.state) who [adr tuf])
       ==
-    ;<  ~  bind:m  (give-result /(scot %p who) %dns-binding adr tuf)
-    (pure:m this)
+    ;<  ~  bind:(move-writer ,_this)
+      (give-result /(scot %p who) %dns-binding adr tuf)
+    `this
   ==
 ::
 ++  peek
@@ -137,28 +139,29 @@
 ::
 ++  peer
   |=  =path
-  =/  m  (move-writer ,_this)
   ^-  (quip move _this)
   ::  will be immediately unlinked, see +prep
   ::
   ?:  ?=([%sole *] path)
-    (pure:m this)
+    `this
   ?.  ?=([@ ~] path)
     ~|  %invalid-path  !!
   ?:  ?=(%requests i.path)
     =/  requests  ~(tap by requested.state)
-    |-  ^-  m
+    |-  ^-  (quip move _this)
     =*  loop  $
     ?~  requests
-      (pure:m this)
-    ;<  ~  bind:m  (give-result path %dns-request i.requests)
+      `this
+    ;<  ~  bind:(move-writer ,_this)
+      (give-result path %dns-request i.requests)
     loop(requests t.requests)
   ::
   =/  who=(unit @p)  (slaw %p i.path)
   ?~  who
     ~|  %invalid-path  !!
   ?~  dun=(~(get by completed.state) u.who)
-    (pure:m this)
-  ;<  ~  bind:m  (give-result path %dns-binding u.dun)
-  (pure:m this)
+    `this
+  ;<  ~  bind:(move-writer ,_this)
+    (give-result path %dns-binding u.dun)
+  `this
 --
