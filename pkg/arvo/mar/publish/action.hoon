@@ -47,7 +47,7 @@
     ::
     ++  new-collection
       %-  ot:dejs
-      :~  name+(su:dejs sym)
+      :~  name+so:dejs
           title+so:dejs
           comments+comment-config
           allow-edit+edit-config
@@ -57,8 +57,8 @@
     ++  new-post
       %-  ot:dejs
       :~  who+(su:dejs fed:ag)
-          coll+(su:dejs sym)
-          name+(su:dejs sym)
+          coll+so:dejs
+          name+so:dejs
           title+so:dejs
           comments+comment-config
           perm+perm-config
@@ -68,40 +68,40 @@
     ++  new-comment
       %-  ot:dejs
       :~  who+(su:dejs fed:ag)
-          coll+(su:dejs sym)
+          coll+so:dejs
           name+(su:dejs sym)
           content+so:dejs
       ==
     ::
     ++  delete-collection
       %-  ot:dejs
-      :~  coll+(su:dejs sym)
+      :~  coll+so:dejs
       ==
     ::
     ++  delete-post
       %-  ot:dejs
-      :~  coll+(su:dejs sym)
-          post+(su:dejs sym)
+      :~  coll+so:dejs
+          post+so:dejs
       ==
     ::
     ++  delete-comment
       %-  ot:dejs
-      :~  coll+(su:dejs sym)
-          post+(su:dejs sym)
-          comment+(su:dejs sym)
+      :~  coll+so:dejs
+          post+so:dejs
+          comment+so:dejs
       ==
     ::
     ++  edit-collection
       %-  ot:dejs
-      :~  name+(su:dejs sym)
+      :~  name+so:dejs
           title+so:dejs
       ==
     ::
     ++  edit-post
       %-  ot:dejs
       :~  who+(su:dejs fed:ag)
-          coll+(su:dejs sym)
-          name+(su:dejs sym)
+          coll+so:dejs
+          name+so:dejs
           title+so:dejs
           comments+comment-config
           perm+perm-config
@@ -110,9 +110,9 @@
     ::
     ++  edit-comment
       %-  ot:dejs
-      :~  coll+(su:dejs sym)
-          name+(su:dejs sym)
-          id+(su:dejs sym)
+      :~  coll+so:dejs
+          name+so:dejs
+          id+so:dejs
           content+so:dejs
       ==
     ::
@@ -147,7 +147,7 @@
     ::
     ++  invite
       %-  ot:dejs
-      :~  coll+(su:dejs sym)
+      :~  coll+so:dejs
           title+so:dejs
           who+(ar:dejs (su:dejs fed:ag))
       ==
@@ -155,36 +155,36 @@
     ++  reject-invite
       %-  ot:dejs
       :~  who+(su:dejs fed:ag)
-          coll+(su:dejs sym)
+          coll+so:dejs
       ==
     ::
     ++  serve
       %-  ot:dejs
-      :~  coll+(su:dejs sym)
+      :~  coll+so:dejs
       ==
     ::
     ++  unserve
       %-  ot:dejs
-      :~  coll+(su:dejs sym)
+      :~  coll+so:dejs
       ==
     ::
     ++  subscribe
       %-  ot:dejs
       :~  who+(su:dejs fed:ag)
-          coll+(su:dejs sym)
+          coll+so:dejs
       ==
     ::
     ++  unsubscribe
       %-  ot:dejs
       :~  who+(su:dejs fed:ag)
-          coll+(su:dejs sym)
+          coll+so:dejs
       ==
     ::
     ++  read
       %-  ot:dejs
       :~  who+(su:dejs fed:ag)
-          coll+(su:dejs sym)
-          post+(su:dejs sym)
+          coll+so:dejs
+          post+so:dejs
       ==
     ::
     --

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { PathControl } from '/components/lib/path-control';
 import { withRouter } from 'react-router';
 import urbitOb from 'urbit-ob';
+import { stringToSymbol } from '/lib/util';
 
 const PC = withRouter(PathControl);
 
@@ -41,28 +42,10 @@ export class NewBlog extends Component {
     this.blogSubmit = this.blogSubmit.bind(this);
   }
 
-  stringToSymbol(str){
-    let result = '';
-    for (var i=0; i<str.length; i++){
-      var n = str.charCodeAt(i);
-      if (( (n >= 97) && (n <= 122) ) ||
-          ( (n >= 48) && (n <= 57) ))
-      {
-        result += str[i];
-      } else if ( (n >= 65) &&  (n <= 90) ) 
-      {
-        result += String.fromCharCode(n + 32);
-      } else {
-        result += '-';
-      }
-    }
-    return result.replace(/^\-+|\-+$/g, '');
-  }
-
   blogSubmit() {
     let ship = window.ship;
     let blogTitle = this.state.title;
-    let blogId = this.stringToSymbol(blogTitle);
+    let blogId = stringToSymbol(blogTitle);
 
     let permissions = {
       read: {
