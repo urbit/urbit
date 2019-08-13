@@ -5,61 +5,61 @@
 ::
 =/  vane  (alef !>(..zuse))
 ::
-=/  alice  vane
-=/  bob    vane
+=/  nec  vane
+=/  bud    vane
 ::
-=.  our.alice        ~nec
-=.  now.alice        ~1111.1.1
-=.  eny.alice        0xdead.beef
-=.  scry-gate.alice  |=(* ``[%noun !>(*(list turf))])
+=.  our.nec        ~nec
+=.  now.nec        ~1111.1.1
+=.  eny.nec        0xdead.beef
+=.  scry-gate.nec  |=(* ``[%noun !>(*(list turf))])
 ::
-=.  our.bob          ~doznec-doznec
-=.  now.bob          ~1111.1.1
-=.  eny.bob          0xbeef.dead
-=.  scry-gate.bob    |=(* ``[%noun !>(*(list turf))])
+=.  our.bud          ~bud
+=.  now.bud          ~1111.1.1
+=.  eny.bud          0xbeef.dead
+=.  scry-gate.bud    |=(* ``[%noun !>(*(list turf))])
 ::
-=.  crypto-core.ames-state.alice  (pit:nu:crub:crypto 512 (shaz 'alice'))
-=.  crypto-core.ames-state.bob    (pit:nu:crub:crypto 512 (shaz 'bob'))
+=.  crypto-core.ames-state.nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
+=.  crypto-core.ames-state.bud    (pit:nu:crub:crypto 512 (shaz 'bud'))
 ::
-=/  alice-pub  pub:ex:crypto-core.ames-state.alice
-=/  alice-sec  sec:ex:crypto-core.ames-state.alice
-=/  bob-pub    pub:ex:crypto-core.ames-state.bob
-=/  bob-sec    sec:ex:crypto-core.ames-state.bob
+=/  nec-pub  pub:ex:crypto-core.ames-state.nec
+=/  nec-sec  sec:ex:crypto-core.ames-state.nec
+=/  bud-pub    pub:ex:crypto-core.ames-state.bud
+=/  bud-sec    sec:ex:crypto-core.ames-state.bud
 ::
-=/  alice-sym  (derive-symmetric-key:vane bob-pub alice-sec)
-=/  bob-sym    (derive-symmetric-key:vane alice-pub bob-sec)
+=/  nec-sym  (derive-symmetric-key:vane bud-pub nec-sec)
+=/  bud-sym    (derive-symmetric-key:vane nec-pub bud-sec)
 ::
-?>  =(alice-sym bob-sym)
+?>  =(nec-sym bud-sym)
 ::
-=.  life.ames-state.alice  2
-=.  peers.ames-state.alice
-  %+  ~(put by peers.ames-state.alice)  ~doznec-doznec
+=.  life.ames-state.nec  2
+=.  peers.ames-state.nec
+  %+  ~(put by peers.ames-state.nec)  ~bud
   =|  =peer-state:alef
   =.  -.peer-state
-    :*  symmetric-key=bob-sym
+    :*  symmetric-key=bud-sym
         life=3
-        public-key=bob-pub
-        sponsor=~marzod
+        public-key=bud-pub
+        sponsor=~nec
     ==
   =.  route.peer-state  `[direct=%.y `lane:alef`[%& ~nec]]
   [%known peer-state]
 ::
-=.  life.ames-state.bob  3
-=.  peers.ames-state.bob
-  %+  ~(put by peers.ames-state.bob)  ~nec
+=.  life.ames-state.bud  3
+=.  peers.ames-state.bud
+  %+  ~(put by peers.ames-state.bud)  ~nec
   =|  =peer-state:alef
   =.  -.peer-state
-    :*  symmetric-key=alice-sym
+    :*  symmetric-key=nec-sym
         life=2
-        public-key=alice-pub
+        public-key=nec-pub
         sponsor=~nec
     ==
   =.  route.peer-state  `[direct=%.y `lane:alef`[%| `@`%lane-bar]]
   [%known peer-state]
 ::  metamorphose
 ::
-=>  .(alice +:(call:(alice) ~[//unix] ** %born ~))
-=>  .(bob +:(call:(bob) ~[//unix] ** %born ~))
+=>  .(nec +:(call:(nec) ~[//unix] ** %born ~))
+=>  .(bud +:(call:(bud) ~[//unix] ** %born ~))
 ::  helper core
 ::
 =>
@@ -85,16 +85,16 @@
   (skim moves is-move-send)
 ::
 ++  call
-  |=  [vane=_alice =duct =task:alef]
-  ^-  [moves=(list move:alef) _alice]
+  |=  [vane=_nec =duct =task:alef]
+  ^-  [moves=(list move:alef) _nec]
   ::
   =/  vane-core  (vane(now `@da`(add ~s1 now.vane)))
   ::
   (call:vane-core duct ** task)
 ::
 ++  take
-  |=  [vane=_alice =wire =duct =sign:alef]
-  ^-  [moves=(list move:alef) _alice]
+  |=  [vane=_nec =wire =duct =sign:alef]
+  ^-  [moves=(list move:alef) _nec]
   ::
   =/  vane-core  (vane(now `@da`(add ~s1 now.vane)))
   ::
@@ -106,7 +106,7 @@
 ++  test-packet-encoding  ^-  tang
   ::
   =/  =packet:alef
-    :*  [sndr=~nec rcvr=~doznec-doznec]
+    :*  [sndr=~nec rcvr=~bud]
         encrypted=%.n
         origin=~
         content=[12 13]
@@ -134,23 +134,23 @@
     ==
   ::
   =/  =packet:alef
-    :*  [sndr=~bus rcvr=~doznec-doznec]
+    :*  [sndr=~bus rcvr=~bud]
         encrypted=%.y
         origin=~
-        content=(encrypt:vane alice-sym shut-packet)
+        content=(encrypt:vane nec-sym shut-packet)
     ==
   ::
   =/  =blob:alef   (encode-packet:vane packet)
-  =^  moves1  bob  (call bob ~[//unix] %hear lane-foo blob)
-  =^  moves2  bob
+  =^  moves1  bud  (call bud ~[//unix] %hear lane-foo blob)
+  =^  moves2  bud
     =/  =point:alef
       :*  rift=1
           life=4
-          keys=[[life=4 [crypto-suite=1 `@`alice-pub]] ~ ~]
+          keys=[[life=4 [crypto-suite=1 `@`nec-pub]] ~ ~]
           sponsor=`~bus
       ==
     %-  take
-    :^  bob  /public-keys  ~[//unix]
+    :^  bud  /public-keys  ~[//unix]
     ^-  sign:alef
     [%k %public-keys %full [n=[~bus point] ~ ~]]
   ::
@@ -160,49 +160,71 @@
       !>  moves1
   ::
     %+  expect-eq
-      !>  [~[//unix] %pass /bone/~bus/1 %g %plea ~bus %g /talk [%first %post]]~
-      !>  moves2
+      !>  %-  sy
+          :~  :^  ~[//unix]  %pass  /bone/~bus/1
+              [%g %plea ~bus %g /talk [%first %post]]
+          ::
+              :^  ~[//unix]  %pass  /qos
+              [%d %flog %text "; ~bus is your neighbor"]
+          ==
+      !>  (sy ,.moves2)
   ==
 ::
 ++  test-message-flow  ^-  tang
+  ::  ~nec -> %plea -> ~bud
   ::
-  =^  moves1  alice
-    (call alice ~[/alice] %plea ~doznec-doznec %g /talk [%get %post])
+  =^  moves1  nec  (call nec ~[/g/talk] %plea ~bud %g /talk [%get %post])
+  =^  moves2  bud  (call bud ~[//unix] %hear (snag-packet 0 moves1))
+  ::  ~bud -> %done -> ~nec
   ::
-  =^  moves2  bob    (call bob ~[/bob] %hear (snag-packet 0 moves1))
-  =^  moves3  bob    (take bob /bone/~nec/1 ~[/bob] %g %done ~)
-  =^  moves4  alice  (call alice ~[/alice] %hear (snag-packet 0 moves3))
-  =^  moves5  bob
-    (take bob /bone/~nec/1 ~[/bob] %g %boon [%post 'first1!!'])
+  =^  moves3  bud  (take bud /bone/~nec/1 ~[//unix] %g %done ~)
+  =^  moves4  nec  (call nec ~[//unix] %hear (snag-packet 0 moves3))
+  ::  ~bud -> %boon -> ~nec
   ::
-  =^  moves6  alice  (call alice ~[/alice] %hear (snag-packet 0 moves5))
-  =^  moves7  bob    (call bob ~[/bob] %hear (snag-packet 0 moves6))
+  =^  moves5  bud  (take bud /bone/~nec/1 ~[//unix] %g %boon [%post 'first1!!'])
+  =^  moves6  nec  (call nec ~[//unix] %hear (snag-packet 0 moves5))
+  ::  ~nec -> %done -> ~bud (just make sure ~bud doesn't crash on ack)
+  ::
+  =^  moves7  bud  (call bud ~[//unix] %hear (snag-packet 0 moves6))
   ::
   ;:  weld
     %+  expect-eq
-      !>  :~  :+  ~[/alice]  %give  [%done error=~]
-              :+  ~[/alice]  %pass
-              [/pump/~doznec-doznec/0 %b %rest ~1111.1.1..00.00.06]
+      !>  :~  [~[//unix] %pass /qos %d %flog %text "; ~nec is your neighbor"]
+              [~[//unix] %pass /bone/~nec/1 %g %plea ~nec %g /talk [%get %post]]
           ==
-      !>  moves4
+      !>  moves2
   ::
     %+  expect-eq
-      !>  [~[/alice] %give %boon [%post 'first1!!']]
+      !>  %-  sy
+          :~  [~[//unix] %pass /qos %d %flog %text "; ~bud is your neighbor"]
+              [~[//unix] %pass /pump/~bud/0 %b %rest ~1111.1.1..00.00.06]
+              [~[/g/talk] %give %done error=~]
+          ==
+      !>  (sy ,.moves4)
+  ::
+    %+  expect-eq
+      !>  [~[/g/talk] %give %boon [%post 'first1!!']]
       !>  (snag 1 `(list move:alef)`moves6)
   ==
 ::
 ++  test-nack  ^-  tang
-  =^  moves1  alice
-    (call alice ~[/alice] %plea ~doznec-doznec %g /talk [%get %post])
+  ::  ~nec -> %plea -> ~bud
   ::
-  =^  moves2  bob    (call bob ~[/bob] %hear (snag-packet 0 moves1))
-  =/  =error:alef    [%flub [%leaf "sinusoidal repleneration"]~]
-  =^  moves3  bob    (take bob /bone/~nec/1 ~[/bob] %g %done `error)
-  =^  moves4  alice  (call alice ~[/alice] %hear (snag-packet 0 moves3))
-  =^  moves5  alice  (call alice ~[/alice] %hear (snag-packet 1 moves3))
-  =^  moves6  bob    (call bob ~[/bob] %hear (snag-packet 0 moves5))
+  =^  moves1  nec  (call nec ~[/g/talk] %plea ~bud %g /talk [%get %post])
+  =^  moves2  bud  (call bud ~[//unix] %hear (snag-packet 0 moves1))
+  ::  ~bud -> nack -> ~nec
+  ::
+  =/  =error:alef  [%flub [%leaf "sinusoidal repleneration"]~]
+  =^  moves3  bud  (take bud /bone/~nec/1 ~[/bud] %g %done `error)
+  =^  moves4  nec  (call nec ~[//unix] %hear (snag-packet 0 moves3))
+  ::  ~bud -> nack-trace -> ~nec
+  ::
+  =^  moves5  nec  (call nec ~[//unix] %hear (snag-packet 1 moves3))
+  ::  ~nec -> ack nack-trace -> ~bud
+  ::
+  =^  moves6  bud  (call bud ~[//unix] %hear (snag-packet 0 moves5))
   ::
   %+  expect-eq
-    !>  [~[/alice] %give %done `error]
+    !>  [~[/g/talk] %give %done `error]
     !>  (snag 1 `(list move:alef)`moves5)
 --
