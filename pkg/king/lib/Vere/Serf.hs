@@ -61,7 +61,7 @@ compileFlags = foldl' (\acc flag -> setBit acc (fromEnum flag)) 0
 data Config = Config FilePath [Flag]
   deriving (Show)
 
-debug msg = putStrLn ("[DEBUG]\t" <> msg)
+debug _msg = pure () -- putStrLn ("[DEBUG]\t" <> msg)
 
 serf msg = putStrLn ("[SERF]\t" <> msg)
 
@@ -133,10 +133,6 @@ printTank _pri tank =
 guardExn :: Exception e => Bool -> e -> IO ()
 guardExn ok = unless ok . throwIO
 
-fromJustExn :: Exception e => Maybe a -> e -> IO a
-fromJustExn Nothing  exn = throwIO exn
-fromJustExn (Just x) exn = pure x
-
 fromRightExn :: Exception e => Either a b -> (a -> e) -> IO b
 fromRightExn (Left m)  exn = throwIO (exn m)
 fromRightExn (Right x) _   = pure x
@@ -185,15 +181,18 @@ readStdErr h =
 
 tearDown :: Serf -> IO ()
 tearDown serf = do
-    race_ waitThenKill (shutdownAndWait serf 0)
-  where
-    killedMsg =
-      "[Serf.tearDown]: Serf didn't die when asked, killing it"
+    terminateProcess (process serf)
+    void (waitForExit serf)
 
-    waitThenKill = do
-        threadDelay 1000000
-        debug killedMsg
-        terminateProcess (process serf)
+    -- race_ waitThenKill (shutdownAndWait serf 0)
+  where
+    -- killedMsg =
+      -- "[Serf.tearDown]: Serf didn't die when asked, killing it"
+
+    -- waitThenKill = do
+        -- threadDelay 1000000
+        -- debug killedMsg
+        -- terminateProcess (process serf)
 
 waitForExit :: Serf -> IO ExitCode
 waitForExit serf = waitForProcess (process serf)
@@ -201,10 +200,12 @@ waitForExit serf = waitForProcess (process serf)
 kill :: Serf -> IO ExitCode
 kill serf = terminateProcess (process serf) >> waitForExit serf
 
+{-
 shutdownAndWait :: Serf -> Word8 -> IO ExitCode
 shutdownAndWait serf code = do
   shutdown serf code
   waitForExit serf
+-}
 
 
 -- Basic Send and Receive Operations -------------------------------------------
@@ -227,10 +228,8 @@ sendOrder w o = do
   n <- evaluate (toNoun o)
 
   case o of
-    OWork (DoWork (Work _ _ _ e)) -> do
-      print (toNoun (e :: Ev))
-    _  -> do
-      pure ()
+    OWork (DoWork (Work _ _ _ e)) -> do print (toNoun (e :: Ev))
+    _                             -> do pure ()
 
   debug ("[Serf.sendOrder.jam]")
   bs <- evaluate (jamBS n)
@@ -239,22 +238,23 @@ sendOrder w o = do
   debug ("[Serf.sendOrder.sent]")
 
 sendBytes :: Serf -> ByteString -> IO ()
-sendBytes s bs = do
-    debug "sendLen"
+sendBytes s bs = handle ioErr $ do
     sendLen s (length bs)
-    debug "hFlush"
     hFlush (sendHandle s)
-    debug "Flushed"
 
-    threadDelay 10000 -- TODO WHY DOES THIS MATTER?????
+    hack
 
-    debug "hPut"
     hPut (sendHandle s) bs
-    debug "hFlush"
     hFlush (sendHandle s)
-    debug "Flushed"
 
-    threadDelay 10000 -- TODO WHY DOES THIS MATTER?????
+    hack
+
+  where
+    ioErr :: IOError -> IO ()
+    ioErr _ = throwIO SerfConnectionClosed
+
+    -- TODO WHY DOES THIS MATTER?????
+    hack = threadDelay 10000
 
 recvLen :: Serf -> IO Word64
 recvLen w = do
@@ -275,9 +275,6 @@ recvAtom w = do
   where
     packAtom :: ByteString -> Atom
     packAtom = view (from atomBytes)
-
-cordString :: Cord -> String
-cordString = unpack . cordText
 
 cordText :: Cord -> Text
 cordText = T.strip . unCord

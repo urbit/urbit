@@ -116,7 +116,7 @@ pier pierPath mPort (serf, log, ss) = do
     persistQ <- newTQueueIO :: Acquire (TQueue (Job, FX))
     executeQ <- newTQueueIO :: Acquire (TQueue FX)
 
-    inst <- liftIO (KingId . UV . fromIntegral <$> randomIO @Word32)
+    inst <- liftIO (KingId . UV . fromIntegral <$> randomIO @Word16)
 
     let ship = who (Log.identity log)
 

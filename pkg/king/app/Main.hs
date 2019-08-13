@@ -158,10 +158,9 @@ collectAllFx top = do
 
 --------------------------------------------------------------------------------
 
-tryDoStuff :: IO ()
-tryDoStuff = runInBoundThread $ do
+tryDoStuff :: FilePath -> IO ()
+tryDoStuff shipPath = runInBoundThread $ do
     let pillPath = "/home/benjamin/r/urbit/bin/solid.pill"
-        shipPath = "/home/benjamin/r/urbit/s/dev/"
         ship     = zod
 
     -- collectAllFx "/home/benjamin/r/urbit/s/testnet-zod/"
@@ -179,8 +178,18 @@ tryDoStuff = runInBoundThread $ do
 
     pure ()
 
+newShip :: CLI.New -> CLI.Opts -> IO ()
+newShip CLI.New{..} _ = do
+    tryBootFromPill nPillPath nPierPath (Ship 0)
+
+runShip :: CLI.Run -> CLI.Opts -> IO ()
+runShip (CLI.Run pierPath) _ = tryPlayShip pierPath
+
 main :: IO ()
-main = CLI.parseArgs >>= print
+main = CLI.parseArgs >>= \case
+    CLI.CmdRun r o -> runShip r o
+    CLI.CmdNew r o -> pPrint (CLI.CmdNew r o)
+    CLI.CmdTry p   -> tryDoStuff p
 
 --------------------------------------------------------------------------------
 

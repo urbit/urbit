@@ -16,6 +16,7 @@ data Opts = Opts
     { oQuiet    :: Bool
     , oHashless :: Bool
     , oExit     :: Bool
+    , oDryRun   :: Bool
     , oVerbose  :: Bool
     , oAmesPort :: Maybe Word16
     , oProf     :: Bool
@@ -23,21 +24,22 @@ data Opts = Opts
   deriving (Show)
 
 data New = New
-    { naPillPath :: FilePath
-    , naShipAddr :: Text
-    , naPierPath :: FilePath
-    , naArvoDir  :: Maybe FilePath
+    { nPillPath :: FilePath
+    , nShipAddr :: Text
+    , nPierPath :: FilePath
+    , nArvoDir  :: Maybe FilePath
     }
   deriving (Show)
 
 data Run = Run
-    { raPierPath :: FilePath
+    { rPierPath :: FilePath
     }
   deriving (Show)
 
 data Cmd
     = CmdNew New Opts
     | CmdRun Run Opts
+    | CmdTry FilePath
   deriving (Show)
 
 --------------------------------------------------------------------------------
@@ -86,23 +88,19 @@ parseArgs = do
 
 run :: Parser Run
 run = do
-    raPierPath <- strArgument (metavar "PIER" <> help "Path to pier")
+    rPierPath <- strArgument (metavar "PIER" <> help "Path to pier")
     pure Run{..}
 
 new :: Parser New
 new = do
-    naPierPath <- strArgument (metavar "PIER" <> help "Path to pier")
+    nPierPath <- strArgument (metavar "PIER" <> help "Path to pier")
+    nPillPath <- strArgument (metavar "PILL" <> help "Path to pill file")
+    nShipAddr <- strArgument (metavar "SHIP" <> help "Ship address")
 
-    naPillPath <- strArgument $ metavar "PILL"
-                             <> help "Path to pill file"
-
-    naShipAddr <- strArgument $ metavar "SHIP"
-                             <> help "Ship address"
-
-    naArvoDir <- option auto $ metavar "ARVO"
-                            <> short 'A'
-                            <> value Nothing
-                            <> help "Initial Arvo filesystem"
+    nArvoDir <- option auto $ metavar "ARVO"
+                           <> short 'A'
+                           <> value Nothing
+                           <> help "Initial Arvo filesystem"
 
     pure New{..}
 
@@ -117,6 +115,7 @@ opts = do
     oQuiet    <- switch (short 'q' <> help "Quiet")
     oVerbose  <- switch (short 'v' <> help "Verbose")
     oExit     <- switch (short 'x' <> help "Exit immediatly")
+    oDryRun   <- switch (short 'N' <> help "Dry run -- Don't persist")
     oProf     <- switch (short 'p' <> help "Enable profiling")
 
     pure (Opts{..})
@@ -127,7 +126,10 @@ cmd = subparser
                          $ progDesc "Boot a new ship")
        <> (command "run" $ info (runShip <**> helper)
                          $ progDesc "Run an existing ship")
+       <> (command "try" $ info (tryShip <**> helper)
+                         $ progDesc "Run development test flow")
         )
   where
     runShip = CmdRun <$> run <*> opts
     newShip = CmdNew <$> new <*> opts
+    tryShip = CmdTry <$> strArgument (metavar "PIER" <> help "Path to pier")
