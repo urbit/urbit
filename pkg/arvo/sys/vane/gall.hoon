@@ -2737,10 +2737,6 @@
     =/  payload  gall-payload(system-duct.agents.gall duct)
     [~ payload]
       ::
-      %sunk
-      ::
-    [~ gall-payload]
-      ::
       %vega
       ::
     [~ gall-payload]
@@ -2764,7 +2760,8 @@
     mo-abet
   ::
       %wash
-    =.  running.ship-state.gall  (~(run by running.ship-state.gall) |=(=agent agent(cache *worm)))
+    =.  running.agents.gall
+      (~(run by running.agents.gall) |=(=agent agent(cache *worm)))
     [~ gall-payload]
       ::
       %wegh
