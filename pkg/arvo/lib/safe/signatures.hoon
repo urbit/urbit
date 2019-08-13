@@ -107,7 +107,7 @@
     %-  async-sign-message  :*
       our
       now
-      (shas eny %root)
+      (shas eny %msg)
       path-request.signing-request
       [route user-event]:signing-request
     ==
@@ -116,7 +116,7 @@
     %-  async-sign-message  :*
       our
       now
-      (shas eny %msg)
+      (shas eny %root)
       root-request.signing-request
       [inner-signature route.signing-request user-event.signing-request]
     ==

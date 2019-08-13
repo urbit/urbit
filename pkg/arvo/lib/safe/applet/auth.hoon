@@ -44,22 +44,19 @@
   ==
 ::  +on-route: everything routes through the toplevel node. this is what does 
 ::
-::    TODO: child-event or return-event, to force routing to be able to act
-::    and terminate processing?
-::
 ++  on-route
   |=  [=path =parent-event =private-state]
-  ^-  (unit child-event)
+  ^-  (either return-event child-event)
   ::
   ?-    -.parent-event
       %ship
     ~&  [%todo-verify-signature-for-ship ship.parent-event]
-    `[%ship ship.parent-event]
+    [%r %ship ship.parent-event]
   ::
       %ring
     ~&  %todo-verify-ring-signature-for
     ::
-    `[%ring / y.raw.ring-signature.parent-event]
+    [%r %ring / y.raw.ring-signature.parent-event]
   ==
 ::
 ++  on-process-event

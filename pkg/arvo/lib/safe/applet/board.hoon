@@ -58,10 +58,10 @@
 ::
 ++  on-route
   |=  [=path =parent-event =private-state]
-  ^-  (unit child-event)
+  ^-  (either return-event child-event)
   ::  we could block the route if we wanted here!
   ::
-  `[next-postid.private-state parent-event]
+  [%r next-postid.private-state parent-event]
 ::  +on-process-event: called when we give the passed in user-event to its
 ::  target node.
 ::

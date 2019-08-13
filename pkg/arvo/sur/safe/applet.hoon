@@ -33,6 +33,13 @@
         ::  eject yourself in response to blackmail?
     ==
   --
+::  A dedicated either type that doesn't have a `p` face on the and whose names
+::  are actually easy to check.
+::
++*  either  [left right]
+  $%  [%l left]
+      [%r right]
+  ==
 ::  The toplevel signature is what comes in on the auth app.
 ::
 ++  full-signature

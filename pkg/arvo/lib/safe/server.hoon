@@ -185,8 +185,6 @@
       ==
   ^-  [(list server-to-client:common) _original-state]
   ::
-  =/  toplevel-sig-type=signature-type  signature-type.snapshot.original-state
-  ::
   |^  ::  there are two things which cause broadcast changes: events sent as part
       ::  of the [%log ...] message from +on-process-event and the toplevel
       ::  [%accept-and-invite-member @p] return value.
@@ -269,16 +267,19 @@
       ::
       =/  on-route=vase  (slap app-vase [%limb %on-route])
       =/  args  :(slop !>(route) parent-event private-state.state)
-      =/  raw-result  (slam on-route args)
-      ::  raw-result is a (unit *), where we abort processing if we get a sig
-      ::  back
+      =/  raw-result  (sped (slam on-route args))
+      ::  the raw-result is either a return-event or a child-event.
       ::
-      ?:  =(~ q.raw-result)
-        ~&  [%node-canceled-event route parent-event private-state.state]
-        ~&  [%state-at-cancel state]
-        [!>(~) changes state]
+      ?:  =(%l q:(slot 2 raw-result))
+        ::  the raw-result is a return vase. send it upwards.
+        ::
+        =/  return-vase=vase  (slot 3 raw-result)
+        ~&  [%got-early-return-during-route return-vase]
+        [return-vase changes state]
+      ::  the raw-result is a child-event. send it downwards.
       ::
       =/  child-event=vase  (slot 3 raw-result)
+      ~&  [%on-route-child-event child-event]
       ::
       =/  n=[return-value=vase changes-and-state]
         (recurse child-event t.route full-path message-signature original-path message changes u.sub-node)
