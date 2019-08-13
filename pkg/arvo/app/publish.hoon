@@ -1268,7 +1268,13 @@
   ::
       %read
     =.  unread.sat  (~(del in unread.sat) who.act coll.act post.act)
-    [make-tile-moves this]
+    :_  this
+    %+  welp  make-tile-moves
+    ::
+    %+  turn  (prey:pubsub:userlib /primary bol)
+    |=  [b=bone *]
+    ^-  move
+    [b %diff %publish-update %unread %.n (sy [who.act coll.act post.act] ~)]
   ::
   ==
 ::

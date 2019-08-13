@@ -108,5 +108,6 @@
 ::
 +$  update
   $%  [%invite add=? who=@p col=@tas title=@t]
+      [%unread add=? keys=(set [who=@p coll=@tas post=@tas])]
   ==
 --

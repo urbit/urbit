@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { PostPreview } from '/components/lib/post-preview';
 import _ from 'lodash';
 import { PathControl } from '/components/lib/path-control';
 import { BlogData } from '/components/lib/blog-data';
@@ -158,6 +157,13 @@ export class Blog extends Component {
   }
 
   buildPostPreviewProps(post, blog, pinned){
+    let unread =  (-1 === _.findIndex(this.props.unread, {
+        post: post.post.info.filename,
+        coll: blog.info.filename,
+        who: blog.info.owner.slice(1),
+      }))
+      ? false: true;
+
     return {
       postTitle: post.post.info.title,
       postName:  post.post.info.filename,
@@ -169,6 +175,7 @@ export class Blog extends Component {
       blogOwner: blog.info.owner,
       date: post.post.info["date-created"],
       pinned: pinned,
+      unread: unread,
     }
   }
 

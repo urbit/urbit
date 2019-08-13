@@ -47,7 +47,7 @@ export class RecentPreview extends Component {
       <div className="w-336 relative"
         style={{height:240, marginBottom: 72, marginRight: 16}}>
         <Link to={postLink}>
-          <TitleSnippet title={this.props.post.postTitle}/>
+          <TitleSnippet badge={this.props.post.unread} title={this.props.post.postTitle}/>
           <PostSnippet
             body={this.props.post.postBody}
           />
