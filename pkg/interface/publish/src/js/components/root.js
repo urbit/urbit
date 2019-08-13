@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route } from "react-router-dom";
-import Mousetrap from 'mousetrap';
 import classnames from 'classnames';
-import _ from 'lodash';
-
 import { api } from '/api';
 import { store } from '/store';
 import { Recent } from '/components/recent';

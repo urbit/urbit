@@ -159,11 +159,11 @@ export class Post extends Component {
 
     if (ship !== window.ship) {
       
-      let blog = _.get(this.props, `subs[${ship}][${blogId}]`, false);
+      let blog = _.get(this.props, `subs["${ship}"]["${blogId}"]`, false);
 
       if (blog) {
-        let post = _.get(blog, `posts[${postId}].post`, false);
-        let comments = _.get(blog, `posts[${postId}].comments`, false);
+        let post = _.get(blog, `posts["${postId}"].post`, false);
+        let comments = _.get(blog, `posts["${postId}"].comments`, false);
         let blogUrl = `/~publish/${blog.info.owner}/${blog.info.filename}`;
         let postUrl = `${blogUrl}/${post.info.filename}`;
 
@@ -208,9 +208,9 @@ export class Post extends Component {
           this.handleError.bind(this));
       }
     } else {
-      let blog = _.get(this.props, `pubs[${blogId}]`, false);
-      let post = _.get(blog, `posts[${postId}].post`, false);
-      let comments = _.get(blog, `posts[${postId}].comments`, false);
+      let blog = _.get(this.props, `pubs["${blogId}"]`, false);
+      let post = _.get(blog, `posts["${postId}"].post`, false);
+      let comments = _.get(blog, `posts["${postId}"].comments`, false);
 
       if (!blog || !post) {
         this.setState({notFound: true});
@@ -303,13 +303,13 @@ export class Post extends Component {
     let blog;
 
     if (ship === window.ship) {
-      blog = _.get(this.props, `pubs[${blogId}]`, false);
-      post = _.get(blog, `posts[${postId}].post`, false);
-      comments = _.get(blog, `posts[${postId}].comments`, false);
+      blog = _.get(this.props, `pubs["${blogId}"]`, false);
+      post = _.get(blog, `posts["${postId}"].post`, false);
+      comments = _.get(blog, `posts["${postId}"].comments`, false);
     } else {
-      blog = _.get(this.props, `subs[${ship}][${blogId}]`, false);
-      post = _.get(blog, `posts[${postId}].post`, false);
-      comments = _.get(blog, `posts[${postId}].comments`, false);
+      blog = _.get(this.props, `subs["${ship}"]["${blogId}"]`, false);
+      post = _.get(blog, `posts["${postId}"].post`, false);
+      comments = _.get(blog, `posts["${postId}"].comments`, false);
     }
 
 
