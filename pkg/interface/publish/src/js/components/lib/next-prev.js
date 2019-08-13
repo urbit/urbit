@@ -70,7 +70,7 @@ class Preview extends Component {
           <div className="w-336 relative"
             style={{height:210}}>
             <Link to={postLink} className="db">
-              <TitleSnippet title={previewProps.postTitle} />
+              <TitleSnippet badge={false} title={previewProps.postTitle} />
               <div className="w-100" style={{height:16}}></div>
               <PostSnippet
                 body={previewProps.postBody}

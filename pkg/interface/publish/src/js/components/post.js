@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { PostPreview } from '/components/lib/post-preview';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { PostBody } from '/components/lib/post-body';
@@ -348,6 +347,15 @@ export class Post extends Component {
       });
 
       this.props.setSpinner(false);
+
+      let read = {
+        read: {
+          who: ship,
+          coll: blogId,
+          post: postId,
+        }
+      };
+      this.props.api.action("publish", "publish-action", read);
     }
 
     if (!this.state.temporary){
@@ -365,6 +373,15 @@ export class Post extends Component {
             { text: post.info.title, url: postUrl },
           ],
         });
+
+        let read = {
+          read: {
+            who: ship,
+            coll: blogId,
+            post: postId,
+          }
+        };
+        this.props.api.action("publish", "publish-action", read);
       }
       if (oldComments != comments) {
         this.setState({comments: comments});
