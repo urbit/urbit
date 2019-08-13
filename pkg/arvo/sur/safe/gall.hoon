@@ -19,6 +19,9 @@
       ::  a poke which anyone can do.
       ::
       [%receive-message name=@t =client-to-server:common]
+      ::  temporary; inspect state
+      ::
+      [%debug command=@t]
   ==
 ::  Peers you can send to safe. This contains a tag for gall's pattern matching
 ::  crud.

@@ -1,93 +1,109 @@
-/-  ring, safe-applet, common=safe-common, client=safe-client
-/+  ring
+/-  *ring, safe-applet, common=safe-common, client=safe-client, tapp-sur=tapp
+/+  async, lib-ring=ring
+::
+=+  (async [sign card contract]:(tapp-sur ,_!! ,_!!))
 ::
 ::  Signature verification utilities for Safe
 ::
 |%
-++  verify-signature
-  |=  $:  =signature-type:safe-applet
-          route=path
+++  async-verify-signature
+  |=  $:  our=@p
+          now=@da
+          =signature-type:safe-applet
           =full-signature:safe-applet
           noun=*
       ==
-  ^-  ?
+  =/  m  (async ,?)
+  ^-  form:m
   ::  %inherit isn't a real signature type, but a directive to use the parent's
   ::  type. there should be no instances of it.
   ::
   ?>  !=(%inherit signature-type)
-  ::  TODO: We don't want to go full signature verification until we have the
-  ::  parts of the inter-ship replication system going, since we'll have to
-  ::  write the code which 
+  ::  if the signature-type is ship, you must have a ship signature
   ::
-  %.y
-  ::  ::  if the signature-type is ship, you must have a ship signature
-  ::  ::
-  ::  ?:  =(%ship signature-type)
-  ::    ?.  ?=([%ship *] full-signature)
-  ::      %.n
-  ::    ::
-  ::    ~&  %todo-verify-ship-signature
-  ::    %.y
-  ::  ::  all other signatures are variants on ring signatures
-  ::  ::
-  ::  ?.  ?=([%ring *] full-signature)
-  ::    %.n
-  ::  ::  todo: this rest here.
-  ::  ::
-  ::  %.y
+  ?:  =(%ship signature-type)
+    ?.  ?=([%ship *] full-signature)
+      (pure:m %.n)
+    ::
+    ~&  %todo-verify-ship-signature
+    (pure:m %.y)
+  ::  all other signatures are variants on ring signatures
+  ::
+  ?.  ?=([%ring *] full-signature)
+    (pure:m %.n)
+  ::
+  (verify-async:lib-ring our now noun ring-signature.full-signature)
 ::  +message-sign: signs an outbound message
 ::
 ::    Applets are able to request how signatures are performed and thus our
 ::    signing function needs to deal with all the concretized ways we can sign
 ::    something.
 ::
-++  sign-message
-  |=  [our=@p now=@da eny=@uvJ =signature-request:common data=*]
-  ^-  full-signature:safe-applet
-  ?-    -.signature-request
+++  async-sign-message
+  |=  [our=@p now=@da eny=@uvJ =signature-type-request:common data=*]
+  =/  m  (async ,full-signature:safe-applet)
+  ^-  form:m
+  ?-    -.signature-type-request
       %ship
     ::  if the signature type is just %ship, we sign data with our
     ::  authentication key.
     ::
-    [%ship ~zod 5]
+    (pure:m [%ship ~zod 5])
   ::
       %unlinked
     ::  if the signature is unlinked, we don't actually have to use
     ::  :requested-route in our calculation.
     ::
-    ::  TODO: Real ring signatures don't work on fakezods!?
-    [%ring *ring-signature:ring]
-    ::  [%ring (sign:ring our now eny data ~ invited.signature-request)]
+    ;<  sig=ring-signature  bind:m
+      (sign-async:lib-ring our now eny data ~ invited.signature-type-request)
+    ::
+    (pure:m [%ring sig])
   ::
       %linked
     ::  if the signature is linked, we link on the requested scope.
     ::
-    ::  TODO: Real ring signatures don't work on fakezods!?
-    [%ring *ring-signature:ring]
-    ::  :-  %ring
-    ::  (sign:ring our now eny data `scope.signature-request invited.signature-request)
+    ;<  sig=ring-signature  bind:m
+      (sign-async:lib-ring our now eny data `scope.signature-type-request invited.signature-type-request)
+    ::
+    (pure:m [%ring sig])
   ==
-::  +sign-user-event: performs the low level signing on 
+::  +sign-request: actually performs the signing.
 ::
-++  sign-raw-user-event
+::    TODO: I should just get the data from tapp instead of passing along?
+::
+::    TODO: Is using entropy twice actually safe here? Unlikely!
+::
+++  async-sign-request
   |=  $:  our=@p
           now=@da
           eny=@uvJ
-          root-request=signature-request:common
-          path-request=signature-request:common
-          route=path
-          user-event=*
+          =signing-request:common
       ==
-  ^-  client-to-server:common
+  =/  m  (async ,client-to-server:common)
+  ^-  form:m
   ::  build the two signatures
   ::
   ::    the inner-signature is passed to the target node. the outer-signature
   ::    is passed to the root node. the outer-signature signs the inner-signature.
   ::
-  =/  inner-signature
-    (sign-message our now eny path-request [route user-event])
-  =/  outer-signature
-    (sign-message our now eny root-request [inner-signature route user-event])
+  ;<  inner-signature=full-signature:safe-applet  bind:m
+    %-  async-sign-message  :*
+      our
+      now
+      (shas eny %root)
+      path-request.signing-request
+      [route user-event]:signing-request
+    ==
   ::
-  [outer-signature inner-signature route user-event]
+  ;<  outer-signature=full-signature:safe-applet  bind:m
+    %-  async-sign-message  :*
+      our
+      now
+      (shas eny %msg)
+      root-request.signing-request
+      [inner-signature route.signing-request user-event.signing-request]
+    ==
+  ::
+  %-  pure:m
+  [outer-signature inner-signature route.signing-request user-event.signing-request]
 --

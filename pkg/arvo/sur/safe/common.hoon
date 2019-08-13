@@ -122,17 +122,25 @@
       ::  creates a new child node under this
       [%create sub-id=@t type=@t =signature-type]
   ==
-::  when we go to actually request a signature, we change the abstract
+::  when we go to actually request a signature, we change a single abstract
 ::  :signature-type from the applet layer into a fully realized
-::  :signature-request which goes into the signing library.
+::  :signature-type-request which goes into the signing library.
 ::
-+$  signature-request
++$  signature-type-request
   $%  [%ship ~]
       [%unlinked invited=(set @p)]
       $:  %linked
           scope=[community-name=@t original-host=@p route=path]
           invited=(set @p)
   ==  ==
+::  A signing request is what actual gets passed to +sign-event
+::
++$  signing-request
+  $:  root-request=signature-type-request
+      path-request=signature-type-request
+      route=path
+      user-event=*
+  ==
 ::  +peer-diff: produced by the server, consumed by the client.
 ::
 ::    A diff to be sent over the wire for transport; this contains no vases.

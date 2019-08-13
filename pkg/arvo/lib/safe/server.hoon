@@ -107,6 +107,70 @@
     ::
     $(route t.route, state u.child-node)
   --
+::  +get-signature-type: returns the requested signature-type for a node
+::
+++  get-signature-type
+  |=  [route=path state=node:server]
+  ^-  (unit signature-type)
+  ::
+  ?~  route
+    `signature-type.snapshot.state
+  ::
+  ?~  child-node=(~(get by children.state) i.route)
+    ~
+  ::
+  =/  candidate  $(route t.route, state u.child-node)
+  ?:  =(`%inherit candidate)
+    `signature-type.snapshot.state
+  ::
+  candidate
+::  +async-validate-message: validates that signatures are correct
+::
+++  async-validate-message
+  |=  $:  our=@p
+          now=@da
+          signed-message=client-to-server:common
+          state=node:server
+      ==
+  =/  m  (async ,?)
+  ^-  form:m
+  ::
+  =/  toplevel-sig-type=signature-type  signature-type.snapshot.state
+  ::
+  ;<  ok=?  bind:m
+    %-  async-verify-signature  :*
+      our
+      now
+      toplevel-sig-type
+      top-signature.signed-message
+      [message-signature / message]:signed-message
+    ==
+  ::
+  ?.  ok
+    ~&  %invalid-toplevel-signature
+    (pure:m %.n)
+  ::
+  ::  OK, when the server receives a users message, we check the message with
+  ::  the destination node's signature type. At this phase, we don't care if
+  ::  the message is going to be forwarded by a %create command. (This is why
+  ::  the event log records the route on a per-item basis; when you replay the
+  ::  log, you need that information since the route of an individual message
+  ::  may not match the final receiving node.
+  ::
+  =/  message-sig-type=(unit signature-type)
+    (get-signature-type route.signed-message state)
+  ::
+  ?~  message-sig-type
+    ~&  %invalid-target-path
+    (pure:m %.n)
+  ::
+  %-  async-verify-signature  :*
+    our
+    now
+    u.message-sig-type
+    message-signature.signed-message
+    [route message]:signed-message
+  ==
 ::  +apply-to-server: applies a message to the event logs
 ::
 ::    We need the full path identity to be in the node and the signature and
@@ -121,41 +185,7 @@
   ::
   =/  toplevel-sig-type=signature-type  signature-type.snapshot.original-state
   ::
-  |^  ::  Check the toplevel message before checking anything else
-      ::
-      ?.  %-  verify-signature  :*
-              toplevel-sig-type
-              /
-              top-signature.signed-message
-              [message-signature route message]:signed-message
-            ==
-        ~&  %invalid-toplevel-signature
-        [~ original-state]
-      ::  OK, when the server receives a users message, we check the message with
-      ::  the destination node's signature type. At this phase, we don't care if
-      ::  the message is going to be forwarded by a %create command. (This is why
-      ::  the event log records the route on a per-item basis; when you replay the
-      ::  log, you need that information since the route of an individual message
-      ::  may not match the final receiving node.
-      ::
-      =/  message-sig-type=(unit signature-type)
-        (get-signature-type route.signed-message original-state)
-      ::
-      ?~  message-sig-type
-        ~&  %invalid-target-path
-        [~ original-state]
-      ::
-      ~&  [%dest message-sig-type]
-      ::
-      ?.  %-  verify-signature  :*
-            u.message-sig-type
-            route.signed-message
-            message-signature.signed-message
-            [route message]:signed-message
-          ==
-        ~&  %invalid-message-signature
-        [~ original-state]
-      ::  there are two things which cause broadcast changes: events sent as part
+  |^  ::  there are two things which cause broadcast changes: events sent as part
       ::  of the [%log ...] message from +on-process-event and the toplevel
       ::  [%accept-and-invite-member @p] return value.
       ::
@@ -348,22 +378,5 @@
     =.  private-state.state  (slot 3 raw-result)
     ::
     [return-event changes state]
-  ::  +get-signature-type: returns the requested signature-type for a node
-  ::
-  ++  get-signature-type
-    |=  [route=path state=node:server]
-    ^-  (unit signature-type)
-    ::
-    ?~  route
-      `signature-type.snapshot.state
-    ::
-    ?~  child-node=(~(get by children.state) i.route)
-      ~
-    ::
-    =/  candidate  $(route t.route, state u.child-node)
-    ?:  =(`%inherit candidate)
-      `signature-type.snapshot.state
-    ::
-    candidate
   --
 --

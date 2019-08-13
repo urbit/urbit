@@ -165,18 +165,18 @@
   ::
   |=  =node
   (apply-peer-diff-to-node app-map peer-diff.msg node)
-::  +signature-request-for: changes an abstract signature-type into a
-::  signature-request for route.
+::  +signature-type-request-for: changes an abstract signature-type into a
+::  signature-type-request for route.
 ::
 ::    This operation requires us to know information about the final 
 ::
-++  signature-request-for
+++  signature-type-request-for
   |=  [route=path client-state=node]
-  ^-  (each path signature-request:common)
+  ^-  (each path signature-type-request:common)
   ::
   =/  root-state  client-state
   ::
-  |^  ^-  (each path signature-request:common)
+  |^  ^-  (each path signature-type-request:common)
       =/  result  (search route client-state)
       ::
       ?-  -.result
@@ -187,7 +187,7 @@
   ::
   ++  search
     |=  [route=path client-state=node]
-    ^-  (each path (unit signature-request:common))
+    ^-  (each path (unit signature-type-request:common))
     ::
     =|  built-route=path
     |-
@@ -206,7 +206,7 @@
       ?~  u.children-state
         [%& built-route]
       ::
-      =/  ret-val=(each path (unit signature-request:common))
+      =/  ret-val=(each path (unit signature-type-request:common))
         %_  $
           route         t.route
           client-state  u.u.children-state
@@ -233,7 +233,7 @@
   ::
   ++  get-for-node
     |=  [built-route=path client-state=node]
-    ^-  (each path (unit signature-request:common))
+    ^-  (each path (unit signature-type-request:common))
     ::  if we don't have the root state, we can't do anything here.
     ::
     ?~  snapshot.root-state
@@ -272,7 +272,10 @@
       [%| ~]
     ==
   --
-::  +sign-user-event: signs a user event for sending to the server
+::  +build-signing-request:
+::
+::    XXX: Next paragraph is wrong
+::
 ::
 ::    +sign-user-event returns either a path that we aren't subscribed to or a
 ::    completed signature. Since +sign-user-event requires information from the
@@ -281,7 +284,7 @@
 ::    instead perform the subscription and retry once it has the requisite
 ::    data.
 ::
-::    TODO: +signature-request-for does a +need, but we should really break out
+::    TODO: +signature-type-request-for does a +need, but we should really break out
 ::    if :subscribed is false on any of the nodes.
 ::
 ::    TODO: It feels like a smell that app-map isn't part of a client-state,
@@ -292,17 +295,17 @@
 ::    was a large part of why I wanted the source code to the manipulation in
 ::    the nodes, even if it made upgrading harder.
 ::
-++  sign-user-event
-  |=  [our=@p now=@da eny=@uvJ route=path user-event=* client-state=node app-map=(map @t vase)]
-  ^-  (each path client-to-server:common)
+++  build-signing-request
+  |=  [route=path user-event=* client-state=node app-map=(map @t vase)]
+  ^-  (each path signing-request:common)
   ::
   ~&  [%sign-user-event route user-event]
   ::
-  =/  root-request  (signature-request-for / client-state)
+  =/  root-request  (signature-type-request-for / client-state)
   ?:  ?=([%& *] root-request)
     [%& p.root-request]
   ::
-  =/  path-request  (signature-request-for route client-state)
+  =/  path-request  (signature-type-request-for route client-state)
   ?:  ?=([%& *] path-request)
     [%& p.path-request]
   ::
@@ -321,14 +324,10 @@
   =/  user-event-mold=vase  (slap node-vase [%limb %user-event])
   =/  user-event=vase       (slam user-event-mold %noun user-event)
   ::
-  :-  %|
-  %-  sign-raw-user-event:signatures  :*
-    our
-    now
-    eny
-    p.root-request
-    p.path-request
-    route
-    q.user-event
+  :*  %|
+      p.root-request
+      p.path-request
+      route
+      q.user-event
   ==
 --

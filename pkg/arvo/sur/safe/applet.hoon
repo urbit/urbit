@@ -79,7 +79,7 @@
   $?  ::  sign publicly with your ship identity
       ::
       %ship
-      ::  sign with an ulinked ring-signature.
+      ::  sign with an unlinked ring-signature.
       ::
       %unlinked
       ::  sign with a linked ring-signature with scope of the community.

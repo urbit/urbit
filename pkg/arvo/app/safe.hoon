@@ -1,5 +1,5 @@
-/-  safe-gall, safe-client, safe-server
-/+  tapp, stdio, safe-applets, *safe-server, *safe-client
+/-  safe-gall, safe-client, safe-server, ring-sur=ring
+/+  tapp, stdio, safe-applets, *safe-server, *safe-client, safe-signatures, ring-lib=ring
 =>
   |%
   +$  subscription-state
@@ -139,7 +139,7 @@
     ::
     (enqueue-message-and-subscribe host name / path msg app-state)
   ::
-  =/  e  (sign-user-event our.bowl now.bowl eny.bowl path msg u.community safe-applets)
+  =/  e  (build-signing-request path msg u.community safe-applets)
   ::  check if we made the signature. when we can't make the signature because
   ::  we're lacking information, we make a subscription and then try again.
   ::
@@ -154,16 +154,21 @@
     ::
     (enqueue-message-and-subscribe host name p.e path msg app-state)
   ::
+  ;<  c-to-s=client-to-server:common  bind:m
+    (async-sign-request our.bowl now.bowl eny.bowl p.e)
+  ::
+  ~&  [%signature c-to-s]
+  ::
   ?:  =(host our.bowl)
     ::  we do the special case where we synchronously call ourselves for
     ::  messages to ourselves.
     ::
     ~&  %sending-to-self
-    (receive-message host name p.e app-state)
+    (receive-message our.bowl now.bowl name c-to-s app-state)
   ::  sends to a remote server.
   ::
   ~&  %sending-remotely
-  ;<  ~  bind:m  (poke-app [host %safe] %safe-poke %receive-message name p.e)
+  ;<  ~  bind:m  (poke-app [host %safe] %safe-poke %receive-message name c-to-s)
   (pure:m app-state)
 ::  +enqueue-message-and-subscribe
 ::
@@ -214,13 +219,16 @@
 ::    changes that need to be synced to clients who are subscribed.
 ::
 ++  receive-message
-  |=  [host=@p name=@t =client-to-server:common =app-state]
+  |=  [our=@p now=@da name=@t =client-to-server:common =app-state]
   =/  m  tapp-async
   ^-  form:m
   ::
   ?~  community=(~(get by server-communities.app-state) name)
     ~&  [%no-such-colmmunity name]
     (pure:m app-state)
+  ::
+  ;<  valid=?  bind:m
+    (async-validate-message our now client-to-server u.community)
   ::
   =^  changes  u.community
     %-  apply-to-server  :*
@@ -242,7 +250,7 @@
   ::  apply each of the changes per above to the community
   ::
   =.  client-communities.app-state
-    %+  ~(jab by client-communities.app-state)  [host name]
+    %+  ~(jab by client-communities.app-state)  [our name]
     |=  =node:safe-client
     ^+  node
     ::
@@ -360,9 +368,24 @@
     ::
     %-  receive-message  :*
       our.bowl
+      now.bowl
       name.command
       client-to-server.command
       app-state
+    ==
+  ::
+      %debug
+    ~&  [%debug-command command.command]
+    ?+  command.command  (pure:m app-state)
+        %test-sign
+      =/  req=signature-type-request:common
+        [%unlinked (sy [~zod ~nec ~fed ~])]
+      ::
+      ;<  =ring-signature:ring-sur  bind:m
+        (sign-async:ring-lib our.bowl now.bowl eny.bowl 'hi there' ~ (silt ~zod ~nec ~))
+::      ~&  [%sign (sign-message:safe-signatures our.bowl now.bowl eny.bowl req [%blah ~])]
+      ~&  [%sig ring-signature]
+      (pure:m app-state)
     ==
   ==
 ::
