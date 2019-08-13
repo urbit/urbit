@@ -329,6 +329,9 @@ export class Post extends Component {
        ((post.info.title != oldPost.info.title) ||
         (post.raw != oldPost.raw))) {
 
+      let blogUrl = `/~publish/${blog.info.owner}/${blog.info.filename}`;
+      let postUrl = `${blogUrl}/${post.info.filename}`;
+
       this.setState({
         mode: 'view',
         titleOriginal: post.info.title,
@@ -337,6 +340,11 @@ export class Post extends Component {
         body: post.raw,
         awaitingEdit: false,
         post: post,
+        pathData: [
+          { text: "Home", url: "/~publish/recent" },
+          { text: blog.info.title, url: blogUrl },
+          { text: post.info.title, url: postUrl },
+        ],
       });
 
       this.props.setSpinner(false);
@@ -344,10 +352,18 @@ export class Post extends Component {
 
     if (!this.state.temporary){
       if (oldPost != post) {
+        let blogUrl = `/~publish/${blog.info.owner}/${blog.info.filename}`;
+        let postUrl = `${blogUrl}/${post.info.filename}`;
+
         this.setState({
           titleOriginal: post.info.title,
           bodyOriginal: post.raw,
           post: post,
+          pathData: [
+            { text: "Home", url: "/~publish/recent" },
+            { text: blog.info.title, url: blogUrl },
+            { text: post.info.title, url: postUrl },
+          ],
         });
       }
       if (oldComments != comments) {
