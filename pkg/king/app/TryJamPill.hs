@@ -1,4 +1,4 @@
-module Main where
+module TryJamPill where
 
 import ClassyPrelude
 import Control.Lens

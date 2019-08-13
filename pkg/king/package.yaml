@@ -1,4 +1,4 @@
-name: urbit
+name: king
 version: 0.1.0
 license: AGPL-3.0-only
 
@@ -12,10 +12,10 @@ library:
     - -O2
 
 tests:
-  urbit-tests:
+  king-tests:
     source-dirs: test
     main: Main.hs
-    dependencies: urbit
+    dependencies: king
     ghc-options:
       - -threaded
       - -rtsopts
@@ -82,6 +82,7 @@ dependencies:
   - wai-conduit
   - warp
   - warp-tls
+  - optparse-applicative
 
 default-extensions:
   - ApplicativeDo
@@ -127,3 +128,15 @@ default-extensions:
   - UnboxedTuples
   - UnicodeSyntax
   - ViewPatterns
+
+executables:
+  king:
+    main: Main.hs
+    source-dirs: app
+    dependencies: ["king"]
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - "-with-rtsopts=-N"
+      - -fwarn-incomplete-patterns
+      - -O0

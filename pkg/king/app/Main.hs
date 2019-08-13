@@ -2,12 +2,15 @@ module Main where
 
 import ClassyPrelude
 
+import Options.Applicative
+import Options.Applicative.Help.Pretty
+
 import Arvo
 import Control.Exception hiding (evaluate)
 import Data.Acquire
 import Data.Conduit
-import Data.Conduit.List
-import Noun
+import Data.Conduit.List hiding (replicate)
+import Noun hiding (Parser)
 import Vere.Pier
 import Vere.Pier.Types
 import Vere.Serf
@@ -15,9 +18,11 @@ import Vere.Serf
 import Control.Concurrent (runInBoundThread, threadDelay)
 import Control.Lens       ((&))
 import System.Directory   (doesFileExist, removeFile)
+import System.Environment (getProgName)
 import Text.Show.Pretty   (pPrint)
 import Urbit.Time         (Wen)
 
+import qualified CLI
 import qualified Data.Set  as Set
 import qualified Vere.Log  as Log
 import qualified Vere.Pier as Pier
@@ -153,8 +158,8 @@ collectAllFx top = do
 
 --------------------------------------------------------------------------------
 
-main :: IO ()
-main = runInBoundThread $ do
+tryDoStuff :: IO ()
+tryDoStuff = runInBoundThread $ do
     let pillPath = "/home/benjamin/r/urbit/bin/solid.pill"
         shipPath = "/home/benjamin/r/urbit/s/dev/"
         ship     = zod
@@ -173,6 +178,9 @@ main = runInBoundThread $ do
     -- tryFullReplay shipPath
 
     pure ()
+
+main :: IO ()
+main = CLI.parseArgs >>= print
 
 --------------------------------------------------------------------------------
 

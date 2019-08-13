@@ -1,5 +1,6 @@
-module Main where
+module TryTimers where
 
+{-
 import Prelude
 import Control.Lens
 
@@ -47,3 +48,4 @@ main = do
   putStrLn "<bench>"
   replicateM_ 10 (bench behn)
   putStrLn "</bench>"
+-}

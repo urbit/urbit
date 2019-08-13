@@ -1,8 +1,7 @@
 resolver: lts-13.10
 
 packages:
-  - pkg/hs-urbit
-  - pkg/hs-vere
+  - pkg/king
 
 extra-deps:
   - para-1.1@sha256:a90eebb063ad70271e6e2a7f00a93e8e8f8b77273f100f39852fbf8301926f81
@@ -17,7 +16,7 @@ nix:
     - zlib
 
 ghc-options:
-  urbit: -fobject-code
+  king: -fobject-code
 
 # build:
 #   executable-profiling: true
