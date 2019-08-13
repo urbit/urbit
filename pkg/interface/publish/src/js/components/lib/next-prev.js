@@ -64,13 +64,14 @@ class Preview extends Component {
 
       return (
         <div className="w-336">
-          <Link className="ml2 mr2 gray-50 body-regular" to={prevUrl}>
+          <Link className="ml2 mr2 gray-50 body-regular db mb3" to={prevUrl}>
             {this.props.text}
           </Link>
           <div className="w-336 relative"
-            style={{height:195}}>
-            <Link to={postLink}>
-              <TitleSnippet title={previewProps.postTitle}/>
+            style={{height:210}}>
+            <Link to={postLink} className="db">
+              <TitleSnippet badge={false} title={previewProps.postTitle} />
+              <div className="w-100" style={{height:16}}></div>
               <PostSnippet
                 body={previewProps.postBody}
               />
