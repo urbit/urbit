@@ -128,6 +128,9 @@ export default class WeatherTile extends Component {
             style={{left: 8, top: 4}}>
             Weather
           </p>
+          <a className="label-regular b gray absolute pointer"
+            style={{right: 8, top: 4}}
+            onClick={() => this.locationSubmit()}>Update location -></a>
         <div className="w-100 mb2 mt2 absolute"
             style={{left: 18, top: 28}}>
           <img 
