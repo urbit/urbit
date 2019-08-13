@@ -57,14 +57,7 @@
     `[%ship ship.parent-event]
   ::
       %ring
-    ::
-    =/  ships=(set @p)
-      %-  sy
-      %+  turn
-        ~(tap by participants.ring-signature.parent-event)
-      head
-    ::
-    ~&  [%todo-verify-ring-signature-for ships]
+    ~&  %todo-verify-ring-signature-for
     ::
     `[%ring / y.raw.ring-signature.parent-event]
   ==

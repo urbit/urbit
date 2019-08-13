@@ -9,6 +9,7 @@
 ++  async-verify-signature
   |=  $:  our=@p
           now=@da
+          invited=(set @p)
           =signature-type:safe-applet
           =full-signature:safe-applet
           noun=*
@@ -25,11 +26,20 @@
     ?.  ?=([%ship *] full-signature)
       (pure:m %.n)
     ::
+    ?.  (~(has in invited) ship.full-signature)
+      ~&  [%uninvited-ship ship.full-signature]
+      (pure:m %.n)
+    ::
     ~&  %todo-verify-ship-signature
     (pure:m %.y)
   ::  all other signatures are variants on ring signatures
   ::
   ?.  ?=([%ring *] full-signature)
+    (pure:m %.n)
+  ::  the signature set must be equivalent to the current invited set
+  ::
+  ?.  =(invited (~(run in participants.ring-signature.full-signature) head))
+    ~&  %invalid-invited-set
     (pure:m %.n)
   ::
   (verify-async:lib-ring our now noun ring-signature.full-signature)
@@ -63,7 +73,14 @@
     ::  if the signature is linked, we link on the requested scope.
     ::
     ;<  sig=ring-signature  bind:m
-      (sign-async:lib-ring our now eny data `scope.signature-type-request invited.signature-type-request)
+      %-  sign-async:lib-ring  :*
+        our
+        now
+        eny
+        data
+        `scope.signature-type-request
+        invited.signature-type-request
+      ==
     ::
     (pure:m [%ring sig])
   ==

@@ -230,6 +230,10 @@
   ;<  valid=?  bind:m
     (async-validate-message our now client-to-server u.community)
   ::
+  ?.  valid
+    ~&  [%ignoring-invalid-message client-to-server]
+    (pure:m app-state)
+  ::
   =^  changes  u.community
     %-  apply-to-server  :*
       safe-applets

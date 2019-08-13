@@ -141,9 +141,10 @@
     %-  async-verify-signature  :*
       our
       now
+      invited:(need top-state.snapshot.state)
       toplevel-sig-type
       top-signature.signed-message
-      [message-signature / message]:signed-message
+      [message-signature route message]:signed-message
     ==
   ::
   ?.  ok
@@ -167,6 +168,7 @@
   %-  async-verify-signature  :*
     our
     now
+    invited:(need top-state.snapshot.state)
     u.message-sig-type
     message-signature.signed-message
     [route message]:signed-message
