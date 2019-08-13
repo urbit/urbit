@@ -2,8 +2,8 @@
 ::
 /?  309
 ::
-/-  hall
-/+  chat, hall-json
+/-  chat, hall
+/+  hall-json
 ::
 |_  upd=update:chat
 ++  grow

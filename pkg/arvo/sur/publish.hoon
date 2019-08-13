@@ -1,15 +1,15 @@
 |%
 ::
 +$  action
-  $%  $:  %new-collection  
-          name=@tas 
-          title=@t 
+  $%  $:  %new-collection
+          name=@tas
+          title=@t
           com=comment-config
           edit=edit-config
           perm=perm-config
       ==
   ::
-      $:  %new-post 
+      $:  %new-post
           who=@p
           coll=@tas
           name=@tas
@@ -96,16 +96,6 @@
       contributors=[mod=?(%white %black) who=(set @p)]
       subscribers=(set @p)
       last-update=@da
-  ==
-::
-+$  state
-  $:  pubs=(map @tas collection)
-      subs=(map [ship @tas] collection)
-      awaiting=(map @tas [builds=(set wire) partial=(unit delta)])
-      latest=(list [who=ship coll=@tas post=@tas])
-      unread=(set [who=ship coll=@tas post=@tas])
-      invites=(map [who=ship coll=@tas] title=@t)
-      outgoing=(map path bone)
   ==
 ::
 +$  delta

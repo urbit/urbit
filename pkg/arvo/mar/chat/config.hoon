@@ -2,8 +2,8 @@
 ::
 /?  309
 ::
-/-  hall
-/+  chat, hall-json
+/-  chat, hall
+/+  hall-json
 ::
 |_  str=streams:chat
 ++  grow
@@ -13,7 +13,7 @@
     ^-  ^json
     %+  frond  %chat
     %-  pairs
-    :~  
+    :~
       ::
         [%inbox (conf:enjs:hall-json inbox.str)]
       ::
