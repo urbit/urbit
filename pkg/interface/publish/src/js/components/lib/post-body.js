@@ -59,6 +59,11 @@ export class PostBody extends Component {
     return element;
   }
 
+  renderHR(what, node, attr, parentNode) {
+    const element = React.createElement(node, attr);
+    return element;
+  }
+
   renderDefault(what, node, attr, parentNode) {
     let dStyle = {
       wordWrap: "break-word",
@@ -84,6 +89,8 @@ export class PostBody extends Component {
         return this.renderIMG(what, node, attr, parentNode);
       case "p":
         return this.renderP(what, node, attr, parentNode);
+      case "hr":
+        return this.renderHR(what, node, attr, parentNode);
       default:
         return this.renderDefault(what, node, attr, parentNode);
     }
