@@ -11,7 +11,7 @@
 ::  the parent-event of thread is a board issued id number
 ::
 +$  parent-event
-  [id=@ud =processed-signature]
+  [id=@ud =community-signature]
 ::  the child-event of the toplevel is ~. The toplevel has no 
 ::
 +$  child-event
@@ -49,7 +49,10 @@
   ==
 ::
 +$  private-state
-  ~
+  $:  ::  a mapping between post ids and the identity that posted that message.
+      ::
+      identities=(map @ud @udpoint)
+  ==
 ::
 +$  on-process-response
   $%  [%log =private-event =return-event]
@@ -67,7 +70,15 @@
   ^-  [on-process-response _private-state]
   ::
   =/  id  id.parent-event
-  [[%log [id ~2019.5.5] [%accepted id]] private-state]
+  ::
+  ::  TODO: Need to put a valid time on this.
+  ~&  [%id id tag.community-signature.parent-event]
+  ::
+  :-  [%log [id ~2019.5.5] [%accepted id]]
+  %_    private-state
+      identities
+    (~(put by identities.private-state) id tag.community-signature.parent-event)
+  ==
 ::  applies an event or fails
 ::
 ++  apply-event-to-snapshot

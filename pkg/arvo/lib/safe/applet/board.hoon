@@ -6,11 +6,11 @@
 ::
 |%
 ++  parent-event
-  processed-signature
+  community-signature
 ::  the board passes the newly allocated id to the thread
 ::
 +$  child-event
-  [id=@ud =processed-signature]
+  [id=@ud =community-signature]
 ::  the user-event of the board is a new post request
 ::
 +$  user-event

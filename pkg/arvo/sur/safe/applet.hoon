@@ -46,21 +46,12 @@
   $%  [%ship ship=@p sig=@]
       [%ring =ring-signature:ring]
   ==
-::  A processed signature is an attestation by a parent node to a child node
-::  that a valid signature was made.
+::  The community signature is built by auth for the details to reveal to the
+::  lower parts of the system.
 ::
-++  processed-signature
-  $%  [%ship ship=@]
-      [%ring is-moderator=? =path tag=(unit @udpoint)]
-  ==
-::
-++  process-signature
-  |=  [is-moderator=? =path =full-signature]
-  ^-  processed-signature
-  ::
-  ?-  -.full-signature
-    %ship  [%ship ship.full-signature]
-    %ring  [%ring is-moderator path y.raw.ring-signature.full-signature]
+++  community-signature
+  $:  is-moderator=?
+      tag=@udpoint
   ==
 ::  The +on-process-event arm in your applet will return one of these to direct
 ::  what the next processing action is.

@@ -9,7 +9,7 @@
   input:toplevel-interface
 ::
 +$  child-event
-  processed-signature
+  community-signature
 ::  user events which target the toplevel node are all about doing membership checks
 ::
 +$  user-event
@@ -60,30 +60,27 @@
   |=  [=path =parent-event =snapshot =private-state]
   ^-  (either return-event child-event)
   ::
-  ?-    -.parent-event
-      %ship
-    ~&  [%todo-verify-signature-for-ship ship.parent-event]
-    [%r (process-signature %.n / parent-event)]
+  ?:  ?=(%ship -.parent-event)
+    ::  the toplevel auth deals only in ring signatures.
+    ::
+    [%l %reject ~]
+  ::  The toplevel auth is meant to always be in %community signing mode.
   ::
-      %ring
-    ::  The toplevel auth is meant to always be in %community signing mode.
+  ?.  ?=(^ y.raw.ring-signature.parent-event)
+    [%l %reject ~]
+  ::
+  =/  community-tag=@udpoint  u.y.raw.ring-signature.parent-event
+  ::
+  ?:  (~(has by banned-tags.snapshot) community-tag)
     ::
-    ?.  ?=(^ y.raw.ring-signature.parent-event)
-      [%l %reject ~]
-    ::
-    =/  community-tag=@udpoint  u.y.raw.ring-signature.parent-event
-    ::
-    ?:  (~(has by banned-tags.snapshot) community-tag)
-      ::
-      ~&  [%banned-tag-trying-to-post community-tag]
-      [%l %reject ~]
-    ::
-    =/  is-moderator=?  (~(has in moderators.private-state) community-tag)
-    ::
-    ~&  [%is-moderator is-moderator]
-    ::
-    [%r (process-signature is-moderator / parent-event)]
-  ==
+    ~&  [%banned-tag-trying-to-post community-tag]
+    [%l %reject ~]
+  ::
+  =/  is-moderator=?  (~(has in moderators.private-state) community-tag)
+  ::
+  ~&  [%is-moderator is-moderator]
+  ::
+  [%r is-moderator community-tag]
 ::
 ++  on-process-event
   |=  [=parent-event =user-event =snapshot =private-state]
@@ -128,9 +125,7 @@
         name.user-event
         app-type.user-event
         %unlinked
-        :: TODO: We must get our current node name and weld our new name to the end.
-        ::
-        (process-signature %.y / parent-event)
+        [%.y u.y.raw.ring-signature.parent-event]
     ==
   ==
 ::
