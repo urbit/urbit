@@ -129,7 +129,7 @@ export default class WeatherTile extends Component {
 
   renderNoData() {
     return this.renderWrapper((
-      <div onClick={this.locationSubmit.bind(this)}>
+      <div onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>
           <p className="gray label-regular b absolute"
             style={{left: 8, top: 4}}>
             Weather
