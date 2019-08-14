@@ -1495,14 +1495,18 @@ u3r_mug_bytes(const c3_y *buf_y,
   c3_w syd_w = 0xcafebabe;
   c3_w ham_w = 0;
 
-  while ( 0 == ham_w ) {
+  while ( 1 ) {
     c3_w haz_w;
     MurmurHash3_x86_32(buf_y, len_w, syd_w, &haz_w);
     ham_w = (haz_w >> 31) ^ (haz_w & 0x7fffffff);
-    syd_w++;
-  }
 
-  return ham_w;
+    if ( 0 == ham_w ) {
+      syd_w++;
+    }
+    else {
+      return ham_w;
+    }
+  }
 }
 
 /* u3r_mug_chub(): Compute the mug of `num`, LSW first.
