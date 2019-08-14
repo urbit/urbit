@@ -1043,274 +1043,262 @@ _me_gain_use(u3_noun dog)
   }
 }
 
-/* _me_copy_north_in(): copy subjuniors on a north road.
-*/
-static u3_noun _me_copy_north(u3_noun);
-static u3_noun
-_me_copy_north_in(u3_noun som)
+#define TAKE_ROOT 0
+#define TAKE_HEAD 1
+#define TAKE_TAIL 2
+
+#undef VERBOSE_TAKE
+
+//  stack frame for recording head vs tail iteration
+//
+//    In Hoon, this structure would be as follows:
+//
+//    $%  [%root ~]
+//        [%head old=* new=*]
+//        [%tail old=* new=*]
+//    ==
+//
+typedef struct takeframe
 {
-  c3_assert(u3_none != som);
-  if ( _(u3a_is_cat(som)) ) {
-    return som;
+  c3_y      tag_y;
+  u3a_cell* old_u;
+  u3a_cell* new_u;
+} takeframe;
+
+static inline void
+_ca_take_push(c3_ys mov,
+              c3_ys off,
+              c3_y tag_y,
+              u3a_cell* old_u,
+              u3a_cell* new_u)
+{
+  u3R->cap_p += mov;
+
+  //  ensure we haven't overflowed the stack
+  //  (off==0 means we're on a north road)
+  //
+  if ( 0 == off ) {
+    if( !(u3R->cap_p > u3R->hat_p) ) {
+      u3m_bail(c3__meme);
+    }
   }
   else {
-    u3_noun dog = som;
-
-    if ( _(u3a_north_is_senior(u3R, dog)) ) {
-      return dog;
-    }
-    else if ( _(u3a_north_is_junior(u3R, dog)) ) {
-      return _me_copy_north(dog);
-    }
-    else {
-      _me_gain_use(dog);
-      return dog;
+    if( !(u3R->cap_p < u3R->hat_p) ) {
+      u3m_bail(c3__meme);
     }
   }
-}
-/* _me_copy_north(): copy juniors on a north road.
-*/
-static u3_noun
-_me_copy_north(u3_noun dog)
-{
-  c3_assert(c3y == u3a_north_is_junior(u3R, dog));
 
-  if ( !_(u3a_north_is_junior(u3R, dog)) ) {
-    if ( !_(u3a_north_is_senior(u3R, dog)) ) {
-      _me_gain_use(dog);
-    }
-    return dog;
-  }
-  else {
-    u3a_noun* dog_u = u3a_to_ptr(dog);
-
-    /* Borrow mug slot to record new destination.
-    */
-    if ( dog_u->mug_w >> 31 ) {
-      u3_noun nov = (u3_noun) dog_u->mug_w;
-
-      c3_assert(_(u3a_north_is_normal(u3R, nov)));
-      _me_gain_use(nov);
-
-      return nov;
-    }
-    else {
-      if ( c3y == u3a_is_pom(dog) ) {
-        u3a_cell* old_u = u3a_to_ptr(dog);
-        c3_w*       new_w = u3a_walloc(c3_wiseof(u3a_cell));
-        u3_noun     new   = u3a_de_twin(dog, new_w);
-        u3a_cell* new_u = (u3a_cell*)(void *)new_w;
-
-        new_u->mug_w = old_u->mug_w;
-        new_u->hed = _me_copy_north_in(old_u->hed);
-        new_u->tel = _me_copy_north_in(old_u->tel);
-
-        /* Borrow mug slot to record new destination.
-        */
-        old_u->mug_w = new;
-        return new;
-      }
-      else {
-        u3a_atom* old_u = u3a_to_ptr(dog);
-        c3_w*       new_w = u3a_walloc(old_u->len_w + c3_wiseof(u3a_atom));
-        u3_noun     new   = u3a_de_twin(dog, new_w);
-        u3a_atom* new_u = (u3a_atom*)(void *)new_w;
-
-        new_u->mug_w = old_u->mug_w;
-        new_u->len_w = old_u->len_w;
-        {
-          c3_w i_w;
-
-          for ( i_w=0; i_w < old_u->len_w; i_w++ ) {
-            new_u->buf_w[i_w] = old_u->buf_w[i_w];
-          }
-        }
-
-        /* Borrow mug slot to record new destination.
-        */
-        old_u->mug_w = new;
-        return new;
-      }
-    }
-  }
+  takeframe* fam_u = u3to(takeframe, u3R->cap_p + off);
+  fam_u->tag_y = tag_y;
+  fam_u->old_u = old_u;
+  fam_u->new_u = new_u;
 }
 
-/* _me_copy_south_in(): copy subjuniors on a south road.
-*/
-static u3_noun _me_copy_south(u3_noun);
-static u3_noun
-_me_copy_south_in(u3_noun som)
+static inline takeframe
+_ca_take_pop(c3_ys mov, c3_ys off)
 {
-  c3_assert(u3_none != som);
-  if ( _(u3a_is_cat(som)) ) {
-    return som;
-  }
-  else {
-    u3_noun dog = som;
+  takeframe* fam_u = u3to(takeframe, u3R->cap_p + off);
+  u3R->cap_p -= mov;
 
-    if ( _(u3a_south_is_senior(u3R, dog)) ) {
-      return dog;
-    }
-    else if ( _(u3a_south_is_junior(u3R, dog)) ) {
-      return _me_copy_south(dog);
-    }
-    else {
-      _me_gain_use(dog);
-      return dog;
-    }
-  }
-}
-/* _me_copy_south(): copy juniors on a south road.
-*/
-static u3_noun
-_me_copy_south(u3_noun dog)
-{
-  c3_assert(c3y == u3a_south_is_junior(u3R, dog));
-
-  if ( !_(u3a_south_is_junior(u3R, dog)) ) {
-    if ( !_(u3a_south_is_senior(u3R, dog)) ) {
-      _me_gain_use(dog);
-    }
-    return dog;
-  }
-  else {
-    u3a_noun* dog_u = u3a_to_ptr(dog);
-
-    /* Borrow mug slot to record new destination.
-    */
-    if ( dog_u->mug_w >> 31 ) {
-      u3_noun nov = (u3_noun) dog_u->mug_w;
-
-      // u3l_log("south: %p is already %p\r\n", dog_u, u3a_to_ptr(nov));
-
-      c3_assert(_(u3a_south_is_normal(u3R, nov)));
-      _me_gain_use(nov);
-
-      return nov;
-    }
-    else {
-      if ( c3y == u3a_is_pom(dog) ) {
-        u3a_cell* old_u = u3a_to_ptr(dog);
-        c3_w*       new_w = u3a_walloc(c3_wiseof(u3a_cell));
-        u3_noun     new   = u3a_de_twin(dog, new_w);
-        u3a_cell* new_u = (u3a_cell*)(void *)new_w;
-
-        // u3l_log("south: cell %p to %p\r\n", old_u, new_u);
-#if 0
-        if ( old_u->mug_w == 0x730e66cc ) {
-          u3l_log("BAD: take %p\r\n", new_u);
-        }
-#endif
-        new_u->mug_w = old_u->mug_w;
-        // new_u->mug_w = 0;
-        new_u->hed = _me_copy_south_in(old_u->hed);
-        new_u->tel = _me_copy_south_in(old_u->tel);
-
-        /* Borrow mug slot to record new destination.
-        */
-        old_u->mug_w = new;
-        return new;
-      }
-      else {
-        u3a_atom* old_u = u3a_to_ptr(dog);
-        c3_w*       new_w = u3a_walloc(old_u->len_w + c3_wiseof(u3a_atom));
-        u3_noun     new   = u3a_de_twin(dog, new_w);
-        u3a_atom* new_u = (u3a_atom*)(void *)new_w;
-
-        // u3l_log("south: atom %p to %p\r\n", old_u, new_u);
-
-        new_u->mug_w = old_u->mug_w;
-        // new_u->mug_w = 0;
-        new_u->len_w = old_u->len_w;
-        {
-          c3_w i_w;
-
-          for ( i_w=0; i_w < old_u->len_w; i_w++ ) {
-            new_u->buf_w[i_w] = old_u->buf_w[i_w];
-          }
-        }
-
-        /* Borrow mug slot to record new destination.
-        */
-        old_u->mug_w = new;
-        return new;
-      }
-    }
-  }
-}
-
-/* _me_take_north(): take on a north road.
-*/
-static u3_noun
-_me_take_north(u3_noun dog)
-{
-  if ( c3y == u3a_north_is_senior(u3R, dog) ) {
-    /*  senior pointers are not refcounted
-    */
-    return dog;
-  }
-  else if ( c3y == u3a_north_is_junior(u3R, dog) ) {
-    /* junior pointers are copied
-    */
-    u3_noun mos = _me_copy_north(dog);
-
-    // u3l_log("north: %p to %p\r\n", u3a_to_ptr(dog), u3a_to_ptr(mos));
-    return mos;
-  }
-  else {
-    /* normal pointers are refcounted
-    */
-    _me_gain_use(dog);
-    return dog;
-  }
-}
-
-/* _me_take_south(): take on a south road.
-*/
-static u3_noun
-_me_take_south(u3_noun dog)
-{
-  if ( c3y == u3a_south_is_senior(u3R, dog) ) {
-    /*  senior pointers are not refcounted
-    */
-    return dog;
-  }
-  else if ( c3y == u3a_south_is_junior(u3R, dog) ) {
-    /* junior pointers are copied
-    */
-    u3_noun mos = _me_copy_south(dog);
-
-    // u3l_log("south: %p to %p\r\n", u3a_to_ptr(dog), u3a_to_ptr(mos));
-    return mos;
-  }
-  else {
-    /* normal pointers are refcounted
-    */
-    _me_gain_use(dog);
-    return dog;
-  }
+  return *fam_u;
 }
 
 /* u3a_take(): gain, copying juniors.
 */
 u3_noun
-u3a_take(u3_noun som)
+u3a_take(u3_noun veb)
 {
-  c3_assert(u3_none != som);
+  c3_assert(u3_none != veb);
 
-  if ( _(u3a_is_cat(som)) ) {
-    return som;
+  u3t_on(coy_o);
+
+  //  initialize signed stack offsets (relative to north/south road)
+  //
+  c3_o  nor_o = u3a_is_north(u3R);
+  c3_ys mov, off;
+  {
+    c3_y wis_y = c3_wiseof(takeframe);
+    mov = ( c3y == nor_o ? -wis_y : wis_y );
+    off = ( c3y == nor_o ? 0 : -wis_y );
   }
-  else {
-    u3t_on(coy_o);
 
-    som = _(u3a_is_north(u3R))
-              ? _me_take_north(som)
-              : _me_take_south(som);
+  //  stash the current stack post
+  //
+  u3p(takeframe) cap_p = u3R->cap_p;
 
-    u3t_off(coy_o);
-    return som;
+  //  push the (only) ROOT stack frame (our termination condition)
+  //
+  _ca_take_push(mov, off, TAKE_ROOT, 0, 0);
+
+  //  the finished copy  of our current noun .veb
+  //
+  u3_noun pro;
+
+  //  read from the current noun .veb
+  //
+  advance: {
+    if ( c3y == u3a_is_cat(veb) ) {
+      pro = veb;
+      goto retreat;
+    }
+    //  senior pointers are not refcounted
+    //
+    else if ( c3y == (( c3y == nor_o )
+                      ? u3a_north_is_senior(u3R, veb)
+                      : u3a_south_is_senior(u3R, veb)) )
+    {
+      pro = veb;
+      goto retreat;
+    }
+    //  not junior; a normal pointer in our road -- refcounted
+    //
+    else if ( c3n == (( c3y == nor_o )
+                      ? u3a_north_is_junior(u3R, veb)
+                      : u3a_south_is_junior(u3R, veb)) )
+    {
+      //  bypass normal road checks in u3k
+      //
+      _me_gain_use(veb);
+      pro = veb;
+      goto retreat;
+
+
+    }
+    //  junior pointers are copied
+    //
+    else {
+      u3a_noun* veb_u = u3a_to_ptr(veb);
+
+      //  32-bit mug_w: already copied .veb and .mug_w is the pointer
+      //
+      if ( veb_u->mug_w >> 31 ) {
+        u3_noun nov = (u3_noun)veb_u->mug_w;
+
+        c3_assert( c3y == (( c3y == nor_o)
+                           ? u3a_north_is_normal(u3R, nov)
+                           : u3a_south_is_normal(u3R, nov)) );
+
+#ifdef VERBOSE_TAKE
+          u3l_log("%s: %p is already %p\r\n", ( c3y == nor_o )
+                                           ? "north"
+                                           : "south",
+                                           veb_u,
+                                           u3a_to_ptr(nov));
+#endif
+
+        //  bypass normal road checks in u3k
+        //
+        _me_gain_use(nov);
+        pro = nov;
+        goto retreat;
+      }
+      else {
+        if ( c3y == u3a_is_atom(veb) ) {
+          u3a_atom* old_u = u3a_to_ptr(veb);
+          c3_w*     new_w = u3a_walloc(old_u->len_w + c3_wiseof(u3a_atom));
+          u3a_atom* new_u = (u3a_atom*)(void *)new_w;
+          u3_noun     new = u3a_to_pug(u3a_outa(new_u));
+
+#ifdef VERBOSE_TAKE
+          u3l_log("%s: atom %p to %p\r\n", ( c3y == nor_o )
+                                           ? "north"
+                                           : "south",
+                                           old_u,
+                                           new_u);
+#endif
+
+          new_u->mug_w = old_u->mug_w;
+          new_u->len_w = old_u->len_w;
+          {
+            c3_w i_w;
+
+            for ( i_w=0; i_w < old_u->len_w; i_w++ ) {
+              new_u->buf_w[i_w] = old_u->buf_w[i_w];
+            }
+          }
+
+          //  Borrow mug slot to record new destination in .old_u.
+          //
+          old_u->mug_w = new;
+
+          pro = new;
+          goto retreat;
+        }
+        else {
+          u3a_cell* old_u = u3a_to_ptr(veb);
+          //  XX use u3a_celloc?
+          //
+          c3_w*     new_w = u3a_walloc(c3_wiseof(u3a_cell));
+          u3a_cell* new_u = (u3a_cell*)(void *)new_w;
+
+#ifdef VERBOSE_TAKE
+          u3l_log("%s: cell %p to %p\r\n", ( c3y == nor_o )
+                                           ? "north"
+                                           : "south",
+                                           old_u,
+                                           new_u);
+#endif
+
+          new_u->mug_w = old_u->mug_w;
+
+          veb = old_u->hed;
+          _ca_take_push(mov, off, TAKE_HEAD, old_u, new_u);
+          goto advance;
+        }
+      }
+    }
   }
+
+  //  consume: popped stack frame, and .pro from above
+  //
+  retreat: {
+    takeframe fam_u = _ca_take_pop(mov, off);
+
+    switch ( fam_u.tag_y ) {
+      default: {
+        c3_assert(0);
+      }
+
+      //  .fam_u is our stack root, we're done.
+      //
+      case TAKE_ROOT: {
+        break;
+      }
+
+      //  .pro is the copied head of a cell; save a pointer to it in .new_u
+      //  and advance to copy the tail
+      //
+      case TAKE_HEAD: {
+        fam_u.new_u->hed = pro;
+
+        veb = fam_u.old_u->tel;
+        _ca_take_push(mov, off, TAKE_TAIL, fam_u.old_u, fam_u.new_u);
+        goto advance;
+      }
+
+      //  .pro is the copied tail of a cell; save a pointer to it in .new_u,
+      //  and produce the whole copied cell (as if it were a read from above).
+      //
+      case TAKE_TAIL: {
+        fam_u.new_u->tel = pro;
+        pro = u3a_to_pom(u3a_outa(fam_u.new_u));
+
+        //  Borrow mug slot to record new destination in old_u.
+        //
+        fam_u.old_u->mug_w = pro;
+
+        goto retreat;
+      }
+    }
+  }
+
+  //  sanity check
+  //
+  c3_assert( u3R->cap_p == cap_p );
+
+  u3t_off(coy_o);
+
+  return pro;
 }
 
 /* u3a_left(): true of junior if preserved.
