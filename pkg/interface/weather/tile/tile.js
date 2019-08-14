@@ -35,11 +35,6 @@ export default class WeatherTile extends Component {
   }
 
   locationSubmit() {
-    console.log('location submit');
-    if (location.protocol === "http:") {
-      this.setState({manualEntry: !this.state.manualEntry});
-    }
-    else {
     navigator.geolocation.getCurrentPosition((res) => {
       console.log(res);
       let latlng = `${res.coords.latitude},${res.coords.longitude}`;
@@ -50,7 +45,6 @@ export default class WeatherTile extends Component {
       }, { maximumAge: Infinity, timeout: 10000 });
       api.action('weather', 'json', latlng);
     });
-  }
   }
 
   manualLocationSubmit() {
@@ -90,13 +84,20 @@ export default class WeatherTile extends Component {
   }
 
   renderManualEntry() {
+    let secureCheck;
     let error;
     if (this.state.error === true) {
       error = <p 
-        className="label-small red pt1">
-        Incorrect latitude/longitude formatting. Please try again. <br/>
-        (eg. "29.558107,-95.089023")
+          className="label-small red pt1">
+          Incorrect latitude/longitude formatting. Please try again. <br/>
+          (eg. "29.558107, -95.089023")
         </p>
+    }
+    if (location.protocol === "https:") {
+      secureCheck = <a
+        className="label-regular b gray absolute pointer"
+        style={{right: 8, top: 4}}
+        onClick={() => this.locationSubmit()}>Detect location -></a>
     }
     return this.renderWrapper((
       <div>
@@ -104,14 +105,16 @@ export default class WeatherTile extends Component {
         onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>
         &lt;&#45;
         </a>
+        {secureCheck}
         <p className="label-regular white pt2">
         Please enter your <a href="https://latitudeandlongitude.org/" target="_blank">latitude and longitude</a>.</p>
         {error}
-        <form className="flex absolute" style={{"bottom": "0"}}>
+        <form className="flex absolute" style={{"bottom": 0, "left": 8}}>
           <input id="gps" 
-            className="white pb1 bg-transparent outline-0 bn bb-ns b--white" 
+            className="white pa1 bg-transparent outline-0 bn bb-ns b--white" 
+            style={{width: "100%"}}
             type="text" 
-            placeholder="29.558107,-95.089023" 
+            placeholder="29.558107, -95.089023" 
             onKeyDown={this.keyPress.bind(this)}>
           </input> 
           <input className="bg-transparent inter white w-20 outliner-0 bn pointer" 
@@ -150,7 +153,7 @@ export default class WeatherTile extends Component {
           </p>
           <a className="label-regular b gray absolute pointer"
             style={{right: 8, top: 4}}
-            onClick={() => this.locationSubmit()}>Update location -></a>
+            onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>Update location -></a>
         <div className="w-100 mb2 mt2 absolute"
             style={{left: 18, top: 28}}>
           <img 
