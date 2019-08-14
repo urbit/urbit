@@ -39,6 +39,7 @@
   ::
   ?:  =(%czar (clan:title our.bowl))
     [~ app-core]
+  ~>  %slog.0^leaf/"ping: prep {<our.bowl>}"
   send-ping
 ::  +coup-ping-send: handle ames ack
 ::
@@ -79,6 +80,7 @@
   ::
   =/  sponsor=ship  (sein:title [our now our]:bowl)
   ::
+  ~>  %slog.0^leaf/"ping: {<our.bowl>} -> {<sponsor>}"
   :_  app-core
   [ost.bowl %poke /ping-send [sponsor %ping] %noun ~]~
 --
