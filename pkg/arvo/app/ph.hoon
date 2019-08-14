@@ -147,6 +147,24 @@
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
+        ~&  >  'BUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~marbud)
+        ~&  >  'MARBUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~linnup-torsyx)
+        ~&  >  'LINNUP DONE'
+        ;<  ~  bind:m  (send-hi ~linnup-torsyx ~marbud)
+        ~&  >  'HI DONE-------------------------------'
+        (pure:m ~)
+      (pure:m ~)
+    ::
+      :+  %hi-linnup-az-backward
+        ~[~bud ~marbud ~linnup-torsyx]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      =.  eth-node  (spawn:eth-node ~linnup-torsyx)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
         ;<  ~  bind:m  (raw-real-ship:eth-node ~linnup-torsyx)
         ~&  >  'LINNUP DONE'
         ;<  ~  bind:m  (raw-real-ship:eth-node ~marbud)
