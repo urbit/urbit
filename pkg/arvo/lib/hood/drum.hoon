@@ -79,26 +79,26 @@
   =+  myr=(clan:title our)
   ::
   ?:  ?=($pawn myr)
-    :~  [%home %lens]
-        [%base %hall]
-        [%base %talk]
+    :~  ::[%home %lens]
+        ::[%base %hall]
+        ::[%base %talk]
         [%base %dojo]
         [%base %ping]
-        [%base %modulo]
+        ::[%base %modulo]
     ==
-  :~  [%home %lens]
-      [%home %acme]
-      [%home %dns]
+  :~  ::[%home %lens]
+      ::[%home %acme]
+      ::[%home %dns]
       [%home %dojo]
       [%home %ping]
-      [%home %hall]
-      [%home %talk]
-      [%home %modulo]
-      [%home %launch]
-      [%home %chat]
-      [%home %publish]
-      [%home %clock]
-      [%home %weather]
+      ::[%home %hall]
+      ::[%home %talk]
+      ::[%home %modulo]
+      ::[%home %launch]
+      ::[%home %chat]
+      ::[%home %publish]
+      ::[%home %clock]
+      ::[%home %weather]
       [%home %azimuth-tracker]
   ==
 ::
@@ -106,7 +106,8 @@
   |=  our/ship
   %-  ~(gas in *(set gill:gall))
   ^-  (list gill:gall)
-  [[our %talk] [our %dojo] ~]
+  ::[[our %talk] [our %dojo] ~]
+  [[our %dojo] ~]
 ::
 ++  make                                                ::  initial part
   |=  our/ship
