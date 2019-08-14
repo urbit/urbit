@@ -6,8 +6,6 @@
 =,  gall
 =>  =~
 ::
-::  (rest of arvo)
-::
 |%
 ::
 ::  +internal-gift: synonym for +cuft.
@@ -78,8 +76,6 @@
   ==
 --
 ::
-::  (local arvo)
-::
 |%
 ::
 ::  +internal-note: +ap note.
@@ -104,8 +100,6 @@
 ::
 ++  move  (pair duct (wind note-arvo gift-arvo))
 --
-::
-::  (%gall state)
 ::
 |%
 ::
@@ -285,11 +279,7 @@
   ==
 --
 ::
-:: (vane header)
-::
 .  ==
-::
-:: (all vane state)
 ::
 =|  =gall
 |=  $:
@@ -307,11 +297,7 @@
         ska=sley
     ==
 ::
-::  (opaque core)
-::
 ~%  %gall-top  ..is  ~
-::
-::  (state machine)
 ::
 |%
 ::
