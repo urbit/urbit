@@ -114,24 +114,35 @@ instance FromNoun UV where
         Just uv -> pure (UV uv)
 
 fromUV :: String -> Maybe Atom
-fromUV = go (0, 0)
+fromUV = \case
+    ('0':'v':cs) -> go (0, 0) (reverse cs)
+    _            -> Nothing
   where
     go (i, acc) []         = pure acc
     go (i, acc) ('.' : cs) = go (i, acc) cs
     go (i, acc) (c   : cs) = do
         n <- uvCharNum c
-        go (i+1, i*n) cs
+        go (i+1, acc+(32^i)*n) cs
 
 toUV :: Atom -> String
 toUV = go []
   where
-    go acc 0 = reverse acc
+    go acc 0 = "0v" <> uvAddDots acc
     go acc n = go (char n : acc) (n `div` 32)
 
     char n = base32Chars !! (fromIntegral (n `mod` 32))
 
 base32Chars :: [Char]
 base32Chars = (['0'..'9'] <> ['a'..'v'])
+
+uvAddDots :: String -> String
+uvAddDots = reverse . go . reverse
+  where
+    go s = if null tel then hed
+                       else hed <> "." <> go tel
+      where
+        hed = take 5 s
+        tel = drop 5 s
 
 uvCharNum :: Char -> Maybe Atom
 uvCharNum = \case
