@@ -13,21 +13,24 @@ import System.Environment (getProgName)
 --------------------------------------------------------------------------------
 
 data Opts = Opts
-    { oQuiet    :: Bool
-    , oHashless :: Bool
-    , oExit     :: Bool
-    , oDryRun   :: Bool
-    , oVerbose  :: Bool
-    , oAmesPort :: Maybe Word16
-    , oProf     :: Bool
+    { oQuiet     :: Bool
+    , oHashless  :: Bool
+    , oExit      :: Bool
+    , oDryRun    :: Bool
+    , oVerbose   :: Bool
+    , oAmesPort  :: Maybe Word16
+    , oProf      :: Bool
+    , oCollectFx :: Maybe FilePath
     }
   deriving (Show)
 
 data New = New
-    { nPillPath :: FilePath
-    , nShipAddr :: Text
-    , nPierPath :: FilePath
-    , nArvoDir  :: Maybe FilePath
+    { nPillPath  :: FilePath
+    , nShipAddr  :: Text
+    , nPierPath  :: FilePath
+    , nArvoDir   :: Maybe FilePath
+    , nBootFake  :: Bool
+    , nLocalhost :: Bool
     }
   deriving (Show)
 
@@ -97,6 +100,14 @@ new = do
     nPillPath <- strArgument (metavar "PILL" <> help "Path to pill file")
     nShipAddr <- strArgument (metavar "SHIP" <> help "Ship address")
 
+    nLocalhost <- switch $ short 'L'
+                        <> long "local"
+                        <> help "Localhost-only networking"
+
+    nBootFake <- switch $ short 'F'
+                       <> long "fake"
+                       <> help "Create a fake ship"
+
     nArvoDir <- option auto $ metavar "ARVO"
                            <> short 'A'
                            <> value Nothing
@@ -117,6 +128,11 @@ opts = do
     oExit     <- switch (short 'x' <> help "Exit immediatly")
     oDryRun   <- switch (short 'N' <> help "Dry run -- Don't persist")
     oProf     <- switch (short 'p' <> help "Enable profiling")
+
+    oCollectFx <- option auto $ metavar "FXDIR"
+                             <> long "collect-fx"
+                             <> help "Write effects to disk for debugging"
+                             <> value Nothing
 
     pure (Opts{..})
 

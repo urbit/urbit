@@ -1,3 +1,108 @@
+{-
+    # Booting a Ship
+
+    - TODO Correctly setup the Pier directory.
+    - TODO Hook up CLI command.
+    - TODO Don't just boot, also run the ship (unless `-x` is set).
+    - TODO Figure out why ships booted by us don't work.
+
+    # Event Pruning
+
+    - `king discard-events NUM_EVENTS`: Delete the last `n` events from
+      the event log.
+
+    - `king discard-events-interactive`: Iterate through the events in
+      the event log, from last to first, pretty-print each event, and
+      ask if it should be pruned.
+
+
+    # `-L` -- Local-Only Networking
+
+    Localhost-only networking, even on real ships.
+
+
+    # `-O` -- Networking Disabled
+
+    Run networking drivers, but configure them to never send any packages
+    and to never open any ports.
+
+
+    # `-N` -- Dry Run
+
+    Disable all persistence and use no-op networking.
+
+
+    # `-x` -- Exit Immediately
+
+    When creating a new ship, or booting an existing one, simply get to
+    a good state, snapshot, and then exit. Don't do anything that has
+    any effect on the outside world, just boot or catch the snapshot up
+    to the event log.
+
+
+    # Proper Logging
+
+    - TODO Consider using RIO's logging infrastructure.
+    - TODO If that's too heavy, figure out what the best way to do
+      logging is now.
+    - TODO Convert all existing logging to the chosen logging system.
+    - TODO Add more logging to all the places. Logging is super useful.
+
+
+    # Implement subcommands to test event and effect parsing.
+
+    - `king * --collect-fx`: All effects that come from the serf get
+      written into the `effects` LMDB database.
+
+    - `king parse-events PIER`: Run through the event log, and parse all
+      events, print failures.
+
+    - `king parse-effects PIER`: Run through the event log, and parse all
+      effects, print any failures.
+
+    - `king clear-fx PIER`: Deletes all collected effects.
+
+    - `king full-replay PIER`: Replays the whole event log events, print
+      any failures. On success, replace the snapshot.
+
+
+    # Validate Pill Files
+
+    - `king validate-pill PILL`: Parse a pill file. Print an error on
+      exit, and print a description of the pill on success.
+
+
+    # Full Replay -- An Integration Test
+
+    - Copy the event log:
+
+      - Create a new event log at the destination.
+      - Stream events from the first event log.
+      - Parse each event.
+      - Re-Serialize each event.
+      - Verify that the round-trip was successful.
+      - Write the event into the new database.
+
+    - Replay the event log at the destination.
+      - If `--collect-fx` is set, then record effects as well.
+
+    - Snapshot.
+
+    - Verify that the final mug is the same as it was before.
+
+    # Implement Remaining Serf Flags
+
+    - `DebugRam`: Memory debugging.
+    - `DebugCpu`: Profiling
+    - `CheckCorrupt`: Heap Corruption Tests
+    - `CheckFatal`: TODO What is this?
+    - `Verbose`: TODO Just the `-v` flag?
+    - `DryRun`: TODO Just the `-N` flag?
+    - `Quiet`: TODO Just the `-q` flag?
+    - `Hashless`: Don't use hashboard for jets.
+    - `Trace`: TODO What does this do?
+-}
+
 module Main where
 
 import ClassyPrelude
@@ -135,16 +240,6 @@ tryParseEvents dir first = do
 
 serfFlags :: Serf.Flags
 serfFlags = [Serf.Hashless, Serf.DryRun] -- [Serf.Verbose, Serf.Trace]
-
-    -- = DebugRam
-    -- | DebugCpu
-    -- | CheckCorrupt
-    -- | CheckFatal
-    -- | Verbose
-    -- | DryRun
-    -- | Quiet
-    -- | Hashless
-    -- | Trace
 
 collectedFX :: FilePath -> Acquire ()
 collectedFX top = do
