@@ -344,10 +344,17 @@
     =.  app-state  (local-subscribe our.bowl name.command / app-state)
     ::
     ~&  [%created-community name.command initial-invitees.command]
+    ::  we send an in-band [%init ~] event so that our community recognizes us
+    ::  as a moderator.
     ::
-    ~&  [%client-communities client-communities.app-state]
-    ::
-    (pure:m app-state)
+    %-  send-message  :*
+      bowl
+      our.bowl
+      name.command
+      /
+      [%init ~]
+      app-state
+    ==
   ::
       %send-message
     ::  only we can send a message as ourselves

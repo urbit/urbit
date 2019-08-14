@@ -13,7 +13,14 @@
 ::  user events which target the toplevel node are all about doing membership checks
 ::
 +$  user-event
-  $%  [%invite ship=@p]
+  $%  ::  initializes the community, setting the current ship up as the first moderator
+      ::
+      [%init ~]
+      ::  invites a new user to the community
+      ::
+      [%invite ship=@p]
+      ::  
+      ::
       [%create name=@t app-type=@t =signature-type]
   ==
 ::
@@ -21,7 +28,12 @@
   ~
 ::
 +$  private-state
-  ~
+  $:  ::  moderator tags
+      ::
+      ::    while the banlist is public, the moderators are not.
+      ::
+      moderators=(set @udpoint)
+  ==
 ::
 +$  snapshot
   $:  ::  this node keeps track of the
@@ -45,26 +57,67 @@
 ::  +on-route: everything routes through the toplevel node. this is what does 
 ::
 ++  on-route
-  |=  [=path =parent-event =private-state]
+  |=  [=path =parent-event =snapshot =private-state]
   ^-  (either return-event child-event)
   ::
   ?-    -.parent-event
       %ship
     ~&  [%todo-verify-signature-for-ship ship.parent-event]
-    [%r %ship ship.parent-event]
+    [%r (process-signature %.n / parent-event)]
   ::
       %ring
-    ~&  %todo-verify-ring-signature-for
+    ::  The toplevel auth is meant to always be in %community signing mode.
     ::
-    [%r %ring / y.raw.ring-signature.parent-event]
+    ?.  ?=(^ y.raw.ring-signature.parent-event)
+      [%l %reject ~]
+    ::
+    =/  community-tag=@udpoint  u.y.raw.ring-signature.parent-event
+    ::
+    ?:  (~(has by banned-tags.snapshot) community-tag)
+      ::
+      ~&  [%banned-tag-trying-to-post community-tag]
+      [%l %reject ~]
+    ::
+    =/  is-moderator=?  (~(has in moderators.private-state) community-tag)
+    ::
+    ~&  [%is-moderator is-moderator]
+    ::
+    [%r (process-signature is-moderator / parent-event)]
   ==
 ::
 ++  on-process-event
-  |=  [=parent-event =user-event =private-state]
+  |=  [=parent-event =user-event =snapshot =private-state]
   ^-  [on-process-response _private-state]
-  ::  todo: since we're the toplevel node, we also need to perform auth here.
+  ::  Handle init specially. It is the only command that can be executed
+  ::  without having any moderator state.
+  ::
+  ?:  ?=(%init -.user-event)
+    ::  ignore reinitialization attempts
+    ::
+    ?.  =(~ moderators.private-state)
+      [[%return [%reject ~]] private-state]
+    ::  assert that the signature is a valid %community signed ring
+    ::
+    ?.  ?&  ?=(%ring -.parent-event)
+            ?=(^ y.raw.ring-signature.parent-event)
+        ==
+      [[%return [%reject ~]] private-state]
+    ::
+    =/  moderator-tag=@udpoint  u.y.raw.ring-signature.parent-event
+    ~&  [%init-with-moderator moderator-tag]
+    :-  [%return [%accept ~]]
+    private-state(moderators (~(put in moderators.private-state) moderator-tag))
+  ::  assert that the signature is a valid %community signed ring and that it
+  ::  was built by a moderator
+  ::
+  ?.  ?&  ?=(%ring -.parent-event)
+          ?=(^ y.raw.ring-signature.parent-event)
+          (~(has in moderators.private-state) u.y.raw.ring-signature.parent-event)
+      ==
+    [[%return [%reject ~]] private-state]
   ::
   ?-    -.user-event
+  ::
       %invite
     [[%return [%accept-and-invite-member ship.user-event]] private-state]
   ::
@@ -77,7 +130,7 @@
         %unlinked
         :: TODO: We must get our current node name and weld our new name to the end.
         ::
-        (process-signature / parent-event)
+        (process-signature %.y / parent-event)
     ==
   ==
 ::
@@ -86,10 +139,15 @@
   ^-  _snapshot
   ?-    -.user-event
   ::
+      %init
+    snapshot
+  ::
       %invite
     snapshot
   ::
       %create
+    ::  TODO: Keep the list of subnodes in our public state for ordering and stuff.
+    ::
     snapshot
   ==
 ::

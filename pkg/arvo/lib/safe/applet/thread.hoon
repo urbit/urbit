@@ -63,7 +63,7 @@
 :::::::::::::::::::: FLOW CONTROL
 ::
 ++  on-process-event
-  |=  [=parent-event =user-event =private-state]
+  |=  [=parent-event =user-event =snapshot =private-state]
   ^-  [on-process-response _private-state]
   ::
   =/  id  id.parent-event

@@ -57,7 +57,7 @@
 ::    ability to halt the processing of this event by returning ~.
 ::
 ++  on-route
-  |=  [=path =parent-event =private-state]
+  |=  [=path =parent-event =snapshot =private-state]
   ^-  (either return-event child-event)
   ::  we could block the route if we wanted here!
   ::
@@ -70,7 +70,7 @@
 ::    with modifications to private state that the user never sees.
 ::
 ++  on-process-event
-  |=  [=parent-event =user-event =private-state]
+  |=  [=parent-event =user-event =snapshot =private-state]
   ^-  [on-process-response _private-state]
   ::
   ?-    -.user-event

@@ -51,16 +51,16 @@
 ::
 ++  processed-signature
   $%  [%ship ship=@]
-      [%ring =path tag=(unit @udpoint)]
+      [%ring is-moderator=? =path tag=(unit @udpoint)]
   ==
 ::
 ++  process-signature
-  |=  [=path =full-signature]
+  |=  [is-moderator=? =path =full-signature]
   ^-  processed-signature
   ::
   ?-  -.full-signature
     %ship  [%ship ship.full-signature]
-    %ring  [%ring path y.raw.ring-signature.full-signature]
+    %ring  [%ring is-moderator path y.raw.ring-signature.full-signature]
   ==
 ::  The +on-process-event arm in your applet will return one of these to direct
 ::  what the next processing action is.
@@ -72,7 +72,7 @@
       ::  creates a new node and re-dispatch the event to it
       ::
       [%create sub-id=@t app-type=@t =signature-type child-event=vase]
-      ::  returns a value upwards
+      ::  returns a value upwards without modifying the public state
       ::
       [%return return-event=vase]
   ==

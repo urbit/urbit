@@ -266,7 +266,7 @@
         [!>(~) changes state]
       ::
       =/  on-route=vase  (slap app-vase [%limb %on-route])
-      =/  args  :(slop !>(route) parent-event private-state.state)
+      =/  args  :(slop !>(route) parent-event snapshot.snapshot.state private-state.state)
       =/  raw-result  (sped (slam on-route args))
       ::  the raw-result is either a return-event or a child-event.
       ::
@@ -299,7 +299,7 @@
     ::  now process the event
     ::
     =/  on-process-event=vase  (slap app-vase [%limb %on-process-event])
-    =/  args  :(slop parent-event user-event private-state.state)
+    =/  args  :(slop parent-event user-event snapshot.snapshot.state private-state.state)
     =/  raw-result  (slam on-process-event args)
     ::
     =/  response=on-process-response  (sump (slot 2 raw-result))
