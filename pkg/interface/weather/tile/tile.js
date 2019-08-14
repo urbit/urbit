@@ -37,7 +37,7 @@ export default class WeatherTile extends Component {
   locationSubmit() {
     console.log('location submit');
     if (location.protocol === "http:") {
-      this.setState({manualEntry: !this.state.manualEntry})
+      this.setState({manualEntry: !this.state.manualEntry});
     }
     else {
     navigator.geolocation.getCurrentPosition((res) => {
@@ -54,19 +54,19 @@ export default class WeatherTile extends Component {
   }
 
   manualLocationSubmit() {
-    event.preventDefault()
-    let gpsInput = document.getElementById('gps')
-    let latlngNoSpace = gpsInput.value.replace(/\s+/g, '')
-    let latlngParse = /-?[0-9]+(?:\.[0-9]*)?,-?[0-9]+(?:\.[0-9]*)?/g
+    event.preventDefault();
+    let gpsInput = document.getElementById('gps');
+    let latlngNoSpace = gpsInput.value.replace(/\s+/g, '');
+    let latlngParse = /-?[0-9]+(?:\.[0-9]*)?,-?[0-9]+(?:\.[0-9]*)?/g;
     if (latlngParse.test(latlngNoSpace)) {
-      let latlng = latlngNoSpace
-      this.setState({latlng}, (err) => {console.log(err)}, {maximumAge: Infinity, timeout: 10000})
-      api.action('weather', 'json', latlng)
-      this.setState({manualEntry: !this.state.manualEntry})
+      let latlng = latlngNoSpace;
+      this.setState({latlng}, (err) => {console.log(err)}, {maximumAge: Infinity, timeout: 10000});
+      api.action('weather', 'json', latlng);
+      this.setState({manualEntry: !this.state.manualEntry});
     }
     else {
-      this.setState({error: true})
-      return false
+      this.setState({error: true});
+      return false;
     }
   }
 
@@ -92,14 +92,34 @@ export default class WeatherTile extends Component {
   renderManualEntry() {
     let error;
     if (this.state.error === true) {
-     error = <p className="label-small red pt1">Incorrect latitude/longitude formatting. Please try again. <br/>(eg. "29.558107,-95.089023")</p>
+      error = <p 
+        className="label-small red pt1">
+        Incorrect latitude/longitude formatting. Please try again. <br/>
+        (eg. "29.558107,-95.089023")
+        </p>
     }
     return this.renderWrapper((
       <div>
-        <a style={{"color": "white", "cursor": "pointer"}} onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>&lt;&#45;</a>
-        <p className="label-regular white pt2">Please enter your <a href="https://latitudeandlongitude.org/" target="_blank">latitude and longitude</a>.</p>
+        <a style={{"color": "white", "cursor": "pointer"}} 
+        onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>
+        &lt;&#45;
+        </a>
+        <p className="label-regular white pt2">
+        Please enter your <a href="https://latitudeandlongitude.org/" target="_blank">latitude and longitude</a>.</p>
         {error}
-        <form className="flex absolute" style={{"bottom": "0"}}><input id="gps" className="white pb1 bg-transparent outline-0 bn bb-ns b--white" type="text" placeholder="29.558107,-95.089023" onKeyDown={this.keyPress.bind(this)}></input> <input className="bg-transparent inter white w-20 outliner-0 bn pointer" type="submit" onClick={() => this.manualLocationSubmit()} value="->"></input></form>
+        <form className="flex absolute" style={{"bottom": "0"}}>
+          <input id="gps" 
+            className="white pb1 bg-transparent outline-0 bn bb-ns b--white" 
+            type="text" 
+            placeholder="29.558107,-95.089023" 
+            onKeyDown={this.keyPress.bind(this)}>
+          </input> 
+          <input className="bg-transparent inter white w-20 outliner-0 bn pointer" 
+            type="submit" 
+            onClick={() => this.manualLocationSubmit()} 
+            value="->">
+          </input>
+        </form>
       </div>
     ))
   }
