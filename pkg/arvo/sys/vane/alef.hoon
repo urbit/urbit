@@ -1228,7 +1228,27 @@
       ^+  event-core
       ::
       ~>  %slog.0^leaf/"ames: rekey {<our^ship^life>}"
-      (insert-peer-state ship (got-peer-state ship) life public-key)
+      ::
+      =/  ship-state  (~(get by peers.ames-state) ship)
+      ?.  ?=([~ %known *] ship-state)
+        =|  =point
+        =.  life.point     life
+        =.  keys.point     (my [life crypto-suite public-key]~)
+        =.  sponsor.point  `(^sein:title ship)
+        ::
+        (on-publ-full (my [ship point]~))
+      ::
+      =/  =peer-state  +.u.ship-state
+      ::
+      =/  =private-key              sec:ex:crypto-core.ames-state
+      =.  symmetric-key.peer-state
+        (derive-symmetric-key public-key private-key)
+      ::
+      =.  life.peer-state           life
+      =.  public-key.peer-state     public-key
+      ::
+      =.  peers.ames-state  (~(put by peers.ames-state) ship %known peer-state)
+      event-core
     ::  +on-publ-sponsor: handle new or lost sponsor for peer
     ::
     ::    TODO: handle sponsor loss
@@ -1257,34 +1277,18 @@
           ::
           =+  ^-  [=ship =point]  i.points
           ::
-          =.  event-core
-            ?~  ship-state=(~(get by peers.ames-state) ship)
-              ~>  %slog.0^leaf/"ames: new peer {<ship>}"
-              (fresh-peer ship point)
-            ::
-            ?:  ?=([~ %alien *] ship-state)
-              ~>  %slog.0^leaf/"ames: met alien {<ship>}"
-              (meet-alien ship point +.u.ship-state)
-            ::
-            ~>  %slog.0^leaf/"ames: update peer {<ship>}"
-            (update-known ship point +.u.ship-state)
+          =/  old-ship-state  (~(get by peers.ames-state) ship)
+          ::
+          =.  event-core  (insert-peer-state ship point)
+          ::
+          =?  event-core  ?=([~ %alien *] old-ship-state)
+            (meet-alien ship point +.u.old-ship-state)
           ::
           $(points t.points)
-      ::
-      ++  fresh-peer
-        |=  [=ship =point]
-        ^+  event-core
-        ::
-        =/  =public-key  pass:(~(got by keys.point) life.point)
-        (insert-peer-state ship *peer-state life.point public-key)
       ::
       ++  meet-alien
         |=  [=ship =point todos=pending-requests]
         ^+  event-core
-        ::
-        =/  =public-key  pass:(~(got by keys.point) life.point)
-        =.  event-core
-          (insert-peer-state ship *peer-state life.point public-key)
         ::  apply incoming packets
         ::
         =.  event-core
@@ -1321,25 +1325,21 @@
           $(blobs t.blobs)
         ::
         event-core
-      ::
-      ++  update-known
-        |=  [=ship =point =peer-state]
-        ^+  event-core
-        ::
-        =/  =public-key  pass:(~(got by keys.point) life.point)
-        (insert-peer-state ship peer-state life.point public-key)
       --
     ::
     ++  insert-peer-state
-      |=  [=ship =peer-state =life =public-key]
+      |=  [=ship =point]
       ^+  event-core
       ::
+      =/  =peer-state     (gut-peer-state ship)
+      =/  =public-key     pass:(~(got by keys.point) life.point)
       =/  =private-key    sec:ex:crypto-core.ames-state
       =/  =symmetric-key  (derive-symmetric-key public-key private-key)
       ::
-      =.  life.peer-state           life
+      =.  life.peer-state           life.point
       =.  public-key.peer-state     public-key
       =.  symmetric-key.peer-state  symmetric-key
+      =.  sponsor.peer-state        (fall sponsor.point (^sein:title ship))
       ::  automatically set galaxy route, since unix handles lookup
       ::
       =?  route.peer-state  ?=(%czar (clan:title ship))
@@ -1477,6 +1477,15 @@
     ~|  %freaky-alien^her
     =-  ?>(?=(%known -<) ->)
     (~(got by peers.ames-state) her)
+  ::  +gut-peer-state: lookup .her state or default
+  ::
+  ++  gut-peer-state
+    |=  her=ship
+    ^-  peer-state
+    =/  ship-state  (~(get by peers.ames-state) her)
+    ?.  ?=([~ %known *] ship-state)
+      *peer-state
+    +.u.ship-state
   ::  +make-peer-core: create nested |peer-core for per-peer processing
   ::
   ++  make-peer-core
