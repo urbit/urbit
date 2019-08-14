@@ -52,13 +52,13 @@
 ++  forward-ames  $%
   :: message
   ::
-  [action=%m mark=mark noun=*]
+  [action=%m =mark noun=*]
   :: "peel" subscribe
   ::
-  [action=%l mark=mark path=path]
+  [action=%l =mark =path]
   :: subscribe
   ::
-  [action=%s path=path]
+  [action=%s =path]
   :: cancel+unsubscribe
   ::
   [action=%u ~]
@@ -230,22 +230,22 @@
   privilege=security-control
   :: statistics
   ::
-  stats=stats
+  =stats
   :: subscribers
   ::
-  subscribers=subscribers
+  =subscribers
   :: running state
   ::
   running-state=vase
   :: update control
   ::
-  beak=beak
+  =beak
   :: req'd translations
   ::
   marks=(map bone mark)
   :: opaque ducts
   ::
-  ducts=ducts
+  =ducts
 ==
 ::
 :: +blocked: blocked tasks.
