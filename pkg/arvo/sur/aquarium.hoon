@@ -10,11 +10,17 @@
 ::  Short names are simply the first letter of each word plus `s` if
 ::  it's a list.
 ::
+/+  pill
+=,  pill-lib=pill
 |%
 ++  ph-event
   $%  [%test-done p=?]
       aqua-event
   ==
+::
++$  unix-event  unix-event:pill-lib
++$  dawn-event  dawn-event:pill-lib
++$  pill        pill:pill-lib
 ::
 +$  aqua-event
   $%  [%init-ship who=ship keys=(unit dawn-event)]
@@ -40,16 +46,6 @@
 ::
 +$  unix-timed-event  [tym=@da ue=unix-event]
 ::
-+$  unix-event
-  %+  pair  wire
-  $%  [%wack p=@]
-      [%whom p=ship]
-      [%live p=@ud q=(unit @ud)]
-      [%barn ~]
-      [%boot $%([%fake p=ship] [%dawn p=dawn-event])]
-      unix-task
-  ==
-::
 +$  unix-effect
   %+  pair  wire
   $%  [%blit p=(list blit:dill)]
@@ -60,20 +56,8 @@
       [%sleep ~]
       [%restore ~]
       [%init ~]
+      [%request id=@ud request=request:http]
   ==
-+$  pill
-  [boot-ova=* kernel-ova=(list unix-event) userspace-ova=(list unix-event)]
-::
-+$  dawn-event
-  $:  =seed:able:jael
-      spon=ship
-      czar=(map ship [=life =pass])
-      turf=(list turf)
-      bloq=@ud
-      node=(unit purl:eyre)
-      snap=(unit snapshot:jael)
-  ==
-::
 +$  vane-move
   %+  pair  bone
   $%  [%peer wire dock path]

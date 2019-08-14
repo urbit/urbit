@@ -12,3 +12,11 @@ release/
 .stack-work
 \#*\#
 s/*
+=======
+**/.DS_Store
+**/dist
+**/node_modules
+**/urbitrc
+**/*.swp
+**/*.swo
+**/*-min.js

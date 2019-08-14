@@ -22,9 +22,9 @@
       ==                                                ::
       $:  %j                                            ::    to %jael
           $>  $?  %meet                                 ::  neighbor
-                  %pubs                                 ::  view public keys
+                  %public-keys                          ::  view public keys
                   %turf                                 ::  view domains
-                  %vein                                 ::  view private keys
+                  %private-keys                         ::  view private keys
               ==                                        ::
           task:able:jael                                ::
       ==                                                ::
@@ -37,9 +37,9 @@
           $>(%wake gift:able:behn)                      ::  timer activate
       ==                                                ::
       $:  %j                                            ::    from %jael
-          $>  $?  %pubs                                 ::  public keys
+          $>  $?  %public-keys                          ::  public keys
                   %turf                                 ::  bind to domains
-                  %vein                                 ::  private keys
+                  %private-keys                         ::  private keys
               ==                                        ::
           gift:able:jael                                ::
       ==                                                ::
@@ -270,7 +270,7 @@
             ::
             =/  bil=(unit deed)
               =/  rac  (clan:title our)
-              ?.  ?|  ?=(?(%earl %pawn) rac)
+              ?.  ?|  ?=(%pawn rac)
                       &(!?=(%czar rac) =(our seg))
                   ==
                 ~
@@ -832,20 +832,6 @@
           =*  wed  u.law
           ?>  ^-  ?
               ?-    (clan:title her)
-                  %earl
-                ::  signed by parent
-                ::
-                =/  seg  (^sein:title her)
-                =/  yig
-                  ?:  =(our seg)
-                    sen:gus
-                  cluy:(myx:gus seg)
-                ?&  =(lyf.yig life.wed)
-                    ?=(^ oath.wed)
-                    .=  (need (sure:as:cub.yig u.oath.wed))
-                    (shaf %earl (sham [her life.wed pass.wed]))
-                ==
-              ::
                   %pawn
                 ::  self-signed, life 1, address is fingerprint
                 ::
@@ -919,10 +905,7 @@
               ::  if :her is a comet, or a moon of a known ship, proceed
               ::
               =/  =rank:title  (clan:title her)
-              ?:  ?|  ?=(%pawn rank)
-                      ?&  ?=(%earl rank)
-                          !=(~ lew.wod.dur:(myx:gus (sein-scry her)))
-                  ==  ==
+              ?:  ?=(%pawn rank)
                 apse
               ::  otherwise, drop the packet
               ::
@@ -1358,7 +1341,7 @@
     ?-    -.bon
         %beer
       =/  =wire  /pubs/(scot %p p.bon)
-      :_  fox  [hen [%pass wire %j %pubs p.bon]]~
+      :_  fox  [hen [%pass wire %j %public-keys (silt p.bon ~)]]~
     ::
         %bock
       ::  ignore %turf if we haven't yet learned a unix duct
@@ -1421,20 +1404,23 @@
     ::
         %sake
       =/  =wire  /our/(scot %p our)
-      :_  fox  [hen [%pass wire %j %vein ~]]~
+      :_  fox  [hen [%pass wire %j %private-keys ~]]~
     ::
         %wine
-      :_  fox
-      =+  fom=~(rend co %$ %p p.bon)
-      :~  :-  hen
-          :+  %slip  %d
-          :+  %flog  %text
-          ;:  weld
-            "; "
-            fom
-            q.bon
-          ==
-      ==
+      [[(print hen p.bon q.bon) ~] fox]
+    ==
+  ::
+  ++  print
+    |=  [hen=duct who=ship =tape]
+    ^-  move
+    =+  fom=~(rend co %$ %p who)
+    :-  hen
+    :+  %slip  %d
+    :+  %flog  %text
+    ;:  weld
+      "; "
+      fom
+      tape
     ==
   ::
   ++  knap
@@ -1453,30 +1439,44 @@
         %mack  ?~  +>.sih  $(sih [%g %nice ~])          ::  XX using old code
                $(sih [%g %mean `[%mack +>+.sih]])
     ::
-        %pubs
+        %public-keys
       ?.  ?=([%pubs @ ~] tea)
         ~&  [%strange-pubs tea]
-        [~ +>]
+        [~ +>.$]
+      ?:  ?&  ?=(%diff -.public-keys-result.sih)
+              ?=(%rift -.diff.public-keys-result.sih)
+          ==
+        (sink hen [who [from to]:diff]:public-keys-result.sih)
+      ?:  ?&  ?=(%diff -.public-keys-result.sih)
+              !?=(%keys -.diff.public-keys-result.sih)
+          ==
+        [~ +>.$]
       =/  her=ship  (slav %p i.t.tea)
       =/  gus  (~(us go ton.fox) our)
       =/  diz  (myx:gus her)
-      ?:  =(0 life.sih)
-          ::  this should clear lew.wod.dur.diz because it means
-          ::  we no longer trust that their public key came to
-          ::  us honestly (becuse of a %jael snapshot restore).
-          ::  in practice, that crashes in ++cluy:las:as:go, so
-          ::  we ignore for now.
-          ~&  [%ames-hear-empty-pub her]
-          [~ +>.$]
-      =/  ded=deed
-        [life.sih (~(got by pubs.sih) life.sih) oath=~]
-      =.  lew.wod.dur.diz  `ded
+      =/  ded=(unit deed)
+        ?:  ?=(%full -.public-keys-result.sih)
+          ~|  [her=her public-keys-result=public-keys-result.sih]
+          =/  a-point=(unit point:able:jael)
+            (~(get by points.public-keys-result.sih) her)
+          ?~  a-point
+            ~
+          =/  a-pass=pass  pass:(~(got by keys.u.a-point) life.u.a-point)
+          `[life.u.a-point a-pass oath=~]
+        ?>  ?=(%keys -.diff.public-keys-result.sih)
+        ?>  =(her who.public-keys-result.sih)
+        =/  a-key-update=key-update:point:able:jael
+          to.diff.public-keys-result.sih
+        `[life.a-key-update pass.a-key-update oath=~]
+      ?~  ded
+        [~ +>.$]
+      =.  lew.wod.dur.diz  `u.ded
       =.  ton.fox  (~(su go ton.fox) (nux:gus diz))
       [~ +>.$]
     ::
         %unto  [~ +>]
     ::
-        %vein
+        %private-keys
       ?.  ?=([%our @ ~] tea)
         ~&  [%strange-vein tea]
         [~ +>]
@@ -1520,6 +1520,17 @@
       =^  toe  fox  (clop now hen i.p.fuy)
       $(p.fuy t.p.fuy, out (weld (flop toe) out))
     ==
+  ::
+  ++  sink
+    |=  [hen=duct who=ship from=rift to=rift]
+    ^-  [(list move) _+>]
+    ?:  =(our who)
+      [[(print hen who ", you have sunk") ~] +>.$]
+    ::
+    =:  hoc.ton.fox  (~(del by hoc.ton.fox) who)
+        wab.zac.fox  (~(del by wab.zac.fox) who)
+      ==
+    [[(print hen who " has sunk") ~] +>.$]
   ::
   ++  knob
     ~/  %knob
@@ -1585,25 +1596,6 @@
             fox(bad (~(del in bad.fox) p.kyz))
           ~&  [%block p.kyz]
           fox(bad (~(put in bad.fox) p.kyz))
-        ::
-            %sunk
-          =*  who  p.kyz
-          =*  lyf  q.kyz
-          ?:  =(our who)
-            ?:  (lth lyf p:(head val.ton.fox))
-              ::  replaying our old sinkage, ignore
-              ::  XX review
-              ::
-              [~ fox]
-            ::  XX include some helpful instructions here
-            ::
-            :_  fox
-            [%wine who ", you have sunk"]~
-          ::
-          =:  hoc.ton.fox  (~(del by hoc.ton.fox) who)
-              wab.zac.fox  (~(del by wab.zac.fox) who)
-            ==
-          [[%wine who " has sunk"]~ fox]
         ::
             %vega
           ::  re-initialize our cryptosuite B cores

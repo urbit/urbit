@@ -193,7 +193,6 @@
 #     define u3a_is_atom(som)    c3o(u3a_is_cat(som), \
                                          u3a_is_pug(som))
 #     define u3a_is_cell(som)    u3a_is_pom(som)
-#     define u3a_de_twin(dog, dog_w)  ((dog & 0xc0000000) | u3a_outa(dog_w))
 
 #     define u3a_h(som) \
         ( _(u3a_is_cell(som)) \

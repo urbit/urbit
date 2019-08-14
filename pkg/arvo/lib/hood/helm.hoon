@@ -40,12 +40,13 @@
       $%  [%bonk wire ~]                                ::
           {$conf wire dock $load ship term}             ::
           {$flog wire flog:dill}                        ::
-          [%mint wire p=ship q=safe:rights:jael]
           {$nuke wire ship}                             ::
-          [%serve wire binding:eyre generator:eyre]
+          [%serve wire binding:eyre generator:eyre]     ::
           {$poke wire dock pear}                        ::
           {$rest wire @da}                              ::
           {$wait wire @da}                              ::
+          {$rekey wire life ring}                       ::
+          {$moon wire ship udiff:point:able:jael}       ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  pear                                            ::  poke fruit
@@ -79,14 +80,14 @@
   ?.  =(our who.u.sed)
     ~&  [%wrong-private-key-ship who.u.sed]
     +>.$
-  =/  lyf=life  .^(@ud j+/(scot %p our)/life/(scot %da now)/(scot %p our))
-  ?.  =(+(lyf) lyf.u.sed)
-    ~&  [%wrong-private-key-life expected=+(lyf) actual=lyf.u.sed]
+  (emit %rekey / lyf.u.sed key.u.sed)
+::
+++  poke-moon                                        ::  rotate moon keys
+  |=  sed=(unit [=ship =udiff:point:able:jael])
+  =<  abet
+  ?~  sed
     +>.$
-  ::  our new private key, as a +tree of +rite
-  ::
-  =/  rit  (sy [%jewel (my [lyf.u.sed key.u.sed] ~)] ~)
-  (emit %mint / our rit)
+  (emit %moon / u.sed)
 ::
 ++  poke-nuke                                         ::  initialize
   |=  him/ship  =<  abet

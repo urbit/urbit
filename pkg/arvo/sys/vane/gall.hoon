@@ -1334,21 +1334,19 @@
         %keep  `%f
         %kill  `%f
         %look  `%j
-        %listen  `%k
+        %listen  `%j
         %merg  `%c
-        %mint  `%j
         %mont  `%c
-        %new-event  `%k
+        %moon  `%j
         %nuke  `%a
         %ogre  `%c
         %perm  `%c
         %rest  `%b
-        %snap  `%j
-        %sources  `%k
+        %rekey  `%j
         %wait  `%b
         %want  `%a
         %warp  `%c
-        %wind  `%j
+        %wash  `%g
         %wipe  `%f
       ::
         %request         `%i
@@ -1382,8 +1380,6 @@
       $init
     [~ ..^$(sys.mast.all hen)]
   ::
-      $sunk  [~ ..^$]
-  ::
       $vega  [~ ..^$]
   ::
       $west
@@ -1397,6 +1393,10 @@
     =+  mes=;;({@ud roon} r.q.hic)
     =<  mo-abet
     (mo-gawd:(mo-abed:mo hen) him dap mes)
+  ::
+      %wash
+    =.  bum.mast.all  (~(run by bum.mast.all) |=(=seat seat(vel *worm)))
+    [~ ..^$]
   ::
       $wegh
     =/  =mass

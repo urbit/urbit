@@ -1508,7 +1508,6 @@ u3_http_ef_http_server(c3_l    sev_l,
   if ( c3y == u3rz_sing(u3i_string("set-config"), u3k(tag)) ) {
     u3_http_ef_form(u3k(dat));
   }
-
   //  responds to an open request
   //
   else if ( 0 != (req_u = _http_search_req(sev_l, coq_l, seq_l)) ) {

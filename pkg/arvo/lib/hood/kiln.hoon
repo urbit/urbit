@@ -70,6 +70,7 @@
           {$merg wire @tas @p @tas case germ}           ::
           {$perm wire desk path rite}                   ::
           {$poke wire dock pear}                        ::
+          [%wash wire ~]
           {$wipe wire @ud}                              ::
           [%keep wire compiler-cache-size=@ud build-cache-size=@ud]
           {$wait wire @da}                              ::
@@ -275,6 +276,8 @@
 ++  poke-keep-ford
   |=  [compiler-cache-size=@ud build-cache-size=@ud]
   abet:(emit %keep /kiln compiler-cache-size build-cache-size)
+::
+++  poke-wash-gall  |=(* abet:(emit %wash /kiln ~))
 ::
 ++  mack
   |=  {way/wire saw/(unit tang)}

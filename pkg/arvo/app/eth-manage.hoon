@@ -10,7 +10,6 @@
           [%vein wire]
           [%look wire src=(each ship purl:eyre)]
           [%wind wire p=@ud]
-          [%snap wire snapshot=snapshot:jael kick=?]
       ==
     ++  state
       $:  a/@
@@ -28,8 +27,6 @@
       %turf         [ost.hid %turf /hi ~]~
       %vein         [ost.hid %vein /hi]~
       [%wind @ud]   [ost.hid %wind /hi +.val]~
-      [%snap * ?]
-    [ost.hid %snap /hi (snapshot:jael +<.val) +>.val]~
   ::
       %look-ethnode
     :_  ~

@@ -255,7 +255,7 @@
       ::  XX if active clam contracts only to abort transaction?
       ::
       ::  ~&  [%tapp-reset dap.bowl]
-      :: `this-tapp
+      ::  `this-tapp
       ~|  [%tapp-load-incompatible dap.bowl]
       !!
     ::
@@ -412,10 +412,10 @@
     ^-  (quip move _this-tapp)
     (take-async bowl `[wire %bound success binding])
   ::
-  ::  Receive source update from kale
+  ::  Receive source update from jael
   ::
   ++  source
-    |=  [=wire whos=(set ship) =source:kale]
+    |=  [=wire whos=(set ship) =source:jael]
     ^-  (quip move _this-tapp)
     =.  waiting  (~(put to waiting) ost.bowl [%take %source whos source])
     ?^  active
@@ -428,6 +428,9 @@
     |=  =async-input:async-lib
     ^-  (quip move _this-tapp)
     =/  m  tapp-async
+    =|  moves=(list move)
+    =|  scrys=(list path)
+    |-  ^-  (quip move _this-tapp)
     ?~  active
       ~|  %no-active-async
       ~|  ?~  in.async-input
@@ -442,14 +445,27 @@
         %&  p.out
         %|  [[~ [%fail contracts.u.active %crash p.out]] u.active]
       ==
+    =.  moves  (weld moves (skip moves.r |=(=move =(%scry -.q.move))))
+    =.  scrys
+      %+  weld  scrys
+      ^-  (list path)
+      %+  murn  moves.r
+      |=  =move
+      ^-  (unit path)
+      ?.  ?=(%scry -.q.move)
+        ~
+      `path.q.move
+    ?^  scrys
+      =/  scry-result  .^(* i.scrys)
+      $(scrys t.scrys, in.async-input `[i.scrys %scry-result scry-result])
     =>  .(active `(unit eval-form:eval:tapp-async)`active)  :: TMI
-    =^  moves=(list move)  this-tapp
+    =^  final-moves=(list move)  this-tapp
       ?-  -.eval-result.r
         %next  `this-tapp
         %fail  (fail-async [contracts err]:eval-result.r)
         %done  (done-async [contracts value]:eval-result.r)
       ==
-    [(weld moves.r moves) this-tapp]
+    [(weld moves final-moves) this-tapp]
   ::
   ::  Fails currently-running async
   ::

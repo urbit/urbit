@@ -6,7 +6,7 @@ fail () {
 }
 
 if [ -z "$CACHIX_SIGNING_KEY" ]
-then fail "The CACHIX_AUTH_TOKEN environment variable needs to be set."
+then fail "The CACHIX_SIGNING_KEY environment variable needs to be set."
 fi
 
 if [ -z "$CACHIX_AUTH_TOKEN" ]

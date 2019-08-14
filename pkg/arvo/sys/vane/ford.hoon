@@ -6169,12 +6169,6 @@
     ::
     [moves ford-gate]
   ::
-      ::  %sunk: foreign ship has lost continutity
-      ::
-      %sunk
-    ::
-    [~ ford-gate]
-  ::
       ::  %vega: learn of kernel upgrade
       ::
       ::    XX clear cache, rebuild live builds

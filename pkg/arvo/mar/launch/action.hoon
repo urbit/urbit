@@ -1,6 +1,4 @@
-::
-::
-/+  launch
+/-  launch
 ::
 |_  act=action:launch
 ::
