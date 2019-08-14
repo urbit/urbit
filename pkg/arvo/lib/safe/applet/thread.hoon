@@ -19,8 +19,8 @@
 ::  the user-event of the toplevel is a signed post
 ::
 +$  user-event
-  $:  [%new-post =post]
-::      [%delete-post id=@ud]
+  $%  [%new-post =post]
+      [%delete-post to-delete=@ud]
   ==
 ::  the private-event of a thread is the additional metadata
 ::
@@ -44,6 +44,9 @@
       ::  ignored: the id number was consumed, and still accept the message.
       ::
       [%ignored id=@u]
+      ::  reject the entire event
+      ::
+      [%reject ~]
   ==
 ::
 :::::::::::::::::::: OTHER DATA
@@ -77,6 +80,7 @@
 ::
 +$  on-process-response
   $%  [%log =private-event =return-event]
+      [%return =return-event]
   ==
 ::
 +$  post
@@ -93,17 +97,40 @@
   =/  post-id  id.parent-event
   =/  community-tag  tag.community-signature.parent-event
   ::
-  ::  TODO: Need to put a valid time on this.
+  ?-    -.user-event
+      %new-post
+    ::  TODO: Need to put a valid time on this.
+    ::
+    =/  new-poster=?  (~(has in posted.private-state) community-tag)
+    ::
+    :-  [%log [post-id ~2019.5.5 new-poster] [%accepted post-id]]
+    %_    private-state
+        identities
+      (~(put by identities.private-state) post-id community-tag)
+    ::
+        posted
+      (~(put in posted.private-state) community-tag)
+    ==
   ::
-  =/  new-poster=?  (~(has in posted.private-state) community-tag)
-  ::
-  :-  [%log [post-id ~2019.5.5 new-poster] [%accepted post-id]]
-  %_    private-state
-      identities
-    (~(put by identities.private-state) post-id community-tag)
-  ::
-      posted
-    (~(put in posted.private-state) community-tag)
+      %delete-post
+    ::  does the post we're trying to delete actually exist?
+    ::
+    ?~  point-id=(~(get by identities.private-state) to-delete.user-event)
+      ~&  [%rejecting-no-such-post to-delete.user-event]
+      [[%return [%reject ~]] private-state]
+    ::  make sure the sender is either the original poster or a moderator
+    ::
+    ?.  ?|  is-moderator.community-signature.parent-event
+            =(community-tag u.point-id)
+        ==
+      ~&  [%rejecting-mismatch community-tag u.point-id]
+      [[%return [%reject ~]] private-state]
+    ::
+    :-  [%log [to-delete.user-event ~2019.5.5 %.n] [%ignored post-id]]
+    %_    private-state
+        identities
+      (~(del by identities.private-state) to-delete.user-event)
+    ==
   ==
 ::  applies an event or fails
 ::
@@ -111,11 +138,24 @@
   |=  [=user-event private=private-event =snapshot]
   ^-  _snapshot
   ::
-  %_  snapshot
-      posts
-    [[user-event private] posts.snapshot]
+  ?-    -.user-event
+      %new-post
+    %_  snapshot
+        posts
+      [[user-event private] posts.snapshot]
+    ::
+        poster-count
+      ?:(new-poster.private +(poster-count.snapshot) poster-count.snapshot)
+    ==
   ::
-      poster-count
-    ?:(new-poster.private +(poster-count.snapshot) poster-count.snapshot)
+      %delete-post
+    ::  filter the post with that id out of the snapshot state
+    ::
+    %_    snapshot
+        posts
+      %+  skip  posts.snapshot
+      |=  [* private=private-event]
+      =(to-delete.user-event id.private)
+    ==
   ==
 --
