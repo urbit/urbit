@@ -171,7 +171,7 @@
     %circles
   ?>  ?=(%circles -.piz)
   :_  this(circles.str cis.piz)
-  (send-chat-update [[%circles cis.piz] str])
+  (send-chat-update [[%circles cis.piz] sta])
   ::
   ::  %circle wire
   ::
@@ -199,7 +199,7 @@
     =/  localpeers=(set @p)
       (silt (turn ~(tap by loc.pes.piz) head))
     ::
-    =/  peers/(map circle:hall (set @p))
+    =/  peers=(map circle:hall (set @p))
       %-  ~(rep by rem.pes.piz)
       |=  [[cir=circle:hall grp=group:hall] acc=(map circle:hall (set @p))]
       ^-  (map circle:hall (set @p))
@@ -212,7 +212,6 @@
       =/  wir/wire  /circle/[(scot %p our.bol)]/[nom.cir]/config/group
       =/  pat/path  /circle/[nom.cir]/config/group
       [ost.bol %peer wir [our.bol %hall] pat]
-    ::
     %=  this
         inbox.str  loc.cos.piz
         configs.str  configs
@@ -231,20 +230,14 @@
       |=  [[cir=circle:hall grp=group:hall] acc=(map circle:hall (set @p))]
       ^-  (map circle:hall (set @p))
       (~(put by acc) cir (silt (turn ~(tap by grp) head)))
-    =/  str
+    =/  sta
       %=  str
         messages  (~(put by messages) circle nes.piz)
         peers  (~(uni by peers.str) (~(put by peers) circle localpeers))
       ==
-    =/  messageupdate=update
-      :*  %messages
-          circle
-          0
-          (lent messages)
-          nes.piz
-      ==
-    :-  (send-chat-update [messageupdate str])
-    this(str str)
+    =/  messageupdate=update  [%messages circle 0 (lent messages) nes.piz]
+    :-  (send-chat-update [messageupdate sta])
+    this(str sta)
   ==
 ::
 ::  +diff-hall-rumor: handle updates to hall state
@@ -402,7 +395,7 @@
         messages  (~(del by messages.str) affectedcir)
         peers     (~(del by peers.str) affectedcir)
       ==
-    =/  fakecir/circle:hall
+    =/  fakecir=circle:hall
       :-  our.bol
       (crip (weld (trip 'hall-internal-') (trip nom.affectedcir)))
     ::
@@ -417,12 +410,12 @@
     ::  if we get a delete from another ship, delete our fake circle copy
     ::
     =/  deletefake  [%hall-action [%delete nom.fakecir ~]]
-      :_  this(str str)
-      :-  [ost.bol %pull newwir [hos.affectedcir %hall] ~]
-      :-  [ost.bol %poke /fake [our.bol %hall] deletefake]
-      %+  weld
-        (send-chat-update [[%inbox newinbox] sta])
-      (send-chat-update [[%delete affectedcir] sta])
+    :_  this(str sta)
+    :-  [ost.bol %pull newwir [hos.affectedcir %hall] ~]
+    :-  [ost.bol %poke /fake [our.bol %hall] deletefake]
+    %+  weld
+      (send-chat-update [[%inbox newinbox] sta])
+    (send-chat-update [[%delete affectedcir] sta])
   ::
   ::  %remove: remove a circle
   ::
@@ -494,21 +487,21 @@
   ::  paginated message data
   ::
       [%'~chat' %scroll @t @t @t @t ~]
-    =/  cir/circle:hall  [(slav %p &3:site.request-line) &4:site.request-line]
-    =/  start/@ud  (need (rush &5:site.request-line dem))
-    =/  parsedend/@ud  (need (rush &6:site.request-line dem))
+    =/  cir=circle:hall  [(slav %p &3:site.request-line) &4:site.request-line]
+    =/  start=@ud  (need (rush &5:site.request-line dem))
+    =/  parsedend=@ud  (need (rush &6:site.request-line dem))
     =*  messages  messages.str
     =/  envs/(unit (list envelope:hall))  (~(get by messages) cir)
     ?~  envs
       [~ this]
     ?:  (gte start (lent u.envs))
       [~ this]
-    =/  end/@
+    =/  end=@
       ?:  (gte parsedend (lent u.envs))
         (dec (lent u.envs))
       parsedend
     =/  offset  (sub end start)
-    =/  jon/json  %-  msg-to-json
+    =/  jon=json  %-  msg-to-json
     :*  %messages
         cir
         start
@@ -543,7 +536,7 @@
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
   ::
       %circle
-    =/  shp/@p  (slav %p &2:wir)
+    =/  shp=@p  (slav %p &2:wir)
     =/  pat  /circle/[&3:wir]/config/group
     ?:  =(&3:wir 'inbox')
       :_  this
@@ -569,7 +562,7 @@
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
   ::
       %circle
-    =/  shp/@p  (slav %p &2:wir)
+    =/  shp=@p  (slav %p &2:wir)
     =/  pat  /circle/[&3:wir]/config/group
     ?:  =(&3:wir 'inbox')
       :_  this
