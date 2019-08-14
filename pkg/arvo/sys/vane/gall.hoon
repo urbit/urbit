@@ -40,7 +40,7 @@
 ::
 ++  reverse-ames
   $%
-      :: diff
+      ::  diff
       ::
       [action=%d p=mark q=*]
       ::  etc.
