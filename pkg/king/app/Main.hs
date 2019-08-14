@@ -68,7 +68,9 @@ runAcquire act = with act pure
 tryPlayShip :: FilePath -> IO ()
 tryPlayShip shipPath = do
     runAcquire $ do
+        putStrLn "RESUMING SHIP"
         sls <- Pier.resumed shipPath serfFlags
+        putStrLn "SHIP RESUMED"
         Pier.pier shipPath Nothing sls
 
 tryResume :: FilePath -> IO ()

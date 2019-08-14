@@ -46,10 +46,9 @@ generateBootSeq ship Pill{..} = do
     pure $ BootSeq ident pBootFormulas ovums
   where
     ident       = LogIdentity ship True (fromIntegral $ length pBootFormulas)
-    blip        = EvBlip
-    preKern ent = [ blip $ BlipEvTerm $ TermEvBoot (1,()) (Fake (who ident))
-                  , blip $ BlipEvArvo $ ArvoEvWhom ()     ship
-                  , blip $ BlipEvArvo $ ArvoEvWack ()     ent
+    preKern ent = [ EvBlip $ BlipEvTerm $ TermEvBoot (1,()) (Fake (who ident))
+                  , EvBlip $ BlipEvArvo $ ArvoEvWhom ()     ship
+                  , EvBlip $ BlipEvArvo $ ArvoEvWack ()     ent
                   ]
 
 
@@ -75,15 +74,15 @@ writeJobs log !jobs = do
 
 booted :: FilePath -> FilePath -> Serf.Flags -> Ship
        -> Acquire (Serf, EventLog, SerfState)
-booted pillPath top flags ship = do
+booted pillPath pierPath flags ship = do
   pill <- liftIO $ loadFile @Pill pillPath >>= \case
-            Left l  -> error (show l)
+            Left l  -> error (show l) -- TODO Throw a real exception.
             Right p -> pure p
 
   seq@(BootSeq ident x y) <- liftIO $ generateBootSeq ship pill
 
-  log  <- Log.new (top <> "/.urb/log") ident
-  serf <- Serf.run (Serf.Config top flags)
+  log  <- Log.new (pierPath <> "/.urb/log") ident
+  serf <- Serf.run (Serf.Config pierPath flags)
 
   liftIO $ do
       (events, serfSt) <- Serf.bootFromSeq serf seq
@@ -94,7 +93,8 @@ booted pillPath top flags ship = do
 
 -- Resume an existing ship. ----------------------------------------------------
 
-resumed :: FilePath -> Serf.Flags -> Acquire (Serf, EventLog, SerfState)
+resumed :: FilePath -> Serf.Flags
+        -> Acquire (Serf, EventLog, SerfState)
 resumed top flags = do
     log    <- Log.existing (top <> "/.urb/log")
     serf   <- Serf.run (Serf.Config top flags)

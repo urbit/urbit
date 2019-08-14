@@ -39,7 +39,6 @@ nextEv = fmap succ . readIORef . numEvents
 lastEv :: EventLog -> IO EventId
 lastEv = readIORef . numEvents
 
-
 data EventLogExn
     = NoLogIdentity
     | MissingEvent EventId
@@ -194,7 +193,7 @@ clearEvents env eventsTbl =
 appendEvents :: EventLog -> Vector ByteString -> IO ()
 appendEvents log !events = do
     numEvs <- readIORef (numEvents log)
-    next   <- nextEv log
+    next   <- pure (numEvs + 1)
     doAppend $ zip [next..] $ toList events
     writeIORef (numEvents log) (numEvs + word (length events))
   where
@@ -311,6 +310,5 @@ putNoun flags txn db key val =
 putEvent :: MDB_WriteFlags -> Txn -> Dbi -> Word64 -> ByteString -> IO Bool
 putEvent flags txn db id bs = do
   withWord64AsMDBval id $ \idVal -> do
-    -- traceM ("putEvent: " <> show (id, length bs))
     byteStringAsMdbVal bs $ \mVal -> do
       mdb_put flags txn db idVal mVal

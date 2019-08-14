@@ -241,7 +241,7 @@ mkIpv6 (p, q, r, s) = Ipv6 (pBits .|. qBits .|. rBits .|. sBits)
     sBits = shiftL (fromIntegral s) 96
 
 reqUrl :: W.Request -> Cord
-reqUrl = Cord . decodeUtf8 . W.rawPathInfo
+reqUrl r = Cord $ decodeUtf8 $ W.rawPathInfo r <> W.rawQueryString r
 
 
 -- Utilities for Constructing Events -------------------------------------------
