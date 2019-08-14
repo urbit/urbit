@@ -20,7 +20,7 @@ data Opts = Opts
     , oVerbose   :: Bool
     , oAmesPort  :: Maybe Word16
     , oProf      :: Bool
-    , oCollectFx :: Maybe FilePath
+    , oCollectFx :: Bool
     }
   deriving (Show)
 
@@ -129,10 +129,8 @@ opts = do
     oDryRun   <- switch (short 'N' <> help "Dry run -- Don't persist")
     oProf     <- switch (short 'p' <> help "Enable profiling")
 
-    oCollectFx <- option auto $ metavar "FXDIR"
-                             <> long "collect-fx"
-                             <> help "Write effects to disk for debugging"
-                             <> value Nothing
+    oCollectFx <- switch $ long "collect-fx"
+                        <> help "Write effects to disk for debugging"
 
     pure (Opts{..})
 
