@@ -87,15 +87,14 @@
           sourceannounce
       ==
     ::
-    =/  actions=(list move)
-      :~  [ost.bol %connect / [~ /'~chat'] %chat]
-          launcha
-          peer-inbox
-          (hall-peer circlespat circlespat)
-          (hall-source [our.bol %i])
-      ==
     :_  this
-    (weld actions hall-actions)
+    :*  [ost.bol %connect / [~ /'~chat'] %chat]
+        launcha
+        peer-inbox
+        (hall-peer circlespat circlespat)
+        (hall-source [our.bol %i])
+        hall-actions
+    ==
   ::
   :_  this(+<+ u.old)
   [launcha]~
@@ -113,28 +112,28 @@
   |=  wir=wire
   ^-  (quip move _this)
   =*  messages  messages.str
-  =/  lismov=(list move)
-    %+  murn  ~(tap by messages)
-    |=  [cir=circle:hall lis=(list envelope:hall)]
-    ^-  (unit move)
-    =/  envs=(unit (list envelope:hall))  (~(get by messages) cir)
-    ?~  envs
-      ~
-    =/  length/@  (lent u.envs)
-    =/  start/@
-      ?:  (gte length 100)
-        (sub length 100)
-      0
-    =/  end/@  length
-    =/  offset/@  (sub end start)
-    :-  ~
-    :*  ost.bol
-        %diff
-        %chat-update
-        [%messages cir start end (swag [start offset] u.envs)]
-    ==
   :_  this
-  [[ost.bol %diff %chat-config str] lismov]
+  :-  [ost.bol %diff %chat-config str]
+  %+  murn  ~(tap by messages)
+  |=  [cir=circle:hall lis=(list envelope:hall)]
+  ^-  (unit move)
+  =/  envs=(unit (list envelope:hall))  (~(get by messages) cir)
+  ?~  envs
+    ~
+  =/  length/@  (lent u.envs)
+  =/  start/@
+    ?:  (gte length 100)
+      (sub length 100)
+    0
+  =/  end/@  length
+  =/  offset/@  (sub end start)
+  :-  ~
+  :*  ost.bol
+      %diff
+      %chat-update
+      [%messages cir start end (swag [start offset] u.envs)]
+  ==
+
 ::
 ::  +poke-chat: send us an action
 ::
@@ -170,14 +169,18 @@
   ::
     %circles
   ?>  ?=(%circles -.piz)
-  :_  this(circles.str cis.piz)
+  =/  sta
+    %=  str
+      circles  cis.piz
+    ==
+  :_  this(str sta)
   (send-chat-update [[%circles cis.piz] sta])
   ::
   ::  %circle wire
   ::
     %circle
   ?>  ?=(%circle -.piz)
-  =/  circle/circle:hall  [our.bol &3:wir]
+  =/  circle=circle:hall  [our.bol &3:wir]
   ::
   ::  fill inbox config and remote configs with prize data
   ::
@@ -196,8 +199,7 @@
       ^-  [circle:hall (list envelope:hall)]
       [cir ~]
     ::
-    =/  localpeers=(set @p)
-      (silt (turn ~(tap by loc.pes.piz) head))
+    =/  localpeers=(set @p)  (silt (turn ~(tap by loc.pes.piz) head))
     ::
     =/  peers=(map circle:hall (set @p))
       %-  ~(rep by rem.pes.piz)
@@ -236,8 +238,8 @@
         peers  (~(uni by peers.str) (~(put by peers) circle localpeers))
       ==
     =/  messageupdate=update  [%messages circle 0 (lent messages) nes.piz]
-    :-  (send-chat-update [messageupdate sta])
-    this(str sta)
+    :_  this(str sta)
+    (send-chat-update [messageupdate sta])
   ==
 ::
 ::  +diff-hall-rumor: handle updates to hall state
@@ -426,8 +428,8 @@
         messages  (~(del by messages.str) circ)
         peers     (~(del by peers.str) circ)
       ==
-    :-  (send-chat-update [[%delete circ] sta])
-    this(str sta)
+    :_  this(str sta)
+    (send-chat-update [[%delete circ] sta])
     ::
   ==
   ::  end of branching on dif.sto type
