@@ -11,7 +11,13 @@
   ::  the input to your node; this is your parent-event
   ::
   ++  input
-    full-signature
+    $:  ::  the server time when the event was received
+        ::
+        now=@da
+        ::  the validated toplevel signature passed in
+        ::
+        =full-signature
+    ==
   ::  the output of your node; this is your return-event
   ::
   ++  output

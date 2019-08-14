@@ -6,11 +6,13 @@
 ::
 |%
 ++  parent-event
-  community-signature
+  $:  now=@da
+      =community-signature
+  ==
 ::  the board passes the newly allocated id to the thread
 ::
 +$  child-event
-  [id=@ud =community-signature]
+  [id=@ud now=@da =community-signature]
 ::  the user-event of the board is a new post request
 ::
 +$  user-event
@@ -61,7 +63,7 @@
   ^-  (either return-event child-event)
   ::  we could block the route if we wanted here!
   ::
-  [%r next-postid.private-state parent-event]
+  [%r next-postid.private-state now.parent-event community-signature.parent-event]
 ::  +on-process-event: called when we give the passed in user-event to its
 ::  target node.
 ::
@@ -83,7 +85,7 @@
         (scot %ud id)
         %thread
         %inherit
-        [next-postid.private-state parent-event]
+        [next-postid.private-state now.parent-event community-signature.parent-event]
     ==
   ::
       %create

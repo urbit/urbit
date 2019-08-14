@@ -236,6 +236,7 @@
   ::
   =^  changes  u.community
     %-  apply-to-server  :*
+      now
       safe-applets
       client-to-server
       u.community

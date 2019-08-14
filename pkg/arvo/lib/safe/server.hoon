@@ -179,7 +179,8 @@
 ::    checked to prevent weird replay attacks?
 ::
 ++  apply-to-server
-  |=  $:  app-map=(map @t vase)
+  |=  $:  now=@da
+          app-map=(map @t vase)
           signed-message=client-to-server:common
           original-state=node:server
       ==
@@ -191,7 +192,7 @@
       ::
       =/  ret=[=vase changes=(list server-to-client:common) state=_original-state]
         %-  recurse  :*
-          !>(top-signature.signed-message)
+          (slop !>(now) !>(top-signature.signed-message))
           route.signed-message
           route.signed-message
           message-signature.signed-message

@@ -11,7 +11,7 @@
 ::  the parent-event of thread is a board issued id number
 ::
 +$  parent-event
-  [id=@ud =community-signature]
+  [id=@ud now=@da =community-signature]
 ::  the child-event of the toplevel is ~. The toplevel has no 
 ::
 +$  child-event
@@ -99,11 +99,9 @@
   ::
   ?-    -.user-event
       %new-post
-    ::  TODO: Need to put a valid time on this.
-    ::
     =/  new-poster=?  (~(has in posted.private-state) community-tag)
     ::
-    :-  [%log [post-id ~2019.5.5 new-poster] [%accepted post-id]]
+    :-  [%log [post-id now.parent-event new-poster] [%accepted post-id]]
     %_    private-state
         identities
       (~(put by identities.private-state) post-id community-tag)
@@ -126,7 +124,7 @@
       ~&  [%rejecting-mismatch community-tag u.point-id]
       [[%return [%reject ~]] private-state]
     ::
-    :-  [%log [to-delete.user-event ~2019.5.5 %.n] [%ignored post-id]]
+    :-  [%log [to-delete.user-event now.parent-event %.n] [%ignored post-id]]
     %_    private-state
         identities
       (~(del by identities.private-state) to-delete.user-event)

@@ -9,7 +9,9 @@
   input:toplevel-interface
 ::
 +$  child-event
-  community-signature
+  $:  now=@da
+      =community-signature
+  ==
 ::  user events which target the toplevel node are all about doing membership checks
 ::
 +$  user-event
@@ -19,7 +21,7 @@
       ::  invites a new user to the community
       ::
       [%invite ship=@p]
-      ::  
+      ::  creates a new board
       ::
       [%create name=@t app-type=@t =signature-type]
   ==
@@ -60,16 +62,16 @@
   |=  [=path =parent-event =snapshot =private-state]
   ^-  (either return-event child-event)
   ::
-  ?:  ?=(%ship -.parent-event)
+  ?:  ?=(%ship -.full-signature.parent-event)
     ::  the toplevel auth deals only in ring signatures.
     ::
     [%l %reject ~]
   ::  The toplevel auth is meant to always be in %community signing mode.
   ::
-  ?.  ?=(^ y.raw.ring-signature.parent-event)
+  ?.  ?=(^ y.raw.ring-signature.full-signature.parent-event)
     [%l %reject ~]
   ::
-  =/  community-tag=@udpoint  u.y.raw.ring-signature.parent-event
+  =/  community-tag=@udpoint  u.y.raw.ring-signature.full-signature.parent-event
   ::
   ?:  (~(has by banned-tags.snapshot) community-tag)
     ::
@@ -80,7 +82,7 @@
   ::
   ~&  [%is-moderator is-moderator]
   ::
-  [%r is-moderator community-tag]
+  [%r now.parent-event is-moderator community-tag]
 ::
 ++  on-process-event
   |=  [=parent-event =user-event =snapshot =private-state]
@@ -95,21 +97,21 @@
       [[%return [%reject ~]] private-state]
     ::  assert that the signature is a valid %community signed ring
     ::
-    ?.  ?&  ?=(%ring -.parent-event)
-            ?=(^ y.raw.ring-signature.parent-event)
+    ?.  ?&  ?=(%ring -.full-signature.parent-event)
+            ?=(^ y.raw.ring-signature.full-signature.parent-event)
         ==
       [[%return [%reject ~]] private-state]
     ::
-    =/  moderator-tag=@udpoint  u.y.raw.ring-signature.parent-event
+    =/  moderator-tag=@udpoint  u.y.raw.ring-signature.full-signature.parent-event
     ~&  [%init-with-moderator moderator-tag]
     :-  [%return [%accept ~]]
     private-state(moderators (~(put in moderators.private-state) moderator-tag))
   ::  assert that the signature is a valid %community signed ring and that it
   ::  was built by a moderator
   ::
-  ?.  ?&  ?=(%ring -.parent-event)
-          ?=(^ y.raw.ring-signature.parent-event)
-          (~(has in moderators.private-state) u.y.raw.ring-signature.parent-event)
+  ?.  ?&  ?=(%ring -.full-signature.parent-event)
+          ?=(^ y.raw.ring-signature.full-signature.parent-event)
+          (~(has in moderators.private-state) u.y.raw.ring-signature.full-signature.parent-event)
       ==
     [[%return [%reject ~]] private-state]
   ::
@@ -125,7 +127,7 @@
         name.user-event
         app-type.user-event
         %unlinked
-        [%.y u.y.raw.ring-signature.parent-event]
+        [now.parent-event %.y u.y.raw.ring-signature.full-signature.parent-event]
     ==
   ==
 ::
