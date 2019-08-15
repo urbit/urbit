@@ -1180,7 +1180,7 @@
       ::
       %_  mo-state
         running.agents.state  running
-        moves                moves
+        moves                 moves
       ==
     ::
     ::  +ap-track-queue: track queue.
