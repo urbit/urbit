@@ -1869,7 +1869,7 @@
       $~  [%vega ~]                                     ::
       $%  {$conf p/dock q/dock}                         ::  configure app
           $>(%init vane-task)                           ::  set owner
-          {$deal p/sock q/cush}                         ::  full transmission
+          {$deal p/sock q/internal-task}                ::  full transmission
           $>(%vega vane-task)                           ::  report upgrade
           $>(%west vane-task)                           ::  network request
           [%wash ~]                                     ::  clear caches
@@ -1911,7 +1911,7 @@
         {$reap p/(unit tang)}                           ::  peer result
         [%http-response =http-event:http]              ::  serve http result
     ==                                                  ::
-  ++  cush  (pair term club)                            ::  internal task
+  ++  internal-task  (pair term club)                   ::  internal task
   ++  dude  term                                        ::  server identity
   ++  gill  (pair ship term)                            ::  general contact
   ++  scar                                              ::  opaque duct
