@@ -39,8 +39,7 @@
 ::  +reverse-ames: reverse ames message.
 ::
 ++  reverse-ames
-  $%
-      ::  diff
+  $%  ::  diff
       ::
       [action=%d p=mark q=*]
       ::  etc.
@@ -51,8 +50,7 @@
 ::  +forward-ames: forward ames message.
 ::
 ++  forward-ames
-  $%
-      :: message
+  $%  :: message
       ::
       [action=%m =mark noun=*]
       :: "peel" subscribe
@@ -91,9 +89,8 @@
 ::  duct.
 ::
 ++  internal-move
-  $:
-    =bone
-    move=(wind internal-note internal-gift)
+  $:  =bone
+      move=(wind internal-note internal-gift)
   ==
 ::
 ::  +move: Arvo-level move.
@@ -110,8 +107,7 @@
 ::  +gall: all state.
 ::
 ++  gall
-  $:
-      :: state version
+  $:  :: state version
       ::
       %0
       :: agents by ship
@@ -122,8 +118,7 @@
 ::  +subscribers: subscriber data.
 ::
 ++  subscribers
-  $:
-      :: incoming subscribers
+  $:  :: incoming subscribers
       ::
       incoming=bitt
       :: outgoing subscribers
@@ -137,8 +132,7 @@
 ::  +agents: ship state.
 ::
 ++  agents
-  $:
-      :: (deprecated)
+  $:  :: (deprecated)
       ::
       mak=*
       ::  system duct
@@ -158,32 +152,29 @@
 ::  +routes: new cuff.
 ::
 ++  routes
-    $:
-        :: disclosing to
-        ::
-        disclosing=(unit (set ship))
-        :: attributed to
-        ::
-        attributing=ship
-    ==
+  $:  :: disclosing to
+      ::
+      disclosing=(unit (set ship))
+      :: attributed to
+      ::
+      attributing=ship
+  ==
 ::
 ::  +privilege: privilege.
 ::
 ++  privilege
-    $:
-        :: voltage
-        ::
-        =volt
-        :: routes
-        ::
-        =routes
-    ==
+  $:  :: voltage
+      ::
+      =volt
+      :: routes
+      ::
+      =routes
+  ==
 ::
 ::  +foreign: foreign connections.
 ::
 ++  foreign
-  $:
-      :: index
+  $:  :: index
       ::
       index=@ud
       :: by duct
@@ -197,8 +188,7 @@
 ::  +ducts: opaque input.
 ::
 ++  ducts
-  $:
-      :: bone sequence
+  $:  :: bone sequence
       ::
       bone=@ud
       :: by duct
@@ -220,8 +210,7 @@
 ::  +agent: agent state.
 ::
 ++  agent
-  $:
-      :: bad reqs
+  $:  :: bad reqs
       ::
       misvale=misvale-data
       :: cache
@@ -266,8 +255,7 @@
 :: +stats: statistics.
 ::
 ++  stats
-  $:
-      :: change number
+  $:  :: change number
       ::
       change=@ud
       :: entropy
@@ -282,8 +270,7 @@
 .  ==
 ::
 =|  =gall
-|=  $:
-        :: identity
+|=  $:  :: identity
         ::
         our=ship
         :: urban time
@@ -314,9 +301,8 @@
   ~%  %gall-mo  +>  ~
   ::
   |_
-    $:
-      hen=duct
-      moves=(list move)
+    $:  hen=duct
+        moves=(list move)
     ==
   ::
   ++  mo-state  .
