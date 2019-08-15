@@ -1625,7 +1625,9 @@
                 attributing.agent-routes                ::  guest
                 agent-name                              ::  agent
             ==                                          ::
-            :*  wex=~                                   ::  outgoing
+
+            :*  :: NB (jtobin): see urbit/urbit#1620
+                wex=~                                   ::  outgoing
                 sup=incoming.subscribers.current-agent  ::  incoming
             ==                                          ::
             :*  agent-bone=agent-bone                   ::  cause
