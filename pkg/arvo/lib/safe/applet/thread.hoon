@@ -133,14 +133,17 @@
 ::  applies an event or fails
 ::
 ++  apply-event-to-snapshot
-  |=  [=user-event private=private-event =snapshot]
+  |=  [user-event=(unit user-event) private=private-event =snapshot]
   ^-  _snapshot
+  ::  All events in a thread have user-event
+  ?~  user-event
+    snapshot
   ::
-  ?-    -.user-event
+  ?-    -.u.user-event
       %new-post
     %_  snapshot
         posts
-      [[user-event private] posts.snapshot]
+      [[u.user-event private] posts.snapshot]
     ::
         poster-count
       ?:(new-poster.private +(poster-count.snapshot) poster-count.snapshot)
@@ -153,7 +156,7 @@
         posts
       %+  skip  posts.snapshot
       |=  [* private=private-event]
-      =(to-delete.user-event id.private)
+      =(to-delete.u.user-event id.private)
     ==
   ==
 --

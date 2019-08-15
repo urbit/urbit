@@ -73,6 +73,18 @@
       ::
       [%return return-event=vase]
   ==
+::  The +on-child-return arm in your applet will return one of these to take
+::  action based on what your child nodes did. This is equivalent to most of
+::  +on-process-response, except there is no ability to create new nodes.
+::
++$  on-child-response
+  $%  ::  emits an event to this node's event log with a corresponding piece of data
+      ::
+      [%log private-event=vase return-event=vase]
+      ::  returns a value upwards without modifying the public state
+      ::
+      [%return return-event=vase]
+  ==
 ::  what sort of signature this node wants
 ::
 ::    We don't want to give applets the ability to build arbitrary signatures,

@@ -22,16 +22,19 @@
     ?.  ?=(%log -.e)
       e
     ::
-    [%log msg-signature.e route.e q.user-event.e q.private-event.e]
+    ?~  user-event.e
+      [%log ~ q.private-event.e]
+    ::
+    [%log [~ msg-signature.u.user-event.e route.u.user-event.e q.user-event.u.user-event.e] q.private-event.e]
   ::
   ++  snapshot
     |=  s=snapshot:common
     ^-  transport-snapshot:common
     [app-type top-state signature-type q.snapshot children]:s
   --
-::  +sump: like arvo sump, translates vases into cards between applets
+::  +process-sump: like arvo sump, translates vases into cards between applets
 ::
-++  sump
+++  process-sump
   |=  wec/vase
   ^-  on-process-response
   ::
@@ -49,6 +52,24 @@
     =/  sig-type  (slot 30 wec)
     =/  child-event  (slot 31 wec)
     [%create ;;(@t q.id) ;;(@t q.node-type) ;;(signature-type q.sig-type) child-event]
+  ::
+      %return
+    =/  event  (slot 3 wec)
+    [%return event]
+  ==
+::  +child-sump: like arvo sump, translates vases into cards between applets
+::
+++  child-sump
+  |=  wec/vase
+  ^-  on-child-response
+  ::
+  =.  wec  (sped wec)
+  =/  tag  (slot 2 wec)
+  ?+    q.tag  !!
+      %log
+    =/  private-event  (slot 6 wec)
+    =/  return-event  (slot 7 wec)
+    [%log private-event return-event]
   ::
       %return
     =/  event  (slot 3 wec)
@@ -290,7 +311,7 @@
       ::
       =.  children.state  (~(put by children.state) i.route u.sub-node)
       ::
-      (process-child-returned app-vase return-value changes state)
+      (process-child-returned full-path app-vase return-value changes state)
     ::  we've reached the node we're trying to talk to.
     ::
     ::  validate the incoming message as a user event.
@@ -303,7 +324,7 @@
     =/  args  :(slop parent-event user-event snapshot.snapshot.state private-state.state)
     =/  raw-result  (slam on-process-event args)
     ::
-    =/  response=on-process-response  (sump (slot 2 raw-result))
+    =/  response=on-process-response  (process-sump (slot 2 raw-result))
     =.  private-state.state  (slot 3 raw-result)
     ::
     ?-    -.response
@@ -311,7 +332,7 @@
       ::
       =/  nu=changes-and-state
         %^  record-change  changes  [state full-path]
-        [%log message-signature original-path user-event private-event.response]
+        [%log [~ message-signature original-path user-event] private-event.response]
       ::
       [return-event.response changes.nu state.nu]
     ::
@@ -335,7 +356,7 @@
         %^  record-change  changes  [state full-path]
         [%create sub-id.response app-type.response signature-type.response]
       ::
-      (process-child-returned app-vase return changes.nu state.nu)
+      (process-child-returned full-path app-vase return changes.nu state.nu)
     ::
         %return
       ::  when we receive a %return value, we pass the value up to the callers
@@ -366,7 +387,8 @@
     [changes state]
   ::
   ++  process-child-returned
-    |=  $:  app-vase=vase
+    |=  $:  full-path=path
+            app-vase=vase
             child-returned=vase
             changes=(list server-to-client:common)
             state=node:server
@@ -378,9 +400,22 @@
     ::
     =/  raw-result  (slam on-child-return args)
     ::
-    =/  return-event=vase  (slot 2 raw-result)
+    =/  response=on-child-response  (child-sump (slot 2 raw-result))
     =.  private-state.state  (slot 3 raw-result)
     ::
-    [return-event changes state]
+    ?-    -.response
+        %log
+      ::
+      =/  nu=changes-and-state
+        %^  record-change  changes  [state full-path]
+        [%log ~ private-event.response]
+      ::
+      [return-event.response changes.nu state.nu]
+    ::
+        %return
+      ::  when we receive a %return value, we pass the value up to the callers
+      ::
+      [return-event.response changes state]
+    ==
   --
 --

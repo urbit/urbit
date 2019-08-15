@@ -22,16 +22,19 @@
     ::
     =/  node-vase=vase           (~(got by app-map) app)
     ::
-    =/  user-event-mold=vase     (slap node-vase [%limb %user-event])
     =/  private-event-mold=vase  (slap node-vase [%limb %private-event])
-    ::
-    =/  user-event=vase  (slam user-event-mold %noun user-event.e)
     =/  private-event=vase  (slam private-event-mold %noun private-event.e)
+    ::
+    ?~  user-event.e
+      `[%log ~ private-event]
+    ::
+    =/  user-event-mold=vase     (slap node-vase [%limb %user-event])
+    =/  user-event=vase  (slam user-event-mold %noun user-event.u.user-event.e)
     ::
     ::  TODO: The point at which we reconstitute an event from transport is
     ::  probably the correct time to perform the signature verification.
     ::
-    `[%log msg-signature.e route.e user-event private-event]
+    `[%log [~ msg-signature.u.user-event.e route.u.user-event.e user-event] private-event]
   ::
   ++  snapshot
     |=  [app-map=(map @t vase) s=transport-snapshot:common]

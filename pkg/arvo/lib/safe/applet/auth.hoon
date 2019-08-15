@@ -56,6 +56,10 @@
       [%create @t @t =signature-type =child-event]
       [%return =return-event]
   ==
+::
++$  on-child-response
+  $%  [%return =return-event]
+  ==
 ::  +on-route: everything routes through the toplevel node. this is what does 
 ::
 ++  on-route
@@ -132,14 +136,19 @@
   ==
 ::
 ++  apply-event-to-snapshot
-  |=  [=user-event =private-event =snapshot]
+  |=  [user-event=(unit user-event) =private-event =snapshot]
   ^-  _snapshot
-  ?-    -.user-event
+  ::  we don't have private-only events.
   ::
-      %init
+  ?~  user-event
     snapshot
   ::
-      %invite
+  ?-    -.u.user-event
+  ::
+      ?(%init %invite)
+    ::  the init and invite causes no changes to public state, only private
+    ::  state, and never gets persisted to the log.
+    ::
     snapshot
   ::
       %create
@@ -150,6 +159,6 @@
 ::
 ++  on-child-return
   |=  [=child-returned =private-state]
-  ^-  [return-event _private-state]
-  [child-returned private-state]
+  ^-  [on-child-response _private-state]
+  [[%return child-returned] private-state]
 --

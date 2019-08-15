@@ -57,7 +57,13 @@
     =/  app-vase=vase       (~(got by app-map) app-type.snapshot)
     =/  apply-event-to-snapshot=vase
       (slap app-vase [%limb %apply-event-to-snapshot])
-    =/  args  :(slop user-event.item private-event.item snapshot.snapshot)
+    ::
+    =/  user-event=vase
+      ?~  user-event.item
+        !>(~)
+      (slop !>(~) user-event.u.user-event.item)
+    ::
+    =/  args  :(slop user-event private-event.item snapshot.snapshot)
     =.  snapshot.snapshot  (slam apply-event-to-snapshot args)
     ::
     snapshot

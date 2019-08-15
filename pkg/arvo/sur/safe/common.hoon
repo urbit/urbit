@@ -56,17 +56,23 @@
       ::  the remote will call the mold.
       ::
       $:  %log
-          ::  TODO: Next action isn't splitting up the files, but making sure
-          ::  local signatures appear in the %log!
+          ::  the :user-event if this log entry was created from directly
+          ::  processing a user event.
           ::
-          msg-signature=full-signature
-          route=path
-          user-event=vase
+          user-event=(unit logged-user-event)
+          ::
+          ::
           private-event=vase
       ==
       ::
       ::  creates a new child node under this
       [%create sub-id=@t app-type=@t =signature-type]
+  ==
+::
+++  logged-user-event
+  $:  msg-signature=full-signature
+      route=path
+      user-event=vase
   ==
 ::  representation of a snapshot on the wire; contains no vases
 ::
@@ -113,14 +119,18 @@
       ::  the remote will call the mold.
       ::
       $:  %log
-          msg-signature=full-signature
-          route=path
-          user-event=*
+          user-event=(unit transport-logged-user-event)
           private-event=*
       ==
       ::
       ::  creates a new child node under this
       [%create sub-id=@t type=@t =signature-type]
+  ==
+::
++$  transport-logged-user-event
+  $:  msg-signature=full-signature
+      route=path
+      user-event=*
   ==
 ::  when we go to actually request a signature, we change a single abstract
 ::  :signature-type from the applet layer into a fully realized
