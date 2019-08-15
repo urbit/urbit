@@ -50,7 +50,7 @@
       $:  %g
           ::
           ::
-          $%  [%deal id=sock data=cush:gall]
+          $%  [%deal id=sock data=internal-task:gall]
   ==  ==  ==
 ::  +sign: private response from another vane to ford
 ::
@@ -809,7 +809,7 @@
     ^-  note
     :^  %g  %deal  [our our]
     ::
-    ^-  cush:gall
+    ^-  internal-task:gall
     :*  app.act
         %poke
         %handle-http-request
@@ -857,7 +857,7 @@
       ::  use a %handle arm instead of a sub-%poke with the
       ::  %handle-http-request type.
       ::
-      ^-  cush:gall
+      ^-  internal-task:gall
       :*  app.action
           %poke
           %handle-http-request
@@ -899,7 +899,7 @@
       ^-  note
       :^  %g  %deal  [our our]
       ::
-      ^-  cush:gall
+      ^-  internal-task:gall
       :*  app.action.u.connection
           %poke
           %handle-http-cancel
@@ -1354,7 +1354,7 @@
           ^-  move
           :^  duct  %pass  /channel/poke/[channel-id]/(scot %ud request-id.i.requests)
           =,  i.requests
-          [%g %deal `sock`[our ship] `cush:gall`[app %punk mark %json !>(json)]]
+          [%g %deal `sock`[our ship] `internal-task:gall`[app %punk mark %json !>(json)]]
         ::
         $(requests t.requests)
       ::
@@ -1368,7 +1368,7 @@
           ^-  move
           :^  duct  %pass  channel-wire
           =,  i.requests
-          [%g %deal [our ship] `cush:gall`[app %peel %json path]]
+          [%g %deal [our ship] `internal-task:gall`[app %peel %json path]]
         ::
         =.  session.channel-state.state
           %+  ~(jab by session.channel-state.state)  channel-id
@@ -1399,7 +1399,7 @@
           ^-  move
           :^  duc.u.maybe-subscription  %pass  channel-wire
           =,  u.maybe-subscription
-          [%g %deal [our ship] `cush:gall`[app %pull ~]]
+          [%g %deal [our ship] `internal-task:gall`[app %pull ~]]
         ::
         =.  session.channel-state.state
           %+  ~(jab by session.channel-state.state)  channel-id

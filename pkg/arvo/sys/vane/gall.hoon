@@ -6,9 +6,6 @@
 =,  gall
 =>  =~
 |%
-::  +internal-task: synonym for +cush
-::
-++  internal-task  cush
 ::  +agent-action: synonym for +club
 ::
 ++  agent-action  club
