@@ -1185,11 +1185,8 @@
       =/  slammed
         =/  index  p.u.maybe-arm
         =/  term  q.u.maybe-arm
-        ~&  [%slam-index-is index]
-        ~&  [%slam-term-is term]
         =/  =vase
           =/  =path  [term tyl]
-          ~&  [%slam-path-is path]
           !>  (slag index path)
         (ap-slam term p.arm vase)
       ::
