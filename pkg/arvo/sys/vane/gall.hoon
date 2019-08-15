@@ -100,13 +100,13 @@
 ::
 |%
 ::
-::  +gall-old: upgrade path.
+::  +state-old: upgrade path.
 ::
-++  gall-old  ?(gall)
+++  state-old  ?(state)
 ::
-::  +gall: all state.
+::  +state: all state.
 ::
-++  gall
+++  state
   $:  :: state version
       ::
       %0
@@ -269,7 +269,7 @@
 ::
 .  ==
 ::
-=|  =gall
+=|  =state
 |=  $:  :: identity
         ::
         our=ship
@@ -405,13 +405,13 @@
     =/  result-vase  q.cage
     ::
     =/  maybe-agent=(unit agent)
-      (~(get by running.agents.gall) term)
+      (~(get by running.agents.state) term)
     ::
     ?^  maybe-agent
       =/  agent  u.maybe-agent(beak beak)
       ::
-      =.  running.agents.gall
-        (~(put by running.agents.gall) term agent)
+      =.  running.agents.state
+        (~(put by running.agents.state) term agent)
       ::
       =/  =privilege
         =/  =routes  [disclosing=~ attributing=our]
@@ -472,7 +472,7 @@
       ==
     ::
     %_  mo-state
-      running.agents.gall  (~(put by running.agents.gall) term agent)
+      running.agents.state  (~(put by running.agents.state) term agent)
     ==
   ::
   ::  +mo-handle-foreign-request: handle a foreign request.
@@ -562,7 +562,7 @@
     ^-  [bone _mo-state]
     ::
     =/  =foreign
-      =/  existing  (~(get by contacts.agents.gall) ship)
+      =/  existing  (~(get by contacts.agents.state) ship)
       (fall existing [1 ~ ~])
     ::
     =/  existing  (~(get by index-map.foreign) hen)
@@ -579,9 +579,9 @@
           index-map  (~(put by index-map.foreign) hen index)
           duct-map   (~(put by duct-map.foreign) index hen)
         ==
-      (~(put by contacts.agents.gall) ship new-foreign)
+      (~(put by contacts.agents.state) ship new-foreign)
     ::
-    =/  next  mo-state(contacts.agents.gall contacts)
+    =/  next  mo-state(contacts.agents.state contacts)
     [index next]
   ::
   ::  +mo-retrieve-duct: retrieve a duct by index.
@@ -590,7 +590,7 @@
     |=  [=ship index=@ud]
     ^-  duct
     ::
-    =/  =foreign  (~(got by contacts.agents.gall) ship)
+    =/  =foreign  (~(got by contacts.agents.state) ship)
     (~(got by duct-map.foreign) index)
   ::
   ::  +mo-handle-sys: handle a +sign incoming over /sys.
@@ -931,10 +931,10 @@
     |=  =term
     ^+  mo-state
     ::
-    ?.  (~(has by running.agents.gall) term)
+    ?.  (~(has by running.agents.state) term)
       mo-state
     ::
-    =/  maybe-blocked  (~(get by blocked.agents.gall) term)
+    =/  maybe-blocked  (~(get by blocked.agents.state) term)
     ::
     ?~  maybe-blocked
       mo-state
@@ -944,9 +944,9 @@
     |-  ^+  mo-state
     ::
     ?:  =(~ blocked)
-      =/  blocked   (~(del by blocked.agents.gall) term)
+      =/  blocked   (~(del by blocked.agents.state) term)
       %_  mo-state
-        blocked.agents.gall  blocked
+        blocked.agents.state  blocked
       ==
     ::
     =^  task  blocked  [p q]:~(get to blocked)
@@ -969,7 +969,7 @@
     |=  =term
     ^-  beak
     ::
-    ?~  running=(~(get by running.agents.gall) term)
+    ?~  running=(~(get by running.agents.state) term)
       ::
       ::  XX this fallback is necessary, as .term could be either the source
       ::  or the destination app. ie, it might not exist locally ...
@@ -1035,19 +1035,19 @@
     =/  =term  p.internal-task
     =/  =agent-action  q.internal-task
     ::
-    =/  is-running  (~(has by running.agents.gall) term)
-    =/  is-blocked  (~(has by blocked.agents.gall) term)
+    =/  is-running  (~(has by running.agents.state) term)
+    =/  is-blocked  (~(has by blocked.agents.state) term)
     ::
     ?:  |(!is-running is-blocked)
       ::
       =/  =blocked
-        =/  waiting  (~(get by blocked.agents.gall) term)
+        =/  waiting  (~(get by blocked.agents.state) term)
         =/  tasks  (fall waiting *blocked)
         =/  task  [hen privilege agent-action]
         (~(put to tasks) task)
       ::
       %_  mo-state
-        blocked.agents.gall  (~(put by blocked.agents.gall) term blocked)
+        blocked.agents.state  (~(put by blocked.agents.state) term blocked)
       ==
     ::
     (mo-apply term privilege agent-action)
@@ -1169,7 +1169,7 @@
       ^+  ap-state
       ::
       =/  =agent
-        =/  running  (~(got by running.agents.gall) term)
+        =/  running  (~(got by running.agents.state) term)
         =/  =stats
           :+  +(change.stats.running)
             (shaz (mix (add term change.stats.running) eny))
@@ -1202,7 +1202,7 @@
       ::
       =>  ap-track-queue
       ::
-      =/  running  (~(put by running.agents.gall) agent-name current-agent)
+      =/  running  (~(put by running.agents.state) agent-name current-agent)
       ::
       =/  moves
         =/  giver  |=(report=(each suss tang) [hen %give %onto report])
@@ -1211,7 +1211,7 @@
         :(weld from-internal from-suss moves)
       ::
       %_  mo-state
-        running.agents.gall  running
+        running.agents.state  running
         moves                moves
       ==
     ::
@@ -2724,7 +2724,7 @@
       ::
       %init
       ::
-    =/  payload  gall-payload(system-duct.agents.gall duct)
+    =/  payload  gall-payload(system-duct.agents.state duct)
     [~ payload]
       ::
       %vega
@@ -2751,26 +2751,26 @@
       ::
       %wash
       ::
-    =.  running.agents.gall
-      (~(run by running.agents.gall) |=(=agent agent(cache *worm)))
+    =.  running.agents.state
+      (~(run by running.agents.state) |=(=agent agent(cache *worm)))
     [~ gall-payload]
       ::
       %wegh
       ::
     =/  blocked
-      =/  queued  (~(run by blocked.agents.gall) |=(blocked [%.y +<]))
+      =/  queued  (~(run by blocked.agents.state) |=(blocked [%.y +<]))
       (sort ~(tap by queued) aor)
     ::
     =/  running
-      =/  active  (~(run by running.agents.gall) |=(agent [%.y +<]))
+      =/  active  (~(run by running.agents.state) |=(agent [%.y +<]))
       (sort ~(tap by active) aor)
     ::
     =/  =mass
       :+  %gall  %.n
-      :~  [%foreign %.y contacts.agents.gall]
+      :~  [%foreign %.y contacts.agents.state]
           [%blocked %.n blocked]
           [%active %.n running]
-          [%dot %.y gall]
+          [%dot %.y state]
       ==
     ::
     =/  moves
@@ -2783,11 +2783,11 @@
 ::  +load: recreate vane.
 ::
 ++  load
-  |=  =gall-old
+  |=  =state-old
   ^+  gall-payload
   ::
-  ?-  -.gall-old
-    %0  gall-payload(gall gall-old)
+  ?-  -.state-old
+    %0  gall-payload(state state-old)
   ==
 ::
 ::  +scry: standard scry.
@@ -2806,7 +2806,7 @@
           =([%$ %da now] coin)
           =(our ship)
       ==
-    =/  =vase  !>((~(has by running.agents.gall) desk))
+    =/  =vase  !>((~(has by running.agents.state) desk))
     =/  =cage  [%noun vase]
     (some (some cage))
   ::
@@ -2816,7 +2816,7 @@
   ?.  =([%$ %da now] coin)
     ~
   ::
-  ?.  (~(has by running.agents.gall) desk)
+  ?.  (~(has by running.agents.state) desk)
     (some ~)
   ::
   ?.  ?=(^ path)
@@ -2828,7 +2828,7 @@
 ::
 ::  +stay: save without cache.
 ::
-++  stay  gall
+++  stay  state
 ::
 ::  +take: response.
 ::
