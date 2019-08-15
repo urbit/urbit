@@ -85,8 +85,8 @@
 ::
 ::  +internal-move: agent-level move
 ::
-::  Analogous to an Arvo move, except these are routed by bone, instead of
-::  duct.
+::    Analogous to an Arvo move, except these are routed by bone, instead of
+::    duct.
 ::
 ++  internal-move
   $:  =bone
@@ -294,8 +294,8 @@
 ::
 ::  +mo: Arvo-level move handling
 ::
-::  An outer core responsible for routing moves to and from Arvo; it calls
-::  an inner core, +ap, to route internal moves to and from agents.
+::    An outer core responsible for routing moves to and from Arvo; it calls
+::    an inner core, +ap, to route internal moves to and from agents.
 ::
 ++  mo
   ~%  %gall-mo  +>  ~
@@ -377,15 +377,15 @@
   ::
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
-  ::  Presuming we receive a good core, we first check to see if the agent
-  ::  is already running.  If so, we update its beak in %gall's state,
-  ::  initialise an +ap core for the agent, install the core we got from
-  ::  %ford, and then resolve any moves associated with it.
+  ::    Presuming we receive a good core, we first check to see if the agent
+  ::    is already running.  If so, we update its beak in %gall's state,
+  ::    initialise an +ap core for the agent, install the core we got from
+  ::    %ford, and then resolve any moves associated with it.
   ::
-  ::  If we're dealing with a new agent, we create one using the result we got
-  ::  from %ford, add it to the collection of agents %gall is keeping track of,
-  ::  and then do more or less the same procedure as we did for the running
-  ::  agent case.
+  ::    If we're dealing with a new agent, we create one using the result we
+  ::    got from %ford, add it to the collection of agents %gall is keeping
+  ::    track of, and then do more or less the same procedure as we did for the
+  ::    running agent case.
   ::
   ++  mo-receive-core
     ~/  %mo-receive-core
@@ -449,8 +449,8 @@
   ::
   ::  +mo-new-agent: create a new agent and add it to %gall's state.
   ::
-  ::  %gall maintains a collection of running agents.  This arm creates a
-  ::  new one with the provided name, beak, and state (held in a vase).
+  ::    %gall maintains a collection of running agents.  This arm creates a
+  ::    new one with the provided name, beak, and state (held in a vase).
   ::
   ++  mo-new-agent
     |=  [=term =beak =vase]
@@ -476,7 +476,7 @@
   ::
   ::  +mo-handle-foreign-request: handle a foreign request.
   ::
-  ::  Handles tasks received on a +call that have come from another ship.
+  ::    Handles tasks received on a +call that have come from another ship.
   ::
   ++  mo-handle-foreign-request
     ~/  %mo-handle-foreign-request
@@ -525,7 +525,7 @@
   ::
   ::  +mo-handle-foreign-response: handle foreign response.
   ::
-  ::  Handle a received %woot from %ames.
+  ::    Handle a received %woot from %ames.
   ::
   ++  mo-handle-foreign-response
     |=  [=foreign-response art=(unit ares)]
@@ -553,8 +553,8 @@
   ::
   ::  +mo-assign-bone: assign an outbone to a ship.
   ::
-  ::  If we know about the ship, we simply use its existing bone.  Otherwise
-  ::  we register a new entry for the ship, and use a default bone for it.
+  ::    If we know about the ship, we simply use its existing bone.  Otherwise
+  ::    we register a new entry for the ship, and use a default bone for it.
   ::
   ++  mo-assign-bone
     |=  =ship
@@ -594,7 +594,7 @@
   ::
   ::  +mo-handle-sys: handle a +sign incoming over /sys.
   ::
-  ::  (Note that /sys implies the +sign should be routed to a vane.)
+  ::    (Note that /sys implies the +sign should be routed to a vane.)
   ::
   ++  mo-handle-sys
     ~/  %mo-handle-sys
@@ -632,7 +632,7 @@
   ::
   ::  +mo-handle-sys-pel: translated peer.
   ::
-  ::  Validates a received %ford result and %gives an internal %diff.
+  ::    Validates a received %ford result and %gives an internal %diff.
   ::
   ++  mo-handle-sys-pel
     |=  [=path =sign-arvo]
@@ -656,10 +656,10 @@
   ::
   ::  +mo-handle-sys-red: diff ack.
   ::
-  ::  On receipt of a valid +sign from %ames, we simply pass a %pump
-  ::  acknowledgement internally; otherwise we pass both an internal
-  ::  unsubscribing %pull, plus a %want to %ames, before complaining about a
-  ::  bad message acknowledgment.
+  ::    On receipt of a valid +sign from %ames, we simply pass a %pump
+  ::    acknowledgement internally; otherwise we pass both an internal
+  ::    unsubscribing %pull, plus a %want to %ames, before complaining about a
+  ::    bad message acknowledgment.
   ::
   ++  mo-handle-sys-red
     |=  [=path =sign-arvo]
@@ -714,8 +714,8 @@
   ::
   ::  +mo-handle-sys-rep: reverse request.
   ::
-  ::  On receipt of a valid +sign from %ford, sets state to the appropriate
-  ::  duct and gives an internal %diff containing the +sign payload.
+  ::    On receipt of a valid +sign from %ford, sets state to the appropriate
+  ::    duct and gives an internal %diff containing the +sign payload.
   ::
   ++  mo-handle-sys-rep
     |=  [=path =sign-arvo]
@@ -825,8 +825,8 @@
   ::
   ::  +mo-handle-sys-val: inbound validate.
   ::
-  ::  Validates an incoming +sign from %ford and applies it to the specified
-  ::  agent.
+  ::    Validates an incoming +sign from %ford and applies it to the specified
+  ::    agent.
   ::
   ++  mo-handle-sys-val
     |=  [=path =sign-arvo]
@@ -872,10 +872,10 @@
   ::
   ::  +mo-handle-use: handle a typed +sign incoming on /use.
   ::
-  ::  (Note that /use implies the +sign should be routed to an agent.)
+  ::    (Note that /use implies the +sign should be routed to an agent.)
   ::
-  ::  Initialises the specified agent and then performs an agent-level +take on
-  ::  the supplied +sign.
+  ::    Initialises the specified agent and then performs an agent-level +take
+  ::    on the supplied +sign.
   ::
   ++  mo-handle-use
     ~/  %mo-handle-use
@@ -1020,8 +1020,8 @@
   ::
   ::  +mo-handle-local: handle locally.
   ::
-  ::  If the agent is running or blocked, assign it the supplied +task.
-  ::  Otherwise simply apply the action to the agent.
+  ::    If the agent is running or blocked, assign it the supplied +task.
+  ::    Otherwise simply apply the action to the agent.
   ::
   ++  mo-handle-local
     |=  [=ship =internal-task]
@@ -1140,8 +1140,8 @@
   ::
   ::  +ap: agent engine
   ::
-  ::  An inner, agent-level core.  The sample refers to the agent we're
-  ::  currently focused on.
+  ::    An inner, agent-level core.  The sample refers to the agent we're
+  ::    currently focused on.
   ::
   ++  ap
     ~%  %gall-ap  +>  ~
@@ -1156,11 +1156,10 @@
     ::
     ++  ap-state  .
     ::
-    ::  +ap-abed: initialise state for the specified agent, with the
-    ::  supplied privilege.
+    ::  +ap-abed: initialise state for an agent, with the supplied privilege.
     ::
-    ::  The agent must already be running in +gall -- here we simply update
-    ::  +ap's state to focus on it.
+    ::    The agent must already be running in +gall -- here we simply update
+    ::    +ap's state to focus on it.
     ::
     ++  ap-abed
       ~/  %ap-abed
@@ -1261,8 +1260,8 @@
     ::
     ::  +ap-from-internal: internal move to move.
     ::
-    ::  We convert from bone-indexed moves to duct-indexed moves when resolving
-    ::  them in Arvo.
+    ::    We convert from bone-indexed moves to duct-indexed moves when
+    ::    resolving them in Arvo.
     ::
     ++  ap-from-internal
       ~/  %ap-from-internal
@@ -1528,8 +1527,8 @@
     ::
     ::  +ap-dequeue: drop from queue.
     ::
-    ::  Dequeues along the current bone, deleting the queue entirely if it
-    ::  drops to zero.
+    ::    Dequeues along the current bone, deleting the queue entirely if it
+    ::    drops to zero.
     ::
     ++  ap-dequeue
       ^+  ap-state
@@ -1589,13 +1588,13 @@
     ::
     ::  +ap-enqueue: add to queue.
     ::
-    ::  Every agent has a 'meter', that tracks the number of incoming
-    ::  subscribers by bone.  We get both the meter and ship associated with
-    ::  the current bone; if the meter has hit twenty for another ship, we
-    ::  don't enqueue the subscriber.  Otherwise we increment the meter for
-    ::  the current bone and update the agent's state with it.
+    ::    Every agent has a 'meter', that tracks the number of incoming
+    ::    subscribers by bone.  We get both the meter and ship associated with
+    ::    the current bone; if the meter has hit twenty for another ship, we
+    ::    don't enqueue the subscriber.  Otherwise we increment the meter for
+    ::    the current bone and update the agent's state with it.
     ::
-    ::  Returns a yes if the meter has been incremented, and no otherwise.
+    ::    Returns a yes if the meter has been incremented, and no otherwise.
     ::
     ++  ap-enqueue
       ^-  [? _ap-state]
