@@ -28,14 +28,6 @@
       %cay
   ==
 ::
-::  +volt: voltage
-::
-++  volt  ?(%low %high)
-::
-::  +security-control: security control
-::
-++  security-control  $@(?(%iron %gold) [%lead p=ship])
-::
 ::  +reverse-ames: reverse ames message
 ::
 ++  reverse-ames
@@ -160,17 +152,6 @@
       attributing=ship
   ==
 ::
-::  +privilege: privilege
-::
-++  privilege
-  $:  :: voltage
-      ::
-      =volt
-      :: routes
-      ::
-      =routes
-  ==
-::
 ::  +foreign: foreign connections
 ::
 ++  foreign
@@ -225,9 +206,6 @@
       :: unstopped
       ::
       live=?
-      :: privilege
-      ::
-      privilege=security-control
       :: statistics
       ::
       =stats
@@ -250,7 +228,7 @@
 ::
 :: +blocked: blocked tasks
 ::
-++  blocked  (qeu (trel duct privilege agent-action))
+++  blocked  (qeu (trel duct routes agent-action))
 ::
 :: +stats: statistics
 ::
@@ -412,11 +390,8 @@
       =.  running.agents.state
         (~(put by running.agents.state) term agent)
       ::
-      =/  =privilege
-        =/  =routes  [disclosing=~ attributing=our]
-        [%high routes]
-      ::
-      =/  app  (ap-abed:ap term privilege)
+      =/  =routes  [disclosing=~ attributing=our]
+      =/  app  (ap-abed:ap term routes)
       =.  app  (ap-reinstall:app result-vase)
       ap-abet:app
     ::
@@ -430,8 +405,7 @@
     ::
     =/  wag
       =/  =routes  [disclosing=~ attributing=our]
-      =/  =privilege  [%high routes]
-      =/  app  (ap-abed:ap term privilege)
+      =/  app  (ap-abed:ap term routes)
       (ap-prep:app ~)
     ::
     =/  maybe-tang  -.wag
@@ -848,13 +822,10 @@
       =/  err  (some message.build-result)
       (mo-give %unto %coup err)
     ::
-    =/  =privilege
-      =/  =routes  [disclosing=~ attributing=ship]
-      [%high routes]
-    ::
+    =/  =routes  [disclosing=~ attributing=ship]
     =/  =cage  (result-to-cage:ford build-result)
     =/  =agent-action  [%poke cage]
-    (mo-apply term privilege agent-action)
+    (mo-apply term routes agent-action)
   ::
   ::  +mo-handle-sys-way: outbound request.
   ::
@@ -888,11 +859,9 @@
     ::
     =/  app
       =/  =term  i.path
-      =/  =privilege
-        =/  =ship  (slav %p i.t.path)
-        =/  =routes  [disclosing=~ attributing=ship]
-        [%high routes]
-      (ap-abed:ap term privilege)
+      =/  =ship  (slav %p i.t.path)
+      =/  =routes  [disclosing=~ attributing=ship]
+      (ap-abed:ap term routes)
     ::
     =/  =sign-arvo  q.hin
     ::
@@ -951,11 +920,11 @@
     =^  task  blocked  [p q]:~(get to blocked)
     ::
     =/  =duct  p.task
-    =/  =privilege  q.task
+    =/  =routes  q.task
     =/  =agent-action  r.task
     ::
     =/  move
-      =/  =sock  [attributing.routes.privilege our]
+      =/  =sock  [attributing.routes our]
       =/  =internal-task  [term agent-action]
       =/  card  [%slip %g %deal sock internal-task]
       [duct card]
@@ -980,20 +949,20 @@
   ::
   ++  mo-peek
     ~/  %mo-peek
-    |=  [agent=term =privilege =term =path]
+    |=  [agent=term =routes =term =path]
     ^-  (unit (unit cage))
     ::
-    =/  app  (ap-abed:ap agent privilege)
+    =/  app  (ap-abed:ap agent routes)
     (ap-peek:app term path)
   ::
   ::  +mo-apply: apply the supplied action to the specified agent.
   ::
   ++  mo-apply
-    |=  [=term =privilege =agent-action]
+    |=  [=term =routes =agent-action]
     ^+  mo-state
     ::
     =/  =path
-      =/  ship  (scot %p attributing.routes.privilege)
+      =/  ship  (scot %p attributing.routes)
       /sys/val/[ship]/[term]
     ::
     =/  ship-desk
@@ -1014,7 +983,7 @@
       =/  err  (some p.agent-action)
       (mo-give %unto %reap err)
     ::
-    =/  app  (ap-abed:ap term privilege)
+    =/  app  (ap-abed:ap term routes)
     =.  app  (ap-apply:app agent-action)
     ap-abet:app
   ::
@@ -1027,9 +996,7 @@
     |=  [=ship =internal-task]
     ^+  mo-state
     ::
-    =/  =privilege
-      =/  =routes  [disclosing=~ attributing=ship]
-      [%high routes]
+    =/  =routes  [disclosing=~ attributing=ship]
     ::
     =/  =term  p.internal-task
     =/  =agent-action  q.internal-task
@@ -1042,14 +1009,14 @@
       =/  =blocked
         =/  waiting  (~(get by blocked.agents.state) term)
         =/  tasks  (fall waiting *blocked)
-        =/  task  [hen privilege agent-action]
+        =/  task  [hen routes agent-action]
         (~(put to tasks) task)
       ::
       %_  mo-state
         blocked.agents.state  (~(put by blocked.agents.state) term blocked)
       ==
     ::
-    (mo-apply term privilege agent-action)
+    (mo-apply term routes agent-action)
   ::
   ::  +mo-handle-forward: handle forward %ames message.
   ::
@@ -1147,7 +1114,7 @@
     ~%  %gall-ap  +>  ~
     ::
     |_  $:  agent-name=term
-            agent-privilege=privilege
+            agent-routes=routes
             agent-bone=bone
             agent-moves=(list internal-move)
             agent-config=(list (each suss tang))
@@ -1156,14 +1123,14 @@
     ::
     ++  ap-state  .
     ::
-    ::  +ap-abed: initialise state for an agent, with the supplied privilege.
+    ::  +ap-abed: initialise state for an agent, with the supplied routes.
     ::
     ::    The agent must already be running in +gall -- here we simply update
     ::    +ap's state to focus on it.
     ::
     ++  ap-abed
       ~/  %ap-abed
-      |=  [=term =privilege]
+      |=  [=term =routes]
       ^+  ap-state
       ::
       =/  =agent
@@ -1175,7 +1142,7 @@
         running(stats stats)
       ::
       =.  agent-name  term
-      =.  agent-privilege  privilege
+      =.  agent-routes  routes
       =.  current-agent  agent
       ::
       =/  maybe-bone  (~(get by bone-map.ducts.agent) hen)
@@ -1256,7 +1223,7 @@
         ap-state
       ::
       =/  =ship  p.u.incoming
-      ap-kill(attributing.routes.agent-privilege ship)
+      ap-kill(attributing.agent-routes ship)
     ::
     ::  +ap-from-internal: internal move to move.
     ::
@@ -1684,7 +1651,7 @@
           +12.q.running-state.current-agent
         ^-   bowl
         :*  :*  our                                     ::  host
-                attributing.routes.agent-privilege      ::  guest
+                attributing.agent-routes                ::  guest
                 agent-name                              ::  agent
             ==                                          ::
             :*  wex=~                                   ::  outgoing
@@ -1869,7 +1836,7 @@
         (~(slot wa cache.current-agent) 3 vase)
       ::
       =/  =internal-move
-        =/  =path  [(scot %p attributing.routes.agent-privilege) %inn u.pax]
+        =/  =path  [(scot %p attributing.agent-routes) %inn u.pax]
         =/  vase  (ap-atomic-vase %tas noun)
         =/  combined  (slop vase at-slot)
         =/  =internal-note  [%meta vane combined]
@@ -2145,7 +2112,7 @@
       |=  pax=path
       ^+  ap-state
       ::
-      =/  incoming  [attributing.routes.agent-privilege pax]
+      =/  incoming  [attributing.agent-routes pax]
       ::
       =.  incoming.subscribers.current-agent
         (~(put by incoming.subscribers.current-agent) agent-bone incoming)
@@ -2311,7 +2278,7 @@
           ::
           %diff
           ::
-        =/  =ship  attributing.routes.agent-privilege
+        =/  =ship  attributing.agent-routes
         =/  =cage  p.internal-gift
         (ap-diff ship path cage)
           ::
@@ -2821,8 +2788,8 @@
     ~
   ::
   =/  initialised  mo-abed:mo
-  =/  =privilege  [%high [~ ship]]
-  (mo-peek:initialised desk privilege term path)
+  =/  =routes  [~ ship]
+  (mo-peek:initialised desk routes term path)
 ::
 ::  +stay: save without cache
 ::
