@@ -87,7 +87,10 @@
 ::
 ::  +move: Arvo-level move
 ::
-++  move  (pair duct (wind note-arvo gift-arvo))
+++  move
+  $:  =duct
+      move=(wind note-arvo gift-arvo))
+  ==
 --
 ::
 |%
