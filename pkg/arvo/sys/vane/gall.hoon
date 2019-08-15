@@ -766,37 +766,29 @@
     =/  =internal-gift  +>.sign-arvo
     ::
     ?-    -.internal-gift
-        ::
         %coup
-        ::
       (mo-give %mack p.internal-gift)
-        ::
+    ::
         %diff
-        ::
       =/  sys-path  [%sys %red t.path]
       =/  =note-arvo
         =/  path  [%g %gh dap ~]
         =/  noun  [num %d p.p.internal-gift q.q.p.internal-gift]
         [%a %want him path noun]
-      ::
       (mo-pass sys-path note-arvo)
-        ::
+    ::
         %quit
-        ::
       =/  sys-path  [%sys path]
       =/  =note-arvo
         =/  path  [%g %gh dap ~]
         =/  noun  [num %x ~]
         [%a %want him path noun]
-      ::
       (mo-pass sys-path note-arvo)
-        ::
+    ::
         %reap
-        ::
       (mo-give %mack p.internal-gift)
-        ::
+    ::
         %http-response
-        ::
       !!
     ==
   ::
@@ -869,30 +861,24 @@
     =/  =sign-arvo  q.hin
     ::
     ?-  i.t.t.path
-        ::
         %inn
-        ::
       =/  =vase  (slot 3 hin)
       =.  app  (ap-generic-take:app t.t.t.path vase)
       ap-abet:app
-        ::
+    ::
         %cay
-        ::
       ~&  [%mo-handle-use-weird sign-arvo]
       ~&  [%mo-handle-use-weird-path path]
       mo-state
-        ::
+    ::
         %out
-        ::
       ?.  ?=([%g %unto *] sign-arvo)
         ~&  [%mo-handle-use-weird sign-arvo]
         ~&  [%mo-handle-use-weird-path path]
         mo-state
-      ::
       =.  app
         =/  =internal-gift  +>.sign-arvo
         (ap-specific-take:app t.t.t.path internal-gift)
-      ::
       ap-abet:app
     ==
   ::
@@ -1041,36 +1027,30 @@
     ::
     =/  =note-arvo
       ?-  -.forward-ames
-          ::
           %m
-          ::
         =/  =task:able
           =/  =internal-task  [term %puff [mark noun]:forward-ames]
           [%deal sock internal-task]
         [%g task]
-          ::
+      ::
           %l
-          ::
         =/  =task:able
           =/  =internal-task  [term %peel [mark path]:forward-ames]
           [%deal sock internal-task]
         [%g task]
-          ::
+      ::
           %s
-          ::
         =/  =task:able
           =/  =internal-task  [term %peer path.forward-ames]
           [%deal sock internal-task]
         [%g task]
-          ::
+      ::
           %u
-          ::
         =/  =task:able
           =/  =internal-task  [term %pull ~]
           [%deal sock internal-task]
         [%g task]
       ==
-    ::
     (mo-pass path note-arvo)
   ::
   ::  +mo-handle-backward: handle reverse %ames message.
@@ -1080,9 +1060,7 @@
     ^+  mo-state
     ::
     ?-    -.reverse-ames
-        ::
         %d
-        ::
       =/  =path
         =/  him  (scot %p ship)
         =/  num  (scot %ud bone)
@@ -1095,9 +1073,8 @@
         [%f %build live=%.n schematic]
       ::
       (mo-pass path note-arvo)
-        ::
+    ::
         %x
-        ::
       ::  XX should crash
       =.  mo-state  (mo-give %mack ~)
       ::
@@ -1245,11 +1222,9 @@
       ::
       =/  card
         ?-    -.move.internal-move
-            ::
             %slip  !!
-            ::
+        ::
             %give
-            ::
           ?<  =(0 bone.internal-move)
           ::
           =/  =internal-gift  p.move.internal-move
@@ -1265,7 +1240,6 @@
             [%give %unto internal-gift]
           ::
           =/  =path  /sys/pel/[agent-name]
-          ::
           =/  =note-arvo
             =/  =schematic:ford
               =/  =beak  (mo-beak agent-name)
@@ -1273,27 +1247,22 @@
             [%f %build live=%.n schematic]
           ::
           [%pass path note-arvo]
-            ::
+        ::
             %pass
-            ::
           =/  =path  p.move.internal-move
           =/  =internal-note  q.move.internal-move
-          ::
           =/  use-path  [%use agent-name path]
           ::
           =/  =note-arvo
             ?-  -.internal-note
-                ::
                 %send
-                ::
               =/  =task:able
                 =/  =sock  [our ship.internal-note]
                 =/  =internal-task  internal-task.internal-note
                 [%deal sock internal-task]
               [%g task]
-                ::
+            ::
                 %meta
-                ::
               =/  =term  term.internal-note
               =/  =vase  vase.internal-note
               [term %meta vase]
@@ -1301,7 +1270,6 @@
           ::
           [%pass use-path note-arvo]
         ==
-      ::
       [duct card]
     ::
     ::  +ap-call: call into server.
@@ -2273,29 +2241,23 @@
       =/  pax  +.path
       ::
       ?-  -.internal-gift
-          ::
           %coup
-          ::
         =/  maybe-vase  (some !>(p.internal-gift))
         (ap-non-diff-take %coup pax maybe-vase)
-          ::
+      ::
           %diff
-          ::
         =/  =ship  attributing.agent-routes
         =/  =cage  p.internal-gift
         (ap-diff ship path cage)
-          ::
+      ::
           %quit
-          ::
         (ap-non-diff-take %quit pax ~)
-          ::
+      ::
           %reap
-          ::
         =/  maybe-vase  (some !>(p.internal-gift))
         (ap-non-diff-take %reap pax maybe-vase)
-          ::
+      ::
           %http-response
-          ::
         !!
       ==
     ::
@@ -2664,9 +2626,7 @@
   =/  initialised  (mo-abed:mo duct)
   ::
   ?-    -.task
-      ::
       %conf
-      ::
     =/  =dock  p.task
     =/  =ship  p.dock
     ?.  =(our ship)
@@ -2676,12 +2636,10 @@
     ~&  [%gall-booting q.dock q.task]
     =>  (mo-boot:initialised q.dock q.task)
     mo-abet
-      ::
+  ::
       %deal
-      ::
     =/  =sock  p.task
     =/  =internal-task  q.task
-    ::
     ?.  =(q.sock our)
       ?>  =(p.sock our)
       =>  (mo-handle-foreign-request:initialised q.sock internal-task)
@@ -2689,18 +2647,15 @@
     ::
     =>  (mo-handle-local:initialised p.sock internal-task)
     mo-abet
-      ::
+  ::
       %init
-      ::
     =/  payload  gall-payload(system-duct.agents.state duct)
     [~ payload]
-      ::
+  ::
       %vega
-      ::
     [~ gall-payload]
-      ::
+  ::
       %west
-      ::
     =/  =ship  p.task
     =/  =path  q.task
     =/  =noun  r.task
@@ -2716,15 +2671,13 @@
     =/  mes  ;;((pair @ud reverse-ames) noun)
     =>  (mo-handle-backward:initialised ship agent-name mes)
     mo-abet
-      ::
+  ::
       %wash
-      ::
     =.  running.agents.state
       (~(run by running.agents.state) |=(=agent agent(cache *worm)))
     [~ gall-payload]
-      ::
+  ::
       %wegh
-      ::
     =/  blocked
       =/  queued  (~(run by blocked.agents.state) |=(blocked [%.y +<]))
       (sort ~(tap by queued) aor)
