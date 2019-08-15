@@ -74,6 +74,9 @@ data SerfState = SerfState
     }
   deriving (Eq, Ord, Show)
 
+ssLastEv :: SerfState -> EventId
+ssLastEv = pred . ssNextEv
+
 data Serf = Serf
   { sendHandle :: Handle
   , recvHandle :: Handle
@@ -283,7 +286,7 @@ cordText = T.strip . unCord
 --------------------------------------------------------------------------------
 
 snapshot :: Serf -> SerfState -> IO ()
-snapshot serf SerfState{..} = sendOrder serf (OSave $ ssNextEv - 1)
+snapshot serf ss = sendOrder serf $ OSave $ ssLastEv ss
 
 shutdown :: Serf -> Word8 -> IO ()
 shutdown serf code = sendOrder serf (OExit code)

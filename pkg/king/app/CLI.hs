@@ -21,16 +21,17 @@ data Opts = Opts
     , oAmesPort  :: Maybe Word16
     , oProf      :: Bool
     , oCollectFx :: Bool
+    , oLocalhost :: Bool
+    , oOffline   :: Bool
     }
   deriving (Show)
 
 data New = New
     { nPillPath  :: FilePath
     , nShipAddr  :: Text
-    , nPierPath  :: FilePath
+    , nPierPath  :: Maybe FilePath -- Derived from ship name if not specified.
     , nArvoDir   :: Maybe FilePath
     , nBootFake  :: Bool
-    , nLocalhost :: Bool
     }
   deriving (Show)
 
@@ -42,7 +43,7 @@ data Run = Run
 data Cmd
     = CmdNew New Opts
     | CmdRun Run Opts
-    | CmdTry FilePath
+    | CmdVal FilePath -- Validate Pill
   deriving (Show)
 
 --------------------------------------------------------------------------------
@@ -89,61 +90,114 @@ parseArgs = do
 
 --------------------------------------------------------------------------------
 
-run :: Parser Run
-run = do
-    rPierPath <- strArgument (metavar "PIER" <> help "Path to pier")
-    pure Run{..}
-
 new :: Parser New
 new = do
-    nPierPath <- strArgument (metavar "PIER" <> help "Path to pier")
-    nPillPath <- strArgument (metavar "PILL" <> help "Path to pill file")
-    nShipAddr <- strArgument (metavar "SHIP" <> help "Ship address")
+    nShipAddr <- strArgument
+                     $ metavar "SHIP"
+                    <> help "Ship address"
 
-    nLocalhost <- switch $ short 'L'
-                        <> long "local"
-                        <> help "Localhost-only networking"
+    nPierPath <- argument auto
+                     $ metavar "PIER"
+                    <> help "Path to pier"
+                    <> value Nothing
 
-    nBootFake <- switch $ short 'F'
-                       <> long "fake"
-                       <> help "Create a fake ship"
+    nPillPath <- strOption
+                     $ short 'B'
+                    <> long "pill"
+                    <> metavar "PILL"
+                    <> help "Path to pill file"
 
-    nArvoDir <- option auto $ metavar "ARVO"
-                           <> short 'A'
-                           <> value Nothing
-                           <> help "Initial Arvo filesystem"
+    nBootFake <- switch
+                     $ short 'F'
+                    <> long "fake"
+                    <> help "Create a fake ship"
+
+    nArvoDir <- option auto
+                    $ metavar "PATH"
+                   <> short 'A'
+                   <> long "arvo"
+                   <> value Nothing
+                   <> help "Replace initial clay filesys with contents of PATH"
 
     pure New{..}
 
 opts :: Parser Opts
 opts = do
-    oAmesPort <- option auto $ metavar "PORT"
-                            <> short 'p'
-                            <> help "Ames port number"
-                            <> value Nothing
+    oAmesPort  <- option auto $ metavar "PORT"
+                             <> short 'p'
+                             <> long "ames"
+                             <> help "Ames port number"
+                             <> value Nothing
+                             <> hidden
 
-    oHashless <- switch (short 'S' <> help "Disable battery hashing")
-    oQuiet    <- switch (short 'q' <> help "Quiet")
-    oVerbose  <- switch (short 'v' <> help "Verbose")
-    oExit     <- switch (short 'x' <> help "Exit immediatly")
-    oDryRun   <- switch (short 'N' <> help "Dry run -- Don't persist")
-    oProf     <- switch (short 'p' <> help "Enable profiling")
+    oHashless  <- switch $ short 'S'
+                        <> long "hashless"
+                        <> help "Disable battery hashing"
+                        <> hidden
 
-    oCollectFx <- switch $ long "collect-fx"
+    oQuiet     <- switch $ short 'q'
+                        <> long "quiet"
+                        <> help "Quiet"
+                        <> hidden
+
+    oVerbose   <- switch $ short 'v'
+                        <> long "verbose"
+                        <> help "Verbose"
+                        <> hidden
+
+    oExit      <- switch $ short 'x'
+                        <> long "exit"
+                        <> help "Exit immediatly"
+                        <> hidden
+
+    oDryRun    <- switch $ short 'N'
+                        <> long "dry-run"
+                        <> help "Dry run -- Don't persist"
+                        <> hidden
+
+    oProf      <- switch $ short 'p'
+                       <> long "profile"
+                       <> help "Enable profiling"
+                       <> hidden
+
+    oLocalhost <- switch $ short 'L'
+                        <> long "local"
+                        <> help "Localhost-only networking"
+                        <> hidden
+
+    oOffline   <- switch $ short 'O'
+                        <> long "offline"
+                        <> help "Run without any networking"
+                        <> hidden
+
+    oCollectFx <- switch $ short 'f'
+                        <> long "collect-fx"
                         <> help "Write effects to disk for debugging"
+                        <> hidden
 
     pure (Opts{..})
 
+runShip :: Parser Cmd
+runShip = do
+    rPierPath <- strArgument (metavar "PIER" <> help "Path to pier")
+    o         <- opts
+    pure (CmdRun (Run{..}) o)
+
+valPill :: Parser Cmd
+valPill = do
+    pillPath <- strArgument (metavar "PILL" <> help "Path to pill")
+    pure (CmdVal pillPath)
+
 cmd :: Parser Cmd
 cmd = subparser
-        ( (command "new" $ info (newShip <**> helper)
-                         $ progDesc "Boot a new ship")
-       <> (command "run" $ info (runShip <**> helper)
-                         $ progDesc "Run an existing ship")
-       <> (command "try" $ info (tryShip <**> helper)
-                         $ progDesc "Run development test flow")
-        )
+        $ command "new" ( info (newShip <**> helper)
+                        $ progDesc "Boot a new ship."
+                        )
+       <> command "run" ( info (runShip <**> helper)
+                        $ progDesc "Run an existing ship."
+                        )
+       <> command "val" ( info (valPill <**> helper)
+                        $ progDesc "Validate a pill file."
+                        )
   where
-    runShip = CmdRun <$> run <*> opts
     newShip = CmdNew <$> new <*> opts
-    tryShip = CmdTry <$> strArgument (metavar "PIER" <> help "Path to pier")

@@ -26,8 +26,8 @@ import qualified Vere.Serf      as Serf
 
 _ioDrivers = [] :: [IODriver]
 
-_setupPierDirectory :: FilePath -> IO ()
-_setupPierDirectory shipPath = do
+setupPierDirectory :: FilePath -> IO ()
+setupPierDirectory shipPath = do
    for_ ["put", "get", "log", "chk"] $ \seg -> do
      let pax = shipPath <> "/.urb/" <> seg
      createDirectoryIfMissing True pax
@@ -75,19 +75,37 @@ writeJobs log !jobs = do
 booted :: FilePath -> FilePath -> Serf.Flags -> Ship
        -> Acquire (Serf, EventLog, SerfState)
 booted pillPath pierPath flags ship = do
+  putStrLn "LOADING PILL"
+
   pill <- liftIO $ loadFile @Pill pillPath >>= \case
             Left l  -> error (show l) -- TODO Throw a real exception.
             Right p -> pure p
 
+  putStrLn "PILL LOADED"
+
   seq@(BootSeq ident x y) <- liftIO $ generateBootSeq ship pill
 
+  putStrLn "BootSeq Computed"
+
+  liftIO (setupPierDirectory pierPath)
+
+  putStrLn "Directory Setup"
+
   log  <- Log.new (pierPath <> "/.urb/log") ident
+
+  putStrLn "Event Log Initialized"
+
   serf <- Serf.run (Serf.Config pierPath flags)
+
+  putStrLn "Serf Started"
 
   liftIO $ do
       (events, serfSt) <- Serf.bootFromSeq serf seq
+      putStrLn "Boot Sequence completed"
       Serf.snapshot serf serfSt
+      putStrLn "Snapshot taken"
       writeJobs log (fromList events)
+      putStrLn "Events written"
       pure (serf, log, serfSt)
 
 

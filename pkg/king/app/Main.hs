@@ -153,10 +153,12 @@ catchAny = Control.Exception.catch
 
 wipeSnapshot :: FilePath -> IO ()
 wipeSnapshot shipPath = do
+    putStrLn "wipeSnapshot"
     removeFileIfExists (shipPath <> "/.urb/chk/north.bin")
     removeFileIfExists (shipPath <> "/.urb/chk/south.bin")
     print (shipPath <> "/.urb/chk/north.bin")
     print (shipPath <> "/.urb/chk/south.bin")
+    putStrLn "SNAPSHOT WIPED"
 
 tryBootFromPill :: FilePath -> FilePath -> Ship -> IO ()
 tryBootFromPill pillPath shipPath ship = do
@@ -277,7 +279,9 @@ tryDoStuff shipPath = runInBoundThread $ do
 
 newShip :: CLI.New -> CLI.Opts -> IO ()
 newShip CLI.New{..} _ = do
-    tryBootFromPill nPillPath nPierPath (Ship 0)
+    tryBootFromPill nPillPath pierPath (Ship 0)
+  where
+    pierPath = fromMaybe ("./" <> unpack nShipAddr) nPierPath
 
 runShip :: CLI.Run -> CLI.Opts -> IO ()
 runShip (CLI.Run pierPath) _ = tryPlayShip pierPath
@@ -285,8 +289,11 @@ runShip (CLI.Run pierPath) _ = tryPlayShip pierPath
 main :: IO ()
 main = CLI.parseArgs >>= \case
     CLI.CmdRun r o -> runShip r o
-    CLI.CmdNew r o -> pPrint (CLI.CmdNew r o)
-    CLI.CmdTry p   -> tryDoStuff p
+    CLI.CmdNew n o -> newShip n o
+    CLI.CmdVal pil -> validatePill pil
+
+validatePill :: FilePath -> IO ()
+validatePill = const (pure ())
 
 --------------------------------------------------------------------------------
 
