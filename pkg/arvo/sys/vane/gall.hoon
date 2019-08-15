@@ -368,13 +368,12 @@
     |=  =vase
     ^-  ?
     ::
-    =/  inferred  -:!>(*bowl)
     =/  maybe-vase  (slew 12 vase)
     ::
     ?~  maybe-vase
       %.n
     =/  =type  p.u.maybe-vase
-    (~(nest ut type) %.n inferred)
+    (~(nest ut type) %.n -:!>(*bowl))
   ::
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
