@@ -110,10 +110,7 @@
 ::  +agents: ship state
 ::
 ++  agents
-  $:  :: (deprecated)
-      ::
-      mak=*
-      ::  system duct
+  $:  ::  system duct
       ::
       system-duct=duct
       ::  foreign contacts
