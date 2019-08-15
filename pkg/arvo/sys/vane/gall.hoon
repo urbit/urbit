@@ -33,10 +33,10 @@
 ++  reverse-ames
   $%  ::  diff
       ::
-      [action=%d p=mark q=*]
+      [%d p=mark q=*]
       ::  etc.
       ::
-      [action=%x ~]
+      [%x ~]
   ==
 ::
 ::  +forward-ames: forward ames message
@@ -44,16 +44,16 @@
 ++  forward-ames
   $%  :: message
       ::
-      [action=%m =mark noun=*]
+      [%m =mark noun=*]
       :: "peel" subscribe
       ::
-      [action=%l =mark =path]
+      [%l =mark =path]
       :: subscribe
       ::
-      [action=%s =path]
+      [%s =path]
       :: cancel+unsubscribe
       ::
-      [action=%u ~]
+      [%u ~]
   ==
 ::
 ::  +foreign-response: foreign response
@@ -71,8 +71,8 @@
 ::  +internal-note: +ap note
 ::
 ++  internal-note
-  $%  [task=%meta =term =vase]
-      [task=%send =ship =internal-task]
+  $%  [%meta =term =vase]
+      [%send =ship =internal-task]
   ==
 ::
 ::  +internal-move: agent-level move
@@ -1025,7 +1025,7 @@
     ^+  mo-state
     ::
     =.  mo-state
-      ?.  ?=(%u action.forward-ames)
+      ?.  ?=(%u -.forward-ames)
         mo-state
       (mo-give %mack ~)
     ::
@@ -1037,7 +1037,7 @@
     =/  =sock  [ship our]
     ::
     =/  =note-arvo
-      ?-  action.forward-ames
+      ?-  -.forward-ames
           ::
           %m
           ::
@@ -1076,7 +1076,7 @@
     |=  [=ship =term =bone =reverse-ames]
     ^+  mo-state
     ::
-    ?-    action.reverse-ames
+    ?-    -.reverse-ames
         ::
         %d
         ::
@@ -1279,7 +1279,7 @@
           =/  use-path  [%use agent-name path]
           ::
           =/  =note-arvo
-            ?-  task.internal-note
+            ?-  -.internal-note
                 ::
                 %send
                 ::
