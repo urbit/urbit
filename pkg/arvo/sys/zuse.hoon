@@ -1894,7 +1894,7 @@
                   now/@da                               ::  current time
                   byk/beak                              ::  load source
           ==  ==                                        ::
-  ++  club                                              ::  agent action
+  ++  agent-action                                      ::  agent action
     $%  {$peel p/mark q/path}                           ::  translated peer
         {$peer p/path}                                  ::  subscribe
         {$poke p/cage}                                  ::  apply
@@ -1911,7 +1911,7 @@
         {$reap p/(unit tang)}                           ::  peer result
         [%http-response =http-event:http]              ::  serve http result
     ==                                                  ::
-  ++  internal-task  (pair term club)                   ::  internal task
+  ++  internal-task  (pair term agent-action)           ::  internal task
   ++  dude  term                                        ::  server identity
   ++  gill  (pair ship term)                            ::  general contact
   ++  scar                                              ::  opaque duct
