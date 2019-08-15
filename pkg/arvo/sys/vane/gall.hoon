@@ -8,19 +8,19 @@
 ::
 |%
 ::
-::  +internal-gift: synonym for +cuft.
+::  +internal-gift: synonym for +cuft
 ::
 ++  internal-gift  cuft
 ::
-::  +internal-task: synonym for +cush.
+::  +internal-task: synonym for +cush
 ::
 ++  internal-task  cush
 ::
-::  +agent-action: synonym for +club.
+::  +agent-action: synonym for +club
 ::
 ++  agent-action  club
 ::
-::  +coke: cook.
+::  +coke: cook
 ::
 ++  coke
   $?  %inn
@@ -28,15 +28,15 @@
       %cay
   ==
 ::
-::  +volt: voltage.
+::  +volt: voltage
 ::
 ++  volt  ?(%low %high)
 ::
-::  +security-control: security control.
+::  +security-control: security control
 ::
 ++  security-control  $@(?(%iron %gold) [%lead p=ship])
 ::
-::  +reverse-ames: reverse ames message.
+::  +reverse-ames: reverse ames message
 ::
 ++  reverse-ames
   $%  ::  diff
@@ -47,7 +47,7 @@
       [action=%x ~]
   ==
 ::
-::  +forward-ames: forward ames message.
+::  +forward-ames: forward ames message
 ::
 ++  forward-ames
   $%  :: message
@@ -64,7 +64,7 @@
       [action=%u ~]
   ==
 ::
-::  +foreign-response: foreign response.
+::  +foreign-response: foreign response
 ::
 ++  foreign-response
   $?  %peer
@@ -76,14 +76,14 @@
 ::
 |%
 ::
-::  +internal-note: +ap note.
+::  +internal-note: +ap note
 ::
 ++  internal-note
   $%  [task=%meta =term =vase]
       [task=%send =ship =internal-task]
   ==
 ::
-::  +internal-move: agent-level move.
+::  +internal-move: agent-level move
 ::
 ::  Analogous to an Arvo move, except these are routed by bone, instead of
 ::  duct.
@@ -93,18 +93,18 @@
       move=(wind internal-note internal-gift)
   ==
 ::
-::  +move: Arvo-level move.
+::  +move: Arvo-level move
 ::
 ++  move  (pair duct (wind note-arvo gift-arvo))
 --
 ::
 |%
 ::
-::  +state-old: upgrade path.
+::  +state-old: upgrade path
 ::
 ++  state-old  ?(state)
 ::
-::  +state: all state.
+::  +state: all state
 ::
 ++  state
   $:  :: state version
@@ -115,7 +115,7 @@
       =agents
   ==
 ::
-::  +subscribers: subscriber data.
+::  +subscribers: subscriber data
 ::
 ++  subscribers
   $:  :: incoming subscribers
@@ -129,7 +129,7 @@
       meter=(map bone @ud)
   ==
 ::
-::  +agents: ship state.
+::  +agents: ship state
 ::
 ++  agents
   $:  :: (deprecated)
@@ -149,7 +149,7 @@
       blocked=(map term blocked)
   ==
 ::
-::  +routes: new cuff.
+::  +routes: new cuff
 ::
 ++  routes
   $:  :: disclosing to
@@ -160,7 +160,7 @@
       attributing=ship
   ==
 ::
-::  +privilege: privilege.
+::  +privilege: privilege
 ::
 ++  privilege
   $:  :: voltage
@@ -171,7 +171,7 @@
       =routes
   ==
 ::
-::  +foreign: foreign connections.
+::  +foreign: foreign connections
 ::
 ++  foreign
   $:  :: index
@@ -185,7 +185,7 @@
       duct-map=(map @ud duct)
   ==
 ::
-::  +ducts: opaque input.
+::  +ducts: opaque input
 ::
 ++  ducts
   $:  :: bone sequence
@@ -199,7 +199,7 @@
       duct-map=(map bone duct)
   ==
 ::
-::  +misvale-data: subscribers with bad marks.
+::  +misvale-data: subscribers with bad marks
 ::
 ::    XX a hack, required to break a subscription loop
 ::    which arises when an invalid mark crashes a diff.
@@ -207,7 +207,7 @@
 ::
 ++  misvale-data  (set wire)
 ::
-::  +agent: agent state.
+::  +agent: agent state
 ::
 ++  agent
   $:  :: bad reqs
@@ -248,11 +248,11 @@
       =ducts
   ==
 ::
-:: +blocked: blocked tasks.
+:: +blocked: blocked tasks
 ::
 ++  blocked  (qeu (trel duct privilege agent-action))
 ::
-:: +stats: statistics.
+:: +stats: statistics
 ::
 ++  stats
   $:  :: change number
@@ -288,11 +288,11 @@
 ::
 |%
 ::
-::  +gall-payload:  gall payload.
+::  +gall-payload:  gall payload
 ::
 ++  gall-payload  +
 ::
-::  +mo: Arvo-level move handling.
+::  +mo: Arvo-level move handling
 ::
 ::  An outer core responsible for routing moves to and from Arvo; it calls
 ::  an inner core, +ap, to route internal moves to and from agents.
@@ -2678,7 +2678,7 @@
     --
   --
 ::
-::  +call: request.
+::  +call: request
 ::
 ++  call
   ~%  %gall-call  +>   ~
@@ -2780,7 +2780,7 @@
     [moves gall-payload]
   ==
 ::
-::  +load: recreate vane.
+::  +load: recreate vane
 ::
 ++  load
   |=  =state-old
@@ -2790,7 +2790,7 @@
     %0  gall-payload(state state-old)
   ==
 ::
-::  +scry: standard scry.
+::  +scry: standard scry
 ::
 ++  scry
   ~/  %gall-scry
@@ -2826,11 +2826,11 @@
   =/  =privilege  [%high [~ ship]]
   (mo-peek:initialised desk privilege term path)
 ::
-::  +stay: save without cache.
+::  +stay: save without cache
 ::
 ++  stay  state
 ::
-::  +take: response.
+::  +take: response
 ::
 ++  take
   ~/  %gall-take
