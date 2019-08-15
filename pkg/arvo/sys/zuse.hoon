@@ -1862,7 +1862,7 @@
       $%  {$mass p/mass}                                ::  memory usage
           {$onto p/(each suss tang)}                    ::  about agent
           {$rend p/path q/*}                            ::  network request
-          {$unto p/cuft}                                ::
+          {$unto p/internal-gift}                       ::
           {$mack p/(unit tang)}                         ::  message ack
       ==                                                ::
     ++  task                                            ::  incoming request
@@ -1904,7 +1904,7 @@
         {$pump ~}                                      ::  pump yes+no
         {$peer-not p/tang}                              ::  poison pill peer
     ==                                                  ::
-  ++  cuft                                              ::  internal gift
+  ++  internal-gift                                     ::
     $%  {$coup p/(unit tang)}                           ::  poke result
         {$diff p/cage}                                  ::  subscription output
         {$quit ~}                                      ::  close subscription

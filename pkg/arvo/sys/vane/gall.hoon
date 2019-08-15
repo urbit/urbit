@@ -6,9 +6,6 @@
 =,  gall
 =>  =~
 |%
-::  +internal-gift: synonym for +cuft
-::
-++  internal-gift  cuft
 ::  +internal-task: synonym for +cush
 ::
 ++  internal-task  cush

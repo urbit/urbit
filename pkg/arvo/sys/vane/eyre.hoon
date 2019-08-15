@@ -74,7 +74,7 @@
       $:  %g
           ::
           ::
-          $%  [%unto p=cuft:gall]
+          $%  [%unto p=internal-gift:gall]
   ==  ==  ==
 --
 ::  more structures
@@ -563,7 +563,7 @@
       //    the functions will be called, and the outstanding poke will be
       //    removed after calling the success or failure function.
       //
-      
+
       this.outstandingPokes = new Map();
 
       //  a registry of requestId to subscription functions.
@@ -941,7 +941,7 @@
   ::
   ++  authentication
     |%
-    ::  +handle-request: handles an http request for the 
+    ::  +handle-request: handles an http request for the
     ::
     ++  handle-request
       |=  [secure=? =address =request:http]
@@ -1451,19 +1451,19 @@
     ::  +on-gall-response: turns a gall response into an event
     ::
     ++  on-gall-response
-      |=  [channel-id=@t request-id=@ud =cuft:gall]
+      |=  [channel-id=@t request-id=@ud =internal-gift:gall]
       ^-  [(list move) server-state]
       ::
-      ?+    -.cuft  ~|([%invalid-gall-response -.cuft] !!)
+      ?+    -.internal-gift  ~|([%invalid-gall-response -.internal-gift] !!)
           %coup
         =/  =json
           =,  enjs:format
           %-  pairs  :~
             ['response' [%s 'poke']]
             ['id' (numb request-id)]
-            ?~  p.cuft
+            ?~  p.internal-gift
               ['ok' [%s 'ok']]
-            ['err' (wall (render-tang-to-wall 100 u.p.cuft))]
+            ['err' (wall (render-tang-to-wall 100 u.p.internal-gift))]
           ==
         ::
         (emit-event channel-id [(en-json:html json)]~)
@@ -1475,8 +1475,8 @@
             ['response' [%s 'diff']]
             ['id' (numb request-id)]
             :-  'json'
-            ?>  =(%json p.p.cuft)
-            ;;(json q.q.p.cuft)
+            ?>  =(%json p.p.internal-gift)
+            ;;(json q.q.p.internal-gift)
           ==
         ::
         (emit-event channel-id [(en-json:html json)]~)
@@ -1498,9 +1498,9 @@
           %-  pairs  :~
             ['response' [%s 'subscribe']]
             ['id' (numb request-id)]
-            ?~  p.cuft
+            ?~  p.internal-gift
               ['ok' [%s 'ok']]
-            ['err' (wall (render-tang-to-wall 100 u.p.cuft))]
+            ['err' (wall (render-tang-to-wall 100 u.p.internal-gift))]
           ==
         ::
         (emit-event channel-id [(en-json:html json)]~)
