@@ -6,9 +6,6 @@
 =,  gall
 =>  =~
 |%
-::  +agent-action: synonym for +club
-::
-++  agent-action  club
 ::  +coke: cook
 ::
 ++  coke
