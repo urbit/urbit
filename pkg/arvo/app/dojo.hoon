@@ -130,7 +130,7 @@
                   ::
                   [%incomplete =tang]
           ==  ==
-          {$unto p/cuft:gall}
+          {$unto p/internal-gift:gall}
       ==
     --
 =>
@@ -940,7 +940,7 @@
     ==  ==
   ::
   ++  he-unto                                           ::  result from behn
-    |=  {way/wire cit/cuft:gall}
+    |=  {way/wire cit/internal-gift:gall}
     ^+  +>
     ?.  ?=($coup -.cit)
       ~&  [%strange-unto cit]
