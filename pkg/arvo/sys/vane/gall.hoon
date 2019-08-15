@@ -38,60 +38,63 @@
 ::
 ::  +reverse-ames: reverse ames message.
 ::
-++  reverse-ames  $%
-  ::  diff
-  ::
-  [action=%d p=mark q=*]
-  ::  etc.
-  ::
-  [action=%x ~]
-==
+++  reverse-ames
+  $%
+      ::  diff
+      ::
+      [action=%d p=mark q=*]
+      ::  etc.
+      ::
+      [action=%x ~]
+  ==
 ::
 ::  +forward-ames: forward ames message.
 ::
-++  forward-ames  $%
-  :: message
-  ::
-  [action=%m =mark noun=*]
-  :: "peel" subscribe
-  ::
-  [action=%l =mark =path]
-  :: subscribe
-  ::
-  [action=%s =path]
-  :: cancel+unsubscribe
-  ::
-  [action=%u ~]
-==
+++  forward-ames
+  $%
+      :: message
+      ::
+      [action=%m =mark noun=*]
+      :: "peel" subscribe
+      ::
+      [action=%l =mark =path]
+      :: subscribe
+      ::
+      [action=%s =path]
+      :: cancel+unsubscribe
+      ::
+      [action=%u ~]
+  ==
 ::
 ::  +foreign-response: foreign response.
 ::
-++  foreign-response  $?
-  %peer
-  %peel
-  %poke
-  %pull
-==
+++  foreign-response
+  $?  %peer
+      %peel
+      %poke
+      %pull
+  ==
 --
 ::
 |%
 ::
 ::  +internal-note: +ap note.
 ::
-++  internal-note  $%
-  [task=%meta =term =vase]
-  [task=%send =ship =internal-task]
-==
+++  internal-note
+  $%  [task=%meta =term =vase]
+      [task=%send =ship =internal-task]
+  ==
 ::
 ::  +internal-move: agent-level move.
 ::
 ::  Analogous to an Arvo move, except these are routed by bone, instead of
 ::  duct.
 ::
-++  internal-move  $:
-  =bone
-  move=(wind internal-note internal-gift)
-==
+++  internal-move
+  $:
+    =bone
+    move=(wind internal-note internal-gift)
+  ==
 ::
 ::  +move: Arvo-level move.
 ::
@@ -106,98 +109,105 @@
 ::
 ::  +gall: all state.
 ::
-++  gall  $:
-  :: state version
-  ::
-  %0
-  :: agents by ship
-  ::
-  =agents
-==
+++  gall
+  $:
+      :: state version
+      ::
+      %0
+      :: agents by ship
+      ::
+      =agents
+  ==
 ::
 ::  +subscribers: subscriber data.
 ::
-++  subscribers  $:
-  :: incoming subscribers
-  ::
-  incoming=bitt
-  :: outgoing subscribers
-  ::
-  outgoing=boat
-  :: queue meter
-  ::
-  meter=(map bone @ud)
-==
+++  subscribers
+  $:
+      :: incoming subscribers
+      ::
+      incoming=bitt
+      :: outgoing subscribers
+      ::
+      outgoing=boat
+      :: queue meter
+      ::
+      meter=(map bone @ud)
+  ==
 ::
 ::  +agents: ship state.
 ::
-++  agents  $:
-  :: (deprecated)
-  ::
-  mak=*
-  ::  system duct
-  ::
-  system-duct=duct
-  ::  foreign contacts
-  ::
-  contacts=(map ship foreign)
-  ::  running agents
-  ::
-  running=(map term agent)
-  ::  waiting queue
-  ::
-  blocked=(map term blocked)
-==
+++  agents
+  $:
+      :: (deprecated)
+      ::
+      mak=*
+      ::  system duct
+      ::
+      system-duct=duct
+      ::  foreign contacts
+      ::
+      contacts=(map ship foreign)
+      ::  running agents
+      ::
+      running=(map term agent)
+      ::  waiting queue
+      ::
+      blocked=(map term blocked)
+  ==
 ::
 ::  +routes: new cuff.
 ::
-++  routes  $:
-  :: disclosing to
-  ::
-  disclosing=(unit (set ship))
-  :: attributed to
-  ::
-  attributing=ship
-==
+++  routes
+    $:
+        :: disclosing to
+        ::
+        disclosing=(unit (set ship))
+        :: attributed to
+        ::
+        attributing=ship
+    ==
 ::
 ::  +privilege: privilege.
 ::
-++  privilege  $:
-  :: voltage
-  ::
-  =volt
-  :: routes
-  ::
-  =routes
-==
+++  privilege
+    $:
+        :: voltage
+        ::
+        =volt
+        :: routes
+        ::
+        =routes
+    ==
 ::
 ::  +foreign: foreign connections.
 ::
-++  foreign  $:
-  :: index
-  ::
-  index=@ud
-  :: by duct
-  ::
-  index-map=(map duct @ud)
-  :: by index
-  ::
-  duct-map=(map @ud duct)
-==
+++  foreign
+  $:
+      :: index
+      ::
+      index=@ud
+      :: by duct
+      ::
+      index-map=(map duct @ud)
+      :: by index
+      ::
+      duct-map=(map @ud duct)
+  ==
 ::
 ::  +ducts: opaque input.
 ::
-++  ducts  $:
-  :: bone sequence
-  ::
-  bone=@ud
-  :: by duct
-  ::
-  bone-map=(map duct bone)
-  :: by bone
-  ::
-  duct-map=(map bone duct)
-==
+++  ducts
+  $:
+      :: bone sequence
+      ::
+      bone=@ud
+      :: by duct
+      ::
+      bone-map=(map duct bone)
+      :: by bone
+      ::
+      duct-map=(map bone duct)
+  ==
 ::
 ::  +misvale-data: subscribers with bad marks.
 ::
@@ -209,44 +219,45 @@
 ::
 ::  +agent: agent state.
 ::
-++  agent  $:
-  :: bad reqs
-  ::
-  misvale=misvale-data
-  :: cache
-  ::
-  cache=worm
-  :: ap-find-arm cache
-  ::
-  arm-cache=(map [term path] (unit (pair @ud term)))
-  :: control duct
-  ::
-  control-duct=duct
-  :: unstopped
-  ::
-  live=?
-  :: privilege
-  ::
-  privilege=security-control
-  :: statistics
-  ::
-  =stats
-  :: subscribers
-  ::
-  =subscribers
-  :: running state
-  ::
-  running-state=vase
-  :: update control
-  ::
-  =beak
-  :: req'd translations
-  ::
-  marks=(map bone mark)
-  :: opaque ducts
-  ::
-  =ducts
-==
+++  agent
+  $:
+      :: bad reqs
+      ::
+      misvale=misvale-data
+      :: cache
+      ::
+      cache=worm
+      :: ap-find-arm cache
+      ::
+      arm-cache=(map [term path] (unit (pair @ud term)))
+      :: control duct
+      ::
+      control-duct=duct
+      :: unstopped
+      ::
+      live=?
+      :: privilege
+      ::
+      privilege=security-control
+      :: statistics
+      ::
+      =stats
+      :: subscribers
+      ::
+      =subscribers
+      :: running state
+      ::
+      running-state=vase
+      :: update control
+      ::
+      =beak
+      :: req'd translations
+      ::
+      marks=(map bone mark)
+      :: opaque ducts
+      ::
+      =ducts
+  ==
 ::
 :: +blocked: blocked tasks.
 ::
@@ -254,35 +265,36 @@
 ::
 :: +stats: statistics.
 ::
-++  stats  $:
-  :: change number
-  ::
-  change=@ud
-  :: entropy
-  ::
-  eny=@uvJ
-  :: time
-  ::
-  time=@da
-==
+++  stats
+  $:
+      :: change number
+      ::
+      change=@ud
+      :: entropy
+      ::
+      eny=@uvJ
+      :: time
+      ::
+      time=@da
+  ==
 --
 ::
 .  ==
 ::
 =|  =gall
 |=  $:
-      :: identity
-      ::
-      our=ship
-      :: urban time
-      ::
-      now=@da
-      :: entropy
-      ::
-      eny=@uvJ
-      :: activate
-      ::
-      ska=sley
+        :: identity
+        ::
+        our=ship
+        :: urban time
+        ::
+        now=@da
+        :: entropy
+        ::
+        eny=@uvJ
+        :: activate
+        ::
+        ska=sley
     ==
 ::
 ~%  %gall-top  ..is  ~
