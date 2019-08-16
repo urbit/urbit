@@ -1068,6 +1068,10 @@
     ?.  ?=([~ %known *] sndr-state)
       %+  enqueue-alien-todo  sndr.packet
       |=  todos=pending-requests
+      ::  only enqueue one packet from an alien, to plug space leak
+      ::
+      ?.  =(~ rcv-packets.todos)
+        todos
       todos(rcv-packets [[lane packet] rcv-packets.todos])
     ::  decrypt packet contents using symmetric-key.channel
     ::
