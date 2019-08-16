@@ -982,43 +982,14 @@
     on-hear-open
   ::  +on-hear-forward: maybe forward a packet to someone else
   ::
-  ::    Only forward downward, to limit DDoS amplification vectors:
-  ::      Galaxies forward to stars and below.
-  ::      Stars forward to planets and below.
-  ::      Planets forward to moons.
-  ::
-  ::    Also, only stars forward to comets, since only a star can be a
-  ::    comet's sponsor.
+  ::    TODO: DDoS protection, possibly in Vere
   ::
   ++  on-hear-forward
     |=  [=lane =packet ok=?]
     ^+  event-core
-    ::  only forward downward
-    ::
-    ?:  %+  lte
-          rank:(encode-ship-metadata sndr.packet)
-        rank:(encode-ship-metadata our)
-      ::
-      event-core
-    ::  only stars forward to comets
-    ::
-    ?:  &(=(%pawn (clan:title sndr.packet)) !=(%king (clan:title our)))
-      event-core
-    ::
-    =/  ship-state  (~(get by peers.ames-state) rcvr.packet)
-    ::  ignore packets to unfamiliar ships
-    ::
-    ?.  ?=([~ %known *] ship-state)
-      event-core
-    ::  if we don't have a lane to .rcvr, give up
-    ::
-    ?~  rcvr-lane=route.+.u.ship-state
-      event-core
     ::  set .origin.packet, re-encode, and send
     ::
-    =/  =blob  (encode-packet packet(origin `lane))
-    ::
-    (emit unix-duct.ames-state %give %send lane.u.rcvr-lane blob)
+    (send-blob rcvr.packet (encode-packet packet(origin `lane)))
   ::  +on-hear-open: handle receipt of plaintext comet self-attestation
   ::
   ++  on-hear-open
@@ -1111,7 +1082,7 @@
     ::
     =?  route.peer-state  !=(%czar (clan:title her.channel))
       ?~  origin.packet
-        `[direct=%.n lane]
+        `[direct=%.y lane]
       `[direct=%.n u.origin.packet]
     ::  perform peer-specific handling of packet
     ::
@@ -1436,38 +1407,46 @@
     (emit duct %pass /public-keys %k %public-keys [n=ship ~ ~])
   ::  +send-blob: fire packet at .ship and maybe sponsors
   ::
-  ::    Send to .ship and sponsors until we find a direct lane.
+  ::    Send to .ship and sponsors until we find a direct lane or
+  ::    encounter .our in the sponsorship chain.
+  ::
   ::    If we have no PKI data for a recipient, enqueue the packet and
   ::    request the information from Jael if we haven't already.
   ::
   ++  send-blob
     |=  [=ship =blob]
-    ^+  event-core
     ::
-    =/  ship-state  (~(get by peers.ames-state) ship)
+    |^  ^+  event-core
+        ::
+        =/  ship-state  (~(get by peers.ames-state) ship)
+        ::
+        ?.  ?=([~ %known *] ship-state)
+          %+  enqueue-alien-todo  ship
+          |=  todos=pending-requests
+          todos(snd-packets (~(put in snd-packets.todos) blob))
+        ::
+        =/  =peer-state  +.u.ship-state
+        ::
+        ?~  route=route.peer-state
+          (try-next-sponsor sponsor.peer-state)
+        ::
+        =.  event-core
+          (emit unix-duct.ames-state %give %send lane.u.route blob)
+        ::
+        ?:  direct.u.route
+          event-core
+        (try-next-sponsor sponsor.peer-state)
     ::
-    ?.  ?=([~ %known *] ship-state)
-      %+  enqueue-alien-todo  ship
-      |=  todos=pending-requests
-      todos(snd-packets (~(put in snd-packets.todos) blob))
-    ::
-    =/  =peer-state  +.u.ship-state
-    =/  =channel     [[our ship] now |2.ames-state -.peer-state]
-    ::
-    ?~  route=route.peer-state
-      ?:  =(ship her-sponsor.channel)
+    ++  try-next-sponsor
+      |=  sponsor=^ship
+      ^+  event-core
+      ::
+      ?:  =(ship sponsor)
         event-core
-      $(ship her-sponsor.channel)
-    ::
-    =.  event-core
-      (emit unix-duct.ames-state %give %send lane.u.route blob)
-    ::
-    ?:  direct.u.route
-      event-core
-    ::
-    ?:  =(ship her-sponsor.channel)
-      event-core
-    $(ship her-sponsor.channel)
+      ?:  =(our sponsor)
+        event-core
+      ^$(ship sponsor)
+    --
   ::  +attestation-packet: generate signed self-attestation for .her
   ::
   ::    Sent by a comet on first contact with a peer.  Not acked.
