@@ -754,6 +754,7 @@
       =/  =task
         ?.  ?=(%soft -.wrapped-task)
           wrapped-task
+        ~|  our^%ames-fail-soft
         ;;(task p.wrapped-task)
       ::  %born: set .unix-duct and start draining .queued-events
       ::
@@ -981,11 +982,28 @@
     on-hear-open
   ::  +on-hear-forward: maybe forward a packet to someone else
   ::
-  ::    TODO: filter for transitive closure of sponsors/sponsees.
+  ::    Only forward downward, to limit DDoS amplification vectors:
+  ::      Galaxies forward to stars and below.
+  ::      Stars forward to planets and below.
+  ::      Planets forward to moons.
+  ::
+  ::    Also, only stars forward to comets, since only a star can be a
+  ::    comet's sponsor.
   ::
   ++  on-hear-forward
     |=  [=lane =packet ok=?]
     ^+  event-core
+    ::  only forward downward
+    ::
+    ?:  %+  lte
+          rank:(encode-ship-metadata sndr.packet)
+        rank:(encode-ship-metadata our)
+      ::
+      event-core
+    ::  only stars forward to comets
+    ::
+    ?:  &(=(%pawn (clan:title sndr.packet)) !=(%king (clan:title our)))
+      event-core
     ::
     =/  ship-state  (~(get by peers.ames-state) rcvr.packet)
     ::  ignore packets to unfamiliar ships
