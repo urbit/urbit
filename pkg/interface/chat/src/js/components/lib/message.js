@@ -191,7 +191,7 @@ export class Message extends Component {
           <div className="fr clamp-message" style={{ flexGrow: 1, marginTop: -8 }}>
             <div className="hide-child">
               <p className="v-top label-small-mono gray dib mr3">
-                ~{props.msg.aut}
+                {this.renderAuthor()}
               </p>
               <p className="v-top label-small-mono gray dib">{timestamp}</p>
               <p className="v-top label-small-mono ml2 gray dib child">
@@ -218,5 +218,4 @@ export class Message extends Component {
       )
     }
   }
-
 }
