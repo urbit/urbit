@@ -154,6 +154,7 @@ def make_dep_graph
     add_dep 'libqcocoa.a', 'libQt5PrintSupport.a'
     add_dep 'libqcocoa.a', '-lcups'  # Also available: -lcups.2
     add_dep 'libqcocoa.a', '-framework IOKit'
+    add_dep 'libqcocoa.a', '-framework IOSurface'
     add_dep 'libqcocoa.a', '-framework CoreVideo'
     add_dep 'libqcocoa.a', '-framework Metal'
     add_dep 'libqcocoa.a', '-framework QuartzCore'

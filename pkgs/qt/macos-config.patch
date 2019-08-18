@@ -1,6 +1,6 @@
-diff -ur qtbase-everywhere-src-5.12.0-orig/mkspecs/common/clang-mac.conf qtbase-everywhere-src-5.12.0/mkspecs/common/clang-mac.conf
---- qtbase-everywhere-src-5.12.0-orig/mkspecs/common/clang-mac.conf	2018-12-29 15:45:19.203000000 -0800
-+++ qtbase-everywhere-src-5.12.0/mkspecs/common/clang-mac.conf	2018-12-29 16:04:26.431000000 -0800
+diff -ur qtbase-everywhere-src-5.12.4-orig/mkspecs/common/clang-mac.conf qtbase-everywhere-src-5.12.4/mkspecs/common/clang-mac.conf
+--- qtbase-everywhere-src-5.12.4-orig/mkspecs/common/clang-mac.conf	2019-08-17 11:27:28.315000000 -0700
++++ qtbase-everywhere-src-5.12.4/mkspecs/common/clang-mac.conf	2019-08-17 11:28:33.791000000 -0700
 @@ -6,8 +6,6 @@
  
  QMAKE_XCODE_GCC_VERSION = com.apple.compilers.llvm.clang.1_0
@@ -10,12 +10,12 @@ diff -ur qtbase-everywhere-src-5.12.0-orig/mkspecs/common/clang-mac.conf qtbase-
  QMAKE_AR_LTCG  = libtool -static -o
  
  QMAKE_CFLAGS_APPLICATION_EXTENSION  = -fapplication-extension
-diff -ur qtbase-everywhere-src-5.12.0-orig/mkspecs/features/mac/default_post.prf qtbase-everywhere-src-5.12.0/mkspecs/features/mac/default_post.prf
---- qtbase-everywhere-src-5.12.0-orig/mkspecs/features/mac/default_post.prf	2018-12-29 15:45:19.211000000 -0800
-+++ qtbase-everywhere-src-5.12.0/mkspecs/features/mac/default_post.prf	2018-12-29 16:04:56.755000000 -0800
+diff -ur qtbase-everywhere-src-5.12.4-orig/mkspecs/features/mac/default_post.prf qtbase-everywhere-src-5.12.4/mkspecs/features/mac/default_post.prf
+--- qtbase-everywhere-src-5.12.4-orig/mkspecs/features/mac/default_post.prf	2019-08-17 11:27:28.327000000 -0700
++++ qtbase-everywhere-src-5.12.4/mkspecs/features/mac/default_post.prf	2019-08-17 11:28:33.791000000 -0700
 @@ -3,7 +3,7 @@
  contains(TEMPLATE, .*app) {
-     !macx-xcode {
+     !macx-xcode:if(isEmpty(BUILDS)|build_pass) {
          # Detect changes to the platform SDK
 -        QMAKE_EXTRA_VARIABLES += QMAKE_MAC_SDK QMAKE_MAC_SDK_VERSION QMAKE_XCODE_DEVELOPER_PATH
 +        QMAKE_EXTRA_VARIABLES += QMAKE_MAC_SDK QMAKE_MAC_SDK_VERSION
@@ -84,10 +84,9 @@ diff -ur qtbase-everywhere-src-5.12.0-orig/mkspecs/features/mac/default_post.prf
  QMAKE_XCODE_LIBRARY_SUFFIX = $$qtPlatformTargetSuffix()
  
  xcode_product_bundle_identifier_setting.name = PRODUCT_BUNDLE_IDENTIFIER
-Only in qtbase-everywhere-src-5.12.0/mkspecs/features/mac: default_post.prf.orig
-diff -ur qtbase-everywhere-src-5.12.0-orig/mkspecs/features/mac/default_pre.prf qtbase-everywhere-src-5.12.0/mkspecs/features/mac/default_pre.prf
---- qtbase-everywhere-src-5.12.0-orig/mkspecs/features/mac/default_pre.prf	2018-12-29 15:45:19.211000000 -0800
-+++ qtbase-everywhere-src-5.12.0/mkspecs/features/mac/default_pre.prf	2018-12-29 16:04:26.431000000 -0800
+diff -ur qtbase-everywhere-src-5.12.4-orig/mkspecs/features/mac/default_pre.prf qtbase-everywhere-src-5.12.4/mkspecs/features/mac/default_pre.prf
+--- qtbase-everywhere-src-5.12.4-orig/mkspecs/features/mac/default_pre.prf	2019-08-17 11:27:28.327000000 -0700
++++ qtbase-everywhere-src-5.12.4/mkspecs/features/mac/default_pre.prf	2019-08-17 11:28:33.791000000 -0700
 @@ -1,43 +1,6 @@
  CONFIG = asset_catalogs rez $$CONFIG
  load(default_pre)
@@ -132,18 +131,22 @@ diff -ur qtbase-everywhere-src-5.12.0-orig/mkspecs/features/mac/default_pre.prf 
  QMAKE_ASSET_CATALOGS_APP_ICON = AppIcon
  
  # Make the default debug info format for static debug builds
-diff -ur qtbase-everywhere-src-5.12.0-orig/mkspecs/features/mac/sdk.mk qtbase-everywhere-src-5.12.0/mkspecs/features/mac/sdk.mk
---- qtbase-everywhere-src-5.12.0-orig/mkspecs/features/mac/sdk.mk	2018-12-29 15:45:19.211000000 -0800
-+++ qtbase-everywhere-src-5.12.0/mkspecs/features/mac/sdk.mk	2018-12-29 19:26:57.121000000 -0800
-@@ -1,4 +1,4 @@
--CURRENT_MAC_SDK_VERSION := $(shell DEVELOPER_DIR=$(EXPORT_QMAKE_XCODE_DEVELOPER_PATH) /usr/bin/xcrun --sdk $(EXPORT_QMAKE_MAC_SDK) -show-sdk-version)
-+CURRENT_MAC_SDK_VERSION := $(EXPORT_QMAKE_MAC_SDK_VERSION)
+diff -ur qtbase-everywhere-src-5.12.4-orig/mkspecs/features/mac/sdk.mk qtbase-everywhere-src-5.12.4/mkspecs/features/mac/sdk.mk
+--- qtbase-everywhere-src-5.12.4-orig/mkspecs/features/mac/sdk.mk	2019-08-17 11:27:28.327000000 -0700
++++ qtbase-everywhere-src-5.12.4/mkspecs/features/mac/sdk.mk	2019-08-17 11:32:30.271000000 -0700
+@@ -1,7 +1,7 @@
  
- ifneq ($(CURRENT_MAC_SDK_VERSION),$(EXPORT_QMAKE_MAC_SDK_VERSION))
-     $(info The platform SDK has been changed from version $(EXPORT_QMAKE_MAC_SDK_VERSION) to version $(CURRENT_MAC_SDK_VERSION).)
-diff -ur qtbase-everywhere-src-5.12.0-orig/mkspecs/features/mac/sdk.prf qtbase-everywhere-src-5.12.0/mkspecs/features/mac/sdk.prf
---- qtbase-everywhere-src-5.12.0-orig/mkspecs/features/mac/sdk.prf	2018-12-29 15:45:19.211000000 -0800
-+++ qtbase-everywhere-src-5.12.0/mkspecs/features/mac/sdk.prf	2018-12-29 16:04:26.431000000 -0800
+ ifeq ($(QT_MAC_SDK_NO_VERSION_CHECK),)
+-    CHECK_SDK_COMMAND = /usr/bin/xcrun --sdk $(EXPORT_QMAKE_MAC_SDK) -show-sdk-version 2>&1
+-    CURRENT_MAC_SDK_VERSION := $(shell DEVELOPER_DIR=$(EXPORT_QMAKE_XCODE_DEVELOPER_PATH) $(CHECK_SDK_COMMAND))
++    CHECK_SDK_COMMAND = false
++    CURRENT_MAC_SDK_VERSION := $(EXPORT_QMAKE_MAC_SDK_VERSION)
+     ifneq ($(CURRENT_MAC_SDK_VERSION),$(EXPORT_QMAKE_MAC_SDK_VERSION))
+         # We don't want to complain about out of date SDK unless the target needs to be remade.
+         # This covers use-cases such as running 'make check' after moving the build to a
+diff -ur qtbase-everywhere-src-5.12.4-orig/mkspecs/features/mac/sdk.prf qtbase-everywhere-src-5.12.4/mkspecs/features/mac/sdk.prf
+--- qtbase-everywhere-src-5.12.4-orig/mkspecs/features/mac/sdk.prf	2019-08-17 11:27:28.327000000 -0700
++++ qtbase-everywhere-src-5.12.4/mkspecs/features/mac/sdk.prf	2019-08-17 11:28:33.791000000 -0700
 @@ -18,7 +18,7 @@
          sdk = $$QMAKE_MAC_SDK
  
@@ -153,7 +156,7 @@ diff -ur qtbase-everywhere-src-5.12.0-orig/mkspecs/features/mac/sdk.prf qtbase-e
          # --show-sdk-platform-path won't work for Command Line Tools; this is fine
          # only used by the XCTest backend to testlib
          isEmpty(QMAKE_MAC_SDK.$${sdk}.$${info}):if(!isEmpty(QMAKE_XCODEBUILD_PATH)|!equals(infoarg, "--show-sdk-platform-path")): \
-@@ -50,7 +50,7 @@
+@@ -53,7 +53,7 @@
      value = $$eval($$tool)
      isEmpty(value): next()
  
