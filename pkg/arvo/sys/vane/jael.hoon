@@ -623,11 +623,8 @@
       ?.  &(?=([[%a @ @ *] *] d) !=(%pubs i.t.i.d))
         %-  emit
         [d %give %public-keys public-keys-result]
-      =/  our  (slav %p i.t.i.d)
-      =/  who  (slav %p i.t.t.i.d)
-      =/  =message-result  [%public-keys-result public-keys-result]
       %-  emit
-      [d %give %boon message-result]
+      [d %give %boon %public-keys-result public-keys-result]
     $(yez t.yez)
   ::
   ++  get-source
