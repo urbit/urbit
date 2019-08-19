@@ -61,8 +61,10 @@
 +$  message                                             ::  message to her jael
   $%  [%nuke whos=(set ship)]                           ::  cancel trackers
       [%public-keys whos=(set ship)]                    ::  view ethereum events
-      [%public-keys-result =public-keys-result]         ::  tmp workaround
   ==                                                    ::
++$  message-result
+  $%  [%public-keys-result =public-keys-result]         ::  public keys boon
+  ==
 +$  card                                                ::  i/o action
   (wind note gift)                                      ::
 ::                                                      ::
@@ -492,14 +494,6 @@
           %public-keys
         =.  moz  [[hen %give %done ~] moz]
         $(tac mes)
-      ::
-      ::  receive keys result
-      ::    [%public-keys-result =public-keys-result]
-      ::
-          %public-keys-result
-        =.  moz  [[hen %give %done ~] moz]
-        %-  curd  =<  abet
-        (public-keys:~(feel su hen our pki etn) public-keys-result.mes)
       ==
     ==
   ::
@@ -513,6 +507,11 @@
       %-  (slog tang.u.error.hin)
       ::TODO  fail:et
       +>.$
+    ::
+        [%a %boon *]
+      =+  ;;  [%public-keys-result =public-keys-result]  payload.hin
+      %-  curd  =<  abet
+      (public-keys:~(feel su hen our pki etn) public-keys-result)
     ::
         [%g %onto *]
       ~&  [%jael-onto tea hin]
@@ -538,8 +537,6 @@
         ?>  ?=([@ *] tea)
         =*  app  i.tea
         =/  =peer-sign  ;;(peer-sign q.q.p.p.+>.hin)
-        %.  [hen tea app]
-        =<  pump
         %-  curd  =<  abet
         (~(new-event su hen our pki etn) peer-sign)
       ==
@@ -551,10 +548,6 @@
             etn/state-eth-node
         ==
     +>(pki pki, etn etn, moz (weld (flop moz) ^moz))
-  ::                                                    ::  ++wind:of
-  ++  pump
-    |=  [hen=duct =wire app=term]
-    (emit [hen %pass wire %g %deal [our our] app %pump ~])
   --
 ::                                                      ::  ++su
 ::::                    ## relative^heavy               ::  subjective engine
@@ -632,9 +625,9 @@
         [d %give %public-keys public-keys-result]
       =/  our  (slav %p i.t.i.d)
       =/  who  (slav %p i.t.t.i.d)
-      =/  =message  [%public-keys-result public-keys-result]
+      =/  =message-result  [%public-keys-result public-keys-result]
       %-  emit
-      [d %give %boon message]
+      [d %give %boon message-result]
     $(yez t.yez)
   ::
   ++  get-source
@@ -988,7 +981,7 @@
     ?:  fak.own.pki.lex
       =/  cub  (pit:nu:crub:crypto 512 u.who)
       :^  ~  ~  %noun
-      !>  `deed:ames`[1 pub:ex:cub ~]
+      !>  [1 pub:ex:cub ~]
     ::
     =/  rac  (clan:title u.who)
     ?:  ?=(%pawn rac)
