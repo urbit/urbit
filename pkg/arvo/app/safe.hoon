@@ -23,7 +23,10 @@
         ::  messages that we intend to send, but that we lack up-to-date data
         ::  in our client-communities state.
         ::
-        pending-messages-to-send=(jug [host=@p name=@t =path] [route=path msg=*])
+        pending-writes=(jug [host=@p name=@t =path] [route=path msg=*])
+        ::  read operations here
+        ::
+        pending-reads=(set [host=@p name=@t =path])
     ==
   +$  peek-data  _!!
   +$  in-poke-data
@@ -88,33 +91,6 @@
     |=  =node:safe-client
     (apply-to-client-node full-route node fun)
   ==
-
-::  +local-subscribe: subscribes locally to a not
-::
-++  local-subscribe
-  |=  [our=@p name=@t full-route=path =app-state]
-  ^+  app-state
-  ::  the server side must exist
-  ::
-  =/  server=node:safe-server  (~(got by server-communities.app-state) name)
-  ::  already subscribed?
-  ::
-  ?:  (~(has in local-subscriptions.app-state) [name full-route])
-    app-state
-  ::
-  =.  local-subscriptions.app-state
-    (~(put in local-subscriptions.app-state) [name full-route])
-  ::
-  =/  full-server-state=(unit peer-diff:common)
-    (get-snapshot-as-peer-diff full-route server)
-  ::
-  %-  update-client-communities  :*
-    our
-    name
-    full-route
-    app-state
-    (apply-peer-diff-to-client (need full-server-state))
-  ==
 ::  +send-message: sends a message to a node, validating the message.
 ::
 ::    To know how to construct the requested signature, +send-message will
@@ -137,8 +113,9 @@
     ::  If we don't know anything about this community, we need to go remote
     ::  subscribe to it.
     ::
+    =.  app-state  (enqueue-write host name / path msg app-state)
     ::
-    (enqueue-message-and-subscribe host name / path msg app-state)
+    (subscribe bowl host name / app-state)
   ::
   =/  e  (build-signing-request path msg u.community safe-applets)
   ::  check if we made the signature. when we can't make the signature because
@@ -146,14 +123,9 @@
   ::
   ?:  ?=([%& *] e)
     ~&  [%send-message-blocked-on p.e]
-    ::  if the missing information is on our own local server state, then we
-    ::  can just go and fetch it synchronously.
+    =.  app-state  (enqueue-write host name p.e path msg app-state)
     ::
-    ?:  =(our.bowl host)
-      =.  app-state  (local-subscribe our.bowl name p.e app-state)
-      loop
-    ::
-    (enqueue-message-and-subscribe host name p.e path msg app-state)
+    (subscribe bowl host name p.e app-state)
   ::
   ;<  c-to-s=client-to-server:common  bind:m
     (async-sign-request our.bowl now.bowl eny.bowl p.e)
@@ -171,16 +143,51 @@
   ~&  %sending-remotely
   ;<  ~  bind:m  (poke-app [host %safe] %safe-poke %receive-message name c-to-s)
   (pure:m app-state)
-::  +enqueue-message-and-subscribe
+::  +enqueue-write
 ::
-++  enqueue-message-and-subscribe
+++  enqueue-write
   |=  [host=@p name=@t subscribe-path=path send-path=path msg=* =app-state]
+  ^+  app-state
+  ::
+  %_    app-state
+      pending-writes
+    %+  ~(put ju pending-writes.app-state)
+      [host name subscribe-path]
+    [send-path msg]
+  ==
+::  +subscribe: subscribes remotely or locally
+::
+++  subscribe
+  |=  [=bowl:gall host=@p name=@t subscribe-path=path =app-state]
   =/  m  tapp-async
   ^-  form:m
+  ::  we special case local subscriptions so that we don't peer on ourselves.
   ::
-  =.  pending-messages-to-send.app-state
-    (~(put ju pending-messages-to-send.app-state) [host name subscribe-path] [send-path msg])
-  ::
+  ?:  =(our.bowl host)
+    ::  the server side must exist
+    ::
+    =/  server=node:safe-server  (~(got by server-communities.app-state) name)
+    ::  already subscribed?
+    ::
+    ?:  (~(has in local-subscriptions.app-state) [name subscribe-path])
+      (pure:m app-state)
+    ::
+    =.  local-subscriptions.app-state
+      (~(put in local-subscriptions.app-state) [name subscribe-path])
+    ::
+    =/  full-server-state=(unit peer-diff:common)
+      (get-snapshot-as-peer-diff subscribe-path server)
+    ::
+    =.  app-state
+      %-  update-client-communities  :*
+        our.bowl
+        name
+        subscribe-path
+        app-state
+        (apply-peer-diff-to-client (need full-server-state))
+      ==
+    ::
+    (retry-sending-messages bowl host name subscribe-path app-state)
   ::  TODO: If we're already %pending, don't send a second peer. This was what
   ::  caused the out of control message spam when I had the incorrect children
   ::  calculation. It's theoretically triggerable during natural usage, too.
@@ -201,8 +208,18 @@
 ::  +retry-sending-messages:
 ::
 ++  retry-sending-messages
-  |=  [=bowl:gall host=@p name=@t =path msgs=(list [route=path msg=*]) =app-state]
+  |=  [=bowl:gall host=@p community-name=@t =path =app-state]
   =/  m  tapp-async
+  ::  for every pending message in the :pending-writes, try to send
+  ::  it again.
+  ::
+  =/  to-send=(set [route=^path msg=*])
+    (~(get ju pending-writes.app-state) [host community-name path])
+  ::
+  =.  pending-writes.app-state
+    (~(del by pending-writes.app-state) [host community-name path])
+  ::
+  =/  msgs=(list [route=^path msg=*])  ~(tap by to-send)
   ::
   |-  ^-  form:m
   =*  loop  $
@@ -211,7 +228,7 @@
     (pure:m app-state)
   ::
   ;<  new-state=^app-state  bind:m
-    (send-message bowl host name route.i.msgs msg.i.msgs app-state)
+    (send-message bowl host community-name route.i.msgs msg.i.msgs app-state)
   ::
   loop(msgs t.msgs, app-state new-state)
 ::  +receive-message: receives a message to apply to our server state
@@ -364,7 +381,7 @@
     ::    owns this server almost certainly wants to participate in the
     ::    community but their archive shouldn't be public.
     ::
-    =.  app-state  (local-subscribe our.bowl name.command / app-state)
+    ;<  =^app-state  bind:m  (subscribe bowl our.bowl name.command / app-state)
     ::
     ~&  [%created-community name.command initial-invitees.command]
     ::  we send an in-band [%init ~] event so that our community recognizes us
@@ -522,16 +539,8 @@
       app-state
       (apply-peer-diff-to-client data)
     ==
-  ::  for every pending message in the :pending-messages-to-send, try to send
-  ::  it again.
   ::
-  =/  to-send=(set [route=^path msg=*])
-    (~(get ju pending-messages-to-send.app-state) [her community-name route])
-  ::
-  =.  pending-messages-to-send.app-state
-    (~(del by pending-messages-to-send.app-state) [her community-name route])
-  ::
-  (retry-sending-messages bowl her community-name route ~(tap by to-send) app-state)
+  (retry-sending-messages bowl her community-name route app-state)
   ::  ::
   ::  ::  TODO: MUCH LATER we probably want to forward on the update to any of our
   ::  ::  http subscribed clients.
