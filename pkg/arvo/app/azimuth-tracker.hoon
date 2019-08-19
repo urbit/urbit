@@ -1,5 +1,5 @@
 /+  tapp, stdio
-=,  able:kale
+=,  able:jael
 =>  |%
     +$  pending-udiffs  (map number:block udiffs:point)
     +$  app-state
@@ -13,7 +13,7 @@
     +$  peek-data  ~
     +$  in-poke-data
       $:  %azimuth-tracker-poke
-          $%  [%listen whos=(list ship) =source:kale]
+          $%  [%listen whos=(list ship) =source:jael]
               [%watch url=@ta]
           ==
       ==
@@ -39,12 +39,19 @@
 =>  |%
     ++  topics
       |=  ships=(set ship)
+      ^-  (list ?(@ux (list @ux)))
+      ::  The first topic should be one of these event types
+      ::
       :-  =>  azimuth-events:azimuth
           :~  broke-continuity
               changed-keys
               lost-sponsor
               escape-accepted
           ==
+      ::  If we're looking for a specific set of ships, specify them as
+      ::  the second topic.  Otherwise don't specify the second topic so
+      ::  we will match all ships.
+      ::
       ?:  =(~ ships)
         ~
       [(turn ~(tap in ships) ,@) ~]
@@ -266,10 +273,10 @@
 ::
 =>  |%
     ::
-    ::  Send %listen to kale
+    ::  Send %listen to jael
     ::
     ++  listen
-      |=  [state=app-state whos=(list ship) =source:kale]
+      |=  [state=app-state whos=(list ship) =source:jael]
       =/  m  (async:stdio ,app-state)
       ^-  form:m
       ;<  ~  bind:m  (send-effect:stdio %listen /lo (silt whos) source)

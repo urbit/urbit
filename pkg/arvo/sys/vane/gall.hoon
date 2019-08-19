@@ -1244,19 +1244,21 @@
         %keep  `%f
         %kill  `%f
         %look  `%j
-        %listen  `%k
+        %listen  `%j
         %merg  `%c
-        %mint  `%k
+        %mint  `%j
         %mont  `%c
+        %moon  `%j
         %nuke  `%a
         %ogre  `%c
         %perm  `%c
         %rest  `%b
-        %snap  `%j
+        %rekey  `%j
         %wait  `%b
         %want  `%a
         %warp  `%c
-        %wind  `%k
+        %wind  `%j
+        %wash  `%g
         %wipe  `%f
       ::
         %request         `%i
@@ -1300,6 +1302,10 @@
     (mo-gawk:(mo-abed:mo hen) him dap mes)
   ::
       $vega  [~ ..^$]
+  ::
+      %wash
+    =.  bum.mast.all  (~(run by bum.mast.all) |=(=seat seat(vel *worm)))
+    [~ ..^$]
   ::
       $wegh
     =/  =mass

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import { PathControl } from '/components/lib/path-control';
 import { withRouter } from 'react-router';
+import { stringToSymbol } from '/lib/util';
 
 const PC = withRouter(PathControl);
 
@@ -67,8 +68,6 @@ export class NewPost extends Component {
   constructor(props){
     super(props);
 
-    console.log("props", this.props);
-
     this.state = {
       title: "",
       body: "",
@@ -92,24 +91,6 @@ export class NewPost extends Component {
     this.comments = false;
   }
 
-  stringToSymbol(str){
-    let result = '';
-    for (var i=0; i<str.length; i++){
-      var n = str.charCodeAt(i);
-      if (( (n >= 97) && (n <= 122) ) ||
-          ( (n >= 48) && (n <= 57) ))
-      {
-        result += str[i];
-      } else if ( (n >= 65) &&  (n <= 90) ) 
-      {
-        result += String.fromCharCode(n + 32);
-      } else {
-        result += '-';
-      }
-    }
-    return result.replace(/^\-+|\-+$/g, '');
-  }
-
   postSubmit() {
     let last = _.get(this.props, 'location.state', false);
     let ship = window.ship;
@@ -121,7 +102,7 @@ export class NewPost extends Component {
     }
 
     let postTitle = this.state.title;
-    let postId = this.stringToSymbol(postTitle);
+    let postId = stringToSymbol(postTitle);
 
     let awaiting = Object.assign({}, {
       ship: ship,
@@ -202,17 +183,17 @@ export class NewPost extends Component {
       if (ship == window.ship) {
         post =
           _.get(this.props,
-            `pubs[${blogId}].posts[${postId}].post`, false) || false;
+            `pubs["${blogId}"].posts["${postId}"].post`, false) || false;
         comments =
           _.get(this.props,
-            `pubs[${blogId}].posts[${postId}].comments`, false) || false;
+            `pubs["${blogId}"].posts["${postId}"].comments`, false) || false;
       } else {
         post =
           _.get(this.props,
-            `subs[${ship}][${blogId}].posts[${postId}].post`, false) || false;
+            `subs["${ship}"]["${blogId}"].posts["${postId}"].post`, false) || false;
         comments =
           _.get(this.props,
-            `subs[${ship}][${blogId}].posts[${postId}].comments`, false) || false;
+            `subs["${ship}"]["${blogId}"].posts["${postId}"].comments`, false) || false;
       }
 
       if (!_.isEqual(this.post, post)) {

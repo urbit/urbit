@@ -51,6 +51,13 @@ export class Recent extends Component {
     let col = this.retrieveColl(coll, who);
     let com = this.retrieveComments(post, coll, who);
 
+    let unread =  (-1 === _.findIndex(this.props.unread, {
+        post: post,
+        coll: coll,
+        who: who,
+      }))
+      ? false: true;
+
     return {
       postTitle: pos.info.title,
       postName:  post,
@@ -60,7 +67,8 @@ export class Recent extends Component {
       collectionName:  coll,
       author: pos.info.creator.slice(1),
       blogOwner: who,
-      date: pos.info["date-created"]
+      date: pos.info["date-created"],
+      unread: unread,
     }
 
   }

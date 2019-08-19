@@ -300,32 +300,10 @@ _dawn_turf(c3_c* dns_c)
 u3_noun
 u3_dawn_vent(u3_noun seed)
 {
-  u3_noun url, bok, pos, pon, zar, tuf, sap;
+  u3_noun url, bok, pos, pon, zar, tuf;
 
   u3_noun ship = u3h(seed);
   u3_noun rank = u3do("clan:title", u3k(ship));
-
-  //  load snapshot from file
-  //
-  if ( 0 != u3_Host.ops_u.ets_c ) {
-    u3l_log("boot: loading azimuth snapshot\r\n");
-    u3_noun raw_snap = u3ke_cue(u3m_file(u3_Host.ops_u.ets_c));
-    sap = u3nc(u3_nul, raw_snap);
-  }
-  //  load snapshot from HTTP URL
-  //
-  else if ( 0 != u3_Host.ops_u.sap_c ) {
-    u3l_log("boot: downloading azimuth snapshot from %s\r\n",
-            u3_Host.ops_u.sap_c);
-    u3_noun raw_snap = _dawn_get_jam(u3_Host.ops_u.sap_c);
-    sap = u3nc(u3_nul, raw_snap);
-  }
-  //  no snapshot
-  //
-  else {
-    u3l_log("boot: no azimuth snapshot specified\n");
-    sap = u3_nul;
-  }
 
   url = _dawn_purl(rank);
 
@@ -337,14 +315,7 @@ u3_dawn_vent(u3_noun seed)
 
   //  pin block number
   //
-  if ( c3y == u3_Host.ops_u.etn ) {
-    u3l_log("boot: extracting block from snapshot\r\n");
-
-    bok = _dawn_need_unit(u3do("bloq:snap:dawn", u3k(u3t(sap))),
-                          "boot: failed to extract "
-                          "block from snapshot");
-  }
-  else {
+  {
     u3l_log("boot: retrieving latest block\r\n");
 
     u3_noun oct = u3v_wish("bloq:give:dawn");
@@ -360,14 +331,7 @@ u3_dawn_vent(u3_noun seed)
     //
     u3_noun pot;
 
-    if ( c3y == u3_Host.ops_u.etn ) {
-      u3l_log("boot: extracting public keys from snapshot\r\n");
-
-      pot = _dawn_need_unit(u3dc("point:snap:dawn", u3k(ship), u3k(u3t(sap))),
-                            "boot: failed to extract "
-                            "public keys from snapshot");
-    }
-    else if ( c3__pawn == rank ) {
+    if ( c3__pawn == rank ) {
       //  irrelevant, just bunt +point
       //
       pot = u3v_wish("*point:azimuth");
@@ -435,14 +399,7 @@ u3_dawn_vent(u3_noun seed)
 
   //  (map ship [=life =pass]): galaxy table
   //
-  if ( c3y == u3_Host.ops_u.etn ) {
-    u3l_log("boot: extracting galaxy table from snapshot\r\n");
-
-    zar = _dawn_need_unit(u3do("czar:snap:dawn", u3k(u3t(sap))),
-                          "boot: failed to extract "
-                          "galaxy table from snapshot");
-  }
-  else {
+  {
     u3l_log("boot: retrieving galaxy table\r\n");
 
     u3_noun oct = u3do("czar:give:dawn", u3k(bok));
@@ -458,13 +415,6 @@ u3_dawn_vent(u3_noun seed)
   if ( 0 != u3_Host.ops_u.dns_c ) {
     tuf = _dawn_turf(u3_Host.ops_u.dns_c);
   }
-  else if ( c3y == u3_Host.ops_u.etn ) {
-    u3l_log("boot: extracting network domains from snapshot\r\n");
-
-    tuf = _dawn_need_unit(u3do("turf:snap:dawn", u3k(u3t(sap))),
-                          "boot: failed to extract "
-                          "network domains from snapshot");
-  }
   else {
     u3l_log("boot: retrieving network domains\r\n");
 
@@ -476,14 +426,7 @@ u3_dawn_vent(u3_noun seed)
     u3z(oct); u3z(fut);
   }
 
-  if ( c3y == u3_Host.ops_u.etn ) {
-    u3l_log("boot: extracting sponsor keys from snapshot\r\n");
-
-    pon = _dawn_need_unit(u3do("point:snap:dawn", u3k(u3t(sap))),
-                          "boot: failed to extract "
-                          "sponsor keys from snapshot");
-  }
-  else {
+  {
     u3l_log("boot: retrieving sponsor keys\r\n");
 
     u3_noun oct = u3dc("point:give:dawn", u3k(bok), u3k(pos));
@@ -500,7 +443,7 @@ u3_dawn_vent(u3_noun seed)
 
   //  [%dawn seed sponsor galaxies domains block eth-url snap]
   //
-  return u3nc(c3__dawn, u3nq(seed, pon, zar, u3nq(tuf, bok, url, sap)));
+  return u3nc(c3__dawn, u3nq(seed, pon, zar, u3nt(tuf, bok, url)));
 }
 
 /* _dawn_come(): mine a comet under a list of stars

@@ -1,15 +1,15 @@
 |%
 ::
 +$  action
-  $%  $:  %new-collection  
-          name=@tas 
-          title=@t 
+  $%  $:  %new-collection
+          name=@tas
+          title=@t
           com=comment-config
           edit=edit-config
           perm=perm-config
       ==
   ::
-      $:  %new-post 
+      $:  %new-post
           who=@p
           coll=@tas
           name=@tas
@@ -98,16 +98,6 @@
       last-update=@da
   ==
 ::
-+$  state
-  $:  pubs=(map @tas collection)
-      subs=(map [ship @tas] collection)
-      awaiting=(map @tas [builds=(set wire) partial=(unit delta)])
-      latest=(list [who=ship coll=@tas post=@tas])
-      unread=(set [who=ship coll=@tas post=@tas])
-      invites=(map [who=ship coll=@tas] title=@t)
-      outgoing=(map path bone)
-  ==
-::
 +$  delta
   $%  [%collection who=@p col=@tas dat=(each collection-info tang)]
       [%post who=@p col=@tas pos=@tas dat=(each [post-info manx @t] tang)]
@@ -118,5 +108,6 @@
 ::
 +$  update
   $%  [%invite add=? who=@p col=@tas title=@t]
+      [%unread add=? keys=(set [who=@p coll=@tas post=@tas])]
   ==
 --

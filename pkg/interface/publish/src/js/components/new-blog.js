@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { PathControl } from '/components/lib/path-control';
 import { withRouter } from 'react-router';
 import urbitOb from 'urbit-ob';
+import { stringToSymbol } from '/lib/util';
 
 const PC = withRouter(PathControl);
 
@@ -39,30 +40,14 @@ export class NewBlog extends Component {
     this.returnHome = this.returnHome.bind(this);
     this.addInvites = this.addInvites.bind(this);
     this.blogSubmit = this.blogSubmit.bind(this);
-  }
 
-  stringToSymbol(str){
-    let result = '';
-    for (var i=0; i<str.length; i++){
-      var n = str.charCodeAt(i);
-      if (( (n >= 97) && (n <= 122) ) ||
-          ( (n >= 48) && (n <= 57) ))
-      {
-        result += str[i];
-      } else if ( (n >= 65) &&  (n <= 90) ) 
-      {
-        result += String.fromCharCode(n + 32);
-      } else {
-        result += '-';
-      }
-    }
-    return result.replace(/^\-+|\-+$/g, '');
+    this.titleHeight = 52;
   }
 
   blogSubmit() {
     let ship = window.ship;
     let blogTitle = this.state.title;
-    let blogId = this.stringToSymbol(blogTitle);
+    let blogId = stringToSymbol(blogTitle);
 
     let permissions = {
       read: {
@@ -126,6 +111,11 @@ export class NewBlog extends Component {
   }
 
   titleChange(evt){
+    this.titleInput.style.height = 'auto';
+    this.titleInput.style.height =  (this.titleInput.scrollHeight < 52)
+      ?  52 : this.titleInput.scrollHeight;
+    this.titleHeight = this.titleInput.style.height;
+
     this.setState({title: evt.target.value});
   }
 
@@ -172,13 +162,16 @@ export class NewBlog extends Component {
                style={{height: 'calc(100% - 124px)', top: 124}}>
             <div className="h-inner dt center mw-688 w-100">
               <div className="flex-col dtc v-mid">
-                <input autoFocus
-                  className="header-2 b--none"
+                <textarea autoFocus
+                  ref={(el) => {this.titleInput = el}}
+                  className="header-2 b--none w-100"
+                  style={{resize:"none", height: this.titleHeight}}
+                  rows={1}
                   type="text" 
                   name="blogName"
                   placeholder="Add a Title"
-                  onChange={this.titleChange}
-                />
+                  onChange={this.titleChange}>
+                </textarea>
 
                 <hr className="gray-30" style={{marginTop:32, marginBottom: 32}}/>
 
@@ -219,13 +212,16 @@ export class NewBlog extends Component {
                style={{height: 'calc(100% - 124px)', top: 124}}>
             <div className="h-inner dt center mw-688 w-100">
               <div className="flex-col dtc v-mid">
-                <input autoFocus
-                  className="header-2 b--none"
+                <textarea autoFocus
+                  ref={(el) => {this.titleInput = el}}
+                  className="header-2 b--none w-100"
+                  style={{resize:"none", height: this.titleHeight}}
+                  rows={1}
                   type="text" 
                   name="blogName"
                   placeholder="Add a Title"
-                  onChange={this.titleChange}
-                />
+                  onChange={this.titleChange}>
+                </textarea>
 
                 <p className="body-regular-400" style={{marginTop:25, marginBottom:27}}>
                   Who is invited to read this notebook?

@@ -83,6 +83,30 @@ export class Sidebar extends Component {
     this.props.history.push('/~chat/new');
   }
 
+  summarizeMessage(speech) {
+    const fallback = '...';
+    if (_.has(speech, 'lin')) {
+      return speech.lin.msg;
+    } else if (_.has(speech, 'url')) {
+      return speech.url;
+    } else if (_.has(speech, 'exp')) {
+      return '# ' + speech.exp.exp;
+    } else if (_.has(speech, 'ire')) {
+      return this.summarizeMessage(speech.ire.sep);
+    } else if (_.has(speech, 'app')) {
+      return this.summarizeMessage(speech.app.sep);
+    } else if (_.has(speech, 'fat')) {
+      const msg = this.summarizeMessage(speech.fat.sep);
+      if (msg !== '' && msg !== fallback) return msg;
+      return 'Attachment' +
+        (_.has(speech, 'fat.tac.name.nom')
+         ? ': ' + speech.fat.tac.name.nom
+         : '');
+    } else {
+      return fallback;
+    }
+  }
+
   render() {
     const { props, state } = this;
     let station = props.match.params.ship + '/' + props.match.params.station;
@@ -93,7 +117,9 @@ export class Sidebar extends Component {
       })
       .map((cir) => {
         let msg = props.messagePreviews[cir];
-        let content = _.get(msg, 'gam.sep.lin.msg', 'No messages yet');
+        let content = _.has(msg, 'gam.sep')
+          ? this.summarizeMessage(msg.gam.sep)
+          : 'No messages yet';
         let aut = !!msg ? msg.gam.aut : '';
         let wen = !!msg ? msg.gam.wen : 0;
         let datetime =

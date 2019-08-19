@@ -57,8 +57,8 @@
 =/  protocol-version=?(%0 %1 %2 %3 %4 %5 %6 %7)  %0
 =,  ames
 =,  able
-=*  point               point:able:kale
-=*  public-keys-result  public-keys-result:able:kale
+=*  point               point:able:jael
+=*  public-keys-result  public-keys-result:able:jael
 ::
 =>
 |%
@@ -633,7 +633,7 @@
       $:  %d
       $%  [%flog flog:dill]
       ==  ==
-      $:  %k
+      $:  %j
       $%  [%private-keys ~]
           [%public-keys ships=(set ship)]
           [%turf ~]
@@ -655,7 +655,7 @@
   $%  $:  %b
       $%  [%wake error=(unit tang)]
       ==  ==
-      $:  %k
+      $:  %j
       $%  [%private-keys =life vein=(map life ring)]
           [%public-keys =public-keys-result]
           [%turf turfs=(list turf)]
@@ -881,9 +881,9 @@
     ::
       [%b %wake *]  (on-take-wake:event-core wire error.sign)
     ::
-      [%k %turf *]          (on-take-turf:event-core turfs.sign)
-      [%k %private-keys *]  (on-priv:event-core [life vein]:sign)
-      [%k %public-keys *]   (on-publ:event-core wire public-keys-result.sign)
+      [%j %turf *]          (on-take-turf:event-core turfs.sign)
+      [%j %private-keys *]  (on-priv:event-core [life vein]:sign)
+      [%j %public-keys *]   (on-publ:event-core wire public-keys-result.sign)
     ==
   ::
   [moves ames-gate]
@@ -1143,8 +1143,8 @@
     |=  our=ship
     ^+  event-core
     ::
-    =~  (emit duct %pass /turf %k %turf ~)
-        (emit duct %pass /private-keys %k %private-keys ~)
+    =~  (emit duct %pass /turf %j %turf ~)
+        (emit duct %pass /private-keys %j %private-keys ~)
     ==
   ::  +on-priv: set our private key to jael's response
   ::
@@ -1374,7 +1374,7 @@
     =/  turfs
       ;;  (list turf)
       =<  q.q  %-  need  %-  need
-      (scry-gate [%141 %noun] ~ %k `beam`[[our %turf %da now] /])
+      (scry-gate [%141 %noun] ~ %j `beam`[[our %turf %da now] /])
     ::
     (emit unix-duct.ames-state %give %turf turfs)
   ::  +on-vega: handle kernel reload
@@ -1404,7 +1404,7 @@
     ::
     ?:  already-pending
       event-core
-    (emit duct %pass /public-keys %k %public-keys [n=ship ~ ~])
+    (emit duct %pass /public-keys %j %public-keys [n=ship ~ ~])
   ::  +send-blob: fire packet at .ship and maybe sponsors
   ::
   ::    Send to .ship and sponsors until we find a direct lane or
@@ -1816,7 +1816,7 @@
             %a  (emit duct %pass wire %a %plea her.channel plea)
             %c  (emit duct %pass wire %c %plea her.channel plea)
             %g  (emit duct %pass wire %g %plea her.channel plea)
-            %k  (emit duct %pass wire %k %plea her.channel plea)
+            %j  (emit duct %pass wire %j %plea her.channel plea)
           ==
         ::  we previously crashed on this message; send nack
         ::

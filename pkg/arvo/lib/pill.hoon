@@ -24,7 +24,6 @@
       turf=(list turf)
       bloq=@ud
       node=(unit purl:eyre)
-      snap=(unit snapshot:jael)
   ==
 ::
 ++  module-ova
@@ -61,7 +60,7 @@
         [%i /vane/iris]
         ::  sys/vane/kale: security
         ::
-        [%k /vane/kale]
+        [%j /vane/jael]
     ==
   |=  [=term =path]
   =/  pax  (weld sys path)
@@ -75,7 +74,7 @@
   =/  directories
     `(list path)`~[/app /gen /lib /mar /ren /sec /sur /sys /tests /web]
   |=  bas=path
-  ^-  ovum
+  ^-  unix-event
   ::
   ::    /app    %gall applications
   ::    /gen    :dojo generators
@@ -92,7 +91,7 @@
   |=  ::  sal: all spurs to load from
       ::
       sal/(list spur)
-  ^-  ovum
+  ^-  unix-event
   ::
   ::  hav: all user files
   ::
@@ -118,7 +117,7 @@
   =?  hav  ?=(^ fil.lon)
       ::  XX  this whitelist needs to be reviewed
       ::
-      ?.  ?=  ?($css $hoon $json $md $txt $udon $umd)
+      ?.  ?=  ?($css $hoon $html $js $json $md $png $txt $udon $umd)
           -.tyl
         ::
         ::  install only files with whitelisted marks

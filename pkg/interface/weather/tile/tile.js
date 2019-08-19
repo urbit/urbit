@@ -28,12 +28,13 @@ export default class WeatherTile extends Component {
     let api = window.api;
 
     this.state = {
-      latlng: ''
+      latlng: '',
+      manualEntry: false,
+      error: false
     };
   }
 
   locationSubmit() {
-    console.log('location submit');
     navigator.geolocation.getCurrentPosition((res) => {
       console.log(res);
       let latlng = `${res.coords.latitude},${res.coords.longitude}`;
@@ -44,6 +45,30 @@ export default class WeatherTile extends Component {
       }, { maximumAge: Infinity, timeout: 10000 });
       api.action('weather', 'json', latlng);
     });
+  }
+
+  manualLocationSubmit() {
+    event.preventDefault();
+    let gpsInput = document.getElementById('gps');
+    let latlngNoSpace = gpsInput.value.replace(/\s+/g, '');
+    let latlngParse = /-?[0-9]+(?:\.[0-9]*)?,-?[0-9]+(?:\.[0-9]*)?/g;
+    if (latlngParse.test(latlngNoSpace)) {
+      let latlng = latlngNoSpace;
+      this.setState({latlng}, (err) => {console.log(err)}, {maximumAge: Infinity, timeout: 10000});
+      api.action('weather', 'json', latlng);
+      this.setState({manualEntry: !this.state.manualEntry});
+    }
+    else {
+      this.setState({error: true});
+      return false;
+    }
+  }
+
+  keyPress(e) {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      this.manualLocationSubmit(e.target.value);
+    }
   }
 
   renderWrapper(child) {
@@ -58,9 +83,53 @@ export default class WeatherTile extends Component {
     );
   }
 
+  renderManualEntry() {
+    let secureCheck;
+    let error;
+    if (this.state.error === true) {
+      error = <p 
+          className="label-small red pt1">
+          Incorrect latitude/longitude formatting. Please try again. <br/>
+          (eg. "29.558107, -95.089023")
+        </p>
+    }
+    if (location.protocol === "https:") {
+      secureCheck = <a
+        className="label-regular b gray absolute pointer"
+        style={{right: 8, top: 4}}
+        onClick={() => this.locationSubmit()}>Detect location -></a>
+    }
+    return this.renderWrapper((
+      <div>
+        <a style={{"color": "white", "cursor": "pointer"}} 
+        onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>
+        &lt;&#45;
+        </a>
+        {secureCheck}
+        <p className="label-regular white pt2">
+        Please enter your <a href="https://latitudeandlongitude.org/" target="_blank">latitude and longitude</a>.</p>
+        {error}
+        <form className="flex absolute" style={{"bottom": 0, "left": 8}}>
+          <input id="gps" 
+            className="white pa1 bg-transparent outline-0 bn bb-ns b--white" 
+            style={{width: "100%"}}
+            type="text" 
+            placeholder="29.558107, -95.089023" 
+            onKeyDown={this.keyPress.bind(this)}>
+          </input> 
+          <input className="bg-transparent inter white w-20 outliner-0 bn pointer" 
+            type="submit" 
+            onClick={() => this.manualLocationSubmit()} 
+            value="->">
+          </input>
+        </form>
+      </div>
+    ))
+  }
+
   renderNoData() {
     return this.renderWrapper((
-      <div onClick={this.locationSubmit.bind(this)}>
+      <div onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>
           <p className="gray label-regular b absolute"
             style={{left: 8, top: 4}}>
             Weather
@@ -82,6 +151,9 @@ export default class WeatherTile extends Component {
             style={{left: 8, top: 4}}>
             Weather
           </p>
+          <a className="label-regular b gray absolute pointer"
+            style={{right: 8, top: 4}}
+            onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>Update location -></a>
         <div className="w-100 mb2 mt2 absolute"
             style={{left: 18, top: 28}}>
           <img 
@@ -129,6 +201,10 @@ export default class WeatherTile extends Component {
 
   render() {
     let data = !!this.props.data ? this.props.data : {};
+
+    if (this.state.manualEntry === true) {
+      return this.renderManualEntry();
+    }
 
     if ('currently' in data && 'daily' in data) {
       return this.renderWithData(data);

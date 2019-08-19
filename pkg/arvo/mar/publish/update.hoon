@@ -20,6 +20,21 @@
           [%title s+title.upd]
       ==
     ::
+        %unread
+      %-  pairs
+      :~  [%add b+add.upd]
+          :+  %posts
+            %a
+          %+  turn  ~(tap in keys.upd)
+          |=  [who=@p coll=@tas post=@tas]
+          ^-  ^json
+          %-  pairs
+          :~  [%who (ship who)]
+              [%coll s+coll]
+              [%post s+post]
+          ==
+      ==
+    ::
     ==
     ::
   --

@@ -498,8 +498,8 @@
               ==                                        ::
           task:able:ford                                ::
       ==                                                ::
-      $:  %k                                            ::  by %kale
-          $>(%public-keys task:able:kale)               ::
+      $:  %j                                            ::  by %jael
+          $>(%public-keys task:able:jael)               ::
   ==  ==                                                ::
 ++  riot  (unit rant)                                   ::  response+complete
 ++  sign                                                ::  in result $<-
@@ -527,8 +527,8 @@
       $:  %f                                            ::  by %ford
           $>(%made gift:able:ford)                      ::
       ==                                                ::
-      $:  %k                                            ::  by %kale
-          $>(%public-keys gift:able:kale)               ::
+      $:  %j                                            ::  by %jael
+          $>(%public-keys gift:able:jael)               ::
       ==                                                ::
       $:  @tas                                          ::  by any
           $>(%crud vane-task)                           ::  XX strange
@@ -2643,7 +2643,7 @@
         ::
         :+  ?:  (~(has by hoy.ruf) her)
               ~
-            [hun.rom.ruf %pass /sinks %k %public-keys (silt her ~)]~
+            [hun.rom.ruf %pass /sinks %j %public-keys (silt her ~)]~
           ~
         =/  rus  rus:(~(gut by hoy.ruf) her *rung)
         %+  ~(gut by rus)  syd
@@ -4172,17 +4172,15 @@
     [[[hen %slip %d %flog req] ~] ..^$]
   ::
       %drop
-      ?:  =(~ act.ruf)
-        ~&  %clay-idle
-        [~ ..^$]
-      ~&  :-  %clay-cancelling
-          ?>  ?=(^ act.ruf)
-          [hen -.req -.eval-data]:u.act.ruf
-      =.  act.ruf  ~
-      ?~  cue.ruf
-        [~ ..^$]
-      =/  =duct  duct:(need ~(top to cue.ruf))
-      [[duct %pass /queued-request %b %wait now]~ ..^$]
+    ~?  =(~ act.ruf)
+      [%clay-idle cue-length=~(wyt in cue.ruf)]
+    ~?  ?=(^ act.ruf)
+      [%clay-cancelling hen -.req -.eval-data]:u.act.ruf
+    =.  act.ruf  ~
+    ?~  cue.ruf
+      [~ ..^$]
+    =/  =duct  duct:(need ~(top to cue.ruf))
+    [[duct %pass /queued-request %b %wait now]~ ..^$]
   ::
       %info
     ?:  =(%$ des.req)

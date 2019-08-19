@@ -229,7 +229,6 @@
     u3_noun u3gfu_busk(u3_noun, u3_noun, u3_noun);
     u3_noun u3gfu_buss(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3gfu_bust(u3_noun, u3_noun, u3_noun);
-    u3_noun u3gfu_conk(u3_noun, u3_noun, u3_noun);
     u3_noun u3gfu_crop(u3_noun, u3_noun, u3_noun);
     u3_noun u3gfu_cull(u3_noun, u3_noun, u3_noun, u3_atom, u3_noun);
     u3_noun u3gfu_duck(u3_noun, u3_noun);

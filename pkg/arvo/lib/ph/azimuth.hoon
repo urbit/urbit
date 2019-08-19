@@ -182,14 +182,14 @@
       ==
     ::
     ++  number-to-hash
-      |=  =number:block:able:kale
+      |=  =number:block:able:jael
       ^-  @
       ?:  (lth number launch:contracts:azimuth)
         (cat 3 0x5364 (sub launch:contracts:azimuth number))
       (cat 3 0x5363 (sub number launch:contracts:azimuth))
     ::
     ++  hash-to-number
-      |=  =hash:block:able:kale
+      |=  =hash:block:able:jael
       (add launch:contracts:azimuth (div hash 0x1.0000))
     ::
     ++  logs-by-range
@@ -205,8 +205,8 @@
       logs
     ::
     ++  logs-by-hash
-      |=  =hash:block:able:kale
-      =/  =number:block:able:kale  (hash-to-number hash)
+      |=  =hash:block:able:jael
+      =/  =number:block:able:jael  (hash-to-number hash)
       (logs-by-range number number)
     ::
     ++  logs-to-json
@@ -252,13 +252,19 @@
   |=  who=ship
   =/  m  (ph ,~)
   ^-  form:m
-  ;<  now=@da  bind:m
-    |=  pin=ph-input
-    [& ~ %done now.pin]
-  (raw-ship:(ph-tests our) who `(dawn who now))
+  ?.  =(%earl (clan:title who))
+    (raw-ship:(ph-tests our) who `(dawn who ~))
+  =/  spon=ship  (^sein:title who)
+  =/  cub  (pit:nu:crub:crypto 512 (shaz (jam who life=1 %entropy)))
+  =/  =seed:able:jael
+    [who 1 sec:ex:cub ~]
+  =/  =pass  pub:ex:cub
+  =/  com=tape  "|moon {(scow %p who)}, =public-key {(scow %uw pass)}"
+  ;<  ~  bind:m  (just-events:(ph-tests our) (dojo spon com))
+  (raw-ship:(ph-tests our) who `(dawn who `seed))
 ::
 ++  dawn
-  |=  [who=ship now=@da]
+  |=  [who=ship seed=(unit seed:able:jael)]
   ^-  dawn-event
   =/  spon
     =/  =ship  (^sein:title who)
@@ -278,15 +284,9 @@
         *[address address address address]:azimuth
       `[life=life pass rift spon-spon ~]
     ~
-  =/  =seed:able:kale
-    ?:  =(%earl (clan:title who))
-      =/  pax
-        ;:  weld
-          /i/(scot %p ship.spon)/k/(scot %p ship.spon)/earl/(scot %da now)
-          /(scot %p who)/(scot %ud life.spon)
-          /noun
-        ==
-      (need (scry-aqua (unit seed:able:kale) our now pax))
+  =/  =seed:able:jael
+    ?^  seed
+      u.seed
     =/  life-rift  (~(got by lives) who)
     =/  =life  lyfe.life-rift
     [who life sec:ex:(get-keys who life) ~]
@@ -296,7 +296,6 @@
       ~[~['arvo' 'netw' 'ork']]
       0
       `(need (de-purl:html 'http://localhost:8545'))
-      ~
   ==
 ::
 ::  Should only do galaxies
@@ -349,7 +348,7 @@
     :+  &  ~
     =/  aqua-pax
       :-  %i
-      /(scot %p her)/k/(scot %p her)/life/(scot %da now.pin)/(scot %p who)/noun
+      /(scot %p her)/j/(scot %p her)/life/(scot %da now.pin)/(scot %p who)/noun
     =/  lyfe  (scry-aqua noun our now.pin aqua-pax)
     ~&  [new-lyfe=[0 new-lyfe] lyfe=lyfe]
     ?:  =([~ new-lyfe] lyfe)
@@ -389,7 +388,7 @@
     :+  &  ~
     =/  aqua-pax
       :-  %i
-      /(scot %p her)/k/(scot %p her)/rift/(scot %da now.pin)/(scot %p who)/noun
+      /(scot %p her)/j/(scot %p her)/rift/(scot %da now.pin)/(scot %p who)/noun
     =/  rut  (scry-aqua noun our now.pin aqua-pax)
     ?:  =([~ new-rut] rut)
       [%done ~]

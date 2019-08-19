@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { PostPreview } from '/components/lib/post-preview';
 import _ from 'lodash';
 import { PathControl } from '/components/lib/path-control';
 import { BlogData } from '/components/lib/blog-data';
@@ -82,8 +81,8 @@ export class Blog extends Component {
     let blogId = this.props.blogId;
 
     let blog = (ship === window.ship)
-      ?  _.get(this.props, `pubs[${blogId}]`, false)
-      :  _.get(this.props, `subs[${ship}][${blogId}]`, false);
+      ?  _.get(this.props, `pubs["${blogId}"]`, false)
+      :  _.get(this.props, `subs["${ship}"]["${blogId}"]`, false);
 
 
     if (!(blog) && (ship === window.ship)) {
@@ -110,8 +109,8 @@ export class Blog extends Component {
     let ship = this.props.ship;
     let blogId = this.props.blogId;
     let blog = (ship == window.ship)
-      ?  _.get(this.props, `pubs[${blogId}]`, false)
-      :  _.get(this.props, `subs[${ship}][${blogId}]`, false);
+      ?  _.get(this.props, `pubs["${blogId}"]`, false)
+      :  _.get(this.props, `subs["${ship}"]["${blogId}"]`, false);
 
     if (!(blog) && (ship === window.ship)) {
       this.setState({notFound: true});
@@ -158,6 +157,13 @@ export class Blog extends Component {
   }
 
   buildPostPreviewProps(post, blog, pinned){
+    let unread =  (-1 === _.findIndex(this.props.unread, {
+        post: post.post.info.filename,
+        coll: blog.info.filename,
+        who: blog.info.owner.slice(1),
+      }))
+      ? false: true;
+
     return {
       postTitle: post.post.info.title,
       postName:  post.post.info.filename,
@@ -169,13 +175,14 @@ export class Blog extends Component {
       blogOwner: blog.info.owner,
       date: post.post.info["date-created"],
       pinned: pinned,
+      unread: unread,
     }
   }
 
   buildData(){
     let blog = (this.props.ship == window.ship)
-      ?  _.get(this.props, `pubs[${this.props.blogId}]`, false)
-      :  _.get(this.props, `subs[${this.props.ship}][${this.props.blogId}]`, false);
+      ?  _.get(this.props, `pubs["${this.props.blogId}"]`, false)
+      :  _.get(this.props, `subs["${this.props.ship}"]["${this.props.blogId}"]`, false);
 
     if (this.state.temporary) {
       return {
@@ -228,17 +235,14 @@ export class Blog extends Component {
   }
 
   viewSubs() {
-    console.log("view subs");
     this.setState({view: 'subs'});
   }
 
   viewSettings() {
-    console.log("view settings");
     this.setState({view: 'settings'});
   }
 
   viewNotes() {
-    console.log("view notes");
     this.setState({view: 'notes'});
   }
 
@@ -259,7 +263,7 @@ export class Blog extends Component {
       let subNum = _.get(data.blog, 'subscribers.length', 0);
 
       let foreign = _.get(this.props,
-        `subs[${this.props.ship}][${this.props.blogId}]`, false);
+        `subs["${this.props.ship}"]["${this.props.blogId}"]`, false);
 
       let actionType = false;
       if (this.state.temporary) {

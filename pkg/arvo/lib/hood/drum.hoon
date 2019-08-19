@@ -85,6 +85,11 @@
         [%base %dojo]
         [%base %ping]
         ::[%base %modulo]
+        ::[%home %launch]
+        ::[%home %chat]
+        ::[%home %publish]
+        ::[%home %clock]
+        ::[%home %weather]
     ==
   :~  ::[%home %lens]
       ::[%home %acme]
