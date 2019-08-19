@@ -66,12 +66,22 @@
   $%  ::  emits an event to this node's event log with a corresponding piece of data
       ::
       [%log private-event=vase return-event=vase]
-      ::  creates a new node and re-dispatch the event to it
-      ::
-      [%create sub-id=@t app-type=@t =signature-type child-event=vase]
       ::  returns a value upwards without modifying the public state
       ::
       [%return return-event=vase]
+      ::  creates a new node and re-dispatch the event to it
+      ::
+      ::    Optionally, if a private-event is given, the normal %log case will
+      ::    fire with the private event returned. If no private-event is given,
+      ::    no %log entry will be emitted.
+      ::
+      $:  %create
+          sub-id=@t
+          app-type=@t
+          =signature-type
+          private-event=(unit vase)
+          child-event=vase
+      ==
   ==
 ::  The +on-child-return arm in your applet will return one of these to take
 ::  action based on what your child nodes did. This is equivalent to most of

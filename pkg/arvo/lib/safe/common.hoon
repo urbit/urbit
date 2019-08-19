@@ -69,6 +69,20 @@
     snapshot
   ::
       %create
-    snapshot(children (~(put in children.snapshot) sub-id.item))
+    ::
+    =.  children.snapshot  (~(put in children.snapshot) sub-id.item)
+    ::
+    ?~  private-event.item
+      snapshot
+    ::  This create event also has a private event, so we need to apply it
+    ::
+    =/  app-vase=vase       (~(got by app-map) app-type.snapshot)
+    =/  apply-event-to-snapshot=vase
+      (slap app-vase [%limb %apply-event-to-snapshot])
+    ::
+    =/  args  :(slop !>(~) u.private-event.item snapshot.snapshot)
+    =.  snapshot.snapshot  (slam apply-event-to-snapshot args)
+    ::
+    snapshot
   ==
 --

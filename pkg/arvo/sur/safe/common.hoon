@@ -66,7 +66,7 @@
       ==
       ::
       ::  creates a new child node under this
-      [%create sub-id=@t app-type=@t =signature-type]
+      [%create sub-id=@t app-type=@t =signature-type private-event=(unit vase)]
   ==
 ::
 ++  logged-user-event
@@ -124,7 +124,7 @@
       ==
       ::
       ::  creates a new child node under this
-      [%create sub-id=@t type=@t =signature-type]
+      [%create sub-id=@t app-type=@t =signature-type private-event=(unit *)]
   ==
 ::
 +$  transport-logged-user-event

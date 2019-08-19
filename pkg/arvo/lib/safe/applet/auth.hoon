@@ -53,7 +53,7 @@
 ::
 +$  on-process-response
   $%  [%log =private-event =return-event]
-      [%create @t @t =signature-type =child-event]
+      [%create @t @t =signature-type ~ =child-event]
       [%return =return-event]
   ==
 ::
@@ -131,6 +131,7 @@
         name.user-event
         app-type.user-event
         %unlinked
+        ~
         [now.parent-event %.y u.y.raw.ring-signature.full-signature.parent-event]
     ==
   ==

@@ -44,7 +44,7 @@
   ==
 ::
 +$  on-process-response
-  $%  [%create id=@t type=@t =signature-type =child-event]
+  $%  [%create id=@t type=@t =signature-type ~ =child-event]
       [%return =return-event]
   ==
 ::
@@ -89,6 +89,7 @@
         (scot %ud id)
         %thread
         %inherit
+        ~
         [next-postid.private-state now.parent-event community-signature.parent-event]
     ==
   ::

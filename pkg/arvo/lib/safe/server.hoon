@@ -19,13 +19,35 @@
     ^-  transport-event-log-item:common
     ::  the only thing we need to special case is %log
     ::
-    ?.  ?=(%log -.e)
+    ?-   -.e
+        ?(%toplevel-init %toplevel-invite %init)
       e
     ::
-    ?~  user-event.e
-      [%log ~ q.private-event.e]
+        %log
+      ::
+      :*  %log
+          ?~  user-event.e
+            ~
+          :*  ~
+              msg-signature.u.user-event.e
+              route.u.user-event.e
+              q.user-event.u.user-event.e
+          ==
+      ::
+          q.private-event.e
+      ==
     ::
-    [%log [~ msg-signature.u.user-event.e route.u.user-event.e q.user-event.u.user-event.e] q.private-event.e]
+        %create
+      :*  %create
+          sub-id.e
+          app-type.e
+          signature-type.e
+      ::
+          ?~  private-event.e
+            ~
+          `q.u.private-event.e
+      ==
+    ==
   ::
   ++  snapshot
     |=  s=snapshot:common
@@ -50,8 +72,12 @@
     =/  id  (slot 6 wec)
     =/  node-type  (slot 14 wec)
     =/  sig-type  (slot 30 wec)
-    =/  child-event  (slot 31 wec)
-    [%create ;;(@t q.id) ;;(@t q.node-type) ;;(signature-type q.sig-type) child-event]
+    =/  private-event  (slot 62 wec)
+    =/  child-event  (slot 63 wec)
+    ::
+    ::  TODO: Interpret the private-event instead of assuming it doesn't exist.
+    ::
+    [%create ;;(@t q.id) ;;(@t q.node-type) ;;(signature-type q.sig-type) ~ child-event]
   ::
       %return
     =/  event  (slot 3 wec)
@@ -354,7 +380,7 @@
       ::
       =/  nu=changes-and-state
         %^  record-change  changes  [state full-path]
-        [%create sub-id.response app-type.response signature-type.response]
+        [%create sub-id.response app-type.response signature-type.response private-event.response]
       ::
       (process-child-returned full-path app-vase return changes.nu state.nu)
     ::

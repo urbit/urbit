@@ -17,24 +17,39 @@
     |=  [app-map=(map @t vase) app=term e=transport-event-log-item:common]
     ^-  (unit event-log-item:common)
     ::
-    ?.  ?=(%log -.e)
+    ?-    -.e
+        ?(%toplevel-init %toplevel-invite %init)
       `e
     ::
-    =/  node-vase=vase           (~(got by app-map) app)
+        %log
+      ::
+      =/  node-vase=vase           (~(got by app-map) app)
+      ::
+      =/  private-event-mold=vase  (slap node-vase [%limb %private-event])
+      =/  private-event=vase  (slam private-event-mold %noun private-event.e)
+      ::
+      ?~  user-event.e
+        `[%log ~ private-event]
+      ::
+      =/  user-event-mold=vase     (slap node-vase [%limb %user-event])
+      =/  user-event=vase  (slam user-event-mold %noun user-event.u.user-event.e)
+      ::
+      `[%log [~ msg-signature.u.user-event.e route.u.user-event.e user-event] private-event]
     ::
-    =/  private-event-mold=vase  (slap node-vase [%limb %private-event])
-    =/  private-event=vase  (slam private-event-mold %noun private-event.e)
-    ::
-    ?~  user-event.e
-      `[%log ~ private-event]
-    ::
-    =/  user-event-mold=vase     (slap node-vase [%limb %user-event])
-    =/  user-event=vase  (slam user-event-mold %noun user-event.u.user-event.e)
-    ::
-    ::  TODO: The point at which we reconstitute an event from transport is
-    ::  probably the correct time to perform the signature verification.
-    ::
-    `[%log [~ msg-signature.u.user-event.e route.u.user-event.e user-event] private-event]
+        %create
+      ::
+      ::  Is this the simple case of creation without a private event? Then we can
+      ::
+      ?~  private-event.e
+        `[%create sub-id.e app-type.e signature-type.e ~]
+      ::
+      =/  node-vase=vase           (~(got by app-map) app)
+      ::
+      =/  private-event-mold=vase  (slap node-vase [%limb %private-event])
+      =/  private-event=vase  (slam private-event-mold %noun u.private-event.e)
+      ::
+      `[%create sub-id.e app-type.e signature-type.e `private-event]
+    ==
   ::
   ++  snapshot
     |=  [app-map=(map @t vase) s=transport-snapshot:common]
