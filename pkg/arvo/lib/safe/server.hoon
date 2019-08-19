@@ -72,12 +72,15 @@
     =/  id  (slot 6 wec)
     =/  node-type  (slot 14 wec)
     =/  sig-type  (slot 30 wec)
-    =/  private-event  (slot 62 wec)
+    =/  unit-private-event  (slot 62 wec)
     =/  child-event  (slot 63 wec)
     ::
-    ::  TODO: Interpret the private-event instead of assuming it doesn't exist.
+    =/  private-event=(unit vase)
+      ?:  =(~ q.unit-private-event)
+        ~
+      [~ (slot 3 unit-private-event)]
     ::
-    [%create ;;(@t q.id) ;;(@t q.node-type) ;;(signature-type q.sig-type) ~ child-event]
+    [%create ;;(@t q.id) ;;(@t q.node-type) ;;(signature-type q.sig-type) private-event child-event]
   ::
       %return
     =/  event  (slot 3 wec)

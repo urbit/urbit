@@ -137,6 +137,7 @@
     ::  If we don't know anything about this community, we need to go remote
     ::  subscribe to it.
     ::
+    ::
     (enqueue-message-and-subscribe host name / path msg app-state)
   ::
   =/  e  (build-signing-request path msg u.community safe-applets)
@@ -282,6 +283,27 @@
   ;<  ~  bind:m  (give-result (weld [name ~] path.i.changes) %safe-peer peer-diff.i.changes)
   ::
   loop(changes t.changes)
+::
+++  show-path
+  |=  [host=@p name=@t =path =app-state]
+  =/  m  tapp-async
+  ^-  form:m
+  ::
+  ?~  community=(~(get by client-communities.app-state) [host name])
+    ~&  [%no-such-community host name]
+    (pure:m app-state)
+  ::
+  ::
+  =/  data=(unit [=snapshot:common archives=(list @t)])
+    (get-data-at path u.community)
+  ::
+  ?~  data
+    ~&  [%no-such-path path]
+    (pure:m app-state)
+  ::
+  ~&  [%s (noah snapshot.snapshot.u.data)]
+  ::
+  (pure:m app-state)
 --
 ::
 %-  create-tapp-all:tapp
@@ -383,6 +405,16 @@
       now.bowl
       name.command
       client-to-server.command
+      app-state
+    ==
+  ::
+      %show
+    ::
+    ::
+    %-  show-path  :*
+      host.command
+      name.command
+      path.command
       app-state
     ==
   ::

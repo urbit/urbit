@@ -19,6 +19,9 @@
       ::  a poke which anyone can do.
       ::
       [%receive-message name=@t =client-to-server:common]
+      ::  shows the data at a path
+      ::
+      [%show host=@p name=@t =path]
       ::  temporary; inspect state
       ::
       [%debug command=@t]

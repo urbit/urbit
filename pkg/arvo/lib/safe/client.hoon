@@ -348,4 +348,24 @@
       route
       q.user-event
   ==
+::  +get-data-at: returns the data for display 
+::
+::    TODO: In the case of no data, we shouldn't return ~ until we've heard
+::    back from the server that the path doesn't exist.
+::
+++  get-data-at
+  |=  [route=path client-state=node]
+  ^-  (unit [=snapshot:common archives=(list @t)])
+  ::
+  ?^  route
+    ::  TODO: archived state, too.
+    ::
+    ?~  children-state=(~(get by children.client-state) i.route)
+      ~
+    ?~  u.children-state
+      ~
+    ::
+    $(route t.route, client-state u.u.children-state)
+  ::
+  `[(need snapshot.client-state) ~(tap in ~(key by archived.client-state))]
 --

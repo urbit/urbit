@@ -24,10 +24,16 @@
       ::  creates a new board
       ::
       [%create name=@t app-type=@t =signature-type]
+      ::
+      ::
+      ::  TODO:
+      ::  - %reorder to change display order
   ==
 ::
 +$  private-event
-  ~
+  $%  [%ok ~]
+      [%created name=@t app-type=@t]
+  ==
 ::
 +$  private-state
   $:  ::  moderator tags
@@ -41,6 +47,9 @@
   $:  ::  this node keeps track of the
       ::
       banned-tags=(map @udpoint @da)
+      ::
+      ::
+      display-order=(list [name=@t app-type=@t])
   ==
 ::
 +$  child-returned
@@ -53,7 +62,7 @@
 ::
 +$  on-process-response
   $%  [%log =private-event =return-event]
-      [%create @t @t =signature-type ~ =child-event]
+      [%create @t @t =signature-type e=(unit private-event) =child-event]
       [%return =return-event]
   ==
 ::
@@ -131,7 +140,7 @@
         name.user-event
         app-type.user-event
         %unlinked
-        ~
+        `[%created name.user-event app-type.user-event]
         [now.parent-event %.y u.y.raw.ring-signature.full-signature.parent-event]
     ==
   ==
@@ -139,10 +148,15 @@
 ++  apply-event-to-snapshot
   |=  [user-event=(unit user-event) =private-event =snapshot]
   ^-  _snapshot
-  ::  we don't have private-only events.
   ::
   ?~  user-event
-    snapshot
+    ?-    -.private-event
+        %ok
+      snapshot
+    ::
+        %created
+      snapshot(display-order (weld display-order.snapshot [[name app-type]:private-event ~]))
+    ==
   ::
   ?-    -.u.user-event
   ::
