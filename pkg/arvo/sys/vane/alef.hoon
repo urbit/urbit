@@ -987,9 +987,11 @@
   ++  on-hear-forward
     |=  [=lane =packet ok=?]
     ^+  event-core
-    ::  set .origin.packet, re-encode, and send
+    ::  set .origin.packet if it doesn't already have one, re-encode, and send
     ::
-    (send-blob rcvr.packet (encode-packet packet(origin `lane)))
+    =?  origin.packet  ?=(~ origin.packet)  `lane
+    =/  =blob  (encode-packet packet)
+    (send-blob rcvr.packet blob)
   ::  +on-hear-open: handle receipt of plaintext comet self-attestation
   ::
   ++  on-hear-open
@@ -2376,8 +2378,8 @@
         (give %send seq %& fragment-num)
       ::  whole message (n)ack
       ::
-      =/  ok=?  (~(has in nax.state) seq)
-      ~>  %slog.0^leaf/"ames: send dupe message ack {<seq>}"
+      =/  ok=?  !(~(has in nax.state) seq)
+      ~>  %slog.0^leaf/"ames: send dupe message ack {<seq>} ok={<ok>}"
       (give %send seq %| ok lag=`@dr`0)
     ::  last-acked<seq<=last-heard; heard message, unprocessed
     ::
