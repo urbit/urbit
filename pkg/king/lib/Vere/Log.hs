@@ -1,6 +1,11 @@
+{-
+    TODO Effects storage logic is messy.
+-}
+
 module Vere.Log ( EventLog, identity, nextEv
                 , new, existing
                 , streamEvents, appendEvents
+                , streamEffectsRows, writeEffectsRow
                 ) where
 
 import ClassyPrelude         hiding (init)
@@ -26,11 +31,12 @@ type Dbi = MDB_dbi
 type Cur = MDB_cursor
 
 data EventLog = EventLog
-    { env       :: Env
-    , _metaTbl  :: Dbi
-    , eventsTbl :: Dbi
-    , identity  :: LogIdentity
-    , numEvents :: IORef EventId
+    { env        :: Env
+    , _metaTbl   :: Dbi
+    , eventsTbl  :: Dbi
+    , effectsTbl :: Dbi
+    , identity   :: LogIdentity
+    , numEvents  :: IORef EventId
     }
 
 nextEv :: EventLog -> IO EventId
@@ -46,6 +52,7 @@ data EventLogExn
     | BadKeyInEventLog
     | BadWriteLogIdentity LogIdentity
     | BadWriteEvent EventId
+    | BadWriteEffect EventId
   deriving Show
 
 
@@ -66,35 +73,37 @@ rawOpen dir = do
 
 create :: FilePath -> LogIdentity -> IO EventLog
 create dir id = do
-    env    <- rawOpen dir
-    (m, e) <- createTables env
+    env       <- rawOpen dir
+    (m, e, f) <- createTables env
     clearEvents env e
     writeIdent env m id
-    EventLog env m e id <$> newIORef 0
+    EventLog env m e f id <$> newIORef 0
   where
     createTables env =
-      with (writeTxn env) $ \txn -> do
-        m <- mdb_dbi_open txn (Just "META")   [MDB_CREATE]
-        e <- mdb_dbi_open txn (Just "EVENTS") [MDB_CREATE, MDB_INTEGERKEY]
-        pure (m, e)
+      with (writeTxn env) $ \txn ->
+        (,,) <$> mdb_dbi_open txn (Just "META")    [MDB_CREATE]
+             <*> mdb_dbi_open txn (Just "EVENTS")  [MDB_CREATE, MDB_INTEGERKEY]
+             <*> mdb_dbi_open txn (Just "EFFECTS") [MDB_CREATE, MDB_INTEGERKEY]
 
 open :: FilePath -> IO EventLog
 open dir = do
-    env    <- rawOpen dir
-    (m, e) <- openTables env
-    id     <- getIdent env m
-    numEvs <- getNumEvents env e
-    EventLog env m e id <$> newIORef numEvs
+    env       <- rawOpen dir
+    (m, e, f) <- openTables env
+    id        <- getIdent env m
+    numEvs    <- getNumEvents env e
+    EventLog env m e f id <$> newIORef numEvs
   where
     openTables env =
       with (openTxn env) $ \txn ->
-        (,) <$> mdb_dbi_open txn (Just "META")   []
-            <*> mdb_dbi_open txn (Just "EVENTS") [MDB_INTEGERKEY]
+        (,,) <$> mdb_dbi_open txn (Just "META")    []
+             <*> mdb_dbi_open txn (Just "EVENTS")  [MDB_INTEGERKEY]
+             <*> mdb_dbi_open txn (Just "EFFECTS") [MDB_CREATE, MDB_INTEGERKEY]
 
 close :: EventLog -> IO ()
-close (EventLog env meta events _ _) = do
+close (EventLog env meta events effects _ _) = do
     mdb_dbi_close env meta
     mdb_dbi_close env events
+    mdb_dbi_close env effects
     mdb_env_sync_flush env
     mdb_env_close env
 
@@ -199,24 +208,49 @@ appendEvents log !events = do
   where
     flags    = compileWriteFlags [MDB_NOOVERWRITE]
     doAppend = \kvs ->
-        with (writeTxn $ env log) \txn ->
+        with (writeTxn $ env log) $ \txn ->
         for_ kvs $ \(k,v) -> do
-            putEvent flags txn (eventsTbl log) k v >>= \case
+            putBytes flags txn (eventsTbl log) k v >>= \case
                 True  -> pure ()
                 False -> throwIO (BadWriteEvent k)
 
+writeEffectsRow :: EventLog -> EventId -> ByteString -> IO ()
+writeEffectsRow log k v = do
+    with (writeTxn $ env log) $ \txn ->
+        putBytes flags txn (effectsTbl log) k v >>= \case
+            True  -> pure ()
+            False -> throwIO (BadWriteEffect k)
+  where
+    flags = compileWriteFlags []
 
+
+--------------------------------------------------------------------------------
 -- Read Events -----------------------------------------------------------------
 
-streamEvents :: EventLog -> Word64 -> ConduitT () ByteString IO ()
+streamEvents :: EventLog -> Word64
+             -> ConduitT () ByteString IO ()
 streamEvents log first = do
     last <- liftIO $ lastEv log
-    -- traceM ("streamEvents: " <> show (first, last))
     batch <- liftIO (readBatch log first)
     unless (null batch) $ do
         for_ batch yield
         streamEvents log (first + word (length batch))
 
+streamEffectsRows :: EventLog -> EventId
+              -> ConduitT () (Word64, ByteString) IO ()
+streamEffectsRows log = go
+  where
+    go next = do
+        batch <- liftIO $ readRowsBatch (env log) (effectsTbl log) next
+        unless (null batch) $ do
+            for_ batch yield
+            go (next + fromIntegral (length batch))
+
+{-
+   Read 1000 rows from the events table, starting from event `first`.
+
+   Throws `MissingEvent` if an event was missing from the log.
+-}
 readBatch :: EventLog -> Word64 -> IO (V.Vector ByteString)
 readBatch log first = start
   where
@@ -247,6 +281,34 @@ readBatch log first = start
             when (count /= succ i) $ do
                 assertFound idx =<< mdb_cursor_get MDB_NEXT cur pKey pVal
             pure val
+
+{-
+   Read 1000 rows from the database, starting from key `first`.
+-}
+readRowsBatch :: Env -> Dbi -> Word64 -> IO (V.Vector (Word64, ByteString))
+readRowsBatch env dbi first = readRows
+  where
+    readRows = do
+        -- print ("readRows", first)
+        withWordPtr first $ \pIdx ->
+          withKVPtrs (MDB_val 8 (castPtr pIdx)) nullVal $ \pKey pVal ->
+          with (readTxn env) $ \txn ->
+          with (cursor txn dbi) $ \cur ->
+          mdb_cursor_get MDB_SET_RANGE cur pKey pVal >>= \case
+              False -> pure mempty
+              True  -> V.unfoldrM (fetchRows cur pKey pVal) 1000
+
+    fetchRows :: Cur -> Ptr MDB_val -> Ptr MDB_val
+              -> Word
+              -> IO (Maybe ((Word64, ByteString), Word))
+    fetchRows cur pKey pVal 0 = pure Nothing
+    fetchRows cur pKey pVal n = do
+        key <- peek pKey >>= mdbValToWord64
+        val <- peek pVal >>= mdbValToBytes
+        -- print ("fetchRows", n, key, val)
+        mdb_cursor_get MDB_NEXT cur pKey pVal >>= \case
+            False -> pure $ Just ((key, val), 0)
+            True  -> pure $ Just ((key, val), pred n)
 
 
 -- Utils -----------------------------------------------------------------------
@@ -307,8 +369,8 @@ putNoun flags txn db key val =
   byteStringAsMdbVal (jamBS val) $ \mVal ->
   mdb_put flags txn db mKey mVal
 
-putEvent :: MDB_WriteFlags -> Txn -> Dbi -> Word64 -> ByteString -> IO Bool
-putEvent flags txn db id bs = do
+putBytes :: MDB_WriteFlags -> Txn -> Dbi -> Word64 -> ByteString -> IO Bool
+putBytes flags txn db id bs = do
   withWord64AsMDBval id $ \idVal -> do
     byteStringAsMdbVal bs $ \mVal -> do
       mdb_put flags txn db idVal mVal

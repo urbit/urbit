@@ -9,7 +9,7 @@ import UrbitPrelude
 import Vere.Log
 import Vere.Pier.Types
 import Data.Conduit
-import Data.Conduit.List
+import Data.Conduit.List hiding (filter)
 
 import Control.Concurrent (threadDelay, runInBoundThread)
 import Data.LargeWord     (LargeKey(..))
@@ -36,21 +36,24 @@ assertEqual x y = do
 
 -- Database Operations ---------------------------------------------------------
 
-data Db = Db LogIdentity [ByteString]
+data Db = Db LogIdentity [ByteString] (Map Word64 ByteString)
   deriving (Eq, Ord, Show)
 
 addEvents :: Db -> [ByteString] -> Db
-addEvents (Db id evs) new = Db id (evs <> new)
+addEvents (Db id evs efs) new = Db id (evs <> new) efs
 
 readDb :: EventLog -> IO Db
 readDb log = do
-    events <- runConduit (streamEvents log 1 .| consume)
-    pure $ Db (Log.identity log) events
+    events  <- runConduit (streamEvents log 1 .| consume)
+    effects <- runConduit (streamEffectsRows log 0 .| consume)
+    pure $ Db (Log.identity log) events (mapFromList effects)
 
 withDb :: FilePath -> Db -> (EventLog -> IO a) -> IO a
-withDb dir (Db dId dEvs) act = do
+withDb dir (Db dId dEvs dFx) act = do
     with (Log.new dir dId) $ \log -> do
         Log.appendEvents log (fromList dEvs)
+        for_ (mapToList dFx) $ \(k,v) ->
+            Log.writeEffectsRow log k v
         act log
 
 --------------------------------------------------------------------------------
@@ -72,6 +75,17 @@ tryReadIdentity = forAll arbitrary (ioProperty . runTest)
 
 tryReadDatabase :: Property
 tryReadDatabase = forAll arbitrary (ioProperty . runTest)
+  where
+    runTest :: Db -> IO Bool
+    runTest db = do
+        runInBoundThread $
+            withTestDir $ \dir -> do
+                withDb dir db $ \log -> do
+                    readDb log >>= assertEqual db
+        pure True
+
+tryReadDatabaseFuzz :: Property
+tryReadDatabaseFuzz = forAll arbitrary (ioProperty . runTest)
   where
     runTest :: Db -> IO Bool
     runTest db = do
@@ -108,7 +122,7 @@ tryAppendHuge = forAll arbitrary (ioProperty . runTest)
     runTest :: ([ByteString], Db) -> IO Bool
     runTest (extra, db) = do
         runInBoundThread $ do
-            extra <- do b <- readFile "/home/benjamin/r/urbit/bin/brass.pill"
+            extra <- do b <- readFile "/home/benajmin/r/urbit/bin/brass.pill"
                         pure (extra <> [b] <> extra)
             withTestDir $ \dir -> do
                 db' <- pure (addEvents db extra)
@@ -127,9 +141,12 @@ tests =
     [ localOption (QuickCheckTests 10) $
           testProperty "Read/Write Log Identity" $
               tryReadIdentity
-    , localOption (QuickCheckTests 10) $
+    , localOption (QuickCheckTests 15) $
           testProperty "Read/Write Database" $
               tryReadDatabase
+    , localOption (QuickCheckTests 5) $
+          testProperty "Read/Write Database Multiple Times" $
+              tryReadDatabaseFuzz
     , localOption (QuickCheckTests 10) $
           testProperty "Append Random Events" $
               tryAppend
@@ -153,8 +170,18 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (LargeKey a b) where
 instance Arbitrary Ship where
   arbitrary = Ship <$> arb
 
+arbEffects :: [ByteString] -> Gen (Map Word64 ByteString)
+arbEffects evs = do
+  hax <- for (zip [1..] evs) $ \(i, bs) -> do keep :: Bool <- arbitrary
+                                              pure (keep, (i, bs))
+  pure $ mapFromList $ snd <$> filter fst hax
+
 instance Arbitrary Db where
-  arbitrary = Db <$> arbitrary <*> arbitrary
+  arbitrary = do
+    ident <- arbitrary
+    evs   <- arbitrary
+    efs   <- arbEffects evs
+    pure (Db ident evs efs)
 
 instance Arbitrary LogIdentity where
   arbitrary = LogIdentity <$> arb <*> arb <*> arb

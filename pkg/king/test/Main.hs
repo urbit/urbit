@@ -8,6 +8,7 @@ import Test.Tasty.QuickCheck
 import Test.Tasty.TH
 
 import System.Environment (setEnv)
+import Control.Concurrent (runInBoundThread)
 
 import qualified LogTests
 import qualified DeriveNounTests
@@ -18,7 +19,7 @@ import qualified BehnTests
 main :: IO ()
 main = do
   setEnv "TASTY_NUM_THREADS" "1"
-  defaultMain $ testGroup "Urbit"
+  runInBoundThread $ defaultMain $ testGroup "Urbit"
     [ DeriveNounTests.tests
     , ArvoTests.tests
     , AmesTests.tests
