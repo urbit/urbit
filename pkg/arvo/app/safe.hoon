@@ -360,6 +360,22 @@
     ?~  p.action
       ;<  ~  bind:m  (display %txt "No such path {<path>}.")
       (pure:m app-state)
+    ::  Calculate the signature line
+    ::
+    ::    We want to show information about what sort of signature will be
+    ::    produced here, using red and our ship name for ship signatures, green
+    ::    for unlinked, and yellow for signatures on a certain scope.
+    ::
+    =/  signature-line=styx
+      =/  type
+        (signature-type-request-for path u.community)
+      ?:  ?=([%& *] type)
+        ['<internal error>' ~]
+      ?-  -.p.type
+        %ship      [[[~ ~ `%r] (scot %p our.bowl) ~] ~]
+        %linked    [[[~ ~ `%y] (spat route.scope.p.type) ~] ~]
+        %unlinked  [[[~ ~ `%g] 'unlinked' ~] ~]
+      ==
     ::
     =/  bold=styl  [`%br ~ ~]
     ::
@@ -368,10 +384,7 @@
       :-  %mor  :~
         [%klr [[bold 'Path: ' ~] (spat path) ~]]
         [%klr [[bold 'Type: ' ~] app-type.snapshot.u.p.action ~]]
-        ::  TODO: We should surface ship signed as red, linked as yellow and
-        ::  unlinked as green.
-        ::
-        [%klr [[bold 'Signatures: ' ~] signature-type.snapshot.u.p.action ~]]
+        [%klr [[bold 'Signatures: ' ~] signature-line]]
         [%tan [(cain snapshot.snapshot.u.p.action) ~]]
       ==
     (pure:m app-state)
