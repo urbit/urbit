@@ -80,7 +80,13 @@
         ~
       [~ (slot 3 unit-private-event)]
     ::
-    [%create ;;(@t q.id) ;;(@t q.node-type) ;;(signature-type q.sig-type) private-event child-event]
+    :*  %create
+        ;;(@t q.id)
+        ;;(@t q.node-type)
+        ;;(signature-type q.sig-type)
+        private-event
+        child-event
+    ==
   ::
       %return
     =/  event  (slot 3 wec)
@@ -258,15 +264,12 @@
       ::
       ?-    -.ret-val
           %accept
-        ~&  %accepting-event
         [changes:ret state:ret]
       ::
           %reject
-        ~&  %rejecting-event
         [~ original-state]
       ::
           %accept-and-invite-member
-        ~&  [%accepting-event-and-inviting ship.ret-val]
         ::
         %^  record-change  changes.ret  [state.ret /]
         [%toplevel-invite ship.ret-val]
@@ -305,8 +308,6 @@
         ==
     ^-  [vase changes-and-state]
     ::
-    ~&  [%full-path full-path]
-    ::
     =/  app-vase=vase  (~(got by app-map) app-type.snapshot.state)
     ::  If we still have remaining path elements, dispatch on them.
     ::
@@ -330,7 +331,6 @@
       ::  the raw-result is a child-event. send it downwards.
       ::
       =/  child-event=vase  (slot 3 raw-result)
-      ~&  [%on-route-child-event child-event]
       ::
       =/  n=[return-value=vase changes-and-state]
         (recurse child-event t.route full-path message-signature original-path message changes u.sub-node)
@@ -378,7 +378,6 @@
       =.  changes  changes.n
       =.  created    state.n
       ::
-      ~&  [%created type=app-type.response sub-id=sub-id.response return=return]
       =.  children.state  (~(put by children.state) sub-id.response created)
       ::
       =/  nu=changes-and-state

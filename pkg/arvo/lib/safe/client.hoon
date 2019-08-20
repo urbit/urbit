@@ -318,8 +318,6 @@
   |=  [route=path user-event=* client-state=node app-map=(map @t vase)]
   ^-  (each path signing-request:common)
   ::
-  ~&  [%sign-user-event route user-event]
-  ::
   =/  root-request  (signature-type-request-for / client-state)
   ?:  ?=([%& *] root-request)
     [%& p.root-request]

@@ -1,4 +1,4 @@
-/-  common=safe-common
+/-  common=safe-common, sole-sur=sole
 ::  Data structures used for gall to pass data structures across ships.
 ::
 |%
@@ -29,8 +29,12 @@
 ::  Peers you can send to safe. This contains a tag for gall's pattern matching
 ::  crud.
 ::
-+$  peer
++$  in-peer
   [%safe-peer command=peer-command]
++$  out-peer
+  $%  [%safe-peer command=peer-command]
+      [%sole-effect sole-effect:sole-sur]
+  ==
 ::  The actual peering data structure for use inside the app.
 ::
 +$  peer-command

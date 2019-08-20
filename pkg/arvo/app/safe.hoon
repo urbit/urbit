@@ -1,4 +1,4 @@
-/-  safe-gall, safe-client, safe-server, ring-sur=ring
+/-  safe-gall, safe-client, safe-server, ring-sur=ring, sole-sur=sole
 /+  tapp, stdio, safe-applets, *safe-server, *safe-client, safe-signatures, ring-lib=ring
 =>
   |%
@@ -22,7 +22,7 @@
         local-subscriptions=(set [name=@t =path])
         ::  pending remote subscriptions?
         ::
-        pending-remote-subscriptions=(set [host=@p name=@t =path])
+        pending-community-subscriptions=(set [host=@p name=@t =path])
         ::  messages that we intend to send, but that we lack up-to-date data
         ::  in our client-communities state.
         ::
@@ -33,19 +33,18 @@
     ==
   +$  peek-data  _!!
   +$  in-poke-data
-    poke:safe-gall
+    $%  [%safe-poke command=poke-command:safe-gall]
+        [%sole-action *]
+    ==
   +$  out-poke-data
     $%  ::  receive message to be sent to a foreign :safe server.
         ::
         [%safe-poke %receive-message name=@t =client-to-server:common]
-        ::  unlink ourselves as soon as we start.
-        ::
-        [%drum-unlink =dock]
     ==
   +$  out-peer-data
-    peer:safe-gall
+    out-peer:safe-gall
   +$  in-peer-data
-    peer:safe-gall
+    in-peer:safe-gall
   ++  tapp   (^tapp app-state peek-data in-poke-data out-poke-data in-peer-data out-peer-data)
   ++  stdio  (^stdio out-poke-data out-peer-data)
   --
@@ -106,8 +105,6 @@
   =/  m  tapp-async
   ^-  form:m
   ::
-  ~&  [%safe-send-message host name path msg]
-  ::
   |-
   =*  loop  $
   ::  Using our client copy of the state, perform verification.
@@ -133,17 +130,13 @@
   ;<  c-to-s=client-to-server:common  bind:m
     (async-sign-request our.bowl now.bowl eny.bowl p.e)
   ::
-  ~&  [%signature c-to-s]
-  ::
   ?:  =(host our.bowl)
     ::  we do the special case where we synchronously call ourselves for
     ::  messages to ourselves.
     ::
-    ~&  %sending-to-self
     (receive-message our.bowl now.bowl name c-to-s app-state)
   ::  sends to a remote server.
   ::
-  ~&  %sending-remotely
   ;<  ~  bind:m  (poke-app [host %safe] %safe-poke %receive-message name c-to-s)
   (pure:m app-state)
 ::  +enqueue-write
@@ -320,7 +313,6 @@
       t.locally-subscribed-changes
     ::
         node
-      ~&  [%applying-change i.locally-subscribed-changes]
       (apply-to-client safe-applets i.locally-subscribed-changes node)
     ==
   ::  broadcast each of the changes to all listeners.
@@ -336,14 +328,25 @@
   ::
   loop(changes t.changes)
 ::
+++  display
+  |=  [=sole-effect:sole-sur]
+  =/  m  (async ,~)
+  ^-  form:m
+  ::
+  (give-result /sole %sole-effect sole-effect)
+::
 ++  show-path
   |=  [=bowl:gall host=@p name=@t =path =app-state]
   =/  m  tapp-async
   ^-  form:m
   ::
   ?~  community=(~(get by client-communities.app-state) [host name])
-    ~&  [%no-such-community host name]
-    (pure:m app-state)
+    ::  If we don't know anything about this community, we need to go remote
+    ::  subscribe to it.
+    ::
+    =.  app-state  (enqueue-read host name / path app-state)
+    ::
+    (subscribe bowl host name / app-state)
   ::
   =/  action  (nu-get-data-at path u.community)
   ::
@@ -355,10 +358,10 @@
   ::
       %|
     ?~  p.action
-      ~&  [%no-such-path path]
+      ;<  ~  bind:m  (display %txt "No such path {<path>}.")
       (pure:m app-state)
     ::
-    ~&  [%data u.p.action]
+    ;<  ~  bind:m  (display %tan [(cain snapshot.snapshot.u.p.action) ~])
     (pure:m app-state)
   ==
 --
@@ -373,13 +376,16 @@
   =/  m  tapp-async
   ^-  form:m
   ::
-  ;<  ~  bind:m  (poke-app:stdio [[our %hood] [%drum-unlink our dap]]:bowl)
   (pure:m app-state)
 
 ++  handle-poke
   |=  =in-poke-data
   =/  m  tapp-async
   ^-  form:m
+  ::
+  ?:  ?=([%sole-action *] in-poke-data)
+    :: just ignore the sole actions?
+    (pure:m)
   ::
   =/  command  command.in-poke-data
   ::
@@ -392,7 +398,8 @@
     ::  if the community already exists
     ::
     ?:  (~(has by server-communities.app-state) name.command)
-      ~&  [%community-already-exists name.command]
+      ::
+      ;<  ~  bind:m  (display %txt "Community '{<name.command>}' already exists.")
       (pure:m app-state)
     ::  create the server side community
     ::
@@ -424,19 +431,21 @@
     ::    community but their archive shouldn't be public.
     ::
     ;<  =^app-state  bind:m  (subscribe bowl our.bowl name.command / app-state)
-    ::
-    ~&  [%created-community name.command initial-invitees.command]
     ::  we send an in-band [%init ~] event so that our community recognizes us
     ::  as a moderator.
     ::
-    %-  send-message  :*
-      bowl
-      our.bowl
-      name.command
-      /
-      [%init ~]
-      app-state
-    ==
+    ;<  =^^app-state  bind:m
+      %-  send-message  :*
+        bowl
+        our.bowl
+        name.command
+        /
+        [%init ~]
+        app-state
+      ==
+    ::
+    ;<  ~  bind:m  (display %txt "Created community '{<name.command>}'.")
+    (pure:m app-state)
   ::
       %send-message
     ::  only we can send a message as ourselves
@@ -444,8 +453,6 @@
     ?.  =(our.bowl src.bowl)
       ~&  [%remote-cant-send-message src.bowl]
       (pure:m app-state)
-    ::
-    ~&  [%full-community client-communities.app-state]
     ::
     %-  send-message  :*
       bowl
@@ -498,8 +505,12 @@
   =/  m  tapp-async
   ^-  form:m
   ::
-  ?:  =(/sole path)
-    ;<  ~  bind:m  (poke-app:stdio [[our %hood] [%drum-unlink our dap]]:bowl)
+  ~&  [%received-peer path]
+  ::
+  ?:  ?=([%sole *] path)
+    ::  we don't disconnect /sole so we have can print on it.
+    ::
+    ~&  %received-sole
     (pure:m app-state)
   ::
   ?>  ?=(^ path)
@@ -555,8 +566,6 @@
   ::  - We don't deal in update-client-communities where we get multiple
   ::  snapshots which are the same. If we get snapshot 1, we shouldn't add
   ::  another shapshot 1.
-  ::
-  ~&  [%handle-diff path tagged-data]
   ::
   ?>  ?=(^ path)
   ::

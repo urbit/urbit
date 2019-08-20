@@ -143,7 +143,8 @@
       %new-post
     %_  snapshot
         posts
-      [[u.user-event private] posts.snapshot]
+      ^+  posts.snapshot
+      (weld posts.snapshot ^+(posts.snapshot [[u.user-event private] ~]))
     ::
         poster-count
       ?:(new-poster.private +(poster-count.snapshot) poster-count.snapshot)
