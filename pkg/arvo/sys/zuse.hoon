@@ -1988,7 +1988,7 @@
       $~  [%vega ~]                                     ::
       $%  $:  %dawn                                     ::  boot from keys
               =seed:able:jael                           ::    identity params
-              spon=[=ship point:azimuth-types]          ::    sponsor
+              spon=(list [=ship point:azimuth-types])   ::
               czar=(map ship [=rift =life =pass])       ::    galaxy table
               turf=(list turf)                          ::    domains
               bloq=@ud                                  ::    block number
