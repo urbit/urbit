@@ -99,7 +99,7 @@
   ::
   ?-    -.user-event
       %new-post
-    =/  new-poster=?  (~(has in posted.private-state) community-tag)
+    =/  new-poster=?  !(~(has in posted.private-state) community-tag)
     ::
     :-  [%log [post-id now.parent-event new-poster] [%accepted post-id]]
     %_    private-state
