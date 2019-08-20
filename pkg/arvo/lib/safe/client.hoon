@@ -358,27 +358,6 @@
 ::
 ++  get-data-at
   |=  [route=path client-state=node]
-  ^-  (unit [=snapshot:common archives=(list @t)])
-  ::
-  ?^  route
-    ::  TODO: archived state, too.
-    ::
-    ?~  children-state=(~(get by children.client-state) i.route)
-      ~
-    ?~  u.children-state
-      ~
-    ::
-    $(route t.route, client-state u.u.children-state)
-  ::
-  `[(need snapshot.client-state) ~(tap in ~(key by archived.client-state))]
-
-::  TODO: this code is mostly copy-pasted from the +signature-type-request-for
-::  function and if we actually had a 
-::
-::  What happens when we try to view a path that doesn't exist?
-::
-++  nu-get-data-at
-  |=  [route=path client-state=node]
   ::
   |^  ^-  (each path (unit [=snapshot:common archives=(list @t)]))
       =|  built-route=path

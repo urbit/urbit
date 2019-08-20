@@ -348,7 +348,7 @@
     ::
     (subscribe bowl host name / app-state)
   ::
-  =/  action  (nu-get-data-at path u.community)
+  =/  action  (get-data-at path u.community)
   ::
   ?-    -.action
       %&
