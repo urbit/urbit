@@ -54,6 +54,7 @@
       $=  zim                                           ::  public
         $:  yen=(jug duct ship)                         ::  trackers
             ney=(jug ship duct)                         ::  reverse trackers
+            nel=(set duct)                              ::  trackers of all
             dns=dnses                                   ::  on-chain dns state
             pos=(map ship point)                        ::  on-chain ship state
         ==                                              ::
@@ -397,6 +398,8 @@
         ?~  ships
           yen.zim.pki
         (~(del ju $(ships t.ships)) hen i.ships)
+      =?  nel.zim.pki  ?=(~ whos.tac)
+        (~(del in nel.zim.pki) hen)
       ?^  whos.tac
         +>.$
       %_  +>.$
@@ -659,6 +662,13 @@
       this-su
     (public-keys:feel %diff a-ship u.a-diff)
   ::
+  ++  subscribers-on-ship
+    |=  =ship
+    ^-  (set duct)
+    =/  specific-subs  (~(get ju ney.zim) ship)
+    =/  general-subs   nel.zim
+    (~(uni in specific-subs) general-subs)
+  ::
   ++  feed
     |_  ::  hen: subscription source
         ::
@@ -705,6 +715,8 @@
         %+  turn  ~(tap in whos)
         |=  who=ship
         [hen who]
+      =?  nel.zim  ?=(~ whos)
+        (~(put in nel.zim) hen)
       ::  Give initial result
       ::
       =/  =public-keys-result
@@ -770,7 +782,7 @@
         ?~  pointl
           ..feel
         %+  public-keys-give
-          (~(get ju ney.zim) who.i.pointl)
+          (subscribers-on-ship who.i.pointl)
         [%full (my i.pointl ~)]
       =*  who  who.public-keys-result
       =/  a-diff=diff:point  diff.public-keys-result
@@ -791,7 +803,7 @@
         ==
       =.  pos.zim  (~(put by pos.zim) who point)
       %+  public-keys-give
-        (~(get ju ney.zim) who)
+        (subscribers-on-ship who)
       ?~  maybe-point
         [%full (my [who point]~)]
       [%diff who a-diff]
