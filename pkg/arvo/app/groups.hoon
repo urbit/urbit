@@ -1,10 +1,9 @@
 :: service/groups.hoon
+/-  *groups
 |%
 +$  move  [bone card]
-::
 +$  card
   $%  [%diff [%noun group-diff]]
-      [%peer wire dock path]
       [%quit ~]
       ::[%pull wire dock ~]
   ==
@@ -15,25 +14,6 @@
 +$  state-zero
   $:  groups=(map path group)
   ==
-::
-++  group  (set ship)
-::
-+$  group-action
-  $%  [%add members=group pax=path]
-      [%remove members=group pax=path]
-      [%bundle pax=path]
-      [%unbundle pax=path]
-  ==
-::
-+$  group-diff
-  $%  [%keys keys=(set path)]
-      [%path members=groups pax=path]
-      [%add members=groups pax=path]
-      [%remove members=groups pax=path]
-      [%bundle pax=path]
-      [%unbundle pax=path]
-  ==
-::
 --
 ::
 |_  [bol=bowl:gall state]
@@ -47,45 +27,49 @@
     [~ this]
   [~ this(+<+ u.old)]
 ::
+++  peek-x
+  |=  pax=path
+  ^-  (unit (unit [%noun (unit group)]))
+  ?~  pax
+    [~ ~ %noun ~]
+  =/  group-path=(list @tas)  (limo pax)
+  =.  group-path  ?^(group-path t.group-path ~)
+  =/  grp=(unit group)  (~(get by groups) group-path)
+  [~ ~ %noun grp]
 ::
-::
-::  +peek
-::  /groups/:pax  (pax is optional, if ~ receive set of keys)
-::  /member/:ship
-::  
-::
-::++  peek  .
-::
-++  peer
+++  peer-all
   |=  pax=path
   ^-  (quip move _this)
-  ::  no-op
-  ?~  pax
-    [[ost.bol %quit ~]~ this]
   ::  we now proxy all events to this path
-  ?:  =(/all pax)
-    [~ this]  
-  ::  we send the list of keys then quit the subscription
-  ?:  =(/keys pax)
-    :_  this
-    :~  [ost.bol %diff %noun [%keys ~(key by groups)]]
-        [ost.bol %quit ~]
-    ==
-  :: we now send all diffs that affect this path to this subscriber
-  ?:  =(%groups &1:pax)
-    =/  group-path  (limo pax)
-    =.  group-path  ?^(group-path t.group-path ~)
-    =/  grp=(unit group)  (~(get by groups) group-path)
-    :_  this
-    [ost.bol %diff %noun [%path grp]]~
-  :: otherwise we quit the subscription
-  [[ost.bol %quit ~]~ this]
+  [~ this]
+::
+++  peer-keys
+  |=  pax=path
+  ^-  (quip move _this)
+  ::  we send the list of keys then send events when they change
+  :_  this
+  [ost.bol %diff %noun [%keys ~(key by groups)]]~
+::
+++  peer-group
+  |=  pax=path
+  ^-  (quip move _this)
+  =/  grp=(unit group)  (~(get by groups) pax)
+  ?~  grp
+    [[ost.bol %quit ~]~ this]
+  :_  this
+  [ost.bol %diff %noun [%path u.grp pax]]~
 ::
 ++  poke-noun
+  |=  cmd=cord
+  ^-  (quip move _this)
+  ~&  groups
+  [~ this]
+::
+++  poke-group-action
   |=  action=group-action
   ^-  (quip move _this)
   ?.  =(src.bol our.bol)
-    this
+    [~ this]
   ?-  -.action
       %add
     (handle-add action)
@@ -109,8 +93,8 @@
   ?~  pax.act
     this
   ?:  (~(has by groups) pax.act)
-    =/  members  (~(got by groups) pax.act)
-    =.  members  (~(put in members) members.act)
+    =/  members=group  (~(got by groups) pax.act)
+    =.  members  (~(uni in members) members.act)
     this(groups (~(put by groups) pax.act members))
   this(groups (~(put by groups) pax.act members.act))
 ::
@@ -123,8 +107,9 @@
     this
   ?.  (~(has by groups) pax.act)
     this
+  ~&  act
   =/  members  (~(got by groups) pax.act)
-  =.  members  (~(del in members) members.act)
+  =.  members  (~(dif in members) members.act)
   this(groups (~(put by groups) pax.act members))
 ::
 ++  handle-bundle
@@ -152,17 +137,16 @@
 ++  send-diff
   |=  [pax=path action=group-action]
   ^-  (list move)
+  ::  TODO: if bundle or unbundle, send an update to keys
   %+  weld
     ^-  (list move)
     %+  turn  (prey:pubsub:userlib /all bol)
     |=  [=bone *]
     [bone %diff %noun action]
-    list-move
-    ^-  (list move)
-    %+  turn  (prey:pubsub:userlib [%groups pax] bol)
-    |=  [=bone *]
-    [bone %diff %noun action]
-  ==
+  ^-  (list move)
+  %+  turn  (prey:pubsub:userlib [%groups pax] bol)
+  |=  [=bone *]
+  [bone %diff %noun action]
 ::
 --
 
