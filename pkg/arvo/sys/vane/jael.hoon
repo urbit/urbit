@@ -678,7 +678,10 @@
     |=  =ship
     ^-  (set duct)
     =/  specific-subs  (~(get ju ney.zim) ship)
-    =/  general-subs   nel.zim
+    =/  general-subs=(set duct)
+      ?:  ?=(?(%czar %king %duke) (clan:title ship))
+        nel.zim
+      ~
     (~(uni in specific-subs) general-subs)
   ::
   ++  feed
