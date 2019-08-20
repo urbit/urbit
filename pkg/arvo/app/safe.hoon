@@ -20,13 +20,16 @@
         ::    community and the server copy in the current application.
         ::
         local-subscriptions=(set [name=@t =path])
+        ::  pending remote subscriptions?
+        ::
+        pending-remote-subscriptions=(set [host=@p name=@t =path])
         ::  messages that we intend to send, but that we lack up-to-date data
         ::  in our client-communities state.
         ::
         pending-writes=(jug [host=@p name=@t =path] [route=path msg=*])
-        ::  read operations here
+        ::  read operations here.
         ::
-        pending-reads=(set [host=@p name=@t =path])
+        pending-reads=(jug [host=@p name=@t =path] path)
     ==
   +$  peek-data  _!!
   +$  in-poke-data
@@ -155,6 +158,16 @@
       [host name subscribe-path]
     [send-path msg]
   ==
+::  +enqueue-read
+::
+++  enqueue-read
+  |=  [host=@p name=@t subscribe-path=path read-path=path =app-state]
+  ^+  app-state
+  ::
+  %_    app-state
+      pending-reads
+    (~(put ju pending-reads.app-state) [host name subscribe-path] read-path)
+  ==
 ::  +subscribe: subscribes remotely or locally
 ::
 ++  subscribe
@@ -187,7 +200,7 @@
         (apply-peer-diff-to-client (need full-server-state))
       ==
     ::
-    (retry-sending-messages bowl host name subscribe-path app-state)
+    (unblock-pending bowl host name subscribe-path app-state)
   ::  TODO: If we're already %pending, don't send a second peer. This was what
   ::  caused the out of control message spam when I had the incorrect children
   ::  calculation. It's theoretically triggerable during natural usage, too.
@@ -205,9 +218,9 @@
   ;<  ~  bind:m  (peer-app [host %safe] (weld [name ~] subscribe-path))
   ::
   (pure:m app-state)
-::  +retry-sending-messages:
+::  +unblock-pending:
 ::
-++  retry-sending-messages
+++  unblock-pending
   |=  [=bowl:gall host=@p community-name=@t =path =app-state]
   =/  m  tapp-async
   ::  for every pending message in the :pending-writes, try to send
@@ -218,19 +231,41 @@
   ::
   =.  pending-writes.app-state
     (~(del by pending-writes.app-state) [host community-name path])
+  ::  for all pending writes, try sending the message again.
   ::
-  =/  msgs=(list [route=^path msg=*])  ~(tap by to-send)
+  ;<  =^app-state  bind:m
+    =/  msgs=(list [route=^path msg=*])  ~(tap by to-send)
+    ::
+    |-  ^-  form:m
+    =*  loop  $
+    ::
+    ?~  msgs
+      (pure:m app-state)
+    ::
+    ;<  new-state=^app-state  bind:m
+      (send-message bowl host community-name route.i.msgs msg.i.msgs app-state)
+    ::
+    loop(msgs t.msgs, app-state new-state)
+  ::  for all pending reads, try reading again.
+  ::
+  =/  to-read=(set ^path)
+    (~(get ju pending-reads.app-state) [host community-name path])
+  ::
+  =.  pending-reads.app-state
+    (~(del by pending-reads.app-state) [host community-name path])
+  ::
+  =/  reads=(list ^path)  ~(tap by to-read)
   ::
   |-  ^-  form:m
   =*  loop  $
   ::
-  ?~  msgs
+  ?~  reads
     (pure:m app-state)
   ::
-  ;<  new-state=^app-state  bind:m
-    (send-message bowl host community-name route.i.msgs msg.i.msgs app-state)
+  ;<  new-state=^^app-state  bind:m
+    (show-path bowl host community-name i.reads app-state)
   ::
-  loop(msgs t.msgs, app-state new-state)
+  loop(reads t.reads, app-state new-state)
 ::  +receive-message: receives a message to apply to our server state
 ::
 ::    This first applies a message to our server state, which may then produce
@@ -302,7 +337,7 @@
   loop(changes t.changes)
 ::
 ++  show-path
-  |=  [host=@p name=@t =path =app-state]
+  |=  [=bowl:gall host=@p name=@t =path =app-state]
   =/  m  tapp-async
   ^-  form:m
   ::
@@ -310,17 +345,22 @@
     ~&  [%no-such-community host name]
     (pure:m app-state)
   ::
+  =/  action  (nu-get-data-at path u.community)
   ::
-  =/  data=(unit [=snapshot:common archives=(list @t)])
-    (get-data-at path u.community)
+  ?-    -.action
+      %&
+    ~!  action
+    =.  app-state  (enqueue-read host name p.action path app-state)
+    (subscribe bowl host name p.action app-state)
   ::
-  ?~  data
-    ~&  [%no-such-path path]
+      %|
+    ?~  p.action
+      ~&  [%no-such-path path]
+      (pure:m app-state)
+    ::
+    ~&  [%data u.p.action]
     (pure:m app-state)
-  ::
-  ~&  [%s (noah snapshot.snapshot.u.data)]
-  ::
-  (pure:m app-state)
+  ==
 --
 ::
 %-  create-tapp-all:tapp
@@ -373,6 +413,8 @@
     =.  server-communities.app-state
       %+  ~(put by server-communities.app-state)  name.command
       initial-toplevel-server-state
+    ::  TODO: +send-message will subscribe for us? No need to have this here?
+    ::
     ::  create the client side community
     ::
     ::    When we make a community, we also build a local copy of it as the
@@ -429,6 +471,7 @@
     ::
     ::
     %-  show-path  :*
+      bowl
       host.command
       name.command
       path.command
@@ -540,7 +583,7 @@
       (apply-peer-diff-to-client data)
     ==
   ::
-  (retry-sending-messages bowl her community-name route app-state)
+  (unblock-pending bowl her community-name route app-state)
   ::  ::
   ::  ::  TODO: MUCH LATER we probably want to forward on the update to any of our
   ::  ::  http subscribed clients.

@@ -22,11 +22,15 @@
   ==
 ::
 +$  private-event
-  ~
+  $%  [%created-thread name=@t]
+  ==
 ::
 +$  private-state
   $:  next-postid=_1
       other=@
+  ::
+      ::  TODO: we want to maintain a bumplist, where we modify the private
+      ::  state on acceptance.
   ==
 ::
 +$  snapshot
@@ -44,7 +48,7 @@
   ==
 ::
 +$  on-process-response
-  $%  [%create id=@t type=@t =signature-type ~ =child-event]
+  $%  [%create id=@t type=@t =signature-type (unit private-event) =child-event]
       [%return =return-event]
   ==
 ::
@@ -84,12 +88,14 @@
     =/  id  next-postid.private-state
     ::  new threads inherit the board configuration
     ::
+    =/  thread-str  (scot %ud id)
+    ::
     :_  private-state
     :*  %create
-        (scot %ud id)
+        thread-str
         %thread
         %inherit
-        ~
+        `[%created-thread thread-str]
         [next-postid.private-state now.parent-event community-signature.parent-event]
     ==
   ::

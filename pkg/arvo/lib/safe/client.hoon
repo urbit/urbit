@@ -183,6 +183,7 @@
   ::
   |=  =node
   (apply-peer-diff-to-node app-map peer-diff.msg node)
+::
 ::  +signature-type-request-for: changes an abstract signature-type into a
 ::  signature-type-request for route.
 ::
@@ -348,7 +349,11 @@
       route
       q.user-event
   ==
-::  +get-data-at: returns the data for display 
+::  +get-data-at: returns the data for display at route
+::
+::    +get-data-at returns either a path that we aren't subscribed to which we
+::    must subscribe to, or it returns an unit data, which is ~ if we know the
+::    node doesn't currently exist, and the data if it does.
 ::
 ::    TODO: In the case of no data, we shouldn't return ~ until we've heard
 ::    back from the server that the path doesn't exist.
@@ -368,4 +373,54 @@
     $(route t.route, client-state u.u.children-state)
   ::
   `[(need snapshot.client-state) ~(tap in ~(key by archived.client-state))]
+
+::  TODO: this code is mostly copy-pasted from the +signature-type-request-for
+::  function and if we actually had a 
+::
+::  What happens when we try to view a path that doesn't exist?
+::
+++  nu-get-data-at
+  |=  [route=path client-state=node]
+  ::
+  |^  ^-  (each path (unit [=snapshot:common archives=(list @t)]))
+      =|  built-route=path
+      |-
+      ^-  (each path (unit [=snapshot:common archives=(list @t)]))
+      ::
+      ?^  route
+        ?:  ?=(?(%unsubscribed %pending) subscribed.client-state)
+          ::  if we're unsubscribed, we need to become subscribed
+          ::
+          [%& built-route]
+        ::  TODO: archive checking goes here?
+        ::
+        ::  if we don't know anything about children.client-state despite being
+        ::  subscribed, then this is an invalid node.
+        ?~  children-state=(~(get by children.client-state) i.route)
+          [%| ~]
+        ::  update the built-route so we're looking at the child node.
+        ::
+        =.  built-route  (weld built-route [i.route ~])
+        ::  if we do know that children.client-state exists, but know nothing
+        ::  about it, also block while we look it up.
+        ::
+        ?~  u.children-state
+          [%& built-route]
+        ::
+        %_  $
+          route         t.route
+          client-state  u.u.children-state
+        ==
+      ::
+      [%| (get-for-node built-route client-state)]
+  ::
+  ++  get-for-node
+    |=  [built-route=path client-state=node]
+    ^-  (unit [=snapshot:common archives=(list @t)])
+    ::  if we don't have the snapshot here, things have gone rather wrong.
+    ::
+    ?~  snapshot.client-state
+      ~
+    `[u.snapshot.client-state ~(tap in ~(key by archived.client-state))]
+  --
 --
