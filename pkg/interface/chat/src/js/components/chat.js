@@ -20,6 +20,8 @@ export class ChatScreen extends Component {
       scrollLocked: false,
     };
 
+    this.pendingQueue = props.pendingMessages;
+
     this.hasAskedForMessages = false;
     this.onScroll = this.onScroll.bind(this);
 
@@ -182,6 +184,18 @@ export class ChatScreen extends Component {
 
     let config = props.configs[state.station] || {};
     let messages = props.messages.slice(0);
+    
+    // Pending messages get pinned to the bottom of the messages queue.
+    
+    let pendingInRoom = 
+    (this.pendingQueue.has(this.state.station)) 
+    ? this.pendingQueue.get(this.state.station) : [];
+
+    pendingInRoom.map(function(value) {
+      return value.pending = true;
+    })
+
+    messages = messages.concat(pendingInRoom);
 
     let lastMsgNum = (messages.length > 0) ?
       messages[messages.length - 1].num : 0;
@@ -194,23 +208,39 @@ export class ChatScreen extends Component {
     let reversedMessages = messages.reverse();
     let chatMessages = reversedMessages.map((msg, i) => {
       // Render sigil if previous message is not by the same sender
-      let gamAut = ['gam', 'aut'];      
+      let gamAut = ['gam', 'aut'];    
+
+      // Local messages don't have a 'gam' prop, so look for the top level if it doesn't exist.
+      let aut = msg.aut ? msg.aut : null;
+      
+      // No gamAut? Return top level author for the same sender check.
       let renderSigil =
-        _.get(reversedMessages[i + 1], gamAut) !== _.get(msg, gamAut);
+        _.get(reversedMessages[i + 1], gamAut) !== _.get(msg, gamAut, aut);
 
       // More padding top if previous message is not by the same sender
       let paddingTop = renderSigil;
       // More padding bot if next message is not by the same sender
       let paddingBot =
-        _.get(reversedMessages[i - 1], gamAut) !== _.get(msg, gamAut);
+        _.get(reversedMessages[i - 1], gamAut) !== _.get(msg, gamAut, aut);
+
+      // Non-local ships don't have pending props.
+      if (!msg.pending) {
+        var pending = false;
+      }
+
+      // Non-local ships don't have pending props.
+      if (!pending) {
+        var pending = false;
+      }
 
       return (
         <Message
-          key={msg.gam.uid}
-          msg={msg.gam}
+          key={msg.gam ? msg.gam.uid : msg.uid}
+          msg={msg.gam ? msg.gam : msg}
           renderSigil={renderSigil}
           paddingTop={paddingTop}
-          paddingBot={paddingBot} />
+          paddingBot={paddingBot} 
+          pending={!!pending}/>
       );
     });
 
