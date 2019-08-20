@@ -361,7 +361,19 @@
       ;<  ~  bind:m  (display %txt "No such path {<path>}.")
       (pure:m app-state)
     ::
-    ;<  ~  bind:m  (display %tan [(cain snapshot.snapshot.u.p.action) ~])
+    =/  bold=styl  [`%br ~ ~]
+    ::
+    ;<  ~  bind:m
+      %-  display
+      :-  %mor  :~
+        [%klr [[bold 'Path: ' ~] (spat path) ~]]
+        [%klr [[bold 'Type: ' ~] app-type.snapshot.u.p.action ~]]
+        ::  TODO: We should surface ship signed as red, linked as yellow and
+        ::  unlinked as green.
+        ::
+        [%klr [[bold 'Signatures: ' ~] signature-type.snapshot.u.p.action ~]]
+        [%tan [(cain snapshot.snapshot.u.p.action) ~]]
+      ==
     (pure:m app-state)
   ==
 --
