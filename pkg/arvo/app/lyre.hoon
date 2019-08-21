@@ -1,11 +1,35 @@
 /-  *lyre
 /+  *server
+::
+/=  index
+  /^  $-(json manx)
+  /:  /===/app/lyre/index  /!noun/
+::
+/=  js
+  /^  octs
+  /;  as-octs:mimes:html
+  /|  /:  /===/app/lyre/js/index  /js/
+      /~  ~
+  ==
+::
+/=  css
+  /^  octs
+  /;  as-octs:mimes:html
+  /|  /:  /===/app/lyre/css/index  /css/
+      /~  ~
+  ==
+::
 |%
 +$  move  [bone card]
 +$  card
   $%  [%connect wire binding:eyre term]
       [%disconnect wire binding:eyre]
       [%http-response =http-event:http]
+      [%diff diff]
+  ==
+::
++$  diff
+  $%  [%json json]
   ==
 ::
 +$  session
@@ -56,32 +80,55 @@
       %new-session
     =/  new-pax
       ?~  pax.act  /  u.pax.act
-    :-  ~
-    %=  this
-      ses  (snoc ses new-pax)
-      cur  (lent ses)
-    ==
+    =.  this
+      %=  this
+        ses  (snoc ses new-pax)
+        cur  (lent ses)
+      ==
+    [update-primary this]
   ::
       %delete-session
-    :-  ~
-    %=  this
-      ses  (oust [id.act 1] ses)
-      cur  ?:((gte cur id.act) (dec cur) cur)
-    ==
+    =.  this
+      %=  this
+        ses  (oust [id.act 1] ses)
+        cur  ?:((gte cur id.act) (dec cur) cur)
+      ==
+    [update-primary this]
   ::
       %switch-session
     ?>  (lth id.act (lent ses))
-    :-  ~
-    %=  this
-      cur   id.act
-    ==
+    =.  this
+      %=  this
+        cur   id.act
+      ==
+    [update-primary this]
   ::
       %set-path
-    :-  ~
-    %=  this
-      ses   ;:(welp (scag cur ses) [pax.act]~ (slag +(cur) ses))
-    ==
+    =.  this
+      %=  this
+        ses   ;:(welp (scag cur ses) [pax.act]~ (slag +(cur) ses))
+      ==
+    [update-primary this]
   ==
+::
+++  build-session-json
+  ^-  json
+  :-  %a
+  %+  turn  `path`(snag cur ses)
+  |=  seg=@t
+  [%s seg]
+::
+++  update-primary
+  ^-  (list move)
+  %+  turn  (prey:pubsub:userlib /primary bol)
+  |=  [b=bone *]
+  ^-  move
+  [b %diff %json build-session-json]
+::
+++  peer-primary
+  |=  wir=wire
+  ^-  (quip move _this)
+  [update-primary this]
 ::
 ++  bound
   |=  [wir=wire suc=? bin=binding:eyre]
@@ -92,10 +139,27 @@
   %-  (require-authorization:app ost.bol move this)
   |=  =inbound-request:eyre
   ^-  (quip move _this)
-  =/  current-path=path  (snag cur ses)
-  =/  man=manx  ;div: {current-path}
-  :_  this
-  [ost.bol %http-response (manx-response:app man)]~
+  =/  request-line  (parse-request-line url.request.inbound-request)
+  ?+  request-line
+    :_  this
+    [ost.bol %http-response not-found:app]~
+  ::  styling
+  ::
+      [[[~ %css] [%'~lyre' %index ~]] ~]
+    :_  this
+    [ost.bol %http-response (css-response:app css)]~
+  ::  scripting
+  ::
+      [[[~ %js] [%'~lyre' %index ~]] ~]
+    :_  this
+    [ost.bol %http-response (js-response:app js)]~
+  ::  home page; redirect to recent
+  ::
+      [[~ [%'~lyre' ~]] ~]
+    =/  jon=json  build-session-json
+    :_  this
+    [ost.bol %http-response (manx-response:app (index jon))]~
+  ==
 ::
 --
 
