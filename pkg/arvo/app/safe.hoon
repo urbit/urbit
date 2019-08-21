@@ -122,13 +122,19 @@
   ::  we're lacking information, we make a subscription and then try again.
   ::
   ?:  ?=([%& *] e)
-    ~&  [%send-message-blocked-on p.e]
+    ~&  [%send-message-blocked-on p.e path]
     =.  app-state  (enqueue-write host name p.e path msg app-state)
     ::
     (subscribe bowl host name p.e app-state)
+  ::  if the signature request returns ~, we have an invalid path which doesn't
+  ::  exist.
+  ::
+  ?~  p.e
+    ;<  ~  bind:m  (display %txt "No such path {<path>}.")
+    (pure:m app-state)
   ::
   ;<  c-to-s=client-to-server:common  bind:m
-    (async-sign-request our.bowl now.bowl eny.bowl p.e)
+    (async-sign-request our.bowl now.bowl eny.bowl u.p.e)
   ::
   ?:  =(host our.bowl)
     ::  we do the special case where we synchronously call ourselves for
@@ -371,9 +377,11 @@
         (signature-type-request-for path u.community)
       ?:  ?=([%& *] type)
         ['<internal error>' ~]
-      ?-  -.p.type
+      ?~  p.type
+        ['<internal error>' ~]
+      ?-  -.u.p.type
         %ship      [[[~ ~ `%r] (scot %p our.bowl) ~] ~]
-        %linked    [[[~ ~ `%y] (spat route.scope.p.type) ~] ~]
+        %linked    [[[~ ~ `%y] (spat route.scope.u.p.type) ~] ~]
         %unlinked  [[[~ ~ `%g] 'unlinked' ~] ~]
       ==
     ::

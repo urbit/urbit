@@ -191,17 +191,11 @@
 ::
 ++  signature-type-request-for
   |=  [route=path client-state=node]
-  ^-  (each path signature-type-request:common)
+  ^-  (each path (unit signature-type-request:common))
   ::
   =/  root-state  client-state
   ::
-  |^  ^-  (each path signature-type-request:common)
-      =/  result  (search route client-state)
-      ::
-      ?-  -.result
-        %|  [%| (need p.result)]
-        %&  [%& p.result]
-      ==
+  |^  (search route client-state)
   ::  +search: attempts to find the node to operate on.
   ::
   ++  search
@@ -212,10 +206,14 @@
     |-
     ::
     ?^  route
-      ::  if we don't know anything about children.client-state, then
-      ::  subscribe to the parent because we must first learn if it exists.
-      ?~  children-state=(~(get by children.client-state) i.route)
+      ?:  ?=(?(%unsubscribed %pending) subscribed.client-state)
+        ::  if we're unsubscribed, we need to become subscribed
+        ::
         [%& built-route]
+      ::  if we don't know anything about children.client-state despite being
+      ::  subscribed, then this is an invalid node.
+      ?~  children-state=(~(get by children.client-state) i.route)
+        [%| ~]
       ::  update the built-route so we're looking at the child node.
       ::
       =.  built-route  (weld built-route [i.route ~])
@@ -223,6 +221,7 @@
       ::  about it, also block while we look it up.
       ::
       ?~  u.children-state
+        ~&  [%no-u-children i.route]
         [%& built-route]
       ::
       =/  ret-val=(each path (unit signature-type-request:common))
@@ -233,6 +232,7 @@
       ::  if we're blocked, propagate the block
       ::
       ?:  ?=([%& *] ret-val)
+        ~&  [%propagate-block i.route]
         [%& p.ret-val]
       ::
       ?~  p.ret-val
@@ -303,9 +303,6 @@
 ::    instead perform the subscription and retry once it has the requisite
 ::    data.
 ::
-::    TODO: +signature-type-request-for does a +need, but we should really break out
-::    if :subscribed is false on any of the nodes.
-::
 ::    TODO: It feels like a smell that app-map isn't part of a client-state,
 ::    which isn't reflected in the server-state. If we're going to let people
 ::    customize this thing, think about the source code being in the node?
@@ -316,15 +313,21 @@
 ::
 ++  build-signing-request
   |=  [route=path user-event=* client-state=node app-map=(map @t vase)]
-  ^-  (each path signing-request:common)
+  ^-  (each path (unit signing-request:common))
   ::
   =/  root-request  (signature-type-request-for / client-state)
   ?:  ?=([%& *] root-request)
     [%& p.root-request]
   ::
+  ?~  p.root-request
+    [%| ~]
+  ::
   =/  path-request  (signature-type-request-for route client-state)
   ?:  ?=([%& *] path-request)
     [%& p.path-request]
+  ::
+  ?~  p.path-request
+    [%| ~]
   ::
   =/  app-type=@t
     |-
@@ -342,8 +345,9 @@
   =/  user-event=vase       (slam user-event-mold %noun user-event)
   ::
   :*  %|
-      p.root-request
-      p.path-request
+      ~
+      u.p.root-request
+      u.p.path-request
       route
       q.user-event
   ==
