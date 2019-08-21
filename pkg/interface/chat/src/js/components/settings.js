@@ -67,7 +67,7 @@ export class SettingsScreen extends Component {
 
     if (state.host !== `~${window.ship}`) {
       titleText = "Leave Chat"
-      descriptionText = "Leave this chat."
+      descriptionText = "You will no longer have access to this chat."
       buttonText = "-> Leave";
     }
 
