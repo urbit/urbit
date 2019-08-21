@@ -163,7 +163,7 @@ wipeSnapshot shipPath = do
 tryBootFromPill :: FilePath -> FilePath -> Ship -> IO ()
 tryBootFromPill pillPath shipPath ship = do
     wipeSnapshot shipPath
-    with (Pier.booted pillPath shipPath serfFlags ship) $ \(serf, log, ss) -> do
+    with (Pier.booted pillPath shipPath [] ship) $ \(serf, log, ss) -> do
         print "lul"
         print ss
         threadDelay 500000
@@ -176,13 +176,13 @@ tryPlayShip :: FilePath -> IO ()
 tryPlayShip shipPath = do
     runAcquire $ do
         putStrLn "RESUMING SHIP"
-        sls <- Pier.resumed shipPath serfFlags
+        sls <- Pier.resumed shipPath []
         putStrLn "SHIP RESUMED"
         Pier.pier shipPath Nothing sls
 
 tryResume :: FilePath -> IO ()
 tryResume shipPath = do
-    with (Pier.resumed shipPath serfFlags) $ \(serf, log, ss) -> do
+    with (Pier.resumed shipPath []) $ \(serf, log, ss) -> do
         print ss
         threadDelay 500000
         shutdown serf 0 >>= print
@@ -240,20 +240,28 @@ tryParseEvents dir first = do
 
 --------------------------------------------------------------------------------
 
-serfFlags :: Serf.Flags
-serfFlags = [Serf.Hashless, Serf.DryRun] -- [Serf.Verbose, Serf.Trace]
-
-collectedFX :: FilePath -> Acquire ()
-collectedFX top = do
-    log    <- Log.existing (top <> "/.urb/log")
-    serf   <- Serf.run (Serf.Config top serfFlags)
-    liftIO (Serf.collectFX serf log)
-
+{-
+    This runs the serf at `$top/.tmpdir`, but we disable snapshots,
+    so this should never actually be created. We just do this to avoid
+    letting the serf use an existing snapshot.
+-}
 collectAllFx :: FilePath -> IO ()
 collectAllFx top = do
-    wipeSnapshot top
-    with (collectedFX top) $ \() ->
+    putStrLn (pack top)
+    with collectedFX $ \() ->
         putStrLn "[collectAllFx] Done collecting effects!"
+  where
+    tmpDir :: FilePath
+    tmpDir = top <> "/.tmpdir"
+
+    collectedFX :: Acquire ()
+    collectedFX = do
+        log  <- Log.existing (top <> "/.urb/log")
+        serf <- Serf.run (Serf.Config tmpDir serfFlags)
+        liftIO (Serf.collectFX serf log)
+
+    serfFlags :: Serf.Flags
+    serfFlags = [Serf.Hashless, Serf.DryRun]
 
 --------------------------------------------------------------------------------
 
@@ -288,9 +296,10 @@ runShip (CLI.Run pierPath) _ = tryPlayShip pierPath
 
 main :: IO ()
 main = CLI.parseArgs >>= \case
-    CLI.CmdRun r o -> runShip r o
-    CLI.CmdNew n o -> newShip n o
-    CLI.CmdVal pil -> validatePill pil
+    CLI.CmdRun r o                    -> runShip r o
+    CLI.CmdNew n o                    -> newShip n o
+    CLI.CmdBug (CLI.CollectAllFX pax) -> collectAllFx pax
+    CLI.CmdBug (CLI.ValidatePill pax) -> print ("validate-pill", pax)
 
 validatePill :: FilePath -> IO ()
 validatePill = const (pure ())

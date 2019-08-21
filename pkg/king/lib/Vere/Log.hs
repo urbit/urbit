@@ -65,6 +65,7 @@ instance Exception EventLogExn where
 
 rawOpen :: FilePath -> IO Env
 rawOpen dir = do
+    putStrLn $ pack ("PAX: " <> dir)
     env <- mdb_env_create
     mdb_env_set_maxdbs env 3
     mdb_env_set_mapsize env (40 * 1024 * 1024 * 1024)
@@ -94,7 +95,7 @@ open dir = do
     EventLog env m e f id <$> newIORef numEvs
   where
     openTables env =
-      with (openTxn env) $ \txn ->
+      with (writeTxn env) $ \txn ->
         (,,) <$> mdb_dbi_open txn (Just "META")    []
              <*> mdb_dbi_open txn (Just "EVENTS")  [MDB_INTEGERKEY]
              <*> mdb_dbi_open txn (Just "EFFECTS") [MDB_CREATE, MDB_INTEGERKEY]
@@ -119,18 +120,34 @@ new dir id = mkAcquire (create dir id) close
 
 -- Read/Write Log Identity -----------------------------------------------------
 
-openTxn :: Env -> Acquire Txn
-openTxn env = mkAcquire begin commit
+{-
+    A read-only transaction that commits at the end.
+
+    Use this when opening database handles.
+-}
+_openTxn :: Env -> Acquire Txn
+_openTxn env = mkAcquire begin commit
   where
     begin  = mdb_txn_begin env Nothing True
     commit = mdb_txn_commit
 
+{-
+    A read-only transaction that aborts at the end.
+
+    Use this when reading data from already-opened databases.
+-}
 readTxn :: Env -> Acquire Txn
 readTxn env = mkAcquire begin abort
   where
     begin = mdb_txn_begin env Nothing True
     abort = mdb_txn_abort
 
+{-
+    A read-write transaction that commits upon sucessful completion and
+    aborts on exception.
+
+    Use this when reading data from already-opened databases.
+-}
 writeTxn :: Env -> Acquire Txn
 writeTxn env = mkAcquireType begin finalize
   where

@@ -447,21 +447,20 @@ collectFX :: Serf -> Log.EventLog -> IO ()
 collectFX serf log = do
     ss <- handshake serf (Log.identity log)
 
-    let pax = "/home/benjamin/testnet-zod-fx"
-
-    createDirectoryIfMissing True pax
-
     runConduit $  Log.streamEvents log (ssNextEv ss)
                .| toJobs (Log.identity log) (ssNextEv ss)
                .| doCollectFX serf ss
-               .| persistFX pax
+               .| persistFX log
 
-persistFX :: FilePath -> ConduitT (EventId, FX) Void IO ()
-persistFX pax = await >>= \case
-    Nothing        -> pure ()
-    Just (eId, fx) -> do
-        writeFile (pax <> "/" <> show eId) (jamBS $ toNoun fx)
-        persistFX pax
+persistFX :: Log.EventLog -> ConduitT (EventId, FX) Void IO ()
+persistFX log = loop
+  where
+    loop = await >>= \case
+        Nothing        -> pure ()
+        Just (eId, fx) -> do
+            liftIO $ Log.writeEffectsRow log eId (jamBS $ toNoun fx)
+            putStr "."
+            loop
 
 doCollectFX :: Serf -> SerfState -> ConduitT Job (EventId, FX) IO ()
 doCollectFX serf = go
@@ -470,7 +469,7 @@ doCollectFX serf = go
     go ss = await >>= \case
         Nothing -> pure ()
         Just jb -> do
-            jb <- pure $ replaceMug jb (ssLastMug ss)
+            -- jb <- pure $ replaceMug jb (ssLastMug ss)
             (_, ss, fx) <- liftIO (doJob serf jb)
             liftIO $ print (jobId jb)
             yield (jobId jb, fx)

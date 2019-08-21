@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Werror -Wall #-}
 {-# LANGUAGE CPP #-}
 
-module CLI (parseArgs, Cmd(..), New(..), Run(..), Opts(..)) where
+module CLI (parseArgs, Cmd(..), New(..), Run(..), Bug(..), Opts(..)) where
 
 import ClassyPrelude
 import Options.Applicative
@@ -40,10 +40,15 @@ data Run = Run
     }
   deriving (Show)
 
+data Bug
+    = ValidatePill FilePath
+    | CollectAllFX FilePath
+  deriving (Show)
+
 data Cmd
     = CmdNew New Opts
     | CmdRun Run Opts
-    | CmdVal FilePath -- Validate Pill
+    | CmdBug Bug
   deriving (Show)
 
 --------------------------------------------------------------------------------
@@ -177,16 +182,36 @@ opts = do
 
     pure (Opts{..})
 
+newShip :: Parser Cmd
+newShip = CmdNew <$> new <*> opts
+
 runShip :: Parser Cmd
 runShip = do
     rPierPath <- strArgument (metavar "PIER" <> help "Path to pier")
     o         <- opts
     pure (CmdRun (Run{..}) o)
 
-valPill :: Parser Cmd
+valPill :: Parser Bug
 valPill = do
     pillPath <- strArgument (metavar "PILL" <> help "Path to pill")
-    pure (CmdVal pillPath)
+    pure (ValidatePill pillPath)
+
+bugCmd :: Parser Cmd
+bugCmd = fmap CmdBug
+        $ subparser
+        $ command "validate-pill"
+            ( info (valPill <**> helper)
+            $ progDesc "Validate a pill file."
+            )
+       <> command "collect-all-fx"
+            ( info (allFx <**> helper)
+            $ progDesc "Replay entire event log, collecting all effects"
+            )
+
+allFx :: Parser Bug
+allFx = do
+    pier <- strArgument (metavar "PIER" <> help "Path to pier")
+    pure (CollectAllFX pier)
 
 cmd :: Parser Cmd
 cmd = subparser
@@ -196,8 +221,6 @@ cmd = subparser
        <> command "run" ( info (runShip <**> helper)
                         $ progDesc "Run an existing ship."
                         )
-       <> command "val" ( info (valPill <**> helper)
-                        $ progDesc "Validate a pill file."
+       <> command "bug" ( info (bugCmd <**> helper)
+                        $ progDesc "Run a debugging sub-command."
                         )
-  where
-    newShip = CmdNew <$> new <*> opts
