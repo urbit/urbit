@@ -135,7 +135,7 @@ export class Root extends Component {
           render={ (props) => {
             return (
               <Skeleton
-                sidebar={renderDefaultSidebar(props)}>
+                sidebar={renderChannelsSidebar(props)}>
                 <LandingScreen
                   api={api}
                   configs={configs}
