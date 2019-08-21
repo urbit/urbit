@@ -2076,10 +2076,10 @@
     ++  ap-silent-delete
       ^+  ap-core
       ::
-      ?~  incoming=(~(get by incoming.subscribers.current-agent) agent-bone)
+      ?~  (~(get by incoming.subscribers.current-agent) agent-bone)
         ap-core
       ::
-      =.  incoming  (~(del by incoming.subscribers.current-agent) agent-bone)
+      =/  incoming  (~(del by incoming.subscribers.current-agent) agent-bone)
       =/  meter  (~(del by meter.subscribers.current-agent) agent-bone)
       %_  ap-core
         incoming.subscribers.current-agent  incoming
