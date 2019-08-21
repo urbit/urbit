@@ -1462,52 +1462,53 @@
   ::  make moves to call %serve for each collection
   ::
   =/  out=[mow=(list move) sob=soba:clay]
-  %+  roll  ~(tap by dir)
-  |=  [[pax=path fil=publish-file] mow=(list move) sob=soba:clay]
-  =/  mis=miso:clay
-    (feel:space:userlib (weld our-beak pax) -.fil !>(+.fil))
-  ?+  pax
-    [mow sob]
+    %+  roll  ~(tap by dir)
+    |=  [[pax=path fil=publish-file] mow=(list move) sob=soba:clay]
+    =/  mis=miso:clay
+      (feel:space:userlib (weld our-beak pax) -.fil !>(+.fil))
+    ?+  pax
+      [mow sob]
+    ::
+        [%web %publish * %publish-info ~]
+      =/  col=@tas  &3.pax
+      =/  wir=wire  /collection/[col]
+      =/  schema=schematic:ford
+        :*  %bake
+            %publish-info
+            *coin
+            [[our.bol q.byk.bol] /[col]/publish/web]
+        ==
+      :-  [[ost.bol %build wir %.y schema] mow]
+      [[pax mis] sob]
+    ::
+        [%web %publish * * %udon ~]
+      =/  col=@tas  &3.pax
+      =/  pos=@tas  &4.pax
+      =/  post-wir=wire  /post/[col]/[pos]
+      =/  post-schema=schematic:ford
+        :*  %bake
+            %publish-post
+            *coin
+            [[our.bol q.byk.bol] /[pos]/[col]/publish/web]
+        ==
+      =/  comment-wir=wire  /comments/[col]/[pos]
+      =/  comment-schema=schematic:ford
+        :*  %bake
+            %publish-comments
+            *coin
+            [[our.bol q.byk.bol] /[pos]/[col]/publish/web]
+        ==
+      :-  :+  [ost.bol %build post-wir %.y post-schema]
+              [ost.bol %build comment-wir %.y comment-schema]
+              mow
+      [[pax mis] sob]
+    ::
+        [%web %publish * * * %publish-comment ~]
+      :-  mow
+      [[pax mis] sob]
+    ::
+    ==
   ::
-      [%web %publish * %publish-info ~]
-    =/  col=@tas  &3.pax
-    =/  wir=wire  /collection/[col]
-    =/  schema=schematic:ford
-      :*  %bake
-          %publish-info
-          *coin
-          [[our.bol q.byk.bol] /[col]/publish/web]
-      ==
-    :-  [[ost.bol %build wir %.y schema] mow]
-    [[pax mis] sob]
-  ::
-      [%web %publish * * %udon ~]
-    =/  col=@tas  &3.pax
-    =/  pos=@tas  &4.pax
-    =/  post-wir=wire  /post/[col]/[pos]
-    =/  post-schema=schematic:ford
-      :*  %bake
-          %publish-post
-          *coin
-          [[our.bol q.byk.bol] /[pos]/[col]/publish/web]
-      ==
-    =/  comment-wir=wire  /comments/[col]/[pos]
-    =/  comment-schema=schematic:ford
-      :*  %bake
-          %publish-comments
-          *coin
-          [[our.bol q.byk.bol] /[pos]/[col]/publish/web]
-      ==
-    :-  :+  [ost.bol %build post-wir %.y post-schema]
-            [ost.bol %build comment-wir %.y comment-schema]
-            mow
-    [[pax mis] sob]
-  ::
-      [%web %publish * * * %publish-comment ~]
-    :-  mow
-    [[pax mis] sob]
-  ::
-  ==
   =/  tor=toro:clay
     [q.byk.bol %.y sob.out]
   :_  this
