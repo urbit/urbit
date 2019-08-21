@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -O2 #-}
+
 module Noun.Jam (jam, jamBS) where
 
 import ClassyPrelude hiding (hash)

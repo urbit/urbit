@@ -41,8 +41,14 @@ data Run = Run
   deriving (Show)
 
 data Bug
-    = ValidatePill FilePath
-    | CollectAllFX FilePath
+    = ValidatePill
+        { bPillPath :: FilePath
+        , bPrintPil :: Bool
+        , bPrintSeq :: Bool
+        }
+    | CollectAllFX
+        { bPierPath :: FilePath
+        }
   deriving (Show)
 
 data Cmd
@@ -193,8 +199,15 @@ runShip = do
 
 valPill :: Parser Bug
 valPill = do
-    pillPath <- strArgument (metavar "PILL" <> help "Path to pill")
-    pure (ValidatePill pillPath)
+    bPillPath <- strArgument (metavar "PILL" <> help "Path to pill")
+
+    bPrintPil <- switch $ long "print-pill"
+                       <> help "Print pill"
+
+    bPrintSeq <- switch $ long "print-boot"
+                       <> help "Print boot sequence"
+
+    pure ValidatePill{..}
 
 bugCmd :: Parser Cmd
 bugCmd = fmap CmdBug
@@ -210,8 +223,8 @@ bugCmd = fmap CmdBug
 
 allFx :: Parser Bug
 allFx = do
-    pier <- strArgument (metavar "PIER" <> help "Path to pier")
-    pure (CollectAllFX pier)
+    bPierPath <- strArgument (metavar "PIER" <> help "Path to pier")
+    pure CollectAllFX{..}
 
 cmd :: Parser Cmd
 cmd = subparser

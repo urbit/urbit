@@ -111,10 +111,10 @@ import Options.Applicative
 import Options.Applicative.Help.Pretty
 
 import Arvo
-import Control.Exception hiding (evaluate)
+import Control.Exception hiding (evaluate, throwIO)
 import Data.Acquire
 import Data.Conduit
-import Data.Conduit.List hiding (replicate)
+import Data.Conduit.List hiding (replicate, take)
 import Noun hiding (Parser)
 import Vere.Pier
 import Vere.Pier.Types
@@ -285,6 +285,70 @@ tryDoStuff shipPath = runInBoundThread $ do
 
     pure ()
 
+--------------------------------------------------------------------------------
+
+{-
+    Interesting
+-}
+testPill :: FilePath -> Bool -> Bool -> IO ()
+testPill pax showPil showSeq = do
+  putStrLn "Reading pill file."
+  pillBytes <- readFile pax
+
+  putStrLn "Cueing pill file."
+  pillNoun <- cueBS pillBytes & either throwIO pure
+
+  putStrLn "Parsing pill file."
+  pill <- fromNounErr pillNoun & either (throwIO . uncurry ParseErr) pure
+
+  putStrLn "Using pill to generate boot sequence."
+  bootSeq <- generateBootSeq zod pill
+
+  putStrLn "Validate jam/cue and toNoun/fromNoun on pill value"
+  reJam <- validateNounVal pill
+
+  putStrLn "Checking if round-trip matches input file:"
+  unless (reJam == pillBytes) $ do
+    putStrLn "    Our jam does not match the file...\n"
+    putStrLn "    This is surprising, but it is probably okay."
+
+  when showPil $ do
+      putStrLn "\n\n== Pill ==\n"
+      pPrint pill
+
+  when showSeq $ do
+      putStrLn "\n\n== Boot Sequence ==\n"
+      pPrint bootSeq
+
+validateNounVal :: (Eq a, ToNoun a, FromNoun a) => a -> IO ByteString
+validateNounVal inpVal = do
+    putStrLn "  jam"
+    inpByt <- evaluate $ jamBS $ toNoun inpVal
+
+    putStrLn "  cue"
+    outNon <- cueBS inpByt & either throwIO pure
+
+    putStrLn "  fromNoun"
+    outVal <- fromNounErr outNon & either (throwIO . uncurry ParseErr) pure
+
+    putStrLn "  toNoun"
+    outNon <- evaluate (toNoun outVal)
+
+    putStrLn "  jam"
+    outByt <- evaluate $ jamBS outNon
+
+    putStrLn "Checking if: x == cue (jam x)"
+    unless (inpVal == outVal) $
+        error "Value fails test: x == cue (jam x)"
+
+    putStrLn "Checking if: jam x == jam (cue (jam x))"
+    unless (inpByt == outByt) $
+        error "Value fails test: jam x == jam (cue (jam x))"
+
+    pure outByt
+
+--------------------------------------------------------------------------------
+
 newShip :: CLI.New -> CLI.Opts -> IO ()
 newShip CLI.New{..} _ = do
     tryBootFromPill nPillPath pierPath (Ship 0)
@@ -296,10 +360,10 @@ runShip (CLI.Run pierPath) _ = tryPlayShip pierPath
 
 main :: IO ()
 main = CLI.parseArgs >>= \case
-    CLI.CmdRun r o                    -> runShip r o
-    CLI.CmdNew n o                    -> newShip n o
-    CLI.CmdBug (CLI.CollectAllFX pax) -> collectAllFx pax
-    CLI.CmdBug (CLI.ValidatePill pax) -> print ("validate-pill", pax)
+    CLI.CmdRun r o                            -> runShip r o
+    CLI.CmdNew n o                            -> newShip n o
+    CLI.CmdBug (CLI.CollectAllFX pax)         -> collectAllFx pax
+    CLI.CmdBug (CLI.ValidatePill pax pil seq) -> testPill pax pil seq
 
 validatePill :: FilePath -> IO ()
 validatePill = const (pure ())

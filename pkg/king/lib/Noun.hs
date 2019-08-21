@@ -9,6 +9,7 @@ module Noun
     , module Noun.Tank
     , module Noun.TH
     , _Cue
+    , LoadErr(..)
     , loadFile
     ) where
 
@@ -33,15 +34,17 @@ _Cue = prism' jamBS (eitherToMaybe . cueBS)
     eitherToMaybe (Left _)  = Nothing
     eitherToMaybe (Right x) = Just x
 
-data LoadErr = CueErr DecodeErr
-             | ParseErr [Text] Text
-  deriving (Eq, Ord, Show)
+data LoadErr
+    = FileErr IOException
+    | CueErr DecodeErr
+    | ParseErr [Text] Text
+  deriving (Show)
+
+instance Exception LoadErr
 
 loadFile :: ∀a. FromNoun a => FilePath -> IO (Either LoadErr a)
-loadFile pax = do
-    bs <- readFile pax
-    case cueBS bs of
-      Left e  -> pure $ Left (CueErr e)
-      Right n -> case fromNounErr n of
-                   Left (p,e) -> pure $ Left (ParseErr p e)
-                   Right x    -> pure $ Right x
+loadFile pax = try $ do
+    byt <- try (readFile pax) >>= either (throwIO . FileErr) pure
+    non <- cueBS byt & either (throwIO . CueErr) pure
+    res <- fromNounErr non & either (throwIO . uncurry ParseErr) pure
+    pure res

@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -O2 #-}
+
 module Noun.Cue (cue, cueExn, cueBS, cueBSExn, DecodeErr) where
 
 import ClassyPrelude

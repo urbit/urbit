@@ -1,6 +1,8 @@
 {-# OPTIONS_GHC -Wwarn #-}
 
-module Vere.Pier (booted, resumed, pier, runPersist, runCompute) where
+module Vere.Pier
+  ( booted, resumed, pier, runPersist, runCompute, generateBootSeq
+  ) where
 
 import UrbitPrelude
 
@@ -77,9 +79,7 @@ booted :: FilePath -> FilePath -> Serf.Flags -> Ship
 booted pillPath pierPath flags ship = do
   putStrLn "LOADING PILL"
 
-  pill <- liftIO $ loadFile @Pill pillPath >>= \case
-            Left l  -> error (show l) -- TODO Throw a real exception.
-            Right p -> pure p
+  pill <- liftIO (loadFile pillPath >>= either throwIO pure)
 
   putStrLn "PILL LOADED"
 
