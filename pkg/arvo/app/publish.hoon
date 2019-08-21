@@ -73,6 +73,7 @@
       [%publish-collection collection]
       [%publish-rumor rumor]
       [%publish-update update]
+      [%export %publish-v0 publish-dir]
   ==
 ::
 --
@@ -1451,6 +1452,94 @@
   :~  invites+(numb:enjs:format ~(wyt by invites.sat))
       new+(numb:enjs:format ~(wyt in unread.sat))
   ==
+::
+++  poke-import
+  |=  i=*
+  ^-  (quip move _this)
+  ?>  ?=([%publish-v0 *] i)
+  =/  dir=publish-dir  ;;(publish-dir +.i)
+  ::  make moves to save all files to clay, and
+  ::  make moves to call %serve for each collection
+  ::
+  =/  out=[mow=(list move) sob=soba:clay]
+  %+  roll  ~(tap by dir)
+  |=  [[pax=path fil=publish-file] mow=(list move) sob=soba:clay]
+  =/  mis=miso:clay
+    (feel:space:userlib (weld our-beak pax) -.fil !>(+.fil))
+  ?+  pax
+    [mow sob]
+  ::
+      [%web %publish * %publish-info ~]
+    =/  col=@tas  &3.pax
+    =/  wir=wire  /collection/[col]
+    =/  schema=schematic:ford
+      :*  %bake
+          %publish-info
+          *coin
+          [[our.bol q.byk.bol] /[col]/publish/web]
+      ==
+    :-  [[ost.bol %build wir %.y schema] mow]
+    [[pax mis] sob]
+  ::
+      [%web %publish * * %udon ~]
+    =/  col=@tas  &3.pax
+    =/  pos=@tas  &4.pax
+    =/  post-wir=wire  /post/[col]/[pos]
+    =/  post-schema=schematic:ford
+      :*  %bake
+          %publish-post
+          *coin
+          [[our.bol q.byk.bol] /[pos]/[col]/publish/web]
+      ==
+    =/  comment-wir=wire  /comments/[col]/[pos]
+    =/  comment-schema=schematic:ford
+      :*  %bake
+          %publish-comments
+          *coin
+          [[our.bol q.byk.bol] /[pos]/[col]/publish/web]
+      ==
+    :-  :+  [ost.bol %build post-wir %.y post-schema]
+            [ost.bol %build comment-wir %.y comment-schema]
+            mow
+    [[pax mis] sob]
+  ::
+      [%web %publish * * * %publish-comment ~]
+    :-  mow
+    [[pax mis] sob]
+  ::
+  ==
+  =/  tor=toro:clay
+    [q.byk.bol %.y sob.out]
+  :_  this
+  [[ost.bol %info /import tor] mow.out]
+::
+++  peer-export
+  |=  pax=path
+  ^-  (quip move _this)
+  =/  pal=(list path)  .^((list path) %ct (weld our-beak /web/publish))
+  ::
+  =/  dir=publish-dir
+  %+  roll  pal
+  |=  [pax=path out=publish-dir]
+  ^-  publish-dir
+  ?+  pax
+    out
+  ::
+      [%web %publish * %publish-info ~]
+    =/  fil=collection-info  .^(collection-info %cx (welp our-beak pax))
+    (~(put by out) pax [%publish-info fil])
+  ::
+      [%web %publish * * %udon ~]
+    =/  fil=@t  .^(@t %cx (welp our-beak pax))
+    (~(put by out) pax [%udon fil])
+  ::
+      [%web %publish * * * %publish-comment ~]
+    =/  fil=comment  .^(comment %cx (welp our-beak pax))
+    (~(put by out) pax [%publish-comment fil])
+  ==
+  ::
+  :_  this
+  [ost.bol %diff %export %publish-v0 dir]~
 ::
 ++  peer-publishtile
   |=  wir=wire
