@@ -3,9 +3,8 @@
 |%
 +$  move  [bone card]
 +$  card
-  $%  [%diff [%noun group-diff]]
+  $%  [%diff [%group-update group-update]]
       [%quit ~]
-      ::[%pull wire dock ~]
   ==
 +$  state
   $%  [%0 state-zero]
@@ -32,9 +31,7 @@
   ^-  (unit (unit [%noun (unit group)]))
   ?~  pax
     [~ ~ %noun ~]
-  =/  group-path=(list @tas)  (limo pax)
-  =.  group-path  ?^(group-path t.group-path ~)
-  =/  grp=(unit group)  (~(get by groups) group-path)
+  =/  grp=(unit group)  (~(get by groups) pax)
   [~ ~ %noun grp]
 ::
 ++  peer-all
@@ -48,7 +45,7 @@
   ^-  (quip move _this)
   ::  we send the list of keys then send events when they change
   :_  this
-  [ost.bol %diff %noun [%keys ~(key by groups)]]~
+  [ost.bol %diff %group-update [%keys ~(key by groups)]]~
 ::
 ++  peer-group
   |=  pax=path
@@ -57,7 +54,7 @@
   ?~  grp
     [[ost.bol %quit ~]~ this]
   :_  this
-  [ost.bol %diff %noun [%path u.grp pax]]~
+  [ost.bol %diff %group-update [%path u.grp pax]]~
 ::
 ++  poke-noun
   |=  cmd=cord
@@ -137,16 +134,22 @@
 ++  send-diff
   |=  [pax=path action=group-action]
   ^-  (list move)
-  ::  TODO: if bundle or unbundle, send an update to keys
-  %+  weld
+  ;:  weld
     ^-  (list move)
     %+  turn  (prey:pubsub:userlib /all bol)
     |=  [=bone *]
-    [bone %diff %noun action]
-  ^-  (list move)
-  %+  turn  (prey:pubsub:userlib [%groups pax] bol)
-  |=  [=bone *]
-  [bone %diff %noun action]
+    [bone %diff %group-update action]
+    ^-  (list move)
+    %+  turn  (prey:pubsub:userlib [%group pax] bol)
+    |=  [=bone *]
+    [bone %diff %group-update action]
+    ^-  (list move)
+    ?.  |(=(%bundle -.action) =(%unbundle -.action))
+      ~
+    %+  turn  (prey:pubsub:userlib /keys bol)
+    |=  [=bone *]
+    [bone %diff %group-update action]
+  ==
 ::
 --
 

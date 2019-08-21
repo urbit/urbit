@@ -95,18 +95,12 @@
       [%home %weather]
   ==
   :~  [%home %lens]
-      [%home %acme]
-      [%home %dns]
       [%home %dojo]
       [%home %hall]
       [%home %talk]
-      [%home %modulo]
-      [%home %launch]
-      [%home %chat]
-      [%home %publish]
-      [%home %clock]
-      [%home %weather]
-      [%home %azimuth-tracker]
+      [%home %groups]
+      [%home %group-sync]
+      [%home %ex-group]
   ==
 ::
 ++  deft-fish                                           ::  default connects
