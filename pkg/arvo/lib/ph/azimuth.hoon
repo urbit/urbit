@@ -288,7 +288,7 @@
       ~
     ?:  ?=(%czar (clan:title ship))
       [a-point]~
-    [a-point $(who who.sponsor:(need net.a-point))]
+    [a-point $(who ship)]
   =/  =seed:able:jael
     ?^  seed
       u.seed
