@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Route, Link } from "react-router-dom";
 import classnames from 'classnames';
 import _ from 'lodash';
 
@@ -107,10 +107,13 @@ export class Root extends Component {
             return (
               <Skeleton
                 sidebar={renderChannelsSidebar(props)}>
-                <div className="w-100 h-100 fr" style={{ flexGrow: 1 }}>
-                  <div className="dt w-100 h-100">
-                    <div className="dtc center v-mid w-100 h-100 bg-white">
-                    </div>
+                <div className="h-100 w-100 overflow-x-hidden flex flex-column">
+                  <div className="pl3 pr3 pt2 pb3">
+                    <h2>Home</h2>
+                    <p className="body-regular-400 pt3">
+                      Select a chat from the sidebar
+                      or <Link to="/~chat/new">create a new one</Link>.
+                    </p>
                   </div>
                 </div>
               </Skeleton>

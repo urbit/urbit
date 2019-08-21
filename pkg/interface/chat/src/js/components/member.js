@@ -83,7 +83,7 @@ export class MemberScreen extends Component {
     );
 
 
-    let inviteButtonClasses = "label-regular black btn-font pointer";
+    let inviteButtonClasses = "label-regular black underline btn-font pointer";
     if (!this.state.error) {
       inviteButtonClasses = inviteButtonClasses + ' black';
     }
