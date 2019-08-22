@@ -16,6 +16,11 @@
                             (status < 400) ? "moved" :
                             (status < 500) ? "missing" :
                             "hosed";
+
+    TODO This uses `W.openFreePort` to find a free port, but I actually
+         want to mimick the old kings behavior and try 8080, then 8081,
+         etc. I think I'll have to reimplement a varianet of
+         `openFreePort` myself, but this will work for now.
 -}
 
 module Vere.Http.Server where
@@ -380,25 +385,32 @@ startServ pierPath conf plan = do
   sId <- ServId . UV . fromIntegral <$> (randomIO :: IO Word32)
   liv <- newTVarIO emptyLiveReqs
 
-  let httpPort  = 8080  -- 80 if real ship
-      httpsPort = 8443  -- 443 if real ship
-      loopPort  = 12321 -- 443 if real ship
+  (httpPortInt,  httpSock)  <- W.openFreePort -- 8080  -- 80 if real ship
+  (httpsPortInt, httpsSock) <- W.openFreePort -- 8443  -- 443 if real ship
+  (loopPortInt,  loopSock)  <- W.openFreePort -- 12321 -- ??? if real ship
 
-      loopOpts  = W.defaultSettings & W.setPort (fromIntegral loopPort)
+  let httpPort  = Port (fromIntegral httpPortInt)
+      httpsPort = Port (fromIntegral httpsPortInt)
+      loopPort  = Port (fromIntegral loopPortInt)
+
+  let loopOpts  = W.defaultSettings & W.setPort (fromIntegral loopPort)
                                     & W.setHost "127.0.0.1"
                                     & W.setTimeout (5 * 60)
       httpOpts  = W.defaultSettings & W.setPort (fromIntegral httpPort)
       httpsOpts = W.defaultSettings & W.setPort (fromIntegral httpsPort)
 
   putStrLn "Starting loopback server"
-  loopTid  <- async $ W.runSettings loopOpts $ app sId liv plan Loopback
+  loopTid  <- async $ W.runSettingsSocket loopOpts loopSock
+                    $ app sId liv plan Loopback
 
   putStrLn "Starting HTTP server"
-  httpTid  <- async $ W.runSettings httpOpts $ app sId liv plan Insecure
+  httpTid  <- async $ W.runSettingsSocket httpOpts httpSock
+                    $ app sId liv plan Insecure
 
   putStrLn "Starting HTTPS server"
   httpsTid <- for tls $ \tlsOpts ->
-                async $ W.runTLS tlsOpts httpsOpts $ app sId liv plan Secure
+                async $ W.runTLSSocket tlsOpts httpsOpts httpsSock
+                      $ app sId liv plan Secure
 
   let por = Ports (tls <&> const httpsPort) httpPort loopPort
       fil = pierPath <> "/.http.ports"
