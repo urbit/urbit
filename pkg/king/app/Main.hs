@@ -195,8 +195,8 @@ tryFullReplay shipPath = do
 
 --------------------------------------------------------------------------------
 
-tryParseEvents :: FilePath -> EventId -> IO ()
-tryParseEvents dir first = do
+checkEvs :: FilePath -> Word64 -> IO ()
+checkEvs pier first = do
     vPax <- newIORef []
     with (Log.existing dir) $ \log -> do
         let ident = Log.identity log
@@ -206,16 +206,20 @@ tryParseEvents dir first = do
     paths <- sort . ordNub <$> readIORef vPax
     for_ paths print
   where
+    dir :: FilePath
+    dir = pier <> "/.urb/log"
+
     showEvents :: IORef [Path] -> EventId -> EventId
                -> ConduitT ByteString Void IO ()
     showEvents vPax eId cycle = await >>= \case
-      Nothing -> print "Done!"
+      Nothing -> print "Everything checks out."
       Just bs -> do
           -- print ("got event", eId)
           n <- liftIO $ cueBSExn bs
           -- print ("done cue", eId)
           when (eId <= cycle) $ do
-              putStrLn ("[tryParseEvents] lifecycle nock: " <> tshow eId)
+              -- putStrLn ("[tryParseEvents] lifecycle nock: " <> tshow eId)
+              pure ()
           when (eId > cycle) $ liftIO $ do
               (mug, wen, evNoun) <- unpackJob n
               case fromNounErr evNoun of
@@ -361,6 +365,8 @@ main = CLI.parseArgs >>= \case
     CLI.CmdNew n o                            -> newShip n o
     CLI.CmdBug (CLI.CollectAllFX pax)         -> collectAllFx pax
     CLI.CmdBug (CLI.ValidatePill pax pil seq) -> testPill pax pil seq
+    CLI.CmdBug (CLI.ValidateFX pax)           -> print "validate-fx"
+    CLI.CmdBug (CLI.ValidateEvents pax start) -> checkEvs pax start
 
 validatePill :: FilePath -> IO ()
 validatePill = const (pure ())

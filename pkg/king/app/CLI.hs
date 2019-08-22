@@ -49,6 +49,13 @@ data Bug
     | CollectAllFX
         { bPierPath :: FilePath
         }
+    | ValidateEvents
+        { bPierPath :: FilePath
+        , bFirstEvt :: Word64
+        }
+    | ValidateFX
+        { bPierPath :: FilePath
+        }
   deriving (Show)
 
 data Cmd
@@ -209,6 +216,17 @@ valPill = do
 
     pure ValidatePill{..}
 
+checkEvs :: Parser Bug
+checkEvs = do
+  bPierPath <- strArgument (metavar "PIER" <> help "Path to pier")
+
+  bFirstEvt <- option auto $ long "start"
+                          <> metavar "FST"
+                          <> help "starting from event FST"
+                          <> value 1
+
+  pure ValidateEvents{..}
+
 bugCmd :: Parser Cmd
 bugCmd = fmap CmdBug
         $ subparser
@@ -219,6 +237,10 @@ bugCmd = fmap CmdBug
        <> command "collect-all-fx"
             ( info (allFx <**> helper)
             $ progDesc "Replay entire event log, collecting all effects"
+            )
+       <> command "validate-events"
+            ( info (checkEvs <**> helper)
+            $ progDesc "Parse all data in event log"
             )
 
 allFx :: Parser Bug
