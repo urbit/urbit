@@ -52,9 +52,12 @@ data Bug
     | ValidateEvents
         { bPierPath :: FilePath
         , bFirstEvt :: Word64
+        , bFinalEvt :: Word64
         }
     | ValidateFX
         { bPierPath :: FilePath
+        , bFirstEvt :: Word64
+        , bFinalEvt :: Word64
         }
   deriving (Show)
 
@@ -216,16 +219,26 @@ valPill = do
 
     pure ValidatePill{..}
 
+pierPath :: Parser FilePath
+pierPath = strArgument (metavar "PIER" <> help "Path to pier")
+
+firstEv :: Parser Word64
+firstEv = option auto $ long "first"
+                     <> metavar "FST"
+                     <> help "starting from event FST"
+                     <> value 1
+
+lastEv :: Parser Word64
+lastEv = option auto $ long "last"
+                    <> metavar "LAS"
+                    <> help "anding with event LAS"
+                    <> value maxBound
+
 checkEvs :: Parser Bug
-checkEvs = do
-  bPierPath <- strArgument (metavar "PIER" <> help "Path to pier")
+checkEvs = ValidateEvents <$> pierPath <*> firstEv <*> lastEv
 
-  bFirstEvt <- option auto $ long "start"
-                          <> metavar "FST"
-                          <> help "starting from event FST"
-                          <> value 1
-
-  pure ValidateEvents{..}
+checkFx :: Parser Bug
+checkFx = ValidateFX <$> pierPath <*> firstEv <*> lastEv
 
 bugCmd :: Parser Cmd
 bugCmd = fmap CmdBug
@@ -240,6 +253,10 @@ bugCmd = fmap CmdBug
             )
        <> command "validate-events"
             ( info (checkEvs <**> helper)
+            $ progDesc "Parse all data in event log"
+            )
+       <> command "validate-effects"
+            ( info (checkFx <**> helper)
             $ progDesc "Parse all data in event log"
             )
 

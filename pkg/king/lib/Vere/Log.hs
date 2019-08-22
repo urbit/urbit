@@ -254,7 +254,7 @@ streamEvents log first = do
         streamEvents log (first + word (length batch))
 
 streamEffectsRows :: EventLog -> EventId
-              -> ConduitT () (Word64, ByteString) IO ()
+                  -> ConduitT () (Word64, ByteString) IO ()
 streamEffectsRows log = go
   where
     go next = do

@@ -195,49 +195,29 @@ tryFullReplay shipPath = do
 
 --------------------------------------------------------------------------------
 
-checkEvs :: FilePath -> Word64 -> IO ()
-checkEvs pier first = do
-    vPax <- newIORef []
-    with (Log.existing dir) $ \log -> do
+checkEvs :: FilePath -> Word64 -> Word64 -> IO ()
+checkEvs pierPath first last = do
+    with (Log.existing logPath) $ \log -> do
         let ident = Log.identity log
         print ident
         runConduit $ Log.streamEvents log first
-                  .| showEvents vPax first (fromIntegral $ lifecycleLen ident)
-    paths <- sort . ordNub <$> readIORef vPax
-    for_ paths print
+                  .| showEvents first (fromIntegral $ lifecycleLen ident)
   where
-    dir :: FilePath
-    dir = pier <> "/.urb/log"
+    logPath :: FilePath
+    logPath = pierPath <> "/.urb/log"
 
-    showEvents :: IORef [Path] -> EventId -> EventId
-               -> ConduitT ByteString Void IO ()
-    showEvents vPax eId cycle = await >>= \case
-      Nothing -> print "Everything checks out."
-      Just bs -> do
-          -- print ("got event", eId)
-          n <- liftIO $ cueBSExn bs
-          -- print ("done cue", eId)
-          when (eId <= cycle) $ do
-              -- putStrLn ("[tryParseEvents] lifecycle nock: " <> tshow eId)
-              pure ()
-          when (eId > cycle) $ liftIO $ do
-              (mug, wen, evNoun) <- unpackJob n
-              case fromNounErr evNoun of
-                  Left err -> liftIO $ do
-                      -- pPrint err
-                      -- pPrint evNoun
-                      print err
-                  Right (ev :: Ev) -> do
-                      -- print ev
-                      pure ()
-                      -- pPrint ev
-                      -- paths <- readIORef vPax
-                      -- let pax = case ev of Ovum pax _ -> pax
-                      -- writeIORef vPax (pax:paths)
-                      -- print ("done from noun", eId)
-                      -- print (Job eId mug $ DateOvum date ev)
-          -- unless (eId - first > 1000) $
-          showEvents vPax (succ eId) cycle
+    showEvents :: EventId -> EventId -> ConduitT ByteString Void IO ()
+    showEvents eId _ | eId > last = pure ()
+    showEvents eId cycle          =
+        await >>= \case
+            Nothing -> print "Everything checks out."
+            Just bs -> do
+                liftIO $ do
+                    n <- cueBSExn bs
+                    when (eId > cycle) $ do
+                        (mug, wen, evNoun) <- unpackJob n
+                        fromNounErr evNoun & either print pure
+                showEvents (succ eId) cycle
 
     unpackJob :: Noun -> IO (Mug, Wen, Noun)
     unpackJob n = fromNounExn n
@@ -273,12 +253,6 @@ tryDoStuff :: FilePath -> IO ()
 tryDoStuff shipPath = runInBoundThread $ do
     let pillPath = "/home/benjamin/r/urbit/bin/solid.pill"
         ship     = zod
-
-    -- tryParseEvents "/home/benjamin/r/urbit/s/zod/.urb/log" 1
-    -- tryParseEvents "/home/benjamin/r/urbit/s/testnet-zod/.urb/log" 1
-
-    -- tryParseFX "/home/benjamin/zod-fx"         1 100000000
-    -- tryParseFX "/home/benjamin/testnet-zod-fx" 1 100000000
 
     -- tryResume shipPath
     tryPlayShip shipPath
@@ -361,34 +335,36 @@ runShip (CLI.Run pierPath) _ = tryPlayShip pierPath
 
 main :: IO ()
 main = CLI.parseArgs >>= \case
-    CLI.CmdRun r o                            -> runShip r o
-    CLI.CmdNew n o                            -> newShip n o
-    CLI.CmdBug (CLI.CollectAllFX pax)         -> collectAllFx pax
-    CLI.CmdBug (CLI.ValidatePill pax pil seq) -> testPill pax pil seq
-    CLI.CmdBug (CLI.ValidateFX pax)           -> print "validate-fx"
-    CLI.CmdBug (CLI.ValidateEvents pax start) -> checkEvs pax start
+    CLI.CmdRun r o                             -> runShip r o
+    CLI.CmdNew n o                             -> newShip n o
+    CLI.CmdBug (CLI.CollectAllFX pax)          -> collectAllFx pax
+    CLI.CmdBug (CLI.ValidatePill pax pil seq)  -> testPill pax pil seq
+    CLI.CmdBug (CLI.ValidateEvents pax f l)    -> checkEvs pax f l
+    CLI.CmdBug (CLI.ValidateFX pax f l)        -> checkFx  pax f l
+
+    -- tryParseFX "/home/benjamin/zod-fx"         1 100000000
+    -- tryParseFX "/home/benjamin/testnet-zod-fx" 1 100000000
 
 validatePill :: FilePath -> IO ()
 validatePill = const (pure ())
 
 --------------------------------------------------------------------------------
 
-tryParseFX :: FilePath -> Word -> Word -> IO ()
-tryParseFX pax first last =
-  runConduit $ streamFX pax first last
-            .| tryParseFXStream
-
-streamFX :: FilePath -> Word -> Word -> ConduitT () ByteString IO ()
-streamFX dir first last = loop first
+checkFx :: FilePath -> Word64 -> Word64 -> IO ()
+checkFx pierPath first last =
+    with (Log.existing logPath) $ \log ->
+        runConduit $ streamFX log first last
+                  .| tryParseFXStream
   where
-    loop n = do
-      -- when (n `mod` 1000 == 0) $ do
-        -- print n
-      let fil = dir <> "/" <> show n
-      exists <- liftIO (doesFileExist fil)
-      when (exists && n <= last) $ do
-          liftIO (readFile fil) >>= yield
-          loop (n+1)
+    logPath = pierPath <> "/.urb/log"
+
+streamFX :: Log.EventLog -> Word64 -> Word64 -> ConduitT () ByteString IO ()
+streamFX log first last = do
+    Log.streamEffectsRows log first .| loop
+  where
+    loop = await >>= \case Nothing                     -> pure ()
+                           Just (eId, bs) | eId > last -> pure ()
+                           Just (eId, bs)              -> yield bs >> loop
 
 tryParseFXStream :: ConduitT ByteString Void IO ()
 tryParseFXStream = loop 0 (mempty :: Set (Text, Noun))
@@ -409,15 +385,15 @@ tryParseFXStream = loop 0 (mempty :: Set (Text, Noun))
                           -- $ fx <&> \(Effect p v) -> (getTag v, toNoun p)
               loop errors pax
 
--- getTag :: Effect -> Text
--- getTag fx =
-  -- let n = toNoun fx
-  -- in case n of
-       -- A _   -> maybe "ERR" unCord (fromNoun n)
-       -- C h _ -> maybe "ERR" unCord (fromNoun h)
-
 
 {-
+getTag :: Effect -> Text
+getTag fx =
+  let n = toNoun fx
+  in case n of
+       A _   -> maybe "ERR" unCord (fromNoun n)
+       C h _ -> maybe "ERR" unCord (fromNoun h)
+
 tryCopyLog :: IO ()
 tryCopyLog = do
   let logPath      = "/Users/erg/src/urbit/zod/.urb/falselog/"
