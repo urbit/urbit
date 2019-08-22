@@ -16786,7 +16786,7 @@
             =/  tar  [%base %noun]
             [%bsts term [%bssg tar [%bshp tar tar]]]
           [%ktcl [%made [b c] e]]
-        ;~  pfix  (jest '+*')
+        ;~  pfix  ;~(pose (jest '+*') (jest '+>'))
           ;~  plug
             ;~(pfix gap sym)
             ;~(pfix gap (ifix [lac rac] (most ace sym)))
