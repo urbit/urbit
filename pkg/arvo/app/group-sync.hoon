@@ -50,14 +50,17 @@
   ^-  (quip move _this)
   ?-  -.act
       %add-owned
+    =/  group-path  [%group path.act]
+    =/  group-wire  [(scot %p our.bol) group-path]
     ?:  (~(has in owned) path.act)
       [~ this]
     :_  this(owned (~(put in owned) path.act))
-    [ost.bol %peer [%group path.act] [our.bol %groups] [%group path.act]]~
+    [ost.bol %peer group-path [our.bol %groups] group-path]~
   ::
       %remove-owned
+    =/  group-wire  [(scot %p our.bol) %group path.act]
     :_  this(owned (~(del in owned) path.act))
-    :-  [ost.bol %pull [%group path.act] [our.bol %groups] ~]
+    :-  [ost.bol %pull group-wire [our.bol %groups] ~]
     ^-  (list move)
     %+  turn  (prey:pubsub:userlib [%group path.act] bol)
     |=  [=bone *]
@@ -65,21 +68,23 @@
     [bone %quit ~]
   ::
       %add-synced
+    =/  group-path  [%group path.act]
+    =/  group-wire  [(scot %p ship.act) group-path]
     ?:  (~(has in synced) [ship.act path.act])
       [~ this]
     :_  this(synced (~(put in synced) [ship.act path.act]))
-    [ost.bol %peer [%group path.act] [ship.act %group-sync] [%group path.act]]~
+    [ost.bol %peer group-wire [ship.act %group-sync] group-path]~
   ::
       %remove-synced
+    =/  group-wire  [(scot %p ship.act) %group path.act]
     :_  this(synced (~(del in synced) [ship.act path.act]))
-    [ost.bol %pull [%group path.act] [ship.act %group-sync] ~]~
+    [ost.bol %pull group-wire [ship.act %group-sync] ~]~
   ::
   ==
 ::
 ++  peer-group
   |=  pax=path
   ^-  (quip move _this)
-  ~&  pax
   ?~  pax
     [[ost.bol %quit ~]~ this]
   ?.  (~(has in owned) pax)
@@ -143,14 +148,16 @@
 ++  handle-foreign
   |=  diff=group-update
   ^-  (quip move _this)
-  :_  this
   ?-  -.diff
       %keys
-    ~
+    [~ this]
+      %bundle
+    [~ this]
   ::
       %path
     ?.  (~(has in synced) [src.bol pax.diff])
-      ~
+      [~ this]
+    :_  this
     :~  (group-poke pax.diff [%unbundle pax.diff])
         (group-poke pax.diff [%bundle pax.diff])
         (group-poke pax.diff [%add members.diff pax.diff])
@@ -158,30 +165,23 @@
   ::
       %add
     ?.  (~(has in synced) [src.bol pax.diff])
-      ~
-    =/  act=group-action  diff
-    :~  (group-poke pax.diff act)
+      [~ this]
+    :_  this
+    :~  (group-poke pax.diff diff)
     ==
   ::
       %remove
     ?.  (~(has in synced) [src.bol pax.diff])
-      ~
-    =/  act=group-action  diff
-    :~  (group-poke pax.diff act)
-    ==
-  ::
-      %bundle
-    ?.  (~(has in synced) [src.bol pax.diff])
-      ~
-    =/  act=group-action  diff
-    :~  (group-poke pax.diff act)
+      [~ this]
+    :_  this
+    :~  (group-poke pax.diff diff)
     ==
   ::
       %unbundle
     ?.  (~(has in synced) [src.bol pax.diff])
-      ~
-    =/  act=group-action  diff
-    :~  (group-poke pax.diff act)
+      [~ this]
+    :_  this(synced (~(del in synced) [src.bol pax.diff]))
+    :~  (group-poke pax.diff diff)
     ==
   ::
   ==
@@ -189,8 +189,14 @@
 ++  quit
   |=  wir=wire
   ^-  (quip move _this)
-  ~&  %quit-happened
-  ~&  wir
+  =.  wir  `(list @tas)`wir
+  =/  =ship  (slav %p &1:wir)
+  =.  wir  ?^  wir  t.wir  ~
+  =.  wir  ?^  wir  t.wir  ~
+  ?:  (~(has in synced) [ship wir])
+    ::  resubscribe
+    [~ this]
+  ::  no-op
   [~ this]
 ::
 ++  group-poke

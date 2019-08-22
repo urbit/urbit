@@ -37,12 +37,16 @@
 ++  peer-all
   |=  pax=path
   ^-  (quip move _this)
+  ?.  =(src.bol our.bol)
+    [[ost.bol %quit ~]~ this]
   ::  we now proxy all events to this path
   [~ this]
 ::
 ++  peer-keys
   |=  pax=path
   ^-  (quip move _this)
+  ?.  =(src.bol our.bol)
+    [[ost.bol %quit ~]~ this]
   ::  we send the list of keys then send events when they change
   :_  this
   [ost.bol %diff %group-update [%keys ~(key by groups)]]~
@@ -50,6 +54,8 @@
 ++  peer-group
   |=  pax=path
   ^-  (quip move _this)
+  ?.  =(src.bol our.bol)
+    [[ost.bol %quit ~]~ this]
   =/  grp=(unit group)  (~(get by groups) pax)
   ?~  grp
     [[ost.bol %quit ~]~ this]
@@ -104,7 +110,6 @@
     this
   ?.  (~(has by groups) pax.act)
     this
-  ~&  act
   =/  members  (~(got by groups) pax.act)
   =.  members  (~(dif in members) members.act)
   this(groups (~(put by groups) pax.act members))
