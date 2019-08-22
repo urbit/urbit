@@ -44590,8 +44590,9 @@
             class Store {
               constructor() {
                 this.state = {
-                  path: window.injectedState,
+                  ...window.injectedState,
                 };
+                
                 this.setState = () => {};
               }
 
@@ -44600,7 +44601,8 @@
               }
 
               handleEvent(data) {
-                this.state.path = data.data;
+                this.state.path = data.data.path;
+                this.state.current = data.data.current;
                 this.setState(this.state);
                 console.log("state", this.state);
               }
@@ -44615,12 +44617,93 @@
               constructor(props) {
                 super(props);
                 this.state = store.state;
+
+                this.state.input = '';
+                this.inputChange = this.inputChange.bind(this);
+                this.inputSubmit = this.inputSubmit.bind(this);
                 store.setStateHandler(this.setState.bind(this));
               }
 
+              inputChange(evt) {
+                this.setState({input: evt.target.value});
+              }
+
+              parseCommand(com) {
+                let command = false;
+                let newReg = /(new)(\s+((\/\w+)+))?/;
+                let delReg = /(del)(\s+(\d+))?/;
+                let swtReg = /(switch)\s+(\d+)/;
+                let setReg = /(go)\s+((\/\w+)+)/;
+
+                let match = newReg.exec(com);
+                if (match) {
+                  let bod = (match[3] === undefined)
+                    ?  null
+                    :  match[3];
+                  command = {
+                    "new-session": bod,
+                  };
+                }
+
+                match = delReg.exec(com);
+                if (match) {
+                  let bod = (match[3] === undefined)
+                    ?  this.state.current
+                    :  Number(match[3]);
+                  command = {
+                    "delete-session": bod,
+                  };
+                }
+                
+                match = swtReg.exec(com);
+                if (match) {
+                  command = {
+                    "switch-session": Number(match[2]),
+                  };
+                }
+
+                match = setReg.exec(com);
+                if (match) {
+                  command = {
+                    "set-path": match[2],
+                  };
+                }
+
+                if (command) {
+                  console.log("parsed", command);
+                  api.action("lyre", "lyre-action", command);
+                }
+              }
+
+              inputSubmit(evt) {
+                this.parseCommand(this.state.input);
+                evt.preventDefault();
+              }
+
               render() {
+                let path = '/' + this.state.path.join('/');
+
+
                 return (
-                  react.createElement('p', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 17}}, this.state.path)
+                  react.createElement('div', { className: "w-100 h-100" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 80}}
+                    , react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName, lineNumber: 81}}
+                      , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 82}}
+                        , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 83}}, path)
+                      )
+                      , react.createElement('div', { className: "flex absolute bg-black pa3 w-100"    ,
+                          style: {bottom:0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 85}}
+                        , react.createElement('p', { className: "white mr4" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 87}}, this.state.current)
+                        , react.createElement('p', { className: "white mr4" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 88}}, path)
+                        , react.createElement('form', { onSubmit: this.inputSubmit, className: "w-100", __self: this, __source: {fileName: _jsxFileName, lineNumber: 89}}
+                          , react.createElement('input', { autoFocus: true,
+                            className: "w-100",
+                            ref: (el) => {this.input = el;},
+                            onChange: this.inputChange.bind(this), __self: this, __source: {fileName: _jsxFileName, lineNumber: 90}}
+                          )
+                        )
+                      )
+                    )
+                  )
                 );
               }
             }

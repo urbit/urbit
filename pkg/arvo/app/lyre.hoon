@@ -73,6 +73,20 @@
   ::
   ==
 ::
+++  poke-json
+  |=  jon=json
+  ^-  (quip move _this)
+  ~&  input+jon
+  ~&  :-  %output
+  %.  jon
+  %-  of:dejs:format
+  :~  new-session+(mu:dejs:format (su:dejs:format ;~(pfix net (more net urs:ab))))
+      delete-session+ni:dejs:format
+      switch-session+ni:dejs:format
+      set-path+(su:dejs:format ;~(pfix net (more net urs:ab)))
+  ==
+  [~ this]
+::
 ++  poke-lyre-action
   |=  act=action
   ^-  (quip move _this)
@@ -113,10 +127,14 @@
 ::
 ++  build-session-json
   ^-  json
-  :-  %a
-  %+  turn  `path`(snag cur ses)
-  |=  seg=@t
-  [%s seg]
+  %-  pairs:enjs:format
+  :~  :+  %path   %a
+      %+  turn  `path`(snag cur ses)
+      |=  seg=@t
+      [%s seg]
+  ::
+      current+(numb:enjs:format cur)
+  ==
 ::
 ++  update-primary
   ^-  (list move)

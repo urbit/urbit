@@ -1,8 +1,9 @@
 class Store {
   constructor() {
     this.state = {
-      path: window.injectedState,
+      ...window.injectedState,
     }
+    
     this.setState = () => {};
   }
 
@@ -11,7 +12,8 @@ class Store {
   }
 
   handleEvent(data) {
-    this.state.path = data.data;
+    this.state.path = data.data.path;
+    this.state.current = data.data.current;
     this.setState(this.state);
     console.log("state", this.state);
   }
