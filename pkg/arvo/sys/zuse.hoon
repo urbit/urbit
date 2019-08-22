@@ -2072,14 +2072,7 @@
     ::
     +=  task                                            ::  in request ->$
       $~  [%vega ~]                                     ::
-      $%  $:  %dawn                                     ::  boot from keys
-              =seed:able:jael                           ::    identity params
-              spon=(list [=ship point:azimuth-types])   ::
-              czar=(map ship [=rift =life =pass])       ::    galaxy table
-              turf=(list turf)                          ::    domains
-              bloq=@ud                                  ::    block number
-              node=(unit purl:eyre)                     ::    gateway url
-          ==                                            ::
+      $%  [%dawn dawn-event]                            ::  boot from keys
           [%fake =ship]                                 ::  fake boot
           [%listen whos=(set ship) =source]             ::  set ethereum source
           ::TODO  %next for generating/putting new private key
@@ -2094,6 +2087,15 @@
           $>(%wegh vane-task)                           ::  memory usage request
           $>(%west vane-task)                           ::  remote request
       ==                                                ::
+    ::
+    +$  dawn-event
+      $:  =seed
+          spon=(list [=ship point:azimuth-types])
+          czar=(map ship [=rift =life =pass])
+          turf=(list turf)
+          bloq=@ud
+          node=(unit purl:eyre)
+      ==
     ::
     ++  block
       =<  block

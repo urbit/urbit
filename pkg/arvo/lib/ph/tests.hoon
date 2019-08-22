@@ -49,7 +49,7 @@
 ::  Boot ship; don't check it succeeded.
 ::
 ++  boot-ship
-  |=  [her=ship keys=(unit dawn-event)]
+  |=  [her=ship keys=(unit dawn-event:able:jael)]
   ^+  *form:(ph ,~)
   |=  ph-input
   [& (init her keys) %done ~]
@@ -96,7 +96,7 @@
 ::  Boot a ship and verify it booted.  Parent must already be booted.
 ::
 ++  raw-ship
-  |=  [her=ship keys=(unit dawn-event)]
+  |=  [her=ship keys=(unit dawn-event:able:jael)]
   =/  m  (ph ,~)
   ^-  form:m
   ;<  ~  bind:m  (boot-ship her keys)
