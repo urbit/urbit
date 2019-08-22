@@ -270,15 +270,12 @@ tryDoStuff shipPath = runInBoundThread $ do
     let pillPath = "/home/benjamin/r/urbit/bin/solid.pill"
         ship     = zod
 
-    -- collectAllFx "/home/benjamin/r/urbit/s/testnet-zod/"
-
     -- tryParseEvents "/home/benjamin/r/urbit/s/zod/.urb/log" 1
     -- tryParseEvents "/home/benjamin/r/urbit/s/testnet-zod/.urb/log" 1
 
     -- tryParseFX "/home/benjamin/zod-fx"         1 100000000
     -- tryParseFX "/home/benjamin/testnet-zod-fx" 1 100000000
 
-    -- tryBootFromPill pillPath shipPath ship
     -- tryResume shipPath
     tryPlayShip shipPath
     -- tryFullReplay shipPath

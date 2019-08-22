@@ -4,7 +4,8 @@ module Noun.Conversions
   ( Nullable(..), Jammed(..), AtomCell(..)
   , Word128, Word256, Word512
   , Bytes(..), Octs(..), File(..)
-  , Cord(..), Knot(..), Term(..), Tape(..), BigTape(..), Tour(..)
+  , Cord(..), Knot(..), Term(..), Tape(..), Tour(..)
+  , BigTape(..), BigCord(..)
   , Wall
   , UD(..), UV(..)
   , Mug(..), Path(..), EvilPath(..), Ship(..)
@@ -342,6 +343,15 @@ instance FromNoun Tape where
 -- Wall -- Text Lines ----------------------------------------------------------
 
 type Wall = [Tape]
+
+
+-- Big Cord -- Don't Print -----------------------------------------------------
+
+newtype BigCord = BigCord Cord
+  deriving newtype (Eq, Ord, ToNoun, FromNoun, IsString)
+
+instance Show BigCord where
+  show (BigCord (Cord t)) = show (take 32 t <> "...")
 
 
 -- Big Tape -- Don't Print -----------------------------------------------------

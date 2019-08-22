@@ -262,12 +262,12 @@ data VaneName
   deriving (Eq, Ord, Show, Enum, Bounded)
 
 data ZuseEv
-    = ZEVeer () Cord Path BigTape
+    = ZEVeer () Cord Path BigCord
     | ZEVoid Void
   deriving (Eq, Ord, Show)
 
 data VaneEv
-    = VEVeer (VaneName, ()) Cord Path BigTape
+    = VEVeer (VaneName, ()) Cord Path BigCord
     | VEVoid Void
   deriving (Eq, Ord, Show)
 
