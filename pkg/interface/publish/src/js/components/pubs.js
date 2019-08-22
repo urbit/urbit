@@ -60,8 +60,8 @@ export class Pubs extends Component {
         <div className={cls} key={i}>
           <div className="fl body-regular-400 mw-336 w-336 pr3">
             <Link to={data.url}>
-              <p className="one-line mw-336">
-                <span className="ml3">{data.title}</span>
+              <p className="ml3 mw-336">
+                <span>{data.title}</span>
               </p>
             </Link>
           </div>
@@ -82,7 +82,7 @@ export class Pubs extends Component {
       <div>
         <HM invites={invites} unread={unread}/>
         <div className="absolute w-100" style={{top:124}}>
-          <div className="flex-col">
+          <div className="flex-column">
             <div className="w-100">
               <h2 className="gray-50"
                 style={{marginLeft: 16, marginTop:32, marginBottom: 16}}>
