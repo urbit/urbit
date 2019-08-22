@@ -1,5 +1,5 @@
 ::  app/ex-group.hoon
-/-  *groups, *group-sync
+/-  *groups, *sync-hook
 |%
 +$  move  [bone card]
 +$  card
@@ -8,8 +8,7 @@
 ::
 +$  poke
   $%  [%group-action group-action]
-      [%group-sync-action group-sync-action]
-
+      [%sync-hook-action sync-hook-action]
   ==
 +$  state
   $%  [%0 state-zero]
@@ -35,9 +34,9 @@
     =/  grp=group  (silt [~bus]~)
     :~  (group-poke [%bundle /ex])
         (group-poke [%add grp /ex])
-        (group-sync-poke [%add-owned /ex])
+        (sync-hook-poke %group-sync [%add-owned /ex])
     ==
-  :~  (group-sync-poke [%add-synced ~zod /ex])
+  :~  (sync-hook-poke %group-sync [%add-synced ~zod /ex])
   ==
 ::
 ++  poke-noun
@@ -48,11 +47,11 @@
   ?:  =('add-ex-nec' cmd)
     :_  this
     :~  (group-poke [%add grp-nec /ex])
-        (group-sync-poke [%add-owned /ex])
+        (sync-hook-poke %group-sync [%add-owned /ex])
     ==
   ?:  =('sync-zod-ex' cmd)
      :_  this
-     :~  (group-sync-poke [%add-synced ~zod /ex])
+     :~  (sync-hook-poke %group-sync [%add-synced ~zod /ex])
      ==
   ?:  =('rm-bus-ex' cmd)
     =/  grp=group  (silt [~bus]~)
@@ -68,10 +67,10 @@
   ^-  move
   [ost.bol %poke /ex [our.bol %groups] [%group-action act]]
 ::
-++  group-sync-poke
-  |=  act=group-sync-action
+++  sync-hook-poke
+  |=  [app=@tas act=sync-hook-action]
   ^-  move
-  [ost.bol %poke /ex [our.bol %group-sync] [%group-sync-action act]]
+  [ost.bol %poke /ex [our.bol app] [%sync-hook-action act]]
 ::
 --
 

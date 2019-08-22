@@ -1,5 +1,5 @@
 ::  hook/sync-group.hoon
-/-  *groups, *group-sync
+/-  *groups, *sync-hook
 |%
 +$  move  [bone card]
 ::
@@ -16,13 +16,16 @@
   ==
 ::
 +$  state-zero
+  ::  TODO:
+  ::  (map path ship)
+  ::  use our for owned
   $:  synced=(set [ship path])
       owned=(set path)
   ==
 ::
 +$  poke
   $%  [%group-action group-action]
-      [%group-sync-action group-sync-action]
+      [%sync-hook-action sync-hook-action]
   ==
 ::
 --
@@ -45,8 +48,8 @@
   ~&  synced+synced
   [~ this]
 ::
-++  poke-group-sync-action
-  |=  act=group-sync-action
+++  poke-sync-hook-action
+  |=  act=sync-hook-action
   ^-  (quip move _this)
   ?-  -.act
       %add-owned

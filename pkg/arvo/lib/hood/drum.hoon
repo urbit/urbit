@@ -101,6 +101,8 @@
       [%home %groups]
       [%home %group-sync]
       [%home %ex-group]
+      [%home %inbox]
+      [%home %inbox-sync]
   ==
 ::
 ++  deft-fish                                           ::  default connects
