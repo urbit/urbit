@@ -139,7 +139,7 @@
     :*  %create
         name.user-event
         app-type.user-event
-        %unlinked
+        signature-type.user-event
         `[%created name.user-event app-type.user-event]
         [now.parent-event %.y u.y.raw.ring-signature.full-signature.parent-event]
     ==
