@@ -22,9 +22,9 @@
   $%  [%new-post =post]
       [%delete-post to-delete=@ud]
   ==
-::  the private-event of a thread is the additional metadata
+::  the server-event of a thread is the additional metadata
 ::
-+$  private-event
++$  server-event
   $:  ::  the post-id is assigned server side
       ::
       id=@ud
@@ -56,7 +56,7 @@
 +$  snapshot
   $:  ::  reverse list of all %new-post events
       ::
-      posts=(list [user-event private-event])
+      posts=(list [user-event server-event])
       ::  number of unique posters
       ::
       poster-count=@ud
@@ -79,7 +79,7 @@
   ==
 ::
 +$  on-process-response
-  $%  [%log =private-event =return-event]
+  $%  [%log =server-event =return-event]
       [%return =return-event]
   ==
 ::
@@ -133,7 +133,7 @@
 ::  applies an event or fails
 ::
 ++  apply-event-to-snapshot
-  |=  [user-event=(unit user-event) private=private-event =snapshot]
+  |=  [user-event=(unit user-event) private=server-event =snapshot]
   ^-  _snapshot
   ::  All events in a thread have user-event
   ?~  user-event
@@ -156,7 +156,7 @@
     %_    snapshot
         posts
       %+  skip  posts.snapshot
-      |=  [* private=private-event]
+      |=  [* private=server-event]
       =(to-delete.u.user-event id.private)
     ==
   ==

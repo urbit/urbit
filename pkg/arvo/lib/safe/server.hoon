@@ -34,7 +34,7 @@
               q.user-event.u.user-event.e
           ==
       ::
-          q.private-event.e
+          q.server-event.e
       ==
     ::
         %create
@@ -43,9 +43,9 @@
           app-type.e
           signature-type.e
       ::
-          ?~  private-event.e
+          ?~  server-event.e
             ~
-          `q.u.private-event.e
+          `q.u.server-event.e
       ==
     ==
   ::
@@ -64,27 +64,27 @@
   =/  tag  (slot 2 wec)
   ?+    q.tag  !!
       %log
-    =/  private-event  (slot 6 wec)
+    =/  server-event  (slot 6 wec)
     =/  return-event  (slot 7 wec)
-    [%log private-event return-event]
+    [%log server-event return-event]
   ::
       %create
     =/  id  (slot 6 wec)
     =/  node-type  (slot 14 wec)
     =/  sig-type  (slot 30 wec)
-    =/  unit-private-event  (slot 62 wec)
+    =/  unit-server-event  (slot 62 wec)
     =/  child-event  (slot 63 wec)
     ::
-    =/  private-event=(unit vase)
-      ?:  =(~ q.unit-private-event)
+    =/  server-event=(unit vase)
+      ?:  =(~ q.unit-server-event)
         ~
-      [~ (slot 3 unit-private-event)]
+      [~ (slot 3 unit-server-event)]
     ::
     :*  %create
         ;;(@t q.id)
         ;;(@t q.node-type)
         ;;(signature-type q.sig-type)
-        private-event
+        server-event
         child-event
     ==
   ::
@@ -102,9 +102,9 @@
   =/  tag  (slot 2 wec)
   ?+    q.tag  !!
       %log
-    =/  private-event  (slot 6 wec)
+    =/  server-event  (slot 6 wec)
     =/  return-event  (slot 7 wec)
-    [%log private-event return-event]
+    [%log server-event return-event]
   ::
       %return
     =/  event  (slot 3 wec)
@@ -361,7 +361,7 @@
       ::
       =/  nu=changes-and-state
         %^  record-change  changes  [state full-path]
-        [%log [~ message-signature original-path user-event] private-event.response]
+        [%log [~ message-signature original-path user-event] server-event.response]
       ::
       [return-event.response changes.nu state.nu]
     ::
@@ -382,7 +382,7 @@
       ::
       =/  nu=changes-and-state
         %^  record-change  changes  [state full-path]
-        [%create sub-id.response app-type.response signature-type.response private-event.response]
+        [%create sub-id.response app-type.response signature-type.response server-event.response]
       ::
       (process-child-returned full-path app-vase return changes.nu state.nu)
     ::
@@ -436,7 +436,7 @@
       ::
       =/  nu=changes-and-state
         %^  record-change  changes  [state full-path]
-        [%log ~ private-event.response]
+        [%log ~ server-event.response]
       ::
       [return-event.response changes.nu state.nu]
     ::

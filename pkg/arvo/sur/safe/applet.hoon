@@ -65,21 +65,21 @@
 +$  on-process-response
   $%  ::  emits an event to this node's event log with a corresponding piece of data
       ::
-      [%log private-event=vase return-event=vase]
+      [%log server-event=vase return-event=vase]
       ::  returns a value upwards without modifying the public state
       ::
       [%return return-event=vase]
       ::  creates a new node and re-dispatch the event to it
       ::
-      ::    Optionally, if a private-event is given, the normal %log case will
-      ::    fire with the private event returned. If no private-event is given,
+      ::    Optionally, if a server-event is given, the normal %log case will
+      ::    fire with the private event returned. If no server-event is given,
       ::    no %log entry will be emitted.
       ::
       $:  %create
           sub-id=@t
           app-type=@t
           =signature-type
-          private-event=(unit vase)
+          server-event=(unit vase)
           child-event=vase
       ==
   ==
@@ -90,7 +90,7 @@
 +$  on-child-response
   $%  ::  emits an event to this node's event log with a corresponding piece of data
       ::
-      [%log private-event=vase return-event=vase]
+      [%log server-event=vase return-event=vase]
       ::  returns a value upwards without modifying the public state
       ::
       [%return return-event=vase]

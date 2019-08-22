@@ -21,7 +21,7 @@
 ::        [%delete-post =post]
   ==
 ::
-+$  private-event
++$  server-event
   $%  [%created-thread name=@t]
   ==
 ::
@@ -48,7 +48,7 @@
   ==
 ::
 +$  on-process-response
-  $%  [%create id=@t type=@t =signature-type (unit private-event) =child-event]
+  $%  [%create id=@t type=@t =signature-type (unit server-event) =child-event]
       [%return =return-event]
   ==
 ::
@@ -139,7 +139,7 @@
 ::    snapshots of the current state.
 ::
 ++  apply-event-to-snapshot
-  |=  [user-event=(unit user-event) =private-event =snapshot]
+  |=  [user-event=(unit user-event) =server-event =snapshot]
   ^-  _snapshot
   ~&  %todo
   snapshot

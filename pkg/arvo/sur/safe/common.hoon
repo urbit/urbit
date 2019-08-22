@@ -62,11 +62,11 @@
           user-event=(unit logged-user-event)
           ::
           ::
-          private-event=vase
+          server-event=vase
       ==
       ::
       ::  creates a new child node under this
-      [%create sub-id=@t app-type=@t =signature-type private-event=(unit vase)]
+      [%create sub-id=@t app-type=@t =signature-type server-event=(unit vase)]
   ==
 ::
 ++  logged-user-event
@@ -120,11 +120,11 @@
       ::
       $:  %log
           user-event=(unit transport-logged-user-event)
-          private-event=*
+          server-event=*
       ==
       ::
       ::  creates a new child node under this
-      [%create sub-id=@t app-type=@t =signature-type private-event=(unit *)]
+      [%create sub-id=@t app-type=@t =signature-type server-event=(unit *)]
   ==
 ::
 +$  transport-logged-user-event

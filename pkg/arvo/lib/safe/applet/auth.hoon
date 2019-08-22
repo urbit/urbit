@@ -30,7 +30,7 @@
       ::  - %reorder to change display order
   ==
 ::
-+$  private-event
++$  server-event
   $%  [%ok ~]
       [%created name=@t app-type=@t]
   ==
@@ -61,8 +61,8 @@
   output:toplevel-interface
 ::
 +$  on-process-response
-  $%  [%log =private-event =return-event]
-      [%create @t @t =signature-type e=(unit private-event) =child-event]
+  $%  [%log =server-event =return-event]
+      [%create @t @t =signature-type e=(unit server-event) =child-event]
       [%return =return-event]
   ==
 ::
@@ -146,16 +146,16 @@
   ==
 ::
 ++  apply-event-to-snapshot
-  |=  [user-event=(unit user-event) =private-event =snapshot]
+  |=  [user-event=(unit user-event) =server-event =snapshot]
   ^-  _snapshot
   ::
   ?~  user-event
-    ?-    -.private-event
+    ?-    -.server-event
         %ok
       snapshot
     ::
         %created
-      snapshot(display-order (weld display-order.snapshot [[name app-type]:private-event ~]))
+      snapshot(display-order (weld display-order.snapshot [[name app-type]:server-event ~]))
     ==
   ::
   ?-    -.u.user-event

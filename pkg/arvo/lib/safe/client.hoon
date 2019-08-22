@@ -25,30 +25,30 @@
       ::
       =/  node-vase=vase           (~(got by app-map) app)
       ::
-      =/  private-event-mold=vase  (slap node-vase [%limb %private-event])
-      =/  private-event=vase  (slam private-event-mold %noun private-event.e)
+      =/  server-event-mold=vase  (slap node-vase [%limb %server-event])
+      =/  server-event=vase  (slam server-event-mold %noun server-event.e)
       ::
       ?~  user-event.e
-        `[%log ~ private-event]
+        `[%log ~ server-event]
       ::
       =/  user-event-mold=vase     (slap node-vase [%limb %user-event])
       =/  user-event=vase  (slam user-event-mold %noun user-event.u.user-event.e)
       ::
-      `[%log [~ msg-signature.u.user-event.e route.u.user-event.e user-event] private-event]
+      `[%log [~ msg-signature.u.user-event.e route.u.user-event.e user-event] server-event]
     ::
         %create
       ::
       ::  Is this the simple case of creation without a private event? Then we can
       ::
-      ?~  private-event.e
+      ?~  server-event.e
         `[%create sub-id.e app-type.e signature-type.e ~]
       ::
       =/  node-vase=vase           (~(got by app-map) app)
       ::
-      =/  private-event-mold=vase  (slap node-vase [%limb %private-event])
-      =/  private-event=vase  (slam private-event-mold %noun u.private-event.e)
+      =/  server-event-mold=vase  (slap node-vase [%limb %server-event])
+      =/  server-event=vase  (slam server-event-mold %noun u.server-event.e)
       ::
-      `[%create sub-id.e app-type.e signature-type.e `private-event]
+      `[%create sub-id.e app-type.e signature-type.e `server-event]
     ==
   ::
   ++  snapshot
