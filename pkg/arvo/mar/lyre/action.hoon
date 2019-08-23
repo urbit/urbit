@@ -1,5 +1,5 @@
 ::
-::::  /hoon/lyre/publish/mar
+::::  /mar/lyre/action/hoon
   ::
 /?  309
 /-  *lyre
@@ -24,16 +24,5 @@
         switch-session+ni:dejs
         set-path+(su:dejs ;~(pfix net (more net urs:ab)))
     ==
-::    |=  jon=^json
-::    =<  (action jon)
-::    |%
-::    ++  action
-::      %-  of-dejs
-::      :~  new-session+new-session
-::          delete-session+delete-session
-::          switch-session+switch-session
-::          set-path+set-path
-::      ==
-::    --
   --
 --

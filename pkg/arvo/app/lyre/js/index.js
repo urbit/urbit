@@ -44601,8 +44601,9 @@
               }
 
               handleEvent(data) {
-                this.state.path = data.data.path;
+                this.state.body = data.data.body;
                 this.state.current = data.data.current;
+                this.state.sessions = data.data.sessions;
                 this.setState(this.state);
                 console.log("state", this.state);
               }
@@ -44650,16 +44651,20 @@
                   let bod = (match[3] === undefined)
                     ?  this.state.current
                     :  Number(match[3]);
-                  command = {
-                    "delete-session": bod,
-                  };
+                  if (bod < this.state.sessions.length) {
+                    command = {
+                      "delete-session": bod,
+                    };
+                  }
                 }
                 
                 match = swtReg.exec(com);
                 if (match) {
-                  command = {
-                    "switch-session": Number(match[2]),
-                  };
+                  if (Number(match[2]) < this.state.sessions.length) {
+                    command = {
+                      "switch-session": Number(match[2]),
+                    };
+                  }
                 }
 
                 match = setReg.exec(com);
@@ -44670,8 +44675,8 @@
                 }
 
                 if (command) {
-                  console.log("parsed", command);
                   api.action("lyre", "lyre-action", command);
+                  this.input.value = '';
                 }
               }
 
@@ -44681,25 +44686,39 @@
               }
 
               render() {
-                let path = '/' + this.state.path.join('/');
+                let path = '/' + this.state.sessions[this.state.current].join('/');
+                let body = this.state.body.text || null;
 
+                const ses = this.state.sessions.map((path, i) => {
+                  let pax = '/'+path.join('/');
+                  if (this.state.current === i) {
+                    return (
+                      react.createElement('p', { key: i, className: "bg-white black mr2 pl2 pr2"    , __self: this, __source: {fileName: _jsxFileName, lineNumber: 87}}, i, ": " , pax)
+                    );
+                  } else {
+                    return (
+                      react.createElement('p', { key: i, className: "white mr2 pl2 pr2"   , __self: this, __source: {fileName: _jsxFileName, lineNumber: 91}}, i, ": " , pax)
+                    );
+                  }
+                });
 
                 return (
-                  react.createElement('div', { className: "w-100 h-100" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 80}}
-                    , react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName, lineNumber: 81}}
-                      , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 82}}
-                        , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 83}}, path)
+                  react.createElement('div', { className: "w-100 h-100" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 97}}
+                    , react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName, lineNumber: 98}}
+                      , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 99}}
+                        , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 100}}, body)
                       )
-                      , react.createElement('div', { className: "flex absolute bg-black pa3 w-100"    ,
-                          style: {bottom:0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 85}}
-                        , react.createElement('p', { className: "white mr4" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 87}}, this.state.current)
-                        , react.createElement('p', { className: "white mr4" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 88}}, path)
-                        , react.createElement('form', { onSubmit: this.inputSubmit, className: "w-100", __self: this, __source: {fileName: _jsxFileName, lineNumber: 89}}
+                      , react.createElement('div', { className: "flex-col absolute bg-black pa3 w-100"    ,
+                          style: {bottom:0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 102}}
+                        , react.createElement('form', { onSubmit: this.inputSubmit, className: "w-100", __self: this, __source: {fileName: _jsxFileName, lineNumber: 104}}
                           , react.createElement('input', { autoFocus: true,
                             className: "w-100",
                             ref: (el) => {this.input = el;},
-                            onChange: this.inputChange.bind(this), __self: this, __source: {fileName: _jsxFileName, lineNumber: 90}}
+                            onChange: this.inputChange.bind(this), __self: this, __source: {fileName: _jsxFileName, lineNumber: 105}}
                           )
+                        )
+                        , react.createElement('div', { className: "flex w-100" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 111}}
+                          , ses
                         )
                       )
                     )

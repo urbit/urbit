@@ -26,6 +26,8 @@
       [%disconnect wire binding:eyre]
       [%http-response =http-event:http]
       [%diff diff]
+      [%build wire ? schematic:ford]
+      [%warp wire ship riff:clay]
   ==
 ::
 +$  diff
@@ -41,6 +43,7 @@
   $:  ses=(list session)
       cur=@u
       ren=(map path (unit renderer))
+      req-handle=(map wire bone)
   ==
 ::
 --
@@ -49,6 +52,8 @@
 ::
 ++  this  .
 ::
+++  our-beak  /(scot %p our.bol)/[q.byk.bol]/(scot %da now.bol)
+::
 ++  prep
   |=  old=(unit *)
   ^-  (quip move _this)
@@ -56,9 +61,13 @@
   ?~  old
     :_  this
     [ost.bol %connect / [~ /'~lyre'] %lyre]~
-  ::  XX  todo, populate renderer map, start clay watch
-::  [~ this(+<+ *state)]           ::  flush state
+::  [~ this(+<+ initialize-state)]           ::  flush state
   [~ this(+<+ ;;(state u.old))]  ::  keep state
+::
+++  initialize-state
+  ^-  state
+  =|  sty=state
+  sty(ses [/]~)
 ::
 ++  poke-noun
   |=  a=*
@@ -71,82 +80,170 @@
     ~&  +<+.this
     [~ this]
   ::
+      %build
+    (get-session-json /diff ost.bol)
+  ::
   ==
 ::
-++  poke-json
-  |=  jon=json
-  ^-  (quip move _this)
-  ~&  input+jon
-  ~&  :-  %output
-  %.  jon
-  %-  of:dejs:format
-  :~  new-session+(mu:dejs:format (su:dejs:format ;~(pfix net (more net urs:ab))))
-      delete-session+ni:dejs:format
-      switch-session+ni:dejs:format
-      set-path+(su:dejs:format ;~(pfix net (more net urs:ab)))
+::  ford helper functions
+::
+++  render
+  |=  [pax=path ren=(unit renderer)]
+  ^-  schematic:ford
+  =/  ren-path
+    ?~  ren
+      /hoon/[(snag 0 (flop pax))]/lyre/lib
+    !!
+  :*  %core
+      [our.bol q.byk.bol]
+      ren-path
   ==
-  [~ this]
+::
+++  bake-file
+  |=  pax=path
+  ^-  schematic:ford
+  :*  %bake
+      (snag 0 (flop pax))
+      *coin
+      [our.bol q.byk.bol]
+      (slag 1 (flop (slag 3 pax)))
+  ==
+::
+++  render-dir
+  ^-  schematic:ford
+  :*  %core
+      [our.bol q.byk.bol]
+      /hoon/clay-dir/lyre/lib
+  ==
+::
+++  call-gate
+  |=  [gat=schematic:ford sam=schematic:ford]
+  ^-  schematic:ford
+  [%call gat sam]
+::
+++  cast-mark
+  |=  [mar=term sch=schematic:ford]
+  ^-  schematic:ford
+  [%cast [our.bol q.byk.bol] mar sch]
+::
+++  build-dom-json
+  |=  [pax=path ren=(unit renderer)]
+  ^-  schematic:ford
+  =/  ark=arch  .^(arch %cy pax)
+  ?:  &(?=(~ fil.ark) ?=(~ dir.ark))
+    %+  cast-mark  %json
+    [%$ %lyre-dom !>([%text 'Empty path'])]
+  ::
+  ?:  ?=(~ fil.ark)
+    %+  cast-mark  %json
+    %+  cast-mark  %lyre-dom
+    %+  call-gate
+      render-dir
+    [%$ %noun !>(ark)]
+  ::
+  %+  cast-mark  %json
+  %+  cast-mark  %lyre-dom
+  (call-gate (render pax ren) (bake-file pax))
+::
+::  main action entry-point
 ::
 ++  poke-lyre-action
   |=  act=action
   ^-  (quip move _this)
   ?-  -.act
       %new-session
-    =/  new-pax
-      ?~  pax.act  /  u.pax.act
-    =.  this
-      %=  this
-        ses  (snoc ses new-pax)
-        cur  (lent ses)
-      ==
-    [update-primary this]
+    =/  new-pax  ?~  pax.act  /  u.pax.act
+    =.  ses  (snoc ses new-pax)
+    =.  cur  (dec (lent ses))
+    (get-session-json /diff ost.bol)
   ::
       %delete-session
-    =.  this
-      %=  this
-        ses  (oust [id.act 1] ses)
-        cur  ?:((gte cur id.act) (dec cur) cur)
-      ==
-    [update-primary this]
+    =.  ses  (oust [id.act 1] ses)
+    =.  cur  ?:((gte cur id.act) (dec cur) cur)
+    (get-session-json /diff ost.bol)
   ::
       %switch-session
     ?>  (lth id.act (lent ses))
-    =.  this
-      %=  this
-        cur   id.act
-      ==
-    [update-primary this]
+    =.  cur  id.act
+    (get-session-json /diff ost.bol)
   ::
       %set-path
-    =.  this
-      %=  this
-        ses   ;:(welp (scag cur ses) [pax.act]~ (slag +(cur) ses))
-      ==
-    [update-primary this]
+    =.  ses  ;:(welp (scag cur ses) [pax.act]~ (slag +(cur) ses))
+    (get-session-json /diff ost.bol)
   ==
 ::
-++  build-session-json
+++  session-json
+  |=  bod=json
   ^-  json
   %-  pairs:enjs:format
-  :~  :+  %path   %a
-      %+  turn  `path`(snag cur ses)
+  :~  :+  %sessions   %a
+      %+  turn  ses
+      |=  s=session
+      ^-  json
+      :-  %a
+      %+  turn  pax.s
       |=  seg=@t
       [%s seg]
   ::
       current+(numb:enjs:format cur)
+  ::
+      body+bod
   ==
 ::
-++  update-primary
-  ^-  (list move)
-  %+  turn  (prey:pubsub:userlib /primary bol)
-  |=  [b=bone *]
-  ^-  move
-  [b %diff %json build-session-json]
+++  get-session-json
+  |=  [wir=wire bon=bone]
+  ^-  (quip move _this)
+  =/  cur-ses=path    (snag cur ses)
+  =/  build-wir=path  (welp wir cur-ses)
+  =/  file-path=path  (welp our-beak cur-ses)
+  :_  this(req-handle (~(put by req-handle) build-wir bon))
+  [ost.bol %build build-wir %.n (build-dom-json file-path ~)]~
 ::
 ++  peer-primary
   |=  wir=wire
   ^-  (quip move _this)
-  [update-primary this]
+  (get-session-json /diff ost.bol)
+::
+++  tang-dom-json
+  |=  tan=tang
+  ^-  json
+  %+  frond:enjs:format
+    %text
+  %-  wall:enjs:format
+  %-  zing
+  %+  turn  tan
+  |=  a=tank
+  (wash [0 80] a)
+::
+++  made
+  |=  [wir=wire wen=@da mad=made-result:ford]
+  ^-  (quip move _this)
+  =/  jon=json
+    ?:  ?=(%incomplete -.mad)
+      (tang-dom-json tang.mad)
+    =/  bul=build-result:ford  build-result.mad
+    ?:  ?=(%error -.bul)
+      (tang-dom-json message.bul)
+    ?+  +<.bul
+      ~
+      %cast  ;;(json q.q.cage.bul)
+    ==
+  ::
+  ?+  wir
+    [~ this]
+  ::
+      [%diff *]
+    :_  this(req-handle (~(del by req-handle) wir))
+    %+  turn  (prey:pubsub:userlib /primary bol)
+    |=  [b=bone *]
+    ^-  move
+    [b %diff %json (session-json jon)]
+  ::
+      [%http *]
+    =/  b=bone  (~(got by req-handle) wir)
+    :_  this(req-handle (~(del by req-handle) wir))
+    [b %http-response (manx-response:app (index (session-json jon)))]~
+  ==
 ::
 ++  bound
   |=  [wir=wire suc=? bin=binding:eyre]
@@ -174,9 +271,10 @@
   ::  home page; redirect to recent
   ::
       [[~ [%'~lyre' ~]] ~]
-    =/  jon=json  build-session-json
-    :_  this
-    [ost.bol %http-response (manx-response:app (index jon))]~
+    (get-session-json /http ost.bol)
+::    =/  jon=json  (session-json ~)
+::    :_  this
+::    [ost.bol %http-response (manx-response:app (index jon))]~
   ==
 ::
 --

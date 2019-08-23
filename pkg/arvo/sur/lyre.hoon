@@ -5,4 +5,7 @@
       [%switch-session id=@u]
       [%set-path pax=path]
   ==
+++  dom
+  $%  [%text bod=@t]
+  ==
 --

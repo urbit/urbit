@@ -12,8 +12,9 @@ class Store {
   }
 
   handleEvent(data) {
-    this.state.path = data.data.path;
+    this.state.body = data.data.body;
     this.state.current = data.data.current;
+    this.state.sessions = data.data.sessions;
     this.setState(this.state);
     console.log("state", this.state);
   }

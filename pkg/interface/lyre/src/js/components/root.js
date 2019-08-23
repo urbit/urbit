@@ -42,15 +42,19 @@ export class Root extends Component {
       let bod = (match[3] === undefined)
         ?  this.state.current
         :  Number(match[3]);
-      command = {
-        "delete-session": bod,
+      if (bod < this.state.sessions.length) {
+        command = {
+          "delete-session": bod,
+        };
       }
     }
     
     match = swtReg.exec(com);
     if (match) {
-      command = {
-        "switch-session": Number(match[2]),
+      if (Number(match[2]) < this.state.sessions.length) {
+        command = {
+          "switch-session": Number(match[2]),
+        };
       }
     }
 
@@ -58,12 +62,12 @@ export class Root extends Component {
     if (match) {
       command = {
         "set-path": match[2],
-      }
+      };
     }
 
     if (command) {
-      console.log("parsed", command);
       api.action("lyre", "lyre-action", command);
+      this.input.value = '';
     }
   }
 
@@ -73,19 +77,30 @@ export class Root extends Component {
   }
 
   render() {
-    let path = '/' + this.state.path.join('/');
+    let path = '/' + this.state.sessions[this.state.current].join('/');
+    let body = this.state.body.text || null;
 
+    const ses = this.state.sessions.map((path, i) => {
+      let pax = '/'+path.join('/');
+      if (this.state.current === i) {
+        return (
+          <p key={i} className="bg-white black mr2 pl2 pr2">{i}: {pax}</p>
+        );
+      } else {
+        return (
+          <p key={i} className="white mr2 pl2 pr2">{i}: {pax}</p>
+        );
+      }
+    });
 
     return (
       <div className="w-100 h-100">
         <div className="flex-col">
           <div>
-            <p>{path}</p>
+            <p>{body}</p>
           </div>
-          <div className="flex absolute bg-black pa3 w-100"
+          <div className="flex-col absolute bg-black pa3 w-100"
               style={{bottom:0}}>
-            <p className="white mr4">{this.state.current}</p>
-            <p className="white mr4">{path}</p>
             <form onSubmit={this.inputSubmit} className="w-100">
               <input autoFocus
                 className="w-100"
@@ -93,6 +108,9 @@ export class Root extends Component {
                 onChange={this.inputChange.bind(this)}
               />
             </form>
+            <div className="flex w-100">
+              {ses} 
+            </div>
           </div>
         </div>
       </div>
