@@ -136,14 +136,12 @@ data Blit
     %init -- TODO
     %logo -- Shutdown
     %mass -- Measure memory usage (unused)
-    %send -- Send a UDP packet (duplicate of ames %send)
 -}
 data TermEf
     = TermEfBlit (UD, ()) [Blit]
     | TermEfInit (UD, ()) ()
     | TermEfLogo Path ()
     | TermEfMass Path Noun -- Irrelevant
-    | TermEfSend Path AmesDest Bytes
   deriving (Eq, Ord, Show)
 
 deriveNoun ''Blit

@@ -97,17 +97,6 @@ _reck_kick_term(u3_pier* pir_u, u3_noun pox, c3_l tid_l, u3_noun fav)
       u3z(pox); u3z(fav); return c3y;
     } break;
 
-    // this can return through dill due to our fscked up boot sequence
-    //
-    case c3__send: {
-      u3_noun lan = u3k(u3h(u3t(fav)));
-      u3_noun pac = u3k(u3t(u3t(fav)));
-
-      u3l_log("kick: strange send\r\n");
-      u3_ames_ef_send(pir_u, lan, pac);
-      u3z(pox); u3z(fav); return c3y;
-    } break;
-
     case c3__logo:
     {
       u3_pier_exit(pir_u);

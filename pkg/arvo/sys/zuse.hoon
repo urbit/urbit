@@ -600,7 +600,6 @@
           {$note p/@tD q/tank}                          ::  debug message
           {$ogre p/@tas}                                ::  delete mount point
           {$rule red/dict wit/dict}                     ::  node r+w permissions
-          {$send p/lane:ames q/@}                       ::  transmit packet
           {$writ p/riot}                                ::  response
           {$wris p/{$da p/@da} q/(set (pair care path))}  ::  many changes
       ==                                                ::
@@ -769,7 +768,6 @@
           {$logo ~}                                     ::  logout
           {$lyra p/@t q/@t}                             ::  upgrade kernel
           {$mass p/mass}                                ::  memory usage
-          {$send p/lane:ames q/@}                       ::  transmit packet
           {$veer p/@ta q/path r/@t}                     ::  install vane
           {$verb ~}                                     ::  verbose mode
       ==                                                ::
