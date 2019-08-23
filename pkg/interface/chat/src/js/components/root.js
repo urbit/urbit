@@ -158,6 +158,7 @@ export class Root extends Component {
                    api={api}
                    configs={configs}
                    messages={messages}
+                   pendingMessages={state.pendingMessages}
                    peers={state.peers}
                    subscription={subscription}
                    {...props}

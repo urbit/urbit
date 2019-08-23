@@ -263,6 +263,8 @@ export class ChatInput extends Component {
       )
     };
 
+    props.api.addPendingMessage(message);
+
     props.api.hall(
       {
         convey: [message]
