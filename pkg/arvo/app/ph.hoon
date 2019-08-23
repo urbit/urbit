@@ -345,9 +345,11 @@
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
-        ;<  ~        bind:m  (raw-real-ship:eth-node ~bud)
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
         ~&  >  'BUD RE DONE'
-        ;<  ~        bind:m  (just-events (dojo ~bud "|merge %base ~marbud %kids, =gem %this"))
+        ;<  ~  bind:m  (send-hi ~bud ~marbud)
+        ~&  >  'BUD HI MARBUD'
+        ;<  ~  bind:m  (just-events (dojo ~bud "|merge %base ~marbud %kids, =gem %this"))
         ~&  >  'THIS MERGE STARTED DONE'
         ;<  file=@t  bind:m  (touch-file ~bud %base)
         ~&  >  'TOUCH-1 DONE'

@@ -408,13 +408,11 @@
   ==
 ::  $pending-requests: what to do when we learn a peer's life and keys
 ::
-::    rcv-packets: packets we've received from unix
 ::    snd-messages: pleas local vanes have asked us to send
 ::    snd-packets: packets we've tried to send
 ::
 +$  pending-requests
-  $:  rcv-packets=(list [=lane =packet])
-      snd-messages=(list [=duct =plea])
+  $:  snd-messages=(list [=duct =plea])
       snd-packets=(set =blob)
   ==
 ::  $peer-state: state for a peer with known life and keys
@@ -1054,16 +1052,10 @@
     ?>  ?=(@ content.packet)
     ::
     =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
-    ::  if we don't know them, enqueue the packet to be handled later
+    ::  if we don't know them, maybe enqueue a jael %public-keys request
     ::
     ?.  ?=([~ %known *] sndr-state)
-      %+  enqueue-alien-todo  sndr.packet
-      |=  todos=pending-requests
-      ::  only enqueue one packet from an alien, to plug space leak
-      ::
-      ?.  =(~ rcv-packets.todos)
-        todos
-      todos(rcv-packets [[lane packet] rcv-packets.todos])
+      (enqueue-alien-todo sndr.packet (bake same pending-requests))
     ::  decrypt packet contents using symmetric-key.channel
     ::
     ::    If we know them, we have a $channel with them, which we've
@@ -1120,7 +1112,7 @@
     =/  =channel     [[our ship] now |2.ames-state -.peer-state]
     ::
     =^  =bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
-    ~>  %slog.0^leaf/"ames: plea {<our^ship^bone^vane.plea^path.plea>}"
+    ~>  %slog.0^leaf/"ames: plea {<[our our-life.channel]^[ship her-life.channel]^bone^vane.plea^path.plea>}"
     ::
     abet:(on-memo:(make-peer-core peer-state channel) bone plea)
   ::  +on-take-wake: receive wakeup or error notification from behn
@@ -1317,17 +1309,7 @@
       ++  meet-alien
         |=  [=ship =point todos=pending-requests]
         ^+  event-core
-        ::  apply incoming packets
-        ::
-        =.  event-core
-          |-  ^+  event-core
-          ?~  rcv-packets.todos  event-core
-          ::
-          =.  event-core
-            (on-hear-packet [lane packet ok=%.y]:i.rcv-packets.todos)
-          ::
-          $(rcv-packets.todos t.rcv-packets.todos)
-        ::  we're a comet; send self-attestation packet first
+        ::  if we're a comet, send self-attestation packet first
         ::
         =?  event-core  =(%pawn (clan:title our))
           (send-blob ship (attestation-packet ship life.point))
@@ -2131,6 +2113,8 @@
     =.  expiry.val     (next-retry-expiry:gauge -.val)
     =.  sent-date.val  now.channel
     =.  retried.val    %.y
+    ::
+    ~&  [%ames-resend [our our-life her her-life]:channel key]
     ::
     [`val stop=%.n (dec num-slots.acc) packet-pump]
   ::  +feed: try to send a list of packets, returning unsent and effects
