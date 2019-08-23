@@ -1203,12 +1203,38 @@
     ::    TODO: cancel all timers? otherwise we'll get spurious firings
     ::    from behn
     ::
+    ::    TODO: cancel gall subscriptions on breach
+    ::
     ++  on-publ-breach
       |=  [=ship =rift]
       ^+  event-core
       ::
       ~>  %slog.0^leaf/"ames: breach {<our^ship^rift>}"
-      =.  peers.ames-state  (~(del by peers.ames-state) ship)
+      =/  ship-state  (~(get by peers.ames-state) ship)
+      ::  we shouldn't be hearing about ships we don't care about
+      ::
+      ?~  ship-state
+        ~>  %slog.0^leaf/"ames: unknown breach {<our^ship^rift>}"
+        event-core
+      ::  if an alien breached, this doesn't affect us
+      ::
+      ?:  ?=([~ %alien *] ship)
+        event-core
+      ::  a peer breached; drop messaging state
+      ::
+      =/  =peer-state  +.u.ship-state
+      =.  peers.ames-state
+        %+  ~(put by peers.ames-state)  ship
+        ::  reset all peer state other than pki data
+        ::
+        =.  +.peer-state  +:*^peer-state
+        ::  reinitialize galaxy route if applicable
+        ::
+        =?  route.peer-state  =(%czar (clan:title ship))
+          `[direct=%.y lane=[%& ship]]
+        ::
+        peer-state
+      ::
       event-core
     ::  +on-publ-rekey: handle new key for peer
     ::
