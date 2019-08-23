@@ -140,13 +140,6 @@ u3_term_io_init()
         c3_assert(uty_u->ufo_u.way.nam##_y); \
       }
 
-      uty_u->ufo_u.inn.max_w = 0;
-
-      _utfo(inn, kcuu1);
-      _utfo(inn, kcud1);
-      _utfo(inn, kcub1);
-      _utfo(inn, kcuf1);
-
       _utfo(out, clear);
       _utfo(out, el);
       // _utfo(out, el1);
@@ -158,38 +151,6 @@ u3_term_io_init()
       _utfo(out, cud1);
       // _utfo(out, cub);
       // _utfo(out, cuf);
-
-      //  Terminfo chronically reports the wrong sequence for arrow
-      //  keys on xterms.  Drastic fix for ridiculous unacceptable bug.
-      //  Yes, we could fix this with smkx/rmkx, but this is retarded as well.
-      {
-        uty_u->ufo_u.inn.kcuu1_y = (const c3_y*)"\033[A";
-        uty_u->ufo_u.inn.kcud1_y = (const c3_y*)"\033[B";
-        uty_u->ufo_u.inn.kcuf1_y = (const c3_y*)"\033[C";
-        uty_u->ufo_u.inn.kcub1_y = (const c3_y*)"\033[D";
-      }
-
-      uty_u->ufo_u.inn.max_w = 0;
-      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcuu1_y)) >
-            uty_u->ufo_u.inn.max_w )
-      {
-        uty_u->ufo_u.inn.max_w = len_w;
-      }
-      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcud1_y)) >
-            uty_u->ufo_u.inn.max_w )
-      {
-        uty_u->ufo_u.inn.max_w = len_w;
-      }
-      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcub1_y)) >
-            uty_u->ufo_u.inn.max_w )
-      {
-        uty_u->ufo_u.inn.max_w = len_w;
-      }
-      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcuf1_y)) >
-            uty_u->ufo_u.inn.max_w )
-      {
-        uty_u->ufo_u.inn.max_w = len_w;
-      }
     }
 
     //  Load old terminal state to restore.

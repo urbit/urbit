@@ -475,13 +475,6 @@
     */
       typedef struct {
         struct {
-          const c3_y* kcuu1_y;              //  key_up
-          const c3_y* kcud1_y;              //  key_down
-          const c3_y* kcub1_y;              //  key_back
-          const c3_y* kcuf1_y;              //  key_forward
-          c3_w        max_w;                //  maximum input sequence length
-        } inn;
-        struct {
           const c3_y* clear_y;              //  clear_screen
           const c3_y* el_y;                 //  clr_bol clear to beginning
           // const c3_y* el1_y;                //  clr_eol clear to end
