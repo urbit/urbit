@@ -1197,7 +1197,7 @@
         ==
     ::  +on-publ-breach: handle continuity breach of .ship; wipe its state
     ::
-    ::    Abandon all pretense of continuity and delete all state
+    ::    Abandon all pretense of continuity and delete all messaging state
     ::    associated with .ship, including sent and unsent messages.
     ::
     ::    TODO: cancel all timers? otherwise we'll get spurious firings
@@ -1209,31 +1209,38 @@
       |=  [=ship =rift]
       ^+  event-core
       ::
-      ~>  %slog.0^leaf/"ames: breach {<our^ship^rift>}"
       =/  ship-state  (~(get by peers.ames-state) ship)
       ::  we shouldn't be hearing about ships we don't care about
       ::
       ?~  ship-state
-        ~>  %slog.0^leaf/"ames: unknown breach {<our^ship^rift>}"
+        ~>  %slog.0^leaf/"ames: breach unknown {<our^ship^rift>}"
         event-core
       ::  if an alien breached, this doesn't affect us
       ::
-      ?:  ?=([~ %alien *] ship)
+      ?:  ?=([~ %alien *] ship-state)
+        ~>  %slog.0^leaf/"ames: breach alien {<our^ship^rift>}"
         event-core
+      ~>  %slog.0^leaf/"ames: breach peer {<our^ship^rift>}"
       ::  a peer breached; drop messaging state
       ::
       =/  =peer-state  +.u.ship-state
+      =/  old-qos=qos  qos.peer-state
+      ::  reset all peer state other than pki data
+      ::
+      =.  +.peer-state  +:*^peer-state
+      ::  print change to quality of service, if any
+      ::
+      =/  text=(unit tape)  (qos-update-text ship old-qos qos.peer-state)
+      ::
+      =?  event-core  ?=(^ text)
+        (emit duct %pass /qos %d %flog %text u.text)
+      ::  reinitialize galaxy route if applicable
+      ::
+      =?  route.peer-state  =(%czar (clan:title ship))
+        `[direct=%.y lane=[%& ship]]
+      ::
       =.  peers.ames-state
-        %+  ~(put by peers.ames-state)  ship
-        ::  reset all peer state other than pki data
-        ::
-        =.  +.peer-state  +:*^peer-state
-        ::  reinitialize galaxy route if applicable
-        ::
-        =?  route.peer-state  =(%czar (clan:title ship))
-          `[direct=%.y lane=[%& ship]]
-        ::
-        peer-state
+        (~(put by peers.ames-state) ship [%known peer-state])
       ::
       event-core
     ::  +on-publ-rekey: handle new key for peer
@@ -1577,6 +1584,8 @@
       ::  update and print connection state
       ::
       =.  peer-core  %-  update-qos
+        ?:  ?=(%unborn -.qos.peer-state)
+          [%dead now]
         ?.  ?&  ?=(%live -.qos.peer-state)
                 (gte now (add ~s30 last-contact.qos.peer-state))
             ==
@@ -2525,8 +2534,9 @@
   ::
   ?+  [-.old -.new]  ~
     [%unborn %live]  `"; {(scow %p ship)} is your neighbor"
-    [%live %dead]    `"; {(scow %p ship)} not responding still trying"
     [%dead %live]    `"; {(scow %p ship)} is ok"
+    [%live %dead]    `"; {(scow %p ship)} not responding still trying"
+    [%unborn %dead]  `"; {(scow %p ship)} not responding still trying"
     [%live %unborn]  `"; {(scow %p ship)} is dead"
     [%dead %unborn]  `"; {(scow %p ship)} is dead"
   ==
