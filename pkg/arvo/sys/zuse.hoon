@@ -781,7 +781,6 @@
           {$flow p/@tas q/(list gill:gall)}             ::  terminal config
           {$hail ~}                                     ::  terminal refresh
           {$heft ~}                                     ::  memory report
-          {$hook ~}                                     ::  this term hung up
           {$harm ~}                                     ::  all terms hung up
           $>(%init vane-task)                           ::  after gall ready
           {$lyra p/@t q/@t}                             ::  upgrade kernel
@@ -7491,9 +7490,6 @@
       ::  %ames: hear packet
       ::
       $>(%hear task:able:ames)
-      ::  %dill: hangup
-      ::
-      $>(%hook task:able:dill)
       ::  %clay: external edit
       ::
       $>(%into task:able:clay)
