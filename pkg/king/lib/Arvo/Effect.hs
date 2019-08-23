@@ -132,7 +132,6 @@ data Blit
   deriving (Eq, Ord, Show)
 
 {-
-    %bbye -- TODO
     %blip -- TODO
     %init -- TODO
     %logo -- Shutdown
@@ -140,8 +139,7 @@ data Blit
     %send -- Send a UDP packet (duplicate of ames %send)
 -}
 data TermEf
-    = TermEfBbye Path ()
-    | TermEfBlit (UD, ()) [Blit]
+    = TermEfBlit (UD, ()) [Blit]
     | TermEfInit (UD, ()) ()
     | TermEfLogo Path ()
     | TermEfMass Path Noun -- Irrelevant

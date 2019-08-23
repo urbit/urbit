@@ -90,11 +90,6 @@ _reck_kick_term(u3_pier* pir_u, u3_noun pox, c3_l tid_l, u3_noun fav)
   }
   else switch ( u3h(fav) ) {
     default: u3z(pox); u3z(fav); return c3n;
-    case c3__bbye:
-    {
-      u3z(pox); u3z(fav); return c3y;
-    } break;
-
     case c3__blit: p_fav = u3t(fav);
     {
       u3_term_ef_blit(tid_l, u3k(p_fav));

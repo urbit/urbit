@@ -764,8 +764,7 @@
   ++  able  ^?
     |%
     ++  gift                                            ::  out result <-$
-      $%  {$bbye ~}                                     ::  reset prompt
-          {$blit p/(list blit)}                         ::  terminal output
+      $%  {$blit p/(list blit)}                         ::  terminal output
           {$burl p/@t}                                  ::  activate url
           {$init p/@p}                                  ::  set owner
           {$logo ~}                                     ::  logout
