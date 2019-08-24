@@ -16,3 +16,5 @@ release/
 **/*.swp
 **/*.swo
 **/*-min.js
+**/arvo/app/**/*.js
+**/arvo/app/**/*.css
