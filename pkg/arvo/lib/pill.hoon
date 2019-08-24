@@ -13,17 +13,8 @@
   %+  pair  wire
   $%  [%wack p=@]
       [%whom p=ship]
-      [%boot $%([%fake p=ship] [%dawn p=dawn-event])]
+      [%boot $%($>(%fake task:able:jael) $>(%dawn task:able:jael))]
       unix-task
-  ==
-::
-+$  dawn-event
-  $:  =seed:able:jael
-      spon=[=ship point:azimuth]
-      czar=(map ship [=rift =life =pass])
-      turf=(list turf)
-      bloq=@ud
-      node=(unit purl:eyre)
   ==
 ::
 ++  module-ova

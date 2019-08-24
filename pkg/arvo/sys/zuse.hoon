@@ -2072,14 +2072,7 @@
     ::
     +=  task                                            ::  in request ->$
       $~  [%vega ~]                                     ::
-      $%  $:  %dawn                                     ::  boot from keys
-              =seed:able:jael                           ::    identity params
-              spon=[=ship point:azimuth-types]          ::    sponsor
-              czar=(map ship [=rift =life =pass])       ::    galaxy table
-              turf=(list turf)                          ::    domains
-              bloq=@ud                                  ::    block number
-              node=(unit purl:eyre)                     ::    gateway url
-          ==                                            ::
+      $%  [%dawn dawn-event]                            ::  boot from keys
           [%fake =ship]                                 ::  fake boot
           [%listen whos=(set ship) =source]             ::  set ethereum source
           ::TODO  %next for generating/putting new private key
@@ -2094,6 +2087,15 @@
           $>(%wegh vane-task)                           ::  memory usage request
           $>(%west vane-task)                           ::  remote request
       ==                                                ::
+    ::
+    +$  dawn-event
+      $:  =seed
+          spon=(list [=ship point:azimuth-types])
+          czar=(map ship [=rift =life =pass])
+          turf=(list turf)
+          bloq=@ud
+          node=(unit purl:eyre)
+      ==
     ::
     ++  block
       =<  block
@@ -8978,7 +8980,7 @@
   ::
   ++  veri
     |=  [=seed:able:jael =point:azimuth =live]
-    ^-  (each sponsor=ship error=term)
+    ^-  (unit error=term)
     =/  rac  (clan:title who.seed)
     =/  cub  (nol:nu:crub:crypto key.seed)
     ?-  rac
@@ -8986,39 +8988,35 @@
       ::  a comet address is the fingerprint of the keypair
       ::
       ?.  =(who.seed `@`fig:ex:cub)
-        [%| %key-mismatch]
+        `%key-mismatch
       ::  a comet can never be breached
       ::
       ?^  live
-        [%| %already-booted]
+        `%already-booted
       ::  a comet can never be re-keyed
       ::
       ?.  ?=(%1 lyf.seed)
-        [%| %invalid-life]
-      [%& (^sein:title who.seed)]
+        `%invalid-life
+      ~
     ::
         %earl
-      ::  the parent must be launched
-      ::
-      ?~  net.point
-        [%| %parent-not-keyed]
-      [%& (^sein:title who.seed)]
+      ~
     ::
         *
       ::  on-chain ships must be launched
       ::
       ?~  net.point
-        [%| %not-keyed]
+        `%not-keyed
       =*  net  u.net.point
       ::  boot keys must match the contract
       ::
       ?.  =(pub:ex:cub pass.net)
         ~&  [%key-mismatch pub:ex:cub pass.net]
-        [%| %key-mismatch]
+        `%key-mismatch
       ::  life must match the contract
       ::
       ?.  =(lyf.seed life.net)
-        [%| %life-mismatch]
+        `%life-mismatch
       ::  the boot life must be greater than and discontinuous with
       ::  the last seen life (per the sponsor)
       ::
@@ -9026,12 +9024,28 @@
               ?|  ?=(%| breach.u.live)
                   (lte life.net life.u.live)
           ==  ==
-        [%| %already-booted]
+        `%already-booted
       ::  produce the sponsor for vere
       ::
       ~?  !has.sponsor.net
         [%no-sponsorship-guarantees-from who.sponsor.net]
-      [%& who.sponsor.net]
+      ~
+    ==
+  ::  +sponsor:dawn: retreive sponsor from point
+  ::
+  ++  sponsor
+    |=  [who=ship =point:azimuth]
+    ^-  (each ship error=term)
+    ?-    (clan:title who)
+        %pawn  [%& (^sein:title who)]
+        %earl  [%& (^sein:title who)]
+        %czar  [%& (^sein:title who)]
+        *
+      ?~  net.point
+        [%| %not-booted]
+      ?.  has.sponsor.u.net.point
+        [%| %no-sponsor]
+      [%& who.sponsor.u.net.point]
     ==
   --
 --  ::

@@ -265,25 +265,27 @@
 ::
 ++  dawn
   |=  [who=ship seed=(unit seed:able:jael)]
-  ^-  dawn-event
-  =/  spon
+  ^-  dawn-event:able:jael
+  =/  spon=(list [ship point:azimuth])
+    |-  ^-  (list [ship point:azimuth])
     =/  =ship  (^sein:title who)
-    =/  spon-spon
-      ?:  ?=(%czar (clan:title ship))
-        [| ~zod]
-      [& (^sein:title ship)]
-    =/  life-rift  ~|([ship lives] (~(got by lives) ship))
-    =/  =life  lyfe.life-rift
-    =/  =rift  rut.life-rift
-    =/  =pass
-      %^    pass-from-eth:azimuth
-          (as-octs:mimes:html (get-public ship life %crypt))
-        (as-octs:mimes:html (get-public ship life %auth))
-      1
-    :^    ship=ship
-        *[address address address address]:azimuth
-      `[life=life pass rift spon-spon ~]
-    ~
+    =/  a-point=[^ship point:azimuth]
+      =/  spon-spon  [& (^sein:title ship)]
+      =/  life-rift  ~|([ship lives] (~(got by lives) ship))
+      =/  =life  lyfe.life-rift
+      =/  =rift  rut.life-rift
+      =/  =pass
+        %^    pass-from-eth:azimuth
+            (as-octs:mimes:html (get-public ship life %crypt))
+          (as-octs:mimes:html (get-public ship life %auth))
+        1
+      :^    ship
+          *[address address address address]:azimuth
+        `[life=life pass rift spon-spon ~]
+      ~
+    ?:  ?=(%czar (clan:title ship))
+      [a-point]~
+    [a-point $(who ship)]
   =/  =seed:able:jael
     ?^  seed
       u.seed

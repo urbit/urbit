@@ -16,7 +16,7 @@
 ::  Start a ship (low-level; prefer +raw-ship)
 ::
 ++  init
-  |=  [who=ship keys=(unit dawn-event)]
+  |=  [who=ship keys=(unit dawn-event:able:jael)]
   ^-  (list ph-event)
   [%init-ship who keys]~
 ::

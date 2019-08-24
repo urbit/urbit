@@ -188,36 +188,36 @@
 ++  test-veri-good
   =/  sed  [~zod 1 sec ~]
   %+  expect-eq
-    !>  [%& ~zod]
+    !>  ~
     !>  (veri:dawn sed pot ~)
 ::
 ++  test-veri-not-spawned
   =/  sed  [~zod 1 sec ~]
   %+  expect-eq
-    !>  [%| %not-keyed]
+    !>  `%not-keyed
     !>  (veri:dawn sed =>(pot .(net ~)) ~)
 ::
 ++  test-veri-wrong-key
   =/  sed  [~zod 1 sec:ex:(pit:nu:crub:crypto 24 %foo) ~]
   %+  expect-eq
-    !>  [%| %key-mismatch]
+    !>  `%key-mismatch
     !>  (veri:dawn sed pot ~)
 ::
 ++  test-veri-life-mismatch
   =/  sed  [~zod 2 sec ~]
   %+  expect-eq
-    !>  [%| %life-mismatch]
+    !>  `%life-mismatch
     !>  (veri:dawn sed pot ~)
 ::
 ++  test-veri-already-booted
   =/  sed  [~zod 1 sec ~]
   ;:  weld
     %+  expect-eq
-      !>  [%| %already-booted]
+      !>  `%already-booted
       !>  (veri:dawn sed pot `[1 |])
   ::
     %+  expect-eq
-      !>  [%| %already-booted]
+      !>  `%already-booted
       !>  (veri:dawn sed pot `[2 &])
   ==
 ::
@@ -230,7 +230,7 @@
       (shaf %earl (sham who 1 pub:ex:cub))
     [who 1 sec:ex:cub `sig]
   %+  expect-eq
-    !>  [%& (^sein:title who)]
+    !>  ~
     !>  (veri:dawn sed pot ~)
 ::
 ++  test-veri-earl-parent-not-keyed
@@ -242,7 +242,7 @@
       (shaf %earl (sham who 1 pub:ex:cub))
     [who 1 sec:ex:cub `sig]
   %+  expect-eq
-    !>  [%| %parent-not-keyed]
+    !>  ~
     !>  (veri:dawn sed =>(pot .(net ~)) ~)
 ::
 ++  test-veri-pawn-good
@@ -250,7 +250,7 @@
   =/  who=ship  `@`fig:ex:cub
   =/  sed  [who 1 sec:ex:cub ~]
   %+  expect-eq
-    !>  [%& ~mittun]
+    !>  ~
     !>  (veri:dawn sed *point:azimuth-types ~)
 ::
 ++  test-veri-pawn-key-mismatch
@@ -258,7 +258,7 @@
   =/  who=ship  `@`fig:ex:cub
   =/  sed  [who 1 sec:ex:(pit:nu:crub:crypto 24 %bar) ~]
   %+  expect-eq
-    !>  [%| %key-mismatch]
+    !>  `%key-mismatch
     !>  (veri:dawn sed *point:azimuth-types ~)
 ::
 ++  test-veri-pawn-invalid-life
@@ -266,7 +266,7 @@
   =/  who=ship  `@`fig:ex:cub
   =/  sed  [who 2 sec:ex:cub ~]
   %+  expect-eq
-    !>  [%| %invalid-life]
+    !>  `%invalid-life
     !>  (veri:dawn sed *point:azimuth-types ~)
 ::
 ++  test-veri-pawn-already-booted
@@ -274,6 +274,6 @@
   =/  who=ship  `@`fig:ex:cub
   =/  sed  [who 1 sec:ex:cub ~]
   %+  expect-eq
-    !>  [%| %already-booted]
+    !>  `%already-booted
     !>  (veri:dawn sed *point:azimuth-types `[1 |])
 --
