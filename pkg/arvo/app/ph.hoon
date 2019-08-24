@@ -140,6 +140,60 @@
         (send-hi ~bud ~marbud)
       (pure:m ~)
     ::
+      :+  %hi-uncle-az
+        ~[~bud ~marbud ~dev]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      =.  eth-node  (spawn:eth-node ~dev)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
+        ~&  >  'BUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~marbud)
+        ~&  >  'MARBUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~dev)
+        ~&  >  'BUD-DONE'
+        (send-hi ~marbud ~dev)
+      ~&  >  'HI DONE'
+      (pure:m ~)
+    ::
+      :+  %hi-nephew-az
+        ~[~bud ~marbud ~dev]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      =.  eth-node  (spawn:eth-node ~dev)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
+        ~&  >  'BUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~marbud)
+        ~&  >  'MARBUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~dev)
+        ~&  >  'BUD-DONE'
+        (send-hi ~dev ~marbud)
+      ~&  >  'HI DONE'
+      (pure:m ~)
+    ::
+      :+  %hi-cousin-az
+        ~[~bud ~marbud ~dev ~mardev]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      =.  eth-node  (spawn:eth-node ~dev)
+      =.  eth-node  (spawn:eth-node ~mardev)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
+        ~&  >  'BUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~marbud)
+        ~&  >  'MARBUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~dev)
+        ~&  >  'BUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~mardev)
+        ~&  >  'MARDEV-DONE'
+        (send-hi ~mardev ~marbud)
+      ~&  >  'HI DONE'
+      (pure:m ~)
+    ::
       :+  %hi-linnup-az
         ~[~bud ~marbud ~linnup-torsyx]
       =.  eth-node  (spawn:eth-node ~marbud)
@@ -240,18 +294,27 @@
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
+        ~&  >  'BUD DONE'
         ;<  ~  bind:m  (raw-real-ship:eth-node ~dev)
+        ~&  >  'DEV DONE'
         ;<  ~  bind:m  (raw-real-ship:eth-node ~marbud)
+        ~&  >  'MARBUD DONE'
         ;<  ~  bind:m  (raw-real-ship:eth-node ~mardev)
+        ~&  >  'MARDEV DONE'
         (send-hi ~marbud ~mardev)
+      ~&  >  'HI MARBUD MARDEV'
       ;<  eth-node=_eth-node  bind:m
         (breach-and-hear:eth-node our.hid ~mardev ~marbud)
+      ~&  >  'BREACH MARDEV'
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         ;<  ~  bind:m  (send-hi-not-responding ~marbud ~mardev)
+        ~&  >  'HI NOT RESPONDING'
         ;<  ~  bind:m  (raw-real-ship:eth-node ~mardev)
+        ~&  >  'MARDEV RE DONE'
         (wait-for-dojo ~marbud "hi ~mardev successful")
+      ~&  >  'DONE'
       (pure:m ~)
     ::
       :+  %breach-sync

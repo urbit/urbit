@@ -791,9 +791,11 @@
         |-  ^+  ..feel
         ?~  pointl
           ..feel
-        %+  public-keys-give
-          (subscribers-on-ship who.i.pointl)
-        [%full (my i.pointl ~)]
+        =.  ..feel
+          %+  public-keys-give
+            (subscribers-on-ship who.i.pointl)
+          [%full (my i.pointl ~)]
+        $(pointl t.pointl)
       =*  who  who.public-keys-result
       =/  a-diff=diff:point  diff.public-keys-result
       =/  maybe-point  (~(get by pos.zim) who)
