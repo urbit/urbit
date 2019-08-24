@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import moment from 'moment';
 import _ from 'lodash';
 
 import { SidebarItem } from '/components/lib/sidebar-item';
@@ -122,13 +121,8 @@ export class Sidebar extends Component {
           : 'No messages yet';
         let aut = !!msg ? msg.gam.aut : '';
         let wen = !!msg ? msg.gam.wen : 0;
-        let datetime =
-          !!msg ?
-            moment.unix(wen / 1000).from(moment.utc())
-          : '';
         return {
           msg,
-          datetime,
           wen,
           aut,
           content,
@@ -145,11 +139,11 @@ export class Sidebar extends Component {
 
         return (
           <SidebarItem
-            key={obj.cir}
+            key={obj.cir + '/' + obj.wen}
             title={obj.title}
             description={obj.content}
             cir={obj.cir}
-            datetime={obj.datetime}
+            wen={obj.wen}
             ship={obj.aut}
             selected={obj.selected}
             unread={unread}
