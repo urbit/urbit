@@ -4,26 +4,38 @@
 +$  permission
   [kind=?(%black %white) who=(set ship)]
 ::
++$  permission-diff
+  $%  [%create =permission]
+      [%delete ~]
+      [%add who=(set ship)]
+      [%remove who=(set ship)]
+  ==
+::
++$  action
+  $:  =path
+    ::
+      $=  what
+      $%  permission-diff
+          [%allow who=(set ship)]
+          [%deny who=(set ship)]
+      ==
+  ==
+::
++$  diff
+  $:  =path
+      what=permission-diff
+  ==
+::
+::
 +$  state
   $:  permissions=(map path permission)
       ::TODO  do we want to track these for whitelists only? probably no?
       affiliation=(map ship (set path))  ::  jug
   ==
 ::
-+$  action
-  $%  [%create pax=path =permission]
-      [%delete pax=path]
-      [%add pax=path ships=(set ship)]
-      [%remove pax=path ships=(set ship)]
-      [%allow pax=path ships=(set ship)]
-      [%deny pax=path ships=(set ship)]
-      [%debug ~]
-  ==
-::
-::
 +$  move  [bone card]
 +$  card
-  $%  [%diff *]
+  $%  [%diff %permissions-diff diff]
   ==
 --
 ::
@@ -31,7 +43,7 @@
 ::
 ++  this  .
 ::
-::  simple state operations
+::  primitive state operations
 ::
 ++  affiliate
   |=  [=path who=(set ship)]
@@ -79,7 +91,7 @@
     ?:(add affiliate unaffiliate)
   ==
 ::
-::  actions-on-state
+::  actions on state
 ::
 ++  create
   |=  [=path =permission]
@@ -90,12 +102,10 @@
 ::
 ++  delete
   |=  =path
+  ?.  (~(has by permissions) path)  this
   %_  this
     permissions  (~(del by permissions) path)
-  ::
-      affiliation
-    ~|  [%no-such-permission path]
-    (unaffiliate path who:(~(got by permissions) path))
+    affiliation  (unaffiliate path who:(~(got by permissions) path))
   ==
 ::
 ++  add
@@ -104,38 +114,66 @@
 ++  remove
   (cury modify-permission |)
 ::
-++  allow
-  |=  [=path who=(set ship)]
-  ^+  this
-  =-  (modify-permission - path who)
-  =/  =permission  (~(got by permissions) path)
-  ?=(%white kind.permission)
+::  diff handling
 ::
-++  deny
-  |=  [=path who=(set ship)]
+++  calculate-diff
+  |=  =action
+  ^-  (unit diff)
+  =/  pem=(unit permission)
+    (~(get by permissions) path.action)
+  ?:  ?=(%create -.what.action)  `action
+  ?~  pem  ~
+  |-  ^-  (unit diff)
+  ?-  -.what.action
+      %delete  `action
+    ::
+        %allow  ::TODO  smaller?
+      =-  $(what.action -)
+      ?:  ?=(%black kind.u.pem)
+        [%add who.what.action]
+      [%remove who.what.action]
+  ::
+        %deny
+      =-  $(what.action -)
+      ?:  ?=(%black kind.u.pem)
+        [%add who.what.action]
+      [%remove who.what.action]
+  ::
+      %add
+    =+  new=(~(dif in who.what.action) who.u.pem)
+    ?~(new ~ `action(who.what new))
+  ::
+      %remove
+    =+  new=(~(int in who.what.action) who.u.pem)
+    ?~(new ~ `action(who.what new))
+  ==
+::
+++  apply-diff
+  |=  =diff
   ^+  this
-  =-  (modify-permission - path who)
-  =/  =permission  (~(got by permissions) path)
-  ?=(%black kind.permission)
+  ?-  -.what.diff
+    %create  (create [path +.what]:diff)
+    %delete  (delete path.diff)
+    %add     (add [path +.what]:diff)
+    %remove  (remove [path +.what]:diff)
+  ==
+::
+++  send-diff
+  |=  =diff
+  ^-  (list move)
+  %+  murn  ~(tap by sup.bowl)
+  |=  [=bone =ship =path]
+  ^-  (unit move)
+  ?.  =(path path.diff)  ~
+  `[bone %diff %permissions-diff diff]
 ::
 ::  gall interface
 ::
 ++  poke-noun
   |=  =action
   ^-  (quip move _this)
-  :-  ~  ::TODO  send action as diff if it did anything?
-  ?-  -.action
-    %create  (create +.action)
-    %delete  (delete +.action)
-    %add     (add +.action)
-    %remove  (remove +.action)
-    %allow   (allow +.action)
-    %deny    (deny +.action)
-  ::
-      %debug
-    ~&  `(list [path permission])`~(tap by permissions)
-    ~&  `(list [ship (set path)])`~(tap by affiliation)
-    this
-  ==
-::
+  =/  diff=(unit diff)  (calculate-diff action)
+  ?~  diff  [~ this]
+  :-  (send-diff u.diff)
+  (apply-diff u.diff)
 --
