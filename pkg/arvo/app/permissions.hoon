@@ -165,7 +165,12 @@
   |=  [=bone =ship =path]
   ^-  (unit move)
   ?.  =(path path.diff)  ~
-  `[bone %diff %permissions-diff diff]
+  `(diff-move bone diff)
+::
+++  diff-move
+  |=  [=bone =diff]
+  ^-  move
+  [bone %diff %permissions-diff diff]
 ::
 ::  gall interface
 ::
@@ -176,4 +181,22 @@
   ?~  diff  [~ this]
   :-  (send-diff u.diff)
   (apply-diff u.diff)
+::
+++  peer
+  |=  =path
+  ^-  (quip move _this)
+  :_  this
+  ~|  [%invalid-subscription-path path]
+  ?+  path  !!
+      [%permissions ^]
+    ?.  (~(has by permissions) path)  ~
+    [(diff-move ost.bowl path %create (~(got by permissions) path)) ~]
+  ::
+      [%affiliation @ ~]
+    =+  who=(slav %p i.t.path)
+    ?.  (~(has by affiliation) who)  ~
+    ::TODO  ah crud we're gonna need multiple diffs per poke aren't we?
+    ~|  %affiliation-subs-unimplemented
+    !!
+  ==
 --
