@@ -13,7 +13,7 @@
   %+  pair  wire
   $%  [%wack p=@]
       [%whom p=ship]
-      [%boot $%($>(%fake task:able:jael) $>(%dawn task:able:jael))]
+      [%boot ? $%($>(%fake task:able:jael) $>(%dawn task:able:jael))]
       unix-task
   ==
 ::

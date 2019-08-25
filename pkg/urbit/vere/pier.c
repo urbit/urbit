@@ -1485,7 +1485,7 @@ _pier_boot_vent(u3_boot* bot_u)
     c3_assert( c3y == u3du(bot_u->ven) );
 
     u3_noun wir = u3nq(u3_blip, c3__term, '1', u3_nul);
-    u3_noun car = u3nc(c3__boot, u3k(bot_u->ven));
+    u3_noun car = u3nt(c3__boot, u3_Host.ops_u.lit, u3k(bot_u->ven));
     u3_noun ovo = u3nc(wir, car);
 
     _pier_writ_insert_ovum(pir_u, 0, ovo);

@@ -12,6 +12,7 @@
   $:  $0                                                ::
       hey/(unit duct)                                   ::  default duct
       dug/(map duct axon)                               ::  conversations
+      lit/?                                             ::  boot in lite mode
       $=  hef                                           ::  other weights
       $:  a/(unit mass)                                 ::
           b/(unit mass)                                 ::
@@ -317,6 +318,7 @@
                 ::
                 (show %kids):(sync %kids our %base)
         =.  +>  autoload
+        =.  +>  hood-set-boot-apps
         =.  +>  peer
         |-  ^+  +>+
         ?~  myt  +>+
@@ -333,6 +335,7 @@
       ::
       ++  send                                          ::  send action
         |=  bet/dill-belt
+        ^+  +>
         ?^  tem
           +>(tem `[bet u.tem])
         %_    +>
@@ -340,6 +343,16 @@
           :_  moz
           [hen %pass ~ %g %deal [our our] ram %poke [%dill-belt -:!>(bet) bet]]
         ==
+      ::
+      ++  hood-set-boot-apps
+        %_    .
+            moz
+          :_  moz
+          :*  hen  %pass  ~  %g  %deal  [our our]
+              ram  %poke  %drum-set-boot-apps  !>(lit.all)
+          ==
+        ==
+      ::
       ++  peer
         %_    .
             moz
@@ -515,7 +528,8 @@
       ~&  %dill-no-boot
       ~&  p.task
       ~|  invalid-boot-event+hen  !!
-    :_(..^$ [hen %pass / %j u.boot]~)
+    =.  lit.all  lit.task
+    [[hen %pass / %j u.boot]~ ..^$]
   ::  we are subsequently initialized. single-home
   ::
   ?:  ?=(%init -.task)
