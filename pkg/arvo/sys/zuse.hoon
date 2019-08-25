@@ -5682,15 +5682,7 @@
   ::                                                    ::  ++of-wain:format
   ++  of-wain                                           ::  line list to atom
     |=  tez/(list @t)
-    =|  {our/@ i/@ud}
-    |-  ^-  @
-    ?~  tez
-      our
-    ?:  =(%$ i.tez)
-      $(i +(i), tez t.tez, our (cat 3 our 10))
-    ?:  =(0 i)
-      $(i +(i), tez t.tez, our i.tez)
-    $(i +(i), tez t.tez, our (cat 3 (cat 3 our 10) i.tez))
+    (rap 3 (join '\0a' tez))
   ::                                                    ::  ++of-wall:format
   ++  of-wall                                           ::  line list to tape
     |=  a/wall  ^-  tape
