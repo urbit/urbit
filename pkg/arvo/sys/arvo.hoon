@@ -21,8 +21,15 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =>
 |%
+:: a filesystem node
+:: why is this a map of @ta to nil? Maybe this was made before
+:: sets were added to stdlib?
+:: fil is ~ for directories, but something (a hash?) for files
+:: dir is empty for files, but a bunch of sub-nodes for directories
 ++  arch  {fil/(unit @uvI) dir/(map @ta $~)}            ::  fundamental node
 ++  arvo  (wind {p/term q/mill} mill)                   ::  arvo card
+:: global name for a file on the urbit network. ship, filesystem,
+:: version, path
 ++  beam  {{p/ship q/desk r/case} s/path}               ::  global name
 ++  beak  {p/ship q/desk r/case}                        ::  garnish with beak
 ++  bone  @ud                                           ::  opaque duct
@@ -31,9 +38,14 @@
               {$tas p/@tas}                             ::  label
               {$ud p/@ud}                               ::  sequence
           ==                                            ::
+:: symbolic name of a filesystem. Can have many desks on an urbit, and
+:: one desk can by synced with another
 ++  desk  @tas                                          ::  ship desk case spur
 ++  dock  (pair @p term)                                ::  message target
+:: a value, hoon type, and mark all together
 ++  cage  (cask vase)                                   ::  global metadata
+:: an association between a hoon type and the mark it should get
+:: serialized/diffed/etc with
 ++  cask  |*(a/mold (pair mark a))                      ::  global data
 ++  curd  {p/@tas q/*}                                  ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
@@ -49,6 +61,8 @@
           (pair cord (each noun (list mash)))           ::
 ++  mill  (each vase milt)                              ::  vase+metavase
 ++  milt  {p/* q/*}                                     ::  metavase
+:: either an urbit identity, or an identity on another service, like
+:: [p="twitter" q="jack"]. Service identity is maybe deprecated?
 ++  monk  (each ship {p/@tas q/@ta})                    ::  general identity
 ++  muse  {p/@tas q/duct r/arvo s/@ud}                  ::  sourced move
 ++  move  {p/duct q/arvo}                               ::  arvo move

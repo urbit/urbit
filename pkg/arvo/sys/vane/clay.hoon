@@ -4378,6 +4378,15 @@
   ?>  ?=(%1 -.old)
   %_(..^$ ruf ruf-1.old)
 ::
+:: monk is an identity. (set monk) is a set of identities.
+:: ren is the request type symbol.
+:: For example, .^(arch %cy %) means ren would by %y, indicating the
+:: request type.
+:: why is a shop, which is either a ship (@p) or a dns domain. BUT this
+:: doesn't support domains, only ships.
+:: syd is the desk (%home, %base, %kids, etc)
+:: lot is a coin - a value with a bit of info about how to display it.
+:: tyl is the path
 ++  scry                                              ::  inspect
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))

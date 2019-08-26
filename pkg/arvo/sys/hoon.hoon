@@ -675,6 +675,7 @@
   ?~  a  ~
   ?:((b i.a) $(a t.a) [i.a $(a t.a)])
 ::
+:: remove `a` elements from head of list
 ++  slag                                                ::  suffix
   ~/  %slag
   |*  {a/@ b/(list)}
@@ -734,7 +735,7 @@
   |*  {{a/@ b/@} c/(list)}
   (scag +<-> (slag +<-< c))
 ::  +turn: transform each value of list :a using the function :b
-::
+::  most other languages call this `map`
 ++  turn
   ~/  %turn
   |*  [a=(list) b=gate]
@@ -773,6 +774,7 @@
 ::::  2c: bit arithmetic                                ::
   ::                                                    ::
   ::
+  :: 2^a, as atom
 ++  bex                                                 ::  binary exponent
   ~/  %bex
   |=  a/@
@@ -787,11 +789,33 @@
   ?~  b  0
   (add (end a p.i.b q.i.b) (lsh a p.i.b $(b t.b)))
 ::
+:: concatenate. b fills lower bits, c fills upper bits.
+:: bloq size here you can think of as either bit alignment,
+:: or as what base we do the concatenation in.
+:: Concatenate in binary, base-4, base-16, base-256
+:: Or, concatenate the bits of the number with 1-bit, 2-bit, 4-bit, 8-bit alignment
+:: > (cat 0 1 1)
+:: 3      (11 in base 2)
+:: > (cat 1 1 1)
+:: 5      (11 in base 4)
+:: > (cat 2 1 1)
+:: 17     (11 in base 16)
+:: > (cat 3 1 1)
+:: 257    (11 in base 256)
+:: > (cat 2 12 1)  (d12 = 30 in base 4, 1 = 1)
+:: 28     (130 in base 4)
+:: > (cat 2 3 1)
+:: 19     (4-bit alignment, b = 0b0011, c = 0b0001, result is 0b1.0011 = d19
+::
 ++  cat                                                 ::  concatenate
   ~/  %cat
   |=  {a/bloq b/@ c/@}
   (add (lsh a (met a b) c) b)
-::
+:: extract a segment from an atom
+:: a - block size
+:: b - how many low blocks should we skip?
+:: c - how many blocks should we take?
+:: d - the atom we're extracting from
 ++  cut                                                 ::  slice
   ~/  %cut
   |=  {a/bloq {b/@u c/@u} d/@}
@@ -811,11 +835,15 @@
     (rsh a 1 d)
   $(d (add c (lsh a 1 d)), n +(n))
 ::
+:: a = block size of shift
+:: b = number of blocks to shift
+:: c = target
 ++  lsh                                                 ::  left-shift
   ~/  %lsh
   |=  {a/bloq b/@u c/@}
   (mul (bex (mul (bex a) b)) c)
 ::
+:: "how many blocks of size a do we need to fit the number b?"
 ++  met                                                 ::  measure
   ~/  %met
   |=  {a/bloq b/@}
@@ -823,8 +851,10 @@
   =+  c=0
   |-
   ?:  =(0 b)  c
+  :: increment c each time we right shift by one block.
   $(b (rsh a 1 b), c +(c))
 ::
+:: concatenate all numbers in a list together.
 ++  rap                                                 ::  assemble nonzero
   ~/  %rap
   |=  {a/bloq b/(list @)}
@@ -833,6 +863,13 @@
   ?~  b  0
   (cat a i.b $(b t.b))
 ::
+:: concatenate only the low bloqs of each number in a list
+:: for example, with bloqsize of 0, it will concatentate only the last
+:: bit of each number in a list
+:: > (rep 0 ~[0b10 0b11])
+:: 2
+:: > (rep 0 ~[0b0 0b1])
+:: 2
 ++  rep                                                 ::  assemble single
   ~/  %rep
   |=  {a/bloq b/(list @)}
@@ -1458,6 +1495,9 @@
       $(a l.a, c (peg c 6))
     $(a r.a, c (peg c 7))
   ::
+  ::  it's some kinda binary search tree, where branches are ordered by
+  ::  mug or double mug hash. A little confused about the double
+  ::  comparisons here.
   ++  apt                                               ::  check correctness
     =|  {l/(unit) r/(unit)}
     |-  ^-  ?
@@ -1477,9 +1517,11 @@
       a
     $(b t.b, a (put p.i.b q.i.b))
   ::
+  :: returns a (unit value)
   ++  get                                               ::  grab value by key
     ~/  %get
     |*  b=*
+    :: cast b to the key type of this map
     =>  .(b `_?>(?=(^ a) p.n.a)`b)
     |-  ^-  (unit _?>(?=(^ a) q.n.a))
     ?~  a
@@ -1569,10 +1611,18 @@
       [n.a l.a d]
     [n.d [n.a l.a l.d] r.d]
   ::
+  :: reduce over the key/val pairs of the map.
+  :: Pre-order traversal (root, recurse left, recurse right)
+  :: should seem like arbitrary order to callers though, since
+  :: maps are ordered by hash
   ++  rep                                               ::  replace by product
+    :: takes a gate a^b -> b
     |*  b/_=>(~ |=({* *} +<+))
     |-
+    :: if the map is empty, return the accumulated value
     ?~  a  +<+.b
+    :: apply reducer to current node, then recurse down left branch,
+    :: then recurse down right branch
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
   ::
   ++  rib                                               ::  transform + product
@@ -1585,6 +1635,8 @@
     =+  f=$(a r.a, b -.e)
     [-.f [n.a +.e +.f]]
   ::
+  :: returns a new map with the same keys but values have been run
+  :: through the gate `b`
   ++  run                                               ::  apply gate to values
     |*  b/gate
     |-
@@ -1861,6 +1913,14 @@
 ++  nl
   |%
   ::                                                    ::
+  :: ???  some tricky type inference stuff
+  :: > !>(~[1 2 3])
+  :: [#t/{@ud @ud @ud $~} q=[1 2 3 0]]
+  :: > !>(`(list @)`~[1 2 3])
+  :: [#t/it(@) q=[1 2 3 0]]
+  :: > !>((le:nl ~[1 2 3]))
+  :: [#t/it(?(?(?(#! @ud) @ud) @ud)) q=[1 2 3 0]]
+  :: so.... it infers the depth of the list or something?
   ++  le                                                ::  construct list
     |*  a/(list)
     ^+  =<  $
@@ -3972,13 +4032,23 @@
 ::
 ::::  3g: molds and mold builders
   ::
+:: default format is as decimal number
 ++  coin  $~  [%$ %ud 0]                                ::  print format
-          $%  {$$ p/dime}                               ::
-              {$blob p/*}                               ::
-              {$many p/(list coin)}                     ::
+          $%  {$$ p/dime}                               ::  an atom with some aura, i presume?
+              {$blob p/*}                               ::  an opaque noun
+              {$many p/(list coin)}                     ::  a list of things to print?
           ==                                            ::
+:: aura + atom
 ++  dime  {p/@ta q/@}                                   ::
+:: i have no idea what this structure is.
+:: maybe:
+:: - hair is the new parsing location after applying the parsing rule
+:: - q is some if the parse succeeded, nil if not
+:: - then u.q is the value
+:: - p.u.q is the hoon or whatever came out of the parsing rule
+:: - q.u.q was the original input?
 ++  edge  {p/hair q/(unit {p/* q/nail})}                ::  parsing output
+:: like row/column info maybe?
 ++  hair  {p/@ud q/@ud}                                 ::  parsing trace
 ++  like  |*  a/$-(* *)                                 ::  generic edge
           |:  b=`*`[(hair) ~]                           ::
@@ -3987,8 +4057,12 @@
           ?@  +.b  ~                                    ::
           :-  ~                                         ::
           u=[p=(a +>-.b) q=[p=(hair -.b) q=(tape +.b)]] ::
+:: i guess the rest of the string to parse as well as the current
+:: location. i assume it bumps the column as it consumes a character,
+:: or bumps row when it finds a newline
 ++  nail  {p/hair q/tape}                               ::  parsing input
 ++  pint  {p/{p/@ q/@} q/{p/@ q/@}}                     ::  line+column range
+:: a gate from parsing input to parsing output. So, a parser function
 ++  rule  _|:($:nail $:edge)                            ::  parsing rule
 ++  spot  {p/path q/pint}                               ::  range in file
 ++  tone  $%  {$0 p/*}                                  ::  success
@@ -3999,6 +4073,15 @@
               {$1 p/(list)}                             ::  blocks
               {$2 p/(list tank)}                        ::  stack trace
           ==                                            ::
+:: yanks the parsing result out of the edge, crashes if it's not in
+:: there.
+:: I think this could be a wet gate instead of this
+:: manual adding sample to payload, then wet core with one arm.
+:: maybe this?
+:: ++  wonk
+::   |*  veq/edge
+::   ?~(q.veq !! p.u.q.veq)
+:: or, maybe this is just for getting the type of a given parser result
 ++  wonk  =+  veq=$:edge                                ::  product from edge
           |@  ++  $  ?~(q.veq !! p.u.q.veq)             ::
           --                                            ::
@@ -5511,6 +5594,7 @@
 ::
 ::::  4g: parsing (outside caller)
   ::
+:: run a parsing rule on a given cord
 ++  rash  |*({naf/@ sab/rule} (scan (trip naf) sab))
 ++  rose  |*  {los/tape sab/rule}
           =+  vex=(sab [[1 1] los])
@@ -5523,6 +5607,7 @@
 ++  rust  |*  {los/tape sab/rule}
           =+  vex=((full sab) [[1 1] los])
           ?~(q.vex ~ [~ u=p.u.q.vex])
+:: run a parsing rule on a given tape
 ++  scan  |*  {los/tape sab/rule}
           =+  vex=((full sab) [[1 1] los])
           ?~  q.vex
@@ -5805,12 +5890,15 @@
   ++  zig  [p=(end 4 1 (add top (sub 0x1.0000 bot))) q=bot]
   ++  zug  (mix (lsh 4 1 top) bot)
   --
+:: Digit rendering engine
+:: A door containing arms that render digits at bases 10, 16, 32, and 64.
 ++  ne
-  |_  tig/@
-  ++  c  (cut 3 [tig 1] key:fa)
-  ++  d  (add tig '0')
-  ++  x  ?:((gte tig 10) (add tig 87) d)
-  ++  v  ?:((gte tig 10) (add tig 87) d)
+  |_  tig/@  :: tig as a digit
+  ++  c  (cut 3 [tig 1] key:fa)  :: base58 - digits, upper alpha, lower alpha
+  ++  d  (add tig '0')           :: decimal
+  ++  x  ?:((gte tig 10) (add tig 87) d)  :: hex - 0-9a-f
+  ++  v  ?:((gte tig 10) (add tig 87) d)  :: base32 - 0-9a-v
+  ::  base64 - 0-9a-zA-Z-~
   ++  w  ?:(=(tig 63) '~' ?:(=(tig 62) '-' ?:((gte tig 36) (add tig 29) x)))
   --
 ::
@@ -5820,7 +5908,10 @@
   ~%  %co  ..co  ~
   =<  |_  lot/coin
       ++  rear  |=(rom/tape =>(.(rep rom) rend))
+      :: render first as tape, then convert to knot
       ++  rent  `@ta`(rap 3 rend)
+      :: render as tape
+      :: i'd love to know the list of supported formats...
       ++  rend
         ^-  tape
         ?:  ?=($blob -.lot)
@@ -6222,9 +6313,11 @@
 ::
 ::::  4m: formatting functions
   ::
+:: render atom to @ta, using given aura
 ++  scot
   ~/  %scot
   |=(mol/dime ~(rent co %$ mol))
+:: render atom to tape, using given aura
 ++  scow
   ~/  %scow
   |=(mol/dime ~(rend co %$ mol))

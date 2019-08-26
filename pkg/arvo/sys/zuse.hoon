@@ -5394,38 +5394,85 @@
 ++  format  ^?
   |%
   ::                                                    ::  ++to-wain:format
+  :: does this fail for strings with null bytes?
+  :: cord to list of cords, split on \n
   ++  to-wain                                           ::  atom to line list
     ~%  %lore  ..is  ~
+    :: takes an atom
     |=  lub/@
+    :: plops an empty list called tez into the subject
     =|  tez/(list @t)
+    ::  we return something of the same type, namely list of @t
     |-  ^+  tez
+    ::  compute this indented thing, call it wor
     =+  ^=  wor
       =+  [meg=0 i=0]
       |-  ^-  {meg/@ i/@ end/@f}
+      :: take one byte, starting from i
       =+  gam=(cut 3 [i 1] lub)
+      :: if it's a zero byte
       ?:  =(0 gam)
         [meg i %.y]
       ?:  =(10 gam)
         [meg i %.n]
       $(meg (cat 3 meg gam), i +(i))
+    :: if we hit the end, then add this last line to the result,
+    :: reverse the list, and return
     ?:  end.wor
       (flop ^+(tez [meg.wor tez]))
+    :: if there's nothing left, return the list. This happens if the
+    :: last character is a newline
     ?:  =(0 lub)  (flop tez)
+    :: recurse, with a smaller atom, and a new thing pushed on the head
+    :: of the list. rsh takes a block size as 2's exponent, number of blocks,
+    :: and the atom to shift. Returns the smaller atom.
+    :: 2^3 == 8, so we are right shifting the main arg by the number of
+    :: bytes counted in i.wor.
+    :: So, we are taking some number of bytes from the low bits of the
+    :: atom, and pushing them into a list somehow.
+    :: cords (strings as an atom) store the early characters as the low
+    :: bits of the atom.
     $(lub (rsh 3 +(i.wor) lub), tez [meg.wor tez])
   ::                                                    ::  ++of-wain:format
+  :: list of cords to a single cord, joining with newlines
   ++  of-wain                                           ::  line list to atom
     |=  tez/(list @t)
-    (rap 3 (join '\0a' tez))
+    =|  {our/@ i/@ud}
+    |-  ^-  @
+    ?~  tez
+      our
+    ?:  =(%$ i.tez)
+      $(i +(i), tez t.tez, our (cat 3 our 10))
+    ?:  =(0 i)
+      $(i +(i), tez t.tez, our i.tez)
+    $(i +(i), tez t.tez, our (cat 3 (cat 3 our 10) i.tez))
   ::                                                    ::  ++of-wall:format
+  :: list of tapes to a single tape, joining with \n
   ++  of-wall                                           ::  line list to tape
     |=  a/wall  ^-  tape
     ?~(a ~ "{i.a}\0a{$(a t.a)}")
   ::                                                    ::  ++en-beam:format
+  :: ++  beam  {{p/ship q/desk r/case} s/path}             ::  global name
+  :: ++  ship  @p                                            ::  network identity
+  :: ++  desk  @tas                                          ::  ship desk case spur
+  :: ++  case                                                ::  version
+  ::           $%  {$da p/@da}                               ::  date
+  ::               {$tas p/@tas}                             ::  label
+  ::               {$ud p/@ud}                               ::  sequence
+  ::           ==                                            ::
+  :: +$  path  (list knot)                                   ::  like unix path
+  :: +$  knot  @ta                                           ::  ASCII text
+  :: beam to path. Dunno why we reverse the path part of the global name
+  :: > (en-beam:format `beam`[[p=~zod q=%home r=[%ud p=12]] s=/sys/zuse/hoon])
+  :: /~zod/home/12/hoon/zuse/sys
   ++  en-beam                                           ::  beam to path
     |=  bem/beam
     ^-  path
     [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
   ::                                                    ::  ++de-beam:format
+  :: beam serialized as path, back to beam. Returns a (unit beam)
+  :: > (de-beam:format /~zod/home/12/hoon/zuse/sys)
+  :: [~ [[p=~zod q=%home r=[%ud p=12]] s=/sys/zuse/hoon]]
   ++  de-beam                                           ::  parse path to beam
     |=  pax/path
     ^-  (unit beam)
@@ -5462,11 +5509,13 @@
       ^-  json
       (tape (of-wall a))
     ::                                                  ::  ++ship:enjs:format
+    :: @p rendering, but remove the initial ~
     ++  ship                                            ::  string from ship
       |=  a/^ship
       ^-  json
       (tape (slag 1 (scow %p a)))
     ::                                                  ::  ++numb:enjs:format
+    :: print @ud, but without dot separators. just one long number
     ++  numb                                            ::  number from unsigned
       |=  a/@u
       ^-  json
@@ -5477,12 +5526,15 @@
       |-  ^-  ^tape
       ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])
     ::                                                  ::  ++time:enjs:format
+    :: integer # of milliseconds since the epoch
     ++  time                                            ::  ms timestamp
       |=  a/^time
       =-  (numb (div (mul - 1.000) ~s1))
       (add (div ~s1 2.000) (sub a ~1970.1.1))
     --  ::enjs
   ::                                                    ::  ++dejs:format
+  :: there are a whole lot of assertions in this code
+  :: could it be done with unit or Result types instead?
   ++  dejs                                              ::  json reparser
     =>  |%  ++  grub  *                                 ::  result
             ++  fist  $-(json grub)                     ::  reparser instance
@@ -5496,39 +5548,57 @@
       (turn p.jon wit)
     ::                                                  ::  ++at:dejs:format
     ++  at                                              ::  array as tuple
+      :: this just asserts it's properly wrapped as a json array,
+      :: then passes the elements and handlers off to at-raw
       |*  wil/(pole fist)
       |=  jon/json
       ?>  ?=({$a *} jon)
       ((at-raw wil) p.jon)
     ::                                                  ::  ++at-raw:dejs:format
+    :: create a tuple (improper list) where each element is handled by a
+    :: handler at the same index.
     ++  at-raw                                          ::  array as tuple
       |*  wil/(pole fist)
       |=  jol/(list json)
       ?~  jol  !!
       ?-    wil                                         :: mint-vain on empty
-          :: {wit/* t/*}
-          {* t/*}
-        =>  .(wil [wit *]=wil)
-        ?~  t.wil  ?^(t.jol !! (wit.wil i.jol))
+          {wit/* t/*}
+        :: we better not have more array elements than we do element
+        :: handlers.
+        ?~  t.wil
+          :: last one isn't a list, just an item
+          ?^(t.jol !! (wit.wil i.jol))
+        :: it's a tuple, or "improper list".
+        :: run the head handler on the head element, and recurse with
+        :: the tail of each.
         [(wit.wil i.jol) ((at-raw t.wil) t.jol)]
       ==
     ::                                                  ::  ++bo:dejs:format
+    :: simply unwrap the value
     ++  bo                                              ::  boolean
       |=(jon/json ?>(?=({$b *} jon) p.jon))
     ::                                                  ::  ++bu:dejs:format
+    :: unwrap and flip the value
     ++  bu                                              ::  boolean not
       |=(jon/json ?>(?=({$b *} jon) !p.jon))
     ::                                                  ::  ++ci:dejs:format
+    :: wit is generally the json unpacker.
+    :: poq then is some transformation to apply to the
+    :: fully-extraced sub-structure, whereas wit is applied
+    :: to the json object to do the extraction.
     ++  ci                                              ::  maybe transform
       |*  {poq/gate wit/fist}
       |=  jon/json
       (need (poq (wit jon)))
     ::                                                  ::  ++cu:dejs:format
+    :: do "normal" extraction on `jon` via `wit`, then apply the
+    :: transform `poq`
     ++  cu                                              ::  transform
       |*  {poq/gate wit/fist}
       |=  jon/json
       (poq (wit jon))
     ::                                                  ::  ++di:dejs:format
+    :: turn milliseconds since epoch into a @da
     ++  di                                              ::  millisecond date
       %+  cu
         |=  a/@u  ^-  @da
@@ -5554,34 +5624,48 @@
     ++  no                                              ::  number as cord
       |=(jon/json ?>(?=({$n *} jon) p.jon))
     ::                                                  ::  ++of:dejs:format
+    :: this takes a set of handlers for keys, and a single-property
+    :: object. If you have a handler for the single key it has, it
+    :: will apply it and return it.
     ++  of                                              ::  object as frond
       |*  wer/(pole {cord fist})
       |=  jon/json
       ?>  ?=({$o {@ *} $~ $~} jon)
       |-
       ?-    wer                                         :: mint-vain on empty
-          :: {{key/@t wit/*} t/*}
-          {{key/@t *} t/*}
-        =>  .(wer [[* wit] *]=wer)
+          {{key/@t wit/*} t/*}
+          ::            key . head node . key/value map . json
+          :: if the key asked for is the top (only, bc of assertion
+          :: above) key of the map,
         ?:  =(key.wer p.n.p.jon)
+          :: extract that key
           [key.wer ~|(key+key.wer (wit.wer q.n.p.jon))]
+        :: else, try the next handler, or error if we're out of
+        :: handlers.
         ?~  t.wer  ~|(bad-key+p.n.p.jon !!)
         ((of t.wer) jon)
       ==
     ::                                                  ::  ++ot:dejs:format
+    :: takes a list of [key handler]s. All those keys must be in the
+    :: object, and it will apply all of them to the appropriate value,
+    :: and return the values in the same order as your key/handler
+    :: pairs.
     ++  ot                                              ::  object as tuple
       |*  wer/(pole {cord fist})
       |=  jon/json
       ?>  ?=({$o *} jon)
       ((ot-raw wer) p.jon)
     ::                                                  ::  ++ot-raw:dejs:format
+    :: for each key/parser pair in wer, extract that key from the
+    :: object. Will error if a key is missing. Won't include extra
+    :: keys/values from the underlying object.
+    :: Returns a tuple of values in the same order as the keys were
+    :: passed in.
     ++  ot-raw                                          ::  object as tuple
       |*  wer/(pole {cord fist})
       |=  jom/(map @t json)
       ?-    wer                                         :: mint-vain on empty
-          :: {{key/@t wit/*} t/*}
-          {{key/@t *} t/*}
-        =>  .(wer [[* wit] *]=wer)
+          {{key/@t wit/*} t/*}
         =/  ten  ~|(key+key.wer (wit.wer (~(got by jom) key.wer)))
         ?~(t.wer ten [ten ((ot-raw t.wer) jom)])
       ==
@@ -5592,71 +5676,97 @@
       ?>  ?=({$o *} jon)
       ((ou-raw wer) p.jon)
     ::                                                  ::  ++ou-raw:dejs:format
+    :: Takes a list of key/handler pairs, and returns a list of (unit
+    :: extracted-value)s, of the same length in the same order.
     ++  ou-raw                                          ::  object of units
       |*  wer/(pole {cord fist})
       |=  jom/(map @t json)
       ?-    wer                                         :: mint-vain on empty
-          :: {{key/@t wit/*} t/*}
-          {{key/@t *} t/*}
-        =>  .(wer [[* wit] *]=wer)
+          {{key/@t wit/*} t/*}
         =/  ten  ~|(key+key.wer (wit.wer (~(get by jom) key.wer)))
         ?~(t.wer ten [ten ((ou-raw t.wer) jom)])
       ==
     ::                                                  ::  ++om:dejs:format
+    :: just turn the json map into a map of the same keys to the decoded
+    :: values
     ++  om                                              ::  object as map
       |*  wit/fist
       |=  jon/json
       ?>  ?=({$o *} jon)
       (~(run by p.jon) wit)
     ::                                                  ::  ++op:dejs:format
+    :: parses all keys of the obj with `fel`, decodes all values with
+    :: `wit`, and returns a map from parsed keys to decoded values
     ++  op                                              ::  parse keys of map
       |*  {fel/rule wit/fist}
       |=  jon/json  ^-  (map _(wonk *fel) _*wit)
+      :: first decode all the values
       =/  jom  ((om wit) jon)
+      :: tree -> list of key/val pairs -> parse all keys -> back to map
       %-  malt
       %+  turn  ~(tap by jom)
       |*  {a/cord b/*}
+      :: does this replacement do anything? doesn't the line above
+      :: already put the a and b faces on it?
       =>  .(+< [a b]=+<)
+      :: run the parsing rule on the key
       [(rash a fel) b]
     ::                                                  ::  ++pe:dejs:format
+    :: do normal extraction, then turn into a cel with `pre` as the
+    :: left, and the decoded object as the right
     ++  pe                                              ::  prefix
       |*  {pre/* wit/fist}
       (cu |*(* [pre +<]) wit)
     ::                                                  ::  ++sa:dejs:format
+    :: it better be a string, get it as a tape
     ++  sa                                              ::  string as tape
       |=(jon/json ?>(?=({$s *} jon) (trip p.jon)))
     ::                                                  ::  ++so:dejs:format
+    :: it better be a string, get it as a cord
     ++  so                                              ::  string as cord
       |=(jon/json ?>(?=({$s *} jon) p.jon))
     ::                                                  ::  ++su:dejs:format
+    :: it better be a string, parse the string with a given parsing rule
     ++  su                                              ::  parse string
       |*  sab/rule
       |=  jon/json  ^+  (wonk *sab)
       ?>  ?=({$s *} jon)
       (rash p.jon sab)
     ::                                                  ::  ++uf:dejs:format
+    :: parse a maybe json, or use default if it was empty
     ++  uf                                              ::  unit fall
       |*  [def/* wit/fist]
       |=  jon/(unit json)
       ?~(jon def (wit u.jon))
     ::                                                  ::  ++un:dejs:format
+    :: parse a maybe json, crash if it was empty
     ++  un                                              ::  unit need
       |*  wit/fist
       |=  jon/(unit json)
       (wit (need jon))
     ::                                                  ::  ++ul:dejs:format
+    ::  ensure it's a null
     ++  ul                                              ::  null
       |=(jon/json ?~(jon ~ !!))
     ::
+    :: are all units in this list full?
     ++  za                                              ::  full unit pole
       |*  pod/(pole (unit))
       ?~  pod  &
       ?~  -.pod  |
       (za +.pod)
     ::
+    :: (list (unit)) -> (unit (list)).
+    :: if any of the listed units are empty, return an empty.
+    :: otherwise, unwrap them all, and return (some the-list-of-unwrapped)
+    :: could we use za here instead of duplicating?
+    :: Should za be a stdlib?
     ++  zl                                              ::  collapse unit list
       |*  lut/(list (unit))
+      :: if all units are full
+      :: if this recursive condition, then some, otherwise nil
       ?.  |-  ^-  ?
+          :: yes if the list is empty, no if the head is nil.
           ?~(lut & ?~(i.lut | $(lut t.lut)))
         ~
       %-  some
@@ -5664,17 +5774,25 @@
       ?~  lut  ~
       [i=u:+.i.lut t=$(lut t.lut)]
     ::
+    :: unwrap a unit list as a tuple
     ++  zp                                              ::  unit tuple
       |*  but/(pole (unit))
+      :: crash on empty list
       ?~  but  !!
+      :: if this is last element, just unwrap it
       ?~  +.but
         u:->.but
+      :: otherwise unwrap it and tuple it with the rest
       [u:->.but (zp +.but)]
     ::
+    :: (map @tas (unit *)) -> (unit (map @tas *))
+    :: if any value is empty, return empty, otherwise unwrap all values
     ++  zm                                              ::  collapse unit map
       |*  lum/(map term (unit))
+      :: if any value is nil, return nil.
       ?:  (~(rep by lum) |=({{@ a/(unit)} b/_|} |(b ?=(~ a))))
         ~
+      :: otherwise, unwrap all values
       (some (~(run by lum) need))
     --  ::dejs
   ::                                                    ::  ++dejs-soft:format
