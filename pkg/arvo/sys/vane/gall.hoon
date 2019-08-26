@@ -1190,11 +1190,12 @@
       =/  slammed-vase  p.possibly-vase
       =/  vase-value  q.slammed-vase
       =/  err
+        |.
         =/  =tank  [%leaf "peek bad result"]
         =/  print  (slog tank ~)
         (print [~ ~])
       ::
-      ?+  vase-value  err
+      ?+  vase-value  $:err
           ~
         ~
       ::
