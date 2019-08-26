@@ -445,18 +445,15 @@
     |=  [=foreign-response art=(unit ares)]
     ^+  mo-core
     ::
-    =/  =ares
-      =/  tanks  [%blank ~]
-      =/  tang  (some tanks)
-      (fall art tang)
-    ::
     =/  to-tang
-      |=  ars=(pair term tang)
+      |=  =ares
       ^-  tang
-      =/  tape  (trip p.ars)
-      [[%leaf tape] q.ars]
+      ?~  ares
+        ~
+      =/  tape  (trip p.u.ares)
+      [[%leaf tape] q.u.ares]
     ::
-    =/  result  (bind ares to-tang)
+    =/  result  (bind art to-tang)
     ?-  foreign-response
       %peel  (mo-give %unto %reap result)
       %peer  (mo-give %unto %reap result)
