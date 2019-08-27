@@ -985,12 +985,14 @@
         $(eny (shas %try-again candidate))
       ::  record cookie and record expiry time
       ::
+      =/  expires-in=@dr  ~d7
       =.  sessions.authentication-state.state
-        (~(put by sessions.authentication-state.state) session (add now ~h24))
+        (~(put by sessions.authentication-state.state) session (add now expires-in))
       ::
+      =/  max-age=tape  (format-ud-as-integer `@ud`(div (msec:milly expires-in) 1.000))
       =/  cookie-line
         %-  crip
-        "urbauth={<session>}; Path=/; Max-Age=86400"
+        "urbauth={<session>}; Path=/; Max-Age={max-age}"
       ::
       ?~  redirect=(get-header:http 'redirect' u.parsed)
         %-  handle-response
