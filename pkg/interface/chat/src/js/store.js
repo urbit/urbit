@@ -11,7 +11,8 @@ class Store {
       configs: {},
       circles: [],
       peers: {},
-      spinner: false
+      spinner: false,
+      pendingMessages: new Map([])
     };
 
     this.initialReducer = new InitialReducer();

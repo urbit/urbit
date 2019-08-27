@@ -19,6 +19,7 @@
         cur-arvo/@uvI                                   ::
         cur-zuse/@uvI                                   ::
         cur-vanes/(map @tas @uvI)                       ::
+        commit-timer/{way/wire nex/@da tim/@dr mon=term}
     ==                                                  ::
 ++  per-desk                                            ::  per-desk state
     $:  auto/?                                          ::  escalate on failure
@@ -74,6 +75,7 @@
           {$wipe wire @ud}                              ::
           [%keep wire compiler-cache-size=@ud build-cache-size=@ud]
           {$wait wire @da}                              ::
+          {$rest wire @da}                              ::
           {$warp wire ship riff}                        ::
       ==                                                ::
     ++  pear                                            ::  poke fruit
@@ -100,8 +102,19 @@
   ~[leaf+"from {<sud>}" leaf+"on {<who>}" leaf+"to {<syd>}"]
 ::
 ++  poke-commit
-  |=  mon/kiln-commit
-  abet:(emit %dirk /commit mon)
+  |=  [mon/kiln-commit auto=?]
+  =<  abet
+  =.  +>.$  (emit %dirk /commit mon)
+  ?.  auto
+    +>.$
+  =/  recur  ~s1
+  =.  commit-timer
+    [/kiln/autocommit (add now recur) recur mon]
+  (emit %wait way.commit-timer nex.commit-timer)
+::
+++  poke-cancel-autocommit
+  |=  ~
+  abet:(emit %rest way.commit-timer nex.commit-timer)
 ::
 ++  poke-mount
   |=  kiln-mount
@@ -360,6 +373,20 @@
   =+  tym=(slav %dr i.way)
   ~&  %wake-overload-deprecated
   abet
+::
+++  take-wake-autocommit
+  |=  [way=wire error=(unit tang)]
+  ?^  error
+    %-  (slog u.error)
+    ~&  %kiln-wake-autocommit-fail
+    abet
+  =.  nex.commit-timer  (add now tim.commit-timer)
+  =<  abet
+  %-  emil
+  :~  [%dirk /commit mon.commit-timer]
+      [%wait way.commit-timer nex.commit-timer]
+  ==
+::
 ::
 ++  spam
   |=  mes/(list tank)

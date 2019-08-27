@@ -171,7 +171,7 @@ export class Message extends Component {
 
   render() {
     const { props } = this;
-    let pending = !!props.msg.pending ? ' o-80' : '';
+    let pending = !!props.msg.pending ? ' o-40' : '';
     let datestamp = moment.unix(props.msg.wen / 1000).format('LL');
 
     let paddingTop = props.paddingTop ? 'pt3' : '';

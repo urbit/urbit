@@ -11505,7 +11505,7 @@
       ?^(p.sut yad [p.yad [%face p.sut q.yad]])
     ::
         {$fork *}
-      =+  yed=~(tap in p.sut)
+      =+  yed=(sort ~(tap in p.sut) aor)
       =-  [p [%bswt q]]
       |-  ^-  {p/{p/(map type @) q/(map @ wine)} q/(list wine)}
       ?~  yed

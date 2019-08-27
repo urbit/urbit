@@ -430,7 +430,7 @@
           [/ %whom who.ae]  ::  eny
           [//newt/0v1n.2m9vh %born ~]
           [//behn/0v1n.2m9vh %born ~]
-          :+  //term/1  %boot
+          :^  //term/1  %boot  &
           ?~  keys.ae
             [%fake who.ae]
           [%dawn u.keys.ae]

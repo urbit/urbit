@@ -110,8 +110,8 @@ export class Subs extends Component {
           <div className={cls} key={i}>
             <div className="fl mw-336" style={{flexBasis: 336}}>
               <Link to={data.url}>
-                <p className="body-regular-400 one-line pr3">
-                  <span className="ml3">{data.title}</span>
+                <p className="body-regular-400 pr3 ml3">
+                  <span>{data.title}</span>
                 </p>
               </Link>
             </div>
@@ -133,7 +133,7 @@ export class Subs extends Component {
           <div className={cls} key={i}>
             <div className="fl body-regular-400" style={{flexBasis: 336}}>
               <Link to={data.url}>
-                <div className="mw-336 one-line pr3">
+                <div className="mw-336 pr3">
                   <span className="body-large green-medium"> • </span>
                   <span className="body-regular-400">Invite to </span>
                   <span className="body-regular">
@@ -170,7 +170,7 @@ export class Subs extends Component {
       <div>
         <HM invites={invites} unread={unread}/>
         <div className="absolute w-100" style={{top:124}}>
-          <div className="flex-col">
+          <div className="flex-column">
             <div className="w-100">
               <h2 className="gray-50"
                 style={{marginLeft: 16, marginTop: 32, marginBottom: 16}}>

@@ -107,12 +107,12 @@ export default class WeatherTile extends Component {
         </a>
         {secureCheck}
         <p className="label-regular white pt2">
-        Please enter your <a href="https://latitudeandlongitude.org/" target="_blank">latitude and longitude</a>.</p>
+        Please enter your <a className="white" href="https://latitudeandlongitude.org/" target="_blank">latitude and longitude</a>.</p>
         {error}
         <form className="flex absolute" style={{"bottom": 0, "left": 8}}>
           <input id="gps" 
             className="white pa1 bg-transparent outline-0 bn bb-ns b--white" 
-            style={{width: "100%"}}
+            style={{width: "86%"}}
             type="text" 
             placeholder="29.558107, -95.089023" 
             onKeyDown={this.keyPress.bind(this)}>

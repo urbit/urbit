@@ -265,15 +265,12 @@
 ::
 ++  dawn
   |=  [who=ship seed=(unit seed:able:jael)]
-  ^-  dawn-event
+  ^-  dawn-event:able:jael
   =/  spon=(list [ship point:azimuth])
     |-  ^-  (list [ship point:azimuth])
     =/  =ship  (^sein:title who)
     =/  a-point=[^ship point:azimuth]
-      =/  spon-spon
-        ?:  ?=(%czar (clan:title ship))
-          [| ~zod]
-        [& (^sein:title ship)]
+      =/  spon-spon  [& (^sein:title ship)]
       =/  life-rift  ~|([ship lives] (~(got by lives) ship))
       =/  =life  lyfe.life-rift
       =/  =rift  rut.life-rift

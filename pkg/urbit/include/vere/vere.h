@@ -569,6 +569,7 @@
         c3_w    kno_w;                      //  -K, kernel version
         c3_c*   key_c;                      //  -k, private key file
         c3_o    net;                        //  -L, local-only networking
+        c3_o    lit;                        //  -l, lite mode
         c3_o    pro;                        //  -P, profile
         c3_s    por_s;                      //  -p, ames port
         c3_o    qui;                        //  -q, quiet

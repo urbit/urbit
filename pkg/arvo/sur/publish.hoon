@@ -88,6 +88,14 @@
 ::
 +$  rumor  delta
 ::
++$  publish-dir  (map path publish-file)
+::
++$  publish-file
+  $%  [%udon @t]
+      [%publish-info collection-info]
+      [%publish-comment comment]
+  ==
+::
 +$  collection
   $:  col=[=bone dat=(each collection-info tang)]
       pos=(map @tas [=bone dat=(each [post-info manx @t] tang)])

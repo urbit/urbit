@@ -81,7 +81,9 @@
       :+  %hi
         ~[~bud ~dev]
       ;<  ~  bind:m  (raw-ship ~bud ~)
+      ~&  >  "BUD DONE"
       ;<  ~  bind:m  (raw-ship ~dev ~)
+      ~&  >  "DEV DONE"
       (send-hi ~bud ~dev)
     ::
       :+  %boot-planet
