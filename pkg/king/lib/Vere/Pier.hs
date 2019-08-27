@@ -17,6 +17,7 @@ import Vere.Behn          (behn)
 import Vere.Http.Server   (serv)
 import Vere.Log           (EventLog)
 import Vere.Serf          (Serf, SerfState(..), doJob)
+import Vere.Term          (term)
 
 import qualified System.Entropy as Ent
 import qualified Urbit.Time     as Time
@@ -188,7 +189,8 @@ drivers pierPath inst who mPort plan =
     (behnBorn, runBehn) = behn inst plan
     (amesBorn, runAmes) = ames inst who mPort plan
     (httpBorn, runHttp) = serv pierPath inst plan
-    initialEvents       = mconcat [behnBorn, amesBorn, httpBorn]
+    (termBorn, runTerm) = term inst plan
+    initialEvents       = mconcat [behnBorn, amesBorn, httpBorn, termBorn]
     runDrivers          = do
         dNewt       <- runAmes
         dBehn       <- runBehn
@@ -196,7 +198,7 @@ drivers pierPath inst who mPort plan =
         dHttpClient <- pure $ const $ pure ()
         dHttpServer <- runHttp
         dSync       <- pure $ const $ pure ()
-        dTerm       <- pure $ const $ pure ()
+        dTerm       <- runTerm
         pure (Drivers{..})
 
 
