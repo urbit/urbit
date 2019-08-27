@@ -779,7 +779,7 @@
       $~  [%vega ~]                                     ::
       $%  {$belt p/belt}                                ::  terminal input
           {$blew p/blew}                                ::  terminal config
-          {$boot p/*}                                   ::  weird %dill boot
+          {$boot lit/? p/*}                             ::  weird %dill boot
           $>(%crud vane-task)                           ::  error with trace
           {$flog p/flog}                                ::  wrapped error
           {$flow p/@tas q/(list gill:gall)}             ::  terminal config

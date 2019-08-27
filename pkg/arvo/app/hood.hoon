@@ -151,6 +151,7 @@
 ++  poke-drum-unlink          (wrap poke-unlink):from-drum
 ++  poke-drum-exit            (wrap poke-exit):from-drum
 ++  poke-drum-start           (wrap poke-start):from-drum
+++  poke-drum-set-boot-apps   (wrap poke-set-boot-apps):from-drum
 ++  poke-helm-hi              (wrap poke-hi):from-helm
 ::++  poke-helm-invite          (wrap poke-invite):from-helm
 ++  poke-helm-mass            (wrap poke-mass):from-helm
