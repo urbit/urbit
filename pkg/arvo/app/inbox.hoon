@@ -29,13 +29,27 @@
     [~ this]
   [~ this(+<+ u.old)]
 ::
-++  peek-x
+++  peek-x-all
+  |=  pax=path
+  ^-  (unit (unit [%noun (unit (map path mailbox))]))
+  [~ ~ %noun `inbox]
+::
+++  peek-x-mailbox
   |=  pax=path
   ^-  (unit (unit [%noun (unit mailbox)]))
   ?~  pax
     [~ ~ %noun ~]
   =/  mailbox=(unit mailbox)  (~(get by inbox) pax)
   [~ ~ %noun mailbox]
+::
+++  peer-keys
+  |=  pax=path
+  ^-  (quip move _this)
+  ?.  =(src.bol our.bol)
+    [[ost.bol %quit ~]~ this]
+  ::  we send the list of keys then send events when they change
+  :_  this
+  [ost.bol %diff %inbox-update [%keys ~(key by inbox)]]~
 ::
 ++  peer-mailbox
   |=  pax=path
@@ -118,7 +132,15 @@
 ++  send-diff
   |=  [pax=path act=inbox-action]
   ^-  (list move)
-  %+  turn  (prey:pubsub:userlib [%mailbox pax] bol)
+  %+  weld
+    ^-  (list move)
+    %+  turn  (prey:pubsub:userlib [%mailbox pax] bol)
+    |=  [=bone *]
+    [bone %diff %inbox-update act]
+  ^-  (list move)
+  ?.  |(=(%create -.act) =(%delete -.act))
+    ~
+  %+  turn  (prey:pubsub:userlib /keys bol)
   |=  [=bone *]
   [bone %diff %inbox-update act]
 ::

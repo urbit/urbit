@@ -14,7 +14,7 @@ export class Subscription {
   }
 
   initializeChat() {
-    api.bind('/primary', 'PUT', api.authTokens.ship, 'chat',
+    api.bind('/primary', 'PUT', api.authTokens.ship, 'inbox-view',
       this.handleEvent.bind(this),
       this.handleError.bind(this));
   }

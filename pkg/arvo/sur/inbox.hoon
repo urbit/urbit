@@ -13,5 +13,10 @@
       [%read =path read=@]
   ==
 ::
-+$  inbox-update  inbox-action
++$  inbox-update
+  $%  [%keys keys=(set path)]
+      inbox-action
+  ==
++$  inbox-initial  (map path mailbox)
+::
 --

@@ -33,13 +33,12 @@ export class Root extends Component {
   render() {
     const { props, state } = this;
 
-    let configs = !!state.configs ? state.configs : {};
-
-    let circles = Object.keys(configs).filter((conf) => {
-      return configs[conf] !== undefined && conf.split('/')[1] !== 'i';
+    let configs = {};
+    let circles = Object.keys(state).filter((path) => {
+      return !!state[path] && path.split('/')[1] !== 'i';
     });
 
-    let messages = _.get(state, 'messages', {});
+    let messages = {};
     let messagePreviews = {};
     Object.keys(messages).forEach((stat) => {
       let arr = messages[stat];
@@ -52,50 +51,10 @@ export class Root extends Component {
 
     let unreads = {};
     circles.forEach((cir) => {
-      if (cir in messages) {
-        if (messages[cir].length === 0) {
-          unreads[cir] = false;
-        } else {
-          let host = `~${window.ship}`;
-          let circle = cir.split('/')[1];
-          let internalStation = host + '/hall-internal-' + circle;
-
-          if (internalStation in state.configs) {
-            if (!!state.configs[internalStation]) {
-              unreads[cir] =
-                state.configs[internalStation].red <=
-                messages[cir][messages[cir].length - 1].num;
-            } else {
-              unreads[cir] = false;
-            }
-          } else if (cir in state.configs) {
-            if (!!state.configs[cir]) {
-               unreads[cir] =
-                state.configs[cir].red <=
-                messages[cir][messages[cir].length - 1].num;
-            } else {
-              unreads[cir] = false;
-            }
-          } else {
-            unreads[cir] = false;
-          }
-        }
-      } else {
-        unreads[cir] = false;
-      }
+      unreads[cir] = false;
     });
 
-    let invites = _.get(state, 'messages', {});
-    if (`~${window.ship}/i` in invites) {
-      invites = invites[`~${window.ship}/i`];
-    } else {
-      invites = [];
-    }
-
     let inviteConfig = false;
-    if (`~${window.ship}/i` in configs) {
-      inviteConfig = configs[`~${window.ship}/i`];
-    }
 
     const renderChannelSidebar = (props) => (
       <Sidebar

@@ -100,6 +100,9 @@
   ^-  (quip move _this)
   ~&  diff
   ?-  -.diff
+      %keys
+    [~ this]
+  ::
       %create
     [~ this]
   ::
@@ -127,6 +130,9 @@
   |=  diff=inbox-update
   ^-  (quip move _this)
   ?-  -.diff
+      %keys
+    [~ this]
+  ::
       %create
     ::  send a create poke to local inbox
     ?~  path.diff

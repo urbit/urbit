@@ -97,12 +97,15 @@
   :~  [%home %lens]
       [%home %dojo]
       [%home %hall]
-      [%home %talk]
       [%home %groups]
       [%home %group-sync]
       [%home %ex-group]
+      [%home %modulo]
+      [%home %launch]
+      [%home %chat]
       [%home %inbox]
       [%home %inbox-sync]
+      [%home %inbox-view]
   ==
 ::
 ++  deft-fish                                           ::  default connects

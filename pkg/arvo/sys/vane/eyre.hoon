@@ -686,6 +686,7 @@
           if (obj.hasOwnProperty("ok")) {
             funcs["success"]()
           } else if (obj.hasOwnProperty("err")) {
+            console.log(obj);
             funcs["fail"](obj.err)
           } else {
             console.log("Invalid poke response: ", obj);
