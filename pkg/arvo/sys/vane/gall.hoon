@@ -1443,7 +1443,7 @@
                 attributing.agent-routes                ::  guest
                 agent-name                              ::  agent
             ==                                          ::
-            :*  :: NB (jtobin): see urbit/urbit#1620
+            :*  :: NB (jtobin): see urbit/urbit#1466
                 wex=~                                   ::  outgoing
                 sup=incoming.subscribers.current-agent  ::  incoming
             ==                                          ::
