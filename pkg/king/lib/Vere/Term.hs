@@ -38,9 +38,13 @@ disabledFlags = [
 
 -- TODO: We lie about terminal size for now because getting it is a call to
 -- ioctl().
-initialBlew = EvBlip $ BlipEvTerm $ TermEvBlew (1, ()) 80 24
 
-initialHail = EvBlip $ BlipEvTerm $ TermEvHail (1, ()) ()
+-- TODO: 49 is the string "1", which is what we need to pass to dill as the
+-- hard-coded terminal "1" session. Figure out how to turn this into "1" later.
+initialBlew = EvBlip $ BlipEvTerm $ TermEvBlew (49, ()) 80 24
+
+initialHail = EvBlip $ BlipEvTerm $ TermEvHail (49, ()) ()
+
 
 -- What we need is an equivalent to _term_io_suck_char(). That's a manual, hand
 -- rolled parser to deal with the escape state.
