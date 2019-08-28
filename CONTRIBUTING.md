@@ -211,11 +211,11 @@ bugs, performance problems, feature requests, and so on.  If you encounter any
 issues when developing on urbit, feel free to submit a report about it here.
 
 A good bug report, description of a crash, etc., should ideally be
-*reproducible*, with clear, obvious steps as to how another developer can
-replicate and examine your problem.  That said, this isn't always possible --
-some bugs depend on having created a complicated or unusual state, or can
-otherwise simply be difficult to trigger again (say, you encountered it in the
-last continuity era).
+*reproducible*, with clear steps as to how another developer can replicate and
+examine your problem.  That said, this isn't always possible -- some bugs
+depend on having created a complicated or unusual state, or can otherwise
+simply be difficult to trigger again (say, you encountered it in the last
+continuity era).
 
 Your issue should thus at a minimum be *informative*.  The best advice here is
 probably "don't write bad issues," where "bad" is a matter of judgment and
