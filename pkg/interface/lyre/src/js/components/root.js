@@ -5,6 +5,8 @@ import { api } from '/api';
 import { store } from '/store';
 import { Switch } from 'react-router';
 
+import { Dom } from '/components/dom';
+
 export class Root extends Component {
   constructor(props) {
     super(props);
@@ -78,7 +80,6 @@ export class Root extends Component {
 
   render() {
     let path = '/' + this.state.sessions[this.state.current].join('/');
-    let body = this.state.body.text || null;
 
     const ses = this.state.sessions.map((path, i) => {
       let pax = '/'+path.join('/');
@@ -96,8 +97,9 @@ export class Root extends Component {
     return (
       <div className="w-100 h-100">
         <div className="flex-col">
-          <div>
-            <p>{body}</p>
+          <div className="w-100"
+              style={{height: 'calc(100% - 96px)'}}>
+            <Dom body={this.state.body} api={api}/>
           </div>
           <div className="flex-col absolute bg-black pa3 w-100"
               style={{bottom:0}}>

@@ -1,6 +1,7 @@
 /-  *lyre
 /+  *server
 ::
+::
 /=  index
   /^  $-(json manx)
   /:  /===/app/lyre/index  /!noun/
@@ -59,7 +60,7 @@
   ^-  (quip move _this)
   ~&  prep+act.bol
   ?~  old
-    :_  this
+    :_  this(+<+ initialize-state)
     [ost.bol %connect / [~ /'~lyre'] %lyre]~
 ::  [~ this(+<+ initialize-state)]           ::  flush state
   [~ this(+<+ ;;(state u.old))]  ::  keep state
@@ -80,6 +81,10 @@
     ~&  +<+.this
     [~ this]
   ::
+      %print-bowl
+    ~&  bol
+    [~ this]
+  ::
       %build
     (get-session-json /diff ost.bol)
   ::
@@ -92,7 +97,8 @@
   ^-  schematic:ford
   =/  ren-path
     ?~  ren
-      /hoon/[(snag 0 (flop pax))]/lyre/lib
+      ::/hoon/[(snag 0 (flop pax))]/lyre/lib
+      /hoon/button-test/lyre/lib
     !!
   :*  %core
       [our.bol q.byk.bol]
@@ -159,7 +165,9 @@
   ::
       %delete-session
     =.  ses  (oust [id.act 1] ses)
-    =.  cur  ?:((gte cur id.act) (dec cur) cur)
+    =.  cur  
+      ?:  =(cur 0)  0
+      ?:((gte cur id.act) (dec cur) cur)
     (get-session-json /diff ost.bol)
   ::
       %switch-session
@@ -272,9 +280,6 @@
   ::
       [[~ [%'~lyre' ~]] ~]
     (get-session-json /http ost.bol)
-::    =/  jon=json  (session-json ~)
-::    :_  this
-::    [ost.bol %http-response (manx-response:app (index jon))]~
   ==
 ::
 --

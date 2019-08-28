@@ -3,17 +3,13 @@
   ::
 /?  309
 /-  *lyre
+/+  *lyre
 ::
 |_  do=dom
 ::
 ++  grow
   |%
-  ++  json
-    =,  enjs:format
-    %+  frond  -.do
-    ?-  -.do
-      %text  s+bod.do
-    ==
+  ++  json  (dom:enjs do)
   --
 ::
 ++  grab

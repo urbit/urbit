@@ -14,6 +14,7 @@
   |%
   ++  mime  [/application/json (as-octs:mimes -:txt)]   ::  convert to %mime
   ++  txt   [(crip (en-json jon))]~
+  ++  noun  jon
   --
 ++  grab
   |%                                                    ::  convert from

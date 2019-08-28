@@ -1,11 +1,14 @@
 |%
-++  action
++$  action
   $%  [%new-session pax=(unit path)]
       [%delete-session id=@u]
       [%switch-session id=@u]
       [%set-path pax=path]
   ==
-++  dom
++$  poke  [app=@tas mark=@tas dat=json]
++$  dom
+  $~  [%text '']
   $%  [%text bod=@t]
+      [%button bod=dom act=poke]
   ==
 --
