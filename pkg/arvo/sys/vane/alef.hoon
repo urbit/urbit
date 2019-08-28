@@ -2331,17 +2331,17 @@
     |=  sent-packet-state
     ^-  pump-metrics
     ::
-    ~&  %skipped^max-live
+    =-  ~&  %skipped^max-live^%to^max-live.-  -
     ::
     %_  metrics
-      max-live  (max 1 (dec max-live))
+      max-live  (max 1 (div max-live 2))
     ==
   ::  +on-ack: adjust metrics based on a packet getting acknowledged
   ::
   ++  on-ack
     |=  sent-packet-state
     ^-  pump-metrics
-    =-  ~&  %ack^rtt^%to^rtt.-  -
+    =-  ~&  %ack^(mul rtt 1.000)^%to^(mul rtt.- 1.000)  -
     ::
     %_  metrics
       num-live  (dec (max 1 num-live))
@@ -2363,7 +2363,7 @@
   ++  on-resent
     |=  sent-packet-state
     ^-  pump-metrics
-    =-  ~&  %resent^rtt^%to^rtt.-  -
+    =-  ~&  %resent^(mul rtt 1.000)^%to^(mul rtt.- 1.000)  -
     ::
     %_  metrics
       last-sent-at  now
