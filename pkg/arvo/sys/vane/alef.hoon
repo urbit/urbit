@@ -550,6 +550,7 @@
       last-sent-at=@da
       rtt=_~s1
       max-live=_2
+      skipped=@ud
   ==
 +$  live-packet-key  [=message-num =fragment-num]
 +$  live-packet-val
@@ -2078,6 +2079,7 @@
     ::
     =-  =.  packet-pump  core.-
         =.  live.state   live.-
+        ~?  !=(0 num-sent.-)  %resent^num-sent.-
         packet-pump
     ::  acc: state to thread through traversal
     ::
@@ -2085,6 +2087,7 @@
     ::
     =|  $=  acc
         $:  num-slots=_num-retry-slots:gauge
+            num-sent=@ud
             core=_packet-pump
         ==
     ::
@@ -2115,15 +2118,15 @@
     ::
     =.  packet-pump    (give %send static-fragment)
     =.  metrics.state  (on-resent:gauge -.val)
+    =.  num-sent.acc   +(num-sent.acc)
+    =.  num-slots.acc  (dec num-slots.acc)
     ::  update $sent-packet-state in .val and continue
     ::
     =.  expiry.val     (next-retry-expiry:gauge -.val)
     =.  sent-date.val  now.channel
     =.  retried.val    %.y
     ::
-    ~&  [%ames-resend [our our-life her her-life]:channel key]
-    ::
-    [`val stop=%.n (dec num-slots.acc) packet-pump]
+    [`val stop=%.n acc]
   ::  +feed: try to send a list of packets, returning unsent and effects
   ::
   ++  feed
@@ -2192,7 +2195,7 @@
         ?.  found.-
           ~>  %slog.0^leaf/"ames: hear: no-op"
           packet-pump
-        ::~&  %ames-hear-ack^message-num^fragment-num
+        ~&  %ames-hear-ack^message-num^fragment-num
         ::
         =.  metrics.state  metrics.-
         =.  live.state     live.-
@@ -2235,6 +2238,7 @@
     =-  =.  metrics.state  metrics.-
         =.  live.state     live.-
         ::
+        ~&  %done^metrics.state
         resend-lost
     ::
     ^-  $:  metrics=pump-metrics
@@ -2324,24 +2328,22 @@
   ::
   ++  num-retry-slots
     ^-  @ud
-    max-live
+    (max 1 (div max-live 10))
   ::  +on-skipped-packet: adjust metrics based on a misordered ack
   ::
   ++  on-skipped-packet
     |=  sent-packet-state
     ^-  pump-metrics
     ::
-    =-  ~&  %skipped^max-live^%to^max-live.-  -
-    ::
     %_  metrics
       max-live  (max 1 (div max-live 2))
+      skipped   +(skipped)
     ==
   ::  +on-ack: adjust metrics based on a packet getting acknowledged
   ::
   ++  on-ack
     |=  sent-packet-state
     ^-  pump-metrics
-    =-  ~&  %ack^(mul rtt 1.000)^%to^(mul rtt.- 1.000)  -
     ::
     %_  metrics
       num-live  (dec (max 1 num-live))
@@ -2363,7 +2365,6 @@
   ++  on-resent
     |=  sent-packet-state
     ^-  pump-metrics
-    =-  ~&  %resent^(mul rtt 1.000)^%to^(mul rtt.- 1.000)  -
     ::
     %_  metrics
       last-sent-at  now
