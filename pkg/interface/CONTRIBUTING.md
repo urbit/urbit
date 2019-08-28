@@ -1,6 +1,6 @@
 ## Introduction
 
-Thanks for your interest in contributing to the urbit interface. This section
+Thanks for your interest in contributing to the Urbit interface. This section
 specifically focuses on Landscape development. Landscape lets you integrate your
 ship with front-end web applications accessed through the browser. It has a core
 set of applications that accept contributions.
@@ -29,11 +29,11 @@ will make the production files and deposit them in [pkg/arvo][arvo]. Create a
 pull request with both the production files, and the source code you were
 working on in the interface directory.
 
-Please also ensure your pull request fits our standards for 
+Please also ensure your pull request fits our standards for
 [Git hygiene][contributing].
 
-[contributing]: /CONTRIBUTING.md#git-practice 
-[arvo]: /pkg/arvo 
+[contributing]: /CONTRIBUTING.md#git-practice
+[arvo]: /pkg/arvo
 [interface]:/pkg/interface
 
 ### Gall
@@ -51,8 +51,8 @@ documentation for its everyday use -- just create a repo [using its
 template][template], install and then start it, and you'll soon be up and
 running.
 
-[cla]: https://github.com/urbit/create-landscape-app 
-[template]: https://github.com/urbit/create-landscape-app/generate 
-[gall]: https://urbit.org/docs/learn/arvo/gall/ 
+[cla]: https://github.com/urbit/create-landscape-app
+[template]: https://github.com/urbit/create-landscape-app/generate
+[gall]: https://urbit.org/docs/learn/arvo/gall/
 [chat]: /pkg/arvo/app/chat.hoon
 [publish]: /pkg/arvo/app/publish.hoon

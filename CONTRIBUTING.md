@@ -1,10 +1,10 @@
 # Contributing to Urbit
 
-Thank you for your interest in contributing to urbit.
+Thank you for your interest in contributing to Urbit.
 
 See [urbit.org/docs/getting-started][start] for basic orientation and usage
-instructions.  You may also want to subscribe to [urbit-dev][list], the urbit
-development mailing list. For specific information on contributing to the urbit
+instructions.  You may also want to subscribe to [urbit-dev][list], the Urbit
+development mailing list. For specific information on contributing to the Urbit
 interface, see its [contribution guidelines][interface].
 
 [start]: https://urbit.org/docs/getting-started/#arvo
@@ -14,7 +14,7 @@ interface, see its [contribution guidelines][interface].
 
 You may have an identity on the live network, but doing all your development on
 the live network would be cumbersome and unnecessary.  Standard practice in
-urbit development is to work on a fake `~zod`.  Fake ships use deterministic
+Urbit development is to work on a fake `~zod`.  Fake ships use deterministic
 keys (derived from the ship address) and don't talk to the live network. They
 can talk to each other over the local loopback.
 
@@ -137,7 +137,7 @@ Arvo, will find their way into releases before terribly long.
 
 ## Code style
 
-The urbit project uses two-space indentation and avoids tab characters.
+The Urbit project uses two-space indentation and avoids tab characters.
 In C code, it should not be too difficult to mimic the style of the code
 around you, which is just fairly standard K&R with braces on every
 compound statement. One thing to watch out for is top-level sections in
@@ -210,7 +210,7 @@ $ git lfs pull
 
 The [GitHub tracker][issu] is our canonical source of truth around issues,
 bugs, performance problems, feature requests, and so on.  If you encounter any
-issues when developing on urbit, feel free to submit a report about it here.
+issues when developing on Urbit, feel free to submit a report about it here.
 
 A good bug report, description of a crash, etc., should ideally be
 *reproducible*, with clear steps as to how another developer can replicate and
