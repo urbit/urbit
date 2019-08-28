@@ -97,14 +97,14 @@ booted pillPath pierPath flags ship = do
 
   rio $ logTrace "Event Log Initialized"
 
-  serf <- liftAcquire $ Serf.run (Serf.Config pierPath flags)
+  serf <- Serf.run (Serf.Config pierPath flags)
 
   rio $ logTrace "Serf Started"
 
   rio $ do
-      (events, serfSt) <- io $ Serf.bootFromSeq serf seq
+      (events, serfSt) <- Serf.bootFromSeq serf seq
       logTrace "Boot Sequence completed"
-      io $ Serf.snapshot serf serfSt
+      Serf.snapshot serf serfSt
       logTrace "Snapshot taken"
       writeJobs log (fromList events)
       logTrace "Events written"
@@ -113,14 +113,15 @@ booted pillPath pierPath flags ship = do
 
 -- Resume an existing ship. ----------------------------------------------------
 
-resumed :: FilePath -> Serf.Flags
-        -> Acquire (Serf, EventLog, SerfState)
+resumed :: HasLogFunc e
+        => FilePath -> Serf.Flags
+        -> RAcquire e (Serf, EventLog, SerfState)
 resumed top flags = do
-    log    <- Log.existing (top <> "/.urb/log")
+    log    <- liftAcquire $ Log.existing (top <> "/.urb/log")
     serf   <- Serf.run (Serf.Config top flags)
-    serfSt <- io (Serf.replay serf log)
+    serfSt <- rio $ Serf.replay serf log
 
-    io (Serf.snapshot serf serfSt)
+    rio $ Serf.snapshot serf serfSt
 
     pure (serf, log, serfSt)
 
@@ -262,7 +263,7 @@ runCompute serf ss getEvent putResult =
         eId <- pure (ssNextEv ss)
         mug <- pure (ssLastMug ss)
 
-        (job', ss', fx) <- io $ doJob serf $ DoWork $ Work eId mug wen ev
+        (job', ss', fx) <- doJob serf $ DoWork $ Work eId mug wen ev
         atomically (putResult (job', fx))
         go ss'
 

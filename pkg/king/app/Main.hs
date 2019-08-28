@@ -210,7 +210,7 @@ tryBootFromPill pillPath shipPath ship = do
         logTrace "Booting"
         logTrace $ displayShow ss
         io $ threadDelay 500000
-        ss <- io $ shutdown serf 0
+        ss <- shutdown serf 0
         logTrace $ displayShow ss
         logTrace "Booted!"
 
@@ -226,16 +226,16 @@ tryPlayShip :: HasLogFunc e => FilePath -> RIO e ()
 tryPlayShip shipPath = do
     runRAcquire $ do
         rio $ logTrace "RESUMING SHIP"
-        sls <- liftAcquire $ Pier.resumed shipPath []
+        sls <- Pier.resumed shipPath []
         rio $ logTrace "SHIP RESUMED"
         Pier.pier shipPath Nothing sls
 
 tryResume :: HasLogFunc e => FilePath -> RIO e ()
 tryResume shipPath = do
-    rwith (liftAcquire $ Pier.resumed shipPath []) $ \(serf, log, ss) -> do
+    rwith (Pier.resumed shipPath []) $ \(serf, log, ss) -> do
         logTrace (displayShow ss)
         threadDelay 500000
-        ss <- io (shutdown serf 0)
+        ss <- shutdown serf 0
         logTrace (displayShow ss)
         logTrace "Resumed!"
 
@@ -293,8 +293,8 @@ collectAllFx top = do
     collectedFX :: RAcquire e ()
     collectedFX = do
         log  <- liftAcquire $ Log.existing (top <> "/.urb/log")
-        serf <- liftAcquire $ Serf.run (Serf.Config tmpDir serfFlags)
-        liftIO (Serf.collectFX serf log)
+        serf <- Serf.run (Serf.Config tmpDir serfFlags)
+        rio $ Serf.collectFX serf log
 
     serfFlags :: Serf.Flags
     serfFlags = [Serf.Hashless, Serf.DryRun]

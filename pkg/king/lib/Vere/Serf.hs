@@ -60,9 +60,8 @@ compileFlags = foldl' (\acc flag -> setBit acc (fromEnum flag)) 0
 data Config = Config FilePath [Flag]
   deriving (Show)
 
-debug _msg = pure () -- putStrLn ("[DEBUG]\t" <> msg)
-
-serf msg = putStrLn ("[SERF]\t" <> msg)
+serf :: HasLogFunc e => Text -> RIO e ()
+serf msg = logInfo $ display ("SERF: " <> msg)
 
 
 -- Types -----------------------------------------------------------------------
@@ -97,8 +96,6 @@ data Plea
     | PSlog EventId Word32 Tank
   deriving (Eq, Show)
 
-type GetJobs = EventId -> Word64 -> IO (Vector Job)
-
 type ReplacementEv = Job
 type WorkResult    = (SerfState, FX)
 type SerfResp      = Either ReplacementEv WorkResult
@@ -128,28 +125,32 @@ deriveNoun ''Plea
 
 -- Utils -----------------------------------------------------------------------
 
-printTank :: Word32 -> Tank -> IO ()
+printTank :: HasLogFunc e => Word32 -> Tank -> RIO e ()
 printTank _pri tank =
     (serf . unlines . fmap unTape . wash (WashCfg 0 80)) tank
 
-guardExn :: Exception e => Bool -> e -> IO ()
-guardExn ok = unless ok . throwIO
+guardExn :: (Exception e, MonadIO m) => Bool -> e -> m ()
+guardExn ok = io . unless ok . throwIO
 
-fromRightExn :: Exception e => Either a b -> (a -> e) -> IO b
+fromRightExn :: (Exception e, MonadIO m) => Either a b -> (a -> e) -> m b
 fromRightExn (Left m)  exn = throwIO (exn m)
 fromRightExn (Right x) _   = pure x
 
 
 -- Process Management ----------------------------------------------------------
 
-run :: Config -> Acquire Serf
-run config = mkAcquire (startUp config) tearDown
+run :: HasLogFunc e => Config -> RAcquire e Serf
+run config = mkRAcquire (startUp config) tearDown
 
-startUp :: Config -> IO Serf
+startUp :: HasLogFunc e => Config -> RIO e Serf
 startUp conf@(Config pierPath flags) = do
-    debug "STARTING SERF"
-    debug (tshow conf)
-    (Just i, Just o, Just e, p) <- createProcess pSpec
+    logTrace "STARTING SERF"
+    logTrace (displayShow conf)
+
+    (i, o, e, p) <- io $ do
+        (Just i, Just o, Just e, p) <- createProcess pSpec
+        pure (i, o, e, p)
+
     ss <- newEmptyMVar
     et <- async (readStdErr e)
     pure (Serf i o et p ss)
@@ -163,28 +164,30 @@ startUp conf@(Config pierPath flags) = do
                 , std_err = CreatePipe
                 }
 
-readStdErr :: Handle -> IO ()
+readStdErr :: ∀e. HasLogFunc e => Handle -> RIO e ()
 readStdErr h =
     untilEOFExn $ do
-        ln <- IO.hGetLine h
+        ln <- io $ IO.hGetLine h
         serf ("[stderr] " <> T.strip (pack ln))
   where
     eofMsg = "[Serf.readStdErr] serf stderr closed"
 
-    untilEOFExn :: IO () -> IO ()
+    untilEOFExn :: RIO e () -> RIO e ()
     untilEOFExn act = loop
       where
+        loop :: RIO e ()
         loop = do
-          IO.tryIOError act >>= \case
-            Left exn | IO.isEOFError exn -> do debug eofMsg
-                                               pure ()
-            Left exn                     -> IO.ioError exn
-            Right ()                     -> loop
+            env <- ask
+            res <- io $ IO.tryIOError $ runRIO env act
+            case res of
+                Left exn | IO.isEOFError exn -> logDebug eofMsg
+                Left exn                     -> io (IO.ioError exn)
+                Right ()                     -> loop
 
-tearDown :: Serf -> IO ()
+tearDown :: Serf -> RIO e ()
 tearDown serf = do
-    terminateProcess (process serf)
-    void (waitForExit serf)
+    io $ terminateProcess (process serf)
+    void $ waitForExit serf
 
     -- race_ waitThenKill (shutdownAndWait serf 0)
   where
@@ -196,50 +199,49 @@ tearDown serf = do
         -- debug killedMsg
         -- terminateProcess (process serf)
 
-waitForExit :: Serf -> IO ExitCode
-waitForExit serf = waitForProcess (process serf)
+waitForExit :: Serf -> RIO e ExitCode
+waitForExit = io . waitForProcess . process
 
-kill :: Serf -> IO ExitCode
-kill serf = terminateProcess (process serf) >> waitForExit serf
+kill :: Serf -> RIO e ExitCode
+kill serf = io (terminateProcess $ process serf) >> waitForExit serf
 
-{-
-shutdownAndWait :: Serf -> Word8 -> IO ExitCode
-shutdownAndWait serf code = do
-  shutdown serf code
-  waitForExit serf
--}
+_shutdownAndWait :: HasLogFunc e => Serf -> Word8 -> RIO e ExitCode
+_shutdownAndWait serf code = do
+    shutdown serf code
+    waitForExit serf
 
 
 -- Basic Send and Receive Operations -------------------------------------------
 
-withWord64AsByteString :: Word64 -> (ByteString -> IO a) -> IO a
+withWord64AsByteString :: Word64 -> (ByteString -> RIO e a) -> RIO e a
 withWord64AsByteString w k = do
-  alloca $ \wp -> do
-    poke wp w
-    bs <- BS.unsafePackCStringLen (castPtr wp, 8)
-    k bs
+    env <- ask
+    io $ alloca $ \wp -> do
+        poke wp w
+        bs <- BS.unsafePackCStringLen (castPtr wp, 8)
+        runRIO env (k bs)
 
-sendLen :: Serf -> Int -> IO ()
+sendLen :: Serf -> Int -> RIO e ()
 sendLen s i = do
   w <- evaluate (fromIntegral i :: Word64)
   withWord64AsByteString (fromIntegral i) (hPut (sendHandle s))
 
-sendOrder :: Serf -> Order -> IO ()
+sendOrder :: HasLogFunc e => Serf -> Order -> RIO e ()
 sendOrder w o = do
-  debug ("[Serf.sendOrder.toNoun] " <> tshow o)
+  logDebug $ display ("[Serf.sendOrder.toNoun] " <> tshow o)
   n <- evaluate (toNoun o)
 
   case o of
-    OWork (DoWork (Work _ _ _ e)) -> do print (toNoun (e :: Ev))
+    OWork (DoWork (Work _ _ _ e)) -> do logTrace $ displayShow $ toNoun (e::Ev)
     _                             -> do pure ()
 
-  debug ("[Serf.sendOrder.jam]")
+  logDebug "[Serf.sendOrder.jam]"
   bs <- evaluate (jamBS n)
-  debug ("[Serf.sendOrder.send]: " <> tshow (length bs))
+  logDebug $ display ("[Serf.sendOrder.send]: " <> tshow (length bs))
   sendBytes w bs
-  debug ("[Serf.sendOrder.sent]")
+  logDebug "[Serf.sendOrder.sent]"
 
-sendBytes :: Serf -> ByteString -> IO ()
+sendBytes :: Serf -> ByteString -> RIO e ()
 sendBytes s bs = handle ioErr $ do
     sendLen s (length bs)
     hFlush (sendHandle s)
@@ -252,24 +254,24 @@ sendBytes s bs = handle ioErr $ do
     hack
 
   where
-    ioErr :: IOError -> IO ()
+    ioErr :: IOError -> RIO e ()
     ioErr _ = throwIO SerfConnectionClosed
 
     -- TODO WHY DOES THIS MATTER?????
     hack = threadDelay 10000
 
-recvLen :: Serf -> IO Word64
-recvLen w = do
+recvLen :: MonadIO m => Serf -> m Word64
+recvLen w = io $ do
   bs <- hGet (recvHandle w) 8
   case length bs of
     8 -> unsafeUseAsCString bs (peek . castPtr)
     _ -> throwIO SerfConnectionClosed
 
-recvBytes :: Serf -> Word64 -> IO ByteString
-recvBytes w = do
-  hGet (recvHandle w) . fromIntegral
+recvBytes :: Serf -> Word64 -> RIO e ByteString
+recvBytes serf =
+  io . hGet (recvHandle serf) . fromIntegral
 
-recvAtom :: Serf -> IO Atom
+recvAtom :: Serf -> RIO e Atom
 recvAtom w = do
     len <- recvLen w
     bs <- recvBytes w len
@@ -284,20 +286,20 @@ cordText = T.strip . unCord
 
 --------------------------------------------------------------------------------
 
-snapshot :: Serf -> SerfState -> IO ()
+snapshot :: HasLogFunc e => Serf -> SerfState -> RIO e ()
 snapshot serf ss = sendOrder serf $ OSave $ ssLastEv ss
 
-shutdown :: Serf -> Word8 -> IO ()
+shutdown :: HasLogFunc e => Serf -> Word8 -> RIO e ()
 shutdown serf code = sendOrder serf (OExit code)
 
 {-
     TODO Find a cleaner way to handle `PStdr` Pleas.
 -}
-recvPlea :: Serf -> IO Plea
+recvPlea :: HasLogFunc e => Serf -> RIO e Plea
 recvPlea w = do
-  debug ("[Vere.Serf.recvPlea] waiting")
+  logDebug "[Vere.Serf.recvPlea] waiting"
   a <- recvAtom w
-  debug ("[Vere.Serf.recvPlea] got atom")
+  logDebug "[Vere.Serf.recvPlea] got atom"
   n <- fromRightExn (cue a) (const $ BadPleaAtom a)
   p <- fromRightExn (fromNounErr n) (\(p,m) -> BadPleaNoun (traceShowId n) p m)
 
@@ -305,13 +307,13 @@ recvPlea w = do
                                 recvPlea w
             PSlog _ pri t -> do printTank pri t
                                 recvPlea w
-            _             -> do debug ("[Serf.recvPlea] Got " <> tshow p)
+            _             -> do logTrace $ display ("recvPlea got: " <> tshow p)
                                 pure p
 
 {-
     Waits for initial plea, and then sends boot IPC if necessary.
 -}
-handshake :: Serf -> LogIdentity -> IO SerfState
+handshake :: HasLogFunc e => Serf -> LogIdentity -> RIO e SerfState
 handshake serf ident = do
     ss@SerfState{..} <- recvPlea serf >>= \case
       PPlay Nothing          -> pure $ SerfState 1 (Mug 0)
@@ -323,27 +325,27 @@ handshake serf ident = do
 
     pure ss
 
-sendWork :: Serf -> Job -> IO SerfResp
+sendWork :: ∀e. HasLogFunc e => Serf -> Job -> RIO e SerfResp
 sendWork w job =
   do
     sendOrder w (OWork job)
     res <- loop
-    debug ("[Vere.Serf.sendWork] Got response")
+    logTrace ("[sendWork] Got response")
     pure res
   where
     eId = jobId job
 
-    produce :: WorkResult -> IO SerfResp
+    produce :: WorkResult -> RIO e SerfResp
     produce (ss@SerfState{..}, o) = do
       guardExn (ssNextEv == (1+eId)) (BadComputeId eId (ss, o))
       pure $ Right (ss, o)
 
-    replace :: ReplacementEv -> IO SerfResp
+    replace :: ReplacementEv -> RIO e SerfResp
     replace job = do
       guardExn (jobId job == eId) (BadReplacementId eId job)
       pure (Left job)
 
-    loop :: IO SerfResp
+    loop :: RIO e SerfResp
     loop = recvPlea w >>= \case
       PPlay p       -> throwIO (UnexpectedPlay eId p)
       PDone i m o   -> produce (SerfState (i+1) m, o)
@@ -354,19 +356,19 @@ sendWork w job =
 
 --------------------------------------------------------------------------------
 
-doJob :: Serf -> Job -> IO (Job, SerfState, FX)
+doJob :: HasLogFunc e => Serf -> Job -> RIO e (Job, SerfState, FX)
 doJob serf job = do
     sendWork serf job >>= \case
         Left replaced  -> doJob serf replaced
         Right (ss, fx) -> pure (job, ss, fx)
 
-bootJob :: Serf -> Job -> IO (Job, SerfState)
+bootJob :: HasLogFunc e => Serf -> Job -> RIO e (Job, SerfState)
 bootJob serf job = do
     doJob serf job >>= \case
         (job, ss, []) -> pure (job, ss)
         (job, ss, fx) -> throwIO (EffectsDuringBoot (jobId job) fx)
 
-replayJob :: Serf -> Job -> IO SerfState
+replayJob :: HasLogFunc e => Serf -> Job -> RIO e SerfState
 replayJob serf job = do
     sendWork serf job >>= \case
         Left replace  -> throwIO (ReplacedEventDuringReplay (jobId job) replace)
@@ -381,17 +383,17 @@ data BootExn = ShipAlreadyBooted
   deriving stock    (Eq, Ord, Show)
   deriving anyclass (Exception)
 
-bootFromSeq :: Serf -> BootSeq -> IO ([Job], SerfState)
+bootFromSeq :: ∀e. HasLogFunc e => Serf -> BootSeq -> RIO e ([Job], SerfState)
 bootFromSeq serf (BootSeq ident nocks ovums) = do
     handshake serf ident >>= \case
         ss@(SerfState 1 (Mug 0)) -> loop [] ss bootSeqFns
         _                        -> throwIO ShipAlreadyBooted
 
   where
-    loop :: [Job] -> SerfState -> [BootSeqFn] -> IO ([Job], SerfState)
+    loop :: [Job] -> SerfState -> [BootSeqFn] -> RIO e ([Job], SerfState)
     loop acc ss = \case
         []   -> pure (reverse acc, ss)
-        x:xs -> do wen       <- Time.now
+        x:xs -> do wen       <- io Time.now
                    job       <- pure $ x (ssNextEv ss) (ssLastMug ss) wen
                    (job, ss) <- bootJob serf job
                    loop (job:acc) ss xs
@@ -405,12 +407,13 @@ bootFromSeq serf (BootSeq ident nocks ovums) = do
     The ship is booted, but it is behind. shove events to the worker
     until it is caught up.
 -}
-replayJobs :: Serf -> SerfState -> ConduitT Job Void IO SerfState
+replayJobs :: HasLogFunc e
+           => Serf -> SerfState -> ConduitT Job Void (RIO e) SerfState
 replayJobs serf = go
   where
-    go ss = await >>= maybe (pure ss) (liftIO . replayJob serf >=> go)
+    go ss = await >>= maybe (pure ss) (lift . replayJob serf >=> go)
 
-replay :: Serf -> Log.EventLog -> IO SerfState
+replay :: HasLogFunc e => Serf -> Log.EventLog -> RIO e SerfState
 replay serf log = do
     ss <- handshake serf (Log.identity log)
 
@@ -418,18 +421,18 @@ replay serf log = do
                .| toJobs (Log.identity log) (ssNextEv ss)
                .| replayJobs serf ss
 
-toJobs :: LogIdentity -> EventId -> ConduitT ByteString Job IO ()
+toJobs :: HasLogFunc e
+       => LogIdentity -> EventId -> ConduitT ByteString Job (RIO e) ()
 toJobs ident eId =
     await >>= \case
-        Nothing -> putStrLn "[toJobs] no more jobs" >> pure ()
-        Just at -> do yield =<< liftIO (fromAtom at)
-                      putStrLn ("[toJobs] " <> tshow eId)
+        Nothing -> lift $ logTrace "[toJobs] no more jobs"
+        Just at -> do yield =<< lift (fromAtom at)
+                      lift $ logTrace $ display ("[toJobs] " <> tshow eId)
                       toJobs ident (eId+1)
   where
-    isNock = trace ("[toJobs] " <> show (eId, lifecycleLen ident))
-           $ eId <= fromIntegral (lifecycleLen ident)
+    isNock = eId <= fromIntegral (lifecycleLen ident)
 
-    fromAtom :: ByteString -> IO Job
+    fromAtom :: ByteString -> RIO e Job
     fromAtom bs | isNock = do
         noun       <- cueBSExn bs
         (mug, nok) <- fromNounExn noun
@@ -442,7 +445,7 @@ toJobs ident eId =
 
 -- Collect Effects for Parsing -------------------------------------------------
 
-collectFX :: Serf -> Log.EventLog -> IO ()
+collectFX :: HasLogFunc e => Serf -> Log.EventLog -> RIO e ()
 collectFX serf log = do
     ss <- handshake serf (Log.identity log)
 
@@ -451,26 +454,26 @@ collectFX serf log = do
                .| doCollectFX serf ss
                .| persistFX log
 
-persistFX :: Log.EventLog -> ConduitT (EventId, FX) Void IO ()
+persistFX :: Log.EventLog -> ConduitT (EventId, FX) Void (RIO e) ()
 persistFX log = loop
   where
     loop = await >>= \case
         Nothing        -> pure ()
         Just (eId, fx) -> do
             liftIO $ Log.writeEffectsRow log eId (jamBS $ toNoun fx)
-            putStr "."
             loop
 
-doCollectFX :: Serf -> SerfState -> ConduitT Job (EventId, FX) IO ()
+doCollectFX :: ∀e. HasLogFunc e
+            => Serf -> SerfState -> ConduitT Job (EventId, FX) (RIO e) ()
 doCollectFX serf = go
   where
-    go :: SerfState -> ConduitT Job (EventId, FX) IO ()
+    go :: SerfState -> ConduitT Job (EventId, FX) (RIO e) ()
     go ss = await >>= \case
         Nothing -> pure ()
         Just jb -> do
             -- jb <- pure $ replaceMug jb (ssLastMug ss)
-            (_, ss, fx) <- liftIO (doJob serf jb)
-            liftIO $ print (jobId jb)
+            (_, ss, fx) <- lift $ doJob serf jb
+            lift $ logTrace $ displayShow (jobId jb)
             yield (jobId jb, fx)
             go ss
 
