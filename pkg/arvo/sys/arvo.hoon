@@ -64,7 +64,7 @@
 ++  sley  $-  {* (unit (set monk)) term beam}           ::  namespace function
           (unit (unit cage))                            ::
 ++  slyd  $-  {* (unit (set monk)) term beam}           ::  super advanced
-          (unit (unit (cask)))                          ::
+          (unit (unit (cask milt)))                     ::
 ++  slyt  $-({* *} (unit (unit)))                       ::  old namespace
 +$  vane  [=vase =worm]
 ++  vile                                                ::  reflexive constants
@@ -112,10 +112,18 @@
   ?~  dyc  ~
   ?.  ?=(^ ved)  ~
   =/  ron=@tas  u.hyr
-  =+  bed=[[u.fal u.dyc (case p.u.ved)] (flop tyl)]
-  =+  bop=(sod ref ~ ron bed)
+  =/  bed=beam
+    [[u.fal u.dyc (case p.u.ved)] (flop tyl)]
+  =/  bop=(unit (unit (cask milt)))
+    (sod ref ~ ron bed)
   ?~  bop  ~
   ?~  u.bop  [~ ~]
+  ::  XX figure out wth to do about hoon-version
+  ::
+  ?.  ?&  ?=([?(%151 %141) *] ref)
+          -:(~(nets wa *worm) +.ref -.q.u.u.bop)
+      ==
+    ~>(%slog.[0 leaf+"arvo: scry-lost"] ~)
   [~ ~ +.q.u.u.bop]
 ::  +sloy-light: minimal parsing version of sloy
 ::
@@ -135,10 +143,18 @@
   |=  [ref=* ron=@tas fal=@p dyc=@tas ved=case tyl=path]
   ::  we do not flop tyl because tyl wouldn't have been flopped by +en-beam
   ::
-  =+  bed=[[fal dyc ved] tyl]
-  =+  bop=(sod ref ~ ron bed)
+  =/  bed=beam
+    [[fal dyc ved] tyl]
+  =/  bop=(unit (unit (cask milt)))
+    (sod ref ~ ron bed)
   ?~  bop  ~
   ?~  u.bop  [~ ~]
+  ::  XX figure out wth to do about hoon-version
+  ::
+  ?.  ?&  ?=([?(%151 %141) *] ref)
+          -:(~(nets wa *worm) +.ref -.q.u.u.bop)
+      ==
+    ~>(%slog.[0 leaf+"arvo: scry-dark"] ~)
   [~ ~ +.q.u.u.bop]
 ::
 ++  symp                                                ::  symbol or empty
@@ -350,7 +366,7 @@
               ren/@t
               bed/beam
           ==
-      ^-  (unit (unit (cask)))
+      ^-  (unit (unit (cask milt)))
       ::  ~&  [%arvo-scry ren bed]
       =/  old=scry-sample
         :*  fur
@@ -360,10 +376,10 @@
             `coin`[%$ r.bed]
             (flop s.bed)
         ==
-      ^-  (unit (unit (cask)))
+      ^-  (unit (unit (cask milt)))
       =+  fun=-:(~(slap wa worm.vane) rig [%limb %scry])
       ::
-      %-  (unit (unit (cask)))
+      %-  (unit (unit (cask milt)))
       (slum q.fun old)
     ::
     ++  soar                                            ::  scrub vane
@@ -441,12 +457,12 @@
   |_  now/@da
   ++  beck
     ^-  slyd
-    |=  {* fur/(unit (set monk)) ron/term bed/beam}
-    ^-  (unit (unit (cask)))
+    |=  {typ/* fur/(unit (set monk)) ron/term bed/beam}
+    ^-  (unit (unit (cask milt)))
     =>  .(fur ?^(fur fur `[[%& p.bed] ~ ~]))            ::  XX heinous
     =+  lal=(end 3 1 ron)
     =+  ren=(@t (rsh 3 1 ron))
-    |-  ^-  (unit (unit (cask)))
+    |-  ^-  (unit (unit (cask milt)))
     ?~  vanes  ~
     ?.  =(lal label.i.vanes)  $(vanes t.vanes)
     ~|  [%failed-scry ron bed]
