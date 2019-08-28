@@ -28,14 +28,16 @@ static c3_i _term_tcsetattr(int, int, const struct termios *);
 #define _SPIN_RATE_US 250000  //  spinner rate (microseconds/frame)
 #define _SPIN_IDLE_US 500000  //  spinner cools down if stopped this long
 
-static void _write(int  fd,  const  void  *buf,  size_t count)
+/* _write(): wraps write(), asserting length
+*/
+static void
+_write(c3_i fid_i, const void* buf_v, size_t len)
 {
-  if (count != write(fd,  buf, count)){
+  if ( len != write(fid_i, buf_v, len) ){
     u3l_log("write failed\r\n");
     c3_assert(0);
   }
 }
-
 
 /* _term_msc_out_host(): unix microseconds from current host time.
 */
@@ -288,7 +290,7 @@ void
 u3_term_io_exit(void)
 {
   if ( c3y == u3_Host.ops_u.dem ) {
-    uv_close((uv_handle_t*)&u3_Host.uty_u->pop_u, NULL);
+    uv_close((uv_handle_t*)&u3_Host.uty_u->pop_u, 0);
   }
   else {
     u3_utty* uty_u;
@@ -353,25 +355,17 @@ _term_it_buf(c3_w len_w, const c3_y* hun_y)
   return buf_u;
 }
 
-/* An unusual lameness in libuv.
-*/
-  typedef struct {
-    uv_write_t wri_u;
-    c3_y*      buf_y;
-  } _u3_write_t;
-
 /* _term_write_cb(): general write callback.
 */
 static void
 _term_write_cb(uv_write_t* wri_u, c3_i sas_i)
 {
-  _u3_write_t* ruq_u = (void *)wri_u;
-
   if ( 0 != sas_i ) {
-    // u3l_log("term: write: ERROR\n");
+    u3l_log("term: write: %s\n", uv_strerror(sas_i));
   }
-  free(ruq_u->buf_y);
-  free(ruq_u);
+
+  free(wri_u->data);
+  free(wri_u);
 }
 
 /* _term_it_write_buf(): write buffer uv style.
@@ -379,17 +373,16 @@ _term_write_cb(uv_write_t* wri_u, c3_i sas_i)
 static void
 _term_it_write_buf(u3_utty* uty_u, uv_buf_t buf_u)
 {
-  _u3_write_t* ruq_u = (_u3_write_t*) c3_malloc(sizeof(_u3_write_t));
-
-  ruq_u->buf_y = (c3_y*)buf_u.base;
+  uv_write_t* wri_u = c3_malloc(sizeof(uv_write_t));
+  wri_u->data = buf_u.base;
 
   c3_w ret_w;
-  if ( 0 != (ret_w = uv_write(&ruq_u->wri_u,
+  if ( 0 != (ret_w = uv_write(wri_u,
                      (uv_stream_t*)&(uty_u->pop_u),
                      &buf_u, 1,
-                              _term_write_cb)) )
+                     _term_write_cb)) )
   {
-    u3l_log("terminal: %s\n", uv_strerror(ret_w));
+    u3l_log("term: write: %s\n", uv_strerror(ret_w));
   }
 }
 
