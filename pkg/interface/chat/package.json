@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.6",
+    "del": "^5.1.0",
     "lodash": "^4.17.11",
     "moment": "^2.20.1",
     "mousetrap": "^1.6.3",
