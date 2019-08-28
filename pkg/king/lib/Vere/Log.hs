@@ -244,8 +244,9 @@ writeEffectsRow log k v = do
 --------------------------------------------------------------------------------
 -- Read Events -----------------------------------------------------------------
 
-streamEvents :: EventLog -> Word64
-             -> ConduitT () ByteString IO ()
+streamEvents :: MonadIO m
+             => EventLog -> Word64
+             -> ConduitT () ByteString m ()
 streamEvents log first = do
     last <- liftIO $ lastEv log
     batch <- liftIO (readBatch log first)
@@ -253,8 +254,9 @@ streamEvents log first = do
         for_ batch yield
         streamEvents log (first + word (length batch))
 
-streamEffectsRows :: EventLog -> EventId
-                  -> ConduitT () (Word64, ByteString) IO ()
+streamEffectsRows :: MonadIO m
+                  => EventLog -> EventId
+                  -> ConduitT () (Word64, ByteString) m ()
 streamEffectsRows log = go
   where
     go next = do

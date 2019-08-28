@@ -105,10 +105,9 @@
 
 module Main where
 
-import ClassyPrelude
+import UrbitPrelude
 
-import Options.Applicative
-import Options.Applicative.Help.Pretty
+import Data.RAcquire
 
 import Arvo
 import Control.Exception hiding (evaluate, throwIO)
@@ -120,7 +119,7 @@ import Vere.Pier
 import Vere.Pier.Types
 import Vere.Serf
 
-import Control.Concurrent (runInBoundThread, threadDelay)
+import Control.Concurrent (runInBoundThread)
 import Control.Lens       ((&))
 import System.Directory   (doesFileExist, removeFile)
 import System.Environment (getProgName)
@@ -133,6 +132,80 @@ import qualified Vere.Log  as Log
 import qualified Vere.Pier as Pier
 import qualified Vere.Serf as Serf
 
+import RIO (RIO, runRIO)
+import RIO (Utf8Builder, display, displayShow)
+import RIO (threadDelay)
+
+import RIO ( HasLogFunc
+           , LogFunc
+           , logError
+           , logInfo
+           , logWarn
+           , logDebug
+           , logOther
+           , logFuncL
+           , logOptionsHandle
+           , withLogFunc
+           , setLogUseTime
+           , setLogUseLoc
+           )
+
+--------------------------------------------------------------------------------
+
+logTrace :: HasLogFunc e => Utf8Builder -> RIO e ()
+logTrace = logOther "trace"
+
+--------------------------------------------------------------------------------
+
+class HasAppName env where
+    appNameL :: Lens' env Utf8Builder
+
+data App = App
+  { _appLogFunc :: !LogFunc
+  , _appName    :: !Utf8Builder
+  }
+
+makeLenses ''App
+
+instance HasLogFunc App where
+    logFuncL = appLogFunc
+
+instance HasAppName App where
+    appNameL = appName
+
+runApp :: RIO App a -> IO a
+runApp inner = do
+    logOptions <- logOptionsHandle stderr True
+        <&> setLogUseTime True
+        <&> setLogUseLoc False
+
+    withLogFunc logOptions $ \logFunc -> do
+        let app = App { _appLogFunc = logFunc
+                      , _appName    = "Alice"
+                      }
+        runRIO app inner
+
+--------------------------------------------------------------------------------
+
+io :: MonadIO m => IO a -> m a
+io = liftIO
+
+rio :: MonadRIO m => RIO e a -> m e a
+rio = liftRIO
+
+--------------------------------------------------------------------------------
+
+example :: IO ()
+example = runApp sayHello
+
+sayHello :: RIO App ()
+sayHello = do
+    name <- view $ to _appName
+    logDebug $ "Hello, " <> name
+    logInfo  $ "Hello, " <> name
+    logWarn  $ "Hello, " <> name
+    logError $ "Hello, " <> name
+
 --------------------------------------------------------------------------------
 
 zod :: Ship
@@ -140,87 +213,97 @@ zod = 0
 
 --------------------------------------------------------------------------------
 
-removeFileIfExists :: FilePath -> IO ()
+removeFileIfExists :: HasLogFunc env => FilePath -> RIO env ()
 removeFileIfExists pax = do
-  exists <- doesFileExist pax
+  exists <- io $ doesFileExist pax
   when exists $ do
-      removeFile pax
-
-catchAny :: IO a -> (SomeException -> IO a) -> IO a
-catchAny = Control.Exception.catch
+      io $ removeFile pax
 
 --------------------------------------------------------------------------------
 
-wipeSnapshot :: FilePath -> IO ()
+wipeSnapshot :: HasLogFunc env => FilePath -> RIO env ()
 wipeSnapshot shipPath = do
-    putStrLn "wipeSnapshot"
-    removeFileIfExists (shipPath <> "/.urb/chk/north.bin")
-    removeFileIfExists (shipPath <> "/.urb/chk/south.bin")
-    print (shipPath <> "/.urb/chk/north.bin")
-    print (shipPath <> "/.urb/chk/south.bin")
-    putStrLn "SNAPSHOT WIPED"
+    logTrace "wipeSnapshot"
+    logDebug $ display $ pack @Text ("Wiping " <> north)
+    logDebug $ display $ pack @Text ("Wiping " <> south)
+    removeFileIfExists north
+    removeFileIfExists south
+  where
+    north = shipPath <> "/.urb/chk/north.bin"
+    south = shipPath <> "/.urb/chk/south.bin"
 
-tryBootFromPill :: FilePath -> FilePath -> Ship -> IO ()
+--------------------------------------------------------------------------------
+
+tryBootFromPill :: HasLogFunc e => FilePath -> FilePath -> Ship -> RIO e ()
 tryBootFromPill pillPath shipPath ship = do
     wipeSnapshot shipPath
     with (Pier.booted pillPath shipPath [] ship) $ \(serf, log, ss) -> do
-        print "lul"
-        print ss
-        threadDelay 500000
-        shutdown serf 0 >>= print
-        putStrLn "[tryBootFromPill] Booted!"
+        logTrace "Booting"
+        logTrace $ displayShow ss
+        io $ threadDelay 500000
+        ss <- io $ shutdown serf 0
+        logTrace $ displayShow ss
+        logTrace "Booted!"
 
+runAcquire :: (MonadUnliftIO m,  MonadIO m)
+           => Acquire a -> m a
 runAcquire act = with act pure
 
-tryPlayShip :: FilePath -> IO ()
+runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
+            => RAcquire e a -> m e a
+runRAcquire act = rwith act pure
+
+tryPlayShip :: HasLogFunc e => FilePath -> RIO e ()
 tryPlayShip shipPath = do
-    runAcquire $ do
-        putStrLn "RESUMING SHIP"
-        sls <- Pier.resumed shipPath []
-        putStrLn "SHIP RESUMED"
-        Pier.pier shipPath Nothing sls
+    runRAcquire $ do
+        liftRIO $ logTrace "RESUMING SHIP"
+        sls <- liftAcquire $ Pier.resumed shipPath []
+        liftRIO $ logTrace "SHIP RESUMED"
+        liftAcquire $ Pier.pier shipPath Nothing sls
 
-tryResume :: FilePath -> IO ()
+tryResume :: HasLogFunc e => FilePath -> RIO e ()
 tryResume shipPath = do
-    with (Pier.resumed shipPath []) $ \(serf, log, ss) -> do
-        print ss
+    rwith (liftAcquire $ Pier.resumed shipPath []) $ \(serf, log, ss) -> do
+        logTrace (displayShow ss)
         threadDelay 500000
-        shutdown serf 0 >>= print
-        putStrLn "[tryResume] Resumed!"
+        ss <- io (shutdown serf 0)
+        logTrace (displayShow ss)
+        logTrace "Resumed!"
 
-tryFullReplay :: FilePath -> IO ()
+tryFullReplay :: HasLogFunc e => FilePath -> RIO e ()
 tryFullReplay shipPath = do
     wipeSnapshot shipPath
     tryResume shipPath
 
 --------------------------------------------------------------------------------
 
-checkEvs :: FilePath -> Word64 -> Word64 -> IO ()
+checkEvs :: forall e. HasLogFunc e => FilePath -> Word64 -> Word64 -> RIO e ()
 checkEvs pierPath first last = do
-    with (Log.existing logPath) $ \log -> do
+    rwith (liftAcquire $ Log.existing logPath) $ \log -> do
         let ident = Log.identity log
-        print ident
+        logTrace (displayShow ident)
         runConduit $ Log.streamEvents log first
                   .| showEvents first (fromIntegral $ lifecycleLen ident)
   where
     logPath :: FilePath
     logPath = pierPath <> "/.urb/log"
 
-    showEvents :: EventId -> EventId -> ConduitT ByteString Void IO ()
+    showEvents :: EventId -> EventId -> ConduitT ByteString Void (RIO e) ()
     showEvents eId _ | eId > last = pure ()
     showEvents eId cycle          =
         await >>= \case
-            Nothing -> print "Everything checks out."
+            Nothing -> lift $ logTrace "Everything checks out."
             Just bs -> do
-                liftIO $ do
-                    n <- cueBSExn bs
+                lift $ do
+                    n <- io $ cueBSExn bs
                     when (eId > cycle) $ do
                         (mug, wen, evNoun) <- unpackJob n
-                        fromNounErr evNoun & either print pure
+                        fromNounErr evNoun &
+                            either (logError . displayShow) pure
                 showEvents (succ eId) cycle
 
-    unpackJob :: Noun -> IO (Mug, Wen, Noun)
-    unpackJob n = fromNounExn n
+    unpackJob :: Noun -> RIO e (Mug, Wen, Noun)
+    unpackJob = io . fromNounExn
 
 --------------------------------------------------------------------------------
 
@@ -229,19 +312,19 @@ checkEvs pierPath first last = do
     so this should never actually be created. We just do this to avoid
     letting the serf use an existing snapshot.
 -}
-collectAllFx :: FilePath -> IO ()
+collectAllFx :: ∀e. HasLogFunc e => FilePath -> RIO e ()
 collectAllFx top = do
-    putStrLn (pack top)
-    with collectedFX $ \() ->
-        putStrLn "[collectAllFx] Done collecting effects!"
+    logTrace $ display $ pack @Text top
+    rwith collectedFX $ \() ->
+        logTrace "Done collecting effects!"
   where
     tmpDir :: FilePath
     tmpDir = top <> "/.tmpdir"
 
-    collectedFX :: Acquire ()
+    collectedFX :: RAcquire e ()
     collectedFX = do
-        log  <- Log.existing (top <> "/.urb/log")
-        serf <- Serf.run (Serf.Config tmpDir serfFlags)
+        log  <- liftAcquire $ Log.existing (top <> "/.urb/log")
+        serf <- liftAcquire $ Serf.run (Serf.Config tmpDir serfFlags)
         liftIO (Serf.collectFX serf log)
 
     serfFlags :: Serf.Flags
@@ -249,35 +332,37 @@ collectAllFx top = do
 
 --------------------------------------------------------------------------------
 
-tryDoStuff :: FilePath -> IO ()
-tryDoStuff shipPath = runInBoundThread $ do
-    let pillPath = "/home/benjamin/r/urbit/bin/solid.pill"
-        ship     = zod
+tryDoStuff :: HasLogFunc e => FilePath -> RIO e ()
+tryDoStuff shipPath = do
+    env <- ask
+    liftIO $ runInBoundThread $ runRIO env $ do
+        let pillPath = "/home/benjamin/r/urbit/bin/solid.pill"
+            ship     = zod
 
-    -- tryResume shipPath
-    tryPlayShip shipPath
-    -- tryFullReplay shipPath
+        -- tryResume shipPath
+        tryPlayShip shipPath
+        -- tryFullReplay shipPath
 
-    pure ()
+        pure ()
 
 --------------------------------------------------------------------------------
 
 {-
     Interesting
 -}
-testPill :: FilePath -> Bool -> Bool -> IO ()
+testPill :: HasLogFunc e => FilePath -> Bool -> Bool -> RIO e ()
 testPill pax showPil showSeq = do
   putStrLn "Reading pill file."
   pillBytes <- readFile pax
 
   putStrLn "Cueing pill file."
-  pillNoun <- cueBS pillBytes & either throwIO pure
+  pillNoun <- io $ cueBS pillBytes & either throwIO pure
 
   putStrLn "Parsing pill file."
-  pill <- fromNounErr pillNoun & either (throwIO . uncurry ParseErr) pure
+  pill <- io $ fromNounErr pillNoun & either (throwIO . uncurry ParseErr) pure
 
   putStrLn "Using pill to generate boot sequence."
-  bootSeq <- generateBootSeq zod pill
+  bootSeq <- io $ generateBootSeq zod pill
 
   putStrLn "Validate jam/cue and toNoun/fromNoun on pill value"
   reJam <- validateNounVal pill
@@ -289,13 +374,14 @@ testPill pax showPil showSeq = do
 
   when showPil $ do
       putStrLn "\n\n== Pill ==\n"
-      pPrint pill
+      io $ pPrint pill
 
   when showSeq $ do
       putStrLn "\n\n== Boot Sequence ==\n"
-      pPrint bootSeq
+      io $ pPrint bootSeq
 
-validateNounVal :: (Eq a, ToNoun a, FromNoun a) => a -> IO ByteString
+validateNounVal :: (HasLogFunc e, Eq a, ToNoun a, FromNoun a)
+                => a -> RIO e ByteString
 validateNounVal inpVal = do
     putStrLn "  jam"
     inpByt <- evaluate $ jamBS $ toNoun inpVal
@@ -324,41 +410,37 @@ validateNounVal inpVal = do
 
 --------------------------------------------------------------------------------
 
-newShip :: CLI.New -> CLI.Opts -> IO ()
+newShip :: HasLogFunc e => CLI.New -> CLI.Opts -> RIO e ()
 newShip CLI.New{..} _ = do
     tryBootFromPill nPillPath pierPath (Ship 0)
   where
     pierPath = fromMaybe ("./" <> unpack nShipAddr) nPierPath
 
-runShip :: CLI.Run -> CLI.Opts -> IO ()
+runShip :: HasLogFunc e => CLI.Run -> CLI.Opts -> RIO e ()
 runShip (CLI.Run pierPath) _ = tryPlayShip pierPath
 
 main :: IO ()
 main = CLI.parseArgs >>= \case
-    CLI.CmdRun r o                             -> runShip r o
-    CLI.CmdNew n o                             -> newShip n o
-    CLI.CmdBug (CLI.CollectAllFX pax)          -> collectAllFx pax
-    CLI.CmdBug (CLI.ValidatePill pax pil seq)  -> testPill pax pil seq
-    CLI.CmdBug (CLI.ValidateEvents pax f l)    -> checkEvs pax f l
-    CLI.CmdBug (CLI.ValidateFX pax f l)        -> checkFx  pax f l
-
-    -- tryParseFX "/home/benjamin/zod-fx"         1 100000000
-    -- tryParseFX "/home/benjamin/testnet-zod-fx" 1 100000000
-
-validatePill :: FilePath -> IO ()
-validatePill = const (pure ())
+    CLI.CmdRun r o                             -> runApp $ runShip r o
+    CLI.CmdNew n o                             -> runApp $ newShip n o
+    CLI.CmdBug (CLI.CollectAllFX pax)          -> runApp $ collectAllFx pax
+    CLI.CmdBug (CLI.ValidatePill pax pil seq)  -> runApp $ testPill pax pil seq
+    CLI.CmdBug (CLI.ValidateEvents pax f l)    -> runApp $ checkEvs pax f l
+    CLI.CmdBug (CLI.ValidateFX pax f l)        -> runApp $ checkFx  pax f l
 
 --------------------------------------------------------------------------------
 
-checkFx :: FilePath -> Word64 -> Word64 -> IO ()
+checkFx :: HasLogFunc e
+        => FilePath -> Word64 -> Word64 -> RIO e ()
 checkFx pierPath first last =
-    with (Log.existing logPath) $ \log ->
+    rwith (liftAcquire $ Log.existing logPath) $ \log ->
         runConduit $ streamFX log first last
                   .| tryParseFXStream
   where
     logPath = pierPath <> "/.urb/log"
 
-streamFX :: Log.EventLog -> Word64 -> Word64 -> ConduitT () ByteString IO ()
+streamFX :: MonadIO m
+         => Log.EventLog -> Word64 -> Word64 -> ConduitT () ByteString m ()
 streamFX log first last = do
     Log.streamEffectsRows log first .| loop
   where
@@ -366,24 +448,15 @@ streamFX log first last = do
                            Just (eId, bs) | eId > last -> pure ()
                            Just (eId, bs)              -> yield bs >> loop
 
-tryParseFXStream :: ConduitT ByteString Void IO ()
-tryParseFXStream = loop 0 (mempty :: Set (Text, Noun))
+tryParseFXStream :: HasLogFunc e => ConduitT ByteString Void (RIO e) ()
+tryParseFXStream = loop
   where
-    loop 1 pax = for_ (setToList pax) print
-    loop errors pax =
-      await >>= \case
-        Nothing -> for_ (setToList pax) $ \(t,n) ->
-                     putStrLn (t <> ": " <> tshow n)
+    loop = await >>= \case
+        Nothing -> pure ()
         Just bs -> do
-          n <- liftIO (cueBSExn bs)
-          fromNounErr n & \case
-            Left err            -> print err >> loop (errors + 1) pax
-            Right []            -> loop errors pax
-            Right (fx :: FX) -> do
-              -- pax <- pure $ Set.union pax
-                          -- $ setFromList
-                          -- $ fx <&> \(Effect p v) -> (getTag v, toNoun p)
-              loop errors pax
+            n <- liftIO (cueBSExn bs)
+            fromNounErr n & either (logError . displayShow) pure
+            loop
 
 
 {-
