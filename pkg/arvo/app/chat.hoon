@@ -155,7 +155,7 @@
     ::  fill remote configs with message data
     ::
       =*  messages  messages.str
-      =/  circle=circle:hall  [`@p`(slav %p &2:wir) &3:wir]
+      =/  circle  [`@p`(slav %p &2:wir) &3:wir]
       =/  peers=(map circle:hall (set @p))
         %-  ~(rep by rem.pes.piz)
         |=  [[cir=circle:hall grp=group:hall] acc=(map circle:hall (set @p))]
@@ -183,7 +183,10 @@
       (~(put by acc) cir (silt (turn ~(tap by grp) head)))
     ::
     :-
-      %+  turn  ~(tap in (~(del in (silt circles)) [our.bol %inbox]))
+      %+  turn
+        %~  tap  in
+        %-  ~(del in (silt circles))
+        [our.bol %inbox]
       |=  cir=circle:hall
       %+  hall-peer
         /circle/(scot %p our.bol)/[nom.cir]/config/group
@@ -193,7 +196,7 @@
         peers.str  (~(put by peers) [our.bol %inbox] ~(key by loc.pes.piz))
     ::
         configs.str
-      %-  ~(uni in configs.str)
+      %-  ~(uni by configs.str)
       ^-  (map circle:hall (unit config:hall))
       (~(run by rem.cos.piz) some)
     ::
@@ -306,8 +309,9 @@
   ^-  (quip move _this)
   ?>  ?=(%gram -.sto)
   =*  messages  messages.str
-  =/  circle=circle:hall  [`@p`(slav %p &2:wir) &3:wir]
-  =/  nes=(unit (list envelope:hall))  (~(get by messages) circle)
+  =/  circle  [`@p`(slav %p &2:wir) &3:wir]
+  =/  nes=(unit (list envelope:hall))
+    (~(get by messages) circle)
   ?~  nes
     [~ this]
   =.  messages.str  (~(put by messages) circle (snoc u.nes nev.sto))
@@ -454,11 +458,11 @@
   ::  paginated message data
   ::
       [%'~chat' %scroll @t @t @t @t ~]
-    =/  cir=circle:hall  [(slav %p &3:site.request-line) &4:site.request-line]
+    =/  cir  [(slav %p &3:site.request-line) &4:site.request-line]
     =/  start=@ud  (need (rush &5:site.request-line dem))
     =/  parsedend=@ud  (need (rush &6:site.request-line dem))
     =*  messages  messages.str
-    =/  envs/(unit (list envelope:hall))  (~(get by messages) cir)
+    =/  envs=(unit (list envelope:hall))  (~(get by messages) cir)
     ?~  envs
       [~ this]
     ?:  (gte start (lent u.envs))
@@ -468,13 +472,14 @@
         (dec (lent u.envs))
       parsedend
     =/  offset  (sub end start)
-    =/  jon=json  %-  msg-to-json
-    :*  %messages
-        cir
-        start
-        end
-        (swag [start offset] u.envs)
-    ==
+    =/  jon
+      %-  msg-to-json
+      :*  %messages
+          cir
+          start
+          end
+          (swag [start offset] u.envs)
+      ==
     :_  this
     [ost.bol %http-response (json-response:app (json-to-octs jon))]~
   ::
