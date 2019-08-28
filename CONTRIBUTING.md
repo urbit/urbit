@@ -4,9 +4,11 @@ Thank you for your interest in contributing to urbit.
 
 See [urbit.org/docs/getting-started][start] for basic orientation and usage
 instructions.  You may also want to subscribe to [urbit-dev][list], the urbit
-development mailing list.
+development mailing list. For specific information on contributing to the urbit
+interface, see its [contribution guidelines][interface].
 
 [start]: https://urbit.org/docs/getting-started/#arvo
+[interface]: /pkg/interface/CONTRIBUTING.md
 
 ## Fake ships
 
