@@ -142,9 +142,11 @@ compound statement. One thing to watch out for is top-level sections in
 source files that are denoted by comments and are actually indented one
 level.
 
-Hoon will be a less familiar language to many contributors.  Until we publish
-an 'official' style guide, the best advice is again to mimic the code around
-you.  In general: the more recent the code, the more standard the style.
+Hoon will be a less familiar language to many contributors.  We've published
+some [style guidelines for Hoon][hoon], but above all you should try to mimic
+the style of the code around you.  With regards to the style used throughout
+the codebase: the more recently the code was written, the more standard and
+accepted its style is likely to be.
 
 ## Kernel development
 
@@ -241,3 +243,4 @@ Questions or other communications about contributing to Urbit can go to
 [repo]: https://github.com/urbit/urbit
 [reba]: https://www.atlassian.com/git/tutorials/merging-vs-rebasing
 [issu]: https://github.com/urbit/urbit/issues
+[hoon]: https://urbit.org/docs/learn/hoon/style/
