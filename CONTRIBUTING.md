@@ -201,17 +201,34 @@ $ git lfs pull
 
 [git-lfs]: https://git-lfs.github.com
 
-## What to work on
+## Issues
 
-If you are not thinking of contributing with a specific goal in mind, the
-GitHub issue tracker is the first place you should look for ideas.  Issues are
-occasionally tagged with a priority and a difficulty; a good place to start is
-on a low-difficulty or low-priority issue.  Higher-priority issues are likely
-to be assigned to someone -- if this is the case, then contacting that person
-to coordinate before starting to work is probably a good idea.
+The [GitHub tracker][issu] is our canonical source of truth around issues,
+bugs, performance problems, feature requests, and so on.  If you encounter any
+issues when developing on urbit, feel free to submit a report about it here.
 
-There is also a "help wanted" tag for things that we are especially eager to
-have outside contributions on. Check here first!
+You should label your issue appropriately if you know happen to know what it
+applies to.  For example, a `%gall` bug should be labelled with both 'gall' and
+'bug'.  It's ok if you don't know how to label your issue -- the maintainers
+will help you out and try to label it appropriately.
+
+A good bug report, description of a crash, etc., should ideally be
+*reproducible*, with clear, obvious steps as to how another developer can
+replicate and examine your problem.  That said, this isn't always possible --
+some bugs depend on having created a complicated or unusual state, or can
+otherwise simply be difficult to trigger again (say, you encountered it in the
+last continuity era).
+
+Your issue should thus at a minimum be *informative*.  The best advice here is
+probably "don't write bad issues," where "bad" is a matter of judgment and
+taste.  Issues that the maintainers don't judge to be sufficiently useful or
+informative may be closed.
+
+Feature requests are welcome, but they should include sufficient detail and
+explanation, as well as a discussion of perceived benefits one could expect
+from them.  "It would be cool if.." probably does not, in itself, constitute a
+good feature request; instead, try to be specific about what you're requesting,
+and what your desired feature would accomplish.
 
 ## Staying in touch
 
@@ -222,3 +239,4 @@ Questions or other communications about contributing to Urbit can go to
 [list]: https://groups.google.com/a/urbit.org/forum/#!forum/dev
 [repo]: https://github.com/urbit/urbit
 [reba]: https://www.atlassian.com/git/tutorials/merging-vs-rebasing
+[issu]: https://github.com/urbit/urbit/issues
