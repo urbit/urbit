@@ -547,11 +547,9 @@
 ::
 +$  pump-metrics
   $:  num-live=@ud
-      num-lost=@ud
       last-sent-at=@da
-      last-dead-at=@da
-      rtt=@dr
-      max-live=_7
+      rtt=_~s1
+      max-live=_2
   ==
 +$  live-packet-key  [=message-num =fragment-num]
 +$  live-packet-val
@@ -2303,14 +2301,13 @@
   ::
   ++  next-expiry
     ^-  @da
-    ::
-    (add now ~s5)
+    (add now (mul 2 rtt))
   ::  +next-retry-expiry: when should a resent packet time out?
   ::
   ++  next-retry-expiry
     |=  sent-packet-state
     ^-  @da
-    (add now ~s10)
+    next-expiry
   ::  +has-slot: can we send a packet right now?
   ::
   ++  has-slot
@@ -2330,33 +2327,49 @@
     max-live
   ::  +on-skipped-packet: adjust metrics based on a misordered ack
   ::
-  ::    TODO: decrease .max-live
-  ::
   ++  on-skipped-packet
     |=  sent-packet-state
-    metrics
+    ^-  pump-metrics
+    ::
+    %_  metrics
+      max-live  (max 1 (dec max-live))
+    ==
   ::  +on-ack: adjust metrics based on a packet getting acknowledged
-  ::
-  ::    TODO: adjust .rtt and .max-live
   ::
   ++  on-ack
     |=  sent-packet-state
     ^-  pump-metrics
     ::
-    metrics(num-live (dec num-live))
+    %_  metrics
+      num-live  ?:(=(0 num-live) 0 (dec num-live))
+      max-live  +(max-live)
+      rtt       smooth-rtt
+    ==
   ::  +on-sent: adjust metrics based on sending .num-sent fresh packets
   ::
   ++  on-sent
     |=  num-sent=@ud
     ^-  pump-metrics
     ::
-    metrics(num-live (add num-sent num-live))
+    %_  metrics
+      last-sent-at  now
+      num-live      (add num-sent num-live)
+    ==
   ::  +on-resent: adjust metrics based on retrying an expired packet
   ::
   ++  on-resent
     |=  sent-packet-state
     ^-  pump-metrics
-    metrics
+    ::
+    %_  metrics
+      last-sent-at  now
+      max-live      (max 1 (div max-live 2))
+    ==
+  ::  +smooth-rtt: apply a low-pass-filtered update to .rtt
+  ::
+  ++  smooth-rtt
+    ^+  rtt
+    (div (add rtt (sub now last-sent-at)) 2)
   --
 ::  +make-message-still: construct |message-still message receiver core
 ::
