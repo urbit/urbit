@@ -2079,7 +2079,7 @@
                 :-  307
                 :~  ['location' '/~landscape']
                     :-  'set-cookie'
-                    'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea; Path=/; Max-Age=86400'
+                    'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea; Path=/; Max-Age=604800'
                 ==
                 ~
                 complete=%.y
