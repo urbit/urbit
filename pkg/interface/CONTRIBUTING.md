@@ -23,7 +23,7 @@ this folder, [pkg/interface][interface]. You can find an `urbitrc-sample` here
 for reference. Then `cd` into the application's folder and `npm install` the
 dependencies, then `gulp watch` to watch for changes.
 
-On your development ship, ensure you `|commit %home` to confirm your changes.
+On your development ship, ensure you `|commit %home` to apply your changes.
 Once you're done and ready to make a pull request, running `gulp bundle-prod`
 will make the production files and deposit them in [pkg/arvo][arvo]. Create a
 pull request with both the production files, and the source code you were
