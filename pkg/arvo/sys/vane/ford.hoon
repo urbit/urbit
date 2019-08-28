@@ -5570,7 +5570,7 @@
     %-  sloy  ^-  slyd
     ~/  %intercepted-scry
     |=  [ref=* (unit (set monk)) =term =beam]
-    ^-  (unit (unit (cask)))
+    ^-  (unit (unit (cask milt)))
     ::  if the actual scry produces a value, use that value; otherwise use local
     ::
     =/  scry-response  (scry +<.$)
@@ -5606,7 +5606,7 @@
     ?.  -:(nets:wa +.ref `type`p.q.local-cage)
       [~ ~]
     ::
-    [~ ~ `(cask)`local-cage]
+    [~ ~ local-cage]
   ::  +unblock-clients-on-duct: unblock and produce clients blocked on :build
   ::
   ++  unblock-clients-on-duct
