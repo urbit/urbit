@@ -103,7 +103,7 @@
     - `Trace`: TODO What does this do?
 -}
 
-module Main where
+module Main (main) where
 
 import UrbitPrelude
 
@@ -161,9 +161,9 @@ class HasAppName env where
     appNameL :: Lens' env Utf8Builder
 
 data App = App
-  { _appLogFunc :: !LogFunc
-  , _appName    :: !Utf8Builder
-  }
+    { _appLogFunc :: !LogFunc
+    , _appName    :: !Utf8Builder
+    }
 
 makeLenses ''App
 
@@ -200,7 +200,7 @@ example = runApp sayHello
 
 sayHello :: RIO App ()
 sayHello = do
-    name <- view $ to _appName
+    name <- view appName
     logDebug $ "Hello, " <> name
     logInfo  $ "Hello, " <> name
     logWarn  $ "Hello, " <> name
@@ -332,21 +332,6 @@ collectAllFx top = do
 
 --------------------------------------------------------------------------------
 
-tryDoStuff :: HasLogFunc e => FilePath -> RIO e ()
-tryDoStuff shipPath = do
-    env <- ask
-    liftIO $ runInBoundThread $ runRIO env $ do
-        let pillPath = "/home/benjamin/r/urbit/bin/solid.pill"
-            ship     = zod
-
-        -- tryResume shipPath
-        tryPlayShip shipPath
-        -- tryFullReplay shipPath
-
-        pure ()
-
---------------------------------------------------------------------------------
-
 {-
     Interesting
 -}
@@ -420,13 +405,13 @@ runShip :: HasLogFunc e => CLI.Run -> CLI.Opts -> RIO e ()
 runShip (CLI.Run pierPath) _ = tryPlayShip pierPath
 
 main :: IO ()
-main = CLI.parseArgs >>= \case
-    CLI.CmdRun r o                             -> runApp $ runShip r o
-    CLI.CmdNew n o                             -> runApp $ newShip n o
-    CLI.CmdBug (CLI.CollectAllFX pax)          -> runApp $ collectAllFx pax
-    CLI.CmdBug (CLI.ValidatePill pax pil seq)  -> runApp $ testPill pax pil seq
-    CLI.CmdBug (CLI.ValidateEvents pax f l)    -> runApp $ checkEvs pax f l
-    CLI.CmdBug (CLI.ValidateFX pax f l)        -> runApp $ checkFx  pax f l
+main = CLI.parseArgs >>= runApp . \case
+    CLI.CmdRun r o                             -> runShip r o
+    CLI.CmdNew n o                             -> newShip n o
+    CLI.CmdBug (CLI.CollectAllFX pax)          -> collectAllFx pax
+    CLI.CmdBug (CLI.ValidatePill pax pil seq)  -> testPill pax pil seq
+    CLI.CmdBug (CLI.ValidateEvents pax f l)    -> checkEvs pax f l
+    CLI.CmdBug (CLI.ValidateFX pax f l)        -> checkFx  pax f l
 
 --------------------------------------------------------------------------------
 
@@ -460,13 +445,6 @@ tryParseFXStream = loop
 
 
 {-
-getTag :: Effect -> Text
-getTag fx =
-  let n = toNoun fx
-  in case n of
-       A _   -> maybe "ERR" unCord (fromNoun n)
-       C h _ -> maybe "ERR" unCord (fromNoun h)
-
 tryCopyLog :: IO ()
 tryCopyLog = do
   let logPath      = "/Users/erg/src/urbit/zod/.urb/falselog/"
