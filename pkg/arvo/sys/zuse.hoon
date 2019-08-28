@@ -400,6 +400,7 @@
     ::
     ::    %boon: response message from remote ship
     ::    %done: notify vane that peer (n)acked our message
+    ::    %lost: notify vane that we crashed on %boon
     ::    %send: packet to unix
     ::
     ::    %mass: memory usage report
@@ -408,6 +409,7 @@
     +$  gift
       $%  [%boon payload=*]
           [%done error=(unit error)]
+          [%lost ~]
           [%send =lane =blob]
       ::
           [%mass p=mass]

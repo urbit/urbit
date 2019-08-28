@@ -94,6 +94,7 @@
   $%  $:  %a
           $%  $>(%boon gift:able:ames)                  ::  message response
               $>(%done gift:able:ames)                  ::  message (n)ack
+              $>(%lost gift:able:ames)                  ::  lost boon
       ==  ==
       $:  %g                                            ::
           $>  $?  %onto                                 ::
@@ -522,6 +523,12 @@
       =+  ;;  [%public-keys-result =public-keys-result]  payload.hin
       %-  curd  =<  abet
       (public-keys:~(feel su hen our pki etn) public-keys-result)
+    ::
+        [%a %lost *]
+      ::  TODO: better error handling
+      ::
+      ~|  %jael-ames-lost
+      !!
     ::
         [%g %onto *]
       ~&  [%jael-onto tea hin]

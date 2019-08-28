@@ -508,8 +508,9 @@
           $%  [%init-clad ~]                            ::
       ==  ==                                            ::
       $:  %a                                            ::  by %ames
-          $>  $?  %boon                                 ::
-                  %done                                 ::
+          $>  $?  %boon                                 ::  response
+                  %done                                 ::  (n)ack
+                  %lost                                 ::  lost boon
               ==                                        ::
           gift:able:ames                                ::
       ==                                                ::
@@ -4478,7 +4479,8 @@
     ==  ==
   ::
   ?:  ?=([%warp-index @ @ @ ~] tea)
-    ?:  ?=(%done +<.q.hin)
+    ?+    +<.q.hin  ~|  %clay-warp-index-strange  !!
+        %done
       ?~  error.q.hin
         [~ ..^$]
       ::  TODO better error handling
@@ -4487,23 +4489,23 @@
       %-  (slog tang.u.error.q.hin)
       [~ ..^$]
     ::
-    ?>  ?=(%boon +<.q.hin)
-    ::
-    =/  res=(unit rand)
-      ?^  v=((soft ,(unit rand)) payload.q.hin)
-        u.v
-      ~|  %clay-take-boon-fail^our^payload.q.hin
+        %lost
+      ~|  %clay-take-lost^our
+      ::  TODO better error handling
       !!
-    ::=+  ;;  res=(unit rand)  payload.q.hin
     ::
-    =/  her=ship   (slav %p i.t.tea)
-    =/  =desk      (slav %tas i.t.t.tea)
-    =/  index=@ud  (slav %ud i.t.t.t.tea)
-    ::
-    =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) her desk)
-      abet:(take-foreign-answer:den index res)
-    [mos ..^$]
+        %boon
+      =+  ;;  res=(unit rand)  payload.q.hin
+      ::
+      =/  her=ship   (slav %p i.t.tea)
+      =/  =desk      (slav %tas i.t.t.tea)
+      =/  index=@ud  (slav %ud i.t.t.t.tea)
+      ::
+      =^  mos  ruf
+        =/  den  ((de our now ski hen ruf) her desk)
+        abet:(take-foreign-answer:den index res)
+      [mos ..^$]
+    ==
   ::
   ?:  ?=([%sinks ~] tea)
     ?>  ?=(%public-keys +<.q.hin)
@@ -4603,6 +4605,7 @@
       ::  handled in the wire dispatcher
       ::
       %boon  !!
+      %lost  !!
       %writ  !!
   ::
       %done

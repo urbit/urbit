@@ -393,9 +393,12 @@
       ?:  ?=([%a %done *] sih)
         (mo-awed him cub error.sih)
       ::
-      ?>  ?=([%a %boon *] sih)
-      =+  mes=;;([@ud roon] payload.sih)
-      (mo-gawd:(mo-abed:mo hen) him dap mes)
+      ?:  ?=([%a %boon *] sih)
+        =+  mes=;;([@ud roon] payload.sih)
+        (mo-gawd:(mo-abed:mo hen) him dap %& mes)
+      ::
+      ?>  ?=([%a %lost *] sih)
+      (mo-gawd:(mo-abed:mo hen) him dap %| [%leaf "ames: lost boon"]~)
     ==
   ::
   ++  mo-cook                                           ::  take in /use
@@ -497,13 +500,16 @@
     ==
   ::
   ++  mo-gawd                                           ::  ames backward
-    |=  {him/@p dap/dude num/@ud ron/roon}
-    ?-    -.ron
+    |=  {him/@p dap/dude ron/(each [num=@ud =roon] tang)}
+    ::
+    ?:  ?=(%| -.ron)
+      (mo-give %unto %quit ~)
+    ?-    -.roon.p.ron
         $x  (mo-give %unto %quit ~)
         $d
       %+  mo-pass
-        [%sys %rep (scot %p him) dap (scot %ud num) ~]
-      [%f %build live=%.n [%vale [p q]:(mo-beak dap) p.ron q.ron]]
+        [%sys %rep (scot %p him) dap (scot %ud num.p.ron) ~]
+      [%f %build live=%.n [%vale [p q]:(mo-beak dap) [p q]:roon.p.ron]]
     ==
   ::
   ++  ap                                                ::  agent engine

@@ -1773,16 +1773,25 @@
       ::    could change this to a no-op if we had some sort of security
       ::    reporting.
       ::
+      ::    TODO: This handles a previous crash in the client vane, but not in
+      ::    Ames itself.
+      ::
       ++  on-still-boon
         |=  [=message-num message=*]
         ^+  peer-core
-        ~>  %slog.0^leaf/"ames: boon {<her.channel^bone>}"
         ::  send ack unconditionally
         ::
         =.  peer-core  (run-message-still bone %done ok=%.y)
-        ::  give message to client vane
         ::
-        (emit (got-duct bone) %give %boon message)
+        ?.  ?=([%hear * * ok=%.n] task)
+          ::  fresh boon; give message to client vane
+          ::
+          ~>  %slog.0^leaf/"ames: boon {<her.channel^bone>}"
+          (emit (got-duct bone) %give %boon message)
+        ::  we previously crashed on this message; notify client vane
+        ::
+        ~>  %slog.1^leaf/"ames: crashed on boon {<her.channel^bone>}"
+        (emit (got-duct bone) %give %lost ~)
       ::  +on-still-nack-trace: handle nack-trace received by |message-still
       ::
       ++  on-still-nack-trace
