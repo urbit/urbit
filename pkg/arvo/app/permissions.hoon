@@ -11,6 +11,13 @@
       [%remove who=(set ship)]
   ==
 ::
+::TODO  since we only operate on one permission at once, these can be =path
+::      but we want to keep an affordance for showing current state...
++$  affiliation-diff
+  $%  [%add where=(set path)]
+      [%remove where=(set path)]
+  ==
+::
 +$  action
   $:  =path
     ::
@@ -22,8 +29,9 @@
   ==
 ::
 +$  diff
-  $:  =path
-      what=permission-diff
+  ::TODO  should path and ship not be included in outgoing diffs? known info...
+  $%  [%permission =path what=permission-diff]
+      [%affiliation who=ship what=affiliation-diff]
   ==
 ::
 ::
@@ -45,21 +53,19 @@
 ::
 ::  primitive state operations
 ::
-++  affiliate
-  |=  [=path who=(set ship)]
-  ^+  affiliation
-  ?~  who  affiliation
-  =.  affiliation  (~(put ju affiliation) n.who path)
-  =.  affiliation  $(who l.who)
-  $(who r.who)
+++  create-permission
+  |=  [=path =permission]
+  ^+  permissions
+  ::NOTE  if we ever want to allow overwriting by creation,
+  ::      we'll need to smarter affiliation diff calculation.
+  ~|  [%permission-already-exists path]
+  ?<  (~(has by permissions) path)
+  (~(put by permissions) path permission)
 ::
-++  unaffiliate
-  |=  [=path who=(set ship)]
-  ^+  affiliation
-  ?~  who  affiliation
-  =.  affiliation  (~(del ju affiliation) n.who path)
-  =.  affiliation  $(who l.who)
-  $(who r.who)
+++  delete-permission
+  |=  =path
+  ^+  permissions
+  (~(del by permissions) path)
 ::
 ++  add-to-permission
   |=  [=path who=(set ship)]
@@ -79,84 +85,130 @@
     (~(got by permissions) path)
   permission(who (~(dif in who.permission) who))
 ::
-++  modify-permission
-  |=  [add=? =path who=(set ship)]
-  %_  this
-      permissions
-    %.  [path who]
-    ?:(add add-to-permission remove-from-permission)
-  ::
-      affiliation
-    %.  [path who]
-    ?:(add affiliate unaffiliate)
+++  add-affiliation
+  |=  [who=ship where=(set path)]
+  ^+  affiliation
+  %-  ~(gas ju affiliation)
+  (turn ~(tap in where) (tack who))
+::
+++  remove-affiliation
+  |=  [who=ship where=(set path)]
+  ^+  affiliation
+  ?~  where  affiliation
+  =.  affiliation  (~(del ju affiliation) who n.where)
+  =.  affiliation  $(where l.where)
+  $(where r.where)
+::
+::  diff application
+::
+++  apply-diffs
+  |=  diffs=(list diff)
+  ^+  this
+  ?~  diffs  this
+  =-  $(this -, diffs t.diffs)
+  ?-  -.i.diffs
+    %permission  (apply-permission-diff +.i.diffs)
+    %affiliation  (apply-affiliation-diff +.i.diffs)
   ==
 ::
-::  actions on state
-::
-++  create
-  |=  [=path =permission]
-  %_  this
-    permissions  (~(put by permissions) path permission)
-    affiliation  (affiliate path who.permission)
+++  apply-permission-diff
+  |=  [=path diff=permission-diff]
+  ^+  this
+  =-  this(permissions -)
+  ?-  -.diff
+    %create  (create-permission path +.diff)
+    %delete  (delete-permission path)
+    %add     (add-to-permission path +.diff)
+    %remove  (remove-from-permission path +.diff)
   ==
 ::
-++  delete
-  |=  =path
-  ?.  (~(has by permissions) path)  this
-  %_  this
-    permissions  (~(del by permissions) path)
-    affiliation  (unaffiliate path who:(~(got by permissions) path))
+++  apply-affiliation-diff
+  |=  [who=ship diff=affiliation-diff]
+  ^+  this
+  =-  this(affiliation -)
+  ?-  -.diff
+    %add  (affiliate who +.diff)
+    %remove  (unaffiliate who +.diff)
   ==
 ::
-++  add
-  (cury modify-permission &)
+::  diff calculation
 ::
-++  remove
-  (cury modify-permission |)
-::
-::  diff handling
-::
-++  calculate-diff
+++  calculate-diffs
   |=  =action
-  ^-  (unit diff)
+  ^-  (list diff)
+  =+  dif=(calculate-permission-diff action)
+  ?~  dif  ~
+  :-  [%permission path.action u.dif]
+  %+  turn
+    (calculate-affiliation-diffs path.action u.dif)
+  (tack %affiliation)
+::
+++  calculate-permission-diff
+  |=  =action
+  ^-  (unit permission-diff)
   =/  pem=(unit permission)
     (~(get by permissions) path.action)
-  ?:  ?=(%create -.what.action)  `action
+  ?:  ?=(%create -.what.action)  `what.action
   ?~  pem  ~
-  |-  ^-  (unit diff)
+  |-  ^-  (unit permission-diff)
   ?-  -.what.action
-      %delete  `action
-    ::
-        %allow  ::TODO  smaller?
-      =-  $(what.action -)
-      ?:  ?=(%black kind.u.pem)
-        [%add who.what.action]
-      [%remove who.what.action]
+      %delete  `what.action
   ::
-        %deny
-      =-  $(what.action -)
-      ?:  ?=(%black kind.u.pem)
-        [%add who.what.action]
-      [%remove who.what.action]
+      %allow  ::TODO  smaller?
+    :-  ~
+    ?:  ?=(%black kind.u.pem)
+      [%add who.what.action]
+    [%remove who.what.action]
+  ::
+      %deny
+    :-  ~
+    ?:  ?=(%black kind.u.pem)
+      [%add who.what.action]
+    [%remove who.what.action]
   ::
       %add
     =+  new=(~(dif in who.what.action) who.u.pem)
-    ?~(new ~ `action(who.what new))
+    ?~(new ~ `what.action(who new))
   ::
       %remove
     =+  new=(~(int in who.what.action) who.u.pem)
-    ?~(new ~ `action(who.what new))
+    ?~(new ~ `what.action(who new))
   ==
 ::
-++  apply-diff
-  |=  =diff
-  ^+  this
-  ?-  -.what.diff
-    %create  (create [path +.what]:diff)
-    %delete  (delete path.diff)
-    %add     (add [path +.what]:diff)
-    %remove  (remove [path +.what]:diff)
+++  calculate-affiliation-diffs
+  |=  [=path diff=permission-diff]
+  ^-  (list [ship affiliation-diff])
+  %+  murn
+    ^-  (list ship)
+    %~  tap  in
+    ?-  -.diff
+      %create           who.permission.diff
+      %delete           who:(~(got by permissions) path)
+      ?(%add %remove)   who.diff
+    ==
+  |=  who=ship
+  ^-  (unit [ship affiliation-diff])
+  ?-  -.diff
+      ?(%create %add)
+    ?:  (~(has ju affiliation) who path)  ~
+    `[who %add [path ~ ~]]
+  ::
+      ?(%remove %delete)
+    ?.  (~(has ju affiliation) who path)  ~
+    `[who %remove [path ~ ~]]
   ==
+::
+::  diff communication
+::
+++  diff-move
+  |=  [=bone =diff]
+  ^-  move
+  [bone %diff %permissions-diff diff]
+::
+++  send-diffs
+  |=  diffs=(list diff)
+  ^-  (list move)
+  (zing (turn diffs send-diff))
 ::
 ++  send-diff
   |=  =diff
@@ -164,23 +216,22 @@
   %+  murn  ~(tap by sup.bowl)
   |=  [=bone =ship =path]
   ^-  (unit move)
-  ?.  =(path path.diff)  ~
+  ?.  ?-  -.diff
+        %permission   =(path [-.diff path.diff])
+        %affiliation  =(path /(scot %p who.diff))
+      ==
+    ~
   `(diff-move bone diff)
-::
-++  diff-move
-  |=  [=bone =diff]
-  ^-  move
-  [bone %diff %permissions-diff diff]
 ::
 ::  gall interface
 ::
 ++  poke-noun
   |=  =action
   ^-  (quip move _this)
-  =/  diff=(unit diff)  (calculate-diff action)
-  ?~  diff  [~ this]
-  :-  (send-diff u.diff)
-  (apply-diff u.diff)
+  =/  diffs=(list diff)  (calculate-diffs action)
+  ?~  diffs  [~ this]
+  :-  (send-diffs diffs)
+  (apply-diffs diffs)
 ::
 ++  peer
   |=  =path
@@ -189,14 +240,22 @@
   ~|  [%invalid-subscription-path path]
   ?+  path  !!
       [%permissions ^]
-    ?.  (~(has by permissions) path)  ~
-    [(diff-move ost.bowl path %create (~(got by permissions) path)) ~]
+    ?.  (~(has by permissions) t.path)  ~
+    =-  [(diff-move ost.bowl -) ~]
+    [%permission t.path %create (~(got by permissions) t.path)]
   ::
       [%affiliation @ ~]
     =+  who=(slav %p i.t.path)
     ?.  (~(has by affiliation) who)  ~
-    ::TODO  ah crud we're gonna need multiple diffs per poke aren't we?
-    ~|  %affiliation-subs-unimplemented
-    !!
+    =-  [(diff-move ost.bowl -) ~]
+    [%affiliation who %add (~(get ju affiliation) who)]
   ==
+::
+::
+::TODO  stdlib additions
+::
+++  tack
+  |*  a=*
+  |*  b=*
+  [a b]
 --
