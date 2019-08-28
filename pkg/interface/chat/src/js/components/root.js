@@ -36,7 +36,7 @@ export class Root extends Component {
     let configs = !!state.configs ? state.configs : {};
 
     let circles = Object.keys(configs).filter((conf) => {
-      return !!configs[conf] && conf.split('/')[1] !== 'i';
+      return configs[conf] !== undefined && conf.split('/')[1] !== 'i';
     });
 
     let messages = _.get(state, 'messages', {});
@@ -87,7 +87,7 @@ export class Root extends Component {
       inviteConfig = configs[`~${window.ship}/i`];
     }
 
-    const renderChannelsSidebar = (props) => (
+    const renderChannelSidebar = (props) => (
       <Sidebar
         circles={circles}
         messagePreviews={messagePreviews}
@@ -106,7 +106,7 @@ export class Root extends Component {
           render={ (props) => {
             return (
               <Skeleton
-                sidebar={renderChannelsSidebar(props)}>
+                sidebar={renderChannelSidebar(props)}>
                 <div className="h-100 w-100 overflow-x-hidden flex flex-column">
                   <div className="pl3 pr3 pt2 pb3">
                     <h2>Home</h2>
@@ -124,7 +124,7 @@ export class Root extends Component {
             return (
               <Skeleton
                 spinner={this.state.spinner}
-                sidebar={renderChannelsSidebar(props)}>
+                sidebar={renderChannelSidebar(props)}>
                 <NewScreen
                   setSpinner={this.setSpinner}
                   api={api}
@@ -138,7 +138,7 @@ export class Root extends Component {
           render={ (props) => {
             return (
               <Skeleton
-                sidebar={renderChannelsSidebar(props)}>
+                sidebar={renderChannelSidebar(props)}>
                 <LandingScreen
                   api={api}
                   configs={configs}
@@ -156,7 +156,7 @@ export class Root extends Component {
              let messages = state.messages[station] || [];
              return (
                <Skeleton
-                 sidebar={renderChannelsSidebar(props) }>
+                 sidebar={renderChannelSidebar(props) }>
                  <ChatScreen
                    api={api}
                    configs={configs}
@@ -173,7 +173,7 @@ export class Root extends Component {
            render={ (props) => {
              return (
                <Skeleton
-                 sidebar={renderChannelsSidebar(props) }>
+                 sidebar={renderChannelSidebar(props) }>
                  <MemberScreen
                    {...props}
                    api={api}
@@ -187,7 +187,7 @@ export class Root extends Component {
              return (
                <Skeleton
                  spinner={this.state.spinner}
-                 sidebar={renderChannelsSidebar(props) }>
+                 sidebar={renderChannelSidebar(props) }>
                  <SettingsScreen
                    {...props}
                    setSpinner={this.setSpinner}
