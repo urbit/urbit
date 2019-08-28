@@ -1,4 +1,7 @@
 /-  *groups
+/+  hall-json
+=,  dejs:format
+=,  dejs:hall-json
 |_  act=group-action
 ++  grab
   |%
@@ -8,7 +11,6 @@
     =<  (parse-group-action jon)
     |%
     ++  parse-group-action
-      =,  dejs:format
       %-  of
       :~
         [%add add-action]
@@ -19,13 +21,13 @@
     ::
     ++  add-action
       %-  ot
-      :~  [%members (ar hall-action)]
-          [%path+(su ;~(pfix net (more net urs:ab)))]
+      :~  [%members (as ;~(pfix sig fed:ag))]
+          [%path (su ;~(pfix net (more net urs:ab)))]
       ==
     ::
     ++  remove-action
       %-  ot
-      :~  [%members (ar hall-action)]
+      :~  [%members (as ;~(pfix sig fed:ag))]
           [%path (su ;~(pfix net (more net urs:ab)))]
       ==
     ::
