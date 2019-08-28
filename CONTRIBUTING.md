@@ -210,11 +210,6 @@ The [GitHub tracker][issu] is our canonical source of truth around issues,
 bugs, performance problems, feature requests, and so on.  If you encounter any
 issues when developing on urbit, feel free to submit a report about it here.
 
-You should label your issue appropriately if you know happen to know what it
-applies to.  For example, a `%gall` bug should be labelled with both 'gall' and
-'bug'.  It's ok if you don't know how to label your issue -- the maintainers
-will help you out and try to label it appropriately.
-
 A good bug report, description of a crash, etc., should ideally be
 *reproducible*, with clear, obvious steps as to how another developer can
 replicate and examine your problem.  That said, this isn't always possible --
