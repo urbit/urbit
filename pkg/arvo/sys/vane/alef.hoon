@@ -2331,6 +2331,8 @@
     |=  sent-packet-state
     ^-  pump-metrics
     ::
+    ~&  %skipped^max-live
+    ::
     %_  metrics
       max-live  (max 1 (dec max-live))
     ==
@@ -2339,6 +2341,7 @@
   ++  on-ack
     |=  sent-packet-state
     ^-  pump-metrics
+    =-  ~&  %ack^rtt^%to^rtt.-  -
     ::
     %_  metrics
       num-live  (dec (max 1 num-live))
@@ -2360,6 +2363,7 @@
   ++  on-resent
     |=  sent-packet-state
     ^-  pump-metrics
+    =-  ~&  %resent^rtt^%to^rtt.-  -
     ::
     %_  metrics
       last-sent-at  now
@@ -2371,8 +2375,8 @@
   ++  smooth-rtt-since
     |=  start=@da
     %+  min  ~s30
-    =-  (div - 2)
-    %+  add  rtt
+    =-  (div - 4)
+    %+  add  (mul 3 rtt)
     (sub now start)
   --
 ::  +make-message-still: construct |message-still message receiver core
