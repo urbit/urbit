@@ -132,29 +132,6 @@ import qualified Vere.Log  as Log
 import qualified Vere.Pier as Pier
 import qualified Vere.Serf as Serf
 
-import RIO (RIO, runRIO)
-import RIO (Utf8Builder, display, displayShow)
-import RIO (threadDelay)
-
-import RIO ( HasLogFunc
-           , LogFunc
-           , logError
-           , logInfo
-           , logWarn
-           , logDebug
-           , logOther
-           , logFuncL
-           , logOptionsHandle
-           , withLogFunc
-           , setLogUseTime
-           , setLogUseLoc
-           )
-
---------------------------------------------------------------------------------
-
-logTrace :: HasLogFunc e => Utf8Builder -> RIO e ()
-logTrace = logOther "trace"
-
 --------------------------------------------------------------------------------
 
 class HasAppName env where
@@ -184,14 +161,6 @@ runApp inner = do
                       , _appName    = "Alice"
                       }
         runRIO app inner
-
---------------------------------------------------------------------------------
-
-io :: MonadIO m => IO a -> m a
-io = liftIO
-
-rio :: MonadRIO m => RIO e a -> m e a
-rio = liftRIO
 
 --------------------------------------------------------------------------------
 
@@ -237,7 +206,7 @@ wipeSnapshot shipPath = do
 tryBootFromPill :: HasLogFunc e => FilePath -> FilePath -> Ship -> RIO e ()
 tryBootFromPill pillPath shipPath ship = do
     wipeSnapshot shipPath
-    with (Pier.booted pillPath shipPath [] ship) $ \(serf, log, ss) -> do
+    rwith (Pier.booted pillPath shipPath [] ship) $ \(serf, log, ss) -> do
         logTrace "Booting"
         logTrace $ displayShow ss
         io $ threadDelay 500000
@@ -256,10 +225,10 @@ runRAcquire act = rwith act pure
 tryPlayShip :: HasLogFunc e => FilePath -> RIO e ()
 tryPlayShip shipPath = do
     runRAcquire $ do
-        liftRIO $ logTrace "RESUMING SHIP"
+        rio $ logTrace "RESUMING SHIP"
         sls <- liftAcquire $ Pier.resumed shipPath []
-        liftRIO $ logTrace "SHIP RESUMED"
-        liftAcquire $ Pier.pier shipPath Nothing sls
+        rio $ logTrace "SHIP RESUMED"
+        Pier.pier shipPath Nothing sls
 
 tryResume :: HasLogFunc e => FilePath -> RIO e ()
 tryResume shipPath = do
@@ -344,10 +313,10 @@ testPill pax showPil showSeq = do
   pillNoun <- io $ cueBS pillBytes & either throwIO pure
 
   putStrLn "Parsing pill file."
-  pill <- io $ fromNounErr pillNoun & either (throwIO . uncurry ParseErr) pure
+  pill <- fromNounErr pillNoun & either (throwIO . uncurry ParseErr) pure
 
   putStrLn "Using pill to generate boot sequence."
-  bootSeq <- io $ generateBootSeq zod pill
+  bootSeq <- generateBootSeq zod pill
 
   putStrLn "Validate jam/cue and toNoun/fromNoun on pill value"
   reJam <- validateNounVal pill

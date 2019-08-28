@@ -22,7 +22,6 @@ import System.Process
 import Vere.Pier.Types
 
 import Data.Bits              (setBit)
-import Control.Concurrent     (threadDelay)
 import Data.ByteString        (hGet)
 import Data.ByteString.Unsafe (unsafeUseAsCString)
 import Foreign.Marshal.Alloc  (alloca)

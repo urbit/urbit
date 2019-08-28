@@ -8,13 +8,13 @@ module Vere.Log ( EventLog, identity, nextEv
                 , streamEffectsRows, writeEffectsRow
                 ) where
 
-import ClassyPrelude         hiding (init)
+import UrbitPrelude hiding (init)
+
 import Data.Acquire
 import Data.Conduit
 import Database.LMDB.Raw
 import Foreign.Marshal.Alloc
 import Foreign.Ptr
-import Noun
 import Vere.Pier.Types
 
 import Foreign.Storable (peek, poke, sizeOf)

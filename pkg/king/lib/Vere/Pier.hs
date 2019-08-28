@@ -28,20 +28,20 @@ import qualified Vere.Serf      as Serf
 
 _ioDrivers = [] :: [IODriver]
 
-setupPierDirectory :: FilePath -> IO ()
+setupPierDirectory :: FilePath -> RIO e ()
 setupPierDirectory shipPath = do
    for_ ["put", "get", "log", "chk"] $ \seg -> do
-     let pax = shipPath <> "/.urb/" <> seg
-     createDirectoryIfMissing True pax
-     setFileMode pax ownerModes
+       let pax = shipPath <> "/.urb/" <> seg
+       io $ createDirectoryIfMissing True pax
+       io $ setFileMode pax ownerModes
 
 
 -- Load pill into boot sequence. -----------------------------------------------
 
-genEntropy :: IO Word512
-genEntropy = fromIntegral . view (from atomBytes) <$> Ent.getEntropy 64
+genEntropy :: RIO e Word512
+genEntropy = fromIntegral . view (from atomBytes) <$> io (Ent.getEntropy 64)
 
-generateBootSeq :: Ship -> Pill -> IO BootSeq
+generateBootSeq :: Ship -> Pill -> RIO e BootSeq
 generateBootSeq ship Pill{..} = do
     ent <- genEntropy
     let ovums = preKern ent <> pKernelOvums <> pUserspaceOvums
@@ -56,15 +56,16 @@ generateBootSeq ship Pill{..} = do
 
 -- Write a batch of jobs into the event log ------------------------------------
 
-writeJobs :: EventLog -> Vector Job -> IO ()
+writeJobs :: EventLog -> Vector Job -> RIO e ()
 writeJobs log !jobs = do
-    expect <- Log.nextEv log
+    expect <- io $ Log.nextEv log
     events <- fmap fromList $ traverse fromJob (zip [expect..] $ toList jobs)
-    Log.appendEvents log events
+    io $ Log.appendEvents log events
   where
-    fromJob :: (EventId, Job) -> IO ByteString
+    fromJob :: (EventId, Job) -> RIO e ByteString
     fromJob (expectedId, job) = do
-        guard (expectedId == jobId job)
+        unless (expectedId == jobId job) $
+            error $ show ("bad job id!", expectedId, jobId job)
         pure $ jamBS $ jobPayload job
 
     jobPayload :: Job -> Noun
@@ -74,38 +75,39 @@ writeJobs log !jobs = do
 
 -- Boot a new ship. ------------------------------------------------------------
 
-booted :: FilePath -> FilePath -> Serf.Flags -> Ship
-       -> Acquire (Serf, EventLog, SerfState)
+booted :: HasLogFunc e
+       => FilePath -> FilePath -> Serf.Flags -> Ship
+       -> RAcquire e (Serf, EventLog, SerfState)
 booted pillPath pierPath flags ship = do
-  putStrLn "LOADING PILL"
+  rio $ logTrace "LOADING PILL"
 
-  pill <- liftIO (loadFile pillPath >>= either throwIO pure)
+  pill <- io (loadFile pillPath >>= either throwIO pure)
 
-  putStrLn "PILL LOADED"
+  rio $ logTrace "PILL LOADED"
 
-  seq@(BootSeq ident x y) <- liftIO $ generateBootSeq ship pill
+  seq@(BootSeq ident x y) <- rio $ generateBootSeq ship pill
 
-  putStrLn "BootSeq Computed"
+  rio $ logTrace "BootSeq Computed"
 
-  liftIO (setupPierDirectory pierPath)
+  liftRIO (setupPierDirectory pierPath)
 
-  putStrLn "Directory Setup"
+  rio $ logTrace "Directory Setup"
 
-  log  <- Log.new (pierPath <> "/.urb/log") ident
+  log  <- liftAcquire $ Log.new (pierPath <> "/.urb/log") ident
 
-  putStrLn "Event Log Initialized"
+  rio $ logTrace "Event Log Initialized"
 
-  serf <- Serf.run (Serf.Config pierPath flags)
+  serf <- liftAcquire $ Serf.run (Serf.Config pierPath flags)
 
-  putStrLn "Serf Started"
+  rio $ logTrace "Serf Started"
 
-  liftIO $ do
-      (events, serfSt) <- Serf.bootFromSeq serf seq
-      putStrLn "Boot Sequence completed"
-      Serf.snapshot serf serfSt
-      putStrLn "Snapshot taken"
+  rio $ do
+      (events, serfSt) <- io $ Serf.bootFromSeq serf seq
+      logTrace "Boot Sequence completed"
+      io $ Serf.snapshot serf serfSt
+      logTrace "Snapshot taken"
       writeJobs log (fromList events)
-      putStrLn "Events written"
+      logTrace "Events written"
       pure (serf, log, serfSt)
 
 
@@ -116,32 +118,33 @@ resumed :: FilePath -> Serf.Flags
 resumed top flags = do
     log    <- Log.existing (top <> "/.urb/log")
     serf   <- Serf.run (Serf.Config top flags)
-    serfSt <- liftIO (Serf.replay serf log)
+    serfSt <- io (Serf.replay serf log)
 
-    liftIO (Serf.snapshot serf serfSt)
+    io (Serf.snapshot serf serfSt)
 
     pure (serf, log, serfSt)
 
 
 -- Run Pier --------------------------------------------------------------------
 
-pier :: FilePath
+pier :: ∀e. HasLogFunc e
+     => FilePath
      -> Maybe Port
      -> (Serf, EventLog, SerfState)
-     -> Acquire ()
+     -> RAcquire e ()
 pier pierPath mPort (serf, log, ss) = do
-    computeQ <- newTQueueIO :: Acquire (TQueue Ev)
-    persistQ <- newTQueueIO :: Acquire (TQueue (Job, FX))
-    executeQ <- newTQueueIO :: Acquire (TQueue FX)
+    computeQ <- newTQueueIO :: RAcquire e (TQueue Ev)
+    persistQ <- newTQueueIO :: RAcquire e (TQueue (Job, FX))
+    executeQ <- newTQueueIO :: RAcquire e (TQueue FX)
 
-    inst <- liftIO (KingId . UV . fromIntegral <$> randomIO @Word16)
+    inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
     let ship = who (Log.identity log)
 
     let (bootEvents, startDrivers) =
           drivers pierPath inst ship mPort (writeTQueue computeQ)
 
-    liftIO $ atomically $ for_ bootEvents (writeTQueue computeQ)
+    io $ atomically $ for_ bootEvents (writeTQueue computeQ)
 
     tExe  <- startDrivers >>= router (readTQueue executeQ)
     tDisk <- runPersist log persistQ (writeTQueue executeQ)
@@ -155,8 +158,8 @@ pier pierPath mPort (serf, log, ss) = do
                    ]
 
     atomically ded >>= \case
-      Left (txt, exn) -> print ("Somthing died", txt, exn)
-      Right tag       -> print ("something simply exited", tag)
+      Left (txt, exn) -> logError $ displayShow ("Somthing died", txt, exn)
+      Right tag       -> logError $ displayShow ("something simply exited", tag)
 
 death :: Text -> Async () -> STM (Either (Text, SomeException) Text)
 death tag tid = do
@@ -181,9 +184,9 @@ drivers :: FilePath
         -> Ship
         -> Maybe Port
         -> (Ev -> STM ())
-        -> ([Ev], Acquire Drivers)
+        -> ([Ev], RAcquire e Drivers)
 drivers pierPath inst who mPort plan =
-    (initialEvents, runDrivers)
+    (initialEvents, liftAcquire runDrivers)
   where
     (behnBorn, runBehn) = behn inst plan
     (amesBorn, runAmes) = ames inst who mPort plan
@@ -202,44 +205,64 @@ drivers pierPath inst who mPort plan =
 
 -- Route Effects to Drivers ----------------------------------------------------
 
-router :: STM FX -> Drivers -> Acquire (Async ())
-router waitFx Drivers{..} = mkAcquire start cancel
+router :: HasLogFunc e => STM FX -> Drivers -> RAcquire e (Async ())
+router waitFx Drivers{..} =
+    mkRAcquire start cancel
   where
     start = async $ forever $ do
         fx <- atomically waitFx
         for_ fx $ \ef -> do
-            putStrLn ("[EFFECT]\n" <> pack (ppShow ef) <> "\n\n")
+            logEffect ef
             case ef of
               GoodParse (EfVega _ _)               -> error "TODO"
               GoodParse (EfExit _ _)               -> error "TODO"
-              GoodParse (EfVane (VEAmes ef))       -> dAmes ef
-              GoodParse (EfVane (VEBehn ef))       -> dBehn ef
-              GoodParse (EfVane (VEBoat ef))       -> dSync ef
-              GoodParse (EfVane (VEClay ef))       -> dSync ef
-              GoodParse (EfVane (VEHttpClient ef)) -> dHttpClient ef
-              GoodParse (EfVane (VEHttpServer ef)) -> dHttpServer ef
-              GoodParse (EfVane (VENewt ef))       -> dNewt ef
-              GoodParse (EfVane (VESync ef))       -> dSync ef
-              GoodParse (EfVane (VETerm ef))       -> dTerm ef
-              FailParse n                          -> pPrint n
+              GoodParse (EfVane (VEAmes ef))       -> io $ dAmes ef
+              GoodParse (EfVane (VEBehn ef))       -> io $ dBehn ef
+              GoodParse (EfVane (VEBoat ef))       -> io $ dSync ef
+              GoodParse (EfVane (VEClay ef))       -> io $ dSync ef
+              GoodParse (EfVane (VEHttpClient ef)) -> io $ dHttpClient ef
+              GoodParse (EfVane (VEHttpServer ef)) -> io $ dHttpServer ef
+              GoodParse (EfVane (VENewt ef))       -> io $ dNewt ef
+              GoodParse (EfVane (VESync ef))       -> io $ dSync ef
+              GoodParse (EfVane (VETerm ef))       -> io $ dTerm ef
+              FailParse n                          -> logError
+                                                    $ display
+                                                    $ pack @Text (ppShow n)
 
 
 -- Compute Thread --------------------------------------------------------------
 
-runCompute :: Serf -> SerfState -> STM Ev -> ((Job, FX) -> STM ())
-           -> Acquire (Async ())
-runCompute serf ss getEvent putResult =
-    mkAcquire (async (go ss)) cancel
+logEvent :: HasLogFunc e => Ev -> RIO e ()
+logEvent ev =
+    logDebug $ display $ "[EVENT]\n" <> pretty
   where
-    go :: SerfState -> IO ()
+    pretty :: Text
+    pretty = pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow ev
+
+logEffect :: HasLogFunc e => Lenient Ef -> RIO e ()
+logEffect ef =
+    logDebug $ display $ "[EFFECT]\n" <> pretty ef
+  where
+    pretty :: Lenient Ef -> Text
+    pretty = \case
+       GoodParse e -> pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow e
+       FailParse n -> pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow n
+
+runCompute :: ∀e. HasLogFunc e
+           => Serf -> SerfState -> STM Ev -> ((Job, FX) -> STM ())
+           -> RAcquire e (Async ())
+runCompute serf ss getEvent putResult =
+    mkRAcquire (async (go ss)) cancel
+  where
+    go :: SerfState -> RIO e ()
     go ss = do
         ev  <- atomically getEvent
-        putStrLn ("[EVENT]\n" <> pack (ppShow ev) <> "\n\n")
-        wen <- Time.now
+        logEvent ev
+        wen <- io Time.now
         eId <- pure (ssNextEv ss)
         mug <- pure (ssLastMug ss)
 
-        (job', ss', fx) <- doJob serf (DoWork (Work eId mug wen ev))
+        (job', ss', fx) <- io $ doJob serf $ DoWork $ Work eId mug wen ev
         atomically (putResult (job', fx))
         go ss'
 
@@ -258,23 +281,23 @@ instance Exception PersistExn where
 runPersist :: EventLog
            -> TQueue (Job, FX)
            -> (FX -> STM ())
-           -> Acquire (Async ())
+           -> RAcquire e (Async ())
 runPersist log inpQ out =
-    mkAcquire runThread cancelWait
+    mkRAcquire runThread cancelWait
   where
-    cancelWait :: Async () -> IO ()
+    cancelWait :: Async () -> RIO e ()
     cancelWait tid = cancel tid >> wait tid
 
-    runThread :: IO (Async ())
+    runThread :: RIO e (Async ())
     runThread = asyncBound $ forever $ do
         writs  <- atomically getBatchFromQueue
         events <- validateJobsAndGetBytes (toNullable writs)
-        Log.appendEvents log events
+        io $ Log.appendEvents log events
         atomically $ for_ writs $ \(_,fx) -> out fx
 
-    validateJobsAndGetBytes :: [(Job, FX)] -> IO (Vector ByteString)
+    validateJobsAndGetBytes :: [(Job, FX)] -> RIO e (Vector ByteString)
     validateJobsAndGetBytes writs = do
-        expect <- Log.nextEv log
+        expect <- io $ Log.nextEv log
         fmap fromList
             $ for (zip [expect..] writs)
             $ \(expectedId, (j, fx)) -> do

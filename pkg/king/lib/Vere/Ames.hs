@@ -7,8 +7,6 @@ import Network.Socket            hiding (recvFrom, sendTo)
 import Network.Socket.ByteString
 import Vere.Pier.Types
 
-import Control.Concurrent (threadDelay)
-
 import qualified Urbit.Time as Time
 
 
