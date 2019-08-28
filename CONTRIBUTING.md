@@ -54,16 +54,17 @@ others.
 Commits should generally be relevant, atomic, and have descriptions formatted
 in the following manner:
 
->  component: short description (<= 50 characters total)
+>  component: short description
 >
->  long description (optional)
+>  long description
 
 The 'component' is a short prefix of what area of the codebase the commit
 applies to.  If a commit patches `%gall`, for example, the description should
 be prefixed by 'gall'.  If it touches `:aqua`, it should be prefixed by 'aqua'.
 If it touches multiple components, then separate these by commas, e.g. "gall,
 aqua, ph" -- but note that this may be a warning that too many changes are
-being packed into a single commit.
+being packed into a single commit.  The 'component' and 'short description'
+combined should be no more than 50 characters.
 
 A lengthier description is encouraged, where useful, but is not required.
 
