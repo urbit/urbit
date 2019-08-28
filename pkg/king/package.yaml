@@ -71,6 +71,7 @@ dependencies:
   - tasty-quickcheck
   - tasty-th
   - template-haskell
+  - terminfo
   - text
   - these
   - time

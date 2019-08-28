@@ -17,7 +17,7 @@ import Vere.Behn          (behn)
 import Vere.Http.Server   (serv)
 import Vere.Log           (EventLog)
 import Vere.Serf          (Serf, SerfState(..), doJob)
-import Vere.Term          (term)
+import Vere.Term
 
 import qualified System.Entropy as Ent
 import qualified Urbit.Time     as Time
@@ -49,7 +49,7 @@ generateBootSeq ship Pill{..} = do
     pure $ BootSeq ident pBootFormulas ovums
   where
     ident       = LogIdentity ship True (fromIntegral $ length pBootFormulas)
-    preKern ent = [ EvBlip $ BlipEvTerm $ TermEvBoot (1,()) (Fake (who ident))
+    preKern ent = [ EvBlip $ BlipEvTerm $ TermEvBoot (49,()) (Fake (who ident))
                   , EvBlip $ BlipEvArvo $ ArvoEvWhom ()     ship
                   , EvBlip $ BlipEvArvo $ ArvoEvWack ()     ent
                   ]
@@ -137,10 +137,12 @@ pier pierPath mPort (serf, log, ss) = do
 
     inst <- liftIO (KingId . UV . fromIntegral <$> randomIO @Word16)
 
+    vereTerminal <- initializeTerminal
+
     let ship = who (Log.identity log)
 
     let (bootEvents, startDrivers) =
-          drivers pierPath inst ship mPort (writeTQueue computeQ)
+          drivers pierPath inst ship mPort (writeTQueue computeQ) vereTerminal
 
     liftIO $ atomically $ for_ bootEvents (writeTQueue computeQ)
 
@@ -182,14 +184,15 @@ drivers :: FilePath
         -> Ship
         -> Maybe Port
         -> (Ev -> STM ())
+        -> VereTerminal
         -> ([Ev], Acquire Drivers)
-drivers pierPath inst who mPort plan =
+drivers pierPath inst who mPort plan vereTerm =
     (initialEvents, runDrivers)
   where
     (behnBorn, runBehn) = behn inst plan
     (amesBorn, runAmes) = ames inst who mPort plan
     (httpBorn, runHttp) = serv pierPath inst plan
-    (termBorn, runTerm) = term inst plan
+    (termBorn, runTerm) = term vereTerm inst plan
     initialEvents       = mconcat [behnBorn, amesBorn, httpBorn, termBorn]
     runDrivers          = do
         dNewt       <- runAmes
