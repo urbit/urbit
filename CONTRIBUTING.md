@@ -131,6 +131,8 @@ breach network continuity in order to release large changes that are difficult
 to push out over-the-air.  Contributions to Vere, or non-OTA-able updates to
 Arvo, will find their way into releases before terribly long.
 
+## Code style
+
 The urbit project uses two-space indentation and avoids tab characters.
 In C code, it should not be too difficult to mimic the style of the code
 around you, which is just fairly standard K&R with braces on every
@@ -138,12 +140,9 @@ compound statement. One thing to watch out for is top-level sections in
 source files that are denoted by comments and are actually indented one
 level.
 
-Hoon will be a less familiar language to many contributors. More details are
-forthcoming; for now, the `%ford` vane (in
-[`pkg/arvo/sys/vane/ford.hoon`][ford]) is some of the highest quality code in
-the kernel.
-
-[ford]: https://github.com/urbit/urbit/blob/master/pkg/arvo/sys/vane/ford.hoon
+Hoon will be a less familiar language to many contributors.  Until we publish
+an 'official' style guide, the best advice is again to mimic the code around
+you.  In general: the more recent the code, the more standard the style.
 
 ## Kernel development
 
