@@ -184,23 +184,14 @@ You can boot a new ship from your local pill with `-B`:
 $ urbit -F zod -B path/to/urbit.pill my-fake-zod
 ```
 
-Pills are cached at `https://bootstrap.urbit.org` and are indexed by the first
-10 characters of the `git` SHA1 of the relevant commit, i.e. as
-`git-[sha1].pill`.  The continuous integration build uploads these pills for
-any successful build of a commit or pull request that affects the
-`pkg/arvo/sys/` directory.
-
-You can boot from one of these pills by passing the path to an Arvo working
-copy with `-A` (and `-s` for *search*):
-
-```
-$ git clone https://github.com/urbit/urbit
-$ urbit -F zod -sA urbit/pkg/arvo -s my-fake-zod
-```
+Release pills, i.e. those corresponding to vere releases, are cached at
+`https://bootstrap.urbit.org` and are indexed by the vere version number, e.g.
+`urbit-0.8.2.pill`.
 
 Pills are also cached in version control via [git LFS][git-lfs].  You can find
-the latest solid pill (as well as the latest so-called *brass* and *ivory*
-pills) in the `bin/` directory at the repository root:
+the latest solid pill, as well as the latest so-called *brass* and *ivory*
+pills, in the `bin/` directory at the repository root.  Note that you'll need
+to initialise git LFS in order to check these pills out:
 
 ```
 $ git lfs init
