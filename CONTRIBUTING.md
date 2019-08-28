@@ -3,7 +3,8 @@
 Thank you for your interest in contributing to urbit.
 
 See [urbit.org/docs/getting-started][start] for basic orientation and usage
-instructions.
+instructions.  You may also want to subscribe to [urbit-dev][list], the urbit
+development mailing list.
 
 [start]: https://urbit.org/docs/getting-started/#arvo
 
