@@ -2341,9 +2341,9 @@
     ^-  pump-metrics
     ::
     %_  metrics
-      num-live  ?:(=(0 num-live) 0 (dec num-live))
+      num-live  (dec (max 1 num-live))
       max-live  +(max-live)
-      rtt       smooth-rtt
+      rtt       (smooth-rtt-since sent-date)
     ==
   ::  +on-sent: adjust metrics based on sending .num-sent fresh packets
   ::
@@ -2364,12 +2364,16 @@
     %_  metrics
       last-sent-at  now
       max-live      (max 1 (div max-live 2))
+      rtt           (smooth-rtt-since sent-date)
     ==
-  ::  +smooth-rtt: apply a low-pass-filtered update to .rtt
+  ::  +smooth-rtt-since: calculate new low-passed roundtrip time
   ::
-  ++  smooth-rtt
-    ^+  rtt
-    (div (add rtt (sub now last-sent-at)) 2)
+  ++  smooth-rtt-since
+    |=  start=@da
+    %+  min  ~s30
+    =-  (div - 2)
+    %+  add  rtt
+    (sub now start)
   --
 ::  +make-message-still: construct |message-still message receiver core
 ::
