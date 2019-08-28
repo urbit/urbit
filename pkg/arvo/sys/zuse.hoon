@@ -6331,6 +6331,14 @@
           (easy ~)
         ==
       ==
+    ::                                                  ::  ++cdat:de-xml:html
+    ++  cdat                                            ::  CDATA section
+      %+  cook
+        |=(a/tape ^-(mars ;/(a)))
+      %+  ifix
+        [(jest '<![CDATA[') (jest ']]>')]
+      %-  star
+      ;~(less (jest ']]>') next)
     ::                                                  ::  ++chrd:de-xml:html
     ++  chrd                                            ::  character data
       %+  cook  |=(a/tape ^-(mars ;/(a)))
@@ -6367,7 +6375,7 @@
       (ifix [gal ban] ;~(plug name attr))
     ::                                                  ::  ++many:de-xml:html
     ++  many                                            ::  contents
-      (more (star comt) ;~(pose apex chrd))
+      (more (star comt) ;~(pose apex chrd cdat))
     ::                                                  ::  ++name:de-xml:html
     ++  name                                            ::  tag name
       =+  ^=  chx
