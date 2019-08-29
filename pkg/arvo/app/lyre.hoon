@@ -74,7 +74,7 @@
   |=  a=*
   ^-  (quip move _this)
   ?+  a
-    ~&  poked+a
+    ~&  poked+;;(json a)
     [~ this]
   ::
       %print-state
@@ -98,7 +98,7 @@
   =/  ren-path
     ?~  ren
       ::/hoon/[(snag 0 (flop pax))]/lyre/lib
-      /hoon/button-test/lyre/lib
+      /hoon/form-test/lyre/lib
     !!
   :*  %core
       [our.bol q.byk.bol]
@@ -278,7 +278,7 @@
     [ost.bol %http-response (js-response:app js)]~
   ::  home page; redirect to recent
   ::
-      [[~ [%'~lyre' ~]] ~]
+      [[~ [%'~lyre' ~]] *]
     (get-session-json /http ost.bol)
   ==
 ::

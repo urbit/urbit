@@ -1,7 +1,8 @@
 /-  *lyre
 |=  fil=@t
 ^-  dom
-:*  %button
+:*  [%text 'button label:']
+    %button
     [%text 'You must submit']
     %lyre
     %lyre-action

@@ -44613,7 +44613,7 @@
             let store = new Store();
             window.store = store;
 
-            const _jsxFileName = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/js/components/dom/text.js";
+            const _jsxFileName = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/js/components/lib/text.js";
             class Text extends react_1 {
               constructor(props) {
                 super(props);
@@ -44635,7 +44635,7 @@
               }
             }
 
-            const _jsxFileName$1 = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/js/components/dom/button.js";
+            const _jsxFileName$1 = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/js/components/lib/button.js";
             class Button extends react_1 {
               constructor(props) {
                 super(props);
@@ -44656,23 +44656,136 @@
               }
             }
 
-            const _jsxFileName$2 = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/js/components/dom.js";
-            class Dom extends react_1 {
+            const _jsxFileName$2 = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/js/components/lib/text-input.js";
+            class TextInput extends react_1 {
               constructor(props) {
                 super(props);
               }
 
+              render() {
+                return (
+                  react.createElement('input', { type: "text", name: this.props.name, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 12}})
+                );
+              }
+            }
+
+            const _jsxFileName$3 = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/js/components/lib/submit.js";
+            class Submit extends react_1 {
+              constructor(props) {
+                super(props);
+              }
+
+              render() {
+                console.log("submit", this.props);
+                return (
+                  react.createElement('button', { onClick: this.props.action, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 13}}
+                    , react.createElement(Dom, { body: this.props.body, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 14}})
+                  )
+                );
+              }
+            }
+
+            const _jsxFileName$4 = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/js/components/lib/form-dom.js";
+            class FormDom extends react_1 {
+              constructor(props) {
+                super(props);
+                this.parseDom = this.parseDom.bind(this);
+              }
+
+              parseDom(dom, key) {
+                if (Array.isArray(dom)) {
+                  return dom.map((itm, i) => {
+                    return this.parseDom(itm, i)
+                  });
+                }
+                let head = Object.keys(dom)[0];
+                let body = Object.values(dom)[0];
+                switch (head) {
+                  case "text-input":
+                    return (
+                      react.createElement(TextInput, { name: body.name, key: key, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 24}})
+                    );
+                  case "submit":
+                    return (
+                      react.createElement(Submit, { body: body, action: this.props.action, key: key, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 28}})
+                    );
+                  default:
+                    return;
+                }
+              }
+
+              render() {
+                return this.parseDom(this.props.body, 0);
+              }
+            }
+
+            const _jsxFileName$5 = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/js/components/lib/form.js";
+            class Form extends react_1 {
+              constructor(props) {
+                super(props);
+                this.formSubmit = this.formSubmit.bind(this);
+              }
+
+              formSubmit(evt) {
+                let fd = new FormData(document.getElementById('myForm'));
+
+                let data = {};
+
+                for (var pair of fd.entries()) {
+                  data[pair[0]] = pair[1];
+                }
+
+                this.props.api.action(this.props.app, this.props.mark, data);
+
+                evt.preventDefault();
+              }
+
+              render() {
+                console.log("form props", this.props);
+                return (
+                  react.createElement('form', { id: "myForm", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 28}}
+                    , react.createElement(FormDom, { body: this.props.body,
+                      action: this.formSubmit.bind(this), __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 29}})
+                  )
+                );
+              }
+            }
+
+            const _jsxFileName$6 = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/js/components/dom.js";
+            class Dom extends react_1 {
+              constructor(props) {
+                super(props);
+                this.parseDom = this.parseDom.bind(this);
+              }
+
               parseDom(dom) {
+                if (Array.isArray(dom)) {
+                  return dom.map((itm, i) => {
+                    return (
+                      react.createElement('div', { key: i, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 18}}
+                        , this.parseDom(itm)
+                      )
+                    );
+                  });
+                }
+
                 let head = Object.keys(dom)[0];
                 let body = Object.values(dom)[0];
                 switch (head) {
                   case "text":
                     return (
-                      react.createElement(Text, { body: body, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 18}})
+                      react.createElement(Text, { body: body, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 30}})
                     );
                   case "button":
                     return (
-                      react.createElement(Button, { body: body.body, action: body.action, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 22}})
+                      react.createElement(Button, { body: body.body, action: body.action, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 34}})
+                    );
+                  case "form":
+                    return (
+                      react.createElement(Form, { app: body.app,
+                        mark: body.mark,
+                        body: body.body,
+                        api: this.props.api, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 38}})
                     );
                   default:
                     return;
@@ -44681,14 +44794,14 @@
 
               render() {
                 return (
-                  react.createElement('div', { className: "w-100 h-100 overflow-y-scroll overflow-x-scroll"   , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 31}}
+                  react.createElement('div', { className: "w-100 h-100 overflow-y-scroll overflow-x-scroll"   , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 50}}
                     , this.parseDom(this.props.body)
                   )
                 );
               }
             }
 
-            const _jsxFileName$3 = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/js/components/root.js";
+            const _jsxFileName$7 = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/js/components/root.js";
             class Root extends react_1 {
               constructor(props) {
                 super(props);
@@ -44767,32 +44880,32 @@
                   let pax = '/'+path.join('/');
                   if (this.state.current === i) {
                     return (
-                      react.createElement('p', { key: i, className: "bg-white black mr2 pl2 pr2"    , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 88}}, i, ": " , pax)
+                      react.createElement('p', { key: i, className: "bg-white black mr2 pl2 pr2"    , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 88}}, i, ": " , pax)
                     );
                   } else {
                     return (
-                      react.createElement('p', { key: i, className: "white mr2 pl2 pr2"   , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 92}}, i, ": " , pax)
+                      react.createElement('p', { key: i, className: "white mr2 pl2 pr2"   , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 92}}, i, ": " , pax)
                     );
                   }
                 });
 
                 return (
-                  react.createElement('div', { className: "w-100 h-100" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 98}}
-                    , react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 99}}
+                  react.createElement('div', { className: "w-100 h-100" , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 98}}
+                    , react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 99}}
                       , react.createElement('div', { className: "w-100",
-                          style: {height: 'calc(100% - 96px)'}, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 100}}
-                        , react.createElement(Dom, { body: this.state.body, api: api, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 102}})
+                          style: {height: 'calc(100% - 96px)'}, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 100}}
+                        , react.createElement(Dom, { body: this.state.body, api: api, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 102}})
                       )
                       , react.createElement('div', { className: "flex-col absolute bg-black pa3 w-100"    ,
-                          style: {bottom:0}, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 104}}
-                        , react.createElement('form', { onSubmit: this.inputSubmit, className: "w-100", __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 106}}
+                          style: {bottom:0}, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 104}}
+                        , react.createElement('form', { onSubmit: this.inputSubmit, className: "w-100", __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 106}}
                           , react.createElement('input', { autoFocus: true,
                             className: "w-100",
                             ref: (el) => {this.input = el;},
-                            onChange: this.inputChange.bind(this), __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 107}}
+                            onChange: this.inputChange.bind(this), __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 107}}
                           )
                         )
-                        , react.createElement('div', { className: "flex w-100" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 113}}
+                        , react.createElement('div', { className: "flex w-100" , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 113}}
                           , ses
                         )
                       )
@@ -44831,7 +44944,7 @@
 
             let subscription = new Subscription();
 
-            const _jsxFileName$4 = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/index.js";
+            const _jsxFileName$8 = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/index.js";
             console.log('app running');
 
             api.setAuthTokens({
@@ -44844,7 +44957,7 @@
             window._ = lodash;
 
             reactDom.render((
-              react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$4, lineNumber: 21}} )
+              react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$8, lineNumber: 21}} )
             ), document.querySelectorAll("#root")[0]);
 
 }));
