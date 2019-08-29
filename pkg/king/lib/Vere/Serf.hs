@@ -228,18 +228,9 @@ sendLen s i = do
 
 sendOrder :: HasLogFunc e => Serf -> Order -> RIO e ()
 sendOrder w o = do
-  logDebug $ display ("[Serf.sendOrder.toNoun] " <> tshow o)
-  n <- evaluate (toNoun o)
-
-  case o of
-    OWork (DoWork (Work _ _ _ e)) -> do logTrace $ displayShow $ toNoun (e::Ev)
-    _                             -> do pure ()
-
-  logDebug "[Serf.sendOrder.jam]"
-  bs <- evaluate (jamBS n)
-  logDebug $ display ("[Serf.sendOrder.send]: " <> tshow (length bs))
-  sendBytes w bs
-  logDebug "[Serf.sendOrder.sent]"
+  logDebug $ display ("(sendOrder) " <> tshow o)
+  sendBytes w $ jamBS $ toNoun o
+  logDebug "(sendOrder) Done"
 
 sendBytes :: Serf -> ByteString -> RIO e ()
 sendBytes s bs = handle ioErr $ do
@@ -297,9 +288,9 @@ shutdown serf code = sendOrder serf (OExit code)
 -}
 recvPlea :: HasLogFunc e => Serf -> RIO e Plea
 recvPlea w = do
-  logDebug "[Vere.Serf.recvPlea] waiting"
+  logDebug "(recvPlea) Waiting"
   a <- recvAtom w
-  logDebug "[Vere.Serf.recvPlea] got atom"
+  logDebug "(recvPlea) Got atom"
   n <- fromRightExn (cue a) (const $ BadPleaAtom a)
   p <- fromRightExn (fromNounErr n) (\(p,m) -> BadPleaNoun (traceShowId n) p m)
 
@@ -307,7 +298,7 @@ recvPlea w = do
                                 recvPlea w
             PSlog _ pri t -> do printTank pri t
                                 recvPlea w
-            _             -> do logTrace $ display ("recvPlea got: " <> tshow p)
+            _             -> do logTrace $ display ("(recvPlea) " <> tshow p)
                                 pure p
 
 {-

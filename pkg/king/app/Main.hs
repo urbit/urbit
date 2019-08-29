@@ -109,6 +109,7 @@ import qualified Data.Set  as Set
 import qualified Vere.Log  as Log
 import qualified Vere.Pier as Pier
 import qualified Vere.Serf as Serf
+import qualified EventBrowser
 
 --------------------------------------------------------------------------------
 
@@ -357,11 +358,19 @@ newShip CLI.New{..} _ = do
 runShip :: HasLogFunc e => CLI.Run -> CLI.Opts -> RIO e ()
 runShip (CLI.Run pierPath) _ = tryPlayShip pierPath
 
+startBrowser :: HasLogFunc e => FilePath -> RIO e ()
+startBrowser pierPath =
+    rwith (Log.existing logPath) $ \log ->
+        EventBrowser.run log
+  where
+    logPath = pierPath <> "/.urb/log"
+
 main :: IO ()
 main = CLI.parseArgs >>= runApp . \case
     CLI.CmdRun r o                             -> runShip r o
     CLI.CmdNew n o                             -> newShip n o
     CLI.CmdBug (CLI.CollectAllFX pax)          -> collectAllFx pax
+    CLI.CmdBug (CLI.EventBrowser pax)          -> startBrowser pax
     CLI.CmdBug (CLI.ValidatePill pax pil seq)  -> testPill pax pil seq
     CLI.CmdBug (CLI.ValidateEvents pax f l)    -> checkEvs pax f l
     CLI.CmdBug (CLI.ValidateFX pax f l)        -> checkFx  pax f l

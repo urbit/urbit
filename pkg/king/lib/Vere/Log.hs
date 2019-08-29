@@ -2,9 +2,9 @@
     TODO Effects storage logic is messy.
 -}
 
-module Vere.Log ( EventLog, identity, nextEv
+module Vere.Log ( EventLog, identity, nextEv, lastEv
                 , new, existing
-                , streamEvents, appendEvents
+                , streamEvents, appendEvents, trimEvents
                 , streamEffectsRows, writeEffectsRow
                 ) where
 
@@ -251,6 +251,13 @@ writeEffectsRow log k v = do
 --------------------------------------------------------------------------------
 -- Read Events -----------------------------------------------------------------
 
+trimEvents :: HasLogFunc e => EventLog -> Word64 -> RIO e ()
+trimEvents log start = do
+    rwith (writeTxn $ env log) $ \txn -> do
+        logError "(trimEvents): Not implemented."
+        pure ()
+    writeIORef (numEvents log) (pred start)
+
 streamEvents :: HasLogFunc e
              => EventLog -> Word64
              -> ConduitT () ByteString (RIO e) ()
@@ -318,22 +325,21 @@ readRowsBatch :: ∀e. HasLogFunc e
 readRowsBatch env dbi first = readRows
   where
     readRows = do
-        logDebug $ displayShow ("readRows", first)
+        logDebug $ display ("(readRowsBatch) From: " <> tshow first)
         withWordPtr first $ \pIdx ->
             withKVPtrs' (MDB_val 8 (castPtr pIdx)) nullVal $ \pKey pVal ->
             rwith (readTxn env) $ \txn ->
             rwith (cursor txn dbi) $ \cur ->
             io (mdb_cursor_get MDB_SET_RANGE cur pKey pVal) >>= \case
                 False -> pure mempty
-                True  -> V.unfoldrM (fetchRows cur pKey pVal) 1000
+                True  -> V.unfoldrM (fetchBatch cur pKey pVal) 1000
 
-    fetchRows :: Cur -> Ptr Val -> Ptr Val -> Word
+    fetchBatch :: Cur -> Ptr Val -> Ptr Val -> Word
               -> RIO e (Maybe ((Word64, ByteString), Word))
-    fetchRows cur pKey pVal 0 = pure Nothing
-    fetchRows cur pKey pVal n = do
+    fetchBatch cur pKey pVal 0 = pure Nothing
+    fetchBatch cur pKey pVal n = do
         key <- io $ peek pKey >>= mdbValToWord64
         val <- io $ peek pVal >>= mdbValToBytes
-        logDebug $ displayShow ("fetchRows", n, key, val)
         io $ mdb_cursor_get MDB_NEXT cur pKey pVal >>= \case
             False -> pure $ Just ((key, val), 0)
             True  -> pure $ Just ((key, val), pred n)
