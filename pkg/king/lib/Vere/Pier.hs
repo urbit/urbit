@@ -58,9 +58,9 @@ generateBootSeq ship Pill{..} = do
 
 writeJobs :: EventLog -> Vector Job -> RIO e ()
 writeJobs log !jobs = do
-    expect <- io $ Log.nextEv log
+    expect <- Log.nextEv log
     events <- fmap fromList $ traverse fromJob (zip [expect..] $ toList jobs)
-    io $ Log.appendEvents log events
+    Log.appendEvents log events
   where
     fromJob :: (EventId, Job) -> RIO e ByteString
     fromJob (expectedId, job) = do
@@ -93,7 +93,7 @@ booted pillPath pierPath flags ship = do
 
   rio $ logTrace "Directory Setup"
 
-  log  <- liftAcquire $ Log.new (pierPath <> "/.urb/log") ident
+  log  <- Log.new (pierPath <> "/.urb/log") ident
 
   rio $ logTrace "Event Log Initialized"
 
@@ -117,7 +117,7 @@ resumed :: HasLogFunc e
         => FilePath -> Serf.Flags
         -> RAcquire e (Serf, EventLog, SerfState)
 resumed top flags = do
-    log    <- liftAcquire $ Log.existing (top <> "/.urb/log")
+    log    <- Log.existing (top <> "/.urb/log")
     serf   <- Serf.run (Serf.Config top flags)
     serfSt <- rio $ Serf.replay serf log
 
@@ -170,32 +170,29 @@ death tag tid = do
 
 -- Start All Drivers -----------------------------------------------------------
 
-data Drivers = Drivers
-    { dAmes       :: EffCb AmesEf
-    , dBehn       :: EffCb BehnEf
-    , dHttpClient :: EffCb HttpClientEf
-    , dHttpServer :: EffCb HttpServerEf
-    , dNewt       :: EffCb NewtEf
-    , dSync       :: EffCb SyncEf
-    , dTerm       :: EffCb TermEf
+data Drivers e = Drivers
+    { dAmes       :: EffCb e AmesEf
+    , dBehn       :: EffCb e BehnEf
+    , dHttpClient :: EffCb e HttpClientEf
+    , dHttpServer :: EffCb e HttpServerEf
+    , dNewt       :: EffCb e NewtEf
+    , dSync       :: EffCb e SyncEf
+    , dTerm       :: EffCb e TermEf
     }
 
-drivers :: FilePath
-        -> KingId
-        -> Ship
-        -> Maybe Port
-        -> (Ev -> STM ())
-        -> ([Ev], RAcquire e Drivers)
+drivers :: HasLogFunc e
+        => FilePath -> KingId -> Ship -> Maybe Port -> (Ev -> STM ())
+        -> ([Ev], RAcquire e (Drivers e))
 drivers pierPath inst who mPort plan =
-    (initialEvents, liftAcquire runDrivers)
+    (initialEvents, runDrivers)
   where
     (behnBorn, runBehn) = behn inst plan
     (amesBorn, runAmes) = ames inst who mPort plan
     (httpBorn, runHttp) = serv pierPath inst plan
     initialEvents       = mconcat [behnBorn, amesBorn, httpBorn]
     runDrivers          = do
-        dNewt       <- runAmes
-        dBehn       <- runBehn
+        dNewt       <- liftAcquire $ runAmes
+        dBehn       <- liftAcquire $ runBehn
         dAmes       <- pure $ const $ pure ()
         dHttpClient <- pure $ const $ pure ()
         dHttpServer <- runHttp
@@ -206,7 +203,7 @@ drivers pierPath inst who mPort plan =
 
 -- Route Effects to Drivers ----------------------------------------------------
 
-router :: HasLogFunc e => STM FX -> Drivers -> RAcquire e (Async ())
+router :: HasLogFunc e => STM FX -> Drivers e -> RAcquire e (Async ())
 router waitFx Drivers{..} =
     mkRAcquire start cancel
   where
@@ -217,15 +214,15 @@ router waitFx Drivers{..} =
             case ef of
               GoodParse (EfVega _ _)               -> error "TODO"
               GoodParse (EfExit _ _)               -> error "TODO"
-              GoodParse (EfVane (VEAmes ef))       -> io $ dAmes ef
-              GoodParse (EfVane (VEBehn ef))       -> io $ dBehn ef
-              GoodParse (EfVane (VEBoat ef))       -> io $ dSync ef
-              GoodParse (EfVane (VEClay ef))       -> io $ dSync ef
-              GoodParse (EfVane (VEHttpClient ef)) -> io $ dHttpClient ef
-              GoodParse (EfVane (VEHttpServer ef)) -> io $ dHttpServer ef
-              GoodParse (EfVane (VENewt ef))       -> io $ dNewt ef
-              GoodParse (EfVane (VESync ef))       -> io $ dSync ef
-              GoodParse (EfVane (VETerm ef))       -> io $ dTerm ef
+              GoodParse (EfVane (VEAmes ef))       -> dAmes ef
+              GoodParse (EfVane (VEBehn ef))       -> dBehn ef
+              GoodParse (EfVane (VEBoat ef))       -> dSync ef
+              GoodParse (EfVane (VEClay ef))       -> dSync ef
+              GoodParse (EfVane (VEHttpClient ef)) -> dHttpClient ef
+              GoodParse (EfVane (VEHttpServer ef)) -> dHttpServer ef
+              GoodParse (EfVane (VENewt ef))       -> dNewt ef
+              GoodParse (EfVane (VESync ef))       -> dSync ef
+              GoodParse (EfVane (VETerm ef))       -> dTerm ef
               FailParse n                          -> logError
                                                     $ display
                                                     $ pack @Text (ppShow n)
@@ -293,12 +290,12 @@ runPersist log inpQ out =
     runThread = asyncBound $ forever $ do
         writs  <- atomically getBatchFromQueue
         events <- validateJobsAndGetBytes (toNullable writs)
-        io $ Log.appendEvents log events
+        Log.appendEvents log events
         atomically $ for_ writs $ \(_,fx) -> out fx
 
     validateJobsAndGetBytes :: [(Job, FX)] -> RIO e (Vector ByteString)
     validateJobsAndGetBytes writs = do
-        expect <- io $ Log.nextEv log
+        expect <- Log.nextEv log
         fmap fromList
             $ for (zip [expect..] writs)
             $ \(expectedId, (j, fx)) -> do

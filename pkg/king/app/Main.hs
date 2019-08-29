@@ -122,6 +122,7 @@ import Vere.Serf
 import Control.Concurrent (runInBoundThread)
 import Control.Lens       ((&))
 import System.Directory   (doesFileExist, removeFile)
+import System.Directory   (getHomeDirectory, createDirectoryIfMissing)
 import System.Environment (getProgName)
 import Text.Show.Pretty   (pPrint)
 import Urbit.Time         (Wen)
@@ -152,15 +153,21 @@ instance HasAppName App where
 
 runApp :: RIO App a -> IO a
 runApp inner = do
-    logOptions <- logOptionsHandle stderr True
-        <&> setLogUseTime True
-        <&> setLogUseLoc False
+    home <- getHomeDirectory
+    let logDir = home <> "/log"
+    createDirectoryIfMissing True logDir
+    withTempFile logDir "king-" $ \tmpFile hFile -> do
+        hSetBuffering hFile LineBuffering
 
-    withLogFunc logOptions $ \logFunc -> do
-        let app = App { _appLogFunc = logFunc
-                      , _appName    = "Alice"
-                      }
-        runRIO app inner
+        logOptions <- logOptionsHandle hFile True
+            <&> setLogUseTime True
+            <&> setLogUseLoc False
+
+        withLogFunc logOptions $ \logFunc -> do
+            let app = App { _appLogFunc = logFunc
+                          , _appName    = "Alice"
+                          }
+            runRIO app inner
 
 --------------------------------------------------------------------------------
 
@@ -248,7 +255,7 @@ tryFullReplay shipPath = do
 
 checkEvs :: forall e. HasLogFunc e => FilePath -> Word64 -> Word64 -> RIO e ()
 checkEvs pierPath first last = do
-    rwith (liftAcquire $ Log.existing logPath) $ \log -> do
+    rwith (Log.existing logPath) $ \log -> do
         let ident = Log.identity log
         logTrace (displayShow ident)
         runConduit $ Log.streamEvents log first
@@ -292,7 +299,7 @@ collectAllFx top = do
 
     collectedFX :: RAcquire e ()
     collectedFX = do
-        log  <- liftAcquire $ Log.existing (top <> "/.urb/log")
+        log  <- Log.existing (top <> "/.urb/log")
         serf <- Serf.run (Serf.Config tmpDir serfFlags)
         rio $ Serf.collectFX serf log
 
@@ -387,14 +394,15 @@ main = CLI.parseArgs >>= runApp . \case
 checkFx :: HasLogFunc e
         => FilePath -> Word64 -> Word64 -> RIO e ()
 checkFx pierPath first last =
-    rwith (liftAcquire $ Log.existing logPath) $ \log ->
+    rwith (Log.existing logPath) $ \log ->
         runConduit $ streamFX log first last
                   .| tryParseFXStream
   where
     logPath = pierPath <> "/.urb/log"
 
-streamFX :: MonadIO m
-         => Log.EventLog -> Word64 -> Word64 -> ConduitT () ByteString m ()
+streamFX :: HasLogFunc e
+         => Log.EventLog -> Word64 -> Word64
+         -> ConduitT () ByteString (RIO e) ()
 streamFX log first last = do
     Log.streamEffectsRows log first .| loop
   where

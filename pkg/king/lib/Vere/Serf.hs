@@ -460,7 +460,7 @@ persistFX log = loop
     loop = await >>= \case
         Nothing        -> pure ()
         Just (eId, fx) -> do
-            liftIO $ Log.writeEffectsRow log eId (jamBS $ toNoun fx)
+            lift $ Log.writeEffectsRow log eId (jamBS $ toNoun fx)
             loop
 
 doCollectFX :: ∀e. HasLogFunc e

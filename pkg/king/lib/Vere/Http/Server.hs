@@ -119,36 +119,37 @@ reorgHttpEvent = \case
 
     - Keeps the MVar lock until the restart process finishes.
 -}
-restartService :: forall s
-                . MVar (Maybe s)
-               -> IO s
-               -> (s -> IO ())
-               -> IO (Either SomeException s)
+restartService :: ∀e s. HasLogFunc e
+               => MVar (Maybe s)
+               -> RIO e s
+               -> (s -> RIO e ())
+               -> RIO e (Either SomeException s)
 restartService vServ sstart kkill = do
-    putStrLn "restartService"
+    logDebug "restartService"
     modifyMVar vServ $ \case
         Nothing -> doStart
         Just sv -> doRestart sv
   where
-    doRestart :: s -> IO (Maybe s, Either SomeException s)
+    doRestart :: s -> RIO e (Maybe s, Either SomeException s)
     doRestart serv = do
-        putStrLn "doStart"
+        logDebug "doStart"
         try (kkill serv) >>= \case
             Left exn -> pure (Nothing, Left exn)
             Right () -> doStart
 
-    doStart :: IO (Maybe s, Either SomeException s)
+    doStart :: RIO e (Maybe s, Either SomeException s)
     doStart = do
-        putStrLn "doStart"
+        logDebug "doStart"
         try sstart <&> \case
             Right s  -> (Just s,  Right s)
             Left exn -> (Nothing, Left exn)
 
-stopService :: MVar (Maybe s)
-            -> (s -> IO ())
-            -> IO (Either SomeException ())
+stopService :: HasLogFunc e
+            => MVar (Maybe s)
+            -> (s -> RIO e ())
+            -> RIO e (Either SomeException ())
 stopService vServ kkill = do
-    putStrLn "stopService"
+    logDebug "stopService"
     modifyMVar vServ $ \case
         Nothing -> pure (Nothing, Right ())
         Just sv -> do res <- try (kkill sv)
@@ -186,10 +187,10 @@ newLiveReq var = do
 
 -- Ports File ------------------------------------------------------------------
 
-removePortsFile :: FilePath -> IO ()
+removePortsFile :: FilePath -> RIO e ()
 removePortsFile pax =
-    doesFileExist pax >>= \case
-        True  -> removeFile pax
+    io (doesFileExist pax) >>= \case
+        True  -> io $ removeFile pax
         False -> pure ()
 
 portsFileText :: Ports -> Text
@@ -200,7 +201,7 @@ portsFileText Ports{..} =
     , Just (tshow (unPort pLoop) <> " insecure loopback")
     ]
 
-writePortsFile :: FilePath -> Ports -> IO ()
+writePortsFile :: FilePath -> Ports -> RIO e ()
 writePortsFile f = writeFile f . encodeUtf8 . portsFileText
 
 
@@ -224,12 +225,12 @@ cookMeth = H.parseMethod . W.requestMethod >>> \case
 reqIdCord :: ReqId -> Cord
 reqIdCord = Cord . tshow
 
-reqBody :: W.Request -> IO (Maybe File)
+reqBody :: W.Request -> RIO e (Maybe File)
 reqBody req = do
-    bodyLbs <- W.strictRequestBody req
-    if length bodyLbs == 0
-      then pure $ Nothing
-      else pure $ Just $ File $ Octs (toStrict bodyLbs)
+    bodyLbs <- io $ W.strictRequestBody req
+    pure $ if length bodyLbs == 0
+      then Nothing
+      else Just $ File $ Octs (toStrict bodyLbs)
 
 reqAddr :: W.Request -> Address
 reqAddr = W.remoteHost >>> \case
@@ -295,7 +296,7 @@ data Req
     - If %bloc before %head, collect it and wait for %head.
     - If %done before %head, ignore all chunks and produce Nothing.
 -}
-getReq :: TQueue RespAction -> IO Req
+getReq :: TQueue RespAction -> RIO e Req
 getReq tmv = go []
   where
     go çunks = atomically (readTQueue tmv) >>= \case
@@ -309,12 +310,15 @@ getReq tmv = go []
     - Yield the data from %bloc action.
     - Close the stream when we hit a %done action.
 -}
-streamBlocks :: [File] -> TQueue RespAction -> ConduitT () (Flush Builder) IO ()
-streamBlocks init tmv =
+streamBlocks :: HasLogFunc e
+             => e -> [File] -> TQueue RespAction
+             -> ConduitT () (Flush Builder) IO ()
+streamBlocks env init tmv =
     for_ init yieldÇunk >> go
   where
     yieldFlush = \x -> yield (Chunk x) >> yield Flush
-    logDupHead = putStrLn "Multiple %head actions on one request"
+    logDupHead = runRIO env
+               $ logError "Multiple %head actions on one request"
 
     yieldÇunk  = \case
       "" -> pure ()
@@ -326,17 +330,19 @@ streamBlocks init tmv =
            RABloc c      -> yieldÇunk c
            RADone        -> pure ()
 
-sendResponse :: (W.Response -> IO W.ResponseReceived)
-            -> TQueue RespAction
-            -> IO W.ResponseReceived
+sendResponse :: HasLogFunc e
+             => (W.Response -> IO W.ResponseReceived)
+             -> TQueue RespAction
+             -> RIO e W.ResponseReceived
 sendResponse cb tmv = do
+    env <- ask
     getReq tmv >>= \case
-      RNone     -> cb $ W.responseLBS (H.mkStatus 444 "No Response") []
-                      $ ""
-      RFull h f -> cb $ W.responseLBS (hdrStatus h) (hdrHeaders h)
-                      $ fromStrict $ concat $ unOcts . unFile <$> f
-      RHead h i -> cb $ W.responseSource (hdrStatus h) (hdrHeaders h)
-                      $ streamBlocks i tmv
+        RNone     -> io $ cb $ W.responseLBS (H.mkStatus 444 "No Response") []
+                             $ ""
+        RFull h f -> io $ cb $ W.responseLBS (hdrStatus h) (hdrHeaders h)
+                             $ fromStrict $ concat $ unOcts . unFile <$> f
+        RHead h i -> io $ cb $ W.responseSource (hdrStatus h) (hdrHeaders h)
+                             $ streamBlocks env i tmv
   where
     hdrHeaders :: ResponseHeader -> [H.Header]
     hdrHeaders = unconvertHeaders . headers
@@ -344,15 +350,18 @@ sendResponse cb tmv = do
     hdrStatus :: ResponseHeader -> H.Status
     hdrStatus = toEnum . fromIntegral . statusCode
 
-liveReq :: TVar LiveReqs -> Acquire (ReqId, TQueue RespAction)
-liveReq vLiv = mkAcquire ins del
+liveReq :: TVar LiveReqs -> RAcquire e (ReqId, TQueue RespAction)
+liveReq vLiv = mkRAcquire ins del
   where
     ins = atomically (newLiveReq vLiv)
     del = atomically . rmLiveReq vLiv . fst
 
-app :: ServId -> TVar LiveReqs -> (Ev -> STM ()) -> WhichServer -> W.Application
-app sId liv plan which req respond = do
-   with (liveReq liv) $ \(reqId, respVar) -> do
+app :: HasLogFunc e
+    => e -> ServId -> TVar LiveReqs -> (Ev -> STM ()) -> WhichServer
+    -> W.Application
+app env sId liv plan which req respond =
+   runRIO env $
+   rwith (liveReq liv) $ \(reqId, respVar) -> do
         body <- reqBody req
         meth <- maybe (error "bad method") pure (cookMeth req)
 
@@ -364,9 +373,10 @@ app sId liv plan which req respond = do
 
         try (sendResponse respond respVar) >>= \case
           Right rr -> pure rr
-          Left exn -> do atomically $ plan (cancelEv sId reqId)
-                         putStrLn ("Exception during request" <> tshow exn)
-                         throwIO (exn :: SomeException)
+          Left exn -> do
+            io $ atomically $ plan (cancelEv sId reqId)
+            logError $ display ("Exception during request" <> tshow exn)
+            throwIO (exn :: SomeException)
 
 
 -- Top-Level Driver Interface --------------------------------------------------
@@ -374,20 +384,21 @@ app sId liv plan which req respond = do
 {-
     TODO Need to find an open port.
 -}
-startServ :: FilePath -> HttpServerConf -> (Ev -> STM ())
-            -> IO Serv
+startServ :: HasLogFunc e
+          => FilePath -> HttpServerConf -> (Ev -> STM ())
+          -> RIO e Serv
 startServ pierPath conf plan = do
-  putStrLn "startServ"
+  logDebug "startServ"
 
   let tls = hscSecure conf <&> \(PEM key, PEM cert) ->
               (W.tlsSettingsMemory (cordBytes cert) (cordBytes key))
 
-  sId <- ServId . UV . fromIntegral <$> (randomIO :: IO Word32)
+  sId <- io $ ServId . UV . fromIntegral <$> (randomIO :: IO Word32)
   liv <- newTVarIO emptyLiveReqs
 
-  (httpPortInt,  httpSock)  <- W.openFreePort -- 8080  -- 80 if real ship
-  (httpsPortInt, httpsSock) <- W.openFreePort -- 8443  -- 443 if real ship
-  (loopPortInt,  loopSock)  <- W.openFreePort -- 12321 -- ??? if real ship
+  (httpPortInt,  httpSock)  <- io $ W.openFreePort -- 8080  -- 80 if real ship
+  (httpsPortInt, httpsSock) <- io $ W.openFreePort -- 8443  -- 443 if real ship
+  (loopPortInt,  loopSock)  <- io $ W.openFreePort -- 12321 -- ??? if real ship
 
   let httpPort  = Port (fromIntegral httpPortInt)
       httpsPort = Port (fromIntegral httpsPortInt)
@@ -399,29 +410,34 @@ startServ pierPath conf plan = do
       httpOpts  = W.defaultSettings & W.setPort (fromIntegral httpPort)
       httpsOpts = W.defaultSettings & W.setPort (fromIntegral httpsPort)
 
-  putStrLn "Starting loopback server"
-  loopTid  <- async $ W.runSettingsSocket loopOpts loopSock
-                    $ app sId liv plan Loopback
+  env <- ask
 
-  putStrLn "Starting HTTP server"
-  httpTid  <- async $ W.runSettingsSocket httpOpts httpSock
-                    $ app sId liv plan Insecure
+  logDebug "Starting loopback server"
+  loopTid  <- async $ io
+                    $ W.runSettingsSocket loopOpts loopSock
+                    $ app env sId liv plan Loopback
 
-  putStrLn "Starting HTTPS server"
+  logDebug "Starting HTTP server"
+  httpTid  <- async $ io
+                    $ W.runSettingsSocket httpOpts httpSock
+                    $ app env sId liv plan Insecure
+
+  logDebug "Starting HTTPS server"
   httpsTid <- for tls $ \tlsOpts ->
-                async $ W.runTLSSocket tlsOpts httpsOpts httpsSock
-                      $ app sId liv plan Secure
+                async $ io
+                      $ W.runTLSSocket tlsOpts httpsOpts httpsSock
+                      $ app env sId liv plan Secure
 
   let por = Ports (tls <&> const httpsPort) httpPort loopPort
       fil = pierPath <> "/.http.ports"
 
-  print (sId, por, fil)
+  logDebug $ displayShow (sId, por, fil)
 
-  putStrLn "END startServ"
+  logDebug "Finished started HTTP Servers"
 
   pure $ Serv sId conf loopTid httpTid httpsTid por fil liv
 
-killServ :: Serv -> IO ()
+killServ :: HasLogFunc e => Serv -> RIO e ()
 killServ Serv{..} = do
     cancel sLoopTid
     cancel sHttpTid
@@ -431,47 +447,50 @@ killServ Serv{..} = do
     (void . waitCatch) sHttpTid
     traverse_ (void . waitCatch) sHttpsTid
 
-kill :: Drv -> IO ()
+kill :: HasLogFunc e => Drv -> RIO e ()
 kill (Drv v) = stopService v killServ >>= fromEither
 
-respond :: Drv -> ReqId -> HttpEvent -> IO ()
+respond :: HasLogFunc e
+        => Drv -> ReqId -> HttpEvent -> RIO e ()
 respond (Drv v) reqId ev = do
     readMVar v >>= \case
         Nothing -> pure ()
-        Just sv -> do (print (reorgHttpEvent ev))
+        Just sv -> do logDebug $ displayShow $ reorgHttpEvent ev
                       for_ (reorgHttpEvent ev) $
                         atomically . respondToLiveReq (sLiveReqs sv) reqId
 
-serv :: FilePath -> KingId -> QueueEv -> ([Ev], Acquire (EffCb HttpServerEf))
+serv :: ∀e. HasLogFunc e
+     => FilePath -> KingId -> QueueEv
+     -> ([Ev], RAcquire e (EffCb e HttpServerEf))
 serv pier king plan =
     (initialEvents, runHttpServer)
   where
     initialEvents :: [Ev]
     initialEvents = [bornEv king]
 
-    runHttpServer :: Acquire (EffCb HttpServerEf)
-    runHttpServer = handleEf <$> mkAcquire (Drv <$> newMVar Nothing) kill
+    runHttpServer :: RAcquire e (EffCb e HttpServerEf)
+    runHttpServer = handleEf <$> mkRAcquire (Drv <$> newMVar Nothing) kill
 
-    restart :: Drv -> HttpServerConf -> IO Serv
+    restart :: Drv -> HttpServerConf -> RIO e Serv
     restart (Drv var) conf = do
-        putStrLn "Restarting http server"
+        logDebug "Restarting http server"
         res <- fromEither =<< restartService var (startServ pier conf plan) killServ
-        putStrLn "Done restating http server"
+        logDebug "Done restating http server"
         pure res
 
-    handleEf :: Drv -> HttpServerEf -> IO ()
+    handleEf :: Drv -> HttpServerEf -> RIO e ()
     handleEf drv = \case
         HSESetConfig (i, ()) conf -> do
             -- print (i, king)
             -- when (i == fromIntegral king) $ do
-                putStrLn "restarting"
+                logDebug "restarting"
                 Serv{..} <- restart drv conf
-                putStrLn "Enqueue %live"
+                logDebug "Enqueue %live"
                 atomically $ plan (liveEv sServId sPorts)
-                putStrLn "Write ports file"
+                logDebug "Write ports file"
                 writePortsFile sPortsFile sPorts
         HSEResponse (i, req, _seq, ()) ev -> do
             -- print (i, king)
             -- when (i == fromIntegral king) $ do
-                putStrLn "respond"
+                logDebug "respond"
                 respond drv (fromIntegral req) ev
