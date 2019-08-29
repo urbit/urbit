@@ -178,7 +178,7 @@ instance Show BadNoun where
 
 instance Exception BadNoun where
 
-fromNounExn :: FromNoun a => Noun -> IO a
+fromNounExn :: MonadIO m => FromNoun a => Noun -> m a
 fromNounExn n = runParser (parseNoun n) [] onFail onSuccess
   where
     onFail p m  = throwIO (BadNoun p m)

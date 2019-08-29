@@ -84,7 +84,7 @@ deriveToNoun ''Order
 
 type QueueEv = Ev -> STM ()
 
-type EffCb a = a -> IO ()
+type EffCb e a = a -> RIO e ()
 
 type Perform = Ef -> IO ()
 
