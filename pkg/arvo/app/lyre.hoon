@@ -97,8 +97,8 @@
   ^-  schematic:ford
   =/  ren-path
     ?~  ren
-      ::/hoon/[(snag 0 (flop pax))]/lyre/lib
-      /hoon/form-test/lyre/lib
+      /hoon/[(snag 0 (flop pax))]/lyre/lib
+::      /hoon/form-test/lyre/lib
     !!
   :*  %core
       [our.bol q.byk.bol]
@@ -145,7 +145,7 @@
     %+  cast-mark  %lyre-dom
     %+  call-gate
       render-dir
-    [%$ %noun !>(ark)]
+    [%$ %noun !>([pax ark])]
   ::
   %+  cast-mark  %json
   %+  cast-mark  %lyre-dom
@@ -165,7 +165,7 @@
   ::
       %delete-session
     =.  ses  (oust [id.act 1] ses)
-    =.  cur  
+    =.  cur
       ?:  =(cur 0)  0
       ?:((gte cur id.act) (dec cur) cur)
     (get-session-json /diff ost.bol)
@@ -176,6 +176,7 @@
     (get-session-json /diff ost.bol)
   ::
       %set-path
+    =?  pax.act  =(~[%$] pax.act)  /
     =.  ses  ;:(welp (scag cur ses) [pax.act]~ (slag +(cur) ses))
     (get-session-json /diff ost.bol)
   ==

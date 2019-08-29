@@ -6,16 +6,24 @@
       [%set-path pax=path]
   ==
 +$  poke  [app=@tas mark=@tas dat=json]
-+$  form-dom
-  $^  [hed=form-dom tal=form-dom]
-  $%  [%text-input name=@tas]
-      [%submit bod=dom]
-  ==
 +$  dom
-  $~  [%text '']
-  $^  [hed=dom tal=dom]
-  $%  [%text bod=@t]
+  $~  [%empty ~]
+  $%
+  ::  basic elements
+  ::
+      [%empty ~]
+      [%text bod=@t]
       [%button bod=dom act=poke]
-      [%form app=@tas mark=@tas bod=form-dom]
+  ::  form elements
+  ::
+      [%form app=@tas mark=@tas bod=dom]
+      [%text-input name=@tas]
+      [%submit bod=dom]
+  ::  layout elements
+  ::
+      [%size w=@u h=@u bod=dom]
+      [%padding t=@u b=@u l=@u r=@u bod=dom]
+      [%horizontal bod=(list dom)]
+      [%vertical bod=(list dom)]
   ==
 --

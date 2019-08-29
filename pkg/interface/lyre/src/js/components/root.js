@@ -27,7 +27,7 @@ export class Root extends Component {
     let newReg = /(new)(\s+((\/\w+)+))?/
     let delReg = /(del)(\s+(\d+))?/
     let swtReg = /(switch)\s+(\d+)/
-    let setReg = /(go)\s+((\/\w+)+)/
+    let setReg = /(go)\s+((\/\w*)+)/
 
     let match = newReg.exec(com);
     if (match) {
@@ -99,7 +99,9 @@ export class Root extends Component {
         <div className="flex-col">
           <div className="w-100"
               style={{height: 'calc(100% - 96px)'}}>
-            <Dom body={this.state.body} api={api}/>
+            <div className="w-100 h-100 overflow-y-scroll overflow-x-scroll">
+              <Dom body={this.state.body} api={api}/>
+            </div>
           </div>
           <div className="flex-col absolute bg-black pa3 w-100"
               style={{bottom:0}}>

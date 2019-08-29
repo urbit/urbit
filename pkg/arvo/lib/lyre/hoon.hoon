@@ -1,4 +1,6 @@
 /-  *lyre
 |=  fil=@t
 ^-  dom
-[%text fil]
+:*  %padding  10  10  10  10
+  [%text fil]
+==

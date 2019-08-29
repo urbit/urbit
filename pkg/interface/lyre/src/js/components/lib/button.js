@@ -15,9 +15,11 @@ export class Button extends Component {
 
   render() {
     return (
-      <button onClick={this.buttonAction}>
-        <Dom body={this.props.body}/>
-      </button>
+      <div>
+        <button onClick={this.buttonAction}>
+          <Dom body={this.props.body}/>
+        </button>
+      </div>
     );
   }
 }

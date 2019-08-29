@@ -12,17 +12,27 @@
         dat+dat.a
     ==
   ::
-  ::  +dom conversions
-  ::
   ++  dom
     |=  a=^dom
     ^-  json
     ?-  -.a
-      ^        [%a (dom hed.a) (dom tal.a) ~]
-      %text    (text a)
-      %button  (button a)
-      %form    (form a)
+      %empty       empty
+      %text        (text a)
+      %button      (button a)
+    ::
+      %form        (form a)
+      %text-input  (text-input a)
+      %submit      (submit a)
+    ::
+      %size        (size a)
+      %padding     (padding a)
+      %horizontal  (horizontal a)
+      %vertical    (vertical a)
     ==
+  ::
+  ++  empty
+    ^-  json
+    (frond:enjs:format %empty ~)
   ::
   ++  text
     |=  a=^dom
@@ -52,22 +62,11 @@
     %-  pairs:enjs:format
     :~  app+s+app.a
         mark+s+mark.a
-        body+(form-dom bod.a)
-    ==
-  ::
-  ::
-  ::
-  ++  form-dom
-    |=  a=^form-dom
-    ^-  json
-    ?-  -.a
-      ^            [%a (form-dom hed.a) (form-dom tal.a) ~]
-      %text-input  (text-input a)
-      %submit      (submit a)
+        body+(dom bod.a)
     ==
   ::
   ++  text-input
-    |=  a=^form-dom
+    |=  a=^dom
     ^-  json
     ?>  ?=(%text-input -.a)
     %+  frond:enjs:format
@@ -77,12 +76,78 @@
     ==
   ::
   ++  submit
-    |=  a=^form-dom
+    |=  a=^dom
     ^-  json
     ?>  ?=(%submit -.a)
     %+  frond:enjs:format
       %submit
     (dom bod.a)
   ::
+  ++  size
+    |=  a=^dom
+    ^-  json
+    ?>  ?=(%size -.a)
+    %+  frond:enjs:format
+      %size
+    %-  pairs:enjs:format
+    :~  width+(numb:enjs:format w.a)
+        height+(numb:enjs:format h.a)
+        body+(dom bod.a)
+    ==
+  ::
+  ++  padding
+    |=  a=^dom
+    ^-  json
+    ?>  ?=(%padding -.a)
+    %+  frond:enjs:format
+      %padding
+    %-  pairs:enjs:format
+    :~  top+(numb:enjs:format t.a)
+        bottom+(numb:enjs:format b.a)
+        left+(numb:enjs:format l.a)
+        right+(numb:enjs:format r.a)
+        body+(dom bod.a)
+    ==
+  ::
+  ++  horizontal
+    |=  a=^dom
+    ^-  json
+    ?>  ?=(%horizontal -.a)
+    %+  frond:enjs:format
+      %horizontal
+    [%a (turn bod.a dom)]
+  ::
+  ++  vertical 
+    |=  a=^dom
+    ^-  json
+    ?>  ?=(%vertical -.a)
+    %+  frond:enjs:format
+      %vertical
+    [%a (turn bod.a dom)]
+  ::
   --
 --
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,9 +1,10 @@
 /-  *lyre
 |=  fil=@t
 ^-  dom
-:*  %form
+:^    %form
     %lyre
-    %noun
-    [%text-input %val] 
+  %noun
+:-  %horizontal
+:~  [%padding 30 30 30 30 [%text-input %val]]
     [%submit [%text %submit]]
 ==

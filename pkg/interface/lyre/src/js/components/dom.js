@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 
-import { Text }   from '/components/lib/text';
-import { Button } from '/components/lib/button';
-import { Form } from '/components/lib/form';
+import { Text }       from '/components/lib/text';
+import { Button }     from '/components/lib/button';
+import { Form }       from '/components/lib/form';
+import { TextInput }  from '/components/lib/text-input';
+import { Submit }     from '/components/lib/submit';
+import { Size }       from '/components/lib/size';
+import { Padding }    from '/components/lib/padding';
+import { Horizontal } from '/components/lib/horizontal';
+import { Vertical }   from '/components/lib/vertical';
 
 export class Dom extends Component {
   constructor(props) {
@@ -12,16 +18,6 @@ export class Dom extends Component {
   }
 
   parseDom(dom) {
-    if (Array.isArray(dom)) {
-      return dom.map((itm, i) => {
-        return (
-          <div key={i}>
-            {this.parseDom(itm)}
-          </div>
-        );
-      });
-    }
-
     let head = Object.keys(dom)[0];
     let body = Object.values(dom)[0];
     switch (head) {
@@ -40,16 +36,44 @@ export class Dom extends Component {
             body={body.body}
             api={this.props.api}/>
         );
+      case "text-input":
+        return (
+          <TextInput name={body.name}/>
+        );
+      case "submit":
+        return (
+          <Submit body={body} api={this.props.api}/>
+        );
+       case "size":
+          return (
+            <Size width={body.width}
+                  height={body.height}
+                  api={this.props.api}
+                  body={body.body}/> 
+          );
+       case "padding":
+          return (
+            <Padding top={body.top}
+                  bottom={body.bottom}
+                  left={body.left}
+                  right={body.right}
+                  api={this.props.api}
+                  body={body.body}/> 
+          );
+      case "horizontal":
+        return (
+          <Horizontal body={body} api={this.props.api}/>
+        );
+      case "vertical":
+        return (
+          <Vertical body={body} api={this.props.api}/>
+        );
       default:
         return;
     }
   }
 
   render() {
-    return (
-      <div className="w-100 h-100 overflow-y-scroll overflow-x-scroll">
-        {this.parseDom(this.props.body)}
-      </div>
-    );
+    return this.parseDom(this.props.body);
   }
 }
