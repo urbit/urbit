@@ -1,7 +1,7 @@
 /-  *groups
-/+  hall-json
+/+  inbox-json
 =,  dejs:format
-=,  dejs:hall-json
+
 |_  act=group-action
 ++  grab
   |%
@@ -21,21 +21,21 @@
     ::
     ++  add-action
       %-  ot
-      :~  [%members (as ;~(pfix sig fed:ag))]
+      :~  [%members (as:inbox-json (su ;~(pfix sig fed:ag)))]
           [%path (su ;~(pfix net (more net urs:ab)))]
       ==
     ::
     ++  remove-action
       %-  ot
-      :~  [%members (as ;~(pfix sig fed:ag))]
+      :~  [%members (as:inbox-json (su ;~(pfix sig fed:ag)))]
           [%path (su ;~(pfix net (more net urs:ab)))]
       ==
     ::
     ++  bundle-action
-      (ot path+(su ;~(pfix net (more net urs:ab))) ~)
+      (su ;~(pfix net (more net urs:ab)))
     ::
     ++  unbundle-action
-      (ot path+(su ;~(pfix net (more net urs:ab))) ~)
+      (su ;~(pfix net (more net urs:ab)))
     ::
     --
   --

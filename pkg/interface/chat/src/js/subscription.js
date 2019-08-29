@@ -17,6 +17,9 @@ export class Subscription {
     api.bind('/primary', 'PUT', api.authTokens.ship, 'inbox-view',
       this.handleEvent.bind(this),
       this.handleError.bind(this));
+    api.bind('/all', 'PUT', api.authTokens.ship, 'groups',
+      this.handleEvent.bind(this),
+      this.handleError.bind(this));
   }
 
   fetchMessages(circle, start, end) {
@@ -30,6 +33,7 @@ export class Subscription {
   }
 
   handleEvent(diff) {
+    console.log(diff);
     store.handleEvent(diff);
   }
 

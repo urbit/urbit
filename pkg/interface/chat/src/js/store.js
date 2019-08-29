@@ -5,6 +5,8 @@ import { UpdateReducer } from '/reducers/update';
 class Store {
   constructor() {
     this.state = {
+      inbox: {},
+      groups: {}
     };
 
     this.initialReducer = new InitialReducer();

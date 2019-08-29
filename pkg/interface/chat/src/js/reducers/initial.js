@@ -7,7 +7,8 @@ export class InitialReducer {
     console.log('initial reducer');
     console.log(data);
     if (data) {
-      state = data;
+      state.inbox = data;
+
     }
   }
 }

@@ -1,5 +1,6 @@
 /-  *inbox
 /+  hall-json
+=,  dejs:format
 |%
 ++  inbox-to-json
   |=  box=inbox-initial
@@ -16,5 +17,9 @@
       [%owner (ship:enjs:format owner.mailbox)]
       [%read (numb read.mailbox)]
   ==
+::
+++  as                                                :::  array as set
+  |*  a/fist
+  (cu ~(gas in *(set _$:a)) (ar a))
 --
 

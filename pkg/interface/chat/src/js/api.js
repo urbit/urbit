@@ -51,25 +51,30 @@ class UrbitApi {
 
   bundle(path) {
     this.groups({
-      path
+      bundle: path
     });
   }
 
   unbundle(path) {
     this.groups({
-      path
+      unbundle: path
     });
   }
 
   add(members, path) {
     this.groups({
-      path
+      add: {
+        members,
+        path
+      }
     });
   }
 
   remove(members, path) {
     this.groups({
-      path
+      remove: {
+        members, path
+      }
     });
   }
 
