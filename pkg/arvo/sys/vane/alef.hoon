@@ -1908,9 +1908,8 @@
     ::  pass to |packet-pump unless duplicate or future ack
     ::
     ?.  (is-message-num-in-range message-num)
-      ~&  %hear-pump-out-of-range
+      ~>  %slog.0^leaf/"ames: hear pump out of range"
       message-pump
-    ~&  %hear-pump
     (run-packet-pump %hear message-num fragment-num)
   ::  +on-done: handle message acknowledgment
   ::
@@ -2118,15 +2117,18 @@
       =>  [key val]
       [message-num num-fragments fragment-num fragment]
     ::
-    =.  packet-pump    (give %send static-fragment)
-    =.  metrics.state  (on-resent:gauge -.val)
-    =.  num-sent.acc   +(num-sent.acc)
-    =.  num-slots.acc  (dec num-slots.acc)
+    =.  packet-pump      (give %send static-fragment)
+    =.  metrics.state    (on-resent:gauge -.val)
     ::  update $sent-packet-state in .val and continue
     ::
     =.  expiry.val     (next-retry-expiry:gauge -.val)
     =.  sent-date.val  now.channel
     =.  retried.val    %.y
+    ::  update .acc, writing back .packet-pump
+    ::
+    =.  num-sent.acc   +(num-sent.acc)
+    =.  num-slots.acc  (dec num-slots.acc)
+    =.  core.acc       packet-pump
     ::
     [`val stop=%.n acc]
   ::  +feed: try to send a list of packets, returning unsent and effects
@@ -2411,7 +2413,6 @@
   ++  on-hear
     |=  [=lane =shut-packet ok=?]
     ^+  message-still
-    ~&  %on-hear-message-still^ok=ok
     ::  we know this is a fragment, not an ack; expose into namespace
     ::
     ?>  ?=(%& -.meat.shut-packet)
