@@ -35,14 +35,14 @@ class Admin extends Component {
       );
     } else if (this.props.mode === 'edit'){
       return (
-        <div className="flex-col fr">
-          <p className="label-regular gray-50 pointer tr b"
+        <div className="body-regular flex-col fr">
+          <p className="pointer"
              onClick={this.props.savePost}>
-            Save
+            -> Save
           </p>
-          <p className="label-regular red pointer tr b"
+          <p className="pointer"
              onClick={this.props.deletePost}>
-            Delete
+            Delete note
           </p>
         </div>
       );
@@ -499,7 +499,7 @@ export class Post extends Component {
                 </p>
               </Link>
 
-              <input className="header-2 w-100"
+              <input autoFocus className="header-2 b--none w-100"
                 type="text"
                 name="postName"
                 defaultValue={this.state.titleOriginal}
@@ -516,7 +516,7 @@ export class Post extends Component {
                 />
               </div>
 
-              <textarea className="cb body-regular-400 w-100 h5"
+              <textarea className="cb b--none body-regular-400 w-100 h5"
                 style={{resize:"none"}}
                 type="text"
                 name="postBody"
