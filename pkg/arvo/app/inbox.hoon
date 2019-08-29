@@ -145,17 +145,22 @@
 ++  send-diff
   |=  [pax=path act=inbox-action]
   ^-  (list move)
-  %+  weld
+  ;:  weld
+    ^-  (list move)
+    %+  turn  (prey:pubsub:userlib /all bol)
+    |=  [=bone *]
+    [bone %diff %inbox-update act]
     ^-  (list move)
     %+  turn  (prey:pubsub:userlib [%mailbox pax] bol)
     |=  [=bone *]
     [bone %diff %inbox-update act]
-  ^-  (list move)
-  ?.  |(=(%create -.act) =(%delete -.act))
-    ~
-  %+  turn  (prey:pubsub:userlib /keys bol)
-  |=  [=bone *]
-  [bone %diff %inbox-update act]
+    ^-  (list move)
+    ?.  |(=(%create -.act) =(%delete -.act))
+      ~
+    %+  turn  (prey:pubsub:userlib /keys bol)
+    |=  [=bone *]
+    [bone %diff %inbox-update act]
+  ==
 ::
 --
 

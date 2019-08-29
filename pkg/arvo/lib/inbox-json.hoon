@@ -12,7 +12,7 @@
   :-  (spat path)
   %-  pairs
   :~  [%envelopes [%a (turn envelopes.mailbox enve)]]
-      [%owner (ship:enjs:format owner.mailbox)]
+      [%owner (ship owner.mailbox)]
       [%read (numb read.mailbox)]
   ==
 ::
@@ -28,13 +28,12 @@
 ::
 ++  enve
   |=  =envelope
-  =,  enjs:format
   ^-  json
-  %+  frond  %envelope
+  =,  enjs:format
   %-  pairs
-  :~  [%author s+(scow %p author.envelope)]
+  :~  [%author (ship author.envelope)]
       [%when (time when.envelope)]
-      [%message s+message.envelope)]
+      [%message s+message.envelope]
   ==
 --
 

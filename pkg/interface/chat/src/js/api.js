@@ -60,24 +60,24 @@ class UrbitApi {
     });
   }
 
-  groups(data) {
+  groupsAction(data) {
     this.action("groups", "group-action", data);
   }
 
   groupBundle(path) {
-    this.groups({
+    this.groupsAction({
       bundle: path
     });
   }
 
   groupUnbundle(path) {
-    this.groups({
+    this.groupsAction({
       unbundle: path
     });
   }
 
   groupAdd(members, path) {
-    this.groups({
+    this.groupsAction({
       add: {
         members,
         path
@@ -86,19 +86,19 @@ class UrbitApi {
   }
 
   groupRemove(members, path) {
-    this.groups({
+    this.groupsAction({
       remove: {
         members, path
       }
     });
   }
 
-  inbox(data) {
+  inboxAction(data) {
     this.action("inbox", "inbox-action", data);
   }
 
   inboxCreate(path, owner) {
-    this.inbox({
+    this.inboxAction({
       create: {
         path, owner
       }
@@ -106,23 +106,28 @@ class UrbitApi {
   }
 
   inboxDelete(path) {
-    this.inbox({
+    this.inboxAction({
       delete: {
         path
       }
     });
   }
 
-  inboxMessage(path, envelope) {
-    this.inbox({
+  inboxMessage(path, author, when, message) {
+    this.inboxAction({
       message: {
-        path, envelope
+        path,
+        envelope: {
+          author,
+          when,
+          message
+        }
       }
     });
   }
 
   inboxRead(path, read) {
-    this.inbox({
+    this.inboxAction({
       read: {
         path, read
       }

@@ -1,7 +1,6 @@
 /-  *groups
 /+  inbox-json
 =,  dejs:format
-
 |_  act=group-action
 ++  grab
   |%

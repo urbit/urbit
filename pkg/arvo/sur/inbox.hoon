@@ -2,8 +2,8 @@
 ::
 +$  envelope
   $:  author=ship
-      when=@da
-      message=@t
+      when=time
+      message=cord
   ==
 ::
 +$  mailbox

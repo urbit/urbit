@@ -1,5 +1,5 @@
 /-  *inbox
-/+  hall-json, *inbox-json
+/+  *inbox-json
 |_  box=inbox-initial
 ::
 ++  grow

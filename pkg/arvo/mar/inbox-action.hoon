@@ -1,5 +1,5 @@
 /-  *inbox
-/+  hall-json
+=,  dejs:format
 |_  act=inbox-action
 ++  grab
   |%
