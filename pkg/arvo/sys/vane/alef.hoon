@@ -2199,7 +2199,6 @@
         ::
         =.  metrics.state  metrics.-
         =.  live.state     live.-
-        ::
         resend-lost
     ::
     ^-  $:  [found=? metrics=pump-metrics]
@@ -2328,7 +2327,7 @@
   ::
   ++  num-retry-slots
     ^-  @ud
-    (max 1 (div max-live 10))
+    max-live
   ::  +on-skipped-packet: adjust metrics based on a misordered ack
   ::
   ++  on-skipped-packet
@@ -2336,8 +2335,7 @@
     ^-  pump-metrics
     ::
     %_  metrics
-      max-live  (max 1 (div max-live 2))
-      skipped   +(skipped)
+      skipped  +(skipped)
     ==
   ::  +on-ack: adjust metrics based on a packet getting acknowledged
   ::
@@ -2345,8 +2343,15 @@
     |=  sent-packet-state
     ^-  pump-metrics
     ::
+    =?  metrics  (gth skipped 0)
+      ~&  %skipped^skipped
+      %_  metrics
+        skipped   0
+        max-live  (max 1 (div max-live 2))
+      ==
+    ::
     %_  metrics
-      num-live  (dec (max 1 num-live))
+      num-live  (dec num-live)
       max-live  +(max-live)
       rtt       (smooth-rtt-since sent-date)
     ==
