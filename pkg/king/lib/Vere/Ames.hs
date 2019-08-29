@@ -7,8 +7,6 @@ import Network.Socket            hiding (recvFrom, sendTo)
 import Network.Socket.ByteString
 import Vere.Pier.Types
 
-import Control.Concurrent (threadDelay)
-
 import qualified Urbit.Time as Time
 
 
@@ -92,17 +90,17 @@ _turfText = intercalate "." . reverse . fmap unCord . unTurf
     TODO verify that the KingIds match on effects.
 -}
 ames :: KingId -> Ship -> Maybe Port -> QueueEv
-     -> ([Ev], Acquire (EffCb NewtEf))
+     -> ([Ev], Acquire (EffCb e NewtEf))
 ames inst who mPort enqueueEv =
     (initialEvents, runAmes)
   where
     initialEvents :: [Ev]
     initialEvents = [barnEv inst]
 
-    runAmes :: Acquire (EffCb NewtEf)
+    runAmes :: Acquire (EffCb e NewtEf)
     runAmes = do
         drv <- mkAcquire start stop
-        pure (handleEffect drv)
+        pure (io . handleEffect drv)
 
     start :: IO AmesDrv
     start = do

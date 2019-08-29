@@ -8,13 +8,13 @@ module Vere.Log ( EventLog, identity, nextEv
                 , streamEffectsRows, writeEffectsRow
                 ) where
 
-import ClassyPrelude         hiding (init)
-import Data.Acquire
+import UrbitPrelude hiding (init)
+
+import Data.RAcquire
 import Data.Conduit
 import Database.LMDB.Raw
 import Foreign.Marshal.Alloc
 import Foreign.Ptr
-import Noun
 import Vere.Pier.Types
 
 import Foreign.Storable (peek, poke, sizeOf)
@@ -26,6 +26,7 @@ import qualified Data.Vector            as V
 -- Types -----------------------------------------------------------------------
 
 type Env = MDB_env
+type Val = MDB_val
 type Txn = MDB_txn
 type Dbi = MDB_dbi
 type Cur = MDB_cursor
@@ -39,10 +40,10 @@ data EventLog = EventLog
     , numEvents  :: IORef EventId
     }
 
-nextEv :: EventLog -> IO EventId
+nextEv :: EventLog -> RIO e EventId
 nextEv = fmap succ . readIORef . numEvents
 
-lastEv :: EventLog -> IO EventId
+lastEv :: EventLog -> RIO e EventId
 lastEv = readIORef . numEvents
 
 data EventLogExn
@@ -63,17 +64,18 @@ instance Exception EventLogExn where
 
 -- Open/Close an Event Log -----------------------------------------------------
 
-rawOpen :: FilePath -> IO Env
-rawOpen dir = do
-    putStrLn $ pack ("PAX: " <> dir)
+rawOpen :: MonadIO m => FilePath -> m Env
+rawOpen dir = io $ do
     env <- mdb_env_create
     mdb_env_set_maxdbs env 3
     mdb_env_set_mapsize env (40 * 1024 * 1024 * 1024)
     mdb_env_open env dir []
     pure env
 
-create :: FilePath -> LogIdentity -> IO EventLog
+create :: HasLogFunc e => FilePath -> LogIdentity -> RIO e EventLog
 create dir id = do
+    logDebug $ display (pack @Text $ "Creating LMDB database: " <> dir)
+    logDebug $ display (pack @Text $ "Log Identity: " <> show id)
     env       <- rawOpen dir
     (m, e, f) <- createTables env
     clearEvents env e
@@ -81,41 +83,44 @@ create dir id = do
     EventLog env m e f id <$> newIORef 0
   where
     createTables env =
-      with (writeTxn env) $ \txn ->
+      rwith (writeTxn env) $ \txn -> io $
         (,,) <$> mdb_dbi_open txn (Just "META")    [MDB_CREATE]
              <*> mdb_dbi_open txn (Just "EVENTS")  [MDB_CREATE, MDB_INTEGERKEY]
              <*> mdb_dbi_open txn (Just "EFFECTS") [MDB_CREATE, MDB_INTEGERKEY]
 
-open :: FilePath -> IO EventLog
+open :: HasLogFunc e => FilePath -> RIO e EventLog
 open dir = do
+    logDebug $ display (pack @Text $ "Opening LMDB database: " <> dir)
     env       <- rawOpen dir
     (m, e, f) <- openTables env
     id        <- getIdent env m
+    logDebug $ display (pack @Text $ "Log Identity: " <> show id)
     numEvs    <- getNumEvents env e
     EventLog env m e f id <$> newIORef numEvs
   where
     openTables env =
-      with (writeTxn env) $ \txn ->
+      rwith (writeTxn env) $ \txn -> io $
         (,,) <$> mdb_dbi_open txn (Just "META")    []
              <*> mdb_dbi_open txn (Just "EVENTS")  [MDB_INTEGERKEY]
              <*> mdb_dbi_open txn (Just "EFFECTS") [MDB_CREATE, MDB_INTEGERKEY]
 
-close :: EventLog -> IO ()
-close (EventLog env meta events effects _ _) = do
-    mdb_dbi_close env meta
-    mdb_dbi_close env events
-    mdb_dbi_close env effects
-    mdb_env_sync_flush env
-    mdb_env_close env
+close :: HasLogFunc e => FilePath -> EventLog -> RIO e ()
+close dir (EventLog env meta events effects _ _) = do
+    logDebug $ display (pack @Text $ "Closing LMDB database: " <> dir)
+    io $ do mdb_dbi_close env meta
+            mdb_dbi_close env events
+            mdb_dbi_close env effects
+            mdb_env_sync_flush env
+            mdb_env_close env
 
 
 -- Create a new event log or open an existing one. -----------------------------
 
-existing :: FilePath -> Acquire EventLog
-existing dir = mkAcquire (open dir) close
+existing :: HasLogFunc e => FilePath -> RAcquire e EventLog
+existing dir = mkRAcquire (open dir) (close dir)
 
-new :: FilePath -> LogIdentity -> Acquire EventLog
-new dir id = mkAcquire (create dir id) close
+new :: HasLogFunc e => FilePath -> LogIdentity -> RAcquire e EventLog
+new dir id = mkRAcquire (create dir id) (close dir)
 
 
 -- Read/Write Log Identity -----------------------------------------------------
@@ -125,22 +130,22 @@ new dir id = mkAcquire (create dir id) close
 
     Use this when opening database handles.
 -}
-_openTxn :: Env -> Acquire Txn
-_openTxn env = mkAcquire begin commit
+_openTxn :: Env -> RAcquire e Txn
+_openTxn env = mkRAcquire begin commit
   where
-    begin  = mdb_txn_begin env Nothing True
-    commit = mdb_txn_commit
+    begin  = io $ mdb_txn_begin env Nothing True
+    commit = io . mdb_txn_commit
 
 {-
     A read-only transaction that aborts at the end.
 
     Use this when reading data from already-opened databases.
 -}
-readTxn :: Env -> Acquire Txn
-readTxn env = mkAcquire begin abort
+readTxn :: Env -> RAcquire e Txn
+readTxn env = mkRAcquire begin abort
   where
-    begin = mdb_txn_begin env Nothing True
-    abort = mdb_txn_abort
+    begin = io $ mdb_txn_begin env Nothing True
+    abort = io . mdb_txn_abort
 
 {-
     A read-write transaction that commits upon sucessful completion and
@@ -148,42 +153,44 @@ readTxn env = mkAcquire begin abort
 
     Use this when reading data from already-opened databases.
 -}
-writeTxn :: Env -> Acquire Txn
-writeTxn env = mkAcquireType begin finalize
+writeTxn :: Env -> RAcquire e Txn
+writeTxn env = mkRAcquireType begin finalize
   where
-    begin = mdb_txn_begin env Nothing False
-    finalize txn = \case
+    begin = io $ mdb_txn_begin env Nothing False
+    finalize txn = io . \case
         ReleaseNormal    -> mdb_txn_commit txn
         ReleaseEarly     -> mdb_txn_commit txn
         ReleaseException -> mdb_txn_abort  txn
 
-cursor :: Txn -> Dbi -> Acquire Cur
-cursor txn dbi = mkAcquire open close
+cursor :: Txn -> Dbi -> RAcquire e Cur
+cursor txn dbi = mkRAcquire open close
   where
-    open  = mdb_cursor_open txn dbi
-    close = mdb_cursor_close
+    open  = io $ mdb_cursor_open txn dbi
+    close = io . mdb_cursor_close
 
-getIdent :: Env -> Dbi -> IO LogIdentity
-getIdent env dbi =
+getIdent :: HasLogFunc e => Env -> Dbi -> RIO e LogIdentity
+getIdent env dbi = do
+    logDebug "Reading log identity"
     getTbl env >>= traverse decodeIdent >>= \case
         Nothing -> throwIO NoLogIdentity
         Just li -> pure li
   where
-    decodeIdent :: (Noun, Noun, Noun) -> IO LogIdentity
+    decodeIdent :: (Noun, Noun, Noun) -> RIO e LogIdentity
     decodeIdent = fromNounExn . toNoun
 
-    getTbl :: Env -> IO (Maybe (Noun, Noun, Noun))
+    getTbl :: Env -> RIO e (Maybe (Noun, Noun, Noun))
     getTbl env = do
-        with (readTxn env) $ \txn -> do
+        rwith (readTxn env) $ \txn -> do
             who  <- getMb txn dbi "who"
             fake <- getMb txn dbi "is-fake"
             life <- getMb txn dbi "life"
             pure $ (,,) <$> who <*> fake <*> life
 
-writeIdent :: Env -> Dbi -> LogIdentity -> IO ()
+writeIdent :: HasLogFunc e => Env -> Dbi -> LogIdentity -> RIO e ()
 writeIdent env metaTbl ident@LogIdentity{..} = do
+    logDebug "Writing log identity"
     let flags = compileWriteFlags []
-    with (writeTxn env) $ \txn -> do
+    rwith (writeTxn env) $ \txn -> do
         x <- putNoun flags txn metaTbl "who"     (toNoun who)
         y <- putNoun flags txn metaTbl "is-fake" (toNoun isFake)
         z <- putNoun flags txn metaTbl "life"    (toNoun lifecycleLen)
@@ -193,30 +200,30 @@ writeIdent env metaTbl ident@LogIdentity{..} = do
 
 -- Latest Event Number ---------------------------------------------------------
 
-getNumEvents :: Env -> Dbi -> IO Word64
+getNumEvents :: Env -> Dbi -> RIO e Word64
 getNumEvents env eventsTbl =
-    with (readTxn env) $ \txn ->
-    with (cursor txn eventsTbl) $ \cur ->
-    withKVPtrs nullVal nullVal $ \pKey pVal ->
-    mdb_cursor_get MDB_LAST cur pKey pVal >>= \case
+    rwith (readTxn env) $ \txn ->
+    rwith (cursor txn eventsTbl) $ \cur ->
+    withKVPtrs' nullVal nullVal $ \pKey pVal ->
+    io $ mdb_cursor_get MDB_LAST cur pKey pVal >>= \case
         False -> pure 0
         True  -> peek pKey >>= mdbValToWord64
 
 
 -- Write Events ----------------------------------------------------------------
 
-clearEvents :: Env -> Dbi -> IO ()
+clearEvents :: Env -> Dbi -> RIO e ()
 clearEvents env eventsTbl =
-    with (writeTxn env) $ \txn ->
-    with (cursor txn eventsTbl) $ \cur ->
-    withKVPtrs nullVal nullVal $ \pKey pVal -> do
-        let loop = mdb_cursor_get MDB_LAST cur pKey pVal >>= \case
+    rwith (writeTxn env) $ \txn ->
+    rwith (cursor txn eventsTbl) $ \cur ->
+    withKVPtrs' nullVal nullVal $ \pKey pVal -> do
+        let loop = io (mdb_cursor_get MDB_LAST cur pKey pVal) >>= \case
                 False -> pure ()
-                True  -> do mdb_cursor_del (compileWriteFlags []) cur
+                True  -> do io $ mdb_cursor_del (compileWriteFlags []) cur
                             loop
         loop
 
-appendEvents :: EventLog -> Vector ByteString -> IO ()
+appendEvents :: EventLog -> Vector ByteString -> RIO e ()
 appendEvents log !events = do
     numEvs <- readIORef (numEvents log)
     next   <- pure (numEvs + 1)
@@ -225,15 +232,15 @@ appendEvents log !events = do
   where
     flags    = compileWriteFlags [MDB_NOOVERWRITE]
     doAppend = \kvs ->
-        with (writeTxn $ env log) $ \txn ->
+        rwith (writeTxn $ env log) $ \txn ->
         for_ kvs $ \(k,v) -> do
             putBytes flags txn (eventsTbl log) k v >>= \case
                 True  -> pure ()
                 False -> throwIO (BadWriteEvent k)
 
-writeEffectsRow :: EventLog -> EventId -> ByteString -> IO ()
+writeEffectsRow :: EventLog -> EventId -> ByteString -> RIO e ()
 writeEffectsRow log k v = do
-    with (writeTxn $ env log) $ \txn ->
+    rwith (writeTxn $ env log) $ \txn ->
         putBytes flags txn (effectsTbl log) k v >>= \case
             True  -> pure ()
             False -> throwIO (BadWriteEffect k)
@@ -244,21 +251,24 @@ writeEffectsRow log k v = do
 --------------------------------------------------------------------------------
 -- Read Events -----------------------------------------------------------------
 
-streamEvents :: EventLog -> Word64
-             -> ConduitT () ByteString IO ()
+streamEvents :: HasLogFunc e
+             => EventLog -> Word64
+             -> ConduitT () ByteString (RIO e) ()
 streamEvents log first = do
-    last <- liftIO $ lastEv log
-    batch <- liftIO (readBatch log first)
+    last  <- lift $ lastEv log
+    batch <- lift $ readBatch log first
     unless (null batch) $ do
         for_ batch yield
         streamEvents log (first + word (length batch))
 
-streamEffectsRows :: EventLog -> EventId
-                  -> ConduitT () (Word64, ByteString) IO ()
+streamEffectsRows :: ∀e. HasLogFunc e
+                  => EventLog -> EventId
+                  -> ConduitT () (Word64, ByteString) (RIO e) ()
 streamEffectsRows log = go
   where
+    go :: EventId -> ConduitT () (Word64, ByteString) (RIO e) ()
     go next = do
-        batch <- liftIO $ readRowsBatch (env log) (effectsTbl log) next
+        batch <- lift $ readRowsBatch (env log) (effectsTbl log) next
         unless (null batch) $ do
             for_ batch yield
             go (next + fromIntegral (length batch))
@@ -268,7 +278,7 @@ streamEffectsRows log = go
 
    Throws `MissingEvent` if an event was missing from the log.
 -}
-readBatch :: EventLog -> Word64 -> IO (V.Vector ByteString)
+readBatch :: EventLog -> Word64 -> RIO e (V.Vector ByteString)
 readBatch log first = start
   where
     start = do
@@ -277,58 +287,65 @@ readBatch log first = start
             then pure mempty
             else readRows $ fromIntegral $ min 1000 $ ((last+1) - first)
 
-    assertFound :: EventId -> Bool -> IO ()
+    assertFound :: EventId -> Bool -> RIO e ()
     assertFound id found = do
         unless found $ throwIO $ MissingEvent id
 
     readRows count =
         withWordPtr first $ \pIdx ->
-        withKVPtrs (MDB_val 8 (castPtr pIdx)) nullVal $ \pKey pVal ->
-        with (readTxn $ env log) $ \txn ->
-        with (cursor txn $ eventsTbl log) $ \cur -> do
-            assertFound first =<< mdb_cursor_get MDB_SET_KEY cur pKey pVal
+        withKVPtrs' (MDB_val 8 (castPtr pIdx)) nullVal $ \pKey pVal ->
+        rwith (readTxn $ env log) $ \txn ->
+        rwith (cursor txn $ eventsTbl log) $ \cur -> do
+            assertFound first =<< io (mdb_cursor_get MDB_SET_KEY cur pKey pVal)
             fetchRows count cur pKey pVal
 
     fetchRows count cur pKey pVal = do
-        V.generateM count $ \i -> do
-            key <- peek pKey >>= mdbValToWord64
-            val <- peek pVal >>= mdbValToBytes
+        env <- ask
+        V.generateM count $ \i -> runRIO env $ do
+            key <- io $ peek pKey >>= mdbValToWord64
+            val <- io $ peek pVal >>= mdbValToBytes
             idx <- pure (first + word i)
             unless (key == idx) $ throwIO $ MissingEvent idx
             when (count /= succ i) $ do
-                assertFound idx =<< mdb_cursor_get MDB_NEXT cur pKey pVal
+                assertFound idx =<< io (mdb_cursor_get MDB_NEXT cur pKey pVal)
             pure val
 
 {-
    Read 1000 rows from the database, starting from key `first`.
 -}
-readRowsBatch :: Env -> Dbi -> Word64 -> IO (V.Vector (Word64, ByteString))
+readRowsBatch :: ∀e. HasLogFunc e
+              => Env -> Dbi -> Word64 -> RIO e (V.Vector (Word64, ByteString))
 readRowsBatch env dbi first = readRows
   where
     readRows = do
-        -- print ("readRows", first)
+        logDebug $ displayShow ("readRows", first)
         withWordPtr first $ \pIdx ->
-          withKVPtrs (MDB_val 8 (castPtr pIdx)) nullVal $ \pKey pVal ->
-          with (readTxn env) $ \txn ->
-          with (cursor txn dbi) $ \cur ->
-          mdb_cursor_get MDB_SET_RANGE cur pKey pVal >>= \case
-              False -> pure mempty
-              True  -> V.unfoldrM (fetchRows cur pKey pVal) 1000
+            withKVPtrs' (MDB_val 8 (castPtr pIdx)) nullVal $ \pKey pVal ->
+            rwith (readTxn env) $ \txn ->
+            rwith (cursor txn dbi) $ \cur ->
+            io (mdb_cursor_get MDB_SET_RANGE cur pKey pVal) >>= \case
+                False -> pure mempty
+                True  -> V.unfoldrM (fetchRows cur pKey pVal) 1000
 
-    fetchRows :: Cur -> Ptr MDB_val -> Ptr MDB_val
-              -> Word
-              -> IO (Maybe ((Word64, ByteString), Word))
+    fetchRows :: Cur -> Ptr Val -> Ptr Val -> Word
+              -> RIO e (Maybe ((Word64, ByteString), Word))
     fetchRows cur pKey pVal 0 = pure Nothing
     fetchRows cur pKey pVal n = do
-        key <- peek pKey >>= mdbValToWord64
-        val <- peek pVal >>= mdbValToBytes
-        -- print ("fetchRows", n, key, val)
-        mdb_cursor_get MDB_NEXT cur pKey pVal >>= \case
+        key <- io $ peek pKey >>= mdbValToWord64
+        val <- io $ peek pVal >>= mdbValToBytes
+        logDebug $ displayShow ("fetchRows", n, key, val)
+        io $ mdb_cursor_get MDB_NEXT cur pKey pVal >>= \case
             False -> pure $ Just ((key, val), 0)
             True  -> pure $ Just ((key, val), pred n)
 
 
 -- Utils -----------------------------------------------------------------------
+
+withKVPtrs' :: (MonadIO m, MonadUnliftIO m)
+            => Val -> Val -> (Ptr Val -> Ptr Val -> m a) -> m a
+withKVPtrs' k v cb =
+    withRunInIO $ \run ->
+        withKVPtrs k v $ \x y -> run (cb x y)
 
 nullVal :: MDB_val
 nullVal = MDB_val 0 nullPtr
@@ -353,20 +370,24 @@ mdbValToWord64 (MDB_val sz ptr) = do
   assertExn (sz == 8) BadKeyInEventLog
   peek (castPtr ptr)
 
-withWord64AsMDBval :: Word64 -> (MDB_val -> IO a) -> IO a
+withWord64AsMDBval :: (MonadIO m, MonadUnliftIO m)
+                   => Word64 -> (MDB_val -> m a) -> m a
 withWord64AsMDBval w cb = do
   withWordPtr w $ \p ->
     cb (MDB_val (fromIntegral (sizeOf w)) (castPtr p))
 
-withWordPtr :: Word64 -> (Ptr Word64 -> IO a) -> IO a
-withWordPtr w cb = do
-  allocaBytes (sizeOf w) (\p -> poke p w >> cb p)
+withWordPtr :: (MonadIO m, MonadUnliftIO m)
+            => Word64 -> (Ptr Word64 -> m a) -> m a
+withWordPtr w cb =
+    withRunInIO $ \run ->
+        allocaBytes (sizeOf w) (\p -> poke p w >> run (cb p))
 
 
 -- Lower-Level Operations ------------------------------------------------------
 
-getMb :: Txn -> Dbi -> ByteString -> IO (Maybe Noun)
+getMb :: MonadIO m => Txn -> Dbi -> ByteString -> m (Maybe Noun)
 getMb txn db key =
+  io $
   byteStringAsMdbVal key $ \mKey ->
   mdb_get txn db mKey >>= traverse (mdbValToNoun key)
 
@@ -380,14 +401,19 @@ mdbValToNoun key (MDB_val sz ptr) = do
   let res = cueBS bs
   eitherExn res (\err -> BadNounInLogIdentity key err bs)
 
-putNoun :: MDB_WriteFlags -> Txn -> Dbi -> ByteString -> Noun -> IO Bool
+putNoun :: MonadIO m
+        => MDB_WriteFlags -> Txn -> Dbi -> ByteString -> Noun -> m Bool
 putNoun flags txn db key val =
+  io $
   byteStringAsMdbVal key $ \mKey ->
   byteStringAsMdbVal (jamBS val) $ \mVal ->
   mdb_put flags txn db mKey mVal
 
-putBytes :: MDB_WriteFlags -> Txn -> Dbi -> Word64 -> ByteString -> IO Bool
-putBytes flags txn db id bs = do
-  withWord64AsMDBval id $ \idVal -> do
-    byteStringAsMdbVal bs $ \mVal -> do
-      mdb_put flags txn db idVal mVal
+
+putBytes :: MonadIO m
+         => MDB_WriteFlags -> Txn -> Dbi -> Word64 -> ByteString -> m Bool
+putBytes flags txn db id bs =
+  io $
+  withWord64AsMDBval id $ \idVal ->
+  byteStringAsMdbVal bs $ \mVal ->
+  mdb_put flags txn db idVal mVal

@@ -179,16 +179,16 @@ initializeTerminal = mkAcquire start stop
       termShowCursor t newLs pos
 
 
-term :: VereTerminal -> KingId -> QueueEv -> ([Ev], Acquire (EffCb TermEf))
+term :: VereTerminal -> KingId -> QueueEv -> ([Ev], Acquire (EffCb e TermEf))
 term VereTerminal{..} king enqueueEv =
     (initialEvents, runTerm)
   where
     initialEvents = [(initialBlew vtWidth vtHeight), initialHail]
 
-    runTerm :: Acquire (EffCb TermEf)
+    runTerm :: Acquire (EffCb e TermEf)
     runTerm = do
       tim <- mkAcquire start stop
-      pure (handleEffect vtWriteQueue tim)
+      pure (io . handleEffect vtWriteQueue tim)
 
     start :: IO TermDrv
     start = do

@@ -26,7 +26,7 @@ import qualified Data.Vector.Primitive  as VP
 cueBS :: ByteString -> Either DecodeErr Noun
 cueBS = doGet dNoun
 
-cueBSExn :: ByteString -> IO Noun
+cueBSExn :: MonadIO m => ByteString -> m Noun
 cueBSExn bs =
   cueBS bs & \case
     Left e  -> throwIO e
@@ -35,7 +35,7 @@ cueBSExn bs =
 cue :: Atom -> Either DecodeErr Noun
 cue = cueBS . view atomBytes
 
-cueExn :: Atom -> IO Noun
+cueExn :: MonadIO m => Atom -> m Noun
 cueExn atm = cueBSExn (atm ^. atomBytes)
 
 
