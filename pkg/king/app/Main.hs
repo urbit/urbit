@@ -1,8 +1,6 @@
 {-
     # Booting a Ship
 
-    - TODO Correctly setup the Pier directory.
-    - TODO Hook up CLI command.
     - TODO Don't just boot, also run the ship (unless `-x` is set).
     - TODO Figure out why ships booted by us don't work.
 
@@ -40,36 +38,15 @@
     to the event log.
 
 
-    # Proper Logging
-
-    - TODO Consider using RIO's logging infrastructure.
-    - TODO If that's too heavy, figure out what the best way to do
-      logging is now.
-    - TODO Convert all existing logging to the chosen logging system.
-    - TODO Add more logging to all the places. Logging is super useful.
-
-
     # Implement subcommands to test event and effect parsing.
 
     - `king * --collect-fx`: All effects that come from the serf get
       written into the `effects` LMDB database.
 
-    - `king parse-events PIER`: Run through the event log, and parse all
-      events, print failures.
-
-    - `king parse-effects PIER`: Run through the event log, and parse all
-      effects, print any failures.
-
     - `king clear-fx PIER`: Deletes all collected effects.
 
     - `king full-replay PIER`: Replays the whole event log events, print
       any failures. On success, replace the snapshot.
-
-
-    # Validate Pill Files
-
-    - `king validate-pill PILL`: Parse a pill file. Print an error on
-      exit, and print a description of the pill on success.
 
 
     # Full Replay -- An Integration Test
