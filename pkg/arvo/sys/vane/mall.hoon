@@ -209,6 +209,10 @@
     |~  path
     *step
   ::
+  ++  handle-pull
+    |~  path
+    *step
+  ::
   ++  handle-peek
     |~  path
     *(unit (unit cage))
@@ -221,8 +225,8 @@
     |~  [wire sign=vase]
     *step
   ::
-  ++  handle-pull
-    |~  path
+  ++  handle-lame
+    |~  [term tang]
     *step
   --
 :: +blocked: blocked tasks
@@ -324,18 +328,6 @@
     ::
     =/  =move  [hen [%give gift]]
     mo-core(moves [move moves])
-  ::  +mo-contains-valid-bowl: check that a vase contains a valid bowl.
-  ::
-  ++  mo-contains-valid-bowl
-    ~/  %mo-contains-valid-bowl
-    |=  =vase
-    ^-  ?
-    ::
-    =/  maybe-vase  (slew 12 vase)
-    ?~  maybe-vase
-      %.n
-    =/  =type  p.u.maybe-vase
-    (~(nest ut type) %.n -:!>(*bowl))
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -375,11 +367,11 @@
       =.  app  (ap-reinstall:app result-vase)
       ap-abet:app
     ::
-    ?.  (mo-contains-valid-bowl result-vase)
-      =/  err  [[%leaf "{<term>}: bogus core"] ~]
+    =/  maybe-new-agent  !<(agent vase)
+    ?~  maybe-new-agent
+      =/  err  [[%leaf "{<term>}: not valid agent"] ~]
       (mo-give %onto %.n err)
-    ::
-    =.  mo-core  (mo-new-agent term beak result-vase)
+    =.  mo-core  (mo-new-agent term beak u.maybe-new-agent)
     =/  old  mo-core
     =/  wag
       =/  =routes  [disclosing=~ attributing=our]
@@ -402,13 +394,13 @@
   ::    new one with the provided name, beak, and state (held in a vase).
   ::
   ++  mo-new-agent
-    |=  [=term =beak =vase]
+    |=  [=term =beak =agent]
     ^+  mo-core
     ::
     =/  =ducts
       :+  bone=1
         bone-map=[[[~ ~] 0] ~ ~]
-       duct-map=[[0 [~ ~]] ~ ~]
+      duct-map=[[0 [~ ~]] ~ ~]
     ::
     =/  running-agent
       =/  default-agent  *running-agent
@@ -416,7 +408,7 @@
         control-duct    hen
         beak            beak
         running-state   vase
-        agent           !<(agent vase)
+        agent           agent
         state           !>(~)
         ducts           ducts
       ==
@@ -1308,8 +1300,12 @@
       |=  =vase
       ^+  ap-core
       ::
+      =/  maybe-agent  !<(agent vase)
+      ?~  maybe-agent
+        (ap-lame %new-core-not-agent ~)
+      ::
       =/  prep
-        =/  =agent  !<(agent vase)
+        =/  =agent  u.maybe-agent
         =/  installed  ap-install(agent.current-agent agent)
         =/  running  (some state.current-agent)
         (installed running)
@@ -1356,27 +1352,14 @@
       ap-core
     ::  +ap-lame: pour error.
     ::
-    ::  !! wat do
     ++  ap-lame
       |=  [=term =tang]
       ^+  ap-core
       ::
-      =^  maybe-arm  ap-core  (ap-find-arm /lame)
       =/  form  |=(=tank [%rose [~ "! " ~] tank ~])
-      ?~  maybe-arm
-        =/  tang  [>%ap-lame agent-name term< (turn tang form)]
-        ~>  %slog.`rose+["  " "[" "]"]^(flop tang)
-        ap-core
-      ::
-      =/  arm  u.maybe-arm
-      =/  =vase  !>([term tang])
-      =^  maybe-tang  ap-core  (ap-call q.arm vase)
-      ?^  maybe-tang
-        =/  tang  u.maybe-tang
-        =/  etc  (flop [>%ap-lame-lame< (turn tang form)])
-        ~>  %slog.`rose+["  " "[" "]"]^(welp etc [%leaf "." (flop tang)])
-        ap-core
-      ::
+      =^  maybe-tang  ap-core
+        %+  ap-ingest  ~  |.
+        (handle-lame:ap-agent-core term (turn tang form))
       ap-core
     ::  +ap-generic-take: generic take.
     ::
