@@ -3,7 +3,7 @@
 |%
 +$  move  [bone card]
 +$  card
-  $%  [%diff [%group-update group-update]]
+  $%  [%diff diff]
       [%quit ~]
   ==
 +$  state
@@ -12,6 +12,11 @@
 ::
 +$  state-zero
   $:  groups=(map path group)
+  ==
+::
++$  diff
+  $%  [%group-update group-update]
+      [%group-initial group-initial]
   ==
 --
 ::
@@ -40,7 +45,8 @@
   ?.  =(src.bol our.bol)
     [[ost.bol %quit ~]~ this]
   ::  we now proxy all events to this path
-  [~ this]
+  :_  this
+  [ost.bol %diff %group-initial groups]~
 ::
 ++  peer-keys
   |=  pax=path
@@ -92,9 +98,9 @@
   |=  act=group-action
   ^-  (quip move _this)
   ?>  ?=(%add -.act)
-  :-  (send-diff pax.act act)
   ?~  pax.act
-    this
+    [~ this]
+  :-  (send-diff pax.act act)
   ?:  (~(has by groups) pax.act)
     =/  members=group  (~(got by groups) pax.act)
     =.  members  (~(uni in members) members.act)
@@ -105,35 +111,35 @@
   |=  act=group-action
   ^-  (quip move _this)
   ?>  ?=(%remove -.act)
-  :-  (send-diff pax.act act)
   ?~  pax.act
-    this
+    [~ this]
   ?.  (~(has by groups) pax.act)
-    this
+    [~ this]
   =/  members  (~(got by groups) pax.act)
   =.  members  (~(dif in members) members.act)
+  :-  (send-diff pax.act act)
   this(groups (~(put by groups) pax.act members))
 ::
 ++  handle-bundle
   |=  act=group-action
   ^-  (quip move _this)
   ?>  ?=(%bundle -.act)
-  :-  (send-diff pax.act act)
   ?~  pax.act
-    this
+    [~ this]
   ?:  (~(has by groups) pax.act)
-    this
+    [~ this]
+  :-  (send-diff pax.act act)
   this(groups (~(put by groups) pax.act *group))
 ::
 ++  handle-unbundle
   |=  act=group-action
   ^-  (quip move _this)
   ?>  ?=(%unbundle -.act)
-  :-  (send-diff pax.act act)
   ?~  pax.act
-    this
+    [~ this]
   ?.  (~(has by groups) pax.act)
-    this
+    [~ this]
+  :-  (send-diff pax.act act)
   this(groups (~(del by groups) pax.act))
 ::
 ++  send-diff

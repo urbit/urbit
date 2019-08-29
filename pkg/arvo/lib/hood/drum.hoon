@@ -84,8 +84,6 @@
   ::
   ?:  ?=($pawn myr)
   :~  [%home %lens]
-      [%base %hall]
-      [%base %talk]
       [%base %dojo]
       [%base %modulo]
       [%home %launch]
@@ -96,16 +94,13 @@
   ==
   :~  [%home %lens]
       [%home %dojo]
-      [%home %hall]
       [%home %groups]
       [%home %group-sync]
-      [%home %ex-group]
       [%home %modulo]
       [%home %launch]
       [%home %chat]
       [%home %inbox]
       [%home %inbox-sync]
-      [%home %inbox-view]
   ==
 ::
 ++  deft-fish                                           ::  default connects

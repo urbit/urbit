@@ -1,7 +1,13 @@
-/-  hall
 |%
+::
++$  envelope
+  $:  author=ship
+      when=@da
+      message=@t
+  ==
+::
 +$  mailbox
-  $:  envelopes=(list envelope:hall)
+  $:  envelopes=(list envelope)
       read=@
       owner=ship
   ==
@@ -9,7 +15,7 @@
 +$  inbox-action
   $%  [%create =path owner=ship]
       [%delete =path]
-      [%message =path =envelope:hall]
+      [%message =path =envelope]
       [%read =path read=@]
   ==
 ::

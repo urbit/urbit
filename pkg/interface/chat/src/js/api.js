@@ -9,6 +9,21 @@ class UrbitApi {
   setAuthTokens(authTokens) {
     this.authTokens = authTokens;
     this.bindPaths = [];
+
+    this.groups = {
+      bundle: this.groupBundle.bind(this),
+      unbundle: this.groupBundle.bind(this),
+      add: this.groupAdd.bind(this),
+      remove: this.groupRemove.bind(this)
+    };
+    
+    this.inbox = {
+      create: this.inboxCreate.bind(this),
+      delete: this.inboxDelete.bind(this),
+      message: this.inboxMessage.bind(this),
+      read: this.inboxRead.bind(this)
+    };
+
   }
 
   // keep default bind to hall, since its bind procedure more complex for now AA
@@ -49,19 +64,19 @@ class UrbitApi {
     this.action("groups", "group-action", data);
   }
 
-  bundle(path) {
+  groupBundle(path) {
     this.groups({
       bundle: path
     });
   }
 
-  unbundle(path) {
+  groupUnbundle(path) {
     this.groups({
       unbundle: path
     });
   }
 
-  add(members, path) {
+  groupAdd(members, path) {
     this.groups({
       add: {
         members,
@@ -70,10 +85,46 @@ class UrbitApi {
     });
   }
 
-  remove(members, path) {
+  groupRemove(members, path) {
     this.groups({
       remove: {
         members, path
+      }
+    });
+  }
+
+  inbox(data) {
+    this.action("inbox", "inbox-action", data);
+  }
+
+  inboxCreate(path, owner) {
+    this.inbox({
+      create: {
+        path, owner
+      }
+    });
+  }
+
+  inboxDelete(path) {
+    this.inbox({
+      delete: {
+        path
+      }
+    });
+  }
+
+  inboxMessage(path, envelope) {
+    this.inbox({
+      message: {
+        path, envelope
+      }
+    });
+  }
+
+  inboxRead(path, read) {
+    this.inbox({
+      read: {
+        path, read
       }
     });
   }

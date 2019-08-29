@@ -1,5 +1,5 @@
 /-  *inbox
-/+  hall-json
+/+  *inbox-json
 |_  upd=inbox-update
 ++  grow
   |%
@@ -15,8 +15,8 @@
         ?>  ?=(%message -.upd)
         :-  %message
         %-  pairs
-        :~  [%path (spat path.upd)]
-            [%envelope (enve:enjs:hall-json envelope.upd)]
+        :~  [%path (pa path.upd)]
+            [%envelope (enve envelope.upd)]
         ==
       ::
       ::  %read
@@ -24,7 +24,7 @@
         ?>  ?=(%read -.upd)
         :-  %read
         %-  pairs
-        :~  [%path (spat path.upd)]
+        :~  [%path (pa path.upd)]
             [%read (numb read.upd)]
         ==
       ::
@@ -33,14 +33,14 @@
         ?>  ?=(%create -.upd)
         :-  %create
         %-  pairs
-        :~  [%path (spat path.upd)]
+        :~  [%path (pa path.upd)]
             [%owner (ship:enjs:format owner.upd)]
         ==
       ::
       ::  %delete
       ?:  =(%delete -.upd)
         ?>  ?=(%delete -.upd)
-        [%delete (pairs [%path (spat path.upd)]~)]
+        [%delete (pairs [%path (pa path.upd)]~)]
       ::
       ::  %noop
       [*@t *^json]

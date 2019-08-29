@@ -13,5 +13,7 @@
       [%path members=group pax=path]
       group-action
   ==
+::
++$  group-initial  (map path group)
 --
 

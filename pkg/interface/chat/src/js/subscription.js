@@ -14,22 +14,12 @@ export class Subscription {
   }
 
   initializeChat() {
-    api.bind('/primary', 'PUT', api.authTokens.ship, 'inbox-view',
+    api.bind('/all', 'PUT', api.authTokens.ship, 'inbox',
       this.handleEvent.bind(this),
       this.handleError.bind(this));
     api.bind('/all', 'PUT', api.authTokens.ship, 'groups',
       this.handleEvent.bind(this),
       this.handleError.bind(this));
-  }
-
-  fetchMessages(circle, start, end) {
-    fetch(`/~chat/scroll/${circle}/${start}/${end}`)
-      .then((response) => response.json())
-      .then((json) => {
-        store.handleEvent({
-          data: json
-        });
-      });
   }
 
   handleEvent(diff) {
@@ -39,9 +29,6 @@ export class Subscription {
 
   handleError(err) {
     console.error(err);
-    api.bind('/primary', 'PUT', api.authTokens.ship, 'chat',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this));
   }
 }
 

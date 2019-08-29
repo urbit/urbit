@@ -4,7 +4,7 @@
 +$  move  [bone card]
 ::
 +$  card
-  $%  [%diff [%inbox-update inbox-update]]
+  $%  [%diff diff]
       [%quit ~]
   ==
 ::
@@ -16,6 +16,10 @@
   $:  inbox=(map path mailbox)
   ==
 ::
++$  diff
+  $%  [%inbox-update inbox-update]
+      [%inbox-initial inbox-initial]
+  ==
 --
 ::
 |_  [bol=bowl:gall state]
@@ -50,6 +54,15 @@
   ::  we send the list of keys then send events when they change
   :_  this
   [ost.bol %diff %inbox-update [%keys ~(key by inbox)]]~
+::
+++  peer-all
+  |=  pax=path
+  ^-  (quip move _this)
+  ?.  =(src.bol our.bol)
+    [[ost.bol %quit ~]~ this]
+  ::  we now proxy all events to this path
+  :_  this
+  [ost.bol %diff %inbox-initial inbox]~
 ::
 ++  peer-mailbox
   |=  pax=path
