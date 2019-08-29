@@ -251,6 +251,31 @@
     [%affiliation who %add (~(get ju affiliation) who)]
   ==
 ::
+++  peek-x
+  |=  =path
+  ^-  (unit (unit (pair mark *)))
+  ?+  path  ~
+      [%permissions ~]
+    ``noun+~(key by permissions)
+    ::
+      [%permissions ^]
+    =+  pem=(~(get by permissions) t.path)
+    ?~  pem  ~
+    ``noun+u.pem
+  ::
+      [%affiliation @ ~]
+    =+  who=(slav %p i.t.path)
+    ``noun+(~(get ju affiliation) who)
+  ::
+      [%permitted @ ^]
+    =+  pem=(~(get by permissions) t.t.path)
+    ?~  pem  ``noun+|
+    =+  who=(slav %p i.t.path)
+    =+  has=(~(has in who.u.pem) who)
+    :^  ~  ~  %noun
+    ?-(kind.u.pem %black !has, %white has)
+  ==
+::
 ::
 ::TODO  stdlib additions
 ::
