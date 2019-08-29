@@ -1908,7 +1908,9 @@
     ::  pass to |packet-pump unless duplicate or future ack
     ::
     ?.  (is-message-num-in-range message-num)
+      ~&  %hear-pump-out-of-range
       message-pump
+    ~&  %hear-pump
     (run-packet-pump %hear message-num fragment-num)
   ::  +on-done: handle message acknowledgment
   ::
@@ -2079,7 +2081,7 @@
     ::
     =-  =.  packet-pump  core.-
         =.  live.state   live.-
-        ~?  !=(0 num-sent.-)  %resent^num-sent.-
+        ~?  !=(0 num-sent.-)  %resent-lost^num-sent.-
         packet-pump
     ::  acc: state to thread through traversal
     ::
@@ -2409,6 +2411,7 @@
   ++  on-hear
     |=  [=lane =shut-packet ok=?]
     ^+  message-still
+    ~&  %on-hear-message-still^ok=ok
     ::  we know this is a fragment, not an ack; expose into namespace
     ::
     ?>  ?=(%& -.meat.shut-packet)
