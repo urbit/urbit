@@ -21,15 +21,23 @@ data TermDrv = TermDrv
   , tdReader :: Async ()
   }
 
+-- Output to the attached terminal is either a series of vere blits, or it is an
+-- injected printf line from the interpreter.
+data VereOutput = VereBlitOutput [Blit]
+                | VerePrintOutput String
+
+
+
 data VereTerminal = VereTerminal
   { vtWidth  :: Word
   , vtHeight :: Word
-  , vtClearScreen :: Maybe TermOutput
 
   --
-  , vtWriteQueue :: TQueue TermOutput
+  , vtWriteQueue :: TQueue VereOutput
   , vtWriter :: Async ()
   }
+
+data LineState = LineState String Int
 
 -- A list of terminal flags that we disable
 disabledFlags = [
@@ -48,18 +56,23 @@ disabledFlags = [
 -- TODO: We lie about terminal size for now and just pass 80x24 because getting
 -- it is a call to ioctl() which is in IO.
 
--- TODO: 49 is the string "1", which is what we need to pass to dill as the
--- hard-coded terminal "1" session. Figure out how to turn this into "1" later.
-initialBlew w h = EvBlip $ BlipEvTerm $ TermEvBlew (49, ()) w h
+initialBlew w h = EvBlip $ BlipEvTerm $ TermEvBlew (UD 1, ()) w h
 
-initialHail = EvBlip $ BlipEvTerm $ TermEvHail (49, ()) ()
+initialHail = EvBlip $ BlipEvTerm $ TermEvHail (UD 1, ()) ()
 
 
 -- What we need is an equivalent to _term_io_suck_char(). That's a manual, hand
 -- rolled parser to deal with the escape state.
 
 -- Version one of this is punting on the ops_u.dem flag: whether we're running
--- in daemon mode. This needs to 
+-- in daemon mode.
+
+--------------------------------------------------------------------------------
+
+runMaybeTermOutput :: Terminal -> (Terminal -> Maybe TermOutput) -> IO ()
+runMaybeTermOutput t getter = case (getter t) of
+  Nothing -> pure ()
+  Just x -> runTermOutput t x
 
 --------------------------------------------------------------------------------
 
@@ -71,7 +84,6 @@ initializeTerminal = mkAcquire start stop
       t <- setupTermFromEnv
       let vtWidth = 80
       let vtHeight = 24
-      let vtClearScreen = getCap t "clear"
 
       vtWriteQueue <- newTQueueIO
       vtWriter <- asyncBound (writeTerminal t vtWriteQueue)
@@ -84,12 +96,87 @@ initializeTerminal = mkAcquire start stop
     getCap term cap =
       getCapability term (tiGetOutput1 cap) :: Maybe TermOutput
 
+    vtClearScreen t  = getCap t "clear"
+    vtClearToBegin t = getCap t "el"
+    vtSoundBell t    = getCap t "bel"
+    vtParmLeft t     = getCap t "cub1"
+    vtParmRight t    = getCap t "cuf1"
+
     -- Writes data to the terminal. Both the terminal reading, normal logging,
     -- and effect handling can all emit bytes which go to the terminal.
-    writeTerminal :: Terminal -> TQueue TermOutput -> IO ()
-    writeTerminal terminal q = forever $ do
-      x <- atomically $ readTQueue q
-      runTermOutput terminal x
+    writeTerminal :: Terminal -> TQueue VereOutput -> IO ()
+    writeTerminal t q = loop (LineState "" 0)
+      where
+        loop s = do
+          x <- atomically $ readTQueue q
+          case x of
+            VereBlitOutput blits -> do
+              newS <- foldM (writeBlit t) s blits
+              loop newS
+            VerePrintOutput p -> do
+              runTermOutput t $ termText "\r"
+              runMaybeTermOutput t vtClearToBegin
+              runTermOutput t $ termText p
+              newS <- termRefreshLine t s
+              loop newS
+
+    -- Writes an individual blit to the screen
+    writeBlit :: Terminal -> LineState -> Blit -> IO LineState
+    writeBlit t ls = \case
+      Bel () -> do
+        runMaybeTermOutput t vtSoundBell
+        pure ls
+      Clr () -> do
+        runMaybeTermOutput t vtClearScreen
+        termRefreshLine t ls
+      (Hop w) -> do
+        termShowCursor t ls (fromIntegral w)
+      (Lin c)  -> do
+        ls2 <- termShowClear t ls
+        termShowLine t ls2 (pack c)
+      (Mor ()) -> do
+        termShowMore t ls
+      (Sag path noun) -> pure ls
+      (Sav path atom) -> pure ls
+      (Url url) -> pure ls
+
+    -- Moves the cursor to the requested position
+    termShowCursor :: Terminal -> LineState -> Int -> IO LineState
+    termShowCursor t (LineState line pos) newPos = do
+      if newPos < pos then do
+        replicateM_ (pos - newPos) (runMaybeTermOutput t vtParmLeft)
+        pure (LineState line newPos)
+      else if newPos > pos then do
+        replicateM_ (newPos - pos) (runMaybeTermOutput t vtParmRight)
+        pure (LineState line newPos)
+      else
+        pure (LineState line pos)
+
+    -- Displays and sets the current line
+    termShowLine :: Terminal -> LineState -> String -> IO LineState
+    termShowLine t ls newStr = do
+      -- TODO: Really think about how term.c munged cus_w. Amidoinitrit?
+      runTermOutput t $ termText newStr
+      pure (LineState newStr (length newStr))
+
+    termShowClear :: Terminal -> LineState -> IO LineState
+    termShowClear t ls = do
+      runTermOutput t $ termText "\r"
+      runMaybeTermOutput t vtClearToBegin
+      pure (LineState "" 0)
+
+    -- New Current Line
+    termShowMore :: Terminal -> LineState -> IO LineState
+    termShowMore t ls = do
+      runTermOutput t $ termText "\r\n"
+      pure (LineState "" 0)
+
+    -- Redraw the current LineState, moving cursor to the end.
+    termRefreshLine :: Terminal -> LineState -> IO LineState
+    termRefreshLine t ls@(LineState line pos) = do
+      runMaybeTermOutput t vtClearToBegin
+      newLs <- termShowLine t ls line
+      termShowCursor t newLs pos
 
 
 term :: VereTerminal -> KingId -> QueueEv -> ([Ev], Acquire (EffCb TermEf))
@@ -124,7 +211,6 @@ term VereTerminal{..} king enqueueEv =
     stop (TermDrv{..}) = do
       -- cancel our threads
       cancel tdReader
-      --cancel tdWriter
       -- take the terminal out of raw mode
       setTerminalAttributes stdInput tdPreviousConfiguration Immediately
 
@@ -150,23 +236,9 @@ term VereTerminal{..} king enqueueEv =
           pure ()
 --          atomicallu $ enqueuEv $ 
 
-    handleEffect :: TQueue TermOutput -> TermDrv -> TermEf -> IO ()
+    handleEffect :: TQueue VereOutput -> TermDrv -> TermEf -> IO ()
     handleEffect writeQueue TermDrv{..} = \case
-      TermEfBlit _ blits ->
-        atomically $ for_ blits (blitToScreen writeQueue)
+      TermEfBlit _ blits -> atomically $ writeTQueue writeQueue (VereBlitOutput blits)
       TermEfInit _ _ -> pure ()
       TermEfLogo path _ -> pure ()
       TermEfMass _ _ -> pure ()
-
-    -- Write each in
-    blitToScreen :: TQueue TermOutput -> Blit -> STM ()
-    blitToScreen q = \case
-      (Bel ()) -> pure ()
-      (Clr ()) -> pure ()
-      (Hop w)  -> pure ()
-      (Lin c)  -> writeTQueue q $ termText $ pack c
-      (Mor ()) -> pure ()
-      (Sag path noun) -> pure ()
-      (Sav path atom) -> pure ()
-      (Url url) -> pure ()
-
