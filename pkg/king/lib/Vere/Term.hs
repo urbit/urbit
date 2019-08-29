@@ -7,12 +7,13 @@ import Arvo hiding (Term)
 import Vere.Pier.Types
 
 import Foreign.Marshal.Alloc
+import Foreign.Storable
 import System.Posix.IO
 import System.Posix.Terminal
 
 import System.Console.Terminfo.Base
 
-import qualified Urbit.Time  as Time
+import Data.ByteString.Internal
 
 -- Types -----------------------------------------------------------------------
 
@@ -223,7 +224,10 @@ term VereTerminal{..} king enqueueEv =
     -- A better way to do this would be to get some sort of epoll on stdInput,
     -- since that's kinda closer to what libuv does?
     readTerminal :: IO ()
+
     readTerminal = allocaBytes 1 $ \ buf -> forever $ do
+      -- The problem with using fdRead raw is that it will text encode things
+      -- like \ESC instead of 27. That makes it broken for our purposes.
       t <- try (fdReadBuf stdInput buf 1)
       case t of
         Left (e :: IOException) ->
@@ -231,10 +235,10 @@ term VereTerminal{..} king enqueueEv =
           pure ()
         Right 0 -> pure ()
         Right _ -> do
-          putStrLn "\r[KEY] "  -- ++ str)
-          wen          <- Time.now
-          pure ()
---          atomicallu $ enqueuEv $ 
+          w   <- peek buf
+          let c = w2c w
+          let blip = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ Txt $ Tour $ [c]
+          atomically $ enqueueEv $ blip
 
     handleEffect :: TQueue VereOutput -> TermDrv -> TermEf -> IO ()
     handleEffect writeQueue TermDrv{..} = \case
