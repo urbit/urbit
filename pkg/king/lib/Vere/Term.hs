@@ -6,7 +6,9 @@ import UrbitPrelude
 import Arvo hiding (Term)
 import Vere.Pier.Types
 
+import Data.Char
 import Foreign.Marshal.Alloc
+import Foreign.Ptr
 import Foreign.Storable
 import System.Posix.IO
 import System.Posix.Terminal
@@ -51,6 +53,13 @@ disabledFlags = [
   -- oflag
   ProcessOutput
   ]
+
+-- A record used in reading data from stdInput.
+data ReadData = ReadData
+  { rBuf :: Ptr Word8
+  , rEscape :: Bool
+  , rBracket :: Bool
+  }
 
 -- Utils -----------------------------------------------------------------------
 
@@ -204,9 +213,13 @@ term VereTerminal{..} king enqueueEv =
             foldl' withoutMode tdPreviousConfiguration disabledFlags
       setTerminalAttributes stdInput newTermSettings Immediately
 
-      tdReader <- asyncBound readTerminal
+      tdReader <- asyncBound (readTerminal (bell vtWriteQueue))
 
       pure TermDrv{..}
+
+    bell :: TQueue VereOutput -> IO ()
+    bell q = do
+      atomically $ writeTQueue q $ VereBlitOutput [Bel ()]
 
     stop :: TermDrv -> IO ()
     stop (TermDrv{..}) = do
@@ -223,22 +236,76 @@ term VereTerminal{..} king enqueueEv =
     --
     -- A better way to do this would be to get some sort of epoll on stdInput,
     -- since that's kinda closer to what libuv does?
-    readTerminal :: IO ()
+    readTerminal :: (IO ()) -> IO ()
 
-    readTerminal = allocaBytes 1 $ \ buf -> forever $ do
-      -- The problem with using fdRead raw is that it will text encode things
-      -- like \ESC instead of 27. That makes it broken for our purposes.
-      t <- try (fdReadBuf stdInput buf 1)
-      case t of
-        Left (e :: IOException) ->
-          -- Ignore EAGAINs when doing reads
-          pure ()
-        Right 0 -> pure ()
-        Right _ -> do
-          w   <- peek buf
-          let c = w2c w
-          let blip = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ Txt $ Tour $ [c]
+    readTerminal bell = allocaBytes 1 $ \ buf -> loop (ReadData buf False False)
+      where
+        loop rd@ReadData{..} = do
+          -- The problem with using fdRead raw is that it will text encode things
+          -- like \ESC instead of 27. That makes it broken for our purposes.
+          t <- try (fdReadBuf stdInput rBuf 1)
+          case t of
+            Left (e :: IOException) ->
+              -- Ignore EAGAINs when doing reads
+              loop rd
+            Right 0 -> loop rd
+            Right _ -> do
+              w   <- peek rBuf
+--              print ("{" ++ (show w) ++ "}")
+              let c = w2c w
+              if rEscape then
+                if rBracket then do
+                  case c of
+                    'A' -> sendBelt $ Aro U
+                    'B' -> sendBelt $ Aro D
+                    'C' -> sendBelt $ Aro R
+                    'D' -> sendBelt $ Aro L
+                    _ -> pure ()
+                  loop rd { rEscape = False, rBracket = False}
+                else
+                  if isAsciiLower c then do
+                    sendBelt $ Met $ Cord $ pack [c]
+                    loop rd { rEscape = False }
+                  else if c == '.' then do
+                    pure()
+                  -- a bunch of other cases
+                  else if c == '[' || c == '0' then do
+                    loop rd { rBracket = True }
+                  else do
+                    bell
+                    loop rd { rEscape = False }
+              -- if not escape
+              else if False then
+                -- TODO: Put the unicode accumulation logic here.
+                pure()
+              else if isPrint c then do
+                sendBelt $ Txt $ Tour $ [c]
+                pure()
+              else if w == 0 then do
+                bell
+                pure()
+              else if w == 8 || w == 127 then do
+                sendBelt $ Bac ()
+                loop rd
+              else if w == 13 then do
+                sendBelt $ Ret ()
+                loop rd
+              else if w <= 26 then do
+                sendBelt $ Ctl $ Cord $ pack [w2c (w + 97 - 1)]
+                loop rd
+              else if w == 27 then do
+                loop rd { rEscape = True }
+              else
+                -- start the utf8 accumulation buffer
+                pure()
+
+              loop rd
+
+        sendBelt :: Belt -> IO ()
+        sendBelt b = do
+          let blip = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ b
           atomically $ enqueueEv $ blip
+
 
     handleEffect :: TQueue VereOutput -> TermDrv -> TermEf -> IO ()
     handleEffect writeQueue TermDrv{..} = \case
