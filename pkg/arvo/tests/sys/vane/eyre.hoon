@@ -272,7 +272,7 @@
         ::
         %+  expect-gall-deal
           :+  /run-app-request/app1  [~nul ~nul]
-              ^-  cush:gall
+              ^-  internal-task:gall
               :*  %app1  %poke  %handle-http-request
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
@@ -359,7 +359,7 @@
         ::
         %+  expect-gall-deal
           :+  /run-app-request/app1  [~nul ~nul]
-              ^-  cush:gall
+              ^-  internal-task:gall
               :*  %app1  %poke  %handle-http-request
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
@@ -448,7 +448,7 @@
         ::
         %+  expect-gall-deal
           :+  /run-app-request/app1  [~nul ~nul]
-              ^-  cush:gall
+              ^-  internal-task:gall
               :*  %app1  %poke  %handle-http-request
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
@@ -555,7 +555,7 @@
         ::
         %+  expect-gall-deal
           :+  /run-app-request/app1  [~nul ~nul]
-              ^-  cush:gall
+              ^-  internal-task:gall
               :*  %app1  %poke  %handle-http-request
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/~landscape/inner-path' ~ ~]])
               ==
@@ -623,7 +623,7 @@
         ::
         %+  expect-gall-deal
           :+  /run-app-request/app1  [~nul ~nul]
-              ^-  cush:gall
+              ^-  internal-task:gall
               :*  %app1  %poke  %handle-http-request
                   !>  :*
                     %.y
@@ -1809,7 +1809,7 @@
         ::
         %+  expect-gall-deal
           :+  /run-app-request/app1  [~nul ~nul]
-              ^-  cush:gall
+              ^-  internal-task:gall
               :*  %app1  %poke  %handle-http-request
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
@@ -1843,7 +1843,7 @@
         ::
         %+  expect-gall-deal
           :+  /run-app-cancel/app1  [~nul ~nul]
-              ^-  cush:gall
+              ^-  internal-task:gall
               :*  %app1  %poke  %handle-http-cancel
                   !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
@@ -1951,7 +1951,7 @@
   [output http-server-gate]
 ::
 ++  expect-gall-deal
-  |=  $:  expected=[wire=path id=sock data=cush:gall]
+  |=  $:  expected=[wire=path id=sock data=internal-task:gall]
           actual=(wind note:http-server-gate gift:able:http-server-gate)
       ==
   ^-  tang

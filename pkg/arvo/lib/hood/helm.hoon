@@ -38,7 +38,7 @@
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
       $%  [%bonk wire ~]                                ::
-          {$conf wire dock $load ship term}             ::
+          {$conf wire dock ship term}                   ::
           {$flog wire flog:dill}                        ::
           {$nuke wire ship}                             ::
           [%serve wire binding:eyre generator:eyre]     ::
