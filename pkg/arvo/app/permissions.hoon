@@ -127,8 +127,8 @@
   ^+  this
   =-  this(affiliation -)
   ?-  -.diff
-    %add  (affiliate who +.diff)
-    %remove  (unaffiliate who +.diff)
+    %add  (add-affiliation who +.diff)
+    %remove  (remove-affiliation who +.diff)
   ==
 ::
 ::  diff calculation
