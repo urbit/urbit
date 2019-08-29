@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wwarn #-}
 
-module Vere.Term (initializeTerminal, term, VereTerminal) where
+module Vere.Term (initializeLocalTerminal, term, TerminalSystem, tsReaderThread) where
 
 import UrbitPrelude
 import Arvo hiding (Term)
@@ -19,58 +19,46 @@ import Data.ByteString.Internal
 
 -- Types -----------------------------------------------------------------------
 
-data TermDrv = TermDrv
-  { tdPreviousConfiguration ::  TerminalAttributes
-  , tdReader :: Async ()
-  }
-
 -- Output to the attached terminal is either a series of vere blits, or it is an
 -- injected printf line from the interpreter.
 data VereOutput = VereBlitOutput [Blit]
                 | VerePrintOutput String
-
-data VereTerminal = VereTerminal
-  { vtWidth  :: Word
-  , vtHeight :: Word
-
-  --
-  , vtWriteQueue :: TQueue VereOutput
-  , vtWriter :: Async ()
-  }
+                | VereBlankLine
 
 data LineState = LineState String Int
 
--- A list of terminal flags that we disable
-disabledFlags = [
-  -- lflag
-  StartStopOutput, KeyboardInterrupts, EnableEcho, EchoLF, ProcessInput, ExtendedFunctions,
-  -- iflag
-  MapCRtoLF, CheckParity, StripHighBit,
-  -- cflag, todo: Terminal library missing CSIZE?
-  EnableParity,
-  -- oflag
-  ProcessOutput
-  ]
-
 -- A record used in reading data from stdInput.
 data ReadData = ReadData
-  { rBuf :: Ptr Word8
-  , rEscape :: Bool
-  , rBracket :: Bool
+  { rdBuf :: Ptr Word8
+  , rdEscape :: Bool
+  , rdBracket :: Bool
+  }
+
+-- Minimal terminal interface.
+--
+-- A Terminal can either be local or remote. Either way, the Terminal, from the
+-- view of the caller, a terminal has a thread which when exits indicates that
+-- the session is over, and has a general in/out queue in the types of the
+-- vere/arvo interface.
+data TerminalSystem = TerminalSystem
+  -- | The reader can be waited on, as it shuts itself down when the console
+  -- goes away.
+  { tsReaderThread :: Async()
+  , tsReadQueue    :: TQueue Belt
+  , tsWriteQueue   :: TQueue VereOutput
+  }
+
+-- Private data to the TerminalSystem that we keep around for stop().
+data Private = Private
+  { pWriterThread :: Async()
+  , pPreviousConfiguration ::  TerminalAttributes
   }
 
 -- Utils -----------------------------------------------------------------------
 
--- TODO: We lie about terminal size for now and just pass 80x24 because getting
--- it is a call to ioctl() which is in IO.
-
 initialBlew w h = EvBlip $ BlipEvTerm $ TermEvBlew (UD 1, ()) w h
 
 initialHail = EvBlip $ BlipEvTerm $ TermEvHail (UD 1, ()) ()
-
-
--- What we need is an equivalent to _term_io_suck_char(). That's a manual, hand
--- rolled parser to deal with the escape state.
 
 -- Version one of this is punting on the ops_u.dem flag: whether we're running
 -- in daemon mode.
@@ -84,22 +72,57 @@ runMaybeTermOutput t getter = case (getter t) of
 
 --------------------------------------------------------------------------------
 
-initializeTerminal :: Acquire VereTerminal
-initializeTerminal = mkAcquire start stop
+-- Initializes the generalized input/output parts of the terminal.
+--
+initializeLocalTerminal :: Acquire TerminalSystem
+initializeLocalTerminal = do
+    (a, b) <- mkAcquire start stop
+    pure a
   where
-    start :: IO VereTerminal
+    start :: IO (TerminalSystem, Private)
     start = do
+      --  Initialize the writing side of the terminal
+      --
       t <- setupTermFromEnv
-      let vtWidth = 80
-      let vtHeight = 24
+      -- TODO: We still need to actually get this from the terminal somehow.
 
-      vtWriteQueue <- newTQueueIO
-      vtWriter <- asyncBound (writeTerminal t vtWriteQueue)
+      tsWriteQueue <- newTQueueIO
+      pWriterThread <- asyncBound (writeTerminal t tsWriteQueue)
 
-      pure VereTerminal{..}
+      pPreviousConfiguration <- getTerminalAttributes stdInput
 
-    stop :: VereTerminal -> IO ()
-    stop (VereTerminal{..}) = cancel vtWriter
+      -- Create a new configuration where we put the terminal in raw mode and
+      -- disable a bunch of preprocessing.
+      let newTermSettings =
+            flip withTime     0 .
+            flip withMinInput 1 $
+            foldl' withoutMode pPreviousConfiguration disabledFlags
+      setTerminalAttributes stdInput newTermSettings Immediately
+
+      tsReadQueue <- newTQueueIO
+      tsReaderThread <- asyncBound (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
+
+      pure (TerminalSystem{..}, Private{..})
+
+    stop :: (TerminalSystem, Private) -> IO ()
+    stop (TerminalSystem{..}, Private{..}) = do
+      cancel tsReaderThread
+      cancel pWriterThread
+      -- take the terminal out of raw mode
+      setTerminalAttributes stdInput pPreviousConfiguration Immediately
+
+    -- A list of terminal flags that we disable
+    disabledFlags = [
+      -- lflag
+      StartStopOutput, KeyboardInterrupts, EnableEcho, EchoLF,
+      ProcessInput, ExtendedFunctions,
+      -- iflag
+      MapCRtoLF, CheckParity, StripHighBit,
+      -- cflag, todo: Terminal library missing CSIZE?
+      EnableParity,
+      -- oflag
+      ProcessOutput
+      ]
 
     getCap term cap =
       getCapability term (tiGetOutput1 cap) :: Maybe TermOutput
@@ -119,15 +142,18 @@ initializeTerminal = mkAcquire start stop
           x <- atomically $ readTQueue q
           case x of
             VereBlitOutput blits -> do
-              newS <- foldM (writeBlit t) s blits
-              loop newS
+              s <- foldM (writeBlit t) s blits
+              loop s
             VerePrintOutput p -> do
               runTermOutput t $ termText "\r"
               runMaybeTermOutput t vtClearToBegin
               runTermOutput t $ termText p
               runTermOutput t $ termText "\r\n"
-              newS <- termRefreshLine t s
-              loop newS
+              s <- termRefreshLine t s
+              loop s
+            VereBlankLine -> do
+              runTermOutput t $ termText "\r\n"
+              loop s
 
     -- Writes an individual blit to the screen
     writeBlit :: Terminal -> LineState -> Blit -> IO LineState
@@ -187,45 +213,10 @@ initializeTerminal = mkAcquire start stop
       newLs <- termShowLine t ls line
       termShowCursor t newLs pos
 
-
-term :: VereTerminal -> KingId -> QueueEv -> ([Ev], Acquire (EffCb e TermEf))
-term VereTerminal{..} king enqueueEv =
-    (initialEvents, runTerm)
-  where
-    initialEvents = [(initialBlew vtWidth vtHeight), initialHail]
-
-    runTerm :: Acquire (EffCb e TermEf)
-    runTerm = do
-      tim <- mkAcquire start stop
-      pure (io . handleEffect vtWriteQueue tim)
-
-    start :: IO TermDrv
-    start = do
-      putStrLn "term start"
-      tdPreviousConfiguration <- getTerminalAttributes stdInput
-
-      -- Create a new configuration where we put the terminal in raw mode and
-      -- disable a bunch of preprocessing.
-      let newTermSettings =
-            flip withTime     0 .
-            flip withMinInput 1 $
-            foldl' withoutMode tdPreviousConfiguration disabledFlags
-      setTerminalAttributes stdInput newTermSettings Immediately
-
-      tdReader <- asyncBound (readTerminal (bell vtWriteQueue))
-
-      pure TermDrv{..}
-
+    -- ring my bell
     bell :: TQueue VereOutput -> IO ()
     bell q = do
       atomically $ writeTQueue q $ VereBlitOutput [Bel ()]
-
-    stop :: TermDrv -> IO ()
-    stop (TermDrv{..}) = do
-      -- cancel our threads
-      cancel tdReader
-      -- take the terminal out of raw mode
-      setTerminalAttributes stdInput tdPreviousConfiguration Immediately
 
     -- Reads data from stdInput and emit the proper effect
     --
@@ -235,47 +226,46 @@ term VereTerminal{..} king enqueueEv =
     --
     -- A better way to do this would be to get some sort of epoll on stdInput,
     -- since that's kinda closer to what libuv does?
-    readTerminal :: (IO ()) -> IO ()
-
-    readTerminal bell = allocaBytes 1 $ \ buf -> loop (ReadData buf False False)
+    readTerminal :: TQueue Belt -> TQueue VereOutput -> (IO ()) -> IO ()
+    readTerminal rq wq bell = allocaBytes 1 $ \ buf -> loop (ReadData buf False False)
       where
         loop rd@ReadData{..} = do
           -- The problem with using fdRead raw is that it will text encode things
           -- like \ESC instead of 27. That makes it broken for our purposes.
           --
-          t <- try (fdReadBuf stdInput rBuf 1)
+          t <- try (fdReadBuf stdInput rdBuf 1)
           case t of
             Left (e :: IOException) -> do
               -- Ignore EAGAINs when doing reads
               loop rd
             Right 0 -> loop rd
             Right _ -> do
-              w   <- peek rBuf
+              w   <- peek rdBuf
               -- print ("{" ++ (show w) ++ "}")
               let c = w2c w
-              if rEscape then
-                if rBracket then do
+              if rdEscape then
+                if rdBracket then do
                   case c of
                     'A' -> sendBelt $ Aro U
                     'B' -> sendBelt $ Aro D
                     'C' -> sendBelt $ Aro R
                     'D' -> sendBelt $ Aro L
                     _   -> bell
-                  loop rd { rEscape = False, rBracket = False}
+                  loop rd { rdEscape = False, rdBracket = False}
                 else if isAsciiLower c then do
                   sendBelt $ Met $ Cord $ pack [c]
-                  loop rd { rEscape = False }
+                  loop rd { rdEscape = False }
                 else if c == '.' then do
                   sendBelt $ Met $ Cord "dot"
-                  loop rd { rEscape = False }
+                  loop rd { rdEscape = False }
                 else if w == 8 || w == 127 then do
                   sendBelt $ Met $ Cord "bac"
-                  loop rd { rEscape = False }
+                  loop rd { rdEscape = False }
                 else if c == '[' || c == '0' then do
-                  loop rd { rBracket = True }
+                  loop rd { rdBracket = True }
                 else do
                   bell
-                  loop rd { rEscape = False }
+                  loop rd { rdEscape = False }
               -- if not escape
               else if False then
                 -- TODO: Put the unicode accumulation logic here.
@@ -295,31 +285,57 @@ term VereTerminal{..} king enqueueEv =
               else if w == 3 then do
                 -- ETX (^C)
                 atomically $ do
-                  writeTQueue vtWriteQueue $ VerePrintOutput "interrupt"
-                  enqueueEv $ EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ Ctl $ Cord "c"
+                  writeTQueue wq $ VerePrintOutput "interrupt"
+                  writeTQueue rq $ Ctl $ Cord "c"
                 loop rd
               else if w == 4 then do
                 -- EOT (^D)
-                putStrLn "{ctrl-d}"
-                loop rd
+                atomically $ writeTQueue wq $ VereBlankLine
+                -- On ctrl-d, we end reading input. Returning instead of
+                -- looping causes this Async() to return, which is detected by
+                -- the main thread.
+                pure ()
               else if w <= 26 then do
                 sendBelt $ Ctl $ Cord $ pack [w2c (w + 97 - 1)]
                 loop rd
               else if w == 27 then do
-                loop rd { rEscape = True }
+                loop rd { rdEscape = True }
               else do
                 -- start the utf8 accumulation buffer
                 loop rd
 
         sendBelt :: Belt -> IO ()
         sendBelt b = do
-          let blip = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ b
-          atomically $ enqueueEv $ blip
+          atomically $ writeTQueue rq b
 
+--------------------------------------------------------------------------------
 
-    handleEffect :: TQueue VereOutput -> TermDrv -> TermEf -> IO ()
-    handleEffect writeQueue TermDrv{..} = \case
-      TermEfBlit _ blits -> atomically $ writeTQueue writeQueue (VereBlitOutput blits)
+term :: TerminalSystem -> KingId -> QueueEv -> ([Ev], Acquire (EffCb e TermEf))
+term TerminalSystem{..} king enqueueEv =
+    (initialEvents, runTerm)
+  where
+    initialEvents = [(initialBlew 80 24), initialHail]
+
+    runTerm :: Acquire (EffCb e TermEf)
+    runTerm = do
+      tim <- mkAcquire start stop
+      pure (io . handleEffect)
+
+    start :: IO (Async ())
+    start = async readBelt
+
+    stop :: Async () -> IO ()
+    stop rb = cancel rb
+
+    readBelt :: IO ()
+    readBelt = forever $ do
+      b <- atomically $ readTQueue tsReadQueue
+      let blip = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ b
+      atomically $ enqueueEv $ blip
+
+    handleEffect :: TermEf -> IO ()
+    handleEffect = \case
+      TermEfBlit _ blits -> atomically $ writeTQueue tsWriteQueue (VereBlitOutput blits)
       TermEfInit _ _ -> pure ()
       TermEfLogo path _ -> pure ()
       TermEfMass _ _ -> pure ()

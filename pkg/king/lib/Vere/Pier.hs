@@ -141,12 +141,12 @@ pier pierPath mPort (serf, log, ss) = do
 
     inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
-    vereTerminal <- liftAcquire $ initializeTerminal
+    terminalSystem <- liftAcquire $ initializeLocalTerminal
 
     let ship = who (Log.identity log)
 
     let (bootEvents, startDrivers) =
-          drivers pierPath inst ship mPort (writeTQueue computeQ) vereTerminal
+          drivers pierPath inst ship mPort (writeTQueue computeQ) terminalSystem
 
     io $ atomically $ for_ bootEvents (writeTQueue computeQ)
 
@@ -159,6 +159,7 @@ pier pierPath mPort (serf, log, ss) = do
     let ded = asum [ death "effect thread" tExe
                    , death "persist thread" tDisk
                    , death "compute thread" tCpu
+                   , death "terminal thread" (tsReaderThread terminalSystem)
                    ]
 
     atomically ded >>= \case
@@ -185,15 +186,15 @@ data Drivers e = Drivers
 
 drivers :: HasLogFunc e
         => FilePath -> KingId -> Ship -> Maybe Port -> (Ev -> STM ())
-        -> VereTerminal
+        -> TerminalSystem
         -> ([Ev], RAcquire e (Drivers e))
-drivers pierPath inst who mPort plan vereTerm =
+drivers pierPath inst who mPort plan termSys =
     (initialEvents, runDrivers)
   where
     (behnBorn, runBehn) = behn inst plan
     (amesBorn, runAmes) = ames inst who mPort plan
     (httpBorn, runHttp) = serv pierPath inst plan
-    (termBorn, runTerm) = term vereTerm inst plan
+    (termBorn, runTerm) = term termSys inst plan
     initialEvents       = mconcat [behnBorn, amesBorn, httpBorn, termBorn]
     runDrivers          = do
         dNewt       <- liftAcquire $ runAmes
