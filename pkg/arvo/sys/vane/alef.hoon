@@ -2179,6 +2179,7 @@
     ::
     |-  ^+  packet-pump
     ?~  sent  packet-pump
+    ~&  %sent^[message-num fragment-num]:i.sent
     =.  packet-pump  (give %send i.sent)
     $(sent t.sent)
   ::  +on-hear: handle ack on a live packet
@@ -2351,7 +2352,6 @@
       ~&  %skipped^skipped
       %_  metrics
         skipped   0
-        max-live  (max 1 (div max-live 2))
       ==
     ::
     %_  metrics
@@ -2450,7 +2450,7 @@
         message-still
       ::  ack all other packets
       ::
-      ::~&  %send-ack^seq^fragment-num
+      ~&  %send-ack^seq^fragment-num
       (give %send seq %& fragment-num)
     ::  last-heard<seq<10+last-heard; this is a packet in a live message
     ::
@@ -2489,7 +2489,7 @@
     ::  ack any packet other than the last one, and continue either way
     ::
     =?  message-still  !is-last-fragment
-      ::~&  %send-ack^seq^fragment-num
+      ~&  %send-ack^seq^fragment-num
       (give %send seq %& fragment-num)
     ::  enqueue all completed messages starting at +(last-heard.state)
     ::
