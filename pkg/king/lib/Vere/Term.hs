@@ -125,6 +125,7 @@ initializeTerminal = mkAcquire start stop
               runTermOutput t $ termText "\r"
               runMaybeTermOutput t vtClearToBegin
               runTermOutput t $ termText p
+              runTermOutput t $ termText "\r\n"
               newS <- termRefreshLine t s
               loop newS
 
@@ -293,7 +294,9 @@ term VereTerminal{..} king enqueueEv =
                 loop rd
               else if w == 3 then do
                 -- ETX (^C)
-                putStrLn "{ctrl-c}"
+                atomically $ do
+                  writeTQueue vtWriteQueue $ VerePrintOutput "interrupt"
+                  enqueueEv $ EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ Ctl $ Cord "c"
                 loop rd
               else if w == 4 then do
                 -- EOT (^D)
