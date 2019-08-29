@@ -29,8 +29,6 @@ data TermDrv = TermDrv
 data VereOutput = VereBlitOutput [Blit]
                 | VerePrintOutput String
 
-
-
 data VereTerminal = VereTerminal
   { vtWidth  :: Word
   , vtHeight :: Word
@@ -45,7 +43,7 @@ data LineState = LineState String Int
 -- A list of terminal flags that we disable
 disabledFlags = [
   -- lflag
-  EnableEcho, EchoLF, ProcessInput, ExtendedFunctions,
+  StartStopOutput, KeyboardInterrupts, EnableEcho, EchoLF, ProcessInput, ExtendedFunctions,
   -- iflag
   MapCRtoLF, CheckParity, StripHighBit,
   -- cflag, todo: Terminal library missing CSIZE?
@@ -208,8 +206,8 @@ term VereTerminal{..} king enqueueEv =
       -- Create a new configuration where we put the terminal in raw mode and
       -- disable a bunch of preprocessing.
       let newTermSettings =
-            flip withTime     1 .
-            flip withMinInput 0 $
+            flip withTime     0 .
+            flip withMinInput 1 $
             foldl' withoutMode tdPreviousConfiguration disabledFlags
       setTerminalAttributes stdInput newTermSettings Immediately
 
@@ -243,15 +241,16 @@ term VereTerminal{..} king enqueueEv =
         loop rd@ReadData{..} = do
           -- The problem with using fdRead raw is that it will text encode things
           -- like \ESC instead of 27. That makes it broken for our purposes.
+          --
           t <- try (fdReadBuf stdInput rBuf 1)
           case t of
-            Left (e :: IOException) ->
+            Left (e :: IOException) -> do
               -- Ignore EAGAINs when doing reads
               loop rd
             Right 0 -> loop rd
             Right _ -> do
               w   <- peek rBuf
---              print ("{" ++ (show w) ++ "}")
+              -- print ("{" ++ (show w) ++ "}")
               let c = w2c w
               if rEscape then
                 if rBracket then do
@@ -260,46 +259,54 @@ term VereTerminal{..} king enqueueEv =
                     'B' -> sendBelt $ Aro D
                     'C' -> sendBelt $ Aro R
                     'D' -> sendBelt $ Aro L
-                    _ -> pure ()
+                    _   -> bell
                   loop rd { rEscape = False, rBracket = False}
-                else
-                  if isAsciiLower c then do
-                    sendBelt $ Met $ Cord $ pack [c]
-                    loop rd { rEscape = False }
-                  else if c == '.' then do
-                    pure()
-                  -- a bunch of other cases
-                  else if c == '[' || c == '0' then do
-                    loop rd { rBracket = True }
-                  else do
-                    bell
-                    loop rd { rEscape = False }
+                else if isAsciiLower c then do
+                  sendBelt $ Met $ Cord $ pack [c]
+                  loop rd { rEscape = False }
+                else if c == '.' then do
+                  sendBelt $ Met $ Cord "dot"
+                  loop rd { rEscape = False }
+                else if w == 8 || w == 127 then do
+                  sendBelt $ Met $ Cord "bac"
+                  loop rd { rEscape = False }
+                else if c == '[' || c == '0' then do
+                  loop rd { rBracket = True }
+                else do
+                  bell
+                  loop rd { rEscape = False }
               -- if not escape
               else if False then
                 -- TODO: Put the unicode accumulation logic here.
-                pure()
-              else if isPrint c then do
+                loop rd
+              else if w >= 32 && w < 127 then do
                 sendBelt $ Txt $ Tour $ [c]
-                pure()
+                loop rd
               else if w == 0 then do
                 bell
-                pure()
+                loop rd
               else if w == 8 || w == 127 then do
                 sendBelt $ Bac ()
                 loop rd
               else if w == 13 then do
                 sendBelt $ Ret ()
                 loop rd
+              else if w == 3 then do
+                -- ETX (^C)
+                putStrLn "{ctrl-c}"
+                loop rd
+              else if w == 4 then do
+                -- EOT (^D)
+                putStrLn "{ctrl-d}"
+                loop rd
               else if w <= 26 then do
                 sendBelt $ Ctl $ Cord $ pack [w2c (w + 97 - 1)]
                 loop rd
               else if w == 27 then do
                 loop rd { rEscape = True }
-              else
+              else do
                 -- start the utf8 accumulation buffer
-                pure()
-
-              loop rd
+                loop rd
 
         sendBelt :: Belt -> IO ()
         sendBelt b = do
