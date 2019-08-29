@@ -2197,7 +2197,7 @@
     =-  ::  if no sent packet matches the ack, don't apply mutations or effects
         ::
         ?.  found.-
-          ~>  %slog.0^leaf/"ames: hear: no-op"
+          ~>  %slog.0^leaf/"ames: hear: no-op {(scow %ud message-num)} {(scow %ud fragment-num)}"
           packet-pump
         ~&  %ames-hear-ack^message-num^fragment-num
         ::
