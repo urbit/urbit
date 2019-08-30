@@ -86,6 +86,7 @@ dependencies:
   - wai-conduit
   - warp
   - warp-tls
+  - websockets
 
 default-extensions:
   - ApplicativeDo

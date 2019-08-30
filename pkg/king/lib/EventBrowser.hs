@@ -28,14 +28,7 @@ data Event = Event
     }
   deriving Show
 
-data Input
-    = Next
-    | Prev
-    | Quit
-    | Trim
-    | Effs
-    | Init
-    | Last
+data Input = Next | Prev | Quit | Trim | Effs | Init | Last
 
 --------------------------------------------------------------------------------
 

@@ -149,19 +149,6 @@ runApp inner = do
 
 --------------------------------------------------------------------------------
 
-example :: IO ()
-example = runApp sayHello
-
-sayHello :: RIO App ()
-sayHello = do
-    name <- view appName
-    logDebug $ "Hello, " <> name
-    logInfo  $ "Hello, " <> name
-    logWarn  $ "Hello, " <> name
-    logError $ "Hello, " <> name
-
---------------------------------------------------------------------------------
-
 zod :: Ship
 zod = 0
 
