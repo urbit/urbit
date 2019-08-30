@@ -12,9 +12,7 @@ export class ChatScreen extends Component {
     super(props);
 
     this.state = {
-      station: props.match.params.ship + "/" + props.match.params.station,
-      circle: props.match.params.station,
-      host: props.match.params.ship,
+      station: '/' + props.match.params.station,
       numPeople: 0,
       numPages: 1,
       scrollLocked: false,
@@ -25,15 +23,15 @@ export class ChatScreen extends Component {
     this.hasAskedForMessages = false;
     this.onScroll = this.onScroll.bind(this);
 
-    this.updateReadInterval = setInterval(
+    /*this.updateReadInterval = setInterval(
       this.updateReadNumber.bind(this),
       1000
-    );
+    );*/
   }
 
   componentDidMount() {
     this.updateNumPeople();
-    this.updateReadNumber();
+    //this.updateReadNumber();
   }
 
   componentWillUnmount() {
@@ -46,18 +44,14 @@ export class ChatScreen extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
 
-    if (prevProps.match.params.ship !== props.match.params.ship ||
-              prevProps.match.params.station !== props.match.params.station
-    ) {
+    if (prevProps.match.params.station !== props.match.params.station) {
       console.log('switched circle');
       this.hasAskedForMessages = false;
 
       clearInterval(this.updateReadInterval);
 
       this.setState({
-        station: props.match.params.ship + "/" + props.match.params.station,
-        circle: props.match.params.station,
-        host: props.match.params.ship,
+        station: "/" + props.match.params.station,
         numPeople: 0,
         scrollLocked: false
       }, () => {
@@ -69,7 +63,7 @@ export class ChatScreen extends Component {
         );
         this.updateReadNumber();
       });
-    } else if (!(state.station in props.configs)) {
+    } else if (!(state.station in props.inbox)) {
       props.history.push('/~chat');
     }
   }
@@ -77,6 +71,8 @@ export class ChatScreen extends Component {
   updateReadNumber() {
     const { props, state } = this;
 
+    // TODO
+    return;
     let internalCircle = 'hall-internal-' + state.circle;
     let internalStation = `~${window.ship}/${internalCircle}`;
 
@@ -84,7 +80,7 @@ export class ChatScreen extends Component {
     let regularConfig = props.configs[state.station] || false;
 
     let config = internalConfig || regularConfig;
-    let messages = props.messages;
+    let messages = props.envelopes;
 
     let lastMsgNum = (messages.length > 0) ?
       ( messages[messages.length - 1].num + 1 ) : 0;
@@ -171,6 +167,7 @@ export class ChatScreen extends Component {
   }
 
   updateNumPeople() {
+    return;
     let conf = this.props.configs[this.state.station] || {};
     let sis = _.get(conf, 'con.sis');
     let numPeople = !!sis ? sis.length : 0;
@@ -182,23 +179,11 @@ export class ChatScreen extends Component {
   render() {
     const { props, state } = this;
 
-    let config = props.configs[state.station] || {};
-    let messages = props.messages.slice(0);
+    console.log(props.mailbox);
+    let messages = props.envelopes.slice(0);
     
-    // Pending messages get pinned to the bottom of the messages queue.
-    
-    let pendingInRoom = 
-    (this.pendingQueue.has(this.state.station)) 
-    ? this.pendingQueue.get(this.state.station) : [];
-
-    pendingInRoom.map(function(value) {
-      return value.pending = true;
-    })
-
-    messages = messages.concat(pendingInRoom);
-
     let lastMsgNum = (messages.length > 0) ?
-      messages[messages.length - 1].num : 0;
+      messages.length : 0;
 
     if (messages.length > 50 * state.numPages) {
       messages = messages
@@ -208,52 +193,26 @@ export class ChatScreen extends Component {
     let reversedMessages = messages.reverse();
     let chatMessages = reversedMessages.map((msg, i) => {
       // Render sigil if previous message is not by the same sender
-      let gamAut = ['gam', 'aut'];    
-
-      // Local messages don't have a 'gam' prop, so look for the top level if it doesn't exist.
-      let aut = msg.aut ? msg.aut : null;
-      
-      // No gamAut? Return top level author for the same sender check.
-      let renderSigil =
-        _.get(reversedMessages[i + 1], gamAut) !== _.get(msg, gamAut, aut);
-
-      // More padding top if previous message is not by the same sender
-      let paddingTop = renderSigil;
-      // More padding bot if next message is not by the same sender
-      let paddingBot =
-        _.get(reversedMessages[i - 1], gamAut) !== _.get(msg, gamAut, aut);
-
-      // Non-local ships don't have pending props.
-      if (!msg.pending) {
-        var pending = false;
-      }
-
-      // Non-local ships don't have pending props.
-      if (!pending) {
-        var pending = false;
-      }
+      let aut = ['author'];    
 
       return (
         <Message
-          key={msg.gam ? msg.gam.uid : msg.uid}
-          msg={msg.gam ? msg.gam : msg}
-          renderSigil={renderSigil}
-          paddingTop={paddingTop}
-          paddingBot={paddingBot} 
-          pending={!!pending}/>
+          key={Math.random()}
+          msg={msg}
+          renderSigil={true}
+          paddingTop={0}
+          paddingBot={0} />
       );
     });
-
-    let peers = props.peers[state.station] || [window.ship];
 
     return (
       <div key={state.station}
         className="h-100 w-100 overflow-hidden flex flex-column">
         <div className='pl3 pt2 bb'>
-          <h2>{state.circle}</h2>
+          <h2>{state.station}</h2>
           <ChatTabBar {...props}
             station={state.station}
-            numPeers={peers.length} />
+            numPeers={0} />
         </div>
         <div
           className="overflow-y-scroll pt3 pb2 flex flex-column-reverse"
@@ -266,8 +225,7 @@ export class ChatScreen extends Component {
           api={props.api}
           numMsgs={lastMsgNum}
           station={state.station}
-          circle={state.circle}
-          security={!!config ? config.con : {}}
+          security={'channel'}
           placeholder='Message...' />
       </div>
     )

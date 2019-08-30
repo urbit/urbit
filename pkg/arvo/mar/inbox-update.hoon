@@ -6,7 +6,7 @@
   ++  json
     =,  enjs:format
     ^-  ^json
-    %+  frond  %update
+    %+  frond  %inbox-update
     %-  pairs
     :~
       ::

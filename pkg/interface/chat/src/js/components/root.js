@@ -33,34 +33,24 @@ export class Root extends Component {
   render() {
     const { props, state } = this;
 
-    let configs = {};
-    let circles = Object.keys(state).filter((path) => {
-      return !!state[path] && path.split('/')[1] !== 'i';
-    });
-
-    let messages = {};
     let messagePreviews = {};
-    Object.keys(messages).forEach((stat) => {
-      let arr = messages[stat];
-      if (arr.length === 0) {
+    Object.keys(state.inbox).forEach((stat) => {
+      let envelopes = state.inbox[stat].envelopes;
+      if (envelopes.length === 0) {
         messagePreviews[stat] = false;
       } else {
-        messagePreviews[stat] = arr[arr.length - 1];
+        messagePreviews[stat] = envelopes[envelopes.length - 1];
       }
     });
 
     let unreads = {};
-    circles.forEach((cir) => {
-      unreads[cir] = false;
-    });
-
     let inviteConfig = false;
 
     const renderChannelSidebar = (props) => (
       <Sidebar
-        circles={circles}
+        inbox={state.inbox}
         messagePreviews={messagePreviews}
-        invites={invites}
+        invites={[]}
         unreads={unreads}
         api={api}
         inviteConfig={inviteConfig}
@@ -97,7 +87,7 @@ export class Root extends Component {
                 <NewScreen
                   setSpinner={this.setSpinner}
                   api={api}
-                  circles={circles}
+                  inbox={state.inbox}
                   {...props}
                 />
               </Skeleton>
@@ -110,28 +100,30 @@ export class Root extends Component {
                 sidebar={renderChannelSidebar(props)}>
                 <LandingScreen
                   api={api}
-                  configs={configs}
                   {...props}
                 />
               </Skeleton>
             );
            }} />
-         <Route exact path="/~chat/:ship/:station"
+         <Route exact path="/~chat/:station"
            render={ (props) => {
-             let station =
-               props.match.params.ship
-               + "/" +
-               props.match.params.station;
-             let messages = state.messages[station] || [];
+             let station = '/' + props.match.params.station;
+             let mailbox = state.inbox[station] || {
+               owner: '',
+               read: -1,
+               envelopes: []
+             };
              return (
                <Skeleton
                  sidebar={renderChannelSidebar(props) }>
                  <ChatScreen
                    api={api}
-                   configs={configs}
-                   messages={messages}
+                   inbox={state.inbox}
+                   owner={mailbox.owner}
+                   read={mailbox.read}
+                   envelopes={mailbox.envelopes}
                    pendingMessages={state.pendingMessages}
-                   peers={state.peers}
+                   groups={state.groups[station] || new Set([])}
                    subscription={subscription}
                    {...props}
                  />
@@ -161,8 +153,8 @@ export class Root extends Component {
                    {...props}
                    setSpinner={this.setSpinner}
                    api={api}
-                   peers={state.peers}
-                   circles={state.circles}
+                   groups={state.groups}
+                   inbox={state.inbox}
                  />
                </Skeleton>
              );

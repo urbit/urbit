@@ -1,10 +1,10 @@
 import _ from 'lodash';
 
 
-export class UpdateReducer {
+export class GroupUpdateReducer {
   reduce(json, state) {
     console.log('update', json);
-    let data = _.get(json, 'update', false);
+    let data = _.get(json, 'group-update', false);
     if (data) {
       this.add(data, state);
       this.remove(data, state);

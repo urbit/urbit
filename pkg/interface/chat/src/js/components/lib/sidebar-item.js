@@ -25,14 +25,14 @@ export class SidebarItem extends Component {
   }
 
   getTimeSinceNewestMessage() {
-    return !!this.props.wen ?
-      moment.unix(this.props.wen / 1000).from(moment.utc())
+    return !!this.props.when ?
+      moment.unix(this.props.when / 1000).from(moment.utc())
       : '';
   }
 
   onClick() {
     const { props } = this;
-    props.history.push('/~chat/' + props.cir);
+    props.history.push('/~chat' + props.box);
   }
 
   render() {

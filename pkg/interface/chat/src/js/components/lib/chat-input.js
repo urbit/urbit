@@ -297,10 +297,10 @@ export class ChatInput extends Component {
   render() {
     const { props, state } = this;
 
-    if (props.security && props.security.sec !== 'channel' &&
+    /*if (props.security && props.security.sec !== 'channel' &&
       !props.security.sis.includes(window.ship)) {
       return this.readOnlyRender();
-    }
+    }*/
 
     return (
       <div className="pa3 cf flex black bt b--black-30" style={{ flexGrow: 1 }}>

@@ -10,7 +10,7 @@
   ++  json
     =,  enjs:format
     ^-  ^json
-    %+  frond  %update
+    %+  frond  %group-update
     %-  pairs
     :~
       ::

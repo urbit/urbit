@@ -15,10 +15,10 @@ export class Sidebar extends Component {
       invites: []
     };
 
-    this.setInvitesToReadInterval = setInterval(
+    /*this.setInvitesToReadInterval = setInterval(
       this.setInvitesToRead.bind(this),
       1000
-    );
+    );*/
   }
 
   componentDidMount() {
@@ -82,70 +82,43 @@ export class Sidebar extends Component {
     this.props.history.push('/~chat/new');
   }
 
-  summarizeMessage(speech) {
-    const fallback = '...';
-    if (_.has(speech, 'lin')) {
-      return speech.lin.msg;
-    } else if (_.has(speech, 'url')) {
-      return speech.url;
-    } else if (_.has(speech, 'exp')) {
-      return '# ' + speech.exp.exp;
-    } else if (_.has(speech, 'ire')) {
-      return this.summarizeMessage(speech.ire.sep);
-    } else if (_.has(speech, 'app')) {
-      return this.summarizeMessage(speech.app.sep);
-    } else if (_.has(speech, 'fat')) {
-      const msg = this.summarizeMessage(speech.fat.sep);
-      if (msg !== '' && msg !== fallback) return msg;
-      return 'Attachment' +
-        (_.has(speech, 'fat.tac.name.nom')
-         ? ': ' + speech.fat.tac.name.nom
-         : '');
-    } else {
-      return fallback;
-    }
-  }
-
   render() {
     const { props, state } = this;
-    let station = props.match.params.ship + '/' + props.match.params.station;
+    let station = props.match.params.ship + props.match.params.station;
 
-    console.log(props.circles);
-    let sidebarItems = props.circles
-      .filter((cir) => {
-        return !cir.includes('hall-internal-');
-      })
-      .map((cir) => {
-        let msg = props.messagePreviews[cir];
-        let content = _.has(msg, 'gam.sep')
-          ? this.summarizeMessage(msg.gam.sep)
+    let sidebarItems = Object.keys(props.inbox)
+      .map((box) => {
+        console.log(box);
+        let msg = props.messagePreviews[box];
+        let content = _.has(msg, 'message')
+          ? msg.message
           : 'No messages yet';
-        let aut = !!msg ? msg.gam.aut : '';
-        let wen = !!msg ? msg.gam.wen : 0;
+        let author = !!msg ? msg.author : '';
+        let when = !!msg ? msg.when : 0;
         return {
           msg,
-          wen,
-          aut,
+          when,
+          author,
           content,
-          cir,
-          title: cir.split('/')[1],
-          selected: station === cir
+          box,
+          title: box.split('/')[1],
+          selected: station === box
         };
       })
       .sort((a, b) => {
         return b.wen - a.wen;
       })
       .map((obj) => {
-        let unread = props.unreads[obj.cir];
+        let unread = props.unreads[obj.box];
 
         return (
           <SidebarItem
-            key={obj.cir + '/' + obj.wen}
+            key={obj.box + '/' + obj.when}
             title={obj.title}
             description={obj.content}
-            cir={obj.cir}
-            wen={obj.wen}
-            ship={obj.aut}
+            box={obj.box}
+            when={obj.when}
+            ship={obj.author}
             selected={obj.selected}
             unread={unread}
             history={props.history}
