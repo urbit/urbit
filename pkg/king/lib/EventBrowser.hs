@@ -58,13 +58,13 @@ run log = do
             Init -> loop cyc las 1
             Last -> loop cyc las las
             Quit -> pure ()
-            Trim -> trim cyc las cur
+            Trim -> trim cyc las cur mFx
             Effs -> showEffects mFx >> input cyc las cur mFx
 
-    trim cyc las cur = do
+    trim cyc las cur mFx = do
         deleteFrom log las cur >>= \case
             True  -> loop cyc (pred cur) (pred cur)
-            False -> loop cyc las cur
+            False -> input cyc las cur mFx
 
     loop cyc las 0                = loop cyc las 1
     loop cyc las cur | cur > las  = loop cyc las las
@@ -93,22 +93,28 @@ deleteFrom log las cur = do
     pure sure
   where
     abortDelete = do
-        putStrLn "Aborted delete -- no events pruned"
+        putStrLn "\n\n    [ABORTED]\n"
+        putStrLn "    Aborted delete, no events pruned.\n"
 
-    doDelete = Log.trimEvents log cur
+    doDelete = do
+        Log.trimEvents log cur
+        putStrLn "\n\n    [DELETED]\n"
+        putStrLn "    It's gone forever!\n"
 
     question =
       if las == cur
-      then mconcat [ "Are you sure you want to the last event (#"
+      then mconcat [ "    This will permanently delete the last event (#"
                    , tshow las
-                   , ")?" ]
-      else mconcat [ "Are you sure you want to all events (#"
+                   , ")\n" ]
+      else mconcat [ "    This will permanently delete all events in (#"
                    , tshow cur
                    , " - #"
                    , tshow las
-                   , ")?" ]
+                   , ")\n" ]
 
     areYouSure = do
+        putStrLn "\n\n    ARE YOU SURE????"
+        putStrLn ""
         putStrLn question
         putStr "(y|n) "
         hFlush stdout
@@ -142,20 +148,20 @@ getInput las cur = do
        , "    q    Quit"
        , "    x    Delete (only the last event)"
        , "    ?    Show this help"
-       , ""
        ]
 
 showEffectsTeaser :: Maybe FX -> RIO e ()
-showEffectsTeaser Nothing   = putStrLn "No collected effects\n"
-showEffectsTeaser (Just []) = putStrLn "No effects for this event\n"
+showEffectsTeaser Nothing   = putStrLn "    [No collected effects]\n"
+showEffectsTeaser (Just []) = putStrLn "    [No effects for this event]\n"
 showEffectsTeaser (Just fx) = putStrLn $ mconcat
-    [ tshow (length fx)
-    , " collected effects. Press 'f' to view.\n"
+    [ "    ["
+    , tshow (length fx)
+    , " collected effects. Press 'f' to view]\n"
     ]
 
 showEffects :: Maybe FX -> RIO e ()
-showEffects Nothing   = putStrLn "No collected effects\n"
-showEffects (Just []) = putStrLn "No effects for this event\n"
+showEffects Nothing   = putStrLn "    [No collected effects]\n"
+showEffects (Just []) = putStrLn "    [No effects for this event]\n"
 showEffects (Just fx) = do
     putStrLn "\n"
     putStrLn "    [EFFECTS]"
@@ -176,7 +182,6 @@ showEvent ev = do
     putStrLn "    [EVENT]"
     putStrLn ""
     putStrLn $ unlines $ fmap ("    " <>) $ lines $ pack $ ppShow (ova ev)
-    putStrLn ""
 
 peekEffect :: HasLogFunc e => EventLog -> Word64 -> RIO e (Maybe FX)
 peekEffect log eId = runMaybeT $ do

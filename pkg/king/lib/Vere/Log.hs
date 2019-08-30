@@ -253,9 +253,14 @@ writeEffectsRow log k v = do
 
 trimEvents :: HasLogFunc e => EventLog -> Word64 -> RIO e ()
 trimEvents log start = do
-    rwith (writeTxn $ env log) $ \txn -> do
-        logError "(trimEvents): Not implemented."
-        pure ()
+    last <- lastEv log
+    rwith (writeTxn $ env log) $ \txn ->
+        for_ [start..last] $ \eId ->
+        withWordPtr eId $ \pKey -> do
+            let key = MDB_val 8 (castPtr pKey)
+            found <- io $ mdb_del txn (eventsTbl log) key Nothing
+            unless found $
+                throwIO (MissingEvent eId)
     writeIORef (numEvents log) (pred start)
 
 streamEvents :: HasLogFunc e

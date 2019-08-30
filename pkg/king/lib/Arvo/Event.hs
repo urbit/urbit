@@ -128,6 +128,7 @@ data HttpServerEv
     | HttpServerEvRequestLocal  (ServId, UD, UD, ()) HttpServerReq
     | HttpServerEvLive          (ServId, ())         Port (Maybe Port)
     | HttpServerEvBorn          (KingId, ())         ()
+    | HttpServerEvCrud          Path                 Cord Tang
   deriving (Eq, Ord, Show)
 
 deriveNoun ''Address
@@ -152,8 +153,9 @@ deriveNoun ''AmesEv
 -- Arvo Events -----------------------------------------------------------------
 
 data ArvoEv
-    = ArvoEvWhom () Ship
-    | ArvoEvWack () Word512
+    = ArvoEvWhom ()   Ship
+    | ArvoEvWack ()   Word512
+    | ArvoEvCrud Path Cord Tang
   deriving (Eq, Ord, Show)
 
 deriveNoun ''ArvoEv
@@ -162,8 +164,8 @@ deriveNoun ''ArvoEv
 -- Boat Events -----------------------------------------------------------------
 
 data BoatEv
-    = BoatEvBoat () ()
-    | BoatEvVoid Void
+    = BoatEvBoat ()   ()
+    | BoatEvCrud Path Cord Tang
   deriving (Eq, Ord, Show)
 
 deriveNoun ''BoatEv
@@ -172,8 +174,9 @@ deriveNoun ''BoatEv
 -- Timer Events ----------------------------------------------------------------
 
 data BehnEv
-    = BehnEvWake ()        ()
+    = BehnEvWake ()           ()
     | BehnEvBorn (KingId, ()) ()
+    | BehnEvCrud Path         Cord Tang
   deriving (Eq, Ord, Show)
 
 deriveNoun ''BehnEv
@@ -183,7 +186,7 @@ deriveNoun ''BehnEv
 
 data NewtEv
     = NewtEvBarn (Atom, ()) ()
-    | NewtEvBorn Void
+    | NewtEvCrud Path       Cord Tang
   deriving (Eq, Ord, Show)
 
 deriveNoun ''NewtEv
@@ -224,7 +227,7 @@ data TermEv
     | TermEvBlew (Atom, ()) Word Word
     | TermEvBoot (Atom, ()) LegacyBootEvent
     | TermEvHail (Atom, ()) ()
-    | TermEvBorn Void
+    | TermEvCrud Path       Cord Tang
   deriving (Eq, Ord, Show)
 
 deriveNoun ''LegacyBootEvent
