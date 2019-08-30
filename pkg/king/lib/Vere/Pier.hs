@@ -194,7 +194,7 @@ drivers pierPath inst who mPort plan termSys =
     (behnBorn, runBehn) = behn inst plan
     (amesBorn, runAmes) = ames inst who mPort plan
     (httpBorn, runHttp) = serv pierPath inst plan
-    (termBorn, runTerm) = term termSys inst plan
+    (termBorn, runTerm) = term termSys pierPath inst plan
     initialEvents       = mconcat [behnBorn, amesBorn, httpBorn, termBorn]
     runDrivers          = do
         dNewt       <- liftAcquire $ runAmes

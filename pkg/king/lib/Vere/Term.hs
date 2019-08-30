@@ -7,6 +7,7 @@ import Arvo hiding (Term)
 import Vere.Pier.Types
 
 import Data.Char
+import Data.List ((!!))
 import Foreign.Marshal.Alloc
 import Foreign.Ptr
 import Foreign.Storable
@@ -14,6 +15,7 @@ import System.Posix.IO
 import System.Posix.Terminal
 
 import System.Console.Terminfo.Base
+import System.Directory   (createDirectoryIfMissing)
 
 import Data.ByteString.Internal
 
@@ -311,8 +313,8 @@ initializeLocalTerminal = do
 
 --------------------------------------------------------------------------------
 
-term :: TerminalSystem -> KingId -> QueueEv -> ([Ev], Acquire (EffCb e TermEf))
-term TerminalSystem{..} king enqueueEv =
+term :: TerminalSystem -> FilePath -> KingId -> QueueEv -> ([Ev], Acquire (EffCb e TermEf))
+term TerminalSystem{..} pierPath king enqueueEv =
     (initialEvents, runTerm)
   where
     initialEvents = [(initialBlew 80 24), initialHail]
@@ -359,6 +361,31 @@ term TerminalSystem{..} king enqueueEv =
       TermEfMass _ _ -> pure ()
 
     handleFsWrite :: Blit -> IO ()
-    handleFsWrite (Sag path noun) = pure ()
-    handleFsWrite (Sav path atom) = pure ()
+    handleFsWrite (Sag path noun) = performPut path (jamBS noun)
+    handleFsWrite (Sav path atom) = pure () --performPut path atom
     handleFsWrite _ = pure ()
+
+    performPut :: Path -> ByteString -> IO ()
+    performPut path bs = do
+      -- Get the types right
+      let elements = map (unpack . unKnot) (unPath path)
+      let elementsLen = length elements
+
+      -- Make sure that the
+      let basePutDir = pierPath </> ".urb" </> "put"
+      let putDir = foldl' (</>) basePutDir (take (elementsLen - 2) elements)
+      createDirectoryIfMissing True putDir
+
+      let putOutFile = case elementsLen of
+            -- We know elementsLen is one, but we still can't use `head`.
+            1 -> case elements of
+              (x:xs) -> putDir </> x
+              _ -> putDir
+            --
+            _ -> putDir </>
+              (elements !! (elementsLen - 2)) <.> (elements !! (elementsLen - 1))
+
+--      print $ "Writing to " ++ putOutFile
+      writeFile putOutFile bs
+
+      pure ()
