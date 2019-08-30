@@ -70,6 +70,14 @@ runMaybeTermOutput t getter = case (getter t) of
   Nothing -> pure ()
   Just x -> runTermOutput t x
 
+-- Because of legacy reasons, some file operations are in the terminal
+-- driver. These should be filtered out and handled locally instead of in any
+-- abstractly connected terminal.
+isTerminalBlit :: Blit -> Bool
+isTerminalBlit (Sav _ _) = False
+isTerminalBlit (Sag _ _) = False
+isTerminalBlit _         = True
+
 --------------------------------------------------------------------------------
 
 -- Initializes the generalized input/output parts of the terminal.
@@ -288,13 +296,6 @@ initializeLocalTerminal = do
                   writeTQueue wq $ VerePrintOutput "interrupt"
                   writeTQueue rq $ Ctl $ Cord "c"
                 loop rd
-              else if w == 4 then do
-                -- EOT (^D)
-                atomically $ writeTQueue wq $ VereBlankLine
-                -- On ctrl-d, we end reading input. Returning instead of
-                -- looping causes this Async() to return, which is detected by
-                -- the main thread.
-                pure ()
               else if w <= 26 then do
                 sendBelt $ Ctl $ Cord $ pack [w2c (w + 97 - 1)]
                 loop rd
@@ -335,7 +336,29 @@ term TerminalSystem{..} king enqueueEv =
 
     handleEffect :: TermEf -> IO ()
     handleEffect = \case
-      TermEfBlit _ blits -> atomically $ writeTQueue tsWriteQueue (VereBlitOutput blits)
+      TermEfBlit _ blits -> do
+        let (termBlits, fsWrites) = partition isTerminalBlit blits
+        atomically $ writeTQueue tsWriteQueue (VereBlitOutput termBlits)
+        for_ fsWrites handleFsWrite
       TermEfInit _ _ -> pure ()
-      TermEfLogo path _ -> pure ()
+      TermEfLogo path _ -> do
+        -- %logo is the shutdown path. A previous iteration just had the reader
+        -- thread exit when it saw a ^D, which was wrong because it didn't emit
+        -- a ^D to your Urbit, which does things and then sends us a %logo.
+        --
+        -- But this isn't optimal either. Right now, Pier spins forever,
+        -- waiting for some piece to exit or die, and I added the terminal
+        -- reading Async for expedience. But the terminal system ending should
+        -- additionally trigger taking a snapshot, along with any other clean
+        -- shutdown work.
+        --
+        -- If we have a separate terminal program which connects to the daemon,
+        -- this shouldn't be shutdown, but should be a sort of disconnect,
+        -- meaning it would be a VereOutput?
+        cancel tsReaderThread
       TermEfMass _ _ -> pure ()
+
+    handleFsWrite :: Blit -> IO ()
+    handleFsWrite (Sag path noun) = pure ()
+    handleFsWrite (Sav path atom) = pure ()
+    handleFsWrite _ = pure ()
