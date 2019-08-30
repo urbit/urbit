@@ -18,6 +18,10 @@ nix:
 ghc-options:
   king: -fobject-code
 
+flags:
+  king:
+    Release: false
+
 # build:
 #   executable-profiling: true
 #   executable-stripping: false

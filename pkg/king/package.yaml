@@ -2,6 +2,12 @@ name: king
 version: 0.1.0
 license: AGPL-3.0-only
 
+flags:
+  Release:
+    description: "Produce statically-linked executables"
+    default: false
+    manual: true
+
 library:
   source-dirs: lib
   ghc-options:
@@ -138,9 +144,16 @@ executables:
     main: Main.hs
     source-dirs: app
     dependencies: ["king"]
+    when:
+      - condition: flag(Release)
+        then:
+          cc-options: -static
+          ld-options: -static -pthread
+        else: {}
     ghc-options:
       - -threaded
       - -rtsopts
+      - -static
+      - -O2
       - "-with-rtsopts=-N"
       - -fwarn-incomplete-patterns
-      - -O0
