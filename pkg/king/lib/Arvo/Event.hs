@@ -223,10 +223,10 @@ data Belt
   deriving (Eq, Ord, Show)
 
 data TermEv
-    = TermEvBelt (Atom, ()) Belt
-    | TermEvBlew (Atom, ()) Word Word
-    | TermEvBoot (Atom, ()) LegacyBootEvent
-    | TermEvHail (Atom, ()) ()
+    = TermEvBelt (UD, ()) Belt
+    | TermEvBlew (UD, ()) Word Word
+    | TermEvBoot (UD, ()) LegacyBootEvent
+    | TermEvHail (UD, ()) ()
     | TermEvCrud Path       Cord Tang
   deriving (Eq, Ord, Show)
 

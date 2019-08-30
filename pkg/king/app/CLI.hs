@@ -120,10 +120,10 @@ new = do
                      $ metavar "SHIP"
                     <> help "Ship address"
 
-    nPierPath <- argument auto
+    nPierPath <- optional
+               $ strArgument
                      $ metavar "PIER"
                     <> help "Path to pier"
-                    <> value Nothing
 
     nPillPath <- strOption
                      $ short 'B'
