@@ -37,6 +37,42 @@ data Server i o a = Server
 
 --------------------------------------------------------------------------------
 
+wsConn :: (FromNoun i, ToNoun o, Show o, HasLogFunc e)
+       => Utf8Builder
+       -> TBMChan i -> TBMChan o
+       -> WS.Connection
+       -> RIO e ()
+wsConn pre inp out wsc = do
+    env <- ask
+    writer <- io $ async $ runRIO env $ forever $ do
+        logWarn (pre <> "(wsConn) Waiting for data.")
+        byt <- io $ toStrict <$> WS.receiveData wsc
+        logWarn (pre <> "Got data")
+        dat <- cueBSExn byt >>= fromNounExn
+        logWarn (pre <> "(wsConn) Decoded data, writing to chan")
+        atomically $ writeTBMChan inp dat
+
+    reader <- io $ async $ runRIO env $ forever $ do
+        logWarn (pre <> "Waiting for data from chan")
+        atomically (readTBMChan out) >>= \case
+            Nothing  -> do
+                logWarn (pre <> "(wsConn) Connection closed")
+                error "dead-conn"
+            Just msg -> do
+                logWarn (pre <> "(wsConn) Got message! " <> displayShow msg)
+                io $ WS.sendBinaryData wsc $ fromStrict $ jamBS $ toNoun msg
+
+    res <- atomically (waitCatchSTM writer <|> waitCatchSTM reader)
+
+    logWarn $ displayShow (res :: Either SomeException ())
+
+    atomically (closeTBMChan inp >> closeTBMChan out)
+
+    cancel writer
+    cancel reader
+
+--------------------------------------------------------------------------------
+
 wsClient :: ∀i o e. (Show o, Show i, ToNoun o, FromNoun i, HasLogFunc e)
          => W.Port -> RIO e (Client i o)
 wsClient por = do
@@ -49,102 +85,34 @@ wsClient por = do
 
     tid <- io $ async
               $ WS.runClient "127.0.0.1" por "/"
-              $ runRIO env . runClient inp out
+              $ runRIO env . wsConn "(wsClie) " inp out
 
     pure $ Client con tid
 
-runClient :: (Show o, Show i, ToNoun o, FromNoun i, HasLogFunc e)
-          => TBMChan i -> TBMChan o
-          -> WS.Connection
-          -> RIO e ()
-runClient inp out wsc = do
-    logDebug "(wsClie) Connecting"
-
-    env <- ask
-
-    reader <- io $ async $ runRIO env $ forever $ do
-        logDebug "(wsClie) Waiting for data"
-        byt <- io $ WS.receiveData wsc
-        logDebug "(wsClie) Got data!"
-        msg <- cueBSExn (toStrict byt) >>= fromNounExn
-        logDebug "(wsClie) Decoded data"
-        atomically $ writeTBMChan inp msg
-
-    writer <- io $ async $ runRIO env $ forever $ do
-        atomically (readTBMChan out) >>= \case
-            Nothing  -> error "done"
-            Just msg -> do
-                logDebug ("(wsClie) Got msg")
-                non <- pure $ toNoun msg
-                io $ WS.sendBinaryData wsc $ fromStrict $ jamBS $ toNoun msg
-
-    res <- atomically (waitCatchSTM writer <|> waitCatchSTM reader)
-
-    logDebug $ displayShow (res :: Either SomeException ())
-
-    atomically $ do
-        closeTBMChan inp
-        closeTBMChan out
-
-    cancel writer
-    cancel reader
+--------------------------------------------------------------------------------
 
 wsServer :: ∀i o e. (Show o, Show i, ToNoun o, FromNoun i, HasLogFunc e)
          => RIO e (Server i o W.Port)
 wsServer = do
     con <- io $ newTBMChanIO 5
-    tid <- async (runServ con)
+
+    let app pen = do
+            logError "(wsServer) Got connection! Accepting"
+            wsc <- io $ WS.acceptRequest pen
+            inp <- io $ newTBMChanIO 5
+            out <- io $ newTBMChanIO 5
+            atomically $ writeTBMChan con (mkConn inp out)
+            wsConn "(wsServ) " inp out wsc
+
+    tid <- async $ do
+        env <- ask
+        logError "(wsServer) Starting server"
+        io $ WS.runServer "127.0.0.1" 9999 (runRIO env . app)
+        logError "(wsServer) Server died"
+        atomically $ closeTBMChan con
+
     pure $ Server (readTBMChan con) tid 9999
 
-runServ :: ∀i o e. (Show o, Show i, ToNoun o, FromNoun i, HasLogFunc e)
-        => TBMChan (Conn i o)
-        -> RIO e ()
-runServ con = do
-    env <- ask
-    logError "(wsServer) Starting server"
-    io $ WS.runServer "127.0.0.1" 9999 (runRIO env . app)
-    logError "(wsServer) Server died"
-    atomically $ closeTBMChan con
-  where
-    app :: WS.PendingConnection -> RIO e ()
-    app pen = do
-        logError "(wsServer) Got connection! Accepting"
-        wsc <- io $ WS.acceptRequest pen
-        inp <- io $ newTBMChanIO 5
-        out <- io $ newTBMChanIO 5
-        logError "(wsServ) Writing connection to chan"
-        atomically $ writeTBMChan con (mkConn inp out)
-
-        env <- ask
-
-        writer <- io $ async $ runRIO env $ forever $ do
-            logError "(wsServ) Waiting for data."
-            byt <- io $ toStrict <$> WS.receiveData wsc
-            logError "(wsServ) Got data"
-            dat <- cueBSExn byt >>= fromNounExn
-            logError "(wsServ) Decoded data, writing to chan"
-            atomically $ writeTBMChan inp dat
-
-        reader <- io $ async $ runRIO env $ forever $ do
-            logError "(wsServ) Waiting for data from chan"
-            atomically (readTBMChan out) >>= \case
-                Nothing  -> do
-                    logDebug "(wsServ) Connection closed"
-                    error "dead-conn"
-                Just msg -> do
-                    logError ("(wsServ) Got message! " <> displayShow msg)
-                    io $ WS.sendBinaryData wsc $ fromStrict $ jamBS $ toNoun msg
-
-        res <- atomically $ (waitCatchSTM writer <|> waitCatchSTM reader)
-
-        logDebug $ displayShow (res :: Either SomeException ())
-
-        atomically (closeTBMChan inp >> closeTBMChan out)
-
-        logError "(wsServ) Connection closed. Error?"
-
-        cancel writer
-        cancel reader
 
 -- Hacky Integration Test ------------------------------------------------------
 
@@ -173,6 +141,7 @@ testIt = do
             atomically (cSend cConn example)
             logTrace "(testIt) Waiting for response"
             res <- atomically (cRecv sConn)
+            print ("clientSend", res, example)
             unless (res == Just example) $ do
                 error "Bad data"
             logInfo "(testIt) Success"
@@ -182,6 +151,7 @@ testIt = do
             atomically (cSend sConn example)
             logTrace "(testIt) Waiting for response"
             res <- atomically (cRecv cConn)
+            print ("serverSend", res, example)
             unless (res == Just example) $ do
                 error "Bad data"
             logInfo "(testIt) Success"
