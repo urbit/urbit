@@ -45,7 +45,7 @@ The canonical source tree is located in the `master` branch at
 `master` when commencing new work; similarly, when we pull in your
 contribution, we'll do so by merging it to `master`.
 
-Since we use GitHub, it's helpful, though not required, to contribute via a
+Since we use GitHub, it's helpful (though not required) to contribute via a
 GitHub pull request.  You can also post patches to the [mailing list][list],
 email them to maintainers, or request a maintainer pull from your tree directly
 -- but note that some maintainers will be more receptive to these methods than
