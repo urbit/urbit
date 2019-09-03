@@ -1,17 +1,9 @@
-{-
-    TODO Effects storage logic is messy.
--}
-
-module Vere.Log ( EventLog, identity, nextEv, lastEv
-                , new, existing
-                , streamEvents, appendEvents, trimEvents
-                , streamEffectsRows, writeEffectsRow
-                ) where
+module Vere.LMDB where
 
 import UrbitPrelude hiding (init)
 
 import Data.RAcquire
-import Data.Conduit
+-- import Data.Conduit
 import Database.LMDB.Raw
 import Foreign.Marshal.Alloc
 import Foreign.Ptr
@@ -20,7 +12,7 @@ import Vere.Pier.Types
 import Foreign.Storable (peek, poke, sizeOf)
 
 import qualified Data.ByteString.Unsafe as BU
-import qualified Data.Vector            as V
+-- import qualified Data.Vector            as V
 
 
 -- Types -----------------------------------------------------------------------
@@ -31,22 +23,7 @@ type Txn = MDB_txn
 type Dbi = MDB_dbi
 type Cur = MDB_cursor
 
-data EventLog = EventLog
-    { env        :: Env
-    , _metaTbl   :: Dbi
-    , eventsTbl  :: Dbi
-    , effectsTbl :: Dbi
-    , identity   :: LogIdentity
-    , numEvents  :: IORef EventId
-    }
-
-nextEv :: EventLog -> RIO e EventId
-nextEv = fmap succ . readIORef . numEvents
-
-lastEv :: EventLog -> RIO e EventId
-lastEv = readIORef . numEvents
-
-data EventLogExn
+data VereLMDBExn
     = NoLogIdentity
     | MissingEvent EventId
     | BadNounInLogIdentity ByteString DecodeErr ByteString
@@ -56,82 +33,18 @@ data EventLogExn
     | BadWriteEffect EventId
   deriving Show
 
-
--- Instances -------------------------------------------------------------------
-
-instance Exception EventLogExn where
+instance Exception VereLMDBExn where
 
 
--- Open/Close an Event Log -----------------------------------------------------
-
-rawOpen :: MonadIO m => FilePath -> m Env
-rawOpen dir = io $ do
-    env <- mdb_env_create
-    mdb_env_set_maxdbs env 3
-    mdb_env_set_mapsize env (40 * 1024 * 1024 * 1024)
-    mdb_env_open env dir []
-    pure env
-
-create :: HasLogFunc e => FilePath -> LogIdentity -> RIO e EventLog
-create dir id = do
-    logDebug $ display (pack @Text $ "Creating LMDB database: " <> dir)
-    logDebug $ display (pack @Text $ "Log Identity: " <> show id)
-    env       <- rawOpen dir
-    (m, e, f) <- createTables env
-    clearEvents env e
-    writeIdent env m id
-    EventLog env m e f id <$> newIORef 0
-  where
-    createTables env =
-      rwith (writeTxn env) $ \txn -> io $
-        (,,) <$> mdb_dbi_open txn (Just "META")    [MDB_CREATE]
-             <*> mdb_dbi_open txn (Just "EVENTS")  [MDB_CREATE, MDB_INTEGERKEY]
-             <*> mdb_dbi_open txn (Just "EFFECTS") [MDB_CREATE, MDB_INTEGERKEY]
-
-open :: HasLogFunc e => FilePath -> RIO e EventLog
-open dir = do
-    logDebug $ display (pack @Text $ "Opening LMDB database: " <> dir)
-    env       <- rawOpen dir
-    (m, e, f) <- openTables env
-    id        <- getIdent env m
-    logDebug $ display (pack @Text $ "Log Identity: " <> show id)
-    numEvs    <- getNumEvents env e
-    EventLog env m e f id <$> newIORef numEvs
-  where
-    openTables env =
-      rwith (writeTxn env) $ \txn -> io $
-        (,,) <$> mdb_dbi_open txn (Just "META")    []
-             <*> mdb_dbi_open txn (Just "EVENTS")  [MDB_INTEGERKEY]
-             <*> mdb_dbi_open txn (Just "EFFECTS") [MDB_CREATE, MDB_INTEGERKEY]
-
-close :: HasLogFunc e => FilePath -> EventLog -> RIO e ()
-close dir (EventLog env meta events effects _ _) = do
-    logDebug $ display (pack @Text $ "Closing LMDB database: " <> dir)
-    io $ do mdb_dbi_close env meta
-            mdb_dbi_close env events
-            mdb_dbi_close env effects
-            mdb_env_sync_flush env
-            mdb_env_close env
-
-
--- Create a new event log or open an existing one. -----------------------------
-
-existing :: HasLogFunc e => FilePath -> RAcquire e EventLog
-existing dir = mkRAcquire (open dir) (close dir)
-
-new :: HasLogFunc e => FilePath -> LogIdentity -> RAcquire e EventLog
-new dir id = mkRAcquire (create dir id) (close dir)
-
-
--- Read/Write Log Identity -----------------------------------------------------
+-- Transactions ----------------------------------------------------------------
 
 {-
     A read-only transaction that commits at the end.
 
     Use this when opening database handles.
 -}
-_openTxn :: Env -> RAcquire e Txn
-_openTxn env = mkRAcquire begin commit
+openTxn :: Env -> RAcquire e Txn
+openTxn env = mkRAcquire begin commit
   where
     begin  = io $ mdb_txn_begin env Nothing True
     commit = io . mdb_txn_commit
@@ -162,60 +75,33 @@ writeTxn env = mkRAcquireType begin finalize
         ReleaseEarly     -> mdb_txn_commit txn
         ReleaseException -> mdb_txn_abort  txn
 
+
+-- Cursors ---------------------------------------------------------------------
+
 cursor :: Txn -> Dbi -> RAcquire e Cur
 cursor txn dbi = mkRAcquire open close
   where
     open  = io $ mdb_cursor_open txn dbi
     close = io . mdb_cursor_close
 
-getIdent :: HasLogFunc e => Env -> Dbi -> RIO e LogIdentity
-getIdent env dbi = do
-    logDebug "Reading log identity"
-    getTbl env >>= traverse decodeIdent >>= \case
-        Nothing -> throwIO NoLogIdentity
-        Just li -> pure li
-  where
-    decodeIdent :: (Noun, Noun, Noun) -> RIO e LogIdentity
-    decodeIdent = fromNounExn . toNoun
 
-    getTbl :: Env -> RIO e (Maybe (Noun, Noun, Noun))
-    getTbl env = do
-        rwith (readTxn env) $ \txn -> do
-            who  <- getMb txn dbi "who"
-            fake <- getMb txn dbi "is-fake"
-            life <- getMb txn dbi "life"
-            pure $ (,,) <$> who <*> fake <*> life
+-- Last Key In Dbi -------------------------------------------------------------
 
-writeIdent :: HasLogFunc e => Env -> Dbi -> LogIdentity -> RIO e ()
-writeIdent env metaTbl ident@LogIdentity{..} = do
-    logDebug "Writing log identity"
-    let flags = compileWriteFlags []
-    rwith (writeTxn env) $ \txn -> do
-        x <- putNoun flags txn metaTbl "who"     (toNoun who)
-        y <- putNoun flags txn metaTbl "is-fake" (toNoun isFake)
-        z <- putNoun flags txn metaTbl "life"    (toNoun lifecycleLen)
-        unless (x && y && z) $ do
-            throwIO (BadWriteLogIdentity ident)
-
-
--- Latest Event Number ---------------------------------------------------------
-
-getNumEvents :: Env -> Dbi -> RIO e Word64
-getNumEvents env eventsTbl =
-    rwith (readTxn env) $ \txn ->
-    rwith (cursor txn eventsTbl) $ \cur ->
+lastKeyWord64 :: Env -> Dbi -> Txn -> RIO e Word64
+lastKeyWord64 env dbi txn =
+    rwith (cursor txn dbi) $ \cur ->
     withKVPtrs' nullVal nullVal $ \pKey pVal ->
     io $ mdb_cursor_get MDB_LAST cur pKey pVal >>= \case
         False -> pure 0
         True  -> peek pKey >>= mdbValToWord64
 
 
--- Write Events ----------------------------------------------------------------
+-- Delete Rows -----------------------------------------------------------------
 
-clearEvents :: Env -> Dbi -> RIO e ()
-clearEvents env eventsTbl =
+deleteAllRows :: Env -> Dbi -> RIO e ()
+deleteAllRows env dbi =
     rwith (writeTxn env) $ \txn ->
-    rwith (cursor txn eventsTbl) $ \cur ->
+    rwith (cursor txn dbi) $ \cur ->
     withKVPtrs' nullVal nullVal $ \pKey pVal -> do
         let loop = io (mdb_cursor_get MDB_LAST cur pKey pVal) >>= \case
                 False -> pure ()
@@ -223,8 +109,23 @@ clearEvents env eventsTbl =
                             loop
         loop
 
-appendEvents :: EventLog -> Vector ByteString -> RIO e ()
-appendEvents log !events = do
+deleteRowsFrom :: HasLogFunc e => Env -> Dbi -> Word64 -> RIO e ()
+deleteRowsFrom env dbi start = do
+    rwith (writeTxn env) $ \txn -> do
+        last <- lastKeyWord64 env dbi txn
+        for_ [start..last] $ \eId -> do
+            withWordPtr eId $ \pKey -> do
+                let key = MDB_val 8 (castPtr pKey)
+                found <- io $ mdb_del txn dbi key Nothing
+                unless found $
+                    throwIO (MissingEvent eId)
+
+
+-- Append Rows to Sequence -----------------------------------------------------
+
+{-
+appendToSequence :: Env -> Dbi -> Vector ByteString -> RIO e ()
+appendToSequence env dbi events = do
     numEvs <- readIORef (numEvents log)
     next   <- pure (numEvs + 1)
     doAppend $ zip [next..] $ toList events
@@ -232,36 +133,29 @@ appendEvents log !events = do
   where
     flags    = compileWriteFlags [MDB_NOOVERWRITE]
     doAppend = \kvs ->
-        rwith (writeTxn $ env log) $ \txn ->
+        rwith (writeTxn env) $ \txn ->
         for_ kvs $ \(k,v) -> do
-            putBytes flags txn (eventsTbl log) k v >>= \case
+            putBytes flags txn dbi k v >>= \case
                 True  -> pure ()
                 False -> throwIO (BadWriteEvent k)
+-}
 
-writeEffectsRow :: EventLog -> EventId -> ByteString -> RIO e ()
-writeEffectsRow log k v = do
-    rwith (writeTxn $ env log) $ \txn ->
-        putBytes flags txn (effectsTbl log) k v >>= \case
+
+-- Insert ----------------------------------------------------------------------
+
+insertWord64 :: Env -> Dbi -> Word64 -> ByteString -> RIO e ()
+insertWord64 env dbi k v = do
+    rwith (writeTxn env) $ \txn ->
+        putBytes flags txn dbi k v >>= \case
             True  -> pure ()
             False -> throwIO (BadWriteEffect k)
   where
     flags = compileWriteFlags []
 
 
+{-
 --------------------------------------------------------------------------------
 -- Read Events -----------------------------------------------------------------
-
-trimEvents :: HasLogFunc e => EventLog -> Word64 -> RIO e ()
-trimEvents log start = do
-    last <- lastEv log
-    rwith (writeTxn $ env log) $ \txn ->
-        for_ [start..last] $ \eId ->
-        withWordPtr eId $ \pKey -> do
-            let key = MDB_val 8 (castPtr pKey)
-            found <- io $ mdb_del txn (eventsTbl log) key Nothing
-            unless found $
-                throwIO (MissingEvent eId)
-    writeIORef (numEvents log) (pred start)
 
 streamEvents :: HasLogFunc e
              => EventLog -> Word64
@@ -349,6 +243,7 @@ readRowsBatch env dbi first = readRows
             False -> pure $ Just ((key, val), 0)
             True  -> pure $ Just ((key, val), pred n)
 
+-}
 
 -- Utils -----------------------------------------------------------------------
 

@@ -49,6 +49,9 @@ data Bug
     | CollectAllFX
         { bPierPath :: FilePath
         }
+    | EventBrowser
+        { bPierPath :: FilePath
+        }
     | ValidateEvents
         { bPierPath :: FilePath
         , bFirstEvt :: Word64
@@ -117,10 +120,10 @@ new = do
                      $ metavar "SHIP"
                     <> help "Ship address"
 
-    nPierPath <- argument auto
+    nPierPath <- optional
+               $ strArgument
                      $ metavar "PIER"
                     <> help "Path to pier"
-                    <> value Nothing
 
     nPillPath <- strOption
                      $ short 'B'
@@ -240,6 +243,9 @@ checkEvs = ValidateEvents <$> pierPath <*> firstEv <*> lastEv
 checkFx :: Parser Bug
 checkFx = ValidateFX <$> pierPath <*> firstEv <*> lastEv
 
+browseEvs :: Parser Bug
+browseEvs = EventBrowser <$> pierPath
+
 bugCmd :: Parser Cmd
 bugCmd = fmap CmdBug
         $ subparser
@@ -254,6 +260,10 @@ bugCmd = fmap CmdBug
        <> command "validate-events"
             ( info (checkEvs <**> helper)
             $ progDesc "Parse all data in event log"
+            )
+       <> command "event-browser"
+            ( info (browseEvs <**> helper)
+            $ progDesc "Interactively view (and prune) event log"
             )
        <> command "validate-effects"
             ( info (checkFx <**> helper)
