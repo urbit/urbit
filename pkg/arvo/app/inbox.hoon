@@ -150,10 +150,12 @@
     %+  turn  (prey:pubsub:userlib /all bol)
     |=  [=bone *]
     [bone %diff %inbox-update act]
+  ::
     ^-  (list move)
     %+  turn  (prey:pubsub:userlib [%mailbox pax] bol)
     |=  [=bone *]
     [bone %diff %inbox-update act]
+  ::
     ^-  (list move)
     ?.  |(=(%create -.act) =(%delete -.act))
       ~

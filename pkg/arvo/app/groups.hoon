@@ -150,10 +150,12 @@
     %+  turn  (prey:pubsub:userlib /all bol)
     |=  [=bone *]
     [bone %diff %group-update action]
+  ::
     ^-  (list move)
     %+  turn  (prey:pubsub:userlib [%group pax] bol)
     |=  [=bone *]
     [bone %diff %group-update action]
+  ::
     ^-  (list move)
     ?.  |(=(%bundle -.action) =(%unbundle -.action))
       ~
