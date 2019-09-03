@@ -141,7 +141,7 @@ pier pierPath mPort (serf, log, ss) = do
 
     inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
-    terminalSystem <- liftAcquire $ initializeLocalTerminal
+    terminalSystem <- initializeLocalTerminal
 
     let ship = who (Log.identity log)
 
@@ -203,7 +203,7 @@ drivers pierPath inst who mPort plan termSys =
         dHttpClient <- pure $ const $ pure ()
         dHttpServer <- runHttp
         dSync       <- pure $ const $ pure ()
-        dTerm       <- liftAcquire $ runTerm
+        dTerm       <- runTerm
         pure (Drivers{..})
 
 

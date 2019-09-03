@@ -67,10 +67,16 @@ initialHail = EvBlip $ BlipEvTerm $ TermEvHail (UD 1, ()) ()
 
 --------------------------------------------------------------------------------
 
-runMaybeTermOutput :: Terminal -> (Terminal -> Maybe TermOutput) -> IO ()
+runMaybeTermOutput :: Terminal -> (Terminal -> Maybe TermOutput) -> RIO e ()
 runMaybeTermOutput t getter = case (getter t) of
   Nothing -> pure ()
-  Just x -> runTermOutput t x
+  Just x -> io $ runTermOutput t x
+
+rioAllocaBytes :: (MonadIO m, MonadUnliftIO m)
+               => Int -> (Ptr a -> m b) -> m b
+rioAllocaBytes size action =
+  withRunInIO $ \run ->
+    allocaBytes size $ \x -> run (action x)
 
 -- Because of legacy reasons, some file operations are in the terminal
 -- driver. These should be filtered out and handled locally instead of in any
@@ -84,22 +90,22 @@ isTerminalBlit _         = True
 
 -- Initializes the generalized input/output parts of the terminal.
 --
-initializeLocalTerminal :: Acquire TerminalSystem
+initializeLocalTerminal :: HasLogFunc e => RAcquire e TerminalSystem
 initializeLocalTerminal = do
-    (a, b) <- mkAcquire start stop
+    (a, b) <- mkRAcquire start stop
     pure a
   where
-    start :: IO (TerminalSystem, Private)
+    start :: HasLogFunc e => RIO e (TerminalSystem, Private)
     start = do
       --  Initialize the writing side of the terminal
       --
-      t <- setupTermFromEnv
-      -- TODO: We still need to actually get this from the terminal somehow.
+      t <- io $ setupTermFromEnv
+      -- TODO: We still need to actually get the size from the terminal somehow.
 
       tsWriteQueue <- newTQueueIO
       pWriterThread <- asyncBound (writeTerminal t tsWriteQueue)
 
-      pPreviousConfiguration <- getTerminalAttributes stdInput
+      pPreviousConfiguration <- io $ getTerminalAttributes stdInput
 
       -- Create a new configuration where we put the terminal in raw mode and
       -- disable a bunch of preprocessing.
@@ -107,19 +113,19 @@ initializeLocalTerminal = do
             flip withTime     0 .
             flip withMinInput 1 $
             foldl' withoutMode pPreviousConfiguration disabledFlags
-      setTerminalAttributes stdInput newTermSettings Immediately
+      io $ setTerminalAttributes stdInput newTermSettings Immediately
 
       tsReadQueue <- newTQueueIO
       tsReaderThread <- asyncBound (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
 
       pure (TerminalSystem{..}, Private{..})
 
-    stop :: (TerminalSystem, Private) -> IO ()
+    stop :: (TerminalSystem, Private) -> RIO e ()
     stop (TerminalSystem{..}, Private{..}) = do
       cancel tsReaderThread
       cancel pWriterThread
       -- take the terminal out of raw mode
-      setTerminalAttributes stdInput pPreviousConfiguration Immediately
+      io $ setTerminalAttributes stdInput pPreviousConfiguration Immediately
 
     -- A list of terminal flags that we disable
     disabledFlags = [
@@ -145,7 +151,7 @@ initializeLocalTerminal = do
 
     -- Writes data to the terminal. Both the terminal reading, normal logging,
     -- and effect handling can all emit bytes which go to the terminal.
-    writeTerminal :: Terminal -> TQueue VereOutput -> IO ()
+    writeTerminal :: Terminal -> TQueue VereOutput -> RIO e ()
     writeTerminal t q = loop (LineState "" 0)
       where
         loop s = do
@@ -155,18 +161,18 @@ initializeLocalTerminal = do
               s <- foldM (writeBlit t) s blits
               loop s
             VerePrintOutput p -> do
-              runTermOutput t $ termText "\r"
+              io $ runTermOutput t $ termText "\r"
               runMaybeTermOutput t vtClearToBegin
-              runTermOutput t $ termText p
-              runTermOutput t $ termText "\r\n"
+              io $ runTermOutput t $ termText p
+              io $ runTermOutput t $ termText "\r\n"
               s <- termRefreshLine t s
               loop s
             VereBlankLine -> do
-              runTermOutput t $ termText "\r\n"
+              io $ runTermOutput t $ termText "\r\n"
               loop s
 
     -- Writes an individual blit to the screen
-    writeBlit :: Terminal -> LineState -> Blit -> IO LineState
+    writeBlit :: Terminal -> LineState -> Blit -> RIO e LineState
     writeBlit t ls = \case
       Bel () -> do
         runMaybeTermOutput t vtSoundBell
@@ -186,7 +192,7 @@ initializeLocalTerminal = do
       (Url url) -> pure ls
 
     -- Moves the cursor to the requested position
-    termShowCursor :: Terminal -> LineState -> Int -> IO LineState
+    termShowCursor :: Terminal -> LineState -> Int -> RIO e LineState
     termShowCursor t (LineState line pos) newPos = do
       if newPos < pos then do
         replicateM_ (pos - newPos) (runMaybeTermOutput t vtParmLeft)
@@ -198,35 +204,34 @@ initializeLocalTerminal = do
         pure (LineState line pos)
 
     -- Displays and sets the current line
-    termShowLine :: Terminal -> LineState -> String -> IO LineState
+    termShowLine :: Terminal -> LineState -> String -> RIO e LineState
     termShowLine t ls newStr = do
       -- TODO: Really think about how term.c munged cus_w. Amidoinitrit?
-      runTermOutput t $ termText newStr
+      io $ runTermOutput t $ termText newStr
       pure (LineState newStr (length newStr))
 
-    termShowClear :: Terminal -> LineState -> IO LineState
+    termShowClear :: Terminal -> LineState -> RIO e LineState
     termShowClear t ls = do
-      runTermOutput t $ termText "\r"
+      io $ runTermOutput t $ termText "\r"
       runMaybeTermOutput t vtClearToBegin
       pure (LineState "" 0)
 
     -- New Current Line
-    termShowMore :: Terminal -> LineState -> IO LineState
+    termShowMore :: Terminal -> LineState -> RIO e LineState
     termShowMore t ls = do
-      runTermOutput t $ termText "\r\n"
+      io $ runTermOutput t $ termText "\r\n"
       pure (LineState "" 0)
 
     -- Redraw the current LineState, moving cursor to the end.
-    termRefreshLine :: Terminal -> LineState -> IO LineState
+    termRefreshLine :: Terminal -> LineState -> RIO e LineState
     termRefreshLine t ls@(LineState line pos) = do
       runMaybeTermOutput t vtClearToBegin
       newLs <- termShowLine t ls line
       termShowCursor t newLs pos
 
     -- ring my bell
-    bell :: TQueue VereOutput -> IO ()
-    bell q = do
-      atomically $ writeTQueue q $ VereBlitOutput [Bel ()]
+    bell :: TQueue VereOutput -> RIO e ()
+    bell q = atomically $ writeTQueue q $ VereBlitOutput [Bel ()]
 
     -- Reads data from stdInput and emit the proper effect
     --
@@ -236,21 +241,24 @@ initializeLocalTerminal = do
     --
     -- A better way to do this would be to get some sort of epoll on stdInput,
     -- since that's kinda closer to what libuv does?
-    readTerminal :: TQueue Belt -> TQueue VereOutput -> (IO ()) -> IO ()
-    readTerminal rq wq bell = allocaBytes 1 $ \ buf -> loop (ReadData buf False False)
+    readTerminal :: forall e. HasLogFunc e
+                 => TQueue Belt -> TQueue VereOutput -> (RIO e ()) -> RIO e ()
+    readTerminal rq wq bell =
+      rioAllocaBytes 1 $ \ buf -> loop (ReadData buf False False)
       where
+        loop :: ReadData -> RIO e ()
         loop rd@ReadData{..} = do
           -- The problem with using fdRead raw is that it will text encode things
           -- like \ESC instead of 27. That makes it broken for our purposes.
           --
-          t <- try (fdReadBuf stdInput rdBuf 1)
+          t <- io $ try (fdReadBuf stdInput rdBuf 1)
           case t of
             Left (e :: IOException) -> do
               -- Ignore EAGAINs when doing reads
               loop rd
             Right 0 -> loop rd
             Right _ -> do
-              w   <- peek rdBuf
+              w   <- io $ peek rdBuf
               -- print ("{" ++ (show w) ++ "}")
               let c = w2c w
               if rdEscape then
@@ -294,6 +302,7 @@ initializeLocalTerminal = do
                 loop rd
               else if w == 3 then do
                 -- ETX (^C)
+                logDebug $ displayShow "Ctrl-c interrupt"
                 atomically $ do
                   writeTQueue wq $ VerePrintOutput "interrupt"
                   writeTQueue rq $ Ctl $ Cord "c"
@@ -307,36 +316,37 @@ initializeLocalTerminal = do
                 -- start the utf8 accumulation buffer
                 loop rd
 
-        sendBelt :: Belt -> IO ()
+        sendBelt :: HasLogFunc e => Belt -> RIO e ()
         sendBelt b = do
+          logDebug $ displayShow ("terminalBelt", b)
           atomically $ writeTQueue rq b
 
 --------------------------------------------------------------------------------
 
-term :: TerminalSystem -> FilePath -> KingId -> QueueEv -> ([Ev], Acquire (EffCb e TermEf))
+term :: TerminalSystem -> FilePath -> KingId -> QueueEv -> ([Ev], RAcquire e (EffCb e TermEf))
 term TerminalSystem{..} pierPath king enqueueEv =
     (initialEvents, runTerm)
   where
     initialEvents = [(initialBlew 80 24), initialHail]
 
-    runTerm :: Acquire (EffCb e TermEf)
+    runTerm :: RAcquire e (EffCb e TermEf)
     runTerm = do
-      tim <- mkAcquire start stop
-      pure (io . handleEffect)
+      tim <- mkRAcquire start stop
+      pure handleEffect
 
-    start :: IO (Async ())
+    start :: RIO e (Async ())
     start = async readBelt
 
-    stop :: Async () -> IO ()
+    stop :: Async () -> RIO e ()
     stop rb = cancel rb
 
-    readBelt :: IO ()
+    readBelt :: RIO e ()
     readBelt = forever $ do
       b <- atomically $ readTQueue tsReadQueue
       let blip = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ b
       atomically $ enqueueEv $ blip
 
-    handleEffect :: TermEf -> IO ()
+    handleEffect :: TermEf -> RIO e ()
     handleEffect = \case
       TermEfBlit _ blits -> do
         let (termBlits, fsWrites) = partition isTerminalBlit blits
@@ -360,12 +370,12 @@ term TerminalSystem{..} pierPath king enqueueEv =
         cancel tsReaderThread
       TermEfMass _ _ -> pure ()
 
-    handleFsWrite :: Blit -> IO ()
+    handleFsWrite :: Blit -> RIO e ()
     handleFsWrite (Sag path noun) = performPut path (jamBS noun)
     handleFsWrite (Sav path atom) = pure () --performPut path atom
     handleFsWrite _ = pure ()
 
-    performPut :: Path -> ByteString -> IO ()
+    performPut :: Path -> ByteString -> RIO e ()
     performPut path bs = do
       -- Get the types right
       let elements = map (unpack . unKnot) (unPath path)
@@ -374,7 +384,7 @@ term TerminalSystem{..} pierPath king enqueueEv =
       -- Make sure that the
       let basePutDir = pierPath </> ".urb" </> "put"
       let putDir = foldl' (</>) basePutDir (take (elementsLen - 2) elements)
-      createDirectoryIfMissing True putDir
+      io $ createDirectoryIfMissing True putDir
 
       let putOutFile = case elementsLen of
             -- We know elementsLen is one, but we still can't use `head`.
