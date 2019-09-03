@@ -1,6 +1,6 @@
 /-  *inbox
 /+  *inbox-json
-|_  box=inbox-initial
+|_  box=inbox
 ::
 ++  grow
   |%
@@ -9,7 +9,7 @@
 ::
 ++  grab
   |%
-  ++  noun  inbox-initial
+  ++  noun  inbox
   --
 ::
 --

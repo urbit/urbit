@@ -51,26 +51,7 @@ export class NewScreen extends Component {
       return;
     }
 
-    let station = `~${window.ship}/${state.idName}`;
-    let actions = [
-      {
-        create: {
-          nom: state.idName,
-          des: "chatroom",
-          sec: "village"
-        }
-      },
-      {
-        source: {
-          nom: 'inbox',
-          sub: true,
-          srs: [station]
-        }
-      }
-    ];
-
-
-    if (state.invites.length > 0) {
+    /*if (state.invites.length > 0) {
 
       let aud = state.invites.split(',')
         .map((mem) => mem.trim())
@@ -123,18 +104,23 @@ export class NewScreen extends Component {
           inviteError: true,
           idError: false,
           success: false
-        });
+        })
       }
-    } else {
-      this.setState({
-        error: false,
-        success: true,
-        invites: ''
-      }, () => {
-        props.setSpinner(true);
-        props.api.chat(actions);
-      });
-    }
+    } else {*/
+
+    let station = `/${state.idName}`;
+
+    this.setState({
+      error: false,
+      success: true,
+      invites: ''
+    }, () => {
+      props.setSpinner(true);
+      props.api.inbox.create(station, `~${window.ship}`);
+      setTimeout(() => {
+        props.api.inboxSync.addOwned(station);
+      }, 1000)
+    });
 
   }
 

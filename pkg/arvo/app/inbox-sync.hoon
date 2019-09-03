@@ -16,8 +16,7 @@
   ==
 ::
 +$  state-zero
-  $:  synced=(set [ship path])
-      owned=(set path)
+  $:  synced=(map path ship)
   ==
 ::
 +$  poke
@@ -38,6 +37,26 @@
     [~ this]
   [~ this(+<+ u.old)]
 ::
+++  poke-inbox-action
+  |=  act=inbox-action
+  ^-  (quip move _this)
+  ?>  ?=(%message -.act)
+  ?:  =(src.bol our.bol)
+    =/  ship  (~(get by synced) path.act)
+    ?~  ship
+      [~ this]
+    :_  this
+    [ost.bol %poke / [u.ship %inbox-sync] [%inbox-action act]]~
+  =/  ship  (~(get by synced) path.act)
+  ?~  ship
+    [~ this]
+  :_  this
+  ?.  =(u.ship our.bol)
+    ~
+  =.  author.envelope.act  src.bol
+  =.  when.envelope.act  now.bol
+  [ost.bol %poke / [our.bol %inbox] [%inbox-action act]]~
+::
 ++  poke-sync-hook-action
   |=  act=sync-hook-action
   ^-  (quip move _this)
@@ -45,14 +64,15 @@
       %add-owned
     =/  inbox-path  [%mailbox path.act]
     =/  inbox-wire  [(scot %p our.bol) inbox-path]
-    ?:  (~(has in owned) path.act)
+    =/  sync  (~(get by synced) path.act)
+    ?^  sync
       [~ this]
-    :_  this(owned (~(put in owned) path.act))
+    :_  this(synced (~(put by synced) path.act our.bol))
     [ost.bol %peer inbox-path [our.bol %inbox] inbox-path]~
   ::
       %remove-owned
     =/  inbox-wire  [(scot %p our.bol) %mailbox path.act]
-    :_  this(owned (~(del in owned) path.act))
+    :_  this(synced (~(del by synced) path.act))
     :-  [ost.bol %pull inbox-wire [our.bol %inbox] ~]
     ^-  (list move)
     %+  turn  (prey:pubsub:userlib [%mailbox path.act] bol)
@@ -63,14 +83,14 @@
       %add-synced
     =/  inbox-path  [%mailbox path.act]
     =/  inbox-wire  [(scot %p ship.act) inbox-path]
-    ?:  (~(has in synced) [ship.act path.act])
+    ?:  (~(has by synced) path.act)
       [~ this]
-    :_  this(synced (~(put in synced) [ship.act path.act]))
+    :_  this(synced (~(put by synced) path.act ship.act))
     [ost.bol %peer inbox-wire [ship.act %inbox-sync] inbox-path]~
   ::
       %remove-synced
     =/  inbox-wire  [(scot %p ship.act) %mailbox path.act]
-    :_  this(synced (~(del in synced) [ship.act path.act]))
+    :_  this(synced (~(del by synced) path.act))
     [ost.bol %pull inbox-wire [ship.act %inbox-sync] ~]~
   ::
   ==
@@ -80,7 +100,7 @@
   ^-  (quip move _this)
   ?~  pax
     [[ost.bol %quit ~]~ this]
-  ?.  (~(has in owned) pax)
+  ?.  (~(has by synced) pax)
     [[ost.bol %quit ~]~ this]
   =/  box=(unit mailbox)  (inbox-scry pax)
   ?^  box
@@ -98,7 +118,6 @@
 ++  handle-local
   |=  diff=inbox-update
   ^-  (quip move _this)
-  ~&  diff
   ?-  -.diff
       %keys
     [~ this]
@@ -110,10 +129,10 @@
     [~ this]
   ::
       %delete
-    ?.  (~(has in owned) path.diff)
+    ?.  (~(has by synced) path.diff)
       [~ this]
     =/  inbox-wire  [(scot %p our.bol) %mailbox path.diff]
-    :_  this(owned (~(del in owned) path.diff))
+    :_  this(synced (~(del by synced) path.diff))
     :-  (inbox-poke diff)
     [ost.bol %pull inbox-wire [our.bol %inbox] ~]~
   ::
@@ -133,11 +152,17 @@
       %keys
     [~ this]
   ::
+      %read
+    [~ this]
+  ::
       %create
     ::  send a create poke to local inbox
     ?~  path.diff
       [~ this]
-    ?.  (~(has in synced) [owner.diff path.diff])
+    =/  sync  (~(get by synced) path.diff)
+    ?~  sync
+      [~ this]
+    ?.  =(src.bol u.sync)
       [~ this]
     :_  this
     :~  (inbox-poke diff)
@@ -147,26 +172,23 @@
     ::  send a delete poke to local inbox
     ?~  path.diff
       [~ this]
-    ?.  (~(has in synced) [src.bol path.diff])
+    =/  sync  (~(get by synced) path.diff)
+    ?~  sync
+      [~ this]
+    ?.  =(src.bol u.sync)
       [~ this]
     =/  inbox-wire  [(scot %p src.bol) %mailbox path.diff]
-    :_  this(synced (~(del in synced) [src.bol path.diff]))
+    :_  this(synced (~(del by synced) path.diff))
     :-  (inbox-poke diff)
     [ost.bol %pull inbox-wire [src.bol %inbox-sync] ~]~
   ::
       %message
     ?~  path.diff
       [~ this]
-    ?.  (~(has in synced) [src.bol path.diff])
+    =/  sync  (~(get by synced) path.diff)
+    ?~  sync
       [~ this]
-    :_  this
-    :~  (inbox-poke diff)
-    ==
-  ::
-      %read
-    ?~  path.diff
-      [~ this]
-    ?.  (~(has in synced) [src.bol path.diff])
+    ?.  =(src.bol u.sync)
       [~ this]
     :_  this
     :~  (inbox-poke diff)
@@ -177,11 +199,12 @@
 ++  quit
   |=  wir=wire
   ^-  (quip move _this)
+  ~&  quit+wir
   =.  wir  `(list @tas)`wir
   =/  =ship  (slav %p &1:wir)
   =.  wir  ?^  wir  t.wir  ~
   =.  wir  ?^  wir  t.wir  ~
-  ?:  (~(has in synced) [ship wir])
+  ?:  (~(has by synced) wir)
     ::  resubscribe
     [~ this]
   ::  no-op
@@ -196,7 +219,7 @@
   |=  pax=path
   ^-  (unit mailbox)
   =.  pax  ;:  weld
-    `path`/=inbox/(scot %da now.bol)
+    `path`/=inbox/(scot %da now.bol)/mailbox
     pax
     `path`/noun
   ==

@@ -1,14 +1,14 @@
 /-  *inbox
 |%
 ++  inbox-to-json
-  |=  box=inbox-initial
+  |=  box=inbox
   =,  enjs:format
   ^-  ^json
   %+  frond  %inbox-initial
   %-  pairs
   %+  turn  ~(tap by box)
   |=  [=path =mailbox]
-  ^-  [@t ^json]
+  ^-  [cord ^json]
   :-  (spat path)
   %-  pairs
   :~  [%envelopes [%a (turn envelopes.mailbox enve)]]
@@ -21,6 +21,13 @@
   |*  a/fist
   (cu ~(gas in *(set _$:a)) (ar a))
 ::
+++  slan  |=(mod/@tas |=(txt/@ta (need (slaw mod txt))))
+::
+++  seri                                              :::  serial
+  =,  dejs:format
+  ^-  $-(json serial)
+  (cu (slan %uv) so)
+::
 ++  pa 
   |=  a/path
   ^-  json
@@ -31,7 +38,8 @@
   ^-  json
   =,  enjs:format
   %-  pairs
-  :~  [%author (ship author.envelope)]
+  :~  [%uid s+(scot %uv uid.envelope)]
+      [%author (ship author.envelope)]
       [%when (time when.envelope)]
       [%message s+message.envelope]
   ==

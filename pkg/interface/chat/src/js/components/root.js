@@ -34,16 +34,20 @@ export class Root extends Component {
     const { props, state } = this;
 
     let messagePreviews = {};
+    let unreads = {};
     Object.keys(state.inbox).forEach((stat) => {
       let envelopes = state.inbox[stat].envelopes;
+      
       if (envelopes.length === 0) {
         messagePreviews[stat] = false;
       } else {
         messagePreviews[stat] = envelopes[envelopes.length - 1];
       }
-    });
 
-    let unreads = {};
+      let read = state.inbox[stat].read;
+      unreads[stat] = envelopes.length > read;
+    });
+    
     let inviteConfig = false;
 
     const renderChannelSidebar = (props) => (
@@ -100,12 +104,13 @@ export class Root extends Component {
                 sidebar={renderChannelSidebar(props)}>
                 <LandingScreen
                   api={api}
+                  inbox={state.inbox}
                   {...props}
                 />
               </Skeleton>
             );
            }} />
-         <Route exact path="/~chat/:station"
+         <Route exact path="/~chat/room/:station"
            render={ (props) => {
              let station = '/' + props.match.params.station;
              let mailbox = state.inbox[station] || {

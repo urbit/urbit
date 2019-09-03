@@ -3,7 +3,6 @@ import _ from 'lodash';
 
 export class GroupUpdateReducer {
   reduce(json, state) {
-    console.log('update', json);
     let data = _.get(json, 'group-update', false);
     if (data) {
       this.add(data, state);

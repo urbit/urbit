@@ -3,7 +3,6 @@ import _ from 'lodash';
 
 export class InboxUpdateReducer {
   reduce(json, state) {
-    console.log('update', json);
     let data = _.get(json, 'inbox-update', false);
     if (data) {
       this.message(data, state);

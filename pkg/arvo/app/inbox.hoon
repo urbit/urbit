@@ -1,5 +1,5 @@
 :: service/inbox.hoon
-/-  *groups, *inbox, *sync-hook
+/-  *groups, *inbox
 |%
 +$  move  [bone card]
 ::
@@ -13,12 +13,12 @@
   ==
 ::
 +$  state-zero
-  $:  inbox=(map path mailbox)
+  $:  =inbox
   ==
 ::
 +$  diff
   $%  [%inbox-update inbox-update]
-      [%inbox-initial inbox-initial]
+      [%inbox-initial inbox]
   ==
 --
 ::
@@ -32,6 +32,12 @@
   ?~  old
     [~ this]
   [~ this(+<+ u.old)]
+::
+++  poke-noun
+  |=  a=*
+  ^-  (quip move _this)
+  ~&  inbox
+  [~ this]
 ::
 ++  peek-x-all
   |=  pax=path

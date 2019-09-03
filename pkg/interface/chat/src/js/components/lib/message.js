@@ -16,16 +16,6 @@ export class Message extends Component {
     );
   }
 
-  renderAuthor() {
-    const msg = this.props.msg;
-    const ship = '~' + msg.aut;
-    if (_.has(msg, 'sep.app.app')) {
-      return `:${msg.sep.app.app} (${ship})`;
-    } else {
-      return ship;
-    }
-  }
-
   render() {
     const { props } = this;
     let pending = !!props.msg.pending ? ' o-40' : '';
@@ -35,7 +25,7 @@ export class Message extends Component {
     let paddingBot = props.paddingBot ? 'pb2' : 'pb1';
 
     if (props.renderSigil) {
-      let timestamp = moment.unix(props.msg.wen / 1000).format('hh:mm a');
+      let timestamp = moment.unix(props.msg.when / 1000).format('hh:mm a');
 
       return (
         <div className={"w-100 pl3 pr3 cf flex " + paddingTop + " " + paddingBot + pending}
@@ -48,7 +38,7 @@ export class Message extends Component {
           <div className="fr clamp-message" style={{ flexGrow: 1, marginTop: -8 }}>
             <div className="hide-child">
               <p className="v-top label-small-mono gray dib mr3">
-                {this.renderAuthor()}
+                {props.msg.author}
               </p>
               <p className="v-top label-small-mono gray dib">{timestamp}</p>
               <p className="v-top label-small-mono ml2 gray dib child">

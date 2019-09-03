@@ -32,7 +32,7 @@ export class SidebarItem extends Component {
 
   onClick() {
     const { props } = this;
-    props.history.push('/~chat' + props.box);
+    props.history.push('/~chat/room' + props.box);
   }
 
   render() {

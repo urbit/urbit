@@ -23,15 +23,15 @@ export class ChatScreen extends Component {
     this.hasAskedForMessages = false;
     this.onScroll = this.onScroll.bind(this);
 
-    /*this.updateReadInterval = setInterval(
+    this.updateReadInterval = setInterval(
       this.updateReadNumber.bind(this),
       1000
-    );*/
+    );
   }
 
   componentDidMount() {
     this.updateNumPeople();
-    //this.updateReadNumber();
+    this.updateReadNumber();
   }
 
   componentWillUnmount() {
@@ -71,30 +71,15 @@ export class ChatScreen extends Component {
   updateReadNumber() {
     const { props, state } = this;
 
-    // TODO
-    return;
-    let internalCircle = 'hall-internal-' + state.circle;
-    let internalStation = `~${window.ship}/${internalCircle}`;
-
-    let internalConfig = props.configs[internalStation] || false;
-    let regularConfig = props.configs[state.station] || false;
-
-    let config = internalConfig || regularConfig;
-    let messages = props.envelopes;
-
-    let lastMsgNum = (messages.length > 0) ?
-      ( messages[messages.length - 1].num + 1 ) : 0;
-
-    if (config && config.red < lastMsgNum) {
-      if (internalConfig) {
-        props.api.read(internalCircle, lastMsgNum);
-      } else {
-        props.api.read(state.circle, lastMsgNum);
-      }
+    let lastMsgNum = props.envelopes || [];
+    lastMsgNum = lastMsgNum.length;
+    let lastRead = props.read;
+    if (lastMsgNum > lastRead) {
+      props.api.inbox.read(state.station, lastMsgNum);
     }
   }
 
-  askForMessages() {
+  /*askForMessages() {
     const { props, state } = this;
     let messages = props.messages;
     
@@ -115,7 +100,7 @@ export class ChatScreen extends Component {
         props.subscription.fetchMessages(state.station, start, end - 1);
       }
     }
-  }
+  }*/
 
   scrollToBottom() {
     if (!this.state.scrollLocked && this.scrollElement) {
@@ -132,7 +117,7 @@ export class ChatScreen extends Component {
           numPages: this.state.numPages + 1,
           scrollLocked: true
         }, () => {
-          this.askForMessages();
+          //this.askForMessages();
         });
       } else if (
           (e.target.scrollHeight - Math.round(e.target.scrollTop)) ===
@@ -158,7 +143,7 @@ export class ChatScreen extends Component {
           numPages: this.state.numPages + 1,
           scrollLocked: true
         }, () => {
-          this.askForMessages();
+          //this.askForMessages();
         });
       }
     } else {
@@ -179,7 +164,6 @@ export class ChatScreen extends Component {
   render() {
     const { props, state } = this;
 
-    console.log(props.mailbox);
     let messages = props.envelopes.slice(0);
     
     let lastMsgNum = (messages.length > 0) ?
@@ -225,7 +209,7 @@ export class ChatScreen extends Component {
           api={props.api}
           numMsgs={lastMsgNum}
           station={state.station}
-          security={'channel'}
+          owner={props.owner}
           placeholder='Message...' />
       </div>
     )

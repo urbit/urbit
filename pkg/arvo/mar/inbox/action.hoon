@@ -1,4 +1,5 @@
 /-  *inbox
+/+  *inbox-json
 =,  dejs:format
 |_  act=inbox-action
 ++  grab
@@ -38,7 +39,8 @@
       ==
     ++  envelope
       %-  ot
-      :~  [%author (su ;~(pfix sig fed:ag))]
+      :~  [%uid seri]
+          [%author (su ;~(pfix sig fed:ag))]
           [%when di]
           [%message so]
       ==

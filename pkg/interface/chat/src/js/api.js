@@ -24,6 +24,13 @@ class UrbitApi {
       read: this.inboxRead.bind(this)
     };
 
+    this.inboxSync = {
+      addOwned: this.inboxSyncAddOwned.bind(this),
+      removeOwned: this.inboxSyncRemoveOwned.bind(this),
+      addSynced: this.inboxSyncAddSynced.bind(this),
+      removeSynced: this.inboxSyncRemoveSynced.bind(this)
+    };
+
   }
 
   // keep default bind to hall, since its bind procedure more complex for now AA
@@ -113,17 +120,23 @@ class UrbitApi {
     });
   }
 
-  inboxMessage(path, author, when, message) {
-    this.inboxAction({
+  inboxMessage(local, path, author, when, message) {
+    let data = {
       message: {
         path,
         envelope: {
+          uid: uuid(),
           author,
           when,
           message
         }
       }
-    });
+    };
+    if (local) {
+      this.inboxAction(data);
+    } else {
+      this.inboxSyncAction(data, "inbox-action");
+    }
   }
 
   inboxRead(path, read) {
@@ -134,6 +147,41 @@ class UrbitApi {
     });
   }
 
+  inboxSyncAction(data, mark = "sync-hook-action") {
+    this.action("inbox-sync", mark, data);
+  }
+
+
+  inboxSyncAddOwned(path) {
+    let data = {};
+    data['add-owned'] = path;
+    this.inboxSyncAction(data);
+  }
+
+  inboxSyncRemoveOwned(path) {
+    let data = {};
+    data['remove-owned'] = path;
+    this.inboxSyncAction(data);
+  }
+
+  inboxSyncAddSynced(ship, path) {
+    let data = {};
+    data['add-synced'] = {
+      ship,
+      path
+    };
+    this.inboxSyncAction(data);
+  }
+
+  inboxSyncRemoveSynced(ship, path) {
+    let data = {};
+    data['remove-synced'] = {
+      ship,
+      path
+    };
+    this.inboxSyncAction(data);
+
+  }
 
 }
 

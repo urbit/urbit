@@ -1,4 +1,5 @@
 /-  *sync-hook
+=,  dejs:format
 |_  act=sync-hook-action
 ++  grab
   |%

@@ -10,51 +10,29 @@ export class LandingScreen extends Component {
 
   componentDidMount() {
     const { props } = this;
-    let station = props.match.params.ship + '/' + props.match.params.station;
+    let station = '/' + props.match.params.station;
 
-    if (station in props.configs) {
-      props.history.push(`/~chat/${station}`);
+    if (station in props.inbox) {
+      props.history.push(`/~chat/room${station}`);
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { props } = this;
-    let station = props.match.params.ship + '/' + props.match.params.station;
+    let station = '/' + props.match.params.station;
 
-    if (station in props.configs) {
+    if (station in props.inbox) {
       props.history.push(`/~chat/${station}`);
     }
   }
 
   onClickSubscribe() {
     const { props } = this;
-    
-    let station = props.match.params.ship + '/' + props.match.params.station;
-    let  actions = [
-        {
-          create: {
-            nom: 'hall-internal-' + props.match.params.station,
-            des: "chatroom",
-            sec: "channel"
-          }
-        },
-        {
-          source: {
-            nom: "inbox",
-            sub: true,
-            srs: [station]
-          }
-        },
-        {
-          source: {
-            nom: "inbox",
-            sub: true,
-            srs: [`~${window.ship}/hall-internal-${props.match.params.station}`]
-          }
-        }
-    ];
 
-    this.props.api.chat(actions);
+    let ship = props.match.params.ship;
+    let station = '/' + props.match.params.station;
+
+    props.api.inboxSync.addSynced(ship, station);
     this.props.history.push('/~chat');
   }
 
