@@ -16,7 +16,7 @@ import Vere.Ames          (ames)
 import Vere.Behn          (behn)
 import Vere.Http.Server   (serv)
 import Vere.Log           (EventLog)
-import Vere.Serf          (Serf, SerfState(..), doJob)
+import Vere.Serf          (Serf, sStderr, SerfState(..), doJob)
 import Vere.Term
 
 import qualified System.Entropy as Ent
@@ -78,7 +78,7 @@ writeJobs log !jobs = do
 
 booted :: HasLogFunc e
        => FilePath -> FilePath -> Serf.Flags -> Ship
-       -> RAcquire e (Serf, EventLog, SerfState)
+       -> RAcquire e (Serf e, EventLog, SerfState)
 booted pillPath pierPath flags ship = do
   rio $ logTrace "LOADING PILL"
 
@@ -116,7 +116,7 @@ booted pillPath pierPath flags ship = do
 
 resumed :: HasLogFunc e
         => FilePath -> Serf.Flags
-        -> RAcquire e (Serf, EventLog, SerfState)
+        -> RAcquire e (Serf e, EventLog, SerfState)
 resumed top flags = do
     log    <- Log.existing (top <> "/.urb/log")
     serf   <- Serf.run (Serf.Config top flags)
@@ -132,7 +132,7 @@ resumed top flags = do
 pier :: ∀e. HasLogFunc e
      => FilePath
      -> Maybe Port
-     -> (Serf, EventLog, SerfState)
+     -> (Serf e, EventLog, SerfState)
      -> RAcquire e ()
 pier pierPath mPort (serf, log, ss) = do
     computeQ <- newTQueueIO :: RAcquire e (TQueue Ev)
@@ -142,6 +142,8 @@ pier pierPath mPort (serf, log, ss) = do
     inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
     terminalSystem <- initializeLocalTerminal
+
+    serf <- pure serf { sStderr = (tsStderr terminalSystem) }
 
     let ship = who (Log.identity log)
 
@@ -186,7 +188,7 @@ data Drivers e = Drivers
 
 drivers :: HasLogFunc e
         => FilePath -> KingId -> Ship -> Maybe Port -> (Ev -> STM ())
-        -> TerminalSystem
+        -> TerminalSystem e
         -> ([Ev], RAcquire e (Drivers e))
 drivers pierPath inst who mPort plan termSys =
     (initialEvents, runDrivers)
@@ -253,7 +255,7 @@ logEffect ef =
        FailParse n -> pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow n
 
 runCompute :: ∀e. HasLogFunc e
-           => Serf -> SerfState -> STM Ev -> ((Job, FX) -> STM ())
+           => Serf e -> SerfState -> STM Ev -> ((Job, FX) -> STM ())
            -> RAcquire e (Async ())
 runCompute serf ss getEvent putResult =
     mkRAcquire (async (go ss)) cancel

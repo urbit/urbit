@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wwarn #-}
 
-module Vere.Term (initializeLocalTerminal, term, TerminalSystem, tsReaderThread) where
+module Vere.Term (initializeLocalTerminal, term, TerminalSystem(..)) where
 
 import UrbitPrelude
 import Arvo hiding (Term)
@@ -42,12 +42,14 @@ data ReadData = ReadData
 -- view of the caller, a terminal has a thread which when exits indicates that
 -- the session is over, and has a general in/out queue in the types of the
 -- vere/arvo interface.
-data TerminalSystem = TerminalSystem
+data TerminalSystem e = TerminalSystem
   -- | The reader can be waited on, as it shuts itself down when the console
   -- goes away.
   { tsReaderThread :: Async()
   , tsReadQueue    :: TQueue Belt
   , tsWriteQueue   :: TQueue VereOutput
+  --
+  , tsStderr       :: Text -> RIO e ()
   }
 
 -- Private data to the TerminalSystem that we keep around for stop().
@@ -90,12 +92,12 @@ isTerminalBlit _         = True
 
 -- Initializes the generalized input/output parts of the terminal.
 --
-initializeLocalTerminal :: HasLogFunc e => RAcquire e TerminalSystem
+initializeLocalTerminal :: HasLogFunc e => RAcquire e (TerminalSystem e)
 initializeLocalTerminal = do
     (a, b) <- mkRAcquire start stop
     pure a
   where
-    start :: HasLogFunc e => RIO e (TerminalSystem, Private)
+    start :: HasLogFunc e => RIO e (TerminalSystem e, Private)
     start = do
       --  Initialize the writing side of the terminal
       --
@@ -118,9 +120,13 @@ initializeLocalTerminal = do
       tsReadQueue <- newTQueueIO
       tsReaderThread <- asyncBound (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
 
+      let tsStderr = \txt ->
+            atomically $ writeTQueue tsWriteQueue $ VerePrintOutput $ unpack txt
+
       pure (TerminalSystem{..}, Private{..})
 
-    stop :: (TerminalSystem, Private) -> RIO e ()
+    stop :: HasLogFunc e
+         => (TerminalSystem e, Private) -> RIO e ()
     stop (TerminalSystem{..}, Private{..}) = do
       cancel tsReaderThread
       cancel pWriterThread
@@ -164,7 +170,6 @@ initializeLocalTerminal = do
               io $ runTermOutput t $ termText "\r"
               runMaybeTermOutput t vtClearToBegin
               io $ runTermOutput t $ termText p
-              io $ runTermOutput t $ termText "\r\n"
               s <- termRefreshLine t s
               loop s
             VereBlankLine -> do
@@ -304,7 +309,7 @@ initializeLocalTerminal = do
                 -- ETX (^C)
                 logDebug $ displayShow "Ctrl-c interrupt"
                 atomically $ do
-                  writeTQueue wq $ VerePrintOutput "interrupt"
+                  writeTQueue wq $ VerePrintOutput "interrupt\r\n"
                   writeTQueue rq $ Ctl $ Cord "c"
                 loop rd
               else if w <= 26 then do
@@ -323,7 +328,8 @@ initializeLocalTerminal = do
 
 --------------------------------------------------------------------------------
 
-term :: TerminalSystem -> FilePath -> KingId -> QueueEv -> ([Ev], RAcquire e (EffCb e TermEf))
+term :: HasLogFunc e
+     => TerminalSystem e -> FilePath -> KingId -> QueueEv -> ([Ev], RAcquire e (EffCb e TermEf))
 term TerminalSystem{..} pierPath king enqueueEv =
     (initialEvents, runTerm)
   where
