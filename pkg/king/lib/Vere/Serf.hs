@@ -308,7 +308,7 @@ recvPlea w = do
                                 recvPlea w
             PSlog _ pri t -> do printTank (sStderr w) pri t
                                 recvPlea w
-            _             -> do logTrace $ display ("recvPlea got: " <> tshow p)
+            _             -> do logTrace "recvPlea got something else"
                                 pure p
 
 {-

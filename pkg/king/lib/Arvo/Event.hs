@@ -154,6 +154,7 @@ deriveNoun ''AmesEv
 data ArvoEv
     = ArvoEvWhom () Ship
     | ArvoEvWack () Word512
+    | ArvoEvWarn Path Noun
   deriving (Eq, Ord, Show)
 
 deriveNoun ''ArvoEv

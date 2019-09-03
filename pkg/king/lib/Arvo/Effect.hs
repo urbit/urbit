@@ -129,7 +129,19 @@ data Blit
     | Sag Path Noun
     | Sav Path Atom
     | Url Cord
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord)
+
+-- Manual instance to not save the noun/atom in Sag/Sav, because these can be
+-- megabytes and makes king hang.
+instance Show Blit where
+  show (Bel ()) = "Bel ()"
+  show (Clr ()) = "Clr ()"
+  show (Hop x) = "Hop " ++ (show x)
+  show (Lin c) = "Lin " ++ (show c)
+  show (Mor ()) = "Mor ()"
+  show (Sag path _) = "Sag " ++ (show path)
+  show (Sav path _) = "Sav " ++ (show path)
+  show (Url c) = "Url " ++ (show c)
 
 {-
     %blip -- TODO
