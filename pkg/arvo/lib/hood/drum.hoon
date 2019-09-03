@@ -87,27 +87,23 @@
       [%base %dojo]
       [%base %modulo]
       [%home %launch]
-      [%home %chat]
-      [%home %publish]
-      [%home %clock]
-      [%home %weather]
   ==
   :~  [%home %lens]
       [%home %dojo]
-      [%home %groups]
-      [%home %group-sync]
       [%home %modulo]
       [%home %launch]
-      [%home %chat]
+      [%home %groups]
+      [%home %group-sync]
       [%home %inbox]
       [%home %inbox-sync]
+      [%home %inbox-view]
   ==
 ::
 ++  deft-fish                                           ::  default connects
   |=  our/ship
   %-  ~(gas in *(set gill:gall))
   ^-  (list gill:gall)
-  [[our %talk] [our %dojo] ~]
+  [[our %dojo] ~]
 ::
 ++  make                                                ::  initial part
   |=  our/ship
