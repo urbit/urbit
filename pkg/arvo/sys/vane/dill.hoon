@@ -91,7 +91,6 @@
   $%  $:  %a                                            ::
           $%  [%nice ~]                                 ::  XX obsolete
               $>  $?  %mass                             ::
-                      %send                             ::  XX strange
                   ==                                    ::
               gift:able:ames                            ::
       ==  ==                                            ::
@@ -393,9 +392,6 @@
             [%j %init *]
           ::  pass thru to unix
           ::
-          +>(moz :_(moz [hen %give +.sih]))
-        ::
-            {$a $send *}
           +>(moz :_(moz [hen %give +.sih]))
         ::
             {$g $onto *}
