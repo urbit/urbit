@@ -12,8 +12,8 @@
   ^-  (quip move _this)
   :_  this  :_  ~
   ?+  arg  ~|(%bad-arg !!)
-    %conf  `move`[ost.bowl %conf-mall / [our.bowl %first] [our.bowl %home]]
-    %poke  `move`[ost.bowl %deal-mall / [our.bowl our.bowl] %first %poke %noun !>(%hey)]
+    %conf  `move`[ost.bowl %conf-mall / [our.bowl %hood] [our.bowl %home]]
+    %poke  `move`[ost.bowl %deal-mall / [our.bowl our.bowl] %hood %poke %atom !>(%hey)]
   ==
 ::
 ++  onto

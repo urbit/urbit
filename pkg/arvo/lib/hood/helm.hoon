@@ -57,11 +57,19 @@
       ==                                                ::
     --
 =+  moz=((list move))
+=|  moi=(list move:agent:mall)
 |%
 ++  abet                                              ::  resolve
   [(flop moz) %_(+<+.$ hoc (~(put by hoc) ost sez))]
 ::
+++  abei
+  [(flop moi) %_(+<+.$ hoc (~(put by hoc) ost sez))]
+::
 ++  emit  |=(card %_(+> moz [[ost +<] moz]))          ::  return card
+++  emii
+  |=  (wind internal-note:mall internal-gift:mall)
+  %_(+> moi [[ost +<] moi])
+::
 ++  emil                                              ::  return cards
   |=  (list card)
   ^+  +>
@@ -144,8 +152,10 @@
   |=  ato/@
   =+  len=(scow %ud (met 3 ato))
   =+  gum=(scow %p (mug ato))
-  =<  abet
-  (emit %flog /di %text "< {<src>}: atom: {len} bytes, mug {gum}")
+  =<  abei
+  %^  emii  %pass  /di
+  :+  %meta  %d
+  !>  [%flog %text "< {<src>}: atom: {len} bytes, mug {gum}"]
 ::
 ++  coup-hi
   |=  {pax/path cop/(unit tang)}  =<  abet
