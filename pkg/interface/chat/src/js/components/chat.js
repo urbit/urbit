@@ -267,7 +267,7 @@ export class ChatScreen extends Component {
           numMsgs={lastMsgNum}
           station={state.station}
           circle={state.circle}
-          security={config.con}
+          security={!!config ? config.con : {}}
           placeholder='Message...' />
       </div>
     )
