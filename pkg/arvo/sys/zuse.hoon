@@ -1941,46 +1941,51 @@
   ::  +agent: app core
   ::
   ++  agent
-    =>  |%
-        +$  move  internal-move
-        +$  step  (quip move new-state=vase)
-        --
-    $_  ^|
-    |_  [bowl state=vase]
-    ++  handle-init
-      *step
-    ::
-    ++  handle-prep
-      |~  old-state=vase
-      *step
-    ::
-    ++  handle-poke
-      |~  in-poke-data=cage
-      *step
-    ::
-    ++  handle-peer
-      |~  path
-      *step
-    ::
-    ++  handle-pull
-      |~  path
-      *step
-    ::
-    ++  handle-peek
-      |~  path
-      *(unit (unit cage))
-    ::
-    ++  handle-mall
-      |~  [wire internal-gift]
-      *step
-    ::
-    ++  handle-take
-      |~  [wire sign=vase]
-      *step
-    ::
-    ++  handle-lame
-      |~  [term tang]
-      *step
+    =<  form
+    |%
+    +$  move  internal-move
+    +$  step  (quip move form)
+    ++  form
+      $_  ^|
+      |_  bowl
+      ++  handle-init
+        *(quip move _^|(..handle-init))
+      ::
+      ++  handle-prep
+        |~  old-state=vase
+        *(quip move _^|(..handle-init))
+      ::
+      ++  handle-poke
+        |~  in-poke-data=cage
+        *(quip move _^|(..handle-init))
+      ::
+      ++  handle-peer
+        |~  path
+        *(quip move _^|(..handle-init))
+      ::
+      ++  handle-pull
+        |~  path
+        *(quip move _^|(..handle-init))
+      ::
+      ++  handle-peek
+        |~  path
+        *(unit (unit cage))
+      ::
+      ++  handle-mall
+        |~  [wire internal-gift]
+        *(quip move _^|(..handle-init))
+      ::
+      ++  handle-take
+        |~  [wire sign=vase]
+        *(quip move _^|(..handle-init))
+      ::
+      ++  handle-lame
+        |~  [term tang]
+        *(quip move _^|(..handle-init))
+      ::
+      ++  handle-stay
+        *vase
+      --
     --
   --  ::mall
 ::                                                      ::::

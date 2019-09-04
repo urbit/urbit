@@ -1,45 +1,50 @@
-/+  agent
-|%
-+$  in-poke-data  %hoy
-++  agent  (^agent ,~ in-poke-data ,*)
---
-%-  agent-to-mall-agent:agent
-^-  agent:agent
-|_  [bowl:mall state=~]
+^-  agent:mall
+=|  state=@
+|_  bowl:mall
 ++  handle-init
-  `~
+  `..handle-init
 ::
 ++  handle-prep
-  |~  old-state=vase
-  *step:agent:agent
+  |=  =old-state=vase
+  =/  old-state  !<(@ old-state-vase)
+  ?~  old-state
+    ~&  %prep-lost
+    `..handle-init
+  ~&  %prep-found
+  `..handle-init(state u.old-state)
 ::
 ++  handle-poke
-  |=  =a=in-poke-data
-  ~&  >>  'ouchers!'
-  ~&  >>>  a-in-poke-data
-  *step:agent:agent
+  |=  in-poke-data=cage
+  ~&  >>  'ouchies!'
+  ~&  >>>  in-poke-data
+  ~&  >  state=state
+  =.  state  +(state)
+  `..handle-init
 ::
 ++  handle-peer
-  |~  path
-  *step:agent:agent
+  |=  path
+  `..handle-init
 ::
 ++  handle-pull
-  |~  path
-  *step:agent:agent
+  |=  path
+  `..handle-init
 ::
 ++  handle-peek
-  |~  path
+  |=  path
   *(unit (unit cage))
 ::
 ++  handle-mall
-  |~  [wire internal-gift:mall]
-  *step:agent:agent
+  |=  [wire internal-gift:mall]
+  `..handle-init
 ::
 ++  handle-take
-  |~  [wire *]
-  *step:agent:agent
+  |=  [wire vase]
+  `..handle-init
 ::
 ++  handle-lame
-  |~  [term tang]
-  *step:agent:agent
+  |=  [term tang]
+  `..handle-init
+::
+++  handle-stay
+  !>(state)
 --

@@ -156,9 +156,6 @@
       ::  agent core
       ::
       =agent
-      :: running state
-      ::
-      state=vase
       :: update control
       ::
       =beak
@@ -348,7 +345,6 @@
         control-duct    hen
         beak            beak
         agent           agent
-        state           !>(~)
         ducts           ducts
       ==
     ::
@@ -1090,7 +1086,7 @@
     ::  +ap-agent-core: agent core with current bowl and state
     ::
     ++  ap-agent-core
-      ~(. agent.current-agent ap-construct-bowl state.current-agent)
+      ~(. agent.current-agent ap-construct-bowl)
     ::  +ap-apply: apply effect.
     ::
     ++  ap-apply
@@ -1244,8 +1240,8 @@
       ::
       =/  prep
         =/  =agent  u.maybe-agent
+        =/  running  (some ~(handle-stay agent.current-agent ap-construct-bowl))
         =/  installed  ap-install(agent.current-agent agent)
-        =/  running  (some state.current-agent)
         (installed running)
       ::
       =^  maybe-tang  ap-core  prep
@@ -1440,7 +1436,7 @@
       ::
       :-  (flop -.p.result)
       %_  ap-core
-        state.current-agent                 +.p.result
+        agent.current-agent                 +.p.result
         incoming.subscribers.current-agent  new-subs
       ==
     ::  +ap-handle-quits: handle cancels of incoming subscriptions
@@ -1571,7 +1567,7 @@
   ^+  mall-payload
   ::
   ?-  -.state-old
-    %0  mall-payload  ::  (state state-old)
+    %0  mall-payload(state state-old)
   ==
 ::  +scry: standard scry
 ::
