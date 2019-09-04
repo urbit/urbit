@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wwarn #-}
-
 module Vere.Term (initializeLocalTerminal, term, TerminalSystem(..)) where
 
 import UrbitPrelude
