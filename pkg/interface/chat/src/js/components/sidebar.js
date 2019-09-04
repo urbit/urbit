@@ -110,6 +110,7 @@ export class Sidebar extends Component {
     const { props, state } = this;
     let station = props.match.params.ship + '/' + props.match.params.station;
 
+    console.log(props.circles);
     let sidebarItems = props.circles
       .filter((cir) => {
         return !cir.includes('hall-internal-');

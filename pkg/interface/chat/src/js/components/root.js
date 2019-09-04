@@ -61,13 +61,23 @@ export class Root extends Component {
           let internalStation = host + '/hall-internal-' + circle;
 
           if (internalStation in state.configs) {
-            unreads[cir] =
-              state.configs[internalStation].red <=
-              messages[cir][messages[cir].length - 1].num;
+            if (!!state.configs[internalStation]) {
+              unreads[cir] =
+                state.configs[internalStation].red <=
+                messages[cir][messages[cir].length - 1].num;
+            } else {
+              unreads[cir] = false;
+            }
+          } else if (cir in state.configs) {
+            if (!!state.configs[cir]) {
+               unreads[cir] =
+                state.configs[cir].red <=
+                messages[cir][messages[cir].length - 1].num;
+            } else {
+              unreads[cir] = false;
+            }
           } else {
-            unreads[cir] =
-              state.configs[cir].red <=
-              messages[cir][messages[cir].length - 1].num;
+            unreads[cir] = false;
           }
         }
       } else {
