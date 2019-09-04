@@ -2285,14 +2285,17 @@
         %build           `%f
         %cash            `%a
         %conf            `%g
+        %conf-mall       `%m
         %cred            `%c
         %crew            `%c
         %crow            `%c
         %deal            `%g
+        %deal-mall       `%m
         %dirk            `%c
         %drop            `%c
         %flog            `%d
         %info            `%c
+        %init            `%m
         %keep            `%f
         %kill            `%f
         %look            `%j

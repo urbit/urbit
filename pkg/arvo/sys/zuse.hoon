@@ -1849,6 +1849,141 @@
     ~
   --
 ::                                                      ::::
+::::                    ++mall                            ::  (1g) extensions
+  ::                                                    ::::
+++  mall  ^?
+  |%
+  ::                                                    ::
+  ::::                  ++able:mall                     ::  (1g1) arvo moves
+    ::                                                  ::::
+  ++  able  ^?
+    |%
+    ++  gift                                            ::  outgoing result
+      $%  {$mass p/mass}                                ::  memory usage
+          {$onto p/(each suss tang)}                    ::  about agent
+          {$rend p/path q/*}                            ::  network request
+          {$unto p/internal-gift}                       ::
+          {$mack p/(unit tang)}                         ::  message ack
+      ==                                                ::
+    ++  task                                            ::  incoming request
+      $~  [%vega ~]                                     ::
+      $%  {$conf-mall p/dock q/dock}                    ::  configure app
+          $>(%init vane-task)                           ::  set owner
+          {$deal p/sock q/internal-task}                ::  full transmission
+          {$deal-mall p/sock q/internal-task}           ::  full transmission
+          $>(%vega vane-task)                           ::  report upgrade
+          $>(%west vane-task)                           ::  network request
+          [%wash ~]                                     ::  clear caches
+          $>(%wegh vane-task)                           ::  report memory
+      ==                                                ::
+    --  ::able
+  ++  bitt  (map bone (pair ship path))                 ::  incoming subs
+  ++  boat                                              ::  outgoing subs
+    %+  map  (pair bone wire)                           ::
+    (trel bean ship path)                               ::
+  ++  bowl                                              ::  standard app state
+          $:  $:  our/ship                              ::  host
+                  src/ship                              ::  guest
+                  dap/term                              ::  agent
+              ==                                        ::
+              $:  wex/boat                              ::  outgoing subs
+                  sup/bitt                              ::  incoming subs
+              ==                                        ::
+              $:  ost/bone                              ::  opaque cause
+                  act/@ud                               ::  change number
+                  eny/@uvJ                              ::  entropy
+                  now/@da                               ::  current time
+                  byk/beak                              ::  load source
+          ==  ==                                        ::
+  ++  agent-action                                      ::  agent action
+    $%  {$peel p/mark q/path}                           ::  translated peer
+        {$peer p/path}                                  ::  subscribe
+        {$poke p/cage}                                  ::  apply
+        {$puff p/mark q/noun}                           ::  unchecked poke
+        {$pull ~}                                      ::  unsubscribe
+        {$punk p/mark q/cage}                           ::  translated poke
+        {$pump ~}                                      ::  pump yes+no
+        {$peer-not p/tang}                              ::  poison pill peer
+    ==                                                  ::
+  ++  internal-gift                                     ::
+    $%  {$coup p/(unit tang)}                           ::  poke result
+        {$diff p/cage}                                  ::  subscription output
+        {$quit ~}                                      ::  close subscription
+        {$reap p/(unit tang)}                           ::  peer result
+        [%http-response =http-event:http]              ::  serve http result
+    ==                                                  ::
+  ++  internal-task  (pair term agent-action)           ::  internal task
+  ++  dude  term                                        ::  server identity
+  ++  gill  (pair ship term)                            ::  general contact
+  ++  scar                                              ::  opaque duct
+    $:  p/@ud                                           ::  bone sequence
+        q/(map duct bone)                               ::  by duct
+        r/(map bone duct)                               ::  by bone
+    ==                                                  ::
+  ++  suss  (trel dude @tas @da)                        ::  config report
+  ++  well  (pair desk term)                            ::
+  ::
+  ::  +internal-note: +ap note
+  ::
+  ++  internal-note
+    $%  [%meta =term =vase]
+        [%send =ship =internal-task]
+    ==
+  ::  +internal-move: agent-level move
+  ::
+  ::    Analogous to an Arvo move, except these are routed by bone, instead of
+  ::    duct.
+  ::
+  ++  internal-move
+    $:  =bone
+        move=(wind internal-note internal-gift)
+    ==
+  ::  +agent: app core
+  ::
+  ++  agent
+    =>  |%
+        +$  move  internal-move
+        +$  step  (quip move new-state=vase)
+        --
+    $_  ^|
+    |_  [bowl state=vase]
+    ++  handle-init
+      *step
+    ::
+    ++  handle-prep
+      |~  old-state=vase
+      *step
+    ::
+    ++  handle-poke
+      |~  in-poke-data=cage
+      *step
+    ::
+    ++  handle-peer
+      |~  path
+      *step
+    ::
+    ++  handle-pull
+      |~  path
+      *step
+    ::
+    ++  handle-peek
+      |~  path
+      *(unit (unit cage))
+    ::
+    ++  handle-mall
+      |~  [wire internal-gift]
+      *step
+    ::
+    ++  handle-take
+      |~  [wire sign=vase]
+      *step
+    ::
+    ++  handle-lame
+      |~  [term tang]
+      *step
+    --
+  --  ::mall
+::                                                      ::::
 ::::                    ++gall                            ::  (1g) extensions
   ::                                                    ::::
 ++  gall  ^?
@@ -7433,6 +7568,7 @@
       [%e task:able:eyre]
       {$f task:able:ford}
       {$g task:able:gall}
+      {$m task:able:mall}
       [%i task:able:iris]
       {$j task:able:jael}
       {@tas $meta vase}
@@ -7449,6 +7585,7 @@
       {$f gift:able:ford}
       [%e gift:able:eyre]
       {$g gift:able:gall}
+      {$m gift:able:mall}
       [%i gift:able:iris]
       {$j gift:able:jael}
   ==
