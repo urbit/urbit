@@ -226,6 +226,114 @@
     ~&  sat
     [~ this]
   ::
+      %state-surgery
+    =/  pubs=[broken=(list [@p @tas @tas]) new=(map @tas collection)]
+      %-  ~(rep by pubs.sat)
+      |=  $:  [nom=@tas col=collection]
+              broken=(list [@p @tas @tas])
+              pubs=(map @tas collection)
+          ==
+      ^-  [(list [@p @tas @tas]) (map @tas collection)]
+      ::
+      =/  bad-posts=(list [@p @tas @tas])
+        %-  ~(rep by pos.col)
+        |=  $:  [pos=@tas dat=[=bone dat=(each [post-info manx @t] tang)]]
+                broken=(list [@p @tas @tas])
+            ==
+        ^-  (list [@p @tas @tas])
+        ?:  -.dat.dat
+          broken
+        [[our.bol nom pos] broken]
+      ::
+      =.  pin.order.col
+        %+  skip  pin.order.col
+        |=  pos=@tas
+        ^-  ?
+        ?~  (find [our.bol nom pos]~ bad-posts)
+          %.n
+        %.y
+      ::
+      =.  unpin.order.col
+        %+  skip  unpin.order.col
+        |=  pos=@tas
+        ^-  ?
+        ?~  (find [our.bol nom pos]~ bad-posts)
+          %.n
+        %.y
+      ::
+      [(welp broken bad-posts) (~(put by pubs) nom col)]
+    ::
+    =/  subs=[broken=(list [@p @tas @tas]) new=(map [@p @tas] collection)]
+      %-  ~(rep by subs.sat)
+      |=  $:  [[who=@p nom=@tas] col=collection]
+              broken=(list [@p @tas @tas])
+              subs=(map [@p @tas] collection)
+          ==
+      ^-  [(list [@p @tas @tas]) (map [@p @tas] collection)]
+      ::
+      =/  bad-posts=(list [@p @tas @tas])
+        %-  ~(rep by pos.col)
+        |=  $:  [pos=@tas dat=[=bone dat=(each [post-info manx @t] tang)]]
+                broken=(list [@p @tas @tas])
+            ==
+        ^-  (list [@p @tas @tas])
+        ?:  -.dat.dat
+          broken
+        [[who nom pos] broken]
+      ::
+      ::
+      =.  pin.order.col
+        %+  skip  pin.order.col
+        |=  pos=@tas
+        ?~  (find [who nom pos]~ bad-posts)
+          %.n
+        %.y
+      ::
+      =.  unpin.order.col
+        %+  skip  unpin.order.col
+        |=  pos=@tas
+        ?~  (find [who nom pos]~ bad-posts)
+          %.n
+        %.y
+      ::
+      [(welp broken bad-posts) (~(put by subs) [who nom] col)]
+    ::
+    =/  new-latest=(list [@p @tas @tas])
+      %+  skip  latest.sat
+      |=  elm=[@p @tas @tas]
+      ^-  ?
+      ?^  (find [elm]~ broken.pubs)
+        %.y
+      ?^  (find [elm]~ broken.subs)
+        %.y
+      %.n
+    ::
+    =/  new-unread=(set [@p @tas @tas])
+      %-  sy
+      %+  skip  ~(tap in unread.sat)
+      |=  elm=[@p @tas @tas]
+      ^-  ?
+      ?^  (find [elm]~ broken.pubs)
+        %.y
+      ?^  (find [elm]~ broken.subs)
+        %.y
+      %.n
+    ::
+    =/  mow=(list move)
+      %-  ~(rep by new.pubs)
+      |=  [[nom=@tas col=collection] out=(list move)]
+      ^-  (list move)
+      =/  del=delta  [%total our.bol nom col]
+      (welp (affection del) out)
+    ::
+    :-  mow
+    %=  this
+      latest.sat    new-latest
+      unread.sat    new-unread
+      pubs.sat      new.pubs
+      subs.sat      new.subs
+    ==
+  ::
   ==
 ::
 ++  da
@@ -289,8 +397,10 @@
         (~(put by pubs.sat) col.del new)
       =?  subs.sat  !=(our.bol who.del)
         (~(put by subs.sat) [who.del col.del] new)
-      =?  da-this  -.dat.del
-        (da-insert who.del col.del pos.del)
+      =.  da-this
+        ?:  -.dat.del
+          (da-insert who.del col.del pos.del)
+        (da-remove who.del col.del pos.del)
       (da-emil (affection del))
     ::
         %comments
@@ -328,7 +438,10 @@
       ?~  posts
         da-this
       ?.  +>-.i.posts
-        $(posts t.posts)
+        %=  $
+          da-this  (da-remove who.del col.del -.i.posts)
+          posts    t.posts
+        ==
       %=  $
         da-this  (da-insert who.del col.del -.i.posts)
         posts    t.posts
