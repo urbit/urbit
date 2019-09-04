@@ -2,11 +2,17 @@
 ::
 ++  serial  @uvH                                        ::  unique identifier
 ::
-+$  envelope                                            ::  message container
++$  letter
+  $%  [%text msg=cord]
+      [%url msg=cord]
+      [%code msg=cord]
+  ==
+::
++$  envelope                                            ::  letter container
   $:  uid=serial
       author=ship
       when=time
-      message=cord
+      =letter
   ==
 ::
 +$  mailbox                                             ::  envelopes + configs

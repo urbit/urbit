@@ -33,6 +33,22 @@
   ^-  json
   s+(spat a)
 ::
+++  lett
+  |=  =letter
+  ^-  json
+  =,  enjs:format
+  ?-  -.letter
+      %text
+    s+msg.letter
+  ::
+      %url
+    s+msg.letter
+  ::
+      %code
+    s+msg.letter
+  ::
+  --
+::
 ++  enve
   |=  =envelope
   ^-  json
@@ -41,7 +57,7 @@
   :~  [%uid s+(scot %uv uid.envelope)]
       [%author (ship author.envelope)]
       [%when (time when.envelope)]
-      [%message s+message.envelope]
+      [%letter (lett letter.envelope)]
   ==
 --
 
