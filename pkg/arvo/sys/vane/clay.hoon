@@ -508,8 +508,7 @@
           $%  [%init-clad ~]                            ::
       ==  ==                                            ::
       $:  %a                                            ::  by %ames
-          $>  $?  %send                                 ::  XX strange
-                  %woot                                 ::
+          $>  $?  %woot                                 ::
               ==                                        ::
           gift:able:ames                                ::
       ==                                                ::
