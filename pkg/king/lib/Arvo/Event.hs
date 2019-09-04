@@ -157,6 +157,7 @@ data ArvoEv
     | ArvoEvWack () Word512
     | ArvoEvWarn Path Noun
     | ArvoEvCrud Path Cord Tang
+    | ArvoEvVeer Atom Noun
   deriving (Eq, Ord, Show)
 
 deriveNoun ''ArvoEv
