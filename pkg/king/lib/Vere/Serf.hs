@@ -357,8 +357,8 @@ doJob serf job = do
 bootJob :: HasLogFunc e => Serf e -> Job -> RIO e (Job, SerfState)
 bootJob serf job = do
     doJob serf job >>= \case
-        (job, ss, []) -> pure (job, ss)
-        (job, ss, fx) -> throwIO (EffectsDuringBoot (jobId job) fx)
+        (job, ss, _) -> pure (job, ss)
+--        (job, ss, fx) -> throwIO (EffectsDuringBoot (jobId job) fx)
 
 replayJob :: HasLogFunc e => Serf e -> Job -> RIO e SerfState
 replayJob serf job = do
