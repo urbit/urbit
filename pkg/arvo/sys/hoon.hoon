@@ -273,7 +273,8 @@
   ::  8 bits.
   @
 ::
-+*  each  [this that]
+++  each
+  |$  [this that]
   ::    either {a} or {b}, defaulting to {a}.
   ::
   ::  mold generator: produces a discriminated fork between two types,
@@ -291,7 +292,8 @@
   ::  sample type of `*`.
   $-(* *)
 ::
-+*  list  [item]
+++  list
+  |$  [item]
   ::    null-terminated list
   ::
   ::  mold generator: produces a mold of a null-terminated list of the
@@ -299,14 +301,16 @@
   ::
   $@(~ [i=item t=(list item)])
 ::
-+*  lone  [item]
+++  lone
+  |$  [item]
   ::    single item tuple
   ::
   ::  mold generator: puts the face of `p` on the passed in mold.
   ::
   p=item
 ::
-+*  lest  [item]
+++  lest
+  |$  [item]
   ::    null-terminated non-empty list
   ::
   ::  mold generator: produces a mold of a null-terminated list of the
@@ -322,7 +326,8 @@
   ::  examples: * @ud ,[p=time q=?(%a %b)]
   $~(* $-(* *))
 ::
-+*  pair  [head tail]
+++  pair
+  |$  [head tail]
   ::    dual tuple
   ::
   ::  mold generator: produces a tuple of the two types passed in.
@@ -332,21 +337,24 @@
   ::
   [p=head q=tail]
 ::
-+*  pole  [item]
+++  pole
+  |$  [item]
   ::    faceless list
   ::
   ::  like ++list, but without the faces {i} and {t}.
   ::
   $@(~ [item (pole item)])
 ::
-+*  qual  [first second third fourth]
+++  qual
+  |$  [first second third fourth]
   ::    quadruple tuple
   ::
   ::  mold generator: produces a tuple of the four types passed in.
   ::
   [p=first q=second r=third s=fourth]
 ::
-+*  quip  [item state]
+++  quip
+  |$  [item state]
   ::    pair of list of first and second
   ::
   ::  a common pattern in hoon code is to return a ++list of changes, along with
@@ -357,12 +365,14 @@
   ::
   [(list item) state]
 ::
-+*  trap  [product]
+++  trap
+  |$  [product]
   ::    a core with one arm `$`
   ::
   _|?($:product)
 ::
-+*  tree  [node]
+++  tree
+  |$  [node]
   ::    tree mold generator
   ::
   ::  a `++tree` can be empty, or contain a node of a type and
@@ -370,14 +380,16 @@
   ::
   $@(~ [n=node l=(tree node) r=(tree node)])
 ::
-+*  trel  [first second third]
+++  trel
+  |$  [first second third]
   ::    triple tuple
   ::
   ::  mold generator: produces a tuple of the three types passed in.
   ::
   [p=first q=second r=third]
 ::
-+*  unit  [item]
+++  unit
+  |$  [item]
   ::    maybe
   ::
   ::  mold generator: either `~` or `[~ u=a]` where `a` is the
@@ -1815,18 +1827,21 @@
 ::::  2o: containers                                    ::
   ::                                                    ::
   ::
-+*  jar  [key value]  (map key (list value))            ::  map of lists
-+*  jug  [key value]  (map key (set value))             ::  map of sets
+++  jar  |$  [key value]  (map key (list value))        ::  map of lists
+++  jug  |$  [key value]  (map key (set value))         ::  map of sets
 ::
-+*  map  [key value]                                    ::  table
+++  map
+  |$  [key value]                                       ::  table
   $|  (tree (pair key value))
   |=(a=(tree (pair)) ~(apt by a))
 ::
-+*  qeu  [item]                                         ::  queue
+++  qeu
+  |$  [item]                                            ::  queue
   $|  (tree item)
   |=(a=(tree) ~(apt to a))
 ::
-+*  set  [item]                                         ::  set
+++  set
+  |$  [item]                                            ::  set
   $|  (tree item)
   |=(a=(tree) ~(apt in a))
 ::
@@ -11911,8 +11926,8 @@
   ::
   +|  %helpers
   ::
-  +*  batt-of  [arm]  (map term (pair what (map term arm)))
-  +*  chap-of  [arm]  [doc=what arms=(map term arm)]
+  ++  batt-of  |$  [arm]  (map term (pair what (map term arm)))
+  ++  chap-of  |$  [arm]  [doc=what arms=(map term arm)]
   ::
   ::  Traverse over a chapter in a battery.
   ::
