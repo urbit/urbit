@@ -16585,6 +16585,7 @@
                   ['*' (rune tar %brtr exqc)]
                   ['=' (rune tis %brts exqc)]
                   ['?' (rune wut %brwt expa)]
+                  ['$' (rune bus %brbs exqe)]
               ==
             ==
           :-  '$'
@@ -16795,7 +16796,18 @@
           ==
         ==
       ==
-    ::
+    ++  lynx
+      %+  cook
+        |=  a=(list term)
+        ^-  spec
+        :-  %bscl
+        =-  ?>(?=(^ -) -)
+        %+  turn  a
+        |=  =term
+        ^-  spec
+        =/  tar  [%base %noun]
+        [%bsts term [%bssg tar [%bshp tar tar]]]
+      (ifix [lac rac] (most ace sym))           ::  list of names
     ++  whap  !:                                        ::  chapter
       %+  cook
         |=  a=(list (pair term hoon))
@@ -16963,6 +16975,7 @@
     ++  exqb  |.(;~(gunk loan loan))                    ::  two specs
     ++  exqc  |.(;~(gunk loan loaf))                    ::  spec then hoon
     ++  exqd  |.(;~(gunk loaf loan))                    ::  hoon then spec
+    ++  exqe  |.(;~(gunk lynx loan))                    ::  list of names then spec
     ++  exqs  |.((butt hunk))                           ::  closed gapped specs
     ++  exqg  |.(;~(gunk sym loan))                     ::  term and spec
     ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  hoon with one spec
