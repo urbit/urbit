@@ -6654,6 +6654,7 @@
     {$yell p/(list hoon)}                               ::  render as tank
     {$xray p/manx:hoot}                                 ::  ;foo; templating
   ::                                            ::::::  cores
+    [%brbs sample=spec body=spec]
     {$brcb p/spec q/alas r/(map term tome)}             ::  |_
     {$brcl p/hoon q/hoon}                               ::  |:
     {$brcn p/(unit term) q/(map term tome)}             ::  |%
@@ -8630,6 +8631,7 @@
         {$yell *}  [%cncl [%limb %cain] [%zpbn [%cltr p.gen]] ~]
         {$note *}  q.gen
     ::
+        [%brbs *]  [%brtr sample.gen [%ktcl body.gen]]
         {$brcb *}  :+  %tsls  [%kttr p.gen]
                    :+  %brcn  ~
                    %-  ~(run by r.gen)
