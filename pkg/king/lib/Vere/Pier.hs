@@ -14,6 +14,7 @@ import System.Directory   (createDirectoryIfMissing)
 import System.Posix.Files (ownerModes, setFileMode)
 import Vere.Ames          (ames)
 import Vere.Behn          (behn)
+import Vere.Http.Client   (client)
 import Vere.Http.Server   (serv)
 import Vere.Log           (EventLog)
 import Vere.Serf          (Serf, sStderr, SerfState(..), doJob)
@@ -196,13 +197,14 @@ drivers pierPath inst who mPort plan termSys =
     (behnBorn, runBehn) = behn inst plan
     (amesBorn, runAmes) = ames inst who mPort plan
     (httpBorn, runHttp) = serv pierPath inst plan
+    (irisBorn, runIris) = client inst plan
     (termBorn, runTerm) = term termSys pierPath inst plan
-    initialEvents       = mconcat [behnBorn, amesBorn, httpBorn, termBorn]
+    initialEvents       = mconcat [behnBorn, amesBorn, httpBorn, termBorn, irisBorn]
     runDrivers          = do
         dNewt       <- liftAcquire $ runAmes
         dBehn       <- liftAcquire $ runBehn
         dAmes       <- pure $ const $ pure ()
-        dHttpClient <- pure $ const $ pure ()
+        dHttpClient <- runIris
         dHttpServer <- runHttp
         dSync       <- pure $ const $ pure ()
         dTerm       <- runTerm

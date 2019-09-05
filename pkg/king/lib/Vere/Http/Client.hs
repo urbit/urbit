@@ -5,37 +5,30 @@
 
 module Vere.Http.Client where
 
-import ClassyPrelude
+import Arvo            (KingId, Ev(..), BlipEv(..), HttpClientEf(..),
+                        HttpClientEv(..), HttpClientReq(..), HttpEvent(..),
+                        ResponseHeader(..))
+import UrbitPrelude    hiding (Builder)
+import Vere.Pier.Types
 
-import Noun
 import Vere.Http
-import Arvo (ResponseHeader(..))
 
+import qualified Data.Map            as M
 import qualified Network.HTTP.Client as H
 import qualified Network.HTTP.Types  as HT
-
 
 -- Types -----------------------------------------------------------------------
 
 type ReqId = Word
 
-data Ev = Receive ReqId Event -- [%receive @ todo]
-
-data Eff
-    = NewReq ReqId Request -- [%request @ todo]
-    | CancelReq ReqId      -- [%cancel-request @]
-  deriving (Eq, Ord, Show)
-
-data State = State
-  { sManager :: H.Manager
-  , sLive    :: TVar (Map ReqId (Async ()))
-  , sChan    :: MVar Ev
+data HttpClientDrv = HttpClientDrv
+  { hcdManager :: H.Manager
+  , hcdLive    :: TVar (Map ReqId (Async ()))
   }
-
 
 --------------------------------------------------------------------------------
 
-cvtReq :: Request -> Maybe H.Request
+cvtReq :: HttpClientReq -> Maybe H.Request
 cvtReq r =
   H.parseRequest (unpack (unCord $ url r)) <&> \init -> init
     { H.method = encodeUtf8 $ tshow (method r)
@@ -52,59 +45,105 @@ cvtRespHeaders resp =
   where
     heads = convertHeaders (H.responseHeaders resp)
 
-
 --------------------------------------------------------------------------------
 
-initState :: IO State
-initState = State <$> H.newManager H.defaultManagerSettings
-                  <*> newTVarIO mempty
-                  <*> newEmptyMVar
-
-emit :: State -> Ev -> IO ()
-emit st event = putMVar (sChan st) event
-
-runEff :: State -> Eff -> IO ()
-runEff st = \case NewReq id req -> newReq st id req
-                  CancelReq id  -> cancelReq st id
-
-newReq :: State -> ReqId -> Request -> IO ()
-newReq st id req = do async <- runReq st id req
-                      atomically $ modifyTVar (sLive st) (insertMap id async)
-
-waitCancel :: Async a -> IO (Either SomeException a)
-waitCancel async = cancel async >> waitCatch async
-
-cancelThread :: State -> ReqId -> Async a -> IO ()
-cancelThread st id =
-  waitCancel >=> \case Left _  -> emit st (Receive id Canceled)
-                       Right _ -> pure ()
-
-cancelReq :: State -> ReqId -> IO ()
-cancelReq st id =
-  join $ atomically $ do
-    tbl <- readTVar (sLive st)
-    case lookup id tbl of
-      Nothing    -> pure (pure ())
-      Just async -> do writeTVar (sLive st) (deleteMap id tbl)
-                       pure (cancelThread st id async)
-
-runReq :: State -> ReqId -> Request -> IO (Async ())
-runReq st id req = async $
-  case cvtReq req of
-    Nothing -> emit st (Receive id (Failed "bad-request-e"))
-    Just r  -> H.withResponse r (sManager st) exec
+client :: forall e. HasLogFunc e
+       => KingId -> QueueEv -> ([Ev], RAcquire e (EffCb e HttpClientEf))
+client kingId enqueueEv = ([], runHttpClient)
   where
-    recv :: H.BodyReader -> IO (Maybe ByteString)
-    recv read = read <&> \case chunk | null chunk -> Nothing
-                                     | otherwise  -> Just chunk
+    runHttpClient :: RAcquire e (EffCb e HttpClientEf)
+    runHttpClient = do
+      tim <- mkRAcquire start stop
+      pure (handleEffect tim)
 
-    exec :: H.Response H.BodyReader -> IO ()
-    exec resp = do
-      let headers  = cvtRespHeaders resp
-          getChunk = recv (H.responseBody resp)
-          loop     = getChunk >>= \case
-                       Nothing -> emit st (Receive id Done)
-                       Just bs -> do emit st (Receive id $ Received $ Octs bs)
-                                     loop
-      emit st (Receive id $ Started headers)
-      loop
+    start :: RIO e (HttpClientDrv)
+    start = do
+      manager <- io $ H.newManager H.defaultManagerSettings
+      var <- newTVarIO M.empty
+      pure $ HttpClientDrv manager var
+
+    stop :: HttpClientDrv -> RIO e ()
+    stop HttpClientDrv{..} = do
+      -- Cancel all the outstanding asyncs, ignoring any exceptions.
+      liveThreads <- atomically $ readTVar hcdLive
+      mapM_ cancel liveThreads
+
+    handleEffect :: HttpClientDrv -> HttpClientEf -> RIO e ()
+    handleEffect drv = \case
+      HCERequest _ id req -> newReq drv id req
+      HCECancelRequest _ id -> cancelReq drv id
+
+    newReq :: HttpClientDrv -> ReqId -> HttpClientReq -> RIO e ()
+    newReq drv id req = do
+      async <- runReq drv id req
+      atomically $ modifyTVar (hcdLive drv) (insertMap id async)
+
+    -- The problem with the original http client code was that it was written
+    -- to the idea of what the events "should have" been instead of what they
+    -- actually were. This means that this driver doesn't run like the vere
+    -- http client driver. The vere driver was written assuming that parts of
+    -- events could be compressed together: a Start might contain the only
+    -- chunk of data and immediately complete, where here the Start event, the
+    -- Continue (with File) event, and the Continue (completed) event are three
+    -- separate things.
+    runReq :: HttpClientDrv -> ReqId -> HttpClientReq -> RIO e (Async ())
+    runReq HttpClientDrv{..} id req = async $
+      case cvtReq req of
+        Nothing -> do
+          logDebug $ displayShow ("(malformed http client request)", id, req)
+          planEvent id (Cancel ())
+        Just r -> do
+          logDebug $ displayShow ("(http client request)", id, req)
+          withRunInIO $ \run ->
+            H.withResponse r hcdManager $ \x -> run (exec x)
+      where
+        recv :: H.BodyReader -> RIO e (Maybe ByteString)
+        recv read = io $ read <&> \case chunk | null chunk -> Nothing
+                                              | otherwise  -> Just chunk
+
+        exec :: H.Response H.BodyReader -> RIO e ()
+        exec resp = do
+          let headers  = cvtRespHeaders resp
+              getChunk = recv (H.responseBody resp)
+              loop     = getChunk >>= \case
+                           Nothing -> planEvent id (Continue Nothing True)
+                           Just bs -> do
+                             planEvent id $ Continue (Just $ File $ Octs bs) False
+                             loop
+          planEvent id (Start headers Nothing False)
+          loop
+
+    planEvent :: ReqId -> HttpEvent -> RIO e ()
+    planEvent id ev = do
+      logDebug $ displayShow ("(http client response)", id, (describe ev))
+      atomically $ enqueueEv $ EvBlip $ BlipEvHttpClient $
+        HttpClientEvReceive (kingId, ()) (fromIntegral id) ev
+
+    -- show an HttpEvent with byte count instead of raw data
+    describe :: HttpEvent -> String
+    describe (Start header Nothing final) =
+      "(Start " ++ (show header) ++ " ~ " ++ (show final)
+    describe (Start header (Just (File (Octs bs))) final) =
+      "(Start " ++ (show header) ++ " (" ++ (show $ length bs) ++ " bytes) " ++ (show final)
+    describe (Continue Nothing final) =
+      "(Continue ~ " ++ (show final)
+    describe (Continue (Just (File (Octs bs))) final) =
+      "(Continue (" ++ (show $ length bs) ++ " bytes) " ++ (show final)
+    describe (Cancel ()) = "(Cancel ())"
+
+    waitCancel :: Async a -> RIO e (Either SomeException a)
+    waitCancel async = cancel async >> waitCatch async
+
+    cancelThread :: ReqId -> Async a -> RIO e ()
+    cancelThread id =
+      waitCancel >=> \case Left _  -> planEvent id $ Cancel ()
+                           Right _ -> pure ()
+
+    cancelReq :: HttpClientDrv -> ReqId -> RIO e ()
+    cancelReq drv id =
+      join $ atomically $ do
+        tbl <- readTVar (hcdLive drv)
+        case lookup id tbl of
+          Nothing    -> pure (pure ())
+          Just async -> do writeTVar (hcdLive drv) (deleteMap id tbl)
+                           pure (cancelThread id async)
