@@ -3,9 +3,9 @@
 ++  serial  @uvH                                        ::  unique identifier
 ::
 +$  letter
-  $%  [%text msg=cord]
-      [%url msg=cord]
-      [%code msg=cord]
+  $%  [%text text=cord]
+      [%url url=cord]
+      [%code expression=cord output=(list tank)]
   ==
 ::
 +$  envelope                                            ::  letter container

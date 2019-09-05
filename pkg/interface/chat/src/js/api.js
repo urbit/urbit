@@ -128,7 +128,9 @@ class UrbitApi {
           uid: uuid(),
           author,
           when,
-          message
+          letter: {
+            text: message
+          }
         }
       }
     };
@@ -150,7 +152,6 @@ class UrbitApi {
   inboxSyncAction(data, mark = "sync-hook-action") {
     this.action("inbox-sync", mark, data);
   }
-
 
   inboxSyncAddOwned(path) {
     let data = {};

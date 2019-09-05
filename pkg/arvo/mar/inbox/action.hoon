@@ -42,7 +42,14 @@
       :~  [%uid seri]
           [%author (su ;~(pfix sig fed:ag))]
           [%when di]
-          [%message so]
+          [%letter letter]
+      ==
+    ::
+    ++  letter
+      %-  of
+      :~  [%text so]
+          [%url so]
+          [%code eval]
       ==
     ::
     --

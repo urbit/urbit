@@ -11,7 +11,7 @@ export class Message extends Component {
     const { props } = this;
     return (
       <p className={`body-regular-400 v-top`}>
-        {props.msg.message}
+        {props.msg.letter.text}
       </p>
     );
   }
