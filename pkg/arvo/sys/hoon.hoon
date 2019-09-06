@@ -16811,6 +16811,7 @@
           ==
         ==
       ==
+    ::  parses [a b c] or ==  a  b  c  ==
     ++  lynx
       %+  cook
         |=  a=(list term)
@@ -16822,7 +16823,15 @@
         ^-  spec
         =/  tar  [%base %noun]
         [%bsts term [%bssg tar [%bshp tar tar]]]
-      (ifix [lac rac] (most ace sym))           ::  list of names
+      =/  wide  (ifix [lac rac] (most ace sym))
+      =/  tall
+        %+  ifix
+          :-  ;~(plug duz gap)
+          ;~(plug gap duz)
+        (most gap sym)
+      ?.  tol
+        wide
+      ;~(pose wide tall)
     ++  whap  !:                                        ::  chapter
       %+  cook
         |=  a=(list (pair term hoon))
