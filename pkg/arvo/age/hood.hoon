@@ -12,7 +12,7 @@
     ::     they have been bundled into :hood
     ::
     ::  |command handlers
-    hood-helm-mall, hood-kiln, hood-drum-mall, hood-write
+    hood-helm-mall, hood-kiln-mall, hood-drum-mall, hood-write
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -48,7 +48,7 @@
             ?-  hed
               $drum  ?>(?=($drum -.paw) `part:hood-drum-mall`paw)
               $helm  ?>(?=($helm -.paw) `part:hood-helm-mall`paw)
-              $kiln  ?>(?=($kiln -.paw) `part:hood-kiln`paw)
+              $kiln  ?>(?=($kiln -.paw) `part:hood-kiln-mall`paw)
               $write  ?>(?=($write -.paw) `part:hood-write`paw)
             ==
       --
@@ -59,7 +59,7 @@
             ?-  hed
               $drum  (make:hood-drum-mall our)
               $helm  *part:hood-helm-mall
-              $kiln  *part:hood-kiln
+              $kiln  *part:hood-kiln-mall
               $write  *part:hood-write
             ==
       --
@@ -71,7 +71,7 @@
     ++  hood-part                                       ::  current module state
       $%  {$drum $2 pith-2:hood-drum-mall}              ::
           {$helm $0 pith:hood-helm-mall}                ::
-          {$kiln $0 pith:hood-kiln}                     ::
+          {$kiln $0 pith:hood-kiln-mall}                ::
           {$write $0 pith:hood-write}                   ::
       ==                                                ::
     --                                                  ::
@@ -123,7 +123,7 @@
     ::  per-module interface wrappers
     ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum-mall))
     ++  from-helm  (from-module %helm [..$ _abet]:(hood-helm-mall))
-    ++  from-kiln  (from-module %kiln [..$ _abet]:(hood-kiln))
+    ++  from-kiln  (from-module %kiln [..$ _abet]:(hood-kiln-mall))
     ++  from-write  (from-module %write [..$ _abet]:(hood-write))
     --
 |_  hid/bowl:mall                                       ::  gall environment
@@ -193,6 +193,50 @@
                               (need !<(well:gall vase))
       %drum-set-boot-apps     %-  (wrap poke-set-boot-apps):from-drum:h
                               (need !<(? vase))
+      %hood-sync              %-  (wrap poke-sync):from-kiln:h
+                              (need !<([desk ship desk] vase))
+      %kiln-commit            %-  (wrap poke-commit):from-kiln:h
+                              (need !<([term ?] vase))
+      %kiln-info              %-  (wrap poke-info):from-kiln:h
+                              (need !<([tape (unit toro:clay)] vase))
+      %kiln-label             %-  (wrap poke-label):from-kiln:h
+                              (need !<([desk @tas] vase))
+      %kiln-merge             %-  (wrap poke-merge):from-kiln:h
+                              (need !<([desk ship desk case ?($auto germ:clay)] vase))
+      %kiln-cancel            %-  (wrap poke-cancel):from-kiln:h
+                              (need !<(desk vase))
+      %kiln-cancel-autocommit  %-  (wrap poke-cancel-autocommit):from-kiln:h
+                              (need !<(~ vase))
+      %kiln-mount             %-  (wrap poke-mount):from-kiln:h
+                              (need !<([path term] vase))
+      %kiln-rm                %-  (wrap poke-rm):from-kiln:h
+                              (need !<(path vase))
+      %kiln-schedule          %-  (wrap poke-schedule):from-kiln:h
+                              (need !<([path @da @t] vase))
+      %kiln-track             %-  (wrap poke-track):from-kiln:h
+                              (need !<([desk ship desk] vase))
+      %kiln-sync              %-  (wrap poke-sync):from-kiln:h
+                              (need !<([desk ship desk] vase))
+      %kiln-syncs             %-  (wrap poke-syncs):from-kiln:h
+                              (need !<(~ vase))
+      %kiln-start-autoload    %-  (wrap poke-start-autoload):from-kiln:h
+                              (need !<(~ vase))
+      %kiln-wipe-ford         %-  (wrap poke-wipe-ford):from-kiln:h
+                              (need !<(@ud vase))
+      %kiln-keep-ford         %-  (wrap poke-keep-ford):from-kiln:h
+                              (need !<([@ud @ud] vase))
+      %kiln-autoload          %-  (wrap poke-autoload):from-kiln:h
+                              (need !<((unit ?) vase))
+      %kiln-overload          %-  (wrap poke-overload):from-kiln:h
+                              (need !<([@dr @da] vase))
+      %kiln-wash-gall         %-  (wrap poke-wash-gall):from-kiln:h
+                              (need !<(* vase))
+      %kiln-unmount           %-  (wrap poke-unmount):from-kiln:h
+                              (need !<($@(term [knot path]) vase))
+      %kiln-unsync            %-  (wrap poke-unsync):from-kiln:h
+                              (need !<([desk ship desk] vase))
+      %kiln-permission        %-  (wrap poke-permission):from-kiln:h
+                              (need !<([desk path ?] vase))
     ==
   [moves ..handle-init]
 ::
@@ -219,8 +263,14 @@
   =/  h  (help hid)
   =^  moves  lac
     ?+  wire  ~|([%hood-bad-wire wire] !!)
-        [%helm %hi *]    %+  (wrap coup-hi):from-helm:h  t.t.wire
-                         ?>(?=(%coup -.internal-gift) p.internal-gift)
+        [%helm %hi *]      %+  (wrap coup-hi):from-helm:h  t.t.wire
+                           ?>(?=(%coup -.internal-gift) p.internal-gift)
+        [%kiln %fancy *]   %+  (wrap take-coup-fancy):from-kiln:h  t.t.wire
+                           ?>(?=(%coup -.internal-gift) p.internal-gift)
+        [%kiln %reload *]  %+  (wrap take-coup-reload):from-kiln:h  t.t.wire
+                           ?>(?=(%coup -.internal-gift) p.internal-gift)
+        [%kiln %spam *]    %+  (wrap take-coup-spam):from-kiln:h  t.t.wire
+                           ?>(?=(%coup -.internal-gift) p.internal-gift)
         [%drum %phat *]
       ?-  -.internal-gift
           %http-response  !!
@@ -242,6 +292,7 @@
     ?+  wire  ~|([%hood-bad-wire wire] !!)
       [%helm *]  ((wrap take):from-helm:h t.wire vase)
       [%drum *]  ((wrap take):from-drum:h t.wire vase)
+      [%kiln *]  ((wrap take-general):from-kiln:h t.wire vase)
     ==
   [moves ..handle-init]
 ::
