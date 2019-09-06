@@ -4,9 +4,9 @@
 const {app, BrowserWindow, ipcMain} = require('electron');
 const os = require('os');
 
-const path       = require('path');
-const { exec }   = require('child_process');
-const appRootDir = require('app-root-dir');
+const path = require('path');
+const proc = require('child_process');
+const root = require('app-root-dir');
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -23,20 +23,55 @@ const getPlatform = () => {
   };
 };
 
-const execPath = (env.name === 'production') ?
-  path.join(path.dirname(appRootDir.get()), 'bin'):
-  path.join(appRootDir.get(), 'resources', getPlatform());
+////////////////////////////////////////////////////////////////////////////////
+
+const shipsDir = path.join(root.get(), 'ships');
+
+const pillPath = (env.name === 'production')
+               ? path.join(path.dirname(root.get()), 'solid.pill')
+               : path.join(root.get(), 'resources', 'solid.pill');
+
+const execPath = (env.name === 'production')
+               ? path.join(path.dirname(root.get()), 'bin')
+               : path.join(root.get(), 'resources', getPlatform());
+
+const arvoPath = (env.name === 'production')
+               ? path.join(path.dirname(root.get()), 'arvo')
+               : path.join(root.get(), 'resources', 'arvo');
+
+const urbitExe = `${path.join(execPath, 'urbit')}`;
+
+console.log(arvoPath);
+console.log(pillPath);
+console.log(urbitExe);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-const cmd = `${path.join(execPath, 'urbit')}`;
+const bootShip = (ship) => {
+  const pier = path.join(shipsDir, ship);
 
-exec(cmd, (err, stdout, stderr) => {
-  console.log(stdout);
-  console.log(stderr);
-  // stdout.pipe(process.stdout);
-  // stderr.pipe(process.stderr);
-});
+  proc.exec(`du -sh ${pillPath}`, (err, stdout, stderr) => {
+    console.log(["err", err]);
+    console.log(stdout);
+    console.log(stderr);
+  });
+
+  const args = ['-F', ship, '-d', '-A', arvoPath, '-B', pillPath, '-c', pier];
+
+  console.log(args);
+
+  proc.execFile(urbitExe, args, (err, stdout, stderr) => {
+    console.log(["err", err]);
+    console.log(stdout);
+    console.log(stderr);
+    // stdout.pipe(process.stdout);
+    // stderr.pipe(process.stderr);
+  });
+}
+
+bootShip('zod');
+
+// return;
 
 ////////////////////////////////////////////////////////////////////////////////
 

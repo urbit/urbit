@@ -7,3 +7,7 @@ mkdir -p $dir
 dir=resources/mac
 mkdir -p $dir
 ( cd $dir; tar xfz ../../../../release/urbit-darwin-$ver.tgz )
+
+cp -r ../arvo resources/arvo
+
+cp ../../bin/solid.pill resources/solid.pill
