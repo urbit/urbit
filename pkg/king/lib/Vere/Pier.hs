@@ -136,33 +136,36 @@ pier :: ∀e. HasLogFunc e
      -> (Serf e, EventLog, SerfState)
      -> RAcquire e ()
 pier pierPath mPort (serf, log, ss) = do
-    computeQ <- newTQueueIO :: RAcquire e (TQueue Ev)
+    computeQ <- newTQueueIO :: RAcquire e (TQueue ComputeRequest)
     persistQ <- newTQueueIO :: RAcquire e (TQueue (Job, FX))
     executeQ <- newTQueueIO :: RAcquire e (TQueue FX)
 
     inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
     terminalSystem <- initializeLocalTerminal
-
     serf <- pure serf { sStderr = (tsStderr terminalSystem) }
 
     let ship = who (Log.identity log)
 
-    let (bootEvents, startDrivers) =
-          drivers pierPath inst ship mPort (writeTQueue computeQ) terminalSystem
+    let shutdownEvent = writeTQueue computeQ $ CRShutdown
+    let computeEvent = (\ev -> writeTQueue computeQ $ CREvent ev)
 
-    io $ atomically $ for_ bootEvents (writeTQueue computeQ)
+    let (bootEvents, startDrivers) =
+          drivers pierPath inst ship mPort computeEvent shutdownEvent terminalSystem
+
+    io $ atomically $ for_ bootEvents computeEvent
 
     tExe  <- startDrivers >>= router (readTQueue executeQ)
     tDisk <- runPersist log persistQ (writeTQueue executeQ)
     tCpu  <- runCompute serf ss (readTQueue computeQ) (writeTQueue persistQ)
+
+    tSaveSignal <- saveSignalThread computeQ
 
     -- Wait for something to die.
 
     let ded = asum [ death "effect thread" tExe
                    , death "persist thread" tDisk
                    , death "compute thread" tCpu
-                   , death "terminal thread" (tsReaderThread terminalSystem)
                    ]
 
     atomically ded >>= \case
@@ -174,6 +177,13 @@ death tag tid = do
   waitCatchSTM tid <&> \case
     Left exn -> Left (tag, exn)
     Right () -> Right tag
+
+saveSignalThread :: TQueue ComputeRequest -> RAcquire e (Async ())
+saveSignalThread tq = mkRAcquire start cancel
+  where
+    start = async $ forever $ do
+      threadDelay (120 * 1000000) -- 120 seconds
+      atomically $ writeTQueue tq $ CRSave
 
 -- Start All Drivers -----------------------------------------------------------
 
@@ -188,17 +198,17 @@ data Drivers e = Drivers
     }
 
 drivers :: HasLogFunc e
-        => FilePath -> KingId -> Ship -> Maybe Port -> (Ev -> STM ())
+        => FilePath -> KingId -> Ship -> Maybe Port -> (Ev -> STM ()) -> STM()
         -> TerminalSystem e
         -> ([Ev], RAcquire e (Drivers e))
-drivers pierPath inst who mPort plan termSys =
+drivers pierPath inst who mPort plan shutdownSTM termSys =
     (initialEvents, runDrivers)
   where
     (behnBorn, runBehn) = behn inst plan
     (amesBorn, runAmes) = ames inst who mPort plan
     (httpBorn, runHttp) = serv pierPath inst plan
     (irisBorn, runIris) = client inst plan
-    (termBorn, runTerm) = term termSys pierPath inst plan
+    (termBorn, runTerm) = term termSys shutdownSTM pierPath inst plan
     initialEvents       = mconcat [behnBorn, amesBorn, httpBorn, termBorn, irisBorn]
     runDrivers          = do
         dNewt       <- liftAcquire $ runAmes
@@ -240,6 +250,12 @@ router waitFx Drivers{..} =
 
 -- Compute Thread --------------------------------------------------------------
 
+data ComputeRequest
+    = CREvent Ev
+    | CRSave
+    | CRShutdown
+  deriving (Eq, Show)
+
 logEvent :: HasLogFunc e => Ev -> RIO e ()
 logEvent ev =
     logDebug $ display $ "[EVENT]\n" <> pretty
@@ -257,22 +273,35 @@ logEffect ef =
        FailParse n -> pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow n
 
 runCompute :: ∀e. HasLogFunc e
-           => Serf e -> SerfState -> STM Ev -> ((Job, FX) -> STM ())
+           => Serf e -> SerfState -> STM ComputeRequest -> ((Job, FX) -> STM ())
            -> RAcquire e (Async ())
 runCompute serf ss getEvent putResult =
     mkRAcquire (async (go ss)) cancel
   where
     go :: SerfState -> RIO e ()
     go ss = do
-        ev  <- atomically getEvent
-        logEvent ev
-        wen <- io Time.now
-        eId <- pure (ssNextEv ss)
-        mug <- pure (ssLastMug ss)
+        cr  <- atomically getEvent
+        case cr of
+          CREvent ev -> do
+            logEvent ev
+            wen <- io Time.now
+            eId <- pure (ssNextEv ss)
+            mug <- pure (ssLastMug ss)
 
-        (job', ss', fx) <- doJob serf $ DoWork $ Work eId mug wen ev
-        atomically (putResult (job', fx))
-        go ss'
+            (job', ss', fx) <- doJob serf $ DoWork $ Work eId mug wen ev
+            atomically (putResult (job', fx))
+            go ss'
+          CRSave -> do
+            logDebug $ "Taking periodic snapshot"
+            Serf.snapshot serf ss
+            go ss
+          CRShutdown -> do
+            -- When shutting down, we first request a snapshot, and then we
+            -- just exit this recursive processing, which will cause the serf
+            -- to exit from its RAcquire.
+            logDebug $ "Shutting down compute system..."
+            Serf.snapshot serf ss
+            pure ()
 
 
 -- Persist Thread --------------------------------------------------------------

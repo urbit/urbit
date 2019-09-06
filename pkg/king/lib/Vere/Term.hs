@@ -41,18 +41,15 @@ data ReadData = ReadData
 -- the session is over, and has a general in/out queue in the types of the
 -- vere/arvo interface.
 data TerminalSystem e = TerminalSystem
-  -- | The reader can be waited on, as it shuts itself down when the console
-  -- goes away.
-  { tsReaderThread :: Async()
-  , tsReadQueue    :: TQueue Belt
+  { tsReadQueue    :: TQueue Belt
   , tsWriteQueue   :: TQueue VereOutput
-  --
   , tsStderr       :: Text -> RIO e ()
   }
 
 -- Private data to the TerminalSystem that we keep around for stop().
 data Private = Private
-  { pWriterThread :: Async()
+  { pReaderThread :: Async ()
+  , pWriterThread :: Async ()
   , pPreviousConfiguration ::  TerminalAttributes
   }
 
@@ -116,7 +113,7 @@ initializeLocalTerminal = do
       io $ setTerminalAttributes stdInput newTermSettings Immediately
 
       tsReadQueue <- newTQueueIO
-      tsReaderThread <- asyncBound (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
+      pReaderThread <- asyncBound (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
 
       let tsStderr = \txt ->
             atomically $ writeTQueue tsWriteQueue $ VerePrintOutput $ unpack txt
@@ -126,7 +123,12 @@ initializeLocalTerminal = do
     stop :: HasLogFunc e
          => (TerminalSystem e, Private) -> RIO e ()
     stop (TerminalSystem{..}, Private{..}) = do
-      cancel tsReaderThread
+      -- Note that we don't `cancel pReaderThread` here. This is a deliberate
+      -- decision because fdRead calls into a native function which the runtime
+      -- can't kill. If we were to cancel here, the internal `waitCatch` would
+      -- block until the next piece of keyboard input. Since this only happens
+      -- at shutdown, just leak the file descriptor.
+
       cancel pWriterThread
       -- take the terminal out of raw mode
       io $ setTerminalAttributes stdInput pPreviousConfiguration Immediately
@@ -327,8 +329,9 @@ initializeLocalTerminal = do
 --------------------------------------------------------------------------------
 
 term :: HasLogFunc e
-     => TerminalSystem e -> FilePath -> KingId -> QueueEv -> ([Ev], RAcquire e (EffCb e TermEf))
-term TerminalSystem{..} pierPath king enqueueEv =
+     => TerminalSystem e -> (STM ()) -> FilePath -> KingId -> QueueEv
+     -> ([Ev], RAcquire e (EffCb e TermEf))
+term TerminalSystem{..} shutdownSTM pierPath king enqueueEv =
     (initialEvents, runTerm)
   where
     initialEvents = [(initialBlew 80 24), initialHail]
@@ -358,20 +361,7 @@ term TerminalSystem{..} pierPath king enqueueEv =
         for_ fsWrites handleFsWrite
       TermEfInit _ _ -> pure ()
       TermEfLogo path _ -> do
-        -- %logo is the shutdown path. A previous iteration just had the reader
-        -- thread exit when it saw a ^D, which was wrong because it didn't emit
-        -- a ^D to your Urbit, which does things and then sends us a %logo.
-        --
-        -- But this isn't optimal either. Right now, Pier spins forever,
-        -- waiting for some piece to exit or die, and I added the terminal
-        -- reading Async for expedience. But the terminal system ending should
-        -- additionally trigger taking a snapshot, along with any other clean
-        -- shutdown work.
-        --
-        -- If we have a separate terminal program which connects to the daemon,
-        -- this shouldn't be shutdown, but should be a sort of disconnect,
-        -- meaning it would be a VereOutput?
-        cancel tsReaderThread
+        atomically $ shutdownSTM
       TermEfMass _ _ -> pure ()
 
     handleFsWrite :: Blit -> RIO e ()
