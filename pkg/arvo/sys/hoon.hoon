@@ -6470,7 +6470,7 @@
 ++  mute                                                ::  untyped virtual
   |=  taq/_=>(~ ^?(|.(**)))
   ^-  (each * (list tank))
-  =+  ton=(mock [taq %9 2 %0 1] |=({* *} ~))
+  =/  ton  (mock [taq %9 2 %0 1] |=((pair) ``.*(~ [%12 1+p 1+q])))
   ?-  -.ton
     $0  [%& p.ton]
     $1  [%| (turn p.ton |=(a/* (smyt (path a))))]
