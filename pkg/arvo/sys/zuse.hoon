@@ -6375,7 +6375,7 @@
       (ifix [gal ban] ;~(plug name attr))
     ::                                                  ::  ++many:de-xml:html
     ++  many                                            ::  contents
-      (more (star comt) ;~(pose apex chrd cdat))
+      ;~(pfix (star comt) (star ;~(sfix ;~(pose apex chrd cdat) (star comt))))
     ::                                                  ::  ++name:de-xml:html
     ++  name                                            ::  tag name
       =+  ^=  chx
