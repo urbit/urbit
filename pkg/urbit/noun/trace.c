@@ -425,8 +425,10 @@ u3t_event_trace(const c3_c* name, c3_c type)
 /* u3t_print_steps: print step counter.
 */
 void
-u3t_print_steps(c3_c* cap_c, c3_d sep_d)
+u3t_print_steps(FILE* fil_u, c3_c* cap_c, c3_d sep_d)
 {
+  c3_assert( 0 != fil_u );
+
   c3_w gib_w = (sep_d / 1000000000ULL);
   c3_w mib_w = (sep_d % 1000000000ULL) / 1000000ULL;
   c3_w kib_w = (sep_d % 1000000ULL) / 1000ULL;
@@ -436,17 +438,17 @@ u3t_print_steps(c3_c* cap_c, c3_d sep_d)
   //
   if ( sep_d ) {
     if ( gib_w ) {
-      fprintf(stderr, "%s: G/%d.%03d.%03d.%03d\r\n",
+      fprintf(fil_u, "%s: G/%d.%03d.%03d.%03d\r\n",
           cap_c, gib_w, mib_w, kib_w, bib_w);
     }
     else if ( mib_w ) {
-      fprintf(stderr, "%s: M/%d.%03d.%03d\r\n", cap_c, mib_w, kib_w, bib_w);
+      fprintf(fil_u, "%s: M/%d.%03d.%03d\r\n", cap_c, mib_w, kib_w, bib_w);
     }
     else if ( kib_w ) {
-      fprintf(stderr, "%s: K/%d.%03d\r\n", cap_c, kib_w, bib_w);
+      fprintf(fil_u, "%s: K/%d.%03d\r\n", cap_c, kib_w, bib_w);
     }
     else if ( bib_w ) {
-      fprintf(stderr, "%s: %d\r\n", cap_c, bib_w);
+      fprintf(fil_u, "%s: %d\r\n", cap_c, bib_w);
     }
   }
 }
@@ -454,8 +456,10 @@ u3t_print_steps(c3_c* cap_c, c3_d sep_d)
 /* u3t_damp(): print and clear profile data.
 */
 void
-u3t_damp(void)
+u3t_damp(FILE* fil_u)
 {
+  c3_assert( 0 != fil_u );
+
   if ( 0 != u3R->pro.day ) {
     u3_noun wol = u3do("pi-tell", u3R->pro.day);
 
@@ -466,10 +470,10 @@ u3t_damp(void)
 
       while ( u3_nul != low ) {
         c3_c* str_c = (c3_c*)u3r_tape(u3h(low));
+        fputs(str_c, fil_u);
+        fputs("\r\n", fil_u);
 
-        fprintf(stderr, "%s\r\n", str_c);
         c3_free(str_c);
-
         low = u3t(low);
       }
 
@@ -481,8 +485,8 @@ u3t_damp(void)
     u3R->pro.day = u3nt(u3nq(0, 0, 0, u3nq(0, 0, 0, 0)), 0, 0);
   }
 
-  u3t_print_steps("nocks", u3R->pro.nox_d);
-  u3t_print_steps("cells", u3R->pro.cel_d);
+  u3t_print_steps(fil_u, "nocks", u3R->pro.nox_d);
+  u3t_print_steps(fil_u, "cells", u3R->pro.cel_d);
 
   u3R->pro.nox_d = 0;
   u3R->pro.cel_d = 0;
