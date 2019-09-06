@@ -1466,7 +1466,7 @@
   ::
   =/  initialised  (mo-abed:mo duct)
   ?-    -.task
-      %conf-mall
+      ?(%conf %conf-mall)
     =/  =dock  p.task
     =/  =ship  p.dock
     ?.  =(our ship)

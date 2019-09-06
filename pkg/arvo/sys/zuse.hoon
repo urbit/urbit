@@ -1867,7 +1867,8 @@
       ==                                                ::
     ++  task                                            ::  incoming request
       $~  [%vega ~]                                     ::
-      $%  {$conf-mall p/dock q/dock}                    ::  configure app
+      $%  {$conf p/dock q/dock}                         ::  configure app
+          {$conf-mall p/dock q/dock}                    ::  configure app
           $>(%init vane-task)                           ::  set owner
           {$deal p/sock q/internal-task}                ::  full transmission
           {$deal-mall p/sock q/internal-task}           ::  full transmission

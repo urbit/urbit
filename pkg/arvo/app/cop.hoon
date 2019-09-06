@@ -12,9 +12,11 @@
   ^-  (quip move _this)
   :_  this  :_  ~
   ?+  arg  ~|(%bad-arg !!)
-    %conf  [ost.bowl %conf-mall / [our.bowl %hood] [our.bowl %home]]
-    %poke  [ost.bowl %deal-mall / [our.bowl our.bowl] %hood %poke %atom !>(%hey)]
-    %hi    [ost.bowl %deal-mall / [our.bowl our.bowl] %hood %poke %helm-send-hi !>([our.bowl `"heyza"])]
+    %conf   [ost.bowl %conf-mall / [our.bowl %hood] [our.bowl %home]]
+    %poke   [ost.bowl %deal-mall / [our.bowl our.bowl] %hood %poke %atom !>(%hey)]
+    %hi     [ost.bowl %deal-mall / [our.bowl our.bowl] %hood %poke %helm-send-hi !>([our.bowl `"heyza"])]
+    %start  [ost.bowl %deal-mall / [our.bowl our.bowl] %hood %poke %drum-start !>([%home %first])]
+    %first  [ost.bowl %deal-mall / [our.bowl our.bowl] %first %poke %atom !>(%hey)]
   ==
 ::
 ++  onto

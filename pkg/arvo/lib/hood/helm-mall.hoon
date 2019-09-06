@@ -35,26 +35,6 @@
   ::                                                    ::  ::
 |:  $:{bowl:gall part}                                  ::  main helm work
 =+  sez=(~(gut by hoc) ost $:session)
-=>  |%                                                  ::  arvo structures
-    ++  card                                            ::
-      $%  [%bonk wire ~]                                ::
-          {$flog wire flog:dill}                        ::
-          {$nuke wire ship}                             ::
-          [%serve wire binding:eyre generator:eyre]     ::
-          {$poke wire dock pear}                        ::
-          {$rest wire @da}                              ::
-          {$wait wire @da}                              ::
-          {$rekey wire life ring}                       ::
-          {$moon wire ship udiff:point:able:jael}       ::
-      ==                                                ::
-    ++  move  (pair bone card)                          ::  user-level move
-    ++  pear                                            ::  poke fruit
-      $%  {$hood-unsync desk ship desk}                 ::
-          {$helm-hi cord}                               ::
-          {$drum-start well:gall}                       ::
-          {$hall-action action:hall}                    ::
-      ==                                                ::
-    --
 =|  moz=(list move:agent:mall)
 |%
 ++  abet

@@ -2,6 +2,7 @@
 ::::  /hoon/hood/app                                    ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  zuse version
+/-  *sole
 /+  sole,                                               ::  libraries
     ::  XX these should really be separate apps, as
     ::     none of them interact with each other in
@@ -11,7 +12,7 @@
     ::     they have been bundled into :hood
     ::
     ::  |command handlers
-    hood-helm-mall, hood-kiln, hood-drum, hood-write
+    hood-helm-mall, hood-kiln, hood-drum-mall, hood-write
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -45,7 +46,7 @@
       |@  ++  $
             |:  paw=$:hood-part
             ?-  hed
-              $drum  ?>(?=($drum -.paw) `part:hood-drum`paw)
+              $drum  ?>(?=($drum -.paw) `part:hood-drum-mall`paw)
               $helm  ?>(?=($helm -.paw) `part:hood-helm-mall`paw)
               $kiln  ?>(?=($kiln -.paw) `part:hood-kiln`paw)
               $write  ?>(?=($write -.paw) `part:hood-write`paw)
@@ -56,7 +57,7 @@
       =+  $:{our/@p hed/hood-head}                      ::
       |@  ++  $
             ?-  hed
-              $drum  (make:hood-drum our)
+              $drum  (make:hood-drum-mall our)
               $helm  *part:hood-helm-mall
               $kiln  *part:hood-kiln
               $write  *part:hood-write
@@ -68,7 +69,7 @@
       paw                                               ::
     ::                                                  ::
     ++  hood-part                                       ::  current module state
-      $%  {$drum $2 pith-2:hood-drum}                   ::
+      $%  {$drum $2 pith-2:hood-drum-mall}              ::
           {$helm $0 pith:hood-helm-mall}                ::
           {$kiln $0 pith:hood-kiln}                     ::
           {$write $0 pith:hood-write}                   ::
@@ -120,7 +121,7 @@
       =.  +>.handle  (start hid ((able hid) identity))
       (ably (handle a))
     ::  per-module interface wrappers
-    ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum))
+    ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum-mall))
     ++  from-helm  (from-module %helm [..$ _abet]:(hood-helm-mall))
     ++  from-kiln  (from-module %kiln [..$ _abet]:(hood-kiln))
     ++  from-write  (from-module %write [..$ _abet]:(hood-write))
@@ -176,12 +177,33 @@
                               (need !<(~ vase))
       %helm-bonk              %-  (wrap poke-bonk):from-helm:h
                               (need !<(~ vase))
+      %dill-belt              %-  (wrap poke-dill-belt):from-drum:h
+                              (need !<(dill-belt:dill vase))
+      %dill-blit              %-  (wrap poke-dill-blit):from-drum:h
+                              (need !<(dill-blit:dill vase))
+      %drum-put               %-  (wrap poke-put):from-drum:h
+                              (need !<([path @] vase))
+      %drum-link              %-  (wrap poke-link):from-drum:h
+                              (need !<(gill:gall vase))
+      %drum-unlink            %-  (wrap poke-unlink):from-drum:h
+                              (need !<(gill:gall vase))
+      %drum-exit              %-  (wrap poke-exit):from-drum:h
+                              (need !<(~ vase))
+      %drum-start             %-  (wrap poke-start):from-drum:h
+                              (need !<(well:gall vase))
+      %drum-set-boot-apps     %-  (wrap poke-set-boot-apps):from-drum:h
+                              (need !<(? vase))
     ==
   [moves ..handle-init]
 ::
 ++  handle-peer
-  |=  path
-  `..handle-init
+  |=  =path
+  =/  h  (help hid)
+  =^  moves  lac
+    ?+  path  ~|([%hood-bad-path wire] !!)
+      [%drum *]  ((wrap peer):from-drum:h t.path)
+    ==
+  [moves ..handle-init]
 ::
 ++  handle-pull
   |=  path
@@ -197,8 +219,19 @@
   =/  h  (help hid)
   =^  moves  lac
     ?+  wire  ~|([%hood-bad-wire wire] !!)
-      [%helm %hi *]  %+  (wrap coup-hi):from-helm:h  t.t.wire
-                     ?>(?=(%coup -.internal-gift) p.internal-gift)
+        [%helm %hi *]    %+  (wrap coup-hi):from-helm:h  t.t.wire
+                         ?>(?=(%coup -.internal-gift) p.internal-gift)
+        [%drum %phat *]
+      ?-  -.internal-gift
+          %http-response  !!
+          %coup  ((wrap take-coup-phat):from-drum:h t.t.wire p.internal-gift)
+          %reap  ((wrap reap-phat):from-drum:h t.t.wire p.internal-gift)
+          %quit  ((wrap quit-phat):from-drum:h t.t.wire)
+          %diff
+        %+  (wrap diff-sole-effect-phat):from-drum:h  t.t.wire
+        ?>  ?=(%sole-effect p.p.internal-gift)
+        (need !<(sole-effect q.p.internal-gift))
+      ==
     ==
   [moves ..handle-init]
 ::
@@ -208,6 +241,7 @@
   =^  moves  lac
     ?+  wire  ~|([%hood-bad-wire wire] !!)
       [%helm *]  ((wrap take):from-helm:h t.wire vase)
+      [%drum *]  ((wrap take):from-drum:h t.wire vase)
     ==
   [moves ..handle-init]
 ::
