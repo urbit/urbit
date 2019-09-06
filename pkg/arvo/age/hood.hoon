@@ -12,7 +12,7 @@
     ::     they have been bundled into :hood
     ::
     ::  |command handlers
-    hood-helm-mall, hood-kiln-mall, hood-drum-mall, hood-write
+    hood-helm-mall, hood-kiln-mall, hood-drum-mall, hood-write-mall
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -49,7 +49,7 @@
               $drum  ?>(?=($drum -.paw) `part:hood-drum-mall`paw)
               $helm  ?>(?=($helm -.paw) `part:hood-helm-mall`paw)
               $kiln  ?>(?=($kiln -.paw) `part:hood-kiln-mall`paw)
-              $write  ?>(?=($write -.paw) `part:hood-write`paw)
+              $write  ?>(?=($write -.paw) `part:hood-write-mall`paw)
             ==
       --
     ++  hood-head  _-:$:hood-part                       ::  initialize state
@@ -60,7 +60,7 @@
               $drum  (make:hood-drum-mall our)
               $helm  *part:hood-helm-mall
               $kiln  *part:hood-kiln-mall
-              $write  *part:hood-write
+              $write  *part:hood-write-mall
             ==
       --
     ++  hood-part-old  hood-part                        ::  old state for ++prep
@@ -72,7 +72,7 @@
       $%  {$drum $2 pith-2:hood-drum-mall}              ::
           {$helm $0 pith:hood-helm-mall}                ::
           {$kiln $0 pith:hood-kiln-mall}                ::
-          {$write $0 pith:hood-write}                   ::
+          {$write $0 pith:hood-write-mall}              ::
       ==                                                ::
     --                                                  ::
 ::                                                      ::  ::
@@ -124,7 +124,7 @@
     ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum-mall))
     ++  from-helm  (from-module %helm [..$ _abet]:(hood-helm-mall))
     ++  from-kiln  (from-module %kiln [..$ _abet]:(hood-kiln-mall))
-    ++  from-write  (from-module %write [..$ _abet]:(hood-write))
+    ++  from-write  (from-module %write [..$ _abet]:(hood-write-mall))
     --
 |_  hid/bowl:mall                                       ::  gall environment
 ++  handle-init
@@ -237,6 +237,14 @@
                               (need !<([desk ship desk] vase))
       %kiln-permission        %-  (wrap poke-permission):from-kiln:h
                               (need !<([desk path ?] vase))
+      %write-sec-atom         %-  (wrap poke-sec-atom):from-write:h
+                              (need !<([host:eyre @] vase))
+      %write-paste            %-  (wrap poke-paste):from-write:h
+                              (need !<([?(%hoon %md %txt) @t] vase))
+      %write-tree             %-  (wrap poke-tree):from-write:h
+                              (need !<([path mime] vase))
+      %write-wipe             %-  (wrap poke-wipe):from-write:h
+                              (need !<(path vase))
     ==
   [moves ..handle-init]
 ::
@@ -290,9 +298,10 @@
   =/  h  (help hid)
   =^  moves  lac
     ?+  wire  ~|([%hood-bad-wire wire] !!)
-      [%helm *]  ((wrap take):from-helm:h t.wire vase)
-      [%drum *]  ((wrap take):from-drum:h t.wire vase)
-      [%kiln *]  ((wrap take-general):from-kiln:h t.wire vase)
+      [%helm *]   ((wrap take):from-helm:h t.wire vase)
+      [%drum *]   ((wrap take):from-drum:h t.wire vase)
+      [%kiln *]   ((wrap take-general):from-kiln:h t.wire vase)
+      [%write *]  ((wrap take):from-write:h t.wire vase)
     ==
   [moves ..handle-init]
 ::
