@@ -1944,7 +1944,8 @@
   ++  agent
     =<  form
     |%
-    +$  move  internal-move
+    +$  move  [=bone move=card]
+    +$  card  (wind internal-note internal-gift)
     +$  step  (quip move form)
     ++  form
       $_  ^|
