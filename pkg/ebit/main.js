@@ -49,7 +49,15 @@ console.log(urbitExe);
 
 ////////////////////////////////////////////////////////////////////////////////
 
+ipcMain.on('ship-list', (event, arg) => {
+  const ships = fs.readdirSync(shipsDir);
+  console.log("ships", ships);
+  event.returnValue = ships;
+})
+
 const checkShipExists = (ship, cb) => {
+  const pax = path.join(shipsDir, ship);
+  cb (fs.existsSync(path));
 };
 
 const readPorts = (ship, cb) => {
@@ -114,16 +122,15 @@ const bootShip = (ship, cb) => {
   });
 }
 
+/*
 bootShip('bus', (ship, ports) => {
   console.log(`booted + running: ${ship} on`, ports);
 });
 
-
 runShip('zod', (ship, ports) => {
   console.log(`running: ${ship} on`, ports);
 });
-
-// return;
+*/
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -138,10 +145,27 @@ runShip('zod', (ship, ports) => {
 // In main process.
 ipcMain.on('renderer-started', (event, arg) => {
   console.log(["renderer-started", arg]);
-  event.reply('urbit-started', 42283);
 });
 
-console.log("Starting up");
+ipcMain.on('start-ship', (event, ship) => {
+  console.log('start-ship', ship);
+
+  runShip(ship, (ship, ports) => {
+    event.reply('ship-running', ship, ports);
+  });
+});
+
+ipcMain.on('boot-ship', (event, ship) => {
+  console.log('boot-ship', ship);
+
+  bootShip(ship, (ship, ports) => {
+    event.reply('ship-running', ship, ports);
+  });
+});
+
+// event.reply('asynchronous-reply', 'pong')
+
+  // event.reply('urbit-started', 42283);
 
 /*
   Keep a global reference of the window object, if you don't, the window will
