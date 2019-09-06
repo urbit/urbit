@@ -120,7 +120,7 @@ class UrbitApi {
     });
   }
 
-  inboxMessage(local, path, author, when, message) {
+  inboxMessage(local, path, author, when, letter) {
     let data = {
       message: {
         path,
@@ -128,9 +128,7 @@ class UrbitApi {
           uid: uuid(),
           author,
           when,
-          letter: {
-            text: message
-          }
+          letter
         }
       }
     };

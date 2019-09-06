@@ -177,13 +177,25 @@ export class ChatScreen extends Component {
     let reversedMessages = messages.reverse();
     let chatMessages = reversedMessages.map((msg, i) => {
       // Render sigil if previous message is not by the same sender
-      let aut = ['author'];    
+      let aut = ['author'];
+
+      // No gamAut? Return top level author for the same sender check.
+      let renderSigil =
+        _.get(reversedMessages[i + 1], aut) !== _.get(msg, aut, msg.author);
+
+      // More padding top if previous message is not by the same sender
+      let paddingTop = renderSigil;
+      // More padding bot if next message is not by the same sender
+      let paddingBot =
+        _.get(reversedMessages[i - 1], aut) !== _.get(msg, aut, msg.author);
 
       return (
         <Message
-          key={Math.random()}
+          key={msg.uid}
           msg={msg}
-          renderSigil={true}
+          renderSigil={renderSigil}
+          paddingTop={paddingTop}
+          paddingBot={paddingBot} 
           paddingTop={0}
           paddingBot={0} />
       );

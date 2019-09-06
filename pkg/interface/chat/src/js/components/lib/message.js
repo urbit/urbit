@@ -6,14 +6,35 @@ import _ from 'lodash';
 
 export class Message extends Component {
 
-
   renderContent() {
     const { props } = this;
-    return (
-      <p className={`body-regular-400 v-top`}>
-        {props.msg.letter.text}
-      </p>
-    );
+    let letter = props.msg.letter;
+
+    if ('code' in letter) {
+      return (
+        <p>
+          <pre className="clamp-attachment pa1 mt0 mb0 bg-light-gray">
+            {letter.code.expression}
+          </pre>
+          <pre className="clamp-attachment pa1 mt0 mb0">
+            {letter.code.output[0].join('\n')}
+          </pre>
+        </p>
+      );
+    } else if ('url' in letter) {
+      return (
+        <a className={`body-regular-400 v-top`} href={letter.url}>
+          {letter.url}
+        </p>
+      );
+    } else {
+      return (
+        <p className={`body-regular-400 v-top`}>
+          {letter.text}
+        </p>
+      );
+    }
+
   }
 
   render() {
@@ -50,7 +71,7 @@ export class Message extends Component {
         </div>
       );
     } else {
-      let timestamp = moment.unix(props.msg.wen / 1000).format('hh:mm');
+      let timestamp = moment.unix(props.msg.when / 1000).format('hh:mm');
 
       return (
         <div className={"w-100 pr3 pb1 cf hide-child flex" + pending}

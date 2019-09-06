@@ -68,8 +68,7 @@ export class Root extends Component {
         <Route exact path="/~chat"
           render={ (props) => {
             return (
-              <Skeleton
-                sidebar={renderChannelSidebar(props)}>
+              <Skeleton sidebar={renderChannelSidebar(props)}>
                 <div className="h-100 w-100 overflow-x-hidden flex flex-column">
                   <div className="pl3 pr3 pt2 pb3">
                     <h2>Home</h2>
@@ -100,8 +99,7 @@ export class Root extends Component {
         <Route exact path="/~chat/join/:ship/:station"
           render={ (props) => {
             return (
-              <Skeleton
-                sidebar={renderChannelSidebar(props)}>
+              <Skeleton sidebar={renderChannelSidebar(props)}>
                 <LandingScreen
                   api={api}
                   inbox={state.inbox}
@@ -119,8 +117,7 @@ export class Root extends Component {
                envelopes: []
              };
              return (
-               <Skeleton
-                 sidebar={renderChannelSidebar(props) }>
+               <Skeleton sidebar={renderChannelSidebar(props) }>
                  <ChatScreen
                    api={api}
                    inbox={state.inbox}
@@ -135,20 +132,25 @@ export class Root extends Component {
                </Skeleton>
              );
            }} />
-         <Route exact path="/~chat/:ship/:station/members"
+         <Route exact path="/~chat/room/:station/members"
            render={ (props) => {
+             let station = '/' + props.match.params.station;
+             let group = state.groups[station];
+             let owner = state.inbox[station] || { owner: '' };
+             owner = owner.owner;
+             console.log(group);
              return (
-               <Skeleton
-                 sidebar={renderChannelSidebar(props) }>
+               <Skeleton sidebar={renderChannelSidebar(props) }>
                  <MemberScreen
                    {...props}
                    api={api}
-                   peers={state.peers}
+                   group={group}
+                   owner={owner}
                  />
                </Skeleton>
              );
            }} />
-         <Route exact path="/~chat/:ship/:station/settings"
+         <Route exact path="/~chat/room/:station/settings"
            render={ (props) => {
              return (
                <Skeleton

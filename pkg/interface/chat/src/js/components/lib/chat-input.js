@@ -67,19 +67,59 @@ export class ChatInput extends Component {
     });
   }
 
+  getLetterType(letter) {
+    if (letter[0] === '#') {
+      letter = letter.slice(1);
+      // remove insignificant leading whitespace.
+      // aces might be relevant to style.
+      while (letter[0] === '\n') {
+        letter = letter.slice(1);
+      }
+
+      return {
+        code: {
+          expression: letter
+        }
+      }
+    } else if (this.isUrl(letter)) {
+       return {
+        url: letter
+      }
+    } else {
+      return {
+        text: letter
+      }
+    }
+  }
+
+  isUrl(string) {
+    try {
+      const urlObject = new URL(string);
+      //NOTE we check for a host to ensure a url is actually being posted
+      //     to combat false positives for things like "marzod: ur cool".
+      //     this does mean you can't send "mailto:e@ma.il" as %url message,
+      //     but the desirability of that seems questionable anyway.
+      return (urlObject.host !== '');
+    } catch (e) {
+      return false;
+    }
+  }
+
   messageSubmit() {
     const { props, state } = this;
 
     if (state.message === '') {
       return;
     }
-    console.log(props.owner, window.ship);
+
+    let letter = this.getLetterType(state.message);
+
     props.api.inbox.message(
       props.owner === `${window.ship}`,
       props.station,
       `~${window.ship}`,
       Date.now(),
-      state.message
+      letter
     );
 
     this.setState({

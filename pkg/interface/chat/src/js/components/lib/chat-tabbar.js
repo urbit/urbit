@@ -6,7 +6,7 @@ import classnames from 'classnames';
 export class ChatTabBar extends Component {
 
   render() {
-    let toBaseLink = '/~chat/' + this.props.station;
+    let toBaseLink = '/~chat/room' + this.props.station;
 
     let bbStream = '',
       bbMembers = '',

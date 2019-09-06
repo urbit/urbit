@@ -11,9 +11,8 @@ export class MemberScreen extends Component {
     super(props);
 
     this.state = {
-      station: props.match.params.ship + "/" + props.match.params.station,
-      circle: props.match.params.station,
-      host: props.match.params.ship,
+      station: "/" + props.match.params.station,
+      owner: props.match.params.owner,
       invMembers: '',
       error: false,
       success: false
@@ -58,12 +57,14 @@ export class MemberScreen extends Component {
   render() {
     const { props, state } = this;
 
-    let peers = props.peers[state.station] || [window.ship];
-    let listMembers = peers.map((mem) => {
+    let group = props.group;
+    console.log(group);
+
+    let listMembers = group.map((mem) => {
       return (
         <MemberElement 
           key={mem} 
-          host={state.host}
+          host={state.owner}
           ship={mem}
           circle={state.circle}
           api={props.api} />
@@ -95,7 +96,7 @@ export class MemberScreen extends Component {
           <ChatTabBar
             {...props}
             station={state.station}
-            numPeers={peers.length} />
+            numPeers={group.length} />
         </div>
         <div className="w-100 cf">
           <div className="w-50 fl pa2">
