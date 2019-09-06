@@ -92,6 +92,7 @@
       [%home %dojo]
       [%home %modulo]
       [%home %launch]
+      [%home %permissions]
       [%home %groups]
       [%home %group-sync]
       [%home %inbox]

@@ -1,31 +1,11 @@
+/-  *permissions
 ::  service/permissions.hoon
 ::
 |%
-+$  permission
-  [kind=?(%black %white) who=(set ship)]
++$  move  [bone card]
 ::
-+$  permission-diff
-  $%  [%create =permission]
-      [%delete ~]
-      [%add who=(set ship)]
-      [%remove who=(set ship)]
-  ==
-::
-::TODO  since we only operate on one permission at once, these can be =path
-::      but we want to keep an affordance for showing current state...
-+$  affiliation-diff
-  $%  [%add where=(set path)]
-      [%remove where=(set path)]
-  ==
-::
-+$  action
-  $:  =path
-    ::
-      $=  what
-      $%  permission-diff
-          [%allow who=(set ship)]
-          [%deny who=(set ship)]
-      ==
++$  card
+  $%  [%diff %permissions-diff diff]
   ==
 ::
 +$  diff
@@ -34,16 +14,10 @@
       [%affiliation who=ship what=affiliation-diff]
   ==
 ::
-::
 +$  state
-  $:  permissions=(map path permission)
+  $:  permissions=permission-map
       ::TODO  do we want to track these for whitelists only? probably no?
-      affiliation=(map ship (set path))  ::  jug
-  ==
-::
-+$  move  [bone card]
-+$  card
-  $%  [%diff %permissions-diff diff]
+      affiliation=affiliation-map
   ==
 --
 ::
@@ -134,7 +108,7 @@
 ::  diff calculation
 ::
 ++  calculate-diffs
-  |=  =action
+  |=  action=permission-action
   ^-  (list diff)
   =+  dif=(calculate-permission-diff action)
   ?~  dif  ~
@@ -144,7 +118,7 @@
   (tack %affiliation)
 ::
 ++  calculate-permission-diff
-  |=  =action
+  |=  action=permission-action
   ^-  (unit permission-diff)
   =/  pem=(unit permission)
     (~(get by permissions) path.action)
@@ -225,8 +199,8 @@
 ::
 ::  gall interface
 ::
-++  poke-noun
-  |=  =action
+++  poke-permission-action
+  |=  action=permission-action
   ^-  (quip move _this)
   =/  diffs=(list diff)  (calculate-diffs action)
   ?~  diffs  [~ this]
@@ -251,30 +225,38 @@
     [%affiliation who %add (~(get ju affiliation) who)]
   ==
 ::
-++  peek-x
+++  peek-x-keys
+  |=  pax=path
+  ^-  (unit (unit (set path)))
+  ``~(key by permissions)
+::
+++  peek-x-permissions
   |=  =path
-  ^-  (unit (unit (pair mark *)))
-  ?+  path  ~
-      [%permissions ~]
-    ``noun+~(key by permissions)
-    ::
-      [%permissions ^]
-    =+  pem=(~(get by permissions) t.path)
-    ?~  pem  ~
-    ``noun+u.pem
-  ::
-      [%affiliation @ ~]
-    =+  who=(slav %p i.t.path)
-    ``noun+(~(get ju affiliation) who)
-  ::
-      [%permitted @ ^]
-    =+  pem=(~(get by permissions) t.t.path)
-    ?~  pem  ``noun+|
-    =+  who=(slav %p i.t.path)
-    =+  has=(~(has in who.u.pem) who)
-    :^  ~  ~  %noun
-    ?-(kind.u.pem %black !has, %white has)
-  ==
+  ^-  (unit (unit permission))
+  =/  pem  (~(get by permissions) path)
+  `pem
+::
+++  peek-x-affiliation
+  |=  pax=path
+  ^-  (unit (unit (set path)))
+  ?~  pax
+    ~
+  =/  who=ship  (slav %p i.pax)
+  =/  paths=(unit (set path))  (~(get by affiliation) who)
+  `paths
+::
+++  peek-x-permitted
+  |=  =path
+  ^-  (unit (unit ?))
+  ?~  path
+    ~
+  =/  pem  (~(get by permissions) t.path)
+  ?~  pem
+    ~
+  =/  who  (slav %p i.path)
+  =/  has  (~(has in who.u.pem) who)
+  :+  ~  ~
+  ?-(kind.u.pem %black !has, %white has)
 ::
 ::
 ::TODO  stdlib additions
