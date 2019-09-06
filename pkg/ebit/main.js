@@ -88,39 +88,36 @@ const readPorts = (ship, cb) => {
 
 const runShip = (ship, cb) => {
   const pier = path.join(shipsDir, ship);
-
   const args = ['-d', pier];
 
-  console.log(args);
+  console.log(urbitExe, args);
 
   const child = proc.spawn(urbitExe, args, {stdio: 'inherit'});
 
   child.on('exit', () => {
-    console.log("Booting finished");
+    console.log("Ship started");
     readPorts(ship, (ports) => cb(ship, ports));
   });
 }
 
 const bootShip = (ship, cb) => {
   const pier = path.join(shipsDir, ship);
-
   const args = ['-F', ship, '-d', '-A', arvoPath, '-B', pillPath, '-c', pier];
 
-  proc.execFile(urbitExe, args, (err, stdout, stderr) => {
-    if (err !== undefined) {
-      console.log(err);
-      throw err;
-    }
+  console.log(urbitExe, args)
 
-    console.log(stdout);
-    console.log(stderr);
+  const child = proc.spawn(urbitExe, args, {stdio: 'inherit'});
 
-    // TODO read ports file
-    const port = 42283;
-
-    cb(ship, port);
+  child.on('exit', () => {
+    console.log("Ship booted");
+    readPorts(ship, (ports) => cb(ship, ports));
   });
 }
+
+bootShip('bus', (ship, ports) => {
+  console.log(`booted + running: ${ship} on`, ports);
+});
+
 
 runShip('zod', (ship, ports) => {
   console.log(`running: ${ship} on`, ports);
