@@ -64,8 +64,7 @@
       %add-owned
     =/  inbox-path  [%mailbox path.act]
     =/  inbox-wire  [(scot %p our.bol) inbox-path]
-    =/  sync  (~(get by synced) path.act)
-    ?^  sync
+    ?:  (~(has by synced) path.act)
       [~ this]
     :_  this(synced (~(put by synced) path.act our.bol))
     [ost.bol %peer inbox-path [our.bol %inbox] inbox-path]~
