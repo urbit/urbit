@@ -1,8 +1,22 @@
 /*
   Modules to control application life and create native browser window
 */
-const {app, BrowserWindow} = require('electron')
-const path = require('path')
+const {app, BrowserWindow, ipcMain} = require('electron');
+const path = require('path');
+
+// ipcRenderer.send('renderer-started', null);
+// ipcRenderer.on('urbit-started', (event, port) => redirectToShip(port));
+//
+// ipcMain.on('synchronous-message', (event, arg) => {
+//   console.log(["node got", arg]);
+//   event.returnValue = 'pong';
+// });
+
+// In main process.
+ipcMain.on('renderer-started', (event, arg) => {
+  console.log(["renderer-started", arg]);
+  event.reply('urbit-started', 42283);
+});
 
 console.log("Starting up");
 
@@ -28,7 +42,8 @@ const createWindow = () => {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      nodeIntegration: true,
+      preload: path.join(__dirname, 'preload.js'),
     }
   });
 
