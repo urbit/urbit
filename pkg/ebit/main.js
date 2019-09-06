@@ -2,7 +2,9 @@
   Modules to control application life and create native browser window
 */
 const {app, BrowserWindow, ipcMain} = require('electron');
+
 const os = require('os');
+const fs = require('fs');
 
 const path = require('path');
 const proc = require('child_process');
@@ -47,29 +49,82 @@ console.log(urbitExe);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-const bootShip = (ship) => {
+const checkShipExists = (ship, cb) => {
+};
+
+const readPorts = (ship, cb) => {
+  const pax = path.join(shipsDir, ship, '.http.ports');
+
+  fs.readFile(pax, {encoding: 'utf-8'}, function(err,data){
+    if (!!err) {
+      console.log(err);
+      throw err;
+    }
+
+    console.log('== PORTS FILE ==');
+    console.log(data);
+
+    const ports = data.split(/\r\n|\n|\r/);
+
+    var ins = null;
+    var lop = null;
+    var sec = null;
+
+    ports.forEach(x => {
+      if (x.match(/insecure loopback/)) {
+        lop = Number(x.split(/ /)[0]);
+      }
+      else if (x.match(/insecure public/)) {
+        ins = Number(x.split(/ /)[0]);
+      }
+      else if (x.match(/secure public/)) {
+        sec = Number(x.split(/ /)[0]);
+      }
+    });
+
+    cb({ins, lop, ins});
+  });
+};
+
+const runShip = (ship, cb) => {
   const pier = path.join(shipsDir, ship);
 
-  proc.exec(`du -sh ${pillPath}`, (err, stdout, stderr) => {
-    console.log(["err", err]);
-    console.log(stdout);
-    console.log(stderr);
-  });
-
-  const args = ['-F', ship, '-d', '-A', arvoPath, '-B', pillPath, '-c', pier];
+  const args = ['-d', pier];
 
   console.log(args);
 
-  proc.execFile(urbitExe, args, (err, stdout, stderr) => {
-    console.log(["err", err]);
-    console.log(stdout);
-    console.log(stderr);
-    // stdout.pipe(process.stdout);
-    // stderr.pipe(process.stderr);
+  const child = proc.spawn(urbitExe, args, {stdio: 'inherit'});
+
+  child.on('exit', () => {
+    console.log("Booting finished");
+    readPorts(ship, (ports) => cb(ship, ports));
   });
 }
 
-bootShip('zod');
+const bootShip = (ship, cb) => {
+  const pier = path.join(shipsDir, ship);
+
+  const args = ['-F', ship, '-d', '-A', arvoPath, '-B', pillPath, '-c', pier];
+
+  proc.execFile(urbitExe, args, (err, stdout, stderr) => {
+    if (err !== undefined) {
+      console.log(err);
+      throw err;
+    }
+
+    console.log(stdout);
+    console.log(stderr);
+
+    // TODO read ports file
+    const port = 42283;
+
+    cb(ship, port);
+  });
+}
+
+runShip('zod', (ship, ports) => {
+  console.log(`running: ${ship} on`, ports);
+});
 
 // return;
 
