@@ -18,5 +18,14 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^6.0.7"
+  },
+  "build": {
+    "extraFiles": [
+      {
+        "from": "resources/${os}",
+        "to": "Resources/bin",
+        "filter": ["**/*"]
+      }
+    ]
   }
 }

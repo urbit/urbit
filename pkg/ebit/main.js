@@ -2,7 +2,43 @@
   Modules to control application life and create native browser window
 */
 const {app, BrowserWindow, ipcMain} = require('electron');
-const path = require('path');
+const os = require('os');
+
+const path       = require('path');
+const { exec }   = require('child_process');
+const appRootDir = require('app-root-dir');
+
+////////////////////////////////////////////////////////////////////////////////
+
+const env = { name: 'dev' };
+
+const getPlatform = () => {
+  switch(os.platform()) {
+    case 'linux':
+      return 'linux';
+    case 'darwin':
+      return 'mac';
+    case 'win32':
+      return 'win';
+  };
+};
+
+const execPath = (env.name === 'production') ?
+  path.join(path.dirname(appRootDir.get()), 'bin'):
+  path.join(appRootDir.get(), 'resources', getPlatform());
+
+////////////////////////////////////////////////////////////////////////////////
+
+const cmd = `${path.join(execPath, 'urbit')}`;
+
+exec(cmd, (err, stdout, stderr) => {
+  console.log(stdout);
+  console.log(stderr);
+  // stdout.pipe(process.stdout);
+  // stderr.pipe(process.stderr);
+});
+
+////////////////////////////////////////////////////////////////////////////////
 
 // ipcRenderer.send('renderer-started', null);
 // ipcRenderer.on('urbit-started', (event, port) => redirectToShip(port));
