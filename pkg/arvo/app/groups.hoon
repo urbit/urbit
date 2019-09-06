@@ -100,12 +100,13 @@
   ?>  ?=(%add -.act)
   ?~  pax.act
     [~ this]
+  :: TODO: use dif to calculate whether anything changed before sending diff
+  ?.  (~(has by groups) pax.act)
+    [~ this]
+  =/  members=group  (~(got by groups) pax.act)
+  =.  members  (~(uni in members) members.act)
   :-  (send-diff pax.act act)
-  ?:  (~(has by groups) pax.act)
-    =/  members=group  (~(got by groups) pax.act)
-    =.  members  (~(uni in members) members.act)
-    this(groups (~(put by groups) pax.act members))
-  this(groups (~(put by groups) pax.act members.act))
+  this(groups (~(put by groups) pax.act members))
 ::
 ++  handle-remove
   |=  act=group-action
@@ -113,6 +114,7 @@
   ?>  ?=(%remove -.act)
   ?~  pax.act
     [~ this]
+  :: TODO: use dif to calculate whether anything changed before sending diff
   ?.  (~(has by groups) pax.act)
     [~ this]
   =/  members  (~(got by groups) pax.act)

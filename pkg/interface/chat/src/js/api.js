@@ -24,6 +24,13 @@ class UrbitApi {
       read: this.inboxRead.bind(this)
     };
 
+    this.permissions = {
+      create: this.permissionCreate.bind(this),
+      delete: this.permissionDelete.bind(this),
+      add: this.permissionAdd.bind(this),
+      remove: this.permissionRemove.bind(this)
+    };
+
     this.inboxSync = {
       addOwned: this.inboxSyncAddOwned.bind(this),
       removeOwned: this.inboxSyncRemoveOwned.bind(this),
@@ -33,11 +40,10 @@ class UrbitApi {
 
   }
 
-  // keep default bind to hall, since its bind procedure more complex for now AA
-  bind(path, method, ship = this.authTokens.ship, appl = "hall", success, fail) {
+  bind(path, method, ship = this.authTokens.ship, app, success, fail) {
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
-    window.subscriptionId = window.urb.subscribe(ship, appl, path, 
+    window.subscriptionId = window.urb.subscribe(ship, app, path, 
       (err) => {
         fail(err);
       },
@@ -180,6 +186,80 @@ class UrbitApi {
     };
     this.inboxSyncAction(data);
 
+  }
+
+  permissionAction(data) {
+    this.action("permissions", "permission-action", data);
+  }
+
+  groupAdd(members, path) {
+    this.groupsAction({
+      add: {
+        members, path
+      }
+    });
+  }
+
+  groupRemove(members, path) {
+    this.groupsAction({
+      remove: {
+        members, path
+      }
+    });
+  }
+
+  permissionCreate(path, kind, who) {
+    this.permissionAction({
+      create: {
+        path,
+        kind,
+        who
+      }
+    });
+  }
+
+  permissionDelete(path) {
+    this.permissionAction({
+      delete: {
+        path
+      }
+    });
+  }
+
+  permissionAdd(path, who) {
+    this.permissionAction({
+      add: {
+        path,
+        who
+      }
+    });
+  }
+
+  permissionRemove(path, who) {
+    this.permissionAction({
+      remove: {
+        path,
+        who
+      }
+    });
+  }
+
+  permissionAllow(path, who) {
+    this.permissionAction({
+      allow: {
+        path,
+        who
+      }
+    });
+  }
+
+  permissionDeny(path, who) {
+    this.permissionAction({
+      deny: {
+        path,
+        who
+      }
+    });
   }
 
 }

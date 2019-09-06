@@ -20,6 +20,9 @@ export class Subscription {
     api.bind('/all', 'PUT', api.authTokens.ship, 'groups',
       this.handleEvent.bind(this),
       this.handleError.bind(this));
+    api.bind('/all', 'PUT', api.authTokens.ship, 'permissions',
+      this.handleEvent.bind(this),
+      this.handleError.bind(this));
   }
 
   handleEvent(diff) {
