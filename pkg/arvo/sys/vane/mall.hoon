@@ -6,13 +6,6 @@
 =,  mall
 =>  =~
 |%
-::  +coke: cook
-::
-++  coke
-  $?  %inn
-      %out
-      %cay
-  ==
 ::  +reverse-ames: reverse ames message
 ::
 ++  reverse-ames
@@ -706,7 +699,7 @@
     |=  [=path hin=(hypo sign-arvo)]
     ^+  mo-core
     ::
-    ?.  ?=([@ @ coke *] path)
+    ?.  ?=([@ @ *] path)
       ~&  [%mo-handle-use-bad-path path]
       !!
     ::
@@ -717,27 +710,16 @@
       (ap-abed:ap term routes)
     ::
     =/  =sign-arvo  q.hin
-    ?-  i.t.t.path
-        %inn
+    ?.  ?=([%m %unto *] sign-arvo)
       =/  =vase  (slot 3 hin)
-      =.  app  (ap-generic-take:app t.t.t.path vase)
+      ~&  [%handling-use path]
+      =.  app  (ap-generic-take:app t.t.path vase)
       ap-abet:app
-    ::
-        %cay
-      ~&  [%mo-handle-use-weird sign-arvo]
-      ~&  [%mo-handle-use-weird-path path]
-      mo-core
-    ::
-        %out
-      ?.  ?=([%m %unto *] sign-arvo)
-        ~&  [%mo-handle-use-weird sign-arvo]
-        ~&  [%mo-handle-use-weird-path path]
-        mo-core
-      =.  app
-        =/  =internal-gift  +>.sign-arvo
-        (ap-specific-take:app t.t.t.path internal-gift)
-      ap-abet:app
-    ==
+    =.  app
+      =/  =internal-gift  +>.sign-arvo
+      ~&  [%handling-use path]
+      (ap-specific-take:app t.t.path internal-gift)
+    ap-abet:app
   ::  +mo-clear-queue: clear blocked tasks from the specified running agent.
   ::
   ++  mo-clear-queue
@@ -1065,7 +1047,8 @@
             %pass
           =/  =path  p.move.internal-move
           =/  =internal-note  q.move.internal-move
-          =/  use-path  [%use agent-name path]
+          =/  use-path
+            [%use agent-name (scot %p attributing.agent-routes) path]
           =/  =note-arvo
             ?-  -.internal-note
                 %send
@@ -1316,9 +1299,9 @@
       ::
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
-        (handle-mall:ap-agent-core +.path internal-gift)
+        (handle-mall:ap-agent-core path internal-gift)
       ?:  ?=(%diff -.internal-gift)
-        (ap-update-subscription =(~ maybe-tang) attributing.agent-routes +.path)
+        (ap-update-subscription =(~ maybe-tang) attributing.agent-routes path)
       ?^  maybe-tang
         (ap-lame -.internal-gift u.maybe-tang)
       ap-core
@@ -1563,12 +1546,14 @@
 ::  +load: recreate vane
 ::
 ++  load
-  |=  =state-old
-  ^+  mall-payload
-  ::
-  ?-  -.state-old
-    %0  mall-payload(state state-old)
-  ==
+  |=  *
+  mall-payload
+  ::  |=  =state-old
+  ::  ^+  mall-payload
+  ::  ::
+  ::  ?-  -.state-old
+  ::    %0  mall-payload(state state-old)
+  ::  ==
 ::  +scry: standard scry
 ::
 ++  scry

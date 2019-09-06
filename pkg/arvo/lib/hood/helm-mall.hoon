@@ -38,7 +38,6 @@
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
       $%  [%bonk wire ~]                                ::
-          {$conf wire dock ship term}                   ::
           {$flog wire flog:dill}                        ::
           {$nuke wire ship}                             ::
           [%serve wire binding:eyre generator:eyre]     ::
@@ -56,14 +55,21 @@
           {$hall-action action:hall}                    ::
       ==                                                ::
     --
-=+  moz=((list move))
+=|  moz=(list move:agent:mall)
 |%
-++  abet                                              ::  resolve
+++  abet
   [(flop moz) %_(+<+.$ hoc (~(put by hoc) ost sez))]
 ::
-++  emit  |=(card %_(+> moz [[ost +<] moz]))          ::  return card
+++  emit
+  |=  (wind internal-note:mall internal-gift:mall)
+  %_(+> moz [[ost +<] moz])
+::
+++  flog
+  |=  =flog:dill
+  (emit %pass /di %meta %d !>([%flog flog]))
+::
 ++  emil                                              ::  return cards
-  |=  (list card)
+  |=  (list (wind internal-note:mall internal-gift:mall))
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
@@ -80,38 +86,38 @@
   ?.  =(our who.u.sed)
     ~&  [%wrong-private-key-ship who.u.sed]
     +>.$
-  (emit %rekey / lyf.u.sed key.u.sed)
+  (emit %pass / %meta %j !>([%rekey lyf.u.sed key.u.sed]))
 ::
 ++  poke-moon                                        ::  rotate moon keys
   |=  sed=(unit [=ship =udiff:point:able:jael])
   =<  abet
   ?~  sed
     +>.$
-  (emit %moon / u.sed)
+  (emit %pass / %meta %j !>([%moon u.sed]))
 ::
 ++  poke-nuke                                         ::  initialize
   |=  him/ship  =<  abet
-  (emit %nuke /helm him)
+  (emit %pass /helm %meta %j !>([%nuke him]))
 ::
 ++  poke-mass
   |=  ~  =<  abet
-  (emit %flog /heft %crud %hax-heft ~)
+  (flog %crud %hax-heft ~)
 ::
 ++  poke-automass
   |=  recur=@dr
   =.  mass-timer.sez
     [/helm/automass (add now recur) recur]
-  abet:(emit %wait way.mass-timer.sez nex.mass-timer.sez)
+  abet:(emit %pass way.mass-timer.sez %meta %b !>([%wait nex.mass-timer.sez]))
 ::
 ++  poke-cancel-automass
   |=  ~
-  abet:(emit %rest way.mass-timer.sez nex.mass-timer.sez)
+  abet:(emit %pass way.mass-timer.sez %meta %b !>([%rest nex.mass-timer.sez]))
 ::
 ++  poke-bonk
   |=  ~
   ~&  .^((unit @da) %a /(scot %p our)/time/(scot %da now)/(scot %p our))
   %-  %-  slog  :_  ~  .^(tank %b /(scot %p our)/timers/(scot %da now))
-  abet:(emit %bonk /bonk ~)
+  abet:(emit %pass /bonk %meta %a !>([%bonk ~]))
 ::
 ++  take-wake-automass
   |=  [way=wire error=(unit tang)]
@@ -122,14 +128,17 @@
   =.  nex.mass-timer.sez  (add now tim.mass-timer.sez)
   =<  abet
   %-  emil
-  :~  [%flog /heft %crud %hax-heft ~]
-      [%wait way.mass-timer.sez nex.mass-timer.sez]
+  :~  [%pass /heft %meta %d !>([%flog %crud %hax-heft ~])]
+      [%pass way.mass-timer.sez %meta %b !>([%wait nex.mass-timer.sez])]
   ==
 ::
 ++  poke-send-hi
   |=  {her/ship mes/(unit tape)}  =<  abet
-  %^  emit  %poke  /helm/hi/(scot %p her)
-  [[her %hood] %helm-hi ?~(mes '' (crip u.mes))]
+  %-  emit
+  :*  %pass  /helm/hi/(scot %p her)
+      %send  her  %hood  %poke
+      %helm-hi  !>(?~(mes '' (crip u.mes)))
+  ==
 ::
 ::
 ++  poke-hi
@@ -138,19 +147,19 @@
   ?:  =(%fail mes)
     ~&  %poke-hi-fail
     !!
-  abet:(emit %flog /di %text "< {<src>}: {(trip mes)}")
+  abet:(flog %text "< {<src>}: {(trip mes)}")
 ::
 ++  poke-atom
   |=  ato/@
   =+  len=(scow %ud (met 3 ato))
   =+  gum=(scow %p (mug ato))
   =<  abet
-  (emit %flog /di %text "< {<src>}: atom: {len} bytes, mug {gum}")
+  (flog %text "< {<src>}: atom: {len} bytes, mug {gum}")
 ::
 ++  coup-hi
   |=  {pax/path cop/(unit tang)}  =<  abet
   ?>  ?=({@t ~} pax)
-  (emit %flog ~ %text "hi {(trip i.pax)} {?~(cop "" "un")}successful")
+  (flog %text "hi {(trip i.pax)} {?~(cop "" "un")}successful")
 ::
 ++  poke-reload  |=(all/(list term) (poke-reload-desk %home all))
 ++  poke-reload-desk                                 ::  reload vanes
@@ -174,7 +183,7 @@
   =+  zus==('z' tip)
   =+  way=?:(zus (welp top /sys/[nam]) (welp top /sys/vane/[nam]))
   =+  fil=.^(@ %cx (welp way /hoon))
-  [%flog /reload [%veer ?:(=('z' tip) %$ tip) way fil]]
+  [%pass /reload %meta %d !>([%flog %veer ?:(=('z' tip) %$ tip) way fil])]
 ::  +poke-reset:  send %lyra to initiate kernel upgrade
 ::
 ::    And reinstall %zuse and the vanes with %veer.
@@ -184,37 +193,33 @@
   |=  hood-reset
   =<  abet
   %-  emil  %-  flop
-  ^-  (list card)
+  ^-  (list (wind internal-note:mall internal-gift:mall))
   =/  top=path  /(scot %p our)/home/(scot %da now)/sys
   =/  hun  .^(@ %cx (welp top /hoon/hoon))
   =/  arv  .^(@ %cx (welp top /arvo/hoon))
-  :-  [%flog /reset [%lyra `@t`hun `@t`arv]]
+  :-  [%pass /reset %meta %d !>([%flog %lyra `@t`hun `@t`arv])]
   %+  turn
     (module-ova:pill top)
-  |=(a=[wire flog:dill] [%flog a])
+  |=([=wire =flog:dill] [%pass wire %meta %d !>([%flog flog])])
 ::
 ++  poke-verb                                         ::  toggle verbose
   |=  ~  =<  abet
-  (emit %flog /helm %verb ~)
-::
-++  take-onto                                         ::  result of %conf
-  |=  saw/(each suss:gall tang)  =<  abet
-  %-  emit
-  ?-   -.saw
-    %|  [%flog ~ %crud %onto `tang`p.saw]
-    %&  [%flog ~ %text "<{<p.saw>}>"]
-  ==
-::
-++  take-woot                                         ::  result of %want
-  |=  {way/wire her/ship cop/coop}  =<  abet
-  (emit %flog ~ %text "woot: {<[way cop]>}")
+  (flog %verb ~)
 ::
 ++  poke-serve
   |=  [=binding:eyre =generator:eyre]  =<  abet
-  (emit %serve /helm/serv binding generator)
+  (emit %pass /helm/serv %meta %e !>([%serve binding generator]))
 ::
 ++  take-bound
   |=  [wir=wire success=? binding=binding:eyre]  =<  abet
-  (emit %flog ~ %text "bound: {<success>}")
+  (flog %text "bound: {<success>}")
 ::
+++  take
+  |=  [=wire =vase]
+  ?+  wire  ~|([%helm-bad-take-wire wire] !!)
+    [%automass *]  %+  take-wake-automass  t.wire
+                   +:(need !<([%wake (unit tang)] vase))
+    [%serv *]      %+  take-bound  t.wire
+                   +:(need !<([%bound ? binding:eyre] vase))
+  ==
 --

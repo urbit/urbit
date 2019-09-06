@@ -200,6 +200,5 @@
 ++  writ-kiln-autoload        (wrap take-writ-autoload):from-kiln
 ++  writ-kiln-find-ship       (wrap take-writ-find-ship):from-kiln
 ++  writ-kiln-sync            (wrap take-writ-sync):from-kiln
-
 ++  bound                     (wrap take-bound):from-helm
 --

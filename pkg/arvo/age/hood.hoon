@@ -11,7 +11,7 @@
     ::     they have been bundled into :hood
     ::
     ::  |command handlers
-    hood-helm, hood-kiln, hood-drum, hood-write
+    hood-helm-mall, hood-kiln, hood-drum, hood-write
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -46,7 +46,7 @@
             |:  paw=$:hood-part
             ?-  hed
               $drum  ?>(?=($drum -.paw) `part:hood-drum`paw)
-              $helm  ?>(?=($helm -.paw) `part:hood-helm`paw)
+              $helm  ?>(?=($helm -.paw) `part:hood-helm-mall`paw)
               $kiln  ?>(?=($kiln -.paw) `part:hood-kiln`paw)
               $write  ?>(?=($write -.paw) `part:hood-write`paw)
             ==
@@ -57,7 +57,7 @@
       |@  ++  $
             ?-  hed
               $drum  (make:hood-drum our)
-              $helm  *part:hood-helm
+              $helm  *part:hood-helm-mall
               $kiln  *part:hood-kiln
               $write  *part:hood-write
             ==
@@ -69,7 +69,7 @@
     ::                                                  ::
     ++  hood-part                                       ::  current module state
       $%  {$drum $2 pith-2:hood-drum}                   ::
-          {$helm $0 pith:hood-helm}                     ::
+          {$helm $0 pith:hood-helm-mall}                ::
           {$kiln $0 pith:hood-kiln}                     ::
           {$write $0 pith:hood-write}                   ::
       ==                                                ::
@@ -79,7 +79,9 @@
   ::                                                    ::  ::
 ^-  agent:mall
 =|  hood-1                                              ::  module states
-=>  |%
+=/  help
+    |=  hid/bowl:mall
+    |%
     ++  able                                            ::  find+make part
       |=  hid=bowl:mall
       =+  hed=$:hood-head
@@ -103,16 +105,15 @@
       ?~  old  +>
       +>(lac (~(run by lac.u.old) hood-port))
     ::
-    ::  ++  poke-hood-load                                  ::  recover lost brain
-    ::    |=  dat/hood-part
-    ::    ?>  =(our.hid src.hid)
-    ::    ~&  loaded+-.dat
-    ::    [~ %_(+> lac (~(put by lac) -.dat dat))]
+    ++  poke-hood-load                                  ::  recover lost brain
+      |=  dat/hood-part
+      ?>  =(our.hid src.hid)
+      ~&  loaded+-.dat
+      [~ (~(put by lac) -.dat dat)]
     ::
     ::
     ++  from-module                                     ::  create wrapper
       |*  _[identity=%module start=..$ finish=_abet]:(hood-module)
-      |=  hid=bowl:mall
       =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
       |*  handle/_finish
       |=  a=_+<.handle
@@ -120,7 +121,7 @@
       (ably (handle a))
     ::  per-module interface wrappers
     ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum))
-    ++  from-helm  (from-module %helm [..$ _abet]:(hood-helm))
+    ++  from-helm  (from-module %helm [..$ _abet]:(hood-helm-mall))
     ++  from-kiln  (from-module %kiln [..$ _abet]:(hood-kiln))
     ++  from-write  (from-module %write [..$ _abet]:(hood-write))
     --
@@ -140,9 +141,41 @@
 ++  handle-poke
   |=  [=mark =vase]
   ^-  (quip move:agent:mall agent:mall)
+  =/  h  (help hid)
   =^  moves  lac
     ?+  mark  ~|([%poke-hood-bad-mark mark] !!)
-      %atom  ((wrap poke-atom):(from-helm hid) (need !<(@ vase)))
+      %hood-load              %-  poke-hood-load:h
+                              (need !<(hood-part vase))
+      %atom                   %-  (wrap poke-atom):from-helm:h
+                              (need !<(@ vase))
+      %helm-hi                %-  (wrap poke-hi):from-helm:h
+                              (need !<(@t vase))
+      %helm-mass              %-  (wrap poke-mass):from-helm:h
+                              (need !<(~ vase))
+      %helm-reload            %-  (wrap poke-reload):from-helm:h
+                              (need !<((list term) vase))
+      %helm-reload-desk       %-  (wrap poke-reload-desk):from-helm:h
+                              (need !<([@t (list term)] vase))
+      %helm-reset             %-  (wrap poke-reset):from-helm:h
+                              (need !<(~ vase))
+      %helm-serve             %-  (wrap poke-serve):from-helm:h
+                              (need !<([=binding:eyre =generator:eyre] vase))
+      %helm-send-hi           %-  (wrap poke-send-hi):from-helm:h
+                              (need !<([ship (unit tape)] vase))
+      %helm-verb              %-  (wrap poke-verb):from-helm:h
+                              (need !<(~ vase))
+      %helm-rekey             %-  (wrap poke-rekey):from-helm:h
+                              (need !<(@t vase))
+      %helm-moon              %-  (wrap poke-moon):from-helm:h
+                              (need !<((unit [ship udiff:point:able:jael]) vase))
+      %helm-nuke              %-  (wrap poke-nuke):from-helm:h
+                              (need !<(ship vase))
+      %helm-automass          %-  (wrap poke-automass):from-helm:h
+                              (need !<(@dr vase))
+      %helm-cancel-automass   %-  (wrap poke-cancel-automass):from-helm:h
+                              (need !<(~ vase))
+      %helm-bonk              %-  (wrap poke-bonk):from-helm:h
+                              (need !<(~ vase))
     ==
   [moves ..handle-init]
 ::
@@ -159,12 +192,24 @@
   *(unit (unit cage))
 ::
 ++  handle-mall
-  |=  [wire internal-gift:mall]
-  `..handle-init
+  |=  [=wire =internal-gift:mall]
+  ~&  [%handling-mall wire]
+  =/  h  (help hid)
+  =^  moves  lac
+    ?+  wire  ~|([%hood-bad-wire wire] !!)
+      [%helm %hi *]  %+  (wrap coup-hi):from-helm:h  t.t.wire
+                     ?>(?=(%coup -.internal-gift) p.internal-gift)
+    ==
+  [moves ..handle-init]
 ::
 ++  handle-take
-  |=  [wire vase]
-  `..handle-init
+  |=  [=wire =vase]
+  =/  h  (help hid)
+  =^  moves  lac
+    ?+  wire  ~|([%hood-bad-wire wire] !!)
+      [%helm *]  ((wrap take):from-helm:h t.wire vase)
+    ==
+  [moves ..handle-init]
 ::
 ++  handle-lame
   |=  [term tang]
