@@ -309,7 +309,7 @@
         =/  myt  (flop (fall tem ~))
         =/  can  (clan:title our)
         =.  tem  ~
-        =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
+        =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] our %home]])
         =.  +>  (sync %home our %base)
         =.  +>  ?:  ?=(?($czar $pawn) can)  +>
                 (sync %base (sein our) %kids)

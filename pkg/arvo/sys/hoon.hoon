@@ -10300,7 +10300,6 @@
         {$zpmc *}
       =+  vos=$(gol %noun, gen q.gen)
       =+  ref=p:$(gol %noun, gen p.gen)
-      ?>  (~(nest ut p:!>(*type)) & ref)
       [(nice (cell ref p.vos)) (cons [%1 burp(sut p.vos)] q.vos)]
     ::
         {$zpts *}   [(nice %noun) [%1 q:$(vet |, gen p.gen)]]

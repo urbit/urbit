@@ -31,8 +31,7 @@
     "moment": "^2.20.1",
     "react": "^16.5.2",
     "react-dom": "^16.8.6",
-    "react-router-dom": "^5.0.0",
-    "urbit-ob": "^3.1.1"
+    "react-router-dom": "^5.0.0"
   },
   "resolutions": {
     "natives": "1.1.3"

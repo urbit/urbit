@@ -1862,14 +1862,14 @@
       $%  {$mass p/mass}                                ::  memory usage
           {$onto p/(each suss tang)}                    ::  about agent
           {$rend p/path q/*}                            ::  network request
-          {$unto p/cuft}                                ::
+          {$unto p/internal-gift}                       ::
           {$mack p/(unit tang)}                         ::  message ack
       ==                                                ::
     ++  task                                            ::  incoming request
       $~  [%vega ~]                                     ::
-      $%  {$conf p/dock q/culm}                         ::  configure app
+      $%  {$conf p/dock q/dock}                         ::  configure app
           $>(%init vane-task)                           ::  set owner
-          {$deal p/sock q/cush}                         ::  full transmission
+          {$deal p/sock q/internal-task}                ::  full transmission
           $>(%vega vane-task)                           ::  report upgrade
           $>(%west vane-task)                           ::  network request
           [%wash ~]                                     ::  clear caches
@@ -1894,7 +1894,7 @@
                   now/@da                               ::  current time
                   byk/beak                              ::  load source
           ==  ==                                        ::
-  ++  club                                              ::  agent action
+  ++  agent-action                                      ::  agent action
     $%  {$peel p/mark q/path}                           ::  translated peer
         {$peer p/path}                                  ::  subscribe
         {$poke p/cage}                                  ::  apply
@@ -1904,20 +1904,14 @@
         {$pump ~}                                      ::  pump yes+no
         {$peer-not p/tang}                              ::  poison pill peer
     ==                                                  ::
-  ++  cuft                                              ::  internal gift
+  ++  internal-gift                                     ::
     $%  {$coup p/(unit tang)}                           ::  poke result
         {$diff p/cage}                                  ::  subscription output
         {$quit ~}                                      ::  close subscription
         {$reap p/(unit tang)}                           ::  peer result
         [%http-response =http-event:http]              ::  serve http result
     ==                                                  ::
-  ++  culm                                              ::  config action
-    $%  {$load p/scup}                                  ::  load+reload
-    ::  {$kick ~}                                      ::  restart everything
-    ::  {$stop ~}                                      ::  toggle suspend
-    ::  {$wipe ~}                                      ::  destroy all state
-    ==                                                  ::
-  ++  cush  (pair term club)                            ::  internal task
+  ++  internal-task  (pair term agent-action)           ::  internal task
   ++  dude  term                                        ::  server identity
   ++  gill  (pair ship term)                            ::  general contact
   ++  scar                                              ::  opaque duct
@@ -1925,7 +1919,6 @@
         q/(map duct bone)                               ::  by duct
         r/(map bone duct)                               ::  by bone
     ==                                                  ::
-  ++  scup  (pair ship desk)                            ::  autoupdate
   ++  suss  (trel dude @tas @da)                        ::  config report
   ++  well  (pair desk term)                            ::
   --  ::gall

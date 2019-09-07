@@ -87,10 +87,10 @@
 ++  request-darksky
   |=  location=@t
   ^-  request:http
-  =/  url/@t
-    %-  crip  %+  weld
-    (trip 'https://api.darksky.net/forecast/634639c10670c7376dc66b6692fe57ca/')
-    (trip location)
+  =/  base
+    "https://api.darksky.net/forecast/634639c10670c7376dc66b6692fe57ca/"
+  =/  url/@t  %-  crip
+    :(weld base (trip location) "?units=auto")
   =/  hed  [['Accept' 'application/json']]~
   [%'GET' url hed *(unit octs)]
 ::
