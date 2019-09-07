@@ -81,6 +81,14 @@
         u3_noun
         u3x_at(u3_noun axe, u3_noun som);
 
+      /* u3x_mean():
+      **
+      **   Attempt to deconstruct `a` by axis, noun pairs; 0 terminates.
+      **   Axes must be sorted in tree order.
+      */
+        void
+        u3x_mean(u3_noun a, ...);
+
       /* u3x_cell():
       **
       **   Divide `a` as a cell `[b c]`.
