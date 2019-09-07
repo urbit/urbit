@@ -8,10 +8,7 @@
 u3_noun
 u3x_good(u3_weak som)
 {
-  if ( u3_none == som ) {
-    return u3m_bail(c3__exit);
-  }
-  else return som;
+  return ( u3_none == som ) ? u3m_bail(c3__exit) : som;
 }
 
 /* u3x_at (u3at): fragment.
@@ -19,11 +16,7 @@ u3x_good(u3_weak som)
 u3_noun
 u3x_at(u3_noun axe, u3_noun som)
 {
-  u3_weak pro = u3r_at(axe, som);
-
-  if ( u3_none == pro ) {
-    return u3m_bail(c3__exit);
-  } else return pro;
+  return u3x_good(u3r_at(axe, som));
 }
 
 /* u3x_cell():
@@ -32,8 +25,8 @@ u3x_at(u3_noun axe, u3_noun som)
 */
 void
 u3x_cell(u3_noun  a,
-           u3_noun* b,
-           u3_noun* c)
+         u3_noun* b,
+         u3_noun* c)
 {
   if ( c3n == u3r_cell(a, b, c) ) {
     u3m_bail(c3__exit);
@@ -46,9 +39,9 @@ u3x_cell(u3_noun  a,
 */
 void
 u3x_trel(u3_noun  a,
-           u3_noun* b,
-           u3_noun* c,
-           u3_noun* d)
+         u3_noun* b,
+         u3_noun* c,
+         u3_noun* d)
 {
   if ( c3n == u3r_trel(a, b, c, d) ) {
     u3m_bail(c3__exit);
@@ -61,10 +54,10 @@ u3x_trel(u3_noun  a,
 */
 void
 u3x_qual(u3_noun  a,
-           u3_noun* b,
-           u3_noun* c,
-           u3_noun* d,
-           u3_noun* e)
+         u3_noun* b,
+         u3_noun* c,
+         u3_noun* d,
+         u3_noun* e)
 {
   if ( c3n == u3r_qual(a, b, c, d, e) ) {
     u3m_bail(c3__exit);
@@ -77,11 +70,11 @@ u3x_qual(u3_noun  a,
 */
 void
 u3x_quil(u3_noun  a,
-           u3_noun* b,
-           u3_noun* c,
-           u3_noun* d,
-           u3_noun* e,
-           u3_noun* f)
+         u3_noun* b,
+         u3_noun* c,
+         u3_noun* d,
+         u3_noun* e,
+         u3_noun* f)
 {
   if ( c3n == u3r_quil(a, b, c, d, e, f) ) {
     u3m_bail(c3__exit);
@@ -94,12 +87,12 @@ u3x_quil(u3_noun  a,
 */
 void
 u3x_hext(u3_noun  a,
-           u3_noun* b,
-           u3_noun* c,
-           u3_noun* d,
-           u3_noun* e,
-           u3_noun* f,
-           u3_noun* g)
+         u3_noun* b,
+         u3_noun* c,
+         u3_noun* d,
+         u3_noun* e,
+         u3_noun* f,
+         u3_noun* g)
 {
   if ( c3n == u3r_hext(a, b, c, d, e, f, g) ) {
     u3m_bail(c3__exit);
