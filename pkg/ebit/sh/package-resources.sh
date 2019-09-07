@@ -1,13 +1,20 @@
-ver=6500f622dfff11dbe314b682e8b206f352f618c2
+ver=0.8.2
+host=https://bootstrap.urbit.org
 
-dir=resources/linux
-mkdir -p $dir
-( cd $dir; tar xfz ../../../../release/urbit-linux64-$ver.tgz )
+rm -rf ./resources
+mkdir -p resources/{linux,mac}
 
-dir=resources/mac
-mkdir -p $dir
-( cd $dir; tar xfz ../../../../release/urbit-darwin-$ver.tgz )
+(
+  cd resources/linux
+  curl $host/urbit-linux64-v$ver.tgz | gunzip | tar x
+)
 
-cp -r ../arvo resources/arvo
+(
+  cd resources/mac
+  curl $host/urbit-darwin-v$ver.tgz | gunzip | tar x
+)
 
-cp ../../bin/solid.pill resources/solid.pill
+(
+  cd resources
+  wget $host/urbit-$ver.pill -O solid.pill
+)

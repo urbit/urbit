@@ -50,6 +50,7 @@ console.log(urbitExe);
 ////////////////////////////////////////////////////////////////////////////////
 
 ipcMain.on('ship-list', (event, arg) => {
+  try { fs.mkdirSync(shipsDir); } catch(e) {}
   const ships = fs.readdirSync(shipsDir);
   console.log("ships", ships);
   event.returnValue = ships;
@@ -110,7 +111,7 @@ const runShip = (ship, cb) => {
 
 const bootShip = (ship, cb) => {
   const pier = path.join(shipsDir, ship);
-  const args = ['-F', ship, '-d', '-A', arvoPath, '-B', pillPath, '-c', pier];
+  const args = ['-F', ship, '-d', '-B', pillPath, '-c', pier];
 
   console.log(urbitExe, args)
 
@@ -122,25 +123,7 @@ const bootShip = (ship, cb) => {
   });
 }
 
-/*
-bootShip('bus', (ship, ports) => {
-  console.log(`booted + running: ${ship} on`, ports);
-});
-
-runShip('zod', (ship, ports) => {
-  console.log(`running: ${ship} on`, ports);
-});
-*/
-
 ////////////////////////////////////////////////////////////////////////////////
-
-// ipcRenderer.send('renderer-started', null);
-// ipcRenderer.on('urbit-started', (event, port) => redirectToShip(port));
-//
-// ipcMain.on('synchronous-message', (event, arg) => {
-//   console.log(["node got", arg]);
-//   event.returnValue = 'pong';
-// });
 
 // In main process.
 ipcMain.on('renderer-started', (event, arg) => {
@@ -151,6 +134,9 @@ ipcMain.on('start-ship', (event, ship) => {
   console.log('start-ship', ship);
 
   runShip(ship, (ship, ports) => {
+    const port = ports.ins;
+    const url = `http://localhost:${port}`;
+    createUrbitWindow(url)
     event.reply('ship-running', ship, ports);
   });
 });
@@ -159,6 +145,9 @@ ipcMain.on('boot-ship', (event, ship) => {
   console.log('boot-ship', ship);
 
   bootShip(ship, (ship, ports) => {
+    const port = ports.ins;
+    const url = `http://localhost:${port}`;
+    createUrbitWindow(url)
     event.reply('ship-running', ship, ports);
   });
 });
@@ -184,6 +173,23 @@ let mainWindow
     an array if your app supports multi windows, this is the time when
     you should delete the corresponding element.
 */
+const createUrbitWindow = (url) => {
+  urbWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true,
+      // preload: path.join(__dirname, 'preload.js'),
+    }
+  });
+
+  urbWindow.loadURL(url);
+
+  urbWindow.on('closed', () => {
+    urbWindow = null;
+  });
+};
+
 const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 800,

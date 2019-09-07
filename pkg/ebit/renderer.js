@@ -1,28 +1,25 @@
 const { ipcRenderer } = require('electron');
 
-console.log("renderer.js loaded");
-
-const redirectToShip = (port) => {
-    const url = `http://localhost:${port}`;
-    console.log(url);
-    document.write("<h1>Redirecting</h1>");
-    window.setTimeout(() => { window.location = url; }, 2000);
-};
-
 const ships = ipcRenderer.sendSync('ship-list');
 
 var body = '';
 
 body += '<ul>';
 
+const say = (html) => {
+  let bod = document.body.innerHTML;
+  bod += html
+  document.body.innerHTML = bod;
+}
+
 const doship = (ship) => {
-  document.body.innerHTML = `Starting ${ship}`;
+  say(`<br><br>Starting ${ship}...</br>`);
   ipcRenderer.send('start-ship', ship);
 }
 
 const mkship = () => {
   const ship = document.getElementById("bootname").value;
-  document.body.innerHTML = `Booting ${ship}`;
+  say(`Booting ${ship}`);
   ipcRenderer.send('boot-ship', ship);
 }
 
@@ -46,5 +43,5 @@ ipcRenderer.send('renderer-started', null);
 
 ipcRenderer.on('ship-running', (event, ship, ports) => {
   console.log(ship, ports);
-  redirectToShip(ports.ins);
+  say(`<br><br>~${ship} is running!<br>`)
 });
