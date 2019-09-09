@@ -1251,6 +1251,7 @@
       [~ this]
     =/  files=(list path)
       .^((list path) %ct (weld our-beak /web/publish/[coll.act]))
+    ?>  ?=(^ (find [/web/publish/[coll.act]/publish-info]~ files))
     =/  all=[moves=(list move) builds=(set wire)]
     %+  roll  files
     |=  [pax=path out=[moves=(list move) builds=(set wire)]]
