@@ -1,6 +1,8 @@
 |%
++$  kind  ?(%black %white)
+::
 +$  permission
-  $:  kind=?(%black %white)
+  $:  =kind
       who=(set ship)
   ==
 ::

@@ -1,6 +1,11 @@
 /-  *permissions
-|_  per=permission-map
+/+  *permission-json
+|_  pem=permission-map
 ::
+++  grow
+  |%
+  ++  json  (permission-to-json pem)
+  --
 ::
 ++  grab
   |%

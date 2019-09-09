@@ -1,5 +1,6 @@
 /-  *permissions
 /+  *permission-json
+=,  dejs:format
 |_  act=permission-action
 ++  grab
   |%
@@ -13,7 +14,7 @@
       :~  [%create create]
           [%delete delete]
           [%add add]
-          [%read remove]
+          [%remove remove]
           [%allow allow]
           [%deny deny]
       ==
@@ -21,7 +22,7 @@
     ++  create
       %-  ot
       :~  [%path (su ;~(pfix net (more net urs:ab)))]
-          [%kind sa]
+          [%kind ki]
           [%who (as (su ;~(pfix sig fed:ag)))]
       ==
     ::
@@ -52,5 +53,6 @@
           [%who (as (su ;~(pfix sig fed:ag)))]
       ==
     ::
+    --
   --
 --

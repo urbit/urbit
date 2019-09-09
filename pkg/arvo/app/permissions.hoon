@@ -27,8 +27,6 @@
 ++  peer-all
   |=  =path
   ^-  (quip move _this)
-  ?~  path
-    [[ost.bol %quit ~]~ this]
   ?.  =(src.bol our.bol)
     [[ost.bol %quit ~]~ this]
   ::  we now proxy all events to this path
