@@ -1331,10 +1331,19 @@
         ::  executes {exe} and sends both its code and
         ::  result.
         ::
-        |=  {txt/cord exe/hoon}
-        =>  |.([(sell (slap (slop hoon-head seed) exe))]~)
-        =+  tan=p:(mule .)
-        (say [%exp txt tan] ~)
+        |=  [txt=cord exe=hoon]
+        ::  XX revisit
+        ::
+        ::    this double-virtualizes and clams to disable .^
+        ::
+        =;  tan=(list tank)
+          (say [%exp txt tan] ~)
+        ;;  (list tank)
+        =<  +>
+        %+  mong
+          :-  mute
+          |.([(sell (slap (slop hoon-head seed) exe))]~)
+        |=(^ ~)
       ::
       ++  target
         ::    %target

@@ -577,7 +577,17 @@
     :+  ~  u.exp
     =+  res=((ot res+(ar dank) ~) a)
     ?^  res  u.res
-    p:(mule |.([(sell (slap !>(..^zuse) (ream u.exp)))]~))  ::TODO  oldz
+    ::  XX revisit
+    ::
+    ::    this double-virtualizes and clams to disable .^
+    ::    the subject of the eval should include [our now eny]
+    ::
+    ;;  (list tank)
+    =<  +>
+    %+  mong
+      :-  mute
+      |.([(sell (slap !>(..^zuse) (ream u.exp)))]~)
+    |=(^ ~)
   ::
   ++  atta                                              :::  attache
     ^-  $-(json (unit attache))
