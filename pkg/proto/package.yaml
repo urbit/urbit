@@ -1,0 +1,77 @@
+name: proto
+version: 0.1.0
+license: AGPL-3.0-only
+
+dependencies:
+  - base
+  - bound
+  - containers
+  - text
+  - unordered-containers
+
+default-extensions:
+  - ApplicativeDo
+  - BangPatterns
+  - BlockArguments
+  - DeriveAnyClass
+  - DeriveDataTypeable
+  - DeriveFoldable
+  - DeriveGeneric
+  - DeriveTraversable
+  - DerivingStrategies
+  - EmptyDataDecls
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GADTs
+  - GeneralizedNewtypeDeriving
+  - LambdaCase
+  - MultiParamTypeClasses
+  - NamedFieldPuns
+  - NoImplicitPrelude
+  - NumericUnderscores
+  - OverloadedStrings
+  - PartialTypeSignatures
+  - QuasiQuotes
+  - Rank2Types
+  - RankNTypes
+  - RecordWildCards
+  - ScopedTypeVariables
+  - TemplateHaskell
+  - TupleSections
+  - TypeApplications
+  - TypeFamilies
+  - UnicodeSyntax
+  - ViewPatterns
+
+library:
+  source-dirs: lib
+  ghc-options:
+    - -fwarn-incomplete-patterns
+    - -fwarn-unused-binds
+    - -fwarn-unused-imports
+    - -O2
+
+executables:
+  proto:
+    main: Main.hs
+    source-dirs: app
+    dependencies:
+      - proto
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -O2
+      - "-with-rtsopts=-N"
+      - -fwarn-incomplete-patterns
+
+tests:
+  proto:
+    main: Spec.hs
+    source-dirs: test
+    dependencies:
+      - proto
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
