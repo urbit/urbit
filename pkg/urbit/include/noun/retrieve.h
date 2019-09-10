@@ -141,11 +141,6 @@
         c3_o
         u3r_sing(u3_noun a, u3_noun b);
 
-      /* u3rz_sing(): transferring u3r_sing
-      */
-        c3_o
-        u3rz_sing(u3_noun a, u3_noun b);
-
       /* u3r_sung(): yes iff (a) and (b) are the same noun, unifying equals.
       **
       **   Make sure you have no live, uncounted pointers to any noun
@@ -154,9 +149,7 @@
         c3_o
         u3r_sung(u3_noun a, u3_noun b);
 
-      /* u3r_sing_c):
-      **
-      **   Yes iff (b) is the same noun as the C string [a].
+      /* u3r_sing_c(): cord/C-string value equivalence.
       */
         c3_o
         u3r_sing_c(const c3_c* a_c,

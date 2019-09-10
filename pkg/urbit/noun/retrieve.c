@@ -645,16 +645,6 @@ u3r_sing(u3_noun a, u3_noun b)
   }
 }
 
-/* u3rz_sing(): transferring u3r_sing
-*/
-c3_o
-u3rz_sing(u3_noun a, u3_noun b)
-{
-  c3_o ret_o = u3r_sing(a, b);
-  u3z(a); u3z(b);
-  return ret_o;
-}
-
 /* u3r_sung(): yes iff (a) and (b) are the same noun, unifying equals.
 */
 c3_o
@@ -841,13 +831,11 @@ u3r_nord(u3_noun a,
   }
 }
 
-/* u3r_sing_c():
-**
-**   Yes iff (b) is the same noun as the C string a_c.
+/* u3r_sing_c(): cord/C-string value equivalence.
 */
 c3_o
 u3r_sing_c(const c3_c* a_c,
-             u3_noun     b)
+           u3_noun     b)
 {
   c3_assert(u3_none != b);
 
