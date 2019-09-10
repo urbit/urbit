@@ -506,15 +506,13 @@ _worker_work_live(c3_d evt_d, u3_noun job)
   u3A->now  = u3k(now);
 
 #ifdef U3_EVENT_TIME_DEBUG
-  {
-    struct timeval b4, f2, d0;
-    gettimeofday(&b4, 0);
+  struct timeval b4, f2, d0;
+  gettimeofday(&b4, 0);
 
-    if ( c3__belt != u3h(u3t(ovo)) ) {
-      c3_c* txt_c = u3r_string(u3h(u3t(ovo)));
+  if ( c3__belt != u3h(u3t(ovo)) ) {
+    c3_c* txt_c = u3r_string(u3h(u3t(ovo)));
 
-      u3l_log("work: %s (%" PRIu64 ") live\r\n", txt_c, evt_d);
-    }
+    u3l_log("work: %s (%" PRIu64 ") live\r\n", txt_c, evt_d);
   }
 #endif
 
