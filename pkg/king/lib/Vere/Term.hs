@@ -5,7 +5,6 @@ import Arvo hiding (Term)
 import Vere.Pier.Types
 
 import Data.Char
-import Data.List ((!!))
 import Foreign.Marshal.Alloc
 import Foreign.Ptr
 import Foreign.Storable
@@ -13,7 +12,8 @@ import System.Posix.IO
 import System.Posix.Terminal
 
 import System.Console.Terminfo.Base
-import System.Directory   (createDirectoryIfMissing)
+import RIO.Directory   (createDirectoryIfMissing)
+import RIO.FilePath
 
 import Data.ByteString.Internal
 
@@ -328,7 +328,7 @@ initializeLocalTerminal = do
 
 --------------------------------------------------------------------------------
 
-term :: HasLogFunc e
+term :: forall e. HasLogFunc e
      => TerminalSystem e -> (STM ()) -> FilePath -> KingId -> QueueEv
      -> ([Ev], RAcquire e (EffCb e TermEf))
 term TerminalSystem{..} shutdownSTM pierPath king enqueueEv =
@@ -371,25 +371,6 @@ term TerminalSystem{..} shutdownSTM pierPath king enqueueEv =
 
     performPut :: Path -> ByteString -> RIO e ()
     performPut path bs = do
-      -- Get the types right
-      let elements = map (unpack . unKnot) (unPath path)
-      let elementsLen = length elements
-
-      -- Make sure that the
-      let basePutDir = pierPath </> ".urb" </> "put"
-      let putDir = foldl' (</>) basePutDir (take (elementsLen - 2) elements)
-      io $ createDirectoryIfMissing True putDir
-
-      let putOutFile = case elementsLen of
-            -- We know elementsLen is one, but we still can't use `head`.
-            1 -> case elements of
-              (x:xs) -> putDir </> x
-              _ -> putDir
-            --
-            _ -> putDir </>
-              (elements !! (elementsLen - 2)) <.> (elements !! (elementsLen - 1))
-
---      print $ "Writing to " ++ putOutFile
+      let putOutFile = pierPath </> ".urb" </> "put" </> (pathToFilePath path)
+      createDirectoryIfMissing True (takeDirectory putOutFile)
       writeFile putOutFile bs
-
-      pure ()

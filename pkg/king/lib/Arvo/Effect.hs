@@ -7,6 +7,7 @@ import Arvo.Common (KingId(..), ServId(..))
 import Arvo.Common (Header, HttpEvent, HttpServerConf, Method, Mime)
 import Arvo.Common (AmesDest, Turf)
 import Arvo.Common (ReOrg(..), reorgThroughNoun)
+import Arvo.Common (Desk)
 
 
 -- Newt Effects ----------------------------------------------------------------
@@ -69,10 +70,10 @@ deriveNoun ''HttpServerEf
     %ogre -- TODO
 -}
 data SyncEf
-    = SyncEfHill ()  [Term]
-    | SyncEfDirk Path Term
-    | SyncEfErgo Path Term [(Path, Maybe Mime)]
-    | SyncEfOgre Path Term
+    = SyncEfHill ()  [Desk]
+    | SyncEfDirk Path Desk
+    | SyncEfErgo Path Desk [(Path, Maybe Mime)]
+    | SyncEfOgre Path Desk
   deriving (Eq, Ord, Show)
 
 deriveNoun ''SyncEf

@@ -9,7 +9,7 @@ module Noun.Conversions
   , Wall
   , UD(..), UV(..)
   , Mug(..), Path(..), EvilPath(..), Ship(..)
-  , Lenient(..)
+  , Lenient(..), pathToFilePath
   ) where
 
 import ClassyPrelude hiding (hash)
@@ -35,6 +35,8 @@ import Prelude          ((!!))
 import RIO              (decodeUtf8Lenient)
 import System.IO.Unsafe (unsafePerformIO)
 import Text.Show.Pretty (ppShow)
+import RIO.FilePath  ((</>), (<.>), joinPath, splitDirectories,
+                         takeBaseName, takeDirectory, takeExtension)
 
 import qualified Data.Char                as C
 import qualified Data.Text.Encoding       as T
@@ -472,6 +474,15 @@ newtype EvilPath = EvilPath { unEvilPath :: [Atom] }
 instance Show EvilPath where
   show = show . unEvilPath
 
+pathToFilePath :: Path -> FilePath
+pathToFilePath p = joinPath (dirs ++ [filename])
+  where
+    elements :: [String] = map (unpack . unKnot) (unPath p)
+    (dirs, f) = splitAt ((length elements) - 2) elements
+    filename = case length f of
+      0 -> ""
+      1 -> (f !! 0)
+      _ -> (f !! 0) RIO.FilePath.<.> (f !! 1)
 
 -- Mug -------------------------------------------------------------------------
 
