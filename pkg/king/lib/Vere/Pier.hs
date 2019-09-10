@@ -136,9 +136,13 @@ pier :: ∀e. HasLogFunc e
      -> (Serf e, EventLog, SerfState)
      -> RAcquire e ()
 pier pierPath mPort (serf, log, ss) = do
-    computeQ <- newTQueueIO :: RAcquire e (TQueue ComputeRequest)
+    computeQ <- newTQueueIO :: RAcquire e (TQueue Ev)
     persistQ <- newTQueueIO :: RAcquire e (TQueue (Job, FX))
     executeQ <- newTQueueIO :: RAcquire e (TQueue FX)
+
+    saveM <- newEmptyTMVarIO :: RAcquire e (TMVar ())
+    shutdownM <- newEmptyTMVarIO :: RAcquire e (TMVar ())
+    let shutdownEvent = putTMVar shutdownM ()
 
     inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
@@ -147,19 +151,16 @@ pier pierPath mPort (serf, log, ss) = do
 
     let ship = who (Log.identity log)
 
-    let shutdownEvent = writeTQueue computeQ $ CRShutdown
-    let computeEvent = (\ev -> writeTQueue computeQ $ CREvent ev)
-
     let (bootEvents, startDrivers) =
-          drivers pierPath inst ship mPort computeEvent shutdownEvent terminalSystem
+          drivers pierPath inst ship mPort (writeTQueue computeQ) shutdownEvent terminalSystem
 
-    io $ atomically $ for_ bootEvents computeEvent
+    io $ atomically $ for_ bootEvents (writeTQueue computeQ)
 
     tExe  <- startDrivers >>= router (readTQueue executeQ)
     tDisk <- runPersist log persistQ (writeTQueue executeQ)
-    tCpu  <- runCompute serf ss (readTQueue computeQ) (writeTQueue persistQ)
+    tCpu  <- runCompute serf ss (readTQueue computeQ) (takeTMVar saveM) (takeTMVar shutdownM) (writeTQueue persistQ)
 
-    tSaveSignal <- saveSignalThread computeQ
+    tSaveSignal <- saveSignalThread saveM
 
     -- Wait for something to die.
 
@@ -178,12 +179,12 @@ death tag tid = do
     Left exn -> Left (tag, exn)
     Right () -> Right tag
 
-saveSignalThread :: TQueue ComputeRequest -> RAcquire e (Async ())
-saveSignalThread tq = mkRAcquire start cancel
+saveSignalThread :: TMVar () -> RAcquire e (Async ())
+saveSignalThread tm = mkRAcquire start cancel
   where
     start = async $ forever $ do
       threadDelay (120 * 1000000) -- 120 seconds
-      atomically $ writeTQueue tq $ CRSave
+      atomically $ putTMVar tm ()
 
 -- Start All Drivers -----------------------------------------------------------
 
@@ -252,8 +253,8 @@ router waitFx Drivers{..} =
 
 data ComputeRequest
     = CREvent Ev
-    | CRSave
-    | CRShutdown
+    | CRSave ()
+    | CRShutdown ()
   deriving (Eq, Show)
 
 logEvent :: HasLogFunc e => Ev -> RIO e ()
@@ -273,14 +274,22 @@ logEffect ef =
        FailParse n -> pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow n
 
 runCompute :: ∀e. HasLogFunc e
-           => Serf e -> SerfState -> STM ComputeRequest -> ((Job, FX) -> STM ())
+           => Serf e
+           -> SerfState
+           -> STM Ev
+           -> STM ()
+           -> STM ()
+           -> ((Job, FX) -> STM ())
            -> RAcquire e (Async ())
-runCompute serf ss getEvent putResult =
+runCompute serf ss getEvent getSaveSignal getShutdownSignal putResult =
     mkRAcquire (async (go ss)) cancel
   where
     go :: SerfState -> RIO e ()
     go ss = do
-        cr  <- atomically getEvent
+        cr  <- atomically $
+          CREvent    <$> getEvent          <|>
+          CRSave     <$> getSaveSignal     <|>
+          CRShutdown <$> getShutdownSignal
         case cr of
           CREvent ev -> do
             logEvent ev
@@ -291,11 +300,11 @@ runCompute serf ss getEvent putResult =
             (job', ss', fx) <- doJob serf $ DoWork $ Work eId mug wen ev
             atomically (putResult (job', fx))
             go ss'
-          CRSave -> do
+          CRSave () -> do
             logDebug $ "Taking periodic snapshot"
             Serf.snapshot serf ss
             go ss
-          CRShutdown -> do
+          CRShutdown () -> do
             -- When shutting down, we first request a snapshot, and then we
             -- just exit this recursive processing, which will cause the serf
             -- to exit from its RAcquire.
