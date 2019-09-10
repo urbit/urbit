@@ -1862,7 +1862,7 @@
       $%  {$mass p/mass}                                ::  memory usage
           {$onto p/(each suss tang)}                    ::  about agent
           {$rend p/path q/*}                            ::  network request
-          {$unto p/internal-gift}                       ::
+          {$unto p/gift:agent}                          ::
           {$mack p/(unit tang)}                         ::  message ack
       ==                                                ::
     ++  task                                            ::  incoming request
@@ -1901,19 +1901,12 @@
         {$peer p/path}                                  ::  subscribe
         {$poke p/cage}                                  ::  apply
         {$puff p/mark q/noun}                           ::  unchecked poke
-        {$pull ~}                                      ::  unsubscribe
+        {$pull ~}                                       ::  unsubscribe
         {$punk p/mark q/cage}                           ::  translated poke
-        {$pump ~}                                      ::  pump yes+no
+        {$pump ~}                                       ::  pump yes+no
         {$peer-not p/tang}                              ::  poison pill peer
     ==                                                  ::
-  ++  internal-gift                                     ::
-    $%  {$coup p/(unit tang)}                           ::  poke result
-        {$diff p/cage}                                  ::  subscription output
-        {$quit ~}                                      ::  close subscription
-        {$reap p/(unit tang)}                           ::  peer result
-        [%http-response =http-event:http]              ::  serve http result
-    ==                                                  ::
-  ++  internal-task  (pair term agent-action)           ::  internal task
+  ++  internal-task  task:agent                         ::  internal task
   ++  dude  term                                        ::  server identity
   ++  gill  (pair ship term)                            ::  general contact
   ++  scar                                              ::  opaque duct
@@ -1924,36 +1917,43 @@
   ++  suss  (trel dude @tas @da)                        ::  config report
   ++  well  (pair desk term)                            ::
   ::
-  ::  +internal-note: +ap note
-  ::
-  ++  internal-note
-    $%  [%meta =term =vase]
-        [%send =ship =internal-task]
-    ==
-  ::  +internal-move: agent-level move
-  ::
-  ::    Analogous to an Arvo move, except these are routed by bone, instead of
-  ::    duct.
-  ::
-  ++  internal-move
-    $:  =bone
-        move=(wind internal-note internal-gift)
-    ==
   ::  +agent: app core
   ::
   ++  agent
     =<  form
     |%
-    +$  move  [=bone move=card]
-    +$  card  (wind internal-note internal-gift)
-    +$  step  (quip move form)
+    +$  step  (quip card form)
+    +$  card  (wind note gift)
+    +$  note  
+      $%  [%arvo note-arvo]
+          [%agent =ship name=term =task]
+      ==
+    +$  task
+      $%  [%subscribe-translated =mark =path]
+          [%subscribe =path]
+          [%unsubscribe ~]
+          [%poke =cage]
+          [%raw-poke =mark =noun]
+          [%poke-translated =mark =cage]
+          [%pump ~]
+      ==
+    +$  gift
+      $%  [%poke-ack p=(unit tang)]
+          [%subscription-update p=cage]
+          [%subscription-closed ~]
+          [%subscription-ack p=(unit tang)]
+          [%http-response =http-event:http]
+      ==
     ++  form
       $_  ^|
       |_  bowl
       ++  handle-init
         *(quip move _^|(..handle-init))
       ::
-      ++  handle-prep
+      ++  handle-extract-state
+        *vase
+      ::
+      ++  handle-upgrade-state
         |~  old-state=vase
         *(quip move _^|(..handle-init))
       ::
@@ -1961,11 +1961,11 @@
         |~  in-poke-data=cage
         *(quip move _^|(..handle-init))
       ::
-      ++  handle-peer
+      ++  handle-subscribe
         |~  path
         *(quip move _^|(..handle-init))
       ::
-      ++  handle-pull
+      ++  handle-unsubscribe
         |~  path
         *(quip move _^|(..handle-init))
       ::
@@ -1973,20 +1973,17 @@
         |~  path
         *(unit (unit cage))
       ::
-      ++  handle-mall
+      ++  handle-agent-response
         |~  [wire internal-gift]
         *(quip move _^|(..handle-init))
       ::
-      ++  handle-take
-        |~  [wire sign=vase]
+      ++  handle-arvo-response
+        |~  [wire =sign-arvo]
         *(quip move _^|(..handle-init))
       ::
-      ++  handle-lame
+      ++  handle-error
         |~  [term tang]
         *(quip move _^|(..handle-init))
-      ::
-      ++  handle-stay
-        *vase
       --
     --
   --  ::mall

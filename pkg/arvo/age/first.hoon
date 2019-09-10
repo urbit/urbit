@@ -1,50 +1,22 @@
+/+  default-agent
 ^-  agent:mall
 =|  state=@
-|_  bowl:mall
-++  handle-init
-  `..handle-init
-::
-++  handle-prep
-  |=  =old-state=vase
-  =/  old-state  !<(@ old-state-vase)
-  ?~  old-state
-    ~&  %prep-lost
-    `..handle-init
-  ~&  %prep-found
-  `..handle-init(state u.old-state)
-::
+|_  =bowl:mall
++*  this  .
+++  handle-init            ~(handle-init default-agent bowl this)
+++  handle-extract-state   ~(handle-extract-state default-agent bowl this)
+++  handle-upgrade-state   ~(handle-upgrade-state default-agent bowl this)
 ++  handle-poke
   |=  in-poke-data=cage
-  ~&  >>  'ouchies!'
-  ~&  >>>  in-poke-data
   ~&  >  state=state
+  ~&  >  in-poke-data
   =.  state  +(state)
-  `..handle-init
+  `this
 ::
-++  handle-peer
-  |=  path
-  `..handle-init
-::
-++  handle-pull
-  |=  path
-  `..handle-init
-::
-++  handle-peek
-  |=  path
-  *(unit (unit cage))
-::
-++  handle-mall
-  |=  [wire internal-gift:mall]
-  `..handle-init
-::
-++  handle-take
-  |=  [wire vase]
-  `..handle-init
-::
-++  handle-lame
-  |=  [term tang]
-  `..handle-init
-::
-++  handle-stay
-  !>(state)
+++  handle-subscribe       ~(handle-subscribe default-agent bowl this)
+++  handle-unsubscribe     ~(handle-unsubscribe default-agent bowl this)
+++  handle-peek            ~(handle-peek default-agent bowl this)
+++  handle-agent-response  ~(handle-agent-response default-agent bowl this)
+++  handle-arvo-response   ~(handle-arvo-response default-agent bowl this)
+++  handle-error           ~(handle-error default-agent bowl this)
 --
