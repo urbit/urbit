@@ -322,6 +322,7 @@
 =+  foo=*monkey
 =|  house                                               ::  program state
 =*  state  -
+=>  |%
 ++  he                                                  ::  per session
   |_  {hid/bowl:mall moz/(list move:agent:mall) session}
   ::
@@ -361,7 +362,7 @@
       =.  poy  ~
       ?~  pux  +>
       %.  [%txt "! cancel {<u.pux>}"]
-      he-diff:(he-card [%pass u.pux %meta %f !>([%kill ~]))
+      he-diff:(he-card [%pass u.pux %meta %f !>([%kill ~])])
     ::
     ++  dy-slam                                         ::  call by ford
       |=  {way/wire gat/vase sam/vase}
@@ -559,7 +560,6 @@
         :*  %pass
             /poke 
             %send
-            our.hid
             p.p.p.mad
             q.p.p.mad
             %poke
@@ -836,16 +836,16 @@
     ==
   ::
   ++  he-abet                                           ::  resolve
-    [(flop moz) %_(state hoc (~(put by hoc) ost.hid +<+))]
+    [(flop moz) %_(state hoc (~(put by hoc) ost.hid +<+>))]
   ::
   ++  he-abut                                           ::  discard
     =>  he-stop
     [(flop moz) %_(state hoc (~(del by hoc) ost.hid))]
   ::
   ++  he-card                                           ::  emit gift
-    |=  cad/card:agent:mall
+    |=  =card:agent:mall
     ^+  +>
-    %_(+> moz [[ost.hid cad] moz])
+    %_(+> moz [[ost.hid card] moz])
   ::
   ++  he-diff                                           ::  emit update
     |=  fec/sole-effect
@@ -857,7 +857,8 @@
     ?~(poy . ~(dy-stop dy u.poy))
   ::
   ++  he-peer                                           ::  subscribe to
-    |=(pax/path ?>(=(~ pax) he-prom))
+    |=  pax/path
+    ?>(=(~ pax) he-prom)
   ::
   ++  he-pine                                           ::  restore prompt
     ^+  .
@@ -1130,14 +1131,14 @@
 ::
 ++  handle-poke
   |=  [=mark =vase]
-  ^-  (quip move _..handle-init)
-  =/  =session  (~(got by hoc) ost.hid)
-  =/  he-full  ~(. he hid ~ session)
+  ^-  (quip move:agent:mall _..handle-init)
+  =/  a-session=session  (~(got by hoc) ost.hid)
+  =/  he-full  ~(. he hid ~ a-session)
   =^  moves  state
-    =<  he-abet
+    ^-  (quip move:agent:mall house)
     ?+  mark  ~|([%dojo-poke-bad-mark mark] !!)
-        %sole-action   (he-type:he-full (need !<(sole-action vase)))
-        %lens-command  (he-lens:he-full (need !<(command:lens vase)))
+        %sole-action   he-abet:(he-type:he-full (need !<(sole-action vase)))
+        %lens-command  he-abet:(he-lens:he-full (need !<(command:lens vase)))
         %json          ~&  jon=(need !<(json vase))  `state
         %wipe
       ~&  %dojo-wipe
@@ -1157,7 +1158,7 @@
 ::
 ++  handle-peer
   |=  =path
-  ^-  (quip move _..handle-init)
+  ^-  (quip move:agent:mall _..handle-init)
   ~?  !=(our.hid src.hid)  [%dojo-peer-stranger ost.hid src.hid]
   ?>  (team:title our.hid src.hid)
   =^  moves-1  state
@@ -1166,7 +1167,8 @@
     ~(he-abut he hid ~ (~(got by hoc) ost.hid))
   =^  moves-2  state
     =/  =session  %*(. *session -.dir [our.hid %home ud+0])
-    he-abet:(~(he-peer hid moves-1 session) path)
+    ?>  ?=([%sole *] path)
+    he-abet:(~(he-peer he hid moves-1 session) t.path)
   [moves-2 ..handle-init]
 ::
 ++  handle-pull
@@ -1184,28 +1186,29 @@
   |=  [=wire =internal-gift:mall]
   =/  =session  (~(got by hoc) ost.hid)
   =^  moves  state
-    he-abet:(~(he-unto hid ~ session) wire internal-gift)
+    he-abet:(~(he-unto he hid ~ session) wire internal-gift)
   [moves ..handle-init]
 ::
 ++  handle-take
   |=  [=wire =vase]
-  =/  sesssion  (~(got by hoc) ost.hid)
+  =/  =session  (~(got by hoc) ost.hid)
   =/  he-full  ~(. he hid ~ session)
   =^  moves  state
     =<  he-abet
     ?+    -.q.vase  ~|([%dojo-bad-take -.q.vase] !!)
         %made
-      (he-made:he-full wire (need !<([@da made-result:ford] vase)))
+      (he-made:he-full wire +:(need !<([%made @da made-result:ford] vase)))
     ::
         %http-response
-      (he-http-response:he-full wire (need !<(client-response:iris vase)))
+      (he-http-response:he-full wire +:(need !<([%made client-response:iris] vase)))
     ==
+  [moves ..handle-init]
 ::
 ++  handle-lame
   |=  [=term =tang]
   =/  =session  (~(got by hoc) ost.hid)
   =^  moves  state
-    he-abet:(~(he-lame hid ~ session) term tang)
+    he-abet:(~(he-lame he hid ~ session) term tang)
   [moves ..handle-init]
 ::
 ++  handle-stay

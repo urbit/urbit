@@ -70,12 +70,12 @@
       $:  %f                                            ::
           $>(%wegh task:able:ford)                      ::
       ==                                                ::
-      $:  %g                                            ::
+      $:  %m                                            ::
           $>  $?  %conf                                 ::
                   %deal                                 ::
                   %wegh                                 ::
               ==                                        ::
-          task:able:gall                                ::
+          task:able:mall                                ::
       ==                                                ::
       $:  %i                                            ::
           $>(%wegh task:able:iris)                      ::
@@ -99,6 +99,7 @@
       $:  %b                                            ::
           $%  $>(%mass gift:able:behn)                  ::
               $>(%writ gift:able:clay)                  ::  XX %slip
+              $>(%mere gift:able:clay)                  ::  XX %slip
       ==  ==                                            ::
       $:  %c                                            ::
           $>  $?  %mack                                 ::  XX strange
@@ -118,12 +119,12 @@
       $:  %f                                            ::
           $>(%mass gift:able:ford)                      ::
       ==                                                ::
-      $:  %g                                            ::
+      $:  %m                                            ::
           $>  $?  %mass                                 ::
                   %onto                                 ::
                   %unto                                 ::
               ==                                        ::
-          gift:able:gall                                ::
+          gift:able:mall                                ::
       ==                                                ::
       $:  %i                                            ::
           $>(%mass gift:able:iris)                      ::
@@ -282,7 +283,7 @@
               [hen %pass /heft/clay %c %wegh ~]
               [hen %pass /heft/eyre %e %wegh ~]
               [hen %pass /heft/ford %f %wegh ~]
-              [hen %pass /heft/gall %g %wegh ~]
+              [hen %pass /heft/gall %m %wegh ~]
               [hen %pass /heft/iris %i %wegh ~]
               [hen %pass /heft/jael %j %wegh ~]
               moz
@@ -309,7 +310,7 @@
         =/  myt  (flop (fall tem ~))
         =/  can  (clan:title our)
         =.  tem  ~
-        =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] our %home]])
+        =.  moz  :_(moz [hen %pass ~ %m %conf [[our ram] our %home]])
         =.  +>  (sync %home our %base)
         =.  +>  ?:  ?=(?($czar $pawn) can)  +>
                 (sync %base (sein our) %kids)
@@ -341,14 +342,14 @@
         %_    +>
             moz
           :_  moz
-          [hen %pass ~ %g %deal [our our] ram %poke [%dill-belt -:!>(bet) bet]]
+          [hen %pass ~ %m %deal [our our] ram %poke [%dill-belt -:!>(bet) bet]]
         ==
       ::
       ++  hood-set-boot-apps
         %_    .
             moz
           :_  moz
-          :*  hen  %pass  ~  %g  %deal  [our our]
+          :*  hen  %pass  ~  %m  %deal  [our our]
               ram  %poke  %drum-set-boot-apps  !>(lit.all)
           ==
         ==
@@ -356,7 +357,7 @@
       ++  peer
         %_    .
             moz
-          :_(moz [hen %pass ~ %g %deal [our our] ram %peer /drum])
+          :_(moz [hen %pass ~ %m %deal [our our] ram %peer /drum])
         ==
       ::
       ++  show                                          ::  permit reads on desk
@@ -372,7 +373,7 @@
         %_    +>.$
             moz
           :_  moz
-          :*  hen  %pass  /sync  %g  %deal  [our our]
+          :*  hen  %pass  /sync  %m  %deal  [our our]
               ram  %poke  %hood-sync  -:!>(syn)  syn
           ==
         ==
@@ -381,7 +382,7 @@
         %_    .
             moz
           :_  moz
-          :*  hen  %pass  /autoload  %g  %deal  [our our]
+          :*  hen  %pass  /autoload  %m  %deal  [our our]
               ram  %poke  %kiln-start-autoload  [%atom %n `~]  ~
           ==
         ==
@@ -389,14 +390,14 @@
       ++  pump                                          ::  send diff ack
         %_    .
             moz
-          :_(moz [hen %pass ~ %g %deal [our our] ram %pump ~])
+          :_(moz [hen %pass ~ %m %deal [our our] ram %pump ~])
         ==
       ::
       ++  take                                          ::  receive
         |=  sih/sign
         ^+  +>
         ?-    sih
-            {?($a $b $c $e $f $g $i $j) $mass *}
+            {?($a $b $c $e $f $m $i $j) $mass *}
           (wegh -.sih p.sih)
         ::
             {$a $nice *}
@@ -411,14 +412,14 @@
             {$a $send *}
           +>(moz :_(moz [hen %give +.sih]))
         ::
-            {$g $onto *}
+            {$m $onto *}
           ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
             %|  (crud %onto p.p.+>.sih)
             %&  (done %blit [%lin (tuba "{<p.p.sih>}")]~)
           ==
         ::
-            {$g $unto *}
+            {$m $unto *}
           ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
             $coup  ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
@@ -436,7 +437,7 @@
             {?($b $c) $writ *}
           init
         ::
-            {$c $mere *}
+            {?($b %c) $mere *}
           ?:  ?=(%& -.p.sih)
             mere
           (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
@@ -451,7 +452,7 @@
       ::  +wegh: receive a memory report from a vane and maybe emit full report
       ::
       ++  wegh
-        |=  [lal=?(%a %b %c %e %f %g %i %j) mas=mass]
+        |=  [lal=?(%a %b %c %e %f %m %i %j) mas=mass]
         ^+  +>
         ::  update our listing of vane responses with this new one
         ::
@@ -462,7 +463,7 @@
             %c  ~?(?=(^ c.hef.all) %double-mass-c hef.all(c `mas))
             %e  ~?(?=(^ e.hef.all) %double-mass-e hef.all(e `mas))
             %f  ~?(?=(^ f.hef.all) %double-mass-f hef.all(f `mas))
-            %g  ~?(?=(^ g.hef.all) %double-mass-g hef.all(g `mas))
+            %m  ~?(?=(^ g.hef.all) %double-mass-g hef.all(g `mas))
             %i  ~?(?=(^ i.hef.all) %double-mass-i hef.all(i `mas))
             %j  ~?(?=(^ j.hef.all) %double-mass-j hef.all(j `mas))
           ==

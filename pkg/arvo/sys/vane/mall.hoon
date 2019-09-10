@@ -712,12 +712,10 @@
     =/  =sign-arvo  q.hin
     ?.  ?=([%m %unto *] sign-arvo)
       =/  =vase  (slot 3 hin)
-      ~&  [%handling-use path]
       =.  app  (ap-generic-take:app t.t.path vase)
       ap-abet:app
     =.  app
       =/  =internal-gift  +>.sign-arvo
-      ~&  [%handling-use path]
       (ap-specific-take:app t.t.path internal-gift)
     ap-abet:app
   ::  +mo-clear-queue: clear blocked tasks from the specified running agent.
@@ -1473,9 +1471,7 @@
       ~&  [%mall-not-ours ship]
       [~ mall-payload]
     ::
-    ~&  [%mall-ours ship]
     =>  (mo-boot:initialised q.dock q.task)
-    ~&  [%mall-initialized ship]
     mo-abet
   ::
       ?(%deal %deal-mall)
@@ -1546,14 +1542,14 @@
 ::  +load: recreate vane
 ::
 ++  load
-  |=  *
-  mall-payload
-  ::  |=  =state-old
-  ::  ^+  mall-payload
-  ::  ::
-  ::  ?-  -.state-old
-  ::    %0  mall-payload(state state-old)
-  ::  ==
+  ::  |=  *
+  ::  mall-payload
+  |=  =state-old
+  ^+  mall-payload
+  ::
+  ?-  -.state-old
+    %0  mall-payload(state state-old)
+  ==
 ::  +scry: standard scry
 ::
 ++  scry

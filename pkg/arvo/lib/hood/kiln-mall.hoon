@@ -416,7 +416,7 @@
   ::
   ++  warp
     |=  [=bone =wire =ship =riff]
-    (blab [bone %pass wire %meta %c !>([ship riff])] ~)
+    (blab [bone %pass wire %meta %c !>([%warp ship riff])] ~)
   ::
   ++  spam  |*(* %_(+> ..auto (^spam +<)))
   ++  stop

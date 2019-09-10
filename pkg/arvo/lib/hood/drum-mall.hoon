@@ -44,7 +44,7 @@
       off/@ud                                           ::  window offset
       kil/kill                                          ::  kill buffer
       inx/@ud                                           ::  ring index
-      fug/(map gill:gall (unit target))                ::  connections
+      fug/(map gill:gall (unit target))                 ::  connections
       mir/(pair @ud stub)                               ::  mirrored terminal
   ==                                                    ::
 ++  history                                             ::  past input
@@ -78,7 +78,7 @@
   ^-  (list well:gall)
   ?:  lit
     :~  [%home %dojo]
-        [%home %azimuth-tracker]
+        ::  [%home %azimuth-tracker]
     ==
   =+  myr=(clan:title our)
   ::
@@ -113,7 +113,8 @@
   |=  our/ship
   %-  ~(gas in *(set gill:gall))
   ^-  (list gill:gall)
-  [[our %talk] [our %dojo] ~]
+  ::  [[our %talk] [our %dojo] ~]
+  [[our %dojo] ~]
 ::
 ++  make                                                ::  initial part
   |=  our/ship

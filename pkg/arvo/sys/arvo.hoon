@@ -691,26 +691,49 @@
               =^  rey  +>+  (^load +<)
               [rey +>.$]
     ::
-    ++  peek  |=(* (^peek ;;([@da path] +<)))      ::  46
+    ++  peek  |=  *                                     ::  46
+              =/  rob  (^peek ;;([@da path] +<))
+              ?~  rob  ~
+              ?~  u.rob  ~
+              [~ u.u.rob]
     ::
     ++  poke  |=  *                                     ::  47
-              ^-  [(list ovum) *]
               =>  .(+< ;;([now=@da ovo=ovum] +<))
-              =^  ova  +>+.$  (^poke now ovo)
+              =;  taq=_^?(|.(**))
+                =/  res
+                  %+  mock
+                    [taq 9 2 0 1]
+                  |=  [ref=* raw=*]
+                  (^peek now ;;(path raw))
+                |-
+                ?-  -.res
+                    %0  p.res
+                    %1  $(res [%2 leaf+"blocked" >p.res< ~])
+                    %2
+                  ~_  leaf+"deterministic error"
+                  |-
+                  ?~  p.res
+                    !!
+                  ~_  i.p.res
+                  $(p.res t.p.res)
+                ==
+              |.
+              ^-  [(list ovum) *]
+              =^  ova  +>+.^$  (^poke now ovo)
               =|  out=(list ovum)
               |-  ^-  [(list ovum) *]
               ?~  ova
-                [(flop out) +>.^$]
+                [(flop out) +>.^^$]
               ::  upgrade the kernel
               ::
               ?:  ?=(%lyra -.q.i.ova)
                 %+  fall
                   (vega now t.ova ;;([@ @] +.q.i.ova))
-                [~ +>.^$]
+                [~ +>.^^$]
               ::  iterate over effects, handling those on arvo proper
               ::  and passing the rest through as output
               ::
-              =^  vov  +>+.^$  (feck now i.ova)
+              =^  vov  +>+.^^$  (feck now i.ova)
               =?  out  ?=(^ vov)  [+.vov out]
               $(ova t.ova)
     ::
@@ -758,12 +781,9 @@
 ::
 ++  peek                                                ::  external inspect
   |=  {now/@da hap/path}
-  ^-  (unit)
-  ?~  hap  [~ hoon-version]
-  =+  rob=((sloy ~(beck (is our vil eny bud vanes) now)) [151 %noun] hap)
-  ?~  rob  ~
-  ?~  u.rob  ~
-  [~ u.u.rob]
+  ^-  (unit (unit))
+  ?~  hap  [~ ~ hoon-version]
+  ((sloy ~(beck (is our vil eny bud vanes) now)) [151 %noun] hap)
 ::
 ++  poke                                                ::  external apply
   |=  [now=@da ovo=ovum]

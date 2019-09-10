@@ -80,51 +80,52 @@
   ::                                                    ::  ::
 ^-  agent:mall
 =|  hood-1                                              ::  module states
-=/  help
+=>  |%
+    ++  help
     |=  hid/bowl:mall
-    |%
-    ++  able                                            ::  find+make part
-      |=  hid=bowl:mall
-      =+  hed=$:hood-head
-      |@  ++  $
-            =+  rep=(~(get by lac) hed)
-            =+  par=?^(rep u.rep `hood-part`(hood-make our.hid hed))
-            ((hood-good hed) par)
-      --
-    ::
-    ++  ably                                            ::  save part
-      =+  $:{(list) hood-part}
-      |@  ++  $
-            [(flop +<-) (~(put by lac) +<+< +<+)]
-      --
-    ::                                                  ::  ::
-    ::::                                                ::  ::  generic handling
+      |%
+      ++  able                                          ::  find+make part
+        =+  hed=$:hood-head
+        |@  ++  $
+              =+  rep=(~(get by lac) hed)
+              =+  par=?^(rep u.rep `hood-part`(hood-make our.hid hed))
+              ((hood-good hed) par)
+        --
+      ::
+      ++  ably                                          ::  save part
+        =+  $:{(list) hood-part}
+        |@  ++  $
+              [+<- (~(put by lac) +<+< +<+)]
+        --
       ::                                                ::  ::
-    ++  prep
-      |=  old/(unit hood-old)  ^-  (quip _!! _+>)
-      :-  ~
-      ?~  old  +>
-      +>(lac (~(run by lac.u.old) hood-port))
-    ::
-    ++  poke-hood-load                                  ::  recover lost brain
-      |=  dat/hood-part
-      ?>  =(our.hid src.hid)
-      ~&  loaded+-.dat
-      [~ (~(put by lac) -.dat dat)]
-    ::
-    ::
-    ++  from-module                                     ::  create wrapper
-      |*  _[identity=%module start=..$ finish=_abet]:(hood-module)
-      =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
-      |*  handle/_finish
-      |=  a=_+<.handle
-      =.  +>.handle  (start hid ((able hid) identity))
-      (ably (handle a))
-    ::  per-module interface wrappers
-    ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum-mall))
-    ++  from-helm  (from-module %helm [..$ _abet]:(hood-helm-mall))
-    ++  from-kiln  (from-module %kiln [..$ _abet]:(hood-kiln-mall))
-    ++  from-write  (from-module %write [..$ _abet]:(hood-write-mall))
+      ::::                                              ::  ::  generic handling
+        ::                                              ::  ::
+      ++  prep
+        |=  old/(unit hood-old)  ^-  (quip _!! _+>)
+        :-  ~
+        ?~  old  +>
+        +>(lac (~(run by lac.u.old) hood-port))
+      ::
+      ++  poke-hood-load                                ::  recover lost brain
+        |=  dat/hood-part
+        ?>  =(our.hid src.hid)
+        ~&  loaded+-.dat
+        [~ (~(put by lac) -.dat dat)]
+      ::
+      ::
+      ++  from-module                                   ::  create wrapper
+        |*  _[identity=%module start=..$ finish=_abet]:(hood-module)
+        =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
+        |*  handle/_finish
+        |=  a=_+<.handle
+        =.  +>.handle  (start hid (able identity))
+        (ably (handle a))
+      ::  per-module interface wrappers
+      ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum-mall))
+      ++  from-helm  (from-module %helm [..$ _abet]:(hood-helm-mall))
+      ++  from-kiln  (from-module %kiln [..$ _abet]:(hood-kiln-mall))
+      ++  from-write  (from-module %write [..$ _abet]:(hood-write-mall))
+      --
     --
 |_  hid/bowl:mall                                       ::  gall environment
 ++  handle-init
@@ -267,7 +268,6 @@
 ::
 ++  handle-mall
   |=  [=wire =internal-gift:mall]
-  ~&  [%handling-mall wire]
   =/  h  (help hid)
   =^  moves  lac
     ?+  wire  ~|([%hood-bad-wire wire] !!)

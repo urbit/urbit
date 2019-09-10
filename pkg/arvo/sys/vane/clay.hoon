@@ -3075,7 +3075,7 @@
     |=  err=(pair term tang)
     ^+  +>
     =.  +>.$
-      (emit [hen %give %mere %| err])
+      (emit [hen %slip %b %drip !>([%mere %| err])])
     finish-write
   ::
   ::  Release effects and apply state changes
@@ -3083,7 +3083,7 @@
   ++  done-merge
     |=  [conflicts=(set path) =dome =rang]
     ^+  +>
-    =.  +>.$  (emit [hen %give %mere %& conflicts])
+    =.  +>.$  (emit [hen %slip %b %drip !>([%mere %& conflicts])])
     =:  dom      dome
         hut.ran  (~(uni by hut.rang) hut.ran)
         lat.ran  (~(uni by lat.rang) lat.ran)

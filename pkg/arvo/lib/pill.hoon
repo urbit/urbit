@@ -45,7 +45,7 @@
         [%f /vane/ford]
         ::  sys/vane/gall: applications
         ::
-        [%g /vane/gall]
+        [%m /vane/mall]
         ::  sys/vane/iris: http client
         ::
         [%i /vane/iris]
@@ -63,7 +63,7 @@
 ::
 ++  file-ovum
   =/  directories
-    `(list path)`~[/app /gen /lib /mar /ren /sec /sur /sys /tests /web]
+    `(list path)`~[/app /age /gen /lib /mar /ren /sec /sur /sys /tests /web]
   |=  bas=path
   ^-  unix-event
   ::

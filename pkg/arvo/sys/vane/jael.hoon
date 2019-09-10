@@ -326,7 +326,7 @@
         :~  [hen %give %init our]
             [hen %slip %e %init our]
             [hen %slip %d %init our]
-            [hen %slip %g %init our]
+            [hen %slip %m %init our]
             [hen %slip %c %init our]
             [hen %slip %a %init our]
         ==
@@ -368,7 +368,7 @@
         :~  [hen %give %init our]
             [hen %slip %e %init our]
             [hen %slip %d %init our]
-            [hen %slip %g %init our]
+            [hen %slip %m %init our]
             [hen %slip %c %init our]
             [hen %slip %a %init our]
         ==

@@ -7585,6 +7585,7 @@
       $:  $b
           $%  gift:able:behn
               [%writ riot:clay]
+              $>(%mere gift:able:clay)
           ==
       ==
       {$c gift:able:clay}
