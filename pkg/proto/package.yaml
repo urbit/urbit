@@ -6,7 +6,12 @@ dependencies:
   - base
   - bound
   - containers
+  - classy-prelude
+  - deriving-compat
+  - mtl
   - text
+  - transformers
+  - transformers-compat
   - unordered-containers
 
 default-extensions:
@@ -37,6 +42,7 @@ default-extensions:
   - RankNTypes
   - RecordWildCards
   - ScopedTypeVariables
+  - StandaloneDeriving
   - TemplateHaskell
   - TupleSections
   - TypeApplications
@@ -66,7 +72,7 @@ executables:
       - -fwarn-incomplete-patterns
 
 tests:
-  proto:
+  proto-test:
     main: Spec.hs
     source-dirs: test
     dependencies:

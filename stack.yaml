@@ -1,0 +1,11 @@
+resolver: lts-13.10
+
+packages:
+  - pkg/proto
+
+nix:
+  packages:
+    - pkgconfig
+    - SDL2
+    - SDL2_image
+    - zlib
