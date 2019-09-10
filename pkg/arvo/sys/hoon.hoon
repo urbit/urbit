@@ -6670,6 +6670,7 @@
     {$xray p/manx:hoot}                                 ::  ;foo; templating
   ::                                            ::::::  cores
     [%brbs sample=spec body=spec]
+    {$brhx sample/(lest term) body/spec}
     {$brcb p/spec q/alas r/(map term tome)}             ::  |_
     {$brcl p/hoon q/hoon}                               ::  |:
     {$brcn p/(unit term) q/(map term tome)}             ::  |%
@@ -8647,6 +8648,14 @@
         {$note *}  q.gen
     ::
         [%brbs *]  [%brtr sample.gen [%ktcl body.gen]]
+        {$brhx *}  =-  ?~  -  !!
+                       [%brtr [%bscl -] [%ktcl body.gen]]
+                   ^-  (list spec)
+                   %+  turn  `(list term)`sample.gen
+                   |=  =term
+                   ^-  spec
+                   =/  tar  [%base %noun]
+                   [%bsts term [%bssg tar [%bshp tar tar]]]
         {$brcb *}  :+  %tsls  [%kttr p.gen]
                    :+  %brcn  ~
                    %-  ~(run by r.gen)
@@ -16600,7 +16609,8 @@
                   ['*' (rune tar %brtr exqc)]
                   ['=' (rune tis %brts exqc)]
                   ['?' (rune wut %brwt expa)]
-                  ['$' (rune bus %brbs exqe)]
+                  ['$' (rune bus %brbs exqf)]
+                  ['#' (rune hax %brhx exqe)]
               ==
             ==
           :-  '$'
@@ -16921,6 +16931,7 @@
               ?.(tol fail ;~(sfix zor ;~(plug gap dun)))
     ++  hank  (most muck loaf)                          ::  gapped hoons
     ++  hunk  (most muck loan)                          ::  gapped specs
+    ++  huns  (most muck sym)                           ::  gapped terms
     ++  lore  (sear |=(=hoon ~(flay ap hoon)) loaf)     ::  skin
     ++  loaf  ?:(tol tall wide)                         ::  tall/wide hoon
     ++  loan  ?:(tol till wyde)                         ::  tall/wide spec
@@ -16999,7 +17010,8 @@
     ++  exqb  |.(;~(gunk loan loan))                    ::  two specs
     ++  exqc  |.(;~(gunk loan loaf))                    ::  spec then hoon
     ++  exqd  |.(;~(gunk loaf loan))                    ::  hoon then spec
-    ++  exqe  |.(;~(gunk lynx loan))                    ::  list of names then spec
+    ++  exqf  |.(;~(gunk lynx loan))                    ::  list of names then spec
+    ++  exqe  |.(;~(gunk (butt huns) loan))             ::  list of names then spec
     ++  exqs  |.((butt hunk))                           ::  closed gapped specs
     ++  exqg  |.(;~(gunk sym loan))                     ::  term and spec
     ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  hoon with one spec
