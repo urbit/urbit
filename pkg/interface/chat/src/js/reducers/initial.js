@@ -8,12 +8,23 @@ export class InitialReducer {
       state.inbox = data;
     }
 
-    data = _.get(json, 'groups-initial', false);
+    data = _.get(json, 'group-initial', false);
     if (data) {
       for (let group in data) {
         state.groups[group] = new Set(data[group]);
       }
     }
+
+    data = _.get(json, 'permission-initial', false);
+    if (data) {
+      for (let perm in data) {
+        state.permissions[perm] = {
+          who: new Set(data[perm].who),
+          kind: data[perm].who
+        }
+      }
+    }
+
   }
 }
 

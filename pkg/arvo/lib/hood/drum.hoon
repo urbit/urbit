@@ -95,6 +95,7 @@
       [%home %permissions]
       [%home %groups]
       [%home %group-sync]
+      [%home %group-permit]
       [%home %inbox]
       [%home %inbox-sync]
       [%home %inbox-view]

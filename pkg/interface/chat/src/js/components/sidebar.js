@@ -88,7 +88,6 @@ export class Sidebar extends Component {
 
     let sidebarItems = Object.keys(props.inbox)
       .map((box) => {
-        console.log(box);
         let msg = props.messagePreviews[box];
         let content = _.has(msg, 'message')
           ? msg.message

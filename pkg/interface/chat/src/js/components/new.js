@@ -51,64 +51,40 @@ export class NewScreen extends Component {
       return;
     }
 
-    /*if (state.invites.length > 0) {
+    let station = `/${state.idName}`;
 
-      let aud = state.invites.split(',')
+    // TODO: check if group name already exists
+    // if so, do not allow
+    //
+    let aud = [];
+    let isValid = true;
+    if (state.invites.length > 2) {
+      aud = state.invites.split(',')
         .map((mem) => mem.trim())
-        .map(deSig);
+        .map(deSig)
+        .map((mem) => {
+          return `~${mem}`;
+        });
 
-      let isValid = true;
       aud.forEach((mem) => {
-        if (!urbitOb.isValidPatp(`~${mem}`)) {
+        if (!urbitOb.isValidPatp(mem)) {
           isValid = false;
         }
       });
+    }
 
-      if (isValid) {
-        actions.push({
-          permit: {
-            nom: state.idName,
-            sis: aud,
-            inv: true
-          }
-        });
+    if (!isValid) {
+      this.setState({
+        inviteError: true,
+        idError: false,
+        success: false
+      });
+      return;
+    }
 
-        actions.push({
-          phrase: {
-            aud: aud.map((aud) => `~${aud}/i`),
-            ses: [{
-              inv: {
-                inv: true,
-                cir: station
-              }
-            }]
-          }
-        });
-
-        if (this.textarea) {
-          this.textarea.value = '';
-        }
-
-        this.setState({
-          inviteError: false,
-          idError: false,
-          success: true,
-          invites: ''
-        }, () => {
-          props.setSpinner(true);
-          props.api.chat(actions);
-        });
-
-      } else {
-        this.setState({
-          inviteError: true,
-          idError: false,
-          success: false
-        })
-      }
-    } else {*/
-
-    let station = `/${state.idName}`;
+    if (this.textarea) {
+      this.textarea.value = '';
+    }
 
     this.setState({
       error: false,
@@ -116,12 +92,35 @@ export class NewScreen extends Component {
       invites: ''
     }, () => {
       props.setSpinner(true);
-      props.api.inbox.create(station, `~${window.ship}`);
-      setTimeout(() => {
-        props.api.inboxSync.addOwned(station);
-      }, 1000)
-    });
 
+      //  command concatenator will look like:
+      //  props.api.chat.create(station, aud, 'channel');
+      
+      props.api.inbox.create(station);
+      props.api.groups.bundle(`/inbox${station}/read`);
+      props.api.groups.bundle(`/inbox${station}/write`);
+
+      // TODO: remove setTimeout
+      setTimeout(() => {
+        props.api.groups.add(aud, `/inbox${station}/read`);
+        props.api.groups.add(aud, `/inbox${station}/write`);
+
+        setTimeout(() => {
+          // expose inbox to outside, set permissions
+          props.api.inboxSync.addOwned(station, 'channel');
+
+          setTimeout(() => {
+            // sync permissions path to aforementioned group
+            props.api.groupPermit.associate(`/inbox${station}/read`, [
+              `/inbox${station}/read`
+            ]);
+            props.api.groupPermit.associate(`/inbox${station}/write`, [
+              `/inbox${station}/write`
+            ]);
+          }, 1000);
+        }, 1000);
+      }, 1000);
+    });
   }
 
   render() {

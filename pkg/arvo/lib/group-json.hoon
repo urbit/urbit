@@ -5,7 +5,7 @@
   |=  grp=group-initial
   =,  enjs:format
   ^-  ^json
-  %+  frond  %groups-initial
+  %+  frond  %group-initial
   %-  pairs
   %+  turn  ~(tap by grp)
   |=  [=path =group]
@@ -17,6 +17,11 @@
   |*  {a/(set) b/$-(* json)}
   ^-  json
   [%a (turn ~(tap in a) b)]
+::
+++  as                                                :: array as set
+  =,  dejs:format
+  |*  a/fist
+  (cu ~(gas in *(set _$:a)) (ar a))
 ::
 ++  pa 
   |=  a/path

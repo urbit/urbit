@@ -124,7 +124,6 @@ export class Root extends Component {
                    owner={mailbox.owner}
                    read={mailbox.read}
                    envelopes={mailbox.envelopes}
-                   pendingMessages={state.pendingMessages}
                    groups={state.groups[station] || new Set([])}
                    subscription={subscription}
                    {...props}

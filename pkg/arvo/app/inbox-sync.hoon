@@ -1,5 +1,5 @@
 ::  hook/sync-inbox.hoon
-/-  *inbox, *groups, *sync-hook
+/-  *inbox, *permissions, *inbox-permission-hook
 |%
 +$  move  [bone card]
 ::
@@ -20,8 +20,8 @@
   ==
 ::
 +$  poke
-  $%  [%group-action group-action]
-      [%inbox-action inbox-action]
+  $%  [%inbox-action inbox-action]
+      [%permission-action permission-action]
   ==
 ::
 --
@@ -41,24 +41,29 @@
   |=  act=inbox-action
   ^-  (quip move _this)
   ?>  ?=(%message -.act)
+  ::  local
   ?:  =(src.bol our.bol)
     =/  ship  (~(get by synced) path.act)
     ?~  ship
       [~ this]
     :_  this
     [ost.bol %poke / [u.ship %inbox-sync] [%inbox-action act]]~
+  ::  foreign
   =/  ship  (~(get by synced) path.act)
   ?~  ship
     [~ this]
   :_  this
   ?.  =(u.ship our.bol)
     ~
+  ::  scry permissions to check if write is permitted
+  ?.  (permitted-scry [%inbox (weld path.act /write)])
+    ~
   =.  author.envelope.act  src.bol
   =.  when.envelope.act  now.bol
   [ost.bol %poke / [our.bol %inbox] [%inbox-action act]]~
 ::
-++  poke-sync-hook-action
-  |=  act=sync-hook-action
+++  poke-permission-hook-action
+  |=  act=permission-hook-action
   ^-  (quip move _this)
   ?-  -.act
       %add-owned
@@ -67,17 +72,23 @@
     ?:  (~(has by synced) path.act)
       [~ this]
     :_  this(synced (~(put by synced) path.act our.bol))
-    [ost.bol %peer inbox-path [our.bol %inbox] inbox-path]~
+    :-  [ost.bol %peer inbox-path [our.bol %inbox] inbox-path]
+    (create-permission [%inbox path.act] security.act)
   ::
       %remove-owned
     =/  inbox-wire  [(scot %p our.bol) %mailbox path.act]
     :_  this(synced (~(del by synced) path.act))
-    :-  [ost.bol %pull inbox-wire [our.bol %inbox] ~]
-    ^-  (list move)
-    %+  turn  (prey:pubsub:userlib [%mailbox path.act] bol)
-    |=  [=bone *]
-    ^-  move
-    [bone %quit ~]
+    ;:  weld
+      [ost.bol %pull inbox-wire [our.bol %inbox] ~]~
+    ::
+      (delete-permission [%inbox path.act])    
+    ::
+      ^-  (list move)
+      %+  turn  (prey:pubsub:userlib [%mailbox path.act] bol)
+      |=  [=bone *]
+      ^-  move
+      [bone %quit ~]
+    ==
   ::
       %add-synced
     =/  inbox-path  [%mailbox path.act]
@@ -101,11 +112,14 @@
     [[ost.bol %quit ~]~ this]
   ?.  (~(has by synced) pax)
     [[ost.bol %quit ~]~ this]
+  ::  scry permissions to check if read is permitted
+  ?.  (permitted-scry [%inbox (weld pax /read)])
+    [[ost.bol %quit ~]~ this]
   =/  box=(unit mailbox)  (inbox-scry pax)
-  ?^  box
-    :_  this
-    [ost.bol %diff [%inbox-update [%create pax owner.u.box]]]~
-  [[ost.bol %quit ~]~ this]
+  ?~  box
+    [[ost.bol %quit ~]~ this]
+  :_  this
+  [ost.bol %diff [%inbox-update [%create pax owner.u.box]]]~
 ::
 ++  diff-inbox-update
   |=  [wir=wire diff=inbox-update]
@@ -199,13 +213,20 @@
   |=  wir=wire
   ^-  (quip move _this)
   ~&  quit+wir
-  =.  wir  `(list @tas)`wir
+  =/  wir  `(list @tas)`wir
   =/  =ship  (slav %p &1:wir)
   =.  wir  ?^  wir  t.wir  ~
   =.  wir  ?^  wir  t.wir  ~
   ?:  (~(has by synced) wir)
     ::  resubscribe
-    [~ this]
+    ::  could cause infinite loop. what do?
+    ::  could implement exponential backoff in an arcane way, hook
+    ::  would need timers and potentially many @da added to inbox-wire
+    ::  this(synced (~(del by synced) path.act))
+    =/  inbox-path  [%mailbox wir]
+    =/  inbox-wire  [(scot %p ship) inbox-path]
+    :_  this
+    [ost.bol %peer inbox-wire [ship %inbox-sync] inbox-path]~
   ::  no-op
   [~ this]
 ::
@@ -213,6 +234,53 @@
   |=  act=inbox-action
   ^-  move
   [ost.bol %poke /inbox-sync [our.bol %inbox] [%inbox-action act]]
+::
+++  permission-poke
+  |=  act=permission-action
+  ^-  move
+  [ost.bol %poke /inbox-sync [our.bol %permissions] [%permission-action act]]
+::
+++  create-permission
+  |=  [pax=path sec=inbox-security]
+  ^-  (list move)
+  =/  read-perm   (weld pax /read)
+  =/  write-perm  (weld pax /write)
+  ?-  sec
+      %channel
+    :~  (permission-poke (sec-to-perm read-perm %black))
+        (permission-poke (sec-to-perm write-perm %black))
+    ==
+  ::
+      %village
+    :~  (permission-poke (sec-to-perm read-perm %white))
+        (permission-poke (sec-to-perm write-perm %white))
+    ==
+  ::
+      %journal
+    :~  (permission-poke (sec-to-perm read-perm %black))
+        (permission-poke (sec-to-perm write-perm %white))
+    ==
+  ::
+      %mailbox
+    :~  (permission-poke (sec-to-perm read-perm %white))
+        (permission-poke (sec-to-perm write-perm %black))
+    ==
+  ::
+  ==
+::
+++  delete-permission
+  |=  pax=path
+  ^-  (list move)
+  =/  read-perm   (weld pax /read)
+  =/  write-perm  (weld pax /write)
+  :~  (permission-poke [%delete read-perm])
+      (permission-poke [%delete write-perm])
+  ==
+::
+++  sec-to-perm
+  |=  [pax=path =kind]
+  ^-  permission-action
+  [%create pax kind *(set ship)]
 ::
 ++  inbox-scry
   |=  pax=path
@@ -223,6 +291,19 @@
     `path`/noun
   ==
   .^((unit mailbox) %gx pax)
+::
+++  permitted-scry
+  |=  pax=path
+  ^-  ?
+  =.  pax  ;:  weld
+    `path`/=permissions/(scot %da now.bol)/permitted
+    pax
+    `path`/noun
+  ==
+  =/  pem=(unit ?)  .^((unit ?) %gx pax)
+  ?~  pem
+    %.n
+  u.pem
 ::
 --
 

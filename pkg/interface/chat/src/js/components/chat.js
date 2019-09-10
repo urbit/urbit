@@ -18,8 +18,6 @@ export class ChatScreen extends Component {
       scrollLocked: false,
     };
 
-    this.pendingQueue = props.pendingMessages;
-
     this.hasAskedForMessages = false;
     this.onScroll = this.onScroll.bind(this);
 
@@ -74,7 +72,7 @@ export class ChatScreen extends Component {
     let lastMsgNum = props.envelopes || [];
     lastMsgNum = lastMsgNum.length;
     let lastRead = props.read;
-    if (lastMsgNum > lastRead) {
+    if (lastMsgNum > lastRead && lastMsgNum > 0) {
       props.api.inbox.read(state.station, lastMsgNum);
     }
   }

@@ -12,14 +12,14 @@ export class Message extends Component {
 
     if ('code' in letter) {
       return (
-        <p>
+        <span>
           <pre className="clamp-attachment pa1 mt0 mb0 bg-light-gray">
             {letter.code.expression}
           </pre>
           <pre className="clamp-attachment pa1 mt0 mb0">
             {letter.code.output[0].join('\n')}
           </pre>
-        </p>
+        </span>
       );
     } else if ('url' in letter) {
       return (

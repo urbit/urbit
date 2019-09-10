@@ -1,18 +1,20 @@
 import { InitialReducer } from '/reducers/initial';
 import { GroupUpdateReducer } from '/reducers/group-update';
 import { InboxUpdateReducer } from '/reducers/inbox-update';
-
+import { PermissionUpdateReducer } from '/reducers/permission-update';
 
 
 class Store {
   constructor() {
     this.state = {
       inbox: {},
-      groups: {}
+      groups: {},
+      permissions: {}
     };
 
     this.initialReducer = new InitialReducer();
     this.groupUpdateReducer = new GroupUpdateReducer();
+    this.permissionUpdateReducer = new PermissionUpdateReducer();
     this.inboxUpdateReducer = new InboxUpdateReducer();
     this.setState = () => {};
   }
@@ -27,6 +29,7 @@ class Store {
     console.log(json);
     this.initialReducer.reduce(json, this.state);
     this.groupUpdateReducer.reduce(json, this.state);
+    this.permissionUpdateReducer.reduce(json, this.state);
     this.inboxUpdateReducer.reduce(json, this.state);
 
     this.setState(this.state);

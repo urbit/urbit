@@ -12,7 +12,7 @@ class UrbitApi {
 
     this.groups = {
       bundle: this.groupBundle.bind(this),
-      unbundle: this.groupBundle.bind(this),
+      unbundle: this.groupUnbundle.bind(this),
       add: this.groupAdd.bind(this),
       remove: this.groupRemove.bind(this)
     };
@@ -36,6 +36,11 @@ class UrbitApi {
       removeOwned: this.inboxSyncRemoveOwned.bind(this),
       addSynced: this.inboxSyncAddSynced.bind(this),
       removeSynced: this.inboxSyncRemoveSynced.bind(this)
+    };
+
+    this.groupPermit = {
+      associate: this.groupPermitAssociate.bind(this),
+      dissociate: this.groupPermitDissociate.bind(this)
     };
 
   }
@@ -90,6 +95,7 @@ class UrbitApi {
   }
 
   groupAdd(members, path) {
+
     this.groupsAction({
       add: {
         members,
@@ -110,7 +116,7 @@ class UrbitApi {
     this.action("inbox", "inbox-action", data);
   }
 
-  inboxCreate(path, owner) {
+  inboxCreate(path, owner = `~${window.ship}`) {
     this.inboxAction({
       create: {
         path, owner
@@ -153,13 +159,16 @@ class UrbitApi {
     });
   }
 
-  inboxSyncAction(data, mark = "sync-hook-action") {
+  inboxSyncAction(data, mark = "permission-hook-action") {
     this.action("inbox-sync", mark, data);
   }
 
-  inboxSyncAddOwned(path) {
+  inboxSyncAddOwned(path, security) {
     let data = {};
-    data['add-owned'] = path;
+    data['add-owned'] = {
+      path,
+      security
+    };
     this.inboxSyncAction(data);
   }
 
@@ -190,22 +199,6 @@ class UrbitApi {
 
   permissionAction(data) {
     this.action("permissions", "permission-action", data);
-  }
-
-  groupAdd(members, path) {
-    this.groupsAction({
-      add: {
-        members, path
-      }
-    });
-  }
-
-  groupRemove(members, path) {
-    this.groupsAction({
-      remove: {
-        members, path
-      }
-    });
   }
 
   permissionCreate(path, kind, who) {
@@ -260,6 +253,29 @@ class UrbitApi {
         who
       }
     });
+  }
+
+  groupPermitAction(data) {
+    this.action("group-permit", "group-permit-action", data);
+  }
+  
+  groupPermitAssociate(group, permissions) {
+    this.groupPermitAction({
+      associate: {
+        group,
+        permissions
+      }
+    });
+  }
+  
+  groupPermitDissociate() {
+    this.groupPermitAction({
+      dissociate: {
+        group,
+        permissions
+      }
+    });
+ 
   }
 
 }

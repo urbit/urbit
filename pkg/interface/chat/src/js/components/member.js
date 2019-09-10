@@ -58,7 +58,6 @@ export class MemberScreen extends Component {
     const { props, state } = this;
 
     let group = props.group;
-    console.log(group);
 
     let listMembers = group.map((mem) => {
       return (

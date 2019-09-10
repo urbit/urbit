@@ -47,17 +47,19 @@
 ::
 ++  peek-x-keys
   |=  pax=path
-  ^-  (unit (unit (set path)))
-  ``~(key by permissions)
+  ^-  (unit (unit [%noun (set path)]))
+  [~ ~ %noun ~(key by permissions)]
 ::
-++  peek-x-permissions
+++  peek-x-permission
   |=  =path
-  ^-  (unit (unit permission))
-  `(~(get by permissions) path)
+  ^-  (unit (unit [%noun (unit permission)]))
+  ?~  path
+    ~
+  [~ ~ %noun (~(get by permissions) path)]
 ::
 ++  peek-x-permitted
   |=  =path
-  ^-  (unit (unit ?))
+  ^-  (unit (unit [%noun ?]))
   ?~  path
     ~
   =/  pem  (~(get by permissions) t.path)
@@ -65,7 +67,7 @@
     ~
   =/  who  (slav %p i.path)
   =/  has  (~(has in who.u.pem) who)
-  :+  ~  ~
+  :^  ~  ~  %noun
   ?-(kind.u.pem %black !has, %white has)
 ::
 ++  poke-permission-action
