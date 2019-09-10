@@ -152,13 +152,15 @@ pier pierPath mPort (serf, log, ss) = do
     let ship = who (Log.identity log)
 
     let (bootEvents, startDrivers) =
-          drivers pierPath inst ship mPort (writeTQueue computeQ) shutdownEvent terminalSystem
+          drivers pierPath inst ship mPort (writeTQueue computeQ)
+            shutdownEvent terminalSystem
 
     io $ atomically $ for_ bootEvents (writeTQueue computeQ)
 
     tExe  <- startDrivers >>= router (readTQueue executeQ)
     tDisk <- runPersist log persistQ (writeTQueue executeQ)
-    tCpu  <- runCompute serf ss (readTQueue computeQ) (takeTMVar saveM) (takeTMVar shutdownM) (writeTQueue persistQ)
+    tCpu  <- runCompute serf ss (readTQueue computeQ) (takeTMVar saveM)
+      (takeTMVar shutdownM) (writeTQueue persistQ)
 
     tSaveSignal <- saveSignalThread saveM
 
@@ -287,9 +289,9 @@ runCompute serf ss getEvent getSaveSignal getShutdownSignal putResult =
     go :: SerfState -> RIO e ()
     go ss = do
         cr  <- atomically $
-          CREvent    <$> getEvent          <|>
+          CRShutdown <$> getShutdownSignal <|>
           CRSave     <$> getSaveSignal     <|>
-          CRShutdown <$> getShutdownSignal
+          CREvent    <$> getEvent
         case cr of
           CREvent ev -> do
             logEvent ev
