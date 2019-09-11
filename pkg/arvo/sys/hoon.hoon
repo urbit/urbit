@@ -16928,7 +16928,6 @@
               ?.(tol fail ;~(sfix zor ;~(plug gap dun)))
     ++  hank  (most muck loaf)                          ::  gapped hoons
     ++  hunk  (most muck loan)                          ::  gapped specs
-    ++  huns  (most muck sym)                           ::  gapped terms
     ++  lore  (sear |=(=hoon ~(flay ap hoon)) loaf)     ::  skin
     ++  loaf  ?:(tol tall wide)                         ::  tall/wide hoon
     ++  loan  ?:(tol till wyde)                         ::  tall/wide spec
