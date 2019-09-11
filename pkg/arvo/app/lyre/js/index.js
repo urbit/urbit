@@ -44601,11 +44601,16 @@
               }
 
               handleEvent(data) {
-                this.state.body = data.data.body;
+                this.state.status = data.data.status;
+
+                if (data.data.status !== "pending"){
+                  this.state.data = data.data.data;
+                }
+
                 this.state.current = data.data.current;
                 this.state.sessions = data.data.sessions;
                 this.setState(this.state);
-                console.log("state", this.state);
+            //    console.log("store", this.state);
               }
 
             }
@@ -44873,7 +44878,11 @@
               }
 
               render() {
-                return this.parseDom(this.props.body);
+                if (this.props.body === null) {
+                   return null;
+                } else {
+                  return this.parseDom(this.props.body);
+                }
               }
             }
 
@@ -44950,28 +44959,28 @@
               }
 
               render() {
-                let path = '/' + this.state.sessions[this.state.current].join('/');
-
-                const ses = this.state.sessions.map((path, i) => {
-                  let pax = '/'+path.join('/');
-                  if (this.state.current === i) {
+                const ses = this.state.sessions.map((nom, i) => {
+                  let cnom = '%'+nom;
+                  if (this.state.current === nom) {
                     return (
-                      react.createElement('p', { key: i, className: "bg-white black mr2 pl2 pr2"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 88}}, i, ": " , pax)
+                      react.createElement('p', { key: i, className: "bg-white black mr2 pl2 pr2"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 86}}, cnom)
                     );
                   } else {
                     return (
-                      react.createElement('p', { key: i, className: "white mr2 pl2 pr2"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 92}}, i, ": " , pax)
+                      react.createElement('p', { key: i, className: "white mr2 pl2 pr2"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 90}}, cnom)
                     );
                   }
                 });
 
                 return (
-                  react.createElement('div', { className: "w-100 h-100" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 98}}
-                    , react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 99}}
+                  react.createElement('div', { className: "w-100 h-100" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 96}}
+                    , react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 97}}
                       , react.createElement('div', { className: "w-100",
-                          style: {height: 'calc(100% - 96px)'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 100}}
-                        , react.createElement('div', { className: "w-100 h-100 overflow-y-scroll overflow-x-scroll"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 102}}
-                          , react.createElement(Dom, { body: this.state.body, api: api, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 103}})
+                          style: {height: 'calc(100% - 96px)'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 98}}
+                        , react.createElement('div', { className: "w-100 h-100 overflow-y-scroll overflow-x-scroll"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 100}}
+                          , react.createElement(Dom, { status: this.state.status,
+                            body: this.state.data,
+                            api: api, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 101}})
                         )
                       )
                       , react.createElement('div', { className: "flex-col absolute bg-black pa3 w-100"    ,

@@ -74,6 +74,10 @@ export class Dom extends Component {
   }
 
   render() {
-    return this.parseDom(this.props.body);
+    if (this.props.body === null) {
+       return null;
+    } else {
+      return this.parseDom(this.props.body);
+    }
   }
 }

@@ -79,17 +79,15 @@ export class Root extends Component {
   }
 
   render() {
-    let path = '/' + this.state.sessions[this.state.current].join('/');
-
-    const ses = this.state.sessions.map((path, i) => {
-      let pax = '/'+path.join('/');
-      if (this.state.current === i) {
+    const ses = this.state.sessions.map((nom, i) => {
+      let cnom = '%'+nom
+      if (this.state.current === nom) {
         return (
-          <p key={i} className="bg-white black mr2 pl2 pr2">{i}: {pax}</p>
+          <p key={i} className="bg-white black mr2 pl2 pr2">{cnom}</p>
         );
       } else {
         return (
-          <p key={i} className="white mr2 pl2 pr2">{i}: {pax}</p>
+          <p key={i} className="white mr2 pl2 pr2">{cnom}</p>
         );
       }
     });
@@ -100,7 +98,9 @@ export class Root extends Component {
           <div className="w-100"
               style={{height: 'calc(100% - 96px)'}}>
             <div className="w-100 h-100 overflow-y-scroll overflow-x-scroll">
-              <Dom body={this.state.body} api={api}/>
+              <Dom status={this.state.status}
+                body={this.state.data}
+                api={api}/>
             </div>
           </div>
           <div className="flex-col absolute bg-black pa3 w-100"

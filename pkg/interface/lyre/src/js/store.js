@@ -12,11 +12,16 @@ class Store {
   }
 
   handleEvent(data) {
-    this.state.body = data.data.body;
+    this.state.status = data.data.status;
+
+    if (data.data.status !== "pending"){
+      this.state.data = data.data.data;
+    }
+
     this.state.current = data.data.current;
     this.state.sessions = data.data.sessions;
     this.setState(this.state);
-    console.log("state", this.state);
+//    console.log("store", this.state);
   }
 
 }
