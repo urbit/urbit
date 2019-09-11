@@ -692,7 +692,34 @@ static void
 _worker_poke_exit(c3_w cod_w)                 //  exit code
 {
   if ( u3C.wag_w & u3o_debug_cpu ) {
-    u3t_damp();
+    FILE* fil_u;
+
+    {
+      u3_noun wen = u3dc("scot", c3__da, u3k(u3A->now));
+      c3_c* wen_c = u3r_string(wen);
+
+      c3_c nam_c[2048];
+      snprintf(nam_c, 2048, "%s/.urb/put/profile", u3P.dir_c);
+
+      struct stat st;
+      if ( -1 == stat(nam_c, &st) ) {
+        mkdir(nam_c, 0700);
+      }
+
+      c3_c man_c[2048];
+      snprintf(man_c, 2048, "%s/%s.txt", nam_c, wen_c);
+
+      fil_u = fopen(man_c, "w");
+
+      free(wen_c);
+      u3z(wen);
+    }
+
+    u3t_damp(fil_u);
+
+    {
+      fclose(fil_u);
+    }
   }
 
   exit(cod_w);
