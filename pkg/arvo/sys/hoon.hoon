@@ -6669,8 +6669,8 @@
     {$yell p/(list hoon)}                               ::  render as tank
     {$xray p/manx:hoot}                                 ::  ;foo; templating
   ::                                            ::::::  cores
-    [%brbs sample=spec body=spec]
-    {$brhx sample/(lest term) body/spec}
+    {$brbs sample/(lest term) body/spec}                ::  |$
+    {$brhx sample/(lest term) body/spec}                ::  |#
     {$brcb p/spec q/alas r/(map term tome)}             ::  |_
     {$brcl p/hoon q/hoon}                               ::  |:
     {$brcn p/(unit term) q/(map term tome)}             ::  |%
@@ -8647,7 +8647,14 @@
         {$yell *}  [%cncl [%limb %cain] [%zpbn [%cltr p.gen]] ~]
         {$note *}  q.gen
     ::
-        [%brbs *]  [%brtr sample.gen [%ktcl body.gen]]
+        {$brbs *}  =-  ?~  -  !!
+                       [%brtr [%bscl -] [%ktcl body.gen]]
+                   ^-  (list spec)
+                   %+  turn  `(list term)`sample.gen
+                   |=  =term
+                   ^-  spec
+                   =/  tar  [%base %noun]
+                   [%bsts term [%bssg tar [%bshp tar tar]]]
         {$brhx *}  =-  ?~  -  !!
                        [%brtr [%bscl -] [%ktcl body.gen]]
                    ^-  (list spec)
@@ -16609,7 +16616,7 @@
                   ['*' (rune tar %brtr exqc)]
                   ['=' (rune tis %brts exqc)]
                   ['?' (rune wut %brwt expa)]
-                  ['$' (rune bus %brbs exqf)]
+                  ['$' (rune bus %brbs exqe)]
                   ['#' (rune hax %brhx exqe)]
               ==
             ==
