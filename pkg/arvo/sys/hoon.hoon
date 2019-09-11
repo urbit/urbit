@@ -16842,6 +16842,22 @@
       ?.  tol
         wide
       ;~(pose wide tall)
+   ++  lunx
+      =/  wid  (ifix [lac rac] (most ace sym))
+      =/  tal
+        ;~  sfix
+          (most gap sym)
+          ;~(plug gap duz)
+        ==
+      =/  one
+        %-  cook  :_  sym
+        |=  a=term
+        `(list term)`~[a]
+      %-  cook
+      :_  ;~(pose (runq wid tal) one)
+      ::  lestify
+      |=  a=(list term)
+      ?~(a !! a)
     ++  whap  !:                                        ::  chapter
       %+  cook
         |=  a=(list (pair term hoon))
@@ -16922,6 +16938,11 @@
       |@  ++  $
             ;~(pfix dif (stag hil (stag tuq (toad har))))
       --
+    ++  runq                                            ::  wide or tall if tol
+      |*  [wid/rule tal/rule]                           ::  else wide
+      ?.  tol
+        wid
+      ;~(pose wid tal)
     ::
     ++  glop  ~+((glue mash))                           ::  separated by space
     ++  gunk  ~+((glue muck))                           ::  separated list
@@ -17011,7 +17032,7 @@
     ++  exqc  |.(;~(gunk loan loaf))                    ::  spec then hoon
     ++  exqd  |.(;~(gunk loaf loan))                    ::  hoon then spec
     ++  exqf  |.(;~(gunk lynx loan))                    ::  list of names then spec
-    ++  exqe  |.(;~(gunk (butt huns) loan))             ::  list of names then spec
+    ++  exqe  |.(;~(gunk lunx loan))                    ::  list of names then spec
     ++  exqs  |.((butt hunk))                           ::  closed gapped specs
     ++  exqg  |.(;~(gunk sym loan))                     ::  term and spec
     ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  hoon with one spec
