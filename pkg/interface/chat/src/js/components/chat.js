@@ -61,7 +61,7 @@ export class ChatScreen extends Component {
         );
         this.updateReadNumber();
       });
-    } else if (!(state.station in props.inbox)) {
+    } else if (props.owner === '') {
       props.history.push('/~chat');
     }
   }
@@ -203,7 +203,7 @@ export class ChatScreen extends Component {
       <div key={state.station}
         className="h-100 w-100 overflow-hidden flex flex-column">
         <div className='pl3 pt2 bb'>
-          <h2>{state.station}</h2>
+          <h2>{state.station.substr(1)}</h2>
           <ChatTabBar {...props}
             station={state.station}
             numPeers={0} />
@@ -220,6 +220,7 @@ export class ChatScreen extends Component {
           numMsgs={lastMsgNum}
           station={state.station}
           owner={props.owner}
+          permissions={props.permissions}
           placeholder='Message...' />
       </div>
     )

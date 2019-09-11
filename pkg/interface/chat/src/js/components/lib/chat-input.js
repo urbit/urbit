@@ -144,13 +144,8 @@ export class ChatInput extends Component {
     );
   }
 
-  render() {
+  writeAccessRender() {
     const { props, state } = this;
-
-    /*if (props.security && props.security.sec !== 'channel' &&
-      !props.security.sis.includes(window.ship)) {
-      return this.readOnlyRender();
-    }*/
 
     return (
       <div className="pa3 cf flex black bt b--black-30" style={{ flexGrow: 1 }}>
@@ -177,5 +172,33 @@ export class ChatInput extends Component {
         </div>
       </div>
     );
+  }
+
+  render() {
+    const { props, state } = this;
+
+    let writePermission = props.permissions[`/inbox${props.station}/write`];
+    if (writePermission) {
+      console.log(writePermission.kind);
+      console.log(writePermission.who.has(window.ship));
+
+      if (writePermission.kind === 'black') {
+        // black
+        if (writePermission.who.has(window.ship)) {
+          return this.readOnlyRender();
+        } else {
+          return this.writeAccessRender();
+        }
+      } else {
+        // white
+        if (writePermission.who.has(window.ship)) {
+          return this.writeAccessRender();
+        } else {
+          return this.readOnlyRender();
+        }
+      }
+    } else {
+      return this.writeAccessRender();
+    }
   }
 }

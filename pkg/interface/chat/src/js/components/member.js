@@ -57,9 +57,9 @@ export class MemberScreen extends Component {
   render() {
     const { props, state } = this;
 
-    let group = props.group;
+    let readGroup = Array.from(props.read.values());
 
-    let listMembers = group.map((mem) => {
+    let listMembers = readGroup.map((mem) => {
       return (
         <MemberElement 
           key={mem} 
@@ -95,7 +95,7 @@ export class MemberScreen extends Component {
           <ChatTabBar
             {...props}
             station={state.station}
-            numPeers={group.length} />
+            numPeers={readGroup.length} />
         </div>
         <div className="w-100 cf">
           <div className="w-50 fl pa2">

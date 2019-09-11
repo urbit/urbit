@@ -116,16 +116,17 @@ export class Root extends Component {
                read: -1,
                envelopes: []
              };
+
              return (
                <Skeleton sidebar={renderChannelSidebar(props) }>
                  <ChatScreen
                    api={api}
-                   inbox={state.inbox}
+                   subscription={subscription}
                    owner={mailbox.owner}
                    read={mailbox.read}
                    envelopes={mailbox.envelopes}
-                   groups={state.groups[station] || new Set([])}
-                   subscription={subscription}
+                   groups={state.groups}
+                   permissions={state.permissions}
                    {...props}
                  />
                </Skeleton>
@@ -134,17 +135,20 @@ export class Root extends Component {
          <Route exact path="/~chat/room/:station/members"
            render={ (props) => {
              let station = '/' + props.match.params.station;
-             let group = state.groups[station];
              let owner = state.inbox[station] || { owner: '' };
+             let read = state.groups[`/inbox${station}/read`] || new Set([]);
+             let write = state.groups[`/inbox${station}/write`] || new Set([]);
+
              owner = owner.owner;
-             console.log(group);
              return (
                <Skeleton sidebar={renderChannelSidebar(props) }>
                  <MemberScreen
                    {...props}
                    api={api}
-                   group={group}
+                   read={read}
+                   write={write}
                    owner={owner}
+                   permissions={state.permissions}
                  />
                </Skeleton>
              );

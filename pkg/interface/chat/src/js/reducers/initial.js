@@ -20,7 +20,7 @@ export class InitialReducer {
       for (let perm in data) {
         state.permissions[perm] = {
           who: new Set(data[perm].who),
-          kind: data[perm].who
+          kind: data[perm].kind
         }
       }
     }
