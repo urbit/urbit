@@ -6,7 +6,7 @@
 +|  %generics
 ::  $mk-item: constructor for +ordered-map item type
 ::
-++  mk-item  |$  [key val]  [key=key val=val]
+++  mk-item  |#  [key val]  [key=key val=val]
 ::  +ordered-map: treap with user-specified horizontal order
 ::
 ::    Conceptually smaller items go on the left, so the item with the
