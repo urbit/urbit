@@ -8648,7 +8648,6 @@
     ::
         {$brbs *}  =-  ?~  -  !!
                        [%brtr [%bscl -] [%ktcl body.gen]]
-                   ^-  (list spec)
                    %+  turn  `(list term)`sample.gen
                    |=  =term
                    ^-  spec
