@@ -1249,7 +1249,7 @@ u3r_bytes(c3_w    a_w,
 */
 void
 u3r_mp(mpz_t   a_mp,
-         u3_atom b)
+       u3_atom b)
 {
   c3_assert(u3_none != b);
   c3_assert(_(u3a_is_atom(b)));
@@ -1258,25 +1258,15 @@ u3r_mp(mpz_t   a_mp,
     mpz_init_set_ui(a_mp, b);
   }
   else {
-    u3a_atom* b_u   = u3a_to_ptr(b);
-    c3_w        len_w = b_u->len_w;
+    u3a_atom* b_u = u3a_to_ptr(b);
+    c3_w    len_w = b_u->len_w;
 
-    /* Slight deficiency in the GMP API.
-    */
+    //  slight deficiency in the GMP API.
+    //
     c3_assert(!(len_w >> 27));
     mpz_init2(a_mp, len_w << 5);
 
-    /* Efficiency: horrible.
-    */
-    {
-      c3_w *buf_w = alloca(len_w << 2);
-      c3_w i_w;
-
-      for ( i_w=0; i_w < len_w; i_w++ ) {
-        buf_w[i_w] = b_u->buf_w[i_w];
-      }
-      mpz_import(a_mp, len_w, -1, 4, 0, 0, buf_w);
-    }
+    mpz_import(a_mp, len_w, -1, sizeof(c3_w), 0, 0, b_u->buf_w);
   }
 }
 
