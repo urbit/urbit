@@ -6670,7 +6670,6 @@
     {$xray p/manx:hoot}                                 ::  ;foo; templating
   ::                                            ::::::  cores
     {$brbs sample/(lest term) body/spec}                ::  |$
-    {$brhx sample/(lest term) body/spec}                ::  |#
     {$brcb p/spec q/alas r/(map term tome)}             ::  |_
     {$brcl p/hoon q/hoon}                               ::  |:
     {$brcn p/(unit term) q/(map term tome)}             ::  |%
@@ -8648,14 +8647,6 @@
         {$note *}  q.gen
     ::
         {$brbs *}  =-  ?~  -  !!
-                       [%brtr [%bscl -] [%ktcl body.gen]]
-                   ^-  (list spec)
-                   %+  turn  `(list term)`sample.gen
-                   |=  =term
-                   ^-  spec
-                   =/  tar  [%base %noun]
-                   [%bsts term [%bssg tar [%bshp tar tar]]]
-        {$brhx *}  =-  ?~  -  !!
                        [%brtr [%bscl -] [%ktcl body.gen]]
                    ^-  (list spec)
                    %+  turn  `(list term)`sample.gen
@@ -16617,7 +16608,6 @@
                   ['=' (rune tis %brts exqc)]
                   ['?' (rune wut %brwt expa)]
                   ['$' (rune bus %brbs exqe)]
-                  ['#' (rune hax %brhx exqe)]
               ==
             ==
           :-  '$'
@@ -16828,28 +16818,8 @@
           ==
         ==
       ==
-    ::  parses [a b c] or ==  a  b  c  ==
-    ++  lynx
-      %+  cook
-        |=  a=(list term)
-        ^-  spec
-        :-  %bscl
-        =-  ?>(?=(^ -) -)
-        %+  turn  a
-        |=  =term
-        ^-  spec
-        =/  tar  [%base %noun]
-        [%bsts term [%bssg tar [%bshp tar tar]]]
-      =/  wide  (ifix [lac rac] (most ace sym))
-      =/  tall
-        %+  ifix
-          :-  ;~(plug duz gap)
-          ;~(plug gap duz)
-        (most gap sym)
-      ?.  tol
-        wide
-      ;~(pose wide tall)
-   ++  lunx
+   ::  parses a or [a b c] or a  b  c  ==
+   ++  lynx
       =/  wid  (ifix [lac rac] (most ace sym))
       =/  tal
         ;~  sfix
@@ -17038,8 +17008,7 @@
     ++  exqb  |.(;~(gunk loan loan))                    ::  two specs
     ++  exqc  |.(;~(gunk loan loaf))                    ::  spec then hoon
     ++  exqd  |.(;~(gunk loaf loan))                    ::  hoon then spec
-    ++  exqf  |.(;~(gunk lynx loan))                    ::  list of names then spec
-    ++  exqe  |.(;~(gunk lunx loan))                    ::  list of names then spec
+    ++  exqe  |.(;~(gunk lynx loan))                    ::  list of names then spec
     ++  exqs  |.((butt hunk))                           ::  closed gapped specs
     ++  exqg  |.(;~(gunk sym loan))                     ::  term and spec
     ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  hoon with one spec
