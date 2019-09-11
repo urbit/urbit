@@ -91,7 +91,7 @@ export class MemberScreen extends Component {
     return (
       <div className="h-100 w-100 overflow-x-hidden flex flex-column">
         <div className='pl3 pt2 bb mb3'>
-          <h2>{state.circle}</h2>
+          <h2>{state.station.substr(1)}</h2>
           <ChatTabBar
             {...props}
             station={state.station}

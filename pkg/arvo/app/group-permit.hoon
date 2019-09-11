@@ -63,7 +63,7 @@
 ++  handle-associate
   |=  [group=path permissions=(set path)]
   ^-  (quip move _this)
-  ::  permission paths must already exist. if they do not, fail.
+  ::  TODO: remove the requirement for permission paths to exist
   =/  perm-list  ~(tap in permissions)
   =/  perm-length  (lent perm-list)
   =/  checked-paths
@@ -146,9 +146,17 @@
   ::
       %unbundle
     ::  pull subscriptions
+    =/  perms  (~(get by relation) pax.diff)
+    ?~  perms
+      :_  this(relation (~(del by relation) pax.diff))
+      :~  (group-pull [%group pax.diff])
+      ==
     :_  this(relation (~(del by relation) pax.diff))
-    :~  (group-pull [%group pax.diff])
-    ==
+    :-  (group-pull [%group pax.diff])
+    %+  turn  ~(tap in u.perms)
+    |=  =path
+    ^-  move
+    (permission-poke path [%delete path])
   ::
   ==
 ::

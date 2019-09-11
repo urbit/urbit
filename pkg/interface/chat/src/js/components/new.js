@@ -12,6 +12,7 @@ export class NewScreen extends Component {
     this.state = {
       idName: '',
       invites: '',
+      security: 'village',
       idError: false,
       inviteError: false
     };
@@ -23,10 +24,10 @@ export class NewScreen extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
 
-    if (prevProps.circles !== props.circles) {
-      let station = `~${window.ship}/${state.idName}`;
-      if (props.circles.includes(station)) {
-        props.history.push('/~chat/' + station);
+    if (prevProps !== props) { 
+      let station = `/${state.idName}`;
+      if (station in props.inbox) {
+        props.history.push('/~chat/room' + station);
       }
     }
   }
@@ -41,6 +42,10 @@ export class NewScreen extends Component {
     this.setState({invites: event.target.value});
   }
 
+  securityChange(event) {
+    this.setState({security: event.target.value});
+  }
+
   onClickCreate() {
     const { props, state } = this;
     if (!state.idName) {
@@ -53,9 +58,16 @@ export class NewScreen extends Component {
 
     let station = `/${state.idName}`;
 
-    // TODO: check if group name already exists
-    // if so, do not allow
-    //
+    if (station in props.inbox) {
+      this.setState({
+        inviteError: false,
+        idError: true,
+        success: false
+      });
+      return;
+    }
+
+    // TODO: send invites
     let aud = [];
     let isValid = true;
     if (state.invites.length > 2) {
@@ -102,12 +114,32 @@ export class NewScreen extends Component {
 
       // TODO: remove setTimeout
       setTimeout(() => {
-        props.api.groups.add(aud, `/inbox${station}/read`);
-        props.api.groups.add(aud, `/inbox${station}/write`);
+        let writeAud;
+        let readAud; 
+
+        if (state.security === 'village') {
+          aud.push(`~${window.ship}`);
+          readAud = aud.slice(); // white list
+          writeAud = aud.slice(); // white list
+        } else if (state.security === 'channel') {
+          readAud = []; // black list
+          writeAud = []; // black list
+        } else if (state.security === 'journal') {
+          aud.push(`~${window.ship}`);
+          readAud = []; // black list
+          writeAud = aud.slice(); // white list
+        } else if (state.security === 'mailbox') {
+          aud.push(`~${window.ship}`);
+          readAud = aud.slice(); // white list
+          writeAud = []; // black list
+        }
+
+        props.api.groups.add(readAud, `/inbox${station}/read`);
+        props.api.groups.add(writeAud, `/inbox${station}/write`);
 
         setTimeout(() => {
           // expose inbox to outside, set permissions
-          props.api.inboxSync.addOwned(station, 'channel');
+          props.api.inboxSync.addOwned(station, state.security);
 
           setTimeout(() => {
             // sync permissions path to aforementioned group
@@ -179,6 +211,14 @@ export class NewScreen extends Component {
             }}
             onChange={this.invChange} />
           {invErrElem}
+          <select
+            value={this.state.securityValue}
+            onChange={this.securityChange}>
+            <option value="village">Village</option>
+            <option value="channel">Channel</option>
+            <option value="journal">Journal</option>
+            <option value="mailbox">Mailbox</option>
+          </select>
           <button
             onClick={this.onClickCreate.bind(this)}
             className={createClasses}

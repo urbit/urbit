@@ -47,11 +47,7 @@ export class ChatInput extends Component {
         }
     });
   }
-
-  componentDidMount() {
-    this.bindShortcuts();
-  }
-
+  
   bindShortcuts() {
     Mousetrap(this.textareaRef.current).bind('enter', e => {
       e.preventDefault();
@@ -147,6 +143,8 @@ export class ChatInput extends Component {
   writeAccessRender() {
     const { props, state } = this;
 
+    this.bindShortcuts();
+    
     return (
       <div className="pa3 cf flex black bt b--black-30" style={{ flexGrow: 1 }}>
         <div className="fl" style={{
@@ -189,7 +187,7 @@ export class ChatInput extends Component {
         } else {
           return this.writeAccessRender();
         }
-      } else {
+      } else if (writePermission.kind === 'white') {
         // white
         if (writePermission.who.has(window.ship)) {
           return this.writeAccessRender();
