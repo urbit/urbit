@@ -30,10 +30,6 @@ export class LandingScreen extends Component {
     const { props } = this;
 
     let ship = props.match.params.ship;
-    if (ship === `~${window.ship}`) {
-      props.history.push('/~chat');
-      return;
-    }
     let station = '/' + props.match.params.station;
 
     props.api.inboxSync.addSynced(ship, station);

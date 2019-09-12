@@ -117,6 +117,8 @@ export class Root extends Component {
                envelopes: []
              };
 
+             let write = state.groups[`/inbox${station}/write`] || new Set([]);
+
              return (
                <Skeleton sidebar={renderChannelSidebar(props) }>
                  <ChatScreen
@@ -125,7 +127,8 @@ export class Root extends Component {
                    owner={mailbox.owner}
                    read={mailbox.read}
                    envelopes={mailbox.envelopes}
-                   groups={state.groups}
+                   inbox={state.inbox}
+                   group={write}
                    permissions={state.permissions}
                    {...props}
                  />
@@ -156,6 +159,7 @@ export class Root extends Component {
            render={ (props) => {
              let station = '/' + props.match.params.station;
              let owner = state.inbox[station] || { owner: '' };
+             let write = state.groups[`/inbox${station}/write`] || new Set([]);
 
              return (
                <Skeleton
@@ -166,7 +170,7 @@ export class Root extends Component {
                    setSpinner={this.setSpinner}
                    api={api}
                    owner={owner.owner}
-                   groups={state.groups}
+                   group={write}
                    inbox={state.inbox}
                  />
                </Skeleton>

@@ -12,7 +12,6 @@ export class MemberScreen extends Component {
 
     this.state = {
       station: "/" + props.match.params.station,
-      owner: props.match.params.owner,
       invMembers: '',
       error: false,
       success: false
@@ -57,13 +56,13 @@ export class MemberScreen extends Component {
   render() {
     const { props, state } = this;
 
-    let readGroup = Array.from(props.read.values());
+    let writeGroup = Array.from(props.write.values());
 
-    let listMembers = readGroup.map((mem) => {
+    let listMembers = writeGroup.map((mem) => {
       return (
         <MemberElement 
           key={mem} 
-          host={state.owner}
+          host={props.owner}
           ship={mem}
           circle={state.circle}
           api={props.api} />
@@ -95,7 +94,8 @@ export class MemberScreen extends Component {
           <ChatTabBar
             {...props}
             station={state.station}
-            numPeers={readGroup.length} />
+            numPeers={writeGroup.length}
+            isOwner={props.owner === window.ship} />
         </div>
         <div className="w-100 cf">
           <div className="w-50 fl pa2">
@@ -105,7 +105,7 @@ export class MemberScreen extends Component {
             </p>
             {listMembers}
           </div>
-          { `~${window.ship}` === state.host ? (
+          { window.ship === props.owner ? (
             <div className="w-50 fr pa2">
               <p className="body-regular">Invite</p>
               <p className="label-regular gray mb3">

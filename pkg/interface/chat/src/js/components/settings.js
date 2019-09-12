@@ -64,12 +64,12 @@ export class SettingsScreen extends Component {
 
   render() {
     const { props, state } = this;
-    //let peers = props.[state.station] || [window.ship];
-    let group = props.groups[state.station] || [window.ship];
+
+    let writeGroup = Array.from(props.group.values());
 
     if (!!state.isLoading) {
       let text = "Deleting...";
-      if (state.host === `~${window.ship}`) {
+      if (props.owner === window.ship) {
         text = "Leaving...";
       }
 
@@ -80,7 +80,7 @@ export class SettingsScreen extends Component {
             <ChatTabBar
               {...props}
               station={state.station}
-              numPeers={group.length} />
+              numPeers={writeGroup.length} />
           </div>
           <div className="w-100 cf pa3">
             <h2>{text}</h2>
@@ -96,7 +96,8 @@ export class SettingsScreen extends Component {
           <ChatTabBar
             {...props}
             station={state.station}
-            numPeers={group.length} />
+            numPeers={writeGroup.length}
+            isOwner={props.owner === window.ship} />
         </div>
         <div className="w-100 cf pa3">
           <h2>Settings</h2>

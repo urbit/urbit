@@ -89,16 +89,16 @@ export class Sidebar extends Component {
     let sidebarItems = Object.keys(props.inbox)
       .map((box) => {
         let msg = props.messagePreviews[box];
-        let content = _.has(msg, 'message')
-          ? msg.message
-          : 'No messages yet';
+        let letter = _.has(msg, 'letter')
+          ? msg.letter
+          : {text: 'No messages yet'};
         let author = !!msg ? msg.author : '';
         let when = !!msg ? msg.when : 0;
         return {
           msg,
           when,
           author,
-          content,
+          letter,
           box,
           title: box.split('/')[1],
           selected: station === box
@@ -114,7 +114,7 @@ export class Sidebar extends Component {
           <SidebarItem
             key={obj.box + '/' + obj.when}
             title={obj.title}
-            description={obj.content}
+            description={obj.letter}
             box={obj.box}
             when={obj.when}
             ship={obj.author}

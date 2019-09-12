@@ -6,7 +6,8 @@ import classnames from 'classnames';
 export class ChatTabBar extends Component {
 
   render() {
-    let toBaseLink = '/~chat/room' + this.props.station;
+    let props = this.props;
+    let toBaseLink = '/~chat/room' + props.station;
 
     let bbStream = '',
       bbMembers = '',
@@ -16,12 +17,12 @@ export class ChatTabBar extends Component {
       memColor = '',
       setColor = '';
 
-    if (this.props.location.pathname.includes('/settings')) {
+    if (props.location.pathname.includes('/settings')) {
       bbSettings = ' bb';
       strColor = 'gray';
       memColor =  'gray';
       setColor = 'black';
-    } else if (this.props.location.pathname.includes('/members')) {
+    } else if (props.location.pathname.includes('/members')) {
       bbMembers = ' bb';
       strColor = 'gray';
       memColor =  'black';
@@ -33,8 +34,10 @@ export class ChatTabBar extends Component {
       setColor = 'gray';
     }
 
-    let membersText = this.props.numPeers === 1
-      ? '1 Member' : `${this.props.numPeers} Members`;
+    let membersText = props.numPeers === 1
+      ? '1 Member' : `${props.numPeers} Members`;
+
+    console.log(props.isOwner);
 
     return (
       <div className="w-100" style={{ height:28 }}>
@@ -43,11 +46,14 @@ export class ChatTabBar extends Component {
             className={'no-underline label-regular v-mid ' + strColor}
             to={toBaseLink}>Stream</Link>
         </div>
-        <div className={"dib h-100" + bbMembers} style={{width:'160px'}}>
-          <Link
-            className={'no-underline label-regular v-mid ' + memColor}
-            to={toBaseLink + '/members'}>{membersText}</Link>
-        </div>
+        { !!props.isOwner ? (
+          <div className={"dib h-100" + bbMembers} style={{width:'160px'}}>
+            <Link
+              className={'no-underline label-regular v-mid ' + memColor}
+              to={toBaseLink + '/members'}>{membersText}</Link>
+          </div>
+          ) : <div className="dib" style={{width:0}}></div>
+        }
         <div className={"dib h-100" + bbSettings} style={{width:'160px'}}>
           <Link
             className={'no-underline label-regular v-mid ' + setColor}

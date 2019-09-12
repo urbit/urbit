@@ -61,7 +61,7 @@ export class ChatScreen extends Component {
         );
         this.updateReadNumber();
       });
-    } else if (props.owner === '') {
+    } else if (Object.keys(props.inbox) > 0 && props.owner === '') {
       props.history.push('/~chat');
     }
   }
@@ -199,6 +199,8 @@ export class ChatScreen extends Component {
       );
     });
 
+    let group = Array.from(props.group.values());
+
     return (
       <div key={state.station}
         className="h-100 w-100 overflow-hidden flex flex-column">
@@ -206,7 +208,8 @@ export class ChatScreen extends Component {
           <h2>{state.station.substr(1)}</h2>
           <ChatTabBar {...props}
             station={state.station}
-            numPeers={0} />
+            numPeers={group.length}
+            isOwner={props.owner === window.ship} />
         </div>
         <div
           className="overflow-y-scroll pt3 pb2 flex flex-column-reverse"
