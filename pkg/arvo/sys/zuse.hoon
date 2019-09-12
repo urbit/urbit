@@ -2437,7 +2437,6 @@
       gift:able:dill
       gift:able:eyre
       gift:able:ford
-      gift:able:gall
       gift:able:mall
       gift:able:iris
       gift:able:jael
@@ -2449,7 +2448,7 @@
       task:able:dill
       task:able:iris
       task:able:ford
-      task:able:gall
+      task:able:mall
       task:able:eyre
       task:able:jael
   ==
@@ -2461,7 +2460,6 @@
       {$d task:able:dill}
       [%e task:able:eyre]
       {$f task:able:ford}
-      {$g task:able:gall}
       {$m task:able:mall}
       [%i task:able:iris]
       {$j task:able:jael}
@@ -2479,7 +2477,6 @@
       {$d gift:able:dill}
       {$f gift:able:ford}
       [%e gift:able:eyre]
-      {$g gift:able:gall}
       {$m gift:able:mall}
       [%i gift:able:iris]
       {$j gift:able:jael}

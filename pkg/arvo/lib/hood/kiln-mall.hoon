@@ -58,7 +58,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|=  {bowl:gall part}                                    ::  main kiln work
+|=  {bowl:mall part}                                    ::  main kiln work
 ?>  =(src our)
 |_  moz/(list card:agent:mall)
 ++  abet                                                ::  resolve
@@ -69,7 +69,7 @@
   %_(+> moz [+< moz])
 ::
 ++  emil                                              ::  return cards
-  |=  (list (wind internal-note:mall internal-gift:mall))
+  |=  (list card:agent:mall)
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
@@ -186,7 +186,7 @@
 ++  autoload
   |%
   ++  emit
-    |=  a/(wind internal-note:mall internal-gift:mall)
+    |=  a/card:agent:mall
     +>(..autoload (^emit a))
   ::
   ++  tracked-vanes
@@ -263,17 +263,17 @@
   ::  +poke-overload: wipes ford cache at {start}, and then every {recur}.
   |=  [recur=@dr start=@da]
   ?>  (gte start now)
-  abet:(emit %pass /kiln/overload/(scot %dr recur) %arvo %c [%wait start])
+  abet:(emit %pass /kiln/overload/(scot %dr recur) %arvo %b [%wait start])
 ::
 ++  poke-wipe-ford
-  |=(percent=@ud abet:(emit %pass /kiln %arvo %c [%wipe percent]))
+  |=(percent=@ud abet:(emit %pass /kiln %arvo %f [%wipe percent]))
 ::
 ++  poke-keep-ford
   |=  [compiler-cache-size=@ud build-cache-size=@ud]
   =<  abet
-  (emit %pass /kiln %arvo %c [%keep compiler-cache-size build-cache-size])
+  (emit %pass /kiln %arvo %f [%keep compiler-cache-size build-cache-size])
 ::
-++  poke-wash-gall  |=(* abet:(emit %pass /kiln %arvo %c [%wash ~]))
+++  poke-wash-gall  |=(* abet:(emit %pass /kiln %arvo %m [%wash ~]))
 ::
 ++  mack
   |=  {way/wire saw/(unit tang)}
@@ -296,7 +296,7 @@
       [%autocommit *]   %+  take-wake-autocommit  t.wire
                         ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
       *
-    ?+  +<.sign-arvo  ~|([%kiln-bad-take-card -.q.vase] !!)
+    ?+  +<.sign-arvo  ~|([%kiln-bad-take-card +<.sign-arvo] !!)
       %mack  %+  mack  wire
              ?>(?=(%mack +<.sign-arvo) +>.sign-arvo)
       %made  %+  take-made  wire
@@ -407,7 +407,7 @@
   =+  (~(gut by syn) [syd her sud] let=*@ud)
   |%
   ++  abet
-    ..auto(syn (~(put by syn) [syd her sud] let ust))
+    ..auto(syn (~(put by syn) [syd her sud] let))
   ::
   ++  blab
     |=  new/(list card:agent:mall)
@@ -415,14 +415,14 @@
     +>.$(moz (welp new moz))
   ::
   ++  warp
-    |=  [=bone =wire =ship =riff]
-    (blab [bone %pass wire %arvo %c [%warp ship riff]] ~)
+    |=  [=wire =ship =riff]
+    (blab [%pass wire %arvo %c [%warp ship riff]] ~)
   ::
   ++  spam  |*(* %_(+> ..auto (^spam +<)))
   ++  stop
     =>  (spam (render "ended autosync" sud her syd) ~)
     =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
-    (warp ust wire her sud ~)
+    (warp wire her sud ~)
   ::  XX duplicate of start-sync? see |track
   ::
   ++  start-track

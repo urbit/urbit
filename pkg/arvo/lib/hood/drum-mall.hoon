@@ -139,7 +139,7 @@
 ::
 ::::
   ::
-|=  {hid/bowl:gall part}                          ::  main drum work
+|=  {hid/bowl:mall part}                          ::  main drum work
 =/  ost  0
 =+  (~(gut by bin) ost *source)
 =*  dev  -
@@ -177,7 +177,7 @@
 ::
 ++  poke-set-boot-apps                                ::
   |=  lit/?
-  ^-  (quip move:agent:mall part)
+  ^-  (quip card:agent:mall part)
   ::  We do not run se-abet:se-view here because that starts the apps,
   ::  and some apps are not ready to start (eg Talk crashes because the
   ::  terminal has width 0).  It appears the first message to drum must
@@ -266,19 +266,14 @@
 ++  se-abet                                           ::  resolve
   ^-  (quip card:agent:mall part)
   =*  pith  +<+.$
-  ?.  se-ably
-    =.  .  se-adit
-    [(flop moz) pith]
   =.  .  se-subze:se-adze:se-adit
   :_  pith(bin (~(put by bin) ost dev))
   %-  flop
   ^-  (list card:agent:mall)
   ?~  biz  moz
   :_  moz
-  =/  =blit:dill  ?~(t.biz i.biz [%mor (flop biz)])
-  [%give %subscription-update `/drum %dill-blit !>(blit)]
-::
-++  se-ably  (~(has by sup.hid) ost)                  ::  caused by console
+  =/  =dill-blit:dill  ?~(t.biz i.biz [%mor (flop biz)])
+  [%give %subscription-update `/drum %dill-blit !>(dill-blit)]
 ::
 ++  se-adit                                           ::  update servers
   ^+  .
@@ -400,7 +395,6 @@
 ++  se-dump                                           ::  print tanks
   |=  tac/(list tank)
   ^+  +>
-  ?.  se-ably  (se-hall tac)
   =/  wol/wall
     (zing (turn (flop tac) |=(a/tank (~(win re a) [0 edg]))))
   |-  ^+  +>.^$
@@ -436,7 +430,7 @@
 ::
 ++  se-blit-sys                                       ::  output to system
   |=  bil/dill-blit:dill  ^+  +>
-  (se-emit %give %subscription-update %dill-blit `/drum !>(bil))
+  (se-emit %give %subscription-update `/drum %dill-blit !>(bil))
 ::
 ++  se-show                                           ::  show buffer, raw
   |=  lin/(pair @ud stub)
@@ -491,7 +485,6 @@
   ?.  ((sane %t) (crip txt))  :: XX upstream validation
     ~&  bad-text+<`*`txt>
     +>
-  ?.  se-ably  (se-hall [%leaf txt]~)
   (se-blit %out (tuba txt))
 ::
 ++  se-poke                                           ::  send a poke

@@ -19,7 +19,7 @@
 ::
 ::::
   ::
-|=  {bowl:gall part}
+|=  {bowl:mall part}
 =*  par  +<+
 |_  moz/(list card:agent:mall)
 ++  abet  [(flop moz) `part`par]

@@ -367,6 +367,7 @@
           %f  %ford
           %g  %gall
           %j  %jael
+          %m  %mall
         ==
       =/  pax
         /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/[vane]

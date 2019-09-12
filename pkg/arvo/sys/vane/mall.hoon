@@ -356,7 +356,7 @@
       /sys/way/[action]
     ::
     =/  =note-arvo
-      =/  =path  /g/ge/[term]
+      =/  =path  /m/ge/[term]
       =/  =noun  [bone forward-ames]
       [%a %want ship path noun]
     ::
@@ -982,7 +982,7 @@
         =/  =cage  cage.gift
         %+  turn  ducts
         |=  =duct
-        ~?  =(duct system-duct.agents.state)
+        ~?  &(=(duct system-duct.agents.state) !=(agent-name %hood))
           [%agent-giving-on-system-duct agent-name -.gift]
         ^-  move
         =/  =mark
@@ -1033,7 +1033,7 @@
       %+  murn  ~(tap by incoming.subscribers.current-agent)
       |=  [=duct =ship =path]
       ^-  (unit ^duct)
-      ?:  =(target-path path)
+      ?:  =(u.target-path path)
         `duct
       ~
     ::  +ap-apply: apply effect.

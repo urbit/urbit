@@ -93,35 +93,6 @@
       ==                                                ::
     ++  bead  {p/(set beam) q/cage}                     ::  computed result
     ++  goal  {p/ship q/term}                           ::  flat application
-    ++  clap                                            ::  action, user
-      $%  {$peer p/path}                                ::  subscribe
-          {$poke p/(cask)}                              ::  apply
-          {$pull ~}                                     ::  unsubscribe
-      ==                                                ::
-    ++  club                                            ::  action, system
-      $%  {$peer p/path}                                ::  subscribe
-          {$poke p/cage}                                ::  apply
-          {$pull ~}                                     ::  unsubscribe
-      ==                                                ::
-    ++  sign                                            ::
-      $%  ::  %made: build result; response to %build +task
-          ::
-          $:  %made
-              ::  date: formal date of the build
-              ::
-              date=@da
-              ::  result: result of the build; either complete build, or error
-              ::
-              $=  result
-              $%  ::  %complete: contains the result of the completed build
-                  ::
-                  [%complete build-result=build-result:ford]
-                  ::  %incomplete: couldn't finish build; contains error message
-                  ::
-                  [%incomplete =tang]
-          ==  ==
-          {$unto p/internal-gift:gall}
-      ==
     --
 =>
 |%
@@ -324,7 +295,7 @@
 =*  state  -
 =>  |%
 ++  he                                                  ::  per session
-  |_  {hid/bowl:mall moz/(list move:agent:mall) session}
+  |_  {hid/bowl:mall ost=bone moz/(list card:agent:mall) session}
   ::
   ++  he-beam
     ^-  beam
@@ -348,21 +319,21 @@
       ::  pin all builds to :now.hid so they don't get cached forever
       ::
       %-  he-card(poy `+>+<(pux `way))
-      [%pass way %meta %f !>([%build live=%.n schematic])]
+      [%pass way %arvo %f %build live=%.n schematic]
     ::
     ++  dy-request
       |=  [way=wire =request:http]
       ^+  +>+>
       ?>  ?=(~ pux)
       %-  he-card(poy `+>+<(pux `way))
-      [%pass way %meta %l !>([%request request *outbound-config:iris])]
+      [%pass way %arvo %i %request request *outbound-config:iris]
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
       =.  poy  ~
       ?~  pux  +>
       %.  [%txt "! cancel {<u.pux>}"]
-      he-diff:(he-card [%pass u.pux %meta %f !>([%kill ~])])
+      he-diff:(he-card [%pass u.pux %arvo %f %kill ~])
     ::
     ++  dy-slam                                         ::  call by ford
       |=  {way/wire gat/vase sam/vase}
@@ -559,7 +530,7 @@
         %-  he-card(poy ~)
         :*  %pass
             /poke 
-            %send
+            %agent
             p.p.p.mad
             q.p.p.mad
             %poke
@@ -568,8 +539,8 @@
       ::
           $file
         %-  he-card(poy ~)
-        :*  %pass  /file  %meta  %c  !>
-            [%info (foal:space:userlib (en-beam:format p.p.mad) cay)]
+        :*  %pass  /file  %arvo  %c
+            %info  (foal:space:userlib (en-beam:format p.p.mad) cay)
         ==
       ::
           $flat
@@ -836,21 +807,21 @@
     ==
   ::
   ++  he-abet                                           ::  resolve
-    [(flop moz) %_(state hoc (~(put by hoc) ost.hid +<+>))]
+    [(flop moz) %_(state hoc (~(put by hoc) ost +<+>+))]
   ::
   ++  he-abut                                           ::  discard
     =>  he-stop
-    [(flop moz) %_(state hoc (~(del by hoc) ost.hid))]
+    [(flop moz) %_(state hoc (~(del by hoc) ost))]
   ::
   ++  he-card                                           ::  emit gift
     |=  =card:agent:mall
     ^+  +>
-    %_(+> moz [[ost.hid card] moz])
+    %_(+> moz [card moz])
   ::
   ++  he-diff                                           ::  emit update
     |=  fec/sole-effect
     ^+  +>
-    (he-card %give %diff %sole-effect !>(fec))
+    (he-card %give %subscription-update `/sole %sole-effect !>(fec))
   ::
   ++  he-stop                                           ::  abort work
     ^+  .
@@ -928,9 +899,9 @@
     ==  ==
   ::
   ++  he-unto                                           ::  result from behn
-    |=  {way/wire cit/internal-gift:gall}
+    |=  {way/wire cit/gift:agent:mall}
     ^+  +>
-    ?.  ?=($coup -.cit)
+    ?.  ?=($poke-ack -.cit)
       ~&  [%strange-unto cit]
       +>
     ?~  p.cit
@@ -1115,12 +1086,16 @@
     he-pine                           ::  XX give mean to original keystroke
   --
 --
+=/  ost=bone  0
 ^-  agent:mall
 |_  hid=bowl:mall
 ++  handle-init
   `..handle-init
 ::
-++  handle-prep
+++  handle-extract-state
+  !>(state)
+::
+++  handle-upgrade-state
   |=  =old-state=vase
   =/  old-state  !<(house old-state-vase)
   ?~  old-state
@@ -1131,11 +1106,11 @@
 ::
 ++  handle-poke
   |=  [=mark =vase]
-  ^-  (quip move:agent:mall _..handle-init)
-  =/  a-session=session  (~(got by hoc) ost.hid)
-  =/  he-full  ~(. he hid ~ a-session)
+  ^-  (quip card:agent:mall _..handle-init)
+  =/  a-session=session  (~(got by hoc) ost)
+  =/  he-full  ~(. he hid ost ~ a-session)
   =^  moves  state
-    ^-  (quip move:agent:mall house)
+    ^-  (quip card:agent:mall house)
     ?+  mark  ~|([%dojo-poke-bad-mark mark] !!)
         %sole-action   he-abet:(he-type:he-full (need !<(sole-action vase)))
         %lens-command  he-abet:(he-lens:he-full (need !<(command:lens vase)))
@@ -1156,61 +1131,55 @@
   ::
   [moves ..handle-init]
 ::
-++  handle-peer
+++  handle-subscribe
   |=  =path
-  ^-  (quip move:agent:mall _..handle-init)
-  ~?  !=(our.hid src.hid)  [%dojo-peer-stranger ost.hid src.hid]
+  ^-  (quip card:agent:mall _..handle-init)
+  ~?  !=(our.hid src.hid)  [%dojo-peer-stranger src.hid]
   ?>  (team:title our.hid src.hid)
   =^  moves-1  state
-    ?.  (~(has by hoc) ost.hid)  [~ state]
-    ~&  [%dojo-peer-replaced ost.hid]
-    ~(he-abut he hid ~ (~(got by hoc) ost.hid))
+    ?.  (~(has by hoc) ost)  [~ state]
+    ~&  [%dojo-peer-replaced ost]
+    ~(he-abut he hid ost ~ (~(got by hoc) ost))
   =^  moves-2  state
     =/  =session  %*(. *session -.dir [our.hid %home ud+0])
     ?>  ?=([%sole *] path)
-    he-abet:(~(he-peer he hid moves-1 session) t.path)
+    he-abet:(~(he-peer he hid ost moves-1 session) t.path)
   [moves-2 ..handle-init]
 ::
-++  handle-pull
+++  handle-unsubscribe
   |=  path
   =^  moves  state
-    ~(he-abut he hid ~ (~(got by hoc) ost.hid))
-  =.  hoc  (~(del by hoc) ost.hid)
+    ~(he-abut he hid ost ~ (~(got by hoc) ost))
+  =.  hoc  (~(del by hoc) ost)
   [moves ..handle-init]
 ::
 ++  handle-peek
   |=  path
   *(unit (unit cage))
 ::
-++  handle-mall
-  |=  [=wire =internal-gift:mall]
-  =/  =session  (~(got by hoc) ost.hid)
+++  handle-agent-response
+  |=  [=wire =gift:agent:mall]
+  =/  =session  (~(got by hoc) ost)
   =^  moves  state
-    he-abet:(~(he-unto he hid ~ session) wire internal-gift)
+    he-abet:(~(he-unto he hid ost ~ session) wire gift)
   [moves ..handle-init]
 ::
-++  handle-take
-  |=  [=wire =vase]
-  =/  =session  (~(got by hoc) ost.hid)
-  =/  he-full  ~(. he hid ~ session)
+++  handle-arvo-response
+  |=  [=wire =sign-arvo]
+  =/  =session  (~(got by hoc) ost)
+  =/  he-full  ~(. he hid ost ~ session)
   =^  moves  state
     =<  he-abet
-    ?+    -.q.vase  ~|([%dojo-bad-take -.q.vase] !!)
-        %made
-      (he-made:he-full wire +:(need !<([%made @da made-result:ford] vase)))
-    ::
-        %http-response
-      (he-http-response:he-full wire +:(need !<([%made client-response:iris] vase)))
+    ?+    +<.sign-arvo  ~|([%dojo-bad-take +<.sign-arvo] !!)
+        %made           (he-made:he-full wire +>.sign-arvo)
+        %http-response  (he-http-response:he-full wire +>.sign-arvo)
     ==
   [moves ..handle-init]
 ::
-++  handle-lame
+++  handle-error
   |=  [=term =tang]
-  =/  =session  (~(got by hoc) ost.hid)
+  =/  =session  (~(got by hoc) ost)
   =^  moves  state
-    he-abet:(~(he-lame he hid ~ session) term tang)
+    he-abet:(~(he-lame he hid ost ~ session) term tang)
   [moves ..handle-init]
-::
-++  handle-stay
-  !>(state)
 --

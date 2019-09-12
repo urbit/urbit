@@ -33,13 +33,13 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|:  $:{bowl:gall part}                                  ::  main helm work
+|:  $:{bowl:mall part}                                  ::  main helm work
 =/  ost  0
-=+  sez=(~(gut by hoc) $:session)
+=+  sez=(~(gut by hoc) ost $:session)
 =|  moz=(list card:agent:mall)
 |%
 ++  abet
-  [(flop moz) %_(+<+.$ hoc (~(put by hoc) sez))]
+  [(flop moz) %_(+<+.$ hoc (~(put by hoc) ost sez))]
 ::
 ++  emit
   |=  card:agent:mall
@@ -50,7 +50,7 @@
   (emit %pass /di %arvo %d %flog flog)
 ::
 ++  emil                                              ::  return cards
-  |=  (list (wind internal-note:mall internal-gift:mall))
+  |=  (list card:agent:mall)
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
@@ -78,7 +78,7 @@
 ::
 ++  poke-nuke                                         ::  initialize
   |=  him/ship  =<  abet
-  (emit %pass /helm %arvo %j %nuke him)
+  (emit %pass /helm %arvo %a %nuke him)
 ::
 ++  poke-mass
   |=  ~  =<  abet
@@ -174,7 +174,7 @@
   |=  hood-reset
   =<  abet
   %-  emil  %-  flop
-  ^-  (list (wind internal-note:mall internal-gift:mall))
+  ^-  (list card:agent:mall)
   =/  top=path  /(scot %p our)/home/(scot %da now)/sys
   =/  hun  .^(@ %cx (welp top /hoon/hoon))
   =/  arv  .^(@ %cx (welp top /arvo/hoon))
@@ -197,7 +197,7 @@
 ::
 ++  take
   |=  [=wire =sign-arvo]
-  ?+  wire  ~|([%helm-bad-take-wire wire] !!)
+  ?+  wire  ~|([%helm-bad-take-wire wire +<.sign-arvo] !!)
     [%automass *]  %+  take-wake-automass  t.wire
                    ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
     [%serv *]      %+  take-bound  t.wire

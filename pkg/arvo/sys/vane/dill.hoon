@@ -357,7 +357,7 @@
       ++  peer
         %_    .
             moz
-          :_(moz [hen %pass ~ %m %deal [our our] ram %peer /drum])
+          :_(moz [hen %pass ~ %m %deal [our our] ram %subscribe /drum])
         ==
       ::
       ++  show                                          ::  permit reads on desk
@@ -422,13 +422,13 @@
             {$m $unto *}
           ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
-            $coup  ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
-            $quit  peer
-            $reap  ?~  p.p.+>.sih
-                     +>.$
-                   (dump:(crud %reap u.p.p.+>.sih) %logo ~)
-            $diff  pump:(from ;;(dill-blit q:`vase`+>+>.sih))
-            $http-response  !!
+            $poke-ack             ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
+            $subscription-close   peer
+            $subscription-ack     ?~  p.p.+>.sih
+                                    +>.$
+                                  (dump:(crud %reap u.p.p.+>.sih) %logo ~)
+            $subscription-update  pump:(from ;;(dill-blit q:`vase`+>+>+.sih))
+            $http-response        !!
           ==
         ::
             {$c $note *}

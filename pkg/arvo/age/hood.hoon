@@ -22,13 +22,9 @@
   =>  |%
       +$  part  [%module %0 pith]
       +$  pith  ~
-      ::
-      +$  move  [bone card]
-      +$  card  $%  [%fake ~]
-                ==
       --
-  |=  [bowl:gall own=part]
-  |_  moz=(list move)
+  |=  [bowl:mall own=part]
+  |_  moz=(list card:agent:mall)
   ++  abet  [(flop moz) own]
   --
 --
@@ -119,6 +115,7 @@
         |*  handle/_finish
         |=  a=_+<.handle
         =.  +>.handle  (start hid (able identity))
+        ^-  (quip card:agent:mall _lac)
         (ably (handle a))
       ::  per-module interface wrappers
       ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum-mall))
@@ -250,7 +247,7 @@
       %write-wipe             %-  (wrap poke-wipe):from-write:h
                               (need !<(path vase))
     ==
-  [cards ..handle-init]
+  [`(list card:agent:mall)`cards `agent:mall`..handle-init]
 ::
 ++  handle-subscribe
   |=  =path
@@ -270,33 +267,33 @@
   *(unit (unit cage))
 ::
 ++  handle-agent-response
-  |=  [=wire =internal-gift:mall]
+  |=  [=wire =gift:agent:mall]
   =/  h  (help hid)
   =^  cards  lac
     ?+  wire  ~|([%hood-bad-wire wire] !!)
         [%helm %hi *]      %+  (wrap coup-hi):from-helm:h  t.t.wire
-                           ?>(?=(%poke-ack -.internal-gift) p.internal-gift)
+                           ?>(?=(%poke-ack -.gift) p.gift)
         [%kiln %fancy *]   %+  (wrap take-coup-fancy):from-kiln:h  t.t.wire
-                           ?>(?=(%poke-ack -.internal-gift) p.internal-gift)
+                           ?>(?=(%poke-ack -.gift) p.gift)
         [%kiln %reload *]  %+  (wrap take-coup-reload):from-kiln:h  t.t.wire
-                           ?>(?=(%poke-ack -.internal-gift) p.internal-gift)
+                           ?>(?=(%poke-ack -.gift) p.gift)
         [%kiln %spam *]    %+  (wrap take-coup-spam):from-kiln:h  t.t.wire
-                           ?>(?=(%poke-ack -.internal-gift) p.internal-gift)
+                           ?>(?=(%poke-ack -.gift) p.gift)
         [%drum %phat *]
-      ?-  -.internal-gift
+      ?-  -.gift
           %http-response  !!
-          %poke-ack            ((wrap take-coup-phat):from-drum:h t.t.wire p.internal-gift)
-          %subscription-ack    ((wrap reap-phat):from-drum:h t.t.wire p.internal-gift)
+          %poke-ack            ((wrap take-coup-phat):from-drum:h t.t.wire p.gift)
+          %subscription-ack    ((wrap reap-phat):from-drum:h t.t.wire p.gift)
           %subscription-close  ((wrap quit-phat):from-drum:h t.t.wire)
           %subscription-update
         %+  (wrap diff-sole-effect-phat):from-drum:h  t.t.wire
-        ?>  ?=(%sole-effect p.p.internal-gift)
-        (need !<(sole-effect q.p.internal-gift))
+        ?>  ?=(%sole-effect p.cage.gift)
+        (need !<(sole-effect q.cage.gift))
       ==
     ==
   [cards ..handle-init]
 ::
-++  handle-system-response
+++  handle-arvo-response
   |=  [=wire =sign-arvo]
   =/  h  (help hid)
   =^  cards  lac

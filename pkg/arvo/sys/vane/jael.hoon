@@ -75,8 +75,8 @@
   $%  $:  %a                                            ::    to %ames
           $>(%want task:able:ames)                      ::  send message
       ==                                                ::
-      $:  %g                                            ::    to self
-          $>(%deal task:able:gall)                              ::  set ethereum source
+      $:  %m                                            ::    to self
+          $>(%deal task:able:mall)                              ::  set ethereum source
       ==                                                ::
       $:  %j                                            ::    to self
           $>(%listen task)                              ::  set ethereum source
@@ -90,11 +90,11 @@
 +$  sign                                                ::  in result $<-
   $~  [%a %woot *ship ~]                                ::
   $%  [%a $>(%woot gift:able:ames)]                     ::  message result
-      $:  %g                                            ::
+      $:  %m                                            ::
           $>  $?  %onto                                 ::
                   %unto                                 ::
               ==                                        ::
-          gift:able:gall                                ::
+          gift:able:mall                                ::
       ==
   ==                                                    ::
 --  ::
@@ -186,7 +186,7 @@
     :*  hen
         %pass
         /[app]/poke
-        %g
+        %m
         %deal
         [our our]
         app
@@ -318,7 +318,7 @@
         %+  weld  moz
         ::  order is crucial!
         ::
-        ::    %dill must init after %gall
+        ::    %dill must init after %mall
         ::    the %give init (for unix) must be after %dill init
         ::    %jael init must be deferred (makes http requests)
         ::
@@ -522,30 +522,31 @@
       ::TODO  fail:et
       +>.$
     ::
-        [%g %onto *]
+        [%m %onto *]
       ~&  [%jael-onto tea hin]
       +>.$
     ::
-        [%g %unto *]
+        [%m %unto *]
       ?-  +>-.hin
-          $quit           ~|([%jael-unexpected-quit tea hin] !!)
-          $http-response  ~|([%jael-unexpected-http-response tea hin] !!)
-          $coup
+          $subscription-close  ~|([%jael-unexpected-quit tea hin] !!)
+          $http-response       ~|([%jael-unexpected-http-response tea hin] !!)
+          $poke-ack
         ?~  p.p.+>.hin
           +>.$
         %-  (slog leaf+"jael-bad-coup" u.p.p.+>.hin)
         +>.$
       ::
-          $reap
+          $subscription-ack
         ?~  p.p.+>.hin
           +>.$
         %-  (slog u.p.p.+>.hin)
         ~|([%jael-unexpected-reap tea hin] +>.$)
       ::
-          $diff
+          $subscription-update
         ?>  ?=([@ *] tea)
         =*  app  i.tea
-        =/  =peer-sign  ;;(peer-sign q.q.p.p.+>.hin)
+        ~!  +>.hin
+        =/  =peer-sign  ;;(peer-sign q.q.cage.p.+>.hin)
         %.  [hen tea app]
         =<  pump
         %-  curd  =<  abet
@@ -562,7 +563,7 @@
   ::                                                    ::  ++wind:of
   ++  pump
     |=  [hen=duct =wire app=term]
-    (emit [hen %pass wire %g %deal [our our] app %pump ~])
+    (emit [hen %pass wire %m %deal [our our] app %pump ~])
   --
 ::                                                      ::  ++su
 ::::                    ## relative^heavy               ::  subjective engine
@@ -610,11 +611,11 @@
     :*  hen
         %pass
         [app path]
-        %g
+        %m
         %deal
         [our our]
         app
-        %peer
+        %subscribe
         path
     ==
   ::
