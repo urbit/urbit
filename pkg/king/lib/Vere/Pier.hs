@@ -148,7 +148,7 @@ pier pierPath mPort (serf, log, ss) = do
     inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
     terminalSystem <- initializeLocalTerminal
-    serf <- pure serf { sStderr = (tsStderr terminalSystem) }
+    swapMVar (sStderr serf) (tsStderr terminalSystem)
 
     let ship = who (Log.identity log)
 

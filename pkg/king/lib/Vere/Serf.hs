@@ -11,13 +11,10 @@ module Vere.Serf ( Serf, sStderr, SerfState(..), doJob
                  , Config(..), Flags, Flag(..)
                  ) where
 
-import UrbitPrelude hiding (fail)
+import UrbitPrelude
 
 import Arvo
-import Control.Monad.Fail (fail)
 import Data.Conduit
-import Data.Void
-import Noun
 import System.Process
 import System.ProgressBar
 import Vere.Pier.Types
@@ -28,7 +25,6 @@ import Data.ByteString.Unsafe (unsafeUseAsCString)
 import Foreign.Marshal.Alloc  (alloca)
 import Foreign.Ptr            (castPtr)
 import Foreign.Storable       (peek, poke)
-import System.Directory       (createDirectoryIfMissing)
 import System.Exit            (ExitCode)
 
 import qualified Data.ByteString.Unsafe as BS
@@ -79,10 +75,8 @@ ssLastEv = pred . ssNextEv
 data Serf e = Serf
   { sendHandle :: Handle
   , recvHandle :: Handle
-  , errThread  :: Async ()
   , process    :: ProcessHandle
-  , sState     :: MVar SerfState
-  , sStderr    :: Text -> RIO e ()
+  , sStderr    :: MVar (Text -> RIO e ())
   }
 
 data ShipId = ShipId Ship Bool
@@ -127,9 +121,9 @@ deriveNoun ''Plea
 
 -- Utils -----------------------------------------------------------------------
 
-printTank :: HasLogFunc e => (Text -> RIO e ()) -> Word32 -> Tank -> RIO e ()
+printTank :: HasLogFunc e => MVar (Text -> RIO e ()) -> Word32 -> Tank -> RIO e ()
 printTank log _pri tank =
-    (log . unlines . fmap unTape . wash (WashCfg 0 80)) tank
+    ((printErr log) . unlines . fmap unTape . wash (WashCfg 0 80)) tank
 
 guardExn :: (Exception e, MonadIO m) => Bool -> e -> m ()
 guardExn ok = io . unless ok . throwIO
@@ -138,6 +132,10 @@ fromRightExn :: (Exception e, MonadIO m) => Either a b -> (a -> e) -> m b
 fromRightExn (Left m)  exn = throwIO (exn m)
 fromRightExn (Right x) _   = pure x
 
+printErr :: MVar (Text -> RIO e ()) -> Text -> RIO e ()
+printErr m txt = do
+  f <- readMVar m
+  f txt
 
 -- Process Management ----------------------------------------------------------
 
@@ -153,9 +151,9 @@ startUp conf@(Config pierPath flags) = do
         (Just i, Just o, Just e, p) <- createProcess pSpec
         pure (i, o, e, p)
 
-    ss <- newEmptyMVar
-    et <- async (readStdErr e)
-    pure (Serf i o et p ss serf)
+    stderr <- newMVar putStrLn
+    async (readStdErr e stderr)
+    pure (Serf i o p stderr)
   where
     diskKey = ""
     config  = show (compileFlags flags)
@@ -166,11 +164,13 @@ startUp conf@(Config pierPath flags) = do
                 , std_err = CreatePipe
                 }
 
-readStdErr :: ∀e. HasLogFunc e => Handle -> RIO e ()
-readStdErr h =
+readStdErr :: ∀e. HasLogFunc e => Handle -> MVar (Text -> RIO e ()) -> RIO e ()
+readStdErr h print =
     untilEOFExn $ do
-        ln <- io $ IO.hGetLine h
-        serf ("[stderr] " <> T.strip (pack ln))
+        raw <- io $ IO.hGetLine h
+        let ln = T.strip (pack raw)
+        printErr print ln
+        serf ("[stderr] " <> ln)
   where
     eofMsg = "[Serf.readStdErr] serf stderr closed"
 
@@ -296,7 +296,7 @@ recvPlea w = do
   n <- fromRightExn (cue a) (const $ BadPleaAtom a)
   p <- fromRightExn (fromNounErr n) (\(p,m) -> BadPleaNoun (traceShowId n) p m)
 
-  case p of PStdr e msg   -> do (sStderr w) (cordText msg)
+  case p of PStdr e msg   -> do printErr (sStderr w) (cordText msg)
                                 recvPlea w
             PSlog _ pri t -> do printTank (sStderr w) pri t
                                 recvPlea w
@@ -343,7 +343,7 @@ sendWork w job =
       PPlay p       -> throwIO (UnexpectedPlay eId p)
       PDone i m o   -> produce (SerfState (i+1) m, o)
       PWork work    -> replace (DoWork work)
-      PStdr _ cord  -> (sStderr w) (cordText cord) >> loop
+      PStdr _ cord  -> printErr (sStderr w) (cordText cord) >> loop
       PSlog _ pri t -> printTank (sStderr w) pri t >> loop
 
 
