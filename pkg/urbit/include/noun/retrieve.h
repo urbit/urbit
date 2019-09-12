@@ -30,6 +30,8 @@
       **   Axes must be sorted in tree order.
       */
         c3_o
+        u3r_vmean(u3_noun a, va_list ap);
+        c3_o
         u3r_mean(u3_noun a, ...);
 
       /* u3r_mug_bytes(): Compute the mug of `buf`, `len`, LSW first.

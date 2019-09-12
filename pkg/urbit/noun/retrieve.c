@@ -163,49 +163,61 @@ u3r_at(u3_atom a, u3_noun b)
 
 __attribute__((no_sanitize_address))
 c3_o
-u3r_mean(u3_noun som,
-        ...)
+u3r_vmean(u3_noun som, va_list ap)
 {
-  va_list            ap;
+  va_list            aq;
   c3_w               len_w;
   struct _mean_pair* prs_m;
 
   c3_assert(u3_none != som);
 
-  /* Count.
-  */
+  //  traverse copy of va_list for alloca
+  //
+  va_copy(aq, ap);
   len_w = 0;
-  {
-    va_start(ap, som);
-    while ( 1 ) {
-      if ( 0 == va_arg(ap, c3_w) ) {
-        break;
-      }
-      va_arg(ap, u3_noun*);
-      len_w++;
+
+  while ( 1 ) {
+    if ( 0 == va_arg(aq, c3_w) ) {
+      break;
     }
-    va_end(ap);
+    va_arg(aq, u3_noun*);
+    len_w++;
   }
+
+  va_end(aq);
 
   c3_assert( 0 != len_w );
   prs_m = alloca(len_w * sizeof(struct _mean_pair));
 
-  /* Install.
-  */
+  //  traverse va_list and extract args
+  //
   {
     c3_w i_w;
 
-    va_start(ap, som);
     for ( i_w = 0; i_w < len_w; i_w++ ) {
       prs_m[i_w].axe_w = va_arg(ap, c3_w);
       prs_m[i_w].som = va_arg(ap, u3_noun*);
     }
+
     va_end(ap);
   }
 
-  /* Extract.
-  */
+  //  extract axis from som
+  //
   return _mean_extract(som, len_w, prs_m);
+}
+
+c3_o
+u3r_mean(u3_noun som, ...)
+{
+  c3_o    ret_o;
+  va_list ap;
+
+  va_start(ap, som);
+  ret_o = u3r_vmean(som, ap);
+  va_end(ap);
+
+  return ret_o;
 }
 
 /* _sang_one(): unify but leak old.
