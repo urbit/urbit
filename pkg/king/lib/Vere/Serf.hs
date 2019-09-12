@@ -19,6 +19,7 @@ import Data.Conduit
 import Data.Void
 import Noun
 import System.Process
+import System.ProgressBar
 import Vere.Pier.Types
 
 import Data.Bits              (setBit)
@@ -400,18 +401,38 @@ bootFromSeq serf (BootSeq ident nocks ovums) = do
     until it is caught up.
 -}
 replayJobs :: HasLogFunc e
-           => Serf e -> SerfState -> ConduitT Job Void (RIO e) SerfState
-replayJobs serf = go
+           => Serf e -> Int -> SerfState -> ConduitT Job Void (RIO e) SerfState
+replayJobs serf lastEv = go Nothing
   where
-    go ss = await >>= maybe (pure ss) (lift . replayJob serf >=> go)
+    go pb ss = do
+      await >>= \case
+        Nothing -> pure ss
+        Just job -> do
+          pb <- case pb of
+            Nothing -> do
+              -- We only construct the progress bar on the first time that we
+              -- process an event so that we don't display an empty progress
+              -- bar when the snapshot is caught up to the log.
+              let toReplay = lastEv - (fromIntegral (ssNextEv ss))
+              let style = defStyle { stylePostfix = exact }
+              putStrLn $ pack ("Replaying events #" ++ (show (ssNextEv ss)) ++
+                               " to #" ++ (show lastEv))
+              io $ newProgressBar style 10 (Progress 0 toReplay lastEv)
+            Just pb -> do
+              io $ incProgress pb 1
+              pure pb
+          played <- lift $ replayJob serf job
+          go (Just pb) played
+
 
 replay :: HasLogFunc e => Serf e -> Log.EventLog -> RIO e SerfState
 replay serf log = do
     ss <- handshake serf (Log.identity log)
 
+    lastEv <- Log.lastEv log
     runConduit $  Log.streamEvents log (ssNextEv ss)
                .| toJobs (Log.identity log) (ssNextEv ss)
-               .| replayJobs serf ss
+               .| replayJobs serf (fromIntegral lastEv) ss
 
 toJobs :: HasLogFunc e
        => LogIdentity -> EventId -> ConduitT ByteString Job (RIO e) ()

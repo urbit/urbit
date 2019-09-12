@@ -80,6 +80,7 @@ dependencies:
   - tasty-th
   - template-haskell
   - terminfo
+  - terminal-progress-bar
   - text
   - these
   - time
