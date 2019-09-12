@@ -5,6 +5,8 @@ import urbitOb from 'urbit-ob';
 import { deSig } from '/lib/util';
 import { ChatTabBar } from '/components/lib/chat-tabbar';
 import { MemberElement } from '/components/lib/member-element';
+import { InviteElement } from '/components/lib/invite-element';
+
 
 export class MemberScreen extends Component {
   constructor(props) {
@@ -12,123 +14,100 @@ export class MemberScreen extends Component {
 
     this.state = {
       station: "/" + props.match.params.station,
-      owner: props.match.params.owner,
-      invMembers: '',
-      error: false,
-      success: false
     };
 
-  }
-
-  inviteMembers() {
-    const { props, state } = this;
-    let sis = state.invMembers.split(',')
-      .map((mem) => mem.trim())
-      .map(deSig);
-
-    let isValid = true;
-    sis.forEach((mem) => {
-      if (!urbitOb.isValidPatp(`~${mem}`)) {
-        isValid = false;
-      }
-    });
-
-    if (isValid) {
-      props.api.permit(state.circle, sis, true);
-      if (this.textarea) {
-        this.textarea.value = '';
-      }
-      this.setState({
-        error: false,
-        success: true,
-        invMembers: ''
-      });
-    } else {
-      this.setState({ error: true, success: false });
-    }
-  }
-
-  inviteMembersChange(e) {
-    this.setState({
-      invMembers: e.target.value
-    });
   }
 
   render() {
     const { props, state } = this;
 
-    let readGroup = Array.from(props.read.values());
+    let writeGroup = Array.from(props.write.who.values());
+    let readGroup = Array.from(props.read.who.values());
 
-    let listMembers = readGroup.map((mem) => {
+    let writeText = '';
+    let readText = '';
+    let modWriteText = '';
+    let modReadText = '';
+
+    if (props.write.kind === 'black') {
+      writeText = 'Everyone banned from writing to this chat.';
+      modWriteText = 'Ban someone from writing to this chat.';
+    } else if (props.write.kind === 'white') {
+      writeText = 'Everyone with permission to message this chat.';
+      modWriteText = 'Invite someone to write to this chat.';
+    }
+
+    if (props.read.kind === 'black') {
+      readText = 'Everyone banned from reading this chat.';
+      modReadText = 'Ban someone from reading this chat.';
+    } else if (props.read.kind === 'white') {
+      readText = 'Everyone with permission to read this chat.';
+      modReadText = 'Invite someone to read this chat.';
+    }
+
+    let writeListMembers = writeGroup.map((mem) => {
       return (
         <MemberElement 
           key={mem} 
-          host={state.owner}
-          ship={mem}
-          circle={state.circle}
-          api={props.api} />
+          owner={props.owner}
+          ship={mem} />
       );
     });
 
-    let errorElem = !!this.state.error ? (
-      <p className="pa2 nice-red label-regular">Invalid ship name.</p>
-    ) : (
-      <div></div>
-    );
-
-    let successElem = !!this.state.success ? (
-      <p className="pa2 nice-green label-regular">Sent invites!</p>
-    ) : (
-      <div></div>
-    );
-
-
-    let inviteButtonClasses = "label-regular black underline btn-font pointer";
-    if (!this.state.error) {
-      inviteButtonClasses = inviteButtonClasses + ' black';
-    }
+    let readListMembers = readGroup.map((mem) => {
+      return (
+        <MemberElement 
+          key={mem} 
+          owner={props.owner}
+          ship={mem} />
+      );
+    });
 
     return (
       <div className="h-100 w-100 overflow-x-hidden flex flex-column">
         <div className='pl3 pt2 bb mb3'>
-          <h2>{state.circle}</h2>
+          <h2>{state.station.substr(1)}</h2>
           <ChatTabBar
             {...props}
             station={state.station}
-            numPeers={readGroup.length} />
+            numPeers={writeGroup.length}
+            isOwner={props.owner === window.ship} />
         </div>
         <div className="w-100 cf">
-          <div className="w-50 fl pa2">
-            <p className="body-regular">Permitted Members</p>
-            <p className="label-regular gray mb3">
-              Everyone with permission to see this chat.
-            </p>
-            {listMembers}
+          <div className="w-50 fl pa2 pr3">
+            <p className="body-regular mb3">Members</p>
+            <p className="label-regular gray mb3">{writeText}</p>
+            {writeListMembers}
           </div>
-          { `~${window.ship}` === state.host ? (
-            <div className="w-50 fr pa2">
-              <p className="body-regular">Invite</p>
-              <p className="label-regular gray mb3">
-                Invite new participants to this chat.
-              </p>
-              <textarea
-                ref={ e => { this.textarea = e; } }
-                className="w-80 db ba overflow-y-hidden mono gray mb2"
-                style={{
-                  resize: 'none',
-                  height: 150
-                }}
-                spellCheck="false"
-                onChange={this.inviteMembersChange.bind(this)}></textarea>
-              <button
-                onClick={this.inviteMembers.bind(this)}
-                className={inviteButtonClasses}>
-                -> Invite
-              </button>
-              {errorElem}
-              {successElem}
-            </div>
-          ) : null }
+          <div className="w-50 fr pa2 pl3">
+            <p className="body-regular mb3">Modify Permissions</p>
+            <p className="label-regular gray mb3">
+              {modWriteText}
+            </p>
+            { window.ship === props.owner ? (
+              <InviteElement
+                path={`/inbox${state.station}/write`}
+                permissions={props.write}
+                api={props.api} />
+            ) : null }
+          </div>
+        </div>
+        <div className="w-100 cf mt2">
+          <div className="w-50 fl pa2 pr3">
+            <p className="label-regular gray mb3">{readText}</p>
+            {readListMembers}
+          </div>
+          <div className="w-50 fr pa2 pl3">
+            <p className="label-regular gray mb3">
+              {modReadText}
+            </p>
+            { window.ship === props.owner ? (
+              <InviteElement
+                path={`/inbox${state.station}/read`}
+                permissions={props.read}
+                api={props.api}/>
+            ) : null }
+          </div>
         </div>
       </div>
     )

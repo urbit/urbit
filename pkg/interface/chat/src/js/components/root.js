@@ -90,7 +90,7 @@ export class Root extends Component {
                 <NewScreen
                   setSpinner={this.setSpinner}
                   api={api}
-                  inbox={state.inbox}
+                  inbox={state.inbox || {}}
                   {...props}
                 />
               </Skeleton>
@@ -117,6 +117,8 @@ export class Root extends Component {
                envelopes: []
              };
 
+             let write = state.groups[`/inbox${station}/write`] || new Set([]);
+
              return (
                <Skeleton sidebar={renderChannelSidebar(props) }>
                  <ChatScreen
@@ -125,7 +127,8 @@ export class Root extends Component {
                    owner={mailbox.owner}
                    read={mailbox.read}
                    envelopes={mailbox.envelopes}
-                   groups={state.groups}
+                   inbox={state.inbox}
+                   group={write}
                    permissions={state.permissions}
                    {...props}
                  />
@@ -136,10 +139,15 @@ export class Root extends Component {
            render={ (props) => {
              let station = '/' + props.match.params.station;
              let owner = state.inbox[station] || { owner: '' };
-             let read = state.groups[`/inbox${station}/read`] || new Set([]);
-             let write = state.groups[`/inbox${station}/write`] || new Set([]);
+             let read = state.permissions[`/inbox${station}/read`] || {
+               kind: '',
+               who: new Set([])
+             };
+             let write = state.permissions[`/inbox${station}/write`] || {
+               kind: '',
+               who: new Set([])
+             };
 
-             owner = owner.owner;
              return (
                <Skeleton sidebar={renderChannelSidebar(props) }>
                  <MemberScreen
@@ -147,7 +155,7 @@ export class Root extends Component {
                    api={api}
                    read={read}
                    write={write}
-                   owner={owner}
+                   owner={owner.owner}
                    permissions={state.permissions}
                  />
                </Skeleton>
@@ -155,6 +163,10 @@ export class Root extends Component {
            }} />
          <Route exact path="/~chat/room/:station/settings"
            render={ (props) => {
+             let station = '/' + props.match.params.station;
+             let owner = state.inbox[station] || { owner: '' };
+             let write = state.groups[`/inbox${station}/write`] || new Set([]);
+
              return (
                <Skeleton
                  spinner={this.state.spinner}
@@ -163,7 +175,8 @@ export class Root extends Component {
                    {...props}
                    setSpinner={this.setSpinner}
                    api={api}
-                   groups={state.groups}
+                   owner={owner.owner}
+                   group={write}
                    inbox={state.inbox}
                  />
                </Skeleton>

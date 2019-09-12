@@ -17,6 +17,7 @@
 ::
 +$  state-zero
   $:  synced=(map path ship)
+      boned=(map wire (list bone))
   ==
 ::
 +$  poke
@@ -37,6 +38,12 @@
     [~ this]
   [~ this(+<+ u.old)]
 ::
+++  poke-noun
+  |=  a=*
+  ^-  (quip move _this)
+  ~&  synced
+  [~ this]
+::
 ++  poke-inbox-action
   |=  act=inbox-action
   ^-  (quip move _this)
@@ -56,7 +63,7 @@
   ?.  =(u.ship our.bol)
     ~
   ::  scry permissions to check if write is permitted
-  ?.  (permitted-scry [%inbox (weld path.act /write)])
+  ?.  (permitted-scry [(scot %p src.bol) %inbox (weld path.act /write)])
     ~
   =.  author.envelope.act  src.bol
   =.  when.envelope.act  now.bol
@@ -91,8 +98,10 @@
     ==
   ::
       %add-synced
+    ~&  'add-synced'
     =/  inbox-path  [%mailbox path.act]
     =/  inbox-wire  [(scot %p ship.act) inbox-path]
+    ~&  inbox-wire
     ?:  (~(has by synced) path.act)
       [~ this]
     :_  this(synced (~(put by synced) path.act ship.act))
@@ -100,6 +109,8 @@
   ::
       %remove-synced
     =/  inbox-wire  [(scot %p ship.act) %mailbox path.act]
+    ~&  inbox-wire
+    ~&  path.act
     :_  this(synced (~(del by synced) path.act))
     [ost.bol %pull inbox-wire [ship.act %inbox-sync] ~]~
   ::
@@ -108,22 +119,30 @@
 ++  peer-mailbox
   |=  pax=path
   ^-  (quip move _this)
+  ~&  pax
   ?~  pax
     [[ost.bol %quit ~]~ this]
   ?.  (~(has by synced) pax)
+    ~&  'no has'
     [[ost.bol %quit ~]~ this]
   ::  scry permissions to check if read is permitted
-  ?.  (permitted-scry [%inbox (weld pax /read)])
+  ~&  'is permitted?'
+  ?.  (permitted-scry [(scot %p src.bol) %inbox (weld pax /write)])
+    ~&  'no'
     [[ost.bol %quit ~]~ this]
+  ~&  'yes'
   =/  box=(unit mailbox)  (inbox-scry pax)
   ?~  box
+    ~&  'no has'
     [[ost.bol %quit ~]~ this]
+  ~&  'we send'
   :_  this
   [ost.bol %diff [%inbox-update [%create pax owner.u.box]]]~
 ::
 ++  diff-inbox-update
   |=  [wir=wire diff=inbox-update]
   ^-  (quip move _this)
+  ~&  diff
   ?:  =(src.bol our.bol)
     (handle-local diff)
   (handle-foreign diff)
@@ -142,8 +161,11 @@
     [~ this]
   ::
       %delete
+    ~&  local-delete+diff
     ?.  (~(has by synced) path.diff)
+      ~&  'failing'
       [~ this]
+    ~&  'continuing'
     =/  inbox-wire  [(scot %p our.bol) %mailbox path.diff]
     :_  this(synced (~(del by synced) path.diff))
     :-  (inbox-poke diff)
@@ -161,6 +183,7 @@
 ++  handle-foreign
   |=  diff=inbox-update
   ^-  (quip move _this)
+  ~&  foreign+diff
   ?-  -.diff
       %keys
     [~ this]
@@ -300,10 +323,7 @@
     pax
     `path`/noun
   ==
-  =/  pem=(unit ?)  .^((unit ?) %gx pax)
-  ?~  pem
-    %.n
-  u.pem
+  .^(? %gx pax)
 ::
 --
 

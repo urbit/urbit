@@ -22,7 +22,7 @@ export class LandingScreen extends Component {
     let station = '/' + props.match.params.station;
 
     if (station in props.inbox) {
-      props.history.push(`/~chat/${station}`);
+      props.history.push(`/~chat/room${station}`);
     }
   }
 
