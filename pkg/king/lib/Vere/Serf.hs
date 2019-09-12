@@ -408,21 +408,23 @@ replayJobs serf lastEv = go Nothing
       await >>= \case
         Nothing -> pure ss
         Just job -> do
-          pb <- case pb of
-            Nothing -> do
-              -- We only construct the progress bar on the first time that we
-              -- process an event so that we don't display an empty progress
-              -- bar when the snapshot is caught up to the log.
-              let toReplay = lastEv - (fromIntegral (ssNextEv ss))
-              let style = defStyle { stylePostfix = exact }
-              putStrLn $ pack ("Replaying events #" ++ (show (ssNextEv ss)) ++
-                               " to #" ++ (show lastEv))
-              io $ newProgressBar style 10 (Progress 0 toReplay lastEv)
-            Just pb -> do
-              io $ incProgress pb 1
-              pure pb
+          pb <- updatePb ss pb
           played <- lift $ replayJob serf job
           go (Just pb) played
+
+    updatePb ss = \case
+      Nothing -> do
+        -- We only construct the progress bar on the first time that we
+        -- process an event so that we don't display an empty progress
+        -- bar when the snapshot is caught up to the log.
+        let toReplay = lastEv - (fromIntegral (ssNextEv ss))
+        let style = defStyle { stylePostfix = exact }
+        putStrLn $ pack ("Replaying events #" ++ (show (ssNextEv ss)) ++
+                         " to #" ++ (show lastEv))
+        io $ newProgressBar style 10 (Progress 0 toReplay lastEv)
+      Just pb -> do
+        io $ incProgress pb 1
+        pure pb
 
 
 replay :: HasLogFunc e => Serf e -> Log.EventLog -> RIO e SerfState
