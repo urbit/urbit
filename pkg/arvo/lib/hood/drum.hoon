@@ -87,11 +87,13 @@
       [%base %dojo]
       [%base %modulo]
       [%home %launch]
+      [%home %lyre]
   ==
   :~  [%home %lens]
       [%home %dojo]
       [%home %modulo]
       [%home %launch]
+      [%home %lyre]
       [%home %permissions]
       [%home %groups]
       [%home %group-sync]

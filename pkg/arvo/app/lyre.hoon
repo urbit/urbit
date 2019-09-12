@@ -1,4 +1,4 @@
-/-  *lyre, hall
+/-  *lyre, inbox
 /+  *server
 ::
 ::
@@ -148,7 +148,7 @@
       %chat
     =/  dep=dependencies
       :*  ~  ::[[[byk.bol /hoon/hello/gen] %x] [[byk.bol /] %y]]
-          ~[[%dummy /sub-path]]
+          ~[[%inbox /full/all/chat1]]
           ~
           %chat
       ==
