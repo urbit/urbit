@@ -19,6 +19,7 @@ export class NewScreen extends Component {
 
     this.idChange = this.idChange.bind(this);
     this.invChange = this.invChange.bind(this);
+    this.securityChange = this.securityChange.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {

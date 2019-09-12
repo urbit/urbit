@@ -17,6 +17,7 @@
 ::
 +$  state-zero
   $:  synced=(map path ship)
+      boned=(map wire (list bone))
   ==
 ::
 +$  poke
@@ -108,6 +109,8 @@
   ::
       %remove-synced
     =/  inbox-wire  [(scot %p ship.act) %mailbox path.act]
+    ~&  inbox-wire
+    ~&  path.act
     :_  this(synced (~(del by synced) path.act))
     [ost.bol %pull inbox-wire [ship.act %inbox-sync] ~]~
   ::
@@ -158,8 +161,11 @@
     [~ this]
   ::
       %delete
+    ~&  local-delete+diff
     ?.  (~(has by synced) path.diff)
+      ~&  'failing'
       [~ this]
+    ~&  'continuing'
     =/  inbox-wire  [(scot %p our.bol) %mailbox path.diff]
     :_  this(synced (~(del by synced) path.diff))
     :-  (inbox-poke diff)

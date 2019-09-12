@@ -139,8 +139,14 @@ export class Root extends Component {
            render={ (props) => {
              let station = '/' + props.match.params.station;
              let owner = state.inbox[station] || { owner: '' };
-             let read = state.groups[`/inbox${station}/read`] || new Set([]);
-             let write = state.groups[`/inbox${station}/write`] || new Set([]);
+             let read = state.permissions[`/inbox${station}/read`] || {
+               kind: '',
+               who: new Set([])
+             };
+             let write = state.permissions[`/inbox${station}/write`] || {
+               kind: '',
+               who: new Set([])
+             };
 
              return (
                <Skeleton sidebar={renderChannelSidebar(props) }>
