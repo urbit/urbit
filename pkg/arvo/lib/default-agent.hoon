@@ -36,12 +36,12 @@
       %quit
     ~|  "unexpected subscription closure to {<dap.bowl>} on wire {<wire>}"
     !!
-  ::  
+  ::
       %diff
     ~|  "unexpected subscription update to {<dap.bowl>} on wire {<wire>}"
     ~|  "with mark {<p.p.internal-gift>}"
     !!
-  ::  
+  ::
       %http-response
     ~|  "unexpected http-response to {<dap.bowl>} on wire {<wire>}"
     !!

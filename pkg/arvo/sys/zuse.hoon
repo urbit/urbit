@@ -1870,17 +1870,17 @@
       $%  {$conf p/dock q/dock}                         ::  configure app
           {$conf-mall p/dock q/dock}                    ::  configure app
           $>(%init vane-task)                           ::  set owner
-          {$deal p/sock q/internal-task}                ::  full transmission
-          {$deal-mall p/sock q/internal-task}           ::  full transmission
+          {$deal p/sock q/term r/task:agent}            ::  full transmission
+          {$deal-mall p/sock q/term r/task:agent}       ::  full transmission
           $>(%vega vane-task)                           ::  report upgrade
           $>(%west vane-task)                           ::  network request
           [%wash ~]                                     ::  clear caches
           $>(%wegh vane-task)                           ::  report memory
       ==                                                ::
     --  ::able
-  ++  bitt  (map bone (pair ship path))                 ::  incoming subs
+  ++  bitt  (map duct (pair ship path))                 ::  incoming subs
   ++  boat                                              ::  outgoing subs
-    %+  map  (pair bone wire)                           ::
+    %+  map  wire                                       ::
     (trel bean ship path)                               ::
   ++  bowl                                              ::  standard app state
           $:  $:  our/ship                              ::  host
@@ -1890,23 +1890,11 @@
               $:  wex/boat                              ::  outgoing subs
                   sup/bitt                              ::  incoming subs
               ==                                        ::
-              $:  ost/bone                              ::  opaque cause
-                  act/@ud                               ::  change number
+              $:  act/@ud                               ::  change number
                   eny/@uvJ                              ::  entropy
                   now/@da                               ::  current time
                   byk/beak                              ::  load source
           ==  ==                                        ::
-  ++  agent-action                                      ::  agent action
-    $%  {$peel p/mark q/path}                           ::  translated peer
-        {$peer p/path}                                  ::  subscribe
-        {$poke p/cage}                                  ::  apply
-        {$puff p/mark q/noun}                           ::  unchecked poke
-        {$pull ~}                                       ::  unsubscribe
-        {$punk p/mark q/cage}                           ::  translated poke
-        {$pump ~}                                       ::  pump yes+no
-        {$peer-not p/tang}                              ::  poison pill peer
-    ==                                                  ::
-  ++  internal-task  task:agent                         ::  internal task
   ++  dude  term                                        ::  server identity
   ++  gill  (pair ship term)                            ::  general contact
   ++  scar                                              ::  opaque duct
@@ -1916,7 +1904,6 @@
     ==                                                  ::
   ++  suss  (trel dude @tas @da)                        ::  config report
   ++  well  (pair desk term)                            ::
-  ::
   ::  +agent: app core
   ::
   ++  agent
@@ -1924,8 +1911,8 @@
     |%
     +$  step  (quip card form)
     +$  card  (wind note gift)
-    +$  note  
-      $%  [%arvo note-arvo]
+    +$  note
+      $%  [%arvo =note-arvo]
           [%agent =ship name=term =task]
       ==
     +$  task
@@ -1939,8 +1926,8 @@
       ==
     +$  gift
       $%  [%poke-ack p=(unit tang)]
-          [%subscription-update p=cage]
-          [%subscription-closed ~]
+          [%subscription-update path=(unit path) =cage]
+          [%subscription-close path=(unit path)]
           [%subscription-ack p=(unit tang)]
           [%http-response =http-event:http]
       ==
@@ -1948,42 +1935,42 @@
       $_  ^|
       |_  bowl
       ++  handle-init
-        *(quip move _^|(..handle-init))
+        *(quip card _^|(..handle-init))
       ::
       ++  handle-extract-state
         *vase
       ::
       ++  handle-upgrade-state
         |~  old-state=vase
-        *(quip move _^|(..handle-init))
+        *(quip card _^|(..handle-init))
       ::
       ++  handle-poke
         |~  in-poke-data=cage
-        *(quip move _^|(..handle-init))
+        *(quip card _^|(..handle-init))
       ::
       ++  handle-subscribe
         |~  path
-        *(quip move _^|(..handle-init))
+        *(quip card _^|(..handle-init))
       ::
       ++  handle-unsubscribe
         |~  path
-        *(quip move _^|(..handle-init))
+        *(quip card _^|(..handle-init))
       ::
       ++  handle-peek
         |~  path
         *(unit (unit cage))
       ::
       ++  handle-agent-response
-        |~  [wire internal-gift]
-        *(quip move _^|(..handle-init))
+        |~  [wire gift]
+        *(quip card _^|(..handle-init))
       ::
       ++  handle-arvo-response
         |~  [wire =sign-arvo]
-        *(quip move _^|(..handle-init))
+        *(quip card _^|(..handle-init))
       ::
       ++  handle-error
         |~  [term tang]
-        *(quip move _^|(..handle-init))
+        *(quip card _^|(..handle-init))
       --
     --
   --  ::mall
@@ -2442,6 +2429,116 @@
         {$ix p/@da q/@ud r/@if}                         ::  IPv4 provisional
     ==                                                  ::
   --  ::xmas
+++  gift-arvo                                           ::  out result <-$
+  $~  [%init ~zod]
+  $%  gift:able:ames
+      gift:able:behn
+      gift:able:clay
+      gift:able:dill
+      gift:able:eyre
+      gift:able:ford
+      gift:able:gall
+      gift:able:mall
+      gift:able:iris
+      gift:able:jael
+  ==
+++  task-arvo                                           ::  in request ->$
+  $%  task:able:ames
+      task:able:clay
+      task:able:behn
+      task:able:dill
+      task:able:iris
+      task:able:ford
+      task:able:gall
+      task:able:eyre
+      task:able:jael
+  ==
+++  note-arvo                                           ::  out request $->
+  $~  [%a %wake ~]
+  $%  {$a task:able:ames}
+      {$b task:able:behn}
+      {$c task:able:clay}
+      {$d task:able:dill}
+      [%e task:able:eyre]
+      {$f task:able:ford}
+      {$g task:able:gall}
+      {$m task:able:mall}
+      [%i task:able:iris]
+      {$j task:able:jael}
+      {@tas $meta vase}
+  ==
+++  sign-arvo                                           ::  in result $<-
+  $%  {$a gift:able:ames}
+      $:  $b
+          $%  gift:able:behn
+              [%writ riot:clay]
+              $>(%mere gift:able:clay)
+          ==
+      ==
+      {$c gift:able:clay}
+      {$d gift:able:dill}
+      {$f gift:able:ford}
+      [%e gift:able:eyre]
+      {$g gift:able:gall}
+      {$m gift:able:mall}
+      [%i gift:able:iris]
+      {$j gift:able:jael}
+  ==
+::
++$  unix-task                                           ::  input from unix
+  $~  [%wake ~]
+  $%  ::  %ames: new process
+      ::
+      $>(%barn task:able:ames)
+      ::  %dill: keyboard input
+      ::
+      $>(%belt task:able:dill)
+      ::  %dill: configure terminal (resized)
+      ::
+      $>(%blew task:able:dill)
+      ::  %clay: new process
+      ::
+      $>(%boat task:able:clay)
+      ::  %behn/%eyre/%iris: new process
+      ::
+      $>(%born vane-task)
+      ::  %eyre: cancel request
+      ::
+      [%cancel-request ~]
+      ::  any vane: error report
+      ::
+      $>(%crud vane-task)
+      ::  %dill: reset terminal configuration
+      ::
+      $>(%hail task:able:dill)
+      ::  %ames: hear packet
+      ::
+      $>(%hear task:able:ames)
+      ::  %dill: hangup
+      ::
+      $>(%hook task:able:dill)
+      ::  %clay: external edit
+      ::
+      $>(%into task:able:clay)
+      ::  %eyre: learn ports of live http servers
+      ::
+      $>(%live task:able:eyre)
+      ::  %iris: hear (partial) http response
+      ::
+      $>(%receive task:able:iris)
+      ::  %eyre: starts handling an inbound http request
+      ::
+      $>(%request task:able:eyre)
+      ::  %eyre: starts handling an backdoor http request
+      ::
+      $>(%request-local task:able:eyre)
+      ::  %behn: wakeup
+      ::
+      $>(%wake task:able:behn)
+      ::  %ames: send message
+      ::
+      $>(%want task:able:ames)
+  ==
 --  ::
 ::                                                      ::  ::
 ::::                                                    ::  ::  (2) engines
@@ -7540,115 +7637,6 @@
   --
 ::
 ++  zuse  %309                                          ::  hoon+zuse kelvin
-++  gift-arvo                                           ::  out result <-$
-  $~  [%init ~zod]
-  $%  gift:able:ames
-      gift:able:behn
-      gift:able:clay
-      gift:able:dill
-      gift:able:eyre
-      gift:able:ford
-      gift:able:gall
-      gift:able:iris
-      gift:able:jael
-  ==
-++  task-arvo                                           ::  in request ->$
-  $%  task:able:ames
-      task:able:clay
-      task:able:behn
-      task:able:dill
-      task:able:iris
-      task:able:ford
-      task:able:gall
-      task:able:eyre
-      task:able:jael
-  ==
-++  note-arvo                                           ::  out request $->
-  $~  [%a %wake ~]
-  $%  {$a task:able:ames}
-      {$b task:able:behn}
-      {$c task:able:clay}
-      {$d task:able:dill}
-      [%e task:able:eyre]
-      {$f task:able:ford}
-      {$g task:able:gall}
-      {$m task:able:mall}
-      [%i task:able:iris]
-      {$j task:able:jael}
-      {@tas $meta vase}
-  ==
-++  sign-arvo                                           ::  in result $<-
-  $%  {$a gift:able:ames}
-      $:  $b
-          $%  gift:able:behn
-              [%writ riot:clay]
-              $>(%mere gift:able:clay)
-          ==
-      ==
-      {$c gift:able:clay}
-      {$d gift:able:dill}
-      {$f gift:able:ford}
-      [%e gift:able:eyre]
-      {$g gift:able:gall}
-      {$m gift:able:mall}
-      [%i gift:able:iris]
-      {$j gift:able:jael}
-  ==
-::
-+$  unix-task                                           ::  input from unix
-  $~  [%wake ~]
-  $%  ::  %ames: new process
-      ::
-      $>(%barn task:able:ames)
-      ::  %dill: keyboard input
-      ::
-      $>(%belt task:able:dill)
-      ::  %dill: configure terminal (resized)
-      ::
-      $>(%blew task:able:dill)
-      ::  %clay: new process
-      ::
-      $>(%boat task:able:clay)
-      ::  %behn/%eyre/%iris: new process
-      ::
-      $>(%born vane-task)
-      ::  %eyre: cancel request
-      ::
-      [%cancel-request ~]
-      ::  any vane: error report
-      ::
-      $>(%crud vane-task)
-      ::  %dill: reset terminal configuration
-      ::
-      $>(%hail task:able:dill)
-      ::  %ames: hear packet
-      ::
-      $>(%hear task:able:ames)
-      ::  %dill: hangup
-      ::
-      $>(%hook task:able:dill)
-      ::  %clay: external edit
-      ::
-      $>(%into task:able:clay)
-      ::  %eyre: learn ports of live http servers
-      ::
-      $>(%live task:able:eyre)
-      ::  %iris: hear (partial) http response
-      ::
-      $>(%receive task:able:iris)
-      ::  %eyre: starts handling an inbound http request
-      ::
-      $>(%request task:able:eyre)
-      ::  %eyre: starts handling an backdoor http request
-      ::
-      $>(%request-local task:able:eyre)
-      ::  %behn: wakeup
-      ::
-      $>(%wake task:able:behn)
-      ::  %ames: send message
-      ::
-      $>(%want task:able:ames)
-  ==
 ::                                                      ::
 ::::                      ++azimuth                     ::  (2az) azimuth
   ::                                                    ::::

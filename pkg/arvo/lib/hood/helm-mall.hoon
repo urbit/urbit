@@ -34,19 +34,20 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |:  $:{bowl:gall part}                                  ::  main helm work
-=+  sez=(~(gut by hoc) ost $:session)
-=|  moz=(list move:agent:mall)
+=/  ost  0
+=+  sez=(~(gut by hoc) $:session)
+=|  moz=(list card:agent:mall)
 |%
 ++  abet
-  [(flop moz) %_(+<+.$ hoc (~(put by hoc) ost sez))]
+  [(flop moz) %_(+<+.$ hoc (~(put by hoc) sez))]
 ::
 ++  emit
-  |=  (wind internal-note:mall internal-gift:mall)
-  %_(+> moz [[ost +<] moz])
+  |=  card:agent:mall
+  %_(+> moz [+< moz])
 ::
 ++  flog
   |=  =flog:dill
-  (emit %pass /di %meta %d !>([%flog flog]))
+  (emit %pass /di %arvo %d %flog flog)
 ::
 ++  emil                                              ::  return cards
   |=  (list (wind internal-note:mall internal-gift:mall))
@@ -66,18 +67,18 @@
   ?.  =(our who.u.sed)
     ~&  [%wrong-private-key-ship who.u.sed]
     +>.$
-  (emit %pass / %meta %j !>([%rekey lyf.u.sed key.u.sed]))
+  (emit %pass / %arvo %j %rekey lyf.u.sed key.u.sed)
 ::
 ++  poke-moon                                        ::  rotate moon keys
   |=  sed=(unit [=ship =udiff:point:able:jael])
   =<  abet
   ?~  sed
     +>.$
-  (emit %pass / %meta %j !>([%moon u.sed]))
+  (emit %pass / %arvo %j %moon u.sed)
 ::
 ++  poke-nuke                                         ::  initialize
   |=  him/ship  =<  abet
-  (emit %pass /helm %meta %j !>([%nuke him]))
+  (emit %pass /helm %arvo %j %nuke him)
 ::
 ++  poke-mass
   |=  ~  =<  abet
@@ -87,17 +88,17 @@
   |=  recur=@dr
   =.  mass-timer.sez
     [/helm/automass (add now recur) recur]
-  abet:(emit %pass way.mass-timer.sez %meta %b !>([%wait nex.mass-timer.sez]))
+  abet:(emit %pass way.mass-timer.sez %arvo %b %wait nex.mass-timer.sez)
 ::
 ++  poke-cancel-automass
   |=  ~
-  abet:(emit %pass way.mass-timer.sez %meta %b !>([%rest nex.mass-timer.sez]))
+  abet:(emit %pass way.mass-timer.sez %arvo %b %rest nex.mass-timer.sez)
 ::
 ++  poke-bonk
   |=  ~
   ~&  .^((unit @da) %a /(scot %p our)/time/(scot %da now)/(scot %p our))
   %-  %-  slog  :_  ~  .^(tank %b /(scot %p our)/timers/(scot %da now))
-  abet:(emit %pass /bonk %meta %a !>([%bonk ~]))
+  abet:(emit %pass /bonk %arvo %a %bonk ~)
 ::
 ++  take-wake-automass
   |=  [way=wire error=(unit tang)]
@@ -108,15 +109,15 @@
   =.  nex.mass-timer.sez  (add now tim.mass-timer.sez)
   =<  abet
   %-  emil
-  :~  [%pass /heft %meta %d !>([%flog %crud %hax-heft ~])]
-      [%pass way.mass-timer.sez %meta %b !>([%wait nex.mass-timer.sez])]
+  :~  [%pass /heft %arvo %d %flog %crud %hax-heft ~]
+      [%pass way.mass-timer.sez %arvo %b %wait nex.mass-timer.sez]
   ==
 ::
 ++  poke-send-hi
   |=  {her/ship mes/(unit tape)}  =<  abet
   %-  emit
   :*  %pass  /helm/hi/(scot %p her)
-      %send  her  %hood  %poke
+      %agent  her  %hood  %poke
       %helm-hi  !>(?~(mes '' (crip u.mes)))
   ==
 ::
@@ -163,7 +164,7 @@
   =+  zus==('z' tip)
   =+  way=?:(zus (welp top /sys/[nam]) (welp top /sys/vane/[nam]))
   =+  fil=.^(@ %cx (welp way /hoon))
-  [%pass /reload %meta %d !>([%flog %veer ?:(=('z' tip) %$ tip) way fil])]
+  [%pass /reload %arvo %d %flog %veer ?:(=('z' tip) %$ tip) way fil]
 ::  +poke-reset:  send %lyra to initiate kernel upgrade
 ::
 ::    And reinstall %zuse and the vanes with %veer.
@@ -177,10 +178,10 @@
   =/  top=path  /(scot %p our)/home/(scot %da now)/sys
   =/  hun  .^(@ %cx (welp top /hoon/hoon))
   =/  arv  .^(@ %cx (welp top /arvo/hoon))
-  :-  [%pass /reset %meta %d !>([%flog %lyra `@t`hun `@t`arv])]
+  :-  [%pass /reset %arvo %d %flog %lyra `@t`hun `@t`arv]
   %+  turn
     (module-ova:pill top)
-  |=([=wire =flog:dill] [%pass wire %meta %d !>([%flog flog])])
+  |=([=wire =flog:dill] [%pass wire %arvo %d %flog flog])
 ::
 ++  poke-verb                                         ::  toggle verbose
   |=  ~  =<  abet
@@ -188,18 +189,18 @@
 ::
 ++  poke-serve
   |=  [=binding:eyre =generator:eyre]  =<  abet
-  (emit %pass /helm/serv %meta %e !>([%serve binding generator]))
+  (emit %pass /helm/serv %arvo %e %serve binding generator)
 ::
 ++  take-bound
   |=  [wir=wire success=? binding=binding:eyre]  =<  abet
   (flog %text "bound: {<success>}")
 ::
 ++  take
-  |=  [=wire =vase]
+  |=  [=wire =sign-arvo]
   ?+  wire  ~|([%helm-bad-take-wire wire] !!)
     [%automass *]  %+  take-wake-automass  t.wire
-                   +:(need !<([%wake (unit tang)] vase))
+                   ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
     [%serv *]      %+  take-bound  t.wire
-                   +:(need !<([%bound ? binding:eyre] vase))
+                   ?>(?=(%bound +<.sign-arvo) +>.sign-arvo)
   ==
 --

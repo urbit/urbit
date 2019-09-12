@@ -20,8 +20,7 @@
   |:($:source +<(mir ((pair @ud (list @c)))))           ::  style-less mir
 ::                                                      ::
 ++  pith-2                                              ::
-  $:  sys/(unit bone)                                   ::  local console
-      eel/(set gill:gall)                               ::  connect to
+  $:  eel/(set gill:gall)                               ::  connect to
       ray/(set well:gall)                               ::
       fur/(map dude:gall (unit server))                 ::  servers
       bin/(map bone source)                             ::  terminals
@@ -121,7 +120,6 @@
   ^-  part
   :*  %drum
       %2
-      sys=~
       eel=(deft-fish our)
       ray=~
       fur=~
@@ -142,7 +140,8 @@
 ::::
   ::
 |=  {hid/bowl:gall part}                          ::  main drum work
-=+  (~(gut by bin) ost.hid *source)
+=/  ost  0
+=+  (~(gut by bin) ost *source)
 =*  dev  -
 =>  |%                                                ::  arvo structures
     ++  pear                                          ::  request
@@ -161,7 +160,7 @@
       ==                                              ::
     ++  move  (pair bone card)                        ::  user-level move
     --
-|_  {moz/(list move:agent:mall) biz/(list dill-blit:dill)}
+|_  {moz/(list card:agent:mall) biz/(list dill-blit:dill)}
 ++  diff-sole-effect-phat                             ::  app event
   |=  {way/wire fec/sole-effect}
   =<  se-abet  =<  se-view
@@ -227,9 +226,10 @@
   (se-dump:(se-drop & gyl) u.saw)
 ::
 ++  take                                              ::
-  |=  [=wire =vase]
+  |=  [=wire =sign-arvo]
   %+  take-onto  wire
-  +:(need !<([%onto (each suss:gall tang)] vase))
+  ?>  ?=(%onto +<.sign-arvo)
+  +>.sign-arvo
 ::
 ++  take-coup-phat                                    ::  ack poke
   |=  {way/wire saw/(unit tang)}
@@ -239,7 +239,7 @@
   ?:  (se-aint gyl)  +>.$
   %-  se-dump:(se-drop & gyl)
   :_  u.saw
-  >[%drum-coup-fail src.hid ost.hid gyl]<
+  >[%drum-coup-fail src.hid gyl]<
 ::
 ++  take-onto                                         ::  ack start
   |=  {way/wire saw/(each suss:gall tang)}
@@ -258,27 +258,27 @@
   |=  way/wire
   =<  se-abet  =<  se-view
   =+  gyl=(de-gill way)
-  ~&  [%drum-quit src.hid ost.hid gyl]
+  ~&  [%drum-quit src.hid gyl]
   (se-drop %| gyl)
 ::                                                    ::  ::
 ::::                                                  ::  ::
   ::                                                  ::  ::
 ++  se-abet                                           ::  resolve
-  ^-  (quip move:agent:mall part)
+  ^-  (quip card:agent:mall part)
   =*  pith  +<+.$
   ?.  se-ably
     =.  .  se-adit
     [(flop moz) pith]
-  =.  sys  ?^(sys sys `ost.hid)
   =.  .  se-subze:se-adze:se-adit
-  :_  pith(bin (~(put by bin) ost.hid dev))
+  :_  pith(bin (~(put by bin) ost dev))
   %-  flop
-  ^-  (list move:agent:mall)
+  ^-  (list card:agent:mall)
   ?~  biz  moz
   :_  moz
-  [ost.hid %give %diff %dill-blit !>(?~(t.biz i.biz [%mor (flop biz)]))]
+  =/  =blit:dill  ?~(t.biz i.biz [%mor (flop biz)])
+  [%give %subscription-update `/drum %dill-blit !>(blit)]
 ::
-++  se-ably  (~(has by sup.hid) ost.hid)              ::  caused by console
+++  se-ably  (~(has by sup.hid) ost)                  ::  caused by console
 ::
 ++  se-adit                                           ::  update servers
   ^+  .
@@ -293,7 +293,7 @@
   =.  +>.$  (se-text "activated app {(trip p.wel)}/{(trip q.wel)}")
   %-  se-emit(fur (~(put by fur) q.wel ~))
   =/  =wire  [%drum p.wel q.wel ~]
-  [ost.hid %pass wire %meta %m !>([%conf [our.hid q.wel] our.hid p.wel])]
+  [%pass wire %arvo %m %conf [our.hid q.wel] our.hid p.wel]
 ::
 ++  se-adze                                           ::  update connections
   ^+  .
@@ -306,14 +306,14 @@
   (se-peer gil)
 ::
 ++  se-subze                                          ::  downdate connections
-  =<  .(dev (~(got by bin) ost.hid))
-  =.  bin  (~(put by bin) ost.hid dev)
+  =<  .(dev (~(got by bin) ost))
+  =.  bin  (~(put by bin) ost dev)
   ^+  .
   %-  ~(rep by bin)
   =<  .(con +>)
   |:  $:{{ost/bone dev/source} con/_.}  ^+  con
-  =+  xeno=se-subze-local:%_(con ost.hid ost, dev dev)
-  xeno(ost.hid ost.hid.con, dev dev.con, bin (~(put by bin) ost dev.xeno))
+  =+  xeno=se-subze-local:%_(con ost ost, dev dev)
+  xeno(ost ost.con, dev dev.con, bin (~(put by bin) ost dev.xeno))
 ::
 ++  se-subze-local
   ^+  .
@@ -328,7 +328,7 @@
 ++  se-aint                                           ::  ignore result
   |=  gyl/gill:gall
   ^-  ?
-  ?.  (~(has by bin) ost.hid)  &
+  ?.  (~(has by bin) ost)  &
   =+  gyr=(~(get by fug) gyl)
   |(?=(~ gyr) ?=(~ u.gyr))
 ::
@@ -436,8 +436,7 @@
 ::
 ++  se-blit-sys                                       ::  output to system
   |=  bil/dill-blit:dill  ^+  +>
-  ?~  sys  ~&(%se-blit-no-sys +>)
-  (se-emit [u.sys %give %diff %dill-blit !>(bil)])
+  (se-emit %give %subscription-update %dill-blit `/drum !>(bil))
 ::
 ++  se-show                                           ::  show buffer, raw
   |=  lin/(pair @ud stub)
@@ -475,7 +474,7 @@
   (se-just ta-vew:(se-tame u.gul))
 ::
 ++  se-emit
-  |=  move:agent:mall
+  |=  card:agent:mall
   %_(+> moz [+< moz])
 ::
 ++  se-hall
@@ -497,16 +496,16 @@
 ::
 ++  se-poke                                           ::  send a poke
   |=  {gyl/gill:gall par/pear}
-  (se-emit [ost.hid %pass (en-gill gyl) %send p.gyl q.gyl %poke par])
+  (se-emit %pass (en-gill gyl) %agent p.gyl q.gyl %poke par)
 ::
 ++  se-peer                                           ::  send a peer
   |=  gyl/gill:gall
   %-  se-emit(fug (~(put by fug) gyl ~))
-  [ost.hid %pass (en-gill gyl) %send p.gyl q.gyl %peer /sole]
+  [%pass (en-gill gyl) %agent p.gyl q.gyl %subscribe /sole]
 ::
 ++  se-pull                                           ::  cancel subscription
   |=  gyl/gill:gall
-  (se-emit [ost.hid %pass (en-gill gyl) %send p.gyl q.gyl %pull ~])
+  (se-emit %pass (en-gill gyl) %agent p.gyl q.gyl %unsubscribe ~)
 ::
 ++  se-tame                                           ::  switch connection
   |=  gyl/gill:gall

@@ -21,11 +21,11 @@
   ::
 |=  {bowl:gall part}
 =*  par  +<+
-|_  moz/(list move:agent:mall)
+|_  moz/(list card:agent:mall)
 ++  abet  [(flop moz) `part`par]
 ++  emit
-  |=  a/(wind internal-note:mall internal-gift:mall)
-  %_(+> moz :_(moz [ost a]))
+  |=  =card:agent:mall
+  %_(+> moz :_(moz card))
 ::
 ++  beak-now  byk(r [%da now])
 ++  poke-wipe
@@ -33,7 +33,7 @@
   =+  ext=%md
   ?~  (file (en-beam beak-now [ext sup]))
     ~|(not-found+[ext `path`(flop sup)] !!)
-  =-  abet:(emit %pass /write %meta %c !>([%info -]))
+  =-  abet:(emit %pass /write %arvo %c %info -)
   (fray (en-beam beak-now [ext sup]))
 ::
 ++  poke-tree
@@ -94,13 +94,13 @@
     (made pax now [%complete %success %$ cay])
   =<  abet
   %-  emit  :*
-    %pass  write+pax  %meta  %f  !>
-  :*  %build
+    %pass  write+pax  %arvo  %f
+    %build
       live=%.n                ::  XX defer %nice
       ^-  schematic:ford   ::  SYNTAX ERROR AT START OF LINE?
       =/  =beak  beak-now
       [%cast [p q]:beak u.ext [%$ cay]]
-  ==  ==
+  ==
 ::
 ++  made
   |=  [pax=wire date=@da result=made-result:ford]
@@ -118,12 +118,13 @@
   ::
   =/  =cage  (result-to-cage:ford build-result)
   ::
-  =-  abet:(emit %pass /write %meta %c !>([%info -]))
+  =-  abet:(emit %pass /write %arvo %c %info -)
   ::
   (foal :(welp (en-beam beak-now ~) pax /[-.cage]) cage)
 ::
 ++  take                                              ::
-  |=  [=wire =vase]
+  |=  [=wire =sign-arvo]
   %+  made  wire
-  +:(need !<([%made @da made-result:ford] vase))
+  ?>  ?=(%made +<.sign-arvo)
+  +>.sign-arvo
 --
