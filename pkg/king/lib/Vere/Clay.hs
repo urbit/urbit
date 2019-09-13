@@ -106,12 +106,8 @@ clay pierPath king enqueueEv =
       ]
 
     runSync :: RAcquire e (EffCb e SyncEf)
-    runSync = do
-      tim <- mkRAcquire start stop
-      pure (handleEffect tim)
+    runSync = handleEffect <$> mkRAcquire start stop
 
-    -- TODO: Traditionally, lock file acquisition was handled in the unix
-    -- driver. This should instead be bumped up to main or something.
     start :: RIO e ClayDrv
     start = ClayDrv <$> newTVarIO mempty
     stop c = pure ()

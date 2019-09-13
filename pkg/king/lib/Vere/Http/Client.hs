@@ -5,8 +5,8 @@
 
 module Vere.Http.Client where
 
-import Arvo            (KingId, Ev(..), BlipEv(..), HttpClientEf(..),
-                        HttpClientEv(..), HttpClientReq(..), HttpEvent(..),
+import Arvo            (BlipEv(..), Ev(..), HttpClientEf(..), HttpClientEv(..),
+                        HttpClientReq(..), HttpEvent(..), KingId,
                         ResponseHeader(..))
 import UrbitPrelude    hiding (Builder)
 import Vere.Pier.Types
@@ -52,15 +52,12 @@ client :: forall e. HasLogFunc e
 client kingId enqueueEv = ([], runHttpClient)
   where
     runHttpClient :: RAcquire e (EffCb e HttpClientEf)
-    runHttpClient = do
-      tim <- mkRAcquire start stop
-      pure (handleEffect tim)
+    runHttpClient = handleEffect <$> mkRAcquire start stop
 
     start :: RIO e (HttpClientDrv)
-    start = do
-      manager <- io $ H.newManager H.defaultManagerSettings
-      var <- newTVarIO M.empty
-      pure $ HttpClientDrv manager var
+    start = HttpClientDrv <$>
+      (io $ H.newManager H.defaultManagerSettings) <*>
+      newTVarIO M.empty
 
     stop :: HttpClientDrv -> RIO e ()
     stop HttpClientDrv{..} = do
@@ -108,7 +105,8 @@ client kingId enqueueEv = ([], runHttpClient)
               loop     = getChunk >>= \case
                            Nothing -> planEvent id (Continue Nothing True)
                            Just bs -> do
-                             planEvent id $ Continue (Just $ File $ Octs bs) False
+                             planEvent id $
+                               Continue (Just $ File $ Octs bs) False
                              loop
           planEvent id (Start headers Nothing False)
           loop
@@ -124,7 +122,8 @@ client kingId enqueueEv = ([], runHttpClient)
     describe (Start header Nothing final) =
       "(Start " ++ (show header) ++ " ~ " ++ (show final)
     describe (Start header (Just (File (Octs bs))) final) =
-      "(Start " ++ (show header) ++ " (" ++ (show $ length bs) ++ " bytes) " ++ (show final)
+      "(Start " ++ (show header) ++ " (" ++ (show $ length bs) ++ " bytes) " ++
+      (show final)
     describe (Continue Nothing final) =
       "(Continue ~ " ++ (show final)
     describe (Continue (Just (File (Octs bs))) final) =
