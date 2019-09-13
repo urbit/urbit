@@ -197,8 +197,8 @@ deriveNoun ''NewtEv
 -- FileSystem Events -----------------------------------------------------------
 
 data SyncEv
-    = SyncEvInto (Nullable (Atom, ())) Desk Bool [(Path, Maybe Mime)]
-    | SyncEvCrud Path                  Cord Tang
+    = SyncEvInto (Nullable (KingId, ())) Desk Bool [(Path, Maybe Mime)]
+    | SyncEvCrud Path                    Cord Tang
   deriving (Eq, Ord, Show)
 
 deriveNoun ''SyncEv

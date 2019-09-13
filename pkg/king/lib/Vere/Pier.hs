@@ -18,6 +18,7 @@ import Vere.Http.Client   (client)
 import Vere.Http.Server   (serv)
 import Vere.Log           (EventLog)
 import Vere.Serf          (Serf, sStderr, SerfState(..), doJob)
+import Vere.Clay          (clay)
 import Vere.Term
 
 import qualified System.Entropy as Ent
@@ -210,16 +211,18 @@ drivers pierPath inst who mPort plan shutdownSTM termSys =
     (behnBorn, runBehn) = behn inst plan
     (amesBorn, runAmes) = ames inst who mPort plan
     (httpBorn, runHttp) = serv pierPath inst plan
+    (clayBorn, runClay) = clay pierPath inst plan
     (irisBorn, runIris) = client inst plan
     (termBorn, runTerm) = term termSys shutdownSTM pierPath inst plan
-    initialEvents       = mconcat [behnBorn, amesBorn, httpBorn, termBorn, irisBorn]
+    initialEvents       = mconcat [behnBorn, clayBorn, amesBorn, httpBorn,
+                                   termBorn, irisBorn]
     runDrivers          = do
         dNewt       <- liftAcquire $ runAmes
         dBehn       <- liftAcquire $ runBehn
         dAmes       <- pure $ const $ pure ()
         dHttpClient <- runIris
         dHttpServer <- runHttp
-        dSync       <- pure $ const $ pure ()
+        dSync       <- runClay
         dTerm       <- runTerm
         pure (Drivers{..})
 

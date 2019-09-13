@@ -42,9 +42,6 @@ data LogIdentity = LogIdentity
 data BootSeq = BootSeq LogIdentity [Nock] [Ev]
   deriving (Eq, Show)
 
-newtype Desk = Desk Cord
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
-
 deriveNoun ''LogIdentity
 deriveNoun ''Pill
 
