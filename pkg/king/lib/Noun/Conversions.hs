@@ -204,7 +204,7 @@ instance FromNoun Char where
 -- Tour ------------------------------------------------------------------------
 
 newtype Tour = Tour [Char]
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, Show, IsString, ToNoun, FromNoun)
 
 
 -- Double Jammed ---------------------------------------------------------------

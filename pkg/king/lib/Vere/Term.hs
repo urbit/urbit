@@ -1,3 +1,9 @@
+{-
+    TODO Need somewhere to write out the ports for the remote-terminal
+         interface.
+    TODO Implement the client side of the remote terminal interface.
+-}
+
 module Vere.Term (initializeLocalTerminal, term, TerminalSystem(..)) where
 
 import UrbitPrelude
@@ -19,6 +25,17 @@ import Data.ByteString.Internal
 
 import qualified Vere.NounServ                as Serv
 import qualified System.Console.Terminal.Size as Term
+
+
+-- Terminal Size ---------------------------------------------------------------
+
+data TermSize = TermSize { tsHeight :: Word, tsWidth :: Word }
+  deriving (Eq, Ord, Show)
+
+tsFromWindow :: Term.Window Word -> TermSize
+tsFromWindow (Term.Window h w) = TermSize h w
+
+deriveNoun ''TermSize
 
 
 -- Types -----------------------------------------------------------------------
@@ -48,10 +65,10 @@ data ReadData = ReadData
 -- the session is over, and has a general in/out queue in the types of the
 -- vere/arvo interface.
 data TerminalSystem e = TerminalSystem
-  { tsReadQueue    :: TQueue Belt
-  , tsWriteQueue   :: TQueue VereOutput
+  { tsReadFromTerm :: STM Belt
+  , tsWriteToTerm  :: VereOutput -> STM ()
   , tsStderr       :: Text -> RIO e ()
-  , tsSize         :: Term.Window Word
+  , tsSize         :: TermSize
   }
 
 -- Private data to the TerminalSystem that we keep around for stop().
@@ -93,11 +110,83 @@ isTerminalBlit _         = True
 
 --------------------------------------------------------------------------------
 
+data RemoteTerminalServer e = RTS
+    { rtsListen :: STM (Maybe (TerminalSystem e))
+    , rtsAsync  :: Async ()
+    , rtsNServ  :: Serv.Server (Either TermSize Belt) VereOutput Int
+    , rtsActive :: TVar [Void]
+    }
+
+{-
+    TODO This has a problem where a new connection that never sends any
+         data will prevent more connections from being handled. Rethink
+         approach.
+
+    TODO We should close the websocket connection if we don't receive
+         a size, but I forgot to expose that from the NounServ interface.
+-}
 _remoteTerminalServer :: ∀e. HasLogFunc e
-                      => RAcquire e (TChan (TerminalSystem e))
-_remoteTerminalServer = do
-  _serv <- rio $ Serv.wsServer @Belt @VereOutput @e
-  newTChanIO
+                      => RAcquire e (RemoteTerminalServer e)
+_remoteTerminalServer = mkRAcquire start stop
+  where
+    start = do
+        rtsNServ  <- Serv.wsServer
+        rtsActive <- newTVarIO mempty
+        newTerms  <- io $ newTBMChanIO 5
+        rtsListen <- pure $ readTBMChan newTerms
+
+        let servLoop :: RIO e ()
+            servLoop = do
+                atomically (Serv.sAccept rtsNServ) >>= \case
+                    Nothing -> atomically $ closeTBMChan newTerms
+                    Just c -> do
+                        logInfo "Got a new terminal connection"
+                        atomically (getInitialTermSize c) >>= \case
+                            Left err -> logError (display err)
+                            Right sz ->
+                                atomically $ writeTBMChan newTerms
+                                           $ mkTermSys c sz
+                        servLoop
+
+        rtsAsync <- async servLoop
+
+        pure RTS{..}
+
+    getInitialTermSize :: Serv.Conn (Either TermSize Belt) VereOutput
+                       -> STM (Either Text TermSize)
+    getInitialTermSize c = Serv.cRecv c <&> \case
+        Nothing        -> Left noData
+        Just (Right _) -> Left noSize
+        Just (Left sz) -> Right sz
+      where
+        noData = "Terminal connection closed with no data"
+        noSize = "Expected first packet to be term size, but got belt"
+
+    bogusBelt :: Belt
+    bogusBelt = Txt ""
+
+    mkTermSys :: Serv.Conn (Either TermSize Belt) VereOutput
+              -> TermSize
+              -> TerminalSystem e
+    mkTermSys Serv.Conn{..} tsSize = TerminalSystem{..}
+      where
+        -- TODO HACK: API should support terminal disconnect and size change.
+        tsReadFromTerm = cRecv <&> \case
+            Nothing        -> bogusBelt
+            Just (Left _)  -> bogusBelt
+            Just (Right b) -> b
+
+        tsWriteToTerm = cSend
+
+        -- TODO What to do here?
+        tsStderr t = pure ()
+
+    stop RTS{..} = do
+      cancel rtsAsync
+      -- acts <- atomically (readTVar rtsActive)
+      -- for_ acts (cancel . Serv.sAsync)
+
+--------------------------------------------------------------------------------
 
 -- Initializes the generalized input/output parts of the terminal.
 --
@@ -110,7 +199,7 @@ initializeLocalTerminal = do
     start = do
       --  Initialize the writing side of the terminal
       --
-      t <- io $ setupTermFromEnv
+      t <- io setupTermFromEnv
 
       tsWriteQueue <- newTQueueIO
       pWriterThread <- asyncBound (writeTerminal t tsWriteQueue)
@@ -133,7 +222,10 @@ initializeLocalTerminal = do
       let tsStderr = \txt ->
             atomically $ writeTQueue tsWriteQueue $ VerePrintOutput $ unpack txt
 
-      tsSize <- io $ Term.size <&> fromMaybe (Term.Window 80 24)
+      tsSize <- io $ Term.size <&> tsFromWindow . fromMaybe (Term.Window 80 24)
+
+      let tsReadFromTerm = readTQueue tsReadQueue
+          tsWriteToTerm  = writeTQueue tsWriteQueue
 
       pure (TerminalSystem{..}, Private{..})
 
@@ -270,9 +362,9 @@ initializeLocalTerminal = do
       where
         loop :: ReadData -> RIO e ()
         loop rd@ReadData{..} = do
-          -- The problem with using fdRead raw is that it will text encode things
-          -- like \ESC instead of 27. That makes it broken for our purposes.
-          --
+          -- The problem with using fdRead raw is that it will text
+          -- encode things like \ESC instead of 27. That makes it broken
+          -- for our purposes.
           t <- io $ try (fdReadBuf stdInput rdBuf 1)
           case t of
             Left (e :: IOException) -> do
@@ -351,7 +443,7 @@ term :: forall e. HasLogFunc e
 term TerminalSystem{..} shutdownSTM pierPath king enqueueEv =
     (initialEvents, runTerm)
   where
-    Term.Window hig wit = tsSize
+    TermSize hig wit = tsSize
 
     initialEvents = [initialBlew hig wit, initialHail]
 
@@ -367,21 +459,21 @@ term TerminalSystem{..} shutdownSTM pierPath king enqueueEv =
     stop rb = cancel rb
 
     readBelt :: RIO e ()
-    readBelt = forever $ do
-      b <- atomically $ readTQueue tsReadQueue
-      let blip = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ b
-      atomically $ enqueueEv $ blip
+    readBelt = forever $ atomically $ do
+      b <- tsReadFromTerm
+      enqueueEv $ EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) b
 
     handleEffect :: TermEf -> RIO e ()
     handleEffect = \case
+      TermEfInit _ _     -> pure ()
+      TermEfMass _ _     -> pure ()
       TermEfBlit _ blits -> do
         let (termBlits, fsWrites) = partition isTerminalBlit blits
-        atomically $ writeTQueue tsWriteQueue (VereBlitOutput termBlits)
+        atomically $ tsWriteToTerm $ VereBlitOutput termBlits
         for_ fsWrites handleFsWrite
-      TermEfInit _ _ -> pure ()
+
       TermEfLogo path _ -> do
         atomically $ shutdownSTM
-      TermEfMass _ _ -> pure ()
 
     handleFsWrite :: Blit -> RIO e ()
     handleFsWrite (Sag path noun) = performPut path (jamBS noun)
@@ -393,21 +485,3 @@ term TerminalSystem{..} shutdownSTM pierPath king enqueueEv =
       let putOutFile = pierPath </> ".urb" </> "put" </> (pathToFilePath path)
       createDirectoryIfMissing True (takeDirectory putOutFile)
       writeFile putOutFile bs
-
---------------------------------------------------------------------------------
-
-{-
-type ExternalTerm = Serv.Conn Belt
-
--- Minimal terminal interface.
---
--- A Terminal can either be local or remote. Either way, the Terminal, from the
--- view of the caller, a terminal has a thread which when exits indicates that
--- the session is over, and has a general in/out queue in the types of the
--- vere/arvo interface.
-data TerminalSystem e = TerminalSystem
-  { tsReadQueue    :: TQueue Belt
-  , tsWriteQueue   :: TQueue VereOutput
-  , tsStderr       :: Text -> RIO e ()
-  }
--}
