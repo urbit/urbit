@@ -9,12 +9,12 @@ module Noun.Conversions
   , Wall
   , UD(..), UV(..)
   , Mug(..), Path(..), EvilPath(..), Ship(..)
-  , Lenient(..), pathToFilePath
+  , Lenient(..), pathToFilePath, filePathToPath
   ) where
 
 import ClassyPrelude hiding (hash)
 
-import Control.Lens hiding (Index)
+import Control.Lens hiding (Index, (<.>))
 import Data.Void
 import Data.Word
 import Noun.Atom
@@ -475,14 +475,27 @@ instance Show EvilPath where
   show = show . unEvilPath
 
 pathToFilePath :: Path -> FilePath
-pathToFilePath p = joinPath (dirs ++ [filename])
+pathToFilePath p = joinPath components
   where
     elements :: [String] = map (unpack . unKnot) (unPath p)
-    (dirs, f) = splitAt ((length elements) - 2) elements
-    filename = case length f of
-      0 -> ""
-      1 -> (f !! 0)
-      _ -> (f !! 0) RIO.FilePath.<.> (f !! 1)
+    components = case reverse elements of
+      [] -> []
+      [p] -> [p]
+      (ext : fname : dirs) -> (reverse dirs) <> [(fname <.> ext)]
+
+-- Takes a filepath and converts it to a clay path, changing the '.' to a '/'
+-- and removing any prefixed '/'.
+filePathToPath :: FilePath -> Path
+filePathToPath fp = Path path
+  where
+    dir = case (splitDirectories $ (takeDirectory fp)) of
+      ("/":xs) -> xs
+      x        -> x
+    file = [takeBaseName fp, ext]
+    path = map (MkKnot . pack) (dir ++ file)
+    ext = case takeExtension fp of
+      ('.':xs) -> xs
+      x        -> x
 
 -- Mug -------------------------------------------------------------------------
 

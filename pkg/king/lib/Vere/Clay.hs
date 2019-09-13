@@ -13,25 +13,11 @@ import qualified Data.Map.Strict          as M
 import qualified Data.Set                 as S
 
 data ClayDrv = ClayDrv
-  { cdMountPoints :: TVar (M.Map Desk (M.Map FilePath Int))
+  { cdMountPoints :: TVar (Map Desk (Map FilePath Int))
   }
 
 deskToPath :: Desk -> FilePath
 deskToPath (Desk (Cord t)) = unpack t
-
--- Takes a filepath and converts it to a clay path, changing the '.' to a '/'
--- and removing any prefixed '/'.
-filePathToPath :: FilePath -> Path
-filePathToPath fp = Path path
-  where
-    dir = case (splitDirectories $ (takeDirectory fp)) of
-      ("/":xs) -> xs
-      x        -> x
-    file = [takeBaseName fp, ext]
-    path = map (MkKnot . pack) (dir ++ file)
-    ext = case takeExtension fp of
-      ('.':xs) -> xs
-      x        -> x
 
 -- The hard coded mime type of every file.
 textPlain = Path [(MkKnot "text"), (MkKnot "plain")]
@@ -68,7 +54,7 @@ getHashOfFile fp = do
 
 -- Takes an initial snapshot of the filesystem, recording what files exist and
 -- what their hashes are.
-takeFilesystemSnapshot :: FilePath -> RIO e (M.Map FilePath Int)
+takeFilesystemSnapshot :: FilePath -> RIO e (Map FilePath Int)
 takeFilesystemSnapshot fp = do
   exists <- doesDirectoryExist fp
   if not exists then
@@ -79,30 +65,30 @@ takeFilesystemSnapshot fp = do
 -- Check an existing filepath against a snapshot of files that existed on disk
 -- the last time we checked. Returns Either (unchanged) (new file data).
 checkFileForUpdates :: (MonadIO m)
-                    => M.Map FilePath Int -> FilePath
+                    => Map FilePath Int -> FilePath
                     -> m (Either FilePath (FilePath, Mime, Int))
 checkFileForUpdates snapshot fp = do
   bs <- readFile fp
   let !newHash = hash bs
-  pure $ case M.lookup fp snapshot of
+  pure $ case lookup fp snapshot of
     -- text/plain is the hardcoded mime type of every file sent to clay.
     Nothing -> Right (fp, (Mime textPlain (File (Octs bs))), newHash)
     Just i -> if i == newHash then Left fp
               else Right (fp, (Mime textPlain (File (Octs bs))), newHash)
 
 -- Given a previous snapshot of the filesystem, produces a list of changes
-buildActionListFromDifferences :: FilePath -> M.Map FilePath Int
+buildActionListFromDifferences :: FilePath -> Map FilePath Int
                                -> RIO e [(FilePath, Maybe (Mime, Int))]
 buildActionListFromDifferences fp snapshot = do
   checks <- foreachFileIn fp (checkFileForUpdates snapshot)
 
-  let changedItems = flip map (rights checks) $ \(fp, m, i) -> (fp, Just (m, i))
+  let changedItems = rights checks <&> \(fp, m, i) -> (fp, Just (m, i))
 
   let existsSet = S.fromList $ flip map checks $ \case
         Left fp          -> fp
         Right (fp, _, _) -> fp
   let deletedSet = S.difference (M.keysSet snapshot) existsSet
-  let deletedItems = flip map (S.toList deletedSet) $ \x -> (x, Nothing)
+  let deletedItems = (toList deletedSet) <&> \x -> (x, Nothing)
 
   pure $ sort (deletedItems ++ changedItems)
 
@@ -127,9 +113,7 @@ clay pierPath king enqueueEv =
     -- TODO: Traditionally, lock file acquisition was handled in the unix
     -- driver. This should instead be bumped up to main or something.
     start :: RIO e ClayDrv
-    start = do
-      var <- newTVarIO M.empty
-      pure $ ClayDrv var
+    start = ClayDrv <$> newTVarIO mempty
     stop c = pure ()
 
     handleEffect :: ClayDrv -> SyncEf -> RIO e ()
@@ -185,7 +169,7 @@ clay pierPath king enqueueEv =
       (base </> pathToFilePath p, Just ((Mime t f), (hash $ unOcts $ unFile f)))
 
     -- Performs the actions on the actual filesystem
-    performAction :: (M.Map FilePath Int) -> (FilePath, Maybe (Mime, Int)) -> RIO e ()
+    performAction :: (Map FilePath Int) -> (FilePath, Maybe (Mime, Int)) -> RIO e ()
     performAction m (fp, Nothing) = do
       logDebug $ displayShow ("(clay) deleting file ", fp)
       removeFile fp
@@ -204,17 +188,17 @@ clay pierPath king enqueueEv =
     -- Apply the actions to our internal snapshots
     applyActionsToMountPoints :: Desk
                               -> [(FilePath, Maybe (Mime, Int))]
-                              -> (M.Map Desk (M.Map FilePath Int))
-                              -> (M.Map Desk (M.Map FilePath Int))
+                              -> (Map Desk (Map FilePath Int))
+                              -> (Map Desk (Map FilePath Int))
     applyActionsToMountPoints desk actions m = M.alter change desk m
       where
         change (Just fileMap) = Just (foldl' applySyncAction fileMap actions)
         change Nothing        = change (Just M.empty)
 
         -- Applies the sync mutations specified.
-        applySyncAction :: (M.Map FilePath Int)
+        applySyncAction :: (Map FilePath Int)
                         -> (FilePath, Maybe (Mime, Int))
-                        -> (M.Map FilePath Int)
+                        -> (Map FilePath Int)
         applySyncAction m (fp, Nothing)       = M.delete fp m
         applySyncAction m (fp, (Just (_, h))) = M.insert fp h m
 
