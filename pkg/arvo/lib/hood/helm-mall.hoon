@@ -194,23 +194,20 @@
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-helm-bad-mark mark] !!)
-    %helm-hi           (poke-hi (need !<(@t vase)))
-    %helm-mass         (poke-mass (need !<(~ vase)))
-    %helm-reload       (poke-reload (need !<((list term) vase)))
-    %helm-reload-desk  (poke-reload-desk (need !<([@t (list term)] vase)))
-    %helm-reset        (poke-reset (need !<(~ vase)))
-    %helm-send-hi      (poke-send-hi (need !<([ship (unit tape)] vase)))
-    %helm-verb         (poke-verb (need !<(~ vase)))
-    %helm-rekey        (poke-rekey (need !<(@t vase)))
-    %helm-nuke         (poke-nuke (need !<(ship vase)))
-    %helm-automass     (poke-automass (need !<(@dr vase)))
-    %helm-bonk         (poke-bonk (need !<(~ vase)))
-    %helm-cancel-automass
-      (poke-cancel-automass (need !<(~ vase)))
-    %helm-moon
-      (poke-moon (need !<((unit [ship udiff:point:able:jael]) vase)))
-    %helm-serve
-      (poke-serve (need !<([=binding:eyre =generator:eyre] vase)))
+    %helm-hi               =;(f (f (need !<(_+<.f vase))) poke-hi)
+    %helm-mass             =;(f (f (need !<(_+<.f vase))) poke-mass)
+    %helm-reload           =;(f (f (need !<(_+<.f vase))) poke-reload)
+    %helm-reload-desk      =;(f (f (need !<(_+<.f vase))) poke-reload-desk)
+    %helm-reset            =;(f (f (need !<(_+<.f vase))) poke-reset)
+    %helm-send-hi          =;(f (f (need !<(_+<.f vase))) poke-send-hi)
+    %helm-verb             =;(f (f (need !<(_+<.f vase))) poke-verb)
+    %helm-rekey            =;(f (f (need !<(_+<.f vase))) poke-rekey)
+    %helm-nuke             =;(f (f (need !<(_+<.f vase))) poke-nuke)
+    %helm-automass         =;(f (f (need !<(_+<.f vase))) poke-automass)
+    %helm-bonk             =;(f (f (need !<(_+<.f vase))) poke-bonk)
+    %helm-cancel-automass  =;(f (f (need !<(_+<.f vase))) poke-cancel-automass)
+    %helm-moon             =;(f (f (need !<(_+<.f vase))) poke-moon)
+    %helm-serve            =;(f (f (need !<(_+<.f vase))) poke-serve)
   ==
 ::
 ++  take-agent

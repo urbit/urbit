@@ -220,12 +220,12 @@
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-drum-bad-mark mark] !!)
-    %drum-put            (poke-put (need !<([path @] vase)))
-    %drum-link           (poke-link (need !<(gill:gall vase)))
-    %drum-unlink         (poke-unlink (need !<(gill:gall vase)))
-    %drum-exit           (poke-exit (need !<(~ vase)))
-    %drum-start          (poke-start (need !<(well:gall vase)))
-    %drum-set-boot-apps  (poke-set-boot-apps (need !<(? vase)))
+    %drum-put            =;(f (f (need !<(_+<.f vase))) poke-put)
+    %drum-link           =;(f (f (need !<(_+<.f vase))) poke-link)
+    %drum-unlink         =;(f (f (need !<(_+<.f vase))) poke-unlink)
+    %drum-exit           =;(f (f (need !<(_+<.f vase))) poke-exit)
+    %drum-start          =;(f (f (need !<(_+<.f vase))) poke-start)
+    %drum-set-boot-apps  =;(f (f (need !<(_+<.f vase))) poke-set-boot-apps)
   ==
 ::
 ++  reap-phat                                         ::  ack connect
