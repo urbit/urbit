@@ -89,6 +89,7 @@ dependencies:
   - unliftio
   - unliftio-core
   - unordered-containers
+  - utf8-string
   - vector
   - wai
   - wai-conduit

@@ -17,6 +17,9 @@ import System.Console.Terminfo.Base
 
 import Data.ByteString.Internal
 
+import qualified Data.ByteString      as B
+import qualified Data.ByteString.UTF8 as UTF8
+
 -- Types -----------------------------------------------------------------------
 
 -- Output to the attached terminal is either a series of vere blits, or it is an
@@ -29,9 +32,11 @@ data LineState = LineState String Int
 
 -- A record used in reading data from stdInput.
 data ReadData = ReadData
-  { rdBuf     :: Ptr Word8
-  , rdEscape  :: Bool
-  , rdBracket :: Bool
+  { rdBuf       :: Ptr Word8
+  , rdEscape    :: Bool
+  , rdBracket   :: Bool
+  , rdUTF8      :: ByteString
+  , rdUTF8width :: Int
   }
 
 -- Minimal terminal interface.
@@ -250,12 +255,13 @@ initializeLocalTerminal = do
     readTerminal :: forall e. HasLogFunc e
                  => TQueue Belt -> TQueue VereOutput -> (RIO e ()) -> RIO e ()
     readTerminal rq wq bell =
-      rioAllocaBytes 1 $ \ buf -> loop (ReadData buf False False)
+      rioAllocaBytes 1 $ \ buf -> loop (ReadData buf False False B.empty 0)
       where
         loop :: ReadData -> RIO e ()
         loop rd@ReadData{..} = do
-          -- The problem with using fdRead raw is that it will text encode things
-          -- like \ESC instead of 27. That makes it broken for our purposes.
+          -- The problem with using fdRead raw is that it will text encode
+          -- things like \ESC instead of 27. That makes it broken for our
+          -- purposes.
           --
           t <- io $ try (fdReadBuf stdInput rdBuf 1)
           case t of
@@ -290,10 +296,18 @@ initializeLocalTerminal = do
                 else do
                   bell
                   loop rd { rdEscape = False }
-              -- if not escape
-              else if False then
-                -- TODO: Put the unicode accumulation logic here.
-                loop rd
+              else if rdUTF8width /= 0 then do
+                -- continue reading into the utf8 accumulation buffer
+                rd@ReadData{..} <- pure rd { rdUTF8 = snoc rdUTF8 w }
+                if length rdUTF8 /= rdUTF8width then loop rd
+                else do
+                  case UTF8.decode rdUTF8 of
+                    Nothing ->
+                      error "empty utf8 accumulation buffer"
+                    Just (c, bytes) | bytes /= rdUTF8width ->
+                      error "utf8 character size mismatch?!"
+                    Just (c, bytes) -> sendBelt $ Txt $ Tour $ [c]
+                  loop rd { rdUTF8 = B.empty, rdUTF8width = 0 }
               else if w >= 32 && w < 127 then do
                 sendBelt $ Txt $ Tour $ [c]
                 loop rd
@@ -320,7 +334,10 @@ initializeLocalTerminal = do
                 loop rd { rdEscape = True }
               else do
                 -- start the utf8 accumulation buffer
-                loop rd
+                loop rd { rdUTF8 = singleton w,
+                          rdUTF8width = if w < 224 then 2
+                                        else if w < 240 then 3
+                                        else 4 }
 
         sendBelt :: HasLogFunc e => Belt -> RIO e ()
         sendBelt b = do
@@ -367,7 +384,7 @@ term TerminalSystem{..} shutdownSTM pierPath king enqueueEv =
 
     handleFsWrite :: Blit -> RIO e ()
     handleFsWrite (Sag path noun) = performPut path (jamBS noun)
-    handleFsWrite (Sav path atom) = pure () --performPut path atom
+    handleFsWrite (Sav path atom) = performPut path (atom ^. atomBytes)
     handleFsWrite _               = pure ()
 
     performPut :: Path -> ByteString -> RIO e ()
