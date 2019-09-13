@@ -17,6 +17,10 @@ import RIO.FilePath
 
 import Data.ByteString.Internal
 
+import qualified Vere.NounServ                as Serv
+import qualified System.Console.Terminal.Size as Term
+
+
 -- Types -----------------------------------------------------------------------
 
 -- Output to the attached terminal is either a series of vere blits, or it is an
@@ -24,6 +28,9 @@ import Data.ByteString.Internal
 data VereOutput = VereBlitOutput [Blit]
                 | VerePrintOutput String
                 | VereBlankLine
+  deriving Show
+
+deriveNoun ''VereOutput
 
 data LineState = LineState String Int
 
@@ -44,6 +51,7 @@ data TerminalSystem e = TerminalSystem
   { tsReadQueue    :: TQueue Belt
   , tsWriteQueue   :: TQueue VereOutput
   , tsStderr       :: Text -> RIO e ()
+  , tsSize         :: Term.Window Word
   }
 
 -- Private data to the TerminalSystem that we keep around for stop().
@@ -85,6 +93,12 @@ isTerminalBlit _         = True
 
 --------------------------------------------------------------------------------
 
+_remoteTerminalServer :: ∀e. HasLogFunc e
+                      => RAcquire e (TChan (TerminalSystem e))
+_remoteTerminalServer = do
+  _serv <- rio $ Serv.wsServer @Belt @VereOutput @e
+  newTChanIO
+
 -- Initializes the generalized input/output parts of the terminal.
 --
 initializeLocalTerminal :: HasLogFunc e => RAcquire e (TerminalSystem e)
@@ -97,7 +111,6 @@ initializeLocalTerminal = do
       --  Initialize the writing side of the terminal
       --
       t <- io $ setupTermFromEnv
-      -- TODO: We still need to actually get the size from the terminal somehow.
 
       tsWriteQueue <- newTQueueIO
       pWriterThread <- asyncBound (writeTerminal t tsWriteQueue)
@@ -106,17 +119,21 @@ initializeLocalTerminal = do
 
       -- Create a new configuration where we put the terminal in raw mode and
       -- disable a bunch of preprocessing.
-      let newTermSettings =
-            flip withTime     0 .
-            flip withMinInput 1 $
-            foldl' withoutMode pPreviousConfiguration disabledFlags
+      let newTermSettings = flip withTime 0
+                          $ flip withMinInput 1
+                          $ foldl' withoutMode pPreviousConfiguration
+                          $ disabledFlags
+
       io $ setTerminalAttributes stdInput newTermSettings Immediately
 
-      tsReadQueue <- newTQueueIO
-      pReaderThread <- asyncBound (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
+      tsReadQueue   <- newTQueueIO
+      pReaderThread <- asyncBound $ readTerminal tsReadQueue tsWriteQueue
+                                  $ bell tsWriteQueue
 
       let tsStderr = \txt ->
             atomically $ writeTQueue tsWriteQueue $ VerePrintOutput $ unpack txt
+
+      tsSize <- io $ Term.size <&> fromMaybe (Term.Window 80 24)
 
       pure (TerminalSystem{..}, Private{..})
 
@@ -334,7 +351,9 @@ term :: forall e. HasLogFunc e
 term TerminalSystem{..} shutdownSTM pierPath king enqueueEv =
     (initialEvents, runTerm)
   where
-    initialEvents = [(initialBlew 80 24), initialHail]
+    Term.Window hig wit = tsSize
+
+    initialEvents = [initialBlew hig wit, initialHail]
 
     runTerm :: RAcquire e (EffCb e TermEf)
     runTerm = do
@@ -374,3 +393,21 @@ term TerminalSystem{..} shutdownSTM pierPath king enqueueEv =
       let putOutFile = pierPath </> ".urb" </> "put" </> (pathToFilePath path)
       createDirectoryIfMissing True (takeDirectory putOutFile)
       writeFile putOutFile bs
+
+--------------------------------------------------------------------------------
+
+{-
+type ExternalTerm = Serv.Conn Belt
+
+-- Minimal terminal interface.
+--
+-- A Terminal can either be local or remote. Either way, the Terminal, from the
+-- view of the caller, a terminal has a thread which when exits indicates that
+-- the session is over, and has a general in/out queue in the types of the
+-- vere/arvo interface.
+data TerminalSystem e = TerminalSystem
+  { tsReadQueue    :: TQueue Belt
+  , tsWriteQueue   :: TQueue VereOutput
+  , tsStderr       :: Text -> RIO e ()
+  }
+-}

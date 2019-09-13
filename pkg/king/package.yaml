@@ -79,8 +79,9 @@ dependencies:
   - tasty-quickcheck
   - tasty-th
   - template-haskell
-  - terminfo
   - terminal-progress-bar
+  - terminal-size
+  - terminfo
   - text
   - these
   - time
