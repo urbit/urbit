@@ -1,7 +1,7 @@
 module Vere.Term (initializeLocalTerminal, term, TerminalSystem(..)) where
 
+import Arvo            hiding (Term)
 import UrbitPrelude
-import Arvo hiding (Term)
 import Vere.Pier.Types
 
 import Data.Char
@@ -11,9 +11,9 @@ import Foreign.Storable
 import System.Posix.IO
 import System.Posix.Terminal
 
-import System.Console.Terminfo.Base
-import RIO.Directory   (createDirectoryIfMissing)
+import RIO.Directory                (createDirectoryIfMissing)
 import RIO.FilePath
+import System.Console.Terminfo.Base
 
 import Data.ByteString.Internal
 
@@ -29,8 +29,8 @@ data LineState = LineState String Int
 
 -- A record used in reading data from stdInput.
 data ReadData = ReadData
-  { rdBuf :: Ptr Word8
-  , rdEscape :: Bool
+  { rdBuf     :: Ptr Word8
+  , rdEscape  :: Bool
   , rdBracket :: Bool
   }
 
@@ -41,15 +41,15 @@ data ReadData = ReadData
 -- the session is over, and has a general in/out queue in the types of the
 -- vere/arvo interface.
 data TerminalSystem e = TerminalSystem
-  { tsReadQueue    :: TQueue Belt
-  , tsWriteQueue   :: TQueue VereOutput
-  , tsStderr       :: Text -> RIO e ()
+  { tsReadQueue  :: TQueue Belt
+  , tsWriteQueue :: TQueue VereOutput
+  , tsStderr     :: Text -> RIO e ()
   }
 
 -- Private data to the TerminalSystem that we keep around for stop().
 data Private = Private
-  { pReaderThread :: Async ()
-  , pWriterThread :: Async ()
+  { pReaderThread          :: Async ()
+  , pWriterThread          :: Async ()
   , pPreviousConfiguration ::  TerminalAttributes
   }
 
@@ -67,7 +67,7 @@ initialHail = EvBlip $ BlipEvTerm $ TermEvHail (UD 1, ()) ()
 runMaybeTermOutput :: Terminal -> (Terminal -> Maybe TermOutput) -> RIO e ()
 runMaybeTermOutput t getter = case (getter t) of
   Nothing -> pure ()
-  Just x -> io $ runTermOutput t x
+  Just x  -> io $ runTermOutput t x
 
 rioAllocaBytes :: (MonadIO m, MonadUnliftIO m)
                => Int -> (Ptr a -> m b) -> m b
@@ -113,7 +113,8 @@ initializeLocalTerminal = do
       io $ setTerminalAttributes stdInput newTermSettings Immediately
 
       tsReadQueue <- newTQueueIO
-      pReaderThread <- asyncBound (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
+      pReaderThread <- asyncBound
+        (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
 
       let tsStderr = \txt ->
             atomically $ writeTQueue tsWriteQueue $ VerePrintOutput $ unpack txt
@@ -367,7 +368,7 @@ term TerminalSystem{..} shutdownSTM pierPath king enqueueEv =
     handleFsWrite :: Blit -> RIO e ()
     handleFsWrite (Sag path noun) = performPut path (jamBS noun)
     handleFsWrite (Sav path atom) = pure () --performPut path atom
-    handleFsWrite _ = pure ()
+    handleFsWrite _               = pure ()
 
     performPut :: Path -> ByteString -> RIO e ()
     performPut path bs = do
