@@ -1,4 +1,4 @@
-/+  *server
+/+  *server, *inbox
 /=  index
   /^  octs
   /;  as-octs:mimes:html
@@ -101,6 +101,24 @@
     :_  this
     [ost.bol %http-response (png-response:app img)]~
   ::
+    [%'~chat' %scroll @t @t *]
+    =/  start=@ud  (need (rush i.t.t.site.request-line dem))
+    =/  end=@ud  (need (rush i.t.t.t.site.request-line dem))
+    =/  pax  t.t.t.site.request-line
+    =/  envelopes  (envelope-scry [start end pax])
+    ?~  envelopes
+      [~ this]
+    :_  this
+    :*  ost.bol
+        %http-response
+        %-  json-response:app
+          %-  json-to-octs
+        *json
+::        %-  envelopes-to-json
+::          envelopes
+        ~
+    ==
+  ::
   ::
   ::  inbox page
   ::
@@ -109,9 +127,43 @@
     [ost.bol %http-response (html-response:app index)]~
   ==
 ::
+++  peer-inbox
+  |=  pax=path
+  ^-  (quip move _this)
+  :_  this
+  %+  turn  ~(tap in (keys-scry ~))
+  |=  =path
+  ^-  move
+  *move
+::  :*  ost.bol
+::      %diff
+::      %inbox-view-update
+::
+::  (envelope-scry [(scot %ud 0) (scot %ud 100) path])
+::
 ++  launch-poke
   |=  [=path =cord]
   ^-  move
   [ost.bol %poke /chat [our.bol %launch] [%launch-action %chat path cord]]
+::
+++  envelope-scry
+  |=  pax=path
+  ^-  (list envelope)
+  =.  pax  ;:  weld
+    `path`/=inbox/(scot %da now.bol)/envelopes
+    pax
+    `path`/noun
+  ==
+  .^((list envelope) %gx pax)
+::
+++  keys-scry
+  |=  pax=path
+  ^-  (set path)
+  =.  pax  ;:  weld
+    `path`/=inbox/(scot %da now.bol)/keys
+    pax
+    `path`/noun
+  ==
+  .^((set path) %gx pax)
 ::
 --

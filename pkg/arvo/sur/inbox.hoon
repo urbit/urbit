@@ -23,6 +23,8 @@
 ::
 +$  inbox  (map path mailbox)
 ::
++$  configs  (map path [read=@ owner=ship])
+::
 +$  inbox-action
   $%  [%create =path owner=ship]
       [%delete =path]

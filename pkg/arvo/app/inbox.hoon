@@ -33,24 +33,79 @@
     [~ this]
   [~ this(+<+ u.old)]
 ::
-++  poke-noun
-  |=  a=*
-  ^-  (quip move _this)
-  ~&  inbox
-  [~ this]
-::
 ++  peek-x-all
   |=  pax=path
-  ^-  (unit (unit [%noun (unit (map path mailbox))]))
-  [~ ~ %noun `inbox]
+  ^-  (unit (unit [%noun (map path mailbox)]))
+  [~ ~ %noun inbox]
+::
+++  peek-x-configs
+  |=  pax=path
+  ^-  (unit (unit [%noun configs]))
+  :^  ~  ~  %noun
+  %-  ~(run by inbox)
+  |=  =mailbox
+  ^-  [@ ship]
+  [read.mailbox owner.mailbox]
+::
+++  peek-x-keys
+  |=  pax=path
+  ^-  (unit (unit [%noun (set path)]))
+  [~ ~ %noun ~(key by inbox)]
 ::
 ++  peek-x-mailbox
   |=  pax=path
   ^-  (unit (unit [%noun (unit mailbox)]))
   ?~  pax
-    [~ ~ %noun ~]
+    ~
   =/  mailbox=(unit mailbox)  (~(get by inbox) pax)
   [~ ~ %noun mailbox]
+::
+++  peek-x-envelopes
+  |=  pax=path
+  ^-  (unit (unit [%noun (list envelope)]))
+  ::  TODO: negative indexing to fetch last X messages
+  ?+  pax
+    ~
+  ::
+      [@ @ *]
+    =/  mail-path  t.t.pax
+    =/  mailbox=(unit mailbox)  (~(get by inbox) mail-path)
+    ?~  mailbox
+      [~ ~ %noun ~]
+    =*  envelopes  envelopes.u.mailbox
+    =/  sign-test=(unit [?(%neg %pos) @])
+      %+  rush  i.pax
+      ;~  pose
+        %+  cook
+        |=  n=@
+        [%neg n]
+        ;~(pfix hep dem)
+      ::
+        %+  cook
+        |=  n=@
+        [%pos n]
+        dem
+      ==
+    ?~  sign-test
+      ~
+    ?:  =(-.u.sign-test %pos)
+      =/  start  +.u.sign-test
+      =/  end  (slav %ud i.t.pax)
+      ?.  (lte start end)
+        ~
+      =/  length  (lent envelopes)
+      =.  end
+        ?:  (lth end length)
+          end
+        length
+      [~ ~ %noun (swag [start (sub end start)] envelopes)]
+    =/  start  (new:si %.n +.u.sign-test)
+    =/  length  (lent envelopes)
+    =.  start  +.u.sign-test
+    ?:  (gth start length)
+      [~ ~ %noun envelopes]
+    [~ ~ %noun (swag [(sub length start) start] envelopes)]
+  ==
 ::
 ++  peer-keys
   |=  pax=path
@@ -66,9 +121,13 @@
   ^-  (quip move _this)
   ?.  =(src.bol our.bol)
     [[ost.bol %quit ~]~ this]
-  ::  we now proxy all events to this path
-  :_  this
-  [ost.bol %diff %inbox-initial inbox]~
+  ?~  pax
+    ::  we now proxy all events to this path
+    :_  this
+    [ost.bol %diff %inbox-initial inbox]~
+  ?:  =(pax /updates)
+    [~ this]
+  [[ost.bol %quit ~]~ this]
 ::
 ++  peer-mailbox
   |=  pax=path
@@ -154,6 +213,10 @@
   ;:  weld
     ^-  (list move)
     %+  turn  (prey:pubsub:userlib /all bol)
+    |=  [=bone *]
+    [bone %diff %inbox-update act]
+    ^-  (list move)
+    %+  turn  (prey:pubsub:userlib /all/updates bol)
     |=  [=bone *]
     [bone %diff %inbox-update act]
   ::
