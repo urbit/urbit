@@ -102,6 +102,15 @@
       [%cast [p q]:beak u.ext [%$ cay]]
   ==
 ::
+++  poke
+  |=  [=mark =vase]
+  ?+  mark  ~|([%poke-write-bad-mark mark] !!)
+    %write-sec-atom  (poke-sec-atom (need !<([host:eyre @] vase)))
+    %write-paste     (poke-paste (need !<([?(%hoon %md %txt) @t] vase)))
+    %write-tree      (poke-tree (need !<([path mime] vase)))
+    %write-wipe      (poke-wipe (need !<(path vase)))
+  ==
+::
 ++  made
   |=  [pax=wire date=@da result=made-result:ford]
   ^+  abet
@@ -127,4 +136,8 @@
   %+  made  wire
   ?>  ?=(%made +<.sign-arvo)
   +>.sign-arvo
+::
+++  take-agent
+  |=  [=wire =gift:agent:mall]
+  ~|([%write-bad-take-agent wire -.gift] !!)
 --

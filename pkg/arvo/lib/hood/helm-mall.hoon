@@ -191,6 +191,35 @@
   |=  [=binding:eyre =generator:eyre]  =<  abet
   (emit %pass /helm/serv %arvo %e %serve binding generator)
 ::
+++  poke
+  |=  [=mark =vase]
+  ?+  mark  ~|([%poke-helm-bad-mark mark] !!)
+    %helm-hi           (poke-hi (need !<(@t vase)))
+    %helm-mass         (poke-mass (need !<(~ vase)))
+    %helm-reload       (poke-reload (need !<((list term) vase)))
+    %helm-reload-desk  (poke-reload-desk (need !<([@t (list term)] vase)))
+    %helm-reset        (poke-reset (need !<(~ vase)))
+    %helm-send-hi      (poke-send-hi (need !<([ship (unit tape)] vase)))
+    %helm-verb         (poke-verb (need !<(~ vase)))
+    %helm-rekey        (poke-rekey (need !<(@t vase)))
+    %helm-nuke         (poke-nuke (need !<(ship vase)))
+    %helm-automass     (poke-automass (need !<(@dr vase)))
+    %helm-bonk         (poke-bonk (need !<(~ vase)))
+    %helm-cancel-automass
+      (poke-cancel-automass (need !<(~ vase)))
+    %helm-moon
+      (poke-moon (need !<((unit [ship udiff:point:able:jael]) vase)))
+    %helm-serve
+      (poke-serve (need !<([=binding:eyre =generator:eyre] vase)))
+  ==
+::
+++  take-agent
+  |=  [=wire =gift:agent:mall]
+  ?+  wire  ~|([%helm-bad-take-agent wire -.gift] !!)
+    [%helm %hi *]  ?>  ?=(%poke-ack -.gift)
+                   (coup-hi t.t.wire p.gift)
+  ==
+::
 ++  take-bound
   |=  [wir=wire success=? binding=binding:eyre]  =<  abet
   (flog %text "bound: {<success>}")

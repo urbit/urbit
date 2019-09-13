@@ -182,6 +182,31 @@
 ::
 ++  poke-autoload  |=(lod/(unit ?) abet:(poke:autoload lod))
 ++  poke-start-autoload  |=(~ abet:start:autoload)
+++  poke
+  |=  [=mark =vase]
+  ?+  mark  ~|([%poke-kiln-bad-mark mark] !!)
+    %kiln-commit             (poke-commit (need !<([term ?] vase)))
+    %kiln-info               (poke-info (need !<([tape (unit toro:clay)] vase)))
+    %kiln-label              (poke-label (need !<([desk @tas] vase)))
+    %kiln-cancel             (poke-cancel (need !<(desk vase)))
+    %kiln-mount              (poke-mount (need !<([path term] vase)))
+    %kiln-rm                 (poke-rm (need !<(path vase)))
+    %kiln-schedule           (poke-schedule (need !<([path @da @t] vase)))
+    %kiln-track              (poke-track (need !<(kiln-sync vase)))
+    %kiln-sync               (poke-sync (need !<(kiln-sync vase)))
+    %kiln-syncs              (poke-syncs (need !<(~ vase)))
+    %kiln-wipe-ford          (poke-wipe-ford (need !<(@ud vase)))
+    %kiln-keep-ford          (poke-keep-ford (need !<([@ud @ud] vase)))
+    %kiln-autoload           (poke-autoload (need !<((unit ?) vase)))
+    %kiln-overload           (poke-overload (need !<([@dr @da] vase)))
+    %kiln-wash-gall          (poke-wash-gall (need !<(* vase)))
+    %kiln-unmount            (poke-unmount (need !<($@(term [knot path]) vase)))
+    %kiln-unsync             (poke-unsync (need !<(kiln-unsync vase)))
+    %kiln-permission         (poke-permission (need !<([desk path ?] vase)))
+    %kiln-cancel-autocommit  (poke-cancel-autocommit (need !<(~ vase)))
+    %kiln-start-autoload     (poke-start-autoload (need !<(~ vase)))
+    %kiln-merge              (poke-merge (need !<(kiln-merge vase)))
+  ==
 ::
 ++  autoload
   |%
@@ -279,6 +304,17 @@
   |=  {way/wire saw/(unit tang)}
   ~?  ?=(^ saw)  [%kiln-nack u.saw]
   abet
+::
+++  take-agent
+  |=  [=wire =gift:agent:mall]
+  ?+  wire  ~|([%kiln-bad-take-agent wire -.gift] !!)
+    [%kiln %fancy *]   ?>  ?=(%poke-ack -.gift) 
+                       (take-coup-fancy t.t.wire p.gift)
+    [%kiln %reload *]  ?>  ?=(%poke-ack -.gift)
+                       (take-coup-reload t.t.wire p.gift)
+    [%kiln %spam *]    ?>  ?=(%poke-ack -.gift) 
+                       (take-coup-spam t.t.wire p.gift)
+  ==
 ::
 ++  take-general
   |=  [=wire =sign-arvo]

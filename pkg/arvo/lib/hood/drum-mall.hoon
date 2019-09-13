@@ -217,6 +217,17 @@
   |=  {pax/path txt/@}
   se-abet:(se-blit-sys [%sav pax txt])                ::
 ::
+++  poke
+  |=  [=mark =vase]
+  ?+  mark  ~|([%poke-drum-bad-mark mark] !!)
+    %drum-put            (poke-put (need !<([path @] vase)))
+    %drum-link           (poke-link (need !<(gill:gall vase)))
+    %drum-unlink         (poke-unlink (need !<(gill:gall vase)))
+    %drum-exit           (poke-exit (need !<(~ vase)))
+    %drum-start          (poke-start (need !<(well:gall vase)))
+    %drum-set-boot-apps  (poke-set-boot-apps (need !<(? vase)))
+  ==
+::
 ++  reap-phat                                         ::  ack connect
   |=  {way/wire saw/(unit tang)}
   =<  se-abet  =<  se-view
@@ -253,6 +264,22 @@
             ::  =.  +>.$  (se-text "live {<p.saw>}")
             +>.$(fur (~(put by fur) q.wel `[p.wel %da r.p.saw]))
   ==
+::
+++  take-agent
+  |=  [=wire =gift:agent:mall]
+  ?+  wire  ~|([%drum-bad-take-agent wire -.gift] !!)
+      [%drum %phat *]
+    ?-  -.gift
+        %http-response       !!
+        %poke-ack            (take-coup-phat t.t.wire p.gift)
+        %subscription-ack    (reap-phat t.t.wire p.gift)
+        %subscription-close  (quit-phat t.t.wire)
+        %subscription-update
+      %+  diff-sole-effect-phat  t.t.wire
+      ?>  ?=(%sole-effect p.cage.gift)
+      (need !<(sole-effect q.cage.gift))
+   ==
+ ==
 ::
 ++  quit-phat                                         ::
   |=  way/wire

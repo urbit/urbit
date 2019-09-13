@@ -22,6 +22,15 @@
   =>  |%
       +$  part  [%module %0 pith]
       +$  pith  ~
+      ++  take
+        |~  [wire sign-arvo]
+        *(quip card:agent:mall part)
+      ++  take-agent
+        |~  [wire gift:agent:mall]
+        *(quip card:agent:mall part)
+      ++  poke
+        |~  [mark vase]
+        *(quip card:agent:mall part)
       --
   |=  [bowl:mall own=part]
   |_  moz=(list card:agent:mall)
@@ -116,7 +125,9 @@
         |=  a=_+<.handle
         =.  +>.handle  (start hid (able identity))
         ^-  (quip card:agent:mall _lac)
-        (ably (handle a))
+        %-  ably
+        ^-  (quip card:agent:mall hood-part)
+        (handle a)
       ::  per-module interface wrappers
       ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum-mall))
       ++  from-helm  (from-module %helm [..$ _abet]:(hood-helm-mall))
@@ -145,109 +156,29 @@
   ^-  (quip card:agent:mall agent:mall)
   =/  h  (help hid)
   =^  cards  lac
+    ?:  =(%helm (end 3 4 mark))
+      ((wrap poke):from-helm:h mark vase)
+    ?:  =(%drum (end 3 4 mark))
+      ((wrap poke):from-drum:h mark vase)
+    ?:  =(%kiln (end 3 4 mark))
+      ((wrap poke):from-kiln:h mark vase)
+    ?:  =(%write (end 3 5 mark))
+      ((wrap poke):from-write:h mark vase)
+    ::  XX should rename and move to libs
+    ::
     ?+  mark  ~|([%poke-hood-bad-mark mark] !!)
-      %hood-load              %-  poke-hood-load:h
-                              (need !<(hood-part vase))
-      %atom                   %-  (wrap poke-atom):from-helm:h
-                              (need !<(@ vase))
-      %helm-hi                %-  (wrap poke-hi):from-helm:h
-                              (need !<(@t vase))
-      %helm-mass              %-  (wrap poke-mass):from-helm:h
-                              (need !<(~ vase))
-      %helm-reload            %-  (wrap poke-reload):from-helm:h
-                              (need !<((list term) vase))
-      %helm-reload-desk       %-  (wrap poke-reload-desk):from-helm:h
-                              (need !<([@t (list term)] vase))
-      %helm-reset             %-  (wrap poke-reset):from-helm:h
-                              (need !<(~ vase))
-      %helm-serve             %-  (wrap poke-serve):from-helm:h
-                              (need !<([=binding:eyre =generator:eyre] vase))
-      %helm-send-hi           %-  (wrap poke-send-hi):from-helm:h
-                              (need !<([ship (unit tape)] vase))
-      %helm-verb              %-  (wrap poke-verb):from-helm:h
-                              (need !<(~ vase))
-      %helm-rekey             %-  (wrap poke-rekey):from-helm:h
-                              (need !<(@t vase))
-      %helm-moon              %-  (wrap poke-moon):from-helm:h
-                              (need !<((unit [ship udiff:point:able:jael]) vase))
-      %helm-nuke              %-  (wrap poke-nuke):from-helm:h
-                              (need !<(ship vase))
-      %helm-automass          %-  (wrap poke-automass):from-helm:h
-                              (need !<(@dr vase))
-      %helm-cancel-automass   %-  (wrap poke-cancel-automass):from-helm:h
-                              (need !<(~ vase))
-      %helm-bonk              %-  (wrap poke-bonk):from-helm:h
-                              (need !<(~ vase))
-      %dill-belt              %-  (wrap poke-dill-belt):from-drum:h
-                              (need !<(dill-belt:dill vase))
-      %dill-blit              %-  (wrap poke-dill-blit):from-drum:h
-                              (need !<(dill-blit:dill vase))
-      %drum-put               %-  (wrap poke-put):from-drum:h
-                              (need !<([path @] vase))
-      %drum-link              %-  (wrap poke-link):from-drum:h
-                              (need !<(gill:gall vase))
-      %drum-unlink            %-  (wrap poke-unlink):from-drum:h
-                              (need !<(gill:gall vase))
-      %drum-exit              %-  (wrap poke-exit):from-drum:h
-                              (need !<(~ vase))
-      %drum-start             %-  (wrap poke-start):from-drum:h
-                              (need !<(well:gall vase))
-      %drum-set-boot-apps     %-  (wrap poke-set-boot-apps):from-drum:h
-                              (need !<(? vase))
-      %hood-sync              %-  (wrap poke-sync):from-kiln:h
-                              (need !<([desk ship desk] vase))
-      %kiln-commit            %-  (wrap poke-commit):from-kiln:h
-                              (need !<([term ?] vase))
-      %kiln-info              %-  (wrap poke-info):from-kiln:h
-                              (need !<([tape (unit toro:clay)] vase))
-      %kiln-label             %-  (wrap poke-label):from-kiln:h
-                              (need !<([desk @tas] vase))
-      %kiln-merge             %-  (wrap poke-merge):from-kiln:h
-                              (need !<([desk ship desk case ?($auto germ:clay)] vase))
-      %kiln-cancel            %-  (wrap poke-cancel):from-kiln:h
-                              (need !<(desk vase))
-      %kiln-cancel-autocommit  %-  (wrap poke-cancel-autocommit):from-kiln:h
-                              (need !<(~ vase))
-      %kiln-mount             %-  (wrap poke-mount):from-kiln:h
-                              (need !<([path term] vase))
-      %kiln-rm                %-  (wrap poke-rm):from-kiln:h
-                              (need !<(path vase))
-      %kiln-schedule          %-  (wrap poke-schedule):from-kiln:h
-                              (need !<([path @da @t] vase))
-      %kiln-track             %-  (wrap poke-track):from-kiln:h
-                              (need !<([desk ship desk] vase))
-      %kiln-sync              %-  (wrap poke-sync):from-kiln:h
-                              (need !<([desk ship desk] vase))
-      %kiln-syncs             %-  (wrap poke-syncs):from-kiln:h
-                              (need !<(~ vase))
-      %kiln-start-autoload    %-  (wrap poke-start-autoload):from-kiln:h
-                              (need !<(~ vase))
-      %kiln-wipe-ford         %-  (wrap poke-wipe-ford):from-kiln:h
-                              (need !<(@ud vase))
-      %kiln-keep-ford         %-  (wrap poke-keep-ford):from-kiln:h
-                              (need !<([@ud @ud] vase))
-      %kiln-autoload          %-  (wrap poke-autoload):from-kiln:h
-                              (need !<((unit ?) vase))
-      %kiln-overload          %-  (wrap poke-overload):from-kiln:h
-                              (need !<([@dr @da] vase))
-      %kiln-wash-gall         %-  (wrap poke-wash-gall):from-kiln:h
-                              (need !<(* vase))
-      %kiln-unmount           %-  (wrap poke-unmount):from-kiln:h
-                              (need !<($@(term [knot path]) vase))
-      %kiln-unsync            %-  (wrap poke-unsync):from-kiln:h
-                              (need !<([desk ship desk] vase))
-      %kiln-permission        %-  (wrap poke-permission):from-kiln:h
-                              (need !<([desk path ?] vase))
-      %write-sec-atom         %-  (wrap poke-sec-atom):from-write:h
-                              (need !<([host:eyre @] vase))
-      %write-paste            %-  (wrap poke-paste):from-write:h
-                              (need !<([?(%hoon %md %txt) @t] vase))
-      %write-tree             %-  (wrap poke-tree):from-write:h
-                              (need !<([path mime] vase))
-      %write-wipe             %-  (wrap poke-wipe):from-write:h
-                              (need !<(path vase))
+      %hood-load  %-  poke-hood-load:h
+                  (need !<(hood-part vase))
+      %atom       %-  (wrap poke-atom):from-helm:h
+                  (need !<(@ vase))
+      %dill-belt  %-  (wrap poke-dill-belt):from-drum:h
+                  (need !<(dill-belt:dill vase))
+      %dill-blit  %-  (wrap poke-dill-blit):from-drum:h
+                  (need !<(dill-blit:dill vase))
+      %hood-sync  %-  (wrap poke-sync):from-kiln:h
+                  (need !<([desk ship desk] vase))
     ==
-  [`(list card:agent:mall)`cards `agent:mall`..handle-init]
+  [cards ..handle-init]
 ::
 ++  handle-subscribe
   |=  =path
@@ -271,25 +202,10 @@
   =/  h  (help hid)
   =^  cards  lac
     ?+  wire  ~|([%hood-bad-wire wire] !!)
-        [%helm %hi *]      %+  (wrap coup-hi):from-helm:h  t.t.wire
-                           ?>(?=(%poke-ack -.gift) p.gift)
-        [%kiln %fancy *]   %+  (wrap take-coup-fancy):from-kiln:h  t.t.wire
-                           ?>(?=(%poke-ack -.gift) p.gift)
-        [%kiln %reload *]  %+  (wrap take-coup-reload):from-kiln:h  t.t.wire
-                           ?>(?=(%poke-ack -.gift) p.gift)
-        [%kiln %spam *]    %+  (wrap take-coup-spam):from-kiln:h  t.t.wire
-                           ?>(?=(%poke-ack -.gift) p.gift)
-        [%drum %phat *]
-      ?-  -.gift
-          %http-response  !!
-          %poke-ack            ((wrap take-coup-phat):from-drum:h t.t.wire p.gift)
-          %subscription-ack    ((wrap reap-phat):from-drum:h t.t.wire p.gift)
-          %subscription-close  ((wrap quit-phat):from-drum:h t.t.wire)
-          %subscription-update
-        %+  (wrap diff-sole-effect-phat):from-drum:h  t.t.wire
-        ?>  ?=(%sole-effect p.cage.gift)
-        (need !<(sole-effect q.cage.gift))
-      ==
+      [%helm *]   ((wrap take-agent):from-helm:h wire gift)
+      [%kiln *]   ((wrap take-agent):from-kiln:h wire gift)
+      [%drum *]   ((wrap take-agent):from-drum:h wire gift)
+      [%write *]  ((wrap take-agent):from-write:h wire gift)
     ==
   [cards ..handle-init]
 ::
