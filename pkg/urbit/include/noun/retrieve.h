@@ -134,20 +134,12 @@
                       u3_noun s,
                       u3_noun b);
 
-      /* u3r_sing():
+      /* u3r_sing(): noun value equality.
       **
-      **   Yes iff (a) and (b) are the same noun.
+      **   Unifies noun pointers on inner roads.
       */
         c3_o
         u3r_sing(u3_noun a, u3_noun b);
-
-      /* u3r_sung(): yes iff (a) and (b) are the same noun, unifying equals.
-      **
-      **   Make sure you have no live, uncounted pointers to any noun
-      **   within (a) or (b)!
-      */
-        c3_o
-        u3r_sung(u3_noun a, u3_noun b);
 
       /* u3r_sing_c(): cord/C-string value equivalence.
       */

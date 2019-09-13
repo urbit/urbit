@@ -220,59 +220,6 @@ u3r_mean(u3_noun som, ...)
   return ret_o;
 }
 
-/* _sang_one(): unify but leak old.
-*/
-static void
-_sang_one(u3_noun* a, u3_noun* b)
-{
-  if ( *a == *b ) {
-    return;
-  }
-  else {
-    c3_o asr_o = u3a_is_senior(u3R, *a);
-    c3_o bsr_o = u3a_is_senior(u3R, *b);
-
-    if ( _(asr_o) && _(bsr_o) ) {
-      // You shouldn't have let this happen.  We don't want to
-      // descend down to a lower road and free there, because
-      // synchronization - though this could be revisited under
-      // certain circumstances.
-      //
-      return;
-    }
-    if ( _(asr_o) && !_(bsr_o) ){
-      // u3z(*b);
-      *b = *a;
-    }
-    if ( _(bsr_o) && !_(asr_o) ) {
-      //  u3z(*a);
-      *a = *b;
-    }
-    if ( u3a_is_north(u3R) ) {
-      if ( *a <= *b ) {
-        u3k(*a);
-        //  u3z(*b);
-        *b = *a;
-      } else {
-        u3k(*b);
-        //  u3z(*a);
-        *a = *b;
-      }
-    }
-    else {
-      if ( *a >= *b ) {
-        u3k(*a);
-        // u3z(*b);
-        *b = *a;
-      } else {
-        u3k(*b);
-        // u3z(*a);
-        *a = *b;
-      }
-    }
-  }
-}
-
 #define SONG_NONE 0
 #define SONG_HEAD 1
 #define SONG_TAIL 2
@@ -301,20 +248,12 @@ _eq_pop(c3_ys mov, c3_ys off)
   return u3to(eqframe, u3R->cap_p + off);
 }
 
-/* _sing_one(): do not pick a unified pointer for identical (a) and (b).
-*/
-static void
-_sing_one(u3_noun* a, u3_noun* b)
-{
-  // this space left intentionally blank
-}
-
-/* _sung_one(): pick a unified pointer for identical (a) and (b).
+/* _song_uni(): pick a unified pointer for identical (a) and (b).
 **
 **  Assumes exclusive access to noun memory.
 */
 static void
-_sung_one(u3_noun* a, u3_noun* b)
+_song_uni(u3_noun* a, u3_noun* b)
 {
   //  already unified, we're done
   //
@@ -483,8 +422,7 @@ _song_atom(u3_atom a, u3_noun b)
 static c3_o
 _song_x_cape(c3_ys mov, c3_ys off,
              eqframe* fam, eqframe* don,
-             u3p(u3h_root) har_p,
-             void (*uni_f)(u3_noun*, u3_noun*))
+             u3p(u3h_root) har_p)
 {
   u3_noun a, b, key;
   u3_weak got;
@@ -539,7 +477,7 @@ _song_x_cape(c3_ys mov, c3_ys off,
       case SONG_HEAD:
         a_u = u3a_to_ptr(a);
         b_u = u3a_to_ptr(b);
-        uni_f(&(a_u->hed), &(b_u->hed));
+        _song_uni(&(a_u->hed), &(b_u->hed));
         fam->sat_y = SONG_TAIL;
         fam = _eq_push(mov, off, a_u->tel, b_u->tel);
         continue;
@@ -547,7 +485,7 @@ _song_x_cape(c3_ys mov, c3_ys off,
       case SONG_TAIL:
         a_u = u3a_to_ptr(a);
         b_u = u3a_to_ptr(b);
-        uni_f(&(a_u->tel), &(b_u->tel));
+        _song_uni(&(a_u->tel), &(b_u->tel));
         break;
 
       default:
@@ -569,7 +507,7 @@ _song_x_cape(c3_ys mov, c3_ys off,
 /* _song_x(): yes if a and b are the same noun, use uni to unify
 */
 static c3_o
-_song_x(u3_noun a, u3_noun b, void (*uni_f)(u3_noun*, u3_noun*))
+_song_x(u3_noun a, u3_noun b)
 {
   u3p(eqframe) empty = u3R->cap_p;
 
@@ -626,7 +564,7 @@ _song_x(u3_noun a, u3_noun b, void (*uni_f)(u3_noun*, u3_noun*))
       case SONG_HEAD:
         a_u = u3a_to_ptr(a);
         b_u = u3a_to_ptr(b);
-        uni_f(&(a_u->hed), &(b_u->hed));
+        _song_uni(&(a_u->hed), &(b_u->hed));
         fam->sat_y = SONG_TAIL;
         fam = _eq_push(mov, off, a_u->tel, b_u->tel);
         continue;
@@ -634,7 +572,7 @@ _song_x(u3_noun a, u3_noun b, void (*uni_f)(u3_noun*, u3_noun*))
       case SONG_TAIL:
         a_u = u3a_to_ptr(a);
         b_u = u3a_to_ptr(b);
-        uni_f(&(a_u->tel), &(b_u->tel));
+        _song_uni(&(a_u->tel), &(b_u->tel));
         break;
 
       default:
@@ -644,7 +582,7 @@ _song_x(u3_noun a, u3_noun b, void (*uni_f)(u3_noun*, u3_noun*))
 
     if ( 0 == ++ovr_s ) {
       u3p(u3h_root) har_p = u3h_new();
-      c3_o ret_o = _song_x_cape(mov, off, fam, don, har_p, uni_f);
+      c3_o ret_o = _song_x_cape(mov, off, fam, don, har_p);
       u3h_free(har_p);
       u3R->cap_p = empty;
       return ret_o;
@@ -655,49 +593,14 @@ _song_x(u3_noun a, u3_noun b, void (*uni_f)(u3_noun*, u3_noun*))
   return c3y;
 }
 
-/* u3r_sang(): yes iff (a) and (b) are the same noun, unifying equals.
-*/
-c3_o
-u3r_sang(u3_noun a, u3_noun b)
-{
-  c3_o ret_o;
-  u3t_on(euq_o);
-  ret_o = _song_x(a, b, &_sang_one);
-  u3t_off(euq_o);
-  return ret_o;
-}
-
-/* u3r_sing():
-**
-**   Yes iff (a) and (b) are the same noun.
+/* u3r_sing(): Yes iff [a] and [b] are the same noun.
 */
 c3_o
 u3r_sing(u3_noun a, u3_noun b)
 {
-#ifndef U3_MEMORY_DEBUG
-  if ( u3R->par_p ) {
-    return u3r_sang(a, b);
-  }
-#endif
-  {
-    c3_o ret_o;
-
-    u3t_on(euq_o);
-    ret_o = _song_x(a, b, &_sing_one);
-    u3t_off(euq_o);
-
-    return ret_o;
-  }
-}
-
-/* u3r_sung(): yes iff (a) and (b) are the same noun, unifying equals.
-*/
-c3_o
-u3r_sung(u3_noun a, u3_noun b)
-{
   c3_o ret_o;
   u3t_on(euq_o);
-  ret_o = _song_x(a, b, &_sung_one);
+  ret_o = _song_x(a, b);
   u3t_off(euq_o);
   return ret_o;
 }

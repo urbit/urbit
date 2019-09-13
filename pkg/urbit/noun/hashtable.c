@@ -635,7 +635,7 @@ _ch_buck_gut(u3h_buck* hab_u, u3_noun key)
 
   for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
     u3_noun kev = u3h_slot_to_noun(hab_u->sot_w[i_w]);
-    if ( _(u3r_sung(key, u3h(kev))) ) {
+    if ( _(u3r_sing(key, u3h(kev))) ) {
       return u3t(kev);
     }
   }
@@ -664,7 +664,7 @@ _ch_node_gut(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
     if ( _(u3h_slot_is_noun(sot_w)) ) {
       u3_noun kev = u3h_slot_to_noun(sot_w);
 
-      if ( _(u3r_sung(key, u3h(kev))) ) {
+      if ( _(u3r_sing(key, u3h(kev))) ) {
         return u3t(kev);
       }
       else {
@@ -701,7 +701,7 @@ u3h_gut(u3p(u3h_root) har_p, u3_noun key)
   else if ( _(u3h_slot_is_noun(sot_w)) ) {
     u3_noun kev = u3h_slot_to_noun(sot_w);
 
-    if ( _(u3r_sung(key, u3h(kev))) ) {
+    if ( _(u3r_sing(key, u3h(kev))) ) {
       har_u->sot_w[inx_w] = u3h_noun_be_warm(sot_w);
       return u3k(u3t(kev));
     }
