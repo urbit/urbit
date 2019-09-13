@@ -87,7 +87,7 @@ import UrbitPrelude
 import Data.RAcquire
 
 import Arvo
-import Control.Exception hiding (evaluate, throwIO)
+import Control.Exception (AsyncException(UserInterrupt))
 import Data.Acquire
 import Data.Conduit
 import Data.Conduit.List hiding (replicate, take)
@@ -96,20 +96,23 @@ import Vere.Pier
 import Vere.Pier.Types
 import Vere.Serf
 
-import Control.Concurrent (runInBoundThread)
-import Control.Lens       ((&))
-import System.Directory   (doesFileExist, removeFile)
-import System.Directory   (getHomeDirectory, createDirectoryIfMissing)
-import System.Environment (getProgName)
-import Text.Show.Pretty   (pPrint)
-import Urbit.Time         (Wen)
+import Control.Concurrent   (myThreadId, runInBoundThread)
+import Control.Lens         ((&))
+import Data.Default         (def)
+import System.Directory     (doesFileExist, removeFile)
+import System.Directory     (createDirectoryIfMissing, getHomeDirectory)
+import System.Environment   (getProgName)
+import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
+import Text.Show.Pretty     (pPrint)
+import Urbit.Time           (Wen)
 
 import qualified CLI
-import qualified Data.Set  as Set
-import qualified Vere.Log  as Log
-import qualified Vere.Pier as Pier
-import qualified Vere.Serf as Serf
+import qualified Data.Set                    as Set
 import qualified EventBrowser
+import qualified System.IO.LockFile.Internal as Lock
+import qualified Vere.Log                    as Log
+import qualified Vere.Pier                   as Pier
+import qualified Vere.Serf                   as Serf
 
 --------------------------------------------------------------------------------
 
@@ -162,29 +165,19 @@ removeFileIfExists pax = do
 
 --------------------------------------------------------------------------------
 
-wipeSnapshot :: HasLogFunc env => FilePath -> RIO env ()
-wipeSnapshot shipPath = do
-    logTrace "wipeSnapshot"
-    logDebug $ display $ pack @Text ("Wiping " <> north)
-    logDebug $ display $ pack @Text ("Wiping " <> south)
-    removeFileIfExists north
-    removeFileIfExists south
-  where
-    north = shipPath <> "/.urb/chk/north.bin"
-    south = shipPath <> "/.urb/chk/south.bin"
-
---------------------------------------------------------------------------------
-
 tryBootFromPill :: HasLogFunc e => FilePath -> FilePath -> Ship -> RIO e ()
 tryBootFromPill pillPath shipPath ship = do
-    wipeSnapshot shipPath
-    rwith (Pier.booted pillPath shipPath [] ship) $ \(serf, log, ss) -> do
+    rwith bootedPier $ \(serf, log, ss) -> do
         logTrace "Booting"
         logTrace $ displayShow ss
         io $ threadDelay 500000
         ss <- shutdown serf 0
         logTrace $ displayShow ss
         logTrace "Booted!"
+  where
+    bootedPier = do
+        lockFile shipPath
+        Pier.booted pillPath shipPath [] ship
 
 runAcquire :: (MonadUnliftIO m,  MonadIO m)
            => Acquire a -> m a
@@ -197,24 +190,55 @@ runRAcquire act = rwith act pure
 tryPlayShip :: HasLogFunc e => FilePath -> RIO e ()
 tryPlayShip shipPath = do
     runRAcquire $ do
+        lockFile shipPath
         rio $ logTrace "RESUMING SHIP"
         sls <- Pier.resumed shipPath []
         rio $ logTrace "SHIP RESUMED"
         Pier.pier shipPath Nothing sls
 
+lockFile :: HasLogFunc e => FilePath -> RAcquire e ()
+lockFile pax = void $ mkRAcquire start stop
+  where
+    fil = pax <> "/.vere.lock"
+
+    stop handle = do
+        logInfo $ display @Text $ ("Releasing lock file: " <> pack fil)
+        io $ Lock.unlock fil handle
+
+    params = def { Lock.retryToAcquireLock = Lock.No }
+
+    start = do
+        logInfo $ display @Text $ ("Taking lock file: " <> pack fil)
+        io (Lock.lock params fil)
+
 tryResume :: HasLogFunc e => FilePath -> RIO e ()
 tryResume shipPath = do
-    rwith (Pier.resumed shipPath []) $ \(serf, log, ss) -> do
+    rwith resumedPier $ \(serf, log, ss) -> do
         logTrace (displayShow ss)
         threadDelay 500000
         ss <- shutdown serf 0
         logTrace (displayShow ss)
         logTrace "Resumed!"
+  where
+    resumedPier = do
+        lockFile shipPath
+        Pier.resumed shipPath []
 
 tryFullReplay :: HasLogFunc e => FilePath -> RIO e ()
 tryFullReplay shipPath = do
-    wipeSnapshot shipPath
+    wipeSnapshot
     tryResume shipPath
+  where
+    wipeSnapshot = do
+        logTrace "wipeSnapshot"
+        logDebug $ display $ pack @Text ("Wiping " <> north)
+        logDebug $ display $ pack @Text ("Wiping " <> south)
+        removeFileIfExists north
+        removeFileIfExists south
+
+    north = shipPath <> "/.urb/chk/north.bin"
+    south = shipPath <> "/.urb/chk/south.bin"
+
 
 --------------------------------------------------------------------------------
 
@@ -264,6 +288,7 @@ collectAllFx top = do
 
     collectedFX :: RAcquire e ()
     collectedFX = do
+        lockFile top
         log  <- Log.existing (top <> "/.urb/log")
         serf <- Serf.run (Serf.Config tmpDir serfFlags)
         rio $ Serf.collectFX serf log
@@ -346,21 +371,27 @@ runShip :: HasLogFunc e => CLI.Run -> CLI.Opts -> RIO e ()
 runShip (CLI.Run pierPath) _ = tryPlayShip pierPath
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
-startBrowser pierPath =
-    rwith (Log.existing logPath) $ \log ->
-        EventBrowser.run log
-  where
-    logPath = pierPath <> "/.urb/log"
+startBrowser pierPath = runRAcquire $ do
+    lockFile pierPath
+    log <- Log.existing (pierPath <> "/.urb/log")
+    rio $ EventBrowser.run log
 
 main :: IO ()
-main = CLI.parseArgs >>= runApp . \case
-    CLI.CmdRun r o                             -> runShip r o
-    CLI.CmdNew n o                             -> newShip n o
-    CLI.CmdBug (CLI.CollectAllFX pax)          -> collectAllFx pax
-    CLI.CmdBug (CLI.EventBrowser pax)          -> startBrowser pax
-    CLI.CmdBug (CLI.ValidatePill pax pil seq)  -> testPill pax pil seq
-    CLI.CmdBug (CLI.ValidateEvents pax f l)    -> checkEvs pax f l
-    CLI.CmdBug (CLI.ValidateFX pax f l)        -> checkFx  pax f l
+main = do
+    mainTid <- myThreadId
+
+    let onTermSig = throwTo mainTid UserInterrupt
+
+    installHandler sigTERM (Catch onTermSig) Nothing
+
+    CLI.parseArgs >>= runApp . \case
+        CLI.CmdRun r o                            -> runShip r o
+        CLI.CmdNew n o                            -> newShip n o
+        CLI.CmdBug (CLI.CollectAllFX pax)         -> collectAllFx pax
+        CLI.CmdBug (CLI.EventBrowser pax)         -> startBrowser pax
+        CLI.CmdBug (CLI.ValidatePill pax pil seq) -> testPill pax pil seq
+        CLI.CmdBug (CLI.ValidateEvents pax f l)   -> checkEvs pax f l
+        CLI.CmdBug (CLI.ValidateFX pax f l)       -> checkFx  pax f l
 
 --------------------------------------------------------------------------------
 
