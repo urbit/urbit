@@ -63,48 +63,41 @@
 ++  peek-x-envelopes
   |=  pax=path
   ^-  (unit (unit [%noun (list envelope)]))
-  ::  TODO: negative indexing to fetch last X messages
   ?+  pax
     ~
   ::
       [@ @ *]
     =/  mail-path  t.t.pax
-    =/  mailbox=(unit mailbox)  (~(get by inbox) mail-path)
+    =/  mailbox  (~(get by inbox) mail-path)
     ?~  mailbox
       [~ ~ %noun ~]
     =*  envelopes  envelopes.u.mailbox
-    =/  sign-test=(unit [?(%neg %pos) @])
+    =/  sign-test=[?(%neg %pos) @]
+      %-  need
       %+  rush  i.pax
       ;~  pose
         %+  cook
-        |=  n=@
-        [%neg n]
+          |=  n=@
+          [%neg n]
         ;~(pfix hep dem)
       ::
         %+  cook
-        |=  n=@
-        [%pos n]
+          |=  n=@
+          [%pos n]
         dem
       ==
-    ?~  sign-test
-      ~
-    ?:  =(-.u.sign-test %pos)
-      =/  start  +.u.sign-test
-      =/  end  (slav %ud i.t.pax)
-      ?.  (lte start end)
-        ~
-      =/  length  (lent envelopes)
-      =.  end
-        ?:  (lth end length)
-          end
-        length
-      [~ ~ %noun (swag [start (sub end start)] envelopes)]
-    =/  start  (new:si %.n +.u.sign-test)
     =/  length  (lent envelopes)
-    =.  start  +.u.sign-test
-    ?:  (gth start length)
-      [~ ~ %noun envelopes]
-    [~ ~ %noun (swag [(sub length start) start] envelopes)]
+    =*  start  +.sign-test
+    ?:  =(-.sign-test %neg)
+      ?:  (gth start length)
+        [~ ~ %noun envelopes]
+      [~ ~ %noun (swag [(sub length start) start] envelopes)]
+    ::
+    =/  end  (slav %ud i.t.pax)
+    ?.  (lte start end)
+      ~
+    =.  end  ?:((lth end length) end length)
+    [~ ~ %noun (swag [start (sub end start)] envelopes)]
   ==
 ::
 ++  peer-keys

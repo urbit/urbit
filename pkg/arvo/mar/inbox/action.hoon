@@ -41,6 +41,7 @@
     ++  envelope
       %-  ot
       :~  [%uid seri]
+          [%number ni]
           [%author (su ;~(pfix sig fed:ag))]
           [%when di]
           [%letter letter]

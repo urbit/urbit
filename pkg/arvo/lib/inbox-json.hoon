@@ -99,6 +99,7 @@
   =,  enjs:format
   %-  pairs
   :~  [%uid s+(scot %uv uid.envelope)]
+      [%number (numb number.envelope)]
       [%author (ship author.envelope)]
       [%when (time when.envelope)]
       [%letter (lett letter.envelope)]

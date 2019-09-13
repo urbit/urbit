@@ -10,6 +10,7 @@
 ::
 +$  envelope                                            ::  letter container
   $:  uid=serial
+      number=@
       author=ship
       when=time
       =letter

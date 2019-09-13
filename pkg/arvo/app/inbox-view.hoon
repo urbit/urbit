@@ -1,4 +1,5 @@
-/+  *server, *inbox
+/-  *inbox
+/+  *server, *inbox-json
 /=  index
   /^  octs
   /;  as-octs:mimes:html
@@ -39,6 +40,8 @@
   $%  [%http-response =http-event:http]
       [%connect wire binding:eyre term]
       [%poke wire dock [%launch-action [@tas path @t]]]
+      [%diff %inbox-initial inbox]
+      [%quit ~]
   ==
 --
 ::
@@ -70,15 +73,15 @@
   |=  =inbound-request:eyre
   ^-  (quip move _this)
   ::
-  =+  request-line=(parse-request-line url.request.inbound-request)
+  =+  url=(parse-request-line url.request.inbound-request)
   =/  name=@t
-    =+  back-path=(flop site.request-line)
+    =+  back-path=(flop site.url)
     ?~  back-path
       ''
     i.back-path
   ?:  =(name 'tile')
     [[ost.bol %http-response (js-response:app tile-js)]~ this]
-  ?+  site.request-line
+  ?+  site.url
     :_  this
     [ost.bol %http-response not-found:app]~
   ::
@@ -102,21 +105,20 @@
     [ost.bol %http-response (png-response:app img)]~
   ::
     [%'~chat' %scroll @t @t *]
-    =/  start=@ud  (need (rush i.t.t.site.request-line dem))
-    =/  end=@ud  (need (rush i.t.t.t.site.request-line dem))
-    =/  pax  t.t.t.site.request-line
+    =*  start  i.t.t.site.url
+    =*  end  i.t.t.t.site.url
+    =/  pax  t.t.t.site.url
     =/  envelopes  (envelope-scry [start end pax])
-    ?~  envelopes
-      [~ this]
     :_  this
+    :~
     :*  ost.bol
         %http-response
         %-  json-response:app
-          %-  json-to-octs
-        *json
-::        %-  envelopes-to-json
-::          envelopes
-        ~
+        %-  json-to-octs 
+        %+  envelopes-update
+          envelopes
+        [start end pax]
+    ==
     ==
   ::
   ::
@@ -130,17 +132,26 @@
 ++  peer-inbox
   |=  pax=path
   ^-  (quip move _this)
+  ::  create inbox with 100 messages max per mailbox and send that along
+  ::  then quit the subscription
+  ~&  pax
   :_  this
-  %+  turn  ~(tap in (keys-scry ~))
-  |=  =path
-  ^-  move
-  *move
-::  :*  ost.bol
-::      %diff
-::      %inbox-view-update
-::
-::  (envelope-scry [(scot %ud 0) (scot %ud 100) path])
-::
+  :~
+  :*  ost.bol
+      %diff
+      %inbox-initial
+      %-  ~(run by all-scry)
+      |=  mail=mailbox
+      ^-  mailbox
+      ~&  mail
+      :+  (truncate-envelopes envelopes.mail)
+        read.mail
+      owner.mail
+  ==
+  ==
+  ::[ost.bol %quit ~]~
+
+::  
 ++  launch-poke
   |=  [=path =cord]
   ^-  move
@@ -156,14 +167,32 @@
   ==
   .^((list envelope) %gx pax)
 ::
-++  keys-scry
-  |=  pax=path
-  ^-  (set path)
-  =.  pax  ;:  weld
-    `path`/=inbox/(scot %da now.bol)/keys
-    pax
-    `path`/noun
+++  all-scry
+  ^-  inbox
+  =/  pax=path  /=inbox/(scot %da now.bol)/all/noun
+  .^(inbox %gx pax)
+::
+++  envelopes-update
+  |=  [envelopes=(list envelope) start=@t end=@t pax=path]
+  ^-  json
+  %+  frond:enjs:format  %inbox-update
+  %-  pairs:enjs:format
+  :~
+    :-  %messages
+    %-  pairs:enjs:format
+    :~  [%path (pa pax)]
+        [%start (numb:enjs:format (need (rush start dem)))]
+        [%end (numb:enjs:format (need (rush end dem)))]
+        [%envelopes [%a (turn envelopes enve)]]
+    ==
   ==
-  .^((set path) %gx pax)
+::
+++  truncate-envelopes
+  |=  envelopes=(list envelope)
+  ^-  (list envelope)
+  =/  length  (lent envelopes)
+  ?:  (lth length 100)
+    envelopes
+  (swag [(sub length 100) 100] envelopes)
 ::
 --

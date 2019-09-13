@@ -138,6 +138,7 @@ class UrbitApi {
         path,
         envelope: {
           uid: uuid(),
+          number: 0,
           author,
           when,
           letter
