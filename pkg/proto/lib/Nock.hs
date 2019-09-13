@@ -4,15 +4,32 @@ import ClassyPrelude
 
 type Atom = Integer
 
-data Tree a  = Atom !a
-             | Cell !(Tree a) !(Tree a)
-  deriving (Eq, Ord, Read, Show, Functor)
-
 type Noun = Tree Atom
+data Tree a  = A !a
+             | C !(Tree a) !(Tree a)
+  deriving (Eq, Ord, Read, Functor)
+
+data Fern a = FernA !a
+            | FernF [Fern a]
+
+toFern :: Tree a -> Fern a
+toFern = \case
+  A a -> FernA a
+  C h t -> case toFern t of
+    a@FernA{} -> FernF [toFern h, a]
+    FernF fs -> FernF (toFern h : fs)
+
+instance Show a => Show (Fern a) where
+  show = \case
+    FernA a -> show a
+    FernF xs -> "[" <> intercalate " " (map show xs) <> "]"
+
+instance Show a => Show (Tree a) where
+  show = show . toFern
 
 yes, no :: Noun
-yes = Atom 0
-no  = Atom 1
+yes = A 0
+no  = A 1
 
 -- | Tree address
 type Axis = Atom
@@ -31,75 +48,78 @@ data Nock = NC Nock Nock           -- ^ ^: autocons
           | N10 (Axis, Nock) Nock  -- ^ 10, edit
           | N11 Hint Nock          -- ^ 11, hint
           | N12 Nock Nock          -- ^ 12, scry
-  deriving (Eq, Ord, Read, Show)
+  deriving (Eq, Ord, Read)
 
 data Hint = Tag Atom
           | Assoc Atom Nock
   deriving (Eq, Ord, Read, Show)
 
+instance Show Nock where
+  show = show . nockToNoun
+
 nockToNoun :: Nock -> Noun
 nockToNoun = go
   where
     go = \case
-      NC f g -> Cell (go f) (go g)
-      N0 a -> Cell (Atom 0) (Atom a)
-      N1 n -> Cell (Atom 1) n
-      N2 f g -> Cell (Atom 2) (Cell (go f) (go g))
-      N3 f -> Cell (Atom 3) (go f)
-      N4 f -> Cell (Atom 4) (go f)
-      N5 f g -> Cell (Atom 5) (Cell (go f) (go g))
-      N6 f g h -> Cell (Atom 5) (Cell (go f) (Cell (go g) (go h)))
-      N7 f g -> Cell (Atom 7) (Cell (go f) (go g))
-      N8 f g -> Cell (Atom 8) (Cell (go f) (go g))
-      N9 a f -> Cell (Atom 9) (Cell (Atom a) (go f))
-      N10 (a, f) g -> Cell (Atom 10) (Cell (Cell (Atom a) (go f)) (go g))
-      N11 (Tag a) f -> Cell (Atom 11) (Cell (Atom a) (go f))
-      N11 (Assoc a f) g -> Cell (Atom 11) (Cell (Cell (Atom a) (go f)) (go g))
-      N12 f g -> Cell (Atom 12) (Cell (go f) (go g))
+      NC f g -> C (go f) (go g)
+      N0 a -> C (A 0) (A a)
+      N1 n -> C (A 1) n
+      N2 f g -> C (A 2) (C (go f) (go g))
+      N3 f -> C (A 3) (go f)
+      N4 f -> C (A 4) (go f)
+      N5 f g -> C (A 5) (C (go f) (go g))
+      N6 f g h -> C (A 5) (C (go f) (C (go g) (go h)))
+      N7 f g -> C (A 7) (C (go f) (go g))
+      N8 f g -> C (A 8) (C (go f) (go g))
+      N9 a f -> C (A 9) (C (A a) (go f))
+      N10 (a, f) g -> C (A 10) (C (C (A a) (go f)) (go g))
+      N11 (Tag a) f -> C (A 11) (C (A a) (go f))
+      N11 (Assoc a f) g -> C (A 11) (C (C (A a) (go f)) (go g))
+      N12 f g -> C (A 12) (C (go f) (go g))
 
 nounToNock :: Noun -> Nock
 nounToNock = go
   where
     go = \case
-      Atom{} -> error "nounToNock: atom"
-      Cell n@Cell{} m -> NC (go n) (go m)
-      Cell (Atom op) n -> case op of
-        0  | (Atom a)                   <- n  -> N0 a
-        1                                     -> N1 n
-        2  | (Cell m o)                 <- n  -> N2 (go m) (go o)
-        3                                     -> N3 (go n)
-        4                                     -> N4 (go n)
-        5  | (Cell m o)                 <- n  -> N5 (go m) (go o)
-        6  | (Cell m (Cell o p))        <- n  -> N6 (go m) (go o) (go p)
-        7  | (Cell m o)                 <- n  -> N7 (go m) (go o)
-        8  | (Cell m o)                 <- n  -> N8 (go m) (go o)
-        9  | (Cell (Atom a) m)          <- n  -> N9 a (go m)
-        10 | (Cell (Cell (Atom a) m) o) <- n  -> N10 (a, (go m)) (go o)
-        11 | (Cell (Cell (Atom a) m) o) <- n  -> N11 (Assoc a (go m)) (go o)
-           | (Cell (Atom a) m)          <- n  -> N11 (Tag a) (go m)
-        12 | (Cell m o)                 <- n  -> N12 (go m) (go o)
+      A{} -> error "nounToNock: atom"
+      C n@C{} m -> NC (go n) (go m)
+      C (A op) n -> case op of
+        0  | (A a)              <- n  -> N0 a
+        1                             -> N1 n
+        2  | (C m o)            <- n  -> N2 (go m) (go o)
+        3                             -> N3 (go n)
+        4                             -> N4 (go n)
+        5  | (C m o)            <- n  -> N5 (go m) (go o)
+        6  | (C m (C o p))      <- n  -> N6 (go m) (go o) (go p)
+        7  | (C m o)            <- n  -> N7 (go m) (go o)
+        8  | (C m o)            <- n  -> N8 (go m) (go o)
+        9  | (C (A a) m)        <- n  -> N9 a (go m)
+        10 | (C (C (A a) m) o)  <- n  -> N10 (a, (go m)) (go o)
+        11 | (C (C (A a) m) o)  <- n  -> N11 (Assoc a (go m)) (go o)
+           | (C (A a) m)        <- n  -> N11 (Tag a) (go m)
+        12 | (C m o)            <- n  -> N12 (go m) (go o)
         _ -> error ("nockToNoun: invalid " <> show op <> " " <> show n)
 
 -- | Nock interpreter
 nock :: Noun -> Nock -> Noun
 nock n = \case
-  NC f g -> Cell (nock n f) (nock n g)
+  NC f g -> C (nock n f) (nock n g)
   N0 a -> axis a n
   N1 n' -> n'
   N2 sf ff -> nock (nock n sf) (nounToNock (nock n ff))
   N3 f -> case nock n f of
-    Cell{} -> yes
-    Atom{} -> no
+    C{} -> yes
+    A{} -> no
   N4 f -> case nock n f of
-    Cell{} -> error "nock: cannot increment cell"
-    Atom a -> Atom (a + 1)
+    C{} -> error "nock: cannot increment cell"
+    A a -> A (a + 1)
   N5 f g -> if nock n f == nock n g then yes else no
   N6 f g h -> case nock n f of
-    (Atom 0) -> nock n g
-    (Atom 1) -> nock n h
+    (A 0) -> nock n g
+    (A 1) -> nock n h
     _ -> error "nock: invalid test value"
   N7 f g -> nock (nock n f) g
-  N8 f g -> nock (Cell (nock n f) n) g
+  N8 f g -> nock (C (nock n f) n) g
   N9 a f -> let c = nock n f in nock c (nounToNock (axis a c))
   N10{} -> error "nock: I don't want to implement editing right now"
   N11 _ f -> nock n f
@@ -148,7 +168,7 @@ peg a = \case
 
 axis :: Axis -> Tree a -> Tree a
 axis 1 n = n
-axis (capMas -> (d, r)) (Cell n m) = case d of
+axis (capMas -> (d, r)) (C n m) = case d of
   L -> axis r n
   R -> axis r m
 axis a n = error ("bad axis: " ++ show a)
