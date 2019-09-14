@@ -883,6 +883,12 @@ u3_worker_boot(void)
 c3_i
 main(c3_i argc, c3_c* argv[])
 {
+  // Close file descriptors 0 and 1 so that we don't use them by accident.
+  int inn_i = dup(0);
+  int out_i = dup(1);
+  close(0);
+  close(1);
+
   uv_loop_t* lup_u = uv_default_loop();
   c3_c*      dir_c = argv[1];
   c3_c*      key_c = argv[2];
@@ -939,11 +945,11 @@ main(c3_i argc, c3_c* argv[])
 
     err_i = uv_pipe_init(lup_u, &u3V.inn_u.pyp_u, 0);
     c3_assert(!err_i);
-    uv_pipe_open(&u3V.inn_u.pyp_u, 0);
+    uv_pipe_open(&u3V.inn_u.pyp_u, inn_i);
 
     err_i = uv_pipe_init(lup_u, &u3V.out_u.pyp_u, 0);
     c3_assert(!err_i);
-    uv_pipe_open(&u3V.out_u.pyp_u, 1);
+    uv_pipe_open(&u3V.out_u.pyp_u, out_i);
   }
 
   /* set up writing
