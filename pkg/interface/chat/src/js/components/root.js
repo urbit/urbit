@@ -130,6 +130,7 @@ export class Root extends Component {
                    inbox={state.inbox}
                    group={write}
                    permissions={state.permissions}
+                   pendingMessages={state.pendingMessages}
                    {...props}
                  />
                </Skeleton>

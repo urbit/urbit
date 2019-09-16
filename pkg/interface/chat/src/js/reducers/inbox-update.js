@@ -5,6 +5,7 @@ export class InboxUpdateReducer {
   reduce(json, state) {
     let data = _.get(json, 'inbox-update', false);
     if (data) {
+      this.pending(data, state);
       this.message(data, state);
       this.read(data, state);
       this.create(data, state);
@@ -41,6 +42,22 @@ export class InboxUpdateReducer {
     let data = _.get(json, 'delete', false);
     if (data) {
       delete state.inbox[data.path];
+    }
+  }
+  
+  pending(json, state) {
+    let msg = _.get(json, 'message', false);
+    if (!msg || !state.pendingMessages.has(msg.path)) {
+      return;
+    }
+
+    let mailbox = state.pendingMessages.get(msg.path);
+
+    for (let pendingMsg of mailbox) {
+      if (msg.envelope.uid === pendingMsg.uid) {
+        let index = mailbox.indexOf(pendingMsg);
+        state.pendingMessages.get(msg.path).splice(index, 1);
+      }
     }
   }
   

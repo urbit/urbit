@@ -177,9 +177,6 @@ export class ChatInput extends Component {
 
     let writePermission = props.permissions[`/inbox${props.station}/write`];
     if (writePermission) {
-      console.log(writePermission.kind);
-      console.log(writePermission.who.has(window.ship));
-
       if (writePermission.kind === 'black') {
         // black
         if (writePermission.who.has(window.ship)) {

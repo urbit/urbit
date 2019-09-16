@@ -31,6 +31,7 @@ export class SettingsScreen extends Component {
     const { props, state } = this;
 
     props.api.inbox.delete(state.station);
+
     props.api.inboxSync.removeSynced(`~${props.owner}`, state.station);
     props.api.groups.unbundle(`/inbox${state.station}/read`);
     props.api.groups.unbundle(`/inbox${state.station}/write`);

@@ -114,13 +114,16 @@
   ^-  (quip move _this)
   ?.  =(src.bol our.bol)
     [[ost.bol %quit ~]~ this]
-  ?~  pax
-    ::  we now proxy all events to this path
-    :_  this
-    [ost.bol %diff %inbox-initial inbox]~
-  ?:  =(pax /updates)
-    [~ this]
-  [[ost.bol %quit ~]~ this]
+  :_  this
+  [ost.bol %diff %inbox-initial inbox]~
+::
+++  peer-updates
+  |=  pax=path
+  ^-  (quip move _this)
+  ?.  =(src.bol our.bol)
+    [[ost.bol %quit ~]~ this]
+  ::  we now proxy all events to this path
+  [~ this]
 ::
 ++  peer-mailbox
   |=  pax=path
@@ -185,8 +188,10 @@
     [~ this]
   =.  envelopes.u.mailbox  (snoc envelopes.u.mailbox envelope.act)
   =.  inbox  (~(put by inbox) path.act u.mailbox)
+  =/  lismov  (send-diff path.act act)
+  ~&  lismov
   :_  this(inbox inbox)
-  (send-diff path.act act)
+  lismov
 ::
 ++  handle-read
   |=  act=inbox-action
@@ -207,15 +212,18 @@
     ^-  (list move)
     %+  turn  (prey:pubsub:userlib /all bol)
     |=  [=bone *]
+    ~&  [bone /all]
     [bone %diff %inbox-update act]
     ^-  (list move)
-    %+  turn  (prey:pubsub:userlib /all/updates bol)
+    %+  turn  (prey:pubsub:userlib /updates bol)
     |=  [=bone *]
+    ~&  [bone /updates]
     [bone %diff %inbox-update act]
   ::
     ^-  (list move)
     %+  turn  (prey:pubsub:userlib [%mailbox pax] bol)
     |=  [=bone *]
+    ~&  [bone /mailbox]
     [bone %diff %inbox-update act]
   ::
     ^-  (list move)

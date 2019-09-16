@@ -78,6 +78,18 @@ class UrbitApi {
     });
   }
 
+  addPendingMessage(msg) {
+    if (store.state.pendingMessages.has(msg.path)) {
+      store.state.pendingMessages.get(msg.path).push(msg.envelope);
+    } else {
+      store.state.pendingMessages.set(msg.path, [msg.envelope]);
+    }
+
+    store.setState({
+      pendingMessages: store.state.pendingMessages
+    });
+  }
+
   groupsAction(data) {
     this.action("groups", "group-action", data);
   }
@@ -145,11 +157,16 @@ class UrbitApi {
         }
       }
     };
-    if (local) {
-      this.inboxAction(data);
-    } else {
-      this.inboxSyncAction(data, "inbox-action");
-    }
+
+    this.addPendingMessage(data.message);
+
+    setTimeout(() => {
+      if (local) {
+        this.inboxAction(data);
+      } else {
+        this.inboxSyncAction(data, "inbox-action");
+      }
+    }, 1000)
   }
 
   inboxRead(path, read) {

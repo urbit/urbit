@@ -78,15 +78,17 @@
     =/  inbox-wire  [(scot %p our.bol) inbox-path]
     ?:  (~(has by synced) path.act)
       [~ this]
-    :_  this(synced (~(put by synced) path.act our.bol))
-    :-  [ost.bol %peer inbox-path [our.bol %inbox] inbox-path]
+    =.  synced  (~(put by synced) path.act our.bol)
+    :_  (track-bone inbox-wire)
+    %+  weld
+      [ost.bol %peer inbox-path [our.bol %inbox] inbox-path]~
     (create-permission [%inbox path.act] security.act)
   ::
       %remove-owned
     =/  inbox-wire  [(scot %p our.bol) %mailbox path.act]
     :_  this(synced (~(del by synced) path.act))
     ;:  weld
-      [ost.bol %pull inbox-wire [our.bol %inbox] ~]~
+      (pull-wire inbox-wire path.act)
     ::
       (delete-permission [%inbox path.act])    
     ::
@@ -98,51 +100,40 @@
     ==
   ::
       %add-synced
-    ~&  'add-synced'
     =/  inbox-path  [%mailbox path.act]
     =/  inbox-wire  [(scot %p ship.act) inbox-path]
-    ~&  inbox-wire
     ?:  (~(has by synced) path.act)
       [~ this]
-    :_  this(synced (~(put by synced) path.act ship.act))
+    =.  synced  (~(put by synced) path.act ship.act)
+    :_  (track-bone inbox-wire)
     [ost.bol %peer inbox-wire [ship.act %inbox-sync] inbox-path]~
   ::
       %remove-synced
     =/  inbox-wire  [(scot %p ship.act) %mailbox path.act]
-    ~&  inbox-wire
-    ~&  path.act
     :_  this(synced (~(del by synced) path.act))
-    [ost.bol %pull inbox-wire [ship.act %inbox-sync] ~]~
+    (pull-wire inbox-wire path.act)
   ::
   ==
 ::
 ++  peer-mailbox
   |=  pax=path
   ^-  (quip move _this)
-  ~&  pax
   ?~  pax
     [[ost.bol %quit ~]~ this]
   ?.  (~(has by synced) pax)
-    ~&  'no has'
     [[ost.bol %quit ~]~ this]
   ::  scry permissions to check if read is permitted
-  ~&  'is permitted?'
   ?.  (permitted-scry [(scot %p src.bol) %inbox (weld pax /write)])
-    ~&  'no'
     [[ost.bol %quit ~]~ this]
-  ~&  'yes'
   =/  box=(unit mailbox)  (inbox-scry pax)
   ?~  box
-    ~&  'no has'
     [[ost.bol %quit ~]~ this]
-  ~&  'we send'
   :_  this
   [ost.bol %diff [%inbox-update [%create pax owner.u.box]]]~
 ::
 ++  diff-inbox-update
   |=  [wir=wire diff=inbox-update]
   ^-  (quip move _this)
-  ~&  diff
   ?:  =(src.bol our.bol)
     (handle-local diff)
   (handle-foreign diff)
@@ -161,11 +152,8 @@
     [~ this]
   ::
       %delete
-    ~&  local-delete+diff
     ?.  (~(has by synced) path.diff)
-      ~&  'failing'
       [~ this]
-    ~&  'continuing'
     =/  inbox-wire  [(scot %p our.bol) %mailbox path.diff]
     :_  this(synced (~(del by synced) path.diff))
     :-  (inbox-poke diff)
@@ -183,7 +171,6 @@
 ++  handle-foreign
   |=  diff=inbox-update
   ^-  (quip move _this)
-  ~&  foreign+diff
   ?-  -.diff
       %keys
     [~ this]
@@ -324,6 +311,30 @@
     `path`/noun
   ==
   .^(? %gx pax)
+::
+++  track-bone
+  |=  wir=wire
+  ^+  this
+  =/  bnd  (~(get by boned) wir)
+  ?^  bnd
+    this(boned (~(put by boned) wir (snoc u.bnd ost.bol)))
+  this(boned (~(put by boned) wir [ost.bol]~))
+::
+++  pull-wire
+  |=  [wir=wire pax=path]
+  ^-  (list move)
+  =/  bnd  (~(get by boned) wir)
+  ?~  bnd
+    ~
+  =/  shp  (~(get by synced) pax)
+  ?~  shp
+    ~
+  %+  turn  u.bnd
+  |=  ost=bone
+  ^-  move
+  ?:  =(u.shp our.bol)
+    [ost %pull wir [our.bol %inbox] ~]
+  [ost %pull wir [u.shp %inbox-sync] ~]
 ::
 --
 

@@ -21,6 +21,7 @@
 ::
 +$  state-zero
   $:  relation=(map group-path (set permission-path))
+      boned=(map wire (list bone))
   ==
 ::
 +$  poke
@@ -82,7 +83,8 @@
   ?~  perms
     ~&  group+group
     =/  group-path  [%group group]
-    :_  this(relation (~(put by relation) group permissions))
+    =.  relation  (~(put by relation) group permissions)
+    :_  (track-bone group-path)
     [ost.bol %peer group-path [our.bol %groups] group-path]~
   =.  u.perms  (~(uni in u.perms) permissions)
   :-  ~
@@ -179,6 +181,14 @@
     `path`/noun
   ==
   .^((unit permission) %gx pax)
+::
+++  track-bone
+  |=  wir=wire
+  ^+  this
+  =/  bnd  (~(get by boned) wir)
+  ?^  bnd
+    this(boned (~(put by boned) wir (snoc u.bnd ost.bol)))
+  this(boned (~(put by boned) wir [ost.bol]~))
 ::
 --
 

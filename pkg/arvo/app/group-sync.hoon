@@ -17,6 +17,7 @@
 ::
 +$  state-zero
   $:  synced=(map path ship)
+      boned=(map wire (list bone))
   ==
 ::
 +$  poke
@@ -46,14 +47,15 @@
     =/  group-wire  [(scot %p our.bol) group-path]
     ?:  (~(has by synced) path.act)
       [~ this]
-    :_  this(synced (~(put by synced) path.act our.bol))
+    =.  synced  (~(put by synced) path.act our.bol)
+    :_  (track-bone group-wire)
     [ost.bol %peer group-path [our.bol %groups] group-path]~
   ::
       %remove-owned
-
     =/  group-wire  [(scot %p our.bol) %group path.act]
     :_  this(synced (~(del by synced) path.act))
-    :-  [ost.bol %pull group-wire [our.bol %groups] ~]
+    %+  weld
+      (pull-wire group-wire path.act)
     ^-  (list move)
     %+  turn  (prey:pubsub:userlib [%group path.act] bol)
     |=  [=bone *]
@@ -65,13 +67,14 @@
     =/  group-wire  [(scot %p ship.act) group-path]
     ?:  (~(has by synced) path.act)
       [~ this]
-    :_  this(synced (~(put by synced) path.act ship.act))
+    =.  synced  (~(put by synced) path.act ship.act)
+    :_  (track-bone group-wire)
     [ost.bol %peer group-wire [ship.act %group-sync] group-path]~
   ::
       %remove-synced
     =/  group-wire  [(scot %p ship.act) %group path.act]
     :_  this(synced (~(del by synced) path.act))
-    [ost.bol %pull group-wire [ship.act %group-sync] ~]~
+    (pull-wire group-wire path.act)
   ::
   ==
 ::
@@ -98,7 +101,6 @@
 ++  handle-local
   |=  diff=group-update
   ^-  (quip move _this)
-  ~&  diff
   ?-  -.diff
       %keys
     [~ this]
@@ -115,7 +117,6 @@
     [bone %diff [%group-update diff]]
   ::
       %remove
-    ~&  diff
     :_  this
     %+  turn  (prey:pubsub:userlib [%group pax.diff] bol)
     |=  [=bone *]
@@ -226,6 +227,30 @@
     `path`/noun
   ==
   .^((unit group) %gx pax)
+::
+++  track-bone
+  |=  wir=wire
+  ^+  this
+  =/  bnd  (~(get by boned) wir)
+  ?^  bnd
+    this(boned (~(put by boned) wir (snoc u.bnd ost.bol)))
+  this(boned (~(put by boned) wir [ost.bol]~))
+::
+++  pull-wire
+  |=  [wir=wire pax=path]
+  ^-  (list move)
+  =/  bnd  (~(get by boned) wir)
+  ?~  bnd
+    ~
+  =/  shp  (~(get by synced) pax)
+  ?~  shp
+    ~
+  %+  turn  u.bnd
+  |=  ost=bone
+  ^-  move
+  ?:  =(u.shp our.bol)
+    [ost %pull wir [our.bol %groups] ~]
+  [ost %pull wir [u.shp %group-sync] ~]
 ::
 --
 

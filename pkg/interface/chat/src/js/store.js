@@ -9,7 +9,9 @@ class Store {
     this.state = {
       inbox: {},
       groups: {},
-      permissions: {}
+      permissions: {},
+      spinner: false,
+      pendingMessages: new Map([])
     };
 
     this.initialReducer = new InitialReducer();

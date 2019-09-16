@@ -37,8 +37,6 @@ export class ChatTabBar extends Component {
     let membersText = props.numPeers === 1
       ? '1 Member' : `${props.numPeers} Members`;
 
-    console.log(props.isOwner);
-
     return (
       <div className="w-100" style={{ height:28 }}>
         <div className={"dib h-100" + bbStream} style={{width:'160px'}}>

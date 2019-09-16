@@ -17,19 +17,19 @@ export class Subscription {
     api.bind('/inbox', 'PUT', api.authTokens.ship, 'inbox-view',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
-      this.handleQuit.bind(this));
-    api.bind('/all/updates', 'PUT', api.authTokens.ship, 'inbox',
+      this.handleQuitSilently.bind(this));
+    api.bind('/updates', 'PUT', api.authTokens.ship, 'inbox',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
-      this.handleQuit.bind(this));
+      this.handleQuitAndResubscribe.bind(this));
     api.bind('/all', 'PUT', api.authTokens.ship, 'groups',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
-      this.handleQuit.bind(this));
+      this.handleQuitAndResubscribe.bind(this));
     api.bind('/all', 'PUT', api.authTokens.ship, 'permissions',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
-      this.handleQuit.bind(this));
+      this.handleQuitAndResubscribe.bind(this));
   }
 
   handleEvent(diff) {
@@ -40,8 +40,8 @@ export class Subscription {
     console.error(err);
   }
 
-  handleQuit(quit) {
-    console.log('subscription quit');
+  handleQuitSilently(quit) {
+    // no-op
   }
 
   handleQuitAndResubscribe(quit) {

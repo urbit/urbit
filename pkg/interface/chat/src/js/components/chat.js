@@ -43,7 +43,6 @@ export class ChatScreen extends Component {
     const { props, state } = this;
 
     if (prevProps.match.params.station !== props.match.params.station) {
-      console.log('switched circle');
       this.hasAskedForMessages = false;
 
       clearInterval(this.updateReadInterval);
@@ -172,18 +171,23 @@ export class ChatScreen extends Component {
         .slice(messages.length - (50 * state.numPages), messages.length);
     }
 
-    let reversedMessages = messages.reverse();
-    let chatMessages = reversedMessages.map((msg, i) => {
+    let pendingMessages = 
+	    props.pendingMessages.has(state.station) 
+      ? props.pendingMessages.get(state.station) : [];
+	
+    pendingMessages.map(function(value) {
+      return value.pending = true;
+    })
+	
+	  let reversedMessages = messages.concat(pendingMessages);
+    reversedMessages = reversedMessages.reverse();
+
+    reversedMessages = reversedMessages.map((msg, i) => {
       // Render sigil if previous message is not by the same sender
       let aut = ['author'];
-
-      // No gamAut? Return top level author for the same sender check.
       let renderSigil =
         _.get(reversedMessages[i + 1], aut) !== _.get(msg, aut, msg.author);
-
-      // More padding top if previous message is not by the same sender
       let paddingTop = renderSigil;
-      // More padding bot if next message is not by the same sender
       let paddingBot =
         _.get(reversedMessages[i - 1], aut) !== _.get(msg, aut, msg.author);
 
@@ -193,14 +197,13 @@ export class ChatScreen extends Component {
           msg={msg}
           renderSigil={renderSigil}
           paddingTop={paddingTop}
-          paddingBot={paddingBot} 
-          paddingTop={0}
-          paddingBot={0} />
+          paddingBot={paddingBot}
+          pending={!!msg.pending} />
       );
     });
 
     let group = Array.from(props.group.values());
-
+    
     return (
       <div key={state.station}
         className="h-100 w-100 overflow-hidden flex flex-column">
@@ -216,7 +219,7 @@ export class ChatScreen extends Component {
           style={{ height: 'calc(100% - 157px)', resize: 'vertical' }}
           onScroll={this.onScroll}>
           <div ref={ el => { this.scrollElement = el; }}></div>
-          {chatMessages}
+          {reversedMessages}
         </div>
         <ChatInput
           api={props.api}
