@@ -63,6 +63,11 @@
     :~  app+s+app.a
         mark+s+mark.a
         body+(dom bod.a)
+        :+  %data  %o
+        %-  ~(run by dat.a)
+        |=  val=@t
+        ^-  json
+        [%s val]
     ==
   ::
   ++  text-input
@@ -82,6 +87,7 @@
     %+  frond:enjs:format
       %submit
     (dom bod.a)
+  ::
   ::
   ++  size
     |=  a=^dom

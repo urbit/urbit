@@ -44667,12 +44667,20 @@
             class Form extends react_1 {
               constructor(props) {
                 super(props);
+
+                this.data = {};
+                for (var key in this.props.data) {
+                  this.data["data-"+key] = this.props.data[key];
+                }
               }
 
               render() {
+
                 return (
-                  react.createElement('form', { id: "myForm", app: this.props.app, mark: this.props.mark, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 12}}
-                    , react.createElement(Dom, { body: this.props.body, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 13}})
+                  react.createElement('form', { 'data-app': this.props.app,
+                      'data-mark': this.props.mark,
+                      ...this.data, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 18}}
+                    , react.createElement(Dom, { body: this.props.body, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 21}})
                   )
                 );
               }
@@ -44722,9 +44730,17 @@
                     data[pair[0]] = pair[1];
                   }
 
-                  let app = form.getAttribute("app");
-                  let mark = form.getAttribute("mark");
+                  let app = form.getAttribute("data-app");
+                  let mark = form.getAttribute("data-mark");
 
+                  let attr = form.attributes;
+                  for (var i=0; i<attr.length; i++) {
+                    var key = attr[i].name;
+                    var val = attr[i].value;
+                    if (key !== 'data-app' && key !== 'data-mark'){
+                      data[key.slice(5)] = val;
+                    }
+                  }
 
                   this.props.api.action(app, mark, data);
                 } else {
@@ -44737,8 +44753,8 @@
               render() {
                 return (
                   react.createElement('button', { onClick: this.submitAction,
-                      ref: (el) => { this.button = el;}, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 49}}
-                    , react.createElement(Dom, { body: this.props.body, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 51}})
+                      ref: (el) => { this.button = el;}, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 57}}
+                    , react.createElement(Dom, { body: this.props.body, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 59}})
                   )
                 );
               }
@@ -44838,39 +44854,40 @@
                       react.createElement(Form, { app: body.app,
                         mark: body.mark,
                         body: body.body,
+                        data: body.data,
                         api: this.props.api, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 34}})
                     );
                   case "text-input":
                     return (
-                      react.createElement(TextInput, { name: body.name, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 41}})
+                      react.createElement(TextInput, { name: body.name, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 42}})
                     );
                   case "submit":
                     return (
-                      react.createElement(Submit, { body: body, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 45}})
+                      react.createElement(Submit, { body: body, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 46}})
                     );
-                   case "size":
-                      return (
-                        react.createElement(Size, { width: body.width,
-                              height: body.height,
-                              api: this.props.api,
-                              body: body.body, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 49}}) 
-                      );
-                   case "padding":
-                      return (
-                        react.createElement(Padding, { top: body.top,
-                              bottom: body.bottom,
-                              left: body.left,
-                              right: body.right,
-                              api: this.props.api,
-                              body: body.body, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 56}}) 
-                      );
+                  case "size":
+                    return (
+                      react.createElement(Size, { width: body.width,
+                            height: body.height,
+                            api: this.props.api,
+                            body: body.body, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 50}}) 
+                    );
+                  case "padding":
+                    return (
+                      react.createElement(Padding, { top: body.top,
+                            bottom: body.bottom,
+                            left: body.left,
+                            right: body.right,
+                            api: this.props.api,
+                            body: body.body, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 57}}) 
+                    );
                   case "horizontal":
                     return (
-                      react.createElement(Horizontal, { body: body, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 65}})
+                      react.createElement(Horizontal, { body: body, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 66}})
                     );
                   case "vertical":
                     return (
-                      react.createElement(Vertical, { body: body, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 69}})
+                      react.createElement(Vertical, { body: body, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 70}})
                     );
                   default:
                     return;

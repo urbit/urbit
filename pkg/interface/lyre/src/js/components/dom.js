@@ -34,6 +34,7 @@ export class Dom extends Component {
           <Form app={body.app}
             mark={body.mark}
             body={body.body}
+            data={body.data}
             api={this.props.api}/>
         );
       case "text-input":
@@ -44,22 +45,22 @@ export class Dom extends Component {
         return (
           <Submit body={body} api={this.props.api}/>
         );
-       case "size":
-          return (
-            <Size width={body.width}
-                  height={body.height}
-                  api={this.props.api}
-                  body={body.body}/> 
-          );
-       case "padding":
-          return (
-            <Padding top={body.top}
-                  bottom={body.bottom}
-                  left={body.left}
-                  right={body.right}
-                  api={this.props.api}
-                  body={body.body}/> 
-          );
+      case "size":
+        return (
+          <Size width={body.width}
+                height={body.height}
+                api={this.props.api}
+                body={body.body}/> 
+        );
+      case "padding":
+        return (
+          <Padding top={body.top}
+                bottom={body.bottom}
+                left={body.left}
+                right={body.right}
+                api={this.props.api}
+                body={body.body}/> 
+        );
       case "horizontal":
         return (
           <Horizontal body={body} api={this.props.api}/>

@@ -16,9 +16,10 @@
       [%button bod=dom act=poke]
   ::  form elements
   ::
-      [%form app=@tas mark=@tas bod=dom]
+      [%form app=@tas mark=@tas dat=(map @tas @t) bod=dom]
       [%text-input name=@tas]
       [%submit bod=dom]
+::      [%data key=@tas val=json]
   ::  layout elements
   ::
       [%size w=@u h=@u bod=dom]

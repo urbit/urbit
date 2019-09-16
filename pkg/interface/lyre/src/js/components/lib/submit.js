@@ -32,9 +32,17 @@ export class Submit extends Component {
         data[pair[0]] = pair[1];
       }
 
-      let app = form.getAttribute("app");
-      let mark = form.getAttribute("mark");
+      let app = form.getAttribute("data-app");
+      let mark = form.getAttribute("data-mark");
 
+      let attr = form.attributes;
+      for (var i=0; i<attr.length; i++) {
+        var key = attr[i].name;
+        var val = attr[i].value;
+        if (key !== 'data-app' && key !== 'data-mark'){
+          data[key.slice(5)] = val;
+        }
+      }
 
       this.props.api.action(app, mark, data);
     } else {
