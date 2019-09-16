@@ -54,6 +54,7 @@ dependencies:
   - largeword
   - lens
   - lmdb
+  - lock-file
   - megaparsec
   - mtl
   - multimap
@@ -79,8 +80,8 @@ dependencies:
   - tasty-quickcheck
   - tasty-th
   - template-haskell
-  - terminfo
   - terminal-progress-bar
+  - terminfo
   - text
   - these
   - time
@@ -95,6 +96,7 @@ dependencies:
   - warp
   - warp-tls
   - websockets
+  - data-default
 
 default-extensions:
   - ApplicativeDo
