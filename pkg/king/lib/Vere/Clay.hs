@@ -106,12 +106,8 @@ clay pierPath king enqueueEv =
       ]
 
     runSync :: RAcquire e (EffCb e SyncEf)
-    runSync = do
-      tim <- mkRAcquire start stop
-      pure (handleEffect tim)
+    runSync = handleEffect <$> mkRAcquire start stop
 
-    -- TODO: Traditionally, lock file acquisition was handled in the unix
-    -- driver. This should instead be bumped up to main or something.
     start :: RIO e ClayDrv
     start = ClayDrv <$> newTVarIO mempty
     stop c = pure ()
@@ -162,20 +158,23 @@ clay pierPath king enqueueEv =
         atomically $ modifyTVar (cdMountPoints cd) (M.delete desk)
 
 
-    -- Change the structures off of the event into something we can work with in Unix.
-    calculateActionHash :: FilePath -> (Path, Maybe Mime) -> (FilePath, Maybe (Mime, Int))
+    -- Change the structures off of the event into something we can work with
+    -- in Unix.
+    calculateActionHash :: FilePath -> (Path, Maybe Mime)
+                        -> (FilePath, Maybe (Mime, Int))
     calculateActionHash base (p, Nothing) = (base </> pathToFilePath p, Nothing)
     calculateActionHash base (p, Just (Mime t f)) =
       (base </> pathToFilePath p, Just ((Mime t f), (hash $ unOcts $ unFile f)))
 
     -- Performs the actions on the actual filesystem
-    performAction :: (Map FilePath Int) -> (FilePath, Maybe (Mime, Int)) -> RIO e ()
+    performAction :: (Map FilePath Int) -> (FilePath, Maybe (Mime, Int))
+                  -> RIO e ()
     performAction m (fp, Nothing) = do
       logDebug $ displayShow ("(clay) deleting file ", fp)
       removeFile fp
     performAction m (fp, Just ((Mime _ (File (Octs bs)), hash)))
-        | skip =
-            logDebug $ displayShow ("(clay) skipping unchanged file update " , fp)
+        | skip = logDebug $
+                 displayShow ("(clay) skipping unchanged file update " , fp)
         | otherwise = do
             logDebug $ displayShow ("(clay) updating file " , fp)
             createDirectoryIfMissing True $ takeDirectory fp
@@ -203,7 +202,8 @@ clay pierPath king enqueueEv =
         applySyncAction m (fp, (Just (_, h))) = M.insert fp h m
 
     -- Changes an action list item into a form injectable into Urbit
-    actionsToInto :: FilePath -> (FilePath, Maybe (Mime, Int)) -> (Path, Maybe Mime)
+    actionsToInto :: FilePath -> (FilePath, Maybe (Mime, Int))
+                  -> (Path, Maybe Mime)
     actionsToInto prefix (fp, mybData) = (p, mybOutData)
       where
         p = filePathToPath strippedFp
