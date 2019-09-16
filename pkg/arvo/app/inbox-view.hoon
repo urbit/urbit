@@ -134,23 +134,10 @@
   ^-  (quip move _this)
   ::  create inbox with 100 messages max per mailbox and send that along
   ::  then quit the subscription
-  ~&  pax
   :_  this
-  :~
-  :*  ost.bol
-      %diff
-      %inbox-initial
-      %-  ~(run by all-scry)
-      |=  mail=mailbox
-      ^-  mailbox
-      ~&  mail
-      :+  (truncate-envelopes envelopes.mail)
-        read.mail
-      owner.mail
+  :~  [ost.bol %diff %inbox-initial (truncate-inbox all-scry)]
+      [ost.bol %quit ~]
   ==
-  ==
-  ::[ost.bol %quit ~]~
-
 ::  
 ++  launch-poke
   |=  [=path =cord]
@@ -194,5 +181,15 @@
   ?:  (lth length 100)
     envelopes
   (swag [(sub length 100) 100] envelopes)
+::
+++  truncate-inbox
+  |=  box=inbox
+  ^-  inbox
+  %-  ~(run by box)
+  |=  mail=mailbox
+  ^-  mailbox
+  :+  (truncate-envelopes envelopes.mail)
+    read.mail
+  owner.mail
 ::
 --

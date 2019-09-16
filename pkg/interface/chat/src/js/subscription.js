@@ -16,16 +16,20 @@ export class Subscription {
   initializeChat() {
     api.bind('/inbox', 'PUT', api.authTokens.ship, 'inbox-view',
       this.handleEvent.bind(this),
-      this.handleError.bind(this));
+      this.handleError.bind(this),
+      this.handleQuit.bind(this));
     api.bind('/all/updates', 'PUT', api.authTokens.ship, 'inbox',
       this.handleEvent.bind(this),
-      this.handleError.bind(this));
+      this.handleError.bind(this),
+      this.handleQuit.bind(this));
     api.bind('/all', 'PUT', api.authTokens.ship, 'groups',
       this.handleEvent.bind(this),
-      this.handleError.bind(this));
+      this.handleError.bind(this),
+      this.handleQuit.bind(this));
     api.bind('/all', 'PUT', api.authTokens.ship, 'permissions',
       this.handleEvent.bind(this),
-      this.handleError.bind(this));
+      this.handleError.bind(this),
+      this.handleQuit.bind(this));
   }
 
   handleEvent(diff) {
@@ -35,6 +39,16 @@ export class Subscription {
   handleError(err) {
     console.error(err);
   }
+
+  handleQuit(quit) {
+    console.log('subscription quit');
+  }
+
+  handleQuitAndResubscribe(quit) {
+    console.error(quit);
+    // TODO: resubscribe
+  }
+
 }
 
 export let subscription = new Subscription();
