@@ -400,11 +400,11 @@ u3h_trim_to(u3p(u3h_root) har_p, c3_w n_w)
 void
 u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
 {
-  u3h_root*   har_u = u3to(u3h_root, har_p);
-  u3_noun     kev   = u3nc(u3k(key), val);
-  c3_w        mug_w = u3r_mug(key);
-  c3_w        inx_w = (mug_w >> 25);  //  6 bits
-  c3_w        rem_w = (mug_w & ((1 << 25) - 1));
+  u3h_root* har_u = u3to(u3h_root, har_p);
+  u3_noun   kev   = u3nc(u3k(key), val);
+  c3_w      mug_w = u3r_mug(key);
+  c3_w      inx_w = (mug_w >> 25);  //  6 bits
+  c3_w      rem_w = (mug_w & ((1 << 25) - 1));
 
   _ch_slot_put(&(har_u->sot_w[inx_w]), kev, 25, rem_w, &(har_u->use_w));
   if ( har_u->max_w > 0 ) {
@@ -475,9 +475,9 @@ c3_o
 u3h_hum(u3p(u3h_root) har_p, c3_w mug_w)
 {
   u3h_root* har_u = u3to(u3h_root, har_p);
-  c3_w        inx_w = (mug_w >> 25);
-  c3_w        rem_w = (mug_w & ((1 << 25) - 1));
-  c3_w        sot_w = har_u->sot_w[inx_w];
+  c3_w      inx_w = (mug_w >> 25);
+  c3_w      rem_w = (mug_w & ((1 << 25) - 1));
+  c3_w      sot_w = har_u->sot_w[inx_w];
 
   if ( _(u3h_slot_is_null(sot_w)) ) {
     return c3n;
@@ -668,10 +668,10 @@ u3_weak
 u3h_gut(u3p(u3h_root) har_p, u3_noun key)
 {
   u3h_root* har_u = u3to(u3h_root, har_p);
-  c3_w mug_w        = u3r_mug(key);
-  c3_w inx_w        = (mug_w >> 25);
-  c3_w rem_w        = (mug_w & ((1 << 25) - 1));
-  c3_w sot_w        = har_u->sot_w[inx_w];
+  c3_w      mug_w = u3r_mug(key);
+  c3_w      inx_w = (mug_w >> 25);
+  c3_w      rem_w = (mug_w & ((1 << 25) - 1));
+  c3_w      sot_w = har_u->sot_w[inx_w];
 
   if ( _(u3h_slot_is_null(sot_w)) ) {
     return u3_none;
