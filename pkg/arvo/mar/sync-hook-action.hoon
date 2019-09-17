@@ -11,30 +11,18 @@
     ++  parse-sync-hook-action
       %-  of
       :~
-        [%add-owned add-owned]
-        [%remove-owned remove-owned]
-        [%add-synced add-synced]
-        [%remove-synced remove-synced]
+        [%add add-action]
+        [%remove remove-action]
       ==
     ::
-    ++  add-owned
-      (su ;~(pfix net (more net urs:ab)))
-    ::
-    ++  remove-owned
-      (su ;~(pfix net (more net urs:ab)))
-    ::
-    ++  add-synced
+    ++  add-action
       %-  ot
       :~  [%ship (su ;~(pfix sig fed:ag))]
           [%path (su ;~(pfix net (more net urs:ab)))]
       ==
     ::
-    ++  remove-synced
-      %-  ot
-      :~  [%ship (su ;~(pfix sig fed:ag))]
-          [%path (su ;~(pfix net (more net urs:ab)))]
-      ==
-    ::
+    ++  remove-action
+      (su ;~(pfix net (more net urs:ab)))
     --
   --
 --

@@ -33,9 +33,8 @@ class UrbitApi {
 
     this.inboxSync = {
       addOwned: this.inboxSyncAddOwned.bind(this),
-      removeOwned: this.inboxSyncRemoveOwned.bind(this),
       addSynced: this.inboxSyncAddSynced.bind(this),
-      removeSynced: this.inboxSyncRemoveSynced.bind(this)
+      remove: this.inboxSyncRemove.bind(this)
     };
 
     this.groupPermit = {
@@ -95,23 +94,17 @@ class UrbitApi {
   }
 
   groupBundle(path) {
-    this.groupsAction({
-      bundle: path
-    });
+    this.groupsAction({ bundle: path });
   }
 
   groupUnbundle(path) {
-    this.groupsAction({
-      unbundle: path
-    });
+    this.groupsAction({ unbundle: path });
   }
 
   groupAdd(members, path) {
-
     this.groupsAction({
       add: {
-        members,
-        path
+        members, path
       }
     });
   }
@@ -137,11 +130,7 @@ class UrbitApi {
   }
 
   inboxDelete(path) {
-    this.inboxAction({
-      delete: {
-        path
-      }
-    });
+    this.inboxAction({ delete: { path } });
   }
 
   inboxMessage(local, path, author, when, letter) {
@@ -159,14 +148,11 @@ class UrbitApi {
     };
 
     this.addPendingMessage(data.message);
-
-    setTimeout(() => {
-      if (local) {
-        this.inboxAction(data);
-      } else {
-        this.inboxSyncAction(data, "inbox-action");
-      }
-    }, 1000)
+    if (local) {
+      this.inboxAction(data);
+    } else {
+      this.inboxSyncAction(data, "inbox-action");
+    }
   }
 
   inboxRead(path, read) {
@@ -184,35 +170,21 @@ class UrbitApi {
   inboxSyncAddOwned(path, security) {
     let data = {};
     data['add-owned'] = {
-      path,
-      security
+      path, security
     };
     this.inboxSyncAction(data);
   }
 
-  inboxSyncRemoveOwned(path) {
-    let data = {};
-    data['remove-owned'] = path;
-    this.inboxSyncAction(data);
+  inboxSyncRemove(path) {
+    this.inboxSyncAction({ remove: path });
   }
 
   inboxSyncAddSynced(ship, path) {
     let data = {};
     data['add-synced'] = {
-      ship,
-      path
+      ship, path
     };
     this.inboxSyncAction(data);
-  }
-
-  inboxSyncRemoveSynced(ship, path) {
-    let data = {};
-    data['remove-synced'] = {
-      ship,
-      path
-    };
-    this.inboxSyncAction(data);
-
   }
 
   permissionAction(data) {
@@ -222,26 +194,19 @@ class UrbitApi {
   permissionCreate(path, kind, who) {
     this.permissionAction({
       create: {
-        path,
-        kind,
-        who
+        path, kind, who
       }
     });
   }
 
   permissionDelete(path) {
-    this.permissionAction({
-      delete: {
-        path
-      }
-    });
+    this.permissionAction({ delete: { path } });
   }
 
   permissionAdd(path, who) {
     this.permissionAction({
       add: {
-        path,
-        who
+        path, who
       }
     });
   }
@@ -249,8 +214,7 @@ class UrbitApi {
   permissionRemove(path, who) {
     this.permissionAction({
       remove: {
-        path,
-        who
+        path, who
       }
     });
   }
@@ -258,8 +222,7 @@ class UrbitApi {
   permissionAllow(path, who) {
     this.permissionAction({
       allow: {
-        path,
-        who
+        path, who
       }
     });
   }
@@ -267,8 +230,7 @@ class UrbitApi {
   permissionDeny(path, who) {
     this.permissionAction({
       deny: {
-        path,
-        who
+        path, who
       }
     });
   }
@@ -280,8 +242,7 @@ class UrbitApi {
   groupPermitAssociate(group, permissions) {
     this.groupPermitAction({
       associate: {
-        group,
-        permissions
+        group, permissions
       }
     });
   }
@@ -289,11 +250,9 @@ class UrbitApi {
   groupPermitDissociate() {
     this.groupPermitAction({
       dissociate: {
-        group,
-        permissions
+        group, permissions
       }
     });
- 
   }
 
 }

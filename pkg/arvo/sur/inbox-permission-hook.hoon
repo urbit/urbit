@@ -8,9 +8,8 @@
 ::
 +$  permission-hook-action
   $%  [%add-owned =path security=inbox-security]
-      [%remove-owned =path]
       [%add-synced =ship =path]
-      [%remove-synced =ship =path]
+      [%remove =path]
   ==
 --
 

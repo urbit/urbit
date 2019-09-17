@@ -12,9 +12,8 @@
       %-  of
       :~
         [%add-owned add-owned]
-        [%remove-owned remove-owned]
         [%add-synced add-synced]
-        [%remove-synced remove-synced]
+        [%remove remove]
       ==
     ::
     ++  add-owned
@@ -23,20 +22,14 @@
           [%security sec]
       ==
     ::
-    ++  remove-owned
-      (su ;~(pfix net (more net urs:ab)))
-    ::
     ++  add-synced
       %-  ot
       :~  [%ship (su ;~(pfix sig fed:ag))]
           [%path (su ;~(pfix net (more net urs:ab)))]
       ==
     ::
-    ++  remove-synced
-      %-  ot
-      :~  [%ship (su ;~(pfix sig fed:ag))]
-          [%path (su ;~(pfix net (more net urs:ab)))]
-      ==
+    ++  remove
+      (su ;~(pfix net (more net urs:ab)))
     ::
     ++  sec
       =,  dejs:format

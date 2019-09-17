@@ -41,7 +41,7 @@
 ++  poke-noun
   |=  a=*
   ^-  (quip move _this)
-  ~&  synced
+  ~&  bol
   [~ this]
 ::
 ++  poke-inbox-action
@@ -74,6 +74,8 @@
   ^-  (quip move _this)
   ?-  -.act
       %add-owned
+    ?.  =(src.bol our.bol)
+      [~ this]
     =/  inbox-path  [%mailbox path.act]
     =/  inbox-wire  [(scot %p our.bol) inbox-path]
     ?:  (~(has by synced) path.act)
@@ -84,22 +86,9 @@
       [ost.bol %peer inbox-path [our.bol %inbox] inbox-path]~
     (create-permission [%inbox path.act] security.act)
   ::
-      %remove-owned
-    =/  inbox-wire  [(scot %p our.bol) %mailbox path.act]
-    :_  this(synced (~(del by synced) path.act))
-    ;:  weld
-      (pull-wire inbox-wire path.act)
-    ::
-      (delete-permission [%inbox path.act])    
-    ::
-      ^-  (list move)
-      %+  turn  (prey:pubsub:userlib [%mailbox path.act] bol)
-      |=  [=bone *]
-      ^-  move
-      [bone %quit ~]
-    ==
-  ::
       %add-synced
+    ?.  =(src.bol our.bol)
+      [~ this]
     =/  inbox-path  [%mailbox path.act]
     =/  inbox-wire  [(scot %p ship.act) inbox-path]
     ?:  (~(has by synced) path.act)
@@ -108,10 +97,40 @@
     :_  (track-bone inbox-wire)
     [ost.bol %peer inbox-wire [ship.act %inbox-sync] inbox-path]~
   ::
-      %remove-synced
-    =/  inbox-wire  [(scot %p ship.act) %mailbox path.act]
-    :_  this(synced (~(del by synced) path.act))
-    (pull-wire inbox-wire path.act)
+      %remove
+    =/  ship  (~(get by synced) path.act)
+    ?~  ship
+      [~ this]
+    ?:  &(=(u.ship our.bol) =(our.bol src.bol))
+      ::  delete one of our own paths
+      =/  inbox-wire  [(scot %p our.bol) %mailbox path.act]
+      :_
+      %_  this
+        synced  (~(del by synced) path.act)
+        boned  (~(del by boned) inbox-wire)
+      ==
+      ;:  weld
+        (pull-wire inbox-wire path.act)
+      ::
+        (delete-permission [%inbox path.act])    
+      ::
+        ^-  (list move)
+        %+  turn  (prey:pubsub:userlib [%mailbox path.act] bol)
+        |=  [=bone *]
+        ^-  move
+        [bone %quit ~]
+      ==
+    ?:  |(=(u.ship src.bol) =(our.bol src.bol))
+      ::  delete a foreign ship's path
+      =/  inbox-wire  [(scot %p u.ship) %mailbox path.act]
+      :_
+      %_  this
+        synced  (~(del by synced) path.act)
+        boned  (~(del by boned) inbox-wire)
+      ==
+      (pull-wire inbox-wire path.act)
+    :: don't allow
+    [~ this]
   ::
   ==
 ::
@@ -235,7 +254,7 @@
     ::  this(synced (~(del by synced) path.act))
     =/  inbox-path  [%mailbox wir]
     =/  inbox-wire  [(scot %p ship) inbox-path]
-    :_  this
+    :_  (track-bone inbox-wire)
     [ost.bol %peer inbox-wire [ship %inbox-sync] inbox-path]~
   ::  no-op
   [~ this]
@@ -324,6 +343,7 @@
   |=  [wir=wire pax=path]
   ^-  (list move)
   =/  bnd  (~(get by boned) wir)
+  ~&  bnd
   ?~  bnd
     ~
   =/  shp  (~(get by synced) pax)

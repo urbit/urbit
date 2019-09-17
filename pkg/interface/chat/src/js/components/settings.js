@@ -22,6 +22,7 @@ export class SettingsScreen extends Component {
       this.setState({
         isLoading: false
       }, () => {
+        props.setSpinner(false);
         props.history.push('/~chat');
       });
     }
@@ -30,9 +31,8 @@ export class SettingsScreen extends Component {
   deleteChat() {
     const { props, state } = this;
 
+    props.api.inboxSync.remove(state.station);
     props.api.inbox.delete(state.station);
-
-    props.api.inboxSync.removeSynced(`~${props.owner}`, state.station);
     props.api.groups.unbundle(`/inbox${state.station}/read`);
     props.api.groups.unbundle(`/inbox${state.station}/write`);
 
@@ -72,7 +72,7 @@ export class SettingsScreen extends Component {
 
     if (!!state.isLoading) {
       let text = "Deleting...";
-      if (props.owner === window.ship) {
+      if (props.owner !== window.ship) {
         text = "Leaving...";
       }
 

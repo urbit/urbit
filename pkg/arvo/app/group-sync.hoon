@@ -42,37 +42,39 @@
   |=  act=sync-hook-action
   ^-  (quip move _this)
   ?-  -.act
-      %add-owned
-    =/  group-path  [%group path.act]
-    =/  group-wire  [(scot %p our.bol) group-path]
-    ?:  (~(has by synced) path.act)
+      %add
+    ?.  =(src.bol our.bol)
       [~ this]
-    =.  synced  (~(put by synced) path.act our.bol)
-    :_  (track-bone group-wire)
-    [ost.bol %peer group-path [our.bol %groups] group-path]~
-  ::
-      %remove-owned
-    =/  group-wire  [(scot %p our.bol) %group path.act]
-    :_  this(synced (~(del by synced) path.act))
-    %+  weld
-      (pull-wire group-wire path.act)
-    ^-  (list move)
-    %+  turn  (prey:pubsub:userlib [%group path.act] bol)
-    |=  [=bone *]
-    ^-  move
-    [bone %quit ~]
-  ::
-      %add-synced
     =/  group-path  [%group path.act]
     =/  group-wire  [(scot %p ship.act) group-path]
     ?:  (~(has by synced) path.act)
       [~ this]
     =.  synced  (~(put by synced) path.act ship.act)
     :_  (track-bone group-wire)
+    ?:  =(ship.act our.bol)
+      [ost.bol %peer group-path [ship.act %groups] group-path]~
     [ost.bol %peer group-wire [ship.act %group-sync] group-path]~
   ::
-      %remove-synced
-    =/  group-wire  [(scot %p ship.act) %group path.act]
+      %remove
+    =/  ship  (~(get by synced) path.act)
+    ?~  ship
+      [~ this]
+    ?:  &(=(u.ship our.bol) =(src.bol our.bol))
+      ::  delete one of our own paths
+      =/  group-wire  [(scot %p our.bol) %group path.act]
+      :_  this(synced (~(del by synced) path.act))
+      %+  weld
+        (pull-wire group-wire path.act)
+      ^-  (list move)
+      %+  turn  (prey:pubsub:userlib [%group path.act] bol)
+      |=  [=bone *]
+      ^-  move
+      [bone %quit ~]
+    ?.  =(u.ship src.bol)
+      :: don't allow
+      [~ this]
+    ::  delete a foreign ship's path
+    =/  group-wire  [(scot %p u.ship) %group path.act]
     :_  this(synced (~(del by synced) path.act))
     (pull-wire group-wire path.act)
   ::
