@@ -7,19 +7,20 @@ module Vere.Pier
 import UrbitPrelude
 
 import Arvo
-import Vere.Pier.Types
 import System.Random
+import Vere.Pier.Types
 
-import System.Directory   (createDirectoryIfMissing)
 import System.Posix.Files (ownerModes, setFileMode)
 import Vere.Ames          (ames)
 import Vere.Behn          (behn)
+import Vere.Clay          (clay)
 import Vere.Http.Client   (client)
 import Vere.Http.Server   (serv)
 import Vere.Log           (EventLog)
-import Vere.Serf          (Serf, sStderr, SerfState(..), doJob)
-import Vere.Clay          (clay)
+import Vere.Serf          (Serf, SerfState(..), doJob, sStderr)
 import Vere.Term
+
+import RIO.Directory
 
 import qualified System.Entropy as Ent
 import qualified Urbit.Time     as Time
@@ -35,7 +36,7 @@ setupPierDirectory :: FilePath -> RIO e ()
 setupPierDirectory shipPath = do
    for_ ["put", "get", "log", "chk"] $ \seg -> do
        let pax = shipPath <> "/.urb/" <> seg
-       io $ createDirectoryIfMissing True pax
+       createDirectoryIfMissing True pax
        io $ setFileMode pax ownerModes
 
 
