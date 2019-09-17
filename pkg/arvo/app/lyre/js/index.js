@@ -44584,8 +44584,8 @@
               }
             }
 
-            let api = new UrbitApi();
-            window.api = api;
+            let api$1 = new UrbitApi();
+            window.api = api$1;
 
             class Store {
               constructor() {
@@ -44830,7 +44830,43 @@
               }
             }
 
-            const _jsxFileName$9 = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/js/components/dom.js";
+            const _jsxFileName$9 = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/js/components/lib/widget.js";
+            class Widget extends react_1 {
+              constructor(props) {
+                super(props);
+              }
+
+              componentWillMount() {
+                if (this.props.sub) {
+                  this.props.api.bind(this.props.sub.path,
+                    "PUT", api.authTokens.ship, this.props.sub.app,
+                    this.handleEvent.bind(this),
+                    this.handleError.bind(this));
+                }
+              }
+
+              handleEvent(diff) {
+                this.child.handleEvent(diff);
+              }
+
+              handleError(err) {
+                console.error(err);
+                this.props.api.bind(this.props.path,
+                  "PUT", api.authTokens.ship, this.props.app,
+                  this.handleEvent.bind(this),
+                  this.handleError.bind(this));
+              }
+
+
+              render() {
+                let Comp = window.componentTable[this.props.name];
+                return (
+                  react.createElement(Comp, { ref: (el) => this.child = el, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 34}})
+                );
+              }
+            }
+
+            const _jsxFileName$a = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/js/components/dom.js";
             class Dom extends react_1 {
               constructor(props) {
                 super(props);
@@ -44843,11 +44879,11 @@
                 switch (head) {
                   case "text":
                     return (
-                      react.createElement(Text, { body: body, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 26}})
+                      react.createElement(Text, { body: body, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 27}})
                     );
                   case "button":
                     return (
-                      react.createElement(Button, { body: body.body, action: body.action, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 30}})
+                      react.createElement(Button, { body: body.body, action: body.action, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 31}})
                     );
                   case "form":
                     return (
@@ -44855,22 +44891,22 @@
                         mark: body.mark,
                         body: body.body,
                         data: body.data,
-                        api: this.props.api, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 34}})
+                        api: this.props.api, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 35}})
                     );
                   case "text-input":
                     return (
-                      react.createElement(TextInput, { name: body.name, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 42}})
+                      react.createElement(TextInput, { name: body.name, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 43}})
                     );
                   case "submit":
                     return (
-                      react.createElement(Submit, { body: body, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 46}})
+                      react.createElement(Submit, { body: body, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 47}})
                     );
                   case "size":
                     return (
                       react.createElement(Size, { width: body.width,
                             height: body.height,
                             api: this.props.api,
-                            body: body.body, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 50}}) 
+                            body: body.body, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 51}}) 
                     );
                   case "padding":
                     return (
@@ -44879,15 +44915,26 @@
                             left: body.left,
                             right: body.right,
                             api: this.props.api,
-                            body: body.body, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 57}}) 
+                            body: body.body, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 58}}) 
                     );
                   case "horizontal":
                     return (
-                      react.createElement(Horizontal, { body: body, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 66}})
+                      react.createElement(Horizontal, { body: body, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 67}})
                     );
                   case "vertical":
                     return (
-                      react.createElement(Vertical, { body: body, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 70}})
+                      react.createElement(Vertical, { body: body, api: this.props.api, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 71}})
+                    );
+                  case "include":
+                    let script = document.createElement('script');
+                    script.innerHTML = body.js;
+                    document.body.appendChild(script);
+                    return null;
+                  case "component":
+                    return (
+                      react.createElement(Widget, { name: body.name,
+                        sub: body.sub,
+                        api: this.props.api, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 80}})
                     );
                   default:
                     return;
@@ -44903,7 +44950,7 @@
               }
             }
 
-            const _jsxFileName$a = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/js/components/root.js";
+            const _jsxFileName$b = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/js/components/root.js";
             class Root extends react_1 {
               constructor(props) {
                 super(props);
@@ -44965,7 +45012,7 @@
                 }
 
                 if (command) {
-                  api.action("lyre", "lyre-action", command);
+                  api$1.action("lyre", "lyre-action", command);
                   this.input.value = '';
                 }
               }
@@ -44980,36 +45027,36 @@
                   let cnom = '%'+nom;
                   if (this.state.current === nom) {
                     return (
-                      react.createElement('p', { key: i, className: "bg-white black mr2 pl2 pr2"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 86}}, cnom)
+                      react.createElement('p', { key: i, className: "bg-white black mr2 pl2 pr2"    , __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 86}}, cnom)
                     );
                   } else {
                     return (
-                      react.createElement('p', { key: i, className: "white mr2 pl2 pr2"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 90}}, cnom)
+                      react.createElement('p', { key: i, className: "white mr2 pl2 pr2"   , __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 90}}, cnom)
                     );
                   }
                 });
 
                 return (
-                  react.createElement('div', { className: "w-100 h-100" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 96}}
-                    , react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 97}}
+                  react.createElement('div', { className: "w-100 h-100" , __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 96}}
+                    , react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 97}}
                       , react.createElement('div', { className: "w-100",
-                          style: {height: 'calc(100% - 96px)'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 98}}
-                        , react.createElement('div', { className: "w-100 h-100 overflow-y-scroll overflow-x-scroll"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 100}}
+                          style: {height: 'calc(100% - 96px)'}, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 98}}
+                        , react.createElement('div', { className: "w-100 h-100 overflow-y-scroll overflow-x-scroll"   , __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 100}}
                           , react.createElement(Dom, { status: this.state.status,
                             body: this.state.data,
-                            api: api, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 101}})
+                            api: api$1, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 101}})
                         )
                       )
                       , react.createElement('div', { className: "flex-col absolute bg-black pa3 w-100"    ,
-                          style: {bottom:0}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 106}}
-                        , react.createElement('form', { onSubmit: this.inputSubmit, className: "w-100", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 108}}
+                          style: {bottom:0}, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 106}}
+                        , react.createElement('form', { onSubmit: this.inputSubmit, className: "w-100", __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 108}}
                           , react.createElement('input', { autoFocus: true,
                             className: "w-100",
                             ref: (el) => {this.input = el;},
-                            onChange: this.inputChange.bind(this), __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 109}}
+                            onChange: this.inputChange.bind(this), __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 109}}
                           )
                         )
-                        , react.createElement('div', { className: "flex w-100" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 115}}
+                        , react.createElement('div', { className: "flex w-100" , __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 115}}
                           , ses
                         )
                       )
@@ -45021,7 +45068,7 @@
 
             class Subscription {
               start() {
-                if (api.authTokens) {
+                if (api$1.authTokens) {
                   this.initializeBind();
                 } else {
                   console.error("~~~ ERROR: Must set api.authTokens before operation ~~~");
@@ -45029,7 +45076,7 @@
               }
 
               initializeBind() {
-                api.bind(`/primary`, "PUT", api.authTokens.ship, 'lyre',
+                api$1.bind(`/primary`, "PUT", api$1.authTokens.ship, 'lyre',
                   this.handleEvent.bind(this),
                   this.handleError.bind(this));
               }
@@ -45040,7 +45087,7 @@
 
               handleError(err) {
                 console.error(err);
-                api.bind(`/primary`, "PUT", api.authTokens.ship, 'lyre',
+                api$1.bind(`/primary`, "PUT", api$1.authTokens.ship, 'lyre',
                   this.handleEvent.bind(this),
                   this.handleError.bind(this));
               }
@@ -45048,10 +45095,10 @@
 
             let subscription = new Subscription();
 
-            const _jsxFileName$b = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/index.js";
+            const _jsxFileName$c = "/Users/isaac/urbit/urbit/pkg/interface/lyre/src/index.js";
             console.log('app running');
 
-            api.setAuthTokens({
+            api$1.setAuthTokens({
               ship: window.ship
             });
 
@@ -45061,7 +45108,7 @@
             window._ = lodash;
 
             reactDom.render((
-              react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$b, lineNumber: 21}} )
+              react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$c, lineNumber: 21}} )
             ), document.querySelectorAll("#root")[0]);
 
 }));

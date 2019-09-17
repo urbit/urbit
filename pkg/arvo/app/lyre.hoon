@@ -145,16 +145,25 @@
     ~&  bol
     [~ this]
   ::
+      %react
+    =/  dep=dependencies
+      :*  ~[[[byk.bol /hoon/hello/gen] %x]]
+          ~
+          ~
+          %react
+      ==
+    ::
+    finish:(set-deps:(init:per-view cur) dep)
+  ::
       %chat
     =/  dep=dependencies
-      :*  ~  ::[[[byk.bol /hoon/hello/gen] %x] [[byk.bol /] %y]]
+      :*  ~
           ~[[%chat-view /chat/-50/0/chat1]]
           ~
           %chat
       ==
     ::
     finish:(set-deps:(init:per-view cur) dep)
-  ::
   ==
 ::
 ++  writ

@@ -12,6 +12,14 @@
         dat+dat.a
     ==
   ::
+  ++  peer
+    |=  a=^peer
+    ^-  json
+    %-  pairs:enjs:format
+    :~  app+s+app.a
+        path+s+(spat pax.a)
+    ==
+  ::
   ++  dom
     |=  a=^dom
     ^-  json
@@ -28,6 +36,9 @@
       %padding     (padding a)
       %horizontal  (horizontal a)
       %vertical    (vertical a)
+    ::
+      %include     (include a)
+      %component   (component a)
     ==
   ::
   ++  empty
@@ -131,6 +142,24 @@
       %vertical
     [%a (turn bod.a dom)]
   ::
+  ++  include
+    |=  a=^dom
+    ^-  json
+    ?>  ?=(%include -.a)
+    %+  frond:enjs:format
+      %include
+    (frond:enjs:format %js s+js.a)
+  ::
+  ++  component
+    |=  a=^dom
+    ^-  json
+    ?>  ?=(%component -.a)
+    %+  frond:enjs:format
+      %component
+    %-  pairs:enjs:format
+    :~  name+s+name.a
+        sub+?~(sub.a ~ (peer u.sub.a))
+    ==
   --
 --
 

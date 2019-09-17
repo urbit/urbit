@@ -10,6 +10,7 @@ import { Size }       from '/components/lib/size';
 import { Padding }    from '/components/lib/padding';
 import { Horizontal } from '/components/lib/horizontal';
 import { Vertical }   from '/components/lib/vertical';
+import { Widget }     from '/components/lib/widget';
 
 export class Dom extends Component {
   constructor(props) {
@@ -68,6 +69,17 @@ export class Dom extends Component {
       case "vertical":
         return (
           <Vertical body={body} api={this.props.api}/>
+        );
+      case "include":
+        let script = document.createElement('script');
+        script.innerHTML = body.js;
+        document.body.appendChild(script);
+        return null;
+      case "component":
+        return (
+          <Widget name={body.name}
+            sub={body.sub}
+            api={this.props.api}/>
         );
       default:
         return;
