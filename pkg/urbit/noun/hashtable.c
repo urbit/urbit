@@ -137,9 +137,8 @@ _ch_buck_add(u3h_buck* hab_u, u3_noun kev, c3_w *use_w)
   for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
     u3_noun kov = u3h_slot_to_noun(hab_u->sot_w[i_w]);
     if ( c3y == u3r_sing(u3h(kev), u3h(kov)) ) {
-      u3a_lose(kov);
       hab_u->sot_w[i_w] = u3h_noun_to_slot(kev);
-
+      u3z(kov);
       return hab_u;
     }
   }
@@ -600,7 +599,7 @@ u3h_get(u3p(u3h_root) har_p, u3_noun key)
   u3_noun pro = u3h_git(har_p, key);
 
   if ( u3_none != pro ) {
-    u3a_gain(pro);
+    u3k(pro);
   }
   return pro;
 }
@@ -615,7 +614,7 @@ _ch_buck_gut(u3h_buck* hab_u, u3_noun key)
   for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
     u3_noun kev = u3h_slot_to_noun(hab_u->sot_w[i_w]);
     if ( _(u3r_sung(key, u3h(kev))) ) {
-      return u3a_gain(u3t(kev));
+      return u3k(u3t(kev));
     }
   }
   return u3_none;
@@ -644,7 +643,7 @@ _ch_node_gut(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
       u3_noun kev = u3h_slot_to_noun(sot_w);
 
       if ( _(u3r_sung(key, u3h(kev))) ) {
-        return u3a_gain(u3t(kev));
+        return u3k(u3t(kev));
       }
       else {
         return u3_none;
@@ -682,7 +681,7 @@ u3h_gut(u3p(u3h_root) har_p, u3_noun key)
 
     if ( _(u3r_sung(key, u3h(kev))) ) {
       har_u->sot_w[inx_w] = u3h_noun_be_warm(sot_w);
-      return u3a_gain(u3t(kev));
+      return u3k(u3t(kev));
     }
     else {
       return u3_none;
@@ -703,7 +702,7 @@ _ch_free_buck(u3h_buck* hab_u)
   c3_w i_w;
 
   for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
-    u3a_lose(u3h_slot_to_noun(hab_u->sot_w[i_w]));
+    u3z(u3h_slot_to_noun(hab_u->sot_w[i_w]));
   }
   u3a_wfree(hab_u);
 }
@@ -722,9 +721,7 @@ _ch_free_node(u3h_node* han_u, c3_w lef_w)
     c3_w sot_w = han_u->sot_w[i_w];
 
     if ( _(u3h_slot_is_noun(sot_w)) ) {
-      u3_noun kev = u3h_slot_to_noun(sot_w);
-
-      u3a_lose(kev);
+      u3z(u3h_slot_to_noun(sot_w));
     }
     else {
       void* hav_v = u3h_slot_to_node(sot_w);
@@ -751,9 +748,7 @@ u3h_free(u3p(u3h_root) har_p)
     c3_w sot_w = har_u->sot_w[i_w];
 
     if ( _(u3h_slot_is_noun(sot_w)) ) {
-      u3_noun kev = u3h_slot_to_noun(sot_w);
-
-      u3a_lose(kev);
+      u3z(u3h_slot_to_noun(sot_w));
     }
     else if ( _(u3h_slot_is_node(sot_w)) ) {
       u3h_node* han_u = u3h_slot_to_node(sot_w);
