@@ -17,11 +17,11 @@ class UrbitApi {
       remove: this.groupRemove.bind(this)
     };
     
-    this.inbox = {
-      create: this.inboxCreate.bind(this),
-      delete: this.inboxDelete.bind(this),
-      message: this.inboxMessage.bind(this),
-      read: this.inboxRead.bind(this)
+    this.chat = {
+      create: this.chatCreate.bind(this),
+      delete: this.chatDelete.bind(this),
+      message: this.chatMessage.bind(this),
+      read: this.chatRead.bind(this)
     };
 
     this.permissions = {
@@ -31,10 +31,10 @@ class UrbitApi {
       remove: this.permissionRemove.bind(this)
     };
 
-    this.inboxHook = {
-      addOwned: this.inboxHookAddOwned.bind(this),
-      addSynced: this.inboxHookAddSynced.bind(this),
-      remove: this.inboxHookRemove.bind(this)
+    this.chatHook = {
+      addOwned: this.chatHookAddOwned.bind(this),
+      addSynced: this.chatHookAddSynced.bind(this),
+      remove: this.chatHookRemove.bind(this)
     };
 
     this.permissionGroupHook = {
@@ -117,23 +117,23 @@ class UrbitApi {
     });
   }
 
-  inboxAction(data) {
-    this.action("inbox-store", "inbox-action", data);
+  chatAction(data) {
+    this.action("chat-store", "chat-action", data);
   }
 
-  inboxCreate(path, owner = `~${window.ship}`) {
-    this.inboxAction({
+  chatCreate(path, owner = `~${window.ship}`) {
+    this.chatAction({
       create: {
         path, owner
       }
     });
   }
 
-  inboxDelete(path) {
-    this.inboxAction({ delete: { path } });
+  chatDelete(path) {
+    this.chatAction({ delete: { path } });
   }
 
-  inboxMessage(local, path, author, when, letter) {
+  chatMessage(local, path, author, when, letter) {
     let data = {
       message: {
         path,
@@ -149,42 +149,42 @@ class UrbitApi {
 
     this.addPendingMessage(data.message);
     if (local) {
-      this.inboxAction(data);
+      this.chatAction(data);
     } else {
-      this.inboxHookAction(data, "inbox-action");
+      this.chatHookAction(data, "chat-action");
     }
   }
 
-  inboxRead(path, read) {
-    this.inboxAction({
+  chatRead(path, read) {
+    this.chatAction({
       read: {
         path, read
       }
     });
   }
 
-  inboxHookAction(data, mark = "inbox-hook-action") {
-    this.action("inbox-hook", mark, data);
+  chatHookAction(data, mark = "chat-hook-action") {
+    this.action("chat-hook", mark, data);
   }
 
-  inboxHookAddOwned(path, security) {
+  chatHookAddOwned(path, security) {
     let data = {};
     data['add-owned'] = {
       path, security
     };
-    this.inboxHookAction(data);
+    this.chatHookAction(data);
   }
 
-  inboxHookRemove(path) {
-    this.inboxHookAction({ remove: path });
+  chatHookRemove(path) {
+    this.chatHookAction({ remove: path });
   }
 
-  inboxHookAddSynced(ship, path) {
+  chatHookAddSynced(ship, path) {
     let data = {};
     data['add-synced'] = {
       ship, path
     };
-    this.inboxHookAction(data);
+    this.chatHookAction(data);
   }
 
   permissionAction(data) {

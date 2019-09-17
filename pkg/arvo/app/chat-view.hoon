@@ -1,5 +1,4 @@
-/-  *inbox-store
-/+  *server, *inbox-json
+/+  *server, *chat-json
 /=  index
   /^  octs
   /;  as-octs:mimes:html
@@ -40,7 +39,7 @@
   $%  [%http-response =http-event:http]
       [%connect wire binding:eyre term]
       [%poke wire dock [%launch-action [@tas path @t]]]
-      [%diff %inbox-initial inbox]
+      [%diff %chat-initial inbox]
       [%quit ~]
   ==
 --
@@ -55,7 +54,7 @@
   |=  old=*
   ^-  (quip move _this)
   :_  this
-  :~  [ost.bol %connect / [~ /'~chat'] %inbox-view]
+  :~  [ost.bol %connect / [~ /'~chat'] %chat-view]
       (launch-poke [/chattile '/~chat/js/tile.js'])
   ==
 ::
@@ -104,11 +103,11 @@
     :_  this
     [ost.bol %http-response (png-response:app img)]~
   ::
-    [%'~chat' %scroll @t @t *]
-    =*  start  i.t.t.site.url
-    =*  end  i.t.t.t.site.url
-    =/  pax  t.t.t.site.url
-    =/  envelopes  (envelope-scry [start end pax])
+    [%'~chat' %paginate @t @t *]
+    =/  start  (need (rush i.t.t.site.url dem))
+    =/  end  (need (rush i.t.t.t.site.url dem))
+    =/  pax  t.t.t.t.site.url
+    =/  envelopes  (envelope-scry [(scot %ud start) (scot %ud end) pax])
     :_  this
     :~
     :*  ost.bol
@@ -129,13 +128,15 @@
     [ost.bol %http-response (html-response:app index)]~
   ==
 ::
-++  peer-inbox
+++  peer-initial
   |=  pax=path
   ^-  (quip move _this)
+  ?.  =(src.bol our.bol)
+    [[ost.bol %quit ~]~ this]
   ::  create inbox with 100 messages max per mailbox and send that along
   ::  then quit the subscription
   :_  this
-  :~  [ost.bol %diff %inbox-initial (truncate-inbox all-scry)]
+  :~  [ost.bol %diff %chat-initial (truncate-inbox all-scry)]
       [ost.bol %quit ~]
   ==
 ::  
@@ -148,7 +149,7 @@
   |=  pax=path
   ^-  (list envelope)
   =.  pax  ;:  weld
-    `path`/=inbox-store/(scot %da now.bol)/envelopes
+    `path`/=chat-store/(scot %da now.bol)/envelopes
     pax
     `path`/noun
   ==
@@ -156,20 +157,20 @@
 ::
 ++  all-scry
   ^-  inbox
-  =/  pax=path  /=inbox-store/(scot %da now.bol)/all/noun
+  =/  pax=path  /=chat-store/(scot %da now.bol)/all/noun
   .^(inbox %gx pax)
 ::
 ++  envelopes-update
-  |=  [envelopes=(list envelope) start=@t end=@t pax=path]
+  |=  [envelopes=(list envelope) start=@ud end=@ud pax=path]
   ^-  json
-  %+  frond:enjs:format  %inbox-update
+  %+  frond:enjs:format  %chat-update
   %-  pairs:enjs:format
   :~
     :-  %messages
     %-  pairs:enjs:format
     :~  [%path (pa pax)]
-        [%start (numb:enjs:format (need (rush start dem)))]
-        [%end (numb:enjs:format (need (rush end dem)))]
+        [%start (numb:enjs:format start)]
+        [%end (numb:enjs:format end)]
         [%envelopes [%a (turn envelopes enve)]]
     ==
   ==

@@ -1,4 +1,4 @@
-/-  *lyre, inbox-store
+/-  *lyre, chat-store
 /+  *server
 ::
 ::

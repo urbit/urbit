@@ -26,16 +26,16 @@
 ::
 +$  configs  (map path [read=@ owner=ship])
 ::
-+$  inbox-action
++$  chat-action
   $%  [%create =path owner=ship]
       [%delete =path]
       [%message =path =envelope]
       [%read =path read=@]
   ==
 ::
-+$  inbox-update
++$  chat-update
   $%  [%keys keys=(set path)]
-      inbox-action
+      chat-action
   ==
 ::
 --

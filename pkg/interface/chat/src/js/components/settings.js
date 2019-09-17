@@ -31,8 +31,8 @@ export class SettingsScreen extends Component {
   deleteChat() {
     const { props, state } = this;
 
-    props.api.inboxHook.remove(state.station);
-    props.api.inbox.delete(state.station);
+    props.api.chatHook.remove(state.station);
+    props.api.chat.delete(state.station);
     props.api.groups.unbundle(`/inbox${state.station}/read`);
     props.api.groups.unbundle(`/inbox${state.station}/write`);
 

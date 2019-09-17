@@ -98,9 +98,9 @@
       [%home %group-hook]
       [%home %permission-store]
       [%home %permission-group-hook]
-      [%home %inbox-store]
-      [%home %inbox-hook]
-      [%home %inbox-view]
+      [%home %chat-store]
+      [%home %chat-hook]
+      [%home %chat-view]
   ==
 ::
 ++  deft-fish                                           ::  default connects
