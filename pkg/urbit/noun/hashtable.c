@@ -3,6 +3,14 @@
 */
 #include "all.h"
 
+/* CUT_END(): extract [b_w] low bits from [a_w]
+*/
+#define CUT_END(a_w, b_w) (a_w & ((1 << b_w) - 1))
+
+/* BIT_SET(): [1] if bit [b_w] is set in [a_w]
+*/
+#define BIT_SET(a_w, b_w) (a_w & (1 << b_w))
+
 static void
 _ch_slot_put(u3h_slot* sot_w, u3_noun kev, c3_w lef_w, c3_w rem_w, c3_w* use_w);
 
@@ -93,11 +101,11 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
 
   lef_w -= 5;
   bit_w = (rem_w >> lef_w);
-  rem_w = (rem_w & ((1 << lef_w) - 1));
+  rem_w = CUT_END(rem_w, lef_w);
   map_w = han_u->map_w;
-  inx_w = _ch_popcount(map_w & ((1 << bit_w) - 1));
+  inx_w = _ch_popcount(CUT_END(map_w, bit_w));
 
-  if ( map_w & (1 << bit_w) ) {
+  if ( BIT_SET(map_w, bit_w) ) {
     _ch_slot_put(&(han_u->sot_w[inx_w]), kev, lef_w, rem_w, use_w);
     return han_u;
   }
@@ -191,7 +199,7 @@ _ch_slot_put(u3h_slot* sot_w, u3_noun kev, c3_w lef_w, c3_w rem_w, c3_w* use_w)
       u3z(kov);
     }
     else {
-      c3_w  rom_w = u3r_mug(u3h(kov)) & ((1 << lef_w) - 1);
+      c3_w  rom_w = CUT_END(u3r_mug(u3h(kov)), lef_w);
       void* hav_v = _ch_some_new(lef_w);
 
       *use_w -= 1; // take one out, add two
@@ -225,13 +233,13 @@ _ch_trim_node(u3h_root* har_u, u3h_slot* sot_w, c3_w lef_w, c3_w rem_w)
   bit_w = (rem_w >> lef_w);
   map_w = han_u->map_w;
 
-  if ( 0 == (map_w & (1 << bit_w)) ) {
+  if ( !BIT_SET(map_w, bit_w) ) {
     har_u->arm_u.mug_w = _ch_skip_slot(har_u->arm_u.mug_w, lef_w);
     return c3n;
   }
 
-  rem_w = (rem_w & ((1 << lef_w) - 1));
-  inx_w = _ch_popcount(map_w & ((1 << bit_w) - 1));
+  rem_w = CUT_END(rem_w, lef_w);
+  inx_w = _ch_popcount(CUT_END(map_w, bit_w));
   tos_w = &(han_u->sot_w[inx_w]);
 
   if ( c3n == _ch_trim_slot(har_u, tos_w, lef_w, rem_w) ) {
@@ -325,7 +333,7 @@ c3_w
 _ch_skip_slot(c3_w mug_w, c3_w lef_w)
 {
   c3_w hig_w = mug_w >> lef_w;
-  c3_w new_w = (hig_w + 1) & ((1 << (31 - lef_w)) - 1); // modulo 2^(31 - lef_w)
+  c3_w new_w = CUT_END(hig_w + 1, (31 - lef_w)); // modulo 2^(31 - lef_w)
   return new_w << lef_w;
 }
 
@@ -366,7 +374,7 @@ _ch_trim_root(u3h_root* har_u)
 {
   c3_w      mug_w = har_u->arm_u.mug_w;
   c3_w      inx_w = mug_w >> 25; // 6 bits
-  c3_w      rem_w = mug_w & ((1 << 25) - 1);
+  c3_w      rem_w = CUT_END(mug_w, 25);
   u3h_slot* sot_w = &(har_u->sot_w[inx_w]);
 
   return _ch_trim_slot(har_u, sot_w, 25, rem_w);
@@ -404,7 +412,7 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
   u3_noun   kev   = u3nc(u3k(key), val);
   c3_w      mug_w = u3r_mug(key);
   c3_w      inx_w = (mug_w >> 25);  //  6 bits
-  c3_w      rem_w = (mug_w & ((1 << 25) - 1));
+  c3_w      rem_w = CUT_END(mug_w, 25);
 
   _ch_slot_put(&(har_u->sot_w[inx_w]), kev, 25, rem_w, &(har_u->use_w));
   if ( har_u->max_w > 0 ) {
@@ -436,14 +444,14 @@ _ch_node_hum(u3h_node* han_u, c3_w lef_w, c3_w rem_w, c3_w mug_w)
 
   lef_w -= 5;
   bit_w = (rem_w >> lef_w);
-  rem_w = (rem_w & ((1 << lef_w) - 1));
+  rem_w = CUT_END(rem_w, lef_w);
   map_w = han_u->map_w;
 
-  if ( !(map_w & (1 << bit_w)) ) {
+  if ( !BIT_SET(map_w, bit_w) ) {
     return c3n;
   }
   else {
-    c3_w inx_w = _ch_popcount(map_w & ((1 << bit_w) - 1));
+    c3_w inx_w = _ch_popcount(CUT_END(map_w, bit_w));
     c3_w sot_w = han_u->sot_w[inx_w];
 
     if ( _(u3h_slot_is_noun(sot_w)) ) {
@@ -476,7 +484,7 @@ u3h_hum(u3p(u3h_root) har_p, c3_w mug_w)
 {
   u3h_root* har_u = u3to(u3h_root, har_p);
   c3_w      inx_w = (mug_w >> 25);
-  c3_w      rem_w = (mug_w & ((1 << 25) - 1));
+  c3_w      rem_w = CUT_END(mug_w, 25);
   c3_w      sot_w = har_u->sot_w[inx_w];
 
   if ( _(u3h_slot_is_null(sot_w)) ) {
@@ -524,14 +532,14 @@ _ch_node_git(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
 
   lef_w -= 5;
   bit_w = (rem_w >> lef_w);
-  rem_w = (rem_w & ((1 << lef_w) - 1));
+  rem_w = CUT_END(rem_w, lef_w);
   map_w = han_u->map_w;
 
-  if ( !(map_w & (1 << bit_w)) ) {
+  if ( !BIT_SET(map_w, bit_w) ) {
     return u3_none;
   }
   else {
-    c3_w inx_w = _ch_popcount(map_w & ((1 << bit_w) - 1));
+    c3_w inx_w = _ch_popcount(CUT_END(map_w, bit_w));
     c3_w sot_w = han_u->sot_w[inx_w];
 
     if ( _(u3h_slot_is_noun(sot_w)) ) {
@@ -565,7 +573,7 @@ u3h_git(u3p(u3h_root) har_p, u3_noun key)
   u3h_root* har_u = u3to(u3h_root, har_p);
   c3_w      mug_w = u3r_mug(key);
   c3_w      inx_w = (mug_w >> 25);
-  c3_w      rem_w = (mug_w & ((1 << 25) - 1));
+  c3_w      rem_w = CUT_END(mug_w, 25);
   c3_w      sot_w = har_u->sot_w[inx_w];
 
   if ( _(u3h_slot_is_null(sot_w)) ) {
@@ -629,14 +637,14 @@ _ch_node_gut(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
 
   lef_w -= 5;
   bit_w = (rem_w >> lef_w);
-  rem_w = (rem_w & ((1 << lef_w) - 1));
+  rem_w = CUT_END(rem_w, lef_w);
   map_w = han_u->map_w;
 
-  if ( !(map_w & (1 << bit_w)) ) {
+  if ( !BIT_SET(map_w, bit_w) ) {
     return u3_none;
   }
   else {
-    c3_w inx_w = _ch_popcount(map_w & ((1 << bit_w) - 1));
+    c3_w inx_w = _ch_popcount(CUT_END(map_w, bit_w));
     c3_w sot_w = han_u->sot_w[inx_w];
 
     if ( _(u3h_slot_is_noun(sot_w)) ) {
@@ -670,7 +678,7 @@ u3h_gut(u3p(u3h_root) har_p, u3_noun key)
   u3h_root* har_u = u3to(u3h_root, har_p);
   c3_w      mug_w = u3r_mug(key);
   c3_w      inx_w = (mug_w >> 25);
-  c3_w      rem_w = (mug_w & ((1 << 25) - 1));
+  c3_w      rem_w = CUT_END(mug_w, 25);
   c3_w      sot_w = har_u->sot_w[inx_w];
 
   if ( _(u3h_slot_is_null(sot_w)) ) {
