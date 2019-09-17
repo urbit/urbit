@@ -57,38 +57,38 @@ _ch_popcount(c3_w num_w)
   return __builtin_popcount(num_w);
 }
 
-/* _ch_buck_new(): create new, empty bucket.
+/* _ch_buck_new(): create new bucket.
 */
 static u3h_buck*
-_ch_buck_new(void)
+_ch_buck_new(c3_w len_w)
 {
-  u3h_buck* hab_u = u3a_walloc(c3_wiseof(u3h_buck));
-
-  hab_u->len_w = 0;
+  u3h_buck* hab_u = u3a_walloc(c3_wiseof(u3h_buck) +
+                               (len_w * c3_wiseof(u3h_slot)));
+  hab_u->len_w = len_w;
   return hab_u;
 }
 
-/* _ch_node_new(): create new, empty node.
+/* _ch_node_new(): create new node.
 */
 static u3h_node*
-_ch_node_new(void)
+_ch_node_new(c3_w len_w)
 {
-  u3h_node* han_u = u3a_walloc(c3_wiseof(u3h_node));
-
+  u3h_node* han_u = u3a_walloc(c3_wiseof(u3h_node) +
+                               (len_w * c3_wiseof(u3h_slot)));
   han_u->map_w = 0;
   return han_u;
 }
 
-/* _ch_some_new(): create node or bucket.
+/* _ch_some_new(): create new, empty node or bucket.
 */
 static void*
 _ch_some_new(c3_w lef_w)
 {
   if ( 0 == lef_w ) {
-    return _ch_buck_new();
+    return _ch_buck_new(0);
   }
   else {
-    return _ch_node_new();
+    return _ch_node_new(0);
   }
 }
 
@@ -114,9 +114,8 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
     //  Optimize: use u3a_wealloc.
     //
     c3_w      len_w = _ch_popcount(map_w);
-    u3h_node* nah_u = u3a_walloc(c3_wiseof(u3h_node) +
-                                 ((len_w + 1) * c3_wiseof(u3h_slot)));
-    nah_u->map_w = han_u->map_w | (1 << bit_w);
+    u3h_node* nah_u = _ch_node_new(1 + len_w);
+    nah_u->map_w    = han_u->map_w | (1 << bit_w);
 
     for ( i_w = 0; i_w < inx_w; i_w++ ) {
       nah_u->sot_w[i_w] = han_u->sot_w[i_w];
@@ -152,16 +151,11 @@ _ch_buck_add(u3h_buck* hab_u, u3_noun kev, c3_w *use_w)
   }
 
   //  create mutant bucket with added key-value pair.
+  //  Optimize: use u3a_wealloc().
   {
-    c3_w len_w      = hab_u->len_w;
-    u3h_buck* bah_u = u3a_walloc(c3_wiseof(u3h_buck) +
-                                 (len_w + 1) * c3_wiseof(u3h_slot));
-
-    bah_u->len_w    = len_w + 1;
+    u3h_buck* bah_u = _ch_buck_new(1 + hab_u->len_w);
     bah_u->sot_w[0] = u3h_noun_to_slot(kev);
 
-    // Optimize: use u3a_wealloc().
-    //
     for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
       bah_u->sot_w[i_w + 1] = hab_u->sot_w[i_w];
     }
