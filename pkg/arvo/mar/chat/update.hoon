@@ -1,12 +1,11 @@
-/-  *inbox-store
-/+  *inbox-json
-|_  upd=inbox-update
+/+  *chat-json
+|_  upd=chat-update
 ++  grow
   |%
   ++  json
     =,  enjs:format
     ^-  ^json
-    %+  frond  %inbox-update
+    %+  frond  %chat-update
     %-  pairs
     :~
       ::
@@ -49,7 +48,7 @@
 ::
 ++  grab
   |%
-  ++  noun  inbox-update
+  ++  noun  chat-update
   --
 ::
 --

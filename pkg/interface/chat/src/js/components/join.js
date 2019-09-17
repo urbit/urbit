@@ -32,7 +32,7 @@ export class JoinScreen extends Component {
     let ship = props.match.params.ship;
     let station = '/' + props.match.params.station;
 
-    props.api.inboxHook.addSynced(ship, station);
+    props.api.chatHook.addSynced(ship, station);
     this.props.history.push('/~chat');
   }
 

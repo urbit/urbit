@@ -7,6 +7,7 @@ export class InboxUpdateReducer {
     if (data) {
       this.pending(data, state);
       this.message(data, state);
+      this.messages(data, state);
       this.read(data, state);
       this.create(data, state);
       this.delete(data, state);
@@ -17,6 +18,13 @@ export class InboxUpdateReducer {
     let data = _.get(json, 'message', false);
     if (data) {
       state.inbox[data.path].envelopes.push(data.envelope);
+    }
+  }
+
+  messages(json, state) {
+    let data = _.get(json, 'messages', false);
+    if (data) {
+      console.log(data);
     }
   }
 

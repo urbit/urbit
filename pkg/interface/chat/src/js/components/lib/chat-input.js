@@ -24,6 +24,24 @@ export class ChatInput extends Component {
     this.messageSubmit = this.messageSubmit.bind(this);
     this.messageChange = this.messageChange.bind(this);
 
+    /*// perf testing:
+      let closure = () => {
+        for (var i = 0; i < 20; i++) {
+          props.api.chat.message(
+            props.owner === `${window.ship}`,
+            props.station,
+            `~${window.ship}`,
+            Date.now(),
+            {
+              text: `${Date.now()}`
+            }
+          );
+        }
+        setTimeout(closure, 1000);
+      };
+      setTimeout(closure, 2000);
+    */
+
     moment.updateLocale('en', {
         relativeTime : {
             past: function(input) {
@@ -110,7 +128,7 @@ export class ChatInput extends Component {
 
     let letter = this.getLetterType(state.message);
 
-    props.api.inbox.message(
+    props.api.chat.message(
       props.owner === `${window.ship}`,
       props.station,
       `~${window.ship}`,

@@ -1,15 +1,14 @@
-/-  *inbox-store
-/+  *inbox-json
+/+  *chat-json
 =,  dejs:format
-|_  act=inbox-action
+|_  act=chat-action
 ++  grab
   |%
-  ++  noun  inbox-action
+  ++  noun  chat-action
   ++  json  
     |=  jon=^json
-    =<  (parse-inbox-action jon)
+    =<  (parse-chat-action jon)
     |%
-    ++  parse-inbox-action
+    ++  parse-chat-action
       %-  of
       :~  [%create create]
           [%delete delete]

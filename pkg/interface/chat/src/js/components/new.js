@@ -109,7 +109,7 @@ export class NewScreen extends Component {
       //  command concatenator will look like:
       //  props.api.chat.create(station, aud, 'channel');
       
-      props.api.inbox.create(station);
+      props.api.chat.create(station);
       props.api.groups.bundle(`/inbox${station}/read`);
       props.api.groups.bundle(`/inbox${station}/write`);
 
@@ -140,7 +140,7 @@ export class NewScreen extends Component {
 
         setTimeout(() => {
           // expose inbox to outside, set permissions
-          props.api.inboxHook.addOwned(station, state.security);
+          props.api.chatHook.addOwned(station, state.security);
 
           setTimeout(() => {
             // sync permissions path to aforementioned group

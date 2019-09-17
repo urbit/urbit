@@ -1,10 +1,10 @@
-/-  *inbox-store
+/-  *chat-store
 |%
 ++  inbox-to-json
   |=  box=inbox
   =,  enjs:format
   ^-  json
-  %+  frond  %inbox-initial
+  %+  frond  %chat-initial
   %-  pairs
   %+  turn  ~(tap by box)
   |=  [=path =mailbox]
@@ -59,8 +59,7 @@
 ++  eval                                              :::  %exp speech
   :::  extract contents of an %exp speech, evaluating
   :::  the {exp} if there is no {res} yet.
-  ::
-  |=  a/json
+  |=  a=json
   ^-  [cord (list tank)]
   =,  ^?  dejs-soft:format
   =/  exp  ((ot expression+so ~) a)

@@ -1,5 +1,4 @@
-/-  *inbox-store
-/+  *inbox-json
+/+  *chat-json
 |_  box=inbox
 ::
 ++  grow

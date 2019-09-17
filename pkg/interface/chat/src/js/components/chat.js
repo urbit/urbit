@@ -13,7 +13,6 @@ export class ChatScreen extends Component {
 
     this.state = {
       station: '/' + props.match.params.station,
-      numPeople: 0,
       numPages: 1,
       scrollLocked: false,
     };
@@ -28,7 +27,6 @@ export class ChatScreen extends Component {
   }
 
   componentDidMount() {
-    this.updateNumPeople();
     this.updateReadNumber();
   }
 
@@ -49,10 +47,8 @@ export class ChatScreen extends Component {
 
       this.setState({
         station: "/" + props.match.params.station,
-        numPeople: 0,
         scrollLocked: false
       }, () => {
-        this.updateNumPeople();
         this.scrollToBottom();
         this.updateReadInterval = setInterval(
           this.updateReadNumber.bind(this),
@@ -68,25 +64,24 @@ export class ChatScreen extends Component {
   updateReadNumber() {
     const { props, state } = this;
 
-    let lastMsgNum = props.envelopes || [];
-    lastMsgNum = lastMsgNum.length;
-    let lastRead = props.read;
-    if (lastMsgNum > lastRead && lastMsgNum > 0) {
-      props.api.inbox.read(state.station, lastMsgNum);
+    let lastMsgNum = (props.envelopes.length > 0) ?
+      ( props.envelopes[props.envelopes.length - 1].number ) : 0;
+
+    if (props.read < lastMsgNum && lastMsgNum > 0) {
+      props.api.chat.read(state.station, lastMsgNum);
     }
   }
 
-  /*askForMessages() {
+  askForMessages() {
     const { props, state } = this;
-    let messages = props.messages;
     
-    if (state.numPages * 50 < props.messages.length - 200 ||
+    if (state.numPages * 50 < props.envelopes.length - 200 ||
         this.hasAskedForMessages) {
       return;
     }
 
-    if (messages.length > 0) {
-      let end = messages[0].num;
+    if (props.envelopes.length > 0) {
+      let end = props.envelopes[0].number;
       if (end > 0) {
         let start = ((end - 400) > 0) ? end - 400 : 0;
 
@@ -94,10 +89,10 @@ export class ChatScreen extends Component {
 
         console.log('fetching new messages');
 
-        props.subscription.fetchMessages(state.station, start, end - 1);
+        props.subscription.fetchMessages(start, end - 1, state.station);
       }
     }
-  }*/
+  }
 
   scrollToBottom() {
     if (!this.state.scrollLocked && this.scrollElement) {
@@ -114,7 +109,7 @@ export class ChatScreen extends Component {
           numPages: this.state.numPages + 1,
           scrollLocked: true
         }, () => {
-          //this.askForMessages();
+          this.askForMessages();
         });
       } else if (
           (e.target.scrollHeight - Math.round(e.target.scrollTop)) ===
@@ -140,21 +135,11 @@ export class ChatScreen extends Component {
           numPages: this.state.numPages + 1,
           scrollLocked: true
         }, () => {
-          //this.askForMessages();
+          this.askForMessages();
         });
       }
     } else {
       console.log('Your browser is not supported.');
-    }
-  }
-
-  updateNumPeople() {
-    return;
-    let conf = this.props.configs[this.state.station] || {};
-    let sis = _.get(conf, 'con.sis');
-    let numPeople = !!sis ? sis.length : 0;
-    if (numPeople !== this.state.numPeople) {
-      this.setState({ numPeople });
     }
   }
 

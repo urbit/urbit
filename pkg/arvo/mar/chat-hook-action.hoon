@@ -1,14 +1,14 @@
-/-  *inbox-hook
+/-  *chat-hook
 =,  dejs:format
-|_  act=inbox-hook-action
+|_  act=chat-hook-action
 ++  grab
   |%
-  ++  noun  inbox-hook-action
+  ++  noun  chat-hook-action
   ++  json
     |=  jon=^json
-    =<  (parse-inbox-hook-action jon)
+    =<  (parse-chat-hook-action jon)
     |%
-    ++  parse-inbox-hook-action
+    ++  parse-chat-hook-action
       %-  of
       :~
         [%add-owned add-owned]
@@ -33,7 +33,7 @@
     ::
     ++  sec
       =,  dejs:format
-      ^-  $-(json inbox-security)
+      ^-  $-(json chat-security)
       (su (perk %channel %village %journal %mailbox ~))
     ::
     --

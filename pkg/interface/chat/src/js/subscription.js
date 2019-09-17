@@ -14,11 +14,11 @@ export class Subscription {
   }
 
   initializeChat() {
-    api.bind('/inbox', 'PUT', api.authTokens.ship, 'inbox-view',
+    api.bind('/initial', 'PUT', api.authTokens.ship, 'chat-view',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitSilently.bind(this));
-    api.bind('/updates', 'PUT', api.authTokens.ship, 'inbox-store',
+    api.bind('/updates', 'PUT', api.authTokens.ship, 'chat-store',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this));
@@ -47,6 +47,17 @@ export class Subscription {
   handleQuitAndResubscribe(quit) {
     console.error(quit);
     // TODO: resubscribe
+  }
+
+  fetchMessages(start, end, path) {
+    console.log(start, end, path);
+    fetch(`/~chat/paginate/${start}/${end}${path}`)
+      .then((response) => response.json())
+      .then((json) => {
+        store.handleEvent({
+          data: json
+        });
+      });
   }
 
 }

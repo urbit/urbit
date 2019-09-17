@@ -58,7 +58,7 @@
     =/  ship  (~(get by synced) path.act)
     ?~  ship
       [~ this]
-    ?:  &(=(u.ship our.bol) =(src.bol our.bol))
+    ?:  &(=(u.ship our.bol) =(our.bol src.bol))
       ::  delete one of our own paths
       =/  group-wire  [(scot %p our.bol) %group path.act]
       :_  this(synced (~(del by synced) path.act))
@@ -69,13 +69,13 @@
       |=  [=bone *]
       ^-  move
       [bone %quit ~]
-    ?.  =(u.ship src.bol)
-      :: don't allow
-      [~ this]
-    ::  delete a foreign ship's path
-    =/  group-wire  [(scot %p u.ship) %group path.act]
-    :_  this(synced (~(del by synced) path.act))
-    (pull-wire group-wire path.act)
+    ?:  |(=(u.ship src.bol) =(our.bol src.bol))
+      ::  delete a foreign ship's path
+      =/  group-wire  [(scot %p u.ship) %group path.act]
+      :_  this(synced (~(del by synced) path.act))
+      (pull-wire group-wire path.act)
+    :: don't allow
+    [~ this]
   ::
   ==
 ::
