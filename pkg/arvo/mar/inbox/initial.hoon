@@ -1,4 +1,4 @@
-/-  *inbox
+/-  *inbox-store
 /+  *inbox-json
 |_  box=inbox
 ::

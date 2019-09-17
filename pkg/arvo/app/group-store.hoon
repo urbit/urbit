@@ -1,5 +1,4 @@
-:: service/groups.hoon
-/-  *groups
+/-  *group-store
 |%
 +$  move  [bone card]
 +$  card

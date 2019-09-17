@@ -1,4 +1,4 @@
-/-  *permissions
+/-  *permission-store
 |%
 ++  permission-to-json
   |=  pem=permission-map

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { Sigil } from '/components/lib/icons/sigil';
+import { deSig } from '/lib/util';
+import urbitOb from 'urbit-ob';
 
 
 export class InviteElement extends Component {
@@ -35,9 +37,9 @@ export class InviteElement extends Component {
       });
     }
 
-    if (!isValid) {
+    if (!isValid || (state.members.length > 0 && state.members.length < 3)) {
       this.setState({
-        error: false,
+        error: true,
         success: false
       });
       return;
@@ -65,13 +67,13 @@ export class InviteElement extends Component {
   render() {
     const { props, state} = this;
     let errorElem = !!state.error ? (
-      <p className="pa2 nice-red label-regular">Invalid ship name.</p>
+      <p className="pt2 nice-red label-regular">Invalid ship name.</p>
     ) : (
       <div></div>
     );
 
     let successElem = !!state.success ? (
-      <p className="pa2 nice-green label-regular">Success!</p>
+      <p className="pt2 nice-green label-regular">Success!</p>
     ) : (
       <div></div>
     );

@@ -1,4 +1,4 @@
-/-  *groups
+/-  *group-store
 =,  enjs:format
 |%
 ++  groups-to-json

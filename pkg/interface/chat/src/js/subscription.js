@@ -18,15 +18,15 @@ export class Subscription {
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitSilently.bind(this));
-    api.bind('/updates', 'PUT', api.authTokens.ship, 'inbox',
+    api.bind('/updates', 'PUT', api.authTokens.ship, 'inbox-store',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this));
-    api.bind('/all', 'PUT', api.authTokens.ship, 'groups',
+    api.bind('/all', 'PUT', api.authTokens.ship, 'group-store',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this));
-    api.bind('/all', 'PUT', api.authTokens.ship, 'permissions',
+    api.bind('/all', 'PUT', api.authTokens.ship, 'permission-store',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this));

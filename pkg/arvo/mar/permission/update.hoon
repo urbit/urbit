@@ -1,4 +1,4 @@
-/-  *permissions
+/-  *permission-store
 /+  *permission-json
 |_  upd=permission-update
 ::

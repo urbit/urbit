@@ -1,5 +1,4 @@
-::  hook/group-permits.hoon
-/-  *groups, *permissions, *group-permit
+/-  *group-store, *permission-store, *permission-group-hook
 |%
 +$  move  [bone card]
 ::
@@ -47,8 +46,8 @@
   ~&  relation
   [~ this]
 ::
-++  poke-group-permit-action
-  |=  act=group-permit-action
+++  poke-permission-group-hook-action
+  |=  act=permission-group-hook-action
   ^-  (quip move _this)
   ?.  =(src.bol our.bol)
     [~ this]
@@ -85,7 +84,7 @@
     =/  group-path  [%group group]
     =.  relation  (~(put by relation) group permissions)
     :_  (track-bone group-path)
-    [ost.bol %peer group-path [our.bol %groups] group-path]~
+    [ost.bol %peer group-path [our.bol %group-store] group-path]~
   =.  u.perms  (~(uni in u.perms) permissions)
   :-  ~
   this(relation (~(put by relation) group u.perms))
@@ -165,18 +164,18 @@
 ++  permission-poke
   |=  [pax=path action=permission-action]
   ^-  move
-  [ost.bol %poke pax [our.bol %permissions] [%permission-action action]]
+  [ost.bol %poke pax [our.bol %permission-store] [%permission-action action]]
 ::
 ++  group-pull
   |=  =path
   ^-  move
-  [ost.bol %pull [%group path] [our.bol %groups] ~]
+  [ost.bol %pull [%group path] [our.bol %group-store] ~]
 ::
 ++  permission-scry
   |=  pax=path
   ^-  (unit permission)
   =.  pax  ;:  weld
-    `path`/=permissions/(scot %da now.bol)/permission
+    `path`/=permission-store/(scot %da now.bol)/permission
     pax
     `path`/noun
   ==

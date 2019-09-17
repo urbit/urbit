@@ -1,4 +1,4 @@
-/-  *groups
+/-  *group-store
 /+  *group-json
 |_  grp=group-initial
 ::

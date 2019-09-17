@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 
 
-export class LandingScreen extends Component {
+export class JoinScreen extends Component {
 
   constructor(props) {
     super(props);
@@ -32,7 +32,7 @@ export class LandingScreen extends Component {
     let ship = props.match.params.ship;
     let station = '/' + props.match.params.station;
 
-    props.api.inboxSync.addSynced(ship, station);
+    props.api.inboxHook.addSynced(ship, station);
     this.props.history.push('/~chat');
   }
 

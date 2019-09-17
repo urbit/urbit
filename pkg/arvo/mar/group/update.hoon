@@ -1,4 +1,4 @@
-/-  *groups
+/-  *group-store
 /+  *group-json
 |_  upd=group-update
 ++  grab

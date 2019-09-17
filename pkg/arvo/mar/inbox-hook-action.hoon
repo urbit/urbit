@@ -1,14 +1,14 @@
-/-  *inbox-permission-hook
+/-  *inbox-hook
 =,  dejs:format
-|_  act=permission-hook-action
+|_  act=inbox-hook-action
 ++  grab
   |%
-  ++  noun  permission-hook-action
+  ++  noun  inbox-hook-action
   ++  json
     |=  jon=^json
-    =<  (parse-permission-hook-action jon)
+    =<  (parse-inbox-hook-action jon)
     |%
-    ++  parse-permission-hook-action
+    ++  parse-inbox-hook-action
       %-  of
       :~
         [%add-owned add-owned]

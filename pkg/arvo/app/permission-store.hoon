@@ -1,5 +1,4 @@
-/-  *permissions
-::  service/permissions.hoon
+/-  *permission-store
 ::
 |%
 +$  move  [bone card]

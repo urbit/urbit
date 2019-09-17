@@ -1,4 +1,4 @@
-/-  *inbox
+/-  *inbox-store
 /+  *server, *inbox-json
 /=  index
   /^  octs
@@ -148,7 +148,7 @@
   |=  pax=path
   ^-  (list envelope)
   =.  pax  ;:  weld
-    `path`/=inbox/(scot %da now.bol)/envelopes
+    `path`/=inbox-store/(scot %da now.bol)/envelopes
     pax
     `path`/noun
   ==
@@ -156,7 +156,7 @@
 ::
 ++  all-scry
   ^-  inbox
-  =/  pax=path  /=inbox/(scot %da now.bol)/all/noun
+  =/  pax=path  /=inbox-store/(scot %da now.bol)/all/noun
   .^(inbox %gx pax)
 ::
 ++  envelopes-update

@@ -1,5 +1,4 @@
-::  hook/sync-inbox.hoon
-/-  *inbox, *permissions, *inbox-permission-hook
+/-  *inbox-store, *permission-store, *inbox-hook
 |%
 +$  move  [bone card]
 ::
@@ -54,7 +53,7 @@
     ?~  ship
       [~ this]
     :_  this
-    [ost.bol %poke / [u.ship %inbox-sync] [%inbox-action act]]~
+    [ost.bol %poke / [u.ship %inbox-store] [%inbox-action act]]~
   ::  foreign
   =/  ship  (~(get by synced) path.act)
   ?~  ship
@@ -67,10 +66,10 @@
     ~
   =.  author.envelope.act  src.bol
   =.  when.envelope.act  now.bol
-  [ost.bol %poke / [our.bol %inbox] [%inbox-action act]]~
+  [ost.bol %poke / [our.bol %inbox-store] [%inbox-action act]]~
 ::
-++  poke-permission-hook-action
-  |=  act=permission-hook-action
+++  poke-inbox-hook-action
+  |=  act=inbox-hook-action
   ^-  (quip move _this)
   ?-  -.act
       %add-owned
@@ -83,7 +82,7 @@
     =.  synced  (~(put by synced) path.act our.bol)
     :_  (track-bone inbox-wire)
     %+  weld
-      [ost.bol %peer inbox-path [our.bol %inbox] inbox-path]~
+      [ost.bol %peer inbox-path [our.bol %inbox-store] inbox-path]~
     (create-permission [%inbox path.act] security.act)
   ::
       %add-synced
@@ -95,7 +94,7 @@
       [~ this]
     =.  synced  (~(put by synced) path.act ship.act)
     :_  (track-bone inbox-wire)
-    [ost.bol %peer inbox-wire [ship.act %inbox-sync] inbox-path]~
+    [ost.bol %peer inbox-wire [ship.act %inbox-hook] inbox-path]~
   ::
       %remove
     =/  ship  (~(get by synced) path.act)
@@ -176,7 +175,7 @@
     =/  inbox-wire  [(scot %p our.bol) %mailbox path.diff]
     :_  this(synced (~(del by synced) path.diff))
     :-  (inbox-poke diff)
-    [ost.bol %pull inbox-wire [our.bol %inbox] ~]~
+    [ost.bol %pull inbox-wire [our.bol %inbox-store] ~]~
   ::
       %message
     :_  this
@@ -222,7 +221,7 @@
     =/  inbox-wire  [(scot %p src.bol) %mailbox path.diff]
     :_  this(synced (~(del by synced) path.diff))
     :-  (inbox-poke diff)
-    [ost.bol %pull inbox-wire [src.bol %inbox-sync] ~]~
+    [ost.bol %pull inbox-wire [src.bol %inbox-hook] ~]~
   ::
       %message
     ?~  path.diff
@@ -255,19 +254,19 @@
     =/  inbox-path  [%mailbox wir]
     =/  inbox-wire  [(scot %p ship) inbox-path]
     :_  (track-bone inbox-wire)
-    [ost.bol %peer inbox-wire [ship %inbox-sync] inbox-path]~
+    [ost.bol %peer inbox-wire [ship %inbox-hook] inbox-path]~
   ::  no-op
   [~ this]
 ::
 ++  inbox-poke
   |=  act=inbox-action
   ^-  move
-  [ost.bol %poke /inbox-sync [our.bol %inbox] [%inbox-action act]]
+  [ost.bol %poke / [our.bol %inbox-store] [%inbox-action act]]
 ::
 ++  permission-poke
   |=  act=permission-action
   ^-  move
-  [ost.bol %poke /inbox-sync [our.bol %permissions] [%permission-action act]]
+  [ost.bol %poke / [our.bol %permission-store] [%permission-action act]]
 ::
 ++  create-permission
   |=  [pax=path sec=inbox-security]
@@ -315,7 +314,7 @@
   |=  pax=path
   ^-  (unit mailbox)
   =.  pax  ;:  weld
-    `path`/=inbox/(scot %da now.bol)/mailbox
+    `path`/=inbox-store/(scot %da now.bol)/mailbox
     pax
     `path`/noun
   ==
@@ -325,7 +324,7 @@
   |=  pax=path
   ^-  ?
   =.  pax  ;:  weld
-    `path`/=permissions/(scot %da now.bol)/permitted
+    `path`/=permission-store/(scot %da now.bol)/permitted
     pax
     `path`/noun
   ==
@@ -353,8 +352,8 @@
   |=  ost=bone
   ^-  move
   ?:  =(u.shp our.bol)
-    [ost %pull wir [our.bol %inbox] ~]
-  [ost %pull wir [u.shp %inbox-sync] ~]
+    [ost %pull wir [our.bol %inbox-store] ~]
+  [ost %pull wir [u.shp %inbox-hook] ~]
 ::
 --
 

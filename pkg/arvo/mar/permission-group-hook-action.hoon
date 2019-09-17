@@ -1,10 +1,10 @@
-/-  *group-permit
+/-  *permission-group-hook
 /+  *group-json
 =,  dejs:format
-|_  act=group-permit-action
+|_  act=permission-group-hook-action
 ++  grab
   |%
-  ++  noun  group-permit-action
+  ++  noun  permission-group-hook-action
   ++  json  
     |=  jon=^json
     =<  (parse-action jon)

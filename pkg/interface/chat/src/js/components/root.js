@@ -12,7 +12,7 @@ import { ChatScreen } from '/components/chat';
 import { MemberScreen } from '/components/member';
 import { SettingsScreen } from '/components/settings';
 import { NewScreen } from '/components/new';
-import { LandingScreen } from '/components/landing';
+import { JoinScreen } from '/components/join';
 
 
 export class Root extends Component {
@@ -100,7 +100,7 @@ export class Root extends Component {
           render={ (props) => {
             return (
               <Skeleton sidebar={renderChannelSidebar(props)}>
-                <LandingScreen
+                <JoinScreen
                   api={api}
                   inbox={state.inbox}
                   {...props}

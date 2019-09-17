@@ -1,5 +1,5 @@
-/-  *groups
-/+  inbox-json
+/-  *group-store
+/+  *group-json
 =,  dejs:format
 |_  act=group-action
 ++  grab
@@ -20,13 +20,13 @@
     ::
     ++  add-action
       %-  ot
-      :~  [%members (as:inbox-json (su ;~(pfix sig fed:ag)))]
+      :~  [%members (as (su ;~(pfix sig fed:ag)))]
           [%path (su ;~(pfix net (more net urs:ab)))]
       ==
     ::
     ++  remove-action
       %-  ot
-      :~  [%members (as:inbox-json (su ;~(pfix sig fed:ag)))]
+      :~  [%members (as (su ;~(pfix sig fed:ag)))]
           [%path (su ;~(pfix net (more net urs:ab)))]
       ==
     ::

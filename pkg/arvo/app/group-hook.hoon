@@ -1,5 +1,4 @@
-::  hook/sync-group.hoon
-/-  *groups, *sync-hook
+/-  *group-store, *group-hook
 |%
 +$  move  [bone card]
 ::
@@ -22,7 +21,7 @@
 ::
 +$  poke
   $%  [%group-action group-action]
-      [%sync-hook-action sync-hook-action]
+      [%group-hook-action group-hook-action]
   ==
 ::
 --
@@ -38,8 +37,8 @@
     [~ this]
   [~ this(+<+ u.old)]
 ::
-++  poke-sync-hook-action
-  |=  act=sync-hook-action
+++  poke-group-hook-action
+  |=  act=group-hook-action
   ^-  (quip move _this)
   ?-  -.act
       %add
@@ -52,8 +51,8 @@
     =.  synced  (~(put by synced) path.act ship.act)
     :_  (track-bone group-wire)
     ?:  =(ship.act our.bol)
-      [ost.bol %peer group-path [ship.act %groups] group-path]~
-    [ost.bol %peer group-wire [ship.act %group-sync] group-path]~
+      [ost.bol %peer group-path [ship.act %group-store] group-path]~
+    [ost.bol %peer group-wire [ship.act %group-hook] group-path]~
   ::
       %remove
     =/  ship  (~(get by synced) path.act)
@@ -218,13 +217,13 @@
 ++  group-poke
   |=  [pax=path action=group-action]
   ^-  move
-  [ost.bol %poke pax [our.bol %groups] [%group-action action]]
+  [ost.bol %poke pax [our.bol %group-store] [%group-action action]]
 ::
 ++  group-scry
   |=  pax=path
   ^-  (unit group)
   =.  pax  ;:  weld
-    `path`/=groups/(scot %da now.bol)
+    `path`/=group-store/(scot %da now.bol)
     pax
     `path`/noun
   ==
@@ -251,8 +250,8 @@
   |=  ost=bone
   ^-  move
   ?:  =(u.shp our.bol)
-    [ost %pull wir [our.bol %groups] ~]
-  [ost %pull wir [u.shp %group-sync] ~]
+    [ost %pull wir [our.bol %group-store] ~]
+  [ost %pull wir [u.shp %group-hook] ~]
 ::
 --
 

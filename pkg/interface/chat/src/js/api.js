@@ -31,15 +31,15 @@ class UrbitApi {
       remove: this.permissionRemove.bind(this)
     };
 
-    this.inboxSync = {
-      addOwned: this.inboxSyncAddOwned.bind(this),
-      addSynced: this.inboxSyncAddSynced.bind(this),
-      remove: this.inboxSyncRemove.bind(this)
+    this.inboxHook = {
+      addOwned: this.inboxHookAddOwned.bind(this),
+      addSynced: this.inboxHookAddSynced.bind(this),
+      remove: this.inboxHookRemove.bind(this)
     };
 
-    this.groupPermit = {
-      associate: this.groupPermitAssociate.bind(this),
-      dissociate: this.groupPermitDissociate.bind(this)
+    this.permissionGroupHook = {
+      associate: this.permissionGroupHookAssociate.bind(this),
+      dissociate: this.permissionGroupHookDissociate.bind(this)
     };
 
   }
@@ -90,7 +90,7 @@ class UrbitApi {
   }
 
   groupsAction(data) {
-    this.action("groups", "group-action", data);
+    this.action("group-store", "group-action", data);
   }
 
   groupBundle(path) {
@@ -118,7 +118,7 @@ class UrbitApi {
   }
 
   inboxAction(data) {
-    this.action("inbox", "inbox-action", data);
+    this.action("inbox-store", "inbox-action", data);
   }
 
   inboxCreate(path, owner = `~${window.ship}`) {
@@ -151,7 +151,7 @@ class UrbitApi {
     if (local) {
       this.inboxAction(data);
     } else {
-      this.inboxSyncAction(data, "inbox-action");
+      this.inboxHookAction(data, "inbox-action");
     }
   }
 
@@ -163,32 +163,32 @@ class UrbitApi {
     });
   }
 
-  inboxSyncAction(data, mark = "permission-hook-action") {
-    this.action("inbox-sync", mark, data);
+  inboxHookAction(data, mark = "inbox-hook-action") {
+    this.action("inbox-hook", mark, data);
   }
 
-  inboxSyncAddOwned(path, security) {
+  inboxHookAddOwned(path, security) {
     let data = {};
     data['add-owned'] = {
       path, security
     };
-    this.inboxSyncAction(data);
+    this.inboxHookAction(data);
   }
 
-  inboxSyncRemove(path) {
-    this.inboxSyncAction({ remove: path });
+  inboxHookRemove(path) {
+    this.inboxHookAction({ remove: path });
   }
 
-  inboxSyncAddSynced(ship, path) {
+  inboxHookAddSynced(ship, path) {
     let data = {};
     data['add-synced'] = {
       ship, path
     };
-    this.inboxSyncAction(data);
+    this.inboxHookAction(data);
   }
 
   permissionAction(data) {
-    this.action("permissions", "permission-action", data);
+    this.action("permission-store", "permission-action", data);
   }
 
   permissionCreate(path, kind, who) {
@@ -235,20 +235,20 @@ class UrbitApi {
     });
   }
 
-  groupPermitAction(data) {
-    this.action("group-permit", "group-permit-action", data);
+  permissionGroupHookAction(data) {
+    this.action("permission-group-hook", "permission-group-hook-action", data);
   }
   
-  groupPermitAssociate(group, permissions) {
-    this.groupPermitAction({
+  permissionGroupHookAssociate(group, permissions) {
+    this.permissionGroupHookAction({
       associate: {
         group, permissions
       }
     });
   }
   
-  groupPermitDissociate() {
-    this.groupPermitAction({
+  permissionGroupHookDissociate() {
+    this.permissionGroupHookAction({
       dissociate: {
         group, permissions
       }

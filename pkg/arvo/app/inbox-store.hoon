@@ -1,5 +1,4 @@
-:: service/inbox.hoon
-/-  *groups, *inbox
+/-  *group-store, *inbox-store
 |%
 +$  move  [bone card]
 ::

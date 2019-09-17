@@ -94,12 +94,12 @@
       [%home %modulo]
       [%home %launch]
       [%home %lyre]
-      [%home %permissions]
-      [%home %groups]
-      [%home %group-sync]
-      [%home %group-permit]
-      [%home %inbox]
-      [%home %inbox-sync]
+      [%home %group-store]
+      [%home %group-hook]
+      [%home %permission-store]
+      [%home %permission-group-hook]
+      [%home %inbox-store]
+      [%home %inbox-hook]
       [%home %inbox-view]
   ==
 ::

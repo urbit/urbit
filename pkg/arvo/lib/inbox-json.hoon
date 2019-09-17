@@ -1,4 +1,4 @@
-/-  *inbox
+/-  *inbox-store
 |%
 ++  inbox-to-json
   |=  box=inbox

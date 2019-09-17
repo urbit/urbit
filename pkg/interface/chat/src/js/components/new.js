@@ -140,16 +140,18 @@ export class NewScreen extends Component {
 
         setTimeout(() => {
           // expose inbox to outside, set permissions
-          props.api.inboxSync.addOwned(station, state.security);
+          props.api.inboxHook.addOwned(station, state.security);
 
           setTimeout(() => {
             // sync permissions path to aforementioned group
-            props.api.groupPermit.associate(`/inbox${station}/read`, [
-              `/inbox${station}/read`
-            ]);
-            props.api.groupPermit.associate(`/inbox${station}/write`, [
-              `/inbox${station}/write`
-            ]);
+            props.api.permissionGroupHook.associate(
+              `/inbox${station}/read`, [
+                `/inbox${station}/read`
+              ]);
+            props.api.permissionGroupHook.associate(
+              `/inbox${station}/write`, [
+                `/inbox${station}/write`
+              ]);
           }, 1000);
         }, 1000);
       }, 1000);

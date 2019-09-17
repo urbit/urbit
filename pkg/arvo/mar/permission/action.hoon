@@ -1,4 +1,4 @@
-/-  *permissions
+/-  *permission-store
 /+  *permission-json
 =,  dejs:format
 |_  act=permission-action

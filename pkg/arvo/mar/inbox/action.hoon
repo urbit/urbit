@@ -1,4 +1,4 @@
-/-  *inbox
+/-  *inbox-store
 /+  *inbox-json
 =,  dejs:format
 |_  act=inbox-action
