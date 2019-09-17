@@ -34,20 +34,21 @@ no  = A 1
 -- | Tree address
 type Axis = Atom
 
-data Nock = NC Nock Nock           -- ^ ^: autocons
-          | N0 Axis                -- ^ 0, axis: tree addressing
-          | N1 Noun                -- ^ 1, const: constant
-          | N2 Nock Nock           -- ^ 2, compose: compute subject, formula; apply
-          | N3 Nock                -- ^ 3, is cell
-          | N4 Nock                -- ^ 4, succ
-          | N5 Nock Nock           -- ^ 5, eq
-          | N6 Nock Nock Nock      -- ^ 6, if
-          | N7 Nock Nock           -- ^ 7, then: =>
-          | N8 Nock Nock           -- ^ 8, push: =+
-          | N9 Axis Nock           -- ^ 9, invoke
-          | N10 (Axis, Nock) Nock  -- ^ 10, edit
-          | N11 Hint Nock          -- ^ 11, hint
-          | N12 Nock Nock          -- ^ 12, scry
+data Nock
+  = NC Nock Nock           -- ^ ^: autocons
+  | N0 Axis                -- ^ 0, axis: tree addressing
+  | N1 Noun                -- ^ 1, const
+  | N2 Nock Nock           -- ^ 2, compose: compute subject, formula; apply
+  | N3 Nock                -- ^ 3, is cell
+  | N4 Nock                -- ^ 4, succ
+  | N5 Nock Nock           -- ^ 5, eq
+  | N6 Nock Nock Nock      -- ^ 6, if
+  | N7 Nock Nock           -- ^ 7, then: =>
+  | N8 Nock Nock           -- ^ 8, push: =+
+  | N9 Axis Nock           -- ^ 9, invoke
+  | N10 (Axis, Nock) Nock  -- ^ 10, edit
+  | N11 Hint Nock          -- ^ 11, hint
+  | N12 Nock Nock          -- ^ 12, scry
   deriving (Eq, Ord, Read)
 
 data Hint = Tag Atom
@@ -121,7 +122,7 @@ nock n = \case
   N7 f g -> nock (nock n f) g
   N8 f g -> nock (C (nock n f) n) g
   N9 a f -> let c = nock n f in nock c (nounToNock (axis a c))
-  N10{} -> error "nock: I don't want to implement editing right now"
+  N10 (a, f) g -> edit a (nock n f) (nock n g)
   N11 _ f -> nock n f
   N12{} -> error "nock: scrying is not allowed"
 
@@ -132,9 +133,7 @@ data Dir = L | R
   deriving (Eq, Ord, Enum, Read, Show)
 type Path = [Dir]
 
--- Write an axis as a binary number; e.g. 5 as 101.
--- The rule is: after droping the 1 in the msb, you read from left to right.
--- 0 becomes L and 1 becomes R.
+-- some stuff from hoon.hoon
 
 cap :: Axis -> Dir
 cap = \case
@@ -171,8 +170,18 @@ axis 1 n = n
 axis (capMas -> (d, r)) (C n m) = case d of
   L -> axis r n
   R -> axis r m
-axis a n = error ("bad axis: " ++ show a)
+axis a _ = error ("bad axis: " ++ show a)
 
+edit :: Axis -> Tree a -> Tree a -> Tree a
+edit 1 v n = v
+edit (capMas -> (d, r)) v (C n m) = case d of
+  L -> C (edit r v n) m
+  R -> C n (edit r v m)
+edit a _ _ = error ("bad edit: " ++ show a)
+
+-- Write an axis as a binary number; e.g. 5 as 101.
+-- The rule is: after droping the 1 in the msb, you read from left to right.
+-- 0 becomes L and 1 becomes R. So 5 becomes [L,R]
 toPath :: Axis -> Path
 toPath = \case
   1 -> []

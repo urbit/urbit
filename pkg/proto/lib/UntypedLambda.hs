@@ -105,21 +105,19 @@ data CopyExp
   | CApp CopyExp CopyExp
   | CLam [CopyVar] CopyExp
 
-toCopy :: forall a. Ord a => Exp a -> CopyExp
+toCopy :: Ord a => Exp a -> CopyExp
 toCopy = fst . go \v -> error "toCopy: free variable"
   where
-    go :: (a -> CopyVar) -> Exp a -> (CopyExp, Set a)
+    go :: Ord a => (a -> CopyVar) -> Exp a -> (CopyExp, Set a)
     go env = \case
       Var v -> (CVar (env v), singleton v)
       App e f -> (CApp ec fc, union eu fu)
         where
           (ec, eu) = go env e
           (fc, fu) = go env f
-      Lam s -> (CLam (map env u) c, fromList u)
+      Lam s -> (CLam (map env u) c, setFromList u)
         where
-          c :: CopyExp
           (c, u') = go env' (fromScope s)
-          env' :: Var () a -> CopyVar
           env' = \case
             B () -> Argument
             F v  -> Lexical (fromJust (elemIndex v u))
@@ -128,19 +126,24 @@ toCopy = fst . go \v -> error "toCopy: free variable"
             B () -> Nothing
             F v  -> Just v
 
+-- Possible improvements:
+--   - store the copied values in a tree rather than list
+--   - avoid a nock 8 if nothing is copied
 copyToNock :: CopyExp -> Nock
 copyToNock = \case
-  CVar v -> toAxis case v of
+  CVar v -> N0 $ toAxis case v of
     Argument -> [R]
-    Lexical n -> L : repeat n R ++ L
+    Lexical n -> L : replicate n R ++ [L]
   CApp e f -> N2 (copyToNock f) (copyToNock e)
+  CLam vs e -> lam (map (copyToNock . CVar) vs) (nockToNoun (copyToNock e))
+  where
+    lam vfs ef = NC (N1 (A 8)) (NC (NC (N1 (A 1)) vars) (N1 ef))
+      where
+        vars = foldr NC (N1 (A 0)) vfs
 
 -- | The proposed new calling convention
-new :: Exp a -> Nock
-new = go \v -> error "new: free variable"
-  where
-    go = undefined
-
+copy :: Ord a => Exp a -> Nock
+copy = copyToNock . toCopy
 
 
 -- x. y. x
