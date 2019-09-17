@@ -7,18 +7,18 @@ module Vere.Pier
 import UrbitPrelude
 
 import Arvo
-import Vere.Pier.Types
 import System.Random
+import Vere.Pier.Types
 
 import System.Directory   (createDirectoryIfMissing)
 import System.Posix.Files (ownerModes, setFileMode)
 import Vere.Ames          (ames)
 import Vere.Behn          (behn)
+import Vere.Clay          (clay)
 import Vere.Http.Client   (client)
 import Vere.Http.Server   (serv)
 import Vere.Log           (EventLog)
-import Vere.Serf          (Serf, sStderr, SerfState(..), doJob)
-import Vere.Clay          (clay)
+import Vere.Serf          (Serf, SerfState(..), doJob, sStderr)
 import Vere.Term
 
 import qualified System.Entropy as Ent
@@ -329,16 +329,14 @@ instance Exception PersistExn where
             , "\tExpected " <> show expected <> " but got " <> show got
             ]
 
-runPersist :: EventLog
+runPersist :: ∀e. HasLogFunc e
+           => EventLog
            -> TQueue (Job, FX)
            -> (FX -> STM ())
            -> RAcquire e (Async ())
 runPersist log inpQ out =
-    mkRAcquire runThread cancelWait
+    mkRAcquire runThread cancel
   where
-    cancelWait :: Async () -> RIO e ()
-    cancelWait tid = cancel tid >> wait tid
-
     runThread :: RIO e (Async ())
     runThread = asyncBound $ forever $ do
         writs  <- atomically getBatchFromQueue

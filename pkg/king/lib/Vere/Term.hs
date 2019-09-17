@@ -55,7 +55,8 @@ data TerminalSystem e = TerminalSystem
 data Private = Private
   { pReaderThread          :: Async ()
   , pWriterThread          :: Async ()
-  , pPreviousConfiguration ::  TerminalAttributes
+  , pTerminal              :: Terminal
+  , pPreviousConfiguration :: TerminalAttributes
   }
 
 -- Utils -----------------------------------------------------------------------
@@ -101,11 +102,11 @@ initializeLocalTerminal = do
     start = do
       --  Initialize the writing side of the terminal
       --
-      t <- io $ setupTermFromEnv
+      pTerminal <- io $ setupTermFromEnv
       -- TODO: We still need to actually get the size from the terminal somehow.
 
       tsWriteQueue <- newTQueueIO
-      pWriterThread <- asyncBound (writeTerminal t tsWriteQueue)
+      pWriterThread <- asyncBound (writeTerminal pTerminal tsWriteQueue)
 
       pPreviousConfiguration <- io $ getTerminalAttributes stdInput
 
@@ -134,8 +135,11 @@ initializeLocalTerminal = do
       -- can't kill. If we were to cancel here, the internal `waitCatch` would
       -- block until the next piece of keyboard input. Since this only happens
       -- at shutdown, just leak the file descriptor.
-
       cancel pWriterThread
+
+      -- inject one final newline, as we're usually on the prompt.
+      io $ runTermOutput pTerminal $ termText "\r\n"
+
       -- take the terminal out of raw mode
       io $ setTerminalAttributes stdInput pPreviousConfiguration Immediately
 
@@ -356,14 +360,11 @@ term TerminalSystem{..} shutdownSTM pierPath king enqueueEv =
 
     runTerm :: RAcquire e (EffCb e TermEf)
     runTerm = do
-      tim <- mkRAcquire start stop
+      tim <- mkRAcquire start cancel
       pure handleEffect
 
     start :: RIO e (Async ())
     start = async readBelt
-
-    stop :: Async () -> RIO e ()
-    stop rb = cancel rb
 
     readBelt :: RIO e ()
     readBelt = forever $ do
