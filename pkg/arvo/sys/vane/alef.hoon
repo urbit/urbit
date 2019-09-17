@@ -2138,7 +2138,7 @@
     ^+  [fragments gifts state]
     ::  return unsent back to caller and reverse effects to finalize
     ::
-    =-  ::~&  %ames-feed^(lent fragments)^%unsent^(lent unsent)
+    =-  ::::::::~&~&~&  %ames-feed^(lent fragments)^%unsent^(lent unsent)
         [unsent (flop gifts) state]
     ::
     ^+  [unsent=fragments packet-pump]
@@ -2179,7 +2179,7 @@
     ::
     |-  ^+  packet-pump
     ?~  sent  packet-pump
-    ~&  %sent^[message-num fragment-num]:i.sent
+    ::::::~&~&~&  %sent^[message-num fragment-num]:i.sent
     =.  packet-pump  (give %send i.sent)
     $(sent t.sent)
   ::  +on-hear: handle ack on a live packet
@@ -2198,9 +2198,9 @@
     =-  ::  if no sent packet matches the ack, don't apply mutations or effects
         ::
         ?.  found.-
-          ~>  %slog.0^leaf/"ames: hear: no-op {(scow %ud message-num)} {(scow %ud fragment-num)}"
+          ::~>  %slog.0^leaf/"ames: hear: no-op {(scow %ud message-num)} {(scow %ud fragment-num)}"
           packet-pump
-        ~&  %ames-hear-ack^message-num^fragment-num
+        ::::::~&~&~&  %ames-hear-ack^message-num^fragment-num
         ::
         =.  metrics.state  metrics.-
         =.  live.state     live.-
@@ -2242,7 +2242,7 @@
     =-  =.  metrics.state  metrics.-
         =.  live.state     live.-
         ::
-        ~&  %done^metrics.state
+        ::::::~&~&~&  %done^metrics.state
         resend-lost
     ::
     ^-  $:  metrics=pump-metrics
@@ -2299,8 +2299,6 @@
   --
 ::  +make-pump-gauge: construct |pump-gauge congestion control core
 ::
-::    TODO: actual congestion control
-::
 ++  make-pump-gauge
   |=  [now=@da pump-metrics]
   =*  metrics  +<+
@@ -2349,7 +2347,7 @@
     ^-  pump-metrics
     ::
     =?  metrics  (gth skipped 0)
-      ~&  %skipped^skipped
+      ::::::~&~&~&  %skipped^skipped
       %_  metrics
         skipped   0
       ==
@@ -2433,12 +2431,12 @@
       ?.  is-last-fragment
         ::  single packet ack
         ::
-        ~>  %slog.0^leaf/"ames: send dupe ack {<seq^fragment-num>}"
+        ::~>  %slog.0^leaf/"ames: send dupe ack {<seq^fragment-num>}"
         (give %send seq %& fragment-num)
       ::  whole message (n)ack
       ::
       =/  ok=?  !(~(has in nax.state) seq)
-      ~>  %slog.0^leaf/"ames: send dupe message ack {<seq>} ok={<ok>}"
+      ::~>  %slog.0^leaf/"ames: send dupe message ack {<seq>} ok={<ok>}"
       (give %send seq %| ok lag=`@dr`0)
     ::  last-acked<seq<=last-heard; heard message, unprocessed
     ::
@@ -2446,11 +2444,11 @@
       ?:  is-last-fragment
         ::  drop last packet since we don't know whether to ack or nack
         ::
-        ~>  %slog.0^leaf/"ames: hear last in-progress {<her.channel^seq>}"
+        ::~>  %slog.0^leaf/"ames: hear last in-progress {<her.channel^seq>}"
         message-still
       ::  ack all other packets
       ::
-      ~&  %send-ack^seq^fragment-num
+      ::::::~&~&~&  %send-ack^seq^fragment-num
       (give %send seq %& fragment-num)
     ::  last-heard<seq<10+last-heard; this is a packet in a live message
     ::
@@ -2472,9 +2470,9 @@
     ::
     ?:  already-heard-fragment
       ?:  is-last-fragment
-        ~>  %slog.0^leaf/"ames: hear last dupe {<her.channel^seq>}"
+        ::~>  %slog.0^leaf/"ames: hear last dupe {<her.channel^seq>}"
         message-still
-      ~>  %slog.0^leaf/"ames: send dupe ack {<her.channel^seq^fragment-num>}"
+      ::~>  %slog.0^leaf/"ames: send dupe ack {<her.channel^seq^fragment-num>}"
       (give %send seq %& fragment-num)
     ::  new fragment; store in state and check if message is done
     ::
@@ -2489,7 +2487,7 @@
     ::  ack any packet other than the last one, and continue either way
     ::
     =?  message-still  !is-last-fragment
-      ~&  %send-ack^seq^fragment-num
+      ::::::~&~&~&  %send-ack^seq^fragment-num
       (give %send seq %& fragment-num)
     ::  enqueue all completed messages starting at +(last-heard.state)
     ::
