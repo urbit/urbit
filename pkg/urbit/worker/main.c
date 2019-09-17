@@ -883,6 +883,18 @@ u3_worker_boot(void)
 c3_i
 main(c3_i argc, c3_c* argv[])
 {
+  //  the worker is spawned with [FD 0] = events and [FD 1] = effects
+  //  we dup [FD 0 & 1] so we don't accidently use them for something else
+  //  we replace [FD 0] (stdin) with a fd pointing to /dev/null
+  //  we replace [FD 1] (stdout) with a dup of [FD 2] (stderr)
+  //
+  c3_i nul_i = open("/dev/null", O_RDWR, 0);
+  c3_i inn_i = dup(0);
+  c3_i out_i = dup(1);
+  dup2(nul_i, 0);
+  dup2(2, 1);
+  close(nul_i);
+
   uv_loop_t* lup_u = uv_default_loop();
   c3_c*      dir_c = argv[1];
   c3_c*      key_c = argv[2];
@@ -939,11 +951,11 @@ main(c3_i argc, c3_c* argv[])
 
     err_i = uv_pipe_init(lup_u, &u3V.inn_u.pyp_u, 0);
     c3_assert(!err_i);
-    uv_pipe_open(&u3V.inn_u.pyp_u, 0);
+    uv_pipe_open(&u3V.inn_u.pyp_u, inn_i);
 
     err_i = uv_pipe_init(lup_u, &u3V.out_u.pyp_u, 0);
     c3_assert(!err_i);
-    uv_pipe_open(&u3V.out_u.pyp_u, 1);
+    uv_pipe_open(&u3V.out_u.pyp_u, out_i);
   }
 
   /* set up writing
