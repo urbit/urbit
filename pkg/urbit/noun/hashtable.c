@@ -873,6 +873,91 @@ u3h_walk(u3p(u3h_root) har_p, void (*fun_f)(u3_noun))
   u3h_walk_with(har_p, _ch_walk_plain, fun_f);
 }
 
+/* _ch_take_noun(): take key and call [fun_f] on val.
+*/
+static u3h_slot
+_ch_take_noun(u3h_slot sot_w, u3_funk fun_f)
+{
+  u3_noun kov = u3h_slot_to_noun(sot_w);
+  u3_noun kev = u3nc(u3a_take(u3h(kov)),
+                     fun_f(u3t(kov)));
+
+  return u3h_noun_to_slot(kev);
+}
+
+/* _ch_take_buck(): take bucket and contents
+*/
+static u3h_slot
+_ch_take_buck(u3h_slot sot_w, u3_funk fun_f)
+{
+  u3h_buck* hab_u = u3h_slot_to_node(sot_w);
+  u3h_buck* bah_u = _ch_buck_new(hab_u->len_w);
+  c3_w        i_w;
+
+  for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
+    bah_u->sot_w[i_w] = _ch_take_noun(hab_u->sot_w[i_w], fun_f);
+  }
+
+  return u3h_node_to_slot(bah_u);
+}
+
+/* _ch_take_node(): take node and contents
+*/
+static u3h_slot
+_ch_take_node(u3h_slot sot_w, c3_w lef_w, u3_funk fun_f)
+{
+  u3h_node* han_u = u3h_slot_to_node(sot_w);
+  c3_w      len_w = _ch_popcount(han_u->map_w);
+  u3h_node* nah_u = _ch_node_new(len_w);
+  c3_w       i_w;
+
+  nah_u->map_w = han_u->map_w;
+  lef_w -= 5;
+
+  for ( i_w = 0; i_w < len_w; i_w++ ) {
+    c3_w        tos_w = han_u->sot_w[i_w];
+    nah_u->sot_w[i_w] = ( c3y == u3h_slot_is_noun(tos_w) )
+                        ? _ch_take_noun(tos_w, fun_f)
+                        :  ( 0 == lef_w )
+                           ? _ch_take_buck(tos_w, fun_f)
+                           : _ch_take_node(tos_w, lef_w, fun_f);
+  }
+
+  return u3h_node_to_slot(nah_u);
+}
+
+/* u3h_take_with(): gain hashtable, copying junior keys
+** and calling [fun_f] on values
+*/
+u3p(u3h_root)
+u3h_take_with(u3p(u3h_root) har_p, u3_funk fun_f)
+{
+  u3h_root*     har_u = u3to(u3h_root, har_p);
+  u3p(u3h_root) rah_p = u3h_new_cache(har_u->max_w);
+  u3h_root*     rah_u = u3to(u3h_root, rah_p);
+  c3_w            i_w;
+
+  rah_u->use_w = har_u->use_w;
+  rah_u->arm_u = har_u->arm_u;
+
+  for ( i_w = 0; i_w < 64; i_w++ ) {
+    c3_w        sot_w = har_u->sot_w[i_w];
+    rah_u->sot_w[i_w] = ( c3y == u3h_slot_is_noun(sot_w) )
+                        ? _ch_take_noun(sot_w, fun_f)
+                        : _ch_take_node(sot_w, 25, fun_f);
+  }
+
+  return rah_p;
+}
+
+/* u3h_take(): gain hashtable, copying junior nouns
+*/
+u3p(u3h_root)
+u3h_take(u3p(u3h_root) har_p)
+{
+  return u3h_take_with(har_p, u3a_take);
+}
+
 /* _ch_mark_buck(): mark bucket for gc.
 */
 c3_w

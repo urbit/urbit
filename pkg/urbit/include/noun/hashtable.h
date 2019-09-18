@@ -158,3 +158,14 @@
       */
         void
         u3h_walk(u3p(u3h_root) har_p, void (*fun_f)(u3_noun));
+
+      /* u3h_take_with(): gain hashtable, copying junior keys
+      ** and calling [fun_f] on values
+      */
+        u3p(u3h_root)
+        u3h_take_with(u3p(u3h_root) har_p, u3_funk fun_f);
+
+      /* u3h_take(): gain hashtable, copying junior nouns
+      */
+        u3p(u3h_root)
+        u3h_take(u3p(u3h_root) har_p);
