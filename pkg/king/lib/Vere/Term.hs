@@ -1,6 +1,6 @@
 module Vere.Term
     ( module Term
-    , initializeLocalTerminal
+    , localClient
     , term
     ) where
 
@@ -104,11 +104,11 @@ isTerminalBlit _         = True
 
 --------------------------------------------------------------------------------
 
--- Initializes the generalized input/output parts of the terminal.
---
-initializeLocalTerminal :: forall e. HasLogFunc e
-                        => RAcquire e Client
-initializeLocalTerminal = fst <$> mkRAcquire start stop
+{-
+    Initializes the generalized input/output parts of the terminal.
+-}
+localClient :: ∀e. HasLogFunc e => RAcquire e Client
+localClient = fst <$> mkRAcquire start stop
   where
     start :: HasLogFunc e => RIO e (Client, Private)
     start = do
@@ -154,18 +154,24 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
       -- take the terminal out of raw mode
       io $ setTerminalAttributes stdInput pPreviousConfiguration Immediately
 
-    -- A list of terminal flags that we disable
-    disabledFlags = [
-      -- lflag
-      StartStopOutput, KeyboardInterrupts, EnableEcho, EchoLF,
-      ProcessInput, ExtendedFunctions,
-      -- iflag
-      MapCRtoLF, CheckParity, StripHighBit,
-      -- cflag, todo: Terminal library missing CSIZE?
-      EnableParity,
-      -- oflag
-      ProcessOutput
-      ]
+    {-
+        A list of terminal flags that we disable.
+
+        TODO: Terminal library missing CSIZE?
+    -}
+    disabledFlags :: [TerminalMode]
+    disabledFlags = [ StartStopOutput
+                    , KeyboardInterrupts
+                    , EnableEcho
+                    , EchoLF
+                    , ProcessInput
+                    , ExtendedFunctions
+                    , MapCRtoLF
+                    , CheckParity
+                    , StripHighBit
+                    , EnableParity
+                    , ProcessOutput
+                    ]
 
     getCap term cap =
       T.getCapability term (T.tiGetOutput1 cap) :: Maybe T.TermOutput
@@ -281,22 +287,17 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
     -- Writes an individual blit to the screen
     writeBlit :: T.Terminal -> LineState -> Blit -> RIO e LineState
     writeBlit t ls = \case
-      Bel () -> do
-        runMaybeTermOutput t vtSoundBell
-        pure ls
-      Clr () -> do
-        runMaybeTermOutput t vtClearScreen
-        termRefreshLine t ls
-      (Hop w) -> do
-        termShowCursor t ls (fromIntegral w)
-      (Lin c)  -> do
-        ls2 <- termShowClear t ls
-        termShowLine t ls2 (pack c)
-      (Mor ()) -> do
-        termShowMore t ls
-      (Sag path noun) -> pure ls
-      (Sav path atom) -> pure ls
-      (Url url) -> pure ls
+      Bel ()        -> do runMaybeTermOutput t vtSoundBell
+                          pure ls
+      Clr ()        -> do runMaybeTermOutput t vtClearScreen
+                          termRefreshLine t ls
+      Hop w         -> termShowCursor t ls (fromIntegral w)
+      Lin c         -> do ls2 <- termShowClear t ls
+                          termShowLine t ls2 (pack c)
+      Mor ()        -> termShowMore t ls
+      Sag path noun -> pure ls
+      Sav path atom -> pure ls
+      Url url       -> pure ls
 
     -- Moves the cursor to the requested position
     termShowCursor :: T.Terminal -> LineState -> Int -> RIO e LineState

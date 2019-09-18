@@ -18,15 +18,16 @@ import Vere.Http.Client   (client)
 import Vere.Http.Server   (serv)
 import Vere.Log           (EventLog)
 import Vere.Serf          (Serf, SerfState(..), doJob, sStderr)
-import Vere.Term
 
 import RIO.Directory
 
-import qualified System.Entropy as Ent
-import qualified Urbit.Time     as Time
-import qualified Vere.Log       as Log
-import qualified Vere.Serf      as Serf
-import qualified Vere.Term.API  as Term
+import qualified System.Entropy  as Ent
+import qualified Urbit.Time      as Time
+import qualified Vere.Log        as Log
+import qualified Vere.Serf       as Serf
+import qualified Vere.Term       as Term
+import qualified Vere.Term.API   as Term
+import qualified Vere.Term.Demux as Term
 
 
 --------------------------------------------------------------------------------
@@ -149,14 +150,22 @@ pier pierPath mPort (serf, log, ss) = do
 
     inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
-    terminalSystem <- initializeLocalTerminal
-    swapMVar (sStderr serf) (atomically . Term.trace terminalSystem)
+    local <- Term.localClient
+
+    muxed <- atomically $ do
+        res <- Term.mkDemux
+        Term.addDemux local res
+        pure (Term.useDemux res)
+
+    swapMVar (sStderr serf) (atomically . Term.trace muxed)
 
     let ship = who (Log.identity log)
 
     let (bootEvents, startDrivers) =
-          drivers pierPath inst ship mPort (writeTQueue computeQ)
-            shutdownEvent terminalSystem
+            drivers pierPath inst ship mPort
+                (writeTQueue computeQ)
+                shutdownEvent
+                muxed
 
     io $ atomically $ for_ bootEvents (writeTQueue computeQ)
 
@@ -166,8 +175,8 @@ pier pierPath mPort (serf, log, ss) = do
                (readTQueue computeQ)
                (takeTMVar saveM)
                (takeTMVar shutdownM)
-               (Term.spin terminalSystem)
-               (Term.stopSpin terminalSystem)
+               (Term.spin muxed)
+               (Term.stopSpin muxed)
                (writeTQueue persistQ)
 
     tSaveSignal <- saveSignalThread saveM
@@ -220,7 +229,7 @@ drivers pierPath inst who mPort plan shutdownSTM termSys =
     (httpBorn, runHttp) = serv pierPath inst plan
     (clayBorn, runClay) = clay pierPath inst plan
     (irisBorn, runIris) = client inst plan
-    (termBorn, runTerm) = term termSys shutdownSTM pierPath inst plan
+    (termBorn, runTerm) = Term.term termSys shutdownSTM pierPath inst plan
     initialEvents       = mconcat [behnBorn, clayBorn, amesBorn, httpBorn,
                                    termBorn, irisBorn]
     runDrivers          = do
