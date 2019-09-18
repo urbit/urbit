@@ -19,6 +19,7 @@ import Vere.Pier.Types
 import Control.Concurrent (runInBoundThread, threadDelay)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
+import KingApp            (runApp)
 import Network.Socket     (tupleToHostAddress)
 
 import qualified Urbit.Time as Time
@@ -32,12 +33,12 @@ king = KingId 0
 
 -- TODO Timers always fire immediatly. Something is wrong!
 timerFires :: Property
-timerFires = forAll arbitrary (ioProperty . runTest)
+timerFires = forAll arbitrary (ioProperty . runApp . runTest)
   where
-    runTest :: () -> IO Bool
+    runTest :: () -> RIO e Bool
     runTest () = do
       q <- newTQueueIO
-      with (snd $ behn king (writeTQueue q)) $ \cb -> do
+      rwith (liftAcquire $ snd $ behn king (writeTQueue q)) $ \cb -> do
         cb (BehnEfDoze (king, ()) (Just (2^20)))
         t <- atomically $ readTQueue q
         print t

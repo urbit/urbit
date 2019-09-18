@@ -1,7 +1,6 @@
 module AmesTests (tests) where
 
 import Arvo
-import Data.Acquire
 import Data.Conduit
 import Data.Conduit.List     hiding (take)
 import Data.Ord.Unicode
@@ -16,9 +15,10 @@ import Vere.Ames
 import Vere.Log
 import Vere.Pier.Types
 
-import Control.Concurrent (runInBoundThread, threadDelay)
+import Control.Concurrent (runInBoundThread)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
+import KingApp            (runApp)
 import Network.Socket     (tupleToHostAddress)
 
 import qualified Vere.Log as Log
@@ -35,11 +35,12 @@ turfEf = NewtEfTurf (0, ()) []
 sendEf :: Galaxy -> Wen -> Bytes -> NewtEf
 sendEf g w bs = NewtEfSend (0, ()) (ADGala w g) bs
 
-runGala :: Word8 -> Acquire (TQueue Ev, EffCb NewtEf)
+runGala :: Word8 -> RAcquire e (TQueue Ev, EffCb e NewtEf)
 runGala point = do
-    q  <- liftIO newTQueueIO
-    cb <- snd $ ames pid (fromIntegral point) Nothing (writeTQueue q)
-    liftIO $ cb turfEf
+    q  <- newTQueueIO
+    let (_, runAmes) = ames pid (fromIntegral point) Nothing (writeTQueue q)
+    cb ← liftAcquire runAmes
+    rio $ cb turfEf
     pure (q, cb)
 
 waitForPacket :: TQueue Ev -> Bytes -> IO Bool
@@ -51,37 +52,37 @@ waitForPacket q val = go
         EvBlip (BlipEvAmes (AmesEvHear () _ bs)) -> pure (bs == val)
         _                                        -> pure False
 
-runAcquire :: Acquire a -> IO a
-runAcquire acq = with acq pure
+runRAcquire :: RAcquire e a -> RIO e a
+runRAcquire acq = rwith acq pure
 
-sendThread :: EffCb NewtEf -> (Galaxy, Bytes) -> Acquire ()
-sendThread cb (to, val) = void $ mkAcquire start cancel
+sendThread :: EffCb e NewtEf -> (Galaxy, Bytes) -> RAcquire e ()
+sendThread cb (to, val) = void $ mkRAcquire start cancel
   where
     start = async $ forever $ do threadDelay 1_000
-                                 wen <- now
+                                 wen <- io $ now
                                  cb (sendEf to wen val)
                                  threadDelay 10_000
 
 zodSelfMsg :: Property
-zodSelfMsg = forAll arbitrary (ioProperty . runTest)
+zodSelfMsg = forAll arbitrary (ioProperty . runApp . runTest)
   where
-    runTest :: Bytes -> IO Bool
-    runTest val = runAcquire $ do
+    runTest :: Bytes -> RIO e Bool
+    runTest val = runRAcquire $ do
       (zodQ, zod) <- runGala 0
       ()          <- sendThread zod (0, val)
       liftIO (waitForPacket zodQ val)
 
 twoTalk :: Property
-twoTalk = forAll arbitrary (ioProperty . runTest)
+twoTalk = forAll arbitrary (ioProperty . runApp . runTest)
   where
-    runTest :: (Word8, Word8, Bytes) -> IO Bool
+    runTest :: (Word8, Word8, Bytes) -> RIO e Bool
     runTest (aliceShip, bobShip, val) =
       if aliceShip == bobShip
         then pure True
         else go aliceShip bobShip val
 
-    go :: Word8 -> Word8 -> Bytes -> IO Bool
-    go aliceShip bobShip val = runAcquire $ do
+    go :: Word8 -> Word8 -> Bytes -> RIO e Bool
+    go aliceShip bobShip val = runRAcquire $ do
         (aliceQ, alice) <- runGala aliceShip
         (bobQ,   bob)   <- runGala bobShip
         sendThread alice (Galaxy bobShip,   val)
@@ -128,6 +129,15 @@ genIpv4 = do
   if (x == 0 || (x≥256 && x≤512))
     then genIpv4
     else pure (Ipv4 x)
+
+instance Arbitrary Text where
+  arbitrary = pack <$> arb
+
+instance Arbitrary Cord where
+  arbitrary = Cord <$> arb
+
+instance Arbitrary BigCord where
+  arbitrary = BigCord <$> arb
 
 instance Arbitrary AmesDest where
   arbitrary = oneof [ ADGala <$> arb <*> arb

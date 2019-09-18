@@ -11,16 +11,17 @@ import Vere.Pier.Types
 import Data.Conduit
 import Data.Conduit.List hiding (filter)
 
-import Control.Concurrent (threadDelay, runInBoundThread)
+import Control.Concurrent (runInBoundThread, threadDelay)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
+import KingApp            (runApp, App)
 
 import qualified Vere.Log as Log
 
 
 -- Utils -----------------------------------------------------------------------
 
-withTestDir :: (FilePath -> IO a) -> IO a
+withTestDir :: (FilePath -> RIO e a) -> RIO e a
 withTestDir = withTempDirectory "./" ".testlog."
 
 data NotEqual = NotEqual String String
@@ -28,10 +29,9 @@ data NotEqual = NotEqual String String
 
 instance Exception NotEqual where
 
-assertEqual :: (Show a, Eq a) => a -> a -> IO ()
+assertEqual :: MonadIO m => (Show a, Eq a) => a -> a -> m ()
 assertEqual x y = do
-    unless (x == y) $
-        throwIO (NotEqual (show x) (show y))
+    unless (x == y) $ io $ throwIO $ NotEqual (show x) (show y)
 
 
 -- Database Operations ---------------------------------------------------------
@@ -42,15 +42,15 @@ data Db = Db LogIdentity [ByteString] (Map Word64 ByteString)
 addEvents :: Db -> [ByteString] -> Db
 addEvents (Db id evs efs) new = Db id (evs <> new) efs
 
-readDb :: EventLog -> IO Db
+readDb :: EventLog -> RIO App Db
 readDb log = do
     events  <- runConduit (streamEvents log 1 .| consume)
     effects <- runConduit (streamEffectsRows log 0 .| consume)
     pure $ Db (Log.identity log) events (mapFromList effects)
 
-withDb :: FilePath -> Db -> (EventLog -> IO a) -> IO a
+withDb :: FilePath -> Db -> (EventLog -> RIO App a) -> RIO App a
 withDb dir (Db dId dEvs dFx) act = do
-    with (Log.new dir dId) $ \log -> do
+    rwith (Log.new dir dId) $ \log -> do
         Log.appendEvents log (fromList dEvs)
         for_ (mapToList dFx) $ \(k,v) ->
             Log.writeEffectsRow log k v
@@ -59,70 +59,75 @@ withDb dir (Db dId dEvs dFx) act = do
 --------------------------------------------------------------------------------
 
 tryReadIdentity :: Property
-tryReadIdentity = forAll arbitrary (ioProperty . runTest)
+tryReadIdentity = forAll arbitrary (ioProperty . runApp . runTest)
   where
-    runTest :: LogIdentity -> IO Bool
+    runTest :: LogIdentity -> RIO App Bool
     runTest ident = do
-        runInBoundThread $
+        env <- ask
+        io $ runInBoundThread $ runRIO env $
             withTestDir $ \dir -> do
-                with (Log.new dir ident) $ \log ->
+                rwith (Log.new dir ident) $ \log ->
                     assertEqual ident (Log.identity log)
-                with (Log.existing dir) $ \log ->
+                rwith (Log.existing dir) $ \log ->
                     assertEqual ident (Log.identity log)
-                with (Log.existing dir) $ \log ->
+                rwith (Log.existing dir) $ \log ->
                     assertEqual ident (Log.identity log)
         pure True
 
 tryReadDatabase :: Property
-tryReadDatabase = forAll arbitrary (ioProperty . runTest)
+tryReadDatabase = forAll arbitrary (ioProperty . runApp . runTest)
   where
-    runTest :: Db -> IO Bool
+    runTest :: Db -> RIO App Bool
     runTest db = do
-        runInBoundThread $
+        env <- ask
+        io $ runInBoundThread $ runRIO env $
             withTestDir $ \dir -> do
                 withDb dir db $ \log -> do
                     readDb log >>= assertEqual db
         pure True
 
 tryReadDatabaseFuzz :: Property
-tryReadDatabaseFuzz = forAll arbitrary (ioProperty . runTest)
+tryReadDatabaseFuzz = forAll arbitrary (ioProperty . runApp . runTest)
   where
-    runTest :: Db -> IO Bool
+    runTest :: Db -> RIO App Bool
     runTest db = do
-        runInBoundThread $
+        env <- ask
+        io $ runInBoundThread $ runRIO env $
             withTestDir $ \dir -> do
                 withDb dir db $ \log -> do
                     readDb log >>= assertEqual db
-                with (Log.existing dir) $ \log -> do
+                rwith (Log.existing dir) $ \log -> do
                     readDb log >>= assertEqual db
-                with (Log.existing dir) $ \log -> do
+                rwith (Log.existing dir) $ \log -> do
                     readDb log >>= assertEqual db
                     readDb log >>= assertEqual db
         pure True
 
 tryAppend :: Property
-tryAppend = forAll arbitrary (ioProperty . runTest)
+tryAppend = forAll arbitrary (ioProperty . runApp . runTest)
   where
-    runTest :: ([ByteString], Db) -> IO Bool
+    runTest :: ([ByteString], Db) -> RIO App Bool
     runTest (extra, db) = do
-        runInBoundThread $
+        env <- ask
+        io $ runInBoundThread $ runRIO env $
             withTestDir $ \dir -> do
                 db' <- pure (addEvents db extra)
                 withDb dir db $ \log -> do
                     readDb log >>= assertEqual db
                     Log.appendEvents log (fromList extra)
                     readDb log >>= assertEqual db'
-                with (Log.existing dir) $ \log -> do
+                rwith (Log.existing dir) $ \log -> do
                     readDb log >>= assertEqual db'
         pure True
 
 tryAppendHuge :: Property
-tryAppendHuge = forAll arbitrary (ioProperty . runTest)
+tryAppendHuge = forAll arbitrary (ioProperty . runApp . runTest)
   where
-    runTest :: ([ByteString], Db) -> IO Bool
+    runTest :: ([ByteString], Db) -> RIO App Bool
     runTest (extra, db) = do
-        runInBoundThread $ do
-            extra <- do b <- readFile "/home/benajmin/r/urbit/bin/brass.pill"
+        env <- ask
+        io $ runInBoundThread $ runRIO env $ do
+            extra <- do b <- readFile "./bin/brass.pill"
                         pure (extra <> [b] <> extra)
             withTestDir $ \dir -> do
                 db' <- pure (addEvents db extra)
@@ -130,7 +135,7 @@ tryAppendHuge = forAll arbitrary (ioProperty . runTest)
                     readDb log >>= assertEqual db
                     Log.appendEvents log (fromList extra)
                     readDb log >>= assertEqual db'
-                with (Log.existing dir) $ \log -> do
+                rwith (Log.existing dir) $ \log -> do
                     readDb log >>= assertEqual db'
         pure True
 
