@@ -162,7 +162,8 @@ pier pierPath mPort (serf, log, ss) = do
     tExe  <- startDrivers >>= router (readTQueue executeQ)
     tDisk <- runPersist log persistQ (writeTQueue executeQ)
     tCpu  <- runCompute serf ss (readTQueue computeQ) (takeTMVar saveM)
-      (takeTMVar shutdownM) (writeTQueue persistQ)
+      (takeTMVar shutdownM) (tsShowSpinner terminalSystem)
+      (tsHideSpinner terminalSystem) (writeTQueue persistQ)
 
     tSaveSignal <- saveSignalThread saveM
 
@@ -285,9 +286,12 @@ runCompute :: ∀e. HasLogFunc e
            -> STM Ev
            -> STM ()
            -> STM ()
+           -> (Maybe String -> STM ())
+           -> STM ()
            -> ((Job, FX) -> STM ())
            -> RAcquire e (Async ())
-runCompute serf ss getEvent getSaveSignal getShutdownSignal putResult =
+runCompute serf ss getEvent getSaveSignal getShutdownSignal
+           showSpinner hideSpinner putResult =
     mkRAcquire (async (go ss)) cancel
   where
     go :: SerfState -> RIO e ()
@@ -303,7 +307,9 @@ runCompute serf ss getEvent getSaveSignal getShutdownSignal putResult =
             eId <- pure (ssNextEv ss)
             mug <- pure (ssLastMug ss)
 
+            atomically $ showSpinner (getSpinnerNameForEvent ev)
             (job', ss', fx) <- doJob serf $ DoWork $ Work eId mug wen ev
+            atomically $ hideSpinner
             atomically (putResult (job', fx))
             go ss'
           CRSave () -> do
