@@ -161,9 +161,13 @@ pier pierPath mPort (serf, log, ss) = do
 
     tExe  <- startDrivers >>= router (readTQueue executeQ)
     tDisk <- runPersist log persistQ (writeTQueue executeQ)
-    tCpu  <- runCompute serf ss (readTQueue computeQ) (takeTMVar saveM)
-      (takeTMVar shutdownM) (tsShowSpinner terminalSystem)
-      (tsHideSpinner terminalSystem) (writeTQueue persistQ)
+    tCpu  <- runCompute serf ss
+               (readTQueue computeQ)
+               (takeTMVar saveM)
+               (takeTMVar shutdownM)
+               (tsShowSpinner terminalSystem)
+               (tsHideSpinner terminalSystem)
+               (writeTQueue persistQ)
 
     tSaveSignal <- saveSignalThread saveM
 
@@ -286,7 +290,7 @@ runCompute :: ∀e. HasLogFunc e
            -> STM Ev
            -> STM ()
            -> STM ()
-           -> (Maybe String -> STM ())
+           -> (Maybe Text -> STM ())
            -> STM ()
            -> ((Job, FX) -> STM ())
            -> RAcquire e (Async ())

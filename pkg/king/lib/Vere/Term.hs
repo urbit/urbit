@@ -1,43 +1,48 @@
 module Vere.Term (initializeLocalTerminal, term, TerminalSystem(..)) where
 
-import Arvo            hiding (Term)
-import Urbit.Time
-import UrbitPrelude    hiding (getCurrentTime)
-import Vere.Pier.Types
-
+import Arvo                  hiding (Term)
 import Data.Char
-import Data.List             ((!!))
 import Foreign.Marshal.Alloc
 import Foreign.Ptr
 import Foreign.Storable
+import RIO.FilePath
 import System.Posix.IO
 import System.Posix.Terminal
+import Urbit.Time
+import UrbitPrelude          hiding (getCurrentTime)
+import Vere.Pier.Types
 
-import RIO.Directory                (createDirectoryIfMissing)
-import RIO.FilePath
-import System.Console.Terminfo.Base
+import Data.List     ((!!))
+import RIO.Directory (createDirectoryIfMissing)
 
-import Data.ByteString.Internal
-
-import qualified Data.ByteString      as B
-import qualified Data.ByteString.UTF8 as UTF8
+import qualified Data.ByteString.Internal     as BS
+import qualified Data.ByteString.UTF8         as BS
+import qualified System.Console.Terminfo.Base as T
 
 -- Types -----------------------------------------------------------------------
 
--- Output to the attached terminal is either a series of vere blits, or it is an
--- injected printf line from the interpreter.
-data VereOutput = VereBlitOutput [Blit]
-                | VerePrintOutput String
-                | VereBlankLine
-                | VereShowSpinner (Maybe String)
-                | VereHideSpinner
+termText :: Text -> T.TermOutput
+termText = T.termText . unpack
+
+{-
+    Input Event for terminal driver:
+
+    %blits -- list of blits from arvo.
+    %trace -- stderr line from runtime.
+    %blank -- print a blank line
+    %spinr -- Start or stop the spinner
+-}
+data DrvEv = DEBlits [Blit]
+           | DETrace Text
+           | DEBlank
+           | DESpinr (Maybe (Maybe Text))
 
 -- All stateful data in the printing to stdOutput.
 data LineState = LineState
-  { lsLine            :: String
+  { lsLine            :: Text
   , lsCurPos          :: Int
   , lsSpinTimer       :: Maybe (Async ())
-  , lsSpinCause       :: Maybe String
+  , lsSpinCause       :: Maybe Text
   , lsSpinFirstRender :: Bool
   , lsSpinFrame       :: Int
   , lsPrevEndTime     :: Wen
@@ -60,9 +65,9 @@ data ReadData = ReadData
 -- vere/arvo interface.
 data TerminalSystem e = TerminalSystem
   { tsReadQueue   :: TQueue Belt
-  , tsWriteQueue  :: TQueue VereOutput
+  , tsWriteQueue  :: TQueue DrvEv
   , tsStderr      :: Text -> RIO e ()
-  , tsShowSpinner :: Maybe String -> STM ()
+  , tsShowSpinner :: Maybe Text -> STM ()
   , tsHideSpinner :: STM ()
   }
 
@@ -82,10 +87,14 @@ initialHail = EvBlip $ BlipEvTerm $ TermEvHail (UD 1, ()) ()
 -- Version one of this is punting on the ops_u.dem flag: whether we're running
 -- in daemon mode.
 
-spinners = ['|', '/', '-', '\\']
+spinners :: [Text]
+spinners = ["|", "/", "-", "\\"]
 
-leftBracket = ['«']
-rightBracket = ['»']
+leftBracket :: Text
+leftBracket = "«"
+
+rightBracket :: Text
+rightBracket = "»"
 
 _spin_cool_us = 500000
 _spin_warm_us = 50000
@@ -94,10 +103,10 @@ _spin_idle_us = 500000
 
 --------------------------------------------------------------------------------
 
-runMaybeTermOutput :: Terminal -> (Terminal -> Maybe TermOutput) -> RIO e ()
+runMaybeTermOutput :: T.Terminal -> (T.Terminal -> Maybe T.TermOutput) -> RIO e ()
 runMaybeTermOutput t getter = case (getter t) of
   Nothing -> pure ()
-  Just x  -> io $ runTermOutput t x
+  Just x  -> io $ T.runTermOutput t x
 
 rioAllocaBytes :: (MonadIO m, MonadUnliftIO m)
                => Int -> (Ptr a -> m b) -> m b
@@ -125,7 +134,7 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
     start = do
       --  Initialize the writing side of the terminal
       --
-      t <- io $ setupTermFromEnv
+      t <- io $ T.setupTermFromEnv
       -- TODO: We still need to actually get the size from the terminal somehow.
 
       tsWriteQueue <- newTQueueIO
@@ -147,11 +156,12 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
           (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
 
       let tsStderr = \txt ->
-            atomically $ writeTQueue tsWriteQueue $ VerePrintOutput $ unpack txt
+            atomically $ writeTQueue tsWriteQueue $ DETrace txt
 
-      let tsShowSpinner = \str ->
-            writeTQueue tsWriteQueue $ VereShowSpinner str
-      let tsHideSpinner = writeTQueue tsWriteQueue $ VereHideSpinner
+      let tsShowSpinner = \mTxt ->
+            writeTQueue tsWriteQueue $ DESpinr (Just mTxt)
+
+      let tsHideSpinner = writeTQueue tsWriteQueue $ DESpinr Nothing
 
       pure (TerminalSystem{..}, Private{..})
 
@@ -182,7 +192,7 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
       ]
 
     getCap term cap =
-      getCapability term (tiGetOutput1 cap) :: Maybe TermOutput
+      T.getCapability term (T.tiGetOutput1 cap) :: Maybe T.TermOutput
 
     vtClearScreen t  = getCap t "clear"
     vtClearToBegin t = getCap t "el"
@@ -202,51 +212,52 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
           threadDelay rest
           loop
 
+    writeTrace :: T.Terminal -> LineState -> Text -> RIO e LineState
+    writeTrace t ls p = do
+        io $ T.runTermOutput t $ termText "\r"
+        runMaybeTermOutput t vtClearToBegin
+        io $ T.runTermOutput t $ termText p
+        termRefreshLine t ls
+
     -- Writes data to the terminal. Both the terminal reading, normal logging,
     -- and effect handling can all emit bytes which go to the terminal.
-    writeTerminal :: Terminal -> TQueue VereOutput -> TMVar () -> RIO e ()
+    writeTerminal :: T.Terminal -> TQueue DrvEv -> TMVar () -> RIO e ()
     writeTerminal t q spinner = do
         currentTime <- io $ now
         loop (LineState "" 0 Nothing Nothing True 0 currentTime)
       where
-        loop ls@LineState{..} = do
-          x <- atomically $
-                 Right <$> readTQueue q <|>
-                 Left <$> takeTMVar spinner
-          case x of
-            Right (VereBlitOutput blits) -> do
-              ls <- foldM (writeBlit t) ls blits
-              loop ls
-            Right (VerePrintOutput p) -> do
-              io $ runTermOutput t $ termText "\r"
-              runMaybeTermOutput t vtClearToBegin
-              io $ runTermOutput t $ termText p
-              ls <- termRefreshLine t ls
-              loop ls
-            Right VereBlankLine -> do
-              io $ runTermOutput t $ termText "\r\n"
-              loop ls
-            Right (VereShowSpinner txt) -> do
-              current <- io $ now
-              -- Figure out how long to wait to show the spinner. When we don't
-              -- have a vane name to display, we assume its a user action and
-              -- trigger immediately. Otherwise, if we receive an event shortly
-              -- after a previous spin, use a shorter delay to avoid giving the
-              -- impression of a half-idle system.
-              let delay = case txt of
-                    Nothing -> 0
-                    Just _  ->
-                      if (gap current lsPrevEndTime ^. microSecs) <
-                         _spin_idle_us
-                      then _spin_warm_us
-                      else _spin_cool_us
+        writeBlank :: LineState -> RIO e LineState
+        writeBlank ls = do
+            io $ T.runTermOutput t $ termText "\r\n"
+            pure ls
 
-              spinTimer <- async $ spinnerHeartBeat delay _spin_rate_us spinner
-              loop ls { lsSpinTimer = Just spinTimer,
-                        lsSpinCause = txt,
-                        lsSpinFirstRender = True }
-            Right VereHideSpinner -> do
-              maybe (pure ()) cancel lsSpinTimer
+        {-
+            Figure out how long to wait to show the spinner. When we
+            don't have a vane name to display, we assume its a user
+            action and trigger immediately. Otherwise, if we receive an
+            event shortly after a previous spin, use a shorter delay to
+            avoid giving the impression of a half-idle system.
+        -}
+        doSpin :: LineState -> Maybe Text -> RIO e LineState
+        doSpin ls@LineState{..} mTxt = do
+            current <- io $ now
+            delay   <- pure $ case mTxt of
+                Nothing -> 0
+                Just _  ->
+                  if (gap current lsPrevEndTime ^. microSecs) < _spin_idle_us
+                  then _spin_warm_us
+                  else _spin_cool_us
+
+            spinTimer <- async $ spinnerHeartBeat delay _spin_rate_us spinner
+
+            pure $ ls { lsSpinTimer       = Just spinTimer
+                      , lsSpinCause       = mTxt
+                      , lsSpinFirstRender = True
+                      }
+
+        unspin :: LineState -> RIO e LineState
+        unspin ls = do
+              maybe (pure ()) cancel (lsSpinTimer ls)
               -- We do a final flush of the spinner mvar to ensure we don't
               -- have a lingering signal which will redisplay the spinner after
               -- we call termRefreshLine below.
@@ -254,26 +265,46 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
 
               -- If we ever actually ran the spinner display callback, we need
               -- to force a redisplay of the command prompt.
-              ls <- if not lsSpinFirstRender
+              ls <- if not (lsSpinFirstRender ls)
                     then termRefreshLine t ls
                     else pure ls
 
               endTime <- io $ now
-              loop ls { lsSpinTimer = Nothing, lsPrevEndTime = endTime }
-            Left () -> do
-              let spinner = [spinners !! lsSpinFrame] ++ case lsSpinCause of
-                    Nothing  -> []
-                    Just str -> leftBracket ++ str ++ rightBracket
+              pure $ ls { lsSpinTimer = Nothing, lsPrevEndTime = endTime }
 
-              io $ runTermOutput t $ termText spinner
-              termSpinnerMoveLeft t (length spinner)
+        execEv :: LineState -> DrvEv -> RIO e LineState
+        execEv ls = \case
+            DEBlits bs         -> foldM (writeBlit t) ls bs
+            DETrace p          -> writeTrace t ls p
+            DEBlank            -> writeBlank ls
+            DESpinr (Just txt) -> doSpin ls txt
+            DESpinr Nothing    -> unspin ls
 
-              loop ls { lsSpinFirstRender = False,
-                        lsSpinFrame = (lsSpinFrame + 1) `mod` (length spinners)
+
+        spin :: LineState -> RIO e LineState
+        spin ls@LineState{..} = do
+            let spinner = (spinners !! lsSpinFrame) ++ case lsSpinCause of
+                  Nothing  -> ""
+                  Just str -> leftBracket ++ str ++ rightBracket
+
+            io $ T.runTermOutput t $ termText spinner
+            termSpinnerMoveLeft t (length spinner)
+
+            let newFrame = (lsSpinFrame + 1) `mod` (length spinners)
+
+            pure $ ls { lsSpinFirstRender = False
+                      , lsSpinFrame       = newFrame
                       }
 
+        loop :: LineState -> RIO e ()
+        loop ls@LineState{..} = do
+            join $ atomically $ asum
+                [ readTQueue q      >>= pure . (execEv ls >=> loop)
+                , takeTMVar spinner >>  pure (spin ls >>= loop)
+                ]
+
     -- Writes an individual blit to the screen
-    writeBlit :: Terminal -> LineState -> Blit -> RIO e LineState
+    writeBlit :: T.Terminal -> LineState -> Blit -> RIO e LineState
     writeBlit t ls = \case
       Bel () -> do
         runMaybeTermOutput t vtSoundBell
@@ -293,7 +324,7 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
       (Url url) -> pure ls
 
     -- Moves the cursor to the requested position
-    termShowCursor :: Terminal -> LineState -> Int -> RIO e LineState
+    termShowCursor :: T.Terminal -> LineState -> Int -> RIO e LineState
     termShowCursor t ls@LineState{..} {-line pos)-} newPos = do
       if newPos < lsCurPos then do
         replicateM_ (lsCurPos - newPos) (runMaybeTermOutput t vtParmLeft)
@@ -307,30 +338,30 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
 
     -- Moves the cursor left without any mutation of the LineState. Used only
     -- in cursor spinning.
-    termSpinnerMoveLeft :: Terminal -> Int -> RIO e ()
+    termSpinnerMoveLeft :: T.Terminal -> Int -> RIO e ()
     termSpinnerMoveLeft t count =
       replicateM_ count (runMaybeTermOutput t vtParmLeft)
 
     -- Displays and sets the current line
-    termShowLine :: Terminal -> LineState -> String -> RIO e LineState
+    termShowLine :: T.Terminal -> LineState -> Text -> RIO e LineState
     termShowLine t ls newStr = do
-      io $ runTermOutput t $ termText newStr
+      io $ T.runTermOutput t $ termText newStr
       pure ls { lsLine = newStr, lsCurPos = (length newStr) }
 
-    termShowClear :: Terminal -> LineState -> RIO e LineState
+    termShowClear :: T.Terminal -> LineState -> RIO e LineState
     termShowClear t ls = do
-      io $ runTermOutput t $ termText "\r"
+      io $ T.runTermOutput t $ termText "\r"
       runMaybeTermOutput t vtClearToBegin
       pure ls { lsLine = "", lsCurPos = 0  }
 
     -- New Current Line
-    termShowMore :: Terminal -> LineState -> RIO e LineState
+    termShowMore :: T.Terminal -> LineState -> RIO e LineState
     termShowMore t ls = do
-      io $ runTermOutput t $ termText "\r\n"
+      io $ T.runTermOutput t $ termText "\r\n"
       pure ls { lsLine = "", lsCurPos = 0  }
 
     -- Redraw the current LineState, maintaining the current curpos
-    termRefreshLine :: Terminal -> LineState -> RIO e LineState
+    termRefreshLine :: T.Terminal -> LineState -> RIO e LineState
     termRefreshLine t ls = do
       let line = (lsLine ls)
           curPos = (lsCurPos ls)
@@ -339,8 +370,8 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
       termShowCursor t ls curPos
 
     -- ring my bell
-    bell :: TQueue VereOutput -> RIO e ()
-    bell q = atomically $ writeTQueue q $ VereBlitOutput [Bel ()]
+    bell :: TQueue DrvEv -> RIO e ()
+    bell q = atomically $ writeTQueue q $ DEBlits [Bel ()]
 
     -- Reads data from stdInput and emit the proper effect
     --
@@ -351,9 +382,9 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
     -- A better way to do this would be to get some sort of epoll on stdInput,
     -- since that's kinda closer to what libuv does?
     readTerminal :: forall e. HasLogFunc e
-                 => TQueue Belt -> TQueue VereOutput -> (RIO e ()) -> RIO e ()
+                 => TQueue Belt -> TQueue DrvEv -> (RIO e ()) -> RIO e ()
     readTerminal rq wq bell =
-      rioAllocaBytes 1 $ \ buf -> loop (ReadData buf False False B.empty 0)
+      rioAllocaBytes 1 $ \ buf -> loop (ReadData buf False False mempty 0)
       where
         loop :: ReadData -> RIO e ()
         loop rd@ReadData{..} = do
@@ -370,7 +401,7 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
             Right _ -> do
               w   <- io $ peek rdBuf
               -- print ("{" ++ (show w) ++ "}")
-              let c = w2c w
+              let c = BS.w2c w
               if rdEscape then
                 if rdBracket then do
                   case c of
@@ -399,13 +430,13 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
                 rd@ReadData{..} <- pure rd { rdUTF8 = snoc rdUTF8 w }
                 if length rdUTF8 /= rdUTF8width then loop rd
                 else do
-                  case UTF8.decode rdUTF8 of
+                  case BS.decode rdUTF8 of
                     Nothing ->
                       error "empty utf8 accumulation buffer"
                     Just (c, bytes) | bytes /= rdUTF8width ->
                       error "utf8 character size mismatch?!"
                     Just (c, bytes) -> sendBelt $ Txt $ Tour $ [c]
-                  loop rd { rdUTF8 = B.empty, rdUTF8width = 0 }
+                  loop rd { rdUTF8 = mempty, rdUTF8width = 0 }
               else if w >= 32 && w < 127 then do
                 sendBelt $ Txt $ Tour $ [c]
                 loop rd
@@ -422,11 +453,11 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
                 -- ETX (^C)
                 logDebug $ displayShow "Ctrl-c interrupt"
                 atomically $ do
-                  writeTQueue wq $ VerePrintOutput "interrupt\r\n"
+                  writeTQueue wq $ DETrace "interrupt\r\n"
                   writeTQueue rq $ Ctl $ Cord "c"
                 loop rd
               else if w <= 26 then do
-                sendBelt $ Ctl $ Cord $ pack [w2c (w + 97 - 1)]
+                sendBelt $ Ctl $ Cord $ pack [BS.w2c (w + 97 - 1)]
                 loop rd
               else if w == 27 then do
                 loop rd { rdEscape = True }
@@ -473,7 +504,7 @@ term TerminalSystem{..} shutdownSTM pierPath king enqueueEv =
     handleEffect = \case
       TermEfBlit _ blits -> do
         let (termBlits, fsWrites) = partition isTerminalBlit blits
-        atomically $ writeTQueue tsWriteQueue (VereBlitOutput termBlits)
+        atomically $ writeTQueue tsWriteQueue (DEBlits termBlits)
         for_ fsWrites handleFsWrite
       TermEfInit _ _ -> pure ()
       TermEfLogo path _ -> do
