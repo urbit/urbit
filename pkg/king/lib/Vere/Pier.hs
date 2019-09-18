@@ -18,14 +18,17 @@ import Vere.Http.Client   (client)
 import Vere.Http.Server   (serv)
 import Vere.Log           (EventLog)
 import Vere.Serf          (Serf, SerfState(..), doJob, sStderr)
-import Vere.Term
 
 import RIO.Directory
 
-import qualified System.Entropy as Ent
-import qualified Urbit.Time     as Time
-import qualified Vere.Log       as Log
-import qualified Vere.Serf      as Serf
+import qualified System.Console.Terminal.Size as TSize
+import qualified System.Entropy               as Ent
+import qualified Urbit.Time                   as Time
+import qualified Vere.Log                     as Log
+import qualified Vere.Serf                    as Serf
+import qualified Vere.Term                    as Term
+import qualified Vere.Term.API                as Term
+import qualified Vere.Term.Demux              as Term
 
 
 --------------------------------------------------------------------------------
@@ -132,38 +135,71 @@ resumed top flags = do
 
 -- Run Pier --------------------------------------------------------------------
 
+acquireWorker :: RIO e () -> RAcquire e (Async ())
+acquireWorker act = mkRAcquire (async act) cancel
+
 pier :: ∀e. HasLogFunc e
      => FilePath
      -> Maybe Port
      -> (Serf e, EventLog, SerfState)
      -> RAcquire e ()
 pier pierPath mPort (serf, log, ss) = do
-    computeQ <- newTQueueIO :: RAcquire e (TQueue Ev)
-    persistQ <- newTQueueIO :: RAcquire e (TQueue (Job, FX))
-    executeQ <- newTQueueIO :: RAcquire e (TQueue FX)
+    computeQ  <- newTQueueIO
+    persistQ  <- newTQueueIO
+    executeQ  <- newTQueueIO
+    saveM     <- newEmptyTMVarIO
+    shutdownM <- newEmptyTMVarIO
 
-    saveM <- newEmptyTMVarIO :: RAcquire e (TMVar ())
-    shutdownM <- newEmptyTMVarIO :: RAcquire e (TMVar ())
     let shutdownEvent = putTMVar shutdownM ()
 
     inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
-    terminalSystem <- initializeLocalTerminal
-    swapMVar (sStderr serf) (tsStderr terminalSystem)
+    (sz, local) <- Term.localClient
+
+    (waitExternalTerm, termServPort) <- Term.termServer
+
+    (demux, muxed) <- atomically $ do
+        res <- Term.mkDemux
+        Term.addDemux local res
+        pure (res, Term.useDemux res)
+
+    rio $ logInfo $ display $
+        "TERMSERV Terminal Server running on port: " <> tshow termServPort
+
+    let listenLoop = do
+            logTrace "TERMSERV Waiting for external terminal."
+            ok <- atomically $ do
+                waitExternalTerm >>= \case
+                    Nothing  -> pure False
+                    Just ext -> Term.addDemux ext demux >> pure True
+            if ok
+               then do logTrace "TERMSERV External terminal connected"
+                       listenLoop
+               else logTrace "TERMSERV Termainal server is dead"
+
+    acquireWorker listenLoop
+
+    swapMVar (sStderr serf) (atomically . Term.trace muxed)
 
     let ship = who (Log.identity log)
 
     let (bootEvents, startDrivers) =
-          drivers pierPath inst ship mPort (writeTQueue computeQ)
-            shutdownEvent terminalSystem
+            drivers pierPath inst ship mPort
+                (writeTQueue computeQ)
+                shutdownEvent
+                (sz, muxed)
 
     io $ atomically $ for_ bootEvents (writeTQueue computeQ)
 
     tExe  <- startDrivers >>= router (readTQueue executeQ)
     tDisk <- runPersist log persistQ (writeTQueue executeQ)
-    tCpu  <- runCompute serf ss (readTQueue computeQ) (takeTMVar saveM)
-      (takeTMVar shutdownM) (tsShowSpinner terminalSystem)
-      (tsHideSpinner terminalSystem) (writeTQueue persistQ)
+    tCpu  <- runCompute serf ss
+               (readTQueue computeQ)
+               (takeTMVar saveM)
+               (takeTMVar shutdownM)
+               (Term.spin muxed)
+               (Term.stopSpin muxed)
+               (writeTQueue persistQ)
 
     tSaveSignal <- saveSignalThread saveM
 
@@ -205,7 +241,7 @@ data Drivers e = Drivers
 
 drivers :: HasLogFunc e
         => FilePath -> KingId -> Ship -> Maybe Port -> (Ev -> STM ()) -> STM()
-        -> TerminalSystem e
+        -> (TSize.Window Word, Term.Client)
         -> ([Ev], RAcquire e (Drivers e))
 drivers pierPath inst who mPort plan shutdownSTM termSys =
     (initialEvents, runDrivers)
@@ -215,7 +251,7 @@ drivers pierPath inst who mPort plan shutdownSTM termSys =
     (httpBorn, runHttp) = serv pierPath inst plan
     (clayBorn, runClay) = clay pierPath inst plan
     (irisBorn, runIris) = client inst plan
-    (termBorn, runTerm) = term termSys shutdownSTM pierPath inst plan
+    (termBorn, runTerm) = Term.term termSys shutdownSTM pierPath inst plan
     initialEvents       = mconcat [behnBorn, clayBorn, amesBorn, httpBorn,
                                    termBorn, irisBorn]
     runDrivers          = do
@@ -286,7 +322,7 @@ runCompute :: ∀e. HasLogFunc e
            -> STM Ev
            -> STM ()
            -> STM ()
-           -> (Maybe String -> STM ())
+           -> (Maybe Text -> STM ())
            -> STM ()
            -> ((Job, FX) -> STM ())
            -> RAcquire e (Async ())
