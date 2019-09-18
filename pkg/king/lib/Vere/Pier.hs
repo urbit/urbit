@@ -135,6 +135,12 @@ resumed top flags = do
 
 -- Run Pier --------------------------------------------------------------------
 
+acquireWorker :: RIO e () -> RAcquire e (Async ())
+acquireWorker act = mkRAcquire start stop
+  where
+    stop t = cancel t >> void (waitCatch t)
+    start = async act
+
 pier :: ∀e. HasLogFunc e
      => FilePath
      -> Maybe Port
@@ -153,10 +159,24 @@ pier pierPath mPort (serf, log, ss) = do
 
     (sz, local) <- Term.localClient
 
-    muxed <- atomically $ do
+    (waitExternalTerm, termServPort) <- Term.termServer
+
+    (demux, muxed) <- atomically $ do
         res <- Term.mkDemux
         Term.addDemux local res
-        pure (Term.useDemux res)
+        pure (res, Term.useDemux res)
+
+    rio $ logInfo $ display $
+        "Terminal Server running on port: " <> tshow termServPort
+
+    let listenLoop = do
+            ok <- atomically $ do
+                waitExternalTerm >>= \case
+                    Nothing  -> pure False
+                    Just ext -> Term.addDemux ext demux >> pure True
+            when ok listenLoop
+
+    acquireWorker listenLoop
 
     swapMVar (sStderr serf) (atomically . Term.trace muxed)
 

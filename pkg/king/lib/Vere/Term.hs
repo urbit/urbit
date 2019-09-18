@@ -110,23 +110,29 @@ isTerminalBlit _         = True
 
 --------------------------------------------------------------------------------
 
+{-
+    TODO XX HACK: We don't have any good way of handling client
+        disconnect, so we just retry. This will probably waste CPU.
+-}
 termServer :: ∀e. HasLogFunc e
-           => RAcquire e (TChan Client, Port)
+           => RAcquire e (STM (Maybe Client), Port)
 termServer = mkRAcquire start stop
   where
     stop = const (pure ())
     start = do
         serv <- Serv.wsServer @Belt @Term.Ev
-        chan <- newTChanIO
-        pure (chan, 0)
 
-{-
-data Server i o a = Server
-    { sAccept :: STM (Maybe (Conn i o))
-    , sAsync  :: Async ()
-    , sData   :: a
-    }
--}
+        let getClient = do
+                Serv.sAccept serv <&> \case
+                    Nothing -> Nothing
+                    Just c  -> Just $ Client
+                        { give = Serv.cSend c
+                        , take = Serv.cRecv c >>= \case
+                                     Nothing -> empty
+                                     Just ev -> pure ev
+                        }
+
+        pure (getClient, Port $ fromIntegral $ Serv.sData serv)
 
 {-
     Initializes the generalized input/output parts of the terminal.
@@ -136,23 +142,20 @@ localClient = fst <$> mkRAcquire start stop
   where
     start :: HasLogFunc e => RIO e ((TSize.Window Word, Client), Private)
     start = do
-      --  Initialize the writing side of the terminal
-      --
-      t <- io $ T.setupTermFromEnv
-      -- TODO: We still need to actually get the size from the terminal somehow.
-
-      tsWriteQueue <- newTQueueIO
-      spinnerMVar <- newEmptyTMVarIO
+      t             <- io $ T.setupTermFromEnv
+      tsWriteQueue  <- newTQueueIO
+      spinnerMVar   <- newEmptyTMVarIO
       pWriterThread <- asyncBound (writeTerminal t tsWriteQueue spinnerMVar)
 
       pPreviousConfiguration <- io $ getTerminalAttributes stdInput
 
       -- Create a new configuration where we put the terminal in raw mode and
       -- disable a bunch of preprocessing.
-      let newTermSettings =
-            flip withTime     0 .
-            flip withMinInput 1 $
-            foldl' withoutMode pPreviousConfiguration disabledFlags
+      let newTermSettings = flip withTime     0
+                          $ flip withMinInput 1
+                          $ foldl' withoutMode pPreviousConfiguration
+                          $ disabledFlags
+
       io $ setTerminalAttributes stdInput newTermSettings Immediately
 
       tsReadQueue <- newTQueueIO
