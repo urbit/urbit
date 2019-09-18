@@ -16,23 +16,26 @@ import Arvo (Blit, Belt)
     %spinr -- Start or stop the spinner
 -}
 data Ev = Blits [Blit]
-        | Trace Text
+        | Trace Cord
         | Blank
-        | Spinr (Maybe (Maybe Text))
+        | Spinr (Maybe (Maybe Cord))
+  deriving (Show)
 
 data Client = Client
     { take :: STM Belt
     , give :: Ev -> STM ()
     }
 
+deriveNoun ''Ev
+
 
 -- Utilities -------------------------------------------------------------------
 
 trace :: Client -> Text -> STM ()
-trace ts = give ts . Trace
+trace ts = give ts . Trace . Cord
 
 spin :: Client -> Maybe Text -> STM ()
-spin ts = give ts . Spinr . Just
+spin ts = give ts . Spinr . Just . fmap Cord
 
 stopSpin :: Client -> STM ()
 stopSpin ts = give ts (Spinr Nothing)

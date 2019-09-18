@@ -1,6 +1,7 @@
 module Vere.Term
     ( module Term
     , localClient
+    , termServer
     , term
     ) where
 
@@ -22,8 +23,13 @@ import Vere.Term.API (Client(Client))
 
 import qualified Data.ByteString.Internal     as BS
 import qualified Data.ByteString.UTF8         as BS
+import qualified System.Console.Terminal.Size as TSize
 import qualified System.Console.Terminfo.Base as T
+import qualified Vere.NounServ                as Serv
 import qualified Vere.Term.API                as Term
+
+
+
 
 
 -- Types -----------------------------------------------------------------------
@@ -104,13 +110,31 @@ isTerminalBlit _         = True
 
 --------------------------------------------------------------------------------
 
+termServer :: ∀e. HasLogFunc e
+           => RAcquire e (TChan Client, Port)
+termServer = mkRAcquire start stop
+  where
+    stop = const (pure ())
+    start = do
+        serv <- Serv.wsServer @Belt @Term.Ev
+        chan <- newTChanIO
+        pure (chan, 0)
+
+{-
+data Server i o a = Server
+    { sAccept :: STM (Maybe (Conn i o))
+    , sAsync  :: Async ()
+    , sData   :: a
+    }
+-}
+
 {-
     Initializes the generalized input/output parts of the terminal.
 -}
-localClient :: ∀e. HasLogFunc e => RAcquire e Client
+localClient :: ∀e. HasLogFunc e => RAcquire e (TSize.Window Word, Client)
 localClient = fst <$> mkRAcquire start stop
   where
-    start :: HasLogFunc e => RIO e (Client, Private)
+    start :: HasLogFunc e => RIO e ((TSize.Window Word, Client), Private)
     start = do
       --  Initialize the writing side of the terminal
       --
@@ -139,11 +163,13 @@ localClient = fst <$> mkRAcquire start stop
                           , give = writeTQueue tsWriteQueue
                           }
 
-      pure (client, Private{..})
+      tsize <- io $ TSize.size <&> fromMaybe (TSize.Window 80 24)
+
+      pure ((tsize, client), Private{..})
 
     stop :: HasLogFunc e
-         => (Client, Private) -> RIO e ()
-    stop (Client{..}, Private{..}) = do
+         => ((TSize.Window Word, Client), Private) -> RIO e ()
+    stop ((_, Client{..}), Private{..}) = do
       -- Note that we don't `cancel pReaderThread` here. This is a deliberate
       -- decision because fdRead calls into a native function which the runtime
       -- can't kill. If we were to cancel here, the internal `waitCatch` would
@@ -257,9 +283,9 @@ localClient = fst <$> mkRAcquire start stop
         execEv :: LineState -> Term.Ev -> RIO e LineState
         execEv ls = \case
             Term.Blits bs         -> foldM (writeBlit t) ls bs
-            Term.Trace p          -> writeTrace ls p
+            Term.Trace p          -> writeTrace ls (unCord p)
             Term.Blank            -> writeBlank ls
-            Term.Spinr (Just txt) -> doSpin ls txt
+            Term.Spinr (Just txt) -> doSpin ls (unCord <$> txt)
             Term.Spinr Nothing    -> unspin ls
 
         spin :: LineState -> RIO e LineState
@@ -451,12 +477,18 @@ localClient = fst <$> mkRAcquire start stop
 --------------------------------------------------------------------------------
 
 term :: forall e. HasLogFunc e
-     => Client -> (STM ()) -> FilePath -> KingId -> QueueEv
+     => (TSize.Window Word, Client)
+     -> (STM ())
+     -> FilePath
+     -> KingId
+     -> QueueEv
      -> ([Ev], RAcquire e (EffCb e TermEf))
-term Client{..} shutdownSTM pierPath king enqueueEv =
+term (tsize, Client{..}) shutdownSTM pierPath king enqueueEv =
     (initialEvents, runTerm)
   where
-    initialEvents = [(initialBlew 80 24), initialHail]
+    TSize.Window wi hi = tsize
+
+    initialEvents = [(initialBlew hi wi), initialHail]
 
     runTerm :: RAcquire e (EffCb e TermEf)
     runTerm = do

@@ -37,6 +37,7 @@ dependencies:
   - classy-prelude
   - conduit
   - containers
+  - data-default
   - data-fix
   - directory
   - entropy
@@ -81,6 +82,7 @@ dependencies:
   - tasty-th
   - template-haskell
   - terminal-progress-bar
+  - terminal-size
   - terminfo
   - text
   - these
@@ -98,7 +100,6 @@ dependencies:
   - warp
   - warp-tls
   - websockets
-  - data-default
 
 default-extensions:
   - ApplicativeDo

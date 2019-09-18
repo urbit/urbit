@@ -21,13 +21,14 @@ import Vere.Serf          (Serf, SerfState(..), doJob, sStderr)
 
 import RIO.Directory
 
-import qualified System.Entropy  as Ent
-import qualified Urbit.Time      as Time
-import qualified Vere.Log        as Log
-import qualified Vere.Serf       as Serf
-import qualified Vere.Term       as Term
-import qualified Vere.Term.API   as Term
-import qualified Vere.Term.Demux as Term
+import qualified System.Console.Terminal.Size as TSize
+import qualified System.Entropy               as Ent
+import qualified Urbit.Time                   as Time
+import qualified Vere.Log                     as Log
+import qualified Vere.Serf                    as Serf
+import qualified Vere.Term                    as Term
+import qualified Vere.Term.API                as Term
+import qualified Vere.Term.Demux              as Term
 
 
 --------------------------------------------------------------------------------
@@ -150,7 +151,7 @@ pier pierPath mPort (serf, log, ss) = do
 
     inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
-    local <- Term.localClient
+    (sz, local) <- Term.localClient
 
     muxed <- atomically $ do
         res <- Term.mkDemux
@@ -165,7 +166,7 @@ pier pierPath mPort (serf, log, ss) = do
             drivers pierPath inst ship mPort
                 (writeTQueue computeQ)
                 shutdownEvent
-                muxed
+                (sz, muxed)
 
     io $ atomically $ for_ bootEvents (writeTQueue computeQ)
 
@@ -219,7 +220,7 @@ data Drivers e = Drivers
 
 drivers :: HasLogFunc e
         => FilePath -> KingId -> Ship -> Maybe Port -> (Ev -> STM ()) -> STM()
-        -> Term.Client
+        -> (TSize.Window Word, Term.Client)
         -> ([Ev], RAcquire e (Drivers e))
 drivers pierPath inst who mPort plan shutdownSTM termSys =
     (initialEvents, runDrivers)
