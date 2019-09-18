@@ -136,10 +136,7 @@ resumed top flags = do
 -- Run Pier --------------------------------------------------------------------
 
 acquireWorker :: RIO e () -> RAcquire e (Async ())
-acquireWorker act = mkRAcquire start stop
-  where
-    stop t = cancel t >> void (waitCatch t)
-    start = async act
+acquireWorker act = mkRAcquire (async act) cancel
 
 pier :: ∀e. HasLogFunc e
      => FilePath
@@ -163,7 +160,7 @@ pier pierPath mPort (serf, log, ss) = do
 
     (demux, muxed) <- atomically $ do
         res <- Term.mkDemux
-        -- Term.addDemux local res
+        Term.addDemux local res
         pure (res, Term.useDemux res)
 
     rio $ logInfo $ display $
@@ -380,11 +377,8 @@ runPersist :: EventLog
            -> (FX -> STM ())
            -> RAcquire e (Async ())
 runPersist log inpQ out =
-    mkRAcquire runThread cancelWait
+    mkRAcquire runThread cancel
   where
-    cancelWait :: Async () -> RIO e ()
-    cancelWait tid = cancel tid >> wait tid
-
     runThread :: RIO e (Async ())
     runThread = asyncBound $ forever $ do
         writs  <- atomically getBatchFromQueue
