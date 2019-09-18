@@ -372,7 +372,8 @@ instance Exception PersistExn where
             , "\tExpected " <> show expected <> " but got " <> show got
             ]
 
-runPersist :: EventLog
+runPersist :: ∀e. HasLogFunc e
+           => EventLog
            -> TQueue (Job, FX)
            -> (FX -> STM ())
            -> RAcquire e (Async ())

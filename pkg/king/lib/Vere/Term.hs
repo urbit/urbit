@@ -57,6 +57,7 @@ data ReadData = ReadData
 data Private = Private
   { pReaderThread          :: Async ()
   , pWriterThread          :: Async ()
+  , pTerminal              :: T.Terminal
   , pPreviousConfiguration :: TerminalAttributes
   }
 
@@ -171,10 +172,11 @@ localClient = fst <$> mkRAcquire start stop
   where
     start :: HasLogFunc e => RIO e ((TSize.Window Word, Client), Private)
     start = do
-      t             <- io $ T.setupTermFromEnv
+      pTerminal     <- io $ T.setupTermFromEnv
       tsWriteQueue  <- newTQueueIO
       spinnerMVar   <- newEmptyTMVarIO
-      pWriterThread <- asyncBound (writeTerminal t tsWriteQueue spinnerMVar)
+      pWriterThread <-
+          asyncBound (writeTerminal pTerminal tsWriteQueue spinnerMVar)
 
       pPreviousConfiguration <- io $ getTerminalAttributes stdInput
 
@@ -207,8 +209,11 @@ localClient = fst <$> mkRAcquire start stop
       -- can't kill. If we were to cancel here, the internal `waitCatch` would
       -- block until the next piece of keyboard input. Since this only happens
       -- at shutdown, just leak the file descriptor.
-
       cancel pWriterThread
+
+      -- inject one final newline, as we're usually on the prompt.
+      io $ T.runTermOutput pTerminal $ termText "\r\n"
+
       -- take the terminal out of raw mode
       io $ setTerminalAttributes stdInput pPreviousConfiguration Immediately
 
@@ -524,14 +529,11 @@ term (tsize, Client{..}) shutdownSTM pierPath king enqueueEv =
 
     runTerm :: RAcquire e (EffCb e TermEf)
     runTerm = do
-      tim <- mkRAcquire start stop
+      tim <- mkRAcquire start cancel
       pure handleEffect
 
     start :: RIO e (Async ())
     start = async readBelt
-
-    stop :: Async () -> RIO e ()
-    stop rb = cancel rb
 
     readBelt :: RIO e ()
     readBelt = forever $ do
