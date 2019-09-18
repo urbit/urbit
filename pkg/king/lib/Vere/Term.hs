@@ -57,7 +57,7 @@ data ReadData = ReadData
 data Private = Private
   { pReaderThread          :: Async ()
   , pWriterThread          :: Async ()
-  , pTerminal              :: Terminal
+  , pTerminal              :: T.Terminal
   , pPreviousConfiguration :: TerminalAttributes
   }
 
@@ -212,7 +212,7 @@ localClient = fst <$> mkRAcquire start stop
       cancel pWriterThread
 
       -- inject one final newline, as we're usually on the prompt.
-      io $ runTermOutput pTerminal $ termText "\r\n"
+      io $ T.runTermOutput pTerminal $ termText "\r\n"
 
       -- take the terminal out of raw mode
       io $ setTerminalAttributes stdInput pPreviousConfiguration Immediately
