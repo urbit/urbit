@@ -103,6 +103,7 @@ import System.Environment   (getProgName)
 import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
 import Text.Show.Pretty     (pPrint)
 import Urbit.Time           (Wen)
+import Vere.LockFile        (lockFile)
 
 import RIO.Directory
 
@@ -195,22 +196,6 @@ tryPlayShip shipPath = do
         sls <- Pier.resumed shipPath []
         rio $ logTrace "SHIP RESUMED"
         Pier.pier shipPath Nothing sls
-
-lockFile :: HasLogFunc e => FilePath -> RAcquire e ()
-lockFile pax = void $ mkRAcquire start stop
-  where
-    fil = pax <> "/.vere.lock"
-
-    stop handle = do
-        logInfo $ display @Text $ ("Releasing lock file: " <> pack fil)
-        io $ Lock.unlock fil handle
-
-    params = def { Lock.retryToAcquireLock = Lock.No }
-
-    start = do
-        createDirectoryIfMissing True pax
-        logInfo $ display @Text $ ("Taking lock file: " <> pack fil)
-        io (Lock.lock params fil)
 
 tryResume :: HasLogFunc e => FilePath -> RIO e ()
 tryResume shipPath = do
