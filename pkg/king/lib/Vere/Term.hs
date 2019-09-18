@@ -1,6 +1,8 @@
 module Vere.Term
     ( module Term
     , localClient
+    , connectToRemote
+    , runTerminalClient
     , termServer
     , term
     ) where
@@ -27,9 +29,6 @@ import qualified System.Console.Terminal.Size as TSize
 import qualified System.Console.Terminfo.Base as T
 import qualified Vere.NounServ                as Serv
 import qualified Vere.Term.API                as Term
-
-
-
 
 
 -- Types -----------------------------------------------------------------------
@@ -116,9 +115,9 @@ isTerminalBlit _         = True
 -}
 termServer :: ∀e. HasLogFunc e
            => RAcquire e (STM (Maybe Client), Port)
-termServer = mkRAcquire start stop
+termServer = fst <$> mkRAcquire start stop
   where
-    stop = const (pure ())
+    stop = cancel . snd
     start = do
         serv <- Serv.wsServer @Belt @Term.Ev
 
@@ -132,7 +131,37 @@ termServer = mkRAcquire start stop
                                      Just ev -> pure ev
                         }
 
-        pure (getClient, Port $ fromIntegral $ Serv.sData serv)
+        pure ( (getClient, Port $ fromIntegral $ Serv.sData serv)
+             , Serv.sAsync serv
+             )
+
+connectToRemote :: ∀e. HasLogFunc e
+                => Port
+                -> Client
+                -> RAcquire e (Async (), Async ())
+connectToRemote port local = mkRAcquire start stop
+  where
+    stop (x, y) = cancel x >> cancel y
+    start = do
+        Serv.Client{..} <- Serv.wsClient (fromIntegral port)
+
+        ferry <- async $ forever $ atomically $ asum
+            [ Term.take local >>= Serv.cSend cConn
+            , Serv.cRecv cConn >>= \case
+                  Nothing -> empty
+                  Just ev -> Term.give local ev
+            ]
+
+        pure (ferry, cAsync)
+
+runTerminalClient :: ∀e. HasLogFunc e => Port -> RIO e ()
+runTerminalClient port = runRAcquire $ do
+    (tsize, local) <- localClient
+    (tid1, tid2) <- connectToRemote port local
+    atomically $ waitSTM tid1 <|> waitSTM tid2
+  where
+    runRAcquire :: RAcquire e () -> RIO e ()
+    runRAcquire act = rwith act $ const $ pure ()
 
 {-
     Initializes the generalized input/output parts of the terminal.
