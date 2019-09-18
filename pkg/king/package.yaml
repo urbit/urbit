@@ -90,6 +90,7 @@ dependencies:
   - unliftio
   - unliftio-core
   - unordered-containers
+  - urbit-hob
   - utf8-string
   - vector
   - wai

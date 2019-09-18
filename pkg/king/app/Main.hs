@@ -84,71 +84,35 @@ module Main (main) where
 
 import UrbitPrelude
 
-import Data.RAcquire
-
 import Arvo
-import Control.Exception (AsyncException(UserInterrupt))
 import Data.Acquire
 import Data.Conduit
 import Data.Conduit.List hiding (replicate, take)
-import Noun hiding (Parser)
+import Data.RAcquire
+import Noun              hiding (Parser)
+import RIO.Directory
 import Vere.Pier
 import Vere.Pier.Types
 import Vere.Serf
 
 import Control.Concurrent   (myThreadId, runInBoundThread)
+import Control.Exception    (AsyncException(UserInterrupt))
 import Control.Lens         ((&))
 import Data.Default         (def)
-import System.Directory     (doesFileExist, removeFile)
-import System.Directory     (createDirectoryIfMissing, getHomeDirectory)
+import KingApp              (runApp)
 import System.Environment   (getProgName)
 import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
 import Text.Show.Pretty     (pPrint)
 import Urbit.Time           (Wen)
+import Vere.LockFile        (lockFile)
 
-import qualified CLI
+import qualified CLI                         as CLI
 import qualified Data.Set                    as Set
-import qualified EventBrowser
+import qualified EventBrowser                as EventBrowser
 import qualified System.IO.LockFile.Internal as Lock
 import qualified Vere.Log                    as Log
 import qualified Vere.Pier                   as Pier
 import qualified Vere.Serf                   as Serf
-
---------------------------------------------------------------------------------
-
-class HasAppName env where
-    appNameL :: Lens' env Utf8Builder
-
-data App = App
-    { _appLogFunc :: !LogFunc
-    , _appName    :: !Utf8Builder
-    }
-
-makeLenses ''App
-
-instance HasLogFunc App where
-    logFuncL = appLogFunc
-
-instance HasAppName App where
-    appNameL = appName
-
-runApp :: RIO App a -> IO a
-runApp inner = do
-    home <- getHomeDirectory
-    let logDir = home <> "/log"
-    createDirectoryIfMissing True logDir
-    withTempFile logDir "king-" $ \tmpFile hFile -> do
-        hSetBuffering hFile LineBuffering
-
-        logOptions <- logOptionsHandle hFile True
-            <&> setLogUseTime True
-            <&> setLogUseLoc False
-
-        withLogFunc logOptions $ \logFunc -> do
-            let app = App { _appLogFunc = logFunc
-                          , _appName    = "Alice"
-                          }
-            runRIO app inner
 
 --------------------------------------------------------------------------------
 
@@ -159,9 +123,9 @@ zod = 0
 
 removeFileIfExists :: HasLogFunc env => FilePath -> RIO env ()
 removeFileIfExists pax = do
-  exists <- io $ doesFileExist pax
+  exists <- doesFileExist pax
   when exists $ do
-      io $ removeFile pax
+      removeFile pax
 
 --------------------------------------------------------------------------------
 
@@ -195,21 +159,6 @@ tryPlayShip shipPath = do
         sls <- Pier.resumed shipPath []
         rio $ logTrace "SHIP RESUMED"
         Pier.pier shipPath Nothing sls
-
-lockFile :: HasLogFunc e => FilePath -> RAcquire e ()
-lockFile pax = void $ mkRAcquire start stop
-  where
-    fil = pax <> "/.vere.lock"
-
-    stop handle = do
-        logInfo $ display @Text $ ("Releasing lock file: " <> pack fil)
-        io $ Lock.unlock fil handle
-
-    params = def { Lock.retryToAcquireLock = Lock.No }
-
-    start = do
-        logInfo $ display @Text $ ("Taking lock file: " <> pack fil)
-        io (Lock.lock params fil)
 
 tryResume :: HasLogFunc e => FilePath -> RIO e ()
 tryResume shipPath = do

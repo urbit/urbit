@@ -155,6 +155,10 @@ instance Arbitrary StdMethod where
 instance Arbitrary Header where
   arbitrary = Header <$> arb <*> arb
 
+instance Arbitrary BigCord where
+  arbitrary = BigCord <$> arb
+
+
 instance Arbitrary ServId where arbitrary = ServId <$> arb
 
 instance Arbitrary UD where arbitrary = UD <$> arb

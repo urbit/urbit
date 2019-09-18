@@ -1,10 +1,12 @@
 module Vere.Term (initializeLocalTerminal, term, TerminalSystem(..)) where
 
 import Arvo            hiding (Term)
-import UrbitPrelude
+import Urbit.Time
+import UrbitPrelude    hiding (getCurrentTime)
 import Vere.Pier.Types
 
 import Data.Char
+import Data.List             ((!!))
 import Foreign.Marshal.Alloc
 import Foreign.Ptr
 import Foreign.Storable
@@ -27,8 +29,19 @@ import qualified Data.ByteString.UTF8 as UTF8
 data VereOutput = VereBlitOutput [Blit]
                 | VerePrintOutput String
                 | VereBlankLine
+                | VereShowSpinner (Maybe String)
+                | VereHideSpinner
 
-data LineState = LineState String Int
+-- All stateful data in the printing to stdOutput.
+data LineState = LineState
+  { lsLine            :: String
+  , lsCurPos          :: Int
+  , lsSpinTimer       :: Maybe (Async ())
+  , lsSpinCause       :: Maybe String
+  , lsSpinFirstRender :: Bool
+  , lsSpinFrame       :: Int
+  , lsPrevEndTime     :: Wen
+  }
 
 -- A record used in reading data from stdInput.
 data ReadData = ReadData
@@ -46,9 +59,11 @@ data ReadData = ReadData
 -- the session is over, and has a general in/out queue in the types of the
 -- vere/arvo interface.
 data TerminalSystem e = TerminalSystem
-  { tsReadQueue  :: TQueue Belt
-  , tsWriteQueue :: TQueue VereOutput
-  , tsStderr     :: Text -> RIO e ()
+  { tsReadQueue   :: TQueue Belt
+  , tsWriteQueue  :: TQueue VereOutput
+  , tsStderr      :: Text -> RIO e ()
+  , tsShowSpinner :: Maybe String -> STM ()
+  , tsHideSpinner :: STM ()
   }
 
 -- Private data to the TerminalSystem that we keep around for stop().
@@ -67,6 +82,16 @@ initialHail = EvBlip $ BlipEvTerm $ TermEvHail (UD 1, ()) ()
 
 -- Version one of this is punting on the ops_u.dem flag: whether we're running
 -- in daemon mode.
+
+spinners = ['|', '/', '-', '\\']
+
+leftBracket = ['«']
+rightBracket = ['»']
+
+_spin_cool_us = 500000
+_spin_warm_us = 50000
+_spin_rate_us = 250000
+_spin_idle_us = 500000
 
 --------------------------------------------------------------------------------
 
@@ -93,10 +118,9 @@ isTerminalBlit _         = True
 
 -- Initializes the generalized input/output parts of the terminal.
 --
-initializeLocalTerminal :: HasLogFunc e => RAcquire e (TerminalSystem e)
-initializeLocalTerminal = do
-    (a, b) <- mkRAcquire start stop
-    pure a
+initializeLocalTerminal :: forall e. HasLogFunc e
+                        => RAcquire e (TerminalSystem e)
+initializeLocalTerminal = fst <$> mkRAcquire start stop
   where
     start :: HasLogFunc e => RIO e (TerminalSystem e, Private)
     start = do
@@ -106,7 +130,9 @@ initializeLocalTerminal = do
       -- TODO: We still need to actually get the size from the terminal somehow.
 
       tsWriteQueue <- newTQueueIO
-      pWriterThread <- asyncBound (writeTerminal pTerminal tsWriteQueue)
+      spinnerMVar <- newEmptyTMVarIO
+      pWriterThread <-
+        asyncBound (writeTerminal pTerminal tsWriteQueue spinnerMVar)
 
       pPreviousConfiguration <- io $ getTerminalAttributes stdInput
 
@@ -120,10 +146,14 @@ initializeLocalTerminal = do
 
       tsReadQueue <- newTQueueIO
       pReaderThread <- asyncBound
-        (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
+          (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
 
       let tsStderr = \txt ->
             atomically $ writeTQueue tsWriteQueue $ VerePrintOutput $ unpack txt
+
+      let tsShowSpinner = \str ->
+            writeTQueue tsWriteQueue $ VereShowSpinner str
+      let tsHideSpinner = writeTQueue tsWriteQueue $ VereHideSpinner
 
       pure (TerminalSystem{..}, Private{..})
 
@@ -165,26 +195,87 @@ initializeLocalTerminal = do
     vtParmLeft t     = getCap t "cub1"
     vtParmRight t    = getCap t "cuf1"
 
+    -- An async which will put into an mvar after a delay. Used to spin the
+    -- spinner in writeTerminal.
+    spinnerHeartBeat :: Int -> Int -> TMVar () -> RIO e ()
+    spinnerHeartBeat first rest mvar = do
+        threadDelay first
+        loop
+      where
+        loop = do
+          atomically $ putTMVar mvar ()
+          threadDelay rest
+          loop
+
     -- Writes data to the terminal. Both the terminal reading, normal logging,
     -- and effect handling can all emit bytes which go to the terminal.
-    writeTerminal :: Terminal -> TQueue VereOutput -> RIO e ()
-    writeTerminal t q = loop (LineState "" 0)
+    writeTerminal :: Terminal -> TQueue VereOutput -> TMVar () -> RIO e ()
+    writeTerminal t q spinner = do
+        currentTime <- io $ now
+        loop (LineState "" 0 Nothing Nothing True 0 currentTime)
       where
-        loop s = do
-          x <- atomically $ readTQueue q
+        loop ls@LineState{..} = do
+          x <- atomically $
+                 Right <$> readTQueue q <|>
+                 Left <$> takeTMVar spinner
           case x of
-            VereBlitOutput blits -> do
-              s <- foldM (writeBlit t) s blits
-              loop s
-            VerePrintOutput p -> do
+            Right (VereBlitOutput blits) -> do
+              ls <- foldM (writeBlit t) ls blits
+              loop ls
+            Right (VerePrintOutput p) -> do
               io $ runTermOutput t $ termText "\r"
               runMaybeTermOutput t vtClearToBegin
               io $ runTermOutput t $ termText p
-              s <- termRefreshLine t s
-              loop s
-            VereBlankLine -> do
+              ls <- termRefreshLine t ls
+              loop ls
+            Right VereBlankLine -> do
               io $ runTermOutput t $ termText "\r\n"
-              loop s
+              loop ls
+            Right (VereShowSpinner txt) -> do
+              current <- io $ now
+              -- Figure out how long to wait to show the spinner. When we don't
+              -- have a vane name to display, we assume its a user action and
+              -- trigger immediately. Otherwise, if we receive an event shortly
+              -- after a previous spin, use a shorter delay to avoid giving the
+              -- impression of a half-idle system.
+              let delay = case txt of
+                    Nothing -> 0
+                    Just _  ->
+                      if (gap current lsPrevEndTime ^. microSecs) <
+                         _spin_idle_us
+                      then _spin_warm_us
+                      else _spin_cool_us
+
+              spinTimer <- async $ spinnerHeartBeat delay _spin_rate_us spinner
+              loop ls { lsSpinTimer = Just spinTimer,
+                        lsSpinCause = txt,
+                        lsSpinFirstRender = True }
+            Right VereHideSpinner -> do
+              maybe (pure ()) cancel lsSpinTimer
+              -- We do a final flush of the spinner mvar to ensure we don't
+              -- have a lingering signal which will redisplay the spinner after
+              -- we call termRefreshLine below.
+              atomically $ tryTakeTMVar spinner
+
+              -- If we ever actually ran the spinner display callback, we need
+              -- to force a redisplay of the command prompt.
+              ls <- if not lsSpinFirstRender
+                    then termRefreshLine t ls
+                    else pure ls
+
+              endTime <- io $ now
+              loop ls { lsSpinTimer = Nothing, lsPrevEndTime = endTime }
+            Left () -> do
+              let spinner = [spinners !! lsSpinFrame] ++ case lsSpinCause of
+                    Nothing  -> []
+                    Just str -> leftBracket ++ str ++ rightBracket
+
+              io $ runTermOutput t $ termText spinner
+              termSpinnerMoveLeft t (length spinner)
+
+              loop ls { lsSpinFirstRender = False,
+                        lsSpinFrame = (lsSpinFrame + 1) `mod` (length spinners)
+                      }
 
     -- Writes an individual blit to the screen
     writeBlit :: Terminal -> LineState -> Blit -> RIO e LineState
@@ -208,41 +299,49 @@ initializeLocalTerminal = do
 
     -- Moves the cursor to the requested position
     termShowCursor :: Terminal -> LineState -> Int -> RIO e LineState
-    termShowCursor t (LineState line pos) newPos = do
-      if newPos < pos then do
-        replicateM_ (pos - newPos) (runMaybeTermOutput t vtParmLeft)
-        pure (LineState line newPos)
-      else if newPos > pos then do
-        replicateM_ (newPos - pos) (runMaybeTermOutput t vtParmRight)
-        pure (LineState line newPos)
+    termShowCursor t ls@LineState{..} {-line pos)-} newPos = do
+      if newPos < lsCurPos then do
+        replicateM_ (lsCurPos - newPos) (runMaybeTermOutput t vtParmLeft)
+        pure ls { lsCurPos =  newPos }
+      else if newPos > lsCurPos then do
+        replicateM_ (newPos - lsCurPos) (runMaybeTermOutput t vtParmRight)
+        pure ls { lsCurPos =  newPos }
       else
-        pure (LineState line pos)
+        pure ls
+
+
+    -- Moves the cursor left without any mutation of the LineState. Used only
+    -- in cursor spinning.
+    termSpinnerMoveLeft :: Terminal -> Int -> RIO e ()
+    termSpinnerMoveLeft t count =
+      replicateM_ count (runMaybeTermOutput t vtParmLeft)
 
     -- Displays and sets the current line
     termShowLine :: Terminal -> LineState -> String -> RIO e LineState
     termShowLine t ls newStr = do
-      -- TODO: Really think about how term.c munged cus_w. Amidoinitrit?
       io $ runTermOutput t $ termText newStr
-      pure (LineState newStr (length newStr))
+      pure ls { lsLine = newStr, lsCurPos = (length newStr) }
 
     termShowClear :: Terminal -> LineState -> RIO e LineState
     termShowClear t ls = do
       io $ runTermOutput t $ termText "\r"
       runMaybeTermOutput t vtClearToBegin
-      pure (LineState "" 0)
+      pure ls { lsLine = "", lsCurPos = 0  }
 
     -- New Current Line
     termShowMore :: Terminal -> LineState -> RIO e LineState
     termShowMore t ls = do
       io $ runTermOutput t $ termText "\r\n"
-      pure (LineState "" 0)
+      pure ls { lsLine = "", lsCurPos = 0  }
 
-    -- Redraw the current LineState, moving cursor to the end.
+    -- Redraw the current LineState, maintaining the current curpos
     termRefreshLine :: Terminal -> LineState -> RIO e LineState
-    termRefreshLine t ls@(LineState line pos) = do
-      runMaybeTermOutput t vtClearToBegin
-      newLs <- termShowLine t ls line
-      termShowCursor t newLs pos
+    termRefreshLine t ls = do
+      let line = (lsLine ls)
+          curPos = (lsCurPos ls)
+      ls <- termShowClear t ls
+      ls <- termShowLine t ls line
+      termShowCursor t ls curPos
 
     -- ring my bell
     bell :: TQueue VereOutput -> RIO e ()
