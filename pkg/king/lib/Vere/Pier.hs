@@ -26,6 +26,7 @@ import qualified System.Entropy as Ent
 import qualified Urbit.Time     as Time
 import qualified Vere.Log       as Log
 import qualified Vere.Serf      as Serf
+import qualified Vere.Term.API  as Term
 
 
 --------------------------------------------------------------------------------
@@ -138,18 +139,18 @@ pier :: ∀e. HasLogFunc e
      -> (Serf e, EventLog, SerfState)
      -> RAcquire e ()
 pier pierPath mPort (serf, log, ss) = do
-    computeQ <- newTQueueIO :: RAcquire e (TQueue Ev)
-    persistQ <- newTQueueIO :: RAcquire e (TQueue (Job, FX))
-    executeQ <- newTQueueIO :: RAcquire e (TQueue FX)
+    computeQ  <- newTQueueIO
+    persistQ  <- newTQueueIO
+    executeQ  <- newTQueueIO
+    saveM     <- newEmptyTMVarIO
+    shutdownM <- newEmptyTMVarIO
 
-    saveM <- newEmptyTMVarIO :: RAcquire e (TMVar ())
-    shutdownM <- newEmptyTMVarIO :: RAcquire e (TMVar ())
     let shutdownEvent = putTMVar shutdownM ()
 
     inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
     terminalSystem <- initializeLocalTerminal
-    swapMVar (sStderr serf) (atomically . tsStderr terminalSystem)
+    swapMVar (sStderr serf) (atomically . Term.trace terminalSystem)
 
     let ship = who (Log.identity log)
 
@@ -165,8 +166,8 @@ pier pierPath mPort (serf, log, ss) = do
                (readTQueue computeQ)
                (takeTMVar saveM)
                (takeTMVar shutdownM)
-               (tsShowSpinner terminalSystem)
-               (tsHideSpinner terminalSystem)
+               (Term.spin terminalSystem)
+               (Term.stopSpin terminalSystem)
                (writeTQueue persistQ)
 
     tSaveSignal <- saveSignalThread saveM
@@ -209,7 +210,7 @@ data Drivers e = Drivers
 
 drivers :: HasLogFunc e
         => FilePath -> KingId -> Ship -> Maybe Port -> (Ev -> STM ()) -> STM()
-        -> TerminalSystem
+        -> Term.Client
         -> ([Ev], RAcquire e (Drivers e))
 drivers pierPath inst who mPort plan shutdownSTM termSys =
     (initialEvents, runDrivers)
