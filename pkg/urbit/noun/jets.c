@@ -1387,6 +1387,49 @@ u3j_rite_copy(u3j_rite* dst_u, u3j_rite* src_u, c3_o los_o)
   }
 }
 
+/* u3j_rite_take(): copy junior rite references. [dst_u] is uninitialized
+*/
+void
+u3j_rite_take(u3j_rite* dst_u, u3j_rite* src_u)
+{
+  if ( u3_none == src_u->clu ) {
+    dst_u->clu   = u3_none;
+    dst_u->fin_p = 0;
+    dst_u->own_o = c3n;
+  }
+  else {
+    dst_u->clu   = u3a_take(src_u->clu);
+    dst_u->own_o = src_u->own_o;
+    dst_u->fin_p = ( c3n == src_u->own_o )
+                   ? src_u->fin_p
+                   : u3of(u3j_fink, _cj_fink_take(u3to(u3j_fink, src_u->fin_p)));
+  }
+}
+
+/* u3j_rite_merge(): copy rite references from src_u to dst_u,
+**                  losing old references
+*/
+void
+u3j_rite_merge(u3j_rite* dst_u, u3j_rite* src_u)
+{
+  if ( u3_none != src_u->clu ) {
+    if ( u3_none != dst_u->clu ) {
+      u3z(dst_u->clu);
+    }
+
+    dst_u->clu = src_u->clu;
+
+    if ( dst_u->fin_p != src_u->fin_p ) {
+      if ( c3y == dst_u->own_o ) {
+        _cj_fink_free(dst_u->fin_p);
+      }
+
+      dst_u->fin_p = src_u->fin_p;
+      dst_u->own_o = src_u->own_o;
+    }
+  }
+}
+
 /* u3j_site_copy(): copy site references from src_u to dst_u,
 **                  losing old references if los_o is yes
 */
@@ -1444,6 +1487,72 @@ u3j_site_copy(u3j_site* dst_u, u3j_site* src_u, c3_o los_o)
           _cj_fink_free(fon_p);
         }
       }
+    }
+  }
+}
+
+/* u3j_site_take(): copy junior site references. [dst_u] is uninitialized
+*/
+void
+u3j_site_take(u3j_site* dst_u, u3j_site* src_u)
+{
+  dst_u->axe   = u3a_take(src_u->axe);
+  dst_u->bat   = u3_none;
+  dst_u->bas   = u3_none;
+  dst_u->pog_p = 0;
+
+  if ( u3_none == src_u->loc ) {
+    dst_u->loc   = u3_none;
+    dst_u->lab   = u3_none;
+    dst_u->jet_o = c3n;
+    dst_u->cop_u = NULL;
+    dst_u->ham_u = NULL;
+    dst_u->fin_p = 0;
+    dst_u->fon_o = c3n;
+  }
+  else {
+    dst_u->loc   = u3a_take(src_u->loc);
+    dst_u->lab   = u3a_take(src_u->lab);
+    dst_u->jet_o = src_u->jet_o;
+    dst_u->cop_u = src_u->cop_u;
+    dst_u->ham_u = src_u->ham_u;
+
+    if ( c3y == src_u->fon_o ) {
+      dst_u->fin_p = u3of(u3j_fink, _cj_fink_take(u3to(u3j_fink, src_u->fin_p)));
+      dst_u->fon_o = c3y;
+    }
+    else {
+      dst_u->fin_p = src_u->fin_p;
+      dst_u->fon_o = c3n;
+    }
+  }
+}
+
+/* u3j_site_merge(): copy site references from src_u to dst_u,
+**                  losing old references
+*/
+void
+u3j_site_merge(u3j_site* dst_u, u3j_site* src_u)
+{
+  u3z(dst_u->axe);
+  dst_u->axe = src_u->axe;
+
+  if ( u3_none != src_u->loc ) {
+    u3z(dst_u->loc);
+    u3z(dst_u->lab);
+    dst_u->loc   = src_u->loc;
+    dst_u->lab   = src_u->lab;
+    dst_u->cop_u = src_u->cop_u;
+    dst_u->ham_u = src_u->ham_u;
+    dst_u->jet_o = src_u->jet_o;
+
+    if ( dst_u->fin_p != src_u->fin_p ) {
+      if ( c3y == dst_u->fon_o )  {
+        _cj_fink_free(dst_u->fin_p);
+      }
+
+      dst_u->fin_p = src_u->fin_p;
+      dst_u->fon_o = src_u->fon_o;
     }
   }
 }

@@ -206,11 +206,33 @@
         void
         u3j_rite_copy(u3j_rite* dst_u, u3j_rite* src_u, c3_o los_o);
 
+      /* u3j_rite_take(): copy junior rite references from src_u to dst_u.
+      */
+        void
+        u3j_rite_take(u3j_rite* dst_u, u3j_rite* src_u);
+
+      /* u3j_rite_merge(): copy rite references from src_u to dst_u,
+      **                   losing old references
+      */
+        void
+        u3j_rite_merge(u3j_rite* dst_u, u3j_rite* src_u);
+
       /* u3j_site_copy(): copy site references from src_u to dst_u,
       **                  losing old references if los_o is yes
       */
         void
         u3j_site_copy(u3j_site* dst_u, u3j_site* src_u, c3_o los_o);
+
+      /* u3j_site_take(): copy junior site references.
+      */
+        void
+        u3j_site_take(u3j_site* dst_u, u3j_site* src_u);
+
+      /* u3j_site_merge(): copy site references from src_u to dst_u,
+      **                   losing old references
+      */
+        void
+        u3j_site_merge(u3j_site* dst_u, u3j_site* src_u);
 
       /* u3j_site_ream(): refresh u3j_site after restoring from checkpoint
       */

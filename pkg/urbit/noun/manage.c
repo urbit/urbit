@@ -829,24 +829,37 @@ u3m_hate(c3_w pad_w)
 u3_noun
 u3m_love(u3_noun pro)
 {
-  {
-    u3p(u3h_root) cod_p = u3R->jed.cod_p;
-    u3p(u3h_root) war_p = u3R->jed.war_p;
-    u3p(u3h_root) han_p = u3R->jed.han_p;
-    u3p(u3h_root) bas_p = u3R->jed.bas_p;
-    u3p(u3h_root) byc_p = u3R->byc.har_p;
+  //  save junior road cache pointers
+  //
+  u3p(u3h_root) byc_p = u3R->byc.har_p;
+  u3p(u3h_root) cod_p = u3R->jed.cod_p;
+  u3p(u3h_root) war_p = u3R->jed.war_p;
+  u3p(u3h_root) han_p = u3R->jed.han_p;
+  u3p(u3h_root) bas_p = u3R->jed.bas_p;
 
-    u3m_fall();
+  //  fallback to senior
+  //
+  u3m_fall();
 
-    pro = u3a_take(pro);
+  //  copy products off our stack
+  //
+  //    this order is important! see u3j_reap().
+  //
+  pro   = u3a_take(pro);
+  byc_p = u3n_take(byc_p);
 
-    // call sites first: see u3j_reap().
-    u3n_reap(byc_p);
-    u3j_reap(cod_p, war_p, han_p, bas_p);
+  //  integrate junior caches
+  //
+  //    this order is important! see u3j_reap().
+  //
+  u3n_reap(byc_p);
+  u3j_reap(cod_p, war_p, han_p, bas_p);
 
-    u3R->cap_p = u3R->ear_p;
-    u3R->ear_p = 0;
-  }
+  //  pop the stack
+  //
+  u3R->cap_p = u3R->ear_p;
+  u3R->ear_p = 0;
+
   return pro;
 }
 

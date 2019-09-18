@@ -2363,68 +2363,6 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
   return pro;
 }
 
-/* _n_prog_take_dat(): copy references from src u3n_prog. overwritten
- *                     values in dst u3n_prog are lost/freed only if
- *                     los_o is yes.
- */
-static void
-_n_prog_take_dat(u3n_prog* dst_u, u3n_prog* src_u, c3_o los_o)
-{
-  c3_w i_w;
-  for ( i_w = 0; i_w < src_u->lit_u.len_w; ++i_w ) {
-    u3_noun* dst = &(dst_u->lit_u.non[i_w]);
-    u3_noun* src = &(src_u->lit_u.non[i_w]);
-    u3_noun  old = *dst;
-    *dst = u3a_take(*src);
-    if ( c3y == los_o ) {
-      u3z(old);
-    }
-  }
-
-  for ( i_w = 0; i_w < src_u->mem_u.len_w; ++i_w ) {
-    u3n_memo* dst = &(dst_u->mem_u.sot_u[i_w]);
-    u3n_memo* src = &(src_u->mem_u.sot_u[i_w]);
-    u3_noun  old = dst->key;
-    dst->sip_l   = src->sip_l;
-    dst->key     = u3a_take(src->key);
-    if ( c3y == los_o ) {
-      u3z(old);
-    }
-  }
-
-  for ( i_w = 0; i_w < src_u->cal_u.len_w; ++i_w ) {
-    u3j_site_copy(&(dst_u->cal_u.sit_u[i_w]),
-                  &(src_u->cal_u.sit_u[i_w]), los_o);
-  }
-
-  for ( i_w = 0; i_w < src_u->reg_u.len_w; ++i_w ) {
-    u3j_rite_copy(&(dst_u->reg_u.rit_u[i_w]),
-                  &(src_u->reg_u.rit_u[i_w]), los_o);
-  }
-}
-
-/* _n_prog_take(): copy program from a junior road
- */
-static u3n_prog*
-_n_prog_take(u3n_prog* pog_u)
-{
-  u3n_prog* gop_u;
-
-  if ( c3y == pog_u->byc_u.own_o ) {
-    gop_u = _n_prog_new(pog_u->byc_u.len_w,
-        pog_u->cal_u.len_w, pog_u->reg_u.len_w,
-        pog_u->lit_u.len_w, pog_u->mem_u.len_w);
-    memcpy(gop_u->byc_u.ops_y, pog_u->byc_u.ops_y, pog_u->byc_u.len_w);
-  }
-  else {
-    gop_u = _n_prog_old(pog_u);
-  }
-  _n_prog_take_dat(gop_u, pog_u, c3n);
-
-  return gop_u;
-}
-
-
 /* _n_prog_free(): free memory retained by program
 */
 static void
@@ -2451,32 +2389,123 @@ _n_prog_free(u3n_prog* pog_u)
   u3a_free(pog_u);
 }
 
-/* _n_reap(): reap key and value from byc table.
+/* _cn_take_prog_dat(): take references from junior u3n_prog.
 */
 static void
-_n_reap(u3_noun kev)
+_cn_take_prog_dat(u3n_prog* dst_u, u3n_prog* src_u)
 {
-  u3_post   val;
-  u3n_prog* pog_u = u3to(u3n_prog, u3t(kev));
+  c3_w i_w;
 
-  // we must always take
-  u3_noun key = u3a_take(u3h(kev));
-  // because u3h_git will gain the key
-  u3_weak got = u3h_git(u3R->byc.har_p, key);
+  for ( i_w = 0; i_w < src_u->lit_u.len_w; ++i_w ) {
+    dst_u->lit_u.non[i_w] = u3a_take(src_u->lit_u.non[i_w]);
+  }
 
-  if ( u3_none == got ) {
-    val = u3a_outa(_n_prog_take(pog_u));
+  for ( i_w = 0; i_w < src_u->mem_u.len_w; ++i_w ) {
+    u3n_memo* emo_u = &(src_u->mem_u.sot_u[i_w]);
+    u3n_memo* ome_u = &(dst_u->mem_u.sot_u[i_w]);
+    ome_u->sip_l    = emo_u->sip_l;
+    ome_u->key      = u3a_take(emo_u->key);
+  }
+
+  for ( i_w = 0; i_w < src_u->cal_u.len_w; ++i_w ) {
+    u3j_site_take(&(dst_u->cal_u.sit_u[i_w]),
+                  &(src_u->cal_u.sit_u[i_w]));
+  }
+
+  for ( i_w = 0; i_w < src_u->reg_u.len_w; ++i_w ) {
+    u3j_rite_take(&(dst_u->reg_u.rit_u[i_w]),
+                  &(src_u->reg_u.rit_u[i_w]));
+  }
+}
+
+/*  _cn_take_prog_cb(): u3h_take_with cb for taking junior u3n_prog's.
+*/
+static u3p(u3n_prog)
+_cn_take_prog_cb(u3p(u3n_prog) pog_p)
+{
+  u3n_prog* pog_u = u3to(u3n_prog, pog_p);
+  u3n_prog* gop_u;
+
+  if ( c3y == pog_u->byc_u.own_o ) {
+    gop_u = _n_prog_new(pog_u->byc_u.len_w,
+                        pog_u->cal_u.len_w,
+                        pog_u->reg_u.len_w,
+                        pog_u->lit_u.len_w,
+                        pog_u->mem_u.len_w);
+    memcpy(gop_u->byc_u.ops_y, pog_u->byc_u.ops_y, pog_u->byc_u.len_w);
   }
   else {
-    u3n_prog* sep_u = u3to(u3n_prog, got);
-    _n_prog_take_dat(sep_u, pog_u, c3y);
-    val = u3a_outa(sep_u);
+    gop_u = _n_prog_old(pog_u);
   }
-  // we must always put, because we have taken.
-  // we must always keep what we have taken,
-  // or we can break relocation pointers.
-  u3h_put(u3R->byc.har_p, key, val);
-  u3z(key);
+
+  _cn_take_prog_dat(gop_u, pog_u);
+  // _n_prog_take_dat(gop_u, pog_u, c3n);
+
+  return u3of(u3n_prog, gop_u);
+}
+
+/* u3n_take(): copy junior bytecode state.
+*/
+u3p(u3h_root)
+u3n_take(u3p(u3h_root) har_p)
+{
+  return u3h_take_with(har_p, _cn_take_prog_cb);
+}
+
+/* _cn_merge_prog_dat(): copy references from src_u u3n_prog to dst_u.
+*/
+static void
+_cn_merge_prog_dat(u3n_prog* dst_u, u3n_prog* src_u)
+{
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < src_u->lit_u.len_w; ++i_w ) {
+    u3z(dst_u->lit_u.non[i_w]);
+    dst_u->lit_u.non[i_w] = src_u->lit_u.non[i_w];
+  }
+
+  for ( i_w = 0; i_w < src_u->mem_u.len_w; ++i_w ) {
+    u3n_memo* emo_u = &(dst_u->mem_u.sot_u[i_w]);
+    u3n_memo* ome_u = &(src_u->mem_u.sot_u[i_w]);
+    u3z(emo_u->key);
+    emo_u->sip_l    = ome_u->sip_l;
+    emo_u->key      = ome_u->key;
+  }
+
+  for ( i_w = 0; i_w < src_u->cal_u.len_w; ++i_w ) {
+    u3j_site_merge(&(dst_u->cal_u.sit_u[i_w]),
+                   &(src_u->cal_u.sit_u[i_w]));
+  }
+
+  for ( i_w = 0; i_w < src_u->reg_u.len_w; ++i_w ) {
+    u3j_rite_merge(&(dst_u->reg_u.rit_u[i_w]),
+                   &(src_u->reg_u.rit_u[i_w]));
+  }
+}
+
+/*  _cn_merge_prog_cb(): u3h_walk_with cb for integrating taken u3n_prog's.
+*/
+static void
+_cn_merge_prog_cb(u3_noun kev, void* wit)
+{
+  u3p(u3h_root) har_p = *(u3p(u3h_root)*)wit;
+  u3n_prog*     pog_u;
+  u3_weak         got;
+  u3_noun         key;
+  u3p(u3n_prog) pog_p;
+  u3x_cell(kev, &key, &pog_p);
+
+  pog_u = u3to(u3n_prog, pog_p);
+  got   = u3h_git(har_p, key);
+
+  if ( u3_none != got ) {
+    u3n_prog* sep_u = u3to(u3n_prog, got);
+    _cn_merge_prog_dat(sep_u, pog_u);
+    u3a_free(pog_u);
+    pog_u = sep_u;
+  }
+
+  u3h_put(har_p, key, u3of(u3n_prog, pog_u));
 }
 
 /* u3n_reap(): promote bytecode state.
@@ -2484,7 +2513,9 @@ _n_reap(u3_noun kev)
 void
 u3n_reap(u3p(u3h_root) har_p)
 {
-  u3h_walk(har_p, _n_reap);
+  u3h_walk_with(har_p, _cn_merge_prog_cb, &u3R->byc.har_p);
+  // NB *not* u3n_free, _cn_merge_prog_cb() transfers u3n_prog's
+  u3h_free(har_p);
 }
 
 /* _n_ream(): ream program call sites
