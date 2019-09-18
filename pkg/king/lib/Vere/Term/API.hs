@@ -23,7 +23,7 @@ data Ev = Blits [Blit]
 
 data Client = Client
     { take :: STM Belt
-    , give :: Ev -> STM ()
+    , give :: [Ev] -> STM ()
     }
 
 deriveNoun ''Ev
@@ -32,10 +32,10 @@ deriveNoun ''Ev
 -- Utilities -------------------------------------------------------------------
 
 trace :: Client -> Text -> STM ()
-trace ts = give ts . Trace . Cord
+trace ts = give ts . singleton . Trace . Cord
 
 spin :: Client -> Maybe Text -> STM ()
-spin ts = give ts . Spinr . Just . fmap Cord
+spin ts = give ts . singleton . Spinr . Just . fmap Cord
 
 stopSpin :: Client -> STM ()
-stopSpin ts = give ts (Spinr Nothing)
+stopSpin ts = give ts [Spinr Nothing]

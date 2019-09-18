@@ -119,7 +119,7 @@ termServer = fst <$> mkRAcquire start stop
   where
     stop = cancel . snd
     start = do
-        serv <- Serv.wsServer @Belt @Term.Ev
+        serv <- Serv.wsServer @Belt @[Term.Ev]
 
         let getClient = do
                 Serv.sAccept serv <&> \case
@@ -254,7 +254,7 @@ localClient = fst <$> mkRAcquire start stop
 
     -- Writes data to the terminal. Both the terminal reading, normal logging,
     -- and effect handling can all emit bytes which go to the terminal.
-    writeTerminal :: T.Terminal -> TQueue Term.Ev -> TMVar () -> RIO e ()
+    writeTerminal :: T.Terminal -> TQueue [Term.Ev] -> TMVar () -> RIO e ()
     writeTerminal t q spinner = do
         currentTime <- io $ now
         loop (LineState "" 0 Nothing Nothing True 0 currentTime)
@@ -338,7 +338,7 @@ localClient = fst <$> mkRAcquire start stop
         loop :: LineState -> RIO e ()
         loop ls = do
             join $ atomically $ asum
-                [ readTQueue q      >>= pure . (execEv ls >=> loop)
+                [ readTQueue q      >>= pure . (foldM execEv ls >=> loop)
                 , takeTMVar spinner >>  pure (spin ls >>= loop)
                 ]
 
@@ -403,8 +403,8 @@ localClient = fst <$> mkRAcquire start stop
       termShowCursor t ls curPos
 
     -- ring my bell
-    bell :: TQueue Term.Ev -> RIO e ()
-    bell q = atomically $ writeTQueue q $ Term.Blits [Bel ()]
+    bell :: TQueue [Term.Ev] -> RIO e ()
+    bell q = atomically $ writeTQueue q $ [Term.Blits [Bel ()]]
 
     -- Reads data from stdInput and emit the proper effect
     --
@@ -415,7 +415,7 @@ localClient = fst <$> mkRAcquire start stop
     -- A better way to do this would be to get some sort of epoll on stdInput,
     -- since that's kinda closer to what libuv does?
     readTerminal :: forall e. HasLogFunc e
-                 => TQueue Belt -> TQueue Term.Ev -> (RIO e ()) -> RIO e ()
+                 => TQueue Belt -> TQueue [Term.Ev] -> (RIO e ()) -> RIO e ()
     readTerminal rq wq bell =
       rioAllocaBytes 1 $ \ buf -> loop (ReadData buf False False mempty 0)
       where
@@ -486,7 +486,7 @@ localClient = fst <$> mkRAcquire start stop
                 -- ETX (^C)
                 logDebug $ displayShow "Ctrl-c interrupt"
                 atomically $ do
-                  writeTQueue wq $ Term.Trace "interrupt\r\n"
+                  writeTQueue wq [Term.Trace "interrupt\r\n"]
                   writeTQueue rq $ Ctl $ Cord "c"
                 loop rd
               else if w <= 26 then do
@@ -543,7 +543,7 @@ term (tsize, Client{..}) shutdownSTM pierPath king enqueueEv =
     handleEffect = \case
       TermEfBlit _ blits -> do
         let (termBlits, fsWrites) = partition isTerminalBlit blits
-        atomically $ give (Term.Blits termBlits)
+        atomically $ give [Term.Blits termBlits]
         for_ fsWrites handleFsWrite
       TermEfInit _ _ -> pure ()
       TermEfLogo path _ -> do

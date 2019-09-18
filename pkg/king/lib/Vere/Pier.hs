@@ -163,18 +163,22 @@ pier pierPath mPort (serf, log, ss) = do
 
     (demux, muxed) <- atomically $ do
         res <- Term.mkDemux
-        Term.addDemux local res
+        -- Term.addDemux local res
         pure (res, Term.useDemux res)
 
     rio $ logInfo $ display $
-        "Terminal Server running on port: " <> tshow termServPort
+        "TERMSERV Terminal Server running on port: " <> tshow termServPort
 
     let listenLoop = do
+            logTrace "TERMSERV Waiting for external terminal."
             ok <- atomically $ do
                 waitExternalTerm >>= \case
                     Nothing  -> pure False
                     Just ext -> Term.addDemux ext demux >> pure True
-            when ok listenLoop
+            if ok
+               then do logTrace "TERMSERV External terminal connected"
+                       listenLoop
+               else logTrace "TERMSERV Termainal server is dead"
 
     acquireWorker listenLoop
 

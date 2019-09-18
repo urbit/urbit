@@ -351,7 +351,6 @@ connTerm :: ∀e. HasLogFunc e => Word16 -> RIO e ()
 connTerm port =
     Term.runTerminalClient (fromIntegral port)
 
-
 --------------------------------------------------------------------------------
 
 checkFx :: HasLogFunc e

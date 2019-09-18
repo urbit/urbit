@@ -44,6 +44,9 @@ wsConn :: (FromNoun i, ToNoun o, Show o, HasLogFunc e)
        -> RIO e ()
 wsConn pre inp out wsc = do
     env <- ask
+
+    logWarn (pre <> "(wcConn) Connected!")
+
     writer <- io $ async $ runRIO env $ forever $ do
         logWarn (pre <> "(wsConn) Waiting for data.")
         byt <- io $ toStrict <$> WS.receiveData wsc
@@ -81,11 +84,11 @@ wsClient por = do
     out <- io $ newTBMChanIO 5
     con <- pure (mkConn inp out)
 
-    logDebug "(wsClie) Trying to connect"
+    logDebug "NOUNSERV (wsClie) Trying to connect"
 
     tid <- io $ async
               $ WS.runClient "127.0.0.1" por "/"
-              $ runRIO env . wsConn "(wsClie) " inp out
+              $ runRIO env . wsConn "NOUNSERV (wsClie) " inp out
 
     pure $ Client con tid
 
@@ -97,18 +100,18 @@ wsServer = do
     con <- io $ newTBMChanIO 5
 
     let app pen = do
-            logError "(wsServer) Got connection! Accepting"
+            logError "NOUNSERV (wsServer) Got connection! Accepting"
             wsc <- io $ WS.acceptRequest pen
             inp <- io $ newTBMChanIO 5
             out <- io $ newTBMChanIO 5
             atomically $ writeTBMChan con (mkConn inp out)
-            wsConn "(wsServ) " inp out wsc
+            wsConn "NOUNSERV (wsServ) " inp out wsc
 
     tid <- async $ do
         env <- ask
-        logError "(wsServer) Starting server"
+        logError "NOUNSERV (wsServer) Starting server"
         io $ WS.runServer "127.0.0.1" 9999 (runRIO env . app)
-        logError "(wsServer) Server died"
+        logError "NOUNSERV (wsServer) Server died"
         atomically $ closeTBMChan con
 
     pure $ Server (readTBMChan con) tid 9999

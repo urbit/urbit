@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wwarn #-}
+
 {-
     This allows multiple (zero or more) terminal clients to connect to
     the *same* logical arvo terminal. Terminals that connect will be
@@ -18,7 +20,7 @@ import qualified Vere.Term.API as Term
 
 data Demux = Demux
     { dConns :: TVar [Client]
-    , dStash :: TVar [Term.Ev]
+    , dStash :: TVar [[Term.Ev]]
     }
 
 mkDemux :: STM Demux
@@ -26,9 +28,9 @@ mkDemux = Demux <$> newTVar [] <*> newTVar []
 
 addDemux :: Client -> Demux -> STM ()
 addDemux conn Demux{..} = do
-    stash <- reverse <$> readTVar dStash
+    stash <- concat . reverse <$> readTVar dStash
     modifyTVar' dConns (conn:)
-    for_ stash (Term.give conn)
+    Term.give conn stash
 
 useDemux :: Demux -> Client
 useDemux d = Client { give = dGive d, take = dTake d }
@@ -36,7 +38,7 @@ useDemux d = Client { give = dGive d, take = dTake d }
 
 -- Internal --------------------------------------------------------------------
 
-dGive :: Demux -> Term.Ev -> STM ()
+dGive :: Demux -> [Term.Ev] -> STM ()
 dGive Demux{..} ev = do
     modifyTVar' dStash (ev:)
     conns <- readTVar dConns
