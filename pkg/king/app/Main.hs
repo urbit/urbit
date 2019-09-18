@@ -84,72 +84,35 @@ module Main (main) where
 
 import UrbitPrelude
 
-import Data.RAcquire
-
 import Arvo
-import Control.Exception (AsyncException(UserInterrupt))
 import Data.Acquire
 import Data.Conduit
 import Data.Conduit.List hiding (replicate, take)
+import Data.RAcquire
 import Noun              hiding (Parser)
+import RIO.Directory
 import Vere.Pier
 import Vere.Pier.Types
 import Vere.Serf
 
 import Control.Concurrent   (myThreadId, runInBoundThread)
+import Control.Exception    (AsyncException(UserInterrupt))
 import Control.Lens         ((&))
 import Data.Default         (def)
+import KingApp              (runApp)
 import System.Environment   (getProgName)
 import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
 import Text.Show.Pretty     (pPrint)
 import Urbit.Time           (Wen)
 import Vere.LockFile        (lockFile)
 
-import RIO.Directory
-
-import qualified CLI
+import qualified CLI                         as CLI
 import qualified Data.Set                    as Set
-import qualified EventBrowser
+import qualified EventBrowser                as EventBrowser
 import qualified System.IO.LockFile.Internal as Lock
 import qualified Vere.Log                    as Log
 import qualified Vere.Pier                   as Pier
 import qualified Vere.Serf                   as Serf
-
---------------------------------------------------------------------------------
-
-class HasAppName env where
-    appNameL :: Lens' env Utf8Builder
-
-data App = App
-    { _appLogFunc :: !LogFunc
-    , _appName    :: !Utf8Builder
-    }
-
-makeLenses ''App
-
-instance HasLogFunc App where
-    logFuncL = appLogFunc
-
-instance HasAppName App where
-    appNameL = appName
-
-runApp :: RIO App a -> IO a
-runApp inner = do
-    home <- getHomeDirectory
-    let logDir = home <> "/log"
-    createDirectoryIfMissing True logDir
-    withTempFile logDir "king-" $ \tmpFile hFile -> do
-        hSetBuffering hFile LineBuffering
-
-        logOptions <- logOptionsHandle hFile True
-            <&> setLogUseTime True
-            <&> setLogUseLoc False
-
-        withLogFunc logOptions $ \logFunc -> do
-            let app = App { _appLogFunc = logFunc
-                          , _appName    = "Alice"
-                          }
-            runRIO app inner
 
 --------------------------------------------------------------------------------
 
