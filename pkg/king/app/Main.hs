@@ -91,7 +91,7 @@ import Control.Exception (AsyncException(UserInterrupt))
 import Data.Acquire
 import Data.Conduit
 import Data.Conduit.List hiding (replicate, take)
-import Noun hiding (Parser)
+import Noun              hiding (Parser)
 import Vere.Pier
 import Vere.Pier.Types
 import Vere.Serf
@@ -99,13 +99,13 @@ import Vere.Serf
 import Control.Concurrent   (myThreadId, runInBoundThread)
 import Control.Lens         ((&))
 import Data.Default         (def)
-import System.Directory     (doesFileExist, removeFile)
-import System.Directory     (createDirectoryIfMissing, getHomeDirectory)
 import System.Environment   (getProgName)
 import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
 import Text.Show.Pretty     (pPrint)
 import Urbit.Time           (Wen)
 import Vere.LockFile        (lockFile)
+
+import RIO.Directory
 
 import qualified CLI
 import qualified Data.Set                    as Set
@@ -160,9 +160,9 @@ zod = 0
 
 removeFileIfExists :: HasLogFunc env => FilePath -> RIO env ()
 removeFileIfExists pax = do
-  exists <- io $ doesFileExist pax
+  exists <- doesFileExist pax
   when exists $ do
-      io $ removeFile pax
+      removeFile pax
 
 --------------------------------------------------------------------------------
 

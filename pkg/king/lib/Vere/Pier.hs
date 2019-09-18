@@ -7,19 +7,20 @@ module Vere.Pier
 import UrbitPrelude
 
 import Arvo
-import Vere.Pier.Types
 import System.Random
+import Vere.Pier.Types
 
-import System.Directory   (createDirectoryIfMissing)
 import System.Posix.Files (ownerModes, setFileMode)
 import Vere.Ames          (ames)
 import Vere.Behn          (behn)
+import Vere.Clay          (clay)
 import Vere.Http.Client   (client)
 import Vere.Http.Server   (serv)
 import Vere.Log           (EventLog)
-import Vere.Serf          (Serf, sStderr, SerfState(..), doJob)
-import Vere.Clay          (clay)
+import Vere.Serf          (Serf, SerfState(..), doJob, sStderr)
 import Vere.Term
+
+import RIO.Directory
 
 import qualified System.Entropy as Ent
 import qualified Urbit.Time     as Time
@@ -35,7 +36,7 @@ setupPierDirectory :: FilePath -> RIO e ()
 setupPierDirectory shipPath = do
    for_ ["put", "get", "log", "chk"] $ \seg -> do
        let pax = shipPath <> "/.urb/" <> seg
-       io $ createDirectoryIfMissing True pax
+       createDirectoryIfMissing True pax
        io $ setFileMode pax ownerModes
 
 
@@ -161,7 +162,8 @@ pier pierPath mPort (serf, log, ss) = do
     tExe  <- startDrivers >>= router (readTQueue executeQ)
     tDisk <- runPersist log persistQ (writeTQueue executeQ)
     tCpu  <- runCompute serf ss (readTQueue computeQ) (takeTMVar saveM)
-      (takeTMVar shutdownM) (writeTQueue persistQ)
+      (takeTMVar shutdownM) (tsShowSpinner terminalSystem)
+      (tsHideSpinner terminalSystem) (writeTQueue persistQ)
 
     tSaveSignal <- saveSignalThread saveM
 
@@ -284,9 +286,12 @@ runCompute :: ∀e. HasLogFunc e
            -> STM Ev
            -> STM ()
            -> STM ()
+           -> (Maybe String -> STM ())
+           -> STM ()
            -> ((Job, FX) -> STM ())
            -> RAcquire e (Async ())
-runCompute serf ss getEvent getSaveSignal getShutdownSignal putResult =
+runCompute serf ss getEvent getSaveSignal getShutdownSignal
+           showSpinner hideSpinner putResult =
     mkRAcquire (async (go ss)) cancel
   where
     go :: SerfState -> RIO e ()
@@ -302,7 +307,9 @@ runCompute serf ss getEvent getSaveSignal getShutdownSignal putResult =
             eId <- pure (ssNextEv ss)
             mug <- pure (ssLastMug ss)
 
+            atomically $ showSpinner (getSpinnerNameForEvent ev)
             (job', ss', fx) <- doJob serf $ DoWork $ Work eId mug wen ev
+            atomically $ hideSpinner
             atomically (putResult (job', fx))
             go ss'
           CRSave () -> do

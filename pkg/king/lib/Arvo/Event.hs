@@ -5,8 +5,8 @@ import UrbitPrelude hiding (Term)
 import Arvo.Common (KingId(..), ServId(..))
 import Arvo.Common (NounMap, NounSet)
 import Arvo.Common (Desk, Mime)
-import Arvo.Common (HttpEvent, Header(..))
-import Arvo.Common (Ipv4, Ipv6, Port, Turf, AmesDest)
+import Arvo.Common (Header(..), HttpEvent)
+import Arvo.Common (AmesDest, Ipv4, Ipv6, Port, Turf)
 import Arvo.Common (ReOrg(..), reorgThroughNoun)
 
 import qualified Network.HTTP.Types.Method as H
@@ -299,3 +299,26 @@ instance FromNoun Ev where
     ReOrg ""     s t p v -> fmap EvBlip $ parseNoun $ toNoun (s,t,p,v)
     ReOrg "vane" s t p v -> fmap EvVane $ parseNoun $ toNoun (s,t,p,v)
     ReOrg _      _ _ _ _ -> fail "First path-elem must be ?($ %vane)"
+
+-- Short Event Names -----------------------------------------------------------
+
+getSpinnerNameForEvent :: Ev -> Maybe String
+getSpinnerNameForEvent = \case
+  EvVane _ -> Nothing
+  EvBlip b -> case b of
+    BlipEvAmes _ -> Just "ames"
+    BlipEvArvo _ -> Just "arvo"
+    BlipEvBehn _ -> Just "behn"
+    BlipEvBoat _ -> Just "boat"
+    BlipEvHttpClient _ -> Just "iris"
+    BlipEvHttpServer _ -> Just "eyre"
+    BlipEvNewt _       -> Just "newt"
+    BlipEvSync _       -> Just "clay"
+    BlipEvTerm t -> case t of
+      TermEvBelt _ belt -> case belt of
+        -- In the case of the user hitting enter, the cause is technically a
+        -- terminal event, but we don't display any name because the cause is
+        -- really the user.
+        Ret () -> Nothing
+        _      -> Just "term"
+      _ -> Just "term"
