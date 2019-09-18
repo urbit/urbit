@@ -1359,34 +1359,6 @@ _cj_fink_free(u3p(u3j_fink) fin_p)
   u3a_wfree(fin_u);
 }
 
-/* u3j_rite_copy(): copy rite references from src_u to dst_u,
-**                  losing old references if los_o is yes
-*/
-void
-u3j_rite_copy(u3j_rite* dst_u, u3j_rite* src_u, c3_o los_o)
-{
-  if ( u3_none == src_u->clu ) {
-    dst_u->clu   = u3_none;
-    dst_u->fin_p = 0;
-  }
-  else {
-    u3p(u3j_fink) fon_p = dst_u->fin_p;
-    u3_noun   old   = dst_u->clu;
-    c3_o      own_o = dst_u->own_o;
-    if ( c3y == src_u->own_o ) {
-      dst_u->own_o = c3y;
-      dst_u->clu   = u3a_take(src_u->clu);
-      dst_u->fin_p = u3of(u3j_fink, _cj_fink_take(u3to(u3j_fink, src_u->fin_p)));
-      if ( (c3y == los_o) &&
-          (u3_none != old) &&
-          (c3y == own_o) ) {
-        u3z(old);
-        _cj_fink_free(fon_p);
-      }
-    }
-  }
-}
-
 /* u3j_rite_take(): copy junior rite references. [dst_u] is uninitialized
 */
 void
@@ -2074,83 +2046,99 @@ u3j_rite_mine(u3j_rite* rit_u, u3_noun clu, u3_noun cor)
   u3t_off(glu_o);
 }
 
-/* _cj_warm_reap(): reap key and value from warm table.
+/* _cj_take_hank_cb(): u3h_take_with cb for taking hanks
+*/
+static u3p(_cj_hank)
+_cj_take_hank_cb(u3p(_cj_hank) nah_p)
+{
+  _cj_hank* nah_u = u3to(_cj_hank, nah_p);
+  _cj_hank* han_u = u3a_walloc(c3_wiseof(_cj_hank));
+
+  if ( u3_none == nah_u->hax ) {
+    han_u->hax = u3_none;
+    // han_u->sit_u left uninitialized, will be ignored
+  }
+  else {
+    han_u->hax = u3a_take(nah_u->hax);
+    u3j_site_take(&(han_u->sit_u), &(nah_u->sit_u));
+  }
+
+  return u3of(_cj_hank, han_u);
+}
+
+/* u3j_take(): copy junior jet state.
+*/
+u3a_jets
+u3j_take(u3a_jets jed_u)
+{
+  jed_u.cod_p = u3h_take(jed_u.cod_p);
+
+  // call sites must be reaped before the warm dashboard, because they may
+  // contain references to labels on this road
+  jed_u.han_p = u3h_take_with(jed_u.han_p, _cj_take_hank_cb);
+
+  jed_u.war_p = u3h_take(jed_u.war_p);
+  jed_u.bas_p = u3h_take(jed_u.bas_p);
+
+  return jed_u;
+}
+
+/* _cj_merge_hank_cb(): u3h_uni_with cb for integrating taken hanks
+**  NB "transfers" or frees hanks in jed_u.han_p
 */
 static void
-_cj_warm_reap(u3_noun kev)
+_cj_merge_hank_cb(u3_noun kev, void* wit)
 {
-  u3_noun loc = u3a_take(u3h(kev));
-  u3_noun act = u3a_take(u3t(kev));
-  u3h_put(u3R->jed.war_p, loc, act);
-  u3z(loc);
-}
+  u3p(u3h_root) han_p = *(u3p(u3h_root)*)wit;
+  _cj_hank* nah_u;
+  u3_noun key;
+  u3p(_cj_hank) nah_p;
+  u3x_cell(kev, &key, &nah_p);
 
-/* _cj_cold_reap(): reap cold dashboard entries.
- */
-static void
-_cj_cold_reap(u3_noun kev)
-{
-  u3_noun bat = u3a_take(u3h(kev));
-  u3_noun reg = u3a_take(u3t(kev));
-  u3h_put(u3R->jed.cod_p, bat, reg);
-  u3z(bat);
-}
+  nah_u = u3to(_cj_hank, nah_p);
 
-/* _cj_bash_reap(): reap battery hashes.
- */
-static void
-_cj_bash_reap(u3_noun kev)
-{
-  u3_noun key = u3a_take(u3h(kev)),
-          val = u3a_take(u3t(kev));
-  u3h_put(u3R->jed.bas_p, key, val);
-  u3z(key);
-}
+  if ( u3_none == nah_u->hax ) {
+    u3a_wfree(nah_u);
+  }
+  else {
+    _cj_hank* han_u;
+    u3_weak     got = u3h_git(u3R->jed.han_p, key);
 
-/* _cj_hank_reap(): reap hook resolutions.
- */
-static void
-_cj_hank_reap(u3_noun kev)
-{
-  u3_noun   key   = u3a_take(u3h(kev));
-  u3_noun   got   = u3h_git(u3R->jed.han_p, key);
-  _cj_hank* nah_u = u3to(_cj_hank, u3t(kev));
-  _cj_hank* han_u;
-
-  if ( u3_none != got ) {
-    if ( u3_none != nah_u->hax ) {
-      u3_weak old;
-      han_u = u3to(_cj_hank, got);
-      old = han_u->hax;
-      han_u->hax = u3a_take(nah_u->hax);
-      u3j_site_copy(&(han_u->sit_u), &(nah_u->sit_u), c3y);
-      if ( u3_none != old ) {
-        u3z(old);
-      }
+    if ( u3_none == got )  {
+      han_u = nah_u;
     }
-  }
-  else if ( u3_none != nah_u->hax ) {
-    han_u      = u3a_walloc(c3_wiseof(_cj_hank));
-    han_u->hax = u3a_take(nah_u->hax);
-    u3j_site_copy(&(han_u->sit_u), &(nah_u->sit_u), c3n);
-    u3h_put(u3R->jed.han_p, key, u3a_outa(han_u));
-  }
+    else {
+      han_u = u3to(_cj_hank, got);
 
-  u3z(key);
+      if ( u3_none != han_u->hax ) {
+        u3z(han_u->hax);
+      }
+      han_u->hax = nah_u->hax;
+
+      u3j_site_merge(&(han_u->sit_u), &(nah_u->sit_u));
+      u3a_wfree(nah_u);
+    }
+
+    u3h_put(han_p, key, u3of(_cj_hank, han_u));
+  }
 }
 
 /* u3j_reap(): promote jet state.
 */
 void
-u3j_reap(u3p(u3h_root) cod_p, u3p(u3h_root) war_p, u3p(u3h_root) han_p, u3p(u3h_root) bas_p)
+u3j_reap(u3a_jets jed_u)
 {
-  u3h_walk(cod_p, _cj_cold_reap);
+  u3h_uni(u3R->jed.cod_p, jed_u.cod_p);
+  u3h_free(jed_u.cod_p);
 
-  // call sites must be reaped before the warm dashboard, because they may
-  // contain references to labels on this road
-  u3h_walk(han_p, _cj_hank_reap);
-  u3h_walk(war_p, _cj_warm_reap);
-  u3h_walk(bas_p, _cj_bash_reap);
+  u3h_walk_with(jed_u.han_p, _cj_merge_hank_cb, &u3R->jed.han_p);
+  u3h_free(jed_u.han_p);
+
+  u3h_uni(u3R->jed.war_p, jed_u.war_p);
+  u3h_free(jed_u.war_p);
+
+  u3h_uni(u3R->jed.bas_p, jed_u.bas_p);
+  u3h_free(jed_u.bas_p);
 }
 
 /* _cj_ream(): ream list of battery [bash registry] pairs. RETAIN.

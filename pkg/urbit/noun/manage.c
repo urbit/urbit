@@ -832,10 +832,7 @@ u3m_love(u3_noun pro)
   //  save junior road cache pointers
   //
   u3p(u3h_root) byc_p = u3R->byc.har_p;
-  u3p(u3h_root) cod_p = u3R->jed.cod_p;
-  u3p(u3h_root) war_p = u3R->jed.war_p;
-  u3p(u3h_root) han_p = u3R->jed.han_p;
-  u3p(u3h_root) bas_p = u3R->jed.bas_p;
+  u3a_jets      jed_u = u3R->jed;
 
   //  fallback to senior
   //
@@ -843,17 +840,16 @@ u3m_love(u3_noun pro)
 
   //  copy products off our stack
   //
-  //    this order is important! see u3j_reap().
+  //    this order is important! see u3j_take().
   //
   pro   = u3a_take(pro);
   byc_p = u3n_take(byc_p);
+  jed_u = u3j_take(jed_u);
 
   //  integrate junior caches
   //
-  //    this order is important! see u3j_reap().
-  //
   u3n_reap(byc_p);
-  u3j_reap(cod_p, war_p, han_p, bas_p);
+  u3j_reap(jed_u);
 
   //  pop the stack
   //
