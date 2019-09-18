@@ -226,13 +226,6 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
           threadDelay rest
           loop
 
-    writeTrace :: T.Terminal -> LineState -> Text -> RIO e LineState
-    writeTrace t ls p = do
-        io $ T.runTermOutput t $ termText "\r"
-        runMaybeTermOutput t vtClearToBegin
-        io $ T.runTermOutput t $ termText p
-        termRefreshLine t ls
-
     -- Writes data to the terminal. Both the terminal reading, normal logging,
     -- and effect handling can all emit bytes which go to the terminal.
     writeTerminal :: T.Terminal -> TQueue DrvEv -> TMVar () -> RIO e ()
@@ -244,6 +237,13 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
         writeBlank ls = do
             io $ T.runTermOutput t $ termText "\r\n"
             pure ls
+
+        writeTrace :: LineState -> Text -> RIO e LineState
+        writeTrace ls p = do
+            io $ T.runTermOutput t $ termText "\r"
+            runMaybeTermOutput t vtClearToBegin
+            io $ T.runTermOutput t $ termText p
+            termRefreshLine t ls
 
         {-
             Figure out how long to wait to show the spinner. When we
@@ -289,7 +289,7 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
         execEv :: LineState -> DrvEv -> RIO e LineState
         execEv ls = \case
             DEBlits bs         -> foldM (writeBlit t) ls bs
-            DETrace p          -> writeTrace t ls p
+            DETrace p          -> writeTrace ls p
             DEBlank            -> writeBlank ls
             DESpinr (Just txt) -> doSpin ls txt
             DESpinr Nothing    -> unspin ls
