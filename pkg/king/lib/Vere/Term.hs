@@ -1,4 +1,11 @@
-module Vere.Term (initializeLocalTerminal, term, TerminalSystem(..)) where
+module Vere.Term
+    ( TerminalSystem(..)
+    , initializeLocalTerminal
+    , term
+    , tsHideSpinner
+    , tsShowSpinner
+    , tsStderr
+    ) where
 
 import Arvo                  hiding (Term)
 import Data.Char
@@ -19,10 +26,7 @@ import qualified Data.ByteString.Internal     as BS
 import qualified Data.ByteString.UTF8         as BS
 import qualified System.Console.Terminfo.Base as T
 
--- Types -----------------------------------------------------------------------
-
-termText :: Text -> T.TermOutput
-termText = T.termText . unpack
+-- External Types --------------------------------------------------------------
 
 {-
     Input Event for terminal driver:
@@ -36,6 +40,32 @@ data DrvEv = DEBlits [Blit]
            | DETrace Text
            | DEBlank
            | DESpinr (Maybe (Maybe Text))
+
+{-
+    Minimal terminal interface.
+
+    A Terminal can either be local or remote. Either way, the Terminal,
+    from the view of the caller, a terminal has a thread which when
+    exits indicates that the session is over, and has a general in/out
+    queue in the types of the vere/arvo interface.
+-}
+data TerminalSystem = TerminalSystem
+  { tsRead  :: STM Belt
+  , tsWrite :: DrvEv -> STM ()
+  }
+
+tsStderr :: TerminalSystem -> Text -> STM ()
+tsStderr ts = tsWrite ts . DETrace
+
+tsShowSpinner :: TerminalSystem -> Maybe Text -> STM ()
+tsShowSpinner ts = tsWrite ts . DESpinr . Just
+
+tsHideSpinner :: TerminalSystem -> STM ()
+tsHideSpinner ts = tsWrite ts (DESpinr Nothing)
+
+
+
+-- Types -----------------------------------------------------------------------
 
 -- All stateful data in the printing to stdOutput.
 data LineState = LineState
@@ -57,20 +87,6 @@ data ReadData = ReadData
   , rdUTF8width :: Int
   }
 
--- Minimal terminal interface.
---
--- A Terminal can either be local or remote. Either way, the Terminal, from the
--- view of the caller, a terminal has a thread which when exits indicates that
--- the session is over, and has a general in/out queue in the types of the
--- vere/arvo interface.
-data TerminalSystem e = TerminalSystem
-  { tsReadQueue   :: TQueue Belt
-  , tsWriteQueue  :: TQueue DrvEv
-  , tsStderr      :: Text -> RIO e ()
-  , tsShowSpinner :: Maybe Text -> STM ()
-  , tsHideSpinner :: STM ()
-  }
-
 -- Private data to the TerminalSystem that we keep around for stop().
 data Private = Private
   { pReaderThread          :: Async ()
@@ -79,6 +95,9 @@ data Private = Private
   }
 
 -- Utils -----------------------------------------------------------------------
+
+termText :: Text -> T.TermOutput
+termText = T.termText . unpack
 
 initialBlew w h = EvBlip $ BlipEvTerm $ TermEvBlew (UD 1, ()) w h
 
@@ -127,10 +146,10 @@ isTerminalBlit _         = True
 -- Initializes the generalized input/output parts of the terminal.
 --
 initializeLocalTerminal :: forall e. HasLogFunc e
-                        => RAcquire e (TerminalSystem e)
+                        => RAcquire e TerminalSystem
 initializeLocalTerminal = fst <$> mkRAcquire start stop
   where
-    start :: HasLogFunc e => RIO e (TerminalSystem e, Private)
+    start :: HasLogFunc e => RIO e (TerminalSystem, Private)
     start = do
       --  Initialize the writing side of the terminal
       --
@@ -155,18 +174,13 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
       pReaderThread <- asyncBound
           (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
 
-      let tsStderr = \txt ->
-            atomically $ writeTQueue tsWriteQueue $ DETrace txt
-
-      let tsShowSpinner = \mTxt ->
-            writeTQueue tsWriteQueue $ DESpinr (Just mTxt)
-
-      let tsHideSpinner = writeTQueue tsWriteQueue $ DESpinr Nothing
+      let tsRead  = readTQueue tsReadQueue
+          tsWrite = writeTQueue tsWriteQueue
 
       pure (TerminalSystem{..}, Private{..})
 
     stop :: HasLogFunc e
-         => (TerminalSystem e, Private) -> RIO e ()
+         => (TerminalSystem, Private) -> RIO e ()
     stop (TerminalSystem{..}, Private{..}) = do
       -- Note that we don't `cancel pReaderThread` here. This is a deliberate
       -- decision because fdRead calls into a native function which the runtime
@@ -256,8 +270,8 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
                       }
 
         unspin :: LineState -> RIO e LineState
-        unspin ls = do
-              maybe (pure ()) cancel (lsSpinTimer ls)
+        unspin ls@LineState{..} = do
+              maybe (pure ()) cancel lsSpinTimer
               -- We do a final flush of the spinner mvar to ensure we don't
               -- have a lingering signal which will redisplay the spinner after
               -- we call termRefreshLine below.
@@ -265,7 +279,7 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
 
               -- If we ever actually ran the spinner display callback, we need
               -- to force a redisplay of the command prompt.
-              ls <- if not (lsSpinFirstRender ls)
+              ls <- if not lsSpinFirstRender
                     then termRefreshLine t ls
                     else pure ls
 
@@ -279,7 +293,6 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
             DEBlank            -> writeBlank ls
             DESpinr (Just txt) -> doSpin ls txt
             DESpinr Nothing    -> unspin ls
-
 
         spin :: LineState -> RIO e LineState
         spin ls@LineState{..} = do
@@ -297,7 +310,7 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
                       }
 
         loop :: LineState -> RIO e ()
-        loop ls@LineState{..} = do
+        loop ls = do
             join $ atomically $ asum
                 [ readTQueue q      >>= pure . (execEv ls >=> loop)
                 , takeTMVar spinner >>  pure (spin ls >>= loop)
@@ -334,7 +347,6 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
         pure ls { lsCurPos =  newPos }
       else
         pure ls
-
 
     -- Moves the cursor left without any mutation of the LineState. Used only
     -- in cursor spinning.
@@ -476,7 +488,7 @@ initializeLocalTerminal = fst <$> mkRAcquire start stop
 --------------------------------------------------------------------------------
 
 term :: forall e. HasLogFunc e
-     => TerminalSystem e -> (STM ()) -> FilePath -> KingId -> QueueEv
+     => TerminalSystem -> (STM ()) -> FilePath -> KingId -> QueueEv
      -> ([Ev], RAcquire e (EffCb e TermEf))
 term TerminalSystem{..} shutdownSTM pierPath king enqueueEv =
     (initialEvents, runTerm)
@@ -496,7 +508,7 @@ term TerminalSystem{..} shutdownSTM pierPath king enqueueEv =
 
     readBelt :: RIO e ()
     readBelt = forever $ do
-      b <- atomically $ readTQueue tsReadQueue
+      b <- atomically tsRead
       let blip = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ b
       atomically $ enqueueEv $ blip
 
@@ -504,7 +516,7 @@ term TerminalSystem{..} shutdownSTM pierPath king enqueueEv =
     handleEffect = \case
       TermEfBlit _ blits -> do
         let (termBlits, fsWrites) = partition isTerminalBlit blits
-        atomically $ writeTQueue tsWriteQueue (DEBlits termBlits)
+        atomically $ tsWrite (DEBlits termBlits)
         for_ fsWrites handleFsWrite
       TermEfInit _ _ -> pure ()
       TermEfLogo path _ -> do

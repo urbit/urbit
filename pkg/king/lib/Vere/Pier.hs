@@ -149,7 +149,7 @@ pier pierPath mPort (serf, log, ss) = do
     inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
     terminalSystem <- initializeLocalTerminal
-    swapMVar (sStderr serf) (tsStderr terminalSystem)
+    swapMVar (sStderr serf) (atomically . tsStderr terminalSystem)
 
     let ship = who (Log.identity log)
 
@@ -209,7 +209,7 @@ data Drivers e = Drivers
 
 drivers :: HasLogFunc e
         => FilePath -> KingId -> Ship -> Maybe Port -> (Ev -> STM ()) -> STM()
-        -> TerminalSystem e
+        -> TerminalSystem
         -> ([Ev], RAcquire e (Drivers e))
 drivers pierPath inst who mPort plan shutdownSTM termSys =
     (initialEvents, runDrivers)
