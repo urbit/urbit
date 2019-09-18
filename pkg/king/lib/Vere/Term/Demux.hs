@@ -26,7 +26,7 @@ mkDemux = Demux <$> newTVar [] <*> newTVar []
 
 addDemux :: Client -> Demux -> STM ()
 addDemux conn Demux{..} = do
-    stash <- readTVar dStash
+    stash <- reverse <$> readTVar dStash
     modifyTVar' dConns (conn:)
     for_ stash (Term.give conn)
 
