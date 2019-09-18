@@ -27,10 +27,12 @@ import Foreign.Ptr            (castPtr)
 import Foreign.Storable       (peek, poke)
 import System.Exit            (ExitCode)
 
+import qualified Urbit.Ob as Ob
+
 import qualified Data.ByteString.Unsafe as BS
 import qualified Data.Text              as T
-import qualified System.IO.Error        as IO
 import qualified System.IO              as IO
+import qualified System.IO.Error        as IO
 import qualified Urbit.Time             as Time
 import qualified Vere.Log               as Log
 
@@ -151,7 +153,7 @@ startUp conf@(Config pierPath flags) = do
         (Just i, Just o, Just e, p) <- createProcess pSpec
         pure (i, o, e, p)
 
-    stderr <- newMVar putStrLn
+    stderr <- newMVar serf
     async (readStdErr e stderr)
     pure (Serf i o p stderr)
   where
@@ -367,6 +369,22 @@ replayJob serf job = do
         Left replace  -> throwIO (ReplacedEventDuringReplay (jobId job) replace)
         Right (ss, _) -> pure ss
 
+--------------------------------------------------------------------------------
+
+updateProgressBar :: Int -> Text -> Maybe (ProgressBar ())
+                  -> RIO e (Maybe (ProgressBar ()))
+updateProgressBar count startMsg = \case
+    Nothing -> do
+      -- We only construct the progress bar on the first time that we
+      -- process an event so that we don't display an empty progress
+      -- bar when the snapshot is caught up to the log.
+      putStrLn startMsg
+      let style = defStyle { stylePostfix = exact }
+      pb <- io $ newProgressBar style 10 (Progress 0 count ())
+      pure (Just pb)
+    Just pb -> do
+      io $ incProgress pb 1
+      pure (Just pb)
 
 --------------------------------------------------------------------------------
 
@@ -379,23 +397,34 @@ data BootExn = ShipAlreadyBooted
 bootFromSeq :: ∀e. HasLogFunc e => Serf e -> BootSeq -> RIO e ([Job], SerfState)
 bootFromSeq serf (BootSeq ident nocks ovums) = do
     handshake serf ident >>= \case
-        ss@(SerfState 1 (Mug 0)) -> loop [] ss bootSeqFns
+        ss@(SerfState 1 (Mug 0)) -> loop [] ss Nothing bootSeqFns
         _                        -> throwIO ShipAlreadyBooted
 
   where
-    loop :: [Job] -> SerfState -> [BootSeqFn] -> RIO e ([Job], SerfState)
-    loop acc ss = \case
-        []   -> pure (reverse acc, ss)
-        x:xs -> do wen       <- io Time.now
-                   job       <- pure $ x (ssNextEv ss) (ssLastMug ss) wen
-                   (job, ss) <- bootJob serf job
-                   loop (job:acc) ss xs
+    loop :: [Job] -> SerfState -> Maybe (ProgressBar ()) -> [BootSeqFn]
+         -> RIO e ([Job], SerfState)
+    loop acc ss pb = \case
+        []   -> do
+          pb        <- updateProgressBar 0 bootMsg pb
+          pure (reverse acc, ss)
+        x:xs -> do
+          wen       <- io Time.now
+          job       <- pure $ x (ssNextEv ss) (ssLastMug ss) wen
+          pb        <- updateProgressBar (1 + length xs) bootMsg pb
+          (job, ss) <- bootJob serf job
+          loop (job:acc) ss pb xs
 
     bootSeqFns :: [BootSeqFn]
     bootSeqFns = fmap muckNock nocks <> fmap muckOvum ovums
       where
         muckNock nok eId mug _   = RunNok $ LifeCyc eId mug nok
         muckOvum ov  eId mug wen = DoWork $ Work eId mug wen ov
+
+    bootMsg = "Booting " ++ (fakeStr (isFake ident)) ++
+              (Ob.render (Ob.patp (fromIntegral (who ident))))
+    fakeStr True  = "fake "
+    fakeStr False = ""
+
 {-
     The ship is booted, but it is behind. shove events to the worker
     until it is caught up.
@@ -408,23 +437,15 @@ replayJobs serf lastEv = go Nothing
       await >>= \case
         Nothing -> pure ss
         Just job -> do
-          pb <- updatePb ss pb
+          pb <- lift $ updatePb ss pb
           played <- lift $ replayJob serf job
-          go (Just pb) played
+          go pb played
 
-    updatePb ss = \case
-      Nothing -> do
-        -- We only construct the progress bar on the first time that we
-        -- process an event so that we don't display an empty progress
-        -- bar when the snapshot is caught up to the log.
-        let toReplay = lastEv - (fromIntegral (ssNextEv ss))
-        let style = defStyle { stylePostfix = exact }
-        putStrLn $ pack ("Replaying events #" ++ (show (ssNextEv ss)) ++
-                         " to #" ++ (show lastEv))
-        io $ newProgressBar style 10 (Progress 0 toReplay lastEv)
-      Just pb -> do
-        io $ incProgress pb 1
-        pure pb
+    updatePb ss = do
+      let start = lastEv - (fromIntegral (ssNextEv ss))
+      let msg = pack ("Replaying events #" ++ (show (ssNextEv ss)) ++
+                      " to #" ++ (show lastEv))
+      updateProgressBar start msg
 
 
 replay :: HasLogFunc e => Serf e -> Log.EventLog -> RIO e SerfState

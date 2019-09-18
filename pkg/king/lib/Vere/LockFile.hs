@@ -3,6 +3,7 @@ module Vere.LockFile (lockFile) where
 import UrbitPrelude
 
 import Data.Default                (def)
+import RIO.Directory               (createDirectoryIfMissing)
 import System.IO.LockFile.Internal (LockingParameters(..), RetryStrategy(..),
                                     lock, unlock)
 
@@ -20,5 +21,6 @@ lockFile pax = void $ mkRAcquire start stop
     params = def { retryToAcquireLock = No }
 
     start = do
+        createDirectoryIfMissing True pax
         logInfo $ display @Text $ ("Taking lock file: " <> pack fil)
         io (lock params fil)
