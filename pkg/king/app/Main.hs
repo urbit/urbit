@@ -113,6 +113,7 @@ import qualified System.IO.LockFile.Internal as Lock
 import qualified Vere.Log                    as Log
 import qualified Vere.Pier                   as Pier
 import qualified Vere.Serf                   as Serf
+import qualified Vere.Term                   as Term
 
 --------------------------------------------------------------------------------
 
@@ -341,6 +342,14 @@ main = do
         CLI.CmdBug (CLI.ValidatePill pax pil seq) -> testPill pax pil seq
         CLI.CmdBug (CLI.ValidateEvents pax f l)   -> checkEvs pax f l
         CLI.CmdBug (CLI.ValidateFX pax f l)       -> checkFx  pax f l
+        CLI.CmdCon port                           -> connTerm port
+
+
+--------------------------------------------------------------------------------
+
+connTerm :: ∀e. HasLogFunc e => Word16 -> RIO e ()
+connTerm port =
+    Term.runTerminalClient (fromIntegral port)
 
 --------------------------------------------------------------------------------
 

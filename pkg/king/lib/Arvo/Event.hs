@@ -302,23 +302,25 @@ instance FromNoun Ev where
 
 -- Short Event Names -----------------------------------------------------------
 
-getSpinnerNameForEvent :: Ev -> Maybe String
+{-
+    In the case of the user hitting enter, the cause is technically a
+    terminal event, but we don't display any name because the cause is
+    really the user.
+-}
+getSpinnerNameForEvent :: Ev -> Maybe Text
 getSpinnerNameForEvent = \case
-  EvVane _ -> Nothing
-  EvBlip b -> case b of
-    BlipEvAmes _ -> Just "ames"
-    BlipEvArvo _ -> Just "arvo"
-    BlipEvBehn _ -> Just "behn"
-    BlipEvBoat _ -> Just "boat"
-    BlipEvHttpClient _ -> Just "iris"
-    BlipEvHttpServer _ -> Just "eyre"
-    BlipEvNewt _       -> Just "newt"
-    BlipEvSync _       -> Just "clay"
-    BlipEvTerm t -> case t of
-      TermEvBelt _ belt -> case belt of
-        -- In the case of the user hitting enter, the cause is technically a
-        -- terminal event, but we don't display any name because the cause is
-        -- really the user.
-        Ret () -> Nothing
-        _      -> Just "term"
-      _ -> Just "term"
+    EvVane _ -> Nothing
+    EvBlip b -> case b of
+        BlipEvAmes _           -> Just "ames"
+        BlipEvArvo _           -> Just "arvo"
+        BlipEvBehn _           -> Just "behn"
+        BlipEvBoat _           -> Just "boat"
+        BlipEvHttpClient _     -> Just "iris"
+        BlipEvHttpServer _     -> Just "eyre"
+        BlipEvNewt _           -> Just "newt"
+        BlipEvSync _           -> Just "clay"
+        BlipEvTerm t | isRet t -> Nothing
+        BlipEvTerm t           -> Just "term"
+  where
+    isRet (TermEvBelt _ (Ret ())) = True
+    isRet _                       = False
