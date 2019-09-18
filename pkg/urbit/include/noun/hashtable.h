@@ -105,6 +105,11 @@
         void
         u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val);
 
+      /* u3h_uni(): unify hashtables, copying [rah_p] into [har_p]
+      */
+        void
+        u3h_uni(u3p(u3h_root) har_p, u3p(u3h_root) rah_p);
+
       /* u3h_get(): read from hashtable.
       **
       ** `key` is RETAINED; result is PRODUCED.

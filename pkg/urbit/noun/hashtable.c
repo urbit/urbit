@@ -233,6 +233,26 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
   }
 }
 
+/* _ch_uni_with(): key/value callback, put into [*wit]
+*/
+static void
+_ch_uni_with(u3_noun kev, void* wit)
+{
+  u3p(u3h_root) har_p = *(u3p(u3h_root)*)wit;
+  u3_noun key, val;
+  u3x_cell(kev, &key, &val);
+
+  u3h_put(har_p, key, u3k(val));
+}
+
+/* u3h_uni(): unify hashtables, copying [rah_p] into [har_p]
+*/
+void
+u3h_uni(u3p(u3h_root) har_p, u3p(u3h_root) rah_p)
+{
+  u3h_walk_with(rah_p, _ch_uni_with, &har_p);
+}
+
 /* _ch_trim_node(): trim one entry from a node slot or its children
 */
 static c3_o
