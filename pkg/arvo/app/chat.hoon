@@ -557,17 +557,18 @@
 ++  send-chat-update
   |=  [upd=update str=streams]
   ^-  (list move)
-  =/  jon  (construct-tile-json str)
+  =/  jon-one  (update-to-json upd)
+  =/  jon-two  (construct-tile-json str)
   ::
   %+  weld
     ^-  (list move)
     %+  turn  (prey:pubsub:userlib /primary bol)
     |=  [=bone *]
-    [bone %diff %chat-update upd]
+    [bone %diff %json jon-one]
   ^-  (list move)
   %+  turn  (prey:pubsub:userlib /chattile bol)
   |=  [=bone *]
-  [bone %diff %json jon]
+  [bone %diff %json jon-two]
 ::
 ++  construct-tile-json
   |=  str=streams

@@ -20,8 +20,6 @@ export class ChatInput extends Component {
       let wen = Date.now();
       let aut = window.ship;
 
-      let config = props.configs[props.station];
-
       aud = [props.station];
       sep = {
         lin: {
@@ -33,8 +31,9 @@ export class ChatInput extends Component {
       let uid;
       let message;
 
-      for (var i = 0; i < 10; i++) {
+      for (var i = 0; i < 40; i++) {
         uid = uuid();
+        wen = Date.now();
         message = {
           uid,
           aut,
