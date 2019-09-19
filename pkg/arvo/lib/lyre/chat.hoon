@@ -1,12 +1,12 @@
-/-  *lyre, inbox
-|=  [con=configs:inbox nom=path env=(list envelope:inbox)]
+/-  *lyre, chat-store
+|=  [con=configs:chat-store nom=path env=(list envelope:chat-store)]
 ^-  dom
 :*  %padding  20  20  20  20
   :-  %vertical
   ^-  (list dom)
   %+  snoc 
     %+  turn  env
-    |=  ev=envelope:inbox
+    |=  ev=envelope:chat-store
     ^-  dom
     ?+    -.letter.ev
         [%text 'Unhandled Letter Type']
@@ -16,7 +16,7 @@
             [%padding 0 0 10 0 [%text text.letter.ev]]
         ==
     ==
-  :*  %form  %chat-view  %json
+  :*  %form  %chat-lyre-view  %json
     %-  my 
     :~  [%chat (spat nom)]
         [%who (scot %p owner:(~(got by con) nom))]

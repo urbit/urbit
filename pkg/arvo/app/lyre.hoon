@@ -158,7 +158,7 @@
       %chat
     =/  dep=dependencies
       :*  ~
-          ~[[%chat-view /chat/-50/0/chat1]]
+          ~[[%chat-lyre-view /chat/-50/0/chat1]]
           ~
           %chat
       ==
@@ -177,7 +177,6 @@
   |=  [wir=wire mar=@tas dat=*]
   ^-  (quip move _this)
   ?<  ?=(~ wir)
-::  ~&  diff+[wir mar ;;([configs:inbox path (list envelope:inbox)] dat)]
   =/  nom=@tas  i.wir
   finish:(validate-gall:(init:per-view nom) wir mar dat)
 ::

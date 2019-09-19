@@ -1,7 +1,7 @@
-/-  inbox
-|_  vew=[configs:inbox path (list envelope:inbox)]
+/-  *chat-store
+|_  vew=[configs path (list envelope)]
 ++  grab
   |%
-  ++  noun  ,[configs:inbox path (list envelope:inbox)]
+  ++  noun  ,[configs path (list envelope)]
   --
 --

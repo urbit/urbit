@@ -101,6 +101,7 @@
       [%home %chat-store]
       [%home %chat-hook]
       [%home %chat-view]
+      [%home %chat-lyre-view]
   ==
 ::
 ++  deft-fish                                           ::  default connects
