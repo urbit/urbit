@@ -57,6 +57,7 @@ dependencies:
   - lmdb
   - lock-file
   - megaparsec
+  - memory
   - mtl
   - multimap
   - network
@@ -99,6 +100,7 @@ dependencies:
   - wai-conduit
   - warp
   - warp-tls
+  - web3
   - websockets
 
 default-extensions:

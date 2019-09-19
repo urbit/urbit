@@ -15,6 +15,7 @@ import qualified Network.HTTP.Types.Method as H
 -- Misc Types ------------------------------------------------------------------
 
 type Pass = Atom -- Public Key
+type Rift = Atom -- Continuity number
 type Life = Word -- Number of Azimoth key revs.
 type Bloq = Atom -- TODO
 type Ring = Atom -- Private Key
@@ -74,7 +75,7 @@ data Snap = Snap (NounMap Ship Public)
 data Dawn = MkDawn
     { dSeed :: Seed
     , dShip :: Ship
-    , dCzar :: NounMap Ship (Life, Pass)
+    , dCzar :: NounMap Ship (Rift, Life, Pass)
     , dTurf :: [Turf]
     , dBloq :: Bloq
     , dNode :: (Maybe PUrl)

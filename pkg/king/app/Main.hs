@@ -104,6 +104,7 @@ import System.Environment   (getProgName)
 import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
 import Text.Show.Pretty     (pPrint)
 import Urbit.Time           (Wen)
+import Vere.Dawn
 import Vere.LockFile        (lockFile)
 
 import qualified CLI                         as CLI
@@ -326,6 +327,13 @@ startBrowser pierPath = runRAcquire $ do
     log <- Log.existing (pierPath <> "/.urb/log")
     rio $ EventBrowser.run log
 
+checkDawn :: HasLogFunc e => RIO e ()
+checkDawn = do
+  e <- dawnVent (Seed (Ship 0) 1 (fromIntegral 1) Nothing)
+  case e of
+    Left x  -> putStrLn "Left"
+    Right y -> putStrLn "Right"
+
 main :: IO ()
 main = do
     mainTid <- myThreadId
@@ -342,6 +350,7 @@ main = do
         CLI.CmdBug (CLI.ValidatePill pax pil seq) -> testPill pax pil seq
         CLI.CmdBug (CLI.ValidateEvents pax f l)   -> checkEvs pax f l
         CLI.CmdBug (CLI.ValidateFX pax f l)       -> checkFx  pax f l
+        CLI.CmdBug CLI.CheckDawn                  -> checkDawn
         CLI.CmdCon port                           -> connTerm port
 
 

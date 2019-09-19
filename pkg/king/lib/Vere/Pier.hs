@@ -214,6 +214,9 @@ pier pierPath mPort (serf, log, ss) = do
       Left (txt, exn) -> logError $ displayShow ("Somthing died", txt, exn)
       Right tag       -> logError $ displayShow ("something simply exited", tag)
 
+    atomically $ (Term.spin muxed) (Just "shutdown")
+
+
 death :: Text -> Async () -> STM (Either (Text, SomeException) Text)
 death tag tid = do
   waitCatchSTM tid <&> \case

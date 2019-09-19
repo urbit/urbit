@@ -27,11 +27,11 @@ data Opts = Opts
   deriving (Show)
 
 data New = New
-    { nPillPath  :: FilePath
-    , nShipAddr  :: Text
-    , nPierPath  :: Maybe FilePath -- Derived from ship name if not specified.
-    , nArvoDir   :: Maybe FilePath
-    , nBootFake  :: Bool
+    { nPillPath :: FilePath
+    , nShipAddr :: Text
+    , nPierPath :: Maybe FilePath -- Derived from ship name if not specified.
+    , nArvoDir  :: Maybe FilePath
+    , nBootFake :: Bool
     }
   deriving (Show)
 
@@ -62,6 +62,7 @@ data Bug
         , bFirstEvt :: Word64
         , bFinalEvt :: Word64
         }
+    | CheckDawn
   deriving (Show)
 
 data Cmd
@@ -247,6 +248,9 @@ checkFx = ValidateFX <$> pierPath <*> firstEv <*> lastEv
 browseEvs :: Parser Bug
 browseEvs = EventBrowser <$> pierPath
 
+checkDawn :: Parser Bug
+checkDawn = pure CheckDawn
+
 bugCmd :: Parser Cmd
 bugCmd = fmap CmdBug
         $ subparser
@@ -269,6 +273,10 @@ bugCmd = fmap CmdBug
        <> command "validate-effects"
             ( info (checkFx <**> helper)
             $ progDesc "Parse all data in event log"
+            )
+       <> command "dawn"
+            ( info (checkDawn <**> helper)
+            $ progDesc "Test run dawn"
             )
 
 conCmd :: Parser Cmd
