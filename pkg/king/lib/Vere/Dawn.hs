@@ -13,11 +13,15 @@ import Network.Ethereum.Web3
 
 import Data.Text (splitOn)
 
+import qualified Data.ByteArray  as BA
 import qualified Data.Map.Strict as M
 
 {-TODOs:
 
   - Dawn takes a NounMap instead of a Map. Need a conversion function.
+
+  - The Haskell Dawn structure as it exists right now isn't right? It can't
+    parse a real %dawn event in the event browser.
 
 -}
 
@@ -28,10 +32,17 @@ provider = HttpProvider
 
 azimuthContract = "0x223c067F8CF28ae173EE5CafEa60cA44C335fecB"
 
+bytes32ToAtom :: BytesN 32 -> Atom
+bytes32ToAtom bytes =
+  (reverse (BA.pack $ BA.unpack bytes)) ^. from atomBytes
 
--- Reads the
---
--- TODO: I don't know how to change a BytesN 32 to an Atom.
+-- retrievePoint :: Quantity -> Int -> Web3 ()
+-- retrievePoint bloq point =
+--     withAccount () $
+--       withParam (to .~ azimuthContract) $
+--         withParam (block .~ (BlockWithNumber bloq)) $
+--           (pubKey, _, _, _, _, _, _, _, keyRev, continuity) <- points idx
+
 retrieveGalaxyTable :: Quantity -> Web3 (Map Ship (Rift, Life, Pass))
 retrieveGalaxyTable bloq =
     withAccount () $
@@ -41,11 +52,9 @@ retrieveGalaxyTable bloq =
   where
     getRow idx = do
       (pubKey, _, _, _, _, _, _, _, keyRev, continuity) <- points idx
-      -- pubKey is a sort of ByteArray.
       pure (fromIntegral idx, (fromIntegral continuity,
                                fromIntegral keyRev,
-                               fromIntegral 0))
-                               -- pubKey ^. from atomBytes))
+                               bytes32ToAtom pubKey))
 
 -- Reads the Turf domains off the blockchain at block height `bloq`.
 readAmesDomains :: Quantity -> Web3 ([Turf])
@@ -83,9 +92,9 @@ dawnVent (Seed (Ship ship) life ring oaf) = do
     --   withParam (to .~ azimuthContract) $
     --     points 15
 
-    -- Retrieve the galaxy table [MUST FIX s/5/255/ AND PUBKEY TO ATOM]
-    -- galaxyTable <- retrieveGalaxyTable dBloq
-    -- print $ show galaxyTable
+    -- Retrieve the galaxy table [MUST FIX s/5/255/]
+    galaxyTable <- retrieveGalaxyTable dBloq
+    print $ show galaxyTable
 
     -- Read Ames domains [DONE]
     -- dTurf <- readAmesDomains dBloq
