@@ -1079,6 +1079,7 @@ _cj_hank_find(u3_noun pre, u3_noun tam)
 {
   u3_noun key = u3nc(u3k(pre), u3k(tam));
   u3_noun got = u3h_git(u3R->jed.han_p, key);
+
   if ( u3_none != got ) {
     u3z(key);
     return u3to(_cj_hank, got);
@@ -1086,20 +1087,26 @@ _cj_hank_find(u3_noun pre, u3_noun tam)
   else {
     _cj_hank* new_u = u3a_walloc(c3_wiseof(_cj_hank));
     u3a_road* rod_u = u3R;
+
     while ( rod_u->par_p && u3_none == got ) {
       rod_u = u3to(u3a_road, rod_u->par_p);
-      got   = u3h_git(u3R->jed.han_p, key);
+      got   = u3h_git(rod_u->jed.han_p, key);
     }
+
     if ( u3_none == got ) {
       new_u->hax = u3_none;
     }
     else {
       _cj_hank* old_u = u3to(_cj_hank, got);
       if ( u3_none != (new_u->hax = old_u->hax) ) {
-        u3j_site_copy(&(new_u->sit_u), &(old_u->sit_u), c3n);
+        //  it's unusual but safe to "take" here, because
+        //  u3a_take will no-op on senior nouns (just as u3k would)
+        //
+        u3j_site_take(&(new_u->sit_u), &(old_u->sit_u));
       }
     }
-    u3h_put(u3R->jed.han_p, key, u3a_outa(new_u));
+
+    u3h_put(u3R->jed.han_p, key, u3of(_cj_hank, new_u));
     u3z(key);
     return new_u;
   }
@@ -1398,67 +1405,6 @@ u3j_rite_merge(u3j_rite* dst_u, u3j_rite* src_u)
 
       dst_u->fin_p = src_u->fin_p;
       dst_u->own_o = src_u->own_o;
-    }
-  }
-}
-
-/* u3j_site_copy(): copy site references from src_u to dst_u,
-**                  losing old references if los_o is yes
-*/
-void
-u3j_site_copy(u3j_site* dst_u, u3j_site* src_u, c3_o los_o)
-{
-  u3_noun old = dst_u->axe;
-  dst_u->axe  = u3a_take(src_u->axe);
-
-  if ( c3y == los_o ) {
-    u3z(old);
-  }
-  else {
-    dst_u->bat   = u3_none;
-    dst_u->bas   = u3_none;
-    dst_u->pog_p = 0;
-    dst_u->loc   = u3_none;
-    dst_u->lab   = u3_none;
-    dst_u->jet_o = c3n;
-    dst_u->fon_o = c3n;
-    dst_u->cop_u = NULL;
-    dst_u->ham_u = NULL;
-    dst_u->fin_p = 0;
-  }
-
-  if ( u3_none != src_u->loc ) {
-    u3_noun  lob   = dst_u->lab,
-             lod   = dst_u->loc;
-    c3_o     fon_o = dst_u->fon_o;
-    u3p(u3j_fink) fon_p = dst_u->fin_p;
-
-    dst_u->loc   = u3a_take(src_u->loc);
-    dst_u->lab   = u3a_take(src_u->lab);
-    dst_u->cop_u = src_u->cop_u;
-    dst_u->ham_u = src_u->ham_u;
-    dst_u->jet_o = src_u->jet_o;
-
-    if ( c3y == src_u->fon_o ) {
-      dst_u->fin_p = u3of(u3j_fink, _cj_fink_take(u3to(u3j_fink, src_u->fin_p)));
-      dst_u->fon_o = c3y;
-    }
-    else if ( fon_p != src_u->fin_p ) {
-      dst_u->fin_p = src_u->fin_p;
-      dst_u->fon_o = c3n;
-    }
-    else {
-      fon_o = c3n;
-    }
-
-    if ( c3y == los_o ) {
-      if ( u3_none != lod ) {
-        u3z(lod);
-        u3z(lob);
-        if ( c3y == fon_o ) {
-          _cj_fink_free(fon_p);
-        }
-      }
     }
   }
 }
