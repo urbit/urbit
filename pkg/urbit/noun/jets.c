@@ -2017,15 +2017,10 @@ _cj_take_hank_cb(u3p(_cj_hank) nah_p)
 u3a_jets
 u3j_take(u3a_jets jed_u)
 {
-  jed_u.cod_p = u3h_take(jed_u.cod_p);
-
-  // call sites must be reaped before the warm dashboard, because they may
-  // contain references to labels on this road
-  jed_u.han_p = u3h_take_with(jed_u.han_p, _cj_take_hank_cb);
-
   jed_u.war_p = u3h_take(jed_u.war_p);
+  jed_u.cod_p = u3h_take(jed_u.cod_p);
+  jed_u.han_p = u3h_take_with(jed_u.han_p, _cj_take_hank_cb);
   jed_u.bas_p = u3h_take(jed_u.bas_p);
-
   return jed_u;
 }
 
@@ -2074,14 +2069,14 @@ _cj_merge_hank_cb(u3_noun kev, void* wit)
 void
 u3j_reap(u3a_jets jed_u)
 {
+  u3h_uni(u3R->jed.war_p, jed_u.war_p);
+  u3h_free(jed_u.war_p);
+
   u3h_uni(u3R->jed.cod_p, jed_u.cod_p);
   u3h_free(jed_u.cod_p);
 
   u3h_walk_with(jed_u.han_p, _cj_merge_hank_cb, &u3R->jed.han_p);
   u3h_free(jed_u.han_p);
-
-  u3h_uni(u3R->jed.war_p, jed_u.war_p);
-  u3h_free(jed_u.war_p);
 
   u3h_uni(u3R->jed.bas_p, jed_u.bas_p);
   u3h_free(jed_u.bas_p);
