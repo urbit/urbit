@@ -1,6 +1,7 @@
 module KingApp
     ( App
     , runApp
+    , runAppLogFile
     , HasAppName(..)
     ) where
 
@@ -36,6 +37,19 @@ withLogFileHandle act = do
 
 runApp :: RIO App a -> IO a
 runApp inner = do
+    logOptions <- logOptionsHandle stdout True
+        <&> setLogUseTime True
+        <&> setLogUseLoc False
+
+    withLogFunc logOptions $ \logFunc ->
+        go $ App { _appLogFunc = logFunc
+                 , _appName    = "Vere"
+                 }
+  where
+    go app = runRIO app inner
+
+runAppLogFile :: RIO App a -> IO a
+runAppLogFile inner = do
     withLogFileHandle $ \logFile -> do
         logOptions <- logOptionsHandle logFile True
             <&> setLogUseTime True

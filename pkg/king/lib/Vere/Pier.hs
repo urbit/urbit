@@ -154,13 +154,14 @@ pier pierPath mPort (serf, log, ss) = do
 
     inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
-    (sz, local) <- Term.localClient
+    -- (sz, local) <- Term.localClient
+    let sz = TSize.Window 80 24
 
     (waitExternalTerm, termServPort) <- Term.termServer
 
     (demux, muxed) <- atomically $ do
         res <- Term.mkDemux
-        Term.addDemux local res
+        -- Term.addDemux local res
         pure (res, Term.useDemux res)
 
     rio $ logInfo $ display $
@@ -190,6 +191,8 @@ pier pierPath mPort (serf, log, ss) = do
                 (sz, muxed)
 
     io $ atomically $ for_ bootEvents (writeTQueue computeQ)
+
+    rio $ logTrace "PIER Starting Drivers"
 
     tExe  <- startDrivers >>= router (readTQueue executeQ)
     tDisk <- runPersist log persistQ (writeTQueue executeQ)
@@ -255,13 +258,20 @@ drivers pierPath inst who mPort plan shutdownSTM termSys =
     initialEvents       = mconcat [behnBorn, clayBorn, amesBorn, httpBorn,
                                    termBorn, irisBorn]
     runDrivers          = do
+        rio $ logTrace "Starting Ames"
         dNewt       <- liftAcquire $ runAmes
+        rio $ logTrace "Starting Behn"
         dBehn       <- liftAcquire $ runBehn
         dAmes       <- pure $ const $ pure ()
+        rio $ logTrace "Starting Iris"
         dHttpClient <- runIris
+        rio $ logTrace "Starting Http"
         dHttpServer <- runHttp
+        rio $ logTrace "Starting Clay"
         dSync       <- runClay
+        rio $ logTrace "Starting Term"
         dTerm       <- runTerm
+        rio $ logTrace "All drivers started"
         pure (Drivers{..})
 
 

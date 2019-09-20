@@ -404,11 +404,11 @@ startServ pierPath conf plan = do
       httpsPort = Port (fromIntegral httpsPortInt)
       loopPort  = Port (fromIntegral loopPortInt)
 
-  let loopOpts  = W.defaultSettings & W.setPort (fromIntegral loopPort)
+  let loopOpts  = W.defaultSettings & W.setPort loopPortInt
                                     & W.setHost "127.0.0.1"
                                     & W.setTimeout (5 * 60)
-      httpOpts  = W.defaultSettings & W.setPort (fromIntegral httpPort)
-      httpsOpts = W.defaultSettings & W.setPort (fromIntegral httpsPort)
+      httpOpts  = W.defaultSettings & W.setPort httpPortInt
+      httpsOpts = W.defaultSettings & W.setPort httpsPortInt
 
   env <- ask
 

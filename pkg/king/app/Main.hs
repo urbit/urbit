@@ -99,7 +99,7 @@ import Control.Concurrent   (myThreadId, runInBoundThread)
 import Control.Exception    (AsyncException(UserInterrupt))
 import Control.Lens         ((&))
 import Data.Default         (def)
-import KingApp              (runApp)
+import KingApp              (runApp, runAppLogFile)
 import System.Environment   (getProgName)
 import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
 import Text.Show.Pretty     (pPrint)
@@ -109,6 +109,7 @@ import Vere.LockFile        (lockFile)
 import qualified CLI                         as CLI
 import qualified Data.Set                    as Set
 import qualified EventBrowser                as EventBrowser
+import qualified King.API                    as King
 import qualified System.IO.LockFile.Internal as Lock
 import qualified Vere.Log                    as Log
 import qualified Vere.Pier                   as Pier
@@ -328,21 +329,27 @@ startBrowser pierPath = runRAcquire $ do
 
 main :: IO ()
 main = do
-    mainTid <- myThreadId
-
-    let onTermSig = throwTo mainTid UserInterrupt
+    mainTid   <- myThreadId
+    onTermSig <- pure $ throwTo mainTid UserInterrupt
 
     installHandler sigTERM (Catch onTermSig) Nothing
 
-    CLI.parseArgs >>= runApp . \case
-        CLI.CmdRun r o                            -> runShip r o
-        CLI.CmdNew n o                            -> newShip n o
-        CLI.CmdBug (CLI.CollectAllFX pax)         -> collectAllFx pax
-        CLI.CmdBug (CLI.EventBrowser pax)         -> startBrowser pax
-        CLI.CmdBug (CLI.ValidatePill pax pil seq) -> testPill pax pil seq
-        CLI.CmdBug (CLI.ValidateEvents pax f l)   -> checkEvs pax f l
-        CLI.CmdBug (CLI.ValidateFX pax f l)       -> checkFx  pax f l
-        CLI.CmdCon port                           -> connTerm port
+    args <- CLI.parseArgs
+
+    let run = args & \case
+                CLI.CmdCon _ -> runAppLogFile
+                _            -> runApp
+
+    runApp $ rwith King.kingAPI $ \_ ->
+        args & \case
+            CLI.CmdRun r o                            -> runShip r o
+            CLI.CmdNew n o                            -> newShip n o
+            CLI.CmdBug (CLI.CollectAllFX pax)         -> collectAllFx pax
+            CLI.CmdBug (CLI.EventBrowser pax)         -> startBrowser pax
+            CLI.CmdBug (CLI.ValidatePill pax pil seq) -> testPill pax pil seq
+            CLI.CmdBug (CLI.ValidateEvents pax f l)   -> checkEvs pax f l
+            CLI.CmdBug (CLI.ValidateFX pax f l)       -> checkFx  pax f l
+            CLI.CmdCon port                           -> connTerm port
 
 
 --------------------------------------------------------------------------------

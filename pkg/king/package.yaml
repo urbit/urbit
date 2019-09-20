@@ -28,6 +28,7 @@ tests:
       - -with-rtsopts=-N
 
 dependencies:
+  - aeson
   - async
   - base
   - base-unicode-symbols
@@ -92,11 +93,12 @@ dependencies:
   - unliftio
   - unliftio-core
   - unordered-containers
-  - urbit-hob
+  - urbit-hob == 0.3.0
   - utf8-string
   - vector
   - wai
   - wai-conduit
+  - wai-websockets
   - warp
   - warp-tls
   - websockets

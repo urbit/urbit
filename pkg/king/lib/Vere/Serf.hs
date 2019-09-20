@@ -27,12 +27,11 @@ import Foreign.Ptr            (castPtr)
 import Foreign.Storable       (peek, poke)
 import System.Exit            (ExitCode)
 
-import qualified Urbit.Ob as Ob
-
 import qualified Data.ByteString.Unsafe as BS
 import qualified Data.Text              as T
 import qualified System.IO              as IO
 import qualified System.IO.Error        as IO
+import qualified Urbit.Ob               as Ob
 import qualified Urbit.Time             as Time
 import qualified Vere.Log               as Log
 
@@ -232,9 +231,9 @@ sendLen s i = do
 
 sendOrder :: HasLogFunc e => Serf e -> Order -> RIO e ()
 sendOrder w o = do
-  logDebug $ display ("(sendOrder) " <> tshow o)
+  -- logDebug $ display ("(sendOrder) " <> tshow o)
   sendBytes w $ jamBS $ toNoun o
-  logDebug "(sendOrder) Done"
+  -- logDebug "(sendOrder) Done"
 
 sendBytes :: HasLogFunc e => Serf e -> ByteString -> RIO e ()
 sendBytes s bs = handle ioErr $ do
@@ -292,9 +291,9 @@ shutdown serf code = sendOrder serf (OExit code)
 -}
 recvPlea :: HasLogFunc e => Serf e -> RIO e Plea
 recvPlea w = do
-  logDebug "(recvPlea) Waiting"
+  -- logDebug "(recvPlea) Waiting"
   a <- recvAtom w
-  logDebug "(recvPlea) Got atom"
+  -- logDebug "(recvPlea) Got atom"
   n <- fromRightExn (cue a) (const $ BadPleaAtom a)
   p <- fromRightExn (fromNounErr n) (\(p,m) -> BadPleaNoun (traceShowId n) p m)
 
@@ -302,7 +301,7 @@ recvPlea w = do
                                 recvPlea w
             PSlog _ pri t -> do printTank (sStderr w) pri t
                                 recvPlea w
-            _             -> do logTrace "recvPlea got something else"
+            _             -> do -- logTrace "recvPlea got something else"
                                 pure p
 
 {-
@@ -325,7 +324,7 @@ sendWork w job =
   do
     sendOrder w (OWork job)
     res <- loop
-    logTrace ("[sendWork] Got response")
+    -- logTrace ("[sendWork] Got response")
     pure res
   where
     eId = jobId job
@@ -421,7 +420,7 @@ bootFromSeq serf (BootSeq ident nocks ovums) = do
         muckOvum ov  eId mug wen = DoWork $ Work eId mug wen ov
 
     bootMsg = "Booting " ++ (fakeStr (isFake ident)) ++
-              (Ob.render (Ob.patp (fromIntegral (who ident))))
+              (Ob.renderPatp (Ob.patp (fromIntegral (who ident))))
     fakeStr True  = "fake "
     fakeStr False = ""
 
@@ -461,9 +460,9 @@ toJobs :: HasLogFunc e
        => LogIdentity -> EventId -> ConduitT ByteString Job (RIO e) ()
 toJobs ident eId =
     await >>= \case
-        Nothing -> lift $ logTrace "[toJobs] no more jobs"
+        Nothing -> pure () -- lift $ logTrace "[toJobs] no more jobs"
         Just at -> do yield =<< lift (fromAtom at)
-                      lift $ logTrace $ display ("[toJobs] " <> tshow eId)
+                      -- lift $ logTrace $ display ("[toJobs] " <> tshow eId)
                       toJobs ident (eId+1)
   where
     isNock = eId <= fromIntegral (lifecycleLen ident)
@@ -509,7 +508,7 @@ doCollectFX serf = go
         Just jb -> do
             -- jb <- pure $ replaceMug jb (ssLastMug ss)
             (_, ss, fx) <- lift $ doJob serf jb
-            lift $ logTrace $ displayShow (jobId jb)
+            -- lift $ logTrace $ displayShow (jobId jb)
             yield (jobId jb, fx)
             go ss
 
