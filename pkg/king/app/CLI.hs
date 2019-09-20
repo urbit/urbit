@@ -68,7 +68,7 @@ data Cmd
     = CmdNew New Opts
     | CmdRun Run Opts
     | CmdBug Bug
-    | CmdCon Word16
+    | CmdCon
   deriving (Show)
 
 --------------------------------------------------------------------------------
@@ -271,13 +271,6 @@ bugCmd = fmap CmdBug
             $ progDesc "Parse all data in event log"
             )
 
-conCmd :: Parser Cmd
-conCmd = do
-    port <- argument auto ( metavar "PORT"
-                         <> help "Port of terminal server"
-                          )
-    pure (CmdCon port)
-
 allFx :: Parser Bug
 allFx = do
     bPierPath <- strArgument (metavar "PIER" <> help "Path to pier")
@@ -294,6 +287,6 @@ cmd = subparser
        <> command "bug" ( info (bugCmd <**> helper)
                         $ progDesc "Run a debugging sub-command."
                         )
-       <> command "con" ( info (conCmd <**> helper)
+       <> command "con" ( info (pure CmdCon <**> helper)
                         $ progDesc "Connect a terminal to a running urbit."
                         )

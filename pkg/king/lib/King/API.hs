@@ -1,4 +1,4 @@
-module King.API (kingAPI, readPortsFile) where
+module King.API where
 
 import UrbitPrelude
 import Data.Aeson
@@ -15,6 +15,31 @@ import qualified Network.Wai.Handler.Warp       as W
 import qualified Network.Wai.Handler.WebSockets as WS
 import qualified Network.WebSockets             as WS
 import qualified Urbit.Ob                       as Ob
+import qualified Vere.NounServ                  as NounServ
+
+
+--------------------------------------------------------------------------------
+
+data King = King
+    { kServer :: Async ()
+    }
+
+type TermAPI i o = TVar (Map Ship (NounServ.Conn i o -> STM ()))
+
+data ShipStatus = Halted | Booting | Booted | Running | LandscapeUp
+  deriving (Generic, ToJSON, FromJSON)
+
+data KingStatus = Starting | Started
+  deriving (Generic, ToJSON, FromJSON)
+
+data StatusResp = StatusResp
+    { king  :: KingStatus
+    , ships :: Map Text ShipStatus
+    }
+  deriving (Generic, ToJSON, FromJSON)
+
+data BadShip = BadShip Text
+  deriving (Show, Exception)
 
 
 --------------------------------------------------------------------------------
@@ -39,63 +64,52 @@ readPortsFile :: RIO e (Maybe Word)
 readPortsFile = do
     (_, fil) <- portsFilePath
     bs <- readFile fil
-    evaluate (read $ unpack $ decodeUtf8 bs)
+    evaluate (readMay $ unpack $ decodeUtf8 bs)
 
-data King = King
-    { kServer :: Async ()
-    }
-
-kingAPI :: HasLogFunc e => RAcquire e King
-kingAPI = do
-    (port, sock) <- io $ W.openFreePort
-    (dir, fil)   <- portsFile (fromIntegral port)
+kingAPI :: (HasLogFunc e, ToNoun o, FromNoun i)
+        => TermAPI i o -> RAcquire e King
+kingAPI api = do
+    (por, soc) <- io $ W.openFreePort
+    (dir, fil) <- portsFile (fromIntegral por)
     lockFile dir
-    kingServer (port, sock)
-
-kingServer :: HasLogFunc e => (Int, Socket) -> RAcquire e King
-kingServer is = mkRAcquire (startKing is) stopKing
+    mkRAcquire (startKing (por, soc) api) stopKing
 
 stopKing :: King -> RIO e ()
 stopKing = cancel . kServer
 
-startKing :: HasLogFunc e => (Int, Socket) -> RIO e King
-startKing (port, sock) = do
+startKing :: (HasLogFunc e, ToNoun o, FromNoun i)
+          => (Int, Socket) -> TermAPI i o
+          -> RIO e King
+startKing (port, sock) api = do
     let opts = W.defaultSettings & W.setPort port
 
-    tid <- async $ io
-                 $ W.runSettingsSocket opts sock
-                 $ app
+    env <- ask
+
+    tid <- async $ io $ W.runSettingsSocket opts sock $ app env api
 
     pure (King tid)
-
-data ShipStatus = Halted | Booting | Booted | Running | LandscapeUp
-  deriving (Generic, ToJSON, FromJSON)
-
-data KingStatus = Starting | Started
-  deriving (Generic, ToJSON, FromJSON)
-
-data StatusResp = StatusResp
-    { king  :: KingStatus
-    , ships :: Map Text ShipStatus
-    }
-  deriving (Generic, ToJSON, FromJSON)
-
 
 stubStatus :: StatusResp
 stubStatus = StatusResp Started $ mapFromList [("zod", Running)]
 
-serveTerminal :: Ship -> Word -> W.Application
-serveTerminal ship word =
-    WS.websocketsOr WS.defaultConnectionOptions placeholderWSApp fallback
+serveTerminal :: (HasLogFunc e, FromNoun i, ToNoun o)
+              => e -> TermAPI i o -> Ship -> Word -> W.Application
+serveTerminal env api ship word =
+    WS.websocketsOr WS.defaultConnectionOptions wsApp fallback
   where
     fallback req respond =
         respond $ W.responseLBS H.status500 [] "This endpoint uses websockets"
 
-placeholderWSApp :: WS.ServerApp
-placeholderWSApp _ = pure ()
-
-data BadShip = BadShip Text
-  deriving (Show, Exception)
+    wsApp pen =
+        atomically (lookup ship <$> readTVar api) >>= \case
+            Nothing -> WS.rejectRequest pen "Ship not running"
+            Just cb -> do
+                wsc <- io $ WS.acceptRequest pen
+                inp <- io $ newTBMChanIO 5
+                out <- io $ newTBMChanIO 5
+                atomically $ cb (NounServ.mkConn inp out)
+                runRIO env $
+                    NounServ.wsConn "NOUNSERV (wsServ) " inp out wsc
 
 readShip :: Text -> IO Ship
 readShip t = Ob.parsePatp t & \case
@@ -103,16 +117,16 @@ readShip t = Ob.parsePatp t & \case
      Right pp -> pure $ Ship $ fromIntegral $ Ob.fromPatp pp
 
 
-app :: W.Application
-app req respond =
+app :: (HasLogFunc e, FromNoun i, ToNoun o) => e -> TermAPI i o -> W.Application
+app env api req respond =
     case W.pathInfo req of
         ["terminal", ship] -> do
             ship <- readShip ship
-            serveTerminal ship 0 req respond
+            serveTerminal env api ship 0 req respond
         ["terminal", ship, session] -> do
             session :: Word <- evaluate $ read $ unpack session
             ship <- readShip ship
-            serveTerminal ship session req respond
+            serveTerminal env api ship session req respond
         ["status"] ->
             respond $ W.responseLBS H.status200 [] $ encode stubStatus
         _ ->

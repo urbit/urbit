@@ -25,6 +25,7 @@ import Vere.Term.API (Client(Client))
 
 import qualified Data.ByteString.Internal     as BS
 import qualified Data.ByteString.UTF8         as BS
+import qualified King.API                     as King
 import qualified System.Console.Terminal.Size as TSize
 import qualified System.Console.Terminfo.Base as T
 import qualified Vere.NounServ                as Serv
@@ -115,15 +116,16 @@ isTerminalBlit _         = True
         disconnect, so we just retry. This will probably waste CPU.
 -}
 termServer :: ∀e. HasLogFunc e
-           => RAcquire e (STM (Maybe Client), Port)
-termServer = fst <$> mkRAcquire start stop
+           => STM (Serv.Conn Belt [Term.Ev])
+           -> RAcquire e (STM (Maybe Client), Port)
+termServer getTerm = fst <$> mkRAcquire start stop
   where
     stop = cancel . snd
     start = do
         serv <- Serv.wsServer @Belt @[Term.Ev]
 
-        let getClient = do
-                Serv.sAccept serv <&> \case
+        let getClient =
+                (fmap Just getTerm <|> Serv.sAccept serv) <&> \case
                     Nothing -> Nothing
                     Just c  -> Just $ Client
                         { give = Serv.cSend c
@@ -155,11 +157,15 @@ connectToRemote port local = mkRAcquire start stop
 
         pure (ferry, cAsync)
 
-runTerminalClient :: ∀e. HasLogFunc e => Port -> RIO e ()
-runTerminalClient port = runRAcquire $ do
-    (tsize, local) <- localClient
-    (tid1, tid2) <- connectToRemote port local
-    atomically $ waitSTM tid1 <|> waitSTM tid2
+runTerminalClient :: ∀e. HasLogFunc e => RIO e ()
+runTerminalClient = runRAcquire $ do
+    por <- rio King.readPortsFile >>= \case
+               Nothing -> error "King not running"
+               Just po -> pure (po :: Word)
+
+    (siz, cli) <- localClient
+    (tid, sid) <- connectToRemote (fromIntegral por) cli
+    atomically $ waitSTM tid <|> waitSTM sid
   where
     runRAcquire :: RAcquire e () -> RIO e ()
     runRAcquire act = rwith act $ const $ pure ()

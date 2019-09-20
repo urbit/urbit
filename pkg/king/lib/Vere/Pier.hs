@@ -21,6 +21,7 @@ import Vere.Serf          (Serf, SerfState(..), doJob, sStderr)
 
 import RIO.Directory
 
+import qualified King.API                     as King
 import qualified System.Console.Terminal.Size as TSize
 import qualified System.Entropy               as Ent
 import qualified Urbit.Time                   as Time
@@ -139,16 +140,23 @@ acquireWorker :: RIO e () -> RAcquire e (Async ())
 acquireWorker act = mkRAcquire (async act) cancel
 
 pier :: ∀e. HasLogFunc e
-     => FilePath
+     => King.TermAPI Belt [Term.Ev]
+     -> Ship
+     -> FilePath
      -> Maybe Port
      -> (Serf e, EventLog, SerfState)
      -> RAcquire e ()
-pier pierPath mPort (serf, log, ss) = do
+pier termApi ship pierPath mPort (serf, log, ss) = do
     computeQ  <- newTQueueIO
     persistQ  <- newTQueueIO
     executeQ  <- newTQueueIO
     saveM     <- newEmptyTMVarIO
     shutdownM <- newEmptyTMVarIO
+
+    termApiQ <- atomically $ do
+        q <- newTQueue
+        modifyTVar' termApi $ insertMap ship $ writeTQueue q
+        pure q
 
     let shutdownEvent = putTMVar shutdownM ()
 
@@ -157,7 +165,7 @@ pier pierPath mPort (serf, log, ss) = do
     -- (sz, local) <- Term.localClient
     let sz = TSize.Window 80 24
 
-    (waitExternalTerm, termServPort) <- Term.termServer
+    (waitExternalTerm, termServPort) <- Term.termServer (readTQueue termApiQ)
 
     (demux, muxed) <- atomically $ do
         res <- Term.mkDemux

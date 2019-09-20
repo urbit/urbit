@@ -101,6 +101,7 @@ import Control.Lens         ((&))
 import Data.Default         (def)
 import KingApp              (runApp, runAppLogFile)
 import System.Environment   (getProgName)
+import System.Exit          (exitSuccess)
 import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
 import Text.Show.Pretty     (pPrint)
 import Urbit.Time           (Wen)
@@ -115,6 +116,7 @@ import qualified Vere.Log                    as Log
 import qualified Vere.Pier                   as Pier
 import qualified Vere.Serf                   as Serf
 import qualified Vere.Term                   as Term
+import qualified Vere.Term.API               as Term
 
 --------------------------------------------------------------------------------
 
@@ -153,14 +155,14 @@ runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
             => RAcquire e a -> m e a
 runRAcquire act = rwith act pure
 
-tryPlayShip :: HasLogFunc e => FilePath -> RIO e ()
-tryPlayShip shipPath = do
+tryPlayShip :: HasLogFunc e => FilePath -> King.TermAPI Belt [Term.Ev] -> RIO e ()
+tryPlayShip shipPath api = do
     runRAcquire $ do
         lockFile shipPath
         rio $ logTrace "RESUMING SHIP"
         sls <- Pier.resumed shipPath []
         rio $ logTrace "SHIP RESUMED"
-        Pier.pier shipPath Nothing sls
+        Pier.pier api zod shipPath Nothing sls
 
 tryResume :: HasLogFunc e => FilePath -> RIO e ()
 tryResume shipPath = do
@@ -318,8 +320,10 @@ newShip CLI.New{..} _ = do
   where
     pierPath = fromMaybe ("./" <> unpack nShipAddr) nPierPath
 
-runShip :: HasLogFunc e => CLI.Run -> CLI.Opts -> RIO e ()
-runShip (CLI.Run pierPath) _ = tryPlayShip pierPath
+runShip :: HasLogFunc e
+        => CLI.Run -> CLI.Opts -> King.TermAPI Belt [Term.Ev]
+        -> RIO e ()
+runShip (CLI.Run pierPath) _ api = tryPlayShip pierPath api
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
 startBrowser pierPath = runRAcquire $ do
@@ -336,27 +340,28 @@ main = do
 
     args <- CLI.parseArgs
 
-    let run = args & \case
-                CLI.CmdCon _ -> runAppLogFile
-                _            -> runApp
+    case args of
+        CLI.CmdCon -> runAppLogFile connTerm >> exitSuccess
+        _          -> pure ()
 
-    runApp $ rwith King.kingAPI $ \_ ->
+    termAPI <- newTVarIO mempty
+
+    runApp $ rwith (King.kingAPI termAPI) $ \_ ->
         args & \case
-            CLI.CmdRun r o                            -> runShip r o
+            CLI.CmdRun r o                            -> runShip r o termAPI
             CLI.CmdNew n o                            -> newShip n o
             CLI.CmdBug (CLI.CollectAllFX pax)         -> collectAllFx pax
             CLI.CmdBug (CLI.EventBrowser pax)         -> startBrowser pax
             CLI.CmdBug (CLI.ValidatePill pax pil seq) -> testPill pax pil seq
             CLI.CmdBug (CLI.ValidateEvents pax f l)   -> checkEvs pax f l
             CLI.CmdBug (CLI.ValidateFX pax f l)       -> checkFx  pax f l
-            CLI.CmdCon port                           -> connTerm port
+            CLI.CmdCon                                -> undefined
 
 
 --------------------------------------------------------------------------------
 
-connTerm :: ∀e. HasLogFunc e => Word16 -> RIO e ()
-connTerm port =
-    Term.runTerminalClient (fromIntegral port)
+connTerm :: ∀e. HasLogFunc e => RIO e ()
+connTerm = Term.runTerminalClient
 
 --------------------------------------------------------------------------------
 
