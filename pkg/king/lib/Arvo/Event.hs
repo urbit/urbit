@@ -45,7 +45,7 @@ type Public = (Life, NounMap Life Pass)
 data Dnses = Dnses { dPri::Cord, dSec::Cord, dTer::Cord }
   deriving (Eq, Ord, Show)
 
-type EthAddr = Bytes -- 20 bytes
+type EthAddr = Atom --Bytes -- 20 bytes
 type ContNum = Word
 
 data EthPoint = EthPoint
@@ -73,13 +73,12 @@ data Snap = Snap (NounMap Ship Public)
   deriving (Eq, Ord, Show)
 
 data Dawn = MkDawn
-    { dSeed :: Seed
-    , dShip :: Ship
-    , dCzar :: NounMap Ship (Rift, Life, Pass)
-    , dTurf :: [Turf]
-    , dBloq :: Bloq
-    , dNode :: (Maybe PUrl)
-    , dSnap :: (Maybe Snap)
+    { dSeed    :: Seed
+    , dSponsor :: EthPoint
+    , dCzar    :: NounMap Ship (Rift, Life, Pass)
+    , dTurf    :: [Turf]
+    , dBloq    :: Bloq
+    , dNode    :: (Maybe PUrl)
     }
   deriving (Eq, Ord, Show)
 

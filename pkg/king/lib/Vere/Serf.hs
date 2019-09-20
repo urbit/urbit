@@ -421,7 +421,7 @@ bootFromSeq serf (BootSeq ident nocks ovums) = do
         muckOvum ov  eId mug wen = DoWork $ Work eId mug wen ov
 
     bootMsg = "Booting " ++ (fakeStr (isFake ident)) ++
-              (Ob.render (Ob.patp (fromIntegral (who ident))))
+              (Ob.renderPatp (Ob.patp (fromIntegral (who ident))))
     fakeStr True  = "fake "
     fakeStr False = ""
 
