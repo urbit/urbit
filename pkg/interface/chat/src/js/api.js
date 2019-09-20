@@ -34,7 +34,7 @@ class UrbitApi {
   }
 
   hall(data) {
-    this.action("hall", "hall-action", data);
+    this.action("hall", "json", data);
   }
   
   addPendingMessage(data) {
