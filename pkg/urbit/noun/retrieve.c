@@ -248,130 +248,6 @@ _eq_pop(c3_ys mov, c3_ys off)
   return u3to(eqframe, u3R->cap_p + off);
 }
 
-/* _song_uni(): pick a unified pointer for identical (a) and (b).
-**
-**  Assumes exclusive access to noun memory.
-*/
-static void
-_song_uni(u3_noun* a, u3_noun* b)
-{
-  //  already unified, we're done
-  //
-  if ( *a == *b ) {
-    return;
-  }
-  else {
-    //  stash our road pointer
-    //
-    //    XX do we need signal exclusion to safely mutate u3R?
-    //
-    u3_road* rod_u = u3R;
-
-    while ( 1 ) {
-      //
-      //  we can't perform this kind of butchery on the home road,
-      //  where asynchronous things can allocate.
-      //
-      //    XX anything other than u3t_samp?
-      //
-      if ( u3R == &u3H->rod_u ) {
-        break;
-      }
-      else {
-        c3_o asr_o = u3a_is_senior(u3R, *a);
-        c3_o bsr_o = u3a_is_senior(u3R, *b);
-
-        //  both [a] and [b] are in a senior road
-        //
-        //    we can't switch to a senior road if GC is enabled,
-        //    as we may be forced to (temporarily) leak a reference.
-        //
-        if ( (c3y == asr_o) &&
-             (c3y == bsr_o) )
-        {
-          //
-          //  when unifying on a higher road, we can't free nouns,
-          //  because we can't track junior nouns that point into
-          //  that road.
-          //
-          //  this is just an implementation issue -- we could set use
-          //  counts to 0 without actually freeing.  but the allocator
-          //  would have to be actually designed for this.
-          //
-          //  not freeing may generate spurious leaks, so we disable
-          //  senior unification when debugging memory.  this will
-          //  cause a very slow boot process as the compiler compiles
-          //  itself, constantly running into duplicates.
-          //
-#ifdef U3_MEMORY_DEBUG
-          break;
-#else
-          u3R = u3to(u3_road, u3R->par_p);
-          continue;
-#endif
-        }
-        else {
-          //  if we're on our road, we can free
-          //
-          //    it's safe to leak on inner roads;
-          //    memory will be reclaimed when we return home.
-          //
-          //    XX we should stash [b] on its road and lose it
-          //    when return to that road.
-          //
-          c3_t loc_t = ( u3R == rod_u );
-
-          //  keep [a]; it's senior
-          //
-          if ( (c3y == asr_o) &&
-               (c3n == bsr_o) )
-          {
-            if ( loc_t ) { u3z(*b); }
-            *b = *a;
-          }
-          //  keep [b]; it's senior
-          //
-          else if ( (c3n == asr_o) &&
-                    (c3y == bsr_o) )
-          {
-            if ( loc_t ) { u3z(*a); }
-            *a = *b;
-          }
-          //  both are on the current road; gain a reference
-          //  to whichever we keep
-          //
-          else {
-            //  keep [a]; it's deeper in the heap
-            //
-            //    (N && >) || (S && <)
-            //
-            if ( (*a > *b) ==
-                 (c3y == u3a_is_north(u3R)) )
-            {
-              u3k(*a);
-              if ( loc_t ) { u3z(*b); }
-              *b = *a;
-            }
-            //  keep [b]; it's deeper in the heap
-            //
-            else {
-              u3k(*b);
-              if ( loc_t ) { u3z(*a); }
-              *a = *b;
-            }
-          }
-        }
-
-        break;
-      }
-    }
-
-    //  restore our road pointer
-    //
-    u3R = rod_u;
-  }
-}
-
 /* _song_atom(): check if atom [a] is indirect and equal to noun [b]
 */
 static inline c3_o
@@ -477,7 +353,7 @@ _song_x_cape(c3_ys mov, c3_ys off,
       case SONG_HEAD:
         a_u = u3a_to_ptr(a);
         b_u = u3a_to_ptr(b);
-        _song_uni(&(a_u->hed), &(b_u->hed));
+        u3a_wed(&(a_u->hed), &(b_u->hed));
         fam->sat_y = SONG_TAIL;
         fam = _eq_push(mov, off, a_u->tel, b_u->tel);
         continue;
@@ -485,7 +361,7 @@ _song_x_cape(c3_ys mov, c3_ys off,
       case SONG_TAIL:
         a_u = u3a_to_ptr(a);
         b_u = u3a_to_ptr(b);
-        _song_uni(&(a_u->tel), &(b_u->tel));
+        u3a_wed(&(a_u->tel), &(b_u->tel));
         break;
 
       default:
@@ -564,7 +440,7 @@ _song_x(u3_noun a, u3_noun b)
       case SONG_HEAD:
         a_u = u3a_to_ptr(a);
         b_u = u3a_to_ptr(b);
-        _song_uni(&(a_u->hed), &(b_u->hed));
+        u3a_wed(&(a_u->hed), &(b_u->hed));
         fam->sat_y = SONG_TAIL;
         fam = _eq_push(mov, off, a_u->tel, b_u->tel);
         continue;
@@ -572,7 +448,7 @@ _song_x(u3_noun a, u3_noun b)
       case SONG_TAIL:
         a_u = u3a_to_ptr(a);
         b_u = u3a_to_ptr(b);
-        _song_uni(&(a_u->tel), &(b_u->tel));
+        u3a_wed(&(a_u->tel), &(b_u->tel));
         break;
 
       default:

@@ -387,6 +387,11 @@
           c3_w
           u3a_use(u3_noun som);
 
+        /* u3a_wed(): unify noun references.
+        */
+          void
+          u3a_wed(u3_noun* a, u3_noun* b);
+
         /* u3a_luse(): check refcount sanity.
         */
           void
