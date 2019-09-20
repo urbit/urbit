@@ -11,7 +11,7 @@ A personal server operating function.
 [azim]: https://etherscan.io/address/0x223c067f8cf28ae173ee5cafea60ca44c335fecb
 [aens]: https://etherscan.io/address/azimuth.eth
 [brid]: https://github.com/urbit/bridge/releases
-[arvo]: https://github.com/urbit/arvo/
+[arvo]: https://github.com/urbit/urbit/tree/master/pkg/arvo
 
 ## Install
 
