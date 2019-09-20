@@ -124,13 +124,6 @@
         u3_weak
         u3h_git(u3p(u3h_root) har_p, u3_noun key);
 
-      /* u3h_gut(): read from hashtable, unifying key nouns.
-      **
-      ** `key` is RETAINED.
-      */
-        u3_weak
-        u3h_gut(u3p(u3h_root) har_p, u3_noun key);
-
       /* u3h_trim_to(): trim to n key-value pairs
       */
         void
