@@ -90,6 +90,16 @@
         u3p(struct _u3a_fbox) nex_p;
       } u3a_fbox;
 
+    /* u3a_jets: jet dashboard
+    */
+      typedef struct _u3a_jets {
+        u3p(u3h_root) hot_p;                  //  hot state (home road only)
+        u3p(u3h_root) war_p;                  //  warm state
+        u3p(u3h_root) cod_p;                  //  cold state
+        u3p(u3h_root) han_p;                  //  hank cache
+        u3p(u3h_root) bas_p;                  //  battery hashes
+      } u3a_jets;
+
     /* u3a_road: contiguous allocation and execution context.
     */
       typedef struct _u3a_road {
@@ -123,13 +133,7 @@
           c3_w max_w;                         //  maximum allocated
         } all;
 
-        struct {                              //  jet dashboard
-          u3p(u3h_root) hot_p;                //  hot state (home road only)
-          u3p(u3h_root) war_p;                //  warm state
-          u3p(u3h_root) cod_p;                //  cold state
-          u3p(u3h_root) han_p;                //  hank cache
-          u3p(u3h_root) bas_p;                //  battery hashes
-        } jed;
+        u3a_jets jed;                         //  jet dashboard
 
         struct {                              // bytecode state
           u3p(u3h_root) har_p;                // formula->post of bytecode
