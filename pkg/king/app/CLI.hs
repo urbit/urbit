@@ -7,8 +7,12 @@ import ClassyPrelude
 import Options.Applicative
 import Options.Applicative.Help.Pretty
 
+import Control.Lens       ((&))
 import Data.Word          (Word16)
+import Noun               (Ship(Ship))
 import System.Environment (getProgName)
+
+import qualified Urbit.Ob as Ob
 
 --------------------------------------------------------------------------------
 
@@ -68,7 +72,7 @@ data Cmd
     = CmdNew New Opts
     | CmdRun Run Opts
     | CmdBug Bug
-    | CmdCon
+    | CmdCon Ship
   deriving (Show)
 
 --------------------------------------------------------------------------------
@@ -276,6 +280,18 @@ allFx = do
     bPierPath <- strArgument (metavar "PIER" <> help "Path to pier")
     pure CollectAllFX{..}
 
+conCmd :: Parser Cmd
+conCmd = do
+    ship <- strArgument $ metavar "SHIP"
+                       <> help "Ship address"
+
+    pure (CmdCon (readShipErr ship))
+
+readShipErr :: Text -> Ship
+readShipErr t = Ob.parsePatp t & \case
+     Left err -> error $ unpack $ "Bad ship: " <> t <> " (" <> err <> ")"
+     Right pp -> Ship $ fromIntegral $ Ob.fromPatp pp
+
 cmd :: Parser Cmd
 cmd = subparser
         $ command "new" ( info (newShip <**> helper)
@@ -287,6 +303,6 @@ cmd = subparser
        <> command "bug" ( info (bugCmd <**> helper)
                         $ progDesc "Run a debugging sub-command."
                         )
-       <> command "con" ( info (pure CmdCon <**> helper)
+       <> command "con" ( info (conCmd <**> helper)
                         $ progDesc "Connect a terminal to a running urbit."
                         )

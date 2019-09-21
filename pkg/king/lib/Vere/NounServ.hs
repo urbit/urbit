@@ -80,8 +80,8 @@ wsConn pre inp out wsc = do
 --------------------------------------------------------------------------------
 
 wsClient :: ∀i o e. (ToNoun o, FromNoun i, HasLogFunc e)
-         => W.Port -> RIO e (Client i o)
-wsClient por = do
+         => Text -> W.Port -> RIO e (Client i o)
+wsClient pax por = do
     env <- ask
     inp <- io $ newTBMChanIO 5
     out <- io $ newTBMChanIO 5
@@ -90,7 +90,7 @@ wsClient por = do
     logDebug "NOUNSERV (wsClie) Trying to connect"
 
     tid <- io $ async
-              $ WS.runClient "127.0.0.1" por "/terminal/zod"
+              $ WS.runClient "127.0.0.1" por (unpack pax)
               $ runRIO env . wsConn "NOUNSERV (wsClie) " inp out
 
     pure $ Client con tid
@@ -141,7 +141,7 @@ testIt = do
     logTrace "(testIt) Starting Server"
     Server{..} <- wsServer @Example @Example
     logTrace "(testIt) Connecting"
-    Client{..} <- wsClient @Example @Example sData
+    Client{..} <- wsClient @Example @Example "/" sData
 
     logTrace "(testIt) Accepting connection"
     sConn <- fromJust "accept" =<< atomically sAccept

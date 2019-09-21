@@ -3,7 +3,7 @@ module Vere.Term
     , localClient
     , connectToRemote
     , runTerminalClient
-    , termServer
+    , connClient
     , term
     ) where
 
@@ -28,6 +28,7 @@ import qualified Data.ByteString.UTF8         as BS
 import qualified King.API                     as King
 import qualified System.Console.Terminal.Size as TSize
 import qualified System.Console.Terminfo.Base as T
+import qualified Urbit.Ob                     as Ob
 import qualified Vere.NounServ                as Serv
 import qualified Vere.Term.API                as Term
 
@@ -115,38 +116,31 @@ isTerminalBlit _         = True
     TODO XX HACK: We don't have any good way of handling client
         disconnect, so we just retry. This will probably waste CPU.
 -}
-termServer :: ∀e. HasLogFunc e
-           => STM (Serv.Conn Belt [Term.Ev])
-           -> RAcquire e (STM (Maybe Client), Port)
-termServer getTerm = fst <$> mkRAcquire start stop
+connClient :: Serv.Conn Belt [Term.Ev] -> Client
+connClient c = Client
+    { give = Serv.cSend c
+    , take = Serv.cRecv c >>= \case
+                 Nothing -> empty
+                 Just ev -> pure ev
+    }
+
+shipToText :: Ship -> Text
+shipToText (Ship w) = trim $ Ob.renderPatp $ Ob.patp $ fromIntegral w
   where
-    stop = cancel . snd
-    start = do
-        serv <- Serv.wsServer @Belt @[Term.Ev]
-
-        let getClient =
-                (fmap Just getTerm <|> Serv.sAccept serv) <&> \case
-                    Nothing -> Nothing
-                    Just c  -> Just $ Client
-                        { give = Serv.cSend c
-                        , take = Serv.cRecv c >>= \case
-                                     Nothing -> empty
-                                     Just ev -> pure ev
-                        }
-
-        pure ( (getClient, Port $ fromIntegral $ Serv.sData serv)
-             , Serv.sAsync serv
-             )
+    trim = drop 1
 
 connectToRemote :: ∀e. HasLogFunc e
-                => Port
+                => Ship
+                -> Port
                 -> Client
                 -> RAcquire e (Async (), Async ())
-connectToRemote port local = mkRAcquire start stop
+connectToRemote ship port local = mkRAcquire start stop
   where
     stop (x, y) = cancel x >> cancel y
     start = do
-        Serv.Client{..} <- Serv.wsClient (fromIntegral port)
+        let pax = "/terminal/" <> shipToText ship
+
+        Serv.Client{..} <- Serv.wsClient pax (fromIntegral port)
 
         ferry <- async $ forever $ atomically $ asum
             [ Term.take local >>= Serv.cSend cConn
@@ -157,14 +151,14 @@ connectToRemote port local = mkRAcquire start stop
 
         pure (ferry, cAsync)
 
-runTerminalClient :: ∀e. HasLogFunc e => RIO e ()
-runTerminalClient = runRAcquire $ do
-    por <- rio King.readPortsFile >>= \case
-               Nothing -> error "King not running"
-               Just po -> pure (po :: Word)
+runTerminalClient :: ∀e. HasLogFunc e => Ship -> RIO e ()
+runTerminalClient ship = runRAcquire $ do
+    por <- rio $ King.readPortsFile >>= \case
+                     Nothing -> error "King not running"
+                     Just po -> pure (po :: Word)
 
     (siz, cli) <- localClient
-    (tid, sid) <- connectToRemote (fromIntegral por) cli
+    (tid, sid) <- connectToRemote ship (fromIntegral por) cli
     atomically $ waitSTM tid <|> waitSTM sid
   where
     runRAcquire :: RAcquire e () -> RIO e ()

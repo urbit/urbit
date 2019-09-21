@@ -162,31 +162,18 @@ pier termApi ship pierPath mPort (serf, log, ss) = do
 
     inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
-    -- (sz, local) <- Term.localClient
     let sz = TSize.Window 80 24
-
-    (waitExternalTerm, termServPort) <- Term.termServer (readTQueue termApiQ)
 
     (demux, muxed) <- atomically $ do
         res <- Term.mkDemux
-        -- Term.addDemux local res
         pure (res, Term.useDemux res)
 
-    rio $ logInfo $ display $
-        "TERMSERV Terminal Server running on port: " <> tshow termServPort
-
-    let listenLoop = do
-            logTrace "TERMSERV Waiting for external terminal."
-            ok <- atomically $ do
-                waitExternalTerm >>= \case
-                    Nothing  -> pure False
-                    Just ext -> Term.addDemux ext demux >> pure True
-            if ok
-               then do logTrace "TERMSERV External terminal connected"
-                       listenLoop
-               else logTrace "TERMSERV Termainal server is dead"
-
-    acquireWorker listenLoop
+    acquireWorker $ forever $ do
+        logTrace "TERMSERV Waiting for external terminal."
+        atomically $ do
+            ext <- Term.connClient <$> readTQueue termApiQ
+            Term.addDemux ext demux
+        logTrace "TERMSERV External terminal connected."
 
     swapMVar (sStderr serf) (atomically . Term.trace muxed)
 

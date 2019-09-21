@@ -343,7 +343,7 @@ main = do
     let dem x = runApp $ rwith (King.kingAPI termAPI) $ \_ -> x
 
     case args of
-        CLI.CmdCon                                -> runAppLogFile connTerm
+        CLI.CmdCon s                              -> runAppLogFile (connTerm s)
         CLI.CmdRun r o                            -> dem $ runShip r o termAPI
         CLI.CmdNew n o                            -> dem $ newShip n o
         CLI.CmdBug (CLI.CollectAllFX pax)         -> dem $ collectAllFx pax
@@ -355,7 +355,7 @@ main = do
 
 --------------------------------------------------------------------------------
 
-connTerm :: ∀e. HasLogFunc e => RIO e ()
+connTerm :: ∀e. HasLogFunc e => Ship -> RIO e ()
 connTerm = Term.runTerminalClient
 
 --------------------------------------------------------------------------------

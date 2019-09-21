@@ -120,7 +120,6 @@ readShip t = Ob.parsePatp t & \case
      Left err -> throwIO (BadShip t)
      Right pp -> pure $ Ship $ fromIntegral $ Ob.fromPatp pp
 
-
 app :: HasLogFunc e => e -> FleetCtl -> W.Application
 app env api req respond =
     case W.pathInfo req of
