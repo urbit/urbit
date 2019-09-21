@@ -155,7 +155,7 @@ runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
             => RAcquire e a -> m e a
 runRAcquire act = rwith act pure
 
-tryPlayShip :: HasLogFunc e => FilePath -> King.TermAPI Belt [Term.Ev] -> RIO e ()
+tryPlayShip :: HasLogFunc e => FilePath -> King.FleetCtl -> RIO e ()
 tryPlayShip shipPath api = do
     runRAcquire $ do
         lockFile shipPath
@@ -320,9 +320,7 @@ newShip CLI.New{..} _ = do
   where
     pierPath = fromMaybe ("./" <> unpack nShipAddr) nPierPath
 
-runShip :: HasLogFunc e
-        => CLI.Run -> CLI.Opts -> King.TermAPI Belt [Term.Ev]
-        -> RIO e ()
+runShip :: HasLogFunc e => CLI.Run -> CLI.Opts -> King.FleetCtl -> RIO e ()
 runShip (CLI.Run pierPath) _ api = tryPlayShip pierPath api
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
@@ -340,22 +338,19 @@ main = do
 
     args <- CLI.parseArgs
 
-    case args of
-        CLI.CmdCon -> runAppLogFile connTerm >> exitSuccess
-        _          -> pure ()
-
     termAPI <- newTVarIO mempty
 
-    runApp $ rwith (King.kingAPI termAPI) $ \_ ->
-        args & \case
-            CLI.CmdRun r o                            -> runShip r o termAPI
-            CLI.CmdNew n o                            -> newShip n o
-            CLI.CmdBug (CLI.CollectAllFX pax)         -> collectAllFx pax
-            CLI.CmdBug (CLI.EventBrowser pax)         -> startBrowser pax
-            CLI.CmdBug (CLI.ValidatePill pax pil seq) -> testPill pax pil seq
-            CLI.CmdBug (CLI.ValidateEvents pax f l)   -> checkEvs pax f l
-            CLI.CmdBug (CLI.ValidateFX pax f l)       -> checkFx  pax f l
-            CLI.CmdCon                                -> undefined
+    let dem x = runApp $ rwith (King.kingAPI termAPI) $ \_ -> x
+
+    case args of
+        CLI.CmdCon                                -> runAppLogFile connTerm
+        CLI.CmdRun r o                            -> dem $ runShip r o termAPI
+        CLI.CmdNew n o                            -> dem $ newShip n o
+        CLI.CmdBug (CLI.CollectAllFX pax)         -> dem $ collectAllFx pax
+        CLI.CmdBug (CLI.EventBrowser pax)         -> dem $ startBrowser pax
+        CLI.CmdBug (CLI.ValidatePill pax pil seq) -> dem $ testPill pax pil seq
+        CLI.CmdBug (CLI.ValidateEvents pax f l)   -> dem $ checkEvs pax f l
+        CLI.CmdBug (CLI.ValidateFX pax f l)       -> dem $ checkFx  pax f l
 
 
 --------------------------------------------------------------------------------

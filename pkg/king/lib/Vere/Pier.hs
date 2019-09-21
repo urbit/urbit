@@ -140,7 +140,7 @@ acquireWorker :: RIO e () -> RAcquire e (Async ())
 acquireWorker act = mkRAcquire (async act) cancel
 
 pier :: ∀e. HasLogFunc e
-     => King.TermAPI Belt [Term.Ev]
+     => King.FleetCtl
      -> Ship
      -> FilePath
      -> Maybe Port
@@ -155,7 +155,7 @@ pier termApi ship pierPath mPort (serf, log, ss) = do
 
     termApiQ <- atomically $ do
         q <- newTQueue
-        modifyTVar' termApi $ insertMap ship $ writeTQueue q
+        modifyTVar' termApi $ insertMap ship $ King.ShipCtl $ writeTQueue q
         pure q
 
     let shutdownEvent = putTMVar shutdownM ()

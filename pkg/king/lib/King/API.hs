@@ -4,7 +4,7 @@ import UrbitPrelude
 import Data.Aeson
 import RIO.Directory
 
-
+import Arvo           (Belt)
 import Network.Socket (Socket)
 import Prelude        (read)
 import Vere.LockFile  (lockFile)
@@ -16,6 +16,7 @@ import qualified Network.Wai.Handler.WebSockets as WS
 import qualified Network.WebSockets             as WS
 import qualified Urbit.Ob                       as Ob
 import qualified Vere.NounServ                  as NounServ
+import qualified Vere.Term.API                  as Term
 
 
 --------------------------------------------------------------------------------
@@ -24,7 +25,13 @@ data King = King
     { kServer :: Async ()
     }
 
-type TermAPI i o = TVar (Map Ship (NounServ.Conn i o -> STM ()))
+type TermConn = NounServ.Conn Belt [Term.Ev]
+
+data ShipCtl = ShipCtl
+  { scTerm :: TermConn -> STM ()
+  }
+
+type FleetCtl = TVar (Map Ship ShipCtl)
 
 data ShipStatus = Halted | Booting | Booted | Running | LandscapeUp
   deriving (Generic, ToJSON, FromJSON)
@@ -66,8 +73,7 @@ readPortsFile = do
     bs <- readFile fil
     evaluate (readMay $ unpack $ decodeUtf8 bs)
 
-kingAPI :: (HasLogFunc e, ToNoun o, FromNoun i)
-        => TermAPI i o -> RAcquire e King
+kingAPI :: HasLogFunc e => FleetCtl -> RAcquire e King
 kingAPI api = do
     (por, soc) <- io $ W.openFreePort
     (dir, fil) <- portsFile (fromIntegral por)
@@ -77,9 +83,7 @@ kingAPI api = do
 stopKing :: King -> RIO e ()
 stopKing = cancel . kServer
 
-startKing :: (HasLogFunc e, ToNoun o, FromNoun i)
-          => (Int, Socket) -> TermAPI i o
-          -> RIO e King
+startKing :: HasLogFunc e => (Int, Socket) -> FleetCtl -> RIO e King
 startKing (port, sock) api = do
     let opts = W.defaultSettings & W.setPort port
 
@@ -92,8 +96,8 @@ startKing (port, sock) api = do
 stubStatus :: StatusResp
 stubStatus = StatusResp Started $ mapFromList [("zod", Running)]
 
-serveTerminal :: (HasLogFunc e, FromNoun i, ToNoun o)
-              => e -> TermAPI i o -> Ship -> Word -> W.Application
+serveTerminal :: HasLogFunc e
+              => e -> FleetCtl -> Ship -> Word -> W.Application
 serveTerminal env api ship word =
     WS.websocketsOr WS.defaultConnectionOptions wsApp fallback
   where
@@ -103,11 +107,11 @@ serveTerminal env api ship word =
     wsApp pen =
         atomically (lookup ship <$> readTVar api) >>= \case
             Nothing -> WS.rejectRequest pen "Ship not running"
-            Just cb -> do
+            Just sp -> do
                 wsc <- io $ WS.acceptRequest pen
                 inp <- io $ newTBMChanIO 5
                 out <- io $ newTBMChanIO 5
-                atomically $ cb (NounServ.mkConn inp out)
+                atomically $ scTerm sp (NounServ.mkConn inp out)
                 runRIO env $
                     NounServ.wsConn "NOUNSERV (wsServ) " inp out wsc
 
@@ -117,7 +121,7 @@ readShip t = Ob.parsePatp t & \case
      Right pp -> pure $ Ship $ fromIntegral $ Ob.fromPatp pp
 
 
-app :: (HasLogFunc e, FromNoun i, ToNoun o) => e -> TermAPI i o -> W.Application
+app :: HasLogFunc e => e -> FleetCtl -> W.Application
 app env api req respond =
     case W.pathInfo req of
         ["terminal", ship] -> do
