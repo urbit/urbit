@@ -5,6 +5,7 @@ import ClassyPrelude
 import Bound
 import Control.Monad.Writer
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
+import qualified Data.Function as F
 import Data.List (elemIndex)
 import Data.Maybe (fromJust)
 import qualified Data.Set as Set
@@ -26,33 +27,20 @@ data Exp a
   | Eql (Exp a) (Exp a)
   | Ift (Exp a) (Exp a) (Exp a)
   | Let (Exp a) (Scope () Exp a)
+  -- Really should be Set a (Exp a) (Exp a), but making that work would require
+  -- something like
+  -- https://github.com/ekmett/bound/blob/master/examples/Imperative.hs
+  -- and I really really can't be bothered right now.
+  | Set (Exp a) (Exp a) (Exp a)
   | Jet Atom (Exp a)
+  | Fix (Scope () Exp a)
   deriving (Functor, Foldable, Traversable)
-
-instance Applicative Exp where
-  pure = Var
-  (<*>) = ap
-
-instance Monad Exp where
-  return = Var
-  Var a >>= f = f a
-  App x y >>= f = App (x >>= f) (y >>= f)
-  Lam s >>= f = Lam (s >>>= f)
-  -- interesting: x@Atm{} doesn't work
-  Atm a >>= f = Atm a
-  Cel x y >>= f = Cel (x >>= f) (y >>= f)
-  IsC x >>= f = IsC (x >>= f)
-  Suc x >>= f = Suc (x >>= f)
-  Eql x y >>= f = Eql (x >>= f) (y >>= f)
-  Ift x y z >>= f = Ift (x >>= f) (y >>= f) (z >>= f)
-  Let x s >>= f = Let (x >>=f) (s >>>= f)
-  Jet a x >>= f = Jet a (x >>= f)
 
 deriveEq1   ''Exp
 deriveOrd1  ''Exp
 deriveRead1 ''Exp
 deriveShow1 ''Exp
---makeBound   ''Exp
+makeBound   ''Exp
 
 deriving instance Eq a => Eq (Exp a)
 deriving instance Ord a => Ord (Exp a)
@@ -62,7 +50,16 @@ deriving instance Show a => Show (Exp a)
 lam :: Eq a => a -> Exp a -> Exp a
 lam v e = Lam (abstract1 v e)
 
-eval :: Exp a -> Exp a
+ledt :: Eq a => a -> Exp a -> Exp a -> Exp a
+ledt v e f = Let e (abstract1 v f)
+
+set :: a -> Exp a -> Exp a -> Exp a
+set v e f = Set (Var v) e f
+
+fix :: Eq a => a -> Exp a -> Exp a
+fix v e = Fix (abstract1 v e)
+
+eval :: (Eq a) => Exp a -> Exp a
 eval = \case
   e@Var{} -> e
   e@Lam{} -> e
@@ -85,7 +82,9 @@ eval = \case
     Atm 1 -> eval f
     _ -> error "eval: not a boolean"
   (Let e s) -> instantiate1 (eval e) s
+  (Set _ _ _) -> error "eval: Set: FIXME not sure"
   Jet _ e -> eval e
+  Fix s -> F.fix (flip instantiate1 s)  -- Who knows, it may even work!
 
 -- 6, 30, 126, 510, ...
 oldDeBruijn :: Nat -> Axis
@@ -143,7 +142,10 @@ old = go \v -> error "old: free variable"
           env' = \case
             B () -> [L]
             F v  -> R : env v
-      Jet{}     -> error "Old-style jetting not supported"
+      Set e f g -> case e of
+        Var v -> N10 (toAxis (env v), go env f) (go env g)
+      Jet{}     -> error "old: Old-style jetting not supported"
+      Fix{}     -> error "old: This convention doesn't use fix"
 
     app ef ff =
       N8
@@ -169,7 +171,9 @@ data CExp a
   | CEql (CExp a) (CExp a)
   | CIft (CExp a) (CExp a) (CExp a)
   | CLet (CExp a) (CExp (Var () a))
+  | CSet a (CExp a) (CExp a)
   | CJet Atom (CExp a)
+  | CFix (CExp (Var () a))
   deriving (Functor, Foldable, Traversable)
 
 deriveEq1   ''CExp
@@ -195,11 +199,19 @@ toCopy = fst . runWriter . go \v -> error "toCopy: free variable"
       Suc e     -> CSuc <$> go env e
       Eql e f   -> CEql <$> go env e <*> go env f
       Ift e t f -> CIft <$> go env e <*> go env t <*> go env f
+      Set e f g -> case e of
+        Var v -> do
+          tell (singleton v)
+          cf <- go env f
+          cg <- go env g
+          pure (CSet (env v) cf cg)
+        _ -> error "toCopy: duuude that's not how you set things"
       Jet a e   -> CJet a <$> go env e
       Let e s   -> do
         ce <- go env e
         cf <- retcon removeBound (go (fmap env) (fromScope s))
         pure (CLet ce cf)
+      Fix s     -> CFix <$> retcon removeBound (go (fmap env) (fromScope s))
       Lam s -> writer (CLam (map env $ toList usedLexicals) ce, usedLexicals)
         where
           (ce, usedVars) = runWriter $ go env' $ fromScope s
@@ -225,6 +237,7 @@ mapMaybeSet f = setFromList . mapMaybe f . toList
 --   - store the copied values in a tree rather than list
 --   - avoid a nock 8 if nothing is copied
 --   - a "quote and unquote" framework for nock code generation (maybe)
+--   - something about error messages when a variable is set but then not read
 copyToNock :: CExp a -> Nock
 copyToNock = go \v -> error "copyToNock: free variable"
   where
@@ -240,6 +253,7 @@ copyToNock = go \v -> error "copyToNock: free variable"
       CEql e f -> N5 (go env e) (go env f)
       CIft e t f -> N6 (go env e) (go env t) (go env f)
       CJet a e -> jet a (go env e)
+      CSet v e f -> N10 (toAxis (env v), go env e) (go env f)
       CLet e f -> N8 (go env e) (go env' f)
         where
           env' = \case
@@ -250,6 +264,11 @@ copyToNock = go \v -> error "copyToNock: free variable"
           env' = \case
             B () -> [R]
             F i  -> L : replicate i R ++ [L]
+      CFix e -> N8 (go env' e) (N2 (N0 1) (N0 2))
+        where
+          env' = \case
+            B () -> [L]
+            F v  -> R : env v
 
     jet a ef =
       NC
