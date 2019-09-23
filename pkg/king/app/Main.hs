@@ -90,6 +90,7 @@ import Data.Conduit
 import Data.Conduit.List hiding (replicate, take)
 import Data.RAcquire
 import Noun              hiding (Parser)
+import Noun.Atom
 import RIO.Directory
 import Vere.Pier
 import Vere.Pier.Types
@@ -109,6 +110,7 @@ import Vere.LockFile        (lockFile)
 
 import qualified CLI                         as CLI
 import qualified Data.Set                    as Set
+import qualified Data.Text                   as T
 import qualified EventBrowser                as EventBrowser
 import qualified System.IO.LockFile.Internal as Lock
 import qualified Vere.Log                    as Log
@@ -327,9 +329,25 @@ startBrowser pierPath = runRAcquire $ do
     log <- Log.existing (pierPath <> "/.urb/log")
     rio $ EventBrowser.run log
 
-checkDawn :: HasLogFunc e => RIO e ()
-checkDawn = do
-  e <- dawnVent (Seed (Ship 0) 1 (fromIntegral 1) Nothing)
+cordToUW :: Cord -> Maybe UW
+cordToUW = fromNoun . toNoun
+
+checkDawn :: HasLogFunc e => FilePath -> RIO e ()
+checkDawn keyfilePath = do
+  -- The keyfile is a jammed Seed then rendered in UW format
+  text <- readFileUtf8 keyfilePath
+  asAtom <- case cordToUW (Cord $ T.strip text) of
+    Nothing -> error "Couldn't parse keyfile. Hint: keyfiles start with 0w?"
+    Just (UW a) -> pure a
+
+  asNoun <- cueExn asAtom
+  seed :: Seed <- case fromNoun asNoun of
+    Nothing -> error "Keyfile does not seem to contain a seed."
+    Just s  -> pure s
+
+  print $ show seed
+
+  e <- dawnVent seed
   case e of
     Left x  -> putStrLn "Left"
     Right y -> putStrLn "Right"
@@ -350,7 +368,7 @@ main = do
         CLI.CmdBug (CLI.ValidatePill pax pil seq) -> testPill pax pil seq
         CLI.CmdBug (CLI.ValidateEvents pax f l)   -> checkEvs pax f l
         CLI.CmdBug (CLI.ValidateFX pax f l)       -> checkFx  pax f l
-        CLI.CmdBug CLI.CheckDawn                  -> checkDawn
+        CLI.CmdBug (CLI.CheckDawn pax)            -> checkDawn pax
         CLI.CmdCon port                           -> connTerm port
 
 

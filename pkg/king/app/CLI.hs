@@ -63,6 +63,8 @@ data Bug
         , bFinalEvt :: Word64
         }
     | CheckDawn
+        { bKeyfilePath :: FilePath
+        }
   deriving (Show)
 
 data Cmd
@@ -227,6 +229,9 @@ valPill = do
 pierPath :: Parser FilePath
 pierPath = strArgument (metavar "PIER" <> help "Path to pier")
 
+keyfilePath :: Parser FilePath
+keyfilePath = strArgument (metavar "KEYFILE" <> help "Path to key file")
+
 firstEv :: Parser Word64
 firstEv = option auto $ long "first"
                      <> metavar "FST"
@@ -249,7 +254,7 @@ browseEvs :: Parser Bug
 browseEvs = EventBrowser <$> pierPath
 
 checkDawn :: Parser Bug
-checkDawn = pure CheckDawn
+checkDawn = CheckDawn <$> keyfilePath
 
 bugCmd :: Parser Cmd
 bugCmd = fmap CmdBug
