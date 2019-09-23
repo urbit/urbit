@@ -2,20 +2,21 @@ module Main (main) where
 
 import ClassyPrelude
 
+import RIO.Directory
 import Test.QuickCheck       hiding ((.&.))
 import Test.Tasty
 import Test.Tasty.QuickCheck
 import Test.Tasty.TH
-import RIO.Directory
 
-import System.Environment (setEnv)
 import Control.Concurrent (runInBoundThread)
+import System.Environment (setEnv)
 
-import qualified LogTests
-import qualified DeriveNounTests
-import qualified ArvoTests
 import qualified AmesTests
+import qualified ArvoTests
 import qualified BehnTests
+import qualified DeriveNounTests
+import qualified LogTests
+import qualified NounConversionTests
 
 main :: IO ()
 main = do
@@ -27,4 +28,5 @@ main = do
         , AmesTests.tests
         , LogTests.tests
         , BehnTests.tests
+        , NounConversionTests.tests
         ]
