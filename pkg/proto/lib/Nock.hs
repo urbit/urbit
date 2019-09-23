@@ -26,9 +26,6 @@ data Hint = Tag Atom
           | Assoc Atom Nock
   deriving (Eq, Ord, Read, Show, Generic)
 
-pattern FastAtom = 9999
-pattern FastHint id = Assoc FastAtom (N1 (A id))
-
 instance Hashable Nock
 instance Hashable Hint
 
@@ -87,7 +84,9 @@ nock n = \case
   N2 sf ff -> do
     s <- nock n sf
     f <- nock n ff
-    nock s (nounToNock f)
+    match f >>= \case
+      Just jet -> pure (jet s)
+      Nothing  -> nock s (nounToNock f)
   N3 f -> nock n f <&> \case
     C{} -> yes
     A{} -> no

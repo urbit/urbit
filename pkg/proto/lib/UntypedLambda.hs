@@ -11,6 +11,7 @@ import Data.Maybe (fromJust)
 import qualified Data.Set as Set
 import Data.Void
 
+import Dashboard (pattern FastAtom)
 import Nock
 import Noun
 
