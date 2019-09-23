@@ -185,27 +185,27 @@
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-kiln-bad-mark mark] !!)
-    %kiln-commit             =;(f (f (need !<(_+<.f vase))) poke-commit)
-    %kiln-info               =;(f (f (need !<(_+<.f vase))) poke-info)
-    %kiln-label              =;(f (f (need !<(_+<.f vase))) poke-label)
-    %kiln-cancel             =;(f (f (need !<(_+<.f vase))) poke-cancel)
-    %kiln-mount              =;(f (f (need !<(_+<.f vase))) poke-mount)
-    %kiln-rm                 =;(f (f (need !<(_+<.f vase))) poke-rm)
-    %kiln-schedule           =;(f (f (need !<(_+<.f vase))) poke-schedule)
-    %kiln-track              =;(f (f (need !<(_+<.f vase))) poke-track)
-    %kiln-sync               =;(f (f (need !<(_+<.f vase))) poke-sync)
-    %kiln-syncs              =;(f (f (need !<(_+<.f vase))) poke-syncs)
-    %kiln-wipe-ford          =;(f (f (need !<(_+<.f vase))) poke-wipe-ford)
-    %kiln-keep-ford          =;(f (f (need !<(_+<.f vase))) poke-keep-ford)
-    %kiln-autoload           =;(f (f (need !<(_+<.f vase))) poke-autoload)
-    %kiln-overload           =;(f (f (need !<(_+<.f vase))) poke-overload)
-    %kiln-wash-gall          =;(f (f (need !<(_+<.f vase))) poke-wash-gall)
-    %kiln-unmount            =;(f (f (need !<(_+<.f vase))) poke-unmount)
-    %kiln-unsync             =;(f (f (need !<(_+<.f vase))) poke-unsync)
-    %kiln-permission         =;(f (f (need !<(_+<.f vase))) poke-permission)
-    %kiln-cancel-autocommit  =;(f (f (need !<(_+<.f vase))) poke-cancel-autocommit)
-    %kiln-start-autoload     =;(f (f (need !<(_+<.f vase))) poke-start-autoload)
-    %kiln-merge              =;(f (f (need !<(_+<.f vase))) poke-merge)
+    %kiln-commit             =;(f (f !<(_+<.f vase)) poke-commit)
+    %kiln-info               =;(f (f !<(_+<.f vase)) poke-info)
+    %kiln-label              =;(f (f !<(_+<.f vase)) poke-label)
+    %kiln-cancel             =;(f (f !<(_+<.f vase)) poke-cancel)
+    %kiln-mount              =;(f (f !<(_+<.f vase)) poke-mount)
+    %kiln-rm                 =;(f (f !<(_+<.f vase)) poke-rm)
+    %kiln-schedule           =;(f (f !<(_+<.f vase)) poke-schedule)
+    %kiln-track              =;(f (f !<(_+<.f vase)) poke-track)
+    %kiln-sync               =;(f (f !<(_+<.f vase)) poke-sync)
+    %kiln-syncs              =;(f (f !<(_+<.f vase)) poke-syncs)
+    %kiln-wipe-ford          =;(f (f !<(_+<.f vase)) poke-wipe-ford)
+    %kiln-keep-ford          =;(f (f !<(_+<.f vase)) poke-keep-ford)
+    %kiln-autoload           =;(f (f !<(_+<.f vase)) poke-autoload)
+    %kiln-overload           =;(f (f !<(_+<.f vase)) poke-overload)
+    %kiln-wash-gall          =;(f (f !<(_+<.f vase)) poke-wash-gall)
+    %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
+    %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
+    %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
+    %kiln-cancel-autocommit  =;(f (f !<(_+<.f vase)) poke-cancel-autocommit)
+    %kiln-start-autoload     =;(f (f !<(_+<.f vase)) poke-start-autoload)
+    %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
   ==
 ::
 ++  autoload
@@ -257,14 +257,14 @@
       =.  cur-hoon  new-hoon
       =.  cur-arvo  new-arvo
       =.  cur-vanes  rehash-vanes
-      (emit %pass /kiln/reload/hoon %agent our %hood %poke %helm-reset !>(~))
+      (emit %pass /kiln/reload/hoon %agent [our %hood] %poke %helm-reset !>(~))
       ::  XX  updates cur-vanes?
     =/  new-zuse  (sys-hash /zuse/hoon)
     ?:  !=(new-zuse cur-zuse)
       =.  cur-zuse  new-zuse
       =.  cur-vanes  rehash-vanes
       =/  =cage  [%helm-reload !>([%zuse tracked-vanes])]
-      (emit [%pass /kiln/reload/zuse %agent our %hood %poke cage])
+      (emit [%pass /kiln/reload/zuse %agent [our %hood] %poke cage])
     (roll tracked-vanes load-vane)
   ::
   ++  load-vane
@@ -276,7 +276,7 @@
       +>.$
     =.  cur-vanes  (~(put by cur-vanes) syd new-vane)
     =/  =cage  [%helm-reload !>(~[syd])]
-    (emit %pass /kiln/reload/[syd] %agent our %hood %poke cage)
+    (emit %pass /kiln/reload/[syd] %agent [our %hood] %poke cage)
   ::
   ++  coup-reload
     |=  {way/wire saw/(unit tang)}
@@ -584,7 +584,7 @@
     ^+  +>
     =/  =cage  [%kiln-merge !>([syd her sud cas gem])]
     %-  blab  :_  ~
-    [%pass /kiln/fancy/[^syd] %agent our %hood %poke cage]
+    [%pass /kiln/fancy/[^syd] %agent [our %hood] %poke cage]
   ::
   ++  spam  ::|=(tang ((slog +<) ..spam))
             |*(* +>(..work (^spam +<)))

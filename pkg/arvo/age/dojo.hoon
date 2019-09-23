@@ -531,8 +531,7 @@
         :*  %pass
             /poke 
             %agent
-            p.p.p.mad
-            q.p.p.mad
+            p.p.mad
             %poke
             cay
         ==
@@ -1098,11 +1097,7 @@
 ++  handle-upgrade-state
   |=  =old-state=vase
   =/  old-state  !<(house old-state-vase)
-  ?~  old-state
-    ~&  %prep-lost
-    `..handle-init
-  ~&  %prep-found
-  `..handle-init(state u.old-state)
+  `..handle-init(state old-state)
 ::
 ++  handle-poke
   |=  [=mark =vase]
@@ -1112,9 +1107,9 @@
   =^  moves  state
     ^-  (quip card:agent:mall house)
     ?+  mark  ~|([%dojo-poke-bad-mark mark] !!)
-        %sole-action   he-abet:(he-type:he-full (need !<(sole-action vase)))
-        %lens-command  he-abet:(he-lens:he-full (need !<(command:lens vase)))
-        %json          ~&  jon=(need !<(json vase))  `state
+        %sole-action   he-abet:(he-type:he-full !<(sole-action vase))
+        %lens-command  he-abet:(he-lens:he-full !<(command:lens vase))
+        %json          ~&  jon=!<(json vase)  `state
         %wipe
       ~&  %dojo-wipe
       =.  hoc

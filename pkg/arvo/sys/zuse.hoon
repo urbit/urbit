@@ -1913,7 +1913,7 @@
     +$  card  (wind note gift)
     +$  note
       $%  [%arvo =note-arvo]
-          [%agent =ship name=term =task]
+          [%agent [=ship name=term] =task]
       ==
     +$  task
       $%  [%subscribe-translated =mark =path]

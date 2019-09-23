@@ -281,11 +281,11 @@
       =.  app  (ap-reinstall:app result-vase)
       ap-abet:app
     ::
-    =/  maybe-new-agent  !<(agent result-vase)
-    ?~  maybe-new-agent
-      =/  err  [[%leaf "{<term>}: not valid agent"] ~]
+    =/  maybe-new-agent  (mule |.(!<(agent result-vase)))
+    ?:  ?=(%| -.maybe-new-agent)
+      =/  err  [[%leaf "{<term>}: not valid agent"] p.maybe-new-agent]
       (mo-give %onto %.n err)
-    =.  mo-core  (mo-new-agent term beak u.maybe-new-agent)
+    =.  mo-core  (mo-new-agent term beak p.maybe-new-agent)
     =/  old  mo-core
     =/  wag
       =/  =routes  [disclosing=~ attributing=our]
@@ -1075,10 +1075,10 @@
       =/  way  [(scot %p ship) %out path]
       ::
       ?:  is-ok
-        =/  =note:agent  [%agent ship -.path %pump ~]
+        =/  =note:agent  [%agent [ship -.path] %pump ~]
         (ap-pass way note)
       =.  ap-core  (ap-give %subscription-close ~)
-      =/  =note:agent  [%agent ship -.path %unsubscribe ~]
+      =/  =note:agent  [%agent [ship -.path] %unsubscribe ~]
       (ap-pass way note)
     ::  +ap-dequeue: drop from queue.
     ::
@@ -1177,12 +1177,12 @@
       |=  =vase
       ^+  ap-core
       ::
-      =/  maybe-agent  !<(agent vase)
-      ?~  maybe-agent
-        (ap-error %new-core-not-agent ~)
+      =/  maybe-agent  (mule |.(!<(agent vase)))
+      ?:  ?=(%| -.maybe-agent)
+        (ap-error %new-core-not-agent p.maybe-agent)
       ::
       =/  prep
-        =/  =agent  u.maybe-agent
+        =/  =agent  p.maybe-agent
         =/  running
           %-  some
           ~(handle-extract-state agent.current-agent ap-construct-bowl)

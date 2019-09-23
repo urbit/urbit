@@ -117,7 +117,7 @@
   |=  {her/ship mes/(unit tape)}  =<  abet
   %-  emit
   :*  %pass  /helm/hi/(scot %p her)
-      %agent  her  %hood  %poke
+      %agent  [her %hood]  %poke
       %helm-hi  !>(?~(mes '' (crip u.mes)))
   ==
 ::
@@ -194,20 +194,20 @@
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-helm-bad-mark mark] !!)
-    %helm-hi               =;(f (f (need !<(_+<.f vase))) poke-hi)
-    %helm-mass             =;(f (f (need !<(_+<.f vase))) poke-mass)
-    %helm-reload           =;(f (f (need !<(_+<.f vase))) poke-reload)
-    %helm-reload-desk      =;(f (f (need !<(_+<.f vase))) poke-reload-desk)
-    %helm-reset            =;(f (f (need !<(_+<.f vase))) poke-reset)
-    %helm-send-hi          =;(f (f (need !<(_+<.f vase))) poke-send-hi)
-    %helm-verb             =;(f (f (need !<(_+<.f vase))) poke-verb)
-    %helm-rekey            =;(f (f (need !<(_+<.f vase))) poke-rekey)
-    %helm-nuke             =;(f (f (need !<(_+<.f vase))) poke-nuke)
-    %helm-automass         =;(f (f (need !<(_+<.f vase))) poke-automass)
-    %helm-bonk             =;(f (f (need !<(_+<.f vase))) poke-bonk)
-    %helm-cancel-automass  =;(f (f (need !<(_+<.f vase))) poke-cancel-automass)
-    %helm-moon             =;(f (f (need !<(_+<.f vase))) poke-moon)
-    %helm-serve            =;(f (f (need !<(_+<.f vase))) poke-serve)
+    %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
+    %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)
+    %helm-reload           =;(f (f !<(_+<.f vase)) poke-reload)
+    %helm-reload-desk      =;(f (f !<(_+<.f vase)) poke-reload-desk)
+    %helm-reset            =;(f (f !<(_+<.f vase)) poke-reset)
+    %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
+    %helm-verb             =;(f (f !<(_+<.f vase)) poke-verb)
+    %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
+    %helm-nuke             =;(f (f !<(_+<.f vase)) poke-nuke)
+    %helm-automass         =;(f (f !<(_+<.f vase)) poke-automass)
+    %helm-bonk             =;(f (f !<(_+<.f vase)) poke-bonk)
+    %helm-cancel-automass  =;(f (f !<(_+<.f vase)) poke-cancel-automass)
+    %helm-moon             =;(f (f !<(_+<.f vase)) poke-moon)
+    %helm-serve            =;(f (f !<(_+<.f vase)) poke-serve)
   ==
 ::
 ++  take-agent

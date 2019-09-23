@@ -105,10 +105,10 @@
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-write-bad-mark mark] !!)
-    %write-sec-atom  =;(f (f (need !<(_+<.f vase))) poke-sec-atom)
-    %write-paste     =;(f (f (need !<(_+<.f vase))) poke-paste)
-    %write-tree      =;(f (f (need !<(_+<.f vase))) poke-tree)
-    %write-wipe      =;(f (f (need !<(_+<.f vase))) poke-wipe)
+    %write-sec-atom  =;(f (f !<(_+<.f vase)) poke-sec-atom)
+    %write-paste     =;(f (f !<(_+<.f vase)) poke-paste)
+    %write-tree      =;(f (f !<(_+<.f vase)) poke-tree)
+    %write-wipe      =;(f (f !<(_+<.f vase)) poke-wipe)
   ==
 ::
 ++  made

@@ -10304,25 +10304,20 @@
       [(nice (cell ref p.vos)) (cons [%1 burp(sut p.vos)] q.vos)]
     ::
         {$zpgl *}
-      =+  ^=  typ
-          %-  nice
-          %-  fork
-          :~  [%atom %n `0]
-              [%cell [%atom %n `0] [%face %u (play [%kttr p.gen])]]
-          ==
-      =+  ^=  val
-          =<  q
-          %_    $
-              gol  %noun
-              gen
-            :^    %wtcl
-                :+  %cncl  [%limb %levi]
-                :~  [%tsbn [%zpbn [%kttr p.gen]] [%$ 2]]
-                    [%tsbn q.gen [%$ 2]]
-                ==
-              [%clhp [%bust %null] [%tsbn q.gen [%$ 3]]]
-            [%bust %null]
-          ==
+      =/  typ  (nice (play [%kttr p.gen]))
+      =/  val
+        =<  q
+        %_    $
+            gol  %noun
+            gen
+          :^    %wtcl
+              :+  %cncl  [%limb %levi]
+              :~  [%tsbn [%zpbn [%kttr p.gen]] [%$ 2]]
+                  [%tsbn q.gen [%$ 2]]
+              ==
+            [%tsbn q.gen [%$ 3]]
+          [%zpzp ~]
+        ==
       [typ val]
     ::
         {$zpts *}   [(nice %noun) [%1 q:$(vet |, gen p.gen)]]
@@ -10489,11 +10484,7 @@
     ::
         {$zpgl *}
       ::  XX is this right?
-      %-  beth
-      %-  fork
-      :~  [%atom %n `0]
-          [%cell [%atom %n `0] [%face %u (play [%kttr p.gen])]]
-      ==
+      (beth (play [%kttr p.gen]))
     ::
         {$zpvt *}
       =+  [(feel p.gen) (feel(sut dox) p.gen)]
@@ -10798,10 +10789,7 @@
       {$zpcm *}  $(gen p.gen)
       {$lost *}  %void
       {$zpmc *}  (cell $(gen p.gen) $(gen q.gen))
-      {$zpgl *}  %-  fork
-                 :~  [%atom %n `0]
-                     [%cell [%atom %n `0] [%face %u (play [%kttr p.gen])]]
-                 ==
+      {$zpgl *}  (play [%kttr p.gen])
       {$zpts *}  %noun
       {$zpvt *}  ?:((feel p.gen) $(gen q.gen) $(gen r.gen))
       {$zpzp *}  %void

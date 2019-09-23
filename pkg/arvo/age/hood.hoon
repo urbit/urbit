@@ -145,11 +145,7 @@
 ++  handle-upgrade-state
   |=  =old-state=vase
   =/  old-state  !<(hood-1 old-state-vase)
-  ?~  old-state
-    ~&  %prep-lost
-    `..handle-init
-  ~&  %prep-found
-  `..handle-init(lac lac.u.old-state)
+  `..handle-init(lac lac.old-state)
 ::
 ++  handle-poke
   |=  [=mark =vase]
@@ -167,16 +163,11 @@
     ::  XX should rename and move to libs
     ::
     ?+  mark  ~|([%poke-hood-bad-mark mark] !!)
-      %hood-load  %-  poke-hood-load:h
-                  (need !<(hood-part vase))
-      %atom       %-  (wrap poke-atom):from-helm:h
-                  (need !<(@ vase))
-      %dill-belt  %-  (wrap poke-dill-belt):from-drum:h
-                  (need !<(dill-belt:dill vase))
-      %dill-blit  %-  (wrap poke-dill-blit):from-drum:h
-                  (need !<(dill-blit:dill vase))
-      %hood-sync  %-  (wrap poke-sync):from-kiln:h
-                  (need !<([desk ship desk] vase))
+      %hood-load  (poke-hood-load:h !<(hood-part vase))
+      %atom       ((wrap poke-atom):from-helm:h !<(@ vase))
+      %dill-belt  ((wrap poke-dill-belt):from-drum:h !<(dill-belt:dill vase))
+      %dill-blit  ((wrap poke-dill-blit):from-drum:h !<(dill-blit:dill vase))
+      %hood-sync  ((wrap poke-sync):from-kiln:h !<([desk ship desk] vase))
     ==
   [cards ..handle-init]
 ::

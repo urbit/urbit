@@ -2,7 +2,11 @@
 ++  handle-init
   `agent
 ::
-++  handle-prep
+++  handle-extract-state
+  ~&  "extracting empty state for {<dap.bowl>}"
+  !>(~)
+::
+++  handle-upgrade-state
   |=  old-state=vase
   ~&  "updating agent {<dap.bowl>} by throwing away old state"
   `agent
@@ -13,13 +17,13 @@
   ~|  "unexpected poke to {<dap.bowl>} with mark {<p.cage>}"
   !!
 ::
-++  handle-peer
+++  handle-subscribe
   |=  =path
   ~&  "unexpected subscription to {<dap.bowl>} on path {<path>}"
   ~|  "unexpected subscription to {<dap.bowl>} on path {<path>}"
   !!
 ::
-++  handle-pull
+++  handle-unsubscribe
   |=  path
   `agent
 ::
@@ -28,18 +32,18 @@
   ~|  "unexpected scry into {<dap.bowl>} on path {<path>}"
   !!
 ::
-++  handle-mall
-  |=  [=wire =internal-gift:mall]
-  ?-    -.internal-gift
-      %coup  `agent
-      %reap  `agent
-      %quit
+++  handle-agent-response
+  |=  [=wire =gift:agent:mall]
+  ?-    -.gift
+      %poke-ack          `agent
+      %subscription-ack  `agent
+      %subscription-close
     ~|  "unexpected subscription closure to {<dap.bowl>} on wire {<wire>}"
     !!
   ::
-      %diff
+      %subscription-update
     ~|  "unexpected subscription update to {<dap.bowl>} on wire {<wire>}"
-    ~|  "with mark {<p.p.internal-gift>}"
+    ~|  "with mark {<p.cage.gift>}"
     !!
   ::
       %http-response
@@ -47,17 +51,13 @@
     !!
   ==
 ::
-++  handle-take
-  |=  [=wire =vase]
-  ~|  "unexpected system response {<q.vase>} to {<dap.bowl>} on wire {<wire>}"
+++  handle-arvo-response
+  |=  [=wire =sign-arvo]
+  ~|  "unexpected system response {<-.sign-arvo>} to {<dap.bowl>} on wire {<wire>}"
   !!
 ::
-++  handle-lame
+++  handle-error
   |=  [=term =tang]
   %-  (slog leaf+"error in {<dap.bowl>}" >term< tang)
   `agent
-::
-++  handle-stay
-  ~&  "extracting empty state for {<dap.bowl>}"
-  !>(~)
 --

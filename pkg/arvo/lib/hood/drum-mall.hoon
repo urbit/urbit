@@ -220,12 +220,12 @@
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-drum-bad-mark mark] !!)
-    %drum-put            =;(f (f (need !<(_+<.f vase))) poke-put)
-    %drum-link           =;(f (f (need !<(_+<.f vase))) poke-link)
-    %drum-unlink         =;(f (f (need !<(_+<.f vase))) poke-unlink)
-    %drum-exit           =;(f (f (need !<(_+<.f vase))) poke-exit)
-    %drum-start          =;(f (f (need !<(_+<.f vase))) poke-start)
-    %drum-set-boot-apps  =;(f (f (need !<(_+<.f vase))) poke-set-boot-apps)
+    %drum-put            =;(f (f !<(_+<.f vase)) poke-put)
+    %drum-link           =;(f (f !<(_+<.f vase)) poke-link)
+    %drum-unlink         =;(f (f !<(_+<.f vase)) poke-unlink)
+    %drum-exit           =;(f (f !<(_+<.f vase)) poke-exit)
+    %drum-start          =;(f (f !<(_+<.f vase)) poke-start)
+    %drum-set-boot-apps  =;(f (f !<(_+<.f vase)) poke-set-boot-apps)
   ==
 ::
 ++  reap-phat                                         ::  ack connect
@@ -277,7 +277,7 @@
         %subscription-update
       %+  diff-sole-effect-phat  t.t.wire
       ?>  ?=(%sole-effect p.cage.gift)
-      (need !<(sole-effect q.cage.gift))
+      !<(sole-effect q.cage.gift)
    ==
  ==
 ::
@@ -516,16 +516,16 @@
 ::
 ++  se-poke                                           ::  send a poke
   |=  {gyl/gill:gall par/pear}
-  (se-emit %pass (en-gill gyl) %agent p.gyl q.gyl %poke par)
+  (se-emit %pass (en-gill gyl) %agent gyl %poke par)
 ::
 ++  se-peer                                           ::  send a peer
   |=  gyl/gill:gall
   %-  se-emit(fug (~(put by fug) gyl ~))
-  [%pass (en-gill gyl) %agent p.gyl q.gyl %subscribe /sole]
+  [%pass (en-gill gyl) %agent gyl %subscribe /sole]
 ::
 ++  se-pull                                           ::  cancel subscription
   |=  gyl/gill:gall
-  (se-emit %pass (en-gill gyl) %agent p.gyl q.gyl %unsubscribe ~)
+  (se-emit %pass (en-gill gyl) %agent gyl %unsubscribe ~)
 ::
 ++  se-tame                                           ::  switch connection
   |=  gyl/gill:gall
