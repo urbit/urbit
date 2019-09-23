@@ -3,13 +3,15 @@ module UntypedLambda where
 import ClassyPrelude
 
 import Bound
-import Control.Monad.State
+import Control.Monad.Writer
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 import Data.List (elemIndex)
 import Data.Maybe (fromJust)
+import qualified Data.Set as Set
 import Data.Void
 
 import Nock
+import Noun
 
 type Nat = Int
 
@@ -27,11 +29,30 @@ data Exp a
   | Jet Atom (Exp a)
   deriving (Functor, Foldable, Traversable)
 
+instance Applicative Exp where
+  pure = Var
+  (<*>) = ap
+
+instance Monad Exp where
+  return = Var
+  Var a >>= f = f a
+  App x y >>= f = App (x >>= f) (y >>= f)
+  Lam s >>= f = Lam (s >>>= f)
+  -- interesting: x@Atm{} doesn't work
+  Atm a >>= f = Atm a
+  Cel x y >>= f = Cel (x >>= f) (y >>= f)
+  IsC x >>= f = IsC (x >>= f)
+  Suc x >>= f = Suc (x >>= f)
+  Eql x y >>= f = Eql (x >>= f) (y >>= f)
+  Ift x y z >>= f = Ift (x >>= f) (y >>= f) (z >>= f)
+  Let x s >>= f = Let (x >>=f) (s >>>= f)
+  Jet a x >>= f = Jet a (x >>= f)
+
 deriveEq1   ''Exp
 deriveOrd1  ''Exp
 deriveRead1 ''Exp
 deriveShow1 ''Exp
-makeBound ''Exp
+--makeBound   ''Exp
 
 deriving instance Eq a => Eq (Exp a)
 deriving instance Ord a => Ord (Exp a)
@@ -137,74 +158,117 @@ old = go \v -> error "old: free variable"
           (N1 ff)  -- the battery (nock code)
           (N0 1))  -- onto the pair of bunt and context
 
-data CopyVar
-  = Argument
-  | Lexical Nat
-
-data CopyExp
-  = CVar CopyVar
-  | CApp CopyExp CopyExp
-  | CLam [CopyVar] CopyExp
+data CExp a
+  = CVar a
+  | CApp (CExp a) (CExp a)
+  | CLam [a] (CExp (Var () Int))
   | CAtm Atom
-  | CCel CopyExp CopyExp
-  | CIsC CopyExp
-  | CSuc CopyExp
-  | CEql CopyExp CopyExp
-  | CIft CopyExp CopyExp CopyExp
-  | CLet CopyExp CopyExp
-  | CJet Atom CopyExp
+  | CCel (CExp a) (CExp a)
+  | CIsC (CExp a)
+  | CSuc (CExp a)
+  | CEql (CExp a) (CExp a)
+  | CIft (CExp a) (CExp a) (CExp a)
+  | CLet (CExp a) (CExp (Var () a))
+  | CJet Atom (CExp a)
+  deriving (Functor, Foldable, Traversable)
 
-toCopy :: Ord a => Exp a -> CopyExp
-toCopy = fst . go \v -> error "toCopy: free variable"
+deriveEq1   ''CExp
+deriveOrd1  ''CExp
+deriveRead1 ''CExp
+deriveShow1 ''CExp
+
+deriving instance Eq a => Eq (CExp a)
+deriving instance Ord a => Ord (CExp a)
+deriving instance Read a => Read (CExp a)
+deriving instance Show a => Show (CExp a)
+
+toCopy :: Ord a => Exp a -> CExp b
+toCopy = fst . runWriter . go \v -> error "toCopy: free variable"
   where
-    go :: Ord a => (a -> CopyVar) -> Exp a -> (CopyExp, Set a)
+    go :: Ord a => (a -> c) -> Exp a -> Writer (Set a) (CExp c)
     go env = \case
-      Var v -> (CVar (env v), singleton v)
-      App e f -> (CApp ec fc, union eu fu)
+      Var v     -> writer (CVar (env v), singleton v)
+      App e f   -> CApp <$> go env e <*> go env f
+      Atm a     -> pure (CAtm a)
+      Cel e f   -> CCel <$> go env e <*> go env f
+      IsC e     -> CIsC <$> go env e
+      Suc e     -> CSuc <$> go env e
+      Eql e f   -> CEql <$> go env e <*> go env f
+      Ift e t f -> CIft <$> go env e <*> go env t <*> go env f
+      Jet a e   -> CJet a <$> go env e
+      Let e s   -> do
+        ce <- go env e
+        cf <- retcon removeBound (go (fmap env) (fromScope s))
+        pure (CLet ce cf)
+      Lam s -> writer (CLam (map env $ toList usedLexicals) ce, usedLexicals)
         where
-          (ec, eu) = go env e
-          (fc, fu) = go env f
-      Lam s -> (CLam (map env u) c, setFromList u)
-        where
-          (c, u') = go env' (fromScope s)
+          (ce, usedVars) = runWriter $ go env' $ fromScope s
           env' = \case
-            B () -> Argument
-            F v  -> Lexical (fromJust (elemIndex v u))
-          u = mapMaybe pred (toList u')
-          pred = \case
-            B () -> Nothing
-            F v  -> Just v
+            B () -> B ()
+            F v  -> F (Set.findIndex v usedLexicals)
+          usedLexicals = removeBound usedVars
+
+    removeBound :: (Ord a, Ord b) => Set (Var b a) -> Set a
+    removeBound = mapMaybeSet \case
+      B _ -> Nothing
+      F v -> Just v
+
+-- | Like censor, except you can change the type of the log
+retcon :: (w -> uu) -> Writer w a -> Writer uu a
+retcon f = mapWriter \(a, m) -> (a, f m)
+
+-- I begin to wonder why there aren't primary abstractions around filtering.
+mapMaybeSet :: (Ord a, Ord b) => (a -> Maybe b) -> Set a -> Set b
+mapMaybeSet f = setFromList . mapMaybe f . toList
 
 -- Possible improvements:
 --   - store the copied values in a tree rather than list
 --   - avoid a nock 8 if nothing is copied
-copyToNock :: CopyExp -> Nock
-copyToNock = go
+--   - a "quote and unquote" framework for nock code generation (maybe)
+copyToNock :: CExp a -> Nock
+copyToNock = go \v -> error "copyToNock: free variable"
   where
-    go = \case
-      CVar v -> N0 $ toAxis case v of
-        -- FIXME let
-        Argument -> [R]
-        Lexical n -> L : replicate n R ++ [L]
-      CApp e f -> N2 (go f) (go e)
-      CLam vs e -> lam (map (go . CVar) vs) (nockToNoun (go e))
+    -- if you comment out this declaration, you get a type error!
+    go :: (a -> Path) -> CExp a -> Nock
+    go env = \case
+      CVar v -> N0 (toAxis (env v))
+      CApp e f -> N2 (go env f) (go env e)
       CAtm a -> N1 (A a)
-      CCel e f -> cell (go e) (go f)
-      CIsC e -> N3 (go e)
-      CSuc e -> N4 (go e)
-      CEql e f -> N5 (go e) (go f)
-      CIft e t f -> N6 (go e) (go t) (go f)
-      CLet e f -> error "actually I didn't implement variable lookup sorry"
-      CJet a e -> N11 (Assoc 9999 (N1 (A a))) (go e)
+      CCel e f -> cell (go env e) (go env f)
+      CIsC e -> N3 (go env e)
+      CSuc e -> N4 (go env e)
+      CEql e f -> N5 (go env e) (go env f)
+      CIft e t f -> N6 (go env e) (go env t) (go env f)
+      CJet a e -> jet a (go env e)
+      CLet e f -> N8 (go env e) (go env' f)
+        where
+          env' = \case
+            B () -> [L]
+            F v  -> R : env v
+      CLam vs e -> lam (map (go env . CVar) vs) (go env' e)
+        where
+          env' = \case
+            B () -> [R]
+            F i  -> L : replicate i R ++ [L]
 
-    lam vfs ef = NC (N1 (A 8)) (NC (NC (N1 (A 1)) vars) (N1 ef))
+    jet a ef =
+      NC
+        (N1
+          (C (A 11)
+          (C (A FastAtom)
+            (C (A 1) (A a)))))
+        ef
+    lam vfs ef =
+      NC (N1 (A 8))
+        (NC
+          (NC (N1 (A 1)) vars)
+          (N1 (nockToNoun ef)))
       where
         vars = foldr NC (N1 (A 0)) vfs
 
 -- | The proposed new calling convention
 copy :: Ord a => Exp a -> Nock
 copy = copyToNock . toCopy
-
 
 -- x. y. x
 -- old: [8 [1 0] [1 8 [1 0] [1 0 30] 0 1] 0 1]

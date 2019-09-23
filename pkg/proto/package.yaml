@@ -37,6 +37,7 @@ default-extensions:
   - NumericUnderscores
   - OverloadedStrings
   - PartialTypeSignatures
+  - PatternSynonyms
   - QuasiQuotes
   - Rank2Types
   - RankNTypes
