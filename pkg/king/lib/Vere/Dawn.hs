@@ -65,6 +65,9 @@ passFromEth enc aut sut            =
 clanFromShip :: Ship -> Ob.Class
 clanFromShip = Ob.clan . Ob.patp . fromIntegral
 
+shipSein :: Ship -> Ship
+shipSein = Ship . fromIntegral . Ob.fromPatp . Ob.sein . Ob.patp . fromIntegral
+
 -- Data Validation -------------------------------------------------------------
 
 -- Validates the keys, life, discontinuity, etc. If everything is ok, return
@@ -74,12 +77,20 @@ validateAndGetSponsor (Seed ship life ring mo) EthPoint{..} = do
   let clan = clanFromShip ship
 
   case clan of
-    Ob.Comet  -> Left "todo: comet"
+    Ob.Comet  -> do
+      -- A comet address is the fingerprint of the keypair
+      -- when (ship /= (x ring.seed)) (Left "todo: key mismatch")
+      -- A comet can never be breached
+      -- when live Left "comet already booted"
+      -- TODO: the parent must be launched check?
+      Right $ shipSein ship
+
     -- When the ship is a moon, the only requirement is that the parent is
     -- launched.
     Ob.Moon   -> do
       Left "todo: moon's parent must be launched"
 
+    -- For Galaxies, Stars and Planets, we do the full checks.
     _         -> case epNet of
       Nothing -> Left "ship not keyed"
       Just (life, pass, contNum, _, _) -> do
