@@ -127,7 +127,10 @@
 ::  +foreign: foreign connections
 ::
 ++  foreign
-  $:  :: index
+  $:  :: rift of first contact
+      ::
+      =rift
+      :: index
       ::
       index=@ud
       :: by duct
@@ -469,10 +472,16 @@
     |=  =ship
     ^-  [bone _mo-core]
     ::
-    =/  =foreign
-      =/  existing  (~(get by contacts.agents.state) ship)
-      (fall existing [1 ~ ~])
+    =?  mo-core  !(~(has by contacts.agents.state) ship)
+      =/  =note-arvo  [%j %public-keys (silt ship ~)]
+      =.  moves  [[system-duct.agents.state %pass /sys/jael note-arvo] moves]
+      =/  =rift  (fall (mo-rift-scry ship) *rift)
+      =/  =foreign  [rift 1 ~ ~]
+      =.  contacts.agents.state
+        (~(put by contacts.agents.state) ship foreign)
+      mo-core
     ::
+    =/  =foreign  (~(got by contacts.agents.state) ship)
     =/  existing  (~(get by index-map.foreign) hen)
     ?^  existing
       [u.existing mo-core]
@@ -493,10 +502,49 @@
   ::
   ++  mo-retrieve-duct
     |=  [=ship index=@ud]
-    ^-  duct
+    ^-  (unit duct)
     ::
-    =/  =foreign  (~(got by contacts.agents.state) ship)
-    (~(got by duct-map.foreign) index)
+    =/  contact=(unit foreign)  (~(get by contacts.agents.state) ship)
+    ?~  contact
+      ~
+    `(~(got by duct-map.u.contact) index)
+  ::  +mo-rift-scry: for a +rift
+  ::
+  ++  mo-rift-scry
+    |=  who=ship
+    ^-  (unit rift)
+    =;  rit
+      ?~(rit ~ u.rit)
+    ;;  (unit (unit rift))
+    %-  (sloy-light ska)
+    =/  pur=spur
+      /(scot %p who)
+    [[151 %noun] %j our %rift da+now pur]
+  ::  +mo-cancel-jael: cancel jael subscription
+  ::
+  ++  mo-cancel-jael
+    |=  =ship
+    ^+  mo-core
+    =/  =note-arvo  [%j %nuke (silt ship ~)]
+    =.  moves
+      [[system-duct.agents.state %pass /sys/jael note-arvo] moves]
+    mo-core
+  ::  +mo-breach: ship breached, so forget about them
+  ::
+  ++  mo-breach
+    |=  =ship
+    ^+  mo-core
+    =/  agents=(list [name=term =agent])  ~(tap by running.agents.state)
+    |-  ^+  mo-core
+    ?~  agents
+      mo-core
+    =.  mo-core
+      =/  =routes  [disclosing=~ attributing=ship]
+      =/  app  (ap-abed:ap name.i.agents routes)
+      ap-abet:(ap-breach:app ship)
+    =.  mo-core  (mo-cancel-jael ship)
+    =.  contacts.agents.state  (~(del by contacts.agents.state) ship)
+    $(agents t.agents)
   ::  +mo-handle-sys: handle a +sign incoming over /sys.
   ::
   ::    (Note that /sys implies the +sign should be routed to a vane.)
@@ -507,6 +555,7 @@
     ^+  mo-core
     ::
     ?+  -.path  !!
+      %jael  (mo-handle-sys-jael path sign-arvo)
       %core  (mo-handle-sys-core path sign-arvo)
       %pel   (mo-handle-sys-pel path sign-arvo)
       %red   (mo-handle-sys-red path sign-arvo)
@@ -515,6 +564,43 @@
       %val   (mo-handle-sys-val path sign-arvo)
       %way   (mo-handle-sys-way path sign-arvo)
     ==
+  ::  +mo-handle-sys-jael: receive update about contact
+  ::
+  ++  mo-handle-sys-jael
+    |=  [=path =sign-arvo]
+    ^+  mo-core
+    ?>  ?=([%j %public-keys *] sign-arvo)
+    ?>  ?=([%jael ~] path)
+    ?:  ?=(%full -.public-keys-result.sign-arvo)
+      =/  ships=(list [=ship =point:able:jael])
+        ~(tap by points.public-keys-result.sign-arvo)
+      |-  ^+  mo-core
+      ?~  ships
+        mo-core
+      =.  mo-core
+        =/  contact=(unit foreign)
+          (~(get by contacts.agents.state) ship.i.ships)
+        ?~  contact
+          =/  =tank
+            leaf+"gall: unexpected jael update for {<ship.i.ships>}, cancelling"
+          %-  (slog tank ~)
+          (mo-cancel-jael ship.i.ships)
+        ?:  (lte rift.point.i.ships rift.u.contact)
+          mo-core
+        (mo-breach ship.i.ships)
+      $(ships t.ships)
+    ?.  ?=(%rift -.diff.public-keys-result.sign-arvo)
+      mo-core
+    =/  =ship  who.public-keys-result.sign-arvo
+    =/  contact=(unit foreign)  (~(get by contacts.agents.state) ship)
+    ?~  contact
+      =/  =tank
+        leaf+"gall: unexpected jael update for {<ship>}, cancelling"
+      %-  (slog tank ~)
+      (mo-cancel-jael ship)
+    ?:  (lte to.diff.public-keys-result.sign-arvo rift.u.contact)
+      mo-core
+    (mo-breach ship)
   ::  +mo-handle-sys-core: receive a core from %ford.
   ::
   ++  mo-handle-sys-core
@@ -634,7 +720,10 @@
     ::  XX pump should ack
     =.  mo-core  (mo-give %mack ~)
     =/  duct  (mo-retrieve-duct him num)
-    =.  mo-core  (mo-abed duct)
+    ?~  duct
+      %-  (slog leaf/"gall: sys-rep no index" ~)
+      mo-core
+    =.  mo-core  (mo-abed u.duct)
     =/  =cage  (result-to-cage:ford build-result)
     =/  move  [%unto [%diff cage]]
     (mo-give move)
@@ -955,9 +1044,12 @@
         %x
       ::  XX should crash
       =.  mo-core  (mo-give %mack ~)
+      =/  out  (mo-retrieve-duct ship bone)
+      ?~  out
+        %-  (slog leaf/"gall: x no index" ~)
+        mo-core
       =/  initialised
-        =/  out  (mo-retrieve-duct ship bone)
-        (mo-abed out)
+        (mo-abed u.out)
       (mo-give:initialised %unto %quit ~)
     ==
   ::  +ap: agent engine
@@ -1123,6 +1215,29 @@
           [%pass use-path note-arvo]
         ==
       [duct card]
+    ::  +ap-breach: ship breached, so forget about them
+    ::
+    ++  ap-breach
+      |=  =ship
+      ^+  ap-core
+      =/  in=(list [=bone =^ship =path])
+        ~(tap by incoming.subscribers.current-agent)
+      |-  ^+  ap-core
+      ?^  in
+        =?  ap-core  =(ship ship.i.in)
+          =/  core  ap-load-delete(agent-bone bone.i.in)
+          core(agent-bone agent-bone)
+        $(in t.in)
+      ::
+      =/  out=(list [[=bone =wire] =bean =^ship =path])
+        ~(tap by outgoing.subscribers.current-agent)
+      |-  ^+  ap-core
+      ?~  out
+        ap-core
+      =?  ap-core  =(ship ship.i.out)
+        =/  core  (ap-specific-take(agent-bone bone.i.out) wire.i.out %quit ~)
+        core(agent-bone agent-bone)
+      $(out t.out)
     ::  +ap-call: call into server.
     ::
     ++  ap-call
