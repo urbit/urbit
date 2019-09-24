@@ -253,15 +253,16 @@ _eq_pop(c3_ys mov, c3_ys off)
 static inline c3_o
 _song_atom(u3_atom a, u3_noun b)
 {
-  u3a_atom* a_u = u3a_to_ptr(a);
-
-  if ( (c3n == u3a_is_atom(b)) ||
-       (c3y == u3a_is_cat(a)) ||
-       (c3y == u3a_is_cat(b)) )
+  //  [a] is an atom, not pointer-equal to noun [b].
+  //  if they're not both indirect atoms, they can't be equal.
+  //
+  if ( (c3n == u3a_is_pug(a)) ||
+       (c3n == u3a_is_pug(b)) )
   {
     return c3n;
   }
   else {
+    u3a_atom* a_u = u3a_to_ptr(a);
     u3a_atom* b_u = u3a_to_ptr(b);
 
     if ( (0 != a_u->mug_w) &&
@@ -325,8 +326,8 @@ _song_x_cape(c3_ys mov, c3_ys off,
           return c3n;
         }
         else {
-          u3a_cell* a_u = u3a_to_ptr(a);
-          u3a_cell* b_u = u3a_to_ptr(b);
+          a_u = u3a_to_ptr(a);
+          b_u = u3a_to_ptr(b);
 
           if ( (0 != a_u->mug_w) &&
                (0 != b_u->mug_w) &&
@@ -369,6 +370,10 @@ _song_x_cape(c3_ys mov, c3_ys off,
         break;
     }
 
+    //  [har_p] is effectively a set of equal pairs.
+    //  we cons [a] and [b] as posts so that we don't
+    //  touch their reference counts.
+    //
     key = u3nc(u3a_to_off(a), u3a_to_off(b));
     u3t_off(euq_o);
     u3h_put(har_p, key, c3y);
@@ -456,6 +461,9 @@ _song_x(u3_noun a, u3_noun b)
         break;
     }
 
+    //  [ovr_s] counts iterations. when it overflows, we know we've hit a
+    //  pathological case and MUST start de-duplicating comparisons.
+    //
     if ( 0 == ++ovr_s ) {
       u3p(u3h_root) har_p = u3h_new();
       c3_o ret_o = _song_x_cape(mov, off, fam, don, har_p);

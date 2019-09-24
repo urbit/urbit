@@ -1557,7 +1557,7 @@ u3a_wed(u3_noun* a, u3_noun* b)
     //  while not at home, attempt to unify
     //
     //    we try to unify on our road, and retry on senior roads
-    //    until we succeed or reach thee home road.
+    //    until we succeed or reach the home road.
     //
     //    we can't perform this kind of butchery on the home road,
     //    where asynchronous things can allocate.
