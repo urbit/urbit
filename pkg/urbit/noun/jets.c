@@ -486,7 +486,7 @@ _cj_find_cold(u3_noun bat)
   u3a_road* rod_u = u3R;
 
   while ( 1 ) {
-    u3_weak bar = u3h_gut(rod_u->jed.cod_p, bat);
+    u3_weak bar = u3h_get(rod_u->jed.cod_p, bat);
 
     if ( u3_none != bar ) {
       return bar;
@@ -508,7 +508,7 @@ _cj_find_warm(u3_noun loc)
   u3a_road* rod_u = u3R;
 
   while ( 1 ) {
-    u3_weak ank = u3h_gut(rod_u->jed.war_p, loc);
+    u3_weak ank = u3h_get(rod_u->jed.war_p, loc);
 
     if ( u3_none != ank ) {
       return ank;

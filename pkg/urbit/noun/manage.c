@@ -744,9 +744,9 @@ u3m_leap(c3_w pad_w)
 
       rod_u = _pave_south(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
 #if 0
-      u3l_log("leap: from north %p (cap %x), to south %p\r\n",
+      fprintf(stderr, "leap: from north %p (cap 0x%x), to south %p\r\n",
               u3R,
-              u3R->cap_p + len_p,
+              u3R->cap_p + len_w,
               rod_u);
 #endif
     }
@@ -756,9 +756,9 @@ u3m_leap(c3_w pad_w)
 
       rod_u = _pave_north(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
 #if 0
-      u3l_log("leap: from north %p (cap %p), to south %p\r\n",
+      fprintf(stderr, "leap: from south %p (cap 0x%x), to north %p\r\n",
               u3R,
-              u3R->cap_p - len_p,
+              u3R->cap_p - len_w,
               rod_u);
 #endif
     }
@@ -791,13 +791,13 @@ u3m_fall()
   c3_assert(0 != u3R->par_p);
 
 #if 0
-  u3l_log("fall: from %s %p, to %s %p (cap %p, was %p)\r\n",
+  fprintf(stderr, "fall: from %s %p, to %s %p (cap 0x%x, was 0x%x)\r\n",
           _(u3a_is_north(u3R)) ? "north" : "south",
           u3R,
-          _(u3a_is_north(u3R)) ? "north" : "south",
+          _(u3a_is_north(u3to(u3_road, u3R->par_p))) ? "north" : "south",
           u3to(u3_road, u3R->par_p),
-          u3R->hat_w,
-          u3R->rut_w);
+          u3R->hat_p,
+          u3R->rut_p);
 #endif
 
   u3to(u3_road, u3R->par_p)->pro.nox_d += u3R->pro.nox_d;

@@ -1492,6 +1492,103 @@ u3a_use(u3_noun som)
   }
 }
 
+/* _ca_wed_who(): unify [a] and [b] on [rod_u], keeping the senior
+**
+** NB: this leaks a reference when it unifies in a senior road
+*/
+static c3_o
+_ca_wed_who(u3a_road* rod_u, u3_noun* a, u3_noun* b)
+{
+  c3_t asr_t = ( c3y == u3a_is_senior(rod_u, *a) );
+  c3_t bsr_t = ( c3y == u3a_is_senior(rod_u, *b) );
+  c3_t nor_t = ( c3y == u3a_is_north(rod_u) );
+  c3_t own_t = ( rod_u == u3R );
+
+  //  both are on [rod_u]; gain a reference to whichever we keep
+  //
+  if ( !asr_t && !bsr_t ) {
+    //  keep [a]; it's deeper in the heap
+    //
+    //    (N && >) || (S && <)
+    //
+    if ( (*a > *b) == nor_t ) {
+      _me_gain_use(*a);
+      if ( own_t ) { u3z(*b); }
+      *b = *a;
+    }
+    //  keep [b]; it's deeper in the heap
+    //
+    else {
+      _me_gain_use(*b);
+      if ( own_t ) { u3z(*a); }
+      *a = *b;
+    }
+
+    return c3y;
+  }
+  //  keep [a]; it's senior
+  //
+  else if ( asr_t && !bsr_t ) {
+    if ( own_t ) { u3z(*b); }
+    *b = *a;
+    return c3y;
+  }
+  //  keep [b]; it's senior
+  //
+  else if ( !asr_t && bsr_t ) {
+    if ( own_t ) { u3z(*a); }
+    *a = *b;
+    return c3y;
+  }
+
+  //  both [a] and [b] are senior; we can't unify on [rod_u]
+  //
+  return c3n;
+}
+
+/* u3a_wed(): unify noun references.
+*/
+void
+u3a_wed(u3_noun* a, u3_noun* b)
+{
+  if ( *a != *b ) {
+    u3_road* rod_u = u3R;
+
+    //  while not at home, attempt to unify
+    //
+    //    we try to unify on our road, and retry on senior roads
+    //    until we succeed or reach the home road.
+    //
+    //    we can't perform this kind of butchery on the home road,
+    //    where asynchronous things can allocate.
+    //    (XX anything besides u3t_samp?)
+    //
+    //    when unifying on a higher road, we can't free nouns,
+    //    because we can't track junior nouns that point into
+    //    that road.
+    //
+    //    this is just an implementation issue -- we could set use
+    //    counts to 0 without actually freeing.  but the allocator
+    //    would have to be actually designed for this.
+    //    (alternately, we could keep a deferred free-list)
+    //
+    //    not freeing may generate spurious leaks, so we disable
+    //    senior unification when debugging memory.  this will
+    //    cause a very slow boot process as the compiler compiles
+    //    itself, constantly running into duplicates.
+    //
+    while ( (rod_u != &u3H->rod_u) &&
+            (c3n == _ca_wed_who(rod_u, a, b)) )
+    {
+#ifdef U3_MEMORY_DEBUG
+      break;
+#else
+      rod_u = u3to(u3_road, rod_u->par_p);
+#endif
+    }
+  }
+}
+
 /* u3a_luse(): check refcount sanity.
 */
 void
