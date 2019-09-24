@@ -2,7 +2,7 @@
 ::::  /hoon/helm/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
-/-    sole, hall
+/-    sole
 /+    pill
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -53,7 +53,6 @@
       $%  {$hood-unsync desk ship desk}                 ::
           {$helm-hi cord}                               ::
           {$drum-start well:gall}                       ::
-          {$hall-action action:hall}                    ::
       ==                                                ::
     --
 =+  moz=((list move))
