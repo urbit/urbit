@@ -103,6 +103,8 @@ import KingApp              (runApp, runAppLogFile)
 import System.Environment   (getProgName)
 import System.Exit          (exitSuccess)
 import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
+import System.Posix.Signals (Signal, nullSignal, signalProcess)
+import System.Posix.Types   (ProcessID)
 import Text.Show.Pretty     (pPrint)
 import Urbit.Time           (Wen)
 import Vere.LockFile        (lockFile)
@@ -341,17 +343,61 @@ main = do
 
     termAPI <- newTVarIO mempty
 
-    let dem x = runApp $ rwith (King.kingAPI termAPI) $ \_ -> x
+    let wDem = runApp . rwith (King.kingAPI termAPI)
+        rDem = wDem . const
+
 
     case args of
         CLI.CmdCon s                              -> runAppLogFile (connTerm s)
-        CLI.CmdRun r o                            -> dem $ runShip r o termAPI
-        CLI.CmdNew n o                            -> dem $ newShip n o
-        CLI.CmdBug (CLI.CollectAllFX pax)         -> dem $ collectAllFx pax
-        CLI.CmdBug (CLI.EventBrowser pax)         -> dem $ startBrowser pax
-        CLI.CmdBug (CLI.ValidatePill pax pil seq) -> dem $ testPill pax pil seq
-        CLI.CmdBug (CLI.ValidateEvents pax f l)   -> dem $ checkEvs pax f l
-        CLI.CmdBug (CLI.ValidateFX pax f l)       -> dem $ checkFx  pax f l
+        CLI.CmdRun r o                            -> rDem $ runShip r o termAPI
+        CLI.CmdNew n o                            -> rDem $ newShip n o
+        CLI.CmdDam                                -> wDem $ startDaemon
+        CLI.CmdKil                                -> killDaemon
+        CLI.CmdBug (CLI.CollectAllFX pax)         -> rDem $ collectAllFx pax
+        CLI.CmdBug (CLI.EventBrowser pax)         -> rDem $ startBrowser pax
+        CLI.CmdBug (CLI.ValidatePill pax pil seq) -> rDem $ testPill pax pil seq
+        CLI.CmdBug (CLI.ValidateEvents pax f l)   -> rDem $ checkEvs pax f l
+        CLI.CmdBug (CLI.ValidateFX pax f l)       -> rDem $ checkFx  pax f l
+
+data KillExn
+    = DaemonNotRunning
+    | BadPidFile ByteString
+  deriving (Show, Exception)
+
+getRunningDaemonPid :: IO ProcessID
+getRunningDaemonPid = do
+    dir <- fst <$> King.portsFilePath
+    pax <- pure (dir </> ".vere.lock")
+    byt <- try (readFile $ dir </> ".vere.lock") >>= \case
+               Left (_ :: SomeException) -> throwIO DaemonNotRunning
+               Right fl                  -> pure fl
+
+    maybe (throwIO $ BadPidFile byt) (pure . fromIntegral)
+        $ readMay @Text @Word
+        $ decodeUtf8 byt
+
+killDaemon :: IO ()
+killDaemon = do
+    pid <- getRunningDaemonPid
+
+    kill sigTERM pid >>= \case True  -> pure ()
+                               False -> throwIO DaemonNotRunning
+
+    assureDeath pid
+
+  where
+    kill :: Signal -> ProcessID -> IO Bool
+    kill sig = try . signalProcess sig >=> \case
+        Right ()                  -> pure True
+        Left (_ :: SomeException) -> pure False
+
+    assureDeath pid = do
+        threadDelay 50_000
+        kill nullSignal pid >>= \case False -> pure ()
+                                      True  -> assureDeath pid
+
+startDaemon :: King.King -> RIO e ()
+startDaemon = wait . King.kServer
 
 
 --------------------------------------------------------------------------------

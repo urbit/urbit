@@ -71,6 +71,8 @@ data Cmd
     | CmdRun Run Opts
     | CmdBug Bug
     | CmdCon Ship
+    | CmdDam
+    | CmdKil
   deriving (Show)
 
 --------------------------------------------------------------------------------
@@ -303,4 +305,10 @@ cmd = subparser
                         )
        <> command "con" ( info (conCmd <**> helper)
                         $ progDesc "Connect a terminal to a running urbit."
+                        )
+       <> command "dam" ( info (pure CmdDam <**> helper)
+                        $ progDesc "Start the daemon"
+                        )
+       <> command "kil" ( info (pure CmdKil <**> helper)
+                        $ progDesc "Kill the daemon"
                         )

@@ -50,7 +50,7 @@ data BadShip = BadShip Text Text
 
 --------------------------------------------------------------------------------
 
-portsFilePath :: RIO e (FilePath, FilePath)
+portsFilePath :: MonadIO m => m (FilePath, FilePath)
 portsFilePath = do
     hom <- getHomeDirectory
     dir <- pure (hom </> ".urbit")
