@@ -111,16 +111,10 @@ isTerminalBlit _         = True
 
 --------------------------------------------------------------------------------
 
-{-
-    TODO XX HACK: We don't have any good way of handling client
-        disconnect, so we just retry. This will probably waste CPU.
--}
 connClient :: Serv.Conn Belt [Term.Ev] -> Client
 connClient c = Client
     { give = Serv.cSend c
-    , take = Serv.cRecv c >>= \case
-                 Nothing -> empty
-                 Just ev -> pure ev
+    , take = Serv.cRecv c
     }
 
 connectToRemote :: ∀e. HasLogFunc e
@@ -189,7 +183,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
       pReaderThread <- asyncBound
           (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
 
-      let client = Client { take = readTQueue tsReadQueue
+      let client = Client { take = Just <$> readTQueue tsReadQueue
                           , give = writeTQueue tsWriteQueue
                           }
 
@@ -527,29 +521,30 @@ term (tsize, Client{..}) shutdownSTM pierPath king enqueueEv =
 
     runTerm :: RAcquire e (EffCb e TermEf)
     runTerm = do
-      tim <- mkRAcquire start cancel
-      pure handleEffect
+        tim <- mkRAcquire (async readLoop) cancel
+        pure handleEffect
 
-    start :: RIO e (Async ())
-    start = async readBelt
-
-    readBelt :: RIO e ()
-    readBelt = forever $ do
-      b <- atomically take
-      let blip = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ b
-      atomically $ enqueueEv $ blip
+    {-
+        Because our terminals are always `Demux`ed, we don't have to
+        care about disconnections.
+    -}
+    readLoop :: RIO e ()
+    readLoop = forever $ do
+        atomically take >>= \case
+            Nothing -> pure ()
+            Just b  -> do
+                let blip = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ b
+                atomically $ enqueueEv $ blip
 
     handleEffect :: TermEf -> RIO e ()
     handleEffect = \case
-      TermEfBlit _ blits -> do
-        let (termBlits, fsWrites) = partition isTerminalBlit blits
-        atomically $ give [Term.Blits termBlits]
-        for_ fsWrites handleFsWrite
-      TermEfInit _ _ -> pure ()
-      TermEfLogo path _ -> do
-        pure ()
-        -- atomically $ shutdownSTM
-      TermEfMass _ _ -> pure ()
+        TermEfInit _ _     -> pure ()
+        TermEfLogo path _  -> atomically $ shutdownSTM
+        TermEfMass _ _     -> pure ()
+        TermEfBlit _ blits -> do
+            let (termBlits, fsWrites) = partition isTerminalBlit blits
+            atomically $ give [Term.Blits termBlits]
+            for_ fsWrites handleFsWrite
 
     handleFsWrite :: Blit -> RIO e ()
     handleFsWrite (Sag path noun) = performPut path (jamBS noun)
@@ -558,6 +553,6 @@ term (tsize, Client{..}) shutdownSTM pierPath king enqueueEv =
 
     performPut :: Path -> ByteString -> RIO e ()
     performPut path bs = do
-      let putOutFile = pierPath </> ".urb" </> "put" </> (pathToFilePath path)
-      createDirectoryIfMissing True (takeDirectory putOutFile)
-      writeFile putOutFile bs
+        let putOutFile = pierPath </> ".urb" </> "put" </> (pathToFilePath path)
+        createDirectoryIfMissing True (takeDirectory putOutFile)
+        writeFile putOutFile bs

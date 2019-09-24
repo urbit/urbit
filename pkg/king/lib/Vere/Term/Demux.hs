@@ -18,18 +18,41 @@ import qualified Vere.Term.API as Term
 
 --------------------------------------------------------------------------------
 
+data KeyedSet a = KeyedSet
+    { _ksTable  :: IntMap a
+    , _nextKey  :: Int
+    }
+
+instance Semigroup (KeyedSet a) where
+    KeyedSet t1 k1 <> KeyedSet t2 k2 = KeyedSet (t1 <> t2) (max k1 k2)
+
+instance Monoid (KeyedSet a) where
+    mempty = KeyedSet mempty 0
+
+ksInsertKey :: a -> KeyedSet a -> (Int, KeyedSet a)
+ksInsertKey x (KeyedSet tbl nex) =
+    (nex, KeyedSet (insertMap nex x tbl) (succ nex))
+
+ksInsert :: a -> KeyedSet a -> KeyedSet a
+ksInsert x s = snd $ ksInsertKey x s
+
+ksDelete :: Int -> KeyedSet a -> KeyedSet a
+ksDelete k (KeyedSet t n) = KeyedSet (deleteMap k t) n
+
+--------------------------------------------------------------------------------
+
 data Demux = Demux
-    { dConns :: TVar [Client]
+    { dConns :: TVar (KeyedSet Client)
     , dStash :: TVar [[Term.Ev]]
     }
 
 mkDemux :: STM Demux
-mkDemux = Demux <$> newTVar [] <*> newTVar []
+mkDemux = Demux <$> newTVar mempty <*> newTVar []
 
 addDemux :: Client -> Demux -> STM ()
 addDemux conn Demux{..} = do
     stash <- concat . reverse <$> readTVar dStash
-    modifyTVar' dConns (conn:)
+    modifyTVar' dConns (ksInsert conn)
     Term.give conn stash
 
 useDemux :: Demux -> Client
@@ -42,9 +65,28 @@ dGive :: Demux -> [Term.Ev] -> STM ()
 dGive Demux{..} ev = do
     modifyTVar' dStash (ev:)
     conns <- readTVar dConns
-    for_ conns $ \c -> Term.give c ev
+    for_ (_ksTable conns) $ \c -> Term.give c ev
 
-dTake :: Demux -> STM Belt
+{-
+    Returns Nothing if any connected client disconnected. A `Demux`
+    terminal lives forever, so you can continue to call this after it
+    returns `Nothing`.
+
+    If there are no attached clients, this will not return until one
+    is attached.
+-}
+dTake :: Demux -> STM (Maybe Belt)
 dTake Demux{..} = do
     conns <- readTVar dConns
-    asum (Term.take <$> conns)
+    waitForBelt conns >>= \case
+        (_, Just b ) -> pure (Just b)
+        (k, Nothing) -> do traceM "Terminal Disconnect"
+                           traceM (show $ keys $ _ksTable $ ksDelete k conns)
+                           writeTVar dConns (ksDelete k conns)
+                           pure Nothing
+  where
+    waitForBelt :: KeyedSet Client -> STM (Int, Maybe Belt)
+    waitForBelt ks = asum
+                   $ fmap (\(k,c) -> (k,) <$> Term.take c)
+                   $ mapToList
+                   $ _ksTable ks
