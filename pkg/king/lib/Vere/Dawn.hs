@@ -16,10 +16,12 @@ import Network.Ethereum.Web3
 
 import Data.Text (splitOn)
 
-import qualified Data.ByteArray       as BA
-import qualified Data.Map.Strict      as M
-import qualified Network.Ethereum.Ens as Ens
-import qualified Urbit.Ob             as Ob
+import qualified Crypto.ECC.Edwards25519 as Ed
+import qualified Crypto.Error            as Ed
+import qualified Data.ByteArray          as BA
+import qualified Data.Map.Strict         as M
+import qualified Network.Ethereum.Ens    as Ens
+import qualified Urbit.Ob                as Ob
 
 {-TODOs:
 
@@ -58,9 +60,10 @@ addressToAtom = bsToAtom . addressToBS
 
 -- A Pass is the encryptionKey and authenticationKey concatenated together.
 passFromEth :: BytesN 32 -> BytesN 32 -> UIntN 32 -> Pass
-passFromEth enc aut sut | sut /= 1 = 0
-passFromEth enc aut sut            =
-  ((bytes32ToBS enc) <> (bytes32ToBS aut)) ^. from atomBytes
+passFromEth enc aut sut | sut /= 1 = error "Invalid crypto suite number"
+passFromEth enc aut sut = Pass (decode enc) (decode aut)
+  where
+    decode = Ed.throwCryptoError . Ed.pointDecode . bytes32ToBS
 
 clanFromShip :: Ship -> Ob.Class
 clanFromShip = Ob.clan . Ob.patp . fromIntegral
@@ -68,7 +71,21 @@ clanFromShip = Ob.clan . Ob.patp . fromIntegral
 shipSein :: Ship -> Ship
 shipSein = Ship . fromIntegral . Ob.fromPatp . Ob.sein . Ob.patp . fromIntegral
 
+
+
+
 -- Data Validation -------------------------------------------------------------
+
+-- for =(who.seed `@`fix:ex:cub)
+getFingerprintFromKey :: Ring -> Atom
+getFingerprintFromKey = undefined
+
+-- getPassFromKey :: Ring -> Pass
+-- getPassFromKey (Ring crypt sign) = (Pass pubCrypt pubSign)
+--   where
+--     pubCrypt = decode crypt
+--     pubSign = decode sign
+--     decode = Ed.throwCryptoError . Ed.pointDecode
 
 -- Validates the keys, life, discontinuity, etc. If everything is ok, return
 -- the sponsoring ship for Seed.
@@ -164,12 +181,12 @@ retrieveGalaxyTable bloq azimuth =
     withAzimuth bloq azimuth $ M.fromList <$> mapM getRow [0..5]
   where
     getRow idx = do
-      -- TODO: should we be building a `passFromEth` here instead of converting
-      -- pubKey?
-      (pubKey, _, _, _, _, _, _, _, keyRev, continuity) <- points idx
-      pure (fromIntegral idx, (fromIntegral continuity,
-                               fromIntegral keyRev,
-                               bytes32ToAtom pubKey))
+      (encryptionKey, authenticationKey, _, _, _, _, _, cryptoSuite,
+       keyRev, continuity) <- points idx
+      pure (fromIntegral idx,
+            (fromIntegral continuity,
+              fromIntegral keyRev,
+              (passFromEth encryptionKey authenticationKey cryptoSuite)))
 
 -- Reads the three Ames domains from Ethereum.
 readAmesDomains :: Quantity -> Address -> Web3 ([Turf])
@@ -199,7 +216,9 @@ dawnVent (Seed (Ship ship) life ring oaf) = do
     print ("Azimuth: " ++ (show azimuth))
 
     -- TODO: We're retrieving point information, but we don't have
-    p <- retrievePoint dBloq azimuth 0
+    --
+    -- TODO: Comets don't go through retrievePoint.
+    p <- retrievePoint dBloq azimuth (fromIntegral ship)
     print $ show p
 
     -- Retrieve the galaxy table [MUST FIX s/5/255/]

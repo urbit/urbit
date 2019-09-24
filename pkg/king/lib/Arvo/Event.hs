@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wwarn #-}
 module Arvo.Event where
 
 import UrbitPrelude hiding (Term)
@@ -9,17 +10,22 @@ import Arvo.Common (Header(..), HttpEvent)
 import Arvo.Common (AmesDest, Ipv4, Ipv6, Port, Turf)
 import Arvo.Common (ReOrg(..), reorgThroughNoun)
 
+import qualified Crypto.ECC.Edwards25519   as Ed
+import qualified Crypto.Error              as Ed
+import qualified Data.ByteString.Char8     as C
 import qualified Network.HTTP.Types.Method as H
-
 
 -- Misc Types ------------------------------------------------------------------
 
-type Pass = Atom -- Public Key
+--type Pass = Atom -- Public Key
 type Rift = Atom -- Continuity number
 type Life = Word -- Number of Azimoth key revs.
 type Bloq = Atom -- TODO
 type Ring = Atom -- Private Key
 type Oath = Atom -- Signature
+
+
+
 
 
 -- Parsed URLs -----------------------------------------------------------------
@@ -37,6 +43,61 @@ deriveNoun ''PUrl
 
 -- Dawn Records ----------------------------------------------------------------
 
+-- A Pass is the Atom concatenation of 'b', the public encryption key, and the
+-- public authentication key. (see +pass-from-eth.)
+data Pass = Pass Ed.Point Ed.Point
+  deriving (Eq, Show)
+
+instance ToNoun Pass where
+  toNoun (Pass crypt sign) =
+    Atom $ (reverse bs) ^. from atomBytes
+    where
+      -- TODO: I'm confused. The 'B' must be the most significant digit, but
+      -- only is if we reverse the string.
+      bs = (C.singleton 'B' <> (Ed.pointEncode crypt) <> (Ed.pointEncode sign))
+
+instance FromNoun Pass where
+  parseNoun n = named "Pass" $ do
+    MkBytes backwards <- parseNoun n
+    let bs = (C.reverse backwards)
+    when ((length bs) /= 65) $ do
+      fail "Expecting ByteString of length 65"
+    when ((C.head bs) /= 'B') $ do
+      fail "Expecting 'B' prefix in public key structure"
+    let removedPrefix = C.tail bs
+    let cryptPoint =
+          Ed.throwCryptoError $ Ed.pointDecode (take 32 removedPrefix)
+    let signPoint =
+          Ed.throwCryptoError $ Ed.pointDecode (drop 32 removedPrefix)
+    pure $ Pass cryptPoint signPoint
+
+
+-- -- A Ring is the concatenation of 'B', the private encryption key, and the
+-- -- private authentication key. (see +nol:nu:crub:crypto.)
+-- data Ring = Ring ByteString ByteString
+--   deriving (Eq, Ord, Show)
+
+-- instance ToNoun Ring where
+--   toNoun (Ring crypt sign) =
+--     Atom $ (reverse bs) ^. from atomBytes
+--     where
+--       -- TODO: I'm confused. The 'b' must be the most significant digit, but
+--       -- only is if we reverse the string.
+--       bs = (C.singleton 'b' <> crypt <> sign)
+
+-- instance FromNoun Ring where
+--   parseNoun n = named "Ring" $ do
+--     MkBytes backwards <- parseNoun n
+--     let bs = (C.reverse backwards)
+--     when ((length bs) /= 65) $ do
+--       fail "Expecting ByteString of length 65"
+--     when ((C.head bs) /= 'b') $ do
+--       fail "Expecting 'b' prefix in public key structure"
+--     let removedPrefix = C.tail bs
+--     pure $ Ring (take 32 removedPrefix) (drop 32 removedPrefix)
+
+
+
 data Seed = Seed Ship Life Ring (Maybe Oath)
   deriving (Eq, Ord, Show)
 
@@ -53,7 +114,7 @@ data EthPoint = EthPoint
     , epNet :: Maybe (Life, Pass, ContNum, (Bool, Ship), Maybe Ship)
     , epKid :: Maybe (EthAddr, NounSet Ship)
     }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
 
 data EthEventId = EthEventId
     { eeiBlock :: Atom
@@ -70,7 +131,7 @@ data EthBookmark = EthBookmark
 data Snap = Snap (NounMap Ship Public)
                  (Dnses, NounMap Ship EthPoint)
                  EthBookmark
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
 
 data Dawn = MkDawn
     { dSeed    :: Seed
@@ -80,7 +141,7 @@ data Dawn = MkDawn
     , dBloq    :: Bloq
     , dNode    :: (Maybe PUrl)
     }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
 
 deriveNoun ''EthEventId
 deriveNoun ''EthBookmark
@@ -209,7 +270,7 @@ deriveNoun ''SyncEv
 data LegacyBootEvent
     = Fake Ship
     | Dawn Dawn
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
 
 data ArrowKey = D | L | R | U
   deriving (Eq, Ord, Show)
@@ -230,7 +291,7 @@ data TermEv
     | TermEvBoot (UD, ()) LegacyBootEvent
     | TermEvHail (UD, ()) ()
     | TermEvCrud Path       Cord Tang
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
 
 deriveNoun ''LegacyBootEvent
 deriveNoun ''ArrowKey
@@ -250,7 +311,7 @@ data BlipEv
     | BlipEvNewt       NewtEv
     | BlipEvSync       SyncEv
     | BlipEvTerm       TermEv
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
 
 deriveNoun ''BlipEv
 
@@ -287,7 +348,7 @@ deriveNoun ''ZuseEv
 data Ev
     = EvBlip BlipEv
     | EvVane Vane
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
 
 instance ToNoun Ev where
   toNoun = \case
