@@ -1,7 +1,75 @@
+/?  309
 /-  *lyre
 |%
+++  link
+  |=  nom=@tas
+  ^-  poke
+  [%lyre %lyre-action (action:enjs [%switch-view nom])]
+::
 ++  enjs
   |%
+  ::
+  ++  action
+    |=  act=^action
+    ^-  json
+    %+  frond:enjs:format
+      -.act
+    ?-  -.act
+        %new-view
+      %-  pairs:enjs:format
+      :~  nom+s+nom.act
+          dep+(dependencies dep.act)
+      ==
+    ::
+        %change-deps
+      %-  pairs:enjs:format
+      :~  nom+s+nom.act
+          dep+(dependencies dep.act)
+      ==
+    ::
+        %switch-view
+      (frond:enjs:format %nom s+nom.act)
+    ::
+        %delete-view
+      (frond:enjs:format %nom s+nom.act)
+    ::
+    ==
+  ::
+  ++  dependencies
+    |^
+    |=  dep=^dependencies
+    ^-  json
+    %-  pairs:enjs:format
+    :~  clay+(clay clay.dep)
+        gall+(gall gall.dep)
+        raw+~
+        ren+s+ren.dep
+    ==
+    ::
+    ++  clay
+      |=  c=(list [beam care:^clay])
+      ^-  json
+      :-  %a
+      %+  turn  c
+      |=  [bem=beam car=care:^clay]
+      ^-  json
+      %-  pairs:enjs:format
+      :~  bem+s+(spat (en-beam:format bem))
+          car+s+car
+      ==
+    ::
+    ++  gall
+      |=  g=(list [@tas path])
+      ^-  json
+      :-  %a
+      %+  turn  g
+      |=  [app=@tas pax=path]
+      ^-  json
+      %-  pairs:enjs:format
+      :~  app+s+app
+          pax+s+(spat pax)
+      ==
+    --
   ::
   ++  poke
     |=  a=^poke
@@ -21,6 +89,7 @@
     ==
   ::
   ++  dom
+    |^
     |=  a=^dom
     ^-  json
     ?-  -.a
@@ -40,126 +109,127 @@
       %include     (include a)
       %component   (component a)
     ==
-  ::
-  ++  empty
-    ^-  json
-    (frond:enjs:format %empty ~)
-  ::
-  ++  text
-    |=  a=^dom
-    ^-  json
-    ?>  ?=(%text -.a)
-    %+  frond:enjs:format
-      %text
-    [%s bod.a]
-  ::
-  ++  button
-    |=  a=^dom
-    ^-  json
-    ?>  ?=(%button -.a)
-    %+  frond:enjs:format
-      %button
-    %-  pairs:enjs:format
-    :~  body+(dom bod.a)
-        action+(poke act.a)
-    ==
-  ::
-  ++  form
-    |=  a=^dom
-    ^-  json
-    ?>  ?=(%form -.a)
-    %+  frond:enjs:format
-      %form
-    %-  pairs:enjs:format
-    :~  app+s+app.a
-        mark+s+mark.a
-        body+(dom bod.a)
-        :+  %data  %o
-        %-  ~(run by dat.a)
-        |=  val=@t
-        ^-  json
-        [%s val]
-    ==
-  ::
-  ++  text-input
-    |=  a=^dom
-    ^-  json
-    ?>  ?=(%text-input -.a)
-    %+  frond:enjs:format
-      %text-input
-    %-  pairs:enjs:format
-    :~  name+s+name.a
-    ==
-  ::
-  ++  submit
-    |=  a=^dom
-    ^-  json
-    ?>  ?=(%submit -.a)
-    %+  frond:enjs:format
-      %submit
-    (dom bod.a)
-  ::
-  ::
-  ++  size
-    |=  a=^dom
-    ^-  json
-    ?>  ?=(%size -.a)
-    %+  frond:enjs:format
-      %size
-    %-  pairs:enjs:format
-    :~  width+(numb:enjs:format w.a)
-        height+(numb:enjs:format h.a)
-        body+(dom bod.a)
-    ==
-  ::
-  ++  padding
-    |=  a=^dom
-    ^-  json
-    ?>  ?=(%padding -.a)
-    %+  frond:enjs:format
-      %padding
-    %-  pairs:enjs:format
-    :~  top+(numb:enjs:format t.a)
-        bottom+(numb:enjs:format b.a)
-        left+(numb:enjs:format l.a)
-        right+(numb:enjs:format r.a)
-        body+(dom bod.a)
-    ==
-  ::
-  ++  horizontal
-    |=  a=^dom
-    ^-  json
-    ?>  ?=(%horizontal -.a)
-    %+  frond:enjs:format
-      %horizontal
-    [%a (turn bod.a dom)]
-  ::
-  ++  vertical 
-    |=  a=^dom
-    ^-  json
-    ?>  ?=(%vertical -.a)
-    %+  frond:enjs:format
-      %vertical
-    [%a (turn bod.a dom)]
-  ::
-  ++  include
-    |=  a=^dom
-    ^-  json
-    ?>  ?=(%include -.a)
-    %+  frond:enjs:format
-      %include
-    (frond:enjs:format %js s+js.a)
-  ::
-  ++  component
-    |=  a=^dom
-    ^-  json
-    ?>  ?=(%component -.a)
-    %+  frond:enjs:format
-      %component
-    %-  pairs:enjs:format
-    :~  name+s+name.a
-        sub+?~(sub.a ~ (peer u.sub.a))
-    ==
+    ::
+    ++  empty
+      ^-  json
+      (frond:enjs:format %empty ~)
+    ::
+    ++  text
+      |=  a=^dom
+      ^-  json
+      ?>  ?=(%text -.a)
+      %+  frond:enjs:format
+        %text
+      [%s bod.a]
+    ::
+    ++  button
+      |=  a=^dom
+      ^-  json
+      ?>  ?=(%button -.a)
+      %+  frond:enjs:format
+        %button
+      %-  pairs:enjs:format
+      :~  body+(dom bod.a)
+          action+(poke act.a)
+      ==
+    ::
+    ++  form
+      |=  a=^dom
+      ^-  json
+      ?>  ?=(%form -.a)
+      %+  frond:enjs:format
+        %form
+      %-  pairs:enjs:format
+      :~  app+s+app.a
+          mark+s+mark.a
+          body+(dom bod.a)
+          :+  %data  %o
+          %-  ~(run by dat.a)
+          |=  val=@t
+          ^-  json
+          [%s val]
+      ==
+    ::
+    ++  text-input
+      |=  a=^dom
+      ^-  json
+      ?>  ?=(%text-input -.a)
+      %+  frond:enjs:format
+        %text-input
+      %-  pairs:enjs:format
+      :~  name+s+name.a
+      ==
+    ::
+    ++  submit
+      |=  a=^dom
+      ^-  json
+      ?>  ?=(%submit -.a)
+      %+  frond:enjs:format
+        %submit
+      (dom bod.a)
+    ::
+    ::
+    ++  size
+      |=  a=^dom
+      ^-  json
+      ?>  ?=(%size -.a)
+      %+  frond:enjs:format
+        %size
+      %-  pairs:enjs:format
+      :~  width+(numb:enjs:format w.a)
+          height+(numb:enjs:format h.a)
+          body+(dom bod.a)
+      ==
+    ::
+    ++  padding
+      |=  a=^dom
+      ^-  json
+      ?>  ?=(%padding -.a)
+      %+  frond:enjs:format
+        %padding
+      %-  pairs:enjs:format
+      :~  top+(numb:enjs:format t.a)
+          bottom+(numb:enjs:format b.a)
+          left+(numb:enjs:format l.a)
+          right+(numb:enjs:format r.a)
+          body+(dom bod.a)
+      ==
+    ::
+    ++  horizontal
+      |=  a=^dom
+      ^-  json
+      ?>  ?=(%horizontal -.a)
+      %+  frond:enjs:format
+        %horizontal
+      [%a (turn bod.a dom)]
+    ::
+    ++  vertical 
+      |=  a=^dom
+      ^-  json
+      ?>  ?=(%vertical -.a)
+      %+  frond:enjs:format
+        %vertical
+      [%a (turn bod.a dom)]
+    ::
+    ++  include
+      |=  a=^dom
+      ^-  json
+      ?>  ?=(%include -.a)
+      %+  frond:enjs:format
+        %include
+      (frond:enjs:format %js s+js.a)
+    ::
+    ++  component
+      |=  a=^dom
+      ^-  json
+      ?>  ?=(%component -.a)
+      %+  frond:enjs:format
+        %component
+      %-  pairs:enjs:format
+      :~  name+s+name.a
+          sub+?~(sub.a ~ (peer u.sub.a))
+      ==
+    --
   --
 --
 

@@ -1,3 +1,4 @@
 /sec/**/*.atom
 *.swp
 *.swo
+/app/lyre/**/*.js

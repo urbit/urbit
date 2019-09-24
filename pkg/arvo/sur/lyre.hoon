@@ -1,10 +1,20 @@
 |%
 +$  action
-  $%  [%new-session pax=(unit path)]
-      [%delete-session id=@u]
-      [%switch-session id=@u]
-      [%set-path pax=path]
+  $%  [%new-view nom=@tas dep=dependencies]
+      [%change-deps nom=@tas dep=dependencies]
+      [%switch-view nom=@tas]
+      [%delete-view nom=@tas]
   ==
+::
++$  dependencies
+  $:  clay=(list [beam care:clay])
+      gall=(list [app=@tas sub=path])
+      raw=(unit json)
+      ren=renderer
+  ==
+::
++$  renderer  @tas
+::
 +$  poke  [app=@tas mark=@tas dat=json]
 +$  peer  [app=@tas pax=path]
 +$  dom

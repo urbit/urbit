@@ -45,20 +45,11 @@
       out=output
   ==
 ::
-+$  dependencies
-  $:  clay=(list [beam care:clay])
-      gall=(list [app=@tas sub=path])
-      raw=(unit json)
-      ren=renderer
-  ==
-::
 +$  arguments
   $:  clay=(map [beam care:clay] (each cage tang))
       gall=(map [@tas path] (each cage tang))
       raw=(unit json)
   ==
-::
-+$  renderer  @tas
 ::
 +$  output
   $~  [%pending ~]
@@ -90,15 +81,14 @@
     =/  res=[mov=(list move) thy=_this]  initialize
     :_  thy.res
     [[ost.bol %connect / [~ /'~lyre'] %lyre] mov.res]
-  initialize
+  [~ this(+<+ ;;(state u.old))]
 ::
 ++  initialize
   ^-  (quip move _this)
   =/  dep=dependencies  [~ ~ ~ %home]
-  =/  initial-view=view  [dep [~ ~ ~] ~ *output]
   =.  cur  %home
-  =.  ses  (my [%home initial-view] ~)
-  finish:send-error-or-build-page:(init:per-view cur)
+  =.  ses  (~(put by ses) [%home *view])
+  finish:(set-deps:(init:per-view cur) dep)
 ::
 ++  poke-noun
   |=  a=*
@@ -108,6 +98,7 @@
     [~ this]
   ::
       %print-state
+    ~&  ses+~(key by ses)
     ~&  cur+cur
     ::
     =+  %+  turn  ~(tap by ses)
@@ -241,16 +232,27 @@
       (~(got by ses) nom)
     ==
   ::
+  ++  destroy-view
+    ^+  this
+    =.  this  stop-clay
+    =.  this  pull-gall
+    =.  this  kill-output
+    =.  out.vew  [%error (tang-dom-json [leaf+"no such view: {<nom>}"]~)]
+    send-output
+  ::
   ++  set-deps
     |=  dep=dependencies
     ^+  this
-::    ?:  =(dep dep.vew)
-::      this
+    ?:  =(dep dep.vew)
+      this
     =.  this  stop-clay
     =.  this  pull-gall
+    =.  this  kill-output
     =.  dep.vew  dep
     =.  this  read-clay
     =.  this  subscribe-gall
+    ?:  &(=(clay.dep ~) =(gall.dep ~))
+      send-error-or-build-page
     =.  out.vew  [%pending ~]
     send-output
   ::
@@ -428,6 +430,8 @@
   ::
   ++  send-output
     ^+  this
+    ?.  =(nom cur)
+      this
     =/  jon=json
       %-  pairs:enjs:format
       :~  :+  %sessions   %a
@@ -436,7 +440,7 @@
           ^-  json
           [%s nom]
       ::
-          current+s+cur
+          current+s+nom
       ::
           status+s+-.out.vew
       ::
@@ -452,7 +456,11 @@
 ::
 ++  session-json
   ^-  json
-  =/  out=output  out:(~(got by ses) cur)
+  =/  vew=(unit view)  (~(get by ses) cur)
+  =/  out=output
+    ?~  vew
+      [%error (tang-dom-json [leaf+"no such view: {<cur>}"]~)]
+    out.u.vew
   %-  pairs:enjs:format
   :~  :+  %sessions   %a
       %+  turn  ~(tap in ~(key by ses))
@@ -466,7 +474,6 @@
   ::
       data++.out
   ==
-::
 ::
 ::  ford helper functions
 ::
@@ -494,31 +501,30 @@
   |=  act=action
   ^-  (quip move _this)
   ?-  -.act
-      %new-session
-::    =.  ses  (snoc ses initial-view)
-::    =.  cur  (dec (lent ses))
-    [~ this]
-::    (get-view-json /diff ost.bol)
+      %new-view
+    ~|  already-existing-view+nom.act
+    ?<  (~(has by ses) nom.act)
+    =.  ses  (~(put by ses) nom.act *view)
+    =.  cur  nom.act
+    finish:(set-deps:(init:per-view nom.act) dep.act)
   ::
-      %delete-session
-::    =.  ses  (oust [id.act 1] ses)
-::    =.  cur
-::      ?:  =(cur 0)  0
-::      ?:((gte cur id.act) (dec cur) cur)
-    [~ this]
-::    (get-view-json /diff ost.bol)
+      %change-deps
+    ~|  no-such-view+nom.act
+    ?>  (~(has by ses) nom.act)
+    finish:(set-deps:(init:per-view nom.act) dep.act)
   ::
-      %switch-session
-::    ?>  (lth id.act (lent ses))
-::    =.  cur  id.act
-    [~ this]
-::    (get-view-json /diff ost.bol)
+      %switch-view
+    ~|  no-such-view+nom.act
+    ?>  (~(has by ses) nom.act)
+    =.  cur  nom.act
+    finish:send-output:(init:per-view cur)
   ::
-      %set-path
-    [~ this]
-::    =?  pax.act  =(~[%$] pax.act)  /
-::    =.  ses  ;:(welp (scag cur ses) [pax.act]~ (slag +(cur) ses))
-::    (get-view-json /diff ost.bol)
+      %delete-view
+    ~|  no-such-view+nom.act
+    ?>  (~(has by ses) nom.act)
+    =/  res=[mov=(list move) thy=_this]
+      finish:destroy-view:(init:per-view nom.act)
+    [mov.res thy.res(ses (~(del by ses) nom.act))]
   ==
 ::
 ++  peer-primary
