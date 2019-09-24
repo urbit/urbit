@@ -339,17 +339,14 @@ main = do
 
     installHandler sigTERM (Catch onTermSig) Nothing
 
-    args <- CLI.parseArgs
-
-    termAPI <- newTVarIO mempty
-
-    let wDem = runApp . rwith (King.kingAPI termAPI)
+    let wDem = runApp . rwith King.kingAPI
         rDem = wDem . const
 
+    args <- CLI.parseArgs
 
     case args of
         CLI.CmdCon s                              -> runAppLogFile (connTerm s)
-        CLI.CmdRun r o                            -> rDem $ runShip r o termAPI
+        CLI.CmdRun r o                            -> wDem $ \k -> runShip r o (King.kFleet k)
         CLI.CmdNew n o                            -> rDem $ newShip n o
         CLI.CmdDam                                -> wDem $ startDaemon
         CLI.CmdKil                                -> killDaemon

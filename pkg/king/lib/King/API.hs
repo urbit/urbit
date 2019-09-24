@@ -22,6 +22,7 @@ import qualified Vere.Term.API                  as Term
 
 data King = King
     { kServer :: Async ()
+    , kFleet  :: FleetCtl
     }
 
 type TermConn = NounServ.Conn Belt [Term.Ev]
@@ -72,8 +73,9 @@ readPortsFile = do
     bs <- readFile fil
     evaluate (readMay $ unpack $ decodeUtf8 bs)
 
-kingAPI :: HasLogFunc e => FleetCtl -> RAcquire e King
-kingAPI api = do
+kingAPI :: HasLogFunc e => RAcquire e King
+kingAPI = do
+    api        <- newTVarIO mempty
     (por, soc) <- io $ W.openFreePort
     (dir, fil) <- portsFile (fromIntegral por)
     lockFile dir
@@ -90,7 +92,7 @@ startKing (port, sock) api = do
 
     tid <- async $ io $ W.runSettingsSocket opts sock $ app env api
 
-    pure (King tid)
+    pure (King tid api)
 
 stubStatus :: StatusResp
 stubStatus = StatusResp Started $ mapFromList [("zod", Running)]
