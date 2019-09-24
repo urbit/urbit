@@ -145,13 +145,13 @@ connectToRemote ship port local = mkRAcquire start stop
 
         pure (ferry, cAsync)
 
-runTerminalClient :: ∀e. HasLogFunc e => Ship -> RIO e ()
-runTerminalClient ship = runRAcquire $ do
+runTerminalClient :: ∀e. HasLogFunc e => STM () -> Ship -> RIO e ()
+runTerminalClient exitTrigger ship = runRAcquire $ do
     por <- rio $ King.readPortsFile >>= \case
                      Nothing -> error "King not running"
                      Just po -> pure (po :: Word)
 
-    (siz, cli) <- localClient
+    (siz, cli) <- localClient exitTrigger
     (tid, sid) <- connectToRemote ship (fromIntegral por) cli
     atomically $ waitSTM tid <|> waitSTM sid
   where
@@ -161,8 +161,10 @@ runTerminalClient ship = runRAcquire $ do
 {-
     Initializes the generalized input/output parts of the terminal.
 -}
-localClient :: ∀e. HasLogFunc e => RAcquire e (TSize.Window Word, Client)
-localClient = fst <$> mkRAcquire start stop
+localClient :: ∀e. HasLogFunc e
+            => STM ()
+            -> RAcquire e (TSize.Window Word, Client)
+localClient doneSignal = fst <$> mkRAcquire start stop
   where
     start :: HasLogFunc e => RIO e ((TSize.Window Word, Client), Private)
     start = do
@@ -489,8 +491,10 @@ localClient = fst <$> mkRAcquire start stop
                   writeTQueue rq $ Ctl $ Cord "c"
                 loop rd
               else if w <= 26 then do
-                sendBelt $ Ctl $ Cord $ pack [BS.w2c (w + 97 - 1)]
-                loop rd
+                case pack [BS.w2c (w + 97 - 1)] of
+                    "d" -> atomically doneSignal
+                    c   -> do sendBelt $ Ctl $ Cord c
+                              loop rd
               else if w == 27 then do
                 loop rd { rdEscape = True }
               else do
@@ -543,7 +547,8 @@ term (tsize, Client{..}) shutdownSTM pierPath king enqueueEv =
         for_ fsWrites handleFsWrite
       TermEfInit _ _ -> pure ()
       TermEfLogo path _ -> do
-        atomically $ shutdownSTM
+        pure ()
+        -- atomically $ shutdownSTM
       TermEfMass _ _ -> pure ()
 
     handleFsWrite :: Blit -> RIO e ()

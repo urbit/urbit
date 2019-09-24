@@ -361,7 +361,10 @@ main = do
 --------------------------------------------------------------------------------
 
 connTerm :: ∀e. HasLogFunc e => Ship -> RIO e ()
-connTerm = Term.runTerminalClient
+connTerm ship = do
+    vKill <- newEmptyTMVarIO
+    async $ Term.runTerminalClient (putTMVar vKill ()) ship
+    atomically $ takeTMVar vKill
 
 --------------------------------------------------------------------------------
 
