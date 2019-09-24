@@ -1,4 +1,4 @@
-/-  asn1, hall
+/-  asn1
 /+  base64, der, primitive-rsa, *pkcs, *jose
 =,  eyre
 =*  rsa  primitive-rsa
@@ -149,15 +149,9 @@
 +$  card
   $%  [%serve wire =binding:eyre =generator:eyre]
       [%http-response =http-event:http]
-      [%poke wire dock poke]
       [%request wire request:http outbound-config:iris]
       [%rule wire %cert (unit [wain wain])]
       [%wait wire @da]
-  ==
-::  +poke: outgoing app pokes
-::
-+$  poke
-  $%  [%hall-action %phrase audience:hall (list speech:hall)]
   ==
 ::  +nonce-next: next effect to emit upon receiving nonce
 ::
@@ -385,13 +379,8 @@
 ++  notify
   |=  [=cord =tang]
   ^-  card
-  =/  msg=speech:hall
-    :+  %app  dap.bow
-    =/  line  [%lin & cord]
-    ?~(tang line [%fat [%tank tang] line])
-  =/  act
-    [%phrase (sy [our.bow %inbox] ~) [msg ~]]
-  [%poke / [our.bow %hall] %hall-action act]
+  ::  TODO: Write a system notifications service to replace this functionality.
+  !!
 ::  +request: unauthenticated http request
 ::
 ++  request
@@ -1392,3 +1381,4 @@
   ::
   ?.(=(act *acct) this init)
 --
+

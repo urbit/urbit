@@ -1,4 +1,4 @@
-/-  dns, hall
+/-  dns
 /+  tapp, stdio
 ::
 ::  tapp types and boilerplate
@@ -17,7 +17,6 @@
       ==
     +$  out-poke-data
       $%  [%dns-address =address:dns]
-          [%hall-action %phrase audience:hall (list speech:hall)]
       ==
     +$  in-peer-data
       $%  [%dns-binding =binding:dns]
@@ -97,14 +96,8 @@
       |=  [app=term =cord =tang]
       =/  m  (async:stdio ,~)
       ^-  form:m
-      =/  msg=speech:hall
-        :+  %app  app
-        =/  line  [%lin & cord]
-        ?~(tang line [%fat [%tank tang] line])
-      ;<  our=@p  bind:m  get-identity:stdio
-      =/  act
-        [%phrase (sy [our %inbox] ~) [msg ~]]
-      (poke-app:stdio [our %hall] %hall-action act)
+      ::  TODO: replace Hall messaging with a system notifications data store
+      !!
     --
 ::
 ::  application actions
@@ -148,8 +141,10 @@
         :~  leaf+"XX check via nslookup"
             leaf+"XX confirm port 80"
         ==
-      ;<  ~        bind:m  (hall-app-message %dns msg)
-      loop(ames-domains t.ames-domains)
+      ::  TODO: replace Hall with a systems notifications store
+      !!
+      ::;<  ~        bind:m  (hall-app-message %dns msg)
+      ::loop(ames-domains t.ames-domains)
     ::
     ::  +request-by-ip
     ::
@@ -242,8 +237,10 @@
       :~  leaf+"XX check via nslookup"
           leaf+"XX confirm port 80"
       ==
-    ;<  ~       bind:m  (hall-app-message %dns msg)
-    =?  completed.state  good  (some binding)
+    ::
+    ::  TODO: replace Hall with a systems notification store
+    ::;<  ~       bind:m  (hall-app-message %dns msg)
+    ::=?  completed.state  good  (some binding)
     ::  XX save failure?s
     ::  XX unsubscribe?
     (pure:m state)
@@ -263,7 +260,9 @@
     ?~  error.sign
       =/  msg=cord
         (cat 3 'request for DNS sent to ' (scot %p p:collector-app))
-      ;<  ~  bind:m  (hall-app-message %dns msg ~)
+      ::
+      ::;<  ~  bind:m  (hall-app-message %dns msg ~)
+      ::  TODO: replace Hall with a systems notification store
       (pure:m state)
     ::  XX details
     ~&  %dns-ip-request-failed
@@ -284,7 +283,8 @@
     ?~  error.sign
       =/  msg=cord
         (cat 3 'awaiting response from ' (scot %p p:collector-app))
-      ;<  ~  bind:m  (hall-app-message %dns msg ~)
+      ::  TODO: replace hall with a system notification store
+      ::;<  ~  bind:m  (hall-app-message %dns msg ~)
       (pure:m state)
     ::  XX details
     ~&  %dns-domain-subscription-failed
@@ -292,3 +292,4 @@
     (pure:m state)
   ==
 --
+

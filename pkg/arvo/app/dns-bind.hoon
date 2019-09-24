@@ -1,4 +1,4 @@
-/-  *dns-bind, dns, hall
+/-  *dns-bind, dns
 /+  tapp, stdio
 ::
 ::  tapp types and boilerplate
