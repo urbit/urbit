@@ -130,8 +130,11 @@ connectToRemote ship port local = mkRAcquire start stop
 
         Serv.Client{..} <- Serv.wsClient pax (fromIntegral port)
 
+        -- TODO XX Handle disconnect more cleanly.
         ferry <- async $ forever $ atomically $ asum
-            [ Term.take local >>= Serv.cSend cConn
+            [ Term.take local >>= \case
+                  Nothing -> empty
+                  Just ev -> Serv.cSend cConn ev
             , Serv.cRecv cConn >>= \case
                   Nothing -> empty
                   Just ev -> Term.give local ev
@@ -139,15 +142,16 @@ connectToRemote ship port local = mkRAcquire start stop
 
         pure (ferry, cAsync)
 
-runTerminalClient :: ∀e. HasLogFunc e => STM () -> Ship -> RIO e ()
-runTerminalClient exitTrigger ship = runRAcquire $ do
+runTerminalClient :: ∀e. HasLogFunc e => Ship -> RIO e ()
+runTerminalClient ship = runRAcquire $ do
     por <- rio $ King.readPortsFile >>= \case
                      Nothing -> error "King not running"
                      Just po -> pure (po :: Word)
 
-    (siz, cli) <- localClient exitTrigger
+    mExit <- io newEmptyTMVarIO
+    (siz, cli) <- localClient (putTMVar mExit ())
     (tid, sid) <- connectToRemote ship (fromIntegral por) cli
-    atomically $ waitSTM tid <|> waitSTM sid
+    atomically $ waitSTM tid <|> waitSTM sid <|> takeTMVar mExit
   where
     runRAcquire :: RAcquire e () -> RIO e ()
     runRAcquire act = rwith act $ const $ pure ()
@@ -172,7 +176,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
       -- Create a new configuration where we put the terminal in raw mode and
       -- disable a bunch of preprocessing.
-      let newTermSettings = flip withTime     0
+      let newTermSettings = flip withTime 0
                           $ flip withMinInput 1
                           $ foldl' withoutMode pPreviousConfiguration
                           $ disabledFlags

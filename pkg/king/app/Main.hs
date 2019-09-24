@@ -152,10 +152,6 @@ runAcquire :: (MonadUnliftIO m,  MonadIO m)
            => Acquire a -> m a
 runAcquire act = with act pure
 
-runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
-            => RAcquire e a -> m e a
-runRAcquire act = rwith act pure
-
 tryPlayShip :: HasLogFunc e => FilePath -> King.FleetCtl -> RIO e ()
 tryPlayShip shipPath api = do
     runRAcquire $ do
@@ -361,10 +357,7 @@ main = do
 --------------------------------------------------------------------------------
 
 connTerm :: ∀e. HasLogFunc e => Ship -> RIO e ()
-connTerm ship = do
-    vKill <- newEmptyTMVarIO
-    async $ Term.runTerminalClient (putTMVar vKill ()) ship
-    atomically $ takeTMVar vKill
+connTerm = Term.runTerminalClient
 
 --------------------------------------------------------------------------------
 

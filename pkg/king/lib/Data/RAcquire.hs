@@ -134,3 +134,7 @@ rwith (RAcquire f) g = do
                              (runRIO env $ free ReleaseException)
         runRIO env $ free ReleaseNormal
         return res
+
+runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
+            => RAcquire e a -> m e a
+runRAcquire act = rwith act pure

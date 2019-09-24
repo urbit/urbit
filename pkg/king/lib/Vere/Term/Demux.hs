@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wwarn #-}
-
 {-
     This allows multiple (zero or more) terminal clients to connect to
     the *same* logical arvo terminal. Terminals that connect will be
@@ -13,10 +11,11 @@ import UrbitPrelude
 import Arvo          (Belt)
 import Vere.Term.API (Client(Client))
 
-import qualified Vere.Term.API as Term
+import qualified Vere.Term.API   as Term
+import qualified Vere.Term.Logic as Logic
 
 
---------------------------------------------------------------------------------
+-- External --------------------------------------------------------------------
 
 data KeyedSet a = KeyedSet
     { _ksTable  :: IntMap a
@@ -43,17 +42,17 @@ ksDelete k (KeyedSet t n) = KeyedSet (deleteMap k t) n
 
 data Demux = Demux
     { dConns :: TVar (KeyedSet Client)
-    , dStash :: TVar [[Term.Ev]]
+    , dStash :: TVar Logic.St
     }
 
 mkDemux :: STM Demux
-mkDemux = Demux <$> newTVar mempty <*> newTVar []
+mkDemux = Demux <$> newTVar mempty <*> newTVar Logic.init
 
 addDemux :: Client -> Demux -> STM ()
 addDemux conn Demux{..} = do
-    stash <- concat . reverse <$> readTVar dStash
     modifyTVar' dConns (ksInsert conn)
-    Term.give conn stash
+    stash <- readTVar dStash
+    Term.give conn (Logic.toTermEv <$> Logic.drawState stash)
 
 useDemux :: Demux -> Client
 useDemux d = Client { give = dGive d, take = dTake d }
@@ -61,11 +60,14 @@ useDemux d = Client { give = dGive d, take = dTake d }
 
 -- Internal --------------------------------------------------------------------
 
+steps :: [Term.Ev] -> Logic.St -> Logic.St
+steps termEvs st = foldl' Logic.step st $ concat $ Logic.fromTermEv <$> termEvs
+
 dGive :: Demux -> [Term.Ev] -> STM ()
-dGive Demux{..} ev = do
-    modifyTVar' dStash (ev:)
+dGive Demux{..} evs = do
+    modifyTVar' dStash (force $ steps evs)
     conns <- readTVar dConns
-    for_ (_ksTable conns) $ \c -> Term.give c ev
+    for_ (_ksTable conns) $ \c -> Term.give c evs
 
 {-
     Returns Nothing if any connected client disconnected. A `Demux`
@@ -80,9 +82,7 @@ dTake Demux{..} = do
     conns <- readTVar dConns
     waitForBelt conns >>= \case
         (_, Just b ) -> pure (Just b)
-        (k, Nothing) -> do traceM "Terminal Disconnect"
-                           traceM (show $ keys $ _ksTable $ ksDelete k conns)
-                           writeTVar dConns (ksDelete k conns)
+        (k, Nothing) -> do writeTVar dConns (ksDelete k conns)
                            pure Nothing
   where
     waitForBelt :: KeyedSet Client -> STM (Int, Maybe Belt)
