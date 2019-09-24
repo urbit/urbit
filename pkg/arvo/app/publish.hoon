@@ -1,7 +1,7 @@
 ::
 ::  /app/publish.hoon
 ::
-/-  hall, *publish
+/-  *publish
 /+  *server, *publish
 ::
 /=  index
@@ -62,14 +62,12 @@
   ==
 ::
 +$  poke
-  $%  [%hall-action action:hall]
-      [%publish-action action]
+  $%  [%publish-action action]
       [%launch-action @tas path @t]
   ==
 ::
 +$  diff
-  $%  [%hall-rumor rumor:hall]
-      [%json json]
+  $%  [%json json]
       [%publish-collection collection]
       [%publish-rumor rumor]
       [%publish-update update]
