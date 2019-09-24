@@ -488,7 +488,7 @@
   ::
   ++  hurl                                              ::  start loop
     |=  {lac/? ovo/ovum}
-    ~?  &(!lac !=(%belt -.q.ovo))  ["" %unix -.q.ovo p.ovo now]
+    ~?  !lac  ["" %unix -.q.ovo p.ovo now]
     ::  ^-  {p/(list ovum) q/(pair worm (list {p/@tas q/vase}))}
     ^-  {p/(list ovum) q=(list [label=@tas =vane])}
     ?>  ?=(^ p.ovo)
@@ -543,6 +543,10 @@
       ~?  &(!lac !=(%$ p.gum))
         :-  (runt [s.gum '|'] "")
         :^  %pass  [p.gum p.q.r.gum]
+          ?:  ?=(?(%deal %deal-mall) +>-.q.q.r.gum)
+            :-  :-  +>-.q.q.r.gum
+                (,[[ship ship] term term] [+>+< +>+>- +>+>+<]:q.q.r.gum)
+            p.r.gum
           [(symp +>-.q.q.r.gum) p.r.gum]
         q.gum
       [p.q.r.gum ~ [[p.gum p.r.gum] q.gum] q.q.r.gum]
@@ -554,7 +558,11 @@
         !!
       ~?  &(!lac |(!=(%blit +>-.p.r.gum) !=(%d p.gum)))
         :-  (runt [s.gum '|'] "")
-        [%give p.gum (symp +>-.p.r.gum) `duct`q.gum]
+        :^  %give  p.gum
+          ?:  ?=(%unto +>-.p.r.gum)
+            [+>-.p.r.gum (term +>+<.p.r.gum)]
+          (symp +>-.p.r.gum)
+        `duct`q.gum
       [i.i.q.gum [~ t.i.q.gum] t.q.gum p.r.gum]
     ::
         $slip

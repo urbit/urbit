@@ -863,7 +863,7 @@
       =/  initialised
         =/  out  (mo-retrieve-duct ship bone)
         (mo-abed out)
-      (mo-give:initialised %unto %subscription-close ~)
+      (mo-give:initialised %unto %subscription-close ~ ~)
     ==
   ::  +ap: agent engine
   ::
@@ -928,13 +928,15 @@
       ::
       =/  internal-cards  agent-cards
       =/  bad-ducts  *(set duct)
+      =;  core
+        core(agent-duct agent-duct)
       |-  ^+  ap-core
       ?^  internal-cards
         =/  =card:agent  i.internal-cards
         ?.  ?=([%give %subscription-update *] card)
           $(internal-cards t.internal-cards)
         ::
-        =/  ducts  (ap-ducts-from-path path.p.card)
+        =/  ducts  (ap-ducts-from-path path.p.card ~)
         |-  ^+  ap-core
         ?~  ducts
           ^$(internal-cards t.internal-cards)
@@ -978,7 +980,7 @@
         ?.  ?=(%subscription-update -.gift)
           [agent-duct %give %unto gift]~
         ::
-        =/  ducts=(list duct)  (ap-ducts-from-path path.gift)
+        =/  ducts=(list duct)  (ap-ducts-from-path path.gift ~)
         =/  =cage  cage.gift
         %+  turn  ducts
         |=  =duct
@@ -1026,14 +1028,22 @@
     ::  +ap-ducts-from-path: get ducts subscribed to path
     ::
     ++  ap-ducts-from-path
-      |=  target-path=(unit path)
+      |=  [target-path=(unit path) target-ship=(unit ship)]
       ^-  (list duct)
-      ?~  target-path
+      ?:  &(?=(~ target-path) ?=(~ target-ship))
         ~[agent-duct]
       %+  murn  ~(tap by incoming.subscribers.current-agent)
       |=  [=duct =ship =path]
       ^-  (unit ^duct)
-      ?:  =(u.target-path path)
+      ?~  target-ship
+        ?:  =(target-path `path)
+          `duct
+        ~
+      ?~  target-path
+        ?:  =(target-ship `ship)
+          `duct
+        ~
+      ?:  &(=(target-path `path) =(target-ship `ship))
         `duct
       ~
     ::  +ap-apply: apply effect.
@@ -1077,7 +1087,8 @@
       ?:  is-ok
         =/  =note:agent  [%agent [ship -.path] %pump ~]
         (ap-pass way note)
-      =.  ap-core  (ap-give %subscription-close ~)
+      ~&  >  %agent-update-failed
+      =.  ap-core  (ap-specific-take path %subscription-close ~ ~)
       =/  =note:agent  [%agent [ship -.path] %unsubscribe ~]
       (ap-pass way note)
     ::  +ap-dequeue: drop from queue.
@@ -1262,10 +1273,10 @@
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
         (handle-agent-response:ap-agent-core path gift)
-      ?:  ?=(%subscription-update -.gift)
+      =?  ap-core  ?=(%subscription-update -.gift)
         (ap-update-subscription =(~ maybe-tang) attributing.agent-routes path)
       ?^  maybe-tang
-        (ap-error -.gift u.maybe-tang)
+        (ap-error -.gift leaf/"closing subscription" u.maybe-tang)
       ap-core
     ::  +ap-install: install wrapper.
     ::
@@ -1343,7 +1354,7 @@
       ^+  ap-core
       ::
       =>  ap-load-delete
-      (ap-give %subscription-close ~)
+      (ap-give %subscription-close ~ ~)
     ::  +ap-ingest: call agent arm
     ::
     ::    Handle acks here because they need to be emitted before the
@@ -1398,7 +1409,7 @@
         ^-  (list duct)
         ?.  ?=([%give %subscription-close *] card)
           ~
-        (ap-ducts-from-path path.p.card)
+        (ap-ducts-from-path [path ship]:p.card)
       ::
       =/  quit-map=bitt
         (malt (turn quits |=(=duct [duct *[ship path]])))

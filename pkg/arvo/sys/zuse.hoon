@@ -1927,7 +1927,7 @@
     +$  gift
       $%  [%poke-ack p=(unit tang)]
           [%subscription-update path=(unit path) =cage]
-          [%subscription-close path=(unit path)]
+          [%subscription-close path=(unit path) ship=(unit ship)]
           [%subscription-ack p=(unit tang)]
           [%http-response =http-event:http]
       ==

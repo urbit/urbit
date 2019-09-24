@@ -114,10 +114,7 @@
       ==
     --
 ::
-::  #
-::  #  %work
-::  #
-::    functional cores and arms.
+::  Formal agent
 ::
 =;  talk-core
   =|  stat=[%1 state]
@@ -153,9 +150,9 @@
   ::
   ++  handle-subscribe
     |=  =path
-
     ^-  step:agent:mall
-    =^  cards=(list card:agent:mall)  talk-core  (~(peer talk-core bowl stat) path)
+    =^  cards=(list card:agent:mall)  talk-core
+      (~(peer talk-core bowl stat) path)
     [cards this(stat +<+.talk-core)]
   ::
   ++  handle-unsubscribe  ~(handle-unsubscribe default-agent bowl this)
@@ -187,6 +184,12 @@
   ++  handle-arvo-response  ~(handle-arvo-response default-agent bowl this)
   ++  handle-error          ~(handle-error default-agent bowl this)
   --
+::
+::  #
+::  #  %work
+::  #
+::    functional cores and arms.
+::
 |_  {bol/bowl:mall $1 state}
 ::
 ::  #  %transition

@@ -5,7 +5,7 @@
 ::
 ::::
   ::
-|_  bol/bowl:gall
+|_  bol/bowl:mall
 ::
 ::TODO  add to zuse?
 ++  true-self
@@ -20,12 +20,13 @@
 ::
 ++  said-url                                            ::  app url
   |=  url/purl:eyre
-  :^  ost.bol  %poke  /said-url
-  :+  [our.bol %hall]  %hall-action
-  ^-  action
-  :+  %phrase
-    [[our.bol %inbox] ~ ~]
-  [%app dap.bol %lin | (crip (en-purl:html url))]~   :: XX
+  :*  %pass  /said-url  %agent  [our.bol %hall]
+      %poke  %hall-action  !>
+      ^-  action
+      :+  %phrase
+        [[our.bol %inbox] ~ ~]
+      [%app dap.bol %lin | (crip (en-purl:html url))]~  :: XX
+  ==
 ::
 ++  said                                                ::  app message
   |=  mes/(list tank)
