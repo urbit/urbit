@@ -2,7 +2,7 @@
 ::::  /hoon/drum/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
-/-    *sole, hall
+/-    *sole
 /+    sole
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -146,7 +146,6 @@
 =>  |%                                                ::  arvo structures
     ++  pear                                          ::  request
       $%  {$sole-action p/sole-action}                ::
-          {$hall-command command:hall}                ::
       ==                                              ::
     ++  lime                                          ::  update
       $%  {$dill-blit dill-blit:dill}                ::
@@ -393,7 +392,7 @@
 ++  se-dump                                           ::  print tanks
   |=  tac/(list tank)
   ^+  +>
-  ?.  se-ably  (se-hall tac)
+  ?.  se-ably  ((slog tac) +>.$)
   =/  wol/wall
     (zing (turn (flop tac) |=(a/tank (~(win re a) [0 edg]))))
   |-  ^+  +>.^$
@@ -471,21 +470,13 @@
   |=  mov/move
   %_(+> moz [mov moz])
 ::
-++  se-hall
-  |=  tac/(list tank)
-  ^+  +>
-  :: XX hall should be usable for stack traces, see urbit#584 which this change
-  :: closed for the problems there
-  ((slog (flop tac)) +>)
-  ::(se-emit 0 %poke /drum/hall [our.hid %hall] (said:hall our.hid %drum now.hid eny.hid tac))
-::
 ++  se-text                                           ::  return text
   |=  txt/tape
   ^+  +>
   ?.  ((sane %t) (crip txt))  :: XX upstream validation
     ~&  bad-text+<`*`txt>
     +>
-  ?.  se-ably  (se-hall [%leaf txt]~)
+  ?.  se-ably  ((slog [%leaf txt]~) +>.$)
   (se-blit %out (tuba txt))
 ::
 ++  se-poke                                           ::  send a poke
