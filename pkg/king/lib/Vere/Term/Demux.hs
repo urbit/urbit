@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wwarn #-}
-
 {-
     This allows multiple (zero or more) terminal clients to connect to
     the *same* logical arvo terminal. Terminals that connect will be
@@ -13,24 +11,25 @@ import UrbitPrelude
 import Arvo          (Belt)
 import Vere.Term.API (Client(Client))
 
-import qualified Vere.Term.API as Term
+import qualified Vere.Term.API   as Term
+import qualified Vere.Term.Logic as Logic
 
 
---------------------------------------------------------------------------------
+-- External --------------------------------------------------------------------
 
 data Demux = Demux
     { dConns :: TVar [Client]
-    , dStash :: TVar [[Term.Ev]]
+    , dStash :: TVar Logic.St
     }
 
 mkDemux :: STM Demux
-mkDemux = Demux <$> newTVar [] <*> newTVar []
+mkDemux = Demux <$> newTVar [] <*> newTVar Logic.init
 
 addDemux :: Client -> Demux -> STM ()
 addDemux conn Demux{..} = do
-    stash <- concat . reverse <$> readTVar dStash
     modifyTVar' dConns (conn:)
-    Term.give conn stash
+    stash <- readTVar dStash
+    Term.give conn (Logic.toTermEv <$> Logic.drawState stash)
 
 useDemux :: Demux -> Client
 useDemux d = Client { give = dGive d, take = dTake d }
@@ -38,11 +37,14 @@ useDemux d = Client { give = dGive d, take = dTake d }
 
 -- Internal --------------------------------------------------------------------
 
+steps :: [Term.Ev] -> Logic.St -> Logic.St
+steps termEvs st = foldl' Logic.step st $ concat $ Logic.fromTermEv <$> termEvs
+
 dGive :: Demux -> [Term.Ev] -> STM ()
-dGive Demux{..} ev = do
-    modifyTVar' dStash (ev:)
+dGive Demux{..} evs = do
+    modifyTVar' dStash (force $ steps evs)
     conns <- readTVar dConns
-    for_ conns $ \c -> Term.give c ev
+    for_ conns $ \c -> Term.give c evs
 
 dTake :: Demux -> STM Belt
 dTake Demux{..} = do
