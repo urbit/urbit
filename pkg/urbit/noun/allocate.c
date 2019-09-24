@@ -56,7 +56,7 @@ static u3a_box*
 _box_make(void* box_v, c3_w siz_w, c3_w use_w)
 {
   u3a_box* box_u = box_v;
-  c3_w*      box_w = box_v;
+  c3_w*    box_w = box_v;
 
   c3_assert(siz_w >= u3a_minimum);
 
@@ -894,7 +894,6 @@ u3a_free2(void* tox_v, size_t siz_i)
   return u3a_free(tox_v);
 }
 
-#if 1
 /* _me_wash_north(): clean up mug slots after copy.
 */
 static void _me_wash_north(u3_noun dog);
@@ -980,16 +979,13 @@ u3a_wash(u3_noun som)
     }
   }
 }
-#endif
-
-extern u3_noun BDA, BDB;
 
 /* _me_gain_use(): increment use count.
 */
 static void
 _me_gain_use(u3_noun dog)
 {
-  c3_w* dog_w      = u3a_to_ptr(dog);
+  c3_w*    dog_w = u3a_to_ptr(dog);
   u3a_box* box_u = u3a_botox(dog_w);
 
   if ( 0x7fffffff == box_u->use_w ) {
@@ -1002,44 +998,10 @@ _me_gain_use(u3_noun dog)
     box_u->use_w += 1;
 
 #ifdef U3_MEMORY_DEBUG
+    //  enable to (maybe) help track down leaks
+    //
     // if ( u3_Code && !box_u->cod_w ) { box_u->cod_w = u3_Code; }
-
-#if 0
-    if ( u3r_mug(dog) == 0x15d47649 ) {
-      static c3_w bug_w = 0;
-
-      u3l_log("bad %x %d %d\r\n", dog, bug_w, box_u->use_w);
-      if ( bug_w == 0 ) { abort(); }
-      bug_w++;
-    }
 #endif
-#if 0
-    {
-      static c3_w bug_w = 0;
-
-      if ( BDA == dog ) {
-        u3l_log("BDA %d %d\r\n", bug_w, box_u->use_w);
-        // if ( bug_w == 0 ) { abort(); }
-        bug_w++;
-      }
-    }
-#endif
-
-#if 0
-    {
-      static c3_w bug_w = 0;
-
-      if ( FOO && u3a_botox(u3a_to_ptr(dog)) == (void *)0x200dfe3e4 ) {
-        u3a_box* box_u = u3a_botox(u3a_to_ptr(dog));
-
-        u3l_log("GAIN %d %d\r\n", bug_w, box_u->use_w);
-        if ( bug_w == 8 ) { abort(); }
-        bug_w++;
-      }
-    }
-#endif
-#endif
-
   }
 }
 
@@ -1485,7 +1447,7 @@ u3a_use(u3_noun som)
     return 1;
   }
   else {
-    c3_w* dog_w      = u3a_to_ptr(som);
+    c3_w*    dog_w = u3a_to_ptr(som);
     u3a_box* box_u = u3a_botox(dog_w);
 
     return box_u->use_w;
@@ -2054,9 +2016,9 @@ u3a_slaq(c3_g met_g, c3_w len_w)
 u3_noun
 u3a_malt(c3_w* sal_w)
 {
-  c3_w*       nov_w = (sal_w - c3_wiseof(u3a_atom));
+  c3_w*     nov_w = (sal_w - c3_wiseof(u3a_atom));
   u3a_atom* nov_u = (void *)nov_w;
-  c3_w        len_w;
+  c3_w      len_w;
 
   for ( len_w = nov_u->len_w; len_w; len_w-- ) {
     if ( 0 != nov_u->buf_w[len_w - 1] ) {
@@ -2126,7 +2088,7 @@ c3_d
 u3a_detect(u3_noun fum, u3_noun som)
 {
   u3p(u3h_root) har_p = u3h_new();
-  c3_o            ret_o;
+  c3_o          ret_o;
 
   ret_o = _ca_detect(har_p, fum, som, 1);
   u3h_free(har_p);
@@ -2140,7 +2102,7 @@ u3a_detect(u3_noun fum, u3_noun som)
 u3_noun
 u3a_mint(c3_w* sal_w, c3_w len_w)
 {
-  c3_w*       nov_w = (sal_w - c3_wiseof(u3a_atom));
+  c3_w*     nov_w = (sal_w - c3_wiseof(u3a_atom));
   u3a_atom* nov_u = (void*)nov_w;
 
   /* See if we can free the slab entirely.
