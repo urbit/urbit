@@ -14,7 +14,6 @@ import qualified Network.Wai                    as W
 import qualified Network.Wai.Handler.Warp       as W
 import qualified Network.Wai.Handler.WebSockets as WS
 import qualified Network.WebSockets             as WS
-import qualified Urbit.Ob                       as Ob
 import qualified Vere.NounServ                  as NounServ
 import qualified Vere.Term.API                  as Term
 
@@ -45,7 +44,7 @@ data StatusResp = StatusResp
     }
   deriving (Generic, ToJSON, FromJSON)
 
-data BadShip = BadShip Text
+data BadShip = BadShip Text Text
   deriving (Show, Exception)
 
 
@@ -116,9 +115,9 @@ serveTerminal env api ship word =
                     NounServ.wsConn "NOUNSERV (wsServ) " inp out wsc
 
 readShip :: Text -> IO Ship
-readShip t = Ob.parsePatp t & \case
-     Left err -> throwIO (BadShip t)
-     Right pp -> pure $ Ship $ fromIntegral $ Ob.fromPatp pp
+readShip t = parsePat t & \case
+     Left err -> throwIO (BadShip t err)
+     Right sp -> pure sp
 
 app :: HasLogFunc e => e -> FleetCtl -> W.Application
 app env api req respond =

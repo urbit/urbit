@@ -114,6 +114,7 @@ import qualified King.API                    as King
 import qualified System.IO.LockFile.Internal as Lock
 import qualified Vere.Log                    as Log
 import qualified Vere.Pier                   as Pier
+import qualified Vere.Pier.Types             as Pier
 import qualified Vere.Serf                   as Serf
 import qualified Vere.Term                   as Term
 import qualified Vere.Term.API               as Term
@@ -160,9 +161,10 @@ tryPlayShip shipPath api = do
     runRAcquire $ do
         lockFile shipPath
         rio $ logTrace "RESUMING SHIP"
-        sls <- Pier.resumed shipPath []
+        sls@(_, log, _) <- Pier.resumed shipPath []
+        ship <- pure $ fromIntegral $ Pier.who $ Log.identity log
         rio $ logTrace "SHIP RESUMED"
-        Pier.pier api zod shipPath Nothing sls
+        Pier.pier api ship shipPath Nothing sls
 
 tryResume :: HasLogFunc e => FilePath -> RIO e ()
 tryResume shipPath = do
@@ -316,7 +318,10 @@ validateNounVal inpVal = do
 
 newShip :: HasLogFunc e => CLI.New -> CLI.Opts -> RIO e ()
 newShip CLI.New{..} _ = do
-    tryBootFromPill nPillPath pierPath (Ship 0)
+    ship <- case parsePat nShipAddr of
+              Right s  -> pure s
+              Left err -> error (unpack err)
+    tryBootFromPill nPillPath pierPath ship
   where
     pierPath = fromMaybe ("./" <> unpack nShipAddr) nPierPath
 

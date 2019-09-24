@@ -28,7 +28,6 @@ import qualified Data.ByteString.UTF8         as BS
 import qualified King.API                     as King
 import qualified System.Console.Terminal.Size as TSize
 import qualified System.Console.Terminfo.Base as T
-import qualified Urbit.Ob                     as Ob
 import qualified Vere.NounServ                as Serv
 import qualified Vere.Term.API                as Term
 
@@ -124,11 +123,6 @@ connClient c = Client
                  Just ev -> pure ev
     }
 
-shipToText :: Ship -> Text
-shipToText (Ship w) = trim $ Ob.renderPatp $ Ob.patp $ fromIntegral w
-  where
-    trim = drop 1
-
 connectToRemote :: ∀e. HasLogFunc e
                 => Ship
                 -> Port
@@ -138,7 +132,7 @@ connectToRemote ship port local = mkRAcquire start stop
   where
     stop (x, y) = cancel x >> cancel y
     start = do
-        let pax = "/terminal/" <> shipToText ship
+        let pax = "/terminal/" <> renderPat ship
 
         Serv.Client{..} <- Serv.wsClient pax (fromIntegral port)
 

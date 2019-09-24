@@ -9,10 +9,8 @@ import Options.Applicative.Help.Pretty
 
 import Control.Lens       ((&))
 import Data.Word          (Word16)
-import Noun               (Ship(Ship))
+import Noun               (parsePat, Ship)
 import System.Environment (getProgName)
-
-import qualified Urbit.Ob as Ob
 
 --------------------------------------------------------------------------------
 
@@ -288,9 +286,9 @@ conCmd = do
     pure (CmdCon (readShipErr ship))
 
 readShipErr :: Text -> Ship
-readShipErr t = Ob.parsePatp t & \case
+readShipErr t = parsePat t & \case
      Left err -> error $ unpack $ "Bad ship: " <> t <> " (" <> err <> ")"
-     Right pp -> Ship $ fromIntegral $ Ob.fromPatp pp
+     Right sp -> sp
 
 cmd :: Parser Cmd
 cmd = subparser

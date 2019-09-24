@@ -7,8 +7,10 @@ module Noun.Conversions
   , Cord(..), Knot(..), Term(..), Tape(..), Tour(..)
   , BigTape(..), BigCord(..)
   , Wall
-  , UD(..), UV(..)
-  , Mug(..), Path(..), EvilPath(..), Ship(..)
+  , Pat(..), UD(..), UV(..)
+  , PatText(..)
+  , Mug(..), Path(..), EvilPath(..)
+  , Ship, ship, unShip
   , Lenient(..), pathToFilePath, filePathToPath
   ) where
 
@@ -27,7 +29,7 @@ import Text.Regex.TDFA.Text ()
 import Data.LargeWord   (LargeKey, Word128, Word256)
 import GHC.Exts         (chr#, isTrue#, leWord#, word2Int#)
 import GHC.Natural      (Natural)
-import GHC.Types        (Char(C#))
+import GHC.Types        (Char(C#), Symbol)
 import GHC.Word         (Word32(W32#))
 import Noun.Cue         (cue)
 import Noun.Jam         (jam)
@@ -41,6 +43,7 @@ import RIO.FilePath  ((</>), (<.>), joinPath, splitDirectories,
 import qualified Data.Char                as C
 import qualified Data.Text.Encoding       as T
 import qualified Data.Text.Encoding.Error as T
+import qualified Urbit.Ob                 as Ob
 
 
 -- Noun ------------------------------------------------------------------------
@@ -456,9 +459,24 @@ instance FromNoun Term where -- XX TODO
 
 -- Ship ------------------------------------------------------------------------
 
-newtype Ship = Ship Word128 -- @p
+newtype Pat (a :: Symbol) i = Pat { unPat :: i }
   deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
 
+class PatText a where
+  renderPat :: Integral i => Pat a i -> Text
+  parsePat :: Integral i => Text -> Either Text (Pat a i)
+
+instance PatText "p" where
+    renderPat = drop 1 . Ob.renderPatp . Ob.patp . fromIntegral . unPat
+    parsePat = fmap (Pat . fromIntegral . Ob.fromPatp) . Ob.parsePatp
+
+type Ship = Pat "p" Word128
+
+ship :: Word128 -> Ship
+ship = Pat
+
+unShip :: Ship -> Word128
+unShip = unPat
 
 -- Path ------------------------------------------------------------------------
 
