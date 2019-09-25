@@ -113,20 +113,16 @@ validateAndGetSponsor (Seed ship life ring mo) EthPoint{..} = do
     -- For Galaxies, Stars and Planets, we do the full checks.
     _         -> case epNet of
       Nothing -> Left "ship not keyed"
-      Just (netLife, pass, contNum, _, _) -> do
+      Just (netLife, pass, contNum, (hasSponsor, who), _) -> do
         when (netLife /= life) $
-          Left $ pack
-                 ("keyfile life mismatch; keyfile claims life " ++ (show life) ++
-                  ", but Azimuth claims life " ++ (show netLife))
-        -- pass looks correct, but passFromRing is clearly wrong.
-        traceM ("passFromRing: " ++ (show (getPassFromRing ring)))
-        -- The bytestrings in pass appear to be correct, though
-        -- "backwards". There might be a problem with a trailing byte, though?
-        traceM ("pass: " ++ (show pass))
+            Left $ pack
+                 ("keyfile life mismatch; keyfile claims life " ++
+                  (show life) ++ ", but Azimuth claims life " ++ (show netLife))
         when ((getPassFromRing ring) /= pass) $
-          Left "keyfile does not match blockchain"
-        -- when ( /= pass) $ Left "key mismatch"
-        pure $ Ship 5
+            Left "keyfile does not match blockchain"
+        -- TODO: The hoon code does a breach check, but the C code never
+        -- supplies the data necessary for it to function.
+        pure who
 
 
 
@@ -218,34 +214,48 @@ readAmesDomains bloq azimuth =
 
 -- Produces either an error or a validated boot event structure.
 dawnVent :: Seed -> RIO e (Either Text Dawn)
-dawnVent s@(Seed (Ship ship) life ring oaf) = do
+dawnVent dSeed@(Seed (Ship ship) life ring oaf) = do
   --
   -- Everyone needs the Ethereum node instead of just the galaxies.
 
   hs <- runWeb3' provider $ do
     -- Block number (dBloq)
-    dBloq <- blockNumber
-    print ("boot: eth block: " ++ (show dBloq))
+    block <- blockNumber
+    print ("boot: eth block: " ++ (show block))
 
     azimuth <- withAccount () $ Ens.resolve "azimuth.eth"
     print ("Azimuth: " ++ (show azimuth))
 
-    -- TODO: We're retrieving point information, but we don't have
-    --
-    -- TODO: Comets don't go through retrievePoint.
-    p <- retrievePoint dBloq azimuth (fromIntegral ship)
+    -- TODO: Comets don't go through retrievePoint; this needs to be hoisted
+    -- one level.
+    p <- retrievePoint block azimuth (fromIntegral ship)
     print $ show p
-    print $ validateAndGetSponsor s p
+    let validate = validateAndGetSponsor dSeed p
+    sponsorShip <- case validate of
+      Left x -> fail $ unpack x
+      Right sponsor -> do
+        print $ Ob.patp $ fromIntegral sponsor
+        pure sponsor
 
     -- Retrieve the galaxy table [MUST FIX s/5/255/]
-    -- galaxyTable <- retrieveGalaxyTable dBloq azimuth
+    -- galaxyTable <- retrieveGalaxyTable block azimuth
     -- print $ show galaxyTable
 
     -- Read Ames domains [DONE]
-    -- dTurf <- readAmesDomains dBloq azimuth
-    -- print $ show dTurf
+    dTurf <- readAmesDomains block azimuth
+    print $ show dTurf
 
-    pure (dBloq)
+    dSponsor <- retrievePoint block azimuth (fromIntegral sponsorShip)
+
+    -- TODO: I need a Map -> NounMap conversion to turn the galaxyTable into
+    -- dCzar.
+    let dCzar = None
+
+    -- dNode.
+    let dNode = Nothing
+    let dBloq :: Bloq = fromIntegral $ unQuantity block
+
+    pure $ MkDawn{..}
 
   print $ show hs
 

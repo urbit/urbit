@@ -72,7 +72,7 @@ instance FromNoun Pass where
 -- seed. These aren't actually private keys, but public/private keypairs which
 -- can be derived from these seeds.
 data Ring = Ring { ringSign :: ByteString, ringCrypt :: ByteString }
-  deriving (Eq, Show)
+  deriving (Eq)
 
 instance ToNoun Ring where
   toNoun Ring{..} =
@@ -93,6 +93,8 @@ instance FromNoun Ring where
       let ringCrypt = (drop 32 removedPrefix)
       pure $ Ring ringSign ringCrypt
 
+instance Show Ring where
+  show r = "(Ring <<seed>> <<seed>>)"
 
 data Seed = Seed Ship Life Ring (Maybe Oath)
   deriving (Eq, Show)
