@@ -17,7 +17,6 @@ import Network.Ethereum.Web3
 
 import qualified Crypto.Sign.Ed25519  as Ed
 import qualified Data.ByteArray       as BA
-import qualified Data.ByteString      as BS
 import qualified Data.Map.Strict      as M
 import qualified Network.Ethereum.Ens as Ens
 import qualified Urbit.Ob             as Ob

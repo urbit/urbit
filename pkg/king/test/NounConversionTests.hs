@@ -13,9 +13,6 @@ import Test.Tasty.QuickCheck
 import Test.Tasty.TH
 
 import qualified Crypto.Sign.Ed25519 as Ed
--- import qualified Crypto.ECC.Edwards25519 as Ed
--- import qualified Crypto.Error            as Ed
-import qualified Data.ByteArray as BA
 
 -- String Representations of Atoms ---------------------------------------------
 
