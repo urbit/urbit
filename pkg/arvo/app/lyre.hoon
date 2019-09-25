@@ -228,7 +228,7 @@
       nom  nom
     ::
         vew
-      ~|  db-init-nonexistent-view+nom
+      ~|  init-nonexistent-view+nom
       (~(got by ses) nom)
     ==
   ::
@@ -505,7 +505,6 @@
     ~|  already-existing-view+nom.act
     ?<  (~(has by ses) nom.act)
     =.  ses  (~(put by ses) nom.act *view)
-    =.  cur  nom.act
     finish:(set-deps:(init:per-view nom.act) dep.act)
   ::
       %change-deps
@@ -578,4 +577,3 @@
   ==
 ::
 --
-

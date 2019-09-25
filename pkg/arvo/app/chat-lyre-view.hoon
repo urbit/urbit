@@ -1,4 +1,4 @@
-/-  *chat-store, *chat-hook, *permission-store
+/-  *chat-store, *chat-hook, *permission-store, lyre
 ::
 |%
 ::
@@ -14,6 +14,7 @@
   $%  [%chat-action chat-action]
       [%permission-action permission-action]
       [%chat-hook-action chat-hook-action]
+      [%lyre-action action:lyre]
   ==
 ::
 +$  diff
@@ -33,6 +34,11 @@
 ++  prep
   |=  old=(unit *)
   ^-  (quip move _this)
+  ?~  old
+    =/  act=action:lyre
+      [%new-view %chat [~ [%chat-lyre-view /chat/-50/0/chat1]~ ~ %chat]]
+    :_  this
+    [ost.bol %poke /create-chat [our.bol %lyre] %lyre-action act]~
   [~ this]
 ::
 ++  send-poke

@@ -168,7 +168,6 @@
         %submit
       (dom bod.a)
     ::
-    ::
     ++  size
       |=  a=^dom
       ^-  json

@@ -23,8 +23,8 @@
     %-  of:dejs
     :~  new-view+(ot:dejs:format nom+so:dejs:format dep+deps ~)
         change-deps+(ot:dejs:format nom+so:dejs:format dep+deps ~)
-        switch-view+(of:dejs:format nom+so:dejs:format ~)
-        delete-view+(of:dejs:format nom+so:dejs:format ~)
+        switch-view+(ot:dejs:format nom+so:dejs:format ~)
+        delete-view+(ot:dejs:format nom+so:dejs:format ~)
     ==
     ::
     ++  deps
