@@ -37,10 +37,10 @@ dependencies:
   - classy-prelude
   - conduit
   - containers
-  - cryptonite
   - data-default
   - data-fix
   - directory
+  - ed25519
   - entropy
   - exceptions
   - extra

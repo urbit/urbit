@@ -6,22 +6,21 @@ import Arvo.Event      hiding (Address)
 import Azimuth.Azimuth
 import UrbitPrelude    hiding (Call, rights, to)
 
+import Data.Maybe
 import Data.Solidity.Abi.Codec       (encode)
+import Data.Text                     (splitOn)
 import Network.Ethereum.Account
 import Network.Ethereum.Api.Eth
 import Network.Ethereum.Api.Provider
 import Network.Ethereum.Api.Types    hiding (blockNumber)
 import Network.Ethereum.Web3
 
-
-import Data.Text (splitOn)
-
-import qualified Crypto.ECC.Edwards25519 as Ed
-import qualified Crypto.Error            as Ed
-import qualified Data.ByteArray          as BA
-import qualified Data.Map.Strict         as M
-import qualified Network.Ethereum.Ens    as Ens
-import qualified Urbit.Ob                as Ob
+import qualified Crypto.Sign.Ed25519  as Ed
+import qualified Data.ByteArray       as BA
+import qualified Data.ByteString      as BS
+import qualified Data.Map.Strict      as M
+import qualified Network.Ethereum.Ens as Ens
+import qualified Urbit.Ob             as Ob
 
 {-TODOs:
 
@@ -67,7 +66,7 @@ passFromEth enc aut sut | sut /= 1 = error "Invalid crypto suite number"
 passFromEth enc aut sut =
       Pass (decode aut) (decode enc)
     where
-      decode = Ed.throwCryptoError . Ed.pointDecode . bytes32ToBS
+      decode = Ed.PublicKey . bytes32ToBS
 
 clanFromShip :: Ship -> Ob.Class
 clanFromShip = Ob.clan . Ob.patp . fromIntegral
@@ -76,20 +75,20 @@ shipSein :: Ship -> Ship
 shipSein = Ship . fromIntegral . Ob.fromPatp . Ob.sein . Ob.patp . fromIntegral
 
 
-
-
 -- Data Validation -------------------------------------------------------------
 
 -- for =(who.seed `@`fix:ex:cub)
 -- getFingerprintFromKey :: Ring -> Atom
 -- getFingerprintFromKey = undefined
 
+-- Derive public key structure from the key derivation seed structure
 getPassFromRing :: Ring -> Pass
 getPassFromRing Ring{..} = Pass{..}
   where
     passCrypt = decode ringCrypt
     passSign = decode ringSign
-    decode = Ed.toPoint
+    decode = fst . fromJust . Ed.createKeypairFromSeed_
+
 
 -- Validates the keys, life, discontinuity, etc. If everything is ok, return
 -- the sponsoring ship for Seed.
@@ -215,6 +214,7 @@ readAmesDomains bloq azimuth =
 {-
   [%dawn seed sponsor galaxies domains block eth-url]
 -}
+
 
 -- Produces either an error or a validated boot event structure.
 dawnVent :: Seed -> RIO e (Either Text Dawn)

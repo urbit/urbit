@@ -10,25 +10,17 @@ import Arvo.Common (Header(..), HttpEvent)
 import Arvo.Common (AmesDest, Ipv4, Ipv6, Port, Turf)
 import Arvo.Common (ReOrg(..), reorgThroughNoun)
 
-import qualified Crypto.ECC.Edwards25519   as Ed
-import qualified Crypto.Error              as Ed
+import qualified Crypto.Sign.Ed25519       as Ed
 import qualified Data.ByteString           as BS
 import qualified Data.ByteString.Char8     as C
 import qualified Network.HTTP.Types.Method as H
 
-import Numeric (showHex)
 -- Misc Types ------------------------------------------------------------------
 
---type Pass = Atom -- Public Key
 type Rift = Atom -- Continuity number
 type Life = Word -- Number of Azimoth key revs.
 type Bloq = Atom -- TODO
---type Ring = Atom -- Private Key
 type Oath = Atom -- Signature
-
-
-
-
 
 -- Parsed URLs -----------------------------------------------------------------
 
@@ -52,82 +44,54 @@ padByteString bs length | remaining > 0 = bs <> (BS.replicate remaining 0)
 
 -- A Pass is the Atom concatenation of 'b', the public encryption key, and the
 -- public authentication key. (see +pass-from-eth.)
---
--- For
-data Pass = Pass { passSign :: Ed.Point, passCrypt :: Ed.Point }
+data Pass = Pass { passSign :: Ed.PublicKey, passCrypt :: Ed.PublicKey }
   deriving (Eq, Show)
 
 instance ToNoun Pass where
   toNoun Pass{..} =
     Atom $ bs ^. from atomBytes
     where
-      bs = (C.singleton 'b' <> (padByteString (Ed.pointEncode passSign) 32) <>
-            (padByteString (Ed.pointEncode passCrypt) 32))
+      bs = (C.singleton 'b' <>
+            (padByteString (Ed.unPublicKey passSign) 32) <>
+            (padByteString (Ed.unPublicKey passCrypt) 32))
 
 instance FromNoun Pass where
   parseNoun n = named "Pass" $ do
     MkBytes unpadded <- parseNoun n
     let bs = padByteString unpadded 65
-    when ((length bs) /= 65) $ do
-      fail ("Expecting ByteString of length 65, actual size " ++
-            (show (length bs)))
     when ((C.head bs) /= 'b') $ do
       fail "Expecting 'b' prefix in public key structure"
     let removedPrefix = C.tail bs
-    let passSign =
-          Ed.throwCryptoError $ Ed.pointDecode (take 32 removedPrefix)
-    let passCrypt =
-          Ed.throwCryptoError $ Ed.pointDecode (drop 32 removedPrefix)
+    let passSign = Ed.PublicKey (take 32 removedPrefix)
+    let passCrypt = Ed.PublicKey (drop 32 removedPrefix)
     pure $ Pass{..}
 
-
--- A Ring is the concatenation of 'B', the private encryption key, and the
--- private authentication key. (see +nol:nu:crub:crypto.)
-data Ring = Ring { ringSign :: Ed.Scalar, ringCrypt :: Ed.Scalar }
+-- A Ring isn't the secret keys: it's the ByteString input which generates both
+-- the public key and the secret key. A Ring is the concatenation of 'B', the
+-- encryption key derivation seed, and the authentication key derivation
+-- seed. These aren't actually private keys, but public/private keypairs which
+-- can be derived from these seeds.
+data Ring = Ring { ringSign :: ByteString, ringCrypt :: ByteString }
   deriving (Eq, Show)
 
--- TODO: OK, reversing the string here isn't correct; we need to instead
---
--- Attempts at doing simple padding and cuts aren't actually having the effects
--- I'd assume they have. I now suspect the best way to move forward here is to
--- actually implement a real
 instance ToNoun Ring where
   toNoun Ring{..} =
     Atom $ bs ^. from atomBytes
     where
-      bs = (C.singleton 'B' <> (padByteString (Ed.scalarEncode ringSign) 32) <>
-            (padByteString (Ed.scalarEncode ringCrypt) 32))
-
-prettyPrint :: ByteString -> String
-prettyPrint = BS.foldr showHex ""
+      bs = (C.singleton 'B' <> (padByteString ringSign 32) <>
+            (padByteString ringCrypt 32))
 
 -- 'B' is 0x42.
 instance FromNoun Ring where
   parseNoun n = named "Ring" $ do
       MkBytes unpadded <- parseNoun n
-      traceM ("Reversed: " ++ (prettyPrint unpadded))
       let bs = padByteString unpadded 65
-      traceM ("BS: " ++ (prettyPrint bs))
-      when ((length bs) /= 65) $ do
-        fail ("Expecting ByteString of length 65, actual size " ++
-              (show (length bs)))
       when ((C.head bs) /= 'B') $ do
-        traceM "Expecting 'B' prefix in public key structure"
         fail "Expecting 'B' prefix in public key structure"
       let removedPrefix = C.tail bs
-      ringSign <- case decodeToEither (take 32 removedPrefix) of
-        Left x  -> do
-          traceM (show x)
-          fail (show x)
-        Right y -> pure y
-      ringCrypt <- case decodeToEither (drop 32 removedPrefix) of
-        Left x  -> do
-          traceM (show x)
-          fail (show x)
-        Right y -> pure y
+      let ringSign = (take 32 removedPrefix)
+      let ringCrypt = (drop 32 removedPrefix)
       pure $ Ring ringSign ringCrypt
-    where
-      decodeToEither = Ed.eitherCryptoError . Ed.scalarDecodeLong
 
 
 data Seed = Seed Ship Life Ring (Maybe Oath)

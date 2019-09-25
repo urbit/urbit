@@ -4,7 +4,7 @@ import Arvo.Event
 import Noun.Conversions
 import UrbitPrelude
 
-import Crypto.Random.Types
+import Data.Maybe
 import Test.QuickCheck        hiding ((.&.))
 import Test.QuickCheck.Gen
 import Test.QuickCheck.Random
@@ -12,9 +12,10 @@ import Test.Tasty
 import Test.Tasty.QuickCheck
 import Test.Tasty.TH
 
-import qualified Crypto.ECC.Edwards25519 as Ed
-import qualified Crypto.Error            as Ed
-import qualified Data.ByteArray          as BA
+import qualified Crypto.Sign.Ed25519 as Ed
+-- import qualified Crypto.ECC.Edwards25519 as Ed
+-- import qualified Crypto.Error            as Ed
+import qualified Data.ByteArray as BA
 
 -- String Representations of Atoms ---------------------------------------------
 
@@ -32,24 +33,33 @@ wRoundTrip uw = Just uw == (fromNoun $ toNoun uw)
 
 -- Cryptographic Point Representations -----------------------------------------
 
-instance Crypto.Random.Types.MonadRandom Gen where
-    getRandomBytes size = BA.pack <$> vector size
+data ThirtyTwoByteString = ThirtyTwoByteString ByteString
+  deriving (Show)
 
-instance Arbitrary Ed.Point where
-  arbitrary = Ed.toPoint <$> Ed.scalarGenerate
+data KeyPair = KeyPair (Ed.PublicKey, Ed.SecretKey)
+  deriving (Show)
 
-instance Arbitrary Ed.Scalar where
-  arbitrary = Ed.scalarGenerate
+instance Arbitrary ThirtyTwoByteString where
+  arbitrary = (ThirtyTwoByteString . pack) <$> (vector 32)
 
-passRoundTrip :: Ed.Point -> Ed.Point -> Bool
-passRoundTrip crypt sign =
-  Just val == (fromNoun $ toNoun val)
-  where val = (Pass crypt sign)
+instance Arbitrary KeyPair where
+  arbitrary =
+    (KeyPair . fromJust . Ed.createKeypairFromSeed_ . pack) <$> (vector 32)
 
-ringRoundTrip :: Ed.Scalar -> Ed.Scalar -> Bool
-ringRoundTrip crypt sign =
-  Just val == (fromNoun $ toNoun val)
-  where val = (Ring crypt sign)
+
+passRoundTrip :: KeyPair -> KeyPair -> Bool
+passRoundTrip (KeyPair (signPubkey, _)) (KeyPair (cryptPubkey, _)) =
+    (Just p) == (fromNoun $ toNoun p)
+  where
+    p = Pass signPubkey cryptPubkey
+
+
+ringRoundTrip :: ThirtyTwoByteString -> ThirtyTwoByteString -> Bool
+ringRoundTrip (ThirtyTwoByteString signSeed) (ThirtyTwoByteString cryptSeed) =
+    (Just r) == (fromNoun $ toNoun r)
+  where
+    r = Ring signSeed cryptSeed
+
 
 --------------------------------------------------------------------------------
 
