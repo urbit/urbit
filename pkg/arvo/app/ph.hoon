@@ -3,10 +3,6 @@
 ::  usage:
 ::  :aqua [%run-test %test-add]
 ::
-::  TODO:
-::  - Restore a fleet
-::  - Compose tests
-::
 /-  aquarium, ph
 /+  ph, ph-tests, ph-azimuth, ph-philter
 =,  ph-sur=^ph
