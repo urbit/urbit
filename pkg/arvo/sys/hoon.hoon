@@ -11557,7 +11557,7 @@
 ++  onan  seer                                          ::  $-(vise vase)
 ++  levi                                                ::  $-([type type] ?)
   |=  [a=type b=type]
-  (~(nest ut a) | b)
+  (~(nest ut a) & b)
 ::
 ++  text                                                ::  tape pretty-print
   |=  vax/vase  ^-  tape

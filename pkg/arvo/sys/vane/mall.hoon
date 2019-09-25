@@ -1068,6 +1068,17 @@
       |=  [=term tyl=path]
       ^-  (unit (unit cage))
       ::
+      =/  marked
+        ?.  ?=(%x term)
+          [mark=%$ tyl=tyl]
+        ::
+        =/  =path  (flop tyl)
+        ?>  ?=(^ path)
+        [mark=i.path tyl=(flop t.path)]
+      ::
+      =/  =mark  mark.marked
+      =/  tyl  tyl.marked
+      ::
       =/  peek-result=(each (unit (unit cage)) tang)
         (mule |.((handle-peek:ap-agent-core [term tyl])))
       ::
@@ -1087,7 +1098,6 @@
       ?:  is-ok
         =/  =note:agent  [%agent [ship -.path] %pump ~]
         (ap-pass way note)
-      ~&  >  %agent-update-failed
       =.  ap-core  (ap-specific-take path %subscription-close ~ ~)
       =/  =note:agent  [%agent [ship -.path] %unsubscribe ~]
       (ap-pass way note)

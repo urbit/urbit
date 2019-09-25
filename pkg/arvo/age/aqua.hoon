@@ -65,7 +65,7 @@
     =^  cards  aqua-core
       =/  t  ~(. aqua-core bowl all-state)
       ?+  mark  ~|([%aqua-bad-mark mark] !!)
-          %aqua-events  (poke-aqua-events:t !<((list aqua-event) vase))
+          %aqua-events  ~|(p.vase (poke-aqua-events:t !<((list aqua-event) vase)))
           %pill         (poke-pill:t !<(pill vase))
           %noun         (poke-noun:t !<(* vase))
       ==
@@ -253,28 +253,28 @@
     %-  emit-cards
     %+  turn  ~(tap by unix-effects)
     |=  [=ship ufs=(list unix-effect)]
-    [%give %subscription-update `path %aqua-effects !>((flop ufs))]
+    [%give %subscription-update `path %aqua-effects !>(`aqua-effects`[ship (flop ufs)])]
   ::
   =.  this
     %-  emit-cards
     %+  turn  ~(tap by unix-effects)
     |=  [=ship ufs=(list unix-effect)]
     =/  =path  /effects/(scot %p ship)
-    [%give %subscription-update `path %aqua-effects !>((flop ufs))]
+    [%give %subscription-update `path %aqua-effects !>(`aqua-effects`[ship (flop ufs)])]
   ::
   =.  this
     %-  emit-cards
     %+  turn  ~(tap by unix-events)
     |=  [=ship ve=(list unix-timed-event)]
     =/  =path  /events/(scot %p ship)
-    [%give %subscription-update `path %aqua-events !>((flop ve))]
+    [%give %subscription-update `path %aqua-events !>(`aqua-events`[ship (flop ve)])]
   ::
   =.  this
     %-  emit-cards
     %+  turn  ~(tap by unix-boths)
     |=  [=ship bo=(list unix-both)]
     =/  =path  /boths/(scot %p ship)
-    [%give %subscription-update `path %aqua-boths !>((flop bo))]
+    [%give %subscription-update `path %aqua-boths !>(`aqua-boths`[ship (flop bo)])]
   ::
   [(flop cards) this]
 ::

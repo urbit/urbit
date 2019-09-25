@@ -46,10 +46,7 @@
     %-  (slog tank u.p.gift)
     `agent
   ::
-      %subscription-close
-    ~|  "unexpected subscription closure to {<dap.bowl>} on wire {<wire>}"
-    !!
-  ::
+      %subscription-close  `agent
       %subscription-update
     ~|  "unexpected subscription update to {<dap.bowl>} on wire {<wire>}"
     ~|  "with mark {<p.cage.gift>}"

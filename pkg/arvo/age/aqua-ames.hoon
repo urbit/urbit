@@ -27,7 +27,7 @@
   ^-  (quip card:agent:mall _ships)
   =/  hear  [//newt/0v1n.2m9vh %hear lan pac]
   =?  ships  =(~ ships)
-    .^((list ship) %gx /(scot %p our)/aqua/(scot %da now)/ships/noun)
+    .^((list ship) %mx /(scot %p our)/aqua/(scot %da now)/ships/noun)
   :_  ships
   %+  emit-aqua-events  our
   %+  turn  ships

@@ -162,7 +162,10 @@
   ;<  ~  bind:m  (mount her des)
   ^-  form:m
   |=  pin=ph-input
-  ?.  &(=(her who.pin) ?=(?(%init %ergo) -.q.uf.pin))
+  ::  %ergo is no longer sufficient because .^ is pinned to beginning of
+  ::  the event.  So we hope somebody sets a timer for something.
+  ::
+  ?.  &(=(her who.pin) ?=(?(%init %ergo %doze) -.q.uf.pin))
     [& ~ %wait ~]
   =/  pax  /sur/aquarium/hoon
   =/  aqua-pax

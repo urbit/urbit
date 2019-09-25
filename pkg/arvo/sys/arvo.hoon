@@ -716,7 +716,7 @@
                 |-
                 ?-  -.res
                     %0  p.res
-                    %1  $(res [%2 leaf+"blocked" >p.res< ~])
+                    %1  $(res [%2 leaf+"blocked" >((list path) p.res)< ~])
                     %2
                   ~_  leaf+"deterministic error"
                   |-

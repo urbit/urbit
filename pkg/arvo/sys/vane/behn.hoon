@@ -91,6 +91,7 @@
     =.  movs.drips.state  (~(del by movs.drips.state) num)
     ?^  error
       ::  if we errored, drop it
+      %-  (slog leaf/"drip failed" u.error)
       event-core
     event-core(moves [duct %give %meta drip]~)
   ::  +vega: learn of a kernel upgrade

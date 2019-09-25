@@ -37,14 +37,15 @@
   |_  =bowl:mall
   +*  this  .
       def  ~(. default-agent bowl this)
-  ++  handle-init           `this
+  ++  handle-init
+    ~&  prep=%ph
+    =.  tests.all-state  (malt ~(manual-tests ph-core bowl all-state))
+    `this
   ++  handle-extract-state  !>(all-state)
   ++  handle-upgrade-state
     |=  old-state=vase
     ^-  step:agent:mall
-    ~&  prep=%ph
-    =.  tests.all-state  (malt ~(manual-tests ph-core bowl all-state))
-    `this
+    handle-init
   ::
   ++  handle-poke
     |=  [=mark =vase]
@@ -133,7 +134,9 @@
       :+  %child-sync
         ~[~bud ~marbud]
       ;<  ~        bind:m  (star ~marbud)
+      ~&  >  'MARBUD DONE'
       ;<  file=@t  bind:m  (touch-file ~bud %base)
+      ~&  >  'TOUCH DONE'
       (check-file-touched ~marbud %home file)
     ::
       :+  %boot-az
@@ -481,7 +484,7 @@
       %agent  [our.hid %aqua]
       %poke  %aqua-events  !>
       %+  turn
-        .^((list ship) %gx /(scot %p our.hid)/aqua/(scot %da now.hid)/ships/noun)
+        .^((list ship) %mx /(scot %p our.hid)/aqua/(scot %da now.hid)/ships/noun)
       |=  who=ship
       [%pause-events who]
   ==
