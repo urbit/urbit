@@ -92,10 +92,8 @@ getPassFromRing Ring{..} = Pass{..}
 -- Validates the keys, life, discontinuity, etc. If everything is ok, return
 -- the sponsoring ship for Seed.
 validateAndGetSponsor :: Seed -> EthPoint -> Either Text Ship
-validateAndGetSponsor (Seed ship life ring mo) EthPoint{..} = do
-  let clan = clanFromShip ship
-
-  case clan of
+validateAndGetSponsor (Seed ship life ring mo) EthPoint{..} =
+  case clanFromShip ship of
     Ob.Comet  -> do
       -- A comet address is the fingerprint of the keypair
       -- when (ship /= (x ring.seed)) (Left "todo: key mismatch")
@@ -106,8 +104,10 @@ validateAndGetSponsor (Seed ship life ring mo) EthPoint{..} = do
 
     -- When the ship is a moon, the only requirement is that the parent is
     -- launched.
-    Ob.Moon   -> do
-      Left "todo: moon's parent must be launched"
+    Ob.Moon -> do
+      case epNet of
+        Nothing -> Left "parent not keyed"
+        Just _  -> Right $ shipSein ship
 
     -- For Galaxies, Stars and Planets, we do the full checks.
     _         -> case epNet of
@@ -216,8 +216,7 @@ dawnVent :: Seed -> RIO e (Either Text Dawn)
 dawnVent dSeed@(Seed (Ship ship) life ring oaf) = do
   --
   -- Everyone needs the Ethereum node instead of just the galaxies.
-
-  hs <- runWeb3' provider $ do
+  ret <- runWeb3' provider $ do
     -- Block number (dBloq)
     block <- blockNumber
     print ("boot: eth block: " ++ (show block))
@@ -225,8 +224,8 @@ dawnVent dSeed@(Seed (Ship ship) life ring oaf) = do
     azimuth <- withAccount () $ Ens.resolve "azimuth.eth"
     print ("Azimuth: " ++ (show azimuth))
 
-    -- TODO: Comets don't go through retrievePoint; this needs to be hoisted
-    -- one level.
+    -- TODO: This is one of three cases: Validate data for a comet, get the
+    -- moon's parent keys, or get your ship's keys.
     p <- retrievePoint block azimuth (fromIntegral ship)
     print $ show p
     let validate = validateAndGetSponsor dSeed p
@@ -256,7 +255,6 @@ dawnVent dSeed@(Seed (Ship ship) life ring oaf) = do
 
     pure $ MkDawn{..}
 
-  print $ show hs
-
-  pure (Left "bad")
-
+  case ret of
+    Left x  -> pure $ Left $ tshow x
+    Right y -> pure $ Right y

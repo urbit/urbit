@@ -348,9 +348,7 @@ checkDawn keyfilePath = do
   print $ show seed
 
   e <- dawnVent seed
-  case e of
-    Left x  -> putStrLn "Left"
-    Right y -> putStrLn "Right"
+  print $ show e
 
 main :: IO ()
 main = do
