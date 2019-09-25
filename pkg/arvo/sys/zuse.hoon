@@ -6927,7 +6927,7 @@
     ::
       r.q.hiss
     ==
-  --  ::eyre
+  --  ::  html
 ::                                                      ::
 ::::                      ++wired                       ::  wire formatting
   ::                                                    ::::

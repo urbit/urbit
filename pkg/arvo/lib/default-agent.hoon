@@ -13,13 +13,11 @@
 ::
 ++  handle-poke
   |=  =cage
-  ~&  "unexpected poke to {<dap.bowl>} with mark {<p.cage>}"
   ~|  "unexpected poke to {<dap.bowl>} with mark {<p.cage>}"
   !!
 ::
 ++  handle-subscribe
   |=  =path
-  ~&  "unexpected subscription to {<dap.bowl>} on path {<path>}"
   ~|  "unexpected subscription to {<dap.bowl>} on path {<path>}"
   !!
 ::
@@ -35,8 +33,19 @@
 ++  handle-agent-response
   |=  [=wire =gift:agent:mall]
   ?-    -.gift
-      %poke-ack          `agent
-      %subscription-ack  `agent
+      %poke-ack
+    ?~  p.gift
+      `agent
+    %-  (slog leaf+"poke failed from {<dap.bowl>} on wire {<wire>}" u.p.gift)
+    `agent
+  ::
+      %subscription-ack
+    ?~  p.gift
+      `agent
+    =/  =tank  leaf+"subscribe failed from {<dap.bowl>} on wire {<wire>}"
+    %-  (slog tank u.p.gift)
+    `agent
+  ::
       %subscription-close
     ~|  "unexpected subscription closure to {<dap.bowl>} on wire {<wire>}"
     !!
