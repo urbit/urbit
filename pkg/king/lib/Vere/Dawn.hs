@@ -58,12 +58,16 @@ addressToBS = reverse . encode
 
 addressToAtom = bsToAtom . addressToBS
 
+
 -- A Pass is the encryptionKey and authenticationKey concatenated together.
+--
+
 passFromEth :: BytesN 32 -> BytesN 32 -> UIntN 32 -> Pass
 passFromEth enc aut sut | sut /= 1 = error "Invalid crypto suite number"
-passFromEth enc aut sut = Pass (decode enc) (decode aut)
-  where
-    decode = Ed.throwCryptoError . Ed.pointDecode . bytes32ToBS
+passFromEth enc aut sut =
+      Pass (decode aut) (decode enc)
+    where
+      decode = Ed.throwCryptoError . Ed.pointDecode . bytes32ToBS
 
 clanFromShip :: Ship -> Ob.Class
 clanFromShip = Ob.clan . Ob.patp . fromIntegral
@@ -77,15 +81,15 @@ shipSein = Ship . fromIntegral . Ob.fromPatp . Ob.sein . Ob.patp . fromIntegral
 -- Data Validation -------------------------------------------------------------
 
 -- for =(who.seed `@`fix:ex:cub)
-getFingerprintFromKey :: Ring -> Atom
-getFingerprintFromKey = undefined
+-- getFingerprintFromKey :: Ring -> Atom
+-- getFingerprintFromKey = undefined
 
--- getPassFromKey :: Ring -> Pass
--- getPassFromKey (Ring crypt sign) = (Pass pubCrypt pubSign)
---   where
---     pubCrypt = decode crypt
---     pubSign = decode sign
---     decode = Ed.throwCryptoError . Ed.pointDecode
+getPassFromRing :: Ring -> Pass
+getPassFromRing Ring{..} = Pass{..}
+  where
+    passCrypt = decode ringCrypt
+    passSign = decode ringSign
+    decode = Ed.toPoint
 
 -- Validates the keys, life, discontinuity, etc. If everything is ok, return
 -- the sponsoring ship for Seed.
@@ -110,7 +114,18 @@ validateAndGetSponsor (Seed ship life ring mo) EthPoint{..} = do
     -- For Galaxies, Stars and Planets, we do the full checks.
     _         -> case epNet of
       Nothing -> Left "ship not keyed"
-      Just (life, pass, contNum, _, _) -> do
+      Just (netLife, pass, contNum, _, _) -> do
+        when (netLife /= life) $
+          Left $ pack
+                 ("keyfile life mismatch; keyfile claims life " ++ (show life) ++
+                  ", but Azimuth claims life " ++ (show netLife))
+        -- pass looks correct, but passFromRing is clearly wrong.
+        traceM ("passFromRing: " ++ (show (getPassFromRing ring)))
+        -- The bytestrings in pass appear to be correct, though
+        -- "backwards". There might be a problem with a trailing byte, though?
+        traceM ("pass: " ++ (show pass))
+        when ((getPassFromRing ring) /= pass) $
+          Left "keyfile does not match blockchain"
         -- when ( /= pass) $ Left "key mismatch"
         pure $ Ship 5
 
@@ -203,7 +218,7 @@ readAmesDomains bloq azimuth =
 
 -- Produces either an error or a validated boot event structure.
 dawnVent :: Seed -> RIO e (Either Text Dawn)
-dawnVent (Seed (Ship ship) life ring oaf) = do
+dawnVent s@(Seed (Ship ship) life ring oaf) = do
   --
   -- Everyone needs the Ethereum node instead of just the galaxies.
 
@@ -220,6 +235,7 @@ dawnVent (Seed (Ship ship) life ring oaf) = do
     -- TODO: Comets don't go through retrievePoint.
     p <- retrievePoint dBloq azimuth (fromIntegral ship)
     print $ show p
+    print $ validateAndGetSponsor s p
 
     -- Retrieve the galaxy table [MUST FIX s/5/255/]
     -- galaxyTable <- retrieveGalaxyTable dBloq azimuth

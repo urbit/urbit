@@ -44,8 +44,12 @@ instance Arbitrary Ed.Scalar where
 passRoundTrip :: Ed.Point -> Ed.Point -> Bool
 passRoundTrip crypt sign =
   Just val == (fromNoun $ toNoun val)
-  where val = (Pass2 crypt sign)
+  where val = (Pass crypt sign)
 
+ringRoundTrip :: Ed.Scalar -> Ed.Scalar -> Bool
+ringRoundTrip crypt sign =
+  Just val == (fromNoun $ toNoun val)
+  where val = (Ring crypt sign)
 
 --------------------------------------------------------------------------------
 
@@ -55,4 +59,5 @@ tests =
     [ testProperty "0v0 printing/parsing round trip" $ vRoundTrip
     , testProperty "0w0 printing/parsing round trip" $ wRoundTrip
     , testProperty "Pass round trip" $ passRoundTrip
+    , testProperty "Ring round trip" $ ringRoundTrip
     ]
