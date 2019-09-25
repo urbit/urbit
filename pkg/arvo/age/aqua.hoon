@@ -41,16 +41,14 @@
           processing-events=?
       ==
     --
-=,  gall
+::
 =;  aqua-core
   =|  =all=state
   ^-  agent:mall
   |_  =bowl:mall
   +*  this  .
       def  ~(. default-agent bowl this)
-  ++  handle-init
-    `this
-  ::
+  ++  handle-init           `this
   ++  handle-extract-state  !>(all-state)
   ++  handle-upgrade-state
     |=  old-state=vase
@@ -76,6 +74,8 @@
   ++  handle-subscribe
     |=  =path
     ^-  step:agent:mall
+    ?:  ?=([%effects ~] path)
+      `this
     ?.  ?=([?(%effects %evens %boths) @ ~] path)
       ~|  [%aqua-bad-subscribe-path path]
       !!
