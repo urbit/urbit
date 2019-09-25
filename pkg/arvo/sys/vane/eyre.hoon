@@ -580,7 +580,7 @@
     }
 
     deleteOnUnload() {
-      window.addEventListener('beforeunload', (event) => {
+      window.addEventListener("unload", (event) => {
         this.delete();
       });
     }
@@ -588,17 +588,22 @@
     //  sends a poke to an app on an urbit ship
     //
     poke(ship, app, mark, json, successFunc, failureFunc) {
-      var id = this.nextId();
+      let id = this.nextId();
       this.outstandingPokes.set(
-          id, {"success": successFunc, "fail": failureFunc});
+        id,
+        {
+          success: successFunc,
+          fail: failureFunc
+        }
+      );
 
       this.sendJSONToChannel({
-          "id": id,
-          "action": "poke",
-          "ship": ship,
-          "app": app,
-          "mark": mark,
-          "json": json
+          id,
+          action: "poke",
+          ship,
+          app,
+          mark,
+          json
         });
     }
 
@@ -606,18 +611,30 @@
     //
     //    Returns a subscription id, which is the same as the same internal id
     //    passed to your Urbit.
-    subscribe(ship, app, path, connectionErrFunc, eventFunc, quitFunc) {
-      var id = this.nextId();
+    subscribe(
+        ship,
+        app,
+        path,
+        connectionErrFunc = () => {},
+        eventFunc = () => {},
+        quitFunc = () => {}) {
+      let id = this.nextId();
       this.outstandingSubscriptions.set(
-          id, {"err": connectionErrFunc, "event": eventFunc, "quit": quitFunc});
+        id,
+        {
+          err: connectionErrFunc, 
+          event: eventFunc,
+          quit: quitFunc
+        }
+      );
 
       this.sendJSONToChannel({
-          "id": id,
-          "action": "subscribe",
-          "ship": ship,
-          "app": app,
-          "path": path
-        });
+        id,
+        action: "subscribe",
+        ship,
+        app,
+        path
+      });
 
       return id;
     }
@@ -625,33 +642,33 @@
     //  quit the channel
     //
     delete() {
-      var id = this.nextId();
+      let id = this.nextId();
       navigator.sendBeacon(this.channelURL(), JSON.stringify([{
-        "id": id,
-        "action": "delete"
+        id,
+        action: "delete"
       }]));
     }
 
     //  unsubscribe to a specific subscription
     //
-    unsubscribe(subscriptionId) {
-      var id = this.nextId();
+    unsubscribe(subscription) {
+      let id = this.nextId();
       this.sendJSONToChannel({
-          "id": id,
-          "action": "unsubscribe",
-          "subscription": subscriptionId
+        id,
+        action: "unsubscribe",
+        subscription
       });
     }
 
     //  sends a JSON command command to the server.
     //
     sendJSONToChannel(j) {
-      var req = new XMLHttpRequest();
+      let req = new XMLHttpRequest();
       req.open("PUT", this.channelURL());
       req.setRequestHeader("Content-Type", "application/json");
 
       if (this.lastEventId == this.lastAcknowledgedEventId) {
-        var x = JSON.stringify([j]);
+        let x = JSON.stringify([j]);
         req.send(x);
       } else {
         //  we add an acknowledgment to clear the server side queue
@@ -659,8 +676,9 @@
         //    The server side puts messages it sends us in a queue until we
         //    acknowledge that we received it.
         //
-        var x = JSON.stringify(
-          [{"action": "ack", "event-id": parseInt(this.lastEventId)}, j])
+        let x = JSON.stringify(
+          [{action: "ack", "event-id": parseInt(this.lastEventId)}, j]
+        );
         req.send(x);
 
         this.lastEventId = this.lastAcknowledgedEventId;
@@ -680,32 +698,32 @@
       this.eventSource.onmessage = e => {
         this.lastEventId = e.lastEventId;
 
-        var obj = JSON.parse(e.data);
+        let obj = JSON.parse(e.data);
         if (obj.response == "poke") {
-          var funcs = this.outstandingPokes.get(obj.id);
+          let funcs = this.outstandingPokes.get(obj.id);
           if (obj.hasOwnProperty("ok")) {
-            funcs["success"]()
+            funcs["success"]();
           } else if (obj.hasOwnProperty("err")) {
-            funcs["fail"](obj.err)
+            funcs["fail"](obj.err);
           } else {
-            console.log("Invalid poke response: ", obj);
+            console.error("Invalid poke response: ", obj);
           }
           this.outstandingPokes.delete(obj.id);
 
         } else if (obj.response == "subscribe") {
           //  on a response to a subscribe, we only notify the caller on err
           //
-          var funcs = this.outstandingSubscriptions.get(obj.id);
+          let funcs = this.outstandingSubscriptions.get(obj.id);
           if (obj.hasOwnProperty("err")) {
             funcs["err"](obj.err);
             this.outstandingSubscriptions.delete(obj.id);
           }
         } else if (obj.response == "diff") {
-          var funcs = this.outstandingSubscriptions.get(obj.id);
+          let funcs = this.outstandingSubscriptions.get(obj.id);
           funcs["event"](obj.json);
         } else if (obj.response == "quit") {
-          var funcs = this.outstandingSubscriptions.get(obj.id);
-          funcs["quit"](obj.err);
+          let funcs = this.outstandingSubscriptions.get(obj.id);
+          funcs["quit"](obj);
           this.outstandingSubscriptions.delete(obj.id);
         } else {
           console.log("Unrecognized response: ", e);
@@ -713,9 +731,8 @@
       }
 
       this.eventSource.onerror = e => {
-        //  TODO: The server broke the connection. Call every poke cancel and every
-        //  subscription disconnect.
-        console.log(e);
+        console.error("eventSource error:", e);
+        this.delete();
       }
     }
 
