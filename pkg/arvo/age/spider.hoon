@@ -25,7 +25,7 @@
     =^  cards  state
       ?+  mark  (handle-poke:def mark vase)
         %spider-imput  (handle-poke-imput:sc !<(imput vase))
-        %spider-start  (handle-start-imp:sc !<([imp-name path] vase))
+        %spider-start  (handle-start-imp:sc !<([imp-name term] vase))
       ==
     [cards this]
   ::
@@ -55,14 +55,13 @@
   (take-input imp-name ~ %sign wire sign-arvo)
 ::
 ++  handle-start-imp
-  |=  [=imp-name =path]
+  |=  [=imp-name =term]
   ^-  (quip card ^state)
   ?:  (~(has by state) imp-name)
     ~|  [%already-started imp-name]
     !!
   =/  =card
-    =/  =beam            (need (de-beam:format path))
-    =/  =schematic:ford  [%core [p q]:beam hoon+s.beam]
+    =/  =schematic:ford  [%core [our.bowl %home] /hoon/[term]/imp]
     [%pass /build/[imp-name] %arvo %f %build live=%.y schematic]
   [[card ~] state]
 ::

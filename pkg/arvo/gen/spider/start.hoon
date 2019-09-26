@@ -1,3 +1,3 @@
 :-  %say
-|=  [* [=term =path ~] ~]
-[%spider-start term path]
+|=  [* [name=term where=term ~] ~]
+[%spider-start name where]
