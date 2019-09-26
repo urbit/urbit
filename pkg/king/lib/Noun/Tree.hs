@@ -3,6 +3,7 @@
 module Noun.Tree
     ( HoonSet, setToHoonSet, setFromHoonSet
     , HoonMap, mapToHoonMap, mapFromHoonMap
+    , mug
     ) where
 
 import ClassyPrelude
