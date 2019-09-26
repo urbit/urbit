@@ -10,10 +10,9 @@ static void
 _box_count(c3_ws siz_ws)
 {
   u3R->all.fre_w += siz_ws;
+
   {
-    c3_w end_w = _(u3a_is_north(u3R))
-                  ? (u3R->hat_p - u3R->rut_p)
-                  : (u3R->rut_p - u3R->hat_p);
+    c3_w end_w = u3a_heap(u3R);
     c3_w all_w = (end_w - u3R->all.fre_w);
 
     if ( all_w > u3R->all.max_w ) {
@@ -263,6 +262,8 @@ _ca_box_make_hat(c3_w len_w, c3_w ald_w, c3_w alp_w, c3_w use_w)
     pad_w = _me_align_pad(all_p, ald_w, alp_w);
     siz_w = (len_w + pad_w);
 
+    //  hand-inlined: siz_w >= u3a_open(u3R)
+    //
     if ( (siz_w >= (u3R->cap_p - u3R->hat_p)) ) {
       return 0;
     }
@@ -274,6 +275,8 @@ _ca_box_make_hat(c3_w len_w, c3_w ald_w, c3_w alp_w, c3_w use_w)
     siz_w = (len_w + pad_w);
     all_p -= pad_w;
 
+    //  hand-inlined: siz_w >= u3a_open(u3R)
+    //
     if ( siz_w >= (u3R->hat_p - u3R->cap_p) ) {
       return 0;
     }
@@ -1843,20 +1846,13 @@ c3_w
 u3a_sweep(void)
 {
   c3_w neg_w, pos_w, leq_w, weq_w;
-#ifdef U3_MEMORY_DEBUG
-  c3_w tot_w, caf_w;
-#endif
 
   /* Measure allocated memory by counting the free list.
   */
   {
-    c3_w end_w;
+    c3_w end_w = u3a_heap(u3R);
     c3_w fre_w = 0;
     c3_w i_w;
-
-    end_w = _(u3a_is_north(u3R))
-                ? (u3R->hat_p - u3R->rut_p)
-                : (u3R->rut_p - u3R->hat_p);
 
     for ( i_w = 0; i_w < u3a_fbox_no; i_w++ ) {
       u3p(u3a_fbox) fre_p = u3R->all.fre_p[i_w];
@@ -1947,35 +1943,33 @@ u3a_sweep(void)
   }
 
 #ifdef U3_MEMORY_DEBUG
-  tot_w = _(u3a_is_north(u3R))
-                ? u3R->mat_p - u3R->rut_p
-                : u3R->rut_p - u3R->mat_p;
-  caf_w = _(u3a_is_north(u3R))
-                ? u3R->mat_p - u3R->cap_p
-                : u3R->cap_p - u3R->mat_p;
+  {
+    c3_w tot_w = u3a_full(u3R);
+    c3_w caf_w = u3a_temp(u3R);
 
 #ifdef U3_CPU_DEBUG
-  if ( (0 != u3R->par_p) && (u3R->all.max_w > 1000000) ) {
+    if ( (0 != u3R->par_p) && (u3R->all.max_w > 1000000) ) {
+      u3a_print_memory(stderr, "available", (tot_w - pos_w));
+      u3a_print_memory(stderr, "allocated", pos_w);
+      u3a_print_memory(stderr, "volatile", caf_w);
+
+      u3a_print_memory(stderr, "maximum", u3R->all.max_w);
+    }
+#endif
+
+#if 0
     u3a_print_memory(stderr, "available", (tot_w - pos_w));
     u3a_print_memory(stderr, "allocated", pos_w);
     u3a_print_memory(stderr, "volatile", caf_w);
-
-    u3a_print_memory(stderr, "maximum", u3R->all.max_w);
+#endif
   }
-#else
-#if 0
-  u3a_print_memory(stderr, "available", (tot_w - pos_w));
-  u3a_print_memory(stderr, "allocated", pos_w);
-  u3a_print_memory(stderr, "volatile", caf_w);
 #endif
-#endif
-#endif
+
   u3a_print_memory(stderr, "leaked", leq_w);
   u3a_print_memory(stderr, "weaked", weq_w);
 
-  c3_assert((pos_w + leq_w + weq_w) == neg_w);
-
-  if ( 0 != leq_w || (0 != weq_w) ) { c3_assert(0); }
+  c3_assert( (pos_w + leq_w + weq_w) == neg_w );
+  c3_assert( (0 == leq_w) && (0 == weq_w) );
 
   return neg_w;
 }

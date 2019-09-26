@@ -900,8 +900,8 @@ u3m_water(c3_w* low_w, c3_w* hig_w)
 {
   c3_assert(u3R == &u3H->rod_u);
 
-  *low_w = (u3H->rod_u.hat_p - u3H->rod_u.rut_p);
-  *hig_w = (u3H->rod_u.mat_p - u3H->rod_u.cap_p) + c3_wiseof(u3v_home);
+  *low_w = u3a_heap(u3R);
+  *hig_w = u3a_temp(u3R) + c3_wiseof(u3v_home);
 }
 
 /* u3m_soft_top(): top-level safety wrapper.
