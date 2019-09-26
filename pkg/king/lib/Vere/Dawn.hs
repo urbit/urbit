@@ -21,22 +21,9 @@ import qualified Data.Map.Strict      as M
 import qualified Network.Ethereum.Ens as Ens
 import qualified Urbit.Ob             as Ob
 
-{-TODOs:
-
-  - Dawn takes a NounMap instead of a Map. Need a conversion function.
-
-  - The Haskell Dawn structure as it exists right now isn't right? It can't
-    parse a real %dawn event in the event browser.
-
--}
-
-
 -- During boot, use the infura provider
 provider = HttpProvider
   "https://mainnet.infura.io/v3/196a7f37c7d54211b4a07904ec73ad87"
-
-
---azimuthContract = "0x223c067F8CF28ae173EE5CafEa60cA44C335fecB"
 
 -- Conversion Utilities --------------------------------------------------------
 
@@ -58,9 +45,6 @@ addressToAtom = bsToAtom . addressToBS
 
 toBloq :: Quantity -> Bloq
 toBloq = fromIntegral . unQuantity
-
--- A Pass is the encryptionKey and authenticationKey concatenated together.
---
 
 passFromEth :: BytesN 32 -> BytesN 32 -> UIntN 32 -> Pass
 passFromEth enc aut sut | sut /= 1 = error "Invalid crypto suite number"
@@ -174,10 +158,7 @@ readAmesDomains bloq azimuth =
       str <- dnsDomains idx
       pure $ Turf $ fmap Cord $ reverse $ splitOn "." str
 
-{-
-  [%dawn seed sponsor galaxies domains block eth-url]
--}
-
+-- Returns the sponsor of the current ship or fails on invalid state.
 getSponsorShipAndValidate :: Quantity -> Address -> Seed -> Web3 (Ship)
 getSponsorShipAndValidate block azimuth (Seed ship life ring oaf) =
   do
@@ -240,8 +221,6 @@ getSponsorShipAndValidate block azimuth (Seed ship life ring oaf) =
 -- Produces either an error or a validated boot event structure.
 dawnVent :: Seed -> RIO e (Either Text Dawn)
 dawnVent dSeed@(Seed ship life ring oaf) = do
-  --
-  -- Everyone needs the Ethereum node instead of just the galaxies.
   ret <- runWeb3' provider $ do
     -- Block number (dBloq)
     block <- blockNumber
@@ -272,9 +251,12 @@ dawnVent dSeed@(Seed ship life ring oaf) = do
     -- dCzar.
     let dCzar = None
 
-    -- dNode.
-    let dNode = Nothing
     let dBloq = toBloq block
+
+    -- dNode is supposed to be a PUrl to an Ethereum node. However, it looks
+    -- like it's almost always Nothing. The jael side just has a default node
+    -- that it goes and uses when null?
+    let dNode = Nothing
 
     pure $ MkDawn{..}
 

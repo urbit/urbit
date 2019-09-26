@@ -81,7 +81,6 @@ instance ToNoun Ring where
       bs = (C.singleton 'B' <> (padByteString ringSign 32) <>
             (padByteString ringCrypt 32))
 
--- 'B' is 0x42.
 instance FromNoun Ring where
   parseNoun n = named "Ring" $ do
       MkBytes unpadded <- parseNoun n
