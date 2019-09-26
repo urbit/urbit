@@ -82,7 +82,7 @@
     :-  cards.b-res
     ?-    -.next.b-res
       %wait  [%wait ~]
-      %skip  ~|(%bind-got-skip !!)
+      %skip  [%skip ~]
       %cont  [%cont ..$(m-b self.next.b-res)]
       %fail  [%fail err.next.b-res]
       %done  [%cont (fun value.next.b-res)]
