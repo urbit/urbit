@@ -43,9 +43,11 @@ dependencies:
   - entropy
   - exceptions
   - extra
+  - filepath
   - fixed-vector
   - flat
   - ghc-prim
+  - Glob
   - hashable
   - hashtables
   - http-client
@@ -59,6 +61,7 @@ dependencies:
   - megaparsec
   - mtl
   - multimap
+  - murmur3
   - network
   - optparse-applicative
   - para
@@ -78,6 +81,7 @@ dependencies:
   - stm
   - stm-chans
   - tasty
+  - tasty-golden
   - tasty-quickcheck
   - tasty-th
   - template-haskell

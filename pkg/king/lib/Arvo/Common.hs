@@ -1,6 +1,5 @@
 module Arvo.Common
   ( KingId(..), ServId(..)
-  , NounTree(..), NounMap, NounSet
   , Json, JsonNode(..)
   , Desk(..), Mime(..)
   , Lane(..), Port(..), Turf(..)
@@ -105,23 +104,6 @@ data Mime = Mime Path File
 deriveNoun ''Mime
 
 
--- Trees, Maps, and Sets -------------------------------------------------------
-
-data NounTreeNode a = HTN
-    { ntnNode :: a
-    , ntnLeft :: NounTree a
-    , ntnRite :: NounTree a
-    }
-  deriving (Eq, Ord, Show)
-
-type NounTree a = Nullable (NounTreeNode a)
-
-type NounMap k v = NounTree (k, v)
-type NounSet a   = NounTree a
-
-deriveNoun ''NounTreeNode
-
-
 -- Json ------------------------------------------------------------------------
 
 type Json = Nullable JsonNode
@@ -129,7 +111,7 @@ type Json = Nullable JsonNode
 data JsonNode
     = JNA [Json]
     | JNB Bool
-    | JNO (NounMap Cord Json)
+    | JNO (HoonMap Cord Json)
     | JNN Knot
     | JNS Cord
   deriving (Eq, Ord, Show)
