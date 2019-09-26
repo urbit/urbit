@@ -59,6 +59,7 @@ dependencies:
   - megaparsec
   - mtl
   - multimap
+  - murmur3
   - network
   - optparse-applicative
   - para

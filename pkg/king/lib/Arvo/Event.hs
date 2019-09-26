@@ -1,9 +1,9 @@
 module Arvo.Event where
 
 import UrbitPrelude hiding (Term)
+import Noun.Tree (HoonSet, HoonMap)
 
 import Arvo.Common (KingId(..), ServId(..))
-import Arvo.Common (NounMap, NounSet)
 import Arvo.Common (Desk, Mime)
 import Arvo.Common (Header(..), HttpEvent)
 import Arvo.Common (AmesDest, Ipv4, Ipv6, Port, Turf)
@@ -39,7 +39,7 @@ deriveNoun ''PUrl
 data Seed = Seed Ship Life Ring (Maybe Oath)
   deriving (Eq, Ord, Show)
 
-type Public = (Life, NounMap Life Pass)
+type Public = (Life, HoonMap Life Pass)
 
 data Dnses = Dnses { dPri::Cord, dSec::Cord, dTer::Cord }
   deriving (Eq, Ord, Show)
@@ -50,7 +50,7 @@ type ContNum = Word
 data EthPoint = EthPoint
     { epOwn :: (EthAddr, EthAddr, EthAddr, EthAddr)
     , epNet :: Maybe (Life, Pass, ContNum, (Bool, Ship), Maybe Ship)
-    , epKid :: Maybe (EthAddr, NounSet Ship)
+    , epKid :: Maybe (EthAddr, HoonSet Ship)
     }
   deriving (Eq, Ord, Show)
 
@@ -61,20 +61,20 @@ data EthEventId = EthEventId
   deriving (Eq, Ord, Show)
 
 data EthBookmark = EthBookmark
-    { ebHeard       :: NounSet EthEventId
+    { ebHeard       :: HoonSet EthEventId
     , ebLatestBlock :: Atom
     }
   deriving (Eq, Ord, Show)
 
-data Snap = Snap (NounMap Ship Public)
-                 (Dnses, NounMap Ship EthPoint)
+data Snap = Snap (HoonMap Ship Public)
+                 (Dnses, HoonMap Ship EthPoint)
                  EthBookmark
   deriving (Eq, Ord, Show)
 
 data Dawn = MkDawn
     { dSeed :: Seed
     , dShip :: Ship
-    , dCzar :: NounMap Ship (Life, Pass)
+    , dCzar :: HoonMap Ship (Life, Pass)
     , dTurf :: [Turf]
     , dBloq :: Bloq
     , dNode :: (Maybe PUrl)

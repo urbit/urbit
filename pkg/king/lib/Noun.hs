@@ -8,6 +8,7 @@ module Noun
     , module Noun.Jam
     , module Noun.Tank
     , module Noun.TH
+    , module Noun.Tree
     , _Cue
     , LoadErr(..)
     , loadFile
@@ -18,6 +19,7 @@ import Control.Lens
 
 import Data.Word
 import Noun.Atom
+import Noun.Tree
 import Noun.Conversions
 import Noun.Convert
 import Noun.Core
