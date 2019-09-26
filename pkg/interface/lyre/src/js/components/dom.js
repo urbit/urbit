@@ -11,6 +11,8 @@ import { Padding }    from '/components/lib/padding';
 import { Horizontal } from '/components/lib/horizontal';
 import { Vertical }   from '/components/lib/vertical';
 import { Widget }     from '/components/lib/widget';
+import { List }       from '/components/lib/list';
+import { Box }        from '/components/lib/box';
 
 export class Dom extends Component {
   constructor(props) {
@@ -22,9 +24,11 @@ export class Dom extends Component {
     let head = Object.keys(dom)[0];
     let body = Object.values(dom)[0];
     switch (head) {
+      case "empty":
+        return null;
       case "text":
         return (
-          <Text body={body}/>
+          <Text body={body.body} style={body.style}/>
         );
       case "button":
         return (
@@ -69,6 +73,14 @@ export class Dom extends Component {
       case "vertical":
         return (
           <Vertical body={body} api={this.props.api}/>
+        );
+      case "list":
+        return (
+          <List body={body.body} style={body.style} api={this.props.api}/>
+        );
+      case "box":
+        return (
+          <Box body={body.body} style={body.style} api={this.props.api}/>
         );
       case "include":
         let script = document.createElement('script');

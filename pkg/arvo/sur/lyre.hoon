@@ -16,29 +16,76 @@
 +$  renderer  @tas
 ::
 +$  poke  [app=@tas mark=@tas dat=json]
+::
 +$  peer  [app=@tas pax=path]
+::
 +$  dom
   $~  [%empty ~]
   $%
   ::  basic elements
   ::
       [%empty ~]
-      [%text bod=@t]
+      [%text sty=(list typography) bod=@t]
       [%button bod=dom act=poke]
   ::  form elements
   ::
       [%form app=@tas mark=@tas dat=(map @tas @t) bod=dom]
-      [%text-input name=@tas]
+      [%text-input sty=(list typography) name=@tas]
       [%submit bod=dom]
   ::  layout elements
   ::
-      [%size w=@u h=@u bod=dom]
+::      [%size w=@u h=@u bod=dom]
       [%padding t=@u b=@u l=@u r=@u bod=dom]
       [%horizontal bod=(list dom)]
       [%vertical bod=(list dom)]
+      [%list sty=(list ?(flex layout typography bg-color border)) bod=(list dom)]
+      [%box sty=(list ?(flex layout typography bg-color border)) bod=dom]
   ::  custom react
   ::
       [%include js=@t]
       [%component name=@t sub=(unit peer)]
   ==
+::
+::  styling
+::
++$  size
+  $%  [%per @u]
+      [%pix @u]
+  ==
+::
+++  color  @t
+::
++$  typography
+  $%  [%color color]
+      [%font-family @t]
+      [%font-size @u]
+      [%font-weight @u]
+  ==
+::
++$  bg-color  [%bg-color color]
+::
++$  layout
+  $%  [%width size]
+      [%height size]
+  ==
+::
++$  flex
+  $%  [%axis ?(%row %col)]
+      [%basis size]
+      [%grow @u]
+      [%shrink @u]
+  ==
+::
++$  border  [%border ?]
+::
++$  space
+  $%  [%m @u]
+      [%my @u]
+      [%mx @u]
+      [%mt @u]
+      [%mb @u]
+      [%ml @u]
+      [%mr @u]
+  ==
+::
 --

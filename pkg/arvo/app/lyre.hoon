@@ -64,7 +64,6 @@
       req-handle=(map wire bone)
   ==
 ::
-::
 --
 ::
 |_  [bol=bowl:gall state]
@@ -74,14 +73,14 @@
 ++  our-beak  /(scot %p our.bol)/[q.byk.bol]/(scot %da now.bol)
 ::
 ++  prep
-  |=  old=(unit *)
+  |=  old=(unit state)
   ^-  (quip move _this)
   ~&  prep+act.bol
   ?~  old
     =/  res=[mov=(list move) thy=_this]  initialize
     :_  thy.res
     [[ost.bol %connect / [~ /'~lyre'] %lyre] mov.res]
-  [~ this(+<+ ;;(state u.old))]
+  [~ this(+<+ u.old)]
 ::
 ++  initialize
   ^-  (quip move _this)
@@ -381,7 +380,6 @@
           [%pending ~]
         [%error (tang-dom-json u.p.gall-vase)]
       send-output
-
     =/  arg-vase=(unit vase)
       ?:  &(=([%.y *vase] clay-vase) =([%.y *vase] gall-vase))
         ~

@@ -2,20 +2,25 @@
 /+  *lyre
 |=  [con=configs:chat-store nom=path env=(list envelope:chat-store)]
 ^-  dom
+?.  (~(has by con) nom)
+  :-  %vertical
+  :~  [%padding 0 20 0 0 [%button [%text ~ 'home'] (link %home)]]
+      [%text ~ (crip "No such chat {<nom>}")]
+  ==
 :*  %padding  20  20  20  20
   :-  %vertical
   ^-  (list dom)
-  :-  [%padding 0 20 0 0 [%button [%text 'home'] (link %home)]]
+  :-  [%padding 0 20 0 0 [%button [%text ~ 'home'] (link %home)]]
   %+  snoc
     %+  turn  env
     |=  ev=envelope:chat-store
     ^-  dom
     ?+    -.letter.ev
-        [%text 'Unhandled Letter Type']
+        [%text ~ 'Unhandled Letter Type']
       %text
         :-  %horizontal
-        :~  [%text (cat 3 (scot %p author.ev) ':')]
-            [%padding 0 0 10 0 [%text text.letter.ev]]
+        :~  [%text ~ (cat 3 (scot %p author.ev) ':')]
+            [%padding 0 0 10 0 [%text ~ text.letter.ev]]
         ==
     ==
   :*  %form  %chat-lyre-view  %json
@@ -24,8 +29,8 @@
         [%who (scot %p owner:(~(got by con) nom))]
     ==
     :-  %horizontal
-    :~  [%text-input %message]
-        [%submit [%padding 0 0 10 0 [%text 'poast']]]
+    :~  [%text-input ~ %message]
+        [%submit [%padding 0 0 10 0 [%text ~ 'poast']]]
     ==
   ==
 ==

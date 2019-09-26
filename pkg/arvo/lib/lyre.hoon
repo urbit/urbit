@@ -101,10 +101,12 @@
       %text-input  (text-input a)
       %submit      (submit a)
     ::
-      %size        (size a)
+::      %size        (size a)
       %padding     (padding a)
       %horizontal  (horizontal a)
       %vertical    (vertical a)
+      %list        (list a)
+      %box         (box a)
     ::
       %include     (include a)
       %component   (component a)
@@ -120,7 +122,15 @@
       ?>  ?=(%text -.a)
       %+  frond:enjs:format
         %text
-      [%s bod.a]
+      %-  pairs:enjs:format
+      :~  :+  %style
+            %a
+          %+  turn  sty.a
+          |=  s=^typography
+          (typography s)
+      ::
+          body+s+bod.a
+      ==
     ::
     ++  button
       |=  a=^dom
@@ -158,6 +168,12 @@
         %text-input
       %-  pairs:enjs:format
       :~  name+s+name.a
+      ::
+          :+  %style
+            %a
+          %+  turn  sty.a
+          |=  s=^typography
+          (typography s)
       ==
     ::
     ++  submit
@@ -168,17 +184,17 @@
         %submit
       (dom bod.a)
     ::
-    ++  size
-      |=  a=^dom
-      ^-  json
-      ?>  ?=(%size -.a)
-      %+  frond:enjs:format
-        %size
-      %-  pairs:enjs:format
-      :~  width+(numb:enjs:format w.a)
-          height+(numb:enjs:format h.a)
-          body+(dom bod.a)
-      ==
+::    ++  size
+::      |=  a=^dom
+::      ^-  json
+::      ?>  ?=(%size -.a)
+::      %+  frond:enjs:format
+::        %size
+::      %-  pairs:enjs:format
+::      :~  width+(numb:enjs:format w.a)
+::          height+(numb:enjs:format h.a)
+::          body+(dom bod.a)
+::      ==
     ::
     ++  padding
       |=  a=^dom
@@ -210,6 +226,50 @@
         %vertical
       [%a (turn bod.a dom)]
     ::
+    ++  list
+      |=  a=^dom
+      ^-  json
+      ?>  ?=(%list -.a)
+      %+  frond:enjs:format
+        %list
+      %-  pairs:enjs:format
+      :~  :+  %style
+            %a
+          %+  turn  sty.a
+          |=  s=?(^flex ^layout ^typography ^bg-color ^border)
+          ?-  s
+            ^flex        (flex s)
+            ^layout      (layout s)
+            ^typography  (typography s)
+            ^bg-color    (bg-color s)
+            ^border      (border s)
+          ==
+      ::
+          body+a+(turn bod.a dom)
+      ==
+    ::
+    ++  box
+      |=  a=^dom
+      ^-  json
+      ?>  ?=(%box -.a)
+      %+  frond:enjs:format
+        %box
+      %-  pairs:enjs:format
+      :~  :+  %style
+            %a
+          %+  turn  sty.a
+          |=  s=?(^flex ^layout ^typography ^bg-color ^border)
+          ?-  s
+            ^flex        (flex s)
+            ^layout      (layout s)
+            ^typography  (typography s)
+            ^bg-color    (bg-color s)
+            ^border      (border s)
+          ==
+      ::
+          body+(dom bod.a)
+      ==
+    ::
     ++  include
       |=  a=^dom
       ^-  json
@@ -228,6 +288,64 @@
       :~  name+s+name.a
           sub+?~(sub.a ~ (peer u.sub.a))
       ==
+    ::
+    ::  styling
+    ::
+    ++  size
+      |=  a=^size
+      ^-  json
+      ?-  -.a
+        %per  s+(crip "{<+.a>}%")
+        %pix  s+(crip "{<+.a>}px")
+      ==
+    ::
+    ++  layout
+      |=  a=^layout
+      ^-  json
+      ?-  -.a
+          %width
+        (pairs:enjs:format property+s+-.a value+(size +.a) ~)
+          %height
+        (pairs:enjs:format property+s+-.a value+(size +.a) ~)
+      ==
+    ::
+    ++  flex
+      |=  a=^flex
+      ^-  json
+      ?-  -.a
+          %axis
+        (pairs:enjs:format property+s+-.a value+s++.a ~)
+          %basis
+        (pairs:enjs:format property+s+-.a value+(size +.a) ~)
+          %grow
+        (pairs:enjs:format property+s+-.a value+(numb:enjs:format +.a) ~)
+          %shrink
+        (pairs:enjs:format property+s+-.a value+(numb:enjs:format +.a) ~)
+      ==
+    ::
+    ++  typography
+      |=  a=^typography
+      ^-  json
+      ?-  -.a
+          %color
+        (pairs:enjs:format property+s+-.a value+s++.a ~)
+          %font-family
+        (pairs:enjs:format property+s+-.a value+s++.a ~)
+          %font-size
+        (pairs:enjs:format property+s+-.a value+(numb:enjs:format +.a) ~)
+          %font-weight
+        (pairs:enjs:format property+s+-.a value+(numb:enjs:format +.a) ~)
+      ==
+    ::
+    ++  bg-color
+      |=  a=^bg-color
+      ^-  json
+      (pairs:enjs:format property+s+-.a value+s++.a ~)
+    ::
+    ++  border
+      |=  a=^border
+      ^-  json
+      (pairs:enjs:format property+s+-.a value+b++.a ~)
     --
   --
 --

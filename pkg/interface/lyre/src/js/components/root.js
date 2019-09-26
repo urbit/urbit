@@ -6,6 +6,8 @@ import { store } from '/store';
 import { Switch } from 'react-router';
 
 import { Dom } from '/components/dom';
+import { TestComp } from '/components/test';
+
 
 export class Root extends Component {
   constructor(props) {
@@ -16,7 +18,6 @@ export class Root extends Component {
   }
 
   render() {
-
     return (
       <div className="w-100 h-100 overflow-y-scroll overflow-x-scroll">
         <Dom status={this.state.status}

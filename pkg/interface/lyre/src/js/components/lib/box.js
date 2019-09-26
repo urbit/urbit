@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import { Dom } from '/components/dom';
+import { parseFlex, parseLayout, parseTypography, parseBGColor, parseBorder } from '/lib/style-parse';
 
-export class Text extends Component {
+export class Box extends Component {
   constructor(props) {
     super(props);
+
   }
 
   render() {
@@ -24,16 +27,9 @@ export class Text extends Component {
       return res;
     }, {});
 
-    let lines = this.props.body.split('\n').map((line, i) => {
-      return (
-        <p key={i}>
-          {line}
-        </p>
-      );
-    });
     return (
       <div style={style}>
-        {lines}
+        <Dom body={this.props.body} api={this.props.api}/>
       </div>
     );
   }
