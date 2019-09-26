@@ -1,10 +1,10 @@
-/+  libthread=thread, threadio, default-agent
+/-  spider
+/+  libthread=thread, default-agent
 =,  thread=thread:libthread
-~!  thread
 |%
 +$  card      card:agent:mall
 +$  state     (map imp-name _*eval-form:[~!(. eval)]:(thread ,~))
-+$  imp       $-(bowl:mall _*form:(thread ,~))
++$  imp       imp:spider
 +$  imp-name  term
 +$  imput     [=imp-name =cage]
 --
@@ -25,7 +25,7 @@
     =^  cards  state
       ?+  mark  (handle-poke:def mark vase)
         %spider-imput  (handle-poke-imput:sc !<(imput vase))
-        %spider-start  (handle-start-imp:sc !<(imp-name vase))
+        %spider-start  (handle-start-imp:sc !<([imp-name path] vase))
       ==
     [cards this]
   ::
@@ -38,7 +38,8 @@
     ^-  (quip card _this)
     =^  cards  state
       ?+  wire  (handle-arvo-response:def wire sign-arvo)
-        [%imp @ *]  (handle-sign:sc i.t.wire t.t.wire sign-arvo)
+        [%imp @ *]    (handle-sign:sc i.t.wire t.t.wire sign-arvo)
+        [%build @ ~]  (handle-build:sc i.t.wire sign-arvo)
       ==
     [cards this]
   ++  handle-error           handle-error:def
@@ -54,18 +55,43 @@
   (take-input imp-name ~ %sign wire sign-arvo)
 ::
 ++  handle-start-imp
-  |=  =imp-name
+  |=  [=imp-name =path]
   ^-  (quip card ^state)
   ?:  (~(has by state) imp-name)
     ~|  [%already-started imp-name]
     !!
-  ?.  (~(has by imps) imp-name)
-    ~|  [%imp-not-found imp-name]
-    !!
+  =/  =card
+    =/  =beam            (need (de-beam:format path))
+    =/  =schematic:ford  [%core [p q]:beam hoon+s.beam]
+    [%pass /build/[imp-name] %arvo %f %build live=%.y schematic]
+  [[card ~] state]
+::
+++  handle-build
+  |=  [=imp-name =sign-arvo]
+  ^-  (quip card ^state)
+  ?>  ?=([%f %made *] sign-arvo)
+  ?:  ?=(%incomplete -.result.sign-arvo)
+    %-  (slog leaf/"{<imp-name>} build incomplete" tang.result.sign-arvo)
+    `state
+  =/  =build-result:ford  build-result.result.sign-arvo
+  ?:  ?=(%error -.build-result)
+    %-  (slog leaf/"{<imp-name>} build error" message.build-result)
+    `state
+  =/  =cage  (result-to-cage:ford build-result)
+  ?.  ?=(%noun p.cage)
+    %-  (slog leaf/"{<imp-name>} build not noun, is {<p.cage>}" ~)
+    `state
+  =/  maybe-imp  (mule |.(!<(imp q.cage)))
+  ?:  ?=(%| -.maybe-imp)
+    %-  (slog leaf/"{<imp-name>} not valid imp" p.maybe-imp)
+    `state
+  (start-imp imp-name p.maybe-imp)
+::
+++  start-imp
+  |=  [=imp-name =imp]
+  ^-  (quip card ^state)
   =/  m  (thread ,~)
-  =/  =eval-form:eval:m
-    %-  from-form:eval:m
-    ((~(got by imps) imp-name) bowl)
+  =/  =eval-form:eval:m  (from-form:eval:m (imp bowl))
   =.  state  (~(put by state) imp-name eval-form)
   (take-input imp-name ~)
 ::
@@ -123,20 +149,4 @@
   ^-  (quip card ^state)
   %-  (slog leaf+"thread {<imp-name>} finished" ~)
   `(~(del by state) imp-name)
-::
-++  imps
-  %-  malt
-  ^-  (list [imp-name imp])
-  |^
-  :~  [%first-imp first-imp]
-  ==
-  ::
-  ++  first-imp
-    ^-  imp
-    |=  bowl:mall
-    =/  m  (thread ,~)
-    ^-  form:m
-    ;<  ~  bind:m  echo:threadio
-    (pure:m ~)
-  --
 --
