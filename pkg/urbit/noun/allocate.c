@@ -1840,6 +1840,28 @@ _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_ws use_ws)
 
 #endif
 
+/* u3a_idle(): measure free-lists in [rod_u]
+*/
+c3_w
+u3a_idle(u3a_road* rod_u)
+{
+  u3a_fbox* fox_u;
+  c3_w i_w, fre_w = 0;
+
+  for ( i_w = 0; i_w < u3a_fbox_no; i_w++ ) {
+    u3p(u3a_fbox) fre_p = rod_u->all.fre_p[i_w];
+
+    while ( fre_p ) {
+      u3a_fbox* fox_u = u3to(u3a_fbox, fre_p);
+
+      fre_w += fox_u->box_u.siz_w;
+      fre_p  = fox_u->nex_p;
+    }
+  }
+
+  return fre_w;
+}
+
 /* u3a_sweep(): sweep a fully marked road.
 */
 c3_w
@@ -1851,19 +1873,8 @@ u3a_sweep(void)
   */
   {
     c3_w end_w = u3a_heap(u3R);
-    c3_w fre_w = 0;
-    c3_w i_w;
+    c3_w fre_w = u3a_idle(u3R);
 
-    for ( i_w = 0; i_w < u3a_fbox_no; i_w++ ) {
-      u3p(u3a_fbox) fre_p = u3R->all.fre_p[i_w];
-
-      while ( fre_p ) {
-        u3a_fbox* fre_u = u3to(u3a_fbox, fre_p);
-
-        fre_w += fre_u->box_u.siz_w;
-        fre_p = fre_u->nex_p;
-      }
-    }
 #ifdef U3_CPU_DEBUG
     if ( fre_w != u3R->all.fre_w ) {
       u3l_log("fre discrepancy (%x): %x, %x, %x\r\n", u3R->par_p,
