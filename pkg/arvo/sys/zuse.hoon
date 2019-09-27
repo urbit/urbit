@@ -907,7 +907,7 @@
           [%rule =http-rule]
           ::  starts handling an inbound http request
           ::
-          [%request secure=? =address =request:http]
+          [%request-foreign secure=? =address =request:http]
           ::  starts handling an backdoor http request
           ::
           [%request-local secure=? =address =request:http]
@@ -2525,7 +2525,7 @@
       $>(%receive task:able:iris)
       ::  %eyre: starts handling an inbound http request
       ::
-      $>(%request task:able:eyre)
+      $>(%request-foreign task:able:eyre)
       ::  %eyre: starts handling an backdoor http request
       ::
       $>(%request-local task:able:eyre)

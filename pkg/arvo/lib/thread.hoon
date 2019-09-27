@@ -42,7 +42,7 @@
 ++  thread-fail
   |=  err=(pair term tang)
   |=  thread-input
-  [~ ~ ~ %fail err]
+  [~ %fail err]
 ::
 ::  Asynchronous transcaction monad.
 ::

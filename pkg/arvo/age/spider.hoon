@@ -70,19 +70,19 @@
   ^-  (quip card ^state)
   ?>  ?=([%f %made *] sign-arvo)
   ?:  ?=(%incomplete -.result.sign-arvo)
-    %-  (slog leaf/"{<imp-name>} build incomplete" tang.result.sign-arvo)
+    %-  (slog leaf+"{<imp-name>} build incomplete" tang.result.sign-arvo)
     `state
   =/  =build-result:ford  build-result.result.sign-arvo
   ?:  ?=(%error -.build-result)
-    %-  (slog leaf/"{<imp-name>} build error" message.build-result)
+    %-  (slog leaf+"{<imp-name>} build error" message.build-result)
     `state
   =/  =cage  (result-to-cage:ford build-result)
   ?.  ?=(%noun p.cage)
-    %-  (slog leaf/"{<imp-name>} build not noun, is {<p.cage>}" ~)
+    %-  (slog leaf+"{<imp-name>} build not noun, is {<p.cage>}" ~)
     `state
   =/  maybe-imp  (mule |.(!<(imp q.cage)))
   ?:  ?=(%| -.maybe-imp)
-    %-  (slog leaf/"{<imp-name>} not valid imp" p.maybe-imp)
+    %-  (slog leaf+"{<imp-name>} not valid imp" p.maybe-imp)
     `state
   (start-imp imp-name p.maybe-imp)
 ::

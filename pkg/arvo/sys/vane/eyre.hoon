@@ -1973,7 +1973,7 @@
       [duct %pass /acme/order %g %deal [our our] cmd]~
     ==
   ::
-      %request
+      %request-foreign
     =^  moves  server-state.ax  (request:server +.task)
     [moves http-server-gate]
   ::
