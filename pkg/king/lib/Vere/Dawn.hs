@@ -47,7 +47,8 @@ toBloq :: Quantity -> Bloq
 toBloq = fromIntegral . unQuantity
 
 passFromEth :: BytesN 32 -> BytesN 32 -> UIntN 32 -> Pass
-passFromEth enc aut sut | sut /= 1 = error "Invalid crypto suite number"
+passFromEth enc aut sut | sut /= 1 =
+      Pass (Ed.PublicKey mempty) (Ed.PublicKey mempty)
 passFromEth enc aut sut =
       Pass (decode aut) (decode enc)
     where
@@ -130,8 +131,8 @@ retrievePoint bloq azimuth ship =
           )
 
     let epKid = case clanFromShip ship of
-           Ob.Galaxy -> Just (addressToAtom spawnProxy, None)
-           Ob.Star   -> Just (addressToAtom spawnProxy, None)
+           Ob.Galaxy -> Just (addressToAtom spawnProxy, setToHoonSet mempty)
+           Ob.Star   -> Just (addressToAtom spawnProxy, setToHoonSet mempty)
            _         -> Nothing
 
     pure EthPoint{..}
@@ -239,9 +240,9 @@ dawnVent dSeed@(Seed ship life ring oaf) = do
     dSponsor <- retrievePoint block azimuth (fromIntegral sponsorShip)
 
     -- Retrieve the galaxy table [MUST FIX s/5/255/]
-    -- print "boot: retrieving galaxy table"
-    -- galaxyTable <- retrieveGalaxyTable block azimuth
-    -- print $ show galaxyTable
+    print "boot: retrieving galaxy table"
+    galaxyTable <- retrieveGalaxyTable block azimuth
+    let dCzar = mapToHoonMap galaxyTable
 
     -- Read Ames domains
     print "boot: retrieving network domains"
@@ -249,7 +250,6 @@ dawnVent dSeed@(Seed ship life ring oaf) = do
 
     -- TODO: I need a Map -> NounMap conversion to turn the galaxyTable into
     -- dCzar.
-    let dCzar = None
 
     let dBloq = toBloq block
 

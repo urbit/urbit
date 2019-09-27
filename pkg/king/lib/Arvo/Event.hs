@@ -1,10 +1,10 @@
 {-# OPTIONS_GHC -Wwarn #-}
 module Arvo.Event where
 
+import Noun.Tree    (HoonMap, HoonSet)
 import UrbitPrelude hiding (Term)
 
 import Arvo.Common (KingId(..), ServId(..))
-import Arvo.Common (NounMap, NounSet)
 import Arvo.Common (Desk, Mime)
 import Arvo.Common (Header(..), HttpEvent)
 import Arvo.Common (AmesDest, Ipv4, Ipv6, Port, Turf)
@@ -45,7 +45,7 @@ padByteString bs length | remaining > 0 = bs <> (BS.replicate remaining 0)
 -- A Pass is the Atom concatenation of 'b', the public encryption key, and the
 -- public authentication key. (see +pass-from-eth.)
 data Pass = Pass { passSign :: Ed.PublicKey, passCrypt :: Ed.PublicKey }
-  deriving (Eq, Show)
+  deriving (Eq, Ord, Show)
 
 instance ToNoun Pass where
   toNoun Pass{..} =
@@ -98,7 +98,7 @@ instance Show Ring where
 data Seed = Seed Ship Life Ring (Maybe Oath)
   deriving (Eq, Show)
 
-type Public = (Life, NounMap Life Pass)
+type Public = (Life, HoonMap Life Pass)
 
 data Dnses = Dnses { dPri::Cord, dSec::Cord, dTer::Cord }
   deriving (Eq, Ord, Show)
@@ -109,7 +109,7 @@ type ContNum = Word
 data EthPoint = EthPoint
     { epOwn :: (EthAddr, EthAddr, EthAddr, EthAddr)
     , epNet :: Maybe (Life, Pass, ContNum, (Bool, Ship), Maybe Ship)
-    , epKid :: Maybe (EthAddr, NounSet Ship)
+    , epKid :: Maybe (EthAddr, HoonSet Ship)
     }
   deriving (Eq, Show)
 
@@ -120,20 +120,20 @@ data EthEventId = EthEventId
   deriving (Eq, Ord, Show)
 
 data EthBookmark = EthBookmark
-    { ebHeard       :: NounSet EthEventId
+    { ebHeard       :: HoonSet EthEventId
     , ebLatestBlock :: Atom
     }
   deriving (Eq, Ord, Show)
 
-data Snap = Snap (NounMap Ship Public)
-                 (Dnses, NounMap Ship EthPoint)
+data Snap = Snap (HoonMap Ship Public)
+                 (Dnses, HoonMap Ship EthPoint)
                  EthBookmark
   deriving (Eq, Show)
 
 data Dawn = MkDawn
     { dSeed    :: Seed
     , dSponsor :: EthPoint
-    , dCzar    :: NounMap Ship (Rift, Life, Pass)
+    , dCzar    :: HoonMap Ship (Rift, Life, Pass)
     , dTurf    :: [Turf]
     , dBloq    :: Bloq
     , dNode    :: (Maybe PUrl)

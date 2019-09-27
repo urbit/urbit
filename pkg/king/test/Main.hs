@@ -15,6 +15,7 @@ import qualified AmesTests
 import qualified ArvoTests
 import qualified BehnTests
 import qualified DeriveNounTests
+import qualified HoonMapSetTests
 import qualified LogTests
 import qualified NounConversionTests
 
@@ -29,4 +30,5 @@ main = do
         , LogTests.tests
         , BehnTests.tests
         , NounConversionTests.tests
+        , HoonMapSetTests.tests
         ]
