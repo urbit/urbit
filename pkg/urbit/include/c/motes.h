@@ -1134,6 +1134,7 @@
 #   define c3__trel   c3_s4('t','r','e','l')
 #   define c3__trex   c3_s4('t','r','e','x')
 #   define c3__trib   c3_s4('t','r','i','b')
+#   define c3__trim   c3_s4('t','r','i','m')
 #   define c3__trip   c3_s4('t','r','i','p')
 #   define c3__trol   c3_s4('t','r','o','l')
 #   define c3__trop   c3_s4('t','r','o','p')

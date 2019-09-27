@@ -588,21 +588,30 @@ _worker_work_live(c3_d evt_d, u3_noun job)
     //    XX refactor: we should measure memory after losing the old kernel
     //
     {
+      u3_noun pri = u3_none;
       c3_w pos_w = u3a_open(u3R);
       c3_w low_w = (1 << 27);
       c3_w hig_w = (1 << 22);
 
       if ( (pre_w > low_w) && !(pos_w > low_w) ) {
-        //  XX emit low-priority trim event
         //  XX set flag in u3V so we don't repeat endlessly?
         //
         rec_o = c3y;
+        pri   = 1;
       }
       else if ( (pre_w > hig_w) && !(pos_w > hig_w) ) {
-        //  XX emit high-priority trim event
         //  XX we should probably jam/cue our entire state at this point
         //
         rec_o = c3y;
+        pri   = 0;
+      }
+
+      //  notify daemon of memory pressure via "fake" effect
+      //
+      if ( u3_none != pri ) {
+        u3_noun cad = u3nc(u3nt(u3_blip, c3__arvo, u3_nul),
+                           u3nc(c3__trim, pri));
+        vir = u3nc(cad, vir);
       }
     }
 
