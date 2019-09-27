@@ -34,9 +34,6 @@ bsToAtom x = x ^. from atomBytes
 bytes32ToBS :: BytesN 32 -> ByteString
 bytes32ToBS = reverse . BA.pack . BA.unpack
 
-bytes32ToAtom :: BytesN 32 -> Atom
-bytes32ToAtom = bsToAtom . bytes32ToBS
-
 -- web3 doesn't export unAddress.
 addressToBS :: Address -> ByteString
 addressToBS = reverse . encode
