@@ -358,12 +358,12 @@ u3v_mark(FILE* fil_u)
   u3v_arvo* arv_u = &(u3H->arv_u);
   c3_w tot_w = 0;
 
-  tot_w += u3a_maid(fil_u, "  wish cache", u3a_mark_noun(arv_u->yot));
+  tot_w += u3a_maid(fil_u, "  kernel", u3a_mark_noun(arv_u->roc));
   tot_w += u3a_maid(fil_u, "  date", u3a_mark_noun(arv_u->now));
   tot_w += u3a_maid(fil_u, "  formatted date", u3a_mark_noun(arv_u->wen));
   tot_w += u3a_maid(fil_u, "  instance string", u3a_mark_noun(arv_u->sen));
   tot_w += u3a_maid(fil_u, "  identity", u3a_mark_noun(arv_u->our));
   tot_w += u3a_maid(fil_u, "  fake", u3a_mark_noun(arv_u->fak));
-  tot_w += u3a_maid(fil_u, "  kernel", u3a_mark_noun(arv_u->roc));
+  tot_w += u3a_maid(fil_u, "  wish cache", u3a_mark_noun(arv_u->yot));
   return   u3a_maid(fil_u, "total arvo stuff", tot_w);
 }

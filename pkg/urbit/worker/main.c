@@ -308,6 +308,8 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
     u3a_print_memory(fil_u, "total marked", tot_w);
     u3a_print_memory(fil_u, "sweep", u3a_sweep());
 
+    fflush(fil_u);
+
 #ifdef U3_MEMORY_LOG
     {
       fclose(fil_u);
