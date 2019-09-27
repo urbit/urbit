@@ -34,6 +34,15 @@
     [//term/1 %belt %ret ~]
   ==
 ::
+::  Control character
+::
+++  ctrl
+  |=  [who=ship what=term]
+  ^-  (list ph-event)
+  %+  send-events-to  who
+  :~  [//term/1 %belt %ctl (,@c what)]
+  ==
+::
 ::  Inject a file into a ship
 ::
 ++  insert-file
