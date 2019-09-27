@@ -96,6 +96,7 @@
       %empty       empty
       %text        (text a)
       %button      (button a)
+      %image       (image a)
     ::
       %form        (form a)
       %text-input  (text-input a)
@@ -142,6 +143,14 @@
       :~  body+(dom bod.a)
           action+(poke act.a)
       ==
+    ::
+    ++  image
+      |=  a=^dom
+      ^-  json
+      ?>  ?=(%image -.a)
+      %+  frond:enjs:format
+        %image
+      s+dat.a
     ::
     ++  form
       |=  a=^dom

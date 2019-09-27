@@ -27,6 +27,7 @@
       [%empty ~]
       [%text sty=(list typography) bod=@t]
       [%button bod=dom act=poke]
+      [%image dat=@t]
   ::  form elements
   ::
       [%form app=@tas mark=@tas dat=(map @tas @t) bod=dom]
@@ -76,7 +77,16 @@
       [%shrink @u]
   ==
 ::
-+$  border  [%border ?]
++$  border
+  $%  [%border ?]
+      [%ba ?]
+      [%by ?]
+      [%bx ?]
+      [%bt ?]
+      [%bb ?]
+      [%bl ?]
+      [%br ?]
+  ==
 ::
 +$  space
   $%  [%m @u]

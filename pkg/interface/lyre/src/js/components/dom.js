@@ -3,6 +3,7 @@ import classnames from 'classnames';
 
 import { Text }       from '/components/lib/text';
 import { Button }     from '/components/lib/button';
+import { Image }      from '/components/lib/image';
 import { Form }       from '/components/lib/form';
 import { TextInput }  from '/components/lib/text-input';
 import { Submit }     from '/components/lib/submit';
@@ -33,6 +34,10 @@ export class Dom extends Component {
       case "button":
         return (
           <Button body={body.body} action={body.action} api={this.props.api}/>
+        );
+      case "image":
+        return (
+          <Image data={body}/>
         );
       case "form":
         return (

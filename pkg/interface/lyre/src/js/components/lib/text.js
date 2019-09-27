@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import { parseAllStyles } from '/lib/style-parse';
 
 export class Text extends Component {
   constructor(props) {
@@ -7,26 +8,11 @@ export class Text extends Component {
   }
 
   render() {
-    let style = this.props.style.reduce((acc, el) => {
-      let res = parseFlex(acc, el);
-      if (res === acc) {
-        res = parseLayout(acc, el);
-      }
-      if (res === acc) {
-        res = parseTypography(acc, el);
-      }
-      if (res === acc) {
-        res = parseBGColor(acc, el);
-      }
-      if (res === acc) {
-        res = parseBorder(acc, el);
-      }
-      return res;
-    }, {});
+    let style = parseAllStyles(this.props.style);
 
     let lines = this.props.body.split('\n').map((line, i) => {
       return (
-        <p key={i}>
+        <p key={i} style={style}>
           {line}
         </p>
       );

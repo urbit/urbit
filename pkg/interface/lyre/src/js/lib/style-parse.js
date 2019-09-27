@@ -1,3 +1,15 @@
+export function parseAllStyles(style) {
+  let result = style.reduce((acc, el) => {
+    let res = parseFlex(acc, el);
+    if (res === acc) res = parseLayout(acc, el);
+    if (res === acc) res = parseTypography(acc, el);
+    if (res === acc) res = parseBGColor(acc, el);
+    if (res === acc) res = parseBorder(acc, el);
+    return res;
+  }, {});
+  return result;
+}
+
 export function parseFlex(res, el) {
   switch (el.property) {
     case "axis":
@@ -36,6 +48,9 @@ export function parseLayout(res, el) {
 }
 
 export function parseTypography(res, el) {
+  if (!res["lineHeight"]){
+    res["lineHeight"] = 1.33333;
+  }
   switch (el.property) {
     case "color":
       res["color"] = el.value;
@@ -68,6 +83,38 @@ export function parseBorder(res, el) {
   switch (el.property) {
     case "border":
       res["border"] = (el.value)
+        ? "1px solid black" : "none";
+      return res;
+    case "ba":
+      res["border"] = (el.value)
+        ? "1px solid black" : "none";
+      return res;
+    case "by":
+      res["borderTop"] = (el.value)
+        ? "1px solid black" : "none";
+      res["borderBottom"] = (el.value)
+        ? "1px solid black" : "none";
+      return res;
+    case "bx":
+      res["borderLeft"] = (el.value)
+        ? "1px solid black" : "none";
+      res["borderRight"] = (el.value)
+        ? "1px solid black" : "none";
+      return res;
+    case "bt":
+      res["borderTop"] = (el.value)
+        ? "1px solid black" : "none";
+      return res;
+    case "bb":
+      res["borderBottom"] = (el.value)
+        ? "1px solid black" : "none";
+      return res;
+    case "bl":
+      res["borderLeft"] = (el.value)
+        ? "1px solid black" : "none";
+      return res;
+    case "br":
+      res["borderRight"] = (el.value)
         ? "1px solid black" : "none";
       return res;
     default:

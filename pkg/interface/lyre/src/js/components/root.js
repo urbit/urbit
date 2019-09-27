@@ -18,6 +18,7 @@ export class Root extends Component {
   }
 
   render() {
+    console.log(this.state.data);
     return (
       <div className="w-100 h-100 overflow-y-scroll overflow-x-scroll">
         <Dom status={this.state.status}
