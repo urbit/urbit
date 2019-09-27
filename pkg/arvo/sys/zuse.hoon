@@ -795,6 +795,7 @@
           {$veer p/@ta q/path r/@t}                     ::  install vane
           $>(%vega vane-task)                           ::  report upgrade
           {$verb ~}                                     ::  verbose mode
+          [%knob tag=term level=?(%hush %soft %loud)]   ::  error verbosity
       ==                                                ::
     --  ::able
   ::
