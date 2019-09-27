@@ -40,6 +40,7 @@
       $%  [%bonk wire ~]                                ::
           {$conf wire dock ship term}                   ::
           {$flog wire flog:dill}                        ::
+          [%knob wire @tas ?(%hush %soft %loud)]        ::
           {$nuke wire ship}                             ::
           [%serve wire binding:eyre generator:eyre]     ::
           {$poke wire dock pear}                        ::
@@ -196,6 +197,10 @@
 ++  poke-verb                                         ::  toggle verbose
   |=  ~  =<  abet
   (emit %flog /helm %verb ~)
+::
+++  poke-knob
+  |=  [error-tag=@tas level=?(%hush %soft %loud)]  =<  abet
+  (emit %knob /helm error-tag level)
 ::
 ++  take-onto                                         ::  result of %conf
   |=  saw/(each suss:gall tang)  =<  abet
