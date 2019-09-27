@@ -1597,6 +1597,9 @@
           ~&  [%block p.kyz]
           fox(bad (~(put in bad.fox) p.kyz))
         ::
+            %trim
+          [~ fox]
+        ::
             %vega
           ::  re-initialize our cryptosuite B cores
           ::

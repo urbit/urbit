@@ -6169,6 +6169,14 @@
     ::
     [moves ford-gate]
   ::
+      ::  %trim: in response to memory pressure
+      ::
+      ::    XX clear cache
+      ::
+      %trim
+    ::
+    [~ ford-gate]
+  ::
       ::  %vega: learn of kernel upgrade
       ::
       ::    XX clear cache, rebuild live builds

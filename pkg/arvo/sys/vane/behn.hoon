@@ -93,6 +93,9 @@
       ::  if we errored, drop it
       event-core
     event-core(moves [duct %give %meta drip]~)
+  ::  +trim: in response to memory pressue
+  ::
+  ++  trim  [moves state]
   ::  +vega: learn of a kernel upgrade
   ::
   ++  vega  [moves state]
@@ -251,6 +254,7 @@
       %crud  (crud:event-core [p q]:task)
       %rest  (rest:event-core date=p.task)
       %drip  (drip:event-core move=p.task)
+      %trim  trim:event-core
       %vega  vega:event-core
       %wait  (wait:event-core date=p.task)
       %wake  (wake:event-core error=~)

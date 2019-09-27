@@ -1908,6 +1908,10 @@
           [[~ /~/channel] duct [%channel ~]]
       ==
     [~ http-server-gate]
+  ::  %trim: in response to memory pressure
+  ::
+  ?:  ?=(%trim -.task)
+    [~ http-server-gate]
   ::  %vega: notifies us of a completed kernel upgrade
   ::
   ?:  ?=(%vega -.task)
