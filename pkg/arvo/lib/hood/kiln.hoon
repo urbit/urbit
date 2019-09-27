@@ -2,7 +2,6 @@
 ::::  /hoon/kiln/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?  310                                                 ::  version
-/-  hall
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -79,8 +78,7 @@
           {$warp wire ship riff}                        ::
       ==                                                ::
     ++  pear                                            ::  poke fruit
-      $%  {$hall-command command:hall}                  ::
-          {$kiln-merge kiln-merge}                      ::
+      $%  {$kiln-merge kiln-merge}                      ::
           {$helm-reload (list term)}                    ::
           {$helm-reset ~}                              ::
       ==                                                ::
@@ -391,8 +389,6 @@
 ++  spam
   |=  mes/(list tank)
   ((slog mes) ..spam)
-::     %-  emit :: XX not displayed/immediately
-::     [%poke /kiln/spam [our %hall] (said our %kiln now eny mes)]
 ::
 ++  auto
   |=  kiln-sync
