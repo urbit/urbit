@@ -129,6 +129,12 @@ We perform updates by pushing releases over-the-air to `~zod` approximately
 once per week, so any contribution that can be deployed OTA will usually find
 its way onto the network pretty rapidly.
 
+If you want to propose a hotfix (i.e. a small, OTA-updateable change, usually a
+bugfix, to some currently-deployed release) then simply make it clear that your
+contribution -- whether it be a pull request, patch, or whatever -- is intended
+to be a hotfix.  A maintainer can then deploy it to the network outside of the
+normal release schedule.
+
 Less frequently we release new Vere versions, which requires users to download
 new binaries, and occasionally, while Urbit is still in early development, we
 breach network continuity in order to release large changes that are difficult
