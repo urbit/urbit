@@ -3,7 +3,7 @@ module UntypedLambda where
 import ClassyPrelude
 
 import Bound
-import Control.Monad.Writer
+import Control.Monad.Writer hiding (fix)
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 import qualified Data.Function as F
 import Data.List (elemIndex)
@@ -306,6 +306,10 @@ posIn i n
 -- | The proposed new calling convention
 copy :: Ord a => Exp a -> Nock
 copy = copyToNock . toCopy
+
+-- | Decrements its argument.
+decrement :: Exp String
+decrement = lam "a" $ App (fix "f" $ lam "b" $ Ift (Eql (Var "a") (Suc (Var "b"))) (Var "b") (App (Var "f") (Suc (Var "b")))) (Atm 0)
 
 -- x. y. x
 -- old: [8 [1 0] [1 8 [1 0] [1 0 30] 0 1] 0 1]
