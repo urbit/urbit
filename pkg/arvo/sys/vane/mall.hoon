@@ -961,7 +961,7 @@
         ap-core
       ::
       =/  =ship  p.u.incoming
-      ap-kill(attributing.agent-routes ship)
+      ap-kill-up(attributing.agent-routes ship)
     ::  +ap-from-internal: internal move to move.
     ::
     ::    We convert from cards to duct-indexed moves when resolving
@@ -1003,13 +1003,15 @@
       ::
           %pass
         =/  =duct  system-duct.agents.state
-        =/  =path  p.card
+        =/  =wire  p.card
         =/  =note:agent  q.card
-        =/  use-path
+        =?  wire  ?=(%agent -.note)
+          [%out (scot %p ship.note) name.note wire]
+        =.  wire
           ::  Is it bad that this includes attributing ship?  May create
           ::  spurious duct mismatches
           ::
-          [%use agent-name (scot %p attributing.agent-routes) path]
+          [%use agent-name (scot %p attributing.agent-routes) wire]
         =/  =note-arvo
           ?-    -.note
               %arvo  note-arvo.note
@@ -1019,7 +1021,7 @@
               [%deal sock [name task]:note]
             [%m task]
           ==
-        [duct %pass use-path note-arvo]~
+        [duct %pass wire note-arvo]~
       ==
     ::  +ap-agent-core: agent core with current bowl and state
     ::
@@ -1090,17 +1092,16 @@
     ::
     ++  ap-update-subscription
       ~/  %ap-update-subscription
-      |=  [is-ok=? =ship =path]
+      |=  [is-ok=? =other=ship other-agent=term =wire]
       ^+  ap-core
       ::
-      =/  way  [(scot %p ship) %out path]
+      ::  XX pretty sure this shouldn't be used for pump
+      ::  =/  way  [(scot %p ship) %out wire]
       ::
       ?:  is-ok
-        =/  =note:agent  [%agent [ship -.path] %pump ~]
-        (ap-pass way note)
-      =.  ap-core  (ap-specific-take path %subscription-close ~ ~)
-      =/  =note:agent  [%agent [ship -.path] %unsubscribe ~]
-      (ap-pass way note)
+        =/  =note:agent  [%agent [other-ship other-agent] %pump ~]
+        (ap-pass wire note)
+      (ap-kill-down wire [other-ship other-agent])
     ::  +ap-dequeue: drop from queue.
     ::
     ::    Dequeues along the current duct, deleting the queue entirely if it
@@ -1277,14 +1278,19 @@
     ::  +ap-specific-take: specific take.
     ::
     ++  ap-specific-take
-      |=  [=path =gift:agent]
+      |=  [=wire =gift:agent]
       ^+  ap-core
       ::
+      ~|  wire=wire
+      ?>  ?=([%out @ @ *] wire)
+      =/  other-ship  (slav %p i.t.wire)
+      =/  other-agent  i.t.t.wire
+      =/  agent-wire  t.t.t.wire
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
-        (handle-agent-response:ap-agent-core path gift)
+        (handle-agent-response:ap-agent-core agent-wire gift)
       =?  ap-core  ?=(%subscription-update -.gift)
-        (ap-update-subscription =(~ maybe-tang) attributing.agent-routes path)
+        (ap-update-subscription =(~ maybe-tang) other-ship other-agent agent-wire)
       ?^  maybe-tang
         (ap-error -.gift leaf/"closing subscription" u.maybe-tang)
       ap-core
@@ -1358,13 +1364,23 @@
       ?^  maybe-tang
         (ap-error %unsubscribe u.maybe-tang)
       ap-core
-    ::  +ap-kill: queue kill.
+    ::  +ap-kill-up: 2-sided kill from publisher side
     ::
-    ++  ap-kill
+    ++  ap-kill-up
       ^+  ap-core
       ::
       =>  ap-load-delete
       (ap-give %subscription-close ~ ~)
+    ::  +ap-kill-down: 2-sided kill from subscriber side
+    ::
+    ++  ap-kill-down
+      |=  [=wire =dock]
+      ^+  ap-core
+      ::
+      =.  ap-core
+        =/  way  [%out (scot %p p.dock) q.dock wire]
+        (ap-specific-take way %subscription-close ~ ~)
+      (ap-pass wire %agent dock %unsubscribe ~)
     ::  +ap-ingest: call agent arm
     ::
     ::    Handle acks here because they need to be emitted before the
@@ -1586,10 +1602,9 @@
   ?>  ?=([?(%sys %use) *] wire)
   =/  initialised  (mo-abed:mo duct)
   =/  =sign-arvo  q.hin
-  =>
-  ?-  i.wire
-    %sys  (mo-handle-sys:initialised t.wire sign-arvo)
-    %use  (mo-handle-use:initialised t.wire hin)
-  ==
+  =>  ?-  i.wire
+        %sys  (mo-handle-sys:initialised t.wire sign-arvo)
+        %use  (mo-handle-use:initialised t.wire hin)
+      ==
   mo-abet
 --

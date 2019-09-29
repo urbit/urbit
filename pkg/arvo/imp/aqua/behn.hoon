@@ -1,5 +1,5 @@
 /-  aquarium
-/+  aqua-vane
+/+  aqua-vane-imp
 =,  aquarium
 |%
 +$  pier  next-timer=(unit @da)
@@ -85,7 +85,7 @@
   --
 --
 ::
-%-  aqua-vane
+%-  aqua-vane-imp
 |_  =bowl:mall
 +*  this  .
 ++  handle-unix-effect

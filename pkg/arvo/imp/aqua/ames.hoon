@@ -6,7 +6,7 @@
 ::  to drop them.
 ::
 /-  aquarium
-/+  aqua-vane
+/+  aqua-vane-imp
 =,  aquarium
 =|  ships=(list ship)
 |%
@@ -35,12 +35,13 @@
   [%event who hear]
 --
 ::
-%-  aqua-vane
+%-  aqua-vane-imp
 |_  =bowl:mall
 +*  this  .
 ++  handle-unix-effect
   |=  [who=@p ue=unix-effect]
   ^-  (quip card:agent:mall _this)
+  ~&  >>  'feeling affected'
   =^  cards  ships
     ?+  -.q.ue  `ships
       %restore  (handle-restore our.bowl who)

@@ -32,6 +32,9 @@
 +$  aqua-effects
   [who=ship ufs=(list unix-effect)]
 ::
++$  aqua-effect
+  [who=ship ufs=unix-effect]
+::
 +$  aqua-events
   [who=ship utes=(list unix-timed-event)]
 ::

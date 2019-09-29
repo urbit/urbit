@@ -26,12 +26,13 @@
   `agent
 ::
 ++  handle-peek
-  |=  path
+  |=  =path
   ~|  "unexpected scry into {<dap.bowl>} on path {<path>}"
   !!
 ::
 ++  handle-agent-response
   |=  [=wire =gift:agent:mall]
+  ^-  (quip card:agent:mall agent:mall)
   ?-    -.gift
       %poke-ack
     ?~  p.gift

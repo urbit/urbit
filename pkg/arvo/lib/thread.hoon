@@ -3,6 +3,7 @@
 +$  input
   $%  [%poke =cage]
       [%sign =wire =sign-arvo]
+      [%agent =wire =gift:agent:mall]
   ==
 +$  thread-input  [=bowl:mall in=(unit input)]
 ::
@@ -137,7 +138,8 @@
       ::
       ?-  -.next.output
           %wait  [[cards %next ~] eval-form]
-          %skip  ~|(%take-got-skip !!)
+          %skip  ~|  [%take-got-skip ?~(in.thread-input ~ [+< +>-]:u.in.thread-input)]
+                 !!
           %fail  [[cards %fail err.next.output] eval-form]
           %done  [[cards %done value.next.output] eval-form]
           %cont

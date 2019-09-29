@@ -74,9 +74,9 @@
   ++  handle-subscribe
     |=  =path
     ^-  step:agent:mall
-    ?:  ?=([%effects ~] path)
+    ?:  ?=([?(%effects %effect) ~] path)
       `this
-    ?.  ?=([?(%effects %evens %boths) @ ~] path)
+    ?.  ?=([?(%effects %effect %evens %boths) @ ~] path)
       ~|  [%aqua-bad-subscribe-path path]
       !!
     ?~  (slaw %p i.t.path)
@@ -84,7 +84,7 @@
       !!
     `this
   ::
-  ++  handle-unsubscribe     handle-unsubscribe:def
+  ++  handle-unsubscribe     ~&  >>  %k  handle-unsubscribe:def
   ++  handle-peek
     |=  =path
     ^-  (unit (unit cage))
@@ -249,11 +249,31 @@
 ++  abet-aqua
   ^-  (quip card:agent:mall _this)
   =.  this
+    =/  =path  /effect
+    %-  emit-cards
+    %-  zing
+    %+  turn  ~(tap by unix-effects)
+    |=  [=ship ufs=(list unix-effect)]
+    %+  turn  ufs
+    |=  uf=unix-effect
+    [%give %subscription-update `path %aqua-effect !>(`aqua-effect`[ship uf])]
+  ::
+  =.  this
     =/  =path  /effects
     %-  emit-cards
     %+  turn  ~(tap by unix-effects)
     |=  [=ship ufs=(list unix-effect)]
     [%give %subscription-update `path %aqua-effects !>(`aqua-effects`[ship (flop ufs)])]
+  ::
+  =.  this
+    %-  emit-cards
+    %-  zing
+    %+  turn  ~(tap by unix-effects)
+    |=  [=ship ufs=(list unix-effect)]
+    =/  =path  /effect/(scot %p ship)
+    %+  turn  ufs
+    |=  uf=unix-effect
+    [%give %subscription-update `path %aqua-effect !>(`aqua-effect`[ship uf])]
   ::
   =.  this
     %-  emit-cards

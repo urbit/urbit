@@ -8,7 +8,7 @@
 ::
 ++  send-events-to
   |=  [who=ship what=(list unix-event)]
-  ^-  (list ph-event)
+  ^-  (list aqua-event)
   %+  turn  what
   |=  ue=unix-event
   [%event who ue]
@@ -17,14 +17,14 @@
 ::
 ++  init
   |=  [who=ship keys=(unit dawn-event:able:jael)]
-  ^-  (list ph-event)
+  ^-  (list aqua-event)
   [%init-ship who keys]~
 ::
 ::  Send dojo command
 ::
 ++  dojo
   |=  [who=ship what=tape]
-  ^-  (list ph-event)
+  ^-  (list aqua-event)
   %+  send-events-to  who
   ^-  (list unix-event)
   :~

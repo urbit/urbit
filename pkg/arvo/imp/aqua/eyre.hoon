@@ -1,7 +1,7 @@
 ::  Pass-through Eyre driver
 ::
 /-  aquarium
-/+  aqua-vane
+/+  aqua-vane-imp
 =,  aquarium
 |%
 +$  pier  http-requests=(set @ud)
@@ -100,7 +100,7 @@
   --
 --
 ::
-%-  aqua-vane
+%-  aqua-vane-imp
 |_  =bowl:mall
 +*  this  .
 ++  handle-unix-effect

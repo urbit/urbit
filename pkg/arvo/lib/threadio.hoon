@@ -2,12 +2,24 @@
 =,  thread=thread:libthread
 =,  thread-fail=thread-fail:libthread
 |%
+++  send-raw-cards
+  |=  cards=(list =card:agent:mall)
+  =/  m  (thread ,~)
+  ^-  form:m
+  |=  thread-input:thread
+  [cards %done ~]
+::
 ++  send-raw-card
   |=  =card:agent:mall
   =/  m  (thread ,~)
   ^-  form:m
-  |=  thread-input:thread
-  [[card ~] %done ~]
+  (send-raw-cards card ~)
+::
+++  get-bowl
+  =/  m  (thread ,bowl:mall)
+  ^-  form:m
+  |=  tin=thread-input:thread
+  `[%done bowl.tin]
 ::
 ++  get-time
   =/  m  (thread ,@da)
@@ -15,18 +27,28 @@
   |=  tin=thread-input:thread
   `[%done now.bowl.tin]
 ::
-++  handle-poke
-  |=  =mark
-  =/  m  (thread ,vase)
+++  get-our
+  =/  m  (thread ,ship)
   ^-  form:m
   |=  tin=thread-input:thread
-  ?+  in.tin  `[%fail %ignore ~]
-      ~  `[%wait ~]
-      [~ %poke @ *]
-    ?.  =(mark p.cage.u.in.tin)
-      `[%fail %ignore ~]
-    `[%done q.cage.u.in.tin]
-  ==
+  `[%done our.bowl.tin]
+::
+::  Convert skips to %ignore failures.
+::
+::    This tells the main loop to try the next handler.
+::
+++  handle
+  |*  a=mold
+  =/  m  (thread ,a)
+  |=  =form:m
+  ^-  form:m
+  |=  tin=thread-input:thread
+  =/  res  (form tin)
+  =?  next.res  ?=(%skip -.next.res)
+    [%fail %ignore ~]
+  res
+::
+::  Wait for a poke with a particular mark
 ::
 ++  take-poke
   |=  =mark
@@ -41,24 +63,51 @@
     `[%done q.cage.u.in.tin]
   ==
 ::
+::
+::
+++  take-sign-arvo
+  =/  m  (thread ,[wire sign-arvo])
+  ^-  form:m
+  |=  tin=thread-input:thread
+  ?+  in.tin  `[%skip ~]
+      ~  `[%wait ~]
+      [~ %sign *]
+    `[%done [wire sign-arvo]:u.in.tin]
+  ==
+::
+::  Wait for a subscription update on a wire
+::
+++  take-subscription-update
+  |=  =wire
+  =/  m  (thread ,cage)
+  ^-  form:m
+  |=  tin=thread-input:thread
+  ?+  in.tin  `[%skip ~]
+      ~  `[%wait ~]
+      [~ %agent * %subscription-update *]
+    ?.  =(subscribe+wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done cage.gift.u.in.tin]
+  ==
+::
 ++  echo
   =/  m  (thread ,~)
   ^-  form:m
-  ;:  (main-loop ,~)
-    |=  ~
-    ^-  form:m
-    ;<  =vase  bind:m  (handle-poke %echo)
-    =/  message=tape  !<(tape vase)
-    %-  (slog leaf+"{message}..." ~)
-    ;<  ~      bind:m  (sleep ~s2)
-    %-  (slog leaf+"{message}.." ~)
-    (pure:m ~)
+  %-  (main-loop ,~)
+  :~  |=  ~
+      ^-  form:m
+      ;<  =vase  bind:m  ((handle ,vase) (take-poke %echo))
+      =/  message=tape  !<(tape vase)
+      %-  (slog leaf+"{message}..." ~)
+      ;<  ~      bind:m  (sleep ~s2)
+      %-  (slog leaf+"{message}.." ~)
+      (pure:m ~)
   ::
-    |=  ~
-    ^-  form:m
-    ;<  =vase  bind:m  (handle-poke %over)
-    %-  (slog leaf+"over..." ~)
-    (pure:m ~)
+      |=  ~
+      ^-  form:m
+      ;<  =vase  bind:m  ((handle ,vase) (take-poke %over))
+      %-  (slog leaf+"over..." ~)
+      (pure:m ~)
   ==
 ::
 ++  take-wake
@@ -75,6 +124,80 @@
       `[%done ~]
     `[%fail %timer-error u.error.sign-arvo.u.in.tin]
   ==
+::
+++  take-poke-ack
+  |=  =wire
+  =/  m  (thread ,~)
+  ^-  form:m
+  |=  tin=thread-input:thread
+  ?+  in.tin  `[%skip ~]
+      ~  `[%wait ~]
+      [~ %agent * %poke-ack *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    ?~  p.gift.u.in.tin
+      `[%done ~]
+    `[%fail %poke-fail u.p.gift.u.in.tin]
+  ==
+::
+++  take-subscription-ack
+  |=  =wire
+  =/  m  (thread ,~)
+  ^-  form:m
+  |=  tin=thread-input:thread
+  ?+  in.tin  `[%skip ~]
+      ~  `[%wait ~]
+      [~ %agent * %subscription-ack *]
+    ?.  =(subscribe+wire wire.u.in.tin)
+      `[%skip ~]
+    ?~  p.gift.u.in.tin
+      `[%done ~]
+    `[%fail %subscription-ack-fail u.p.gift.u.in.tin]
+  ==
+::
+++  poke
+  |=  [=dock =cage]
+  =/  m  (thread ,~)
+  ^-  form:m
+  =/  =card:agent:mall  [%pass /poke %agent dock %poke cage]
+  ;<  ~  bind:m  (send-raw-card card)
+  (take-poke-ack /poke)
+::
+++  poke-our
+  |=  [=term =cage]
+  =/  m  (thread ,~)
+  ^-  form:m
+  ;<  our=@p  bind:m  get-our
+  (poke [our term] cage)
+::
+++  subscribe
+  |=  [=wire =dock =path]
+  =/  m  (thread ,~)
+  ^-  form:m
+  =/  =card:agent:mall  [%pass subscribe+wire %agent dock %subscribe path]
+  ;<  ~  bind:m  (send-raw-card card)
+  (take-subscription-ack wire)
+::
+++  subscribe-our
+  |=  [=wire =term =path]
+  =/  m  (thread ,~)
+  ^-  form:m
+  ;<  our=@p  bind:m  get-our
+  (subscribe wire [our term] path)
+::
+++  unsubscribe
+  |=  [=wire =dock]
+  =/  m  (thread ,~)
+  ^-  form:m
+  =/  =card:agent:mall  [%pass subscribe+wire %agent dock %unsubscribe ~]
+  (send-raw-card card)
+::
+++  unsubscribe-our
+  |=  [=wire =term]
+  =/  m  (thread ,~)
+  ^-  form:m
+  ;<  our=@p  bind:m  get-our
+  (unsubscribe wire [our term])
 ::
 ++  wait
   |=  until=@da
@@ -161,9 +284,9 @@
   =/  m  (thread ,~)
   =/  m-a  (thread ,a)
   =|  queue=(qeu (unit input:thread))
-  =|  active=(unit [?(%one %two) =form:m-a])
+  =|  active=(unit [=form:m-a forms=(list $-(a form:m-a))])
   =|  state=a
-  |=  [one=$-(a form:m-a) two=$-(a form:m-a)]
+  |=  forms=(lest $-(a form:m-a))
   ^-  form:m
   |=  tin=thread-input:thread
   =*  top  `form:m`..$
@@ -178,7 +301,7 @@
       `[%cont top]
     =^  in=(unit input:thread)  queue  ~(get to queue)
     ^-  output:m
-    =.  active  `one+(one state)
+    =.  active  `[(i.forms state) t.forms]
     ^-  output:m
     (run bowl in)
   ::
@@ -192,11 +315,11 @@
       ?-  -.next.res
           %wait  `[%wait ~]
           %skip  `[%cont ..$(queue (~(put to queue) in.tin))]
-          %cont  `[%cont ..$(active `one+self.next.res)]
+          %cont  `[%cont ..$(active `[self.next.res forms.u.active])]
           %done  (continue(active ~, state value.next.res) bowl.tin)
           %fail
-        ?:  &(?=(%one -.u.active) ?=(%ignore p.err.next.res))
-          $(active `two+(two state))
+        ?:  &(?=(^ forms.u.active) ?=(%ignore p.err.next.res))
+          $(active `[(i.forms.u.active state) t.forms.u.active])
         `[%fail err.next.res]
       ==
     [(weld cards.res cards.output) next.output]

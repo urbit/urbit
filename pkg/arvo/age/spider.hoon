@@ -26,22 +26,39 @@
       ?+  mark  (handle-poke:def mark vase)
         %spider-imput  (handle-poke-imput:sc !<(imput vase))
         %spider-start  (handle-start-imp:sc !<([imp-name term] vase))
+        %spider-stop   (handle-stop-imp:sc !<(imp-name vase))
       ==
     [cards this]
   ::
   ++  handle-subscribe       handle-subscribe:def
   ++  handle-unsubscribe     handle-unsubscribe:def
-  ++  handle-peek            handle-peek:def
-  ++  handle-agent-response  handle-agent-response:def
+  ++  handle-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?+  path  (handle-peek:def path)
+      [%x %started @ ~]  ``noun+!>((~(has by state) i.t.t.path))
+    ==
+  ::
+  ++  handle-agent-response
+    |=  [=wire =gift:agent:mall]
+    ^-  (quip card _this)
+    =^  cards  state
+      ?+    wire  !!
+        [%imp @ *]  (handle-agent-response:sc i.t.wire t.t.wire gift)
+      ==
+    [cards this]
+  ::
   ++  handle-arvo-response
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
     =^  cards  state
       ?+  wire  (handle-arvo-response:def wire sign-arvo)
         [%imp @ *]    (handle-sign:sc i.t.wire t.t.wire sign-arvo)
+        [%find @ ~]   (handle-find:sc i.t.wire sign-arvo)
         [%build @ ~]  (handle-build:sc i.t.wire sign-arvo)
       ==
     [cards this]
+  ::
   ++  handle-error           handle-error:def
   --
 ::
@@ -54,6 +71,10 @@
   |=  [=imp-name =wire =sign-arvo]
   (take-input imp-name ~ %sign wire sign-arvo)
 ::
+++  handle-agent-response
+  |=  [=imp-name =wire =gift:agent:mall]
+  (take-input imp-name ~ %agent wire gift)
+::
 ++  handle-start-imp
   |=  [=imp-name =term]
   ^-  (quip card ^state)
@@ -61,7 +82,26 @@
     ~|  [%already-started imp-name]
     !!
   =/  =card
-    =/  =schematic:ford  [%core [our.bowl %home] /hoon/[term]/imp]
+    =/  =schematic:ford  [%path [our.bowl %home] %imp term]
+    [%pass /find/[imp-name] %arvo %f %build live=%.n schematic]
+  [[card ~] state]
+::
+++  handle-find
+  |=  [=imp-name =sign-arvo]
+  ^-  (quip card ^state)
+  ?>  ?=([%f %made *] sign-arvo)
+  ?:  ?=(%incomplete -.result.sign-arvo)
+    %-  (slog leaf+"{<imp-name>} find incomplete" tang.result.sign-arvo)
+    `state
+  =/  =build-result:ford  build-result.result.sign-arvo
+  ?:  ?=(%error -.build-result)
+    %-  (slog leaf+"{<imp-name>} find error" message.build-result)
+    `state
+  ?.  ?=([%path *] +.build-result)
+    %-  (slog leaf+"{<imp-name>} find strange" ~)
+    `state
+  =/  =card
+    =/  =schematic:ford  [%core rail.build-result]
     [%pass /build/[imp-name] %arvo %f %build live=%.y schematic]
   [[card ~] state]
 ::
@@ -93,6 +133,14 @@
   =/  =eval-form:eval:m  (from-form:eval:m (imp bowl))
   =.  state  (~(put by state) imp-name eval-form)
   (take-input imp-name ~)
+::
+++  handle-stop-imp
+  |=  =imp-name
+  ^-  (quip card ^state)
+  ?.  (~(has by state) imp-name)
+    ~|  [%not-started imp-name]
+    !!
+  (imp-fail imp-name %cancelled ~)
 ::
 ++  take-input
   |=  [=imp-name input=(unit input:thread)]
@@ -141,11 +189,13 @@
   |=  [=imp-name =term =tang]
   ^-  (quip card ^state)
   %-  (slog leaf+"thread {<imp-name>} failed" leaf+<term> tang)
-  `(~(del by state) imp-name)
+  :-  [%pass /build/[imp-name] %arvo %f %kill ~]~
+  (~(del by state) imp-name)
 ::
 ++  imp-done
   |=  =imp-name
   ^-  (quip card ^state)
   %-  (slog leaf+"thread {<imp-name>} finished" ~)
-  `(~(del by state) imp-name)
+  :-  [%pass /build/[imp-name] %arvo %f %kill ~]~
+  (~(del by state) imp-name)
 --

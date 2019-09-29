@@ -8,7 +8,7 @@
 ::  programmatically send events.
 ::
 /-  aquarium
-/+  aqua-vane
+/+  aqua-vane-imp
 |%
 ++  handle-blit
   |=  [who=@p way=wire %blit blits=(list blit:dill)]
@@ -30,7 +30,7 @@
   ~
 --
 ::
-%-  aqua-vane
+%-  aqua-vane-imp
 |_  =bowl:mall
 +*  this  .
 ++  handle-unix-effect
