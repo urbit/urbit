@@ -2459,7 +2459,6 @@
       ~&  [%gall-not-ours ship]
       [~ gall-payload]
     ::
-    ~&  [%gall-booting q.dock q.task]
     =>  (mo-boot:initialised q.dock q.task)
     mo-abet
   ::
