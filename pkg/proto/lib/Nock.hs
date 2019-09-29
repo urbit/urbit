@@ -36,21 +36,21 @@ nockToNoun :: Nock -> Noun
 nockToNoun = go
   where
     go = \case
-      NC f g -> C (go f) (go g)
-      N0 a -> C (A 0) (A a)
-      N1 n -> C (A 1) n
-      N2 f g -> C (A 2) (C (go f) (go g))
-      N3 f -> C (A 3) (go f)
-      N4 f -> C (A 4) (go f)
-      N5 f g -> C (A 5) (C (go f) (go g))
-      N6 f g h -> C (A 5) (C (go f) (C (go g) (go h)))
-      N7 f g -> C (A 7) (C (go f) (go g))
-      N8 f g -> C (A 8) (C (go f) (go g))
-      N9 a f -> C (A 9) (C (A a) (go f))
-      N10 (a, f) g -> C (A 10) (C (C (A a) (go f)) (go g))
-      N11 (Tag a) f -> C (A 11) (C (A a) (go f))
+      NC f g            -> C (go f) (go g)
+      N0 a              -> C (A 0) (A a)
+      N1 n              -> C (A 1) n
+      N2 f g            -> C (A 2) (C (go f) (go g))
+      N3 f              -> C (A 3) (go f)
+      N4 f              -> C (A 4) (go f)
+      N5 f g            -> C (A 5) (C (go f) (go g))
+      N6 f g h          -> C (A 6) (C (go f) (C (go g) (go h)))
+      N7 f g            -> C (A 7) (C (go f) (go g))
+      N8 f g            -> C (A 8) (C (go f) (go g))
+      N9 a f            -> C (A 9) (C (A a) (go f))
+      N10 (a, f) g      -> C (A 10) (C (C (A a) (go f)) (go g))
+      N11 (Tag a) f     -> C (A 11) (C (A a) (go f))
       N11 (Assoc a f) g -> C (A 11) (C (C (A a) (go f)) (go g))
-      N12 f g -> C (A 12) (C (go f) (go g))
+      N12 f g           -> C (A 12) (C (go f) (go g))
 
 nounToNock :: Noun -> Nock
 nounToNock = go

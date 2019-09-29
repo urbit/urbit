@@ -152,6 +152,7 @@ old = go \v -> error "old: free variable"
 
 data CExp a
   = CVar a
+  | CSef a
   | CApp (CExp a) (CExp a)
   | CLam [a] (CExp (Var () Int))
   | CAtm Atom
@@ -175,14 +176,26 @@ deriving instance Ord a => Ord (CExp a)
 deriving instance Read a => Read (CExp a)
 deriving instance Show a => Show (CExp a)
 
+data Manner a
+  = Direct a
+  | Selfish a
+  deriving (Functor, Foldable, Traversable)
+
+rude :: Manner a -> a
+rude = \case
+  Direct x  -> x
+  Selfish x -> x
+
 toCopy :: Ord a => Exp a -> CExp b
 toCopy = fst . runWriter . go \v -> error "toCopy: free variable"
   where
-    go :: Ord a => (a -> c) -> Exp a -> Writer (Set a) (CExp c)
+    go :: Ord a => (a -> Manner c) -> Exp a -> Writer (Set a) (CExp c)
     go env = \case
       Var v     -> do
         tell (singleton v)
-        pure (CVar (env v))
+        case env v of
+          Direct  v' -> pure (CVar v')
+          Selfish v' -> pure (CSef v')
       App e f   -> CApp <$> go env e <*> go env f
       Atm a     -> pure (CAtm a)
       Cel e f   -> CCel <$> go env e <*> go env f
@@ -193,18 +206,22 @@ toCopy = fst . runWriter . go \v -> error "toCopy: free variable"
       Jet a e   -> CJet a <$> go env e
       Let e s   -> do
         ce <- go env e
-        cf <- retcon removeBound (go (fmap env) (fromScope s))
+        let
+          env' = \case
+            B () -> Direct (B ())
+            F x  -> fmap F (env x)
+        cf <- retcon removeBound (go env' (fromScope s))
         pure (CLet ce cf)
-      Fix s     -> lam s env CFix
-      Lam s     -> lam s env CLam
+      Fix s     -> lam s env CFix Selfish
+      Lam s     -> lam s env CLam Direct
 
-    lam s env ctor
-      = writer (ctor (map env $ toList usedLexicals) ce, usedLexicals)
+    lam s env ctor manner
+      = writer (ctor (map (rude . env) $ toList usedLexicals) ce, usedLexicals)
       where
         (ce, usedVars) = runWriter $ go env' $ fromScope s
         env' = \case
-          B () -> B ()
-          F v  -> F (Set.findIndex v usedLexicals)
+          B () -> manner $ B ()
+          F v  -> env v $> F (Set.findIndex v usedLexicals)
         usedLexicals = removeBound usedVars
 
     removeBound :: (Ord a, Ord b) => Set (Var b a) -> Set a
@@ -220,23 +237,16 @@ retcon f = mapWriter \(a, m) -> (a, f m)
 mapMaybeSet :: (Ord a, Ord b) => (a -> Maybe b) -> Set a -> Set b
 mapMaybeSet f = setFromList . mapMaybe f . toList
 
-data Target a
-  = Direct a
-  | Selfish a
-  deriving (Functor)
-
 -- Possible improvements:
 --   - a "quote and unquote" framework for nock code generation (maybe)
---   - something about error messages when a variable is set but then not read
 copyToNock :: CExp a -> Nock
 copyToNock = go \v -> error "copyToNock: free variable"
   where
     -- if you comment out this declaration, you get a type error!
-    go :: (a -> Target Path) -> CExp a -> Nock
+    go :: (a -> Path) -> CExp a -> Nock
     go env = \case
-      CVar v     -> case env v of
-        Direct p  -> N0 (toAxis p)
-        Selfish p -> N2 (N0 $ toAxis p) (N0 $ toAxis p)
+      CVar v     -> N0 (toAxis $ env v)
+      CSef v     -> N2 (N0 $ toAxis $ env v) (N0 $ toAxis $ env v)
       CApp e f   -> N2 (go env f) (go env e)
       CAtm a     -> N1 (A a)
       CCel e f   -> cell (go env e) (go env f)
@@ -248,21 +258,21 @@ copyToNock = go \v -> error "copyToNock: free variable"
       CLet e f   -> N8 (go env e) (go env' f)
         where
           env' = \case
-            B ()   -> Direct [L]
-            F v    -> map (R :) (env v)
-      CLam vs e  -> lam (map (go env . CVar) vs) (go (lamEnv vs Direct) e)
+            B ()   -> [L]
+            F v    -> R : env v
+      CLam vs e  -> lam (map (go env . CVar) vs) (go (lamEnv vs) e)
       CFix vs e  ->
         N7
-          (lam (map (go env . CVar) vs) (go (lamEnv vs Selfish) e))
+          (lam (map (go env . CVar) vs) (go (lamEnv vs) e))
           (N2 (N0 1) (N0 1))
 
-    lamEnv vs targ = if null vs
+    lamEnv vs = if null vs
       then \case
-        B () -> targ []
+        B () -> []
         F _  -> error "copyToNock: unexpected lexical"
       else \case
-        B () -> targ [R]
-        F i  -> Direct (L : posIn i (length vs))
+        B () -> [R]
+        F i  -> L : posIn i (length vs)
       
     jet a ef =
       NC
