@@ -62,13 +62,8 @@
     =-  (pairs (turn ~(tap by a) -))
     |*  {k/* v/*}  [(b k) (c v)]
   ::
-  ++  lank                                              :::  tank as string arr
-    |=  a/tank
-    ^-  json
-    a+(turn (wash [0 80] a) tape)
-  ::
   ++  dank                                              :::  tank
-    |=  a/tank
+    |=  a=^tank
     ?:  ?=($leaf -.a)  (frond %leaf (tape p.a))
     ::  TODO: No idea what a plum is, but it was recently added
     ::
@@ -325,7 +320,7 @@
     %-  pairs
     ?-  -.a
       $lin  ~[pat+b+pat.a msg+s+msg.a]
-      $exp  ~[exp+s+exp.a res+a+(turn res.a lank)]
+      $exp  ~[exp+s+exp.a res+a+(turn res.a tank)]
       $ire  ~[top+s+(scot %uv top.a) sep+(spec sep.a)]  ::TODO  @uv as number?
       $fat  ~[tac+(atta tac.a) sep+(spec sep.a)]
       $inv  ~[inv+b+inv.a cir+(circ cir.a)]
@@ -339,7 +334,7 @@
     ?-  -.a
       $name  (pairs nom+s+nom.a tac+(atta tac.a) ~)
       $text  s+(of-wain:format +.a)
-      $tank  a+(turn +.a lank)
+      $tank  a+(turn +.a tank)
     ==
   ::
   :::  ||

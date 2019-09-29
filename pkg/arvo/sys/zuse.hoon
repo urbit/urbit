@@ -5493,6 +5493,16 @@
       |=  a/^time
       =-  (numb (div (mul - 1.000) ~s1))
       (add (div ~s1 2.000) (sub a ~1970.1.1))
+    ::                                                  ::  ++path:enjs:format
+    ++  path                                            ::  string from path
+      |=  a=^path
+      ^-  json
+      [%s (spat a)]
+    ::                                                  ::  ++tank:enjs:format
+    ++  tank                                            ::  tank as string arr
+      |=  a=^tank
+      ^-  json
+      [%a (turn (wash [0 80] a) tape)]
     --  ::enjs
   ::                                                    ::  ++dejs:format
   ++  dejs                                              ::  json reparser
@@ -5506,6 +5516,10 @@
       |=  jon/json  ^-  (list _(wit *json))
       ?>  ?=({$a *} jon)
       (turn p.jon wit)
+    ::                                                  ::  ++as:dejs:format
+    ++  as                                              ::  array as set
+      |*  a=fist
+      (cu ~(gas in *(set _$:a)) (ar a))
     ::                                                  ::  ++at:dejs:format
     ++  at                                              ::  array as tuple
       |*  wil/(pole fist)
@@ -5630,6 +5644,9 @@
       |*  {a/cord b/*}
       =>  .(+< [a b]=+<)
       [(rash a fel) b]
+    ::                                                  ::  ++pa:dejs:format
+    ++  pa                                              ::  string as path
+      (su ;~(pfix net (more net urs:ab)))
     ::                                                  ::  ++pe:dejs:format
     ++  pe                                              ::  prefix
       |*  {pre/* wit/fist}
@@ -5637,6 +5654,11 @@
     ::                                                  ::  ++sa:dejs:format
     ++  sa                                              ::  string as tape
       |=(jon/json ?>(?=({$s *} jon) (trip p.jon)))
+    ::                                                  ::  ++se:dejs:format
+    ++  se                                              ::  string as aura
+      |=  aur=@tas
+      |=  jon=json
+      ?>(?=([%s *] jon) (slav aur p.jon))
     ::                                                  ::  ++so:dejs:format
     ++  so                                              ::  string as cord
       |=(jon/json ?>(?=({$s *} jon) p.jon))
