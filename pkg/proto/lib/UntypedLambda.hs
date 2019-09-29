@@ -162,7 +162,7 @@ data CExp a
   | CIft (CExp a) (CExp a) (CExp a)
   | CLet (CExp a) (CExp (Var () a))
   | CJet Atom (CExp a)
-  | CFix (CExp (Var () a))
+  | CFix [a] (CExp (Var () Int))
   deriving (Functor, Foldable, Traversable)
 
 deriveEq1   ''CExp
@@ -195,14 +195,17 @@ toCopy = fst . runWriter . go \v -> error "toCopy: free variable"
         ce <- go env e
         cf <- retcon removeBound (go (fmap env) (fromScope s))
         pure (CLet ce cf)
-      Fix s     -> CFix <$> retcon removeBound (go (fmap env) (fromScope s))
-      Lam s -> writer (CLam (map env $ toList usedLexicals) ce, usedLexicals)
-        where
-          (ce, usedVars) = runWriter $ go env' $ fromScope s
-          env' = \case
-            B () -> B ()
-            F v  -> F (Set.findIndex v usedLexicals)
-          usedLexicals = removeBound usedVars
+      Fix s     -> lam s env CFix
+      Lam s     -> lam s env CLam
+
+    lam s env ctor
+      = writer (ctor (map env $ toList usedLexicals) ce, usedLexicals)
+      where
+        (ce, usedVars) = runWriter $ go env' $ fromScope s
+        env' = \case
+          B () -> B ()
+          F v  -> F (Set.findIndex v usedLexicals)
+        usedLexicals = removeBound usedVars
 
     removeBound :: (Ord a, Ord b) => Set (Var b a) -> Set a
     removeBound = mapMaybeSet \case
@@ -217,46 +220,50 @@ retcon f = mapWriter \(a, m) -> (a, f m)
 mapMaybeSet :: (Ord a, Ord b) => (a -> Maybe b) -> Set a -> Set b
 mapMaybeSet f = setFromList . mapMaybe f . toList
 
+data Target a
+  = Direct a
+  | Selfish a
+  deriving (Functor)
+
 -- Possible improvements:
---   - store the copied values in a tree rather than list
---   - avoid a nock 8 if nothing is copied
 --   - a "quote and unquote" framework for nock code generation (maybe)
 --   - something about error messages when a variable is set but then not read
 copyToNock :: CExp a -> Nock
 copyToNock = go \v -> error "copyToNock: free variable"
   where
     -- if you comment out this declaration, you get a type error!
-    go :: (a -> Path) -> CExp a -> Nock
+    go :: (a -> Target Path) -> CExp a -> Nock
     go env = \case
-      CVar v -> N0 (toAxis (env v))
-      CApp e f -> N2 (go env f) (go env e)
-      CAtm a -> N1 (A a)
-      CCel e f -> cell (go env e) (go env f)
-      CIsC e -> N3 (go env e)
-      CSuc e -> N4 (go env e)
-      CEql e f -> N5 (go env e) (go env f)
+      CVar v     -> case env v of
+        Direct p  -> N0 (toAxis p)
+        Selfish p -> N2 (N0 $ toAxis p) (N0 $ toAxis p)
+      CApp e f   -> N2 (go env f) (go env e)
+      CAtm a     -> N1 (A a)
+      CCel e f   -> cell (go env e) (go env f)
+      CIsC e     -> N3 (go env e)
+      CSuc e     -> N4 (go env e)
+      CEql e f   -> N5 (go env e) (go env f)
       CIft e t f -> N6 (go env e) (go env t) (go env f)
-      CJet a e -> jet a (go env e)
-      CLet e f -> N8 (go env e) (go env' f)
+      CJet a e   -> jet a (go env e)
+      CLet e f   -> N8 (go env e) (go env' f)
         where
           env' = \case
-            B () -> [L]
-            F v  -> R : env v
-      CLam vs e -> lam (map (go env . CVar) vs) (go env' e)
-        where
-          env' = if null vs
-            then \case
-              B () -> []
-              F _  -> error "copyToNock: unexpected lexical"
-            else \case
-              B () -> [R]
-              F i  -> L : posIn i (length vs)
-      CFix e -> N8 (N1 $ nockToNoun $ go env' e) (N2 (N0 1) (N0 2))
-        where
-          env' = \case
-            B () -> [L]
-            F v  -> R : env v
+            B ()   -> Direct [L]
+            F v    -> map (R :) (env v)
+      CLam vs e  -> lam (map (go env . CVar) vs) (go (lamEnv vs Direct) e)
+      CFix vs e  ->
+        N7
+          (lam (map (go env . CVar) vs) (go (lamEnv vs Selfish) e))
+          (N2 (N0 1) (N0 1))
 
+    lamEnv vs targ = if null vs
+      then \case
+        B () -> targ []
+        F _  -> error "copyToNock: unexpected lexical"
+      else \case
+        B () -> targ [R]
+        F i  -> Direct (L : posIn i (length vs))
+      
     jet a ef =
       NC
         (N1
