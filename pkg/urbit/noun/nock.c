@@ -2197,7 +2197,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
     skim_out:
       o     = u3k(mem_u->key);
       x     = u3nc(x, o);
-      o     = u3z_find(144 + c3__nock, x);
+      o     = u3z_find_m(144 + c3__nock, x);
       if ( u3_none == o ) {
         _n_push(mov, off, x);
         _n_push(mov, off, u3k(u3h(x)));
@@ -2214,7 +2214,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       top = _n_peek(off);
       o   = *top;
       if ( &(u3H->rod_u) != u3R ) {
-        u3z_save(144 + c3__nock, o, x);
+        u3z_save_m(144 + c3__nock, o, x);
       }
       *top = x;
       u3z(o);
