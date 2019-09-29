@@ -262,10 +262,14 @@ copyToNock = go \v -> error "copyToNock: free variable"
             F v  -> R : env v
       CLam vs e -> lam (map (go env . CVar) vs) (go env' e)
         where
-          env' = \case
-            B () -> [R]
-            F i  -> L : replicate i R ++ [L]
-      CFix e -> N8 (go env' e) (N2 (N0 1) (N0 2))
+          env' = if null vs
+            then \case
+              B () -> []
+              F _  -> error "copyToNock: unexpected lexical"
+            else \case
+              B () -> [R]
+              F i  -> L : posIn i (length vs)
+      CFix e -> N8 (N1 $ nockToNoun $ go env' e) (N2 (N0 1) (N0 2))
         where
           env' = \case
             B () -> [L]
@@ -278,13 +282,27 @@ copyToNock = go \v -> error "copyToNock: free variable"
           (C (A FastAtom)
             (C (A 1) (A a)))))
         ef
-    lam vfs ef =
-      NC (N1 (A 8))
-        (NC
-          (NC (N1 (A 1)) vars)
-          (N1 (nockToNoun ef)))
-      where
-        vars = foldr NC (N1 (A 0)) vfs
+    lam vfs ef = case layOut id NC vfs of
+      Nothing -> N1 (nockToNoun ef)
+      Just pr -> NC (N1 (A 8)) $ NC (NC (N1 (A 1)) pr) $ N1 (nockToNoun ef)
+
+layOut :: (a -> b) -> (b -> b -> b) -> [a] -> Maybe b
+layOut sing pair = go
+  where
+    go = \case
+      []  -> Nothing
+      [x] -> Just (sing x)
+      xs  -> Just $ pair (fromJust $ go l) (fromJust $ go r)
+        where
+          (l, r) = splitAt (length xs `div` 2) xs
+
+posIn :: Int -> Int -> Path
+posIn 0 1 = []
+posIn i n
+  | i < 0 || n <= i = error ("posIn: " <> show i <> " out of bound " <> show n)
+  | i < mid         = L : posIn i mid
+  | otherwise       = R : posIn (i - mid) (n - mid)
+  where mid = n `div` 2
 
 -- | The proposed new calling convention
 copy :: Ord a => Exp a -> Nock
