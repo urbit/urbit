@@ -2478,6 +2478,9 @@
     =/  payload  gall-payload(system-duct.agents.state duct)
     [~ payload]
   ::
+      %trim
+    [~ gall-payload]
+  ::
       %vega
     [~ gall-payload]
   ::

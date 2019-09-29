@@ -778,6 +778,17 @@
   ?:  ?=(?(%veer %verb %wack %warn) -.q.ovo)
     [[ovo ~] +>.$]
   ::
+  ::  These external events (currently only %trim) are global
+  ::  notifications, spammed to every vane
+  ::
+  ?:  ?=(%trim -.q.ovo)
+    =>  .(ovo ;;((pair wire [%trim @ud]) ovo))
+    =^  zef  vanes
+      (~(spam (is our vil eny bud vanes) now) lac ovo)
+    [zef +>.$]
+  ::
+  ::  Normal events are routed to a single vane
+  ::
   =^  zef  vanes
     (~(hurl (is our vil eny bud vanes) now) lac ovo)
   [zef +>.$]

@@ -203,6 +203,9 @@
       ::  boot completed (XX legacy)
       ::
       [%init p=ship]
+      ::  trim state (in response to memory pressure)
+      ::
+      [%trim p=@ud]
       ::  kernel upgraded
       ::
       [%vega ~]
@@ -390,6 +393,7 @@
           $>(%init vane-task)                           ::  report install
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
+          $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           {$wake ~}                                     ::  timer activate
           $>(%wegh vane-task)                           ::  report memory
@@ -571,6 +575,7 @@
           $>(%crud vane-task)                           ::  error with trace
           [%rest p=@da]                                 ::  cancel alarm
           [%drip p=vase]                                ::  give in next event
+          $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           [%wait p=@da]                                 ::  set alarm
           [%wake ~]                                     ::  timer activate
@@ -624,6 +629,7 @@
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm des/desk pax/path rit/rite}            ::  change permissions
+          $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           {$warp wer/ship rif/riff}                     ::  internal file req
           {$werp who/ship wer/ship rif/riff}            ::  external file req
@@ -793,6 +799,7 @@
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
+          $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           {$verb ~}                                     ::  verbose mode
           [%knob tag=term level=?(%hush %soft %loud)]   ::  error verbosity
@@ -897,6 +904,9 @@
           ::  new unix process
           ::
           $>(%born vane-task)
+          ::  trim state (in response to memory pressure)
+          ::
+          $>(%trim vane-task)
           ::  report upgrade
           ::
           $>(%vega vane-task)
@@ -1177,6 +1187,9 @@
           ::  %kill: stop a build; send on same duct as original %build request
           ::
           [%kill ~]
+          ::  trim state (in response to memory pressure)
+          ::
+          $>(%trim vane-task)
           ::  %vega: report kernel upgrade
           ::
           $>(%vega vane-task)
@@ -1871,6 +1884,7 @@
       $%  {$conf p/dock q/dock}                         ::  configure app
           $>(%init vane-task)                           ::  set owner
           {$deal p/sock q/internal-task}                ::  full transmission
+          $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           $>(%west vane-task)                           ::  network request
           [%wash ~]                                     ::  clear caches
@@ -1957,6 +1971,9 @@
           ::  system started up; reset open connections
           ::
           $>(%born vane-task)
+          ::  trim state (in response to memory pressure)
+          ::
+          $>(%trim vane-task)
           ::  report upgrade
           ::
           $>(%vega vane-task)
@@ -2076,6 +2093,7 @@
           [%private-keys ~]                             ::  sub to privates
           [%public-keys ships=(set ship)]               ::  sub to publics
           [%rekey =life =ring]                          ::  update private keys
+          $>(%trim vane-task)                           ::  trim state
           [%turf ~]                                     ::  view domains
           $>(%vega vane-task)                           ::  report upgrade
           $>(%wegh vane-task)                           ::  memory usage request

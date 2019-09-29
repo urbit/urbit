@@ -142,6 +142,19 @@ _reck_kick_term(u3_pier* pir_u, u3_noun pox, c3_l tid_l, u3_noun fav)
   c3_assert(!"not reached"); return 0;
 }
 
+/* _reck_kick_arvo(): apply loopback effects.
+*/
+static u3_noun
+_reck_kick_arvo(u3_pier* pir_u, u3_noun pox, u3_noun fav)
+{
+  if ( c3__trim == u3h(fav) ) {
+    u3_pier_work(pir_u, pox, fav);
+    return c3y;
+  }
+
+  u3z(pox); u3z(fav); return c3n;
+}
+
 /* _reck_kick_behn(): apply packet network outputs.
 */
 static u3_noun
@@ -325,6 +338,10 @@ _reck_kick_spec(u3_pier* pir_u, u3_noun pox, u3_noun fav)
     }
     else switch ( it_pox ) {
       default: u3z(pox); u3z(fav); return c3n;
+
+      case c3__arvo: {
+        return _reck_kick_arvo(pir_u, pox, fav);
+      } break;
 
       case c3__behn: {
         return _reck_kick_behn(pir_u, pox, fav);

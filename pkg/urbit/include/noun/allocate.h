@@ -214,9 +214,30 @@
 #     define  u3a_is_north(r)  __(r->cap_p > r->hat_p)
 #     define  u3a_is_south(r)  !u3a_is_north(r)
 
-#     define  u3a_open(r)      ( (c3y == u3a_is_north(r)) \
-                                  ? (c3_w)(r->cap_p - r->hat_p) \
-                                  : (c3_w)(r->hat_p - r->cap_p) )
+    /* u3a_open(): words of contiguous free space in [r]
+    */
+#     define  u3a_open(r)  ( (c3y == u3a_is_north(r)) \
+                             ? (c3_w)(r->cap_p - r->hat_p) \
+                             : (c3_w)(r->hat_p - r->cap_p) )
+
+    /* u3a_full(): words of [r];
+    ** u3a_full(r) == u3a_heap(r) + u3a_temp(r) + u3a_open(r)
+    */
+#     define  u3a_full(r)  ( (c3y == u3a_is_north(r)) \
+                             ? (c3_w)(r->mat_p - r->rut_p) \
+                             : (c3_w)(r->rut_p - r->mat_p) )
+
+    /* u3a_heap(): words of heap in [r]
+    */
+#     define  u3a_heap(r)  ( (c3y == u3a_is_north(r)) \
+                             ? (c3_w)(r->hat_p - r->rut_p) \
+                             : (c3_w)(r->rut_p - r->hat_p) )
+
+    /* u3a_temp(): words of stack in [r]
+    */
+#     define  u3a_temp(r)  ( (c3y == u3a_is_north(r)) \
+                             ? (c3_w)(r->mat_p - r->cap_p) \
+                             : (c3_w)(r->cap_p - r->mat_p) )
 
 #     define  u3a_north_is_senior(r, dog) \
                 __((u3a_to_off(dog) < r->rut_p) ||  \
@@ -416,6 +437,11 @@
         */
           c3_w
           u3a_mark_road(FILE* fil_u);
+
+        /* u3a_idle(): measure free-lists in [rod_u]
+        */
+          c3_w
+          u3a_idle(u3a_road* rod_u);
 
         /* u3a_sweep(): sweep a fully marked road.
         */

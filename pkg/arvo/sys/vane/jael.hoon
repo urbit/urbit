@@ -456,6 +456,11 @@
     ::    [%vega ~]
     ::
         %vega
+      +>.$::
+    ::  in response to memory pressure
+    ::    [%trim p=@ud]
+    ::
+        %trim
       +>.$
     ::
     ::  watch private keys

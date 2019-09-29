@@ -567,9 +567,9 @@
     =?  p.task  ?=([%crud %hax-heft ~] p.task)  [%heft ~]
     ::
     $(hen u.hey.all, wrapped-task p.task)
-  ::  a %vega notification on kernel upgrade comes in on an unfamiliar duct
+  ::  %vega and %trim notifications come in on an unfamiliar duct
   ::
-  ?:  ?=(%vega -.task)
+  ?:  ?=(?(%trim %vega) -.task)
     [~ ..^$]
   ::  %knob sets a verbosity level for an error tag
   ::

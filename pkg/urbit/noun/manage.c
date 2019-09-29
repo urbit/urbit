@@ -900,8 +900,8 @@ u3m_water(c3_w* low_w, c3_w* hig_w)
 {
   c3_assert(u3R == &u3H->rod_u);
 
-  *low_w = (u3H->rod_u.hat_p - u3H->rod_u.rut_p);
-  *hig_w = (u3H->rod_u.mat_p - u3H->rod_u.cap_p) + c3_wiseof(u3v_home);
+  *low_w = u3a_heap(u3R);
+  *hig_w = u3a_temp(u3R) + c3_wiseof(u3v_home);
 }
 
 /* u3m_soft_top(): top-level safety wrapper.
@@ -1698,7 +1698,11 @@ u3m_boot_lite(void)
 void
 u3m_reclaim(void)
 {
+  c3_assert( &(u3H->rod_u) == u3R );
+
   //  clear the u3v_wish cache
+  //
+  //    NB: this will leak if not on the home road
   //
   u3z(u3A->yot);
   u3A->yot = u3_nul;
@@ -1713,11 +1717,11 @@ u3m_reclaim(void)
   u3h_free(u3R->jed.bas_p);
   u3R->jed.bas_p = u3h_new();
 
-  //  XX we can't clear the warm jet state
-  //  -- _cj_nail expects it to be present ...
+  //  re-establish the warm jet state
   //
-  // u3h_free(u3R->jed.war_p);
-  // u3R->jed.war_p = u3h_new();
+  //    XX might this reduce fragmentation?
+  //
+  // u3j_ream();
 
   //  clear the jet hank cache
   //

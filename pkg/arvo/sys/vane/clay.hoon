@@ -4315,6 +4315,8 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
+      %trim  [~ ..^$]
+  ::
       %vega  [~ ..^$]
   ::
       ?(%warp %werp)
