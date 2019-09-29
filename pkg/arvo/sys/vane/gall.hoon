@@ -2410,6 +2410,7 @@
         %info            `%c
         %keep            `%f
         %kill            `%f
+        %knob            `%d
         %look            `%j
         %listen          `%j
         %merg            `%c
