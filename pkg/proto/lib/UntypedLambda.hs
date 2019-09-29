@@ -28,11 +28,6 @@ data Exp a
   | Eql (Exp a) (Exp a)
   | Ift (Exp a) (Exp a) (Exp a)
   | Let (Exp a) (Scope () Exp a)
-  -- Really should be Set a (Exp a) (Exp a), but making that work would require
-  -- something like
-  -- https://github.com/ekmett/bound/blob/master/examples/Imperative.hs
-  -- and I really really can't be bothered right now.
-  | Set (Exp a) (Exp a) (Exp a)
   | Jet Atom (Exp a)
   | Fix (Scope () Exp a)
   deriving (Functor, Foldable, Traversable)
@@ -53,9 +48,6 @@ lam v e = Lam (abstract1 v e)
 
 ledt :: Eq a => a -> Exp a -> Exp a -> Exp a
 ledt v e f = Let e (abstract1 v f)
-
-set :: a -> Exp a -> Exp a -> Exp a
-set v e f = Set (Var v) e f
 
 fix :: Eq a => a -> Exp a -> Exp a
 fix v e = Fix (abstract1 v e)
@@ -83,7 +75,6 @@ eval = \case
     Atm 1 -> eval f
     _ -> error "eval: not a boolean"
   (Let e s) -> instantiate1 (eval e) s
-  (Set _ _ _) -> error "eval: Set: FIXME not sure"
   Jet _ e -> eval e
   Fix s -> F.fix (flip instantiate1 s)  -- Who knows, it may even work!
 
@@ -143,8 +134,6 @@ old = go \v -> error "old: free variable"
           env' = \case
             B () -> [L]
             F v  -> R : env v
-      Set e f g -> case e of
-        Var v -> N10 (toAxis (env v), go env f) (go env g)
       Jet{}     -> error "old: Old-style jetting not supported"
       Fix{}     -> error "old: This convention doesn't use fix"
 
@@ -172,7 +161,6 @@ data CExp a
   | CEql (CExp a) (CExp a)
   | CIft (CExp a) (CExp a) (CExp a)
   | CLet (CExp a) (CExp (Var () a))
-  | CSet a (CExp a) (CExp a)
   | CJet Atom (CExp a)
   | CFix (CExp (Var () a))
   deriving (Functor, Foldable, Traversable)
@@ -192,7 +180,9 @@ toCopy = fst . runWriter . go \v -> error "toCopy: free variable"
   where
     go :: Ord a => (a -> c) -> Exp a -> Writer (Set a) (CExp c)
     go env = \case
-      Var v     -> writer (CVar (env v), singleton v)
+      Var v     -> do
+        tell (singleton v)
+        pure (CVar (env v))
       App e f   -> CApp <$> go env e <*> go env f
       Atm a     -> pure (CAtm a)
       Cel e f   -> CCel <$> go env e <*> go env f
@@ -200,13 +190,6 @@ toCopy = fst . runWriter . go \v -> error "toCopy: free variable"
       Suc e     -> CSuc <$> go env e
       Eql e f   -> CEql <$> go env e <*> go env f
       Ift e t f -> CIft <$> go env e <*> go env t <*> go env f
-      Set e f g -> case e of
-        Var v -> do
-          tell (singleton v)
-          cf <- go env f
-          cg <- go env g
-          pure (CSet (env v) cf cg)
-        _ -> error "toCopy: duuude that's not how you set things"
       Jet a e   -> CJet a <$> go env e
       Let e s   -> do
         ce <- go env e
@@ -254,7 +237,6 @@ copyToNock = go \v -> error "copyToNock: free variable"
       CEql e f -> N5 (go env e) (go env f)
       CIft e t f -> N6 (go env e) (go env t) (go env f)
       CJet a e -> jet a (go env e)
-      CSet v e f -> N10 (toAxis (env v), go env e) (go env f)
       CLet e f -> N8 (go env e) (go env' f)
         where
           env' = \case
