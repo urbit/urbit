@@ -145,7 +145,7 @@ instance Arbitrary AmesDest where
                     ]
 
 instance Arbitrary Ship where
-  arbitrary = Ship <$> arb
+  arbitrary = ship <$> arb
 
 instance Arbitrary LogIdentity where
   arbitrary = LogIdentity <$> arb <*> arb <*> arb

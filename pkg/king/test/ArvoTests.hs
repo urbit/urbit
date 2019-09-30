@@ -39,7 +39,7 @@ eventSanity = all $ \(EvEx e n) -> toNoun e == n
 
 instance Arbitrary EvExample where
   arbitrary = oneof $ fmap pure $
-    [ EvEx (EvBlip $ BlipEvAmes $ AmesEvWant (Path []) (Ship 0) (Path []) (A 0))
+    [ EvEx (EvBlip $ BlipEvAmes $ AmesEvWant (Path []) (ship 0) (Path []) (A 0))
            (toNoun (Path ["", "ames"], (Cord "want", (), (), ())))
     , EvEx (EvVane $ VaneVane $ VEVeer (Jael, ()) "" (Path []) "")
            (toNoun (Path ["vane", "vane", "jael"], Cord "veer", (), (), ()))
@@ -89,7 +89,7 @@ instance Arbitrary Wen      where arbitrary = Wen <$> arb
 instance Arbitrary Gap      where arbitrary = Gap . abs <$> arb
 instance Arbitrary Galaxy   where arbitrary = Galaxy <$> arb
 instance Arbitrary Port     where arbitrary = Port <$> arb
-instance Arbitrary Ship     where arbitrary = Ship <$> arb
+instance Arbitrary Ship     where arbitrary = ship <$> arb
 instance Arbitrary Address  where arbitrary = AAmes <$> arb
 
 genIpv4 :: Gen Ipv4

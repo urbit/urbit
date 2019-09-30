@@ -173,7 +173,7 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (LargeKey a b) where
   arbitrary = LargeKey <$> arb <*> arb
 
 instance Arbitrary Ship where
-  arbitrary = Ship <$> arb
+  arbitrary = ship <$> arb
 
 arbEffects :: [ByteString] -> Gen (Map Word64 ByteString)
 arbEffects evs = do
