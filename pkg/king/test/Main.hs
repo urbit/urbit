@@ -16,6 +16,7 @@ import qualified DeriveNounTests
 import qualified ArvoTests
 import qualified AmesTests
 import qualified BehnTests
+import qualified HoonMapSetTests
 
 main :: IO ()
 main = do
@@ -27,4 +28,5 @@ main = do
         , AmesTests.tests
         , LogTests.tests
         , BehnTests.tests
+        , HoonMapSetTests.tests
         ]
