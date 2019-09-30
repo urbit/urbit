@@ -1,16 +1,17 @@
 module HoonMapSetTests (tests) where
 
-import UrbitPrelude
 import RIO.Directory
+import UrbitPrelude  hiding (encodeUtf8)
 
-import Test.QuickCheck       hiding ((.&.))
+import Data.Text.Lazy.Encoding (encodeUtf8)
+import Numeric.Natural         (Natural)
+import Test.QuickCheck         hiding ((.&.))
 import Test.Tasty
-import Test.Tasty.Golden     as G
+import Test.Tasty.Golden       as G
 import Test.Tasty.QuickCheck
 import Test.Tasty.TH
 
-import Numeric.Natural (Natural)
-
+import qualified Data.ByteString.Lazy as L
 
 -- Types -----------------------------------------------------------------------
 
@@ -59,22 +60,21 @@ treeTestsIdentity = fmap go
         TTSet s -> (TTSet . setToHoonSet . setFromHoonSet) s
         TTMap m -> (TTMap . mapToHoonMap . mapFromHoonMap) m
 
-treeRTMug :: FilePath -> FilePath -> IO ()
-treeRTMug inp out = do
+treeRTMug :: FilePath -> IO L.ByteString
+treeRTMug inp = do
     byt <- readFile inp
     non <- cueBSExn byt
     tee <- fromNounExn non
     mug <- evaluate $ mug $ toNoun $ treeTestsIdentity tee
-    writeFile out $ encodeUtf8 $ tshow (mug :: Natural)
+    pure $ encodeUtf8 $ tlshow (mug :: Natural)
 
 
-goldenFile :: String -> String -> (FilePath -> FilePath -> IO ()) -> TestTree
+goldenFile :: String -> String -> (FilePath -> IO L.ByteString) -> TestTree
 goldenFile testName testFileName action =
-    goldenVsFile testName gold writ (action pill writ)
+    goldenVsString testName gold (action pill)
   where
     root = "pkg/king/test/gold" </> testFileName
     gold = root <.> "gold"
-    writ = root <.> "writ"
     pill = root <.> "pill"
 
 
