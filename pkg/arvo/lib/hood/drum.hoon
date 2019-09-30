@@ -93,6 +93,10 @@
       [%home %publish]
       [%home %clock]
       [%home %weather]
+      [%home %group-store]
+      [%home %group-hook]
+      [%home %permission-store]
+      [%home %permission-group-hook]
   ==
   :~  [%home %lens]
       [%home %acme]
@@ -106,6 +110,10 @@
       [%home %publish]
       [%home %clock]
       [%home %weather]
+      [%home %group-store]
+      [%home %group-hook]
+      [%home %permission-store]
+      [%home %permission-group-hook]
       [%home %azimuth-tracker]
   ==
 ::
