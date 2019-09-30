@@ -126,5 +126,5 @@ type Entry = (JetName, Hash, Jet)
 -- | Your jets here
 jets :: [Entry]
 jets =
-  [
+  [ (123, 0, \(A a) -> trace "jetting" $ A (a - 1))
   ]

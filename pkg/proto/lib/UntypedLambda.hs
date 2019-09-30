@@ -276,11 +276,12 @@ copyToNock = go \v -> error "copyToNock: free variable"
       
     jet a ef =
       NC
-        (N1
-          (C (A 11)
-          (C (A FastAtom)
-            (C (A 1) (A a)))))
-        ef
+        (N1 (A 11))
+        (NC
+          (N1
+            (C (A FastAtom)
+              (C (A 1) (A a))))
+          ef)
     lam vfs ef = case layOut id NC vfs of
       Nothing -> N1 (nockToNoun ef)
       Just pr -> NC (N1 (A 8)) $ NC (NC (N1 (A 1)) pr) $ N1 (nockToNoun ef)
