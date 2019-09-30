@@ -96,6 +96,9 @@
       [%home %group-hook]
       [%home %permission-store]
       [%home %permission-group-hook]
+      [%home %chat-store]
+      [%home %chat-hook]
+      [%home %chat-view]
   ==
   :~  [%home %lens]
       [%home %acme]
@@ -112,6 +115,9 @@
       [%home %group-hook]
       [%home %permission-store]
       [%home %permission-group-hook]
+      [%home %chat-store]
+      [%home %chat-hook]
+      [%home %chat-view]
       [%home %azimuth-tracker]
   ==
 ::
