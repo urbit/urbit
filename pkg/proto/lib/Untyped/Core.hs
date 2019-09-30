@@ -1,4 +1,4 @@
-module UntypedLambda where
+module Untyped.Core where
 
 import ClassyPrelude
 
@@ -51,104 +51,6 @@ ledt v e f = Let e (abstract1 v f)
 
 fix :: Eq a => a -> Exp a -> Exp a
 fix v e = Fix (abstract1 v e)
-
-eval :: (Eq a) => Exp a -> Exp a
-eval = \case
-  e@Var{} -> e
-  e@Lam{} -> e
-  (App e f) -> case eval e of
-    (Lam s) -> instantiate1 (eval f) s
-    e' -> (App e' (eval f))
-  e@Atm{} -> e
-  (Cel e f) -> Cel (eval e) (eval f)
-  (IsC e) -> case eval e of
-    Atm{} -> Atm 1
-    Cel{} -> Atm 0
-    Lam{} -> Atm 0  -- ehhhh
-    Var{} -> error "eval: free variable"
-    _ -> error "eval: implementation error"
-  (Suc e) -> case eval e of
-    Atm a -> Atm (a + 1)
-    _ -> error "eval: cannot take successor of non-atom"
-  (Ift e t f) -> case eval e of
-    Atm 0 -> eval t
-    Atm 1 -> eval f
-    _ -> error "eval: not a boolean"
-  (Let e s) -> instantiate1 (eval e) s
-  Jet _ e -> eval e
-  Fix s -> F.fix (flip instantiate1 s)  -- Who knows, it may even work!
-
--- 6, 30, 126, 510, ...
-oldDeBruijn :: Nat -> Axis
-oldDeBruijn = toAxis . go
-  where
-    go = \case
-      0 -> [R,L]
-      n -> [R,R] ++ go (n - 1)
-
--- | Raw de Bruijn
-data Exp'
-  = Var' Nat
-  | App' Exp' Exp'
-  | Lam' Exp'
-  deriving (Eq, Ord, Read, Show)
-
-toExp' :: Exp a -> Exp'
-toExp' = go \v -> error "toExp': free variable"
-  where
-    go :: (a -> Nat) -> Exp a -> Exp'
-    go env = \case
-      Var v   -> Var' (env v)
-      App e f -> App' (go env e) (go env f)
-      Lam s   -> Lam' (go env' (fromScope s))
-        where
-          env' = \case
-            B () -> 0
-            F v  -> 1 + env v
-
-cell :: Nock -> Nock -> Nock
-cell (N1 n) (N1 m) = N1 (C n m)
-cell ef ff = NC ef ff
-
--- | The old calling convention; i.e., what the (%-, |=) sublanguage of hoon
--- compiles to
-old :: Exp a -> Nock
-old = go \v -> error "old: free variable"
-  where
-    go :: (a -> Path) -> Exp a -> Nock
-    go env = \case
-      Var v     -> N0 (toAxis (env v))
-      App e f   -> app (go env e) (go (\v -> R : env v) f)
-      Lam s     -> lam (nockToNoun (go env' (fromScope s)))
-        where
-          env' = \case
-            B () -> [R,L]
-            F v  -> [R,R] ++ env v
-      Cel e f   -> cell (go env e) (go env f)
-      IsC e     -> N3 (go env e)
-      Suc e     -> N4 (go env e)
-      Eql e f   -> N5 (go env e) (go env f)
-      Ift e t f -> N6 (go env e) (go env t) (go env f)
-      Let e s   -> N8 (go env e) (go env' (fromScope s))
-        where
-          env' = \case
-            B () -> [L]
-            F v  -> R : env v
-      Jet{}     -> error "old: Old-style jetting not supported"
-      Fix{}     -> error "old: This convention doesn't use fix"
-
-    app ef ff =
-      N8
-        ef  -- =+ callee so we don't modify the orig's bunt
-        (N9 2
-          (N10 (6, ff)
-            (N0 2)))
-    lam ff =
-      N8  -- pushes onto the context
-        (N1 (A 0))  -- a bunt value (in hoon, actually depends on type)
-        (NC  -- then celles (N8 would also work, but hoon doesn't)
-          (N1 ff)  -- the battery (nock code)
-          (N0 1))  -- onto the pair of bunt and context
 
 data CExp a
   = CVar a
@@ -286,6 +188,10 @@ copyToNock = go \v -> error "copyToNock: free variable"
       Nothing -> N1 (nockToNoun ef)
       Just pr -> NC (N1 (A 8)) $ NC (NC (N1 (A 1)) pr) $ N1 (nockToNoun ef)
 
+cell :: Nock -> Nock -> Nock
+cell (N1 n) (N1 m) = N1 (C n m)
+cell ef ff = NC ef ff
+
 layOut :: (a -> b) -> (b -> b -> b) -> [a] -> Maybe b
 layOut sing pair = go
   where
@@ -311,7 +217,3 @@ copy = copyToNock . toCopy
 -- | Decrements its argument.
 decrement :: Exp String
 decrement = lam "a" $ App (fix "f" $ lam "b" $ Ift (Eql (Var "a") (Suc (Var "b"))) (Var "b") (App (Var "f") (Suc (Var "b")))) (Atm 0)
-
--- x. y. x
--- old: [8 [1 0] [1 8 [1 0] [1 0 30] 0 1] 0 1]
---      =+  0  =

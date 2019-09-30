@@ -1,13 +1,14 @@
-module PrintUntypedLambda where
+module Untyped.ShittyCorePrinter where
 
 -- it's pretty clowny but whatever
+-- TODO: handle the new cases (maybe don't do)
 
 import Prelude
 
 import Bound
 import Data.Foldable
 
-import UntypedLambda
+import Untyped.Core
 
 prettyPrec :: [String] -> Bool -> Int -> Exp String -> ShowS
 prettyPrec _      d n (Var a)    = showString a
