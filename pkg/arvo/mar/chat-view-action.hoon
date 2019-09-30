@@ -3,9 +3,9 @@
 |_  act=chat-action
 ++  grab
   |%
-  ++  noun  chat-action
+  ++  noun  chat-view-action
   ++  json  
     |=  jon=^json
-    (json-to-action jon)
+    (json-to-view-action jon)
   --
 --

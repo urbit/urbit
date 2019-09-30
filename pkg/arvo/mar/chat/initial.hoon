@@ -1,14 +1,14 @@
 /+  *chat-json
-|_  cfg=config
+|_  box=inbox
 ::
 ++  grow
   |%
-  ++  json  (conf cfg)
+  ++  json  (inbox-to-json box)
   --
 ::
 ++  grab
   |%
-  ++  noun  config
+  ++  noun  inbox
   --
 ::
 --
