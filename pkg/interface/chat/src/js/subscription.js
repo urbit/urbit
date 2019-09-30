@@ -14,19 +14,26 @@ export class Subscription {
   }
 
   initializeChat() {
-    api.bind('/primary', 'PUT', api.authTokens.ship, 'chat',
+    api.bind('/initial', 'PUT', api.authTokens.ship, 'chat-view',
       this.handleEvent.bind(this),
-      this.handleError.bind(this));
-  }
-
-  fetchMessages(circle, start, end) {
-    fetch(`/~chat/scroll/${circle}/${start}/${end}`)
-      .then((response) => response.json())
-      .then((json) => {
-        store.handleEvent({
-          data: json
-        });
-      });
+      this.handleError.bind(this),
+      this.handleQuitSilently.bind(this));
+    api.bind('/updates', 'PUT', api.authTokens.ship, 'chat-view',
+      this.handleEvent.bind(this),
+      this.handleError.bind(this),
+      this.handleQuitAndResubscribe.bind(this));
+    api.bind('/all', 'PUT', api.authTokens.ship, 'group-store',
+      this.handleEvent.bind(this),
+      this.handleError.bind(this),
+      this.handleQuitAndResubscribe.bind(this));
+    api.bind('/all', 'PUT', api.authTokens.ship, 'permission-store',
+      this.handleEvent.bind(this),
+      this.handleError.bind(this),
+      this.handleQuitAndResubscribe.bind(this));
+    api.bind('/all', 'PUT', api.authTokens.ship, 'invite-store',
+      this.handleEvent.bind(this),
+      this.handleError.bind(this),
+      this.handleQuitAndResubscribe.bind(this));
   }
 
   handleEvent(diff) {
@@ -35,10 +42,28 @@ export class Subscription {
 
   handleError(err) {
     console.error(err);
-    api.bind('/primary', 'PUT', api.authTokens.ship, 'chat',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this));
   }
+
+  handleQuitSilently(quit) {
+    // no-op
+  }
+
+  handleQuitAndResubscribe(quit) {
+    console.error(quit);
+    // TODO: resubscribe
+  }
+
+  fetchMessages(start, end, path) {
+    console.log(start, end, path);
+    fetch(`/~chat/paginate/${start}/${end}${path}`)
+      .then((response) => response.json())
+      .then((json) => {
+        store.handleEvent({
+          data: json
+        });
+      });
+  }
+
 }
 
 export let subscription = new Subscription();
