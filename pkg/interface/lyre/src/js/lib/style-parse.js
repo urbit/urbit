@@ -5,6 +5,7 @@ export function parseAllStyles(style) {
     if (res === acc) res = parseTypography(acc, el);
     if (res === acc) res = parseBGColor(acc, el);
     if (res === acc) res = parseBorder(acc, el);
+    if (res === acc) res = parseSpace(acc, el);
     return res;
   }, {});
   return result;
@@ -121,3 +122,35 @@ export function parseBorder(res, el) {
       return res;
   }
 }
+
+export function parseSpace(res, el) {
+  switch (el.property) {
+    case "m":
+      res["margin"] = el.value;
+      return res;
+    case "my":
+      res["marginTop"] = el.value;
+      res["marginBottom"] = el.value;
+      return res;
+    case "mx":
+      res["marginLeft"] = el.value;
+      res["marginRight"] = el.value;
+      return res;
+    case "mt":
+      res["marginTop"] = el.value;
+      return res;
+    case "mb":
+      res["marginBottom"] = el.value;
+      return res;
+    case "ml":
+      res["marginLeft"] = el.value;
+      return res;
+    case "mr":
+      res["marginRight"] = el.value;
+      return res;
+    default:
+      return res;
+  }
+}
+
+

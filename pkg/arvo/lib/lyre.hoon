@@ -127,8 +127,11 @@
       :~  :+  %style
             %a
           %+  turn  sty.a
-          |=  s=^typography
-          (typography s)
+          |=  s=?(^typography ^space)
+          ?-  s
+            ^typography  (typography s)
+            ^space      (space s)
+          ==
       ::
           body+s+bod.a
       ==
@@ -245,13 +248,14 @@
       :~  :+  %style
             %a
           %+  turn  sty.a
-          |=  s=?(^flex ^layout ^typography ^bg-color ^border)
+          |=  s=?(^flex ^layout ^typography ^bg-color ^border ^space)
           ?-  s
             ^flex        (flex s)
             ^layout      (layout s)
             ^typography  (typography s)
             ^bg-color    (bg-color s)
             ^border      (border s)
+            ^space       (space s)
           ==
       ::
           body+a+(turn bod.a dom)
@@ -267,13 +271,14 @@
       :~  :+  %style
             %a
           %+  turn  sty.a
-          |=  s=?(^flex ^layout ^typography ^bg-color ^border)
+          |=  s=?(^flex ^layout ^typography ^bg-color ^border ^space)
           ?-  s
             ^flex        (flex s)
             ^layout      (layout s)
             ^typography  (typography s)
             ^bg-color    (bg-color s)
             ^border      (border s)
+            ^space       (space s)
           ==
       ::
           body+(dom bod.a)
@@ -355,6 +360,11 @@
       |=  a=^border
       ^-  json
       (pairs:enjs:format property+s+-.a value+b++.a ~)
+    ::
+    ++  space
+      |=  a=^space
+      ^-  json
+      (pairs:enjs:format property+s+-.a value+(numb:enjs:format +.a) ~)
     --
   --
 --

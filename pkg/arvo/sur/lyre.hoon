@@ -25,7 +25,7 @@
   ::  basic elements
   ::
       [%empty ~]
-      [%text sty=(list typography) bod=@t]
+      [%text sty=(list typography space) bod=@t]
       [%button bod=dom act=poke]
       [%image dat=@t]
   ::  form elements
@@ -39,8 +39,8 @@
       [%padding t=@u b=@u l=@u r=@u bod=dom]
       [%horizontal bod=(list dom)]
       [%vertical bod=(list dom)]
-      [%list sty=(list ?(flex layout typography bg-color border)) bod=(list dom)]
-      [%box sty=(list ?(flex layout typography bg-color border)) bod=dom]
+      [%list sty=(list ?(flex layout typography bg-color border space)) bod=(list dom)]
+      [%box sty=(list ?(flex layout typography bg-color border space)) bod=dom]
   ::  custom react
   ::
       [%include js=@t]
