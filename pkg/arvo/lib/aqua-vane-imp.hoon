@@ -38,6 +38,12 @@
   ;<  =bowl:mall               bind:m  get-bowl:threadio
   =^  cards  handler
     (~(handle-unix-effect handler bowl) her unix-effect)
+  ?~  cards
+    (pure:m handler)
+  ::  send in next event to avoid inverting subscription flow.  real
+  ::  solution is probably for gall to drip subscription updates.
+  ::
+  ;<  ~                        bind:m  (sleep:threadio ~s0)
   ;<  ~                        bind:m  (send-raw-cards:threadio cards)
   (pure:m handler)
 ::

@@ -38,7 +38,7 @@
 ::
 ++  insert-file
   |=  [who=ship des=desk pax=path txt=@t]
-  ^-  (list ph-event)
+  ^-  (list aqua-event)
   ?>  ?=([@ @ @ *] pax)
   =/  file  [/text/plain (as-octs:mimes:html txt)]
   %+  send-events-to  who

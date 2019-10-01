@@ -154,7 +154,7 @@
   ^-  (quip card ^state)
   =/  m  (thread ,~)
   ?.  (~(has by state) imp-name)
-    %-  (slog leaf+"spider got input for non-existent {<imp-name>}" ~)
+    ::  %-  (slog leaf+"spider got input for non-existent {<imp-name>}" ~)
     `state
   =/  =eval-form:eval:m
     (~(got by state) imp-name)
