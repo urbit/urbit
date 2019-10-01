@@ -53,7 +53,11 @@ ledt v e f = Let e (abstract1 v f)
 fix :: Eq a => a -> Exp a -> Exp a
 fix v e = Fix (abstract1 v e)
 
-
+-- | The expression that returns the given noun as a constant.
+con :: Noun -> Exp a
+con = \case
+  A a   -> Atm a
+  C n m -> Cel (con n) (con m)
 
 data CExp a
   = CVar a

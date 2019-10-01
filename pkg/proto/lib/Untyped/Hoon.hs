@@ -32,22 +32,20 @@ data Pat
   = Exact Noun
   | Wild
 
-{-
-
 desugar :: Eq a => Hoon a -> Exp a
 desugar = go
   where
     go = \case
       HVar v -> Var v
       HCons h j -> Cel (go h) (go j)
-      BarCen v cs -> Lam $ Scope $ go $ WutHep (Var (B ())) 
-      BarWut cs -> 
-      CenBar cs -> Fix $ Scope
+      BarCen cs -> undefined --Lam $ Scope $ go $ WutHep (Var (B ())) 
+      -- CenBar cs -> Fix $ Scope
+      WutHep h cs -> undefined
 
 branch :: (Hoon b -> Exp a) -> Exp a -> Cases b -> Exp a
 branch go e = foldr f Zap
   where
-     f c acc = case c of
-       (Exact n, h) -> Ift (Eql e 
+   f c acc = case c of
+     (Exact n, h) -> Ift (Eql e (con n)) (go h) acc
+     (Wild,    h) -> go h
 
--}
