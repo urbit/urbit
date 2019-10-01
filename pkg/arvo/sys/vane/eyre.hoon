@@ -1910,8 +1910,42 @@
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
   ::
+  ::    Cancel all inactive channels
+  ::    XX cancel active too if =(0 trim-priority) ?
+  ::
   ?:  ?=(%trim -.task)
-    [~ http-server-gate]
+    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =*  by-channel  by-channel:(per-server-event event-args)
+    =*  channel-state  channel-state.server-state.ax
+    ::
+    =/  inactive=(list @t)
+      =/  full=(set @t)  ~(key by session.channel-state)
+      =/  live=(set @t)
+        (~(gas in *(set @t)) ~(val by duct-to-key.channel-state))
+      ~(tap in (~(dif in full) live))
+    ::
+    ?:  =(~ inactive)
+      [~ http-server-gate]
+    ::
+    =/  len=tape  (scow %ud (lent inactive))
+    ~>  %slog.[0 leaf+"eyre: trim: closing {len} inactive channels"]
+    ::
+    =|  moves=(list (list move))
+    |-  ^-  [(list move) _http-server-gate]
+    =*  channel-id  i.inactive
+    ?~  inactive
+      [(zing (flop moves)) http-server-gate]
+    ::  discard channel state, and cancel any active gall subscriptions
+    ::
+    =^  mov  server-state.ax  (on-channel-timeout:by-channel channel-id)
+    ::  cancel channel timer
+    ::
+    =/  channel  (~(got by session.channel-state) channel-id)
+    =?  mov  ?=([%& *] state.channel)
+      :_  mov
+      (cancel-timeout-move:by-channel channel-id p.state.channel)
+    $(moves [mov moves], inactive t.inactive)
+  ::
   ::  %vega: notifies us of a completed kernel upgrade
   ::
   ?:  ?=(%vega -.task)
