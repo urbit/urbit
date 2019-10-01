@@ -1750,12 +1750,11 @@
   =|  a/(tree)  ::  (qeu)
   |@
   ++  apt                                               ::  check correctness
-    ^-  ?
-    ?~  a  &
     |-  ^-  ?
-    ?~  l.a  &
-    ?~  r.a  &
-    &((mor n.l.a n.r.a) $(a l.a) $(a r.a))
+    ?~  a  &
+    ?&  ?~(l.a & ?&((mor n.a n.l.a) $(a l.a)))
+        ?~(r.a & ?&((mor n.a n.r.a) $(a r.a)))
+    ==
   ::
   ++  bal
     |-  ^+  a
