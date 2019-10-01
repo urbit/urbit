@@ -24,43 +24,46 @@ import qualified Prelude
 
 type Nat  = Int
 type Sym  = String
-type Wing = [Either Nat Sym]
 
 
--- AST -------------------------------------------------------------------------
+-- CST -------------------------------------------------------------------------
 
-data Base = BVoid | BNull | BFlag | BNoun | BCell | BAtom
+data Pat
+    = PatTar
+    | PatNat Nat
   deriving (Eq, Ord, Show)
 
-data AST
-    = WutCol AST AST AST          --  ?:(c t f)
-    | WutPat AST AST AST          --  ?@(c t f)
-    | WutKet AST AST AST          --  ?^(c t f)
-    | KetTis Sym AST              --  ^=(x 3)
-    | ColHep AST AST              --  :-(a b)
-    | ColLus AST AST AST          --  :+(a b c)
-    | ColKet AST AST AST AST      --  :^(a b c d)
-    | ColTar [AST]                --  :*(a as ...)
-    | ColSig [AST]                --  :~(a as ...)
-    | TisGal AST AST              --  =<(a b)
-    | TisGar AST AST              --  =>(a b)
-    | BarTis AST AST              --  |=(s h)
-    | BarHep AST                  --  |-(a)
-    | TisDot Sym AST AST          --  =.(a 3 a)
-    | BarCen (Map Sym AST)        --  |%  ++  a  3  --
-    | ColOp AST AST               --  [+ -]:[3 4]
-    | Tupl [AST]                  --  [a b]
-    | FaceOp Sym AST              --  x=y
-    | Wing Wing                   --  ., a, a.b
+data CST
+    = WutCol CST CST CST          --  ?:(c t f)
+    | WutPat CST CST CST          --  ?@(c t f)
+    | WutKet CST CST CST          --  ?^(c t f)
+    | WutPam CST CST              --  ?&(c cs ...)
+    | WutBar CST CST              --  ?|(c cs ...)
+    | WutHep CST [(Pat, CST)]     --  ?-(c p e p e ...)
+    | TisFas Sym CST CST          --  =/(x 3 x)
+    | ColHep CST CST              --  :-(a b)
+    | ColLus CST CST CST          --  :+(a b c)
+    | ColKet CST CST CST CST      --  :^(a b c d)
+    | ColTar [CST]                --  :*(a as ...)
+    | ColSig [CST]                --  :~(a as ...)
+    | BarTis Sym CST              --  |=(s h)
+    | BarHep Sym Sym CST CST      --  |-(rec var init body)
+    | BarCen [(Pat, CST)]         --  |%  %a  3  ==
+    | CenHep CST CST              --  %-  f  x
+    | CenDot CST CST              --  %.  x  f
+    | DotDot Sym CST              --  ..  $  f
+    | ZapZap                      --  !!
+    | Tupl [CST]                  --  [a b ...]
+    | Var  Sym                    --  a
     | Atom Nat                    --  3
+    | Tag Text                    --  %asdf
     | Cord Text                   --  'cord'
     | Tape Text                   --  "tape"
-    | Incr AST                    --  .+(3)
-    | IncrIrr AST                 --  +(3)
-    | IsEq AST AST                --  .=(3 4)
-    | IsEqIrr AST AST             --  =(3 4)
-    | Lus                         --  +
-    | Hep                         --  -
+    | Incr CST                    --  .+(3)
+    | IncrIrr CST                 --  +(3)
+    | AppIrr CST CST              --  (x y)
+    | IsEq CST CST                --  .=(3 4)
+    | IsEqIrr CST CST             --  =(3 4)
     | Pam                         --  &
     | Bar                         --  |
     | Yes                         --  %.y
@@ -126,22 +129,21 @@ cord = do
   between (char '\'') (char '\'') $
     pack <$> many (label "cord char" (anySingleBut '\''))
 
-literal ∷ Parser AST
+literal ∷ Parser CST
 literal = choice
-  [ Atom     <$> atom
+  [ Var      <$> sym
+  , Atom     <$> atom
   , pure Yes <*  string "%.y"
   , pure No  <*  string "%.n"
   , pure Pam <*  char '&'
   , pure Bar <*  char '|'
   , pure Sig <*  char '~'
-  , pure Lus <*  char '+'
-  , pure Hep <*  char '-'
   , Cord     <$> cord
   , Tape     <$> tape
   ]
 
 
--- Rune Helpers ------------------------------------------------------------------------------------
+-- Rune Helpers ----------------------------------------------------------------
 
 {-
     - If the parser is in `Wide` mode, only accept the `wide` form.
@@ -194,21 +196,21 @@ runeNE node elem = node <$> parseRune tall wide
           pure (fst :| rst)
         wide = mzero -- No wide form for cores
 
--- Irregular Syntax --------------------------------------------------------------------------------
+-- Irregular Syntax ------------------------------------------------------------
 
-inc ∷ Parser AST -- +(3)
+inc ∷ Parser CST -- +(3)
 inc = do
   string "+("
-  h ← ast
+  h ← cst
   char ')'
   pure h
 
-equals ∷ Parser (AST, AST) -- =(3 4)
+equals ∷ Parser (CST, CST) -- =(3 4)
 equals = do
   string "=("
-  x ← ast
+  x ← cst
   ace
-  y ← ast
+  y ← cst
   char ')'
   pure (x, y)
 
@@ -225,107 +227,84 @@ tuple p = char '[' >> elems
     elems ∷ Parser [a]
     elems = (pure [] <* char ']') <|> xs
 
-irregular ∷ Parser AST
+appIrr :: Parser CST
+appIrr = do
+  char '('
+  x <- cst
+  char ' '
+  y <- cst
+  char ')'
+  pure (AppIrr x y)
+
+irregular ∷ Parser CST
 irregular =
   inWideMode $
-    choice [ Tupl            <$> tuple ast
+    choice [ Tupl            <$> tuple cst
            , IncrIrr         <$> inc
            , uncurry IsEqIrr <$> equals
+           , appIrr
            ]
 
 -- Runes -----------------------------------------------------------------------
 
-cRune ∷ (Map Sym AST → a) → Parser a
+cRune ∷ (Map Sym CST → a) → Parser a
 cRune f = do
     mode ← get
     guard (mode == Tall)
     gap
     f . mapFromList <$> arms -- TODO Complain about duplicated arms
   where
-    arms :: Parser [(Sym, AST)]
+    arms :: Parser [(Sym, CST)]
     arms = many arm <* string "--"
 
-    arm :: Parser (Sym, AST)
+    arm :: Parser (Sym, CST)
     arm = do
       string "++"
       gap
       s ← sym
       gap
-      h ← ast
+      h ← cst
       gap
       pure (s, h)
 
-data Skin
-
-rune ∷ Parser AST
-rune = runeSwitch [ ("|=", rune2 BarTis ast ast)
-                  , ("|-", rune1 BarHep ast)
-                  , (":-", rune2 ColHep ast ast)
-                  , (":+", rune3 ColLus ast ast ast)
-                  , (":^", rune4 ColKet ast ast ast ast)
-                  , (":*", runeN ColTar ast)
-                  , (":~", runeN ColSig ast)
-                  , ("=<", rune2 TisGal ast ast)
-                  , ("=>", rune2 TisGar ast ast)
-                  , ("?:", rune3 WutCol ast ast ast)
-                  , ("?@", rune3 WutPat ast ast ast)
-                  , ("?^", rune3 WutKet ast ast ast)
-                  , (".+", rune1 Incr ast)
-                  , (".=", rune2 IsEq ast ast)
-                  , ("^=", rune2 KetTis sym ast)
-                  , ("=.", rune3 TisDot sym ast ast)
-                  , ("|%", cRune BarCen)
+rune ∷ Parser CST
+rune = runeSwitch [ ("|=", rune2 BarTis sym cst)
+                  , ("|-", rune4 BarHep sym sym cst cst)
+                  , (":-", rune2 ColHep cst cst)
+                  , (":+", rune3 ColLus cst cst cst)
+                  , (":^", rune4 ColKet cst cst cst cst)
+                  , (":*", runeN ColTar cst)
+                  , (":~", runeN ColSig cst)
+                  , ("%-", rune2 CenHep cst cst)
+                  , ("%.", rune2 CenDot cst cst)
+                  , ("?:", rune3 WutCol cst cst cst)
+                  , ("?@", rune3 WutPat cst cst cst)
+                  , ("?^", rune3 WutKet cst cst cst)
+                  , (".+", rune1 Incr cst)
+                  , (".=", rune2 IsEq cst cst)
+--                , ("|%", cRune BarCen)
                   ]
 
 runeSwitch ∷ [(Text, Parser a)] → Parser a
 runeSwitch = choice . fmap (\(s, p) → string s *> p)
 
--- runeSwitch ∷ [(String, Parser a)] → Parser a
--- runeSwitch = parseBasedOnRune
---            . fmap (\([x,y], p) → (x, (y,p)))
---   where
---     parseBasedOnRune ∷ [(Char, (Char, Parser a))] → Parser a
---     parseBasedOnRune = combine . restructure
---       where combine     = lexThen . overSnd lexThen
---             overSnd f   = fmap (\(x,y) → (x,f y))
---             lexThen     = choice . fmap (\(x,y) → char x *> y)
---             restructure = MM.assocs
---                         . MM.fromList
 
--- Infix Syntax ------------------------------------------------------------------------------------
+-- CST Parser ------------------------------------------------------------------
 
-colInfix ∷ Parser AST
-colInfix = do
-  x ← try (astNoInfix <* char ':')
-  y ← ast
-  pure (ColOp x y)
+cst ∷ Parser CST
+cst = irregular <|> rune <|> literal
 
-faceOp ∷ Parser AST
-faceOp = FaceOp <$> try (sym <* char '=')
-                <*> ast
 
-infixOp ∷ Parser AST
-infixOp = do
-  inWideMode (colInfix <|> faceOp)
-
--- AST Parser -------------------------------------------------------------------------------------
-
-astNoInfix ∷ Parser AST
-astNoInfix = irregular <|> rune <|> literal
-
-ast ∷ Parser AST
-ast = infixOp <|> astNoInfix
-
--- Entry Point -------------------------------------------------------------------------------------
+-- Entry Point -----------------------------------------------------------------
 
 hoonFile = do
   option () whitespace
-  h ← ast
+  h ← cst
   option () whitespace
   eof
   pure h
 
-parse :: Text -> Either Text AST
+parse :: Text -> Either Text CST
 parse txt =
   runParser (evalStateT hoonFile Tall) "stdin" txt & \case
     Left  e -> Left (pack $ errorBundlePretty e)
@@ -336,15 +315,3 @@ parseHoonTest = parseTest (evalStateT hoonFile Tall)
 
 main ∷ IO ()
 main = (head <$> getArgs) >>= parseHoonTest
-
-
--- Parse Spec ------------------------------------------------------------------
-
-base :: Parser Base
-base = choice [ BVoid <$ char '!'
-              , BNull <$ char '~'
-              , BFlag <$ char '?'
-              , BNoun <$ char '*'
-              , BCell <$ char '^'
-              , BAtom <$ char '@'
-              ]
