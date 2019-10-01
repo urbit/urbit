@@ -37,7 +37,6 @@ data New = New
     -- TODO: Pill path needs to become optional; need to default to either the
     -- git hash version or the release version per current vere.
     { nPillPath :: FilePath
---    , nShipAddr :: Text
     , nPierPath :: Maybe FilePath -- Derived from ship name if not specified.
     , nArvoDir  :: Maybe FilePath
     , nBootType :: BootType
