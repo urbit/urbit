@@ -84,7 +84,7 @@
       !!
     `this
   ::
-  ++  handle-unsubscribe     ~&  >>  %k  handle-unsubscribe:def
+  ++  handle-unsubscribe     handle-unsubscribe:def
   ++  handle-peek
     |=  =path
     ^-  (unit (unit cage))

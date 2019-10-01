@@ -22,6 +22,15 @@
     ~[%aqua-ames %aqua-behn %aqua-dill %aqua-eyre]
   ;<  ~  bind:m  (start-imps vane-imps)
   ;<  ~  bind:m  start-watching
+  ::  We want to wait for the vane imps to actually start and get their
+  ::  subscriptions started.  Other ways to do this are delaying the ack
+  ::  from spider until the build is finished (does that guarantee the
+  ::  subscriptions have started?) or subscribe to the imps themselves
+  ::  for a notification when they're done.  This is probably the best
+  ::  option because the imp can delay until it gets a positive ack on
+  ::  the subscription.
+  ::
+  ;<  ~  bind:m  (sleep ~s0)
   (pure:m ~)
 ::
 ++  end-simple
@@ -29,6 +38,11 @@
   ^-  form:m
   =/  vane-imps=(list term)
     ~[%aqua-ames %aqua-behn %aqua-dill %aqua-eyre]
+  ::  Get our very own event with mistakes in it... yet.  Specifically,
+  ::  this avoids the situation where updates going to the vane imps
+  ::  crash in spider because the imp is already gone.
+  ::
+  ;<  ~  bind:m  (sleep ~s0)
   ;<  ~  bind:m  (stop-imps vane-imps)
   ;<  ~  bind:m  stop-watching
   (pure:m ~)
@@ -65,7 +79,7 @@
     .^(? %mx /(scot %p our)/spider/(scot %da now)/started/[i.imps]/noun)
   ?.  imp-started
     loop(imps t.imps)
-  =/  poke-vase  !>(i.imps)
+  =/  poke-vase  !>([i.imps &])
   ;<  ~  bind:m  (poke-our %spider %spider-stop poke-vase)
   loop(imps t.imps)
 ::

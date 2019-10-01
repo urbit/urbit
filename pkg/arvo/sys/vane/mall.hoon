@@ -1174,8 +1174,7 @@
               attributing.agent-routes                ::  guest
               agent-name                              ::  agent
           ==                                          ::
-          :*  :: NB (jtobin): see urbit/urbit#1466
-              wex=~                                   ::  outgoing
+          :*  wex=outgoing.subscribers.current-agent  ::  outgoing
               sup=incoming.subscribers.current-agent  ::  incoming
           ==                                          ::
           :*  act=change.stats.current-agent          ::  tick
@@ -1285,12 +1284,29 @@
       ?>  ?=([%out @ @ *] wire)
       =/  other-ship  (slav %p i.t.wire)
       =/  other-agent  i.t.t.wire
+      =/  =dock  [other-ship other-agent]
       =/  agent-wire  t.t.t.wire
+      ::  if subscription ack or close, handle before calling user code
+      ::
+      =?  outgoing.subscribers.current-agent  ?=(%subscription-close -.gift)
+        %-  ~(del by outgoing.subscribers.current-agent)
+        [wire dock]
+      =?  outgoing.subscribers.current-agent  ?=(%subscription-ack -.gift)
+        ?^  p.gift
+          %-  ~(del by outgoing.subscribers.current-agent)
+          [wire dock]
+        %+  ~(jab by outgoing.subscribers.current-agent)  [agent-wire dock]
+        |=  [acked=? =path]
+        ~|  [%already-acked agent-name wire dock path]
+        ?<  acked
+        [& path]
+      ::
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
         (handle-agent-response:ap-agent-core agent-wire gift)
+      ::
       =?  ap-core  ?=(%subscription-update -.gift)
-        (ap-update-subscription =(~ maybe-tang) other-ship other-agent agent-wire)
+        (ap-update-subscription =(~ maybe-tang) p.dock q.dock agent-wire)
       ?^  maybe-tang
         (ap-error -.gift leaf/"closing subscription" u.maybe-tang)
       ap-core
@@ -1403,7 +1419,7 @@
         ==
       ::
       =.  agent-cards 
-        :(weld new-cards ack-cards agent-cards)
+        :(weld (flop new-cards) ack-cards agent-cards)
       [maybe-tang ap-core]
     ::  +ap-handle-result: handle result.
     ::
@@ -1414,13 +1430,10 @@
       ?:  ?=(%| -.result)
         `ap-core
       ::
-      =/  new-subs  (ap-handle-quits -.p.result)
-      ::
-      :-  (flop -.p.result)
-      %_  ap-core
-        agent.current-agent                 +.p.result
-        incoming.subscribers.current-agent  new-subs
-      ==
+      =.  agent.current-agent  +.p.result
+      =.  incoming.subscribers.current-agent
+        (ap-handle-quits -.p.result)
+      (ap-handle-peers -.p.result)
     ::  +ap-handle-quits: handle cancels of incoming subscriptions
     ::
     ++  ap-handle-quits
@@ -1440,14 +1453,39 @@
       =/  quit-map=bitt
         (malt (turn quits |=(=duct [duct *[ship path]])))
       (~(dif by incoming.subscribers.current-agent) quit-map)
-    ::  +ap-tang: standard tang.
+    ::  +ap-handle-peers: handle new outgoing subscriptions
     ::
-    ++  ap-tang
-      |=  =tape
-      ^-  tang
-      ::
-      =/  =tank  [%leaf (weld "mall: {<agent-name>}: " tape)]
-      [tank ~]
+    ++  ap-handle-peers
+      ~/  %ap-handle-peers
+      |=  moves=(list card:agent)
+      ^-  [(list card:agent) _ap-core]
+      =|  cards=(list card:agent)
+      |-  ^-  [(list card:agent) _ap-core]
+      ?~  moves
+        [(flop cards) ap-core]
+      =/  =card:agent  i.moves
+      ?:  ?=([%pass * %agent * %unsubscribe *] card)
+        =/  =wire  p.card
+        =/  =dock  [ship name]:q.card
+        =.  outgoing.subscribers.current-agent
+          (~(del by outgoing.subscribers.current-agent) [wire dock])
+        $(moves t.moves, cards [card cards])
+      ?.  ?=([%pass * %agent * %subscribe *] card)
+        $(moves t.moves, cards [card cards])
+      =/  =wire  p.card
+      =/  =dock  [ship name]:q.card
+      =/  =path  path.task.q.card
+      ?:  (~(has by outgoing.subscribers.current-agent) wire dock)
+        =.  ap-core 
+          =/  way  [%out (scot %p p.dock) q.dock wire]
+          =/  =tang
+            ~[leaf+"subscribe wire not unique" >agent-name< >wire< >dock<]
+          %-  (slog leaf/"XXX remove" tang)
+          (ap-specific-take way %subscription-ack `tang)
+        $(moves t.moves)
+      =.  outgoing.subscribers.current-agent
+        (~(put by outgoing.subscribers.current-agent) [wire dock] [| path])
+      $(moves t.moves, cards [card cards])
     --
   --
 ::  +call: request

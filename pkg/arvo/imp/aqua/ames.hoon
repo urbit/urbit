@@ -41,7 +41,6 @@
 ++  handle-unix-effect
   |=  [who=@p ue=unix-effect]
   ^-  (quip card:agent:mall _this)
-  ~&  >>  'feeling affected'
   =^  cards  ships
     ?+  -.q.ue  `ships
       %restore  (handle-restore our.bowl who)

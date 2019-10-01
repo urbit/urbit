@@ -1880,8 +1880,8 @@
     --  ::able
   ++  bitt  (map duct (pair ship path))                 ::  incoming subs
   ++  boat                                              ::  outgoing subs
-    %+  map  wire                                       ::
-    (trel bean ship path)                               ::
+    %+  map  ,[=wire =ship =term]                       ::
+    ,[acked=? =path]                                    ::
   ++  bowl                                              ::  standard app state
           $:  $:  our/ship                              ::  host
                   src/ship                              ::  guest

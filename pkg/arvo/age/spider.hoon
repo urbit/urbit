@@ -26,7 +26,7 @@
       ?+  mark  (handle-poke:def mark vase)
         %spider-imput  (handle-poke-imput:sc !<(imput vase))
         %spider-start  (handle-start-imp:sc !<([imp-name term] vase))
-        %spider-stop   (handle-stop-imp:sc !<(imp-name vase))
+        %spider-stop   (handle-stop-imp:sc !<([imp-name ?] vase))
       ==
     [cards this]
   ::
@@ -129,25 +129,34 @@
 ++  start-imp
   |=  [=imp-name =imp]
   ^-  (quip card ^state)
+  =^  cards-1  state
+    ?.  (~(has by state) imp-name)
+      `state
+    (imp-done imp-name)
   =/  m  (thread ,~)
   =/  =eval-form:eval:m  (from-form:eval:m (imp bowl))
   =.  state  (~(put by state) imp-name eval-form)
-  (take-input imp-name ~)
+  =^  cards-2  state
+    (take-input imp-name ~)
+  [(weld cards-1 cards-2) state]
 ::
 ++  handle-stop-imp
-  |=  =imp-name
+  |=  [=imp-name nice=?]
   ^-  (quip card ^state)
-  ?.  (~(has by state) imp-name)
-    ~|  [%not-started imp-name]
-    !!
+  ~?  !(~(has by state) imp-name)
+    [%not-started imp-name]
+  ?:  nice
+    (imp-done imp-name)
   (imp-fail imp-name %cancelled ~)
 ::
 ++  take-input
   |=  [=imp-name input=(unit input:thread)]
   ^-  (quip card ^state)
   =/  m  (thread ,~)
+  ?.  (~(has by state) imp-name)
+    %-  (slog leaf+"spider got input for non-existent {<imp-name>}" ~)
+    `state
   =/  =eval-form:eval:m
-    ~|  [%no-imp imp-name]
     (~(got by state) imp-name)
   =|  cards=(list card)
   |-  ^-  (quip card ^state)
@@ -189,13 +198,25 @@
   |=  [=imp-name =term =tang]
   ^-  (quip card ^state)
   %-  (slog leaf+"thread {<imp-name>} failed" leaf+<term> tang)
-  :-  [%pass /build/[imp-name] %arvo %f %kill ~]~
-  (~(del by state) imp-name)
+  (imp-clean imp-name)
 ::
 ++  imp-done
   |=  =imp-name
   ^-  (quip card ^state)
   %-  (slog leaf+"thread {<imp-name>} finished" ~)
-  :-  [%pass /build/[imp-name] %arvo %f %kill ~]~
-  (~(del by state) imp-name)
+  (imp-clean imp-name)
+::
+++  imp-clean
+  |=  =imp-name
+  ^-  (quip card ^state)
+  :_  (~(del by state) imp-name)
+  :-  [%pass /build/[imp-name] %arvo %f %kill ~]
+  %+  murn  ~(tap by wex.bowl)
+  |=  [[=wire =ship =term] [acked=? =path]]
+  ^-  (unit card)
+  ?.  ?&  ?=([%imp @ *] wire)
+          =(imp-name i.t.wire)
+      ==
+    ~
+  `[%pass wire %agent [ship term] %unsubscribe ~]
 --
