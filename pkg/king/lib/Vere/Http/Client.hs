@@ -45,12 +45,19 @@ cvtRespHeaders resp =
   where
     heads = convertHeaders (H.responseHeaders resp)
 
+bornEv :: KingId -> Ev
+bornEv king =
+    EvBlip $ BlipEvHttpClient $ HttpClientEvBorn (king, ()) ()
+
 --------------------------------------------------------------------------------
 
 client :: forall e. HasLogFunc e
        => KingId -> QueueEv -> ([Ev], RAcquire e (EffCb e HttpClientEf))
-client kingId enqueueEv = ([], runHttpClient)
+client kingId enqueueEv = (initialEvents, runHttpClient)
   where
+    initialEvents :: [Ev]
+    initialEvents = [bornEv kingId]
+
     runHttpClient :: RAcquire e (EffCb e HttpClientEf)
     runHttpClient = handleEffect <$> mkRAcquire start stop
 
