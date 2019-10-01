@@ -134,8 +134,9 @@ removeFileIfExists pax = do
 
 --------------------------------------------------------------------------------
 
-tryBootFromPill :: HasLogFunc e => FilePath -> FilePath -> Ship -> RIO e ()
-tryBootFromPill pillPath shipPath ship = do
+tryBootFromPill :: HasLogFunc e
+                => FilePath -> FilePath -> Ship -> LegacyBootEvent -> RIO e ()
+tryBootFromPill pillPath shipPath ship boot = do
     rwith bootedPier $ \(serf, log, ss) -> do
         logTrace "Booting"
         logTrace $ displayShow ss
@@ -146,7 +147,7 @@ tryBootFromPill pillPath shipPath ship = do
   where
     bootedPier = do
         lockFile shipPath
-        Pier.booted pillPath shipPath [] ship
+        Pier.booted pillPath shipPath [] ship boot
 
 runAcquire :: (MonadUnliftIO m,  MonadIO m)
            => Acquire a -> m a
@@ -267,7 +268,7 @@ testPill pax showPil showSeq = do
   pill <- fromNounErr pillNoun & either (throwIO . uncurry ParseErr) pure
 
   putStrLn "Using pill to generate boot sequence."
-  bootSeq <- generateBootSeq zod pill
+  bootSeq <- generateBootSeq zod pill (Fake $ Ship 0)
 
   putStrLn "Validate jam/cue and toNoun/fromNoun on pill value"
   reJam <- validateNounVal pill
@@ -316,23 +317,54 @@ validateNounVal inpVal = do
 --------------------------------------------------------------------------------
 
 newShip :: HasLogFunc e => CLI.New -> CLI.Opts -> RIO e ()
-newShip CLI.New{..} _ = do
-    tryBootFromPill nPillPath pierPath shipId
-  where
-    shipId :: Ship
-    shipId = case nBootType of
-      CLI.BootComet -> error "Comets don't work yet"
-      CLI.BootFake txt -> case Ob.parsePatp txt of
-        Left x  -> error "Invalid ship name"
-        Right p -> Ship $ fromIntegral $ Ob.fromPatp p
-      CLI.BootFromKeyfile x -> error "Up next"
+newShip CLI.New{..} _
+  | CLI.BootComet <- nBootType =
+      error "Comets don't work yet"
 
-    pierPath = case nPierPath of
-      Just x -> x
-      Nothing -> case nBootType of
-        CLI.BootComet         -> error "Comets don't work yet"
-        CLI.BootFake txt      -> "./" <> unpack txt
-        CLI.BootFromKeyfile x -> error "That's up next, make fakenec work first."
+  | CLI.BootFake name <- nBootType =
+      let ship = shipFrom name
+      in tryBootFromPill nPillPath (pierPath name) ship (Fake ship)
+
+  | CLI.BootFromKeyfile keyFile <- nBootType = do
+      text <- readFileUtf8 keyFile
+      asAtom <- case cordToUW (Cord $ T.strip text) of
+        Nothing -> error "Couldn't parse keyfile. Hint: keyfiles start with 0w?"
+        Just (UW a) -> pure a
+
+      asNoun <- cueExn asAtom
+      seed :: Seed <- case fromNoun asNoun of
+        Nothing -> error "Keyfile does not seem to contain a seed."
+        Just s  -> pure s
+
+      ethReturn <- dawnVent seed
+
+      case ethReturn of
+        Left x -> error $ unpack x
+        Right dawn ->
+          let ship = sShip $ dSeed dawn
+              path = (pierPath $ nameFromShip ship)
+          in tryBootFromPill nPillPath path ship (Dawn dawn)
+
+  where
+    shipFrom :: Text -> Ship
+    shipFrom name = case Ob.parsePatp name of
+      Left x  -> error "Invalid ship name"
+      Right p -> Ship $ fromIntegral $ Ob.fromPatp p
+
+    pierPath :: Text -> FilePath
+    pierPath name = case nPierPath of
+      Just x  -> x
+      Nothing -> "./" <> unpack name
+
+    nameFromShip :: Ship -> Text
+    nameFromShip s = name
+      where
+        nameWithSig = Ob.renderPatp $ Ob.patp $ fromIntegral s
+        name = case stripPrefix "~" nameWithSig of
+          Nothing -> error "Urbit.ob didn't produce string with ~"
+          Just x  -> x
+
+
 
 runShip :: HasLogFunc e => CLI.Run -> CLI.Opts -> RIO e ()
 runShip (CLI.Run pierPath) _ = tryPlayShip pierPath

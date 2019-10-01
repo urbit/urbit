@@ -95,7 +95,12 @@ instance FromNoun Ring where
 instance Show Ring where
   show r = "(Ring <<seed>> <<seed>>)"
 
-data Seed = Seed Ship Life Ring (Maybe Oath)
+data Seed = Seed
+    { sShip :: Ship
+    , sLife :: Life
+    , sRing :: Ring
+    , sOath :: (Maybe Oath)
+    }
   deriving (Eq, Show)
 
 type Public = (Life, HoonMap Life Pass)
