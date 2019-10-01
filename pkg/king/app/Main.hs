@@ -113,6 +113,7 @@ import qualified Data.Set                    as Set
 import qualified Data.Text                   as T
 import qualified EventBrowser                as EventBrowser
 import qualified System.IO.LockFile.Internal as Lock
+import qualified Urbit.Ob                    as Ob
 import qualified Vere.Log                    as Log
 import qualified Vere.Pier                   as Pier
 import qualified Vere.Serf                   as Serf
@@ -316,9 +317,22 @@ validateNounVal inpVal = do
 
 newShip :: HasLogFunc e => CLI.New -> CLI.Opts -> RIO e ()
 newShip CLI.New{..} _ = do
-    tryBootFromPill nPillPath pierPath (Ship 0)
+    tryBootFromPill nPillPath pierPath shipId
   where
-    pierPath = fromMaybe ("./" <> unpack nShipAddr) nPierPath
+    shipId :: Ship
+    shipId = case nBootType of
+      CLI.BootComet -> error "Comets don't work yet"
+      CLI.BootFake txt -> case Ob.parsePatp txt of
+        Left x  -> error "Invalid ship name"
+        Right p -> Ship $ fromIntegral $ Ob.fromPatp p
+      CLI.BootFromKeyfile x -> error "Up next"
+
+    pierPath = case nPierPath of
+      Just x -> x
+      Nothing -> case nBootType of
+        CLI.BootComet         -> error "Comets don't work yet"
+        CLI.BootFake txt      -> "./" <> unpack txt
+        CLI.BootFromKeyfile x -> error "That's up next, make fakenec work first."
 
 runShip :: HasLogFunc e => CLI.Run -> CLI.Opts -> RIO e ()
 runShip (CLI.Run pierPath) _ = tryPlayShip pierPath

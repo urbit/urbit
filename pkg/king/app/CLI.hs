@@ -1,7 +1,8 @@
 {-# OPTIONS_GHC -Werror -Wall #-}
 {-# LANGUAGE CPP #-}
 
-module CLI (parseArgs, Cmd(..), New(..), Run(..), Bug(..), Opts(..)) where
+module CLI (parseArgs, Cmd(..), BootType(..), New(..), Run(..), Bug(..),
+            Opts(..)) where
 
 import ClassyPrelude
 import Options.Applicative
@@ -26,12 +27,20 @@ data Opts = Opts
     }
   deriving (Show)
 
+data BootType
+  = BootComet
+  | BootFake Text
+  | BootFromKeyfile FilePath
+  deriving (Show)
+
 data New = New
+    -- TODO: Pill path needs to become optional; need to default to either the
+    -- git hash version or the release version per current vere.
     { nPillPath :: FilePath
-    , nShipAddr :: Text
+--    , nShipAddr :: Text
     , nPierPath :: Maybe FilePath -- Derived from ship name if not specified.
     , nArvoDir  :: Maybe FilePath
-    , nBootFake :: Bool
+    , nBootType :: BootType
     }
   deriving (Show)
 
@@ -118,16 +127,37 @@ parseArgs = do
 
 --------------------------------------------------------------------------------
 
+newComet :: Parser BootType
+newComet = flag' BootComet
+  (  long "comet"
+  <> help "Boot a new comet")
+
+newFakeship :: Parser BootType
+newFakeship = BootFake <$> strOption
+                         (short 'F'
+                        <> long "fake"
+                        <> metavar "SHIP"
+                        <> help "Boot a fakeship")
+
+newFromKeyfile :: Parser BootType
+newFromKeyfile = BootFromKeyfile <$> strOption
+                             (short 'k'
+                            <> long "keyfile"
+                            <> metavar "KEYFILE"
+                            <> help "Boot from a keyfile")
+
 new :: Parser New
 new = do
-    nShipAddr <- strArgument
-                     $ metavar "SHIP"
-                    <> help "Ship address"
+    -- nShipAddr <- strArgument
+    --                  $ metavar "SHIP"
+    --                 <> help "Ship address"
 
     nPierPath <- optional
                $ strArgument
                      $ metavar "PIER"
                     <> help "Path to pier"
+
+    nBootType <- newComet <|> newFakeship <|> newFromKeyfile
 
     nPillPath <- strOption
                      $ short 'B'
@@ -135,10 +165,10 @@ new = do
                     <> metavar "PILL"
                     <> help "Path to pill file"
 
-    nBootFake <- switch
-                     $ short 'F'
-                    <> long "fake"
-                    <> help "Create a fake ship"
+    -- nBootFake <- switch
+    --                  $ short 'F'
+    --                 <> long "fake"
+    --                 <> help "Create a fake ship"
 
     nArvoDir <- option auto
                     $ metavar "PATH"
