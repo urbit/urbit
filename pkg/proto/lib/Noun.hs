@@ -12,8 +12,9 @@ data Tree a
 
 instance Hashable a => Hashable (Tree a)
 
-data Fern a = FernA !a
-            | FernF [Fern a]
+data Fern a
+  = FernA !a
+  | FernF [Fern a]
 
 toFern :: Tree a -> Fern a
 toFern = \case
