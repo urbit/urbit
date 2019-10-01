@@ -1353,8 +1353,6 @@
         ?:  (gor n.b n.a)
           $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
         $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
-      ?:  =(n.a n.b)
-        [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
       ?:  (gor n.a n.b)
         $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
       $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
@@ -1622,8 +1620,6 @@
         ?:  (gor p.n.b p.n.a)
           $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
         $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
-      ?:  =(p.n.a p.n.b)
-        [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
       ?:  (gor p.n.a p.n.b)
         $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
       $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
@@ -1641,14 +1637,12 @@
         b
       ?:  (mor p.n.a p.n.b)
         ?:  =(p.n.b p.n.a)
-          [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
+          :+  [p.n.a (meg p.n.a q.n.a q.n.b)]
+            $(b l.b, a l.a)
+          $(b r.b, a r.a)
         ?:  (gor p.n.b p.n.a)
           $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
         $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
-      ?:  =(p.n.a p.n.b)
-        :+  [p.n.a (meg p.n.a q.n.a q.n.b)]
-          $(b l.b, a l.a)
-        $(b r.b, a r.a)
       ?:  (gor p.n.a p.n.b)
         $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
       $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
