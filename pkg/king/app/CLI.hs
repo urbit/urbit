@@ -26,7 +26,7 @@ data Opts = Opts
     , oLocalhost :: Bool
     , oOffline   :: Bool
     }
-  deriving (Show)
+  deriving (Show, Generic)
 
 data New = New
     { nPillPath  :: FilePath
@@ -35,12 +35,12 @@ data New = New
     , nArvoDir   :: Maybe FilePath
     , nBootFake  :: Bool
     }
-  deriving (Show)
+  deriving (Show, Generic)
 
 data Run = Run
     { rPierPath :: FilePath
     }
-  deriving (Show)
+  deriving (Show, Generic)
 
 data Bug
     = ValidatePill
@@ -71,7 +71,7 @@ data Cmd
     | CmdRun Run Opts
     | CmdBug Bug
     | CmdCon Ship
-    | CmdDam
+    | CmdDem
     | CmdKil
   deriving (Show)
 
@@ -306,7 +306,7 @@ cmd = subparser
        <> command "con" ( info (conCmd <**> helper)
                         $ progDesc "Connect a terminal to a running urbit."
                         )
-       <> command "dam" ( info (pure CmdDam <**> helper)
+       <> command "dem" ( info (pure CmdDem <**> helper)
                         $ progDesc "Start the daemon"
                         )
        <> command "kil" ( info (pure CmdKil <**> helper)

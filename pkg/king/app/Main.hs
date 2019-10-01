@@ -348,7 +348,7 @@ main = do
         CLI.CmdCon s                              -> runAppLogFile (connTerm s)
         CLI.CmdRun r o                            -> wDem $ \k -> runShip r o (King.kFleet k)
         CLI.CmdNew n o                            -> rDem $ newShip n o
-        CLI.CmdDam                                -> wDem $ startDaemon
+        CLI.CmdDem                                -> wDem $ startDaemon
         CLI.CmdKil                                -> killDaemon
         CLI.CmdBug (CLI.CollectAllFX pax)         -> rDem $ collectAllFx pax
         CLI.CmdBug (CLI.EventBrowser pax)         -> rDem $ startBrowser pax

@@ -2,20 +2,42 @@ module KingApp
     ( App
     , runApp
     , runAppLogFile
-    , HasAppName(..)
+    , HasDaemon(..)
     ) where
 
 import UrbitPrelude
 import RIO.Directory
 
+import Arvo (Belt)
+
+import qualified Vere.NounServ as NounServ
+import qualified Vere.Term.API as Term
+
+
+-- TODO These don't really belong here. ----------------------------------------
+
+type TermConn = NounServ.Conn Belt [Term.Ev]
+
+data ShipCtl = ShipCtl
+  { scTerm :: TermConn -> STM ()
+  }
+
+type FleetCtl = TVar (Map Ship ShipCtl)
+
 --------------------------------------------------------------------------------
 
-class HasAppName env where
-    appNameL :: Lens' env Utf8Builder
+class HasDaemon env where
+    daemonL :: Lens' env Daemon
+
+data Daemon = Daemon
+     { root  :: FilePath
+     , fleet :: FleetCtl
+     }
+  deriving (Generic)
 
 data App = App
     { _appLogFunc :: !LogFunc
-    , _appName    :: !Utf8Builder
+    , _appDaemon  :: !Daemon
     }
 
 makeLenses ''App
@@ -23,13 +45,13 @@ makeLenses ''App
 instance HasLogFunc App where
     logFuncL = appLogFunc
 
-instance HasAppName App where
-    appNameL = appName
+instance HasDaemon App where
+    daemonL = appName
 
 withLogFileHandle :: (Handle -> IO a) -> IO a
 withLogFileHandle act = do
     home <- getHomeDirectory
-    let logDir = home <> "/log"
+    let logDir = home </> "log"
     createDirectoryIfMissing True logDir
     withTempFile logDir "king-" $ \_tmpFile handle -> do
         hSetBuffering handle LineBuffering
@@ -41,9 +63,13 @@ runApp inner = do
         <&> setLogUseTime True
         <&> setLogUseLoc False
 
+    rootDir <- (</> "urbit") <$> getHomeDirectory
+
+    withLogFunc logOptions $ \logFunc ->
+
     withLogFunc logOptions $ \logFunc ->
         go $ App { _appLogFunc = logFunc
-                 , _appName    = "Vere"
+                 , _appDaemon  = Daemon rootDir
                  }
   where
     go app = runRIO app inner
@@ -57,7 +83,7 @@ runAppLogFile inner = do
 
         withLogFunc logOptions $ \logFunc ->
             go $ App { _appLogFunc = logFunc
-                     , _appName    = "Vere"
+                     , _appDaemon  = "Vere"
                      }
   where
     go app = runRIO app inner

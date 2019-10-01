@@ -17,6 +17,8 @@ import qualified Network.WebSockets             as WS
 import qualified Vere.NounServ                  as NounServ
 import qualified Vere.Term.API                  as Term
 
+import qualified Data.Aeson as A
+
 
 --------------------------------------------------------------------------------
 
@@ -121,6 +123,21 @@ readShip t = parsePat t & \case
      Left err -> throwIO (BadShip t err)
      Right sp -> pure sp
 
+startShip :: (HasLogFunc e, HasDaemon e) => Ship -> RIO e ()
+startShip ship = do
+    rootPath <- ask (daemonL . field @"path")
+
+    shipPath <- pure (rootPath </> ship)
+    let shipPath = 
+    runRAcquire $ do
+        lockFile shipPath
+        rio $ logTrace "RESUMING SHIP"
+        sls@(_, log, _) <- Pier.resumed shipPath []
+        ship <- pure $ fromIntegral $ Pier.who $ Log.identity log
+        rio $ logTrace "SHIP RESUMED"
+        Pier.pier api ship shipPath Nothing sls
+
+
 app :: HasLogFunc e => e -> FleetCtl -> W.Application
 app env api req respond =
     case W.pathInfo req of
@@ -131,6 +148,9 @@ app env api req respond =
             session :: Word <- evaluate $ read $ unpack session
             ship <- readShip ship
             serveTerminal env api ship session req respond
+        ["run", ship] -> do
+            ship <- readShip ship
+            startShip ship
         ["status"] ->
             respond $ W.responseLBS H.status200 [] $ encode stubStatus
         _ ->
