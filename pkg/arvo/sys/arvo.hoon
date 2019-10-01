@@ -782,9 +782,14 @@
   ::  notifications, spammed to every vane
   ::
   ?:  ?=(%trim -.q.ovo)
-    =>  .(ovo ;;((pair wire [%trim @ud]) ovo))
+    =>  .(ovo ;;((pair wire [%trim p=@ud]) ovo))
     =^  zef  vanes
       (~(spam (is our vil eny bud vanes) now) lac ovo)
+    ::  clear compiler caches if high-priority
+    ::
+    =?  vanes  =(0 p.q.ovo)
+      ~>  %slog.[0 leaf+"arvo: trim: clearing caches"]
+      (turn vanes |=([a=@tas =vane] [a vase.vane *worm]))
     [zef +>.$]
   ::
   ::  Normal events are routed to a single vane
