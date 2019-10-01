@@ -16,3 +16,4 @@ release/
 **/*.swp
 **/*.swo
 **/*-min.js
+.stack-work
