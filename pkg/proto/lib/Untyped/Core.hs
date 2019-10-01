@@ -30,6 +30,7 @@ data Exp a
   | Let (Exp a) (Scope () Exp a)
   | Jet Atom (Exp a)
   | Fix (Scope () Exp a)
+  | Zap
   deriving (Functor, Foldable, Traversable)
 
 deriveEq1   ''Exp
@@ -52,6 +53,8 @@ ledt v e f = Let e (abstract1 v f)
 fix :: Eq a => a -> Exp a -> Exp a
 fix v e = Fix (abstract1 v e)
 
+
+
 data CExp a
   = CVar a
   | CSef a
@@ -66,6 +69,7 @@ data CExp a
   | CLet (CExp a) (CExp (Var () a))
   | CJet Atom (CExp a)
   | CFix [a] (CExp (Var () Int))
+  | CZap
   deriving (Functor, Foldable, Traversable)
 
 deriveEq1   ''CExp
@@ -106,6 +110,7 @@ toCopy = fst . runWriter . go \v -> error "toCopy: free variable"
       Eql e f   -> CEql <$> go env e <*> go env f
       Ift e t f -> CIft <$> go env e <*> go env t <*> go env f
       Jet a e   -> CJet a <$> go env e
+      Zap       -> pure CZap
       Let e s   -> do
         ce <- go env e
         let
@@ -117,8 +122,11 @@ toCopy = fst . runWriter . go \v -> error "toCopy: free variable"
       Fix s     -> lam s env CFix Selfish
       Lam s     -> lam s env CLam Direct
 
-    lam s env ctor manner
-      = writer (ctor (map (rude . env) $ toList usedLexicals) ce, usedLexicals)
+    lam s env ctor manner =
+      writer
+        ( ctor (rude . env <$> Set.toAscList usedLexicals) ce
+        , usedLexicals
+        )
       where
         (ce, usedVars) = runWriter $ go env' $ fromScope s
         env' = \case
@@ -157,6 +165,7 @@ copyToNock = go \v -> error "copyToNock: free variable"
       CEql e f   -> N5 (go env e) (go env f)
       CIft e t f -> N6 (go env e) (go env t) (go env f)
       CJet a e   -> jet a (go env e)
+      CZap       -> N0 0
       CLet e f   -> N8 (go env e) (go env' f)
         where
           env' = \case
@@ -184,7 +193,7 @@ copyToNock = go \v -> error "copyToNock: free variable"
             (C (A FastAtom)
               (C (A 1) (A a))))
           ef)
-    lam vfs ef = case layOut id NC vfs of
+    lam vfs ef = case layOut vfs of
       Nothing -> N1 (nockToNoun ef)
       Just pr -> NC (N1 (A 8)) $ NC (NC (N1 (A 1)) pr) $ N1 (nockToNoun ef)
 
@@ -192,15 +201,13 @@ cell :: Nock -> Nock -> Nock
 cell (N1 n) (N1 m) = N1 (C n m)
 cell ef ff = NC ef ff
 
-layOut :: (a -> b) -> (b -> b -> b) -> [a] -> Maybe b
-layOut sing pair = go
-  where
-    go = \case
-      []  -> Nothing
-      [x] -> Just (sing x)
-      xs  -> Just $ pair (fromJust $ go l) (fromJust $ go r)
-        where
-          (l, r) = splitAt (length xs `div` 2) xs
+layOut :: [Nock] -> Maybe Nock
+layOut = \case
+  []  -> Nothing
+  [x] -> Just x
+  xs  -> Just $ NC (fromJust $ layOut l) (fromJust $ layOut r)
+    where
+      (l, r) = splitAt (length xs `div` 2) xs
 
 posIn :: Int -> Int -> Path
 posIn 0 1 = []

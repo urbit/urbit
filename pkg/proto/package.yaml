@@ -9,6 +9,7 @@ dependencies:
   - classy-prelude
   - deriving-compat
   - mtl
+  - pretty-show
   - text
   - transformers
   - transformers-compat

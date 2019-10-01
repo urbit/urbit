@@ -22,8 +22,9 @@ data Nock
   | N12 Nock Nock          -- ^ 12, scry
   deriving (Eq, Ord, Read, Generic)
 
-data Hint = Tag Atom
-          | Assoc Atom Nock
+data Hint
+  = Tag Atom
+  | Assoc Atom Nock
   deriving (Eq, Ord, Read, Show, Generic)
 
 instance Hashable Nock
