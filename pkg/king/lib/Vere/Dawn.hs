@@ -234,7 +234,9 @@ dawnVent dSeed@(Seed ship life ring oaf) = do
     -- Retrieve the whole EthPoint for our sponsor
     print $ "boot: retrieving sponsor " ++ (renderShip sponsorShip) ++
             "'s public keys"
-    dSponsor <- retrievePoint block azimuth (fromIntegral sponsorShip)
+    sponsorPoint <- retrievePoint block azimuth (fromIntegral sponsorShip)
+
+    let dSponsor = (sponsorShip, sponsorPoint)
 
     -- Retrieve the galaxy table [MUST FIX s/5/255/]
     print "boot: retrieving galaxy table"

@@ -137,7 +137,7 @@ data Snap = Snap (HoonMap Ship Public)
 
 data Dawn = MkDawn
     { dSeed    :: Seed
-    , dSponsor :: EthPoint
+    , dSponsor :: (Ship, EthPoint)
     , dCzar    :: HoonMap Ship (Rift, Life, Pass)
     , dTurf    :: [Turf]
     , dBloq    :: Bloq
