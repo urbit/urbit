@@ -5,10 +5,14 @@ license: AGPL-3.0-only
 dependencies:
   - base
   - bound
-  - containers
   - classy-prelude
+  - containers
   - deriving-compat
+  - lens
+  - megaparsec
   - mtl
+  - multimap
+  - para
   - pretty-show
   - text
   - transformers
