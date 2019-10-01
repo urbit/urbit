@@ -41,7 +41,7 @@
 ++  poke-noun
   |=  a=*
   ^-  (quip move _this)
-  ~&  bol
+  ~&  synced
   [~ this]
 ::
 ++  poke-json
@@ -55,11 +55,12 @@
   ?>  ?=(%message -.act)
   ::  local
   ?:  =(src.bol our.bol)
-    =/  ship  (~(get by synced) path.act)
-    ?~  ship
+    ?.  (~(has by synced) path.act)
       [~ this]
+    =/  ship  (~(got by synced) path.act)
+    =/  appl  ?:(=(ship our.bol) %chat-store %chat-hook)
     :_  this
-    [ost.bol %poke / [u.ship %chat-store] [%chat-action act]]~
+    [ost.bol %poke / [ship appl] [%chat-action act]]~
   ::  foreign
   =/  ship  (~(get by synced) path.act)
   ?~  ship
@@ -145,7 +146,7 @@
   ?~  pax  !!
   ?.  (~(has by synced) pax)  !!
   ::  scry permissions to check if read is permitted
-  ?.  (permitted-scry [(scot %p src.bol) %chat (weld pax /write)])
+  ?.  (permitted-scry [(scot %p src.bol) %chat (weld pax /read)])
     !!
   =/  box=(unit mailbox)  (chat-scry pax)
   ?~  box  !!

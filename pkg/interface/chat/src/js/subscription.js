@@ -49,7 +49,6 @@ export class Subscription {
   }
 
   handleQuitAndResubscribe(quit) {
-    console.error(quit);
     // TODO: resubscribe
   }
 

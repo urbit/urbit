@@ -13,27 +13,23 @@
       :~
         [%add-owned add-owned]
         [%add-synced add-synced]
-        [%remove remove]
+        [%remove pa]
       ==
     ::
     ++  add-owned
       %-  ot
-      :~  [%path (su ;~(pfix net (more net urs:ab)))]
-          [%security sec]
+      :~  [%path pa]
+          [%security sec] 
       ==
     ::
     ++  add-synced
       %-  ot
       :~  [%ship (su ;~(pfix sig fed:ag))]
-          [%path (su ;~(pfix net (more net urs:ab)))]
+          [%path pa]
       ==
     ::
-    ++  remove
-      (su ;~(pfix net (more net urs:ab)))
-    ::
     ++  sec
-      =,  dejs:format
-      ^-  $-(json chat-security)
+      ^-  $-(^json chat-security)
       (su (perk %channel %village %journal %mailbox ~))
     ::
     --

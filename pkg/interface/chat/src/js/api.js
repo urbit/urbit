@@ -146,7 +146,7 @@ class UrbitApi {
     this.chatAction({ delete: { path } });
   }
 
-  chatMessage(local, path, author, when, letter) {
+  chatMessage(path, author, when, letter) {
     let data = {
       message: {
         path,
@@ -160,12 +160,8 @@ class UrbitApi {
       }
     };
 
+    this.chatHookAction(data, "json");
     this.addPendingMessage(data.message);
-    if (local) {
-      this.chatAction(data);
-    } else {
-      this.chatHookAction(data, "json");
-    }
   }
 
   chatRead(path, read) {

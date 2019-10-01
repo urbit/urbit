@@ -31,7 +31,7 @@ export class SettingsScreen extends Component {
   deleteChat() {
     const { props, state } = this;
 
-    props.api.chatView.remove(state.station);
+    props.api.chatView.delete(state.station);
     props.setSpinner(true);
 
     this.setState({

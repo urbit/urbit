@@ -28,7 +28,6 @@ export class ChatInput extends Component {
     /*let closure = () => {
       for (var i = 0; i < 30; i++) {
         props.api.chat.message(
-          props.owner === `${window.ship}`,
           props.station,
           `~${window.ship}`,
           Date.now(),
@@ -91,7 +90,8 @@ export class ChatInput extends Component {
 
       return {
         code: {
-          expression: letter
+          expression: letter,
+          output: undefined
         }
       }
     } else if (this.isUrl(letter)) {
@@ -128,7 +128,6 @@ export class ChatInput extends Component {
     let letter = this.getLetterType(state.message);
 
     props.api.chat.message(
-      props.owner === `${window.ship}`,
       props.station,
       `~${window.ship}`,
       Date.now(),

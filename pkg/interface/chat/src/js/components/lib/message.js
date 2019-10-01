@@ -10,6 +10,7 @@ export class Message extends Component {
   renderContent() {
     const { props } = this;
     let letter = props.msg.letter;
+    console.log(props.msg);
 
     if ('code' in letter) {
       return (
@@ -18,7 +19,10 @@ export class Message extends Component {
             {letter.code.expression}
           </pre>
           <pre className="clamp-attachment pa1 mt0 mb0">
-            {letter.code.output[0].join('\n')}
+            { !!letter.code.output && letter.code.output.length ?
+                ( letter.code.output[0].join('\n') ) :
+                ''
+              }
           </pre>
         </span>
       );
