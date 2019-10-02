@@ -2242,6 +2242,7 @@
     =-  =.  metrics.state  metrics.-
         =.  live.state     live.-
         ::
+        ~&  'DONE'^[fragment-num show:gauge]
         packet-pump
     ::
     ^-  $:  metrics=pump-metrics
