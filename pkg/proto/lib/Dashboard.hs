@@ -23,7 +23,7 @@ type Jet = Noun -> Noun
 type JetName = Atom
 type Hash = Int
 
-pattern FastAtom = 9999
+pattern FastAtom = 1953718630  -- %fast
 pattern FastHint id n =
   C (A 11)
     (C
@@ -92,18 +92,18 @@ instance Dashboard Careboard where
     n@(FastHint nm _) -> case namely nm of
       Just (h, j) -> do
         when (h /= hash n) $
-          putStrLn ("careboard: jet " <> tshow nm <> " should have its hash "
+          putStrLn ("careboard: jet " <> tshowA nm <> " should have its hash "
                     <> "updated from " <> tshow h <> " to " <> tshow (hash n))
         get <&> lookup nm >>= \case
           Just n' ->
             when (n' /= n) $
-              putStrLn ("careboard: jet hint " <> tshow nm <> " has been "
+              putStrLn ("careboard: jet hint " <> tshowA nm <> " has been "
                         <> "detected on unequal formulae " <> tshow n
                         <> " and " <> tshow n' <> ", which is very bad")
           Nothing -> modify' (insertMap nm n)
         pure (Just j)
       Nothing -> do
-        putStrLn ("careboard: unmatched fast hint: " ++ tshow nm)
+        putStrLn ("careboard: unmatched fast hint: " ++ tshowA nm)
         pure $ byHash $ hash n
     n -> pure $ byHash $ hash n
 

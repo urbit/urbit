@@ -3,6 +3,8 @@ module SimpleNoun where
 import ClassyPrelude
 import Numeric.Natural
 
+import qualified Noun as N
+
 type Atom = Natural
 
 type Noun = Tree Atom
@@ -40,6 +42,16 @@ loob :: Bool -> Noun
 loob = \case
   True  -> yes
   False -> no
+
+textToAtom :: Text -> Atom
+textToAtom t = case N.textToUtf8Atom t of
+  N.A a -> a
+
+showA :: Atom -> String
+showA a = show (N.A a)
+
+tshowA :: Atom -> Text
+tshowA = pack . showA
 
 -- | Tree address
 type Axis = Atom

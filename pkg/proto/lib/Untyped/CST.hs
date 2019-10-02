@@ -4,7 +4,6 @@ import ClassyPrelude
 import Prelude (foldr1)
 
 import SimpleNoun
-import qualified Noun as N
 import qualified Untyped.Hoon as H
 import Untyped.Parser  -- remove after we've moved the CST type
 
@@ -53,8 +52,3 @@ hone = go
 
     tr (PatTar, c) = (H.Wild, go c)
     tr (PatTag s, c) = (H.Exact (A $ textToAtom s), go c)
-
-
-textToAtom :: Text -> Atom
-textToAtom t = case N.textToUtf8Atom t of
-  N.A a -> a
