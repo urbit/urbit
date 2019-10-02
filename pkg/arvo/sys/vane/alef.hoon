@@ -2204,7 +2204,7 @@
         =.  metrics.state  metrics.-
         =.  live.state     live.-
         ~?  =(0 (mod counter.metrics.state 20))  [fragment-num show:gauge]
-        =?  start.metrics.state  =(0 fragment-num)  now
+        =?  start.metrics.state  =(0 fragment-num)  now.channel
         ::
         packet-pump
     ::
@@ -2244,7 +2244,7 @@
     =-  =.  metrics.state  metrics.-
         =.  live.state     live.-
         ::
-        =/  elapsed=@dr  (sub now start.metrics.state)
+        =/  elapsed=@dr  (sub now.channel start.metrics.state)
         ~&  'DONE'^[message-num seconds=(div elapsed ~s1) show:gauge]
         packet-pump
     ::
