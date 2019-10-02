@@ -693,7 +693,7 @@
               =^  rey  +>+  (^load +<)
               [rey +>.$]
     ::
-    ++  peek  |=(* (^peek ;;([@da path] +<)))      ::  46
+    ++  peek  |=(* (^peek ;;([@da path] +<)))           ::  46
     ::
     ++  poke  |=  *                                     ::  47
               ^-  [(list ovum) *]
@@ -716,7 +716,7 @@
               =?  out  ?=(^ vov)  [+.vov out]
               $(ova t.ova)
     ::
-    ++  wish  |=(* (^wish ;;(@ta +<)))             ::  22
+    ++  wish  |=(* (^wish ;;(@ta +<)))                  ::  22
     --
 ::  Arvo implementation core
 ::
