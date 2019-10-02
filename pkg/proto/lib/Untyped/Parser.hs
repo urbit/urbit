@@ -30,7 +30,7 @@ type Sym  = String
 
 data Pat
     = PatTar
-    | PatNat Nat
+    | PatTag Sym
   deriving (Eq, Ord, Show)
 
 data CST
@@ -39,7 +39,7 @@ data CST
     | WutKet CST CST CST          --  ?^(c t f)
     | WutPam [CST]                --  ?&(c cs ...)
     | WutBar [CST]                --  ?|(c cs ...)
-    | WutHep CST [(Pat, CST)]     --  ?-(c p e p e ...)
+    | WutHep CST [(Pat, CST)]     --  ?-(c p e ps es ...)
     | TisFas Sym CST CST          --  =/(x 3 x)
     | ColHep CST CST              --  :-(a b)
     | ColLus CST CST CST          --  :+(a b c)
@@ -56,7 +56,7 @@ data CST
     | Tupl [CST]                  --  [a b ...]
     | Var  Sym                    --  a
     | Atom Nat                    --  3
-    | Tag Text                    --  %asdf
+    | Tag Sym                     --  %asdf
     | Cord Text                   --  'cord'
     | Tape Text                   --  "tape"
     | Incr CST                    --  .+(3)
@@ -78,10 +78,10 @@ data Mode = Wide | Tall
 
 type Parser = StateT Mode (Parsec Void Text)
 
-withLocalState :: Monad m => s -> StateT s m a -> StateT s m a
+withLocalState ∷ Monad m => s → StateT s m a → StateT s m a
 withLocalState val x = do { old <- get; put val; x <* put old }
 
-inWideMode :: Parser a -> Parser a
+inWideMode ∷ Parser a → Parser a
 inWideMode = withLocalState Wide
 
 ace, pal, par ∷ Parser ()
@@ -129,17 +129,21 @@ cord = do
   between (char '\'') (char '\'') $
     pack <$> many (label "cord char" (anySingleBut '\''))
 
+tag ∷ Parser String
+tag = try (char '%' >> sym)
+
 literal ∷ Parser CST
 literal = choice
-  [ Var      <$> sym
-  , Atom     <$> atom
-  , pure Yes <*  string "%.y"
-  , pure No  <*  string "%.n"
-  , pure Pam <*  char '&'
-  , pure Bar <*  char '|'
-  , pure Sig <*  char '~'
-  , Cord     <$> cord
-  , Tape     <$> tape
+  [ Yes  <$  string "%.y"
+  , No   <$  string "%.n"
+  , Var  <$> sym
+  , Atom <$> atom
+  , Pam  <$  char '&'
+  , Bar  <$  char '|'
+  , Sig  <$  char '~'
+  , Tag  <$> tag
+  , Cord <$> cord
+  , Tape <$> tape
   ]
 
 
@@ -155,6 +159,9 @@ parseRune ∷ Parser a → Parser a → Parser a
 parseRune tall wide = get >>= \case
   Wide → wide
   Tall → tall <|> inWideMode wide
+
+rune0 ∷ a → Parser a
+rune0 = pure
 
 rune1 ∷ (a→b) → Parser a → Parser b
 rune1 node x = parseRune tall wide
@@ -227,7 +234,7 @@ tuple p = char '[' >> elems
     elems ∷ Parser [a]
     elems = (pure [] <* char ']') <|> xs
 
-appIrr :: Parser CST
+appIrr ∷ Parser CST
 appIrr = do
   char '('
   x <- cst
@@ -247,25 +254,38 @@ irregular =
 
 -- Runes -----------------------------------------------------------------------
 
-cRune ∷ (Map Sym CST → a) → Parser a
-cRune f = do
+pat ∷ Parser Pat
+pat = choice [ PatTag   <$> tag
+             , char '*'  $> PatTar
+             ]
+
+cases ∷ Parser [(Pat, CST)]
+cases = do
+    mode ← get
+    guard (mode == Tall)
+    end <|> lop
+  where
+    goo = lop <|> end
+    end = string "==" $> []
+    lop = do { p <- pat; gap; b <- cst; gap; ((p,b):) <$> goo }
+
+wutHep ∷ Parser CST
+wutHep = do
     mode ← get
     guard (mode == Tall)
     gap
-    f . mapFromList <$> arms -- TODO Complain about duplicated arms
-  where
-    arms :: Parser [(Sym, CST)]
-    arms = many arm <* string "--"
+    ex <- cst
+    gap
+    cs <- cases
+    pure (WutHep ex cs)
 
-    arm :: Parser (Sym, CST)
-    arm = do
-      string "++"
-      gap
-      s ← sym
-      gap
-      h ← cst
-      gap
-      pure (s, h)
+barCen ∷ Parser CST
+barCen = do
+    mode ← get
+    guard (mode == Tall)
+    gap
+    cs <- cases
+    pure (BarCen cs)
 
 rune ∷ Parser CST
 rune = runeSwitch [ ("|=", rune2 BarTis sym cst)
@@ -277,12 +297,18 @@ rune = runeSwitch [ ("|=", rune2 BarTis sym cst)
                   , (":~", runeN ColSig cst)
                   , ("%-", rune2 CenHep cst cst)
                   , ("%.", rune2 CenDot cst cst)
+                  , ("..", rune2 DotDot sym cst)
+                  , ("!!", rune0 ZapZap)
                   , ("?:", rune3 WutCol cst cst cst)
                   , ("?@", rune3 WutPat cst cst cst)
+                  , ("?&", runeN WutPam cst)
+                  , ("?|", runeN WutBar cst)
                   , ("?^", rune3 WutKet cst cst cst)
+                  , ("=/", rune3 TisFas sym cst cst)
                   , (".+", rune1 Incr cst)
                   , (".=", rune2 IsEq cst cst)
---                , ("|%", cRune BarCen)
+                  , ("?-", wutHep)
+                  , ("|%", barCen)
                   ]
 
 runeSwitch ∷ [(Text, Parser a)] → Parser a
@@ -292,7 +318,7 @@ runeSwitch = choice . fmap (\(s, p) → string s *> p)
 -- CST Parser ------------------------------------------------------------------
 
 cst ∷ Parser CST
-cst = irregular <|> rune <|> literal
+cst = irregular <|> literal <|> rune
 
 
 -- Entry Point -----------------------------------------------------------------
@@ -304,11 +330,11 @@ hoonFile = do
   eof
   pure h
 
-parse :: Text -> Either Text CST
+parse ∷ Text → Either Text CST
 parse txt =
   runParser (evalStateT hoonFile Tall) "stdin" txt & \case
-    Left  e -> Left (pack $ errorBundlePretty e)
-    Right x -> pure x
+    Left  e → Left (pack $ errorBundlePretty e)
+    Right x → pure x
 
 parseHoonTest ∷ Text → IO ()
 parseHoonTest = parseTest (evalStateT hoonFile Tall)
