@@ -2478,7 +2478,13 @@
     [~ payload]
   ::
       %trim
-    [~ gall-payload]
+    ::  reuse %wash task to clear caches on memory-pressure
+    ::
+    ::    XX cancel subscriptions if =(0 trim-priority) ?
+    ::
+    ~>  %slog.[0 leaf+"gall: trim: clearing caches"]
+    =/  =move  [duct %pass / %g [%wash ~]]
+    [[move ~] gall-payload]
   ::
       %vega
     [~ gall-payload]
