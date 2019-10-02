@@ -1,11 +1,11 @@
 /-  spider
-/+  ph-io
+/+  *ph-io
 =,  thread=thread:spider
 ^-  imp:spider
 |=  =bowl:mall
 =/  m  (thread ,~)
-;<  ~  bind:m  start-azimuth:ph-io
-;<  ~  bind:m  (spawn:ph-io ~bud)
-;<  ~  bind:m  (real-ship:ph-io ~bud)
-;<  ~  bind:m  end-azimuth:ph-io
+;<  ~  bind:m  start-azimuth
+;<  ~  bind:m  (spawn ~bud)
+;<  ~  bind:m  (real-ship ~bud)
+;<  ~  bind:m  end-azimuth
 (pure:m ~)

@@ -1,13 +1,13 @@
 /-  spider
-/+  ph-io
+/+  *ph-io
 =,  thread=thread:spider
 ^-  imp:spider
 |=  =bowl:mall
 =/  m  (thread ,~)
-;<  ~  bind:m  start-simple:ph-io
-;<  ~  bind:m  (raw-ship:ph-io ~bud ~)
-;<  ~  bind:m  (raw-ship:ph-io ~dev ~)
-;<  ~  bind:m  (raw-ship:ph-io ~dev ~)
-;<  ~  bind:m  (send-hi:ph-io ~bud ~dev)
-;<  ~  bind:m  end-simple:ph-io
+;<  ~  bind:m  start-simple
+;<  ~  bind:m  (raw-ship ~bud ~)
+;<  ~  bind:m  (raw-ship ~dev ~)
+;<  ~  bind:m  (raw-ship ~dev ~)
+;<  ~  bind:m  (send-hi ~bud ~dev)
+;<  ~  bind:m  end-simple
 (pure:m ~)
