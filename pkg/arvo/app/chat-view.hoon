@@ -249,11 +249,7 @@
 ++  envelope-scry
   |=  pax=path
   ^-  (list envelope)
-  =.  pax  ;:  weld
-    `path`/=chat-store/(scot %da now.bol)/envelopes
-    pax
-    `path`/noun
-  ==
+  =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/envelopes pax /noun)
   .^((list envelope) %gx pax)
 ::
 ++  all-scry

@@ -111,7 +111,7 @@
 ++  peer-keys
   |=  pax=path
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)  !!
+  ?>  (team:title our.bol src.bol)
   ::  we send the list of keys then send events when they change
   :_  this
   [ost.bol %diff %chat-update [%keys ~(key by inbox)]]~
@@ -119,28 +119,28 @@
 ++  peer-all
   |=  pax=path
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)  !!
+  ?>  (team:title our.bol src.bol)
   :_  this
   [ost.bol %diff %chat-initial inbox]~
 ::
 ++  peer-configs
   |=  pax=path
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)  !!
+  ?>  (team:title our.bol src.bol)
   :_  this
   [ost.bol %diff %chat-configs (inbox-to-configs inbox)]~
 ::
 ++  peer-updates
   |=  pax=path
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)  !!
+  ?>  (team:title our.bol src.bol)
   ::  we now proxy all events to this path
   [~ this]
 ::
 ++  peer-mailbox
   |=  pax=path
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)  !!
+  ?>  (team:title our.bol src.bol)
   =/  box=(unit mailbox)  (~(get by inbox) pax)
   ?~  box  !!
   :_  this
@@ -149,15 +149,13 @@
 ++  poke-json
   |=  jon=json
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)
-    [~ this]
+  ?>  (team:title our.bol src.bol)
   (poke-chat-action (json-to-action jon))
 ::
 ++  poke-chat-action
   |=  action=chat-action
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)
-    [~ this]
+  ?>  (team:title our.bol src.bol)
   ?-  -.action
       %create
     (handle-create action)
@@ -203,7 +201,7 @@
   =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
   ?~  mailbox
     [~ this]
-  =.  length.config.u.mailbox  (add 1 length.config.u.mailbox)
+  =.  length.config.u.mailbox  +(length.config.u.mailbox)
   =.  number.envelope.act  length.config.u.mailbox
   =.  envelopes.u.mailbox  (snoc envelopes.u.mailbox envelope.act)
   =.  inbox  (~(put by inbox) path.act u.mailbox)
@@ -222,38 +220,26 @@
   :_  this(inbox inbox)
   (send-diff path.act act)
 ::
+++  update-subscribers
+  |=  [pax=path act=chat-action]
+  ^-  (list move)
+  %+  turn  (prey:pubsub:userlib pax bol)
+  |=  [=bone *]
+  [bone %diff %chat-update act]
+::
 ++  send-diff
   |=  [pax=path act=chat-action]
   ^-  (list move)
-  ;:  weld
-    ^-  (list move)
-    %+  turn  (prey:pubsub:userlib /all bol)
-    |=  [=bone *]
-    [bone %diff %chat-update act]
-  ::
-    ^-  (list move)
-    %+  turn  (prey:pubsub:userlib /updates bol)
-    |=  [=bone *]
-    [bone %diff %chat-update act]
-  ::
-    ?.  |(=(%read -.act) =(%message -.act))
-      ~
-    ^-  (list move)
-    %+  turn  (prey:pubsub:userlib /configs bol)
-    |=  [=bone *]
-    [bone %diff %chat-update act]
-  ::
-    ^-  (list move)
-    %+  turn  (prey:pubsub:userlib [%mailbox pax] bol)
-    |=  [=bone *]
-    [bone %diff %chat-update act]
-  ::
-    ^-  (list move)
-    ?.  |(=(%create -.act) =(%delete -.act))
-      ~
-    %+  turn  (prey:pubsub:userlib /keys bol)
-    |=  [=bone *]
-    [bone %diff %chat-update act]
+  %-  zing
+  :~  (update-subscribers /all act)
+      (update-subscribers /updates act)
+      (update-subscribers [%mailbox pax] act)
+      ?.  |(=(%read -.act) =(%message -.act))
+        ~
+      (update-subscribers /configs act)
+      ?.  |(=(%create -.act) =(%delete -.act))
+        ~
+      (update-subscribers /keys act)
   ==
 ::
 --

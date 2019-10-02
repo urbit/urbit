@@ -54,7 +54,7 @@
   ^-  (quip move _this)
   ?>  ?=(%message -.act)
   ::  local
-  ?:  =(src.bol our.bol)
+  ?:  (team:title our.bol src.bol)
     ?.  (~(has by synced) path.act)
       [~ this]
     =/  ship  (~(got by synced) path.act)
@@ -80,8 +80,7 @@
   ^-  (quip move _this)
   ?-  -.act
       %add-owned
-    ?.  =(src.bol our.bol)
-      [~ this]
+    ?>  (team:title our.bol src.bol)
     =/  chat-path  [%mailbox path.act]
     =/  chat-wire  [(scot %p our.bol) chat-path]
     ?:  (~(has by synced) path.act)
@@ -93,8 +92,7 @@
     (create-permission [%chat path.act] security.act)
   ::
       %add-synced
-    ?.  =(src.bol our.bol)
-      [~ this]
+    ?>  (team:title our.bol src.bol)
     =/  chat-path  [%mailbox path.act]
     =/  chat-wire  [(scot %p ship.act) chat-path]
     ?:  (~(has by synced) path.act)
@@ -107,8 +105,8 @@
     =/  ship  (~(get by synced) path.act)
     ?~  ship
       [~ this]
-    ?:  &(=(u.ship our.bol) =(our.bol src.bol))
-      ::  delete one of our own paths
+    ?:  &(=(u.ship our.bol) (team:title our.bol src.bol))
+      ::  delete one of our.bol own paths
       =/  chat-wire  [(scot %p our.bol) %mailbox path.act]
       :_
       %_  this
@@ -126,7 +124,7 @@
         ^-  move
         [bone %quit ~]
       ==
-    ?:  |(=(u.ship src.bol) =(our.bol src.bol))
+    ?:  |(=(u.ship src.bol) (team:title our.bol src.bol))
       ::  delete a foreign ship's path
       =/  chat-wire  [(scot %p u.ship) %mailbox path.act]
       :_
@@ -156,7 +154,7 @@
 ++  diff-chat-update
   |=  [wir=wire diff=chat-update]
   ^-  (quip move _this)
-  ?:  =(src.bol our.bol)
+  ?:  (team:title our.bol src.bol)
     (handle-local diff)
   (handle-foreign diff)
 ::
@@ -210,10 +208,10 @@
     ::  send a create poke to local chat
     ?~  path.diff
       [~ this]
-    =/  sync  (~(get by synced) path.diff)
-    ?~  sync
+    =/  shp  (~(get by synced) path.diff)
+    ?~  shp
       [~ this]
-    ?.  =(src.bol u.sync)
+    ?.  (team:title u.shp src.bol)
       [~ this]
     :_  this
     :~  (chat-poke diff)
@@ -223,10 +221,10 @@
     ::  send a delete poke to local chat
     ?~  path.diff
       [~ this]
-    =/  sync  (~(get by synced) path.diff)
-    ?~  sync
+    =/  shp  (~(get by synced) path.diff)
+    ?~  shp
       [~ this]
-    ?.  =(src.bol u.sync)
+    ?.  (team:title u.shp src.bol)
       [~ this]
     =/  chat-wire  [(scot %p src.bol) %mailbox path.diff]
     :_  this(synced (~(del by synced) path.diff))
@@ -250,27 +248,25 @@
 ++  quit
   |=  wir=wire
   ^-  (quip move _this)
-  =/  wir  `(list @tas)`wir
-  =/  =ship  (slav %p &1:wir)
-  =.  wir  ?^  wir  t.wir  ~
-  =.  wir  ?^  wir  t.wir  ~
-  ?:  (~(has by synced) wir)
-    =/  chat-path  [%mailbox wir]
-    =/  chat-wire  [(scot %p ship) chat-path]
-    :_  (track-bone chat-wire)
-    [ost.bol %peer chat-wire [ship %chat-hook] chat-path]~
-  ::  no-op
-  [~ this]
+  =^  =ship  wir
+    ?>  ?=([* ^] wir)
+    [(slav %p i.wir) t.t.wir]
+  ?.  (~(has by synced) wir)
+    ::  no-op
+    [~ this]
+  =/  chat-path  [%mailbox wir]
+  =/  chat-wire  [(scot %p ship) chat-path]
+  :_  (track-bone chat-wire)
+  [ost.bol %peer chat-wire [ship %chat-hook] chat-path]~
 ::
 ++  reap
   |=  [wir=wire saw=(unit tang)]
   ^-  (quip move _this)
   ?~  saw
     [~ this]
-  =/  wir  `(list @tas)`wir
-  =/  =ship  (slav %p &1:wir)
-  =.  wir  ?^  wir  t.wir  ~
-  =.  wir  ?^  wir  t.wir  ~
+  =^  =ship  wir
+    ?>  ?=([* ^] wir)
+    [(slav %p i.wir) t.t.wir]
   [~ this(synced (~(del by synced) wir))]
 ::
 ++  chat-poke
@@ -328,22 +324,13 @@
 ++  chat-scry
   |=  pax=path
   ^-  (unit mailbox)
-  =.  pax  ;:  weld
-    `path`/=chat-store/(scot %da now.bol)/mailbox
-    pax
-    `path`/noun
-  ==
+  =.  pax    ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
   .^((unit mailbox) %gx pax)
 ::
 ++  permitted-scry
   |=  pax=path
   ^-  ?
-  =.  pax  ;:  weld
-    `path`/=permission-store/(scot %da now.bol)/permitted
-    pax
-    `path`/noun
-  ==
-  .^(? %gx pax)
+  .^(? %gx ;:(weld /=permission-store/(scot %da now.bol)/permitted pax /noun))
 ::
 ++  track-bone
   |=  wir=wire

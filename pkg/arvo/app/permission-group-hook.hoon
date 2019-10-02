@@ -45,15 +45,13 @@
 ++  poke-json
   |=  =json
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)
-    [~ this]
+  ?>  (team:title our.bol src.bol)
   (poke-permission-group-hook-action (json-to-perm-group-hook-action json))
 ::
 ++  poke-permission-group-hook-action
   |=  act=permission-group-hook-action
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)
-    [~ this]
+  ?>  (team:title our.bol src.bol)
   ?-  -.act
       %associate   (handle-associate group.act permissions.act)
       %dissociate  (handle-dissociate group.act permissions.act)
@@ -67,22 +65,19 @@
   =/  permissions
     %-  silt
     %+  turn  ~(tap in permission-paths)
-    |=  [=path =kind]
-    path
+    |=([=path =kind] path)
   ?~  perms
     =/  group-path  [%group group]
     :_  this(relation (~(put by relation) group permissions))
     [ost.bol %peer group-path [our.bol %group-store] group-path]~
+  ::
   =.  u.perms  (~(uni in u.perms) permissions)
   :_  this(relation (~(put by relation) group u.perms))
   %+  weld
     %+  turn  ~(tap in permissions)
-    |=  =path
-    ^-  move
-    (permission-poke path [%delete path])
+    |=(=path (permission-poke path [%delete path]))
   %+  turn  ~(tap in permission-paths)
   |=  [=path =kind]
-  ^-  move
   =/  pem  *permission
   =.  kind.pem  kind
   (permission-poke path [%create path pem])
@@ -93,13 +88,12 @@
   =/  perms  (~(get by relation) group)
   ?~  perms
     [~ this]
+  ::
   =.  permissions  (~(del in u.perms) permissions)
   ?~  permissions
     :_  this(relation (~(del by relation) group))
-    :~  (group-pull [%group group])
-    ==
-  :-  ~
-  this(relation (~(put by relation) group permissions))
+    [(group-pull [%group group])]~
+  [~ this(relation (~(put by relation) group permissions))]
 ::
 ++  diff-group-update
   |=  [wir=wire diff=group-update]
@@ -117,7 +111,6 @@
     :_  this
     %+  turn  ~(tap in u.perms)
     |=  =path
-    ^-  move
     (permission-poke path [%add path members.diff])
   ::
       %add
@@ -128,7 +121,6 @@
     :_  this
     %+  turn  ~(tap in u.perms)
     |=  =path
-    ^-  move
     (permission-poke path [%add path members.diff])
   ::
       %remove
@@ -139,7 +131,6 @@
     :_  this
     %+  turn  ~(tap in u.perms)
     |=  =path
-    ^-  move
     (permission-poke path [%remove path members.diff])
   ::
       %unbundle
@@ -147,13 +138,11 @@
     =/  perms  (~(get by relation) pax.diff)
     ?~  perms
       :_  this(relation (~(del by relation) pax.diff))
-      :~  (group-pull [%group pax.diff])
-      ==
+      [(group-pull [%group pax.diff])]~
     :_  this(relation (~(del by relation) pax.diff))
     :-  (group-pull [%group pax.diff])
     %+  turn  ~(tap in u.perms)
     |=  =path
-    ^-  move
     (permission-poke path [%delete path])
   ::
   ==
@@ -182,15 +171,5 @@
   |=  =path
   ^-  move
   [ost.bol %pull [%group path] [our.bol %group-store] ~]
-::
-++  permission-scry
-  |=  pax=path
-  ^-  (unit permission)
-  =.  pax  ;:  weld
-    `path`/=permission-store/(scot %da now.bol)/permission
-    pax
-    `path`/noun
-  ==
-  .^((unit permission) %gx pax)
 ::
 --

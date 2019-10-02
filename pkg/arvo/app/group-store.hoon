@@ -40,7 +40,7 @@
 ++  peer-all
   |=  pax=path
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)  !!
+  ?>  (team:title our.bol src.bol)
   ::  we now proxy all events to this path
   :_  this
   [ost.bol %diff %group-initial groups]~
@@ -48,7 +48,7 @@
 ++  peer-keys
   |=  pax=path
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)  !!
+  ?>  (team:title our.bol src.bol)
   ::  we send the list of keys then send events when they change
   :_  this
   [ost.bol %diff %group-update [%keys ~(key by groups)]]~
@@ -56,7 +56,7 @@
 ++  peer-group
   |=  pax=path
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)  !!
+  ?>  (team:title our.bol src.bol)
   =/  grp=(unit group)  (~(get by groups) pax)
   ?~  grp  !!
   :_  this
@@ -65,8 +65,7 @@
 ++  poke-group-action
   |=  action=group-action
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)
-    [~ this]
+  ?>  (team:title our.bol src.bol)
   ?-  -.action
       %add       (handle-add action)
       %remove    (handle-remove action)
@@ -126,26 +125,22 @@
   :-  (send-diff pax.act act)
   this(groups (~(del by groups) pax.act))
 ::
-++  send-diff
-  |=  [pax=path action=group-action]
+++  update-subscribers
+  |=  [pax=path act=group-action]
   ^-  (list move)
-  ;:  weld
-    ^-  (list move)
-    %+  turn  (prey:pubsub:userlib /all bol)
-    |=  [=bone *]
-    [bone %diff %group-update action]
-  ::
-    ^-  (list move)
-    %+  turn  (prey:pubsub:userlib [%group pax] bol)
-    |=  [=bone *]
-    [bone %diff %group-update action]
-  ::
-    ^-  (list move)
-    ?.  |(=(%bundle -.action) =(%unbundle -.action))
-      ~
-    %+  turn  (prey:pubsub:userlib /keys bol)
-    |=  [=bone *]
-    [bone %diff %group-update action]
+  %+  turn  (prey:pubsub:userlib pax bol)
+  |=  [=bone *]
+  [bone %diff %group-update act]
+::
+++  send-diff
+  |=  [pax=path act=group-action]
+  ^-  (list move)
+  %-  zing
+  :~  (update-subscribers /all act)
+      (update-subscribers [%group pax] act)
+      ?.  |(=(%bundle -.act) =(%unbundle -.act))
+        ~
+      (update-subscribers /keys act)
   ==
 ::
 --
