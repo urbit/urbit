@@ -14,11 +14,13 @@ import Network.Ethereum.Api.Eth
 import Network.Ethereum.Api.Provider
 import Network.Ethereum.Api.Types    hiding (blockNumber)
 import Network.Ethereum.Web3
+import Network.HTTP.Client.TLS
 
 import qualified Crypto.Sign.Ed25519  as Ed
 import qualified Data.ByteArray       as BA
 import qualified Data.Map.Strict      as M
 import qualified Network.Ethereum.Ens as Ens
+import qualified Network.HTTP.Client  as C
 import qualified Urbit.Ob             as Ob
 
 -- During boot, use the infura provider
@@ -262,3 +264,25 @@ dawnVent dSeed@(Seed ship life ring oaf) = do
   case ret of
     Left x  -> pure $ Left $ tshow x
     Right y -> pure $ Right y
+
+
+dawnCometList :: RIO e [Ship]
+dawnCometList = do
+  -- Get the jamfile with the list of stars accepting comets right now.
+  manager <- io $ C.newManager tlsManagerSettings
+  request <- io $ C.parseRequest "https://bootstrap.urbit.org/comet-stars.jam"
+  response <- io $ C.httpLbs (C.setRequestCheckStatus request) manager
+  let body = toStrict $ C.responseBody response
+
+  noun <- cueBS body & either throwIO pure
+  fromNounErr noun & either (throwIO . uncurry ParseErr) pure
+
+
+mineComet :: Set Ship -> Word128 -> Seed
+mineComet ships = loop
+  where
+    loop eny =
+      loop (eny + 1)
+
+-- dawnCome :: RIO e (Either Text Dawn)
+-- dawnCome = do

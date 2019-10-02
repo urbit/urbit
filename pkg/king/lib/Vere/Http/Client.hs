@@ -13,9 +13,10 @@ import Vere.Pier.Types
 
 import Vere.Http
 
-import qualified Data.Map            as M
-import qualified Network.HTTP.Client as H
-import qualified Network.HTTP.Types  as HT
+import qualified Data.Map                as M
+import qualified Network.HTTP.Client     as H
+import qualified Network.HTTP.Client.TLS as TLS
+import qualified Network.HTTP.Types      as HT
 
 -- Types -----------------------------------------------------------------------
 
@@ -63,7 +64,7 @@ client kingId enqueueEv = (initialEvents, runHttpClient)
 
     start :: RIO e (HttpClientDrv)
     start = HttpClientDrv <$>
-      (io $ H.newManager H.defaultManagerSettings) <*>
+      (io $ H.newManager TLS.tlsManagerSettings) <*>
       newTVarIO M.empty
 
     stop :: HttpClientDrv -> RIO e ()

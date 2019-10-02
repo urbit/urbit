@@ -52,6 +52,7 @@ dependencies:
   - hashable
   - hashtables
   - http-client
+  - http-client-tls
   - http-types
   - integer-gmp
   - iproute

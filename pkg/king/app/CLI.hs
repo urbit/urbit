@@ -73,6 +73,7 @@ data Bug
     | CheckDawn
         { bKeyfilePath :: FilePath
         }
+    | CheckComet
   deriving (Show)
 
 data Cmd
@@ -311,6 +312,10 @@ bugCmd = fmap CmdBug
        <> command "dawn"
             ( info (checkDawn <**> helper)
             $ progDesc "Test run dawn"
+            )
+       <> command "comet"
+            ( info (pure CheckComet)
+            $ progDesc "Shows the list of stars accepting comets"
             )
 
 conCmd :: Parser Cmd

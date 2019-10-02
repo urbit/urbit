@@ -87,7 +87,7 @@ import UrbitPrelude
 import Arvo
 import Data.Acquire
 import Data.Conduit
-import Data.Conduit.List hiding (catMaybes, replicate, take)
+import Data.Conduit.List hiding (catMaybes, map, replicate, take)
 import Data.RAcquire
 import Noun              hiding (Parser)
 import Noun.Atom
@@ -415,6 +415,14 @@ checkDawn keyfilePath = do
   e <- dawnVent seed
   print $ show e
 
+
+checkComet :: HasLogFunc e => RIO e ()
+checkComet = do
+  starList <- dawnCometList
+  putStrLn "Stars currently accepting comets:"
+  let starNames = map (Ob.renderPatp . Ob.patp . fromIntegral) starList
+  print starNames
+
 main :: IO ()
 main = do
     mainTid <- myThreadId
@@ -432,6 +440,7 @@ main = do
         CLI.CmdBug (CLI.ValidateEvents pax f l)   -> checkEvs pax f l
         CLI.CmdBug (CLI.ValidateFX pax f l)       -> checkFx  pax f l
         CLI.CmdBug (CLI.CheckDawn pax)            -> checkDawn pax
+        CLI.CmdBug CLI.CheckComet                 -> checkComet
         CLI.CmdCon port                           -> connTerm port
 
 
