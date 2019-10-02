@@ -10,7 +10,7 @@ import Untyped.Core
 
 data Hoon a
   = HVar a
-  | HAtm Atom
+  | HAtom Atom
   | HCons (Hoon a) (Hoon a)
   | BarCen (Cases a)
   | BarHep a a (Hoon a) (Hoon a)
@@ -42,7 +42,7 @@ desugar = go
   where
     go = \case
       HVar v         -> Var v
-      HAtm a         -> Atm a
+      HAtom a        -> Atm a
       HCons h j      -> Cel (go h) (go j)
       BarCen cs      -> Lam $ Scope $ branch (Var . F . go) (Var (B ())) cs
       BarHep r s i h -> go $ CenDot i $ DotDot r $ BarTis s $ h

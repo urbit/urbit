@@ -22,7 +22,7 @@ import qualified Prelude
 
 -- Types -----------------------------------------------------------------------
 
-type Nat  = Int
+type Nat  = Natural
 type Sym  = String
 
 
@@ -37,8 +37,8 @@ data CST
     = WutCol CST CST CST          --  ?:(c t f)
     | WutPat CST CST CST          --  ?@(c t f)
     | WutKet CST CST CST          --  ?^(c t f)
-    | WutPam CST CST              --  ?&(c cs ...)
-    | WutBar CST CST              --  ?|(c cs ...)
+    | WutPam [CST]                --  ?&(c cs ...)
+    | WutBar [CST]                --  ?|(c cs ...)
     | WutHep CST [(Pat, CST)]     --  ?-(c p e p e ...)
     | TisFas Sym CST CST          --  =/(x 3 x)
     | ColHep CST CST              --  :-(a b)

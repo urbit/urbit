@@ -1,8 +1,9 @@
 module Noun where
 
 import ClassyPrelude
+import Numeric.Natural
 
-type Atom = Integer
+type Atom = Natural
 
 type Noun = Tree Atom
 data Tree a
