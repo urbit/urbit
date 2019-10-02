@@ -2197,10 +2197,12 @@
     =-  ::  if no sent packet matches the ack, don't apply mutations or effects
         ::
         ?.  found.-
+          ~&  'MISS'^show:gauge
           packet-pump
         ::
         =.  metrics.state  metrics.-
         =.  live.state     live.-
+        ~?  =(0 (mod counter.metrics.state 20))  [fragment-num show:gauge]
         ::
         packet-pump
     ::
@@ -2347,8 +2349,6 @@
     ::  if this was a re-send, don't adjust rtt or downstream state
     ::
     ?.  =(0 retries.packet-state)
-      ::
-      ~?  =(0 (mod counter 100))  show
       metrics
     ::  rtt-datum: new rtt measurement based on this packet roundtrip
     ::
@@ -2364,8 +2364,6 @@
     =.  rtt     (div (add rtt-datum (mul rtt 7)) 8)
     =.  rttvar  (div (add rtt-error (mul rttvar 7)) 8)
     =.  rto     (clamp-rto (add rtt (mul 4 rttvar)))
-    ::
-    ~?  =(0 (mod counter 100))  show
     ::
     metrics
   ::  +on-skipped-packet: TODO
