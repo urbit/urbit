@@ -20,7 +20,7 @@ data Opts = Opts
     , oDryRun    :: Bool
     , oVerbose   :: Bool
     , oAmesPort  :: Maybe Word16
-    , oProf      :: Bool
+    , oTrace     :: Bool
     , oCollectFx :: Bool
     , oLocalhost :: Bool
     , oOffline   :: Bool
@@ -212,10 +212,10 @@ opts = do
                         <> help "Dry run -- Don't persist"
                         <> hidden
 
-    oProf      <- switch $ short 'p'
-                       <> long "profile"
-                       <> help "Enable profiling"
-                       <> hidden
+    oTrace      <- switch $ short 't'
+                         <> long "trace"
+                         <> help "Enable tracing"
+                         <> hidden
 
     oLocalhost <- switch $ short 'L'
                         <> long "local"

@@ -87,7 +87,7 @@ import UrbitPrelude
 import Arvo
 import Data.Acquire
 import Data.Conduit
-import Data.Conduit.List hiding (replicate, take)
+import Data.Conduit.List hiding (catMaybes, replicate, take)
 import Data.RAcquire
 import Noun              hiding (Parser)
 import Noun.Atom
@@ -134,9 +134,25 @@ removeFileIfExists pax = do
 
 --------------------------------------------------------------------------------
 
+toSerfFlags :: CLI.Opts -> Serf.Flags
+toSerfFlags CLI.Opts{..} = catMaybes m
+  where
+    -- TODO: This is not all the flags.
+    m = [ from oQuiet Serf.Quiet
+        , from oTrace Serf.Trace
+        , from oHashless Serf.Hashless
+        , from oQuiet Serf.Quiet
+        , from oVerbose Serf.Verbose
+        , from oDryRun Serf.DryRun
+        ]
+    from True flag = Just flag
+    from False _   = Nothing
+
+
 tryBootFromPill :: HasLogFunc e
-                => FilePath -> FilePath -> Ship -> LegacyBootEvent -> RIO e ()
-tryBootFromPill pillPath shipPath ship boot = do
+                => FilePath -> FilePath -> Serf.Flags -> Ship -> LegacyBootEvent
+                -> RIO e ()
+tryBootFromPill pillPath shipPath flags ship boot = do
     rwith bootedPier $ \(serf, log, ss) -> do
         logTrace "Booting"
         logTrace $ displayShow ss
@@ -147,7 +163,7 @@ tryBootFromPill pillPath shipPath ship boot = do
   where
     bootedPier = do
         lockFile shipPath
-        Pier.booted pillPath shipPath [] ship boot
+        Pier.booted pillPath shipPath flags ship boot
 
 runAcquire :: (MonadUnliftIO m,  MonadIO m)
            => Acquire a -> m a
@@ -157,17 +173,17 @@ runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
             => RAcquire e a -> m e a
 runRAcquire act = rwith act pure
 
-tryPlayShip :: HasLogFunc e => FilePath -> RIO e ()
-tryPlayShip shipPath = do
+tryPlayShip :: HasLogFunc e => FilePath -> Serf.Flags -> RIO e ()
+tryPlayShip shipPath flags = do
     runRAcquire $ do
         lockFile shipPath
         rio $ logTrace "RESUMING SHIP"
-        sls <- Pier.resumed shipPath []
+        sls <- Pier.resumed shipPath flags
         rio $ logTrace "SHIP RESUMED"
         Pier.pier shipPath Nothing sls
 
-tryResume :: HasLogFunc e => FilePath -> RIO e ()
-tryResume shipPath = do
+tryResume :: HasLogFunc e => FilePath -> Serf.Flags -> RIO e ()
+tryResume shipPath flags = do
     rwith resumedPier $ \(serf, log, ss) -> do
         logTrace (displayShow ss)
         threadDelay 500000
@@ -177,12 +193,12 @@ tryResume shipPath = do
   where
     resumedPier = do
         lockFile shipPath
-        Pier.resumed shipPath []
+        Pier.resumed shipPath flags
 
-tryFullReplay :: HasLogFunc e => FilePath -> RIO e ()
-tryFullReplay shipPath = do
+tryFullReplay :: HasLogFunc e => FilePath -> Serf.Flags -> RIO e ()
+tryFullReplay shipPath flags = do
     wipeSnapshot
-    tryResume shipPath
+    tryResume shipPath flags
   where
     wipeSnapshot = do
         logTrace "wipeSnapshot"
@@ -317,13 +333,13 @@ validateNounVal inpVal = do
 --------------------------------------------------------------------------------
 
 newShip :: HasLogFunc e => CLI.New -> CLI.Opts -> RIO e ()
-newShip CLI.New{..} _
+newShip CLI.New{..} opts
   | CLI.BootComet <- nBootType =
       error "Comets don't work yet"
 
   | CLI.BootFake name <- nBootType =
       let ship = shipFrom name
-      in tryBootFromPill nPillPath (pierPath name) ship (Fake ship)
+      in tryBootFromPill nPillPath (pierPath name) flags ship (Fake ship)
 
   | CLI.BootFromKeyfile keyFile <- nBootType = do
       text <- readFileUtf8 keyFile
@@ -343,7 +359,7 @@ newShip CLI.New{..} _
         Right dawn ->
           let ship = sShip $ dSeed dawn
               path = (pierPath $ nameFromShip ship)
-          in tryBootFromPill nPillPath path ship (Dawn dawn)
+          in tryBootFromPill nPillPath path flags ship (Dawn dawn)
 
   where
     shipFrom :: Text -> Ship
@@ -364,10 +380,13 @@ newShip CLI.New{..} _
           Nothing -> error "Urbit.ob didn't produce string with ~"
           Just x  -> x
 
+    flags = toSerfFlags opts
+
 
 
 runShip :: HasLogFunc e => CLI.Run -> CLI.Opts -> RIO e ()
-runShip (CLI.Run pierPath) _ = tryPlayShip pierPath
+runShip (CLI.Run pierPath) opts = tryPlayShip pierPath (toSerfFlags opts)
+
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
 startBrowser pierPath = runRAcquire $ do
