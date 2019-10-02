@@ -2116,11 +2116,12 @@
     =.  next-wake.state  ~
     ::  tell congestion control a packet timed out
     ::
-    =.  metrics.state    on-timeout:gauge
+    =.  metrics.state  on-timeout:gauge
     ::  re-send first packet and update its state in-place
     ::
     =-  =.  live.state   live.-
         =.  packet-pump  (give %send static-fragment.-)
+        ~&  'DEAD'^fragment-num.static-fragment.-^show:gauge
         packet-pump
     ::
     =|  acc=static-fragment
@@ -2386,7 +2387,6 @@
             cwnd  1
              rto  (clamp-rto (mul rto 2))
       ==
-    ~&  'TIMEOUT'^show
     metrics
   ::  +clamp-rto: apply min and max to an .rto value
   ::
