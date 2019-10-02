@@ -1,4 +1,4 @@
-module Noun where
+module SimpleNoun where
 
 import ClassyPrelude
 import Numeric.Natural

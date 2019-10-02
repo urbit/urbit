@@ -9,7 +9,7 @@ import Untyped.CST
 import Untyped.Hoon
 import Untyped.Core
 import Nock
-import Noun
+import SimpleNoun
 import Dashboard
 
 import Text.Show.Pretty (pPrint)

@@ -17,7 +17,7 @@ import ClassyPrelude
 
 import Control.Monad.State.Strict
 
-import Noun
+import SimpleNoun
 
 type Jet = Noun -> Noun
 type JetName = Atom
@@ -102,6 +102,9 @@ instance Dashboard Careboard where
                         <> " and " <> tshow n' <> ", which is very bad")
           Nothing -> modify' (insertMap nm n)
         pure (Just j)
+      Nothing -> do
+        putStrLn ("careboard: unmatched fast hint: " ++ tshow nm)
+        pure $ byHash $ hash n
     n -> pure $ byHash $ hash n
 
 byFast :: JetName -> Maybe Jet

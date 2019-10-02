@@ -600,7 +600,6 @@
           {$note p/@tD q/tank}                          ::  debug message
           {$ogre p/@tas}                                ::  delete mount point
           {$rule red/dict wit/dict}                     ::  node r+w permissions
-          {$send p/lane:ames q/@}                       ::  transmit packet
           {$writ p/riot}                                ::  response
           {$wris p/{$da p/@da} q/(set (pair care path))}  ::  many changes
       ==                                                ::
@@ -764,14 +763,11 @@
   ++  able  ^?
     |%
     ++  gift                                            ::  out result <-$
-      $%  {$bbye ~}                                     ::  reset prompt
-          {$blit p/(list blit)}                         ::  terminal output
-          {$burl p/@t}                                  ::  activate url
+      $%  {$blit p/(list blit)}                         ::  terminal output
           {$init p/@p}                                  ::  set owner
           {$logo ~}                                     ::  logout
           {$lyra p/@t q/@t}                             ::  upgrade kernel
           {$mass p/mass}                                ::  memory usage
-          {$send p/lane:ames q/@}                       ::  transmit packet
           {$veer p/@ta q/path r/@t}                     ::  install vane
           {$verb ~}                                     ::  verbose mode
       ==                                                ::
@@ -785,7 +781,6 @@
           {$flow p/@tas q/(list gill:gall)}             ::  terminal config
           {$hail ~}                                     ::  terminal refresh
           {$heft ~}                                     ::  memory report
-          {$hook ~}                                     ::  this term hung up
           {$harm ~}                                     ::  all terms hung up
           $>(%init vane-task)                           ::  after gall ready
           {$lyra p/@t q/@t}                             ::  upgrade kernel
@@ -7482,9 +7477,6 @@
       ::  %ames: hear packet
       ::
       $>(%hear task:able:ames)
-      ::  %dill: hangup
-      ::
-      $>(%hook task:able:dill)
       ::  %clay: external edit
       ::
       $>(%into task:able:clay)

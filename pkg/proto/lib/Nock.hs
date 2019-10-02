@@ -3,7 +3,7 @@ module Nock where
 import ClassyPrelude
 
 import Dashboard
-import Noun
+import SimpleNoun
 
 data Nock
   = NC Nock Nock           -- ^ ^: autocons

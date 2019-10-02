@@ -508,8 +508,7 @@
           $%  [%init-clad ~]                            ::
       ==  ==                                            ::
       $:  %a                                            ::  by %ames
-          $>  $?  %send                                 ::  XX strange
-                  %woot                                 ::
+          $>  $?  %woot                                 ::
               ==                                        ::
           gift:able:ames                                ::
       ==                                                ::
@@ -4570,9 +4569,6 @@
             (bind p.+.q.hin rant-to-rand)
         ==
     ==
-  ::
-      %send
-    [[[hen %give +.q.hin] ~] ..^$]
   ::
       %woot
     ?~  q.q.hin

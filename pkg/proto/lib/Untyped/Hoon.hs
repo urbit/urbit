@@ -5,7 +5,7 @@ import ClassyPrelude
 import Bound
 import Bound.Name
 
-import Noun
+import SimpleNoun
 import Untyped.Core
 
 data Hoon a

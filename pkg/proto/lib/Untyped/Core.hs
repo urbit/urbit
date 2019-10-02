@@ -13,7 +13,7 @@ import Data.Void
 
 import Dashboard (pattern FastAtom)
 import Nock
-import Noun
+import SimpleNoun
 
 type Nat = Int
 

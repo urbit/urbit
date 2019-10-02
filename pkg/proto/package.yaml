@@ -8,6 +8,7 @@ dependencies:
   - classy-prelude
   - containers
   - deriving-compat
+  - king
   - lens
   - megaparsec
   - mtl

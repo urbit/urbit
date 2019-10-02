@@ -9,6 +9,10 @@ tags
 TAGS
 cross/
 release/
+.stack-work
+\#*\#
+s/*
+=======
 **/.DS_Store
 **/dist
 **/node_modules

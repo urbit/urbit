@@ -3,7 +3,8 @@ module Untyped.CST where
 import ClassyPrelude
 import Prelude (foldr1)
 
-import Noun
+import SimpleNoun
+import qualified Noun as N
 import qualified Untyped.Hoon as H
 import Untyped.Parser  -- remove after we've moved the CST type
 
@@ -55,4 +56,5 @@ hone = go
 
 
 textToAtom :: Text -> Atom
-textToAtom = undefined
+textToAtom t = case N.textToUtf8Atom t of
+  N.A a -> a
