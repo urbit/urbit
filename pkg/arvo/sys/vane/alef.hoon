@@ -2334,7 +2334,6 @@
     ^-  pump-metrics
     ::
     =.  num-live  (add num-live num-sent)
-    ?>  (lte num-live cwnd)
     metrics
   ::  +on-ack: adjust metrics based on a packet getting acknowledged
   ::
@@ -2347,6 +2346,7 @@
     ::  if below congestion threshold, add 1; else, add avg. 1 / cwnd
     ::
     =.  cwnd
+      %+  min  200
       ?:  in-slow-start
         +(cwnd)
       (add cwnd !=(0 (mod (mug now) cwnd)))
