@@ -16,13 +16,22 @@
   (pure:m !<([aqua-effect] q.cage))
 ::
 ++  start-simple
+  (start-test %aqua-ames %aqua-behn %aqua-dill %aqua-eyre ~)
+++  end-simple
+  (end-test %aqua-ames %aqua-behn %aqua-dill %aqua-eyre ~)
+::
+++  start-azimuth
+  (start-test %aqua-ames %aqua-behn %aqua-dill %aqua-eyre-azimuth ~)
+++  end-azimuth
+  (end-test %aqua-ames %aqua-behn %aqua-dill %aqua-eyre-azimuth ~)
+::
+++  start-test
+  |=  vane-imps=(list term)
   =/  m  (thread ,~)
   ^-  form:m
-  =/  vane-imps=(list term)
-    ~[%aqua-ames %aqua-behn %aqua-dill %aqua-eyre]
   ~&  >  "starting"
   ;<  ~  bind:m  (start-imps vane-imps)
-  ;<  ~  bind:m  start-watching
+  ;<  ~  bind:m  (subscribe-our /effects %aqua /effect)
   ::  Get our very own event with no mistakes in it... yet.
   ::
   ::  We want to wait for the vane imps to actually start and get their
@@ -36,14 +45,13 @@
   ;<  ~  bind:m  (sleep ~s0)
   (pure:m ~)
 ::
-++  end-simple
+++  end-test
+  |=  vane-imps=(list term)
   =/  m  (thread ,~)
   ^-  form:m
-  =/  vane-imps=(list term)
-    ~[%aqua-ames %aqua-behn %aqua-dill %aqua-eyre]
   ~&  >  "done"
   ;<  ~  bind:m  (stop-imps vane-imps)
-  ;<  ~  bind:m  stop-watching
+  ;<  ~  bind:m  (unsubscribe-our /effects %aqua)
   (pure:m ~)
 ::
 ++  start-imps
@@ -82,16 +90,18 @@
   ;<  ~  bind:m  (poke-our %spider %spider-stop poke-vase)
   loop(imps t.imps)
 ::
-++  start-watching
+++  spawn
+  |=  =ship
   =/  m  (thread ,~)
-  ^-  form:m
-  =*  loop  $
-  (subscribe-our /effects %aqua /effect)
+  =/  =vase  !>([%aqua-eyre-azimuth %azimuth-command !>([%spawn ship])])
+  (poke-our %spider %spider-imput vase)
 ::
-++  stop-watching
+++  real-ship
+  |=  =ship
   =/  m  (thread ,~)
-  ^-  form:m
-  (unsubscribe-our /effects %aqua)
+  =/  =vase  !>([%aqua-eyre-azimuth %azimuth-command !>([%create-ship ship])])
+  ;<  ~  bind:m  (poke-our %spider %spider-imput vase)
+  (check-ship-booted ship)
 ::
 ++  raw-ship
   |=  [=ship keys=(unit dawn-event:able:jael)]

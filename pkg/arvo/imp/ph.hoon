@@ -36,6 +36,7 @@
   ;<  ~      bind:m  (poke-our %spider %spider-stop !>([%aqua-behn &]))
   ;<  ~      bind:m  (poke-our %spider %spider-stop !>([%aqua-dill &]))
   ;<  ~      bind:m  (poke-our %spider %spider-stop !>([%aqua-eyre &]))
+  ;<  ~      bind:m  (poke-our %spider %spider-stop !>([%aqua-eyre-azimuth &]))
   (pure:m ~)
 ::
 ++  handle-run-all
