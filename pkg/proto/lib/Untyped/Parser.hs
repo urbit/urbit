@@ -23,7 +23,7 @@ import qualified Prelude
 -- Types -----------------------------------------------------------------------
 
 type Nat  = Natural
-type Sym  = String
+type Sym  = Text
 
 
 -- CST -------------------------------------------------------------------------
@@ -52,11 +52,12 @@ data CST
     | CenHep CST CST              --  %-  f  x
     | CenDot CST CST              --  %.  x  f
     | DotDot Sym CST              --  ..  $  f
+    | SigFas CST CST
     | ZapZap                      --  !!
     | Tupl [CST]                  --  [a b ...]
     | Var  Sym                    --  a
     | Atom Nat                    --  3
-    | Tag Sym                     --  %asdf
+    | Tag Text                    --  %asdf
     | Cord Text                   --  'cord'
     | Tape Text                   --  "tape"
     | Incr CST                    --  .+(3)
@@ -106,7 +107,7 @@ alpha ∷ Parser Char
 alpha = oneOf (['a'..'z'] ++ ['A'..'Z'])
 
 sym ∷ Parser Sym
-sym = bucSym <|> some alpha
+sym = bucSym <|> pack <$> some alpha
   where bucSym = char '$' *> pure ""
 
 atom ∷ Parser Nat
@@ -129,7 +130,7 @@ cord = do
   between (char '\'') (char '\'') $
     pack <$> many (label "cord char" (anySingleBut '\''))
 
-tag ∷ Parser String
+tag ∷ Parser Text
 tag = try (char '%' >> sym)
 
 literal ∷ Parser CST
@@ -309,6 +310,7 @@ rune = runeSwitch [ ("|=", rune2 BarTis sym cst)
                   , (".=", rune2 IsEq cst cst)
                   , ("?-", wutHep)
                   , ("|%", barCen)
+                  , ("~/", rune2 SigFas cst cst)
                   ]
 
 runeSwitch ∷ [(Text, Parser a)] → Parser a
@@ -318,7 +320,7 @@ runeSwitch = choice . fmap (\(s, p) → string s *> p)
 -- CST Parser ------------------------------------------------------------------
 
 cst ∷ Parser CST
-cst = irregular <|> literal <|> rune
+cst = irregular <|> rune <|> literal
 
 
 -- Entry Point -----------------------------------------------------------------

@@ -23,6 +23,7 @@ data Hoon a
   | DotDot a (Hoon a)
   | DotLus (Hoon a)
   | DotTis (Hoon a) (Hoon a)
+  | SigFas Atom (Hoon a)
   | WutBar (Hoon a) (Hoon a)
   | WutCol (Hoon a) (Hoon a) (Hoon a)
   | WutHep (Hoon a) (Cases a)
@@ -30,12 +31,16 @@ data Hoon a
   | WutPam (Hoon a) (Hoon a)
   | WutPat (Hoon a) (Hoon a) (Hoon a)
   | ZapZap
+  deriving (Functor)
+
+deriving instance Show a => Show (Hoon a)
 
 type Cases a = [(Pat, Hoon a)]
 
 data Pat
   = Exact Noun
   | Wild
+  deriving (Show)
 
 desugar :: Eq a => Hoon a -> Exp a
 desugar = go
@@ -53,6 +58,7 @@ desugar = go
       DotDot v h     -> fix v (go h)
       DotLus h       -> Suc (go h)
       DotTis h j     -> Eql (go h) (go j)
+      SigFas a h     -> Jet a (go h)
       WutBar h j     -> Ift (go h) (Atm 0) (go j)
       WutCol h j k   -> Ift (go h) (go j) (go k)
       -- or branch go (go h) cs
