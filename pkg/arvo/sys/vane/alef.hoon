@@ -586,6 +586,7 @@
       cwnd=_1
       num-live=@ud
       counter=@ud
+      start=@da
   ==
 +$  live-packet-key  [=message-num =fragment-num]
 +$  live-packet-val
@@ -2203,6 +2204,7 @@
         =.  metrics.state  metrics.-
         =.  live.state     live.-
         ~?  =(0 (mod counter.metrics.state 20))  [fragment-num show:gauge]
+        =?  start.metrics.state  =(0 fragment-num)  now
         ::
         packet-pump
     ::
@@ -2242,7 +2244,8 @@
     =-  =.  metrics.state  metrics.-
         =.  live.state     live.-
         ::
-        ~&  'DONE'^[fragment-num show:gauge]
+        =/  elapsed=@dr  (sub now start.metrics.state)
+        ~&  'DONE'^[message-num seconds=(div elapsed ~s1) show:gauge]
         packet-pump
     ::
     ^-  $:  metrics=pump-metrics
