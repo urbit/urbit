@@ -250,8 +250,8 @@ deriveNoun ''BehnEv
 -- Newt Events -----------------------------------------------------------------
 
 data NewtEv
-    = NewtEvBarn (Atom, ()) ()
-    | NewtEvCrud Path       Cord Tang
+    = NewtEvBarn (KingId, ()) ()
+    | NewtEvCrud Path         Cord Tang
   deriving (Eq, Ord, Show)
 
 deriveNoun ''NewtEv
