@@ -96,6 +96,22 @@
   =/  =vase  !>([%aqua-eyre-azimuth %azimuth-command !>([%spawn ship])])
   (poke-our %spider %spider-imput vase)
 ::
+++  breach
+  |=  who=ship
+  =/  m  (thread ,~)
+  ~&  >  "breaching {<who>}"
+  =/  =vase
+    !>([%aqua-eyre-azimuth %azimuth-command !>([%breach who])])
+  (poke-our %spider %spider-imput vase)
+::
+++  breach-and-hear
+  |=  [who=ship her=ship]
+  =/  m  (thread ,~)
+  ~&  >  "breaching {<who>} for {<her>}"
+  =/  =vase
+    !>([%aqua-eyre-azimuth %azimuth-command !>([%breach-and-hear who her])])
+  (poke-our %spider %spider-imput vase)
+::
 ++  real-ship
   |=  =ship
   =/  m  (thread ,~)
@@ -155,6 +171,14 @@
   ^-  form:m
   ;<  ~  bind:m  (dojo from "|hi {(scow %p to)}")
   (wait-for-output from "hi {(scow %p to)} successful")
+::
+::  Send "|hi" and wait for "not responding" message
+::
+++  send-hi-not-responding
+  |=  [from=@p to=@p]
+  =/  m  (thread ,~)
+  ;<  ~  bind:m  (dojo from "|hi {(scow %p to)}")
+  (wait-for-output from "{(scow %p to)} not responding still trying")
 ::
 ::  Mount a desk.
 ::
