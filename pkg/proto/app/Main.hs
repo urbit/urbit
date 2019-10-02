@@ -26,12 +26,16 @@ compileHoonTest ln = do
     cst <- parse ln & \case
               Left x  -> error (unpack x)
               Right x -> pure x
-    pPrint cst
+    -- pPrint cst
     hon <- pure $ hone cst
     pPrint hon
     exp <- pure $ desugar hon
     pPrint exp
     nok <- pure $ copy exp
+    putStrLn "==== input  ===="
+    putStrLn ln
+    putStrLn "==== nock   ===="
     pPrint nok
+    putStrLn "==== output ===="
     res <- runCare $ nock (A 140) nok
     pPrint res

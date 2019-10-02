@@ -125,9 +125,11 @@ namely = flip lookup fash
     fash :: HashMap JetName (Hash, Jet)
     fash = mapFromList $ map (\(n, h, j) -> (n, (h, j))) jets
 
+tx = textToAtom
+
 type Entry = (JetName, Hash, Jet)
 -- | Your jets here
 jets :: [Entry]
 jets =
-  [ (123, 1520491622440108403, \(A a) -> trace "jetting" $ A (a - 1))
+  [ (tx "dec", 1520491622440108403, \(A a) -> trace "jetting" $ A (a - 1))
   ]
