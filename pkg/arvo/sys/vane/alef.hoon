@@ -577,7 +577,6 @@
 ::    num-live: how many packets sent, awaiting ack
 ::    ssthresh: slow-start threshold
 ::    cwnd: congestion window; max unacked packets
-::    skips: how many misordered acks we've received
 ::
 +$  pump-metrics
   $:  rto=_~s1
@@ -586,7 +585,7 @@
       ssthresh=_1.000.000
       cwnd=_1
       num-live=@ud
-      num-skips=@ud
+      counter=@ud
   ==
 +$  live-packet-key  [=message-num =fragment-num]
 +$  live-packet-val
@@ -597,6 +596,7 @@
 +$  packet-state
   $:  last-sent=@da
       retries=@ud
+      skips=@ud
   ==
 ::  $message-still-state: state of |message-still to assemble messages
 ::
@@ -2169,7 +2169,7 @@
       ^-  [key=live-packet-key val=live-packet-val]
       ::
       :-  [message-num fragment-num]
-      :-  [sent-date=now.channel retries=0]
+      :-  [sent-date=now.channel retries=0 skips=0]
       [num-fragments fragment]
     ::  update .live and .metrics
     ::
@@ -2191,18 +2191,46 @@
   ::    metrics.  Otherwise, no-op.
   ::
   ++  on-hear
-    |=  key=live-packet-key
+    |=  [=message-num =fragment-num]
     ^+  packet-pump
     ::
-    ::  TODO handle misordered ack
-    =^  packet=(unit live-packet-val)  live.state
-      (del:packet-queue live.state key)
+    =-  ::  if no sent packet matches the ack, don't apply mutations or effects
+        ::
+        ?.  found.-
+          packet-pump
+        ::
+        =.  metrics.state  metrics.-
+        =.  live.state     live.-
+        ::
+        packet-pump
     ::
-    ?~  packet
-      packet-pump
+    ^-  $:  [found=? metrics=pump-metrics]
+            live=(tree [live-packet-key live-packet-val])
+        ==
     ::
-    =.  metrics.state  (on-ack:gauge -.u.packet)
-    packet-pump
+    =/  acc=[found=? metrics=pump-metrics]  [%.n metrics.state]
+    ::
+    %^  (traverse:packet-queue _acc)  live.state  acc
+    |=  $:  acc=_acc
+            key=live-packet-key
+            val=live-packet-val
+        ==
+    ^-  [new-val=(unit live-packet-val) stop=? _acc]
+    ::
+    =/  gauge  (make-pump-gauge now.channel metrics.acc)
+    ::  is this the acked packet?
+    ::
+    ?:  =(key [message-num fragment-num])
+      ::  delete acked packet, update metrics, and stop traversal
+      ::
+      :+  new-val=~
+        stop=%.y
+      [found=%.y metrics=(on-ack:gauge -.val)]
+    ::  ack was out of order; mark skipped, tell gauge, and continue
+    ::
+    :+  new-val=`val(skips +(skips.val))
+      stop=%.n
+    [found=%.n metrics=(on-skipped-packet:gauge -.val)]
   ::  +on-done: apply ack to all packets from .message-num
   ::
   ++  on-done
@@ -2226,13 +2254,19 @@
     ^-  [new-val=(unit live-packet-val) stop=? pump-metrics]
     ::
     =/  gauge  (make-pump-gauge now.channel metrics)
-    ::  if ack was out of order, mark expired and continue
-    ::  TODO redo skipped packet logic
+    ::  if we get an out-of-order ack for a message, no-op
+    ::
+    ::    We need to receive message acks in order, so if we get an ack
+    ::    for anything other than the first unacked message, pretend we
+    ::    never heard it.  If the other end is correct, the first
+    ::    message will get acked, and we'll re-send the second message
+    ::    once it times out.
+    ::
+    ::    This arrangement could probably be optimized, but it isn't
+    ::    very likely to happen, so it's more important we stay correct.
     ::
     ?:  (lth message-num.key message-num)
-      :+  new-val=`val
-        stop=%.n
-      metrics=(on-skipped-packet:gauge -.val)
+      [new-val=`val stop=%.y metrics]
     ::  if packet was from acked message, delete it and continue
     ::
     ?:  =(message-num.key message-num)
@@ -2302,6 +2336,7 @@
     |=  =packet-state
     ^-  pump-metrics
     ::
+    =.  counter  +(counter)
     =.  num-live  (dec num-live)
     ::  if below congestion threshold, add 1; else, add avg. 1 / cwnd
     ::
@@ -2312,6 +2347,8 @@
     ::  if this was a re-send, don't adjust rtt or downstream state
     ::
     ?.  =(0 retries.packet-state)
+      ::
+      ~?  =(0 (mod counter 100))  show
       metrics
     ::  rtt-datum: new rtt measurement based on this packet roundtrip
     ::
@@ -2328,22 +2365,26 @@
     =.  rttvar  (div (add rtt-error (mul rttvar 7)) 8)
     =.  rto     (clamp-rto (add rtt (mul 4 rttvar)))
     ::
+    ~?  =(0 (mod counter 100))  show
+    ::
     metrics
   ::  +on-skipped-packet: TODO
   ::
   ++  on-skipped-packet
     |=  packet-state
     ^-  pump-metrics
+    ~&  'SKIPPED'^show
     metrics
   ::  +on-timeout: (re)enter slow-start mode on packet loss
   ::
   ++  on-timeout
     ^-  pump-metrics
     ::
-    =:  ssthresh  (div cwnd 2)
+    =:  ssthresh  (max 1 (div cwnd 2))
             cwnd  1
              rto  (clamp-rto (mul rto 2))
       ==
+    ~&  'TIMEOUT'^show
     metrics
   ::  +clamp-rto: apply min and max to an .rto value
   ::
@@ -2362,6 +2403,19 @@
     |=  [a=@ b=@]
     ^-  @
     ?:((lte a b) 0 (sub a b))
+  ::
+  ::
+  ++  show
+    =/  ms  (div ~s1 1.000)
+    ::
+    :*  rto=(div rto ms)
+        rtt=(div rtt ms)
+        rttvar=(div rttvar ms)
+        ssthresh=ssthresh
+        cwnd=cwnd
+        num-live=num-live
+        counter=counter
+    ==
   --
 ::  +make-message-still: construct |message-still message receiver core
 ::
