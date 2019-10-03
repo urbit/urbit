@@ -40,6 +40,7 @@ data New = New
     , nPierPath :: Maybe FilePath -- Derived from ship name if not specified.
     , nArvoDir  :: Maybe FilePath
     , nBootType :: BootType
+    , nLite     :: Bool
     }
   deriving (Show)
 
@@ -165,10 +166,10 @@ new = do
                     <> metavar "PILL"
                     <> help "Path to pill file"
 
-    -- nBootFake <- switch
-    --                  $ short 'F'
-    --                 <> long "fake"
-    --                 <> help "Create a fake ship"
+    nLite <- switch
+               $ short 'l'
+              <> long "lite"
+              <> help "Boots ship in lite mode"
 
     nArvoDir <- option auto
                     $ metavar "PATH"

@@ -150,9 +150,10 @@ toSerfFlags CLI.Opts{..} = catMaybes m
 
 
 tryBootFromPill :: HasLogFunc e
-                => FilePath -> FilePath -> Serf.Flags -> Ship -> LegacyBootEvent
+                => FilePath -> FilePath -> Bool -> Serf.Flags -> Ship
+                -> LegacyBootEvent
                 -> RIO e ()
-tryBootFromPill pillPath shipPath flags ship boot = do
+tryBootFromPill pillPath shipPath lite flags ship boot = do
     rwith bootedPier $ \(serf, log, ss) -> do
         logTrace "Booting"
         logTrace $ displayShow ss
@@ -163,7 +164,7 @@ tryBootFromPill pillPath shipPath flags ship boot = do
   where
     bootedPier = do
         lockFile shipPath
-        Pier.booted pillPath shipPath flags ship boot
+        Pier.booted pillPath shipPath lite flags ship boot
 
 runAcquire :: (MonadUnliftIO m,  MonadIO m)
            => Acquire a -> m a
@@ -284,7 +285,7 @@ testPill pax showPil showSeq = do
   pill <- fromNounErr pillNoun & either (throwIO . uncurry ParseErr) pure
 
   putStrLn "Using pill to generate boot sequence."
-  bootSeq <- generateBootSeq zod pill (Fake $ Ship 0)
+  bootSeq <- generateBootSeq zod pill False (Fake $ Ship 0)
 
   putStrLn "Validate jam/cue and toNoun/fromNoun on pill value"
   reJam <- validateNounVal pill
@@ -339,7 +340,7 @@ newShip CLI.New{..} opts
 
   | CLI.BootFake name <- nBootType =
       let ship = shipFrom name
-      in tryBootFromPill nPillPath (pierPath name) flags ship (Fake ship)
+      in tryBootFromPill nPillPath (pierPath name) nLite flags ship (Fake ship)
 
   | CLI.BootFromKeyfile keyFile <- nBootType = do
       text <- readFileUtf8 keyFile
@@ -359,7 +360,7 @@ newShip CLI.New{..} opts
         Right dawn ->
           let ship = sShip $ dSeed dawn
               path = (pierPath $ nameFromShip ship)
-          in tryBootFromPill nPillPath path flags ship (Dawn dawn)
+          in tryBootFromPill nPillPath path nLite flags ship (Dawn dawn)
 
   where
     shipFrom :: Text -> Ship

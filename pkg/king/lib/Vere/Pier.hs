@@ -48,8 +48,8 @@ setupPierDirectory shipPath = do
 genEntropy :: RIO e Word512
 genEntropy = fromIntegral . view (from atomBytes) <$> io (Ent.getEntropy 64)
 
-generateBootSeq :: Ship -> Pill -> LegacyBootEvent -> RIO e BootSeq
-generateBootSeq ship Pill{..} boot = do
+generateBootSeq :: Ship -> Pill -> Bool -> LegacyBootEvent -> RIO e BootSeq
+generateBootSeq ship Pill{..} lite boot = do
     ent <- genEntropy
     let ovums = preKern ent <> pKernelOvums <> pUserspaceOvums
     pure $ BootSeq ident pBootFormulas ovums
@@ -57,7 +57,7 @@ generateBootSeq ship Pill{..} boot = do
     ident       = LogIdentity ship isFake (fromIntegral $ length pBootFormulas)
     preKern ent = [ EvBlip $ BlipEvArvo $ ArvoEvWhom ()     ship
                   , EvBlip $ BlipEvArvo $ ArvoEvWack ()     ent
-                  , EvBlip $ BlipEvTerm $ TermEvBoot (1,()) False boot
+                  , EvBlip $ BlipEvTerm $ TermEvBoot (1,()) lite boot
                   ]
     isFake = case boot of
       Fake _ -> True
@@ -86,16 +86,16 @@ writeJobs log !jobs = do
 -- Boot a new ship. ------------------------------------------------------------
 
 booted :: HasLogFunc e
-       => FilePath -> FilePath -> Serf.Flags -> Ship -> LegacyBootEvent
+       => FilePath -> FilePath -> Bool -> Serf.Flags -> Ship -> LegacyBootEvent
        -> RAcquire e (Serf e, EventLog, SerfState)
-booted pillPath pierPath flags ship boot = do
+booted pillPath pierPath lite flags ship boot = do
   rio $ logTrace "LOADING PILL"
 
   pill <- io (loadFile pillPath >>= either throwIO pure)
 
   rio $ logTrace "PILL LOADED"
 
-  seq@(BootSeq ident x y) <- rio $ generateBootSeq ship pill boot
+  seq@(BootSeq ident x y) <- rio $ generateBootSeq ship pill lite boot
 
   rio $ logTrace "BootSeq Computed"
 
