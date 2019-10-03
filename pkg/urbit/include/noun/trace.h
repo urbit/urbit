@@ -112,7 +112,7 @@
     /* u3t_damp(): print and clear profile data.
     */
       void
-      u3t_damp(void);
+      u3t_damp(FILE* fil_u);
 
     /* u3t_boff(): turn profile sampling off.
     */

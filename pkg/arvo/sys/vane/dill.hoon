@@ -7,11 +7,11 @@
 ++  gill  (pair ship term)                              ::  general contact
 --                                                      ::
 =>  |%                                                  ::  console protocol
-++  all-axle  ?(axle)                                   ::
 ++  axle                                                ::
-  $:  $0                                                ::
+  $:  $1                                                ::
       hey/(unit duct)                                   ::  default duct
       dug/(map duct axon)                               ::  conversations
+      lit/?                                             ::  boot in lite mode
       $=  hef                                           ::  other weights
       $:  a/(unit mass)                                 ::
           b/(unit mass)                                 ::
@@ -22,6 +22,9 @@
           i/(unit mass)                                 ::
           j/(unit mass)                                 ::
       ==                                                ::
+      $=  veb                                           ::  vane verbosities
+      $~  (~(put by *(map @tas log-level)) %hole %soft) ::  quiet packet crashes
+      (map @tas log-level)                              ::
   ==                                                    ::
 ++  axon                                                ::  dill per duct
   $:  ram/term                                          ::  console program
@@ -30,6 +33,7 @@
       pos/@ud                                           ::  cursor position
       see/(list @c)                                     ::  current line
   ==                                                    ::
++$  log-level  ?(%hush %soft %loud)                     ::  none, line, full
 --  =>                                                  ::
 |%                                                      ::  protocol outward
 ++  mess                                                ::
@@ -164,12 +168,23 @@
       ::
       ++  crud
         |=  {err/@tas tac/(list tank)}
-        =+  ^=  wol  ^-  wall
-            :-  :(weld "%" (trip err) " event failed:")
-            (zing (turn (flop tac) |=(a/tank (~(win re a) [0 wid]))))
+        ::  unknown errors default to %loud
+        ::
+        =/  lev=log-level  (~(gut by veb.all) err %loud)
+        ::  apply log level for this error tag
+        ::
+        =/  =wall
+          ?-  lev
+            %hush  ~
+            %soft  ~["crud: %{(trip err)} event failed"]
+            %loud  :-  "crud: %{(trip err)} event failed"
+                   %-  zing
+                   %+  turn  (flop tac)
+                   |=(a=tank (~(win re a) [0 wid]))
+          ==
         |-  ^+  +>.^$
-        ?~  wol  +>.^$
-        $(wol t.wol, +>.^$ (from %out (tuba i.wol)))
+        ?~  wall  +>.^$
+        $(wall t.wall, +>.^$ (from %out (tuba i.wall)))
       ::
       ++  dump                                          ::  pass down to hey
         |=  git/gift:able
@@ -307,7 +322,7 @@
         =/  myt  (flop (fall tem ~))
         =/  can  (clan:title our)
         =.  tem  ~
-        =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
+        =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] our %home]])
         =.  +>  (sync %home our %base)
         =.  +>  ?:  ?=(?($czar $pawn) can)  +>
                 (sync %base (sein our) %kids)
@@ -316,6 +331,7 @@
                 ::
                 (show %kids):(sync %kids our %base)
         =.  +>  autoload
+        =.  +>  hood-set-boot-apps
         =.  +>  peer
         |-  ^+  +>+
         ?~  myt  +>+
@@ -332,6 +348,7 @@
       ::
       ++  send                                          ::  send action
         |=  bet/dill-belt
+        ^+  +>
         ?^  tem
           +>(tem `[bet u.tem])
         %_    +>
@@ -339,6 +356,16 @@
           :_  moz
           [hen %pass ~ %g %deal [our our] ram %poke [%dill-belt -:!>(bet) bet]]
         ==
+      ::
+      ++  hood-set-boot-apps
+        %_    .
+            moz
+          :_  moz
+          :*  hen  %pass  ~  %g  %deal  [our our]
+              ram  %poke  %drum-set-boot-apps  !>(lit.all)
+          ==
+        ==
+      ::
       ++  peer
         %_    .
             moz
@@ -511,7 +538,8 @@
       ~&  %dill-no-boot
       ~&  p.task
       ~|  invalid-boot-event+hen  !!
-    :_(..^$ [hen %pass / %j u.boot]~)
+    =.  lit.all  lit.task
+    [[hen %pass / %j u.boot]~ ..^$]
   ::  we are subsequently initialized. single-home
   ::
   ?:  ?=(%init -.task)
@@ -535,9 +563,14 @@
     =?  p.task  ?=([%crud %hax-heft ~] p.task)  [%heft ~]
     ::
     $(hen u.hey.all, wrapped-task p.task)
-  ::  a %vega notification on kernel upgrade comes in on an unfamiliar duct
+  ::  %vega and %trim notifications come in on an unfamiliar duct
   ::
-  ?:  ?=(%vega -.task)
+  ?:  ?=(?(%trim %vega) -.task)
+    [~ ..^$]
+  ::  %knob sets a verbosity level for an error tag
+  ::
+  ?:  ?=(%knob -.task)
+    =.  veb.all  (~(put by veb.all) tag.task level.task)
     [~ ..^$]
   ::
   =/  nus  (ax hen)
@@ -552,8 +585,8 @@
   =^  moz  all  abet:(call:u.nus task)
   [moz ..^$]
 ::
-++  load                                                ::  trivial
-  |=  old/all-axle
+++  load                                                ::  import old state
+  |=  old/axle
   ..^$(all old)
 ::
 ++  scry

@@ -143,21 +143,13 @@ u3i_bytes(c3_w        a_w,
 u3_noun
 u3i_mp(mpz_t a_mp)
 {
-  /* Efficiency: unnecessary copy.
-  */
-  {
-    c3_w pyg_w  = mpz_size(a_mp) * ((sizeof(mp_limb_t)) / 4);
-    c3_w *buz_w = alloca(pyg_w * 4);
-    c3_w i_w;
+  c3_w  pyg_w = mpz_size(a_mp) * ((sizeof(mp_limb_t)) / 4);
+  c3_w* buz_w = u3a_slab(4 * pyg_w);
 
-    for ( i_w = 0; i_w < pyg_w; i_w++ ) {
-      buz_w[i_w] = 0;
-    }
-    mpz_export(buz_w, 0, -1, 4, 0, 0, a_mp);
-    mpz_clear(a_mp);
+  mpz_export(buz_w, 0, -1, sizeof(c3_w), 0, 0, a_mp);
+  mpz_clear(a_mp);
 
-    return u3i_words(pyg_w, buz_w);
-  }
+  return u3a_malt(buz_w);
 }
 
 /* u3i_vint():

@@ -62,13 +62,8 @@
     =-  (pairs (turn ~(tap by a) -))
     |*  {k/* v/*}  [(b k) (c v)]
   ::
-  ++  lank                                              :::  tank as string arr
-    |=  a/tank
-    ^-  json
-    a+(turn (wash [0 80] a) tape)
-  ::
   ++  dank                                              :::  tank
-    |=  a/tank
+    |=  a=^tank
     ?:  ?=($leaf -.a)  (frond %leaf (tape p.a))
     ::  TODO: No idea what a plum is, but it was recently added
     ::
@@ -325,7 +320,7 @@
     %-  pairs
     ?-  -.a
       $lin  ~[pat+b+pat.a msg+s+msg.a]
-      $exp  ~[exp+s+exp.a res+a+(turn res.a lank)]
+      $exp  ~[exp+s+exp.a res+a+(turn res.a tank)]
       $ire  ~[top+s+(scot %uv top.a) sep+(spec sep.a)]  ::TODO  @uv as number?
       $fat  ~[tac+(atta tac.a) sep+(spec sep.a)]
       $inv  ~[inv+b+inv.a cir+(circ cir.a)]
@@ -339,7 +334,7 @@
     ?-  -.a
       $name  (pairs nom+s+nom.a tac+(atta tac.a) ~)
       $text  s+(of-wain:format +.a)
-      $tank  a+(turn +.a lank)
+      $tank  a+(turn +.a tank)
     ==
   ::
   :::  ||
@@ -577,7 +572,17 @@
     :+  ~  u.exp
     =+  res=((ot res+(ar dank) ~) a)
     ?^  res  u.res
-    p:(mule |.([(sell (slap !>(..^zuse) (ream u.exp)))]~))  ::TODO  oldz
+    ::  XX revisit
+    ::
+    ::    this double-virtualizes and clams to disable .^
+    ::    the subject of the eval should include [our now eny]
+    ::
+    ;;  (list tank)
+    =<  +>
+    %+  mong
+      :-  mute
+      |.([(sell (slap !>(..^zuse) (ream u.exp)))]~)
+    |=(^ ~)
   ::
   ++  atta                                              :::  attache
     ^-  $-(json (unit attache))

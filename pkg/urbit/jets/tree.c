@@ -450,7 +450,6 @@ static c3_c* _141_pen_loot_ha[] = {
     "9fe555b3f9ad666f04194037437d71ee98f6b884f7aacc46a11ad27407cb7e8e",
     0
   };
-  static u3j_harm _141_pen__ut_nest_a[] = {{".2", u3wfu_nest}, {}};
   static c3_c* _141_pen__ut_nest_ha[] = {0};
       static u3j_harm _141_pen__ut_nest_dext_a[] = {{".2", u3wfu_nest_dext}, {}};
       static c3_c* _141_pen__ut_nest_dext_ha[] = {0};
@@ -489,7 +488,7 @@ static u3j_core _141_pen__ut_d[] =
     { "fuse", 7, _141_pen__ut_fuse_a, 0, _141_pen__ut_fuse_ha },
     { "mint", 7, _141_pen__ut_mint_a, 0, _141_pen__ut_mint_ha },
     { "mull", 7, _141_pen__ut_mull_a, 0, _141_pen__ut_mull_ha },
-    { "nest", 7, _141_pen__ut_nest_a, _141_pen__ut_nest_d, _141_pen__ut_nest_ha },
+    { "nest", 7, 0, _141_pen__ut_nest_d, _141_pen__ut_nest_ha },
     { "peek", 7, _141_pen__ut_peek_a, 0, _141_pen__ut_peek_ha },
     { "play", 7, _141_pen__ut_play_a, 0, _141_pen__ut_play_ha },
     { "rest", 7, _141_pen__ut_rest_a, 0, _141_pen__ut_rest_ha },

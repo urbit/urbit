@@ -61,4 +61,3 @@ export function dateToDa(d, mil) {
 export function deSig(ship) {
   return ship.replace('~', '');
 }
-

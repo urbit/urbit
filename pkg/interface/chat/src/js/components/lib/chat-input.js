@@ -20,8 +20,6 @@ export class ChatInput extends Component {
       let wen = Date.now();
       let aut = window.ship;
 
-      let config = props.configs[props.station];
-
       aud = [props.station];
       sep = {
         lin: {
@@ -33,8 +31,9 @@ export class ChatInput extends Component {
       let uid;
       let message;
 
-      for (var i = 0; i < 10; i++) {
+      for (var i = 0; i < 40; i++) {
         uid = uuid();
+        wen = Date.now();
         message = {
           uid,
           aut,
@@ -263,6 +262,8 @@ export class ChatInput extends Component {
       )
     };
 
+    props.api.addPendingMessage(message);
+
     props.api.hall(
       {
         convey: [message]
@@ -278,11 +279,15 @@ export class ChatInput extends Component {
   readOnlyRender() {
     return (
       <div className="mt2 pa3 cf flex black bt o-50">
-        <div className="fl" style={{ flexBasis: 35, height: 40 }}>
+        <div className="fl" style={{
+          marginTop: 4,
+          flexBasis: 32,
+          height: 36
+        }}>
           <Sigil ship={window.ship} size={32} />
         </div>
         <div className="fr h-100 flex pa2" style={{ flexGrow: 1, height: 40 }}>
-          <p>This chat is read only and you cannot post.</p>
+          <p style={{paddingTop: 3}}>This chat is read only and you cannot post.</p>
         </div>
       </div>
     );
@@ -310,7 +315,7 @@ export class ChatInput extends Component {
             className={'ml2 mt2 mr2 bn ' +
               this.getSpeechStyle(state.messageType, state.clipboard)
             }
-            style={{ flexGrow: 1, height: 40, resize: 'none' }}
+            style={{ flexGrow: 1, height: 40, paddingTop: 3, resize: 'none' }}
             ref={this.textareaRef}
             placeholder={props.placeholder}
             value={state.message}

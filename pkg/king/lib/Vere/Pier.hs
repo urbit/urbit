@@ -55,10 +55,11 @@ generateBootSeq ship Pill{..} = do
     pure $ BootSeq ident pBootFormulas ovums
   where
     ident       = LogIdentity ship True (fromIntegral $ length pBootFormulas)
-    preKern ent = [ EvBlip $ BlipEvArvo $ ArvoEvWhom ()     ship
-                  , EvBlip $ BlipEvArvo $ ArvoEvWack ()     ent
-                  , EvBlip $ BlipEvTerm $ TermEvBoot (1,()) (Fake (who ident))
-                  ]
+    preKern ent =
+      [ EvBlip $ BlipEvArvo $ ArvoEvWhom ()     ship
+      , EvBlip $ BlipEvArvo $ ArvoEvWack ()     ent
+      , EvBlip $ BlipEvTerm $ TermEvBoot (1,()) False (Fake (who ident))
+      ]
 
 
 -- Write a batch of jobs into the event log ------------------------------------

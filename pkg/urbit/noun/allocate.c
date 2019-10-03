@@ -10,10 +10,9 @@ static void
 _box_count(c3_ws siz_ws)
 {
   u3R->all.fre_w += siz_ws;
+
   {
-    c3_w end_w = _(u3a_is_north(u3R))
-                  ? (u3R->hat_p - u3R->rut_p)
-                  : (u3R->rut_p - u3R->hat_p);
+    c3_w end_w = u3a_heap(u3R);
     c3_w all_w = (end_w - u3R->all.fre_w);
 
     if ( all_w > u3R->all.max_w ) {
@@ -56,7 +55,7 @@ static u3a_box*
 _box_make(void* box_v, c3_w siz_w, c3_w use_w)
 {
   u3a_box* box_u = box_v;
-  c3_w*      box_w = box_v;
+  c3_w*    box_w = box_v;
 
   c3_assert(siz_w >= u3a_minimum);
 
@@ -263,6 +262,8 @@ _ca_box_make_hat(c3_w len_w, c3_w ald_w, c3_w alp_w, c3_w use_w)
     pad_w = _me_align_pad(all_p, ald_w, alp_w);
     siz_w = (len_w + pad_w);
 
+    //  hand-inlined: siz_w >= u3a_open(u3R)
+    //
     if ( (siz_w >= (u3R->cap_p - u3R->hat_p)) ) {
       return 0;
     }
@@ -274,6 +275,8 @@ _ca_box_make_hat(c3_w len_w, c3_w ald_w, c3_w alp_w, c3_w use_w)
     siz_w = (len_w + pad_w);
     all_p -= pad_w;
 
+    //  hand-inlined: siz_w >= u3a_open(u3R)
+    //
     if ( siz_w >= (u3R->hat_p - u3R->cap_p) ) {
       return 0;
     }
@@ -894,7 +897,6 @@ u3a_free2(void* tox_v, size_t siz_i)
   return u3a_free(tox_v);
 }
 
-#if 1
 /* _me_wash_north(): clean up mug slots after copy.
 */
 static void _me_wash_north(u3_noun dog);
@@ -980,16 +982,13 @@ u3a_wash(u3_noun som)
     }
   }
 }
-#endif
-
-extern u3_noun BDA, BDB;
 
 /* _me_gain_use(): increment use count.
 */
 static void
 _me_gain_use(u3_noun dog)
 {
-  c3_w* dog_w      = u3a_to_ptr(dog);
+  c3_w*    dog_w = u3a_to_ptr(dog);
   u3a_box* box_u = u3a_botox(dog_w);
 
   if ( 0x7fffffff == box_u->use_w ) {
@@ -1002,44 +1001,10 @@ _me_gain_use(u3_noun dog)
     box_u->use_w += 1;
 
 #ifdef U3_MEMORY_DEBUG
+    //  enable to (maybe) help track down leaks
+    //
     // if ( u3_Code && !box_u->cod_w ) { box_u->cod_w = u3_Code; }
-
-#if 0
-    if ( u3r_mug(dog) == 0x15d47649 ) {
-      static c3_w bug_w = 0;
-
-      u3l_log("bad %x %d %d\r\n", dog, bug_w, box_u->use_w);
-      if ( bug_w == 0 ) { abort(); }
-      bug_w++;
-    }
 #endif
-#if 0
-    {
-      static c3_w bug_w = 0;
-
-      if ( BDA == dog ) {
-        u3l_log("BDA %d %d\r\n", bug_w, box_u->use_w);
-        // if ( bug_w == 0 ) { abort(); }
-        bug_w++;
-      }
-    }
-#endif
-
-#if 0
-    {
-      static c3_w bug_w = 0;
-
-      if ( FOO && u3a_botox(u3a_to_ptr(dog)) == (void *)0x200dfe3e4 ) {
-        u3a_box* box_u = u3a_botox(u3a_to_ptr(dog));
-
-        u3l_log("GAIN %d %d\r\n", bug_w, box_u->use_w);
-        if ( bug_w == 8 ) { abort(); }
-        bug_w++;
-      }
-    }
-#endif
-#endif
-
   }
 }
 
@@ -1485,10 +1450,107 @@ u3a_use(u3_noun som)
     return 1;
   }
   else {
-    c3_w* dog_w      = u3a_to_ptr(som);
+    c3_w*    dog_w = u3a_to_ptr(som);
     u3a_box* box_u = u3a_botox(dog_w);
 
     return box_u->use_w;
+  }
+}
+
+/* _ca_wed_who(): unify [a] and [b] on [rod_u], keeping the senior
+**
+** NB: this leaks a reference when it unifies in a senior road
+*/
+static c3_o
+_ca_wed_who(u3a_road* rod_u, u3_noun* a, u3_noun* b)
+{
+  c3_t asr_t = ( c3y == u3a_is_senior(rod_u, *a) );
+  c3_t bsr_t = ( c3y == u3a_is_senior(rod_u, *b) );
+  c3_t nor_t = ( c3y == u3a_is_north(rod_u) );
+  c3_t own_t = ( rod_u == u3R );
+
+  //  both are on [rod_u]; gain a reference to whichever we keep
+  //
+  if ( !asr_t && !bsr_t ) {
+    //  keep [a]; it's deeper in the heap
+    //
+    //    (N && >) || (S && <)
+    //
+    if ( (*a > *b) == nor_t ) {
+      _me_gain_use(*a);
+      if ( own_t ) { u3z(*b); }
+      *b = *a;
+    }
+    //  keep [b]; it's deeper in the heap
+    //
+    else {
+      _me_gain_use(*b);
+      if ( own_t ) { u3z(*a); }
+      *a = *b;
+    }
+
+    return c3y;
+  }
+  //  keep [a]; it's senior
+  //
+  else if ( asr_t && !bsr_t ) {
+    if ( own_t ) { u3z(*b); }
+    *b = *a;
+    return c3y;
+  }
+  //  keep [b]; it's senior
+  //
+  else if ( !asr_t && bsr_t ) {
+    if ( own_t ) { u3z(*a); }
+    *a = *b;
+    return c3y;
+  }
+
+  //  both [a] and [b] are senior; we can't unify on [rod_u]
+  //
+  return c3n;
+}
+
+/* u3a_wed(): unify noun references.
+*/
+void
+u3a_wed(u3_noun* a, u3_noun* b)
+{
+  if ( *a != *b ) {
+    u3_road* rod_u = u3R;
+
+    //  while not at home, attempt to unify
+    //
+    //    we try to unify on our road, and retry on senior roads
+    //    until we succeed or reach the home road.
+    //
+    //    we can't perform this kind of butchery on the home road,
+    //    where asynchronous things can allocate.
+    //    (XX anything besides u3t_samp?)
+    //
+    //    when unifying on a higher road, we can't free nouns,
+    //    because we can't track junior nouns that point into
+    //    that road.
+    //
+    //    this is just an implementation issue -- we could set use
+    //    counts to 0 without actually freeing.  but the allocator
+    //    would have to be actually designed for this.
+    //    (alternately, we could keep a deferred free-list)
+    //
+    //    not freeing may generate spurious leaks, so we disable
+    //    senior unification when debugging memory.  this will
+    //    cause a very slow boot process as the compiler compiles
+    //    itself, constantly running into duplicates.
+    //
+    while ( (rod_u != &u3H->rod_u) &&
+            (c3n == _ca_wed_who(rod_u, a, b)) )
+    {
+#ifdef U3_MEMORY_DEBUG
+      break;
+#else
+      rod_u = u3to(u3_road, rod_u->par_p);
+#endif
+    }
   }
 }
 
@@ -1778,37 +1840,41 @@ _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_ws use_ws)
 
 #endif
 
+/* u3a_idle(): measure free-lists in [rod_u]
+*/
+c3_w
+u3a_idle(u3a_road* rod_u)
+{
+  u3a_fbox* fox_u;
+  c3_w i_w, fre_w = 0;
+
+  for ( i_w = 0; i_w < u3a_fbox_no; i_w++ ) {
+    u3p(u3a_fbox) fre_p = rod_u->all.fre_p[i_w];
+
+    while ( fre_p ) {
+      u3a_fbox* fox_u = u3to(u3a_fbox, fre_p);
+
+      fre_w += fox_u->box_u.siz_w;
+      fre_p  = fox_u->nex_p;
+    }
+  }
+
+  return fre_w;
+}
+
 /* u3a_sweep(): sweep a fully marked road.
 */
 c3_w
 u3a_sweep(void)
 {
   c3_w neg_w, pos_w, leq_w, weq_w;
-#ifdef U3_MEMORY_DEBUG
-  c3_w tot_w, caf_w;
-#endif
 
   /* Measure allocated memory by counting the free list.
   */
   {
-    c3_w end_w;
-    c3_w fre_w = 0;
-    c3_w i_w;
+    c3_w end_w = u3a_heap(u3R);
+    c3_w fre_w = u3a_idle(u3R);
 
-    end_w = _(u3a_is_north(u3R))
-                ? (u3R->hat_p - u3R->rut_p)
-                : (u3R->rut_p - u3R->hat_p);
-
-    for ( i_w = 0; i_w < u3a_fbox_no; i_w++ ) {
-      u3p(u3a_fbox) fre_p = u3R->all.fre_p[i_w];
-
-      while ( fre_p ) {
-        u3a_fbox* fre_u = u3to(u3a_fbox, fre_p);
-
-        fre_w += fre_u->box_u.siz_w;
-        fre_p = fre_u->nex_p;
-      }
-    }
 #ifdef U3_CPU_DEBUG
     if ( fre_w != u3R->all.fre_w ) {
       u3l_log("fre discrepancy (%x): %x, %x, %x\r\n", u3R->par_p,
@@ -1888,35 +1954,33 @@ u3a_sweep(void)
   }
 
 #ifdef U3_MEMORY_DEBUG
-  tot_w = _(u3a_is_north(u3R))
-                ? u3R->mat_p - u3R->rut_p
-                : u3R->rut_p - u3R->mat_p;
-  caf_w = _(u3a_is_north(u3R))
-                ? u3R->mat_p - u3R->cap_p
-                : u3R->cap_p - u3R->mat_p;
+  {
+    c3_w tot_w = u3a_full(u3R);
+    c3_w caf_w = u3a_temp(u3R);
 
 #ifdef U3_CPU_DEBUG
-  if ( (0 != u3R->par_p) && (u3R->all.max_w > 1000000) ) {
+    if ( (0 != u3R->par_p) && (u3R->all.max_w > 1000000) ) {
+      u3a_print_memory(stderr, "available", (tot_w - pos_w));
+      u3a_print_memory(stderr, "allocated", pos_w);
+      u3a_print_memory(stderr, "volatile", caf_w);
+
+      u3a_print_memory(stderr, "maximum", u3R->all.max_w);
+    }
+#endif
+
+#if 0
     u3a_print_memory(stderr, "available", (tot_w - pos_w));
     u3a_print_memory(stderr, "allocated", pos_w);
     u3a_print_memory(stderr, "volatile", caf_w);
-
-    u3a_print_memory(stderr, "maximum", u3R->all.max_w);
+#endif
   }
-#else
-#if 0
-  u3a_print_memory(stderr, "available", (tot_w - pos_w));
-  u3a_print_memory(stderr, "allocated", pos_w);
-  u3a_print_memory(stderr, "volatile", caf_w);
 #endif
-#endif
-#endif
+
   u3a_print_memory(stderr, "leaked", leq_w);
   u3a_print_memory(stderr, "weaked", weq_w);
 
-  c3_assert((pos_w + leq_w + weq_w) == neg_w);
-
-  if ( 0 != leq_w || (0 != weq_w) ) { c3_assert(0); }
+  c3_assert( (pos_w + leq_w + weq_w) == neg_w );
+  c3_assert( (0 == leq_w) && (0 == weq_w) );
 
   return neg_w;
 }
@@ -1957,9 +2021,9 @@ u3a_slaq(c3_g met_g, c3_w len_w)
 u3_noun
 u3a_malt(c3_w* sal_w)
 {
-  c3_w*       nov_w = (sal_w - c3_wiseof(u3a_atom));
+  c3_w*     nov_w = (sal_w - c3_wiseof(u3a_atom));
   u3a_atom* nov_u = (void *)nov_w;
-  c3_w        len_w;
+  c3_w      len_w;
 
   for ( len_w = nov_u->len_w; len_w; len_w-- ) {
     if ( 0 != nov_u->buf_w[len_w - 1] ) {
@@ -2029,7 +2093,7 @@ c3_d
 u3a_detect(u3_noun fum, u3_noun som)
 {
   u3p(u3h_root) har_p = u3h_new();
-  c3_o            ret_o;
+  c3_o          ret_o;
 
   ret_o = _ca_detect(har_p, fum, som, 1);
   u3h_free(har_p);
@@ -2043,7 +2107,7 @@ u3a_detect(u3_noun fum, u3_noun som)
 u3_noun
 u3a_mint(c3_w* sal_w, c3_w len_w)
 {
-  c3_w*       nov_w = (sal_w - c3_wiseof(u3a_atom));
+  c3_w*     nov_w = (sal_w - c3_wiseof(u3a_atom));
   u3a_atom* nov_u = (void*)nov_w;
 
   /* See if we can free the slab entirely.

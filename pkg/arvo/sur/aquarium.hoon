@@ -19,11 +19,10 @@
   ==
 ::
 +$  unix-event  unix-event:pill-lib
-+$  dawn-event  dawn-event:pill-lib
 +$  pill        pill:pill-lib
 ::
 +$  aqua-event
-  $%  [%init-ship who=ship keys=(unit dawn-event)]
+  $%  [%init-ship who=ship keys=(unit dawn-event:able:jael)]
       [%pause-events who=ship]
       [%snap-ships lab=term hers=(list ship)]
       [%restore-snap lab=term]

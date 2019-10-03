@@ -6,6 +6,7 @@ var postcss = require('gulp-postcss')
 var sucrase = require('@sucrase/gulp-plugin');
 var minify = require('gulp-minify');
 var rename = require('gulp-rename');
+var del = require('del');
 
 var resolve = require('rollup-plugin-node-resolve');
 var commonjs = require('rollup-plugin-commonjs');
@@ -80,6 +81,10 @@ gulp.task('rename-index-min', function() {
     .pipe(gulp.dest('../../arvo/app/launch/js/'));
 });
 
+gulp.task('clean-min', function() {
+  return del('../../arvo/app/launch/js/index-min.js', {force: true})
+});
+
 gulp.task('urbit-copy', function () {
   let ret = gulp.src('../../arvo/**/*');
 
@@ -110,6 +115,7 @@ gulp.task('bundle-prod',
       'js-bundle-prod'
     ),
     'rename-index-min',
+    'clean-min',
     'urbit-copy'
   )
 );

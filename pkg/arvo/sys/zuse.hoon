@@ -203,6 +203,9 @@
       ::  boot completed (XX legacy)
       ::
       [%init p=ship]
+      ::  trim state (in response to memory pressure)
+      ::
+      [%trim p=@ud]
       ::  kernel upgraded
       ::
       [%vega ~]
@@ -390,6 +393,7 @@
           $>(%init vane-task)                           ::  report install
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
+          $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           {$wake ~}                                     ::  timer activate
           $>(%wegh vane-task)                           ::  report memory
@@ -571,6 +575,7 @@
           $>(%crud vane-task)                           ::  error with trace
           [%rest p=@da]                                 ::  cancel alarm
           [%drip p=vase]                                ::  give in next event
+          $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           [%wait p=@da]                                 ::  set alarm
           [%wake ~]                                     ::  timer activate
@@ -623,6 +628,7 @@
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm des/desk pax/path rit/rite}            ::  change permissions
+          $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           {$warp wer/ship rif/riff}                     ::  internal file req
           {$werp who/ship wer/ship rif/riff}            ::  external file req
@@ -775,7 +781,7 @@
       $~  [%vega ~]                                     ::
       $%  {$belt p/belt}                                ::  terminal input
           {$blew p/blew}                                ::  terminal config
-          {$boot p/*}                                   ::  weird %dill boot
+          {$boot lit/? p/*}                             ::  weird %dill boot
           $>(%crud vane-task)                           ::  error with trace
           {$flog p/flog}                                ::  wrapped error
           {$flow p/@tas q/(list gill:gall)}             ::  terminal config
@@ -788,8 +794,10 @@
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
+          $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           {$verb ~}                                     ::  verbose mode
+          [%knob tag=term level=?(%hush %soft %loud)]   ::  error verbosity
       ==                                                ::
     --  ::able
   ::
@@ -891,6 +899,9 @@
           ::  new unix process
           ::
           $>(%born vane-task)
+          ::  trim state (in response to memory pressure)
+          ::
+          $>(%trim vane-task)
           ::  report upgrade
           ::
           $>(%vega vane-task)
@@ -1171,6 +1182,9 @@
           ::  %kill: stop a build; send on same duct as original %build request
           ::
           [%kill ~]
+          ::  trim state (in response to memory pressure)
+          ::
+          $>(%trim vane-task)
           ::  %vega: report kernel upgrade
           ::
           $>(%vega vane-task)
@@ -1857,14 +1871,15 @@
       $%  {$mass p/mass}                                ::  memory usage
           {$onto p/(each suss tang)}                    ::  about agent
           {$rend p/path q/*}                            ::  network request
-          {$unto p/cuft}                                ::
+          {$unto p/internal-gift}                       ::
           {$mack p/(unit tang)}                         ::  message ack
       ==                                                ::
     ++  task                                            ::  incoming request
       $~  [%vega ~]                                     ::
-      $%  {$conf p/dock q/culm}                         ::  configure app
+      $%  {$conf p/dock q/dock}                         ::  configure app
           $>(%init vane-task)                           ::  set owner
-          {$deal p/sock q/cush}                         ::  full transmission
+          {$deal p/sock q/internal-task}                ::  full transmission
+          $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           $>(%west vane-task)                           ::  network request
           [%wash ~]                                     ::  clear caches
@@ -1889,7 +1904,7 @@
                   now/@da                               ::  current time
                   byk/beak                              ::  load source
           ==  ==                                        ::
-  ++  club                                              ::  agent action
+  ++  agent-action                                      ::  agent action
     $%  {$peel p/mark q/path}                           ::  translated peer
         {$peer p/path}                                  ::  subscribe
         {$poke p/cage}                                  ::  apply
@@ -1899,20 +1914,14 @@
         {$pump ~}                                      ::  pump yes+no
         {$peer-not p/tang}                              ::  poison pill peer
     ==                                                  ::
-  ++  cuft                                              ::  internal gift
+  ++  internal-gift                                     ::
     $%  {$coup p/(unit tang)}                           ::  poke result
         {$diff p/cage}                                  ::  subscription output
         {$quit ~}                                      ::  close subscription
         {$reap p/(unit tang)}                           ::  peer result
         [%http-response =http-event:http]              ::  serve http result
     ==                                                  ::
-  ++  culm                                              ::  config action
-    $%  {$load p/scup}                                  ::  load+reload
-    ::  {$kick ~}                                      ::  restart everything
-    ::  {$stop ~}                                      ::  toggle suspend
-    ::  {$wipe ~}                                      ::  destroy all state
-    ==                                                  ::
-  ++  cush  (pair term club)                            ::  internal task
+  ++  internal-task  (pair term agent-action)           ::  internal task
   ++  dude  term                                        ::  server identity
   ++  gill  (pair ship term)                            ::  general contact
   ++  scar                                              ::  opaque duct
@@ -1920,7 +1929,6 @@
         q/(map duct bone)                               ::  by duct
         r/(map bone duct)                               ::  by bone
     ==                                                  ::
-  ++  scup  (pair ship desk)                            ::  autoupdate
   ++  suss  (trel dude @tas @da)                        ::  config report
   ++  well  (pair desk term)                            ::
   --  ::gall
@@ -1958,6 +1966,9 @@
           ::  system started up; reset open connections
           ::
           $>(%born vane-task)
+          ::  trim state (in response to memory pressure)
+          ::
+          $>(%trim vane-task)
           ::  report upgrade
           ::
           $>(%vega vane-task)
@@ -2067,14 +2078,7 @@
     ::
     +=  task                                            ::  in request ->$
       $~  [%vega ~]                                     ::
-      $%  $:  %dawn                                     ::  boot from keys
-              =seed:able:jael                           ::    identity params
-              spon=[=ship point:azimuth-types]          ::    sponsor
-              czar=(map ship [=rift =life =pass])       ::    galaxy table
-              turf=(list turf)                          ::    domains
-              bloq=@ud                                  ::    block number
-              node=(unit purl:eyre)                     ::    gateway url
-          ==                                            ::
+      $%  [%dawn dawn-event]                            ::  boot from keys
           [%fake =ship]                                 ::  fake boot
           [%listen whos=(set ship) =source]             ::  set ethereum source
           ::TODO  %next for generating/putting new private key
@@ -2084,11 +2088,21 @@
           [%private-keys ~]                             ::  sub to privates
           [%public-keys ships=(set ship)]               ::  sub to publics
           [%rekey =life =ring]                          ::  update private keys
+          $>(%trim vane-task)                           ::  trim state
           [%turf ~]                                     ::  view domains
           $>(%vega vane-task)                           ::  report upgrade
           $>(%wegh vane-task)                           ::  memory usage request
           $>(%west vane-task)                           ::  remote request
       ==                                                ::
+    ::
+    +$  dawn-event
+      $:  =seed
+          spon=(list [=ship point:azimuth-types])
+          czar=(map ship [=rift =life =pass])
+          turf=(list turf)
+          bloq=@ud
+          node=(unit purl:eyre)
+      ==
     ::
     ++  block
       =<  block
@@ -5408,15 +5422,7 @@
   ::                                                    ::  ++of-wain:format
   ++  of-wain                                           ::  line list to atom
     |=  tez/(list @t)
-    =|  {our/@ i/@ud}
-    |-  ^-  @
-    ?~  tez
-      our
-    ?:  =(%$ i.tez)
-      $(i +(i), tez t.tez, our (cat 3 our 10))
-    ?:  =(0 i)
-      $(i +(i), tez t.tez, our i.tez)
-    $(i +(i), tez t.tez, our (cat 3 (cat 3 our 10) i.tez))
+    (rap 3 (join '\0a' tez))
   ::                                                    ::  ++of-wall:format
   ++  of-wall                                           ::  line list to tape
     |=  a/wall  ^-  tape
@@ -5482,6 +5488,16 @@
       |=  a/^time
       =-  (numb (div (mul - 1.000) ~s1))
       (add (div ~s1 2.000) (sub a ~1970.1.1))
+    ::                                                  ::  ++path:enjs:format
+    ++  path                                            ::  string from path
+      |=  a=^path
+      ^-  json
+      [%s (spat a)]
+    ::                                                  ::  ++tank:enjs:format
+    ++  tank                                            ::  tank as string arr
+      |=  a=^tank
+      ^-  json
+      [%a (turn (wash [0 80] a) tape)]
     --  ::enjs
   ::                                                    ::  ++dejs:format
   ++  dejs                                              ::  json reparser
@@ -5495,6 +5511,10 @@
       |=  jon/json  ^-  (list _(wit *json))
       ?>  ?=({$a *} jon)
       (turn p.jon wit)
+    ::                                                  ::  ++as:dejs:format
+    ++  as                                              ::  array as set
+      |*  a=fist
+      (cu ~(gas in *(set _$:a)) (ar a))
     ::                                                  ::  ++at:dejs:format
     ++  at                                              ::  array as tuple
       |*  wil/(pole fist)
@@ -5619,6 +5639,9 @@
       |*  {a/cord b/*}
       =>  .(+< [a b]=+<)
       [(rash a fel) b]
+    ::                                                  ::  ++pa:dejs:format
+    ++  pa                                              ::  string as path
+      (su ;~(pfix net (more net urs:ab)))
     ::                                                  ::  ++pe:dejs:format
     ++  pe                                              ::  prefix
       |*  {pre/* wit/fist}
@@ -5626,6 +5649,11 @@
     ::                                                  ::  ++sa:dejs:format
     ++  sa                                              ::  string as tape
       |=(jon/json ?>(?=({$s *} jon) (trip p.jon)))
+    ::                                                  ::  ++se:dejs:format
+    ++  se                                              ::  string as aura
+      |=  aur=@tas
+      |=  jon=json
+      ?>(?=([%s *] jon) (slav aur p.jon))
     ::                                                  ::  ++so:dejs:format
     ++  so                                              ::  string as cord
       |=(jon/json ?>(?=({$s *} jon) p.jon))
@@ -6339,6 +6367,14 @@
           (easy ~)
         ==
       ==
+    ::                                                  ::  ++cdat:de-xml:html
+    ++  cdat                                            ::  CDATA section
+      %+  cook
+        |=(a/tape ^-(mars ;/(a)))
+      %+  ifix
+        [(jest '<![CDATA[') (jest ']]>')]
+      %-  star
+      ;~(less (jest ']]>') next)
     ::                                                  ::  ++chrd:de-xml:html
     ++  chrd                                            ::  character data
       %+  cook  |=(a/tape ^-(mars ;/(a)))
@@ -6375,7 +6411,7 @@
       (ifix [gal ban] ;~(plug name attr))
     ::                                                  ::  ++many:de-xml:html
     ++  many                                            ::  contents
-      (more (star comt) ;~(pose apex chrd))
+      ;~(pfix (star comt) (star ;~(sfix ;~(pose apex chrd cdat) (star comt))))
     ::                                                  ::  ++name:de-xml:html
     ++  name                                            ::  tag name
       =+  ^=  chx
@@ -8970,7 +9006,7 @@
   ::
   ++  veri
     |=  [=seed:able:jael =point:azimuth =live]
-    ^-  (each sponsor=ship error=term)
+    ^-  (unit error=term)
     =/  rac  (clan:title who.seed)
     =/  cub  (nol:nu:crub:crypto key.seed)
     ?-  rac
@@ -8978,39 +9014,35 @@
       ::  a comet address is the fingerprint of the keypair
       ::
       ?.  =(who.seed `@`fig:ex:cub)
-        [%| %key-mismatch]
+        `%key-mismatch
       ::  a comet can never be breached
       ::
       ?^  live
-        [%| %already-booted]
+        `%already-booted
       ::  a comet can never be re-keyed
       ::
       ?.  ?=(%1 lyf.seed)
-        [%| %invalid-life]
-      [%& (^sein:title who.seed)]
+        `%invalid-life
+      ~
     ::
         %earl
-      ::  the parent must be launched
-      ::
-      ?~  net.point
-        [%| %parent-not-keyed]
-      [%& (^sein:title who.seed)]
+      ~
     ::
         *
       ::  on-chain ships must be launched
       ::
       ?~  net.point
-        [%| %not-keyed]
+        `%not-keyed
       =*  net  u.net.point
       ::  boot keys must match the contract
       ::
       ?.  =(pub:ex:cub pass.net)
         ~&  [%key-mismatch pub:ex:cub pass.net]
-        [%| %key-mismatch]
+        `%key-mismatch
       ::  life must match the contract
       ::
       ?.  =(lyf.seed life.net)
-        [%| %life-mismatch]
+        `%life-mismatch
       ::  the boot life must be greater than and discontinuous with
       ::  the last seen life (per the sponsor)
       ::
@@ -9018,12 +9050,28 @@
               ?|  ?=(%| breach.u.live)
                   (lte life.net life.u.live)
           ==  ==
-        [%| %already-booted]
+        `%already-booted
       ::  produce the sponsor for vere
       ::
       ~?  !has.sponsor.net
         [%no-sponsorship-guarantees-from who.sponsor.net]
-      [%& who.sponsor.net]
+      ~
+    ==
+  ::  +sponsor:dawn: retreive sponsor from point
+  ::
+  ++  sponsor
+    |=  [who=ship =point:azimuth]
+    ^-  (each ship error=term)
+    ?-    (clan:title who)
+        %pawn  [%& (^sein:title who)]
+        %earl  [%& (^sein:title who)]
+        %czar  [%& (^sein:title who)]
+        *
+      ?~  net.point
+        [%| %not-booted]
+      ?.  has.sponsor.u.net.point
+        [%| %no-sponsor]
+      [%& who.sponsor.u.net.point]
     ==
   --
 --  ::

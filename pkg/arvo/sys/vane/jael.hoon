@@ -54,6 +54,7 @@
       $=  zim                                           ::  public
         $:  yen=(jug duct ship)                         ::  trackers
             ney=(jug ship duct)                         ::  reverse trackers
+            nel=(set duct)                              ::  trackers of all
             dns=dnses                                   ::  on-chain dns state
             pos=(map ship point)                        ::  on-chain ship state
         ==                                              ::
@@ -254,7 +255,8 @@
         =/  cub  (nol:nu:crub:crypto key.seed.tac)
         %+  ~(put by pos.zim.pki)
           our
-        [1 lyf.seed.tac (my [lyf.seed.tac [1 pub:ex:cub]] ~) `ship.spon.tac]
+        =/  spon-ship  ?~(spon.tac ~ `ship.i.spon.tac)
+        [1 lyf.seed.tac (my [lyf.seed.tac [1 pub:ex:cub]] ~) spon-ship]
       ::  our initial private key
       ::
       =.  lyf.own.pki  lyf.seed.tac
@@ -266,15 +268,18 @@
       =.  tuf.own.pki  turf.tac
       ::  our initial galaxy table as a +map from +life to +public
       ::
-      =/  spon-point=point
-        ~|  [%sponsor-point point]
-        ?>  ?=(^ net.spon.tac)
-        :*  continuity-number.u.net.spon.tac
-            life.u.net.spon.tac
-            (malt [life.u.net.spon.tac 1 pass.u.net.spon.tac] ~)
-            ?.  has.sponsor.u.net.spon.tac
+      =/  spon-points=(list [ship point])
+        %+  turn  spon.tac
+        |=  [=ship az-point=point:azimuth]
+        ~|  [%sponsor-point az-point]
+        ?>  ?=(^ net.az-point)
+        :*  ship
+            continuity-number.u.net.az-point
+            life.u.net.az-point
+            (malt [life.u.net.az-point 1 pass.u.net.az-point] ~)
+            ?.  has.sponsor.u.net.az-point
               ~
-            `who.sponsor.u.net.spon.tac
+            `who.sponsor.u.net.az-point
         ==
       =/  points=(map =ship =point)
         %-  ~(run by czar.tac)
@@ -282,7 +287,7 @@
         ^-  point
         [a-rift a-life (malt [a-life 1 a-pass] ~) ~]
       =.  points
-        (~(put by points) ship.spon.tac spon-point)
+        (~(gas by points) spon-points)
       =.  +>.$
         %-  curd  =<  abet
         (public-keys:~(feel su hen our pki etn) %full points)
@@ -297,13 +302,16 @@
           (sources:~(feel su hen our pki etn) ~ [%| %azimuth-tracker])
         ::
             *
+          =/  spon-ship
+            ?>  ?=(^ spon.tac)
+            ship.i.spon.tac
           =.  +>.$
             %-  curd  =<  abet
             %+  sources:~(feel su hen our pki etn)
-              (silt ship.spon.tac ~)
+              (silt spon-ship ~)
             [%| %azimuth-tracker]
           %-  curd  =<  abet
-          (sources:~(feel su hen our pki etn) ~ [%& ship.spon.tac])
+          (sources:~(feel su hen our pki etn) ~ [%& spon-ship])
         ==
       ::
       =.  moz
@@ -392,6 +400,8 @@
         ?~  ships
           yen.zim.pki
         (~(del ju $(ships t.ships)) hen i.ships)
+      =?  nel.zim.pki  ?=(~ whos.tac)
+        (~(del in nel.zim.pki) hen)
       ?^  whos.tac
         +>.$
       %_  +>.$
@@ -446,6 +456,11 @@
     ::    [%vega ~]
     ::
         %vega
+      +>.$::
+    ::  in response to memory pressure
+    ::    [%trim p=@ud]
+    ::
+        %trim
       +>.$
     ::
     ::  watch private keys
@@ -671,6 +686,16 @@
       this-su
     (public-keys:feel %diff a-ship u.a-diff)
   ::
+  ++  subscribers-on-ship
+    |=  =ship
+    ^-  (set duct)
+    =/  specific-subs  (~(get ju ney.zim) ship)
+    =/  general-subs=(set duct)
+      ?:  ?=(?(%czar %king %duke) (clan:title ship))
+        nel.zim
+      ~
+    (~(uni in specific-subs) general-subs)
+  ::
   ++  feed
     |_  ::  hen: subscription source
         ::
@@ -717,6 +742,8 @@
         %+  turn  ~(tap in whos)
         |=  who=ship
         [hen who]
+      =?  nel.zim  ?=(~ whos)
+        (~(put in nel.zim) hen)
       ::  Give initial result
       ::
       =/  =public-keys-result
@@ -782,7 +809,7 @@
         ?~  pointl
           ..feel
         %+  public-keys-give
-          (~(get ju ney.zim) who.i.pointl)
+          (subscribers-on-ship who.i.pointl)
         [%full (my i.pointl ~)]
       =*  who  who.public-keys-result
       =/  a-diff=diff:point  diff.public-keys-result
@@ -803,7 +830,7 @@
         ==
       =.  pos.zim  (~(put by pos.zim) who point)
       %+  public-keys-give
-        (~(get ju ney.zim) who)
+        (subscribers-on-ship who)
       ?~  maybe-point
         [%full (my [who point]~)]
       [%diff who a-diff]

@@ -178,7 +178,7 @@ export default class WeatherTile extends Component {
               text={c.windBearing + '°'} />
             <IconWithData 
               icon='chancerain'
-              text={c.precipProbability + '%'} />
+              text={(c.precipProbability * 100) + '%'} />
             <IconWithData 
               icon='windspeed'
               text={Math.round(c.windSpeed) + ' mph'} />

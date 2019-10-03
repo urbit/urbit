@@ -81,7 +81,9 @@
       :+  %hi
         ~[~bud ~dev]
       ;<  ~  bind:m  (raw-ship ~bud ~)
+      ~&  >  "BUD DONE"
       ;<  ~  bind:m  (raw-ship ~dev ~)
+      ~&  >  "DEV DONE"
       (send-hi ~bud ~dev)
     ::
       :+  %boot-planet
@@ -307,6 +309,40 @@
         (check-file-touched ~marbud %home file)
       ~&  >  'DONE DONE'
       (pure:m ~)
+    ::
+    ::  Doesn't succeed because success is hard to define, just make
+    ::  sure it doesn't crash in Gall
+    ::
+      :+  %breach-gall
+        ~[~bud ~dev]
+      =.  eth-node  (spawn:eth-node ~dev)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
+        ~&  >  'BUD DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~dev)
+        ~&  >  'DEV DONE'
+        ;<  ~  bind:m  (just-events (dojo ~bud "|start %hall"))
+        ;<  ~  bind:m  (just-events (dojo ~bud "|start %talk"))
+        ;<  ~  bind:m  (just-events (dojo ~dev "|start %hall"))
+        ;<  ~  bind:m  (just-events (dojo ~dev "|start %talk"))
+        ;<  ~  bind:m  (just-events (dojo ~bud ";create channel %hi 'desc'"))
+        ;<  ~  bind:m  (just-events (dojo ~dev ";join ~bud/hi"))
+        ;<  ~  bind:m  (just-events (dojo ~bud "heyya"))
+        (wait-for-dojo ~dev "heyya")
+      ~&  >  'CHANNEL DONE'
+      ;<  eth-node=_eth-node  bind:m
+        (breach-and-hear:eth-node our.hid ~dev ~bud)
+      ~&  >  'BREACH DONE'
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~dev)
+        ~&  >  'REBOOT DEV DONE'
+        (send-hi ~bud ~dev)
+      ~&  >  'DONE'
+      stall
   ==
 ::
 ++  install-tests

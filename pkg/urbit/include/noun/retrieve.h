@@ -30,6 +30,8 @@
       **   Axes must be sorted in tree order.
       */
         c3_o
+        u3r_vmean(u3_noun a, va_list ap);
+        c3_o
         u3r_mean(u3_noun a, ...);
 
       /* u3r_mug_bytes(): Compute the mug of `buf`, `len`, LSW first.
@@ -132,29 +134,14 @@
                       u3_noun s,
                       u3_noun b);
 
-      /* u3r_sing():
+      /* u3r_sing(): noun value equality.
       **
-      **   Yes iff (a) and (b) are the same noun.
+      **   Unifies noun pointers on inner roads.
       */
         c3_o
         u3r_sing(u3_noun a, u3_noun b);
 
-      /* u3rz_sing(): transferring u3r_sing
-      */
-        c3_o
-        u3rz_sing(u3_noun a, u3_noun b);
-
-      /* u3r_sung(): yes iff (a) and (b) are the same noun, unifying equals.
-      **
-      **   Make sure you have no live, uncounted pointers to any noun
-      **   within (a) or (b)!
-      */
-        c3_o
-        u3r_sung(u3_noun a, u3_noun b);
-
-      /* u3r_sing_c):
-      **
-      **   Yes iff (b) is the same noun as the C string [a].
+      /* u3r_sing_c(): cord/C-string value equivalence.
       */
         c3_o
         u3r_sing_c(const c3_c* a_c,

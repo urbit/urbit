@@ -30,14 +30,14 @@
   },
   "dependencies": {
     "classnames": "^2.2.6",
+    "del": "^5.1.0",
     "lodash": "^4.17.11",
     "moment": "^2.20.1",
     "mousetrap": "^1.6.1",
     "react": "^16.5.2",
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.8.6",
-    "react-router-dom": "^5.0.0",
-    "urbit-ob": "^3.1.1"
+    "react-router-dom": "^5.0.0"
   },
   "resolutions": {
     "natives": "1.1.3"

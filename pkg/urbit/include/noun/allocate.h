@@ -90,6 +90,16 @@
         u3p(struct _u3a_fbox) nex_p;
       } u3a_fbox;
 
+    /* u3a_jets: jet dashboard
+    */
+      typedef struct _u3a_jets {
+        u3p(u3h_root) hot_p;                  //  hot state (home road only)
+        u3p(u3h_root) war_p;                  //  warm state
+        u3p(u3h_root) cod_p;                  //  cold state
+        u3p(u3h_root) han_p;                  //  hank cache
+        u3p(u3h_root) bas_p;                  //  battery hashes
+      } u3a_jets;
+
     /* u3a_road: contiguous allocation and execution context.
     */
       typedef struct _u3a_road {
@@ -123,13 +133,7 @@
           c3_w max_w;                         //  maximum allocated
         } all;
 
-        struct {                              //  jet dashboard
-          u3p(u3h_root) hot_p;                //  hot state (home road only)
-          u3p(u3h_root) war_p;                //  warm state
-          u3p(u3h_root) cod_p;                //  cold state
-          u3p(u3h_root) han_p;                //  hank cache
-          u3p(u3h_root) bas_p;                //  battery hashes
-        } jed;
+        u3a_jets jed;                         //  jet dashboard
 
         struct {                              // bytecode state
           u3p(u3h_root) har_p;                // formula->post of bytecode
@@ -210,9 +214,30 @@
 #     define  u3a_is_north(r)  __(r->cap_p > r->hat_p)
 #     define  u3a_is_south(r)  !u3a_is_north(r)
 
-#     define  u3a_open(r)      ( (c3y == u3a_is_north(r)) \
-                                  ? (c3_w)(r->cap_p - r->hat_p) \
-                                  : (c3_w)(r->hat_p - r->cap_p) )
+    /* u3a_open(): words of contiguous free space in [r]
+    */
+#     define  u3a_open(r)  ( (c3y == u3a_is_north(r)) \
+                             ? (c3_w)(r->cap_p - r->hat_p) \
+                             : (c3_w)(r->hat_p - r->cap_p) )
+
+    /* u3a_full(): words of [r];
+    ** u3a_full(r) == u3a_heap(r) + u3a_temp(r) + u3a_open(r)
+    */
+#     define  u3a_full(r)  ( (c3y == u3a_is_north(r)) \
+                             ? (c3_w)(r->mat_p - r->rut_p) \
+                             : (c3_w)(r->rut_p - r->mat_p) )
+
+    /* u3a_heap(): words of heap in [r]
+    */
+#     define  u3a_heap(r)  ( (c3y == u3a_is_north(r)) \
+                             ? (c3_w)(r->hat_p - r->rut_p) \
+                             : (c3_w)(r->rut_p - r->hat_p) )
+
+    /* u3a_temp(): words of stack in [r]
+    */
+#     define  u3a_temp(r)  ( (c3y == u3a_is_north(r)) \
+                             ? (c3_w)(r->mat_p - r->cap_p) \
+                             : (c3_w)(r->cap_p - r->mat_p) )
 
 #     define  u3a_north_is_senior(r, dog) \
                 __((u3a_to_off(dog) < r->rut_p) ||  \
@@ -383,6 +408,11 @@
           c3_w
           u3a_use(u3_noun som);
 
+        /* u3a_wed(): unify noun references.
+        */
+          void
+          u3a_wed(u3_noun* a, u3_noun* b);
+
         /* u3a_luse(): check refcount sanity.
         */
           void
@@ -407,6 +437,11 @@
         */
           c3_w
           u3a_mark_road(FILE* fil_u);
+
+        /* u3a_idle(): measure free-lists in [rod_u]
+        */
+          c3_w
+          u3a_idle(u3a_road* rod_u);
 
         /* u3a_sweep(): sweep a fully marked road.
         */

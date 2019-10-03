@@ -28,13 +28,6 @@
   /|  /css/
       /~  ~
   ==
-/=  style
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/chat/css/index
-  /|  /css/
-      /~  ~
-  ==
 /=  chat-png
   /^  (map knot @)
   /:  /===/app/chat/img  /_  /png/
@@ -60,161 +53,84 @@
   ==
 --
 ::
-|_  [bol=bowl:gall sta=state]
+|_  [bol=bowl:gall state]
 ::
 ++  this  .
 ::
-::  +prep: set up the app, migrate the state once started
+::  +prep: set up the app, migrate the state
 ::
 ++  prep
   |=  old=(unit state)
   ^-  (quip move _this)
-  =/  launcha/poke
-    [%launch-action [%chat /chattile '/~chat/js/tile.js']]
-  ?~  old
-    =/  inboxpat  /circle/inbox/config/group
-    =/  circlespat  /circles/[(scot %p our.bol)]
-    =/  inboxwir  /circle/[(scot %p our.bol)]/inbox/config/group
-    =/  inboxi/poke
-      :-  %hall-action
-      [%source %inbox %.y (silt [[our.bol %i] ~]~)]
-    =/  fakeannounce=poke
-      :-  %hall-action
-      [%create %hall-internal-announcements '' %village]
-    =/  announce=poke
-      :-  %hall-action
-      [%create %announcements 'Announcements from Tlon' %journal]
-    =/  help=poke
-      :-  %hall-action
-        [%create %urbit-help 'Get help about Urbit' %channel]
-    =/  dev=poke
-      :-  %hall-action
-      [%create %urbit-dev 'Chat about developing on Urbit' %channel]
-    =/  sourcefakeannounce/poke
-      :-  %hall-action
-      [%source %inbox %.y (silt [[our.bol %hall-internal-announcements] ~]~)]
-    =/  sourceannounce/poke
-      :-  %hall-action
-      [%source %inbox %.y (silt [[~marzod %announcements] ~]~)]
-    =/  hallactions=(list move)
+  ?^  old
+    :_  this(+<+ u.old)
+    [(launch-poke [/chattile '/~chat/js/tile.js'])]~
+  ::
+  =/  inbox-path  /circle/inbox/config/group
+  ::
+  :_  this
+  :*  [ost.bol %connect / [~ /'~chat'] %chat]
+      (launch-poke [/chattile '/~chat/js/tile.js'])
+      (hall-peer /circle/(scot %p our.bol)/inbox/config/group inbox-path)
+      (hall-peer /circles/(scot %p our.bol) /circles/(scot %p our.bol))
+      (hall-source [our.bol %i])
       ?:  =((clan:title our.bol) %czar)
         ~
       ?:  =(our.bol ~marzod)
-        ~&  %marzod-chat
-        :-  [ost.bol %poke /announce [our.bol %hall] announce]
-        [ost.bol %poke /announce [our.bol %hall] sourceannounce]~
+        :-  (hall-create %announcements 'Announcements from Tlon' %journal)  
+        [(hall-source [~marzod %announcements])]~
       ?:  =(our.bol ~dopzod)
-        ~&  %dopzod-chat
-        :-  [ost.bol %poke /announce [our.bol %hall] dev]
-        [ost.bol %poke /announce [our.bol %hall] help]~
-      :-  [ost.bol %poke /announce [our.bol %hall] fakeannounce]
-      :-  [ost.bol %poke /announce [our.bol %hall] sourcefakeannounce]
-      [ost.bol %poke /announce [our.bol %hall] sourceannounce]~
-    =/  moves=(list move)
-    :~  [ost.bol %peer inboxwir [our.bol %hall] inboxpat]
-        [ost.bol %peer circlespat [our.bol %hall] circlespat]
-        [ost.bol %connect / [~ /'~chat'] %chat]
-        [ost.bol %poke /chat [our.bol %hall] inboxi]
-        [ost.bol %poke /chat [our.bol %launch] launcha]
-    ==
-    :_  this
-    %+  weld  moves  hallactions
-  :-  [ost.bol %poke /chat [our.bol %launch] launcha]~
-  this(sta u.old)
+        :-  (hall-create %urbit-dev 'Chat about developing on Urbit' %channel)
+        [(hall-create %urbit-help 'Help about Urbit' %channel)]~
+      :~  (hall-create %hall-internal-announcements '' %village)
+          (hall-source [our.bol %hall-internal-announcements])
+          (hall-source [~marzod %announcements])
+      ==
+  ==
 ::
-++  construct-tile-json
-  |=  str=streams
-  ^-  json
-  =/  numbers/(list [circle:hall @ud])
-    %+  turn  ~(tap by messages.str)
-      |=  [cir=circle:hall lis=(list envelope:hall)]
-      ^-  [circle:hall @ud]
-      ?~  lis
-        [cir 0]
-      =/  last  (snag (dec (lent lis)) `(list envelope:hall)`lis)
-      [cir (add num.last 1)]
-  =/  maptjson=(map @t json)
-    %-  my
-    :~  ['config' (config-to-json str)]
-        ['numbers' (numbers-to-json numbers)]
-    ==
-  [%o maptjson]
+::  +peer-chattile: subscribe to data necessary for chat tile
 ::
 ++  peer-chattile
   |=  wir=wire
   ^-  (quip move _this)
   :_  this
-  [ost.bol %diff %json (construct-tile-json str.sta)]~
+  [ost.bol %diff %json (construct-tile-json str)]~
 ::
 ::  +peer-messages: subscribe to subset of messages and updates
-::
 ::
 ++  peer-primary
   |=  wir=wire
   ^-  (quip move _this)
-  =*  messages  messages.str.sta
-  =/  lismov/(list move)
-    %+  murn  ~(tap by messages)
-    |=  [cir=circle:hall lis=(list envelope:hall)]
-    ^-  (unit move)
-    =/  envs/(unit (list envelope:hall))  (~(get by messages) cir)
-    ?~  envs
-      ~
-    =/  length/@  (lent u.envs)
-    =/  start/@
-      ?:  (gte length 100)
-        (sub length 100)
-      0
-    =/  end/@  length
-    =/  offset/@  (sub end start)
-    :-  ~
-    :*  ost.bol
-        %diff
-        %chat-update
-        [%messages cir start end (swag [start offset] u.envs)]
-    ==
+  =*  messages  messages.str
   :_  this
-  [[ost.bol %diff %chat-config str.sta] lismov]
+  :-  [ost.bol %diff %chat-config str]
+  %+  murn  ~(tap by messages)
+  |=  [cir=circle:hall envelopes=(list envelope:hall)]
+  ^-  (unit move)
+  =/  length=@  (lent envelopes)
+  =/  start=@
+    ?:  (gte length 100)
+      (sub length 100)
+    0
+  =/  end=@  length
+  =/  offset=@  (sub end start)
+  :-  ~
+  :*  ost.bol
+      %diff
+      %chat-update
+      [%messages cir start end (swag [start offset] envelopes)]
+  ==
 ::
-::  +poke-chat: send us an action
+::  +poke-chat: send a list of actions to hall
 ::
 ++  poke-chat-action
   |=  act=action:chat
   ^-  (quip move _this)
   :_  this
   %+  turn  lis.act
-    |=  hac=action:hall
-    ^-  move
-    :*  ost.bol
-        %poke
-        /p/[(scot %da now.bol)]
-        [our.bol %hall]
-        [%hall-action hac]
-    ==
-::
-::  +send-chat-update: utility func for sending updates to all our subscribers
-::
-++  send-chat-update
-  |=  [upd=update str=streams]
-  ^-  (list move)
-  =/  updates/(list move)
-    %+  turn  (prey:pubsub:userlib /primary bol)
-    |=  [=bone *]
-    [bone %diff %chat-update upd]
-  ::
-  =/  jon/json  (construct-tile-json str)
-  =/  tile-updates/(list move)
-    %+  turn  (prey:pubsub:userlib /chattile bol)
-    |=  [=bone *]
-    [bone %diff %json jon]
-  ::
-  %+  weld
-    updates
-    tile-updates
-::
-::
-::  +hall arms
-::
+  |=  hac=action:hall
+  ^-  move
+  [ost.bol %poke /p/(scot %da now.bol) [our.bol %hall] [%hall-action hac]]
 ::
 ::  +diff-hall-prize: handle full state initially handed to us by hall
 ::
@@ -225,109 +141,72 @@
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
   ?+  i.wir
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
-    ::
-    ::  %circles wire
-    ::
+  ::
       %circles
     ?>  ?=(%circles -.piz)
-      =/  str  %=  str.sta
-        circles  cis.piz
-      ==
-      :-  (send-chat-update [[%circles cis.piz] str])
-      this(str.sta str)
-    ::
-    ::  %circle wire
-    ::
+    =.  str  str(circles cis.piz)
+    :_  this(str str)
+    (send-chat-update [[%circles cis.piz] str])
+  ::
       %circle
-::      ::
-::      ::  %circle prize
-::      ::
-::        %circle
-      ?>  ?=(%circle -.piz)
-      =/  circle/circle:hall  [our.bol &3:wir]
-      ?:  =(circle [our.bol %inbox])
-    ::
-    ::  fill inbox config and remote configs with prize data
-    ::
-        =/  configs
-          %-  ~(uni in configs.str.sta)
-          ^-  (map circle:hall (unit config:hall))
-          (~(run by rem.cos.piz) |=(a=config:hall `a))
-        ::
-        =/  circles/(list circle:hall)
-          %+  turn  ~(tap in src.loc.cos.piz)
-            |=  src=source:hall
-            ^-  circle:hall
-            cir.src
-        ::
-        =/  meslis/(list [circle:hall (list envelope:hall)])
-          %+  turn  circles
-          |=  cir=circle:hall
-          ^-  [circle:hall (list envelope:hall)]
-          [cir ~]
-        ::
-        =/  localpeers/(set @p)
-          %-  silt  %+  turn  ~(tap by loc.pes.piz)
-          |=  [shp=@p stat=status:hall]
-          shp
-        ::
-        =/  peers/(map circle:hall (set @p))
-          %-  ~(rep by rem.pes.piz)
-          |=  [[cir=circle:hall grp=group:hall] acc=(map circle:hall (set @p))]
-          ^-  (map circle:hall (set @p))
-          =/  newset
-            %-  silt  %+  turn  ~(tap by grp)
-            |=  [shp=@p stat=status:hall]
-            shp
-          (~(put by acc) cir newset)
-        ::
-        :-
-          %+  turn  ~(tap in (~(del in (silt circles)) [our.bol %inbox]))
-            |=  cir=circle:hall
-            ^-  move
-            =/  wir/wire  /circle/[(scot %p our.bol)]/[nom.cir]/config/group
-            =/  pat/path  /circle/[nom.cir]/config/group
-            [ost.bol %peer wir [our.bol %hall] pat]
-          ::
-          %=  this
-              inbox.str.sta  loc.cos.piz
-              configs.str.sta  configs
-              messages.str.sta  (molt meslis)
-              peers.str.sta  (~(put by peers) [our.bol %inbox] localpeers)
-          ==
+    ?>  ?=(%circle -.piz)
+    ?.  =([our.bol &3:wir] [our.bol %inbox])
     ::
     ::  fill remote configs with message data
     ::
-      =*  messages  messages.str.sta
-      =/  circle/circle:hall  [`@p`(slav %p &2:wir) &3:wir]
-      =/  localpeers/(set @p)
-        %-  silt  %+  turn  ~(tap by loc.pes.piz)
-        |=  [shp=@p stat=status:hall]
-        shp
-      ::
-      =/  peers/(map circle:hall (set @p))
+      =*  messages  messages.str
+      =/  circle  [`@p`(slav %p &2:wir) &3:wir]
+      =/  peers=(map circle:hall (set @p))
         %-  ~(rep by rem.pes.piz)
         |=  [[cir=circle:hall grp=group:hall] acc=(map circle:hall (set @p))]
-        ^-  (map circle:hall (set @p))
-        =/  newset
-          %-  silt  %+  turn  ~(tap by grp)
-          |=  [shp=@p stat=status:hall]
-          shp
-        (~(put by acc) cir newset)
-      =/  str
-        %=  str.sta
+        ^+  acc
+        (~(put by acc) cir (silt (turn ~(tap by grp) head)))
+      ::
+      =.  str
+        %=  str
           messages  (~(put by messages) circle nes.piz)
-          peers  (~(uni by peers.str.sta) (~(put by peers) circle localpeers))
+          peers
+            %-  ~(uni by peers.str)
+            (~(put by peers) circle ~(key by loc.pes.piz))
         ==
-      =/  messageupdate/update
-        :*  %messages
-            circle
-            0
-            (lent messages)
-            nes.piz
-        ==
-      :-  (send-chat-update [messageupdate str])
-      this(str.sta str)
+      :_  this(str str)
+      (send-chat-update [[%messages circle 0 (lent messages) nes.piz] str])
+    ::
+    ::  fill inbox config and remote configs with prize data
+    ::
+    =/  circles=(list circle:hall)  (turn ~(tap in src.loc.cos.piz) head)
+    ::
+    =/  peers=(map circle:hall (set @p))
+      %-  ~(rep by rem.pes.piz)
+      |=  [[cir=circle:hall grp=group:hall] acc=(map circle:hall (set @p))]
+      ^+  acc
+      (~(put by acc) cir (silt (turn ~(tap by grp) head)))
+    ::
+    :-
+      %+  turn
+        %~  tap  in
+        %-  ~(del in (silt circles))
+        [our.bol %inbox]
+      |=  cir=circle:hall
+      %+  hall-peer
+        /circle/(scot %p our.bol)/[nom.cir]/config/group
+      /circle/[nom.cir]/config/group
+    %=  this
+        inbox.str  loc.cos.piz
+        peers.str  (~(put by peers) [our.bol %inbox] ~(key by loc.pes.piz))
+    ::
+        configs.str
+      %-  ~(uni by configs.str)
+      ^-  (map circle:hall (unit config:hall))
+      (~(run by rem.cos.piz) some)
+    ::
+        messages.str  
+      %-  molt
+      %+  turn  circles
+      |=  cir=circle:hall
+      ^-  [circle:hall (list envelope:hall)]
+      [cir ~]
+    ==
   ==
 ::
 ::  +diff-hall-rumor: handle updates to hall state
@@ -340,201 +219,196 @@
   ?+  i.wir
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
   ::
-  ::  %circles
       %circles
-    ?>  ?=(%circles -.rum)
-      =/  cis
-        ?:  add.rum
-          (~(put in circles.str.sta) cir.rum)
-        (~(del in circles.str.sta) cir.rum)
-      =/  str
-        %=  str.sta
-          circles  cis
-          peers
-            ?:  add.rum
-              (~(put by peers.str.sta) [our.bol cir.rum] ~)
-            (~(del by peers.str.sta) [our.bol cir.rum])
-        ==
-      :-  (send-chat-update [[%circles cis] str])
-      this(str.sta str)
-  ::
-  ::
-  ::  %circle: fill remote configs with message data
+    (handle-rumor-circles rum)
   ::
       %circle
-    ?>  ?=(%circle -.rum)
-    =*  sto  rum.rum
-    ?+  -.sto
-      [~ this]
-    ::
-    ::  %gram:
-    ::
-        %gram
-    ?>  ?=(%gram -.sto)
-    =*  messages  messages.str.sta
-    =/  circle/circle:hall  [`@p`(slav %p &2:wir) &3:wir]
-    =/  unes/(unit (list envelope:hall))  (~(get by messages) circle)
-    ?~  unes
-      [~ this]
-    =/  nes  u.unes
-    =/  str
-      %=  str.sta
-        messages  (~(put by messages) circle (snoc nes nev.sto))
-      ==
-    :-  (send-chat-update [[%message circle nev.sto] str])
-    this(str.sta str)
-    ::
-    ::  %status:
-    ::
-      %status
-    ?>  ?=(%status -.sto)
-    =/  upeers/(unit (set @p))  (~(get by peers.str.sta) cir.sto)
-    ?~  upeers
-      [~ this]
-    =/  peers/(set @p)
-      ?:  =(%remove -.dif.sto)
-        (~(del in u.upeers) who.sto)
-      (~(put in u.upeers) who.sto)
-    =/  str
-      %=  str.sta
-        peers  (~(put by peers.str.sta) cir.sto peers)
-      ==
-    :-  (send-chat-update [[%peers cir.sto peers] str])
-    this(str.sta str)
-    ::
-    ::  %config: config has changed
-    ::
-        %config
-    =*  circ  cir.sto
-    ::
-    ?+  -.dif.sto
-      [~ this]
-      ::
-      ::  %full: set all of config without side effects
-      ::
-          %full
-        =*  conf  cof.dif.sto
-        =/  str
-          %=  str.sta
-            configs  (~(put by configs.str.sta) circ `conf)
-          ==
-        :-  (send-chat-update [[%config circ conf] str])
-        this(str.sta str)
-      ::
-      ::  %read: the read count of one of our configs has changed
-      ::
-          %read
-        ?:  =(circ [our.bol %inbox])
-          ::  ignore when circ is inbox
-          [~ this]
-        =/  uconf/(unit config:hall)  (~(got by configs.str.sta) circ)
-        ?~  uconf
-          ::  should we crash?
-          [~ this]
-        =/  conf/config:hall
-          %=  u.uconf
-            red  red.dif.sto
-          ==
-        =/  str
-          %=  str.sta
-            configs  (~(put by configs.str.sta) circ `conf)
-          ==
-        :-  (send-chat-update [[%config circ conf] str])
-        this(str.sta str)
-      ::
-      ::  %source: the sources of our inbox have changed
-      ::
-          %source
-        ?.  =(circ [our.bol %inbox])
-          :: ignore when circ is not inbox
-          [~ this]
-        =*  affectedcir  cir.src.dif.sto
-        =/  newwir/wire
-          /circle/[(scot %p hos.affectedcir)]/[nom.affectedcir]/grams/0/config/group
-        =/  pat/path  /circle/[nom.affectedcir]/grams/0/config/group
-        ::  we've added a source to our inbox
-        ::
-        ?:  add.dif.sto
-          =/  newinbox  %=  inbox.str.sta
-            src  (~(put in src.inbox.str.sta) src.dif.sto)
-          ==
-          =/  str
-            %=  str.sta
-              inbox  newinbox
-              ::
-              configs
-                ?:  (~(has by configs.str.sta) affectedcir)
-                  configs.str.sta
-                (~(put by configs.str.sta) affectedcir ~)
-            ==
-          ::
-          :_  this(str.sta str)
-          %+  weld
-            [ost.bol %peer newwir [hos.affectedcir %hall] pat]~
-            (send-chat-update [[%inbox newinbox] str])
-        ::
-        =/  newinbox  %=  inbox.str.sta
-          src  (~(del in src.inbox.str.sta) src.dif.sto)
-        ==
-        ::  we've removed a source from our inbox
-        ::
-        =/  str
-          %=  str.sta
-            inbox  newinbox
-          ::
-            configs   (~(del by configs.str.sta) affectedcir)
-            messages  (~(del by messages.str.sta) affectedcir)
-            peers     (~(del by peers.str.sta) affectedcir)
-          ==
-        =/  fakecir/circle:hall
-          :-  our.bol
-          %-  crip
-          %+  weld  (trip 'hall-internal-')  (trip nom.affectedcir)
-        ::
-        ?~  (~(get by configs.str) fakecir)
-          ::  just forward the delete to our clients
-          ::
-          :_  this(str.sta str)
-          %+  weld
-            [ost.bol %pull newwir [hos.affectedcir %hall] ~]~
-          %+  weld
-            (send-chat-update [[%inbox newinbox] str])
-            (send-chat-update [[%delete affectedcir] str])
-        ::  if we get a delete from another ship, delete our fake circle copy
-        ::
-        =/  deletefake/poke
-          :-  %hall-action
-              [%delete nom.fakecir ~]
-          :_  this(str.sta str)
-          %+  weld
-            [ost.bol %pull newwir [hos.affectedcir %hall] ~]~
-          %+  weld
-            [ost.bol %poke /fake [our.bol %hall] deletefake]~
-          %+  weld
-            (send-chat-update [[%inbox newinbox] str])
-            (send-chat-update [[%delete affectedcir] str])
-      ::
-      ::  %remove: remove a circle
-      ::
-          %remove
-        =/  str
-          %=  str.sta
-            configs   (~(del by configs.str.sta) circ)
-            messages  (~(del by messages.str.sta) circ)
-            peers     (~(del by peers.str.sta) circ)
-          ==
-        :-  (send-chat-update [[%delete circ] str])
-        this(str.sta str)
-        ::
-      ==
-      ::  end of branching on dif.sto type
-    ==
-    ::  end of branching on sto type
+    (handle-rumor-circle wir rum)
+  ::
   ==
-  ::  end of i.wir branching
 ::
-::  +lient arms
+::  +handle-rumor-circles
 ::
+++  handle-rumor-circles
+  |=  rum=rumor:hall
+  ^-  (quip move _this)
+  ?>  ?=(%circles -.rum)
+  =/  cis
+    ?:  add.rum
+      (~(put in circles.str) cir.rum)
+    (~(del in circles.str) cir.rum)
+  =.  str
+    %=  str
+      circles  cis
+      peers
+        ?:  add.rum
+          (~(put by peers.str) [our.bol cir.rum] ~)
+        (~(del by peers.str) [our.bol cir.rum])
+    ==
+  :_  this(str str)
+  (send-chat-update [[%circles cis] str])
+::
+++  handle-rumor-circle
+  |=  [wir=wire rum=rumor:hall]
+  ^-  (quip move _this)
+  ?>  ?=(%circle -.rum)
+  ?+  -.rum.rum
+    [~ this]
+  ::
+  ::  %gram: new message
+  ::
+      %gram
+    (handle-rumor-circle-gram wir rum.rum)
+  ::
+  ::  status: status update
+  ::
+      %status
+    (handle-rumor-circle-status rum.rum)
+  ::
+  ::  %config: config has changed
+  ::
+      %config
+    ?+  -.dif.rum.rum
+      [~ this]
+    ::
+    ::  %full: set all of config without side effects
+    ::
+        %full
+      =*  conf  cof.dif.rum.rum
+      =.  configs.str  (~(put by configs.str) cir.rum.rum `conf)
+      :_  this(str str)
+      (send-chat-update [[%config cir.rum.rum conf] str])
+    ::
+    ::  %read: the read count of one of our configs has changed
+    ::
+        %read
+      (handle-rumor-circle-config-read rum.rum)
+    ::
+    ::  %source: the sources of our inbox have changed
+    ::
+        %source
+      (handle-rumor-circle-config-source rum.rum)
+    ::
+    ::  %remove: remove a circle
+    ::
+        %remove
+      =.  str
+        %=  str
+          configs   (~(del by configs.str) cir.rum.rum)
+          messages  (~(del by messages.str) cir.rum.rum)
+          peers     (~(del by peers.str) cir.rum.rum)
+        ==
+      :_  this(str str)
+      (send-chat-update [[%delete cir.rum.rum] str])
+      ::
+    ==
+  ==
+::
+++  handle-rumor-circle-gram
+  |=  [wir=wire sto=rumor-story:hall]
+  ^-  (quip move _this)
+  ?>  ?=(%gram -.sto)
+  =*  messages  messages.str
+  =/  circle  [`@p`(slav %p &2:wir) &3:wir]
+  =/  nes=(unit (list envelope:hall))
+    (~(get by messages) circle)
+  ?~  nes
+    [~ this]
+  =.  messages.str  (~(put by messages) circle (snoc u.nes nev.sto))
+  :_  this(str str)
+  (send-chat-update [[%message circle nev.sto] str])
+::
+++  handle-rumor-circle-status
+  |=  sto=rumor-story:hall
+  ^-  (quip move _this)
+  ?>  ?=(%status -.sto)
+  =/  upeers=(unit (set @p))  (~(get by peers.str) cir.sto)
+  ?~  upeers
+    [~ this]
+  =/  peers=(set @p)
+    ?:  =(%remove -.dif.sto)
+      (~(del in u.upeers) who.sto)
+    (~(put in u.upeers) who.sto)
+  =.  peers.str  (~(put by peers.str) cir.sto peers)
+  :_  this(str str)
+  (send-chat-update [[%peers cir.sto peers] str])
+::
+++  handle-rumor-circle-config-read
+  |=  sto=rumor-story:hall
+  ^-  (quip move _this)
+  ?>  ?=(%config -.sto)
+  ?>  ?=(%read -.dif.sto)
+  ?:  =(cir.sto [our.bol %inbox])
+    ::  ignore when cir.sto is inbox
+    [~ this]
+  =/  conf=(unit config:hall)  (~(got by configs.str) cir.sto)
+  ?~  conf
+    [~ this]
+  =.  red.u.conf  red.dif.sto
+  =.  configs.str  (~(put by configs.str) cir.sto conf)
+  :_  this(str str)
+  (send-chat-update [[%config cir.sto u.conf] str])
+::
+::  +handle-rumor-circle-config-source: on source, subscribe and add to inbox
+::  on remove source, send delete and remove data from state
+::
+++  handle-rumor-circle-config-source
+  |=  sto=rumor-story:hall
+  ^-  (quip move _this)
+  ?>  ?=(%config -.sto)
+  ?>  ?=(%source -.dif.sto)
+  ?.  =(cir.sto [our.bol %inbox])
+    :: ignore when cir.sto is not inbox
+    [~ this]
+  =*  circ  cir.src.dif.sto
+  =/  wir  /circle/(scot %p hos.circ)/[nom.circ]/grams/0/config/group
+  ::  we've added a source to our inbox
+  ::
+  ?:  add.dif.sto
+    =.  str
+      %_  str
+        src.inbox  (~(put in src.inbox.str) src.dif.sto)
+        ::
+        configs
+          ?:  (~(has by configs.str) circ)
+            configs.str
+          (~(put by configs.str) circ ~)
+      ==
+    ::
+    =/  pax  /circle/[nom.circ]/grams/0/config/group
+    :_  this(str str)
+    :-  [ost.bol %peer wir [hos.circ %hall] pax]
+    (send-chat-update [[%inbox inbox.str] str])
+  ::
+  =.  src.inbox.str  (~(del in src.inbox.str) src.dif.sto)
+  ::  we've removed a source from our inbox
+  ::
+  =.  str
+    %=  str
+      inbox  inbox.str
+    ::
+      configs   (~(del by configs.str) circ)
+      messages  (~(del by messages.str) circ)
+      peers     (~(del by peers.str) circ)
+    ==
+  =/  fake=circle:hall
+    [our.bol (crip (weld (trip 'hall-internal-') (trip nom.circ)))]
+  ::
+  :_  this(str str)
+  ;:  weld
+    ^-  (list move)
+    ::  just forward the delete to our clients
+    ::
+    ?~  (~(get by configs.str) fake)
+      [ost.bol %pull wir [hos.circ %hall] ~]~
+    ::  if we get a delete from another ship, delete our fake circle copy
+    ::
+    :-  [ost.bol %pull wir [hos.circ %hall] ~]
+    [ost.bol %poke /f [our.bol %hall] [%hall-action [%delete nom.fake ~]]]~
+  ::
+    (send-chat-update [[%inbox inbox.str] str])
+    (send-chat-update [[%delete circ] str])
+  ==
 ::
 ::  +bound: lient tells us we successfully bound our server to the ~chat url
 ::
@@ -584,27 +458,28 @@
   ::  paginated message data
   ::
       [%'~chat' %scroll @t @t @t @t ~]
-    =/  cir/circle:hall  [(slav %p &3:site.request-line) &4:site.request-line]
-    =/  start/@ud  (need (rush &5:site.request-line dem))
-    =/  parsedend/@ud  (need (rush &6:site.request-line dem))
-    =*  messages  messages.str.sta
-    =/  envs/(unit (list envelope:hall))  (~(get by messages) cir)
+    =/  cir  [(slav %p &3:site.request-line) &4:site.request-line]
+    =/  start=@ud  (need (rush &5:site.request-line dem))
+    =/  parsedend=@ud  (need (rush &6:site.request-line dem))
+    =*  messages  messages.str
+    =/  envs=(unit (list envelope:hall))  (~(get by messages) cir)
     ?~  envs
       [~ this]
     ?:  (gte start (lent u.envs))
       [~ this]
-    =/  end/@
+    =/  end=@
       ?:  (gte parsedend (lent u.envs))
         (dec (lent u.envs))
       parsedend
     =/  offset  (sub end start)
-    =/  jon/json  %-  msg-to-json
-    :*  %messages
-        cir
-        start
-        end
-        (swag [start offset] u.envs)
-    ==
+    =/  jon
+      %-  msg-to-json
+      :*  %messages
+          cir
+          start
+          end
+          (swag [start offset] u.envs)
+      ==
     :_  this
     [ost.bol %http-response (json-response:app (json-to-octs jon))]~
   ::
@@ -633,12 +508,12 @@
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
   ::
       %circle
-    =/  shp/@p  (slav %p &2:wir)
+    =/  shp=@p  (slav %p &2:wir)
     =/  pat  /circle/[&3:wir]/config/group
     ?:  =(&3:wir 'inbox')
       :_  this
       [ost.bol %peer wir [shp %hall] pat]~
-    ?:  (~(has in src.inbox.str.sta) [[shp &3:wir] ~])
+    ?:  (~(has in src.inbox.str) [[shp &3:wir] ~])
       :_  this
       [ost.bol %peer wir [shp %hall] pat]~
     [~ this]
@@ -659,12 +534,12 @@
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
   ::
       %circle
-    =/  shp/@p  (slav %p &2:wir)
+    =/  shp=@p  (slav %p &2:wir)
     =/  pat  /circle/[&3:wir]/config/group
     ?:  =(&3:wir 'inbox')
       :_  this
       [ost.bol %peer wir [shp %hall] pat]~
-    ?:  (~(has in src.inbox.str.sta) [[shp &3:wir] ~])
+    ?:  (~(has in src.inbox.str) [[shp &3:wir] ~])
       :_  this
       [ost.bol %peer wir [shp %hall] pat]~
     [~ this]
@@ -673,5 +548,67 @@
     :_  this
     [ost.bol %peer wir [our.bol %hall] wir]~
   ==
+::
+::  +utilities
+::
+::
+::  +send-chat-update: utility func for sending updates to all our subscribers
+::
+++  send-chat-update
+  |=  [upd=update str=streams]
+  ^-  (list move)
+  =/  jon-one  (update-to-json upd)
+  =/  jon-two  (construct-tile-json str)
+  ::
+  %+  weld
+    ^-  (list move)
+    %+  turn  (prey:pubsub:userlib /primary bol)
+    |=  [=bone *]
+    [bone %diff %json jon-one]
+  ^-  (list move)
+  %+  turn  (prey:pubsub:userlib /chattile bol)
+  |=  [=bone *]
+  [bone %diff %json jon-two]
+::
+++  construct-tile-json
+  |=  str=streams
+  ^-  json
+  :-  %o
+  %-  my
+  :~  ['config' (config-to-json str)]
+    ::
+      :-  'numbers'
+      %-  numbers-to-json
+      ^-  (list [circle:hall @ud])
+      %+  turn  ~(tap by messages.str)
+      |=  [cir=circle:hall lis=(list envelope:hall)]
+      ^-  [circle:hall @ud]
+      ?~  lis
+        [cir 0]
+      =/  last  (snag (dec (lent lis)) `(list envelope:hall)`lis)
+      [cir (add num.last 1)]
+  ==
+::
+++  launch-poke
+  |=  [=path =cord]
+  ^-  move
+  [ost.bol %poke /chat [our.bol %launch] [%launch-action %chat path cord]]
+::
+++  hall-peer
+  |=  [wir=wire pat=path]
+  ^-  move
+  [ost.bol %peer wir [our.bol %hall] pat]
+::
+++  hall-create
+  |=  [name=@tas description=@t =security:hall]
+  ^-  move
+  =/  poke  [%hall-action [%create name description security]]
+  [ost.bol %poke /chat [our.bol %hall] poke]
+::
+++  hall-source
+  |=  cir=circle:hall
+  ^-  move
+  =/  poke  [%hall-action [%source %inbox %.y (silt [cir ~]~)]]
+  [ost.bol %poke /chat [our.bol %hall] poke]
 ::
 --

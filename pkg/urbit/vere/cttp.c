@@ -970,7 +970,7 @@ u3_cttp_ef_http_client(u3_noun fav)
 {
   u3_creq* ceq_u;
 
-  if ( c3y == u3rz_sing(u3i_string("request"), u3k(u3h(fav))) ) {
+  if ( c3y == u3r_sing_c("request", u3h(fav)) ) {
     u3_noun p_fav, q_fav;
     u3x_cell(u3t(fav), &p_fav, &q_fav);
 
@@ -983,7 +983,7 @@ u3_cttp_ef_http_client(u3_noun fav)
       u3l_log("cttp: strange request (unparsable url)\n");
     }
   }
-  else if ( c3y == u3rz_sing(u3i_string("cancel-request"), u3k(u3h(fav))) ) {
+  else if ( c3y == u3r_sing_c("cancel-request", u3h(fav)) ) {
     ceq_u =_cttp_creq_find(u3r_word(0, u3t(fav)));
 
     if ( ceq_u ) {

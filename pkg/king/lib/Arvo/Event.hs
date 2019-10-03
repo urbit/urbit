@@ -1,7 +1,7 @@
 module Arvo.Event where
 
+import Noun.Tree    (HoonMap, HoonSet)
 import UrbitPrelude hiding (Term)
-import Noun.Tree (HoonSet, HoonMap)
 
 import Arvo.Common (KingId(..), ServId(..))
 import Arvo.Common (Desk, Mime)
@@ -227,7 +227,7 @@ data Belt
 data TermEv
     = TermEvBelt (UD, ()) Belt
     | TermEvBlew (UD, ()) Word Word
-    | TermEvBoot (UD, ()) LegacyBootEvent
+    | TermEvBoot (UD, ()) Bool LegacyBootEvent
     | TermEvHail (UD, ()) ()
     | TermEvCrud Path       Cord Tang
   deriving (Eq, Ord, Show)

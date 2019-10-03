@@ -2,6 +2,8 @@
 ::
 /-  sole-sur=sole
 /+  sole-lib=sole
+/=  response-mark  /:  /===/mar/json/rpc/response
+                       /!noun/
 ::
 =,  azimuth
 =,  ethereum
@@ -214,7 +216,7 @@
 ::
 ++  move  (pair bone card)
 ++  card
-  $%  [%hiss wire ~ mark %hiss hiss:eyre]
+  $%  [%request wire =request:http =outbound-config:iris]
       [%info wire desk nori:clay]
       [%rest wire @da]
       [%wait wire @da]
@@ -258,6 +260,24 @@
 ++  sigh-json-rpc-response-command
   |=  [=wire =response:rpc:jstd]
   ^-  (quip move _this)
+  (take-command-sigh wire `response)
+::
+++  http-response-command
+  |=  [=wire =client-response:iris]
+  ^-  (quip move _this)
+  ?.  ?=(%finished -.client-response)
+    ~&  'downloading...'
+    `this
+  ?~  full-file.client-response
+    ~&  'no data'
+    `this
+  =/  jon=(unit json)
+    (de-json:html q.data.u.full-file.client-response)
+  ?~  jon
+    ~&  'failed to parse response as json'
+    `this
+  =/  =response:rpc:jstd
+    (json:grab:response-mark u.jon)
   (take-command-sigh wire `response)
 ::
 ++  take-command-sigh
@@ -349,7 +369,7 @@
   ^-  output:null-glad
   =-  [[[ost.bowl -] ~] %done ~]
   ::TODO  wire in sample?
-  [%hiss /command ~ %json-rpc-response %hiss hiss]
+  [%request /command (hiss-to-request:html hiss) *outbound-config:iris]
 ::
 ++  expect-response
   =/  m  (glad response:rpc:jstd)
