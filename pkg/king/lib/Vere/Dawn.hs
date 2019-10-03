@@ -238,7 +238,8 @@ dawnVent dSeed@(Seed ship life ring oaf) = do
             "'s public keys"
     sponsorPoint <- retrievePoint block azimuth (fromIntegral sponsorShip)
 
-    let dSponsor = (sponsorShip, sponsorPoint)
+    -- TODO: Under the new boot conventions, this is supposed to be a list?
+    let dSponsor = [(sponsorShip, sponsorPoint)]
 
     -- Retrieve the galaxy table [MUST FIX s/5/255/]
     print "boot: retrieving galaxy table"
