@@ -87,13 +87,14 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.pro = c3n;
   u3_Host.ops_u.qui = c3n;
   u3_Host.ops_u.rep = c3n;
+  u3_Host.ops_u.tem = c3n;
   u3_Host.ops_u.tex = c3n;
   u3_Host.ops_u.tra = c3n;
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "G:J:B:K:A:H:I:w:u:e:F:k:p:LljabcdgqsvxPDRS")) )
+                 "G:J:B:K:A:H:I:w:u:e:F:k:p:LljabcdgqstvxPDRS")) )
   {
     switch ( ch_i ) {
       case 'J': {
@@ -176,6 +177,7 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'v': { u3_Host.ops_u.veb = c3y; break; }
       case 's': { u3_Host.ops_u.git = c3y; break; }
       case 'S': { u3_Host.ops_u.has = c3y; break; }
+      case 't': { u3_Host.ops_u.tem = c3y; break; }
       case '?': default: {
         return c3n;
       }
@@ -225,6 +227,12 @@ _main_getopt(c3_i argc, c3_c** argv)
   if ( c3y == u3_Host.ops_u.bat ) {
     u3_Host.ops_u.dem = c3y;
     u3_Host.ops_u.nuu = c3y;
+  }
+
+  //  daemon mode (-d) implies disabling terminal assumptions (-t)
+  //
+  if ( c3y == u3_Host.ops_u.dem ) {
+    u3_Host.ops_u.tem = c3y;
   }
 
   //  make -c optional, catch invalid boot of existing pier
@@ -365,7 +373,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-b            Batch create\n",
     "-c pier       Create a new urbit in pier/\n",
     "-D            Recompute from events\n",
-    "-d            Daemon mode\n",
+    "-d            Daemon mode; implies -t\n",
     "-e url        Ethereum gateway\n",
     "-F ship       Fake keys; also disables networking\n",
     "-g            Set GC flag\n",
@@ -380,6 +388,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-S            Disable battery hashing\n",
     // XX find a way to re-enable
     // "-s            Pill URL from arvo git hash\n",
+    "-t            Disable terminal/tty assumptions\n",
     "-u url        URL from which to download pill\n",
     "-v            Verbose\n",
     "-w name       Boot as ~name\n",

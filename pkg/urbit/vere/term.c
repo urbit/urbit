@@ -99,7 +99,7 @@ u3_term_io_init()
 {
   u3_utty* uty_u = c3_calloc(sizeof(u3_utty));
 
-  if ( c3y == u3_Host.ops_u.dem ) {
+  if ( c3y == u3_Host.ops_u.tem ) {
     uty_u->fid_i = 1;
 
     uv_pipe_init(u3L, &(uty_u->pop_u), 0);
@@ -237,7 +237,7 @@ u3_term_io_init()
     u3_Host.uty_u = uty_u;
   }
 
-  if ( c3n == u3_Host.ops_u.dem ) {
+  if ( c3n == u3_Host.ops_u.tem ) {
     //  Start raw input.
     //
     {
@@ -249,9 +249,9 @@ u3_term_io_init()
       }
     }
 
-    //  initialize spinner timeout (if not in daemon-mode)
+    //  initialize spinner timeout (if terminal/tty is enabled)
     //
-    if ( c3n == u3_Host.ops_u.dem ) {
+    if ( c3n == u3_Host.ops_u.tem ) {
       uv_timer_init(u3L, &uty_u->tat_u.sun_u.tim_u);
       uty_u->tat_u.sun_u.tim_u.data = uty_u;
     }
@@ -268,7 +268,7 @@ u3_term_io_talk(void)
 void
 u3_term_io_exit(void)
 {
-  if ( c3y == u3_Host.ops_u.dem ) {
+  if ( c3y == u3_Host.ops_u.tem ) {
     uv_close((uv_handle_t*)&u3_Host.uty_u->pop_u, 0);
   }
   else {
@@ -490,7 +490,7 @@ _term_it_refresh_line(u3_utty* uty_u)
 static void
 _term_it_show_more(u3_utty* uty_u)
 {
-  if ( c3y == u3_Host.ops_u.dem ) {
+  if ( c3y == u3_Host.ops_u.tem ) {
     _term_it_write_str(uty_u, "\n");
   } else {
     _term_it_write_str(uty_u, "\r\n");
@@ -831,7 +831,7 @@ _term_spin_timer_cb(uv_timer_t* tim_u)
 void
 u3_term_start_spinner(c3_c* why_c, c3_o now_o)
 {
-  if ( c3n == u3_Host.ops_u.dem ) {
+  if ( c3n == u3_Host.ops_u.tem ) {
     u3_utty* uty_u = _term_main();
     u3_utat* tat_u = &uty_u->tat_u;
 
@@ -861,7 +861,7 @@ u3_term_start_spinner(c3_c* why_c, c3_o now_o)
 void
 u3_term_stop_spinner(void)
 {
-  if ( c3n == u3_Host.ops_u.dem ) {
+  if ( c3n == u3_Host.ops_u.tem ) {
     u3_utty* uty_u = _term_main();
     u3_utat* tat_u = &uty_u->tat_u;
 
@@ -991,20 +991,20 @@ _term_ef_blit(u3_utty* uty_u,
     default: break;
 
     case c3__bel: {
-      if ( c3n == u3_Host.ops_u.dem ) {
+      if ( c3n == u3_Host.ops_u.tem ) {
         _term_it_write_txt(uty_u, uty_u->ufo_u.out.bel_y);
       }
     } break;
 
     case c3__clr: {
-      if ( c3n == u3_Host.ops_u.dem ) {
+      if ( c3n == u3_Host.ops_u.tem ) {
         _term_it_show_blank(uty_u);
         _term_it_refresh_line(uty_u);
       }
     } break;
 
     case c3__hop: {
-      if ( c3n == u3_Host.ops_u.dem ) {
+      if ( c3n == u3_Host.ops_u.tem ) {
         _term_it_show_cursor(uty_u, u3t(blt));
       }
     } break;
@@ -1022,7 +1022,7 @@ _term_ef_blit(u3_utty* uty_u,
         }
       }
 
-      if ( c3n == u3_Host.ops_u.dem ) {
+      if ( c3n == u3_Host.ops_u.tem ) {
         _term_it_show_clear(uty_u);
         _term_it_show_line(uty_u, lin_w, len_w);
       } else {
@@ -1108,7 +1108,7 @@ u3_term_io_hija(void)
       c3_assert(0);
     }
     else {
-      if ( c3n == u3_Host.ops_u.dem ) {
+      if ( c3n == u3_Host.ops_u.tem ) {
         if ( 0 != _term_tcsetattr(1, TCSADRAIN, &uty_u->bak_u) ) {
           perror("hija-tcsetattr-1");
           c3_assert(!"hija-tcsetattr");
@@ -1150,7 +1150,7 @@ u3_term_io_loja(int x)
       c3_assert(0);
     }
     else {
-      if ( c3y == u3_Host.ops_u.dem ) {
+      if ( c3y == u3_Host.ops_u.tem ) {
         fflush(stdout);
       }
       else {
