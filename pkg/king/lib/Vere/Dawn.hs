@@ -6,6 +6,7 @@ import Arvo.Event      hiding (Address)
 import Azimuth.Azimuth
 import UrbitPrelude    hiding (Call, rights, to)
 
+import Data.List                     (nub)
 import Data.Maybe
 import Data.Solidity.Abi.Codec       (encode)
 import Data.Text                     (splitOn)
@@ -97,9 +98,6 @@ withAzimuth bloq azimuth action =
 retrievePoint :: Quantity -> Address -> Ship -> Web3 (EthPoint)
 retrievePoint bloq azimuth ship =
   withAzimuth bloq azimuth $ do
-    (owner, managementProxy, spawnProxy, votingProxy, transferProxy)
-      <- rights (fromIntegral ship)
-
     (encryptionKey,
      authenticationKey,
      hasSponsor,
@@ -114,10 +112,7 @@ retrievePoint bloq azimuth ship =
                       then Just $ Ship $ fromIntegral escapeTo
                       else Nothing
 
-    let epOwn = (addressToAtom owner,
-                 addressToAtom managementProxy,
-                 addressToAtom votingProxy,
-                 addressToAtom transferProxy)
+    let epOwn = (0, 0, 0, 0)
 
     let epNet = if (not active)
         then Nothing
@@ -130,8 +125,8 @@ retrievePoint bloq azimuth ship =
           )
 
     let epKid = case clanFromShip ship of
-           Ob.Galaxy -> Just (addressToAtom spawnProxy, setToHoonSet mempty)
-           Ob.Star   -> Just (addressToAtom spawnProxy, setToHoonSet mempty)
+           Ob.Galaxy -> Just (0, setToHoonSet mempty)
+           Ob.Star   -> Just (0, setToHoonSet mempty)
            _         -> Nothing
 
     pure EthPoint{..}
@@ -149,10 +144,10 @@ retrieveGalaxyTable bloq azimuth =
               fromIntegral keyRev,
               (passFromEth encryptionKey authenticationKey cryptoSuite)))
 
--- Reads the three Ames domains from Ethereum.
+-- Reads the three Ames domains from Ethereum, removing duplicates
 readAmesDomains :: Quantity -> Address -> Web3 ([Turf])
 readAmesDomains bloq azimuth =
-    withAzimuth bloq azimuth $ mapM getTurf [0..2]
+    withAzimuth bloq azimuth $ nub <$> mapM getTurf [0..2]
   where
     getTurf idx = do
       str <- dnsDomains idx
@@ -196,8 +191,8 @@ getSponsorShipAndValidate block azimuth (Seed ship life ring oaf) =
       -- A comet can never be breached
       -- when live Left "comet already booted"
       -- TODO: the parent must be launched check?
-      --pure $ shipSein ship
-      fail "dealing with comets is a giant todo i'm punting on for now"
+      pure $ shipSein ship
+      --fail "dealing with comets is a giant todo i'm punting on for now"
 
     validateMoon = \case
       Nothing -> fail "sponsoring planet not keyed"
