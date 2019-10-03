@@ -6,6 +6,7 @@ var postcss = require('gulp-postcss');
 var sucrase = require('@sucrase/gulp-plugin');
 var minify = require('gulp-minify');
 var rename = require('gulp-rename');
+var del = require('del');
 
 var resolve = require('rollup-plugin-node-resolve');
 var commonjs = require('rollup-plugin-commonjs');
@@ -117,13 +118,16 @@ gulp.task('tile-js-minify', function () {
 gulp.task('rename-index-min', function() {
   return gulp.src('../../arvo/app/chat/js/index-min.js')
     .pipe(rename('index.js'))
-    .pipe(gulp.dest('../../arvo/app/chat/js/'));
+    .pipe(gulp.dest('../../arvo/app/chat/js/'))
 });
 
 gulp.task('rename-tile-min', function() {
   return gulp.src('../../arvo/app/chat/js/tile-min.js')
     .pipe(rename('tile.js'))
-    .pipe(gulp.dest('../../arvo/app/chat/js/'));
+    .pipe(gulp.dest('../../arvo/app/chat/js/'))});
+
+gulp.task('clean-min', function() {
+  return del(['../../arvo/app/chat/js/index-min.js', '../../arvo/app/chat/js/tile-min.js'], {force: true})
 });
 
 gulp.task('urbit-copy', function () {
@@ -162,7 +166,8 @@ gulp.task('bundle-prod',
     ),
     'rename-index-min',
     'rename-tile-min',
-    'urbit-copy',
+    'clean-min',
+    'urbit-copy'
   )
 );
 

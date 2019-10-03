@@ -2,7 +2,7 @@
 ::::  /hoon/drum/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
-/-    *sole, hall
+/-    *sole
 /+    sole
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -21,9 +21,9 @@
 ::                                                      ::
 ++  pith-2                                              ::
   $:  sys/(unit bone)                                   ::  local console
-      eel/(set gill:gall)                              ::  connect to
-      ray/(set well:gall)                              ::
-      fur/(map dude:gall (unit server))                ::  servers
+      eel/(set gill:gall)                               ::  connect to
+      ray/(set well:gall)                               ::
+      fur/(map dude:gall (unit server))                 ::  servers
       bin/(map bone source)                             ::  terminals
   ==                                                    ::
 ::                                                      ::  ::
@@ -73,9 +73,13 @@
   ::                                                    ::  ::
 |%
 ++  deft-apes                                           ::  default servers
-  |=  our/ship
+  |=  [our/ship lit/?]
   %-  ~(gas in *(set well:gall))
   ^-  (list well:gall)
+  ?:  lit
+    :~  [%home %dojo]
+        [%home %azimuth-tracker]
+    ==
   =+  myr=(clan:title our)
   ::
   ?:  ?=($pawn myr)
@@ -89,6 +93,10 @@
       [%home %publish]
       [%home %clock]
       [%home %weather]
+      [%home %group-store]
+      [%home %group-hook]
+      [%home %permission-store]
+      [%home %permission-group-hook]
   ==
   :~  [%home %lens]
       [%home %acme]
@@ -102,6 +110,10 @@
       [%home %publish]
       [%home %clock]
       [%home %weather]
+      [%home %group-store]
+      [%home %group-hook]
+      [%home %permission-store]
+      [%home %permission-group-hook]
       [%home %azimuth-tracker]
   ==
 ::
@@ -118,7 +130,7 @@
       %2
       sys=~
       eel=(deft-fish our)
-      ray=(deft-apes our)
+      ray=~
       fur=~
       bin=~
   ==
@@ -142,13 +154,12 @@
 =>  |%                                                ::  arvo structures
     ++  pear                                          ::  request
       $%  {$sole-action p/sole-action}                ::
-          {$hall-command command:hall}                ::
       ==                                              ::
     ++  lime                                          ::  update
       $%  {$dill-blit dill-blit:dill}                ::
       ==                                              ::
     ++  card                                          ::  general card
-      $%  {$conf wire dock $load ship term}           ::
+      $%  {$conf wire dock ship term}                 ::
           {$diff lime}                                ::
           {$peer wire dock path}                      ::
           {$poke wire dock pear}                      ::
@@ -170,6 +181,16 @@
   ?>  (team:title our.hid src.hid)               ::  or our own moon
   =<  se-abet  =<  se-view
   (se-text "[{<src.hid>}, driving {<our.hid>}]")
+::
+++  poke-set-boot-apps                                ::
+  |=  lit/?
+  ^-  (quip move part)
+  ::  We do not run se-abet:se-view here because that starts the apps,
+  ::  and some apps are not ready to start (eg Talk crashes because the
+  ::  terminal has width 0).  It appears the first message to drum must
+  ::  be the peer.
+  ::
+  [~ +<+.^$(ray (deft-apes our.hid lit))]
 ::
 ++  poke-dill-belt                                    ::  terminal event
   |=  bet/dill-belt:dill
@@ -272,7 +293,7 @@
   ?:  &(?=(^ hig) |(?=(~ u.hig) =(p.wel syd.u.u.hig)))  +>.$
   =.  +>.$  (se-text "activated app {(trip p.wel)}/{(trip q.wel)}")
   %-  se-emit(fur (~(put by fur) q.wel ~))
-  [ost.hid %conf [%drum p.wel q.wel ~] [our.hid q.wel] %load our.hid p.wel]
+  [ost.hid %conf [%drum p.wel q.wel ~] [our.hid q.wel] our.hid p.wel]
 ::
 ++  se-adze                                           ::  update connections
   ^+  .
@@ -379,7 +400,7 @@
 ++  se-dump                                           ::  print tanks
   |=  tac/(list tank)
   ^+  +>
-  ?.  se-ably  (se-hall tac)
+  ?.  se-ably  ((slog tac) +>.$)
   =/  wol/wall
     (zing (turn (flop tac) |=(a/tank (~(win re a) [0 edg]))))
   |-  ^+  +>.^$
@@ -457,21 +478,13 @@
   |=  mov/move
   %_(+> moz [mov moz])
 ::
-++  se-hall
-  |=  tac/(list tank)
-  ^+  +>
-  :: XX hall should be usable for stack traces, see urbit#584 which this change
-  :: closed for the problems there
-  ((slog (flop tac)) +>)
-  ::(se-emit 0 %poke /drum/hall [our.hid %hall] (said:hall our.hid %drum now.hid eny.hid tac))
-::
 ++  se-text                                           ::  return text
   |=  txt/tape
   ^+  +>
   ?.  ((sane %t) (crip txt))  :: XX upstream validation
     ~&  bad-text+<`*`txt>
     +>
-  ?.  se-ably  (se-hall [%leaf txt]~)
+  ?.  se-ably  ((slog [%leaf txt]~) +>.$)
   (se-blit %out (tuba txt))
 ::
 ++  se-poke                                           ::  send a poke

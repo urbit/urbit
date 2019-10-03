@@ -658,6 +658,54 @@ _pier_work_release(u3_writ* wit_u)
   }
 }
 
+/* _pier_work_spin_start(): activate spinner.
+*/
+static void
+_pier_work_spin_start(u3_writ* wit_u)
+{
+  u3_pier* pir_u = wit_u->pir_u;
+  c3_o now_o = c3n;
+  c3_c* why_c = 0;
+
+  if ( wit_u->evt_d <= pir_u->lif_d ) {
+    why_c = strdup("nock");
+  }
+  else {
+    u3_noun why;
+
+    //  second item of the event wire
+    //
+    //    i.t.p.q:*(pair @da ovum)
+    //
+    if ( u3_none != (why = u3r_at(26, wit_u->job)) ) {
+      u3_noun cad, tag, lag;
+
+
+      if ( c3__term != why ) {
+        why_c = u3r_string(why);
+      }
+      else if (  ( u3_none != (cad = u3r_at(7, wit_u->job)) ) &&
+                 ( u3_none != (tag = u3r_at(2, cad)) ) &&
+                 ( u3_none != (lag = u3r_at(6, cad)) ) &&
+                 ( c3__belt == tag ) &&
+                 ( c3__ret  == lag ) )
+      {
+        now_o = c3y;
+      }
+    }
+  }
+
+  u3_term_start_spinner(why_c, now_o);
+}
+
+/* _pier_work_spin_stop(): deactivate spinner.
+*/
+static void
+_pier_work_spin_stop(u3_writ* wit_u)
+{
+  u3_term_stop_spinner();
+}
+
 /* _pier_work_complete(): worker reported completion.
 */
 static void
@@ -680,9 +728,7 @@ _pier_work_complete(u3_writ* wit_u,
   c3_assert(wit_u->act == 0);
   wit_u->act = act;
 
-  if ( wit_u->evt_d > pir_u->lif_d ) {
-    u3_term_stop_spinner();
-  }
+  _pier_work_spin_stop(wit_u);
 }
 
 /* _pier_work_replace(): worker reported replacement.
@@ -720,9 +766,7 @@ _pier_work_replace(u3_writ* wit_u,
     god_u->sen_d -= 1ULL;
   }
 
-  if ( wit_u->evt_d > pir_u->lif_d ) {
-    u3_term_stop_spinner();
-  }
+  _pier_work_spin_stop(wit_u);
 }
 
 /* _pier_work_compute(): dispatch for processing.
@@ -746,9 +790,7 @@ _pier_work_compute(u3_writ* wit_u)
 
   god_u->sen_d += 1;
 
-  if ( wit_u->evt_d > pir_u->lif_d ) {
-    u3_term_start_spinner(wit_u->job);
-  }
+  _pier_work_spin_start(wit_u);
 }
 
 /* _pier_work_play(): with active worker, create or load log.
@@ -1485,7 +1527,7 @@ _pier_boot_vent(u3_boot* bot_u)
     c3_assert( c3y == u3du(bot_u->ven) );
 
     u3_noun wir = u3nq(u3_blip, c3__term, '1', u3_nul);
-    u3_noun car = u3nc(c3__boot, u3k(bot_u->ven));
+    u3_noun car = u3nt(c3__boot, u3_Host.ops_u.lit, u3k(bot_u->ven));
     u3_noun ovo = u3nc(wir, car);
 
     _pier_writ_insert_ovum(pir_u, 0, ovo);
@@ -1997,9 +2039,9 @@ u3_pier_tank(c3_l tab_l, c3_w pri_w, u3_noun tac)
   }
 
   switch ( pri_w ) {
-    case 3: fprintf(fil_u, ">>> "); break;
-    case 2: fprintf(fil_u, ">> "); break;
-    case 1: fprintf(fil_u, "> "); break;
+    case 3: fprintf(fil_u, "\033[31m>>> "); break;
+    case 2: fprintf(fil_u, "\033[33m>>  "); break;
+    case 1: fprintf(fil_u, "\033[32m>   "); break;
   }
 
   //  if we have no arvo kernel and can't evaluate nock
@@ -2020,6 +2062,7 @@ u3_pier_tank(c3_l tab_l, c3_w pri_w, u3_noun tac)
     _pier_wall(fil_u, wol);
   }
 
+  fprintf(fil_u, "\033[0m");
   u3_term_io_loja(0);
   u3z(blu);
   u3z(tac);

@@ -384,14 +384,12 @@
         } fut;
 
         struct {
-          uv_thread_t* sit_u;               //  spinner thread
-          c3_o         diz_o;               //  spinner activated
-          c3_d         eve_d;               //  spinner start tick (unix μs)
-          c3_d         end_d;               //  spinner end tick (unix μs)
-          c3_c*        why_c;               //  spinner event wire (root only)
-        } sun;
-
-        uv_mutex_t     mex_u;               //  mutex for non-daemon term state
+          uv_timer_t tim_u;                 //  spinner timeout
+          c3_o       diz_o;                 //  spinner activated
+          c3_d       eve_d;                 //  spin count
+          c3_d       end_d;                 //  spinner end tick (ms)
+          c3_c*      why_c;                 //  spinner label
+        } sun_u;
       } u3_utat;
 
       struct _u3_umon;
@@ -556,6 +554,7 @@
         c3_w    kno_w;                      //  -K, kernel version
         c3_c*   key_c;                      //  -k, private key file
         c3_o    net;                        //  -L, local-only networking
+        c3_o    lit;                        //  -l, lite mode
         c3_o    pro;                        //  -P, profile
         c3_s    por_s;                      //  -p, ames port
         c3_o    qui;                        //  -q, quiet
@@ -863,7 +862,7 @@
       /* u3_term_start_spinner(): prepare spinner state. RETAIN.
       */
         void
-        u3_term_start_spinner(u3_noun ovo);
+        u3_term_start_spinner(c3_c* why_c, c3_o now_o);
 
       /* u3_term_stop_spinner(): reset spinner state and restore input line.
       */

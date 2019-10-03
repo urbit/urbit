@@ -9,7 +9,7 @@
 ::      so that the "convert to true identity" doesn't happen for them.
 ::
 /-    hall-sur=hall                                     ::  structures
-/+    hall-lib=hall, hall-legacy                        ::  libraries
+/+    hall-lib=hall, hall-legacy, hall-json             ::  libraries
 /=    seed  /~  !>(.)
 /=    filter-gram
       /^  $-({telegram:hall-sur bowl:gall} telegram:hall-sur)
@@ -2941,6 +2941,37 @@
   =^  mow  +>.$
     log-all-to-file
   [(welp mos mow) +>.$]
+::
+++  poke-json
+  |=  a=json
+  ^-  (quip move _+>)
+  =,  dejs:hall-json
+  =,  dejs-soft:format
+  =/  act=action
+    =-  (need ((of -) a))
+    :~  create+(ot nom+so des+so sec+secu ~)
+        design+(ot nom+so cof+conf ~)
+        delete+(ot nom+so why+(mu so) ~)
+        depict+(ot nom+so des+so ~)
+        filter+(ot nom+so fit+filt ~)
+        permit+(ot nom+so inv+bo sis+(as (su fed:ag)) ~)
+        source+(ot nom+so sub+bo srs+(as sorc) ~)
+        read+(ot nom+so red+ni ~)
+        usage+(ot nom+so add+bo tas+(as so) ~)
+        newdm+(ot sis+(as (su fed:ag)) ~)
+        ::
+        convey+(ar thot)
+        phrase+(ot aud+audi ses+(ar spec:dejs:hall-json) ~)
+        ::
+        notify+(ot aud+audi pes+(mu pres) ~)
+        naming+(ot aud+audi man+huma ~)
+        ::
+        glyph+(ot gyf+so aud+audi bin+bo ~)
+        nick+(ot who+(su fed:ag) nic+so ~)
+        ::
+        public+(ot add+bo cir+circ ~)
+    ==
+  (poke-hall-action act)
 ::
 ++  poke-hall-action
   ::    accept action

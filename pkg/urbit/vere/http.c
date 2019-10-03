@@ -1505,16 +1505,16 @@ u3_http_ef_http_server(c3_l    sev_l,
 
   //  sets server configuration
   //
-  if ( c3y == u3rz_sing(u3i_string("set-config"), u3k(tag)) ) {
+  if ( c3y == u3r_sing_c("set-config", tag) ) {
     u3_http_ef_form(u3k(dat));
   }
   //  responds to an open request
   //
   else if ( 0 != (req_u = _http_search_req(sev_l, coq_l, seq_l)) ) {
-    if ( c3y == u3rz_sing(u3i_string("response"), u3k(tag)) ) {
+    if ( c3y == u3r_sing_c("response", tag) ) {
       u3_noun response = dat;
 
-      if ( c3y == u3rz_sing(u3i_string("start"), u3k(u3h(response))) ) {
+      if ( c3y == u3r_sing_c("start", u3h(response)) ) {
         //  Separate the %start message into its components.
         //
         u3_noun response_header, data, complete;
@@ -1525,7 +1525,7 @@ u3_http_ef_http_server(c3_l    sev_l,
         _http_start_respond(req_u, u3k(status), u3k(headers), u3k(data),
                             u3k(complete));
       }
-      else if ( c3y == u3rz_sing(u3i_string("continue"), u3k(u3h(response))) ) {
+      else if ( c3y == u3r_sing_c("continue", u3h(response)) ) {
         //  Separate the %continue message into its components.
         //
         u3_noun data, complete;
@@ -1533,7 +1533,7 @@ u3_http_ef_http_server(c3_l    sev_l,
 
         _http_continue_respond(req_u, u3k(data), u3k(complete));
       }
-      else if (c3y == u3rz_sing(u3i_string("cancel"), u3k(u3h(response)))) {
+      else if (c3y == u3r_sing_c("cancel", u3h(response))) {
         u3l_log("http: %%cancel not handled yet\n");
       }
       else {

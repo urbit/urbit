@@ -6,6 +6,7 @@ export class UpdateReducer {
     let data = _.get(json, 'update', false);
     if (data) {
       this.reduceInbox(_.get(data, 'inbox', false), state);
+      this.reducePending(_.get(data, 'message', false), state);
       this.reduceMessage(_.get(data, 'message', false), state);
       this.reduceMessages(_.get(data, 'messages', false), state);
       this.reduceConfig(_.get(data, 'config', false), state);
@@ -26,6 +27,23 @@ export class UpdateReducer {
       state.messages[message.circle].push(message.envelope);
     } else {
       state.messages[message.circle] = [message.envelope];
+    }
+  }
+
+  reducePending(message, state) {
+    if (message && (state.pendingMessages.has(message.envelope.gam.aud[0]))) {
+      for (let pendingMessage of state.pendingMessages.get(message.envelope.gam.aud[0])) {
+
+        // Does the incoming message match a pending one?
+        if (message.envelope.gam.uid === pendingMessage.uid) {
+
+          // Mutating the pendingMessages array.
+          let pendingMessageMap = state.pendingMessages;
+          let matchedMessage = pendingMessageMap.get(pendingMessage.aud[0]).indexOf(pendingMessage);
+          pendingMessageMap.get(pendingMessage.aud[0]).splice(matchedMessage, 1);
+          state.pendingMessages = pendingMessageMap;
+        }
+      }
     }
   }
 

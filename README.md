@@ -11,7 +11,7 @@ A personal server operating function.
 [azim]: https://etherscan.io/address/0x223c067f8cf28ae173ee5cafea60ca44c335fecb
 [aens]: https://etherscan.io/address/azimuth.eth
 [brid]: https://github.com/urbit/bridge/releases
-[arvo]: https://github.com/urbit/arvo/
+[arvo]: https://github.com/urbit/urbit/tree/master/pkg/arvo
 
 ## Install
 
@@ -64,20 +64,16 @@ git lfs pull
 
 ## Contributing
 
-Contributions of any form are more than welcome! If something doesn't seem
-right, and there is no issue about it yet, feel free to open one.
+Contributions of any form are more than welcome!  Please take a look at our
+[contributing guidelines][cont] for details on our git practices, coding
+styles, how we manage issues, and so on.
 
-If you're looking to get involved, there are a few things you can do:
+You might also be interested in:
 
-- Join the [urbit-dev][list] mailing list.
-- [Apply to Hoon School][mail], a course we run to teach the Hoon
+- joining the [urbit-dev][list] mailing list.
+- [applying to Hoon School][mail], a course we run to teach the Hoon
   programming language and Urbit application development.
-- Check out [good contributor issues][good].
-
-Once you've got your bearings, have a look at [CONTRIBUTING.md][cont] for some
-pointers on setting up your development environment.
 
 [list]: https://groups.google.com/a/urbit.org/forum/#!forum/dev
 [mail]: mailto:support@urbit.org
-[good]: https://github.com/urbit/urbit/labels/good%20contributor%20issue
 [cont]: https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md

@@ -16,7 +16,7 @@
 ::  Start a ship (low-level; prefer +raw-ship)
 ::
 ++  init
-  |=  [who=ship keys=(unit dawn-event)]
+  |=  [who=ship keys=(unit dawn-event:able:jael)]
   ^-  (list ph-event)
   [%init-ship who keys]~
 ::
@@ -32,6 +32,15 @@
     [//term/1 %belt %ctl `@c`%u]
     [//term/1 %belt %txt ((list @c) what)]
     [//term/1 %belt %ret ~]
+  ==
+::
+::  Control character
+::
+++  ctrl
+  |=  [who=ship what=term]
+  ^-  (list ph-event)
+  %+  send-events-to  who
+  :~  [//term/1 %belt %ctl (,@c what)]
   ==
 ::
 ::  Inject a file into a ship

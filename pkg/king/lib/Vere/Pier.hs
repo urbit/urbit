@@ -57,7 +57,7 @@ generateBootSeq ship Pill{..} boot = do
     ident       = LogIdentity ship isFake (fromIntegral $ length pBootFormulas)
     preKern ent = [ EvBlip $ BlipEvArvo $ ArvoEvWhom ()     ship
                   , EvBlip $ BlipEvArvo $ ArvoEvWack ()     ent
-                  , EvBlip $ BlipEvTerm $ TermEvBoot (1,()) boot
+                  , EvBlip $ BlipEvTerm $ TermEvBoot (1,()) False boot
                   ]
     isFake = case boot of
       Fake _ -> True

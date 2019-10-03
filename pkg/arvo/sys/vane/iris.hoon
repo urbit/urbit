@@ -317,6 +317,10 @@
     =/  moves=(list move)
       [[duct %slip %d %flog task] ~]
     [moves light-gate]
+  ::  %trim: in response to memory pressure
+  ::
+  ?:  ?=(%trim -.task)
+    [~ light-gate]
   ::  %vega: notifies us of a completed kernel upgrade
   ::
   ?:  ?=(%vega -.task)

@@ -290,7 +290,7 @@ data Belt
 data TermEv
     = TermEvBelt (UD, ()) Belt
     | TermEvBlew (UD, ()) Word Word
-    | TermEvBoot (UD, ()) LegacyBootEvent
+    | TermEvBoot (UD, ()) Bool LegacyBootEvent
     | TermEvHail (UD, ()) ()
     | TermEvCrud Path       Cord Tang
   deriving (Eq, Show)

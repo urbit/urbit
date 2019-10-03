@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import { uuid } from '/lib/util';
+import { store } from '/store';
+
 
 class UrbitApi {
   setAuthTokens(authTokens) {
@@ -32,7 +34,19 @@ class UrbitApi {
   }
 
   hall(data) {
-    this.action("hall", "hall-action", data);
+    this.action("hall", "json", data);
+  }
+  
+  addPendingMessage(data) {
+    let pendingMap = store.state.pendingMessages;
+    if (pendingMap.has(data.aud[0])) {
+      pendingMap.get(data.aud[0]).push(data)     
+    } else {
+      pendingMap.set(data.aud[0], [data])
+    }
+    store.setState({
+      pendingMessages: pendingMap
+    });
   }
 
   chat(lis) {

@@ -1,7 +1,34 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import moment from 'moment';
 
 export class SidebarItem extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      timeSinceNewestMessage: this.getTimeSinceNewestMessage()
+    };
+  }
+
+  componentDidMount() {
+    this.updateTimeSinceNewestMessageInterval = setInterval( () => {
+      this.setState({timeSinceNewestMessage: this.getTimeSinceNewestMessage()});
+    }, 60000);
+  }
+
+  componentWillUnmount() {
+    if (this.updateTimeSinceNewestMessageInterval) {
+      clearInterval(this.updateTimeSinceNewestMessageInterval);
+      this.updateTimeSinceNewestMessageInterval = null;
+    }
+  }
+
+  getTimeSinceNewestMessage() {
+    return !!this.props.wen ?
+      moment.unix(this.props.wen / 1000).from(moment.utc())
+      : '';
+  }
 
   onClick() {
     const { props } = this;
@@ -9,7 +36,7 @@ export class SidebarItem extends Component {
   }
 
   render() {
-    const { props } = this;
+    const { props, state } = this;
 
     let unreadElem = !!props.unread ? (
       <div
@@ -29,7 +56,7 @@ export class SidebarItem extends Component {
         </div>
         <div className="w-100">
           <p className='dib gray label-small-mono mr3 lh-16'>{props.ship}</p>
-          <p className='dib gray label-small-mono lh-16'>{props.datetime}</p>
+          <p className='dib gray label-small-mono lh-16'>{state.timeSinceNewestMessage}</p>
         </div>
         <p className='label-small gray clamp-3 lh-16 pt1'>{props.description}</p>
       </div>

@@ -50,7 +50,7 @@
       $:  %g
           ::
           ::
-          $%  [%deal id=sock data=cush:gall]
+          $%  [%deal id=sock data=internal-task:gall]
   ==  ==  ==
 ::  +sign: private response from another vane to ford
 ::
@@ -74,7 +74,7 @@
       $:  %g
           ::
           ::
-          $%  [%unto p=cuft:gall]
+          $%  [%unto p=internal-gift:gall]
   ==  ==  ==
 --
 ::  more structures
@@ -563,7 +563,7 @@
       //    the functions will be called, and the outstanding poke will be
       //    removed after calling the success or failure function.
       //
-      
+
       this.outstandingPokes = new Map();
 
       //  a registry of requestId to subscription functions.
@@ -580,7 +580,7 @@
     }
 
     deleteOnUnload() {
-      window.addEventListener('beforeunload', (event) => {
+      window.addEventListener("unload", (event) => {
         this.delete();
       });
     }
@@ -588,17 +588,22 @@
     //  sends a poke to an app on an urbit ship
     //
     poke(ship, app, mark, json, successFunc, failureFunc) {
-      var id = this.nextId();
+      let id = this.nextId();
       this.outstandingPokes.set(
-          id, {"success": successFunc, "fail": failureFunc});
+        id,
+        {
+          success: successFunc,
+          fail: failureFunc
+        }
+      );
 
       this.sendJSONToChannel({
-          "id": id,
-          "action": "poke",
-          "ship": ship,
-          "app": app,
-          "mark": mark,
-          "json": json
+          id,
+          action: "poke",
+          ship,
+          app,
+          mark,
+          json
         });
     }
 
@@ -606,18 +611,30 @@
     //
     //    Returns a subscription id, which is the same as the same internal id
     //    passed to your Urbit.
-    subscribe(ship, app, path, connectionErrFunc, eventFunc, quitFunc) {
-      var id = this.nextId();
+    subscribe(
+        ship,
+        app,
+        path,
+        connectionErrFunc = () => {},
+        eventFunc = () => {},
+        quitFunc = () => {}) {
+      let id = this.nextId();
       this.outstandingSubscriptions.set(
-          id, {"err": connectionErrFunc, "event": eventFunc, "quit": quitFunc});
+        id,
+        {
+          err: connectionErrFunc, 
+          event: eventFunc,
+          quit: quitFunc
+        }
+      );
 
       this.sendJSONToChannel({
-          "id": id,
-          "action": "subscribe",
-          "ship": ship,
-          "app": app,
-          "path": path
-        });
+        id,
+        action: "subscribe",
+        ship,
+        app,
+        path
+      });
 
       return id;
     }
@@ -625,33 +642,33 @@
     //  quit the channel
     //
     delete() {
-      var id = this.nextId();
+      let id = this.nextId();
       navigator.sendBeacon(this.channelURL(), JSON.stringify([{
-        "id": id,
-        "action": "delete"
+        id,
+        action: "delete"
       }]));
     }
 
     //  unsubscribe to a specific subscription
     //
-    unsubscribe(subscriptionId) {
-      var id = this.nextId();
+    unsubscribe(subscription) {
+      let id = this.nextId();
       this.sendJSONToChannel({
-          "id": id,
-          "action": "unsubscribe",
-          "subscription": subscriptionId
+        id,
+        action: "unsubscribe",
+        subscription
       });
     }
 
     //  sends a JSON command command to the server.
     //
     sendJSONToChannel(j) {
-      var req = new XMLHttpRequest();
+      let req = new XMLHttpRequest();
       req.open("PUT", this.channelURL());
       req.setRequestHeader("Content-Type", "application/json");
 
       if (this.lastEventId == this.lastAcknowledgedEventId) {
-        var x = JSON.stringify([j]);
+        let x = JSON.stringify([j]);
         req.send(x);
       } else {
         //  we add an acknowledgment to clear the server side queue
@@ -659,8 +676,9 @@
         //    The server side puts messages it sends us in a queue until we
         //    acknowledge that we received it.
         //
-        var x = JSON.stringify(
-          [{"action": "ack", "event-id": parseInt(this.lastEventId)}, j])
+        let x = JSON.stringify(
+          [{action: "ack", "event-id": parseInt(this.lastEventId)}, j]
+        );
         req.send(x);
 
         this.lastEventId = this.lastAcknowledgedEventId;
@@ -680,32 +698,32 @@
       this.eventSource.onmessage = e => {
         this.lastEventId = e.lastEventId;
 
-        var obj = JSON.parse(e.data);
+        let obj = JSON.parse(e.data);
         if (obj.response == "poke") {
-          var funcs = this.outstandingPokes.get(obj.id);
+          let funcs = this.outstandingPokes.get(obj.id);
           if (obj.hasOwnProperty("ok")) {
-            funcs["success"]()
+            funcs["success"]();
           } else if (obj.hasOwnProperty("err")) {
-            funcs["fail"](obj.err)
+            funcs["fail"](obj.err);
           } else {
-            console.log("Invalid poke response: ", obj);
+            console.error("Invalid poke response: ", obj);
           }
           this.outstandingPokes.delete(obj.id);
 
         } else if (obj.response == "subscribe") {
           //  on a response to a subscribe, we only notify the caller on err
           //
-          var funcs = this.outstandingSubscriptions.get(obj.id);
+          let funcs = this.outstandingSubscriptions.get(obj.id);
           if (obj.hasOwnProperty("err")) {
             funcs["err"](obj.err);
             this.outstandingSubscriptions.delete(obj.id);
           }
         } else if (obj.response == "diff") {
-          var funcs = this.outstandingSubscriptions.get(obj.id);
+          let funcs = this.outstandingSubscriptions.get(obj.id);
           funcs["event"](obj.json);
         } else if (obj.response == "quit") {
-          var funcs = this.outstandingSubscriptions.get(obj.id);
-          funcs["quit"](obj.err);
+          let funcs = this.outstandingSubscriptions.get(obj.id);
+          funcs["quit"](obj);
           this.outstandingSubscriptions.delete(obj.id);
         } else {
           console.log("Unrecognized response: ", e);
@@ -713,9 +731,8 @@
       }
 
       this.eventSource.onerror = e => {
-        //  TODO: The server broke the connection. Call every poke cancel and every
-        //  subscription disconnect.
-        console.log(e);
+        console.error("eventSource error:", e);
+        this.delete();
       }
     }
 
@@ -809,7 +826,7 @@
     ^-  note
     :^  %g  %deal  [our our]
     ::
-    ^-  cush:gall
+    ^-  internal-task:gall
     :*  app.act
         %poke
         %handle-http-request
@@ -857,7 +874,7 @@
       ::  use a %handle arm instead of a sub-%poke with the
       ::  %handle-http-request type.
       ::
-      ^-  cush:gall
+      ^-  internal-task:gall
       :*  app.action
           %poke
           %handle-http-request
@@ -899,7 +916,7 @@
       ^-  note
       :^  %g  %deal  [our our]
       ::
-      ^-  cush:gall
+      ^-  internal-task:gall
       :*  app.action.u.connection
           %poke
           %handle-http-cancel
@@ -941,7 +958,7 @@
   ::
   ++  authentication
     |%
-    ::  +handle-request: handles an http request for the 
+    ::  +handle-request: handles an http request for the
     ::
     ++  handle-request
       |=  [secure=? =address =request:http]
@@ -985,12 +1002,14 @@
         $(eny (shas %try-again candidate))
       ::  record cookie and record expiry time
       ::
+      =/  expires-in=@dr  ~d7
       =.  sessions.authentication-state.state
-        (~(put by sessions.authentication-state.state) session (add now ~h24))
+        (~(put by sessions.authentication-state.state) session (add now expires-in))
       ::
+      =/  max-age=tape  (format-ud-as-integer `@ud`(div (msec:milly expires-in) 1.000))
       =/  cookie-line
         %-  crip
-        "urbauth={<session>}; Path=/; Max-Age=86400"
+        "urbauth={<session>}; Path=/; Max-Age={max-age}"
       ::
       ?~  redirect=(get-header:http 'redirect' u.parsed)
         %-  handle-response
@@ -1354,7 +1373,7 @@
           ^-  move
           :^  duct  %pass  /channel/poke/[channel-id]/(scot %ud request-id.i.requests)
           =,  i.requests
-          [%g %deal `sock`[our ship] `cush:gall`[app %punk mark %json !>(json)]]
+          [%g %deal `sock`[our ship] `internal-task:gall`[app %punk mark %json !>(json)]]
         ::
         $(requests t.requests)
       ::
@@ -1368,7 +1387,7 @@
           ^-  move
           :^  duct  %pass  channel-wire
           =,  i.requests
-          [%g %deal [our ship] `cush:gall`[app %peel %json path]]
+          [%g %deal [our ship] `internal-task:gall`[app %peel %json path]]
         ::
         =.  session.channel-state.state
           %+  ~(jab by session.channel-state.state)  channel-id
@@ -1399,7 +1418,7 @@
           ^-  move
           :^  duc.u.maybe-subscription  %pass  channel-wire
           =,  u.maybe-subscription
-          [%g %deal [our ship] `cush:gall`[app %pull ~]]
+          [%g %deal [our ship] `internal-task:gall`[app %pull ~]]
         ::
         =.  session.channel-state.state
           %+  ~(jab by session.channel-state.state)  channel-id
@@ -1451,19 +1470,19 @@
     ::  +on-gall-response: turns a gall response into an event
     ::
     ++  on-gall-response
-      |=  [channel-id=@t request-id=@ud =cuft:gall]
+      |=  [channel-id=@t request-id=@ud =internal-gift:gall]
       ^-  [(list move) server-state]
       ::
-      ?+    -.cuft  ~|([%invalid-gall-response -.cuft] !!)
+      ?+    -.internal-gift  ~|([%invalid-gall-response -.internal-gift] !!)
           %coup
         =/  =json
           =,  enjs:format
           %-  pairs  :~
             ['response' [%s 'poke']]
             ['id' (numb request-id)]
-            ?~  p.cuft
+            ?~  p.internal-gift
               ['ok' [%s 'ok']]
-            ['err' (wall (render-tang-to-wall 100 u.p.cuft))]
+            ['err' (wall (render-tang-to-wall 100 u.p.internal-gift))]
           ==
         ::
         (emit-event channel-id [(en-json:html json)]~)
@@ -1475,8 +1494,8 @@
             ['response' [%s 'diff']]
             ['id' (numb request-id)]
             :-  'json'
-            ?>  =(%json p.p.cuft)
-            ;;(json q.q.p.cuft)
+            ?>  =(%json p.p.internal-gift)
+            ;;(json q.q.p.internal-gift)
           ==
         ::
         (emit-event channel-id [(en-json:html json)]~)
@@ -1498,9 +1517,9 @@
           %-  pairs  :~
             ['response' [%s 'subscribe']]
             ['id' (numb request-id)]
-            ?~  p.cuft
+            ?~  p.internal-gift
               ['ok' [%s 'ok']]
-            ['err' (wall (render-tang-to-wall 100 u.p.cuft))]
+            ['err' (wall (render-tang-to-wall 100 u.p.internal-gift))]
           ==
         ::
         (emit-event channel-id [(en-json:html json)]~)
@@ -1889,6 +1908,44 @@
           [[~ /~/channel] duct [%channel ~]]
       ==
     [~ http-server-gate]
+  ::  %trim: in response to memory pressure
+  ::
+  ::    Cancel all inactive channels
+  ::    XX cancel active too if =(0 trim-priority) ?
+  ::
+  ?:  ?=(%trim -.task)
+    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =*  by-channel  by-channel:(per-server-event event-args)
+    =*  channel-state  channel-state.server-state.ax
+    ::
+    =/  inactive=(list @t)
+      =/  full=(set @t)  ~(key by session.channel-state)
+      =/  live=(set @t)
+        (~(gas in *(set @t)) ~(val by duct-to-key.channel-state))
+      ~(tap in (~(dif in full) live))
+    ::
+    ?:  =(~ inactive)
+      [~ http-server-gate]
+    ::
+    =/  len=tape  (scow %ud (lent inactive))
+    ~>  %slog.[0 leaf+"eyre: trim: closing {len} inactive channels"]
+    ::
+    =|  moves=(list (list move))
+    |-  ^-  [(list move) _http-server-gate]
+    =*  channel-id  i.inactive
+    ?~  inactive
+      [(zing (flop moves)) http-server-gate]
+    ::  discard channel state, and cancel any active gall subscriptions
+    ::
+    =^  mov  server-state.ax  (on-channel-timeout:by-channel channel-id)
+    ::  cancel channel timer
+    ::
+    =/  channel  (~(got by session.channel-state) channel-id)
+    =?  mov  ?=([%& *] state.channel)
+      :_  mov
+      (cancel-timeout-move:by-channel channel-id p.state.channel)
+    $(moves [mov moves], inactive t.inactive)
+  ::
   ::  %vega: notifies us of a completed kernel upgrade
   ::
   ?:  ?=(%vega -.task)

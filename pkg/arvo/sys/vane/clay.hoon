@@ -2741,7 +2741,10 @@
     |=  {hen/duct mun/mood dat/(each cage lobe)}
     ^+  +>
     ?:  ?=(%& -.dat)
-      (emit hen %slip %b %drip !>([%writ ~ [care.mun case.mun syd] path.mun p.dat]))
+      %-  emit
+      :*  hen  %slip  %b  %drip
+          !>([%writ ~ [care.mun case.mun syd] path.mun p.dat])
+      ==
     %-  emit
     :*  hen  %pass  [%blab care.mun (scot case.mun) syd path.mun]
         %f  %build  live=%.n  %pin
@@ -3464,13 +3467,13 @@
       ?>  ?=(%mult -.rov)
       ::  we will either respond or store the maybe updated request.
       ::
-      =;  res=(each (map mood (each cage lobe)) rove)
+      =;  res=(each (map mood (unit (each cage lobe))) rove)
           ?:  ?=(%& -.res)
             (respond p.res)
           (store p.res)
       ::  recurse here on next aeon if possible/needed.
       ::
-      |-  ^-  (each (map mood (each cage lobe)) rove)
+      |-  ^-  (each (map mood (unit (each cage lobe))) rove)
       ::  if we don't have an aeon yet, see if we have one now.
       ::
       ?~  aeon.rov
@@ -3501,14 +3504,14 @@
         |+rov
       ::  both complete, so check if anything has changed
       ::
-      =/  changes=(map mood (each cage lobe))
+      =/  changes=(map mood (unit (each cage lobe)))
         %+  roll  ~(tap by old-cach.rov)
         |=  $:  [[car=care pax=path] old-cach-value=cach]
-                changes=(map mood (each cage lobe))
+                changes=(map mood (unit (each cage lobe)))
             ==
         =/  new-cach-value=cach  (~(got by new-cach.rov) car pax)
         ?<  |(?=(~ old-cach-value) ?=(~ new-cach-value))
-        =/  new-entry=(unit (pair mood (each cage lobe)))
+        =/  new-entry=(unit (pair mood (unit (each cage lobe))))
           =/  =mood  [car [%ud u.aeon.rov] pax]
           ?~  u.old-cach-value
             ?~  u.new-cach-value
@@ -3517,18 +3520,18 @@
               ~
             ::  added
             ::
-            `[mood u.u.new-cach-value]
+            `[mood `u.u.new-cach-value]
           ?~  u.new-cach-value
             ::  deleted
             ::
-            `[mood [%& %null [%atom %n ~] ~]]
+            `[mood ~]
           ?:  (equivalent-data:ze u.u.new-cach-value u.u.old-cach-value)
             ::  unchanged
             ::
             ~
           ::  changed
           ::
-          `[mood u.u.new-cach-value]
+          `[mood `u.u.new-cach-value]
         ::  if changed, save the change
         ::
         ?~  new-entry
@@ -3556,13 +3559,15 @@
       ::  send changes
       ::
       ++  respond
-        |=  res=(map mood (each cage lobe))
+        |=  res=(map mood (unit (each cage lobe)))
         ^-  [new-sub=(unit rove) (list sub-result)]
         :-  ~
         ?:  ?=(%mult -.vor)
           [%blas ~(key by res)]~
         ?>  ?=([* ~ ~] res)
-        [%blab n.res]~
+        ?~  q.n.res
+          [%blub ~]~
+        [%blab [p u.q]:n.res]~
       ::
       ::  no unknowns
       ::
@@ -4308,6 +4313,8 @@
       =/  den  ((de our now ski hen ruf) our des.req)
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
+  ::
+      %trim  [~ ..^$]
   ::
       %vega  [~ ..^$]
   ::
