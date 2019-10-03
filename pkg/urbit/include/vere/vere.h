@@ -551,7 +551,6 @@
         c3_c*   ets_c;                      //  -E, eth snapshot
         c3_c*   eth_c;                      //  -e, ethereum node url
         c3_c*   fak_c;                      //  -F, fake ship
-        c3_w    fuz_w;                      //  -f, fuzz testing
         c3_c*   gen_c;                      //  -G, czar generator
         c3_o    gab;                        //  -g, test garbage collection
         c3_c*   dns_c;                      //  -H, ames bootstrap domain

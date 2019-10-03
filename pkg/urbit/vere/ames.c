@@ -313,11 +313,6 @@ u3_ames_ef_send(u3_pier* pir_u, u3_noun lan, u3_noun pac)
 {
   u3_ames* sam_u = pir_u->sam_u;
 
-  if ( u3_Host.ops_u.fuz_w && ((rand() % 100) < u3_Host.ops_u.fuz_w) ) {
-    u3z(lan); u3z(pac);
-    return;
-  }
-
   if ( c3n == sam_u->liv ) {
     u3l_log("ames: not yet live, dropping outbound\r\n");
     u3z(lan); u3z(pac);
