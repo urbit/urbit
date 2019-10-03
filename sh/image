@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+echo "Creating non-debug container image..."
+image=$(nix-build default.nix --no-out-link -A urbit-image)
+
+echo "Loading $image into Docker..."
+docker load --input $image
