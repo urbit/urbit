@@ -14,7 +14,6 @@
 #include <ncurses/term.h>
 #include <dirent.h>
 #include <openssl/ssl.h>
-#include <openssl/rand.h>
 #include <h2o.h>
 #include <curl/curl.h>
 #include <argon2.h>
@@ -676,10 +675,6 @@ main(c3_i   argc,
   if ( c3y == u3_Host.ops_u.dem && c3n == u3_Host.ops_u.bat ) {
     printf("boot: running as daemon\n");
   }
-
-  //  Seed prng. Don't panic -- just for fuzz testing.
-  //
-  srand(getpid());
 
   //  Instantiate process globals.
   {
