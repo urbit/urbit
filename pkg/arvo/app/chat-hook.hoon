@@ -1,3 +1,7 @@
+::  chat-hook:
+::  mirror chat data from foreign to local based on read permissions
+::  allow sending chat messages to foreign paths based on write perms
+::
 /-  *permission-store, *chat-hook
 /+  *chat-json
 |%
@@ -113,16 +117,14 @@
         synced  (~(del by synced) path.act)
         boned  (~(del by boned) chat-wire)
       ==
-      ;:  weld
-        (pull-wire chat-wire path.act)
-      ::
-        (delete-permission [%chat path.act])
-      ::
-        ^-  (list move)
-        %+  turn  (prey:pubsub:userlib [%mailbox path.act] bol)
-        |=  [=bone *]
-        ^-  move
-        [bone %quit ~]
+      %-  zing
+      :~  (pull-wire chat-wire path.act)
+          (delete-permission [%chat path.act])
+          ^-  (list move)
+          %+  turn  (prey:pubsub:userlib [%mailbox path.act] bol)
+          |=  [=bone *]
+          ^-  move
+          [bone %quit ~]
       ==
     ?:  |(=(u.ship src.bol) (team:title our.bol src.bol))
       ::  delete a foreign ship's path

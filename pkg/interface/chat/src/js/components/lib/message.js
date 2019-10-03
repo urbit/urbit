@@ -10,26 +10,34 @@ export class Message extends Component {
   renderContent() {
     const { props } = this;
     let letter = props.msg.letter;
-    console.log(props.msg);
 
     if ('code' in letter) {
+      let outputElement = 
+        (!!letter.code.output && 
+         letter.code.output.length && letter.code.output.length > 0) ?
+        (
+          <pre className="clamp-attachment pa1 mt0 mb0">
+            {letter.code.output[0].join('\n')}
+          </pre>
+        ) : null;
       return (
         <span>
           <pre className="clamp-attachment pa1 mt0 mb0 bg-light-gray">
             {letter.code.expression}
           </pre>
-          <pre className="clamp-attachment pa1 mt0 mb0">
-            { !!letter.code.output && letter.code.output.length ?
-                ( letter.code.output[0].join('\n') ) :
-                ''
-              }
-          </pre>
+          {outputElement}
         </span>
       );
     } else if ('url' in letter) {
       return (
-        <a className='body-regular-400 v-top' href={letter.url}>
+        <a className="body-regular-400 v-top" href={letter.url}>
           {letter.url}
+        </a>
+      );
+    } else if ('me' in letter) {
+      return (
+        <p className='body-regular-400 v-top'>
+          {letter.me}
         </p>
       );
     } else {
@@ -39,7 +47,6 @@ export class Message extends Component {
         </p>
       );
     }
-
   }
 
   render() {

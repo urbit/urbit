@@ -1,3 +1,6 @@
+::  chat-view: sets up chat JS client, paginates data, and combines commands
+::  into semantic actions for the UI
+::
 /-  *permission-store, *group-store, *permission-group-hook, *chat-hook
 /+  *server, *chat-json
 /=  index

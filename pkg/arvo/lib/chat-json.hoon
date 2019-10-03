@@ -59,6 +59,9 @@
         [%output a+(turn output.letter tank)]
     ==
   ::
+      %me
+    (frond %me s+narrative.letter)
+  ::
   ==
 ::
 ++  enve
@@ -212,6 +215,7 @@
     :~  [%text so]
         [%url so]
         [%code eval]
+        [%me so]
     ==
   ::
   --

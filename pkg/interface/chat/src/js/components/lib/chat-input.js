@@ -94,6 +94,17 @@ export class ChatInput extends Component {
           output: undefined
         }
       }
+    } else if (letter[0] === '@') {
+      letter = letter.slice(1);
+      // remove insignificant leading whitespace.
+      // aces might be relevant to style.
+      while (letter[0] === '\n') {
+        letter = letter.slice(1);
+      }
+
+      return {
+        me: letter
+      }
     } else if (this.isUrl(letter)) {
        return {
         url: letter

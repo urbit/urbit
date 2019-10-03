@@ -1,3 +1,5 @@
+:: chat-store: data store that holds linear sequences of chat messages
+::
 /+  *chat-json
 |%
 +$  move  [bone card]
