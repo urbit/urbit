@@ -95,7 +95,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "G:J:B:K:A:H:I:w:u:e:E:f:F:k:p:LljabcCdgqsvxPDRS")) )
+                 "G:J:B:K:A:H:I:w:u:e:E:F:k:p:LljabcCdgqsvxPDRS")) )
   {
     switch ( ch_i ) {
       case 'J': {
@@ -146,12 +146,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'x': {
         u3_Host.ops_u.tex = c3y;
-        break;
-      }
-      case 'f': {
-        if ( c3n == _main_readw(optarg, 100, &u3_Host.ops_u.fuz_w) ) {
-          return c3n;
-        }
         break;
       }
       case 'K': {
@@ -386,7 +380,6 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-d            Daemon mode\n",
     "-e url        Ethereum gateway\n",
     "-F ship       Fake keys; also disables networking\n",
-    "-f            Fuzz testing\n",
     "-g            Set GC flag\n",
     "-j file       Create json trace file\n",
     "-K stage      Start at Hoon kernel version stage\n",
