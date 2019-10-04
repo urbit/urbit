@@ -544,11 +544,9 @@
         c3_o    abo;                        //  -a, abort aggressively
         c3_c*   pil_c;                      //  -B, bootstrap from
         c3_o    bat;                        //  -b, batch create
-        c3_o    can;                        //  -C, chain-only, no eth snapshot
         c3_o    nuu;                        //  -c, new pier
         c3_o    dry;                        //  -D, dry compute, no checkpoint
         c3_o    dem;                        //  -d, daemon
-        c3_c*   ets_c;                      //  -E, eth snapshot
         c3_c*   eth_c;                      //  -e, ethereum node url
         c3_c*   fak_c;                      //  -F, fake ship
         c3_c*   gen_c;                      //  -G, czar generator

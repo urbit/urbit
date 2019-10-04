@@ -71,7 +71,6 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   u3_Host.ops_u.abo = c3n;
   u3_Host.ops_u.bat = c3n;
-  u3_Host.ops_u.can = c3n;
   u3_Host.ops_u.dem = c3n;
   u3_Host.ops_u.dry = c3n;
   u3_Host.ops_u.gab = c3n;
@@ -94,7 +93,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "G:J:B:K:A:H:I:w:u:e:E:F:k:p:LljabcCdgqsvxPDRS")) )
+                 "G:J:B:K:A:H:I:w:u:e:F:k:p:LljabcdgqsvxPDRS")) )
   {
     switch ( ch_i ) {
       case 'J': {
@@ -123,10 +122,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'e': {
         u3_Host.ops_u.eth_c = strdup(optarg);
-        break;
-      }
-      case 'E': {
-        u3_Host.ops_u.ets_c = strdup(optarg);
         break;
       }
       case 'F': {
@@ -173,7 +168,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'a': { u3_Host.ops_u.abo = c3y; break; }
       case 'b': { u3_Host.ops_u.bat = c3y; break; }
       case 'c': { u3_Host.ops_u.nuu = c3y; break; }
-      case 'C': { u3_Host.ops_u.can = c3y; break; }
       case 'd': { u3_Host.ops_u.dem = c3y; break; }
       case 'g': { u3_Host.ops_u.gab = c3y; break; }
       case 'P': { u3_Host.ops_u.pro = c3y; break; }
@@ -284,11 +278,6 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.url_c != 0 ) {
     fprintf(stderr, "-u only makes sense when bootstrapping a new instance\n");
-    return c3n;
-  }
-
-  if ( u3_Host.ops_u.can == c3y && u3_Host.ops_u.ets_c != 0 ) {
-    fprintf(stderr, "-C and -E cannot be used together\n");
     return c3n;
   }
 
