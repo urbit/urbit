@@ -118,23 +118,6 @@ data EthPoint = EthPoint
     }
   deriving (Eq, Show)
 
-data EthEventId = EthEventId
-    { eeiBlock :: Atom
-    , eeiLog   :: Atom
-    }
-  deriving (Eq, Ord, Show)
-
-data EthBookmark = EthBookmark
-    { ebHeard       :: HoonSet EthEventId
-    , ebLatestBlock :: Atom
-    }
-  deriving (Eq, Ord, Show)
-
-data Snap = Snap (HoonMap Ship Public)
-                 (Dnses, HoonMap Ship EthPoint)
-                 EthBookmark
-  deriving (Eq, Show)
-
 data Dawn = MkDawn
     { dSeed    :: Seed
     , dSponsor :: [(Ship, EthPoint)]
@@ -145,11 +128,8 @@ data Dawn = MkDawn
     }
   deriving (Eq, Show)
 
-deriveNoun ''EthEventId
-deriveNoun ''EthBookmark
 deriveNoun ''Dnses
 deriveNoun ''EthPoint
-deriveNoun ''Snap
 deriveNoun ''Seed
 deriveNoun ''Dawn
 

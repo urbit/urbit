@@ -132,7 +132,7 @@ retrievePoint bloq azimuth ship =
 -- Retrieves information about all the galaxies from Ethereum.
 retrieveGalaxyTable :: Quantity -> Address -> Web3 (Map Ship (Rift, Life, Pass))
 retrieveGalaxyTable bloq azimuth =
-    withAzimuth bloq azimuth $ M.fromList <$> mapM getRow [0..5]
+    withAzimuth bloq azimuth $ M.fromList <$> mapM getRow [0..255]
   where
     getRow idx = do
       (encryptionKey, authenticationKey, _, _, _, _, _, cryptoSuite,
@@ -226,9 +226,8 @@ getSponsorshipChain block azimuth = loop
 dawnVent :: Seed -> RIO e (Either Text Dawn)
 dawnVent dSeed@(Seed ship life ring oaf) = do
   ret <- runWeb3' provider $ do
-    -- Block number (dBloq)
     block <- blockNumber
-    print ("boot: eth block: " ++ (show block))
+    print ("boot: ethereum block #" ++ (show block))
 
     print "boot: retrieving azimuth contract"
     azimuth <- withAccount () $ Ens.resolve "azimuth.eth"
@@ -236,22 +235,14 @@ dawnVent dSeed@(Seed ship life ring oaf) = do
     immediateSponsor <- validateShipAndGetImmediateSponsor block azimuth dSeed
     dSponsor <- getSponsorshipChain block azimuth immediateSponsor
 
-    -- Retrieve the galaxy table [MUST FIX s/5/255/]
     print "boot: retrieving galaxy table"
-    galaxyTable <- retrieveGalaxyTable block azimuth
-    let dCzar = mapToHoonMap galaxyTable
+    dCzar <- mapToHoonMap <$> retrieveGalaxyTable block azimuth
 
-    -- Read Ames domains
     print "boot: retrieving network domains"
     dTurf <- readAmesDomains block azimuth
 
     let dBloq = toBloq block
-
-    -- dNode is supposed to be a PUrl to an Ethereum node. However, it looks
-    -- like it's almost always Nothing. The jael side just has a default node
-    -- that it goes and uses when null?
     let dNode = Nothing
-
     pure $ MkDawn{..}
 
   case ret of
