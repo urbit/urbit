@@ -2,8 +2,22 @@
 
 set -euo pipefail
 
-echo "Creating non-debug container image..."
-image=$(nix-build default.nix --no-out-link -A urbit-image)
+build=${1:-}
 
-echo "Loading $image into Docker..."
-docker load --input $image
+if [[ -z "$build" ]]; then
+    build="urbit-image"
+fi
+
+say() {
+  echo "$1" >&2
+}
+
+say "Building $build..."
+image="$(nix-build default.nix --no-out-link -A $build)"
+
+say "Loading $image into Docker..."
+tag="$(docker load --quiet --input $image)"
+tag="${tag#Loaded image: }"
+
+# Output only the tag on stdout for subsequent pipes/tooling.
+echo $tag

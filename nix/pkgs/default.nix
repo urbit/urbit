@@ -27,8 +27,7 @@ let
     import ./urbit/image.nix {
       inherit pkgs;
 
-      name  = if debug then "urbit-debug" else "urbit";
-      urbit = if debug then  urbit-debug  else  urbit;
+      urbit = if debug then urbit-debug else urbit;
     };
 
   urbit-image       = mkImage { debug = false; };
