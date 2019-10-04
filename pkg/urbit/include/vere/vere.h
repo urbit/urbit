@@ -543,7 +543,6 @@
         c3_c*   arv_c;                      //  -A, initial sync from
         c3_o    abo;                        //  -a, abort aggressively
         c3_c*   pil_c;                      //  -B, bootstrap from
-        c3_o    bat;                        //  -b, batch create
         c3_o    nuu;                        //  -c, new pier
         c3_o    dry;                        //  -D, dry compute, no checkpoint
         c3_o    dem;                        //  -d, daemon
@@ -567,7 +566,6 @@
         c3_o    tem;                        //  -t, Disable terminal/tty assumptions
         c3_o    git;                        //  -s, pill url from arvo git hash
         c3_c*   url_c;                      //  -u, pill url
-        c3_o    vno;                        //  -V, replay without reboots
         c3_o    veb;                        //  -v, verbose (inverse of -q)
         c3_c*   who_c;                      //  -w, begin with ticket
         c3_o    tex;                        //  -x, exit after loading
