@@ -565,6 +565,14 @@ _fork_into_background_process()
   exit(WEXITSTATUS(status));
 }
 
+/* _stop_on_boot_completed_cb(): exit gracefully after boot is complete
+*/
+static void
+_stop_on_boot_completed_cb()
+{
+  u3_pier_exit(u3_pier_stub());
+}
+
 c3_i
 main(c3_i   argc,
      c3_c** argv)
@@ -594,6 +602,10 @@ main(c3_i   argc,
   if ( c3y == u3_Host.ops_u.rep ) {
     report();
     return 0;
+  }
+
+  if ( c3y == u3_Host.ops_u.tex ) {
+    u3_Host.bot_f = _stop_on_boot_completed_cb;
   }
 
 #if 0
