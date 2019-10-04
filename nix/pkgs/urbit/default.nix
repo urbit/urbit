@@ -21,6 +21,7 @@ in
 pkgs.stdenv.mkDerivation {
   name    = name;
   exename = name;
+  meta    = { inherit debug; };
   src     = ../../../pkg/urbit;
   builder = ./builder.sh;
 
