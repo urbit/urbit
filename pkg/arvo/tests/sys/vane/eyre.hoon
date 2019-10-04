@@ -602,7 +602,7 @@
             [%ipv4 .192.168.1.1]
             %'GET'
             '/~landscape/inner-path'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
             ~
         ==
       ^=  comparator
@@ -631,7 +631,7 @@
                     [%ipv4 .192.168.1.1]
                     :*  %'GET'
                         '/~landscape/inner-path'
-                        ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+                        ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
                         ~
                   ==  ==
               ==
@@ -985,7 +985,7 @@
             [%ipv4 .192.168.1.1]
             %'GET'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
             ~
         ==
       ^=  expected-moves
@@ -1073,7 +1073,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
         ::
             :-  ~
             %-  as-octs:mimes:html
@@ -1173,7 +1173,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
         ::
             :-  ~
             %-  as-octs:mimes:html
@@ -1274,7 +1274,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
         ::
             :-  ~
             %-  as-octs:mimes:html
@@ -1364,7 +1364,7 @@
             [%ipv4 .192.168.1.1]
             %'GET'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
             ~
         ==
       ^=  expected-moves
@@ -1419,7 +1419,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
         ::
             :-  ~
             %-  as-octs:mimes:html
@@ -1556,7 +1556,7 @@
             [%ipv4 .192.168.1.1]
             %'GET'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
             ~
         ==
       ^=  expected-moves
@@ -1636,7 +1636,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
         ::
             :-  ~
             %-  as-octs:mimes:html
@@ -1706,7 +1706,7 @@
             [%ipv4 .192.168.1.1]
             %'GET'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
             ~
         ==
       ^=  expected-moves
@@ -2079,7 +2079,7 @@
                 :-  307
                 :~  ['location' '/~landscape']
                     :-  'set-cookie'
-                    'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea; Path=/; Max-Age=604800'
+                    'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea; Path=/; Max-Age=604800'
                 ==
                 ~
                 complete=%.y
@@ -2126,7 +2126,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
         ::
             :-  ~
             %-  as-octs:mimes:html
