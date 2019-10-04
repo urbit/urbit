@@ -91,10 +91,7 @@ withAzimuth bloq azimuth action =
         withParam (block .~ (BlockWithNumber bloq))
           action
 
--- In the Hoon implementation, the EthPoint structure has space for the deed
--- information, but it immediately punts on this by bunting the deed structure
--- instead of making the correct calls. We just do the right thing.
---
+-- Retrieves the EthPoint information for an individual point.
 retrievePoint :: Quantity -> Address -> Ship -> Web3 (EthPoint)
 retrievePoint bloq azimuth ship =
   withAzimuth bloq azimuth $ do
@@ -112,6 +109,7 @@ retrievePoint bloq azimuth ship =
                       then Just $ Ship $ fromIntegral escapeTo
                       else Nothing
 
+    -- The hoon version also sets this to all 0s and then does nothing with it.
     let epOwn = (0, 0, 0, 0)
 
     let epNet = if (not active)
@@ -153,37 +151,13 @@ readAmesDomains bloq azimuth =
       str <- dnsDomains idx
       pure $ Turf $ fmap Cord $ reverse $ splitOn "." str
 
--- Returns the sponsor of the current ship or fails on invalid state.
-getSponsorShipAndValidate :: Quantity -> Address -> Seed -> Web3 (Ship)
-getSponsorShipAndValidate block azimuth (Seed ship life ring oaf) =
-  do
-    if clan == Ob.Comet then
-      validateComet
-    else do
-      who <- pointToRetrieve
-
-      -- TODO: We don't need the entire EthPoint structure to do this; this
-      -- is just copying what the old hoon code did.
-      whoP <- retrievePoint block azimuth ship
-      case clan of
-        Ob.Moon -> validateMoon (epNet whoP)
-        _       -> validateRest (epNet whoP)
+validateShipAndGetImmediateSponsor :: Quantity -> Address -> Seed -> Web3 (Ship)
+validateShipAndGetImmediateSponsor block azimuth (Seed ship life ring oaf) =
+  case clanFromShip ship of
+    Ob.Comet -> validateComet
+    Ob.Moon  -> validateMoon
+    _        -> validateRest
   where
-    clan = clanFromShip ship
-
-    -- When we're booting a moon, we need to retrieve our planet's
-    -- keys. Otherwise retrieve keys for the ship passed in.
-    pointToRetrieve =
-      if clan == Ob.Moon then do
-        let parent = shipSein ship
-        print ("boot: retrieving " ++ (renderShip parent) ++
-               "'s public keys (for " ++ (renderShip ship) ++ ")")
-        pure parent
-      else do
-        print ("boot: retrieving " ++ (renderShip ship) ++
-               "'s public keys")
-        pure ship
-
     validateComet = do
       -- TODO: All validation of the comet.
       -- A comet address is the fingerprint of the keypair
@@ -191,26 +165,61 @@ getSponsorShipAndValidate block azimuth (Seed ship life ring oaf) =
       -- A comet can never be breached
       -- when live Left "comet already booted"
       -- TODO: the parent must be launched check?
+      pure (shipSein ship)
+
+    validateMoon = do
+      -- TODO: The current code in zuse does nothing, but we should be able to
+      -- try to validate the oath against the current as exists planet on
+      -- chain.
       pure $ shipSein ship
-      --fail "dealing with comets is a giant todo i'm punting on for now"
 
-    validateMoon = \case
-      Nothing -> fail "sponsoring planet not keyed"
-      Just _  -> pure $ shipSein ship
+    validateRest = do
+      print ("boot: retrieving " ++ (renderShip ship) ++ "'s public keys")
 
-    validateRest = \case
-      Nothing -> fail "ship not keyed"
-      Just (netLife, pass, contNum, (hasSponsor, who), _) -> do
-        when (netLife /= life) $
-            fail $ pack
-                 ("keyfile life mismatch; keyfile claims life " ++
-                  (show life) ++ ", but Azimuth claims life " ++ (show netLife))
-        when ((getPassFromRing ring) /= pass) $
-            fail "keyfile does not match blockchain"
-        -- TODO: The hoon code does a breach check, but the C code never
-        -- supplies the data necessary for it to function.
-        pure who
+      whoP <- retrievePoint block azimuth ship
+      case (epNet whoP) of
+        Nothing -> fail "ship not keyed"
+        Just (netLife, pass, contNum, (hasSponsor, who), _) -> do
+          when (netLife /= life) $
+              fail $ pack
+                   ("keyfile life mismatch; keyfile claims life " ++
+                    (show life) ++ ", but Azimuth claims life " ++
+                    (show netLife))
+          when ((getPassFromRing ring) /= pass) $
+              fail "keyfile does not match blockchain"
+          -- TODO: The hoon code does a breach check, but the C code never
+          -- supplies the data necessary for it to function.
+          pure who
 
+
+-- Walk through the sponsorship chain retrieving the actual sponsorship chain
+-- as it exists on Ethereum.
+getSponsorshipChain :: Quantity -> Address -> Ship -> Web3 [(Ship,EthPoint)]
+getSponsorshipChain block azimuth = loop
+  where
+    loop ship = do
+      print ("boot: retrieving keys for sponsor " ++ (renderShip ship))
+      ethPoint <- retrievePoint block azimuth ship
+
+      case clanFromShip ship of
+        Ob.Comet -> fail "Comets cannot be sponsors"
+        Ob.Moon  -> fail "Moons cannot be sponsors"
+        Ob.Galaxy -> do
+          case (epNet ethPoint) of
+            Nothing -> fail $ unpack ("Galaxy " ++ (renderShip ship) ++
+                                      " not booted")
+            Just _  -> pure [(ship, ethPoint)]
+        _ -> do
+          case (epNet ethPoint) of
+            Nothing -> fail $ unpack ("Ship " ++ (renderShip ship) ++
+                                      " not booted")
+            Just (_, _, _, (has, sponsor), _) -> do
+              case has of
+                False -> fail $ unpack ("Ship " ++ (renderShip ship) ++
+                                        " has no sponsor")
+                True -> do
+                  chain <- loop sponsor
+                  pure $ chain ++ [(ship, ethPoint)]
 
 
 -- Produces either an error or a validated boot event structure.
@@ -224,17 +233,8 @@ dawnVent dSeed@(Seed ship life ring oaf) = do
     print "boot: retrieving azimuth contract"
     azimuth <- withAccount () $ Ens.resolve "azimuth.eth"
 
-    -- TODO: This is one of three cases: Validate data for a comet, get the
-    -- moon's parent keys, or get your ship's keys.
-    sponsorShip <- getSponsorShipAndValidate block azimuth dSeed
-
-    -- Retrieve the whole EthPoint for our sponsor
-    print $ "boot: retrieving sponsor " ++ (renderShip sponsorShip) ++
-            "'s public keys"
-    sponsorPoint <- retrievePoint block azimuth (fromIntegral sponsorShip)
-
-    -- TODO: Under the new boot conventions, this is supposed to be a list?
-    let dSponsor = [(sponsorShip, sponsorPoint)]
+    immediateSponsor <- validateShipAndGetImmediateSponsor block azimuth dSeed
+    dSponsor <- getSponsorshipChain block azimuth immediateSponsor
 
     -- Retrieve the galaxy table [MUST FIX s/5/255/]
     print "boot: retrieving galaxy table"
@@ -244,9 +244,6 @@ dawnVent dSeed@(Seed ship life ring oaf) = do
     -- Read Ames domains
     print "boot: retrieving network domains"
     dTurf <- readAmesDomains block azimuth
-
-    -- TODO: I need a Map -> NounMap conversion to turn the galaxyTable into
-    -- dCzar.
 
     let dBloq = toBloq block
 
