@@ -564,6 +564,7 @@
         c3_o    qui;                        //  -q, quiet
         c3_o    rep;                        //  -R, report build info
         c3_o    has;                        //  -S, Skip battery hashes
+        c3_o    tem;                        //  -t, Disable terminal/tty assumptions
         c3_o    git;                        //  -s, pill url from arvo git hash
         c3_c*   url_c;                      //  -u, pill url
         c3_o    vno;                        //  -V, replay without reboots
