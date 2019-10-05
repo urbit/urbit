@@ -582,8 +582,8 @@
   $:  rto=_~s1
       rtt=_~s1
       rttvar=_~s1
-      ssthresh=_1.000
-      cwnd=_1
+      ssthresh=_1.000.000
+      cwnd=_1.000.000
       num-live=@ud
       counter=@ud
   ==
