@@ -1009,7 +1009,7 @@
       =/  max-age=tape  (format-ud-as-integer `@ud`(div (msec:milly expires-in) 1.000))
       =/  cookie-line
         %-  crip
-        "urbauth={<session>}; Path=/; Max-Age={max-age}"
+        "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}"
       ::
       ?~  redirect=(get-header:http 'redirect' u.parsed)
         %-  handle-response
@@ -1053,7 +1053,7 @@
         %.n
       ::  is there an urbauth cookie?
       ::
-      ?~  urbauth=(get-header:http 'urbauth' u.cookies)
+      ?~  urbauth=(get-header:http (crip "urbauth-{<our>}") u.cookies)
         %.n
       ::  is this formatted like a valid session cookie?
       ::
