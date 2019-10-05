@@ -12,12 +12,22 @@ say() {
   echo "$1" >&2
 }
 
+git_sha="$(git rev-parse HEAD)"
+git_sha="${git_sha:0:8}"
+
+git_branch="$(git branch --show-current)"
+
+git_tag="${build}:${git_branch}-${git_sha}"
+
 say "Building $build..."
 image="$(nix-build default.nix --no-out-link -A $build)"
 
 say "Loading $image into Docker..."
-tag="$(docker load --quiet --input $image)"
-tag="${tag#Loaded image: }"
+nix_tag="$(docker load --quiet --input $image)"
+nix_tag="${nix_tag#Loaded image: }"
+
+say "Re-tagging with current git branch:$git_branch SHA:$git_sha"
+docker tag $nix_tag $git_tag
 
 # Output only the tag on stdout for subsequent pipes/tooling.
-echo $tag
+echo $git_tag
