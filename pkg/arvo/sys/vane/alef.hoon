@@ -1348,10 +1348,10 @@
         ::
         =?  event-core  =(%pawn (clan:title our))
           (send-blob ship (attestation-packet ship life.point))
-        ::  apply outgoing messages
+        ::  apply outgoing messages, reversing for FIFO order
         ::
         =.  event-core
-          %+  roll  snd-messages.todos
+          %+  reel  snd-messages.todos
           |=  [[=^duct =plea] core=_event-core]
           (on-plea:core(duct duct) ship plea)
         ::  apply outgoing packet blobs
