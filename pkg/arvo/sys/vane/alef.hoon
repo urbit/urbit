@@ -586,9 +586,15 @@
       cwnd=_1
       num-live=@ud
       counter=@ud
-      start=@da
   ==
-+$  live-packet-key  [=message-num =fragment-num]
++$  live-packet
+  $:  key=live-packet-key
+      val=live-packet-val
+  ==
++$  live-packet-key
+  $:  =message-num
+      =fragment-num
+  ==
 +$  live-packet-val
   $:  packet-state
       num-fragments=fragment-num
@@ -1345,23 +1351,15 @@
         ::  apply outgoing messages
         ::
         =.  event-core
-          |-  ^+  event-core
-          ?~  snd-messages.todos  event-core
-          ::
-          =.  event-core
-            %-  on-plea(duct duct.i.snd-messages.todos)
-            [ship plea.i.snd-messages.todos]
-          ::
-          $(snd-messages.todos t.snd-messages.todos)
+          %+  roll  snd-messages.todos
+          |=  [[=^duct =plea] core=_event-core]
+          (on-plea:core(duct duct) ship plea)
         ::  apply outgoing packet blobs
         ::
         =.  event-core
-          =/  blobs  ~(tap in snd-packets.todos)
-          |-  ^+  event-core
-          ?~  blobs  event-core
-          ::
-          =.  event-core  (send-blob ship i.blobs)
-          $(blobs t.blobs)
+          %+  roll  ~(tap in snd-packets.todos)
+          |=  [=blob core=_event-core]
+          (send-blob:core ship blob)
         ::
         event-core
       --
@@ -2138,10 +2136,7 @@
     =.  last-sent.val  now.channel
     =.  retries.val    +(retries.val)
     ::
-    =/  =static-fragment
-      [message-num num-fragments fragment-num fragment]:[key val]
-    ::
-    [`val stop=%.y static-fragment]
+    [`val stop=%.y (to-static-fragment key val)]
   ::  +feed: try to send a list of packets, returning unsent and effects
   ::
   ++  feed
@@ -2182,11 +2177,9 @@
     =>  .(sent `(list static-fragment)`sent)
     ::  emit a $packet-pump-gift for each packet to send
     ::
-    |-  ^+  packet-pump
-    ?~  sent  packet-pump
-    ::
-    =.  packet-pump  (give %send i.sent)
-    $(sent t.sent)
+    %+  roll  sent
+    |=  [packet=static-fragment core=_packet-pump]
+    (give:core %send packet)
   ::  +on-hear: handle ack on a live packet
   ::
   ::    If the packet was in our queue, delete it and update our
@@ -2204,16 +2197,23 @@
         ::
         =.  metrics.state  metrics.-
         =.  live.state     live.-
-        ~?  =(0 (mod counter.metrics.state 20))  [fragment-num show:gauge]
-        =?  start.metrics.state  =(0 fragment-num)  now.channel
+        ~?  ?|  =(0 fragment-num)
+                =(0 (mod counter.metrics.state 20))
+            ==
+            [fragment-num show:gauge]
+        ::  .resends is backward, so fold backward and emit
         ::
-        packet-pump
+        %+  reel  resends.-
+        |=  [packet=static-fragment core=_packet-pump]
+        (give:core %send packet)
     ::
-    ^-  $:  [found=? metrics=pump-metrics]
-            live=(tree [live-packet-key live-packet-val])
-        ==
+    =/  acc
+      :*  found=`?`%.n
+          resends=*(list static-fragment)
+          metrics=metrics.state
+      ==
     ::
-    =/  acc=[found=? metrics=pump-metrics]  [%.n metrics.state]
+    ^+  [acc live=live.state]
     ::
     %^  (traverse:packet-queue _acc)  live.state  acc
     |=  $:  acc=_acc
@@ -2228,14 +2228,20 @@
     ?:  =(key [message-num fragment-num])
       ::  delete acked packet, update metrics, and stop traversal
       ::
-      :+  new-val=~
-        stop=%.y
-      [found=%.y metrics=(on-ack:gauge -.val)]
-    ::  ack was out of order; mark skipped, tell gauge, and continue
+      =.  found.acc    %.y
+      =.  metrics.acc  (on-ack:gauge -.val)
+      [new-val=~ stop=%.y acc]
+    ::  ack was on later packet; mark skipped, tell gauge, and continue
     ::
-    :+  new-val=`val(skips +(skips.val))
-      stop=%.n
-    [found=%.n metrics=(on-skipped-packet:gauge -.val)]
+    =.  skips.val  +(skips.val)
+    =^  resend  metrics.acc  (on-skipped-packet:gauge -.val)
+    ?.  resend
+      [new-val=`val stop=%.n acc]
+    ::
+    =.  last-sent.val  now.channel
+    =.  retries.val    +(retries.val)
+    =.  resends.acc    [(to-static-fragment key val) resends.acc]
+    [new-val=`val stop=%.n acc]
   ::  +on-done: apply ack to all packets from .message-num
   ::
   ++  on-done
@@ -2245,13 +2251,10 @@
     =-  =.  metrics.state  metrics.-
         =.  live.state     live.-
         ::
-        =/  elapsed=@dr  (sub now.channel start.metrics.state)
-        ~&  'DONE'^[message-num seconds=(div elapsed ~s1) show:gauge]
+        ~&  'DONE'^[message-num show:gauge]
         packet-pump
     ::
-    ^-  $:  metrics=pump-metrics
-            live=(tree [live-packet-key live-packet-val])
-        ==
+    ^+  [metrics=metrics.state live=live.state]
     ::
     %^  (traverse:packet-queue pump-metrics)  live.state  acc=metrics.state
     |=  $:  metrics=pump-metrics
@@ -2308,6 +2311,12 @@
     ::
     packet-pump
   --
+::  +to-static-fragment: convenience function for |packet-pump
+::
+++  to-static-fragment
+  |=  [live-packet-key live-packet-val]
+  ^-  static-fragment
+  [message-num num-fragments fragment-num fragment]
 ::  +make-pump-gauge: construct |pump-gauge congestion control core
 ::
 ++  make-pump-gauge
@@ -2347,7 +2356,6 @@
     ::  if below congestion threshold, add 1; else, add avg. 1 / cwnd
     ::
     =.  cwnd
-      %+  min  200
       ?:  in-slow-start
         +(cwnd)
       (add cwnd !=(0 (mod (mug now) cwnd)))
@@ -2371,12 +2379,17 @@
     =.  rto     (clamp-rto (add rtt (mul 4 rttvar)))
     ::
     metrics
-  ::  +on-skipped-packet: TODO
+  ::  +on-skipped-packet: handle misordered ack
   ::
   ++  on-skipped-packet
     |=  packet-state
-    ^-  pump-metrics
-    ~&  'SKIPPED'^show
+    ^-  [resend=? pump-metrics]
+    ::
+    =/  resend=?  &(=(0 retries) |(in-recovery (gte skips 3)))
+    :-  resend
+    ::
+    =?  cwnd  !in-recovery  (max 2 (div cwnd 2))
+    ~&  ['SKIPPED' resend=resend in-recovery=in-recovery show]
     metrics
   ::  +on-timeout: (re)enter slow-start mode on packet loss
   ::
@@ -2394,18 +2407,26 @@
     |=  rto=@dr
     ^+  rto
     (min ~m2 (max ^~((div ~s1 5)) rto))
-  ::  +in-slow-start: produces %.y iff we're in "slow-start" mode
+  ::  +in-slow-start: %.y iff we're in "slow-start" mode
   ::
   ++  in-slow-start
     ^-  ?
     (lth cwnd ssthresh)
+  ::  +in-recovery: %.y iff we're recovering from a skipped packet
+  ::
+  ::    We finish recovering when .num-live finally dips back down to
+  ::    .cwnd.
+  ::
+  ++  in-recovery
+    ^-  ?
+    (gth num-live cwnd)
   ::  +sub-safe: subtract with underflow protection
   ::
   ++  sub-safe
     |=  [a=@ b=@]
     ^-  @
     ?:((lte a b) 0 (sub a b))
-  ::
+  ::  +show: produce a printable version of .metrics
   ::
   ++  show
     =/  ms  (div ~s1 1.000)
@@ -2693,8 +2714,6 @@
 ++  derive-symmetric-key
   |=  [=public-key =private-key]
   ^-  symmetric-key
-  ::
-  ~|  [public-key=public-key private-key=private-key]
   ::
   ?>  =('b' (end 3 1 public-key))
   =.  public-key  (rsh 8 1 (rsh 3 1 public-key))
