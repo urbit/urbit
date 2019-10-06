@@ -40,7 +40,7 @@ $ urbit my-fake-zod
 
 ### Contributing
 
-The canonical source tree is located in the `master` branch at
+The canonical source tree is the `master` branch of
 [https://github.com/urbit/urbit][repo].  You should typically branch off of
 `master` when commencing new work; similarly, when we pull in your
 contribution, we'll do so by merging it to `master`.
