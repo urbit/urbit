@@ -17,17 +17,19 @@ git_sha="${git_sha:0:8}"
 
 git_branch="$(git branch --show-current)"
 
-git_tag="${build}:${git_branch}-${git_sha}"
+git_tag="${git_branch}-${git_sha}"
 
 say "Building $build..."
-image="$(nix-build default.nix --no-out-link -A $build)"
+nix_out="$(nix-build default.nix --no-out-link -A $build)"
 
-say "Loading $image into Docker..."
-nix_tag="$(docker load --quiet --input $image)"
-nix_tag="${nix_tag#Loaded image: }"
+say "Loading $nix_out into Docker..."
+nix_name="$(docker load --quiet --input $nix_out)"
+nix_name="${nix_name#Loaded image: }"
 
-say "Re-tagging with current git branch:$git_branch SHA:$git_sha"
-docker tag $nix_tag $git_tag
+say "Re-tagging with current git branch:$git_branch and SHA:$git_sha"
+image_repo="$(docker images $nix_name --format '{{.Repository}}')"
+image_name="${image_repo}:${git_tag}"
+docker tag $nix_name $image_name
 
 # Output only the tag on stdout for subsequent pipes/tooling.
-echo $git_tag
+echo $image_name
