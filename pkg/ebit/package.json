@@ -24,8 +24,13 @@
       {
         "from": "resources/${os}",
         "to": "Resources/bin",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       }
     ]
+  },
+  "dependencies": {
+    "app-root-dir": "^1.0.2"
   }
 }
