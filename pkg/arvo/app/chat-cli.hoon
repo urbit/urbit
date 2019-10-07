@@ -434,9 +434,17 @@
     ++  letters
       %+  most  (jest '•')
       ;~  pose
-        ::TODO  (stag %url aurf:de-purl:html)
+        (stag %url turl)
+        :(stag %me ;~(pfix vat text))
         :(stag %text ;~(less mic hax text))
       ==
+    ::  +turl: url parser
+    ::
+    ++  turl
+      =-  (sear - text)
+      |=  t=cord
+      ^-  (unit cord)
+      ?~((rush t aurf:de-purl:html) ~ `t)
     ::  +text: text message body
     ::
     ++  text
@@ -926,8 +934,9 @@
   ++  body
     |-  ^-  sole-effect:sole-sur
     ?-  -.letter
-        %text
-      tan+~[leaf+"{(trip text.letter)}"]
+        ?(%text %me)
+      =/  pre=tape  ?:(?=(%me -.letter) "@ " "")
+      tan+~[leaf+"{pre}{(trip +.letter)}"]
     ::
         %url
       url+url.letter
@@ -1027,8 +1036,9 @@
       ?:  (gte wyd (lent ful))  :(weld pef " " ful)
       ::  if it doesn't, prefix with _ and render just (the tail of) the domain.
       %+  weld  (weld pef "_")
-      ::TODO  need kinda dangerous...
-      =+  hok=r.p:(need (de-purl:html url.letter))
+      =+  prl=(rust ful aurf:de-purl:html)
+      ?~  prl  (weld (scag (dec wyd) ful) "…")
+      =+  hok=r.p.p.u.prl
       =-  (swag [a=(sub (max wyd (lent -)) wyd) b=wyd] -)
       ^-  tape
       =<  ?:  ?=(%& -.hok)
@@ -1038,15 +1048,16 @@
       ?~  b  (trip a)
       (welp b '.' (trip a))
     ::
-        %text
+        ?(%text %me)
       ::  glyph prefix
       =/  pef=tape
         ?:  &(?=(^ pre) p.u.pre)  q.u.pre
+        ?:  ?=(%me -.letter)  " "
         =-  (weld - q:(fall pre [p=| q=" "]))
         ~(glyph tr source)
       =/  lis=(list tape)
         %+  simple-wrap
-          `tape``(list @)`(tuba (trip text.letter))
+          `tape``(list @)`(tuba (trip +.letter))
         (sub wyd (min (div wyd 2) (lent pef)))
       =+  lef=(lent pef)
       =+  ?:((gth (lent lis) 0) (snag 0 lis) "")
