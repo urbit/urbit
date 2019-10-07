@@ -80,12 +80,17 @@
   ~&  %chat-cli-prep
   ?^  old
     [~ this(+<+ u.old)]
-  :-  [ost.bowl %peer /chat-store [our-self %chat-store] /all]~
+  :-  [connect ~]
   %_  this
     audience  [[our-self /] ~ ~]
     settings  (sy %showtime %notify ~)
     width  80
   ==
+::  +connect: connect to the chat-store
+::
+++  connect
+  ^-  move
+  [ost.bowl %peer /chat-store [our-self %chat-store] /all]
 ::  +true-self: moons to planets
 ::
 ++  true-self
@@ -112,6 +117,14 @@
   =+  who=(slaw %p i.path)
   ?~  who  [our-self path]
   [u.who path]
+::  +poke-noun: debug helpers
+::
+++  poke-noun
+  |=  a=*
+  ^-  (quip move _this)
+  ?:  ?=(%connect a)
+    [[connect ~] this]
+  [~ this]
 ::  +poke-sole-action: handle cli input
 ::
 ++  poke-sole-action
