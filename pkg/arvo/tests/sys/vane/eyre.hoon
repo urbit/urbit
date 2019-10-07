@@ -991,6 +991,11 @@
       ^=  expected-moves
         ^-  (list move:http-server-gate)
         :~  :*  duct=~[/http-get-open]
+                %pass
+                /channel/heartbeat/'0123456789abcdef'
+                [%b %wait ~1111.1.2..00.03.20]
+                ==
+            :*  duct=~[/http-get-open]
                 %give
                 %response
                 %start
@@ -1370,6 +1375,11 @@
       ^=  expected-moves
         ^-  (list move:http-server-gate)
         :~  :*  duct=~[/http-get-open]
+                %pass
+                /channel/heartbeat/'0123456789abcdef'
+                [%b %wait ~1111.1.2..00.03.20]
+                ==
+            :*  duct=~[/http-get-open]
                 %give
                 %response
                 %start
@@ -1562,6 +1572,11 @@
       ^=  expected-moves
         ^-  (list move:http-server-gate)
         :~  :*  duct=~[/http-get-open]
+                %pass
+                /channel/heartbeat/'0123456789abcdef'
+                [%b %wait ~1111.1.2..00.03.20]
+                ==
+            :*  duct=~[/http-get-open]
                 %give
                 %response
                 %start
@@ -1712,6 +1727,11 @@
       ^=  expected-moves
         ^-  (list move:http-server-gate)
         :~  :*  duct=~[/http-get-open]
+                %pass
+                /channel/heartbeat/'0123456789abcdef'
+                [%b %wait ~1111.1.2..00.08.20]
+                ==
+            :*  duct=~[/http-get-open]
                 %give
                 %response
                 %start
