@@ -9,19 +9,15 @@
 ::    we concat the ship onto the head of the path,
 ::    and trust it to take care of the rest.
 ::
-::NOTE  the code is a mess. heavily wip!
-::
 /-  sole-sur=sole, *chat-store, *chat-view, *chat-hook
 /+  sole-lib=sole
 /=  seed  /~  !>(.)
 ::
 |%
 +$  state
-  $:  grams=(list mail)
-      known=(set [target serial])
+  $:  grams=(list mail)                             ::  all messages
+      known=(set [target serial])                   ::  known message lookup
       count=@ud                                     ::  (lent grams)
-      ::  ui state                                  ::
-      ::TODO  nicks from contacts
       bound=(map target char)                       ::  bound circle glyphs
       binds=(jug char target)                       ::  circle glyph lookup
       audience=(set target)                         ::  active targets
@@ -38,7 +34,7 @@
 ++  glyphs  "!@#$%^&()-=_+[]\{};'\\:\",.<>?"
 ::
 +$  command
-  $%  [%target (set target)]                     ::  set messaging target
+  $%  [%target (set target)]                        ::  set messaging target
       [%say (list letter)]                          ::  send message
       [%eval cord hoon]                             ::  send #-message
     ::
@@ -56,7 +52,7 @@
       [%width @ud]                                  ::  adjust display width
       [%timezone ? @ud]                             ::  adjust time printing
     ::
-      [%select $@(back=@ud [zeros=@u num=@ud])]     ::  rel/abs msg selection
+      [%select $@(rel=@ud [zeros=@u abs=@ud])]      ::  rel/abs msg selection
       [%chats ~]                                    ::  list available chats
       [%help ~]                                     ::  print usage info
   ==                                                ::
@@ -76,36 +72,36 @@
 --
 ::
 |_  [=bowl:gall state]
+++  this  .
+::  +prep: setup & state adapter
 ::
 ++  prep
   |=  old=(unit state)
   ~&  %chat-cli-prep
   ?^  old
-    :_  this(+<+ u.old)
-    [ost.bowl %peer /chat-store [our-self %chat-store] /all]~
-  =.  audience  [[our-self /inbox] ~ ~]
-  =.  settings  (sy %showtime %notify ~)
-  =.  width  80
-  :_  this
-  ::TODO  %peer /all
-  ~
-::
-++  this  .
+    [~ this(+<+ u.old)]
+  :-  [ost.bowl %peer /chat-store [our-self %chat-store] /all]~
+  %_  this
+    audience  [[our-self /] ~ ~]
+    settings  (sy %showtime %notify ~)
+    width  80
+  ==
+::  +true-self: moons to planets
 ::
 ++  true-self
   |=  who=ship
   ^-  ship
   ?.  ?=(%earl (clan:title who))  who
-  ::TODO  but they're moons... isn't ^sein sufficient?
   (sein:title our.bowl now.bowl who)
-::
 ++  our-self  (true-self our.bowl)
+::  +target-to-path: prepend ship to the path
 ::
 ++  target-to-path
   |=  target
   path
   ::TODO
   :: [(scot %p ship) path]
+::  +path-to-target: deduces a target from a mailbox path
 ::
 ++  path-to-target
   |=  =path
@@ -116,6 +112,31 @@
   =+  who=(slaw %p i.path)
   ?~  who  [our-self path]
   [u.who path]
+::  +poke-sole-action: handle cli input
+::
+++  poke-sole-action
+  |=  act=sole-action:sole-sur
+  ^-  (quip move _this)
+  ?.  =(bone.cli ost.bowl)
+    ~|(%strange-sole !!)
+  (sole:sh-in act)
+::  +peer: accept only cli subscriptions from ourselves
+::
+++  peer
+  |=  =path
+  ^-  (quip move _this)
+  ?.  (team:title our-self src.bowl)
+    ~|  [%peer-talk-stranger src.bowl]
+    !!
+  ?.  ?=([%sole *] path)
+    ~|  [%peer-talk-strange path]
+    !!
+  =.  bone.cli  ost.bowl
+  ::  display a fresh prompt
+  :-  [prompt:sh-out ~]
+  ::  start with fresh sole state
+  this(state.cli *sole-share:sole-sur)
+::  +diff-chat-initial: catch up on messages
 ::
 ++  diff-chat-initial
   |=  [=wire =inbox]
@@ -130,6 +151,16 @@
   =^  mol  this  $(inbox l.inbox)
   =^  mor  this  $(inbox r.inbox)
   [:(weld mon mol mor) this]
+::  +diff-chat-update: get new mailboxes & messages
+::
+++  diff-chat-update
+  |=  [=wire upd=chat-update]
+  ^-  (quip move _this)
+  ?+  -.upd  [~ this]
+    %create   (notice-create (path-to-target path.upd))
+    %delete   [[(show-delete:sh-out (path-to-target path.upd)) ~] this]
+    %message  (read-envelope (path-to-target path.upd) envelope.upd)
+  ==
 ::
 ++  read-envelopes
   |=  [=target envs=(list envelope)]
@@ -139,15 +170,6 @@
   =^  mot  this  $(envs t.envs)
   [(weld moi mot) this]
 ::
-++  diff-chat-update
-  |=  [=wire upd=chat-update]
-  ^-  (quip move _this)
-  ?+  -.upd  [~ this]
-    %create   (notice-create (path-to-target path.upd))
-    %delete   [[(show-delete:sh (path-to-target path.upd)) ~] this]
-    %message  (read-envelope (path-to-target path.upd) envelope.upd)
-  ==
-::
 ++  notice-create
   |=  =target
   ^-  (quip move _this)
@@ -155,7 +177,8 @@
     ?:  (~(has by bound) target)
       [~ this]
     (bind-default-glyph target)
-  [[(show-create:sh target) moz] this]
+  [[(show-create:sh-out target) moz] this]
+::  +bind-default-glyph:
 ::
 ++  bind-default-glyph
   |=  =target
@@ -164,6 +187,7 @@
   ::TODO  try not to double-bind
   =-  (snag - glyphs)
   (mod (mug target) (lent glyphs))
+::  +bind-glyph: add binding for glyph
 ::
 ++  bind-glyph
   |=  [=glyph =target]
@@ -172,10 +196,11 @@
   ::TODO  disallow double-binding glyphs?
   =.  bound  (~(put by bound) target glyph)
   =.  binds  (~(put ju binds) glyph target)
-  [(show-glyph:sh glyph `target) this]
+  [(show-glyph:sh-out glyph `target) this]
+::  +unbind-glyph: remove all binding for glyph
 ::
 ++  unbind-glyph
-  |=  =glyph  ::TODO  do we really not want this optionally per-audience?
+  |=  =glyph  ::TODO  do we really not want this optionally per-target?
   ^-  (quip move _this)
   =/  ole=(set target)
     (~(get ju binds) glyph)
@@ -186,7 +211,27 @@
     =.  bound  $(ole l.ole)
     =.  bound  $(ole r.ole)
     (~(del by bound) n.ole)
-  [(show-glyph:sh glyph ~) this]
+  [(show-glyph:sh-out glyph ~) this]
+::  +decode-glyph: find the target that matches a glyph, if any
+::
+++  decode-glyph
+  |=  =glyph
+  ^-  (unit target)
+  =+  lax=(~(get ju binds) glyph)
+  ::  no circle.
+  ?:  =(~ lax)  ~
+  ::  single circle.
+  ?:  ?=([* ~ ~] lax)  `n.lax
+  ::  in case of multiple audiences, pick the most recently active one.
+  |-  ^-  (unit target)
+  ~&  %multi-bind-support-missing
+  ?~  grams  ~
+  ~
+  ::TODO
+  :: =+  pan=(silt ~(tap in aud.i.grams))
+  :: ?:  (~(has in lax) pan)  `pan
+  :: $(grams t.grams)
+::  +read-envelope: add envelope to state and show it to user
 ::
 ++  read-envelope
   |=  [=target =envelope]
@@ -194,105 +239,34 @@
   ?:  (~(has in known) [target uid.envelope])
     ::NOTE  we no-op only because edits aren't possible
     [~ this]
-  :-  (print-envelope:sh target envelope)
+  :-  (show-envelope:sh-out target envelope)
   %_  this
     known  (~(put in known) [target uid.envelope])
     grams  [[target envelope] grams]
     count  +(count)
   ==
 ::
-++  peer
-  |=  =path
-  ^-  (quip move _this)
-  ?.  (team:title our-self src.bowl)
-    ~|  [%peer-talk-stranger src.bowl]
-    !!
-  ?.  ?=([%sole *] path)
-    ~|  [%peer-talk-strange path]
-    !!
-  =.  bone.cli  ost.bowl
-  ::  display a fresh prompt
-  :-  [prompt:sh ~]
-  ::  start with fresh sole state
-  this(state.cli *sole-share:sole-sur)
+::  +sh-in: handle user input
 ::
-++  poke-sole-action
-  |=  act=sole-action:sole-sur
-  ^-  (quip move _this)
-  ?.  =(bone.cli ost.bowl)
-    ~|(%strange-sole !!)
-  (sole:sh act)
-::
-::TODO  maybe separate +shin and +shout
-++  sh
+++  sh-in
+  ::NOTE  interestingly, adding =,  sh-out breaks compliation
   |%
-  ++  effect
-    ::  console effect move
-    ::
-    |=  fec=sole-effect:sole-sur
-    ^-  move
-    [bone.cli %diff %sole-effect fec]
-  ::
-  ++  print
-    ::  just puts some text into the cli as-is.
-    ::
-    |=  txt=tape
-    (effect %txt txt)
-  ::
-  ++  note
-    ::    shell message
-    ::
-    ::  left-pads {txt} with heps and prints it.
-    ::
-    |=  txt=tape
-    ^-  move
-    =+  lis=(simple-wrap txt (sub width 16))
-    %+  effect  %mor
-    =+  ?:((gth (lent lis) 0) (snag 0 lis) "")
-    :-  txt+(runt [14 '-'] '|' ' ' -)
-    %+  turn  (slag 1 lis)
-    |=(a=tape txt+(runt [14 ' '] '|' ' ' a))
-  ::
-  ++  prompt
-    ::    show prompt
-    ::
-    ::  makes and stores a move to modify the cli
-    ::  prompt to display the current audience.
-    ::
-    ::TODO  take arg?
-    ^-  move
-    %+  effect  %pro
-    :+  &  %talk-line
-    ^-  tape
-    =-  ?:  =(1 (lent -))  "{-} "
-        "[{-}] "
-    :: %-  zing
-    :: %+  join  " "
-    :: ^-  (list tape)
-    :: %+  turn  ~(tap in audience)
-    :: |=  =target
-    :: ^-  tape
-    :: =+  gyf=(~(get by bound) target)
-    :: ?^  gyf  ~[u.gyf]
-    ~(ar-prom ar audience)
+  ::  +sole: apply sole action
   ::
   ++  sole
-    ::  applies sole action.
-    ::
     |=  act=sole-action:sole-sur
     ^-  (quip move _this)
     ?-  -.act
       $det  (edit +.act)
-      $clr  [~ this] :: (sh-pact ~) ::TODO  clear to PM-to-self?
+      $clr  [~ this]
       $ret  obey
     ==
+  ::  +edit: apply sole edit
+  ::
+  ::    called when typing into the cli prompt.
+  ::    applies the change and does sanitizing.
   ::
   ++  edit
-    ::    apply sole edit
-    ::
-    ::  called when typing into the cli prompt.
-    ::  applies the change and does sanitizing.
-    ::
     |=  cal=sole-change:sole-sur
     ^-  (quip move _this)
     =^  inv  state.cli  (~(transceive sole-lib state.cli) cal)
@@ -306,131 +280,46 @@
     ?.  &(?=($del -.inv) =(+(p.inv) (lent buf.state.cli)))
       [~ this]
     (slug fix)
+  ::  +sanity: check input sanity
+  ::
+  ::    parses cli prompt using +read.
+  ::    if invalid, produces error correction description, for use with +slug.
+  ::
+  ++  sanity
+    |=  [inv=sole-edit:sole-sur buf=(list @c)]
+    ^-  [lit=(list sole-edit:sole-sur) err=(unit @u)]
+    =+  res=(rose (tufa buf) read)
+    ?:  ?=(%& -.res)  [~ ~]
+    [[inv]~ `p.res]
+  ::  +slug: apply error correction to prompt input
+  ::
+  ++  slug
+    |=  [lit=(list sole-edit:sole-sur) err=(unit @u)]
+    ^-  (quip move _this)
+    ?~  lit  [~ this]
+    =^  lic  state.cli
+      %-  ~(transmit sole-lib state.cli)
+      ^-  sole-edit:sole-sur
+      ?~(t.lit i.lit [%mor lit])
+    :_  this
+    :_  ~
+    %+  effect:sh-out  %mor
+    :-  [%det lic]
+    ?~(err ~ [%err u.err]~)
+  ::  +read: command parser
+  ::
+  ::    parses the command line buffer.
+  ::    produces commands which can be executed by +work.
   ::
   ++  read
-    ::    command parser
-    ::
-    ::  parses the command line buffer. produces work
-    ::  items which can be executed by ++sh-work.
-    ::
-    =<  work
-    ::  #  %parsers
-    ::    various parsers for command line input.
-    |%
-    ++  expr
-      ::  [cord hoon]
-      |=  tub/nail  %.  tub
-      %+  stag  (crip q.tub)
-      wide:(vang & [&1:% &2:% (scot %da now.bowl) |3:%])
-    ::
-    ++  dare
-      ::  @dr
-      %+  sear
-        |=  a/coin
-        ?.  ?=({$$ $dr @} a)  ~
-        (some `@dr`+>.a)
-      nuck:so
-    ::
-    ++  ship  ;~(pfix sig fed:ag)                     ::  ship
-    ++  shiz                                          ::  ship set
-      %+  cook
-        |=(a/(list ^ship) (~(gas in *(set ^ship)) a))
-      (most ;~(plug com (star ace)) ship)
-    ::
-    ++  path
-      ;~(pfix net (most net urs:ab))
-    ::
-    ++  tarl                                          ::  local target
-      (stag our-self path)
-    ::
-    ++  tarp                                          ::  sponsor target
-      ;~(pfix ket (stag (sein:title our.bowl now.bowl our-self) path))
-    ::
-    ++  targ                                          ::  target
-      ;~  pose
-        tarl
-        tarp
-        ;~(plug ship path)
-        (sear glyf glyph)
-      ==
-    ::
-    ++  tars                                          ::  non-empty circles
-      %+  cook  ~(gas in *(set target))
-      %+  most  ;~(plug com (star ace))
-      ;~(pose targ (sear glyf glyph))
-    ::
-    ++  drat
-      ::  @da or @dr
-      ::
-      ::  pas: whether @dr's are in the past or not.
-      |=  pas/?
-      =-  ;~(pfix sig (sear - crub:so))
-      |=  a/^dime
-      ^-  (unit @da)
-      ?+  p.a  ~
-        $da   `q.a
-        $dr   :-  ~
-              %.  [now.bowl q.a]
-              ?:(pas sub add)
-      ==
-    ::
-    ++  tarz                                          ::  non-empty sources
-      %+  cook  ~(gas in *(set target))
-      (most ;~(plug com (star ace)) targ)
-    ::
-    ++  pick                                          ::  message reference
-      ;~(pose nump (cook lent (star mic)))
-    ::
-    ++  nump                                          ::  number reference
-      ;~  pose
-        ;~(pfix hep dem:ag)
-        ;~  plug
-          (cook lent (plus (just '0')))
-          ;~(pose dem:ag (easy 0))
-        ==
-        (stag 0 dem:ag)
-      ==
-    ::
-    ++  lobe                                          ::  y/n loob
-      ;~  pose
-        (cold %& ;~(pose (jest 'y') (jest '&') (just 'true')))
-        (cold %| ;~(pose (jest 'n') (jest '|') (just 'false')))
-      ==
-    ::
-    ++  message                                       ::  exp, lin or url msg
-      ;~  pose
-        ;~(plug (cold %eval hax) expr)
-        (stag %say letters)
-      ==
-    ::
-    ++  letters                                       ::  lin or url msgs
-      %+  most  (jest '•')
-      ;~  pose
-        ::TODO  (stag %url aurf:de-purl:html)
-        :(stag %text ;~(less mic hax text))
-      ==
-    ::
-    ++  text                                          ::  msg without break
-      %+  cook  crip
-      (plus ;~(less (jest '•') next))
-    ::
-    ++  nick  (cook crip (plus next))                 ::  nickname
-    ++  glyph  (mask glyphs)                          ::  circle postfix
-    ++  setting                                       ::  setting flag
-      %-  perk  :~
-        %notify
-        %showtime
-      ==
-    ++  tag  |*(a=@tas (cold a (jest a)))  ::TODO  into stdlib
-    ++  work                                          ::  full input
+    |^
+      ~!  (scan "" (cmd %create [path ~] [glyph ~]))
       %+  knee  *command  |.  ~+
       =-  ;~(pose ;~(pfix mic -) message)
-      ::TODO  refactor the optional trailing args, glue junk
       ;~  pose
         (stag %target tars)
       ::
         ;~((glue ace) (tag %create) ;~(plug path (punt ;~(pfix ace glyph))))
-      ::
         ;~((glue ace) (tag %join) ;~(plug targ (punt ;~(pfix ace glyph))))
         ;~((glue ace) (tag %leave) targ)
       ::
@@ -439,8 +328,8 @@
         ;~(plug (perk %what ~) (punt ;~(pfix ace ;~(pose glyph targ))))
       ::
         ;~(plug (tag %settings) (easy ~))
-        ;~((glue ace) (tag %set) setting)
-        ;~((glue ace) (tag %unset) setting)
+        ;~((glue ace) (tag %set) flag)
+        ;~((glue ace) (tag %unset) flag)
         ;~(plug (cold %width (jest 'set width ')) dem:ag)
         ;~  plug
           (cold %timezone (jest 'set timezone '))
@@ -458,26 +347,124 @@
         ;~(plug (tag %chats) (easy ~))
         ;~(plug (tag %help) (easy ~))
       ::
-        (stag %select pick)
+        (stag %select nump)
       ==
+    ::
+    ::TODO
+    :: ++  cmd
+    ::   |*  [cmd=term req=(list rule) opt=(list rule)]
+    ::   |^  ;~  plug
+    ::         (tag cmd)
+    ::       ::
+    ::         ::TODO  this feels slightly too dumb
+    ::         ?~  req
+    ::           ?~  opt  (easy ~)
+    ::           (opt-rules opt)
+    ::         ?~  opt  (req-rules req)
+    ::         ;~(plug (req-rules req) (opt-rules opt))  ::TODO  rest-loop
+    ::       ==
+    ::   ++  req-rules
+    ::     |*  req=(lest rule)
+    ::     =-  ;~(pfix ace -)
+    ::     ?~  t.req  i.req
+    ::     ;~(plug i.req $(req t.req))
+    ::   ++  opt-rules
+    ::     |*  opt=(lest rule)
+    ::     =-  (punt ;~(pfix ace -))
+    ::     ?~  t.opt  ;~(pfix ace i.opt)
+    ::     ;~(pfix ace ;~(plug i.opt $(opt t.opt)))
+    ::   --
+    ::
+    ++  tag   |*(a=@tas (cold a (jest a)))  ::TODO  into stdlib
+    ++  ship  ;~(pfix sig fed:ag)
+    ++  path  ;~(pfix net (most net urs:ab))
+    ::  +tarl: local target, as /path
+    ::
+    ++  tarl  (stag our-self path)
+    ::  +tarp: sponsor target, as ^/path
+    ::
+    ++  tarp
+      =-  ;~(pfix ket (stag - path))
+      (sein:title our.bowl now.bowl our-self)
+    ::  +targ: any target, as tarl, tarp, ~ship/path or glyph
+    ::
+    ++  targ
+      ;~  pose
+        tarl
+        tarp
+        ;~(plug ship path)
+        (sear decode-glyph glyph)
+      ==
+    ::  +tars: set of comma-separated targs
+    ::
+    ++  tars
+      %+  cook  ~(gas in *(set target))
+      (most ;~(plug com (star ace)) targ)
+    ::  +glyph: shorthand character
+    ::
+    ++  glyph  (mask glyphs)
+    ::  +flag: valid flag
+    ::
+    ++  flag
+      %-  perk  :~
+        %notify
+        %showtime
+      ==
+    ::  +nump: message number reference
+    ::
+    ++  nump
+      ;~  pose
+        ;~(pfix hep dem:ag)
+        ;~  plug
+          (cook lent (plus (just '0')))
+          ;~(pose dem:ag (easy 0))
+        ==
+        (stag 0 dem:ag)
+        (cook lent (star mic))
+      ==
+    ::  +message: lin, url, or #exp message
+    ::
+    ++  message
+      ;~  pose
+        ;~(plug (cold %eval hax) expr)
+        (stag %say letters)
+      ==
+    ::  +letters: •-separated text or url messages
+    ::
+    ++  letters
+      %+  most  (jest '•')
+      ;~  pose
+        ::TODO  (stag %url aurf:de-purl:html)
+        :(stag %text ;~(less mic hax text))
+      ==
+    ::  +text: text message body
+    ::
+    ++  text
+      %+  cook  crip
+      (plus ;~(less (jest '•') next))
+    ::  +expr: parse expression into [cord hoon]
+    ::
+    ++  expr
+      |=  tub=nail
+      %.  tub
+      %+  stag  (crip q.tub)
+      wide:(vang & [&1:% &2:% (scot %da now.bowl) |3:%])
     --
+  ::  +obey: apply result
+  ::
+  ::    called upon hitting return in the prompt.
+  ::    if input is invalid, +slug is called.
+  ::    otherwise, the appropriate work is done and
+  ::    the command (if any) gets echoed to the user.
   ::
   ++  obey
-    ::    apply result
-    ::
-    ::  called upon hitting return in the prompt. if
-    ::  input is invalid, ++sh-slug is called.
-    ::  otherwise, the appropriate work is done and
-    ::  the entered command (if any) gets displayed
-    ::  to the user.
-    ::
     ^-  (quip move _this)
     =+  buf=buf.state.cli
     =+  fix=(sanity [%nop ~] buf)
     ?^  lit.fix
       (slug fix)
     =+  jub=(rust (tufa buf) read)
-    ?~  jub  [[(effect %bel ~) ~] this]
+    ?~  jub  [[(effect:sh-out %bel ~) ~] this]
     =^  cal  state.cli  (~(transmit sole-lib state.cli) [%set ~])
     =^  moves  this  (work u.jub)
     :_  this
@@ -485,46 +472,41 @@
       ^-  (list move)
       ::  echo commands into scrollback
       ?.  =(`0 (find ";" buf))  ~
-      [(note (tufa `(list @)`buf)) ~]
+      [(note:sh-out (tufa `(list @)`buf)) ~]
     :_  moves
-    %+  effect  %mor
+    %+  effect:sh-out  %mor
     :~  [%nex ~]
         [%det cal]
     ==
+  ::  +work: run user command
   ::
   ++  work
-    ::    do work
-    ::
-    ::  implements worker arms for different talk
-    ::  commands.
-    ::  worker arms must produce updated state.
-    ::
     |=  job=command
     ^-  (quip move _this)
-    |^  ?-  -.job  ::~|([%unimplemented -.job] !!)
-          %target  (set-target +.job)
+    |^  ?-  -.job
+          %target    (set-target +.job)
+          %say       (say +.job)
+          %eval      (eval +.job)
         ::
-          %join    (join +.job)
-          %leave   (leave +.job)
-          %create  (create +.job)
+          %join      (join +.job)
+          %leave     (leave +.job)
+          %create    (create +.job)
         ::
-          %say     (say +.job)
-          %eval    (eval +.job)
-        ::
-          %bind    (bind-glyph +.job)
-          %unbind  (unbind-glyph +.job)
-          %what    (lookup-glyph +.job)
+          %bind      (bind-glyph +.job)
+          %unbind    (unbind-glyph +.job)
+          %what      (lookup-glyph +.job)
         ::
           %settings  show-settings
-          %set     (set-setting +.job)
-          %unset   (unset-setting +.job)
-          %width   (set-width +.job)
+          %set       (set-setting +.job)
+          %unset     (unset-setting +.job)
+          %width     (set-width +.job)
           %timezone  (set-timezone +.job)
         ::
-          %select  (select +.job)
-          %chats   chats
-          %help    help
+          %select    (select +.job)
+          %chats     chats
+          %help      help
         ==
+    ::  +act: build action move
     ::
     ++  act
       |=  [what=term app=term =out-action]
@@ -535,12 +517,14 @@
           [our-self app]
           out-action
       ==
+    ::  +set-target: set audience, update prompt
     ::
     ++  set-target
       |=  tars=(set target)
       ^-  (quip move _this)
       =.  audience  tars
-      [[prompt ~] this]
+      [[prompt:sh-out ~] this]
+    ::  +create: new local mailbox
     ::
     ++  create
       ::TODO  configurable security
@@ -555,6 +539,7 @@
       %^  act  %do-create  %chat-view
       :-  %chat-view-action
       [%create path %channel ~ ~]
+    ::  +join: sync with remote mailbox
     ::
     ++  join
       |=  [=target gyf=(unit char)]
@@ -566,6 +551,7 @@
       %^  act  %do-join  %chat-hook
       :-  %chat-hook-action
       [%add-synced target]
+    ::  +leave: unsync & destroy mailbox
     ::
     ::TODO  but if we leave our own circle, then it disappears for everyone?
     ++  leave
@@ -574,6 +560,7 @@
       %^  act  %do-leave  %chat-hook
       :-  %chat-hook-action
       [%remove (target-to-path target)]
+    ::  +say: send messages
     ::
     ++  say
       |=  letters=(list letter)
@@ -581,7 +568,6 @@
       =/  =serial  (shaf %msg-uid eny.bowl)
       :_  this(eny.bowl (shax eny.bowl))
       ^-  (list move)
-      ::TODO  wait, so, is host irrelevant in target? only for joins?
       %+  turn  ~(tap in audience)
       |=  =target
       %^  act  %out-message  %chat-hook
@@ -593,18 +579,12 @@
           now.bowl
           (snag 0 letters)  ::TODO  support multiple
       ==
+    ::  +eval: run hoon, send code and result as message
+    ::
+    ::    this double-virtualizes and clams to disable .^ for security reasons
     ::
     ++  eval
-      ::    run
-      ::
-      ::  executes {exe} and sends both its code and
-      ::  result.
-      ::
       |=  [txt=cord exe=hoon]
-      ::  XX revisit
-      ::
-      ::    this double-virtualizes and clams to disable .^
-      ::
       =;  tan=(list tank)
         (say [%code txt tan] ~)
       ;;  (list tank)
@@ -615,125 +595,131 @@
         ^-  [our=@p now=@da eny=@uvI]
         [our-self now.bowl (shas %eny eny.bowl)]
       |=(^ ~)
+    ::  +lookup-glyph: print glyph info for all, glyph or target
     ::
     ++  lookup-glyph
-      ::TODO  we probably want a function for the (list tape) -> %mor %txt case
       |=  qur=(unit $@(glyph target))
       ^-  (quip move _this)
       =-  [[- ~] this]
       ?^  qur
         ?^  u.qur
           =+  gyf=(~(get by bound) u.qur)
-          (print ?~(gyf "none" [u.gyf]~))
+          (print:sh-out ?~(gyf "none" [u.gyf]~))
         =+  pan=~(tap in (~(get ju binds) `@t`u.qur))
-        ?:  =(~ pan)  (print "~")
-        =<  (effect %mor (turn pan .))
-        |=(t=target [%txt ~(cr-phat cr t)])
-      %+  effect  %mor
+        ?:  =(~ pan)  (print:sh-out "~")
+        =<  (effect:sh-out %mor (turn pan .))
+        |=(t=target [%txt ~(phat tr t)])
+      %-  print-more:sh-out
       %-  ~(rep by binds)
       |=  $:  [=glyph tars=(set target)]
-              lis=(list sole-effect:sole-sur)
+              lis=(list tape)
           ==
       %+  weld  lis
-      ^-  (list sole-effect:sole-sur)
+      ^-  (list tape)
       %-  ~(rep in tars)
-      |=  [t=target l=(list sole-effect:sole-sur)]
+      |=  [t=target l=(list tape)]
       %+  weld  l
-      ^-  (list sole-effect:sole-sur)
-      [%txt glyph ' ' ~(cr-phat cr t)]~
+      ^-  (list tape)
+      [glyph ' ' ~(phat tr t)]~
+    ::  +show-settings: print enabled flags, timezone and width settings
     ::
     ++  show-settings
       ^-  (quip move _this)
       :_  this
-      :~  %-  print
+      :~  %-  print:sh-out
           %-  zing
           ^-  (list tape)
           :-  "flags: "
           %+  ^join  ", "
           (turn `(list @t)`~(tap in settings) trip)
         ::
-          %-  print
+          %-  print:sh-out
           %+  weld  "timezone: "
           ^-  tape
           :-  ?:(p.timez '+' '-')
           (scow %ud q.timez)
         ::
-          (print "width: {(scow %ud width)}")
+          (print:sh-out "width: {(scow %ud width)}")
       ==
+    ::  +set-setting: enable settings flag
     ::
     ++  set-setting
       |=  =term
       ^-  (quip move _this)
       [~ this(settings (~(put in settings) term))]
+    ::  +unset-setting: disable settings flag
     ::
     ++  unset-setting
       |=  =term
       ^-  (quip move _this)
       [~ this(settings (~(del in settings) term))]
+    ::  +set-width: configure cli printing width
     ::
     ++  set-width
       |=  w=@ud
       [~ this(width w)]
+    ::  +set-timezone: configure timestamp printing adjustment
     ::
     ++  set-timezone
       |=  tz=[? @ud]
       [~ this(timez tz)]
+    ::  +select: expand message from number reference
     ::
     ++  select
-      ::  finds selected message, expand it.
+      ::NOTE  rel is the nth most recent message,
+      ::      abs is the last message whose numbers ends in n
+      ::      (with leading zeros used for precision)
       ::
-      ::TODO  this either needs a different implementation or extensive comments
-      |=  num=$@(@ud [p=@u q=@ud])
+      |=  num=$@(rel=@ud [zeros=@u abs=@ud])
       ^-  (quip move _this)
       |^  ?@  num
             =+  tum=(scow %s (new:si | +(num)))
-            ?:  (gte num count)
+            ?:  (gte rel.num count)
               %-  just-print
               "{tum}: no such telegram"
-            (activate tum num)
-          ?.  (gte q.num count)
+            (activate tum rel.num)
+          ?.  (gte abs.num count)
             ?:  =(count 0)
               (just-print "0: no messages")
-            =+  msg=(deli (dec count) num)
+            =+  msg=(index (dec count) num)
             (activate (scow %ud msg) (sub count +(msg)))
           %-  just-print
-          "…{(reap p.num '0')}{(scow %ud q.num)}: no such telegram"
+          "…{(reap zeros.num '0')}{(scow %ud abs.num)}: no such telegram"
+      ::  +just-print: full [moves state] output with a single print move
       ::
       ++  just-print
         |=  txt=tape
-        [[(print txt) ~] this]
+        [[(print:sh-out txt) ~] this]
+      ::  +index: get message index from absolute reference
       ::
-      ++  deli
-        ::  gets absolute message number from relative.
-        ::
+      ++  index
         |=  [max=@ud nul=@u fin=@ud]
         ^-  @ud
         =+  dog=|-(?:(=(0 fin) 1 (mul 10 $(fin (div fin 10)))))
         =.  dog  (mul dog (pow 10 nul))
         =-  ?:((lte - max) - (sub - dog))
         (add fin (sub max (mod max dog)))
+      ::  +activate: echo message selector and print details
       ::
       ++  activate
-        ::  prints message details.
-        ::
         |=  [number=tape index=@ud]
         ^-  (quip move _this)
         =+  gam=(snag index grams)
-        =+  tay=~(. tr settings gam)
         =.  audience  [source.gam ~ ~]
         :_  this
         ^-  (list move)
-        :~  (print ['?' ' ' number])
-            (effect tr-fact:tay)
-            prompt
+        :~  (print:sh-out ['?' ' ' number])
+            (effect:sh-out ~(render-activate mr gam))
+            prompt:sh-out
         ==
       --
+    ::  +chats: display list of local mailboxes
     ::
     ++  chats
       ^-  (quip move _this)
       :_  this
       :_  ~
-      %+  effect  %mor
+      %-  print-more:sh-out
       =/  all
         ::TODO  refactor
         ::TODO  remote scries fail... but moon support?
@@ -744,66 +730,78 @@
       %+  turn  ~(tap in all)
       %+  cork  path-to-target
       |=  target
-      :-  %txt
       (weld (scow %p ship) (spud path))
+    ::  +help: print (link to) usage instructions
     ::
     ++  help
       ^-  (quip move _this)
       =-  [[- ~] this]
-      (print "see https://urbit.org/docs/using/messaging/")
+      (print:sh-out "see https://urbit.org/docs/using/messaging/")
     --
+  --
+::
+::  +sh-out: output to the cli
+::
+++  sh-out
+  |%
+  ::  +effect: console effect move
   ::
-  ++  sanity
-    ::    check input sanity
-    ::
-    ::  parses cli prompt input using ++read and
-    ::  describes error correction when invalid.
-    ::
-    |=  [inv=sole-edit:sole-sur buf=(list @c)]
-    ^-  [lit=(list sole-edit:sole-sur) err=(unit @u)]
-    =+  res=(rose (tufa buf) read)
-    ?:  ?=(%& -.res)  [~ ~]
-    [[inv]~ `p.res]
+  ++  effect
+    |=  fec=sole-effect:sole-sur
+    ^-  move
+    [bone.cli %diff %sole-effect fec]
+  ::  +print: puts some text into the cli as-is
   ::
-  ++  slug
-    ::  apply error correction to prompt input
-    ::
-    |=  [lit=(list sole-edit:sole-sur) err=(unit @u)]
-    ^-  (quip move _this)
-    ?~  lit  [~ this]
-    =^  lic  state.cli
-      %-  ~(transmit sole-lib state.cli)
-      ^-  sole-edit:sole-sur
-      ?~(t.lit i.lit [%mor lit])
-    :_  this
-    :_  ~
+  ++  print
+    |=  txt=tape
+    ^-  move
+    (effect %txt txt)
+  ::  +print-more: puts lines of text into the cli
+  ::
+  ++  print-more
+    |=  txs=(list tape)
+    ^-  move
     %+  effect  %mor
-    :-  [%det lic]
-    ?~(err ~ [%err u.err]~)
+    (turn txs |=(t=tape [%txt t]))
+  ::  +note: prints left-padded ---| txt
   ::
-  ++  glyf
-    ::    decode glyph
-    ::
-    ::  finds the circle(s) that match a glyph.
-    ::
-    |=  cha=char
-    ^-  (unit target)
-    =+  lax=(~(get ju binds) cha)
-    ::  no circle.
-    ?:  =(~ lax)  ~
-    ::  single circle.
-    ?:  ?=([* ~ ~] lax)  `n.lax
-    ::  in case of multiple audiences, pick the most recently active one.
-    |-  ^-  (unit target)
-    ~&  %multi-bind-support-missing
-    ?~  grams  ~
-    ~
-    ::TODO
-    :: =+  pan=(silt ~(tap in aud.i.grams))
-    :: ?:  (~(has in lax) pan)  `pan
-    :: $(grams t.grams)
+  ++  note
+    |=  txt=tape
+    ^-  move
+    =+  lis=(simple-wrap txt (sub width 16))
+    %-  print-more
+    =+  ?:((gth (lent lis) 0) (snag 0 lis) "")
+    :-  (runt [14 '-'] '|' ' ' -)
+    %+  turn  (slag 1 lis)
+    |=(a=tape (runt [14 ' '] '|' ' ' a))
+  ::  +prompt: update prompt to display current audience
   ::
-  ++  print-envelope
+  ++  prompt
+    ^-  move
+    %+  effect  %pro
+    :+  &  %talk-line
+    ^-  tape
+    =-  ?:  =(1 (lent -))  "{-} "
+        "[{-}] "
+    =/  all
+      %+  sort  ~(tap in audience)
+      |=  [a=target b=target]
+      (~(beat tr a) b)
+    =+  fir=&
+    |-  ^-  tape
+    ?~  all  ~
+    ;:  welp
+      ?:(fir "" " ")
+      ~(show tr i.all)
+      $(all t.all, fir |)
+    ==
+  ::  +show-envelope: print incoming message
+  ::
+  ::    every five messages, prints the message number also.
+  ::    if the message mentions the user's (shortened) ship name,
+  ::    and the %notify flag is set, emit a bell.
+  ::
+  ++  show-envelope
     |=  [=target =envelope]
     ^-  (list move)
     %+  weld
@@ -813,8 +811,7 @@
       =+  num=(scow %ud count)
       %-  print
       (runt [(sub 13 (lent num)) '-'] "[{num}]")
-    ::TODO  %notify logic? or do elsewhere? just check the %text msgs
-    =+  lis=~(render tr settings target envelope)
+    =+  lis=~(render-inline mr target envelope)
     ?~  lis  ~
     :_  ~
     %+  effect  %mor
@@ -826,16 +823,19 @@
         ==
       [%txt t]
     [%mor [%txt t] [%bel ~] ~]
+  ::  +show-create: print mailbox creation notification
   ::
   ++  show-create
     |=  =target
     ^-  move
-    (note "new: {~(cr-phat cr target)}")
+    (note "new: {~(phat tr target)}")
+  ::  +show-delete: print mailbox deletion notification
   ::
   ++  show-delete
     |=  =target
     ^-  move
-    (note "del: {~(cr-phat cr target)}")
+    (note "del: {~(phat tr target)}")
+  ::  +show-glyph: print glyph un/bind notification
   ::
   ++  show-glyph
     |=  [=glyph target=(unit target)]
@@ -844,99 +844,18 @@
     %-  note
     %+  weld  "set: {[glyph ~]} -> "
     ?~  target  "nothing"
-    ~(cr-phat cr u.target)
+    ~(phat tr u.target)
   --
 ::
+::  +tr: render targets
 ::
-::TODO  code style
-++  ar
-  ::    audience renderer
-  ::
-  ::  used for representing audiences (sets of circles)
-  ::  as tapes.
-  ::
-  |_  ::  aud: members of the audience.
-      ::
-      aud=(set target)
-  ::
-  ++  ar-best
-    ::  find the most relevant circle in the set.
-    ::
-    ^-  (unit target)
-    ?~  aud  ~
-    :-  ~
-    |-  ^-  target
-    =+  lef=`(unit target)`ar-best(aud l.aud)
-    =+  rit=`(unit target)`ar-best(aud r.aud)
-    =?  n.aud  ?=(^ lef)  (~(cr-best cr n.aud) u.lef)
-    =?  n.aud  ?=(^ rit)  (~(cr-best cr n.aud) u.rit)
-    n.aud
-  ::
-  ++  ar-deaf
-    ::  remove ourselves from the audience.
-    ::
-    ^+  .
-    .(aud (~(del in aud) [our-self /inbox]))
-  ::
-  ++  ar-maud
-    ::    multiple audience
-    ::
-    ::  checks if there's multiple circles in the
-    ::  audience via pattern matching.
-    ::
-    ^-  ?
-    =.  .  ar-deaf
-    !?=($@(~ {* ~ ~}) aud)
-  ::
-  ++  ar-phat
-    ::  render all circles, no glyphs.
-    ::
-    ^-  tape
-    %-  ~(rep in aud)
-    |=  {c/target t/tape}
-    =?  t  ?=(^ t)
-      (weld t ", ")
-    (weld t ~(cr-phat cr c))
-  ::
-  ++  ar-prom
-    ::  render all circles, ordered by relevance.
-    ::
-    ^-  tape
-    =.  .  ar-deaf
-    =/  all
-      %+  sort  `(list target)`~(tap in aud)
-      |=  {a/target b/target}
-      (~(cr-beat cr a) b)
-    =+  fir=&
-    |-  ^-  tape
-    ?~  all  ~
-    ;:  welp
-      ?:(fir "" " ")
-      (~(cr-show cr i.all) ~)
-      $(all t.all, fir |)
-    ==
-  ::
-  ++  ar-whom
-    ::  render sender as the most relevant circle.
-    ::
-    (~(cr-show cr (need ar-best)) ~ ar-maud)
-  --
-::
-++  cr
-  ::    target renderer
-  ::
-  ::  used in both target and ship rendering.
-  ::
+++  tr
   |_  ::  one: the target.
       ::
       one=target
+  ::  +beat: true if one is more "relevant" than two
   ::
-  ++  cr-beat
-    ::    {one} more relevant?
-    ::
-    ::  returns true if one is better to show, false
-    ::  otherwise. prioritizes: our > main > size.
-    ::
+  ++  beat
     |=  two=target
     ^-  ?
     ::  the target that's ours is better.
@@ -955,126 +874,94 @@
       (lth (lent path.one) (lent path.two))
     ::  if they're from different ships, neither ours, pick hierarchically.
     (lth (xeb ship.one) (xeb ship.two))
+  ::  +phat: render target fully
   ::
-  ++  cr-best
-    ::  returns the most relevant target.
-    ::
-    |=  two=target
-    ?:((cr-beat two) one two)
+  ::    renders as ~ship/path.
+  ::    for local mailboxes, renders just /path.
+  ::    for sponsor's mailboxes, renders ^/path.
   ::
-  ++  cr-curt
-    ::    prints a ship name in 14 characters.
-    ::
-    ::  left-pads with spaces. {mup} signifies
-    ::  "are there other targets besides this one?"
-    ::
-    |=  mup=?
-    ^-  tape
-    =+  raw=(cite:title ship.one)
-    (runt [(sub 14 (lent raw)) ' '] raw)
+  ::NOTE  but, given current implementation, all will be local
   ::
-  ++  cr-nick
-    ::    get nick for ship, or shortname if no nick.
-    ::
-    ::  left-pads with spaces.
-    ::
-    |=  source=target
-    ::TODO  get nick from contacts store?
-    (cr-curt |)
-  ::
-  ++  cr-phat                                           :::  render accurately
-    ::  prints a target fully as ~ship/path.
-    ::  for local targets, print as /path.
-    ::  for targets on our sponsor, ^/path.
-    ::
+  ++  phat
     ^-  tape
     %+  weld
       ?:  =(our-self ship.one)  ~
       ?:  =((sein:title our.bowl now.bowl our-self) ship.one)  "^"
       (scow %p ship.one)
     (spud path.one)
+  ::  +show: render as tape, as glyph if we can
   ::
-  ++  cr-full  (cr-show ~)                              ::  render full width
-  ::
-  ++  cr-show
-    ::  renders a target as text.
-    ::
-    ::  moy:  multiple targets in audience?
-    |=  moy=(unit ?)
+  ++  show
     ^-  tape
-    ::  render target (as glyph if we can).
-    ?~  moy
-      =+  cha=(~(get by bound) one)
-      =-  ?~(cha - "{u.cha ~}")
-      ~(cr-phat cr one)
-    (~(cr-curt cr one) u.moy)
+    =+  cha=(~(get by bound) one)
+    ?~(cha phat "{u.cha ~}")
+  ::  +glyph: tape for glyph of target, defaulting to *
   ::
-  ++  cr-dire
-    ::  returns true if circle is a mailbox of ours.
-    ::
-    |=  cir=target  ^-  ?
-    ?&  =(ship.cir our-self)
-        ::TODO  permissions check
-    ==
-  ::
-  ++  cr-glyph
-    ::    target glyph
-    ::
-    ::  get the glyph that corresponds to the target.
-    ::  for mailboxes and complex audiences, use
-    ::  reserved "glyphs".
-    ::
+  ++  glyph
     ^-  tape
-    =+  gyf=(~(get by bound) one)
-    ?^  gyf  ~[u.gyf]
-    ?.  (cr-dire one)
-      "*"
-    ":"
+    [(~(gut by bound) one '*') ~]
   --
 ::
-++  tr
-  ::    telegram renderer
-  ::
-  ::  responsible for converting telegrams and
-  ::  everything relating to them to text to be
-  ::  displayed in the cli.
-  ::
-  |_  $:  settings=(set term)
-          source=target
+::  +mr: render messages
+::
+++  mr
+  |_  $:  source=target
           envelope
       ==
+  ::  +activate: produce sole-effect for printing message details
   ::
-  ++  tr-fact
-    ::    activate effect
-    ::
-    ::  produces sole-effect for printing message
-    ::  details.
-    ::
+  ++  render-activate
     ^-  sole-effect:sole-sur
-    ~[%mor [%tan tr-meta] tr-body]
+    ~[%mor [%tan meta] body]
+  ::  +meta: render message metadata (serial, timestamp, author, target)
   ::
-  ++  render
-    ::    renders a telegram
+  ++  meta
+    ^-  tang
+    =.  when  (sub when (mod when (div when ~s0..0001)))    :: round
+    =+  hed=leaf+"{(scow %uv uid)} at {(scow %da when)}"
+    =/  src=tape  ~(phat tr source)
+    [%rose [" " ~ ~] [hed >author< [%rose [", " "to " ~] [leaf+src]~] ~]]~
+  ::  +body: long-form render of message contents
+  ::
+  ++  body
+    |-  ^-  sole-effect:sole-sur
+    ?-  -.letter
+        %text
+      tan+~[leaf+"{(trip text.letter)}"]
     ::
-    ::  the first line will contain the author and
-    ::  optional timestamp.
+        %url
+      url+url.letter
     ::
+        %code
+      =/  texp=tape  ['>' ' ' (trip expression.letter)]
+      :-  %mor
+      |-  ^-  (list sole-effect:sole-sur)
+      ?:  =("" texp)  [tan+output.letter ~]
+      =/  newl  (find "\0a" texp)
+      ?~  newl  [txt+texp $(texp "")]
+      =+  (trim u.newl texp)
+      :-  txt+(scag u.newl texp)
+      $(texp [' ' ' ' (slag +(u.newl) texp)])
+    ==
+  ::  +render-inline: produces lines to display message body in scrollback
+  ::
+  ++  render-inline
     ^-  (list tape)
     =/  wyd
-      %+  sub  width                                    ::  termwidth,
-      %+  add  14                                       ::  minus author,
-      ?:((~(has in settings) %showtime) 10 0)           ::  minus timestamp.
-    =+  txs=(tr-text wyd)
+      ::  termwidth,
+      %+  sub  width
+      ::  minus autor,
+      %+  add  14
+      ::  minus timestamp.
+      ?:((~(has in settings) %showtime) 10 0)
+    =+  txs=(line wyd)
     ?~  txs  ~
-    ::  render the author.
-    =/  nom=tape
-      ?:  (~(has in settings) %nicks)
-        (~(cr-nick cr [author /inbox]) source)
-      (~(cr-curt cr [author /inbox]) |)
-    ::  regular indent.
-    =/  den=tape
-      (reap (lent nom) ' ')
-    ::  timestamp, if desired.
+    ::  nom: rendered author
+    ::  den: regular indent
+    ::  tam: timestamp, if desired
+    ::
+    =/  nom=tape  (nome author)
+    =/  den=tape  (reap (lent nom) ' ')
     =/  tam=tape
       ?.  (~(has in settings) %showtime)  ""
       =.  when
@@ -1100,76 +987,19 @@
     |=  [t=tape l=(list tape)]
     ?~  l  [:(weld nom t tam) ~]
     [(weld den t) l]
+  ::  +nome: prints a ship name in 14 characters, left-padding with spaces
   ::
-  ++  tr-meta
-    ::    metadata
-    ::
-    ::  builds string that display metadata, including
-    ::  message serial, timestamp, author and audience.
-    ::
-    ^-  tang
-    =.  when  (sub when (mod when (div when ~s0..0001)))    :: round
-    =+  hed=leaf+"{(scow %uv uid)} at {(scow %da when)}"
-    =/  src=tape  ~(cr-phat cr source)
-    [%rose [" " ~ ~] [hed >author< [%rose [", " "to " ~] [leaf+src]~] ~]]~
-  ::
-  ++  tr-body
-    ::    message content
-    ::
-    ::  long-form display of message contents, specific
-    ::  to each speech type.
-    ::
-    |-  ^-  sole-effect:sole-sur
-    ?-  -.letter
-        %text
-      tan+~[leaf+"{(trip text.letter)}"]
-    ::
-        %url
-      url+url.letter
-    ::
-        %code
-      =/  texp=tape  ['>' ' ' (trip expression.letter)]
-      :-  %mor
-      |-  ^-  (list sole-effect:sole-sur)
-      ?:  =("" texp)  [tan+output.letter ~]
-      =/  newl  (find "\0a" texp)
-      ?~  newl  [txt+texp $(texp "")]
-      =+  (trim u.newl texp)
-      :-  txt+(scag u.newl texp)
-      $(texp [' ' ' ' (slag +(u.newl) texp)])
-    ==
-  ::
-  ++  tr-chow
-    ::    truncate
-    ::
-    ::  truncates the {txt} to be of max {len}
-    ::  characters. if it does truncate, indicates it
-    ::  did so by appending _ or ….
-    ::
-    |=  [len=@u txt=tape]
+  ++  nome
+    |=  =ship
     ^-  tape
-    ?:  (gth len (lent txt))  txt
-    =.  txt  (scag len txt)
-    |-
-    ?~  txt  txt
-    ?:  =(' ' i.txt)
-      |-
-      :-  '_'
-      ?.  ?=({$' ' *} t.txt)
-        t.txt
-      $(txt t.txt)
-    ?~  t.txt  "…"
-    [i.txt $(txt t.txt)]
+    =+  raw=(cite:title ship)
+    (runt [(sub 14 (lent raw)) ' '] raw)
+  ::  +line: renders most important contents, tries to fit one line
   ::
-  ++  tr-text
-    ::    compact contents
-    ::
-    ::  renders just the most important data of the
-    ::  message. if possible, these stay within a single
-    ::  line.
-    ::
+  ::TODO  this should probably be rewritten someday
+  ++  line
     ::  pre:  replace/append line prefix
-    ::TODO  this should probably be redone someday.
+    ::
     =|  pre=(unit (pair ? tape))
     |=  wyd=@ud
     ^-  (list tape)
@@ -1179,9 +1009,9 @@
       =+  newline=(find "\0a" texp)
       =?  texp  ?=(^ newline)
         (weld (scag u.newline texp) "  ...")
-      :-  (tr-chow wyd '#' ' ' texp)
+      :-  (truncate wyd '#' ' ' texp)
       ?~  output.letter  ~
-      =-  [' ' (tr-chow (dec wyd) ' ' -)]~
+      =-  [' ' (truncate (dec wyd) ' ' -)]~
       ~(ram re (snag 0 `(list tank)`output.letter))
     ::
         %url
@@ -1213,7 +1043,7 @@
       =/  pef=tape
         ?:  &(?=(^ pre) p.u.pre)  q.u.pre
         =-  (weld - q:(fall pre [p=| q=" "]))
-        ~(cr-glyph cr source)
+        ~(glyph tr source)
       =/  lis=(list tape)
         %+  simple-wrap
           `tape``(list @)`(tuba (trip text.letter))
@@ -1224,17 +1054,34 @@
       %+  turn  (slag 1 lis)
       |=(a=tape (runt [lef ' '] a))
     ==
+  ::  +truncate: truncate txt to fit len, indicating truncation with _ or …
+  ::
+  ++  truncate
+    |=  [len=@u txt=tape]
+    ^-  tape
+    ?:  (gth len (lent txt))  txt
+    =.  txt  (scag len txt)
+    |-
+    ?~  txt  txt
+    ?:  =(' ' i.txt)
+      |-
+      :-  '_'
+      ?.  ?=([%' ' *] t.txt)
+        t.txt
+      $(txt t.txt)
+    ?~  t.txt  "…"
+    [i.txt $(txt t.txt)]
   --
 ::
 ++  simple-wrap
-  |=  {txt/tape wyd/@ud}
+  |=  [txt=tape wid=@ud]
   ^-  (list tape)
   ?~  txt  ~
-  =+  ^-  {end/@ud nex/?}
-    ?:  (lte (lent txt) wyd)  [(lent txt) &]
-    =+  ace=(find " " (flop (scag +(wyd) `tape`txt)))
-    ?~  ace  [wyd |]
-    [(sub wyd u.ace) &]
+  =+  ^-  [end=@ud nex=?]
+    ?:  (lte (lent txt) wid)  [(lent txt) &]
+    =+  ace=(find " " (flop (scag +(wid) `tape`txt)))
+    ?~  ace  [wid |]
+    [(sub wid u.ace) &]
   :-  (tufa (scag end `(list @)`txt))
   $(txt (slag ?:(nex +(end) end) `tape`txt))
 --
