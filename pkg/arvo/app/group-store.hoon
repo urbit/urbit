@@ -25,9 +25,7 @@
 ++  prep
   |=  old=(unit state)
   ^-  (quip move _this)
-  ?~  old
-    [~ this]
-  [~ this(+<+ u.old)]
+  [~ ?~(old this this(+<+ u.old))]
 ::
 ++  peek-x
   |=  pax=path
@@ -57,10 +55,9 @@
   |=  pax=path
   ^-  (quip move _this)
   ?>  (team:title our.bol src.bol)
-  =/  grp=(unit group)  (~(get by groups) pax)
-  ?~  grp  !!
+  =/  grp  (~(got by groups) pax)
   :_  this
-  [ost.bol %diff %group-update [%path u.grp pax]]~
+  [ost.bol %diff %group-update [%path grp pax]]~
 ::
 ++  poke-group-action
   |=  action=group-action
@@ -81,7 +78,7 @@
     [~ this]
   ?.  (~(has by groups) pax.act)
     [~ this]
-  =/  members=group  (~(got by groups) pax.act)
+  =/  members  (~(got by groups) pax.act)
   =.  members  (~(uni in members) members.act)
   ?:  =(members (~(got by groups) pax.act))
     [~ this]

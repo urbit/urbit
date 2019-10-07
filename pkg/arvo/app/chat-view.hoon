@@ -151,18 +151,19 @@
   ?-  -.act
       %create
     ::  TODO: add invites
-    =/  group-read=path  [%chat (weld path.act /read)]
-    =/  group-write=path  [%chat (weld path.act /write)]
+    =/  pax  [(scot %p our.bol) path.act]
+    =/  group-read=path  [%chat (weld pax /read)]
+    =/  group-write=path  [%chat (weld pax /write)]
     :_  this
     %+  weld
-      :~  (chat-poke [%create path.act our.bol])
+      :~  (chat-poke [%create our.bol path.act])
           (group-poke [%bundle group-read])
           (group-poke [%bundle group-write])
           (group-poke [%add read.act group-read])
           (group-poke [%add write.act group-write])
-          (chat-hook-poke [%add-owned path.act security.act])
+          (chat-hook-poke [%add-owned pax security.act])
       ==
-    (create-security [%chat path.act] security.act)
+    (create-security [%chat pax] security.act)
   ::
       %delete
     =/  group-read  [%chat (weld path.act /read)]
@@ -179,7 +180,7 @@
 ++  peer-initial
   |=  pax=path
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)  !!
+  ?>  (team:title our.bol src.bol)
   ::  create inbox with 100 messages max per mailbox and send that along
   ::  then quit the subscription
   :_  this
@@ -190,14 +191,14 @@
 ++  peer-updates
   |=  pax=path
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)  !!
+  ?>  (team:title our.bol src.bol)
   ::  send along all subsequent updates
   [~ this]
 ::
 ++  peer-configs
   |=  pax=path
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)  !!
+  ?>  (team:title our.bol src.bol)
   :_  this
   [ost.bol %diff %json *json]~
 ::

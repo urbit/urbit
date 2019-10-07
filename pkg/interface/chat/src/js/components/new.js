@@ -26,7 +26,7 @@ export class NewScreen extends Component {
     const { props, state } = this;
 
     if (prevProps !== props) { 
-      let station = `/${state.idName}`;
+      let station = `/~${window.ship}/${state.idName}`;
       if (station in props.inbox) {
         props.history.push('/~chat/room' + station);
       }

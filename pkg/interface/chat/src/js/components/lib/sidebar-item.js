@@ -66,7 +66,7 @@ export class SidebarItem extends Component {
       <div className={'pa3 ' + selectedCss} onClick={this.onClick.bind(this)}>
         <div className='w-100 v-mid'>
           {unreadElem}
-          <p className="dib body-regular lh-16">{props.title}</p>
+          <p className="dib body-regular lh-16">{props.title.substr(1)}</p>
         </div>
         <div className="w-100">
           <p className='dib gray label-small-mono mr3 lh-16'>{props.ship}</p>

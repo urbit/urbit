@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import { deSig } from '/lib/util';
 
 import { ChatTabBar } from '/components/lib/chat-tabbar';
 
@@ -9,7 +10,7 @@ export class SettingsScreen extends Component {
     super(props);
 
     this.state = {
-      station: "/" + props.match.params.station,
+      station: `/${props.match.params.ship}/${props.match.params.station}`,
       isLoading: false
     };
 
@@ -46,7 +47,7 @@ export class SettingsScreen extends Component {
     let descriptionText = "Permanently delete this chat.";
     let buttonText = "-> Delete";
 
-    if (props.owner !== window.ship) {
+    if (deSig(props.match.params.ship) !== window.ship) {
       titleText = "Leave Chat"
       descriptionText = "You will no longer have access to this chat."
       buttonText = "-> Leave";
@@ -69,7 +70,7 @@ export class SettingsScreen extends Component {
 
     if (!!state.isLoading) {
       let text = "Deleting...";
-      if (props.owner !== window.ship) {
+      if (deSig(props.match.params.ship) !== window.ship) {
         text = "Leaving...";
       }
 
@@ -97,7 +98,7 @@ export class SettingsScreen extends Component {
             {...props}
             station={state.station}
             numPeers={writeGroup.length}
-            isOwner={props.owner === window.ship} />
+            isOwner={deSig(props.match.params.ship) === window.ship} />
         </div>
         <div className="w-100 cf pa3">
           <h2>Settings</h2>

@@ -38,9 +38,7 @@
 ++  prep
   |=  old=(unit state)
   ^-  (quip move _this)
-  ?~  old
-    [~ this]
-  [~ this(+<+ u.old)]
+  [~ ?~(old this this(+<+ u.old))]
 ::
 ++  poke-json
   |=  =json
@@ -62,9 +60,8 @@
   ^-  (quip move _this)
   =/  perms  (~(get by relation) group)
   ::  if relation does not exist, create it and subscribe.
-  =/  permissions
-    %-  silt
-    %+  turn  ~(tap in permission-paths)
+  =/  permissions=(set path)
+    %-  ~(run in permission-paths)
     |=([=path =kind] path)
   ?~  perms
     =/  group-path  [%group group]
@@ -144,7 +141,6 @@
     %+  turn  ~(tap in u.perms)
     |=  =path
     (permission-poke path [%delete path])
-  ::
   ==
 ::
 ++  quit
