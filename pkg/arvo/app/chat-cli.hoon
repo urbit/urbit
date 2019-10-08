@@ -553,10 +553,11 @@
       ^-  (quip move _this)
       ::TODO  check if already exists
       =/  =target  [our-self path]
+      =.  audience  [target ~ ~]
       =^  moz  this
         ?.  ?=(^ gyf)  [~ this]
         (bind-glyph u.gyf target)
-      =-  [[- moz] this(audience [target ~ ~])]
+      =-  [[- moz] this]
       %^  act  %do-create  %chat-view
       :-  %chat-view-action
       [%create path %channel ~ ~]
@@ -861,9 +862,9 @@
   ++  show-glyph
     |=  [=glyph target=(unit target)]
     ^-  (list move)
-    =-  [prompt - ~]
+    :_  [prompt ~]
     %-  note
-    %+  weld  "set: {[glyph ~]} -> "
+    %+  weld  "set: {[glyph ~]} "
     ?~  target  "nothing"
     ~(phat tr u.target)
   --
