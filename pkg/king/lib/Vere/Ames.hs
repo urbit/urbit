@@ -45,6 +45,9 @@ listenPort m _ = 0
 localhost :: HostAddress
 localhost = tupleToHostAddress (127,0,0,1)
 
+inaddrAny :: HostAddress
+inaddrAny = tupleToHostAddress (0,0,0,0)
+
 okayFakeAddr :: AmesDest -> Bool
 okayFakeAddr = \case
     ADGala _ _          -> True
@@ -145,7 +148,10 @@ ames inst who isFake mPort enqueueEv =
         logTrace $ displayShow ("(ames) Binding to port ", ourPort)
         -- localhost may be wrong here; ames.c switches between INADDR_ANY and
         -- INADDR_LOOPBACK based on networking flags.
-        () <- io $ bind s (SockAddrInet ourPort localhost)
+        let addr = SockAddrInet ourPort $
+              if isFake then localhost else inaddrAny
+
+        () <- io $ bind s addr
         pure s
 
     waitPacket :: Socket -> RIO e ()
