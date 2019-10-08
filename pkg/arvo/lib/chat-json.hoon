@@ -1,4 +1,5 @@
 /-  *chat-store, *chat-view
+/+  chat-eval
 |%
 ::
 ++  slan  |=(mod/@tas |=(txt/@ta (need (slaw mod txt))))
@@ -36,19 +37,8 @@
   %-  need
   ?~  exp  [~ '' ~]
   :+  ~  u.exp
-  =+  res=((ot output+(ar dank) ~) a)
-  ?^  res  u.res
-  ::  XX revisit
-  ::
-  ::    this double-virtualizes and clams to disable .^
-  ::    the subject of the eval should include [our now eny]
-  ::
-  ;;  (list tank)
-  =<  +>
-  %+  mong
-    :-  mute
-    |.([(sell (slap !>(..^zuse) (ream u.exp)))]~)
-  |=(^ ~)
+  ::NOTE  when sending, if output is an empty list, chat-store will evaluate
+  (fall ((ot output+(ar dank) ~) a) ~)
 ::
 ++  lett
   |=  =letter
