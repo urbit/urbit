@@ -40,6 +40,7 @@
       [%eval cord hoon]                             ::  send #-message
     ::
       [%create chat-security path (unit glyph)]     ::  create chat
+      [%delete path]                                ::  delete chat
       [%invite ?(%r %w %rw) path (set ship)]        ::  allow
       [%banish ?(%r %w %rw) path (set ship)]        ::  disallow
     ::
@@ -348,8 +349,9 @@
           security
           ;~(plug path (punt ;~(pfix ace glyph)))
         ==
-        ;~((glue ace) (perk %invite ~) rw path ships)
-        ;~((glue ace) (perk %banish ~) rw path ships)
+        ;~((glue ace) (tag %delete) path)
+        ;~((glue ace) (tag %invite) rw path ships)
+        ;~((glue ace) (tag %banish) rw path ships)
       ::
         ;~((glue ace) (tag %join) ;~(plug targ (punt ;~(pfix ace glyph))))
         ;~((glue ace) (tag %leave) targ)
@@ -542,6 +544,7 @@
           %eval      (eval +.job)
         ::
           %create    (create +.job)
+          %delete    (delete +.job)
           %invite    (change-permission & +.job)
           %banish    (change-permission | +.job)
         ::
@@ -607,6 +610,15 @@
         ?(%channel %mailbox)  ~
         ?(%village %journal)  [our-self ~ ~]
       ==
+    ::  +delete: delete local chats
+    ::
+    ++  delete
+      |=  =path
+      ^-  (quip move _this)
+      =-  [[- ~] this]
+      %^  act  %do-delete  %chat-view
+      :-  %chat-view-action
+      [%delete (target-to-path our-self path)]
     ::  +change-permission: modify permissions on a local chat
     ::
     ++  change-permission
@@ -662,10 +674,13 @@
       [%add-synced target]
     ::  +leave: unsync & destroy mailbox
     ::
-    ::TODO  but if we leave our own circle, then it disappears for everyone?
+    ::TODO  allow us to "mute" local chats using this
     ++  leave
       |=  =target
       =-  [[- ~] this]
+      ?:  =(our-self ship.target)
+        %-  print:sh-out
+        "can't ;leave local chats, maybe use ;delete instead"
       %^  act  %do-leave  %chat-hook
       :-  %chat-hook-action
       [%remove (target-to-path target)]
