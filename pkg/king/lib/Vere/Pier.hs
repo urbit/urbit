@@ -261,7 +261,7 @@ drivers pierPath inst who mPort plan shutdownSTM termSys =
     initialEvents       = mconcat [behnBorn, clayBorn, amesBorn, httpBorn,
                                    termBorn, irisBorn]
     runDrivers          = do
-        dNewt       <- liftAcquire $ runAmes
+        dNewt       <- runAmes
         dBehn       <- liftAcquire $ runBehn
         dAmes       <- pure $ const $ pure ()
         dHttpClient <- runIris
