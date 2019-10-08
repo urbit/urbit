@@ -28,18 +28,27 @@
 ++  eval                                              :::  %exp speech
   :::  extract contents of an %exp speech, evaluating
   :::  the {exp} if there is no {res} yet.
+  ::
   |=  a=json
   ^-  [cord (list tank)]
   =,  ^?  dejs-soft:format
-  =/  exp  ((ot expression+so ~) a)
+  =+  exp=((ot expression+so ~) a)
   %-  need
-  ?~  exp
-    [~ '' ~]
+  ?~  exp  [~ '' ~]
   :+  ~  u.exp
-  =/  res  ((ot output+(ar dank) ~) a)
-  ?^  res
-    u.res
-  p:(mule |.([(sell (slap !>(..^zuse) (ream u.exp)))]~))  ::TODO  oldz
+  =+  res=((ot output+(ar dank) ~) a)
+  ?^  res  u.res
+  ::  XX revisit
+  ::
+  ::    this double-virtualizes and clams to disable .^
+  ::    the subject of the eval should include [our now eny]
+  ::
+  ;;  (list tank)
+  =<  +>
+  %+  mong
+    :-  mute
+    |.([(sell (slap !>(..^zuse) (ream u.exp)))]~)
+  |=(^ ~)
 ::
 ++  lett
   |=  =letter
