@@ -1257,16 +1257,9 @@ u3_unix_acquire(c3_c* pax_c)
 
   {
     c3_i fid_i = fileno(loq_u);
-#if defined(U3_OS_linux)
-    fdatasync(fid_i);
-#elif defined(U3_OS_osx)
-    fcntl(fid_i, F_FULLFSYNC);
-#elif defined(U3_OS_bsd)
-    fsync(fid_i);
-#else
-#   error "port: datasync"
-#endif
+    c3_sync(fid_i);
   }
+
   fclose(loq_u);
   free(paf_c);
 }
