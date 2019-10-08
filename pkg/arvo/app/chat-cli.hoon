@@ -103,9 +103,7 @@
 ::
 ++  target-to-path
   |=  target
-  path
-  ::TODO
-  :: [(scot %p ship) path]
+  [(scot %p ship) path]
 ::  +path-to-target: deduces a target from a mailbox path
 ::
 ++  path-to-target
@@ -116,7 +114,7 @@
     [our-self path]
   =+  who=(slaw %p i.path)
   ?~  who  [our-self path]
-  [u.who path]
+  [u.who t.path]
 ::  +poke-noun: debug helpers
 ::
 ++  poke-noun
@@ -170,7 +168,7 @@
   |=  [=wire upd=chat-update]
   ^-  (quip move _this)
   ?+  -.upd  [~ this]
-    %create   (notice-create (path-to-target path.upd))
+    %create   (notice-create +.upd)
     %delete   [[(show-delete:sh-out (path-to-target path.upd)) ~] this]
     %message  (read-envelope (path-to-target path.upd) envelope.upd)
   ==
