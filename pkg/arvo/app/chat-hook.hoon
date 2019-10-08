@@ -43,13 +43,6 @@
     [ost.bol %peer /permissions [our.bol %permission-store] /updates]~
   [~ this(+<+ u.old)]
 ::
-++  poke-noun
-  |=  a=*
-  ^-  (quip move _this)
-  ~&  synced
-  ~&  boned
-  [~ this]
-::
 ++  poke-json
   |=  jon=json
   ^-  (quip move _this)
