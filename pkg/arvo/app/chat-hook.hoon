@@ -125,7 +125,7 @@
           [bone %quit ~]
       ==
     ?.  |(=(u.ship src.bol) (team:title our.bol src.bol))
-      :: if neither ship = source or source = us, do nothing
+      ::  if neither ship = source or source = us, do nothing
       [~ this]
     ::  delete a foreign ship's path
     :-  (pull-wire [%mailbox path.act])
@@ -201,7 +201,6 @@
     ?.  (~(has by synced) path.diff)
       [~ this]
     :_  this(synced (~(del by synced) path.diff))
-    :-  (chat-poke diff)
     [ost.bol %pull [%mailbox path.diff] [our.bol %chat-store] ~]~
   ::
       %message

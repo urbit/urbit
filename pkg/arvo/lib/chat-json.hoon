@@ -126,8 +126,6 @@
   %+  frond  %chat-update
   %-  pairs
   :~
-    ::
-    ::  %message
     ?:  =(%message -.upd)
       ?>  ?=(%message -.upd)
       :-  %message
@@ -135,13 +133,9 @@
       :~  [%path (path path.upd)]
           [%envelope (enve envelope.upd)]
       ==
-    ::
-    ::  %read
     ?:  =(%read -.upd)
       ?>  ?=(%read -.upd)
       [%read (pairs [%path (path path.upd)]~)]
-    ::
-    ::  %create
     ?:  =(%create -.upd)
       ?>  ?=(%create -.upd)
       :-  %create
@@ -149,13 +143,9 @@
       :~  [%ship (ship ship.upd)]
           [%path (path path.upd)]
       ==
-    ::
-    ::  %delete
     ?:  =(%delete -.upd)
       ?>  ?=(%delete -.upd)
       [%delete (pairs [%path (path path.upd)]~)]
-    ::
-    ::  %config
     ?:  =(%config -.upd)
       ?>  ?=(%config -.upd)
       :-  %config
@@ -163,8 +153,6 @@
       :~  [%path (path path.upd)]
           [%config (conf config.upd)]
       ==
-    ::
-    ::  %noop
     [*@t *^json]
   ==
 ::

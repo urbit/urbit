@@ -10,7 +10,7 @@ export class JoinScreen extends Component {
 
   componentDidMount() {
     const { props } = this;
-    let station = `${props.match.params.ship}/${props.match.params.station}`;
+    let station = `/${props.match.params.ship}/${props.match.params.station}`;
 
     if (station in props.inbox) {
       props.history.push(`/~chat/room${station}`);
