@@ -167,9 +167,8 @@
   %+  turn  ~(tap in who)
   |=  check-ship=ship
   ?:  (permitted-scry [(scot %p check-ship) pax])
-    ::  if ship is permitted to be subscribed, do nothing
     ~
-  :: if ship is not permitted, quit their subscription
+  ::  if ship is not permitted, quit their subscription
   =/  mail-path
     (oust [(dec (lent t.pax)) (lent t.pax)] `(list @t)`t.pax)
   =/  bne  (~(get by sup) [check-ship [%mailbox mail-path]])
