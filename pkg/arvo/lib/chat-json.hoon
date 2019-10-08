@@ -1,4 +1,5 @@
 /-  *chat-store, *chat-view
+/+  chat-eval
 |%
 ::
 ++  slan  |=(mod/@tas |=(txt/@ta (need (slaw mod txt))))
@@ -39,7 +40,7 @@
   =/  res  ((ot output+(ar dank) ~) a)
   ?^  res
     u.res
-  p:(mule |.([(sell (slap !>(..^zuse) (ream u.exp)))]~))  ::TODO  oldz
+  (eval:chat-eval *bowl:gall (ream u.exp))
 ::
 ++  lett
   |=  =letter

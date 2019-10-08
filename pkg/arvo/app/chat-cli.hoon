@@ -12,8 +12,7 @@
 /-  *chat-store, *chat-view, *chat-hook,
     *permission-store, *group-store,
     sole-sur=sole
-/+  sole-lib=sole
-/=  seed  /~  !>(.)
+/+  sole-lib=sole, chat-eval
 ::
 |%
 +$  state
@@ -681,16 +680,7 @@
     ::
     ++  eval
       |=  [txt=cord exe=hoon]
-      =;  tan=(list tank)
-        (say %code txt tan)
-      ;;  (list tank)
-      =<  +>
-      %+  mong
-        :-  mute
-        =-  |.([(sell (slap (slop !>(-) seed) exe))]~)
-        ^-  [our=@p now=@da eny=@uvI]
-        [our-self now.bowl (shas %eny eny.bowl)]
-      |=(^ ~)
+      (say %code txt (eval:chat-eval bowl exe))
     ::  +lookup-glyph: print glyph info for all, glyph or target
     ::
     ++  lookup-glyph
