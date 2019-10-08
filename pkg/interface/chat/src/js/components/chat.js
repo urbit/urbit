@@ -5,6 +5,7 @@ import _ from 'lodash';
 import { Message } from '/components/lib/message';
 import { ChatTabBar } from '/components/lib/chat-tabbar';
 import { ChatInput } from '/components/lib/chat-input';
+import { deSig } from '/lib/util';
 
 
 export class ChatScreen extends Component {
@@ -12,7 +13,7 @@ export class ChatScreen extends Component {
     super(props);
 
     this.state = {
-      station: '/' + props.match.params.station,
+      station: `/${props.match.params.ship}/${props.match.params.station}`,
       numPages: 1,
       scrollLocked: false,
     };
@@ -40,13 +41,14 @@ export class ChatScreen extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
 
-    if (prevProps.match.params.station !== props.match.params.station) {
+    if ((prevProps.match.params.station !== props.match.params.station) ||
+      (prevProps.match.params.ship !== props.match.params.ship)) {
       this.hasAskedForMessages = false;
 
       clearInterval(this.updateReadInterval);
 
       this.setState({
-        station: "/" + props.match.params.station,
+      station: `/${props.match.params.ship}/${props.match.params.station}`,
         scrollLocked: false
       }, () => {
         this.scrollToBottom();
@@ -56,7 +58,7 @@ export class ChatScreen extends Component {
         );
         this.updateReadNumber();
       });
-    } else if (Object.keys(props.inbox) > 0 && props.owner === '') {
+    } else if (Object.keys(props.inbox) > 0) {
       props.history.push('/~chat');
     } else if (props.envelopes.length - prevProps.envelopes.length >= 200) {
       this.hasAskedForMessages = false;
@@ -197,7 +199,7 @@ export class ChatScreen extends Component {
           <ChatTabBar {...props}
             station={state.station}
             numPeers={group.length}
-            isOwner={props.owner === window.ship} />
+            isOwner={deSig(props.match.params.ship) === window.ship} />
         </div>
         <div
           className="overflow-y-scroll pt3 pb2 flex flex-column-reverse"
@@ -210,7 +212,7 @@ export class ChatScreen extends Component {
           api={props.api}
           numMsgs={lastMsgNum}
           station={state.station}
-          owner={props.owner}
+          owner={deSig(props.match.params.ship)}
           permissions={props.permissions}
           placeholder='Message...' />
       </div>

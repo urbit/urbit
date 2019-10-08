@@ -107,12 +107,12 @@ export class Root extends Component {
               </Skeleton>
             );
            }} />
-         <Route exact path="/~chat/room/:station"
+         <Route exact path="/~chat/room/:ship/:station"
            render={ (props) => {
-             let station = '/' + props.match.params.station;
+             let station =
+               `/${props.match.params.ship}/${props.match.params.station}`;
              let mailbox = state.inbox[station] || {
                config: {
-                 owner: '',
                  read: -1,
                  length: 0
                },
@@ -126,7 +126,6 @@ export class Root extends Component {
                  <ChatScreen
                    api={api}
                    subscription={subscription}
-                   owner={mailbox.config.owner}
                    read={mailbox.config.read}
                    envelopes={mailbox.envelopes}
                    inbox={state.inbox}
@@ -138,10 +137,10 @@ export class Root extends Component {
                </Skeleton>
              );
            }} />
-         <Route exact path="/~chat/room/:station/members"
+         <Route exact path="/~chat/room/:ship/:station/members"
            render={ (props) => {
-             let station = '/' + props.match.params.station;
-             let owner = state.inbox[station] || { config: { owner: '' } };
+             let station =
+               `/${props.match.params.ship}/${props.match.params.station}`;
              let read = state.permissions[`/chat${station}/read`] || {
                kind: '',
                who: new Set([])
@@ -158,16 +157,15 @@ export class Root extends Component {
                    api={api}
                    read={read}
                    write={write}
-                   owner={owner.config.owner}
                    permissions={state.permissions}
                  />
                </Skeleton>
              );
            }} />
-         <Route exact path="/~chat/room/:station/settings"
+         <Route exact path="/~chat/room/:ship/:station/settings"
            render={ (props) => {
-             let station = '/' + props.match.params.station;
-             let owner = state.inbox[station] || { config: { owner: '' } };
+             let station =
+               `/${props.match.params.ship}/${props.match.params.station}`;
              let write = state.groups[`/chat${station}/write`] || new Set([]);
 
              return (
@@ -178,7 +176,6 @@ export class Root extends Component {
                    {...props}
                    setSpinner={this.setSpinner}
                    api={api}
-                   owner={owner.config.owner}
                    group={write}
                    inbox={state.inbox}
                  />

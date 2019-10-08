@@ -13,7 +13,7 @@ export class MemberScreen extends Component {
     super(props);
 
     this.state = {
-      station: "/" + props.match.params.station,
+      station: `/${props.match.params.ship}/${props.match.params.station}`,
     };
 
   }
@@ -49,7 +49,7 @@ export class MemberScreen extends Component {
       return (
         <MemberElement 
           key={mem} 
-          owner={props.owner}
+          owner={deSig(props.match.params.ship)}
           ship={mem}
           path={`/chat${state.station}/write`}
           kind={props.write.kind}
@@ -61,7 +61,7 @@ export class MemberScreen extends Component {
       return (
         <MemberElement 
           key={mem} 
-          owner={props.owner}
+          owner={deSig(props.match.params.ship)}
           ship={mem}
           path={`/chat${state.station}/read`}
           kind={props.read.kind}
@@ -77,7 +77,7 @@ export class MemberScreen extends Component {
             {...props}
             station={state.station}
             numPeers={writeGroup.length}
-            isOwner={props.owner === window.ship} />
+            isOwner={deSig(props.match.params.ship) === window.ship} />
         </div>
         <div className="w-100 cf">
           <div className="w-50 fl pa2 pr3">
@@ -90,7 +90,7 @@ export class MemberScreen extends Component {
             <p className="label-regular gray mb3">
               {modWriteText}
             </p>
-            { window.ship === props.owner ? (
+            { window.ship === deSig(props.match.params.ship) ? (
               <InviteElement
                 path={`/chat${state.station}/write`}
                 station={state.station}
@@ -108,12 +108,13 @@ export class MemberScreen extends Component {
             <p className="label-regular gray mb3">
               {modReadText}
             </p>
-            { window.ship === props.owner ? (
-              <InviteElement
-                path={`/chat${state.station}/read`}
-                permissions={props.read}
-                api={props.api}/>
-            ) : null }
+            { window.ship === deSig(props.match.params.ship) ?
+              (  <InviteElement
+                   path={`/chat${state.station}/read`}
+                   permissions={props.read}
+                   api={props.api}/>
+              ) : null
+            }
           </div>
         </div>
       </div>

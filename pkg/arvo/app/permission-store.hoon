@@ -30,12 +30,19 @@
   :_  this
   [ost.bol %diff %permission-initial permissions]~
 ::
+++  peer-updates
+  |=  =path
+  ^-  (quip move _this)
+  ?>  (team:title our.bol src.bol)
+  ::  we now proxy all events to this path
+  [~ this]
+::
 ++  peer-permission
   |=  =path
   ^-  (quip move _this)
   ?~  path  !!
   ?>  (team:title our.bol src.bol)
-  ?.  (~(has by permissions) path)  !!
+  ?>  (~(has by permissions) path)
   :_  this
   [ost.bol %diff %permission-update [%create path (~(got by permissions) path)]]~
 ::
@@ -170,6 +177,7 @@
   ^-  (list move)
   %-  zing
   :~  (update-subscribers /all upd)
+      (update-subscribers /updates upd)
       (update-subscribers [%permission pax] upd)
   ==
 ::

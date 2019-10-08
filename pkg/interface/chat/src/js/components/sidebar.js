@@ -36,7 +36,7 @@ export class Sidebar extends Component {
           author,
           letter,
           box,
-          title: box.split('/')[1],
+          title: box,
           selected: station === box
         };
       })

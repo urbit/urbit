@@ -17,8 +17,7 @@
   ==
 ::
 +$  config
-  $:  owner=ship
-      length=@
+  $:  length=@
       read=@
   ==
 ::
@@ -32,7 +31,7 @@
 +$  chat-configs  (map path config)
 ::
 +$  chat-action
-  $%  [%create =path owner=ship]    ::  %create: create a mailbox at path
+  $%  [%create =ship =path]         ::  %create: create a mailbox at ~ship/path
       [%delete =path]               ::  %delete: delete a mailbox at path
       [%message =path =envelope]    ::  %message: append a message to mailbox
       [%read =path]                 ::  %read: set mailbox to read

@@ -31,9 +31,7 @@
 ++  prep
   |=  old=(unit state)
   ^-  (quip move _this)
-  ?~  old
-    [~ this]
-  [~ this(+<+ u.old)]
+  [~ ?~(old this this(+<+ u.old))]
 ::
 ++  peek-x-all
   |=  pax=path
@@ -54,28 +52,23 @@
 ++  peek-x-mailbox
   |=  pax=path
   ^-  (unit (unit [%noun (unit mailbox)]))
-  ?~  pax
-    ~
+  ?~  pax  ~
   =/  mailbox=(unit mailbox)  (~(get by inbox) pax)
   [~ ~ %noun mailbox]
 ::
 ++  peek-x-config
   |=  pax=path
   ^-  (unit (unit [%noun config]))
-  ?~  pax
-    ~
+  ?~  pax  ~
   =/  mailbox  (~(get by inbox) pax)
-  ?~  mailbox
-    ~
+  ?~  mailbox  ~
   :^  ~  ~  %noun
   config.u.mailbox
 ::
 ++  peek-x-envelopes
   |=  pax=path
   ^-  (unit (unit [%noun (list envelope)]))
-  ?+  pax
-    ~
-  ::
+  ?+  pax  ~
       [@ @ *]
     =/  mail-path  t.t.pax
     =/  mailbox  (~(get by inbox) mail-path)
@@ -143,10 +136,18 @@
   |=  pax=path
   ^-  (quip move _this)
   ?>  (team:title our.bol src.bol)
-  =/  box=(unit mailbox)  (~(get by inbox) pax)
-  ?~  box  !!
-  :_  this
-  [ost.bol %diff %chat-update [%create pax owner.config.u.box]]~
+  ?>  (~(has by inbox) pax)
+  =^  =ship  pax
+    ?>  ?=([* ^] pax)
+    [(slav %p i.pax) t.pax]
+    :_  this
+  [ost.bol %diff %chat-update [%create ship pax]]~
+::
+++  poke-noun
+  |=  a=*
+  ^-  (quip move _this)
+  ~&  inbox
+  [~ this]
 ::
 ++  poke-json
   |=  jon=json
@@ -159,31 +160,21 @@
   ^-  (quip move _this)
   ?>  (team:title our.bol src.bol)
   ?-  -.action
-      %create
-    (handle-create action)
-  ::
-      %delete
-    (handle-delete action)
-  ::
-      %message
-    (handle-message action)
-  ::
-      %read
-    (handle-read action)
-  ::
+      %create   (handle-create action)
+      %delete   (handle-delete action)
+      %message  (handle-message action)
+      %read     (handle-read action)
   ==
 ::
 ++  handle-create
   |=  act=chat-action
   ^-  (quip move _this)
   ?>  ?=(%create -.act)
-  ?:  (~(has by inbox) path.act)
+  =/  pax  [(scot %p ship.act) path.act]
+  ?:  (~(has by inbox) pax)
     [~ this]
-  =/  mailbox  *mailbox
-  =.  owner.config.mailbox  owner.act
-  =.  inbox  (~(put by inbox) path.act mailbox)
-  :_  this(inbox inbox)
-  (send-diff path.act act)
+  :-  (send-diff pax act)
+  this(inbox (~(put by inbox) pax *mailbox))
 ::
 ++  handle-delete
   |=  act=chat-action
@@ -192,9 +183,8 @@
   =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
   ?~  mailbox
     [~ this]
-  =.  inbox  (~(del by inbox) path.act)
-  :_  this(inbox inbox)
-  (send-diff path.act act)
+  :-  (send-diff path.act act)
+  this(inbox (~(del by inbox) path.act))
 ::
 ++  handle-message
   |=  act=chat-action
@@ -203,10 +193,11 @@
   =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
   ?~  mailbox
     [~ this]
-  =.  length.config.u.mailbox  +(length.config.u.mailbox)
-  =.  number.envelope.act  length.config.u.mailbox
-  =.  envelopes.u.mailbox  (snoc envelopes.u.mailbox envelope.act)
-  =.  inbox  (~(put by inbox) path.act u.mailbox)
+  =:  length.config.u.mailbox  +(length.config.u.mailbox)
+      number.envelope.act  length.config.u.mailbox
+      envelopes.u.mailbox  (snoc envelopes.u.mailbox envelope.act)
+      inbox  (~(put by inbox) path.act u.mailbox)
+  ==
   :_  this(inbox inbox)
   (send-diff path.act act)
 ::
@@ -217,8 +208,9 @@
   =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
   ?~  mailbox
     [~ this]
-  =.  read.config.u.mailbox  length.config.u.mailbox
-  =.  inbox  (~(put by inbox) path.act u.mailbox)
+  =:  read.config.u.mailbox  length.config.u.mailbox
+      inbox  (~(put by inbox) path.act u.mailbox)
+  ==
   :_  this(inbox inbox)
   (send-diff path.act act)
 ::

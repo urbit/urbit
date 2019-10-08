@@ -81,8 +81,7 @@
   ^-  json
   =,  enjs:format
   %-  pairs
-  :~  [%owner (ship owner.config)]
-      [%length (numb length.config)]
+  :~  [%length (numb length.config)]
       [%read (numb read.config)]
   ==
 ::
@@ -147,8 +146,8 @@
       ?>  ?=(%create -.upd)
       :-  %create
       %-  pairs
-      :~  [%path (path path.upd)]
-          [%owner (ship owner.upd)]
+      :~  [%ship (ship ship.upd)]
+          [%path (path path.upd)]
       ==
     ::
     ::  %delete
@@ -185,8 +184,8 @@
   ::
   ++  create
     %-  ot
-    :~  [%path pa]
-        [%owner (su ;~(pfix sig fed:ag))]
+    :~  [%ship (su ;~(pfix sig fed:ag))]
+        [%path pa]
     ==
   ::
   ++  delete

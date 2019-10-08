@@ -1,9 +1,9 @@
 |%
 +$  chat-security
-  $?  $channel                                          ::  blacklist
-      $village                                          ::  whitelist
-      $journal                                          ::  pub r, whitelist w
-      $mailbox                                          ::  our r, blacklist w
+  $?  $channel                                          ::  black r, black w
+      $village                                          ::  white r, white w
+      $journal                                          ::  black r, white w
+      $mailbox                                          ::  white r, black w
   ==
 ::
 +$  chat-view-action
