@@ -184,10 +184,11 @@ pier pierPath mPort (serf, log, ss) = do
 
     swapMVar (sStderr serf) (atomically . Term.trace muxed)
 
-    let ship = who (Log.identity log)
+    let logId = Log.identity log
+    let ship = who logId
 
     let (bootEvents, startDrivers) =
-            drivers pierPath inst ship mPort
+            drivers pierPath inst ship (isFake logId) mPort
                 (writeTQueue computeQ)
                 shutdownEvent
                 (sz, muxed)
@@ -246,14 +247,15 @@ data Drivers e = Drivers
     }
 
 drivers :: HasLogFunc e
-        => FilePath -> KingId -> Ship -> Maybe Port -> (Ev -> STM ()) -> STM()
+        => FilePath -> KingId -> Ship -> Bool -> Maybe Port -> (Ev -> STM ())
+        -> STM()
         -> (TSize.Window Word, Term.Client)
         -> ([Ev], RAcquire e (Drivers e))
-drivers pierPath inst who mPort plan shutdownSTM termSys =
+drivers pierPath inst who isFake mPort plan shutdownSTM termSys =
     (initialEvents, runDrivers)
   where
     (behnBorn, runBehn) = behn inst plan
-    (amesBorn, runAmes) = ames inst who mPort plan
+    (amesBorn, runAmes) = ames inst who isFake mPort plan
     (httpBorn, runHttp) = serv pierPath inst plan
     (clayBorn, runClay) = clay pierPath inst plan
     (irisBorn, runIris) = client inst plan

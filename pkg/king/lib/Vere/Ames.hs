@@ -95,9 +95,9 @@ _turfText = intercalate "." . reverse . fmap unCord . unTurf
     TODO verify that the KingIds match on effects.
 -}
 ames :: forall e. HasLogFunc e
-     => KingId -> Ship -> Maybe Port -> QueueEv
+     => KingId -> Ship -> Bool -> Maybe Port -> QueueEv
      -> ([Ev], RAcquire e (EffCb e NewtEf))
-ames inst who mPort enqueueEv =
+ames inst who isFake mPort enqueueEv =
     (initialEvents, runAmes)
   where
     initialEvents :: [Ev]
@@ -120,10 +120,8 @@ ames inst who mPort enqueueEv =
         aSendingThread <- async (sendingThread aSendingQueue aSocket)
         pure            $ AmesDrv{..}
 
-    -- TODO: This switch needs to reflect the network mode flag; are we a fake
-    -- network? Do we have all networking disabled?
     netMode :: NetworkMode
-    netMode = Fake
+    netMode = if isFake then Fake else Real
 
     stop :: AmesDrv -> RIO e ()
     stop AmesDrv{..} = do
@@ -190,14 +188,10 @@ ames inst who mPort enqueueEv =
 
       atomically $ writeTQueue queue bs
 
-    sendPacket AmesDrv{..} Real ip@(ADIpv4 _ _ _) bs = do
-      logTrace $ displayShow
-        ("(ames) sendPacket Real Other ", ip, (destSockAddr Real ip))
-      atomically $ writeTQueue aSendingQueue ((destSockAddr Real ip), bs)
-
-    -- Maybe the entire socket usage in this example is wrong. We're using the
-    -- receiving socket as the sending socket, too. Can we not do that?
-
+    sendPacket AmesDrv{..} Real (ADIpv4 _ p a) bs = do
+      let addr = SockAddrInet (fromIntegral p) (unIpv4 a)
+      logTrace $ displayShow ("(ames) sendPacket Real Other ", addr)
+      atomically $ writeTQueue aSendingQueue (addr, bs)
 
     -- An outbound queue of messages. We can only write to a socket from one
     -- thread, so coalesce those writes here.
