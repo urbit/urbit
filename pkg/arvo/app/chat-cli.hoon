@@ -85,17 +85,39 @@
   ~&  %chat-cli-prep
   ?^  old
     [~ this(+<+ u.old)]
-  :-  [connect ~]
-  %_  this
-    audience  [[our-self /] ~ ~]
-    settings  (sy %showtime %notify ~)
-    width  80
-  ==
+  =^  moves  this
+    %_  catch-up
+      audience  [[our-self /] ~ ~]
+      settings  (sy %showtime %notify ~)
+      width  80
+    ==
+  [[connect moves] this]
+::  +catch-up: process all chat-store state
+::
+++  catch-up
+  ^-  (quip move _this)
+  =/  =inbox
+    .^  inbox
+        %gx
+        (scot %p our.bowl)
+        %chat-store
+        (scot %da now.bowl)
+        /all/noun
+    ==
+  |-  ^-  (quip move _this)
+  ?~  inbox  [~ this]
+  =*  path  p.n.inbox
+  =*  mailbox  q.n.inbox
+  =/  =target  (path-to-target path)
+  =^  mon  this  (read-envelopes target envelopes.mailbox)
+  =^  mol  this  $(inbox l.inbox)
+  =^  mor  this  $(inbox r.inbox)
+  [:(weld mon mol mor) this]
 ::  +connect: connect to the chat-store
 ::
 ++  connect
   ^-  move
-  [ost.bowl %peer /chat-store [our-self %chat-store] /all]
+  [ost.bowl %peer /chat-store [our-self %chat-store] /updates]
 ::  +true-self: moons to planets
 ::
 ++  true-self
@@ -127,6 +149,8 @@
   ^-  (quip move _this)
   ?:  ?=(%connect a)
     [[connect ~] this]
+  ?:  ?=(%catch-up a)
+    catch-up
   [~ this]
 ::  +poke-sole-action: handle cli input
 ::
@@ -152,21 +176,6 @@
   :-  [prompt:sh-out ~]
   ::  start with fresh sole state
   this(state.cli *sole-share:sole-sur)
-::  +diff-chat-initial: catch up on messages
-::
-++  diff-chat-initial
-  |=  [=wire =inbox]
-  ^-  (quip move _this)
-  =|  moves=(list move)
-  |-  ^-  (quip move _this)
-  ?~  inbox  [~ this]
-  =*  path  p.n.inbox
-  =*  mailbox  q.n.inbox
-  =/  =target  (path-to-target path)
-  =^  mon  this  (read-envelopes target envelopes.mailbox)
-  =^  mol  this  $(inbox l.inbox)
-  =^  mor  this  $(inbox r.inbox)
-  [:(weld mon mol mor) this]
 ::  +diff-chat-update: get new mailboxes & messages
 ::
 ++  diff-chat-update
