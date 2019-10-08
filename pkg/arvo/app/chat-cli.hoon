@@ -110,10 +110,10 @@
   =*  path  p.n.inbox
   =*  mailbox  q.n.inbox
   =/  =target  (path-to-target path)
-  =^  mon  this  (read-envelopes target envelopes.mailbox)
-  =^  mol  this  $(inbox l.inbox)
-  =^  mor  this  $(inbox r.inbox)
-  [:(weld mon mol mor) this]
+  =^  moves-n  this  (read-envelopes target envelopes.mailbox)
+  =^  moves-l  this  $(inbox l.inbox)
+  =^  moves-r  this  $(inbox r.inbox)
+  [:(weld moves-n moves-l moves-r) this]
 ::  +connect: connect to the chat-store
 ::
 ++  connect
@@ -138,7 +138,8 @@
   |=  =path
   ^-  target
   ?.  ?=([@ @ *] path)
-    ::TODO  but then doing target-to-path won't get us the same path...
+    ::TODO  can we safely assert the above?
+    ~&  [%path-without-host path]
     [our-self path]
   =+  who=(slaw %p i.path)
   ?~  who  [our-self path]
@@ -192,18 +193,18 @@
   |=  [=target envs=(list envelope)]
   ^-  (quip move _this)
   ?~  envs  [~ this]
-  =^  moi  this  (read-envelope target i.envs)
-  =^  mot  this  $(envs t.envs)
-  [(weld moi mot) this]
+  =^  moves-i  this  (read-envelope target i.envs)
+  =^  moves-t  this  $(envs t.envs)
+  [(weld moves-i moves-t) this]
 ::
 ++  notice-create
   |=  =target
   ^-  (quip move _this)
-  =^  moz  this
+  =^  moves  this
     ?:  (~(has by bound) target)
       [~ this]
     (bind-default-glyph target)
-  [[(show-create:sh-out target) moz] this]
+  [[(show-create:sh-out target) moves] this]
 ::  +bind-default-glyph:
 ::
 ++  bind-default-glyph
