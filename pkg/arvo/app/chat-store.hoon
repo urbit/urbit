@@ -1,6 +1,6 @@
 :: chat-store: data store that holds linear sequences of chat messages
 ::
-/+  *chat-json
+/+  *chat-json, *chat-eval
 |%
 +$  move  [bone card]
 ::
@@ -193,6 +193,10 @@
   =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
   ?~  mailbox
     [~ this]
+  =*  letter  letter.envelope.act
+  =?  letter  &(?=(%code -.letter) ?=(~ output.letter))
+    =/  =hoon  (ream expression.letter)
+    letter(output (eval bol hoon))
   =:  length.config.u.mailbox  +(length.config.u.mailbox)
       number.envelope.act  length.config.u.mailbox
       envelopes.u.mailbox  (snoc envelopes.u.mailbox envelope.act)

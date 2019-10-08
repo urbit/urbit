@@ -37,10 +37,8 @@
   ?~  exp
     [~ '' ~]
   :+  ~  u.exp
-  =/  res  ((ot output+(ar dank) ~) a)
-  ?^  res
-    u.res
-  (eval:chat-eval *bowl:gall (ream u.exp))
+  ::NOTE  when sending, if output is an empty list, chat-store will evaluate
+  (fall ((ot output+(ar dank) ~) a) ~)
 ::
 ++  lett
   |=  =letter
