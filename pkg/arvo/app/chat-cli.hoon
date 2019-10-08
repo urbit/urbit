@@ -9,7 +9,9 @@
 ::    we concat the ship onto the head of the path,
 ::    and trust it to take care of the rest.
 ::
-/-  sole-sur=sole, *chat-store, *chat-view, *chat-hook
+/-  *chat-store, *chat-view, *chat-hook,
+    *permission-store, *group-store,
+    sole-sur=sole
 /+  sole-lib=sole
 /=  seed  /~  !>(.)
 ::
@@ -38,8 +40,11 @@
       [%say (list letter)]                          ::  send message
       [%eval cord hoon]                             ::  send #-message
     ::
-      [%create path =(unit glyph)]                  ::  create chat
-      [%join target =(unit glyph)]                  ::  join target
+      [%create chat-security path (unit glyph)]     ::  create chat
+      [%invite ?(%r %w %rw) path (set ship)]        ::  allow
+      [%banish ?(%r %w %rw) path (set ship)]        ::  disallow
+    ::
+      [%join target (unit glyph)]                   ::  join target
       [%leave target]                               ::  nuke target
     ::
       [%bind glyph target]                          ::  bind glyph
@@ -68,6 +73,7 @@
   $%  [%chat-action chat-action]
       [%chat-view-action chat-view-action]
       [%chat-hook-action chat-hook-action]
+      [%group-action group-action]
   ==
 --
 ::
@@ -324,13 +330,19 @@
   ::
   ++  read
     |^
-      ~!  (scan "" (cmd %create [path ~] [glyph ~]))
       %+  knee  *command  |.  ~+
       =-  ;~(pose ;~(pfix mic -) message)
       ;~  pose
         (stag %target tars)
       ::
-        ;~((glue ace) (tag %create) ;~(plug path (punt ;~(pfix ace glyph))))
+        ;~  (glue ace)
+          (tag %create)
+          security
+          ;~(plug path (punt ;~(pfix ace glyph)))
+        ==
+        ;~((glue ace) (perk %invite ~) rw path ships)
+        ;~((glue ace) (perk %banish ~) rw path ships)
+      ::
         ;~((glue ace) (tag %join) ;~(plug targ (punt ;~(pfix ace glyph))))
         ;~((glue ace) (tag %leave) targ)
       ::
@@ -411,6 +423,21 @@
     ++  tars
       %+  cook  ~(gas in *(set target))
       (most ;~(plug com (star ace)) targ)
+    ::  +ships: set of comma-separated ships
+    ::
+    ++  ships
+      %+  cook  ~(gas in *(set ^ship))
+      (most ;~(plug com (star ace)) ship)
+    ::
+    ::  +security: security mode
+    ::
+    ++  security
+      (perk %channel %village %journal %mailbox ~)
+    ::  +rw: read, write, or read-write
+    ::
+    ++  rw
+      (perk %rw %r %w ~)
+    ::
     ::  +glyph: shorthand character
     ::
     ++  glyph  (mask glyphs)
@@ -507,9 +534,12 @@
           %say       (say +.job)
           %eval      (eval +.job)
         ::
+          %create    (create +.job)
+          %invite    (change-permission & +.job)
+          %banish    (change-permission | +.job)
+        ::
           %join      (join +.job)
           %leave     (leave +.job)
-          %create    (create +.job)
         ::
           %bind      (bind-glyph +.job)
           %unbind    (unbind-glyph +.job)
@@ -546,8 +576,7 @@
     ::  +create: new local mailbox
     ::
     ++  create
-      ::TODO  configurable security
-      |=  [=path gyf=(unit char)]
+      |=  [security=chat-security =path gyf=(unit char)]
       ^-  (quip move _this)
       ::TODO  check if already exists
       =/  =target  [our-self path]
@@ -558,7 +587,58 @@
       =-  [[- moz] this]
       %^  act  %do-create  %chat-view
       :-  %chat-view-action
-      [%create path %channel ~ ~]
+      :^  %create  path  security
+      ::  ensure we can read from/write to our own chats
+      ::
+      :-  ::  read
+          ?-  security
+            ?(%channel %journal)  ~
+            ?(%village %mailbox)  [our-self ~ ~]
+          ==
+      ::  write
+      ?-  security
+        ?(%channel %mailbox)  ~
+        ?(%village %journal)  [our-self ~ ~]
+      ==
+    ::  +change-permission: modify permissions on a local chat
+    ::
+    ++  change-permission
+      |=  [allow=? rw=?(%r %w %rw) =path ships=(set ship)]
+      ^-  (quip move _this)
+      :_  this
+      %+  murn
+        ^-  (list term)
+        ?-  rw
+          %r   [%read ~]
+          %w   [%write ~]
+          %rw  [%read %write ~]
+        ==
+      |=  =term
+      ^-  (unit move)
+      =.  path
+        =-  (snoc `^path`- term)
+        [%chat (target-to-path our-self path)]
+      =/  whitelist=(unit ?)
+        =-  ?~(- ~ `?=(%white kind.u))
+        ::TODO  +permission-of-target?
+        .^  (unit permission)
+            %gx
+            (scot %p our-self)
+            %permission-store
+            (scot %da now.bowl)
+            %permission
+            (snoc path %noun)
+        ==
+      ?~  whitelist
+        ~&  [%weird-no-permission path]
+        ~
+      %-  some
+      %^  act  %do-permission  %group-store
+      ^-  out-action
+      :-  %group-action
+      ?:  =(u.whitelist allow)
+        [%add ships path]
+      [%remove ships path]
     ::  +join: sync with remote mailbox
     ::
     ++  join
@@ -568,6 +648,8 @@
         ?.  ?=(^ gyf)  [~ this]
         (bind-glyph u.gyf target)
       =-  [[- moz] this(audience [target ~ ~])]
+      ::TODO  ideally we'd check permission first. attempting this and failing
+      ::      gives ugly %chat-hook-reap
       %^  act  %do-join  %chat-hook
       :-  %chat-hook-action
       [%add-synced target]
