@@ -840,6 +840,8 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
   u3P.nor_u.nam_c = "north";
   u3P.sou_u.nam_c = "south";
 
+  //  XX review dryrun requirements, enable or remove
+  //
 #if 0
   if ( u3C.wag_w & u3o_dryrun ) {
     return c3y;

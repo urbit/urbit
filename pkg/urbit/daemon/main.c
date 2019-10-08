@@ -716,6 +716,8 @@ main(c3_i   argc,
       }
 
       /*  Set dry-run flag.
+      **
+      **    XX also exit immediately?
       */
       if ( _(u3_Host.ops_u.dry) ) {
         u3C.wag_w |= u3o_dryrun;
