@@ -249,6 +249,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       fprintf(stderr, "normal usage: %s %s\n", argv[0], u3_Host.dir_c);
       exit(1);
     }
+    else if ( 0 != access(u3_Host.dir_c, W_OK) ) {
+      fprintf(stderr, "urbit: write permissions are required for %s\n", u3_Host.dir_c);
+      exit(1);
+    }
   }
 
   c3_t imp_t = ((0 != u3_Host.ops_u.who_c) &&
