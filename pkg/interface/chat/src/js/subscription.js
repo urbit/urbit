@@ -14,11 +14,7 @@ export class Subscription {
   }
 
   initializeChat() {
-    api.bind('/initial', 'PUT', api.authTokens.ship, 'chat-view',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitSilently.bind(this));
-    api.bind('/updates', 'PUT', api.authTokens.ship, 'chat-view',
+    api.bind('/primary', 'PUT', api.authTokens.ship, 'chat-view',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this));
@@ -27,10 +23,6 @@ export class Subscription {
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this));
     api.bind('/all', 'PUT', api.authTokens.ship, 'permission-store',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/all', 'PUT', api.authTokens.ship, 'invite-store',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this));
