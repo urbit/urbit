@@ -28,10 +28,6 @@ data AmesDrv = AmesDrv
 data NetworkMode = Fake | Real
   deriving (Eq, Ord, Show)
 
--- data GalaxyInfo = GalaxyInfo { ip :: Ipv4, age :: Time.Unix }
---   deriving (Eq, Ord, Show)
-
-
 -- Utils -----------------------------------------------------------------------
 
 galaxyPort :: NetworkMode -> Galaxy -> PortNumber
@@ -145,13 +141,12 @@ ames inst who isFake mPort enqueueEv =
     bindSock = do
         let ourPort = maybe (listenPort netMode who) fromIntegral mPort
         s  <- io $ socket AF_INET Datagram defaultProtocol
+
         logTrace $ displayShow ("(ames) Binding to port ", ourPort)
-        -- localhost may be wrong here; ames.c switches between INADDR_ANY and
-        -- INADDR_LOOPBACK based on networking flags.
         let addr = SockAddrInet ourPort $
               if isFake then localhost else inaddrAny
-
         () <- io $ bind s addr
+
         pure s
 
     waitPacket :: Socket -> RIO e ()
@@ -175,14 +170,10 @@ ames inst who isFake mPort enqueueEv =
     sendPacket :: AmesDrv -> NetworkMode -> AmesDest -> ByteString -> RIO e ()
 
     sendPacket AmesDrv{..} Fake dest bs = do
-      logTrace $ displayShow
-        ("(ames) sendPacket Fake ", dest, (destSockAddr Fake dest))
       when (okayFakeAddr dest) $ do
         atomically $ writeTQueue aSendingQueue ((destSockAddr Fake dest), bs)
 
     sendPacket AmesDrv{..} Real (ADGala wen galaxy) bs = do
-      logTrace $ displayShow
-        ("(ames) sendPacket Real Galaxy ", galaxy)
       galaxies <- readIORef aGalaxies
       queue <- case M.lookup galaxy galaxies of
         Just (_, queue) -> pure queue
@@ -196,7 +187,6 @@ ames inst who isFake mPort enqueueEv =
 
     sendPacket AmesDrv{..} Real (ADIpv4 _ p a) bs = do
       let addr = SockAddrInet (fromIntegral p) (unIpv4 a)
-      logTrace $ displayShow ("(ames) sendPacket Real Other ", addr)
       atomically $ writeTQueue aSendingQueue (addr, bs)
 
     -- An outbound queue of messages. We can only write to a socket from one
@@ -208,7 +198,6 @@ ames inst who isFake mPort enqueueEv =
       logTrace $ displayShow ("(ames) Sending packet to ", socket, dest)
       -- This line blocks! WTF!
       bytesSent <- io $ sendTo socket bs dest
-      logTrace $ displayShow ("(ames) Packet sent! ", bytesSent)
       let len = BS.length bs
       when (bytesSent /= len) $ do
         logDebug $ displayShow
@@ -284,5 +273,4 @@ ames inst who isFake mPort enqueueEv =
 
         queueSendToGalaxy :: SockAddr -> ByteString -> RIO e ()
         queueSendToGalaxy inet packet = do
-          logTrace $ displayShow ("(ames) Sending galaxy packet to ", inet)
           atomically $ writeTQueue outgoing (inet, packet)
