@@ -114,7 +114,6 @@
           ^-  (list move)
           %+  turn  (prey:pubsub:userlib [%mailbox path.act] bol)
           |=  [=bone *]
-          ^-  move
           [bone %quit ~]
       ==
     ?.  |(=(u.ship src.bol) (team:title our.bol src.bol))
