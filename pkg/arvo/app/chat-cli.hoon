@@ -37,7 +37,7 @@
 ::
 +$  command
   $%  [%target (set target)]                        ::  set messaging target
-      [%say (list letter)]                          ::  send message
+      [%say letter]                                 ::  send message
       [%eval cord hoon]                             ::  send #-message
     ::
       [%create chat-security path (unit glyph)]     ::  create chat
@@ -460,17 +460,16 @@
         (stag 0 dem:ag)
         (cook lent (star mic))
       ==
-    ::  +message: lin, url, or #exp message
+    ::  +message: all messages
     ::
     ++  message
       ;~  pose
         ;~(plug (cold %eval hax) expr)
-        (stag %say letters)
+        (stag %say letter)
       ==
-    ::  +letters: •-separated text or url messages
+    ::  +letter: simple messages
     ::
-    ++  letters
-      %+  most  (jest '•')
+    ++  letter
       ;~  pose
         (stag %url turl)
         :(stag %me ;~(pfix vat text))
@@ -665,7 +664,7 @@
     ::  +say: send messages
     ::
     ++  say
-      |=  letters=(list letter)
+      |=  =letter
       ^-  (quip move _this)
       =/  =serial  (shaf %msg-uid eny.bowl)
       :_  this(eny.bowl (shax eny.bowl))
@@ -675,12 +674,7 @@
       %^  act  %out-message  %chat-hook
       :-  %chat-action
       :+  %message  (target-to-path target)
-      :*  serial
-          *@
-          our-self
-          now.bowl
-          (snag 0 letters)  ::TODO  support multiple
-      ==
+      [serial *@ our-self now.bowl letter]
     ::  +eval: run hoon, send code and result as message
     ::
     ::    this double-virtualizes and clams to disable .^ for security reasons
@@ -688,7 +682,7 @@
     ++  eval
       |=  [txt=cord exe=hoon]
       =;  tan=(list tank)
-        (say [%code txt tan] ~)
+        (say %code txt tan)
       ;;  (list tank)
       =<  +>
       %+  mong
