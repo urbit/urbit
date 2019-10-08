@@ -638,8 +638,11 @@
       =.  path
         =-  (snoc `^path`- term)
         [%chat (target-to-path our-self path)]
+      ::  whitelist: empty if no matching permission, else true if whitelist
+      ::
       =/  whitelist=(unit ?)
-        =-  ?~(- ~ `?=(%white kind.u))
+        =;  perm=(unit permission)
+          ?~(perm ~ `?=(%white kind.u.perm))
         ::TODO  +permission-of-target?
         .^  (unit permission)
             %gx
