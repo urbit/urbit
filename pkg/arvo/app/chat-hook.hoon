@@ -335,7 +335,7 @@
 ++  pull-wire
   |=  pax=path
   ^-  (list move)
-  ?>  ?=([* ^] pax)
+  ?>  ?=(^ pax)
   =/  bnd  (~(get by boned) pax)
   ?~  bnd  ~
   =/  shp  (~(get by synced) t.pax)
