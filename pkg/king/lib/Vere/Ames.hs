@@ -18,8 +18,7 @@ data AmesDrv = AmesDrv
   { aIsLive        :: IORef Bool
   , aTurfs         :: TVar [Turf]
   , aGalaxies      :: IORef (M.Map Galaxy (Async (), TQueue ByteString))
-  , aSocketSend    :: Socket
-  , aSocketRecv    :: Socket
+  , aSocket        :: Socket
   , aWakeTimer     :: Async ()
   , aListener      :: Async ()
   , aSendingQueue  :: TQueue (SockAddr, ByteString)
@@ -53,6 +52,7 @@ okayFakeAddr = \case
 
 destSockAddr :: NetworkMode -> AmesDest -> SockAddr
 destSockAddr m = \case
+    -- As mentioned previously, "localhost" is wrong.
     ADGala _ g   -> SockAddrInet (galaxyPort m g) localhost
     ADIpv4 _ p a -> SockAddrInet (fromIntegral p) (unIpv4 a)
 
@@ -113,12 +113,11 @@ ames inst who mPort enqueueEv =
         aIsLive        <- newIORef False
         aTurfs         <- newTVarIO []
         aGalaxies      <- newIORef mempty
-        aSocketSend    <- io $ bindSendSock
-        aSocketRecv    <- bindRecvSock
+        aSocket        <- bindSock
         aWakeTimer     <- async runTimer
-        aListener      <- async (waitPacket aSocketRecv)
+        aListener      <- async (waitPacket aSocket)
         aSendingQueue  <- newTQueueIO
-        aSendingThread <- async (sendingThread aSendingQueue aSocketSend)
+        aSendingThread <- async (sendingThread aSendingQueue aSocket)
         pure            $ AmesDrv{..}
 
     -- TODO: This switch needs to reflect the network mode flag; are we a fake
@@ -134,21 +133,20 @@ ames inst who mPort enqueueEv =
         cancel aSendingThread
         cancel aWakeTimer
         cancel aListener
-        io $ close' aSocketRecv
+        io $ close' aSocket
 
     runTimer :: RIO e ()
     runTimer = forever $ do
         threadDelay (300 * 1000000) -- 300 seconds
         atomically (enqueueEv wakeEv)
 
-    bindSendSock :: IO Socket
-    bindSendSock = socket AF_INET Datagram defaultProtocol
-
-    bindRecvSock :: RIO e Socket
-    bindRecvSock = do
+    bindSock :: RIO e Socket
+    bindSock = do
         let ourPort = maybe (listenPort netMode who) fromIntegral mPort
         s  <- io $ socket AF_INET Datagram defaultProtocol
         logTrace $ displayShow ("(ames) Binding to port ", ourPort)
+        -- localhost may be wrong here; ames.c switches between INADDR_ANY and
+        -- INADDR_LOOPBACK based on networking flags.
         () <- io $ bind s (SockAddrInet ourPort localhost)
         pure s
 
