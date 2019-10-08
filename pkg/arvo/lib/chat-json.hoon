@@ -216,6 +216,7 @@
     %-  of
     :~  [%create create]
         [%delete delete]
+        [%join join]
     ==
   ::
   ++  create
@@ -228,6 +229,12 @@
   ::
   ++  delete
     (ot [%path pa]~)
+  ::
+  ++  join
+    %-  ot
+    :~  [%ship (su ;~(pfix sig fed:ag))]
+        [%path pa]
+    ==
   ::
   ++  sec
     =,  dejs:format

@@ -100,6 +100,7 @@
       %group-store
       %group-hook
       %permission-store
+      %permission-hook
       %permission-group-hook
       %chat-store
       %chat-hook

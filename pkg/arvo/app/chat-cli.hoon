@@ -687,9 +687,9 @@
       =-  [[- moz] this(audience [target ~ ~])]
       ::TODO  ideally we'd check permission first. attempting this and failing
       ::      gives ugly %chat-hook-reap
-      %^  act  %do-join  %chat-hook
-      :-  %chat-hook-action
-      [%add-synced target]
+      %^  act  %do-join  %chat-view
+      :-  %chat-view-action
+      [%join target]
     ::  +leave: unsync & destroy mailbox
     ::
     ::TODO  allow us to "mute" local chats using this

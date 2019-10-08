@@ -11,15 +11,11 @@ class UrbitApi {
     this.bindPaths = [];
 
     this.groups = {
-      bundle: this.groupBundle.bind(this),
-      unbundle: this.groupUnbundle.bind(this),
       add: this.groupAdd.bind(this),
       remove: this.groupRemove.bind(this)
     };
     
     this.chat = {
-      create: this.chatCreate.bind(this),
-      delete: this.chatDelete.bind(this),
       message: this.chatMessage.bind(this),
       read: this.chatRead.bind(this)
     };
@@ -27,34 +23,8 @@ class UrbitApi {
     this.chatView = {
       create: this.chatViewCreate.bind(this),
       delete: this.chatViewDelete.bind(this),
+      join: this.chatViewJoin.bind(this),
     };
-
-    this.invite = {
-      create: this.inviteCreate.bind(this),
-      delete: this.inviteDelete.bind(this),
-      accept: this.inviteAccept.bind(this),
-      decline: this.inviteDecline.bind(this),
-      invite: this.inviteInvite.bind(this)
-    };
-
-    this.permissions = {
-      create: this.permissionCreate.bind(this),
-      delete: this.permissionDelete.bind(this),
-      add: this.permissionAdd.bind(this),
-      remove: this.permissionRemove.bind(this)
-    };
-
-    this.chatHook = {
-      addOwned: this.chatHookAddOwned.bind(this),
-      addSynced: this.chatHookAddSynced.bind(this),
-      remove: this.chatHookRemove.bind(this)
-    };
-
-    this.permissionGroupHook = {
-      associate: this.permissionGroupHookAssociate.bind(this),
-      dissociate: this.permissionGroupHookDissociate.bind(this)
-    };
-
   }
 
   bind(path, method, ship = this.authTokens.ship, app, success, fail, quit) {
@@ -106,14 +76,6 @@ class UrbitApi {
     this.action("group-store", "group-action", data);
   }
 
-  groupBundle(path) {
-    this.groupsAction({ bundle: path });
-  }
-
-  groupUnbundle(path) {
-    this.groupsAction({ unbundle: path });
-  }
-
   groupAdd(members, path) {
     this.groupsAction({
       add: {
@@ -134,18 +96,6 @@ class UrbitApi {
     this.action("chat-store", "json", data);
   }
 
-  chatCreate(path, owner = `~${window.ship}`) {
-    this.chatAction({
-      create: {
-        path, owner
-      }
-    });
-  }
-
-  chatDelete(path) {
-    this.chatAction({ delete: { path } });
-  }
-
   chatMessage(path, author, when, letter) {
     let data = {
       message: {
@@ -160,7 +110,7 @@ class UrbitApi {
       }
     };
 
-    this.chatHookAction(data, "json");
+    this.action("chat-hook", "json", data);
     this.addPendingMessage(data.message);
   }
 
@@ -169,7 +119,6 @@ class UrbitApi {
   }
 
   chatViewAction(data) {
-    console.log(data);
     this.action("chat-view", "json", data);
   }
 
@@ -185,131 +134,8 @@ class UrbitApi {
     this.chatViewAction({ delete: { path } });
   }
 
-  inviteAction(data) {
-    console.log(data);
-    this.action("invite-store", "json", data);
-  }
-
-  inviteCreate(path) {
-    this.inviteAction({ create: { path } });
-  }
-
-  inviteDelete(path) {
-    this.inviteAction({ delete: { path } });
-  }
-
-  inviteAccept(path, uid) {
-    this.inviteAction({ accept: { path, uid } });
-  }
-
-  inviteDecline(path, uid) {
-    this.inviteAction({ decline: { path, uid } });
-  }
-
-  inviteInvite(path, peerPath, ship, app, text, recipient) {
-    this.inviteAction({
-      invite: {
-        path, 
-        invite: {
-          'peer-path': peerPath,
-          dock: { ship, app },
-          text, recipient
-        },
-        uid: uuid()
-      }
-    });
-  }
-
-  chatHookAction(data, mark = "chat-hook-action") {
-    this.action("chat-hook", mark, data);
-  }
-
-  chatHookAddOwned(path, security) {
-    let data = {};
-    data['add-owned'] = {
-      path, security
-    };
-    this.chatHookAction(data);
-  }
-
-  chatHookRemove(path) {
-    this.chatHookAction({ remove: path });
-  }
-
-  chatHookAddSynced(ship, path) {
-    let data = {};
-    data['add-synced'] = {
-      ship, path
-    };
-    this.chatHookAction(data);
-  }
-
-  permissionAction(data) {
-    this.action("permission-store", "permission-action", data);
-  }
-
-  permissionCreate(path, kind, who) {
-    this.permissionAction({
-      create: {
-        path, kind, who
-      }
-    });
-  }
-
-  permissionDelete(path) {
-    this.permissionAction({ delete: { path } });
-  }
-
-  permissionAdd(path, who) {
-    this.permissionAction({
-      add: {
-        path, who
-      }
-    });
-  }
-
-  permissionRemove(path, who) {
-    this.permissionAction({
-      remove: {
-        path, who
-      }
-    });
-  }
-
-  permissionAllow(path, who) {
-    this.permissionAction({
-      allow: {
-        path, who
-      }
-    });
-  }
-
-  permissionDeny(path, who) {
-    this.permissionAction({
-      deny: {
-        path, who
-      }
-    });
-  }
-
-  permissionGroupHookAction(data) {
-    this.action("permission-group-hook", "permission-group-hook-action", data);
-  }
-  
-  permissionGroupHookAssociate(group, permissions) {
-    this.permissionGroupHookAction({
-      associate: {
-        group, permissions
-      }
-    });
-  }
-  
-  permissionGroupHookDissociate() {
-    this.permissionGroupHookAction({
-      dissociate: {
-        group, permissions
-      }
-    });
+  chatViewJoin(ship, path) {
+    this.chatViewAction({ join: { ship, path } });
   }
 
 }
