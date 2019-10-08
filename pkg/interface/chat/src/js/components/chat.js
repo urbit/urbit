@@ -58,7 +58,7 @@ export class ChatScreen extends Component {
         );
         this.updateReadNumber();
       });
-    } else if (Object.keys(props.inbox) > 0) {
+    } else if (Object.keys(props.inbox).length === 0) {
       props.history.push('/~chat');
     } else if (props.envelopes.length - prevProps.envelopes.length >= 200) {
       this.hasAskedForMessages = false;

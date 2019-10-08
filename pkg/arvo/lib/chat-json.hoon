@@ -29,13 +29,13 @@
 ++  eval                                              :::  %exp speech
   :::  extract contents of an %exp speech, evaluating
   :::  the {exp} if there is no {res} yet.
+  ::
   |=  a=json
   ^-  [cord (list tank)]
   =,  ^?  dejs-soft:format
-  =/  exp  ((ot expression+so ~) a)
+  =+  exp=((ot expression+so ~) a)
   %-  need
-  ?~  exp
-    [~ '' ~]
+  ?~  exp  [~ '' ~]
   :+  ~  u.exp
   ::NOTE  when sending, if output is an empty list, chat-store will evaluate
   (fall ((ot output+(ar dank) ~) a) ~)
@@ -125,8 +125,6 @@
   %+  frond  %chat-update
   %-  pairs
   :~
-    ::
-    ::  %message
     ?:  =(%message -.upd)
       ?>  ?=(%message -.upd)
       :-  %message
@@ -134,13 +132,9 @@
       :~  [%path (path path.upd)]
           [%envelope (enve envelope.upd)]
       ==
-    ::
-    ::  %read
     ?:  =(%read -.upd)
       ?>  ?=(%read -.upd)
       [%read (pairs [%path (path path.upd)]~)]
-    ::
-    ::  %create
     ?:  =(%create -.upd)
       ?>  ?=(%create -.upd)
       :-  %create
@@ -148,13 +142,9 @@
       :~  [%ship (ship ship.upd)]
           [%path (path path.upd)]
       ==
-    ::
-    ::  %delete
     ?:  =(%delete -.upd)
       ?>  ?=(%delete -.upd)
       [%delete (pairs [%path (path path.upd)]~)]
-    ::
-    ::  %config
     ?:  =(%config -.upd)
       ?>  ?=(%config -.upd)
       :-  %config
@@ -162,8 +152,6 @@
       :~  [%path (path path.upd)]
           [%config (conf config.upd)]
       ==
-    ::
-    ::  %noop
     [*@t *^json]
   ==
 ::

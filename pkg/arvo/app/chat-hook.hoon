@@ -43,13 +43,6 @@
     [ost.bol %peer /permissions [our.bol %permission-store] /updates]~
   [~ this(+<+ u.old)]
 ::
-++  poke-noun
-  |=  a=*
-  ^-  (quip move _this)
-  ~&  synced
-  ~&  boned
-  [~ this]
-::
 ++  poke-json
   |=  jon=json
   ^-  (quip move _this)
@@ -121,11 +114,10 @@
           ^-  (list move)
           %+  turn  (prey:pubsub:userlib [%mailbox path.act] bol)
           |=  [=bone *]
-          ^-  move
           [bone %quit ~]
       ==
     ?.  |(=(u.ship src.bol) (team:title our.bol src.bol))
-      :: if neither ship = source or source = us, do nothing
+      ::  if neither ship = source or source = us, do nothing
       [~ this]
     ::  delete a foreign ship's path
     :-  (pull-wire [%mailbox path.act])
@@ -174,9 +166,8 @@
   %+  turn  ~(tap in who)
   |=  check-ship=ship
   ?:  (permitted-scry [(scot %p check-ship) pax])
-    ::  if ship is permitted to be subscribed, do nothing
     ~
-  :: if ship is not permitted, quit their subscription
+  ::  if ship is not permitted, quit their subscription
   =/  mail-path
     (oust [(dec (lent t.pax)) (lent t.pax)] `(list @t)`t.pax)
   =/  bne  (~(get by sup) [check-ship [%mailbox mail-path]])
@@ -201,7 +192,6 @@
     ?.  (~(has by synced) path.diff)
       [~ this]
     :_  this(synced (~(del by synced) path.diff))
-    :-  (chat-poke diff)
     [ost.bol %pull [%mailbox path.diff] [our.bol %chat-store] ~]~
   ::
       %message
@@ -344,7 +334,7 @@
 ++  pull-wire
   |=  pax=path
   ^-  (list move)
-  ?>  ?=([* ^] pax)
+  ?>  ?=(^ pax)
   =/  bnd  (~(get by boned) pax)
   ?~  bnd  ~
   =/  shp  (~(get by synced) t.pax)

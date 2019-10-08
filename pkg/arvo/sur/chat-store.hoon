@@ -1,5 +1,5 @@
 |%
-++  serial  @uvH
++$  serial  @uvH
 ::
 +$  letter
   $%  [%text text=cord]
@@ -42,5 +42,4 @@
       [%config =path =config]
       chat-action
   ==
-::
 --

@@ -1,3 +1,4 @@
+
 ::  chat-view: sets up chat JS client, paginates data, and combines commands
 ::  into semantic actions for the UI
 ::
@@ -177,23 +178,14 @@
   ::
   ==
 ::
-++  peer-initial
+++  peer-primary
   |=  pax=path
   ^-  (quip move _this)
   ?>  (team:title our.bol src.bol)
   ::  create inbox with 100 messages max per mailbox and send that along
   ::  then quit the subscription
   :_  this
-  :~  [ost.bol %diff %json (inbox-to-json (truncate-inbox all-scry))]
-      [ost.bol %quit ~]
-  ==
-::
-++  peer-updates
-  |=  pax=path
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  ::  send along all subsequent updates
-  [~ this]
+  [ost.bol %diff %json (inbox-to-json (truncate-inbox all-scry))]~
 ::
 ++  peer-configs
   |=  pax=path
@@ -209,7 +201,7 @@
   =/  configs-json  (configs-to-json configs-scry)
   :_  this
   %+  weld
-    %+  turn  (prey:pubsub:userlib /updates bol)
+    %+  turn  (prey:pubsub:userlib /primary bol)
     |=  [=bone *]
     [bone %diff %json updates-json]
   %+  turn  (prey:pubsub:userlib /configs bol)

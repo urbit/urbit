@@ -143,12 +143,6 @@
     :_  this
   [ost.bol %diff %chat-update [%create ship pax]]~
 ::
-++  poke-noun
-  |=  a=*
-  ^-  (quip move _this)
-  ~&  inbox
-  [~ this]
-::
 ++  poke-json
   |=  jon=json
   ^-  (quip move _this)

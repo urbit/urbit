@@ -23,12 +23,9 @@ export class InviteElement extends Component {
     let aud = [];
     let isValid = true;
     if (state.members.length > 2) {
-      aud = state.members.split(',')
-        .map((mem) => mem.trim())
-        .map(deSig)
-        .map((mem) => {
-          return `~${mem}`;
-        });
+      aud = state.members
+        .split(',')
+        .map((mem) => `~${deSig(mem.trim())}`);
 
       aud.forEach((mem) => {
         if (!urbitOb.isValidPatp(mem)) {

@@ -73,11 +73,7 @@ export class NewScreen extends Component {
     let isValid = true;
     if (state.invites.length > 2) {
       aud = state.invites.split(',')
-        .map((mem) => mem.trim())
-        .map(deSig)
-        .map((mem) => {
-          return `~${mem}`;
-        });
+        .map((mem) => `~${deSig(mem.trim())}`);
 
       aud.forEach((mem) => {
         if (!urbitOb.isValidPatp(mem)) {
