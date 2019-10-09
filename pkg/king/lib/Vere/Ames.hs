@@ -49,11 +49,10 @@ okayFakeAddr = \case
     ADGala _ _          -> True
     ADIpv4 _ p (Ipv4 a) -> a == localhost
 
-destSockAddr :: NetworkMode -> AmesDest -> SockAddr
-destSockAddr m = \case
-    -- As mentioned previously, "localhost" is wrong.
-    ADGala _ g   -> SockAddrInet (galaxyPort m g) localhost
-    ADIpv4 _ p a -> SockAddrInet (fromIntegral p) (unIpv4 a)
+fakeSockAddr :: AmesDest -> SockAddr
+fakeSockAddr = \case
+    ADGala _ g   -> SockAddrInet (galaxyPort Fake g) localhost
+    ADIpv4 _ p a -> SockAddrInet (fromIntegral p) localhost
 
 barnEv :: KingId -> Ev
 barnEv inst =
@@ -171,7 +170,7 @@ ames inst who isFake mPort enqueueEv =
 
     sendPacket AmesDrv{..} Fake dest bs = do
       when (okayFakeAddr dest) $ do
-        atomically $ writeTQueue aSendingQueue ((destSockAddr Fake dest), bs)
+        atomically $ writeTQueue aSendingQueue ((fakeSockAddr dest), bs)
 
     sendPacket AmesDrv{..} Real (ADGala wen galaxy) bs = do
       galaxies <- readIORef aGalaxies
