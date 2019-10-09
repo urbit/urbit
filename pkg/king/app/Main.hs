@@ -87,9 +87,10 @@ import UrbitPrelude
 import Arvo
 import Data.Acquire
 import Data.Conduit
-import Data.Conduit.List hiding (replicate, take)
+import Data.Conduit.List hiding (catMaybes, map, replicate, take)
 import Data.RAcquire
 import Noun              hiding (Parser)
+import Noun.Atom
 import RIO.Directory
 import Vere.Pier
 import Vere.Pier.Types
@@ -102,14 +103,18 @@ import Data.Default         (def)
 import KingApp              (runApp)
 import System.Environment   (getProgName)
 import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
+import System.Random        (randomIO)
 import Text.Show.Pretty     (pPrint)
 import Urbit.Time           (Wen)
+import Vere.Dawn
 import Vere.LockFile        (lockFile)
 
 import qualified CLI                         as CLI
 import qualified Data.Set                    as Set
+import qualified Data.Text                   as T
 import qualified EventBrowser                as EventBrowser
 import qualified System.IO.LockFile.Internal as Lock
+import qualified Urbit.Ob                    as Ob
 import qualified Vere.Log                    as Log
 import qualified Vere.Pier                   as Pier
 import qualified Vere.Serf                   as Serf
@@ -130,8 +135,26 @@ removeFileIfExists pax = do
 
 --------------------------------------------------------------------------------
 
-tryBootFromPill :: HasLogFunc e => FilePath -> FilePath -> Ship -> RIO e ()
-tryBootFromPill pillPath shipPath ship = do
+toSerfFlags :: CLI.Opts -> Serf.Flags
+toSerfFlags CLI.Opts{..} = catMaybes m
+  where
+    -- TODO: This is not all the flags.
+    m = [ from oQuiet Serf.Quiet
+        , from oTrace Serf.Trace
+        , from oHashless Serf.Hashless
+        , from oQuiet Serf.Quiet
+        , from oVerbose Serf.Verbose
+        , from oDryRun Serf.DryRun
+        ]
+    from True flag = Just flag
+    from False _   = Nothing
+
+
+tryBootFromPill :: HasLogFunc e
+                => FilePath -> FilePath -> Bool -> Serf.Flags -> Ship
+                -> LegacyBootEvent
+                -> RIO e ()
+tryBootFromPill pillPath shipPath lite flags ship boot = do
     rwith bootedPier $ \(serf, log, ss) -> do
         logTrace "Booting"
         logTrace $ displayShow ss
@@ -142,7 +165,7 @@ tryBootFromPill pillPath shipPath ship = do
   where
     bootedPier = do
         lockFile shipPath
-        Pier.booted pillPath shipPath [] ship
+        Pier.booted pillPath shipPath lite flags ship boot
 
 runAcquire :: (MonadUnliftIO m,  MonadIO m)
            => Acquire a -> m a
@@ -152,17 +175,17 @@ runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
             => RAcquire e a -> m e a
 runRAcquire act = rwith act pure
 
-tryPlayShip :: HasLogFunc e => FilePath -> RIO e ()
-tryPlayShip shipPath = do
+tryPlayShip :: HasLogFunc e => FilePath -> Serf.Flags -> RIO e ()
+tryPlayShip shipPath flags = do
     runRAcquire $ do
         lockFile shipPath
         rio $ logTrace "RESUMING SHIP"
-        sls <- Pier.resumed shipPath []
+        sls <- Pier.resumed shipPath flags
         rio $ logTrace "SHIP RESUMED"
         Pier.pier shipPath Nothing sls
 
-tryResume :: HasLogFunc e => FilePath -> RIO e ()
-tryResume shipPath = do
+tryResume :: HasLogFunc e => FilePath -> Serf.Flags -> RIO e ()
+tryResume shipPath flags = do
     rwith resumedPier $ \(serf, log, ss) -> do
         logTrace (displayShow ss)
         threadDelay 500000
@@ -172,12 +195,12 @@ tryResume shipPath = do
   where
     resumedPier = do
         lockFile shipPath
-        Pier.resumed shipPath []
+        Pier.resumed shipPath flags
 
-tryFullReplay :: HasLogFunc e => FilePath -> RIO e ()
-tryFullReplay shipPath = do
+tryFullReplay :: HasLogFunc e => FilePath -> Serf.Flags -> RIO e ()
+tryFullReplay shipPath flags = do
     wipeSnapshot
-    tryResume shipPath
+    tryResume shipPath flags
   where
     wipeSnapshot = do
         logTrace "wipeSnapshot"
@@ -263,7 +286,7 @@ testPill pax showPil showSeq = do
   pill <- fromNounErr pillNoun & either (throwIO . uncurry ParseErr) pure
 
   putStrLn "Using pill to generate boot sequence."
-  bootSeq <- generateBootSeq zod pill
+  bootSeq <- generateBootSeq zod pill False (Fake $ Ship 0)
 
   putStrLn "Validate jam/cue and toNoun/fromNoun on pill value"
   reJam <- validateNounVal pill
@@ -311,20 +334,112 @@ validateNounVal inpVal = do
 
 --------------------------------------------------------------------------------
 
-newShip :: HasLogFunc e => CLI.New -> CLI.Opts -> RIO e ()
-newShip CLI.New{..} _ = do
-    tryBootFromPill nPillPath pierPath (Ship 0)
+newShip :: forall e. HasLogFunc e => CLI.New -> CLI.Opts -> RIO e ()
+newShip CLI.New{..} opts
+  | CLI.BootComet <- nBootType = do
+      putStrLn "boot: retrieving list of stars currently accepting comets"
+      starList <- dawnCometList
+      putStrLn ("boot: " ++ (tshow $ length starList) ++
+                " star(s) currently accepting comets")
+      putStrLn "boot: mining a comet"
+      eny <- io $ randomIO
+      let seed = mineComet (Set.fromList starList) eny
+      putStrLn ("boot: found comet " ++ (renderShip (sShip seed)))
+      bootFromSeed seed
+
+  | CLI.BootFake name <- nBootType = do
+      ship <- shipFrom name
+      tryBootFromPill nPillPath (pierPath name) nLite flags ship (Fake ship)
+
+  | CLI.BootFromKeyfile keyFile <- nBootType = do
+      text <- readFileUtf8 keyFile
+      asAtom <- case cordToUW (Cord $ T.strip text) of
+        Nothing -> error "Couldn't parse keyfile. Hint: keyfiles start with 0w?"
+        Just (UW a) -> pure a
+
+      asNoun <- cueExn asAtom
+      seed :: Seed <- case fromNoun asNoun of
+        Nothing -> error "Keyfile does not seem to contain a seed."
+        Just s  -> pure s
+
+      bootFromSeed seed
+
   where
-    pierPath = fromMaybe ("./" <> unpack nShipAddr) nPierPath
+    shipFrom :: Text -> RIO e Ship
+    shipFrom name = case Ob.parsePatp name of
+      Left x  -> error "Invalid ship name"
+      Right p -> pure $ Ship $ fromIntegral $ Ob.fromPatp p
+
+    pierPath :: Text -> FilePath
+    pierPath name = case nPierPath of
+      Just x  -> x
+      Nothing -> "./" <> unpack name
+
+    nameFromShip :: Ship -> RIO e Text
+    nameFromShip s = name
+      where
+        nameWithSig = Ob.renderPatp $ Ob.patp $ fromIntegral s
+        name = case stripPrefix "~" nameWithSig of
+          Nothing -> error "Urbit.ob didn't produce string with ~"
+          Just x  -> pure x
+
+    bootFromSeed :: Seed -> RIO e ()
+    bootFromSeed seed = do
+      ethReturn <- dawnVent seed
+
+      case ethReturn of
+        Left x -> error $ unpack x
+        Right dawn -> do
+          let ship = sShip $ dSeed dawn
+          path <- pierPath <$> nameFromShip ship
+          tryBootFromPill nPillPath path nLite flags ship (Dawn dawn)
+
+    flags = toSerfFlags opts
+
+
 
 runShip :: HasLogFunc e => CLI.Run -> CLI.Opts -> RIO e ()
-runShip (CLI.Run pierPath) _ = tryPlayShip pierPath
+runShip (CLI.Run pierPath) opts = tryPlayShip pierPath (toSerfFlags opts)
+
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
 startBrowser pierPath = runRAcquire $ do
     lockFile pierPath
     log <- Log.existing (pierPath <> "/.urb/log")
     rio $ EventBrowser.run log
+
+cordToUW :: Cord -> Maybe UW
+cordToUW = fromNoun . toNoun
+
+checkDawn :: HasLogFunc e => FilePath -> RIO e ()
+checkDawn keyfilePath = do
+  -- The keyfile is a jammed Seed then rendered in UW format
+  text <- readFileUtf8 keyfilePath
+  asAtom <- case cordToUW (Cord $ T.strip text) of
+    Nothing -> error "Couldn't parse keyfile. Hint: keyfiles start with 0w?"
+    Just (UW a) -> pure a
+
+  asNoun <- cueExn asAtom
+  seed :: Seed <- case fromNoun asNoun of
+    Nothing -> error "Keyfile does not seem to contain a seed."
+    Just s  -> pure s
+
+  print $ show seed
+
+  e <- dawnVent seed
+  print $ show e
+
+
+checkComet :: HasLogFunc e => RIO e ()
+checkComet = do
+  starList <- dawnCometList
+  putStrLn "Stars currently accepting comets:"
+  let starNames = map (Ob.renderPatp . Ob.patp . fromIntegral) starList
+  print starNames
+  putStrLn "Trying to mine a comet..."
+  eny <- io $ randomIO
+  let s = mineComet (Set.fromList starList) eny
+  print s
 
 main :: IO ()
 main = do
@@ -342,6 +457,8 @@ main = do
         CLI.CmdBug (CLI.ValidatePill pax pil seq) -> testPill pax pil seq
         CLI.CmdBug (CLI.ValidateEvents pax f l)   -> checkEvs pax f l
         CLI.CmdBug (CLI.ValidateFX pax f l)       -> checkFx  pax f l
+        CLI.CmdBug (CLI.CheckDawn pax)            -> checkDawn pax
+        CLI.CmdBug CLI.CheckComet                 -> checkComet
         CLI.CmdCon port                           -> connTerm port
 
 

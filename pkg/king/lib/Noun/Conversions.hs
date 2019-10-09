@@ -7,7 +7,7 @@ module Noun.Conversions
   , Cord(..), Knot(..), Term(..), Tape(..), Tour(..)
   , BigTape(..), BigCord(..)
   , Wall
-  , UD(..), UV(..)
+  , UD(..), UV(..), UW(..)
   , Mug(..), Path(..), EvilPath(..), Ship(..)
   , Lenient(..), pathToFilePath, filePathToPath
   ) where
@@ -102,6 +102,37 @@ instance FromNoun UD where
 
 --------------------------------------------------------------------------------
 
+uTypeAddDots :: String -> String
+uTypeAddDots = reverse . go . reverse
+  where
+    go s = if null tel then hed
+                       else hed <> "." <> go tel
+      where
+        hed = take 5 s
+        tel = drop 5 s
+
+convertToU :: [Char] -> [Char] -> Atom -> String
+convertToU baseMap prefix = go []
+  where
+    go acc 0 = "0" <> prefix <> uTypeAddDots acc
+    go acc n = go (char n : acc) (n `div` len)
+
+    char n = baseMap !! (fromIntegral (n `mod` len))
+
+    len = fromIntegral (length baseMap)
+
+convertFromU :: (Char -> Maybe Atom) -> Char -> Atom -> String -> Maybe Atom
+convertFromU fetch prefix length = \case
+    ('0':prefix:cs) -> go (0, 0) (reverse cs)
+    _               -> Nothing
+  where
+    go (i, acc) []         = pure acc
+    go (i, acc) ('.' : cs) = go (i, acc) cs
+    go (i, acc) (c   : cs) = do
+        n <- fetch c
+        go (i+1, acc+(length^i)*n) cs
+
+
 -- @uv
 newtype UV = UV { unUV :: Atom }
   deriving newtype (Eq, Ord, Show, Num, Enum, Real, Integral)
@@ -117,35 +148,13 @@ instance FromNoun UV where
         Just uv -> pure (UV uv)
 
 fromUV :: String -> Maybe Atom
-fromUV = \case
-    ('0':'v':cs) -> go (0, 0) (reverse cs)
-    _            -> Nothing
-  where
-    go (i, acc) []         = pure acc
-    go (i, acc) ('.' : cs) = go (i, acc) cs
-    go (i, acc) (c   : cs) = do
-        n <- uvCharNum c
-        go (i+1, acc+(32^i)*n) cs
+fromUV = convertFromU uvCharNum 'v' (fromIntegral $ length base32Chars)
 
 toUV :: Atom -> String
-toUV = go []
-  where
-    go acc 0 = "0v" <> uvAddDots acc
-    go acc n = go (char n : acc) (n `div` 32)
-
-    char n = base32Chars !! (fromIntegral (n `mod` 32))
+toUV = convertToU base32Chars "v"
 
 base32Chars :: [Char]
 base32Chars = (['0'..'9'] <> ['a'..'v'])
-
-uvAddDots :: String -> String
-uvAddDots = reverse . go . reverse
-  where
-    go s = if null tel then hed
-                       else hed <> "." <> go tel
-      where
-        hed = take 5 s
-        tel = drop 5 s
 
 uvCharNum :: Char -> Maybe Atom
 uvCharNum = \case
@@ -183,6 +192,98 @@ uvCharNum = \case
   'v' -> pure 31
   _   -> Nothing
 
+--------------------------------------------------------------------------------
+
+-- @uw
+newtype UW = UW { unUW :: Atom }
+  deriving newtype (Eq, Ord, Show, Num, Enum, Real, Integral)
+
+instance ToNoun UW where
+  toNoun = toNoun . Cord . pack . toUW . fromIntegral . unUW
+
+instance FromNoun UW where
+  parseNoun n = do
+    Cord c <- parseNoun n
+    case fromUW $ unpack c of
+      Nothing -> fail ("Invalid @uw: " <> unpack c)
+      Just uw -> pure (UW uw)
+
+fromUW :: String -> Maybe Atom
+fromUW = convertFromU uwCharNum 'w' (fromIntegral $ length base64Chars)
+
+toUW :: Atom -> String
+toUW = convertToU base64Chars "w"
+
+base64Chars :: [Char]
+base64Chars = (['0'..'9'] <> ['a'..'z'] <> ['A'..'Z'] <> ['-', '~'])
+
+uwCharNum :: Char -> Maybe Atom
+uwCharNum = \case
+  '0' -> pure 0
+  '1' -> pure 1
+  '2' -> pure 2
+  '3' -> pure 3
+  '4' -> pure 4
+  '5' -> pure 5
+  '6' -> pure 6
+  '7' -> pure 7
+  '8' -> pure 8
+  '9' -> pure 9
+  'a' -> pure 10
+  'b' -> pure 11
+  'c' -> pure 12
+  'd' -> pure 13
+  'e' -> pure 14
+  'f' -> pure 15
+  'g' -> pure 16
+  'h' -> pure 17
+  'i' -> pure 18
+  'j' -> pure 19
+  'k' -> pure 20
+  'l' -> pure 21
+  'm' -> pure 22
+  'n' -> pure 23
+  'o' -> pure 24
+  'p' -> pure 25
+  'q' -> pure 26
+  'r' -> pure 27
+  's' -> pure 28
+  't' -> pure 29
+  'u' -> pure 30
+  'v' -> pure 31
+  'w' -> pure 32
+  'x' -> pure 33
+  'y' -> pure 34
+  'z' -> pure 35
+  'A' -> pure 36
+  'B' -> pure 37
+  'C' -> pure 38
+  'D' -> pure 39
+  'E' -> pure 40
+  'F' -> pure 41
+  'G' -> pure 42
+  'H' -> pure 43
+  'I' -> pure 44
+  'J' -> pure 45
+  'K' -> pure 46
+  'L' -> pure 47
+  'M' -> pure 48
+  'N' -> pure 49
+  'O' -> pure 50
+  'P' -> pure 51
+  'Q' -> pure 52
+  'R' -> pure 53
+  'S' -> pure 54
+  'T' -> pure 55
+  'U' -> pure 56
+  'V' -> pure 57
+  'W' -> pure 58
+  'X' -> pure 59
+  'Y' -> pure 60
+  'Z' -> pure 61
+  '-' -> pure 62
+  '~' -> pure 63
+  _   -> Nothing
 
 
 -- Char ------------------------------------------------------------------------

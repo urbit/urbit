@@ -41,7 +41,6 @@ timerFires = forAll arbitrary (ioProperty . runApp . runTest)
       rwith (liftAcquire $ snd $ behn king (writeTQueue q)) $ \cb -> do
         cb (BehnEfDoze (king, ()) (Just (2^20)))
         t <- atomically $ readTQueue q
-        print t
         pure True
 
 

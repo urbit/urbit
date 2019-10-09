@@ -35,11 +35,13 @@ turfEf = NewtEfTurf (0, ()) []
 sendEf :: Galaxy -> Wen -> Bytes -> NewtEf
 sendEf g w bs = NewtEfSend (0, ()) (ADGala w g) bs
 
-runGala :: Word8 -> RAcquire e (TQueue Ev, EffCb e NewtEf)
+runGala :: forall e. (HasLogFunc e)
+        => Word8 -> RAcquire e (TQueue Ev, EffCb e NewtEf)
 runGala point = do
     q  <- newTQueueIO
-    let (_, runAmes) = ames pid (fromIntegral point) Nothing (writeTQueue q)
-    cb ← liftAcquire runAmes
+    let (_, runAmes) =
+          ames pid (fromIntegral point) True Nothing (writeTQueue q)
+    cb ← runAmes
     rio $ cb turfEf
     pure (q, cb)
 
@@ -66,7 +68,7 @@ sendThread cb (to, val) = void $ mkRAcquire start cancel
 zodSelfMsg :: Property
 zodSelfMsg = forAll arbitrary (ioProperty . runApp . runTest)
   where
-    runTest :: Bytes -> RIO e Bool
+    runTest :: HasLogFunc e => Bytes -> RIO e Bool
     runTest val = runRAcquire $ do
       (zodQ, zod) <- runGala 0
       ()          <- sendThread zod (0, val)
@@ -75,13 +77,13 @@ zodSelfMsg = forAll arbitrary (ioProperty . runApp . runTest)
 twoTalk :: Property
 twoTalk = forAll arbitrary (ioProperty . runApp . runTest)
   where
-    runTest :: (Word8, Word8, Bytes) -> RIO e Bool
+    runTest :: HasLogFunc e => (Word8, Word8, Bytes) -> RIO e Bool
     runTest (aliceShip, bobShip, val) =
       if aliceShip == bobShip
         then pure True
         else go aliceShip bobShip val
 
-    go :: Word8 -> Word8 -> Bytes -> RIO e Bool
+    go :: HasLogFunc e => Word8 -> Word8 -> Bytes -> RIO e Bool
     go aliceShip bobShip val = runRAcquire $ do
         (aliceQ, alice) <- runGala aliceShip
         (bobQ,   bob)   <- runGala bobShip

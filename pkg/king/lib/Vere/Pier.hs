@@ -48,18 +48,20 @@ setupPierDirectory shipPath = do
 genEntropy :: RIO e Word512
 genEntropy = fromIntegral . view (from atomBytes) <$> io (Ent.getEntropy 64)
 
-generateBootSeq :: Ship -> Pill -> RIO e BootSeq
-generateBootSeq ship Pill{..} = do
+generateBootSeq :: Ship -> Pill -> Bool -> LegacyBootEvent -> RIO e BootSeq
+generateBootSeq ship Pill{..} lite boot = do
     ent <- genEntropy
     let ovums = preKern ent <> pKernelOvums <> pUserspaceOvums
     pure $ BootSeq ident pBootFormulas ovums
   where
-    ident       = LogIdentity ship True (fromIntegral $ length pBootFormulas)
-    preKern ent =
-      [ EvBlip $ BlipEvArvo $ ArvoEvWhom ()     ship
-      , EvBlip $ BlipEvArvo $ ArvoEvWack ()     ent
-      , EvBlip $ BlipEvTerm $ TermEvBoot (1,()) False (Fake (who ident))
-      ]
+    ident       = LogIdentity ship isFake (fromIntegral $ length pBootFormulas)
+    preKern ent = [ EvBlip $ BlipEvArvo $ ArvoEvWhom ()     ship
+                  , EvBlip $ BlipEvArvo $ ArvoEvWack ()     ent
+                  , EvBlip $ BlipEvTerm $ TermEvBoot (1,()) lite boot
+                  ]
+    isFake = case boot of
+      Fake _ -> True
+      _      -> False
 
 
 -- Write a batch of jobs into the event log ------------------------------------
@@ -84,16 +86,16 @@ writeJobs log !jobs = do
 -- Boot a new ship. ------------------------------------------------------------
 
 booted :: HasLogFunc e
-       => FilePath -> FilePath -> Serf.Flags -> Ship
+       => FilePath -> FilePath -> Bool -> Serf.Flags -> Ship -> LegacyBootEvent
        -> RAcquire e (Serf e, EventLog, SerfState)
-booted pillPath pierPath flags ship = do
+booted pillPath pierPath lite flags ship boot = do
   rio $ logTrace "LOADING PILL"
 
   pill <- io (loadFile pillPath >>= either throwIO pure)
 
   rio $ logTrace "PILL LOADED"
 
-  seq@(BootSeq ident x y) <- rio $ generateBootSeq ship pill
+  seq@(BootSeq ident x y) <- rio $ generateBootSeq ship pill lite boot
 
   rio $ logTrace "BootSeq Computed"
 
@@ -182,10 +184,11 @@ pier pierPath mPort (serf, log, ss) = do
 
     swapMVar (sStderr serf) (atomically . Term.trace muxed)
 
-    let ship = who (Log.identity log)
+    let logId = Log.identity log
+    let ship = who logId
 
     let (bootEvents, startDrivers) =
-            drivers pierPath inst ship mPort
+            drivers pierPath inst ship (isFake logId) mPort
                 (writeTQueue computeQ)
                 shutdownEvent
                 (sz, muxed)
@@ -215,6 +218,9 @@ pier pierPath mPort (serf, log, ss) = do
       Left (txt, exn) -> logError $ displayShow ("Somthing died", txt, exn)
       Right tag       -> logError $ displayShow ("something simply exited", tag)
 
+    atomically $ (Term.spin muxed) (Just "shutdown")
+
+
 death :: Text -> Async () -> STM (Either (Text, SomeException) Text)
 death tag tid = do
   waitCatchSTM tid <&> \case
@@ -241,14 +247,15 @@ data Drivers e = Drivers
     }
 
 drivers :: HasLogFunc e
-        => FilePath -> KingId -> Ship -> Maybe Port -> (Ev -> STM ()) -> STM()
+        => FilePath -> KingId -> Ship -> Bool -> Maybe Port -> (Ev -> STM ())
+        -> STM()
         -> (TSize.Window Word, Term.Client)
         -> ([Ev], RAcquire e (Drivers e))
-drivers pierPath inst who mPort plan shutdownSTM termSys =
+drivers pierPath inst who isFake mPort plan shutdownSTM termSys =
     (initialEvents, runDrivers)
   where
     (behnBorn, runBehn) = behn inst plan
-    (amesBorn, runAmes) = ames inst who mPort plan
+    (amesBorn, runAmes) = ames inst who isFake mPort plan
     (httpBorn, runHttp) = serv pierPath inst plan
     (clayBorn, runClay) = clay pierPath inst plan
     (irisBorn, runIris) = client inst plan
@@ -256,7 +263,7 @@ drivers pierPath inst who mPort plan shutdownSTM termSys =
     initialEvents       = mconcat [behnBorn, clayBorn, amesBorn, httpBorn,
                                    termBorn, irisBorn]
     runDrivers          = do
-        dNewt       <- liftAcquire $ runAmes
+        dNewt       <- runAmes
         dBehn       <- liftAcquire $ runBehn
         dAmes       <- pure $ const $ pure ()
         dHttpClient <- runIris

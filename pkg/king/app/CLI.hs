@@ -1,7 +1,8 @@
 {-# OPTIONS_GHC -Werror -Wall #-}
 {-# LANGUAGE CPP #-}
 
-module CLI (parseArgs, Cmd(..), New(..), Run(..), Bug(..), Opts(..)) where
+module CLI (parseArgs, Cmd(..), BootType(..), New(..), Run(..), Bug(..),
+            Opts(..)) where
 
 import ClassyPrelude
 import Options.Applicative
@@ -19,19 +20,27 @@ data Opts = Opts
     , oDryRun    :: Bool
     , oVerbose   :: Bool
     , oAmesPort  :: Maybe Word16
-    , oProf      :: Bool
+    , oTrace     :: Bool
     , oCollectFx :: Bool
     , oLocalhost :: Bool
     , oOffline   :: Bool
     }
   deriving (Show)
 
+data BootType
+  = BootComet
+  | BootFake Text
+  | BootFromKeyfile FilePath
+  deriving (Show)
+
 data New = New
-    { nPillPath  :: FilePath
-    , nShipAddr  :: Text
-    , nPierPath  :: Maybe FilePath -- Derived from ship name if not specified.
-    , nArvoDir   :: Maybe FilePath
-    , nBootFake  :: Bool
+    -- TODO: Pill path needs to become optional; need to default to either the
+    -- git hash version or the release version per current vere.
+    { nPillPath :: FilePath
+    , nPierPath :: Maybe FilePath -- Derived from ship name if not specified.
+    , nArvoDir  :: Maybe FilePath
+    , nBootType :: BootType
+    , nLite     :: Bool
     }
   deriving (Show)
 
@@ -62,6 +71,10 @@ data Bug
         , bFirstEvt :: Word64
         , bFinalEvt :: Word64
         }
+    | CheckDawn
+        { bKeyfilePath :: FilePath
+        }
+    | CheckComet
   deriving (Show)
 
 data Cmd
@@ -115,16 +128,33 @@ parseArgs = do
 
 --------------------------------------------------------------------------------
 
+newComet :: Parser BootType
+newComet = flag' BootComet
+  (  long "comet"
+  <> help "Boot a new comet")
+
+newFakeship :: Parser BootType
+newFakeship = BootFake <$> strOption
+                         (short 'F'
+                        <> long "fake"
+                        <> metavar "SHIP"
+                        <> help "Boot a fakeship")
+
+newFromKeyfile :: Parser BootType
+newFromKeyfile = BootFromKeyfile <$> strOption
+                             (short 'k'
+                            <> long "keyfile"
+                            <> metavar "KEYFILE"
+                            <> help "Boot from a keyfile")
+
 new :: Parser New
 new = do
-    nShipAddr <- strArgument
-                     $ metavar "SHIP"
-                    <> help "Ship address"
-
     nPierPath <- optional
                $ strArgument
                      $ metavar "PIER"
                     <> help "Path to pier"
+
+    nBootType <- newComet <|> newFakeship <|> newFromKeyfile
 
     nPillPath <- strOption
                      $ short 'B'
@@ -132,10 +162,10 @@ new = do
                     <> metavar "PILL"
                     <> help "Path to pill file"
 
-    nBootFake <- switch
-                     $ short 'F'
-                    <> long "fake"
-                    <> help "Create a fake ship"
+    nLite <- switch
+               $ short 'l'
+              <> long "lite"
+              <> help "Boots ship in lite mode"
 
     nArvoDir <- option auto
                     $ metavar "PATH"
@@ -180,10 +210,10 @@ opts = do
                         <> help "Dry run -- Don't persist"
                         <> hidden
 
-    oProf      <- switch $ short 'p'
-                       <> long "profile"
-                       <> help "Enable profiling"
-                       <> hidden
+    oTrace      <- switch $ short 't'
+                         <> long "trace"
+                         <> help "Enable tracing"
+                         <> hidden
 
     oLocalhost <- switch $ short 'L'
                         <> long "local"
@@ -226,6 +256,9 @@ valPill = do
 pierPath :: Parser FilePath
 pierPath = strArgument (metavar "PIER" <> help "Path to pier")
 
+keyfilePath :: Parser FilePath
+keyfilePath = strArgument (metavar "KEYFILE" <> help "Path to key file")
+
 firstEv :: Parser Word64
 firstEv = option auto $ long "first"
                      <> metavar "FST"
@@ -246,6 +279,9 @@ checkFx = ValidateFX <$> pierPath <*> firstEv <*> lastEv
 
 browseEvs :: Parser Bug
 browseEvs = EventBrowser <$> pierPath
+
+checkDawn :: Parser Bug
+checkDawn = CheckDawn <$> keyfilePath
 
 bugCmd :: Parser Cmd
 bugCmd = fmap CmdBug
@@ -269,6 +305,14 @@ bugCmd = fmap CmdBug
        <> command "validate-effects"
             ( info (checkFx <**> helper)
             $ progDesc "Parse all data in event log"
+            )
+       <> command "dawn"
+            ( info (checkDawn <**> helper)
+            $ progDesc "Test run dawn"
+            )
+       <> command "comet"
+            ( info (pure CheckComet)
+            $ progDesc "Shows the list of stars accepting comets"
             )
 
 conCmd :: Parser Cmd

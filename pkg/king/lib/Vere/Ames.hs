@@ -7,26 +7,25 @@ import Network.Socket            hiding (recvFrom, sendTo)
 import Network.Socket.ByteString
 import Vere.Pier.Types
 
-import qualified Urbit.Time as Time
-
+import qualified Data.ByteString as BS
+import qualified Data.Map        as M
+import qualified Urbit.Ob        as Ob
+import qualified Urbit.Time      as Time
 
 -- Types -----------------------------------------------------------------------
 
 data AmesDrv = AmesDrv
-  { aIsLive    :: IORef Bool
-  , aSocket    :: Socket
-  , aWakeTimer :: Async ()
-  , aListener  :: Async ()
+  { aTurfs         :: TVar (Maybe [Turf])
+  , aGalaxies      :: IORef (M.Map Galaxy (Async (), TQueue ByteString))
+  , aSocket        :: Socket
+  , aWakeTimer     :: Async ()
+  , aListener      :: Async ()
+  , aSendingQueue  :: TQueue (SockAddr, ByteString)
+  , aSendingThread :: Async ()
   }
 
 data NetworkMode = Fake | Real
   deriving (Eq, Ord, Show)
-
-{-
-data GalaxyInfo = GalaxyInfo { ip :: Ipv4, age :: Time.Unix }
-  deriving (Eq, Ord, Show)
--}
-
 
 -- Utils -----------------------------------------------------------------------
 
@@ -36,20 +35,23 @@ galaxyPort Real (Galaxy g) = fromIntegral g + 13337
 
 listenPort :: NetworkMode -> Ship -> PortNumber
 listenPort m s | s < 256 = galaxyPort m (fromIntegral s)
-listenPort m _           = 0
+listenPort m _ = 0
 
 localhost :: HostAddress
 localhost = tupleToHostAddress (127,0,0,1)
+
+inaddrAny :: HostAddress
+inaddrAny = tupleToHostAddress (0,0,0,0)
 
 okayFakeAddr :: AmesDest -> Bool
 okayFakeAddr = \case
     ADGala _ _          -> True
     ADIpv4 _ p (Ipv4 a) -> a == localhost
 
-destSockAddr :: NetworkMode -> AmesDest -> SockAddr
-destSockAddr m = \case
-    ADGala _ g   -> SockAddrInet (galaxyPort m g) localhost
-    ADIpv4 _ p a -> SockAddrInet (fromIntegral p) (unIpv4 a)
+fakeSockAddr :: AmesDest -> SockAddr
+fakeSockAddr = \case
+    ADGala _ g   -> SockAddrInet (galaxyPort Fake g) localhost
+    ADIpv4 _ p a -> SockAddrInet (fromIntegral p) localhost
 
 barnEv :: KingId -> Ev
 barnEv inst =
@@ -89,63 +91,181 @@ _turfText = intercalate "." . reverse . fmap unCord . unTurf
 
     TODO verify that the KingIds match on effects.
 -}
-ames :: KingId -> Ship -> Maybe Port -> QueueEv
-     -> ([Ev], Acquire (EffCb e NewtEf))
-ames inst who mPort enqueueEv =
+ames :: forall e. HasLogFunc e
+     => KingId -> Ship -> Bool -> Maybe Port -> QueueEv
+     -> ([Ev], RAcquire e (EffCb e NewtEf))
+ames inst who isFake mPort enqueueEv =
     (initialEvents, runAmes)
   where
     initialEvents :: [Ev]
     initialEvents = [barnEv inst]
 
-    runAmes :: Acquire (EffCb e NewtEf)
+    runAmes :: RAcquire e (EffCb e NewtEf)
     runAmes = do
-        drv <- mkAcquire start stop
-        pure (io . handleEffect drv)
+        drv <- mkRAcquire start stop
+        pure (handleEffect drv)
 
-    start :: IO AmesDrv
+    start :: RIO e AmesDrv
     start = do
-        vLiv <- newIORef False
-        time <- async runTimer
-        sock <- bindSock
-        hear <- async (waitPacket sock)
-        pure $ AmesDrv vLiv sock time hear
+        aTurfs         <- newTVarIO Nothing
+        aGalaxies      <- newIORef mempty
+        aSocket        <- bindSock
+        aWakeTimer     <- async runTimer
+        aListener      <- async (waitPacket aSocket)
+        aSendingQueue  <- newTQueueIO
+        aSendingThread <- async (sendingThread aSendingQueue aSocket)
+        pure            $ AmesDrv{..}
 
     netMode :: NetworkMode
-    netMode = Fake
+    netMode = if isFake then Fake else Real
 
-    stop :: AmesDrv -> IO ()
-    stop (AmesDrv{..}) = do
+    stop :: AmesDrv -> RIO e ()
+    stop AmesDrv{..} = do
+        galaxies <- readIORef aGalaxies
+        mapM_ (cancel . fst) galaxies
+
+        cancel aSendingThread
         cancel aWakeTimer
         cancel aListener
-        close' aSocket
+        io $ close' aSocket
 
-    runTimer :: IO ()
+    runTimer :: RIO e ()
     runTimer = forever $ do
         threadDelay (300 * 1000000) -- 300 seconds
         atomically (enqueueEv wakeEv)
 
-    bindSock :: IO Socket
+    bindSock :: RIO e Socket
     bindSock = do
         let ourPort = maybe (listenPort netMode who) fromIntegral mPort
-        s  <- socket AF_INET Datagram defaultProtocol
-        () <- bind s (SockAddrInet ourPort localhost)
+        s  <- io $ socket AF_INET Datagram defaultProtocol
+
+        logTrace $ displayShow ("(ames) Binding to port ", ourPort)
+        let addr = SockAddrInet ourPort $
+              if isFake then localhost else inaddrAny
+        () <- io $ bind s addr
+
         pure s
 
-    waitPacket :: Socket -> IO ()
+    waitPacket :: Socket -> RIO e ()
     waitPacket s = forever $ do
-        (bs, addr) <- recvFrom s 4096
-        wen        <- Time.now
+        (bs, addr) <- io $ recvFrom s 4096
+        logTrace $ displayShow ("(ames) Received packet from ", addr)
+        wen        <- io $ Time.now
         case addr of
             SockAddrInet p a -> atomically (enqueueEv $ hearEv wen p a bs)
             _                -> pure ()
 
-    handleEffect :: AmesDrv -> NewtEf -> IO ()
-    handleEffect AmesDrv{..} = \case
+    handleEffect :: AmesDrv -> NewtEf -> RIO e ()
+    handleEffect drv@AmesDrv{..} = \case
       NewtEfTurf (_id, ()) turfs -> do
-          writeIORef aIsLive True
+          atomically $ writeTVar aTurfs (Just turfs)
 
       NewtEfSend (_id, ()) dest (MkBytes bs) -> do
-          live <- readIORef aIsLive
-          when live $ do
-              when (netMode == Real || okayFakeAddr dest) $ do
-                  void $ sendTo aSocket bs $ destSockAddr netMode dest
+          atomically (readTVar aTurfs) >>= \case
+            Nothing -> pure ()
+            Just turfs -> (sendPacket drv netMode dest bs)
+
+    sendPacket :: AmesDrv -> NetworkMode -> AmesDest -> ByteString -> RIO e ()
+
+    sendPacket AmesDrv{..} Fake dest bs = do
+      when (okayFakeAddr dest) $ do
+        atomically $ writeTQueue aSendingQueue ((fakeSockAddr dest), bs)
+
+    sendPacket AmesDrv{..} Real (ADGala wen galaxy) bs = do
+      galaxies <- readIORef aGalaxies
+      queue <- case M.lookup galaxy galaxies of
+        Just (_, queue) -> pure queue
+        Nothing -> do
+          inQueue <- newTQueueIO
+          thread <- async $ galaxyResolver galaxy aTurfs inQueue aSendingQueue
+          modifyIORef (aGalaxies) (M.insert galaxy (thread, inQueue))
+          pure inQueue
+
+      atomically $ writeTQueue queue bs
+
+    sendPacket AmesDrv{..} Real (ADIpv4 _ p a) bs = do
+      let addr = SockAddrInet (fromIntegral p) (unIpv4 a)
+      atomically $ writeTQueue aSendingQueue (addr, bs)
+
+    -- An outbound queue of messages. We can only write to a socket from one
+    -- thread, so coalesce those writes here.
+    sendingThread :: TQueue (SockAddr, ByteString) -> Socket -> RIO e ()
+    sendingThread queue socket = forever $ do
+      (dest, bs) <- atomically $ readTQueue queue
+      logTrace $ displayShow ("(ames) Sending packet to ", socket, dest)
+      bytesSent <- io $ sendTo socket bs dest
+      let len = BS.length bs
+      when (bytesSent /= len) $ do
+        logDebug $ displayShow
+          ("(ames) Only sent ", bytesSent, " of ", (length bs))
+
+    -- Asynchronous thread per galaxy which handles domain resolution, and can
+    -- block its own queue of ByteStrings to send.
+    --
+    -- Maybe perform the resolution asynchronously, injecting into the resolver
+    -- queue as a message.
+    --
+    -- TODO: Figure out how the real haskell time library works.
+    galaxyResolver :: Galaxy -> TVar (Maybe [Turf]) -> TQueue ByteString
+                   -> TQueue (SockAddr, ByteString)
+                   -> RIO e ()
+    galaxyResolver galaxy turfVar incoming outgoing =
+      loop Nothing Time.unixEpoch
+      where
+        loop :: Maybe SockAddr -> Time.Wen -> RIO e ()
+        loop lastGalaxyIP lastLookupTime = do
+          packet <- atomically $ readTQueue incoming
+
+          checkIP lastGalaxyIP lastLookupTime >>= \case
+            (Nothing, t) -> do
+              -- We've failed to lookup the IP. Drop the outbound packet
+              -- because we have no IP for our galaxy, including possible
+              -- previous IPs.
+              logDebug $ displayShow
+                ("(ames) Dropping packet; no ip for galaxy ", galaxy)
+              loop Nothing t
+            (Just ip, t) -> do
+              queueSendToGalaxy ip packet
+              loop (Just ip) t
+
+        checkIP :: Maybe SockAddr -> Time.Wen
+                -> RIO e (Maybe SockAddr, Time.Wen)
+        checkIP lastIP lastLookupTime = do
+          current <- io $ Time.now
+          if (Time.gap current lastLookupTime ^. Time.secs) < 300
+          then pure (lastIP, lastLookupTime)
+          else do
+            toCheck <- fromMaybe [] <$> atomically (readTVar turfVar)
+            mybIp <- resolveFirstIP lastIP toCheck
+            timeAfterResolution <- io $ Time.now
+            pure (mybIp, timeAfterResolution)
+
+        resolveFirstIP :: Maybe SockAddr -> [Turf] -> RIO e (Maybe SockAddr)
+        resolveFirstIP prevIP [] = do
+          -- print ("ames: czar at %s: not found (b)\n")
+          logDebug $ displayShow
+              ("(ames) Failed to lookup IP for ", galaxy)
+          pure prevIP
+
+        resolveFirstIP prevIP (x:xs) = do
+          hostname <- buildDNS galaxy x
+          let portstr = show $ galaxyPort Real galaxy
+          listIPs <- io $ getAddrInfo Nothing (Just hostname) (Just portstr)
+          case listIPs of
+            []     -> resolveFirstIP prevIP xs
+            (y:ys) -> do
+              logDebug $ displayShow
+                ("(ames) Looked up ", hostname, portstr, y)
+              pure $ Just $ addrAddress y
+
+        buildDNS :: Galaxy -> Turf -> RIO e String
+        buildDNS (Galaxy g) turf = do
+          let nameWithSig = Ob.renderPatp $ Ob.patp $ fromIntegral g
+          name <- case stripPrefix "~" nameWithSig of
+              Nothing -> error "Urbit.ob didn't produce string with ~"
+              Just x  -> pure (unpack x)
+          pure $ name ++ "." ++ (unpack $ _turfText turf)
+
+        queueSendToGalaxy :: SockAddr -> ByteString -> RIO e ()
+        queueSendToGalaxy inet packet = do
+          atomically $ writeTQueue outgoing (inet, packet)

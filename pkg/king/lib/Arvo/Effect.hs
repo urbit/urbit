@@ -135,14 +135,14 @@ data Blit
 -- Manual instance to not save the noun/atom in Sag/Sav, because these can be
 -- megabytes and makes king hang.
 instance Show Blit where
-  show (Bel ()) = "Bel ()"
-  show (Clr ()) = "Clr ()"
-  show (Hop x) = "Hop " ++ (show x)
-  show (Lin c) = "Lin " ++ (show c)
-  show (Mor ()) = "Mor ()"
+  show (Bel ())     = "Bel ()"
+  show (Clr ())     = "Clr ()"
+  show (Hop x)      = "Hop " ++ (show x)
+  show (Lin c)      = "Lin " ++ (show c)
+  show (Mor ())     = "Mor ()"
   show (Sag path _) = "Sag " ++ (show path)
   show (Sav path _) = "Sav " ++ (show path)
-  show (Url c) = "Url " ++ (show c)
+  show (Url c)      = "Url " ++ (show c)
 
 {-
     %blip -- TODO
@@ -152,7 +152,7 @@ instance Show Blit where
 -}
 data TermEf
     = TermEfBlit (UD, ()) [Blit]
-    | TermEfInit (UD, ()) ()
+    | TermEfInit (UD, ()) Ship
     | TermEfLogo Path ()
     | TermEfMass Path Noun -- Irrelevant
   deriving (Eq, Ord, Show)

@@ -13,9 +13,10 @@ import Vere.Pier.Types
 
 import Vere.Http
 
-import qualified Data.Map            as M
-import qualified Network.HTTP.Client as H
-import qualified Network.HTTP.Types  as HT
+import qualified Data.Map                as M
+import qualified Network.HTTP.Client     as H
+import qualified Network.HTTP.Client.TLS as TLS
+import qualified Network.HTTP.Types      as HT
 
 -- Types -----------------------------------------------------------------------
 
@@ -45,18 +46,25 @@ cvtRespHeaders resp =
   where
     heads = convertHeaders (H.responseHeaders resp)
 
+bornEv :: KingId -> Ev
+bornEv king =
+    EvBlip $ BlipEvHttpClient $ HttpClientEvBorn (king, ()) ()
+
 --------------------------------------------------------------------------------
 
 client :: forall e. HasLogFunc e
        => KingId -> QueueEv -> ([Ev], RAcquire e (EffCb e HttpClientEf))
-client kingId enqueueEv = ([], runHttpClient)
+client kingId enqueueEv = (initialEvents, runHttpClient)
   where
+    initialEvents :: [Ev]
+    initialEvents = [bornEv kingId]
+
     runHttpClient :: RAcquire e (EffCb e HttpClientEf)
     runHttpClient = handleEffect <$> mkRAcquire start stop
 
     start :: RIO e (HttpClientDrv)
     start = HttpClientDrv <$>
-      (io $ H.newManager H.defaultManagerSettings) <*>
+      (io $ H.newManager TLS.tlsManagerSettings) <*>
       newTVarIO M.empty
 
     stop :: HttpClientDrv -> RIO e ()

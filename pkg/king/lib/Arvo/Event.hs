@@ -9,17 +9,17 @@ import Arvo.Common (Header(..), HttpEvent)
 import Arvo.Common (AmesDest, Ipv4, Ipv6, Port, Turf)
 import Arvo.Common (ReOrg(..), reorgThroughNoun)
 
+import qualified Crypto.Sign.Ed25519       as Ed
+import qualified Data.ByteString           as BS
+import qualified Data.ByteString.Char8     as C
 import qualified Network.HTTP.Types.Method as H
-
 
 -- Misc Types ------------------------------------------------------------------
 
-type Pass = Atom -- Public Key
+type Rift = Atom -- Continuity number
 type Life = Word -- Number of Azimoth key revs.
 type Bloq = Atom -- TODO
-type Ring = Atom -- Private Key
 type Oath = Atom -- Signature
-
 
 -- Parsed URLs -----------------------------------------------------------------
 
@@ -36,15 +36,85 @@ deriveNoun ''PUrl
 
 -- Dawn Records ----------------------------------------------------------------
 
-data Seed = Seed Ship Life Ring (Maybe Oath)
+padByteString :: BS.ByteString -> Int -> BS.ByteString
+padByteString bs length | remaining > 0 = bs <> (BS.replicate remaining 0)
+                        | otherwise = bs
+  where remaining = (length - (BS.length bs))
+
+-- A Pass is the Atom concatenation of 'b', the public encryption key, and the
+-- public authentication key. (see +pass-from-eth.)
+data Pass = Pass { passSign :: Ed.PublicKey, passCrypt :: Ed.PublicKey }
   deriving (Eq, Ord, Show)
+
+passToBS :: Pass -> BS.ByteString
+passToBS Pass{..} = C.singleton 'b' <>
+                    (Ed.unPublicKey passSign) <>
+                    (Ed.unPublicKey passCrypt)
+
+instance ToNoun Pass where
+  toNoun p = Atom $ (passToBS p) ^. from atomBytes
+
+instance FromNoun Pass where
+  parseNoun n = named "Pass" $ do
+    MkBytes unpadded <- parseNoun n
+    let bs = padByteString unpadded 65
+    when ((C.head bs) /= 'b') $ do
+      fail "Expecting 'b' prefix in public key structure"
+    let removedPrefix = C.tail bs
+    let passSign = Ed.PublicKey (take 32 removedPrefix)
+    let passCrypt = Ed.PublicKey (drop 32 removedPrefix)
+    unless ((length $ Ed.unPublicKey passSign) == 32) $
+      error "Sign pubkey not 32 bytes"
+    unless ((length $ Ed.unPublicKey passCrypt) == 32) $
+      error "Crypt pubkey not 32 bytes"
+    pure $ Pass{..}
+
+-- A Ring isn't the secret keys: it's the ByteString input which generates both
+-- the public key and the secret key. A Ring is the concatenation of 'B', the
+-- encryption key derivation seed, and the authentication key derivation
+-- seed. These aren't actually private keys, but public/private keypairs which
+-- can be derived from these seeds.
+data Ring = Ring { ringSign :: BS.ByteString, ringCrypt :: BS.ByteString }
+  deriving (Eq)
+
+instance ToNoun Ring where
+  toNoun Ring{..} =
+    Atom $ bs ^. from atomBytes
+    where
+      bs = C.singleton 'B' <> ringSign <> ringCrypt
+
+instance FromNoun Ring where
+  parseNoun n = named "Ring" $ do
+      MkBytes unpadded <- parseNoun n
+      let bs = padByteString unpadded 65
+      when ((C.head bs) /= 'B') $ do
+        fail "Expecting 'B' prefix in public key structure"
+      let removedPrefix = C.tail bs
+      let ringSign = (take 32 removedPrefix)
+      let ringCrypt = (drop 32 removedPrefix)
+      unless ((length ringSign) == 32) $
+        error "Sign seed not 32 bytes"
+      unless ((length ringCrypt) == 32) $
+        error "Crypt seed not 32 bytes"
+      pure $ Ring ringSign ringCrypt
+
+instance Show Ring where
+  show r = "(Ring <<seed>> <<seed>>)"
+
+data Seed = Seed
+    { sShip :: Ship
+    , sLife :: Life
+    , sRing :: Ring
+    , sOath :: (Maybe Oath)
+    }
+  deriving (Eq, Show)
 
 type Public = (Life, HoonMap Life Pass)
 
 data Dnses = Dnses { dPri::Cord, dSec::Cord, dTer::Cord }
   deriving (Eq, Ord, Show)
 
-type EthAddr = Bytes -- 20 bytes
+type EthAddr = Atom --Bytes -- 20 bytes
 type ContNum = Word
 
 data EthPoint = EthPoint
@@ -52,41 +122,20 @@ data EthPoint = EthPoint
     , epNet :: Maybe (Life, Pass, ContNum, (Bool, Ship), Maybe Ship)
     , epKid :: Maybe (EthAddr, HoonSet Ship)
     }
-  deriving (Eq, Ord, Show)
-
-data EthEventId = EthEventId
-    { eeiBlock :: Atom
-    , eeiLog   :: Atom
-    }
-  deriving (Eq, Ord, Show)
-
-data EthBookmark = EthBookmark
-    { ebHeard       :: HoonSet EthEventId
-    , ebLatestBlock :: Atom
-    }
-  deriving (Eq, Ord, Show)
-
-data Snap = Snap (HoonMap Ship Public)
-                 (Dnses, HoonMap Ship EthPoint)
-                 EthBookmark
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
 
 data Dawn = MkDawn
-    { dSeed :: Seed
-    , dShip :: Ship
-    , dCzar :: HoonMap Ship (Life, Pass)
-    , dTurf :: [Turf]
-    , dBloq :: Bloq
-    , dNode :: (Maybe PUrl)
-    , dSnap :: (Maybe Snap)
+    { dSeed    :: Seed
+    , dSponsor :: [(Ship, EthPoint)]
+    , dCzar    :: HoonMap Ship (Rift, Life, Pass)
+    , dTurf    :: [Turf]
+    , dBloq    :: Bloq
+    , dNode    :: (Maybe PUrl)
     }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
 
-deriveNoun ''EthEventId
-deriveNoun ''EthBookmark
 deriveNoun ''Dnses
 deriveNoun ''EthPoint
-deriveNoun ''Snap
 deriveNoun ''Seed
 deriveNoun ''Dawn
 
@@ -187,8 +236,8 @@ deriveNoun ''BehnEv
 -- Newt Events -----------------------------------------------------------------
 
 data NewtEv
-    = NewtEvBarn (Atom, ()) ()
-    | NewtEvCrud Path       Cord Tang
+    = NewtEvBarn (KingId, ()) ()
+    | NewtEvCrud Path         Cord Tang
   deriving (Eq, Ord, Show)
 
 deriveNoun ''NewtEv
@@ -209,7 +258,7 @@ deriveNoun ''SyncEv
 data LegacyBootEvent
     = Fake Ship
     | Dawn Dawn
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
 
 data ArrowKey = D | L | R | U
   deriving (Eq, Ord, Show)
@@ -230,7 +279,7 @@ data TermEv
     | TermEvBoot (UD, ()) Bool LegacyBootEvent
     | TermEvHail (UD, ()) ()
     | TermEvCrud Path       Cord Tang
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
 
 deriveNoun ''LegacyBootEvent
 deriveNoun ''ArrowKey
@@ -250,7 +299,7 @@ data BlipEv
     | BlipEvNewt       NewtEv
     | BlipEvSync       SyncEv
     | BlipEvTerm       TermEv
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
 
 deriveNoun ''BlipEv
 
@@ -287,7 +336,7 @@ deriveNoun ''ZuseEv
 data Ev
     = EvBlip BlipEv
     | EvVane Vane
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
 
 instance ToNoun Ev where
   toNoun = \case

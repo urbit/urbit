@@ -49,7 +49,7 @@ deriveNoun ''Pill
 -- Jobs ------------------------------------------------------------------------
 
 data Work = Work EventId Mug Wen Ev
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
 
 data LifeCyc = LifeCyc EventId Mug Nock
   deriving (Eq, Show)
