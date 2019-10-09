@@ -76,52 +76,42 @@
   |=  [our/ship lit/?]
   %-  ~(gas in *(set well:gall))
   ^-  (list well:gall)
-  ?:  lit
-    :~  [%home %dojo]
-        [%home %azimuth-tracker]
-    ==
-  =+  myr=(clan:title our)
+  ::  boot all default apps off the home desk
   ::
-  ?:  ?=($pawn myr)
-  :~  [%home %lens]
-      [%base %hall]
-      [%base %talk]
-      [%base %dojo]
-      [%base %modulo]
-      [%home %launch]
-      [%home %chat]
-      [%home %publish]
-      [%home %clock]
-      [%home %weather]
-      [%home %group-store]
-      [%home %group-hook]
-      [%home %permission-store]
-      [%home %permission-group-hook]
-  ==
-  :~  [%home %lens]
-      [%home %acme]
-      [%home %dns]
-      [%home %dojo]
-      [%home %hall]
-      [%home %talk]
-      [%home %modulo]
-      [%home %launch]
-      [%home %chat]
-      [%home %publish]
-      [%home %clock]
-      [%home %weather]
-      [%home %group-store]
-      [%home %group-hook]
-      [%home %permission-store]
-      [%home %permission-group-hook]
-      [%home %azimuth-tracker]
+  =-  (turn - |=(a=term home+a))
+  ^-  (list term)
+  ?:  lit
+    :~  %dojo
+        %azimuth-tracker
+    ==
+  %+  welp
+    ?:  ?=(%pawn (clan:title our))  ~
+    :~  %acme
+        %dns
+        %azimuth-tracker
+    ==
+  :~  %lens
+      %dojo
+      %modulo
+      %launch
+      %publish
+      %clock
+      %weather
+      %group-store
+      %group-hook
+      %permission-store
+      %permission-group-hook
+      %chat-store
+      %chat-hook
+      %chat-view
+      %chat-cli
   ==
 ::
 ++  deft-fish                                           ::  default connects
   |=  our/ship
   %-  ~(gas in *(set gill:gall))
   ^-  (list gill:gall)
-  [[our %talk] [our %dojo] ~]
+  [[our %chat-cli] [our %dojo] ~]
 ::
 ++  make                                                ::  initial part
   |=  our/ship
