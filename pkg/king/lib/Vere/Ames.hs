@@ -15,8 +15,7 @@ import qualified Urbit.Time      as Time
 -- Types -----------------------------------------------------------------------
 
 data AmesDrv = AmesDrv
-  { aIsLive        :: IORef Bool
-  , aTurfs         :: TVar [Turf]
+  { aTurfs         :: TVar (Maybe [Turf])
   , aGalaxies      :: IORef (M.Map Galaxy (Async (), TQueue ByteString))
   , aSocket        :: Socket
   , aWakeTimer     :: Async ()
@@ -108,8 +107,7 @@ ames inst who isFake mPort enqueueEv =
 
     start :: RIO e AmesDrv
     start = do
-        aIsLive        <- newIORef False
-        aTurfs         <- newTVarIO []
+        aTurfs         <- newTVarIO Nothing
         aGalaxies      <- newIORef mempty
         aSocket        <- bindSock
         aWakeTimer     <- async runTimer
@@ -160,11 +158,12 @@ ames inst who isFake mPort enqueueEv =
     handleEffect :: AmesDrv -> NewtEf -> RIO e ()
     handleEffect drv@AmesDrv{..} = \case
       NewtEfTurf (_id, ()) turfs -> do
-          writeIORef aIsLive True
-          atomically $ writeTVar aTurfs turfs
+          atomically $ writeTVar aTurfs (Just turfs)
 
       NewtEfSend (_id, ()) dest (MkBytes bs) -> do
-          whenM (readIORef aIsLive) (sendPacket drv netMode dest bs)
+          atomically (readTVar aTurfs) >>= \case
+            Nothing -> pure ()
+            Just turfs -> (sendPacket drv netMode dest bs)
 
     sendPacket :: AmesDrv -> NetworkMode -> AmesDest -> ByteString -> RIO e ()
 
@@ -193,9 +192,7 @@ ames inst who isFake mPort enqueueEv =
     sendingThread :: TQueue (SockAddr, ByteString) -> Socket -> RIO e ()
     sendingThread queue socket = forever $ do
       (dest, bs) <- atomically $ readTQueue queue
-
       logTrace $ displayShow ("(ames) Sending packet to ", socket, dest)
-      -- This line blocks! WTF!
       bytesSent <- io $ sendTo socket bs dest
       let len = BS.length bs
       when (bytesSent /= len) $ do
@@ -209,7 +206,7 @@ ames inst who isFake mPort enqueueEv =
     -- queue as a message.
     --
     -- TODO: Figure out how the real haskell time library works.
-    galaxyResolver :: Galaxy -> TVar [Turf] -> TQueue ByteString
+    galaxyResolver :: Galaxy -> TVar (Maybe [Turf]) -> TQueue ByteString
                    -> TQueue (SockAddr, ByteString)
                    -> RIO e ()
     galaxyResolver galaxy turfVar incoming outgoing =
@@ -219,8 +216,7 @@ ames inst who isFake mPort enqueueEv =
         loop lastGalaxyIP lastLookupTime = do
           packet <- atomically $ readTQueue incoming
 
-          i <- checkIP lastGalaxyIP lastLookupTime
-          case i of
+          checkIP lastGalaxyIP lastLookupTime >>= \case
             (Nothing, t) -> do
               -- We've failed to lookup the IP. Drop the outbound packet
               -- because we have no IP for our galaxy, including possible
@@ -239,10 +235,10 @@ ames inst who isFake mPort enqueueEv =
           if (Time.gap current lastLookupTime ^. Time.secs) < 300
           then pure (lastIP, lastLookupTime)
           else do
-            toCheck <- atomically $ readTVar turfVar
-            ip <- resolveFirstIP lastIP toCheck
+            toCheck <- fromMaybe [] <$> atomically (readTVar turfVar)
+            mybIp <- resolveFirstIP lastIP toCheck
             timeAfterResolution <- io $ Time.now
-            pure (ip, timeAfterResolution)
+            pure (mybIp, timeAfterResolution)
 
         resolveFirstIP :: Maybe SockAddr -> [Turf] -> RIO e (Maybe SockAddr)
         resolveFirstIP prevIP [] = do
@@ -252,7 +248,7 @@ ames inst who isFake mPort enqueueEv =
           pure prevIP
 
         resolveFirstIP prevIP (x:xs) = do
-          let hostname = buildDNS galaxy x
+          hostname <- buildDNS galaxy x
           let portstr = show $ galaxyPort Real galaxy
           listIPs <- io $ getAddrInfo Nothing (Just hostname) (Just portstr)
           case listIPs of
@@ -262,13 +258,13 @@ ames inst who isFake mPort enqueueEv =
                 ("(ames) Looked up ", hostname, portstr, y)
               pure $ Just $ addrAddress y
 
-        buildDNS :: Galaxy -> Turf -> String
-        buildDNS (Galaxy g) turf = name ++ "." ++ (unpack $ _turfText turf)
-          where
-            nameWithSig = Ob.renderPatp $ Ob.patp $ fromIntegral g
-            name = case stripPrefix "~" nameWithSig of
+        buildDNS :: Galaxy -> Turf -> RIO e String
+        buildDNS (Galaxy g) turf = do
+          let nameWithSig = Ob.renderPatp $ Ob.patp $ fromIntegral g
+          name <- case stripPrefix "~" nameWithSig of
               Nothing -> error "Urbit.ob didn't produce string with ~"
-              Just x  -> (unpack x)
+              Just x  -> pure (unpack x)
+          pure $ name ++ "." ++ (unpack $ _turfText turf)
 
         queueSendToGalaxy :: SockAddr -> ByteString -> RIO e ()
         queueSendToGalaxy inet packet = do

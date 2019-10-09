@@ -1,4 +1,3 @@
-{-# OPTIONS_GHC -Wwarn #-}
 module Arvo.Event where
 
 import Noun.Tree    (HoonMap, HoonSet)
@@ -49,8 +48,8 @@ data Pass = Pass { passSign :: Ed.PublicKey, passCrypt :: Ed.PublicKey }
 
 passToBS :: Pass -> BS.ByteString
 passToBS Pass{..} = C.singleton 'b' <>
-                    (padByteString (Ed.unPublicKey passSign) 32) <>
-                    (padByteString (Ed.unPublicKey passCrypt) 32)
+                    (Ed.unPublicKey passSign) <>
+                    (Ed.unPublicKey passCrypt)
 
 instance ToNoun Pass where
   toNoun p = Atom $ (passToBS p) ^. from atomBytes
@@ -64,6 +63,10 @@ instance FromNoun Pass where
     let removedPrefix = C.tail bs
     let passSign = Ed.PublicKey (take 32 removedPrefix)
     let passCrypt = Ed.PublicKey (drop 32 removedPrefix)
+    unless ((length $ Ed.unPublicKey passSign) == 32) $
+      error "Sign pubkey not 32 bytes"
+    unless ((length $ Ed.unPublicKey passCrypt) == 32) $
+      error "Crypt pubkey not 32 bytes"
     pure $ Pass{..}
 
 -- A Ring isn't the secret keys: it's the ByteString input which generates both
@@ -78,8 +81,7 @@ instance ToNoun Ring where
   toNoun Ring{..} =
     Atom $ bs ^. from atomBytes
     where
-      bs = (C.singleton 'B' <> (padByteString ringSign 32) <>
-            (padByteString ringCrypt 32))
+      bs = C.singleton 'B' <> ringSign <> ringCrypt
 
 instance FromNoun Ring where
   parseNoun n = named "Ring" $ do
@@ -90,6 +92,10 @@ instance FromNoun Ring where
       let removedPrefix = C.tail bs
       let ringSign = (take 32 removedPrefix)
       let ringCrypt = (drop 32 removedPrefix)
+      unless ((length ringSign) == 32) $
+        error "Sign seed not 32 bytes"
+      unless ((length ringCrypt) == 32) $
+        error "Crypt seed not 32 bytes"
       pure $ Ring ringSign ringCrypt
 
 instance Show Ring where

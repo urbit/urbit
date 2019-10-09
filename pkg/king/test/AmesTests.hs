@@ -39,7 +39,8 @@ runGala :: forall e. (HasLogFunc e)
         => Word8 -> RAcquire e (TQueue Ev, EffCb e NewtEf)
 runGala point = do
     q  <- newTQueueIO
-    let (_, runAmes) = ames pid (fromIntegral point) Nothing (writeTQueue q)
+    let (_, runAmes) =
+          ames pid (fromIntegral point) True Nothing (writeTQueue q)
     cb ← runAmes
     rio $ cb turfEf
     pure (q, cb)

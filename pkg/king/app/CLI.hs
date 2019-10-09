@@ -149,10 +149,6 @@ newFromKeyfile = BootFromKeyfile <$> strOption
 
 new :: Parser New
 new = do
-    -- nShipAddr <- strArgument
-    --                  $ metavar "SHIP"
-    --                 <> help "Ship address"
-
     nPierPath <- optional
                $ strArgument
                      $ metavar "PIER"

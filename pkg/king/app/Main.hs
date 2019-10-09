@@ -346,9 +346,9 @@ newShip CLI.New{..} opts
       let seed = mineComet (Set.fromList starList) eny
       putStrLn ("boot: found comet " ++ (renderShip (sShip seed)))
 
-  | CLI.BootFake name <- nBootType =
-      let ship = shipFrom name
-      in tryBootFromPill nPillPath (pierPath name) nLite flags ship (Fake ship)
+  | CLI.BootFake name <- nBootType = do
+      ship <- shipFrom name
+      tryBootFromPill nPillPath (pierPath name) nLite flags ship (Fake ship)
 
   | CLI.BootFromKeyfile keyFile <- nBootType = do
       text <- readFileUtf8 keyFile
@@ -365,29 +365,29 @@ newShip CLI.New{..} opts
 
       case ethReturn of
         Left x -> error $ unpack x
-        Right dawn ->
+        Right dawn -> do
           let ship = sShip $ dSeed dawn
-              path = (pierPath $ nameFromShip ship)
-          in tryBootFromPill nPillPath path nLite flags ship (Dawn dawn)
+          path <- pierPath <$> nameFromShip ship
+          tryBootFromPill nPillPath path nLite flags ship (Dawn dawn)
 
   where
-    shipFrom :: Text -> Ship
+    shipFrom :: Text -> RIO e Ship
     shipFrom name = case Ob.parsePatp name of
       Left x  -> error "Invalid ship name"
-      Right p -> Ship $ fromIntegral $ Ob.fromPatp p
+      Right p -> pure $ Ship $ fromIntegral $ Ob.fromPatp p
 
     pierPath :: Text -> FilePath
     pierPath name = case nPierPath of
       Just x  -> x
       Nothing -> "./" <> unpack name
 
-    nameFromShip :: Ship -> Text
+    nameFromShip :: Ship -> RIO e Text
     nameFromShip s = name
       where
         nameWithSig = Ob.renderPatp $ Ob.patp $ fromIntegral s
         name = case stripPrefix "~" nameWithSig of
           Nothing -> error "Urbit.ob didn't produce string with ~"
-          Just x  -> x
+          Just x  -> pure x
 
     flags = toSerfFlags opts
 
