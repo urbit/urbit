@@ -70,7 +70,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   c3_w arg_w;
 
   u3_Host.ops_u.abo = c3n;
-  u3_Host.ops_u.bat = c3n;
   u3_Host.ops_u.dem = c3n;
   u3_Host.ops_u.dry = c3n;
   u3_Host.ops_u.gab = c3n;
@@ -94,7 +93,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "G:J:B:K:A:H:I:w:u:e:F:k:p:LljabcdgqstvxPDRS")) )
+                 "G:J:B:K:A:H:I:w:u:e:F:k:p:LljacdgqstvxPDRS")) )
   {
     switch ( ch_i ) {
       case 'J': {
@@ -167,7 +166,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'l': { u3_Host.ops_u.lit = c3y; break; }
       case 'j': { u3_Host.ops_u.tra = c3y; break; }
       case 'a': { u3_Host.ops_u.abo = c3y; break; }
-      case 'b': { u3_Host.ops_u.bat = c3y; break; }
       case 'c': { u3_Host.ops_u.nuu = c3y; break; }
       case 'd': { u3_Host.ops_u.dem = c3y; break; }
       case 'g': { u3_Host.ops_u.gab = c3y; break; }
@@ -224,11 +222,6 @@ _main_getopt(c3_i argc, c3_c** argv)
     u3_Host.dir_c = strdup(argv[optind]);
   }
 
-  if ( c3y == u3_Host.ops_u.bat ) {
-    u3_Host.ops_u.dem = c3y;
-    u3_Host.ops_u.nuu = c3y;
-  }
-
   //  daemon mode (-d) implies disabling terminal assumptions (-t)
   //
   if ( c3y == u3_Host.ops_u.dem ) {
@@ -247,6 +240,10 @@ _main_getopt(c3_i argc, c3_c** argv)
     else if ( c3y == u3_Host.ops_u.nuu ) {
       fprintf(stderr, "tried to create, but %s already exists\n", u3_Host.dir_c);
       fprintf(stderr, "normal usage: %s %s\n", argv[0], u3_Host.dir_c);
+      exit(1);
+    }
+    else if ( 0 != access(u3_Host.dir_c, W_OK) ) {
+      fprintf(stderr, "urbit: write permissions are required for %s\n", u3_Host.dir_c);
       exit(1);
     }
   }
@@ -370,7 +367,6 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     // XX find a way to re-enable
     // "-A dir        Use dir for initial galaxy sync\n",
     "-B pill       Bootstrap from this pill\n",
-    "-b            Batch create\n",
     "-c pier       Create a new urbit in pier/\n",
     "-D            Recompute from events\n",
     "-d            Daemon mode; implies -t\n",
@@ -573,6 +569,14 @@ _fork_into_background_process()
   exit(WEXITSTATUS(status));
 }
 
+/* _stop_on_boot_completed_cb(): exit gracefully after boot is complete
+*/
+static void
+_stop_on_boot_completed_cb()
+{
+  u3_pier_exit(u3_pier_stub());
+}
+
 c3_i
 main(c3_i   argc,
      c3_c** argv)
@@ -602,6 +606,10 @@ main(c3_i   argc,
   if ( c3y == u3_Host.ops_u.rep ) {
     report();
     return 0;
+  }
+
+  if ( c3y == u3_Host.ops_u.tex ) {
+    u3_Host.bot_f = _stop_on_boot_completed_cb;
   }
 
 #if 0
@@ -670,7 +678,7 @@ main(c3_i   argc,
   u3K.certs_c = strdup("/tmp/urbit-ca-cert-XXXXXX");
   _setup_cert_store(u3K.certs_c);
 
-  if ( c3y == u3_Host.ops_u.dem && c3n == u3_Host.ops_u.bat ) {
+  if ( c3y == u3_Host.ops_u.dem ) {
     printf("boot: running as daemon\n");
   }
 
@@ -712,6 +720,8 @@ main(c3_i   argc,
       }
 
       /*  Set dry-run flag.
+      **
+      **    XX also exit immediately?
       */
       if ( _(u3_Host.ops_u.dry) ) {
         u3C.wag_w |= u3o_dryrun;

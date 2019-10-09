@@ -1238,7 +1238,7 @@ u3_unix_acquire(c3_c* pax_c)
           }
         }
         if ( 16 == i_w ) {
-          u3l_log("process %d seems unkillable!\n", pid_w);
+          u3l_log("unix: process %d seems unkillable!\n", pid_w);
           c3_assert(0);
         }
         u3l_log("unix: stopped old process %u\n", pid_w);
@@ -1248,21 +1248,18 @@ u3_unix_acquire(c3_c* pax_c)
     unlink(paf_c);
   }
 
-  loq_u = fopen(paf_c, "w");
+  if ( NULL == (loq_u = fopen(paf_c, "w")) ) {
+    u3l_log("unix: unable to open %s\n", paf_c);
+    c3_assert(0);
+  }
+
   fprintf(loq_u, "%u\n", getpid());
 
   {
     c3_i fid_i = fileno(loq_u);
-#if defined(U3_OS_linux)
-    fdatasync(fid_i);
-#elif defined(U3_OS_osx)
-    fcntl(fid_i, F_FULLFSYNC);
-#elif defined(U3_OS_bsd)
-    fsync(fid_i);
-#else
-#   error "port: datasync"
-#endif
+    c3_sync(fid_i);
   }
+
   fclose(loq_u);
   free(paf_c);
 }

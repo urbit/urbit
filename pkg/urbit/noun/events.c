@@ -592,29 +592,13 @@ _ce_patch_compose(void)
   }
 }
 
-/* _ce_sync(): sync a file descriptor.
-*/
-static void
-_ce_sync(c3_i fid_i)
-{
-#if defined(U3_OS_linux)
-  fdatasync(fid_i);
-#elif defined(U3_OS_osx)
-  fcntl(fid_i, F_FULLFSYNC);
-#elif defined(U3_OS_bsd)
-  fsync(fid_i);
-#else
-# error "port: datasync"
-#endif
-}
-
 /* _ce_patch_sync(): make sure patch is synced to disk.
 */
 static void
 _ce_patch_sync(u3_ce_patch* pat_u)
 {
-  _ce_sync(pat_u->ctl_i);
-  _ce_sync(pat_u->mem_i);
+  c3_sync(pat_u->ctl_i);
+  c3_sync(pat_u->mem_i);
 }
 
 /* _ce_image_sync(): make sure image is synced to disk.
@@ -622,7 +606,7 @@ _ce_patch_sync(u3_ce_patch* pat_u)
 static void
 _ce_image_sync(u3e_image* img_u)
 {
-  _ce_sync(img_u->fid_i);
+  c3_sync(img_u->fid_i);
 }
 
 /* _ce_patch_apply(): apply patch to image.
@@ -840,6 +824,8 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
   u3P.nor_u.nam_c = "north";
   u3P.sou_u.nam_c = "south";
 
+  //  XX review dryrun requirements, enable or remove
+  //
 #if 0
   if ( u3C.wag_w & u3o_dryrun ) {
     return c3y;
