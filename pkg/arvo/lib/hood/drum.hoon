@@ -273,9 +273,14 @@
 ::
 ++  se-adit                                           ::  update servers
   ^+  .
-  ::  ensure dojo connects after talk
-  =*  dojo-on-top  aor
-  %+  roll  (sort ~(tap in ray) dojo-on-top)
+  %+  roll
+    ::  ensure dojo is first in the list,
+    ::  guaranteeing its display on-boot.
+    ::
+    %+  sort  ~(tap in ray)
+    |=  [a=well:gall b=well:gall]
+    ?:  |(=(%dojo q.a) =(%dojo q.b))  =(%dojo q.a)
+    (aor a b)
   =<  .(con +>)
   |:  $:{wel/well:gall con/_..se-adit}  ^+  con
   =.  +>.$  con

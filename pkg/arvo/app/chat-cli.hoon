@@ -83,7 +83,6 @@
 ::
 ++  prep
   |=  old=(unit state)
-  ~&  %chat-cli-prep
   ?^  old
     [~ this(+<+ u.old)]
   =^  moves  this

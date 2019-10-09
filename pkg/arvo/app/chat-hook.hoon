@@ -258,8 +258,13 @@
   ?~  saw
     [~ this]
   ?>  ?=(^ wir)
-  ~&  %chat-hook-reap
-  [((slog u.saw) ~) this(synced (~(del by synced) t.wir))]
+  :_  this(synced (~(del by synced) t.wir))
+  %.  ~
+  %-  slog
+  :*  leaf+"chat-hook failed subscribe on {(spud t.wir)}"
+      leaf+"stack trace:"
+      u.saw
+  ==
 ::
 ++  chat-poke
   |=  act=chat-action
