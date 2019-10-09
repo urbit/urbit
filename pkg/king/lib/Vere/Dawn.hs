@@ -1,14 +1,11 @@
-{-# OPTIONS_GHC -Wwarn #-}
 module Vere.Dawn where
 
 import Arvo.Common
-import Arvo.Event      hiding (Address)
-import Azimuth.Azimuth
-import UrbitPrelude    hiding (Call, rights, to)
+import Arvo.Event   hiding (Address)
+import UrbitPrelude hiding (Call, rights, to)
 
 import Data.Bits                     (xor)
 import Data.List                     (nub)
-import Data.Maybe
 import Data.Text                     (splitOn)
 import Network.Ethereum.Account
 import Network.Ethereum.Api.Eth
@@ -17,13 +14,13 @@ import Network.Ethereum.Api.Types    hiding (blockNumber)
 import Network.Ethereum.Web3
 import Network.HTTP.Client.TLS
 
+import qualified Azimuth.Azimuth       as AZ
 import qualified Crypto.Hash.SHA512    as SHA512
 import qualified Crypto.Sign.Ed25519   as Ed
 import qualified Data.Binary           as B
 import qualified Data.ByteArray        as BA
 import qualified Data.ByteString       as BS
 import qualified Data.ByteString.Char8 as C
-import qualified Data.Map.Strict       as M
 import qualified Network.Ethereum.Ens  as Ens
 import qualified Network.HTTP.Client   as C
 import qualified Urbit.Ob              as Ob
@@ -71,7 +68,9 @@ getPassFromRing Ring{..} = Pass{..}
     passCrypt = decode ringCrypt
     passSign = decode ringSign
     decode = fst . fromJust . Ed.createKeypairFromSeed_
-
+    fromJust = \case
+      Nothing -> error "Invalid seed passed to createKeypairFromSeed"
+      Just x -> x
 
 -- Azimuth Functions -----------------------------------------------------------
 
@@ -83,11 +82,11 @@ withAzimuth :: Quantity
 withAzimuth bloq azimuth action =
     withAccount () $
       withParam (to .~ azimuth) $
-        withParam (block .~ (BlockWithNumber bloq))
+        withParam (block .~ BlockWithNumber bloq)
           action
 
 -- Retrieves the EthPoint information for an individual point.
-retrievePoint :: Quantity -> Address -> Ship -> Web3 (EthPoint)
+retrievePoint :: Quantity -> Address -> Ship -> Web3 EthPoint
 retrievePoint bloq azimuth ship =
   withAzimuth bloq azimuth $ do
     (encryptionKey,
@@ -98,7 +97,8 @@ retrievePoint bloq azimuth ship =
      sponsor,
      escapeTo,
      cryptoSuite,
-     keyRevision, continuityNum) <- points (fromIntegral ship)
+     keyRevision,
+     continuityNum) <- AZ.points (fromIntegral ship)
 
     let escapeState = if escapeRequested
                       then Just $ Ship $ fromIntegral escapeTo
@@ -107,16 +107,17 @@ retrievePoint bloq azimuth ship =
     -- The hoon version also sets this to all 0s and then does nothing with it.
     let epOwn = (0, 0, 0, 0)
 
-    let epNet = if (not active)
+    let epNet = if not active
         then Nothing
-        else Just (
-          (fromIntegral keyRevision),
-          (passFromEth encryptionKey authenticationKey cryptoSuite),
-          (fromIntegral continuityNum),
-          (hasSponsor, Ship (fromIntegral sponsor)),
-          escapeState
+        else Just
+          ( fromIntegral keyRevision
+          , passFromEth encryptionKey authenticationKey cryptoSuite
+          , fromIntegral continuityNum
+          , (hasSponsor, Ship (fromIntegral sponsor))
+          , escapeState
           )
 
+    -- TODO: wtf?
     let epKid = case clanFromShip ship of
            Ob.Galaxy -> Just (0, setToHoonSet mempty)
            Ob.Star   -> Just (0, setToHoonSet mempty)
@@ -127,26 +128,28 @@ retrievePoint bloq azimuth ship =
 -- Retrieves information about all the galaxies from Ethereum.
 retrieveGalaxyTable :: Quantity -> Address -> Web3 (Map Ship (Rift, Life, Pass))
 retrieveGalaxyTable bloq azimuth =
-    withAzimuth bloq azimuth $ M.fromList <$> mapM getRow [0..255]
+    withAzimuth bloq azimuth $ mapFromList <$> mapM getRow [0..255]
   where
     getRow idx = do
       (encryptionKey, authenticationKey, _, _, _, _, _, cryptoSuite,
-       keyRev, continuity) <- points idx
-      pure (fromIntegral idx,
-            (fromIntegral continuity,
-              fromIntegral keyRev,
-              (passFromEth encryptionKey authenticationKey cryptoSuite)))
+       keyRev, continuity) <- AZ.points idx
+      pure ( fromIntegral idx
+           , ( fromIntegral continuity
+             , fromIntegral keyRev
+             , passFromEth encryptionKey authenticationKey cryptoSuite
+             )
+          )
 
 -- Reads the three Ames domains from Ethereum, removing duplicates
-readAmesDomains :: Quantity -> Address -> Web3 ([Turf])
+readAmesDomains :: Quantity -> Address -> Web3 [Turf]
 readAmesDomains bloq azimuth =
     withAzimuth bloq azimuth $ nub <$> mapM getTurf [0..2]
   where
-    getTurf idx = do
-      str <- dnsDomains idx
-      pure $ Turf $ fmap Cord $ reverse $ splitOn "." str
+    getTurf idx =
+      Turf . fmap Cord . reverse . splitOn "." <$> AZ.dnsDomains idx
 
-validateShipAndGetImmediateSponsor :: Quantity -> Address -> Seed -> Web3 (Ship)
+
+validateShipAndGetImmediateSponsor :: Quantity -> Address -> Seed -> Web3 Ship
 validateShipAndGetImmediateSponsor block azimuth (Seed ship life ring oaf) =
   case clanFromShip ship of
     Ob.Comet -> validateComet
@@ -169,17 +172,16 @@ validateShipAndGetImmediateSponsor block azimuth (Seed ship life ring oaf) =
       pure $ shipSein ship
 
     validateRest = do
-      print ("boot: retrieving " ++ (renderShip ship) ++ "'s public keys")
+      putStrLn ("boot: retrieving " ++ renderShip ship ++ "'s public keys")
 
       whoP <- retrievePoint block azimuth ship
-      case (epNet whoP) of
+      case epNet whoP of
         Nothing -> fail "ship not keyed"
         Just (netLife, pass, contNum, (hasSponsor, who), _) -> do
           when (netLife /= life) $
-              fail $ pack
-                   ("keyfile life mismatch; keyfile claims life " ++
-                    (show life) ++ ", but Azimuth claims life " ++
-                    (show netLife))
+              fail ("keyfile life mismatch; keyfile claims life " ++
+                    show life ++ ", but Azimuth claims life " ++
+                    show netLife)
           when ((getPassFromRing ring) /= pass) $
               fail "keyfile does not match blockchain"
           -- TODO: The hoon code does a breach check, but the C code never
@@ -193,28 +195,28 @@ getSponsorshipChain :: Quantity -> Address -> Ship -> Web3 [(Ship,EthPoint)]
 getSponsorshipChain block azimuth = loop
   where
     loop ship = do
-      print ("boot: retrieving keys for sponsor " ++ (renderShip ship))
+      putStrLn ("boot: retrieving keys for sponsor " ++ renderShip ship)
       ethPoint <- retrievePoint block azimuth ship
 
-      case clanFromShip ship of
-        Ob.Comet -> fail "Comets cannot be sponsors"
-        Ob.Moon  -> fail "Moons cannot be sponsors"
-        Ob.Galaxy -> do
-          case (epNet ethPoint) of
-            Nothing -> fail $ unpack ("Galaxy " ++ (renderShip ship) ++
-                                      " not booted")
-            Just _  -> pure [(ship, ethPoint)]
-        _ -> do
-          case (epNet ethPoint) of
-            Nothing -> fail $ unpack ("Ship " ++ (renderShip ship) ++
-                                      " not booted")
-            Just (_, _, _, (has, sponsor), _) -> do
-              case has of
-                False -> fail $ unpack ("Ship " ++ (renderShip ship) ++
-                                        " has no sponsor")
-                True -> do
-                  chain <- loop sponsor
-                  pure $ chain ++ [(ship, ethPoint)]
+      case (clanFromShip ship, epNet ethPoint) of
+        (Ob.Comet, _) -> fail "Comets cannot be sponsors"
+        (Ob.Moon, _)  -> fail "Moons cannot be sponsors"
+
+        (Ob.Galaxy, Nothing) ->
+            fail $ unpack ("Galaxy " ++ renderShip ship ++ " not booted")
+
+        (Ob.Galaxy, Just _) -> pure [(ship, ethPoint)]
+
+        (_, Nothing) ->
+            fail $ unpack ("Ship " ++ renderShip ship ++ " not booted")
+
+        (_, Just (_, _, _, (has, sponsor), _)) -> do
+            case has of
+              False -> fail $ unpack ("Ship " ++ renderShip ship ++
+                                      " has no sponsor")
+              True -> do
+                chain <- loop sponsor
+                pure $ chain ++ [(ship, ethPoint)]
 
 
 -- Produces either an error or a validated boot event structure.
@@ -222,18 +224,18 @@ dawnVent :: Seed -> RIO e (Either Text Dawn)
 dawnVent dSeed@(Seed ship life ring oaf) = do
   ret <- runWeb3' provider $ do
     block <- blockNumber
-    print ("boot: ethereum block #" ++ (show block))
+    putStrLn ("boot: ethereum block #" ++ tshow block)
 
-    print "boot: retrieving azimuth contract"
+    putStrLn "boot: retrieving azimuth contract"
     azimuth <- withAccount () $ Ens.resolve "azimuth.eth"
 
     immediateSponsor <- validateShipAndGetImmediateSponsor block azimuth dSeed
     dSponsor <- getSponsorshipChain block azimuth immediateSponsor
 
-    print "boot: retrieving galaxy table"
+    putStrLn "boot: retrieving galaxy table"
     dCzar <- mapToHoonMap <$> retrieveGalaxyTable block azimuth
 
-    print "boot: retrieving network domains"
+    putStrLn "boot: retrieving network domains"
     dTurf <- readAmesDomains block azimuth
 
     let dBloq = toBloq block
@@ -259,6 +261,10 @@ dawnCometList = do
 
 -- Comet Mining ----------------------------------------------------------------
 
+-- TODO: Comet mining doesn't seem to work and I'm guessing it's because I'm
+-- screwing up the math below.
+
+-- TODO: This might be entirely wrong. What happens with a or b is longer?
 mix :: BS.ByteString -> BS.ByteString -> BS.ByteString
 mix a b = BS.pack $ BS.zipWith xor a b
 
@@ -267,25 +273,17 @@ shaf :: BS.ByteString -> BS.ByteString -> BS.ByteString
 shaf salt ruz = (mix a b)
   where
     haz = shas salt ruz
-    a = (take 32 haz)
-    b = (drop 32 haz)
+    a = (drop 32 haz)
+    b = (take 32 haz)
 
 shas :: BS.ByteString -> BS.ByteString -> BS.ByteString
 shas salt ruz =
   SHA512.hash $ mix salt $ SHA512.hash ruz
 
--- Mining a comet:
---
--- A comet fingerprint is the "salted hash" of the +pass, where we mix %bfig
--- into the 65 bytes long 'b' prefixed pass in a specific way.
---
---   (shaf %bfig pub) => (shas %bfig pub) and then mixes both sides.
---
 cometFingerprint :: Pass -> Ship  -- Word128
 cometFingerprint = Ship . B.decode . fromStrict . (shas bfig) . passToBS
   where
     bfig = C.pack "bfig"
-
 
 tryMineComet :: Set Ship -> Word64 -> Maybe Seed
 tryMineComet ships seed =
@@ -302,7 +300,6 @@ tryMineComet ships seed =
     shipName = cometFingerprint pass
     shipSponsor = shipSein shipName
 
-
 mineComet :: Set Ship -> Word64 -> Seed
 mineComet ships = loop
   where
@@ -310,6 +307,3 @@ mineComet ships = loop
       case (tryMineComet ships eny) of
         Nothing -> loop (eny + 1)
         Just x  -> x
-
--- dawnCome :: RIO e (Either Text Dawn)
--- dawnCome = do

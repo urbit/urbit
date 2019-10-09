@@ -8,7 +8,7 @@ extra-deps:
   - flat-0.3.4@sha256:002a0e0ae656ea8cc02a772d0bcb6ea7dbd7f2e79070959cc748ad1e7138eb38
   - base58-bytestring-0.1.0@sha256:a1da72ee89d5450bac1c792d9fcbe95ed7154ab7246f2172b57bd4fd9b5eab79
   - lock-file-0.7.0.0@sha256:3ad84b5e454145e1d928063b56abb96db24a99a21b493989520e58fa0ab37b00
-  - urbit-hob-0.3.0
+  - urbit-hob-0.3.0@sha256:4871bd8ad01171ae5d4e50a344f4b8757e9eee80f62ab40a80f5311cd443b115
 
 nix:
   packages:

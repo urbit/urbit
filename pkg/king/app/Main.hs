@@ -334,17 +334,18 @@ validateNounVal inpVal = do
 
 --------------------------------------------------------------------------------
 
-newShip :: HasLogFunc e => CLI.New -> CLI.Opts -> RIO e ()
+newShip :: forall e. HasLogFunc e => CLI.New -> CLI.Opts -> RIO e ()
 newShip CLI.New{..} opts
   | CLI.BootComet <- nBootType = do
       putStrLn "boot: retrieving list of stars currently accepting comets"
       starList <- dawnCometList
-      putStrLn ("boot: " ++ (tshow $ length starList) ++ " star(s) currently accepting comets")
-      putStrLn "boot: mining a comet. May take up to an hour."
-      putStrLn "boot: If you want to boot faster, get an Azimuth point."
+      putStrLn ("boot: " ++ (tshow $ length starList) ++
+                " star(s) currently accepting comets")
+      putStrLn "boot: mining a comet"
       eny <- io $ randomIO
       let seed = mineComet (Set.fromList starList) eny
       putStrLn ("boot: found comet " ++ (renderShip (sShip seed)))
+      bootFromSeed seed
 
   | CLI.BootFake name <- nBootType = do
       ship <- shipFrom name
@@ -361,14 +362,7 @@ newShip CLI.New{..} opts
         Nothing -> error "Keyfile does not seem to contain a seed."
         Just s  -> pure s
 
-      ethReturn <- dawnVent seed
-
-      case ethReturn of
-        Left x -> error $ unpack x
-        Right dawn -> do
-          let ship = sShip $ dSeed dawn
-          path <- pierPath <$> nameFromShip ship
-          tryBootFromPill nPillPath path nLite flags ship (Dawn dawn)
+      bootFromSeed seed
 
   where
     shipFrom :: Text -> RIO e Ship
@@ -388,6 +382,17 @@ newShip CLI.New{..} opts
         name = case stripPrefix "~" nameWithSig of
           Nothing -> error "Urbit.ob didn't produce string with ~"
           Just x  -> pure x
+
+    bootFromSeed :: Seed -> RIO e ()
+    bootFromSeed seed = do
+      ethReturn <- dawnVent seed
+
+      case ethReturn of
+        Left x -> error $ unpack x
+        Right dawn -> do
+          let ship = sShip $ dSeed dawn
+          path <- pierPath <$> nameFromShip ship
+          tryBootFromPill nPillPath path nLite flags ship (Dawn dawn)
 
     flags = toSerfFlags opts
 
