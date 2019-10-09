@@ -36,6 +36,12 @@
   ::  hash again to prevent length extension attacks
   (sha-256l:sha 32 -)
 ::
+++  ownership-wallet-from-ticket
+  |=  [who=ship ticket=byts pass=(unit @t)]
+  ^-  node
+  =+  master-seed=(argon2u who ticket)
+  (child-node-from-seed master-seed "ownership" pass)
+::
 ++  full-wallet-from-ticket
   ::  who:    username
   ::  ticket: password
