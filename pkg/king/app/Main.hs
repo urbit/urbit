@@ -103,6 +103,7 @@ import Data.Default         (def)
 import KingApp              (runApp)
 import System.Environment   (getProgName)
 import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
+import System.Random        (randomIO)
 import Text.Show.Pretty     (pPrint)
 import Urbit.Time           (Wen)
 import Vere.Dawn
@@ -335,8 +336,15 @@ validateNounVal inpVal = do
 
 newShip :: HasLogFunc e => CLI.New -> CLI.Opts -> RIO e ()
 newShip CLI.New{..} opts
-  | CLI.BootComet <- nBootType =
-      error "Comets don't work yet"
+  | CLI.BootComet <- nBootType = do
+      putStrLn "boot: retrieving list of stars currently accepting comets"
+      starList <- dawnCometList
+      putStrLn ("boot: " ++ (tshow $ length starList) ++ " star(s) currently accepting comets")
+      putStrLn "boot: mining a comet. May take up to an hour."
+      putStrLn "boot: If you want to boot faster, get an Azimuth point."
+      eny <- io $ randomIO
+      let seed = mineComet (Set.fromList starList) eny
+      putStrLn ("boot: found comet " ++ (renderShip (sShip seed)))
 
   | CLI.BootFake name <- nBootType =
       let ship = shipFrom name
@@ -423,6 +431,10 @@ checkComet = do
   putStrLn "Stars currently accepting comets:"
   let starNames = map (Ob.renderPatp . Ob.patp . fromIntegral) starList
   print starNames
+  putStrLn "Trying to mine a comet..."
+  eny <- io $ randomIO
+  let s = mineComet (Set.fromList starList) eny
+  print s
 
 main :: IO ()
 main = do

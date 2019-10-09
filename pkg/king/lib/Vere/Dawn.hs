@@ -6,9 +6,9 @@ import Arvo.Event      hiding (Address)
 import Azimuth.Azimuth
 import UrbitPrelude    hiding (Call, rights, to)
 
+import Data.Bits                     (xor)
 import Data.List                     (nub)
 import Data.Maybe
-import Data.Solidity.Abi.Codec       (encode)
 import Data.Text                     (splitOn)
 import Network.Ethereum.Account
 import Network.Ethereum.Api.Eth
@@ -17,12 +17,16 @@ import Network.Ethereum.Api.Types    hiding (blockNumber)
 import Network.Ethereum.Web3
 import Network.HTTP.Client.TLS
 
-import qualified Crypto.Sign.Ed25519  as Ed
-import qualified Data.ByteArray       as BA
-import qualified Data.Map.Strict      as M
-import qualified Network.Ethereum.Ens as Ens
-import qualified Network.HTTP.Client  as C
-import qualified Urbit.Ob             as Ob
+import qualified Crypto.Hash.SHA512    as SHA512
+import qualified Crypto.Sign.Ed25519   as Ed
+import qualified Data.Binary           as B
+import qualified Data.ByteArray        as BA
+import qualified Data.ByteString       as BS
+import qualified Data.ByteString.Char8 as C
+import qualified Data.Map.Strict       as M
+import qualified Network.Ethereum.Ens  as Ens
+import qualified Network.HTTP.Client   as C
+import qualified Urbit.Ob              as Ob
 
 -- During boot, use the infura provider
 provider = HttpProvider
@@ -30,18 +34,9 @@ provider = HttpProvider
 
 -- Conversion Utilities --------------------------------------------------------
 
-bsToAtom :: ByteString -> Atom
-bsToAtom x = x ^. from atomBytes
-
 -- Takes the web3's bytes representation and changes the endianness.
 bytes32ToBS :: BytesN 32 -> ByteString
 bytes32ToBS = reverse . BA.pack . BA.unpack
-
--- web3 doesn't export unAddress.
-addressToBS :: Address -> ByteString
-addressToBS = reverse . encode
-
-addressToAtom = bsToAtom . addressToBS
 
 toBloq :: Quantity -> Bloq
 toBloq = fromIntegral . unQuantity
@@ -262,11 +257,59 @@ dawnCometList = do
   fromNounErr noun & either (throwIO . uncurry ParseErr) pure
 
 
-mineComet :: Set Ship -> Word128 -> Seed
+-- Comet Mining ----------------------------------------------------------------
+
+mix :: BS.ByteString -> BS.ByteString -> BS.ByteString
+mix a b = BS.pack $ BS.zipWith xor a b
+
+-- TODO: a/b ordering?
+shaf :: BS.ByteString -> BS.ByteString -> BS.ByteString
+shaf salt ruz = (mix a b)
+  where
+    haz = shas salt ruz
+    a = (take 32 haz)
+    b = (drop 32 haz)
+
+shas :: BS.ByteString -> BS.ByteString -> BS.ByteString
+shas salt ruz =
+  SHA512.hash $ mix salt $ SHA512.hash ruz
+
+-- Mining a comet:
+--
+-- A comet fingerprint is the "salted hash" of the +pass, where we mix %bfig
+-- into the 65 bytes long 'b' prefixed pass in a specific way.
+--
+--   (shaf %bfig pub) => (shas %bfig pub) and then mixes both sides.
+--
+cometFingerprint :: Pass -> Ship  -- Word128
+cometFingerprint = Ship . B.decode . fromStrict . (shas bfig) . passToBS
+  where
+    bfig = C.pack "bfig"
+
+
+tryMineComet :: Set Ship -> Word64 -> Maybe Seed
+tryMineComet ships seed =
+  if member shipSponsor ships
+  then Just $ Seed shipName 1 ring Nothing
+  else Nothing
+  where
+    -- Hash the incoming seed into a 64 bytes.
+    baseHash = SHA512.hash $ toStrict $ B.encode seed
+    signSeed = (take 32 baseHash)
+    ringSeed = (drop 32 baseHash)
+    ring = Ring signSeed ringSeed
+    pass = getPassFromRing ring
+    shipName = cometFingerprint pass
+    shipSponsor = shipSein shipName
+
+
+mineComet :: Set Ship -> Word64 -> Seed
 mineComet ships = loop
   where
     loop eny =
-      loop (eny + 1)
+      case (tryMineComet ships eny) of
+        Nothing -> loop (eny + 1)
+        Just x  -> x
 
 -- dawnCome :: RIO e (Either Text Dawn)
 -- dawnCome = do

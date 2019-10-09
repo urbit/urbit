@@ -47,13 +47,13 @@ padByteString bs length | remaining > 0 = bs <> (BS.replicate remaining 0)
 data Pass = Pass { passSign :: Ed.PublicKey, passCrypt :: Ed.PublicKey }
   deriving (Eq, Ord, Show)
 
+passToBS :: Pass -> BS.ByteString
+passToBS Pass{..} = C.singleton 'b' <>
+                    (padByteString (Ed.unPublicKey passSign) 32) <>
+                    (padByteString (Ed.unPublicKey passCrypt) 32)
+
 instance ToNoun Pass where
-  toNoun Pass{..} =
-    Atom $ bs ^. from atomBytes
-    where
-      bs = (C.singleton 'b' <>
-            (padByteString (Ed.unPublicKey passSign) 32) <>
-            (padByteString (Ed.unPublicKey passCrypt) 32))
+  toNoun p = Atom $ (passToBS p) ^. from atomBytes
 
 instance FromNoun Pass where
   parseNoun n = named "Pass" $ do
@@ -71,7 +71,7 @@ instance FromNoun Pass where
 -- encryption key derivation seed, and the authentication key derivation
 -- seed. These aren't actually private keys, but public/private keypairs which
 -- can be derived from these seeds.
-data Ring = Ring { ringSign :: ByteString, ringCrypt :: ByteString }
+data Ring = Ring { ringSign :: BS.ByteString, ringCrypt :: BS.ByteString }
   deriving (Eq)
 
 instance ToNoun Ring where

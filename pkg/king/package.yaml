@@ -37,6 +37,7 @@ dependencies:
   - classy-prelude
   - conduit
   - containers
+  - cryptohash-sha512
   - data-default
   - data-fix
   - directory
