@@ -1197,10 +1197,10 @@
     ?:  (gor b n.a)
       =+  c=$(a l.a)
       ?>  ?=(^ c)
-      [n.c l.c [n.a r.c r.a]]
+      c(r a(l r.c))
     =+  c=$(a r.a)
     ?>  ?=(^ c)
-    [n.c [n.a l.a l.c] r.c]
+    c(l a(r l.c))
   ::
   ++  del                                               ::  b without any a
     ~/  %del
@@ -1210,14 +1210,14 @@
       ~
     ?.  =(b n.a)
       ?:  (gor b n.a)
-        [n.a $(a l.a) r.a]
-      [n.a l.a $(a r.a)]
+        a(l $(a l.a))
+      a(r $(a r.a))
     |-  ^-  {$?(~ _a)}
     ?~  l.a  r.a
     ?~  r.a  l.a
     ?:  (mor n.l.a n.r.a)
-      [n.l.a l.l.a $(l.a r.l.a)]
-    [n.r.a $(r.a l.r.a) r.r.a]
+      l.a(r $(l.a r.l.a))
+    r.a(l $(r.a l.r.a))
   ::
   ++  dif                                               ::  difference
     ~/  %dif
@@ -1235,8 +1235,8 @@
       ?~  d  e
       ?~  e  d
       ?:  (mor n.d n.e)
-        [n.d l.d $(d r.d)]
-      [n.e $(e l.e) r.e]
+        d(r $(d r.d))
+      e(l $(e l.e))
     --
   ::
   ++  dig                                               ::  axis of a in b
@@ -1298,10 +1298,10 @@
       ?.  (mor n.a n.b)
         $(a b, b a)
       ?:  =(n.b n.a)
-        [n.a $(a l.a, b l.b) $(a r.a, b r.b)]
+        a(l $(a l.a, b l.b), r $(a r.a, b r.b))
       ?:  (gor n.b n.a)
-        %-  uni(a $(a l.a, b [n.b l.b ~]))  $(b r.b)
-      %-  uni(a $(a r.a, b [n.b ~ r.b]))  $(b l.b)
+        %-  uni(a $(a l.a, r.b ~))  $(b r.b)
+      %-  uni(a $(a r.a, l.b ~))  $(b l.b)
     --
   ::
   ++  put                                               ::  puts b in a, sorted
@@ -1316,13 +1316,13 @@
       =+  c=$(a l.a)
       ?>  ?=(^ c)
       ?:  (mor n.a n.c)
-        [n.a c r.a]
-      [n.c l.c [n.a r.c r.a]]
+        a(l c)
+      c(r a(l r.c))
     =+  c=$(a r.a)
     ?>  ?=(^ c)
     ?:  (mor n.a n.c)
-      [n.a l.a c]
-    [n.c [n.a l.a l.c] r.c]
+      a(r c)
+    c(r a(r l.c))
   ::
   ++  rep                                               ::  replace by product
     |*  b/_=>(~ |=({* *} +<+))
@@ -1359,15 +1359,15 @@
         a
       ?~  a
         b
+      ?:  =(n.b n.a)
+        b(l $(a l.a, b l.b), r $(a r.a, b r.b))
       ?:  (mor n.a n.b)
-        ?:  =(n.b n.a)
-          [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
         ?:  (gor n.b n.a)
-          $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
-        $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
+          $(l.a $(a l.a, r.b ~), b r.b)
+        $(r.a $(a r.a, l.b ~), b l.b)
       ?:  (gor n.a n.b)
-        $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
-      $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
+        $(l.b $(b l.b, r.a ~), a r.a)
+      $(r.b $(b r.b, l.a ~), a l.a)
     --
   ::
   ++  wyt                                               ::  size of set
@@ -1412,14 +1412,14 @@
     ?:  =(b p.n.a)
       ?:  =(c q.n.a)
         a
-      [[b c] l.a r.a]
+      a(n [b c])
     ?:  (gor b p.n.a)
       =+  d=$(a l.a)
       ?>  ?=(^ d)
-      [n.d l.d [n.a r.d r.a]]
+      d(r a(l r.d))
     =+  d=$(a r.a)
     ?>  ?=(^ d)
-    [n.d [n.a l.a l.d] r.d]
+    d(l a(r l.d))
   ::
   ++  del                                               ::  delete at key b
     ~/  %del
@@ -1429,14 +1429,14 @@
       ~
     ?.  =(b p.n.a)
       ?:  (gor b p.n.a)
-        [n.a $(a l.a) r.a]
-      [n.a l.a $(a r.a)]
+        a(l $(a l.a))
+      a(r $(a r.a))
     |-  ^-  {$?(~ _a)}
     ?~  l.a  r.a
     ?~  r.a  l.a
     ?:  (mor p.n.l.a p.n.r.a)
-      [n.l.a l.l.a $(l.a r.l.a)]
-    [n.r.a $(r.a l.r.a) r.r.a]
+      l.a(r $(l.a r.l.a))
+    r.a(l $(r.a l.r.a))
   ::
   ++  dif                                               ::  difference
     ~/  %dif
@@ -1454,8 +1454,8 @@
       ?~  d  e
       ?~  e  d
       ?:  (mor p.n.d p.n.e)
-        [n.d l.d $(d r.d)]
-      [n.e $(e l.e) r.e]
+        d(r $(d r.d))
+      e(l $(e l.e))
     --
   ::
   ++  dig                                               ::  axis of b key
@@ -1525,15 +1525,15 @@
         ~
       ?:  (mor p.n.a p.n.b)
         ?:  =(p.n.b p.n.a)
-          [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
+          b(l $(a l.a, b l.b), r $(a r.a, b r.b))
         ?:  (gor p.n.b p.n.a)
-          %-  uni(a $(a l.a, b [n.b l.b ~]))  $(b r.b)
-        %-  uni(a $(a r.a, b [n.b ~ r.b]))  $(b l.b)
+          %-  uni(a $(a l.a, r.b ~))  $(b r.b)
+        %-  uni(a $(a r.a, l.b ~))  $(b l.b)
       ?:  =(p.n.a p.n.b)
-        [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
+        b(l $(b l.b, a l.a), r $(b r.b, a r.a))
       ?:  (gor p.n.a p.n.b)
-        %-  uni(a $(b l.b, a [n.a l.a ~]))  $(a r.a)
-      %-  uni(a $(b r.b, a [n.a ~ r.a]))  $(a l.a)
+        %-  uni(a $(b l.b, r.a ~))  $(a r.a)
+      %-  uni(a $(b r.b, l.a ~))  $(a l.a)
     --
   ::
   ++  jab
@@ -1566,18 +1566,18 @@
     ?:  =(b p.n.a)
       ?:  =(c q.n.a)
         a
-      [[b c] l.a r.a]
+      a(n [b c])
     ?:  (gor b p.n.a)
       =+  d=$(a l.a)
       ?>  ?=(^ d)
       ?:  (mor p.n.a p.n.d)
-        [n.a d r.a]
-      [n.d l.d [n.a r.d r.a]]
+        a(l d)
+      d(r a(l r.d))
     =+  d=$(a r.a)
     ?>  ?=(^ d)
     ?:  (mor p.n.a p.n.d)
-      [n.a l.a d]
-    [n.d [n.a l.a l.d] r.d]
+      a(r d)
+    d(l a(r l.d))
   ::
   ++  rep                                               ::  replace by product
     |*  b/_=>(~ |=({* *} +<+))
@@ -1593,7 +1593,7 @@
     =.  n.a  +.d
     =+  e=$(a l.a, b -.d)
     =+  f=$(a r.a, b -.e)
-    [-.f [n.a +.e +.f]]
+    [-.f a(l +.e, r +.f)]
   ::
   ++  run                                               ::  apply gate to values
     |*  b/gate
@@ -1626,15 +1626,15 @@
         a
       ?~  a
         b
+      ?:  =(p.n.b p.n.a)
+        b(l $(a l.a, b l.b), r $(a r.a, b r.b))
       ?:  (mor p.n.a p.n.b)
-        ?:  =(p.n.b p.n.a)
-          [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
         ?:  (gor p.n.b p.n.a)
-          $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
-        $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
+          $(l.a $(a l.a, r.b ~), b r.b)
+        $(r.a $(a r.a, l.b ~), b l.b)
       ?:  (gor p.n.a p.n.b)
-        $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
-      $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
+        $(l.b $(b l.b, r.a ~), a r.a)
+      $(r.b $(b r.b, l.a ~), a l.a)
     --
   ::
   ++  uno                                               ::  general union
@@ -1647,17 +1647,17 @@
         a
       ?~  a
         b
+      ?:  =(p.n.b p.n.a)
+        :+  [p.n.a (meg p.n.a q.n.a q.n.b)]
+          $(b l.b, a l.a)
+        $(b r.b, a r.a)
       ?:  (mor p.n.a p.n.b)
-        ?:  =(p.n.b p.n.a)
-          :+  [p.n.a (meg p.n.a q.n.a q.n.b)]
-            $(b l.b, a l.a)
-          $(b r.b, a r.a)
         ?:  (gor p.n.b p.n.a)
-          $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
-        $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
+          $(l.a $(a l.a, r.b ~), b r.b)
+        $(r.a $(a r.a, l.b ~), b l.b)
       ?:  (gor p.n.a p.n.b)
-        $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
-      $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
+        $(l.b $(b l.b, r.a ~), a r.a)
+      $(r.b $(b r.b, l.a ~), a l.a)
     --
   ::
   ::
@@ -1665,7 +1665,7 @@
     |*  b/$-({* *} *)
     |-
     ?~  a  ~
-    [n=[p=p.n.a q=(b p.n.a q.n.a)] l=$(a l.a) r=$(a r.a)]
+    a(n n.a(q (b p.n.a q.n.a)), l $(a l.a), r $(a r.a))
   ::
   ++  wyt                                               ::  depth of map
     |-  ^-  @
@@ -1754,9 +1754,9 @@
     |-  ^+  a
     ?~  a  ~
     ?.  |(?=(~ l.a) (mor n.a n.l.a))
-      $(a [n.l.a l.l.a $(a [n.a r.l.a r.a])])
+      $(a l.a(r $(a a(l r.l.a))))
     ?.  |(?=(~ r.a) (mor n.a n.r.a))
-      $(a [n.r.a $(a [n.a l.a l.r.a]) r.r.a])
+      $(a r.a(l $(a a(r l.r.a))))
     a
   ::
   ++  dep                                               ::  max depth of queue
@@ -1778,30 +1778,30 @@
     =+  b=$(a r.a)
     :-  p.b
     ?:  |(?=(~ q.b) (mor n.a n.q.b))
-      [n.a l.a q.b]
-    [n.q.b [n.a l.a l.q.b] r.q.b]
+      a(r q.b)
+    a(n n.q.b, l a(r l.q.b), r r.q.b)
   ::
-  ++  nip                                               ::  remove root
+  ++  nip                                               ::  removes root
     |-  ^+  a
     ?~  a  ~
     ?~  l.a  r.a
     ?~  r.a  l.a
     ?:  (mor n.l.a n.r.a)
-      [n.l.a l.l.a $(l.a r.l.a)]
-    [n.r.a $(r.a l.r.a) r.r.a]
+      l.a(r $(l.a r.l.a))
+    r.a(l $(r.a l.r.a))
   ::
-  ++  nap                                               ::  removes head
+  ++  nap                                               ::  removes root
     ?>  ?=(^ a)
     ?:  =(~ l.a)  r.a
     =+  b=get(a l.a)
-    bal(a ^+(a [p.b q.b r.a]))
+    bal(n.a p.b, l.a q.b)
   ::
   ++  put                                               ::  insert new tail
     |*  b/*
     |-  ^+  a
     ?~  a
       [b ~ ~]
-    bal(a a(l $(a l.a)))
+    bal(l.a $(a l.a))
   ::
   ++  tap                                               ::  adds list to end
     =+  b=`(list _?>(?=(^ a) n.a))`~
