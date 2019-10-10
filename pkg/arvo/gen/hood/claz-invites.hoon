@@ -1,4 +1,8 @@
-::  |claz-invites:
+::  |claz-invites: generate invite tickets for star's children
+::
+::    writes to .txt with lines in the format ~planet,~ticket,0xaddress
+::
+::    eg: |claz-invites ~marzod 1 10 %/example-invites/txt
 ::
 /+  keygen
 =,  ethereum
