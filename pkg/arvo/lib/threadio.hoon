@@ -15,6 +15,10 @@
   ^-  form:m
   (send-raw-cards card ~)
 ::
+++  ignore
+  |=  tin=thread-input:thread
+  `[%fail %ignore ~]
+::
 ++  get-bowl
   =/  m  (thread ,bowl:mall)
   ^-  form:m
@@ -32,6 +36,12 @@
   ^-  form:m
   |=  tin=thread-input:thread
   `[%done our.bowl.tin]
+::
+++  get-entropy
+  =/  m  (thread ,@uvJ)
+  ^-  form:m
+  |=  tin=thread-input:thread
+  `[%done eny.bowl.tin]
 ::
 ::  Convert skips to %ignore failures.
 ::
@@ -110,15 +120,24 @@
       (pure:m ~)
   ==
 ::
+++  take-subscribe
+  =/  m  (thread ,path)
+  |=  tin=thread-input:thread
+  ?+  in.tin  `[%skip ~]
+      ~  `[%wait ~]
+      [~ %subscribe *]
+    `[%done path.u.in.tin]
+  ==
+::
 ++  take-wake
-  |=  until=@da
+  |=  until=(unit @da)
   =/  m  (thread ,~)
   ^-  form:m
   |=  tin=thread-input:thread
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
       [~ %sign [%wait @ ~] %b %wake *]
-    ?.  =(`until (slaw %da i.t.wire.u.in.tin))
+    ?.  |(?=(~ until) =(`u.until (slaw %da i.t.wire.u.in.tin)))
       `[%skip ~]
     ?~  error.sign-arvo.u.in.tin
       `[%done ~]
@@ -203,10 +222,8 @@
   |=  until=@da
   =/  m  (thread ,~)
   ^-  form:m
-  =/  =card:agent:mall
-    [%pass /wait/(scot %da until) %arvo %b %wait until]
-  ;<  ~  bind:m  (send-raw-card card)
-  (take-wake until)
+  ;<  ~  bind:m  (send-wait until)
+  (take-wake `until)
 ::
 ++  sleep
   |=  for=@dr
@@ -214,6 +231,14 @@
   ^-  form:m
   ;<  now=@da  bind:m  get-time
   (wait (add now for))
+::
+++  send-wait
+  |=  until=@da
+  =/  m  (thread ,~)
+  ^-  form:m
+  =/  =card:agent:mall
+    [%pass /wait/(scot %da until) %arvo %b %wait until]
+  (send-raw-card card)
 ::
 ++  set-timeout
   |*  computation-result=mold
@@ -246,6 +271,11 @@
   ^-  form:m
   (send-raw-card %pass /request %arvo %i %request request *outbound-config:iris)
 ::
+++  send-cancel-request
+  =/  m  (thread ,~)
+  ^-  form:m
+  (send-raw-card %pass /request %arvo %i %cancel-request ~)
+::
 ++  take-client-response
   =/  m  (thread ,client-response:iris)
   ^-  form:m
@@ -254,6 +284,18 @@
       ~  `[%wait ~]
       [~ %sign [%request ~] %i %http-response %finished *]
     `[%done client-response.sign-arvo.u.in.tin]
+  ==
+::
+++  take-maybe-response
+  =/  m  (thread ,(unit client-response:iris))
+  ^-  form:m
+  |=  tin=thread-input:thread
+  ?+  in.tin  `[%skip ~]
+      ~  `[%wait ~]
+      [~ %sign [%request ~] %i %http-response %cancel *]
+    `[%done ~]
+      [~ %sign [%request ~] %i %http-response %finished *]
+    `[%done `client-response.sign-arvo.u.in.tin]
   ==
 ::
 ++  extract-body
@@ -284,7 +326,7 @@
   =/  m  (thread ,~)
   =/  m-a  (thread ,a)
   =|  queue=(qeu (unit input:thread))
-  =|  active=(unit [=form:m-a forms=(list $-(a form:m-a))])
+  =|  active=(unit [in=(unit input:thread) =form:m-a forms=(list $-(a form:m-a))])
   =|  state=a
   |=  forms=(lest $-(a form:m-a))
   ^-  form:m
@@ -301,7 +343,7 @@
       `[%cont top]
     =^  in=(unit input:thread)  queue  ~(get to queue)
     ^-  output:m
-    =.  active  `[(i.forms state) t.forms]
+    =.  active  `[in (i.forms state) t.forms]
     ^-  output:m
     (run bowl in)
   ::
@@ -315,11 +357,14 @@
       ?-  -.next.res
           %wait  `[%wait ~]
           %skip  `[%cont ..$(queue (~(put to queue) in.tin))]
-          %cont  `[%cont ..$(active `[self.next.res forms.u.active])]
+          %cont  `[%cont ..$(active `[in.u.active self.next.res forms.u.active])]
           %done  (continue(active ~, state value.next.res) bowl.tin)
           %fail
         ?:  &(?=(^ forms.u.active) ?=(%ignore p.err.next.res))
-          $(active `[(i.forms.u.active state) t.forms.u.active])
+          %=  $
+            active  `[in.u.active (i.forms.u.active state) t.forms.u.active]
+            in.tin  in.u.active
+          ==
         `[%fail err.next.res]
       ==
     [(weld cards.res cards.output) next.output]

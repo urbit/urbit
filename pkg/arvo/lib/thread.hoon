@@ -4,6 +4,7 @@
   $%  [%poke =cage]
       [%sign =wire =sign-arvo]
       [%agent =wire =gift:agent:mall]
+      [%subscribe =path]
   ==
 +$  thread-input  [=bowl:mall in=(unit input)]
 ::

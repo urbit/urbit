@@ -30,7 +30,15 @@
       ==
     [cards this]
   ::
-  ++  handle-subscribe       handle-subscribe:def
+  ++  handle-subscribe
+    |=  =path
+    ^-  (quip card _this)
+    =^  cards  state
+      ?+  path  (handle-subscribe:def path)
+        [%imp @ *]  (handle-subscribe:sc t.path)
+      ==
+    [cards this]
+  ::
   ++  handle-unsubscribe     handle-unsubscribe:def
   ++  handle-peek
     |=  =path
@@ -66,6 +74,10 @@
 ++  handle-poke-imput
   |=  imput
   (take-input imp-name ~ %poke cage)
+::
+++  handle-subscribe
+  |=  [=imp-name =path]
+  (take-input imp-name ~ %subscribe path)
 ::
 ++  handle-sign
   |=  [=imp-name =wire =sign-arvo]

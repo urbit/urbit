@@ -56,7 +56,7 @@
   =/  m  (thread ,^top-comments)
   ^-  form:m
   %-  (slog leaf+"drumroll please..." ~)
-  ;<  ~      bind:m  (sleep ~s3)
+  ;<  ~  bind:m  (sleep ~s3)
   %-  (slog leaf+"Top comments:" (zing (turn top-comments comment-to-tang)))
   (pure:m top-comments)
 ::
