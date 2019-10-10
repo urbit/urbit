@@ -58,10 +58,6 @@ renderShip = Ob.renderPatp . Ob.patp . fromIntegral
 
 -- Data Validation -------------------------------------------------------------
 
--- for =(who.seed `@`fix:ex:cub)
--- getFingerprintFromKey :: Ring -> Atom
--- getFingerprintFromKey = undefined
-
 -- Derive public key structure from the key derivation seed structure
 ringToPass :: Ring -> Pass
 ringToPass Ring{..} = Pass{..}
@@ -204,21 +200,17 @@ getSponsorshipChain block azimuth = loop
         (Ob.Comet, _) -> fail "Comets cannot be sponsors"
         (Ob.Moon, _)  -> fail "Moons cannot be sponsors"
 
-        (Ob.Galaxy, Nothing) ->
-            fail $ unpack ("Galaxy " ++ renderShip ship ++ " not booted")
-
-        (Ob.Galaxy, Just _) -> pure [(ship, ethPoint)]
-
         (_, Nothing) ->
             fail $ unpack ("Ship " ++ renderShip ship ++ " not booted")
 
-        (_, Just (_, _, _, (has, sponsor), _)) -> do
-            case has of
-              False -> fail $ unpack ("Ship " ++ renderShip ship ++
-                                      " has no sponsor")
-              True -> do
-                chain <- loop sponsor
-                pure $ chain ++ [(ship, ethPoint)]
+        (Ob.Galaxy, Just _) -> pure [(ship, ethPoint)]
+
+        (_, Just (_, _, _, (False, _), _)) ->
+            fail $ unpack ("Ship " ++ renderShip ship ++ " has no sponsor")
+
+        (_, Just (_, _, _, (True, sponsor), _)) -> do
+            chain <- loop sponsor
+            pure $ chain ++ [(ship, ethPoint)]
 
 
 -- Produces either an error or a validated boot event structure.
