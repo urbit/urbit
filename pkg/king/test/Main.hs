@@ -17,6 +17,7 @@ import qualified BehnTests
 import qualified DawnTests
 import qualified DeriveNounTests
 import qualified HoonMapSetTests
+import qualified JamTests
 import qualified LogTests
 import qualified NounConversionTests
 
@@ -31,6 +32,7 @@ main = do
         , DawnTests.tests
         , DeriveNounTests.tests
         , HoonMapSetTests.tests
+        , JamTests.tests
         , LogTests.tests
         , NounConversionTests.tests
         ]
