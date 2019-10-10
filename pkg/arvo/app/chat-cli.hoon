@@ -252,19 +252,18 @@
   |=  =glyph
   ^-  (unit target)
   =+  lax=(~(get ju binds) glyph)
-  ::  no circle.
+  ::  no circle
   ?:  =(~ lax)  ~
-  ::  single circle.
-  ?:  ?=([* ~ ~] lax)  `n.lax
-  ::  in case of multiple audiences, pick the most recently active one.
-  |-  ^-  (unit target)
-  ~&  %multi-bind-support-missing
-  ?~  grams  ~
-  ~
-  ::TODO
-  :: =+  pan=(silt ~(tap in aud.i.grams))
-  :: ?:  (~(has in lax) pan)  `pan
-  :: $(grams t.grams)
+  %-  some
+  ::  single circle
+  ?:  ?=([* ~ ~] lax)  n.lax
+  ::  in case of multiple audiences, pick the most recently active one
+  |-  ^-  target
+  ?~  grams  -:~(tap in lax)
+  =*  source  source.i.grams
+  ?:  (~(has in lax) source)
+    source
+  $(grams t.grams)
 ::  +read-envelope: add envelope to state and show it to user
 ::
 ++  read-envelope
