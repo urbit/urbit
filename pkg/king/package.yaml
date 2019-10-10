@@ -37,6 +37,7 @@ dependencies:
   - classy-prelude
   - conduit
   - containers
+  - cryptohash-sha256
   - cryptohash-sha512
   - data-default
   - data-fix
@@ -86,6 +87,7 @@ dependencies:
   - stm-chans
   - tasty
   - tasty-golden
+  - tasty-hunit
   - tasty-quickcheck
   - tasty-th
   - template-haskell

@@ -91,6 +91,7 @@ import Data.Conduit.List hiding (catMaybes, map, replicate, take)
 import Data.RAcquire
 import Noun              hiding (Parser)
 import Noun.Atom
+import Noun.Conversions  (cordToUW)
 import RIO.Directory
 import Vere.Pier
 import Vere.Pier.Types
@@ -407,9 +408,6 @@ startBrowser pierPath = runRAcquire $ do
     lockFile pierPath
     log <- Log.existing (pierPath <> "/.urb/log")
     rio $ EventBrowser.run log
-
-cordToUW :: Cord -> Maybe UW
-cordToUW = fromNoun . toNoun
 
 checkDawn :: HasLogFunc e => FilePath -> RIO e ()
 checkDawn keyfilePath = do

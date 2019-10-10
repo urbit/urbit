@@ -14,6 +14,7 @@ import System.Environment (setEnv)
 import qualified AmesTests
 import qualified ArvoTests
 import qualified BehnTests
+import qualified DawnTests
 import qualified DeriveNounTests
 import qualified HoonMapSetTests
 import qualified LogTests
@@ -24,11 +25,12 @@ main = do
     makeAbsolute "../.." >>= setCurrentDirectory
     setEnv "TASTY_NUM_THREADS" "1"
     runInBoundThread $ defaultMain $ testGroup "Urbit"
-        [ DeriveNounTests.tests
+        [ AmesTests.tests
         , ArvoTests.tests
-        , AmesTests.tests
-        , LogTests.tests
         , BehnTests.tests
-        , NounConversionTests.tests
+        , DawnTests.tests
+        , DeriveNounTests.tests
         , HoonMapSetTests.tests
+        , LogTests.tests
+        , NounConversionTests.tests
         ]

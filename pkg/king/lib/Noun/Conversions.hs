@@ -7,7 +7,7 @@ module Noun.Conversions
   , Cord(..), Knot(..), Term(..), Tape(..), Tour(..)
   , BigTape(..), BigCord(..)
   , Wall
-  , UD(..), UV(..), UW(..)
+  , UD(..), UV(..), UW(..), cordToUW
   , Mug(..), Path(..), EvilPath(..), Ship(..)
   , Lenient(..), pathToFilePath, filePathToPath
   ) where
@@ -285,6 +285,9 @@ uwCharNum = \case
   '~' -> pure 63
   _   -> Nothing
 
+-- Maybe parses the underlying atom value from a text printed in UW format.
+cordToUW :: Cord -> Maybe UW
+cordToUW = fromNoun . toNoun
 
 -- Char ------------------------------------------------------------------------
 

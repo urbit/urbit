@@ -15,6 +15,7 @@ import Network.Ethereum.Web3
 import Network.HTTP.Client.TLS
 
 import qualified Azimuth.Azimuth       as AZ
+import qualified Crypto.Hash.SHA256    as SHA256
 import qualified Crypto.Hash.SHA512    as SHA512
 import qualified Crypto.Sign.Ed25519   as Ed
 import qualified Data.Binary           as B
@@ -62,8 +63,8 @@ renderShip = Ob.renderPatp . Ob.patp . fromIntegral
 -- getFingerprintFromKey = undefined
 
 -- Derive public key structure from the key derivation seed structure
-getPassFromRing :: Ring -> Pass
-getPassFromRing Ring{..} = Pass{..}
+ringToPass :: Ring -> Pass
+ringToPass Ring{..} = Pass{..}
   where
     passCrypt = decode ringCrypt
     passSign = decode ringSign
@@ -157,12 +158,13 @@ validateShipAndGetImmediateSponsor block azimuth (Seed ship life ring oaf) =
     _        -> validateRest
   where
     validateComet = do
-      -- TODO: All validation of the comet.
       -- A comet address is the fingerprint of the keypair
-      -- when (ship /= (x ring.seed)) (Left "todo: key mismatch")
-      -- A comet can never be breached
-      -- when live Left "comet already booted"
-      -- TODO: the parent must be launched check?
+      let shipFromPass = cometFingerprint $ ringToPass ring
+      when (ship /= shipFromPass) $
+        fail ("comet name doesn't match fingerprint " ++ show ship ++ " vs " ++
+              show shipFromPass)
+      when (life /= 1) $
+        fail ("comet can never be re-keyed")
       pure (shipSein ship)
 
     validateMoon = do
@@ -182,7 +184,7 @@ validateShipAndGetImmediateSponsor block azimuth (Seed ship life ring oaf) =
               fail ("keyfile life mismatch; keyfile claims life " ++
                     show life ++ ", but Azimuth claims life " ++
                     show netLife)
-          when ((getPassFromRing ring) /= pass) $
+          when ((ringToPass ring) /= pass) $
               fail "keyfile does not match blockchain"
           -- TODO: The hoon code does a breach check, but the C code never
           -- supplies the data necessary for it to function.
@@ -261,29 +263,29 @@ dawnCometList = do
 
 -- Comet Mining ----------------------------------------------------------------
 
--- TODO: Comet mining doesn't seem to work and I'm guessing it's because I'm
--- screwing up the math below.
-
--- TODO: This might be entirely wrong. What happens with a or b is longer?
 mix :: BS.ByteString -> BS.ByteString -> BS.ByteString
-mix a b = BS.pack $ BS.zipWith xor a b
+mix a b = BS.pack $ loop (BS.unpack a) (BS.unpack b)
+  where
+    loop [] []         = []
+    loop a  []         = a
+    loop [] b          = b
+    loop (x:xs) (y:ys) = (xor x y) : loop xs ys
 
--- TODO: a/b ordering?
+shas :: BS.ByteString -> BS.ByteString -> BS.ByteString
+shas salt = SHA256.hash . mix salt . SHA256.hash
+
 shaf :: BS.ByteString -> BS.ByteString -> BS.ByteString
 shaf salt ruz = (mix a b)
   where
     haz = shas salt ruz
-    a = (drop 32 haz)
-    b = (take 32 haz)
+    a = (take 16 haz)
+    b = (drop 16 haz)
 
-shas :: BS.ByteString -> BS.ByteString -> BS.ByteString
-shas salt ruz =
-  SHA512.hash $ mix salt $ SHA512.hash ruz
+cometFingerprintBS :: Pass -> ByteString
+cometFingerprintBS = (shaf $ C.pack "bfig") . passToBS
 
-cometFingerprint :: Pass -> Ship  -- Word128
-cometFingerprint = Ship . B.decode . fromStrict . (shas bfig) . passToBS
-  where
-    bfig = C.pack "bfig"
+cometFingerprint :: Pass -> Ship
+cometFingerprint = Ship . B.decode . fromStrict . reverse . cometFingerprintBS
 
 tryMineComet :: Set Ship -> Word64 -> Maybe Seed
 tryMineComet ships seed =
@@ -296,7 +298,7 @@ tryMineComet ships seed =
     signSeed = (take 32 baseHash)
     ringSeed = (drop 32 baseHash)
     ring = Ring signSeed ringSeed
-    pass = getPassFromRing ring
+    pass = ringToPass ring
     shipName = cometFingerprint pass
     shipSponsor = shipSein shipName
 
