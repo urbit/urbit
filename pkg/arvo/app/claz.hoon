@@ -44,7 +44,7 @@
       [%deed deeds-json=cord]
       ::  %invites: sendPoint for every ship in ship,ticket,owner file
       ::
-      ::    to generate such a file, try +claz|invites ~star 1 10
+      ::    to generate such a file, try |claz-invites ~star 1 10 %/out/txt
       ::
       [%invites as-who=ship file=path]
       ::  %lock-prep: prepare for lockup by transfering ships to the ceremony address
