@@ -592,11 +592,12 @@ pathToFilePath p = joinPath components
 filePathToPath :: FilePath -> Path
 filePathToPath fp = Path path
   where
+    path = map (MkKnot . pack) (dir ++ file)
     dir = case (splitDirectories $ (takeDirectory fp)) of
+      ["."]    -> []
       ("/":xs) -> xs
       x        -> x
-    file = [takeBaseName fp, ext]
-    path = map (MkKnot . pack) (dir ++ file)
+    file = if ext /= "" then [takeBaseName fp, ext] else [takeBaseName fp]
     ext = case takeExtension fp of
       ('.':xs) -> xs
       x        -> x

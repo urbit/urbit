@@ -14,6 +14,7 @@ import System.Environment (setEnv)
 import qualified AmesTests
 import qualified ArvoTests
 import qualified BehnTests
+import qualified ClayTests
 import qualified DawnTests
 import qualified DeriveNounTests
 import qualified HoonMapSetTests
@@ -29,6 +30,7 @@ main = do
         [ AmesTests.tests
         , ArvoTests.tests
         , BehnTests.tests
+        , ClayTests.tests
         , DawnTests.tests
         , DeriveNounTests.tests
         , HoonMapSetTests.tests
