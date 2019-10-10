@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from "react-router-dom";
 import classnames from 'classnames';
 import _ from 'lodash';
 
@@ -64,7 +65,7 @@ export class Sidebar extends Component {
     return (
       <div className="h-100 w-100 overflow-x-hidden flex flex-column">
         <div className="pl3 pr3 pt2 pb3 cf bb b--black-30" style={{height: '88px'}}>
-          <h2 className="dib w-50 gray">Chat</h2>
+          <h2 className="dib w-50 gray"><Link to="/~chat">Chat</Link></h2>
           <a
             className="dib tr w-50 pointer plus-font"
             onClick={this.onClickNew.bind(this)}>+</a>
