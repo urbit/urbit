@@ -48,7 +48,7 @@
       [%leave target]                               ::  nuke target
     ::
       [%bind glyph target]                          ::  bind glyph
-      [%unbind glyph]                               ::  unbind glyph
+      [%unbind glyph (unit target)]                 ::  unbind glyph
       [%what (unit $@(char target))]                ::  glyph lookup
     ::
       [%settings ~]                                 ::  show active settings
@@ -234,8 +234,12 @@
 ::  +unbind-glyph: remove all binding for glyph
 ::
 ++  unbind-glyph
-  |=  =glyph  ::TODO  do we really not want this optionally per-target?
+  |=  [=glyph targ=(unit target)]
   ^-  (quip move _this)
+  ?^  targ
+    =.  binds  (~(del ju binds) glyph u.targ)
+    =.  bound  (~(del by bound) u.targ)
+    [(show-glyph:sh-out glyph ~) this]
   =/  ole=(set target)
     (~(get ju binds) glyph)
   =.  binds  (~(del by binds) glyph)
@@ -364,7 +368,7 @@
         ;~((glue ace) (tag %leave) targ)
       ::
         ;~((glue ace) (tag %bind) glyph targ)
-        ;~((glue ace) (tag %unbind) glyph)
+        ;~((glue ace) (tag %unbind) ;~(plug glyph (punt ;~(pfix ace targ))))
         ;~(plug (perk %what ~) (punt ;~(pfix ace ;~(pose glyph targ))))
       ::
         ;~(plug (tag %settings) (easy ~))
@@ -963,7 +967,7 @@
     :_  [prompt ~]
     %-  note
     %+  weld  "set: {[glyph ~]} "
-    ?~  target  "nothing"
+    ?~  target  "unbound"
     ~(phat tr u.target)
   --
 ::
