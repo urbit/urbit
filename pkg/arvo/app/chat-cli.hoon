@@ -204,22 +204,30 @@
       [~ this]
     (bind-default-glyph target)
   [[(show-create:sh-out target) moves] this]
-::  +bind-default-glyph:
+::  +bind-default-glyph: bind to default, or random available
 ::
 ++  bind-default-glyph
   |=  =target
   ^-  (quip move _this)
-  =-  (bind-glyph - target)
-  ::TODO  try not to double-bind
-  =-  (snag - glyphs)
-  (mod (mug target) (lent glyphs))
+  =;  =glyph  (bind-glyph glyph target)
+  |^  =/  g=glyph  (choose glyphs)
+      ?.  (~(has by binds) g)  g
+      =/  available=(list glyph)
+        %~  tap  in
+        (~(dif in `(set glyph)`(sy glyphs)) ~(key by binds))
+      ?~  available  g
+      (choose available)
+  ++  choose
+    |=  =(list glyph)
+    =;  i=@ud  (snag i list)
+    (mod (mug target) (lent list))
+  --
 ::  +bind-glyph: add binding for glyph
 ::
 ++  bind-glyph
   |=  [=glyph =target]
   ^-  (quip move _this)
   ::TODO  should send these to settings store eventually
-  ::TODO  disallow double-binding glyphs?
   =.  bound  (~(put by bound) target glyph)
   =.  binds  (~(put ju binds) glyph target)
   [(show-glyph:sh-out glyph `target) this]
