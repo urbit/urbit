@@ -19,8 +19,8 @@
   $:  grams=(list mail)                             ::  all messages
       known=(set [target serial])                   ::  known message lookup
       count=@ud                                     ::  (lent grams)
-      bound=(map target char)                       ::  bound circle glyphs
-      binds=(jug char target)                       ::  circle glyph lookup
+      bound=(map target glyph)                      ::  bound circle glyphs
+      binds=(jug glyph target)                      ::  circle glyph lookup
       audience=(set target)                         ::  active targets
       settings=(set term)                           ::  frontend flags
       width=@ud                                     ::  display width
@@ -228,6 +228,10 @@
   |=  [=glyph =target]
   ^-  (quip move _this)
   ::TODO  should send these to settings store eventually
+  ::  if the target was already bound to another glyph, un-bind that
+  ::
+  =?  binds  (~(has by bound) target)
+    (~(del ju binds) (~(got by bound) target) target)
   =.  bound  (~(put by bound) target glyph)
   =.  binds  (~(put ju binds) glyph target)
   [(show-glyph:sh-out glyph `target) this]
