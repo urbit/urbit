@@ -482,7 +482,11 @@
 ++  single
   |=  [nonce=@ud =network as=address =call]
   ^-  transaction
-  =-  (do network nonce ecliptic -)
+  =-  (do network nonce contract data)
+  ^-  [contract=address data=tape]  ::TODO  =;
+  :-  ?+  -.call  ecliptic
+        %send-point  delegated-sending
+      ==
   ?-  -.call
     %create-galaxy  (create-galaxy:dat +.call)
     %spawn  (spawn:dat +.call)
