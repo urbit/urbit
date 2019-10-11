@@ -7,7 +7,6 @@ export class ChatTabBar extends Component {
 
   render() {
     let props = this.props;
-    let toBaseLink = '/~chat/room' + props.station;
 
     let bbStream = '',
       bbMembers = '',
@@ -42,20 +41,20 @@ export class ChatTabBar extends Component {
         <div className={"dib h-100" + bbStream} style={{width:'160px'}}>
           <Link
             className={'no-underline label-regular v-mid ' + strColor}
-            to={toBaseLink}>Stream</Link>
+            to={'/~chat/room' + props.station}>Stream</Link>
         </div>
         { !!props.isOwner ? (
           <div className={"dib h-100" + bbMembers} style={{width:'160px'}}>
             <Link
               className={'no-underline label-regular v-mid ' + memColor}
-              to={toBaseLink + '/members'}>{membersText}</Link>
+              to={'/~chat/members' + props.station}>{membersText}</Link>
           </div>
           ) : <div className="dib" style={{width:0}}></div>
         }
         <div className={"dib h-100" + bbSettings} style={{width:'160px'}}>
           <Link
             className={'no-underline label-regular v-mid ' + setColor}
-            to={toBaseLink + '/settings'}>Settings</Link>
+            to={'/~chat/settings' + props.station}>Settings</Link>
         </div>
       </div>
     );

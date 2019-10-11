@@ -72,8 +72,8 @@ export class Root extends Component {
                   <div className="pl3 pr3 pt2 pb3">
                     <h2>Home</h2>
                     <p className="body-regular-400 pt3">
-                      Select a chat from the sidebar
-                      or <Link to="/~chat/new">create a new one</Link>.
+                      <Link to="/~chat/new">Create a new chat</Link> or&nbsp;
+                      <Link to="/~chat/join">join an existing one.</Link>
                     </p>
                   </div>
                 </div>
@@ -95,7 +95,7 @@ export class Root extends Component {
               </Skeleton>
             );
           }} />
-        <Route exact path="/~chat/join/:ship/:station"
+        <Route exact path="/~chat/join"
           render={ (props) => {
             return (
               <Skeleton sidebar={renderChannelSidebar(props)}>
@@ -107,7 +107,7 @@ export class Root extends Component {
               </Skeleton>
             );
            }} />
-         <Route exact path="/~chat/room/:ship/:station"
+         <Route exact path="/~chat/room/:ship/:station+"
            render={ (props) => {
              let station =
                `/${props.match.params.ship}/${props.match.params.station}`;
@@ -137,7 +137,7 @@ export class Root extends Component {
                </Skeleton>
              );
            }} />
-         <Route exact path="/~chat/room/:ship/:station/members"
+         <Route exact path="/~chat/members/:ship/:station+"
            render={ (props) => {
              let station =
                `/${props.match.params.ship}/${props.match.params.station}`;
@@ -162,7 +162,7 @@ export class Root extends Component {
                </Skeleton>
              );
            }} />
-         <Route exact path="/~chat/room/:ship/:station/settings"
+           <Route exact path="/~chat/settings/:ship/:station+"
            render={ (props) => {
              let station =
                `/${props.match.params.ship}/${props.match.params.station}`;
