@@ -19,8 +19,8 @@
   $:  grams=(list mail)                             ::  all messages
       known=(set [target serial])                   ::  known message lookup
       count=@ud                                     ::  (lent grams)
-      bound=(map target char)                       ::  bound circle glyphs
-      binds=(jug char target)                       ::  circle glyph lookup
+      bound=(map target glyph)                      ::  bound circle glyphs
+      binds=(jug glyph target)                      ::  circle glyph lookup
       audience=(set target)                         ::  active targets
       settings=(set term)                           ::  frontend flags
       width=@ud                                     ::  display width
@@ -48,7 +48,7 @@
       [%leave target]                               ::  nuke target
     ::
       [%bind glyph target]                          ::  bind glyph
-      [%unbind glyph]                               ::  unbind glyph
+      [%unbind glyph (unit target)]                 ::  unbind glyph
       [%what (unit $@(char target))]                ::  glyph lookup
     ::
       [%settings ~]                                 ::  show active settings
@@ -204,30 +204,46 @@
       [~ this]
     (bind-default-glyph target)
   [[(show-create:sh-out target) moves] this]
-::  +bind-default-glyph:
+::  +bind-default-glyph: bind to default, or random available
 ::
 ++  bind-default-glyph
   |=  =target
   ^-  (quip move _this)
-  =-  (bind-glyph - target)
-  ::TODO  try not to double-bind
-  =-  (snag - glyphs)
-  (mod (mug target) (lent glyphs))
+  =;  =glyph  (bind-glyph glyph target)
+  |^  =/  g=glyph  (choose glyphs)
+      ?.  (~(has by binds) g)  g
+      =/  available=(list glyph)
+        %~  tap  in
+        (~(dif in `(set glyph)`(sy glyphs)) ~(key by binds))
+      ?~  available  g
+      (choose available)
+  ++  choose
+    |=  =(list glyph)
+    =;  i=@ud  (snag i list)
+    (mod (mug target) (lent list))
+  --
 ::  +bind-glyph: add binding for glyph
 ::
 ++  bind-glyph
   |=  [=glyph =target]
   ^-  (quip move _this)
   ::TODO  should send these to settings store eventually
-  ::TODO  disallow double-binding glyphs?
+  ::  if the target was already bound to another glyph, un-bind that
+  ::
+  =?  binds  (~(has by bound) target)
+    (~(del ju binds) (~(got by bound) target) target)
   =.  bound  (~(put by bound) target glyph)
   =.  binds  (~(put ju binds) glyph target)
   [(show-glyph:sh-out glyph `target) this]
 ::  +unbind-glyph: remove all binding for glyph
 ::
 ++  unbind-glyph
-  |=  =glyph  ::TODO  do we really not want this optionally per-target?
+  |=  [=glyph targ=(unit target)]
   ^-  (quip move _this)
+  ?^  targ
+    =.  binds  (~(del ju binds) glyph u.targ)
+    =.  bound  (~(del by bound) u.targ)
+    [(show-glyph:sh-out glyph ~) this]
   =/  ole=(set target)
     (~(get ju binds) glyph)
   =.  binds  (~(del by binds) glyph)
@@ -244,19 +260,18 @@
   |=  =glyph
   ^-  (unit target)
   =+  lax=(~(get ju binds) glyph)
-  ::  no circle.
+  ::  no circle
   ?:  =(~ lax)  ~
-  ::  single circle.
-  ?:  ?=([* ~ ~] lax)  `n.lax
-  ::  in case of multiple audiences, pick the most recently active one.
-  |-  ^-  (unit target)
-  ~&  %multi-bind-support-missing
-  ?~  grams  ~
-  ~
-  ::TODO
-  :: =+  pan=(silt ~(tap in aud.i.grams))
-  :: ?:  (~(has in lax) pan)  `pan
-  :: $(grams t.grams)
+  %-  some
+  ::  single circle
+  ?:  ?=([* ~ ~] lax)  n.lax
+  ::  in case of multiple audiences, pick the most recently active one
+  |-  ^-  target
+  ?~  grams  -:~(tap in lax)
+  =*  source  source.i.grams
+  ?:  (~(has in lax) source)
+    source
+  $(grams t.grams)
 ::  +read-envelope: add envelope to state and show it to user
 ::
 ++  read-envelope
@@ -357,7 +372,7 @@
         ;~((glue ace) (tag %leave) targ)
       ::
         ;~((glue ace) (tag %bind) glyph targ)
-        ;~((glue ace) (tag %unbind) glyph)
+        ;~((glue ace) (tag %unbind) ;~(plug glyph (punt ;~(pfix ace targ))))
         ;~(plug (perk %what ~) (punt ;~(pfix ace ;~(pose glyph targ))))
       ::
         ;~(plug (tag %settings) (easy ~))
@@ -956,7 +971,7 @@
     :_  [prompt ~]
     %-  note
     %+  weld  "set: {[glyph ~]} "
-    ?~  target  "nothing"
+    ?~  target  "unbound"
     ~(phat tr u.target)
   --
 ::
