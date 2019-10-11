@@ -1038,9 +1038,14 @@
       call-args=[duct=~[/http-get-open] ~ %cancel-request ~]
       ^=  expected-moves
         ^-  (list move:http-server-gate)
-        ::  closing the channel restarts the timeout timer
+        ::  closing the channel cancels the sse heartbeat
+        ::  (initialized in results5 above) and restarts the timeout timer
         ::
         :~  :*  duct=~[/http-get-open]  %pass
+                /channel/heartbeat/'0123456789abcdef'
+                %b  %rest  :(add ~1111.1.2 ~m3 ~s20)
+            ==
+            :*  duct=~[/http-get-open]  %pass
                 /channel/timeout/'0123456789abcdef'
                 %b  %wait  :(add ~1111.1.2 ~h12 ~m4)
         ==  ==
@@ -1682,9 +1687,14 @@
       call-args=[duct=~[/http-get-open] ~ %cancel-request ~]
       ^=  expected-moves
         ^-  (list move:http-server-gate)
-        ::  closing the channel restarts the timeout timer
+        ::  closing the channel cancels the sse heartbeat
+        ::  (initialized in results4 above) and restarts the timeout timer
         ::
         :~  :*  duct=~[/http-get-open]  %pass
+                /channel/heartbeat/'0123456789abcdef'
+                %b  %rest  :(add ~1111.1.2 ~m3 ~s20)
+            ==
+            :*  duct=~[/http-get-open]  %pass
                 /channel/timeout/'0123456789abcdef'
                 %b  %wait  :(add ~1111.1.2 ~h12 ~m6)
         ==  ==

@@ -1148,9 +1148,22 @@
       ::
       ~&  [%canceling-cancel duct]
       ::
+      =/  maybe-session
+        (~(get by session.channel-state.state) u.maybe-channel-id)
+      ?~  maybe-session  [~ state]
+      ::
+      =/  heartbeat-cancel=(list move)
+        ?~  heartbeat.u.maybe-session  ~
+        :~  %^  cancel-heartbeat-move
+              u.maybe-channel-id
+            date.u.heartbeat.u.maybe-session
+          duct.u.heartbeat.u.maybe-session
+        ==
+      ::
       =/  expiration-time=@da  (add now channel-timeout)
       ::
-      :-  [(set-timeout-move u.maybe-channel-id expiration-time) moves]
+      :-  %+  weld  heartbeat-cancel
+        [(set-timeout-move u.maybe-channel-id expiration-time) moves]
       %_    state
           session.channel-state
         %+  ~(jab by session.channel-state.state)  u.maybe-channel-id
@@ -1158,7 +1171,7 @@
         ::  if we are canceling a known channel, it should have a listener
         ::
         ?>  ?=([%| *] state.channel)
-        channel(state [%& [expiration-time duct]])
+        channel(state [%& [expiration-time duct]], heartbeat ~)
       ::
           duct-to-key.channel-state
         (~(del by duct-to-key.channel-state.state) duct)
@@ -1613,6 +1626,9 @@
       |=  channel-id=@t
       ^-  [(list move) server-state]
       ::
+      ?~  connection-state=(~(get by connections.state) duct)
+        [~ state]
+      ::
       =/  res
         %-  handle-response
         :*  %continue
@@ -1645,6 +1661,14 @@
               session.channel-state
             (~(del by session.channel-state.state) channel-id)
           ==
+      =/  heartbeat-cancel=(list move)
+        ?~  heartbeat.session  ~
+        :~  %^  cancel-heartbeat-move
+              channel-id
+            date.u.heartbeat.session
+          duct.u.heartbeat.session
+        ==
+      %+  weld  heartbeat-cancel
       ::  produce a list of moves which cancels every gall subscription
       ::
       %+  turn  ~(tap by subscriptions.session)
