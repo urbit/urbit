@@ -10,6 +10,7 @@ import Arvo
 import System.Random
 import Vere.Pier.Types
 
+import Data.Text          (append)
 import System.Posix.Files (ownerModes, setFileMode)
 import Vere.Ames          (ames)
 import Vere.Behn          (behn)
@@ -187,11 +188,17 @@ pier pierPath mPort (serf, log, ss) = do
     let logId = Log.identity log
     let ship = who logId
 
+    -- Our call above to set the logging function which echos errors from the
+    -- Serf doesn't have the appended \r\n because those \r\n s are added in
+    -- the c serf code. Logging output from our haskell process must manually
+    -- add them.
+    let showErr = atomically . Term.trace muxed . (flip append "\r\n")
     let (bootEvents, startDrivers) =
             drivers pierPath inst ship (isFake logId) mPort
                 (writeTQueue computeQ)
                 shutdownEvent
                 (sz, muxed)
+                showErr
 
     io $ atomically $ for_ bootEvents (writeTQueue computeQ)
 
@@ -250,12 +257,13 @@ drivers :: HasLogFunc e
         => FilePath -> KingId -> Ship -> Bool -> Maybe Port -> (Ev -> STM ())
         -> STM()
         -> (TSize.Window Word, Term.Client)
+        -> (Text -> RIO e ())
         -> ([Ev], RAcquire e (Drivers e))
-drivers pierPath inst who isFake mPort plan shutdownSTM termSys =
+drivers pierPath inst who isFake mPort plan shutdownSTM termSys stderr =
     (initialEvents, runDrivers)
   where
     (behnBorn, runBehn) = behn inst plan
-    (amesBorn, runAmes) = ames inst who isFake mPort plan
+    (amesBorn, runAmes) = ames inst who isFake mPort plan stderr
     (httpBorn, runHttp) = serv pierPath inst plan
     (clayBorn, runClay) = clay pierPath inst plan
     (irisBorn, runIris) = client inst plan

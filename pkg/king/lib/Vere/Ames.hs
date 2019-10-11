@@ -70,6 +70,8 @@ hearEv w p a bs =
 _turfText :: Turf -> Text
 _turfText = intercalate "." . reverse . fmap unCord . unTurf
 
+renderGalaxy :: Galaxy -> Text
+renderGalaxy = Ob.renderPatp . Ob.patp . fromIntegral . unGalaxy
 
 --------------------------------------------------------------------------------
 
@@ -79,22 +81,18 @@ _turfText = intercalate "." . reverse . fmap unCord . unTurf
     enqueueEv -- Queue-event action.
     mPort     -- Explicit port override from command line arguments.
 
-    We ignore the %turf arguments for now. We only have fake ships,
-    so we don't implement the DNS stuff yet.
-
     TODO Handle socket exceptions in waitPacket
 
     4096 is a reasonable number for recvFrom. Packets of that size are
     not possible on the internet.
 
-    TODO log when `sendTo` sent fewer bytes than requested.
-
     TODO verify that the KingIds match on effects.
 -}
 ames :: forall e. HasLogFunc e
      => KingId -> Ship -> Bool -> Maybe Port -> QueueEv
+     -> (Text -> RIO e ())
      -> ([Ev], RAcquire e (EffCb e NewtEf))
-ames inst who isFake mPort enqueueEv =
+ames inst who isFake mPort enqueueEv stderr =
     (initialEvents, runAmes)
   where
     initialEvents :: [Ev]
@@ -121,8 +119,7 @@ ames inst who isFake mPort enqueueEv =
 
     stop :: AmesDrv -> RIO e ()
     stop AmesDrv{..} = do
-        galaxies <- readIORef aGalaxies
-        mapM_ (cancel . fst) galaxies
+        readIORef aGalaxies >>= mapM_ (cancel . fst)
 
         cancel aSendingThread
         cancel aWakeTimer
@@ -190,14 +187,16 @@ ames inst who isFake mPort enqueueEv =
     -- An outbound queue of messages. We can only write to a socket from one
     -- thread, so coalesce those writes here.
     sendingThread :: TQueue (SockAddr, ByteString) -> Socket -> RIO e ()
-    sendingThread queue socket = forever $ do
-      (dest, bs) <- atomically $ readTQueue queue
-      logTrace $ displayShow ("(ames) Sending packet to ", socket, dest)
-      bytesSent <- io $ sendTo socket bs dest
-      let len = BS.length bs
-      when (bytesSent /= len) $ do
-        logDebug $ displayShow
-          ("(ames) Only sent ", bytesSent, " of ", (length bs))
+    sendingThread queue socket = forever $
+      do
+        (dest, bs) <- atomically $ readTQueue queue
+        logTrace $ displayShow ("(ames) Sending packet to ", socket, dest)
+        sendAll bs dest
+      where
+        sendAll bs dest = do
+          bytesSent <- io $ sendTo socket bs dest
+          when (bytesSent /= BS.length bs) $ do
+            sendAll (drop bytesSent bs) dest
 
     -- Asynchronous thread per galaxy which handles domain resolution, and can
     -- block its own queue of ByteStrings to send.
@@ -242,7 +241,7 @@ ames inst who isFake mPort enqueueEv =
 
         resolveFirstIP :: Maybe SockAddr -> [Turf] -> RIO e (Maybe SockAddr)
         resolveFirstIP prevIP [] = do
-          -- print ("ames: czar at %s: not found (b)\n")
+          stderr $ "ames: czar at " ++ renderGalaxy galaxy ++ ": not found"
           logDebug $ displayShow
               ("(ames) Failed to lookup IP for ", galaxy)
           pure prevIP
@@ -254,9 +253,13 @@ ames inst who isFake mPort enqueueEv =
           case listIPs of
             []     -> resolveFirstIP prevIP xs
             (y:ys) -> do
+              let sockaddr = Just $ addrAddress y
+              when (sockaddr /= prevIP) $
+                stderr $ "ames: czar " ++ renderGalaxy galaxy ++ ": ip " ++
+                         (tshow $ addrAddress y)
               logDebug $ displayShow
                 ("(ames) Looked up ", hostname, portstr, y)
-              pure $ Just $ addrAddress y
+              pure sockaddr
 
         buildDNS :: Galaxy -> Turf -> RIO e String
         buildDNS (Galaxy g) turf = do
