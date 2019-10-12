@@ -1,7 +1,11 @@
 ::  chat-view: sets up chat JS client, paginates data, and combines commands
 ::  into semantic actions for the UI
 ::
-/-  *chat-view-imports, *chat-hook
+/-  *permission-store,
+    *permission-hook,
+    *group-store,
+    *permission-group-hook,
+    *chat-hook
 /+  *server, *chat-json
 /=  index
   /^  octs

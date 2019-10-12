@@ -200,12 +200,11 @@
   %+  turn  ~(tap in who)
   |=  check-ship=ship
   ^-  (list move)
-  %-  zing
-  %+  turn  ~(tap in access-paths)
+  %+  murn  ~(tap in access-paths)
   |=  access-path=path
-  ^-  (list move)
+  ^-  (unit move)
   =/  bne  (~(get by sup) [check-ship [%permission access-path]])
-  ?~(bne ~ [u.bne %quit ~]~)
+  ?~(bne ~ `[u.bne %quit ~])
 ::
 ++  quit
   |=  wir=wire
