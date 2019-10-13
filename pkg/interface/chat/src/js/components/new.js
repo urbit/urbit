@@ -123,19 +123,6 @@ export class NewScreen extends Component {
     }, () => {
       props.setSpinner(true);
       props.api.chatView.create(station, state.security, readAud, writeAud);
-      props.api.invite.create('/chat');
-      
-      aud.forEach((recipient) => {
-        props.api.invite.invite(
-          '/chat',
-          `/mailbox${station}`,
-          window.ship,
-          'chat-hook',
-          `You have been invited to join ~${window.ship}/mailbox${station}`,
-          recipient
-        );
-      });
-
     });
   }
 

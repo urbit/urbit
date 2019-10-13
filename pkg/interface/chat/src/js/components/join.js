@@ -47,7 +47,7 @@ export class JoinScreen extends Component {
       return;
     }
 
-    props.api.chatHook.addSynced(ship, station);
+    props.api.chatView.join(ship, station);
     this.props.history.push('/~chat');
   }
 

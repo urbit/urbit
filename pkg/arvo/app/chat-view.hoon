@@ -1,8 +1,11 @@
-
 ::  chat-view: sets up chat JS client, paginates data, and combines commands
 ::  into semantic actions for the UI
 ::
-/-  *permission-store, *group-store, *permission-group-hook, *chat-hook
+/-  *permission-store,
+    *permission-hook,
+    *group-store,
+    *permission-group-hook,
+    *chat-hook
 /+  *server, *chat-json
 /=  index
   /^  octs
@@ -54,6 +57,7 @@
       [%chat-action chat-action]
       [%group-action group-action]
       [%chat-hook-action chat-hook-action]
+      [%permission-hook-action permission-hook-action]
       [%permission-group-hook-action permission-group-hook-action]
   ==
 --
@@ -71,7 +75,7 @@
         [ost.bol %connect / [~ /'~chat'] %chat-view]
         (launch-poke [/configs '/~chat/js/tile.js'])
     ==
-  [~ this]
+  [~ this(+<+ u.old)]
 ::
 ++  bound
   |=  [wir=wire success=? binding=binding:eyre]
@@ -156,24 +160,39 @@
     =/  group-read=path  [%chat (weld pax /read)]
     =/  group-write=path  [%chat (weld pax /write)]
     :_  this
-    %+  weld
-      :~  (chat-poke [%create our.bol path.act])
-          (group-poke [%bundle group-read])
-          (group-poke [%bundle group-write])
-          (group-poke [%add read.act group-read])
-          (group-poke [%add write.act group-write])
-          (chat-hook-poke [%add-owned pax security.act])
-      ==
-    (create-security [%chat pax] security.act)
+    %-  zing
+    :~  :~  (group-poke [%bundle group-read])
+            (group-poke [%bundle group-write])
+            (group-poke [%add read.act group-read])
+            (group-poke [%add write.act group-write])
+            (chat-poke [%create our.bol path.act])
+            (chat-hook-poke [%add-owned pax security.act])
+        ==
+        (create-security [%chat pax] security.act)
+        :~  (permission-hook-poke [%add-owned group-read group-read])
+            (permission-hook-poke [%add-owned group-write group-read])
+        ==
+    ==
   ::
       %delete
     =/  group-read  [%chat (weld path.act /read)]
     =/  group-write  [%chat (weld path.act /write)]
     :_  this
     :~  (chat-hook-poke [%remove path.act])
+        (permission-hook-poke [%remove group-read])
+        (permission-hook-poke [%remove group-write])
         (group-poke [%unbundle group-read])
         (group-poke [%unbundle group-write])
         (chat-poke [%delete path.act])
+    ==
+  ::
+      %join
+    =/  group-read  [%chat (scot %p ship.act) (weld path.act /read)]
+    =/  group-write  [%chat (scot %p ship.act) (weld path.act /write)]
+    :_  this
+    :~  (chat-hook-poke [%add-synced ship.act path.act])
+        (permission-hook-poke [%add-synced ship.act group-write])
+        (permission-hook-poke [%add-synced ship.act group-read])
     ==
   ::
   ==
@@ -235,6 +254,11 @@
   |=  act=chat-hook-action
   ^-  move
   [ost.bol %poke / [our.bol %chat-hook] [%chat-hook-action act]]
+::
+++  permission-hook-poke
+  |=  act=permission-hook-action
+  ^-  move
+  [ost.bol %poke / [our.bol %permission-hook] [%permission-hook-action act]]
 ::
 ++  perm-group-hook-poke
   |=  act=permission-group-hook-action

@@ -52,16 +52,6 @@ export class InviteElement extends Component {
       members: ''
     }, () => {
       props.api.groups.add(aud, props.path);
-      aud.forEach((recipient) => {
-        props.api.invite.invite(
-          '/chat',
-          `/mailbox${props.station}`,
-          window.ship,
-          'chat-hook',
-          `You have been invited to join ~${window.ship}/mailbox${props.station}`,
-          recipient
-        );
-      });
     });
   }
 

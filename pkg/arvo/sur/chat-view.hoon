@@ -9,5 +9,6 @@
 +$  chat-view-action
   $%  [%create =path security=chat-security read=(set ship) write=(set ship)]
       [%delete =path]
+      [%join =ship =path]
   ==
 --
