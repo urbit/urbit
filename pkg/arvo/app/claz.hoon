@@ -402,6 +402,18 @@
     (glad-fail [%leaf "json result is unexpected ${(trip -.response)}"]~)
   (pure:m res.response)
 ::
+++  do-read-expect-result
+  |=  req=proto-read-request
+  =/  m  (glad response:rpc:jstd)
+  ;<  ~  bind:m
+    %-  do-json-request
+    (read-request req)
+  ;<  =response:rpc:jstd  bind:m
+    expect-response
+  ?:  ?=(%result -.response)
+    (pure:m response)
+  (glad-fail ~[leaf+"unexpected result" >response<])
+::
 ++  do-batch-read-expect-results
   |=  reqs=(list proto-read-request)
   =/  m  (glad (list response:rpc:jstd))
@@ -413,7 +425,8 @@
   ?.  ?&  ?=(%batch -.response)
           (levy bas.response |=([a=@tas *] =(%result a)))
       ==
-    (glad-fail [%leaf "incomplete batch response"]~)
+    ::TODO  print just the invalid ones
+    (glad-fail ~[leaf+"incomplete batch response" >response<])
   (pure:m bas.response)
 ::
 ::  transaction generation logic
@@ -453,10 +466,26 @@
       ;~(pfix sig feq:ag)
       ;~(pfix (jest '0x') hex)
     ==
+  ;<  ~  bind:m
+    %-  are-available
+    (turn friends head)
+  ;<  ~  bind:m
+    %+  has-invites-for
+      as-who.batch.command
+    (turn friends head)
+  %-  just-do
+  %+  write-file-transactions
+    path.command
+  (invites nonce [network as +.batch]:command)
+::
+++  are-available
+  |=  ships=(list ship)
+  =/  m  null-glad
+  ^-  form:m
   ;<  responses=(list response:rpc:jstd)  bind:m
     %-  do-batch-read-expect-results
-    %+  turn  friends
-    |=  [=ship *]
+    %+  turn  ships
+    |=  =ship
     ^-  proto-read-request
     :+  `(scot %p ship)
       azimuth
@@ -474,15 +503,61 @@
     ?:  =(0x0 owner.rights)  ~
     `(slav %p id.response)
   ^-  form:m
-  ?.  =(~ taken)
-    %-  glad-fail
-    :~  leaf+"some planets already taken:"
-        >taken<
-    ==
-  %-  just-do
-  %+  write-file-transactions
-    path.command
-  (invites nonce [network as +.batch]:command)
+  ?:  =(~ taken)
+    (pure:m ~)
+  %-  glad-fail
+  :~  leaf+"some ships already taken:"
+      >taken<
+  ==
+::
+++  has-invites-for
+  |=  [as=ship ships=(list ship)]
+  =/  m  null-glad
+  ^-  form:m
+  =/  counts=(map ship @ud)
+    %+  roll  ships
+    |=  [s=ship counts=(map ship @ud)]
+    =+  p=(^sein:title s)
+    %+  ~(put by counts)  p
+    +((~(gut by counts) p 0))
+  ;<  pool=@ud  bind:m
+    ;<  =response:rpc:jstd  bind:(glad @ud)
+      %-  do-read-expect-result
+      :+  `''
+        delegated-sending
+      (get-pool:cal as)
+    ?>  ?=(%result -.response)
+    ?>  ?=(%s -.res.response)
+    %-  pure:(glad @ud)
+    (decode-results p.res.response [%uint]~)
+  ;<  responses=(list response:rpc:jstd)  bind:m
+    %-  do-batch-read-expect-results
+    %+  turn  ~(tap by counts)
+    |=  [=ship @ud]
+    ^-  proto-read-request
+    :+  `(scot %p ship)
+      delegated-sending
+    (pools:cal pool ship)
+  =/  missing=(list [star=ship have=@ud needed=@ud])
+    %+  murn  responses
+    |=  =response:rpc:jstd
+    ^-  (unit [ship @ud @ud])
+    ?>  ?=(%result -.response)
+    ?>  ?=(%s -.res.response)
+    =/  =ship
+      (slav %p id.response)
+    =/  pool-size=@ud
+      (decode-results p.res.response [%uint]~)
+    =/  need=@ud
+      (~(got by counts) ship)
+    ?:  (gte pool-size need)  ~
+    `[ship pool-size need]
+  ?:  =(~ missing)
+    (pure:m ~)
+  %-  glad-fail
+  :~  leaf+"not enough invites from stars:"
+      >missing<
+  ==
 ::
 ++  batch-to-transactions
   |=  [nonce=@ud =network as=address =batch]
@@ -996,6 +1071,21 @@
     ^-  call-data
     :-  'rights(uint32)'
     :~  [%uint `@`ship]
+    ==
+  ::
+  ++  get-pool
+    |=  =ship
+    ^-  call-data
+    :-  'getPool(uint32)'
+    :~  [%uint `@`ship]
+    ==
+  ::
+  ++  pools
+    |=  [pool=@ud star=ship]
+    ^-  call-data
+    :-  'pools(uint32,uint16)'
+    :~  [%uint pool]
+        [%uint `@`star]
     ==
   --
 ::
