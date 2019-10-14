@@ -1,26 +1,30 @@
-{ pkgs
-, pill ? ../../../bin/solid.pill
-, urbit
-}:
+{ pkgs, urbit, pill }:
 
 let
+
   name  = urbit.meta.name;
   debug = urbit.meta.debug;
+  exe   = ''${urbit.meta.exe} "$@"'';
 
-  entrypoint = "${urbit}/bin/${name}";
+  coredump = ''
+    ulimit -c unlimited
 
-  coredump = pkgs.writeScript "entrypoint.sh" ''
+    ${exe} || \
+      ${pkgs.gdb}/bin/gdb -ex "thread apply all bt" -ex "set pagination 0" -batch \
+      ${urbit.meta.bin} \
+      /tmp/cores/core*
+  '';
+
+  entrypoint = pkgs.writeScript "entrypoint.sh" ''
     #!${pkgs.stdenv.shell}
 
     set -euo pipefail
 
-    ulimit -c unlimited
+    ${pkgs.coreutils}/bin/ln -sf ${pill} /data/urbit.pill
 
-    ${entrypoint} -B ${pill} "$@" || \
-      $${pkgs.gdb}/bin/gdb -ex "thread apply all bt" -ex "set pagination 0" -batch \
-      ${entrypoint} \
-      /tmp/cores/core*
+    ${if debug then coredump else exe}
   '';
+
 in
 
 pkgs.dockerTools.buildImage {
@@ -39,7 +43,7 @@ pkgs.dockerTools.buildImage {
   '';
 
   config = {
-    Entrypoint = if debug then [ coredump ] else [ entrypoint ];
+    Entrypoint = entrypoint;
 
     WorkingDir = "/data";
 

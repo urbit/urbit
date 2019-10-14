@@ -23,16 +23,6 @@ let
   urbit       = mkUrbit { debug = false; };
   urbit-debug = mkUrbit { debug = true; };
 
-  mkImage = { debug }:
-    import ./urbit/image.nix {
-      inherit pkgs;
-
-      urbit = if debug then urbit-debug else urbit;
-    };
-
-  urbit-image       = mkImage { debug = false; };
-  urbit-image-debug = mkImage { debug = true; };
-
 in
 
-{ inherit ent ge-additions arvo herb urbit urbit-debug urbit-image urbit-image-debug; }
+{ inherit ent ge-additions arvo herb urbit urbit-debug; }
