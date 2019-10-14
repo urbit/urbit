@@ -543,15 +543,11 @@
         c3_c*   arv_c;                      //  -A, initial sync from
         c3_o    abo;                        //  -a, abort aggressively
         c3_c*   pil_c;                      //  -B, bootstrap from
-        c3_o    bat;                        //  -b, batch create
-        c3_o    can;                        //  -C, chain-only, no eth snapshot
         c3_o    nuu;                        //  -c, new pier
         c3_o    dry;                        //  -D, dry compute, no checkpoint
         c3_o    dem;                        //  -d, daemon
-        c3_c*   ets_c;                      //  -E, eth snapshot
         c3_c*   eth_c;                      //  -e, ethereum node url
         c3_c*   fak_c;                      //  -F, fake ship
-        c3_w    fuz_w;                      //  -f, fuzz testing
         c3_c*   gen_c;                      //  -G, czar generator
         c3_o    gab;                        //  -g, test garbage collection
         c3_c*   dns_c;                      //  -H, ames bootstrap domain
@@ -567,9 +563,9 @@
         c3_o    qui;                        //  -q, quiet
         c3_o    rep;                        //  -R, report build info
         c3_o    has;                        //  -S, Skip battery hashes
+        c3_o    tem;                        //  -t, Disable terminal/tty assumptions
         c3_o    git;                        //  -s, pill url from arvo git hash
         c3_c*   url_c;                      //  -u, pill url
-        c3_o    vno;                        //  -V, replay without reboots
         c3_o    veb;                        //  -v, verbose (inverse of -q)
         c3_c*   who_c;                      //  -w, begin with ticket
         c3_o    tex;                        //  -x, exit after loading

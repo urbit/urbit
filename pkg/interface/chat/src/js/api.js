@@ -9,13 +9,28 @@ class UrbitApi {
   setAuthTokens(authTokens) {
     this.authTokens = authTokens;
     this.bindPaths = [];
+
+    this.groups = {
+      add: this.groupAdd.bind(this),
+      remove: this.groupRemove.bind(this)
+    };
+    
+    this.chat = {
+      message: this.chatMessage.bind(this),
+      read: this.chatRead.bind(this)
+    };
+
+    this.chatView = {
+      create: this.chatViewCreate.bind(this),
+      delete: this.chatViewDelete.bind(this),
+      join: this.chatViewJoin.bind(this),
+    };
   }
 
-  // keep default bind to hall, since its bind procedure more complex for now AA
-  bind(path, method, ship = this.authTokens.ship, appl = "hall", success, fail) {
+  bind(path, method, ship = this.authTokens.ship, app, success, fail, quit) {
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
-    window.subscriptionId = window.urb.subscribe(ship, appl, path, 
+    window.subscriptionId = window.urb.subscribe(ship, app, path, 
       (err) => {
         fail(err);
       },
@@ -28,33 +43,9 @@ class UrbitApi {
           }
         });
       },
-      (err) => {
-        fail(err);
+      (qui) => {
+        quit(qui);
       });
-  }
-
-  hall(data) {
-    this.action("hall", "json", data);
-  }
-  
-  addPendingMessage(data) {
-    let pendingMap = store.state.pendingMessages;
-    if (pendingMap.has(data.aud[0])) {
-      pendingMap.get(data.aud[0]).push(data)     
-    } else {
-      pendingMap.set(data.aud[0], [data])
-    }
-    store.setState({
-      pendingMessages: pendingMap
-    });
-  }
-
-  chat(lis) {
-    this.action("chat", "chat-action", {
-      actions: {
-        lis
-      }
-    });
   }
 
   action(appl, mark, data) {
@@ -69,90 +60,84 @@ class UrbitApi {
     });
   }
 
-  notify(aud, bool) {
-    this.hall({
-      notify: {
-        aud,
-        pes: !!bool ? 'hear' : 'gone'
-      }
-    });
-  }
-
-  permit(cir, aud, message) {
-    this.hall({
-      permit: {
-        nom: cir,
-        sis: aud,
-        inv: true
-      }
-    });
-
-    if (message) {
-      this.invite(cir, aud);
+  addPendingMessage(msg) {
+    if (store.state.pendingMessages.has(msg.path)) {
+      store.state.pendingMessages.get(msg.path).push(msg.envelope);
+    } else {
+      store.state.pendingMessages.set(msg.path, [msg.envelope]);
     }
+
+    store.setState({
+      pendingMessages: store.state.pendingMessages
+    });
   }
 
-  unpermit(cir, ship) {
-    /*
-     * lol, never send an unpermit to yourself.
-     * it puts your ship into an infinite loop.
-     * */
-    if (ship === window.ship) {
-      return;
-    }
-    this.hall({
-      permit: {
-        nom: cir,
-        sis: [ship],
-        inv: false
+  groupsAction(data) {
+    this.action("group-store", "group-action", data);
+  }
+
+  groupAdd(members, path) {
+    this.groupsAction({
+      add: {
+        members, path
       }
     });
   }
 
-  invite(cir, aud) {
-    let audInboxes = aud.map((aud) => `~${aud}/i`);
-    let inviteMessage = {
-      aud: audInboxes,
-      ses: [{
-        inv: {
-          inv: true,
-          cir: `~${window.ship}/${cir}`
+  groupRemove(members, path) {
+    this.groupsAction({
+      remove: {
+        members, path
+      }
+    });
+  }
+
+  chatAction(data) {
+    this.action("chat-store", "json", data);
+  }
+
+  chatMessage(path, author, when, letter) {
+    let data = {
+      message: {
+        path,
+        envelope: {
+          uid: uuid(),
+          number: 0,
+          author,
+          when,
+          letter
         }
-      }]
+      }
     };
 
-    this.hall({
-      phrase: inviteMessage
+    this.action("chat-hook", "json", data);
+    this.addPendingMessage(data.message);
+  }
+
+  chatRead(path, read) {
+    this.chatAction({ read: { path } });
+  }
+
+  chatViewAction(data) {
+    this.action("chat-view", "json", data);
+  }
+
+  chatViewCreate(path, security, read, write) {
+    this.chatViewAction({
+      create: {
+        path, security, read, write
+      }
     });
   }
 
-  source(nom, sub) {
-    this.hall({
-      source: {
-        nom: "inbox",
-        sub: sub,
-        srs: [nom]
-      }
-    })
+  chatViewDelete(path) {
+    this.chatViewAction({ delete: { path } });
   }
 
-  delete(nom) {
-    this.hall({
-      delete: {
-        nom,
-        why: ''
-      }
-    })
+  chatViewJoin(ship, path) {
+    this.chatViewAction({ join: { ship, path } });
   }
 
-  read(nom, red) {
-    this.hall({
-      read: {
-        nom,
-        red
-      }
-    })
-  }
 }
 
 export let api = new UrbitApi();

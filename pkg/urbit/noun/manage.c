@@ -10,6 +10,8 @@
 
 #include "all.h"
 
+//  XX stack-overflow recovery should be gated by -a
+//
 #undef NO_OVERFLOW
 
       /* (u3_noun)setjmp(u3R->esc.buf): setjmp within road.
@@ -610,6 +612,8 @@ c3_w Exit;
 **        [%2 trace]
 **        [%3 code trace]
 **    ==
+**
+**  XX several of these abort() calls should be gated by -a
 */
 c3_i
 u3m_bail(u3_noun how)

@@ -20,8 +20,8 @@ let
       inherit (deps) secp256k1 h2o ivory-header ca-header;
     };
 
-  urbit       = mkUrbit { debug=false; };
-  urbit-debug = mkUrbit { debug=true; };
+  urbit       = mkUrbit { debug = false; };
+  urbit-debug = mkUrbit { debug = true; };
 
 in
 

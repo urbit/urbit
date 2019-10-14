@@ -4,7 +4,10 @@ A clean-slate operating system.
 
 ## Usage
 
-To run Arvo, you'll need [Urbit](https://github.com/urbit/urbit/). To install Urbit and run Arvo please follow the instructions in the [getting started docs](https://urbit.org/docs/getting-started/). You'll be on the live network in a few minutes.
+To run Arvo, you'll need [Urbit](https://github.com/urbit/urbit/). To install
+Urbit and run Arvo please follow the instructions in the [getting started
+docs](https://urbit.org/docs/getting-started/). You'll be on the live network
+in a few minutes.
 
 If you're doing development on Arvo, keep reading.
 
@@ -56,11 +59,16 @@ Most parts of Arvo have dedicated maintainers.
 
 ## Contributing
 
-Contributions of any form are more than welcome! If something doesn't seem right, and there is no issue about it yet, feel free to open one.
+Contributions of any form are more than welcome!  Please take a look at our
+[contributing guidelines][cont] for details on our git practices, coding
+styles, how we manage issues, and so on.
 
-If you're looking to make code contributions, there are a few things you can do:
+You might also be interested in:
 
-- Join the [urbit-dev](https://groups.google.com/a/urbit.org/forum/#!forum/dev) mailing list.
-- [Ask us about Hoon School](mailto:support@urbit.org), a course we run to teach the Hoon programming language and Urbit application development.
-- Check out [good contributor issues](https://github.com/urbit/arvo/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+contributor+issue%22).
-- Reach out to [support@urbit.org](mailto:support@urbit.org) to say hi and ask any questions you might have.
+- joining the [urbit-dev][list] mailing list.
+- [applying to Hoon School][mail], a course we run to teach the Hoon
+  programming language and Urbit application development.
+
+[list]: https://groups.google.com/a/urbit.org/forum/#!forum/dev
+[mail]: mailto:support@urbit.org
+[cont]: https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md

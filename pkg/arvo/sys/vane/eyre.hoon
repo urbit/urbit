@@ -83,7 +83,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2019.1.7
+      date=%~2019.10.6
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -216,8 +216,6 @@
 ::    'Last-Event-Id: ' header to the server; the server then resends all
 ::    events since then.
 ::
-::    TODO: Send \n as a heartbeat every 20 seconds.
-::
 +$  channel
   $:  ::  channel-state: expiration time or the duct currently listening
       ::
@@ -246,6 +244,9 @@
       ::    can cancel all the subscriptions we've made.
       ::
       subscriptions=(map wire [ship=@p app=term =path duc=duct])
+      ::  heartbeat: sse heartbeat timer
+      ::
+      heartbeat=(unit timer)
   ==
 ::  channel-request: an action requested on a channel
 ::
@@ -1009,7 +1010,7 @@
       =/  max-age=tape  (format-ud-as-integer `@ud`(div (msec:milly expires-in) 1.000))
       =/  cookie-line
         %-  crip
-        "urbauth={<session>}; Path=/; Max-Age={max-age}"
+        "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}"
       ::
       ?~  redirect=(get-header:http 'redirect' u.parsed)
         %-  handle-response
@@ -1053,7 +1054,7 @@
         %.n
       ::  is there an urbauth cookie?
       ::
-      ?~  urbauth=(get-header:http 'urbauth' u.cookies)
+      ?~  urbauth=(get-header:http (crip "urbauth-{<our>}") u.cookies)
         %.n
       ::  is this formatted like a valid session cookie?
       ::
@@ -1147,9 +1148,22 @@
       ::
       ~&  [%canceling-cancel duct]
       ::
+      =/  maybe-session
+        (~(get by session.channel-state.state) u.maybe-channel-id)
+      ?~  maybe-session  [~ state]
+      ::
+      =/  heartbeat-cancel=(list move)
+        ?~  heartbeat.u.maybe-session  ~
+        :~  %^  cancel-heartbeat-move
+              u.maybe-channel-id
+            date.u.heartbeat.u.maybe-session
+          duct.u.heartbeat.u.maybe-session
+        ==
+      ::
       =/  expiration-time=@da  (add now channel-timeout)
       ::
-      :-  [(set-timeout-move u.maybe-channel-id expiration-time) moves]
+      :-  %+  weld  heartbeat-cancel
+        [(set-timeout-move u.maybe-channel-id expiration-time) moves]
       %_    state
           session.channel-state
         %+  ~(jab by session.channel-state.state)  u.maybe-channel-id
@@ -1157,7 +1171,7 @@
         ::  if we are canceling a known channel, it should have a listener
         ::
         ?>  ?=([%| *] state.channel)
-        channel(state [%& [expiration-time duct]])
+        channel(state [%& [expiration-time duct]], heartbeat ~)
       ::
           duct-to-key.channel-state
         (~(del by duct-to-key.channel-state.state) duct)
@@ -1182,7 +1196,7 @@
         %_    ..update-timeout-timer-for
             session.channel-state.state
           %+  ~(put by session.channel-state.state)  channel-id
-          [[%& expiration-time duct] 0 ~ ~]
+          [[%& expiration-time duct] 0 ~ ~ ~]
         ::
             moves
           [(set-timeout-move channel-id expiration-time) moves]
@@ -1205,6 +1219,18 @@
             moves
         ==
       ==
+    ::
+    ++  set-heartbeat-move
+      |=  [channel-id=@t heartbeat-time=@da]
+      ^-  move
+      :^  duct  %pass  /channel/heartbeat/[channel-id]
+      [%b %wait heartbeat-time]
+    ::
+    ++  cancel-heartbeat-move
+      |=  [channel-id=@t heartbeat-time=@da =^duct]
+      ^-  move
+      :^  duct  %pass  /channel/heartbeat/[channel-id]
+      [%b %rest heartbeat-time]
     ::
     ++  set-timeout-move
       |=  [channel-id=@t expiration-time=@da]
@@ -1278,14 +1304,19 @@
       ::
       =.  duct-to-key.channel-state.state
         (~(put by duct-to-key.channel-state.state) duct channel-id)
-      ::  clear the event queue and record the duct for future output
+      ::  initialize sse heartbeat
+      ::
+      =/  heartbeat-time=@da  (add now ~s20)
+      =/  heartbeat  (set-heartbeat-move channel-id heartbeat-time)
+      ::  clear the event queue, record the duct for future output and
+      ::  record heartbeat-time for possible future cancel
       ::
       =.  session.channel-state.state
         %+  ~(jab by session.channel-state.state)  channel-id
         |=  =channel
-        channel(events ~, state [%| duct])
+        channel(events ~, state [%| duct], heartbeat (some [heartbeat-time duct]))
       ::
-      [(weld http-moves moves) state]
+      [[heartbeat (weld http-moves moves)] state]
     ::  +acknowledge-events: removes events before :last-event-id on :channel-id
     ::
     ++  acknowledge-events
@@ -1464,6 +1495,14 @@
         =.  duct-to-key.channel-state.state
           (~(del by duct-to-key.channel-state.state) p.state.session)
         ::
+        ?~  heartbeat.session  $(requests t.requests)
+        =.  gall-moves
+          %+  snoc  gall-moves
+          %^    cancel-heartbeat-move
+              channel-id
+            date.u.heartbeat.session
+          duct.u.heartbeat.session
+        ::
         $(requests t.requests)
       ::
       ==
@@ -1582,7 +1621,31 @@
           events  (~(put to events.channel) [event-id event-stream-lines])
         ==
       ==
-    ::  +on-channel-timeout: we received a wake to clear an old session
+    ::
+    ++  on-channel-heartbeat
+      |=  channel-id=@t
+      ^-  [(list move) server-state]
+      ::
+      ?~  connection-state=(~(get by connections.state) duct)
+        [~ state]
+      ::
+      =/  res
+        %-  handle-response
+        :*  %continue
+            data=(some (as-octs:mimes:html '\0a'))
+            complete=%.n
+        ==
+      =/  http-moves  -.res
+      =/  new-state  +.res
+      =/  heartbeat-time=@da  (add now ~s20)
+      :_  %_    new-state
+              session.channel-state
+            %+  ~(jab by session.channel-state.state)  channel-id
+            |=  =channel
+            channel(heartbeat (some [heartbeat-time duct]))
+          ==
+      (snoc http-moves (set-heartbeat-move channel-id heartbeat-time))
+    :: +on-channel-timeout: we received a wake to clear an old session
     ::
     ++  on-channel-timeout
       |=  channel-id=@t
@@ -1598,6 +1661,14 @@
               session.channel-state
             (~(del by session.channel-state.state) channel-id)
           ==
+      =/  heartbeat-cancel=(list move)
+        ?~  heartbeat.session  ~
+        :~  %^  cancel-heartbeat-move
+              channel-id
+            date.u.heartbeat.session
+          duct.u.heartbeat.session
+        ==
+      %+  weld  heartbeat-cancel
       ::  produce a list of moves which cancels every gall subscription
       ::
       %+  turn  ~(tap by subscriptions.session)
@@ -2159,6 +2230,13 @@
         (on-channel-timeout i.t.t.wire)
       [moves http-server-gate]
     ::
+        %heartbeat
+      =/  on-channel-heartbeat
+        on-channel-heartbeat:by-channel:(per-server-event event-args)
+      =^  moves  server-state.ax
+        (on-channel-heartbeat i.t.t.wire)
+      [moves http-server-gate]
+    ::
         ?(%poke %subscription)
       ?>  ?=([%g %unto *] sign)
       ?>  ?=([@ @ @t @ *] wire)
@@ -2187,11 +2265,45 @@
 ::  +load: migrate old state to new state (called on vane reload)
 ::
 ++  load
-  |=  old=axle
+  =>  |%
+    +$  channel-old
+      $:  state=(each timer duct)
+          next-id=@ud
+          events=(qeu [id=@ud lines=wall])
+          subscriptions=(map wire [ship=@p app=term =path duc=duct])
+      ==
+    +$  channel-state-old
+      $:  session=(map @t channel-old)
+          duct-to-key=(map duct @t)
+      ==
+    ++  axle-old
+      %+  cork
+        axle
+      |=  =axle
+      axle(date %~2019.1.7, channel-state.server-state (channel-state-old))
+  --
+  |=  old=$%(axle axle-old)
   ^+  ..^$
   ::
   ~!  %loading
-  ..^$(ax old)
+  ?-  -.old
+    %~2019.1.7
+      =/  add-heartbeat
+      %-  ~(run by session.channel-state.server-state.old)
+      |=  [c=channel-old]
+      ^-  channel
+      [state.c next-id.c events.c subscriptions.c ~]
+      ::
+      =/  new
+      %=  old
+        date  %~2019.10.6
+        session.channel-state.server-state  add-heartbeat
+      ==
+      $(old new)
+    ::
+    %~2019.10.6  ..^$(ax old)
+  ==
+
 ::  +stay: produce current state
 ::
 ++  stay  `axle`ax

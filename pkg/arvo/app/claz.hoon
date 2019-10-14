@@ -42,6 +42,11 @@
       ::  %deed: deed ships based on json, assumes spawnable
       ::
       [%deed deeds-json=cord]
+      ::  %invites: sendPoint for every ship in ship,ticket,owner file
+      ::
+      ::    to generate such a file, try |claz-invites ~star 1 10 %/out/txt
+      ::
+      [%invites as-who=ship file=path]
       ::  %lock-prep: prepare for lockup by transfering ships to the ceremony address
       ::
       [%lock-prep what=(list ship)]
@@ -77,6 +82,8 @@
       [%transfer-ship who=ship to=address]
       [%set-transfer-proxy who=ship proxy=address]
       [%adopt who=ship]
+    ::
+      [%send-point as=ship point=ship to=address]
   ==
 ::
 ::  monadic structures
@@ -224,7 +231,8 @@
 ::
 ::  constants
 ::
-++  ecliptic  `address`0x6ac0.7b7c.4601.b5ce.11de.8dfe.6335.b871.c7c4.dd4d
+++  ecliptic           0x6ac0.7b7c.4601.b5ce.11de.8dfe.6335.b871.c7c4.dd4d
+++  delegated-sending  0xf790.8ab1.f1e3.52f8.3c5e.bc75.051c.0565.aeae.a5fb
 --
 ::
 |_  [=bowl:gall state]
@@ -411,6 +419,7 @@
   ?-  -.batch
     %single     [(single nonce network as +.batch) ~]
     %deed       (deed nonce network as +.batch)
+    %invites    (invites nonce network as +.batch)
     %lock-prep  (lock-prep nonce network as +.batch)
     %lock       (lock nonce network as +.batch)
     ::
@@ -473,7 +482,11 @@
 ++  single
   |=  [nonce=@ud =network as=address =call]
   ^-  transaction
-  =-  (do network nonce ecliptic -)
+  =-  (do network nonce contract data)
+  ^-  [contract=address data=tape]  ::TODO  =;
+  :-  ?+  -.call  ecliptic
+        %send-point  delegated-sending
+      ==
   ?-  -.call
     %create-galaxy  (create-galaxy:dat +.call)
     %spawn  (spawn:dat +.call)
@@ -484,6 +497,8 @@
     %transfer-ship  (transfer-ship:dat +.call)
     %set-transfer-proxy  (set-transfer-proxy:dat +.call)
     %adopt  (adopt:dat +.call)
+  ::
+    %send-point  (send-point:dat +.call)
   ==
 ::
 ++  deed
@@ -527,6 +542,33 @@
     :_  txs
     (do network (add nonce (lent txs)) ecliptic dat)
   --
+::
+++  invites
+  |=  [nonce=@ud =network as=address as-who=ship file=path]
+  ^-  (list transaction)
+  =/  friends=(list [=ship @q =address])
+    =+  txt=.^((list cord) %cx file)
+    %+  turn  txt
+    |=  line=cord
+    ~|  line
+    %+  rash  line
+    ;~  (glue com)
+      ;~(pfix sig fed:ag)
+      ;~(pfix sig feq:ag)
+      ;~(pfix (jest '0x') hex)
+    ==
+  =|  txs=(list transaction)
+  |-
+  ?~  friends  (flop txs)
+  =*  friend  i.friends
+  =;  tx=transaction
+    $(txs [tx txs], friends t.friends)
+  %-  do
+  :*  network
+      (add nonce (lent txs))
+      delegated-sending
+      (send-point:dat as-who [ship address]:friend)
+  ==
 ::
 ++  parse-registration
   |=  reg=cord
@@ -711,10 +753,13 @@
   ++  set-dns-domains         (enc set-dns-domains:cal)
   ++  upgrade-to              (enc upgrade-to:cal)
   ++  transfer-ownership      (enc transfer-ownership:cal)
-  ++  adopt                  (enc adopt:cal)
+  ++  adopt                   (enc adopt:cal)
+  ::
   ++  register-linear         (enc register-linear:cal)
   ++  register-conditional    (enc register-conditional:cal)
   ++  deposit                 (enc deposit:cal)
+  ::
+  ++  send-point              (enc send-point:cal)
   --
 ::
 ++  cal
@@ -862,6 +907,15 @@
     :-  'deposit(address,uint16)'
     :~  [%address to]
         [%uint `@`star]
+    ==
+  ::
+  ++  send-point
+    |=  [as=ship point=ship to=address]
+    ^-  call-data
+    :-  'sendPoint(uint32,uint32,address)'
+    :~  [%uint `@`as]
+        [%uint `@`point]
+        [%address to]
     ==
   --
 ::

@@ -25,17 +25,24 @@
 ++  peer-all
   |=  =path
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)  !!
+  ?>  (team:title our.bol src.bol)
   ::  we now proxy all events to this path
   :_  this
   [ost.bol %diff %permission-initial permissions]~
+::
+++  peer-updates
+  |=  =path
+  ^-  (quip move _this)
+  ?>  (team:title our.bol src.bol)
+  ::  we now proxy all events to this path
+  [~ this]
 ::
 ++  peer-permission
   |=  =path
   ^-  (quip move _this)
   ?~  path  !!
-  ?.  =(src.bol our.bol)  !!
-  ?.  (~(has by permissions) path)  !!
+  ?>  (team:title our.bol src.bol)
+  ?>  (~(has by permissions) path)
   :_  this
   [ost.bol %diff %permission-update [%create path (~(got by permissions) path)]]~
 ::
@@ -67,8 +74,7 @@
 ++  poke-permission-action
   |=  action=permission-action
   ^-  (quip move _this)
-  ?.  =(src.bol our.bol)
-    [~ this]
+  ?>  (team:title our.bol src.bol)
   ?-  -.action
       %add     (handle-add action)
       %remove  (handle-remove action)
@@ -159,20 +165,20 @@
     (handle-add [%add +.act])
   (handle-remove [%remove +.act])
 ::
-++  send-diff
-  |=  [pax=path update=permission-update]
+++  update-subscribers
+  |=  [pax=path upd=permission-update]
   ^-  (list move)
-  ;:  weld
-    ^-  (list move)
-    %+  turn  (prey:pubsub:userlib /all bol)
-    |=  [=bone *]
-    [bone %diff %permission-update update]
-  ::
-    ^-  (list move)
-    %+  turn  (prey:pubsub:userlib [%permission pax] bol)
-    |=  [=bone *]
-    [bone %diff %permission-update update]
-  ::
+  %+  turn  (prey:pubsub:userlib pax bol)
+  |=  [=bone *]
+  [bone %diff %permission-update upd]
+::
+++  send-diff
+  |=  [pax=path upd=permission-update]
+  ^-  (list move)
+  %-  zing
+  :~  (update-subscribers /all upd)
+      (update-subscribers /updates upd)
+      (update-subscribers [%permission pax] upd)
   ==
 ::
 --

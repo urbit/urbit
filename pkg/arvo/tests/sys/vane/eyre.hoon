@@ -602,7 +602,7 @@
             [%ipv4 .192.168.1.1]
             %'GET'
             '/~landscape/inner-path'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
             ~
         ==
       ^=  comparator
@@ -631,7 +631,7 @@
                     [%ipv4 .192.168.1.1]
                     :*  %'GET'
                         '/~landscape/inner-path'
-                        ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+                        ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
                         ~
                   ==  ==
               ==
@@ -985,12 +985,17 @@
             [%ipv4 .192.168.1.1]
             %'GET'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
             ~
         ==
       ^=  expected-moves
         ^-  (list move:http-server-gate)
         :~  :*  duct=~[/http-get-open]
+                %pass
+                /channel/heartbeat/'0123456789abcdef'
+                [%b %wait ~1111.1.2..00.03.20]
+                ==
+            :*  duct=~[/http-get-open]
                 %give
                 %response
                 %start
@@ -1033,9 +1038,14 @@
       call-args=[duct=~[/http-get-open] ~ %cancel-request ~]
       ^=  expected-moves
         ^-  (list move:http-server-gate)
-        ::  closing the channel restarts the timeout timer
+        ::  closing the channel cancels the sse heartbeat
+        ::  (initialized in results5 above) and restarts the timeout timer
         ::
         :~  :*  duct=~[/http-get-open]  %pass
+                /channel/heartbeat/'0123456789abcdef'
+                %b  %rest  :(add ~1111.1.2 ~m3 ~s20)
+            ==
+            :*  duct=~[/http-get-open]  %pass
                 /channel/timeout/'0123456789abcdef'
                 %b  %wait  :(add ~1111.1.2 ~h12 ~m4)
         ==  ==
@@ -1073,7 +1083,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
         ::
             :-  ~
             %-  as-octs:mimes:html
@@ -1173,7 +1183,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
         ::
             :-  ~
             %-  as-octs:mimes:html
@@ -1274,7 +1284,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
         ::
             :-  ~
             %-  as-octs:mimes:html
@@ -1364,12 +1374,17 @@
             [%ipv4 .192.168.1.1]
             %'GET'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
             ~
         ==
       ^=  expected-moves
         ^-  (list move:http-server-gate)
         :~  :*  duct=~[/http-get-open]
+                %pass
+                /channel/heartbeat/'0123456789abcdef'
+                [%b %wait ~1111.1.2..00.03.20]
+                ==
+            :*  duct=~[/http-get-open]
                 %give
                 %response
                 %start
@@ -1419,7 +1434,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
         ::
             :-  ~
             %-  as-octs:mimes:html
@@ -1556,12 +1571,17 @@
             [%ipv4 .192.168.1.1]
             %'GET'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
             ~
         ==
       ^=  expected-moves
         ^-  (list move:http-server-gate)
         :~  :*  duct=~[/http-get-open]
+                %pass
+                /channel/heartbeat/'0123456789abcdef'
+                [%b %wait ~1111.1.2..00.03.20]
+                ==
+            :*  duct=~[/http-get-open]
                 %give
                 %response
                 %start
@@ -1636,7 +1656,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
         ::
             :-  ~
             %-  as-octs:mimes:html
@@ -1667,9 +1687,14 @@
       call-args=[duct=~[/http-get-open] ~ %cancel-request ~]
       ^=  expected-moves
         ^-  (list move:http-server-gate)
-        ::  closing the channel restarts the timeout timer
+        ::  closing the channel cancels the sse heartbeat
+        ::  (initialized in results4 above) and restarts the timeout timer
         ::
         :~  :*  duct=~[/http-get-open]  %pass
+                /channel/heartbeat/'0123456789abcdef'
+                %b  %rest  :(add ~1111.1.2 ~m3 ~s20)
+            ==
+            :*  duct=~[/http-get-open]  %pass
                 /channel/timeout/'0123456789abcdef'
                 %b  %wait  :(add ~1111.1.2 ~h12 ~m6)
         ==  ==
@@ -1706,12 +1731,17 @@
             [%ipv4 .192.168.1.1]
             %'GET'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
             ~
         ==
       ^=  expected-moves
         ^-  (list move:http-server-gate)
         :~  :*  duct=~[/http-get-open]
+                %pass
+                /channel/heartbeat/'0123456789abcdef'
+                [%b %wait ~1111.1.2..00.08.20]
+                ==
+            :*  duct=~[/http-get-open]
                 %give
                 %response
                 %start
@@ -2079,7 +2109,7 @@
                 :-  307
                 :~  ['location' '/~landscape']
                     :-  'set-cookie'
-                    'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea; Path=/; Max-Age=604800'
+                    'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea; Path=/; Max-Age=604800'
                 ==
                 ~
                 complete=%.y
@@ -2126,7 +2156,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
         ::
             :-  ~
             %-  as-octs:mimes:html
