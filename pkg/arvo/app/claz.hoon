@@ -231,6 +231,7 @@
 ::
 ::  constants
 ::
+++  azimuth            0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb
 ++  ecliptic           0x6ac0.7b7c.4601.b5ce.11de.8dfe.6335.b871.c7c4.dd4d
 ++  delegated-sending  0xf790.8ab1.f1e3.52f8.3c5e.bc75.051c.0565.aeae.a5fb
 --
@@ -360,13 +361,18 @@
   %-  pure:m
   (rash p.json ;~(pfix (jest '0x') hex))
 ::
-++  do-request
-  |=  [rid=(unit @t) =request]
+++  do-json-request
+  |=  =json
   %+  do-hiss  %json-rpc-response
   ^-  hiss:eyre
   %+  json-request
     ::TODO  vary per network
     (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
+  json
+::
+++  do-request
+  |=  [rid=(unit @t) =request]
+  %-  do-json-request
   (request-to-json rid request)
 ::
 ++  do-hiss
@@ -396,6 +402,20 @@
     (glad-fail [%leaf "json result is unexpected ${(trip -.response)}"]~)
   (pure:m res.response)
 ::
+++  do-batch-read-expect-results
+  |=  reqs=(list proto-read-request)
+  =/  m  (glad (list response:rpc:jstd))
+  ;<  ~  bind:m
+    %-  do-json-request
+    (batch-read-request reqs)
+  ;<  =response:rpc:jstd  bind:m
+    expect-response
+  ?.  ?&  ?=(%batch -.response)
+          (levy bas.response |=([a=@tas *] =(%result a)))
+      ==
+    (glad-fail [%leaf "incomplete batch response"]~)
+  (pure:m bas.response)
+::
 ::  transaction generation logic
 ::
 ++  deal-with-command
@@ -404,6 +424,9 @@
   ^-  form:m
   ;<  nonce=@ud  bind:m  (get-next-nonce as.command)
   ^-  form:m
+  ::TODO  simplify command structure and/or move more logic here
+  ?:  ?=(%invites -.batch.command)
+    (advanced-command-handling nonce command)
   %-  just-do
   ?-  -.command
       %generate
@@ -411,6 +434,55 @@
       path.command
     (batch-to-transactions nonce [network as batch]:command)
   ==
+::
+++  advanced-command-handling
+  |=  [nonce=@ud =command]
+  =/  m  null-glad
+  ^-  form:m
+  ?>  ?=(%generate -.command)
+  ?>  ?=(%invites -.batch.command)
+  ::TODO  move to handle-invites arm
+  =/  friends=(list [=ship @q =address])
+    =+  txt=.^((list cord) %cx file.batch.command)
+    %+  turn  txt
+    |=  line=cord
+    ~|  line
+    %+  rash  line
+    ;~  (glue com)
+      ;~(pfix sig fed:ag)
+      ;~(pfix sig feq:ag)
+      ;~(pfix (jest '0x') hex)
+    ==
+  ;<  responses=(list response:rpc:jstd)  bind:m
+    %-  do-batch-read-expect-results
+    %+  turn  friends
+    |=  [=ship *]
+    ^-  proto-read-request
+    :+  `(scot %p ship)
+      azimuth
+    (rights:cal ship)
+  =/  taken=(list ship)
+    %+  murn  responses
+    |=  =response:rpc:jstd
+    ^-  (unit ship)
+    ?>  ?=(%result -.response)
+    ?>  ?=(%s -.res.response)
+    =/  rights=[owner=address *]
+      %+  decode-results  p.res.response
+      ::NOTE  using +reap nest-fails
+      [%address %address %address %address %address ~]
+    ?:  =(0x0 owner.rights)  ~
+    `(slav %p id.response)
+  ^-  form:m
+  ?.  =(~ taken)
+    %-  glad-fail
+    :~  leaf+"some planets already taken:"
+        >taken<
+    ==
+  %-  just-do
+  %+  write-file-transactions
+    path.command
+  (invites nonce [network as +.batch]:command)
 ::
 ++  batch-to-transactions
   |=  [nonce=@ud =network as=address =batch]
@@ -915,6 +987,15 @@
     :~  [%uint `@`as]
         [%uint `@`point]
         [%address to]
+    ==
+  ::
+  ::  read calls
+  ::
+  ++  rights
+    |=  =ship
+    ^-  call-data
+    :-  'rights(uint32)'
+    :~  [%uint `@`ship]
     ==
   --
 ::
