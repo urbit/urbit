@@ -443,34 +443,23 @@
   ?>  ?=(%s -.res.response)
   [id p.res]:response
 ::
-::  transaction generation logic
+::  chain state checks
 ::
-++  deal-with-command
+++  run-checks
   |=  =command
   =/  m  null-glad
   ^-  form:m
-  ;<  nonce=@ud  bind:m  (get-next-nonce as.command)
-  ^-  form:m
-  ::TODO  simplify command structure and/or move more logic here
-  ?:  ?=(%invites -.batch.command)
-    (advanced-command-handling nonce command)
-  %-  just-do
-  ?-  -.command
-      %generate
-    %+  write-file-transactions
-      path.command
-    (batch-to-transactions nonce [network as batch]:command)
-  ==
+  ?.  ?&  ::NOTE  ?=(%generate -.command)
+          ?=(%invites -.batch.command)
+      ==
+    (pure:m ~)
+  (check-invites +.batch.command)
 ::
-++  advanced-command-handling
-  |=  [nonce=@ud =command]
+++  check-invites
+  |=  [as-who=ship file=path]
   =/  m  null-glad
-  ^-  form:m
-  ?>  ?=(%generate -.command)
-  ?>  ?=(%invites -.batch.command)
-  ::TODO  move to handle-invites arm
   =/  friends=(list [=ship @q =address])
-    =+  txt=.^((list cord) %cx file.batch.command)
+    =+  txt=.^((list cord) %cx file)
     %+  turn  txt
     |=  line=cord
     ~|  line
@@ -483,14 +472,9 @@
   ;<  ~  bind:m
     %-  are-available
     (turn friends head)
-  ;<  ~  bind:m
-    %+  has-invites-for
-      as-who.batch.command
-    (turn friends head)
-  %-  just-do
-  %+  write-file-transactions
-    path.command
-  (invites nonce [network as +.batch]:command)
+  %+  has-invites-for
+    as-who
+  (turn friends head)
 ::
 ++  are-available
   |=  ships=(list ship)
@@ -566,6 +550,22 @@
   %-  glad-fail
   :~  leaf+"not enough invites from stars:"
       >missing<
+  ==
+::
+::  transaction generation logic
+::
+++  deal-with-command
+  |=  =command
+  =/  m  null-glad
+  ^-  form:m
+  ;<  ~  bind:m  (run-checks command)
+  ;<  nonce=@ud  bind:m  (get-next-nonce as.command)
+  %-  just-do
+  ?-  -.command
+      %generate
+    %+  write-file-transactions
+      path.command
+    (batch-to-transactions nonce [network as batch]:command)
   ==
 ::
 ++  batch-to-transactions
