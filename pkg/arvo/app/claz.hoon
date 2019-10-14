@@ -325,8 +325,7 @@
 ++  fail-command
   |=  err=tang
   ^+  this
-  ~&  'command processing failed'
-  ::TODO  error printing
+  %-  (slog [leaf+"command processing failed" err])
   this(inp ~)
 ::
 ::  done-command: handle result of nonce-fetching monad
@@ -357,7 +356,7 @@
     [%eth-get-transaction-count for]
   ^-  form:m
   ?.  ?=(%s -.json)
-    (glad-fail *tang) ::TODO  proper error, "unexpected json"
+    (glad-fail [%leaf "weird nonce json response"]~)
   %-  pure:m
   (rash p.json ;~(pfix (jest '0x') hex))
 ::
@@ -394,7 +393,7 @@
   ;<  =response:rpc:jstd  bind:m
     expect-response
   ?.  ?=(%result -.response)
-    (glad-fail *tang) ::TODO  make pretty error message
+    (glad-fail [%leaf "json result is unexpected ${(trip -.response)}"]~)
   (pure:m res.response)
 ::
 ::  transaction generation logic
