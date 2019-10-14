@@ -86,6 +86,10 @@
       [%send-point as=ship point=ship to=address]
   ==
 ::
+::  internal types
+::
++$  rpc-result  [id=@t res=@t]
+::
 ::  monadic structures
 ::
 ::  in-progress: monad currently in progress
@@ -403,31 +407,41 @@
   (pure:m res.response)
 ::
 ++  do-read-expect-result
-  |=  req=proto-read-request
-  =/  m  (glad response:rpc:jstd)
+  |=  [to=address =call-data]
+  =/  m  (glad ,[id=@t res=@t])
   ;<  ~  bind:m
     %-  do-json-request
-    (read-request req)
+    (read-request `'' to call-data)
   ;<  =response:rpc:jstd  bind:m
     expect-response
-  ?:  ?=(%result -.response)
-    (pure:m response)
+  ?:  ?&  ?=(%result -.response)
+          ?=(%s -.res.response)
+      ==
+    (pure:m [id p.res]:response)
   (glad-fail ~[leaf+"unexpected result" >response<])
 ::
 ++  do-batch-read-expect-results
   |=  reqs=(list proto-read-request)
-  =/  m  (glad (list response:rpc:jstd))
+  =/  m  (glad (list ,rpc-result))
+  ^-  form:m
   ;<  ~  bind:m
     %-  do-json-request
     (batch-read-request reqs)
   ;<  =response:rpc:jstd  bind:m
     expect-response
-  ?.  ?&  ?=(%batch -.response)
-          (levy bas.response |=([a=@tas *] =(%result a)))
-      ==
-    ::TODO  print just the invalid ones
-    (glad-fail ~[leaf+"incomplete batch response" >response<])
-  (pure:m bas.response)
+  ?.  ?=(%batch -.response)
+    (glad-fail ~[leaf+"not a batch response" >response<])
+  =+  ^-  [res=(list response:rpc:jstd) bad=(list response:rpc:jstd)]
+    %+  skid  bas.response
+    |=([a=@tas *] =(%result a))
+  ?.  =(~ bad)
+    (glad-fail ~[leaf+"unexpected responses in batch" >bad<])
+  %-  pure:m
+  %+  turn  res
+  |=  =response:rpc:jstd
+  ?>  ?=(%result -.response)
+  ?>  ?=(%s -.res.response)
+  [id p.res]:response
 ::
 ::  transaction generation logic
 ::
@@ -482,7 +496,7 @@
   |=  ships=(list ship)
   =/  m  null-glad
   ^-  form:m
-  ;<  responses=(list response:rpc:jstd)  bind:m
+  ;<  responses=(list rpc-result)  bind:m
     %-  do-batch-read-expect-results
     %+  turn  ships
     |=  =ship
@@ -492,16 +506,14 @@
     (rights:cal ship)
   =/  taken=(list ship)
     %+  murn  responses
-    |=  =response:rpc:jstd
+    |=  rpc-result
     ^-  (unit ship)
-    ?>  ?=(%result -.response)
-    ?>  ?=(%s -.res.response)
     =/  rights=[owner=address *]
-      %+  decode-results  p.res.response
+      %+  decode-results  res
       ::NOTE  using +reap nest-fails
       [%address %address %address %address %address ~]
     ?:  =(0x0 owner.rights)  ~
-    `(slav %p id.response)
+    `(slav %p id)
   ^-  form:m
   ?:  =(~ taken)
     (pure:m ~)
@@ -521,16 +533,15 @@
     %+  ~(put by counts)  p
     +((~(gut by counts) p 0))
   ;<  pool=@ud  bind:m
-    ;<  =response:rpc:jstd  bind:(glad @ud)
-      %-  do-read-expect-result
-      :+  `''
+    ;<  rpc-result  bind:(glad ,@ud)
+      %+  do-read-expect-result
         delegated-sending
       (get-pool:cal as)
-    ?>  ?=(%result -.response)
-    ?>  ?=(%s -.res.response)
-    %-  pure:(glad @ud)
-    (decode-results p.res.response [%uint]~)
-  ;<  responses=(list response:rpc:jstd)  bind:m
+    %-  pure:(glad ,@ud)
+    (decode-results res [%uint]~)
+  ;<  responses=(list rpc-result)  bind:m
+    =/  n  (glad ,(list rpc-result))
+    ^-  form:n
     %-  do-batch-read-expect-results
     %+  turn  ~(tap by counts)
     |=  [=ship @ud]
@@ -540,14 +551,12 @@
     (pools:cal pool ship)
   =/  missing=(list [star=ship have=@ud needed=@ud])
     %+  murn  responses
-    |=  =response:rpc:jstd
+    |=  rpc-result
     ^-  (unit [ship @ud @ud])
-    ?>  ?=(%result -.response)
-    ?>  ?=(%s -.res.response)
     =/  =ship
-      (slav %p id.response)
+      (slav %p id)
     =/  pool-size=@ud
-      (decode-results p.res.response [%uint]~)
+      (decode-results res [%uint]~)
     =/  need=@ud
       (~(got by counts) ship)
     ?:  (gte pool-size need)  ~
