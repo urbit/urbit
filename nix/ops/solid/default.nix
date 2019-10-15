@@ -3,9 +3,9 @@
 pkgs.stdenv.mkDerivation rec {
   name        = "solid";
   builder     = ./builder.sh;
-  buildInputs = [ herb ];
+  buildInputs = [ herb pkgs.coreutils ];
 
-  URBIT = urbit.exe;
+  URBIT = urbit.meta.exe;
   PIER  = pier;
   ARVO  = arvo;
 }
