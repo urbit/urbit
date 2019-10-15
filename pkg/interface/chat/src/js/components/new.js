@@ -12,21 +12,23 @@ export class NewScreen extends Component {
     this.state = {
       idName: '',
       invites: '',
+      security: 'village',
       idError: false,
       inviteError: false
     };
 
     this.idChange = this.idChange.bind(this);
     this.invChange = this.invChange.bind(this);
+    this.securityChange = this.securityChange.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
 
-    if (prevProps.circles !== props.circles) {
-      let station = `~${window.ship}/${state.idName}`;
-      if (props.circles.includes(station)) {
-        props.history.push('/~chat/' + station);
+    if (prevProps !== props) { 
+      let station = `/~${window.ship}/${state.idName}`;
+      if (station in props.inbox) {
+        props.history.push('/~chat/room' + station);
       }
     }
   }
@@ -41,6 +43,10 @@ export class NewScreen extends Component {
     this.setState({invites: event.target.value});
   }
 
+  securityChange(event) {
+    this.setState({security: event.target.value});
+  }
+
   onClickCreate() {
     const { props, state } = this;
     if (!state.idName) {
@@ -51,91 +57,73 @@ export class NewScreen extends Component {
       return;
     }
 
-    let station = `~${window.ship}/${state.idName}`;
-    let actions = [
-      {
-        create: {
-          nom: state.idName,
-          des: "chatroom",
-          sec: "village"
-        }
-      },
-      {
-        source: {
-          nom: 'inbox',
-          sub: true,
-          srs: [station]
-        }
-      }
-    ];
+    let station = `/${state.idName}`;
 
+    if (station in props.inbox) {
+      this.setState({
+        inviteError: false,
+        idError: true,
+        success: false
+      });
+      return;
+    }
 
-    if (state.invites.length > 0) {
+    // TODO: send invites
+    let aud = [];
+    let isValid = true;
+    if (state.invites.length > 2) {
+      aud = state.invites.split(',')
+        .map((mem) => `~${deSig(mem.trim())}`);
 
-      let aud = state.invites.split(',')
-        .map((mem) => mem.trim())
-        .map(deSig);
-
-      let isValid = true;
       aud.forEach((mem) => {
-        if (!urbitOb.isValidPatp(`~${mem}`)) {
+        if (!urbitOb.isValidPatp(mem)) {
           isValid = false;
         }
       });
-
-      if (isValid) {
-        actions.push({
-          permit: {
-            nom: state.idName,
-            sis: aud,
-            inv: true
-          }
-        });
-
-        actions.push({
-          phrase: {
-            aud: aud.map((aud) => `~${aud}/i`),
-            ses: [{
-              inv: {
-                inv: true,
-                cir: station
-              }
-            }]
-          }
-        });
-
-        if (this.textarea) {
-          this.textarea.value = '';
-        }
-
-        this.setState({
-          inviteError: false,
-          idError: false,
-          success: true,
-          invites: ''
-        }, () => {
-          props.setSpinner(true);
-          props.api.chat(actions);
-        });
-
-      } else {
-        this.setState({
-          inviteError: true,
-          idError: false,
-          success: false
-        });
-      }
-    } else {
-      this.setState({
-        error: false,
-        success: true,
-        invites: ''
-      }, () => {
-        props.setSpinner(true);
-        props.api.chat(actions);
-      });
     }
 
+    if (!isValid) {
+      this.setState({
+        inviteError: true,
+        idError: false,
+        success: false
+      });
+      return;
+    }
+
+    if (this.textarea) {
+      this.textarea.value = '';
+    }
+
+    // TODO: don't do this, it's shitty
+    let writeAud;
+    let readAud; 
+
+    if (state.security === 'village') {
+      aud.push(`~${window.ship}`);
+      readAud = aud.slice(); // white list
+      writeAud = aud.slice(); // white list
+    } else if (state.security === 'channel') {
+      readAud = []; // black list
+      writeAud = []; // black list
+    } else if (state.security === 'journal') {
+      aud.push(`~${window.ship}`);
+      readAud = []; // black list
+      writeAud = aud.slice(); // white list
+    } else if (state.security === 'mailbox') {
+      aud.push(`~${window.ship}`);
+      readAud = aud.slice(); // white list
+      writeAud = []; // black list
+    }
+
+    this.setState({
+      error: false,
+      success: true,
+      invites: ''
+    }, () => {
+      props.setSpinner(true);
+      props.api.chatView.create(station, state.security, readAud, writeAud);
+    });
   }
 
   render() {
@@ -194,6 +182,14 @@ export class NewScreen extends Component {
             }}
             onChange={this.invChange} />
           {invErrElem}
+          <select
+            value={this.state.securityValue}
+            onChange={this.securityChange}>
+            <option value="village">Village</option>
+            <option value="channel">Channel</option>
+            <option value="journal">Journal</option>
+            <option value="mailbox">Mailbox</option>
+          </select>
           <button
             onClick={this.onClickCreate.bind(this)}
             className={createClasses}

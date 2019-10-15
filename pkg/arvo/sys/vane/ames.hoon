@@ -1385,6 +1385,13 @@
       [[gad.fox [%give %send p.bon q.bon]] ~]
     ::
         %pito
+      ::  ignore/unset timer if we haven't yet learned a unix duct
+      ::
+      ::     Only happens during first boot.
+      ::
+      ?~  gad.fox
+        [~ fox(tim ~)]
+      ::
       :_  fox(tim `p.bon)
       %-  flop
       ^-  (list move)

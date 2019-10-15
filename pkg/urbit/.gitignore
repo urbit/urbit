@@ -3,8 +3,6 @@
 #
 /config.mk
 include/config.h
-include/ca-bundle.h
-include/ivory.h
 #
 # Build Outputs
 #
