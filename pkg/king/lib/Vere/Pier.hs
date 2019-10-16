@@ -52,14 +52,14 @@ genEntropy = fromIntegral . view (from atomBytes) <$> io (Ent.getEntropy 64)
 generateBootSeq :: Ship -> Pill -> Bool -> LegacyBootEvent -> RIO e BootSeq
 generateBootSeq ship Pill{..} lite boot = do
     ent <- genEntropy
-    let ovums = preKern ent <> pKernelOvums <> pUserspaceOvums
+    let ovums = preKern ent <> pKernelOvums <> postKern <> pUserspaceOvums
     pure $ BootSeq ident pBootFormulas ovums
   where
     ident       = LogIdentity ship isFake (fromIntegral $ length pBootFormulas)
     preKern ent = [ EvBlip $ BlipEvArvo $ ArvoEvWhom ()     ship
                   , EvBlip $ BlipEvArvo $ ArvoEvWack ()     ent
-                  , EvBlip $ BlipEvTerm $ TermEvBoot (1,()) lite boot
                   ]
+    postKern = [ EvBlip $ BlipEvTerm $ TermEvBoot (1,()) lite boot ]
     isFake = case boot of
       Fake _ -> True
       _      -> False
