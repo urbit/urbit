@@ -255,7 +255,9 @@
         =/  cub  (nol:nu:crub:crypto key.seed.tac)
         %+  ~(put by pos.zim.pki)
           our
-        =/  spon-ship  ?~(spon.tac ~ `ship.i.spon.tac)
+        =/  spon-ship
+          =/  flopped-spon  (flop spon.tac)
+          ?~(flopped-spon ~ `ship.i.flopped-spon)
         [1 lyf.seed.tac (my [lyf.seed.tac [1 pub:ex:cub]] ~) spon-ship]
       ::  our initial private key
       ::
