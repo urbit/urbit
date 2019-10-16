@@ -39,8 +39,6 @@ data PillSource
   deriving (Show)
 
 data New = New
-    -- TODO: Pill path needs to become optional; need to default to either the
-    -- git hash version or the release version per current vere.
     { nPillSource :: PillSource
     , nPierPath   :: Maybe FilePath -- Derived from ship name if not specified.
     , nArvoDir    :: Maybe FilePath
@@ -133,6 +131,11 @@ parseArgs = do
 
 --------------------------------------------------------------------------------
 
+defaultPillURL :: String
+defaultPillURL = "https://bootstrap.urbit.org/urbit-" <> VERSION_king <> ".pill"
+
+--------------------------------------------------------------------------------
+
 newComet :: Parser BootType
 newComet = flag' BootComet
   (  long "comet"
@@ -164,11 +167,8 @@ pillFromURL = PillSourceURL <$> strOption
                      ( short 'u'
                     <> long "pill-url"
                     <> metavar "URL"
+                    <> value defaultPillURL
                     <> help "URL to pill file")
-
--- pillFromDefaultURL :: Parser PillSource
--- pillFromDefaultURL = value $
---   PillSourceURL "https://bootstrap.urbit.org/urbit-0.9.0.pill"
 
 new :: Parser New
 new = do
@@ -179,7 +179,7 @@ new = do
 
     nBootType <- newComet <|> newFakeship <|> newFromKeyfile
 
-    nPillSource <- pillFromPath <|> pillFromURL  -- <|> pillFromDefaultURL
+    nPillSource <- pillFromPath <|> pillFromURL
 
     nLite <- switch
                $ short 'l'
