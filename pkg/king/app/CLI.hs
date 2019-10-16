@@ -1,8 +1,8 @@
 {-# OPTIONS_GHC -Werror -Wall #-}
 {-# LANGUAGE CPP #-}
 
-module CLI (parseArgs, Cmd(..), BootType(..), New(..), Run(..), Bug(..),
-            Opts(..)) where
+module CLI (parseArgs, Cmd(..), BootType(..), PillSource(..), New(..), Run(..),
+            Bug(..), Opts(..)) where
 
 import ClassyPrelude
 import Options.Applicative
@@ -33,14 +33,19 @@ data BootType
   | BootFromKeyfile FilePath
   deriving (Show)
 
+data PillSource
+  = PillSourceFile FilePath
+  | PillSourceURL String
+  deriving (Show)
+
 data New = New
     -- TODO: Pill path needs to become optional; need to default to either the
     -- git hash version or the release version per current vere.
-    { nPillPath :: FilePath
-    , nPierPath :: Maybe FilePath -- Derived from ship name if not specified.
-    , nArvoDir  :: Maybe FilePath
-    , nBootType :: BootType
-    , nLite     :: Bool
+    { nPillSource :: PillSource
+    , nPierPath   :: Maybe FilePath -- Derived from ship name if not specified.
+    , nArvoDir    :: Maybe FilePath
+    , nBootType   :: BootType
+    , nLite       :: Bool
     }
   deriving (Show)
 
@@ -147,6 +152,24 @@ newFromKeyfile = BootFromKeyfile <$> strOption
                             <> metavar "KEYFILE"
                             <> help "Boot from a keyfile")
 
+pillFromPath :: Parser PillSource
+pillFromPath = PillSourceFile <$> strOption
+                     ( short 'B'
+                    <> long "pill"
+                    <> metavar "PILL"
+                    <> help "Path to pill file")
+
+pillFromURL :: Parser PillSource
+pillFromURL = PillSourceURL <$> strOption
+                     ( short 'u'
+                    <> long "pill-url"
+                    <> metavar "URL"
+                    <> help "URL to pill file")
+
+-- pillFromDefaultURL :: Parser PillSource
+-- pillFromDefaultURL = value $
+--   PillSourceURL "https://bootstrap.urbit.org/urbit-0.9.0.pill"
+
 new :: Parser New
 new = do
     nPierPath <- optional
@@ -156,11 +179,7 @@ new = do
 
     nBootType <- newComet <|> newFakeship <|> newFromKeyfile
 
-    nPillPath <- strOption
-                     $ short 'B'
-                    <> long "pill"
-                    <> metavar "PILL"
-                    <> help "Path to pill file"
+    nPillSource <- pillFromPath <|> pillFromURL  -- <|> pillFromDefaultURL
 
     nLite <- switch
                $ short 'l'

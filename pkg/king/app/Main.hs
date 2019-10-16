@@ -87,11 +87,12 @@ import UrbitPrelude
 import Arvo
 import Data.Acquire
 import Data.Conduit
-import Data.Conduit.List hiding (catMaybes, map, replicate, take)
+import Data.Conduit.List       hiding (catMaybes, map, replicate, take)
 import Data.RAcquire
-import Noun              hiding (Parser)
+import Network.HTTP.Client.TLS
+import Noun                    hiding (Parser)
 import Noun.Atom
-import Noun.Conversions  (cordToUW)
+import Noun.Conversions        (cordToUW)
 import RIO.Directory
 import Vere.Pier
 import Vere.Pier.Types
@@ -114,6 +115,7 @@ import qualified CLI                         as CLI
 import qualified Data.Set                    as Set
 import qualified Data.Text                   as T
 import qualified EventBrowser                as EventBrowser
+import qualified Network.HTTP.Client         as C
 import qualified System.IO.LockFile.Internal as Lock
 import qualified Urbit.Ob                    as Ob
 import qualified Vere.Log                    as Log
@@ -152,10 +154,10 @@ toSerfFlags CLI.Opts{..} = catMaybes m
 
 
 tryBootFromPill :: HasLogFunc e
-                => FilePath -> FilePath -> Bool -> Serf.Flags -> Ship
+                => Pill -> FilePath -> Bool -> Serf.Flags -> Ship
                 -> LegacyBootEvent
                 -> RIO e ()
-tryBootFromPill pillPath shipPath lite flags ship boot = do
+tryBootFromPill pill shipPath lite flags ship boot = do
     rwith bootedPier $ \(serf, log, ss) -> do
         logTrace "Booting"
         logTrace $ displayShow ss
@@ -166,7 +168,7 @@ tryBootFromPill pillPath shipPath lite flags ship boot = do
   where
     bootedPier = do
         lockFile shipPath
-        Pier.booted pillPath shipPath lite flags ship boot
+        Pier.booted pill shipPath lite flags ship boot
 
 runAcquire :: (MonadUnliftIO m,  MonadIO m)
            => Acquire a -> m a
@@ -335,9 +337,27 @@ validateNounVal inpVal = do
 
 --------------------------------------------------------------------------------
 
+pillFrom :: CLI.PillSource -> RIO e Pill
+
+pillFrom (CLI.PillSourceFile pillPath) = do
+  putStrLn $ "boot: reading pill from " ++ pack pillPath
+  io (loadFile pillPath >>= either throwIO pure)
+
+pillFrom (CLI.PillSourceURL url) = do
+  putStrLn $ "boot: retrieving pill from " ++ pack url
+  -- Get the jamfile with the list of stars accepting comets right now.
+  manager <- io $ C.newManager tlsManagerSettings
+  request <- io $ C.parseRequest url
+  response <- io $ C.httpLbs (C.setRequestCheckStatus request) manager
+  let body = toStrict $ C.responseBody response
+
+  noun <- cueBS body & either throwIO pure
+  fromNounErr noun & either (throwIO . uncurry ParseErr) pure
+
 newShip :: forall e. HasLogFunc e => CLI.New -> CLI.Opts -> RIO e ()
 newShip CLI.New{..} opts
   | CLI.BootComet <- nBootType = do
+      pill <- pillFrom nPillSource
       putStrLn "boot: retrieving list of stars currently accepting comets"
       starList <- dawnCometList
       putStrLn ("boot: " ++ (tshow $ length starList) ++
@@ -346,11 +366,12 @@ newShip CLI.New{..} opts
       eny <- io $ randomIO
       let seed = mineComet (Set.fromList starList) eny
       putStrLn ("boot: found comet " ++ (renderShip (sShip seed)))
-      bootFromSeed seed
+      bootFromSeed pill seed
 
   | CLI.BootFake name <- nBootType = do
+      pill <- pillFrom nPillSource
       ship <- shipFrom name
-      tryBootFromPill nPillPath (pierPath name) nLite flags ship (Fake ship)
+      tryBootFromPill pill (pierPath name) nLite flags ship (Fake ship)
 
   | CLI.BootFromKeyfile keyFile <- nBootType = do
       text <- readFileUtf8 keyFile
@@ -363,7 +384,9 @@ newShip CLI.New{..} opts
         Nothing -> error "Keyfile does not seem to contain a seed."
         Just s  -> pure s
 
-      bootFromSeed seed
+      pill <- pillFrom nPillSource
+
+      bootFromSeed pill seed
 
   where
     shipFrom :: Text -> RIO e Ship
@@ -384,8 +407,8 @@ newShip CLI.New{..} opts
           Nothing -> error "Urbit.ob didn't produce string with ~"
           Just x  -> pure x
 
-    bootFromSeed :: Seed -> RIO e ()
-    bootFromSeed seed = do
+    bootFromSeed :: Pill -> Seed -> RIO e ()
+    bootFromSeed pill seed = do
       ethReturn <- dawnVent seed
 
       case ethReturn of
@@ -393,7 +416,7 @@ newShip CLI.New{..} opts
         Right dawn -> do
           let ship = sShip $ dSeed dawn
           path <- pierPath <$> nameFromShip ship
-          tryBootFromPill nPillPath path nLite flags ship (Dawn dawn)
+          tryBootFromPill pill path nLite flags ship (Dawn dawn)
 
     flags = toSerfFlags opts
 

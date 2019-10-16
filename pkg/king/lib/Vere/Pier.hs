@@ -87,15 +87,9 @@ writeJobs log !jobs = do
 -- Boot a new ship. ------------------------------------------------------------
 
 booted :: HasLogFunc e
-       => FilePath -> FilePath -> Bool -> Serf.Flags -> Ship -> LegacyBootEvent
+       => Pill -> FilePath -> Bool -> Serf.Flags -> Ship -> LegacyBootEvent
        -> RAcquire e (Serf e, EventLog, SerfState)
-booted pillPath pierPath lite flags ship boot = do
-  rio $ logTrace "LOADING PILL"
-
-  pill <- io (loadFile pillPath >>= either throwIO pure)
-
-  rio $ logTrace "PILL LOADED"
-
+booted pill pierPath lite flags ship boot = do
   seq@(BootSeq ident x y) <- rio $ generateBootSeq ship pill lite boot
 
   rio $ logTrace "BootSeq Computed"
