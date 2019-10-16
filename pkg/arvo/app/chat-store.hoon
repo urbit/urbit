@@ -192,12 +192,11 @@
     =/  =hoon  (ream expression.letter)
     letter(output (eval bol hoon))
   =:  length.config.u.mailbox  +(length.config.u.mailbox)
-      number.envelope.act  length.config.u.mailbox
+      number.envelope.act  +(length.config.u.mailbox)
       envelopes.u.mailbox  (snoc envelopes.u.mailbox envelope.act)
-      inbox  (~(put by inbox) path.act u.mailbox)
   ==
-  :_  this(inbox inbox)
-  (send-diff path.act act)
+  :-  (send-diff path.act act)
+  this(inbox (~(put by inbox) path.act u.mailbox))
 ::
 ++  handle-read
   |=  act=chat-action
@@ -206,11 +205,9 @@
   =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
   ?~  mailbox
     [~ this]
-  =:  read.config.u.mailbox  length.config.u.mailbox
-      inbox  (~(put by inbox) path.act u.mailbox)
-  ==
-  :_  this(inbox inbox)
-  (send-diff path.act act)
+  =.  read.config.u.mailbox  length.config.u.mailbox
+  :-  (send-diff path.act act)
+  this(inbox (~(put by inbox) path.act u.mailbox))
 ::
 ++  update-subscribers
   |=  [pax=path act=chat-action]
