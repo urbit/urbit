@@ -306,6 +306,7 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
     tot_w += u3a_maid(fil_u, "effects", u3a_mark_noun(vir));
 
     u3a_print_memory(fil_u, "total marked", tot_w);
+    u3a_print_memory(fil_u, "free lists", u3a_idle(u3R));
     u3a_print_memory(fil_u, "sweep", u3a_sweep());
 
     fflush(fil_u);
