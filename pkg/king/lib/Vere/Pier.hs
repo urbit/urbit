@@ -87,13 +87,15 @@ writeJobs log !jobs = do
 
 -- Boot a new ship. ------------------------------------------------------------
 
-booted :: HasLogFunc e
-       => Pill -> FilePath -> Bool -> Serf.Flags -> Ship -> LegacyBootEvent
+booted :: (HasPierConfig e, HasLogFunc e)
+       => Pill -> Bool -> Serf.Flags -> Ship -> LegacyBootEvent
        -> RAcquire e (Serf e, EventLog, SerfState)
-booted pill pierPath lite flags ship boot = do
+booted pill lite flags ship boot = do
   seq@(BootSeq ident x y) <- rio $ generateBootSeq ship pill lite boot
 
   rio $ logTrace "BootSeq Computed"
+
+  pierPath <- getPierPath
 
   liftRIO (setupPierDirectory pierPath)
 
@@ -139,11 +141,9 @@ acquireWorker :: RIO e () -> RAcquire e (Async ())
 acquireWorker act = mkRAcquire (async act) cancel
 
 pier :: ∀e. (HasPierConfig e, HasLogFunc e)
-     => Maybe Port
-     -> (Serf e, EventLog, SerfState)
+     => (Serf e, EventLog, SerfState)
      -> RAcquire e ()
-pier mPort (serf, log, ss) = do
-    pierPath  <- getPierPath
+pier (serf, log, ss) = do
     computeQ  <- newTQueueIO
     persistQ  <- newTQueueIO
     executeQ  <- newTQueueIO
@@ -190,7 +190,7 @@ pier mPort (serf, log, ss) = do
     -- add them.
     let showErr = atomically . Term.trace muxed . (flip append "\r\n")
     let (bootEvents, startDrivers) =
-            drivers inst ship (isFake logId) mPort
+            drivers inst ship (isFake logId)
                 (writeTQueue computeQ)
                 shutdownEvent
                 (sz, muxed)
@@ -250,16 +250,16 @@ data Drivers e = Drivers
     }
 
 drivers :: (HasPierConfig e, HasLogFunc e)
-        => KingId -> Ship -> Bool -> Maybe Port -> (Ev -> STM ())
+        => KingId -> Ship -> Bool -> (Ev -> STM ())
         -> STM()
         -> (TSize.Window Word, Term.Client)
         -> (Text -> RIO e ())
         -> ([Ev], RAcquire e (Drivers e))
-drivers inst who isFake mPort plan shutdownSTM termSys stderr =
+drivers inst who isFake plan shutdownSTM termSys stderr =
     (initialEvents, runDrivers)
   where
     (behnBorn, runBehn) = behn inst plan
-    (amesBorn, runAmes) = ames inst who isFake mPort plan stderr
+    (amesBorn, runAmes) = ames inst who isFake plan stderr
     (httpBorn, runHttp) = serv inst plan
     (clayBorn, runClay) = clay inst plan
     (irisBorn, runIris) = client inst plan

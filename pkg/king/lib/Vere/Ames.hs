@@ -91,10 +91,10 @@ renderGalaxy = Ob.renderPatp . Ob.patp . fromIntegral . unGalaxy
     TODO verify that the KingIds match on effects.
 -}
 ames :: forall e. (HasPierConfig e, HasLogFunc e)
-     => KingId -> Ship -> Bool -> Maybe Port -> QueueEv
+     => KingId -> Ship -> Bool -> QueueEv
      -> (Text -> RIO e ())
      -> ([Ev], RAcquire e (EffCb e NewtEf))
-ames inst who isFake mPort enqueueEv stderr =
+ames inst who isFake enqueueEv stderr =
     (initialEvents, runAmes)
   where
     initialEvents :: [Ev]
@@ -149,6 +149,7 @@ ames inst who isFake mPort enqueueEv stderr =
            doBindSocket :: HostAddress -> RIO e Socket
            doBindSocket bindAddr = do
              mode <- netMode
+             mPort <- getAmesPort
              let ourPort = maybe (listenPort mode who) fromIntegral mPort
              s  <- io $ socket AF_INET Datagram defaultProtocol
 

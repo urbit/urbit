@@ -2,14 +2,7 @@ module PierConfig where
 
 import UrbitPrelude
 
--- State before lunch: I had threaded the pier path through everything. I tried
--- putting the kingid here, but realized it would be a bad idea since it has
--- non-monadic uses. I started the plan of NetworkType for -O vs -L vs nothing.
-
-
--- The
 data NetworkingType = NetworkNormal | NetworkLocalhost
-
 
 -- All the configuration data revolving around a ship and the current execution
 -- options.
@@ -17,6 +10,7 @@ data PierConfig = PierConfig
   { pcPierPath   :: FilePath
   -- Configurable networking options
   , pcNetworking :: NetworkingType
+  , pcAmesPort   :: Maybe Word16
   }
 
 class HasPierConfig env where
@@ -31,3 +25,8 @@ getNetworkingType :: (MonadReader env m, HasPierConfig env) => m NetworkingType
 getNetworkingType = do
   PierConfig{..} <- view pierConfigL
   pure pcNetworking
+
+getAmesPort :: (MonadReader env m, HasPierConfig env) => m (Maybe Word16)
+getAmesPort = do
+  PierConfig{..} <- view pierConfigL
+  pure pcAmesPort

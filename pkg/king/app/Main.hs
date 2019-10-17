@@ -12,24 +12,9 @@
       the event log, from last to first, pretty-print each event, and
       ask if it should be pruned.
 
-
-    # `-L` -- Local-Only Networking
-
-    Localhost-only networking, even on real ships.
-
-
     # `-N` -- Dry Run
 
     Disable all persistence and use no-op networking.
-
-
-    # `-x` -- Exit Immediately
-
-    When creating a new ship, or booting an existing one, simply get to
-    a good state, snapshot, and then exit. Don't do anything that has
-    any effect on the outside world, just boot or catch the snapshot up
-    to the event log.
-
 
     # Implement subcommands to test event and effect parsing.
 
@@ -151,24 +136,53 @@ toPierConfig pierPath CLI.Opts{..} = PierConfig
   { pcPierPath = pierPath
   , pcNetworking = if oLocalhost then NetworkLocalhost
                    else NetworkNormal
+  , pcAmesPort = oAmesPort
   }
 
-tryBootFromPill :: HasLogFunc e
-                => Pill -> FilePath -> Bool -> Serf.Flags -> Ship
+tryBootFromPill :: (HasPierConfig e, HasLogFunc e)
+                => Bool -> Pill -> Bool -> Serf.Flags -> Ship
                 -> LegacyBootEvent
                 -> RIO e ()
-tryBootFromPill pill shipPath lite flags ship boot = do
-    rwith bootedPier $ \(serf, log, ss) -> do
-        logTrace "Booting"
+tryBootFromPill oExit pill lite flags ship boot =
+  do
+    runOrExitImmediately bootedPier oExit
+  where
+    bootedPier = do
+        getPierPath >>= lockFile
+        rio $ logTrace "Starting boot"
+        sls <- Pier.booted pill lite flags ship boot
+        rio $ logTrace "Completed boot"
+        pure sls
+
+runOrExitImmediately :: (HasPierConfig e, HasLogFunc e)
+                     => RAcquire e (Serf e, Log.EventLog, SerfState)
+                     -> Bool
+                     -> RIO e ()
+runOrExitImmediately getPier oExit =
+  do
+    rwith getPier $ if oExit then shutdownImmediately else runPier
+  where
+    shutdownImmediately (serf, log, ss) = do
+        logTrace "Sending shutdown signal"
         logTrace $ displayShow ss
         io $ threadDelay 500000
         ss <- shutdown serf 0
         logTrace $ displayShow ss
-        logTrace "Booted!"
+        logTrace "Shutdown!"
+
+    runPier sls = do
+        runRAcquire $ Pier.pier sls
+
+tryPlayShip :: (HasPierConfig e, HasLogFunc e)
+            => Bool -> Serf.Flags -> RIO e ()
+tryPlayShip oExit flags = runOrExitImmediately resumeShip oExit
   where
-    bootedPier = do
-        lockFile shipPath
-        Pier.booted pill shipPath lite flags ship boot
+    resumeShip = do
+        getPierPath >>= lockFile
+        rio $ logTrace "RESUMING SHIP"
+        sls <- Pier.resumed flags
+        rio $ logTrace "SHIP RESUMED"
+        pure sls
 
 runAcquire :: (MonadUnliftIO m,  MonadIO m)
            => Acquire a -> m a
@@ -177,15 +191,6 @@ runAcquire act = with act pure
 runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
             => RAcquire e a -> m e a
 runRAcquire act = rwith act pure
-
-tryPlayShip :: (HasPierConfig e, HasLogFunc e) => Serf.Flags -> RIO e ()
-tryPlayShip flags = do
-    runRAcquire $ do
-        getPierPath >>= lockFile
-        rio $ logTrace "RESUMING SHIP"
-        sls <- Pier.resumed flags
-        rio $ logTrace "SHIP RESUMED"
-        Pier.pier Nothing sls
 
 tryResume :: (HasPierConfig e, HasLogFunc e) => Serf.Flags -> RIO e ()
 tryResume flags = do
@@ -372,7 +377,7 @@ newShip CLI.New{..} opts
   | CLI.BootFake name <- nBootType = do
       pill <- pillFrom nPillSource
       ship <- shipFrom name
-      tryBootFromPill pill (pierPath name) nLite flags ship (Fake ship)
+      runTryBootFromPill pill name ship (Fake ship)
 
   | CLI.BootFromKeyfile keyFile <- nBootType = do
       text <- readFileUtf8 keyFile
@@ -416,17 +421,23 @@ newShip CLI.New{..} opts
         Left x -> error $ unpack x
         Right dawn -> do
           let ship = sShip $ dSeed dawn
-          path <- pierPath <$> nameFromShip ship
-          tryBootFromPill pill path nLite flags ship (Dawn dawn)
+          name <- nameFromShip ship
+          runTryBootFromPill pill name ship (Dawn dawn)
 
     flags = toSerfFlags opts
 
+    -- Now that we have all the information for running an application with a
+    -- PierConfig, do so.
+    runTryBootFromPill pill name ship bootEvent = do
+      let config = toPierConfig (pierPath name) opts
+      io $ runPierApp config $
+        tryBootFromPill (CLI.oExit opts) pill nLite flags ship bootEvent
 
 
 runShip :: CLI.Run -> CLI.Opts -> IO ()
 runShip (CLI.Run pierPath) opts = do
     let config = toPierConfig pierPath opts
-    runPierApp config $ tryPlayShip (toSerfFlags opts)
+    runPierApp config $ tryPlayShip (CLI.oExit opts) (toSerfFlags opts)
 
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
