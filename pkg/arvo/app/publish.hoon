@@ -58,7 +58,6 @@
       [%kill wire ~]
       [%connect wire binding:eyre term]
       [%http-response http-event:http]
-      [%disconnect binding:eyre]
   ==
 ::
 +$  poke
