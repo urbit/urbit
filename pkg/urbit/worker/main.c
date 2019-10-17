@@ -341,10 +341,6 @@ _worker_send(u3_noun job)
 static void
 _worker_send_replace(c3_d evt_d, u3_noun job)
 {
-  u3l_log("worker_send_replace %" PRIu64 " %s\r\n",
-          evt_d,
-          u3r_string(u3h(u3t(u3t(job)))));
-
   _worker_send(u3nt(c3__work,
                     u3i_chubs(1, &evt_d),
                     u3ke_jam(u3nc(u3V.mug_l, job))));
