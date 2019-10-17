@@ -326,7 +326,8 @@
           ?.  ((sane %tas) lal)  ~
           %+  biff  ((soft path) p.q.caq)
           |=  pax/path
-          =^  yav  worm.vane  (~(spot wa worm.vane) 15 caq)
+          =^  xav  worm.vane  (~(spot wa worm.vane) 7 caq)
+          =^  yav  worm.vane  (~(spot wa worm.vane) 3 xav)
           %+  bind  (song yav)
           |=  {hil/mill vel/worm}
           [%& [%pass pax lal hil] vel]
@@ -343,7 +344,8 @@
           %+  biff  ((soft @) p.q.caq)
           |=  lal/@tas
           ?.  ((sane %tas) lal)  ~
-          =^  yav  worm.vane  (~(spot wa worm.vane) 7 caq)
+          =^  xav  worm.vane  (~(spot wa worm.vane) 3 caq)
+          =^  yav  worm.vane  (~(spot wa worm.vane) 3 xav)
           %+  bind  (song yav)
           |=  {hil/mill vel/worm}
           [%& [%slip lal hil] vel]
