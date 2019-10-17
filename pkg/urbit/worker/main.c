@@ -606,6 +606,15 @@ _worker_work_live(c3_d evt_d, u3_noun job)
         rec_o = c3y;
         pri   = 0;
       }
+      //  reclaim memory from persistent caches periodically
+      //
+      //    XX this is a hack to work two things
+      //    - bytecode caches grow rapidly and can't be simply capped
+      //    - we don't make very effective use of our free lists
+      //
+      else {
+        rec_o = _(0 == (evt_d % 1000ULL));
+      }
 
       //  notify daemon of memory pressure via "fake" effect
       //
