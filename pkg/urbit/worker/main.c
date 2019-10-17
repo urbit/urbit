@@ -898,6 +898,21 @@ _worker_poke(void* vod_p, u3_noun mat)
   }
 }
 
+/* _worker_static_grab(): garbage collect, checking for profiling. RETAIN.
+*/
+static void
+_worker_static_grab(void)
+{
+  c3_assert( u3R == &(u3H->rod_u) );
+
+  fprintf(stderr, "work: measuring memory:\r\n");
+  u3a_print_memory(stderr, "total marked", u3m_mark(stderr));
+  u3a_print_memory(stderr, "free lists", u3a_idle(u3R));
+  u3a_print_memory(stderr, "sweep", u3a_sweep());
+  fprintf(stderr, "\r\n");
+  fflush(stderr);
+}
+
 /* u3_worker_boot(): send startup message to manager.
 */
 void
@@ -927,6 +942,18 @@ u3_worker_boot(void)
   u3l_log("work: play %" PRIu64 "\r\n", nex_d);
 
   _worker_send(u3nc(c3__play, dat));
+
+  //  measure/print static memory usage if < 1/2 of the loom is available
+  //
+  {
+    c3_w pen_w = u3a_open(u3R);
+
+    if ( !(pen_w > (1 << 28)) ) {
+      fprintf(stderr, "\r\n");
+      u3a_print_memory(stderr, "work: contiguous free space", pen_w);
+      _worker_static_grab();
+    }
+  }
 }
 
 /* main(): main() when run as urbit-worker
