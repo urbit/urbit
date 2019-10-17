@@ -1,8 +1,4 @@
 {-
-    # Booting a Ship
-
-    - TODO Don't just boot, also run the ship (unless `-x` is set).
-
     # Event Pruning
 
     - `king discard-events NUM_EVENTS`: Delete the last `n` events from
@@ -11,10 +7,6 @@
     - `king discard-events-interactive`: Iterate through the events in
       the event log, from last to first, pretty-print each event, and
       ask if it should be pruned.
-
-    # `-N` -- Dry Run
-
-    Disable all persistence and use no-op networking.
 
     # Implement subcommands to test event and effect parsing.
 
@@ -134,7 +126,9 @@ toSerfFlags CLI.Opts{..} = catMaybes m
 toPierConfig :: FilePath -> CLI.Opts -> PierConfig
 toPierConfig pierPath CLI.Opts{..} = PierConfig
   { pcPierPath = pierPath
-  , pcNetworking = if oLocalhost then NetworkLocalhost
+  , pcDryRun = oDryRun
+  , pcNetworking = if oDryRun then NetworkNone
+                   else if oLocalhost then NetworkLocalhost
                    else NetworkNormal
   , pcAmesPort = oAmesPort
   }

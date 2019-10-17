@@ -384,7 +384,7 @@ instance Exception PersistExn where
             , "\tExpected " <> show expected <> " but got " <> show got
             ]
 
-runPersist :: ∀e. HasLogFunc e
+runPersist :: ∀e. (HasPierConfig e, HasLogFunc e)
            => EventLog
            -> TQueue (Job, FX)
            -> (FX -> STM ())
@@ -393,11 +393,14 @@ runPersist log inpQ out =
     mkRAcquire runThread cancel
   where
     runThread :: RIO e (Async ())
-    runThread = asyncBound $ forever $ do
-        writs  <- atomically getBatchFromQueue
-        events <- validateJobsAndGetBytes (toNullable writs)
-        Log.appendEvents log events
-        atomically $ for_ writs $ \(_,fx) -> out fx
+    runThread = asyncBound $ do
+        dryRun <- getIsDryRun
+        forever $ do
+            writs  <- atomically getBatchFromQueue
+            unless dryRun $ do
+                events <- validateJobsAndGetBytes (toNullable writs)
+                Log.appendEvents log events
+            atomically $ for_ writs $ \(_,fx) -> out fx
 
     validateJobsAndGetBytes :: [(Job, FX)] -> RIO e (Vector ByteString)
     validateJobsAndGetBytes writs = do
