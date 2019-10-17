@@ -956,8 +956,9 @@
                 =/  mex  ;;(full:pact (cue msg))
                 =.  diz  (deng law.mex)
                 =/  wug  cluy:diz
+                ~|  [from=her expected-her-life=lyf.wug got-her-life=from.lyf.mex]
                 ?>  =(lyf.wug from.lyf.mex)
-                ~|  from=her
+                ~|  [from=her got-our-life=to.lyf.mex]
                 =/  gey  (sev:gus to.lyf.mex)
                 =/  sem  (need (tear:as:q.gey pub:ex:cub.wug txt.mex))
                 =/  mes  ;;((pair @ @) (cue sem))
@@ -970,6 +971,7 @@
                 =/  mex  ;;(open:pact (cue msg))
                 =.  diz  (deng law.mex)
                 =/  wug  cluy:diz
+                ~|  [from=her expected-her-life=lyf.wug got-her-life=from.lyf.mex]
                 ?>  =(lyf.wug from.lyf.mex)
                 =/  mes  (need (sure:as:cub.wug txt.mex))
                 =.  puz  (bilk:puz now)
