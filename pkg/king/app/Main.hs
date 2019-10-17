@@ -2,7 +2,6 @@
     # Booting a Ship
 
     - TODO Don't just boot, also run the ship (unless `-x` is set).
-    - TODO Figure out why ships booted by us don't work.
 
     # Event Pruning
 
@@ -17,12 +16,6 @@
     # `-L` -- Local-Only Networking
 
     Localhost-only networking, even on real ships.
-
-
-    # `-O` -- Networking Disabled
-
-    Run networking drivers, but configure them to never send any packages
-    and to never open any ports.
 
 
     # `-N` -- Dry Run
@@ -77,7 +70,6 @@
     - `DryRun`: TODO Just the `-N` flag?
     - `Quiet`: TODO Just the `-q` flag?
     - `Hashless`: Don't use hashboard for jets.
-    - `Trace`: TODO What does this do?
 -}
 
 module Main (main) where
@@ -93,6 +85,7 @@ import Network.HTTP.Client.TLS
 import Noun                    hiding (Parser)
 import Noun.Atom
 import Noun.Conversions        (cordToUW)
+import PierConfig
 import RIO.Directory
 import Vere.Pier
 import Vere.Pier.Types
@@ -102,7 +95,7 @@ import Control.Concurrent   (myThreadId, runInBoundThread)
 import Control.Exception    (AsyncException(UserInterrupt))
 import Control.Lens         ((&))
 import Data.Default         (def)
-import KingApp              (runApp)
+import KingApp              (runApp, runPierApp)
 import System.Environment   (getProgName)
 import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
 import System.Random        (randomIO)
@@ -153,6 +146,13 @@ toSerfFlags CLI.Opts{..} = catMaybes m
     from False _   = Nothing
 
 
+toPierConfig :: FilePath -> CLI.Opts -> PierConfig
+toPierConfig pierPath CLI.Opts{..} = PierConfig
+  { pcPierPath = pierPath
+  , pcNetworking = if oLocalhost then NetworkLocalhost
+                   else NetworkNormal
+  }
+
 tryBootFromPill :: HasLogFunc e
                 => Pill -> FilePath -> Bool -> Serf.Flags -> Ship
                 -> LegacyBootEvent
@@ -178,17 +178,17 @@ runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
             => RAcquire e a -> m e a
 runRAcquire act = rwith act pure
 
-tryPlayShip :: HasLogFunc e => FilePath -> Serf.Flags -> RIO e ()
-tryPlayShip shipPath flags = do
+tryPlayShip :: (HasPierConfig e, HasLogFunc e) => Serf.Flags -> RIO e ()
+tryPlayShip flags = do
     runRAcquire $ do
-        lockFile shipPath
+        getPierPath >>= lockFile
         rio $ logTrace "RESUMING SHIP"
-        sls <- Pier.resumed shipPath flags
+        sls <- Pier.resumed flags
         rio $ logTrace "SHIP RESUMED"
-        Pier.pier shipPath Nothing sls
+        Pier.pier Nothing sls
 
-tryResume :: HasLogFunc e => FilePath -> Serf.Flags -> RIO e ()
-tryResume shipPath flags = do
+tryResume :: (HasPierConfig e, HasLogFunc e) => Serf.Flags -> RIO e ()
+tryResume flags = do
     rwith resumedPier $ \(serf, log, ss) -> do
         logTrace (displayShow ss)
         threadDelay 500000
@@ -197,23 +197,24 @@ tryResume shipPath flags = do
         logTrace "Resumed!"
   where
     resumedPier = do
-        lockFile shipPath
-        Pier.resumed shipPath flags
+        getPierPath >>= lockFile
+        Pier.resumed flags
 
-tryFullReplay :: HasLogFunc e => FilePath -> Serf.Flags -> RIO e ()
-tryFullReplay shipPath flags = do
+tryFullReplay :: (HasPierConfig e, HasLogFunc e) => Serf.Flags -> RIO e ()
+tryFullReplay flags = do
     wipeSnapshot
-    tryResume shipPath flags
+    tryResume flags
   where
     wipeSnapshot = do
+        shipPath <- getPierPath
         logTrace "wipeSnapshot"
-        logDebug $ display $ pack @Text ("Wiping " <> north)
-        logDebug $ display $ pack @Text ("Wiping " <> south)
-        removeFileIfExists north
-        removeFileIfExists south
+        logDebug $ display $ pack @Text ("Wiping " <> north shipPath)
+        logDebug $ display $ pack @Text ("Wiping " <> south shipPath)
+        removeFileIfExists (north shipPath)
+        removeFileIfExists (south shipPath)
 
-    north = shipPath <> "/.urb/chk/north.bin"
-    south = shipPath <> "/.urb/chk/south.bin"
+    north shipPath = shipPath <> "/.urb/chk/north.bin"
+    south shipPath = shipPath <> "/.urb/chk/south.bin"
 
 
 --------------------------------------------------------------------------------
@@ -422,8 +423,10 @@ newShip CLI.New{..} opts
 
 
 
-runShip :: HasLogFunc e => CLI.Run -> CLI.Opts -> RIO e ()
-runShip (CLI.Run pierPath) opts = tryPlayShip pierPath (toSerfFlags opts)
+runShip :: CLI.Run -> CLI.Opts -> IO ()
+runShip (CLI.Run pierPath) opts = do
+    let config = toPierConfig pierPath opts
+    runPierApp config $ tryPlayShip (toSerfFlags opts)
 
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
@@ -470,17 +473,17 @@ main = do
 
     installHandler sigTERM (Catch onTermSig) Nothing
 
-    CLI.parseArgs >>= runApp . \case
+    CLI.parseArgs >>= \case
         CLI.CmdRun r o                            -> runShip r o
-        CLI.CmdNew n o                            -> newShip n o
-        CLI.CmdBug (CLI.CollectAllFX pax)         -> collectAllFx pax
-        CLI.CmdBug (CLI.EventBrowser pax)         -> startBrowser pax
-        CLI.CmdBug (CLI.ValidatePill pax pil seq) -> testPill pax pil seq
-        CLI.CmdBug (CLI.ValidateEvents pax f l)   -> checkEvs pax f l
-        CLI.CmdBug (CLI.ValidateFX pax f l)       -> checkFx  pax f l
-        CLI.CmdBug (CLI.CheckDawn pax)            -> checkDawn pax
-        CLI.CmdBug CLI.CheckComet                 -> checkComet
-        CLI.CmdCon port                           -> connTerm port
+        CLI.CmdNew n o                            -> runApp $ newShip n o
+        CLI.CmdBug (CLI.CollectAllFX pax)         -> runApp $ collectAllFx pax
+        CLI.CmdBug (CLI.EventBrowser pax)         -> runApp $ startBrowser pax
+        CLI.CmdBug (CLI.ValidatePill pax pil seq) -> runApp $ testPill pax pil seq
+        CLI.CmdBug (CLI.ValidateEvents pax f l)   -> runApp $ checkEvs pax f l
+        CLI.CmdBug (CLI.ValidateFX pax f l)       -> runApp $ checkFx  pax f l
+        CLI.CmdBug (CLI.CheckDawn pax)            -> runApp $ checkDawn pax
+        CLI.CmdBug CLI.CheckComet                 -> runApp $ checkComet
+        CLI.CmdCon port                           -> runApp $ connTerm port
 
 
 --------------------------------------------------------------------------------

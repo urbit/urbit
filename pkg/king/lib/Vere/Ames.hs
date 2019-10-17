@@ -5,6 +5,7 @@ import UrbitPrelude
 import Arvo                      hiding (Fake)
 import Network.Socket            hiding (recvFrom, sendTo)
 import Network.Socket.ByteString
+import PierConfig
 import Vere.Pier.Types
 
 import qualified Data.ByteString as BS
@@ -24,14 +25,15 @@ data AmesDrv = AmesDrv
   , aSendingThread :: Async ()
   }
 
-data NetworkMode = Fake | Real
+data NetworkMode = Fake | Localhost | Real
   deriving (Eq, Ord, Show)
 
 -- Utils -----------------------------------------------------------------------
 
 galaxyPort :: NetworkMode -> Galaxy -> PortNumber
-galaxyPort Fake (Galaxy g) = fromIntegral g + 31337
-galaxyPort Real (Galaxy g) = fromIntegral g + 13337
+galaxyPort Fake (Galaxy g)      = fromIntegral g + 31337
+galaxyPort Localhost (Galaxy g) = fromIntegral g + 13337
+galaxyPort Real (Galaxy g)      = fromIntegral g + 13337
 
 listenPort :: NetworkMode -> Ship -> PortNumber
 listenPort m s | s < 256 = galaxyPort m (fromIntegral s)
@@ -48,9 +50,9 @@ okayFakeAddr = \case
     ADGala _ _          -> True
     ADIpv4 _ p (Ipv4 a) -> a == localhost
 
-fakeSockAddr :: AmesDest -> SockAddr
-fakeSockAddr = \case
-    ADGala _ g   -> SockAddrInet (galaxyPort Fake g) localhost
+localhostSockAddr :: NetworkMode -> AmesDest -> SockAddr
+localhostSockAddr mode = \case
+    ADGala _ g   -> SockAddrInet (galaxyPort mode g) localhost
     ADIpv4 _ p a -> SockAddrInet (fromIntegral p) localhost
 
 barnEv :: KingId -> Ev
@@ -88,7 +90,7 @@ renderGalaxy = Ob.renderPatp . Ob.patp . fromIntegral . unGalaxy
 
     TODO verify that the KingIds match on effects.
 -}
-ames :: forall e. HasLogFunc e
+ames :: forall e. (HasPierConfig e, HasLogFunc e)
      => KingId -> Ship -> Bool -> Maybe Port -> QueueEv
      -> (Text -> RIO e ())
      -> ([Ev], RAcquire e (EffCb e NewtEf))
@@ -114,8 +116,13 @@ ames inst who isFake mPort enqueueEv stderr =
         aSendingThread <- async (sendingThread aSendingQueue aSocket)
         pure            $ AmesDrv{..}
 
-    netMode :: NetworkMode
-    netMode = if isFake then Fake else Real
+    netMode :: RIO e NetworkMode
+    netMode = do
+      if isFake
+      then pure Fake
+      else getNetworkingType >>= \case
+        NetworkNormal -> pure Real
+        NetworkLocalhost -> pure Localhost
 
     stop :: AmesDrv -> RIO e ()
     stop AmesDrv{..} = do
@@ -132,16 +139,24 @@ ames inst who isFake mPort enqueueEv stderr =
         atomically (enqueueEv wakeEv)
 
     bindSock :: RIO e Socket
-    bindSock = do
-        let ourPort = maybe (listenPort netMode who) fromIntegral mPort
-        s  <- io $ socket AF_INET Datagram defaultProtocol
+    bindSock = getBindAddr >>= doBindSocket
+        where
+           getBindAddr = netMode >>= \case
+              Fake -> pure localhost
+              Localhost -> pure localhost
+              Real ->    pure inaddrAny
 
-        logTrace $ displayShow ("(ames) Binding to port ", ourPort)
-        let addr = SockAddrInet ourPort $
-              if isFake then localhost else inaddrAny
-        () <- io $ bind s addr
+           doBindSocket :: HostAddress -> RIO e Socket
+           doBindSocket bindAddr = do
+             mode <- netMode
+             let ourPort = maybe (listenPort mode who) fromIntegral mPort
+             s  <- io $ socket AF_INET Datagram defaultProtocol
 
-        pure s
+             logTrace $ displayShow ("(ames) Binding to port ", ourPort)
+             let addr = SockAddrInet ourPort bindAddr
+             () <- io $ bind s addr
+
+             pure s
 
     waitPacket :: Socket -> RIO e ()
     waitPacket s = forever $ do
@@ -160,13 +175,20 @@ ames inst who isFake mPort enqueueEv stderr =
       NewtEfSend (_id, ()) dest (MkBytes bs) -> do
           atomically (readTVar aTurfs) >>= \case
             Nothing -> pure ()
-            Just turfs -> (sendPacket drv netMode dest bs)
+            Just turfs -> do
+              mode <- netMode
+              (sendPacket drv mode dest bs)
 
     sendPacket :: AmesDrv -> NetworkMode -> AmesDest -> ByteString -> RIO e ()
 
     sendPacket AmesDrv{..} Fake dest bs = do
-      when (okayFakeAddr dest) $ do
-        atomically $ writeTQueue aSendingQueue ((fakeSockAddr dest), bs)
+      when (okayFakeAddr dest) $ atomically $
+        writeTQueue aSendingQueue ((localhostSockAddr Fake dest), bs)
+
+    -- In localhost only mode, regardless of the actual destination, send it to
+    -- localhost.
+    sendPacket AmesDrv{..} Localhost dest bs = atomically $
+      writeTQueue aSendingQueue ((localhostSockAddr Localhost dest), bs)
 
     sendPacket AmesDrv{..} Real (ADGala wen galaxy) bs = do
       galaxies <- readIORef aGalaxies
@@ -272,3 +294,4 @@ ames inst who isFake mPort enqueueEv stderr =
         queueSendToGalaxy :: SockAddr -> ByteString -> RIO e ()
         queueSendToGalaxy inet packet = do
           atomically $ writeTQueue outgoing (inet, packet)
+

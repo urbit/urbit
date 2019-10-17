@@ -23,7 +23,6 @@ data Opts = Opts
     , oTrace     :: Bool
     , oCollectFx :: Bool
     , oLocalhost :: Bool
-    , oOffline   :: Bool
     }
   deriving (Show)
 
@@ -237,11 +236,6 @@ opts = do
     oLocalhost <- switch $ short 'L'
                         <> long "local"
                         <> help "Localhost-only networking"
-                        <> hidden
-
-    oOffline   <- switch $ short 'O'
-                        <> long "offline"
-                        <> help "Run without any networking"
                         <> hidden
 
     oCollectFx <- switch $ short 'f'

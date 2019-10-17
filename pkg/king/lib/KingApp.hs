@@ -1,11 +1,13 @@
 module KingApp
     ( App
     , runApp
+    , runPierApp
     , HasAppName(..)
     ) where
 
-import UrbitPrelude
+import PierConfig
 import RIO.Directory
+import UrbitPrelude
 
 --------------------------------------------------------------------------------
 
@@ -44,6 +46,42 @@ runApp inner = do
         withLogFunc logOptions $ \logFunc ->
             go $ App { _appLogFunc = logFunc
                      , _appName    = "Vere"
+                     }
+  where
+    go app = runRIO app inner
+
+
+--------------------------------------------------------------------------------
+
+-- A PierApp is like an App, except that it also provides a PierConfig
+data PierApp = PierApp
+    { _shipAppLogFunc    :: !LogFunc
+    , _shipAppName       :: !Utf8Builder
+    , _shipAppPierConfig :: !PierConfig
+    }
+
+makeLenses ''PierApp
+
+instance HasLogFunc PierApp where
+    logFuncL = shipAppLogFunc
+
+instance HasAppName PierApp where
+    appNameL = shipAppName
+
+instance HasPierConfig PierApp where
+    pierConfigL = shipAppPierConfig
+
+runPierApp :: PierConfig -> RIO PierApp a -> IO a
+runPierApp pierConfig inner = do
+    withLogFileHandle $ \logFile -> do
+        logOptions <- logOptionsHandle logFile True
+            <&> setLogUseTime True
+            <&> setLogUseLoc False
+
+        withLogFunc logOptions $ \logFunc ->
+            go $ PierApp { _shipAppLogFunc = logFunc
+                     , _shipAppName    = "Vere"
+                     , _shipAppPierConfig = pierConfig
                      }
   where
     go app = runRIO app inner

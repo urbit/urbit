@@ -7,6 +7,7 @@ module Vere.Pier
 import UrbitPrelude
 
 import Arvo
+import PierConfig
 import System.Random
 import Vere.Pier.Types
 
@@ -118,10 +119,11 @@ booted pill pierPath lite flags ship boot = do
 
 -- Resume an existing ship. ----------------------------------------------------
 
-resumed :: HasLogFunc e
-        => FilePath -> Serf.Flags
+resumed :: (HasPierConfig e, HasLogFunc e)
+        => Serf.Flags
         -> RAcquire e (Serf e, EventLog, SerfState)
-resumed top flags = do
+resumed flags = do
+    top    <- getPierPath
     log    <- Log.existing (top <> "/.urb/log")
     serf   <- Serf.run (Serf.Config top flags)
     serfSt <- rio $ Serf.replay serf log
@@ -136,12 +138,12 @@ resumed top flags = do
 acquireWorker :: RIO e () -> RAcquire e (Async ())
 acquireWorker act = mkRAcquire (async act) cancel
 
-pier :: ∀e. HasLogFunc e
-     => FilePath
-     -> Maybe Port
+pier :: ∀e. (HasPierConfig e, HasLogFunc e)
+     => Maybe Port
      -> (Serf e, EventLog, SerfState)
      -> RAcquire e ()
-pier pierPath mPort (serf, log, ss) = do
+pier mPort (serf, log, ss) = do
+    pierPath  <- getPierPath
     computeQ  <- newTQueueIO
     persistQ  <- newTQueueIO
     executeQ  <- newTQueueIO
@@ -188,7 +190,7 @@ pier pierPath mPort (serf, log, ss) = do
     -- add them.
     let showErr = atomically . Term.trace muxed . (flip append "\r\n")
     let (bootEvents, startDrivers) =
-            drivers pierPath inst ship (isFake logId) mPort
+            drivers inst ship (isFake logId) mPort
                 (writeTQueue computeQ)
                 shutdownEvent
                 (sz, muxed)
@@ -247,21 +249,21 @@ data Drivers e = Drivers
     , dTerm       :: EffCb e TermEf
     }
 
-drivers :: HasLogFunc e
-        => FilePath -> KingId -> Ship -> Bool -> Maybe Port -> (Ev -> STM ())
+drivers :: (HasPierConfig e, HasLogFunc e)
+        => KingId -> Ship -> Bool -> Maybe Port -> (Ev -> STM ())
         -> STM()
         -> (TSize.Window Word, Term.Client)
         -> (Text -> RIO e ())
         -> ([Ev], RAcquire e (Drivers e))
-drivers pierPath inst who isFake mPort plan shutdownSTM termSys stderr =
+drivers inst who isFake mPort plan shutdownSTM termSys stderr =
     (initialEvents, runDrivers)
   where
     (behnBorn, runBehn) = behn inst plan
     (amesBorn, runAmes) = ames inst who isFake mPort plan stderr
-    (httpBorn, runHttp) = serv pierPath inst plan
-    (clayBorn, runClay) = clay pierPath inst plan
+    (httpBorn, runHttp) = serv inst plan
+    (clayBorn, runClay) = clay inst plan
     (irisBorn, runIris) = client inst plan
-    (termBorn, runTerm) = Term.term termSys shutdownSTM pierPath inst plan
+    (termBorn, runTerm) = Term.term termSys shutdownSTM inst plan
     initialEvents       = mconcat [behnBorn, clayBorn, amesBorn, httpBorn,
                                    termBorn, irisBorn]
     runDrivers          = do

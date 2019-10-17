@@ -12,6 +12,7 @@ import Data.Char
 import Foreign.Marshal.Alloc
 import Foreign.Ptr
 import Foreign.Storable
+import PierConfig
 import RIO.FilePath
 import System.Posix.IO
 import System.Posix.Terminal
@@ -513,14 +514,13 @@ localClient = fst <$> mkRAcquire start stop
 
 --------------------------------------------------------------------------------
 
-term :: forall e. HasLogFunc e
+term :: forall e. (HasPierConfig e, HasLogFunc e)
      => (TSize.Window Word, Client)
      -> (STM ())
-     -> FilePath
      -> KingId
      -> QueueEv
      -> ([Ev], RAcquire e (EffCb e TermEf))
-term (tsize, Client{..}) shutdownSTM pierPath king enqueueEv =
+term (tsize, Client{..}) shutdownSTM king enqueueEv =
     (initialEvents, runTerm)
   where
     TSize.Window wi hi = tsize
@@ -559,6 +559,7 @@ term (tsize, Client{..}) shutdownSTM pierPath king enqueueEv =
 
     performPut :: Path -> ByteString -> RIO e ()
     performPut path bs = do
+      pierPath <- getPierPath
       let putOutFile = pierPath </> ".urb" </> "put" </> (pathToFilePath path)
       createDirectoryIfMissing True (takeDirectory putOutFile)
       writeFile putOutFile bs
