@@ -128,6 +128,7 @@ toPierConfig pierPath CLI.Opts{..} = PierConfig
   { pcPierPath = pierPath
   , pcDryRun = oDryRun
   , pcNetworking = if oDryRun then NetworkNone
+                   else if oOffline then NetworkNone
                    else if oLocalhost then NetworkLocalhost
                    else NetworkNormal
   , pcAmesPort = oAmesPort

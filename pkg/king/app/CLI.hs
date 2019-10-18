@@ -23,6 +23,7 @@ data Opts = Opts
     , oTrace     :: Bool
     , oCollectFx :: Bool
     , oLocalhost :: Bool
+    , oOffline   :: Bool
     }
   deriving (Show)
 
@@ -241,6 +242,11 @@ opts = do
     oCollectFx <- switch $ short 'f'
                         <> long "collect-fx"
                         <> help "Write effects to disk for debugging"
+                        <> hidden
+
+    oOffline   <- switch $ short 'O'
+                        <> long "offline"
+                        <> help "Run without any networking"
                         <> hidden
 
     pure (Opts{..})
