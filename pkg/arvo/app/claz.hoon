@@ -460,8 +460,11 @@
   =/  m  null-glad
   =/  friends=(list [=ship @q =address])
     =+  txt=.^((list cord) %cx file)
-    %+  turn  txt
+    %+  murn  txt
     |=  line=cord
+    ^-  (unit [ship @q address])
+    ?:  =('' line)  ~
+    %-  some
     ~|  line
     %+  rash  line
     ;~  (glue com)
