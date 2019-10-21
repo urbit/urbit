@@ -14,16 +14,17 @@ import System.Environment (getProgName)
 --------------------------------------------------------------------------------
 
 data Opts = Opts
-    { oQuiet     :: Bool
-    , oHashless  :: Bool
-    , oExit      :: Bool
-    , oDryRun    :: Bool
-    , oVerbose   :: Bool
-    , oAmesPort  :: Maybe Word16
-    , oTrace     :: Bool
-    , oCollectFx :: Bool
-    , oLocalhost :: Bool
-    , oOffline   :: Bool
+    { oQuiet      :: Bool
+    , oHashless   :: Bool
+    , oExit       :: Bool
+    , oDryRun     :: Bool
+    , oVerbose    :: Bool
+    , oAmesPort   :: Maybe Word16
+    , oTrace      :: Bool
+    , oCollectFx  :: Bool
+    , oLocalhost  :: Bool
+    , oOffline    :: Bool
+    , oFullReplay :: Bool
     }
   deriving (Show)
 
@@ -251,6 +252,10 @@ opts = do
                         <> long "offline"
                         <> help "Run without any networking"
                         <> hidden
+
+    oFullReplay <- switch
+          $ long "full-log-replay"
+         <> help "Ignores the snapshot and recomputes state from log"
 
     pure (Opts{..})
 

@@ -169,9 +169,24 @@ runOrExitImmediately getPier oExit =
         runRAcquire $ Pier.pier sls
 
 tryPlayShip :: (HasPierConfig e, HasLogFunc e)
-            => Bool -> Serf.Flags -> RIO e ()
-tryPlayShip oExit flags = runOrExitImmediately resumeShip oExit
+            => Bool -> Bool -> Serf.Flags -> RIO e ()
+tryPlayShip exitImmediately fullReplay flags =
+  do
+    when fullReplay $ do
+      wipeSnapshot
+    runOrExitImmediately resumeShip exitImmediately
   where
+    wipeSnapshot = do
+        shipPath <- getPierPath
+        logTrace "wipeSnapshot"
+        logDebug $ display $ pack @Text ("Wiping " <> north shipPath)
+        logDebug $ display $ pack @Text ("Wiping " <> south shipPath)
+        removeFileIfExists (north shipPath)
+        removeFileIfExists (south shipPath)
+
+    north shipPath = shipPath <> "/.urb/chk/north.bin"
+    south shipPath = shipPath <> "/.urb/chk/south.bin"
+
     resumeShip = do
         getPierPath >>= lockFile
         rio $ logTrace "RESUMING SHIP"
@@ -186,36 +201,6 @@ runAcquire act = with act pure
 runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
             => RAcquire e a -> m e a
 runRAcquire act = rwith act pure
-
-tryResume :: (HasPierConfig e, HasLogFunc e) => Serf.Flags -> RIO e ()
-tryResume flags = do
-    rwith resumedPier $ \(serf, log, ss) -> do
-        logTrace (displayShow ss)
-        threadDelay 500000
-        ss <- shutdown serf 0
-        logTrace (displayShow ss)
-        logTrace "Resumed!"
-  where
-    resumedPier = do
-        getPierPath >>= lockFile
-        Pier.resumed flags
-
-tryFullReplay :: (HasPierConfig e, HasLogFunc e) => Serf.Flags -> RIO e ()
-tryFullReplay flags = do
-    wipeSnapshot
-    tryResume flags
-  where
-    wipeSnapshot = do
-        shipPath <- getPierPath
-        logTrace "wipeSnapshot"
-        logDebug $ display $ pack @Text ("Wiping " <> north shipPath)
-        logDebug $ display $ pack @Text ("Wiping " <> south shipPath)
-        removeFileIfExists (north shipPath)
-        removeFileIfExists (south shipPath)
-
-    north shipPath = shipPath <> "/.urb/chk/north.bin"
-    south shipPath = shipPath <> "/.urb/chk/south.bin"
-
 
 --------------------------------------------------------------------------------
 
@@ -432,7 +417,8 @@ newShip CLI.New{..} opts
 runShip :: CLI.Run -> CLI.Opts -> IO ()
 runShip (CLI.Run pierPath) opts = do
     let config = toPierConfig pierPath opts
-    runPierApp config $ tryPlayShip (CLI.oExit opts) (toSerfFlags opts)
+    runPierApp config $
+      tryPlayShip (CLI.oExit opts) (CLI.oFullReplay opts) (toSerfFlags opts)
 
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
