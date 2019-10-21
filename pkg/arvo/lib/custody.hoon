@@ -34,7 +34,7 @@
   ::
   +$  shard           @udshard
   +$  copy            ?(%a %b %c)
-  +$  physical-form   ?(%usb %dvd %paper)
+  +$  physical-form   ?(%usb %dvd %paper %ledger)
   ++  parsers
     :~  text:csv
         (punt fed)
@@ -59,8 +59,9 @@
     (rash (of-wain:format .^(wain %cx path)) parse)
   ::
   ++  load
-    |=  =path
+    |=  now=@da
     ^-  (list vase)
+    =/  =path  /=home/(scot %da now)/keys/txt
     (turn (load-forms path) |=(=form !>(form)))
   --
 ::
@@ -72,6 +73,7 @@
         description=@t
         =physical-location
     ==
+  ::
   +$  location           @tlocation
   +$  physical-location  @tphysicallocation
   ++  parsers
@@ -93,12 +95,121 @@
     (rash (of-wain:format .^(wain %cx path)) parse)
   ::
   ++  load
-    |=  =path
+    |=  now=@da
     ^-  (list vase)
+    =/  =path  /=home/(scot %da now)/locations/txt
     (turn (load-forms path) |=(=form !>(form)))
   --
 ::
-++  policies  !!
-++  galaxies  !!
-++  ships     !!
+++  galaxies
+  =<  form
+  |%
+  +$  form
+    $:  =ship
+        =policy:policies
+    ==
+  ::
+  ++  parsers
+    :~  fed
+        text:csv
+    ==
+  ::
+  ++  parse
+    %+  cook
+      |*  arg=*
+      ^-  (list form)
+      arg
+    (parse:csv parsers)
+  ::
+  ++  load-forms
+    |=  =path
+    ^-  (list form)
+    (rash (of-wain:format .^(wain %cx path)) parse)
+  ::
+  ++  load
+    |=  now=@da
+    ^-  (list vase)
+    =/  =path  /=home/(scot %da now)/galaxies/txt
+    (turn (load-forms path) |=(=form !>(form)))
+  --
+::
+++  ships
+  =<  form
+  |%
+  +$  form
+    $:  =ship
+        note=@t
+    ==
+  ::
+  ++  parsers
+    :~  fed
+        text:csv
+    ==
+  ::
+  ++  parse
+    %+  cook
+      |*  arg=*
+      ^-  (list form)
+      arg
+    (parse:csv parsers)
+  ::
+  ++  load-forms
+    |=  =path
+    ^-  (list form)
+    (rash (of-wain:format .^(wain %cx path)) parse)
+  ::
+  ++  load
+    |=  now=@da
+    ^-  (list vase)
+    =/  =path  /=home/(scot %da now)/ships/txt
+    (turn (load-forms path) |=(=form !>(form)))
+  --
+::
+++  policies
+  =<  form
+  |%
+  +$  form
+    $:  =policy
+        =lockup
+        provenance=@t
+        description=@t
+        usage=@t
+    ==
+  ::
+  +$  policy  @tpolicy
+  +$  lockup
+    $?  %'1+4'
+        %'0+2'
+        %'0+1'
+        %'0+3'
+        %'0+1/3'
+        %'0'
+    ==
+  ::
+  ++  parsers
+    :~  text:csv
+        (parse-enum lockup)
+        text:csv
+        text:csv
+        text:csv
+    ==
+  ::
+  ++  parse
+    %+  cook
+      |*  arg=*
+      ^-  (list form)
+      arg
+    (parse:csv parsers)
+  ::
+  ++  load-forms
+    |=  =path
+    ^-  (list form)
+    (rash (of-wain:format .^(wain %cx path)) parse)
+  ::
+  ++  load
+    |=  now=@da
+    ^-  (list vase)
+    =/  =path  /=home/(scot %da now)/policies/txt
+    (turn (load-forms path) |=(=form !>(form)))
+  --
 --

@@ -1,4 +1,5 @@
-/+  *custody, *csv
+/+  *custody,
+    *csv
 |=  [=key=path =loc=path]
 %.  ~
 %-  print-rows

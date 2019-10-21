@@ -1,3 +1,6 @@
+::  Parse CSV files with a known schema, then perform queries on the
+::  results.
+::
 |%
 ++  text
   %+  cook

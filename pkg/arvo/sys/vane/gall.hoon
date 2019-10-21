@@ -406,9 +406,9 @@
       ::
       ::  you'd think this would send an ack for the diff
       ::  that caused this pump.  it would, but we already
-      ::  sent it when we got the diff in +mo-handle-sys.  then
-      ::  we'd have to save the network duct and connect it
-      ::  to this returning pump.
+      ::  sent it when we got the diff in +mo-handle-sys-rep.
+      ::  then we'd have to save the network duct and connect
+      ::  it to this returning pump.
       ::
       mo-core
     ::
