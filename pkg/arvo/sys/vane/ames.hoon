@@ -956,7 +956,9 @@
                 =/  mex  ;;(full:pact (cue msg))
                 =.  diz  (deng law.mex)
                 =/  wug  cluy:diz
+                ~|  [from=her expected-her-life=lyf.wug got-her-life=from.lyf.mex]
                 ?>  =(lyf.wug from.lyf.mex)
+                ~|  [from=her got-our-life=to.lyf.mex]
                 =/  gey  (sev:gus to.lyf.mex)
                 =/  sem  (need (tear:as:q.gey pub:ex:cub.wug txt.mex))
                 =/  mes  ;;((pair @ @) (cue sem))
@@ -969,6 +971,7 @@
                 =/  mex  ;;(open:pact (cue msg))
                 =.  diz  (deng law.mex)
                 =/  wug  cluy:diz
+                ~|  [from=her expected-her-life=lyf.wug got-her-life=from.lyf.mex]
                 ?>  =(lyf.wug from.lyf.mex)
                 =/  mes  (need (sure:as:cub.wug txt.mex))
                 =.  puz  (bilk:puz now)
@@ -1468,8 +1471,10 @@
             (~(get by points.public-keys-result.sih) her)
           ?~  a-point
             ~
-          =/  a-pass=pass  pass:(~(got by keys.u.a-point) life.u.a-point)
-          `[life.u.a-point a-pass oath=~]
+          =/  k  (~(get by keys.u.a-point) life.u.a-point)
+          ?~  k
+            ~
+          `[life.u.a-point pass.u.k oath=~]
         ?>  ?=(%keys -.diff.public-keys-result.sih)
         ?>  =(her who.public-keys-result.sih)
         =/  a-key-update=key-update:point:able:jael
