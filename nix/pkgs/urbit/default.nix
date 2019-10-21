@@ -12,8 +12,8 @@ let
   meta = rec {
     inherit debug;
     bin   = "${urbit}/bin/${name}";
-    flags = if debug then "-g" else "";
-    exe   = "${meta.bin} ${meta.flags}";
+    flags = if debug then [ "-g" ] else [];
+    exe   = ''${meta.bin} ${pkgs.lib.strings.concatStringsSep " " meta.flags}'';
   };
 
   deps =
