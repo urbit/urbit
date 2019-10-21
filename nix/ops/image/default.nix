@@ -2,33 +2,18 @@
 
 let
 
-  name  = urbit.meta.name;
-  debug = urbit.meta.debug;
-  exe   = ''${urbit.meta.exe} "$@"'';
-
-  coredump = ''
-    ulimit -c unlimited
-
-    ${exe} || \
-      ${pkgs.gdb}/bin/gdb -ex "thread apply all bt" -ex "set pagination 0" -batch \
-      ${urbit.meta.bin} \
-      /tmp/cores/core*
-  '';
-
   entrypoint = pkgs.writeScript "entrypoint.sh" ''
     #!${pkgs.stdenv.shell}
 
     set -euo pipefail
 
-    ${pkgs.coreutils}/bin/ln -sf ${pill} /data/urbit.pill
-
-    ${if debug then coredump else exe}
+    ${urbit.meta.exe} "$@"
   '';
 
 in
 
 pkgs.dockerTools.buildImage {
-  inherit name;
+  name = urbit.meta.name;
 
   runAsRoot = ''
     #!${pkgs.stdenv.shell}
@@ -39,17 +24,21 @@ pkgs.dockerTools.buildImage {
 
     ${pkgs.dockerTools.shadowSetup}
 
-    mkdir -p /data /tmp/cores
+    mkdir -p /bin /share /data /tmp
+
+    ${pkgs.coreutils}/bin/ln -sf ${pill} /share/urbit.pill
+    ${pkgs.coreutils}/bin/ln -sf ${entrypoint} /bin/urbit
   '';
 
   config = {
-    Entrypoint = entrypoint;
+    Entrypoint = [ "urbit" ];
 
     WorkingDir = "/data";
 
+    Env = [ "PATH=/bin" ];
+
     Volumes = {
       "/data" = {};
-      "/tmp" = {};
     };
 
     ExposedPorts = {
