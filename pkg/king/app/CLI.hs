@@ -228,9 +228,8 @@ opts = do
                         <> help "Exit immediatly"
                         <> hidden
 
-    oDryRun    <- switch $ short 'N'
-                        <> long "dry-run"
-                        <> help "Dry run -- Don't persist"
+    oDryRun    <- switch $ long "dry-run"
+                        <> help "Persist no events and turn off Ames networking"
                         <> hidden
 
     oTrace      <- switch $ short 't'
