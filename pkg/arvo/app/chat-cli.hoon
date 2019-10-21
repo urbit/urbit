@@ -684,7 +684,9 @@
       =^  moz  this
         ?.  ?=(^ gyf)  [~ this]
         (bind-glyph u.gyf target)
-      =-  [[- moz] this(audience [target ~ ~])]
+      =.  audience  [target ~ ~]
+      =;  =move
+        [[move prompt:sh-out moz] this]
       ::TODO  ideally we'd check permission first. attempting this and failing
       ::      gives ugly %chat-hook-reap
       %^  act  %do-join  %chat-view
