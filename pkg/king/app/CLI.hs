@@ -204,10 +204,13 @@ opts = do
                              <> value Nothing
                              <> hidden
 
-    oHashless  <- switch $ short 'S'
-                        <> long "hashless"
-                        <> help "Disable battery hashing"
-                        <> hidden
+    -- Always disable hashboard. Right now, urbit is almost unusable with this
+    -- flag enabled and it is disabled in vere.
+    let oHashless = True
+    -- oHashless  <- switch $ short 'S'
+    --                     <> long "hashless"
+    --                     <> help "Disable battery hashing"
+    --                     <> hidden
 
     oQuiet     <- switch $ short 'q'
                         <> long "quiet"
