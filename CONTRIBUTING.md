@@ -105,7 +105,7 @@ or just a single function in a single file.  Commits should be atomic at the
 level of *code*, not of entire features.  You don't have to squash your commits
 into a single one that captures everything you're trying to do -- the history
 will never make for pleasant bedtime reading, so focus instead on making your
-commits useful for tools like `git-blame` and `git-bisect`.
+commits useful for tools like `git blame` and `git bisect`.
 
 Your contribution must apply cleanly to `master` in order to be considered
 mergeable.  You may want to regularly [rebase your changes][reba] onto `master`
