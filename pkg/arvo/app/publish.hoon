@@ -1420,6 +1420,13 @@
   ::
   ==
 ::
+++  quit-collection
+  |=  wir=wire
+  ^-  (quip move _this)
+  =/  pax=path  (weld /collection wir)
+  :_  this
+  [ost.bol %peer pax [src.bol %publish] pax]~
+::
 ++  bound
   |=  [wir=wire success=? binding=binding:eyre]
   ^-  (quip move _this)
@@ -1750,20 +1757,25 @@
     [~ this]
   =/  coll=@tas  i.wir
   =/  pax  /web/publish/[coll]
-  ?.  (allowed src.bol %read pax)
-    :_  this
-    [ost.bol %quit ~]~
-  ::
-  =/  col=(unit collection)  (~(get by pubs.sat) coll)
-  ?~  col
-    :_  this
-    [ost.bol %quit ~]~
+  ?>  (allowed src.bol %read pax)
+  =/  col=collection  (~(got by pubs.sat) coll)
   =/  new=collection
-    u.col(subscribers (~(put in subscribers.u.col) src.bol))
+    col(subscribers (~(put in subscribers.col) src.bol))
   =/  rum=rumor
     [%total our.bol coll new]
   :_  this(pubs.sat (~(put by pubs.sat) coll new))
   [ost.bol %diff %publish-rumor rum]~
+::
+++  reap
+  |=  [wir=wire err=(unit tang)]
+  ^-  (quip move _this)
+  ?~  err
+    [~ this]
+  ?>  ?=([%collection @tas ~] wir)
+  =/  col=@tas  i.t.wir
+  %-  (slog [leaf+"failed to subscribe to blog: {<col>}"]~)
+  :-  ~
+  this(outgoing.sat (~(del by outgoing.sat) wir))
 ::
 ++  diff-publish-rumor
   |=  [wir=wire rum=rumor]
