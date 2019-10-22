@@ -1570,7 +1570,7 @@ void
 u3a_luse(u3_noun som)
 {
   if ( 0 == u3a_use(som) ) {
-    u3l_log("luse: insane %d 0x%x\r\n", som, som);
+    fprintf(stderr, "loom: insane %d 0x%x\r\n", som, som);
     abort();
   }
   if ( _(u3du(som)) ) {
@@ -1618,7 +1618,7 @@ u3a_mark_ptr(void* ptr_v)
     c3_ws use_ws = (c3_ws)box_u->use_w;
 
     if ( use_ws == 0 ) {
-      u3l_log("%p is bogus\r\n", ptr_v);
+      fprintf(stderr, "%p is bogus\r\n", ptr_v);
       siz_w = 0;
     }
     else {
@@ -1652,7 +1652,6 @@ u3a_mark_mptr(void* ptr_v)
   c3_w  pad_w = ptr_w[-1];
   c3_w* org_w = ptr_w - (pad_w + 1);
 
-  // u3l_log("free %p %p\r\n", org_w, ptr_w);
   return u3a_mark_ptr(org_w);
 }
 
@@ -1887,8 +1886,8 @@ u3a_sweep(void)
 
 #ifdef U3_CPU_DEBUG
     if ( fre_w != u3R->all.fre_w ) {
-      u3l_log("fre discrepancy (%x): %x, %x, %x\r\n", u3R->par_p,
-              fre_w, u3R->all.fre_w, (u3R->all.fre_w - fre_w));
+      fprintf(stderr, "fre discrepancy (%x): %x, %x, %x\r\n", u3R->par_p,
+                      fre_w, u3R->all.fre_w, (u3R->all.fre_w - fre_w));
     }
 #endif
     neg_w = (end_w - fre_w);
