@@ -1244,6 +1244,8 @@
   ::
       %serve
     :: XX specialize this check for subfiles
+    ?.  =(our.bol src.bol)
+      [~ this]
     ?:  (~(has by pubs.sat) coll.act)
       [~ this]
     =/  files=(list path)
@@ -1264,9 +1266,25 @@
             *coin
             [[our.bol q.byk.bol] /[coll.act]/publish/web]
         ==
+      =/  blog-perms=card
+        :*  %perm  /perms  q.byk.bol
+            /web/publish/[coll.act]
+            %rw  `[%black ~]  `[%white (ships-to-whom (sy our.bol ~))]
+        ==
+      =/  info-perms=card
+        :*  %perm  /perms  q.byk.bol
+            /web/publish/[coll.act]/publish-info
+            %rw  `*rule:clay  `*rule:clay
+        ==
       %=  out
-        moves   [[ost.bol %build wir %.y schema] moves.out]
         builds  (~(put in builds.out) wir)
+      ::
+          moves
+        :*  [ost.bol %build wir %.y schema]
+            [ost.bol blog-perms]
+            [ost.bol info-perms]
+            moves.out
+        ==
       ==
     ::
       [%web %publish @tas @tas %udon ~]
@@ -1287,10 +1305,22 @@
             *coin
             [[our.bol q.byk.bol] /[post]/[coll.act]/publish/web]
         ==
+      =/  post-perms=card
+        :*  %perm  /perms  q.byk.bol
+            /web/publish/[coll.act]/[post]/udon
+            %w  `[%white (ships-to-whom (sy our.bol ~))]
+        ==
+      =/  comment-perms=card
+        :*  %perm  /perms  q.byk.bol
+            /web/publish/[coll.act]/[post]
+            %w  `[%black ~]
+        ==
       %=    out
           moves
         :*  [ost.bol %build post-wir %.y post-schema]
             [ost.bol %build comments-wir %.y comments-schema]
+            [ost.bol post-perms]
+            [ost.bol comment-perms]
             moves.out
         ==
       ::
@@ -1589,7 +1619,21 @@
             *coin
             [[our.bol q.byk.bol] /[col]/publish/web]
         ==
-      :-  [[ost.bol %build wir %.y schema] mow]
+      =/  blog-perms=card
+        :*  %perm  /perms  q.byk.bol
+            /web/publish/[col]
+            %rw  `[%black ~]  `[%white (ships-to-whom (sy our.bol ~))]
+        ==
+      =/  info-perms=card
+        :*  %perm  /perms  q.byk.bol
+            /web/publish/[col]/publish-info
+            %rw  `*rule:clay  `*rule:clay
+        ==
+      :-  :*  [ost.bol %build wir %.y schema]
+              [ost.bol blog-perms]
+              [ost.bol info-perms]
+              mow
+          ==
       [[pax mis] sob]
     ::
         [%web %publish * * %udon ~]
@@ -1609,9 +1653,22 @@
             *coin
             [[our.bol q.byk.bol] /[pos]/[col]/publish/web]
         ==
-      :-  :+  [ost.bol %build post-wir %.y post-schema]
+      =/  post-perms=card
+        :*  %perm  /perms  q.byk.bol
+            /web/publish/[col]/[pos]/udon
+            %w  `[%white (ships-to-whom (sy our.bol ~))]
+        ==
+      =/  comment-perms=card
+        :*  %perm  /perms  q.byk.bol
+            /web/publish/[col]/[pos]
+            %w  `[%black ~]
+        ==
+      :-  :*  [ost.bol %build post-wir %.y post-schema]
               [ost.bol %build comment-wir %.y comment-schema]
+              [ost.bol post-perms]
+              [ost.bol comment-perms]
               mow
+          ==
       [[pax mis] sob]
     ::
         [%web %publish * * * %publish-comment ~]
