@@ -255,6 +255,7 @@ opts = do
     oFullReplay <- switch
           $ long "full-log-replay"
          <> help "Ignores the snapshot and recomputes state from log"
+         <> hidden
 
     pure (Opts{..})
 
