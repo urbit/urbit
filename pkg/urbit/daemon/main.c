@@ -298,7 +298,7 @@ _main_getopt(c3_i argc, c3_c** argv)
            && u3_Host.ops_u.url_c == 0
            && u3_Host.ops_u.git == c3n ) {
     u3_Host.ops_u.url_c =
-      "https://bootstrap.urbit.org/urbit-" URBIT_VERSION ".pill";
+      "https://bootstrap.urbit.org/urbit-v" URBIT_VERSION ".pill";
   }
   else if ( u3_Host.ops_u.nuu == c3y
            && u3_Host.ops_u.url_c == 0
