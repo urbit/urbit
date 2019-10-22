@@ -1287,11 +1287,11 @@
       ::
       =/  slammed
         =/  index  p.u.maybe-arm
-        =/  term  q.u.maybe-arm
+        =/  name  q.u.maybe-arm
         =/  =vase
           =/  =path  [term tyl]
           !>  (slag index path)
-        (ap-slam term p.arm vase)
+        (ap-slam name p.arm vase)
       ::
       =^  possibly-vase  ap-core  slammed
       ?:  ?=(%.n -.possibly-vase)
