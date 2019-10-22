@@ -5,7 +5,7 @@ module KingApp
     , HasAppName(..)
     ) where
 
-import PierConfig
+import Config
 import RIO.Directory
 import UrbitPrelude
 
@@ -55,9 +55,10 @@ runApp inner = do
 
 -- A PierApp is like an App, except that it also provides a PierConfig
 data PierApp = PierApp
-    { _shipAppLogFunc    :: !LogFunc
-    , _shipAppName       :: !Utf8Builder
-    , _shipAppPierConfig :: !PierConfig
+    { _shipAppLogFunc       :: !LogFunc
+    , _shipAppName          :: !Utf8Builder
+    , _shipAppPierConfig    :: !PierConfig
+    , _shipAppNetworkConfig :: !NetworkConfig
     }
 
 makeLenses ''PierApp
@@ -71,8 +72,11 @@ instance HasAppName PierApp where
 instance HasPierConfig PierApp where
     pierConfigL = shipAppPierConfig
 
-runPierApp :: PierConfig -> RIO PierApp a -> IO a
-runPierApp pierConfig inner = do
+instance HasNetworkConfig PierApp where
+    networkConfigL = shipAppNetworkConfig
+
+runPierApp :: PierConfig -> NetworkConfig -> RIO PierApp a -> IO a
+runPierApp pierConfig networkConfig inner = do
     withLogFileHandle $ \logFile -> do
         logOptions <- logOptionsHandle logFile True
             <&> setLogUseTime True
@@ -80,8 +84,9 @@ runPierApp pierConfig inner = do
 
         withLogFunc logOptions $ \logFunc ->
             go $ PierApp { _shipAppLogFunc = logFunc
-                     , _shipAppName    = "Vere"
-                     , _shipAppPierConfig = pierConfig
-                     }
+                         , _shipAppName    = "Vere"
+                         , _shipAppPierConfig = pierConfig
+                         , _shipAppNetworkConfig = networkConfig
+                         }
   where
     go app = runRIO app inner

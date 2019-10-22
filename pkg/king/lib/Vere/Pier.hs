@@ -7,7 +7,7 @@ module Vere.Pier
 import UrbitPrelude
 
 import Arvo
-import PierConfig
+import Config
 import System.Random
 import Vere.Pier.Types
 
@@ -140,7 +140,7 @@ resumed flags = do
 acquireWorker :: RIO e () -> RAcquire e (Async ())
 acquireWorker act = mkRAcquire (async act) cancel
 
-pier :: ∀e. (HasPierConfig e, HasLogFunc e)
+pier :: ∀e. (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
      => (Serf e, EventLog, SerfState)
      -> RAcquire e ()
 pier (serf, log, ss) = do
@@ -249,7 +249,7 @@ data Drivers e = Drivers
     , dTerm       :: EffCb e TermEf
     }
 
-drivers :: (HasPierConfig e, HasLogFunc e)
+drivers :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
         => KingId -> Ship -> Bool -> (Ev -> STM ())
         -> STM()
         -> (TSize.Window Word, Term.Client)

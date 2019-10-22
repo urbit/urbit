@@ -54,6 +54,7 @@ module Main (main) where
 import UrbitPrelude
 
 import Arvo
+import Config
 import Data.Acquire
 import Data.Conduit
 import Data.Conduit.List       hiding (catMaybes, map, replicate, take)
@@ -62,7 +63,6 @@ import Network.HTTP.Client.TLS
 import Noun                    hiding (Parser)
 import Noun.Atom
 import Noun.Conversions        (cordToUW)
-import PierConfig
 import RIO.Directory
 import Vere.Pier
 import Vere.Pier.Types
@@ -127,14 +127,18 @@ toPierConfig :: FilePath -> CLI.Opts -> PierConfig
 toPierConfig pierPath CLI.Opts{..} = PierConfig
   { pcPierPath = pierPath
   , pcDryRun = oDryRun
-  , pcNetworking = if oDryRun then NetworkNone
+  }
+
+toNetworkConfig :: CLI.Opts -> NetworkConfig
+toNetworkConfig CLI.Opts{..} = NetworkConfig
+  { ncNetworking = if oDryRun then NetworkNone
                    else if oOffline then NetworkNone
                    else if oLocalhost then NetworkLocalhost
                    else NetworkNormal
-  , pcAmesPort = oAmesPort
+  , ncAmesPort = oAmesPort
   }
 
-tryBootFromPill :: (HasPierConfig e, HasLogFunc e)
+tryBootFromPill :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
                 => Bool -> Pill -> Bool -> Serf.Flags -> Ship
                 -> LegacyBootEvent
                 -> RIO e ()
@@ -149,7 +153,7 @@ tryBootFromPill oExit pill lite flags ship boot =
         rio $ logTrace "Completed boot"
         pure sls
 
-runOrExitImmediately :: (HasPierConfig e, HasLogFunc e)
+runOrExitImmediately :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
                      => RAcquire e (Serf e, Log.EventLog, SerfState)
                      -> Bool
                      -> RIO e ()
@@ -168,7 +172,7 @@ runOrExitImmediately getPier oExit =
     runPier sls = do
         runRAcquire $ Pier.pier sls
 
-tryPlayShip :: (HasPierConfig e, HasLogFunc e)
+tryPlayShip :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
             => Bool -> Bool -> Serf.Flags -> RIO e ()
 tryPlayShip exitImmediately fullReplay flags =
   do
@@ -409,15 +413,17 @@ newShip CLI.New{..} opts
     -- Now that we have all the information for running an application with a
     -- PierConfig, do so.
     runTryBootFromPill pill name ship bootEvent = do
-      let config = toPierConfig (pierPath name) opts
-      io $ runPierApp config $
+      let pierConfig = toPierConfig (pierPath name) opts
+      let networkConfig = toNetworkConfig opts
+      io $ runPierApp pierConfig networkConfig $
         tryBootFromPill (CLI.oExit opts) pill nLite flags ship bootEvent
 
 
 runShip :: CLI.Run -> CLI.Opts -> IO ()
 runShip (CLI.Run pierPath) opts = do
-    let config = toPierConfig pierPath opts
-    runPierApp config $
+    let pierConfig = toPierConfig pierPath opts
+    let networkConfig = toNetworkConfig opts
+    runPierApp pierConfig networkConfig $
       tryPlayShip (CLI.oExit opts) (CLI.oFullReplay opts) (toSerfFlags opts)
 
 

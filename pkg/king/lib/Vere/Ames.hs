@@ -3,10 +3,10 @@ module Vere.Ames (ames) where
 import UrbitPrelude
 
 import Arvo                      hiding (Fake)
+import Config
 import Control.Monad.Extra       hiding (mapM_)
 import Network.Socket            hiding (recvFrom, sendTo)
 import Network.Socket.ByteString
-import PierConfig
 import Vere.Pier.Types
 
 import qualified Data.ByteString as BS
@@ -92,7 +92,7 @@ renderGalaxy = Ob.renderPatp . Ob.patp . fromIntegral . unGalaxy
 
     TODO verify that the KingIds match on effects.
 -}
-ames :: forall e. (HasPierConfig e, HasLogFunc e)
+ames :: forall e. (HasLogFunc e, HasNetworkConfig e)
      => KingId -> Ship -> Bool -> QueueEv
      -> (Text -> RIO e ())
      -> ([Ev], RAcquire e (EffCb e NewtEf))

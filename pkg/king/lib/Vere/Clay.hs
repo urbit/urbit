@@ -1,7 +1,7 @@
 module Vere.Clay (clay) where
 
 import Arvo            hiding (Term)
-import PierConfig
+import Config
 import UrbitPrelude
 import Vere.Pier.Types
 

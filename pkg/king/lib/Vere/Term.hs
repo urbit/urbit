@@ -8,11 +8,11 @@ module Vere.Term
     ) where
 
 import Arvo                  hiding (Term)
+import Config
 import Data.Char
 import Foreign.Marshal.Alloc
 import Foreign.Ptr
 import Foreign.Storable
-import PierConfig
 import RIO.FilePath
 import System.Posix.IO
 import System.Posix.Terminal

@@ -20,9 +20,9 @@ import Control.Lens hiding (Index, cons, index, snoc, uncons, unsnoc, (<.>),
                      (<|))
 
 import Control.Arrow    ((<<<), (>>>))
-import Data.RAcquire    (RAcquire, mkRAcquire, rwith)
-import Data.RAcquire    (MonadRIO(..), MonadAcquire(..))
 import Data.Acquire     (Acquire, mkAcquire, with)
+import Data.RAcquire    (RAcquire, mkRAcquire, rwith)
+import Data.RAcquire    (MonadAcquire(..), MonadRIO(..))
 import Data.Void        (Void, absurd)
 import Text.Printf      (printf)
 import Text.Show.Pretty (pPrint, ppShow)
@@ -31,19 +31,9 @@ import RIO (RIO, runRIO)
 import RIO (Utf8Builder, display, displayShow)
 import RIO (threadDelay)
 
-import RIO ( HasLogFunc
-           , LogFunc
-           , logError
-           , logInfo
-           , logWarn
-           , logDebug
-           , logOther
-           , logFuncL
-           , logOptionsHandle
-           , withLogFunc
-           , setLogUseTime
-           , setLogUseLoc
-           )
+import RIO (HasLogFunc, LogFunc, logDebug, logError, logFuncL, logInfo,
+            logOptionsHandle, logOther, logWarn, mkLogFunc, setLogUseLoc,
+            setLogUseTime, withLogFunc)
 
 io :: MonadIO m => IO a -> m a
 io = liftIO
