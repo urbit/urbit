@@ -119,17 +119,23 @@ _box_detach(u3a_box* box_u)
   _box_count(-(box_u->siz_w));
 
   if ( nex_p ) {
-    c3_assert(u3to(u3a_fbox, nex_p)->pre_p == fre_p);
+    if ( u3to(u3a_fbox, nex_p)->pre_p != fre_p ) {
+      c3_assert(!"loom: corrupt");
+    }
     u3to(u3a_fbox, nex_p)->pre_p = pre_p;
   }
   if ( pre_p ) {
-    c3_assert(u3to(u3a_fbox, pre_p)->nex_p == fre_p);
+    if( u3to(u3a_fbox, pre_p)->nex_p != fre_p ) {
+      c3_assert(!"loom: corrupt");
+    }
     u3to(u3a_fbox, pre_p)->nex_p = nex_p;
   }
   else {
     c3_w sel_w = _box_slot(box_u->siz_w);
 
-    c3_assert(fre_p == u3R->all.fre_p[sel_w]);
+    if ( fre_p != u3R->all.fre_p[sel_w] ) {
+      c3_assert(!"loom: corrupt");
+    }
     u3R->all.fre_p[sel_w] = nex_p;
   }
 }
@@ -468,14 +474,18 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
           siz_w += pad_w;
           _box_count(-(box_u->siz_w));
           {
+            if ( (0 != u3to(u3a_fbox, *pfr_p)->pre_p) &&
+                 (u3to(u3a_fbox, u3to(u3a_fbox, *pfr_p)->pre_p)->nex_p
+                    != (*pfr_p)) )
             {
-              c3_assert((0 == u3to(u3a_fbox, *pfr_p)->pre_p) ||
-                  (u3to(u3a_fbox, u3to(u3a_fbox, *pfr_p)->pre_p)->nex_p
-                        == (*pfr_p)));
+              c3_assert(!"loom: corrupt");
+            }
 
-              c3_assert((0 == u3to(u3a_fbox, *pfr_p)->nex_p) ||
-                  (u3to(u3a_fbox, u3to(u3a_fbox, *pfr_p)->nex_p)->pre_p
-                        == (*pfr_p)));
+            if( (0 != u3to(u3a_fbox, *pfr_p)->nex_p) &&
+                (u3to(u3a_fbox, u3to(u3a_fbox, *pfr_p)->nex_p)->pre_p
+                   != (*pfr_p)) )
+            {
+              c3_assert(!"loom: corrupt");
             }
 
             if ( 0 != u3to(u3a_fbox, *pfr_p)->nex_p ) {
@@ -1560,7 +1570,7 @@ void
 u3a_luse(u3_noun som)
 {
   if ( 0 == u3a_use(som) ) {
-    u3l_log("luse: insane %d 0x%x\r\n", som, som);
+    fprintf(stderr, "loom: insane %d 0x%x\r\n", som, som);
     abort();
   }
   if ( _(u3du(som)) ) {
@@ -1608,7 +1618,7 @@ u3a_mark_ptr(void* ptr_v)
     c3_ws use_ws = (c3_ws)box_u->use_w;
 
     if ( use_ws == 0 ) {
-      u3l_log("%p is bogus\r\n", ptr_v);
+      fprintf(stderr, "%p is bogus\r\n", ptr_v);
       siz_w = 0;
     }
     else {
@@ -1642,7 +1652,6 @@ u3a_mark_mptr(void* ptr_v)
   c3_w  pad_w = ptr_w[-1];
   c3_w* org_w = ptr_w - (pad_w + 1);
 
-  // u3l_log("free %p %p\r\n", org_w, ptr_w);
   return u3a_mark_ptr(org_w);
 }
 
@@ -1877,8 +1886,8 @@ u3a_sweep(void)
 
 #ifdef U3_CPU_DEBUG
     if ( fre_w != u3R->all.fre_w ) {
-      u3l_log("fre discrepancy (%x): %x, %x, %x\r\n", u3R->par_p,
-              fre_w, u3R->all.fre_w, (u3R->all.fre_w - fre_w));
+      fprintf(stderr, "fre discrepancy (%x): %x, %x, %x\r\n", u3R->par_p,
+                      fre_w, u3R->all.fre_w, (u3R->all.fre_w - fre_w));
     }
 #endif
     neg_w = (end_w - fre_w);
