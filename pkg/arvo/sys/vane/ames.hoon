@@ -1453,10 +1453,8 @@
       ?.  ?=([%pubs @ ~] tea)
         ~&  [%strange-pubs tea]
         [~ +>.$]
-      ?:  ?&  ?=(%diff -.public-keys-result.sih)
-              ?=(%rift -.diff.public-keys-result.sih)
-          ==
-        (sink hen [who [from to]:diff]:public-keys-result.sih)
+      ?:  ?=(%breach -.public-keys-result.sih)
+        (sink hen who.public-keys-result.sih)
       ?:  ?&  ?=(%diff -.public-keys-result.sih)
               !?=(%keys -.diff.public-keys-result.sih)
           ==
@@ -1534,7 +1532,7 @@
     ==
   ::
   ++  sink
-    |=  [hen=duct who=ship from=rift to=rift]
+    |=  [hen=duct who=ship]
     ^-  [(list move) _+>]
     ?:  =(our who)
       [[(print hen who ", you have sunk") ~] +>.$]

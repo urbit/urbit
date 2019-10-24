@@ -2067,15 +2067,16 @@
     +$  public-keys-result
       $%  [%full points=(map ship point)]
           [%diff who=ship =diff:point]
+          [%breach who=ship]
       ==
     ::                                                  ::
     ++  gift                                            ::  out result <-$
       $%  [%init p=ship]                                ::  report install unix
           [%mass p=mass]                                ::  memory usage report
           [%mack p=(unit tang)]                         ::  message n/ack
-          [%turf turf=(list turf)]                      ::  domains
           [%private-keys =life vein=(map life ring)]    ::  private keys
           [%public-keys =public-keys-result]            ::  ethereum changes
+          [%turf turf=(list turf)]                      ::  domains
       ==                                                ::
     ::  +seed: private boot parameters
     ::
