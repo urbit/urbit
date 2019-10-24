@@ -72,15 +72,12 @@
   ==
 --
 |%
-::  +state-old: upgrade path
-::
-++  state-old  ?(state)
 ::  +state: all state
 ::
 ++  state
   $:  :: state version
       ::
-      %0
+      %1
       :: agents by ship
       ::
       =agents
@@ -127,10 +124,7 @@
 ::  +foreign: foreign connections
 ::
 ++  foreign
-  $:  :: rift of first contact
-      ::
-      =rift
-      :: index
+  $:  :: index
       ::
       index=@ud
       :: by duct
@@ -475,8 +469,7 @@
     =?  mo-core  !(~(has by contacts.agents.state) ship)
       =/  =note-arvo  [%j %public-keys (silt ship ~)]
       =.  moves  [[system-duct.agents.state %pass /sys/jael note-arvo] moves]
-      =/  =rift  (fall (mo-rift-scry ship) *rift)
-      =/  =foreign  [rift 1 ~ ~]
+      =/  =foreign  [1 ~ ~]
       =.  contacts.agents.state
         (~(put by contacts.agents.state) ship foreign)
       mo-core
@@ -508,18 +501,6 @@
     ?~  contact
       ~
     `(~(got by duct-map.u.contact) index)
-  ::  +mo-rift-scry: for a +rift
-  ::
-  ++  mo-rift-scry
-    |=  who=ship
-    ^-  (unit rift)
-    =;  rit
-      ?~(rit ~ u.rit)
-    ;;  (unit (unit rift))
-    %-  (sloy-light ska)
-    =/  pur=spur
-      /(scot %p who)
-    [[151 %noun] %j our %rift da+now pur]
   ::  +mo-cancel-jael: cancel jael subscription
   ::
   ++  mo-cancel-jael
@@ -571,36 +552,9 @@
     ^+  mo-core
     ?>  ?=([%j %public-keys *] sign-arvo)
     ?>  ?=([%jael ~] path)
-    ?:  ?=(%full -.public-keys-result.sign-arvo)
-      =/  ships=(list [=ship =point:able:jael])
-        ~(tap by points.public-keys-result.sign-arvo)
-      |-  ^+  mo-core
-      ?~  ships
-        mo-core
-      =.  mo-core
-        =/  contact=(unit foreign)
-          (~(get by contacts.agents.state) ship.i.ships)
-        ?~  contact
-          =/  =tank
-            leaf+"gall: unexpected jael update for {<ship.i.ships>}, cancelling"
-          %-  (slog tank ~)
-          (mo-cancel-jael ship.i.ships)
-        ?:  (lte rift.point.i.ships rift.u.contact)
-          mo-core
-        (mo-breach ship.i.ships)
-      $(ships t.ships)
-    ?.  ?=(%rift -.diff.public-keys-result.sign-arvo)
+    ?.  ?=(%breach -.public-keys-result.sign-arvo)
       mo-core
-    =/  =ship  who.public-keys-result.sign-arvo
-    =/  contact=(unit foreign)  (~(get by contacts.agents.state) ship)
-    ?~  contact
-      =/  =tank
-        leaf+"gall: unexpected jael update for {<ship>}, cancelling"
-      %-  (slog tank ~)
-      (mo-cancel-jael ship)
-    ?:  (lte to.diff.public-keys-result.sign-arvo rift.u.contact)
-      mo-core
-    (mo-breach ship)
+    (mo-breach who.public-keys-result.sign-arvo)
   ::  +mo-handle-sys-core: receive a core from %ford.
   ::
   ++  mo-handle-sys-core
@@ -2537,12 +2491,52 @@
 ::  +load: recreate vane
 ::
 ++  load
-  |=  =state-old
+  =>  |%
+      +$  all-states
+        $%  state-0
+            state-1
+        ==
+      ::
+      +$  state-0
+        $:  %0
+            =agents-0
+        ==
+      ::
+      +$  agents-0
+        $:  system-duct=duct
+            contacts=(map ship foreign-0)
+            running=(map term agent)
+            blocked=(map term blocked)
+        ==
+      ::
+      +$  foreign-0
+        $:  =rift
+            index=@ud
+            index-map=(map duct @ud)
+            duct-map=(map @ud duct)
+        ==
+      ::
+      ++  upgrade-0
+        |=  s=state-0
+        ^-  state-1
+        :-  %1
+        %=    +.s
+            contacts.agents-0
+          %-  ~(run by contacts.agents-0.s)
+          |=  foreign-0
+          ^-  foreign
+          [index index-map duct-map]
+        ==
+      ::
+      ++  state-1  ^state
+      --
+  |=  old=all-states
   ^+  gall-payload
   ::
-  ?-  -.state-old
-    %0  gall-payload(state state-old)
-  ==
+  =?  old  ?=(%0 -.old)
+    (upgrade-0 old)
+  ?>  ?=(%1 -.old)
+  gall-payload(state old)
 ::  +scry: standard scry
 ::
 ++  scry
