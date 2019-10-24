@@ -21,7 +21,7 @@ export class Sidebar extends Component {
 
   render() {
     const { props, state } = this;
-    let station = props.match.params.ship + props.match.params.station;
+    let station = `/${props.match.params.ship}/${props.match.params.station}`;
 
     let sidebarItems = Object.keys(props.inbox)
       .map((box) => {
@@ -42,7 +42,7 @@ export class Sidebar extends Component {
         };
       })
       .sort((a, b) => {
-        return b.wen - a.wen;
+        return b.when - a.when;
       })
       .map((obj) => {
         let unread = props.unreads[obj.box];
