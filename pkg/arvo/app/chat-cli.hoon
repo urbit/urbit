@@ -298,9 +298,9 @@
     |=  act=sole-action:sole-sur
     ^-  (quip move _this)
     ?-  -.act
-      $det  (edit +.act)
-      $clr  [~ this]
-      $ret  obey
+      %det  (edit +.act)
+      %clr  [~ this]
+      %ret  obey
     ==
   ::  +edit: apply sole edit
   ::
@@ -497,8 +497,8 @@
     ++  letter
       ;~  pose
         (stag %url turl)
-        :(stag %me ;~(pfix vat text))
-        :(stag %text ;~(less mic hax text))
+        (stag %me ;~(pfix vat text))
+        (stag %text ;~(less mic hax text))
       ==
     ::  +turl: url parser
     ::
