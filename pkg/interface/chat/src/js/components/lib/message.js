@@ -30,7 +30,10 @@ export class Message extends Component {
       );
     } else if ('url' in letter) {
       return (
-        <a className="body-regular-400 v-top" href={letter.url}>
+        <a className="body-regular-400 v-top"
+          href={letter.url}
+          target="_blank"
+          rel="noopener noreferrer">
           {letter.url}
         </a>
       );
