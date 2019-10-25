@@ -1,26 +1,57 @@
 /+  tapp, stdio
+=,  ethereum-types
 =,  able:jael
 =>  |%
-    +$  pending-udiffs  (map number:block udiffs:point)
     +$  app-state
-      $:  %2
-          url=@ta
-          =number:block
-          =pending-udiffs
-          blocks=(list block)
-          whos=(set ship)
+      $:  %0
+          dogs=(map path watchdog)
       ==
+    ::
+    +$  watchdog
+      $:  config
+          =number:block
+          =pending-logs
+          blocks=(list block)
+      ==
+    ::
+    +$  config
+      $:  url=@ta
+          from-block=@ud
+          to-block=(unit @ud)  ::TODO  use or remove
+          contracts=(list address:ethereum)
+          =topics
+      ==
+    ::
+    +$  pending-logs  (map number:block loglist)
+    +$  loglist       (list event-log:rpc:ethereum)
+    ::
+    +$  topics  (list ?(@ux (list @ux)))
+    ::
+    +$  context  [=path dog=watchdog]
+    ::
     +$  peek-data  ~
     +$  in-poke-data
-      $:  %azimuth-tracker-poke
-          $%  [%listen whos=(list ship) =source:jael]
-              [%watch url=@ta]
+      $:  %eth-watcher-poke
+          $%  [%watch =path =config]
+              [%clear =path]
           ==
       ==
     +$  out-poke-data  ~
     +$  in-peer-data   ~
     +$  out-peer-data
-      [%azimuth-udiff =ship =udiff:point]
+      $%  ::  %history: full event log history
+          ::
+          [%history loglist]
+          ::  %log: newly added log
+          ::
+          [%log event-log:rpc:ethereum]
+          ::  %disavow: forget logs
+          ::
+          ::    this is sent when a reorg happens that invalidates
+          ::    previously-sent logs
+          ::
+          [%disavow id:block]
+      ==
     ++  tapp
       %:  ^tapp
         app-state
@@ -37,25 +68,6 @@
 ::  Async helpers
 ::
 =>  |%
-    ++  topics
-      |=  ships=(set ship)
-      ^-  (list ?(@ux (list @ux)))
-      ::  The first topic should be one of these event types
-      ::
-      :-  =>  azimuth-events:azimuth
-          :~  broke-continuity
-              changed-keys
-              lost-sponsor
-              escape-accepted
-          ==
-      ::  If we're looking for a specific set of ships, specify them as
-      ::  the second topic.  Otherwise don't specify the second topic so
-      ::  we will match all ships.
-      ::
-      ?:  =(~ ships)
-        ~
-      [(turn ~(tap in ships) ,@) ~]
-    ::
     ++  request-rpc
       |=  [url=@ta id=(unit @t) req=request:rpc:ethereum]
       =/  m  (async:stdio ,json)
@@ -187,25 +199,28 @@
       --
     ::
     ++  get-logs-by-hash
-      |=  [url=@ta whos=(set ship) =hash:block]
-      =/  m  (async:stdio udiffs:point)
+      |=  [url=@ta =hash:block contracts=(list address) =topics]
+      =/  m  (async:stdio loglist)
       ^-  form:m
       ;<  =json  bind:m
         %+  request-rpc  url
         :*  `'logs by hash'
             %eth-get-logs-by-hash
             hash
-            ~[azimuth:contracts:azimuth]
-            (topics whos)
+            contracts
+            topics
         ==
-      =/  event-logs=(list event-log:rpc:ethereum)
-        (parse-event-logs:rpc:ethereum json)
-      =/  =udiffs:point  (event-logs-to-udiffs event-logs)
-      (pure:m udiffs)
+      %-  pure:m
+      (parse-event-logs:rpc:ethereum json)
     ::
     ++  get-logs-by-range
-      |=  [url=@ta whos=(set ship) =from=number:block =to=number:block]
-      =/  m  (async:stdio udiffs:point)
+      |=  $:  url=@ta
+              contracts=(list address)
+              =topics
+              =from=number:block
+              =to=number:block
+          ==
+      =/  m  (async:stdio loglist)
       ^-  form:m
       ;<  =json  bind:m
         %+  request-rpc  url
@@ -213,161 +228,123 @@
             %eth-get-logs
             `number+from-number
             `number+to-number
-            ~[azimuth:contracts:azimuth]
-            (topics whos)
+            contracts
+            topics
         ==
-      =/  event-logs=(list event-log:rpc:ethereum)
-        (parse-event-logs:rpc:ethereum json)
-      =/  =udiffs:point  (event-logs-to-udiffs event-logs)
-      (pure:m udiffs)
+      %-  pure:m
+      (parse-event-logs:rpc:ethereum json)
     ::
-    ++  event-logs-to-udiffs
-      |=  event-logs=(list =event-log:rpc:ethereum)
-      ^-  =udiffs:point
-      %+  murn  event-logs
-      |=  =event-log:rpc:ethereum
-      ^-  (unit [=ship =udiff:point])
-      ?~  mined.event-log
-        ~
-      ?:  removed.u.mined.event-log
-        ~&  [%removed-log event-log]
-        ~
-      =/  =id:block  [block-hash block-number]:u.mined.event-log
-      =,  azimuth-events:azimuth
-      =,  abi:ethereum
-      ?:  =(broke-continuity i.topics.event-log)
-        =/  who=@  (decode-topics t.topics.event-log ~[%uint])
-        =/  num=@  (decode-results data.event-log ~[%uint])
-        `[who id %rift num]
-      ?:  =(changed-keys i.topics.event-log)
-        =/  who=@  (decode-topics t.topics.event-log ~[%uint])
-        =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
-            %+  decode-results  data.event-log
-            ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
-        `[who id %keys rev sut (pass-from-eth:azimuth enc aut sut)]
-      ?:  =(lost-sponsor i.topics.event-log)
-        =+  ^-  [who=@ pos=@]
-            (decode-topics t.topics.event-log ~[%uint %uint])
-        `[who id %spon ~]
-      ?:  =(escape-accepted i.topics.event-log)
-        =+  ^-  [who=@ wer=@]
-            (decode-topics t.topics.event-log ~[%uint %uint])
-        `[who id %spon `wer]
-      ~&  [%bad-topic event-log]
-      ~
-    ::
-    ++  jael-update
-      |=  =udiffs:point
+    ++  send-logs
+      |=  [=path =loglist]
       =/  m  (async:stdio ,~)
       |-  ^-  form:m
       =*  loop  $
-      ?~  udiffs
+      ?~  loglist
         (pure:m ~)
-      =/  =path  /(scot %p ship.i.udiffs)
-      ;<  ~  bind:m  (give-result:stdio / %azimuth-udiff i.udiffs)
-      ;<  ~  bind:m  (give-result:stdio path %azimuth-udiff i.udiffs)
-      loop(udiffs t.udiffs)
+      ;<  ~  bind:m  (send-update path %log i.loglist)
+      loop(loglist t.loglist)
+    ::
+    ++  send-update
+      |=  [=path out=out-peer-data]
+      =/  m  (async:stdio ,~)
+      ^-  form:m
+      =.  path  [%logs path]
+      (give-result:stdio path out)
     --
 ::
 ::  Main loop
 ::
 =>  |%
     ::
-    ::  Send %listen to jael
+    ::  Update watchdog configuration, then look for updates
     ::
-    ++  listen
-      |=  [state=app-state whos=(list ship) =source:jael]
-      =/  m  (async:stdio ,app-state)
+    ++  configure
+      |=  [context =config]
+      =/  m  (async:stdio ,watchdog)
       ^-  form:m
-      ;<  ~  bind:m  (send-effect:stdio %listen /lo (silt whos) source)
-      (pure:m state)
-    ::
-    ::  Start watching a node
-    ::
-    ++  start
-      |=  state=app-state
-      =/  m  (async:stdio ,app-state)
-      ^-  form:m
-      =:  number.state          0
-          pending-udiffs.state  *pending-udiffs
-          blocks.state          *(list block)
-        ==
-      (get-updates state)
+      %+  get-updates  path
+      %_  dog
+        -       config
+        number  from-block.config
+      ==
     ::
     ::  Get updates since last checked
     ::
     ++  get-updates
-      |=  state=app-state
-      =/  m  (async:stdio ,app-state)
+      |=  context
+      =/  m  (async:stdio ,watchdog)
       ^-  form:m
-      ;<  =latest=block    bind:m  (get-latest-block url.state)
-      ;<  state=app-state  bind:m  (zoom state number.id.latest-block)
+      ;<  =latest=block  bind:m  (get-latest-block url.dog)
+      ;<  dog=watchdog   bind:m  (zoom [path dog] number.id.latest-block)
       |-  ^-  form:m
-      =*  walk-loop  $
-      ?:  (gth number.state number.id.latest-block)
+      =*  loop  $
+      ?:  (gth number.dog number.id.latest-block)
         ;<  now=@da  bind:m  get-time:stdio
-        ;<  ~        bind:m  (wait-effect:stdio (add now ~m5))
-        (pure:m state)
-      ;<  =block  bind:m  (get-block-by-number url.state number.state)
-      ;<  [=new=pending-udiffs new-blocks=(lest ^block)]  bind:m
-        %-  take-block
-        [url.state whos.state pending-udiffs.state block blocks.state]
-      =:  pending-udiffs.state  new-pending-udiffs
-          blocks.state          new-blocks
-          number.state          +(number.id.i.new-blocks)
-        ==
-      walk-loop
+        ::TODO  will set duplicate timers when multiple watchdogs, right?
+        ;<  ~        bind:m  (wait-effect:stdio (add now ~s30))
+        (pure:m dog)
+      ;<  =block  bind:m  (get-block-by-number url.dog number.dog)
+      ;<  [=new=pending-logs new-blocks=(lest ^block)]  bind:m
+        (take-block [path dog] block)
+      %_  loop
+        pending-logs.dog  new-pending-logs
+        blocks.dog        new-blocks
+        number.dog        +(number.id.i.new-blocks)
+      ==
     ::
     ::  Process a block, detecting and handling reorgs
     ::
     ++  take-block
-      |=  [url=@ta whos=(set ship) =a=pending-udiffs =block blocks=(list block)]
-      =/  m  (async:stdio ,[pending-udiffs (lest ^block)])
+      |=  [context =block]
+      =/  m  (async:stdio ,[pending-logs (lest ^block)])
       ^-  form:m
-      ?:  &(?=(^ blocks) !=(parent-hash.block hash.id.i.blocks))
-        (rewind url a-pending-udiffs block blocks)
-      ;<  =b=pending-udiffs  bind:m
-        (release-old-events a-pending-udiffs number.id.block)
-      ;<  =new=udiffs:point  bind:m  (get-logs-by-hash url whos hash.id.block)
-      =.  b-pending-udiffs  (~(put by b-pending-udiffs) number.id.block new-udiffs)
-      (pure:m b-pending-udiffs block blocks)
+      ?:  &(?=(^ blocks.dog) !=(parent-hash.block hash.id.i.blocks.dog))
+        (rewind path url.dog pending-logs.dog block blocks.dog)
+      ;<  =new=pending-logs  bind:m
+        (release-old-events path pending-logs.dog number.id.block)
+      ;<  =new=loglist  bind:m
+        (get-logs-by-hash url.dog hash.id.block contracts.dog topics.dog)
+      =.  new-pending-logs
+        (~(put by new-pending-logs) number.id.block new-loglist)
+      (pure:m new-pending-logs [block blocks.dog])
     ::
     ::  Release events if they're more than 30 blocks ago
     ::
     ++  release-old-events
-      |=  [=pending-udiffs =number:block]
-      =/  m  (async:stdio ,^pending-udiffs)
+      |=  [=path =pending-logs =number:block]
+      =/  m  (async:stdio ,^pending-logs)
       ^-  form:m
+      ?:  (lth number 30)  (pure:m pending-logs)
       =/  rel-number  (sub number 30)
-      =/  =udiffs:point  (~(get ja pending-udiffs) rel-number)
-      ;<  ~  bind:m  (jael-update udiffs)
-      (pure:m (~(del by pending-udiffs) rel-number))
+      =/  =loglist  (~(get ja pending-logs) rel-number)
+      ;<  ~  bind:m  (send-logs path loglist)
+      (pure:m (~(del by pending-logs) rel-number))
     ::
     ::  Reorg detected, so rewind until we're back in sync
     ::
     ++  rewind
-      |=  [url=@ta =pending-udiffs =block blocks=(list block)]
-      =/  m  (async:stdio ,[^pending-udiffs (lest ^block)])
+      |=  [=path url=@ta =pending-logs =block blocks=(list block)]
+      =/  m  (async:stdio ,[^pending-logs (lest ^block)])
       |-  ^-  form:m
       =*  loop  $
       ?~  blocks
-        (pure:m pending-udiffs block blocks)
+        (pure:m pending-logs block blocks)
       ?:  =(parent-hash.block hash.id.i.blocks)
-        (pure:m pending-udiffs block blocks)
+        (pure:m pending-logs block blocks)
       ;<  =next=^block  bind:m  (get-block-by-number url number.id.i.blocks)
-      ?:  =(~ pending-udiffs)
-        ;<  ~  bind:m  (disavow block)
+      ?:  =(~ pending-logs)
+        ;<  ~  bind:m  (disavow path block)
         loop(block next-block, blocks t.blocks)
-      =.  pending-udiffs  (~(del by pending-udiffs) number.id.block)
+      =.  pending-logs  (~(del by pending-logs) number.id.block)
       loop(block next-block, blocks t.blocks)
     ::
     ::  Tell subscribers there was a deep reorg
     ::
     ++  disavow
-      |=  =block
+      |=  [=path =block]
       =/  m  (async:stdio ,~)
       ^-  form:m
-      (jael-update [*ship id.block %disavow ~]~)
+      (send-update path %disavow id.block)
     ::
     ::  Zoom forward to near a given block number.
     ::
@@ -376,19 +353,25 @@
     ::    at a safe distance -- 500 blocks ago is probably sufficient.
     ::
     ++  zoom
-      |=  [state=app-state =latest=number:block]
-      =/  m  (async:stdio ,app-state)
+      |=  [context =latest=number:block]
+      =/  m  (async:stdio ,watchdog)
       ^-  form:m
       =/  zoom-margin=number:block  100
-      ?:  (lth latest-number (add number.state zoom-margin))
-        (pure:m state)
+      ?:  (lth latest-number (add number.dog zoom-margin))
+        (pure:m dog)
       =/  to-number=number:block  (sub latest-number zoom-margin)
-      ;<  =udiffs:point  bind:m
-        (get-logs-by-range url.state whos.state number.state to-number)
-      ;<  ~  bind:m  (jael-update udiffs)
-      =.  number.state  +(to-number)
-      =.  blocks.state  ~
-      (pure:m state)
+      ;<  =loglist  bind:m
+        %:  get-logs-by-range
+          url.dog
+          contracts.dog
+          topics.dog
+          number.dog
+          to-number
+        ==
+      ;<  ~  bind:m  (send-logs path loglist)
+      =.  number.dog  +(to-number)
+      =.  blocks.dog  ~
+      (pure:m dog)
     --
 ::
 ::  Main
@@ -401,8 +384,17 @@
   =/  m  tapp-async
   ^-  form:m
   ?-  +<.in-poke-data
-    %listen  (listen state +>.in-poke-data)
-    %watch   (pure:m state(url url.in-poke-data))
+      %watch
+    =/  dog=watchdog
+      (~(gut by dogs.state) path.in-poke-data *watchdog)
+    ;<  dog=watchdog  bind:m
+      (configure [path.in-poke-data dog] config.in-poke-data)
+    =.  dogs.state  (~(put by dogs.state) path.in-poke-data dog)
+    (pure:m state)
+  ::
+      %clear
+    ::TODO
+    (pure:m state)
   ==
 ::
 ++  handle-take
@@ -410,17 +402,25 @@
   =/  m  tapp-async
   ^-  form:m
   ?+  -.sign  ~|([%strange-sign -.sign] !!)
-    %wake    (get-updates state)
+      %wake
+    ::TODO  ideally we'd process these in parallel. this seems possible,
+    ::      but requires non-trivial work, as it deviates from tapp's flow.
+    ::      (when making that change, take note of rpc request id's.)
+    =/  dogs=(list [=path dog=watchdog])  ~(tap by dogs.state)
+    |-  ^-  form:m
+    =*  loop  $
+    ?~  dogs
+      (pure:m state)
+    =,  i.dogs
+    ;<  dog=watchdog  bind:m  (get-updates path dog)
+    =.  dogs.state  (~(put by dogs.state) path dog)
+    loop(dogs t.dogs)
   ==
 ::
 ++  handle-peer
   |=  =path
   =/  m  tapp-async
   ^-  form:m
-  =/  who=(unit ship)  ?~(path ~ `(slav %p i.path))
-  =.  whos.state
-    ?~  who
-      ~
-    (~(put in whos.state) u.who)
-  (start state)
+  ::TODO
+  (pure:m state)
 --
