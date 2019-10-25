@@ -2,9 +2,8 @@
 ::::  /hoon/dojo/app                                    ::  ::::
   ::                                                    ::    ::
 /?  309                                                 ::  arvo kelvin
-/-  sole, lens                                          ::  console structures
-/+  sole                                                ::  console library
-=,  sole
+/-  *sole, lens                                         ::
+/+  sole, pprint                                        ::
 ::                                                      ::  ::
 ::::                                                    ::  ::::
   ::                                                    ::    ::
@@ -333,6 +332,12 @@
 |_  $:  hid/bowl                                        ::  system state
         house                                           ::  program state
     ==                                                  ::
+::
+::  pretty-printer aliases
+::
+++  xskol  `$-(type tank)`type-to-tank:pprint
+++  xsell  `$-(vase tank)`vase-to-tank:pprint
+::
 ++  he                                                  ::  per session
   |_  {moz/(list move) session}                         ::
   ::

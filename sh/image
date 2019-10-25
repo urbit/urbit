@@ -6,13 +6,6 @@ say() {
   echo "$1" >&2
 }
 
-git_sha="$(git rev-parse HEAD)"
-git_sha="${git_sha:0:8}"
-
-git_branch="$(git branch --show-current)"
-
-git_tag="${git_branch}-${git_sha}"
-
 say "Building nix/ops/image..."
 nix_out="$(nix-build nix/ops -A image --no-out-link "$@")"
 
@@ -20,11 +13,5 @@ say "Loading $nix_out into Docker..."
 nix_name="$(docker load --quiet --input $nix_out)"
 nix_name="${nix_name#Loaded image: }"
 
-say "Re-tagging with git metadata..."
-image_repo="$(docker images $nix_name --format '{{.Repository}}')"
-image_name="${image_repo}:${git_tag}"
-docker tag $nix_name $image_name
-
-# Output only the new tag on stdout for subsequent pipes/tooling.
-say $nix_name
-echo $image_name
+# Output only the tag on stdout for subsequent pipes/tooling.
+echo $nix_name

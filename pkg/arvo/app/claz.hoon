@@ -459,16 +459,7 @@
   |=  [as-who=ship file=path]
   =/  m  null-glad
   =/  friends=(list [=ship @q =address])
-    =+  txt=.^((list cord) %cx file)
-    %+  turn  txt
-    |=  line=cord
-    ~|  line
-    %+  rash  line
-    ;~  (glue com)
-      ;~(pfix sig fed:ag)
-      ;~(pfix sig feq:ag)
-      ;~(pfix (jest '0x') hex)
-    ==
+    (read-invites file)
   ;<  ~  bind:m
     %-  are-available
     (turn friends head)
@@ -550,6 +541,25 @@
   %-  glad-fail
   :~  leaf+"not enough invites from stars:"
       >missing<
+  ==
+::
+::  input file reading
+::
+++  read-invites
+  |=  file=path
+  ^-  (list [=ship ticket=@q =address])
+  =+  txt=.^((list cord) %cx file)
+  %+  murn  txt
+  |=  line=cord
+  ^-  (unit [ship @q address])
+  ?:  =('' line)  ~
+  %-  some
+  ~|  line
+  %+  rash  line
+  ;~  (glue com)
+    ;~(pfix sig fed:ag)
+    ;~(pfix sig feq:ag)
+    ;~(pfix (jest '0x') hex)
   ==
 ::
 ::  transaction generation logic
@@ -702,16 +712,7 @@
   |=  [nonce=@ud =network as=address as-who=ship file=path]
   ^-  (list transaction)
   =/  friends=(list [=ship @q =address])
-    =+  txt=.^((list cord) %cx file)
-    %+  turn  txt
-    |=  line=cord
-    ~|  line
-    %+  rash  line
-    ;~  (glue com)
-      ;~(pfix sig fed:ag)
-      ;~(pfix sig feq:ag)
-      ;~(pfix (jest '0x') hex)
-    ==
+    (read-invites file)
   =|  txs=(list transaction)
   |-
   ?~  friends  (flop txs)
