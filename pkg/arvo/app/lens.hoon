@@ -234,6 +234,8 @@
   |=  a=*
   ^-  (quip move _this)
   ~&  poke+a
+  ?:  ?=  %cancel  a
+    [~ this(job.state ~)]
   [~ this]
 ::
 --
