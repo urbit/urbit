@@ -1410,7 +1410,7 @@
       ::
           %subscribe
         ::
-        =/  channel-wire=path
+        =/  channel-wire=wire
           /channel/subscription/[channel-id]/(scot %ud request-id.i.requests)
         ::
         =.  gall-moves
@@ -1429,7 +1429,7 @@
         $(requests t.requests)
       ::
           %unsubscribe
-        =/  channel-wire=path
+        =/  channel-wire=wire
           /channel/subscription/[channel-id]/(scot %ud subscription-id.i.requests)
         ::
         =/  usession  (~(get by session.channel-state.state) channel-id)
@@ -1475,7 +1475,7 @@
             ::  produce a list of moves which cancels every gall subscription
             ::
             %+  turn  ~(tap by subscriptions.session)
-            |=  [channel-wire=path ship=@p app=term =path duc=^duct]
+            |=  [channel-wire=wire ship=@p app=term =path duc=^duct]
             ^-  move
             ::
             [duc %pass channel-wire [%g %deal [our ship] app %pull ~]]
@@ -1672,7 +1672,7 @@
       ::  produce a list of moves which cancels every gall subscription
       ::
       %+  turn  ~(tap by subscriptions.session)
-      |=  [channel-wire=path ship=@p app=term =path duc=^duct]
+      |=  [channel-wire=wire ship=@p app=term =path duc=^duct]
       ^-  move
       ::
       [duc %pass channel-wire [%g %deal [our ship] app %pull ~]]
