@@ -51,6 +51,11 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:agent:gall _this)
+  ::
+  ?:  &(?=(%noun mark) ?=(%cancel q.vase))
+    ~&  %lens-cancel
+    [~ this(job.state ~)]
+  ::
   ?.  ?=(%handle-http-request mark)
     (on-poke:def mark vase)
   =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
