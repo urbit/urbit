@@ -367,6 +367,8 @@ export class Post extends Component {
           titleOriginal: post.info.title,
           bodyOriginal: post.raw,
           post: post,
+          title: post.info.title,
+          body: post.raw,
           pathData: [
             { text: "Home", url: "/~publish/recent" },
             { text: blog.info.title, url: blogUrl },
