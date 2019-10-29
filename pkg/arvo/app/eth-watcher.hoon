@@ -29,13 +29,13 @@
     ::
     +$  context  [=path dog=watchdog]
     ::
-    +$  peek-data  ~
+    +$  peek-data
+      [%atom =next-block=number:block]
     +$  in-poke-data
       $:  %eth-watcher-poke
           $%  [%watch =path =config]
               [%clear =path]
-          ==
-      ==
+      ==  ==
     +$  out-poke-data  ~
     +$  in-peer-data   ~
     +$  out-peer-data
@@ -377,8 +377,15 @@
 ::  Main
 ::
 =*  default-tapp  default-tapp:tapp
-%-  create-tapp-poke-peer-take:tapp
+%-  create-tapp-all:tapp
+^-  tapp-core-all:tapp
 |_  [=bowl:gall state=app-state]
+++  handle-init
+  =/  m  tapp-async
+  ^-  form:m
+::
+++  handle-diff  handle-diff:default-tapp
+::
 ++  handle-poke
   |=  =in-poke-data
   =/  m  tapp-async
@@ -423,4 +430,17 @@
   ^-  form:m
   ::TODO
   (pure:m state)
+::
+::  +handle-peek: get diagnostics data
+::
+::    /block/some-path: get next block number to check for /some-path
+::
+++  handle-peek
+  |=  =path
+  ^-  (unit (unit peek-data))
+  ?.  ?=([%x %block ^] path)  ~
+  ?.  (~(has by dogs.state) t.t.path)  ~
+  :+  ~  ~
+  :-  %atom
+  number:(~(got by dogs.state) t.t.path)
 --
