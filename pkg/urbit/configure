@@ -2,7 +2,7 @@
 
 set -e
 
-URBIT_VERSION="0.9.1"
+URBIT_VERSION="0.9.2"
 
 deps="                                                                    \
   curl gmp sigsegv argon2 ed25519 ent h2o scrypt sni uv murmur3 secp256k1 \
