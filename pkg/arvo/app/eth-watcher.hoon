@@ -39,19 +39,20 @@
     +$  out-poke-data  ~
     +$  in-peer-data   ~
     +$  out-peer-data
-      $%  ::  %history: full event log history
-          ::
-          [%history loglist]
-          ::  %log: newly added log
-          ::
-          [%log event-log:rpc:ethereum]
-          ::  %disavow: forget logs
-          ::
-          ::    this is sent when a reorg happens that invalidates
-          ::    previously-sent logs
-          ::
-          [%disavow id:block]
-      ==
+      $:  %eth-watcher-diff
+          $%  ::  %history: full event log history
+              ::
+              [%history =loglist]
+              ::  %log: newly added log
+              ::
+              [%log =event-log:rpc:ethereum]
+              ::  %disavow: forget logs
+              ::
+              ::    this is sent when a reorg happens that invalidates
+              ::    previously-sent logs
+              ::
+              [%disavow =id:block]
+      ==  ==
     ++  tapp
       %:  ^tapp
         app-state
@@ -245,11 +246,11 @@
       loop(loglist t.loglist)
     ::
     ++  send-update
-      |=  [=path out=out-peer-data]
+      |=  [=path out=_+:*out-peer-data]
       =/  m  (async:stdio ,~)
       ^-  form:m
       =.  path  [%logs path]
-      (give-result:stdio path out)
+      (give-result:stdio path %eth-watcher-diff out)
     --
 ::
 ::  Main loop
