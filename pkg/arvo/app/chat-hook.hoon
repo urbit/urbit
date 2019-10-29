@@ -69,7 +69,9 @@
   ::  scry permissions to check if write is permitted
   ?.  (permitted-scry [(scot %p src.bol) %chat (weld path.act /write)])
     ~
-  =.  author.envelope.act  src.bol
+  =:  author.envelope.act  src.bol
+      when.envelope.act  now.bol
+  ==
   [ost.bol %poke / [our.bol %chat-store] [%chat-action act]]~
 ::
 ++  poke-chat-hook-action
