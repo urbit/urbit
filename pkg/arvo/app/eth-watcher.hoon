@@ -1,3 +1,6 @@
+::  eth-watcher: ethereum event log collector
+::
+/-  *eth-watcher
 /+  tapp, stdio
 =,  ethereum-types
 =,  able:jael
@@ -7,6 +10,7 @@
           dogs=(map path watchdog)
       ==
     ::
+    +$  context  [=path dog=watchdog]
     +$  watchdog
       $:  config
           =number:block
@@ -14,45 +18,20 @@
           blocks=(list block)
       ==
     ::
-    +$  config
-      $:  url=@ta
-          from-block=@ud
-          to-block=(unit @ud)  ::TODO  use or remove
-          contracts=(list address:ethereum)
-          =topics
-      ==
-    ::
     +$  pending-logs  (map number:block loglist)
-    +$  loglist       (list event-log:rpc:ethereum)
-    ::
-    +$  topics  (list ?(@ux (list @ux)))
-    ::
-    +$  context  [=path dog=watchdog]
     ::
     +$  peek-data
       [%atom =next-block=number:block]
     +$  in-poke-data
       $:  %eth-watcher-poke
-          $%  [%watch =path =config]
-              [%clear =path]
-      ==  ==
+          poke
+      ==
     +$  out-poke-data  ~
     +$  in-peer-data   ~
     +$  out-peer-data
       $:  %eth-watcher-diff
-          $%  ::  %history: full event log history
-              ::
-              [%history =loglist]
-              ::  %log: newly added log
-              ::
-              [%log =event-log:rpc:ethereum]
-              ::  %disavow: forget logs
-              ::
-              ::    this is sent when a reorg happens that invalidates
-              ::    previously-sent logs
-              ::
-              [%disavow =id:block]
-      ==  ==
+          diff
+      ==
     ++  tapp
       %:  ^tapp
         app-state
@@ -246,11 +225,11 @@
       loop(loglist t.loglist)
     ::
     ++  send-update
-      |=  [=path out=_+:*out-peer-data]
+      |=  [=path =diff]
       =/  m  (async:stdio ,~)
       ^-  form:m
       =.  path  [%logs path]
-      (give-result:stdio path %eth-watcher-diff out)
+      (give-result:stdio path %eth-watcher-diff diff)
     --
 ::
 ::  Main loop
@@ -266,7 +245,7 @@
       %+  get-updates  path
       %_  dog
         -       config
-        number  from-block.config
+        number  from.config
       ==
     ::
     ::  Get updates since last checked
