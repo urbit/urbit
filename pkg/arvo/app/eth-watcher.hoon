@@ -279,9 +279,6 @@
       |-  ^-  form:m
       =*  loop  $
       ?:  (gth number.dog number.id.latest-block)
-        ;<  now=@da  bind:m  get-time:stdio
-        ::TODO  will set duplicate timers when multiple watchdogs, right?
-        ;<  ~        bind:m  (wait-effect:stdio (add now ~s30))
         (pure:m dog)
       ;<  =block  bind:m  (get-block-by-number url.dog number.dog)
       ;<  [=new=pending-logs new-blocks=(lest ^block)]  bind:m
@@ -383,6 +380,10 @@
 ++  handle-init
   =/  m  tapp-async
   ^-  form:m
+  ::  start update timer loop
+  ;<  now=@da  bind:m  get-time:stdio
+  ;<  ~  bind:m  (wait-effect:stdio (add now ~m5))
+  (pure:m state)
 ::
 ++  handle-diff  handle-diff:default-tapp
 ::
@@ -410,6 +411,12 @@
   ^-  form:m
   ?+  -.sign  ~|([%strange-sign -.sign] !!)
       %wake
+    ;<  ~  bind:m
+      ;<  now=@da  bind:(async:tapp ,~)  get-time:stdio
+      =/  next=@da  (add now ~m5)
+      ::NOTE  we use +send-raw-card here to ensure we always set a new timer,
+      ::      regardless of what happens further on in the flow.
+      (send-raw-card:stdio %wait /effect/(scot %da next) next)
     ::TODO  ideally we'd process these in parallel. this seems possible,
     ::      but requires non-trivial work, as it deviates from tapp's flow.
     ::      (when making that change, take note of rpc request id's.)
