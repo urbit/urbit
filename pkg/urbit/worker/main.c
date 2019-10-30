@@ -376,6 +376,21 @@ _worker_send_slog(u3_noun hod)
   _worker_send(u3nt(c3__slog, u3i_chubs(1, &u3V.sen_d), hod));
 }
 
+/* _worker_send_tang(): send list of hoon tanks as hint outputs.
+*/
+static void
+_worker_send_tang(c3_y pri_y, u3_noun tan)
+{
+  u3_noun i_tan, t_tan;
+  while ( u3_nul != tan ) {
+    i_tan = u3k(u3h(tan));
+    t_tan = u3k(u3t(tan));
+    u3z(tan);
+    _worker_send_slog(u3nc(pri_y, i_tan));
+    tan = t_tan;
+  }
+}
+
 /* _worker_lame(): event failed, replace with error event.
 */
 static void
@@ -395,6 +410,7 @@ _worker_lame(c3_d evt_d, u3_noun now, u3_noun ovo, u3_noun why, u3_noun tan)
   //      with a crypto failure, just drop the packet.
   //
   if ( (c3__hear == tag) && (c3__exit == why) ) {
+    _worker_send_tang(1, u3k(tan));
     rep = u3nt(u3k(wir), c3__hole, u3k(cad));
   }
   //  failed event notifications (%crud) are replaced with
@@ -406,6 +422,7 @@ _worker_lame(c3_d evt_d, u3_noun now, u3_noun ovo, u3_noun why, u3_noun tan)
   else if ( c3__crud == tag ) {
     u3_noun lef = u3nc(c3__leaf, u3i_tape("crude crashed!"));
     u3_noun nat = u3kb_weld(u3k(u3t(cad)), u3nc(lef, u3k(tan)));
+    _worker_send_tang(1, u3k(nat));
     rep = u3nc(u3nt(u3_blip, c3__arvo, u3_nul),
                u3nt(c3__warn, u3k(u3h(cad)), nat));
   }
@@ -425,6 +442,7 @@ _worker_lame(c3_d evt_d, u3_noun now, u3_noun ovo, u3_noun why, u3_noun tan)
     u3_noun lef = u3nc(c3__leaf, u3kb_weld(u3i_tape("bail: "),
                                            u3qc_rip(3, why)));
     u3_noun nat = u3kb_weld(u3k(tan), u3nc(lef, u3_nul));
+    _worker_send_tang(1, u3k(nat));
     rep = u3nc(u3k(wir), u3nt(c3__crud, u3k(tag), nat));
   }
 

@@ -61,23 +61,45 @@
   =.  this
     ?+  -.q.i.ufs.afs  this
       %restore  (handle-restore who.afs)
-      %send     (handle-send i.ufs.afs)
+      %send     (handle-send who.afs i.ufs.afs)
     ==
   $(ufs.afs t.ufs.afs)
 ::
 ++  handle-restore
   |=  who=@p
   %-  emit-aqua-events
-  [%event who [//newt/0v1n.2m9vh %barn ~]]~
+  [%event who [//newt/0v1n.2m9vh %born ~]]~
 ::
 ++  handle-send
-  |=  [way=wire %send lan=lane:ames pac=@]
+  |=  [sndr=ship way=wire %send lan=lane:ames pac=@]
   ^+  this
-  =/  hear  [//newt/0v1n.2m9vh %hear lan pac]
-  =?  ships  =(~ ships)
-    .^((list ship) %gx /(scot %p our)/aqua/(scot %da now)/ships/noun)
+  =/  rcvr=ship  (lane-to-ship lan)
+  =/  hear-lane  (ship-to-lane sndr)
+  =>  ?.  ?|  =(rcvr ~linnup-torsyx-linnup-torsyx)
+              =(sndr ~linnup-torsyx-linnup-torsyx)
+          ==
+        .
+      ~>  %slog.0^leaf/"aqua: {(scow %p sndr)} -> {(scow %p rcvr)}"
+      .
   %-  emit-aqua-events
-  %+  turn  ships
-  |=  who=ship
-  [%event who hear]
+  [%event rcvr //newt/0v1n.2m9vh %hear hear-lane pac]~
+::  +lane-to-ship: decode a ship from an aqua lane
+::
+++  lane-to-ship
+  |=  =lane:ames
+  ^-  ship
+  ::
+  ?-  -.lane
+    %&  p.lane
+    %|  `ship``@`p.lane
+  ==
+::  +ship-to-lane: encode a lane to look like it came from .ship
+::
+::    Never shows up as a galaxy, because Vere wouldn't know that either.
+::
+++  ship-to-lane
+  |=  =ship
+  ^-  lane:ames
+  ::
+  [%| `address:ames``@`ship]
 --

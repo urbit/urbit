@@ -129,6 +129,109 @@
         (send-hi ~bud ~dev)
       (pure:m ~)
     ::
+      :+  %hi-marbud-az
+        ~[~bud ~marbud]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~marbud)
+        ~&  >  'MARBUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
+        ~&  >  'BUD-DONE'
+        (send-hi ~bud ~marbud)
+      (pure:m ~)
+    ::
+      :+  %hi-uncle-az
+        ~[~bud ~marbud ~dev]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      =.  eth-node  (spawn:eth-node ~dev)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
+        ~&  >  'BUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~marbud)
+        ~&  >  'MARBUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~dev)
+        ~&  >  'BUD-DONE'
+        (send-hi ~marbud ~dev)
+      ~&  >  'HI DONE'
+      (pure:m ~)
+    ::
+      :+  %hi-nephew-az
+        ~[~bud ~marbud ~dev]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      =.  eth-node  (spawn:eth-node ~dev)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
+        ~&  >  'BUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~marbud)
+        ~&  >  'MARBUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~dev)
+        ~&  >  'BUD-DONE'
+        (send-hi ~dev ~marbud)
+      ~&  >  'HI DONE'
+      (pure:m ~)
+    ::
+      :+  %hi-cousin-az
+        ~[~bud ~marbud ~dev ~mardev]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      =.  eth-node  (spawn:eth-node ~dev)
+      =.  eth-node  (spawn:eth-node ~mardev)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
+        ~&  >  'BUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~marbud)
+        ~&  >  'MARBUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~dev)
+        ~&  >  'BUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~mardev)
+        ~&  >  'MARDEV-DONE'
+        (send-hi ~mardev ~marbud)
+      ~&  >  'HI DONE'
+      (pure:m ~)
+    ::
+      :+  %hi-linnup-az
+        ~[~bud ~marbud ~linnup-torsyx]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      =.  eth-node  (spawn:eth-node ~linnup-torsyx)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
+        ~&  >  'BUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~marbud)
+        ~&  >  'MARBUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~linnup-torsyx)
+        ~&  >  'LINNUP DONE'
+        ;<  ~  bind:m  (send-hi ~linnup-torsyx ~marbud)
+        ~&  >  'HI DONE-------------------------------'
+        (pure:m ~)
+      (pure:m ~)
+    ::
+      :+  %hi-linnup-az-backward
+        ~[~bud ~marbud ~linnup-torsyx]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      =.  eth-node  (spawn:eth-node ~linnup-torsyx)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~linnup-torsyx)
+        ~&  >  'LINNUP DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~marbud)
+        ~&  >  'MARBUD-DONE'
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
+        ~&  >  'BUD-DONE'
+        ;<  ~  bind:m  (send-hi ~linnup-torsyx ~marbud)
+        ~&  >  'HI DONE-------------------------------'
+        (pure:m ~)
+      (pure:m ~)
+    ::
       :+  %moon-az
         ~[~bud ~marbud ~linnup-torsyx ~linnup-torsyx-linnup-torsyx ~dev]
       =.  eth-node  (spawn:eth-node ~marbud)
@@ -193,18 +296,27 @@
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
+        ~&  >  'BUD DONE'
         ;<  ~  bind:m  (raw-real-ship:eth-node ~dev)
+        ~&  >  'DEV DONE'
         ;<  ~  bind:m  (raw-real-ship:eth-node ~marbud)
+        ~&  >  'MARBUD DONE'
         ;<  ~  bind:m  (raw-real-ship:eth-node ~mardev)
+        ~&  >  'MARDEV DONE'
         (send-hi ~marbud ~mardev)
+      ~&  >  'HI MARBUD MARDEV'
       ;<  eth-node=_eth-node  bind:m
         (breach-and-hear:eth-node our.hid ~mardev ~marbud)
+      ~&  >  'BREACH MARDEV'
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         ;<  ~  bind:m  (send-hi-not-responding ~marbud ~mardev)
+        ~&  >  'HI NOT RESPONDING'
         ;<  ~  bind:m  (raw-real-ship:eth-node ~mardev)
+        ~&  >  'MARDEV RE DONE'
         (wait-for-dojo ~marbud "hi ~mardev successful")
+      ~&  >  'DONE'
       (pure:m ~)
     ::
       :+  %breach-sync
@@ -298,9 +410,11 @@
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
-        ;<  ~        bind:m  (raw-real-ship:eth-node ~bud)
+        ;<  ~  bind:m  (raw-real-ship:eth-node ~bud)
         ~&  >  'BUD RE DONE'
-        ;<  ~        bind:m  (just-events (dojo ~bud "|merge %base ~marbud %kids, =gem %this"))
+        ;<  ~  bind:m  (send-hi ~bud ~marbud)
+        ~&  >  'BUD HI MARBUD'
+        ;<  ~  bind:m  (just-events (dojo ~bud "|merge %base ~marbud %kids, =gem %this"))
         ~&  >  'THIS MERGE STARTED DONE'
         ;<  file=@t  bind:m  (touch-file ~bud %base)
         ~&  >  'TOUCH-1 DONE'

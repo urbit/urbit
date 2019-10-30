@@ -93,19 +93,14 @@
 ++  sign                                                ::  in result $<-
   $~  [%j %init *@p]                                    ::
   $%  $:  %a                                            ::
-          $%  [%nice ~]                                 ::  XX obsolete
-              $>  $?  %mass                             ::
-                      %send                             ::  XX strange
-                  ==                                    ::
-              gift:able:ames                            ::
+          $%  $>(%mass gift:able:ames)                  ::
       ==  ==                                            ::
       $:  %b                                            ::
           $%  $>(%mass gift:able:behn)                  ::
               $>(%writ gift:able:clay)                  ::  XX %slip
       ==  ==                                            ::
       $:  %c                                            ::
-          $>  $?  %mack                                 ::  XX strange
-                  %mass                                 ::
+          $>  $?  %mass                                 ::
                   %mere                                 ::
                   %note                                 ::
                   %writ                                 ::
@@ -400,12 +395,6 @@
           ==
         ==
       ::
-      ++  pump                                          ::  send diff ack
-        %_    .
-            moz
-          :_(moz [hen %pass ~ %g %deal [our our] ram %pump ~])
-        ==
-      ::
       ++  take                                          ::  receive
         |=  sih/sign
         ^+  +>
@@ -413,16 +402,9 @@
             {?($a $b $c $e $f $g $i $j) $mass *}
           (wegh -.sih p.sih)
         ::
-            {$a $nice *}
-          ::  ~&  [%take-nice-ames sih]
-          +>
-        ::
             [%j %init *]
           ::  pass thru to unix
           ::
-          +>(moz :_(moz [hen %give +.sih]))
-        ::
-            {$a $send *}
           +>(moz :_(moz [hen %give +.sih]))
         ::
             {$g $onto *}
@@ -440,7 +422,7 @@
             $reap  ?~  p.p.+>.sih
                      +>.$
                    (dump:(crud %reap u.p.p.+>.sih) %logo ~)
-            $diff  pump:(from ;;(dill-blit q:`vase`+>+>.sih))
+            $diff  (from ;;(dill-blit q:`vase`+>+>.sih))
             $http-response  !!
           ==
         ::
@@ -454,10 +436,6 @@
           ?:  ?=(%& -.p.sih)
             mere
           (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
-        ::
-            {$c $mack *}
-          ?~  p.sih  +>.$
-          (mean >%dill-clay-nack< u.p.sih)
         ::
             {$d $blit *}
           (done +.sih)
