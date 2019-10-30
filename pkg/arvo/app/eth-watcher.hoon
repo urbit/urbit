@@ -461,8 +461,7 @@
     :+  %diff  %eth-watcher-diff
     :-  %history
     ^-  loglist
-    ~|  [%no-such-watchdog t.path]
-    (zing history:(~(got by dogs.state) t.path))
+    (zing history:(~(gut by dogs.state) t.path *watchdog))
   (pure:m state)
 ::
 ::  +handle-peek: get diagnostics data
