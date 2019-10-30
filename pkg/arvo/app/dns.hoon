@@ -93,7 +93,17 @@
         (pure:m |)
       loop(try +(try))
     ::
-    ++  hall-app-message
+    ++  app-message
+      |=  [app=term =cord =tang]
+      =/  m  (async:stdio ,~)
+      ^-  form:m
+      =/  msg=tape  :(weld (trip app) ": " (trip cord))
+      ;<  ~  bind:m  (flog-text:stdio msg)
+      (flog-tang:stdio tang)
+    ::
+    ::  XX disabled due to :hall's status
+    ::
+    ++  hall-app-message-disabled
       |=  [app=term =cord =tang]
       =/  m  (async:stdio ,~)
       ^-  form:m
@@ -148,7 +158,7 @@
         :~  leaf+"XX check via nslookup"
             leaf+"XX confirm port 80"
         ==
-      ;<  ~        bind:m  (hall-app-message %dns msg)
+      ;<  ~        bind:m  (app-message %dns msg)
       loop(ames-domains t.ames-domains)
     ::
     ::  +request-by-ip
@@ -242,7 +252,7 @@
       :~  leaf+"XX check via nslookup"
           leaf+"XX confirm port 80"
       ==
-    ;<  ~       bind:m  (hall-app-message %dns msg)
+    ;<  ~       bind:m  (app-message %dns msg)
     =?  completed.state  good  (some binding)
     ::  XX save failure?s
     ::  XX unsubscribe?
@@ -263,7 +273,7 @@
     ?~  error.sign
       =/  msg=cord
         (cat 3 'request for DNS sent to ' (scot %p p:collector-app))
-      ;<  ~  bind:m  (hall-app-message %dns msg ~)
+      ;<  ~  bind:m  (app-message %dns msg ~)
       (pure:m state)
     ::  XX details
     ~&  %dns-ip-request-failed
@@ -284,7 +294,7 @@
     ?~  error.sign
       =/  msg=cord
         (cat 3 'awaiting response from ' (scot %p p:collector-app))
-      ;<  ~  bind:m  (hall-app-message %dns msg ~)
+      ;<  ~  bind:m  (app-message %dns msg ~)
       (pure:m state)
     ::  XX details
     ~&  %dns-domain-subscription-failed
