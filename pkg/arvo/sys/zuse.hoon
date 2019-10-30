@@ -6747,7 +6747,7 @@
   ++  saxo                                              ::  autocanon
     |=  [our=ship now=@da who=ship]
     .^  (list ship)
-        %k
+        %j
         /(scot %p our)/saxo/(scot %da now)/(scot %p who)
     ==
   ::                                                    ::  ++sein:title

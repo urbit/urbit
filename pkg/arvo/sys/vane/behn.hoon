@@ -63,8 +63,6 @@
     ::
     ?:  =(~ timers.state)  ~|  %behn-crud-no-timer^tag^error  !!
     ::
-    ~&  %behn-crud-tag^tag
-    %-  (slog error)
     (wake `error)
   ::  +rest: cancel the timer at :date, then adjust unix wakeup
   ::  +wait: set a new timer at :date, then adjust unix wakeup

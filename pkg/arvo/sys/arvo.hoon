@@ -258,7 +258,6 @@
     ++  slur-g  ~/(%slur-g |=({gat/vase hil/mill} =+(%g (slur gat hil))))
     ++  slur-i  ~/(%slur-i |=({gat/vase hil/mill} =+(%i (slur gat hil))))
     ++  slur-j  ~/(%slur-j |=({gat/vase hil/mill} =+(%j (slur gat hil))))
-    ++  slur-k  ~/(%slur-k |=({gat/vase hil/mill} =+(%k (slur gat hil))))
     ++  slur-z  ~/(%slur-z |=({gat/vase hil/mill} =+(%z (slur gat hil))))
     ::
     ++  slur-pro                                        ::  profiling slur
@@ -274,7 +273,6 @@
         $g  (slur-g gat hil)
         $i  (slur-i gat hil)
         $j  (slur-j gat hil)
-        $k  (slur-k gat hil)
       ==
     ::
     ++  song                                            ::  reduce metacard
