@@ -16,15 +16,10 @@
 ++  test-first-order
   =/  dom=(set turf)  (sy /org/urbit/zod ~)
   =^  moves  app  (~(poke-acme-order app *bowl:gall *acme:app) dom)
-  =/  msg  'requesting an https certificate for zod.urbit.org'
   ;:  weld
     %+  expect-eq
-        !>  :~  =-  [ost.bow.app [%poke / -]]
-                =-  [[~zod %hall] %hall-action %phrase (sy [~zod %inbox] ~) -]
-                ~[[%app %$ [%lin & msg]]]
-                [ost.bow.app %wait /acme/try/1/directory +(now.bow.app)]
-            ==
-        !>  moves
+        !>  2
+        !>  (lent moves)
   ::
     %+  expect-eq
         !>  [~ dom]
