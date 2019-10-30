@@ -392,16 +392,26 @@
 ++  handle-diff  handle-diff:default-tapp
 ::
 ++  handle-poke
-  |=  =in-poke-data
+  |=  in=in-poke-data
   =/  m  tapp-async
   ^-  form:m
-  ?-  +<.in-poke-data
+  ?-  +<.in
       %watch
-    =/  dog=watchdog
-      (~(gut by dogs.state) path.in-poke-data *watchdog)
+    ::  fully restart the watchdog if it doesn't exist yet,
+    ::  or if the new config changes more than just the url.
+    =/  restart=?
+      ?|  !(~(has by dogs.state) path.in)
+          ?!  .=  ->:(~(got by dogs.state) path.in)
+                  +.config.in
+      ==
+    ~?  &((~(has by dogs.state) path.in) restart)
+      [dap.bowl 'overwriting existing watchdog on' path.in]
     ;<  dog=watchdog  bind:m
-      (configure [path.in-poke-data dog] config.in-poke-data)
-    =.  dogs.state  (~(put by dogs.state) path.in-poke-data dog)
+      =/  dog=watchdog
+        ?:  restart  *watchdog
+        (~(got by dogs.state) path.in)
+      (configure [path.in dog] config.in)
+    =.  dogs.state  (~(put by dogs.state) path.in dog)
     (pure:m state)
   ::
       %clear
