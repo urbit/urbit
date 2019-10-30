@@ -405,7 +405,7 @@
     (pure:m state)
   ::
       %clear
-    ::TODO
+    =.  dogs.state  (~(del by dogs.state) path.in)
     (pure:m state)
   ==
 ::
