@@ -19,6 +19,7 @@
           blocks=(list block)
       ==
     ::
+    ::  history: newest block first, oldest event first
     +$  history       (list loglist)
     +$  pending-logs  (map number:block loglist)
     ::
@@ -278,7 +279,7 @@
         (rewind [path dog] block)
       ;<  [=new=pending-logs =released=loglist]  bind:m
         (release-old-events path pending-logs.dog number.id.block)
-      ;<  =new=loglist  bind:m
+      ;<  =new=loglist  bind:m  ::  oldest first
         (get-logs-by-hash url.dog hash.id.block contracts.dog topics.dog)
       =.  new-pending-logs
         (~(put by new-pending-logs) number.id.block new-loglist)
@@ -360,7 +361,7 @@
       ?:  (lth latest-number (add number.dog zoom-margin))
         (pure:m dog)
       =/  to-number=number:block  (sub latest-number zoom-margin)
-      ;<  =loglist  bind:m
+      ;<  =loglist  bind:m  ::  oldest first
         %:  get-logs-by-range
           url.dog
           contracts.dog
@@ -461,7 +462,10 @@
     :+  %diff  %eth-watcher-diff
     :-  %history
     ^-  loglist
-    (zing history:(~(gut by dogs.state) t.path *watchdog))
+    %-  zing
+    %-  flop
+    =<  history
+    (~(gut by dogs.state) t.path *watchdog)
   (pure:m state)
 ::
 ::  +handle-peek: get diagnostics data

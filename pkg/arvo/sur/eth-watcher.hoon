@@ -22,7 +22,7 @@
   ==
 ::
 +$  diff
-  $%  ::  %history: full event log history
+  $%  ::  %history: full event log history, oldest first
       ::
       [%history =loglist]
       ::  %log: newly added log
