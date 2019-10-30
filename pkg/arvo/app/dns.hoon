@@ -277,7 +277,7 @@
     ::  XX details
     ~&  %dns-ip-request-failed
     %-  (slog u.error.sign)
-    (pure:m state)
+    (pure:m state(requested ~))
   ::  re-subscribe if (involuntarily) unsubscribed
   ::
       %quit
