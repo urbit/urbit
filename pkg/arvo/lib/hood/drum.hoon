@@ -3,7 +3,7 @@
   ::                                                    ::  ::
 /?    310                                               ::  version
 /-    *sole
-/+    sole, easy-print
+/+    sole
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -394,7 +394,7 @@
   +>.$
 ::
 ++  se-tab                                            ::  print tab completions
-  |=  tl/(list {=term =type})
+  |=  tl/(list {=cord =tank})
   ^+  +>
   =/  lots  (gth (lent tl) 10)
   =/  long
@@ -407,10 +407,9 @@
   ^-  (list tank)
   :-  leaf+"-----"
   %+  turn  tl
-  |=  [=term =type]
+  |=  [=term =type=tank]
   ?:  lots
     leaf+(trip term)
-  =/  type-tank  ~(duck easy-print type)
   =/  type-text  ~(ram re type-tank)
   =/  spaces  (trip (fil 3 (sub long (met 3 term)) ' '))
   =/  =tape  "{(trip term)} {spaces} {type-text}"

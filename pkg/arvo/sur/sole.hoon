@@ -36,7 +36,7 @@
       {$pro sole-prompt}                                ::  set prompt
       {$sag p/path q/*}                                 ::  save to jamfile
       {$sav p/path q/@}                                 ::  save to file
-      {$tab p/(list {=term =type})}                     ::  tab-complete list
+      {$tab p/(list {=cord =tank})}                     ::  tab-complete list
       {$tan p/(list tank)}                              ::  classic tank
   ::  {$taq p/tanq}                                     ::  modern tank
       {$txt p/tape}                                     ::  text line
