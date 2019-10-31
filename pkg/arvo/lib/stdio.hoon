@@ -344,6 +344,35 @@
 ::
 ::    ----
 ::
+::  Output
+::
+++  flog
+  |=  =flog:dill
+  =/  m  (async ,~)
+  ^-  form:m
+  (send-raw-card %flog / flog)
+::
+++  flog-text
+  |=  =tape
+  =/  m  (async ,~)
+  ^-  form:m
+  (flog %text tape)
+::
+++  flog-tang
+  |=  =tang
+  =/  m  (async ,~)
+  ^-  form:m
+  =/  =wall
+    (zing (turn (flop tang) (cury wash [0 80])))
+  |-  ^-  form:m
+  =*  loop  $
+  ?~  wall
+    (pure:m ~)
+  ;<  ~  bind:m  (flog-text i.wall)
+  loop(wall t.wall)
+::
+::    ----
+::
 ::  Apps
 ::
 ++  poke-app

@@ -12,7 +12,9 @@
       ==
     +$  peek-data  _!!
     +$  in-poke-data
-      $%  [%dns-auto ames-domains=(list turf)]
+      $%  ::  XX ames-domains unused, remove
+          ::
+          [%dns-auto ames-domains=(list turf)]
           [%dns-address =address:dns]
       ==
     +$  out-poke-data
@@ -93,7 +95,17 @@
         (pure:m |)
       loop(try +(try))
     ::
-    ++  hall-app-message
+    ++  app-message
+      |=  [app=term =cord =tang]
+      =/  m  (async:stdio ,~)
+      ^-  form:m
+      =/  msg=tape  :(weld (trip app) ": " (trip cord))
+      ;<  ~  bind:m  (flog-text:stdio msg)
+      (flog-tang:stdio tang)
+    ::
+    ::  XX disabled due to :hall's status
+    ::
+    ++  hall-app-message-disabled
       |=  [app=term =cord =tang]
       =/  m  (async:stdio ,~)
       ^-  form:m
@@ -125,15 +137,12 @@
     ::  +galaxy-domains
     ::
     ++  galaxy-domains
-      |=  ames-domains=(list turf)
       =/  m  (async:stdio ,~)
       ^-  form:m
       ;<  our=@p   bind:m  get-identity:stdio
-      :: XX urbit/urbit#1314
-      ::
-      :: ;<  now=@da  bind:m  get-time:stdio
-      :: =/  ames-domains=(list turf)
-      ::   .^((list turf) %j /(scot %p our)/turf/(scot %da now))
+      ;<  now=@da  bind:m  get-time:stdio
+      =/  ames-domains=(list turf)
+        .^((list turf) %j /(scot %p our)/turf/(scot %da now))
       |-  ^-  form:m
       =*  loop  $
       ?~  ames-domains
@@ -148,7 +157,7 @@
         :~  leaf+"XX check via nslookup"
             leaf+"XX confirm port 80"
         ==
-      ;<  ~        bind:m  (hall-app-message %dns msg)
+      ;<  ~        bind:m  (app-message %dns msg)
       loop(ames-domains t.ames-domains)
     ::
     ::  +request-by-ip
@@ -197,7 +206,7 @@
       ::
       ~&  %galaxy-only
       (pure:m state)
-    ;<  ~  bind:m  (galaxy-domains ames-domains.in-poke-data)
+    ;<  ~  bind:m  galaxy-domains
     (pure:m state)
   ::
   ::  manual dns binding -- by explicit ipv4
@@ -242,7 +251,7 @@
       :~  leaf+"XX check via nslookup"
           leaf+"XX confirm port 80"
       ==
-    ;<  ~       bind:m  (hall-app-message %dns msg)
+    ;<  ~       bind:m  (app-message %dns msg)
     =?  completed.state  good  (some binding)
     ::  XX save failure?s
     ::  XX unsubscribe?
@@ -263,12 +272,12 @@
     ?~  error.sign
       =/  msg=cord
         (cat 3 'request for DNS sent to ' (scot %p p:collector-app))
-      ;<  ~  bind:m  (hall-app-message %dns msg ~)
+      ;<  ~  bind:m  (app-message %dns msg ~)
       (pure:m state)
     ::  XX details
     ~&  %dns-ip-request-failed
     %-  (slog u.error.sign)
-    (pure:m state)
+    (pure:m state(requested ~))
   ::  re-subscribe if (involuntarily) unsubscribed
   ::
       %quit
@@ -284,7 +293,7 @@
     ?~  error.sign
       =/  msg=cord
         (cat 3 'awaiting response from ' (scot %p p:collector-app))
-      ;<  ~  bind:m  (hall-app-message %dns msg ~)
+      ;<  ~  bind:m  (app-message %dns msg ~)
       (pure:m state)
     ::  XX details
     ~&  %dns-domain-subscription-failed
