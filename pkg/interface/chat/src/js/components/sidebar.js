@@ -3,17 +3,11 @@ import { Link } from "react-router-dom";
 import classnames from 'classnames';
 import _ from 'lodash';
 
+import { SidebarInvite } from '/components/lib/sidebar-invite';
 import { SidebarItem } from '/components/lib/sidebar-item';
 
 
 export class Sidebar extends Component {
-
-  componentWillUnmount() {
-    if (this.setInvitesToReadInterval) {
-      clearInterval(this.setInvitesToReadInterval);
-      this.setInvitesToReadInterval = null;
-    }
-  }
 
   onClickNew() {
     this.props.history.push('/~chat/new');
@@ -22,6 +16,16 @@ export class Sidebar extends Component {
   render() {
     const { props, state } = this;
     let station = `/${props.match.params.ship}/${props.match.params.station}`;
+
+    let sidebarInvites = Object.keys(props.invites)
+      .map((uid) => {
+        return (
+          <SidebarInvite
+            uid={uid}
+            invite={props.invites[uid]}
+            api={props.api} />
+        );
+      });
 
     let sidebarItems = Object.keys(props.inbox)
       .map((box) => {
@@ -73,6 +77,7 @@ export class Sidebar extends Component {
         <div className="overflow-y-auto" style={{
           height: 'calc(100vh - 60px - 48px)'
         }}>
+          {sidebarInvites}
           {sidebarItems}
         </div>
       </div>
