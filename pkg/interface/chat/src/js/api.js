@@ -25,6 +25,12 @@ class UrbitApi {
       delete: this.chatViewDelete.bind(this),
       join: this.chatViewJoin.bind(this),
     };
+    
+    this.invite = {
+      accept: this.inviteAccept.bind(this),
+      decline: this.inviteDecline.bind(this),
+      invite: this.inviteInvite.bind(this)
+    };
   }
 
   bind(path, method, ship = this.authTokens.ship, app, success, fail, quit) {
@@ -136,6 +142,46 @@ class UrbitApi {
 
   chatViewJoin(ship, path) {
     this.chatViewAction({ join: { ship, path } });
+  }
+
+  inviteAction(data) {
+    this.action("invite-store", "json", data);
+  }
+  
+  inviteInvite(path, ship) {
+    this.action("invite-hook", "json", 
+      {
+        invite: {
+          path: '/chat',
+          invite: {
+            path,
+            ship: `~${window.ship}`,
+            recipient: ship,
+            app: 'chat-hook',
+            text: `You have been invited to /${window.ship}${path}`,
+          },
+          uid: uuid()
+        }
+      }
+    );
+  }
+
+  inviteAccept(uid) {
+    this.inviteAction({
+      accept: {
+        path: '/chat',
+        uid
+      }
+    });
+  }
+  
+  inviteDecline(uid) {
+    this.inviteAction({
+      decline: {
+        path: '/chat',
+        uid
+      }
+    });
   }
 
 }

@@ -68,7 +68,6 @@ export class NewScreen extends Component {
       return;
     }
 
-    // TODO: send invites
     let aud = [];
     let isValid = true;
     if (state.invites.length > 2) {
@@ -123,6 +122,11 @@ export class NewScreen extends Component {
     }, () => {
       props.setSpinner(true);
       props.api.chatView.create(station, state.security, readAud, writeAud);
+      aud.forEach((ship) => {
+        if (ship !== `~${window.ship}`) {
+          props.api.invite.invite(station, ship);
+        }
+      });
     });
   }
 
