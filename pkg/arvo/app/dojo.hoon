@@ -1100,31 +1100,13 @@
     |=  pos=@ud
     ^+  +>
     =*  res  +>
-    =/  buf  (tufa buf.say)
-    ::  Find beg-pos by searching backward to where the current term
-    ::  begins
-    =+  ^-  [id=(unit term) *]
-        (scan `tape`(flop (scag pos buf)) ;~(plug (punt sym) (star prn)))
-    =/  beg-pos
-      ?~  id
-        pos
-      (sub pos (met 3 u.id))
-    =/  txt=tape
-      ;:  weld
-        (scag beg-pos buf)
-        "magic-spoon"
-        ?~  id
-          ""
-        "."
-        (slag beg-pos buf)
-        "\0a"
-      ==
+    =+  [beg-pos=@ud txt=tape]=(insert-magic:auto pos (tufa buf.say))
     =+  vex=((full parse-command-line:he-parser) [1 1] txt)
     ?.  ?=([* ~ [* @ %ex *] *] vex)
       res
     =/  typ  p:(slop q:he-hoon-head !>(..dawn))
-    =/  tl  (tablist:auto typ p.q.q.p.u.q.vex)
-    =/  advance  (autoadvance:auto typ p.q.q.p.u.q.vex)
+    =/  tl  (tab-list-hoon:auto typ p.q.q.p.u.q.vex)
+    =/  advance  (advance-hoon:auto typ p.q.q.p.u.q.vex)
     =?  res  ?=(^ advance)
       =/  to-send  (trip (rsh 3 (sub pos beg-pos) u.advance))
       =|  fxs=(list sole-effect)
