@@ -3,7 +3,7 @@
   ::                                                    ::  ::
 /?    310                                               ::  version
 /-    *sole
-/+    sole
+/+    sole, easy-print
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -393,6 +393,37 @@
     (se-link gyl)
   +>.$
 ::
+++  se-tab                                            ::  print tab completions
+  |=  tl/(list {=term =type})
+  ^+  +>
+  =/  lots  (gth (lent tl) 10)
+  =/  long
+    ?:  lots
+      0
+    (roll (turn tl |=([=term *] (met 3 term))) max)
+
+  %-  se-dump
+  %-  flop
+  ^-  (list tank)
+  :-  leaf+"-----"
+  %+  turn  tl
+  |=  [=term =type]
+  ?:  lots
+    leaf+(trip term)
+  =/  type-tank  ~(duck easy-print type)
+  =/  type-text  ~(ram re type-tank)
+  =/  spaces  (trip (fil 3 (sub long (met 3 term)) ' '))
+  =/  =tape  "{(trip term)} {spaces} {type-text}"
+  ::  If type is too long and not the only result, abbreviate
+  ::
+  ?:  (gth (lent type-text) edg)
+    ?:  ?=([* ~] tl)
+      :+  %rose
+        ["" "" ""]
+      ~[leaf+(trip term) type-tank]
+    leaf+(weld (scag (sub edg 3) tape) "...")
+  leaf+tape
+::
 ++  se-dump                                           ::  print tanks
   |=  tac/(list tank)
   ^+  +>
@@ -650,6 +681,7 @@
                 $(p.fec t.p.fec, +>.^$ ^$(fec i.p.fec))
       {$nex *}  ta-nex
       {$pro *}  (ta-pro +.fec)
+      {$tab *}  +>(..ta (se-tab p.fec))
       {$tan *}  +>(..ta (se-dump p.fec))
       {$sag *}  +>(..ta (se-blit fec))
       {$sav *}  +>(..ta (se-blit fec))

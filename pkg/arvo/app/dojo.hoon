@@ -3,7 +3,7 @@
   ::                                                    ::    ::
 /?  309                                                 ::  arvo kelvin
 /-  *sole, lens                                         ::
-/+  sole, pprint, auto, easy-print                      ::
+/+  sole, pprint, auto                                  ::
 ::                                                      ::  ::
 ::::                                                    ::  ::::
   ::                                                    ::    ::
@@ -1149,24 +1149,7 @@
       res
     ::  Else, print results
     ::
-    =+  =/  lots  (gth (lent u.tl) 10)
-        =/  long
-          ?:  lots
-            0
-          (roll (turn u.tl |=([=term *] (met 3 term))) max)
-        %-  (slog leaf/"-----" ~)
-        %+  turn  u.tl
-        |=  [=term =type]
-        ?:  lots
-          %-  (slog leaf+(trip term) ~)
-          ~
-        =/  type-text  ~(ram re ~(duck easy-print type))
-        =/  spaces  (trip (fil 3 (sub long (met 3 term)) ' '))
-        =/  =tape
-          "{(trip term)} {spaces} {type-text}"
-        %-  (slog leaf+tape ~)
-        ~
-    res
+    (he-diff %tab u.tl)
   ::
   ++  he-type                                           ::  apply input
     |=  act/sole-action
