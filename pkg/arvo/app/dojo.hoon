@@ -3,7 +3,7 @@
   ::                                                    ::    ::
 /?  309                                                 ::  arvo kelvin
 /-  *sole, lens                                         ::
-/+  sole, pprint, auto                                  ::
+/+  sole, pprint, auto, easy-print                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::::
   ::                                                    ::    ::
@@ -1160,8 +1160,10 @@
         ?:  lots
           %-  (slog leaf+(trip term) ~)
           ~
+        =/  type-text  ~(ram re ~(duck easy-print type))
+        =/  spaces  (trip (fil 3 (sub long (met 3 term)) ' '))
         =/  =tape
-          "{(trip term)} {(trip (fil 3 (sub long (met 3 term)) ' '))} {<type>}"
+          "{(trip term)} {spaces} {type-text}"
         %-  (slog leaf+tape ~)
         ~
     res

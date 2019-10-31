@@ -131,7 +131,7 @@
       [%lost *]  loop(gen p.gen)
       [%zpmc *]  (both p.gen q.gen)
       [%zpts *]  loop(gen p.gen)
-      [%zpvt *]  !!
+      [%zpvt *]  (both q.gen r.gen)
       [%zpzp *]  ~
       *
     =+  doz=~(open ap gen)
