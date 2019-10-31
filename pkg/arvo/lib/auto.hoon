@@ -20,7 +20,9 @@
   ::
       [%core *]
     %-  weld
-    :_  $(ty p.ty)
+    :_  ?.  ?=(%gold r.p.q.ty)
+          ~
+        $(ty p.ty)
     ^-  (list (pair term type))
     %-  zing
     %+  turn  ~(tap by q.r.q.ty)
