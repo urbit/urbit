@@ -658,6 +658,7 @@
         $det  (sh-edit +.act)
         $clr  ..sh-sole :: (sh-pact ~) :: XX clear to PM-to-self?
         $ret  sh-obey
+        $tab  ..sh-sole
       ==
     ::
     ++  sh-edit

@@ -589,6 +589,7 @@
         $f  (ta-aro %r)
         $g  ?~  ris  ta-bel
             (ta-hom(pos.hit num.hit, ris ~) [%set ~])
+        $i  ta-tab
         $k  =+  len=(lent buf.say.inp)
             ?:  =(pos.inp len)
               ta-bel
@@ -855,6 +856,9 @@
   ::
   ++  ta-ret                                          ::  hear return
     (ta-act %ret ~)
+  ::
+  ++  ta-tab                                          ::  hear tab
+    (ta-act %tab pos.inp)
   ::
   ++  ta-ser                                          ::  reverse search
     |=  ext/(list @c)
