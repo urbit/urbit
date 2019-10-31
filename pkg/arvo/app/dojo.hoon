@@ -1131,10 +1131,11 @@
       res
     ::  Else, print results
     ::
+    =/  lots  (gth (lent u.tl) 10)
     %+  he-diff  %tab
     %+  turn  u.tl
     |=  [=term =type]
-    [term ~(duck easy-print type)]
+    [term ?:(lots *tank ~(duck easy-print type))]
   ::
   ++  he-type                                           ::  apply input
     |=  act/sole-action

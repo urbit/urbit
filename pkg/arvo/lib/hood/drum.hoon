@@ -401,7 +401,6 @@
     ?:  lots
       0
     (roll (turn tl |=([=term *] (met 3 term))) max)
-
   %-  se-dump
   %-  flop
   ^-  (list tank)
