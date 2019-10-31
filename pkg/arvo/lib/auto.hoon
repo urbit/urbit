@@ -2,6 +2,9 @@
 ::
 |%
 +$  ids  (list [=term =type])
+::
+::  Get all the identifiers accessible if this type is your subject.
+::
 ++  get-identifiers
   |=  ty=type
   %-  flop
@@ -42,12 +45,16 @@
       [%hold *]  $(ty ~(repo ut ty))
   ==
 ::
+::  Get all the identifiers that start with sid.
+::
 ++  search-prefix
   |=  [sid=term =ids]
   ^-  (list [term type])
   %+  skim  ids
   |=  [id=term ty=type]
   =(sid (end 3 (met 3 sid) id))
+::
+::  Get the longest prefix of a list of identifiers.
 ::
 ++  longest-match
   |=  matches=(list [=term =type])
@@ -67,6 +74,9 @@
       ==  ==
     $(n +(n))
   (end 3 (dec n) term.i.matches)
+::
+::  Run +find-type safely, printing the first line of the stack trace on
+::  error.
 ::
 ++  find-type-mule
   |=  [sut=type gen=hoon]
@@ -190,49 +200,66 @@
   ^-  (unit [term type])
   !!
 ::
-++  replace-hax
-  |=  code=tape
-  %+  scan  code
-  %+  cook
-    |=  res=(list $@(@ [~ (unit term)]))
-    %-  trip
-    %-  crip
-    %+  turn  res
-    |=  elem=$@(@ [~ (unit term)])
-    ?@  elem
-      elem
-    ?~  +.elem
-      'magic-spoon'
-    (cat 3 'magic-spoon.' u.+.elem)
-  %-  star
-  ;~  pose
-    ;~  less
-      hax
-      prn
-    ==
+::  Insert magic marker in hoon source at the given position.
+::
+++  insert-magic
+  |=  [pos=@ud txt=tape]
+  ^-  [beg-pos=@ud txt=tape]
+  ::  Find beg-pos by searching backward to where the current term
+  ::  begins
   ::
-    (stag ~ ;~(pfix hax (punt sym)))
+  =+  ^-  [id=(unit term) *]
+      (scan `tape`(flop (scag pos txt)) ;~(plug (punt sym) (star prn)))
+  =/  beg-pos
+    ?~  id
+      pos
+    (sub pos (met 3 u.id))
+  :-  beg-pos
+  ::  Insert "magic-spoon" marker so +find-type can identify where to
+  ::  stop.
+  ::
+  ;:  weld
+    (scag beg-pos txt)
+    "magic-spoon"
+    ?~  id
+      ""
+    "."
+    (slag beg-pos txt)
+    "\0a"
   ==
 ::
-++  autoadvance
+::  Produce the longest possible advance without choosing between
+::  matches.
+::
+::    Takes a +hoon which has already has a magic-spoon marker.  Useful if
+::    you want to handle your own parsing.
+::
+++  advance-hoon
   |=  [sut=type gen=hoon]
   %+  bind  (find-type-mule sut gen)
   |=  [id=term typ=type]
   (longest-match (search-prefix id (get-identifiers typ)))
 ::
-++  auto-advance
-  |=  [sut=type code=cord]
-  (autoadvance sut (scan (replace-hax (trip code)) vest))
+::  Same as +advance-hoon, but takes a position and text directly.
 ::
-++  tablist
+++  advance-tape
+  |=  [sut=type pos=@ud code=tape]
+  (advance-hoon sut (scan txt:(insert-magic pos code) vest))
+::
+::  Produce a list of matches.
+::
+::    Takes a +hoon which has already has a magic-spoon marker.  Useful if
+::    you want to handle your own parsing.
+::
+++  tab-list-hoon
   |=  [sut=type gen=hoon]
   %+  bind  (find-type-mule sut gen)
   |=  [id=term typ=type]
   (search-prefix id (get-identifiers typ))
 ::
-++  tab-list
-  |=  [sut=type code=cord]
-  %+  bind  (find-type sut (scan (replace-hax (trip code)) vest))
-  |=  [id=term typ=type]
-  (search-prefix id (get-identifiers typ))
+::  Same as +advance-hoon, but takes a position and text directly.
+::
+++  tab-list-tape
+  |=  [sut=type pos=@ud code=tape]
+  (tab-list-hoon sut (scan txt:(insert-magic pos code) vest))
 --
