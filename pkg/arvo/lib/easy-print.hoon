@@ -404,7 +404,10 @@
   =-  [p.tez (doge q.p.tez q.tez)]
   ^=  tez
   ^-  {p/{p/(map type @) q/(map @ wine)} q/wine}
-  ?:  (~(meet ut sut) -:!>(*type))
+  =/  type-meet  (mule |.((~(meet ut sut) -:!>(*type))))
+  ?:  ?=(%| -.type-meet)
+    [dex %void]
+  ?:  ?=(%& p.type-meet)
     [dex %type]
   ?-    sut
       $noun      [dex sut]
