@@ -3,7 +3,7 @@
   ::                                                    ::    ::
 /?  309                                                 ::  arvo kelvin
 /-  *sole, lens                                         ::
-/+  sole, pprint, auto                                  ::
+/+  sole, pprint, auto, easy-print                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::::
   ::                                                    ::    ::
@@ -1131,7 +1131,10 @@
       res
     ::  Else, print results
     ::
-    (he-diff %tab u.tl)
+    %+  he-diff  %tab
+    %+  turn  u.tl
+    |=  [=term =type]
+    [term ~(duck easy-print type)]
   ::
   ++  he-type                                           ::  apply input
     |=  act/sole-action
