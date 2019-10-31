@@ -92,21 +92,11 @@
   ^-  (quip move _this)
   ?>  (team:title our.bol src.bol)
   ?-  -.action
-      %create
-    (handle-create action)
-  ::
-      %delete
-    (handle-delete action)
-  ::
-      %invite
-    (handle-invite action)
-  ::
-      %accept
-    (handle-accept action)
-  ::
-      %decline
-    (handle-decline action)
-  ::
+      %create   (handle-create action)
+      %delete   (handle-delete action)
+      %invite   (handle-invite action)
+      %accept   (handle-accept action)
+      %decline  (handle-decline action)
   ==
 ::
 ++  handle-create

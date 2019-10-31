@@ -32,10 +32,10 @@
   ^-  json
   =,  enjs:format
   %-  pairs
-  :~  [%path (path path.invite)]
-      [%ship (ship ship.invite)]
-      [%recipient (ship recipient.invite)]
+  :~  [%ship (ship ship.invite)]
       [%app [%s app.invite]]
+      [%path (path path.invite)]
+      [%recipient (ship recipient.invite)]
       [%text [%s text.invite]]
   ==
 ::
@@ -127,10 +127,10 @@
   ::
   ++  invi
     %-  ot
-    :~  [%path pa]
-        [%ship (su ;~(pfix sig fed:ag))]
-        [%recipient (su ;~(pfix sig fed:ag))]
+    :~  [%ship (su ;~(pfix sig fed:ag))]
         [%app (se %tas)]
+        [%path pa]
+        [%recipient (su ;~(pfix sig fed:ag))]
         [%text so]
     ==
   --
