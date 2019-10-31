@@ -8,7 +8,7 @@
       {$det sole-change}                                ::  command line edit
       {$ret ~}                                          ::  submit and clear
       {$clr ~}                                          ::  exit context
-      {$tab pos=@ud}                                    ::  tab complete
+      {$tab pos/@ud}                                    ::  tab complete
   ==                                                    ::
 ++  sole-buffer  (list @c)                              ::  command state
 ++  sole-change                                         ::  network change
@@ -36,6 +36,7 @@
       {$pro sole-prompt}                                ::  set prompt
       {$sag p/path q/*}                                 ::  save to jamfile
       {$sav p/path q/@}                                 ::  save to file
+      {$tab p/(list {=term =type})}                     ::  tab-complete list
       {$tan p/(list tank)}                              ::  classic tank
   ::  {$taq p/tanq}                                     ::  modern tank
       {$txt p/tape}                                     ::  text line
