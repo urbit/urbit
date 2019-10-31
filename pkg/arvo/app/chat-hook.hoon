@@ -2,7 +2,7 @@
 ::  mirror chat data from foreign to local based on read permissions
 ::  allow sending chat messages to foreign paths based on write perms
 ::
-/-  *permission-store, *chat-hook
+/-  *permission-store, *chat-hook, *invite-store
 /+  *chat-json
 |%
 +$  move  [bone card]
@@ -27,6 +27,8 @@
 +$  poke
   $%  [%chat-action chat-action]
       [%permission-action permission-action]
+      [%invite-action invite-action]
+      [%chat-view-action chat-view-action]
   ==
 ::
 --
@@ -38,10 +40,11 @@
 ++  prep
   |=  old=(unit state)
   ^-  (quip move _this)
-  ?~  old
-    :_  this
-    [ost.bol %peer /permissions [our.bol %permission-store] /updates]~
-  [~ this(+<+ u.old)]
+  :_  ?~(old this this(+<+ u.old))
+  :~  (invite-poke [%create /chat])
+      [ost.bol %peer /invites [our.bol %invite-store] /invitatory/chat]
+      [ost.bol %peer /permissions [our.bol %permission-store] /updates]
+  ==
 ::
 ++  poke-json
   |=  jon=json
@@ -138,6 +141,17 @@
   ?~  box  !!
   :_  this
   [ost.bol %diff %chat-update [%create (slav %p i.pax) pax]]~
+::
+++  diff-invite-update
+  |=  [wir=wire diff=invite-update]
+  ^-  (quip move _this)
+  ?+  -.diff
+    [~ this]
+  ::
+      %accepted
+    :_  this
+    [(chat-view-poke [%join ship.invite.diff path.invite.diff])]~
+  ==
 ::
 ++  diff-permission-update
   |=  [wir=wire diff=permission-update]
@@ -271,10 +285,20 @@
   ^-  move
   [ost.bol %poke / [our.bol %chat-store] [%chat-action act]]
 ::
+++  chat-view-poke
+  |=  act=chat-view-action
+  ^-  move
+  [ost.bol %poke / [our.bol %chat-view] [%chat-view-action act]]
+::
 ++  permission-poke
   |=  act=permission-action
   ^-  move
   [ost.bol %poke / [our.bol %permission-store] [%permission-action act]]
+::
+++  invite-poke
+  |=  act=invite-action
+  ^-  move
+  [ost.bol %poke / [our.bol %invite-store] [%invite-action act]]
 ::
 ++  create-permission
   |=  [pax=path sec=chat-security]
@@ -322,6 +346,13 @@
   ^-  (unit mailbox)
   =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
   .^((unit mailbox) %gx pax)
+::
+++  invite-scry
+  |=  uid=serial
+  ^-  (unit invite)
+  =/  pax
+    (weld /=invite-store/(scot %da now.bol)/invite/(scot %uv uid) /chat/noun)
+  .^((unit invite) %gx pax)
 ::
 ++  permitted-scry
   |=  pax=path
