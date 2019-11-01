@@ -99,6 +99,15 @@
   ?-    gen
       [%cnts [%magic-spoon ~] *]    `['' sut]
       [%cnts [%magic-spoon @ ~] *]  `[i.t.p.gen sut]
+      [%cnts [%magic-spoon @ *] *]
+    %=  $
+      sut      (~(play ut sut) wing+t.t.p.gen)
+      t.p.gen  t.p.gen(t ~)
+    ==
+  ::
+      [%cnts [%magic-fork @ ~] *]
+    `['' (~(play ut sut) wing+t.p.gen)]
+  ::
       [^ *]      (both p.gen q.gen)
       [%ktcn *]  loop(gen p.gen)
       [%brcn *]  (grow q.gen)
@@ -223,6 +232,8 @@
   ::
   ;:  weld
     (scag beg-pos txt)
+    ?:  &(?=(~ id) ?=([%'.' *] (slag pos txt)))
+      "magic-fork"
     "magic-spoon"
     ?~  id
       ""
