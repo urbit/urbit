@@ -551,7 +551,6 @@
     ?>  ?=([%req @ @ @ ~] path)
     =/  him  (slav %p i.t.path)
     =/  dap  i.t.t.path
-    =/  num  (slav %ud i.t.t.t.path)
     ::
     ?>  ?=([%g %unto *] sign-arvo)
     =/  =internal-gift  +>.sign-arvo
@@ -565,10 +564,10 @@
     ::
         %diff
       =+  [mark noun]=[p q.q]:p.internal-gift
-      (mo-give %boon num %d mark noun)
+      (mo-give %boon %d mark noun)
     ::
         %quit
-      (mo-give %boon num %x ~)
+      (mo-give %boon %x ~)
     ::
         %reap
       =/  err=(unit error:ames)
@@ -892,7 +891,6 @@
     ++  ap-abet
       ^+  mo-core
       ::
-      =>  ap-track-queue
       =/  running  (~(put by running.agents.state) agent-name current-agent)
       =/  moves
         =/  giver  |=(report=(each suss tang) [hen %give %onto report])
@@ -904,35 +902,6 @@
         running.agents.state  running
         moves                 moves
       ==
-    ::  +ap-track-queue: track queue.
-    ::
-    ++  ap-track-queue
-      ^+  ap-core
-      ::
-      =/  internal-moves  agent-moves
-      =/  bones  *(set bone)
-      |-  ^+  ap-core
-      ?^  internal-moves
-        =?  bones  ?=([%give %diff *] move.i.internal-moves)
-          (~(put in bones) bone.i.internal-moves)
-        ::
-        $(internal-moves t.internal-moves)
-      ::
-      =/  bones  ~(tap in bones)
-      ::
-      |-  ^+  ap-core
-      ?~  bones
-        ap-core
-      ::
-      =>  $(bones t.bones, agent-bone i.bones)
-      =/  incoming
-        (~(get by incoming.subscribers.current-agent) agent-bone)
-      ?~  incoming
-        ~&  [%ap-track-queue-bad-bone agent-name agent-bone]
-        ap-core
-      ::
-      =/  =ship  p.u.incoming
-      ap-kill(attributing.agent-routes ship)
     ::  +ap-from-internal: internal move to move.
     ::
     ::    We convert from bone-indexed moves to duct-indexed moves when
@@ -1914,9 +1883,10 @@
     ++  ap-silent-delete
       ^+  ap-core
       ::
-      =.  incoming.subcribers.current-agent
+      %=    ap-core
+          incoming.subscribers.current-agent
         (~(del by incoming.subscribers.current-agent) agent-bone)
-      ap-core
+      ==
     ::  +ap-load-delete: load delete.
     ::
     ++  ap-load-delete
