@@ -223,30 +223,45 @@
 ::
 ++  insert-magic
   |=  [pos=@ud txt=tape]
-  ^-  [beg-pos=@ud txt=tape]
+  ^-  [back-pos=@ud fore-pos=@ud txt=tape]
   ::  Find beg-pos by searching backward to where the current term
   ::  begins
   ::
-  =+  ^-  [id=(unit term) *]
-      %+  scan  `tape`(flop (scag pos txt))
-      ;~(plug (punt sym) (star ;~(pose prn (just `@`10))))
-  =/  beg-pos
-    ?~  id
+  =/  forward=(unit term)
+    %+  scan  `tape`(slag pos txt)
+    ;~(sfix (punt sym) (star ;~(pose prn (just `@`10))))
+  =/  backward=(unit term)
+    %+  scan  `tape`(flop (scag pos txt))
+    ;~(sfix (punt sym) (star ;~(pose prn (just `@`10))))
+  =/  id=(unit term)
+    ?~  forward
+      ?~  backward
+        ~
+      `u.backward
+    ?~  backward
+      `u.forward
+    `(cat 3 u.backward u.forward)
+  =/  back-pos
+    ?~  backward
       pos
-    (sub pos (met 3 u.id))
-  :-  beg-pos
+    (sub pos (met 3 u.backward))
+  =/  fore-pos
+    ?~  forward
+      pos
+    (add pos (met 3 u.forward))
+  :+  back-pos  fore-pos
   ::  Insert "magic-spoon" marker so +find-type can identify where to
   ::  stop.
   ::
   ;:  weld
-    (scag beg-pos txt)
+    (scag back-pos txt)
     ?:  &(?=(~ id) ?=([%'.' *] (slag pos txt)))
       "magic-fork"
     "magic-spoon"
     ?~  id
       ""
     "."
-    (slag beg-pos txt)
+    (slag back-pos txt)
     "\0a"
   ==
 ::

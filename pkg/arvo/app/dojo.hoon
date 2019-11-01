@@ -1100,9 +1100,10 @@
     |=  pos=@ud
     ^+  +>
     =*  res  +>
-    =+  ^-  [beg-pos=@ud txt=tape]
+    =+  ^-  [back-pos=@ud fore-pos=@ud txt=tape]
         (insert-magic:auto (add (lent buf) pos) :(weld buf (tufa buf.say)))
-    =/  pos-diff  (sub (add (lent buf) pos) beg-pos)
+    =/  id-len  (sub fore-pos back-pos)
+    =/  fore-pos-diff  (sub fore-pos pos)
     =+  vex=((full parse-command-line:he-parser) [1 1] txt)
     ?.  ?=([* ~ [* @ %ex *] *] vex)
       res
@@ -1111,8 +1112,18 @@
     =/  advance  (advance-hoon:auto typ p.q.q.p.u.q.vex)
     =?  res  ?=(^ advance)
       =/  to-send
-        (trip (rsh 3 pos-diff u.advance))
+        (trip (rsh 3 (sub pos back-pos) u.advance))
       =|  fxs=(list sole-effect)
+      =.  .
+        |-  ^+  +.$
+        ?.  (gth fore-pos-diff 0)
+          +.$
+        =^  lic  say  (~(transmit sole say) %del pos)
+        %=  $
+          fxs            [det+lic fxs]
+          fore-pos-diff  (dec fore-pos-diff)
+        ==
+      ::  =.  pos  (add pos fore-pos-diff)
       |-  ^+  res
       ?~  to-send
         (he-diff %mor (flop fxs))
@@ -1130,7 +1141,7 @@
     ::  If only one option, don't print unless the option is already
     ::  typed in.
     ::
-    ?:  &(?=([* ~] u.tl) !=((met 3 (need advance)) pos-diff))
+    ?:  &(?=([* ~] u.tl) !=((met 3 (need advance)) id-len))
       res
     ::  Else, print results
     ::
