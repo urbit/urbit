@@ -211,7 +211,8 @@
   ::  begins
   ::
   =+  ^-  [id=(unit term) *]
-      (scan `tape`(flop (scag pos txt)) ;~(plug (punt sym) (star prn)))
+      %+  scan  `tape`(flop (scag pos txt))
+      ;~(plug (punt sym) (star ;~(pose prn (just `@`10))))
   =/  beg-pos
     ?~  id
       pos
