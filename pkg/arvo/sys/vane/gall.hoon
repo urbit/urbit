@@ -401,7 +401,7 @@
       /sys/way/[action]
     ::
     =/  =note-arvo
-      =/  =path  /ge/[term]
+      =/  =path  /ge/[foreign-agent]
       [%a %plea ship %g path ames-request]
     ::
     (mo-pass sys-path note-arvo)
@@ -465,7 +465,6 @@
       %jael  (mo-handle-sys-jael path sign-arvo)
       %core  (mo-handle-sys-core path sign-arvo)
       %pel   (mo-handle-sys-pel path sign-arvo)
-      %red   (mo-handle-sys-red path sign-arvo)
       %rep   (mo-handle-sys-rep path sign-arvo)
       %req   (mo-handle-sys-req path sign-arvo)
       %val   (mo-handle-sys-val path sign-arvo)
@@ -478,9 +477,11 @@
     ^+  mo-core
     ?>  ?=([%jael ~] path)
     ?>  ?=([%j %public-keys *] sign-arvo)
-    ?.  ?=(%breach -.public-keys-result.sign-arvo)
-      mo-core
-    (mo-breach who.public-keys-result.sign-arvo)
+    ::  TODO reinstate
+    ::?.  ?=(%breach -.public-keys-result.sign-arvo)
+    ::  mo-core
+    ::(mo-breach who.public-keys-result.sign-arvo)
+    mo-core
   ::  +mo-handle-sys-core: receive a core from %ford.
   ::
   ++  mo-handle-sys-core
@@ -816,7 +817,7 @@
   ::  +mo-handle-ames-response: handle ames response message
   ::
   ++  mo-handle-ames-response
-    |=  [=ship agent-name=term =subscription=path =ames-response]
+    |=  [=ship agent-name=term =ames-response]
     ^+  mo-core
     ::
     ?-    -.ames-response
@@ -824,11 +825,10 @@
         ::
         %d
       =/  =wire
-        =-  (weld - subscription-path)
         /sys/rep/(scot %p ship)/[agent-name]
       ::
       =/  =note-arvo
-        =/  =disc:ford  [p q]:(mo-beak term)
+        =/  =disc:ford  [p q]:(mo-beak agent-name)
         [%f %build live=%.n %vale disc [mark noun]:ames-response]
       ::
       (mo-pass wire note-arvo)
@@ -2208,15 +2208,15 @@
   ::
       %plea
     =/  =ship  ship.task
-    =/  =path  path.task
-    =/  =noun  payload.task
+    =/  =path  path.plea.task
+    =/  =noun  payload.plea.task
     ::
     ~|  [ship=ship plea-path=path]
     ?>  ?=([%ge @ ~] path)
     =/  agent-name  i.t.path
     ::
     =/  =ames-request  ;;(ames-request noun)
-    =>  (mo-handle-ames-request ship agent-name ames-request)
+    =>  (mo-handle-ames-request:initialised ship agent-name ames-request)
     mo-abet
   ::
       %wash
