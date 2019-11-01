@@ -1,4 +1,4 @@
-::  Autocompletion for hoon.
+::  Autocomplete for hoon.
 ::
 |%
 +$  ids  (list [=term =type])

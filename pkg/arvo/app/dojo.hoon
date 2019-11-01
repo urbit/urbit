@@ -1138,7 +1138,15 @@
     %+  he-diff  %tab
     %+  turn  u.tl
     |=  [=term =type]
-    [term ?:(lots *tank ~(duck easy-print type))]
+    ~|  term
+    :-  term
+    ?:  lots
+      *tank
+    ::  +perk is broken because *perk crashes.
+    ::
+    ?:  =(%perk term)
+      *tank
+    ~(duck easy-print type)
   ::
   ++  he-type                                           ::  apply input
     |=  act/sole-action
