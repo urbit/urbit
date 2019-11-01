@@ -5178,7 +5178,7 @@
 ::
 ++  pfix                                                ::  discard first rule
   ~/  %pfix
-  |*  sam=*
+  |*  sam={vex/edge sab/rule}
   %.  sam
   (comp |*({a/* b/*} b))
 ::
@@ -5210,7 +5210,7 @@
 ::
 ++  sfix                                                ::  discard second rule
   ~/  %sfix
-  |*  sam=*
+  |*  sam={vex/edge sab/rule}
   %.  sam
   (comp |*({a/* b/*} a))
 ::
@@ -9915,10 +9915,12 @@
     %+  turn
       hag.$
     |=  {p/type q/foot}
-    :-  %hold
     ?.  ?=({$core *} p)
       ~_  (dunk %fire-type)
+      ~_  leaf+"expected-fork-to-be-core"
+      ~_  (dunk(sut p) %fork-type)
       ~>(%mean.'fire-core' !!)
+    :-  %hold
     =+  dox=[%core q.q.p q.p(r.p %gold)]
     ?:  ?=($dry -.q)
       ::  ~_  (dunk(sut [%cell q.q.p p.p]) %fire-dry)

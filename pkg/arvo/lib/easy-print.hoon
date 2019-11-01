@@ -77,7 +77,10 @@
         [`u=- +]:$(q.ham i.p.r.q.ham, top-level |)
       :_  gid
       :+  %rose
-        :-  " -> "
+        :-  ?>  ?=(%core -.q.q.ham)
+            ?:  ?=(%dry q.p.q.q.q.ham)
+              " -> "
+            " ~> "
         ?:  top-level
           ["" ""]
         ["(" ")"]
@@ -404,10 +407,7 @@
   =-  [p.tez (doge q.p.tez q.tez)]
   ^=  tez
   ^-  {p/{p/(map type @) q/(map @ wine)} q/wine}
-  =/  type-meet  (mule |.((~(meet ut sut) -:!>(*type))))
-  ?:  ?=(%| -.type-meet)
-    [dex %void]
-  ?:  ?=(%& p.type-meet)
+  ?:  (~(meet ut sut) -:!>(*type))
     [dex %type]
   ?-    sut
       $noun      [dex sut]
