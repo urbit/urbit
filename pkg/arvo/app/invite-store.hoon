@@ -3,7 +3,7 @@
 +$  move  [bone card]
 ::
 +$  card
-  $%  [%diff diff]
+  $%  [%diff invite-diff]
       [%quit ~]
   ==
 ::
@@ -13,11 +13,6 @@
 ::
 +$  state-zero
   $:  =invites
-  ==
-::
-+$  diff
-  $%  [%invite-initial invites]
-      [%invite-update invite-update]
   ==
 --
 ::
@@ -48,12 +43,15 @@
 ++  peek-x-invite
   |=  pax=path
   ^-  (unit (unit [%noun (unit invite)]))
-  ?~  pax
+  ::  /:path/:uid
+  =/  pas  (flop pax)
+  ?~  pas
     ~
-  =/  invitatory=(unit invitatory)  (~(get by invites) t.pax)
+  =/  uid=serial  (slav %uv i.pas)
+  =.  pax  (scag (dec (lent pax)) `(list @ta)`pax)
+  =/  invitatory=(unit invitatory)  (~(get by invites) pax)
   ?~  invitatory
     ~
-  =/  uid=serial  (slav %uv i.pax)
   =/  invite=(unit invite)  (~(get by u.invitatory) uid)
   [~ ~ %noun invite]
 ::

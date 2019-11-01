@@ -30,7 +30,7 @@
       ?>  !(team:title our.bol ship.invite.act)
       [(invite-hook-poke recipient.invite.act act)]~
     ?~  (invitatory-scry path.act)  ~
-    ?^  (invite-scry uid.act path.act)  ~
+    ?^  (invite-scry path.act uid.act)  ~
     [(invite-poke path.act act)]~
   ==
 ::
@@ -52,10 +52,10 @@
   .^((unit invitatory) %gx pax)
 ::
 ++  invite-scry
-  |=  [uid=serial pax=path]
+  |=  [pax=path uid=serial]
   ^-  (unit invite)
   =.  pax
-    ;:(weld /=invite-store/(scot %da now.bol)/invite/(scot %uv uid) pax /noun)
+    ;:(weld /=invite-store/(scot %da now.bol)/invite pax /(scot %uv uid)/noun)
   .^((unit invite) %gx pax)
 --
 

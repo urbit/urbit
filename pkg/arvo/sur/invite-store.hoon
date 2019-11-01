@@ -35,5 +35,10 @@
       [%invitatory =invitatory]             ::  receive invitatory
       [%accepted =path uid=serial =invite]  ::  an invite has been accepted
   ==
+::
++$  invite-diff
+  $%  [%invite-initial invites]
+      [%invite-update invite-update]
+  ==
 --
 
