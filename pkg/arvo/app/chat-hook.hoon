@@ -350,8 +350,7 @@
 ++  invite-scry
   |=  uid=serial
   ^-  (unit invite)
-  =/  pax
-    (weld /=invite-store/(scot %da now.bol)/invite/(scot %uv uid) /chat/noun)
+  =/  pax  /=invite-store/(scot %da now.bol)/invite/chat/(scot %uv uid)/noun
   .^((unit invite) %gx pax)
 ::
 ++  permitted-scry
