@@ -40,8 +40,16 @@
     [p.ty q.ty]~
   ::
       [%fork *]
-    ~|  %find-fork
-    !!  ::  eh, fuse?
+    %=    $
+        ty
+      =/  tines  ~(tap in p.ty)
+      ?~  tines
+        %void
+      |-  ^-  type
+      ?~  t.tines
+        i.tines
+      (~(fuse ut $(tines t.tines)) i.tines)
+    ==
   ::
       [%hint *]  $(ty q.ty)
       [%hold *]  $(ty ~(repo ut ty))
