@@ -182,7 +182,9 @@
   ::
   ++  bell
     |=  [a=hoon b=hoon c=hoon]
-    (replace loop(gen a) |.((replace loop(gen b) |.(loop(gen c)))))
+    %+  replace  loop(gen a)
+    |.  %+  replace  loop(gen b, sut (~(gain ut sut) a))
+    |.  loop(gen c, sut (~(lose ut sut) a))
   ::
   ++  spec-and-hoon
     |=  [a=spec b=hoon]
