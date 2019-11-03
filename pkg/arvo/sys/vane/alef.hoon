@@ -431,7 +431,7 @@
 ::    packets: packets we've tried to send
 ::
 +$  alien-agenda
-  $:  messages=(list [=duct =plea])
+  $:  messages=(list [=duct vane=@tas =plea])
       packets=(set =blob)
   ==
 ::  $peer-state: state for a peer with known life and keys
@@ -891,7 +891,7 @@
       %init  (on-init:event-core ship=p.task)
       %vega  on-vega:event-core
       %wegh  on-wegh:event-core
-      %plea  (on-plea:event-core [ship plea]:task)
+      %plea  (on-plea:event-core [ship vane plea]:task)
     ==
   ::
   [moves ames-gate]
@@ -1129,27 +1129,27 @@
     =/  =channel     [[our her] now |2.ames-state -.peer-state]
     ::
     abet:(on-memo:(make-peer-core peer-state channel) bone payload)
-  ::  +on-plea: handle request to send message
+  ::  +on-plea: handle request from vane to send message to foreign ship
   ::
   ++  on-plea
-    |=  [=ship =plea]
+    |=  [=ship vane=@tas =plea]
     ^+  event-core
-    ::  .plea is from local vane to foreign ship
     ::
+    =/  payload     [vane plea]
     =/  ship-state  (~(get by peers.ames-state) ship)
     ::
     ?.  ?=([~ %known *] ship-state)
       %+  enqueue-alien-todo  ship
       |=  todos=alien-agenda
-      todos(messages [[duct plea] messages.todos])
+      todos(messages [[duct payload] messages.todos])
     ::
     =/  =peer-state  +.u.ship-state
     =/  =channel     [[our ship] now |2.ames-state -.peer-state]
     ::
     =^  =bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
-    ~>  %slog.0^leaf/"ames: plea {<[our our-life.channel]^[ship her-life.channel]^bone^vane.plea^path.plea>}"
+    ~>  %slog.0^leaf/"ames: plea {<our^ship^bone^vane^path.plea>}"
     ::
-    abet:(on-memo:(make-peer-core peer-state channel) bone plea)
+    abet:(on-memo:(make-peer-core peer-state channel) bone payload)
   ::  +on-take-wake: receive wakeup or error notification from behn
   ::
   ++  on-take-wake
@@ -1349,8 +1349,8 @@
         ::
         =.  event-core
           %+  reel  messages.todos
-          |=  [[=^duct =plea] core=_event-core]
-          (on-plea:core(duct duct) ship plea)
+          |=  [[=^duct vane=@tas =plea] core=_event-core]
+          (on-plea:core(duct duct) ship vane plea)
         ::  apply outgoing packet blobs
         ::
         =.  event-core
@@ -1862,11 +1862,11 @@
         ?.  ?=([%hear * * ok=%.n] task)
           ::  fresh plea; pass to client vane
           ::
-          =+  ;;  =plea  message
+          =+  ;;  [vane=@tas =plea]  message
           ::
           =/  =wire  (make-bone-wire her.channel bone)
           ::
-          ?+  vane.plea  ~|  %ames-evil-vane^our^her.channel^vane.plea  !!
+          ?+  vane  ~|  %ames-evil-vane^our^her.channel^vane  !!
             %a  (emit duct %pass wire %a %plea her.channel plea)
             %c  (emit duct %pass wire %c %plea her.channel plea)
             %g  (emit duct %pass wire %g %plea her.channel plea)

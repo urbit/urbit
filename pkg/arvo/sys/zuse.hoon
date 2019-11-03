@@ -214,9 +214,10 @@
       ::  produce labeled state (for memory measurement)
       ::
       [%wegh ~]
-      ::  receive message via %ames
+      ::  receive message from %ames
       ::
-      ::    TODO: move .vane from $plea to here
+      ::    ship: sending ship
+      ::    plea: request message
       ::
       [%plea =ship =plea:ames]
   ==
@@ -384,7 +385,7 @@
     ::
     ::    %hear: packet from unix
     ::    %hole: report that packet handling crashed
-    ::    %plea: request to send message
+    ::    %plea: request from vane to send .plea to .ship/.vane
     ::
     ::    System and Lifecycle Tasks
     ::
@@ -397,7 +398,7 @@
     +$  task
       $%  [%hear =lane =blob]
           [%hole =lane =blob]
-          $>(%plea vane-task)
+          [%plea =ship vane=@tas =plea]
       ::
           $>(%born vane-task)
           $>(%crud vane-task)
@@ -472,11 +473,10 @@
   +$  lane  (each @pC address)
   ::  $plea: application-level message, as a %pass
   ::
-  ::    vane: destination vane on remote ship
   ::    path: internal route on the receiving ship
   ::    payload: semantic message contents
   ::
-  +$  plea  [vane=@tas =path payload=*]
+  +$  plea  [=path payload=*]
   --  ::ames
 ::                                                      ::::
 ::::                    ++behn                            ::  (1b) timekeeping

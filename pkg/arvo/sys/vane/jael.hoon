@@ -73,7 +73,7 @@
   [p=duct q=card]                                       ::
 ::                                                      ::
 +$  note                                                ::  out request $->
-  $~  [%a %plea *ship *plea:ames]                       ::
+  $~  [%a %plea *ship *@tas *plea:ames]                 ::
   $%  $:  %a                                            ::    to %ames
           $>(%plea task:able:ames)                      ::  send request message
       ==                                                ::
@@ -490,7 +490,7 @@
       ==
     ::
     ::  authenticated remote request
-    ::    {$west p/ship q/path r/*}
+    ::    [%plea =ship plea=[=path payload=*]]
     ::
         %plea
       =*  her  ship.tac
