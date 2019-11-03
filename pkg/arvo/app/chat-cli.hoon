@@ -301,6 +301,7 @@
       %det  (edit +.act)
       %clr  [~ this]
       %ret  obey
+      %tab  [~ this]
     ==
   ::  +edit: apply sole edit
   ::
