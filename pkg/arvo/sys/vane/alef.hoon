@@ -402,6 +402,9 @@
 ::    always zero.
 ::
 +$  ack-meat  (each fragment-num [ok=? lag=@dr])
+::  $naxplanation: nack trace; explains which message failed and why
+::
++$  naxplanation  [=message-num =error]
 ::
 +|  %statics
 ::
@@ -963,7 +966,8 @@
     ::  construct nack-trace message, referencing .failed $message-num
     ::
     =/  failed=message-num  last-acked:(~(got by rcv.peer-state) bone)
-    =/  =message-blob       (jam [failed u.error])
+    =/  =naxplanation  [failed u.error]
+    =/  =message-blob  (jam naxplanation)
     ::  send nack-trace message on associated .nack-trace-bone
     ::
     =.  peer-core              (make-peer-core peer-state channel)
@@ -1821,14 +1825,14 @@
         ^+  peer-core
         ~>  %slog.0^leaf/"ames: nack trace {<her.channel^bone>}"
         ::
-        =+  ;;  [=failed=^message-num =error]  message
+        =+  ;;  =naxplanation  message
         ::  ack nack-trace message (only applied if we don't later crash)
         ::
         =.  peer-core  (run-message-sink bone %done ok=%.y)
         ::  flip .bone's second bit to find referenced flow
         ::
         =/  target-bone=^bone  (mix 0b10 bone)
-        =/  nax-key            [target-bone failed-message-num]
+        =/  nax-key            [target-bone message-num.naxplanation]
         ::  if we haven't heard a message nack, pretend we have
         ::
         ::    The nack-trace message counts as a valid message nack on
@@ -1841,12 +1845,12 @@
         ::
         =?  peer-core  !(~(has in nax.peer-state) nax-key)
           %-  run-message-pump
-          [target-bone %hear failed-message-num %| ok=%.n lag=`@dr`0]
+          [target-bone %hear message-num.naxplanation %| ok=%.n lag=`@dr`0]
         ::  clear the nack from our state and relay to vane
         ::
         =.  nax.peer-state  (~(del in nax.peer-state) nax-key)
         ::
-        (emit (got-duct target-bone) %give %done `error)
+        (emit (got-duct target-bone) %give %done `error.naxplanation)
       ::  +on-sink-plea: handle request message received by |message-sink
       ::
       ++  on-sink-plea
@@ -1871,10 +1875,11 @@
         ::  we previously crashed on this message; send nack
         ::
         =.  peer-core  (run-message-sink bone %done ok=%.n)
-        ::  also send nack-trace
+        ::  also send nack-trace with blank .error for security
         ::
         =/  nack-trace-bone=^bone  (mix 0b10 bone)
-        =/  =message-blob          (jam [message-num ~])
+        =/  =naxplanation  [message-num *error]
+        =/  =message-blob  (jam naxplanation)
         ::
         (run-message-pump nack-trace-bone %memo message-blob)
       --

@@ -396,7 +396,7 @@
         %peer  [%s p.agent-action]
       ==
     ::
-    =/  sys-path
+    =/  =wire
       =/  action  -.agent-action
       /sys/way/[action]
     ::
@@ -404,7 +404,7 @@
       =/  =path  /ge/[foreign-agent]
       [%a %plea ship %g path ames-request]
     ::
-    (mo-pass sys-path note-arvo)
+    (mo-pass wire note-arvo)
   ::  +mo-track-rift: ensure we're subscribed to jael for .ship breaches
   ::
   ++  mo-track-rift
@@ -548,7 +548,7 @@
     |=  [=path =sign-arvo]
     ^+  mo-core
     ::
-    ?>  ?=([%req @ @ @ ~] path)
+    ?>  ?=([%req @ @ ~] path)
     =/  him  (slav %p i.t.path)
     =/  dap  i.t.t.path
     ::
@@ -610,13 +610,12 @@
     |=  [=path =sign-arvo]
     ^+  mo-core
     ::
-    ?>  ?=([%way @ @ @ *] path)
-    =/  him              (slav %p i.t.path)
-    =/  agent-name       `@tas`i.t.t.path
-    =/  =remote-request  ;;(remote-request i.t.t.t.path)
+    ?>  ?=([%way @ *] path)
     ::
     ?+    sign-arvo  !!
         [%a %done *]
+      ::
+      =/  =remote-request  ;;(remote-request i.t.path)
       =/  err=(unit tang)
         ?~  error=error.sign-arvo
           ~
@@ -630,10 +629,20 @@
       ==
     ::
         [%a %boon *]
+      ::
+      ?>  ?=([@ @ ~] t.t.path)
+      =/  him              (slav %p i.t.path)
+      =/  agent-name       `@tas`i.t.t.path
+      ::
       =/  =ames-response  ;;(ames-response payload.sign-arvo)
       (mo-handle-ames-response him agent-name ames-response)
     ::
         [%a %lost *]
+      ::
+      ?>  ?=([@ @ ~] t.t.path)
+      =/  him              (slav %p i.t.path)
+      =/  agent-name       `@tas`i.t.t.path
+      ::
       =/  sys-wire  [%sys path]
       ::  TODO: %drip %quit so app crash can't kill the remote %pull
       ::
@@ -801,7 +810,7 @@
     ^+  mo-core
     ::  %u/%pull gets automatically acked
     ::
-    =?  mo-core  !?=(%u -.ames-request)  (mo-give %done ~)
+    =?  mo-core  ?=(%u -.ames-request)  (mo-give %done ~)
     ::
     =/  =wire  /sys/req/(scot %p ship)/[agent-name]
     ::
