@@ -1,4 +1,4 @@
-.PHONY: build build-all install cross release test pills clean
+.PHONY: build build-all install cross release test pills ropsten-pills clean
 
 build:
 	nix-build -A urbit -A herb --no-out-link
@@ -22,6 +22,9 @@ pills:
 	sh/update-solid-pill
 	sh/update-brass-pill
 	sh/update-ivory-pill
+
+ropsten-pills:
+	sh/create-ropsten-pills
 
 interface:
 	sh/build-interface

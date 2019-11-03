@@ -12,8 +12,8 @@ let
   meta = rec {
     inherit debug;
     bin   = "${urbit}/bin/${name}";
-    flags = if debug then "-g" else "";
-    exe   = "${meta.bin} ${meta.flags}";
+    flags = if debug then [ "-g" ] else [];
+    exe   = ''${meta.bin} ${pkgs.lib.strings.concatStringsSep " " meta.flags}'';
   };
 
   deps =
@@ -33,7 +33,7 @@ let
     # See https://github.com/NixOS/nixpkgs/issues/18995
     hardeningDisable = if debug then [ "all" ] else [];
 
-    CFLAGS           = if debug then "-O3 -g -Werror" else "-O3 -Werror";
+    CFLAGS           = "-O3 -g -Werror";
     MEMORY_DEBUG     = debug;
     CPU_DEBUG        = debug;
     EVENT_TIME_DEBUG = false;

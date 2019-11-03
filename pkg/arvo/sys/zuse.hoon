@@ -1990,6 +1990,7 @@
     +$  public-keys-result
       $%  [%full points=(map ship point)]
           [%diff who=ship =diff:point]
+          [%breach who=ship]
       ==
     ::                                                  ::
     ++  gift                                            ::  out result <-$
@@ -1997,9 +1998,9 @@
           [%mass p=mass]                                ::  memory usage report
           [%done error=(unit error:ames)]               ::  ames message (n)ack
           [%boon payload=*]                             ::  ames response
-          [%turf turf=(list turf)]                      ::  domains
           [%private-keys =life vein=(map life ring)]    ::  private keys
           [%public-keys =public-keys-result]            ::  ethereum changes
+          [%turf turf=(list turf)]                      ::  domains
       ==                                                ::
     ::  +seed: private boot parameters
     ::

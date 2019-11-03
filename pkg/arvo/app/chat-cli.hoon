@@ -298,9 +298,9 @@
     |=  act=sole-action:sole-sur
     ^-  (quip move _this)
     ?-  -.act
-      $det  (edit +.act)
-      $clr  [~ this]
-      $ret  obey
+      %det  (edit +.act)
+      %clr  [~ this]
+      %ret  obey
     ==
   ::  +edit: apply sole edit
   ::
@@ -497,8 +497,8 @@
     ++  letter
       ;~  pose
         (stag %url turl)
-        :(stag %me ;~(pfix vat text))
-        :(stag %text ;~(less mic hax text))
+        (stag %me ;~(pfix vat text))
+        (stag %text ;~(less mic hax text))
       ==
     ::  +turl: url parser
     ::
@@ -684,7 +684,9 @@
       =^  moz  this
         ?.  ?=(^ gyf)  [~ this]
         (bind-glyph u.gyf target)
-      =-  [[- moz] this(audience [target ~ ~])]
+      =.  audience  [target ~ ~]
+      =;  =move
+        [[move prompt:sh-out moz] this]
       ::TODO  ideally we'd check permission first. attempting this and failing
       ::      gives ugly %chat-hook-reap
       %^  act  %do-join  %chat-view

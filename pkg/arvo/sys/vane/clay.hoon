@@ -299,8 +299,7 @@
 ::  Foreign desk data.
 ::
 ++  rung
-          $:  rit=rift                                  ::  rift of 1st contact
-              rus=(map desk rede)                       ::  neighbor desks
+          $:  rus=(map desk rede)                       ::  neighbor desks
           ==
 ::
 ::  Hash of a commit, for lookup in the object store (hut.ran)
@@ -534,12 +533,6 @@
       $:  @tas                                          ::  by any
           $>(%crud vane-task)                           ::  XX strange
   ==  ==                                                ::
---
-::
-::  Old state types for ++load
-::
-=>  |%
-+$  raft-1  raft
 --  =>
 ::  %utilities
 ::
@@ -2664,8 +2657,6 @@
       ::  save foreign +rede
       ::
       =/  run  (~(gut by hoy.ruf) her *rung)
-      =?  rit.run  =(0 rit.run)
-        (fall (rift-scry her) *rift)
       =/  rug  (~(put by rus.run) syd red)
       ruf(hoy (~(put by hoy.ruf) her run(rus rug)))
     ::  save domestic +room
@@ -2674,19 +2665,6 @@
       hun.rom  (need hun)
       dos.rom  (~(put by dos.rom.ruf) syd [qyx dom per pew]:red)
     ==
-  ::
-  ::  +rift-scry: for a +rift
-  ::
-  ++  rift-scry
-    |=  who=ship
-    ^-  (unit rift)
-    =;  rit
-      ?~(rit ~ u.rit)
-    ;;  (unit (unit rift))
-    %-  (sloy-light ski)
-    =/  pur=spur
-      /(scot %p who)
-    [[151 %noun] %j our %rift da+now pur]
   ::
   ::  Handle `%sing` requests
   ::
@@ -4383,16 +4361,209 @@
   ==
 ::
 ++  load
+  !:
   =>  |%
-      +$  axle  [%1 ruf-1=raft]
+      +$  axle
+        $%  [%1 ruf-1=raft-1]
+            [%2 ruf-2=raft]
+        ==
+      +$  raft-1
+        $:  rom=room
+            hoy=(map ship rung-1)
+            ran=rang
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            cue=(qeu [=duct =task:able])
+            act=active-write-1
+        ==
+      ::
+      +$  rung-1
+          $:  rit=rift
+              rus=(map desk rede-1)
+          ==
+      ::
+      +$  rede-1
+        $:  lim=@da
+            ref=(unit rind-1)
+            qyx=cult
+            dom=dome
+            per=regs
+            pew=regs
+        ==
+      ::
+      +$  rind-1
+        $:  nix=@ud
+            bom=(map @ud {p/duct q/rave})
+            fod=(map duct @ud)
+            haw=(map mood (unit cage))
+            pud=update-qeu-1
+            pur=request-map-1
+        ==
+      ::
+      +$  update-qeu-1
+        $:  waiting=(qeu [inx=@ud rut=(unit rand)])
+            $=  eval-data
+            %-  unit
+            $:  inx=@ud
+                rut=(unit rand)
+                form=(eval-form-1 (unit [lim=@da dome rang]))
+            ==
+        ==
+      ::
+      +$  request-map-1
+        (map inx=@ud [=rand (eval-form-1 cage)])
+      ::
+      +$  active-write-1
+        %-  unit
+        $:  hen=duct
+            req=task:able
+            $=  eval-data
+            $%  [%commit form=(eval-form-1 [dome rang])]
+                [%merge form=(eval-form-1 [(set path) dome rang])]
+                [%mount form=(eval-form-1 [(pair term beam) (map path mime)])]
+            ==
+        ==
+      ::
+      ++  eval-form-1
+        |*  a=mold
+        ,[effects=(list move) form=(clad-form-1 a)]
+      ::
+      ++  clad-form-1
+        |*  a=mold
+        $-([@da rang sign-1] (clad-output-1 a))
+      ::
+      ++  clad-output-1
+        |*  a=mold
+        $~  [~ ~ %done *a]
+        $:  notes=(list [path note])
+            effects=(list move)
+            $=  next
+            $%  [%wait ~]
+                [%cont self=(clad-form-1 a)]
+                [%fail err=(pair term tang)]
+                [%done value=a]
+            ==
+        ==
+      ::
+      ++  sign-1
+        $~  [%b %wake ~]
+        $%  $:  %y
+                $%  [%init-clad ~]
+            ==  ==
+            $:  %a
+                $>  $?  %send
+                        %woot
+                    ==
+                gift:able:ames
+            ==
+            $:  %b
+                $%  $>(%wake gift:able:behn)
+                    $>(%writ gift:able)
+            ==  ==
+            $:  %c
+                $>  $?  %mere
+                        %note
+                        %writ
+                    ==
+                gift:able
+            ==
+            $:  %f
+                $>(%made gift:able:ford)
+            ==
+            $:  %j
+                [%public-keys =public-keys-result-1]
+            ==
+            $:  @tas
+                $>(%crud vane-task)
+        ==  ==
+      ::
+      +$  public-keys-result-1
+        $%  [%full points=(map ship point:able:jael)]
+            [%diff who=ship =diff:point:able:jael]
+        ==
+      ::
+      ++  upgrade-1
+        |=  ruf=raft-1
+        ^-  axle
+        :-  %2
+        %=    ruf
+            act
+          ?~  act.ruf
+            ~
+          :-  ~
+          %=    u.act.ruf
+              eval-data
+            ?-    -.eval-data.u.act.ruf
+                %commit
+              :-  %commit
+              %-  (upgrade-clad-1 ,[dome rang])
+              form.eval-data.u.act.ruf
+            ::
+                %merge
+              :-  %merge
+              %-  (upgrade-clad-1 ,[(set path) dome rang])
+              form.eval-data.u.act.ruf
+            ::
+                %mount
+              :-  %mount
+              %-  (upgrade-clad-1 ,[(pair term beam) (map path mime)])
+              form.eval-data.u.act.ruf
+            ==
+          ==
+        ::
+            hoy
+          ^-  (map ship rung)
+          %-  ~(urn by hoy.ruf)
+          |=  [her=ship rift rus=(map desk rede-1)]
+          ^-  rung
+          %-  ~(urn by rus)
+          |=  [syd=desk red=rede-1]
+          ^-  rede
+          ?~  ref.red
+            red
+          %=    red
+              u.ref
+            ^-  rind
+            %=    u.ref.red
+                pud
+              ^-  update-qeu
+              ?~  eval-data.pud.u.ref.red
+                pud.u.ref.red
+              %=    pud.u.ref.red
+                  form.u.eval-data
+                %-  (upgrade-clad-1 ,(unit [lim=@da dome rang]))
+                form.u.eval-data.pud.u.ref.red
+              ==
+            ::
+                pur
+              %-  ~(urn by pur.u.ref.red)
+              |=  [inx=@ud =rand form=(eval-form-1 ,cage)]
+              [rand ((upgrade-clad-1 ,cage) form)]
+            ==
+          ==
+        ==
+      ::
+      ++  upgrade-clad-1
+        |*  a=mold
+        |=  e-form=(eval-form-1 a)
+        :-  effects.e-form
+        ^+  *form:(clad ,a)
+        |=  cin=clad-input
+        ?:  ?=([%j %public-keys %breach *] sign.cin)
+          [~ ~ %wait ~]
+        =/  res  (form.e-form cin)
+        ?:  ?=(%cont -.next.res)
+          res(self.next ..$(form.e-form self.next.res))
+        res
       --
-  ::  |=  *
-  ::  ..^$
-  ::  XX switch back
+  ::
   |=  old=axle
   ^+  ..^$
-  ?>  ?=(%1 -.old)
-  %_(..^$ ruf ruf-1.old)
+  =?  old  ?=(%1 -.old)
+    (upgrade-1 ruf-1.old)
+  ?>  ?=(%2 -.old)
+  %_(..^$ ruf ruf-2.old)
 ::
 ++  scry                                              ::  inspect
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
@@ -4422,7 +4593,7 @@
   ?:  ?=(%& -.u.u.-)  ``p.u.u.-
   ~
 ::
-++  stay  [%1 ruf]
+++  stay  [%2 ruf]
 ++  take                                              ::  accept response
   |=  [tea=wire hen=duct hin=(hypo sign)]
   ^+  [*(list move) ..^$]
@@ -4516,13 +4687,9 @@
   ::
   ?:  ?=([%sinks ~] tea)
     ?>  ?=(%public-keys +<.q.hin)
-    ?:  ?=(%full -.public-keys-result.q.hin)
-      [~ ..^$]
-    ?.  ?=(%rift -.diff.public-keys-result.q.hin)
+    ?.  ?=(%breach -.public-keys-result.q.hin)
       [~ ..^$]
     =/  who  who.public-keys-result.q.hin
-    =/  to-rift  to.diff.public-keys-result.q.hin
-    ::
     ?:  =(our who)
       [~ ..^$]
     ::  Cancel subscriptions
@@ -4530,8 +4697,6 @@
     =/  foreign-desk=(unit rung)
       (~(get by hoy.ruf) who)
     ?~  foreign-desk
-      [~ ..^$]
-    ?:  (gte rit.u.foreign-desk to-rift)
       [~ ..^$]
     =/  cancel-ducts=(list duct)
       %-  zing  ^-  (list (list duct))
@@ -4665,18 +4830,4 @@
   ?~  -
     `[paf %ins %mime -:!>(*mime) u.mim]
   `[paf %mut %mime -:!>(*mime) u.mim]
-::
-::  +rift-scry: for a +rift
-::
-++  rift-scry
-  ~%  %rift-scry  ..is  ~
-  |=  who=ship
-  ^-  (unit rift)
-  =;  lyf
-    ?~(lyf ~ u.lyf)
-  ;;  (unit (unit rift))
-  %-  (sloy-light ski)
-  =/  pur=spur
-    /(scot %p who)
-  [[151 %noun] %j our %rift da+now pur]
 --

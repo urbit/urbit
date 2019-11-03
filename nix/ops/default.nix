@@ -2,10 +2,11 @@
 
 let
 
-  tlon  = import ../pkgs { inherit pkgs; };
-  arvo  = tlon.arvo;
-  herb  = tlon.herb;
-  urbit = if debug then tlon.urbit-debug else tlon.urbit;
+  tlon         = import ../pkgs { inherit pkgs; };
+  arvo         = tlon.arvo;
+  arvo-ropsten = tlon.arvo-ropsten;
+  herb         = tlon.herb;
+  urbit        = if debug then tlon.urbit-debug else tlon.urbit;
 
   bootbrass = ../../bin/brass.pill;
   bootsolid = ../../bin/solid.pill;
@@ -15,6 +16,13 @@ let
     pill = bootsolid;
     ship = "zod";
     arvo = null;
+  };
+
+  ropzod = import ./fakeship {
+    inherit pkgs herb urbit;
+    pill = bootsolid;
+    ship = "zod";
+    arvo = arvo-ropsten;
   };
 
   zod = import ./fakeship {
@@ -48,9 +56,29 @@ rec {
     pier = zod;
   };
 
+  brass-ropsten = import ./brass {
+    inherit pkgs herb urbit;
+    arvo = arvo-ropsten;
+    pier = ropzod;
+  };
+
   ivory = import ./ivory {
     inherit pkgs herb urbit arvo;
     pier = zod;
+  };
+
+<<<<<<< HEAD
+  image = import ./image {
+    inherit pkgs urbit;
+    pill = bootsolid;
+  };
+
+||||||| merged common ancestors
+=======
+  ivory-ropsten = import ./ivory {
+    inherit pkgs herb urbit;
+    arvo = arvo-ropsten;
+    pier = ropzod;
   };
 
   image = import ./image {
@@ -58,4 +86,5 @@ rec {
     pill = bootsolid;
   };
 
+>>>>>>> master
 }

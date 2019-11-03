@@ -306,6 +306,7 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
     tot_w += u3a_maid(fil_u, "effects", u3a_mark_noun(vir));
 
     u3a_print_memory(fil_u, "total marked", tot_w);
+    u3a_print_memory(fil_u, "free lists", u3a_idle(u3R));
     u3a_print_memory(fil_u, "sweep", u3a_sweep());
 
     fflush(fil_u);
@@ -340,10 +341,6 @@ _worker_send(u3_noun job)
 static void
 _worker_send_replace(c3_d evt_d, u3_noun job)
 {
-  u3l_log("worker_send_replace %" PRIu64 " %s\r\n",
-          evt_d,
-          u3r_string(u3h(u3t(u3t(job)))));
-
   _worker_send(u3nt(c3__work,
                     u3i_chubs(1, &evt_d),
                     u3ke_jam(u3nc(u3V.mug_l, job))));
@@ -622,6 +619,15 @@ _worker_work_live(c3_d evt_d, u3_noun job)
         //
         rec_o = c3y;
         pri   = 0;
+      }
+      //  reclaim memory from persistent caches periodically
+      //
+      //    XX this is a hack to work two things
+      //    - bytecode caches grow rapidly and can't be simply capped
+      //    - we don't make very effective use of our free lists
+      //
+      else {
+        rec_o = _(0 == (evt_d % 1000ULL));
       }
 
       //  notify daemon of memory pressure via "fake" effect
@@ -906,6 +912,21 @@ _worker_poke(void* vod_p, u3_noun mat)
   }
 }
 
+/* _worker_static_grab(): garbage collect, checking for profiling. RETAIN.
+*/
+static void
+_worker_static_grab(void)
+{
+  c3_assert( u3R == &(u3H->rod_u) );
+
+  fprintf(stderr, "work: measuring memory:\r\n");
+  u3a_print_memory(stderr, "total marked", u3m_mark(stderr));
+  u3a_print_memory(stderr, "free lists", u3a_idle(u3R));
+  u3a_print_memory(stderr, "sweep", u3a_sweep());
+  fprintf(stderr, "\r\n");
+  fflush(stderr);
+}
+
 /* u3_worker_boot(): send startup message to manager.
 */
 void
@@ -935,6 +956,18 @@ u3_worker_boot(void)
   u3l_log("work: play %" PRIu64 "\r\n", nex_d);
 
   _worker_send(u3nc(c3__play, dat));
+
+  //  measure/print static memory usage if < 1/2 of the loom is available
+  //
+  {
+    c3_w pen_w = u3a_open(u3R);
+
+    if ( !(pen_w > (1 << 28)) ) {
+      fprintf(stderr, "\r\n");
+      u3a_print_memory(stderr, "work: contiguous free space", pen_w);
+      _worker_static_grab();
+    }
+  }
 }
 
 /* main(): main() when run as urbit-worker

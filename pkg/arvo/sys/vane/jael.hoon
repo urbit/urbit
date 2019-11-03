@@ -261,7 +261,9 @@
         =/  cub  (nol:nu:crub:crypto key.seed.tac)
         %+  ~(put by pos.zim.pki)
           our
-        =/  spon-ship  ?~(spon.tac ~ `ship.i.spon.tac)
+        =/  spon-ship
+          =/  flopped-spon  (flop spon.tac)
+          ?~(flopped-spon ~ `ship.i.flopped-spon)
         [1 lyf.seed.tac (my [lyf.seed.tac [1 pub:ex:cub]] ~) spon-ship]
       ::  our initial private key
       ::
@@ -803,15 +805,38 @@
         |-  ^+  ..feel
         ?~  pointl
           ..feel
-        =.  ..feel
+        ::  if changing rift upward, then signal a breach
+        ::
+        =?    ..feel
+            =/  point
+              (~(get by pos.zim) who.i.pointl)
+            ?&  ?=(^ point)
+                (gth rift.point.i.pointl rift.u.point)
+            ==
           %+  public-keys-give
             (subscribers-on-ship who.i.pointl)
-          [%full (my i.pointl ~)]
-        $(pointl t.pointl)
+          [%breach who.i.pointl]
+        %+  public-keys-give
+          (subscribers-on-ship who.i.pointl)
+        [%full (my i.pointl ~)]
+      ?:  ?=(%breach -.public-keys-result)
+        ::  we calculate our own breaches based on our local state
+        ::
+        ..feel
       =*  who  who.public-keys-result
       =/  a-diff=diff:point  diff.public-keys-result
       =/  maybe-point  (~(get by pos.zim) who)
       =/  =point  (fall maybe-point *point)
+      ::  if changing rift upward, then signal a breach
+      ::
+      =?    ..feel
+          ?&  ?=(%rift -.a-diff)
+              (gth to.a-diff rift.point)
+          ==
+        %+  public-keys-give
+          (subscribers-on-ship who)
+        [%breach who]
+      ::
       =.  point
         ?-  -.a-diff
             %spon  point(sponsor to.a-diff)
@@ -825,6 +850,7 @@
             [crypto-suite pass]:to.a-diff
           ==
         ==
+      ::
       =.  pos.zim  (~(put by pos.zim) who point)
       %+  public-keys-give
         (subscribers-on-ship who)

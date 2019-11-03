@@ -5,7 +5,7 @@ pkgs.stdenv.mkDerivation rec {
   builder     = ./builder.sh;
   buildInputs = [ herb pkgs.coreutils ];
 
-  URBIT = ubit.meta.exe;
+  URBIT = urbit.meta.exe;
   PIER  = pier;
   ARVO  = arvo;
 }

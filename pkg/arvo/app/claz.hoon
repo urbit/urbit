@@ -86,6 +86,10 @@
       [%send-point as=ship point=ship to=address]
   ==
 ::
+::  internal types
+::
++$  rpc-result  [id=@t res=@t]
+::
 ::  monadic structures
 ::
 ::  in-progress: monad currently in progress
@@ -231,6 +235,7 @@
 ::
 ::  constants
 ::
+++  azimuth            0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb
 ++  ecliptic           0x6ac0.7b7c.4601.b5ce.11de.8dfe.6335.b871.c7c4.dd4d
 ++  delegated-sending  0xf790.8ab1.f1e3.52f8.3c5e.bc75.051c.0565.aeae.a5fb
 --
@@ -325,8 +330,7 @@
 ++  fail-command
   |=  err=tang
   ^+  this
-  ~&  'command processing failed'
-  ::TODO  error printing
+  %-  (slog [leaf+"command processing failed" err])
   this(inp ~)
 ::
 ::  done-command: handle result of nonce-fetching monad
@@ -357,17 +361,22 @@
     [%eth-get-transaction-count for]
   ^-  form:m
   ?.  ?=(%s -.json)
-    (glad-fail *tang) ::TODO  proper error, "unexpected json"
+    (glad-fail [%leaf "weird nonce json response"]~)
   %-  pure:m
   (rash p.json ;~(pfix (jest '0x') hex))
 ::
-++  do-request
-  |=  [rid=(unit @t) =request]
+++  do-json-request
+  |=  =json
   %+  do-hiss  %json-rpc-response
   ^-  hiss:eyre
   %+  json-request
     ::TODO  vary per network
     (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
+  json
+::
+++  do-request
+  |=  [rid=(unit @t) =request]
+  %-  do-json-request
   (request-to-json rid request)
 ::
 ++  do-hiss
@@ -394,8 +403,164 @@
   ;<  =response:rpc:jstd  bind:m
     expect-response
   ?.  ?=(%result -.response)
-    (glad-fail *tang) ::TODO  make pretty error message
+    (glad-fail [%leaf "json result is unexpected ${(trip -.response)}"]~)
   (pure:m res.response)
+::
+++  do-read-expect-result
+  |=  [to=address =call-data]
+  =/  m  (glad ,[id=@t res=@t])
+  ;<  ~  bind:m
+    %-  do-json-request
+    (read-request `'' to call-data)
+  ;<  =response:rpc:jstd  bind:m
+    expect-response
+  ?:  ?&  ?=(%result -.response)
+          ?=(%s -.res.response)
+      ==
+    (pure:m [id p.res]:response)
+  (glad-fail ~[leaf+"unexpected result" >response<])
+::
+++  do-batch-read-expect-results
+  |=  reqs=(list proto-read-request)
+  =/  m  (glad (list ,rpc-result))
+  ^-  form:m
+  ;<  ~  bind:m
+    %-  do-json-request
+    (batch-read-request reqs)
+  ;<  =response:rpc:jstd  bind:m
+    expect-response
+  ?.  ?=(%batch -.response)
+    (glad-fail ~[leaf+"not a batch response" >response<])
+  =+  ^-  [res=(list response:rpc:jstd) bad=(list response:rpc:jstd)]
+    %+  skid  bas.response
+    |=([a=@tas *] =(%result a))
+  ?.  =(~ bad)
+    (glad-fail ~[leaf+"unexpected responses in batch" >bad<])
+  %-  pure:m
+  %+  turn  res
+  |=  =response:rpc:jstd
+  ?>  ?=(%result -.response)
+  ?>  ?=(%s -.res.response)
+  [id p.res]:response
+::
+::  chain state checks
+::
+++  run-checks
+  |=  =command
+  =/  m  null-glad
+  ^-  form:m
+  ?.  ?&  ::NOTE  ?=(%generate -.command)
+          ?=(%invites -.batch.command)
+      ==
+    (pure:m ~)
+  (check-invites +.batch.command)
+::
+++  check-invites
+  |=  [as-who=ship file=path]
+  =/  m  null-glad
+  =/  friends=(list [=ship @q =address])
+    (read-invites file)
+  ;<  ~  bind:m
+    %-  are-available
+    (turn friends head)
+  %+  has-invites-for
+    as-who
+  (turn friends head)
+::
+++  are-available
+  |=  ships=(list ship)
+  =/  m  null-glad
+  ^-  form:m
+  ;<  responses=(list rpc-result)  bind:m
+    %-  do-batch-read-expect-results
+    %+  turn  ships
+    |=  =ship
+    ^-  proto-read-request
+    :+  `(scot %p ship)
+      azimuth
+    (rights:cal ship)
+  =/  taken=(list ship)
+    %+  murn  responses
+    |=  rpc-result
+    ^-  (unit ship)
+    =/  rights=[owner=address *]
+      %+  decode-results  res
+      ::NOTE  using +reap nest-fails
+      [%address %address %address %address %address ~]
+    ?:  =(0x0 owner.rights)  ~
+    `(slav %p id)
+  ^-  form:m
+  ?:  =(~ taken)
+    (pure:m ~)
+  %-  glad-fail
+  :~  leaf+"some ships already taken:"
+      >taken<
+  ==
+::
+++  has-invites-for
+  |=  [as=ship ships=(list ship)]
+  =/  m  null-glad
+  ^-  form:m
+  =/  counts=(map ship @ud)
+    %+  roll  ships
+    |=  [s=ship counts=(map ship @ud)]
+    =+  p=(^sein:title s)
+    %+  ~(put by counts)  p
+    +((~(gut by counts) p 0))
+  ;<  pool=@ud  bind:m
+    ;<  rpc-result  bind:(glad ,@ud)
+      %+  do-read-expect-result
+        delegated-sending
+      (get-pool:cal as)
+    %-  pure:(glad ,@ud)
+    (decode-results res [%uint]~)
+  ;<  responses=(list rpc-result)  bind:m
+    =/  n  (glad ,(list rpc-result))
+    ^-  form:n
+    %-  do-batch-read-expect-results
+    %+  turn  ~(tap by counts)
+    |=  [=ship @ud]
+    ^-  proto-read-request
+    :+  `(scot %p ship)
+      delegated-sending
+    (pools:cal pool ship)
+  =/  missing=(list [star=ship have=@ud needed=@ud])
+    %+  murn  responses
+    |=  rpc-result
+    ^-  (unit [ship @ud @ud])
+    =/  =ship
+      (slav %p id)
+    =/  pool-size=@ud
+      (decode-results res [%uint]~)
+    =/  need=@ud
+      (~(got by counts) ship)
+    ?:  (gte pool-size need)  ~
+    `[ship pool-size need]
+  ?:  =(~ missing)
+    (pure:m ~)
+  %-  glad-fail
+  :~  leaf+"not enough invites from stars:"
+      >missing<
+  ==
+::
+::  input file reading
+::
+++  read-invites
+  |=  file=path
+  ^-  (list [=ship ticket=@q =address])
+  =+  txt=.^((list cord) %cx file)
+  %+  murn  txt
+  |=  line=cord
+  ^-  (unit [ship @q address])
+  ?:  =('' line)  ~
+  %-  some
+  ~|  line
+  %+  rash  line
+  ;~  (glue com)
+    ;~(pfix sig fed:ag)
+    ;~(pfix sig feq:ag)
+    ;~(pfix (jest '0x') hex)
+  ==
 ::
 ::  transaction generation logic
 ::
@@ -403,8 +568,8 @@
   |=  =command
   =/  m  null-glad
   ^-  form:m
+  ;<  ~  bind:m  (run-checks command)
   ;<  nonce=@ud  bind:m  (get-next-nonce as.command)
-  ^-  form:m
   %-  just-do
   ?-  -.command
       %generate
@@ -547,16 +712,7 @@
   |=  [nonce=@ud =network as=address as-who=ship file=path]
   ^-  (list transaction)
   =/  friends=(list [=ship @q =address])
-    =+  txt=.^((list cord) %cx file)
-    %+  turn  txt
-    |=  line=cord
-    ~|  line
-    %+  rash  line
-    ;~  (glue com)
-      ;~(pfix sig fed:ag)
-      ;~(pfix sig feq:ag)
-      ;~(pfix (jest '0x') hex)
-    ==
+    (read-invites file)
   =|  txs=(list transaction)
   |-
   ?~  friends  (flop txs)
@@ -916,6 +1072,30 @@
     :~  [%uint `@`as]
         [%uint `@`point]
         [%address to]
+    ==
+  ::
+  ::  read calls
+  ::
+  ++  rights
+    |=  =ship
+    ^-  call-data
+    :-  'rights(uint32)'
+    :~  [%uint `@`ship]
+    ==
+  ::
+  ++  get-pool
+    |=  =ship
+    ^-  call-data
+    :-  'getPool(uint32)'
+    :~  [%uint `@`ship]
+    ==
+  ::
+  ++  pools
+    |=  [pool=@ud star=ship]
+    ^-  call-data
+    :-  'pools(uint32,uint16)'
+    :~  [%uint pool]
+        [%uint `@`star]
     ==
   --
 ::
