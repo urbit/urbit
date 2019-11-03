@@ -866,7 +866,7 @@
     ++  help
       ^-  (quip move _this)
       =-  [[- ~] this]
-      (print:sh-out "see https://urbit.org/docs/using/messaging/")
+      (print:sh-out "see https://urbit.org/using/operations/using-your-ship/#messaging")
     --
   --
 ::
