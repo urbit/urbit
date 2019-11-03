@@ -477,11 +477,9 @@
     ^+  mo-core
     ?>  ?=([%jael ~] path)
     ?>  ?=([%j %public-keys *] sign-arvo)
-    ::  TODO reinstate
-    ::?.  ?=(%breach -.public-keys-result.sign-arvo)
-    ::  mo-core
-    ::(mo-breach who.public-keys-result.sign-arvo)
-    mo-core
+    ?.  ?=(%breach -.public-keys-result.sign-arvo)
+      mo-core
+    (mo-breach who.public-keys-result.sign-arvo)
   ::  +mo-handle-sys-core: receive a core from %ford.
   ::
   ++  mo-handle-sys-core

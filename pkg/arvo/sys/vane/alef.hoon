@@ -1208,7 +1208,7 @@
         ::
         ?-    public-keys-result
             [%diff @ %rift *]
-          (on-publ-breach [who to.diff]:public-keys-result)
+          (on-publ-breach who.public-keys-result)
         ::
             [%diff @ %keys *]
           (on-publ-rekey [who to.diff]:public-keys-result)
@@ -1218,6 +1218,9 @@
         ::
             [%full *]
           (on-publ-full points.public-keys-result)
+        ::
+            [%breach *]
+          (on-publ-breach who.public-keys-result)
         ==
     ::  +on-publ-breach: handle continuity breach of .ship; wipe its state
     ::
@@ -1230,21 +1233,21 @@
     ::    TODO: cancel gall subscriptions on breach
     ::
     ++  on-publ-breach
-      |=  [=ship =rift]
+      |=  =ship
       ^+  event-core
       ::
       =/  ship-state  (~(get by peers.ames-state) ship)
       ::  we shouldn't be hearing about ships we don't care about
       ::
       ?~  ship-state
-        ~>  %slog.0^leaf/"ames: breach unknown {<our^ship^rift>}"
+        ~>  %slog.0^leaf/"ames: breach unknown {<our^ship>}"
         event-core
       ::  if an alien breached, this doesn't affect us
       ::
       ?:  ?=([~ %alien *] ship-state)
-        ~>  %slog.0^leaf/"ames: breach alien {<our^ship^rift>}"
+        ~>  %slog.0^leaf/"ames: breach alien {<our^ship>}"
         event-core
-      ~>  %slog.0^leaf/"ames: breach peer {<our^ship^rift>}"
+      ~>  %slog.0^leaf/"ames: breach peer {<our^ship>}"
       ::  a peer breached; drop messaging state
       ::
       =/  =peer-state  +.u.ship-state
