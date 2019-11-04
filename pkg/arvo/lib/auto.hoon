@@ -1,5 +1,6 @@
 ::  Autocomplete for hoon.
 ::
+=/  debug  |
 |%
 +$  ids  (list [=term =type])
 ::
@@ -310,18 +311,18 @@
 ::  Same as +advance-hoon, but takes a position and text directly.
 ::
 ++  tab-list-tape
-  |=  [sut=type pos=@ud code=tape cache=(tri @tD [hair hoon])]
+  |=  [sut=type pos=@ud code=tape]
   ^-  (each (unit ids) [row=@ col=@])
-  ~&  >  %start-magick
+  ~?  >  debug  %start-magick
   =/  magicked  txt:(insert-magic pos code)
-  ~&  >  %start-parsing
+  ~?  >  debug  %start-parsing
   =/  parser
-    (ifix [gay gay] tall:[%*(. vast fat cache)])
+    (ifix [gay gay] tall:vast)
   =/  res  (lily magicked parser)
   ?:  ?=(%| -.res)
-    ~&  >  [%parsing-error p.res]
+    ~?  >  debug  [%parsing-error p.res]
     [%| p.res]
   :-  %&
-  ~&  >  %parsed-good
+  ~?  >  debug  %parsed-good
   ((cury tab-list-hoon sut) p.res)
 --

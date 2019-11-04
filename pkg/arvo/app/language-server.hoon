@@ -12,19 +12,32 @@
   ==
 ::
 +$  lsp-req 
-  $%  [%sync text=@t]
-      [%completion row=@ud col=@ud]
+  $%  [%sync changes=(list change)]
+      [%completion position]
   ==
 ::
-+$  state
-  [buf=@t cache=(tri @tD [hair hoon]) cache-size=@]
++$  change
+  $:  range=(unit range)
+      range-length=(unit @ud)
+      text=@t
+  ==
+::
++$  range
+  $:  start=position
+      end=position
+  ==
+::
++$  position
+  [row=@ud col=@ud]
+::
++$  state  buf=wall
 --
 ::
 |_  [bow=bowl:gall state]
 ::
 ++  this  .
-++  tall-cached
-  (ifix [gay gay] tall:[%*(. vast fat cache)])
+++  tall
+  (ifix [gay gay] tall:vast)
 ::
 ++  prep
   |=  old=(unit state)
@@ -33,7 +46,7 @@
   ?~  old
     :_  this
     [ost.bow %connect / [~ /'~language-server-protocol'] %language-server]~
-  [~ this(+<+< -.u.old)]
+  [~ this(buf u.old)]
 ::
 ::  alerts us that we were bound.
 ::
@@ -44,19 +57,46 @@
 ::
 ::  +poke-handle-http-request: received on a new connection established
 ::
+++  parser
+  =,  dejs:format
+  |^
+  %-  of
+  :~  sync+sync
+      completion+position
+  ==
+  ::
+  ++  sync
+    %-  ar
+    %:  ou
+      range+(uf ~ (pe ~ range))
+      'rangeLength'^(uf ~ (pe ~ ni))
+      text+(un so)
+      ~
+    ==
+  ::
+  ++  range
+    %:  ot
+      start+position
+      end+position
+      ~
+    ==
+  ::
+  ++  position
+    %:  ot
+      line+ni
+      character+ni
+      ~
+    ==
+  --
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bow move this)
   |=  =inbound-request:eyre
   ^-  (quip move _this)
   ?>  ?=(^ body.request.inbound-request)
   =/  =lsp-req
-    %.  (need (de-json:html q.u.body.request.inbound-request))
-    =,  dejs:format
-    %-  of
-    :~  sync+so
-        completion+(ot line+ni character+ni ~)
-    ==
-  =^  out-jon  +<+.this
+    %-  parser
+    (need (de-json:html q.u.body.request.inbound-request))
+  =^  out-jon  buf
     ?-  -.lsp-req
       %sync        (handle-sync +.lsp-req)
       %completion  (handle-completion +.lsp-req)
@@ -64,54 +104,47 @@
   [[ost.bow %http-response (json-response:app (json-to-octs out-jon))]~ this]
 ::
 ++  handle-sync
-  |=  text=@t
-  =,  enjs:format
-  [*json text cache cache-size]
+  |=  changes=(list change)
+  :-  *json
+  |-  ^-  wall
+  ?~  changes
+    buf
+  ?:  ?|(?=(~ range.i.changes) ?=(~ range-length.i.changes))
+    =/  =wain  (to-wain:format text.i.changes)
+    =.  buf  (turn wain trip)
+    $(changes t.changes)
+  =/  =tape      (zing (join "\0a" buf))
+  =/  start-pos  (get-pos start.u.range.i.changes)
+  =/  end-pos    (get-pos end.u.range.i.changes)
+  =.  tape
+    ;:  weld
+      (scag start-pos tape)
+      (trip text.i.changes)
+      (slag end-pos tape)
+    ==
+  =.  buf  (to-wall tape)
+  $(changes t.changes)
 ::
-::
-++  ingest
-  =|  count=@
-  |=  =wall
-  ^-  (tri @tD [hair hoon])
+++  to-wall
+  |=  =tape
+  ^-  wall
+  %+  roll  (flop tape)
+  |=  [char=@tD =wall]
   ?~  wall
-    [~ ~]
-  =.  count  +(count)
-  ?:  (gth count (sub (lent wall) cache-size))
-    cache
-  =.  cache  $(wall t.wall)
-  ?:  (lth count (sub (sub (lent wall) cache-size) 100))
-    cache
-  ~?  =(0 (mod (lent wall) 100))
-    [%ingest-round (lent wall)]
-  =/  =tape  (zing (join "\0a" wall))
-  =/  mab  (try tape tall-cached)
-  ?~  mab
-    cache
-  ::  ~&  >>>  [- +<]:u.mab
-  (~(put up cache) u.mab)
+    [[char ~] ~]
+  ?:  =('\0a' char)
+    [~ wall]
+  [[char i.wall] t.wall]
 ::
-++  try
-  |*  [los=tape sab=rule]
-  =+  vex=(sab [[1 1] los])
-  ?~  q.vex
-    ~
-  ::  Finished with spaces remaining
-  ::
-  =/  rows  (sub p.p.q.u.q.vex 1)
-  =/  cols
-    ?:  =(0 rows)
-      (sub q.p.q.u.q.vex 1)
-    q.p.q.u.q.vex
-  =/  used-tape
-    (scag (sub (lent los) (lent q.q.u.q.vex)) los)
-  ?.  ?=([?(%32 %10) *] (flop used-tape))
-    ::  ~&  >>>  no=used-tape
-    ~
-  :-  ~
-  ^=  u
-  ::  ~&  >  [p.q.u.q.vex ppv=p.p.vex qpv=q.p.vex tol=(sub (lent los) (lent q.q.u.q.vex)) ll=(lent los) lq=(lent q.q.u.q.vex)]
-  ::  ~&  >>  yes=used-tape
-  [used-tape [rows cols] p.u.q.vex]
+++  get-pos
+  |=  position
+  ^-  @ud
+  ?~  buf
+    0
+  ?:  =(0 row)
+    col
+  %+  add  +((lent i.buf))  ::  +1 because newline
+  $(row (dec row), buf t.buf)
 ::
 ++  safe-sub
   |=  [a=@ b=@]
@@ -121,28 +154,23 @@
 ::
 ++  handle-completion
   |=  [row=@ud col=@ud]
-  ^-  [json @t (tri @tD [hair hoon]) @]
-  =/  =wain  (to-wain:format buf)
-  =/  =wall  (turn wain trip)
-  ::  =?  cache  (lth cache-size (lent wall))   (ingest wall)
-  ::  =.  cache-size  (min (lent wall) (add cache-size 100))
-  =/  =tape  (zing (join "\0a" wall))
-  =/  pos
-    |-  ^-  @ud
-    ?~  wain
-      0
-    ?:  =(0 row)
-      col
-    %+  add  +((met 3 i.wain))  ::  +1 because newline
-    $(row (dec row), wain t.wain)
-  :_  [buf cache cache-size]
-  ~&  >>>  bef=(swag [(safe-sub pos 2) 2] tape)
+  ^-  [json wall]
+  =/  =tape  (zing (join "\0a" buf))
+  =/  pos  (get-pos row col)
+  :_  buf
+  ::  Check if we're on a rune
+  ::
   =/  rune  (swag [(safe-sub pos 2) 2] tape)
   ?:  (~(has by runes:rune-snippet) rune)
     (rune-snippet rune)
+  ::  Don't run on large files because it's slow
+  ::
+  ?:  (gth (lent buf) 1.000)
+    =,  enjs:format
+    (pairs good+b+& result+~ ~)
   ::
   =/  tl
-    (tab-list-tape:auto -:!>(..zuse) pos tape cache)
+    (tab-list-tape:auto -:!>(..zuse) pos tape)
   =,  enjs:format
   ?:  ?=(%| -.tl)
     %-  pairs
