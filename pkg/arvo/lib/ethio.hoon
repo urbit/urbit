@@ -1,10 +1,13 @@
 ::  ethio: Asynchronous Ethereum input/output functions.
 ::.
 /+  stdio
+=,  ethereum-types
+=,  able:jael
 ::
 |*  [out-poke-data=mold out-peer-data=mold]
 =>  |%
-    ++  stdio  (^stdio out-poke-data out-peer-data)
+    ++  stdio   (^stdio out-poke-data out-peer-data)
+    +$  topics  (list ?(@ux (list @ux)))
     --
 |%
 ::  +request-rpc: send rpc request, with retry
@@ -102,4 +105,77 @@
     =,  dejs-soft:format
     (ot id+so error+(ot code+no message+so ~) ~)
   --
+::
+++  get-latest-block
+  |=  url=@ta
+  =/  m  (async:stdio ,block)
+  ^-  form:m
+  ;<  =json  bind:m
+    (request-rpc url `'block number' %eth-block-number ~)
+  (get-block-by-number url (parse-eth-block-number:rpc:ethereum json))
+::
+++  get-block-by-number
+  |=  [url=@ta =number:block]
+  =/  m  (async:stdio ,block)
+  ^-  form:m
+  |^
+  ;<  =json  bind:m
+    %+  request-rpc  url
+    :-  `'block by number'
+    [%eth-get-block-by-number number |]
+  =/  =block  (parse-block json)
+  ?.  =(number number.id.block)
+    (async-fail:stdio %reorg-detected >number< >block< ~)
+  (pure:m block)
+  ::
+  ++  parse-block
+    |=  =json
+    ^-  block
+    =<  [[&1 &2] |2]
+    ^-  [@ @ @]
+    ~|  json
+    %.  json
+    =,  dejs:format
+    %-  ot
+    :~  hash+parse-hex-result:rpc:ethereum
+        number+parse-hex-result:rpc:ethereum
+        'parentHash'^parse-hex-result:rpc:ethereum
+    ==
+  --
+::
+++  get-logs-by-hash
+  |=  [url=@ta =hash:block contracts=(list address) =topics]
+  =/  m  (async:stdio (list event-log:rpc:ethereum))
+  ^-  form:m
+  ;<  =json  bind:m
+    %+  request-rpc  url
+    :*  `'logs by hash'
+        %eth-get-logs-by-hash
+        hash
+        contracts
+        topics
+    ==
+  %-  pure:m
+  (parse-event-logs:rpc:ethereum json)
+::
+++  get-logs-by-range
+  |=  $:  url=@ta
+          contracts=(list address)
+          =topics
+          =from=number:block
+          =to=number:block
+      ==
+  =/  m  (async:stdio (list event-log:rpc:ethereum))
+  ^-  form:m
+  ;<  =json  bind:m
+    %+  request-rpc  url
+    :*  `'logs by range'
+        %eth-get-logs
+        `number+from-number
+        `number+to-number
+        contracts
+        topics
+    ==
+  %-  pure:m
+  (parse-event-logs:rpc:ethereum json)
 --
