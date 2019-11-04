@@ -384,6 +384,8 @@
     ::
     ::    %hear: packet from unix
     ::    %hole: report that packet handling crashed
+    ::    %heed: track peer's responsiveness; gives %clog if slow
+    ::    %jilt: stop tracking peer's responsiveness
     ::    %plea: request to send message
     ::
     ::    System and Lifecycle Tasks
@@ -397,6 +399,8 @@
     +$  task
       $%  [%hear =lane =blob]
           [%hole =lane =blob]
+          [%heed =ship]
+          [%jilt =ship]
           $>(%plea vane-task)
       ::
           $>(%born vane-task)
@@ -410,6 +414,7 @@
     ::    Messaging Gifts
     ::
     ::    %boon: response message from remote ship
+    ::    %clog: notify vane that %boon's to peer are backing up locally
     ::    %done: notify vane that peer (n)acked our message
     ::    %lost: notify vane that we crashed on %boon
     ::    %send: packet to unix
@@ -421,6 +426,7 @@
     ::
     +$  gift
       $%  [%boon payload=*]
+          [%clog =ship]
           [%done error=(unit error)]
           [%lost ~]
           [%send =lane =blob]

@@ -429,10 +429,12 @@
 ::
 ::    messages: pleas local vanes have asked us to send
 ::    packets: packets we've tried to send
+::    heeds: local tracking requests; passed through into $peer-state
 ::
 +$  alien-agenda
   $:  messages=(list [=duct =plea])
       packets=(set =blob)
+      heeds=(set duct)
   ==
 ::  $peer-state: state for a peer with known life and keys
 ::
@@ -451,6 +453,7 @@
 ::         information completes the packet+nack-trace, we remove the
 ::         entry and emit a nack to the local vane that asked us to send
 ::         the message.
+::    heeds: listeners for %clog notifications
 ::
 +$  peer-state
   $:  $:  =symmetric-key
@@ -464,6 +467,7 @@
       snd=(map bone message-pump-state)
       rcv=(map bone message-sink-state)
       nax=(set [=bone =message-num])
+      heeds=(set duct)
   ==
 ::  $qos: quality of service; how is our connection to a peer doing?
 ::
@@ -887,8 +891,10 @@
       %born  on-born:event-core
       %crud  (on-crud:event-core [p q]:task)
       %hear  (on-hear:event-core [lane blob]:task)
+      %heed  (on-heed:event-core ship.task)
       %hole  (on-hole:event-core [lane blob]:task)
       %init  (on-init:event-core ship=p.task)
+      %jilt  (on-jilt:event-core ship.task)
       %vega  on-vega:event-core
       %wegh  on-wegh:event-core
       %plea  (on-plea:event-core [ship plea]:task)
@@ -980,6 +986,34 @@
     |=  =error
     ^+  event-core
     (emit duct %pass /crud %d %flog %crud error)
+  ::  +on-heed: handle request to track .ship's responsiveness
+  ::
+  ++  on-heed
+    |=  =ship
+    ^+  event-core
+    =/  ship-state  (~(get by peers.ames-state) ship)
+    ?.  ?=([~ %known *] ship-state)
+      %+  enqueue-alien-todo  ship
+      |=  todos=alien-agenda
+      todos(heeds (~(put in heeds.todos) duct))
+    ::
+    =/  =peer-state  +.u.ship-state
+    =/  =channel     [[our ship] now |2.ames-state -.peer-state]
+    abet:on-heed:(make-peer-core peer-state channel)
+  ::  +on-jilt: handle request to stop tracking .ship's responsiveness
+  ::
+  ++  on-jilt
+    |=  =ship
+    ^+  event-core
+    =/  ship-state  (~(get by peers.ames-state) ship)
+    ?.  ?=([~ %known *] ship-state)
+      %+  enqueue-alien-todo  ship
+      |=  todos=alien-agenda
+      todos(heeds (~(del in heeds.todos) duct))
+    ::
+    =/  =peer-state  +.u.ship-state
+    =/  =channel     [[our ship] now |2.ames-state -.peer-state]
+    abet:on-jilt:(make-peer-core peer-state channel)
   ::  +on-hear: handle raw packet receipt
   ::
   ++  on-hear
@@ -1546,6 +1580,9 @@
         (~(put by peers.ames-state) her.channel %known peer-state)
       ::
       event-core
+    ::
+    ++  on-heed  peer-core(heeds.peer-state (~(put in heeds.peer-state) duct))
+    ++  on-jilt  peer-core(heeds.peer-state (~(del in heeds.peer-state) duct))
     ::  +update-qos: update and maybe print connection status
     ::
     ++  update-qos
@@ -1553,10 +1590,21 @@
       ^+  peer-core
       ::
       =^  old-qos  qos.peer-state  [qos.peer-state new-qos]
+      ::  if no update worth reporting, we're done
       ::
       ?~  text=(qos-update-text her.channel old-qos new-qos)
         peer-core
-      (emit duct %pass /qos %d %flog %text u.text)
+      ::  print message
+      ::
+      =.  peer-core  (emit duct %pass /qos %d %flog %text u.text)
+      ::  if peer is ok, we're done
+      ::
+      ?.  ?=(?(%dead %unborn) -.qos.peer-state)
+        peer-core
+      ::  peer has stopped responding; notify client vanes
+      ::
+      %+  roll  ~(tap in heeds.peer-state)
+      |=([d=^duct core=_peer-core] (emit:core d %give %clog her.channel))
     ::  +on-hear-shut-packet: handle receipt of ack or message fragment
     ::
     ++  on-hear-shut-packet

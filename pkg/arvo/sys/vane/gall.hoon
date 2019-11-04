@@ -251,7 +251,7 @@
     =/  =wire
       =/  ship  (scot %p ship)
       =/  case  (scot case)
-      /sys/core/[term]/[ship]/[desk]/[case]
+      /sys/cor/[term]/[ship]/[desk]/[case]
     ::
     =/  =note-arvo
       =/  =schematic:ford  [%core [ship desk] /hoon/[term]/app]
@@ -385,7 +385,7 @@
     ?:  ?=(%peer-not -.agent-action)
       (mo-give %unto %reap `p.agent-action)
     ::
-    =.  mo-core  (mo-track-rift ship)
+    =.  mo-core  (mo-track-ship ship)
     =/  =ames-request
       ?-  -.agent-action
         %poke  [%m p.p.agent-action q.q.p.agent-action]
@@ -398,51 +398,59 @@
     ::
     =/  =wire
       =/  action  -.agent-action
-      /sys/way/[action]
+      /sys/way/(scot %p ship)/[foreign-agent]/[action]
     ::
     =/  =note-arvo
       =/  =path  /ge/[foreign-agent]
       [%a %plea ship %g path ames-request]
     ::
     (mo-pass wire note-arvo)
-  ::  +mo-track-rift: ensure we're subscribed to jael for .ship breaches
+  ::  +mo-track-ship: subscribe to ames and jael for notices about .ship
   ::
-  ++  mo-track-rift
+  ++  mo-track-ship
     |=  =ship
     ^+  mo-core
     ::  if already contacted, no-op
     ::
     ?:  (~(has in contacts.agents.state) ship)
       mo-core
-    ::  first contact; update state and subscribe to jael
+    ::  first contact; update state and subscribe to notifications
     ::
     =.  contacts.agents.state  (~(put in contacts.agents.state) ship)
+    ::  ask ames to track .ship's connectivity
+    ::
+    =.  moves  [[system-duct.agents.state %pass /sys/lag %a %heed ship] moves]
+    ::  ask jael to track .ship's breaches
+    ::
     =/  =note-arvo  [%j %public-keys (silt ship ~)]
     =.  moves
-      [[system-duct.agents.state %pass /sys/jael note-arvo] moves]
+      [[system-duct.agents.state %pass /sys/era note-arvo] moves]
     mo-core
-  ::  +mo-untrack-rift: cancel jael subscription to .ship's breaches
+  ::  +mo-untrack-ship: cancel subscriptions to ames and jael for .ship
   ::
-  ++  mo-untrack-rift
+  ++  mo-untrack-ship
     |=  =ship
     ^+  mo-core
     ::  if already canceled, no-op
     ::
     ?.  (~(has in contacts.agents.state) ship)
       mo-core
-    ::  delete .ship from state and kill subscription
+    ::  delete .ship from state and kill subscriptions
     ::
     =.  contacts.agents.state  (~(del in contacts.agents.state) ship)
+    ::
+    =.  moves  [[system-duct.agents.state %pass /sys/lag %a %jilt ship] moves]
+    ::
     =/  =note-arvo  [%j %nuke (silt ship ~)]
     =.  moves
-      [[system-duct.agents.state %pass /sys/jael note-arvo] moves]
+      [[system-duct.agents.state %pass /sys/era note-arvo] moves]
     mo-core
   ::  +mo-breach: ship breached, so forget about them
   ::
   ++  mo-breach
     |=  =ship
     ^+  mo-core
-    =.  mo-core  (mo-untrack-rift ship)
+    =.  mo-core  (mo-untrack-ship ship)
     =/  agents=(list [name=term =agent])  ~(tap by running.agents.state)
     |-  ^+  mo-core
     ?~  agents
@@ -462,31 +470,32 @@
     ^+  mo-core
     ::
     ?+  -.path  !!
-      %jael  (mo-handle-sys-jael path sign-arvo)
-      %core  (mo-handle-sys-core path sign-arvo)
-      %pel   (mo-handle-sys-pel path sign-arvo)
-      %rep   (mo-handle-sys-rep path sign-arvo)
-      %req   (mo-handle-sys-req path sign-arvo)
-      %val   (mo-handle-sys-val path sign-arvo)
-      %way   (mo-handle-sys-way path sign-arvo)
+      %era  (mo-handle-sys-era path sign-arvo)
+      %cor  (mo-handle-sys-cor path sign-arvo)
+      %lag  (mo-handle-sys-lag path sign-arvo)
+      %pel  (mo-handle-sys-pel path sign-arvo)
+      %rep  (mo-handle-sys-rep path sign-arvo)
+      %req  (mo-handle-sys-req path sign-arvo)
+      %val  (mo-handle-sys-val path sign-arvo)
+      %way  (mo-handle-sys-way path sign-arvo)
     ==
-  ::  +mo-handle-sys-jael: receive update about contact
+  ::  +mo-handle-sys-era: receive update about contact
   ::
-  ++  mo-handle-sys-jael
+  ++  mo-handle-sys-era
     |=  [=path =sign-arvo]
     ^+  mo-core
-    ?>  ?=([%jael ~] path)
+    ?>  ?=([%era ~] path)
     ?>  ?=([%j %public-keys *] sign-arvo)
     ?.  ?=(%breach -.public-keys-result.sign-arvo)
       mo-core
     (mo-breach who.public-keys-result.sign-arvo)
-  ::  +mo-handle-sys-core: receive a core from %ford.
+  ::  +mo-handle-sys-cor: receive a core from %ford.
   ::
-  ++  mo-handle-sys-core
+  ++  mo-handle-sys-cor
     |=  [=path =sign-arvo]
     ^+  mo-core
     ::
-    ?>  ?=([@ @ @ @ @ ~] path)
+    ?>  ?=([%cor @ @ @ @ ~] path)
     ?>  ?=([%f %made *] sign-arvo)
     =/  beak-path  t.t.path
     =/  =beak
@@ -495,6 +504,25 @@
       =/  =case  [%da (slav %da i.t.t.beak-path)]
       [ship desk case]
     (mo-receive-core i.t.path beak result.sign-arvo)
+  ::  +mo-handle-sys-lag: handle an ames %clog notification
+  ::
+  ++  mo-handle-sys-lag
+    |=  [=path =sign-arvo]
+    ^+  mo-core
+    ::
+    ?>  ?=([%lag ~] path)
+    ?>  ?=([%a %clog *] sign-arvo)
+    ::
+    =/  agents=(list term)  ~(tap in ~(key by running.agents.state))
+    |-  ^+  mo-core
+    ?~  agents  mo-core
+    ::
+    =.  mo-core
+      =/  =routes  [disclosing=~ attributing=our]
+      =/  app  (ap-abed:ap i.agents routes)
+      ap-abet:(ap-clog:app ship.sign-arvo)
+    ::
+    $(agents t.agents)
   ::  +mo-handle-sys-pel: translated peer.
   ::
   ::    Validates a received %ford result and %gives an internal %diff.
@@ -525,7 +553,7 @@
     |=  [=path =sign-arvo]
     ^+  mo-core
     ::
-    ?>  ?=([%rep @ @ *] path)
+    ?>  ?=([%rep ~] path)
     ?>  ?=([%f %made *] sign-arvo)
     ::
     ?-    result.sign-arvo
@@ -608,18 +636,20 @@
     |=  [=path =sign-arvo]
     ^+  mo-core
     ::
-    ?>  ?=([%way @ *] path)
+    ?>  ?=([%way @ @ @ ~] path)
+    =/  =ship           (slav %p i.t.path)
+    =/  foreign-agent   i.t.t.path
+    =/  remote-request  i.t.t.t.path
     ::
     ?+    sign-arvo  !!
         [%a %done *]
       ::
-      =/  =remote-request  ;;(remote-request i.t.path)
       =/  err=(unit tang)
         ?~  error=error.sign-arvo
           ~
         `[[%leaf (trip tag.u.error)] tang.u.error]
       ::
-      ?-  remote-request
+      ?+  remote-request  !!
         %peel  (mo-give %unto %reap err)
         %peer  (mo-give %unto %reap err)
         %poke  (mo-give %unto %coup err)
@@ -627,25 +657,15 @@
       ==
     ::
         [%a %boon *]
-      ::
-      ?>  ?=([@ @ ~] t.t.path)
-      =/  him              (slav %p i.t.path)
-      =/  agent-name       `@tas`i.t.t.path
-      ::
       =/  =ames-response  ;;(ames-response payload.sign-arvo)
-      (mo-handle-ames-response him agent-name ames-response)
+      (mo-handle-ames-response ames-response)
     ::
         [%a %lost *]
-      ::
-      ?>  ?=([@ @ ~] t.t.path)
-      =/  him              (slav %p i.t.path)
-      =/  agent-name       `@tas`i.t.t.path
-      ::
       =/  sys-wire  [%sys path]
       ::  TODO: %drip %quit so app crash can't kill the remote %pull
       ::
       =.  mo-core  (mo-give %unto %quit ~)
-      =.  mo-core  (mo-pass sys-wire %a %plea him %g /ge/[agent-name] %u ~)
+      =.  mo-core  (mo-pass sys-wire %a %plea ship %g /ge/[foreign-agent] %u ~)
       mo-core
     ==
   ::  +mo-handle-use: handle a typed +sign incoming on /use.
@@ -823,18 +843,18 @@
   ::  +mo-handle-ames-response: handle ames response message
   ::
   ++  mo-handle-ames-response
-    |=  [=ship agent-name=term =ames-response]
+    |=  =ames-response
     ^+  mo-core
     ::
     ?-    -.ames-response
         ::  %d: diff; ask ford to validate .noun as .mark
         ::
         %d
-      =/  =wire
-        /sys/rep/(scot %p ship)/[agent-name]
+      =/  =wire  /sys/rep
+      ::  agents load their code from the %home desk, including marks
       ::
       =/  =note-arvo
-        =/  =disc:ford  [p q]:(mo-beak agent-name)
+        =/  =disc:ford  [our %home]
         [%f %build live=%.n %vale disc [mark noun]:ames-response]
       ::
       (mo-pass wire note-arvo)
@@ -994,6 +1014,26 @@
         =/  core  (ap-specific-take(agent-bone bone.i.out) wire.i.out %quit ~)
         core(agent-bone agent-bone)
       $(out t.out)
+    ::  +ap-clog: handle %clog notification from ames
+    ::
+    ::    Kills subscriptions from .ship in both directions:
+    ::      - notifies local app that subscription is dead
+    ::      - gives remote %quit to notify subscriber ship
+    ::    TODO: %drip local app notification for error isolation
+    ::
+    ++  ap-clog
+      |=  =ship
+      ^+  ap-core
+      ::
+      =/  in=(list [=bone =^ship =path])
+        ~(tap by incoming.subscribers.current-agent)
+      |-  ^+  ap-core
+      ?~  in  ap-core
+      ::
+      =?  ap-core  =(ship ship.i.in)
+        =/  core  ap-kill(agent-bone bone.i.in)
+        core(agent-bone agent-bone)
+      $(in t.in)
     ::  +ap-call: call into server.
     ::
     ++  ap-call
