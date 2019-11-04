@@ -1390,14 +1390,11 @@
       |=  =term
       ^-  [(each vase tang) _ap-core]
       ::
-      =/  compiled
+      =/  virtual
         =/  =type  p.running-state.current-agent
         =/  =hoon  [%limb term]
-        (~(mint wa cache.current-agent) type hoon)
-      ::
-      =/  virtual
-        =/  trap  |.(compiled)
-        (mule trap)
+        %-  mule
+        |.  (~(mint wa cache.current-agent) type hoon)
       ::
       ?:  ?=(%.n -.virtual)
         =/  =tang  p.virtual
@@ -2293,14 +2290,11 @@
       |=  [=term gat=vase arg=vase]
       ^-  [(each vase tang) _ap-core]
       ::
-      =/  compiled
+      =/  virtual
         =/  =type  [%cell p.gat p.arg]
         =/  =hoon  [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
-        (~(mint wa cache.current-agent) type hoon)
-      ::
-      =/  virtual
-        =/  trap  |.(compiled)
-        (mule trap)
+        %-  mule
+        |.  (~(mint wa cache.current-agent) type hoon)
       ::
       ?:  ?=(%.n -.virtual)
         =/  =tang  (ap-tang "call: {<term>}: type mismatch")
