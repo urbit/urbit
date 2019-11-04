@@ -1,4 +1,7 @@
-/+  *server, auto, easy-print, rune-snippet
+/+  *server,
+    auto=language-server-complete,
+    easy-print=language-server-easy-print,
+    rune-snippet=language-server-rune-snippet
 |%
 :: +move: output effect
 ::
