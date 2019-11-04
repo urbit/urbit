@@ -3,6 +3,17 @@
 |%
 +$  ids  (list [=term =type])
 ::
+::  Like +rose except also produces line number
+::
+++  lily
+  |*  {los/tape sab/rule}
+  =+  vex=(sab [[1 1] los])
+  ?~  q.vex
+    [%| p=p.vex(q (dec q.p.vex))]
+  ?.  =(~ q.q.u.q.vex)
+    [%| p=p.vex(q (dec q.p.vex))]
+  [%& p=p.u.q.vex]
+::
 ::  Get all the identifiers accessible if this type is your subject.
 ::
 ++  get-identifiers
@@ -94,7 +105,7 @@
   =/  res  (mule |.((find-type sut gen)))
   ?-  -.res
     %&  p.res
-    %|  ((slog (flop (scag 1 p.res))) ~)
+    %|  ((slog (flop (scag 10 p.res))) ~)
   ==
 ::
 ::  Get the subject type of the wing where you've put the "magic-spoon".
@@ -219,7 +230,7 @@
 ++  find-type-in-spec
   |=  [sut=type pec=spec]
   ^-  (unit [term type])
-  !!
+  ~
 ::
 ::  Insert magic marker in hoon source at the given position.
 ::
@@ -299,6 +310,18 @@
 ::  Same as +advance-hoon, but takes a position and text directly.
 ::
 ++  tab-list-tape
-  |=  [sut=type pos=@ud code=tape]
-  (tab-list-hoon sut (scan txt:(insert-magic pos code) vest))
+  |=  [sut=type pos=@ud code=tape cache=(tri @tD [hair hoon])]
+  ^-  (each (unit ids) [row=@ col=@])
+  ~&  >  %start-magick
+  =/  magicked  txt:(insert-magic pos code)
+  ~&  >  %start-parsing
+  =/  parser
+    (ifix [gay gay] tall:[%*(. vast fat cache)])
+  =/  res  (lily magicked parser)
+  ?:  ?=(%| -.res)
+    ~&  >  [%parsing-error p.res]
+    [%| p.res]
+  :-  %&
+  ~&  >  %parsed-good
+  ((cury tab-list-hoon sut) p.res)
 --
