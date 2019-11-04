@@ -4,6 +4,11 @@
 /+  tapp, stdio, ethio
 =,  ethereum-types
 =,  able:jael
+::
+=>  |%
+    ++  refresh-rate  ~m5
+    --
+::
 =>  |%
     +$  app-state
       $:  %0
@@ -295,7 +300,7 @@
   ^-  form:m
   ::  start update timer loop
   ;<  now=@da  bind:m  get-time:stdio
-  ;<  ~  bind:m  (wait-effect:stdio (add now ~m5))
+  ;<  ~  bind:m  (wait-effect:stdio (add now refresh-rate))
   (pure:m state)
 ::
 ++  handle-diff  handle-diff:default-tapp
@@ -336,7 +341,7 @@
       %wake
     ;<  ~  bind:m
       ;<  now=@da  bind:(async:tapp ,~)  get-time:stdio
-      =/  next=@da  (add now ~m5)
+      =/  next=@da  (add now refresh-rate)
       ::NOTE  we use +send-raw-card here to ensure we always set a new timer,
       ::      regardless of what happens further on in the flow.
       (send-raw-card:stdio %wait /effect/(scot %da next) next)
