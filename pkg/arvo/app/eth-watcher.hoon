@@ -4,6 +4,11 @@
 /+  tapp, stdio, ethio
 =,  ethereum-types
 =,  able:jael
+::
+=>  |%
+    ++  refresh-rate  ~m5
+    --
+::
 =>  |%
     +$  app-state
       $:  %0
@@ -52,79 +57,6 @@
 ::  Async helpers
 ::
 =>  |%
-    ++  get-latest-block
-      |=  url=@ta
-      =/  m  (async:stdio ,block)
-      ^-  form:m
-      ;<  =json  bind:m
-        (request-rpc:ethio url `'block number' %eth-block-number ~)
-      (get-block-by-number url (parse-eth-block-number:rpc:ethereum json))
-    ::
-    ++  get-block-by-number
-      |=  [url=@ta =number:block]
-      =/  m  (async:stdio ,block)
-      ^-  form:m
-      |^
-      ;<  =json  bind:m
-        %+  request-rpc:ethio  url
-        :-  `'block by number'
-        [%eth-get-block-by-number number |]
-      =/  =block  (parse-block json)
-      ?.  =(number number.id.block)
-        (async-fail:stdio %reorg-detected >number< >block< ~)
-      (pure:m block)
-      ::
-      ++  parse-block
-        |=  =json
-        ^-  block
-        =<  [[&1 &2] |2]
-        ^-  [@ @ @]
-        ~|  json
-        %.  json
-        =,  dejs:format
-        %-  ot
-        :~  hash+parse-hex-result:rpc:ethereum
-            number+parse-hex-result:rpc:ethereum
-            'parentHash'^parse-hex-result:rpc:ethereum
-        ==
-      --
-    ::
-    ++  get-logs-by-hash
-      |=  [url=@ta =hash:block contracts=(list address) =topics]
-      =/  m  (async:stdio loglist)
-      ^-  form:m
-      ;<  =json  bind:m
-        %+  request-rpc:ethio  url
-        :*  `'logs by hash'
-            %eth-get-logs-by-hash
-            hash
-            contracts
-            topics
-        ==
-      %-  pure:m
-      (parse-event-logs:rpc:ethereum json)
-    ::
-    ++  get-logs-by-range
-      |=  $:  url=@ta
-              contracts=(list address)
-              =topics
-              =from=number:block
-              =to=number:block
-          ==
-      =/  m  (async:stdio loglist)
-      ^-  form:m
-      ;<  =json  bind:m
-        %+  request-rpc:ethio  url
-        :*  `'logs by range'
-            %eth-get-logs
-            `number+from-number
-            `number+to-number
-            contracts
-            topics
-        ==
-      %-  pure:m
-      (parse-event-logs:rpc:ethereum json)
-    ::
     ++  send-logs
       |=  [=path =loglist]
       =/  m  (async:stdio ,~)
@@ -165,13 +97,13 @@
       |=  context
       =/  m  (async:stdio ,watchdog)
       ^-  form:m
-      ;<  =latest=block  bind:m  (get-latest-block url.dog)
+      ;<  =latest=block  bind:m  (get-latest-block:ethio url.dog)
       ;<  dog=watchdog   bind:m  (zoom [path dog] number.id.latest-block)
       |-  ^-  form:m
       =*  loop  $
       ?:  (gth number.dog number.id.latest-block)
         (pure:m dog)
-      ;<  =block  bind:m  (get-block-by-number url.dog number.dog)
+      ;<  =block  bind:m  (get-block-by-number:ethio url.dog number.dog)
       ;<  dog=watchdog  bind:m
         (take-block [path dog] block)
       loop(dog dog)
@@ -188,7 +120,7 @@
       ;<  [=new=pending-logs =released=loglist]  bind:m
         (release-old-events path pending-logs.dog number.id.block)
       ;<  =new=loglist  bind:m  ::  oldest first
-        (get-logs-by-hash url.dog hash.id.block contracts.dog topics.dog)
+        (get-logs-by-hash:ethio url.dog hash.id.block contracts.dog topics.dog)
       =.  new-pending-logs
         (~(put by new-pending-logs) number.id.block new-loglist)
       %-  pure:m
@@ -228,7 +160,7 @@
         (pure:m dog(blocks [block blocks]))
       ::  next-block: the new target block
       ;<  =next=^block  bind:m
-        (get-block-by-number url.dog number.id.i.blocks)
+        (get-block-by-number:ethio url.dog number.id.i.blocks)
       ::  remove from either pending-logs or history
       ?:  =(~ pending-logs.dog)
         ::  if no more pending logs, start deleting from history instead
@@ -270,7 +202,7 @@
         (pure:m dog)
       =/  to-number=number:block  (sub latest-number zoom-margin)
       ;<  =loglist  bind:m  ::  oldest first
-        %:  get-logs-by-range
+        %:  get-logs-by-range:ethio
           url.dog
           contracts.dog
           topics.dog
@@ -295,7 +227,7 @@
   ^-  form:m
   ::  start update timer loop
   ;<  now=@da  bind:m  get-time:stdio
-  ;<  ~  bind:m  (wait-effect:stdio (add now ~m5))
+  ;<  ~  bind:m  (wait-effect:stdio (add now refresh-rate))
   (pure:m state)
 ::
 ++  handle-diff  handle-diff:default-tapp
@@ -336,7 +268,7 @@
       %wake
     ;<  ~  bind:m
       ;<  now=@da  bind:(async:tapp ,~)  get-time:stdio
-      =/  next=@da  (add now ~m5)
+      =/  next=@da  (add now refresh-rate)
       ::NOTE  we use +send-raw-card here to ensure we always set a new timer,
       ::      regardless of what happens further on in the flow.
       (send-raw-card:stdio %wait /effect/(scot %da next) next)
