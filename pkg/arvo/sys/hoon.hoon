@@ -1817,32 +1817,6 @@
     ?~(r.a [~ n.a] $(a r.a))
   --
 ::
-++  up
-  !:
-  =|  a=(tri * *)
-  =*  val-t  ?>(?=(^ val.a) val.a)
-  |@
-  ++  put
-    |*  [b=(list *) c=*]
-    =>  .(b (homo b))
-    |-  ^+  a
-    ?~  b
-      a(val `c)
-    =/  son  (~(gut by kid.a) i.b [~ ~])
-    a(kid (~(put by kid.a) i.b $(a son, b t.b)))
-  ::
-  ++  get
-    |*  b=(list *)
-    =>  .(b (homo b))
-    |-
-    ?~  b
-      [~ val.a]
-    =/  son  (~(get by kid.a) i.b)
-    ?~  son
-      [b val.a]
-    $(a u.son, b t.b)
-  --
-::
 ::::  2o: containers                                    ::
   ::                                                    ::
   ::
@@ -1863,11 +1837,6 @@
   |$  [item]                                            ::  set
   $|  (tree item)
   |=(a=(tree) ~(apt in a))
-::
-++  tri                                                 ::  trie
-  |$  [key-t val-t]
-  $~  [~ ~]
-  [val=(unit val-t) kid=(map key-t (tri key-t val-t))]
 ::
 ::::  2l: container from container                      ::
   ::                                                    ::
@@ -11967,7 +11936,7 @@
   %*(. vast bug bug, wer wer)                           ::  wer: where we are
 ::
 ++  vast                                                ::  main parsing core
-  =+  [bug=`?`| wer=*path fat=*(tri @tD [hair hoon])]
+  =+  [bug=`?`| wer=*path]
   |%
   ++  gash  %+  cook                                    ::  parse path
               |=  a/(list tyke)  ^-  tyke
@@ -14131,21 +14100,7 @@
         (punt ;~(pfix ;~(pose net tis) wyde))
       ==
     ==
-  ++  tall
-    |=  tub=nail
-    =+  ^-  [t=tape h=(unit [=hair =hoon])]
-        (~(get up fat) q.tub)
-    ?^  h
-      ~&  >  [%tall-cache-hit len=(lent t) hair=hair.u.h]
-      ~?  (lth (lent t) 200)  t=t
-      =/  =hair
-        ?:  =(0 p.hair.u.h)
-          [p=p.p.tub q=(add q.p.tub q.hair.u.h)]
-        [p=(add p.p.tub p.hair.u.h) q=q.hair.u.h]
-      [p=hair q=`u=[p=hoon.u.h q=[p=hair q=t]]]
-    (tale tub)
-  ::
-  ++  tale                                              ::  full tall form
+  ++  tall                                              ::  full tall form
     %+  knee  *hoon
     |.(~+((wart ;~(pose expression:(norm &) long lute apex:(sail &)))))
   ++  till                                              ::  mold tall form
