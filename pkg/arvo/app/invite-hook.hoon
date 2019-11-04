@@ -29,8 +29,8 @@
     ?:  (team:title our.bol src.bol)
       ?>  !(team:title our.bol ship.invite.act)
       [(invite-hook-poke recipient.invite.act act)]~
-    ?~  (invitatory-scry path.act)  ~
-    ?^  (invite-scry path.act uid.act)  ~
+    ?>  ?=(^ (invitatory-scry path.act))
+    ?>  ?=(~ (invite-scry path.act uid.act))
     [(invite-poke path.act act)]~
   ==
 ::
