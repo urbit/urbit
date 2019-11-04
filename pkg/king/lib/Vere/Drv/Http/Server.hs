@@ -23,7 +23,7 @@
          `openFreePort` myself, but this will work for now.
 -}
 
-module Vere.Http.Server where
+module Vere.Drv.Http.Server where
 
 import Arvo            hiding (ServerId, reqBody, reqUrl, secure)
 import Data.Conduit
@@ -36,7 +36,7 @@ import Data.Bits           (shiftL, (.|.))
 import Network.Socket      (SockAddr(..))
 import System.Directory    (doesFileExist, removeFile)
 import System.Random       (randomIO)
-import Vere.Http           (convertHeaders, unconvertHeaders)
+import Vere.Drv.Http        (convertHeaders, unconvertHeaders)
 
 import qualified Network.HTTP.Types          as H
 import qualified Network.Wai                 as W
@@ -461,20 +461,18 @@ respond (Drv v) reqId ev = do
 
 serv :: ∀e. HasLogFunc e
      => FilePath -> KingId -> QueueEv
-     -> ([Ev], RAcquire e (EffCb e HttpServerEf))
+     -> IODrv e HttpServerEf
 serv pier king plan =
-    (initialEvents, runHttpServer)
+    IODrv [bornEv king] runHttpServer
   where
-    initialEvents :: [Ev]
-    initialEvents = [bornEv king]
-
     runHttpServer :: RAcquire e (EffCb e HttpServerEf)
     runHttpServer = handleEf <$> mkRAcquire (Drv <$> newMVar Nothing) kill
 
     restart :: Drv -> HttpServerConf -> RIO e Serv
     restart (Drv var) conf = do
         logDebug "Restarting http server"
-        res <- fromEither =<< restartService var (startServ pier conf plan) killServ
+        res <- fromEither =<< restartService var (startServ pier conf plan)
+                                killServ
         logDebug "Done restating http server"
         pure res
 

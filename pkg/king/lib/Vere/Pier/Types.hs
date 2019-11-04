@@ -85,12 +85,7 @@ type EffCb e a = a -> RIO e ()
 
 type Perform = Ef -> IO ()
 
-data IODriver = IODriver
-  { bornEvent   :: IO Ev
-  , startDriver :: (Ev -> STM ()) -> IO (Async (), Perform)
-  }
-
---------------------------------------------------------------------------------
+data IODrv e ef = IODrv [Ev] (RAcquire e (EffCb e ef))
 
 
 -- Instances -------------------------------------------------------------------

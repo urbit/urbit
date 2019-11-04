@@ -11,7 +11,7 @@ import Test.Tasty.QuickCheck
 import Test.Tasty.TH
 import Urbit.Time
 import UrbitPrelude
-import Vere.Ames
+import Vere.Drv.Ames
 import Vere.Log
 import Vere.Pier.Types
 
@@ -39,8 +39,8 @@ runGala :: forall e. (HasLogFunc e)
         => Word8 -> RAcquire e (TQueue Ev, EffCb e NewtEf)
 runGala point = do
     q  <- newTQueueIO
-    let (_, runAmes) =
-          ames pid (fromIntegral point) True Nothing (writeTQueue q)
+    let IODrv _ runAmes =
+          ames pid (fromIntegral point) True Nothing (writeTQueue q) print
     cb ← runAmes
     rio $ cb turfEf
     pure (q, cb)

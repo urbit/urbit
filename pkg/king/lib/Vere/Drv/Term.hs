@@ -1,4 +1,4 @@
-module Vere.Term
+module Vere.Drv.Term
     ( module Term
     , localClient
     , connectToRemote
@@ -6,6 +6,8 @@ module Vere.Term
     , termServer
     , term
     ) where
+
+import UrbitPrelude hiding (getCurrentTime)
 
 import Arvo                  hiding (Term)
 import Data.Char
@@ -16,19 +18,18 @@ import RIO.FilePath
 import System.Posix.IO
 import System.Posix.Terminal
 import Urbit.Time
-import UrbitPrelude          hiding (getCurrentTime)
 import Vere.Pier.Types
 
-import Data.List     ((!!))
-import RIO.Directory (createDirectoryIfMissing)
-import Vere.Term.API (Client(Client))
+import Data.List         ((!!))
+import RIO.Directory     (createDirectoryIfMissing)
+import Vere.Drv.Term.API (Client(Client))
 
 import qualified Data.ByteString.Internal     as BS
 import qualified Data.ByteString.UTF8         as BS
 import qualified System.Console.Terminal.Size as TSize
 import qualified System.Console.Terminfo.Base as T
+import qualified Vere.Drv.Term.API            as Term
 import qualified Vere.NounServ                as Serv
-import qualified Vere.Term.API                as Term
 
 
 -- Types -----------------------------------------------------------------------
@@ -519,9 +520,9 @@ term :: forall e. HasLogFunc e
      -> FilePath
      -> KingId
      -> QueueEv
-     -> ([Ev], RAcquire e (EffCb e TermEf))
+     -> IODrv e TermEf
 term (tsize, Client{..}) shutdownSTM pierPath king enqueueEv =
-    (initialEvents, runTerm)
+    IODrv initialEvents runTerm
   where
     TSize.Window wi hi = tsize
 

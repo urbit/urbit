@@ -3,20 +3,21 @@
          already in use.
 -}
 
-module Vere.Http.Client where
+module Vere.Drv.Http.Client where
 
-import Arvo            (BlipEv(..), Ev(..), HttpClientEf(..), HttpClientEv(..),
-                        HttpClientReq(..), HttpEvent(..), KingId,
-                        ResponseHeader(..))
-import UrbitPrelude    hiding (Builder)
+import UrbitPrelude hiding (Builder)
+
 import Vere.Pier.Types
+import Vere.Drv.Http
 
-import Vere.Http
+import Arvo (BlipEv(..), Ev(..), HttpClientEf(..), HttpClientEv(..),
+             HttpClientReq(..), HttpEvent(..), KingId, ResponseHeader(..))
 
 import qualified Data.Map                as M
 import qualified Network.HTTP.Client     as H
 import qualified Network.HTTP.Client.TLS as TLS
 import qualified Network.HTTP.Types      as HT
+
 
 -- Types -----------------------------------------------------------------------
 
@@ -26,6 +27,7 @@ data HttpClientDrv = HttpClientDrv
   { hcdManager :: H.Manager
   , hcdLive    :: TVar (Map ReqId (Async ()))
   }
+
 
 --------------------------------------------------------------------------------
 
@@ -52,13 +54,10 @@ bornEv king =
 
 --------------------------------------------------------------------------------
 
-client :: forall e. HasLogFunc e
-       => KingId -> QueueEv -> ([Ev], RAcquire e (EffCb e HttpClientEf))
-client kingId enqueueEv = (initialEvents, runHttpClient)
+client :: ∀e. HasLogFunc e => KingId -> QueueEv -> IODrv e HttpClientEf
+client kingId enqueueEv =
+    IODrv [bornEv kingId] runHttpClient
   where
-    initialEvents :: [Ev]
-    initialEvents = [bornEv kingId]
-
     runHttpClient :: RAcquire e (EffCb e HttpClientEf)
     runHttpClient = handleEffect <$> mkRAcquire start stop
 

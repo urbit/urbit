@@ -10,31 +10,29 @@ import Arvo
 import System.Random
 import Vere.Pier.Types
 
-import Data.Text          (append)
-import System.Posix.Files (ownerModes, setFileMode)
-import Vere.Ames          (ames)
-import Vere.Behn          (behn)
-import Vere.Clay          (clay)
-import Vere.Http.Client   (client)
-import Vere.Http.Server   (serv)
-import Vere.Log           (EventLog)
-import Vere.Serf          (Serf, SerfState(..), doJob, sStderr)
+import Data.Text            (append)
+import System.Posix.Files   (ownerModes, setFileMode)
+import Vere.Drv.Ames        (ames)
+import Vere.Drv.Behn        (behn)
+import Vere.Drv.Clay        (clay)
+import Vere.Drv.Http.Client (client)
+import Vere.Drv.Http.Server (serv)
+import Vere.Log             (EventLog)
+import Vere.Serf            (Serf, SerfState(..), doJob, sStderr)
 
 import RIO.Directory
 
 import qualified System.Console.Terminal.Size as TSize
 import qualified System.Entropy               as Ent
 import qualified Urbit.Time                   as Time
+import qualified Vere.Drv.Term                as Term
+import qualified Vere.Drv.Term.API            as Term
+import qualified Vere.Drv.Term.Demux          as Term
 import qualified Vere.Log                     as Log
 import qualified Vere.Serf                    as Serf
-import qualified Vere.Term                    as Term
-import qualified Vere.Term.API                as Term
-import qualified Vere.Term.Demux              as Term
 
 
 --------------------------------------------------------------------------------
-
-_ioDrivers = [] :: [IODriver]
 
 setupPierDirectory :: FilePath -> RIO e ()
 setupPierDirectory shipPath = do
@@ -256,18 +254,21 @@ drivers :: HasLogFunc e
 drivers pierPath inst who isFake mPort plan shutdownSTM termSys stderr =
     (initialEvents, runDrivers)
   where
-    (behnBorn, runBehn) = behn inst plan
-    (amesBorn, runAmes) = ames inst who isFake mPort plan stderr
-    (httpBorn, runHttp) = serv pierPath inst plan
-    (clayBorn, runClay) = clay pierPath inst plan
-    (irisBorn, runIris) = client inst plan
-    (termBorn, runTerm) = Term.term termSys shutdownSTM pierPath inst plan
-    initialEvents       = mconcat [behnBorn, clayBorn, amesBorn, httpBorn,
-                                   termBorn, irisBorn]
-    runDrivers          = do
+    IODrv behnBorn runBehn = behn inst plan
+    IODrv amesBorn runAmes = ames inst who isFake mPort plan stderr
+    IODrv httpBorn runHttp = serv pierPath inst plan
+    IODrv clayBorn runClay = clay pierPath inst plan
+    IODrv irisBorn runIris = client inst plan
+    IODrv termBorn runTerm = Term.term termSys shutdownSTM pierPath inst plan
+
+    initialEvents = mconcat [ behnBorn, clayBorn, amesBorn, httpBorn, termBorn
+                            , irisBorn
+                            ]
+
+    runDrivers = do
         dNewt       <- runAmes
-        dBehn       <- liftAcquire $ runBehn
-        dAmes       <- pure $ const $ pure ()
+        dBehn       <- runBehn
+        dAmes       <- pure $ const $ pure () -- Same as `%newt`
         dHttpClient <- runIris
         dHttpServer <- runHttp
         dSync       <- runClay

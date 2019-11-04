@@ -1,4 +1,4 @@
-module Vere.Ames (ames) where
+module Vere.Drv.Ames (ames) where
 
 import UrbitPrelude
 
@@ -91,9 +91,9 @@ renderGalaxy = Ob.renderPatp . Ob.patp . fromIntegral . unGalaxy
 ames :: forall e. HasLogFunc e
      => KingId -> Ship -> Bool -> Maybe Port -> QueueEv
      -> (Text -> RIO e ())
-     -> ([Ev], RAcquire e (EffCb e NewtEf))
+     -> IODrv e NewtEf
 ames inst who isFake mPort enqueueEv stderr =
-    (initialEvents, runAmes)
+    IODrv initialEvents runAmes
   where
     initialEvents :: [Ev]
     initialEvents = [barnEv inst]

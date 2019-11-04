@@ -1,4 +1,4 @@
-module Vere.Isle.Util where
+module Vere.Drv.Isle.Util where
 
 import Prelude
 

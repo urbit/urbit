@@ -1,4 +1,4 @@
-module Vere.Term.Logic
+module Vere.Drv.Term.Logic
     ( SpinnerCause(..), St, Ev(..), Ef(..)
     , init
     , step
@@ -12,7 +12,7 @@ import UrbitPrelude hiding (init)
 import Data.Sequence (Seq((:<|)))
 
 import qualified Arvo
-import qualified Vere.Term.API as Term
+import qualified Vere.Drv.Term.API as Term
 
 
 --------------------------------------------------------------------------------

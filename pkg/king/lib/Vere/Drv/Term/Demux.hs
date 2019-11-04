@@ -4,15 +4,15 @@
     given full event history since the creation of the demuxer.
 -}
 
-module Vere.Term.Demux (Demux, mkDemux, addDemux, useDemux) where
+module Vere.Drv.Term.Demux (Demux, mkDemux, addDemux, useDemux) where
 
 import UrbitPrelude
 
 import Arvo          (Belt)
-import Vere.Term.API (Client(Client))
+import Vere.Drv.Term.API (Client(Client))
 
-import qualified Vere.Term.API   as Term
-import qualified Vere.Term.Logic as Logic
+import qualified Vere.Drv.Term.API   as Term
+import qualified Vere.Drv.Term.Logic as Logic
 
 
 -- External --------------------------------------------------------------------

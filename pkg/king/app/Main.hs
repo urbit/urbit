@@ -121,7 +121,7 @@ import qualified Urbit.Ob                    as Ob
 import qualified Vere.Log                    as Log
 import qualified Vere.Pier                   as Pier
 import qualified Vere.Serf                   as Serf
-import qualified Vere.Term                   as Term
+import qualified Vere.Drv.Term               as Term
 
 --------------------------------------------------------------------------------
 

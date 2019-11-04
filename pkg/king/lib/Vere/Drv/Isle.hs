@@ -1,13 +1,13 @@
 {-# OPTIONS_GHC -Wwarn #-}
 
-module Vere.Isle where
+module Vere.Drv.Isle where
 
 import ClassyPrelude
 import Data.Word
 
-import qualified Data.Vector    as V
-import qualified SDL            as SDL
-import qualified Vere.Isle.Util as C
+import qualified Data.Vector        as V
+import qualified SDL                as SDL
+import qualified Vere.Drv.Isle.Util as C
 
 import Data.Bits   (testBit)
 import Data.Vector ((!))

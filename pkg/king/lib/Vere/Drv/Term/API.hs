@@ -1,4 +1,4 @@
-module Vere.Term.API (Ev(..), Client(..), trace, spin, stopSpin) where
+module Vere.Drv.Term.API (Ev(..), Client(..), trace, spin, stopSpin) where
 
 import UrbitPrelude hiding (trace)
 

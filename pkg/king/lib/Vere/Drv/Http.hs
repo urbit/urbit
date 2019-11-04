@@ -1,6 +1,4 @@
--- zuse: +http -----------------------------------------------------------------
-
-module Vere.Http where
+module Vere.Drv.Http where
 
 import ClassyPrelude
 import Noun

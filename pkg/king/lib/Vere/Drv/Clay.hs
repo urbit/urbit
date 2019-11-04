@@ -1,4 +1,4 @@
-module Vere.Clay (clay) where
+module Vere.Drv.Clay (clay) where
 
 import Arvo            hiding (Term)
 import UrbitPrelude
@@ -94,10 +94,9 @@ buildActionListFromDifferences fp snapshot = do
 
 --------------------------------------------------------------------------------
 
-clay :: forall e. HasLogFunc e
-     => FilePath -> KingId -> QueueEv -> ([Ev], RAcquire e (EffCb e SyncEf))
+clay :: ∀e. HasLogFunc e => FilePath -> KingId -> QueueEv -> IODrv e SyncEf
 clay pierPath king enqueueEv =
-    (initialEvents, runSync)
+    IODrv initialEvents runSync
   where
     initialEvents = [
       EvBlip $ BlipEvBoat $ BoatEvBoat () ()
