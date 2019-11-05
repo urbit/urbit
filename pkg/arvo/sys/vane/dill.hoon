@@ -561,7 +561,7 @@
     =*  duc  (need hey.all)
     =/  app  %hood
     =/  see  (tuba "<awaiting {(trip app)}, this may take a minute>")
-    =/  zon=axon  [app input=[~ ~] width=80 cursor=0 see]
+    =/  zon=axon  [app input=[~ ~] width=80 cursor=(lent see) see]
     ::
     =^  moz  all  abet:(~(into as duc zon) ~)
     [moz ..^$]
