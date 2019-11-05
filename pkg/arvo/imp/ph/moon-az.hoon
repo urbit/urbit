@@ -9,7 +9,7 @@
 ;<  ~  bind:m  (spawn ~marbud)
 ;<  ~  bind:m  (spawn ~linnup-torsyx)
 ;<  ~  bind:m  (spawn ~dev)
-;<  ~  bind:m  (real-ship: ~bud)
+;<  ~  bind:m  (real-ship ~bud)
 ;<  ~  bind:m  (real-ship ~marbud)
 ;<  ~  bind:m  (real-ship ~linnup-torsyx)
 ;<  ~  bind:m  (real-ship ~linnup-torsyx-linnup-torsyx)
