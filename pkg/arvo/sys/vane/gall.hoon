@@ -274,6 +274,48 @@
     =/  pass  [path note-arvo]
     (mo-pass pass)
   ::
+  ::  +mo-reboot: ask %ford to rebuild the specified agent
+  ::
+  ++  mo-reboot
+    |=  [force=? =term =ship]
+    ^+  mo-core
+    =/  gent  (~(got by running.agents.state) term)
+    =.  hen  control-duct.gent
+    =*  desk  q.beak.gent
+    ::  if we're forcing a reboot, we don't try to %kill the old build
+    ::
+    ?:  force
+      (mo-boot term ship desk)
+    ::
+    =/  =wire
+      =/  ship  (scot %p ship)
+      =/  case  (scot r.beak.gent)
+      /sys/core/[term]/[ship]/[desk]/[case]
+    %.  [term ship desk]
+    =<  mo-boot
+    =/  =note-arvo  [%f %kill ~]
+    (mo-pass wire note-arvo)
+    ::
+  ::
+  ::  +mo-goad: rebuild agent(s)
+  ::
+  ++  mo-goad
+    |=  [force=? agent=(unit dude)]
+    ^+  mo-core
+    ?^  agent
+      ~|  goad-gone+u.agent
+      (mo-reboot force u.agent our)
+    ::
+    =/  agents=(list term)
+      ~(tap in ~(key by running.agents.state))
+    |-  ^+  mo-core
+    ?~  agents
+      mo-core
+    %=  $
+      agents     t.agents
+      ..mo-core  (mo-reboot force i.agents our)
+    ==
+  ::
   ::  +mo-pass: prepend a standard %pass to the current list of moves.
   ::
   ++  mo-pass
@@ -2355,6 +2397,7 @@
         %dirk            `%c
         %drop            `%c
         %flog            `%d
+        %goad            `%g
         %info            `%c
         %keep            `%f
         %kill            `%f
@@ -2420,6 +2463,9 @@
     ::
     =>  (mo-handle-local:initialised p.sock internal-task)
     mo-abet
+  ::
+      %goad
+    mo-abet:(mo-goad:initialised force.task agent.task)
   ::
       %init
     =/  payload  gall-payload(system-duct.agents.state duct)
