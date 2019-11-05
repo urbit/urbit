@@ -2,9 +2,10 @@
 ::::  /hoon/dojo/app                                    ::  ::::
   ::                                                    ::    ::
 /?  309                                                 ::  arvo kelvin
-/-  sole, lens                                          ::  console structures
-/+  sole, pprint, auto, easy-print                      ::
-=,  sole
+/-  *sole, lens                                         ::  console structures
+/+  sole, pprint,                                       ::
+    auto=language-server-complete,                      ::
+    easy-print=language-server-easy-print               ::
 ::                                                      ::  ::
 ::::                                                    ::  ::::
   ::                                                    ::    ::
@@ -1012,6 +1013,11 @@
     ::  ~&  [%his-clock ler.cal]
     ::  ~&  [%our-clock ven.say]
     =^  dat  say  (~(transceive sole say) cal)
+    ::  speedrun mode
+    ::  =;  res
+    ::    ?.  ?=(%del -.dat)
+    ::      res
+    ::    (he-tab:res +(p.dat))
     ?.  ?&  ?=($del -.dat)
             =(+(p.dat) (lent buf.say))
         ==

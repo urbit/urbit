@@ -24,20 +24,22 @@
   ::  +require-authorization: redirect to the login page when unauthenticated
   ::
   ++  require-authorization
-    |*  [=bone move=mold this=*]
-    |=  handler=$-(inbound-request:eyre (quip move _this))
+    |*  this=*
+    |=  handler=$-(inbound-request:eyre (quip card:agent:mall _this))
     |=  =inbound-request:eyre
-    ^-  (quip move _this)
+    ^-  (quip card:agent:mall _this)
     ::
     ?:  authenticated.inbound-request
+      ~!  this
+      ~!  +:*handler
       (handler inbound-request)
     ::
     :_  this
-    ^-  (list move)
+    ^-  (list card:agent:mall)
     =/  redirect=cord
       %-  crip
       "/~/login?redirect={(trip url.request.inbound-request)}"
-    [bone [%http-response %start [307 ['location' redirect]~] ~ %.y]]~
+    [%give [%http-response %start [307 ['location' redirect]~] ~ %.y]]~
   ::
   ++  html-response
     |=  oct-html=octs
