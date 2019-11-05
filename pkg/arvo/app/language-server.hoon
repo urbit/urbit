@@ -15,8 +15,10 @@
   ==
 ::
 +$  lsp-req 
-  $%  [%sync changes=(list change)]
-      [%completion position]
+  $:  uri=@t
+      $%  [%sync changes=(list change)]
+          [%completion position]
+      ==
   ==
 ::
 +$  change
@@ -33,15 +35,12 @@
 +$  position
   [row=@ud col=@ud]
 ::
-+$  state  buf=wall
++$  state  bufs=(map uri=@t buf=wall)
 --
 ::
 |_  [bow=bowl:gall state]
 ::
 ++  this  .
-++  tall
-  (ifix [gay gay] tall:vast)
-::
 ++  prep
   |=  old=(unit state)
   ^-  (quip move _this)
@@ -49,7 +48,7 @@
   ?~  old
     :_  this
     [ost.bow %connect / [~ /'~language-server-protocol'] %language-server]~
-  [~ this(buf u.old)]
+  [~ this(bufs u.old)]
 ::
 ::  alerts us that we were bound.
 ::
@@ -63,9 +62,14 @@
 ++  parser
   =,  dejs:format
   |^
-  %-  of
-  :~  sync+sync
-      completion+position
+  %:  ot
+    uri+so
+    :-  %data
+    %-  of
+    :~  sync+sync
+        completion+position
+    ==
+    ~
   ==
   ::
   ++  sync
@@ -99,15 +103,18 @@
   =/  =lsp-req
     %-  parser
     (need (de-json:html q.u.body.request.inbound-request))
+  =/  buf  (~(gut by bufs) uri.lsp-req *wall)
   =^  out-jon  buf
-    ?-  -.lsp-req
-      %sync        (handle-sync +.lsp-req)
-      %completion  (handle-completion +.lsp-req)
+    ?-  +<.lsp-req
+      %sync        (handle-sync buf +>.lsp-req)
+      %completion  (handle-completion buf +>.lsp-req)
     ==
+  =.  bufs
+    (~(put by bufs) uri.lsp-req buf)
   [[ost.bow %http-response (json-response:app (json-to-octs out-jon))]~ this]
 ::
 ++  handle-sync
-  |=  changes=(list change)
+  |=  [buf=wall changes=(list change)]
   :-  *json
   |-  ^-  wall
   ?~  changes
@@ -117,8 +124,8 @@
     =.  buf  (turn wain trip)
     $(changes t.changes)
   =/  =tape      (zing (join "\0a" buf))
-  =/  start-pos  (get-pos start.u.range.i.changes)
-  =/  end-pos    (get-pos end.u.range.i.changes)
+  =/  start-pos  (get-pos buf start.u.range.i.changes)
+  =/  end-pos    (get-pos buf end.u.range.i.changes)
   =.  tape
     ;:  weld
       (scag start-pos tape)
@@ -140,7 +147,7 @@
   [[char i.wall] t.wall]
 ::
 ++  get-pos
-  |=  position
+  |=  [buf=wall position]
   ^-  @ud
   ?~  buf
     0
@@ -156,10 +163,10 @@
   (sub a b)
 ::
 ++  handle-completion
-  |=  [row=@ud col=@ud]
+  |=  [buf=wall row=@ud col=@ud]
   ^-  [json wall]
   =/  =tape  (zing (join "\0a" buf))
-  =/  pos  (get-pos row col)
+  =/  pos  (get-pos buf row col)
   :_  buf
   ::  Check if we're on a rune
   ::
