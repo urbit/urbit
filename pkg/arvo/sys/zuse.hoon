@@ -7654,6 +7654,9 @@
         ++  conditional-star-release
           0x8c24.1098.c3d3.498f.e126.1421.633f.d579.86d7.4aea
         ::
+        ++  delegated-sending
+          0xf790.8ab1.f1e3.52f8.3c5e.bc75.051c.0565.aeae.a5fb
+        ::
         ::  launch: block number of azimuth deploy
         ::
         ++  launch  6.784.800

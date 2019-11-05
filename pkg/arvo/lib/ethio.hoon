@@ -105,6 +105,19 @@
     =,  dejs-soft:format
     (ot id+so error+(ot code+no message+so ~) ~)
   --
+::  +read-contract: calls a read function on a contract, produces result hex
+::
+++  read-contract
+  |=  [url=@t proto-read-request:rpc:ethereum]
+  =/  m  (async:stdio ,@t)
+  ;<  =json  bind:m
+    %^  request-rpc  url  id
+    :+  %eth-call
+      ^-  call:rpc:ethereum
+      [~ to ~ ~ ~ `tape`(encode-call:rpc:ethereum function arguments)]
+    [%label %latest]
+  ?.  ?=(%s -.json)  (async-fail:stdio %request-rpc-fail >json< ~)
+  (pure:m p.json)
 ::
 ++  get-latest-block
   |=  url=@ta
