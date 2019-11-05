@@ -1886,6 +1886,7 @@
           $>(%init vane-task)                           ::  set owner
           {$deal p/sock q/term r/task:agent}            ::  full transmission
           {$deal-mall p/sock q/term r/task:agent}       ::  full transmission
+          $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           $>(%west vane-task)                           ::  network request
           [%wash ~]                                     ::  clear caches
