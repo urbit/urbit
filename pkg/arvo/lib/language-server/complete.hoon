@@ -1,3 +1,4 @@
+/+  language-server-parser
 ::  Autocomplete for hoon.
 ::
 =/  debug  |
@@ -316,13 +317,11 @@
   ~?  >  debug  %start-magick
   =/  magicked  txt:(insert-magic pos code)
   ~?  >  debug  %start-parsing
-  =/  parser
-    (ifix [gay gay] tall:vast)
-  =/  res  (lily magicked parser)
+  =/  res  (lily magicked (language-server-parser *beam))
   ?:  ?=(%| -.res)
     ~?  >  debug  [%parsing-error p.res]
     [%| p.res]
   :-  %&
   ~?  >  debug  %parsed-good
-  ((cury tab-list-hoon sut) p.res)
+  ((cury tab-list-hoon sut) tssg+sources.p.res)
 --
