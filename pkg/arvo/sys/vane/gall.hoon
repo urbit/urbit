@@ -968,6 +968,7 @@
         =/  task  [hen routes agent-action]
         (~(put to tasks) task)
       ::
+      ~&  >>  [%gall-not-running term -.agent-action]
       %_  mo-core
         blocked.agents.state  (~(put by blocked.agents.state) term blocked)
       ==
