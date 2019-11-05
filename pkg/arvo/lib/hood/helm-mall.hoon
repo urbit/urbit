@@ -2,7 +2,7 @@
 ::::  /hoon/helm/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
-/-    sole, hall
+/-    sole
 /+    pill
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -187,6 +187,10 @@
   |=  ~  =<  abet
   (flog %verb ~)
 ::
+++  poke-knob
+  |=  [error-tag=@tas level=?(%hush %soft %loud)]  =<  abet
+  (emit %pass /helm %arvo %d %knob error-tag level)
+::
 ++  poke-serve
   |=  [=binding:eyre =generator:eyre]  =<  abet
   (emit %pass /helm/serv %arvo %e %serve binding generator)
@@ -201,6 +205,7 @@
     %helm-reset            =;(f (f !<(_+<.f vase)) poke-reset)
     %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
     %helm-verb             =;(f (f !<(_+<.f vase)) poke-verb)
+    %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
     %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
     %helm-nuke             =;(f (f !<(_+<.f vase)) poke-nuke)
     %helm-automass         =;(f (f !<(_+<.f vase)) poke-automass)

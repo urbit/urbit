@@ -2,7 +2,6 @@
 ::::  /hoon/kiln/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?  310                                                 ::  version
-/-  hall
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -435,8 +434,6 @@
 ++  spam
   |=  mes/(list tank)
   ((slog mes) ..spam)
-::     %-  emit :: XX not displayed/immediately
-::     [%poke /kiln/spam [our %hall] (said our %kiln now eny mes)]
 ::
 ++  auto
   |=  kiln-sync

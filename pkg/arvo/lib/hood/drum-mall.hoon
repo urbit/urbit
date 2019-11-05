@@ -2,7 +2,7 @@
 ::::  /hoon/drum/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
-/-    *sole, hall
+/-    *sole
 /+    sole
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -143,23 +143,6 @@
 =/  ost  0
 =+  (~(gut by bin) ost *source)
 =*  dev  -
-=>  |%                                                ::  arvo structures
-    ++  pear                                          ::  request
-      $%  {$sole-action vase}                         ::
-          {$hall-command vase}                        ::
-      ==                                              ::
-    ++  lime                                          ::  update
-      $%  {$dill-blit dill-blit:dill}                ::
-      ==                                              ::
-    ++  card                                          ::  general card
-      $%  {$conf wire dock ship term}                 ::
-          {$diff lime}                                ::
-          {$peer wire dock path}                      ::
-          {$poke wire dock pear}                      ::
-          {$pull wire dock ~}                        ::
-      ==                                              ::
-    ++  move  (pair bone card)                        ::  user-level move
-    --
 |_  {moz/(list card:agent:mall) biz/(list dill-blit:dill)}
 ++  diff-sole-effect-phat                             ::  app event
   |=  {way/wire fec/sole-effect}
@@ -527,14 +510,6 @@
   |=  card:agent:mall
   %_(+> moz [+< moz])
 ::
-++  se-hall
-  |=  tac/(list tank)
-  ^+  +>
-  :: XX hall should be usable for stack traces, see urbit#584 which this change
-  :: closed for the problems there
-  ((slog (flop tac)) +>)
-  ::(se-emit 0 %poke /drum/hall [our.hid %hall] (said:hall our.hid %drum now.hid eny.hid tac))
-::
 ++  se-text                                           ::  return text
   |=  txt/tape
   ^+  +>
@@ -544,7 +519,7 @@
   (se-blit %out (tuba txt))
 ::
 ++  se-poke                                           ::  send a poke
-  |=  {gyl/gill:gall par/pear}
+  |=  {gyl/gill:gall par/cage}
   (se-emit %pass (en-gill gyl) %agent gyl %poke par)
 ::
 ++  se-peer                                           ::  send a peer
@@ -572,7 +547,7 @@
     ^+  ..ta
     ..ta(fug (~(put by fug) gyl ``target`+<+))
   ::
-  ++  ta-poke  |=(a/pear +>(..ta (se-poke gyl a)))    ::  poke gyl
+  ++  ta-poke  |=(a/cage +>(..ta (se-poke gyl a)))    ::  poke gyl
   ::
   ++  ta-act                                          ::  send action
     |=  act/sole-action
@@ -649,6 +624,7 @@
         $f  (ta-aro %r)
         $g  ?~  ris  ta-bel
             (ta-hom(pos.hit num.hit, ris ~) [%set ~])
+        $i  ta-tab
         $k  =+  len=(lent buf.say.inp)
             ?:  =(pos.inp len)
               ta-bel
@@ -916,6 +892,9 @@
   ::
   ++  ta-ret                                          ::  hear return
     (ta-act %ret ~)
+  ::
+  ++  ta-tab                                          ::  hear tab
+    (ta-act %tab pos.inp)
   ::
   ++  ta-ser                                          ::  reverse search
     |=  ext/(list @c)
