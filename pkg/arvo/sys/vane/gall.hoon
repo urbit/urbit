@@ -72,15 +72,12 @@
   ==
 --
 |%
-::  +state-old: upgrade path
-::
-++  state-old  ?(state)
 ::  +state: all state
 ::
 ++  state
   $:  :: state version
       ::
-      %0
+      %1
       :: agents by ship
       ::
       =agents
@@ -469,10 +466,15 @@
     |=  =ship
     ^-  [bone _mo-core]
     ::
-    =/  =foreign
-      =/  existing  (~(get by contacts.agents.state) ship)
-      (fall existing [1 ~ ~])
+    =?  mo-core  !(~(has by contacts.agents.state) ship)
+      =/  =note-arvo  [%j %public-keys (silt ship ~)]
+      =.  moves  [[system-duct.agents.state %pass /sys/jael note-arvo] moves]
+      =/  =foreign  [1 ~ ~]
+      =.  contacts.agents.state
+        (~(put by contacts.agents.state) ship foreign)
+      mo-core
     ::
+    =/  =foreign  (~(got by contacts.agents.state) ship)
     =/  existing  (~(get by index-map.foreign) hen)
     ?^  existing
       [u.existing mo-core]
@@ -493,10 +495,37 @@
   ::
   ++  mo-retrieve-duct
     |=  [=ship index=@ud]
-    ^-  duct
+    ^-  (unit duct)
     ::
-    =/  =foreign  (~(got by contacts.agents.state) ship)
-    (~(got by duct-map.foreign) index)
+    =/  contact=(unit foreign)  (~(get by contacts.agents.state) ship)
+    ?~  contact
+      ~
+    `(~(got by duct-map.u.contact) index)
+  ::  +mo-cancel-jael: cancel jael subscription
+  ::
+  ++  mo-cancel-jael
+    |=  =ship
+    ^+  mo-core
+    =/  =note-arvo  [%j %nuke (silt ship ~)]
+    =.  moves
+      [[system-duct.agents.state %pass /sys/jael note-arvo] moves]
+    mo-core
+  ::  +mo-breach: ship breached, so forget about them
+  ::
+  ++  mo-breach
+    |=  =ship
+    ^+  mo-core
+    =/  agents=(list [name=term =agent])  ~(tap by running.agents.state)
+    |-  ^+  mo-core
+    ?~  agents
+      mo-core
+    =.  mo-core
+      =/  =routes  [disclosing=~ attributing=ship]
+      =/  app  (ap-abed:ap name.i.agents routes)
+      ap-abet:(ap-breach:app ship)
+    =.  mo-core  (mo-cancel-jael ship)
+    =.  contacts.agents.state  (~(del by contacts.agents.state) ship)
+    $(agents t.agents)
   ::  +mo-handle-sys: handle a +sign incoming over /sys.
   ::
   ::    (Note that /sys implies the +sign should be routed to a vane.)
@@ -507,6 +536,7 @@
     ^+  mo-core
     ::
     ?+  -.path  !!
+      %jael  (mo-handle-sys-jael path sign-arvo)
       %core  (mo-handle-sys-core path sign-arvo)
       %pel   (mo-handle-sys-pel path sign-arvo)
       %red   (mo-handle-sys-red path sign-arvo)
@@ -515,6 +545,16 @@
       %val   (mo-handle-sys-val path sign-arvo)
       %way   (mo-handle-sys-way path sign-arvo)
     ==
+  ::  +mo-handle-sys-jael: receive update about contact
+  ::
+  ++  mo-handle-sys-jael
+    |=  [=path =sign-arvo]
+    ^+  mo-core
+    ?>  ?=([%j %public-keys *] sign-arvo)
+    ?>  ?=([%jael ~] path)
+    ?.  ?=(%breach -.public-keys-result.sign-arvo)
+      mo-core
+    (mo-breach who.public-keys-result.sign-arvo)
   ::  +mo-handle-sys-core: receive a core from %ford.
   ::
   ++  mo-handle-sys-core
@@ -634,7 +674,10 @@
     ::  XX pump should ack
     =.  mo-core  (mo-give %mack ~)
     =/  duct  (mo-retrieve-duct him num)
-    =.  mo-core  (mo-abed duct)
+    ?~  duct
+      %-  (slog leaf/"gall: sys-rep no index" ~)
+      mo-core
+    =.  mo-core  (mo-abed u.duct)
     =/  =cage  (result-to-cage:ford build-result)
     =/  move  [%unto [%diff cage]]
     (mo-give move)
@@ -955,9 +998,12 @@
         %x
       ::  XX should crash
       =.  mo-core  (mo-give %mack ~)
+      =/  out  (mo-retrieve-duct ship bone)
+      ?~  out
+        %-  (slog leaf/"gall: x no index" ~)
+        mo-core
       =/  initialised
-        =/  out  (mo-retrieve-duct ship bone)
-        (mo-abed out)
+        (mo-abed u.out)
       (mo-give:initialised %unto %quit ~)
     ==
   ::  +ap: agent engine
@@ -1123,6 +1169,29 @@
           [%pass use-path note-arvo]
         ==
       [duct card]
+    ::  +ap-breach: ship breached, so forget about them
+    ::
+    ++  ap-breach
+      |=  =ship
+      ^+  ap-core
+      =/  in=(list [=bone =^ship =path])
+        ~(tap by incoming.subscribers.current-agent)
+      |-  ^+  ap-core
+      ?^  in
+        =?  ap-core  =(ship ship.i.in)
+          =/  core  ap-load-delete(agent-bone bone.i.in)
+          core(agent-bone agent-bone)
+        $(in t.in)
+      ::
+      =/  out=(list [[=bone =wire] =bean =^ship =path])
+        ~(tap by outgoing.subscribers.current-agent)
+      |-  ^+  ap-core
+      ?~  out
+        ap-core
+      =?  ap-core  =(ship ship.i.out)
+        =/  core  (ap-specific-take(agent-bone bone.i.out) wire.i.out %quit ~)
+        core(agent-bone agent-bone)
+      $(out t.out)
     ::  +ap-call: call into server.
     ::
     ++  ap-call
@@ -1172,11 +1241,11 @@
       ::
       =/  slammed
         =/  index  p.u.maybe-arm
-        =/  term  q.u.maybe-arm
+        =/  name  q.u.maybe-arm
         =/  =vase
           =/  =path  [term tyl]
           !>  (slag index path)
-        (ap-slam term p.arm vase)
+        (ap-slam name p.arm vase)
       ::
       =^  possibly-vase  ap-core  slammed
       ?:  ?=(%.n -.possibly-vase)
@@ -1321,14 +1390,11 @@
       |=  =term
       ^-  [(each vase tang) _ap-core]
       ::
-      =/  compiled
+      =/  virtual
         =/  =type  p.running-state.current-agent
         =/  =hoon  [%limb term]
-        (~(mint wa cache.current-agent) type hoon)
-      ::
-      =/  virtual
-        =/  trap  |.(compiled)
-        (mule trap)
+        %-  mule
+        |.  (~(mint wa cache.current-agent) type hoon)
       ::
       ?:  ?=(%.n -.virtual)
         =/  =tang  p.virtual
@@ -2224,14 +2290,11 @@
       |=  [=term gat=vase arg=vase]
       ^-  [(each vase tang) _ap-core]
       ::
-      =/  compiled
+      =/  virtual
         =/  =type  [%cell p.gat p.arg]
         =/  =hoon  [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
-        (~(mint wa cache.current-agent) type hoon)
-      ::
-      =/  virtual
-        =/  trap  |.(compiled)
-        (mule trap)
+        %-  mule
+        |.  (~(mint wa cache.current-agent) type hoon)
       ::
       ?:  ?=(%.n -.virtual)
         =/  =tang  (ap-tang "call: {<term>}: type mismatch")
@@ -2298,6 +2361,7 @@
         %init            `%m
         %keep            `%f
         %kill            `%f
+        %knob            `%d
         %look            `%j
         %listen          `%j
         %merg            `%c
@@ -2346,7 +2410,6 @@
       ~&  [%gall-not-ours ship]
       [~ gall-payload]
     ::
-    ~&  [%gall-booting q.dock q.task]
     =>  (mo-boot:initialised q.dock q.task)
     mo-abet
   ::
@@ -2364,6 +2427,15 @@
       %init
     =/  payload  gall-payload(system-duct.agents.state duct)
     [~ payload]
+  ::
+      %trim
+    ::  reuse %wash task to clear caches on memory-pressure
+    ::
+    ::    XX cancel subscriptions if =(0 trim-priority) ?
+    ::
+    ~>  %slog.[0 leaf+"gall: trim: clearing caches"]
+    =/  =move  [duct %pass / %g [%wash ~]]
+    [[move ~] gall-payload]
   ::
       %vega
     [~ gall-payload]
@@ -2416,12 +2488,52 @@
 ::  +load: recreate vane
 ::
 ++  load
-  |=  =state-old
+  =>  |%
+      +$  all-states
+        $%  state-0
+            state-1
+        ==
+      ::
+      +$  state-0
+        $:  %0
+            =agents-0
+        ==
+      ::
+      +$  agents-0
+        $:  system-duct=duct
+            contacts=(map ship foreign-0)
+            running=(map term agent)
+            blocked=(map term blocked)
+        ==
+      ::
+      +$  foreign-0
+        $:  =rift
+            index=@ud
+            index-map=(map duct @ud)
+            duct-map=(map @ud duct)
+        ==
+      ::
+      ++  upgrade-0
+        |=  s=state-0
+        ^-  state-1
+        :-  %1
+        %=    +.s
+            contacts.agents-0
+          %-  ~(run by contacts.agents-0.s)
+          |=  foreign-0
+          ^-  foreign
+          [index index-map duct-map]
+        ==
+      ::
+      ++  state-1  ^state
+      --
+  |=  old=all-states
   ^+  gall-payload
   ::
-  ?-  -.state-old
-    %0  gall-payload(state state-old)
-  ==
+  =?  old  ?=(%0 -.old)
+    (upgrade-0 old)
+  ?>  ?=(%1 -.old)
+  gall-payload(state old)
 ::  +scry: standard scry
 ::
 ++  scry

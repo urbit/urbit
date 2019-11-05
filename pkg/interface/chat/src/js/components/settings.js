@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import { deSig } from '/lib/util';
 
 import { ChatTabBar } from '/components/lib/chat-tabbar';
 
@@ -9,9 +10,7 @@ export class SettingsScreen extends Component {
     super(props);
 
     this.state = {
-      station: props.match.params.ship + "/" + props.match.params.station,
-      circle: props.match.params.station,
-      host: props.match.params.ship,
+      station: `/${props.match.params.ship}/${props.match.params.station}`,
       isLoading: false
     };
 
@@ -20,10 +19,11 @@ export class SettingsScreen extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
-    if (!!state.isLoading && !props.circles.includes(state.station)) {
+    if (!!state.isLoading && !(state.station in props.inbox)) {
       this.setState({
         isLoading: false
       }, () => {
+        props.setSpinner(false);
         props.history.push('/~chat');
       });
     }
@@ -31,29 +31,10 @@ export class SettingsScreen extends Component {
 
   deleteChat() {
     const { props, state } = this;
-    if (state.host === `~${window.ship}`) {
-      props.api.delete(state.circle);
-    } else {
-      let internalCircle = 'hall-internal-' + state.circle;
 
-      props.api.chat([
-        {
-          source: {
-            nom: 'inbox',
-            sub: false,
-            srs: [state.station]
-          }
-        },
-        {
-          delete: {
-            nom: internalCircle,
-            why: ''
-          }
-        }
-      ]);
-    }
-
+    props.api.chatView.delete(state.station);
     props.setSpinner(true);
+
     this.setState({
       isLoading: true
     });
@@ -61,11 +42,12 @@ export class SettingsScreen extends Component {
 
   renderDelete() {
     const { props, state } = this;
+
     let titleText = "Delete Chat";
     let descriptionText = "Permanently delete this chat.";
     let buttonText = "-> Delete";
 
-    if (state.host !== `~${window.ship}`) {
+    if (deSig(props.match.params.ship) !== window.ship) {
       titleText = "Leave Chat"
       descriptionText = "You will no longer have access to this chat."
       buttonText = "-> Leave";
@@ -81,25 +63,25 @@ export class SettingsScreen extends Component {
     );
   }
 
-
   render() {
     const { props, state } = this;
-    let peers = props.peers[state.station] || [window.ship];
+
+    let writeGroup = Array.from(props.group.values());
 
     if (!!state.isLoading) {
       let text = "Deleting...";
-      if (state.host === `~${window.ship}`) {
+      if (deSig(props.match.params.ship) !== window.ship) {
         text = "Leaving...";
       }
 
       return (
         <div className="h-100 w-100 overflow-x-hidden flex flex-column">
           <div className='pl3 pt2 bb mb3'>
-            <h2>{state.circle}</h2>
+            <h2>{state.station.substr(1)}</h2>
             <ChatTabBar
               {...props}
               station={state.station}
-              numPeers={peers.length} />
+              numPeers={writeGroup.length} />
           </div>
           <div className="w-100 cf pa3">
             <h2>{text}</h2>
@@ -111,11 +93,12 @@ export class SettingsScreen extends Component {
     return (
       <div className="h-100 w-100 overflow-x-hidden flex flex-column">
         <div className='pl3 pt2 bb mb3'>
-          <h2>{state.circle}</h2>
+          <h2>{state.station.substr(1)}</h2>
           <ChatTabBar
             {...props}
             station={state.station}
-            numPeers={peers.length} />
+            numPeers={writeGroup.length}
+            isOwner={deSig(props.match.params.ship) === window.ship} />
         </div>
         <div className="w-100 cf pa3">
           <h2>Settings</h2>

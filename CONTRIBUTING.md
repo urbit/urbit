@@ -40,7 +40,7 @@ $ urbit my-fake-zod
 
 ### Contributing
 
-The canonical source tree is located in the `master` branch at
+The canonical source tree is the `master` branch of
 [https://github.com/urbit/urbit][repo].  You should typically branch off of
 `master` when commencing new work; similarly, when we pull in your
 contribution, we'll do so by merging it to `master`.
@@ -50,6 +50,19 @@ GitHub pull request.  You can also post patches to the [mailing list][list],
 email them to maintainers, or request a maintainer pull from your tree directly
 -- but note that some maintainers will be more receptive to these methods than
 others.
+
+When contributing changes, via whatever means, make sure you describe them
+appropriately.  You should attach a reasonably high-level summary of what the
+changes are and what they do; reference any useful background material that may
+exist, e.g. a GitHub issue, a mailing list discussion, a UP, etc.  [Here][jbpr]
+is a good example of a pull request with a useful, concise description.
+
+If your changes replace significant extant functionality, be sure to compare
+them with the thing you're replacing.  You may also want to cc maintainers,
+reviewers, or other parties who might have a particular interest in what you're
+contributing.
+
+[jbpr]: https://github.com/urbit/urbit/pull/1782
 
 ### Hygiene
 
@@ -128,6 +141,12 @@ actually be present in the latest release.
 We perform updates by pushing releases over-the-air to `~zod` approximately
 once per week, so any contribution that can be deployed OTA will usually find
 its way onto the network pretty rapidly.
+
+If you want to propose a hotfix (i.e. a small, OTA-updateable change, usually a
+bugfix, to some currently-deployed release) then simply make it clear that your
+contribution -- whether it be a pull request, patch, or whatever -- is intended
+to be a hotfix.  A maintainer can then deploy it to the network outside of the
+normal release schedule.
 
 Less frequently we release new Vere versions, which requires users to download
 new binaries, and occasionally, while Urbit is still in early development, we

@@ -163,102 +163,61 @@ u3r_at(u3_atom a, u3_noun b)
 
 __attribute__((no_sanitize_address))
 c3_o
-u3r_mean(u3_noun som,
-        ...)
+u3r_vmean(u3_noun som, va_list ap)
 {
-  va_list            ap;
+  va_list            aq;
   c3_w               len_w;
   struct _mean_pair* prs_m;
 
   c3_assert(u3_none != som);
 
-  /* Count.
-  */
+  //  traverse copy of va_list for alloca
+  //
+  va_copy(aq, ap);
   len_w = 0;
-  {
-    va_start(ap, som);
-    while ( 1 ) {
-      if ( 0 == va_arg(ap, c3_w) ) {
-        break;
-      }
-      va_arg(ap, u3_noun*);
-      len_w++;
+
+  while ( 1 ) {
+    if ( 0 == va_arg(aq, c3_w) ) {
+      break;
     }
-    va_end(ap);
+    va_arg(aq, u3_noun*);
+    len_w++;
   }
+
+  va_end(aq);
 
   c3_assert( 0 != len_w );
   prs_m = alloca(len_w * sizeof(struct _mean_pair));
 
-  /* Install.
-  */
+  //  traverse va_list and extract args
+  //
   {
     c3_w i_w;
 
-    va_start(ap, som);
     for ( i_w = 0; i_w < len_w; i_w++ ) {
       prs_m[i_w].axe_w = va_arg(ap, c3_w);
       prs_m[i_w].som = va_arg(ap, u3_noun*);
     }
+
     va_end(ap);
   }
 
-  /* Extract.
-  */
+  //  extract axis from som
+  //
   return _mean_extract(som, len_w, prs_m);
 }
 
-/* _sang_one(): unify but leak old.
-*/
-static void
-_sang_one(u3_noun* a, u3_noun* b)
+c3_o
+u3r_mean(u3_noun som, ...)
 {
-  if ( *a == *b ) {
-    return;
-  }
-  else {
-    c3_o asr_o = u3a_is_senior(u3R, *a);
-    c3_o bsr_o = u3a_is_senior(u3R, *b);
+  c3_o    ret_o;
+  va_list ap;
 
-    if ( _(asr_o) && _(bsr_o) ) {
-      // You shouldn't have let this happen.  We don't want to
-      // descend down to a lower road and free there, because
-      // synchronization - though this could be revisited under
-      // certain circumstances.
-      //
-      return;
-    }
-    if ( _(asr_o) && !_(bsr_o) ){
-      // u3z(*b);
-      *b = *a;
-    }
-    if ( _(bsr_o) && !_(asr_o) ) {
-      //  u3z(*a);
-      *a = *b;
-    }
-    if ( u3a_is_north(u3R) ) {
-      if ( *a <= *b ) {
-        u3k(*a);
-        //  u3z(*b);
-        *b = *a;
-      } else {
-        u3k(*b);
-        //  u3z(*a);
-        *a = *b;
-      }
-    }
-    else {
-      if ( *a >= *b ) {
-        u3k(*a);
-        // u3z(*b);
-        *b = *a;
-      } else {
-        u3k(*b);
-        // u3z(*a);
-        *a = *b;
-      }
-    }
-  }
+  va_start(ap, som);
+  ret_o = u3r_vmean(som, ap);
+  va_end(ap);
+
+  return ret_o;
 }
 
 #define SONG_NONE 0
@@ -289,115 +248,26 @@ _eq_pop(c3_ys mov, c3_ys off)
   return u3to(eqframe, u3R->cap_p + off);
 }
 
-/* _sing_one(): do not pick a unified pointer for identical (a) and (b).
+/* _song_atom(): check if atom [a] is indirect and equal to noun [b]
 */
-static void
-_sing_one(u3_noun* a, u3_noun* b)
-{
-  // this space left intentionally blank
-}
-
-/* _sung_one(): pick a unified pointer for identical (a) and (b).
-**
-**  Assumes exclusive access to noun memory.
-*/
-static void
-_sung_one(u3_noun* a, u3_noun* b)
-{
-
-  if ( *a == *b ) {
-    return;
-  } else {
-    u3_road* rod_u = u3R;
-    while ( 1 ) {
-      //
-      //  we can't perform this kind of butchery on the home road,
-      //  where asynchronous things can allocate.
-      //
-      if ( u3R == &u3H->rod_u ) {
-        break;
-      }
-      else {
-        c3_o asr_o = u3a_is_senior(u3R, *a);
-        c3_o bsr_o = u3a_is_senior(u3R, *b);
-
-        if ( _(asr_o) && _(bsr_o) ) {
-          //
-          //  when unifying on a higher road, we can't free nouns,
-          //  because we can't track junior nouns that point into
-          //  that road.
-          //
-          //  this is just an implementation issue -- we could set use
-          //  counts to 0 without actually freeing.  but the allocator
-          //  would have to be actually designed for this.
-          //
-          //  not freeing may generate spurious leaks, so we disable
-          //  senior unification when debugging memory.  this will
-          //  cause a very slow boot process as the compiler compiles
-          //  itself, constantly running into duplicates.
-          //
-#ifdef U3_MEMORY_DEBUG
-          return;
-#else
-          u3R = u3to(u3_road, u3R->par_p);
-          continue;
-#endif
-        }
-
-        if ( _(asr_o) && !_(bsr_o) ){
-          if ( u3R == rod_u ) { u3z(*b); }
-          *b = *a;
-        }
-        if ( _(bsr_o) && !_(asr_o) ) {
-          if ( u3R == rod_u ) { u3z(*a); }
-          *a = *b;
-        }
-        if ( u3a_is_north(u3R) ) {
-          if ( *a <= *b ) {
-            u3k(*a);
-            if ( u3R == rod_u ) { u3z(*b); }
-            *b = *a;
-          } else {
-            u3k(*b);
-            if ( u3R == rod_u ) { u3z(*a); }
-            *a = *b;
-          }
-        }
-        else {
-          if ( *a >= *b ) {
-            u3k(*a);
-            if ( u3R == rod_u ) { u3z(*b); }
-            *b = *a;
-          } else {
-            u3k(*b);
-            if ( u3R == rod_u ) { u3z(*a); }
-            *a = *b;
-          }
-        }
-        break;
-      }
-    }
-    u3R = rod_u;
-  }
-}
-
 static inline c3_o
-_song_atom(u3_atom a, u3_atom b)
+_song_atom(u3_atom a, u3_noun b)
 {
-  u3a_atom* a_u = u3a_to_ptr(a);
-
-  if ( !_(u3a_is_atom(b)) ||
-      _(u3a_is_cat(a)) ||
-      _(u3a_is_cat(b)) )
+  //  [a] is an atom, not pointer-equal to noun [b].
+  //  if they're not both indirect atoms, they can't be equal.
+  //
+  if ( (c3n == u3a_is_pug(a)) ||
+       (c3n == u3a_is_pug(b)) )
   {
     return c3n;
   }
   else {
+    u3a_atom* a_u = u3a_to_ptr(a);
     u3a_atom* b_u = u3a_to_ptr(b);
 
-    if ( a_u->mug_w &&
-        b_u->mug_w &&
-        (a_u->mug_w != b_u->mug_w) )
+    if ( (0 != a_u->mug_w) &&
+         (0 != b_u->mug_w) &&
+         (a_u->mug_w != b_u->mug_w) )
     {
       return c3n;
     }
@@ -419,6 +289,7 @@ _song_atom(u3_atom a, u3_atom b)
       }
     }
   }
+
   return c3y;
 }
 
@@ -428,8 +299,7 @@ _song_atom(u3_atom a, u3_atom b)
 static c3_o
 _song_x_cape(c3_ys mov, c3_ys off,
              eqframe* fam, eqframe* don,
-             u3p(u3h_root) har_p,
-             void (*uni)(u3_noun*, u3_noun*))
+             u3p(u3h_root) har_p)
 {
   u3_noun a, b, key;
   u3_weak got;
@@ -456,12 +326,13 @@ _song_x_cape(c3_ys mov, c3_ys off,
           return c3n;
         }
         else {
-          u3a_cell* a_u = u3a_to_ptr(a);
-          u3a_cell* b_u = u3a_to_ptr(b);
+          a_u = u3a_to_ptr(a);
+          b_u = u3a_to_ptr(b);
 
-          if ( a_u->mug_w &&
-               b_u->mug_w &&
-               (a_u->mug_w != b_u->mug_w) ) {
+          if ( (0 != a_u->mug_w) &&
+               (0 != b_u->mug_w) &&
+               (a_u->mug_w != b_u->mug_w) )
+          {
             return c3n;
           }
           else {
@@ -483,7 +354,7 @@ _song_x_cape(c3_ys mov, c3_ys off,
       case SONG_HEAD:
         a_u = u3a_to_ptr(a);
         b_u = u3a_to_ptr(b);
-        uni(&(a_u->hed), &(b_u->hed));
+        u3a_wed(&(a_u->hed), &(b_u->hed));
         fam->sat_y = SONG_TAIL;
         fam = _eq_push(mov, off, a_u->tel, b_u->tel);
         continue;
@@ -491,7 +362,7 @@ _song_x_cape(c3_ys mov, c3_ys off,
       case SONG_TAIL:
         a_u = u3a_to_ptr(a);
         b_u = u3a_to_ptr(b);
-        uni(&(a_u->tel), &(b_u->tel));
+        u3a_wed(&(a_u->tel), &(b_u->tel));
         break;
 
       default:
@@ -499,6 +370,10 @@ _song_x_cape(c3_ys mov, c3_ys off,
         break;
     }
 
+    //  [har_p] is effectively a set of equal pairs.
+    //  we cons [a] and [b] as posts so that we don't
+    //  touch their reference counts.
+    //
     key = u3nc(u3a_to_off(a), u3a_to_off(b));
     u3t_off(euq_o);
     u3h_put(har_p, key, c3y);
@@ -513,7 +388,7 @@ _song_x_cape(c3_ys mov, c3_ys off,
 /* _song_x(): yes if a and b are the same noun, use uni to unify
 */
 static c3_o
-_song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
+_song_x(u3_noun a, u3_noun b)
 {
   u3p(eqframe) empty = u3R->cap_p;
 
@@ -553,9 +428,10 @@ _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
           a_u = u3a_to_ptr(a);
           b_u = u3a_to_ptr(b);
 
-          if ( a_u->mug_w &&
-               b_u->mug_w &&
-               (a_u->mug_w != b_u->mug_w) ) {
+          if ( (0 != a_u->mug_w) &&
+               (0 != b_u->mug_w) &&
+               (a_u->mug_w != b_u->mug_w) )
+          {
             u3R->cap_p = empty;
             return c3n;
           }
@@ -569,7 +445,7 @@ _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
       case SONG_HEAD:
         a_u = u3a_to_ptr(a);
         b_u = u3a_to_ptr(b);
-        uni(&(a_u->hed), &(b_u->hed));
+        u3a_wed(&(a_u->hed), &(b_u->hed));
         fam->sat_y = SONG_TAIL;
         fam = _eq_push(mov, off, a_u->tel, b_u->tel);
         continue;
@@ -577,7 +453,7 @@ _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
       case SONG_TAIL:
         a_u = u3a_to_ptr(a);
         b_u = u3a_to_ptr(b);
-        uni(&(a_u->tel), &(b_u->tel));
+        u3a_wed(&(a_u->tel), &(b_u->tel));
         break;
 
       default:
@@ -585,9 +461,12 @@ _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
         break;
     }
 
+    //  [ovr_s] counts iterations. when it overflows, we know we've hit a
+    //  pathological case and MUST start de-duplicating comparisons.
+    //
     if ( 0 == ++ovr_s ) {
       u3p(u3h_root) har_p = u3h_new();
-      c3_o ret_o = _song_x_cape(mov, off, fam, don, har_p, uni);
+      c3_o ret_o = _song_x_cape(mov, off, fam, don, har_p);
       u3h_free(har_p);
       u3R->cap_p = empty;
       return ret_o;
@@ -598,59 +477,14 @@ _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
   return c3y;
 }
 
-/* u3r_sang(): yes iff (a) and (b) are the same noun, unifying equals.
-*/
-c3_o
-u3r_sang(u3_noun a, u3_noun b)
-{
-  c3_o ret_o;
-  u3t_on(euq_o);
-  ret_o = _song_x(a, b, &_sang_one);
-  u3t_off(euq_o);
-  return ret_o;
-}
-
-/* u3r_sing():
-**
-**   Yes iff (a) and (b) are the same noun.
+/* u3r_sing(): Yes iff [a] and [b] are the same noun.
 */
 c3_o
 u3r_sing(u3_noun a, u3_noun b)
 {
-#ifndef U3_MEMORY_DEBUG
-  if ( u3R->par_p ) {
-    return u3r_sang(a, b);
-  }
-#endif
-  {
-    c3_o ret_o;
-
-    u3t_on(euq_o);
-    ret_o = _song_x(a, b, &_sing_one);
-    u3t_off(euq_o);
-
-    return ret_o;
-  }
-}
-
-/* u3rz_sing(): transferring u3r_sing
-*/
-c3_o
-u3rz_sing(u3_noun a, u3_noun b)
-{
-  c3_o ret_o = u3r_sing(a, b);
-  u3z(a); u3z(b);
-  return ret_o;
-}
-
-/* u3r_sung(): yes iff (a) and (b) are the same noun, unifying equals.
-*/
-c3_o
-u3r_sung(u3_noun a, u3_noun b)
-{
   c3_o ret_o;
   u3t_on(euq_o);
-  ret_o = _song_x(a, b, &_sung_one);
+  ret_o = _song_x(a, b);
   u3t_off(euq_o);
   return ret_o;
 }
@@ -829,13 +663,11 @@ u3r_nord(u3_noun a,
   }
 }
 
-/* u3r_sing_c():
-**
-**   Yes iff (b) is the same noun as the C string a_c.
+/* u3r_sing_c(): cord/C-string value equivalence.
 */
 c3_o
 u3r_sing_c(const c3_c* a_c,
-             u3_noun     b)
+           u3_noun     b)
 {
   c3_assert(u3_none != b);
 
@@ -1249,7 +1081,7 @@ u3r_bytes(c3_w    a_w,
 */
 void
 u3r_mp(mpz_t   a_mp,
-         u3_atom b)
+       u3_atom b)
 {
   c3_assert(u3_none != b);
   c3_assert(_(u3a_is_atom(b)));
@@ -1258,25 +1090,15 @@ u3r_mp(mpz_t   a_mp,
     mpz_init_set_ui(a_mp, b);
   }
   else {
-    u3a_atom* b_u   = u3a_to_ptr(b);
-    c3_w        len_w = b_u->len_w;
+    u3a_atom* b_u = u3a_to_ptr(b);
+    c3_w    len_w = b_u->len_w;
 
-    /* Slight deficiency in the GMP API.
-    */
+    //  slight deficiency in the GMP API.
+    //
     c3_assert(!(len_w >> 27));
     mpz_init2(a_mp, len_w << 5);
 
-    /* Efficiency: horrible.
-    */
-    {
-      c3_w *buf_w = alloca(len_w << 2);
-      c3_w i_w;
-
-      for ( i_w=0; i_w < len_w; i_w++ ) {
-        buf_w[i_w] = b_u->buf_w[i_w];
-      }
-      mpz_import(a_mp, len_w, -1, 4, 0, 0, buf_w);
-    }
+    mpz_import(a_mp, len_w, -1, sizeof(c3_w), 0, 0, b_u->buf_w);
   }
 }
 

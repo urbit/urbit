@@ -14,7 +14,6 @@
 #include <ncurses/term.h>
 #include <dirent.h>
 #include <openssl/ssl.h>
-#include <openssl/rand.h>
 #include <h2o.h>
 #include <curl/curl.h>
 #include <argon2.h>
@@ -71,8 +70,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   c3_w arg_w;
 
   u3_Host.ops_u.abo = c3n;
-  u3_Host.ops_u.bat = c3n;
-  u3_Host.ops_u.can = c3n;
   u3_Host.ops_u.dem = c3n;
   u3_Host.ops_u.dry = c3n;
   u3_Host.ops_u.gab = c3n;
@@ -89,13 +86,14 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.pro = c3n;
   u3_Host.ops_u.qui = c3n;
   u3_Host.ops_u.rep = c3n;
+  u3_Host.ops_u.tem = c3n;
   u3_Host.ops_u.tex = c3n;
   u3_Host.ops_u.tra = c3n;
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "G:J:B:K:A:H:I:w:u:e:E:f:F:k:p:LljabcCdgqsvxPDRS")) )
+                 "G:J:B:K:A:H:I:w:u:e:F:k:p:LljacdgqstvxPDRS")) )
   {
     switch ( ch_i ) {
       case 'J': {
@@ -126,10 +124,6 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.eth_c = strdup(optarg);
         break;
       }
-      case 'E': {
-        u3_Host.ops_u.ets_c = strdup(optarg);
-        break;
-      }
       case 'F': {
         u3_Host.ops_u.fak_c = _main_presig(optarg);
         u3_Host.ops_u.net   = c3n;
@@ -146,12 +140,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'x': {
         u3_Host.ops_u.tex = c3y;
-        break;
-      }
-      case 'f': {
-        if ( c3n == _main_readw(optarg, 100, &u3_Host.ops_u.fuz_w) ) {
-          return c3n;
-        }
         break;
       }
       case 'K': {
@@ -178,9 +166,7 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'l': { u3_Host.ops_u.lit = c3y; break; }
       case 'j': { u3_Host.ops_u.tra = c3y; break; }
       case 'a': { u3_Host.ops_u.abo = c3y; break; }
-      case 'b': { u3_Host.ops_u.bat = c3y; break; }
       case 'c': { u3_Host.ops_u.nuu = c3y; break; }
-      case 'C': { u3_Host.ops_u.can = c3y; break; }
       case 'd': { u3_Host.ops_u.dem = c3y; break; }
       case 'g': { u3_Host.ops_u.gab = c3y; break; }
       case 'P': { u3_Host.ops_u.pro = c3y; break; }
@@ -189,6 +175,7 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'v': { u3_Host.ops_u.veb = c3y; break; }
       case 's': { u3_Host.ops_u.git = c3y; break; }
       case 'S': { u3_Host.ops_u.has = c3y; break; }
+      case 't': { u3_Host.ops_u.tem = c3y; break; }
       case '?': default: {
         return c3n;
       }
@@ -235,9 +222,10 @@ _main_getopt(c3_i argc, c3_c** argv)
     u3_Host.dir_c = strdup(argv[optind]);
   }
 
-  if ( c3y == u3_Host.ops_u.bat ) {
-    u3_Host.ops_u.dem = c3y;
-    u3_Host.ops_u.nuu = c3y;
+  //  daemon mode (-d) implies disabling terminal assumptions (-t)
+  //
+  if ( c3y == u3_Host.ops_u.dem ) {
+    u3_Host.ops_u.tem = c3y;
   }
 
   //  make -c optional, catch invalid boot of existing pier
@@ -252,6 +240,10 @@ _main_getopt(c3_i argc, c3_c** argv)
     else if ( c3y == u3_Host.ops_u.nuu ) {
       fprintf(stderr, "tried to create, but %s already exists\n", u3_Host.dir_c);
       fprintf(stderr, "normal usage: %s %s\n", argv[0], u3_Host.dir_c);
+      exit(1);
+    }
+    else if ( 0 != access(u3_Host.dir_c, W_OK) ) {
+      fprintf(stderr, "urbit: write permissions are required for %s\n", u3_Host.dir_c);
       exit(1);
     }
   }
@@ -294,11 +286,6 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
-  if ( u3_Host.ops_u.can == c3y && u3_Host.ops_u.ets_c != 0 ) {
-    fprintf(stderr, "-C and -E cannot be used together\n");
-    return c3n;
-  }
-
   if ( u3_Host.ops_u.eth_c == 0 && imp_t ) {
     u3_Host.ops_u.eth_c = "http://eth-mainnet.urbit.org:8545";
   }
@@ -311,7 +298,7 @@ _main_getopt(c3_i argc, c3_c** argv)
            && u3_Host.ops_u.url_c == 0
            && u3_Host.ops_u.git == c3n ) {
     u3_Host.ops_u.url_c =
-      "https://bootstrap.urbit.org/urbit-" URBIT_VERSION ".pill";
+      "https://bootstrap.urbit.org/urbit-v" URBIT_VERSION ".pill";
   }
   else if ( u3_Host.ops_u.nuu == c3y
            && u3_Host.ops_u.url_c == 0
@@ -380,13 +367,11 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     // XX find a way to re-enable
     // "-A dir        Use dir for initial galaxy sync\n",
     "-B pill       Bootstrap from this pill\n",
-    "-b            Batch create\n",
     "-c pier       Create a new urbit in pier/\n",
     "-D            Recompute from events\n",
-    "-d            Daemon mode\n",
+    "-d            Daemon mode; implies -t\n",
     "-e url        Ethereum gateway\n",
     "-F ship       Fake keys; also disables networking\n",
-    "-f            Fuzz testing\n",
     "-g            Set GC flag\n",
     "-j file       Create json trace file\n",
     "-K stage      Start at Hoon kernel version stage\n",
@@ -399,6 +384,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-S            Disable battery hashing\n",
     // XX find a way to re-enable
     // "-s            Pill URL from arvo git hash\n",
+    "-t            Disable terminal/tty assumptions\n",
     "-u url        URL from which to download pill\n",
     "-v            Verbose\n",
     "-w name       Boot as ~name\n",
@@ -583,6 +569,14 @@ _fork_into_background_process()
   exit(WEXITSTATUS(status));
 }
 
+/* _stop_on_boot_completed_cb(): exit gracefully after boot is complete
+*/
+static void
+_stop_on_boot_completed_cb()
+{
+  u3_pier_exit(u3_pier_stub());
+}
+
 c3_i
 main(c3_i   argc,
      c3_c** argv)
@@ -612,6 +606,10 @@ main(c3_i   argc,
   if ( c3y == u3_Host.ops_u.rep ) {
     report();
     return 0;
+  }
+
+  if ( c3y == u3_Host.ops_u.tex ) {
+    u3_Host.bot_f = _stop_on_boot_completed_cb;
   }
 
 #if 0
@@ -680,13 +678,9 @@ main(c3_i   argc,
   u3K.certs_c = strdup("/tmp/urbit-ca-cert-XXXXXX");
   _setup_cert_store(u3K.certs_c);
 
-  if ( c3y == u3_Host.ops_u.dem && c3n == u3_Host.ops_u.bat ) {
+  if ( c3y == u3_Host.ops_u.dem ) {
     printf("boot: running as daemon\n");
   }
-
-  //  Seed prng. Don't panic -- just for fuzz testing.
-  //
-  srand(getpid());
 
   //  Instantiate process globals.
   {
@@ -726,6 +720,8 @@ main(c3_i   argc,
       }
 
       /*  Set dry-run flag.
+      **
+      **    XX also exit immediately?
       */
       if ( _(u3_Host.ops_u.dry) ) {
         u3C.wag_w |= u3o_dryrun;

@@ -306,7 +306,10 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
     tot_w += u3a_maid(fil_u, "effects", u3a_mark_noun(vir));
 
     u3a_print_memory(fil_u, "total marked", tot_w);
+    u3a_print_memory(fil_u, "free lists", u3a_idle(u3R));
     u3a_print_memory(fil_u, "sweep", u3a_sweep());
+
+    fflush(fil_u);
 
 #ifdef U3_MEMORY_LOG
     {
@@ -338,10 +341,6 @@ _worker_send(u3_noun job)
 static void
 _worker_send_replace(c3_d evt_d, u3_noun job)
 {
-  u3l_log("worker_send_replace %" PRIu64 " %s\r\n",
-          evt_d,
-          u3r_string(u3h(u3t(u3t(job)))));
-
   _worker_send(u3nt(c3__work,
                     u3i_chubs(1, &evt_d),
                     u3ke_jam(u3nc(u3V.mug_l, job))));
@@ -494,8 +493,8 @@ _worker_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
 static void
 _worker_work_live(c3_d evt_d, u3_noun job)
 {
-  u3_noun now, ovo, gon;
-  u3_noun last_date;
+  u3_noun now, ovo, gon, last_date;
+  c3_w pre_w = u3a_open(u3R);
 
   c3_assert(evt_d == u3V.dun_d + 1ULL);
   u3V.sen_d = evt_d;
@@ -506,15 +505,13 @@ _worker_work_live(c3_d evt_d, u3_noun job)
   u3A->now  = u3k(now);
 
 #ifdef U3_EVENT_TIME_DEBUG
-  {
-    struct timeval b4, f2, d0;
-    gettimeofday(&b4, 0);
+  struct timeval b4, f2, d0;
+  gettimeofday(&b4, 0);
 
-    if ( c3__belt != u3h(u3t(ovo)) ) {
-      c3_c* txt_c = u3r_string(u3h(u3t(ovo)));
+  if ( c3__belt != u3h(u3t(ovo)) ) {
+    c3_c* txt_c = u3r_string(u3h(u3t(ovo)));
 
-      u3l_log("work: %s (%" PRIu64 ") live\r\n", txt_c, evt_d);
-    }
+    u3l_log("work: %s (%" PRIu64 ") live\r\n", txt_c, evt_d);
   }
 #endif
 
@@ -539,9 +536,9 @@ _worker_work_live(c3_d evt_d, u3_noun job)
   }
 #endif
 
+  //  event rejected
+  //
   if ( u3_blip != u3h(gon) ) {
-    //  event rejected
-    //
     u3V.sen_d = u3V.dun_d;
     //  restore previous time
     //
@@ -556,11 +553,10 @@ _worker_work_live(c3_d evt_d, u3_noun job)
 
     _worker_lame(evt_d, nex, ovo, why, tan);
   }
+  //  event accepted
+  //
   else {
-    //  event accepted
-    //
-    u3V.dun_d = u3V.sen_d;
-    u3z(last_date);
+    c3_o rec_o = c3n;
 
     //  vir/(list ovum)  list of effects
     //  cor/arvo         arvo core
@@ -569,17 +565,66 @@ _worker_work_live(c3_d evt_d, u3_noun job)
     u3x_trel(gon, 0, &vir, &cor);
 
     u3k(ovo); u3k(vir); u3k(cor);
-    u3z(gon); u3z(job);
+    u3z(gon); u3z(job); u3z(last_date);
+
+    u3V.dun_d = u3V.sen_d;
+
+    //  after a successful event, we check for memory pressure.
+    //
+    //    if we've exceeded either of two thresholds, we reclaim
+    //    from our persistent caches, and notify the daemon
+    //    (via a "fake" effect) that arvo should trim state
+    //    (trusting that the daemon will enqueue an appropriate event).
+    //    For future flexibility, the urgency of the notification is represented
+    //    by a *decreasing* number: 0 is maximally urgent, 1 less so, &c.
+    //
+    //    high-priority: 2^22 contiguous words remaining (~8 MB)
+    //    low-priority:  2^27 contiguous words remaining (~536 MB)
+    //    XX maybe use 2^23 (~16 MB) and 2^26 (~268 MB?
+    //
+    //    XX refactor: we should measure memory after losing the old kernel
+    //
+    {
+      u3_noun pri = u3_none;
+      c3_w pos_w = u3a_open(u3R);
+      c3_w low_w = (1 << 27);
+      c3_w hig_w = (1 << 22);
+
+      if ( (pre_w > low_w) && !(pos_w > low_w) ) {
+        //  XX set flag in u3V so we don't repeat endlessly?
+        //
+        rec_o = c3y;
+        pri   = 1;
+      }
+      else if ( (pre_w > hig_w) && !(pos_w > hig_w) ) {
+        //  XX we should probably jam/cue our entire state at this point
+        //
+        rec_o = c3y;
+        pri   = 0;
+      }
+      //  reclaim memory from persistent caches periodically
+      //
+      //    XX this is a hack to work two things
+      //    - bytecode caches grow rapidly and can't be simply capped
+      //    - we don't make very effective use of our free lists
+      //
+      else {
+        rec_o = _(0 == (evt_d % 1000ULL));
+      }
+
+      //  notify daemon of memory pressure via "fake" effect
+      //
+      if ( u3_none != pri ) {
+        u3_noun cad = u3nc(u3nt(u3_blip, c3__arvo, u3_nul),
+                           u3nc(c3__trim, pri));
+        vir = u3nc(cad, vir);
+      }
+    }
 
     _worker_sure(ovo, vir, cor);
 
-    //  reclaim memory from persistent caches periodically
-    //
-    //    XX this is a hack to work around the fact that
-    //    the bytecode caches grow rapidly and are not
-    //    able to be simply capped (due to internal posts).
-    //
-    if ( 0 == (evt_d % 1000ULL) ) {
+
+    if ( c3y == rec_o ) {
       u3m_reclaim();
     }
   }
@@ -692,7 +737,34 @@ static void
 _worker_poke_exit(c3_w cod_w)                 //  exit code
 {
   if ( u3C.wag_w & u3o_debug_cpu ) {
-    u3t_damp();
+    FILE* fil_u;
+
+    {
+      u3_noun wen = u3dc("scot", c3__da, u3k(u3A->now));
+      c3_c* wen_c = u3r_string(wen);
+
+      c3_c nam_c[2048];
+      snprintf(nam_c, 2048, "%s/.urb/put/profile", u3P.dir_c);
+
+      struct stat st;
+      if ( -1 == stat(nam_c, &st) ) {
+        mkdir(nam_c, 0700);
+      }
+
+      c3_c man_c[2048];
+      snprintf(man_c, 2048, "%s/%s.txt", nam_c, wen_c);
+
+      fil_u = fopen(man_c, "w");
+
+      free(wen_c);
+      u3z(wen);
+    }
+
+    u3t_damp(fil_u);
+
+    {
+      fclose(fil_u);
+    }
   }
 
   exit(cod_w);
@@ -822,6 +894,21 @@ _worker_poke(void* vod_p, u3_noun mat)
   }
 }
 
+/* _worker_static_grab(): garbage collect, checking for profiling. RETAIN.
+*/
+static void
+_worker_static_grab(void)
+{
+  c3_assert( u3R == &(u3H->rod_u) );
+
+  fprintf(stderr, "work: measuring memory:\r\n");
+  u3a_print_memory(stderr, "total marked", u3m_mark(stderr));
+  u3a_print_memory(stderr, "free lists", u3a_idle(u3R));
+  u3a_print_memory(stderr, "sweep", u3a_sweep());
+  fprintf(stderr, "\r\n");
+  fflush(stderr);
+}
+
 /* u3_worker_boot(): send startup message to manager.
 */
 void
@@ -851,6 +938,18 @@ u3_worker_boot(void)
   u3l_log("work: play %" PRIu64 "\r\n", nex_d);
 
   _worker_send(u3nc(c3__play, dat));
+
+  //  measure/print static memory usage if < 1/2 of the loom is available
+  //
+  {
+    c3_w pen_w = u3a_open(u3R);
+
+    if ( !(pen_w > (1 << 28)) ) {
+      fprintf(stderr, "\r\n");
+      u3a_print_memory(stderr, "work: contiguous free space", pen_w);
+      _worker_static_grab();
+    }
+  }
 }
 
 /* main(): main() when run as urbit-worker
@@ -858,6 +957,18 @@ u3_worker_boot(void)
 c3_i
 main(c3_i argc, c3_c* argv[])
 {
+  //  the worker is spawned with [FD 0] = events and [FD 1] = effects
+  //  we dup [FD 0 & 1] so we don't accidently use them for something else
+  //  we replace [FD 0] (stdin) with a fd pointing to /dev/null
+  //  we replace [FD 1] (stdout) with a dup of [FD 2] (stderr)
+  //
+  c3_i nul_i = open("/dev/null", O_RDWR, 0);
+  c3_i inn_i = dup(0);
+  c3_i out_i = dup(1);
+  dup2(nul_i, 0);
+  dup2(2, 1);
+  close(nul_i);
+
   uv_loop_t* lup_u = uv_default_loop();
   c3_c*      dir_c = argv[1];
   c3_c*      key_c = argv[2];
@@ -914,11 +1025,11 @@ main(c3_i argc, c3_c* argv[])
 
     err_i = uv_pipe_init(lup_u, &u3V.inn_u.pyp_u, 0);
     c3_assert(!err_i);
-    uv_pipe_open(&u3V.inn_u.pyp_u, 0);
+    uv_pipe_open(&u3V.inn_u.pyp_u, inn_i);
 
     err_i = uv_pipe_init(lup_u, &u3V.out_u.pyp_u, 0);
     c3_assert(!err_i);
-    uv_pipe_open(&u3V.out_u.pyp_u, 1);
+    uv_pipe_open(&u3V.out_u.pyp_u, out_i);
   }
 
   /* set up writing

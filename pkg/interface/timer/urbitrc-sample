@@ -1,5 +1,0 @@
-module.exports = {
-  URBIT_PIERS: [
-    "/Users/logan/Dev/light-urbit/build/zod-chess-9/home",
-  ]
-};

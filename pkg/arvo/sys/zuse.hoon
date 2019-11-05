@@ -203,6 +203,9 @@
       ::  boot completed (XX legacy)
       ::
       [%init p=ship]
+      ::  trim state (in response to memory pressure)
+      ::
+      [%trim p=@ud]
       ::  kernel upgraded
       ::
       [%vega ~]
@@ -390,6 +393,7 @@
           $>(%init vane-task)                           ::  report install
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
+          $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           {$wake ~}                                     ::  timer activate
           $>(%wegh vane-task)                           ::  report memory
@@ -571,6 +575,7 @@
           $>(%crud vane-task)                           ::  error with trace
           [%rest p=@da]                                 ::  cancel alarm
           [%drip p=vase]                                ::  give in next event
+          $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           [%wait p=@da]                                 ::  set alarm
           [%wake ~]                                     ::  timer activate
@@ -624,6 +629,7 @@
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm des/desk pax/path rit/rite}            ::  change permissions
+          $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           {$warp wer/ship rif/riff}                     ::  internal file req
           {$werp who/ship wer/ship rif/riff}            ::  external file req
@@ -793,8 +799,10 @@
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
+          $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           {$verb ~}                                     ::  verbose mode
+          [%knob tag=term level=?(%hush %soft %loud)]   ::  error verbosity
       ==                                                ::
     --  ::able
   ::
@@ -896,6 +904,9 @@
           ::  new unix process
           ::
           $>(%born vane-task)
+          ::  trim state (in response to memory pressure)
+          ::
+          $>(%trim vane-task)
           ::  report upgrade
           ::
           $>(%vega vane-task)
@@ -1176,6 +1187,9 @@
           ::  %kill: stop a build; send on same duct as original %build request
           ::
           [%kill ~]
+          ::  trim state (in response to memory pressure)
+          ::
+          $>(%trim vane-task)
           ::  %vega: report kernel upgrade
           ::
           $>(%vega vane-task)
@@ -1996,6 +2010,7 @@
       $%  {$conf p/dock q/dock}                         ::  configure app
           $>(%init vane-task)                           ::  set owner
           {$deal p/sock q/internal-task}                ::  full transmission
+          $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           $>(%west vane-task)                           ::  network request
           [%wash ~]                                     ::  clear caches
@@ -2082,6 +2097,9 @@
           ::  system started up; reset open connections
           ::
           $>(%born vane-task)
+          ::  trim state (in response to memory pressure)
+          ::
+          $>(%trim vane-task)
           ::  report upgrade
           ::
           $>(%vega vane-task)
@@ -2175,15 +2193,16 @@
     +$  public-keys-result
       $%  [%full points=(map ship point)]
           [%diff who=ship =diff:point]
+          [%breach who=ship]
       ==
     ::                                                  ::
     ++  gift                                            ::  out result <-$
       $%  [%init p=ship]                                ::  report install unix
           [%mass p=mass]                                ::  memory usage report
           [%mack p=(unit tang)]                         ::  message n/ack
-          [%turf turf=(list turf)]                      ::  domains
           [%private-keys =life vein=(map life ring)]    ::  private keys
           [%public-keys =public-keys-result]            ::  ethereum changes
+          [%turf turf=(list turf)]                      ::  domains
       ==                                                ::
     ::  +seed: private boot parameters
     ::
@@ -2201,6 +2220,7 @@
           [%private-keys ~]                             ::  sub to privates
           [%public-keys ships=(set ship)]               ::  sub to publics
           [%rekey =life =ring]                          ::  update private keys
+          $>(%trim vane-task)                           ::  trim state
           [%turf ~]                                     ::  view domains
           $>(%vega vane-task)                           ::  report upgrade
           $>(%wegh vane-task)                           ::  memory usage request
@@ -5707,6 +5727,16 @@
       |=  a/^time
       =-  (numb (div (mul - 1.000) ~s1))
       (add (div ~s1 2.000) (sub a ~1970.1.1))
+    ::                                                  ::  ++path:enjs:format
+    ++  path                                            ::  string from path
+      |=  a=^path
+      ^-  json
+      [%s (spat a)]
+    ::                                                  ::  ++tank:enjs:format
+    ++  tank                                            ::  tank as string arr
+      |=  a=^tank
+      ^-  json
+      [%a (turn (wash [0 80] a) tape)]
     --  ::enjs
   ::                                                    ::  ++dejs:format
   ++  dejs                                              ::  json reparser
@@ -5720,6 +5750,10 @@
       |=  jon/json  ^-  (list _(wit *json))
       ?>  ?=({$a *} jon)
       (turn p.jon wit)
+    ::                                                  ::  ++as:dejs:format
+    ++  as                                              ::  array as set
+      |*  a=fist
+      (cu ~(gas in *(set _$:a)) (ar a))
     ::                                                  ::  ++at:dejs:format
     ++  at                                              ::  array as tuple
       |*  wil/(pole fist)
@@ -5844,6 +5878,9 @@
       |*  {a/cord b/*}
       =>  .(+< [a b]=+<)
       [(rash a fel) b]
+    ::                                                  ::  ++pa:dejs:format
+    ++  pa                                              ::  string as path
+      (su ;~(pfix net (more net urs:ab)))
     ::                                                  ::  ++pe:dejs:format
     ++  pe                                              ::  prefix
       |*  {pre/* wit/fist}
@@ -5851,6 +5888,11 @@
     ::                                                  ::  ++sa:dejs:format
     ++  sa                                              ::  string as tape
       |=(jon/json ?>(?=({$s *} jon) (trip p.jon)))
+    ::                                                  ::  ++se:dejs:format
+    ++  se                                              ::  string as aura
+      |=  aur=@tas
+      |=  jon=json
+      ?>(?=([%s *] jon) (slav aur p.jon))
     ::                                                  ::  ++so:dejs:format
     ++  so                                              ::  string as cord
       |=(jon/json ?>(?=({$s *} jon) p.jon))
@@ -6564,6 +6606,14 @@
           (easy ~)
         ==
       ==
+    ::                                                  ::  ++cdat:de-xml:html
+    ++  cdat                                            ::  CDATA section
+      %+  cook
+        |=(a/tape ^-(mars ;/(a)))
+      %+  ifix
+        [(jest '<![CDATA[') (jest ']]>')]
+      %-  star
+      ;~(less (jest ']]>') next)
     ::                                                  ::  ++chrd:de-xml:html
     ++  chrd                                            ::  character data
       %+  cook  |=(a/tape ^-(mars ;/(a)))
@@ -6600,7 +6650,7 @@
       (ifix [gal ban] ;~(plug name attr))
     ::                                                  ::  ++many:de-xml:html
     ++  many                                            ::  contents
-      (more (star comt) ;~(pose apex chrd))
+      ;~(pfix (star comt) (star ;~(sfix ;~(pose apex chrd cdat) (star comt))))
     ::                                                  ::  ++name:de-xml:html
     ++  name                                            ::  tag name
       =+  ^=  chx

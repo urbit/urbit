@@ -34,6 +34,8 @@ cp $ARVO/app/dojo.hoon   ./pier/home/app/      2>/dev/null || true
 cp $ARVO/lib/base64.hoon ./pier/home/lib/      2>/dev/null || true
 cp $ARVO/lib/server.hoon ./pier/home/lib/      2>/dev/null || true
 cp $ARVO/lib/sole.hoon   ./pier/home/lib/      2>/dev/null || true
+cp $ARVO/lib/xray.hoon   ./pier/home/lib/      2>/dev/null || true
+cp $ARVO/lib/pprint.hoon ./pier/home/lib/      2>/dev/null || true
 mkdir -p ./pier/home/mar/lens/
 cp $ARVO/mar/lens/*      ./pier/home/mar/lens/ 2>/dev/null || true
 

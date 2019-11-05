@@ -6169,6 +6169,31 @@
     ::
     [moves ford-gate]
   ::
+      ::  %trim: in response to memory pressure
+      ::
+      %trim
+    ::
+    ?.  =(0 p.task)
+      ::  low-priority: remove 50% of cache/stored-builds
+      ::
+      ~>  %slog.[0 leaf+"ford: trim: pruning caches"]
+      =.  state.ax  (wipe:this-event 50)
+      [~ ford-gate]
+    ::
+    ::  high-priority: remove 100% of cache/stored-builds
+    ::
+    ::    We use %keep to ensure that cache-keys are also purged,
+    ::    then restore original limits to allow future caching.
+    ::
+    ::    XX cancel in-progress builds?
+    ::
+    ~>  %slog.[0 leaf+"ford: trim: clearing caches"]
+    =/  b-max  max-size.queue.build-cache.state.ax
+    =/  c-max  max-size.compiler-cache.state.ax
+    =.  state.ax  (keep:this-event 0 0)
+    =.  state.ax  (keep:this-event c-max b-max)
+    [~ ford-gate]
+  ::
       ::  %vega: learn of kernel upgrade
       ::
       ::    XX clear cache, rebuild live builds

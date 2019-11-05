@@ -10,6 +10,8 @@
 
 #include "all.h"
 
+//  XX stack-overflow recovery should be gated by -a
+//
 #undef NO_OVERFLOW
 
       /* (u3_noun)setjmp(u3R->esc.buf): setjmp within road.
@@ -610,6 +612,8 @@ c3_w Exit;
 **        [%2 trace]
 **        [%3 code trace]
 **    ==
+**
+**  XX several of these abort() calls should be gated by -a
 */
 c3_i
 u3m_bail(u3_noun how)
@@ -744,9 +748,9 @@ u3m_leap(c3_w pad_w)
 
       rod_u = _pave_south(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
 #if 0
-      u3l_log("leap: from north %p (cap %x), to south %p\r\n",
+      fprintf(stderr, "leap: from north %p (cap 0x%x), to south %p\r\n",
               u3R,
-              u3R->cap_p + len_p,
+              u3R->cap_p + len_w,
               rod_u);
 #endif
     }
@@ -756,9 +760,9 @@ u3m_leap(c3_w pad_w)
 
       rod_u = _pave_north(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
 #if 0
-      u3l_log("leap: from north %p (cap %p), to south %p\r\n",
+      fprintf(stderr, "leap: from south %p (cap 0x%x), to north %p\r\n",
               u3R,
-              u3R->cap_p - len_p,
+              u3R->cap_p - len_w,
               rod_u);
 #endif
     }
@@ -791,13 +795,13 @@ u3m_fall()
   c3_assert(0 != u3R->par_p);
 
 #if 0
-  u3l_log("fall: from %s %p, to %s %p (cap %p, was %p)\r\n",
+  fprintf(stderr, "fall: from %s %p, to %s %p (cap 0x%x, was 0x%x)\r\n",
           _(u3a_is_north(u3R)) ? "north" : "south",
           u3R,
-          _(u3a_is_north(u3R)) ? "north" : "south",
+          _(u3a_is_north(u3to(u3_road, u3R->par_p))) ? "north" : "south",
           u3to(u3_road, u3R->par_p),
-          u3R->hat_w,
-          u3R->rut_w);
+          u3R->hat_p,
+          u3R->rut_p);
 #endif
 
   u3to(u3_road, u3R->par_p)->pro.nox_d += u3R->pro.nox_d;
@@ -829,24 +833,31 @@ u3m_hate(c3_w pad_w)
 u3_noun
 u3m_love(u3_noun pro)
 {
-  {
-    u3p(u3h_root) cod_p = u3R->jed.cod_p;
-    u3p(u3h_root) war_p = u3R->jed.war_p;
-    u3p(u3h_root) han_p = u3R->jed.han_p;
-    u3p(u3h_root) bas_p = u3R->jed.bas_p;
-    u3p(u3h_root) byc_p = u3R->byc.har_p;
+  //  save cache pointers from current road
+  //
+  u3p(u3h_root) byc_p = u3R->byc.har_p;
+  u3a_jets      jed_u = u3R->jed;
 
-    u3m_fall();
+  //  fallback to parent road (child heap on parent's stack)
+  //
+  u3m_fall();
 
-    pro = u3a_take(pro);
+  //  copy product and caches off our stack
+  //
+  pro   = u3a_take(pro);
+  jed_u = u3j_take(jed_u);
+  byc_p = u3n_take(byc_p);
 
-    // call sites first: see u3j_reap().
-    u3n_reap(byc_p);
-    u3j_reap(cod_p, war_p, han_p, bas_p);
+  //  pop the stack
+  //
+  u3R->cap_p = u3R->ear_p;
+  u3R->ear_p = 0;
 
-    u3R->cap_p = u3R->ear_p;
-    u3R->ear_p = 0;
-  }
+  //  integrate junior caches
+  //
+  u3j_reap(jed_u);
+  u3n_reap(byc_p);
+
   return pro;
 }
 
@@ -893,8 +904,8 @@ u3m_water(c3_w* low_w, c3_w* hig_w)
 {
   c3_assert(u3R == &u3H->rod_u);
 
-  *low_w = (u3H->rod_u.hat_p - u3H->rod_u.rut_p);
-  *hig_w = (u3H->rod_u.mat_p - u3H->rod_u.cap_p) + c3_wiseof(u3v_home);
+  *low_w = u3a_heap(u3R);
+  *hig_w = u3a_temp(u3R) + c3_wiseof(u3v_home);
 }
 
 /* u3m_soft_top(): top-level safety wrapper.
@@ -1691,7 +1702,11 @@ u3m_boot_lite(void)
 void
 u3m_reclaim(void)
 {
+  c3_assert( &(u3H->rod_u) == u3R );
+
   //  clear the u3v_wish cache
+  //
+  //    NB: this will leak if not on the home road
   //
   u3z(u3A->yot);
   u3A->yot = u3_nul;
@@ -1706,11 +1721,11 @@ u3m_reclaim(void)
   u3h_free(u3R->jed.bas_p);
   u3R->jed.bas_p = u3h_new();
 
-  //  XX we can't clear the warm jet state
-  //  -- _cj_nail expects it to be present ...
+  //  re-establish the warm jet state
   //
-  // u3h_free(u3R->jed.war_p);
-  // u3R->jed.war_p = u3h_new();
+  //    XX might this reduce fragmentation?
+  //
+  // u3j_ream();
 
   //  clear the jet hank cache
   //

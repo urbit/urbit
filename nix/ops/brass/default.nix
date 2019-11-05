@@ -1,19 +1,11 @@
-{ pkgs, tlon, deps, pier, arvo, debug }:
-
-let
-
-  urbitExe = if debug
-             then "${tlon.urbit-debug}/bin/urbit-debug -g"
-             else "${tlon.urbit}/bin/urbit";
-
-in
+{ pkgs, herb, urbit, pier, arvo }:
 
 pkgs.stdenv.mkDerivation rec {
   name        = "brass";
   builder     = ./builder.sh;
-  buildInputs = [ tlon.herb pkgs.coreutils ];
+  buildInputs = [ herb pkgs.coreutils ];
 
-  URBIT = urbitExe;
+  URBIT = urbit.meta.exe;
   PIER  = pier;
   ARVO  = arvo;
 }

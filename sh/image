@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+say() {
+  echo "$1" >&2
+}
+
+say "Building nix/ops/image..."
+nix_out="$(nix-build nix/ops -A image --no-out-link "$@")"
+
+say "Loading $nix_out into Docker..."
+nix_name="$(docker load --quiet --input $nix_out)"
+nix_name="${nix_name#Loaded image: }"
+
+# Output only the tag on stdout for subsequent pipes/tooling.
+echo $nix_name

@@ -6,7 +6,7 @@
 =,  ames
 ::  this number needs to be below 8
 ::
-=+  protocol-version=3
+=+  protocol-version=4
 |%
 +$  move  [p=duct q=(wind note gift:able)]              ::  local move
 +$  note                                                ::  out request $->
@@ -956,7 +956,9 @@
                 =/  mex  ;;(full:pact (cue msg))
                 =.  diz  (deng law.mex)
                 =/  wug  cluy:diz
+                ~|  [from=her expected-her-life=lyf.wug got-her-life=from.lyf.mex]
                 ?>  =(lyf.wug from.lyf.mex)
+                ~|  [from=her got-our-life=to.lyf.mex]
                 =/  gey  (sev:gus to.lyf.mex)
                 =/  sem  (need (tear:as:q.gey pub:ex:cub.wug txt.mex))
                 =/  mes  ;;((pair @ @) (cue sem))
@@ -969,6 +971,7 @@
                 =/  mex  ;;(open:pact (cue msg))
                 =.  diz  (deng law.mex)
                 =/  wug  cluy:diz
+                ~|  [from=her expected-her-life=lyf.wug got-her-life=from.lyf.mex]
                 ?>  =(lyf.wug from.lyf.mex)
                 =/  mes  (need (sure:as:cub.wug txt.mex))
                 =.  puz  (bilk:puz now)
@@ -1385,6 +1388,13 @@
       [[gad.fox [%give %send p.bon q.bon]] ~]
     ::
         %pito
+      ::  ignore/unset timer if we haven't yet learned a unix duct
+      ::
+      ::     Only happens during first boot.
+      ::
+      ?~  gad.fox
+        [~ fox(tim ~)]
+      ::
       :_  fox(tim `p.bon)
       %-  flop
       ^-  (list move)
@@ -1443,10 +1453,8 @@
       ?.  ?=([%pubs @ ~] tea)
         ~&  [%strange-pubs tea]
         [~ +>.$]
-      ?:  ?&  ?=(%diff -.public-keys-result.sih)
-              ?=(%rift -.diff.public-keys-result.sih)
-          ==
-        (sink hen [who [from to]:diff]:public-keys-result.sih)
+      ?:  ?=(%breach -.public-keys-result.sih)
+        (sink hen who.public-keys-result.sih)
       ?:  ?&  ?=(%diff -.public-keys-result.sih)
               !?=(%keys -.diff.public-keys-result.sih)
           ==
@@ -1461,8 +1469,10 @@
             (~(get by points.public-keys-result.sih) her)
           ?~  a-point
             ~
-          =/  a-pass=pass  pass:(~(got by keys.u.a-point) life.u.a-point)
-          `[life.u.a-point a-pass oath=~]
+          =/  k  (~(get by keys.u.a-point) life.u.a-point)
+          ?~  k
+            ~
+          `[life.u.a-point pass.u.k oath=~]
         ?>  ?=(%keys -.diff.public-keys-result.sih)
         ?>  =(her who.public-keys-result.sih)
         =/  a-key-update=key-update:point:able:jael
@@ -1522,7 +1532,7 @@
     ==
   ::
   ++  sink
-    |=  [hen=duct who=ship from=rift to=rift]
+    |=  [hen=duct who=ship]
     ^-  [(list move) _+>]
     ?:  =(our who)
       [[(print hen who ", you have sunk") ~] +>.$]
@@ -1596,6 +1606,9 @@
             fox(bad (~(del in bad.fox) p.kyz))
           ~&  [%block p.kyz]
           fox(bad (~(put in bad.fox) p.kyz))
+        ::
+            %trim
+          [~ fox]
         ::
             %vega
           ::  re-initialize our cryptosuite B cores

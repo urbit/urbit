@@ -153,6 +153,7 @@
       [%request wire request:http outbound-config:iris]
       [%rule wire %cert (unit [wain wain])]
       [%wait wire @da]
+      [%flog wire flog:dill]
   ==
 ::  +poke: outgoing app pokes
 ::
@@ -360,6 +361,15 @@
 ++  emit
   |=  car=card
   this(mov [[ost.bow car] mov])
+::  +emil: emit a list of moves
+::
+++  emil
+  |=  rac=(list card)
+  |-  ^+  this
+  ?~  rac
+    this
+  =.  mov  [[ost.bow i.rac] mov]
+  $(rac t.rac)
 ::  +abet: finalize transaction
 ::
 ++  abet
@@ -380,9 +390,20 @@
   |=  [try=@ud act=@tas =wire]
   ^-  ^wire
   (weld /acme/try/(scot %ud try)/[act] wire)
-::  +notify: send :hall notification
+::  +notify: send notification message
 ::
 ++  notify
+  |=  [=cord =tang]
+  ^-  (list card)
+  :-  [%flog / %text :(weld (trip dap.bow) ": " (trip cord))]
+  %+  turn
+    `wall`(zing (turn (flop tang) (cury wash [0 80])))
+  |=(=tape [%flog / %text tape])
+::  +notify: send :hall notification
+::
+::    XX disabled due to :hall status
+::
+++  notify-disabled
   |=  [=cord =tang]
   ^-  card
   =/  msg=speech:hall
@@ -472,7 +493,7 @@
           (join-turf ~(tap in dom.u.rod))
           '. retrying in ~d7.'
       ==
-    (emit (notify msg ~))
+    (emil (notify msg ~))
   ::  too many certificates for top-level-domain
   ::
   ?:  ?=(^ (find "too many certificates already" detail))
@@ -489,7 +510,7 @@
           '. retrying in '
           (scot %dr lul)  '.'
       ==
-    (emit (notify msg ~))
+    (emil (notify msg ~))
   ::  XX match more rate-limit conditions
   ::  or backoff by wire
   ::
@@ -616,7 +637,7 @@
     ::
     =/  msg=cord
       (cat 3 'retrying certificate request in ' (scot %dr lul))
-    =.  ..this  (emit (notify msg ~))
+    =.  ..this  (emil (notify msg ~))
     =.  ..this  (retry:effect try %new-order / lul)
     ::  domains might already be validated
     ::
@@ -774,7 +795,7 @@
         :~  'unable to reach '  (scot %p our.bow)
             ' via http at '  (en-turf:html turf.i.item)  ':80'
         ==
-      (emit(next-order ~) (notify msg [(sell !>(rep)) ~]))
+      (emil(next-order ~) (notify msg [(sell !>(rep)) ~]))
     ?:  ?=(~ (skip ~(val by dom.u.next-order) |=([@ud valid=?] valid)))
       new-order:effect
     (validate-domain:effect +(idx))
@@ -786,7 +807,7 @@
     ?.  =(200 p.rep)
       ?:  (lth try 10)
         (retry:effect try %directory / (min ~m30 (backoff try)))
-      (emit (notify (failure-message directory-base) [(sell !>(rep)) ~]))
+      (emil (notify (failure-message directory-base) [(sell !>(rep)) ~]))
     =.  dir  (directory:grab (need (de-json:html q:(need r.rep))))
     ?~(reg.act register:effect this)
   ::  +nonce: accept new nonce and trigger next effect
@@ -805,7 +826,7 @@
     ?.  =(204 p.rep)
       ?:  (lth try 10)
         (retry:effect try %nonce t.wire (min ~m30 (backoff try)))
-      (emit (notify (failure-message nonce.dir) [(sell !>(rep)) ~]))
+      (emil (notify (failure-message nonce.dir) [(sell !>(rep)) ~]))
     ?-  nex
       %register        register:effect
       %new-order       new-order:effect
@@ -822,7 +843,7 @@
       ::
       ?:  (lth try 10)
         (retry:effect try %register / (min ~h1 (backoff try)))
-      (emit (notify (failure-message register.dir) [(sell !>(rep)) ~]))
+      (emil (notify (failure-message register.dir) [(sell !>(rep)) ~]))
     =/  loc=@t
       q:(head (skim q.rep |=((pair @t @t) ?=(%location p))))
     ::  XX @da once parser is fixed
@@ -852,7 +873,7 @@
         (retry:effect try %new-order / (min ~h1 (backoff try)))
       ::  XX next steps, retrying in ??
       ::
-      (emit (notify (failure-message register.dir) [(sell !>(rep)) ~]))
+      (emil (notify (failure-message register.dir) [(sell !>(rep)) ~]))
     ?>  ?=(^ next-order)
     =/  loc=@t
       q:(head (skim q.rep |=((pair @t @t) ?=(%location p))))
@@ -902,7 +923,7 @@
         (retry:effect try %check-order / (min ~m10 (backoff try)))
       ::  XX next steps, retrying in, delete order ??
       ::
-      (emit (notify (failure-message ego.u.rod) [(sell !>(rep)) ~]))
+      (emil (notify (failure-message ego.u.rod) [(sell !>(rep)) ~]))
     =/  bod=order:body
       (order:grab (need (de-json:html q:(need r.rep))))
     ?+  sas.bod
@@ -916,7 +937,7 @@
       ::  XX possible to retry any reasons?
       ::
       =<  cancel-order:effect
-      (emit (notify 'certificate order failed' [(sell !>(rep)) ~]))
+      (emil (notify 'certificate order failed' [(sell !>(rep)) ~]))
     ::  initial order state
     ::
         %pending
@@ -958,7 +979,7 @@
         :~  'unable to download certificate. '
             'please confirm that your urbit has network connectivity.'
         ==
-      (emit (notify msg [(sell !>(rep)) ~]))
+      (emil (notify msg [(sell !>(rep)) ~]))
     =/  cer=wain  (to-wain:format q:(need r.rep))
     =/  fig=config
       ::  XX expiration date
@@ -978,7 +999,7 @@
           :~  'received https certificate for '
               (join-turf ~(tap in dom.u.liv))
           ==
-        (emit (notify msg ~))
+        (emil (notify msg ~))
     ::  set renewal timer, install certificate in %eyre
     ::
     ::    Certificates expire after ~d90. We want time for retries and
@@ -1009,7 +1030,7 @@
         (retry:effect try %get-authz / (min ~m10 (backoff try)))
       ::  XX next steps, retrying in ??
       ::
-      (emit (notify (failure-message i.pending.aut.u.rod) [(sell !>(rep)) ~]))
+      (emil (notify (failure-message i.pending.aut.u.rod) [(sell !>(rep)) ~]))
     =/  bod=auth:body
       (auth:grab (need (de-json:html q:(need r.rep))))
     =/  cal=trial
@@ -1054,7 +1075,7 @@
             'via '  (en-turf:html dom.aut)  '. '
             'please confirm your urbit has network connectivity.'
         ==
-      (emit (notify msg [(sell !>(rep)) ~]))
+      (emil (notify msg [(sell !>(rep)) ~]))
     =/  bod
       %-  as-octs:mimes:html
       (rap 3 [tok.cal.aut '.' (pass:thumb:jwk key.act) ~])
@@ -1069,7 +1090,7 @@
             (sell !>((some bod)))
             leaf+"expected:"
         ==
-      (emit (notify 'domain validation value is wrong' tang))
+      (emil (notify 'domain validation value is wrong' tang))
     finalize-trial:effect
   ::  +finalize-trial:
   ::
@@ -1091,7 +1112,7 @@
           (retry:effect try %finalize-trial / (min ~m10 (backoff try)))
         ::  XX next steps, check connectivity, etc. ??
         ::
-        (emit (notify (failure-message ego.cal.aut) [(sell !>(rep)) ~]))
+        (emil (notify (failure-message ego.cal.aut) [(sell !>(rep)) ~]))
       ::  XX get challenge, confirm urn:ietf:params:acme:error:connection
       ::
       ::  =/  err=error:body
@@ -1101,7 +1122,7 @@
       =<  cancel-order:effect
       =/  msg=cord
        'unable to finalize domain validation challenge'
-      (emit (notify msg [(sell !>(rep)) ~]))
+      (emil (notify msg [(sell !>(rep)) ~]))
     =/  bod=challenge:body
       (challenge:grab (need (de-json:html q:(need r.rep))))
     ::  XX check for other possible values in 200 response
@@ -1383,7 +1404,7 @@
       :~  'requesting an https certificate for '
           (join-turf ~(tap in dom))
       ==
-    (emit (notify msg ~))
+    (emil (notify msg ~))
   ::  if registered, create order
   ::
   ?^  reg.act

@@ -1,7 +1,7 @@
 ::
 ::  /app/publish.hoon
 ::
-/-  hall, *publish
+/-  *publish
 /+  *server, *publish
 ::
 /=  index
@@ -58,18 +58,15 @@
       [%kill wire ~]
       [%connect wire binding:eyre term]
       [%http-response http-event:http]
-      [%disconnect binding:eyre]
   ==
 ::
 +$  poke
-  $%  [%hall-action action:hall]
-      [%publish-action action]
+  $%  [%publish-action action]
       [%launch-action @tas path @t]
   ==
 ::
 +$  diff
-  $%  [%hall-rumor rumor:hall]
-      [%json json]
+  $%  [%json json]
       [%publish-collection collection]
       [%publish-rumor rumor]
       [%publish-update update]
@@ -226,6 +223,114 @@
     ~&  sat
     [~ this]
   ::
+      %state-surgery
+    =/  pubs=[broken=(list [@p @tas @tas]) new=(map @tas collection)]
+      %-  ~(rep by pubs.sat)
+      |=  $:  [nom=@tas col=collection]
+              broken=(list [@p @tas @tas])
+              pubs=(map @tas collection)
+          ==
+      ^-  [(list [@p @tas @tas]) (map @tas collection)]
+      ::
+      =/  bad-posts=(list [@p @tas @tas])
+        %-  ~(rep by pos.col)
+        |=  $:  [pos=@tas dat=[=bone dat=(each [post-info manx @t] tang)]]
+                broken=(list [@p @tas @tas])
+            ==
+        ^-  (list [@p @tas @tas])
+        ?:  -.dat.dat
+          broken
+        [[our.bol nom pos] broken]
+      ::
+      =.  pin.order.col
+        %+  skip  pin.order.col
+        |=  pos=@tas
+        ^-  ?
+        ?~  (find [our.bol nom pos]~ bad-posts)
+          %.n
+        %.y
+      ::
+      =.  unpin.order.col
+        %+  skip  unpin.order.col
+        |=  pos=@tas
+        ^-  ?
+        ?~  (find [our.bol nom pos]~ bad-posts)
+          %.n
+        %.y
+      ::
+      [(welp broken bad-posts) (~(put by pubs) nom col)]
+    ::
+    =/  subs=[broken=(list [@p @tas @tas]) new=(map [@p @tas] collection)]
+      %-  ~(rep by subs.sat)
+      |=  $:  [[who=@p nom=@tas] col=collection]
+              broken=(list [@p @tas @tas])
+              subs=(map [@p @tas] collection)
+          ==
+      ^-  [(list [@p @tas @tas]) (map [@p @tas] collection)]
+      ::
+      =/  bad-posts=(list [@p @tas @tas])
+        %-  ~(rep by pos.col)
+        |=  $:  [pos=@tas dat=[=bone dat=(each [post-info manx @t] tang)]]
+                broken=(list [@p @tas @tas])
+            ==
+        ^-  (list [@p @tas @tas])
+        ?:  -.dat.dat
+          broken
+        [[who nom pos] broken]
+      ::
+      ::
+      =.  pin.order.col
+        %+  skip  pin.order.col
+        |=  pos=@tas
+        ?~  (find [who nom pos]~ bad-posts)
+          %.n
+        %.y
+      ::
+      =.  unpin.order.col
+        %+  skip  unpin.order.col
+        |=  pos=@tas
+        ?~  (find [who nom pos]~ bad-posts)
+          %.n
+        %.y
+      ::
+      [(welp broken bad-posts) (~(put by subs) [who nom] col)]
+    ::
+    =/  new-latest=(list [@p @tas @tas])
+      %+  skip  latest.sat
+      |=  elm=[@p @tas @tas]
+      ^-  ?
+      ?^  (find [elm]~ broken.pubs)
+        %.y
+      ?^  (find [elm]~ broken.subs)
+        %.y
+      %.n
+    ::
+    =/  new-unread=(set [@p @tas @tas])
+      %-  sy
+      %+  skip  ~(tap in unread.sat)
+      |=  elm=[@p @tas @tas]
+      ^-  ?
+      ?^  (find [elm]~ broken.pubs)
+        %.y
+      ?^  (find [elm]~ broken.subs)
+        %.y
+      %.n
+    ::
+    =/  mow=(list move)
+      %-  ~(rep by new.pubs)
+      |=  [[nom=@tas col=collection] out=(list move)]
+      ^-  (list move)
+      =/  del=delta  [%total our.bol nom col]
+      (welp (affection del) out)
+    ::
+    :-  mow
+    %=  this
+      latest.sat    new-latest
+      unread.sat    new-unread
+      pubs.sat      new.pubs
+      subs.sat      new.subs
+    ==
+  ::
   ==
 ::
 ++  da
@@ -289,8 +394,10 @@
         (~(put by pubs.sat) col.del new)
       =?  subs.sat  !=(our.bol who.del)
         (~(put by subs.sat) [who.del col.del] new)
-      =?  da-this  -.dat.del
-        (da-insert who.del col.del pos.del)
+      =.  da-this
+        ?:  -.dat.del
+          (da-insert who.del col.del pos.del)
+        (da-remove who.del col.del pos.del)
       (da-emil (affection del))
     ::
         %comments
@@ -328,7 +435,10 @@
       ?~  posts
         da-this
       ?.  +>-.i.posts
-        $(posts t.posts)
+        %=  $
+          da-this  (da-remove who.del col.del -.i.posts)
+          posts    t.posts
+        ==
       %=  $
         da-this  (da-insert who.del col.del -.i.posts)
         posts    t.posts
@@ -1134,10 +1244,13 @@
   ::
       %serve
     :: XX specialize this check for subfiles
+    ?.  =(our.bol src.bol)
+      [~ this]
     ?:  (~(has by pubs.sat) coll.act)
       [~ this]
     =/  files=(list path)
       .^((list path) %ct (weld our-beak /web/publish/[coll.act]))
+    ?>  ?=(^ (find [/web/publish/[coll.act]/publish-info]~ files))
     =/  all=[moves=(list move) builds=(set wire)]
     %+  roll  files
     |=  [pax=path out=[moves=(list move) builds=(set wire)]]
@@ -1153,9 +1266,25 @@
             *coin
             [[our.bol q.byk.bol] /[coll.act]/publish/web]
         ==
+      =/  blog-perms=card
+        :*  %perm  /perms  q.byk.bol
+            /web/publish/[coll.act]
+            %rw  `[%black ~]  `[%white (ships-to-whom (sy our.bol ~))]
+        ==
+      =/  info-perms=card
+        :*  %perm  /perms  q.byk.bol
+            /web/publish/[coll.act]/publish-info
+            %rw  `*rule:clay  `*rule:clay
+        ==
       %=  out
-        moves   [[ost.bol %build wir %.y schema] moves.out]
         builds  (~(put in builds.out) wir)
+      ::
+          moves
+        :*  [ost.bol %build wir %.y schema]
+            [ost.bol blog-perms]
+            [ost.bol info-perms]
+            moves.out
+        ==
       ==
     ::
       [%web %publish @tas @tas %udon ~]
@@ -1176,10 +1305,22 @@
             *coin
             [[our.bol q.byk.bol] /[post]/[coll.act]/publish/web]
         ==
+      =/  post-perms=card
+        :*  %perm  /perms  q.byk.bol
+            /web/publish/[coll.act]/[post]/udon
+            %w  `[%white (ships-to-whom (sy our.bol ~))]
+        ==
+      =/  comment-perms=card
+        :*  %perm  /perms  q.byk.bol
+            /web/publish/[coll.act]/[post]
+            %w  `[%black ~]
+        ==
       %=    out
           moves
         :*  [ost.bol %build post-wir %.y post-schema]
             [ost.bol %build comments-wir %.y comments-schema]
+            [ost.bol post-perms]
+            [ost.bol comment-perms]
             moves.out
         ==
       ::
@@ -1278,6 +1419,13 @@
     [b %diff %publish-update %unread %.n (sy [who.act coll.act post.act] ~)]
   ::
   ==
+::
+++  quit-collection
+  |=  wir=wire
+  ^-  (quip move _this)
+  =/  pax=path  (weld /collection wir)
+  :_  this
+  [ost.bol %peer pax [src.bol %publish] pax]~
 ::
 ++  bound
   |=  [wir=wire success=? binding=binding:eyre]
@@ -1478,7 +1626,21 @@
             *coin
             [[our.bol q.byk.bol] /[col]/publish/web]
         ==
-      :-  [[ost.bol %build wir %.y schema] mow]
+      =/  blog-perms=card
+        :*  %perm  /perms  q.byk.bol
+            /web/publish/[col]
+            %rw  `[%black ~]  `[%white (ships-to-whom (sy our.bol ~))]
+        ==
+      =/  info-perms=card
+        :*  %perm  /perms  q.byk.bol
+            /web/publish/[col]/publish-info
+            %rw  `*rule:clay  `*rule:clay
+        ==
+      :-  :*  [ost.bol %build wir %.y schema]
+              [ost.bol blog-perms]
+              [ost.bol info-perms]
+              mow
+          ==
       [[pax mis] sob]
     ::
         [%web %publish * * %udon ~]
@@ -1498,9 +1660,22 @@
             *coin
             [[our.bol q.byk.bol] /[pos]/[col]/publish/web]
         ==
-      :-  :+  [ost.bol %build post-wir %.y post-schema]
+      =/  post-perms=card
+        :*  %perm  /perms  q.byk.bol
+            /web/publish/[col]/[pos]/udon
+            %w  `[%white (ships-to-whom (sy our.bol ~))]
+        ==
+      =/  comment-perms=card
+        :*  %perm  /perms  q.byk.bol
+            /web/publish/[col]/[pos]
+            %w  `[%black ~]
+        ==
+      :-  :*  [ost.bol %build post-wir %.y post-schema]
               [ost.bol %build comment-wir %.y comment-schema]
+              [ost.bol post-perms]
+              [ost.bol comment-perms]
               mow
+          ==
       [[pax mis] sob]
     ::
         [%web %publish * * * %publish-comment ~]
@@ -1582,20 +1757,25 @@
     [~ this]
   =/  coll=@tas  i.wir
   =/  pax  /web/publish/[coll]
-  ?.  (allowed src.bol %read pax)
-    :_  this
-    [ost.bol %quit ~]~
-  ::
-  =/  col=(unit collection)  (~(get by pubs.sat) coll)
-  ?~  col
-    :_  this
-    [ost.bol %quit ~]~
+  ?>  (allowed src.bol %read pax)
+  =/  col=collection  (~(got by pubs.sat) coll)
   =/  new=collection
-    u.col(subscribers (~(put in subscribers.u.col) src.bol))
+    col(subscribers (~(put in subscribers.col) src.bol))
   =/  rum=rumor
     [%total our.bol coll new]
   :_  this(pubs.sat (~(put by pubs.sat) coll new))
   [ost.bol %diff %publish-rumor rum]~
+::
+++  reap
+  |=  [wir=wire err=(unit tang)]
+  ^-  (quip move _this)
+  ?~  err
+    [~ this]
+  ?>  ?=([%collection @tas ~] wir)
+  =/  col=@tas  i.t.wir
+  %-  (slog [leaf+"failed to subscribe to blog: {<col>}"]~)
+  :-  ~
+  this(outgoing.sat (~(del by outgoing.sat) wir))
 ::
 ++  diff-publish-rumor
   |=  [wir=wire rum=rumor]

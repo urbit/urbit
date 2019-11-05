@@ -326,7 +326,8 @@
           ?.  ((sane %tas) lal)  ~
           %+  biff  ((soft path) p.q.caq)
           |=  pax/path
-          =^  yav  worm.vane  (~(spot wa worm.vane) 15 caq)
+          =^  xav  worm.vane  (~(spot wa worm.vane) 7 caq)
+          =^  yav  worm.vane  (~(spot wa worm.vane) 3 xav)
           %+  bind  (song yav)
           |=  {hil/mill vel/worm}
           [%& [%pass pax lal hil] vel]
@@ -343,7 +344,8 @@
           %+  biff  ((soft @) p.q.caq)
           |=  lal/@tas
           ?.  ((sane %tas) lal)  ~
-          =^  yav  worm.vane  (~(spot wa worm.vane) 7 caq)
+          =^  xav  worm.vane  (~(spot wa worm.vane) 3 caq)
+          =^  yav  worm.vane  (~(spot wa worm.vane) 3 xav)
           %+  bind  (song yav)
           |=  {hil/mill vel/worm}
           [%& [%slip lal hil] vel]
@@ -805,6 +807,22 @@
   ::
   ?:  ?=(?(%veer %verb %wack %warn) -.q.ovo)
     [[ovo ~] +>.$]
+  ::
+  ::  These external events (currently only %trim) are global
+  ::  notifications, spammed to every vane
+  ::
+  ?:  ?=(%trim -.q.ovo)
+    =>  .(ovo ;;((pair wire [%trim p=@ud]) ovo))
+    =^  zef  vanes
+      (~(spam (is our vil eny bud vanes) now) lac ovo)
+    ::  clear compiler caches if high-priority
+    ::
+    =?  vanes  =(0 p.q.ovo)
+      ~>  %slog.[0 leaf+"arvo: trim: clearing caches"]
+      (turn vanes |=([a=@tas =vane] [a vase.vane *worm]))
+    [zef +>.$]
+  ::
+  ::  Normal events are routed to a single vane
   ::
   =^  zef  vanes
     (~(hurl (is our vil eny bud vanes) now) lac ovo)

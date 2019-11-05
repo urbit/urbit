@@ -83,7 +83,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2019.1.7
+      date=%~2019.10.6
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -216,8 +216,6 @@
 ::    'Last-Event-Id: ' header to the server; the server then resends all
 ::    events since then.
 ::
-::    TODO: Send \n as a heartbeat every 20 seconds.
-::
 +$  channel
   $:  ::  channel-state: expiration time or the duct currently listening
       ::
@@ -246,6 +244,9 @@
       ::    can cancel all the subscriptions we've made.
       ::
       subscriptions=(map wire [ship=@p app=term =path duc=duct])
+      ::  heartbeat: sse heartbeat timer
+      ::
+      heartbeat=(unit timer)
   ==
 ::  channel-request: an action requested on a channel
 ::
@@ -580,7 +581,7 @@
     }
 
     deleteOnUnload() {
-      window.addEventListener('beforeunload', (event) => {
+      window.addEventListener("unload", (event) => {
         this.delete();
       });
     }
@@ -588,17 +589,22 @@
     //  sends a poke to an app on an urbit ship
     //
     poke(ship, app, mark, json, successFunc, failureFunc) {
-      var id = this.nextId();
+      let id = this.nextId();
       this.outstandingPokes.set(
-          id, {"success": successFunc, "fail": failureFunc});
+        id,
+        {
+          success: successFunc,
+          fail: failureFunc
+        }
+      );
 
       this.sendJSONToChannel({
-          "id": id,
-          "action": "poke",
-          "ship": ship,
-          "app": app,
-          "mark": mark,
-          "json": json
+          id,
+          action: "poke",
+          ship,
+          app,
+          mark,
+          json
         });
     }
 
@@ -606,18 +612,30 @@
     //
     //    Returns a subscription id, which is the same as the same internal id
     //    passed to your Urbit.
-    subscribe(ship, app, path, connectionErrFunc, eventFunc, quitFunc) {
-      var id = this.nextId();
+    subscribe(
+        ship,
+        app,
+        path,
+        connectionErrFunc = () => {},
+        eventFunc = () => {},
+        quitFunc = () => {}) {
+      let id = this.nextId();
       this.outstandingSubscriptions.set(
-          id, {"err": connectionErrFunc, "event": eventFunc, "quit": quitFunc});
+        id,
+        {
+          err: connectionErrFunc, 
+          event: eventFunc,
+          quit: quitFunc
+        }
+      );
 
       this.sendJSONToChannel({
-          "id": id,
-          "action": "subscribe",
-          "ship": ship,
-          "app": app,
-          "path": path
-        });
+        id,
+        action: "subscribe",
+        ship,
+        app,
+        path
+      });
 
       return id;
     }
@@ -625,33 +643,33 @@
     //  quit the channel
     //
     delete() {
-      var id = this.nextId();
+      let id = this.nextId();
       navigator.sendBeacon(this.channelURL(), JSON.stringify([{
-        "id": id,
-        "action": "delete"
+        id,
+        action: "delete"
       }]));
     }
 
     //  unsubscribe to a specific subscription
     //
-    unsubscribe(subscriptionId) {
-      var id = this.nextId();
+    unsubscribe(subscription) {
+      let id = this.nextId();
       this.sendJSONToChannel({
-          "id": id,
-          "action": "unsubscribe",
-          "subscription": subscriptionId
+        id,
+        action: "unsubscribe",
+        subscription
       });
     }
 
     //  sends a JSON command command to the server.
     //
     sendJSONToChannel(j) {
-      var req = new XMLHttpRequest();
+      let req = new XMLHttpRequest();
       req.open("PUT", this.channelURL());
       req.setRequestHeader("Content-Type", "application/json");
 
       if (this.lastEventId == this.lastAcknowledgedEventId) {
-        var x = JSON.stringify([j]);
+        let x = JSON.stringify([j]);
         req.send(x);
       } else {
         //  we add an acknowledgment to clear the server side queue
@@ -659,8 +677,9 @@
         //    The server side puts messages it sends us in a queue until we
         //    acknowledge that we received it.
         //
-        var x = JSON.stringify(
-          [{"action": "ack", "event-id": parseInt(this.lastEventId)}, j])
+        let x = JSON.stringify(
+          [{action: "ack", "event-id": parseInt(this.lastEventId)}, j]
+        );
         req.send(x);
 
         this.lastEventId = this.lastAcknowledgedEventId;
@@ -680,32 +699,32 @@
       this.eventSource.onmessage = e => {
         this.lastEventId = e.lastEventId;
 
-        var obj = JSON.parse(e.data);
+        let obj = JSON.parse(e.data);
         if (obj.response == "poke") {
-          var funcs = this.outstandingPokes.get(obj.id);
+          let funcs = this.outstandingPokes.get(obj.id);
           if (obj.hasOwnProperty("ok")) {
-            funcs["success"]()
+            funcs["success"]();
           } else if (obj.hasOwnProperty("err")) {
-            funcs["fail"](obj.err)
+            funcs["fail"](obj.err);
           } else {
-            console.log("Invalid poke response: ", obj);
+            console.error("Invalid poke response: ", obj);
           }
           this.outstandingPokes.delete(obj.id);
 
         } else if (obj.response == "subscribe") {
           //  on a response to a subscribe, we only notify the caller on err
           //
-          var funcs = this.outstandingSubscriptions.get(obj.id);
+          let funcs = this.outstandingSubscriptions.get(obj.id);
           if (obj.hasOwnProperty("err")) {
             funcs["err"](obj.err);
             this.outstandingSubscriptions.delete(obj.id);
           }
         } else if (obj.response == "diff") {
-          var funcs = this.outstandingSubscriptions.get(obj.id);
+          let funcs = this.outstandingSubscriptions.get(obj.id);
           funcs["event"](obj.json);
         } else if (obj.response == "quit") {
-          var funcs = this.outstandingSubscriptions.get(obj.id);
-          funcs["quit"](obj.err);
+          let funcs = this.outstandingSubscriptions.get(obj.id);
+          funcs["quit"](obj);
           this.outstandingSubscriptions.delete(obj.id);
         } else {
           console.log("Unrecognized response: ", e);
@@ -713,9 +732,8 @@
       }
 
       this.eventSource.onerror = e => {
-        //  TODO: The server broke the connection. Call every poke cancel and every
-        //  subscription disconnect.
-        console.log(e);
+        console.error("eventSource error:", e);
+        this.delete();
       }
     }
 
@@ -992,7 +1010,7 @@
       =/  max-age=tape  (format-ud-as-integer `@ud`(div (msec:milly expires-in) 1.000))
       =/  cookie-line
         %-  crip
-        "urbauth={<session>}; Path=/; Max-Age={max-age}"
+        "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}"
       ::
       ?~  redirect=(get-header:http 'redirect' u.parsed)
         %-  handle-response
@@ -1036,7 +1054,7 @@
         %.n
       ::  is there an urbauth cookie?
       ::
-      ?~  urbauth=(get-header:http 'urbauth' u.cookies)
+      ?~  urbauth=(get-header:http (crip "urbauth-{<our>}") u.cookies)
         %.n
       ::  is this formatted like a valid session cookie?
       ::
@@ -1130,9 +1148,22 @@
       ::
       ~&  [%canceling-cancel duct]
       ::
+      =/  maybe-session
+        (~(get by session.channel-state.state) u.maybe-channel-id)
+      ?~  maybe-session  [~ state]
+      ::
+      =/  heartbeat-cancel=(list move)
+        ?~  heartbeat.u.maybe-session  ~
+        :~  %^  cancel-heartbeat-move
+              u.maybe-channel-id
+            date.u.heartbeat.u.maybe-session
+          duct.u.heartbeat.u.maybe-session
+        ==
+      ::
       =/  expiration-time=@da  (add now channel-timeout)
       ::
-      :-  [(set-timeout-move u.maybe-channel-id expiration-time) moves]
+      :-  %+  weld  heartbeat-cancel
+        [(set-timeout-move u.maybe-channel-id expiration-time) moves]
       %_    state
           session.channel-state
         %+  ~(jab by session.channel-state.state)  u.maybe-channel-id
@@ -1140,7 +1171,7 @@
         ::  if we are canceling a known channel, it should have a listener
         ::
         ?>  ?=([%| *] state.channel)
-        channel(state [%& [expiration-time duct]])
+        channel(state [%& [expiration-time duct]], heartbeat ~)
       ::
           duct-to-key.channel-state
         (~(del by duct-to-key.channel-state.state) duct)
@@ -1165,7 +1196,7 @@
         %_    ..update-timeout-timer-for
             session.channel-state.state
           %+  ~(put by session.channel-state.state)  channel-id
-          [[%& expiration-time duct] 0 ~ ~]
+          [[%& expiration-time duct] 0 ~ ~ ~]
         ::
             moves
           [(set-timeout-move channel-id expiration-time) moves]
@@ -1188,6 +1219,18 @@
             moves
         ==
       ==
+    ::
+    ++  set-heartbeat-move
+      |=  [channel-id=@t heartbeat-time=@da]
+      ^-  move
+      :^  duct  %pass  /channel/heartbeat/[channel-id]
+      [%b %wait heartbeat-time]
+    ::
+    ++  cancel-heartbeat-move
+      |=  [channel-id=@t heartbeat-time=@da =^duct]
+      ^-  move
+      :^  duct  %pass  /channel/heartbeat/[channel-id]
+      [%b %rest heartbeat-time]
     ::
     ++  set-timeout-move
       |=  [channel-id=@t expiration-time=@da]
@@ -1261,14 +1304,19 @@
       ::
       =.  duct-to-key.channel-state.state
         (~(put by duct-to-key.channel-state.state) duct channel-id)
-      ::  clear the event queue and record the duct for future output
+      ::  initialize sse heartbeat
+      ::
+      =/  heartbeat-time=@da  (add now ~s20)
+      =/  heartbeat  (set-heartbeat-move channel-id heartbeat-time)
+      ::  clear the event queue, record the duct for future output and
+      ::  record heartbeat-time for possible future cancel
       ::
       =.  session.channel-state.state
         %+  ~(jab by session.channel-state.state)  channel-id
         |=  =channel
-        channel(events ~, state [%| duct])
+        channel(events ~, state [%| duct], heartbeat (some [heartbeat-time duct]))
       ::
-      [(weld http-moves moves) state]
+      [[heartbeat (weld http-moves moves)] state]
     ::  +acknowledge-events: removes events before :last-event-id on :channel-id
     ::
     ++  acknowledge-events
@@ -1362,7 +1410,7 @@
       ::
           %subscribe
         ::
-        =/  channel-wire=path
+        =/  channel-wire=wire
           /channel/subscription/[channel-id]/(scot %ud request-id.i.requests)
         ::
         =.  gall-moves
@@ -1381,7 +1429,7 @@
         $(requests t.requests)
       ::
           %unsubscribe
-        =/  channel-wire=path
+        =/  channel-wire=wire
           /channel/subscription/[channel-id]/(scot %ud subscription-id.i.requests)
         ::
         =/  usession  (~(get by session.channel-state.state) channel-id)
@@ -1427,7 +1475,7 @@
             ::  produce a list of moves which cancels every gall subscription
             ::
             %+  turn  ~(tap by subscriptions.session)
-            |=  [channel-wire=path ship=@p app=term =path duc=^duct]
+            |=  [channel-wire=wire ship=@p app=term =path duc=^duct]
             ^-  move
             ::
             [duc %pass channel-wire [%g %deal [our ship] app %pull ~]]
@@ -1446,6 +1494,14 @@
         ?>  ?=([%| *] state.session)
         =.  duct-to-key.channel-state.state
           (~(del by duct-to-key.channel-state.state) p.state.session)
+        ::
+        ?~  heartbeat.session  $(requests t.requests)
+        =.  gall-moves
+          %+  snoc  gall-moves
+          %^    cancel-heartbeat-move
+              channel-id
+            date.u.heartbeat.session
+          duct.u.heartbeat.session
         ::
         $(requests t.requests)
       ::
@@ -1565,7 +1621,31 @@
           events  (~(put to events.channel) [event-id event-stream-lines])
         ==
       ==
-    ::  +on-channel-timeout: we received a wake to clear an old session
+    ::
+    ++  on-channel-heartbeat
+      |=  channel-id=@t
+      ^-  [(list move) server-state]
+      ::
+      ?~  connection-state=(~(get by connections.state) duct)
+        [~ state]
+      ::
+      =/  res
+        %-  handle-response
+        :*  %continue
+            data=(some (as-octs:mimes:html '\0a'))
+            complete=%.n
+        ==
+      =/  http-moves  -.res
+      =/  new-state  +.res
+      =/  heartbeat-time=@da  (add now ~s20)
+      :_  %_    new-state
+              session.channel-state
+            %+  ~(jab by session.channel-state.state)  channel-id
+            |=  =channel
+            channel(heartbeat (some [heartbeat-time duct]))
+          ==
+      (snoc http-moves (set-heartbeat-move channel-id heartbeat-time))
+    :: +on-channel-timeout: we received a wake to clear an old session
     ::
     ++  on-channel-timeout
       |=  channel-id=@t
@@ -1581,10 +1661,18 @@
               session.channel-state
             (~(del by session.channel-state.state) channel-id)
           ==
+      =/  heartbeat-cancel=(list move)
+        ?~  heartbeat.session  ~
+        :~  %^  cancel-heartbeat-move
+              channel-id
+            date.u.heartbeat.session
+          duct.u.heartbeat.session
+        ==
+      %+  weld  heartbeat-cancel
       ::  produce a list of moves which cancels every gall subscription
       ::
       %+  turn  ~(tap by subscriptions.session)
-      |=  [channel-wire=path ship=@p app=term =path duc=^duct]
+      |=  [channel-wire=wire ship=@p app=term =path duc=^duct]
       ^-  move
       ::
       [duc %pass channel-wire [%g %deal [our ship] app %pull ~]]
@@ -1891,6 +1979,44 @@
           [[~ /~/channel] duct [%channel ~]]
       ==
     [~ http-server-gate]
+  ::  %trim: in response to memory pressure
+  ::
+  ::    Cancel all inactive channels
+  ::    XX cancel active too if =(0 trim-priority) ?
+  ::
+  ?:  ?=(%trim -.task)
+    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =*  by-channel  by-channel:(per-server-event event-args)
+    =*  channel-state  channel-state.server-state.ax
+    ::
+    =/  inactive=(list @t)
+      =/  full=(set @t)  ~(key by session.channel-state)
+      =/  live=(set @t)
+        (~(gas in *(set @t)) ~(val by duct-to-key.channel-state))
+      ~(tap in (~(dif in full) live))
+    ::
+    ?:  =(~ inactive)
+      [~ http-server-gate]
+    ::
+    =/  len=tape  (scow %ud (lent inactive))
+    ~>  %slog.[0 leaf+"eyre: trim: closing {len} inactive channels"]
+    ::
+    =|  moves=(list (list move))
+    |-  ^-  [(list move) _http-server-gate]
+    =*  channel-id  i.inactive
+    ?~  inactive
+      [(zing (flop moves)) http-server-gate]
+    ::  discard channel state, and cancel any active gall subscriptions
+    ::
+    =^  mov  server-state.ax  (on-channel-timeout:by-channel channel-id)
+    ::  cancel channel timer
+    ::
+    =/  channel  (~(got by session.channel-state) channel-id)
+    =?  mov  ?=([%& *] state.channel)
+      :_  mov
+      (cancel-timeout-move:by-channel channel-id p.state.channel)
+    $(moves [mov moves], inactive t.inactive)
+  ::
   ::  %vega: notifies us of a completed kernel upgrade
   ::
   ?:  ?=(%vega -.task)
@@ -2104,6 +2230,13 @@
         (on-channel-timeout i.t.t.wire)
       [moves http-server-gate]
     ::
+        %heartbeat
+      =/  on-channel-heartbeat
+        on-channel-heartbeat:by-channel:(per-server-event event-args)
+      =^  moves  server-state.ax
+        (on-channel-heartbeat i.t.t.wire)
+      [moves http-server-gate]
+    ::
         ?(%poke %subscription)
       ?>  ?=([%g %unto *] sign)
       ?>  ?=([@ @ @t @ *] wire)
@@ -2132,11 +2265,45 @@
 ::  +load: migrate old state to new state (called on vane reload)
 ::
 ++  load
-  |=  old=axle
+  =>  |%
+    +$  channel-old
+      $:  state=(each timer duct)
+          next-id=@ud
+          events=(qeu [id=@ud lines=wall])
+          subscriptions=(map wire [ship=@p app=term =path duc=duct])
+      ==
+    +$  channel-state-old
+      $:  session=(map @t channel-old)
+          duct-to-key=(map duct @t)
+      ==
+    ++  axle-old
+      %+  cork
+        axle
+      |=  =axle
+      axle(date %~2019.1.7, channel-state.server-state (channel-state-old))
+  --
+  |=  old=$%(axle axle-old)
   ^+  ..^$
   ::
   ~!  %loading
-  ..^$(ax old)
+  ?-  -.old
+    %~2019.1.7
+      =/  add-heartbeat
+      %-  ~(run by session.channel-state.server-state.old)
+      |=  [c=channel-old]
+      ^-  channel
+      [state.c next-id.c events.c subscriptions.c ~]
+      ::
+      =/  new
+      %=  old
+        date  %~2019.10.6
+        session.channel-state.server-state  add-heartbeat
+      ==
+      $(old new)
+    ::
+    %~2019.10.6  ..^$(ax old)
+  ==
+
 ::  +stay: produce current state
 ::
 ++  stay  `axle`ax

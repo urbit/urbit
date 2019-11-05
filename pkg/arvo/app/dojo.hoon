@@ -2,9 +2,8 @@
 ::::  /hoon/dojo/app                                    ::  ::::
   ::                                                    ::    ::
 /?  309                                                 ::  arvo kelvin
-/-  sole, lens                                          ::  console structures
-/+  sole                                                ::  console library
-=,  sole
+/-  *sole, lens                                         ::
+/+  sole, pprint, auto, easy-print                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::::
   ::                                                    ::    ::
@@ -333,6 +332,12 @@
 |_  $:  hid/bowl                                        ::  system state
         house                                           ::  program state
     ==                                                  ::
+::
+::  pretty-printer aliases
+::
+++  xskol  `$-(type tank)`type-to-tank:pprint
+++  xsell  `$-(vase tank)`vase-to-tank:pprint
+::
 ++  he                                                  ::  per session
   |_  {moz/(list move) session}                         ::
   ::
@@ -673,6 +678,7 @@
         $det  (dy-edit +.act)
         $ret  (dy-done (tufa buf.say))
         $clr  dy-stop
+        $tab  +>+>
       ==
     ::
     ++  dy-cage       |=(num/@ud (~(got by rez) num))   ::  known cage
@@ -718,23 +724,6 @@
       :-  [a ~]
       :+  %$  %noun
       ?~(b !>([~ ~]) (dy-vase p.u.b))
-    ::
-    ++  dy-hoon-head                                    ::  dynamic state
-      ::  todo: how do i separate the toplevel 'dojo state' comment?
-      ::  dojo state
-      ::
-      ::  our: the name of this urbit
-      ::  now: the current time
-      ::  eny: a piece of random entropy
-      ::
-      ^-  cage
-      :-  %noun
-      =+  sloop=|=({a/vase b/vase} ?:(=(*vase a) b ?:(=(*vase b) a (slop a b))))
-      %+  sloop
-        %-  ~(rep by var)
-        |=  {{a/term @ b/vase} c/vase}  ^-  vase
-        (sloop b(p face+[a p.b]) c)
-      !>([our=our now=now eny=eny]:hid)
     ::
     ++  dy-made-dial                                    ::  dialog product
       |=  cag/cage
@@ -809,7 +798,7 @@
       =+  too=(dy-hoon-mark gen)
       =-  ?~(too - [%cast he-disc u.too -])
       :+  %ride  gen
-      :-  [%$ dy-hoon-head]
+      :-  [%$ he-hoon-head]
       :^  %plan  he-rail  `coin`blob+**
       `scaffold:ford`[he-rail zuse sur lib ~ ~]
     ::
@@ -1107,6 +1096,69 @@
       ==
     ==
   ::
+  ++  he-tab
+    |=  pos=@ud
+    ^+  +>
+    =*  res  +>
+    =+  ^-  [back-pos=@ud fore-pos=@ud txt=tape]
+        (insert-magic:auto (add (lent buf) pos) :(weld buf (tufa buf.say)))
+    =/  id-len  (sub fore-pos back-pos)
+    =/  fore-pos-diff  (sub fore-pos pos)
+    =+  vex=((full parse-command-line:he-parser) [1 1] txt)
+    ?.  ?=([* ~ [* @ %ex *] *] vex)
+      res
+    =/  typ  p:(slop q:he-hoon-head !>(..dawn))
+    =/  tl  (tab-list-hoon:auto typ p.q.q.p.u.q.vex)
+    =/  advance  (advance-hoon:auto typ p.q.q.p.u.q.vex)
+    =?  res  ?=(^ advance)
+      =/  to-send
+        (trip (rsh 3 (sub pos back-pos) u.advance))
+      =|  fxs=(list sole-effect)
+      =.  .
+        |-  ^+  +.$
+        ?.  (gth fore-pos-diff 0)
+          +.$
+        =^  lic  say  (~(transmit sole say) %del pos)
+        %=  $
+          fxs            [det+lic fxs]
+          fore-pos-diff  (dec fore-pos-diff)
+        ==
+      ::  =.  pos  (add pos fore-pos-diff)
+      |-  ^+  res
+      ?~  to-send
+        (he-diff %mor (flop fxs))
+      =^  lic  say  (~(transmit sole say) %ins pos `@c`i.to-send)
+      $(to-send t.to-send, fxs [`sole-effect`det+lic fxs], pos +(pos))
+    ::  If couldn't search (eg cursor not in appropriate position), do
+    ::  nothing.
+    ::
+    ?:  ?=(~ tl) 
+      res
+    ::  If no options, ring the bell
+    ::
+    ?:  =([~ ~] tl) 
+      (he-diff %bel ~)
+    ::  If only one option, don't print unless the option is already
+    ::  typed in.
+    ::
+    ?:  &(?=([* ~] u.tl) !=((met 3 (need advance)) id-len))
+      res
+    ::  Else, print results
+    ::
+    =/  lots  (gth (lent u.tl) 10)
+    %+  he-diff  %tab
+    %+  turn  u.tl
+    |=  [=term =type]
+    ~|  term
+    :-  term
+    ?:  lots
+      *tank
+    ::  +perk is broken because *perk crashes.
+    ::
+    ?:  =(%perk term)
+      *tank
+    ~(duck easy-print type)
+  ::
   ++  he-type                                           ::  apply input
     |=  act/sole-action
     ^+  +>
@@ -1116,6 +1168,7 @@
       $det  (he-stir +.act)
       $ret  (he-done (tufa buf.say))
       $clr  he-pine(buf "")
+      $tab  (he-tab +.act)
     ==
   ::
   ++  he-lame                                           ::  handle error
@@ -1125,6 +1178,23 @@
     ?^  poy
       he-pine:~(dy-amok dy u.poy)
     he-pine                           ::  XX give mean to original keystroke
+  ::
+  ++  he-hoon-head                                      ::  dynamic state
+    ::  todo: how do i separate the toplevel 'dojo state' comment?
+    ::  dojo state
+    ::
+    ::  our: the name of this urbit
+    ::  now: the current time
+    ::  eny: a piece of random entropy
+    ::
+    ^-  cage
+    :-  %noun
+    =+  sloop=|=({a/vase b/vase} ?:(=(*vase a) b ?:(=(*vase b) a (slop a b))))
+    %+  sloop
+      %-  ~(rep by var)
+      |=  {{a/term @ b/vase} c/vase}  ^-  vase
+      (sloop b(p face+[a p.b]) c)
+    !>([our=our now=now eny=eny]:hid)
   --
 ::
 ++  prep

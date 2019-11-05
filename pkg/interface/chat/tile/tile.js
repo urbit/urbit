@@ -7,40 +7,17 @@ export default class ChatTile extends Component {
 
   render() {
     const { props } = this;
+
+    let data = _.get(props.data, 'chat-configs', false);
+
     let inviteNum = 0;
     let msgNum = 0;
-    let inviteCircle = `~${window.ship}/i`;
 
-    let propNumbers = _.get(props, 'data.numbers.chat.numbers', false);
-    let propConfigs = _.get(props, 'data.config.chat.configs', false);
-
-    if (propNumbers && propConfigs) {
-      let numbers = {};
-
-      for (let i = 0; i < propNumbers.length; i++) {
-        let num = propNumbers[i];
-        numbers[num.circle] = num.length;
-      }
-
-      let configs = Object.keys(propConfigs);
-
-      for (let i = 0; i < configs.length; i++) {
-        let key = configs[i];
-        let host = key.split('/')[0];
-
-        if (!propConfigs[key]) { break; }
-        if (!(key in numbers)) { break; }
-
-        let red = propConfigs[key].red;
-
-        if (key === inviteCircle) {
-          inviteNum = inviteNum - red + numbers[key];
-        } else if (host === `~${window.ship}`) {
-          msgNum = msgNum - red + numbers[key];
-        } else {
-          msgNum = msgNum + numbers[key];
-        }
-      } 
+    if (data) {
+      Object.keys(data).forEach((conf) => {
+        console.log(conf);
+        msgNum = msgNum + data[conf].length - data[conf].read;
+      });
     }
 
     let invSuffix = (inviteNum === 1) ? (
@@ -106,4 +83,4 @@ export default class ChatTile extends Component {
 
 }
 
-window.chatTile = ChatTile;
+window['chat-viewTile'] = ChatTile;

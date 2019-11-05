@@ -6,6 +6,7 @@ let
 
   ent          = import ./ent          { inherit pkgs; };
   arvo         = import ./arvo         { inherit pkgs; };
+  arvo-ropsten = import ./arvo-ropsten { inherit pkgs; };
   herb         = import ../../pkg/herb { inherit pkgs; };
 
   ge-additions = import ./ge-additions {
@@ -20,9 +21,9 @@ let
       inherit (deps) secp256k1 h2o ivory-header ca-header;
     };
 
-  urbit       = mkUrbit { debug=false; };
-  urbit-debug = mkUrbit { debug=true; };
+  urbit       = mkUrbit { debug = false; };
+  urbit-debug = mkUrbit { debug = true; };
 
 in
 
-{ inherit ent ge-additions arvo herb urbit urbit-debug; }
+{ inherit ent ge-additions arvo arvo-ropsten herb urbit urbit-debug; }

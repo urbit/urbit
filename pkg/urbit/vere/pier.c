@@ -2038,10 +2038,19 @@ u3_pier_tank(c3_l tab_l, c3_w pri_w, u3_noun tac)
     fil_u = stderr;
   }
 
-  switch ( pri_w ) {
-    case 3: fprintf(fil_u, "\033[31m>>> "); break;
-    case 2: fprintf(fil_u, "\033[33m>>  "); break;
-    case 1: fprintf(fil_u, "\033[32m>   "); break;
+  if ( c3n == u3_Host.ops_u.tem ) {
+    switch ( pri_w ) {
+        case 3: fprintf(fil_u, "\033[31m>>> "); break;
+        case 2: fprintf(fil_u, "\033[33m>>  "); break;
+        case 1: fprintf(fil_u, "\033[32m>   "); break;
+    }
+  }
+  else {
+    switch ( pri_w ) {
+        case 3: fprintf(fil_u, ">>> "); break;
+        case 2: fprintf(fil_u, ">>  "); break;
+        case 1: fprintf(fil_u, ">   "); break;
+    }
   }
 
   //  if we have no arvo kernel and can't evaluate nock
@@ -2062,7 +2071,10 @@ u3_pier_tank(c3_l tab_l, c3_w pri_w, u3_noun tac)
     _pier_wall(fil_u, wol);
   }
 
-  fprintf(fil_u, "\033[0m");
+  if ( c3n == u3_Host.ops_u.tem ) {
+    fprintf(fil_u, "\033[0m");
+  }
+
   u3_term_io_loja(0);
   u3z(blu);
   u3z(tac);

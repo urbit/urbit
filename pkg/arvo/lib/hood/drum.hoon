@@ -2,7 +2,7 @@
 ::::  /hoon/drum/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
-/-    *sole, hall
+/-    *sole
 /+    sole
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -76,44 +76,43 @@
   |=  [our/ship lit/?]
   %-  ~(gas in *(set well:gall))
   ^-  (list well:gall)
-  ?:  lit
-    :~  [%home %dojo]
-        [%home %azimuth-tracker]
-    ==
-  =+  myr=(clan:title our)
+  ::  boot all default apps off the home desk
   ::
-  ?:  ?=($pawn myr)
-  :~  [%home %lens]
-      [%base %hall]
-      [%base %talk]
-      [%base %dojo]
-      [%base %modulo]
-      [%home %launch]
-      [%home %chat]
-      [%home %publish]
-      [%home %clock]
-      [%home %weather]
-  ==
-  :~  [%home %lens]
-      [%home %acme]
-      [%home %dns]
-      [%home %dojo]
-      [%home %hall]
-      [%home %talk]
-      [%home %modulo]
-      [%home %launch]
-      [%home %chat]
-      [%home %publish]
-      [%home %clock]
-      [%home %weather]
-      [%home %azimuth-tracker]
+  =-  (turn - |=(a=term home+a))
+  ^-  (list term)
+  ?:  lit
+    :~  %dojo
+        %azimuth-tracker
+    ==
+  %+  welp
+    ?:  ?=(%pawn (clan:title our))  ~
+    :~  %acme
+        %dns
+        %azimuth-tracker
+    ==
+  :~  %lens
+      %dojo
+      %modulo
+      %launch
+      %publish
+      %clock
+      %weather
+      %group-store
+      %group-hook
+      %permission-store
+      %permission-hook
+      %permission-group-hook
+      %chat-store
+      %chat-hook
+      %chat-view
+      %chat-cli
   ==
 ::
 ++  deft-fish                                           ::  default connects
   |=  our/ship
   %-  ~(gas in *(set gill:gall))
   ^-  (list gill:gall)
-  [[our %talk] [our %dojo] ~]
+  [[our %chat-cli] [our %dojo] ~]
 ::
 ++  make                                                ::  initial part
   |=  our/ship
@@ -146,7 +145,6 @@
 =>  |%                                                ::  arvo structures
     ++  pear                                          ::  request
       $%  {$sole-action p/sole-action}                ::
-          {$hall-command command:hall}                ::
       ==                                              ::
     ++  lime                                          ::  update
       $%  {$dill-blit dill-blit:dill}                ::
@@ -276,9 +274,14 @@
 ::
 ++  se-adit                                           ::  update servers
   ^+  .
-  ::  ensure dojo connects after talk
-  =*  dojo-on-top  aor
-  %+  roll  (sort ~(tap in ray) dojo-on-top)
+  %+  roll
+    ::  ensure dojo is first in the list,
+    ::  guaranteeing its display on-boot.
+    ::
+    %+  sort  ~(tap in ray)
+    |=  [a=well:gall b=well:gall]
+    ?:  |(=(%dojo q.a) =(%dojo q.b))  =(%dojo q.a)
+    (aor a b)
   =<  .(con +>)
   |:  $:{wel/well:gall con/_..se-adit}  ^+  con
   =.  +>.$  con
@@ -390,10 +393,39 @@
     (se-link gyl)
   +>.$
 ::
+++  se-tab                                            ::  print tab completions
+  |=  tl/(list {=cord =tank})
+  ^+  +>
+  =/  lots  (gth (lent tl) 10)
+  =/  long
+    ?:  lots
+      0
+    (roll (turn tl |=([=term *] (met 3 term))) max)
+  %-  se-dump
+  %-  flop
+  ^-  (list tank)
+  :-  leaf+"-----"
+  %+  turn  tl
+  |=  [=term =type=tank]
+  ?:  lots
+    leaf+(trip term)
+  =/  type-text  ~(ram re type-tank)
+  =/  spaces  (trip (fil 3 (sub long (met 3 term)) ' '))
+  =/  =tape  "{(trip term)} {spaces} {type-text}"
+  ::  If type is too long and not the only result, abbreviate
+  ::
+  ?:  (gth (lent type-text) edg)
+    ?:  ?=([* ~] tl)
+      :+  %rose
+        ["" "" ""]
+      ~[leaf+(trip term) type-tank]
+    leaf+(weld (scag (sub edg 3) tape) "...")
+  leaf+tape
+::
 ++  se-dump                                           ::  print tanks
   |=  tac/(list tank)
   ^+  +>
-  ?.  se-ably  (se-hall tac)
+  ?.  se-ably  ((slog tac) +>.$)
   =/  wol/wall
     (zing (turn (flop tac) |=(a/tank (~(win re a) [0 edg]))))
   |-  ^+  +>.^$
@@ -471,21 +503,13 @@
   |=  mov/move
   %_(+> moz [mov moz])
 ::
-++  se-hall
-  |=  tac/(list tank)
-  ^+  +>
-  :: XX hall should be usable for stack traces, see urbit#584 which this change
-  :: closed for the problems there
-  ((slog (flop tac)) +>)
-  ::(se-emit 0 %poke /drum/hall [our.hid %hall] (said:hall our.hid %drum now.hid eny.hid tac))
-::
 ++  se-text                                           ::  return text
   |=  txt/tape
   ^+  +>
   ?.  ((sane %t) (crip txt))  :: XX upstream validation
     ~&  bad-text+<`*`txt>
     +>
-  ?.  se-ably  (se-hall [%leaf txt]~)
+  ?.  se-ably  ((slog [%leaf txt]~) +>.$)
   (se-blit %out (tuba txt))
 ::
 ++  se-poke                                           ::  send a poke
@@ -594,6 +618,7 @@
         $f  (ta-aro %r)
         $g  ?~  ris  ta-bel
             (ta-hom(pos.hit num.hit, ris ~) [%set ~])
+        $i  ta-tab
         $k  =+  len=(lent buf.say.inp)
             ?:  =(pos.inp len)
               ta-bel
@@ -654,6 +679,7 @@
                 $(p.fec t.p.fec, +>.^$ ^$(fec i.p.fec))
       {$nex *}  ta-nex
       {$pro *}  (ta-pro +.fec)
+      {$tab *}  +>(..ta (se-tab p.fec))
       {$tan *}  +>(..ta (se-dump p.fec))
       {$sag *}  +>(..ta (se-blit fec))
       {$sav *}  +>(..ta (se-blit fec))
@@ -860,6 +886,9 @@
   ::
   ++  ta-ret                                          ::  hear return
     (ta-act %ret ~)
+  ::
+  ++  ta-tab                                          ::  hear tab
+    (ta-act %tab pos.inp)
   ::
   ++  ta-ser                                          ::  reverse search
     |=  ext/(list @c)
