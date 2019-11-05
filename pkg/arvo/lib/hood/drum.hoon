@@ -82,12 +82,14 @@
   ^-  (list term)
   ?:  lit
     :~  %dojo
+        %eth-watcher
         %azimuth-tracker
     ==
   %+  welp
     ?:  ?=(%pawn (clan:title our))  ~
     :~  %acme
         %dns
+        %eth-watcher
         %azimuth-tracker
     ==
   :~  %lens

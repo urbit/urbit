@@ -1,7 +1,6 @@
 ::  gaze: azimuth statistics
 ::
-/+  *eth-watcher
-::
+/-  eth-watcher
 =,  ethereum
 =,  azimuth
 ::
@@ -18,6 +17,7 @@
       days=(list [day=@da sat=stats])
   ==
 ::
+++  loglist  loglist:eth-watcher
 ++  event
   $%  [%azimuth who=ship dif=diff-point]
       ::TODO  [%invites *]
@@ -40,7 +40,7 @@
 ::
 ++  move  (pair bone card)
 ++  card
-  $%  [%poke wire [ship %eth-watcher] %eth-watcher-action action]
+  $%  [%poke wire [ship %eth-watcher] %eth-watcher-poke poke:eth-watcher]
       [%peer wire [ship %eth-watcher] path]
       [%hiss wire (unit user:eyre) mark %hiss hiss:eyre]
       [%wait wire @da]
@@ -49,7 +49,7 @@
 --
 ::
 |_  [bowl:gall state]
-++  node-url  (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
+++  node-url  'http://eth-mainnet.urbit.org:8545'
 ++  export-frequency  ~h1
 ::
 ++  prep
@@ -76,13 +76,12 @@
       :*  %poke
           /look
           [our %eth-watcher]
-          %eth-watcher-action
+          %eth-watcher-poke
         ::
-          ^-  action
-          :+  %watch  dap
+          ^-  poke:eth-watcher
+          :+  %watch  /[dap]
           :*  node-url
               public:contracts
-              ~
               ~[azimuth:contracts]
               ~
           ==
@@ -116,17 +115,20 @@
     [~ +>.$]
   ==
 ::
-::  +diff-eth-watcher-update: process new logs, clear state on rollback
+::  +diff-eth-watcher-diff: process new logs, clear state on rollback
 ::
-++  diff-eth-watcher-update
-  |=  [=wire =^update]
+++  diff-eth-watcher-diff
+  |=  [=wire =diff:eth-watcher]
   ^-  (quip move _+>)
   =^  logs  +>.$
-    ?-  -.update
-      %snap  ~&  [%got-snap (lent logs.snapshot.update)]
-             [logs.snapshot.update +>.$(qued ~, seen ~)]
-      %logs  ~&  [%got-logs (lent loglist.update)]
-             [loglist.update +>.$]
+    ^-  [loglist _+>.$]
+    ?-  -.diff
+      %history  ~&  [%got-history (lent loglist.diff)]
+                [loglist.diff +>.$(qued ~, seen ~)]
+      %log      ~&  %got-log
+                [[event-log.diff ~] +>.$]
+      %disavow  ~&  %disavow-unimplemented
+                [~ +>.$]
     ==
   ?~  logs  [~ +>.$]
   =-  =^  moz  +>.$  (queue-logs mistime)  ::  oldest first
@@ -176,7 +178,8 @@
   ^-  move
   =-  [ost %hiss /timestamps ~ %json-rpc-response %hiss -]
   ^-  hiss:eyre
-  %+  json-request:rpc  node-url
+  %+  json-request:rpc
+    (need (de-purl:html node-url))
   :-  %a
   ^-  (list json)
   %+  turn
