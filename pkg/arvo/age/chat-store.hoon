@@ -3,12 +3,13 @@
 /+  *chat-json, *chat-eval, default-agent
 |%
 +$  card      card:agent:mall
-+$  state
-  $%  [%0 state-zero]
++$  versioned-state
+  $%  state-zero
   ==
 ::
 +$  state-zero
-  $:  =inbox
+  $:  %0
+      =inbox
   ==
 ::
 +$  diff
@@ -18,23 +19,24 @@
   ==
 --
 ::
+=|  state=state-zero
 ^-  agent:mall
 =;  chat-core
-  =|  =state
   |_  =bowl:mall
   +*  this  .
-      sc    ~(. chat-core bowl state)
+      sc    ~(. chat-core bowl)
       def   ~(. default-agent bowl this)
   ::
   ++  handle-init            handle-init:def
   ++  handle-extract-state   !>(state)
   ++  handle-upgrade-state
     |=  old=vase
-    `this(state !<(^state old))
+    `this(state !<(state-zero old))
   ::
   ++  handle-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?>  (team:title our.bowl src.bowl)
     =^  cards  state
       ?+  mark  (handle-poke:def mark vase)
         %json         (poke-json:sc !<(json vase))
@@ -95,40 +97,8 @@
   --
 ::
 ::
-|_  [bol=bowl:mall state]
-+*  all-state  +<+
-::
-++  peek-x-all
-  |=  pax=path
-  ^-  (unit (unit [%noun (map path mailbox)]))
-  [~ ~ %noun inbox]
-::
-++  peek-x-configs
-  |=  pax=path
-  ^-  (unit (unit [%noun chat-configs]))
-  :^  ~  ~  %noun
-  (inbox-to-configs inbox)
-::
-++  peek-x-keys
-  |=  pax=path
-  ^-  (unit (unit [%noun (set path)]))
-  [~ ~ %noun ~(key by inbox)]
-::
-++  peek-x-mailbox
-  |=  pax=path
-  ^-  (unit (unit [%noun (unit mailbox)]))
-  ?~  pax  ~
-  =/  mailbox=(unit mailbox)  (~(get by inbox) pax)
-  [~ ~ %noun mailbox]
-::
-++  peek-x-config
-  |=  pax=path
-  ^-  (unit (unit [%noun config]))
-  ?~  pax  ~
-  =/  mailbox  (~(get by inbox) pax)
-  ?~  mailbox  ~
-  :^  ~  ~  %noun
-  config.u.mailbox
+=,  state
+|_  bol=bowl:mall
 ::
 ++  peek-x-envelopes
   |=  pax=path
@@ -170,14 +140,12 @@
 ::
 ++  poke-json
   |=  jon=json
-  ^-  (quip card _all-state)
-  ?>  (team:title our.bol src.bol)
+  ^-  (quip card _state)
   (poke-chat-action (json-to-action jon))
 ::
 ++  poke-chat-action
   |=  action=chat-action
-  ^-  (quip card _all-state)
-  ?>  (team:title our.bol src.bol)
+  ^-  (quip card _state)
   ?-  -.action
       %create   (handle-create action)
       %delete   (handle-delete action)
@@ -187,31 +155,31 @@
 ::
 ++  handle-create
   |=  act=chat-action
-  ^-  (quip card _all-state)
+  ^-  (quip card _state)
   ?>  ?=(%create -.act)
   =/  pax  [(scot %p ship.act) path.act]
   ?:  (~(has by inbox) pax)
-    [~ all-state]
+    [~ state]
   :-  (send-diff pax act)
-  all-state(inbox (~(put by inbox) pax *mailbox))
+  state(inbox (~(put by inbox) pax *mailbox))
 ::
 ++  handle-delete
   |=  act=chat-action
-  ^-  (quip card _all-state)
+  ^-  (quip card _state)
   ?>  ?=(%delete -.act)
   =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
   ?~  mailbox
-    [~ all-state]
+    [~ state]
   :-  (send-diff path.act act)
-  all-state(inbox (~(del by inbox) path.act))
+  state(inbox (~(del by inbox) path.act))
 ::
 ++  handle-message
   |=  act=chat-action
-  ^-  (quip card _all-state)
+  ^-  (quip card _state)
   ?>  ?=(%message -.act)
   =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
   ?~  mailbox
-    [~ all-state]
+    [~ state]
   =*  letter  letter.envelope.act
   =?  letter  &(?=(%code -.letter) ?=(~ output.letter))
     =/  =hoon  (ream expression.letter)
@@ -221,18 +189,18 @@
       envelopes.u.mailbox  (snoc envelopes.u.mailbox envelope.act)
   ==
   :-  (send-diff path.act act)
-  all-state(inbox (~(put by inbox) path.act u.mailbox))
+  state(inbox (~(put by inbox) path.act u.mailbox))
 ::
 ++  handle-read
   |=  act=chat-action
-  ^-  (quip card _all-state)
+  ^-  (quip card _state)
   ?>  ?=(%read -.act)
   =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
   ?~  mailbox
-    [~ all-state]
+    [~ state]
   =.  read.config.u.mailbox  length.config.u.mailbox
   :-  (send-diff path.act act)
-  all-state(inbox (~(put by inbox) path.act u.mailbox))
+  state(inbox (~(put by inbox) path.act u.mailbox))
 ::
 ++  update-subscribers
   |=  [pax=path act=chat-action]
