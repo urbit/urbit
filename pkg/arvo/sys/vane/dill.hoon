@@ -196,6 +196,14 @@
         |=  git/gift:able
         +>(moz :_(moz [hen %give git]))
       ::
+      ++  deal                                          ::  pass to %gall
+        |=  [=wire act=agent-action:gall]
+        (pass wire [%g %deal [our our] ram act])
+      ::
+      ++  pass                                          ::  pass note
+        |=  [=wire =note]
+        +>(moz :_(moz [hen %pass wire note]))
+      ::
       ++  from                                          ::  receive belt
         |=  bit/dill-blit
         ^+  +>
@@ -289,19 +297,15 @@
         --
       ::
       ++  heft
-        %_    .
-            moz
-          :*  [hen %pass /heft/ames %a %wegh ~]
-              [hen %pass /heft/behn %b %wegh ~]
-              [hen %pass /heft/clay %c %wegh ~]
-              [hen %pass /heft/eyre %e %wegh ~]
-              [hen %pass /heft/ford %f %wegh ~]
-              [hen %pass /heft/gall %g %wegh ~]
-              [hen %pass /heft/iris %i %wegh ~]
-              [hen %pass /heft/jael %j %wegh ~]
-              moz
-          ==
-        ==
+        =<  (pass /heft/ames [%a %wegh ~])
+        =<  (pass /heft/behn [%b %wegh ~])
+        =<  (pass /heft/clay [%c %wegh ~])
+        =<  (pass /heft/eyre [%e %wegh ~])
+        =<  (pass /heft/ford [%f %wegh ~])
+        =<  (pass /heft/gall [%g %wegh ~])
+        =<  (pass /heft/iris [%i %wegh ~])
+        =<  (pass /heft/jael [%j %wegh ~])
+        .
       ::  XX move
       ::
       ++  sein
@@ -312,25 +316,21 @@
         [[151 %noun] %j our %sein da+now /(scot %p who)]
       ::
       ++  init                                          ::  initialize
-        ^+  .
-        =.  moz
-          :_  moz
-          [hen %pass /merg/home %c %merg %home our %base da+now %init]
-        .
+        (pass /merg/home [%c %merg %home our %base da+now %init])
       ::
       ++  mere                                          ::  continue init
         ^+  .
         =/  myt  (flop (fall tem ~))
         =/  can  (clan:title our)
         =.  tem  ~
-        =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] our %home]])
+        =.  +>  (pass / [%g %conf [[our ram] our %home]])
         =.  +>  (sync %home our %base)
-        =.  +>  ?:  ?=(?($czar $pawn) can)  +>
-                (sync %base (sein our) %kids)
-        =.  +>  ?.  ?=(?($duke $king $czar) can)  +>
-                ::  make kids desk publicly readable, so syncs work.
-                ::
-                (show %kids):(sync %kids our %base)
+        =?  +>  ?=(?($earl $duke $king) can)
+          (sync %base (sein our) %kids)
+        =?  +>  ?=(?($duke $king $czar) can)
+          ::  make kids desk publicly readable, so syncs work.
+          ::
+          (show %kids):(sync %kids our %base)
         =.  +>  autoload
         =.  +>  hood-set-boot-apps
         =.  +>  peer
@@ -340,71 +340,35 @@
       ::
       ++  into                                          ::  preinitialize
         |=  gyl/(list gill)
-        %_    +>
-            tem  `(turn gyl |=(a/gill [%yow a]))
-            moz
-          :_  moz
-          [hen %pass / %c %warp our %base `[%sing %y [%ud 1] /]]
-        ==
+        =.  tem  `(turn gyl |=(a/gill [%yow a]))
+        (pass / [%c %warp our %base `[%sing %y [%ud 1] /]])
       ::
       ++  send                                          ::  send action
         |=  bet/dill-belt
         ^+  +>
         ?^  tem
           +>(tem `[bet u.tem])
-        %_    +>
-            moz
-          :_  moz
-          [hen %pass ~ %g %deal [our our] ram %poke [%dill-belt -:!>(bet) bet]]
-        ==
+        (deal / [%poke [%dill-belt -:!>(bet) bet]])
       ::
       ++  hood-set-boot-apps
-        %_    .
-            moz
-          :_  moz
-          :*  hen  %pass  ~  %g  %deal  [our our]
-              ram  %poke  %drum-set-boot-apps  !>(lit.all)
-          ==
-        ==
+        (deal / [%poke %drum-set-boot-apps !>(lit.all)])
       ::
       ++  peer
-        %_    .
-            moz
-          :_(moz [hen %pass ~ %g %deal [our our] ram %peer /drum])
-        ==
+        (deal / [%peer /drum])
       ::
       ++  show                                          ::  permit reads on desk
         |=  des/desk
-        %_    +>.$
-            moz
-          :_  moz
-          [hen %pass /show %c %perm des / r+`[%black ~]]
-        ==
+        (pass /show [%c %perm des / r+`[%black ~]])
       ::
       ++  sync
         |=  syn/{desk ship desk}
-        %_    +>.$
-            moz
-          :_  moz
-          :*  hen  %pass  /sync  %g  %deal  [our our]
-              ram  %poke  %hood-sync  -:!>(syn)  syn
-          ==
-        ==
+        (deal /sync [%poke %hood-sync -:!>(syn) syn])
       ::
       ++  autoload
-        %_    .
-            moz
-          :_  moz
-          :*  hen  %pass  /autoload  %g  %deal  [our our]
-              ram  %poke  %kiln-start-autoload  [%atom %n `~]  ~
-          ==
-        ==
+        (deal /autoload [%poke %kiln-start-autoload [%atom %n `~] ~])
       ::
       ++  pump                                          ::  send diff ack
-        %_    .
-            moz
-          :_(moz [hen %pass ~ %g %deal [our our] ram %pump ~])
-        ==
+        (deal / [%pump ~])
       ::
       ++  take                                          ::  receive
         |=  sih/sign
