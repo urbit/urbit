@@ -15,13 +15,22 @@
       [%peer wire dock path]
   ==
 ::
-+$  state
-  $%  [%0 state-zero]
++$  state-both
+  $%  state-zero
+      state-one
   ==
 ::
 +$  state-zero
-  $:  synced=(map path ship)
+  $:  %0
+      synced=(map path ship)
       boned=(map wire (list bone))
+  ==
+::
++$  state-one
+  $:  %1
+      synced=(map path ship)
+      boned=(map wire (list bone))
+      invite-created=_|
   ==
 ::
 +$  poke
@@ -33,17 +42,32 @@
 ::
 --
 ::
-|_  [bol=bowl:gall state]
+|_  [bol=bowl:gall state-one]
 ::
 ++  this  .
 ::
 ++  prep
-  |=  old=(unit state)
+  |=  old=(unit state-both)
   ^-  (quip move _this)
-  :_  ?~(old this this(+<+ u.old))
-  :~  (invite-poke [%create /chat])
-      [ost.bol %peer /invites [our.bol %invite-store] /invitatory/chat]
-      [ost.bol %peer /permissions [our.bol %permission-store] /updates]
+  ?~  old
+    :_  this(invite-created %.y)
+    :~  (invite-poke [%create /chat])
+        [ost.bol %peer /invites [our.bol %invite-store] /invitatory/chat]
+        [ost.bol %peer /permissions [our.bol %permission-store] /updates]
+    ==
+  ?-  -.u.old
+      %1  [~ this(+<+ u.old)]
+  ::
+      %0
+    =/  sta  *state-one
+    =:  boned.sta   boned.u.old
+        synced.sta  synced.u.old
+        invite-created  %.y
+    ==
+    :_  this(+<+ sta)
+    :~  (invite-poke [%create /chat])
+        [ost.bol %peer /invites [our.bol %invite-store] /invitatory/chat]
+    ==
   ==
 ::
 ++  poke-json
