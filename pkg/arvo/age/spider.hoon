@@ -13,8 +13,8 @@
   =|  =state
   |_  =bowl:mall
   +*  this  .
-      sc  ~(. spider-core bowl state)
-      def  ~(. default-agent bowl this)
+      sc    ~(. spider-core bowl state)
+      def   ~(. default-agent bowl this)
   ::
   ++  handle-init            handle-init:def
   ++  handle-extract-state   handle-extract-state:def
