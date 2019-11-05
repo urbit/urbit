@@ -2023,6 +2023,14 @@ _pier_wall(FILE* fil_u, u3_noun wol)
   u3z(wol);
 }
 
+/* _pier_wash(): print tank via +wash
+*/
+static u3_noun
+_pier_wash(u3_noun cat)
+{
+  return u3do("wash", cat);
+}
+
 /* u3_pier_tank(): dump single tank.
 */
 void
@@ -2063,10 +2071,22 @@ u3_pier_tank(c3_l tab_l, c3_w pri_w, u3_noun tac)
       putc(10, fil_u);
     }
   }
-  //  We are calling nock here, but hopefully need no protection.
-  //
   else {
-    u3_noun wol = u3dc("wash", u3nc(tab_l, col_l), u3k(tac));
+    u3_noun wol = u3_nul;
+
+    {
+      u3_noun cat = u3nc(u3nc(tab_l, col_l), u3k(tac));
+      u3_noun low = u3m_soft(0, _pier_wash, cat);
+
+      if ( u3_blip != u3h(low) ) {
+        u3m_p("bad tank", tac);
+      }
+      else {
+        wol = u3k(u3t(low));
+      }
+
+      u3z(low);
+    }
 
     _pier_wall(fil_u, wol);
   }
