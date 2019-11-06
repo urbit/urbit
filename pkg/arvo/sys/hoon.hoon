@@ -3587,7 +3587,6 @@
   =>  |%
       ++  flin  |=(a=@ (swp 3 a))                       ::  flip input
       ++  flim  |=(byts [wid (rev 3 wid dat)])          ::  flip input w/ length
-      ++  flis  |=([a=@ b=@] [(swp 3 a) b])
       ++  flip  |=(w=@u (cury (cury rev 3) w))          ::  flip output of size
       ++  meet  |=(a=@ [(met 3 a) a])                   ::  measure input size
       --
@@ -3598,9 +3597,6 @@
   ++  sha-1     (cork meet sha-1l)
   ++  sha-256   :(cork flin shax (flip 32))
   ++  sha-512   :(cork flin shaz (flip 64))
-  ++  sha-d     :(cork flin shad (flip 32))
-  ++  sha-s     :(cork flis shas (flip 32))
-  ++  sha-f     :(cork flis shaf (flip 16))
   ::
   ::  use with byts
   ::
