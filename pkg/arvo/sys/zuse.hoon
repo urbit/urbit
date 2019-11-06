@@ -1884,6 +1884,7 @@
       $%  {$conf p/dock q/dock}                         ::  configure app
           $>(%init vane-task)                           ::  set owner
           {$deal p/sock q/internal-task}                ::  full transmission
+          [%goad force=? agent=(unit dude)]             ::  rebuild agent(s)
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           $>(%west vane-task)                           ::  network request

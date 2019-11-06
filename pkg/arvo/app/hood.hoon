@@ -187,6 +187,7 @@
 ++  poke-kiln-keep-ford       (wrap poke-keep-ford):from-kiln
 ++  poke-kiln-autoload        (wrap poke-autoload):from-kiln
 ++  poke-kiln-overload        (wrap poke-overload):from-kiln
+++  poke-kiln-goad-gall       (wrap poke-goad-gall):from-kiln
 ++  poke-kiln-wash-gall       (wrap poke-wash-gall):from-kiln
 ++  poke-kiln-unmount         (wrap poke-unmount):from-kiln
 ++  poke-kiln-unsync          (wrap poke-unsync):from-kiln
