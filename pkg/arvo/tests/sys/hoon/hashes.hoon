@@ -224,35 +224,6 @@
     ::
   ==
 ::
-++  test-sha-d
-::  Retrieved from
-::  https://www.dlitz.net/crypto/shad256-test-vectors/SHAd256_Test_Vectors.txt
-::
-  =/  a  ''
-  =/  b  'abc'
-  =/  c  'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'
-  ;:  weld
-    ::  Empty string
-    ::
-    %+  expect-eq
-      !>  0x5df6.e0e2.7613.59d3.0a82.7505.8e29.9fcc.0381.5345.45f5.5cf4.3e41.
-            983f.5d4c.9456
-      !>  `@ux`(sha-d:sha (swp 3 a))
-    ::  Short Message
-    ::
-    %+  expect-eq
-      !>  0x4f8b.42c2.2dd3.729b.519b.a6f6.8d2d.a7cc.5b2d.606d.05da.ed5a.d512.
-            8cc0.3e6c.6358
-      !>  `@ux`(sha-d:sha (swp 3 b))
-    ::  Long message
-    ::
-    %+  expect-eq
-      !>  0xcff.e17f.6895.4dac.3a84.fb14.58bd.5ec9.9209.4497.49b2.b308.b7cb.
-          5581.2f95.63af
-      !>  `@ux`(sha-d:sha (swp 3 c))
-    ::
-  ==
-::
 ++  test-shaz
   =/  a  ''
   =/  b  'abc'
@@ -282,28 +253,6 @@
       !>  `@ux`(sha-512:sha (swp 3 c))
     ::
   ==
-::
-++  test-sha-s
-::  Derived from double-SHA256 vectors:
-::  https://www.dlitz.net/crypto/shad256-test-vectors/SHAd256_Test_Vectors.txt
-::  Input hashed with SHA256, salted such that the result = once-hashed 'abc'.
-::  Hashed once more, the final result = (shad 'abc').
-::
-  =/  a  0x9ef5.7cde.5d07.f752.a481.664d.5190.421a.133f.85fa.f2e8.5bfb.42fc.
-           12b5.ebdb.136c
-  =/  b  'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'
-  %+  expect-eq
-    !>  0x4f8b.42c2.2dd3.729b.519b.a6f6.8d2d.a7cc.5b2d.606d.05da.ed5a.d512.8cc0.
-          3e6c.6358
-    !>  `@ux`(sha-s:sha a b)
-::
-++  test-sha-f
-  =/  a  0x9ef5.7cde.5d07.f752.a481.664d.5190.421a.133f.85fa.f2e8.5bfb.42fc.
-           12b5.ebdb.136c
-  =/  b  'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'
-  %+  expect-eq
-    !>  0x14a6.22af.2809.9fc1.8489.2a36.b341.c494
-    !>  `@ux`(sha-f:sha a b)
 ::
 ++  test-sham
   ;:  weld
