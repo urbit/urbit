@@ -217,7 +217,10 @@
   =+  gyl=(de-gill way)
   ?~  saw
     (se-join gyl)
-  (se-dump:(se-drop & gyl) u.saw)
+  ::  Don't print stack trace because we probably just crashed to
+  ::  indicate we don't connect to the console.
+  ::
+  (se-drop & gyl)
 ::
 ++  take                                              ::
   |=  [=wire =sign-arvo]

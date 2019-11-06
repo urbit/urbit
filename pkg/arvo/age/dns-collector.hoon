@@ -37,13 +37,7 @@
 +*  this  .
     def   ~(. default-agent bowl this)
 ::
-++  handle-init
-  ^-  (quip card _this)
-  :_  this
-
-  ^-  (list card)
-  [%pass /unlink %agent [our.bowl %hood] %poke %drum-unlink !>([our dap]:bowl)]~
-::
+++  handle-init            handle-init:def
 ++  handle-extract-state   !>(state)
 ++  handle-upgrade-state
   |=  old=vase
@@ -123,10 +117,8 @@
 ++  handle-subscribe
   |=  =path
   ^-  (quip card _this)
-  ::  will be immediately unlinked, see +prep
-  ::
   ?:  ?=([%sole *] path)
-    `this
+    !!
   ?.  ?=([@ ~] path)
     ~|  %invalid-path  !!
   ?:  ?=(%requests i.path)
