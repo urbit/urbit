@@ -52,5 +52,4 @@ behn king enqueueEv =
     doze tim = io . \case
         Nothing -> Timer.stop tim
         Just t  -> Timer.start tim (sysTime t)
-                       $ atomically
-                       $ enqueueEv wakeEv
+                       $ atomically (enqueueEv wakeEv)

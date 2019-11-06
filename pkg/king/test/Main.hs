@@ -27,9 +27,8 @@ main = do
     makeAbsolute "../.." >>= setCurrentDirectory
     setEnv "TASTY_NUM_THREADS" "1"
     runInBoundThread $ defaultMain $ testGroup "Urbit"
-        [ AmesTests.tests
+        [ BehnTests.tests
         , ArvoTests.tests
-        , BehnTests.tests
         , ClayTests.tests
         , DawnTests.tests
         , DeriveNounTests.tests
@@ -37,4 +36,5 @@ main = do
         , JamTests.tests
         , LogTests.tests
         , NounConversionTests.tests
+        , AmesTests.tests
         ]

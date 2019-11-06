@@ -1,4 +1,4 @@
-module BehnTests (tests) where
+module BehnTests where
 
 import Arvo
 import Data.Acquire
@@ -16,7 +16,7 @@ import Vere.Drv.Behn
 import Vere.Log
 import Vere.Pier.Types
 
-import Control.Concurrent (runInBoundThread, threadDelay)
+import Control.Concurrent (runInBoundThread)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
 import KingApp            (runApp)
@@ -55,10 +55,13 @@ import qualified Vere.Log   as Log
 -}
 
 data Cmd
-    = Doze (Maybe Int) -- Cancel or set a timer for n ms from now.
-    | Wait             -- Wait for a timer to fire and record the result
+    = Doze Word -- Set a timer for `n` ms from the start time.
+    | Kill      -- Cancel existing timer
+    | Wait      -- Wait for a timer to fire and record the result
+  deriving (Eq, Ord, Show)
 
-type Prog = [Cmd]
+newtype Prog = Prog { unProg :: [Cmd] }
+  deriving newtype (Eq, Ord, Show)
 
 {-
     All the times when a timer fired. Each number represents the number
@@ -66,70 +69,150 @@ type Prog = [Cmd]
 -}
 type ProgRes = [Double]
 
+instance Arbitrary Cmd where
+    arbitrary = oneof (set <> unset <> wait)
+      where
+        wait  = [pure Wait]
+        unset = [pure Kill]
+        set   = pure . Doze <$> [0..19]
+
+instance Arbitrary Prog where
+    arbitrary = Prog . take 20 <$> arbitrary
+
 {-
     What the test would produce if timers had perfect precision
     and latency.
 -}
 pureBehn :: Prog -> ProgRes
-pureBehn = fmap fromIntegral . go (0, Nothing, [])
+pureBehn = fmap fromIntegral . go (0, Nothing, []) . unProg
   where
-    go :: (Int, Maybe Int, [Int]) -> [Cmd] -> [Int]
+    go :: (Word, Maybe Word, [Word]) -> [Cmd] -> [Word]
 
-    -- No timer and no commands
-    go (_, Nothing, acc) [] = reverse acc
+    {- No timer and no commands -}
+    go (_, Nothing, acc) [] =
+        reverse acc
 
-    -- Timer, but no commands
-    go (_, Just n, acc) [] = reverse (n:acc)
+    {- Timer, but no commands -}
+    go (_, Just n, acc) [] =
+        reverse (n:acc)
 
-    -- Wait command, but no timer
-    go (_, Nothing, acc) (Wait:_) = reverse acc
+    {- Wait command, but no timer -}
+    go (_, Nothing, acc) (Wait:_) =
+        reverse acc
 
-    -- Wait command with timer set
-    go (time, Just n, acc) (Wait:cs) = go (n, Nothing, n:acc) cs
+    {- Wait command with timer set -}
+    go (t, Just n, acc) (Wait:cs) =
+        go (n, Nothing, n:acc) cs
 
-    -- Timer canceled
-    go (time, _, acc) (Doze Nothing : cs) = go (time, Nothing, acc) cs
+    {- Timer canceled -}
+    go (t, _, acc) (Kill : cs) =
+        go (t, Nothing, acc) cs
 
-    -- Timer set for present or past
-    go (time, _, acc) (Doze (Just n) : cs) | n<1 =
-        go (time, Nothing, time:acc) cs
+    {- Timer set -}
+    go (t, _, acc) (Doze n : cs) =
+        if n <= t
+        then go ( t, Nothing, t:acc ) cs
+        else go ( t, Just n,  acc   ) cs
 
-    -- Timer set for the future
-    go (time, _, acc) (Doze (Just n) : cs) =
-        go (time, Just (time+n), acc) cs
+runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
+            => RAcquire e a -> m e a
+runRAcquire act = rwith act pure
+
+gapToFloatingMs :: Gap -> Double
+gapToFloatingMs = (/ 3000) . fromIntegral . view microSecs
 
 {-
     The result of actually executing the program.
 -}
 realBehn :: Prog -> IO ProgRes
-realBehn = undefined
+realBehn (Prog cmds) = runApp $ runRAcquire $ do
+
+    {- Recorded times when behn pushed events -}
+    res <- newTVarIO ([] :: [Double])
+
+    {- Signal that a timer fired, and signal to stop `Wait` command -}
+    fir <- newEmptyTMVarIO
+    wat <- newEmptyTMVarIO
+
+    let onWake _ = do
+            emp <- isEmptyTMVar wat
+            when emp (putTMVar wat ())
+            putTMVar fir ()
+
+    {- Signal that 75ms has passed -}
+    kil <- newEmptyTMVarIO
+    void $ io $ async (threadDelay (25 * 3_000) >> atomically (putTMVar kil ()))
+
+    {- Execution start time -}
+    top <- io now
+
+    {- Calculate ms since start time -}
+    let atTime :: Word -> Wen
+        atTime n = addGap top (fromIntegral (3*n) ^. from milliSecs)
+
+    {- Add to result every time a timer fires -}
+    void $ io $ async $ forever $ do
+        () <- atomically (takeTMVar fir)
+        wen <- now
+        dif <- pure $ gapToFloatingMs $ gap top wen
+        atomically $ do
+            acc <- readTVar res
+            writeTVar res (dif:acc)
+
+    let IODrv _ runDrv = behn 0 onWake
+    cb <- runDrv
+
+    let exit = atomically (reverse <$> readTVar res)
+
+    let go [] = do
+            atomically (takeTMVar kil)
+            exit
+        go (c:cs) = c & \case
+          Kill -> do
+              cb (BehnEfDoze (0, ()) $ Nothing)
+              go cs
+          Doze n -> do
+              cb (BehnEfDoze (0, ()) $ Just $ atTime n)
+              go cs
+          Wait -> do
+              join $ atomically $ asum
+                  [ takeTMVar kil >> pure exit
+                  , takeTMVar wat >> pure (go cs)
+                  ]
+
+    rio (go cmds)
 
 {-
     Is the test results and the real results within reasonable
     jitter expectations?
 -}
-acceptable :: (ProgRes, ProgRes) -> Bool
-acceptable = undefined
+acceptable :: ProgRes -> ProgRes -> Bool
+acceptable rel fak = go rel fak
+  where
+    go []     []     = True
+    go []     _      = False
+    go _      []     = False
+    go (r:rs) (f:fs) = and [ r > f
+                           , r-f < 1
+                           , go rs fs
+                           ]
 
 
 --------------------------------------------------------------------------------
 
-king :: KingId
-king = KingId 0
-
--- TODO Timers always fire immediatly. Something is wrong!
-timerFires :: Property
-timerFires = forAll arbitrary (ioProperty . runApp . runTest)
+behnVsRef :: Property
+behnVsRef = forAll arbitrary (ioProperty . runTest)
   where
-    runTest :: HasLogFunc e => () -> RIO e Bool
-    runTest () = do
-        q <- newTQueueIO
-        let IODrv _ run = behn king (writeTQueue q)
-        rwith run $ \cb -> do
-            cb (BehnEfDoze (king, ()) (Just (2^20)))
-            t <- atomically $ readTQueue q
-            pure True
-
+    runTest :: Prog -> IO Bool
+    runTest pro = do
+        rel <- realBehn pro
+        fak <- pure (pureBehn pro)
+        god <- pure (acceptable rel fak)
+        when (not god) $ do
+            print ("INPU", pro)
+            print ("FAKE", fak)
+            print ("REAL", rel)
+        pure god
 
 -- Utils -----------------------------------------------------------------------
 
@@ -137,6 +220,6 @@ tests :: TestTree
 tests =
     testGroup "Behn"
         [ localOption (QuickCheckTests 10) $
-              testProperty "Behn Timers Fire" $
-                  timerFires
+              testProperty "Real and reference are similar" $
+                  behnVsRef
         ]
