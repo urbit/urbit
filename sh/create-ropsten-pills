@@ -2,7 +2,7 @@
 
 set -e
 
-sha=$(git rev-parse $(git branch --show-current))
+sha=$(git rev-parse HEAD)
 
 brass=$(nix-build nix/ops -A brass-ropsten --no-out-link)
 ivory=$(nix-build nix/ops -A ivory-ropsten --no-out-link)
