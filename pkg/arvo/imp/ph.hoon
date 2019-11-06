@@ -1,17 +1,16 @@
 /-  spider
 /+  *threadio
 =,  thread=thread:spider
-=;  core
-  ^-  imp:spider
-  |=  =bowl:mall
-  =/  m  (thread ,~)
-  ^-  form:m
-  ~&  >  'Entering pH loop'
-  %-  (main-loop ,~)
-  :~  handle-run:core
-      handle-stop:core
-      handle-run-all:core
-  ==
+=<  ^-  imp:spider
+    |=  =bowl:mall
+    =/  m  (thread ,~)
+    ^-  form:m
+    ~&  >  'Entering pH loop'
+    %-  (main-loop ,~)
+    :~  handle-run
+        handle-stop
+        handle-run-all
+    ==
 ::
 |%
 ++  handle-run

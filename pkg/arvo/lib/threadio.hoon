@@ -87,6 +87,21 @@
 ::
 ::  Wait for a subscription update on a wire
 ::
+++  take-subscription-update-prefix
+  |=  =wire
+  =/  m  (thread ,[path cage])
+  ^-  form:m
+  |=  tin=thread-input:thread
+  ?+  in.tin  `[%skip ~]
+      ~  `[%wait ~]
+      [~ %agent * %subscription-update *]
+    ?.  =(subscribe+wire (scag (lent wire) wire.u.in.tin))
+      `[%skip ~]
+    `[%done (slag (lent wire) wire.u.in.tin) cage.gift.u.in.tin]
+  ==
+::
+::  Wait for a subscription update on a wire
+::
 ++  take-subscription-update
   |=  =wire
   =/  m  (thread ,cage)
@@ -98,6 +113,21 @@
     ?.  =(subscribe+wire wire.u.in.tin)
       `[%skip ~]
     `[%done cage.gift.u.in.tin]
+  ==
+::
+::  Wait for a subscription close
+::
+++  take-subscription-close
+  |=  =wire
+  =/  m  (thread ,~)
+  ^-  form:m
+  |=  tin=thread-input:thread
+  ?+  in.tin  `[%skip ~]
+      ~  `[%wait ~]
+      [~ %agent * %subscription-close *]
+    ?.  =(subscribe+wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done ~]
   ==
 ::
 ++  echo
@@ -218,6 +248,14 @@
   ;<  our=@p  bind:m  get-our
   (unsubscribe wire [our term])
 ::
+++  resubscribe
+  |=  [=wire =dock =path]
+  =/  m  (thread ,~)
+  ;<  ~  bind:m  ((handle ,~) (take-subscription-close wire))
+  ;<  ~  bind:m  (flog-text "resubscribing to {<dock>} {<path>}")
+  ;<  ~  bind:m  (subscribe wire dock path)
+  (pure:m ~)
+::
 ++  wait
   |=  until=@da
   =/  m  (thread ,~)
@@ -285,6 +323,21 @@
       [~ %sign [%request ~] %i %http-response %finished *]
     `[%done client-response.sign-arvo.u.in.tin]
   ==
+::
+::  Wait until we get an HTTP response or cancelation and unset contract
+::
+++  take-maybe-sigh
+  =/  m  (thread ,(unit httr:eyre))
+  ^-  form:m
+  ;<  rep=(unit client-response:iris)  bind:m
+    take-maybe-response
+  ?~  rep
+    (pure:m ~)
+  ::  XX s/b impossible
+  ::
+  ?.  ?=(%finished -.u.rep)
+    (pure:m ~)
+  (pure:m (some (to-httr:iris +.u.rep)))
 ::
 ++  take-maybe-response
   =/  m  (thread ,(unit client-response:iris))
@@ -369,4 +422,55 @@
       ==
     [(weld cards.res cards.output) next.output]
   --
+::
+++  backoff
+  |=  [try=@ud limit=@dr]
+  =/  m  (thread ,~)
+  ^-  form:m
+  ;<  eny=@uvJ  bind:m  get-entropy
+  %-  sleep
+  %+  min  limit
+  ?:  =(0 try)  ~s0
+  %+  add
+    (mul ~s1 (bex (dec try)))
+  (mul ~s0..0001 (~(rad og eny) 1.000))
+::
+::    ----
+::
+::  Output
+::
+++  flog
+  |=  =flog:dill
+  =/  m  (thread ,~)
+  ^-  form:m
+  (send-raw-card %pass / %arvo %d %flog flog)
+::
+++  flog-text
+  |=  =tape
+  =/  m  (thread ,~)
+  ^-  form:m
+  (flog %text tape)
+::
+++  flog-tang
+  |=  =tang
+  =/  m  (thread ,~)
+  ^-  form:m
+  =/  =wall
+    (zing (turn (flop tang) (cury wash [0 80])))
+  |-  ^-  form:m
+  =*  loop  $
+  ?~  wall
+    (pure:m ~)
+  ;<  ~  bind:m  (flog-text i.wall)
+  loop(wall t.wall)
+::
+::    ----
+::
+::  Handle domains
+::
+++  install-domain
+  |=  =turf
+  =/  m  (thread ,~)
+  ^-  form:m
+  (send-raw-card %pass / %arvo %e %rule %turf %put turf)
 --

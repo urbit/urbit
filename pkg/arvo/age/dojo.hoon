@@ -1013,11 +1013,6 @@
     ::  ~&  [%his-clock ler.cal]
     ::  ~&  [%our-clock ven.say]
     =^  dat  say  (~(transceive sole say) cal)
-    ::  speedrun mode
-    ::  =;  res
-    ::    ?.  ?=(%del -.dat)
-    ::      res
-    ::    (he-tab:res +(p.dat))
     ?.  ?&  ?=($del -.dat)
             =(+(p.dat) (lent buf.say))
         ==
