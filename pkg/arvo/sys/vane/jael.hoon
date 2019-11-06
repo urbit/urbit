@@ -804,12 +804,11 @@
       |=  =public-keys-result
       ^+  ..feel
       ?:  ?=(%full -.public-keys-result)
-        =.  pos.zim  (~(uni by pos.zim) points.public-keys-result)
         =/  pointl=(list [who=ship =point])
           ~(tap by points.public-keys-result)
         |-  ^+  ..feel
         ?~  pointl
-          ..feel
+          ..feel(pos.zim (~(uni by pos.zim) points.public-keys-result))
         ::  if changing rift upward, then signal a breach
         ::
         =?    ..feel
