@@ -3,7 +3,9 @@
   ::                                                    ::    ::
 /?  309                                                 ::  arvo kelvin
 /-  *sole, lens                                         ::
-/+  sole, pprint, auto, easy-print                      ::
+/+  sole, pprint,                                       ::
+    auto=language-server-complete,                      ::
+    easy-print=language-server-easy-print               ::
 ::                                                      ::  ::
 ::::                                                    ::  ::::
   ::                                                    ::    ::
