@@ -1365,6 +1365,16 @@
       =?  outgoing.subscribers.current-agent  ?=(%subscription-close -.gift)
         %-  ~(del by outgoing.subscribers.current-agent)
         [wire dock]
+      ?:  ?&  ?=(%subscription-ack -.gift)
+              !(~(has by outgoing.subscribers.current-agent) [agent-wire dock])
+          ==
+        %-  %:  slog
+              leaf+"{<agent-name>}: got ack for nonexistent subscription"
+              leaf+"{<dock>}: {<agent-wire>}"
+              ~
+            ==
+        ap-core
+      ::
       =?  outgoing.subscribers.current-agent  ?=(%subscription-ack -.gift)
         ?^  p.gift
           %-  ~(del by outgoing.subscribers.current-agent)
