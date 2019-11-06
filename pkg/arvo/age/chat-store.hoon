@@ -20,11 +20,13 @@
 --
 ::
 =|  state=state-zero
+=,  state
 ^-  agent:mall
-=;  chat-core
+=<
   |_  =bowl:mall
   +*  this  .
-      sc    ~(. chat-core bowl)
+      chat-core  +>
+      cc    ~(. chat-core bowl)
       def   ~(. default-agent bowl this)
   ::
   ++  handle-init            handle-init:def
@@ -39,8 +41,8 @@
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
       ?+  mark  (handle-poke:def mark vase)
-        %json         (poke-json:sc !<(json vase))
-        %chat-action  (poke-chat-action:sc !<(chat-action vase))
+        %json         (poke-json:cc !<(json vase))
+        %chat-action  (poke-chat-action:cc !<(chat-action vase))
       ==
     [cards this]
   ::
@@ -51,12 +53,12 @@
     |^
     =/  cards=(list card)
       ?+    path  (handle-subscribe:def path)
-          [%keys ~]     (give %chat-update !>([%keys ~(key by inbox.state)]))
-          [%all ~]      (give %chat-initial !>(inbox.state))
-          [%configs ~]  (give %chat-configs !>((inbox-to-configs inbox.state)))
+          [%keys ~]     (give %chat-update !>([%keys ~(key by inbox)]))
+          [%all ~]      (give %chat-initial !>(inbox))
+          [%configs ~]  (give %chat-configs !>((inbox-to-configs inbox)))
           [%updates ~]  ~
           [%mailbox @ *]
-        ?>  (~(has by inbox.state) t.path)
+        ?>  (~(has by inbox) t.path)
         =/  =ship  (slav %p i.t.path)
         (give %chat-update !>([%create ship t.t.path]))
       ==
@@ -73,19 +75,19 @@
     |=  =path
     ^-  (unit (unit cage))
     ?+  path  (handle-peek:def path)
-        [%x %all ~]        ``noun+!>(inbox.state)
-        [%x %configs ~]    ``noun+!>((inbox-to-configs inbox.state))
-        [%x %keys ~]       ``noun+!>(~(key by inbox.state))
-        [%x %envelopes ~]  (peek-x-envelopes:sc t.t.path)
+        [%x %all ~]        ``noun+!>(inbox)
+        [%x %configs ~]    ``noun+!>((inbox-to-configs inbox))
+        [%x %keys ~]       ``noun+!>(~(key by inbox))
+        [%x %envelopes ~]  (peek-x-envelopes:cc t.t.path)
         [%x %mailbox *]
       ?~  t.t.path
         ~
-      ``noun+!>((~(get by inbox.state) t.t.path))
+      ``noun+!>((~(get by inbox) t.t.path))
     ::
         [%x %config *]
       ?~  t.t.path
         ~
-      =/  mailbox  (~(get by inbox.state) t.t.path)
+      =/  mailbox  (~(get by inbox) t.t.path)
       ?~  mailbox
         ~
       ``noun+!>(config.u.mailbox)
@@ -97,7 +99,6 @@
   --
 ::
 ::
-=,  state
 |_  bol=bowl:mall
 ::
 ++  peek-x-envelopes
