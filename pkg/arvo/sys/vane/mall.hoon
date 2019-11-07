@@ -722,16 +722,22 @@
       ~&  [%mo-handle-use-bad-path path]
       !!
     ::
-    =/  app
-      =/  =term  i.path
-      =/  =ship  (slav %p i.t.path)
-      =/  =routes  [disclosing=~ attributing=ship]
-      (ap-abed:ap term routes)
-    ::
     =/  =sign-arvo  q.hin
     ?.  ?=([%m %unto *] sign-arvo)
+      =/  app
+        =/  =term  i.path
+        =/  =ship  (slav %p i.t.path)
+        =/  =routes  [disclosing=~ attributing=ship]
+        (ap-abed:ap term routes)
+      ::
       =.  app  (ap-generic-take:app t.t.path sign-arvo)
       ap-abet:app
+    =/  app
+      ?>  ?=([%out @ @ *] t.t.path)
+      =/  =term  i.path
+      =/  =ship  (slav %p i.t.t.t.path)
+      =/  =routes  [disclosing=~ attributing=ship]
+      (ap-abed:ap term routes)
     =.  app
       =/  =gift:agent  +>.sign-arvo
       (ap-specific-take:app t.t.path gift)
@@ -890,7 +896,7 @@
     ::
     ?-    -.reverse-ames
         %d
-      =/  =path
+      =/  =wire
         =/  him  (scot %p ship)
         =/  num  (scot %ud bone)
         /sys/rep/[him]/[term]/[num]
@@ -901,7 +907,7 @@
         =/  =schematic:ford  [%vale info p.reverse-ames q.reverse-ames]
         [%f %build live=%.n schematic]
       ::
-      (mo-pass path note-arvo)
+      (mo-pass wire note-arvo)
     ::
         %x
       ::  XX should crash
@@ -1033,6 +1039,7 @@
           ~?  &(=(duct system-duct.agents.state) !=(agent-name %hood))
             [%agent-giving-on-system-duct agent-name -.gift]
           [duct %give %unto gift]
+        ::
         ?.  ?=(%fact -.gift)
           [agent-duct %give %unto gift]~
         ::
