@@ -1026,6 +1026,13 @@
       ::
           %give
         =/  =gift:agent  p.card
+        ?:  ?=(%kick -.gift)
+          =/  ducts=(list duct)  (ap-ducts-from-path path.gift ship.gift)
+          %+  turn  ducts
+          |=  =duct
+          ~?  &(=(duct system-duct.agents.state) !=(agent-name %hood))
+            [%agent-giving-on-system-duct agent-name -.gift]
+          [duct %give %unto gift]
         ?.  ?=(%fact -.gift)
           [agent-duct %give %unto gift]~
         ::
