@@ -535,7 +535,7 @@
     ::
         [%m %unto *]
       ?-  +>-.hin
-          $subscription-close  ~|([%jael-unexpected-quit tea hin] !!)
+          $kick  ~|([%jael-unexpected-quit tea hin] !!)
           $http-response       ~|([%jael-unexpected-http-response tea hin] !!)
           $poke-ack
         ?~  p.p.+>.hin
@@ -543,13 +543,13 @@
         %-  (slog leaf+"jael-bad-coup" u.p.p.+>.hin)
         +>.$
       ::
-          $subscription-ack
+          $watch-ack
         ?~  p.p.+>.hin
           +>.$
         %-  (slog u.p.p.+>.hin)
         ~|([%jael-unexpected-reap tea hin] +>.$)
       ::
-          $subscription-update
+          $fact
         ?>  ?=([@ *] tea)
         =*  app  i.tea
         ~!  +>.hin
@@ -622,7 +622,7 @@
         %deal
         [our our]
         app
-        %subscribe
+        %watch
         path
     ==
   ::

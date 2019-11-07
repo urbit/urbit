@@ -42,15 +42,18 @@
       ==
     --
 ::
-=;  aqua-core
-  =|  =all=state
+=|  state
+=*  all-state  -
+=<
   ^-  agent:mall
   |_  =bowl:mall
-  +*  this  .
-      def  ~(. default-agent bowl this)
-  ++  handle-init           `this
-  ++  handle-extract-state  !>(all-state)
-  ++  handle-upgrade-state
+  +*  this       .
+      aqua-core  +>
+      ac         ~(. aqua-core bowl)
+      def        ~(. (default-agent this) bowl)
+  ++  on-init           `this
+  ++  on-save  !>(all-state)
+  ++  on-load
     |=  old-state=vase
     ^-  step:agent:mall
     ~&  prep=%aqua
@@ -59,19 +62,18 @@
       `this
     `this(all-state u.new)
   ::
-  ++  handle-poke
+  ++  on-poke
     |=  [=mark =vase]
     ^-  step:agent:mall
-    =^  cards  aqua-core
-      =/  t  ~(. aqua-core bowl all-state)
+    =^  cards  all-state
       ?+  mark  ~|([%aqua-bad-mark mark] !!)
-          %aqua-events  ~|(p.vase (poke-aqua-events:t !<((list aqua-event) vase)))
-          %pill         (poke-pill:t !<(pill vase))
-          %noun         (poke-noun:t !<(* vase))
+          %aqua-events  (poke-aqua-events:ac !<((list aqua-event) vase))
+          %pill         (poke-pill:ac !<(pill vase))
+          %noun         (poke-noun:ac !<(* vase))
       ==
-    [cards this(all-state +<+.aqua-core)]
+    [cards this]
   ::
-  ++  handle-subscribe
+  ++  on-watch
     |=  =path
     ^-  step:agent:mall
     ?:  ?=([?(%effects %effect) ~] path)
@@ -84,15 +86,12 @@
       !!
     `this
   ::
-  ++  handle-unsubscribe     handle-unsubscribe:def
-  ++  handle-peek
-    |=  =path
-    ^-  (unit (unit cage))
-    (~(peek aqua-core bowl all-state) path)
+  ++  on-leave  on-leave:def
+  ++  on-peek   peek:ac
   ::
-  ++  handle-agent-response  handle-agent-response:def
-  ++  handle-arvo-response   handle-arvo-response:def
-  ++  handle-error           handle-error:def
+  ++  on-agent  on-agent:def
+  ++  on-arvo   on-arvo:def
+  ++  on-fail   on-fail:def
   --
 ::
 ::  unix-{effects,events,boths}: collect jar of effects and events to
@@ -103,9 +102,7 @@
 =|  unix-events=(jar ship unix-timed-event)
 =|  unix-boths=(jar ship unix-both)
 =|  cards=(list card:agent:mall)
-|_  $:  hid=bowl:mall
-        state
-    ==
+|_  hid=bowl:mall
 ::
 ::  Represents a single ship's state.
 ::
@@ -247,7 +244,7 @@
   this
 ::
 ++  abet-aqua
-  ^-  (quip card:agent:mall _this)
+  ^-  (quip card:agent:mall state)
   =.  this
     =/  =path  /effect
     %-  emit-cards
@@ -256,14 +253,14 @@
     |=  [=ship ufs=(list unix-effect)]
     %+  turn  ufs
     |=  uf=unix-effect
-    [%give %subscription-update `path %aqua-effect !>(`aqua-effect`[ship uf])]
+    [%give %fact `path %aqua-effect !>(`aqua-effect`[ship uf])]
   ::
   =.  this
     =/  =path  /effects
     %-  emit-cards
     %+  turn  ~(tap by unix-effects)
     |=  [=ship ufs=(list unix-effect)]
-    [%give %subscription-update `path %aqua-effects !>(`aqua-effects`[ship (flop ufs)])]
+    [%give %fact `path %aqua-effects !>(`aqua-effects`[ship (flop ufs)])]
   ::
   =.  this
     %-  emit-cards
@@ -273,30 +270,30 @@
     =/  =path  /effect/(scot %p ship)
     %+  turn  ufs
     |=  uf=unix-effect
-    [%give %subscription-update `path %aqua-effect !>(`aqua-effect`[ship uf])]
+    [%give %fact `path %aqua-effect !>(`aqua-effect`[ship uf])]
   ::
   =.  this
     %-  emit-cards
     %+  turn  ~(tap by unix-effects)
     |=  [=ship ufs=(list unix-effect)]
     =/  =path  /effects/(scot %p ship)
-    [%give %subscription-update `path %aqua-effects !>(`aqua-effects`[ship (flop ufs)])]
+    [%give %fact `path %aqua-effects !>(`aqua-effects`[ship (flop ufs)])]
   ::
   =.  this
     %-  emit-cards
     %+  turn  ~(tap by unix-events)
     |=  [=ship ve=(list unix-timed-event)]
     =/  =path  /events/(scot %p ship)
-    [%give %subscription-update `path %aqua-events !>(`aqua-events`[ship (flop ve)])]
+    [%give %fact `path %aqua-events !>(`aqua-events`[ship (flop ve)])]
   ::
   =.  this
     %-  emit-cards
     %+  turn  ~(tap by unix-boths)
     |=  [=ship bo=(list unix-both)]
     =/  =path  /boths/(scot %p ship)
-    [%give %subscription-update `path %aqua-boths !>(`aqua-boths`[ship (flop bo)])]
+    [%give %fact `path %aqua-boths !>(`aqua-boths`[ship (flop bo)])]
   ::
-  [(flop cards) this]
+  [(flop cards) all-state]
 ::
 ++  emit-cards
   |=  ms=(list card:agent:mall)
@@ -327,7 +324,7 @@
 ::
 ++  poke-pill
   |=  p=pill
-  ^-  (quip card:agent:mall _this)
+  ^-  (quip card:agent:mall state)
   =.  this  apex-aqua  =<  abet-aqua
   =.  pil  p
   ~&  lent=(met 3 (jam boot-ova.pil))
@@ -358,7 +355,7 @@
 ::
 ++  poke-noun
   |=  val=*
-  ^-  (quip card:agent:mall _this)
+  ^-  (quip card:agent:mall state)
   =.  this  apex-aqua  =<  abet-aqua
   ^+  this
   ::  Could potentially factor out the three lines of turn-ships
@@ -388,7 +385,7 @@
       =/  txt  .^(@ %cx (weld pax /hoon))
       [/vane/[vane] [%veer v pax txt]]
     =>  .(this ^+(this this))
-    =^  ms  this  (poke-pill pil)
+    =^  ms  all-state  (poke-pill pil)
     (emit-cards ms)
   ::
       [%swap-files ~]
@@ -399,7 +396,7 @@
       %-  unix-event
       %-  %*(. file-ovum:pill-lib directories slim-dirs)
       /(scot %p our.hid)/home/(scot %da now.hid)
-    =^  ms  this  (poke-pill pil)
+    =^  ms  all-state  (poke-pill pil)
     (emit-cards ms)
   ::
       [%wish hers=* p=@t]
@@ -429,7 +426,7 @@
 ::
 ++  poke-aqua-events
   |=  events=(list aqua-event)
-  ^-  (quip card:agent:mall _this)
+  ^-  (quip card:agent:mall state)
   =.  this  apex-aqua  =<  abet-aqua
   %+  turn-events  events
   |=  [ae=aqua-event thus=_this]

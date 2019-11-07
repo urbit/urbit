@@ -26,18 +26,20 @@
 +$  position
   [row=@ud col=@ud]
 ::
-+$  state  bufs=(map uri=@t buf=wall)
++$  all-state  bufs=(map uri=@t buf=wall)
 --
 ^-  agent:mall
-=;  lsp-core
-  =|  =state
+=|  all-state
+=*  state  -
+=<
   |_  =bowl:mall
-  +*  this  .
-      lsp  ~(. lsp-core bowl state)
-      def  ~(. default-agent bowl this)
+  +*  this      .
+      lsp-core  +>
+      lsp       ~(. lsp-core bowl)
+      def       ~(. (default-agent this) bowl)
   ::
-  ++  handle-init
-    ^+  handle-init:*agent:mall
+  ++  on-init
+    ^+  on-init:*agent:mall
     ^-  (quip card _this)
     ~&  >  %lsp-init
     :_  this  :_  ~
@@ -46,45 +48,44 @@
         %connect  [~ /'~language-server-protocol']  %language-server
     ==
   ::
-  ++  handle-extract-state   !>(state)
-  ++  handle-upgrade-state
-    ^+  handle-upgrade-state:*agent:mall
+  ++  on-save   !>(state)
+  ++  on-load
+    ^+  on-load:*agent:mall
     |=  old-state=vase
     ^-  (quip card _this)
     ~&  >  %lsp-upgrade
-    [~ this(state !<(^state old-state))]
+    [~ this(state !<(all-state old-state))]
   ::
-  ++  handle-poke
-    ^+  handle-poke:*agent:mall
+  ++  on-poke
+    ^+  on-poke:*agent:mall
     |=  [=mark =vase]
     ^-  (quip card _this)
     =^  cards  state
-      ?+    mark  (handle-poke:def mark vase)
+      ?+    mark  (on-poke:def mark vase)
           %handle-http-request
         (handle-http-request:lsp !<(inbound-request:eyre vase))
       ==
     [cards this]
   ::
-  ++  handle-subscribe       handle-subscribe:def
-  ++  handle-unsubscribe     handle-unsubscribe:def
-  ++  handle-peek            handle-peek:def
-  ++  handle-agent-response  handle-agent-response:def
-  ++  handle-arvo-response
-    ^+  handle-arvo-response:*agent:mall
+  ++  on-watch  on-watch:def
+  ++  on-leave  on-leave:def
+  ++  on-peek   on-peek:def
+  ++  on-agent  on-agent:def
+  ++  on-arvo
+    ^+  on-arvo:*agent:mall
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
     =^  cards  state
-      ?+  wire  (handle-arvo-response:def wire sign-arvo)
+      ?+  wire  (on-arvo:def wire sign-arvo)
         [%connect ~]  ?>(?=(%bound +<.sign-arvo) `state)
       ==
     [cards this]
   ::
-  ++  handle-error           handle-error:def
+  ++  on-fail   on-fail:def
   --
 ::
-|_  [bow=bowl:mall state]
+|_  bow=bowl:mall
 ::
-+*  all-state  +<+
 ++  parser
   =,  dejs:format
   |^
@@ -124,9 +125,9 @@
 ::  +handle-http-request: received on a new connection established
 ::
 ++  handle-http-request
-  %-  (require-authorization:app all-state)
+  %-  (require-authorization:app state)
   |=  =inbound-request:eyre
-  ^-  (quip card state)
+  ^-  (quip card all-state)
   ?>  ?=(^ body.request.inbound-request)
   =/  =lsp-req
     %-  parser
@@ -139,7 +140,7 @@
     ==
   =.  bufs
     (~(put by bufs) uri.lsp-req buf)
-  [[%give %http-response (json-response:app (json-to-octs out-jon))]~ all-state]
+  [[%give %http-response (json-response:app (json-to-octs out-jon))]~ state]
 ::
 ++  handle-sync
   |=  [buf=wall changes=(list change)]

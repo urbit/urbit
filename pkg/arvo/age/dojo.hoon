@@ -809,7 +809,7 @@
   ++  he-diff                                           ::  emit update
     |=  fec/sole-effect
     ^+  +>
-    (he-card %give %subscription-update `/sole %sole-effect !>(fec))
+    (he-card %give %fact `/sole %sole-effect !>(fec))
   ::
   ++  he-stop                                           ::  abort work
     ^+  .
@@ -1158,20 +1158,20 @@
 =/  ost=bone  0
 ^-  agent:mall
 |_  hid=bowl:mall
-++  handle-init
-  `..handle-init
+++  on-init
+  `..on-init
 ::
-++  handle-extract-state
+++  on-save
   !>(state)
 ::
-++  handle-upgrade-state
+++  on-load
   |=  =old-state=vase
   =/  old-state  !<(house old-state-vase)
-  `..handle-init(state old-state)
+  `..on-init(state old-state)
 ::
-++  handle-poke
+++  on-poke
   |=  [=mark =vase]
-  ^-  (quip card:agent:mall _..handle-init)
+  ^-  (quip card:agent:mall _..on-init)
   =/  a-session=session  (~(got by hoc) ost)
   =/  he-full  ~(. he hid ost ~ a-session)
   =^  moves  state
@@ -1194,11 +1194,11 @@
       [~ state]
     ==
   ::
-  [moves ..handle-init]
+  [moves ..on-init]
 ::
-++  handle-subscribe
+++  on-watch
   |=  =path
-  ^-  (quip card:agent:mall _..handle-init)
+  ^-  (quip card:agent:mall _..on-init)
   ~?  !=(our.hid src.hid)  [%dojo-peer-stranger src.hid]
   ?>  (team:title our.hid src.hid)
   =^  moves-1  state
@@ -1209,27 +1209,27 @@
     =/  =session  %*(. *session -.dir [our.hid %home ud+0])
     ?>  ?=([%sole *] path)
     he-abet:(~(he-peer he hid ost moves-1 session) t.path)
-  [moves-2 ..handle-init]
+  [moves-2 ..on-init]
 ::
-++  handle-unsubscribe
+++  on-leave
   |=  path
   =^  moves  state
     ~(he-abut he hid ost ~ (~(got by hoc) ost))
   =.  hoc  (~(del by hoc) ost)
-  [moves ..handle-init]
+  [moves ..on-init]
 ::
-++  handle-peek
+++  on-peek
   |=  path
   *(unit (unit cage))
 ::
-++  handle-agent-response
+++  on-agent
   |=  [=wire =gift:agent:mall]
   =/  =session  (~(got by hoc) ost)
   =^  moves  state
     he-abet:(~(he-unto he hid ost ~ session) wire gift)
-  [moves ..handle-init]
+  [moves ..on-init]
 ::
-++  handle-arvo-response
+++  on-arvo
   |=  [=wire =sign-arvo]
   =/  =session  (~(got by hoc) ost)
   =/  he-full  ~(. he hid ost ~ session)
@@ -1239,12 +1239,12 @@
         %made           (he-made:he-full wire +>.sign-arvo)
         %http-response  (he-http-response:he-full wire +>.sign-arvo)
     ==
-  [moves ..handle-init]
+  [moves ..on-init]
 ::
-++  handle-error
+++  on-fail
   |=  [=term =tang]
   =/  =session  (~(got by hoc) ost)
   =^  moves  state
     he-abet:(~(he-lame he hid ost ~ session) term tang)
-  [moves ..handle-init]
+  [moves ..on-init]
 --

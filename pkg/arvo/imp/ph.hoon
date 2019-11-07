@@ -21,8 +21,8 @@
   =/  ph-name    !<(term vase)
   =/  poke-vase  !>([%ph-active (cat 3 %ph- ph-name)])
   ;<  ~          bind:m  (poke-our %spider %spider-start poke-vase)
-  ::  ;<  ~          bind:m  (subscribe-our /active %spider /imp/active-ph)
-  ::  ;<  =cage      bind:m  (take-subscription-update /active)
+  ::  ;<  ~          bind:m  (watch-our /active %spider /imp/active-ph)
+  ::  ;<  =cage      bind:m  (take-fact /active)
   (pure:m ~)
 ::
 ++  handle-stop

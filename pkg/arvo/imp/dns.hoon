@@ -27,7 +27,7 @@
         =/  m  (thread ,app-state)
         ^-  form:m
         ;<  ~  bind:m
-          (resubscribe:threadio /sub collector-app /(scot %p our.bowl))
+          (rewatch:threadio /sub collector-app /(scot %p our.bowl))
         (pure:m state)
     ==
 ::
@@ -139,7 +139,7 @@
         (cat 3 'request for DNS sent to ' (scot %p p:collector-app))
       ;<  ~       bind:m  (app-message %dns msg ~)
       ;<  our=@p  bind:m  get-our:threadio
-      ;<  ~       bind:m  (subscribe:threadio /sub collector-app /(scot %p our))
+      ;<  ~       bind:m  (watch:threadio /sub collector-app /(scot %p our))
       =/  msg=cord
         (cat 3 'awaiting response from ' (scot %p p:collector-app))
       ;<  ~  bind:m  (app-message %dns msg ~)
@@ -190,7 +190,7 @@
   ^-  form:m
   ;<  our=ship     bind:m  get-our:threadio
   ;<  =cage   bind:m
-    ((handle:threadio ,cage) (take-subscription-update:threadio /(scot %p our)))
+    ((handle:threadio ,cage) (take-fact:threadio /(scot %p our)))
   ?>  ?=(%dns-binding p.cage)
   =/  =binding:dns  !<(binding:dns q.cage)
   ?~  requested.state

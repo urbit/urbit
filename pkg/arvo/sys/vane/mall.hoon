@@ -35,10 +35,10 @@
 ::  +foreign-response: foreign response
 ::
 ++  foreign-response
-  $?  %subscribe
-      %subscribe-translated
+  $?  %watch
+      %watch-translated
       %poke
-      %unsubscribe
+      %leave
   ==
 --
 |%
@@ -344,11 +344,11 @@
     =/  =forward-ames
       ?-  -.task
         %poke                  [%m p.cage.task q.q.cage.task]
-        %unsubscribe           [%u ~]
+        %leave           [%u ~]
         %raw-poke              !!
         %poke-translated       !!
-        %subscribe-translated  [%l task]
-        %subscribe             [%s path.task]
+        %watch-translated  [%l task]
+        %watch             [%s path.task]
       ==
     ::
     =/  sys-path
@@ -379,10 +379,10 @@
     ::
     =/  result  (bind art to-tang)
     ?-  foreign-response
-      %subscribe-translated  (mo-give %unto %subscription-ack result)
-      %subscribe             (mo-give %unto %subscription-ack result)
+      %watch-translated  (mo-give %unto %watch-ack result)
+      %watch             (mo-give %unto %watch-ack result)
       %poke                  (mo-give %unto %poke-ack result)
-      %unsubscribe           mo-core
+      %leave           mo-core
     ==
   ::  +mo-assign-bone: assign an outbone to a ship.
   ::
@@ -500,7 +500,7 @@
   ::  +mo-handle-sys-pel: translated peer.
   ::
   ::    Validates a received %ford result and %gives an internal
-  ::    %subscription-update.
+  ::    %fact.
   ::
   ++  mo-handle-sys-pel
     |=  [=path =sign-arvo]
@@ -520,12 +520,12 @@
       (mo-give %unto %poke-ack err)
     ::
     =/  =cage  (result-to-cage:ford build-result)
-    (mo-give %unto %subscription-update ~ cage)
+    (mo-give %unto %fact ~ cage)
   ::  +mo-handle-sys-red: diff ack.
   ::
   ::    On receipt of a valid +sign from %ames, we simply pass a %pump
   ::    acknowledgement internally; otherwise we pass both an internal
-  ::    unsubscribing %unsubscribe, plus a %want to %ames, before
+  ::    unsubscribing %leave, plus a %want to %ames, before
   ::    complaining about a bad message acknowledgment.
   ::
   ++  mo-handle-sys-red
@@ -555,7 +555,7 @@
     ::
     =/  mall-move=note-arvo
       =/  =sock  [him our]
-      =/  =task:agent  [%unsubscribe ~]
+      =/  =task:agent  [%leave ~]
       =/  =task:able  [%deal sock dap task]
       [%m task]
     ::
@@ -578,7 +578,7 @@
   ::  +mo-handle-sys-rep: reverse request.
   ::
   ::    On receipt of a valid +sign from %ford, sets state to the
-  ::    appropriate duct and gives an internal %subscription-update
+  ::    appropriate duct and gives an internal %fact
   ::    containing the +sign payload.
   ::
   ++  mo-handle-sys-rep
@@ -608,7 +608,7 @@
       mo-core
     =.  mo-core  (mo-abed u.duct)
     =/  =cage  (result-to-cage:ford build-result)
-    =/  =gift:able  [%unto [%subscription-update ~ cage]]
+    =/  =gift:able  [%unto [%fact ~ cage]]
     (mo-give gift)
   ::  +mo-handle-sys-req: process an inbound request.
   ::
@@ -647,7 +647,7 @@
         %poke-ack
       (mo-give %mack p.gift)
     ::
-        %subscription-update
+        %fact
       =/  sys-path  [%sys %red t.path]
       =/  =note-arvo
         =/  path  [%m %gh dap ~]
@@ -655,7 +655,7 @@
         [%a %want him path noun]
       (mo-pass sys-path note-arvo)
     ::
-        %subscription-close
+        %kick
       =/  sys-path  [%sys path]
       =/  =note-arvo
         =/  path  [%m %gh dap ~]
@@ -663,7 +663,7 @@
         [%a %want him path noun]
       (mo-pass sys-path note-arvo)
     ::
-        %subscription-ack
+        %watch-ack
       (mo-give %mack p.gift)
     ::
         %http-response
@@ -865,19 +865,19 @@
       ::
           %l
         =/  =task:able
-          =/  =task:agent  [%subscribe-translated [mark path]:forward-ames]
+          =/  =task:agent  [%watch-translated [mark path]:forward-ames]
           [%deal sock term task]
         [%m task]
       ::
           %s
         =/  =task:able
-          =/  =task:agent  [%subscribe path.forward-ames]
+          =/  =task:agent  [%watch path.forward-ames]
           [%deal sock term task]
         [%m task]
       ::
           %u
         =/  =task:able
-          =/  =task:agent  [%unsubscribe ~]
+          =/  =task:agent  [%leave ~]
           [%deal sock term task]
         [%m task]
       ==
@@ -912,7 +912,7 @@
         mo-core
       =/  initialised
         (mo-abed u.out)
-      (mo-give:initialised %unto %subscription-close ~ ~)
+      (mo-give:initialised %unto %kick ~ ~)
     ==
   ::  +ap: agent engine
   ::
@@ -982,7 +982,7 @@
       |-  ^+  ap-core
       ?^  internal-cards
         =/  =card:agent  i.internal-cards
-        ?.  ?=([%give %subscription-update *] card)
+        ?.  ?=([%give %fact *] card)
           $(internal-cards t.internal-cards)
         ::
         =/  ducts  (ap-ducts-from-path path.p.card ~)
@@ -1026,7 +1026,7 @@
       ::
           %give
         =/  =gift:agent  p.card
-        ?.  ?=(%subscription-update -.gift)
+        ?.  ?=(%fact -.gift)
           [agent-duct %give %unto gift]~
         ::
         =/  ducts=(list duct)  (ap-ducts-from-path path.gift ~)
@@ -1094,7 +1094,7 @@
       =?  ap-core  =(ship ship.i.out)
         =/  core
           =.  agent-duct  system-duct.agents.state
-          (ap-specific-take wire.i.out %subscription-close ~ ~)
+          (ap-specific-take wire.i.out %kick ~ ~)
         core(agent-duct agent-duct)
       $(out t.out)
     ::  +ap-agent-core: agent core with current bowl and state
@@ -1129,12 +1129,12 @@
       ^+  ap-core
       ::
       ?-  -.task
-        %subscribe-translated  (ap-subscribe-translated +.task)
+        %watch-translated  (ap-subscribe-translated +.task)
         %poke                  (ap-poke +.task)
-        %subscribe             (ap-subscribe +.task)
+        %watch             (ap-subscribe +.task)
         %raw-poke              !!
         %poke-translated       !!
-        %unsubscribe           ap-load-delete
+        %leave           ap-load-delete
         %pump                  ap-dequeue
       ==
     ::  +ap-peek: peek.
@@ -1156,7 +1156,7 @@
       =/  tyl  tyl.marked
       ::
       =/  peek-result=(each (unit (unit cage)) tang)
-        (mule |.((handle-peek:ap-agent-core [term tyl])))
+        (mule |.((on-peek:ap-agent-core [term tyl])))
       ::
       ?-  -.peek-result
         %&  p.peek-result
@@ -1280,7 +1280,7 @@
         =/  =agent  p.maybe-agent
         =/  running
           %-  some
-          ~(handle-extract-state agent.current-agent ap-construct-bowl)
+          ~(on-save agent.current-agent ap-construct-bowl)
         =/  installed  ap-install(agent.current-agent agent)
         (installed running)
       ::
@@ -1288,7 +1288,7 @@
       ?~  maybe-tang
         ap-core
       (ap-error %prep-failed u.maybe-tang)
-    ::  +ap-subscribe-translated: apply %subscribe-translated.
+    ::  +ap-subscribe-translated: apply %watch-translated.
     ::
     ++  ap-subscribe-translated
       |=  [=mark =path]
@@ -1296,7 +1296,7 @@
       ::
       =.  marks.current-agent  (~(put by marks.current-agent) agent-duct mark)
       (ap-subscribe path)
-    ::  +ap-subscribe: apply %subscribe.
+    ::  +ap-subscribe: apply %watch.
     ::
     ++  ap-subscribe
       ~/  %ap-subscribe
@@ -1308,8 +1308,8 @@
         (~(put by incoming.subscribers.current-agent) agent-duct incoming)
       ::
       =^  maybe-tang  ap-core
-        %+  ap-ingest  %subscription-ack  |.
-        (handle-subscribe:ap-agent-core pax)
+        %+  ap-ingest  %watch-ack  |.
+        (on-watch:ap-agent-core pax)
       ?^  maybe-tang
         ap-silent-delete
       ap-core
@@ -1322,7 +1322,7 @@
       ::
       =^  maybe-tang  ap-core
         %+  ap-ingest  %poke-ack  |.
-        (handle-poke:ap-agent-core cage)
+        (on-poke:ap-agent-core cage)
       ap-core
     ::  +ap-error: pour error.
     ::
@@ -1333,7 +1333,7 @@
       =/  form  |=(=tank [%rose [~ "! " ~] tank ~])
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
-        (handle-error:ap-agent-core term (turn tang form))
+        (on-fail:ap-agent-core term (turn tang form))
       ap-core
     ::  +ap-generic-take: generic take.
     ::
@@ -1344,7 +1344,7 @@
       ::
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
-        (handle-arvo-response:ap-agent-core wire sign-arvo)
+        (on-arvo:ap-agent-core wire sign-arvo)
       ?^  maybe-tang
         (ap-error %arvo-response u.maybe-tang)
       ap-core
@@ -1362,10 +1362,10 @@
       =/  agent-wire  t.t.t.wire
       ::  if subscription ack or close, handle before calling user code
       ::
-      =?  outgoing.subscribers.current-agent  ?=(%subscription-close -.gift)
+      =?  outgoing.subscribers.current-agent  ?=(%kick -.gift)
         %-  ~(del by outgoing.subscribers.current-agent)
         [wire dock]
-      ?:  ?&  ?=(%subscription-ack -.gift)
+      ?:  ?&  ?=(%watch-ack -.gift)
               !(~(has by outgoing.subscribers.current-agent) [agent-wire dock])
           ==
         %-  %:  slog
@@ -1375,7 +1375,7 @@
             ==
         ap-core
       ::
-      =?  outgoing.subscribers.current-agent  ?=(%subscription-ack -.gift)
+      =?  outgoing.subscribers.current-agent  ?=(%watch-ack -.gift)
         ?^  p.gift
           %-  ~(del by outgoing.subscribers.current-agent)
           [wire dock]
@@ -1387,9 +1387,9 @@
       ::
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
-        (handle-agent-response:ap-agent-core agent-wire gift)
+        (on-agent:ap-agent-core agent-wire gift)
       ::
-      =?  ap-core  ?=(%subscription-update -.gift)
+      =?  ap-core  ?=(%fact -.gift)
         (ap-update-subscription =(~ maybe-tang) p.dock q.dock agent-wire)
       ?^  maybe-tang
         (ap-error -.gift leaf/"closing subscription" u.maybe-tang)
@@ -1425,8 +1425,8 @@
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~
         ?~  maybe-vase
-          |.  handle-init:ap-agent-core
-        |.  (handle-upgrade-state:ap-agent-core u.maybe-vase)
+          |.  on-init:ap-agent-core
+        |.  (on-load:ap-agent-core u.maybe-vase)
       [maybe-tang ap-core]
     ::  +ap-silent-delete: silent delete.
     ::
@@ -1460,9 +1460,9 @@
       ::
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
-        (handle-unsubscribe:ap-agent-core q.incoming)
+        (on-leave:ap-agent-core q.incoming)
       ?^  maybe-tang
-        (ap-error %unsubscribe u.maybe-tang)
+        (ap-error %leave u.maybe-tang)
       ap-core
     ::  +ap-kill-up: 2-sided kill from publisher side
     ::
@@ -1470,7 +1470,7 @@
       ^+  ap-core
       ::
       =>  ap-load-delete
-      (ap-give %subscription-close ~ ~)
+      (ap-give %kick ~ ~)
     ::  +ap-kill-down: 2-sided kill from subscriber side
     ::
     ++  ap-kill-down
@@ -1479,15 +1479,15 @@
       ::
       =.  ap-core
         =/  way  [%out (scot %p p.dock) q.dock wire]
-        (ap-specific-take way %subscription-close ~ ~)
-      (ap-pass wire %agent dock %unsubscribe ~)
+        (ap-specific-take way %kick ~ ~)
+      (ap-pass wire %agent dock %leave ~)
     ::  +ap-ingest: call agent arm
     ::
     ::    Handle acks here because they need to be emitted before the
     ::    rest of the moves.
     ::
     ++  ap-ingest
-      |=  [ack=?(%poke-ack %subscription-ack ~) run=_^?(|.(*step:agent))]
+      |=  [ack=?(%poke-ack %watch-ack ~) run=_^?(|.(*step:agent))]
       ^-  [(unit tang) _ap-core]
       =/  result  (mule run)
       =^  new-cards  ap-core  (ap-handle-result result)
@@ -1499,7 +1499,7 @@
         ?-  ack
           ~      ~
           %poke-ack          [%give %poke-ack maybe-tang]~
-          %subscription-ack  [%give %subscription-ack maybe-tang]~
+          %watch-ack  [%give %watch-ack maybe-tang]~
         ==
       ::
       =.  agent-cards
@@ -1530,7 +1530,7 @@
         %+  turn  moves
         |=  =card:agent
         ^-  (list duct)
-        ?.  ?=([%give %subscription-close *] card)
+        ?.  ?=([%give %kick *] card)
           ~
         (ap-ducts-from-path [path ship]:p.card)
       ::
@@ -1548,13 +1548,13 @@
       ?~  moves
         [(flop cards) ap-core]
       =/  =card:agent  i.moves
-      ?:  ?=([%pass * %agent * %unsubscribe *] card)
+      ?:  ?=([%pass * %agent * %leave *] card)
         =/  =wire  p.card
         =/  =dock  [ship name]:q.card
         =.  outgoing.subscribers.current-agent
           (~(del by outgoing.subscribers.current-agent) [wire dock])
         $(moves t.moves, cards [card cards])
-      ?.  ?=([%pass * %agent * %subscribe *] card)
+      ?.  ?=([%pass * %agent * %watch *] card)
         $(moves t.moves, cards [card cards])
       =/  =wire  p.card
       =/  =dock  [ship name]:q.card
@@ -1565,7 +1565,7 @@
           =/  =tang
             ~[leaf+"subscribe wire not unique" >agent-name< >wire< >dock<]
           %-  (slog leaf/"XXX remove" tang)
-          (ap-specific-take way %subscription-ack `tang)
+          (ap-specific-take way %watch-ack `tang)
         $(moves t.moves)
       =.  outgoing.subscribers.current-agent
         (~(put by outgoing.subscribers.current-agent) [wire dock] [| path])

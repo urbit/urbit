@@ -258,12 +258,12 @@
       ::  %poke: pokes an application, translating :json to :mark.
       ::
       [%poke request-id=@ud ship=@p app=term mark=@tas =json]
-      ::  %subscribe: subscribes to an application path
+      ::  %watch: subscribes to an application path
       ::
-      [%subscribe request-id=@ud ship=@p app=term =path]
-      ::  %unsubscribe: unsubscribes from an application path
+      [%watch request-id=@ud ship=@p app=term =path]
+      ::  %leave: unsubscribes from an application path
       ::
-      [%unsubscribe request-id=@ud subscription-id=@ud]
+      [%leave request-id=@ud subscription-id=@ud]
       ::  %delete: kills a channel
       ::
       [%delete ~]
@@ -327,11 +327,11 @@
     ((pe %poke (ot id+ni ship+(su fed:ag) app+so mark+(su sym) json+some ~)) item)
   ?:  =('subscribe' u.maybe-key)
     %.  item
-    %+  pe  %subscribe
+    %+  pe  %watch
     (ot id+ni ship+(su fed:ag) app+so path+(su ;~(pfix fas (more fas urs:ab))) ~)
   ?:  =('unsubscribe' u.maybe-key)
     %.  item
-    %+  pe  %unsubscribe
+    %+  pe  %leave
     (ot id+ni subscription+ni ~)
   ?:  =('delete' u.maybe-key)
     `[%delete ~]
@@ -1408,7 +1408,7 @@
         ::
         $(requests t.requests)
       ::
-          %subscribe
+          %watch
         ::
         =/  channel-wire=wire
           /channel/subscription/[channel-id]/(scot %ud request-id.i.requests)
@@ -1419,7 +1419,7 @@
           :^  duct  %pass  channel-wire
           =,  i.requests
           :*  %m  %deal  [our ship]  app
-              `task:agent:mall`[%subscribe-translated %json path]
+              `task:agent:mall`[%watch-translated %json path]
           ==
         ::
         =.  session.channel-state.state
@@ -1430,7 +1430,7 @@
         ::
         $(requests t.requests)
       ::
-          %unsubscribe
+          %leave
         =/  channel-wire=wire
           /channel/subscription/[channel-id]/(scot %ud subscription-id.i.requests)
         ::
@@ -1452,7 +1452,7 @@
           :^  duc.u.maybe-subscription  %pass  channel-wire
           =,  u.maybe-subscription
           :*  %m  %deal  [our ship]  app
-              `task:agent:mall`[%unsubscribe ~]
+              `task:agent:mall`[%leave ~]
           ==
         ::
         =.  session.channel-state.state
@@ -1482,7 +1482,7 @@
             |=  [channel-wire=wire ship=@p app=term =path duc=^duct]
             ^-  move
             ::
-            [duc %pass channel-wire [%m %deal [our ship] app %unsubscribe ~]]
+            [duc %pass channel-wire [%m %deal [our ship] app %leave ~]]
         ::
         ?:  ?=([%& *] state.session)
           =.  gall-moves
@@ -1530,7 +1530,7 @@
         ::
         (emit-event channel-id [(en-json:html json)]~)
       ::
-          %subscription-update
+          %fact
         =/  =json
           =,  enjs:format
           %-  pairs  :~
@@ -1543,7 +1543,7 @@
         ::
         (emit-event channel-id [(en-json:html json)]~)
       ::
-          %subscription-close
+          %kick
         ~&  [%recieved-quit-from-gall channel-id]
         =/  =json
           =,  enjs:format
@@ -1554,7 +1554,7 @@
         ::
         (emit-event channel-id [(en-json:html json)]~)
       ::
-          %subscription-ack
+          %watch-ack
         =/  =json
           =,  enjs:format
           %-  pairs  :~
@@ -1679,7 +1679,7 @@
       |=  [channel-wire=wire ship=@p app=term =path duc=^duct]
       ^-  move
       ::
-      [duc %pass channel-wire [%m %deal [our ship] app %unsubscribe ~]]
+      [duc %pass channel-wire [%m %deal [our ship] app %leave ~]]
     --
   ::  +handle-ford-response: translates a ford response for the outside world
   ::

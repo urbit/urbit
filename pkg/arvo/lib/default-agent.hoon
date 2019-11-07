@@ -1,38 +1,39 @@
-|_  [=bowl:mall =agent:mall]
-++  handle-init
+|*  agent=*
+|_  =bowl:mall
+++  on-init
   `agent
 ::
-++  handle-extract-state
+++  on-save
   ~&  "extracting empty state for {<dap.bowl>}"
   !>(~)
 ::
-++  handle-upgrade-state
+++  on-load
   |=  old-state=vase
   ~&  "updating agent {<dap.bowl>} by throwing away old state"
   `agent
 ::
-++  handle-poke
+++  on-poke
   |=  =cage
   ~|  "unexpected poke to {<dap.bowl>} with mark {<p.cage>}"
   !!
 ::
-++  handle-subscribe
+++  on-watch
   |=  =path
   ~|  "unexpected subscription to {<dap.bowl>} on path {<path>}"
   !!
 ::
-++  handle-unsubscribe
+++  on-leave
   |=  path
   `agent
 ::
-++  handle-peek
+++  on-peek
   |=  =path
   ~|  "unexpected scry into {<dap.bowl>} on path {<path>}"
   !!
 ::
-++  handle-agent-response
+++  on-agent
   |=  [=wire =gift:agent:mall]
-  ^-  (quip card:agent:mall agent:mall)
+  ^-  (quip card:agent:mall _agent)
   ?-    -.gift
       %poke-ack
     ?~  p.gift
@@ -40,15 +41,15 @@
     %-  (slog leaf+"poke failed from {<dap.bowl>} on wire {<wire>}" u.p.gift)
     `agent
   ::
-      %subscription-ack
+      %watch-ack
     ?~  p.gift
       `agent
     =/  =tank  leaf+"subscribe failed from {<dap.bowl>} on wire {<wire>}"
     %-  (slog tank u.p.gift)
     `agent
   ::
-      %subscription-close  `agent
-      %subscription-update
+      %kick  `agent
+      %fact
     ~|  "unexpected subscription update to {<dap.bowl>} on wire {<wire>}"
     ~|  "with mark {<p.cage.gift>}"
     !!
@@ -58,12 +59,12 @@
     !!
   ==
 ::
-++  handle-arvo-response
+++  on-arvo
   |=  [=wire =sign-arvo]
   ~|  "unexpected system response {<-.sign-arvo>} to {<dap.bowl>} on wire {<wire>}"
   !!
 ::
-++  handle-error
+++  on-fail
   |=  [=term =tang]
   %-  (slog leaf+"error in {<dap.bowl>}" >term< tang)
   `agent

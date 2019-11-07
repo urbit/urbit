@@ -136,18 +136,18 @@
       --
     --
 |_  hid/bowl:mall                                       ::  gall environment
-++  handle-init
-  `..handle-init
+++  on-init
+  `..on-init
 ::
-++  handle-extract-state
+++  on-save
   !>([%1 lac])
 ::
-++  handle-upgrade-state
+++  on-load
   |=  =old-state=vase
   =/  old-state  !<(hood-1 old-state-vase)
-  `..handle-init(lac lac.old-state)
+  `..on-init(lac lac.old-state)
 ::
-++  handle-poke
+++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:agent:mall agent:mall)
   =/  h  (help hid)
@@ -169,26 +169,26 @@
       %dill-blit  ((wrap poke-dill-blit):from-drum:h !<(dill-blit:dill vase))
       %hood-sync  ((wrap poke-sync):from-kiln:h !<([desk ship desk] vase))
     ==
-  [cards ..handle-init]
+  [cards ..on-init]
 ::
-++  handle-subscribe
+++  on-watch
   |=  =path
   =/  h  (help hid)
   =^  cards  lac
     ?+  path  ~|([%hood-bad-path wire] !!)
       [%drum *]  ((wrap peer):from-drum:h t.path)
     ==
-  [cards ..handle-init]
+  [cards ..on-init]
 ::
-++  handle-unsubscribe
+++  on-leave
   |=  path
-  `..handle-init
+  `..on-init
 ::
-++  handle-peek
+++  on-peek
   |=  path
   *(unit (unit cage))
 ::
-++  handle-agent-response
+++  on-agent
   |=  [=wire =gift:agent:mall]
   =/  h  (help hid)
   =^  cards  lac
@@ -198,9 +198,9 @@
       [%drum *]   ((wrap take-agent):from-drum:h wire gift)
       [%write *]  ((wrap take-agent):from-write:h wire gift)
     ==
-  [cards ..handle-init]
+  [cards ..on-init]
 ::
-++  handle-arvo-response
+++  on-arvo
   |=  [=wire =sign-arvo]
   =/  h  (help hid)
   =^  cards  lac
@@ -210,9 +210,9 @@
       [%kiln *]   ((wrap take-general):from-kiln:h t.wire sign-arvo)
       [%write *]  ((wrap take):from-write:h t.wire sign-arvo)
     ==
-  [cards ..handle-init]
+  [cards ..on-init]
 ::
-++  handle-error
+++  on-fail
   |=  [term tang]
-  `..handle-init
+  `..on-init
 --

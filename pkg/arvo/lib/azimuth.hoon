@@ -99,7 +99,6 @@
   |=  [crash-after=(unit @ud) computation=_*form:(thread (unit result))]
   =/  m  (thread ,result)
   =|  try=@ud
-  |^
   |-  ^-  form:m
   =*  loop  $
   ?:  =(crash-after `try)

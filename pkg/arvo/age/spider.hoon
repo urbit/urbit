@@ -9,81 +9,82 @@
 +$  imput     [=imp-name =cage]
 --
 ^-  agent:mall
-=;  spider-core
-  =|  =state
+=|  =state
+=<
   |_  =bowl:mall
   +*  this  .
-      sc    ~(. spider-core bowl state)
-      def   ~(. default-agent bowl this)
+      spider-core  +>
+      sc    ~(. spider-core bowl)
+      def   ~(. (default-agent this) bowl)
   ::
-  ++  handle-init            handle-init:def
-  ++  handle-extract-state   handle-extract-state:def
-  ++  handle-upgrade-state   handle-upgrade-state:def
-  ++  handle-poke
+  ++  on-init   on-init:def
+  ++  on-save   on-save:def
+  ++  on-load   on-load:def
+  ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
     =^  cards  state
-      ?+  mark  (handle-poke:def mark vase)
-        %spider-imput  (handle-poke-imput:sc !<(imput vase))
+      ?+  mark  (on-poke:def mark vase)
+        %spider-imput  (on-poke-imput:sc !<(imput vase))
         %spider-start  (handle-start-imp:sc !<([imp-name term] vase))
         %spider-stop   (handle-stop-imp:sc !<([imp-name ?] vase))
       ==
     [cards this]
   ::
-  ++  handle-subscribe
+  ++  on-watch
     |=  =path
     ^-  (quip card _this)
     =^  cards  state
-      ?+  path  (handle-subscribe:def path)
-        [%imp @ *]  (handle-subscribe:sc t.path)
+      ?+  path  (on-watch:def path)
+        [%imp @ *]  (on-watch:sc t.path)
       ==
     [cards this]
   ::
-  ++  handle-unsubscribe     handle-unsubscribe:def
-  ++  handle-peek
+  ++  on-leave  on-leave:def
+  ++  on-peek
     |=  =path
     ^-  (unit (unit cage))
-    ?+  path  (handle-peek:def path)
+    ?+  path  (on-peek:def path)
       [%x %started @ ~]  ``noun+!>((~(has by state) i.t.t.path))
     ==
   ::
-  ++  handle-agent-response
+  ++  on-agent
     |=  [=wire =gift:agent:mall]
     ^-  (quip card _this)
     =^  cards  state
       ?+    wire  !!
-        [%imp @ *]  (handle-agent-response:sc i.t.wire t.t.wire gift)
+        [%imp @ *]  (on-agent:sc i.t.wire t.t.wire gift)
       ==
     [cards this]
   ::
-  ++  handle-arvo-response
+  ++  on-arvo
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
     =^  cards  state
-      ?+  wire  (handle-arvo-response:def wire sign-arvo)
+      ?+  wire  (on-arvo:def wire sign-arvo)
         [%imp @ *]    (handle-sign:sc i.t.wire t.t.wire sign-arvo)
         [%find @ ~]   (handle-find:sc i.t.wire sign-arvo)
         [%build @ ~]  (handle-build:sc i.t.wire sign-arvo)
       ==
     [cards this]
   ::
-  ++  handle-error           handle-error:def
+  ++  on-fail   on-fail:def
   --
 ::
-|_  [=bowl:mall =state]
-++  handle-poke-imput
+|_  =bowl:mall
+++  on-poke-imput
   |=  imput
   (take-input imp-name ~ %poke cage)
 ::
-++  handle-subscribe
+++  on-watch
   |=  [=imp-name =path]
-  (take-input imp-name ~ %subscribe path)
+  (take-input imp-name ~ %watch path)
 ::
 ++  handle-sign
   |=  [=imp-name =wire =sign-arvo]
   (take-input imp-name ~ %sign wire sign-arvo)
 ::
-++  handle-agent-response
+++  on-agent
   |=  [=imp-name =wire =gift:agent:mall]
   (take-input imp-name ~ %agent wire gift)
 ::
@@ -187,12 +188,12 @@
     ^-  ^card
     ?+  card  card
         [%pass * *]  [%pass [%imp imp-name p.card] q.card]
-        [%give %subscription-update *]
+        [%give %fact *]
       ?~  path.p.card
         card
       card(path.p `[%imp imp-name u.path.p.card])
     ::
-        [%give %subscription-close *]
+        [%give %kick *]
       ?~  path.p.card
         card
       card(path.p `[%imp imp-name u.path.p.card])
@@ -230,5 +231,5 @@
           =(imp-name i.t.wire)
       ==
     ~
-  `[%pass wire %agent [ship term] %unsubscribe ~]
+  `[%pass wire %agent [ship term] %leave ~]
 --

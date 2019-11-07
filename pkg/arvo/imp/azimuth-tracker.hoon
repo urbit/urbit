@@ -120,8 +120,8 @@
     (pure:m ~)
   =/  =path  /(scot %p ship.i.udiffs)
   =/  cards
-    :~  [%give %subscription-update `/ %azimuth-udiff !>(i.udiffs)]
-        [%give %subscription-update `path %azimuth-udiff !>(i.udiffs)]
+    :~  [%give %fact `/ %azimuth-udiff !>(i.udiffs)]
+        [%give %fact `path %azimuth-udiff !>(i.udiffs)]
     ==
   ;<  ~  bind:m  (send-raw-cards:threadio cards)
   loop(udiffs t.udiffs)
@@ -169,7 +169,7 @@
 ++  handle-peer
   |=  state=app-state
   =/  m  (thread ,app-state)
-  ;<  =path  bind:m  ((handle:threadio ,path) take-subscribe:threadio)
+  ;<  =path  bind:m  ((handle:threadio ,path) take-watch:threadio)
   =:    number.state          0
         pending-udiffs.state  *pending-udiffs
         blocks.state          *(list block)

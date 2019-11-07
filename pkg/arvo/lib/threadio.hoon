@@ -87,45 +87,45 @@
 ::
 ::  Wait for a subscription update on a wire
 ::
-++  take-subscription-update-prefix
+++  take-fact-prefix
   |=  =wire
   =/  m  (thread ,[path cage])
   ^-  form:m
   |=  tin=thread-input:thread
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %agent * %subscription-update *]
-    ?.  =(subscribe+wire (scag (lent wire) wire.u.in.tin))
+      [~ %agent * %fact *]
+    ?.  =(watch+wire (scag (lent wire) wire.u.in.tin))
       `[%skip ~]
     `[%done (slag (lent wire) wire.u.in.tin) cage.gift.u.in.tin]
   ==
 ::
 ::  Wait for a subscription update on a wire
 ::
-++  take-subscription-update
+++  take-fact
   |=  =wire
   =/  m  (thread ,cage)
   ^-  form:m
   |=  tin=thread-input:thread
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %agent * %subscription-update *]
-    ?.  =(subscribe+wire wire.u.in.tin)
+      [~ %agent * %fact *]
+    ?.  =(watch+wire wire.u.in.tin)
       `[%skip ~]
     `[%done cage.gift.u.in.tin]
   ==
 ::
 ::  Wait for a subscription close
 ::
-++  take-subscription-close
+++  take-kick
   |=  =wire
   =/  m  (thread ,~)
   ^-  form:m
   |=  tin=thread-input:thread
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %agent * %subscription-close *]
-    ?.  =(subscribe+wire wire.u.in.tin)
+      [~ %agent * %kick *]
+    ?.  =(watch+wire wire.u.in.tin)
       `[%skip ~]
     `[%done ~]
   ==
@@ -150,12 +150,12 @@
       (pure:m ~)
   ==
 ::
-++  take-subscribe
+++  take-watch
   =/  m  (thread ,path)
   |=  tin=thread-input:thread
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %subscribe *]
+      [~ %watch *]
     `[%done path.u.in.tin]
   ==
 ::
@@ -189,19 +189,19 @@
     `[%fail %poke-fail u.p.gift.u.in.tin]
   ==
 ::
-++  take-subscription-ack
+++  take-watch-ack
   |=  =wire
   =/  m  (thread ,~)
   ^-  form:m
   |=  tin=thread-input:thread
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %agent * %subscription-ack *]
-    ?.  =(subscribe+wire wire.u.in.tin)
+      [~ %agent * %watch-ack *]
+    ?.  =(watch+wire wire.u.in.tin)
       `[%skip ~]
     ?~  p.gift.u.in.tin
       `[%done ~]
-    `[%fail %subscription-ack-fail u.p.gift.u.in.tin]
+    `[%fail %watch-ack-fail u.p.gift.u.in.tin]
   ==
 ::
 ++  poke
@@ -219,41 +219,41 @@
   ;<  our=@p  bind:m  get-our
   (poke [our term] cage)
 ::
-++  subscribe
+++  watch
   |=  [=wire =dock =path]
   =/  m  (thread ,~)
   ^-  form:m
-  =/  =card:agent:mall  [%pass subscribe+wire %agent dock %subscribe path]
+  =/  =card:agent:mall  [%pass watch+wire %agent dock %watch path]
   ;<  ~  bind:m  (send-raw-card card)
-  (take-subscription-ack wire)
+  (take-watch-ack wire)
 ::
-++  subscribe-our
+++  watch-our
   |=  [=wire =term =path]
   =/  m  (thread ,~)
   ^-  form:m
   ;<  our=@p  bind:m  get-our
-  (subscribe wire [our term] path)
+  (watch wire [our term] path)
 ::
-++  unsubscribe
+++  leave
   |=  [=wire =dock]
   =/  m  (thread ,~)
   ^-  form:m
-  =/  =card:agent:mall  [%pass subscribe+wire %agent dock %unsubscribe ~]
+  =/  =card:agent:mall  [%pass watch+wire %agent dock %leave ~]
   (send-raw-card card)
 ::
-++  unsubscribe-our
+++  leave-our
   |=  [=wire =term]
   =/  m  (thread ,~)
   ^-  form:m
   ;<  our=@p  bind:m  get-our
-  (unsubscribe wire [our term])
+  (leave wire [our term])
 ::
-++  resubscribe
+++  rewatch
   |=  [=wire =dock =path]
   =/  m  (thread ,~)
-  ;<  ~  bind:m  ((handle ,~) (take-subscription-close wire))
-  ;<  ~  bind:m  (flog-text "resubscribing to {<dock>} {<path>}")
-  ;<  ~  bind:m  (subscribe wire dock path)
+  ;<  ~  bind:m  ((handle ,~) (take-kick wire))
+  ;<  ~  bind:m  (flog-text "rewatching {<dock>} {<path>}")
+  ;<  ~  bind:m  (watch wire dock path)
   (pure:m ~)
 ::
 ++  wait

@@ -19,40 +19,40 @@
   ==
 --
 ::
-=|  state=state-zero
-=,  state
+=|  state-zero
+=*  state  -
 ^-  agent:mall
 =<
   |_  =bowl:mall
-  +*  this  .
+  +*  this       .
       chat-core  +>
-      cc    ~(. chat-core bowl)
-      def   ~(. default-agent bowl this)
+      cc         ~(. chat-core bowl)
+      def        ~(. (default-agent this) bowl)
   ::
-  ++  handle-init            handle-init:def
-  ++  handle-extract-state   !>(state)
-  ++  handle-upgrade-state
+  ++  on-init   on-init:def
+  ++  on-save   !>(state)
+  ++  on-load
     |=  old=vase
     `this(state !<(state-zero old))
   ::
-  ++  handle-poke
+  ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
-      ?+  mark  (handle-poke:def mark vase)
+      ?+  mark  (on-poke:def mark vase)
         %json         (poke-json:cc !<(json vase))
         %chat-action  (poke-chat-action:cc !<(chat-action vase))
       ==
     [cards this]
   ::
-  ++  handle-subscribe
+  ++  on-watch
     |=  =path
     ^-  (quip card _this)
     ?>  (team:title our.bowl src.bowl)
     |^
     =/  cards=(list card)
-      ?+    path  (handle-subscribe:def path)
+      ?+    path  (on-watch:def path)
           [%keys ~]     (give %chat-update !>([%keys ~(key by inbox)]))
           [%all ~]      (give %chat-initial !>(inbox))
           [%configs ~]  (give %chat-configs !>((inbox-to-configs inbox)))
@@ -67,14 +67,14 @@
     ++  give
       |=  =cage
       ^-  (list card)
-      [%give %subscription-update ~ cage]~
+      [%give %fact ~ cage]~
     --
   ::
-  ++  handle-unsubscribe     handle-unsubscribe:def
-  ++  handle-peek
+  ++  on-leave  on-leave:def
+  ++  on-peek
     |=  =path
     ^-  (unit (unit cage))
-    ?+  path  (handle-peek:def path)
+    ?+  path  (on-peek:def path)
         [%x %all ~]        ``noun+!>(inbox)
         [%x %configs ~]    ``noun+!>((inbox-to-configs inbox))
         [%x %keys ~]       ``noun+!>(~(key by inbox))
@@ -93,9 +93,9 @@
       ``noun+!>(config.u.mailbox)
     ==
   ::
-  ++  handle-agent-response  handle-agent-response:def
-  ++  handle-arvo-response   handle-arvo-response:def
-  ++  handle-error           handle-error:def
+  ++  on-agent  on-agent:def
+  ++  on-arvo   on-arvo:def
+  ++  on-fail   on-fail:def
   --
 ::
 ::
@@ -206,7 +206,7 @@
 ++  update-subscribers
   |=  [pax=path act=chat-action]
   ^-  (list card)
-  [%give %subscription-update `pax %chat-update !>(act)]~
+  [%give %fact `pax %chat-update !>(act)]~
 ::
 ++  send-diff
   |=  [pax=path act=chat-action]

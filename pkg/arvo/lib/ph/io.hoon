@@ -11,7 +11,7 @@
 ++  take-unix-effect
   =/  m  (thread ,[ship unix-effect])
   ^-  form:m
-  ;<  =cage  bind:m  (take-subscription-update /effects)
+  ;<  =cage  bind:m  (take-fact /effects)
   ?>  ?=(%aqua-effect p.cage)
   (pure:m !<([aqua-effect] q.cage))
 ::
@@ -31,7 +31,7 @@
   ^-  form:m
   ~&  >  "starting"
   ;<  ~  bind:m  (start-imps vane-imps)
-  ;<  ~  bind:m  (subscribe-our /effects %aqua /effect)
+  ;<  ~  bind:m  (watch-our /effects %aqua /effect)
   ::  Get our very own event with no mistakes in it... yet.
   ::
   ::  We want to wait for the vane imps to actually start and get their
@@ -51,7 +51,7 @@
   ^-  form:m
   ~&  >  "done"
   ;<  ~  bind:m  (stop-imps vane-imps)
-  ;<  ~  bind:m  (unsubscribe-our /effects %aqua)
+  ;<  ~  bind:m  (leave-our /effects %aqua)
   (pure:m ~)
 ::
 ++  start-imps

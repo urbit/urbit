@@ -28,27 +28,27 @@
 ++  give-result
   |=  [=the=path =cage]
   ^-  card
-  [%give %subscription-update `the-path cage]
+  [%give %fact `the-path cage]
 --
 ::
 ^-  agent:mall
 =|  state=app-state
 |_  =bowl:mall
 +*  this  .
-    def   ~(. default-agent bowl this)
+    def   ~(. (default-agent this) bowl)
 ::
-++  handle-init            handle-init:def
-++  handle-extract-state   !>(state)
-++  handle-upgrade-state
+++  on-init   on-init:def
+++  on-save   !>(state)
+++  on-load
   |=  old=vase
   ~&  >  'grand'
   `this(state !<(app-state old))
 ::
-++  handle-poke
+++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
   |^
-  ?+  mark  (handle-poke:def mark vase)
+  ?+  mark  (on-poke:def mark vase)
     %noun          (handle-noun !<(noun vase))
     %dns-address   (handle-dns-address !<(address:dns vase))
     %dns-complete  (handle-dns-complete !<([ship binding:dns] vase))
@@ -114,7 +114,7 @@
     (give-result /(scot %p who) %dns-binding !>([adr tuf]))
   --
 ::
-++  handle-subscribe
+++  on-watch
   |=  =path
   ^-  (quip card _this)
   ?:  ?=([%sole *] path)
@@ -139,8 +139,8 @@
   :_  this  :_  ~
   (give-result path %dns-binding !>(u.dun))
 ::
-++  handle-unsubscribe     handle-unsubscribe:def
-++  handle-peek
+++  on-leave  on-leave:def
+++  on-peek
   |=  =path
   ^-  (unit (unit cage))
   ?+  path  [~ ~]
@@ -148,7 +148,7 @@
       [%x %completed ~]  [~ ~ %completed !>(~(tap by completed.state))]
   ==
 ::
-++  handle-agent-response  handle-agent-response:def
-++  handle-arvo-response   handle-arvo-response:def
-++  handle-error           handle-error:def
+++  on-agent  on-agent:def
+++  on-arvo   on-arvo:def
+++  on-fail   on-fail:def
 --

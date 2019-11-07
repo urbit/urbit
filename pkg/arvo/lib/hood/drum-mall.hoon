@@ -258,9 +258,9 @@
     ?-  -.gift
         %http-response       !!
         %poke-ack            (take-coup-phat t.t.wire p.gift)
-        %subscription-ack    (reap-phat t.t.wire p.gift)
-        %subscription-close  (quit-phat t.t.wire)
-        %subscription-update
+        %watch-ack    (reap-phat t.t.wire p.gift)
+        %kick  (quit-phat t.t.wire)
+        %fact
       %+  diff-sole-effect-phat  t.t.wire
       ?>  ?=(%sole-effect p.cage.gift)
       !<(sole-effect q.cage.gift)
@@ -286,7 +286,7 @@
   ?~  biz  moz
   :_  moz
   =/  =dill-blit:dill  ?~(t.biz i.biz [%mor (flop biz)])
-  [%give %subscription-update `/drum %dill-blit !>(dill-blit)]
+  [%give %fact `/drum %dill-blit !>(dill-blit)]
 ::
 ++  se-adit                                           ::  update servers
   ^+  .
@@ -472,7 +472,7 @@
 ::
 ++  se-blit-sys                                       ::  output to system
   |=  bil/dill-blit:dill  ^+  +>
-  (se-emit %give %subscription-update `/drum %dill-blit !>(bil))
+  (se-emit %give %fact `/drum %dill-blit !>(bil))
 ::
 ++  se-show                                           ::  show buffer, raw
   |=  lin/(pair @ud stub)
@@ -528,11 +528,11 @@
 ++  se-peer                                           ::  send a peer
   |=  gyl/gill:gall
   %-  se-emit(fug (~(put by fug) gyl ~))
-  [%pass (en-gill gyl) %agent gyl %subscribe /sole]
+  [%pass (en-gill gyl) %agent gyl %watch /sole]
 ::
 ++  se-pull                                           ::  cancel subscription
   |=  gyl/gill:gall
-  (se-emit %pass (en-gill gyl) %agent gyl %unsubscribe ~)
+  (se-emit %pass (en-gill gyl) %agent gyl %leave ~)
 ::
 ++  se-tame                                           ::  switch connection
   |=  gyl/gill:gall

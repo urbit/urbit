@@ -21,7 +21,7 @@
   |=  =bowl:mall
   =/  m  (thread ,~)
   ^-  form:m
-  ;<  ~  bind:m  (subscribe-our:threadio /effects %aqua /effect)
+  ;<  ~  bind:m  (watch-our:threadio /effects %aqua /effect)
   %-  (main-loop:threadio ,_handler)
   :~  handle-unix-effect:core
       handle-arvo-response:core

@@ -1931,9 +1931,9 @@
           [%agent [=ship name=term] =task]
       ==
     +$  task
-      $%  [%subscribe-translated =mark =path]
-          [%subscribe =path]
-          [%unsubscribe ~]
+      $%  [%watch-translated =mark =path]
+          [%watch =path]
+          [%leave ~]
           [%poke =cage]
           [%raw-poke =mark =noun]
           [%poke-translated =mark =cage]
@@ -1941,51 +1941,51 @@
       ==
     +$  gift
       $%  [%poke-ack p=(unit tang)]
-          [%subscription-update path=(unit path) =cage]
-          [%subscription-close path=(unit path) ship=(unit ship)]
-          [%subscription-ack p=(unit tang)]
+          [%fact path=(unit path) =cage]
+          [%kick path=(unit path) ship=(unit ship)]
+          [%watch-ack p=(unit tang)]
           [%http-response =http-event:http]
       ==
     ++  form
       $_  ^|
       |_  bowl
-      ++  handle-init
-        *(quip card _^|(..handle-init))
+      ++  on-init
+        *(quip card _^|(..on-init))
       ::
-      ++  handle-extract-state
+      ++  on-save
         *vase
       ::
-      ++  handle-upgrade-state
+      ++  on-load
         |~  old-state=vase
-        *(quip card _^|(..handle-init))
+        *(quip card _^|(..on-init))
       ::
-      ++  handle-poke
+      ++  on-poke
         |~  in-poke-data=cage
-        *(quip card _^|(..handle-init))
+        *(quip card _^|(..on-init))
       ::
-      ++  handle-subscribe
+      ++  on-watch
         |~  path
-        *(quip card _^|(..handle-init))
+        *(quip card _^|(..on-init))
       ::
-      ++  handle-unsubscribe
+      ++  on-leave
         |~  path
-        *(quip card _^|(..handle-init))
+        *(quip card _^|(..on-init))
       ::
-      ++  handle-peek
+      ++  on-peek
         |~  path
         *(unit (unit cage))
       ::
-      ++  handle-agent-response
+      ++  on-agent
         |~  [wire gift]
-        *(quip card _^|(..handle-init))
+        *(quip card _^|(..on-init))
       ::
-      ++  handle-arvo-response
+      ++  on-arvo
         |~  [wire =sign-arvo]
-        *(quip card _^|(..handle-init))
+        *(quip card _^|(..on-init))
       ::
-      ++  handle-error
+      ++  on-fail
         |~  [term tang]
-        *(quip card _^|(..handle-init))
+        *(quip card _^|(..on-init))
       --
     --
   --  ::mall
