@@ -1582,7 +1582,6 @@
           %-  (slog >out=outgoing.subscribers.current-agent< leaf/"XXX remove" tang)
           (ap-specific-take way %watch-ack `tang)
         $(moves t.moves)
-      ~&  >>  %peer-new
       =.  outgoing.subscribers.current-agent
         (~(put by outgoing.subscribers.current-agent) [short-wire dock] [| path])
       $(moves t.moves, new-moves [move new-moves])

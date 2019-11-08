@@ -35,7 +35,7 @@
 =|  state=app-state
 |_  =bowl:mall
 +*  this  .
-    def   ~(. (default-agent this) bowl)
+    def   ~(. (default-agent this %|) bowl)
 ::
 ++  on-init   on-init:def
 ++  on-save   !>(state)

@@ -1,4 +1,8 @@
-|*  agent=*
+/+  skeleton
+|*  [agent=* help=*]
+?:  ?=(%& help)
+  ~|  %default-agent-helpfully-crashing
+  skeleton
 |_  =bowl:mall
 ++  on-init
   `agent

@@ -50,7 +50,7 @@
   +*  this       .
       aqua-core  +>
       ac         ~(. aqua-core bowl)
-      def        ~(. (default-agent this) bowl)
+      def        ~(. (default-agent this %|) bowl)
   ++  on-init           `this
   ++  on-save  !>(all-state)
   ++  on-load

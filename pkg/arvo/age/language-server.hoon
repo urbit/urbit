@@ -36,7 +36,7 @@
   +*  this      .
       lsp-core  +>
       lsp       ~(. lsp-core bowl)
-      def       ~(. (default-agent this) bowl)
+      def       ~(. (default-agent this %|) bowl)
   ::
   ++  on-init
     ^+  on-init:*agent:mall
