@@ -10014,13 +10014,13 @@
   ++  hemp
     ::  generate formula from foot
     ::
-    |=  [hud/poly gen/hoon]
+    |=  [hud/poly gol/type gen/hoon]
     ^-  nock
     ~+
     =+  %hemp-141
     ?-  hud
-      $dry  q:(mint %noun gen)
-      $wet  q:(mint(vet |) %noun gen)
+      $dry  q:(mint gol gen)
+      $wet  q:(mint(vet |) gol gen)
     ==
   ::
   ++  laze
@@ -10044,7 +10044,7 @@
       ^-  (unit noun)
       %+  bind  (~(get by tal) axe)
       |=  gen/hoon
-      %.  [hud gen]
+      %.  [hud %noun gen]
       hemp(sut (core sut [nym hud %gold] sut [[%lazy 1 ..^$] ~] dom))
     ::
     %-  ~(gas by *(map @ud hoon))
@@ -10168,8 +10168,12 @@
   ++  mine
     ::  mint all chapters and feet in a core
     ::
-    |=  [mel/vair nym/(unit term) hud/poly dom/(map term tome)]
+    |=  [gol/type mel/vair nym/(unit term) hud/poly dom/(map term tome)]
     ^-  (pair type nock)
+    |^
+    =/  gol  (core-check gol)
+    =.  gol  (chapters-check gol)
+    =/  dog  (get-tomes gol)
     =-  :_  [%1 dez]
         (core sut [nym hud mel] sut [[%full ~] dez] dom)
     ^=  dez
@@ -10179,10 +10183,13 @@
       ~
     =/  dov/?(~ ^)
       =/  dab/(map term hoon)  q.q.n.dom
+      =/  dag  (get-arms dog p.n.dom)
+      =.  dag  (arms-check dab dag)
       |-  ^-  ?(~ ^)
       ?:  ?=(~ dab)
         ~
-      =+  vad=(hemp hud q.n.dab)
+      =/  gog  (get-arm-type gol dag p.n.dab)
+      =+  vad=(hemp hud gog q.n.dab)
       ?-    dab
         {* ~ ~}   vad
         {* ~ *}   [vad $(dab r.dab)]
@@ -10195,6 +10202,119 @@
       {* * ~}   [dov $(dom l.dom)]
       {* * *}   [dov $(dom l.dom) $(dom r.dom)]
     ==
+    ::
+    ::  all the below arms are used for gol checking and should have no
+    ::  effect other than giving more specific errors
+    ::
+    ::  all the possible types we could be expecting.
+    ::
+    +$  gol-type
+      $~  %noun
+      $@  %noun
+      $%  [%cell p=type q=type]
+          [%core p=type q=coil]
+          [%fork p=(set gol-type)]
+      ==
+    ::  check that we're looking for a core
+    ::
+    ++  core-check
+      |=  gol=type
+      |-  ^-  gol-type
+      ?+    gol  $(gol repo(sut gol))
+          %noun      (nice gol &)
+          %void      (nice %noun |)
+          [%atom *]  (nice %noun |)
+          [%cell *]  (nice gol (nest(sut p.gol) & %noun))
+          [%core *]  (nice gol(r.p.q %gold) &)
+          [%fork *]
+        =/  tys  ~(tap in p.gol)
+        :-  %fork
+        |-  ^-  (set gol-type)
+        ?~  tys
+          ~
+        =/  a  ^$(gol i.tys)
+        =/  b  $(tys t.tys)
+        (~(put in b) a)
+      ==
+    ::  check we have the expected number of chapters
+    ::
+    ++  chapters-check
+      |=  gol=gol-type
+      |-  ^-  gol-type
+      ?-    gol
+          %noun      (nice gol &)
+          [%cell *]  (nice gol &)
+          [%core *]  ~_  leaf+"core-number-of-chapters"
+                     (nice gol =(~(wyt by dom) ~(wyt by q.r.q.gol)))
+          [%fork *]
+        =/  tys  ~(tap in p.gol)
+        |-  ^-  gol-type
+        ?~  tys
+          gol
+        =/  a  ^$(gol i.tys)
+        =/  b  $(tys t.tys)
+        gol
+      ==
+    ::  get map of tomes if exists
+    ::
+    ++  get-tomes
+      |=  gol=gol-type
+      ^-  (unit (map term tome))
+      ?-    gol
+          %noun      ~
+          [%cell *]  ~
+          [%fork *]  ~  ::  maybe could be more aggressive
+          [%core *]  `q.r.q.gol
+      ==
+    ::  get arms in tome
+    ::
+    ++  get-arms
+      |=  [dog=(unit (map term tome)) nam=term]
+      ^-  (unit (map term hoon))
+      %+  bind  dog
+      |=  a/(map term tome)
+      ~_  leaf+"unexpcted-chapter.{(trip nam)}"
+      q:(~(got by a) nam)
+    ::  check we have the expected number of arms
+    ::
+    ++  arms-check
+      |=  [dab=(map term hoon) dag=(unit (map term hoon))]
+      ?~  dag
+        dag
+      =/  a
+        =/  exp  ~(wyt by u.dag)
+        =/  hav  ~(wyt by dab)
+        ~_  =/  expt  (scow %ud exp)
+            =/  havt  (scow %ud hav)
+            leaf+"core-number-of-arms.exp={expt}.hav={havt}"
+        ~_  =/  missing  ~(tap in (~(dif in ~(key by u.dag)) ~(key by dab)))
+            leaf+"missing.{<missing>}"
+        ~_  =/  extra  ~(tap in (~(dif in ~(key by dab)) ~(key by u.dag)))
+            leaf+"extra.{<extra>}"
+        ~_  =/  have  ~(tap in ~(key by dab))
+            leaf+"have.{<have>}"
+        (nice dag =(exp hav))
+      a
+    ::  get expected type of this arm
+    ::
+    ++  get-arm-type
+      |=  [gol=gol-type dag=(unit (map term hoon)) nam=term]
+      ^-  type
+      %-  fall  :_  %noun
+      %+  bind  dag
+      |=  a=(map term hoon)
+      =/  gen=hoon
+        ~_  leaf+"unexpected-arm.{(trip nam)}"
+        (~(got by a) nam)
+      (play(sut gol) gen)
+    ::
+    ++  nice
+      |*  [typ=* gud=?]
+      ?:  gud
+        typ
+      ~_  leaf+"core-nice"
+      !!
+    --
   ::
   ++  mint
     ~/  %mint
@@ -10360,7 +10480,7 @@
       |=  {mel/vair nym/(unit term) hud/poly ruf/hoon dom/(map term tome)}
       ^-  {p/type q/nock}
       =+  dan=^$(gen ruf, gol %noun)
-      =+  pul=(mine mel nym hud dom)
+      =+  pul=(mine gol mel nym hud dom)
       [(nice p.pul) (cons q.pul q.dan)]
     --
   ::
