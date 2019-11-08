@@ -10165,15 +10165,14 @@
     =+  (balk(sut yet) hum hud dom)
     [yet hum]
   ::
-  ++  mine
+  ++  mine  !:
     ::  mint all chapters and feet in a core
     ::
     |=  [gol/type mel/vair nym/(unit term) hud/poly dom/(map term tome)]
     ^-  (pair type nock)
     |^
-    =/  gol  (core-check gol)
-    =.  gol  (chapters-check gol)
-    =/  dog  (get-tomes gol)
+    =/  log  (chapters-check (core-check gol))
+    =/  dog  (get-tomes log)
     =-  :_  [%1 dez]
         (core sut [nym hud mel] sut [[%full ~] dez] dom)
     ^=  dez
@@ -10183,12 +10182,11 @@
       ~
     =/  dov/?(~ ^)
       =/  dab/(map term hoon)  q.q.n.dom
-      =/  dag  (get-arms dog p.n.dom)
-      =.  dag  (arms-check dab dag)
+      =/  dag  (arms-check dab (get-arms dog p.n.dom))
       |-  ^-  ?(~ ^)
       ?:  ?=(~ dab)
         ~
-      =/  gog  (get-arm-type gol dag p.n.dab)
+      =/  gog  (get-arm-type log dag p.n.dab)
       =+  vad=(hemp hud gog q.n.dab)
       ?-    dab
         {* ~ ~}   vad
@@ -10218,53 +10216,53 @@
     ::  check that we're looking for a core
     ::
     ++  core-check
-      |=  gol=type
+      |=  log=type
       |-  ^-  gol-type
-      ?+    gol  $(gol repo(sut gol))
-          %noun      (nice gol &)
+      ?+    log  $(log repo(sut log))
+          %noun      (nice log &)
           %void      (nice %noun |)
           [%atom *]  (nice %noun |)
-          [%cell *]  (nice gol (nest(sut p.gol) & %noun))
-          [%core *]  (nice gol(r.p.q %gold) &)
+          [%cell *]  (nice log (nest(sut p.log) & %noun))
+          [%core *]  (nice log(r.p.q %gold) &)
           [%fork *]
-        =/  tys  ~(tap in p.gol)
+        =/  tys  ~(tap in p.log)
         :-  %fork
         |-  ^-  (set gol-type)
         ?~  tys
           ~
-        =/  a  ^$(gol i.tys)
+        =/  a  ^$(log i.tys)
         =/  b  $(tys t.tys)
         (~(put in b) a)
       ==
     ::  check we have the expected number of chapters
     ::
     ++  chapters-check
-      |=  gol=gol-type
+      |=  log=gol-type
       |-  ^-  gol-type
-      ?-    gol
-          %noun      (nice gol &)
-          [%cell *]  (nice gol &)
+      ?-    log
+          %noun      (nice log &)
+          [%cell *]  (nice log &)
           [%core *]  ~_  leaf+"core-number-of-chapters"
-                     (nice gol =(~(wyt by dom) ~(wyt by q.r.q.gol)))
+                     (nice log =(~(wyt by dom) ~(wyt by q.r.q.log)))
           [%fork *]
-        =/  tys  ~(tap in p.gol)
+        =/  tys  ~(tap in p.log)
         |-  ^-  gol-type
         ?~  tys
-          gol
-        =/  a  ^$(gol i.tys)
+          log
+        =/  a  ^$(log i.tys)
         =/  b  $(tys t.tys)
-        gol
+        log
       ==
     ::  get map of tomes if exists
     ::
     ++  get-tomes
-      |=  gol=gol-type
+      |=  log=gol-type
       ^-  (unit (map term tome))
-      ?-    gol
+      ?-    log
           %noun      ~
           [%cell *]  ~
           [%fork *]  ~  ::  maybe could be more aggressive
-          [%core *]  `q.r.q.gol
+          [%core *]  `q.r.q.log
       ==
     ::  get arms in tome
     ::
@@ -10298,7 +10296,7 @@
     ::  get expected type of this arm
     ::
     ++  get-arm-type
-      |=  [gol=gol-type dag=(unit (map term hoon)) nam=term]
+      |=  [log=gol-type dag=(unit (map term hoon)) nam=term]
       ^-  type
       %-  fall  :_  %noun
       %+  bind  dag
@@ -10306,7 +10304,7 @@
       =/  gen=hoon
         ~_  leaf+"unexpected-arm.{(trip nam)}"
         (~(got by a) nam)
-      (play(sut gol) gen)
+      (play(sut log) gen)
     ::
     ++  nice
       |*  [typ=* gud=?]
