@@ -930,7 +930,7 @@
     |_  $:  agent-name=term
             agent-routes=routes
             agent-duct=duct
-            agent-cards=(list card:agent)
+            agent-moves=(list move)
             agent-config=(list (each suss tang))
             current-agent=running-agent
         ==
@@ -967,10 +967,8 @@
       =/  running  (~(put by running.agents.state) agent-name current-agent)
       =/  moves
         =/  giver  |=(report=(each suss tang) [hen %give %onto report])
-        =/  from-internal=(list move)
-          (zing (turn agent-cards ap-from-internal))
         =/  from-suss  (turn agent-config giver)
-        :(weld from-internal from-suss moves)
+        :(weld agent-moves from-suss moves)
       ::
       %_  mo-core
         running.agents.state  running
@@ -981,26 +979,22 @@
     ++  ap-track-queue
       ^+  ap-core
       ::
-      =/  internal-cards  agent-cards
+      =/  internal-moves  agent-moves
       =/  bad-ducts  *(set duct)
       =;  core
         core(agent-duct agent-duct)
       |-  ^+  ap-core
-      ?^  internal-cards
-        =/  =card:agent  i.internal-cards
-        ?.  ?=([%give %fact *] card)
-          $(internal-cards t.internal-cards)
+      ?^  internal-moves
+        =/  =move  i.internal-moves
+        ?.  ?=([* %give %unto %fact *] move)
+          $(internal-moves t.internal-moves)
         ::
-        =/  ducts  (ap-ducts-from-path path.p.card ~)
-        |-  ^+  ap-core
-        ?~  ducts
-          ^$(internal-cards t.internal-cards)
-        =^  filled  ap-core  ap-enqueue(agent-duct i.ducts)
+        =^  filled  ap-core  ap-enqueue(agent-duct duct.move)
         =.  bad-ducts
           ?:  filled
             bad-ducts
-          (~(put in bad-ducts) i.ducts)
-        $(ducts t.ducts)
+          (~(put in bad-ducts) duct.move)
+        $(internal-moves t.internal-moves)
       ::
       =/  ducts  ~(tap in bad-ducts)
       ::
@@ -1250,10 +1244,9 @@
       |=  =gift:agent
       ^+  ap-core
       ::
-      =/  internal-cards
-        =/  =card:agent  [%give gift]
-        [card agent-cards]
-      ap-core(agent-cards internal-cards)
+      =/  internal-moves
+        (weld (ap-from-internal %give gift) agent-moves)
+      ap-core(agent-moves internal-moves)
     ::  +ap-construct-bowl: set up bowl.
     ::
     ++  ap-construct-bowl
@@ -1276,9 +1269,9 @@
       |=  [=path =note:agent]
       ^+  ap-core
       ::
-      =/  =card:agent  [%pass path note]
-      =/  internal-cards  [card agent-cards]
-      ap-core(agent-cards internal-cards)
+      =/  internal-moves
+        (ap-from-internal %pass path note)
+      ap-core(agent-moves (weld internal-moves agent-moves))
     ::  +ap-reinstall: reinstall.
     ::
     ++  ap-reinstall
@@ -1504,49 +1497,51 @@
       |=  [ack=?(%poke-ack %watch-ack ~) run=_^?(|.(*step:agent))]
       ^-  [(unit tang) _ap-core]
       =/  result  (mule run)
-      =^  new-cards  ap-core  (ap-handle-result result)
+      =^  new-moves  ap-core  (ap-handle-result result)
       =/  maybe-tang=(unit tang)
         ?:  ?=(%& -.result)
           ~
         `p.result
-      =/  ack-cards
+      =/  ack-moves=(list move)
+        %-  zing
+        %-  turn  :_  ap-from-internal
+        ^-  (list card:agent)
         ?-  ack
           ~      ~
-          %poke-ack          [%give %poke-ack maybe-tang]~
+          %poke-ack   [%give %poke-ack maybe-tang]~
           %watch-ack  [%give %watch-ack maybe-tang]~
         ==
       ::
-      =.  agent-cards
-        :(weld (flop new-cards) ack-cards agent-cards)
+      =.  agent-moves
+        :(weld (flop new-moves) ack-moves agent-moves)
       [maybe-tang ap-core]
     ::  +ap-handle-result: handle result.
     ::
     ++  ap-handle-result
       ~/  %ap-handle-result
       |=  result=(each step:agent tang)
-      ^-  [(list card:agent) _ap-core]
+      ^-  [(list move) _ap-core]
       ?:  ?=(%| -.result)
         `ap-core
       ::
       =.  agent.current-agent  +.p.result
+      =/  moves  (zing (turn -.p.result ap-from-internal))
       =.  incoming.subscribers.current-agent
-        (ap-handle-quits -.p.result)
-      (ap-handle-peers -.p.result)
-    ::  +ap-handle-quits: handle cancels of incoming subscriptions
+        (ap-handle-kicks moves)
+      (ap-handle-peers moves)
+    ::  +ap-handle-kicks: handle cancels of incoming subscriptions
     ::
-    ++  ap-handle-quits
-      ~/  %ap-handle-quits
-      |=  moves=(list card:agent)
+    ++  ap-handle-kicks
+      ~/  %ap-handle-kicks
+      |=  moves=(list move)
       ^-  bitt
       =/  quits=(list duct)
-        %-  zing
-        ^-  (list (list duct))
-        %+  turn  moves
-        |=  =card:agent
-        ^-  (list duct)
-        ?.  ?=([%give %kick *] card)
+        %+  murn  moves
+        |=  =move
+        ^-  (unit duct)
+        ?.  ?=([* %give %unto %kick *] move)
           ~
-        (ap-ducts-from-path [path ship]:p.card)
+        `duct.move
       ::
       =/  quit-map=bitt
         (malt (turn quits |=(=duct [duct *[ship path]])))
@@ -1555,24 +1550,24 @@
     ::
     ++  ap-handle-peers
       ~/  %ap-handle-peers
-      |=  moves=(list card:agent)
-      ^-  [(list card:agent) _ap-core]
-      =|  cards=(list card:agent)
-      |-  ^-  [(list card:agent) _ap-core]
+      |=  moves=(list move)
+      ^-  [(list move) _ap-core]
+      =|  new-moves=(list move)
+      |-  ^-  [(list move) _ap-core]
       ?~  moves
-        [(flop cards) ap-core]
-      =/  =card:agent  i.moves
-      ?:  ?=([%pass * %agent * %leave *] card)
-        =/  =wire  p.card
-        =/  =dock  [ship name]:q.card
+        [(flop new-moves) ap-core]
+      =/  =move  i.moves
+      ?:  ?=([* %pass * %m %deal * * %leave *] move)
+        =/  =wire  p.move.move
+        =/  =dock  [q.p q]:q.move.move
         =.  outgoing.subscribers.current-agent
           (~(del by outgoing.subscribers.current-agent) [wire dock])
-        $(moves t.moves, cards [card cards])
-      ?.  ?=([%pass * %agent * %watch *] card)
-        $(moves t.moves, cards [card cards])
-      =/  =wire  p.card
-      =/  =dock  [ship name]:q.card
-      =/  =path  path.task.q.card
+        $(moves t.moves, new-moves [move new-moves])
+      ?.  ?=([* %pass * %m %deal * * %watch *] move)
+        $(moves t.moves, new-moves [move new-moves])
+      =/  =wire  p.move.move
+      =/  =dock  [q.p q]:q.move.move
+      =/  =path  path.r.q.move.move
       ?:  (~(has by outgoing.subscribers.current-agent) wire dock)
         =.  ap-core
           =/  way  [%out (scot %p p.dock) q.dock wire]
@@ -1583,7 +1578,7 @@
         $(moves t.moves)
       =.  outgoing.subscribers.current-agent
         (~(put by outgoing.subscribers.current-agent) [wire dock] [| path])
-      $(moves t.moves, cards [card cards])
+      $(moves t.moves, new-moves [move new-moves])
     --
   --
 ::  +call: request
