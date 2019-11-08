@@ -1371,13 +1371,15 @@
       ::
       =?  outgoing.subscribers.current-agent  ?=(%kick -.gift)
         %-  ~(del by outgoing.subscribers.current-agent)
-        [wire dock]
+        [agent-wire dock]
       ?:  ?&  ?=(%watch-ack -.gift)
               !(~(has by outgoing.subscribers.current-agent) [agent-wire dock])
           ==
         %-  %:  slog
               leaf+"{<agent-name>}: got ack for nonexistent subscription"
               leaf+"{<dock>}: {<agent-wire>}"
+              >wire=wire<
+              >out=outgoing.subscribers.current-agent<
               ~
             ==
         ap-core
@@ -1559,25 +1561,30 @@
       =/  =move  i.moves
       ?:  ?=([* %pass * %m %deal * * %leave *] move)
         =/  =wire  p.move.move
+        ?>  ?=([%use @ @ %out @ @ *] wire)
+        =/  short-wire  t.t.t.t.t.t.wire
         =/  =dock  [q.p q]:q.move.move
         =.  outgoing.subscribers.current-agent
-          (~(del by outgoing.subscribers.current-agent) [wire dock])
+          (~(del by outgoing.subscribers.current-agent) [short-wire dock])
         $(moves t.moves, new-moves [move new-moves])
       ?.  ?=([* %pass * %m %deal * * %watch *] move)
         $(moves t.moves, new-moves [move new-moves])
       =/  =wire  p.move.move
+      ?>  ?=([%use @ @ %out @ @ *] wire)
+      =/  short-wire  t.t.t.t.t.t.wire
       =/  =dock  [q.p q]:q.move.move
       =/  =path  path.r.q.move.move
-      ?:  (~(has by outgoing.subscribers.current-agent) wire dock)
+      ?:  (~(has by outgoing.subscribers.current-agent) short-wire dock)
         =.  ap-core
-          =/  way  [%out (scot %p p.dock) q.dock wire]
+          =/  way  [%out (scot %p p.dock) q.dock short-wire]
           =/  =tang
-            ~[leaf+"subscribe wire not unique" >agent-name< >wire< >dock<]
-          %-  (slog leaf/"XXX remove" tang)
+            ~[leaf+"subscribe wire not unique" >agent-name< >short-wire< >dock<]
+          %-  (slog >out=outgoing.subscribers.current-agent< leaf/"XXX remove" tang)
           (ap-specific-take way %watch-ack `tang)
         $(moves t.moves)
+      ~&  >>  %peer-new
       =.  outgoing.subscribers.current-agent
-        (~(put by outgoing.subscribers.current-agent) [wire dock] [| path])
+        (~(put by outgoing.subscribers.current-agent) [short-wire dock] [| path])
       $(moves t.moves, new-moves [move new-moves])
     --
   --
