@@ -10165,7 +10165,7 @@
     =+  (balk(sut yet) hum hud dom)
     [yet hum]
   ::
-  ++  mine  !:
+  ++  mine
     ::  mint all chapters and feet in a core
     ::
     |=  [gol/type mel/vair nym/(unit term) hud/poly dom/(map term tome)]

@@ -216,10 +216,10 @@
   ==
 ::
 ++  take-agent
-  |=  [=wire =gift:agent:mall]
-  ?+  wire  ~|([%helm-bad-take-agent wire -.gift] !!)
-    [%helm %hi *]  ?>  ?=(%poke-ack -.gift)
-                   (coup-hi t.t.wire p.gift)
+  |=  [=wire =sign:agent:mall]
+  ?+  wire  ~|([%helm-bad-take-agent wire -.sign] !!)
+    [%helm %hi *]  ?>  ?=(%poke-ack -.sign)
+                   (coup-hi t.t.wire p.sign)
   ==
 ::
 ++  take-bound

@@ -3,7 +3,7 @@
 +$  input
   $%  [%poke =cage]
       [%sign =wire =sign-arvo]
-      [%agent =wire =gift:agent:mall]
+      [%agent =wire =sign:agent:mall]
       [%watch =path]
   ==
 +$  thread-input  [=bowl:mall in=(unit input)]

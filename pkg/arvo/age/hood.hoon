@@ -189,14 +189,14 @@
   *(unit (unit cage))
 ::
 ++  on-agent
-  |=  [=wire =gift:agent:mall]
+  |=  [=wire =sign:agent:mall]
   =/  h  (help hid)
   =^  cards  lac
     ?+  wire  ~|([%hood-bad-wire wire] !!)
-      [%helm *]   ((wrap take-agent):from-helm:h wire gift)
-      [%kiln *]   ((wrap take-agent):from-kiln:h wire gift)
-      [%drum *]   ((wrap take-agent):from-drum:h wire gift)
-      [%write *]  ((wrap take-agent):from-write:h wire gift)
+      [%helm *]   ((wrap take-agent):from-helm:h wire sign)
+      [%kiln *]   ((wrap take-agent):from-kiln:h wire sign)
+      [%drum *]   ((wrap take-agent):from-drum:h wire sign)
+      [%write *]  ((wrap take-agent):from-write:h wire sign)
     ==
   [cards ..on-init]
 ::

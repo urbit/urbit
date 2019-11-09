@@ -35,7 +35,7 @@
   !!
 ::
 ++  on-agent
-  |~  [wire gift:agent:mall]
+  |~  [wire sign:agent:mall]
   ^-  (quip card:agent:mall agent:mall)
   !!
 ::

@@ -36,30 +36,26 @@
   !!
 ::
 ++  on-agent
-  |=  [=wire =gift:agent:mall]
+  |=  [=wire =sign:agent:mall]
   ^-  (quip card:agent:mall _agent)
-  ?-    -.gift
+  ?-    -.sign
       %poke-ack
-    ?~  p.gift
+    ?~  p.sign
       `agent
-    %-  (slog leaf+"poke failed from {<dap.bowl>} on wire {<wire>}" u.p.gift)
+    %-  (slog leaf+"poke failed from {<dap.bowl>} on wire {<wire>}" u.p.sign)
     `agent
   ::
       %watch-ack
-    ?~  p.gift
+    ?~  p.sign
       `agent
     =/  =tank  leaf+"subscribe failed from {<dap.bowl>} on wire {<wire>}"
-    %-  (slog tank u.p.gift)
+    %-  (slog tank u.p.sign)
     `agent
   ::
       %kick  `agent
       %fact
     ~|  "unexpected subscription update to {<dap.bowl>} on wire {<wire>}"
-    ~|  "with mark {<p.cage.gift>}"
-    !!
-  ::
-      %http-response
-    ~|  "unexpected http-response to {<dap.bowl>} on wire {<wire>}"
+    ~|  "with mark {<p.cage.sign>}"
     !!
   ==
 ::

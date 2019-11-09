@@ -305,14 +305,14 @@
   abet
 ::
 ++  take-agent
-  |=  [=wire =gift:agent:mall]
-  ?+  wire  ~|([%kiln-bad-take-agent wire -.gift] !!)
-    [%kiln %fancy *]   ?>  ?=(%poke-ack -.gift) 
-                       (take-coup-fancy t.t.wire p.gift)
-    [%kiln %reload *]  ?>  ?=(%poke-ack -.gift)
-                       (take-coup-reload t.t.wire p.gift)
-    [%kiln %spam *]    ?>  ?=(%poke-ack -.gift) 
-                       (take-coup-spam t.t.wire p.gift)
+  |=  [=wire =sign:agent:mall]
+  ?+  wire  ~|([%kiln-bad-take-agent wire -.sign] !!)
+    [%kiln %fancy *]   ?>  ?=(%poke-ack -.sign) 
+                       (take-coup-fancy t.t.wire p.sign)
+    [%kiln %reload *]  ?>  ?=(%poke-ack -.sign)
+                       (take-coup-reload t.t.wire p.sign)
+    [%kiln %spam *]    ?>  ?=(%poke-ack -.sign) 
+                       (take-coup-spam t.t.wire p.sign)
   ==
 ::
 ++  take-general

@@ -49,11 +49,11 @@
     ==
   ::
   ++  on-agent
-    |=  [=wire =gift:agent:mall]
+    |=  [=wire =sign:agent:mall]
     ^-  (quip card _this)
     =^  cards  state
       ?+    wire  !!
-        [%imp @ *]  (on-agent:sc i.t.wire t.t.wire gift)
+        [%imp @ *]  (on-agent:sc i.t.wire t.t.wire sign)
       ==
     [cards this]
   ::
@@ -85,8 +85,8 @@
   (take-input imp-name ~ %sign wire sign-arvo)
 ::
 ++  on-agent
-  |=  [=imp-name =wire =gift:agent:mall]
-  (take-input imp-name ~ %agent wire gift)
+  |=  [=imp-name =wire =sign:agent:mall]
+  (take-input imp-name ~ %agent wire sign)
 ::
 ++  handle-start-imp
   |=  [=imp-name =term]

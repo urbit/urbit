@@ -436,13 +436,13 @@
             {$m $unto *}
           ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
-            $poke-ack             ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
-            $kick                 peer
-            $watch-ack            ?~  p.p.+>.sih
-                                    +>.$
-                                  (dump:(crud %reap u.p.p.+>.sih) %logo ~)
-            $fact  pump:(from ;;(dill-blit q:`vase`+>+>+.sih))
-            $http-response        !!
+            $poke-ack       ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
+            $kick           peer
+            $watch-ack      ?~  p.p.+>.sih
+                              +>.$
+                            (dump:(crud %reap u.p.p.+>.sih) %logo ~)
+            $fact           pump:(from ;;(dill-blit q:`vase`+>+>.sih))
+            $http-response  !!
           ==
         ::
             {$c $note *}

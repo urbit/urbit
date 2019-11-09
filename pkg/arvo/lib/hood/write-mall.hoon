@@ -138,6 +138,6 @@
   +>.sign-arvo
 ::
 ++  take-agent
-  |=  [=wire =gift:agent:mall]
-  ~|([%write-bad-take-agent wire -.gift] !!)
+  |=  [=wire =sign:agent:mall]
+  ~|([%write-bad-take-agent wire -.sign] !!)
 --

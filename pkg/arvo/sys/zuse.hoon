@@ -1876,7 +1876,7 @@
       $%  {$mass p/mass}                                ::  memory usage
           {$onto p/(each suss tang)}                    ::  about agent
           {$rend p/path q/*}                            ::  network request
-          {$unto p/gift:agent}                          ::
+          {$unto p/unto}                                ::
           {$mack p/(unit tang)}                         ::  message ack
       ==                                                ::
     ++  task                                            ::  incoming request
@@ -1884,8 +1884,7 @@
       $%  {$conf p/dock q/dock}                         ::  configure app
           {$conf-mall p/dock q/dock}                    ::  configure app
           $>(%init vane-task)                           ::  set owner
-          {$deal p/sock q/term r/task:agent}            ::  full transmission
-          {$deal-mall p/sock q/term r/task:agent}       ::  full transmission
+          {$deal p/sock q/term r/deal}                  ::  full transmission
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           $>(%west vane-task)                           ::  network request
@@ -1919,6 +1918,20 @@
     ==                                                  ::
   ++  suss  (trel dude @tas @da)                        ::  config report
   ++  well  (pair desk term)                            ::
+  ++  neat
+    $%  [%arvo =note-arvo]
+        [%agent [=ship name=term] =deal]
+    ==
+  +$  deal
+    $%  [%raw-poke =mark =noun]
+        [%pump ~]
+        task:agent
+    ==
+  +$  unto
+    $%  [%http-response =http-event:http]
+        sign:agent
+    ==
+  ::
   ::  +agent: app core
   ::
   ++  agent
@@ -1931,20 +1944,23 @@
           [%agent [=ship name=term] =task]
       ==
     +$  task
-      $%  [%watch-translated =mark =path]
-          [%watch =path]
+      $%  [%watch =path]
+          [%watch-as =mark =path]
           [%leave ~]
           [%poke =cage]
-          [%raw-poke =mark =noun]
-          [%poke-translated =mark =cage]
-          [%pump ~]
+          [%poke-as =mark =cage]
       ==
     +$  gift
-      $%  [%poke-ack p=(unit tang)]
-          [%fact path=(unit path) =cage]
+      $%  [%fact path=(unit path) =cage]
           [%kick path=(unit path) ship=(unit ship)]
           [%watch-ack p=(unit tang)]
-          [%http-response =http-event:http]
+          [%poke-ack p=(unit tang)]
+      ==
+    +$  sign
+      $%  [%poke-ack p=(unit tang)]
+          [%watch-ack p=(unit tang)]
+          [%fact =cage]
+          [%kick ~]
       ==
     ++  form
       $_  ^|
@@ -1960,7 +1976,7 @@
         *(quip card _^|(..on-init))
       ::
       ++  on-poke
-        |~  in-poke-data=cage
+        |~  [mark vase]
         *(quip card _^|(..on-init))
       ::
       ++  on-watch
@@ -1976,11 +1992,11 @@
         *(unit (unit cage))
       ::
       ++  on-agent
-        |~  [wire gift]
+        |~  [wire sign]
         *(quip card _^|(..on-init))
       ::
       ++  on-arvo
-        |~  [wire =sign-arvo]
+        |~  [wire sign-arvo]
         *(quip card _^|(..on-init))
       ::
       ++  on-fail

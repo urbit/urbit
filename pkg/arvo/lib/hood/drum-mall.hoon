@@ -252,18 +252,18 @@
   ==
 ::
 ++  take-agent
-  |=  [=wire =gift:agent:mall]
-  ?+  wire  ~|([%drum-bad-take-agent wire -.gift] !!)
+  |=  [=wire =sign:agent:mall]
+  ?+  wire  ~|([%drum-bad-take-agent wire -.sign] !!)
       [%drum %phat *]
-    ?-  -.gift
+    ?-  -.sign
         %http-response       !!
-        %poke-ack            (take-coup-phat t.t.wire p.gift)
-        %watch-ack    (reap-phat t.t.wire p.gift)
+        %poke-ack            (take-coup-phat t.t.wire p.sign)
+        %watch-ack    (reap-phat t.t.wire p.sign)
         %kick  (quit-phat t.t.wire)
         %fact
       %+  diff-sole-effect-phat  t.t.wire
-      ?>  ?=(%sole-effect p.cage.gift)
-      !<(sole-effect q.cage.gift)
+      ?>  ?=(%sole-effect p.cage.sign)
+      !<(sole-effect q.cage.sign)
    ==
  ==
 ::

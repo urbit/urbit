@@ -887,7 +887,7 @@
     ==  ==
   ::
   ++  he-unto                                           ::  result from behn
-    |=  {way/wire cit/gift:agent:mall}
+    |=  {way/wire cit/sign:agent:mall}
     ^+  +>
     ?.  ?=($poke-ack -.cit)
       ~&  [%strange-unto cit]
@@ -1223,10 +1223,10 @@
   *(unit (unit cage))
 ::
 ++  on-agent
-  |=  [=wire =gift:agent:mall]
+  |=  [=wire =sign:agent:mall]
   =/  =session  (~(got by hoc) ost)
   =^  moves  state
-    he-abet:(~(he-unto he hid ost ~ session) wire gift)
+    he-abet:(~(he-unto he hid ost ~ session) wire sign)
   [moves ..on-init]
 ::
 ++  on-arvo

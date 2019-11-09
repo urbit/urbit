@@ -36,7 +36,7 @@
 ::
 ++  foreign-response
   $?  %watch
-      %watch-translated
+      %watch-as
       %poke
       %leave
   ==
@@ -145,7 +145,7 @@
   ==
 :: +blocked: blocked tasks
 ::
-++  blocked  (qeu (trel duct routes task:agent))
+++  blocked  (qeu (trel duct routes deal))
 :: +stats: statistics
 ::
 ++  stats
@@ -328,10 +328,10 @@
   ::
   ++  mo-handle-foreign-request
     ~/  %mo-handle-foreign-request
-    |=  [=ship =term =task:agent]
+    |=  [=ship =term =deal]
     ^+  mo-core
     ::
-    ?:  ?=(%pump -.task)
+    ?:  ?=(%pump -.deal)
       ::
       ::  you'd think this would send an ack for the diff that caused
       ::  this pump.  it would, but we already sent it when we got the
@@ -342,17 +342,17 @@
     ::
     =^  bone  mo-core  (mo-assign-bone ship)
     =/  =forward-ames
-      ?-  -.task
-        %poke                  [%m p.cage.task q.q.cage.task]
-        %leave           [%u ~]
-        %raw-poke              !!
-        %poke-translated       !!
-        %watch-translated  [%l task]
-        %watch             [%s path.task]
+      ?-  -.deal
+        %poke      [%m p.cage.deal q.q.cage.deal]
+        %leave     [%u ~]
+        %raw-poke  !!
+        %poke-as   !!
+        %watch-as  [%l deal]
+        %watch     [%s path.deal]
       ==
     ::
     =/  sys-path
-      =/  action  -.task
+      =/  action  -.deal
       /sys/way/[action]
     ::
     =/  =note-arvo
@@ -379,10 +379,10 @@
     ::
     =/  result  (bind art to-tang)
     ?-  foreign-response
-      %watch-translated  (mo-give %unto %watch-ack result)
-      %watch             (mo-give %unto %watch-ack result)
-      %poke                  (mo-give %unto %poke-ack result)
-      %leave           mo-core
+      %watch-as  (mo-give %unto %watch-ack result)
+      %watch     (mo-give %unto %watch-ack result)
+      %poke      (mo-give %unto %poke-ack result)
+      %leave     mo-core
     ==
   ::  +mo-assign-bone: assign an outbone to a ship.
   ::
@@ -520,7 +520,7 @@
       (mo-give %unto %poke-ack err)
     ::
     =/  =cage  (result-to-cage:ford build-result)
-    (mo-give %unto %fact ~ cage)
+    (mo-give %unto %fact cage)
   ::  +mo-handle-sys-red: diff ack.
   ::
   ::    On receipt of a valid +sign from %ames, we simply pass a %pump
@@ -548,15 +548,15 @@
     ?~  coop
       =/  =note-arvo
         =/  =sock  [him our]
-        =/  =task:agent  [%pump ~]
-        =/  =task:able  [%deal sock dap task]
+        =/  =deal  [%pump ~]
+        =/  =task:able  [%deal sock dap deal]
         [%m task]
       (mo-pass sys-path note-arvo)
     ::
     =/  mall-move=note-arvo
       =/  =sock  [him our]
-      =/  =task:agent  [%leave ~]
-      =/  =task:able  [%deal sock dap task]
+      =/  =deal  [%leave ~]
+      =/  =task:able  [%deal sock dap deal]
       [%m task]
     ::
     =/  ames-move=note-arvo
@@ -608,7 +608,7 @@
       mo-core
     =.  mo-core  (mo-abed u.duct)
     =/  =cage  (result-to-cage:ford build-result)
-    =/  =gift:able  [%unto [%fact ~ cage]]
+    =/  =gift:able  [%unto %fact cage]
     (mo-give gift)
   ::  +mo-handle-sys-req: process an inbound request.
   ::
@@ -641,17 +641,17 @@
       mo-core
     ::
     ?>  ?=([%m %unto *] sign-arvo)
-    =/  =gift:agent  +>.sign-arvo
+    =/  =unto:agent  +>.sign-arvo
     ::
-    ?-    -.gift
+    ?-    -.unto
         %poke-ack
-      (mo-give %mack p.gift)
+      (mo-give %mack p.unto)
     ::
         %fact
       =/  sys-path  [%sys %red t.path]
       =/  =note-arvo
         =/  path  [%m %gh dap ~]
-        =/  noun  [num %d p.cage.gift q.q.cage.gift]
+        =/  noun  [num %d p.cage.unto q.q.cage.unto]
         [%a %want him path noun]
       (mo-pass sys-path note-arvo)
     ::
@@ -664,7 +664,7 @@
       (mo-pass sys-path note-arvo)
     ::
         %watch-ack
-      (mo-give %mack p.gift)
+      (mo-give %mack p.unto)
     ::
         %http-response
       !!
@@ -693,8 +693,8 @@
     ::
     =/  =routes  [disclosing=~ attributing=ship]
     =/  =cage  (result-to-cage:ford build-result)
-    =/  =task:agent  [%poke cage]
-    (mo-apply term routes task)
+    =/  =deal  [%poke cage]
+    (mo-apply term routes deal)
   ::  +mo-handle-sys-way: outbound request.
   ::
   ++  mo-handle-sys-way
@@ -732,6 +732,8 @@
       ::
       =.  app  (ap-generic-take:app t.t.path sign-arvo)
       ap-abet:app
+    =/  =unto  +>.sign-arvo
+    ?<  ?=(%http-response -.unto)
     =/  app
       ?>  ?=([%out @ @ *] t.t.path)
       =/  =term  i.path
@@ -739,8 +741,7 @@
       =/  =routes  [disclosing=~ attributing=ship]
       (ap-abed:ap term routes)
     =.  app
-      =/  =gift:agent  +>.sign-arvo
-      (ap-specific-take:app t.t.path gift)
+      (ap-specific-take:app t.t.path unto)
     ap-abet:app
   ::  +mo-clear-queue: clear blocked tasks from the specified running agent.
   ::
@@ -765,11 +766,11 @@
     =^  task  blocked  [p q]:~(get to blocked)
     =/  =duct  p.task
     =/  =routes  q.task
-    =/  =task:agent  r.task
+    =/  =deal  r.task
     ::
     =/  move
       =/  =sock  [attributing.routes our]
-      =/  card  [%slip %m %deal sock term task]
+      =/  card  [%slip %m %deal sock term deal]
       [duct card]
     $(moves [move moves])
   ::  +mo-beak: assemble a beak for the specified agent.
@@ -796,7 +797,7 @@
   ::  +mo-apply: apply the supplied action to the specified agent.
   ::
   ++  mo-apply
-    |=  [=term =routes =task:agent]
+    |=  [=term =routes =deal]
     ^+  mo-core
     ::
     =/  =path
@@ -807,26 +808,26 @@
       =/  =beak  (mo-beak term)
       [p q]:beak
     ::
-    ?:  ?=(%raw-poke -.task)
-      =/  =schematic:ford  [%vale ship-desk +.task]
+    ?:  ?=(%raw-poke -.deal)
+      =/  =schematic:ford  [%vale ship-desk +.deal]
       =/  =note-arvo  [%f %build live=%.n schematic]
       (mo-pass path note-arvo)
     ::
-    ?:  ?=(%poke-translated -.task)
-      =/  =schematic:ford  [%cast ship-desk mark.task [%$ cage.task]]
+    ?:  ?=(%poke-as -.deal)
+      =/  =schematic:ford  [%cast ship-desk mark.deal [%$ cage.deal]]
       =/  =note-arvo  [%f %build live=%.n schematic]
       (mo-pass path note-arvo)
     ::
     =/  app  (ap-abed:ap term routes)
-    =.  app  (ap-apply:app task)
+    =.  app  (ap-apply:app deal)
     ap-abet:app
   ::  +mo-handle-local: handle locally.
   ::
-  ::    If the agent is running or blocked, assign it the supplied +task.
+  ::    If the agent is running or blocked, assign it the supplied +deal.
   ::    Otherwise simply apply the action to the agent.
   ::
   ++  mo-handle-local
-    |=  [=ship =term =task:agent]
+    |=  [=ship =term =deal]
     ^+  mo-core
     ::
     =/  =routes  [disclosing=~ attributing=ship]
@@ -836,14 +837,14 @@
     ?:  |(!is-running is-blocked)
       =/  =blocked
         =/  waiting  (~(get by blocked.agents.state) term)
-        =/  tasks  (fall waiting *blocked)
-        =/  task  [hen routes task]
-        (~(put to tasks) task)
+        =/  deals  (fall waiting *blocked)
+        =/  deal  [hen routes deal]
+        (~(put to deals) deal)
       ::
       %_  mo-core
         blocked.agents.state  (~(put by blocked.agents.state) term blocked)
       ==
-    (mo-apply term routes task)
+    (mo-apply term routes deal)
   ::  +mo-handle-forward: handle forward %ames message.
   ::
   ++  mo-handle-forward
@@ -865,26 +866,26 @@
       ?-  -.forward-ames
           %m
         =/  =task:able
-          =/  =task:agent  [%raw-poke [mark noun]:forward-ames]
-          [%deal sock term task]
+          =/  =deal  [%raw-poke [mark noun]:forward-ames]
+          [%deal sock term deal]
         [%m task]
       ::
           %l
         =/  =task:able
-          =/  =task:agent  [%watch-translated [mark path]:forward-ames]
-          [%deal sock term task]
+          =/  =deal  [%watch-as [mark path]:forward-ames]
+          [%deal sock term deal]
         [%m task]
       ::
           %s
         =/  =task:able
-          =/  =task:agent  [%watch path.forward-ames]
-          [%deal sock term task]
+          =/  =deal  [%watch path.forward-ames]
+          [%deal sock term deal]
         [%m task]
       ::
           %u
         =/  =task:able
-          =/  =task:agent  [%leave ~]
-          [%deal sock term task]
+          =/  =deal  [%leave ~]
+          [%deal sock term deal]
         [%m task]
       ==
     (mo-pass path note-arvo)
@@ -918,7 +919,7 @@
         mo-core
       =/  initialised
         (mo-abed u.out)
-      (mo-give:initialised %unto %kick ~ ~)
+      (mo-give:initialised %unto %kick ~)
     ==
   ::  +ap: agent engine
   ::
@@ -1018,7 +1019,7 @@
     ::
     ++  ap-from-internal
       ~/  %ap-from-internal
-      |=  =card:agent
+      |=  card=(wind neat gift:agent)
       ^-  (list move)
       ::
       ?-    -.card
@@ -1032,7 +1033,7 @@
           |=  =duct
           ~?  &(=(duct system-duct.agents.state) !=(agent-name %hood))
             [%agent-giving-on-system-duct agent-name -.gift]
-          [duct %give %unto gift]
+          [duct %give %unto %kick ~]
         ::
         ?.  ?=(%fact -.gift)
           [agent-duct %give %unto gift]~
@@ -1048,7 +1049,7 @@
           (~(gut by marks.current-agent) duct p.cage)
         ::
         ?:  =(mark p.cage)
-          [duct %give %unto gift]
+          [duct %give %unto %fact cage.gift]
         =/  =path  /sys/pel/[agent-name]
         =/  =note-arvo
           =/  =schematic:ford
@@ -1061,21 +1062,21 @@
           %pass
         =/  =duct  system-duct.agents.state
         =/  =wire  p.card
-        =/  =note:agent  q.card
-        =?  wire  ?=(%agent -.note)
-          [%out (scot %p ship.note) name.note wire]
+        =/  =neat:agent  q.card
+        =?  wire  ?=(%agent -.neat)
+          [%out (scot %p ship.neat) name.neat wire]
         =.  wire
           ::  Is it bad that this includes attributing ship?  May create
           ::  spurious duct mismatches
           ::
           [%use agent-name (scot %p attributing.agent-routes) wire]
         =/  =note-arvo
-          ?-    -.note
-              %arvo  note-arvo.note
+          ?-    -.neat
+              %arvo  note-arvo.neat
               %agent
             =/  =task:able
-              =/  =sock  [our ship.note]
-              [%deal sock [name task]:note]
+              =/  =sock  [our ship.neat]
+              [%deal sock [name deal]:neat]
             [%m task]
           ==
         [duct %pass wire note-arvo]~
@@ -1102,7 +1103,7 @@
       =?  ap-core  =(ship ship.i.out)
         =/  core
           =.  agent-duct  system-duct.agents.state
-          (ap-specific-take wire.i.out %kick ~ ~)
+          (ap-specific-take wire.i.out %kick ~)
         core(agent-duct agent-duct)
       $(out t.out)
     ::  +ap-agent-core: agent core with current bowl and state
@@ -1133,17 +1134,17 @@
     ::  +ap-apply: apply effect.
     ::
     ++  ap-apply
-      |=  =task:agent
+      |=  =deal
       ^+  ap-core
       ::
-      ?-  -.task
-        %watch-translated  (ap-subscribe-translated +.task)
-        %poke                  (ap-poke +.task)
-        %watch             (ap-subscribe +.task)
-        %raw-poke              !!
-        %poke-translated       !!
-        %leave           ap-load-delete
-        %pump                  ap-dequeue
+      ?-  -.deal
+        %watch-as  (ap-subscribe-as +.deal)
+        %poke      (ap-poke +.deal)
+        %watch     (ap-subscribe +.deal)
+        %raw-poke  !!
+        %poke-as   !!
+        %leave     ap-load-delete
+        %pump      ap-dequeue
       ==
     ::  +ap-peek: peek.
     ::
@@ -1181,8 +1182,8 @@
       ::  =/  way  [(scot %p ship) %out wire]
       ::
       ?:  is-ok
-        =/  =note:agent  [%agent [other-ship other-agent] %pump ~]
-        (ap-pass wire note)
+        =/  =neat  [%agent [other-ship other-agent] %pump ~]
+        (ap-pass wire neat)
       (ap-kill-down wire [other-ship other-agent])
     ::  +ap-dequeue: drop from queue.
     ::
@@ -1266,11 +1267,11 @@
     ::  +ap-pass: request action.
     ::
     ++  ap-pass
-      |=  [=path =note:agent]
+      |=  [=path =neat]
       ^+  ap-core
       ::
       =/  internal-moves
-        (ap-from-internal %pass path note)
+        (ap-from-internal %pass path neat)
       ap-core(agent-moves (weld internal-moves agent-moves))
     ::  +ap-reinstall: reinstall.
     ::
@@ -1294,10 +1295,10 @@
       =^  maybe-tang  ap-core  prep
       ?~  maybe-tang
         ap-core
-      (ap-error %prep-failed u.maybe-tang)
-    ::  +ap-subscribe-translated: apply %watch-translated.
+      (ap-error %load-failed u.maybe-tang)
+    ::  +ap-subscribe-as: apply %watch-as.
     ::
-    ++  ap-subscribe-translated
+    ++  ap-subscribe-as
       |=  [=mark =path]
       ^+  ap-core
       ::
@@ -1358,7 +1359,7 @@
     ::  +ap-specific-take: specific take.
     ::
     ++  ap-specific-take
-      |=  [=wire =gift:agent]
+      |=  [=wire =sign:agent]
       ^+  ap-core
       ::
       ~|  wire=wire
@@ -1369,10 +1370,10 @@
       =/  agent-wire  t.t.t.wire
       ::  if subscription ack or close, handle before calling user code
       ::
-      =?  outgoing.subscribers.current-agent  ?=(%kick -.gift)
+      =?  outgoing.subscribers.current-agent  ?=(%kick -.sign)
         %-  ~(del by outgoing.subscribers.current-agent)
         [agent-wire dock]
-      ?:  ?&  ?=(%watch-ack -.gift)
+      ?:  ?&  ?=(%watch-ack -.sign)
               !(~(has by outgoing.subscribers.current-agent) [agent-wire dock])
           ==
         %-  %:  slog
@@ -1384,8 +1385,8 @@
             ==
         ap-core
       ::
-      =?  outgoing.subscribers.current-agent  ?=(%watch-ack -.gift)
-        ?^  p.gift
+      =?  outgoing.subscribers.current-agent  ?=(%watch-ack -.sign)
+        ?^  p.sign
           %-  ~(del by outgoing.subscribers.current-agent)
           [wire dock]
         %+  ~(jab by outgoing.subscribers.current-agent)  [agent-wire dock]
@@ -1396,12 +1397,12 @@
       ::
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
-        (on-agent:ap-agent-core agent-wire gift)
+        (on-agent:ap-agent-core agent-wire sign)
       ::
-      =?  ap-core  ?=(%fact -.gift)
+      =?  ap-core  ?=(%fact -.sign)
         (ap-update-subscription =(~ maybe-tang) p.dock q.dock agent-wire)
       ?^  maybe-tang
-        (ap-error -.gift leaf/"closing subscription" u.maybe-tang)
+        (ap-error -.sign leaf/"closing subscription" u.maybe-tang)
       ap-core
     ::  +ap-install: install wrapper.
     ::
@@ -1488,7 +1489,7 @@
       ::
       =.  ap-core
         =/  way  [%out (scot %p p.dock) q.dock wire]
-        (ap-specific-take way %kick ~ ~)
+        (ap-specific-take way %kick ~)
       (ap-pass wire %agent dock %leave ~)
     ::  +ap-ingest: call agent arm
     ::
@@ -1614,16 +1615,16 @@
     =>  (mo-boot:initialised q.dock q.task)
     mo-abet
   ::
-      ?(%deal %deal-mall)
+      %deal
     =/  =sock  p.task
     =/  =term  q.task
-    =/  =task:agent  r.task
+    =/  =deal  r.task
     ?.  =(q.sock our)
       ?>  =(p.sock our)
-      =>  (mo-handle-foreign-request:initialised q.sock term task)
+      =>  (mo-handle-foreign-request:initialised q.sock term deal)
       mo-abet
     ::
-    =>  (mo-handle-local:initialised p.sock term task)
+    =>  (mo-handle-local:initialised p.sock term deal)
     mo-abet
   ::
       %init

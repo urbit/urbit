@@ -1403,7 +1403,7 @@
           :^  duct  %pass  /channel/poke/[channel-id]/(scot %ud request-id.i.requests)
           =,  i.requests
           :*  %m  %deal  `sock`[our ship]  app
-              `task:agent:mall`[%poke-translated mark %json !>(json)]
+              `task:agent:mall`[%poke-as mark %json !>(json)]
           ==
         ::
         $(requests t.requests)
@@ -1419,7 +1419,7 @@
           :^  duct  %pass  channel-wire
           =,  i.requests
           :*  %m  %deal  [our ship]  app
-              `task:agent:mall`[%watch-translated %json path]
+              `task:agent:mall`[%watch-as %json path]
           ==
         ::
         =.  session.channel-state.state
@@ -1513,19 +1513,19 @@
     ::  +on-gall-response: turns a gall response into an event
     ::
     ++  on-gall-response
-      |=  [channel-id=@t request-id=@ud =gift:agent:mall]
+      |=  [channel-id=@t request-id=@ud =unto:mall]
       ^-  [(list move) server-state]
       ::
-      ?+    -.gift  ~|([%invalid-gall-response -.gift] !!)
+      ?+    -.unto  ~|([%invalid-gall-response -.unto] !!)
           %poke-ack
         =/  =json
           =,  enjs:format
           %-  pairs  :~
             ['response' [%s 'poke']]
             ['id' (numb request-id)]
-            ?~  p.gift
+            ?~  p.unto
               ['ok' [%s 'ok']]
-            ['err' (wall (render-tang-to-wall 100 u.p.gift))]
+            ['err' (wall (render-tang-to-wall 100 u.p.unto))]
           ==
         ::
         (emit-event channel-id [(en-json:html json)]~)
@@ -1537,8 +1537,8 @@
             ['response' [%s 'diff']]
             ['id' (numb request-id)]
             :-  'json'
-            ?>  =(%json p.cage.gift)
-            ;;(json q.q.cage.gift)
+            ?>  =(%json p.cage.unto)
+            ;;(json q.q.cage.unto)
           ==
         ::
         (emit-event channel-id [(en-json:html json)]~)
@@ -1560,9 +1560,9 @@
           %-  pairs  :~
             ['response' [%s 'subscribe']]
             ['id' (numb request-id)]
-            ?~  p.gift
+            ?~  p.unto
               ['ok' [%s 'ok']]
-            ['err' (wall (render-tang-to-wall 100 u.p.gift))]
+            ['err' (wall (render-tang-to-wall 100 u.p.unto))]
           ==
         ::
         (emit-event channel-id [(en-json:html json)]~)
