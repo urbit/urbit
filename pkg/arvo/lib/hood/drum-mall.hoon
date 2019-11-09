@@ -80,33 +80,35 @@
         ::  [%home %azimuth-tracker]
     ==
   =+  myr=(clan:title our)
+  :~  [%home %dojo]
+  ==
   ::
-  ?:  ?=($pawn myr)
-  :~  [%home %lens]
-      [%base %hall]
-      [%base %talk]
-      [%base %dojo]
-      [%base %modulo]
-      [%home %launch]
-      [%home %chat]
-      [%home %publish]
-      [%home %clock]
-      [%home %weather]
-  ==
-  :~  [%home %lens]
-      [%home %acme]
-      [%home %dns]
-      [%home %dojo]
-      [%home %hall]
-      [%home %talk]
-      [%home %modulo]
-      [%home %launch]
-      [%home %chat]
-      [%home %publish]
-      [%home %clock]
-      [%home %weather]
-      [%home %azimuth-tracker]
-  ==
+  ::  ?:  ?=($pawn myr)
+  ::  :~  [%home %lens]
+  ::      [%base %hall]
+  ::      [%base %talk]
+  ::      [%base %dojo]
+  ::      [%base %modulo]
+  ::      [%home %launch]
+  ::      [%home %chat]
+  ::      [%home %publish]
+  ::      [%home %clock]
+  ::      [%home %weather]
+  ::  ==
+  ::  :~  [%home %lens]
+  ::      [%home %acme]
+  ::      [%home %dns]
+  ::      [%home %dojo]
+  ::      [%home %hall]
+  ::      [%home %talk]
+  ::      [%home %modulo]
+  ::      [%home %launch]
+  ::      [%home %chat]
+  ::      [%home %publish]
+  ::      [%home %clock]
+  ::      [%home %weather]
+  ::      [%home %azimuth-tracker]
+  ::  ==
 ::
 ++  deft-fish                                           ::  default connects
   |=  our/ship
