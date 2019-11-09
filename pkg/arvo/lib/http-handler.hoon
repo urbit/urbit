@@ -1,11 +1,7 @@
-::  wrap an http handler without having to worry about subscriptions
+::  delay incoming http requests until eyre is subscribed to responses.
 ::
-|%
-+$  response  simple-payload:http
-+$  handler  $-(inbound-request:eyre response)
---
-|=  [=handler =agent:mall]
-=|  state=[count=@ud map=(map app-id=@ud response)]
+|=  =agent:mall
+=|  state=[count=@ud map=(map app-id=@ud inbound-request:eyre)]
 ^-  agent:mall
 |_  =bowl:mall
 +*  this  .
@@ -34,10 +30,9 @@
     =^  cards  agent  (on-poke:ag mark vase)
     [cards this]
   =+  !<([eyre-id=@ud =inbound-request:eyre] vase)
-  =/  response  (handler inbound-request)
   =/  app-id  count.state
   =:  count.state  +(count.state)
-      map.state    (~(put by map.state) app-id response)
+      map.state    (~(put by map.state) app-id inbound-request)
     ==
   :_  this  :_  ~
   [%pass / %arvo %e %start-watching eyre-id app-id]
@@ -49,18 +44,17 @@
     =^  cards  agent  (on-watch:ag path)
     [cards this]
   =/  app-id  (slav %ud i.t.path)
-  =/  response  (~(get by map.state) app-id)
-  :_  this(map.state (~(del by map.state) app-id))
-  ?~  response
+  =/  request  (~(get by map.state) app-id)
+  =.  map.state  (~(del by map.state) app-id)
+  ?~  request
+    :_  this
     ^-  (list card:agent:mall)
     :~  [%give %fact `path %http-response-cancel !>(~)]
         [%give %kick `path ~]
     ==
-  ^-  (list card:agent:mall)
-  :~  [%give %fact `path %http-response-header !>(response-header.u.response)]
-      [%give %fact `path %http-response-data !>(data.u.response)]
-      [%give %kick `path ~]
-  ==
+  =^  cards  agent
+    (on-poke:ag %http-request !>([path u.request]))
+  [cards this]
 ::
 ++  on-leave
   |=  =path

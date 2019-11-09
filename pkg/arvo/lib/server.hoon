@@ -25,8 +25,9 @@
   ::  +require-authorization: redirect to the login page when unauthenticated
   ::
   ++  require-authorization
-    |=  handler=$-(inbound-request:eyre simple-payload:http)
-    |=  =inbound-request:eyre
+    |=  $:  =inbound-request:eyre
+            handler=$-(inbound-request:eyre simple-payload:http)
+        ==
     ^-  simple-payload:http
     ::
     ?:  authenticated.inbound-request
@@ -38,6 +39,14 @@
       %-  crip
       "/~/login?redirect={(trip url.request.inbound-request)}"
     [[307 ['location' redirect]~] ~]
+  ::
+  ++  give-simple-payload
+    |=  [=path =simple-payload:http]
+    ^-  (list card:agent:mall)
+    :~  [%give %fact `path %http-response-header !>(response-header.simple-payload)]
+        [%give %fact `path %http-response-data !>(data.simple-payload)]
+        [%give %kick `path ~]
+    ==
   ::
   ++  html-response
     |=  oct-html=octs

@@ -9,25 +9,8 @@
 =,  format
 ::
 %+  verb  &
+%-  http-handler
 ^-  agent:mall
-%+  http-handler
-  %-  require-authorization:app
-  |=  =inbound-request:eyre
-  ^-  response:http-handler
-  =/  request-line  (parse-request-line url.request.inbound-request)
-  =/  back-path  (flop site.request-line)
-  =/  name=@t
-    =/  back-path  (flop site.request-line)
-    ?~  back-path
-      ''
-    i.back-path
-  ::
-  ?~  back-path
-    not-found:gen
-  ?:  =(name 'tile')
-    (js-response:gen tile-js)
-  not-found:gen
-::
 |_  =bowl:mall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
@@ -42,7 +25,30 @@
   ==
 ++  on-save   on-save:def
 ++  on-load   on-load:def
-++  on-poke   on-poke:def
+++  on-poke
+  |=  [=mark =vase]
+  ^-  (quip card:agent:mall _this)
+  ?.  ?=(%http-request mark)
+    (on-poke:def mark vase)
+  =+  !<([=path =inbound-request:eyre] vase)
+  :_  this
+  %+  give-simple-payload:app  path
+  %+  require-authorization:app  inbound-request
+  |=  =inbound-request:eyre
+  =/  request-line  (parse-request-line url.request.inbound-request)
+  =/  back-path  (flop site.request-line)
+  =/  name=@t
+    =/  back-path  (flop site.request-line)
+    ?~  back-path
+      ''
+    i.back-path
+  ::
+  ?~  back-path
+    not-found:gen
+  ?:  =(name 'tile')
+    (js-response:gen tile-js)
+  not-found:gen
+::
 ++  on-watch
   |=  =path
   ^-  (quip card:agent:mall _this)
