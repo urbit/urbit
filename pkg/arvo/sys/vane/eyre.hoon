@@ -102,6 +102,11 @@
       ::    the :binding into a (map (unit @t) (trie knot =action)).
       ::
       bindings=(list [=binding =duct =action])
+      ::  starting: new http connections waiting for app to send %start-watching
+      ::
+      ::    Ducts should be keys of connections.
+      ::
+      starting=[count=@ud map=(map eyre-id=@ud [=duct app=term])]
       ::  connections: open http connections not fully complete
       ::
       connections=(map duct outstanding-connection)
@@ -816,6 +821,12 @@
     ^-  [(list move) server-state]
     ::
     =/  act  [%app app=%lens]
+    =/  eyre-id  count.starting.state
+    =:    count.starting.state  +(count.starting.state)
+          map.starting.state
+        (~(put by map.starting.state) eyre-id [duct app.act])
+      ==
+    ::
     =/  connection=outstanding-connection
       [act [& secure address request] ~ 0]
     ::
@@ -831,7 +842,7 @@
     ^-  task:agent:mall
     :*  %poke
         %handle-http-request
-        !>(inbound-request.connection)
+        !>([eyre-id inbound-request.connection])
     ==
   ::  +request: starts handling an inbound http request
   ::
@@ -866,6 +877,12 @@
       [%$ %noun !>([authenticated request])]
     ::
         %app
+      =/  eyre-id  count.starting.state
+      =:    count.starting.state  +(count.starting.state)
+            map.starting.state
+          (~(put by map.starting.state) eyre-id [duct app.action])
+        ==
+      ::
       :_  state
       :_  ~
       :^  duct  %pass  /run-app-request/[app.action]
@@ -878,7 +895,7 @@
       ^-  task:agent:mall
       :*  %poke
           %handle-http-request
-          !>(inbound-request.connection)
+          !>([eyre-id inbound-request.connection])
       ==
     ::
         %authentication
@@ -890,6 +907,23 @@
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
+    ==
+  ::  +start-watching: start watching app for response
+  ::
+  ++  start-watching
+    |=  [eyre-id=@ud app-id=@ud]
+    ^-  [(list move) server-state]
+    =/  start=(unit [duct=^duct app=term])
+      (~(get by map.starting.state) eyre-id)
+    ?~  start
+      ~&  [%invalid-starting-connection eyre-id]
+      [~ state]
+    ::
+    :_  state(map.starting (~(del by map.starting.state) eyre-id))
+    :_  ~
+    :*  duct.u.start  %pass  /watch-response
+        %m  %deal  [our our]  app.u.start
+        %watch  /http-response/(scot %ud app-id)
     ==
   ::  +cancel-request: handles a request being externally aborted
   ::
@@ -1513,19 +1547,19 @@
     ::  +on-gall-response: turns a gall response into an event
     ::
     ++  on-gall-response
-      |=  [channel-id=@t request-id=@ud =unto:mall]
+      |=  [channel-id=@t request-id=@ud =sign:agent:mall]
       ^-  [(list move) server-state]
       ::
-      ?+    -.unto  ~|([%invalid-gall-response -.unto] !!)
+      ?-    -.sign
           %poke-ack
         =/  =json
           =,  enjs:format
           %-  pairs  :~
             ['response' [%s 'poke']]
             ['id' (numb request-id)]
-            ?~  p.unto
+            ?~  p.sign
               ['ok' [%s 'ok']]
-            ['err' (wall (render-tang-to-wall 100 u.p.unto))]
+            ['err' (wall (render-tang-to-wall 100 u.p.sign))]
           ==
         ::
         (emit-event channel-id [(en-json:html json)]~)
@@ -1537,8 +1571,8 @@
             ['response' [%s 'diff']]
             ['id' (numb request-id)]
             :-  'json'
-            ?>  =(%json p.cage.unto)
-            ;;(json q.q.cage.unto)
+            ?>  =(%json p.cage.sign)
+            ;;(json q.q.cage.sign)
           ==
         ::
         (emit-event channel-id [(en-json:html json)]~)
@@ -1560,9 +1594,9 @@
           %-  pairs  :~
             ['response' [%s 'subscribe']]
             ['id' (numb request-id)]
-            ?~  p.unto
+            ?~  p.sign
               ['ok' [%s 'ok']]
-            ['err' (wall (render-tang-to-wall 100 u.p.unto))]
+            ['err' (wall (render-tang-to-wall 100 u.p.sign))]
           ==
         ::
         (emit-event channel-id [(en-json:html json)]~)
@@ -1804,6 +1838,8 @@
         ::
             %cancel
           ::  todo: log this differently from an ise.
+          ::
+          ::  maybe should also send %leave to app?
           ::
           error-connection
         ==
@@ -2111,6 +2147,10 @@
     =^  moves  server-state.ax  (request-local:server +.task)
     [moves http-server-gate]
   ::
+      %start-watching
+    =^  moves  server-state.ax  (start-watching:server +.task)
+    [moves http-server-gate]
+  ::
       %cancel-request
     =^  moves  server-state.ax  cancel-request:server
     [moves http-server-gate]
@@ -2169,6 +2209,7 @@
            ~|([%bad-take-wire wire] !!)
       ::
          %run-app-request  run-app-request
+         %watch-response   watch-response
          %run-app-cancel   run-app-cancel
          %run-build        run-build
          %channel          channel
@@ -2180,24 +2221,62 @@
     ?>  ?=([%m %unto *] sign)
     ::
     ::
-    ?:  ?=([%poke-ack *] p.sign)
+    ?>  ?=([%poke-ack *] p.sign)
+    ?~  p.p.sign
+      ::  received a positive acknowledgment: take no action
+      ::
+      [~ http-server-gate]
+    ::  we have an error; propagate it to the client
+    ::
+    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  handle-gall-error
+      handle-gall-error:(per-server-event event-args)
+    =^  moves  server-state.ax
+      (handle-gall-error u.p.p.sign)
+    [moves http-server-gate]
+  ::
+  ++  watch-response
+    ::
+    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    ::
+    ?:  ?=([%m %unto %watch-ack *] sign)
       ?~  p.p.sign
         ::  received a positive acknowledgment: take no action
         ::
         [~ http-server-gate]
       ::  we have an error; propagate it to the client
       ::
-      =/  event-args  [[our eny duct now scry-gate] server-state.ax]
       =/  handle-gall-error
         handle-gall-error:(per-server-event event-args)
       =^  moves  server-state.ax  (handle-gall-error u.p.p.sign)
       [moves http-server-gate]
     ::
-    ?>  ?=([%m %unto %http-response *] sign)
+    ?:  ?=([%m %unto %kick ~] sign)
+      =/  handle-response  handle-response:(per-server-event event-args)
+      =^  moves  server-state.ax
+        (handle-response %continue ~ &)
+      [moves http-server-gate]
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    ?>  ?=([%m %unto %fact *] sign)
+    =/  =mark  p.cage.p.sign
+    =/  =vase  q.cage.p.sign
+    ?.  ?=  ?(%http-response-header %http-response-data %http-response-cancel)
+        mark
+      =/  handle-gall-error
+        handle-gall-error:(per-server-event event-args)
+      =^  moves  server-state.ax
+        (handle-gall-error leaf+"eyre bad mark {<mark>}" ~)
+      [moves http-server-gate]
+    ::
+    =/  =http-event:http
+      ?-  mark
+        %http-response-header  [%start !<(response-header:http vase) ~ |]
+        %http-response-data    [%continue !<((unit octs) vase) |]
+        %http-response-cancel  [%cancel ~]
+      ==
     =/  handle-response  handle-response:(per-server-event event-args)
-    =^  moves  server-state.ax  (handle-response http-event.p.sign)
+    =^  moves  server-state.ax
+      (handle-response http-event)
     [moves http-server-gate]
   ::
   ++  run-app-cancel

@@ -8,12 +8,10 @@
   `agent
 ::
 ++  on-save
-  ~&  "extracting empty state for {<dap.bowl>}"
   !>(~)
 ::
 ++  on-load
   |=  old-state=vase
-  ~&  "updating agent {<dap.bowl>} by throwing away old state"
   `agent
 ::
 ++  on-poke

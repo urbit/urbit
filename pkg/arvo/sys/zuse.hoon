@@ -922,6 +922,9 @@
           ::  starts handling an backdoor http request
           ::
           [%request-local secure=? =address =request:http]
+          ::  initiates a subscription to get response
+          ::
+          [%start-watching our-id=@ud app-id=@ud]
           ::  cancels a previous request
           ::
           [%cancel-request ~]
@@ -1876,7 +1879,7 @@
       $%  {$mass p/mass}                                ::  memory usage
           {$onto p/(each suss tang)}                    ::  about agent
           {$rend p/path q/*}                            ::  network request
-          {$unto p/unto}                                ::
+          {$unto p/sign:agent}                          ::
           {$mack p/(unit tang)}                         ::  message ack
       ==                                                ::
     ++  task                                            ::  incoming request
@@ -1928,10 +1931,6 @@
         [%pump ~]
         task:agent
     ==
-  +$  unto
-    $%  [%http-response =http-event:http]
-        sign:agent
-    ==
   ::
   ::  +agent: app core
   ::
@@ -1956,7 +1955,6 @@
           [%kick path=(unit path) ship=(unit ship)]
           [%watch-ack p=(unit tang)]
           [%poke-ack p=(unit tang)]
-          [%http-response =http-event:http]
       ==
     +$  sign
       $%  [%poke-ack p=(unit tang)]

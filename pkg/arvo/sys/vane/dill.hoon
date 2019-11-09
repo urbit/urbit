@@ -447,7 +447,6 @@
                               +>.$
                             (dump:(crud %reap u.p.p.+>.sih) %logo ~)
             $fact           pump:(from ;;(dill-blit q:`vase`+>+>.sih))
-            $http-response  !!
           ==
         ::
             {$c $note *}

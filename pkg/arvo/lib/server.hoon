@@ -1,3 +1,4 @@
+/+  http-handler
 =,  eyre
 |%
 ::
@@ -24,22 +25,19 @@
   ::  +require-authorization: redirect to the login page when unauthenticated
   ::
   ++  require-authorization
-    |*  this=*
-    |=  handler=$-(inbound-request:eyre (quip card:agent:mall _this))
+    |=  handler=$-(inbound-request:eyre simple-payload:http)
     |=  =inbound-request:eyre
-    ^-  (quip card:agent:mall _this)
+    ^-  simple-payload:http
     ::
     ?:  authenticated.inbound-request
       ~!  this
       ~!  +:*handler
       (handler inbound-request)
     ::
-    :_  this
-    ^-  (list card:agent:mall)
     =/  redirect=cord
       %-  crip
       "/~/login?redirect={(trip url.request.inbound-request)}"
-    [%give [%http-response %start [307 ['location' redirect]~] ~ %.y]]~
+    [[307 ['location' redirect]~] ~]
   ::
   ++  html-response
     |=  oct-html=octs
