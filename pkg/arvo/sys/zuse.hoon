@@ -1955,6 +1955,7 @@
           [%kick path=(unit path) ship=(unit ship)]
           [%watch-ack p=(unit tang)]
           [%poke-ack p=(unit tang)]
+          [%http-response =http-event:http]
       ==
     +$  sign
       $%  [%poke-ack p=(unit tang)]
