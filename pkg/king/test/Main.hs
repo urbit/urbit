@@ -29,13 +29,13 @@ main = do
     -- runInBoundThread $ defaultMain $ testGroup "Urbit"
     defaultMain $ testGroup "Urbit"
         [ BehnTests.tests
-        -- , ArvoTests.tests
-        -- , ClayTests.tests
-        -- , DawnTests.tests
-        -- , DeriveNounTests.tests
-        -- , HoonMapSetTests.tests
-        -- , JamTests.tests
-        -- , LogTests.tests
-        -- , NounConversionTests.tests
-        -- , AmesTests.tests
+        , ArvoTests.tests
+        , ClayTests.tests
+        , DawnTests.tests
+        , DeriveNounTests.tests
+        , HoonMapSetTests.tests
+        , JamTests.tests
+        , LogTests.tests
+        , NounConversionTests.tests
+        , AmesTests.tests
         ]

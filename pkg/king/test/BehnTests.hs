@@ -153,6 +153,31 @@ gapTicks = microSecs . μsTicks
         - Calculates the number of ticks passed since the start time.
         - Adds that to the results list.
         - If the program is waiting for a timer to fire, wakes it up.
+
+    ### Race Condition Hack
+
+    There's a race condition here:
+
+    - Right before the Wait command, we have a `Doze 0`.
+    - That timer tiggers some logic asyncronously.
+    - This thread continues on to the Wait command.
+    - We setup the wait signal.
+    - This happens before the other thread finishes.
+    - That thread finds our wait signal and triggers it.
+    - We stop waiting.
+    - This leads to wrong behavior because:
+
+        - That timer should have triggered "immediately".
+        - The Wait command should block until the end
+          of the simulation.
+        - Instead the Wait command is satisfied by a
+          timer that should not have satisfied it.
+
+    What do?
+
+        Just sleep for a quarter tick before starting the Wait flow.
+
+    Nasty hack, but it works for now.
 -}
 realBehn :: Prog -> IO ProgRes
 realBehn (Prog cmds) = runApp $ runRAcquire $ do
@@ -163,9 +188,10 @@ realBehn (Prog cmds) = runApp $ runRAcquire $ do
               <*> newTVar Nothing
               <*> newEmptyTMVar
 
+    let tickGap     = 1 ^. from gapTicks
+        simDuration = (tickGap * 25) ^. microSecs
+
     killThread <- io $ async $ do
-        let tickGap     = 1 ^. from gapTicks
-        let simDuration = (tickGap * 25) ^. microSecs
         threadDelay $ fromIntegral simDuration
         atomically $ putTMVar kil ()
 
@@ -176,7 +202,6 @@ realBehn (Prog cmds) = runApp $ runRAcquire $ do
         wen <- now
         atomically $ do
             let dif = gap top wen ^. gapTicks
-            traceM (show ("fir", dif))
             readTVar wat >>= \case Nothing -> pure ()
                                    Just sg -> putTMVar sg ()
             modifyTVar res (dif:)
@@ -192,39 +217,19 @@ realBehn (Prog cmds) = runApp $ runRAcquire $ do
 
         go = \case
             [] -> do
-                traceM "No more commands"
                 atomically (takeTMVar kil)
                 finished
             Kill : cs -> do
-                traceM (show Kill)
                 runEf $ BehnEfDoze (0, ()) $ Nothing
                 go cs
             Doze n : cs -> do
-                traceM (show $ Doze n)
                 runEf $ BehnEfDoze (0, ()) $ Just $ timeAfterNTicks n
                 go cs
             Wait : cs -> do
-                traceM (show $ Wait)
 
-                {-
-                    XX TODO There's a race condition here:
-                    - Right before the Wait command, we have a `Doze 0`.
-                    - That timer tiggers some logic asyncronously.
-                    - This thread continues on to the Wait command.
-                    - We setup the wait signal.
-                    - This happens before the other thread finishes.
-                    - That thread finds our wait signal and triggers it.
-                    - We stop waiting.
-                    - This leads to wrong behavior because:
-
-                        - That timer should have triggered "immediately".
-                        - The Wait command should block until the end
-                          of the simulation.
-                        - Instead the Wait command is satisfied by a
-                          timer that should not have satisfied it.
-
-                    What do?
-                -}
+                -- HACK Wait for quarter of a tick to resolve race condition.
+                let quarterTick = (tickGap ^. microSecs) `div` 4
+                threadDelay (fromIntegral quarterTick)
 
                 sig <- atomically $ do res <- newEmptyTMVar
                                        writeTVar wat (Just res)
@@ -283,4 +288,7 @@ behnVsRef = forAll arbitrary (ioProperty . runTest)
 tests :: TestTree
 tests =
     testGroup "Behn"
-        [ testProperty "Real and reference are similar" behnVsRef ]
+        [ localOption (QuickCheckTests 10) $
+              testProperty "Real and reference are similar" $
+                  behnVsRef
+        ]
