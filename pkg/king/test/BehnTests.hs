@@ -55,7 +55,7 @@ import qualified Vere.Log   as Log
 -}
 
 data Cmd
-    = Doze Word -- Set a timer for `n` ms from the start time.
+    = Doze Word -- Set a timer for `n` ticks from the start time.
     | Kill      -- Cancel existing timer
     | Wait      -- Wait for a timer to fire and record the result
   deriving (Eq, Ord, Show)
@@ -65,7 +65,7 @@ newtype Prog = Prog { unProg :: [Cmd] }
 
 {-
     All the times when a timer fired. Each number represents the number
-    of ms since the start of the execution.
+    of ticks since the start of the execution.
 -}
 type ProgRes = [Double]
 
@@ -118,69 +118,131 @@ runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
             => RAcquire e a -> m e a
 runRAcquire act = rwith act pure
 
-gapToFloatingMs :: Gap -> Double
-gapToFloatingMs = (/ 3000) . fromIntegral . view microSecs
+
+-- Simulation Ticks are 10ms. --------------------------------------------------
+
+μsTicks :: Iso' Integer Double
+μsTicks = iso from to
+  where
+    from :: Integer -> Double
+    from i = fromIntegral i / 10_000
+
+    to :: Double -> Integer
+    to d = floor (d * 10_000)
+
+gapTicks :: Iso' Gap Double
+gapTicks = microSecs . μsTicks
+
+
+-- Run test programs against real Behn. ----------------------------------------
 
 {-
     The result of actually executing the program.
+
+    res -- List of times timers were fired.
+    fir -- Queue of timer fires.
+    wat -- Signal to terminate `Wait` command.
+    kil -- Signal that the simulation has finished.
+    top -- Simulation start time.
+
+    killThread -- After 25 ticks, trigger the `kil` TMVar
+
+    fireThread -- In a loop, waits for behn timer to fire and then:
+
+        - Gets the current timer.
+        - Calculates the number of ticks passed since the start time.
+        - Adds that to the results list.
+        - If the program is waiting for a timer to fire, wakes it up.
 -}
 realBehn :: Prog -> IO ProgRes
 realBehn (Prog cmds) = runApp $ runRAcquire $ do
 
-    {- Recorded times when behn pushed events -}
-    res <- newTVarIO ([] :: [Double])
+    (res, fir, wat, kil) <- atomically $
+        (,,,) <$> newTVar []
+              <*> newTQueue
+              <*> newTVar Nothing
+              <*> newEmptyTMVar
 
-    {- Signal that a timer fired, and signal to stop `Wait` command -}
-    fir <- newEmptyTMVarIO
-    wat <- newEmptyTMVarIO
+    killThread <- io $ async $ do
+        let tickGap     = 1 ^. from gapTicks
+        let simDuration = (tickGap * 25) ^. microSecs
+        threadDelay $ fromIntegral simDuration
+        atomically $ putTMVar kil ()
 
-    let onWake _ = do
-            emp <- isEmptyTMVar wat
-            when emp (putTMVar wat ())
-            putTMVar fir ()
-
-    {- Signal that 75ms has passed -}
-    kil <- newEmptyTMVarIO
-    void $ io $ async (threadDelay (25 * 3_000) >> atomically (putTMVar kil ()))
-
-    {- Execution start time -}
     top <- io now
 
-    {- Calculate ms since start time -}
-    let atTime :: Word -> Wen
-        atTime n = addGap top (fromIntegral (3*n) ^. from milliSecs)
-
-    {- Add to result every time a timer fires -}
-    void $ io $ async $ forever $ do
-        () <- atomically (takeTMVar fir)
+    fireThread <- io $ async $ forever $ do
+        atomically $ readTQueue fir
         wen <- now
-        dif <- pure $ gapToFloatingMs $ gap top wen
         atomically $ do
-            acc <- readTVar res
-            writeTVar res (dif:acc)
+            let dif = gap top wen ^. gapTicks
+            traceM (show ("fir", dif))
+            readTVar wat >>= \case Nothing -> pure ()
+                                   Just sg -> putTMVar sg ()
+            modifyTVar res (dif:)
 
-    let IODrv _ runDrv = behn 0 onWake
-    cb <- runDrv
+    let (IODrv _ runDrv) = behn 0 (writeTQueue fir)
+    runEf <- runDrv
 
-    let exit = atomically (reverse <$> readTVar res)
+    let
+        timeAfterNTicks :: Word -> Wen
+        timeAfterNTicks = addGap top . view (from gapTicks) . fromIntegral
 
-    let go [] = do
-            atomically (takeTMVar kil)
-            exit
-        go (c:cs) = c & \case
-          Kill -> do
-              cb (BehnEfDoze (0, ()) $ Nothing)
-              go cs
-          Doze n -> do
-              cb (BehnEfDoze (0, ()) $ Just $ atTime n)
-              go cs
-          Wait -> do
-              join $ atomically $ asum
-                  [ takeTMVar kil >> pure exit
-                  , takeTMVar wat >> pure (go cs)
-                  ]
+        finished = atomically (reverse <$> readTVar res)
 
-    rio (go cmds)
+        go = \case
+            [] -> do
+                traceM "No more commands"
+                atomically (takeTMVar kil)
+                finished
+            Kill : cs -> do
+                traceM (show Kill)
+                runEf $ BehnEfDoze (0, ()) $ Nothing
+                go cs
+            Doze n : cs -> do
+                traceM (show $ Doze n)
+                runEf $ BehnEfDoze (0, ()) $ Just $ timeAfterNTicks n
+                go cs
+            Wait : cs -> do
+                traceM (show $ Wait)
+
+                {-
+                    XX TODO There's a race condition here:
+                    - Right before the Wait command, we have a `Doze 0`.
+                    - That timer tiggers some logic asyncronously.
+                    - This thread continues on to the Wait command.
+                    - We setup the wait signal.
+                    - This happens before the other thread finishes.
+                    - That thread finds our wait signal and triggers it.
+                    - We stop waiting.
+                    - This leads to wrong behavior because:
+
+                        - That timer should have triggered "immediately".
+                        - The Wait command should block until the end
+                          of the simulation.
+                        - Instead the Wait command is satisfied by a
+                          timer that should not have satisfied it.
+
+                    What do?
+                -}
+
+                sig <- atomically $ do res <- newEmptyTMVar
+                                       writeTVar wat (Just res)
+                                       pure res
+
+                let wait = do takeTMVar sig
+                              writeTVar wat Nothing
+
+                join $ atomically $ asum [ takeTMVar kil $> finished
+                                         , wait          $> go cs
+                                         ]
+
+    res <- rio $ go cmds
+
+    cancel fireThread
+    cancel killThread
+
+    pure res
 
 {-
     Is the test results and the real results within reasonable
@@ -209,9 +271,11 @@ behnVsRef = forAll arbitrary (ioProperty . runTest)
         fak <- pure (pureBehn pro)
         god <- pure (acceptable rel fak)
         when (not god) $ do
+            putStrLn "===="
             print ("INPU", pro)
             print ("FAKE", fak)
             print ("REAL", rel)
+            putStrLn "===="
         pure god
 
 -- Utils -----------------------------------------------------------------------
@@ -219,7 +283,4 @@ behnVsRef = forAll arbitrary (ioProperty . runTest)
 tests :: TestTree
 tests =
     testGroup "Behn"
-        [ localOption (QuickCheckTests 10) $
-              testProperty "Real and reference are similar" $
-                  behnVsRef
-        ]
+        [ testProperty "Real and reference are similar" behnVsRef ]
