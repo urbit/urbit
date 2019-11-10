@@ -93,7 +93,7 @@ export class MemberScreen extends Component {
             { window.ship === deSig(props.match.params.ship) ? (
               <InviteElement
                 path={`/chat${state.station}/write`}
-                station={state.station}
+                station={`/${props.match.params.station}`}
                 permissions={props.write}
                 api={props.api} />
             ) : null }
@@ -111,6 +111,7 @@ export class MemberScreen extends Component {
             { window.ship === deSig(props.match.params.ship) ?
               (  <InviteElement
                    path={`/chat${state.station}/read`}
+                   station={`/${props.match.params.station}`}
                    permissions={props.read}
                    api={props.api}/>
               ) : null

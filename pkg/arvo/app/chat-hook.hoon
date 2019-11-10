@@ -2,7 +2,7 @@
 ::  mirror chat data from foreign to local based on read permissions
 ::  allow sending chat messages to foreign paths based on write perms
 ::
-/-  *permission-store, *chat-hook
+/-  *permission-store, *chat-hook, *invite-store
 /+  *chat-json
 |%
 +$  move  [bone card]
@@ -15,33 +15,60 @@
       [%peer wire dock path]
   ==
 ::
-+$  state
-  $%  [%0 state-zero]
++$  state-both
+  $%  state-zero
+      state-one
   ==
 ::
 +$  state-zero
-  $:  synced=(map path ship)
+  $:  %0
+      synced=(map path ship)
       boned=(map wire (list bone))
+  ==
+::
++$  state-one
+  $:  %1
+      synced=(map path ship)
+      boned=(map wire (list bone))
+      invite-created=_|
   ==
 ::
 +$  poke
   $%  [%chat-action chat-action]
       [%permission-action permission-action]
+      [%invite-action invite-action]
+      [%chat-view-action chat-view-action]
   ==
 ::
 --
 ::
-|_  [bol=bowl:gall state]
+|_  [bol=bowl:gall state-one]
 ::
 ++  this  .
 ::
 ++  prep
-  |=  old=(unit state)
+  |=  old=(unit state-both)
   ^-  (quip move _this)
   ?~  old
-    :_  this
-    [ost.bol %peer /permissions [our.bol %permission-store] /updates]~
-  [~ this(+<+ u.old)]
+    :_  this(invite-created %.y)
+    :~  (invite-poke [%create /chat])
+        [ost.bol %peer /invites [our.bol %invite-store] /invitatory/chat]
+        [ost.bol %peer /permissions [our.bol %permission-store] /updates]
+    ==
+  ?-  -.u.old
+      %1  [~ this(+<+ u.old)]
+  ::
+      %0
+    =/  sta  *state-one
+    =:  boned.sta   boned.u.old
+        synced.sta  synced.u.old
+        invite-created  %.y
+    ==
+    :_  this(+<+ sta)
+    :~  (invite-poke [%create /chat])
+        [ost.bol %peer /invites [our.bol %invite-store] /invitatory/chat]
+    ==
+  ==
 ::
 ++  poke-json
   |=  jon=json
@@ -138,6 +165,17 @@
   ?~  box  !!
   :_  this
   [ost.bol %diff %chat-update [%create (slav %p i.pax) pax]]~
+::
+++  diff-invite-update
+  |=  [wir=wire diff=invite-update]
+  ^-  (quip move _this)
+  ?+  -.diff
+    [~ this]
+  ::
+      %accepted
+    :_  this
+    [(chat-view-poke [%join ship.invite.diff path.invite.diff])]~
+  ==
 ::
 ++  diff-permission-update
   |=  [wir=wire diff=permission-update]
@@ -271,10 +309,20 @@
   ^-  move
   [ost.bol %poke / [our.bol %chat-store] [%chat-action act]]
 ::
+++  chat-view-poke
+  |=  act=chat-view-action
+  ^-  move
+  [ost.bol %poke / [our.bol %chat-view] [%chat-view-action act]]
+::
 ++  permission-poke
   |=  act=permission-action
   ^-  move
   [ost.bol %poke / [our.bol %permission-store] [%permission-action act]]
+::
+++  invite-poke
+  |=  act=invite-action
+  ^-  move
+  [ost.bol %poke / [our.bol %invite-store] [%invite-action act]]
 ::
 ++  create-permission
   |=  [pax=path sec=chat-security]
@@ -322,6 +370,12 @@
   ^-  (unit mailbox)
   =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
   .^((unit mailbox) %gx pax)
+::
+++  invite-scry
+  |=  uid=serial
+  ^-  (unit invite)
+  =/  pax  /=invite-store/(scot %da now.bol)/invite/chat/(scot %uv uid)/noun
+  .^((unit invite) %gx pax)
 ::
 ++  permitted-scry
   |=  pax=path

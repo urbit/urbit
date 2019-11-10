@@ -1885,6 +1885,7 @@
           {$conf-mall p/dock q/dock}                    ::  configure app
           $>(%init vane-task)                           ::  set owner
           {$deal p/sock q/term r/deal}                  ::  full transmission
+          [%goad force=? agent=(unit dude)]             ::  rebuild agent(s)
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           $>(%west vane-task)                           ::  network request
@@ -2028,6 +2029,7 @@
       $%  {$conf p/dock q/dock}                         ::  configure app
           $>(%init vane-task)                           ::  set owner
           {$deal p/sock q/internal-task}                ::  full transmission
+          [%goad force=? agent=(unit dude)]             ::  rebuild agent(s)
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           $>(%west vane-task)                           ::  network request
@@ -7799,6 +7801,9 @@
         ::
         ++  conditional-star-release
           0x8c24.1098.c3d3.498f.e126.1421.633f.d579.86d7.4aea
+        ::
+        ++  delegated-sending
+          0xf790.8ab1.f1e3.52f8.3c5e.bc75.051c.0565.aeae.a5fb
         ::
         ::  launch: block number of azimuth deploy
         ::

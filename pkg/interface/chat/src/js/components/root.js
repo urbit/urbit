@@ -47,16 +47,16 @@ export class Root extends Component {
       unreads[stat] = envelopes.length > state.inbox[stat].config.read;
     });
     
-    let inviteConfig = false;
+    let invites = '/chat' in state.invites ?
+      state.invites['/chat'] : {};
 
     const renderChannelSidebar = (props) => (
       <Sidebar
         inbox={state.inbox}
         messagePreviews={messagePreviews}
-        invites={[]}
+        invites={invites}
         unreads={unreads}
         api={api}
-        inviteConfig={inviteConfig}
         {...props}
       />
     );

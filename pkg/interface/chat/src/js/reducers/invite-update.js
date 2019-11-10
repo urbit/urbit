@@ -8,7 +8,7 @@ export class InviteUpdateReducer {
       this.create(data, state);
       this.delete(data, state);
       this.invite(data, state);
-      this.accept(data, state);
+      this.accepted(data, state);
       this.decline(data, state);
     }
   }
@@ -34,9 +34,10 @@ export class InviteUpdateReducer {
     }
   }
 
-  accept(json, state) {
-    let data = _.get(json, 'accept', false);
+  accepted(json, state) {
+    let data = _.get(json, 'accepted', false);
     if (data) {
+      console.log(data);
       delete state.invites[data.path][data.uid];
     }
   }

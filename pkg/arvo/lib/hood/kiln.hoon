@@ -63,6 +63,7 @@
     ++  card                                            ::
       $%  {$build wire ? schematic:ford}                ::
           {$drop wire @tas}                             ::
+          [%goad wire force=? agent=(unit dude:gall)]   ::
           {$info wire @tas nori}                        ::
           {$mont wire @tas beam}                        ::
           {$dirk wire @tas}                             ::
@@ -287,6 +288,10 @@
 ++  poke-keep-ford
   |=  [compiler-cache-size=@ud build-cache-size=@ud]
   abet:(emit %keep /kiln compiler-cache-size build-cache-size)
+::
+++  poke-goad-gall
+  |=  [force=? agent=(unit dude:gall)]
+  abet:(emit %goad /kiln force agent)
 ::
 ++  poke-wash-gall  |=(* abet:(emit %wash /kiln ~))
 ::

@@ -90,9 +90,10 @@
     =/  drip  (~(got by movs.drips.state) num)
     =.  movs.drips.state  (~(del by movs.drips.state) num)
     ?^  error
-      ::  if we errored, drop it
-      %-  (slog leaf/"drip failed" u.error)
-      event-core
+      ::  if the receiver errored, drop it
+      ::
+      %.  event-core
+      (slog leaf/"drip failed" (flop u.error))
     event-core(moves [duct %give %meta drip]~)
   ::  +trim: in response to memory pressue
   ::
