@@ -2,9 +2,9 @@
 /+  threadio
 =,  thread=thread:spider
 ^-  imp:spider
-|=  bowl:mall
-=/  m  (thread ,~)
+|=  [bowl:mall vase]
+=/  m  (thread ,vase)
 ^-  form:m
 ~&  >  %first-starting
 ;<  ~  bind:m  echo:threadio
-(pure:m ~)
+(pure:m *vase)

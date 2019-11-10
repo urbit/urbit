@@ -97,7 +97,7 @@
       [~ %agent * %fact *]
     ?.  =(watch+wire (scag (lent wire) wire.u.in.tin))
       `[%skip ~]
-    `[%done (slag (lent wire) wire.u.in.tin) cage.gift.u.in.tin]
+    `[%done (slag (lent wire) wire.u.in.tin) cage.sign.u.in.tin]
   ==
 ::
 ::  Wait for a subscription update on a wire
@@ -112,7 +112,7 @@
       [~ %agent * %fact *]
     ?.  =(watch+wire wire.u.in.tin)
       `[%skip ~]
-    `[%done cage.gift.u.in.tin]
+    `[%done cage.sign.u.in.tin]
   ==
 ::
 ::  Wait for a subscription close
@@ -184,9 +184,9 @@
       [~ %agent * %poke-ack *]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
-    ?~  p.gift.u.in.tin
+    ?~  p.sign.u.in.tin
       `[%done ~]
-    `[%fail %poke-fail u.p.gift.u.in.tin]
+    `[%fail %poke-fail u.p.sign.u.in.tin]
   ==
 ::
 ++  take-watch-ack
@@ -199,9 +199,9 @@
       [~ %agent * %watch-ack *]
     ?.  =(watch+wire wire.u.in.tin)
       `[%skip ~]
-    ?~  p.gift.u.in.tin
+    ?~  p.sign.u.in.tin
       `[%done ~]
-    `[%fail %watch-ack-fail u.p.gift.u.in.tin]
+    `[%fail %watch-ack-fail u.p.sign.u.in.tin]
   ==
 ::
 ++  poke

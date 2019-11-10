@@ -1,3 +1,3 @@
 :-  %say
-|=  [* [name=term where=term ~] ~]
-[%spider-start name where]
+|=  [* [name=term vase=$@(~ [vase ~])] ~]
+[%spider-start name name ?~(vase *^vase -.vase)]

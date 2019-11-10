@@ -2,15 +2,17 @@
 /+  *threadio
 =,  thread=thread:spider
 =<  ^-  imp:spider
-    |=  =bowl:mall
-    =/  m  (thread ,~)
+    |=  [=bowl:mall vase]
+    =/  m  (thread ,vase)
     ^-  form:m
     ~&  >  'Entering pH loop'
-    %-  (main-loop ,~)
-    :~  handle-run
-        handle-stop
-        handle-run-all
-    ==
+    ;<  ~  bind:m
+      %-  (main-loop ,~)
+      :~  handle-run
+          handle-stop
+          handle-run-all
+      ==
+    (pure:m *vase)
 ::
 |%
 ++  handle-run
@@ -19,10 +21,11 @@
   ^-  form:m
   ;<  =vase      bind:m  ((handle ,vase) (take-poke %ph-run))
   =/  ph-name    !<(term vase)
-  =/  poke-vase  !>([%ph-active (cat 3 %ph- ph-name)])
+  =/  poke-vase  !>([%ph-active (cat 3 %ph- ph-name) *^vase])
   ;<  ~          bind:m  (poke-our %spider %spider-start poke-vase)
-  ::  ;<  ~          bind:m  (watch-our /active %spider /imp/active-ph)
-  ::  ;<  =cage      bind:m  (take-fact /active)
+  ;<  ~          bind:m  (watch-our /active %spider /imp-result/ph-active)
+  ;<  =cage      bind:m  (take-fact /active)
+  ~&  >  got-fact=-.cage
   (pure:m ~)
 ::
 ++  handle-stop

@@ -11,15 +11,17 @@
 --
 =;  core
   ^-  imp:spider
-  |=  =bowl:mall
-  =/  m  (thread ,~)
+  |=  [=bowl:mall vase]
+  =/  m  (thread ,vase)
   ^-  form:m
   ~&  >  'entering main loop'
-  %-  (main-loop ,top-comments)
-  :~  handle-print:core
-      handle-fetch:core
-      ::  `$-(top-comments _*form:(thread ,top-comments))`handle-poll:core
-  ==
+  ;<  ~  bind:m
+    %-  (main-loop ,top-comments)
+    :~  handle-print:core
+        handle-fetch:core
+        ::  `$-(top-comments _*form:(thread ,top-comments))`handle-poll:core
+    ==
+  (pure:m *vase)
 |%
 ::  Helper function to print a comment
 ::

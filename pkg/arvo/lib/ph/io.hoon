@@ -68,7 +68,7 @@
     .^(? %mx /(scot %p our)/spider/(scot %da now)/started/[i.imps]/noun)
   ?:  imp-started
     loop(imps t.imps)
-  =/  poke-vase  !>([i.imps i.imps])
+  =/  poke-vase  !>([i.imps i.imps *vase])
   ;<  ~  bind:m  (poke-our %spider %spider-start poke-vase)
   loop(imps t.imps)
 ::

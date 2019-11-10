@@ -2,8 +2,8 @@
 /+  *threadio
 =,  thread=thread:libthread
 ^-  imp:spider
-|=  =bowl:mall
-=/  m  (thread ,~)
+|=  [=bowl:mall =vase]
+=/  m  (thread ,vase)
 ^-  form:m
 ~&  >  'starting azt'
 =/  url    'http://eth-mainnet.urbit.org:8545'

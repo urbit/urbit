@@ -18,15 +18,17 @@
 =;  core
   |=  handler=vane-handler
   ^-  imp:spider
-  |=  =bowl:mall
-  =/  m  (thread ,~)
+  |=  [=bowl:mall vase]
+  =/  m  (thread ,vase)
   ^-  form:m
   ;<  ~  bind:m  (watch-our:threadio /effects %aqua /effect)
-  %-  (main-loop:threadio ,_handler)
-  :~  handle-unix-effect:core
-      handle-arvo-response:core
-      pure:(thread ,vane-handler)
-  ==
+  ;<  ~  bind:m
+    %-  (main-loop:threadio ,_handler)
+    :~  handle-unix-effect:core
+        handle-arvo-response:core
+        pure:(thread ,vane-handler)
+    ==
+  (pure:m *vase)
 ::
 |%
 ++  handle-unix-effect

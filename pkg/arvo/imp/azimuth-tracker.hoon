@@ -293,11 +293,13 @@
 ::
 ^-  imp:spider
 |=  =bowl:mall
-=/  m  (thread ,~)
+=/  m  (thread ,vase)
 ^-  form:m
-%-  (main-loop:threadio ,app-state)
-:~  handle-listen
-    handle-watch
-    handle-wake
-    handle-peer
-==
+;<  ~  bind:m
+  %-  (main-loop:threadio ,app-state)
+  :~  handle-listen
+      handle-watch
+      handle-wake
+      handle-peer
+  ==
+(pure:m *vase)

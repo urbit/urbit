@@ -2,8 +2,8 @@
 /+  *ph-io
 =,  thread=thread:spider
 ^-  imp:spider
-|=  =bowl:mall
-=/  m  (thread ,~)
+|=  [=bowl:mall vase]
+=/  m  (thread ,vase)
 ;<  ~  bind:m  start-azimuth
 ;<  ~  bind:m  (spawn ~bud)
 ;<  ~  bind:m  (spawn ~marbud)
@@ -19,4 +19,4 @@
 ;<  ~  bind:m  (send-hi ~linnup-torsyx-linnup-torsyx ~dev)
 ;<  ~  bind:m  (send-hi ~dev ~linnup-torsyx-linnup-torsyx)
 ;<  ~  bind:m  end-azimuth
-(pure:m ~)
+(pure:m *vase)

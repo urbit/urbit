@@ -14,22 +14,24 @@
     --
 ::
 =<  ^-  imp:spider
-    |=  =bowl:mall
-    =/  m  (thread ,~)
+    |=  [=bowl:mall vase]
+    =/  m  (thread ,vase)
     ^-  form:m
     ~&  >  'Entering dns loop'
-    %-  (main-loop:threadio ,app-state)
-    :~  handle-dns-auto
-        handle-dns-address
-        handle-diff
-      ::
-        |=  state=app-state
-        =/  m  (thread ,app-state)
-        ^-  form:m
-        ;<  ~  bind:m
-          (rewatch:threadio /sub collector-app /(scot %p our.bowl))
-        (pure:m state)
-    ==
+    ;<  ~  bind:m
+      %-  (main-loop:threadio ,app-state)
+      :~  handle-dns-auto
+          handle-dns-address
+          handle-diff
+        ::
+          |=  state=app-state
+          =/  m  (thread ,app-state)
+          ^-  form:m
+          ;<  ~  bind:m
+            (rewatch:threadio /sub collector-app /(scot %p our.bowl))
+          (pure:m state)
+      ==
+    (pure:m *vase)
 ::
 ::  monadic helpers (XX move to threadio?)
 ::
