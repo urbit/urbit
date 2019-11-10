@@ -7,7 +7,7 @@
 ::  ships or otherwise making use of the fact that we can
 ::  programmatically send events.
 ::
-/-  aquarium
+/-  aquarium, spider
 /+  aqua-vane-imp
 |%
 ++  handle-blit
@@ -31,7 +31,7 @@
 --
 ::
 %-  aqua-vane-imp
-|_  =bowl:mall
+|_  =bowl:spider
 +*  this  .
 ++  handle-unix-effect
   |=  [who=@p ue=unix-effect:aquarium]

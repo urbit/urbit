@@ -20,7 +20,7 @@
 --
 =;  core
   ^-  imp:spider
-  |=  =bowl:mall
+  |=  =bowl:spider
   =/  m  (thread ,~)
   ^-  form:m
   ;<  ~  bind:m  (subscribe-our:threadio /effects %aqua /effect)
@@ -360,7 +360,7 @@
   |-  ^-  form:m
   =*  loop  $
   ;<  [him=ship =unix-effect]  bind:m  take-unix-effect:ph-io
-  ;<  =bowl:mall               bind:m  get-bowl:ph-io
+  ;<  =bowl:spider             bind:m  get-bowl:ph-io
   =/  aqua-pax
     :-  %i
     /(scot %p her)/j/(scot %p her)/rift/(scot %da now.bowl)/(scot %p who)/noun

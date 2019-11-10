@@ -6,7 +6,19 @@
       [%agent =wire =sign:agent:mall]
       [%watch =path]
   ==
-+$  thread-input  [=bowl:mall in=(unit input)]
++$  thread-input  [=bowl in=(unit input)]
++$  iid   @taiid
++$  bowl
+  $:  our=ship
+      src=ship
+      iid=iid
+      mom=(unit iid)
+      wex=boat:mall
+      sup=bitt:mall
+      eny=@uvJ
+      now=@da
+      byk=beak
+  ==
 ::
 ::  cards:  cards to send immediately.  These will go out even if a
 ::          later stage of the computation fails, so they shouldn't have

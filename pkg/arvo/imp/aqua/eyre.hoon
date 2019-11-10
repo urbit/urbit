@@ -1,6 +1,6 @@
 ::  Pass-through Eyre driver
 ::
-/-  aquarium
+/-  aquarium, spider
 /+  aqua-vane-imp
 =,  aquarium
 |%
@@ -11,7 +11,7 @@
 ::
 |%
 ++  pe
-  |=  [bowl:mall who=ship]
+  |=  [bowl:spider who=ship]
   =+  (~(gut by piers) who *pier)
   =*  pier-data  -
   =|  cards=(list card:agent:mall)
@@ -101,7 +101,7 @@
 --
 ::
 %-  aqua-vane-imp
-|_  =bowl:mall
+|_  =bowl:spider
 +*  this  .
 ++  handle-unix-effect
   |=  [who=@p ue=unix-effect:aquarium]

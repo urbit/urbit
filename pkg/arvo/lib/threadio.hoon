@@ -20,7 +20,7 @@
   `[%fail %ignore ~]
 ::
 ++  get-bowl
-  =/  m  (thread ,bowl:mall)
+  =/  m  (thread ,bowl:thread)
   ^-  form:m
   |=  tin=thread-input:thread
   `[%done bowl.tin]
@@ -389,7 +389,7 @@
   |^  (continue bowl.tin)
   ::
   ++  continue
-    |=  =bowl:mall
+    |=  =bowl:thread
     ^-  output:m
     ?>  =(~ active)
     ?:  =(~ queue)

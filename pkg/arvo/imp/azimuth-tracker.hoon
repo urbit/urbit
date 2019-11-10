@@ -292,7 +292,7 @@
 ::  Main
 ::
 ^-  imp:spider
-|=  =bowl:mall
+|=  =bowl:spider
 =/  m  (thread ,vase)
 ^-  form:m
 ;<  ~  bind:m

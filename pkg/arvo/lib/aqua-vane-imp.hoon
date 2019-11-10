@@ -4,7 +4,7 @@
 |%
 ++  vane-handler
   $_  ^|
-  |_  bowl:mall
+  |_  bowl:spider
   ++  handle-unix-effect
     |~  [ship unix-effect]
     *(quip card:agent:mall _^|(..handle-unix-effect))
@@ -18,7 +18,7 @@
 =;  core
   |=  handler=vane-handler
   ^-  imp:spider
-  |=  [=bowl:mall vase]
+  |=  [=bowl:spider vase]
   =/  m  (thread ,vase)
   ^-  form:m
   ;<  ~  bind:m  (watch-our:threadio /effects %aqua /effect)
@@ -37,7 +37,7 @@
   ^-  form:m
   ;<  [her=ship =unix-effect]  bind:m
     ((handle:threadio ,[ship unix-effect]) take-unix-effect:ph-io)
-  ;<  =bowl:mall               bind:m  get-bowl:threadio
+  ;<  =bowl:spider             bind:m  get-bowl:threadio
   =^  cards  handler
     (~(handle-unix-effect handler bowl) her unix-effect)
   ?~  cards
@@ -55,7 +55,7 @@
   ^-  form:m
   ;<  [=wire =sign-arvo]  bind:m
     ((handle:threadio ,[wire sign-arvo]) take-sign-arvo:threadio)
-  ;<  =bowl:mall          bind:m  get-bowl:threadio
+  ;<  =bowl:spider        bind:m  get-bowl:threadio
   =^  cards  handler
     (~(handle-arvo-response handler bowl) wire sign-arvo)
   ;<  ~                   bind:m  (send-raw-cards:threadio cards)

@@ -5,7 +5,7 @@
 ::  For now, we broadcast every packet to every ship and rely on them
 ::  to drop them.
 ::
-/-  aquarium
+/-  aquarium, spider
 /+  aqua-vane-imp
 =,  aquarium
 =|  ships=(list ship)
@@ -36,7 +36,7 @@
 --
 ::
 %-  aqua-vane-imp
-|_  =bowl:mall
+|_  =bowl:spider
 +*  this  .
 ++  handle-unix-effect
   |=  [who=@p ue=unix-effect]

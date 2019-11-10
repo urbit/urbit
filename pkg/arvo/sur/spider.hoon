@@ -1,5 +1,7 @@
 /+  libthread=thread
 =,  thread=thread:libthread
 |%
-+$  imp  $-([bowl:mall vase] _*form:(thread ,vase))
++$  imp   $-([bowl vase] _*form:(thread ,vase))
++$  iid   iid:thread
++$  bowl  bowl:thread
 --

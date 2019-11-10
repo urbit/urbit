@@ -1,4 +1,4 @@
-/-  *aquarium
+/-  *aquarium, spider
 /+  libthread=thread, *threadio, util=ph-util
 =,  thread=thread:libthread
 |%
@@ -58,17 +58,13 @@
   |=  imps=(list term)
   =/  m  (thread ,~)
   ^-  form:m
-  ;<  our=@p  bind:m  get-our
+  ;<  =bowl:spider  bind:m  get-bowl
   |-  ^-  form:m
   =*  loop  $
   ?~  imps
     (pure:m ~)
   ;<  now=@da  bind:m  get-time
-  =/  imp-started
-    .^(? %mx /(scot %p our)/spider/(scot %da now)/started/[i.imps]/noun)
-  ?:  imp-started
-    loop(imps t.imps)
-  =/  poke-vase  !>([i.imps i.imps *vase])
+  =/  poke-vase  !>([`iid.bowl i.imps *vase])
   ;<  ~  bind:m  (poke-our %spider %spider-start poke-vase)
   loop(imps t.imps)
 ::
@@ -76,19 +72,7 @@
   |=  imps=(list term)
   =/  m  (thread ,~)
   ^-  form:m
-  ;<  our=@p  bind:m  get-our
-  |-  ^-  form:m
-  =*  loop  $
-  ?~  imps
-    (pure:m ~)
-  ;<  now=@da  bind:m  get-time
-  =/  imp-started
-    .^(? %mx /(scot %p our)/spider/(scot %da now)/started/[i.imps]/noun)
-  ?.  imp-started
-    loop(imps t.imps)
-  =/  poke-vase  !>([i.imps &])
-  ;<  ~  bind:m  (poke-our %spider %spider-stop poke-vase)
-  loop(imps t.imps)
+  (pure:m ~)
 ::
 ++  spawn
   |=  =ship

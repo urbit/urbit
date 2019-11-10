@@ -2,7 +2,7 @@
 /+  *ph-io
 =,  thread=thread:spider
 ^-  imp:spider
-|=  [=bowl:mall vase]
+|=  [=bowl:spider vase]
 =/  m  (thread ,vase)
 ;<  ~        bind:m  start-simple
 ;<  ~        bind:m  (raw-ship ~bud ~)
