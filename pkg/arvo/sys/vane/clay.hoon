@@ -1370,7 +1370,7 @@
           %-  ~(uni by `(map path *)`can.bob-diffs)
           `(map path *)`old.bob-diffs
         ?^  bof
-          (error:he cas %meet-conflict >(~(run by `(map path *)`bof) ,~)< ~)
+          (error:he cas %meet-conflict >(~(run by `(map path *)`bof) _~)< ~)
         =/  old=(map path lobe)
           %+  roll  ~(tap by (~(uni by old.ali-diffs) old.bob-diffs))
           =<  .(old q.bas)
