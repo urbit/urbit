@@ -1,12 +1,10 @@
 ::  ethio: Asynchronous Ethereum input/output functions.
 ::.
-/+  stdio
+/+  threadio
 =,  ethereum-types
 =,  able:jael
 ::
-|*  [out-poke-data=mold out-peer-data=mold]
 =>  |%
-    ++  stdio   (^stdio out-poke-data out-peer-data)
     +$  topics  (list ?(@ux (list @ux)))
     --
 |%
@@ -14,10 +12,10 @@
 ::
 ++  request-rpc
   |=  [url=@ta id=(unit @t) req=request:rpc:ethereum]
-  =/  m  (async:stdio ,json)
+  =/  m  (thread:threadio ,json)
   ^-  form:m
-  |^  %+  (retry json)  `10
-      =/  m  (async:stdio ,(unit json))
+  |^  %+  (retry:threadio json)  `10
+      =/  m  (thread:threadio ,(unit json))
       ^-  form:m
       =/  =request:http
         :*  method=%'POST'
@@ -28,46 +26,16 @@
             %-  en-json:html
             (request-to-json:rpc:ethereum id req)
         ==
-      ;<  ~  bind:m  (send-request:stdio request)
+      ;<  ~  bind:m  (send-request:threadio request)
       ;<  rep=(unit client-response:iris)  bind:m
-        take-maybe-response:stdio
+        take-maybe-response:threadio
       ?~  rep
         (pure:m ~)
       (parse-response u.rep)
   ::
-  ++  retry
-    |*  result=mold
-    |=  [crash-after=(unit @ud) computation=_*form:(async:stdio (unit result))]
-    =/  m  (async:stdio ,result)
-    =|  try=@ud
-    |^  |-  ^-  form:m
-        =*  loop  $
-        ?:  =(crash-after `try)
-          (async-fail:stdio %retry-too-many ~)
-        ;<  ~                  bind:m  (backoff try ~m1)
-        ;<  res=(unit result)  bind:m  computation
-        ?^  res
-          (pure:m u.res)
-        loop(try +(try))
-    ::
-    ++  backoff
-      |=  [try=@ud limit=@dr]
-      =/  m  (async:stdio ,~)
-      ^-  form:m
-      ;<  eny=@uvJ  bind:m  get-entropy:stdio
-      ;<  now=@da   bind:m  get-time:stdio
-      %-  wait:stdio
-      %+  add  now
-      %+  min  limit
-      ?:  =(0 try)  ~s0
-      %+  add
-        (mul ~s1 (bex (dec try)))
-      (mul ~s0..0001 (~(rad og eny) 1.000))
-    --
-  ::
   ++  parse-response
     |=  =client-response:iris
-    =/  m  (async:stdio ,(unit json))
+    =/  m  (thread:threadio ,(unit json))
     ^-  form:m
     ?>  ?=(%finished -.client-response)
     ?~  full-file.client-response
@@ -82,13 +50,13 @@
     ?~  array
       =/  res=(unit response:rpc:jstd)  (parse-one-response u.jon)
       ?~  res
-        (async-fail:stdio %request-rpc-parse-error >id< ~)
+        (thread-fail:threadio %request-rpc-parse-error >id< ~)
       ?:  ?=(%error -.u.res)
-        (async-fail:stdio %request-rpc-error >id< >+.res< ~)
+        (thread-fail:threadio %request-rpc-error >id< >+.res< ~)
       ?.  ?=(%result -.u.res)
-        (async-fail:stdio %request-rpc-fail >u.res< ~)
+        (thread-fail:threadio %request-rpc-fail >u.res< ~)
       (pure:m `res.u.res)
-    (async-fail:stdio %request-rpc-batch >%not-implemented< ~)
+    (thread-fail:threadio %request-rpc-batch >%not-implemented< ~)
     ::  (pure:m `[%batch u.array])
   ::
   ++  parse-one-response
@@ -109,19 +77,19 @@
 ::
 ++  read-contract
   |=  [url=@t proto-read-request:rpc:ethereum]
-  =/  m  (async:stdio ,@t)
+  =/  m  (thread:threadio ,@t)
   ;<  =json  bind:m
     %^  request-rpc  url  id
     :+  %eth-call
       ^-  call:rpc:ethereum
       [~ to ~ ~ ~ `tape`(encode-call:rpc:ethereum function arguments)]
     [%label %latest]
-  ?.  ?=(%s -.json)  (async-fail:stdio %request-rpc-fail >json< ~)
+  ?.  ?=(%s -.json)  (thread-fail:threadio %request-rpc-fail >json< ~)
   (pure:m p.json)
 ::
 ++  get-latest-block
   |=  url=@ta
-  =/  m  (async:stdio ,block)
+  =/  m  (thread:threadio ,block)
   ^-  form:m
   ;<  =json  bind:m
     (request-rpc url `'block number' %eth-block-number ~)
@@ -129,7 +97,7 @@
 ::
 ++  get-block-by-number
   |=  [url=@ta =number:block]
-  =/  m  (async:stdio ,block)
+  =/  m  (thread:threadio ,block)
   ^-  form:m
   |^
   ;<  =json  bind:m
@@ -138,7 +106,7 @@
     [%eth-get-block-by-number number |]
   =/  =block  (parse-block json)
   ?.  =(number number.id.block)
-    (async-fail:stdio %reorg-detected >number< >block< ~)
+    (thread-fail:threadio %reorg-detected >number< >block< ~)
   (pure:m block)
   ::
   ++  parse-block
@@ -158,7 +126,7 @@
 ::
 ++  get-logs-by-hash
   |=  [url=@ta =hash:block contracts=(list address) =topics]
-  =/  m  (async:stdio (list event-log:rpc:ethereum))
+  =/  m  (thread:threadio (list event-log:rpc:ethereum))
   ^-  form:m
   ;<  =json  bind:m
     %+  request-rpc  url
@@ -178,7 +146,7 @@
           =from=number:block
           =to=number:block
       ==
-  =/  m  (async:stdio (list event-log:rpc:ethereum))
+  =/  m  (thread:threadio (list event-log:rpc:ethereum))
   ^-  form:m
   ;<  =json  bind:m
     %+  request-rpc  url

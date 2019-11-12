@@ -423,17 +423,33 @@
     [(weld cards.res cards.output) next.output]
   --
 ::
-++  backoff
-  |=  [try=@ud limit=@dr]
-  =/  m  (thread ,~)
-  ^-  form:m
-  ;<  eny=@uvJ  bind:m  get-entropy
-  %-  sleep
-  %+  min  limit
-  ?:  =(0 try)  ~s0
-  %+  add
-    (mul ~s1 (bex (dec try)))
-  (mul ~s0..0001 (~(rad og eny) 1.000))
+++  retry
+  |*  result=mold
+  |=  [crash-after=(unit @ud) computation=_*form:(thread (unit result))]
+  =/  m  (thread ,result)
+  =|  try=@ud
+  |^  |-  ^-  form:m
+      =*  loop  $
+      ?:  =(crash-after `try)
+        (thread-fail %retry-too-many ~)
+      ;<  ~                  bind:m  (backoff try ~m1)
+      ;<  res=(unit result)  bind:m  computation
+      ?^  res
+        (pure:m u.res)
+      loop(try +(try))
+  ::
+  ++  backoff
+    |=  [try=@ud limit=@dr]
+    =/  m  (thread ,~)
+    ^-  form:m
+    ;<  eny=@uvJ  bind:m  get-entropy
+    %-  sleep
+    %+  min  limit
+    ?:  =(0 try)  ~s0
+    %+  add
+      (mul ~s1 (bex (dec try)))
+    (mul ~s0..0001 (~(rad og eny) 1.000))
+  --
 ::
 ::    ----
 ::

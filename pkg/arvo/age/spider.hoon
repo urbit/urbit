@@ -28,7 +28,7 @@
   ==
 ::
 +$  start-args
-  [parent=(unit iid) file=term =vase]
+  [parent=(unit iid) use=(unit iid) file=term =vase]
 --
 ::
 ::  Trie operations
@@ -147,6 +147,7 @@
     ^-  (quip card _this)
     =^  cards  state
       ?+  path  (on-watch:def path)
+        [%next-iid ~]      on-watch-next-iid
         [%imp @ *]         (on-watch:sc t.path)
         [%imp-result @ ~]  (on-watch-result:sc i.t.path)
       ==
@@ -202,14 +203,21 @@
 ++  on-watch-result
   |=  =iid
   ^-  (quip card ^state)
-  ?>  (~(has by started.state) (~(got by iid.state) iid))
+  ?>  (lth (slav %ud iid) count.state) ::  (~(has by started.state) (~(got by iid.state) iid))
   `state
+::
+++  on-watch-next-iid
+  ^-  (quip card ^state)
+  :_  state(count +(count.state))
+  :~  [%give %fact ~ %iid !>((scot %ud count.state))]
+      [%give %kick ~ ~]
+  ==
 ::
 ++  handle-sign
   |=  [=iid =wire =sign-arvo]
   =/  imp  (~(get by iid.state) iid)
   ?~  imp
-    %-  (slog leaf+"spider got sign for non-existent {<imp>}" ~)
+    %-  (slog leaf+"spider got sign for non-existent {<iid>}" ~)
     `state
   (take-input u.imp ~ %sign wire sign-arvo)
 ::
@@ -217,18 +225,22 @@
   |=  [=iid =wire =sign:agent:mall]
   =/  imp  (~(get by iid.state) iid)
   ?~  imp
-    %-  (slog leaf+"spider got agent for non-existent {<imp>}" ~)
+    %-  (slog leaf+"spider got agent for non-existent {<iid>}" ~)
     `state
   (take-input u.imp ~ %agent wire sign)
 ::
 ++  handle-start-imp
-  |=  [parent-iid=(unit iid) file=term =vase]
+  |=  [parent-iid=(unit iid) use=(unit iid) file=term =vase]
   ^-  (quip card ^state)
   =/  parent-imp=imp
     ?~  parent-iid
       /
     (~(got by iid.state) u.parent-iid)
-  =/  =imp    (snoc parent-imp count.state)
+  =^  new-iid  count.state
+    ?~  use
+      [(scot %ud count.state) +(count.state)]
+    [u.use count.state]
+  =/  =imp  (snoc parent-imp (slav %ud new-iid))
   ::
   ?:  (has-imp running.state imp)
     ~|  [%already-started imp]
@@ -236,10 +248,9 @@
   ?:  (~(has by started.state) imp)
     ~|  [%already-starting imp]
     !!
-  =/  new-iid  (scot %ud count.state)
+  ::
   =:  started.state  (~(put by started.state) imp vase)
       iid.state      (~(put by iid.state) new-iid imp)
-      count.state    +(count.state)
     ==
   =/  =card
     =/  =schematic:ford  [%path [our.bowl %home] %imp file]
@@ -378,7 +389,7 @@
 ++  imp-done
   |=  [=imp =vase]
   ^-  (quip card ^state)
-  %-  (slog leaf+"thread {<imp>} finished" (sell vase) ~)
+  ::  %-  (slog leaf+"thread {<imp>} finished" (sell vase) ~)
   =/  =iid  (imp-to-iid imp)
   =/  done-cards=(list card)
     :~  [%give %fact `/imp-result/[iid] %imp-done vase]
