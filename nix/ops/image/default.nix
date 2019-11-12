@@ -1,17 +1,5 @@
 { pkgs, urbit, pill }:
 
-let
-
-  entrypoint = pkgs.writeScript "entrypoint.sh" ''
-    #!${pkgs.stdenv.shell}
-
-    set -euo pipefail
-
-    ${urbit.meta.exe} "$@"
-  '';
-
-in
-
 pkgs.dockerTools.buildImage {
   name = urbit.meta.name;
 
