@@ -23,6 +23,7 @@
       $%  [%sync changes=(list change)]
           [%completion position]
           [%commit @ud]
+          [%hover position]
       ==
   ==
 ::
@@ -74,6 +75,7 @@
     :~  sync+sync
         completion+position
         commit+ni
+        hover+position
     ==
     ~
   ==
@@ -132,6 +134,7 @@
       %sync        (handle-sync buf +>.lsp-req)
       %completion  (handle-completion buf +>.lsp-req)
       %commit      (handle-commit buf uri.lsp-req)
+      %hover       (handle-hover buf +>.lsp-req)
     ==
   =.  bufs
     (~(put by bufs) uri.lsp-req buf)
@@ -182,6 +185,30 @@
     q.byk.bow
     |
   ==
+::
+++  handle-hover
+  |=  [buf=wall row=@ud col=@ud]
+  ^-  [(list move) wall]
+  =/  txt
+    (zing (join "\0a" buf))
+  =+  (get-id:auto (get-pos buf row col) txt)
+  ?~  id
+    [(json-response *json) buf]
+  =/  match/(unit [=term =type])
+    (search-exact:auto u.id (get-identifiers:auto -:!>(..zuse)))
+  ?~  match
+    [(json-response *json) buf]
+  =/  contents
+    %-  crip
+    ;:  weld
+      "`"
+      ~(ram re ~(duck easy-print type.u.match))
+      "`"
+    ==
+  :_  buf
+  %-  json-response
+  %-  pairs:enjs:format
+  [contents+s+contents ~]
 ::
 ++  handle-sync
   |=  [buf=wall changes=(list change)]
@@ -254,16 +281,7 @@
   =,  enjs:format
   %-  json-response
   ?:  ?=(%| -.tl)
-    %-  pairs
-    :~  good+b+|
-        :+  %diagnostics  %a  :_  ~
-        =/  loc  (pairs line+(numb (dec row.p.tl)) character+(numb col.p.tl) ~)
-        %-  pairs
-        :~  range+(pairs start+loc end+loc ~)
-            severity+n+'1'
-            message+s+'syntax error'
-        ==
-    ==
+    (format-diagnostic p.tl)
   ?~  p.tl
     *json
   %-  pairs
