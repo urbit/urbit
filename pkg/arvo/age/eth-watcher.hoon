@@ -1,58 +1,40 @@
 ::  eth-watcher: ethereum event log collector
 ::
 /-  *eth-watcher, spider
-/+  default-agent, verb
+/+  run-imp, default-agent, verb
 =,  ethereum-types
 =,  able:jael
 ::
-=>  |%
-    ++  refresh-rate  ~m5
-    --
+|%
++$  card  card:agent:mall
++$  app-state
+  $:  %0
+      dogs=(map path watchdog)
+  ==
 ::
-=>  |%
-    +$  card  card:agent:mall
-    +$  app-state
-      $:  %0
-          dogs=(map path watchdog)
-      ==
-    ::
-    +$  context  [=path dog=watchdog]
-    +$  watchdog
-      $:  config
-          running=(unit (unit =iid:spider))
-          =number:block
-          =pending-logs
-          =history
-          blocks=(list block)
-      ==
-    ::
-    ::  history: newest block first, oldest event first
-    +$  history       (list loglist)
-    --
++$  context  [=path dog=watchdog]
++$  watchdog
+  $:  config
+      =number:block
+      =pending-logs
+      =history
+      blocks=(list block)
+  ==
+::
+::  history: newest block first, oldest event first
++$  history       (list loglist)
+--
 ::
 ::  Helpers
 ::
-=>  |%
-    ++  wait
-      |=  now=@da
-      ^-  card
-      [%pass /timer %arvo %b %wait (add now refresh-rate)]
-    ::
-    ++  wait-shortcut
-      |=  now=@da
-      ^-  card
-      [%pass /shortcut %arvo %b %wait now]
-    ::
-    ++  poke-spider
-      |=  [=path our=@p =cage]
-      ^-  card
-      [%pass [%running path] %agent [our %spider] %poke cage]
-    ::
-    ++  watch-spider
-      |=  [=path our=@p =sub=path]
-      ^-  card
-      [%pass [%running path] %agent [our %spider] %watch sub-path]
-    --
+|%
+++  refresh-rate  ~m5
+++  wait
+  |=  now=@da
+  ^-  card
+  [%pass /timer %arvo %b %wait (add now refresh-rate)]
+--
+::
 ::
 ::  Main
 ::
@@ -61,7 +43,7 @@
 %+  verb  &
 |_  =bowl:mall
 +*  this  .
-    def   ~(. (default-agent this %&) bowl)
+    def   ~(. (default-agent this %|) bowl)
 ::
 ++  on-init
   ^-  (quip card _this)
@@ -71,7 +53,9 @@
 ++  on-save   !>(state)
 ++  on-load
   |=  old=vase
+  ~&  >  %old-ew
   =+  !<(old-state=app-state old)
+
   `this(state old-state)
 ::
 ++  on-poke
@@ -95,15 +79,6 @@
       ==
     ~?  &((~(has by dogs.state) path.poke) restart)
       [dap.bowl 'overwriting existing watchdog on' path.poke]
-    =/  restart-cards
-      =/  dog  (~(get by dogs.state) path.poke)
-      ?.  ?&  restart
-              ?=(^ dog)
-              ?=([~ ~ *] running.u.dog)
-          ==
-        ~
-      =/  =cage  [%spider-stop !>([u.u.running.u.dog &])]
-      [%pass [%starting path] %agent [our.bowl %spider] %poke cage]
     =/  new-dog
       =/  dog=watchdog
         ?:  restart  *watchdog
@@ -113,7 +88,8 @@
         number  from.config.poke
       ==
     =.  dogs.state  (~(put by dogs.state) path.poke new-dog)
-    [[(wait-shortcut now.bowl) ~] this]
+    :_  this  :_  ~
+    [%pass /shortcut %arvo %b %wait now.bowl]
   ::
       %clear
     =.  dogs.state  (~(del by dogs.state) path.poke)
@@ -127,19 +103,16 @@
 ++  on-watch
   |=  =path
   ?.  ?=([%logs ^] path)
-    ~|  [%invalid-subscription-path path]
-    !!
-  !!
-  ::  ;<  ~  bind:m
-  ::    %+  send-effect-on-bone:stdio  ost.bowl
-  ::    :+  %diff  %eth-watcher-diff
-  ::    :-  %history
-  ::    ^-  loglist
-  ::    %-  zing
-  ::    %-  flop
-  ::    =<  history
-  ::    (~(gut by dogs.state) t.path *watchdog)
-  ::  (pure:m state)
+    (on-watch:def path)
+  :_  this  :_  ~
+  :*  %give  %fact  ~  %eth-watcher-diff  !>
+      :-  %history
+      ^-  loglist
+      %-  zing
+      %-  flop
+      =<  history
+      (~(gut by dogs.state) t.path *watchdog)
+  ==
 ::
 ++  on-leave  on-leave:def
 ::
@@ -161,67 +134,8 @@
   |^
   ^-  (quip card agent:mall)
   ?+    wire  (on-agent:def wire sign)
-      [%starting *]
+      [%run *]
     ?+    -.sign  (on-agent:def wire sign)
-        %watch-ack
-      ?~  p.sign
-        [~ this]
-      %-  (slog leaf+"eth-watcher failed to get iid" u.p.sign)
-      [~ (clear-running t.wire)]
-    ::
-        %kick
-      =*  path  t.wire
-      =/  dog  (~(get by dogs.state) path)
-      ?~  dog
-        [~ this]
-      ?~  running.u.dog
-        [~ this]
-      ?^  u.running.u.dog
-        [~ this]
-      [~ this(dogs.state (~(put by dogs.state) path u.dog(running ~)))] 
-    ::
-        %fact
-      =*  path  t.wire
-      ?>  ?=(%iid p.cage.sign)
-      =+  !<(=new=iid:spider q.cage.sign)
-      =/  dog  (~(get by dogs.state) path)
-      ::  watchdog already cancelled
-      ::
-      ?~  dog
-        [~ this]
-      ::  not looking for imp
-      ::
-      ?~  running.u.dog
-        [~ this]
-      ::  already running imp
-      ::
-      ?^  u.running.u.dog
-        [~ this]
-      =>  .(running.u.dog ``new-iid)
-      =/  args
-        :^  ~  `new-iid  %eth-watcher
-        !>(`watchpup`[- number pending-logs blocks]:u.dog)
-      :_  this(dogs.state (~(put by dogs.state) path u.dog))
-      :~  (watch-spider path our.bowl /imp-result/[new-iid])
-          (poke-spider path our.bowl %spider-start !>(args))
-      ==
-    ==
-  ::
-      [%running *]
-    ?-    -.sign
-        %poke-ack
-      ?~  p.sign
-        [~ this]
-      %-  (slog leaf+"eth-watcher couldn't start imp" u.p.sign)
-      [~ (clear-running t.wire)]
-    ::
-        %watch-ack
-      ?~  p.sign
-        [~ this]
-      %-  (slog leaf+"eth-watcher couldn't start listen to imp" u.p.sign)
-      [~ (clear-running t.wire)]
-    ::
-        %kick  [~ (clear-running t.wire)]
         %fact
       =*  path  t.wire
       =/  dog  (~(get by dogs.state) path)
@@ -231,7 +145,7 @@
           %imp-fail
         =+  !<([=term =tang] q.cage.sign)
         %-  (slog leaf+"eth-watcher failed; will retry" leaf+<term> tang)
-        [~ this(dogs.state (~(put by dogs.state) path u.dog(running ~)))]
+        `this
       ::
           %imp-done
         =+  !<([vows=disavows pup=watchpup] q.cage.sign)
@@ -244,19 +158,10 @@
           ==
         =^  cards-1  u.dog  (disavow path u.dog vows)
         =^  cards-2  u.dog  (release-logs path u.dog)
-        =.  dogs.state  (~(put by dogs.state) path u.dog(running ~))
-        `this
-        ::  [(weld cards-1 cards-2) this]
+        [(weld cards-1 cards-2) this]
       ==
     ==
   ==
-  ::
-  ++  clear-running
-    |=  =path
-    =/  dog  (~(get by dogs.state) path)
-    ?~  dog
-      this
-    this(dogs.state (~(put by dogs.state) path u.dog(running ~)))
   ::
   ++  disavow
     |=  [=path dog=watchdog vows=disavows]
@@ -329,31 +234,20 @@
     ::
     =/  dogs=(list [=path dog=watchdog])  ~(tap by dogs.state)
     =|  cards=(list card)
+    =/  this-agent=agent:mall  this
     ^-  (quip card agent:mall)
-    =-  [(flop -<) ->]
     |-  ^-  (quip card agent:mall)
     =*  loop  $
     ?~  dogs
-      [cards this]
+      [cards this-agent]
     =,  i.dogs
-    ?^  running.dog.i.dogs
-      ?~  u.running.dog.i.dogs
-        %-  (slog leaf+"eth-watcher delayed getting iid" ~)
-        loop(dogs t.dogs)
-      ::  if still running, kill it and restart
-      ::
-      =/  =cage  [%spider-stop !>([u.u.running.dog |])]
-      =.  cards
-        :_  cards
-        [%pass [%starting path] %agent [our.bowl %spider] %poke cage]
-      loop(i.dogs i.dogs(running.dog ~))
-    ::
-    =>  .(running.dog.i.dogs [~ ~])
-    =.  cards
-      :_  cards
-      [%pass [%starting path] %agent [our.bowl %spider] %watch /next-iid]
-    =.  dogs.state  (~(put by dogs.state) path dog)
-    loop(dogs t.dogs)
+    ::  XX should not start another one if the previous is still going
+    =^  new-cards  this-agent
+
+      =/  args
+        ``[%eth-watcher !>(`watchpup`[- number pending-logs blocks]:dog)]
+      (run-imp our.bowl [%run path] args this-agent)
+    loop(dogs t.dogs, cards (weld cards new-cards))
   ==
 ::
 ++  on-fail   on-fail:def

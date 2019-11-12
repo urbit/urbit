@@ -26,9 +26,6 @@
       iid=(map iid imp)
       count=pid
   ==
-::
-+$  start-args
-  [parent=(unit iid) use=(unit iid) file=term =vase]
 --
 ::
 ::  Trie operations
@@ -137,7 +134,7 @@
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
         %spider-imput  (on-poke-imput:sc !<(imput vase))
-        %spider-start  (handle-start-imp:sc !<(start-args vase))
+        %spider-start  (handle-start-imp:sc !<(start-args:spider vase))
         %spider-stop   (handle-stop-imp:sc !<([iid ?] vase))
       ==
     [cards this]

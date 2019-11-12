@@ -1445,7 +1445,7 @@
       =?  ap-core  ?=(%fact -.sign)
         (ap-update-subscription =(~ maybe-tang) p.dock q.dock agent-wire)
       ?^  maybe-tang
-        (ap-error -.sign leaf/"closing subscription" u.maybe-tang)
+        (ap-error -.sign leaf+"closing subscription" u.maybe-tang)
       ap-core
     ::  +ap-install: install wrapper.
     ::
