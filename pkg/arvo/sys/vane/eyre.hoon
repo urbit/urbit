@@ -131,10 +131,7 @@
 ::    produce the results.
 ::
 +$  outstanding-connection
-  $:  ::  eyre-id: identifier for request
-      ::
-      eyre-id=@ta
-      ::  action: the action that had matched
+  $:  ::  action: the action that had matched
       ::
       =action
       ::  inbound-request: the original request which caused this connection
@@ -811,6 +808,7 @@
   ::  gate that produces the +per-server-event core from event information
   ::
   |=  [[our=@p eny=@ =duct now=@da scry=sley] state=server-state]
+  =/  eyre-id  (cat 3 'eyre--' (scot %uv (sham duct)))
   |%
   ::  +request-local: bypass authentication for local lens connections
   ::
@@ -819,16 +817,15 @@
     ^-  [(list move) server-state]
     ::
     =/  act  [%app app=%lens]
-    =/  eyre-id  (cat 3 'eyre--' (scot %uv (end 0 128 eny)))
     ::
     =/  connection=outstanding-connection
-      [eyre-id act [& secure address request] ~ 0]
+      [act [& secure address request] ~ 0]
     ::
     =.  connections.state
       (~(put by connections.state) duct connection)
     ::
     :_  state
-    (subscribe-to-app app.act eyre-id inbound-request.connection)
+    (subscribe-to-app app.act inbound-request.connection)
   ::  +request: starts handling an inbound http request
   ::
   ++  request
@@ -837,13 +834,12 @@
     ::
     =/  host  (get-header:http 'host' header-list.request)
     =/  action  (get-action-for-binding host url.request)
-    =/  eyre-id  (cat 3 'eyre--' (scot %uv (end 0 128 eny)))
     ::
     =/  authenticated  (request-is-logged-in:authentication request)
     ::  record that we started an asynchronous response
     ::
     =/  connection=outstanding-connection
-      [eyre-id action [authenticated secure address request] ~ 0]
+      [action [authenticated secure address request] ~ 0]
     =.  connections.state
       (~(put by connections.state) duct connection)
     ::
@@ -864,7 +860,7 @@
     ::
         %app
       :_  state
-      (subscribe-to-app app.action eyre-id inbound-request.connection)
+      (subscribe-to-app app.action inbound-request.connection)
     ::
         %authentication
       (handle-request:authentication secure address request)
@@ -879,7 +875,7 @@
   ::  +subscribe-to-app: subscribe to app and poke it with request data
   ::
   ++  subscribe-to-app
-    |=  [app=term eyre-id=@ta =inbound-request:eyre]
+    |=  [app=term =inbound-request:eyre]
     ^-  (list move)
     :~  :*  duct  %pass  /watch-response/[eyre-id]
             %m  %deal  [our our]  app
@@ -913,7 +909,7 @@
         %app
       :_  state
       :_  ~
-      :*  duct  %pass  /watch-response/[eyre-id.u.connection]
+      :*  duct  %pass  /watch-response/[eyre-id]
           %m  %deal  [our our]  app.action.u.connection
           %leave  ~
       ==
@@ -1736,11 +1732,11 @@
     ^-  [(list move) server-state]
     ::
     =+  connection=(~(got by connections.state) duct)
-    =/  move-1=(list move)
+    =/  moves-1=(list move)
       ?.  ?=(%app -.action.connection)
         ~
       :_  ~
-      :*  duct  %pass  /watch-response/[eyre-id.connection]
+      :*  duct  %pass  /watch-response/[eyre-id]
           %m  %deal  [our our]  app.action.connection
           %leave  ~
       ==
@@ -1753,7 +1749,7 @@
           url.request.inbound-request.connection
           tang
       ==
-    [(weld move-1 moves-2) state]
+    [(weld moves-1 moves-2) state]
   ::  +handle-response: check a response for correctness and send to earth
   ::
   ::    All outbound responses including %http-server generated responses need to go
@@ -1842,7 +1838,7 @@
       ?.  ?=(%app -.action.u.connection-state)
         ~
       :_  ~
-      :*  duct  %pass  /watch-response/[eyre-id.u.connection-state]
+      :*  duct  %pass  /watch-response/[eyre-id]
           %m  %deal  [our our]  app.action.u.connection-state
           %leave  ~
       ==
