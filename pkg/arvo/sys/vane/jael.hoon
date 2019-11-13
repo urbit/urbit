@@ -296,25 +296,13 @@
       ::
       ::  start subscriptions
       ::
+      ::  get everything from azimuth-tracker because jael subscriptions
+      ::  seem to be flaky for now
+      ::
       =.  +>.$  (poke-watch hen %azimuth-tracker nod.own.pki)
       =.  +>.$
-        ?-    (clan:title our)
-            %czar
-          %-  curd  =<  abet
-          (sources:~(feel su hen our pki etn) ~ [%| %azimuth-tracker])
-        ::
-            *
-          =/  spon-ship
-            ?>  ?=(^ spon.tac)
-            ship.i.spon.tac
-          =.  +>.$
-            %-  curd  =<  abet
-            %+  sources:~(feel su hen our pki etn)
-              (silt spon-ship ~)
-            [%| %azimuth-tracker]
-          %-  curd  =<  abet
-          (sources:~(feel su hen our pki etn) ~ [%& spon-ship])
-        ==
+        %-  curd  =<  abet
+        (sources:~(feel su hen our pki etn) ~ [%| %azimuth-tracker])
       ::
       =.  moz
         %+  weld  moz
