@@ -808,7 +808,7 @@
   ::  gate that produces the +per-server-event core from event information
   ::
   |=  [[our=@p eny=@ =duct now=@da scry=sley] state=server-state]
-  =/  eyre-id  (cat 3 'eyre--' (scot %uv (sham duct)))
+  =/  eyre-id  (scot %ta (cat 3 'eyre_' (scot %uv (sham duct))))
   |%
   ::  +request-local: bypass authentication for local lens connections
   ::
