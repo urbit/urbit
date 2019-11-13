@@ -19,7 +19,7 @@
     +$  context  [=path dog=watchdog]
     +$  watchdog
       $:  config
-          running=(unit (unit =iid:spider))
+          running=(unit =iid:spider)
           =number:block
           =pending-logs
           =history
@@ -52,6 +52,11 @@
       |=  [=path our=@p =sub=path]
       ^-  card
       [%pass [%running path] %agent [our %spider] %watch sub-path]
+    ::
+    ++  leave-spider
+      |=  [=path our=@p]
+      ^-  card
+      [%pass [%running path] %agent [our %spider] %leave ~]
     --
 ::
 ::  Main
@@ -99,10 +104,10 @@
       =/  dog  (~(get by dogs.state) path.poke)
       ?.  ?&  restart
               ?=(^ dog)
-              ?=([~ ~ *] running.u.dog)
+              ?=(^ running.u.dog)
           ==
         ~
-      =/  =cage  [%spider-stop !>([u.u.running.u.dog &])]
+      =/  =cage  [%spider-stop !>([u.running.u.dog &])]
       [%pass [%starting path] %agent [our.bowl %spider] %poke cage]
     =/  new-dog
       =/  dog=watchdog
@@ -126,20 +131,19 @@
 ::
 ++  on-watch
   |=  =path
+  ^-  (quip card agent:mall)
   ?.  ?=([%logs ^] path)
     ~|  [%invalid-subscription-path path]
     !!
-  !!
-  ::  ;<  ~  bind:m
-  ::    %+  send-effect-on-bone:stdio  ost.bowl
-  ::    :+  %diff  %eth-watcher-diff
-  ::    :-  %history
-  ::    ^-  loglist
-  ::    %-  zing
-  ::    %-  flop
-  ::    =<  history
-  ::    (~(gut by dogs.state) t.path *watchdog)
-  ::  (pure:m state)
+  :_  this  :_  ~
+  :*  %give  %fact  ~  %eth-watcher-diff  !>
+      :-  %history
+      ^-  loglist
+      %-  zing
+      %-  flop
+      =<  history
+      (~(gut by dogs.state) t.path *watchdog)
+  ==
 ::
 ++  on-leave  on-leave:def
 ::
@@ -160,94 +164,47 @@
   |=  [=wire =sign:agent:mall]
   |^
   ^-  (quip card agent:mall)
-  ?+    wire  (on-agent:def wire sign)
-      [%starting *]
-    ?+    -.sign  (on-agent:def wire sign)
-        %watch-ack
-      ?~  p.sign
-        [~ this]
-      %-  (slog leaf+"eth-watcher failed to get iid" u.p.sign)
-      [~ (clear-running t.wire)]
-    ::
-        %kick
-      =*  path  t.wire
-      =/  dog  (~(get by dogs.state) path)
-      ?~  dog
-        [~ this]
-      ?~  running.u.dog
-        [~ this]
-      ?^  u.running.u.dog
-        [~ this]
-      [~ this(dogs.state (~(put by dogs.state) path u.dog(running ~)))] 
-    ::
-        %fact
-      =*  path  t.wire
-      ?>  ?=(%iid p.cage.sign)
-      =+  !<(=new=iid:spider q.cage.sign)
-      =/  dog  (~(get by dogs.state) path)
-      ::  watchdog already cancelled
-      ::
-      ?~  dog
-        [~ this]
-      ::  not looking for imp
-      ::
-      ?~  running.u.dog
-        [~ this]
-      ::  already running imp
-      ::
-      ?^  u.running.u.dog
-        [~ this]
-      =>  .(running.u.dog ``new-iid)
-      =/  args
-        :^  ~  `new-iid  %eth-watcher
-        !>(`watchpup`[- number pending-logs blocks]:u.dog)
-      :_  this(dogs.state (~(put by dogs.state) path u.dog))
-      :~  (watch-spider path our.bowl /imp-result/[new-iid])
-          (poke-spider path our.bowl %spider-start !>(args))
-      ==
-    ==
+  ?.  ?=([%running *] wire)
+    (on-agent:def wire sign)
+  ?-    -.sign
+      %poke-ack
+    ?~  p.sign
+      [~ this]
+    %-  (slog leaf+"eth-watcher couldn't start imp" u.p.sign)
+    :_  (clear-running t.wire)  :_  ~
+    (leave-spider t.wire our.bowl)
   ::
-      [%running *]
-    ?-    -.sign
-        %poke-ack
-      ?~  p.sign
-        [~ this]
-      %-  (slog leaf+"eth-watcher couldn't start imp" u.p.sign)
-      [~ (clear-running t.wire)]
+      %watch-ack
+    ?~  p.sign
+      [~ this]
+    %-  (slog leaf+"eth-watcher couldn't start listen to imp" u.p.sign)
+    [~ (clear-running t.wire)]
+  ::
+      %kick  [~ (clear-running t.wire)]
+      %fact
+    =*  path  t.wire
+    =/  dog  (~(get by dogs.state) path)
+    ?~  dog
+      [~ this]
+    ?+    p.cage.sign  (on-agent:def wire sign)
+        %imp-fail
+      =+  !<([=term =tang] q.cage.sign)
+      %-  (slog leaf+"eth-watcher failed; will retry" leaf+<term> tang)
+      [~ this(dogs.state (~(put by dogs.state) path u.dog(running ~)))]
     ::
-        %watch-ack
-      ?~  p.sign
-        [~ this]
-      %-  (slog leaf+"eth-watcher couldn't start listen to imp" u.p.sign)
-      [~ (clear-running t.wire)]
-    ::
-        %kick  [~ (clear-running t.wire)]
-        %fact
-      =*  path  t.wire
-      =/  dog  (~(get by dogs.state) path)
-      ?~  dog
-        [~ this]
-      ?+    p.cage.sign  (on-agent:def wire sign)
-          %imp-fail
-        =+  !<([=term =tang] q.cage.sign)
-        %-  (slog leaf+"eth-watcher failed; will retry" leaf+<term> tang)
-        [~ this(dogs.state (~(put by dogs.state) path u.dog(running ~)))]
-      ::
-          %imp-done
-        =+  !<([vows=disavows pup=watchpup] q.cage.sign)
-        =.  u.dog
-          %_  u.dog
-            -             -.pup
-            number        number.pup
-            blocks        blocks.pup
-            pending-logs  pending-logs.pup
-          ==
-        =^  cards-1  u.dog  (disavow path u.dog vows)
-        =^  cards-2  u.dog  (release-logs path u.dog)
-        =.  dogs.state  (~(put by dogs.state) path u.dog(running ~))
-        `this
-        ::  [(weld cards-1 cards-2) this]
-      ==
+        %imp-done
+      =+  !<([vows=disavows pup=watchpup] q.cage.sign)
+      =.  u.dog
+        %_  u.dog
+          -             -.pup
+          number        number.pup
+          blocks        blocks.pup
+          pending-logs  pending-logs.pup
+        ==
+      =^  cards-1  u.dog  (disavow path u.dog vows)
+      =^  cards-2  u.dog  (release-logs path u.dog)
+      =.  dogs.state  (~(put by dogs.state) path u.dog(running ~))
+      [(weld cards-1 cards-2) this]
     ==
   ==
   ::
@@ -329,6 +286,7 @@
     ::
     =/  dogs=(list [=path dog=watchdog])  ~(tap by dogs.state)
     =|  cards=(list card)
+    =/  iid-gen  ~(. og eny.bowl)
     ^-  (quip card agent:mall)
     =-  [(flop -<) ->]
     |-  ^-  (quip card agent:mall)
@@ -337,21 +295,25 @@
       [cards this]
     =,  i.dogs
     ?^  running.dog.i.dogs
-      ?~  u.running.dog.i.dogs
-        %-  (slog leaf+"eth-watcher delayed getting iid" ~)
-        loop(dogs t.dogs)
       ::  if still running, kill it and restart
       ::
-      =/  =cage  [%spider-stop !>([u.u.running.dog |])]
+      =/  =cage  [%spider-stop !>([u.running.dog |])]
       =.  cards
         :_  cards
         [%pass [%starting path] %agent [our.bowl %spider] %poke cage]
       loop(i.dogs i.dogs(running.dog ~))
     ::
-    =>  .(running.dog.i.dogs [~ ~])
+    =^  rand  iid-gen  (raws:iid-gen 128)
+    =/  new-iid  (cat 3 'eth-watcher--' (scot %uv rand))
+    =>  .(running.dog.i.dogs `new-iid)
+    =/  args
+      :^  ~  `new-iid  %eth-watcher
+      !>(`watchpup`[- number pending-logs blocks]:dog)
     =.  cards
-      :_  cards
-      [%pass [%starting path] %agent [our.bowl %spider] %watch /next-iid]
+      :*  (watch-spider path our.bowl /imp-result/[new-iid])
+          (poke-spider path our.bowl %spider-start !>(args))
+          cards
+      ==
     =.  dogs.state  (~(put by dogs.state) path dog)
     loop(dogs t.dogs)
   ==

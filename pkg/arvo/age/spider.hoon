@@ -4,27 +4,24 @@
 |%
 +$  card        card:agent:mall
 +$  imp-thread  imp:spider
-+$  pid         @udpid
 +$  iid         iid:spider
-+$  imp         (list pid)
++$  imp         (list iid)
 +$  imput       [=imp =cage]
 +$  imp-form    _*eval-form:eval:(thread ,vase)
 +$  trie
   $~  [*imp-form ~]
-  [=imp-form kid=(map pid trie)]
+  [=imp-form kid=(map iid trie)]
 ::
 +$  state
   $:  started=(map imp vase)
       running=trie
       iid=(map iid imp)
-      count=pid
   ==
 ::
 +$  clean-slate
   $:  started=(map imp vase)
       running=(list imp)
       iid=(map iid imp)
-      count=pid
   ==
 ::
 +$  start-args
@@ -120,7 +117,6 @@
   ++  on-load
     |=  old-state=vase
     =+  !<(=clean-slate old-state)
-    =.  count.state  count.clean-slate
     =.  iid.state  iid.clean-slate
     |-  ^-  (quip card _this)
     ?~  running.clean-slate
@@ -147,7 +143,6 @@
     ^-  (quip card _this)
     =^  cards  state
       ?+  path  (on-watch:def path)
-        [%next-iid ~]      on-watch-next-iid
         [%imp @ *]         (on-watch:sc t.path)
         [%imp-result @ ~]  (on-watch-result:sc i.t.path)
       ==
@@ -203,15 +198,7 @@
 ++  on-watch-result
   |=  =iid
   ^-  (quip card ^state)
-  ?>  (lth (slav %ud iid) count.state) ::  (~(has by started.state) (~(got by iid.state) iid))
   `state
-::
-++  on-watch-next-iid
-  ^-  (quip card ^state)
-  :_  state(count +(count.state))
-  :~  [%give %fact ~ %iid !>((scot %ud count.state))]
-      [%give %kick ~ ~]
-  ==
 ::
 ++  handle-sign
   |=  [=iid =wire =sign-arvo]
@@ -236,11 +223,8 @@
     ?~  parent-iid
       /
     (~(got by iid.state) u.parent-iid)
-  =^  new-iid  count.state
-    ?~  use
-      [(scot %ud count.state) +(count.state)]
-    [u.use count.state]
-  =/  =imp  (snoc parent-imp (slav %ud new-iid))
+  =/  new-iid  (fall use (scot %uv eny.bowl))
+  =/  =imp  (snoc parent-imp new-iid)
   ::
   ?:  (has-imp running.state imp)
     ~|  [%already-started imp]
@@ -445,7 +429,7 @@
   ^-  iid
   =/  fimp  (flop imp)
   ?>  ?=([@ *] fimp)
-  (scot %ud i.fimp)
+  i.fimp
 ::
 ++  imp-to-parent
   |=  =imp
@@ -454,7 +438,7 @@
   ?>  ?=([@ *] fimp)
   ?~  t.fimp
     ~
-  `(scot %ud i.t.fimp)
+  `i.t.fimp
 ::
 ++  clean-state
   !>  ^-  clean-slate
