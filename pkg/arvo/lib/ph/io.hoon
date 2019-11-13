@@ -64,7 +64,7 @@
   ?~  imps
     (pure:m ~)
   ;<  now=@da  bind:m  get-time
-  =/  poke-vase  !>([`iid.bowl i.imps *vase])
+  =/  poke-vase  !>([`iid.bowl ~ i.imps *vase])
   ;<  ~  bind:m  (poke-our %spider %spider-start poke-vase)
   loop(imps t.imps)
 ::
