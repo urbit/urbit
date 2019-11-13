@@ -131,7 +131,10 @@
 ::    produce the results.
 ::
 +$  outstanding-connection
-  $:  ::  action: the action that had matched
+  $:  ::  eyre-id: identifier for request
+      ::
+      eyre-id=@ta
+      ::  action: the action that had matched
       ::
       =action
       ::  inbound-request: the original request which caused this connection
@@ -816,10 +819,10 @@
     ^-  [(list move) server-state]
     ::
     =/  act  [%app app=%lens]
-    =/  eyre-id  (cat 3 'eyre--' (scot %uv eny))
+    =/  eyre-id  (cat 3 'eyre--' (scot %uv (end 0 128 eny)))
     ::
     =/  connection=outstanding-connection
-      [act [& secure address request] ~ 0]
+      [eyre-id act [& secure address request] ~ 0]
     ::
     =.  connections.state
       (~(put by connections.state) duct connection)
@@ -832,14 +835,15 @@
     |=  [secure=? =address =request:http]
     ^-  [(list move) server-state]
     ::
-    =+  host=(get-header:http 'host' header-list.request)
-    =+  action=(get-action-for-binding host url.request)
+    =/  host  (get-header:http 'host' header-list.request)
+    =/  action  (get-action-for-binding host url.request)
+    =/  eyre-id  (cat 3 'eyre--' (scot %uv (end 0 128 eny)))
     ::
     =/  authenticated  (request-is-logged-in:authentication request)
     ::  record that we started an asynchronous response
     ::
     =/  connection=outstanding-connection
-      [action [authenticated secure address request] ~ 0]
+      [eyre-id action [authenticated secure address request] ~ 0]
     =.  connections.state
       (~(put by connections.state) duct connection)
     ::
@@ -859,7 +863,6 @@
       [%$ %noun !>([authenticated request])]
     ::
         %app
-      =/  eyre-id  (cat 3 'eyre--' (scot %uv eny))
       :_  state
       (subscribe-to-app app.action eyre-id inbound-request.connection)
     ::
@@ -878,12 +881,12 @@
   ++  subscribe-to-app
     |=  [app=term eyre-id=@ta =inbound-request:eyre]
     ^-  (list move)
-    :~  :*  duct  %pass  /watch-response
+    :~  :*  duct  %pass  /watch-response/[eyre-id]
             %m  %deal  [our our]  app
             %watch  /http-response/[eyre-id]
         ==
       ::
-        :*  duct  %pass  /run-app-request
+        :*  duct  %pass  /run-app-request/[eyre-id]
             %m  %deal  [our our]  app
             %poke  %handle-http-request
             !>([eyre-id inbound-request])
@@ -910,7 +913,7 @@
         %app
       :_  state
       :_  ~
-      :*  duct  %pass  /watch-response
+      :*  duct  %pass  /watch-response/[eyre-id.u.connection]
           %m  %deal  [our our]  app.action.u.connection
           %leave  ~
       ==
@@ -1733,14 +1736,24 @@
     ^-  [(list move) server-state]
     ::
     =+  connection=(~(got by connections.state) duct)
+    =/  move-1=(list move)
+      ?.  ?=(%app -.action.connection)
+        ~
+      :_  ~
+      :*  duct  %pass  /watch-response/[eyre-id.connection]
+          %m  %deal  [our our]  app.action.connection
+          %leave  ~
+      ==
     ::
-    %^  return-static-data-on-duct  500  'text/html'
-    ::
-    %-  internal-server-error  :*
-        authenticated.inbound-request.connection
-        url.request.inbound-request.connection
-        tang
-    ==
+    =^  moves-2  state
+      %^  return-static-data-on-duct  500  'text/html'
+      ::
+      %-  internal-server-error  :*
+          authenticated.inbound-request.connection
+          url.request.inbound-request.connection
+          tang
+      ==
+    [(weld move-1 moves-2) state]
   ::  +handle-response: check a response for correctness and send to earth
   ::
   ::    All outbound responses including %http-server generated responses need to go
@@ -1798,8 +1811,6 @@
             %cancel
           ::  todo: log this differently from an ise.
           ::
-          ::  maybe should also send %leave to app?
-          ::
           error-connection
         ==
     ::
@@ -1826,7 +1837,15 @@
       ::  respond to outside with %error
       ::
       ^-  [(list move) server-state]
-      [[duct %give %response %cancel ~]~ state]
+      :_  state
+      :-  [duct %give %response %cancel ~]
+      ?.  ?=(%app -.action.u.connection-state)
+        ~
+      :_  ~
+      :*  duct  %pass  /watch-response/[eyre-id.u.connection-state]
+          %m  %deal  [our our]  app.action.u.connection-state
+          %leave  ~
+      ==
     --
   ::  +add-binding: conditionally add a pairing between binding and action
   ::
@@ -2176,6 +2195,7 @@
     ::
     ::
     ?>  ?=([%poke-ack *] p.sign)
+    ?>  ?=([@ *] t.wire)
     ?~  p.p.sign
       ::  received a positive acknowledgment: take no action
       ::
@@ -2193,6 +2213,7 @@
     ::
     =/  event-args  [[our eny duct now scry-gate] server-state.ax]
     ::
+    ?>  ?=([@ *] t.wire)
     ?:  ?=([%m %unto %watch-ack *] sign)
       ?~  p.p.sign
         ::  received a positive acknowledgment: take no action
