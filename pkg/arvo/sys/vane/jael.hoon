@@ -535,8 +535,7 @@
     ::
         [%m %unto *]
       ?-  +>-.hin
-          $kick  ~|([%jael-unexpected-quit tea hin] !!)
-          $http-response       ~|([%jael-unexpected-http-response tea hin] !!)
+          $kick      ~|([%jael-unexpected-quit tea hin] !!)
           $poke-ack
         ?~  p.p.+>.hin
           +>.$

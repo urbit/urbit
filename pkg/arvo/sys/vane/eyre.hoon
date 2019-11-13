@@ -808,6 +808,7 @@
   ::  gate that produces the +per-server-event core from event information
   ::
   |=  [[our=@p eny=@ =duct now=@da scry=sley] state=server-state]
+  =/  eyre-id  (scot %ta (cat 3 'eyre_' (scot %uv (sham duct))))
   |%
   ::  +request-local: bypass authentication for local lens connections
   ::
@@ -816,6 +817,7 @@
     ^-  [(list move) server-state]
     ::
     =/  act  [%app app=%lens]
+    ::
     =/  connection=outstanding-connection
       [act [& secure address request] ~ 0]
     ::
@@ -823,24 +825,15 @@
       (~(put by connections.state) duct connection)
     ::
     :_  state
-    :_  ~
-    :^  duct  %pass  /run-app-request/[app.act]
-    ^-  note
-    :^  %m  %deal  [our our]  :-  app.act
-    ::
-    ^-  task:agent:mall
-    :*  %poke
-        %handle-http-request
-        !>(inbound-request.connection)
-    ==
+    (subscribe-to-app app.act inbound-request.connection)
   ::  +request: starts handling an inbound http request
   ::
   ++  request
     |=  [secure=? =address =request:http]
     ^-  [(list move) server-state]
     ::
-    =+  host=(get-header:http 'host' header-list.request)
-    =+  action=(get-action-for-binding host url.request)
+    =/  host  (get-header:http 'host' header-list.request)
+    =/  action  (get-action-for-binding host url.request)
     ::
     =/  authenticated  (request-is-logged-in:authentication request)
     ::  record that we started an asynchronous response
@@ -867,19 +860,7 @@
     ::
         %app
       :_  state
-      :_  ~
-      :^  duct  %pass  /run-app-request/[app.action]
-      ^-  note
-      :^  %m  %deal  [our our]  :-  app.action
-      ::  todo: i don't entirely understand gall; there's a way to make a gall
-      ::  use a %handle arm instead of a sub-%poke with the
-      ::  %handle-http-request type.
-      ::
-      ^-  task:agent:mall
-      :*  %poke
-          %handle-http-request
-          !>(inbound-request.connection)
-      ==
+      (subscribe-to-app app.action inbound-request.connection)
     ::
         %authentication
       (handle-request:authentication secure address request)
@@ -890,6 +871,22 @@
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
+    ==
+  ::  +subscribe-to-app: subscribe to app and poke it with request data
+  ::
+  ++  subscribe-to-app
+    |=  [app=term =inbound-request:eyre]
+    ^-  (list move)
+    :~  :*  duct  %pass  /watch-response/[eyre-id]
+            %m  %deal  [our our]  app
+            %watch  /http-response/[eyre-id]
+        ==
+      ::
+        :*  duct  %pass  /run-app-request/[eyre-id]
+            %m  %deal  [our our]  app
+            %poke  %handle-http-request
+            !>([eyre-id inbound-request])
+        ==
     ==
   ::  +cancel-request: handles a request being externally aborted
   ::
@@ -912,14 +909,9 @@
         %app
       :_  state
       :_  ~
-      :^  duct  %pass  /run-app-cancel/[app.action.u.connection]
-      ^-  note
-      :^  %m  %deal  [our our]  :-  app.action.u.connection
-      ::
-      ^-  task:agent:mall
-      :*  %poke
-          %handle-http-cancel
-          !>(inbound-request.u.connection)
+      :*  duct  %pass  /watch-response/[eyre-id]
+          %m  %deal  [our our]  app.action.u.connection
+          %leave  ~
       ==
     ::
         %authentication
@@ -1513,19 +1505,19 @@
     ::  +on-gall-response: turns a gall response into an event
     ::
     ++  on-gall-response
-      |=  [channel-id=@t request-id=@ud =unto:mall]
+      |=  [channel-id=@t request-id=@ud =sign:agent:mall]
       ^-  [(list move) server-state]
       ::
-      ?+    -.unto  ~|([%invalid-gall-response -.unto] !!)
+      ?-    -.sign
           %poke-ack
         =/  =json
           =,  enjs:format
           %-  pairs  :~
             ['response' [%s 'poke']]
             ['id' (numb request-id)]
-            ?~  p.unto
+            ?~  p.sign
               ['ok' [%s 'ok']]
-            ['err' (wall (render-tang-to-wall 100 u.p.unto))]
+            ['err' (wall (render-tang-to-wall 100 u.p.sign))]
           ==
         ::
         (emit-event channel-id [(en-json:html json)]~)
@@ -1537,8 +1529,8 @@
             ['response' [%s 'diff']]
             ['id' (numb request-id)]
             :-  'json'
-            ?>  =(%json p.cage.unto)
-            ;;(json q.q.cage.unto)
+            ?>  =(%json p.cage.sign)
+            ;;(json q.q.cage.sign)
           ==
         ::
         (emit-event channel-id [(en-json:html json)]~)
@@ -1560,9 +1552,9 @@
           %-  pairs  :~
             ['response' [%s 'subscribe']]
             ['id' (numb request-id)]
-            ?~  p.unto
+            ?~  p.sign
               ['ok' [%s 'ok']]
-            ['err' (wall (render-tang-to-wall 100 u.p.unto))]
+            ['err' (wall (render-tang-to-wall 100 u.p.sign))]
           ==
         ::
         (emit-event channel-id [(en-json:html json)]~)
@@ -1740,14 +1732,24 @@
     ^-  [(list move) server-state]
     ::
     =+  connection=(~(got by connections.state) duct)
+    =/  moves-1=(list move)
+      ?.  ?=(%app -.action.connection)
+        ~
+      :_  ~
+      :*  duct  %pass  /watch-response/[eyre-id]
+          %m  %deal  [our our]  app.action.connection
+          %leave  ~
+      ==
     ::
-    %^  return-static-data-on-duct  500  'text/html'
-    ::
-    %-  internal-server-error  :*
-        authenticated.inbound-request.connection
-        url.request.inbound-request.connection
-        tang
-    ==
+    =^  moves-2  state
+      %^  return-static-data-on-duct  500  'text/html'
+      ::
+      %-  internal-server-error  :*
+          authenticated.inbound-request.connection
+          url.request.inbound-request.connection
+          tang
+      ==
+    [(weld moves-1 moves-2) state]
   ::  +handle-response: check a response for correctness and send to earth
   ::
   ::    All outbound responses including %http-server generated responses need to go
@@ -1831,7 +1833,15 @@
       ::  respond to outside with %error
       ::
       ^-  [(list move) server-state]
-      [[duct %give %response %cancel ~]~ state]
+      :_  state
+      :-  [duct %give %response %cancel ~]
+      ?.  ?=(%app -.action.u.connection-state)
+        ~
+      :_  ~
+      :*  duct  %pass  /watch-response/[eyre-id]
+          %m  %deal  [our our]  app.action.u.connection-state
+          %leave  ~
+      ==
     --
   ::  +add-binding: conditionally add a pairing between binding and action
   ::
@@ -2169,7 +2179,7 @@
            ~|([%bad-take-wire wire] !!)
       ::
          %run-app-request  run-app-request
-         %run-app-cancel   run-app-cancel
+         %watch-response   watch-response
          %run-build        run-build
          %channel          channel
          %acme             acme-ack
@@ -2180,37 +2190,65 @@
     ?>  ?=([%m %unto *] sign)
     ::
     ::
-    ?:  ?=([%poke-ack *] p.sign)
+    ?>  ?=([%poke-ack *] p.sign)
+    ?>  ?=([@ *] t.wire)
+    ?~  p.p.sign
+      ::  received a positive acknowledgment: take no action
+      ::
+      [~ http-server-gate]
+    ::  we have an error; propagate it to the client
+    ::
+    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  handle-gall-error
+      handle-gall-error:(per-server-event event-args)
+    =^  moves  server-state.ax
+      (handle-gall-error u.p.p.sign)
+    [moves http-server-gate]
+  ::
+  ++  watch-response
+    ::
+    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    ::
+    ?>  ?=([@ *] t.wire)
+    ?:  ?=([%m %unto %watch-ack *] sign)
       ?~  p.p.sign
         ::  received a positive acknowledgment: take no action
         ::
         [~ http-server-gate]
       ::  we have an error; propagate it to the client
       ::
-      =/  event-args  [[our eny duct now scry-gate] server-state.ax]
       =/  handle-gall-error
         handle-gall-error:(per-server-event event-args)
       =^  moves  server-state.ax  (handle-gall-error u.p.p.sign)
       [moves http-server-gate]
     ::
-    ?>  ?=([%m %unto %http-response *] sign)
+    ?:  ?=([%m %unto %kick ~] sign)
+      =/  handle-response  handle-response:(per-server-event event-args)
+      =^  moves  server-state.ax
+        (handle-response %continue ~ &)
+      [moves http-server-gate]
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    ?>  ?=([%m %unto %fact *] sign)
+    =/  =mark  p.cage.p.sign
+    =/  =vase  q.cage.p.sign
+    ?.  ?=  ?(%http-response-header %http-response-data %http-response-cancel)
+        mark
+      =/  handle-gall-error
+        handle-gall-error:(per-server-event event-args)
+      =^  moves  server-state.ax
+        (handle-gall-error leaf+"eyre bad mark {<mark>}" ~)
+      [moves http-server-gate]
+    ::
+    =/  =http-event:http
+      ?-  mark
+        %http-response-header  [%start !<(response-header:http vase) ~ |]
+        %http-response-data    [%continue !<((unit octs) vase) |]
+        %http-response-cancel  [%cancel ~]
+      ==
     =/  handle-response  handle-response:(per-server-event event-args)
-    =^  moves  server-state.ax  (handle-response http-event.p.sign)
+    =^  moves  server-state.ax
+      (handle-response http-event)
     [moves http-server-gate]
-  ::
-  ++  run-app-cancel
-    ::
-    ?>  ?=([%m %unto *] sign)
-    ::
-    ::  we explicitly don't care about the return value of a
-    ::  %handle-http-cancel. It is purely a notification and we don't care if
-    ::  it succeeds or not. The user might not have implemented
-    ::  +poke-handle-http-cancel or it might have crashed, but since it's a
-    ::  notification, we don't don't care about its return value.
-    ::
-    [~ http-server-gate]
   ::
   ++  run-build
     ::
