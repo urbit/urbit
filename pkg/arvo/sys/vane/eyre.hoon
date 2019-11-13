@@ -102,11 +102,6 @@
       ::    the :binding into a (map (unit @t) (trie knot =action)).
       ::
       bindings=(list [=binding =duct =action])
-      ::  starting: new http connections waiting for app to send %start-watching
-      ::
-      ::    Ducts should be keys of connections.
-      ::
-      starting=[count=@ud map=(map eyre-id=@ud [=duct app=term])]
       ::  connections: open http connections not fully complete
       ::
       connections=(map duct outstanding-connection)
@@ -821,11 +816,7 @@
     ^-  [(list move) server-state]
     ::
     =/  act  [%app app=%lens]
-    =/  eyre-id  count.starting.state
-    =:    count.starting.state  +(count.starting.state)
-          map.starting.state
-        (~(put by map.starting.state) eyre-id [duct app.act])
-      ==
+    =/  eyre-id  (cat 3 'eyre--' (scot %uv eny))
     ::
     =/  connection=outstanding-connection
       [act [& secure address request] ~ 0]
@@ -834,16 +825,7 @@
       (~(put by connections.state) duct connection)
     ::
     :_  state
-    :_  ~
-    :^  duct  %pass  /run-app-request/[app.act]
-    ^-  note
-    :^  %m  %deal  [our our]  :-  app.act
-    ::
-    ^-  task:agent:mall
-    :*  %poke
-        %handle-http-request
-        !>([eyre-id inbound-request.connection])
-    ==
+    (subscribe-to-app app.act eyre-id inbound-request.connection)
   ::  +request: starts handling an inbound http request
   ::
   ++  request
@@ -877,26 +859,9 @@
       [%$ %noun !>([authenticated request])]
     ::
         %app
-      =/  eyre-id  count.starting.state
-      =:    count.starting.state  +(count.starting.state)
-            map.starting.state
-          (~(put by map.starting.state) eyre-id [duct app.action])
-        ==
-      ::
+      =/  eyre-id  (cat 3 'eyre--' (scot %uv eny))
       :_  state
-      :_  ~
-      :^  duct  %pass  /run-app-request/[app.action]
-      ^-  note
-      :^  %m  %deal  [our our]  :-  app.action
-      ::  todo: i don't entirely understand gall; there's a way to make a gall
-      ::  use a %handle arm instead of a sub-%poke with the
-      ::  %handle-http-request type.
-      ::
-      ^-  task:agent:mall
-      :*  %poke
-          %handle-http-request
-          !>([eyre-id inbound-request.connection])
-      ==
+      (subscribe-to-app app.action eyre-id inbound-request.connection)
     ::
         %authentication
       (handle-request:authentication secure address request)
@@ -908,22 +873,21 @@
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
     ==
-  ::  +start-watching: start watching app for response
+  ::  +subscribe-to-app: subscribe to app and poke it with request data
   ::
-  ++  start-watching
-    |=  [eyre-id=@ud app-id=@ud]
-    ^-  [(list move) server-state]
-    =/  start=(unit [duct=^duct app=term])
-      (~(get by map.starting.state) eyre-id)
-    ?~  start
-      ~&  [%invalid-starting-connection eyre-id]
-      [~ state]
-    ::
-    :_  state(map.starting (~(del by map.starting.state) eyre-id))
-    :_  ~
-    :*  duct.u.start  %pass  /watch-response
-        %m  %deal  [our our]  app.u.start
-        %watch  /http-response/(scot %ud app-id)
+  ++  subscribe-to-app
+    |=  [app=term eyre-id=@ta =inbound-request:eyre]
+    ^-  (list move)
+    :~  :*  duct  %pass  /watch-response
+            %m  %deal  [our our]  app
+            %watch  /http-response/[eyre-id]
+        ==
+      ::
+        :*  duct  %pass  /run-app-request
+            %m  %deal  [our our]  app
+            %poke  %handle-http-request
+            !>([eyre-id inbound-request])
+        ==
     ==
   ::  +cancel-request: handles a request being externally aborted
   ::
@@ -946,14 +910,9 @@
         %app
       :_  state
       :_  ~
-      :^  duct  %pass  /run-app-cancel/[app.action.u.connection]
-      ^-  note
-      :^  %m  %deal  [our our]  :-  app.action.u.connection
-      ::
-      ^-  task:agent:mall
-      :*  %poke
-          %handle-http-cancel
-          !>(inbound-request.u.connection)
+      :*  duct  %pass  /watch-response
+          %m  %deal  [our our]  app.action.u.connection
+          %leave  ~
       ==
     ::
         %authentication
@@ -2147,10 +2106,6 @@
     =^  moves  server-state.ax  (request-local:server +.task)
     [moves http-server-gate]
   ::
-      %start-watching
-    =^  moves  server-state.ax  (start-watching:server +.task)
-    [moves http-server-gate]
-  ::
       %cancel-request
     =^  moves  server-state.ax  cancel-request:server
     [moves http-server-gate]
@@ -2210,7 +2165,6 @@
       ::
          %run-app-request  run-app-request
          %watch-response   watch-response
-         %run-app-cancel   run-app-cancel
          %run-build        run-build
          %channel          channel
          %acme             acme-ack
@@ -2278,18 +2232,6 @@
     =^  moves  server-state.ax
       (handle-response http-event)
     [moves http-server-gate]
-  ::
-  ++  run-app-cancel
-    ::
-    ?>  ?=([%m %unto *] sign)
-    ::
-    ::  we explicitly don't care about the return value of a
-    ::  %handle-http-cancel. It is purely a notification and we don't care if
-    ::  it succeeds or not. The user might not have implemented
-    ::  +poke-handle-http-cancel or it might have crashed, but since it's a
-    ::  notification, we don't don't care about its return value.
-    ::
-    [~ http-server-gate]
   ::
   ++  run-build
     ::

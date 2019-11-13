@@ -1,4 +1,3 @@
-/+  http-handler
 =,  eyre
 |%
 ::
@@ -41,65 +40,16 @@
     [[307 ['location' redirect]~] ~]
   ::
   ++  give-simple-payload
-    |=  [=path =simple-payload:http]
+    |=  [eyre-id=@ta =simple-payload:http]
     ^-  (list card:agent:mall)
-    :~  [%give %fact `path %http-response-header !>(response-header.simple-payload)]
-        [%give %fact `path %http-response-data !>(data.simple-payload)]
-        [%give %kick `path ~]
+    =/  header-cage
+      [%http-response-header !>(response-header.simple-payload)]
+    =/  data-cage
+      [%http-response-data !>(data.simple-payload)]
+    :~  [%give %fact `/http-response/[eyre-id] header-cage]
+        [%give %fact `/http-response/[eyre-id] data-cage]
+        [%give %kick `/http-response/[eyre-id] ~]
     ==
-  ::
-  ++  html-response
-    |=  oct-html=octs
-    ^-  http-event:http
-    [%start [200 ['content-type' 'text/html']~] [~ oct-html] %.y]
-  ::
-  ++  js-response
-    |=  oct-js=octs
-    ^-  http-event:http
-    [%start [200 ['content-type' 'text/javascript']~] [~ oct-js] %.y]
-  ::
-  ++  json-response
-    |=  oct-js=octs
-    ^-  http-event:http
-    [%start [200 ['content-type' 'application/json']~] [~ oct-js] %.y]
-  ::
-  ++  css-response
-    |=  oct-css=octs
-    ^-  http-event:http
-    [%start [200 ['content-type' 'text/css']~] [~ oct-css] %.y]
-  ::
-  ++  manx-response
-    |=  man=manx
-    ^-  http-event:http
-    [%start [200 ['content-type' 'text/html']~] [~ (manx-to-octs man)] %.y]
-  ::
-  ++  png-response
-    |=  oct-png=octs
-    ^-  http-event:http
-    [%start [200 ['content-type' 'image/png']~] [~ oct-png] %.y]
-  ::
-  ++  woff2-response
-    |=  oct-woff=octs
-    ^-  http-event:http
-    [%start [200 ['content-type' 'font/woff2']~] [~ oct-woff] %.y]
-  ::
-  ++  not-found
-    ^-  http-event:http
-    [%start [404 ~] ~ %.y]
-  ::
-  ++  login-redirect
-    |=  =inbound-request:eyre
-    ^-  http-event:http
-    =/  redirect=cord
-      %-  crip
-      "/~/login?redirect={(trip url.request.inbound-request)}"
-    [%start [307 ['location' redirect]~] ~ %.y]
-  ::
-  ++  redirect
-    |=  redirect=cord
-    ^-  http-event:http
-    [%start [307 ['location' redirect]~] ~ %.y]
-  ::
   --
 ++  gen
   |%
@@ -124,6 +74,21 @@
     ^-  simple-payload:http
     [[200 ['content-type' 'text/css']~] `octs]
   ::
+  ++  manx-response
+    |=  man=manx
+    ^-  simple-payload:http
+    [[200 ['content-type' 'text/html']~] `(manx-to-octs man)]
+  ::
+  ++  png-response
+    |=  =octs
+    ^-  simple-payload:http
+    [[200 ['content-type' 'image/png']~] `octs]
+  ::
+  ++  woff2-response
+    |=  =octs
+    ^-  simple-payload:http
+    [[200 ['content-type' 'font/woff2']~] `octs]
+  ::
   ++  not-found
     ^-  simple-payload:http
     [[404 ~] ~]
@@ -140,6 +105,5 @@
     |=  redirect=cord
     ^-  simple-payload:http
     [[307 ['location' redirect]~] ~]
-  ::
   --
 --

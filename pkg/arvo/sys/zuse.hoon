@@ -922,9 +922,6 @@
           ::  starts handling an backdoor http request
           ::
           [%request-local secure=? =address =request:http]
-          ::  initiates a subscription to get response
-          ::
-          [%start-watching our-id=@ud app-id=@ud]
           ::  cancels a previous request
           ::
           [%cancel-request ~]

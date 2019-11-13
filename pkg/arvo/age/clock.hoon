@@ -9,7 +9,6 @@
 =,  format
 ::
 %+  verb  &
-%-  http-handler
 ^-  agent:mall
 |_  =bowl:mall
 +*  this  .
@@ -28,11 +27,11 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:agent:mall _this)
-  ?.  ?=(%http-request mark)
+  ?.  ?=(%handle-http-request mark)
     (on-poke:def mark vase)
-  =+  !<([=path =inbound-request:eyre] vase)
+  =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
   :_  this
-  %+  give-simple-payload:app  path
+  %+  give-simple-payload:app  eyre-id
   %+  require-authorization:app  inbound-request
   |=  =inbound-request:eyre
   =/  request-line  (parse-request-line url.request.inbound-request)
@@ -52,6 +51,8 @@
 ++  on-watch
   |=  =path
   ^-  (quip card:agent:mall _this)
+  ?:  ?=([%http-response *] path)
+    `this
   ?.  =(/tile path)
     (on-watch:def path)
   [[%give %fact ~ %json !>(*json)]~ this]
