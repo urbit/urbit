@@ -465,8 +465,11 @@ serv :: ∀e. HasLogFunc e
 serv pier king plan =
     IODrv [bornEv king] runHttpServer
   where
-    runHttpServer :: RAcquire e (EffCb e HttpServerEf)
-    runHttpServer = handleEf <$> mkRAcquire (Drv <$> newMVar Nothing) kill
+    runHttpServer :: RAcquire e (EffCb HttpServerEf)
+    runHttpServer = do
+        env <- ask
+        cb  <- handleEf <$> mkRAcquire (Drv <$> newMVar Nothing) kill
+        pure (runRIO env . cb)
 
     restart :: Drv -> HttpServerConf -> RIO e Serv
     restart (Drv var) conf = do

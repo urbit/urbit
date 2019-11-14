@@ -528,10 +528,11 @@ term (tsize, Client{..}) shutdownSTM pierPath king enqueueEv =
 
     initialEvents = [(initialBlew hi wi), initialHail]
 
-    runTerm :: RAcquire e (EffCb e TermEf)
+    runTerm :: RAcquire e (EffCb TermEf)
     runTerm = do
       tim <- mkRAcquire start cancel
-      pure handleEffect
+      env <- ask
+      pure (runRIO env . handleEffect)
 
     start :: RIO e (Async ())
     start = async readBelt

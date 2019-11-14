@@ -104,8 +104,11 @@ clay pierPath king enqueueEv =
       -- specified directory and shove it into an %into event.
       ]
 
-    runSync :: RAcquire e (EffCb e SyncEf)
-    runSync = handleEffect <$> mkRAcquire start stop
+    runSync :: RAcquire e (EffCb SyncEf)
+    runSync = do
+      env <- ask
+      cal <- handleEffect <$> mkRAcquire start stop
+      pure (runRIO env . cal)
 
     start :: RIO e ClayDrv
     start = ClayDrv <$> newTVarIO mempty

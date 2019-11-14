@@ -74,11 +74,11 @@ data SerfState = SerfState
 ssLastEv :: SerfState -> EventId
 ssLastEv = pred . ssNextEv
 
-data Serf e = Serf
+data Serf = Serf
   { sendHandle :: Handle
   , recvHandle :: Handle
   , process    :: ProcessHandle
-  , sStderr    :: MVar (Text -> RIO e ())
+  , sStderr    :: MVar (Text -> IO ())
   }
 
 data ShipId = ShipId Ship Bool
@@ -123,9 +123,9 @@ deriveNoun ''Plea
 
 -- Utils -----------------------------------------------------------------------
 
-printTank :: HasLogFunc e => MVar (Text -> RIO e ()) -> Word32 -> Tank -> RIO e ()
-printTank log _pri tank =
-    ((printErr log) . unlines . fmap unTape . wash (WashCfg 0 80)) tank
+printTank :: HasLogFunc e => MVar (Text -> IO ()) -> Word32 -> Tank -> RIO e ()
+printTank log _pri =
+    printErr log . unlines . fmap unTape . wash (WashCfg 0 80)
 
 guardExn :: (Exception e, MonadIO m) => Bool -> e -> m ()
 guardExn ok = io . unless ok . throwIO
@@ -134,17 +134,17 @@ fromRightExn :: (Exception e, MonadIO m) => Either a b -> (a -> e) -> m b
 fromRightExn (Left m)  exn = throwIO (exn m)
 fromRightExn (Right x) _   = pure x
 
-printErr :: MVar (Text -> RIO e ()) -> Text -> RIO e ()
+printErr :: MVar (Text -> IO ()) -> Text -> RIO e ()
 printErr m txt = do
-  f <- readMVar m
-  f txt
+    f <- readMVar m
+    io (f txt)
 
 -- Process Management ----------------------------------------------------------
 
-run :: HasLogFunc e => Config -> RAcquire e (Serf e)
+run :: HasLogFunc e => Config -> RAcquire e Serf
 run config = mkRAcquire (startUp config) tearDown
 
-startUp :: HasLogFunc e => Config -> RIO e (Serf e)
+startUp :: HasLogFunc e => Config -> RIO e Serf
 startUp conf@(Config pierPath flags) = do
     logTrace "STARTING SERF"
     logTrace (displayShow conf)
@@ -153,7 +153,8 @@ startUp conf@(Config pierPath flags) = do
         (Just i, Just o, Just e, p) <- createProcess pSpec
         pure (i, o, e, p)
 
-    stderr <- newMVar serf
+    env <- ask
+    stderr <- newMVar (runRIO env . serf)
     async (readStdErr e stderr)
     pure (Serf i o p stderr)
   where
@@ -166,7 +167,7 @@ startUp conf@(Config pierPath flags) = do
                 , std_err = CreatePipe
                 }
 
-readStdErr :: ∀e. HasLogFunc e => Handle -> MVar (Text -> RIO e ()) -> RIO e ()
+readStdErr :: ∀e. HasLogFunc e => Handle -> MVar (Text -> IO ()) -> RIO e ()
 readStdErr h print =
     untilEOFExn $ do
         raw <- io $ IO.hGetLine h
@@ -188,7 +189,7 @@ readStdErr h print =
                 Left exn                     -> io (IO.ioError exn)
                 Right ()                     -> loop
 
-tearDown :: HasLogFunc e => Serf e -> RIO e ()
+tearDown :: HasLogFunc e => Serf -> RIO e ()
 tearDown serf = do
     io $ terminateProcess (process serf)
     void $ waitForExit serf
@@ -203,13 +204,13 @@ tearDown serf = do
         -- debug killedMsg
         -- terminateProcess (process serf)
 
-waitForExit :: HasLogFunc e => Serf e -> RIO e ExitCode
+waitForExit :: HasLogFunc e => Serf -> RIO e ExitCode
 waitForExit = io . waitForProcess . process
 
-kill :: HasLogFunc e => Serf e -> RIO e ExitCode
+kill :: HasLogFunc e => Serf -> RIO e ExitCode
 kill serf = io (terminateProcess $ process serf) >> waitForExit serf
 
-_shutdownAndWait :: HasLogFunc e => Serf e -> Word8 -> RIO e ExitCode
+_shutdownAndWait :: HasLogFunc e => Serf -> Word8 -> RIO e ExitCode
 _shutdownAndWait serf code = do
     shutdown serf code
     waitForExit serf
@@ -225,18 +226,18 @@ withWord64AsByteString w k = do
         bs <- BS.unsafePackCStringLen (castPtr wp, 8)
         runRIO env (k bs)
 
-sendLen :: HasLogFunc e => Serf e -> Int -> RIO e ()
+sendLen :: HasLogFunc e => Serf -> Int -> RIO e ()
 sendLen s i = do
   w <- evaluate (fromIntegral i :: Word64)
   withWord64AsByteString (fromIntegral i) (hPut (sendHandle s))
 
-sendOrder :: HasLogFunc e => Serf e -> Order -> RIO e ()
+sendOrder :: HasLogFunc e => Serf -> Order -> RIO e ()
 sendOrder w o = do
   logDebug $ display ("(sendOrder) " <> tshow o)
   sendBytes w $ jamBS $ toNoun o
   logDebug "(sendOrder) Done"
 
-sendBytes :: HasLogFunc e => Serf e -> ByteString -> RIO e ()
+sendBytes :: HasLogFunc e => Serf -> ByteString -> RIO e ()
 sendBytes s bs = handle ioErr $ do
     sendLen s (length bs)
     hFlush (sendHandle s)
@@ -255,18 +256,18 @@ sendBytes s bs = handle ioErr $ do
     -- TODO WHY DOES THIS MATTER?????
     hack = threadDelay 10000
 
-recvLen :: (MonadIO m, HasLogFunc e) => Serf e -> m Word64
+recvLen :: MonadIO m => Serf -> m Word64
 recvLen w = io $ do
   bs <- hGet (recvHandle w) 8
   case length bs of
     8 -> unsafeUseAsCString bs (peek . castPtr)
     _ -> throwIO SerfConnectionClosed
 
-recvBytes :: HasLogFunc e => Serf e -> Word64 -> RIO e ByteString
+recvBytes :: HasLogFunc e => Serf -> Word64 -> RIO e ByteString
 recvBytes serf =
   io . hGet (recvHandle serf) . fromIntegral
 
-recvAtom :: HasLogFunc e => Serf e -> RIO e Atom
+recvAtom :: HasLogFunc e => Serf -> RIO e Atom
 recvAtom w = do
     len <- recvLen w
     bs <- recvBytes w len
@@ -281,16 +282,16 @@ cordText = T.strip . unCord
 
 --------------------------------------------------------------------------------
 
-snapshot :: HasLogFunc e => Serf e -> SerfState -> RIO e ()
+snapshot :: HasLogFunc e => Serf -> SerfState -> RIO e ()
 snapshot serf ss = sendOrder serf $ OSave $ ssLastEv ss
 
-shutdown :: HasLogFunc e => Serf e -> Word8 -> RIO e ()
+shutdown :: HasLogFunc e => Serf -> Word8 -> RIO e ()
 shutdown serf code = sendOrder serf (OExit code)
 
 {-
     TODO Find a cleaner way to handle `PStdr` Pleas.
 -}
-recvPlea :: HasLogFunc e => Serf e -> RIO e Plea
+recvPlea :: HasLogFunc e => Serf -> RIO e Plea
 recvPlea w = do
   logDebug "(recvPlea) Waiting"
   a <- recvAtom w
@@ -308,7 +309,7 @@ recvPlea w = do
 {-
     Waits for initial plea, and then sends boot IPC if necessary.
 -}
-handshake :: HasLogFunc e => Serf e -> LogIdentity -> RIO e SerfState
+handshake :: HasLogFunc e => Serf -> LogIdentity -> RIO e SerfState
 handshake serf ident = do
     ss@SerfState{..} <- recvPlea serf >>= \case
       PPlay Nothing          -> pure $ SerfState 1 (Mug 0)
@@ -320,7 +321,7 @@ handshake serf ident = do
 
     pure ss
 
-sendWork :: ∀e. HasLogFunc e => Serf e -> Job -> RIO e SerfResp
+sendWork :: ∀e. HasLogFunc e => Serf -> Job -> RIO e SerfResp
 sendWork w job =
   do
     sendOrder w (OWork job)
@@ -351,19 +352,19 @@ sendWork w job =
 
 --------------------------------------------------------------------------------
 
-doJob :: HasLogFunc e => Serf e -> Job -> RIO e (Job, SerfState, FX)
+doJob :: HasLogFunc e => Serf -> Job -> RIO e (Job, SerfState, FX)
 doJob serf job = do
     sendWork serf job >>= \case
         Left replaced  -> doJob serf replaced
         Right (ss, fx) -> pure (job, ss, fx)
 
-bootJob :: HasLogFunc e => Serf e -> Job -> RIO e (Job, SerfState)
+bootJob :: HasLogFunc e => Serf -> Job -> RIO e (Job, SerfState)
 bootJob serf job = do
     doJob serf job >>= \case
         (job, ss, _) -> pure (job, ss)
 --        (job, ss, fx) -> throwIO (EffectsDuringBoot (jobId job) fx)
 
-replayJob :: HasLogFunc e => Serf e -> Job -> RIO e SerfState
+replayJob :: HasLogFunc e => Serf -> Job -> RIO e SerfState
 replayJob serf job = do
     sendWork serf job >>= \case
         Left replace  -> throwIO (ReplacedEventDuringReplay (jobId job) replace)
@@ -394,7 +395,7 @@ data BootExn = ShipAlreadyBooted
   deriving stock    (Eq, Ord, Show)
   deriving anyclass (Exception)
 
-bootFromSeq :: ∀e. HasLogFunc e => Serf e -> BootSeq -> RIO e ([Job], SerfState)
+bootFromSeq :: ∀e. HasLogFunc e => Serf -> BootSeq -> RIO e ([Job], SerfState)
 bootFromSeq serf (BootSeq ident nocks ovums) = do
     handshake serf ident >>= \case
         ss@(SerfState 1 (Mug 0)) -> loop [] ss Nothing bootSeqFns
@@ -430,7 +431,7 @@ bootFromSeq serf (BootSeq ident nocks ovums) = do
     until it is caught up.
 -}
 replayJobs :: HasLogFunc e
-           => Serf e -> Int -> SerfState -> ConduitT Job Void (RIO e) SerfState
+           => Serf -> Int -> SerfState -> ConduitT Job Void (RIO e) SerfState
 replayJobs serf lastEv = go Nothing
   where
     go pb ss = do
@@ -448,7 +449,7 @@ replayJobs serf lastEv = go Nothing
       updateProgressBar start msg
 
 
-replay :: HasLogFunc e => Serf e -> Log.EventLog -> RIO e SerfState
+replay :: HasLogFunc e => Serf -> Log.EventLog -> RIO e SerfState
 replay serf log = do
     ss <- handshake serf (Log.identity log)
 
@@ -481,7 +482,7 @@ toJobs ident eId =
 
 -- Collect Effects for Parsing -------------------------------------------------
 
-collectFX :: HasLogFunc e => Serf e -> Log.EventLog -> RIO e ()
+collectFX :: HasLogFunc e => Serf -> Log.EventLog -> RIO e ()
 collectFX serf log = do
     ss <- handshake serf (Log.identity log)
 
@@ -500,7 +501,7 @@ persistFX log = loop
             loop
 
 doCollectFX :: ∀e. HasLogFunc e
-            => Serf e -> SerfState -> ConduitT Job (EventId, FX) (RIO e) ()
+            => Serf -> SerfState -> ConduitT Job (EventId, FX) (RIO e) ()
 doCollectFX serf = go
   where
     go :: SerfState -> ConduitT Job (EventId, FX) (RIO e) ()

@@ -81,11 +81,11 @@ deriveToNoun ''Order
 
 type QueueEv = Ev -> STM ()
 
-type EffCb e a = a -> RIO e ()
+type EffCb a = a -> IO ()
 
 type Perform = Ef -> IO ()
 
-data IODrv e ef = IODrv [Ev] (RAcquire e (EffCb e ef))
+data IODrv e ef = IODrv [Ev] (RAcquire e (EffCb ef))
 
 
 -- Instances -------------------------------------------------------------------

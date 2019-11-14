@@ -20,14 +20,14 @@ import Control.Lens hiding (Index, cons, index, snoc, uncons, unsnoc, (<.>),
                      (<|))
 
 import Control.Arrow    ((<<<), (>>>))
-import Data.RAcquire    (RAcquire, mkRAcquire, rwith)
+import Data.RAcquire    (RAcquire, mkRAcquire, rwith, withRIO, withRAcquire)
 import Data.RAcquire    (MonadRIO(..), MonadAcquire(..))
 import Data.Acquire     (Acquire, mkAcquire, with)
 import Data.Void        (Void, absurd)
 import Text.Printf      (printf)
 import Text.Show.Pretty (pPrint, ppShow)
 
-import RIO (RIO, runRIO)
+import RIO (RIO(RIO, unRIO), runRIO)
 import RIO (Utf8Builder, display, displayShow)
 import RIO (threadDelay)
 

@@ -19,7 +19,7 @@ import Vere.Pier.Types
 import Control.Concurrent (runInBoundThread)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
-import KingApp            (runApp)
+import KingApp            (runAppNoConfig)
 import Network.Socket     (tupleToHostAddress)
 
 import qualified Urbit.Time as Time
@@ -180,7 +180,7 @@ gapTicks = microSecs . μsTicks
     Nasty hack, but it works for now.
 -}
 realBehn :: Prog -> IO ProgRes
-realBehn (Prog cmds) = runApp $ runRAcquire $ do
+realBehn (Prog cmds) = runAppNoConfig $ runRAcquire $ do
 
     (res, fir, wat, kil) <- atomically $
         (,,,) <$> newTVar []
@@ -242,7 +242,7 @@ realBehn (Prog cmds) = runApp $ runRAcquire $ do
                                          , wait          $> go cs
                                          ]
 
-    res <- rio $ go cmds
+    res <- io (go cmds)
 
     cancel fireThread
     cancel killThread

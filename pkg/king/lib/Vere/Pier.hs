@@ -11,6 +11,7 @@ import System.Random
 import Vere.Pier.Types
 
 import Data.Text            (append)
+import KingApp              (HasAmesPort, HasShip)
 import System.Posix.Files   (ownerModes, setFileMode)
 import Vere.Drv.Ames        (ames)
 import Vere.Drv.Behn        (behn)
@@ -86,7 +87,7 @@ writeJobs log !jobs = do
 
 booted :: HasLogFunc e
        => Pill -> FilePath -> Bool -> Serf.Flags -> Ship -> LegacyBootEvent
-       -> RAcquire e (Serf e, EventLog, SerfState)
+       -> RAcquire e (Serf, EventLog, SerfState)
 booted pill pierPath lite flags ship boot = do
   seq@(BootSeq ident x y) <- rio $ generateBootSeq ship pill lite boot
 
@@ -118,7 +119,7 @@ booted pill pierPath lite flags ship boot = do
 
 resumed :: HasLogFunc e
         => FilePath -> Serf.Flags
-        -> RAcquire e (Serf e, EventLog, SerfState)
+        -> RAcquire e (Serf, EventLog, SerfState)
 resumed top flags = do
     log    <- Log.existing (top <> "/.urb/log")
     serf   <- Serf.run (Serf.Config top flags)
@@ -134,12 +135,11 @@ resumed top flags = do
 acquireWorker :: RIO e () -> RAcquire e (Async ())
 acquireWorker act = mkRAcquire (async act) cancel
 
-pier :: ∀e. HasLogFunc e
+pier :: ∀e. (HasLogFunc e, HasAmesPort e, HasShip e)
      => FilePath
-     -> Maybe Port
-     -> (Serf e, EventLog, SerfState)
+     -> (Serf, EventLog, SerfState)
      -> RAcquire e ()
-pier pierPath mPort (serf, log, ss) = do
+pier pierPath (serf, log, ss) = do
     computeQ  <- newTQueueIO
     persistQ  <- newTQueueIO
     executeQ  <- newTQueueIO
@@ -178,7 +178,7 @@ pier pierPath mPort (serf, log, ss) = do
     swapMVar (sStderr serf) (atomically . Term.trace muxed)
 
     let logId = Log.identity log
-    let ship = who logId
+    let _ship = who logId
 
     -- Our call above to set the logging function which echos errors from the
     -- Serf doesn't have the appended \r\n because those \r\n s are added in
@@ -186,11 +186,13 @@ pier pierPath mPort (serf, log, ss) = do
     -- add them.
     let showErr = atomically . Term.trace muxed . (flip append "\r\n")
     let (bootEvents, startDrivers) =
-            drivers pierPath inst ship (isFake logId) mPort
-                (writeTQueue computeQ)
-                shutdownEvent
-                (sz, muxed)
-                showErr
+            drivers pierPath
+                    inst
+                    (isFake logId)
+                    (writeTQueue computeQ)
+                    shutdownEvent
+                    (sz, muxed)
+                    showErr
 
     io $ atomically $ for_ bootEvents (writeTQueue computeQ)
 
@@ -235,27 +237,27 @@ saveSignalThread tm = mkRAcquire start cancel
 
 -- Start All Drivers -----------------------------------------------------------
 
-data Drivers e = Drivers
-    { dAmes       :: EffCb e AmesEf
-    , dBehn       :: EffCb e BehnEf
-    , dHttpClient :: EffCb e HttpClientEf
-    , dHttpServer :: EffCb e HttpServerEf
-    , dNewt       :: EffCb e NewtEf
-    , dSync       :: EffCb e SyncEf
-    , dTerm       :: EffCb e TermEf
+data Drivers = Drivers
+    { dAmes       :: EffCb AmesEf
+    , dBehn       :: EffCb BehnEf
+    , dHttpClient :: EffCb HttpClientEf
+    , dHttpServer :: EffCb HttpServerEf
+    , dNewt       :: EffCb NewtEf
+    , dSync       :: EffCb SyncEf
+    , dTerm       :: EffCb TermEf
     }
 
-drivers :: HasLogFunc e
-        => FilePath -> KingId -> Ship -> Bool -> Maybe Port -> (Ev -> STM ())
+drivers :: (HasLogFunc e, HasAmesPort e, HasShip e)
+        => FilePath -> KingId -> Bool -> (Ev -> STM ())
         -> STM()
         -> (TSize.Window Word, Term.Client)
         -> (Text -> RIO e ())
-        -> ([Ev], RAcquire e (Drivers e))
-drivers pierPath inst who isFake mPort plan shutdownSTM termSys stderr =
+        -> ([Ev], RAcquire e Drivers)
+drivers pierPath inst isFake plan shutdownSTM termSys stderr =
     (initialEvents, runDrivers)
   where
     IODrv behnBorn runBehn = behn inst plan
-    IODrv amesBorn runAmes = ames inst who isFake mPort plan stderr
+    IODrv amesBorn runAmes = ames inst isFake plan stderr
     IODrv httpBorn runHttp = serv pierPath inst plan
     IODrv clayBorn runClay = clay pierPath inst plan
     IODrv irisBorn runIris = client inst plan
@@ -278,7 +280,7 @@ drivers pierPath inst who isFake mPort plan shutdownSTM termSys stderr =
 
 -- Route Effects to Drivers ----------------------------------------------------
 
-router :: HasLogFunc e => STM FX -> Drivers e -> RAcquire e (Async ())
+router :: HasLogFunc e => STM FX -> Drivers -> RAcquire e (Async ())
 router waitFx Drivers{..} =
     mkRAcquire start cancel
   where
@@ -289,15 +291,15 @@ router waitFx Drivers{..} =
             case ef of
               GoodParse (EfVega _ _)               -> error "TODO"
               GoodParse (EfExit _ _)               -> error "TODO"
-              GoodParse (EfVane (VEAmes ef))       -> dAmes ef
-              GoodParse (EfVane (VEBehn ef))       -> dBehn ef
-              GoodParse (EfVane (VEBoat ef))       -> dSync ef
-              GoodParse (EfVane (VEClay ef))       -> dSync ef
-              GoodParse (EfVane (VEHttpClient ef)) -> dHttpClient ef
-              GoodParse (EfVane (VEHttpServer ef)) -> dHttpServer ef
-              GoodParse (EfVane (VENewt ef))       -> dNewt ef
-              GoodParse (EfVane (VESync ef))       -> dSync ef
-              GoodParse (EfVane (VETerm ef))       -> dTerm ef
+              GoodParse (EfVane (VEAmes ef))       -> io (dAmes ef)
+              GoodParse (EfVane (VEBehn ef))       -> io (dBehn ef)
+              GoodParse (EfVane (VEBoat ef))       -> io (dSync ef)
+              GoodParse (EfVane (VEClay ef))       -> io (dSync ef)
+              GoodParse (EfVane (VEHttpClient ef)) -> io (dHttpClient ef)
+              GoodParse (EfVane (VEHttpServer ef)) -> io (dHttpServer ef)
+              GoodParse (EfVane (VENewt ef))       -> io (dNewt ef)
+              GoodParse (EfVane (VESync ef))       -> io (dSync ef)
+              GoodParse (EfVane (VETerm ef))       -> io (dTerm ef)
               FailParse n                          -> logError
                                                     $ display
                                                     $ pack @Text (ppShow n)
@@ -328,7 +330,7 @@ logEffect ef =
        FailParse n -> pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow n
 
 runCompute :: ∀e. HasLogFunc e
-           => Serf e
+           => Serf
            -> SerfState
            -> STM Ev
            -> STM ()

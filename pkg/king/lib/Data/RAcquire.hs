@@ -3,6 +3,8 @@ module Data.RAcquire where
     ( RAcquire (..)
     , Allocated (..)
     , with
+    , withRIO
+    , withRAcquire
     , mkRAcquire
     , ReleaseType (..)
     , mkRAcquireType
@@ -21,7 +23,7 @@ import Control.Monad.IO.Unlift (MonadIO(..), MonadUnliftIO, withRunInIO)
 import Data.Typeable           (Typeable)
 import Control.Monad.Reader
 
-import RIO (RIO, runRIO)
+import RIO (RIO(..), runRIO)
 
 --------------------------------------------------------------------------------
 
@@ -117,10 +119,37 @@ mkRAcquireType
     -> RAcquire e a
 mkRAcquireType create free = RAcquire $ \restore -> do
     x <- restore create
-    return $! Allocated x (free x)
+    pure $! Allocated x (free x)
 
 transRIO :: e -> (IO a -> IO a) -> RIO e a -> RIO e a
 transRIO env trans act = liftIO $ trans $ runRIO env act
+
+withRIO :: (e -> e') -> RIO e' a -> RIO e a
+withRIO f = RIO . withReaderT f . unRIO
+
+{-
+    This is difficult to follow.
+
+    - It's pretty simple to run the next action in the new environment:
+      - Just use `runRIO`.
+    - However, the `restore` function takes a continuation action.
+      - We need to convert that as well.
+      - We don't have a function from (e' -> e).
+      - But we do have access to the old environment.
+      - So, we can implement `(RIO e a -> RIO e' a)`:
+        - `liftIO . runRIO env`
+-}
+withRAcquire :: ∀e e' a. (e -> e') -> RAcquire e' a -> RAcquire e a
+withRAcquire t (RAcquire f) =
+    RAcquire $ \restore -> do
+        env <- ask
+
+        let wut :: ∀b. (RIO e b -> RIO e b) -> (RIO e' b -> RIO e' b)
+            wut nt = liftIO . runRIO env . nt . liftIO . runRIO (t env)
+
+        Allocated rt clean <- withRIO t (f (wut restore))
+
+        pure $! Allocated rt (withRIO t . clean)
 
 rwith :: (MonadUnliftIO (m e), MonadReader e (m e))
       => RAcquire e a

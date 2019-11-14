@@ -58,8 +58,11 @@ client :: ∀e. HasLogFunc e => KingId -> QueueEv -> IODrv e HttpClientEf
 client kingId enqueueEv =
     IODrv [bornEv kingId] runHttpClient
   where
-    runHttpClient :: RAcquire e (EffCb e HttpClientEf)
-    runHttpClient = handleEffect <$> mkRAcquire start stop
+    runHttpClient :: RAcquire e (EffCb HttpClientEf)
+    runHttpClient = do
+        ev <- ask
+        cb <- handleEffect <$> mkRAcquire start stop
+        pure (runRIO ev . cb)
 
     start :: RIO e (HttpClientDrv)
     start = HttpClientDrv <$>

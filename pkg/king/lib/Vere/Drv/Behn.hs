@@ -35,11 +35,12 @@ behn king enqueueEv =
   where
     initialEvents = [bornEv king]
 
-    runBehn :: RAcquire e (EffCb e BehnEf)
+    runBehn :: RAcquire e (EffCb BehnEf)
     runBehn = do
         rio $ logTrace "Behn Starting"
         tim <- liftAcquire (mkAcquire Timer.init Timer.stop)
-        pure (handleEf tim)
+        env <- ask
+        pure (runRIO env . handleEf tim)
 
     handleEf :: Timer -> BehnEf -> RIO e ()
     handleEf b = \case

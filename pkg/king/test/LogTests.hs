@@ -14,7 +14,7 @@ import Data.Conduit.List hiding (filter)
 import Control.Concurrent (runInBoundThread, threadDelay)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
-import KingApp            (runApp, App)
+import KingApp            (runAppNoConfig, App)
 
 import qualified Vere.Log as Log
 
@@ -59,7 +59,7 @@ withDb dir (Db dId dEvs dFx) act = do
 --------------------------------------------------------------------------------
 
 tryReadIdentity :: Property
-tryReadIdentity = forAll arbitrary (ioProperty . runApp . runTest)
+tryReadIdentity = forAll arbitrary (ioProperty . runAppNoConfig . runTest)
   where
     runTest :: LogIdentity -> RIO App Bool
     runTest ident = do
@@ -75,7 +75,7 @@ tryReadIdentity = forAll arbitrary (ioProperty . runApp . runTest)
         pure True
 
 tryReadDatabase :: Property
-tryReadDatabase = forAll arbitrary (ioProperty . runApp . runTest)
+tryReadDatabase = forAll arbitrary (ioProperty . runAppNoConfig . runTest)
   where
     runTest :: Db -> RIO App Bool
     runTest db = do
@@ -87,7 +87,7 @@ tryReadDatabase = forAll arbitrary (ioProperty . runApp . runTest)
         pure True
 
 tryReadDatabaseFuzz :: Property
-tryReadDatabaseFuzz = forAll arbitrary (ioProperty . runApp . runTest)
+tryReadDatabaseFuzz = forAll arbitrary (ioProperty . runAppNoConfig . runTest)
   where
     runTest :: Db -> RIO App Bool
     runTest db = do
@@ -104,7 +104,7 @@ tryReadDatabaseFuzz = forAll arbitrary (ioProperty . runApp . runTest)
         pure True
 
 tryAppend :: Property
-tryAppend = forAll arbitrary (ioProperty . runApp . runTest)
+tryAppend = forAll arbitrary (ioProperty . runAppNoConfig . runTest)
   where
     runTest :: ([ByteString], Db) -> RIO App Bool
     runTest (extra, db) = do
@@ -121,7 +121,7 @@ tryAppend = forAll arbitrary (ioProperty . runApp . runTest)
         pure True
 
 tryAppendHuge :: Property
-tryAppendHuge = forAll arbitrary (ioProperty . runApp . runTest)
+tryAppendHuge = forAll arbitrary (ioProperty . runAppNoConfig . runTest)
   where
     runTest :: ([ByteString], Db) -> RIO App Bool
     runTest (extra, db) = do

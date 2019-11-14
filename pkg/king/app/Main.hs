@@ -102,7 +102,7 @@ import Control.Concurrent   (myThreadId, runInBoundThread)
 import Control.Exception    (AsyncException(UserInterrupt))
 import Control.Lens         ((&))
 import Data.Default         (def)
-import KingApp              (runApp)
+import KingApp              (App, runAppNoConfig, inPierEnvRAcquire)
 import System.Environment   (getProgName)
 import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
 import System.Random        (randomIO)
@@ -130,7 +130,7 @@ zod = 0
 
 --------------------------------------------------------------------------------
 
-removeFileIfExists :: HasLogFunc env => FilePath -> RIO env ()
+removeFileIfExists :: FilePath -> RIO e ()
 removeFileIfExists pax = do
   exists <- doesFileExist pax
   when exists $ do
@@ -153,10 +153,9 @@ toSerfFlags CLI.Opts{..} = catMaybes m
     from False _   = Nothing
 
 
-tryBootFromPill :: HasLogFunc e
-                => Pill -> FilePath -> Bool -> Serf.Flags -> Ship
+tryBootFromPill :: Pill -> FilePath -> Bool -> Serf.Flags -> Ship
                 -> LegacyBootEvent
-                -> RIO e ()
+                -> RIO App ()
 tryBootFromPill pill shipPath lite flags ship boot = do
     rwith bootedPier $ \(serf, log, ss) -> do
         logTrace "Booting"
@@ -178,29 +177,35 @@ runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
             => RAcquire e a -> m e a
 runRAcquire act = rwith act pure
 
-tryPlayShip :: HasLogFunc e => FilePath -> Serf.Flags -> RIO e ()
+tryPlayShip :: FilePath -> Serf.Flags -> RIO App ()
 tryPlayShip shipPath flags = do
     runRAcquire $ do
         lockFile shipPath
+
         rio $ logTrace "RESUMING SHIP"
+
         sls <- Pier.resumed shipPath flags
+
         rio $ logTrace "SHIP RESUMED"
-        Pier.pier shipPath Nothing sls
 
-tryResume :: HasLogFunc e => FilePath -> Serf.Flags -> RIO e ()
+        let logId = Log.identity (sls ^. _2)
+        let ship  = who logId
+
+        inPierEnvRAcquire ship (Pier.pier shipPath sls)
+
+tryResume :: FilePath -> Serf.Flags -> RIO App ()
 tryResume shipPath flags = do
-    rwith resumedPier $ \(serf, log, ss) -> do
-        logTrace (displayShow ss)
-        threadDelay 500000
-        ss <- shutdown serf 0
-        logTrace (displayShow ss)
-        logTrace "Resumed!"
-  where
-    resumedPier = do
+    runRAcquire $ do
         lockFile shipPath
-        Pier.resumed shipPath flags
+        (serf, log, ss) <- Pier.resumed shipPath flags
+        rio $ do
+            logTrace (displayShow ss)
+            threadDelay 500000
+            ss <- shutdown serf 0
+            logTrace (displayShow ss)
+            logTrace "Resumed!"
 
-tryFullReplay :: HasLogFunc e => FilePath -> Serf.Flags -> RIO e ()
+tryFullReplay :: FilePath -> Serf.Flags -> RIO App ()
 tryFullReplay shipPath flags = do
     wipeSnapshot
     tryResume shipPath flags
@@ -218,7 +223,7 @@ tryFullReplay shipPath flags = do
 
 --------------------------------------------------------------------------------
 
-checkEvs :: forall e. HasLogFunc e => FilePath -> Word64 -> Word64 -> RIO e ()
+checkEvs :: FilePath -> Word64 -> Word64 -> RIO App ()
 checkEvs pierPath first last = do
     rwith (Log.existing logPath) $ \log -> do
         let ident = Log.identity log
@@ -229,7 +234,7 @@ checkEvs pierPath first last = do
     logPath :: FilePath
     logPath = pierPath <> "/.urb/log"
 
-    showEvents :: EventId -> EventId -> ConduitT ByteString Void (RIO e) ()
+    showEvents :: EventId -> EventId -> ConduitT ByteString Void (RIO App) ()
     showEvents eId _ | eId > last = pure ()
     showEvents eId cycle          =
         await >>= \case
@@ -243,7 +248,7 @@ checkEvs pierPath first last = do
                             either (logError . displayShow) pure
                 showEvents (succ eId) cycle
 
-    unpackJob :: Noun -> RIO e (Mug, Wen, Noun)
+    unpackJob :: Noun -> RIO App (Mug, Wen, Noun)
     unpackJob = io . fromNounExn
 
 --------------------------------------------------------------------------------
@@ -253,7 +258,7 @@ checkEvs pierPath first last = do
     so this should never actually be created. We just do this to avoid
     letting the serf use an existing snapshot.
 -}
-collectAllFx :: ∀e. HasLogFunc e => FilePath -> RIO e ()
+collectAllFx :: FilePath -> RIO App ()
 collectAllFx top = do
     logTrace $ display $ pack @Text top
     rwith collectedFX $ \() ->
@@ -262,7 +267,7 @@ collectAllFx top = do
     tmpDir :: FilePath
     tmpDir = top <> "/.tmpdir"
 
-    collectedFX :: RAcquire e ()
+    collectedFX :: RAcquire App ()
     collectedFX = do
         lockFile top
         log  <- Log.existing (top <> "/.urb/log")
@@ -277,7 +282,7 @@ collectAllFx top = do
 {-
     Interesting
 -}
-testPill :: HasLogFunc e => FilePath -> Bool -> Bool -> RIO e ()
+testPill :: FilePath -> Bool -> Bool -> RIO App ()
 testPill pax showPil showSeq = do
   putStrLn "Reading pill file."
   pillBytes <- readFile pax
@@ -307,8 +312,8 @@ testPill pax showPil showSeq = do
       putStrLn "\n\n== Boot Sequence ==\n"
       io $ pPrint bootSeq
 
-validateNounVal :: (HasLogFunc e, Eq a, ToNoun a, FromNoun a)
-                => a -> RIO e ByteString
+validateNounVal :: (Eq a, ToNoun a, FromNoun a)
+                => a -> RIO App ByteString
 validateNounVal inpVal = do
     putStrLn "  jam"
     inpByt <- evaluate $ jamBS $ toNoun inpVal
@@ -337,7 +342,7 @@ validateNounVal inpVal = do
 
 --------------------------------------------------------------------------------
 
-pillFrom :: CLI.PillSource -> RIO e Pill
+pillFrom :: CLI.PillSource -> RIO App Pill
 
 pillFrom (CLI.PillSourceFile pillPath) = do
   putStrLn $ "boot: reading pill from " ++ pack pillPath
@@ -354,7 +359,7 @@ pillFrom (CLI.PillSourceURL url) = do
   noun <- cueBS body & either throwIO pure
   fromNounErr noun & either (throwIO . uncurry ParseErr) pure
 
-newShip :: forall e. HasLogFunc e => CLI.New -> CLI.Opts -> RIO e ()
+newShip :: CLI.New -> CLI.Opts -> RIO App ()
 newShip CLI.New{..} opts
   | CLI.BootComet <- nBootType = do
       pill <- pillFrom nPillSource
@@ -389,7 +394,7 @@ newShip CLI.New{..} opts
       bootFromSeed pill seed
 
   where
-    shipFrom :: Text -> RIO e Ship
+    shipFrom :: Text -> RIO App Ship
     shipFrom name = case Ob.parsePatp name of
       Left x  -> error "Invalid ship name"
       Right p -> pure $ Ship $ fromIntegral $ Ob.fromPatp p
@@ -399,7 +404,7 @@ newShip CLI.New{..} opts
       Just x  -> x
       Nothing -> "./" <> unpack name
 
-    nameFromShip :: Ship -> RIO e Text
+    nameFromShip :: Ship -> RIO App Text
     nameFromShip s = name
       where
         nameWithSig = Ob.renderPatp $ Ob.patp $ fromIntegral s
@@ -407,7 +412,7 @@ newShip CLI.New{..} opts
           Nothing -> error "Urbit.ob didn't produce string with ~"
           Just x  -> pure x
 
-    bootFromSeed :: Pill -> Seed -> RIO e ()
+    bootFromSeed :: Pill -> Seed -> RIO App ()
     bootFromSeed pill seed = do
       ethReturn <- dawnVent seed
 
@@ -422,17 +427,17 @@ newShip CLI.New{..} opts
 
 
 
-runShip :: HasLogFunc e => CLI.Run -> CLI.Opts -> RIO e ()
+runShip :: CLI.Run -> CLI.Opts -> RIO App ()
 runShip (CLI.Run pierPath) opts = tryPlayShip pierPath (toSerfFlags opts)
 
 
-startBrowser :: HasLogFunc e => FilePath -> RIO e ()
+startBrowser :: FilePath -> RIO App ()
 startBrowser pierPath = runRAcquire $ do
     lockFile pierPath
     log <- Log.existing (pierPath <> "/.urb/log")
     rio $ EventBrowser.run log
 
-checkDawn :: HasLogFunc e => FilePath -> RIO e ()
+checkDawn :: FilePath -> RIO App ()
 checkDawn keyfilePath = do
   -- The keyfile is a jammed Seed then rendered in UW format
   text <- readFileUtf8 keyfilePath
@@ -451,7 +456,7 @@ checkDawn keyfilePath = do
   print $ show e
 
 
-checkComet :: HasLogFunc e => RIO e ()
+checkComet :: RIO App ()
 checkComet = do
   starList <- dawnCometList
   putStrLn "Stars currently accepting comets:"
@@ -470,7 +475,7 @@ main = do
 
     installHandler sigTERM (Catch onTermSig) Nothing
 
-    CLI.parseArgs >>= runApp . \case
+    CLI.parseArgs >>= runAppNoConfig . \case
         CLI.CmdRun r o                            -> runShip r o
         CLI.CmdNew n o                            -> newShip n o
         CLI.CmdBug (CLI.CollectAllFX pax)         -> collectAllFx pax
@@ -485,14 +490,13 @@ main = do
 
 --------------------------------------------------------------------------------
 
-connTerm :: ∀e. HasLogFunc e => Word16 -> RIO e ()
+connTerm :: Word16 -> RIO App ()
 connTerm port =
     Term.runTerminalClient (fromIntegral port)
 
 --------------------------------------------------------------------------------
 
-checkFx :: HasLogFunc e
-        => FilePath -> Word64 -> Word64 -> RIO e ()
+checkFx :: FilePath -> Word64 -> Word64 -> RIO App ()
 checkFx pierPath first last =
     rwith (Log.existing logPath) $ \log ->
         runConduit $ streamFX log first last
@@ -500,9 +504,8 @@ checkFx pierPath first last =
   where
     logPath = pierPath <> "/.urb/log"
 
-streamFX :: HasLogFunc e
-         => Log.EventLog -> Word64 -> Word64
-         -> ConduitT () ByteString (RIO e) ()
+streamFX :: Log.EventLog -> Word64 -> Word64
+         -> ConduitT () ByteString (RIO App) ()
 streamFX log first last = do
     Log.streamEffectsRows log first .| loop
   where
@@ -510,7 +513,7 @@ streamFX log first last = do
                            Just (eId, bs) | eId > last -> pure ()
                            Just (eId, bs)              -> yield bs >> loop
 
-tryParseFXStream :: HasLogFunc e => ConduitT ByteString Void (RIO e) ()
+tryParseFXStream :: ConduitT ByteString Void (RIO App) ()
 tryParseFXStream = loop
   where
     loop = await >>= \case

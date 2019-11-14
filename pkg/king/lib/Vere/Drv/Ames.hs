@@ -7,6 +7,8 @@ import Network.Socket            hiding (recvFrom, sendTo)
 import Network.Socket.ByteString
 import Vere.Pier.Types
 
+import KingApp (HasAmesPort(..), HasShip(..))
+
 import qualified Data.ByteString as BS
 import qualified Data.Map        as M
 import qualified Urbit.Ob        as Ob
@@ -79,7 +81,6 @@ renderGalaxy = Ob.renderPatp . Ob.patp . fromIntegral . unGalaxy
     inst      -- Process instance number.
     who       -- Which ship are we?
     enqueueEv -- Queue-event action.
-    mPort     -- Explicit port override from command line arguments.
 
     TODO Handle socket exceptions in waitPacket
 
@@ -88,20 +89,21 @@ renderGalaxy = Ob.renderPatp . Ob.patp . fromIntegral . unGalaxy
 
     TODO verify that the KingIds match on effects.
 -}
-ames :: forall e. HasLogFunc e
-     => KingId -> Ship -> Bool -> Maybe Port -> QueueEv
+ames :: forall e. (HasLogFunc e, HasAmesPort e, HasShip e)
+     => KingId -> Bool -> QueueEv
      -> (Text -> RIO e ())
      -> IODrv e NewtEf
-ames inst who isFake mPort enqueueEv stderr =
+ames inst isFake enqueueEv stderr =
     IODrv initialEvents runAmes
   where
     initialEvents :: [Ev]
     initialEvents = [barnEv inst]
 
-    runAmes :: RAcquire e (EffCb e NewtEf)
+    runAmes :: RAcquire e (EffCb NewtEf)
     runAmes = do
+        env <- ask
         drv <- mkRAcquire start stop
-        pure (handleEffect drv)
+        pure (runRIO env . handleEffect drv)
 
     start :: RIO e AmesDrv
     start = do
@@ -133,6 +135,8 @@ ames inst who isFake mPort enqueueEv stderr =
 
     bindSock :: RIO e Socket
     bindSock = do
+        mPort <- view amesPortL
+        who   <- view shipL
         let ourPort = maybe (listenPort netMode who) fromIntegral mPort
         s  <- io $ socket AF_INET Datagram defaultProtocol
 
