@@ -31,7 +31,7 @@
       ==
     ::
     ++  sec
-      ^-  $-(^json chat-security)
+      ^-  $-(^json rw-security)
       (su (perk %channel %village %journal %mailbox ~))
     ::
     --

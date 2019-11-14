@@ -419,7 +419,7 @@
   [ost.bol %poke / [our.bol %invite-store] [%invite-action act]]
 ::
 ++  create-permission
-  |=  [pax=path sec=chat-security]
+  |=  [pax=path sec=rw-security]
   ^-  (list move)
   =/  read-perm   (weld pax /read)
   =/  write-perm  (weld pax /write)

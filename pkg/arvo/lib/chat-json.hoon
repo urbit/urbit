@@ -256,7 +256,7 @@
   ::
   ++  sec
     =,  dejs:format
-    ^-  $-(json chat-security)
+    ^-  $-(json rw-security)
     (su (perk %channel %village %journal %mailbox ~))
   --
 --

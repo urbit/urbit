@@ -279,7 +279,7 @@
   .^(chat-configs %gx /=chat-store/(scot %da now.bol)/configs/noun)
 ::
 ++  create-security
-  |=  [pax=path sec=chat-security]
+  |=  [pax=path sec=rw-security]
   ^-  (list move)
   =/  read   (weld pax /read)
   =/  write  (weld pax /write)

@@ -41,7 +41,7 @@
     ::
       ::
       ::  create chat
-      [%create chat-security path (unit glyph) (unit ?)]
+      [%create rw-security path (unit glyph) (unit ?)]
       [%delete path]                                ::  delete chat
       [%invite ?(%r %w %rw) path (set ship)]        ::  allow
       [%banish ?(%r %w %rw) path (set ship)]        ::  disallow
@@ -611,7 +611,7 @@
     ::  +create: new local mailbox
     ::
     ++  create
-      |=  [security=chat-security =path gyf=(unit char) allow-history=(unit ?)]
+      |=  [security=rw-security =path gyf=(unit char) allow-history=(unit ?)]
       ^-  (quip move _this)
       ::TODO  check if already exists
       =/  =target  [our-self path]
