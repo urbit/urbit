@@ -92,22 +92,24 @@ _spin_idle_us = 500000
 
 runMaybeTermOutput :: T.Terminal -> (T.Terminal -> Maybe T.TermOutput) -> RIO e ()
 runMaybeTermOutput t getter = case (getter t) of
-  Nothing -> pure ()
-  Just x  -> io $ T.runTermOutput t x
+    Nothing -> pure ()
+    Just x  -> io $ T.runTermOutput t x
 
 rioAllocaBytes :: (MonadIO m, MonadUnliftIO m)
                => Int -> (Ptr a -> m b) -> m b
 rioAllocaBytes size action =
-  withRunInIO $ \run ->
-    allocaBytes size $ \x -> run (action x)
+    withRunInIO $ \run ->
+        allocaBytes size $ \x -> run (action x)
 
--- Because of legacy reasons, some file operations are in the terminal
--- driver. These should be filtered out and handled locally instead of in any
--- abstractly connected terminal.
+{-
+    Because of legacy reasons, some file operations are in the terminal
+    driver. These should be filtered out and handled locally instead of
+    in any abstractly connected terminal.
+-}
 isTerminalBlit :: Blit -> Bool
-isTerminalBlit (Sav _ _) = False
-isTerminalBlit (Sag _ _) = False
-isTerminalBlit _         = True
+isTerminalBlit = \case Sav _ _ -> False
+                       Sag _ _ -> False
+                       _       -> True
 
 --------------------------------------------------------------------------------
 
@@ -173,50 +175,53 @@ localClient = fst <$> mkRAcquire start stop
   where
     start :: HasLogFunc e => RIO e ((TSize.Window Word, Client), Private)
     start = do
-      pTerminal     <- io $ T.setupTermFromEnv
-      tsWriteQueue  <- newTQueueIO
-      spinnerMVar   <- newEmptyTMVarIO
-      pWriterThread <-
-          asyncBound (writeTerminal pTerminal tsWriteQueue spinnerMVar)
+        pTerminal     <- io $ T.setupTermFromEnv
+        tsWriteQueue  <- newTQueueIO
+        spinnerMVar   <- newEmptyTMVarIO
+        pWriterThread <-
+            asyncBound (writeTerminal pTerminal tsWriteQueue spinnerMVar)
 
-      pPreviousConfiguration <- io $ getTerminalAttributes stdInput
+        pPreviousConfiguration <- io $ getTerminalAttributes stdInput
 
-      -- Create a new configuration where we put the terminal in raw mode and
-      -- disable a bunch of preprocessing.
-      let newTermSettings = flip withTime     0
-                          $ flip withMinInput 1
-                          $ foldl' withoutMode pPreviousConfiguration
-                          $ disabledFlags
+        -- Create a new configuration where we put the terminal in raw mode and
+        -- disable a bunch of preprocessing.
+        let newTermSettings = flip withTime 0
+                            $ flip withMinInput 1
+                            $ foldl' withoutMode pPreviousConfiguration
+                            $ disabledFlags
 
-      io $ setTerminalAttributes stdInput newTermSettings Immediately
+        io $ setTerminalAttributes stdInput newTermSettings Immediately
 
-      tsReadQueue <- newTQueueIO
-      pReaderThread <- asyncBound
-          (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
+        tsReadQueue <- newTQueueIO
+        pReaderThread <- asyncBound
+            (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
 
-      let client = Client { take = readTQueue tsReadQueue
-                          , give = writeTQueue tsWriteQueue
-                          }
+        let client = Client { take = readTQueue tsReadQueue
+                            , give = writeTQueue tsWriteQueue
+                            }
 
-      tsize <- io $ TSize.size <&> fromMaybe (TSize.Window 80 24)
+        tsize <- io $ TSize.size <&> fromMaybe (TSize.Window 80 24)
 
-      pure ((tsize, client), Private{..})
+        pure ((tsize, client), Private{..})
 
     stop :: HasLogFunc e
          => ((TSize.Window Word, Client), Private) -> RIO e ()
     stop ((_, Client{..}), Private{..}) = do
-      -- Note that we don't `cancel pReaderThread` here. This is a deliberate
-      -- decision because fdRead calls into a native function which the runtime
-      -- can't kill. If we were to cancel here, the internal `waitCatch` would
-      -- block until the next piece of keyboard input. Since this only happens
-      -- at shutdown, just leak the file descriptor.
-      cancel pWriterThread
+        {-
+            Note that we don't `cancel pReaderThread` here. This is
+            a deliberate decision because fdRead calls into a native
+            function which the runtime can't kill. If we were to cancel
+            here, the internal `waitCatch` would block until the next
+            piece of keyboard input. Since this only happens at shutdown,
+            just leak the file descriptor.
+        -}
+        cancel pWriterThread
 
-      -- inject one final newline, as we're usually on the prompt.
-      io $ T.runTermOutput pTerminal $ termText "\r\n"
+        -- inject one final newline, as we're usually on the prompt.
+        io $ T.runTermOutput pTerminal $ termText "\r\n"
 
-      -- take the terminal out of raw mode
-      io $ setTerminalAttributes stdInput pPreviousConfiguration Immediately
+        -- take the terminal out of raw mode
+        io $ setTerminalAttributes stdInput pPreviousConfiguration Immediately
 
     {-
         A list of terminal flags that we disable.
@@ -238,7 +243,7 @@ localClient = fst <$> mkRAcquire start stop
                     ]
 
     getCap term cap =
-      T.getCapability term (T.tiGetOutput1 cap) :: Maybe T.TermOutput
+        T.getCapability term (T.tiGetOutput1 cap) :: Maybe T.TermOutput
 
     vtClearScreen t  = getCap t "clear"
     vtClearToBegin t = getCap t "el"
@@ -365,48 +370,50 @@ localClient = fst <$> mkRAcquire start stop
 
     -- Moves the cursor to the requested position
     termShowCursor :: T.Terminal -> LineState -> Int -> RIO e LineState
-    termShowCursor t ls@LineState{..} {-line pos)-} newPos = do
-      if newPos < lsCurPos then do
-        replicateM_ (lsCurPos - newPos) (runMaybeTermOutput t vtParmLeft)
-        pure ls { lsCurPos =  newPos }
-      else if newPos > lsCurPos then do
-        replicateM_ (newPos - lsCurPos) (runMaybeTermOutput t vtParmRight)
-        pure ls { lsCurPos =  newPos }
-      else
-        pure ls
+    termShowCursor t ls@LineState{..} newPos = do
+        if newPos < lsCurPos then do
+            replicateM_ (lsCurPos - newPos) (runMaybeTermOutput t vtParmLeft)
+            pure ls { lsCurPos =  newPos }
+        else if newPos > lsCurPos then do
+            replicateM_ (newPos - lsCurPos) (runMaybeTermOutput t vtParmRight)
+            pure ls { lsCurPos =  newPos }
+        else
+            pure ls
 
-    -- Moves the cursor left without any mutation of the LineState. Used only
-    -- in cursor spinning.
+    {-
+        Moves the cursor left without any mutation of the LineState. Used
+        only in cursor spinning.
+    -}
     termSpinnerMoveLeft :: T.Terminal -> Int -> RIO e ()
     termSpinnerMoveLeft t count =
-      replicateM_ count (runMaybeTermOutput t vtParmLeft)
+        replicateM_ count (runMaybeTermOutput t vtParmLeft)
 
     -- Displays and sets the current line
     termShowLine :: T.Terminal -> LineState -> Text -> RIO e LineState
     termShowLine t ls newStr = do
-      io $ T.runTermOutput t $ termText newStr
-      pure ls { lsLine = newStr, lsCurPos = (length newStr) }
+        io $ T.runTermOutput t $ termText newStr
+        pure (ls { lsLine = newStr, lsCurPos = length newStr })
 
     termShowClear :: T.Terminal -> LineState -> RIO e LineState
     termShowClear t ls = do
-      io $ T.runTermOutput t $ termText "\r"
-      runMaybeTermOutput t vtClearToBegin
-      pure ls { lsLine = "", lsCurPos = 0  }
+        io $ T.runTermOutput t $ termText "\r"
+        runMaybeTermOutput t vtClearToBegin
+        pure ls { lsLine = "", lsCurPos = 0  }
 
     -- New Current Line
     termShowMore :: T.Terminal -> LineState -> RIO e LineState
     termShowMore t ls = do
-      io $ T.runTermOutput t $ termText "\r\n"
-      pure ls { lsLine = "", lsCurPos = 0  }
+        io $ T.runTermOutput t $ termText "\r\n"
+        pure ls { lsLine = "", lsCurPos = 0  }
 
     -- Redraw the current LineState, maintaining the current curpos
     termRefreshLine :: T.Terminal -> LineState -> RIO e LineState
     termRefreshLine t ls = do
-      let line = (lsLine ls)
-          curPos = (lsCurPos ls)
-      ls <- termShowClear t ls
-      ls <- termShowLine t ls line
-      termShowCursor t ls curPos
+        let line = (lsLine ls)
+            curPos = (lsCurPos ls)
+        ls <- termShowClear t ls
+        ls <- termShowLine t ls line
+        termShowCursor t ls curPos
 
     -- ring my bell
     bell :: TQueue [Term.Ev] -> RIO e ()
@@ -423,14 +430,13 @@ localClient = fst <$> mkRAcquire start stop
     readTerminal :: forall e. HasLogFunc e
                  => TQueue Belt -> TQueue [Term.Ev] -> (RIO e ()) -> RIO e ()
     readTerminal rq wq bell =
-      rioAllocaBytes 1 $ \ buf -> loop (ReadData buf False False mempty 0)
+        rioAllocaBytes 1 $ \ buf -> loop (ReadData buf False False mempty 0)
       where
         loop :: ReadData -> RIO e ()
         loop rd@ReadData{..} = do
           -- The problem with using fdRead raw is that it will text encode
           -- things like \ESC instead of 27. That makes it broken for our
           -- purposes.
-          --
           t <- io $ try (fdReadBuf stdInput rdBuf 1)
           case t of
             Left (e :: IOException) -> do
@@ -509,57 +515,55 @@ localClient = fst <$> mkRAcquire start stop
 
         sendBelt :: HasLogFunc e => Belt -> RIO e ()
         sendBelt b = do
-          logDebug $ displayShow ("terminalBelt", b)
-          atomically $ writeTQueue rq b
+            logDebug $ displayShow ("terminalBelt", b)
+            atomically $ writeTQueue rq b
 
 --------------------------------------------------------------------------------
 
 term :: ∀e m. (HasLogFunc e, MonadReader e m)
      => (TSize.Window Word, Client)
-     -> (STM ())
+     -> STM ()
      -> FilePath
      -> QueueEv
      -> m (IODrv e TermEf)
 term (tsize, Client{..}) shutdownSTM pierPath enqueueEv = do
-    pure (IODrv initialEvents runTerm)
+    pure (IODrv [initialBlew hi wi, initialHail] runTerm)
   where
     TSize.Window wi hi = tsize
 
-    initialEvents = [(initialBlew hi wi), initialHail]
-
     runTerm :: RAcquire e (EffCb TermEf)
     runTerm = do
-      tim <- mkRAcquire start cancel
-      env <- ask
-      pure (runRIO env . handleEffect)
-
-    start :: RIO e (Async ())
-    start = async readBelt
+        tim <- mkRAcquire (async readBelt) cancel
+        env <- ask
+        pure (runRIO env . handleEffect)
 
     readBelt :: RIO e ()
     readBelt = forever $ do
-      b <- atomically take
-      let blip = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ b
-      atomically $ enqueueEv $ blip
+        b <- atomically take
+        let blip = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) b
+        atomically $ enqueueEv blip
 
     handleEffect :: TermEf -> RIO e ()
     handleEffect = \case
-      TermEfBlit _ blits -> do
+        TermEfBlit _ blits -> doBlit blits
+        TermEfInit _ _     -> pure ()
+        TermEfLogo path _  -> atomically $ shutdownSTM
+        TermEfMass _ _     -> pure ()
+
+    doBlit :: [Blit] -> RIO e ()
+    doBlit blits = do
         let (termBlits, fsWrites) = partition isTerminalBlit blits
         atomically $ give [Term.Blits termBlits]
         for_ fsWrites handleFsWrite
-      TermEfInit _ _ -> pure ()
-      TermEfLogo path _ -> do
-        atomically $ shutdownSTM
-      TermEfMass _ _ -> pure ()
 
     handleFsWrite :: Blit -> RIO e ()
-    handleFsWrite (Sag path noun) = performPut path (jamBS noun)
-    handleFsWrite (Sav path atom) = performPut path (atom ^. atomBytes)
-    handleFsWrite _               = pure ()
+    handleFsWrite = \case
+        Sag path noun -> doPut path (jamBS noun)
+        Sav path atom -> doPut path (atom ^. atomBytes)
+        _             -> pure ()
 
-    performPut :: Path -> ByteString -> RIO e ()
-    performPut path bs = do
-      let putOutFile = pierPath </> ".urb" </> "put" </> (pathToFilePath path)
-      createDirectoryIfMissing True (takeDirectory putOutFile)
-      writeFile putOutFile bs
+    doPut :: Path -> ByteString -> RIO e ()
+    doPut path bs = do
+        let putOutFile = pierPath </> ".urb" </> "put" </> (pathToFilePath path)
+        createDirectoryIfMissing True (takeDirectory putOutFile)
+        writeFile putOutFile bs

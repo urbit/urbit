@@ -28,7 +28,8 @@ sysTime = view Time.systemTime
 
 -- Behn Driver -----------------------------------------------------------------
 
-behn :: ∀e m. (MonadReader e m, HasLogFunc e, HasKingId e)
+behn :: ∀e m
+      . (MonadReader e m, HasLogFunc e, HasKingId e)
      => QueueEv
      -> m (IODrv e BehnEf)
 behn enqueueEv = do
