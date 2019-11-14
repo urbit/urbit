@@ -20,12 +20,14 @@
       %-  ot
       :~  [%path pa]
           [%security sec] 
+          [%allow-history bo]
       ==
     ::
     ++  add-synced
       %-  ot
       :~  [%ship (su ;~(pfix sig fed:ag))]
           [%path pa]
+          [%ask-history bo]
       ==
     ::
     ++  sec

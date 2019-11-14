@@ -7,8 +7,14 @@
   ==
 ::
 +$  chat-view-action
-  $%  [%create =path security=chat-security read=(set ship) write=(set ship)]
+  $%  $:  %create
+          =path
+          security=chat-security
+          read=(set ship)
+          write=(set ship)
+          allow-history=?
+      ==
       [%delete =path]
-      [%join =ship =path]
+      [%join =ship =path ask-history=?]
   ==
 --

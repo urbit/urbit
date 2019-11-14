@@ -10,14 +10,13 @@
   $%  ::  %add-owned: make a chatroom accessible to foreign ships
       ::  specified by the chat-security model
       ::
-      [%add-owned =path security=chat-security]
+      [%add-owned =path security=chat-security allow-history=?]
       ::  %add-synced: mirror a foreign chatroom to our chat-store
       ::
-      [%add-synced =ship =path]
+      [%add-synced =ship =path ask-history=?]
       ::  %remove: stop mirroring a foreign chatroom or allowing a local
       ::  chatroom to be mirrored
       ::
       [%remove =path]
   ==
 --
-

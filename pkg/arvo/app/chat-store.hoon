@@ -154,10 +154,11 @@
   ^-  (quip move _this)
   ?>  (team:title our.bol src.bol)
   ?-  -.action
-      %create   (handle-create action)
-      %delete   (handle-delete action)
-      %message  (handle-message action)
-      %read     (handle-read action)
+      %create    (handle-create action)
+      %delete    (handle-delete action)
+      %message   (handle-message action)
+      %messages  (handle-messages action)
+      %read      (handle-read action)
   ==
 ::
 ++  handle-create
@@ -198,6 +199,35 @@
   :-  (send-diff path.act act)
   this(inbox (~(put by inbox) path.act u.mailbox))
 ::
+++  handle-messages
+  |=  act=chat-action
+  ^-  (quip move _this)
+  ?>  ?=(%messages -.act)
+  =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
+  ?~  mailbox
+    [~ this]
+  =/  diff=chat-update
+    :*  %messages
+        path.act
+        +(length.config.u.mailbox)
+        (add length.config.u.mailbox (lent envelopes.act))
+        envelopes.act
+    ==
+  |-  ^-  (quip move _this)
+  ?~  envelopes.act
+    [(send-diff path.act diff) this]
+  =*  envelope       i.envelopes.act
+  =*  letter         letter.envelope
+  =?  letter  &(?=(%code -.letter) ?=(~ output.letter))
+    =/  =hoon  (ream expression.letter)
+    letter(output (eval bol hoon))
+  =:  length.config.u.mailbox  +(length.config.u.mailbox)
+      number.envelope  +(length.config.u.mailbox)
+      envelopes.u.mailbox  (snoc envelopes.u.mailbox envelope)
+  ==
+  =.  inbox  (~(put by inbox) path.act u.mailbox)
+  $(envelopes.act t.envelopes.act)
+::
 ++  handle-read
   |=  act=chat-action
   ^-  (quip move _this)
@@ -210,25 +240,25 @@
   this(inbox (~(put by inbox) path.act u.mailbox))
 ::
 ++  update-subscribers
-  |=  [pax=path act=chat-action]
+  |=  [pax=path upd=chat-update]
   ^-  (list move)
   %+  turn  (prey:pubsub:userlib pax bol)
   |=  [=bone *]
-  [bone %diff %chat-update act]
+  [bone %diff %chat-update upd]
 ::
 ++  send-diff
-  |=  [pax=path act=chat-action]
+  |=  [pax=path upd=chat-update]
   ^-  (list move)
   %-  zing
-  :~  (update-subscribers /all act)
-      (update-subscribers /updates act)
-      (update-subscribers [%mailbox pax] act)
-      ?.  |(=(%read -.act) =(%message -.act))
+  :~  (update-subscribers /all upd)
+      (update-subscribers /updates upd)
+      (update-subscribers [%mailbox pax] upd)
+      ?.  |(|(=(%read -.upd) =(%message -.upd)) =(%messages -.upd))
         ~
-      (update-subscribers /configs act)
-      ?.  |(=(%create -.act) =(%delete -.act))
+      (update-subscribers /configs upd)
+      ?.  |(=(%create -.upd) =(%delete -.upd))
         ~
-      (update-subscribers /keys act)
+      (update-subscribers /keys upd)
   ==
 ::
 --
