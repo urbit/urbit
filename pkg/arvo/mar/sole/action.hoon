@@ -15,7 +15,7 @@
     |=  jon/^json  ^-  sole-action
     %-  need  %.  jon
     =>  [dejs-soft:format ..sole-action]
-    |^  (fo %ret (of det+change ~))
+    |^  (fo %ret (of det+change tab+ni ~))
     ++  fo
       |*  {a/term b/fist}
       |=(c/json ?.(=([%s a] c) (b c) (some [a ~])))
