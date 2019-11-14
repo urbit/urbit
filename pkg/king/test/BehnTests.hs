@@ -27,8 +27,8 @@
         - Unset the current timer.
         - Wait for a timer to fire.
 
-    `pureBehn` is the idealised implementation, `realBehn` runs a
-    program against the actual behn driver, `acceptable` determines
+    `pureBehn` is the idealised implementation. `realBehn` runs a
+    program against the actual behn driver. `acceptable` determines
     whether or not the real results are close enough to the idealised
     results.
 -}
