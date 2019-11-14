@@ -63,7 +63,7 @@
     =^  cards  state
       ?+    mark  (on-poke:def mark vase)
           %handle-http-request
-        (handle-http-request:lsp !<(inbound-request:eyre vase))
+        (handle-http-request:lsp !<([eyre-id=@ta inbound-request:eyre vase))
       ==
     [cards this]
   ::
@@ -125,9 +125,7 @@
 ::  +handle-http-request: received on a new connection established
 ::
 ++  handle-http-request
-  %-  (require-authorization:app state)
-  |=  =inbound-request:eyre
-  ^-  (quip card all-state)
+  |=  [eyre-id=@ta =inbound-request:eyre]
   ?>  ?=(^ body.request.inbound-request)
   =/  =lsp-req
     %-  parser
@@ -140,7 +138,11 @@
     ==
   =.  bufs
     (~(put by bufs) uri.lsp-req buf)
-  [[%give %http-response (json-response:app (json-to-octs out-jon))]~ state]
+  %+  give-simple-payload:app  eyre-id
+  %+  require-authorization:app  inbound-request
+  |=  =inbound-request:eyre
+  ^-  simple-payload:http
+  (json-response:gen (json-to-octs out-jon))
 ::
 ++  handle-sync
   |=  [buf=wall changes=(list change)]

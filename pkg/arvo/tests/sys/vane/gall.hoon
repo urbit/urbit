@@ -1,6 +1,6 @@
 /+  *test
 ::
-/=  gall-raw  /:  /===/sys/vane/gall  /!noun/
+/=  gall-raw  /:  /===/sys/vane/mall  /!noun/
 ::
 =/  test-pit=vase  !>(..zuse)
 =/  gall-gate  (gall-raw test-pit)
@@ -15,8 +15,8 @@
   ::
   =/  call-args
     =/  =duct  ~[/init]
-    =/  =type  -:!>(*task:able:gall)
-    =/  =task:able:gall  [%init ~nec]
+    =/  =type  -:!>(*task:able:mall)
+    =/  =task:able:mall  [%init ~nec]
     [duct type task]
   ::
   =/  expected-moves  ~
@@ -36,8 +36,8 @@
   =/  ship  ~nec
   ::
   =/  call-args
-    =/  =type  -:!>(*task:able:gall)
-    =/  =task:able:gall
+    =/  =type  -:!>(*task:able:mall)
+    =/  =task:able:mall
       =/  =dock  [ship term]
       [%conf dock dock]
     [duct type task]
@@ -45,7 +45,7 @@
   =/  =move:gall-gate
     =/  =path  /sys/core/[term]/(scot %p ship)/[term]/(scot %da time)
     =/  =note-arvo
-      =/  =schematic:ford  [%core [ship term] /hoon/[term]/app]
+      =/  =schematic:ford  [%core [ship term] /hoon/[term]/age]
       =/  =task:able:ford  [%build %.y schematic]
       [%f task]
     [duct %pass path note-arvo]
@@ -62,7 +62,7 @@
   |=  $:  gall-gate=_gall-gate
           now=@da
           scry=sley
-          call-args=[=duct =type wrapped-task=(hobo task:able:gall)]
+          call-args=[=duct =type wrapped-task=(hobo task:able:mall)]
           expected-moves=(list move:gall-gate)
       ==
   ^-  [tang _gall-gate]

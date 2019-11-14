@@ -260,10 +260,10 @@
       [%poke request-id=@ud ship=@p app=term mark=@tas =json]
       ::  %watch: subscribes to an application path
       ::
-      [%watch request-id=@ud ship=@p app=term =path]
+      [%subscribe request-id=@ud ship=@p app=term =path]
       ::  %leave: unsubscribes from an application path
       ::
-      [%leave request-id=@ud subscription-id=@ud]
+      [%unsubscribe request-id=@ud subscription-id=@ud]
       ::  %delete: kills a channel
       ::
       [%delete ~]
@@ -327,11 +327,11 @@
     ((pe %poke (ot id+ni ship+(su fed:ag) app+so mark+(su sym) json+some ~)) item)
   ?:  =('subscribe' u.maybe-key)
     %.  item
-    %+  pe  %watch
+    %+  pe  %subscribe
     (ot id+ni ship+(su fed:ag) app+so path+(su ;~(pfix fas (more fas urs:ab))) ~)
   ?:  =('unsubscribe' u.maybe-key)
     %.  item
-    %+  pe  %leave
+    %+  pe  %unsubscribe
     (ot id+ni subscription+ni ~)
   ?:  =('delete' u.maybe-key)
     `[%delete ~]
@@ -1400,7 +1400,7 @@
         ::
         $(requests t.requests)
       ::
-          %watch
+          %subscribe
         ::
         =/  channel-wire=wire
           /channel/subscription/[channel-id]/(scot %ud request-id.i.requests)
@@ -1422,7 +1422,7 @@
         ::
         $(requests t.requests)
       ::
-          %leave
+          %unsubscribe
         =/  channel-wire=wire
           /channel/subscription/[channel-id]/(scot %ud subscription-id.i.requests)
         ::
@@ -2113,7 +2113,7 @@
       [duct %pass /acme/order %m %deal [our our] cmd]~
     ==
   ::
-      %request-foreign
+      %request
     =^  moves  server-state.ax  (request:server +.task)
     [moves http-server-gate]
   ::

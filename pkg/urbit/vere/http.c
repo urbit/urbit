@@ -394,7 +394,7 @@ _http_req_dispatch(u3_hreq* req_u, u3_noun req)
 
   }
   else {
-    u3_pier_plan(pox, u3nq(u3i_string("request-foreign"),
+    u3_pier_plan(pox, u3nq(u3i_string("request"),
                            req_u->hon_u->htp_u->sec,
                            u3nc(c3__ipv4,
                                 u3i_words(1, &req_u->hon_u->ipf_w)),
