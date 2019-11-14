@@ -1,4 +1,39 @@
-module BehnTests where
+{-
+   Behn is difficult to test. What properties should it have?
+
+   Well, I can thinkg of a few:
+
+     - Timers set for the past or present should fire immediately.
+
+     - Timers set for the near future should fire and have minimal jitter.
+
+     - Replaced and canceled timers do not fire.
+
+     - If I setup a timer loop, I should expect a small but positive drift.
+
+       - By "timer loop" I mean:
+
+         - Set a timer for 1 second in the future.
+         - Wait for it to fire.
+         - Repeat.
+
+    It's not easy to test these properties, but! We can generate behn
+    "programs" and compare an idealised implementation against the real
+    implementation.
+
+    A behn "program" is series of commands:
+
+        - Set a timer.
+        - Unset the current timer.
+        - Wait for a timer to fire.
+
+    `pureBehn` is the idealised implementation, `realBehn` runs a
+    program against the actual behn driver, `acceptable` determines
+    whether or not the real results are close enough to the idealised
+    results.
+-}
+
+module BehnTests (tests) where
 
 import Arvo
 import Data.Acquire
@@ -18,41 +53,16 @@ import Vere.Pier.Types
 
 import Control.Concurrent (runInBoundThread)
 import Data.LargeWord     (LargeKey(..))
+import Data.RAcquire      (runRAcquire)
 import GHC.Natural        (Natural)
-import KingApp            (runAppNoConfig, inPierEnvRAcquire)
+import KingApp            (inPierEnvRAcquire, runAppNoConfig)
 import Network.Socket     (tupleToHostAddress)
 
 import qualified Urbit.Time as Time
 import qualified Vere.Log   as Log
 
 
--- Better Property Test --------------------------------------------------------
-
-{-
-  How can we test Behn? What properties should a timer have?
-
-  - Timers set for the past or present should fire immediately.
-
-  - Timers set for the near future should fire and have minimal jitter.
-
-  - Replaced and canceled timers do not fire.
-
-  - If I setup a timer loop, I should expect a small but positive drift.
-
-    - By "timer loop" I mean:
-
-      - Set a timer for 1 second in the future.
-      - Wait for it to fire.
-      - Repeat.
-
-  Is there a clever way to test this?
-
-  I think so! Let's generate behn "programs" and compare their execution
-  to a pure reference implementation. The simulation will run for, say,
-  20ms. The generator for `Cmd` should almost always generate very
-  small positive numbers, occasionally negative or zero, and rarely
-  large positive numbers.
--}
+-- Behn "Programs" -------------------------------------------------------------
 
 data Cmd
     = Doze Word -- Set a timer for `n` ticks from the start time.
@@ -78,6 +88,9 @@ instance Arbitrary Cmd where
 
 instance Arbitrary Prog where
     arbitrary = Prog . take 20 <$> arbitrary
+
+
+-- Reference Implementation ----------------------------------------------------
 
 {-
     What the test would produce if timers had perfect precision
@@ -114,12 +127,8 @@ pureBehn = fmap fromIntegral . go (0, Nothing, []) . unProg
         then go ( t, Nothing, t:acc ) cs
         else go ( t, Just n,  acc   ) cs
 
-runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
-            => RAcquire e a -> m e a
-runRAcquire act = rwith act pure
 
-
--- Simulation Ticks are 10ms. --------------------------------------------------
+-- Real Implementation ---------------------------------------------------------
 
 μsTicks :: Iso' Integer Double
 μsTicks = iso from to
@@ -132,9 +141,6 @@ runRAcquire act = rwith act pure
 
 gapTicks :: Iso' Gap Double
 gapTicks = microSecs . μsTicks
-
-
--- Run test programs against real Behn. ----------------------------------------
 
 {-
     The result of actually executing the program.
@@ -250,9 +256,18 @@ realBehn (Prog cmds) =
 
     pure res
 
+
+-- Acceptance Criteria ---------------------------------------------------------
+
 {-
     Is the test results and the real results within reasonable
     jitter expectations?
+
+    Criteria:
+
+        - Latency is always positives and always less than 1 tick.
+        - 1-to-1 corresponance between timer fires from real and reference
+          implementations.
 -}
 acceptable :: ProgRes -> ProgRes -> Bool
 acceptable rel fak = go rel fak
@@ -283,6 +298,7 @@ behnVsRef = forAll arbitrary (ioProperty . runTest)
             print ("REAL", rel)
             putStrLn "===="
         pure god
+
 
 -- Utils -----------------------------------------------------------------------
 

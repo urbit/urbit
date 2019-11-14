@@ -3,6 +3,7 @@ module Data.RAcquire where
     ( RAcquire (..)
     , Allocated (..)
     , with
+    , runRAcquire
     , withRIO
     , withRAcquire
     , mkRAcquire
@@ -126,6 +127,10 @@ transRIO env trans act = liftIO $ trans $ runRIO env act
 
 withRIO :: (e -> e') -> RIO e' a -> RIO e a
 withRIO f = RIO . withReaderT f . unRIO
+
+runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
+            => RAcquire e a -> m e a
+runRAcquire act = rwith act pure
 
 {-
     This is difficult to follow.

@@ -173,10 +173,6 @@ runAcquire :: (MonadUnliftIO m,  MonadIO m)
            => Acquire a -> m a
 runAcquire act = with act pure
 
-runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
-            => RAcquire e a -> m e a
-runRAcquire act = rwith act pure
-
 tryPlayShip :: FilePath -> Serf.Flags -> RIO App ()
 tryPlayShip shipPath flags = do
     runRAcquire $ do
