@@ -12,7 +12,7 @@
     ::     they have been bundled into :hood
     ::
     ::  |command handlers
-    hood-helm-mall, hood-kiln-mall, hood-drum-mall, hood-write-mall
+    hood-helm, hood-kiln, hood-drum, hood-write
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -51,10 +51,10 @@
       |@  ++  $
             |:  paw=$:hood-part
             ?-  hed
-              $drum  ?>(?=($drum -.paw) `part:hood-drum-mall`paw)
-              $helm  ?>(?=($helm -.paw) `part:hood-helm-mall`paw)
-              $kiln  ?>(?=($kiln -.paw) `part:hood-kiln-mall`paw)
-              $write  ?>(?=($write -.paw) `part:hood-write-mall`paw)
+              $drum  ?>(?=($drum -.paw) `part:hood-drum`paw)
+              $helm  ?>(?=($helm -.paw) `part:hood-helm`paw)
+              $kiln  ?>(?=($kiln -.paw) `part:hood-kiln`paw)
+              $write  ?>(?=($write -.paw) `part:hood-write`paw)
             ==
       --
     ++  hood-head  _-:$:hood-part                       ::  initialize state
@@ -62,10 +62,10 @@
       =+  $:{our/@p hed/hood-head}                      ::
       |@  ++  $
             ?-  hed
-              $drum  (make:hood-drum-mall our)
-              $helm  *part:hood-helm-mall
-              $kiln  *part:hood-kiln-mall
-              $write  *part:hood-write-mall
+              $drum  (make:hood-drum our)
+              $helm  *part:hood-helm
+              $kiln  *part:hood-kiln
+              $write  *part:hood-write
             ==
       --
     ++  hood-part-old  hood-part                        ::  old state for ++prep
@@ -74,10 +74,10 @@
       paw                                               ::
     ::                                                  ::
     ++  hood-part                                       ::  current module state
-      $%  {$drum $2 pith-2:hood-drum-mall}              ::
-          {$helm $0 pith:hood-helm-mall}                ::
-          {$kiln $0 pith:hood-kiln-mall}                ::
-          {$write $0 pith:hood-write-mall}              ::
+      $%  {$drum $2 pith-2:hood-drum}                   ::
+          {$helm $0 pith:hood-helm}                     ::
+          {$kiln $0 pith:hood-kiln}                     ::
+          {$write $0 pith:hood-write}                   ::
       ==                                                ::
     --                                                  ::
 ::                                                      ::  ::
@@ -129,10 +129,10 @@
         ^-  (quip card:agent:mall hood-part)
         (handle a)
       ::  per-module interface wrappers
-      ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum-mall))
-      ++  from-helm  (from-module %helm [..$ _abet]:(hood-helm-mall))
-      ++  from-kiln  (from-module %kiln [..$ _abet]:(hood-kiln-mall))
-      ++  from-write  (from-module %write [..$ _abet]:(hood-write-mall))
+      ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum))
+      ++  from-helm  (from-module %helm [..$ _abet]:(hood-helm))
+      ++  from-kiln  (from-module %kiln [..$ _abet]:(hood-kiln))
+      ++  from-write  (from-module %write [..$ _abet]:(hood-write))
       --
     --
 |_  hid/bowl:mall                                       ::  gall environment

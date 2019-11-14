@@ -15,25 +15,25 @@
   ::
 |%
 ++  data  $%({$json json} {$mime mime})
-++  card  $%  {$build wire ? schematic:ford}
-              {$info wire toro:clay}
-          ==
 --
 ::
 ::::
   ::
-|=  {bowl:gall part}
+|=  {bowl:mall part}
 =*  par  +<+
-|_  moz/(list {bone card})
+|_  moz/(list card:agent:mall)
 ++  abet  [(flop moz) `part`par]
-++  emit  |=(a/card %_(+> moz :_(moz [ost a])))
+++  emit
+  |=  =card:agent:mall
+  %_(+> moz :_(moz card))
+::
 ++  beak-now  byk(r [%da now])
 ++  poke-wipe
   |=  sup/path  ^+  abet                ::  XX determine extension, beak
   =+  ext=%md
   ?~  (file (en-beam beak-now [ext sup]))
     ~|(not-found+[ext `path`(flop sup)] !!)
-  =-  abet:(emit %info write+~ -)
+  =-  abet:(emit %pass /write %arvo %c %info -)
   (fray (en-beam beak-now [ext sup]))
 ::
 ++  poke-tree
@@ -94,12 +94,21 @@
     (made pax now [%complete %success %$ cay])
   =<  abet
   %-  emit  :*
+    %pass  write+pax  %arvo  %f
     %build
-    write+pax
-    live=%.n                ::  XX defer %nice
-    ^-  schematic:ford   ::  SYNTAX ERROR AT START OF LINE?
-    =/  =beak  beak-now
-    [%cast [p q]:beak u.ext [%$ cay]]
+      live=%.n                ::  XX defer %nice
+      ^-  schematic:ford   ::  SYNTAX ERROR AT START OF LINE?
+      =/  =beak  beak-now
+      [%cast [p q]:beak u.ext [%$ cay]]
+  ==
+::
+++  poke
+  |=  [=mark =vase]
+  ?+  mark  ~|([%poke-write-bad-mark mark] !!)
+    %write-sec-atom  =;(f (f !<(_+<.f vase)) poke-sec-atom)
+    %write-paste     =;(f (f !<(_+<.f vase)) poke-paste)
+    %write-tree      =;(f (f !<(_+<.f vase)) poke-tree)
+    %write-wipe      =;(f (f !<(_+<.f vase)) poke-wipe)
   ==
 ::
 ++  made
@@ -118,7 +127,17 @@
   ::
   =/  =cage  (result-to-cage:ford build-result)
   ::
-  =-  abet:(emit %info write+~ -)
+  =-  abet:(emit %pass /write %arvo %c %info -)
   ::
   (foal :(welp (en-beam beak-now ~) pax /[-.cage]) cage)
+::
+++  take                                              ::
+  |=  [=wire =sign-arvo]
+  %+  made  wire
+  ?>  ?=(%made +<.sign-arvo)
+  +>.sign-arvo
+::
+++  take-agent
+  |=  [=wire =sign:agent:mall]
+  ~|([%write-bad-take-agent wire -.sign] !!)
 --
