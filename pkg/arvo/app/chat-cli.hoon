@@ -365,9 +365,11 @@
         ;~  (glue ace)
           (tag %create)
           security
-          path
-          (punt ;~(pfix ace glyph))
-          (punt ;~(pfix ace ;~(pose (cold %| bar) (cold %& pad))))
+          ;~  plug
+            path
+            (punt ;~(pfix ace glyph))
+            (punt ;~(pfix ace (fuss 'y' 'n')))
+          ==
         ==
         ;~((glue ace) (tag %delete) path)
         ;~((glue ace) (tag %invite) rw path ships)
@@ -375,9 +377,11 @@
       ::
         ;~  (glue ace)
           (tag %join)
-          targ
-          (punt ;~(pfix ace glyph))
-          (punt ;~(pfix ace ;~(pose (cold %| bar) (cold %& pad))))
+          ;~  plug
+            targ
+            (punt ;~(pfix ace glyph))
+            (punt ;~(pfix ace (fuss 'y' 'n')))
+          ==
         ==
         ;~((glue ace) (tag %leave) targ)
       ::
@@ -637,7 +641,7 @@
             ?(%channel %mailbox)  ~
             ?(%village %journal)  [our-self ~ ~]
           ==
-          ?~(allow-history %.y u.allow-history)
+          (fall allow-history %.y)
       ==
     ::  +delete: delete local chats
     ::
@@ -705,7 +709,7 @@
       ::      gives ugly %chat-hook-reap
       %^  act  %do-join  %chat-view
       :-  %chat-view-action
-      [%join ship.target path.target ?~(ask-history %.y u.ask-history)]
+      [%join ship.target path.target (fall ask-history %.y)]
     ::  +leave: unsync & destroy mailbox
     ::
     ::TODO  allow us to "mute" local chats using this

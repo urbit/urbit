@@ -196,11 +196,7 @@
   ?~  box  !!
   :_  this
   :-  [ost.bol %diff %chat-update [%create (slav %p i.pax) pax]]
-  ?:
-    ?&
-      ?=(^ backlog-start)
-      (~(got by allow-history) pax)
-    ==
+  ?:  ?&(?=(^ backlog-start) (~(got by allow-history) pax))
     (paginate-messages pax u.box u.backlog-start)
   ~
 ::
@@ -215,7 +211,7 @@
   |-  ^-  (list move)
   ?~  envelopes.mailbox
     moves
-  ?:  (lte end 500)
+  ?:  (lte end 5.000)
     =.  moves
       %+  snoc  moves
       %-  messages-move
@@ -225,12 +221,12 @@
     %+  snoc  moves
     %-  messages-move
     :^  path  start
-    (add start 500)
-    (scag 500 `(list envelope)`envelopes.mailbox)
-  =:  start  (add start 500)
-      end    (sub end 500)
+    (add start 5.000)
+    (scag 5.000 `(list envelope)`envelopes.mailbox)
+  =:  start  (add start 5.000)
+      end    (sub end 5.000)
   ==
-  $(envelopes.mailbox (slag 500 `(list envelope)`envelopes.mailbox))
+  $(envelopes.mailbox (slag 5.000 `(list envelope)`envelopes.mailbox))
 ::
 ++  messages-move
   |=  [=path start=@ud end=@ud envelopes=(list envelope)]
