@@ -85,6 +85,7 @@
         ::  %azimuth-tracker
     ==
   :~  %dojo
+      %lens
   ==
   ::  %+  welp
   ::    ?:  ?=(%pawn (clan:title our))  ~
