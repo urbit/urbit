@@ -287,10 +287,9 @@
   =*  pith  +<+.$
   =.  .  se-subze:se-adze:se-adit
   :_  pith(bin (~(put by bin) ost dev))
-  %-  flop
   ^-  (list card:agent:mall)
-  ?~  biz  moz
-  :_  moz
+  ?~  biz  (flop moz)
+  :_  (flop moz)
   =/  =dill-blit:dill  ?~(t.biz i.biz [%mor (flop biz)])
   [%give %fact `/drum %dill-blit !>(dill-blit)]
 ::
@@ -534,7 +533,7 @@
 ++  se-peer                                           ::  send a peer
   |=  gyl/gill:gall
   %-  se-emit(fug (~(put by fug) gyl ~))
-  [%pass (en-gill gyl) %agent gyl %watch /sole]
+  [%pass (en-gill gyl) %agent gyl %watch /sole/drum]
 ::
 ++  se-pull                                           ::  cancel subscription
   |=  gyl/gill:gall
@@ -561,7 +560,7 @@
   ++  ta-act                                          ::  send action
     |=  act/sole-action
     ^+  +>
-    (ta-poke %sole-action !>(act))
+    (ta-poke %sole-action !>(['drum' act]))
   ::
   ++  ta-aro                                          ::  hear arrow
     |=  key/?($d $l $r $u)

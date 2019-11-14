@@ -10,10 +10,11 @@
 ::::                                                    ::  ::::
   ::                                                    ::    ::
 =>  |%                                                  ::  external structures
+    ++  id  @tasession                                  ::  session id
     ++  house                                           ::  all state
       $:  $5
           egg/@u                                        ::  command count
-          hoc/(map bone session)                        ::  conversations
+          hoc/(map id session)                          ::  conversations
       ==                                                ::
     ++  session                                         ::  per conversation
       $:  say/sole-share                                ::  command-line state
@@ -300,7 +301,7 @@
 ++  xsell  `$-(vase tank)`vase-to-tank:pprint
 ::
 ++  he                                                  ::  per session
-  |_  {hid/bowl:mall ost=bone moz/(list card:agent:mall) session}
+  |_  {hid/bowl:mall =id moz/(list card:agent:mall) session}
   ::
   ++  he-beam
     ^-  beam
@@ -795,21 +796,19 @@
     ==
   ::
   ++  he-abet                                           ::  resolve
-    [(flop moz) %_(state hoc (~(put by hoc) ost +<+>+))]
-  ::
-  ++  he-abut                                           ::  discard
-    =>  he-stop
-    [(flop moz) %_(state hoc (~(del by hoc) ost))]
+    [(flop moz) %_(state hoc (~(put by hoc) id +<+>+))]
   ::
   ++  he-card                                           ::  emit gift
     |=  =card:agent:mall
     ^+  +>
+    =?  card  ?=(%pass -.card)
+      card(p [id p.card])
     %_(+> moz [card moz])
   ::
   ++  he-diff                                           ::  emit update
     |=  fec/sole-effect
     ^+  +>
-    (he-card %give %fact `/sole %sole-effect !>(fec))
+    (he-card %give %fact `/sole/[id] %sole-effect !>(fec))
   ::
   ++  he-stop                                           ::  abort work
     ^+  .
@@ -1155,7 +1154,6 @@
     !>([our=our now=now eny=eny]:hid)
   --
 --
-=/  ost=bone  0
 ^-  agent:mall
 |_  hid=bowl:mall
 ++  on-init
@@ -1172,14 +1170,21 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:agent:mall _..on-init)
-  =/  a-session=session  (~(got by hoc) ost)
-  =/  he-full  ~(. he hid ost ~ a-session)
   =^  moves  state
     ^-  (quip card:agent:mall house)
     ?+  mark  ~|([%dojo-poke-bad-mark mark] !!)
-        %sole-action   he-abet:(he-type:he-full !<(sole-action vase))
-        %lens-command  he-abet:(he-lens:he-full !<(command:lens vase))
-        %json          ~&  jon=!<(json vase)  `state
+        %sole-action
+      =+  !<([=id =sole-action] vase)
+      he-abet:(~(he-type he hid id ~ (~(got by hoc) id)) sole-action)
+    ::
+        %lens-command
+      =+  !<([=id =command:lens] vase)
+      he-abet:(~(he-lens he hid id ~ (~(got by hoc) id)) command)
+    ::
+        %json
+      ~&  jon=!<(json vase)
+      `state
+    ::
         %wipe
       ~&  %dojo-wipe
       =.  hoc
@@ -1201,22 +1206,21 @@
   ^-  (quip card:agent:mall _..on-init)
   ~?  !=(our.hid src.hid)  [%dojo-peer-stranger src.hid]
   ?>  (team:title our.hid src.hid)
-  =^  moves-1  state
-    ?.  (~(has by hoc) ost)  [~ state]
-    ~&  [%dojo-peer-replaced ost]
-    ~(he-abut he hid ost ~ (~(got by hoc) ost))
-  =^  moves-2  state
+  ?>  ?=([%sole @ ~] path)
+  =/  id  i.t.path
+  =?  hoc  (~(has by hoc) id)
+    ~&  [%dojo-peer-replaced id]
+    (~(del by hoc) id)
+  =.  hoc
     =/  =session  %*(. *session -.dir [our.hid %home ud+0])
-    ?>  ?=([%sole *] path)
-    he-abet:(~(he-peer he hid ost moves-1 session) t.path)
-  [moves-2 ..on-init]
+    (~(put by hoc) id session)
+  [~ ..on-init]
 ::
 ++  on-leave
-  |=  path
-  =^  moves  state
-    ~(he-abut he hid ost ~ (~(got by hoc) ost))
-  =.  hoc  (~(del by hoc) ost)
-  [moves ..on-init]
+  |=  =path
+  ?>  ?=([%sole *] path)
+  =.  hoc  (~(del by hoc) t.path)
+  [~ ..on-init]
 ::
 ++  on-peek
   |=  path
@@ -1224,27 +1228,29 @@
 ::
 ++  on-agent
   |=  [=wire =sign:agent:mall]
-  =/  =session  (~(got by hoc) ost)
+  ?>  ?=([@ *] wire)
+  =/  =session  (~(got by hoc) i.wire)
   =^  moves  state
-    he-abet:(~(he-unto he hid ost ~ session) wire sign)
+    he-abet:(~(he-unto he hid i.wire ~ session) t.wire sign)
   [moves ..on-init]
 ::
 ++  on-arvo
   |=  [=wire =sign-arvo]
-  =/  =session  (~(got by hoc) ost)
-  =/  he-full  ~(. he hid ost ~ session)
+  ?>  ?=([@ *] wire)
+  =/  =session  (~(got by hoc) i.wire)
+  =/  he-full  ~(. he hid i.wire ~ session)
   =^  moves  state
     =<  he-abet
     ?+    +<.sign-arvo  ~|([%dojo-bad-take +<.sign-arvo] !!)
-        %made           (he-made:he-full wire +>.sign-arvo)
-        %http-response  (he-http-response:he-full wire +>.sign-arvo)
+        %made           (he-made:he-full t.wire +>.sign-arvo)
+        %http-response  (he-http-response:he-full t.wire +>.sign-arvo)
     ==
   [moves ..on-init]
 ::
 ++  on-fail
   |=  [=term =tang]
-  =/  =session  (~(got by hoc) ost)
+  =/  =session  (~(got by hoc) 'drum')
   =^  moves  state
-    he-abet:(~(he-lame he hid ost ~ session) term tang)
+    he-abet:(~(he-lame he hid 'drum' ~ session) term tang)
   [moves ..on-init]
 --

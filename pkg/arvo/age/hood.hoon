@@ -100,7 +100,7 @@
       ++  ably                                          ::  save part
         =+  $:{(list) hood-part}
         |@  ++  $
-              [(flop +<-) (~(put by lac) +<+< +<+)]
+              [+<- (~(put by lac) +<+< +<+)]
         --
       ::                                                ::  ::
       ::::                                              ::  ::  generic handling

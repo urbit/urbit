@@ -59,6 +59,7 @@
         $txt  (frond %txt (tape p.sef))
         $tan  (frond %tan (tape (wush 160 p.sef)))
         $det  (frond %det json:~(grow mar-sole-change +.sef))
+        $tab  (frond %tab a+(turn p.sef |=([=cord tan=^tank] (pairs match+s+cord info+(tape ~(ram re tan)) ~))))
     ::
         $pro
       %+  frond  %pro
