@@ -20,15 +20,17 @@
 --
 =;  core
   ^-  imp:spider
-  |=  =bowl:spider
-  =/  m  (thread ,~)
+  |=  [=bowl:spider args=vase]
+  =/  m  (thread ,vase)
   ^-  form:m
-  ;<  ~  bind:m  (subscribe-our:threadio /effects %aqua /effect)
-  %-  (main-loop:threadio ,state)
-  :~  |=(=state ~(handle-unix-effect core state))
-      |=(=state ~(handle-poke core state))
-      pure:(thread ,state)
-  ==
+  ;<  ~  bind:m  (watch-our:threadio /effects %aqua /effect)
+  ;<  ~  bind:m
+    %-  (main-loop:threadio ,state)
+    :~  |=(=state ~(handle-unix-effect core state))
+        |=(=state ~(handle-poke core state))
+        pure:(thread ,state)
+    ==
+  (pure:m *vase)
 ::
 |_  =state
 ++  handle-unix-effect

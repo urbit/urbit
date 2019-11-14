@@ -63,7 +63,7 @@
     =^  cards  state
       ?+    mark  (on-poke:def mark vase)
           %handle-http-request
-        (handle-http-request:lsp !<([eyre-id=@ta inbound-request:eyre vase))
+        (handle-http-request:lsp !<([eyre-id=@ta inbound-request:eyre] vase))
       ==
     [cards this]
   ::
@@ -126,6 +126,7 @@
 ::
 ++  handle-http-request
   |=  [eyre-id=@ta =inbound-request:eyre]
+  ^-  (quip card _state)
   ?>  ?=(^ body.request.inbound-request)
   =/  =lsp-req
     %-  parser
@@ -138,6 +139,7 @@
     ==
   =.  bufs
     (~(put by bufs) uri.lsp-req buf)
+  :_  state
   %+  give-simple-payload:app  eyre-id
   %+  require-authorization:app  inbound-request
   |=  =inbound-request:eyre

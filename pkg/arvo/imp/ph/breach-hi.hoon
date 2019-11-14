@@ -15,4 +15,4 @@
 ;<  ~  bind:m  (real-ship ~dev)
 ;<  ~  bind:m  (wait-for-output ~bud "hi ~dev successful")
 ;<  ~  bind:m  end-azimuth
-(pure:m vase)
+(pure:m *vase)
