@@ -11,6 +11,7 @@ module KingApp
     , HasConfig(..)
     , HasAmesPort(..)
     , HasShip(..)
+    , HasIsFake(..)
     ) where
 
 import UrbitPrelude
@@ -47,6 +48,7 @@ data PierEnv = PierEnv
     { _pierEnvLogFunc :: !LogFunc
     , _pierEnvConfig  :: !Config
     , _pierEnvShip    :: !Ship
+    , _pierEnvIsFake  :: !Bool
     }
 
 makeLenses ''PierEnv
@@ -63,23 +65,28 @@ instance HasLogFunc PierEnv where
 class HasAmesPort env where
     amesPortL :: Lens' env (Maybe Port)
 
-instance HasAmesPort Config where
-    amesPortL = configAmesPort
-
-instance HasAmesPort App where
-    amesPortL = appConfig . configAmesPort
-
-instance HasAmesPort PierEnv where
-    amesPortL = pierEnvConfig . configAmesPort
+instance HasAmesPort Config  where amesPortL = configAmesPort
+instance HasAmesPort App     where amesPortL = appConfig . configAmesPort
+instance HasAmesPort PierEnv where amesPortL = pierEnvConfig . configAmesPort
 
 
---------------------------------------------------------------------------------
+
+
+-- Which Ship are we? ----------------------------------------------------------
 
 class HasShip env where
     shipL :: Lens' env Ship
 
 instance HasShip PierEnv where
     shipL = pierEnvShip
+
+
+-- Are we a fake ship? ---------------------------------------------------------
+
+class HasIsFake env where
+  isFakeL :: Lens' env Bool
+
+instance HasIsFake PierEnv where isFakeL = pierEnvIsFake
 
 
 -- HasConfig -------------------------------------------------------------------
@@ -112,15 +119,15 @@ runAppNoConfig :: RIO App a -> IO a
 runAppNoConfig = runApp def
 
 inPierEnv :: ∀e a. (HasLogFunc e, HasConfig e)
-          => Ship -> RIO PierEnv a -> RIO e a
-inPierEnv ship =
-    withRIO $ \x -> PierEnv (x ^. logFuncL) (x ^. configL) ship
+          => Ship -> Bool -> RIO PierEnv a -> RIO e a
+inPierEnv ship fake =
+    withRIO $ \x -> PierEnv (x ^. logFuncL) (x ^. configL) ship fake
 
 inPierEnvRAcquire :: ∀e a. (HasLogFunc e, HasConfig e)
-                  => Ship -> RAcquire PierEnv a
-                  -> RAcquire e a
-inPierEnvRAcquire ship =
-    withRAcquire $ \x -> PierEnv (x ^. logFuncL) (x ^. configL) ship
+                  => Ship -> Bool
+                  -> (RAcquire PierEnv a -> RAcquire e a)
+inPierEnvRAcquire ship fake =
+    withRAcquire $ \x -> PierEnv (x ^. logFuncL) (x ^. configL) ship fake
 
 runApp :: Config -> RIO App a -> IO a
 runApp conf inner = do

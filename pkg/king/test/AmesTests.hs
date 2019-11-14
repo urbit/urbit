@@ -41,8 +41,8 @@ sendEf g w bs = NewtEfSend (0, ()) (ADGala w g) bs
 runGala :: Word8 -> RAcquire App (TQueue Ev, EffCb NewtEf)
 runGala point = do
     q <- newTQueueIO
-    inPierEnvRAcquire who $ do
-        let IODrv _ startDrv = ames pid True (writeTQueue q) print
+    inPierEnvRAcquire who True $ do
+        let IODrv _ startDrv = ames pid (writeTQueue q) print
         cb ← startDrv
         io (cb turfEf)
         pure (q, cb)

@@ -11,7 +11,7 @@ import System.Random
 import Vere.Pier.Types
 
 import Data.Text            (append)
-import KingApp              (HasAmesPort, HasShip)
+import KingApp              (HasAmesPort, HasShip, HasIsFake)
 import System.Posix.Files   (ownerModes, setFileMode)
 import Vere.Drv.Ames        (ames)
 import Vere.Drv.Behn        (behn)
@@ -135,7 +135,7 @@ resumed top flags = do
 acquireWorker :: RIO e () -> RAcquire e (Async ())
 acquireWorker act = mkRAcquire (async act) cancel
 
-pier :: ∀e. (HasLogFunc e, HasAmesPort e, HasShip e)
+pier :: ∀e. (HasLogFunc e, HasAmesPort e, HasShip e, HasIsFake e)
      => FilePath
      -> (Serf, EventLog, SerfState)
      -> RAcquire e ()
@@ -247,17 +247,17 @@ data Drivers = Drivers
     , dTerm       :: EffCb TermEf
     }
 
-drivers :: (HasLogFunc e, HasAmesPort e, HasShip e)
+drivers :: (HasLogFunc e, HasAmesPort e, HasShip e, HasIsFake e)
         => FilePath -> KingId -> Bool -> (Ev -> STM ())
         -> STM()
         -> (TSize.Window Word, Term.Client)
-        -> (Text -> RIO e ())
+        -> (Text -> IO ())
         -> ([Ev], RAcquire e Drivers)
 drivers pierPath inst isFake plan shutdownSTM termSys stderr =
     (initialEvents, runDrivers)
   where
     IODrv behnBorn runBehn = behn inst plan
-    IODrv amesBorn runAmes = ames inst isFake plan stderr
+    IODrv amesBorn runAmes = ames inst plan stderr
     IODrv httpBorn runHttp = serv pierPath inst plan
     IODrv clayBorn runClay = clay pierPath inst plan
     IODrv irisBorn runIris = client inst plan

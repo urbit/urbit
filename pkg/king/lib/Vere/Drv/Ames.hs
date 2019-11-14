@@ -7,7 +7,7 @@ import Network.Socket            hiding (recvFrom, sendTo)
 import Network.Socket.ByteString
 import Vere.Pier.Types
 
-import KingApp (HasAmesPort(..), HasShip(..))
+import KingApp (HasAmesPort(..), HasShip(..), HasIsFake(..))
 
 import qualified Data.ByteString as BS
 import qualified Data.Map        as M
@@ -89,11 +89,11 @@ renderGalaxy = Ob.renderPatp . Ob.patp . fromIntegral . unGalaxy
 
     TODO verify that the KingIds match on effects.
 -}
-ames :: forall e. (HasLogFunc e, HasAmesPort e, HasShip e)
-     => KingId -> Bool -> QueueEv
-     -> (Text -> RIO e ())
+ames :: forall e. (HasLogFunc e, HasAmesPort e, HasShip e, HasIsFake e)
+     => KingId -> QueueEv
+     -> (Text -> IO ())
      -> IODrv e NewtEf
-ames inst isFake enqueueEv stderr =
+ames inst enqueueEv stderr =
     IODrv initialEvents runAmes
   where
     initialEvents :: [Ev]
@@ -116,8 +116,9 @@ ames inst isFake enqueueEv stderr =
         aSendingThread <- async (sendingThread aSendingQueue aSocket)
         pure            $ AmesDrv{..}
 
-    netMode :: NetworkMode
-    netMode = if isFake then Fake else Real
+    netMode :: RIO e NetworkMode
+    netMode = view isFakeL <&> \case True  -> Fake
+                                     False -> Real
 
     stop :: AmesDrv -> RIO e ()
     stop AmesDrv{..} = do
@@ -137,12 +138,13 @@ ames inst isFake enqueueEv stderr =
     bindSock = do
         mPort <- view amesPortL
         who   <- view shipL
-        let ourPort = maybe (listenPort netMode who) fromIntegral mPort
+        mod   <- netMode
+        let ourPort = maybe (listenPort mod who) fromIntegral mPort
         s  <- io $ socket AF_INET Datagram defaultProtocol
 
         logTrace $ displayShow ("(ames) Binding to port ", ourPort)
-        let addr = SockAddrInet ourPort $
-              if isFake then localhost else inaddrAny
+        let addr = SockAddrInet ourPort $ mod & \case Fake -> localhost
+                                                      Real -> inaddrAny
         () <- io $ bind s addr
 
         pure s
@@ -163,8 +165,10 @@ ames inst isFake enqueueEv stderr =
 
       NewtEfSend (_id, ()) dest (MkBytes bs) -> do
           atomically (readTVar aTurfs) >>= \case
-            Nothing -> pure ()
-            Just turfs -> (sendPacket drv netMode dest bs)
+              Nothing -> pure ()
+              Just turfs -> do
+                  mod <- netMode
+                  sendPacket drv mod dest bs
 
     sendPacket :: AmesDrv -> NetworkMode -> AmesDest -> ByteString -> RIO e ()
 
@@ -245,7 +249,7 @@ ames inst isFake enqueueEv stderr =
 
         resolveFirstIP :: Maybe SockAddr -> [Turf] -> RIO e (Maybe SockAddr)
         resolveFirstIP prevIP [] = do
-          stderr $ "ames: czar at " ++ renderGalaxy galaxy ++ ": not found"
+          io $ stderr $ "ames: czar at " ++ renderGalaxy galaxy ++ ": not found"
           logDebug $ displayShow
               ("(ames) Failed to lookup IP for ", galaxy)
           pure prevIP
@@ -259,8 +263,8 @@ ames inst isFake enqueueEv stderr =
             (y:ys) -> do
               let sockaddr = Just $ addrAddress y
               when (sockaddr /= prevIP) $
-                stderr $ "ames: czar " ++ renderGalaxy galaxy ++ ": ip " ++
-                         (tshow $ addrAddress y)
+                io $ stderr $ "ames: czar " ++ renderGalaxy galaxy ++ ": ip " ++
+                                (tshow $ addrAddress y)
               logDebug $ displayShow
                 ("(ames) Looked up ", hostname, portstr, y)
               pure sockaddr

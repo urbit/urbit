@@ -190,8 +190,9 @@ tryPlayShip shipPath flags = do
 
         let logId = Log.identity (sls ^. _2)
         let ship  = who logId
+        let fake  = isFake logId
 
-        inPierEnvRAcquire ship (Pier.pier shipPath sls)
+        inPierEnvRAcquire ship fake (Pier.pier shipPath sls)
 
 tryResume :: FilePath -> Serf.Flags -> RIO App ()
 tryResume shipPath flags = do
