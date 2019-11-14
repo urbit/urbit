@@ -81,11 +81,15 @@
   ^-  (list term)
   ?:  lit
     :~  %dojo
-        ::  %eth-watcher
-        ::  %azimuth-tracker
+        %spider
+        %eth-watcher
+        %azimuth-tracker
     ==
   :~  %dojo
       %lens
+      %eth-watcher
+      %azimuth-tracker
+      %clock
   ==
   ::  %+  welp
   ::    ?:  ?=(%pawn (clan:title our))  ~
@@ -99,7 +103,6 @@
   ::      %modulo
   ::      %launch
   ::      %publish
-  ::      %clock
   ::      %weather
   ::      %group-store
   ::      %group-hook

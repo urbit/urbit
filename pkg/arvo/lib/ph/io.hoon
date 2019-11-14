@@ -21,7 +21,11 @@
   (end-test %aqua-ames %aqua-behn %aqua-dill %aqua-eyre ~)
 ::
 ++  start-azimuth
-  (start-test %aqua-ames %aqua-behn %aqua-dill %aqua-eyre-azimuth ~)
+  =/  m  (thread ,iid:spider)
+  ^-  form:m
+  ;<  ~  bind:m  (start-test %aqua-ames %aqua-behn %aqua-dill ~)
+  (start-imp %aqua-eyre-azimuth)
+::
 ++  end-azimuth
   (end-test %aqua-ames %aqua-behn %aqua-dill %aqua-eyre-azimuth ~)
 ::
@@ -63,7 +67,6 @@
   =*  loop  $
   ?~  imps
     (pure:m ~)
-  ;<  now=@da  bind:m  get-time
   =/  poke-vase  !>([`iid.bowl ~ i.imps *vase])
   ;<  ~  bind:m  (poke-our %spider %spider-start poke-vase)
   loop(imps t.imps)
@@ -75,31 +78,33 @@
   (pure:m ~)
 ::
 ++  spawn
-  |=  =ship
+  |=  [=iid:spider =ship]
+  ~&  >  "spawning {<ship>}"
   =/  m  (thread ,~)
-  =/  =vase  !>([%aqua-eyre-azimuth %azimuth-command !>([%spawn ship])])
+  =/  =vase  !>(`imput:spider`[iid %azimuth-command !>([%spawn ship])])
   (poke-our %spider %spider-imput vase)
 ::
 ++  breach
-  |=  who=ship
+  |=  [=iid:spider who=ship]
   =/  m  (thread ,~)
   ~&  >  "breaching {<who>}"
   =/  =vase
-    !>([%aqua-eyre-azimuth %azimuth-command !>([%breach who])])
+    !>([iid %azimuth-command !>([%breach who])])
   (poke-our %spider %spider-imput vase)
 ::
 ++  breach-and-hear
-  |=  [who=ship her=ship]
+  |=  [=iid:spider who=ship her=ship]
   =/  m  (thread ,~)
   ~&  >  "breaching {<who>} for {<her>}"
   =/  =vase
-    !>([%aqua-eyre-azimuth %azimuth-command !>([%breach-and-hear who her])])
+    !>([iid %azimuth-command !>([%breach-and-hear who her])])
   (poke-our %spider %spider-imput vase)
 ::
 ++  real-ship
-  |=  =ship
+  |=  [=iid:spider =ship]
+  ~&  >  "booting real {<ship>}"
   =/  m  (thread ,~)
-  =/  =vase  !>([%aqua-eyre-azimuth %azimuth-command !>([%create-ship ship])])
+  =/  =vase  !>([iid %azimuth-command !>([%create-ship ship])])
   ;<  ~  bind:m  (poke-our %spider %spider-imput vase)
   (check-ship-booted ship)
 ::

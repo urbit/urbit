@@ -1,7 +1,8 @@
 /+  libthread=thread
 =,  thread=thread:libthread
 |%
-+$  imp   $-([bowl vase] _*form:(thread ,vase))
-+$  iid   iid:thread
-+$  bowl  bowl:thread
++$  imp    $-([bowl vase] _*form:(thread ,vase))
++$  imput  [=iid =cage]
++$  iid    iid:thread
++$  bowl   bowl:thread
 --

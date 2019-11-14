@@ -5,8 +5,8 @@
 +$  card        card:agent:mall
 +$  imp-thread  imp:spider
 +$  iid         iid:spider
++$  imput       imput:spider
 +$  imp         (list iid)
-+$  imput       [=imp =cage]
 +$  imp-form    _*eval-form:eval:(thread ,vase)
 +$  trie
   $~  [*imp-form ~]
@@ -92,7 +92,7 @@
   %+  welp
     ?~  imp
       ~
-    [imp imp-form.trie]~
+    [(flop imp) imp-form.trie]~
   =/  kids  ~(tap by kid.trie)
   |-  ^-  (list [=^imp =imp-form])
   ?~  kids
@@ -189,6 +189,7 @@
 |_  =bowl:mall
 ++  on-poke-imput
   |=  imput
+  =/  imp  (~(got by iid.state) iid)
   (take-input imp ~ %poke cage)
 ::
 ++  on-watch
@@ -223,7 +224,7 @@
     ?~  parent-iid
       /
     (~(got by iid.state) u.parent-iid)
-  =/  new-iid  (fall use (scot %uv eny.bowl))
+  =/  new-iid  (fall use (scot %uv (sham eny.bowl)))
   =/  =imp  (snoc parent-imp new-iid)
   ::
   ?:  (has-imp running.state imp)

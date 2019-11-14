@@ -92,7 +92,6 @@
       %watch
     ::  fully restart the watchdog if it doesn't exist yet,
     ::  or if the new config changes more than just the url.
-    ~&  >  %ouch
     =/  restart=?
       ?|  !(~(has by dogs.state) path.poke)
           ?!  .=  ->:(~(got by dogs.state) path.poke)

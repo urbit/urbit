@@ -1,3 +1,4 @@
+/-  spider
 /+  libthread=thread
 =,  thread=thread:libthread
 =,  thread-fail=thread-fail:libthread
@@ -488,4 +489,19 @@
   =/  m  (thread ,~)
   ^-  form:m
   (send-raw-card %pass / %arvo %e %rule %turf %put turf)
+::
+::    ----
+::
+::  Imps
+::
+++  start-imp
+  |=  file=term
+  =/  m  (thread ,iid:spider)
+  ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl
+  =/  iid  (scot %ta (cat 3 'thread_' (scot %uv (sham file eny.bowl))))
+  =/  poke-vase  !>([`iid.bowl `iid file *vase])
+  ;<  ~  bind:m  (poke-our %spider %spider-start poke-vase)
+  ;<  ~  bind:m  (sleep ~s0)  ::  wait for imp to start
+  (pure:m iid)
 --
