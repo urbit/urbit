@@ -12,6 +12,7 @@ module KingApp
     , HasAmesPort(..)
     , HasShip(..)
     , HasIsFake(..)
+    , HasKingId(..)
     ) where
 
 import UrbitPrelude
@@ -49,6 +50,7 @@ data PierEnv = PierEnv
     , _pierEnvConfig  :: !Config
     , _pierEnvShip    :: !Ship
     , _pierEnvIsFake  :: !Bool
+    , _pierEnvKingId  :: !KingId
     }
 
 makeLenses ''PierEnv
@@ -89,6 +91,15 @@ class HasIsFake env where
 instance HasIsFake PierEnv where isFakeL = pierEnvIsFake
 
 
+-- What is the King's instance Id? ---------------------------------------------
+
+class HasKingId env where
+  kingIdL :: Lens' env KingId
+
+instance HasKingId PierEnv where kingIdL = pierEnvKingId
+
+
+
 -- HasConfig -------------------------------------------------------------------
 
 class HasAmesPort env => HasConfig env where
@@ -119,15 +130,16 @@ runAppNoConfig :: RIO App a -> IO a
 runAppNoConfig = runApp def
 
 inPierEnv :: ∀e a. (HasLogFunc e, HasConfig e)
-          => Ship -> Bool -> RIO PierEnv a -> RIO e a
-inPierEnv ship fake =
-    withRIO $ \x -> PierEnv (x ^. logFuncL) (x ^. configL) ship fake
+          => Ship -> Bool -> KingId
+          -> (RIO PierEnv a -> RIO e a)
+inPierEnv ship fake kingId =
+    withRIO $ \x -> PierEnv (x ^. logFuncL) (x ^. configL) ship fake kingId
 
 inPierEnvRAcquire :: ∀e a. (HasLogFunc e, HasConfig e)
-                  => Ship -> Bool
+                  => Ship -> Bool -> KingId
                   -> (RAcquire PierEnv a -> RAcquire e a)
-inPierEnvRAcquire ship fake =
-    withRAcquire $ \x -> PierEnv (x ^. logFuncL) (x ^. configL) ship fake
+inPierEnvRAcquire ship fake kingId =
+    withRAcquire $ \x -> PierEnv (x ^. logFuncL) (x ^. configL) ship fake kingId
 
 runApp :: Config -> RIO App a -> IO a
 runApp conf inner = do

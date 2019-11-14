@@ -7,7 +7,7 @@ import Network.Socket            hiding (recvFrom, sendTo)
 import Network.Socket.ByteString
 import Vere.Pier.Types
 
-import KingApp (HasAmesPort(..), HasShip(..), HasIsFake(..))
+import KingApp (HasAmesPort(..), HasShip(..), HasIsFake(..), HasKingId(..))
 
 import qualified Data.ByteString as BS
 import qualified Data.Map        as M
@@ -78,8 +78,6 @@ renderGalaxy = Ob.renderPatp . Ob.patp . fromIntegral . unGalaxy
 --------------------------------------------------------------------------------
 
 {-
-    inst      -- Process instance number.
-    who       -- Which ship are we?
     enqueueEv -- Queue-event action.
 
     TODO Handle socket exceptions in waitPacket
@@ -89,16 +87,16 @@ renderGalaxy = Ob.renderPatp . Ob.patp . fromIntegral . unGalaxy
 
     TODO verify that the KingIds match on effects.
 -}
-ames :: forall e. (HasLogFunc e, HasAmesPort e, HasShip e, HasIsFake e)
-     => KingId -> QueueEv
+ames :: forall e m
+      . (HasLogFunc e, HasAmesPort e, HasShip e, HasIsFake e, HasKingId e)
+     => MonadReader e m
+     => QueueEv
      -> (Text -> IO ())
-     -> IODrv e NewtEf
-ames inst enqueueEv stderr =
-    IODrv initialEvents runAmes
+     -> m (IODrv e NewtEf)
+ames enqueueEv stderr = do
+    inst <- view kingIdL
+    pure (IODrv [barnEv inst] runAmes)
   where
-    initialEvents :: [Ev]
-    initialEvents = [barnEv inst]
-
     runAmes :: RAcquire e (EffCb NewtEf)
     runAmes = do
         env <- ask

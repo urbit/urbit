@@ -192,7 +192,10 @@ tryPlayShip shipPath flags = do
         let ship  = who logId
         let fake  = isFake logId
 
-        inPierEnvRAcquire ship fake (Pier.pier shipPath sls)
+        kingId <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
+
+        inPierEnvRAcquire ship fake kingId $ do
+            Pier.pier shipPath sls
 
 tryResume :: FilePath -> Serf.Flags -> RIO App ()
 tryResume shipPath flags = do

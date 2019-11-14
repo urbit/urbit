@@ -33,10 +33,11 @@ import Vere.Pier.Types
 
 import Data.Binary.Builder (Builder, fromByteString)
 import Data.Bits           (shiftL, (.|.))
+import KingApp             (HasKingId(..))
 import Network.Socket      (SockAddr(..))
 import System.Directory    (doesFileExist, removeFile)
 import System.Random       (randomIO)
-import Vere.Drv.Http        (convertHeaders, unconvertHeaders)
+import Vere.Drv.Http       (convertHeaders, unconvertHeaders)
 
 import qualified Network.HTTP.Types          as H
 import qualified Network.Wai                 as W
@@ -459,11 +460,12 @@ respond (Drv v) reqId ev = do
                       for_ (reorgHttpEvent ev) $
                         atomically . respondToLiveReq (sLiveReqs sv) reqId
 
-serv :: ∀e. HasLogFunc e
-     => FilePath -> KingId -> QueueEv
-     -> IODrv e HttpServerEf
-serv pier king plan =
-    IODrv [bornEv king] runHttpServer
+serv :: ∀e m. (HasLogFunc e, HasKingId e, MonadReader e m)
+     => FilePath -> QueueEv
+     -> m (IODrv e HttpServerEf)
+serv pier plan = do
+    king <- view kingIdL
+    pure (IODrv [bornEv king] runHttpServer)
   where
     runHttpServer :: RAcquire e (EffCb HttpServerEf)
     runHttpServer = do

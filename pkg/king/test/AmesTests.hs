@@ -18,8 +18,9 @@ import Vere.Pier.Types
 import Control.Concurrent (runInBoundThread)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
-import KingApp            (App, PierEnv, runAppNoConfig, inPierEnvRAcquire)
+import KingApp            (App, PierEnv, inPierEnvRAcquire, runAppNoConfig)
 import Network.Socket     (tupleToHostAddress)
+import System.Random      (randomIO)
 
 import qualified Vere.Log as Log
 
@@ -40,9 +41,10 @@ sendEf g w bs = NewtEfSend (0, ()) (ADGala w g) bs
 -}
 runGala :: Word8 -> RAcquire App (TQueue Ev, EffCb NewtEf)
 runGala point = do
-    q <- newTQueueIO
-    inPierEnvRAcquire who True $ do
-        let IODrv _ startDrv = ames pid (writeTQueue q) print
+    q      <- newTQueueIO
+    kingId <- liftIO (KingId . UV . fromIntegral <$> randomIO @Word16)
+    inPierEnvRAcquire who True kingId $ do
+        IODrv _ startDrv <- rio $ ames (writeTQueue q) print
         cb ← startDrv
         io (cb turfEf)
         pure (q, cb)

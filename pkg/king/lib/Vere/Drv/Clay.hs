@@ -1,16 +1,19 @@
 module Vere.Drv.Clay (clay) where
 
 import Arvo            hiding (Term)
-import UrbitPrelude
-import Vere.Pier.Types
-
 import Conduit
 import RIO.Directory
 import RIO.FilePath
+import UrbitPrelude
+import Vere.Pier.Types
+
+import KingApp (HasKingId(..))
 
 import qualified Data.Conduit.Combinators as CC
 import qualified Data.Map.Strict          as M
 import qualified Data.Set                 as S
+
+--------------------------------------------------------------------------------
 
 data ClayDrv = ClayDrv
   { cdMountPoints :: TVar (Map Desk (Map FilePath Int))
@@ -94,9 +97,10 @@ buildActionListFromDifferences fp snapshot = do
 
 --------------------------------------------------------------------------------
 
-clay :: ∀e. HasLogFunc e => FilePath -> KingId -> QueueEv -> IODrv e SyncEf
-clay pierPath king enqueueEv =
-    IODrv initialEvents runSync
+clay :: ∀e m. (HasLogFunc e, HasKingId e, MonadReader e m)
+     => FilePath -> QueueEv -> m (IODrv e SyncEf)
+clay pierPath enqueueEv =
+    pure (IODrv initialEvents runSync)
   where
     initialEvents = [
       EvBlip $ BlipEvBoat $ BoatEvBoat () ()
@@ -133,6 +137,7 @@ clay pierPath king enqueueEv =
         logDebug $ displayShow ("(clay) dirk actions: ", actions)
 
         let !intoList = map (actionsToInto dir) actions
+        king <- view kingIdL
         atomically $ enqueueEv $ EvBlip $ BlipEvSync $
             SyncEvInto (Some (king, ())) desk False intoList
 

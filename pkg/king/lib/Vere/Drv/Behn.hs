@@ -5,9 +5,10 @@ import UrbitPrelude
 import Arvo                   (KingId)
 import Arvo                   (BehnEf(..), BehnEv(..), BlipEv(..), Ev(..))
 import Data.Time.Clock.System (SystemTime)
+import KingApp                (HasKingId(..))
 import Urbit.Time             (Wen)
 import Urbit.Timer            (Timer)
-import Vere.Pier.Types        (IODrv(..), EffCb, QueueEv)
+import Vere.Pier.Types        (EffCb, IODrv(..), QueueEv)
 
 import qualified Urbit.Time  as Time
 import qualified Urbit.Timer as Timer
@@ -27,14 +28,13 @@ sysTime = view Time.systemTime
 
 -- Behn Driver -----------------------------------------------------------------
 
-behn :: ∀e. HasLogFunc e
-     => KingId -> QueueEv
-     -> IODrv e BehnEf
-behn king enqueueEv =
-    IODrv initialEvents runBehn
+behn :: ∀e m. (MonadReader e m, HasLogFunc e, HasKingId e)
+     => QueueEv
+     -> m (IODrv e BehnEf)
+behn enqueueEv = do
+    king <- view kingIdL
+    pure (IODrv [bornEv king] runBehn)
   where
-    initialEvents = [bornEv king]
-
     runBehn :: RAcquire e (EffCb BehnEf)
     runBehn = do
         rio $ logTrace "Behn Starting"
@@ -46,6 +46,7 @@ behn king enqueueEv =
     handleEf b = \case
         BehnEfVoid v            -> absurd v
         BehnEfDoze (i, ()) mWen -> do
+            king <- view kingIdL
             when (i == king) $ do
                 doze b mWen
 

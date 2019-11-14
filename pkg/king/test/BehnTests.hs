@@ -19,7 +19,7 @@ import Vere.Pier.Types
 import Control.Concurrent (runInBoundThread)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
-import KingApp            (runAppNoConfig)
+import KingApp            (runAppNoConfig, inPierEnvRAcquire)
 import Network.Socket     (tupleToHostAddress)
 
 import qualified Urbit.Time as Time
@@ -180,7 +180,8 @@ gapTicks = microSecs . μsTicks
     Nasty hack, but it works for now.
 -}
 realBehn :: Prog -> IO ProgRes
-realBehn (Prog cmds) = runAppNoConfig $ runRAcquire $ do
+realBehn (Prog cmds) =
+  runAppNoConfig $ runRAcquire $ inPierEnvRAcquire 0 True 0 $ do
 
     (res, fir, wat, kil) <- atomically $
         (,,,) <$> newTVar []
@@ -206,8 +207,8 @@ realBehn (Prog cmds) = runAppNoConfig $ runRAcquire $ do
                                    Just sg -> putTMVar sg ()
             modifyTVar res (dif:)
 
-    let (IODrv _ runDrv) = behn 0 (writeTQueue fir)
-    runEf <- runDrv
+    IODrv _ runDrv <- behn (writeTQueue fir)
+    runEf          <- runDrv
 
     let
         timeAfterNTicks :: Word -> Wen

@@ -514,15 +514,14 @@ localClient = fst <$> mkRAcquire start stop
 
 --------------------------------------------------------------------------------
 
-term :: forall e. HasLogFunc e
+term :: ∀e m. (HasLogFunc e, MonadReader e m)
      => (TSize.Window Word, Client)
      -> (STM ())
      -> FilePath
-     -> KingId
      -> QueueEv
-     -> IODrv e TermEf
-term (tsize, Client{..}) shutdownSTM pierPath king enqueueEv =
-    IODrv initialEvents runTerm
+     -> m (IODrv e TermEf)
+term (tsize, Client{..}) shutdownSTM pierPath enqueueEv = do
+    pure (IODrv initialEvents runTerm)
   where
     TSize.Window wi hi = tsize
 

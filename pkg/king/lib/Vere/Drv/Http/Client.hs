@@ -10,8 +10,9 @@ import UrbitPrelude hiding (Builder)
 import Vere.Pier.Types
 import Vere.Drv.Http
 
-import Arvo (BlipEv(..), Ev(..), HttpClientEf(..), HttpClientEv(..),
-             HttpClientReq(..), HttpEvent(..), KingId, ResponseHeader(..))
+import Arvo    (BlipEv(..), Ev(..), HttpClientEf(..), HttpClientEv(..))
+import Arvo    (HttpClientReq(..), HttpEvent(..), KingId, ResponseHeader(..))
+import KingApp (HasKingId(..))
 
 import qualified Data.Map                as M
 import qualified Network.HTTP.Client     as H
@@ -54,9 +55,12 @@ bornEv king =
 
 --------------------------------------------------------------------------------
 
-client :: ∀e. HasLogFunc e => KingId -> QueueEv -> IODrv e HttpClientEf
-client kingId enqueueEv =
-    IODrv [bornEv kingId] runHttpClient
+client :: ∀e m. (HasLogFunc e, HasKingId e, MonadReader e m)
+       => QueueEv
+       -> m (IODrv e HttpClientEf)
+client enqueueEv = do
+    kingId <- view kingIdL
+    pure (IODrv [bornEv kingId] runHttpClient)
   where
     runHttpClient :: RAcquire e (EffCb HttpClientEf)
     runHttpClient = do
@@ -123,9 +127,10 @@ client kingId enqueueEv =
 
     planEvent :: ReqId -> HttpEvent -> RIO e ()
     planEvent id ev = do
+      kingId <- view kingIdL
       logDebug $ displayShow ("(http client response)", id, (describe ev))
       atomically $ enqueueEv $ EvBlip $ BlipEvHttpClient $
-        HttpClientEvReceive (kingId, ()) (fromIntegral id) ev
+         HttpClientEvReceive (kingId, ()) (fromIntegral id) ev
 
     -- show an HttpEvent with byte count instead of raw data
     describe :: HttpEvent -> String

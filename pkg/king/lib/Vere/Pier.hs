@@ -7,11 +7,10 @@ module Vere.Pier
 import UrbitPrelude
 
 import Arvo
-import System.Random
 import Vere.Pier.Types
 
 import Data.Text            (append)
-import KingApp              (HasAmesPort, HasShip, HasIsFake)
+import KingApp              (HasAmesPort, HasShip, HasIsFake, HasKingId(..))
 import System.Posix.Files   (ownerModes, setFileMode)
 import Vere.Drv.Ames        (ames)
 import Vere.Drv.Behn        (behn)
@@ -135,7 +134,8 @@ resumed top flags = do
 acquireWorker :: RIO e () -> RAcquire e (Async ())
 acquireWorker act = mkRAcquire (async act) cancel
 
-pier :: ∀e. (HasLogFunc e, HasAmesPort e, HasShip e, HasIsFake e)
+pier :: ∀e
+      . (HasLogFunc e, HasAmesPort e, HasShip e, HasIsFake e, HasKingId e)
      => FilePath
      -> (Serf, EventLog, SerfState)
      -> RAcquire e ()
@@ -147,8 +147,6 @@ pier pierPath (serf, log, ss) = do
     shutdownM <- newEmptyTMVarIO
 
     let shutdownEvent = putTMVar shutdownM ()
-
-    inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
     (sz, local) <- Term.localClient
 
@@ -184,15 +182,13 @@ pier pierPath (serf, log, ss) = do
     -- Serf doesn't have the appended \r\n because those \r\n s are added in
     -- the c serf code. Logging output from our haskell process must manually
     -- add them.
-    let showErr = atomically . Term.trace muxed . (flip append "\r\n")
-    let (bootEvents, startDrivers) =
-            drivers pierPath
-                    inst
-                    (isFake logId)
-                    (writeTQueue computeQ)
-                    shutdownEvent
-                    (sz, muxed)
-                    showErr
+    let showErr = atomically . Term.trace muxed . flip append "\r\n"
+
+    (bootEvents, startDrivers) <- rio $ drivers pierPath
+                                                (writeTQueue computeQ)
+                                                shutdownEvent
+                                                (sz, muxed)
+                                                showErr
 
     io $ atomically $ for_ bootEvents (writeTQueue computeQ)
 
@@ -247,35 +243,37 @@ data Drivers = Drivers
     , dTerm       :: EffCb TermEf
     }
 
-drivers :: (HasLogFunc e, HasAmesPort e, HasShip e, HasIsFake e)
-        => FilePath -> KingId -> Bool -> (Ev -> STM ())
-        -> STM()
+drivers :: ∀e
+         . (HasLogFunc e, HasAmesPort e, HasShip e, HasIsFake e, HasKingId e)
+        => FilePath
+        -> (Ev -> STM ())
+        -> STM ()
         -> (TSize.Window Word, Term.Client)
         -> (Text -> IO ())
-        -> ([Ev], RAcquire e Drivers)
-drivers pierPath inst isFake plan shutdownSTM termSys stderr =
-    (initialEvents, runDrivers)
-  where
-    IODrv behnBorn runBehn = behn inst plan
-    IODrv amesBorn runAmes = ames inst plan stderr
-    IODrv httpBorn runHttp = serv pierPath inst plan
-    IODrv clayBorn runClay = clay pierPath inst plan
-    IODrv irisBorn runIris = client inst plan
-    IODrv termBorn runTerm = Term.term termSys shutdownSTM pierPath inst plan
+        -> RIO e ([Ev], RAcquire e Drivers)
+drivers pierPath plan shutdownSTM termSys stderr = do
+    IODrv behnBorn runBehn <- behn plan
+    IODrv amesBorn runAmes <- ames plan stderr
+    IODrv httpBorn runHttp <- serv pierPath plan
+    IODrv clayBorn runClay <- clay pierPath plan
+    IODrv irisBorn runIris <- client plan
+    IODrv termBorn runTerm <- Term.term termSys shutdownSTM pierPath plan
 
-    initialEvents = mconcat [ behnBorn, clayBorn, amesBorn, httpBorn, termBorn
-                            , irisBorn
-                            ]
+    let initialEvents = mconcat [ behnBorn, clayBorn, amesBorn, httpBorn
+                                , termBorn, irisBorn
+                                ]
 
-    runDrivers = do
-        dNewt       <- runAmes
-        dBehn       <- runBehn
-        dAmes       <- pure $ const $ pure () -- Same as `%newt`
-        dHttpClient <- runIris
-        dHttpServer <- runHttp
-        dSync       <- runClay
-        dTerm       <- runTerm
-        pure (Drivers{..})
+    let runDrivers = do
+            dNewt       <- runAmes
+            dBehn       <- runBehn
+            dAmes       <- pure $ const $ pure () -- Same as `%newt`
+            dHttpClient <- runIris
+            dHttpServer <- runHttp
+            dSync       <- runClay
+            dTerm       <- runTerm
+            pure (Drivers{..})
+
+    pure (initialEvents, runDrivers)
 
 
 -- Route Effects to Drivers ----------------------------------------------------
