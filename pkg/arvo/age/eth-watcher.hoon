@@ -6,7 +6,7 @@
 =,  able:jael
 ::
 =>  |%
-    ++  refresh-rate  ~m5
+    ++  refresh-rate  ~m1  ::  ~m5
     --
 ::
 =>  |%
@@ -298,8 +298,10 @@
       ::
       =/  =cage  [%spider-stop !>([u.running.dog |])]
       =.  cards
-        :_  cards
-        [%pass [%starting path] %agent [our.bowl %spider] %poke cage]
+        :*  [%pass [%starting path] %agent [our.bowl %spider] %poke cage]
+            (leave-spider path our.bowl)
+            cards
+        ==
       loop(i.dogs i.dogs(running.dog ~))
     ::
     =^  rand  iid-gen  (raws:iid-gen 128)

@@ -260,6 +260,7 @@
 ::
 ++  dawn
   |=  [who=ship seed=(unit seed:able:jael)]
+  =-  ~&  >>  [%dawn-event -]  -
   ^-  dawn-event:able:jael
   =/  spon=(list [ship point:azimuth])
     |-  ^-  (list [ship point:azimuth])
