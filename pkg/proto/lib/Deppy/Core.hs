@@ -8,7 +8,7 @@ import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 import Data.Map (foldlWithKey)
 import Numeric.Natural
 
-type Typ a = Exp a
+type Typ = Exp
 
 data Exp a
   = Var a
@@ -61,17 +61,21 @@ instance Monad Exp where
 bindAbs :: Abs a -> (a -> Exp b) -> Abs b
 bindAbs (Abs s b) f = Abs (s >>= f) (b >>>= f)
 
-subst :: (Eq a, Ord a) => Map a (Exp a) -> Exp a -> Exp a
-subst s e = foldlWithKey step e s
-  where
-    step e v r = substitute v r e
+lam :: Eq a => a -> Typ a -> Exp a -> Exp a
+lam v t e = Lam (Abs t (abstract1 v e))
 
-extend :: (b -> Typ a) -> (a -> Typ a) -> (Var b a -> Typ a)
-extend b env = \case
-  B v -> b v
-  F v -> env v
+fun :: Eq a => a -> Typ a -> Exp a -> Typ a
+fun v t e = Fun (Abs t (abstract1 v e))
 
-extend1 :: Typ a -> (a -> Typ a) -> (Var () a -> Typ a)
+type Env a = a -> Typ a
+
+extend :: (b -> Typ a) -> Env a -> Env (Var b a)
+extend handleNewBindings oldEnv = \case
+  -- TODO can we use Scope to decrease the cost of this?
+  B v -> F <$> handleNewBindings v
+  F v -> F <$> oldEnv v
+
+extend1 :: Typ a -> Env a -> Env (Var () a)
 extend1 t = extend \() -> t
 
 infer :: forall a. (a -> Typ a) -> Exp a -> Typ a
@@ -85,8 +89,7 @@ infer env = \case
   Lam (Abs t b) -> Fun (Abs t t')
     where
       -- FIXME require t to be in a universe
-      t' :: Scope () Exp a
-      t' = infer (extend1 t env :: Var () a -> Typ a) (fromScope b :: Var () a)
+      t' = toScope $ infer (extend1 t env) (fromScope b)
   App x y -> t'
     where
       (Abs t b) = extractFun $ infer env x
