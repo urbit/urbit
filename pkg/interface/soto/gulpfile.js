@@ -134,7 +134,7 @@ gulp.task('clean-min', function () {
 });
 
 gulp.task('urbit-copy', function () {
-  let ret = gulp.src('urbit/**/*');
+  let ret = gulp.src('../../arvo/**/*');
 
   urbitrc.URBIT_PIERS.forEach(function(pier) {
     ret = ret.pipe(gulp.dest(pier));

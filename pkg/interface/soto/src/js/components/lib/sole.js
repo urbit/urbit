@@ -77,7 +77,11 @@ export class Share {
     switch (false) {
       case 'nop' !== ted: return ted;
       case !ted.map:
-        return ted.map( tad=> { const res=this.inverse(tad); this.apply(tad); return res; }).reverse();
+        return ted.map( tad => { 
+          const res = this.inverse(tad); 
+          this.apply(tad); 
+          return res;
+        }).reverse();
       default: switch (Object.keys(ted)[0]) {
         case 'set': return {set: this.buf};
         case 'ins': return {del: ted.ins};
@@ -115,12 +119,18 @@ export class Share {
   }
 
   transpose(ted,pos){
-    if (pos === undefined) { 
+    if (pos === undefined) {
       return this.transpose(this.leg, ted);
-    } else { 
+    } 
+    else {
       let left;
-    return ((left = (this.transmute(ted, {ins: {at: pos}})).ins) != null ? left : {at:0}).at; }
-  }
+      return ((left = 
+          (this.transmute(
+            ted, {ins: {at: pos}})).ins) != null ? 
+            left : { at:0 }
+          ).at;
+      }
+    }
 };
 
-export default Share
+export default Share;

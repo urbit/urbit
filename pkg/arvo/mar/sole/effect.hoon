@@ -65,8 +65,13 @@
       (pairs vis+b+vis.sef tag+s+tag.sef cad+(tape (purge cad.sef)) ~)
     ::
         $tab
-      %+  frond  %tab
-      a+(turn p.sef |=([=cord tan=^tank] (pairs match+s+cord info+(tape ~(ram re tan)) ~)))
+      :-  %a
+      %+  turn  p.sef
+      |=  [=cord =^tank]
+      %-  pairs
+      :~  match+s+cord
+          info+(tape ~(ram re tank))
+      ==
     ::
         ?($bel $clr $nex)
       (frond %act %s -.sef)
