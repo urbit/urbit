@@ -187,7 +187,7 @@
     %+  rush
       (snag last `(list @ta)`pax)
     dem:ag
-  =>  .(pax `path`(oust [last last] `(list @ta)`pax))
+  =>  .(pax `path`(oust [last 1] `(list @ta)`pax))
   ?>  ?=([* ^] pax)
   ?>  (~(has by synced) pax)
   ::  scry permissions to check if read is permitted

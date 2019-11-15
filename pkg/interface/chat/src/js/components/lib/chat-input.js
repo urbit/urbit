@@ -146,7 +146,7 @@ export class ChatInput extends Component {
       Date.now(),
       letter
     );
-    /*perf: setTimeout(this.closure, 2000);*/
+    // perf: setTimeout(this.closure, 2000);
 
     this.setState({
       message: '',
