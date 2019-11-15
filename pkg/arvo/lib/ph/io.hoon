@@ -92,13 +92,37 @@
     !>([iid %azimuth-command !>([%breach who])])
   (poke-our %spider %spider-imput vase)
 ::
+::  who: breachee
+::  her: wait until hears about breach
+::
 ++  breach-and-hear
   |=  [=iid:spider who=ship her=ship]
   =/  m  (thread ,~)
   ~&  >  "breaching {<who>} for {<her>}"
+  ;<  =bowl:spider             bind:m  get-bowl
+  =/  aqua-pax
+    :-  %i
+    /(scot %p her)/j/(scot %p her)/rift/(scot %da now.bowl)/(scot %p who)/noun
+  =/  old-rut  ;;((unit @) (scry-aqua:util noun our.bowl now.bowl aqua-pax))
+  =/  new-rut
+    ?~  old-rut
+      1
+    +(+.old-rut)
   =/  =vase
-    !>([iid %azimuth-command !>([%breach-and-hear who her])])
-  (poke-our %spider %spider-imput vase)
+    !>([iid %azimuth-command !>([%breach who])])
+  ;<  ~  bind:m                (poke-our %spider %spider-imput vase)
+  |-  ^-  form:m
+  =*  loop  $
+  ;<  [him=ship =unix-effect]  bind:m  take-unix-effect
+  ;<  =bowl:spider             bind:m  get-bowl
+  =/  aqua-pax
+    :-  %i
+    /(scot %p her)/j/(scot %p her)/rift/(scot %da now.bowl)/(scot %p who)/noun
+  =/  rut  (scry-aqua:util noun our.bowl now.bowl aqua-pax)
+  ~&  [new-rut=new-rut now-rut=rut]
+  ?:  =([~ new-rut] rut)
+    (pure:m ~)
+  loop
 ::
 ++  real-ship
   |=  [=iid:spider =ship]

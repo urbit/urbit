@@ -6,7 +6,7 @@
 =,  able:jael
 ::
 =>  |%
-    ++  refresh-rate  ~m1  ::  ~m5
+    ++  refresh-rate  ~m5  ::  ~m5
     --
 ::
 =>  |%
@@ -238,7 +238,7 @@
     :_  dog(history actual-history)
     %+  turn  actual-vows
     |=  =id:block
-    [%give %fact `path %eth-watcher-diff !>([%disavow id])]
+    [%give %fact `[%logs path] %eth-watcher-diff !>([%disavow id])]
   ::
   ++  release-logs
     |=  [=path dog=watchdog]
@@ -246,7 +246,8 @@
     ?:  (lth number.dog 30)
       `dog
     =/  rel-number  (sub number.dog 30)
-    =/  numbers  ~(tap in ~(key by pending-logs.dog))
+    =/  numbers=(list number:block)  ~(tap in ~(key by pending-logs.dog))
+    =.  numbers  (sort numbers lth)
     |-  ^-  (quip card watchdog)
     ?~  numbers
       `dog
@@ -262,7 +263,8 @@
       %+  turn  loglist
       |=  =event-log:rpc:ethereum
       ^-  card
-      [%give %fact `path %eth-watcher-diff !>([%log event-log])]
+      ~&  >  eth-releasing=event-log
+      [%give %fact `[%logs path] %eth-watcher-diff !>([%log event-log])]
     =^  cards-2  dog  $(numbers t.numbers)
     [(weld cards-1 cards-2) dog]
   --
@@ -296,6 +298,7 @@
     ?^  running.dog.i.dogs
       ::  if still running, kill it and restart
       ::
+      %-  (slog leaf+"eth-watcher still running; will restart" ~)
       =/  =cage  [%spider-stop !>([u.running.dog |])]
       =.  cards
         :*  [%pass [%starting path] %agent [our.bowl %spider] %poke cage]

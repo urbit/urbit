@@ -13,7 +13,6 @@
   $%  [%spawn =ship]
       [%create-ship =ship]
       [%breach =ship]
-      [%breach-and-hear who=ship her=ship]
   ==
 ::
 +$  az-log  [topics=(lest @) data=@t]
@@ -160,7 +159,7 @@
     :*  %pass  /aqua-events
         %agent  [our %aqua]
         %poke  %aqua-events
-        !>(aqua-events)
+        !>(events)
     ==
   ::
   ++  number-to-hash
@@ -238,7 +237,6 @@
     %spawn            (spawn +.command)
     %create-ship      (raw-real-ship +.command)
     %breach           (breach +.command)
-    %breach-and-hear  (breach-and-hear +.command)
   ==
 ::
 ++  raw-real-ship
@@ -260,7 +258,6 @@
 ::
 ++  dawn
   |=  [who=ship seed=(unit seed:able:jael)]
-  =-  ~&  >>  [%dawn-event -]  -
   ^-  dawn-event:able:jael
   =/  spon=(list [ship point:azimuth])
     |-  ^-  (list [ship point:azimuth])
@@ -349,28 +346,6 @@
         lyfe
     ==
   (pure:m state)
-::
-::  who: breachee
-::  her: wait until hears about breach
-::
-++  breach-and-hear
-  |=  [who=@p her=@p]
-  =/  m  (thread ,_state)
-  ^-  form:m
-  ;<  =new=^state              bind:m  (breach who)
-  =.  state  new-state
-  =/  new-rut  rut:(~(got by lives.state) who)
-  |-  ^-  form:m
-  =*  loop  $
-  ;<  [him=ship =unix-effect]  bind:m  take-unix-effect:ph-io
-  ;<  =bowl:spider             bind:m  get-bowl:ph-io
-  =/  aqua-pax
-    :-  %i
-    /(scot %p her)/j/(scot %p her)/rift/(scot %da now.bowl)/(scot %p who)/noun
-  =/  rut  (scry-aqua:util noun our.bowl now.bowl aqua-pax)
-  ?:  =([~ new-rut] rut)
-    (pure:m state)
-  loop
 ::
 ++  breach
   |=  who=@p
