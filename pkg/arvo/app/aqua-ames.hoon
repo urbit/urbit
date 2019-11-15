@@ -75,12 +75,12 @@
   ^+  this
   =/  rcvr=ship  (lane-to-ship lan)
   =/  hear-lane  (ship-to-lane sndr)
-  =>  ?.  ?|  =(rcvr ~linnup-torsyx-linnup-torsyx)
-              =(sndr ~linnup-torsyx-linnup-torsyx)
-          ==
-        .
-      ~>  %slog.0^leaf/"aqua: {(scow %p sndr)} -> {(scow %p rcvr)}"
-      .
+::  =>  ?.  ?|  =(rcvr ~linnup-torsyx-linnup-torsyx)
+::              =(sndr ~linnup-torsyx-linnup-torsyx)
+::          ==
+::        .
+::      ~>  %slog.0^leaf/"aqua: {(scow %p sndr)} -> {(scow %p rcvr)}"
+::      .
   %-  emit-aqua-events
   [%event rcvr //newt/0v1n.2m9vh %hear hear-lane pac]~
 ::  +lane-to-ship: decode a ship from an aqua lane

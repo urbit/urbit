@@ -59,7 +59,21 @@
 =,  able
 =*  point               point:able:jael
 =*  public-keys-result  public-keys-result:able:jael
-::
+=>
+=/  veb
+  :*  pak=%.n
+      snd=%.n
+      rcv=%.n
+      odd=%.n
+      msg=%.y
+  ==
+|%
+++  trace
+  |=  [verb=? print=(trap tape)]
+  ?.  verb
+    same
+  (slog leaf/"ames: {(print)}" ~)
+--
 =>
 |%
 +|  %generics
@@ -1181,7 +1195,11 @@
     =/  =channel     [[our ship] now |2.ames-state -.peer-state]
     ::
     =^  =bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
-    ~>  %slog.0^leaf/"ames: plea {<[our our-life.channel]^[ship her-life.channel]^bone^vane.plea^path.plea>}"
+    %-  %+  trace  msg.veb
+        |.  ^-  tape
+        =/  sndr  [our our-life.channel]
+        =/  rcvr  [ship her-life.channel]
+        "plea {<sndr^rcvr^bone^vane.plea^path.plea>}"
     ::
     abet:(on-memo:(make-peer-core peer-state channel) bone plea)
   ::  +on-take-wake: receive wakeup or error notification from behn
@@ -1863,18 +1881,18 @@
         ?.  ?=([%hear * * ok=%.n] task)
           ::  fresh boon; give message to client vane
           ::
-          ~>  %slog.0^leaf/"ames: boon {<her.channel^bone>}"
+          %-  (trace msg.veb |.("boon {<her.channel^bone>}"))
           (emit (got-duct bone) %give %boon message)
         ::  we previously crashed on this message; notify client vane
         ::
-        ~>  %slog.1^leaf/"ames: crashed on boon {<her.channel^bone>}"
+        %-  (trace msg.veb |.("crashed on boon {<her.channel^bone>}"))
         (emit (got-duct bone) %give %lost ~)
       ::  +on-sink-nack-trace: handle nack-trace received by |message-sink
       ::
       ++  on-sink-nack-trace
         |=  [=message-num message=*]
         ^+  peer-core
-        ~>  %slog.0^leaf/"ames: nack trace {<her.channel^bone>}"
+        %-  (trace msg.veb |.("nack trace {<her.channel^bone>}"))
         ::
         =+  ;;  =naxplanation  message
         ::  ack nack-trace message (only applied if we don't later crash)
@@ -1907,7 +1925,7 @@
       ++  on-sink-plea
         |=  [=message-num message=*]
         ^+  peer-core
-        ~>  %slog.0^leaf/"ames: plea {<her.channel^bone>}"
+        %-  (trace msg.veb |.("plea {<her.channel^bone>}"))
         ::  is this the first time we're trying to process this message?
         ::
         ?.  ?=([%hear * * ok=%.n] task)
@@ -1987,7 +2005,7 @@
     ::  pass to |packet-pump unless duplicate or future ack
     ::
     ?.  (is-message-num-in-range message-num)
-      ~>  %slog.0^leaf/"ames: hear pump out of range"
+      %-  (trace snd.veb |.("hear pump out of range"))
       message-pump
     (run-packet-pump %hear message-num fragment-num)
   ::  +on-done: handle message acknowledgment
@@ -2166,9 +2184,11 @@
     =.  metrics.state  on-timeout:gauge
     ::  re-send first packet and update its state in-place
     ::
-    =-  =.  live.state   live.-
-        =.  packet-pump  (give %send static-fragment.-)
-        ~&  'DEAD'^fragment-num.static-fragment.-^show:gauge
+    =-  =*  res  -
+        =.  live.state   live.res
+        =.  packet-pump  (give %send static-fragment.res)
+        %-  %+  trace  snd.veb
+            |.("dead {<fragment-num.static-fragment.res^show:gauge>}")
         packet-pump
     ::
     =|  acc=static-fragment
@@ -2241,15 +2261,17 @@
     =-  ::  if no sent packet matches the ack, don't apply mutations or effects
         ::
         ?.  found.-
-          ~&  'MISS'^show:gauge
+          %-  (trace snd.veb |.("miss {<show:gauge>}"))
           packet-pump
         ::
         =.  metrics.state  metrics.-
         =.  live.state     live.-
-        ~?  ?|  =(0 fragment-num)
-                =(0 (mod counter.metrics.state 20))
-            ==
-            [fragment-num show:gauge]
+        %-  %+  trace
+              ?.  snd.veb  %.n
+              ?|  =(0 fragment-num)
+                  =(0 (mod counter.metrics.state 20))
+              ==
+            |.("{<[fragment-num show:gauge]>}")
         ::  .resends is backward, so fold backward and emit
         ::
         %+  reel  resends.-
@@ -2300,7 +2322,7 @@
     =-  =.  metrics.state  metrics.-
         =.  live.state     live.-
         ::
-        ~&  'DONE'^[message-num show:gauge]
+        %-  (trace snd.veb |.("done {<message-num^show:gauge>}"))
         packet-pump
     ::
     ^+  [metrics=metrics.state live=live.state]
@@ -2438,7 +2460,8 @@
     :-  resend
     ::
     =?  cwnd  !in-recovery  (max 2 (div cwnd 2))
-    ~&  ['SKIPPED' resend=resend in-recovery=in-recovery show]
+    %-  %+  trace  snd.veb
+        |.("skip {<[resend=resend in-recovery=in-recovery show]>}")
     metrics
   ::  +on-timeout: (re)enter slow-start mode on packet loss
   ::
@@ -2523,7 +2546,7 @@
     ::  ignore messages from far future; limit to 10 in progress
     ::
     ?:  (gte seq (add 10 last-acked.state))
-      ~>  %slog.0^leaf/"ames: future %hear {<seq^last-acked.state>}"
+      %-  (trace odd.veb |.("future %hear {<seq^last-acked.state>}"))
       message-sink
     ::
     =/  is-last-fragment=?  =(+(fragment-num) num-fragments)
@@ -2533,12 +2556,12 @@
       ?.  is-last-fragment
         ::  single packet ack
         ::
-        ::~>  %slog.0^leaf/"ames: send dupe ack {<seq^fragment-num>}"
+        %-  (trace rcv.veb |.("send dupe ack {<seq^fragment-num>}"))
         (give %send seq %& fragment-num)
       ::  whole message (n)ack
       ::
       =/  ok=?  !(~(has in nax.state) seq)
-      ::~>  %slog.0^leaf/"ames: send dupe message ack {<seq>} ok={<ok>}"
+      %-  (trace rcv.veb |.("send dupe message ack {<seq>} ok={<ok>}"))
       (give %send seq %| ok lag=`@dr`0)
     ::  last-acked<seq<=last-heard; heard message, unprocessed
     ::
@@ -2546,11 +2569,11 @@
       ?:  is-last-fragment
         ::  drop last packet since we don't know whether to ack or nack
         ::
-        ::~>  %slog.0^leaf/"ames: hear last in-progress {<her.channel^seq>}"
+        %-  (trace rcv.veb |.("hear last in-progress {<her.channel^seq>}"))
         message-sink
       ::  ack all other packets
       ::
-      ::::::~&~&~&  %send-ack^seq^fragment-num
+      %-  (trace rcv.veb |.("send ack {<seq^fragment-num>}"))
       (give %send seq %& fragment-num)
     ::  last-heard<seq<10+last-heard; this is a packet in a live message
     ::
@@ -2572,9 +2595,9 @@
     ::
     ?:  already-heard-fragment
       ?:  is-last-fragment
-        ::~>  %slog.0^leaf/"ames: hear last dupe {<her.channel^seq>}"
+        %-  (trace rcv.veb |.("hear last dupe {<her.channel^seq>}"))
         message-sink
-      ::~>  %slog.0^leaf/"ames: send dupe ack {<her.channel^seq^fragment-num>}"
+      %-  (trace rcv.veb |.("send dupe ack {<her.channel^seq^fragment-num>}"))
       (give %send seq %& fragment-num)
     ::  new fragment; store in state and check if message is done
     ::
@@ -2589,7 +2612,7 @@
     ::  ack any packet other than the last one, and continue either way
     ::
     =?  message-sink  !is-last-fragment
-      ::::::~&~&~&  %send-ack^seq^fragment-num
+      %-  (trace rcv.veb |.("send ack {<seq^fragment-num>}"))
       (give %send seq %& fragment-num)
     ::  enqueue all completed messages starting at +(last-heard.state)
     ::
@@ -2611,7 +2634,7 @@
     =.  last-heard.state     +(last-heard.state)
     =.  live-messages.state  (~(del by live-messages.state) seq)
     ::
-    ~>  %slog.0^leaf/"ames: hear {<her.channel>} {<num-fragments.u.live>}kb"
+    %-  (trace msg.veb |.("hear {<her.channel>} {<num-fragments.u.live>}kb"))
     =/  message=*  (assemble-fragments [num-fragments fragments]:u.live)
     =.  message-sink  (enqueue-to-vane seq message)
     ::
