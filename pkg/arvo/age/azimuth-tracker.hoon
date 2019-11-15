@@ -96,7 +96,7 @@
 --
 ::
 =|  state=app-state
-%+  verb  &
+%+  verb  |
 ^-  agent:mall
 |_  =bowl:mall
 +*  this  .
