@@ -47,7 +47,9 @@
 +$  chat-update
   $%  [%keys keys=(set path)]
       [%config =path =config]
-      [%messages =path start=@ud end=@ud envelopes=(list envelope)]
       chat-base
   ==
+::
++$  chat-two-update
+  [%messages =path start=@ud end=@ud envelopes=(list envelope)]
 --

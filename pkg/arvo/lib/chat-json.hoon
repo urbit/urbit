@@ -118,6 +118,25 @@
       [%config (conf config.mailbox)]
   ==
 ::
+++  two-update-to-json
+  |=  upd=chat-two-update
+  =,  enjs:format
+  ^-  json
+  %+  frond  %chat-update
+  %-  pairs
+  :~
+    ?:  =(%messages -.upd)
+      ?>  ?=(%messages -.upd)
+      :-  %messages
+      %-  pairs
+      :~  [%path (path path.upd)]
+          [%start (numb start.upd)]
+          [%end (numb end.upd)]
+          [%envelopes [%a (turn envelopes.upd enve)]]
+      ==
+    [*@t *^json]
+  ==
+::
 ++  update-to-json
   |=  upd=chat-update
   =,  enjs:format
@@ -131,15 +150,6 @@
       %-  pairs
       :~  [%path (path path.upd)]
           [%envelope (enve envelope.upd)]
-      ==
-    ?:  =(%messages -.upd)
-      ?>  ?=(%messages -.upd)
-      :-  %messages
-      %-  pairs
-      :~  [%path (path path.upd)]
-          [%start (numb start.upd)]
-          [%end (numb end.upd)]
-          [%envelopes [%a (turn envelopes.upd enve)]]
       ==
     ?:  =(%read -.upd)
       ?>  ?=(%read -.upd)

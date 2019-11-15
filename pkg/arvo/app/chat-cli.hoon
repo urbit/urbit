@@ -179,6 +179,11 @@
   :-  [prompt:sh-out ~]
   ::  start with fresh sole state
   this(state.cli *sole-share:sole-sur)
+::
+++  diff-chat-two-update
+  |=  [=wire upd=chat-two-update]
+  ^-  (quip move _this)
+  (read-envelopes (path-to-target path.upd) envelopes.upd)
 ::  +diff-chat-update: get new mailboxes & messages
 ::
 ++  diff-chat-update

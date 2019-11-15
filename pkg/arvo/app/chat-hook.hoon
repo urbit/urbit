@@ -8,7 +8,7 @@
 +$  move  [bone card]
 ::
 +$  card
-  $%  [%diff [%chat-update chat-update]]
+  $%  [%diff diff]
       [%quit ~]
       [%poke wire dock poke]
       [%pull wire dock ~]
@@ -47,6 +47,11 @@
       [%permission-action permission-action]
       [%invite-action invite-action]
       [%chat-view-action chat-view-action]
+  ==
+::
++$  diff
+  $%  [%chat-update chat-update]
+      [%chat-two-update chat-two-update]
   ==
 --
 ::
@@ -231,7 +236,7 @@
 ++  messages-move
   |=  [=path start=@ud end=@ud envelopes=(list envelope)]
   ^-  move
-  [ost.bol %diff %chat-update [%messages path start end envelopes]]
+  [ost.bol %diff %chat-two-update [%messages path start end envelopes]]
 ::
 ++  diff-invite-update
   |=  [wir=wire diff=invite-update]
@@ -282,6 +287,24 @@
   =/  bne  (~(get by sup) [check-ship [%mailbox mail-path]])
   ?~(bne ~ [u.bne %quit ~]~)
 ::
+++  diff-chat-two-update
+  |=  [wir=wire diff=chat-two-update]
+  ^-  (quip move _this)
+  ::  local
+  ?:  (team:title our.bol src.bol)
+    :_  this
+    %+  turn  (prey:pubsub:userlib [%mailbox path.diff] bol)
+    |=  [=bone *]
+    ^-  move
+    [bone %diff [%chat-two-update diff]]
+  ::  foreign
+  :_  this
+  ?>  ?=([* ^] path.diff)
+  =/  shp  (~(get by synced) path.diff)
+  ?~  shp  ~
+  ?.  =(src.bol u.shp)  ~
+  [(chat-poke [%messages path.diff envelopes.diff])]~
+::
 ++  diff-chat-update
   |=  [wir=wire diff=chat-update]
   ^-  (quip move _this)
@@ -304,13 +327,6 @@
     [ost.bol %pull [%mailbox path.diff] [our.bol %chat-store] ~]~
   ::
       %message
-    :_  this
-    %+  turn  (prey:pubsub:userlib [%mailbox path.diff] bol)
-    |=  [=bone *]
-    ^-  move
-    [bone %diff [%chat-update diff]]
-  ::
-      %messages
     :_  this
     %+  turn  (prey:pubsub:userlib [%mailbox path.diff] bol)
     |=  [=bone *]
@@ -351,14 +367,6 @@
     ?~  shp  ~
     ?.  =(src.bol u.shp)  ~
     [(chat-poke [%message path.diff envelope.diff])]~
-  ::
-      %messages
-    :_  this
-    ?>  ?=([* ^] path.diff)
-    =/  shp  (~(get by synced) path.diff)
-    ?~  shp  ~
-    ?.  =(src.bol u.shp)  ~
-    [(chat-poke [%messages path.diff envelopes.diff])]~
   ==
 ::
 ++  quit

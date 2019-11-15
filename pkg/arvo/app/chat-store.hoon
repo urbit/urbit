@@ -21,6 +21,7 @@
   $%  [%chat-initial inbox]
       [%chat-configs chat-configs]
       [%chat-update chat-update]
+      [%chat-two-update chat-two-update]
   ==
 --
 ::
@@ -204,7 +205,7 @@
   |-  ^-  (quip move _this)
   ?~  envelopes.act
     :_  this(inbox (~(put by inbox) path.act u.mailbox))
-    %+  send-diff  path.act
+    %+  send-two-diff  path.act
     :*  %messages
         path.act
         (sub length.config.u.mailbox (lent evaluated-envelopes))
@@ -266,4 +267,19 @@
       (update-subscribers /keys upd)
   ==
 ::
+++  send-two-diff
+  |=  [pax=path upd=chat-two-update]
+  ^-  (list move)
+  %-  zing
+  :~  (update-two-subscribers /all upd)
+      (update-two-subscribers /updates upd)
+      (update-two-subscribers [%mailbox pax] upd)
+  ==
+::
+++  update-two-subscribers
+  |=  [pax=path upd=chat-two-update]
+  ^-  (list move)
+  %+  turn  (prey:pubsub:userlib pax bol)
+  |=  [=bone *]
+  [bone %diff %chat-two-update upd]
 --

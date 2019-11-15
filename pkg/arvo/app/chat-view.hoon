@@ -129,7 +129,7 @@
         %http-response
       %-  json-response:app
       %-  json-to-octs 
-      %-  update-to-json
+      %-  two-update-to-json
       [%messages pax start end envelopes]
     ==
   ::
@@ -224,6 +224,21 @@
   %+  turn  (prey:pubsub:userlib /configs bol)
   |=  [=bone *]
   [bone %diff %json configs-json]
+::
+++  diff-chat-two-update
+  |=  [wir=wire upd=chat-two-update]
+  ^-  (quip move _this)
+  =/  updates-json  (two-update-to-json upd)
+  =/  configs-json  (configs-to-json configs-scry)
+  :_  this
+  %+  weld
+    %+  turn  (prey:pubsub:userlib /primary bol)
+    |=  [=bone *]
+    [bone %diff %json updates-json]
+  %+  turn  (prey:pubsub:userlib /configs bol)
+  |=  [=bone *]
+  [bone %diff %json configs-json]
+
 ::
 ++  quit
   |=  wir=wire
