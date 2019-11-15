@@ -4,9 +4,10 @@ let
 
   deps = import ../deps { inherit pkgs; };
 
-  ent          = import ./ent          { inherit pkgs; };
-  arvo         = import ./arvo         { inherit pkgs; };
-  herb         = import ../../pkg/herb { inherit pkgs; };
+  arvo         = import ./arvo            { inherit pkgs; };
+  ent          = import ./ent             { inherit pkgs; };
+  hello        = import ./hello-cabal-nix { inherit pkgs; };
+  herb         = import ../../pkg/herb    { inherit pkgs; };
 
   ge-additions = import ./ge-additions {
     inherit pkgs;
@@ -25,4 +26,4 @@ let
 
 in
 
-{ inherit ent ge-additions arvo herb urbit urbit-debug; }
+{ inherit ent ge-additions arvo herb urbit urbit-debug hello; }
