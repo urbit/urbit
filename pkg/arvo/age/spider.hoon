@@ -105,7 +105,7 @@
 ^-  agent:mall
 =|  =state
 =<
-  %+  verb  &
+  %+  verb  |
   |_  =bowl:mall
   +*  this         .
       spider-core  +>

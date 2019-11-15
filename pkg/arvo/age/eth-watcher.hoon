@@ -263,7 +263,6 @@
       %+  turn  loglist
       |=  =event-log:rpc:ethereum
       ^-  card
-      ~&  >  eth-releasing=event-log
       [%give %fact `[%logs path] %eth-watcher-diff !>([%log event-log])]
     =^  cards-2  dog  $(numbers t.numbers)
     [(weld cards-1 cards-2) dog]

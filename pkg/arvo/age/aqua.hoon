@@ -366,8 +366,8 @@
     ?>  ?=([[%7 * %1 installed=*] ~] boot-ova.pil)
     =.  installed.boot-ova.pil
       %+  roll  (,(list term) vs.val)
-      |=  [v=term _installed.boot-ova.pil]
-      %^  slum  installed.boot-ova.pil  now.hid
+      |=  [v=term =_installed.boot-ova.pil]
+      %^  slum  installed  now.hid
       =/  vane
         ?+  v  ~|([%unknown-vane v] !!)
           %a  %ames

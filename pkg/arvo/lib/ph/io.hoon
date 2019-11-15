@@ -119,7 +119,6 @@
     :-  %i
     /(scot %p her)/j/(scot %p her)/rift/(scot %da now.bowl)/(scot %p who)/noun
   =/  rut  (scry-aqua:util noun our.bowl now.bowl aqua-pax)
-  ~&  [new-rut=new-rut now-rut=rut]
   ?:  =([~ new-rut] rut)
     (pure:m ~)
   loop
@@ -210,7 +209,7 @@
 ::  Modify /sur/aquarium/hoon on the given ship
 ::
 ++  touch-file
-  |=  [her=ship =desk]
+  |=  [her=ship =desk extra=@t]
   =/  m  (thread ,@t)
   ^-  form:m
   ~&  >  "touching file on {<her>}/{<desk>}"
@@ -228,6 +227,7 @@
     ==
   =/  warped
     %^  cat  3  '=>  .  '
+    %^  cat  3  extra
     (need (scry-aqua:util (unit @) our now aqua-pax))
   ;<  ~  bind:m  (send-events (insert-file:util her desk host-pax warped))
   (pure:m warped)

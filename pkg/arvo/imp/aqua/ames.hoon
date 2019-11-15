@@ -26,7 +26,7 @@
   |=  [our=ship now=@da way=wire %send lan=lane:ames pac=@]
   ^-  (quip card:agent:mall _ships)
   =/  hear  [//newt/0v1n.2m9vh %hear lan pac]
-  =?  ships  =(~ ships)
+  =?  ships  &  ::  =(~ ships)
     .^((list ship) %mx /(scot %p our)/aqua/(scot %da now)/ships/noun)
   :_  ships
   %+  emit-aqua-events  our
