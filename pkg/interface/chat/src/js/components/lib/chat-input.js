@@ -25,22 +25,22 @@ export class ChatInput extends Component {
     this.messageChange = this.messageChange.bind(this);
 
     // perf testing:
-    //let closure = () => {
-    //  let x = 0;
-    //  for (var i = 0; i < 30; i++) {
-    //    x++;
-    //    props.api.chat.message(
-    //      props.station,
-    //      `~${window.ship}`,
-    //      Date.now(),
-    //      {
-    //        text: `${x}`
-    //      }
-    //    );
-    //  }
-    //  setTimeout(closure, 1000);
-    //};
-    //this.closure = closure.bind(this);
+    /*let closure = () => {
+      let x = 0;
+      for (var i = 0; i < 30; i++) {
+        x++;
+        props.api.chat.message(
+          props.station,
+          `~${window.ship}`,
+          Date.now(),
+          {
+            text: `${x}`
+          }
+        );
+      }
+      setTimeout(closure, 1000);
+    };
+    this.closure = closure.bind(this);*/
 
     moment.updateLocale('en', {
         relativeTime : {

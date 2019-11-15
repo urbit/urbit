@@ -88,7 +88,7 @@
   ++  create-allow-history
     |=  synced=(map path ship)
     ^-  (map path ?)
-    (~(run by synced) |=(shp=ship %.n))
+    (~(run by synced) |=(* %.n))
   --
 ::
 ++  poke-json
