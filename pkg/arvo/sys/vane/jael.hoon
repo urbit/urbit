@@ -808,9 +808,12 @@
           %+  public-keys-give
             (subscribers-on-ship who.i.pointl)
           [%breach who.i.pointl]
-        %+  public-keys-give
-          (subscribers-on-ship who.i.pointl)
-        [%full (my i.pointl ~)]
+        =.  ..feel
+          %+  public-keys-give
+            (subscribers-on-ship who.i.pointl)
+          [%full (my i.pointl ~)]
+        $(pointl t.pointl)
+      ::
       ?:  ?=(%breach -.public-keys-result)
         ::  we calculate our own breaches based on our local state
         ::
