@@ -13,7 +13,6 @@ export class Root extends Component {
     super(props);
     this.state = store.state;
     store.setStateHandler(this.setState.bind(this));
-    let ship = window.ship;
   }
 
   render() {
@@ -25,7 +24,7 @@ export class Root extends Component {
           return (
             <div className="pa3 bg-black mono gray3 w-100"
             style={{lineHeight: "1.4", height: "calc(100% - 48px)", cursor: "text"}}>
-              <History history={this.state.txt}/>
+              <History commandLog={this.state.txt}/>
               <Input ship={ship} cursor={this.state.cursor} prompt={this.state.prompt} input={this.state.input}/>
             </div>
           )}}

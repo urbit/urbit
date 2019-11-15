@@ -1,7 +1,9 @@
+::
 ::  Soto: A Dojo relay for Urbit's Landscape interface
 ::  Relays sole-effects to subscribers and forwards sole-action pokes
+::
 /-  sole
-/+  *server, *sole
+/+  *server, *soto
 /=  index
   /^  octs
   /;  as-octs:mimes:html
@@ -34,17 +36,19 @@
   /^  (map knot @)
   /:  /===/app/soto/img  /_  /png/
 ::
-=,  format
 |%
 +$  state
-  $%  [%0 bon=bone]                                     :: store bone from Dojo peer
+::  bon: bone from Dojo peer
+::
+  $%  [%0 bon=bone]
   ==
 ::
 +$  move  [bone card]
 ::
 +$  poke
   $%  [%launch-action [@tas path @t]]
-      [%sole-action sole-action:sole]
+      [%sole-action sole-action]
+      [%json json]
   ==
 ::
 +$  card
@@ -57,7 +61,7 @@
 ::
 +$  diff
   $%  [%json json]
-      [%sole-effect sole-effect:sole]
+      [%sole-effect sole-effect]
   ==
 ::
 --
@@ -77,8 +81,7 @@
         [ost.bol %connect / [~ /'~soto'] %soto]
         [ost.bol %poke /soto [our.bol %launch] launcha]
     ==
-  :-  [ost.bol %poke /soto [our.bol %launch] launcha]~
-  this(sta u.old)
+  [~ this(sta u.old)]
 ::
 ++  peer-sototile
   |=  wir=wire
@@ -91,22 +94,31 @@
 ++  peer-primary
   |=  wir=wire
   ^-  (quip move _this)
-  :-  [ost.bol %peer / [our.bol %dojo] /sole]~                                 :: poke/peer need same wire
-  %=  this
-    bon.sta  ost.bol
-  ==
+  ?>  (team:title our.bol src.bol)
+  ::  poke/peer need same wire
+  ::
+  :_  this(bon.sta ost.bol)
+  [ost.bol %peer / [our.bol %dojo] /sole]~
+::
+++  poke-json
+  |=  =json
+  ^-  (quip move _this)
+  ?>  (team:title our.bol src.bol)
+  (poke-sole-action (json-to-action json))
 ::
 ++  poke-sole-action
   |=  act=sole-action
   ^-  (quip move _this)
+  ::  poke/peer need same wire
+  ::
   :_  this
-  [bon.sta %poke / [our.bol %dojo] [%sole-action act]]~                        :: poke/peer need same wire
+  [bon.sta %poke / [our.bol %dojo] [%sole-action act]]~
 ::
 ++  diff-sole-effect
   |=  [=wire fec=sole-effect]
   ^-  (quip move _this)
   :_  this
-  [bon.sta %diff %sole-effect fec]~
+  [bon.sta %diff %json (effect-to-json fec)]~
 ::
 ++  bound
   |=  [wir=wire success=? binding=binding:eyre]

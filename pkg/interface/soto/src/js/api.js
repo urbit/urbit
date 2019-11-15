@@ -30,7 +30,7 @@ class UrbitApi {
   }
 
   soto(data) {
-    this.action("soto", "sole-action", data);
+    this.action("soto", "json", data); //TODO: revert after #1946
   }
 
   action(appl, mark, data) {
