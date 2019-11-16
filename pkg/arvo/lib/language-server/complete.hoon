@@ -252,7 +252,7 @@
     %+  scan  `tape`(slag pos txt)
     ;~(sfix (punt sym) (star ;~(pose prn (just `@`10))))
   =/  backward=(unit term)
-    %-  (lift |=(t=@tas (crip (flop (trip t)))))
+    %-  (lift |=(t=@tas (swp 3 t)))
     %+  scan  `tape`(flop (scag pos txt))
     ;~(sfix (punt sym) (star ;~(pose prn (just `@`10))))
   =/  id=(unit term)
