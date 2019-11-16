@@ -1,5 +1,6 @@
 /+  *server,
     auto=language-server-complete,
+    lsp-parser=language-server-parser,
     easy-print=language-server-easy-print,
     rune-snippet=language-server-rune-snippet
 |%
@@ -12,12 +13,17 @@
   $%  [%connect wire binding:eyre term]
       [%disconnect wire binding:eyre]
       [%http-response =http-event:http]
+      [%poke wire dock out-pokes]
   ==
+::
++$  out-pokes  [%kiln-commit term _|]
 ::
 +$  lsp-req 
   $:  uri=@t
       $%  [%sync changes=(list change)]
           [%completion position]
+          [%commit @ud]
+          [%hover position]
       ==
   ==
 ::
@@ -68,6 +74,8 @@
     %-  of
     :~  sync+sync
         completion+position
+        commit+ni
+        hover+position
     ==
     ~
   ==
@@ -95,6 +103,23 @@
       ~
     ==
   --
+::
+++  json-response
+  |=  jon=json
+  ^-  (list move)
+  :_  ~
+  :*
+    ost.bow
+    %http-response
+    (json-response:app (json-to-octs jon))
+  ==
+::
+++  coup
+  |=  [=wire saw=(unit tang)]
+  ^-  (quip move _this)
+  :_  this
+  ~
+::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bow move this)
   |=  =inbound-request:eyre
@@ -104,18 +129,90 @@
     %-  parser
     (need (de-json:html q.u.body.request.inbound-request))
   =/  buf  (~(gut by bufs) uri.lsp-req *wall)
-  =^  out-jon  buf
+  =^  moves  buf
     ?-  +<.lsp-req
       %sync        (handle-sync buf +>.lsp-req)
       %completion  (handle-completion buf +>.lsp-req)
+      %commit      (handle-commit buf uri.lsp-req)
+      %hover       (handle-hover buf +>.lsp-req)
     ==
   =.  bufs
     (~(put by bufs) uri.lsp-req buf)
-  [[ost.bow %http-response (json-response:app (json-to-octs out-jon))]~ this]
+  [moves this]
+::
+++  regen-diagnostics
+  |=  buf=wall
+  ^-  json
+  =/  t=tape
+    (zing (join "\0a" buf))
+  =/  parse
+    (lily:auto t (lsp-parser *beam))
+  ?:  ?=(%| -.parse)
+    (format-diagnostic p.parse)
+  =,  enjs:format
+  %-  pairs
+  :~  good+b+&
+  ==
+::
+++  format-diagnostic
+  |=  [row=@ col=@]
+  ^-  json
+  =,  enjs:format
+  %-  pairs
+  :~  good+b+|
+      :+  %diagnostics  %a  :_  ~
+      =/  loc  (pairs line+(numb (dec row)) character+(numb col) ~)
+      %-  pairs
+      :~  range+(pairs start+loc end+loc ~)
+          severity+n+'1'
+          message+s+'syntax error'
+      ==
+  ==
+::
+++  handle-commit
+  |=  [buf=wall uri=@t]
+  ^-  [(list move) wall]
+  :_  buf
+  =/  jon
+    (regen-diagnostics buf)
+  :_  (json-response jon)
+  :*
+    ost.bow
+    %poke
+    /commit
+    [our.bow %hood]
+    %kiln-commit
+    q.byk.bow
+    |
+  ==
+::
+++  handle-hover
+  |=  [buf=wall row=@ud col=@ud]
+  ^-  [(list move) wall]
+  =/  txt
+    (zing (join "\0a" buf))
+  =+  (get-id:auto (get-pos buf row col) txt)
+  ?~  id
+    [(json-response *json) buf]
+  =/  match=(unit [=term =type])
+    (search-exact:auto u.id (get-identifiers:auto -:!>(..zuse)))
+  ?~  match
+    [(json-response *json) buf]
+  =/  contents
+    %-  crip
+    ;:  weld
+      "`"
+      ~(ram re ~(duck easy-print type.u.match))
+      "`"
+    ==
+  :_  buf
+  %-  json-response
+  %-  pairs:enjs:format
+  [contents+s+contents ~]
 ::
 ++  handle-sync
   |=  [buf=wall changes=(list change)]
-  :-  *json
+  :-  (json-response *json)
   |-  ^-  wall
   ?~  changes
     buf
@@ -164,7 +261,7 @@
 ::
 ++  handle-completion
   |=  [buf=wall row=@ud col=@ud]
-  ^-  [json wall]
+  ^-  [(list move) wall]
   =/  =tape  (zing (join "\0a" buf))
   =/  pos  (get-pos buf row col)
   :_  buf
@@ -172,27 +269,19 @@
   ::
   =/  rune  (swag [(safe-sub pos 2) 2] tape)
   ?:  (~(has by runes:rune-snippet) rune)
-    (rune-snippet rune)
+    (json-response (rune-snippet rune))
   ::  Don't run on large files because it's slow
   ::
   ?:  (gth (lent buf) 1.000)
     =,  enjs:format
-    (pairs good+b+& result+~ ~)
+    (json-response (pairs good+b+& result+~ ~))
   ::
   =/  tl
     (tab-list-tape:auto -:!>(..zuse) pos tape)
   =,  enjs:format
+  %-  json-response
   ?:  ?=(%| -.tl)
-    %-  pairs
-    :~  good+b+|
-        :+  %diagnostics  %a  :_  ~
-        =/  loc  (pairs line+(numb (dec row.p.tl)) character+(numb col.p.tl) ~)
-        %-  pairs
-        :~  range+(pairs start+loc end+loc ~)
-            severity+n+'1'
-            message+s+'syntax error'
-        ==
-    ==
+    (format-diagnostic p.tl)
   ?~  p.tl
     *json
   %-  pairs

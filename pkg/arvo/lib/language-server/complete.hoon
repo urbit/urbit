@@ -68,6 +68,17 @@
       [%hold *]  $(ty ~(repo ut ty))
   ==
 ::
+++  search-exact
+  |=  [sid=term ids=(list [term type])]
+  ^-  (unit [term type])
+  =/  match=(list [term type])
+    %+  skim  ids
+    |=  [id=term ty=type]
+    =(sid id)
+  ?~  match
+    ~
+  [~ i.match]
+::
 ::  Get all the identifiers that start with sid.
 ::
 ++  search-prefix
@@ -234,18 +245,14 @@
   ^-  (unit [term type])
   ~
 ::
-::  Insert magic marker in hoon source at the given position.
-::
-++  insert-magic
+++  get-id
   |=  [pos=@ud txt=tape]
-  ^-  [back-pos=@ud fore-pos=@ud txt=tape]
-  ::  Find beg-pos by searching backward to where the current term
-  ::  begins
-  ::
+  ^-  [forward=(unit term) backward=(unit term) id=(unit term)]
   =/  forward=(unit term)
     %+  scan  `tape`(slag pos txt)
     ;~(sfix (punt sym) (star ;~(pose prn (just `@`10))))
   =/  backward=(unit term)
+    %-  (lift |=(t=@tas (swp 3 t)))
     %+  scan  `tape`(flop (scag pos txt))
     ;~(sfix (punt sym) (star ;~(pose prn (just `@`10))))
   =/  id=(unit term)
@@ -256,6 +263,16 @@
     ?~  backward
       `u.forward
     `(cat 3 u.backward u.forward)
+  [forward backward id]
+::
+::  Insert magic marker in hoon source at the given position.
+::
+++  insert-magic
+  |=  [pos=@ud txt=tape]
+  ^-  [back-pos=@ud fore-pos=@ud txt=tape]
+  ::  Find beg-pos by searching backward to where the current term
+  ::  begins
+  =+  (get-id pos txt)
   =/  back-pos
     ?~  backward
       pos
