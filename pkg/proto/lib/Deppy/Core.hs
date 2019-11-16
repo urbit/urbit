@@ -24,8 +24,8 @@ data Abs a = Abs
   }
   deriving (Functor, Foldable, Traversable)
 
-deriveEq1 ''Abs
-deriveOrd1 ''Abs
+deriveEq1   ''Abs
+deriveOrd1  ''Abs
 deriveRead1 ''Abs
 deriveShow1 ''Abs
 --makeBound   ''Abs
@@ -78,30 +78,31 @@ extend handleNewBindings oldEnv = \case
 extend1 :: Typ a -> Env a -> Env (Var () a)
 extend1 t = extend \() -> t
 
-infer :: forall a. (a -> Typ a) -> Exp a -> Typ a
+type Typing = Maybe
+
+check :: Eq a => Env a -> Exp a -> Typ a -> Typing ()
+check env e t = do
+  t' <- infer env e
+  guard (t == t')
+
+infer :: forall a. Eq a => Env a -> Exp a -> Typing (Typ a)
 infer env = \case
-  Var v -> env v
-  Uni n -> Uni (n + 1)
-  Fun (Abs t b) -> Uni (max n k)
-    where
-      n = extractUni $ infer env t
-      k = extractUni $ infer (extend1 t env) (fromScope b)
-  Lam (Abs t b) -> Fun (Abs t t')
-    where
-      -- FIXME require t to be in a universe
-      t' = toScope $ infer (extend1 t env) (fromScope b)
-  App x y -> t'
-    where
-      (Abs t b) = extractFun $ infer env x
-      t' = undefined
+  Var v -> pure $ env v
+  Uni n -> pure $ Uni (n + 1)
+  Lam (Abs t b) -> do
+    Uni _ <- infer env t
+    (toScope -> t') <- infer (extend1 t env) (fromScope b)
+    pure $ Fun (Abs t t')
+  Fun (Abs t b) -> do
+    Uni n <- infer env t
+    Uni k <- infer (extend1 t env) (fromScope b)
+    pure $ Uni (max n k)
+  App x y -> do
+    Fun (Abs t b) <- infer env x
+    check env y t
+    pure $ whnf (instantiate1 y b)
 
-extractUni :: Exp a -> Natural
-extractUni = normalize >>> \case
-  Uni n -> n
-
-extractFun :: Exp a -> Abs a
-extractFun = normalize >>> \case
-  Fun a -> a
-
-normalize :: Exp a -> Exp a
-normalize = undefined
+whnf :: Eq a => Exp a -> Exp a
+whnf = \case
+  App (whnf -> Lam (Abs _ b)) x -> instantiate1 x b
+  e -> e
