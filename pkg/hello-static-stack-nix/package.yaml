@@ -1,28 +1,91 @@
-name:                hello
-version:             0.1.0.0
-github:              "githubuser/hello"
-license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2019 Author name here"
-
-extra-source-files:
-- README.md
-- ChangeLog.md
-
-# Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            Web
-
-# To avoid duplicated efforts in documentation and dealing with the
-# complications of embedding Haddock markup inside cabal files, it is
-# common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/hello#readme>
+name:    hello
+version: 0.1.0.0
+license: BSD3
 
 dependencies:
-- base >= 4.7 && < 5
-- classy-prelude
-- urbit-hob
+  - base
+  # async
+  # base-unicode-symbols
+  # binary
+  # bytestring
+  # case-insensitive
+  - classy-prelude
+  # conduit
+  # containers
+  # cryptohash-sha256
+  # cryptohash-sha512
+  # data-default
+  # data-fix
+  # directory
+  # ed25519
+  # entropy
+  # exceptions
+  # extra
+  # filepath
+  # fixed-vector
+  # flat
+  # ghc-prim
+  # Glob
+  # hashable
+  # hashtables
+  # http-client
+  # http-client-tls
+  # http-types
+  # integer-gmp
+  # iproute
+  # largeword
+  # lens
+  # lmdb
+  # lock-file
+  # megaparsec
+  # memory
+  # mtl
+  # multimap
+  # murmur3
+  # network
+  # optparse-applicative
+  # para
+  # pretty-show
+  # primitive
+  # process
+  # QuickCheck
+  # random
+  # regex-tdfa
+  # regex-tdfa-text
+  # resourcet
+  # rio
+  # sdl2
+  # sdl2-image
+  # semigroups
+  # smallcheck
+  # stm
+  # stm-chans
+  # tasty
+  # tasty-golden
+  # tasty-hunit
+  # tasty-quickcheck
+  # tasty-th
+  # template-haskell
+  # terminal-progress-bar
+  # terminal-size
+  # terminfo
+  # text
+  # these
+  # time
+  # transformers
+  # unix
+  # unliftio
+  # unliftio-core
+  # unordered-containers
+  - urbit-hob
+  - utf8-string
+  - vector
+  - wai
+  - wai-conduit
+  - warp
+  - warp-tls
+  - web3
+  - websockets
 
 library:
   source-dirs: src
@@ -48,3 +111,48 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - hello
+
+default-extensions:
+  - ApplicativeDo
+  - BangPatterns
+  - BlockArguments
+  - DataKinds
+  - DefaultSignatures
+  - DeriveAnyClass
+  - DeriveDataTypeable
+  - DeriveFoldable
+  - DeriveGeneric
+  - DeriveTraversable
+  - DerivingStrategies
+  - EmptyCase
+  - EmptyDataDecls
+  - EmptyDataDeriving
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GADTs
+  - GeneralizedNewtypeDeriving
+  - LambdaCase
+  - MagicHash
+  - MultiParamTypeClasses
+  - NamedFieldPuns
+  - NoImplicitPrelude
+  - NumericUnderscores
+  - OverloadedStrings
+  - PackageImports
+  - PartialTypeSignatures
+  - PatternSynonyms
+  - QuasiQuotes
+  - Rank2Types
+  - RankNTypes
+  - RecordWildCards
+  - ScopedTypeVariables
+  - StandaloneDeriving
+  - TemplateHaskell
+  - TupleSections
+  - TypeApplications
+  - TypeFamilies
+  - TypeOperators
+  - UnboxedTuples
+  - UnicodeSyntax
+  - ViewPatterns
