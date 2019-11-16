@@ -1,3 +1,3 @@
 { pkgs }:
 
-pkgs.pkgs.haskell.packages.ghc863.callPackage ./hello.nix { }
+pkgs.haskellPackages.callCabal2nix "hello" ../../../pkg/hello-cabal-nix {}
