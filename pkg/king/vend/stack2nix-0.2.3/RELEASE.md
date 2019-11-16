@@ -1,0 +1,7 @@
+- bump version in cabal
+- update changelog
+- git commit -m "v0.X.X"
+- git tag v0.X.X
+- stack sdist .
+- git push --tags origin HEAD
+- stack upload .

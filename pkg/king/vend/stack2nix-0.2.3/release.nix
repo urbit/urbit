@@ -1,0 +1,3 @@
+{
+  stack2nix = import ./. {};
+}

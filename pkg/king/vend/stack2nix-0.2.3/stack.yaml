@@ -1,0 +1,14 @@
+resolver: lts-13.3
+
+packages:
+- '.'
+
+flags:
+  stack:
+    disable-git-info: true
+
+nix:
+  packages: [zlib,gmp,git,pcre,openssl]
+
+ghc-options:
+  stack2nix: -Werror
