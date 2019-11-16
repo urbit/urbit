@@ -54,7 +54,10 @@ module Ur.Nock where
 import ClassyPrelude hiding (undefined)
 import Noun
 
-import Prelude (undefined)
+import Prelude  (undefined)
+import Ur.Spock (Sp)
+
+import qualified Ur.Spock as S
 
 
 -- Types -----------------------------------------------------------------------
@@ -77,7 +80,7 @@ data N4
     | IFF N4 N4 N4
     | DOT N4 N4
     | PSH N4 N4
-    | ARM N4 N4
+    | ARM Ix N4
     | HNT Ht N4
 
 
@@ -122,7 +125,35 @@ n4 = curry $ \case
     (ARM x y,   s) -> undefined
     (HNT x y,   s) -> undefined
 
--- Load and Dump Nock 4 Nouns --------------------------------------------------
+
+-- Compile Nock 4 --------------------------------------------------------------
+
+c4 :: N4 -> Sp
+c4 = \case
+    DIE       -> S.DIE
+    VAL x     -> S.VAL x
+    CON x y   -> S.CON (c4 x) (c4 y)
+    GET i     -> cGet i
+    SET i x y -> undefined
+    APP x y   -> S.DOT S.APP (S.CON (c4 x) (c4 y))
+    CEL x     -> S.DOT S.CEL (c4 x)
+    INC x     -> S.DOT S.INC (c4 x)
+    EQU x y   -> S.DOT S.EQU (S.CON (c4 x) (c4 y))
+    IFF x y z -> S.DOT (S.CND (c4 y) (c4 z))
+                       (S.CON (c4 x) S.IDN)
+    DOT x y   -> S.DOT (c4 x) (c4 y)
+    PSH x y   -> S.DOT (c4 y) (S.CON (c4 x) S.IDN)
+    ARM x y   -> c4 (DOT (APP (GET []) (GET x)) y)
+    HNT x y   -> undefined
+
+cGet :: [Dr] -> Sp
+cGet []     = S.IDN
+cGet [L]    = S.LEF
+cGet [R]    = S.RIT
+cGet (L:ds) = S.DOT (cGet ds) S.LEF
+cGet (R:ds) = S.DOT (cGet ds) S.RIT
+
+-- Load Nock 4 -----------------------------------------------------------------
 
 l4 :: Vl -> N4
 l4 = \case
@@ -137,10 +168,13 @@ l4 = \case
     C (A 06)    (C x (C y z))     -> IFF (l4 x) (l4 y) (l4 z)
     C (A 07)    (C x y)           -> DOT (l4 x) (l4 y)
     C (A 08)    (C x y)           -> PSH (l4 x) (l4 y)
-    C (A 09)    (C x y)           -> ARM (l4 x) (l4 y)
+    C (A 09)    (C (A x) y)       -> ARM (ix x) (l4 y)
     C (A 10)    (C (C (A x) y) z) -> SET (ix x) (l4 y) (l4 z)
     C (A 11)    (C x y)           -> HNT (ht x) (l4 y)
     _                             -> DIE
+
+
+-- Dump Nock 4 -----------------------------------------------------------------
 
 d4 :: N4 -> Vl
 d4 = \case
