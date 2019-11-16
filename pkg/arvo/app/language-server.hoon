@@ -194,7 +194,7 @@
   =+  (get-id:auto (get-pos buf row col) txt)
   ?~  id
     [(json-response *json) buf]
-  =/  match/(unit [=term =type])
+  =/  match=(unit [=term =type])
     (search-exact:auto u.id (get-identifiers:auto -:!>(..zuse)))
   ?~  match
     [(json-response *json) buf]

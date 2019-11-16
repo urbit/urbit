@@ -71,7 +71,7 @@
 ++  search-exact
   |=  [sid=term ids=(list [term type])]
   ^-  (unit [term type])
-  =/  match/(list [term type])
+  =/  match=(list [term type])
     %+  skim  ids
     |=  [id=term ty=type]
     =(sid id)
