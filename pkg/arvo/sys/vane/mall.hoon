@@ -1619,7 +1619,7 @@
           =/  way  [%out (scot %p p.dock) q.dock short-wire]
           =/  =tang
             ~[leaf+"subscribe wire not unique" >agent-name< >short-wire< >dock<]
-          %-  (slog >out=outgoing.subscribers.current-agent< leaf/"XXX remove" tang)
+          %-  (slog >out=outgoing.subscribers.current-agent< tang)
           (ap-specific-take way %watch-ack `tang)
         $(moves t.moves)
       =.  outgoing.subscribers.current-agent

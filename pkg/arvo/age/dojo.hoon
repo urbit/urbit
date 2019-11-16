@@ -64,6 +64,7 @@
       $~  [%ex *hoon]
       $%  {$ur p/@t}                                    ::  http GET request
           {$ge p/dojo-model}                            ::  generator
+          {$im p/term q/(list dojo-source)}             ::  imp
           {$dv p/path}                                  ::  core from source
           {$ex p/hoon}                                  ::  hoon expression
           {$sa p/mark}                                  ::  example mark value
@@ -204,6 +205,7 @@
       ;~  pose
         ;~(plug (cold %ur lus) parse-url)
         ;~(plug (cold %ge lus) parse-model)
+        ;~(plug (cold %im hep) sym (star ;~(pfix ace parse-source)))
         ;~(plug (cold %as pad) sym ;~(pfix ace parse-source))
         ;~(plug (cold %do cab) parse-hoon ;~(pfix ace parse-source))
         parse-value
@@ -339,7 +341,13 @@
       =.  poy  ~
       ?~  pux  +>
       %.  [%txt "! cancel {<u.pux>}"]
-      he-diff:(he-card [%pass u.pux %arvo %f %kill ~])
+      =<  he-diff
+      %-  he-card
+      ?:  =(/wool u.pux)
+        ::  really shoud stop the imp as well
+        ::
+        [%pass u.pux %agent [our.hid %spider] %leave ~]
+      [%pass u.pux %arvo %f %kill ~]
     ::
     ++  dy-slam                                         ::  call by ford
       |=  {way/wire gat/vase sam/vase}
@@ -396,14 +404,9 @@
         $as  =^(mor +>.$ (dy-init-source q.bul) [bul(q mor) +>.$])
         $do  =^(mor +>.$ (dy-init-source q.bul) [bul(q mor) +>.$])
         $ge  =^(mod +>.$ (dy-init-model p.bul) [[%ge mod] +>.$])
+        $im  =^(mod +>.$ (dy-init-ordered q.bul) [bul(q mod) +>.$])
         $ur  [bul +>.$]
-        $tu  =^  dof  +>.$
-                 |-  ^+  [p.bul +>.^$]
-                 ?~  p.bul  [~ +>.^$]
-                 =^  dis  +>.^$  (dy-init-source i.p.bul)
-                 =^  mor  +>.^$  $(p.bul t.p.bul)
-                 [[dis mor] +>.^$]
-             [[%tu dof] +>.$]
+        $tu  =^(dof +>.$ (dy-init-ordered p.bul) [[%tu dof] +>.$])
       ==
     ::
     ++  dy-init-model                                   ::  ++dojo-model
@@ -646,15 +649,18 @@
     ::
     ++  dy-cage       |=(num/@ud (~(got by rez) num))   ::  known cage
     ++  dy-vase       |=(num/@ud q:(dy-cage num))       ::  known vase
+    ++  dy-sore
+      |=  src/(list dojo-source)
+      ^-  vase
+      ?~  src
+        !>(~)
+      (slop (dy-vase p.i.src) $(src t.src))
+    ::
     ++  dy-silk-vase  |=(vax/vase [%$ %noun vax])       ::  vase to silk
     ++  dy-silk-sources                                 ::  arglist to silk
       |=  src/(list dojo-source)
       ^-  schematic:ford
-      ::
-      :+  %$  %noun
-      |-
-      ?~  src  !>(~)
-      (slop (dy-vase p.i.src) $(src t.src))
+      [%$ %noun (dy-sore src)]
     ::
     ++  dy-silk-config                                  ::  configure
       |=  {cay/cage cig/dojo-config}
@@ -718,12 +724,28 @@
       |=  cag/cage
       (dy-hand %noun q.cag)
     ::
+    ++  dy-wool-poke
+      |=  [fil=term src=(list dojo-source)]
+      ^+  +>+>
+      ?>  ?=(~ pux)
+      =/  iid  (scot %ta (cat 3 'dojo_' (scot %uv (sham eny.hid))))
+      =.  poy  `+>+<.$(pux `/wool)
+      =.  +>+>.$
+        %-  he-card
+        [%pass /wool %agent [our.hid %spider] %watch /imp-result/[iid]]
+      %-  he-card
+      =/  =cage  ::  also sub
+        [%spider-start !>([~ `iid fil (dy-sore src)])]
+      [%pass /wool %agent [our.hid %spider] %poke cage]
+    ::
     ++  dy-make                                         ::  build step
       ^+  +>
       ?>  ?=(^ cud)
       =+  bil=q.u.cud                 ::  XX =*
       ?:  ?=($ur -.bil)
         (dy-request /hand `request:http`[%'GET' p.bil ~ ~])
+      ?:  ?=($im -.bil)
+        (dy-wool-poke p.bil q.bil)
       %-  dy-ford
       ^-  [path schematic:ford]
       ?-  -.bil
@@ -885,7 +907,7 @@
         (he-diff(poy ~) %tan message.build-result.result)
     ==  ==
   ::
-  ++  he-unto                                           ::  result from behn
+  ++  he-unto                                           ::  result from agent
     |=  {way/wire cit/sign:agent:mall}
     ^+  +>
     ?.  ?=($poke-ack -.cit)
@@ -894,6 +916,35 @@
     ?~  p.cit
       (he-diff %txt ">=")
     (he-diff %tan u.p.cit)
+  ::
+  ++  he-wool
+    |=  [way=wire =sign:agent:mall]
+    ^+  +>
+    ?-    -.sign
+        %poke-ack
+      ?~  p.sign
+        +>.$
+      =.  +>.$  (he-diff(poy ~) %tan u.p.sign)
+      (he-card %pass /wool %agent [our.hid %spider] %leave ~)
+    ::
+        %watch-ack
+      ?~  p.sign
+        +>.$
+      (he-diff(poy ~) %tan u.p.sign)
+    ::
+        %fact
+      ?+    p.cage.sign  ~|([%dojo-imp-bad-mark-result p.cage.sign] !!)
+          %imp-fail
+        =+  !<([=term =tang] q.cage.sign)
+        (he-diff(poy ~) %tan leaf+"imp failed: {<term>}" tang)
+      ::
+          %imp-done
+        ?>  ?=(^ poy)
+        (~(dy-hand dy u.poy(pux ~)) %noun q.cage.sign)
+      ==
+    ::
+        %kick  +>.$
+    ==
   ::  +he-http-response: result from http-client
   ::
   ++  he-http-response
@@ -1228,10 +1279,16 @@
 ::
 ++  on-agent
   |=  [=wire =sign:agent:mall]
-  ?>  ?=([@ *] wire)
+  ?>  ?=([@ @ *] wire)
   =/  =session  (~(got by hoc) i.wire)
+  =/  he-full  ~(. he hid i.wire ~ session)
   =^  moves  state
-    he-abet:(~(he-unto he hid i.wire ~ session) t.wire sign)
+    =<  he-abet
+    ^+  he
+    ?+  i.t.wire  ~|([%dojo-bad-on-agent wire -.sign] !!)
+      %poke  (he-unto:he-full t.wire sign)
+      %wool  (he-wool:he-full t.wire sign)
+    ==
   [moves ..on-init]
 ::
 ++  on-arvo
@@ -1246,11 +1303,17 @@
         %http-response  (he-http-response:he-full t.wire +>.sign-arvo)
     ==
   [moves ..on-init]
+::  if dojo fails unexpectedly, kill whatever each session is working on
 ::
 ++  on-fail
   |=  [=term =tang]
-  =/  =session  (~(got by hoc) 'drum')
-  =^  moves  state
-    he-abet:(~(he-lame he hid 'drum' ~ session) term tang)
-  [moves ..on-init]
+  =/  sessions=(list (pair id session))  ~(tap by hoc)
+  |-  ^-  (quip card:agent:mall _..on-init)
+  ?~  sessions
+    [~ ..on-init]
+  =^  cards-1  state
+    he-abet:(~(he-lame he hid p.i.sessions ~ q.i.sessions) term tang)
+  =^  cards-2  ..on-init
+    $(sessions t.sessions)
+  [(weld cards-1 cards-2) ..on-init]
 --

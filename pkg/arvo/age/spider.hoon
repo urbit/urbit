@@ -12,14 +12,15 @@
   $~  [*imp-form ~]
   [=imp-form kid=(map iid trie)]
 ::
++$  trying  ?(%find %build %none)
 +$  state
-  $:  started=(map imp vase)
+  $:  starting=(map imp [=trying =vase])
       running=trie
       iid=(map iid imp)
   ==
 ::
 +$  clean-slate
-  $:  started=(map imp vase)
+  $:  starting=(map imp [=trying =vase])
       running=(list imp)
       iid=(map iid imp)
   ==
@@ -118,13 +119,16 @@
     |=  old-state=vase
     =+  !<(=clean-slate old-state)
     =.  iid.state  iid.clean-slate
+    =/  imps=(list imp)
+      %+  welp  running.clean-slate
+      ~(tap in ~(key by starting.clean-slate))
     |-  ^-  (quip card _this)
-    ?~  running.clean-slate
+    ?~  imps
       `this
     =^  cards-1  state
-      (handle-stop-imp:sc (imp-to-iid i.running.clean-slate) |)
+      (handle-stop-imp:sc (imp-to-iid i.imps) |)
     =^  cards-2  this
-      $(running.clean-slate t.running.clean-slate)
+      $(imps t.imps)
     [(weld cards-1 cards-2) this]
   ::
   ++  on-poke
@@ -156,7 +160,7 @@
         [%x %tree ~]
       ``noun+!>((turn (tap-imp running.state) head))
     ::
-        [%x %started @ ~]
+        [%x %starting @ ~]
       ``noun+!>((has-imp running.state (~(got by iid.state) i.t.t.path)))
     ::
         [%x %saxo @ ~]
@@ -182,8 +186,13 @@
         [%build @ ~]  (handle-build:sc i.t.wire sign-arvo)
       ==
     [cards this]
+  ::  On unexpected failure, kill all outstanding threads
   ::
-  ++  on-fail   on-fail:def
+  ++  on-fail
+    |=  [=term =tang]
+    ^-  (quip card _this)
+    %-  (slog leaf+"spider crashed, killing all threads: {<term>}" tang)
+    (on-load on-save)
   --
 ::
 |_  =bowl:mall
@@ -230,12 +239,12 @@
   ?:  (has-imp running.state imp)
     ~|  [%already-started imp]
     !!
-  ?:  (~(has by started.state) imp)
+  ?:  (~(has by starting.state) imp)
     ~|  [%already-starting imp]
     !!
   ::
-  =:  started.state  (~(put by started.state) imp vase)
-      iid.state      (~(put by iid.state) new-iid imp)
+  =:  starting.state  (~(put by starting.state) imp [%find vase])
+      iid.state       (~(put by iid.state) new-iid imp)
     ==
   =/  =card
     =/  =schematic:ford  [%path [our.bowl %home] %imp file]
@@ -246,72 +255,72 @@
   |=  [=iid =sign-arvo]
   ^-  (quip card ^state)
   =/  =imp  (~(got by iid.state) iid)
-  ?>  (~(has by started.state) imp)
+  =.  starting.state
+    (~(jab by starting.state) imp |=([=trying =vase] [%none vase]))
   ?>  ?=([%f %made *] sign-arvo)
   ?:  ?=(%incomplete -.result.sign-arvo)
-    %-  (slog leaf+"{<imp>} find incomplete" tang.result.sign-arvo)
-    `state
+    (imp-fail-not-running iid %find-imp-incomplete tang.result.sign-arvo)
   =/  =build-result:ford  build-result.result.sign-arvo
   ?:  ?=(%error -.build-result)
-    %-  (slog leaf+"{<imp>} find error" message.build-result)
-    `state
+    (imp-fail-not-running iid %find-imp-error message.build-result)
   ?.  ?=([%path *] +.build-result)
-    %-  (slog leaf+"{<imp>} find strange" ~)
-    `state
+    (imp-fail-not-running iid %find-imp-strange ~)
+  =.  starting.state
+    (~(jab by starting.state) imp |=([=trying =vase] [%build vase]))
   =/  =card
     =/  =schematic:ford  [%core rail.build-result]
-    [%pass /build/[iid] %arvo %f %build live=%.y schematic]
+    [%pass /build/[iid] %arvo %f %build live=%.n schematic]
   [[card ~] state]
 ::
 ++  handle-build
   |=  [=iid =sign-arvo]
   ^-  (quip card ^state)
   =/  =imp  (~(got by iid.state) iid)
-  ?>  (~(has by started.state) imp)
+  =.  starting.state
+    (~(jab by starting.state) imp |=([=trying =vase] [%none vase]))
   ?>  ?=([%f %made *] sign-arvo)
   ?:  ?=(%incomplete -.result.sign-arvo)
-    %-  (slog leaf+"{<imp>} build incomplete" tang.result.sign-arvo)
-    `state
+    (imp-fail-not-running iid %build-imp-incomplete tang.result.sign-arvo)
   =/  =build-result:ford  build-result.result.sign-arvo
   ?:  ?=(%error -.build-result)
-    %-  (slog leaf+"{<imp>} build error" message.build-result)
-    `state
+    (imp-fail-not-running iid %build-imp-error message.build-result)
   =/  =cage  (result-to-cage:ford build-result)
   ?.  ?=(%noun p.cage)
-    %-  (slog leaf+"{<imp>} build not noun, is {<p.cage>}" ~)
-    `state
+    (imp-fail-not-running iid %build-imp-strange >p.cage< ~)
   =/  maybe-imp  (mule |.(!<(imp-thread q.cage)))
   ?:  ?=(%| -.maybe-imp)
-    %-  (slog leaf+"{<imp>} not valid imp" p.maybe-imp)
-    `state
+    (imp-fail-not-running iid %imp-not-imp ~)
   (start-imp imp p.maybe-imp)
 ::
 ++  start-imp
   |=  [=imp =imp-thread]
   ^-  (quip card ^state)
-  =/  =vase  (~(got by started.state) imp)
-  =^  cards-1  state
-    ?.  (has-imp running.state imp)
-      `state
-    (imp-fail imp %updated ~)
+  =/  =vase  vase:(~(got by starting.state) imp)
+  ?<  (has-imp running.state imp)
   =/  m  (thread ,^vase)
   =/  =bowl:spider  (convert-bowl imp bowl)
+  =/  res  (mule |.((imp-thread bowl vase)))
+  ?:  ?=(%| -.res)
+    (imp-fail-not-running (imp-to-iid imp) %false-start p.res)
   =/  =eval-form:eval:m
-    (from-form:eval:m (imp-thread bowl vase))
-  =.  running.state  (put-imp running.state imp eval-form)
-  =^  cards-2  state
-    (take-input imp ~)
-  [(weld cards-1 cards-2) state]
+    (from-form:eval:m p.res)
+  =:  starting.state  (~(del by starting.state) imp)
+      running.state   (put-imp running.state imp eval-form)
+    ==
+  (take-input imp ~)
 ::
 ++  handle-stop-imp
   |=  [=iid nice=?]
   ^-  (quip card ^state)
   =/  =imp  (~(got by iid.state) iid)
-  ~?  !(has-imp running.state imp)
-    [%not-started imp]
-  ?:  nice
-    (imp-done imp *vase)
-  (imp-fail imp %cancelled ~)
+  ?:  (has-imp running.state imp)
+    ?:  nice
+      (imp-done imp *vase)
+    (imp-fail imp %cancelled ~)
+  ?:  (~(has by starting.state) imp)
+    (imp-fail-not-running iid %stopped-before-started ~)
+  ~&  [%imp-not-started imp]
+  `state
 ::
 ++  take-input
   |=  [=imp input=(unit input:thread)]
@@ -359,15 +368,31 @@
     ==
   [(weld cards final-cards) state]
 ::
+++  imp-fail-not-running
+  |=  [=iid =term =tang]
+  =/  =imp  (~(got by iid.state) iid)
+  :_  state(starting (~(del by starting.state) imp))
+  %-  welp  :_  (imp-say-fail iid term tang)
+  =/  =trying  trying:(~(got by starting.state) imp)
+  ?-  trying
+    %find   [%pass /find/[iid] %arvo %f %kill ~]~
+    %build  [%pass /build/[iid] %arvo %f %kill ~]~
+    %none   ~
+  ==
+::
+++  imp-say-fail
+  |=  [=iid =term =tang]
+  ^-  (list card)
+  :~  [%give %fact `/imp-result/[iid] %imp-fail !>([term tang])]
+      [%give %kick `/imp-result/[iid] ~]
+  ==
+::
 ++  imp-fail
   |=  [=imp =term =tang]
   ^-  (quip card ^state)
   %-  (slog leaf+"thread {<imp>} failed" leaf+<term> tang)
   =/  =iid  (imp-to-iid imp)
-  =/  fail-cards=(list card)
-    :~  [%give %fact `/imp-result/[iid] %imp-fail !>([term tang])]
-        [%give %kick `/imp-result/[iid] ~]
-    ==
+  =/  fail-cards  (imp-say-fail iid term tang)
   =^  cards  state  (imp-clean imp)
   [(weld fail-cards cards) state]
 ::
@@ -395,12 +420,10 @@
   =^  cards-our  state
     =/  =^imp  i.children
     =/  =iid  (imp-to-iid imp)
-    =:  started.state  (~(del by started.state) imp)
-        running.state  (del-imp running.state imp)
+    =:  running.state  (del-imp running.state imp)
         iid.state      (~(del by iid.state) iid)
       ==
     :_  state
-    :-  [%pass /build/[iid] %arvo %f %kill ~]
     %+  murn  ~(tap by wex.bowl)
     |=  [[=wire =ship =term] [acked=? =path]]
     ^-  (unit card)
