@@ -19,7 +19,7 @@
 --
 =;  core
   ^-  imp:spider
-  |=  [=bowl:spider args=vase]
+  |=  args=vase
   =/  m  (thread ,vase)
   ^-  form:m
   ;<  ~  bind:m  (watch-our:threadio /effects %aqua /effect)

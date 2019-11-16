@@ -11,7 +11,7 @@
 --
 =;  core
   ^-  imp:spider
-  |=  [=bowl:spider vase]
+  |=  vase
   =/  m  (thread ,vase)
   ^-  form:m
   ~&  >  'entering main loop'

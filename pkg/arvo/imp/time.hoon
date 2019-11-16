@@ -2,10 +2,11 @@
 /+  threadio
 =,  thread=thread:spider
 ^-  imp:spider
-|=  [=bowl:spider arg=vase]
+|=  arg=vase
 =/  m  (thread ,vase)
 ^-  form:m
 =+  !<([arg=@dr ~] arg)
-;<  ~  bind:m  (sleep:threadio arg)
-;<  now=@da  bind:m  get-time:threadio
-(pure:m !>(`@dr`(sub now now.bowl)))
+;<  now-1=@da  bind:m  get-time:threadio
+;<  ~          bind:m  (sleep:threadio arg)
+;<  now-2=@da  bind:m  get-time:threadio
+(pure:m !>(`@dr`(sub now-2 now-1)))

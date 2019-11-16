@@ -2,7 +2,7 @@
 /+  threadio
 =,  thread=thread:spider
 ^-  imp:spider
-|=  [bowl:spider vase]
+|=  vase
 =/  m  (thread ,vase)
 ^-  form:m
 ~&  >  %first-starting

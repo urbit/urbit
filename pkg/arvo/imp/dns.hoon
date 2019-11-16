@@ -14,10 +14,11 @@
     --
 ::
 =<  ^-  imp:spider
-    |=  [=bowl:spider vase]
+    |=  vase
     =/  m  (thread ,vase)
     ^-  form:m
     ~&  >  'Entering dns loop'
+    ;<  our=@p  bind:m  get-our:threadio
     ;<  ~  bind:m
       %-  (main-loop:threadio ,app-state)
       :~  handle-dns-auto
@@ -28,7 +29,7 @@
           =/  m  (thread ,app-state)
           ^-  form:m
           ;<  ~  bind:m
-            (rewatch:threadio /sub collector-app /(scot %p our.bowl))
+            (rewatch:threadio /sub collector-app /(scot %p our))
           (pure:m state)
       ==
     (pure:m *vase)

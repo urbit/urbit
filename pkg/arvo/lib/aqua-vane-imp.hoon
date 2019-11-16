@@ -18,7 +18,7 @@
 =;  core
   |=  handler=vane-handler
   ^-  imp:spider
-  |=  [=bowl:spider vase]
+  |=  vase
   =/  m  (thread ,vase)
   ^-  form:m
   ;<  ~  bind:m  (watch-our:threadio /effects %aqua /effect)

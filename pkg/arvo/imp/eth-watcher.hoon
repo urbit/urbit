@@ -7,7 +7,7 @@
 ::
 ::  Main loop: get updates since last checked
 ::
-|=  [=bowl:spider args=vase]
+|=  args=vase
 |^
 =+  !<(pup=watchpup args)
 =/  m  (thread:threadio ,vase)

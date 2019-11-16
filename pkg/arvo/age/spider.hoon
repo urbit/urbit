@@ -298,8 +298,7 @@
   =/  =vase  vase:(~(got by starting.state) imp)
   ?<  (has-imp running.state imp)
   =/  m  (thread ,^vase)
-  =/  =bowl:spider  (convert-bowl imp bowl)
-  =/  res  (mule |.((imp-thread bowl vase)))
+  =/  res  (mule |.((imp-thread vase)))
   ?:  ?=(%| -.res)
     (imp-fail-not-running (imp-to-iid imp) %false-start p.res)
   =/  =eval-form:eval:m

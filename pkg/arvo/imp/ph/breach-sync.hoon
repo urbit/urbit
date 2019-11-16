@@ -2,7 +2,7 @@
 /+  *ph-io
 =,  thread=thread:spider
 ^-  imp:spider
-|=  [=bowl:spider vase]
+|=  vase
 =/  m  (thread ,vase)
 ;<  az=iid:spider  bind:m  start-azimuth
 ;<  ~              bind:m  (spawn az ~bud)
