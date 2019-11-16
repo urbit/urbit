@@ -56,7 +56,7 @@ import Noun
 
 import Control.Lens ((&))
 import Prelude      (undefined)
-import Ur.Spock     (Sp, Ix(..), Vl, Dr(..))
+import Ur.Spock     (Sp, Ix(..), Vl, Dr(..), axis, ix)
 
 import qualified Ur.Spock as S
 
@@ -81,26 +81,6 @@ data N4
     | ARM Ix N4
     | HNT Ht N4
   deriving (Eq, Ord, Show)
-
-
--- Tree Indexing ---------------------------------------------------------------
-
-axis :: Ix -> Atom
-axis = go . reverse . unIx
-  where
-    go = \case []   -> 1
-               L:ds -> 2 * go ds
-               R:ds -> 2 * go ds + 1
-
-ix :: Atom -> Ix
-ix = Ix . reverse . go
-  where
-   go = \case 0          -> error "ix called with 0 value"
-              1          -> []
-              2          -> [L]
-              3          -> [R]
-              x | even x -> L : go (x `div` 2)
-              x          -> R : go (x `div` 2)
 
 {-
         Get:
@@ -162,7 +142,8 @@ c4 = \case
                        (S.CON (c4 x) S.IDN)
     DOT x y   -> S.DOT (c4 x) (c4 y)
     PSH x y   -> S.DOT (c4 y) (S.CON (c4 x) S.IDN)
-    ARM x y   -> c4 (DOT (APP (GET $ Ix []) (GET x)) y)
+    ARM x y   -> S.DOT (c4 (APP (GET (Ix [])) (GET x)))
+                   (S.DOT S.COR (c4 y))
     HNT x y   -> c4 y -- XX TODO
 
 cGet :: Ix -> Sp
