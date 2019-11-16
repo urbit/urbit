@@ -54,17 +54,15 @@ module Ur.Nock where
 import ClassyPrelude hiding (undefined)
 import Noun
 
-import Prelude  (undefined)
-import Ur.Spock (Sp)
+import Control.Lens ((&))
+import Prelude      (undefined)
+import Ur.Spock     (Sp, Ix(..), Vl, Dr(..))
 
 import qualified Ur.Spock as S
 
 
 -- Types -----------------------------------------------------------------------
 
-data Dr = L | R
-type Ix = [Dr]
-type Vl = Noun
 type Ht = Noun -- Hint
 
 data N4
@@ -82,17 +80,37 @@ data N4
     | PSH N4 N4
     | ARM Ix N4
     | HNT Ht N4
+  deriving (Eq, Ord, Show)
 
 
 -- Tree Indexing ---------------------------------------------------------------
 
-ix :: Atom -> Ix
-ix 0 = error "ix called with 0 value"
-ix 1 = []
-ix 2 = [L]
-ix 3 = [R]
-ix _ = error "TODO"
+axis :: Ix -> Atom
+axis = go . reverse . unIx
+  where
+    go = \case []   -> 1
+               L:ds -> 2 * go ds
+               R:ds -> 2 * go ds + 1
 
+ix :: Atom -> Ix
+ix = Ix . reverse . go
+  where
+   go = \case 0          -> error "ix called with 0 value"
+              1          -> []
+              2          -> [L]
+              3          -> [R]
+              x | even x -> L : go (x `div` 2)
+              x          -> R : go (x `div` 2)
+
+{-
+        Get:
+            /[1 a]              a
+            /[2 a b]            a
+            /[3 a b]            b
+            /[(a + a) b]        /[2 /[a b]]
+            /[(a + a + 1) b]    /[3 /[a b]]
+            /a                  /a
+-}
 
 -- Hint Parsing ----------------------------------------------------------------
 
@@ -134,7 +152,8 @@ c4 = \case
     VAL x     -> S.VAL x
     CON x y   -> S.CON (c4 x) (c4 y)
     GET i     -> cGet i
-    SET i x y -> undefined
+    SET i x y -> S.DOT S.SET (S.CON (S.VAL (A (axis i)))
+                               (S.CON (c4 x) (c4 y)))
     APP x y   -> S.DOT S.APP (S.CON (c4 x) (c4 y))
     CEL x     -> S.DOT S.CEL (c4 x)
     INC x     -> S.DOT S.INC (c4 x)
@@ -143,15 +162,38 @@ c4 = \case
                        (S.CON (c4 x) S.IDN)
     DOT x y   -> S.DOT (c4 x) (c4 y)
     PSH x y   -> S.DOT (c4 y) (S.CON (c4 x) S.IDN)
-    ARM x y   -> c4 (DOT (APP (GET []) (GET x)) y)
-    HNT x y   -> undefined
+    ARM x y   -> c4 (DOT (APP (GET $ Ix []) (GET x)) y)
+    HNT x y   -> c4 y -- XX TODO
 
-cGet :: [Dr] -> Sp
-cGet []     = S.IDN
-cGet [L]    = S.LEF
-cGet [R]    = S.RIT
-cGet (L:ds) = S.DOT (cGet ds) S.LEF
-cGet (R:ds) = S.DOT (cGet ds) S.RIT
+cGet :: Ix -> Sp
+cGet = go . unIx
+  where
+    go = \case
+        []   -> S.IDN
+        [L]  -> S.LEF
+        [R]  -> S.RIT
+        L:ds -> S.DOT (go ds) S.LEF
+        R:ds -> S.DOT (go ds) S.RIT
+
+n4Set :: Ix -> N4 -> N4 -> N4
+n4Set ix new old = unIx ix & \case
+    []   -> new
+    L:ds -> n4Set (Ix ds) (CON new (get (R:ds) old)) old
+    R:ds -> n4Set (Ix ds) (CON (get (L:ds) old) new) old
+  where
+    get :: [Dr] -> N4 -> N4
+    get ds exp = DOT (GET $ Ix ds) exp
+
+-- Nock 4 Examples -------------------------------------------------------------
+
+-- [8 x@[9 2.398 0 1.023] y@[9 2 10 z@[6 7 [0 3] 4 1 3] 0 2]]
+e4_dec :: Vl
+e4_dec = C (A 8) (C x y)
+  where
+    x = C (A 9) $ C (A 2_389) $ C (A 0) (A 1_023)
+    y = C (A 9) $ C (A 2) $ C (A 10) $ C z $ C (A 0) (A 2)
+    z = C (A 6) $ C (A 7) $ C (C (A 0) (A 3)) $ C (A 4) $ C (A 1) (A 3)
+
 
 -- Load Nock 4 -----------------------------------------------------------------
 

@@ -6,6 +6,17 @@ import Noun
 
 -- Types -----------------------------------------------------------------------
 
+data Dr = L | R
+  deriving (Eq, Ord, Show)
+
+newtype Ix = Ix { unIx :: [Dr] }
+  deriving newtype (Eq, Ord)
+
+instance Show Ix where
+    show (Ix ds) = concat (show <$> ds)
+
+type Vl = Noun
+
 data Sp
     = DIE
     | LEF
@@ -19,6 +30,7 @@ data Sp
     | CON Sp Sp
     | DOT Sp Sp
     | CND Sp Sp
+    | SET
 
 instance Show Sp where
     show = \case
@@ -30,10 +42,14 @@ instance Show Sp where
         CEL     -> "^"
         INC     -> "@"
         EQU     -> "="
+        SET     -> "&"
         VAL n   -> show n
-        CON x y -> mconcat ["(", show x, " ", show y, ")"]
-        DOT x y -> mconcat [show y, show x]
+        CON x y -> "(" <> intercalate " " (show <$> prettyCon [x] y) <> ")"
+        DOT x y -> mconcat [show x, show y]
         CND x y -> mconcat ["<", show x, " ", show y, ">"]
+      where
+        prettyCon acc (CON x y) = prettyCon (x:acc) y
+        prettyCon acc x         = reverse (x:acc)
 
 sp :: (Noun -> Sp) -> Sp -> Noun -> Noun
 sp eval = go
