@@ -1,7 +1,7 @@
 ::  Utility functions for constructing tests
 ::
-/+  ph
-=,  ph
+/-  aquarium
+=,  aquarium
 |%
 ::
 ::  Turn [ship (list unix-event)] into (list ph-event)

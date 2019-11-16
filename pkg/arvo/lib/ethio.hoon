@@ -1,6 +1,6 @@
 ::  ethio: Asynchronous Ethereum input/output functions.
 ::.
-/+  threadio
+/+  strandio
 =,  ethereum-types
 =,  able:jael
 ::
@@ -12,10 +12,10 @@
 ::
 ++  request-rpc
   |=  [url=@ta id=(unit @t) req=request:rpc:ethereum]
-  =/  m  (thread:threadio ,json)
+  =/  m  (strand:strandio ,json)
   ^-  form:m
-  |^  %+  (retry:threadio json)  `10
-      =/  m  (thread:threadio ,(unit json))
+  |^  %+  (retry:strandio json)  `10
+      =/  m  (strand:strandio ,(unit json))
       ^-  form:m
       =/  =request:http
         :*  method=%'POST'
@@ -26,16 +26,16 @@
             %-  en-json:html
             (request-to-json:rpc:ethereum id req)
         ==
-      ;<  ~  bind:m  (send-request:threadio request)
+      ;<  ~  bind:m  (send-request:strandio request)
       ;<  rep=(unit client-response:iris)  bind:m
-        take-maybe-response:threadio
+        take-maybe-response:strandio
       ?~  rep
         (pure:m ~)
       (parse-response u.rep)
   ::
   ++  parse-response
     |=  =client-response:iris
-    =/  m  (thread:threadio ,(unit json))
+    =/  m  (strand:strandio ,(unit json))
     ^-  form:m
     ?>  ?=(%finished -.client-response)
     ?~  full-file.client-response
@@ -50,13 +50,13 @@
     ?~  array
       =/  res=(unit response:rpc:jstd)  (parse-one-response u.jon)
       ?~  res
-        (thread-fail:threadio %request-rpc-parse-error >id< ~)
+        (strand-fail:strandio %request-rpc-parse-error >id< ~)
       ?:  ?=(%error -.u.res)
-        (thread-fail:threadio %request-rpc-error >id< >+.res< ~)
+        (strand-fail:strandio %request-rpc-error >id< >+.res< ~)
       ?.  ?=(%result -.u.res)
-        (thread-fail:threadio %request-rpc-fail >u.res< ~)
+        (strand-fail:strandio %request-rpc-fail >u.res< ~)
       (pure:m `res.u.res)
-    (thread-fail:threadio %request-rpc-batch >%not-implemented< ~)
+    (strand-fail:strandio %request-rpc-batch >%not-implemented< ~)
     ::  (pure:m `[%batch u.array])
   ::
   ++  parse-one-response
@@ -77,19 +77,19 @@
 ::
 ++  read-contract
   |=  [url=@t proto-read-request:rpc:ethereum]
-  =/  m  (thread:threadio ,@t)
+  =/  m  (strand:strandio ,@t)
   ;<  =json  bind:m
     %^  request-rpc  url  id
     :+  %eth-call
       ^-  call:rpc:ethereum
       [~ to ~ ~ ~ `tape`(encode-call:rpc:ethereum function arguments)]
     [%label %latest]
-  ?.  ?=(%s -.json)  (thread-fail:threadio %request-rpc-fail >json< ~)
+  ?.  ?=(%s -.json)  (strand-fail:strandio %request-rpc-fail >json< ~)
   (pure:m p.json)
 ::
 ++  get-latest-block
   |=  url=@ta
-  =/  m  (thread:threadio ,block)
+  =/  m  (strand:strandio ,block)
   ^-  form:m
   ;<  =json  bind:m
     (request-rpc url `'block number' %eth-block-number ~)
@@ -97,7 +97,7 @@
 ::
 ++  get-block-by-number
   |=  [url=@ta =number:block]
-  =/  m  (thread:threadio ,block)
+  =/  m  (strand:strandio ,block)
   ^-  form:m
   |^
   ;<  =json  bind:m
@@ -106,7 +106,7 @@
     [%eth-get-block-by-number number |]
   =/  =block  (parse-block json)
   ?.  =(number number.id.block)
-    (thread-fail:threadio %reorg-detected >number< >block< ~)
+    (strand-fail:strandio %reorg-detected >number< >block< ~)
   (pure:m block)
   ::
   ++  parse-block
@@ -126,7 +126,7 @@
 ::
 ++  get-logs-by-hash
   |=  [url=@ta =hash:block contracts=(list address) =topics]
-  =/  m  (thread:threadio (list event-log:rpc:ethereum))
+  =/  m  (strand:strandio (list event-log:rpc:ethereum))
   ^-  form:m
   ;<  =json  bind:m
     %+  request-rpc  url
@@ -146,7 +146,7 @@
           =from=number:block
           =to=number:block
       ==
-  =/  m  (thread:threadio (list event-log:rpc:ethereum))
+  =/  m  (strand:strandio (list event-log:rpc:ethereum))
   ^-  form:m
   ;<  =json  bind:m
     %+  request-rpc  url

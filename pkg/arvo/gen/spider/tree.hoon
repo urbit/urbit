@@ -3,9 +3,7 @@
 |=  [[now=@da *] ~ *]
 :-  %tang
 =/  tree
-  .^((list (list @ud)) %mx /=spider/(scot %da now)/tree/noun)
+  .^((list (list tid:spider)) %mx /=spider/(scot %da now)/tree/noun)
 %+  turn  tree
-|=  imp=(list @ud)
-=/  =path
-  (turn imp |=(=@ud (scot %ud ud)))
->path<
+|=  yarn=(list tid:spider)
+>`path`yarn<

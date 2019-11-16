@@ -1,3 +1,3 @@
 :-  %say
-|=  [* [name=term ~] ~]
-[%spider-stop name |]
+|=  [* [tid=@ta ~] ~]
+[%spider-stop tid |]

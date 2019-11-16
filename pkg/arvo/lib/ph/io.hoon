@@ -1,15 +1,15 @@
 /-  *aquarium, spider
-/+  libthread=thread, *threadio, util=ph-util
-=,  thread=thread:libthread
+/+  libstrand=strand, *strandio, util=ph-util
+=,  strand=strand:libstrand
 |%
 ++  send-events
   |=  events=(list aqua-event)
-  =/  m  (thread ,~)
+  =/  m  (strand ,~)
   ^-  form:m
   (poke-our %aqua %aqua-events !>(events))
 ::
 ++  take-unix-effect
-  =/  m  (thread ,[ship unix-effect])
+  =/  m  (strand ,[ship unix-effect])
   ^-  form:m
   ;<  =cage  bind:m  (take-fact /effects)
   ?>  ?=(%aqua-effect p.cage)
@@ -21,83 +21,83 @@
   (end-test %aqua-ames %aqua-behn %aqua-dill %aqua-eyre ~)
 ::
 ++  start-azimuth
-  =/  m  (thread ,iid:spider)
+  =/  m  (strand ,tid:spider)
   ^-  form:m
   ;<  ~  bind:m  (start-test %aqua-ames %aqua-behn %aqua-dill ~)
-  (start-imp %aqua-eyre-azimuth)
+  (start-thread %aqua-eyre-azimuth)
 ::
 ++  end-azimuth
   (end-test %aqua-ames %aqua-behn %aqua-dill %aqua-eyre-azimuth ~)
 ::
 ++  start-test
-  |=  vane-imps=(list term)
-  =/  m  (thread ,~)
+  |=  vane-threads=(list term)
+  =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "starting"
-  ;<  ~  bind:m  (start-imps vane-imps)
+  ;<  ~  bind:m  (start-threads vane-threads)
   ;<  ~  bind:m  (watch-our /effects %aqua /effect)
   ::  Get our very own event with no mistakes in it... yet.
   ::
-  ::  We want to wait for the vane imps to actually start and get their
-  ::  subscriptions started.  Other ways to do this are delaying the ack
-  ::  from spider until the build is finished (does that guarantee the
-  ::  subscriptions have started?) or subscribe to the imps themselves
-  ::  for a notification when they're done.  This is probably the best
-  ::  option because the imp can delay until it gets a positive ack on
-  ::  the subscription.
+  ::  We want to wait for the vane threads to actually start and get
+  ::  their subscriptions started.  Other ways to do this are delaying
+  ::  the ack from spider until the build is finished (does that
+  ::  guarantee the subscriptions have started?) or subscribe to the
+  ::  threads themselves for a notification when they're done.  This is
+  ::  probably the best option because the thread can delay until it
+  ::  gets a positive ack on the subscription.
   ::
   ;<  ~  bind:m  (sleep ~s0)
   (pure:m ~)
 ::
 ++  end-test
-  |=  vane-imps=(list term)
-  =/  m  (thread ,~)
+  |=  vane-threads=(list term)
+  =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "done"
-  ;<  ~  bind:m  (stop-imps vane-imps)
+  ;<  ~  bind:m  (stop-threads vane-threads)
   ;<  ~  bind:m  (leave-our /effects %aqua)
   (pure:m ~)
 ::
-++  start-imps
-  |=  imps=(list term)
-  =/  m  (thread ,~)
+++  start-threads
+  |=  threads=(list term)
+  =/  m  (strand ,~)
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl
   |-  ^-  form:m
   =*  loop  $
-  ?~  imps
+  ?~  threads
     (pure:m ~)
-  =/  poke-vase  !>([`iid.bowl ~ i.imps *vase])
+  =/  poke-vase  !>([`tid.bowl ~ i.threads *vase])
   ;<  ~  bind:m  (poke-our %spider %spider-start poke-vase)
-  loop(imps t.imps)
+  loop(threads t.threads)
 ::
-++  stop-imps
-  |=  imps=(list term)
-  =/  m  (thread ,~)
+++  stop-threads
+  |=  threads=(list term)
+  =/  m  (strand ,~)
   ^-  form:m
   (pure:m ~)
 ::
 ++  spawn
-  |=  [=iid:spider =ship]
+  |=  [=tid:spider =ship]
   ~&  >  "spawning {<ship>}"
-  =/  m  (thread ,~)
-  =/  =vase  !>(`imput:spider`[iid %azimuth-command !>([%spawn ship])])
-  (poke-our %spider %spider-imput vase)
+  =/  m  (strand ,~)
+  =/  =vase  !>(`input:spider`[tid %azimuth-command !>([%spawn ship])])
+  (poke-our %spider %spider-input vase)
 ::
 ++  breach
-  |=  [=iid:spider who=ship]
-  =/  m  (thread ,~)
+  |=  [=tid:spider who=ship]
+  =/  m  (strand ,~)
   ~&  >  "breaching {<who>}"
   =/  =vase
-    !>([iid %azimuth-command !>([%breach who])])
-  (poke-our %spider %spider-imput vase)
+    !>([tid %azimuth-command !>([%breach who])])
+  (poke-our %spider %spider-input vase)
 ::
 ::  who: breachee
 ::  her: wait until hears about breach
 ::
 ++  breach-and-hear
-  |=  [=iid:spider who=ship her=ship]
-  =/  m  (thread ,~)
+  |=  [=tid:spider who=ship her=ship]
+  =/  m  (strand ,~)
   ~&  >  "breaching {<who>} for {<her>}"
   ;<  =bowl:spider             bind:m  get-bowl
   =/  aqua-pax
@@ -109,8 +109,8 @@
       1
     +(+.old-rut)
   =/  =vase
-    !>([iid %azimuth-command !>([%breach who])])
-  ;<  ~  bind:m                (poke-our %spider %spider-imput vase)
+    !>([tid %azimuth-command !>([%breach who])])
+  ;<  ~  bind:m                (poke-our %spider %spider-input vase)
   |-  ^-  form:m
   =*  loop  $
   ;<  [him=ship =unix-effect]  bind:m  take-unix-effect
@@ -124,16 +124,16 @@
   loop
 ::
 ++  real-ship
-  |=  [=iid:spider =ship]
+  |=  [=tid:spider =ship]
   ~&  >  "booting real {<ship>}"
-  =/  m  (thread ,~)
-  =/  =vase  !>([iid %azimuth-command !>([%create-ship ship])])
-  ;<  ~  bind:m  (poke-our %spider %spider-imput vase)
+  =/  m  (strand ,~)
+  =/  =vase  !>([tid %azimuth-command !>([%create-ship ship])])
+  ;<  ~  bind:m  (poke-our %spider %spider-input vase)
   (check-ship-booted ship)
 ::
 ++  raw-ship
   |=  [=ship keys=(unit dawn-event:able:jael)]
-  =/  m  (thread ,~)
+  =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "starting {<ship>}"
   ;<  ~  bind:m  (send-events (init:util ship keys))
@@ -141,7 +141,7 @@
 ::
 ++  check-ship-booted
   |=  =ship
-  =/  m  (thread ,~)
+  =/  m  (strand ,~)
   ^-  form:m
   =*  loop  $
   ;<  [her=^ship =unix-effect]  bind:m  take-unix-effect
@@ -158,14 +158,14 @@
 ::
 ++  dojo
   |=  [=ship =tape]
-  =/  m  (thread ,~)
+  =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "dojo: {tape}"
   (send-events (dojo:util ship tape))
 ::
 ++  wait-for-output
   |=  [=ship =tape]
-  =/  m  (thread ,~)
+  =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "waiting for output: {tape}"
   |-  ^-  form:m
@@ -179,7 +179,7 @@
 ::
 ++  send-hi
   |=  [from=@p to=@p]
-  =/  m  (thread ,~)
+  =/  m  (strand ,~)
   ^-  form:m
   ;<  ~  bind:m  (dojo from "|hi {(scow %p to)}")
   (wait-for-output from "hi {(scow %p to)} successful")
@@ -188,7 +188,7 @@
 ::
 ++  send-hi-not-responding
   |=  [from=@p to=@p]
-  =/  m  (thread ,~)
+  =/  m  (strand ,~)
   ;<  ~  bind:m  (dojo from "|hi {(scow %p to)}")
   (wait-for-output from "{(scow %p to)} not responding still trying")
 ::
@@ -196,7 +196,7 @@
 ::
 ++  mount
   |=  [=ship =desk]
-  =/  m  (thread ,~)
+  =/  m  (strand ,~)
   ^-  form:m
   ;<  ~                         bind:m  (dojo ship "|mount /={(trip desk)}=")
   |-  ^-  form:m
@@ -210,7 +210,7 @@
 ::
 ++  touch-file
   |=  [her=ship =desk extra=@t]
-  =/  m  (thread ,@t)
+  =/  m  (strand ,@t)
   ^-  form:m
   ~&  >  "touching file on {<her>}/{<desk>}"
   ;<  ~        bind:m  (mount her desk)
@@ -236,7 +236,7 @@
 ::
 ++  check-file-touched
   |=  [=ship =desk warped=@t]
-  =/  m  (thread ,~)
+  =/  m  (strand ,~)
   ~&  >  "checking file touched on {<ship>}/{<desk>}"
   ;<  ~                         bind:m  (mount ship desk)
   ^-  form:m

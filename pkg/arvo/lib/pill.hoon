@@ -63,7 +63,7 @@
 ::
 ++  file-ovum
   =/  directories
-    `(list path)`~[/app /age /gen /lib /mar /ren /sec /sur /sys /tests /web]
+    `(list path)`~[/app /age /ted /gen /lib /mar /ren /sec /sur /sys /tests /web]
   |=  bas=path
   ^-  unix-event
   ::

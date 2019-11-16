@@ -391,7 +391,7 @@
       [%swap-files ~]
     =.  userspace-ova.pil
       =/  slim-dirs=(list path)
-        ~[/app /age /imp /gen /lib /mar /sur /hoon/sys /arvo/sys /zuse/sys]
+        ~[/app /age /ted /gen /lib /mar /sur /hoon/sys /arvo/sys /zuse/sys]
       :_  ~
       %-  unix-event
       %-  %*(. file-ovum:pill-lib directories slim-dirs)

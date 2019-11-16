@@ -64,7 +64,7 @@
       $~  [%ex *hoon]
       $%  {$ur p/@t}                                    ::  http GET request
           {$ge p/dojo-model}                            ::  generator
-          {$im p/term q/(list dojo-source)}             ::  imp
+          {$te p/term q/(list dojo-source)}             ::  thread
           {$dv p/path}                                  ::  core from source
           {$ex p/hoon}                                  ::  hoon expression
           {$sa p/mark}                                  ::  example mark value
@@ -205,7 +205,7 @@
       ;~  pose
         ;~(plug (cold %ur lus) parse-url)
         ;~(plug (cold %ge lus) parse-model)
-        ;~(plug (cold %im hep) sym (star ;~(pfix ace parse-source)))
+        ;~(plug (cold %te hep) sym (star ;~(pfix ace parse-source)))
         ;~(plug (cold %as pad) sym ;~(pfix ace parse-source))
         ;~(plug (cold %do cab) parse-hoon ;~(pfix ace parse-source))
         parse-value
@@ -344,7 +344,7 @@
       =<  he-diff
       %-  he-card
       ?:  =(/wool u.pux)
-        ::  really shoud stop the imp as well
+        ::  really shoud stop the thread as well
         ::
         [%pass u.pux %agent [our.hid %spider] %leave ~]
       [%pass u.pux %arvo %f %kill ~]
@@ -404,7 +404,7 @@
         $as  =^(mor +>.$ (dy-init-source q.bul) [bul(q mor) +>.$])
         $do  =^(mor +>.$ (dy-init-source q.bul) [bul(q mor) +>.$])
         $ge  =^(mod +>.$ (dy-init-model p.bul) [[%ge mod] +>.$])
-        $im  =^(mod +>.$ (dy-init-ordered q.bul) [bul(q mod) +>.$])
+        $te  =^(mod +>.$ (dy-init-ordered q.bul) [bul(q mod) +>.$])
         $ur  [bul +>.$]
         $tu  =^(dof +>.$ (dy-init-ordered p.bul) [[%tu dof] +>.$])
       ==
@@ -728,14 +728,14 @@
       |=  [fil=term src=(list dojo-source)]
       ^+  +>+>
       ?>  ?=(~ pux)
-      =/  iid  (scot %ta (cat 3 'dojo_' (scot %uv (sham eny.hid))))
+      =/  tid  (scot %ta (cat 3 'dojo_' (scot %uv (sham eny.hid))))
       =.  poy  `+>+<.$(pux `/wool)
       =.  +>+>.$
         %-  he-card
-        [%pass /wool %agent [our.hid %spider] %watch /imp-result/[iid]]
+        [%pass /wool %agent [our.hid %spider] %watch /thread-result/[tid]]
       %-  he-card
       =/  =cage  ::  also sub
-        [%spider-start !>([~ `iid fil (dy-sore src)])]
+        [%spider-start !>([~ `tid fil (dy-sore src)])]
       [%pass /wool %agent [our.hid %spider] %poke cage]
     ::
     ++  dy-make                                         ::  build step
@@ -744,7 +744,7 @@
       =+  bil=q.u.cud                 ::  XX =*
       ?:  ?=($ur -.bil)
         (dy-request /hand `request:http`[%'GET' p.bil ~ ~])
-      ?:  ?=($im -.bil)
+      ?:  ?=($te -.bil)
         (dy-wool-poke p.bil q.bil)
       %-  dy-ford
       ^-  [path schematic:ford]
@@ -933,12 +933,12 @@
       (he-diff(poy ~) %tan u.p.sign)
     ::
         %fact
-      ?+    p.cage.sign  ~|([%dojo-imp-bad-mark-result p.cage.sign] !!)
-          %imp-fail
+      ?+    p.cage.sign  ~|([%dojo-thread-bad-mark-result p.cage.sign] !!)
+          %thread-fail
         =+  !<([=term =tang] q.cage.sign)
-        (he-diff(poy ~) %tan leaf+"imp failed: {<term>}" tang)
+        (he-diff(poy ~) %tan leaf+"thread failed: {<term>}" tang)
       ::
-          %imp-done
+          %thread-done
         ?>  ?=(^ poy)
         (~(dy-hand dy u.poy(pux ~)) %noun q.cage.sign)
       ==

@@ -1,8 +1,8 @@
-/+  libthread=thread
-=,  thread=thread:libthread
+/+  libstrand=strand
+=,  strand=strand:libstrand
 |%
-+$  imp    $-(vase _*form:(thread ,vase))
-+$  imput  [=iid =cage]
-+$  iid    iid:thread
-+$  bowl   bowl:thread
++$  thread  $-(vase _*form:(strand ,vase))
++$  input   [=tid =cage]
++$  tid     tid:strand
++$  bowl    bowl:strand
 --

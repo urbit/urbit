@@ -19,7 +19,7 @@
     +$  context  [=path dog=watchdog]
     +$  watchdog
       $:  config
-          running=(unit =iid:spider)
+          running=(unit =tid:spider)
           =number:block
           =pending-logs
           =history
@@ -169,14 +169,14 @@
       %poke-ack
     ?~  p.sign
       [~ this]
-    %-  (slog leaf+"eth-watcher couldn't start imp" u.p.sign)
+    %-  (slog leaf+"eth-watcher couldn't start thread" u.p.sign)
     :_  (clear-running t.wire)  :_  ~
     (leave-spider t.wire our.bowl)
   ::
       %watch-ack
     ?~  p.sign
       [~ this]
-    %-  (slog leaf+"eth-watcher couldn't start listen to imp" u.p.sign)
+    %-  (slog leaf+"eth-watcher couldn't start listen to thread" u.p.sign)
     [~ (clear-running t.wire)]
   ::
       %kick  [~ (clear-running t.wire)]
@@ -186,12 +186,12 @@
     ?~  dog
       [~ this]
     ?+    p.cage.sign  (on-agent:def wire sign)
-        %imp-fail
+        %thread-fail
       =+  !<([=term =tang] q.cage.sign)
       %-  (slog leaf+"eth-watcher failed; will retry" leaf+<term> tang)
       [~ this(dogs.state (~(put by dogs.state) path u.dog(running ~)))]
     ::
-        %imp-done
+        %thread-done
       =+  !<([vows=disavows pup=watchpup] q.cage.sign)
       =.  u.dog
         %_  u.dog
@@ -286,7 +286,7 @@
     ::
     =/  dogs=(list [=path dog=watchdog])  ~(tap by dogs.state)
     =|  cards=(list card)
-    =/  iid-gen  ~(. og eny.bowl)
+    =/  tid-gen  ~(. og eny.bowl)
     ^-  (quip card agent:mall)
     =-  [(flop -<) ->]
     |-  ^-  (quip card agent:mall)
@@ -306,14 +306,14 @@
         ==
       loop(i.dogs i.dogs(running.dog ~))
     ::
-    =^  rand  iid-gen  (raws:iid-gen 128)
-    =/  new-iid  (cat 3 'eth-watcher--' (scot %uv rand))
-    =>  .(running.dog.i.dogs `new-iid)
+    =^  rand  tid-gen  (raws:tid-gen 128)
+    =/  new-tid  (cat 3 'eth-watcher--' (scot %uv rand))
+    =>  .(running.dog.i.dogs `new-tid)
     =/  args
-      :^  ~  `new-iid  %eth-watcher
+      :^  ~  `new-tid  %eth-watcher
       !>(`watchpup`[- number pending-logs blocks]:dog)
     =.  cards
-      :*  (watch-spider path our.bowl /imp-result/[new-iid])
+      :*  (watch-spider path our.bowl /thread-result/[new-tid])
           (poke-spider path our.bowl %spider-start !>(args))
           cards
       ==

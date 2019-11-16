@@ -1,11 +1,11 @@
-/+  threadio
-=,  thread=thread:threadio
+/+  strandio
+=,  strand=strand:strandio
 =,  able:jael
 |%
 ++  tract  azimuth:contracts:azimuth
 ++  fetch-point
   |=  [url=@ta who=ship]
-  =/  m  (thread ,point:azimuth)
+  =/  m  (strand ,point:azimuth)
   ^-  form:m
   =/  =request:rpc:ethereum
     :+  %eth-call
@@ -31,10 +31,10 @@
 ::
 ++  request-rpc
   |=  [url=@ta id=(unit @t) req=request:rpc:ethereum]
-  =/  m  (thread ,json)
+  =/  m  (strand ,json)
   ^-  form:m
   %+  (retry json)  `10
-  =/  m  (thread ,(unit json))
+  =/  m  (strand ,(unit json))
   ^-  form:m
   |^
   =/  =request:http
@@ -46,16 +46,16 @@
         %-  en-json:html
         (request-to-json:rpc:ethereum id req)
     ==
-  ;<  ~  bind:m  (send-request:threadio request)
+  ;<  ~  bind:m  (send-request:strandio request)
   ;<  rep=(unit client-response:iris)  bind:m
-    take-maybe-response:threadio
+    take-maybe-response:strandio
   ?~  rep
     (pure:m ~)
   (parse-response u.rep)
   ::
   ++  parse-response
     |=  =client-response:iris
-    =/  m  (thread ,(unit json))
+    =/  m  (strand ,(unit json))
     ^-  form:m
     ?>  ?=(%finished -.client-response)
     ?~  full-file.client-response
@@ -70,13 +70,13 @@
     ?~  array
       =/  res=(unit response:rpc:jstd)  (parse-one-response u.jon)
       ?~  res
-        (thread-fail:threadio %request-rpc-parse-error >id< ~)
+        (strand-fail:strandio %request-rpc-parse-error >id< ~)
       ?:  ?=(%error -.u.res)
-        (thread-fail:threadio %request-rpc-error >id< >+.res< ~)
+        (strand-fail:strandio %request-rpc-error >id< >+.res< ~)
       ?.  ?=(%result -.u.res)
-        (thread-fail:threadio %request-rpc-fail >u.res< ~)
+        (strand-fail:strandio %request-rpc-fail >u.res< ~)
       (pure:m `res.u.res)
-    (thread-fail:threadio %request-rpc-batch >%not-implemented< ~)
+    (strand-fail:strandio %request-rpc-batch >%not-implemented< ~)
     ::  (pure:m `[%batch u.array])
   ::
   ++  parse-one-response
@@ -96,14 +96,14 @@
 ::
 ++  retry
   |*  result=mold
-  |=  [crash-after=(unit @ud) computation=_*form:(thread (unit result))]
-  =/  m  (thread ,result)
+  |=  [crash-after=(unit @ud) computation=_*form:(strand (unit result))]
+  =/  m  (strand ,result)
   =|  try=@ud
   |-  ^-  form:m
   =*  loop  $
   ?:  =(crash-after `try)
-    (thread-fail:threadio %retry-too-many ~)
-  ;<  ~                  bind:m  (backoff:threadio try ~m1)
+    (strand-fail:strandio %retry-too-many ~)
+  ;<  ~                  bind:m  (backoff:strandio try ~m1)
   ;<  res=(unit result)  bind:m  computation
   ?^  res
     (pure:m u.res)
@@ -111,21 +111,21 @@
 ::
 ++  get-latest-block
   |=  url=@ta
-  =/  m  (thread ,block)
+  =/  m  (strand ,block)
   ^-  form:m
   ;<  =json  bind:m  (request-rpc url `'block number' %eth-block-number ~)
   (get-block-by-number url (parse-eth-block-number:rpc:ethereum json))
 ::
 ++  get-block-by-number
   |=  [url=@ta =number:block]
-  =/  m  (thread ,block)
+  =/  m  (strand ,block)
   ^-  form:m
   |^
   ;<  =json  bind:m
     (request-rpc url `'block by number' %eth-get-block-by-number number |)
   =/  =block  (parse-block json)
   ?.  =(number number.id.block)
-    (thread-fail:threadio %reorg-detected >number< >block< ~)
+    (strand-fail:strandio %reorg-detected >number< >block< ~)
   (pure:m block)
   ::
   ++  parse-block
