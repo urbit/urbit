@@ -67,14 +67,6 @@ rec {
     pier = zod;
   };
 
-<<<<<<< HEAD
-  image = import ./image {
-    inherit pkgs urbit;
-    pill = bootsolid;
-  };
-
-||||||| merged common ancestors
-=======
   ivory-ropsten = import ./ivory {
     inherit pkgs herb urbit;
     arvo = arvo-ropsten;
@@ -86,5 +78,4 @@ rec {
     pill = bootsolid;
   };
 
->>>>>>> master
 }
