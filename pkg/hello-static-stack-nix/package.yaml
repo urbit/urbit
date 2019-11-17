@@ -54,8 +54,8 @@ dependencies:
   - regex-tdfa-text
   - resourcet
   - rio
-  - sdl2
-  - sdl2-image
+  # sdl2
+  # sdl2-image
   - semigroups
   - smallcheck
   - stm
