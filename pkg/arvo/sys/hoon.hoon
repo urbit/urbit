@@ -6137,14 +6137,14 @@
   ++  royl-rs  (cook ryls (cook royl-cell royl-rn))
   ::
   ++  royl-rn
-    =+  ^=  moo
-      |=  a/tape
+    =/  moo
+      |=  a=tape
       :-  (lent a)
       (scan a (bass 10 (plus sid:ab)))
     ;~  pose
       ;~  plug
         (easy %d)
-        ;~  pose  (cold | hep)  (easy &)  ==
+        ;~(pose (cold | hep) (easy &))
         ;~  plug  dim:ag
           ;~  pose
             ;~(pfix dot (cook moo (plus (shim '0' '9'))))
@@ -6159,13 +6159,15 @@
           ==
         ==
       ==
+      ::
       ;~  plug
         (easy %i)
         ;~  sfix
-          ;~  pose  (cold | hep)  (easy &)  ==
+          ;~(pose (cold | hep) (easy &))
           (jest 'inf')
         ==
       ==
+      ::
       ;~  plug
         (easy %n)
         (cold ~ (jest 'nan'))
