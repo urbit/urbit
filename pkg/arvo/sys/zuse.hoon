@@ -5581,7 +5581,7 @@
     ::                                                  ::  ++no:dejs:format
     ++  no                                              ::  number as cord
       |=(jon/json ?>(?=({$n *} jon) p.jon))
-    ::                                                  ::  ++of:dejs:format
+    ::
     ++  of                                              ::  object as frond
       |*  wer/(pole {cord fist})
       |=  jon/json

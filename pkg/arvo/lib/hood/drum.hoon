@@ -111,6 +111,8 @@
       %chat-hook
       %chat-view
       %chat-cli
+      %contact-store
+      %contact-view
   ==
 ::
 ++  deft-fish                                           ::  default connects
