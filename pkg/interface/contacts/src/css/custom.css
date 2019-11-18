@@ -1,0 +1,147 @@
+p, h1, h2, h3, h4, h5, h6, a, input, textarea, button {
+  margin-block-end: unset;
+  margin-block-start: unset;
+  -webkit-margin-before: unset;
+  -webkit-margin-after: unset;
+  font-family: Inter, sans-serif;
+  padding: 0;
+}
+
+textarea, input, button {
+  outline: none;
+  -webkit-appearance: none;
+  border: none;
+  background-color: #fff;
+}
+
+a {
+  color: #000 !important;
+  font-weight: 400 !important;
+}
+
+h2 {
+  font-size: 32px;
+  line-height: 48px;
+  font-weight: bold;
+}
+
+.body-regular {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.body-large {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.body-medium {
+  font-size: 16px;
+  line-height: 19px;
+}
+
+.body-small {
+  font-size: 12px;
+  line-height: 16px;
+  color: #7f7f7f;
+}
+
+.label-regular {
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.label-small {
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.label-small-mono {
+  font-size: 12px;
+  line-height: 24px;
+  font-family: "Source Code Pro", monospace;
+}
+
+.body-regular-400 {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+}
+
+.plus-font {
+  font-size: 32px;
+  line-height: 24px;
+}
+
+.btn-font {
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 600 !important;
+}
+
+.fw-normal {
+  font-weight: 400;
+}
+
+.fw-bold {
+  font-weight: bold;
+}
+
+.fs-italic {
+  font-style: italic;
+}
+
+.td-underline {
+  text-decoration: underline;
+}
+
+.bg-v-light-gray {
+  background-color: #f9f9f9;
+}
+
+.nice-green {
+  color: #2AA779 !important;
+}
+
+.bg-nice-green {
+  background: #2ED196;
+}
+
+.nice-red {
+  color: #EE5432 !important;
+}
+
+.inter {
+  font-family: Inter, sans-serif;
+}
+
+.clamp-3 {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.clamp-message {
+  max-width: calc(100% - 36px - 1.5rem);
+}
+
+.clamp-attachment {
+  overflow: scroll;
+  max-height: 10em;
+  max-width: 100%;
+}
+
+.lh-16 {
+  line-height: 16px;
+}
+
+.mono {
+  font-family: "Source Code Pro", monospace;
+}
+
+.label-small-mono.list-ship {
+  line-height: 29px;
+}
