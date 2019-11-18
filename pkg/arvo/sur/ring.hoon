@@ -34,4 +34,14 @@
       ::
       raw=raw-ring-signature
   ==
+::
++$  ring-group
+  $:  ::  a ring signature is computed over a set of public keys. the
+      ::  participants set is not those keys, but static references to them.
+      ::
+      participants=(set [ship=@p =life])
+      ::  the linkage scope this signature was made on
+      ::
+      link-scope=(unit *)
+  ==
 --
