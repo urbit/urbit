@@ -806,7 +806,7 @@
       =/  =task
         ?.  ?=(%soft -.wrapped-task)
           wrapped-task
-        ~|  our^%ames-fail-soft
+        ~|  our^%ames-larva-fail-soft
         ;;(task p.wrapped-task)
       ::  %born: set .unix-duct and start draining .queued-events
       ::
@@ -821,6 +821,7 @@
           [moves adult-gate]
         ::  kick off a timer to process the first of .queued-events
         ::
+        ~>  %slog.0^leaf/"ames: larva: born; begin queue drain"
         =.  moves  :_(moves [duct %pass /larva %b %wait now])
         [moves larval-gate]
       ::  any other event: enqueue it until we have a .unix-duct
