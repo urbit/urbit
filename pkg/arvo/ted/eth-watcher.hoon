@@ -1,7 +1,7 @@
 ::  eth-watcher: ethereum event log collector
 ::
 /-  spider, *eth-watcher
-/+  tapp, strandio, ethio
+/+  strandio, ethio
 =,  ethereum-types
 =,  able:jael
 ::
