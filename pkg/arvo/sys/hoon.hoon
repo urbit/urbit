@@ -6124,52 +6124,47 @@
     ==
   ++  royl
     ~+
-    ;~  pose
-      (stag %rh royl-rh)
-      (stag %rq royl-rq)
-      (stag %rd royl-rd)
-      (stag %rs royl-rs)
-    ==
-  ::
-  ++  royl-rh  (cook rylh ;~(pfix ;~(plug sig sig) (cook royl-cell royl-rn)))
-  ++  royl-rq  (cook rylq ;~(pfix ;~(plug sig sig sig) (cook royl-cell royl-rn)))
-  ++  royl-rd  (cook ryld ;~(pfix sig (cook royl-cell royl-rn)))
-  ++  royl-rs  (cook ryls (cook royl-cell royl-rn))
-  ::
-  ++  royl-rn
     =+  ^=  moo
       |=  a/tape
       :-  (lent a)
       (scan a (bass 10 (plus sid:ab)))
-    ;~  pose
-      ;~  plug
-        (easy %d)
-        ;~  pose  (cold | hep)  (easy &)  ==
-        ;~  plug  dim:ag
-          ;~  pose
-            ;~(pfix dot (cook moo (plus (shim '0' '9'))))
-            (easy [0 0])
-          ==
-          ;~  pose
-            ;~  pfix
-              (just 'e')
-              ;~(plug ;~(pose (cold | hep) (easy &)) dim:ag)
-            ==
-            (easy [& 0])
-          ==
-        ==
-      ==
-      ;~  plug
-        (easy %i)
-        ;~  sfix
+    =+  ^=  voy
+      %+  cook  royl-cell
+      ;~  pose
+        ;~  plug
+          (easy %d)
           ;~  pose  (cold | hep)  (easy &)  ==
-          (jest 'inf')
+          ;~  plug  dim:ag
+            ;~  pose
+              ;~(pfix dot (cook moo (plus (shim '0' '9'))))
+              (easy [0 0])
+            ==
+            ;~  pose
+              ;~  pfix
+                (just 'e')
+                ;~(plug ;~(pose (cold | hep) (easy &)) dim:ag)
+              ==
+              (easy [& 0])
+            ==
+          ==
+        ==
+        ;~  plug
+          (easy %i)
+          ;~  sfix
+            ;~  pose  (cold | hep)  (easy &)  ==
+            (jest 'inf')
+          ==
+        ==
+        ;~  plug
+          (easy %n)
+          (cold ~ (jest 'nan'))
         ==
       ==
-      ;~  plug
-        (easy %n)
-        (cold ~ (jest 'nan'))
-      ==
+    ;~  pose
+      (stag %rh (cook rylh ;~(pfix ;~(plug sig sig) voy)))
+      (stag %rq (cook rylq ;~(pfix ;~(plug sig sig sig) voy)))
+      (stag %rd (cook ryld ;~(pfix sig voy)))
+      (stag %rs (cook ryls voy))
     ==
   ::
   ++  royl-cell
