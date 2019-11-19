@@ -128,10 +128,11 @@ class UrbitApi {
     this.action("chat-view", "json", data);
   }
 
-  chatViewCreate(path, security, read, write) {
+  chatViewCreate(path, security, read, write, allowHistory) {
     this.chatViewAction({
       create: {
-        path, security, read, write
+        path, security, read, write,
+        'allow-history': allowHistory
       }
     });
   }
@@ -140,8 +141,13 @@ class UrbitApi {
     this.chatViewAction({ delete: { path } });
   }
 
-  chatViewJoin(ship, path) {
-    this.chatViewAction({ join: { ship, path } });
+  chatViewJoin(ship, path, askHistory) {
+    this.chatViewAction({ 
+      join: {
+        ship, path,
+        'ask-history': askHistory
+      }
+    });
   }
 
   inviteAction(data) {

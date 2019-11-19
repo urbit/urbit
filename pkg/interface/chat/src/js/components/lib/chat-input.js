@@ -26,19 +26,21 @@ export class ChatInput extends Component {
 
     // perf testing:
     /*let closure = () => {
+      let x = 0;
       for (var i = 0; i < 30; i++) {
+        x++;
         props.api.chat.message(
           props.station,
           `~${window.ship}`,
           Date.now(),
           {
-            text: `${Date.now()}`
+            text: `${x}`
           }
         );
       }
       setTimeout(closure, 1000);
     };
-    setTimeout(closure, 2000);*/
+    this.closure = closure.bind(this);*/
 
     moment.updateLocale('en', {
         relativeTime : {
@@ -144,6 +146,7 @@ export class ChatInput extends Component {
       Date.now(),
       letter
     );
+    // perf: setTimeout(this.closure, 2000);
 
     this.setState({
       message: '',

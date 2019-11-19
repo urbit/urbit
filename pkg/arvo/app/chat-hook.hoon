@@ -8,16 +8,17 @@
 +$  move  [bone card]
 ::
 +$  card
-  $%  [%diff [%chat-update chat-update]]
+  $%  [%diff diff]
       [%quit ~]
       [%poke wire dock poke]
       [%pull wire dock ~]
       [%peer wire dock path]
   ==
 ::
-+$  state-both
++$  versioned-state
   $%  state-zero
       state-one
+      state-two
   ==
 ::
 +$  state-zero
@@ -33,6 +34,14 @@
       invite-created=_|
   ==
 ::
++$  state-two
+  $:  %2
+      synced=(map path ship)
+      boned=(map wire (list bone))
+      invite-created=_|
+      allow-history=(map path ?)
+  ==
+::
 +$  poke
   $%  [%chat-action chat-action]
       [%permission-action permission-action]
@@ -40,15 +49,19 @@
       [%chat-view-action chat-view-action]
   ==
 ::
++$  diff
+  $%  [%chat-update chat-update]
+      [%chat-two-update chat-two-update]
+  ==
 --
 ::
-|_  [bol=bowl:gall state-one]
+|_  [bol=bowl:gall state-two]
 ::
 ++  this  .
 ::
 ++  prep
-  |=  old=(unit state-both)
-  ^-  (quip move _this)
+  |=  old=(unit versioned-state)
+  |^  ^-  (quip move _this)
   ?~  old
     :_  this(invite-created %.y)
     :~  (invite-poke [%create /chat])
@@ -56,19 +69,32 @@
         [ost.bol %peer /permissions [our.bol %permission-store] /updates]
     ==
   ?-  -.u.old
-      %1  [~ this(+<+ u.old)]
+      %2  [~ this(+<+ u.old)]
+      %1  [~ (migrate-state synced.u.old boned.u.old)]
   ::
       %0
-    =/  sta  *state-one
-    =:  boned.sta   boned.u.old
-        synced.sta  synced.u.old
-        invite-created  %.y
-    ==
-    :_  this(+<+ sta)
+    :_  (migrate-state synced.u.old boned.u.old)
     :~  (invite-poke [%create /chat])
         [ost.bol %peer /invites [our.bol %invite-store] /invitatory/chat]
     ==
   ==
+  ::
+  ++  migrate-state
+    |=  [synced=(map path ship) boned=(map wire (list bone))]
+    ^-  _this
+    =/  sta  *state-two
+    =:  boned.sta   boned
+        synced.sta  synced
+        allow-history.sta  (create-allow-history synced)
+        invite-created  %.y
+    ==
+    this(+<+ sta)
+  ::
+  ++  create-allow-history
+    |=  synced=(map path ship)
+    ^-  (map path ?)
+    (~(run by synced) |=(* %.n))
+  --
 ::
 ++  poke-json
   |=  jon=json
@@ -110,7 +136,9 @@
     =/  chat-path  [%mailbox path.act]
     ?:  (~(has by synced) path.act)
       [~ this]
-    =.  synced  (~(put by synced) path.act our.bol)
+    =:  synced  (~(put by synced) path.act our.bol)
+        allow-history  (~(put by allow-history) path.act allow-history.act)
+    ==
     :_  (track-bone chat-path)
     %+  weld
       [ost.bol %peer chat-path [our.bol %chat-store] chat-path]~
@@ -118,12 +146,13 @@
   ::
       %add-synced
     ?>  (team:title our.bol src.bol)
-    =/  chat-path  [%mailbox (scot %p ship.act) path.act]
+    =/  chat-path=path  [%mailbox (scot %p ship.act) path.act]
     ?:  (~(has by synced) [(scot %p ship.act) path.act])
       [~ this]
     =.  synced  (~(put by synced) [(scot %p ship.act) path.act] ship.act)
+    =/  history=path  ?:(ask-history.act /0 /~)
     :_  (track-bone chat-path)
-    [ost.bol %peer chat-path [ship.act %chat-hook] chat-path]~
+    [ost.bol %peer chat-path [ship.act %chat-hook] (weld chat-path history)]~
   ::
       %remove
     =/  ship  (~(get by synced) path.act)
@@ -157,6 +186,13 @@
 ++  peer-mailbox
   |=  pax=path
   ^-  (quip move _this)
+  ?>  ?=(^ pax)
+  =/  last  (dec (lent pax))
+  =/  backlog-start=(unit @ud)
+    %+  rush
+      (snag last `(list @ta)`pax)
+    dem:ag
+  =>  .(pax `path`(oust [last 1] `(list @ta)`pax))
   ?>  ?=([* ^] pax)
   ?>  (~(has by synced) pax)
   ::  scry permissions to check if read is permitted
@@ -164,7 +200,43 @@
   =/  box  (chat-scry pax)
   ?~  box  !!
   :_  this
-  [ost.bol %diff %chat-update [%create (slav %p i.pax) pax]]~
+  :-  [ost.bol %diff %chat-update [%create (slav %p i.pax) pax]]
+  ?:  ?&(?=(^ backlog-start) (~(got by allow-history) pax))
+    (paginate-messages pax u.box u.backlog-start)
+  ~
+::
+++  paginate-messages
+  |=  [=path =mailbox start=@ud]
+  ^-  (list move)
+  =/  moves=(list move)  ~
+  =/  end  (lent envelopes.mailbox)
+  ?:  |((gte start end) =(end 0))
+    moves
+  =.  envelopes.mailbox  (slag start `(list envelope)`envelopes.mailbox)
+  |-  ^-  (list move)
+  ?~  envelopes.mailbox
+    moves
+  ?:  (lte end 5.000)
+    =.  moves
+      %+  snoc  moves
+      %-  messages-move
+      [path start (lent envelopes.mailbox) envelopes.mailbox]
+    $(envelopes.mailbox ~)
+  =.  moves
+    %+  snoc  moves
+    %-  messages-move
+    :^  path  start
+    (add start 5.000)
+    (scag 5.000 `(list envelope)`envelopes.mailbox)
+  =:  start  (add start 5.000)
+      end    (sub end 5.000)
+  ==
+  $(envelopes.mailbox (slag 5.000 `(list envelope)`envelopes.mailbox))
+::
+++  messages-move
+  |=  [=path start=@ud end=@ud envelopes=(list envelope)]
+  ^-  move
+  [ost.bol %diff %chat-two-update [%messages path start end envelopes]]
 ::
 ++  diff-invite-update
   |=  [wir=wire diff=invite-update]
@@ -173,8 +245,12 @@
     [~ this]
   ::
       %accepted
+    =/  ask-history
+      ?~  (chat-scry [(scot %p ship.invite.diff) path.invite.diff])
+        %.y
+      %.n
     :_  this
-    [(chat-view-poke [%join ship.invite.diff path.invite.diff])]~
+    [(chat-view-poke [%join ship.invite.diff path.invite.diff ask-history])]~
   ==
 ::
 ++  diff-permission-update
@@ -211,6 +287,24 @@
   =/  bne  (~(get by sup) [check-ship [%mailbox mail-path]])
   ?~(bne ~ [u.bne %quit ~]~)
 ::
+++  diff-chat-two-update
+  |=  [wir=wire diff=chat-two-update]
+  ^-  (quip move _this)
+  ::  local
+  ?:  (team:title our.bol src.bol)
+    :_  this
+    %+  turn  (prey:pubsub:userlib [%mailbox path.diff] bol)
+    |=  [=bone *]
+    ^-  move
+    [bone %diff [%chat-two-update diff]]
+  ::  foreign
+  :_  this
+  ?>  ?=([* ^] path.diff)
+  =/  shp  (~(get by synced) path.diff)
+  ?~  shp  ~
+  ?.  =(src.bol u.shp)  ~
+  [(chat-poke [%messages path.diff envelopes.diff])]~
+::
 ++  diff-chat-update
   |=  [wir=wire diff=chat-update]
   ^-  (quip move _this)
@@ -222,10 +316,10 @@
   |=  diff=chat-update
   ^-  (quip move _this)
   ?-  -.diff
-      %keys    [~ this]
-      %config  [~ this]
-      %create  [~ this]
-      %read    [~ this]
+      %keys      [~ this]
+      %config    [~ this]
+      %create    [~ this]
+      %read      [~ this]
       %delete
     ?.  (~(has by synced) path.diff)
       [~ this]
@@ -263,7 +357,7 @@
     ?.  =(u.shp src.bol)
       [~ this]
     :_  this(synced (~(del by synced) path.diff))
-    :-  (chat-poke diff)
+    :-  (chat-poke [%delete path.diff])
     [ost.bol %pull [%mailbox path.diff] [src.bol %chat-hook] ~]~
   ::
       %message
@@ -272,7 +366,7 @@
     =/  shp  (~(get by synced) path.diff)
     ?~  shp  ~
     ?.  =(src.bol u.shp)  ~
-    [(chat-poke diff)]~
+    [(chat-poke [%message path.diff envelope.diff])]~
   ==
 ::
 ++  quit
@@ -286,9 +380,13 @@
   ?.  (~(has by synced) t.wir)
     ::  no-op
     [~ this]
+  =/  mailbox  (chat-scry t.wir)
+  ?~  mailbox  [~ this]
   ~&  %chat-hook-resubscribe
+  =/  pax=path  (weld wir /(scot %ud (lent envelopes.u.mailbox)))
+  ~&  pax
   :_  (track-bone wir)
-  [ost.bol %peer wir [(slav %p i.t.wir) %chat-hook] wir]~
+  [ost.bol %peer wir [(slav %p i.t.wir) %chat-hook] pax]~
 ::
 ++  reap
   |=  [wir=wire saw=(unit tang)]
@@ -325,7 +423,7 @@
   [ost.bol %poke / [our.bol %invite-store] [%invite-action act]]
 ::
 ++  create-permission
-  |=  [pax=path sec=chat-security]
+  |=  [pax=path sec=rw-security]
   ^-  (list move)
   =/  read-perm   (weld pax /read)
   =/  write-perm  (weld pax /write)

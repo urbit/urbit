@@ -118,6 +118,25 @@
       [%config (conf config.mailbox)]
   ==
 ::
+++  two-update-to-json
+  |=  upd=chat-two-update
+  =,  enjs:format
+  ^-  json
+  %+  frond  %chat-update
+  %-  pairs
+  :~
+    ?:  =(%messages -.upd)
+      ?>  ?=(%messages -.upd)
+      :-  %messages
+      %-  pairs
+      :~  [%path (path path.upd)]
+          [%start (numb start.upd)]
+          [%end (numb end.upd)]
+          [%envelopes [%a (turn envelopes.upd enve)]]
+      ==
+    [*@t *^json]
+  ==
+::
 ++  update-to-json
   |=  upd=chat-update
   =,  enjs:format
@@ -166,6 +185,7 @@
     :~  [%create create]
         [%delete delete]
         [%message message]
+        [%messages messages]
         [%read read]
     ==
   ::
@@ -182,6 +202,12 @@
     %-  ot
     :~  [%path pa]
         [%envelope envelope]
+    ==
+  ::
+  ++  messages
+    %-  ot
+    :~  [%path pa]
+        [%envelopes (ar envelope)]
     ==
   ::
   ++  read
@@ -225,6 +251,7 @@
         [%security sec]
         [%read (as (su ;~(pfix sig fed:ag)))]
         [%write (as (su ;~(pfix sig fed:ag)))]
+        [%allow-history bo]
     ==
   ::
   ++  delete
@@ -234,11 +261,12 @@
     %-  ot
     :~  [%ship (su ;~(pfix sig fed:ag))]
         [%path pa]
+        [%ask-history bo]
     ==
   ::
   ++  sec
     =,  dejs:format
-    ^-  $-(json chat-security)
+    ^-  $-(json rw-security)
     (su (perk %channel %village %journal %mailbox ~))
   --
 --

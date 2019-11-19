@@ -129,9 +129,8 @@
         %http-response
       %-  json-response:app
       %-  json-to-octs 
-      %+  envelopes-update
-        envelopes
-      [start end pax]
+      %-  two-update-to-json
+      [%messages pax start end envelopes]
     ==
   ::
   ::  inbox page
@@ -155,7 +154,6 @@
     [~ this]
   ?-  -.act
       %create
-    ::  TODO: add invites
     =/  pax  [(scot %p our.bol) path.act]
     =/  group-read=path  [%chat (weld pax /read)]
     =/  group-write=path  [%chat (weld pax /write)]
@@ -166,7 +164,7 @@
             (group-poke [%add read.act group-read])
             (group-poke [%add write.act group-write])
             (chat-poke [%create our.bol path.act])
-            (chat-hook-poke [%add-owned pax security.act])
+            (chat-hook-poke [%add-owned pax security.act allow-history.act])
         ==
         (create-security [%chat pax] security.act)
         :~  (permission-hook-poke [%add-owned group-read group-read])
@@ -190,7 +188,7 @@
     =/  group-read  [%chat (scot %p ship.act) (weld path.act /read)]
     =/  group-write  [%chat (scot %p ship.act) (weld path.act /write)]
     :_  this
-    :~  (chat-hook-poke [%add-synced ship.act path.act])
+    :~  (chat-hook-poke [%add-synced ship.act path.act ask-history.act])
         (permission-hook-poke [%add-synced ship.act group-write])
         (permission-hook-poke [%add-synced ship.act group-read])
     ==
@@ -226,6 +224,21 @@
   %+  turn  (prey:pubsub:userlib /configs bol)
   |=  [=bone *]
   [bone %diff %json configs-json]
+::
+++  diff-chat-two-update
+  |=  [wir=wire upd=chat-two-update]
+  ^-  (quip move _this)
+  =/  updates-json  (two-update-to-json upd)
+  =/  configs-json  (configs-to-json configs-scry)
+  :_  this
+  %+  weld
+    %+  turn  (prey:pubsub:userlib /primary bol)
+    |=  [=bone *]
+    [bone %diff %json updates-json]
+  %+  turn  (prey:pubsub:userlib /configs bol)
+  |=  [=bone *]
+  [bone %diff %json configs-json]
+
 ::
 ++  quit
   |=  wir=wire
@@ -281,7 +294,7 @@
   .^(chat-configs %gx /=chat-store/(scot %da now.bol)/configs/noun)
 ::
 ++  create-security
-  |=  [pax=path sec=chat-security]
+  |=  [pax=path sec=rw-security]
   ^-  (list move)
   =/  read   (weld pax /read)
   =/  write  (weld pax /write)
@@ -308,22 +321,6 @@
   ::
   ==
 ::
-++  envelopes-update
-  |=  [envelopes=(list envelope) start=@ud end=@ud pax=path]
-  ^-  json
-  =,  enjs:format
-  %+  frond  %chat-update
-  %-  pairs
-  :~
-    :-  %messages
-    %-  pairs
-    :~  [%path (path pax)]
-        [%start (numb start)]
-        [%end (numb end)]
-        [%envelopes [%a (turn envelopes enve)]]
-    ==
-  ==
-::
 ++  truncate-envelopes
   |=  envelopes=(list envelope)
   ^-  (list envelope)
@@ -340,5 +337,4 @@
   ^-  mailbox
   :-  config.mail
   (truncate-envelopes envelopes.mail)
-::
 --

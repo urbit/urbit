@@ -14,6 +14,10 @@ textarea, input, button {
   background-color: #fff;
 }
 
+input[type=checkbox] {
+  -webkit-appearance: checkbox;
+}
+
 a {
   color: #000 !important;
   font-weight: 400 !important;
