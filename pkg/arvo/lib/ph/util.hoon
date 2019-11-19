@@ -101,7 +101,7 @@
 ++  scry-aqua
   |*  [a=mold our=@p now=@da pax=path]
   .^  a
-      %mx
+      %gx
       (scot %p our)
       %aqua
       (scot %da now)

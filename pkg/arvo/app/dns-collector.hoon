@@ -4,7 +4,7 @@
 ::  app types and boilerplate
 ::
 =>  |%
-    +$  card  card:agent:mall
+    +$  card  card:agent:gall
     +$  app-state
       $:  %0
           requested=(map ship address:dns)
@@ -31,9 +31,9 @@
   [%give %fact `the-path cage]
 --
 ::
-^-  agent:mall
+^-  agent:gall
 =|  state=app-state
-|_  =bowl:mall
+|_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
 ::

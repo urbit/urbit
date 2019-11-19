@@ -24,16 +24,16 @@
       +$  pith  ~
       ++  take
         |~  [wire sign-arvo]
-        *(quip card:agent:mall part)
+        *(quip card:agent:gall part)
       ++  take-agent
-        |~  [wire gift:agent:mall]
-        *(quip card:agent:mall part)
+        |~  [wire gift:agent:gall]
+        *(quip card:agent:gall part)
       ++  poke
         |~  [mark vase]
-        *(quip card:agent:mall part)
+        *(quip card:agent:gall part)
       --
-  |=  [bowl:mall own=part]
-  |_  moz=(list card:agent:mall)
+  |=  [bowl:gall own=part]
+  |_  moz=(list card:agent:gall)
   ++  abet  [(flop moz) own]
   --
 --
@@ -83,11 +83,11 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::  app proper
   ::                                                    ::  ::
-^-  agent:mall
+^-  agent:gall
 =|  hood-1                                              ::  module states
 =>  |%
     ++  help
-    |=  hid/bowl:mall
+    |=  hid/bowl:gall
       |%
       ++  able                                          ::  find+make part
         =+  hed=$:hood-head
@@ -124,9 +124,9 @@
         |*  handle/_finish
         |=  a=_+<.handle
         =.  +>.handle  (start hid (able identity))
-        ^-  (quip card:agent:mall _lac)
+        ^-  (quip card:agent:gall _lac)
         %-  ably
-        ^-  (quip card:agent:mall hood-part)
+        ^-  (quip card:agent:gall hood-part)
         (handle a)
       ::  per-module interface wrappers
       ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum))
@@ -135,7 +135,7 @@
       ++  from-write  (from-module %write [..$ _abet]:(hood-write))
       --
     --
-|_  hid/bowl:mall                                       ::  gall environment
+|_  hid/bowl:gall                                       ::  gall environment
 ++  on-init
   `..on-init
 ::
@@ -149,7 +149,7 @@
 ::
 ++  on-poke
   |=  [=mark =vase]
-  ^-  (quip card:agent:mall agent:mall)
+  ^-  (quip card:agent:gall agent:gall)
   =/  h  (help hid)
   =^  cards  lac
     ?:  =(%helm (end 3 4 mark))
@@ -189,7 +189,7 @@
   *(unit (unit cage))
 ::
 ++  on-agent
-  |=  [=wire =sign:agent:mall]
+  |=  [=wire =sign:agent:gall]
   =/  h  (help hid)
   =^  cards  lac
     ?+  wire  ~|([%hood-bad-wire wire] !!)

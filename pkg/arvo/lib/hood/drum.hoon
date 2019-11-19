@@ -149,11 +149,11 @@
 ::
 ::::
   ::
-|=  {hid/bowl:mall part}                          ::  main drum work
+|=  {hid/bowl:gall part}                          ::  main drum work
 =/  ost  0
 =+  (~(gut by bin) ost *source)
 =*  dev  -
-|_  {moz/(list card:agent:mall) biz/(list dill-blit:dill)}
+|_  {moz/(list card:agent:gall) biz/(list dill-blit:dill)}
 ++  diff-sole-effect-phat                             ::  app event
   |=  {way/wire fec/sole-effect}
   =<  se-abet  =<  se-view
@@ -170,7 +170,7 @@
 ::
 ++  poke-set-boot-apps                                ::
   |=  lit/?
-  ^-  (quip card:agent:mall part)
+  ^-  (quip card:agent:gall part)
   ::  We do not run se-abet:se-view here because that starts the apps,
   ::  and some apps are not ready to start (eg Talk crashes because the
   ::  terminal has width 0).  It appears the first message to drum must
@@ -262,7 +262,7 @@
   ==
 ::
 ++  take-agent
-  |=  [=wire =sign:agent:mall]
+  |=  [=wire =sign:agent:gall]
   ?+  wire  ~|([%drum-bad-take-agent wire -.sign] !!)
       [%drum %phat *]
     ?-  -.sign
@@ -287,11 +287,11 @@
 ::::                                                  ::  ::
   ::                                                  ::  ::
 ++  se-abet                                           ::  resolve
-  ^-  (quip card:agent:mall part)
+  ^-  (quip card:agent:gall part)
   =*  pith  +<+.$
   =.  .  se-subze:se-adze:se-adit
   :_  pith(bin (~(put by bin) ost dev))
-  ^-  (list card:agent:mall)
+  ^-  (list card:agent:gall)
   ?~  biz  (flop moz)
   :_  (flop moz)
   =/  =dill-blit:dill  ?~(t.biz i.biz [%mor (flop biz)])
@@ -310,7 +310,7 @@
   =.  +>.$  (se-text "activated app {(trip p.wel)}/{(trip q.wel)}")
   %-  se-emit(fur (~(put by fur) q.wel ~))
   =/  =wire  [%drum p.wel q.wel ~]
-  [%pass wire %arvo %m %conf [our.hid q.wel] our.hid p.wel]
+  [%pass wire %arvo %g %conf [our.hid q.wel] our.hid p.wel]
 ::
 ++  se-adze                                           ::  update connections
   ^+  .
@@ -519,7 +519,7 @@
   (se-just ta-vew:(se-tame u.gul))
 ::
 ++  se-emit
-  |=  card:agent:mall
+  |=  card:agent:gall
   %_(+> moz [+< moz])
 ::
 ++  se-text                                           ::  return text

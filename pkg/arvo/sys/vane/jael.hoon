@@ -75,8 +75,8 @@
   $%  $:  %a                                            ::    to %ames
           $>(%want task:able:ames)                      ::  send message
       ==                                                ::
-      $:  %m                                            ::    to self
-          $>(%deal task:able:mall)                      ::  set ethereum source
+      $:  %g                                            ::    to self
+          $>(%deal task:able:gall)                      ::  set ethereum source
       ==                                                ::
       $:  %j                                            ::    to self
           $>(%listen task)                              ::  set ethereum source
@@ -90,11 +90,11 @@
 +$  sign                                                ::  in result $<-
   $~  [%a %woot *ship ~]                                ::
   $%  [%a $>(%woot gift:able:ames)]                     ::  message result
-      $:  %m                                            ::
+      $:  %g                                            ::
           $>  $?  %onto                                 ::
                   %unto                                 ::
               ==                                        ::
-          gift:able:mall                                ::
+          gift:able:gall                                ::
       ==
   ==                                                    ::
 --  ::
@@ -186,7 +186,7 @@
     :*  hen
         %pass
         /[app]/poke
-        %m
+        %g
         %deal
         [our our]
         app
@@ -320,7 +320,7 @@
         %+  weld  moz
         ::  order is crucial!
         ::
-        ::    %dill must init after %mall
+        ::    %dill must init after %gall
         ::    the %give init (for unix) must be after %dill init
         ::    %jael init must be deferred (makes http requests)
         ::
@@ -328,7 +328,7 @@
         :~  [hen %give %init our]
             [hen %slip %e %init our]
             [hen %slip %d %init our]
-            [hen %slip %m %init our]
+            [hen %slip %g %init our]
             [hen %slip %c %init our]
             [hen %slip %a %init our]
         ==
@@ -370,7 +370,7 @@
         :~  [hen %give %init our]
             [hen %slip %e %init our]
             [hen %slip %d %init our]
-            [hen %slip %m %init our]
+            [hen %slip %g %init our]
             [hen %slip %c %init our]
             [hen %slip %a %init our]
         ==
@@ -529,11 +529,11 @@
       ::TODO  fail:et
       +>.$
     ::
-        [%m %onto *]
+        [%g %onto *]
       ~&  [%jael-onto tea hin]
       +>.$
     ::
-        [%m %unto *]
+        [%g %unto *]
       ?-  +>-.hin
           $kick      ~|([%jael-unexpected-quit tea hin] !!)
           $poke-ack
@@ -569,7 +569,7 @@
   ::                                                    ::  ++wind:of
   ++  pump
     |=  [hen=duct =wire app=term]
-    (emit [hen %pass wire %m %deal [our our] app %pump ~])
+    (emit [hen %pass wire %g %deal [our our] app %pump ~])
   --
 ::                                                      ::  ++su
 ::::                    ## relative^heavy               ::  subjective engine
@@ -617,7 +617,7 @@
     :*  hen
         %pass
         [app path]
-        %m
+        %g
         %deal
         [our our]
         app

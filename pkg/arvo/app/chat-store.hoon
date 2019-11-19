@@ -2,7 +2,7 @@
 ::
 /+  *chat-json, *chat-eval, default-agent
 |%
-+$  card      card:agent:mall
++$  card      card:agent:gall
 +$  versioned-state
   $%  state-zero
   ==
@@ -21,9 +21,9 @@
 ::
 =|  state-zero
 =*  state  -
-^-  agent:mall
+^-  agent:gall
 =<
-  |_  =bowl:mall
+  |_  =bowl:gall
   +*  this       .
       chat-core  +>
       cc         ~(. chat-core bowl)
@@ -99,7 +99,7 @@
   --
 ::
 ::
-|_  bol=bowl:mall
+|_  bol=bowl:gall
 ::
 ++  peek-x-envelopes
   |=  pax=path

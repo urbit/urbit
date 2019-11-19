@@ -4,7 +4,7 @@
     rune-snippet=language-server-rune-snippet,
     default-agent
 |%
-+$  card  card:agent:mall
++$  card  card:agent:gall
 +$  lsp-req
   $:  uri=@t
       $%  [%sync changes=(list change)]
@@ -28,18 +28,18 @@
 ::
 +$  all-state  bufs=(map uri=@t buf=wall)
 --
-^-  agent:mall
+^-  agent:gall
 =|  all-state
 =*  state  -
 =<
-  |_  =bowl:mall
+  |_  =bowl:gall
   +*  this      .
       lsp-core  +>
       lsp       ~(. lsp-core bowl)
       def       ~(. (default-agent this %|) bowl)
   ::
   ++  on-init
-    ^+  on-init:*agent:mall
+    ^+  on-init:*agent:gall
     ^-  (quip card _this)
     ~&  >  %lsp-init
     :_  this  :_  ~
@@ -50,14 +50,14 @@
   ::
   ++  on-save   !>(state)
   ++  on-load
-    ^+  on-load:*agent:mall
+    ^+  on-load:*agent:gall
     |=  old-state=vase
     ^-  (quip card _this)
     ~&  >  %lsp-upgrade
     [~ this(state !<(all-state old-state))]
   ::
   ++  on-poke
-    ^+  on-poke:*agent:mall
+    ^+  on-poke:*agent:gall
     |=  [=mark =vase]
     ^-  (quip card _this)
     =^  cards  state
@@ -72,7 +72,7 @@
   ++  on-peek   on-peek:def
   ++  on-agent  on-agent:def
   ++  on-arvo
-    ^+  on-arvo:*agent:mall
+    ^+  on-arvo:*agent:gall
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
     =^  cards  state
@@ -84,7 +84,7 @@
   ++  on-fail   on-fail:def
   --
 ::
-|_  bow=bowl:mall
+|_  bow=bowl:gall
 ::
 ++  parser
   =,  dejs:format

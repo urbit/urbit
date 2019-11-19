@@ -3,7 +3,7 @@
 ?:  ?=(%& help)
   ~|  %default-agent-helpfully-crashing
   skeleton
-|_  =bowl:mall
+|_  =bowl:gall
 ++  on-init
   `agent
 ::
@@ -34,8 +34,8 @@
   !!
 ::
 ++  on-agent
-  |=  [=wire =sign:agent:mall]
-  ^-  (quip card:agent:mall _agent)
+  |=  [=wire =sign:agent:gall]
+  ^-  (quip card:agent:gall _agent)
   ?-    -.sign
       %poke-ack
     ?~  p.sign

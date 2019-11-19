@@ -45,7 +45,7 @@
         [%f /vane/ford]
         ::  sys/vane/gall: applications
         ::
-        [%m /vane/mall]
+        [%g /vane/gall]
         ::  sys/vane/iris: http client
         ::
         [%i /vane/iris]

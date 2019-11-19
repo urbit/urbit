@@ -1,6 +1,6 @@
 |%
 ++  eval
-  |=  [=bowl:mall =hoon]
+  |=  [=bowl:gall =hoon]
   ^-  (list tank)
   =/  subj=[our=@p now=@da eny=@uvJ]
     :+  our.bowl

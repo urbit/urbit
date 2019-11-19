@@ -19,7 +19,7 @@
 --
 ::
 =|  =state
-|_  =bowl:mall
+|_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
 ::
@@ -31,7 +31,7 @@
 ::
 ++  on-poke
   |=  [=mark =vase]
-  ^-  (quip card:agent:mall _this)
+  ^-  (quip card:agent:gall _this)
   ?.  ?=(%handle-http-request mark)
     (on-poke:def mark vase)
   =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
@@ -64,7 +64,7 @@
 ::
 ++  on-watch
   |=  =path
-  ^-  (quip card:agent:mall _this)
+  ^-  (quip card:agent:gall _this)
   ?:  ?=([%http-response *] path)
     `this
   (on-watch:def path)
@@ -72,8 +72,8 @@
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ++  on-agent
-  |=  [=wire =sign:agent:mall]
-  ^-  (quip card:agent:mall _this)
+  |=  [=wire =sign:agent:gall]
+  ^-  (quip card:agent:gall _this)
   |^
   ?+    wire  (on-agent:def wire sign)
       [%import ~]
@@ -123,7 +123,7 @@
   ::
   ++  take-export
     |=  data=*
-    ^-  (quip card:agent:mall _this)
+    ^-  (quip card:agent:gall _this)
     ?>  ?=(^ job.state)
     ?>  ?=(%export -.source.com.u.job.state)
     =/  app-name=tape  (trip app.source.com.u.job.state)
@@ -141,7 +141,7 @@
   ::
   ++  take-sole-effect
     |=  fec=sole-effect
-    ^-  (quip card:agent:mall _this)
+    ^-  (quip card:agent:gall _this)
     =/  out
       |-  ^-  (unit lens-out)
       =*  loop  $
@@ -205,7 +205,7 @@
 ::
 ++  on-arvo
   |=  [=wire =sign-arvo]
-  ^-  (quip card:agent:mall _this)
+  ^-  (quip card:agent:gall _this)
   ?.  ?=(%bound +<.sign-arvo)
     (on-arvo:def wire sign-arvo)
   [~ this]

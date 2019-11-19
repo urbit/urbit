@@ -43,10 +43,10 @@
               ==                                        ::
           gift:able:jael                                ::
       ==                                                ::
-      $:  %m                                            ::    from %gall
+      $:  %g                                            ::    from %gall
           $%  [%mean p=ares]                            ::  XX obsolete
               [%nice ~]                                 ::  XX obsolete
-              $>(%unto gift:able:mall)                  ::  application ack
+              $>(%unto gift:able:gall)                  ::  application ack
       ==  ==                                            ::
       $:  @tas                                          ::    from any
           $%  $>(%crud vane-task)                       ::  XX strange
@@ -1372,7 +1372,7 @@
         %milk
       ::  ~&  [%milk p.bon q.bon]
       ?>  ?=([@ @ *] q.q.bon)
-      ?>  ?=(?(%a %c %e %m %j) i.q.q.bon)
+      ?>  ?=(?(%a %c %e %g %j) i.q.q.bon)
       =/  =wire  [(scot %p our) (scot %p p.bon) q.q.bon]
       :_  fox  [hen %pass wire i.q.q.bon %west p.bon t.q.q.bon r.bon]~
     ::
@@ -1446,8 +1446,8 @@
     ?-  +<.sih
         %crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
     ::
-        %mack  ?~  +>.sih  $(sih [%m %nice ~])          ::  XX using old code
-               $(sih [%m %mean `[%mack +>+.sih]])
+        %mack  ?~  +>.sih  $(sih [%g %nice ~])          ::  XX using old code
+               $(sih [%g %mean `[%mack +>+.sih]])
     ::
         %public-keys
       ?.  ?=([%pubs @ ~] tea)

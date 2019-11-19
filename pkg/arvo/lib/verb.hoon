@@ -1,13 +1,13 @@
 ::  Print what your agent is doing.
 ::
-|=  [loud=? =agent:mall]
-^-  agent:mall
-|_  =bowl:mall
+|=  [loud=? =agent:gall]
+^-  agent:gall
+|_  =bowl:gall
 +*  this  .
     ag    ~(. agent bowl)
 ::
 ++  on-init
-  ^-  (quip card:agent:mall agent:mall)
+  ^-  (quip card:agent:gall agent:gall)
   =>  ?.  loud  .
       %-  (slog leaf+"{<dap.bowl>}: on-init" ~)
       .
@@ -23,7 +23,7 @@
 ::
 ++  on-load
   |=  old-state=vase
-  ^-  (quip card:agent:mall agent:mall)
+  ^-  (quip card:agent:gall agent:gall)
   =>  ?.  loud  .
       %-  (slog leaf+"{<dap.bowl>}: on-load" ~)
       .
@@ -32,7 +32,7 @@
 ::
 ++  on-poke
   |=  [=mark =vase]
-  ^-  (quip card:agent:mall agent:mall)
+  ^-  (quip card:agent:gall agent:gall)
   =>  ?.  loud  .
       %-  (slog leaf+"{<dap.bowl>}: on-poke with mark {<mark>}" ~)
       .
@@ -43,7 +43,7 @@
 ::
 ++  on-watch
   |=  =path
-  ^-  (quip card:agent:mall agent:mall)
+  ^-  (quip card:agent:gall agent:gall)
   =>  ?.  loud  .
       %-  (slog leaf+"{<dap.bowl>}: on-watch on path {<path>}" ~)
       .
@@ -52,7 +52,7 @@
 ::
 ++  on-leave
   |=  =path
-  ^-  (quip card:agent:mall agent:mall)
+  ^-  (quip card:agent:gall agent:gall)
   =>  ?.  loud  .
       %-  (slog leaf+"{<dap.bowl>}: on-leave on path {<path>}" ~)
       .
@@ -68,8 +68,8 @@
   (on-peek:ag path)
 ::
 ++  on-agent
-  |=  [=wire =sign:agent:mall]
-  ^-  (quip card:agent:mall agent:mall)
+  |=  [=wire =sign:agent:gall]
+  ^-  (quip card:agent:gall agent:gall)
   =>  ?.  loud  .
       %-  (slog leaf+"{<dap.bowl>}: on-agent on wire {<wire>}, {<-.sign>}" ~)
       .
@@ -78,7 +78,7 @@
 ::
 ++  on-arvo
   |=  [=wire =sign-arvo]
-  ^-  (quip card:agent:mall agent:mall)
+  ^-  (quip card:agent:gall agent:gall)
   =>  ?.  loud  .
       %-  %+  slog
             leaf+"{<dap.bowl>}: on-arvo on wire {<wire>}, {<[- +<]:sign-arvo>}"
@@ -89,7 +89,7 @@
 ::
 ++  on-fail
   |=  [=term =tang]
-  ^-  (quip card:agent:mall agent:mall)
+  ^-  (quip card:agent:gall agent:gall)
   =>  ?.  loud  .
       %-  (slog leaf+"{<dap.bowl>}: on-fail with term {<term>}" ~)
       .

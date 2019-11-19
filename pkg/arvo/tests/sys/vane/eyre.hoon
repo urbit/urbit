@@ -299,7 +299,7 @@
           :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
               ^-  (hypo sign:http-server-gate)
               :-  *type
-              :*  %m  %unto  %fact
+              :*  %g  %unto  %fact
                   %http-response-header
                   !>([200 ['content-type' 'text/html']~])
               ==
@@ -394,14 +394,14 @@
         :*  wire=/run-app-request/app1  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            :*  %m  %unto  %poke-ack  ~
+            :*  %g  %unto  %poke-ack  ~
                 :~  [%leaf "/~zod/...../app1:<[1 1].[1 20]>"]
             ==  ==
          ==
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %pass
                 /watch-response/[eyre-id]
-                %m  %deal  [~nul ~nul]  %app1  %leave  ~
+                %g  %deal  [~nul ~nul]  %app1  %leave  ~
             ==
           ::
             :*  duct=~[/http-blah]  %give  %response
@@ -496,7 +496,7 @@
       ^=  take-args
         :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)  :-  *type
-            :*  %m  %unto  %fact
+            :*  %g  %unto  %fact
                 %http-response-header
                 !>([200 ['content-type' 'text/html']~])
             ==
@@ -515,7 +515,7 @@
       ^=  take-args
         :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)  :-  *type
-            :*  %m  %unto  %fact
+            :*  %g  %unto  %fact
                 %http-response-data
                 !>(`(as-octs:mimes:html 'ya!'))
             ==
@@ -611,7 +611,7 @@
       ^=  take-args
         :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)  :-  *type
-            :*  %m  %unto  %fact
+            :*  %g  %unto  %fact
                 %http-response-header
                 !>([307 ['location' '/~/login?redirect=/~landscape/inner-path']~])
             ==
@@ -987,7 +987,7 @@
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%m %unto %poke-ack ~]
+            [%g %unto %poke-ack ~]
          ==
       moves=~
     ==
@@ -1002,7 +1002,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%m %unto %watch-ack ~]
+            [%g %unto %watch-ack ~]
          ==
       moves=~
     ==
@@ -1017,7 +1017,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%m %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+            [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
          ==
       moves=~
     ==
@@ -1202,7 +1202,7 @@
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%m %unto %poke-ack ~]
+            [%g %unto %poke-ack ~]
          ==
       moves=~
     ==
@@ -1217,7 +1217,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%m %unto %watch-ack ~]
+            [%g %unto %watch-ack ~]
          ==
       moves=~
     ==
@@ -1303,7 +1303,7 @@
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%m %unto %poke-ack ~]
+            [%g %unto %poke-ack ~]
          ==
       moves=~
     ==
@@ -1318,7 +1318,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%m %unto %watch-ack ~]
+            [%g %unto %watch-ack ~]
          ==
       moves=~
     ==
@@ -1393,7 +1393,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%m %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+            [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
          ==
       moves=~
     ==
@@ -1408,7 +1408,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'2'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%m %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+            [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
          ==
       moves=~
     ==
@@ -1529,7 +1529,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'2'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%m %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+            [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
          ==
       ^=  comparator
         |=  moves=(list move:http-server-gate)
@@ -1590,7 +1590,7 @@
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%m %unto %poke-ack ~]
+            [%g %unto %poke-ack ~]
          ==
       moves=~
     ==
@@ -1605,7 +1605,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%m %unto %watch-ack ~]
+            [%g %unto %watch-ack ~]
          ==
       moves=~
     ==
@@ -1675,7 +1675,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%m %unto %fact %json !>(`json`[%a [%n '1'] ~])]
+            [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
          ==
       ^=  moves
         ^-  (list move:http-server-gate)
@@ -1763,7 +1763,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%m %unto %fact %json !>(`json`[%a [%n '2'] ~])]
+            [%g %unto %fact %json !>(`json`[%a [%n '2'] ~])]
          ==
       moves=~
     ==
@@ -2020,7 +2020,7 @@
   [output http-server-gate]
 ::
 ++  expect-gall-deal
-  |=  $:  expected=[wire=path id=sock app=term =deal:mall]
+  |=  $:  expected=[wire=path id=sock app=term =deal:gall]
           actual=(wind note:http-server-gate gift:able:http-server-gate)
       ==
   ^-  tang
@@ -2032,7 +2032,7 @@
     (expect-eq !>(wire.expected) !>(p.actual))
   ::
   =/  note=note:http-server-gate  q.actual
-  ?.  ?=([%m %deal *] note)
+  ?.  ?=([%g %deal *] note)
     [%leaf "bad move, not a %deal: {<actual>}"]~
   ::
   %+  weld

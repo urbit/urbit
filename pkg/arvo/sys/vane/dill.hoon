@@ -77,13 +77,13 @@
       $:  %f                                            ::
           $>(%wegh task:able:ford)                      ::
       ==                                                ::
-      $:  %m                                            ::
+      $:  %g                                            ::
           $>  $?  %conf                                 ::
                   %deal                                 ::
                   %goad                                 ::
                   %wegh                                 ::
               ==                                        ::
-          task:able:mall                                ::
+          task:able:gall                                ::
       ==                                                ::
       $:  %i                                            ::
           $>(%wegh task:able:iris)                      ::
@@ -130,12 +130,12 @@
       $:  %f                                            ::
           $>(%mass gift:able:ford)                      ::
       ==                                                ::
-      $:  %m                                            ::
+      $:  %g                                            ::
           $>  $?  %mass                                 ::
                   %onto                                 ::
                   %unto                                 ::
               ==                                        ::
-          gift:able:mall                                ::
+          gift:able:gall                                ::
       ==                                                ::
       $:  %i                                            ::
           $>(%mass gift:able:iris)                      ::
@@ -174,7 +174,7 @@
             [%auto %one ~]
           ?~  error
             ~&  %behn-goad
-            (pass / [%m %goad force=| ~])
+            (pass / [%g %goad force=| ~])
           ::  %goad crashed, wait again, then force
           ::
           ~&  %behn-goad-retry
@@ -184,7 +184,7 @@
             [%auto %two ~]
           ?~  error
             ~&  %behn-goad-again
-            (pass / [%m %goad force=& ~])
+            (pass / [%g %goad force=& ~])
           ::  %goad crashed again, bail out
           ::
           ~&  %behn-goad-fail
@@ -239,8 +239,8 @@
         +>(moz :_(moz [hen %give git]))
       ::
       ++  deal                                          ::  pass to %gall
-        |=  [=wire =deal:mall]
-        (pass wire [%m %deal [our our] ram deal])
+        |=  [=wire =deal:gall]
+        (pass wire [%g %deal [our our] ram deal])
       ::
       ++  pass                                          ::  pass note
         |=  [=wire =note]
@@ -344,7 +344,7 @@
         =<  (pass /heft/clay [%c %wegh ~])
         =<  (pass /heft/eyre [%e %wegh ~])
         =<  (pass /heft/ford [%f %wegh ~])
-        =<  (pass /heft/gall [%m %wegh ~])
+        =<  (pass /heft/gall [%g %wegh ~])
         =<  (pass /heft/iris [%i %wegh ~])
         =<  (pass /heft/jael [%j %wegh ~])
         .
@@ -365,7 +365,7 @@
         =/  myt  (flop (fall tem ~))
         =/  can  (clan:title our)
         =.  tem  ~
-        =.  +>  (pass / [%m %conf [[our ram] our %home]])
+        =.  +>  (pass / [%g %conf [[our ram] our %home]])
         =.  +>  (sync %home our %base)
         =?  +>  ?=(?($earl $duke $king) can)
           (sync %base (sein our) %kids)
@@ -416,7 +416,7 @@
         |=  {tea/wire sih/sign}
         ^+  +>
         ?-    sih
-            {?($a $b $c $e $f $m $i $j) $mass *}
+            {?($a $b $c $e $f $g $i $j) $mass *}
           (wegh -.sih p.sih)
         ::
             {$a $nice *}
@@ -431,14 +431,14 @@
             {$a $send *}
           +>(moz :_(moz [hen %give +.sih]))
         ::
-            {$m $onto *}
+            {$g $onto *}
           ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
             %|  (crud %onto p.p.+>.sih)
             %&  (done %blit [%lin (tuba "{<p.p.sih>}")]~)
           ==
         ::
-            {$m $unto *}
+            {$g $unto *}
           ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
             $poke-ack       ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
@@ -473,7 +473,7 @@
       ::  +wegh: receive a memory report from a vane and maybe emit full report
       ::
       ++  wegh
-        |=  [lal=?(%a %b %c %e %f %m %i %j) mas=mass]
+        |=  [lal=?(%a %b %c %e %f %g %i %j) mas=mass]
         ^+  +>
         ::  update our listing of vane responses with this new one
         ::
@@ -484,7 +484,7 @@
             %c  ~?(?=(^ c.hef.all) %double-mass-c hef.all(c `mas))
             %e  ~?(?=(^ e.hef.all) %double-mass-e hef.all(e `mas))
             %f  ~?(?=(^ f.hef.all) %double-mass-f hef.all(f `mas))
-            %m  ~?(?=(^ g.hef.all) %double-mass-g hef.all(g `mas))
+            %g  ~?(?=(^ g.hef.all) %double-mass-g hef.all(g `mas))
             %i  ~?(?=(^ i.hef.all) %double-mass-i hef.all(i `mas))
             %j  ~?(?=(^ j.hef.all) %double-mass-j hef.all(j `mas))
           ==

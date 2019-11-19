@@ -10,7 +10,7 @@
     --
 ::
 =>  |%
-    +$  card  card:agent:mall
+    +$  card  card:agent:gall
     +$  app-state
       $:  %0
           dogs=(map path watchdog)
@@ -61,10 +61,10 @@
 ::
 ::  Main
 ::
-^-  agent:mall
+^-  agent:gall
 =|  state=app-state
 %+  verb  &
-|_  =bowl:mall
+|_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
 ::
@@ -130,7 +130,7 @@
 ::
 ++  on-watch
   |=  =path
-  ^-  (quip card agent:mall)
+  ^-  (quip card agent:gall)
   ?.  ?=([%logs ^] path)
     ~|  [%invalid-subscription-path path]
     !!
@@ -160,9 +160,9 @@
   !>(number:(~(got by dogs.state) t.t.path))
 ::
 ++  on-agent
-  |=  [=wire =sign:agent:mall]
+  |=  [=wire =sign:agent:gall]
   |^
-  ^-  (quip card agent:mall)
+  ^-  (quip card agent:gall)
   ?.  ?=([%running *] wire)
     (on-agent:def wire sign)
   ?-    -.sign
@@ -270,7 +270,7 @@
 ::
 ++  on-arvo
   |=  [=wire =sign-arvo]
-  ^-  (quip card agent:mall)
+  ^-  (quip card agent:gall)
   ?+  +<.sign-arvo  ~|([%strange-sign-arvo -.sign-arvo] !!)
       %wake
     =;  rest
@@ -287,9 +287,9 @@
     =/  dogs=(list [=path dog=watchdog])  ~(tap by dogs.state)
     =|  cards=(list card)
     =/  tid-gen  ~(. og eny.bowl)
-    ^-  (quip card agent:mall)
+    ^-  (quip card agent:gall)
     =-  [(flop -<) ->]
-    |-  ^-  (quip card agent:mall)
+    |-  ^-  (quip card agent:gall)
     =*  loop  $
     ?~  dogs
       [cards this]

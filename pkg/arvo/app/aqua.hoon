@@ -45,8 +45,8 @@
 =|  state
 =*  all-state  -
 =<
-  ^-  agent:mall
-  |_  =bowl:mall
+  ^-  agent:gall
+  |_  =bowl:gall
   +*  this       .
       aqua-core  +>
       ac         ~(. aqua-core bowl)
@@ -55,7 +55,7 @@
   ++  on-save  !>(all-state)
   ++  on-load
     |=  old-state=vase
-    ^-  step:agent:mall
+    ^-  step:agent:gall
     ~&  prep=%aqua
     =+  new=((soft state) !<(* old-state))
     ?~  new
@@ -64,7 +64,7 @@
   ::
   ++  on-poke
     |=  [=mark =vase]
-    ^-  step:agent:mall
+    ^-  step:agent:gall
     =^  cards  all-state
       ?+  mark  ~|([%aqua-bad-mark mark] !!)
           %aqua-events  (poke-aqua-events:ac !<((list aqua-event) vase))
@@ -75,7 +75,7 @@
   ::
   ++  on-watch
     |=  =path
-    ^-  step:agent:mall
+    ^-  step:agent:gall
     ?:  ?=([?(%effects %effect) ~] path)
       `this
     ?.  ?=([?(%effects %effect %evens %boths) @ ~] path)
@@ -101,8 +101,8 @@
 =|  unix-effects=(jar ship unix-effect)
 =|  unix-events=(jar ship unix-timed-event)
 =|  unix-boths=(jar ship unix-both)
-=|  cards=(list card:agent:mall)
-|_  hid=bowl:mall
+=|  cards=(list card:agent:gall)
+|_  hid=bowl:gall
 ::
 ::  Represents a single ship's state.
 ::
@@ -138,7 +138,7 @@
   ::  Send cards to host arvo
   ::
   ++  emit-cards
-    |=  ms=(list card:agent:mall)
+    |=  ms=(list card:agent:gall)
     =.  this  (^emit-cards ms)
     ..abet-pe
   ::
@@ -244,7 +244,7 @@
   this
 ::
 ++  abet-aqua
-  ^-  (quip card:agent:mall state)
+  ^-  (quip card:agent:gall state)
   =.  this
     =/  =path  /effect
     %-  emit-cards
@@ -296,7 +296,7 @@
   [(flop cards) all-state]
 ::
 ++  emit-cards
-  |=  ms=(list card:agent:mall)
+  |=  ms=(list card:agent:gall)
   =.  cards  (weld ms cards)
   this
 ::
@@ -324,7 +324,7 @@
 ::
 ++  poke-pill
   |=  p=pill
-  ^-  (quip card:agent:mall state)
+  ^-  (quip card:agent:gall state)
   =.  this  apex-aqua  =<  abet-aqua
   =.  pil  p
   ~&  lent=(met 3 (jam boot-ova.pil))
@@ -355,7 +355,7 @@
 ::
 ++  poke-noun
   |=  val=*
-  ^-  (quip card:agent:mall state)
+  ^-  (quip card:agent:gall state)
   =.  this  apex-aqua  =<  abet-aqua
   ^+  this
   ::  Could potentially factor out the three lines of turn-ships
@@ -378,7 +378,7 @@
           %f  %ford
           %g  %gall
           %j  %jael
-          %m  %mall
+          %g  %gall
         ==
       =/  pax
         /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/[vane]
@@ -426,7 +426,7 @@
 ::
 ++  poke-aqua-events
   |=  events=(list aqua-event)
-  ^-  (quip card:agent:mall state)
+  ^-  (quip card:agent:gall state)
   =.  this  apex-aqua  =<  abet-aqua
   %+  turn-events  events
   |=  [ae=aqua-event thus=_this]

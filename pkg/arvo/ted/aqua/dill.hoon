@@ -12,7 +12,7 @@
 |%
 ++  handle-blit
   |=  [who=@p way=wire %blit blits=(list blit:dill)]
-  ^-  (list card:agent:mall)
+  ^-  (list card:agent:gall)
   =/  last-line
     %+  roll  blits
     |=  [b=blit:dill line=tape]
@@ -35,7 +35,7 @@
 +*  this  .
 ++  handle-unix-effect
   |=  [who=@p ue=unix-effect:aquarium]
-  ^-  (quip card:agent:mall _this)
+  ^-  (quip card:agent:gall _this)
   =/  cards
     ?+  -.q.ue  ~
       %blit  (handle-blit who ue)

@@ -2,7 +2,7 @@
 /+  libstrand=strand, default-agent, verb
 =,  strand=strand:libstrand
 |%
-+$  card         card:agent:mall
++$  card         card:agent:gall
 +$  thread       thread:spider
 +$  tid          tid:spider
 +$  input        input:spider
@@ -103,11 +103,11 @@
   (welp next-1 next-2)
 --
 ::
-^-  agent:mall
+^-  agent:gall
 =|  =state
 =<
   %+  verb  |
-  |_  =bowl:mall
+  |_  =bowl:gall
   +*  this         .
       spider-core  +>
       sc           ~(. spider-core bowl)
@@ -168,7 +168,7 @@
     ==
   ::
   ++  on-agent
-    |=  [=wire =sign:agent:mall]
+    |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
     =^  cards  state
       ?+    wire  !!
@@ -195,7 +195,7 @@
     (on-load on-save)
   --
 ::
-|_  =bowl:mall
+|_  =bowl:gall
 ++  on-poke-input
   |=  input
   =/  yarn  (~(got by tid.state) tid)
@@ -219,7 +219,7 @@
   (take-input u.yarn ~ %sign wire sign-arvo)
 ::
 ++  on-agent
-  |=  [=tid =wire =sign:agent:mall]
+  |=  [=tid =wire =sign:agent:gall]
   =/  yarn  (~(get by tid.state) tid)
   ?~  yarn
     %-  (slog leaf+"spider got agent for non-existent {<tid>}" ~)
@@ -434,7 +434,7 @@
   [(welp cards-children cards-our) state]
 ::
 ++  convert-bowl
-  |=  [=yarn =bowl:mall]
+  |=  [=yarn =bowl:gall]
   ^-  bowl:spider
   :*  our.bowl
       src.bowl

@@ -545,7 +545,7 @@
       ~?  &(!lac !=(%$ p.gum))
         :-  (runt [s.gum '|'] "")
         :^  %pass  [p.gum p.q.r.gum]
-          ?:  ?=(?(%deal %deal-mall) +>-.q.q.r.gum)
+          ?:  ?=(?(%deal %deal-gall) +>-.q.q.r.gum)
             :-  :-  +>-.q.q.r.gum
                 (,[[ship ship] term term] [+>+< +>+>- +>+>+<]:q.q.r.gum)
             p.r.gum

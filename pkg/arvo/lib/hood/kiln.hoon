@@ -57,18 +57,18 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|=  {bowl:mall part}                                    ::  main kiln work
+|=  {bowl:gall part}                                    ::  main kiln work
 ?>  =(src our)
-|_  moz/(list card:agent:mall)
+|_  moz/(list card:agent:gall)
 ++  abet                                                ::  resolve
   [(flop moz) `part`+<+.$]
 ::
 ++  emit
-  |=  card:agent:mall
+  |=  card:agent:gall
   %_(+> moz [+< moz])
 ::
 ++  emil                                              ::  return cards
-  |=  (list card:agent:mall)
+  |=  (list card:agent:gall)
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
@@ -211,7 +211,7 @@
 ++  autoload
   |%
   ++  emit
-    |=  a/card:agent:mall
+    |=  a/card:agent:gall
     +>(..autoload (^emit a))
   ::
   ++  tracked-vanes
@@ -300,9 +300,9 @@
 ::
 ++  poke-goad-gall
   |=  [force=? agent=(unit dude:gall)]
-  abet:(emit %pass /kiln %arvo %m %goad force agent)
+  abet:(emit %pass /kiln %arvo %g %goad force agent)
 ::
-++  poke-wash-gall  |=(* abet:(emit %pass /kiln %arvo %m [%wash ~]))
+++  poke-wash-gall  |=(* abet:(emit %pass /kiln %arvo %g [%wash ~]))
 ::
 ++  mack
   |=  {way/wire saw/(unit tang)}
@@ -310,7 +310,7 @@
   abet
 ::
 ++  take-agent
-  |=  [=wire =sign:agent:mall]
+  |=  [=wire =sign:agent:gall]
   ?+  wire  ~|([%kiln-bad-take-agent wire -.sign] !!)
     [%kiln %fancy *]   ?>  ?=(%poke-ack -.sign) 
                        (take-coup-fancy t.t.wire p.sign)
@@ -448,7 +448,7 @@
     ..auto(syn (~(put by syn) [syd her sud] let))
   ::
   ++  blab
-    |=  new/(list card:agent:mall)
+    |=  new/(list card:agent:gall)
     ^+  +>
     +>.$(moz (welp new moz))
   ::
@@ -558,7 +558,7 @@
     ..work(rem (~(put by rem) syd auto gem her sud cas))
   ::
   ++  blab
-    |=  new/(list card:agent:mall)
+    |=  new/(list card:agent:gall)
     ^+  +>
     +>.$(moz (welp new moz))
   ::

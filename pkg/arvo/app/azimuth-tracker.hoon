@@ -74,7 +74,7 @@
 ::
 ++  jael-update
   |=  =udiffs:point
-  ^-  (list card:agent:mall)
+  ^-  (list card:agent:gall)
   ?~  udiffs
     ~
   =/  =path  /(scot %p ship.i.udiffs)
@@ -85,7 +85,7 @@
 ::
 ++  start
   |=  [state=app-state our=ship dap=term]
-  ^-  card:agent:mall
+  ^-  card:agent:gall
   =/  args=vase  !>
     :*  %watch  /[dap]
         url.state  launch:contracts:azimuth
@@ -97,15 +97,15 @@
 ::
 =|  state=app-state
 %+  verb  |
-^-  agent:mall
-|_  =bowl:mall
+^-  agent:gall
+|_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
 ::
 ++  on-init
-  ^-  (quip card:agent:mall agent:mall)
+  ^-  (quip card:agent:gall agent:gall)
   :_  this  :_  ~
-  ^-  card:agent:mall
+  ^-  card:agent:gall
   [%pass /eth-watcher %agent [our.bowl %eth-watcher] %watch /logs/[dap.bowl]]
 ::
 ++  on-save   !>(state)
@@ -126,7 +126,7 @@
   ==
 ++  on-watch
   |=  =path
-  ^-  (quip card:agent:mall _this)
+  ^-  (quip card:agent:gall _this)
   ?<  =(/sole/drum path)
   ?>  ?=(?(~ [@ ~]) path)
   =/  who=(unit ship)
@@ -142,7 +142,7 @@
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ++  on-agent
-  |=  [=wire =sign:agent:mall]
+  |=  [=wire =sign:agent:gall]
   ?.  ?=([%eth-watcher ~] wire)
     (on-agent:def wire sign)
   ?.  ?=(%fact -.sign)
@@ -151,7 +151,7 @@
     (on-agent:def wire sign)
   =+  !<(diff=diff:eth-watcher q.cage.sign)
   :_  this
-  ^-  (list card:agent:mall)
+  ^-  (list card:agent:gall)
   %-  jael-update
   ?-  -.diff
     %history  (event-logs-to-udiffs loglist.diff)

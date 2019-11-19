@@ -1,9 +1,9 @@
 |%
-+$  card          card:agent:mall
++$  card          card:agent:gall
 +$  input
   $%  [%poke =cage]
       [%sign =wire =sign-arvo]
-      [%agent =wire =sign:agent:mall]
+      [%agent =wire =sign:agent:gall]
       [%watch =path]
   ==
 +$  strand-input  [=bowl in=(unit input)]
@@ -13,8 +13,8 @@
       src=ship
       tid=tid
       mom=(unit tid)
-      wex=boat:mall
-      sup=bitt:mall
+      wex=boat:gall
+      sup=bitt:gall
       eny=@uvJ
       now=@da
       byk=beak

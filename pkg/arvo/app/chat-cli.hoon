@@ -63,14 +63,14 @@
       [%help ~]                                     ::  print usage info
   ==                                                ::
 ::
-+$  card  card:agent:mall
++$  card  card:agent:gall
 --
 =|  state
 =*  all-state  -
 =<
   %+  verb  |
-  ^-  agent:mall
-  |_  =bowl:mall
+  ^-  agent:gall
+  |_  =bowl:gall
   +*  this       .
       talk-core  +>
       tc         ~(. talk-core(eny eny.bowl) bowl)
@@ -110,7 +110,7 @@
   ++  on-leave  on-leave:def
   ++  on-peek   on-peek:def
   ++  on-agent
-    |=  [=wire =sign:agent:mall]
+    |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
     =^  cards  all-state
       ?-    -.sign
@@ -128,7 +128,7 @@
   ++  on-fail   on-fail:def
   --
 ::
-|_  =bowl:mall
+|_  =bowl:gall
 ::  +prep: setup & state adapter
 ::
 ++  prep
@@ -149,7 +149,7 @@
   ^-  (quip card state)
   =/  =inbox
     .^  inbox
-        %mx
+        %gx
         (scot %p our.bowl)
         %chat-store
         (scot %da now.bowl)
@@ -711,7 +711,7 @@
           ?~(perm ~ `?=(%white kind.u.perm))
         ::TODO  +permission-of-target?
         .^  (unit permission)
-            %mx
+            %gx
             (scot %p our-self)
             %permission-store
             (scot %da now.bowl)
@@ -910,7 +910,7 @@
         ::TODO  refactor
         ::TODO  remote scries fail... but moon support?
         .^  (set path)
-            %mx
+            %gx
             /(scot %p our-self)/chat-store/(scot %da now.bowl)/keys/noun
         ==
       %+  turn  ~(tap in all)

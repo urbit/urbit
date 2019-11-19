@@ -41,7 +41,7 @@
   ::
   ++  give-simple-payload
     |=  [eyre-id=@ta =simple-payload:http]
-    ^-  (list card:agent:mall)
+    ^-  (list card:agent:gall)
     =/  header-cage
       [%http-response-header !>(response-header.simple-payload)]
     =/  data-cage

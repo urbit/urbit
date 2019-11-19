@@ -12,16 +12,16 @@
   |=  [bowl:spider who=ship]
   =+  (~(gut by piers) who *pier)
   =*  pier-data  -
-  =|  cards=(list card:agent:mall)
+  =|  cards=(list card:agent:gall)
   |%
   ++  this  .
   ++  abet-pe
-    ^-  (quip card:agent:mall _piers)
+    ^-  (quip card:agent:gall _piers)
     =.  piers  (~(put by piers) who pier-data)
     [(flop cards) piers]
   ::
   ++  emit-cards
-    |=  cs=(list card:agent:mall)
+    |=  cs=(list card:agent:gall)
     %_(this cards (weld cs cards))
   ::
   ++  emit-aqua-events
@@ -90,7 +90,7 @@
 +*  this  .
 ++  handle-unix-effect
   |=  [who=@p ue=unix-effect:aquarium]
-  ^-  (quip card:agent:mall _this)
+  ^-  (quip card:agent:gall _this)
   =^  cards  piers
     ?+  -.q.ue  `piers
       %sleep    abet-pe:handle-sleep:(pe bowl who)

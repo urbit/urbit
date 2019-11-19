@@ -12,22 +12,22 @@
 |%
 ++  emit-aqua-events
   |=  [our=ship aes=(list aqua-event)]
-  ^-  (list card:agent:mall)
+  ^-  (list card:agent:gall)
   [%pass /aqua-events %agent [our %aqua] %poke %aqua-events !>(aes)]~
 ::
 ++  handle-restore
   |=  [our=ship who=@p]
-  ^-  (quip card:agent:mall _ships)
+  ^-  (quip card:agent:gall _ships)
   :_  ships
   %+  emit-aqua-events  our
   [%event who [//newt/0v1n.2m9vh %barn ~]]~
 ::
 ++  handle-send
   |=  [our=ship now=@da way=wire %send lan=lane:ames pac=@]
-  ^-  (quip card:agent:mall _ships)
+  ^-  (quip card:agent:gall _ships)
   =/  hear  [//newt/0v1n.2m9vh %hear lan pac]
   =?  ships  &  ::  =(~ ships)
-    .^((list ship) %mx /(scot %p our)/aqua/(scot %da now)/ships/noun)
+    .^((list ship) %gx /(scot %p our)/aqua/(scot %da now)/ships/noun)
   :_  ships
   %+  emit-aqua-events  our
   %+  turn  ships
@@ -40,7 +40,7 @@
 +*  this  .
 ++  handle-unix-effect
   |=  [who=@p ue=unix-effect]
-  ^-  (quip card:agent:mall _this)
+  ^-  (quip card:agent:gall _this)
   =^  cards  ships
     ?+  -.q.ue  `ships
       %restore  (handle-restore our.bowl who)

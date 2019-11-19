@@ -50,7 +50,7 @@
 ::
 ++  router
   |=  [our=ship her=ship uf=unix-effect]
-  ^-  (unit card:agent:mall)
+  ^-  (unit card:agent:gall)
   =,  enjs:format
   =/  ask  (extract-request:util uf 'http://localhost:8545/')
   ?~  ask
@@ -58,7 +58,7 @@
   ?~  body.request.u.ask
     ~
   =/  req  q.u.body.request.u.ask
-  |^  ^-  (unit card:agent:mall)
+  |^  ^-  (unit card:agent:gall)
   =/  method  (get-method req)
   ?:  =(method 'eth_blockNumber')
     :-  ~
@@ -138,7 +138,7 @@
   ::
   ++  answer-request
     |=  [req=@t result=json]
-    ^-  card:agent:mall
+    ^-  card:agent:gall
     =/  resp
       %-  crip
       %-  en-json:html

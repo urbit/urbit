@@ -7,11 +7,11 @@
   |_  bowl:spider
   ++  handle-unix-effect
     |~  [ship unix-effect]
-    *(quip card:agent:mall _^|(..handle-unix-effect))
+    *(quip card:agent:gall _^|(..handle-unix-effect))
   ::
   ++  handle-arvo-response
     |~  [wire sign-arvo]
-    *(quip card:agent:mall _^|(..handle-unix-effect))
+    *(quip card:agent:gall _^|(..handle-unix-effect))
   --
 --
 ::

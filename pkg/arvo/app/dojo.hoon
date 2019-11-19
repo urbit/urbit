@@ -303,7 +303,7 @@
 ++  xsell  `$-(vase tank)`vase-to-tank:pprint
 ::
 ++  he                                                  ::  per session
-  |_  {hid/bowl:mall =id moz/(list card:agent:mall) session}
+  |_  {hid/bowl:gall =id moz/(list card:agent:gall) session}
   ::
   ++  he-beam
     ^-  beam
@@ -821,7 +821,7 @@
     [(flop moz) %_(state hoc (~(put by hoc) id +<+>+))]
   ::
   ++  he-card                                           ::  emit gift
-    |=  =card:agent:mall
+    |=  =card:agent:gall
     ^+  +>
     =?  card  ?=(%pass -.card)
       card(p [id p.card])
@@ -908,7 +908,7 @@
     ==  ==
   ::
   ++  he-unto                                           ::  result from agent
-    |=  {way/wire cit/sign:agent:mall}
+    |=  {way/wire cit/sign:agent:gall}
     ^+  +>
     ?.  ?=($poke-ack -.cit)
       ~&  [%strange-unto cit]
@@ -918,7 +918,7 @@
     (he-diff %tan u.p.cit)
   ::
   ++  he-wool
-    |=  [way=wire =sign:agent:mall]
+    |=  [way=wire =sign:agent:gall]
     ^+  +>
     ?-    -.sign
         %poke-ack
@@ -1205,8 +1205,8 @@
     !>([our=our now=now eny=eny]:hid)
   --
 --
-^-  agent:mall
-|_  hid=bowl:mall
+^-  agent:gall
+|_  hid=bowl:gall
 ++  on-init
   `..on-init
 ::
@@ -1220,9 +1220,9 @@
 ::
 ++  on-poke
   |=  [=mark =vase]
-  ^-  (quip card:agent:mall _..on-init)
+  ^-  (quip card:agent:gall _..on-init)
   =^  moves  state
-    ^-  (quip card:agent:mall house)
+    ^-  (quip card:agent:gall house)
     ?+  mark  ~|([%dojo-poke-bad-mark mark] !!)
         %sole-action
       =+  !<([=id =sole-action] vase)
@@ -1254,7 +1254,7 @@
 ::
 ++  on-watch
   |=  =path
-  ^-  (quip card:agent:mall _..on-init)
+  ^-  (quip card:agent:gall _..on-init)
   ~?  !=(our.hid src.hid)  [%dojo-peer-stranger src.hid]
   ?>  (team:title our.hid src.hid)
   ?>  ?=([%sole @ ~] path)
@@ -1278,7 +1278,7 @@
   *(unit (unit cage))
 ::
 ++  on-agent
-  |=  [=wire =sign:agent:mall]
+  |=  [=wire =sign:agent:gall]
   ?>  ?=([@ @ *] wire)
   =/  =session  (~(got by hoc) i.wire)
   =/  he-full  ~(. he hid i.wire ~ session)
@@ -1308,7 +1308,7 @@
 ++  on-fail
   |=  [=term =tang]
   =/  sessions=(list (pair id session))  ~(tap by hoc)
-  |-  ^-  (quip card:agent:mall _..on-init)
+  |-  ^-  (quip card:agent:gall _..on-init)
   ?~  sessions
     [~ ..on-init]
   =^  cards-1  state

@@ -4,14 +4,14 @@
 =,  strand-fail=strand-fail:libstrand
 |%
 ++  send-raw-cards
-  |=  cards=(list =card:agent:mall)
+  |=  cards=(list =card:agent:gall)
   =/  m  (strand ,~)
   ^-  form:m
   |=  strand-input:strand
   [cards %done ~]
 ::
 ++  send-raw-card
-  |=  =card:agent:mall
+  |=  =card:agent:gall
   =/  m  (strand ,~)
   ^-  form:m
   (send-raw-cards card ~)
@@ -209,7 +209,7 @@
   |=  [=dock =cage]
   =/  m  (strand ,~)
   ^-  form:m
-  =/  =card:agent:mall  [%pass /poke %agent dock %poke cage]
+  =/  =card:agent:gall  [%pass /poke %agent dock %poke cage]
   ;<  ~  bind:m  (send-raw-card card)
   (take-poke-ack /poke)
 ::
@@ -224,7 +224,7 @@
   |=  [=wire =dock =path]
   =/  m  (strand ,~)
   ^-  form:m
-  =/  =card:agent:mall  [%pass watch+wire %agent dock %watch path]
+  =/  =card:agent:gall  [%pass watch+wire %agent dock %watch path]
   ;<  ~  bind:m  (send-raw-card card)
   (take-watch-ack wire)
 ::
@@ -239,7 +239,7 @@
   |=  [=wire =dock]
   =/  m  (strand ,~)
   ^-  form:m
-  =/  =card:agent:mall  [%pass watch+wire %agent dock %leave ~]
+  =/  =card:agent:gall  [%pass watch+wire %agent dock %leave ~]
   (send-raw-card card)
 ::
 ++  leave-our
@@ -275,7 +275,7 @@
   |=  until=@da
   =/  m  (strand ,~)
   ^-  form:m
-  =/  =card:agent:mall
+  =/  =card:agent:gall
     [%pass /wait/(scot %da until) %arvo %b %wait until]
   (send-raw-card card)
 ::
@@ -286,7 +286,7 @@
   ^-  form:m
   ;<  now=@da  bind:m  get-time
   =/  when  (add now time)
-  =/  =card:agent:mall
+  =/  =card:agent:gall
     [%pass /timeout/(scot %da when) %arvo %b %wait when]
   ;<  ~        bind:m  (send-raw-card card)
   |=  tin=strand-input:strand
@@ -299,7 +299,7 @@
   ?:  ?=(%cont -.next.c-res)
     c-res(self.next ..loop(computation self.next.c-res))
   ?:  ?=(%done -.next.c-res)
-    =/  =card:agent:mall
+    =/  =card:agent:gall
       [%pass /timeout/(scot %da when) %arvo %b %rest when]
     c-res(cards [card cards.c-res])
   c-res

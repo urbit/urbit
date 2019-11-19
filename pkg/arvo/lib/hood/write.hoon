@@ -19,12 +19,12 @@
 ::
 ::::
   ::
-|=  {bowl:mall part}
+|=  {bowl:gall part}
 =*  par  +<+
-|_  moz/(list card:agent:mall)
+|_  moz/(list card:agent:gall)
 ++  abet  [(flop moz) `part`par]
 ++  emit
-  |=  =card:agent:mall
+  |=  =card:agent:gall
   %_(+> moz :_(moz card))
 ::
 ++  beak-now  byk(r [%da now])
@@ -138,6 +138,6 @@
   +>.sign-arvo
 ::
 ++  take-agent
-  |=  [=wire =sign:agent:mall]
+  |=  [=wire =sign:agent:gall]
   ~|([%write-bad-take-agent wire -.sign] !!)
 --

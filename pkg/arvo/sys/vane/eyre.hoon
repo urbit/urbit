@@ -45,12 +45,12 @@
           $%  [%build live=? schematic=schematic:ford]
               [%kill ~]
       ==  ==
-      ::  %m: to mall
+      ::  %g: to gall
       ::
-      $:  %m
+      $:  %g
           ::
           ::
-          $>(%deal task:able:mall)
+          $>(%deal task:able:gall)
   ==  ==
 ::  +sign: private response from another vane to ford
 ::
@@ -69,13 +69,13 @@
           ::
           $%  [%made date=@da result=made-result:ford]
       ==  ==
-      ::  %m: from mall
+      ::  %g: from gall
       ::
-      $:  %m
+      $:  %g
           ::
           ::
-          gift:able:mall
-          ::  $>(%unto gift:able:mall)
+          gift:able:gall
+          ::  $>(%unto gift:able:gall)
   ==  ==
 --
 ::  more structures
@@ -878,12 +878,12 @@
     |=  [app=term =inbound-request:eyre]
     ^-  (list move)
     :~  :*  duct  %pass  /watch-response/[eyre-id]
-            %m  %deal  [our our]  app
+            %g  %deal  [our our]  app
             %watch  /http-response/[eyre-id]
         ==
       ::
         :*  duct  %pass  /run-app-request/[eyre-id]
-            %m  %deal  [our our]  app
+            %g  %deal  [our our]  app
             %poke  %handle-http-request
             !>([eyre-id inbound-request])
         ==
@@ -910,7 +910,7 @@
       :_  state
       :_  ~
       :*  duct  %pass  /watch-response/[eyre-id]
-          %m  %deal  [our our]  app.action.u.connection
+          %g  %deal  [our our]  app.action.u.connection
           %leave  ~
       ==
     ::
@@ -1394,8 +1394,8 @@
           ^-  move
           :^  duct  %pass  /channel/poke/[channel-id]/(scot %ud request-id.i.requests)
           =,  i.requests
-          :*  %m  %deal  `sock`[our ship]  app
-              `task:agent:mall`[%poke-as mark %json !>(json)]
+          :*  %g  %deal  `sock`[our ship]  app
+              `task:agent:gall`[%poke-as mark %json !>(json)]
           ==
         ::
         $(requests t.requests)
@@ -1410,8 +1410,8 @@
           ^-  move
           :^  duct  %pass  channel-wire
           =,  i.requests
-          :*  %m  %deal  [our ship]  app
-              `task:agent:mall`[%watch-as %json path]
+          :*  %g  %deal  [our ship]  app
+              `task:agent:gall`[%watch-as %json path]
           ==
         ::
         =.  session.channel-state.state
@@ -1443,8 +1443,8 @@
           ^-  move
           :^  duc.u.maybe-subscription  %pass  channel-wire
           =,  u.maybe-subscription
-          :*  %m  %deal  [our ship]  app
-              `task:agent:mall`[%leave ~]
+          :*  %g  %deal  [our ship]  app
+              `task:agent:gall`[%leave ~]
           ==
         ::
         =.  session.channel-state.state
@@ -1474,7 +1474,7 @@
             |=  [channel-wire=wire ship=@p app=term =path duc=^duct]
             ^-  move
             ::
-            [duc %pass channel-wire [%m %deal [our ship] app %leave ~]]
+            [duc %pass channel-wire [%g %deal [our ship] app %leave ~]]
         ::
         ?:  ?=([%& *] state.session)
           =.  gall-moves
@@ -1505,7 +1505,7 @@
     ::  +on-gall-response: turns a gall response into an event
     ::
     ++  on-gall-response
-      |=  [channel-id=@t request-id=@ud =sign:agent:mall]
+      |=  [channel-id=@t request-id=@ud =sign:agent:gall]
       ^-  [(list move) server-state]
       ::
       ?-    -.sign
@@ -1671,7 +1671,7 @@
       |=  [channel-wire=wire ship=@p app=term =path duc=^duct]
       ^-  move
       ::
-      [duc %pass channel-wire [%m %deal [our ship] app %leave ~]]
+      [duc %pass channel-wire [%g %deal [our ship] app %leave ~]]
     --
   ::  +handle-ford-response: translates a ford response for the outside world
   ::
@@ -1737,7 +1737,7 @@
         ~
       :_  ~
       :*  duct  %pass  /watch-response/[eyre-id]
-          %m  %deal  [our our]  app.action.connection
+          %g  %deal  [our our]  app.action.connection
           %leave  ~
       ==
     ::
@@ -1839,7 +1839,7 @@
         ~
       :_  ~
       :*  duct  %pass  /watch-response/[eyre-id]
-          %m  %deal  [our our]  app.action.u.connection-state
+          %g  %deal  [our our]  app.action.u.connection-state
           %leave  ~
       ==
     --
@@ -2110,7 +2110,7 @@
       :_  http-server-gate
       =/  cmd
         [%acme %poke `cage`[%acme-order !>(mod)]]
-      [duct %pass /acme/order %m %deal [our our] cmd]~
+      [duct %pass /acme/order %g %deal [our our] cmd]~
     ==
   ::
       %request
@@ -2164,7 +2164,7 @@
   =/  =sign  q.wrapped-sign
   =>  %=    .
           sign
-        ?:  ?=(%m -.sign)
+        ?:  ?=(%g -.sign)
           ?>  ?=(%unto +<.sign)
           sign
         sign
@@ -2187,7 +2187,7 @@
   ::
   ++  run-app-request
     ::
-    ?>  ?=([%m %unto *] sign)
+    ?>  ?=([%g %unto *] sign)
     ::
     ::
     ?>  ?=([%poke-ack *] p.sign)
@@ -2210,7 +2210,7 @@
     =/  event-args  [[our eny duct now scry-gate] server-state.ax]
     ::
     ?>  ?=([@ *] t.wire)
-    ?:  ?=([%m %unto %watch-ack *] sign)
+    ?:  ?=([%g %unto %watch-ack *] sign)
       ?~  p.p.sign
         ::  received a positive acknowledgment: take no action
         ::
@@ -2222,13 +2222,13 @@
       =^  moves  server-state.ax  (handle-gall-error u.p.p.sign)
       [moves http-server-gate]
     ::
-    ?:  ?=([%m %unto %kick ~] sign)
+    ?:  ?=([%g %unto %kick ~] sign)
       =/  handle-response  handle-response:(per-server-event event-args)
       =^  moves  server-state.ax
         (handle-response %continue ~ &)
       [moves http-server-gate]
     ::
-    ?>  ?=([%m %unto %fact *] sign)
+    ?>  ?=([%g %unto %fact *] sign)
     =/  =mark  p.cage.p.sign
     =/  =vase  q.cage.p.sign
     ?.  ?=  ?(%http-response-header %http-response-data %http-response-cancel)
@@ -2287,7 +2287,7 @@
       [moves http-server-gate]
     ::
         ?(%poke %subscription)
-      ?>  ?=([%m %unto *] sign)
+      ?>  ?=([%g %unto *] sign)
       ?>  ?=([@ @ @t @ *] wire)
       =/  on-gall-response
         on-gall-response:by-channel:(per-server-event event-args)
@@ -2298,7 +2298,7 @@
     ==
   ::
   ++  acme-ack
-    ?>  ?=([%m %unto *] sign)
+    ?>  ?=([%g %unto *] sign)
     ::
     ?>  ?=([%poke-ack *] p.sign)
     ?~  p.p.sign

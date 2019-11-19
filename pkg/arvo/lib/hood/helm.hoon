@@ -33,16 +33,16 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|:  $:{bowl:mall part}                                  ::  main helm work
+|:  $:{bowl:gall part}                                  ::  main helm work
 =/  ost  0
 =+  sez=(~(gut by hoc) ost $:session)
-=|  moz=(list card:agent:mall)
+=|  moz=(list card:agent:gall)
 |%
 ++  abet
   [(flop moz) %_(+<+.$ hoc (~(put by hoc) ost sez))]
 ::
 ++  emit
-  |=  card:agent:mall
+  |=  card:agent:gall
   %_(+> moz [+< moz])
 ::
 ++  flog
@@ -50,7 +50,7 @@
   (emit %pass /di %arvo %d %flog flog)
 ::
 ++  emil                                              ::  return cards
-  |=  (list card:agent:mall)
+  |=  (list card:agent:gall)
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
@@ -174,7 +174,7 @@
   |=  hood-reset
   =<  abet
   %-  emil  %-  flop
-  ^-  (list card:agent:mall)
+  ^-  (list card:agent:gall)
   =/  top=path  /(scot %p our)/home/(scot %da now)/sys
   =/  hun  .^(@ %cx (welp top /hoon/hoon))
   =/  arv  .^(@ %cx (welp top /arvo/hoon))
@@ -216,7 +216,7 @@
   ==
 ::
 ++  take-agent
-  |=  [=wire =sign:agent:mall]
+  |=  [=wire =sign:agent:gall]
   ?+  wire  ~|([%helm-bad-take-agent wire -.sign] !!)
     [%helm %hi *]  ?>  ?=(%poke-ack -.sign)
                    (coup-hi t.t.wire p.sign)

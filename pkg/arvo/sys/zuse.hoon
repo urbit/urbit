@@ -1863,12 +1863,12 @@
     ~
   --
 ::                                                      ::::
-::::                    ++mall                            ::  (1g) extensions
+::::                    ++gall                            ::  (1g) extensions
   ::                                                    ::::
-++  mall  ^?
+++  gall  ^?
   |%
   ::                                                    ::
-  ::::                  ++able:mall                     ::  (1g1) arvo moves
+  ::::                  ++able:gall                     ::  (1g1) arvo moves
     ::                                                  ::::
   ++  able  ^?
     |%
@@ -1882,7 +1882,6 @@
     ++  task                                            ::  incoming request
       $~  [%vega ~]                                     ::
       $%  {$conf p/dock q/dock}                         ::  configure app
-          {$conf-mall p/dock q/dock}                    ::  configure app
           $>(%init vane-task)                           ::  set owner
           {$deal p/sock q/term r/deal}                  ::  full transmission
           [%goad force=? agent=(unit dude)]             ::  rebuild agent(s)
@@ -2001,82 +2000,6 @@
         *(quip card _^|(..on-init))
       --
     --
-  --  ::mall
-::                                                      ::::
-::::                    ++gall                            ::  (1g) extensions
-  ::                                                    ::::
-++  gall  ^?
-  |%
-  ::                                                    ::
-  ::::                  ++able:gall                     ::  (1g1) arvo moves
-    ::                                                  ::::
-  ++  able  ^?
-    |%
-    ++  gift                                            ::  outgoing result
-      $%  {$mass p/mass}                                ::  memory usage
-          {$onto p/(each suss tang)}                    ::  about agent
-          {$rend p/path q/*}                            ::  network request
-          {$unto p/internal-gift}                       ::
-          {$mack p/(unit tang)}                         ::  message ack
-      ==                                                ::
-    ++  task                                            ::  incoming request
-      $~  [%vega ~]                                     ::
-      $%  {$conf p/dock q/dock}                         ::  configure app
-          $>(%init vane-task)                           ::  set owner
-          {$deal p/sock q/internal-task}                ::  full transmission
-          [%goad force=? agent=(unit dude)]             ::  rebuild agent(s)
-          $>(%trim vane-task)                           ::  trim state
-          $>(%vega vane-task)                           ::  report upgrade
-          $>(%west vane-task)                           ::  network request
-          [%wash ~]                                     ::  clear caches
-          $>(%wegh vane-task)                           ::  report memory
-      ==                                                ::
-    --  ::able
-  ++  bitt  (map bone (pair ship path))                 ::  incoming subs
-  ++  boat                                              ::  outgoing subs
-    %+  map  (pair bone wire)                           ::
-    (trel bean ship path)                               ::
-  ++  bowl                                              ::  standard app state
-          $:  $:  our/ship                              ::  host
-                  src/ship                              ::  guest
-                  dap/term                              ::  agent
-              ==                                        ::
-              $:  wex/boat                              ::  outgoing subs
-                  sup/bitt                              ::  incoming subs
-              ==                                        ::
-              $:  ost/bone                              ::  opaque cause
-                  act/@ud                               ::  change number
-                  eny/@uvJ                              ::  entropy
-                  now/@da                               ::  current time
-                  byk/beak                              ::  load source
-          ==  ==                                        ::
-  ++  agent-action                                      ::  agent action
-    $%  {$peel p/mark q/path}                           ::  translated peer
-        {$peer p/path}                                  ::  subscribe
-        {$poke p/cage}                                  ::  apply
-        {$puff p/mark q/noun}                           ::  unchecked poke
-        {$pull ~}                                      ::  unsubscribe
-        {$punk p/mark q/cage}                           ::  translated poke
-        {$pump ~}                                      ::  pump yes+no
-        {$peer-not p/tang}                              ::  poison pill peer
-    ==                                                  ::
-  ++  internal-gift                                     ::
-    $%  {$coup p/(unit tang)}                           ::  poke result
-        {$diff p/cage}                                  ::  subscription output
-        {$quit ~}                                      ::  close subscription
-        {$reap p/(unit tang)}                           ::  peer result
-        [%http-response =http-event:http]              ::  serve http result
-    ==                                                  ::
-  ++  internal-task  (pair term agent-action)           ::  internal task
-  ++  dude  term                                        ::  server identity
-  ++  gill  (pair ship term)                            ::  general contact
-  ++  scar                                              ::  opaque duct
-    $:  p/@ud                                           ::  bone sequence
-        q/(map duct bone)                               ::  by duct
-        r/(map bone duct)                               ::  by bone
-    ==                                                  ::
-  ++  suss  (trel dude @tas @da)                        ::  config report
-  ++  well  (pair desk term)                            ::
   --  ::gall
 ::  %iris http-client interface
 ::
@@ -2472,7 +2395,7 @@
       gift:able:dill
       gift:able:eyre
       gift:able:ford
-      gift:able:mall
+      gift:able:gall
       gift:able:iris
       gift:able:jael
   ==
@@ -2483,7 +2406,7 @@
       task:able:dill
       task:able:iris
       task:able:ford
-      task:able:mall
+      task:able:gall
       task:able:eyre
       task:able:jael
   ==
@@ -2495,7 +2418,7 @@
       {$d task:able:dill}
       [%e task:able:eyre]
       {$f task:able:ford}
-      {$m task:able:mall}
+      {$g task:able:gall}
       [%i task:able:iris]
       {$j task:able:jael}
       {@tas $meta vase}
@@ -2512,7 +2435,7 @@
       {$d gift:able:dill}
       {$f gift:able:ford}
       [%e gift:able:eyre]
-      {$m gift:able:mall}
+      {$g gift:able:gall}
       [%i gift:able:iris]
       {$j gift:able:jael}
   ==
@@ -7677,25 +7600,6 @@
       ?@  &2.rul  [%| p=;;(tape rul)]
       [%& p=rul]
     --  ::scanf
-  ::                                                    ::
-  ::::                    ++pubsub:userlib              ::  (2uG) application
-    ::                                                  ::::
-  ++  pubsub  ^?
-    =,  gall
-    |%
-    ::                                                  ::  ++pale:pubsub:
-    ++  pale                                            ::  filter peers
-      |=  {hid/bowl fun/$-(sink ?)}
-      (skim ~(tap by sup.hid) fun)
-    ::                                                  ::  ++prix:pubsub:
-    ++  prix                                            ::  filter gate
-      |=  pax/path  |=  sink  ^-  ?
-      ?~  pax  &  ?~  r.+<  |
-      &(=(i.pax i.r.+<) $(pax t.pax, r.+< t.r.+<))
-    ::                                                  ::  ++prey:pubsub:
-    ++  prey                                            ::  prefix
-      |=({pax/path hid/bowl} (pale hid (prix pax)))
-    --  ::pubsub
   --
 ::
 ++  zuse  %309                                          ::  hoon+zuse kelvin

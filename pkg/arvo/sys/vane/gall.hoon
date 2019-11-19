@@ -1,9 +1,9 @@
-!:  ::  %mall, agent execution
+!:  ::  %gall, agent execution
 !?  163
 !:
 ::::
 |=  pit=vase
-=,  mall
+=,  gall
 =>  =~
 |%
 ::  +reverse-ames: reverse ames message
@@ -175,18 +175,18 @@
         ::
         ska=sley
     ==
-~%  %mall-top  ..is  ~
+~%  %gall-top  ..is  ~
 |%
-::  +mall-payload:  mall payload
+::  +gall-payload:  gall payload
 ::
-++  mall-payload  +
+++  gall-payload  +
 ::  +mo: Arvo-level move handling
 ::
 ::    An outer core responsible for routing moves to and from Arvo; it calls
 ::    an inner core, +ap, to route internal moves to and from agents.
 ::
 ++  mo
-  ~%  %mall-mo  +>  ~
+  ~%  %gall-mo  +>  ~
   |_
     $:  hen=duct
         moves=(list move)
@@ -202,10 +202,10 @@
   ::  +mo-abet: resolve moves.
   ::
   ++  mo-abet
-    ^-  [(list move) _mall-payload]
+    ^-  [(list move) _gall-payload]
     ::
     =/  resolved  (flop moves)
-    [resolved mall-payload]
+    [resolved gall-payload]
   ::
   ::  +mo-boot: ask %ford to build us a core for the specified agent.
   ::
@@ -287,12 +287,12 @@
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
-  ::    is already running.  If so, we update its beak in %mall's state,
+  ::    is already running.  If so, we update its beak in %gall's state,
   ::    initialise an +ap core for the agent, install the core we got from
   ::    %ford, and then resolve any moves associated with it.
   ::
   ::    If we're dealing with a new agent, we create one using the result we
-  ::    got from %ford, add it to the collection of agents %mall is keeping
+  ::    got from %ford, add it to the collection of agents %gall is keeping
   ::    track of, and then do more or less the same procedure as we did for the
   ::    running agent case.
   ::
@@ -344,9 +344,9 @@
     =.  mo-core  (mo-clear-queue term)
     =/  =suss  [term %boot now]
     (mo-give %onto [%.y suss])
-  ::  +mo-new-agent: create a new agent and add it to %mall's state.
+  ::  +mo-new-agent: create a new agent and add it to %gall's state.
   ::
-  ::    %mall maintains a collection of running agents.  This arm creates a
+  ::    %gall maintains a collection of running agents.  This arm creates a
   ::    new one with the provided name, beak, and state (held in a vase).
   ::
   ++  mo-new-agent
@@ -592,22 +592,22 @@
         =/  =sock  [him our]
         =/  =deal  [%pump ~]
         =/  =task:able  [%deal sock dap deal]
-        [%m task]
+        [%g task]
       (mo-pass sys-path note-arvo)
     ::
-    =/  mall-move=note-arvo
+    =/  gall-move=note-arvo
       =/  =sock  [him our]
       =/  =deal  [%leave ~]
       =/  =task:able  [%deal sock dap deal]
-      [%m task]
+      [%g task]
     ::
     =/  ames-move=note-arvo
-      =/  path  [%m %gh dap ~]
+      =/  path  [%g %gh dap ~]
       =/  =noun  [num %x ~]
       =/  =task:able:ames  [%want him path noun]
       [%a task]
     ::
-    =.  mo-core  (mo-pass sys-path mall-move)
+    =.  mo-core  (mo-pass sys-path gall-move)
     =.  mo-core  (mo-pass sys-path ames-move)
     ::
     ?.  ?=([~ ~ %mack *] coop)
@@ -676,13 +676,13 @@
       =/  sys-path  [%sys path]
       =/  =note-arvo
         =/  =cage  (result-to-cage:ford build-result)
-        [%m %deal [him our] i.t.t.path %poke cage]
+        [%g %deal [him our] i.t.t.path %poke cage]
       (mo-pass sys-path note-arvo)
     ::
     ?:  ?=([%a %woot *] sign-arvo)
       mo-core
     ::
-    ?>  ?=([%m %unto *] sign-arvo)
+    ?>  ?=([%g %unto *] sign-arvo)
     =/  =sign:agent  +>.sign-arvo
     ::
     ?-    -.sign
@@ -692,7 +692,7 @@
         %fact
       =/  sys-path  [%sys %red t.path]
       =/  =note-arvo
-        =/  path  [%m %gh dap ~]
+        =/  path  [%g %gh dap ~]
         =/  noun  [num %d p.cage.sign q.q.cage.sign]
         [%a %want him path noun]
       (mo-pass sys-path note-arvo)
@@ -700,7 +700,7 @@
         %kick
       =/  sys-path  [%sys path]
       =/  =note-arvo
-        =/  path  [%m %gh dap ~]
+        =/  path  [%g %gh dap ~]
         =/  noun  [num %x ~]
         [%a %want him path noun]
       (mo-pass sys-path note-arvo)
@@ -762,7 +762,7 @@
       !!
     ::
     =/  =sign-arvo  q.hin
-    ?.  ?=([%m %unto *] sign-arvo)
+    ?.  ?=([%g %unto *] sign-arvo)
       =/  app
         =/  =term  i.path
         =/  =ship  (slav %p i.t.path)
@@ -808,7 +808,7 @@
     ::
     =/  move
       =/  =sock  [attributing.routes our]
-      =/  card  [%slip %m %deal sock term deal]
+      =/  card  [%slip %g %deal sock term deal]
       [duct card]
     $(moves [move moves])
   ::  +mo-beak: assemble a beak for the specified agent.
@@ -907,25 +907,25 @@
         =/  =task:able
           =/  =deal  [%raw-poke [mark noun]:forward-ames]
           [%deal sock term deal]
-        [%m task]
+        [%g task]
       ::
           %l
         =/  =task:able
           =/  =deal  [%watch-as [mark path]:forward-ames]
           [%deal sock term deal]
-        [%m task]
+        [%g task]
       ::
           %s
         =/  =task:able
           =/  =deal  [%watch path.forward-ames]
           [%deal sock term deal]
-        [%m task]
+        [%g task]
       ::
           %u
         =/  =task:able
           =/  =deal  [%leave ~]
           [%deal sock term deal]
-        [%m task]
+        [%g task]
       ==
     (mo-pass path note-arvo)
   ::  +mo-handle-backward: handle reverse %ames message.
@@ -966,7 +966,7 @@
   ::    currently focused on.
   ::
   ++  ap
-    ~%  %mall-ap  +>  ~
+    ~%  %gall-ap  +>  ~
     |_  $:  agent-name=term
             agent-routes=routes
             agent-duct=duct
@@ -977,7 +977,7 @@
     ++  ap-core  .
     ::  +ap-abed: initialise state for an agent, with the supplied routes.
     ::
-    ::    The agent must already be running in +mall -- here we simply update
+    ::    The agent must already be running in +gall -- here we simply update
     ::    +ap's state to focus on it.
     ::
     ++  ap-abed
@@ -1116,7 +1116,7 @@
             =/  =task:able
               =/  =sock  [our ship.neat]
               [%deal sock [name deal]:neat]
-            [%m task]
+            [%g task]
           ==
         [duct %pass wire note-arvo]~
       ==
@@ -1269,7 +1269,7 @@
               ==
           ==
         =/  incoming  (~(get by incoming.subscribers.current-agent) agent-duct)
-        ~&  [%mall-pulling-20 agent-duct incoming]
+        ~&  [%gall-pulling-20 agent-duct incoming]
         [%.n ap-core]
       ::
       =/  next
@@ -1599,7 +1599,7 @@
       ?~  moves
         [(flop new-moves) ap-core]
       =/  =move  i.moves
-      ?:  ?=([* %pass * %m %deal * * %leave *] move)
+      ?:  ?=([* %pass * %g %deal * * %leave *] move)
         =/  =wire  p.move.move
         ?>  ?=([%use @ @ %out @ @ *] wire)
         =/  short-wire  t.t.t.t.t.t.wire
@@ -1607,7 +1607,7 @@
         =.  outgoing.subscribers.current-agent
           (~(del by outgoing.subscribers.current-agent) [short-wire dock])
         $(moves t.moves, new-moves [move new-moves])
-      ?.  ?=([* %pass * %m %deal * * %watch *] move)
+      ?.  ?=([* %pass * %g %deal * * %watch *] move)
         $(moves t.moves, new-moves [move new-moves])
       =/  =wire  p.move.move
       ?>  ?=([%use @ @ %out @ @ *] wire)
@@ -1630,11 +1630,11 @@
 ::  +call: request
 ::
 ++  call
-  ~%  %mall-call  +>   ~
+  ~%  %gall-call  +>   ~
   |=  [=duct hic=(hypo (hobo task:able))]
-  ^-  [(list move) _mall-payload]
+  ^-  [(list move) _gall-payload]
   ::
-  ~|  [%mall-call-failed duct q.hic]
+  ~|  [%gall-call-failed duct q.hic]
   ::  make sure our task is hard
   ::
   =/  =task:able
@@ -1644,12 +1644,12 @@
   ::
   =/  initialised  (mo-abed:mo duct)
   ?-    -.task
-      ?(%conf %conf-mall)
+      %conf
     =/  =dock  p.task
     =/  =ship  p.dock
     ?.  =(our ship)
-      ~&  [%mall-not-ours ship]
-      [~ mall-payload]
+      ~&  [%gall-not-ours ship]
+      [~ gall-payload]
     ::
     =>  (mo-boot:initialised q.dock q.task)
     mo-abet
@@ -1670,7 +1670,7 @@
     mo-abet:(mo-goad:initialised force.task agent.task)
   ::
       %init
-    =/  payload  mall-payload(system-duct.agents.state duct)
+    =/  payload  gall-payload(system-duct.agents.state duct)
     [~ payload]
   ::
       %trim
@@ -1679,11 +1679,11 @@
     ::    XX cancel subscriptions if =(0 trim-priority) ?
     ::
     ~>  %slog.[0 leaf+"gall: trim: clearing caches"]
-    =/  =move  [duct %pass / %m [%wash ~]]
-    [[move ~] mall-payload]
+    =/  =move  [duct %pass / %g [%wash ~]]
+    [[move ~] gall-payload]
   ::
       %vega
-    [~ mall-payload]
+    [~ gall-payload]
   ::
       %west
     =/  =ship  p.task
@@ -1707,7 +1707,7 @@
       %-  ~(run by running.agents.state)
       |=  =running-agent
       running-agent(cache *worm)
-    [~ mall-payload]
+    [~ gall-payload]
   ::
       %wegh
     =/  blocked
@@ -1719,7 +1719,7 @@
       (sort ~(tap by active) aor)
     ::
     =/  =mass
-      :+  %mall  %.n
+      :+  %gall  %.n
       :~  [%foreign %.y contacts.agents.state]
           [%blocked %.n blocked]
           [%active %.n running]
@@ -1730,23 +1730,23 @@
       =/  =move  [duct %give %mass mass]
       [move ~]
     ::
-    [moves mall-payload]
+    [moves gall-payload]
   ==
 ::  +load: recreate vane
 ::
 ++  load
   ::  |=  *
-  ::  mall-payload
+  ::  gall-payload
   |=  =state-old
-  ^+  mall-payload
+  ^+  gall-payload
   ::
   ?-  -.state-old
-    %1  mall-payload(state state-old)
+    %1  gall-payload(state state-old)
   ==
 ::  +scry: standard scry
 ::
 ++  scry
-  ~/  %mall-scry
+  ~/  %gall-scry
   |=  [fur=(unit (set monk)) =term =shop =desk =coin =path]
   ^-  (unit (unit cage))
   ?.  ?=(%.y -.shop)
@@ -1783,11 +1783,11 @@
 ::  +take: response
 ::
 ++  take
-  ~/  %mall-take
+  ~/  %gall-take
   |=  [=wire =duct hin=(hypo sign-arvo)]
-  ^-  [(list move) _mall-payload]
+  ^-  [(list move) _gall-payload]
   ::
-  ~|  [%mall-take-failed wire]
+  ~|  [%gall-take-failed wire]
   ?>  ?=([?(%sys %use) *] wire)
   =/  initialised  (mo-abed:mo duct)
   =/  =sign-arvo  q.hin

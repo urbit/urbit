@@ -9,13 +9,13 @@
 =,  format
 ::
 %+  verb  &
-^-  agent:mall
-|_  =bowl:mall
+^-  agent:gall
+|_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
 ::
 ++  on-init
-  ^-  (quip card:agent:mall _this)
+  ^-  (quip card:agent:gall _this)
   =/  launcha
     [%launch-action !>([%clock /tile '/~clock/js/tile.js'])]
   :_  this
@@ -26,7 +26,7 @@
 ++  on-load   on-load:def
 ++  on-poke
   |=  [=mark =vase]
-  ^-  (quip card:agent:mall _this)
+  ^-  (quip card:agent:gall _this)
   ?.  ?=(%handle-http-request mark)
     (on-poke:def mark vase)
   =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
@@ -50,7 +50,7 @@
 ::
 ++  on-watch
   |=  =path
-  ^-  (quip card:agent:mall _this)
+  ^-  (quip card:agent:gall _this)
   ?:  ?=([%http-response *] path)
     `this
   ?.  =(/tile path)
@@ -62,7 +62,7 @@
 ++  on-agent  on-agent:def
 ++  on-arvo
   |=  [=wire =sign-arvo]
-  ^-  (quip card:agent:mall _this)
+  ^-  (quip card:agent:gall _this)
   ?.  ?=(%bound +<.sign-arvo)
     (on-arvo:def wire sign-arvo)
   [~ this]

@@ -1,7 +1,7 @@
 /+  default-agent
 ::
 |%
-+$  card  card:agent:mall
++$  card  card:agent:gall
 +$  test
   $%  [%arvo ~]       ::UNIMPLEMENTED
       [%marks ~]      ::UNIMPLEMENTED
@@ -34,8 +34,8 @@
 ::
 =,  ford
 =,  format
-^-  agent:mall
-|_  =bowl:mall
+^-  agent:gall
+|_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
 ::
