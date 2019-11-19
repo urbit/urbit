@@ -8,7 +8,6 @@
 /-  aquarium, spider
 /+  aqua-vane-thread
 =,  aquarium
-=|  ships=(list ship)
 |%
 ++  emit-aqua-events
   |=  [our=ship aes=(list aqua-event)]
@@ -17,21 +16,18 @@
 ::
 ++  handle-restore
   |=  [our=ship who=@p]
-  ^-  (quip card:agent:gall _ships)
-  :_  ships
+  ^-  (list card:agent:gall)
   %+  emit-aqua-events  our
   [%event who [//newt/0v1n.2m9vh %born ~]]~
 ::
 ++  handle-send
-  |=  [our=ship now=@da way=wire sendr=@p %send lan=lane:ames pac=@]
-  ^-  (quip card:agent:gall _ships)
+  |=  [our=ship now=@da sndr=@p way=wire %send lan=lane:ames pac=@]
+  ^-  (list card:agent:gall)
   =/  rcvr=ship  (lane-to-ship lan)
   =/  hear-lane  (ship-to-lane sndr)
-  :_  ships
+  ~&  >  [%sending-aqua sndr rcvr hear-lane]
   %+  emit-aqua-events  our
-  %+  turn  ships
-  |=  who=ship
-    [%event rcvr //newt/0v1n.2m9vh %hear hear-lane pac]~
+  [%event rcvr //newt/0v1n.2m9vh %hear hear-lane pac]~
 ::  +lane-to-ship: decode a ship from an aqua lane
 ::
 ++  lane-to-ship
@@ -59,8 +55,8 @@
 ++  handle-unix-effect
   |=  [who=@p ue=unix-effect]
   ^-  (quip card:agent:gall _this)
-  =^  cards  ships
-    ?+  -.q.ue  `ships
+  =/  cards
+    ?+  -.q.ue  ~
       %restore  (handle-restore our.bowl who)
       %send     (handle-send our.bowl now.bowl who ue)
     ==
