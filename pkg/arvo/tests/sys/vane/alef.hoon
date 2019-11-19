@@ -152,11 +152,12 @@
     %-  take
     :^  bud  /public-keys  ~[//unix]
     ^-  sign:alef
-    [%k %public-keys %full [n=[~bus point] ~ ~]]
+    [%j %public-keys %full [n=[~bus point] ~ ~]]
+  =^  moves3  bud  (call bud ~[//unix] %hear lane-foo blob)
   ::
   ;:  weld
     %+  expect-eq
-      !>  [~[//unix] %pass /public-keys %k %public-keys [~bus ~ ~]]~
+      !>  [~[//unix] %pass /public-keys %j %public-keys [~bus ~ ~]]~
       !>  moves1
   ::
     %+  expect-eq
@@ -167,7 +168,7 @@
               :^  ~[//unix]  %pass  /qos
               [%d %flog %text "; ~bus is your neighbor"]
           ==
-      !>  (sy ,.moves2)
+      !>  (sy ,.moves3)
   ==
 ::
 ++  test-message-flow  ^-  tang
@@ -196,8 +197,8 @@
   ::
     %+  expect-eq
       !>  %-  sy
-          :~  [~[//unix] %pass /qos %d %flog %text "; ~bud is your neighbor"]
-              [~[//unix] %pass /pump/~bud/0 %b %rest ~1111.1.1..00.00.06]
+          :~  [~[/ames] %pass /pump/~bud/0 %b %rest ~1111.1.1..00.00.02]
+              [~[//unix] %pass /qos %d %flog %text "; ~bud is your neighbor"]
               [~[/g/talk] %give %done error=~]
           ==
       !>  (sy ,.moves4)
