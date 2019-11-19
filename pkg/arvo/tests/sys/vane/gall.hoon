@@ -45,7 +45,7 @@
   =/  =move:gall-gate
     =/  =path  /sys/core/[term]/(scot %p ship)/[term]/(scot %da time)
     =/  =note-arvo
-      =/  =schematic:ford  [%core [ship term] /hoon/[term]/age]
+      =/  =schematic:ford  [%core [ship term] /hoon/[term]/app]
       =/  =task:able:ford  [%build %.y schematic]
       [%f task]
     [duct %pass path note-arvo]

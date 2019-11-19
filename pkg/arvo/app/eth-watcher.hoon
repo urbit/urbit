@@ -1,15 +1,16 @@
 ::  eth-watcher: ethereum event log collector
 ::
-/-  *eth-watcher
-/+  tapp, stdio, ethio
+/-  *eth-watcher, spider
+/+  default-agent, verb
 =,  ethereum-types
 =,  able:jael
 ::
 =>  |%
-    ++  refresh-rate  ~m5
+    ++  refresh-rate  ~m5  ::  ~m5
     --
 ::
 =>  |%
+    +$  card  card:agent:mall
     +$  app-state
       $:  %0
           dogs=(map path watchdog)
@@ -18,6 +19,7 @@
     +$  context  [=path dog=watchdog]
     +$  watchdog
       $:  config
+          running=(unit =tid:spider)
           =number:block
           =pending-logs
           =history
@@ -26,298 +28,298 @@
     ::
     ::  history: newest block first, oldest event first
     +$  history       (list loglist)
-    +$  pending-logs  (map number:block loglist)
-    ::
-    +$  peek-data
-      [%atom =next-block=number:block]
-    +$  in-poke-data
-      $:  %eth-watcher-poke
-          poke
-      ==
-    +$  out-poke-data  ~
-    +$  in-peer-data   ~
-    +$  out-peer-data
-      $:  %eth-watcher-diff
-          diff
-      ==
-    ++  tapp
-      %:  ^tapp
-        app-state
-        peek-data
-        in-poke-data
-        out-poke-data
-        in-peer-data
-        out-peer-data
-      ==
-    ++  tapp-async  tapp-async:tapp
-    ++  stdio  (^stdio out-poke-data out-peer-data)
-    ++  ethio  (^ethio out-poke-data out-peer-data)
     --
 ::
-::  Async helpers
+::  Helpers
 ::
 =>  |%
-    ++  send-logs
-      |=  [=path =loglist]
-      =/  m  (async:stdio ,~)
-      |-  ^-  form:m
-      =*  loop  $
-      ?~  loglist
-        (pure:m ~)
-      ;<  ~  bind:m  (send-update path %log i.loglist)
-      loop(loglist t.loglist)
+    ++  wait
+      |=  now=@da
+      ^-  card
+      [%pass /timer %arvo %b %wait (add now refresh-rate)]
     ::
-    ++  send-update
-      |=  [=path =diff]
-      =/  m  (async:stdio ,~)
-      ^-  form:m
-      =.  path  [%logs path]
-      (give-result:stdio path %eth-watcher-diff diff)
-    --
-::
-::  Main loop
-::
-=>  |%
+    ++  wait-shortcut
+      |=  now=@da
+      ^-  card
+      [%pass /shortcut %arvo %b %wait now]
     ::
-    ::  Update watchdog configuration, then look for updates
+    ++  poke-spider
+      |=  [=path our=@p =cage]
+      ^-  card
+      [%pass [%running path] %agent [our %spider] %poke cage]
     ::
-    ++  configure
-      |=  [context =config]
-      =/  m  (async:stdio ,watchdog)
-      ^-  form:m
-      %+  get-updates  path
-      %_  dog
-        -       config
-        number  from.config
-      ==
+    ++  watch-spider
+      |=  [=path our=@p =sub=path]
+      ^-  card
+      [%pass [%running path] %agent [our %spider] %watch sub-path]
     ::
-    ::  Get updates since last checked
-    ::
-    ++  get-updates
-      |=  context
-      =/  m  (async:stdio ,watchdog)
-      ^-  form:m
-      ;<  =latest=block  bind:m  (get-latest-block:ethio url.dog)
-      ;<  dog=watchdog   bind:m  (zoom [path dog] number.id.latest-block)
-      |-  ^-  form:m
-      =*  loop  $
-      ?:  (gth number.dog number.id.latest-block)
-        (pure:m dog)
-      ;<  =block  bind:m  (get-block-by-number:ethio url.dog number.dog)
-      ;<  dog=watchdog  bind:m
-        (take-block [path dog] block)
-      loop(dog dog)
-    ::
-    ::  Process a block, detecting and handling reorgs
-    ::
-    ++  take-block
-      |=  [context =block]
-      =/  m  (async:stdio ,watchdog)
-      ^-  form:m
-      ::  if this next block isn't direct descendant of our logs, reorg happened
-      ?:  &(?=(^ blocks.dog) !=(parent-hash.block hash.id.i.blocks.dog))
-        (rewind [path dog] block)
-      ;<  [=new=pending-logs =released=loglist]  bind:m
-        (release-old-events path pending-logs.dog number.id.block)
-      ;<  =new=loglist  bind:m  ::  oldest first
-        (get-logs-by-hash:ethio url.dog hash.id.block contracts.dog topics.dog)
-      =.  new-pending-logs
-        (~(put by new-pending-logs) number.id.block new-loglist)
-      %-  pure:m
-      %_  dog
-        number        +(number.id.block)
-        pending-logs  new-pending-logs
-        history       [released-loglist history.dog]
-        blocks        [block blocks.dog]
-      ==
-    ::
-    ::  Release events if they're more than 30 blocks ago
-    ::
-    ++  release-old-events
-      |=  [=path =pending-logs =number:block]
-      =/  m  (async:stdio ,[^pending-logs loglist])
-      ^-  form:m
-      ?:  (lth number 30)  (pure:m pending-logs ~)
-      =/  rel-number  (sub number 30)
-      =/  =loglist  (~(get ja pending-logs) rel-number)
-      ;<  ~  bind:m  (send-logs path loglist)
-      (pure:m (~(del by pending-logs) rel-number) loglist)
-    ::
-    ::  Reorg detected, so rewind until we're back in sync
-    ::
-    ++  rewind
-      ::  block: wants to be head of blocks.dog, but might not match
-      |=  [context =block]
-      =/  m  (async:stdio ,watchdog)
-      =*  blocks  blocks.dog
-      |-  ^-  form:m
-      =*  loop  $
-      ::  if we have no further history to rewind, we're done
-      ?~  blocks
-        (pure:m dog(blocks [block blocks]))
-      ::  if target block is directly after "latest", we're done
-      ?:  =(parent-hash.block hash.id.i.blocks)
-        (pure:m dog(blocks [block blocks]))
-      ::  next-block: the new target block
-      ;<  =next=^block  bind:m
-        (get-block-by-number:ethio url.dog number.id.i.blocks)
-      ::  remove from either pending-logs or history
-      ?:  =(~ pending-logs.dog)
-        ::  if no more pending logs, start deleting from history instead
-        ::NOTE  this assumes there's one history entry per item in blocks.
-        ::      while +zoom breaks that assumption by clearing blocks, we won't
-        ::      run out of history before running out of blocks, allowing us to
-        ::      skip the =(number.id.block number.id.i.i.history) check.
-        ?~  history.dog
-          loop(block next-block, blocks t.blocks)
-        ;<  ~  bind:m
-          ::  don't bother sending a disavow if there were no logs there
-          ?~  i.history.dog  (pure:(async:stdio ,~) ~)
-          (disavow path block)
-        loop(block next-block, blocks t.blocks, history.dog t.history.dog)
-      =.  pending-logs.dog
-        (~(del by pending-logs.dog) number.id.block)
-      loop(block next-block, blocks t.blocks)
-    ::
-    ::  Tell subscribers there was a deep reorg
-    ::
-    ++  disavow
-      |=  [=path =block]
-      =/  m  (async:stdio ,~)
-      ^-  form:m
-      (send-update path %disavow id.block)
-    ::
-    ::  Zoom forward to near a given block number.
-    ::
-    ::    Zooming doesn't go forward one block at a time.  As a
-    ::    consequence, it cannot detect and handle reorgs.  Only use it
-    ::    at a safe distance -- 500 blocks ago is probably sufficient.
-    ::
-    ++  zoom
-      |=  [context =latest=number:block]
-      =/  m  (async:stdio ,watchdog)
-      ^-  form:m
-      =/  zoom-margin=number:block  100
-      ?:  (lth latest-number (add number.dog zoom-margin))
-        (pure:m dog)
-      =/  to-number=number:block  (sub latest-number zoom-margin)
-      ;<  =loglist  bind:m  ::  oldest first
-        %:  get-logs-by-range:ethio
-          url.dog
-          contracts.dog
-          topics.dog
-          number.dog
-          to-number
-        ==
-      ;<  ~  bind:m  (send-logs path loglist)
-      =.  number.dog  +(to-number)
-      =.  blocks.dog  ~
-      =.  history.dog  [loglist history.dog]
-      (pure:m dog)
+    ++  leave-spider
+      |=  [=path our=@p]
+      ^-  card
+      [%pass [%running path] %agent [our %spider] %leave ~]
     --
 ::
 ::  Main
 ::
-=*  default-tapp  default-tapp:tapp
-%-  create-tapp-all:tapp
-^-  tapp-core-all:tapp
-|_  [=bowl:gall state=app-state]
-++  handle-init
-  =/  m  tapp-async
-  ^-  form:m
+^-  agent:mall
+=|  state=app-state
+%+  verb  &
+|_  =bowl:mall
++*  this  .
+    def   ~(. (default-agent this %|) bowl)
+::
+++  on-init
+  ^-  (quip card _this)
   ::  start update timer loop
-  ;<  now=@da  bind:m  get-time:stdio
-  ;<  ~  bind:m  (wait-effect:stdio (add now refresh-rate))
-  (pure:m state)
+  [[(wait now.bowl) ~] this]
 ::
-++  handle-diff  handle-diff:default-tapp
+++  on-save   !>(state)
+++  on-load
+  |=  old=vase
+  =+  !<(old-state=app-state old)
+  `this(state old-state)
 ::
-++  handle-poke
-  |=  in=in-poke-data
-  =/  m  tapp-async
-  ^-  form:m
-  ?-  +<.in
+++  on-poke
+  |=  [=mark =vase]
+  ?:  ?=(%noun mark)
+    ~&  state
+    `this
+  ?.  ?=(%eth-watcher-poke mark)
+    (on-poke:def mark vase)
+  ::
+  =+  !<(=poke vase)
+  ?-  -.poke
       %watch
     ::  fully restart the watchdog if it doesn't exist yet,
     ::  or if the new config changes more than just the url.
     =/  restart=?
-      ?|  !(~(has by dogs.state) path.in)
-          ?!  .=  ->:(~(got by dogs.state) path.in)
-                  +.config.in
+      ?|  !(~(has by dogs.state) path.poke)
+          ?!  .=  ->:(~(got by dogs.state) path.poke)
+                  +.config.poke
       ==
-    ~?  &((~(has by dogs.state) path.in) restart)
-      [dap.bowl 'overwriting existing watchdog on' path.in]
-    ;<  dog=watchdog  bind:m
+    ~?  &((~(has by dogs.state) path.poke) restart)
+      [dap.bowl 'overwriting existing watchdog on' path.poke]
+    =/  restart-cards
+      =/  dog  (~(get by dogs.state) path.poke)
+      ?.  ?&  restart
+              ?=(^ dog)
+              ?=(^ running.u.dog)
+          ==
+        ~
+      =/  =cage  [%spider-stop !>([u.running.u.dog &])]
+      [%pass [%starting path] %agent [our.bowl %spider] %poke cage]
+    =/  new-dog
       =/  dog=watchdog
         ?:  restart  *watchdog
-        (~(got by dogs.state) path.in)
-      (configure [path.in dog] config.in)
-    =.  dogs.state  (~(put by dogs.state) path.in dog)
-    (pure:m state)
+        (~(got by dogs.state) path.poke)
+      %_  dog
+        -       config.poke
+        number  from.config.poke
+      ==
+    =.  dogs.state  (~(put by dogs.state) path.poke new-dog)
+    [[(wait-shortcut now.bowl) ~] this]
   ::
       %clear
-    =.  dogs.state  (~(del by dogs.state) path.in)
-    (pure:m state)
+    =.  dogs.state  (~(del by dogs.state) path.poke)
+    [~ this]
   ==
 ::
-++  handle-take
-  |=  =sign:tapp
-  =/  m  tapp-async
-  ^-  form:m
-  ?+  -.sign  ~|([%strange-sign -.sign] !!)
-      %wake
-    ;<  ~  bind:m
-      ;<  now=@da  bind:(async:tapp ,~)  get-time:stdio
-      =/  next=@da  (add now refresh-rate)
-      ::NOTE  we use +send-raw-card here to ensure we always set a new timer,
-      ::      regardless of what happens further on in the flow.
-      (send-raw-card:stdio %wait /effect/(scot %da next) next)
-    ::TODO  ideally we'd process these in parallel. this seems possible,
-    ::      but requires non-trivial work, as it deviates from tapp's flow.
-    ::      (when making that change, take note of rpc request id's.)
-    =/  dogs=(list [=path dog=watchdog])  ~(tap by dogs.state)
-    |-  ^-  form:m
-    =*  loop  $
-    ?~  dogs
-      (pure:m state)
-    =,  i.dogs
-    ;<  dog=watchdog  bind:m  (get-updates path dog)
-    =.  dogs.state  (~(put by dogs.state) path dog)
-    loop(dogs t.dogs)
-  ==
-::
-::  +handle-peer: subscribe & get initial subscription data
+::  +on-watch: subscribe & get initial subscription data
 ::
 ::    /logs/some-path:
 ::
-++  handle-peer
+++  on-watch
   |=  =path
-  =/  m  tapp-async
-  ^-  form:m
+  ^-  (quip card agent:mall)
   ?.  ?=([%logs ^] path)
     ~|  [%invalid-subscription-path path]
     !!
-  ;<  ~  bind:m
-    %+  send-effect-on-bone:stdio  ost.bowl
-    :+  %diff  %eth-watcher-diff
-    :-  %history
-    ^-  loglist
-    %-  zing
-    %-  flop
-    =<  history
-    (~(gut by dogs.state) t.path *watchdog)
-  (pure:m state)
+  :_  this  :_  ~
+  :*  %give  %fact  ~  %eth-watcher-diff  !>
+      :-  %history
+      ^-  loglist
+      %-  zing
+      %-  flop
+      =<  history
+      (~(gut by dogs.state) t.path *watchdog)
+  ==
 ::
-::  +handle-peek: get diagnostics data
+++  on-leave  on-leave:def
+::
+::  +on-peek: get diagnostics data
 ::
 ::    /block/some-path: get next block number to check for /some-path
 ::
-++  handle-peek
+++  on-peek
   |=  =path
-  ^-  (unit (unit peek-data))
+  ^-  (unit (unit cage))
   ?.  ?=([%x %block ^] path)  ~
   ?.  (~(has by dogs.state) t.t.path)  ~
   :+  ~  ~
   :-  %atom
-  number:(~(got by dogs.state) t.t.path)
+  !>(number:(~(got by dogs.state) t.t.path))
+::
+++  on-agent
+  |=  [=wire =sign:agent:mall]
+  |^
+  ^-  (quip card agent:mall)
+  ?.  ?=([%running *] wire)
+    (on-agent:def wire sign)
+  ?-    -.sign
+      %poke-ack
+    ?~  p.sign
+      [~ this]
+    %-  (slog leaf+"eth-watcher couldn't start thread" u.p.sign)
+    :_  (clear-running t.wire)  :_  ~
+    (leave-spider t.wire our.bowl)
+  ::
+      %watch-ack
+    ?~  p.sign
+      [~ this]
+    %-  (slog leaf+"eth-watcher couldn't start listen to thread" u.p.sign)
+    [~ (clear-running t.wire)]
+  ::
+      %kick  [~ (clear-running t.wire)]
+      %fact
+    =*  path  t.wire
+    =/  dog  (~(get by dogs.state) path)
+    ?~  dog
+      [~ this]
+    ?+    p.cage.sign  (on-agent:def wire sign)
+        %thread-fail
+      =+  !<([=term =tang] q.cage.sign)
+      %-  (slog leaf+"eth-watcher failed; will retry" leaf+<term> tang)
+      [~ this(dogs.state (~(put by dogs.state) path u.dog(running ~)))]
+    ::
+        %thread-done
+      =+  !<([vows=disavows pup=watchpup] q.cage.sign)
+      =.  u.dog
+        %_  u.dog
+          -             -.pup
+          number        number.pup
+          blocks        blocks.pup
+          pending-logs  pending-logs.pup
+        ==
+      =^  cards-1  u.dog  (disavow path u.dog vows)
+      =^  cards-2  u.dog  (release-logs path u.dog)
+      =.  dogs.state  (~(put by dogs.state) path u.dog(running ~))
+      [(weld cards-1 cards-2) this]
+    ==
+  ==
+  ::
+  ++  clear-running
+    |=  =path
+    =/  dog  (~(get by dogs.state) path)
+    ?~  dog
+      this
+    this(dogs.state (~(put by dogs.state) path u.dog(running ~)))
+  ::
+  ++  disavow
+    |=  [=path dog=watchdog vows=disavows]
+    ^-  (quip card watchdog)
+    =/  history-ids=(list [id:block loglist])
+      %+  murn  history.dog
+      |=  logs=loglist
+      ^-  (unit [id:block loglist])
+      ?~  logs
+         ~
+      `[[block-hash block-number]:(need mined.i.logs) logs]
+    =/  actual-vows=disavows
+      %+  skim  vows
+      |=  =id:block
+      (lien history-ids |=([=history=id:block *] =(id history-id)))
+    =/  actual-history=history
+      %+  murn  history-ids
+      |=  [=id:block logs=loglist]
+      ^-  (unit loglist)
+      ?:  (lien actual-vows |=(=vow=id:block =(id vow-id)))
+        ~
+      `logs
+    :_  dog(history actual-history)
+    %+  turn  actual-vows
+    |=  =id:block
+    [%give %fact `[%logs path] %eth-watcher-diff !>([%disavow id])]
+  ::
+  ++  release-logs
+    |=  [=path dog=watchdog]
+    ^-  (quip card watchdog)
+    ?:  (lth number.dog 30)
+      `dog
+    =/  rel-number  (sub number.dog 30)
+    =/  numbers=(list number:block)  ~(tap in ~(key by pending-logs.dog))
+    =.  numbers  (sort numbers lth)
+    |-  ^-  (quip card watchdog)
+    ?~  numbers
+      `dog
+    ?:  (gth i.numbers rel-number)
+      $(numbers t.numbers)
+    =^  cards-1  dog
+      =/  =loglist  (~(get ja pending-logs.dog) i.numbers)
+      =.  pending-logs.dog  (~(del by pending-logs.dog) i.numbers)
+      ?~  loglist
+        `dog
+      =.  history.dog  [loglist history.dog]
+      :_  dog
+      %+  turn  loglist
+      |=  =event-log:rpc:ethereum
+      ^-  card
+      [%give %fact `[%logs path] %eth-watcher-diff !>([%log event-log])]
+    =^  cards-2  dog  $(numbers t.numbers)
+    [(weld cards-1 cards-2) dog]
+  --
+::
+++  on-arvo
+  |=  [=wire =sign-arvo]
+  ^-  (quip card agent:mall)
+  ?+  +<.sign-arvo  ~|([%strange-sign-arvo -.sign-arvo] !!)
+      %wake
+    =;  rest
+      ?.  =(/timer wire)
+        rest
+      [[(wait now.bowl) -.rest] +.rest]
+    ?^  error.sign-arvo
+      ::  failed, try again.  maybe should tell user if fails more than
+      ::  5 times.
+      ::
+      [[(wait now.bowl) ~] this]
+    ::  start all updates in parallel
+    ::
+    =/  dogs=(list [=path dog=watchdog])  ~(tap by dogs.state)
+    =|  cards=(list card)
+    =/  tid-gen  ~(. og eny.bowl)
+    ^-  (quip card agent:mall)
+    =-  [(flop -<) ->]
+    |-  ^-  (quip card agent:mall)
+    =*  loop  $
+    ?~  dogs
+      [cards this]
+    =,  i.dogs
+    ?^  running.dog.i.dogs
+      ::  if still running, kill it and restart
+      ::
+      %-  (slog leaf+"eth-watcher still running; will restart" ~)
+      =/  =cage  [%spider-stop !>([u.running.dog |])]
+      =.  cards
+        :*  [%pass [%starting path] %agent [our.bowl %spider] %poke cage]
+            (leave-spider path our.bowl)
+            cards
+        ==
+      loop(i.dogs i.dogs(running.dog ~))
+    ::
+    =^  rand  tid-gen  (raws:tid-gen 128)
+    =/  new-tid  (cat 3 'eth-watcher--' (scot %uv rand))
+    =>  .(running.dog.i.dogs `new-tid)
+    =/  args
+      :^  ~  `new-tid  %eth-watcher
+      !>(`watchpup`[- number pending-logs blocks]:dog)
+    =.  cards
+      :*  (watch-spider path our.bowl /thread-result/[new-tid])
+          (poke-spider path our.bowl %spider-start !>(args))
+          cards
+      ==
+    =.  dogs.state  (~(put by dogs.state) path dog)
+    loop(dogs t.dogs)
+  ==
+::
+++  on-fail   on-fail:def
 --

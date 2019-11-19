@@ -220,7 +220,7 @@
       /sys/core/[term]/[ship]/[desk]/[case]
     ::
     =/  =note-arvo
-      =/  =schematic:ford  [%core [ship desk] /hoon/[term]/age]
+      =/  =schematic:ford  [%core [ship desk] /hoon/[term]/app]
       [%f %build live=%.y schematic]
     ::
     =/  pass  [path note-arvo]

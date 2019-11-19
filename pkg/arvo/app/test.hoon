@@ -54,7 +54,7 @@
       %marks    ~|(%stub !!) ::TODO restore historical handler
       %renders   ~&(%all-renderers-are-disabled ~)
       %cores
-    =/  spurs  [- +]:(list-hoons p.a skip=(sy /sys /ren /tests /app ~))
+    =/  spurs  [- +]:(list-hoons p.a skip=(sy /sys /ren /tests ~))
     [(build-core [p q]:byk.bowl spurs) ~]
   ==
   ::
