@@ -1,11 +1,14 @@
 =,  eyre
 |%
-::
++$  request-line
+  $:  [ext=(unit @ta) site=(list @t)]
+      args=(list [key=@t value=@t])
+  ==
 ::  +parse-request-line: take a cord and parse out a url
 ::
 ++  parse-request-line
   |=  url=@t
-  ^-  [[ext=(unit @ta) site=(list @t)] args=(list [key=@t value=@t])]
+  ^-  request-line
   (fall (rush url ;~(plug apat:de-purl:html yque:de-purl:html)) [[~ ~] ~])
 ::
 ++  manx-to-octs
