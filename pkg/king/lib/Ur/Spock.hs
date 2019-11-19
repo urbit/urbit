@@ -1,19 +1,11 @@
-module Ur.Spock where
+module Ur.Spock
+    ( Vl, Sp(..), sp
+    ) where
 
-import ClassyPrelude hiding (undefined)
-import Noun
+import Ur.Common
 
 
 -- Types -----------------------------------------------------------------------
-
-data Dr = L | R
-  deriving (Eq, Ord, Show)
-
-newtype Ix = Ix { unIx :: [Dr] }
-  deriving newtype (Eq, Ord)
-
-instance Show Ix where
-    show (Ix ds) = concat (show <$> ds)
 
 type Vl = Noun
 
@@ -53,6 +45,9 @@ instance Show Sp where
         prettyCon acc (CON x y) = prettyCon (x:acc) y
         prettyCon acc x         = reverse (x:acc)
 
+
+-- Interpreter -----------------------------------------------------------------
+
 sp :: (Noun -> Sp) -> Sp -> Noun -> Noun
 sp eval = go
   where
@@ -83,30 +78,10 @@ sp eval = go
         ( EQU,     A _            ) -> error "bad-equ"
         ( CND _ _, _              ) -> error "bad-cnd"
 
-spSet :: Ix -> Noun -> Noun -> Noun
-spSet ix old new = go (unIx ix) old
-  where
-    go []     _       = new
-    go (_:_)  (A _)   = error "bad-set"
-    go (L:ds) (C l r) = C (go ds l) r
-    go (R:ds) (C l r) = C l (go ds r)
-
-
--- Tree Indexing ---------------------------------------------------------------
-
-axis :: Ix -> Atom
-axis = go . reverse . unIx
-  where
-    go = \case []   -> 1
-               L:ds -> 2 * go ds
-               R:ds -> 2 * go ds + 1
-
-ix :: Atom -> Ix
-ix = Ix . reverse . go
-  where
-   go = \case 0          -> error "ix called with 0 value"
-              1          -> []
-              2          -> [L]
-              3          -> [R]
-              x | even x -> L : go (x `div` 2)
-              x          -> R : go (x `div` 2)
+    spSet :: Ix -> Noun -> Noun -> Noun
+    spSet ix old new = go (unIx ix) old
+      where
+        go []     _       = new
+        go (_:_)  (A _)   = error "bad-set"
+        go (L:ds) (C l r) = C (go ds l) r
+        go (R:ds) (C l r) = C l (go ds r)
