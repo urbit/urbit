@@ -6155,7 +6155,6 @@
               (just 'e')
               ;~(plug ;~(pose (cold | hep) (easy &)) dim:ag)
             ==
-            (easy [& 0])
           ==
         ==
       ==
