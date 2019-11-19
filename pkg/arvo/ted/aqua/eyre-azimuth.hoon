@@ -260,6 +260,7 @@
   |=  [who=ship seed=(unit seed:able:jael)]
   ^-  dawn-event:able:jael
   =/  spon=(list [ship point:azimuth])
+    %-  flop
     |-  ^-  (list [ship point:azimuth])
     =/  =ship  (^sein:title who)
     =/  a-point=[^ship point:azimuth]

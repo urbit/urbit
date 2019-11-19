@@ -25,7 +25,6 @@
   ^-  (list card:agent:gall)
   =/  rcvr=ship  (lane-to-ship lan)
   =/  hear-lane  (ship-to-lane sndr)
-  ~&  >  [%sending-aqua sndr rcvr hear-lane]
   %+  emit-aqua-events  our
   [%event rcvr //newt/0v1n.2m9vh %hear hear-lane pac]~
 ::  +lane-to-ship: decode a ship from an aqua lane
