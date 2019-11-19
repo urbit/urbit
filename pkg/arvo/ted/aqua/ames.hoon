@@ -20,19 +20,37 @@
   ^-  (quip card:agent:gall _ships)
   :_  ships
   %+  emit-aqua-events  our
-  [%event who [//newt/0v1n.2m9vh %barn ~]]~
+  [%event who [//newt/0v1n.2m9vh %born ~]]~
 ::
 ++  handle-send
-  |=  [our=ship now=@da way=wire %send lan=lane:ames pac=@]
+  |=  [our=ship now=@da way=wire sendr=@p %send lan=lane:ames pac=@]
   ^-  (quip card:agent:gall _ships)
-  =/  hear  [//newt/0v1n.2m9vh %hear lan pac]
-  =?  ships  &  ::  =(~ ships)
-    .^((list ship) %gx /(scot %p our)/aqua/(scot %da now)/ships/noun)
+  =/  rcvr=ship  (lane-to-ship lan)
+  =/  hear-lane  (ship-to-lane sndr)
   :_  ships
   %+  emit-aqua-events  our
   %+  turn  ships
   |=  who=ship
-  [%event who hear]
+    [%event rcvr //newt/0v1n.2m9vh %hear hear-lane pac]~
+::  +lane-to-ship: decode a ship from an aqua lane
+::
+++  lane-to-ship
+  |=  =lane:ames
+  ^-  ship
+  ::
+  ?-  -.lane
+    %&  p.lane
+    %|  `ship``@`p.lane
+  ==
+::  +ship-to-lane: encode a lane to look like it came from .ship
+::
+::    Never shows up as a galaxy, because Vere wouldn't know that either.
+::
+++  ship-to-lane
+  |=  =ship
+  ^-  lane:ames
+  ::
+  [%| `address:ames``@`ship]
 --
 ::
 %-  aqua-vane-thread
@@ -44,7 +62,7 @@
   =^  cards  ships
     ?+  -.q.ue  `ships
       %restore  (handle-restore our.bowl who)
-      %send     (handle-send our.bowl now.bowl ue)
+      %send     (handle-send our.bowl now.bowl who ue)
     ==
   [cards this]
 ::

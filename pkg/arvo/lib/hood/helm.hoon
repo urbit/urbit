@@ -76,10 +76,6 @@
     +>.$
   (emit %pass / %arvo %j %moon u.sed)
 ::
-++  poke-nuke                                         ::  initialize
-  |=  him/ship  =<  abet
-  (emit %pass /helm %arvo %a %nuke him)
-::
 ++  poke-mass
   |=  ~  =<  abet
   (flog %crud %hax-heft ~)
@@ -93,12 +89,6 @@
 ++  poke-cancel-automass
   |=  ~
   abet:(emit %pass way.mass-timer.sez %arvo %b %rest nex.mass-timer.sez)
-::
-++  poke-bonk
-  |=  ~
-  ~&  .^((unit @da) %a /(scot %p our)/time/(scot %da now)/(scot %p our))
-  %-  %-  slog  :_  ~  .^(tank %b /(scot %p our)/timers/(scot %da now))
-  abet:(emit %pass /bonk %arvo %a %bonk ~)
 ::
 ++  take-wake-automass
   |=  [way=wire error=(unit tang)]
@@ -207,9 +197,7 @@
     %helm-verb             =;(f (f !<(_+<.f vase)) poke-verb)
     %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
     %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
-    %helm-nuke             =;(f (f !<(_+<.f vase)) poke-nuke)
     %helm-automass         =;(f (f !<(_+<.f vase)) poke-automass)
-    %helm-bonk             =;(f (f !<(_+<.f vase)) poke-bonk)
     %helm-cancel-automass  =;(f (f !<(_+<.f vase)) poke-cancel-automass)
     %helm-moon             =;(f (f !<(_+<.f vase)) poke-moon)
     %helm-serve            =;(f (f !<(_+<.f vase)) poke-serve)

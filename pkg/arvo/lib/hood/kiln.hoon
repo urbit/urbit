@@ -304,8 +304,8 @@
 ::
 ++  poke-wash-gall  |=(* abet:(emit %pass /kiln %arvo %g [%wash ~]))
 ::
-++  mack
-  |=  {way/wire saw/(unit tang)}
+++  done
+  |=  {way/wire saw/(unit error:ames)}
   ~?  ?=(^ saw)  [%kiln-nack u.saw]
   abet
 ::
@@ -337,8 +337,8 @@
                         ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
       *
     ?+  +<.sign-arvo  ~|([%kiln-bad-take-card +<.sign-arvo] !!)
-      %mack  %+  mack  wire
-             ?>(?=(%mack +<.sign-arvo) +>.sign-arvo)
+      %done  %+  done  wire
+             ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
       %made  %+  take-made  wire
              ?>(?=(%made +<.sign-arvo) +>.sign-arvo)
       %mere  %+  take-mere  wire

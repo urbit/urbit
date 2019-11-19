@@ -98,11 +98,7 @@
 ++  sign                                                ::  in result $<-
   $~  [%j %init *@p]                                    ::
   $%  $:  %a                                            ::
-          $%  [%nice ~]                                 ::  XX obsolete
-              $>  $?  %mass                             ::
-                      %send                             ::  XX strange
-                  ==                                    ::
-              gift:able:ames                            ::
+          $%  $>(%mass gift:able:ames)                  ::
       ==  ==                                            ::
       $:  %b                                            ::
           $%  $>  $?  %mass                             ::
@@ -113,8 +109,7 @@
               $>(%mere gift:able:clay)                  ::  XX %slip
       ==  ==                                            ::
       $:  %c                                            ::
-          $>  $?  %mack                                 ::  XX strange
-                  %mass                                 ::
+          $>  $?  %mass                                 ::
                   %mere                                 ::
                   %note                                 ::
                   %writ                                 ::
@@ -409,9 +404,6 @@
       ++  autoload
         (deal /autoload [%poke %kiln-start-autoload [%atom %n `~] ~])
       ::
-      ++  pump                                          ::  send diff ack
-        (deal / [%pump ~])
-      ::
       ++  take                                          ::  receive
         |=  {tea/wire sih/sign}
         ^+  +>
@@ -419,16 +411,9 @@
             {?($a $b $c $e $f $g $i $j) $mass *}
           (wegh -.sih p.sih)
         ::
-            {$a $nice *}
-          ::  ~&  [%take-nice-ames sih]
-          +>
-        ::
             [%j %init *]
           ::  pass thru to unix
           ::
-          +>(moz :_(moz [hen %give +.sih]))
-        ::
-            {$a $send *}
           +>(moz :_(moz [hen %give +.sih]))
         ::
             {$g $onto *}
@@ -441,12 +426,12 @@
             {$g $unto *}
           ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
-            $poke-ack       ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
-            $kick           peer
-            $watch-ack      ?~  p.p.+>.sih
-                              +>.$
-                            (dump:(crud %reap u.p.p.+>.sih) %logo ~)
-            $fact           pump:(from ;;(dill-blit q:`vase`+>+>.sih))
+            $poke-ack   ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
+            $kick       peer
+            $watch-ack  ?~  p.p.+>.sih
+                          +>.$
+                        (dump:(crud %reap u.p.p.+>.sih) %logo ~)
+            $fact       (from ;;(dill-blit q:`vase`+>+>.sih))
           ==
         ::
             {$c $note *}
@@ -459,10 +444,6 @@
           ?:  ?=(%& -.p.sih)
             mere
           (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
-        ::
-            {$c $mack *}
-          ?~  p.sih  +>.$
-          (mean >%dill-clay-nack< u.p.sih)
         ::
             {$d $blit *}
           (done +.sih)

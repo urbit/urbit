@@ -84,12 +84,14 @@
         %spider
         %eth-watcher
         %azimuth-tracker
+        %ping
     ==
   :~  %dojo
       %lens
       %eth-watcher
       %azimuth-tracker
       %clock
+      %ping
   ==
   ::  %+  welp
   ::    ?:  ?=(%pawn (clan:title our))  ~
