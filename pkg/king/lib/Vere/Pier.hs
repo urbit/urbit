@@ -7,6 +7,7 @@ module Vere.Pier
 import UrbitPrelude
 
 import Arvo
+import Config
 import System.Random
 import Vere.Pier.Types
 
@@ -86,13 +87,15 @@ writeJobs log !jobs = do
 
 -- Boot a new ship. ------------------------------------------------------------
 
-booted :: HasLogFunc e
-       => Pill -> FilePath -> Bool -> Serf.Flags -> Ship -> LegacyBootEvent
+booted :: (HasPierConfig e, HasLogFunc e)
+       => Pill -> Bool -> Serf.Flags -> Ship -> LegacyBootEvent
        -> RAcquire e (Serf e, EventLog, SerfState)
-booted pill pierPath lite flags ship boot = do
+booted pill lite flags ship boot = do
   seq@(BootSeq ident x y) <- rio $ generateBootSeq ship pill lite boot
 
   rio $ logTrace "BootSeq Computed"
+
+  pierPath <- getPierPath
 
   liftRIO (setupPierDirectory pierPath)
 
@@ -118,10 +121,11 @@ booted pill pierPath lite flags ship boot = do
 
 -- Resume an existing ship. ----------------------------------------------------
 
-resumed :: HasLogFunc e
-        => FilePath -> Serf.Flags
+resumed :: (HasPierConfig e, HasLogFunc e)
+        => Serf.Flags
         -> RAcquire e (Serf e, EventLog, SerfState)
-resumed top flags = do
+resumed flags = do
+    top    <- getPierPath
     log    <- Log.existing (top <> "/.urb/log")
     serf   <- Serf.run (Serf.Config top flags)
     serfSt <- rio $ Serf.replay serf log
@@ -136,12 +140,10 @@ resumed top flags = do
 acquireWorker :: RIO e () -> RAcquire e (Async ())
 acquireWorker act = mkRAcquire (async act) cancel
 
-pier :: ∀e. HasLogFunc e
-     => FilePath
-     -> Maybe Port
-     -> (Serf e, EventLog, SerfState)
+pier :: ∀e. (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
+     => (Serf e, EventLog, SerfState)
      -> RAcquire e ()
-pier pierPath mPort (serf, log, ss) = do
+pier (serf, log, ss) = do
     computeQ  <- newTQueueIO
     persistQ  <- newTQueueIO
     executeQ  <- newTQueueIO
@@ -188,7 +190,7 @@ pier pierPath mPort (serf, log, ss) = do
     -- add them.
     let showErr = atomically . Term.trace muxed . (flip append "\r\n")
     let (bootEvents, startDrivers) =
-            drivers pierPath inst ship (isFake logId) mPort
+            drivers inst ship (isFake logId)
                 (writeTQueue computeQ)
                 shutdownEvent
                 (sz, muxed)
@@ -247,21 +249,21 @@ data Drivers e = Drivers
     , dTerm       :: EffCb e TermEf
     }
 
-drivers :: HasLogFunc e
-        => FilePath -> KingId -> Ship -> Bool -> Maybe Port -> (Ev -> STM ())
+drivers :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
+        => KingId -> Ship -> Bool -> (Ev -> STM ())
         -> STM()
         -> (TSize.Window Word, Term.Client)
         -> (Text -> RIO e ())
         -> ([Ev], RAcquire e (Drivers e))
-drivers pierPath inst who isFake mPort plan shutdownSTM termSys stderr =
+drivers inst who isFake plan shutdownSTM termSys stderr =
     (initialEvents, runDrivers)
   where
     (behnBorn, runBehn) = behn inst plan
-    (amesBorn, runAmes) = ames inst who isFake mPort plan stderr
-    (httpBorn, runHttp) = serv pierPath inst plan
-    (clayBorn, runClay) = clay pierPath inst plan
+    (amesBorn, runAmes) = ames inst who isFake plan stderr
+    (httpBorn, runHttp) = serv inst plan
+    (clayBorn, runClay) = clay inst plan
     (irisBorn, runIris) = client inst plan
-    (termBorn, runTerm) = Term.term termSys shutdownSTM pierPath inst plan
+    (termBorn, runTerm) = Term.term termSys shutdownSTM inst plan
     initialEvents       = mconcat [behnBorn, clayBorn, amesBorn, httpBorn,
                                    termBorn, irisBorn]
     runDrivers          = do
@@ -382,7 +384,7 @@ instance Exception PersistExn where
             , "\tExpected " <> show expected <> " but got " <> show got
             ]
 
-runPersist :: ∀e. HasLogFunc e
+runPersist :: ∀e. (HasPierConfig e, HasLogFunc e)
            => EventLog
            -> TQueue (Job, FX)
            -> (FX -> STM ())
@@ -391,11 +393,14 @@ runPersist log inpQ out =
     mkRAcquire runThread cancel
   where
     runThread :: RIO e (Async ())
-    runThread = asyncBound $ forever $ do
-        writs  <- atomically getBatchFromQueue
-        events <- validateJobsAndGetBytes (toNullable writs)
-        Log.appendEvents log events
-        atomically $ for_ writs $ \(_,fx) -> out fx
+    runThread = asyncBound $ do
+        dryRun <- getIsDryRun
+        forever $ do
+            writs  <- atomically getBatchFromQueue
+            unless dryRun $ do
+                events <- validateJobsAndGetBytes (toNullable writs)
+                Log.appendEvents log events
+            atomically $ for_ writs $ \(_,fx) -> out fx
 
     validateJobsAndGetBytes :: [(Job, FX)] -> RIO e (Vector ByteString)
     validateJobsAndGetBytes writs = do

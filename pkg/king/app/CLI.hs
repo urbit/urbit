@@ -14,16 +14,17 @@ import System.Environment (getProgName)
 --------------------------------------------------------------------------------
 
 data Opts = Opts
-    { oQuiet     :: Bool
-    , oHashless  :: Bool
-    , oExit      :: Bool
-    , oDryRun    :: Bool
-    , oVerbose   :: Bool
-    , oAmesPort  :: Maybe Word16
-    , oTrace     :: Bool
-    , oCollectFx :: Bool
-    , oLocalhost :: Bool
-    , oOffline   :: Bool
+    { oQuiet      :: Bool
+    , oHashless   :: Bool
+    , oExit       :: Bool
+    , oDryRun     :: Bool
+    , oVerbose    :: Bool
+    , oAmesPort   :: Maybe Word16
+    , oTrace      :: Bool
+    , oCollectFx  :: Bool
+    , oLocalhost  :: Bool
+    , oOffline    :: Bool
+    , oFullReplay :: Bool
     }
   deriving (Show)
 
@@ -204,10 +205,13 @@ opts = do
                              <> value Nothing
                              <> hidden
 
-    oHashless  <- switch $ short 'S'
-                        <> long "hashless"
-                        <> help "Disable battery hashing"
-                        <> hidden
+    -- Always disable hashboard. Right now, urbit is almost unusable with this
+    -- flag enabled and it is disabled in vere.
+    let oHashless = True
+    -- oHashless  <- switch $ short 'S'
+    --                     <> long "hashless"
+    --                     <> help "Disable battery hashing"
+    --                     <> hidden
 
     oQuiet     <- switch $ short 'q'
                         <> long "quiet"
@@ -224,9 +228,8 @@ opts = do
                         <> help "Exit immediatly"
                         <> hidden
 
-    oDryRun    <- switch $ short 'N'
-                        <> long "dry-run"
-                        <> help "Dry run -- Don't persist"
+    oDryRun    <- switch $ long "dry-run"
+                        <> help "Persist no events and turn off Ames networking"
                         <> hidden
 
     oTrace      <- switch $ short 't'
@@ -239,15 +242,20 @@ opts = do
                         <> help "Localhost-only networking"
                         <> hidden
 
+    oCollectFx <- switch $ short 'f'
+                        <> long "collect-fx"
+                        <> help "Write effects to disk for debugging"
+                        <> hidden
+
     oOffline   <- switch $ short 'O'
                         <> long "offline"
                         <> help "Run without any networking"
                         <> hidden
 
-    oCollectFx <- switch $ short 'f'
-                        <> long "collect-fx"
-                        <> help "Write effects to disk for debugging"
-                        <> hidden
+    oFullReplay <- switch
+          $ long "full-log-replay"
+         <> help "Ignores the snapshot and recomputes state from log"
+         <> hidden
 
     pure (Opts{..})
 

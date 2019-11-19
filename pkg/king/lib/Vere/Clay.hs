@@ -1,6 +1,7 @@
 module Vere.Clay (clay) where
 
 import Arvo            hiding (Term)
+import Config
 import UrbitPrelude
 import Vere.Pier.Types
 
@@ -94,9 +95,9 @@ buildActionListFromDifferences fp snapshot = do
 
 --------------------------------------------------------------------------------
 
-clay :: forall e. HasLogFunc e
-     => FilePath -> KingId -> QueueEv -> ([Ev], RAcquire e (EffCb e SyncEf))
-clay pierPath king enqueueEv =
+clay :: forall e. (HasPierConfig e, HasLogFunc e)
+     => KingId -> QueueEv -> ([Ev], RAcquire e (EffCb e SyncEf))
+clay king enqueueEv =
     (initialEvents, runSync)
   where
     initialEvents = [
@@ -116,6 +117,7 @@ clay pierPath king enqueueEv =
     handleEffect cd = \case
       SyncEfHill _ mountPoints -> do
         logDebug $ displayShow ("(clay) known mount points:", mountPoints)
+        pierPath <- getPierPath
         mountPairs <- flip mapM mountPoints $ \desk -> do
           ss <- takeFilesystemSnapshot (pierPath </> (deskToPath desk))
           pure (desk, ss)
@@ -125,6 +127,7 @@ clay pierPath king enqueueEv =
         logDebug $ displayShow ("(clay) dirk:", p, desk)
         m <- atomically $ readTVar (cdMountPoints cd)
         let snapshot = M.findWithDefault M.empty desk m
+        pierPath <- getPierPath
         let dir = pierPath </> deskToPath desk
         actions <- buildActionListFromDifferences dir snapshot
 
@@ -144,6 +147,7 @@ clay pierPath king enqueueEv =
         m <- atomically $ readTVar (cdMountPoints cd)
         let mountPoint = M.findWithDefault M.empty desk m
 
+        pierPath <- getPierPath
         let dir = pierPath </> deskToPath desk
         let hashedActions = map (calculateActionHash dir) actions
         for_ hashedActions (performAction mountPoint)
@@ -154,6 +158,7 @@ clay pierPath king enqueueEv =
 
       SyncEfOgre p desk -> do
         logDebug $ displayShow ("(clay) ogre:", p, desk)
+        pierPath <- getPierPath
         removeDirectoryRecursive $ pierPath </> deskToPath desk
         atomically $ modifyTVar (cdMountPoints cd) (M.delete desk)
 
