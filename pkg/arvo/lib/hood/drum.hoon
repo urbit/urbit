@@ -79,19 +79,17 @@
   ::
   =-  (turn - |=(a=term home+a))
   ^-  (list term)
-  ?:  lit
+  %+  weld
     :~  %dojo
         %spider
         %eth-watcher
         %azimuth-tracker
         %ping
     ==
-  :~  %dojo
+  ?:  lit
+    ~
+  :~  %clock
       %lens
-      %eth-watcher
-      %azimuth-tracker
-      %clock
-      %ping
   ==
   ::  %+  welp
   ::    ?:  ?=(%pawn (clan:title our))  ~
