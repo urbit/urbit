@@ -74,11 +74,11 @@
   |=  old=(unit state)
   ^-  (quip move _this)
   =/  launcha=poke
-    [%launch-action [%soto /sototile '/~soto/js/tile.js']]
+    [%launch-action [%soto /sototile '/~dojo/js/tile.js']]
   ?~  old
     :_  this
     :~ 
-        [ost.bol %connect / [~ /'~soto'] %soto]
+        [ost.bol %connect / [~ /'~dojo'] %soto]
         [ost.bol %poke /soto [our.bol %launch] launcha]
     ==
   [~ this(sta u.old)]
@@ -144,26 +144,26 @@
   ::
   ::  styling
   ::
-      [%'~soto' %css %index ~]
+      [%'~dojo' %css %index ~]
     :_  this
     [ost.bol %http-response (css-response:app style)]~
   ::
   ::  javascript
   ::
-      [%'~soto' %js %index ~]
+      [%'~dojo' %js %index ~]
     :_  this
     [ost.bol %http-response (js-response:app script)]~
   ::
   ::  images
   ::
-      [%'~soto' %img *]
+      [%'~dojo' %img *]
     =/  img  (as-octs:mimes:html (~(got by soto-png) `@ta`name))
     :_  this
     [ost.bol %http-response (png-response:app img)]~
   ::
   ::  index page
   ::
-     [%'~soto' *]
+     [%'~dojo' *]
     :_  this
     [ost.bol %http-response (html-response:app index)]~
   ==
