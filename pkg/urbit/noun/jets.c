@@ -126,7 +126,7 @@ _cj_bash(u3_noun bat)
       c3_y*   fat_y;
       c3_y    dig_y[32];
 
-      wor_w = u3qe_jam_buf(bat, &bit_w);
+      wor_w = u3s_jam_fib(bat, &bit_w);
       met_w = bit_w >> 3;
       if ( bit_w != met_w << 3 ) {
         ++met_w;
