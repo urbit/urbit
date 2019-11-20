@@ -46,6 +46,11 @@
         u3_noun
         u3m_file(c3_c* pas_c);
 
+      /* u3m_jam_file(): jam [a] into a file, overwriting
+      */
+        void
+        u3m_jam_file(u3_noun a, c3_c* pas_c);
+
       /* u3m_error(): bail out with %exit, ct_pushing error.
       */
         c3_i
