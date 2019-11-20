@@ -185,3 +185,214 @@ u3s_jam_fib(u3_noun a, c3_w* bit_w)
   u3h_free(fib_u.har_p);
   return fib_u.buf_w;
 }
+
+/* _cs_jam_met_mat(): the jam bitwidth of an atom of bitwidth [wid_w]
+**
+**   equivalent to (head (rub a))
+*/
+static c3_d
+_cs_jam_met_mat(c3_w wid_w)
+{
+  return ( 0 == wid_w ) ? 1ULL :
+         (c3_d)wid_w + (2ULL * (c3_d)_cs_met0_w(wid_w));
+}
+
+/* _cs_jam_met: struct for tracking the jam bitwidth of a noun
+*/
+struct _cs_jam_met {
+  u3p(u3h_root) har_p;
+  u3p(u3h_root) bak_p;
+  c3_d          len_d;
+};
+
+/* _cs_jam_met_atom_cb(): bitwidth of atom or backref encoding for [a]
+*/
+static void
+_cs_jam_met_atom_cb(u3_atom a, void* ptr_v)
+{
+  struct _cs_jam_met* met_u = ptr_v;
+  c3_w  a_w = u3r_met(0, a);
+  u3_weak b = u3h_git(met_u->har_p, a);
+
+  //  if we haven't haven't seen [a], put cursor into [har_p]
+  //
+  if ( u3_none == b ) {
+    u3h_put(met_u->har_p, a, u3i_chubs(1, &(met_u->len_d)));
+    met_u->len_d += 1ULL + _cs_jam_met_mat(a_w);
+  }
+  else {
+    c3_w b_w = u3r_met(0, b);
+
+    //  if [a] is smaller than a backref, use directly
+    //
+    if ( a_w <= b_w ) {
+      met_u->len_d += 1ULL + _cs_jam_met_mat(a_w);
+    }
+    //  otherwise, save backref
+    //
+    else {
+      u3h_put(met_u->bak_p, a, u3k(b));
+      met_u->len_d += 2ULL + _cs_jam_met_mat(b_w);
+    }
+  }
+}
+
+/* _cs_jam_met_cell_cb(): bitwidth of cell or backref encoding for [a]
+*/
+static c3_o
+_cs_jam_met_cell_cb(u3_noun a, void* ptr_v)
+{
+  struct _cs_jam_met* met_u = ptr_v;
+  u3_weak b = u3h_git(met_u->har_p, a);
+
+  //  if we haven't haven't seen [a], put cursor into [har_p]
+  //
+  if ( u3_none == b ) {
+    u3h_put(met_u->har_p, a, u3i_chubs(1, &(met_u->len_d)));
+    met_u->len_d += 2ULL;
+    return c3y;
+  }
+  //  otherwise, save backref and shortcircuit traversal
+  //
+  else {
+    c3_w b_w = u3r_met(0, b);
+    u3h_put(met_u->bak_p, a, u3k(b));
+    met_u->len_d += 2ULL + _cs_jam_met_mat(b_w);
+    return c3n;
+  }
+}
+
+/* u3s_jam_met(): measure a noun for jam, calculating backrefs
+*/
+c3_d
+u3s_jam_met(u3_noun a, u3p(u3h_root)* bak_p)
+{
+  struct _cs_jam_met met_u;
+  met_u.har_p = u3h_new();
+  met_u.bak_p = u3h_new();
+  met_u.len_d = 0ULL;
+
+  u3a_walk_fore(a, &met_u, _cs_jam_met_atom_cb,
+                           _cs_jam_met_cell_cb);
+  u3h_free(met_u.har_p);
+  *bak_p = met_u.bak_p;
+
+  return met_u.len_d;
+}
+
+/* _cs_jam_buf: struct for tracking the pre-measured jam of a noun
+*/
+struct _cs_jam_buf {
+  u3p(u3h_root) bak_p;
+  c3_w          bit_w;
+  c3_w*         buf_w;
+};
+
+/* _cs_jam_buf_chop(): chop [met_w] bits of [a] into [buf_u]
+*/
+static void
+_cs_jam_buf_chop(struct _cs_jam_buf* buf_u, c3_w met_w, u3_noun a)
+{
+  u3r_chop(0, 0, met_w, buf_u->bit_w, buf_u->buf_w, a);
+  buf_u->bit_w += met_w;
+}
+
+/* _cs_jam_buf_mat(): length-prefixed encode (mat) [a] into [buf_u]
+*/
+static void
+_cs_jam_buf_mat(struct _cs_jam_buf* buf_u, u3_atom a)
+{
+  if ( 0 == a ) {
+    _cs_jam_buf_chop(buf_u, 1, 1);
+  }
+  else {
+    c3_w a_w = u3r_met(0, a);
+    c3_w b_w = _cs_met0_w(a_w);
+
+    _cs_jam_buf_chop(buf_u, b_w+1, 1 << b_w);
+    _cs_jam_buf_chop(buf_u, b_w-1, a_w & ((1 << (b_w-1)) - 1));
+    _cs_jam_buf_chop(buf_u, a_w, a);
+  }
+}
+
+/* _cs_jam_buf_atom_cb(): encode atom or backref
+*/
+static void
+_cs_jam_buf_atom_cb(u3_atom a, void* ptr_v)
+{
+  struct _cs_jam_buf* buf_u = ptr_v;
+  u3_weak b = u3h_git(buf_u->bak_p, a);
+
+  //  if [a] has no backref (or this is the referent), encode atom
+  //
+  if ( (u3_none == b) ||
+       (u3r_word(0, b) == buf_u->bit_w) )
+  {
+    _cs_jam_buf_chop(buf_u, 1, 0);
+    _cs_jam_buf_mat(buf_u, a);
+  }
+  else {
+    c3_w a_w = u3r_met(0, a);
+    c3_w b_w = u3r_met(0, b);
+
+    //  if [a] is smaller than the backref, encode atom
+    //
+    if ( a_w <= b_w ) {
+      _cs_jam_buf_chop(buf_u, 1, 0);
+      _cs_jam_buf_mat(buf_u, a);
+    }
+    //  otherwise, encode backref
+    //
+    else {
+      _cs_jam_buf_chop(buf_u, 2, 3);
+      _cs_jam_buf_mat(buf_u, b);
+    }
+  }
+}
+
+/* _cs_jam_buf_cell_cb(): encode cell or backref
+*/
+static c3_o
+_cs_jam_buf_cell_cb(u3_noun a, void* ptr_v)
+{
+  struct _cs_jam_buf* buf_u = ptr_v;
+  u3_weak b = u3h_git(buf_u->bak_p, a);
+
+  //  if [a] has no backref (or this is the referent), encode cell
+  //
+  if ( (u3_none == b) ||
+       (u3r_word(0, b) == buf_u->bit_w) )
+  {
+    _cs_jam_buf_chop(buf_u, 2, 1);
+    return c3y;
+  }
+  //  otherwise, encode backref and shortcircuit traversal
+  //
+  else {
+    _cs_jam_buf_chop(buf_u, 2, 3);
+    _cs_jam_buf_mat(buf_u, b);
+    return c3n;
+  }
+}
+
+/* u3s_jam_buf(): jam [a] into pre-allocated [buf_w], without allocation
+**
+**   using backrefs in [bak_p], as computed by u3s_jam_met()
+**   NB [buf_w] must be pre-allocated with sufficient space
+**
+**   XX can only encode up to c3_w bits, due to use of chop
+*/
+void
+u3s_jam_buf(u3_noun a, u3p(u3h_root) bak_p, c3_w* buf_w)
+{
+  struct _cs_jam_buf buf_u;
+  buf_u.bak_p = bak_p;
+  buf_u.buf_w = buf_w;
+  buf_u.bit_w = 0;
+
+  //  this is in fact safe under normal usage, as
+  //  the stack will have been checked in u3s_jam_met()
+  //
+  u3a_walk_fore_unsafe(a, &buf_u, _cs_jam_buf_atom_cb,
+                                  _cs_jam_buf_cell_cb);
+}
