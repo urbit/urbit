@@ -547,7 +547,7 @@
     =/  him  (slav %p i.t.path)
     =/  dap  i.t.t.path
     ::
-    ?>  ?=([%g %unto *] sign-arvo)
+    ?>  ?=([?(%g %b) %unto *] sign-arvo)
     =/  =sign:agent  +>.sign-arvo
     ::
     ?-    -.sign
@@ -650,7 +650,7 @@
       !!
     ::
     =/  =sign-arvo  q.hin
-    ?.  ?=([%g %unto *] sign-arvo)
+    ?.  ?=([?(%g %b) %unto *] sign-arvo)
       =/  app
         =/  =term  i.path
         =/  =ship  (slav %p i.t.path)
@@ -1053,9 +1053,6 @@
       |=  [is-ok=? =other=ship other-agent=term =wire]
       ^+  ap-core
       ::
-      ::  XX pretty sure this shouldn't be used for pump
-      ::  =/  way  [(scot %p ship) %out wire]
-      ::
       ?:  is-ok
         ap-core
       (ap-kill-down wire [other-ship other-agent])
@@ -1296,14 +1293,16 @@
       (ap-give %kick ~ ~)
     ::  +ap-kill-down: 2-sided kill from subscriber side
     ::
+    ::    Must process leave first in case kick handler rewatches.
+    ::
     ++  ap-kill-down
       |=  [=wire =dock]
       ^+  ap-core
       ::
       =.  ap-core
-        =/  way  [%out (scot %p p.dock) q.dock wire]
-        (ap-specific-take way %kick ~)
-      (ap-pass wire %agent dock %leave ~)
+        (ap-pass wire %agent dock %leave ~)
+      =/  way  [%out (scot %p p.dock) q.dock wire]
+      (ap-pass way %arvo %b %huck !>([%unto %kick ~]))
     ::  +ap-ingest: call agent arm
     ::
     ::    Handle acks here because they need to be emitted before the

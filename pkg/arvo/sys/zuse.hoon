@@ -506,6 +506,7 @@
           $>(%crud vane-task)                           ::  error with trace
           [%rest p=@da]                                 ::  cancel alarm
           [%drip p=vase]                                ::  give in next event
+          [%huck p=vase]                                ::  give back
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           [%wait p=@da]                                 ::  set alarm
@@ -1805,14 +1806,14 @@
     ++  gift                                            ::  outgoing result
       $%  [%boon payload=*]                             ::  ames response
           [%done error=(unit error:ames)]               ::  ames message (n)ack
-          {$mass p/mass}                                ::  memory usage
-          {$onto p/(each suss tang)}                    ::  about agent
-          {$unto p/sign:agent}                          ::
+          [%mass p=mass]                                ::  memory usage
+          [%onto p=(each suss tang)]                    ::  about agent
+          [%unto p=sign:agent]                          ::
       ==                                                ::
     ++  task                                            ::  incoming request
       $~  [%vega ~]                                     ::
-      $%  {$conf p/dock q/dock}                         ::  configure app
-          {$deal p/sock q/term r/deal}                  ::  full transmission
+      $%  [$conf p=dock q=dock]                         ::  configure app
+          [$deal p=sock q=term r=deal]                  ::  full transmission
           [%goad force=? agent=(unit dude)]             ::  rebuild agent(s)
           $>(%init vane-task)                           ::  set owner
           $>(%trim vane-task)                           ::  trim state
@@ -1827,24 +1828,24 @@
     %+  map  ,[=wire =ship =term]                       ::
     ,[acked=? =path]                                    ::
   ++  bowl                                              ::  standard app state
-          $:  $:  our/ship                              ::  host
-                  src/ship                              ::  guest
-                  dap/term                              ::  agent
+          $:  $:  our=ship                              ::  host
+                  src=ship                              ::  guest
+                  dap=term                              ::  agent
               ==                                        ::
-              $:  wex/boat                              ::  outgoing subs
-                  sup/bitt                              ::  incoming subs
+              $:  wex=boat                              ::  outgoing subs
+                  sup=bitt                              ::  incoming subs
               ==                                        ::
-              $:  act/@ud                               ::  change number
-                  eny/@uvJ                              ::  entropy
-                  now/@da                               ::  current time
-                  byk/beak                              ::  load source
+              $:  act=@ud                               ::  change number
+                  eny=@uvJ                              ::  entropy
+                  now=@da                               ::  current time
+                  byk=beak                              ::  load source
           ==  ==                                        ::
   ++  dude  term                                        ::  server identity
   ++  gill  (pair ship term)                            ::  general contact
   ++  scar                                              ::  opaque duct
-    $:  p/@ud                                           ::  bone sequence
-        q/(map duct bone)                               ::  by duct
-        r/(map bone duct)                               ::  by bone
+    $:  p=@ud                                           ::  bone sequence
+        q=(map duct bone)                               ::  by duct
+        r=(map bone duct)                               ::  by bone
     ==                                                  ::
   ++  suss  (trel dude @tas @da)                        ::  config report
   ++  well  (pair desk term)                            ::
@@ -2310,6 +2311,7 @@
           $%  gift:able:behn
               [%writ riot:clay]
               $>(%mere gift:able:clay)
+              $>(%unto gift:able:gall)
           ==
       ==
       {$c gift:able:clay}

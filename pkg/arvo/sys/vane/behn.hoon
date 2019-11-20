@@ -69,6 +69,14 @@
   ::
   ++  rest  |=(date=@da set-unix-wake(timers.state (unset-timer [date duct])))
   ++  wait  |=(date=@da set-unix-wake(timers.state (set-timer [date duct])))
+  ::  +huck: give back immediately
+  ::
+  ::    Useful if you want to continue working after other moves finish.
+  ::
+  ++  huck
+    |=  mov=vase
+    =<  [moves state]
+    event-core(moves [duct %give %meta mov]~)
   ::  +drip:  XX
   ::
   ++  drip
@@ -256,6 +264,7 @@
       %crud  (crud:event-core [p q]:task)
       %rest  (rest:event-core date=p.task)
       %drip  (drip:event-core move=p.task)
+      %huck  (huck:event-core move=p.task)
       %trim  trim:event-core
       %vega  vega:event-core
       %wait  (wait:event-core date=p.task)

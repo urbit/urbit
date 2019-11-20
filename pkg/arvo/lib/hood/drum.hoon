@@ -269,10 +269,9 @@
   ?+  wire  ~|([%drum-bad-take-agent wire -.sign] !!)
       [%drum %phat *]
     ?-  -.sign
-        %http-response       !!
-        %poke-ack            (take-coup-phat t.t.wire p.sign)
-        %watch-ack    (reap-phat t.t.wire p.sign)
-        %kick  (quit-phat t.t.wire)
+        %poke-ack   (take-coup-phat t.t.wire p.sign)
+        %watch-ack  (reap-phat t.t.wire p.sign)
+        %kick       (quit-phat t.t.wire)
         %fact
       %+  diff-sole-effect-phat  t.t.wire
       ?>  ?=(%sole-effect p.cage.sign)
