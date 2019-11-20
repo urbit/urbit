@@ -87,6 +87,7 @@
         %ping
     ==
   :~  %dojo
+      %spider
       %lens
       %eth-watcher
       %azimuth-tracker
@@ -246,7 +247,7 @@
   ?~  saw  +>
   =+  gyl=(de-gill way)
   ?:  (se-aint gyl)  +>.$
-  %-  se-dump:(se-drop & gyl)
+  %-  se-dump:(se-drop:(se-pull gyl) & gyl)
   :_  u.saw
   >[%drum-coup-fail src.hid gyl]<
 ::
