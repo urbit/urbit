@@ -33,7 +33,7 @@
 =|  state-0
 =*  state  -
 ::
-%+  verb  &
+%+  verb  |
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -107,7 +107,7 @@
       (scot %p our.bowl)
       %group-store
       (scot %da now.bowl)
-      (snoc `^path`path %noun)  ::TODO  TMI
+      (snoc t.path %noun)
   ==
 ::
 ::  groups subscription

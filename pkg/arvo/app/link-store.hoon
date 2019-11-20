@@ -52,6 +52,7 @@
     ?>  (team:title [our src]:bowl)  ::TODO  /lib/store
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
+        ::TODO  move json conversion into mark once mark performance improves
         %json         (do-action:do (action:de-json !<(json vase)))
         %link-action  (do-action:do !<(action vase))
       ==
@@ -138,7 +139,6 @@
 ++  hear-submission
   |=  [=path =submission]
   ^-  (quip card _state)
-  ~&  [%hear-submission submission]
   ?<  =(~ path)
   ::  add link to group submissions
   ::

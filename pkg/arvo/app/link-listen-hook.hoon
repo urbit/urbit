@@ -25,7 +25,7 @@
 =|  state-0
 =*  state  -
 ::
-%+  verb  &
+%+  verb  |
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -62,11 +62,20 @@
     ~|  [dap.bowl %weird-wire wire]
     !!
   ::
+  ++  on-arvo
+    |=  [=wire =sign-arvo]
+    ^-  (quip card _this)
+    ?.  ?=([%g %done *] sign-arvo)
+      (on-arvo:def wire sign-arvo)
+    ?~  error.sign-arvo  [~ this]
+    =/  =tank  leaf+"{(trip dap.bowl)}'s message went wrong!"
+    %-  (slog tank tang.u.error.sign-arvo)
+    [~ this]
+  ::
   ++  on-poke   on-poke:def
   ++  on-peek   on-peek:def
   ++  on-watch  on-watch:def
   ++  on-leave  on-leave:def
-  ++  on-arvo   on-arvo:def
   ++  on-fail   on-fail:def
   --
 ::
@@ -145,7 +154,7 @@
   :*  %pass
       [%links (scot %p who) where]
       %agent
-      [who %link-hook]
+      [who %link-proxy-hook]
       %watch
       [%local-pages where]
   ==
@@ -156,7 +165,7 @@
   :*  %pass
       [%links (scot %p who) where]
       %agent
-      [who %link-hook]
+      [who %link-proxy-hook]
       %leave
       ~
   ==
@@ -169,13 +178,13 @@
     %kick       [[(start-link-subscription who where)]~ state]
   ::
       %watch-ack
-    ?~  p.sign
-      ~&  [dap.bowl 'groups subscription success']
-      [~ state]
-    =/  =tank
-      :-  %leaf
-      "{(trip dap.bowl)} failed subscribe to groups. very wrong!"
-    %-  (slog tank u.p.sign)
+    ?~  p.sign  [~ state]
+    ::  our subscription request got rejected for whatever reason,
+    ::  (most likely difference in group membership,)
+    ::  so we don't try again.
+    ::TODO  but now the only way to retry is to remove from group and re-add...
+    ::      this is a problem because our and their group may not update
+    ::      simultaneously...
     [~ state]
   ::
       %fact
