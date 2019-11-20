@@ -79,7 +79,7 @@
   ::
   =-  (turn - |=(a=term home+a))
   ^-  (list term)
-  %+  weld
+  %+  welp
     :~  %dojo
         %spider
         %eth-watcher
