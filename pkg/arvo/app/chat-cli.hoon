@@ -97,7 +97,7 @@
     =^  cards  all-state
       ?+  mark        (on-poke:def mark vase)
         %noun         (poke-noun:tc mark !<(* vase))
-        %sole-action  (poke-sole-action:tc !<(sole-action:sole-sur vase))
+        %sole-action  (poke-sole-action:tc !<([@t sole-action:sole-sur] vase))
       ==
     [cards this]
   ::
@@ -207,7 +207,8 @@
 ::  +poke-sole-action: handle cli input
 ::
 ++  poke-sole-action
-  |=  act=sole-action:sole-sur
+  ::TODO  use session id to support multiple separate sessions
+  |=  [session=@t act=sole-action:sole-sur]
   ^-  (quip card state)
   (sole:sh-in act)
 ::  +peer: accept only cli subscriptions from ourselves
@@ -964,7 +965,8 @@
   ++  effect
     |=  fec=sole-effect:sole-sur
     ^-  card
-    [%give %fact `/sole %sole-effect !>(fec)]
+    ::TODO  don't hard-code session id 'drum' here
+    [%give %fact `/sole/drum %sole-effect !>(fec)]
   ::  +print: puts some text into the cli as-is
   ::
   ++  print
