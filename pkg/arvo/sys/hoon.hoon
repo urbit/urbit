@@ -558,7 +558,8 @@
 ::
 ++  gulf                                                ::  range inclusive
   |=  {a/@ b/@}
-  ^-  (list @)
+  ?>  (lte a b)
+  |-  ^-  (list @)
   ?:(=(a +(b)) ~ [a $(a +(a))])
 ::
 ++  homo                                                ::  homogenize
@@ -763,6 +764,18 @@
   |-  ^+  b
   ?~  a  b
   [i.a $(a t.a)]
+::
+++  snap                                               ::  replace item
+  ~/  %snap
+  |*  [a=(list) b=@ c=*]
+  ^+  a
+  (weld (scag b a) [c (slag +(b) a)])
+::
+++  into                                               ::  insert item
+  ~/  %into
+  |*  [a=(list) b=@ c=*]
+  ^+  a
+  (weld (scag b a) [c (slag b a)])
 ::
 ++  welp                                                ::  faceless weld
   =|  {* *}
