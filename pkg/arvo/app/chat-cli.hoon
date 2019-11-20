@@ -10,7 +10,7 @@
 ::    and trust it to take care of the rest.
 ::
 /-  *chat-store, *chat-view, *chat-hook,
-    *permission-store, *group-store,
+    *permission-store, *group-store, *invite-store,
     sole-sur=sole
 /+  sole-lib=sole, chat-eval, default-agent, verb
 ::
@@ -641,6 +641,30 @@
           %poke
           cage
       ==
+    ::  +invite-card: build invite card
+    ::
+    ++  invite-card
+      |=  [where=path who=ship]
+      ^-  card
+      :*  %pass
+          /cli-command/invite
+          %agent
+          [who %invite-hook]  ::NOTE  only place chat-cli pokes others
+          %poke
+          %invite-action
+        ::
+          !>
+          ^-  invite-action
+          :^  %invite  /chat
+            (shax (jam [our-self where] who))
+          ^-  invite
+          =;  desc=cord
+            [our-self %chat-hook where who desc]
+          %-  crip
+          %+  weld
+            "You have been invited to chat at "
+          ~(full tr [our-self where])
+      ==
     ::  +set-target: set audience, update prompt
     ::
     ++  set-target
@@ -692,6 +716,11 @@
       |=  [allow=? rw=?(%r %w %rw) =path ships=(set ship)]
       ^-  (quip card state)
       :_  all-state
+      =;  cards=(list card)
+        ?.  allow  cards
+        %+  weld  cards
+        %+  turn  ~(tap in ships)
+        (cury invite-card path)
       %+  murn
         ^-  (list term)
         ?-  rw
@@ -1060,7 +1089,12 @@
       (lth (lent path.one) (lent path.two))
     ::  if they're from different ships, neither ours, pick hierarchically.
     (lth (xeb ship.one) (xeb ship.two))
-  ::  +phat: render target fully
+  ::  +full: render target fully, always
+  ::
+  ++  full
+    ^-  tape
+    (weld (scow %p ship.one) (spud path.one))
+  ::  +phat: render target with local shorthand
   ::
   ::    renders as ~ship/path.
   ::    for local mailboxes, renders just /path.
