@@ -125,7 +125,6 @@
   |=  our/ship
   %-  ~(gas in *(set gill:gall))
   ^-  (list gill:gall)
-  ::  [[our %talk] [our %dojo] ~]
   [[our %dojo] ~]
 ::
 ++  make                                                ::  initial part
@@ -203,7 +202,7 @@
 ++  poke-unlink                                       ::  disconnect app
   |=  gyl/gill:gall
   =<  se-abet  =<  se-view
-  (se-klin gyl)
+  (se-drop:(se-pull gyl) & gyl)
 ::
 ++  poke-exit                                         ::  shutdown
   |=  ~
@@ -374,6 +373,7 @@
   ^-  (unit gill:gall)
   =+  wag=se-amor
   ?~  wag  ~
+  ~|  [inx=inx wag=wag fug=fug eel=eel]
   `(snag inx `(list gill:gall)`wag)
 ::
 ++  se-belt                                           ::  handle input
