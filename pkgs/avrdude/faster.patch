@@ -1,0 +1,73 @@
+diff -ur avrdude-6.3-orig/arduino.c avrdude-6.3/arduino.c
+--- avrdude-6.3-orig/arduino.c	2019-11-20 18:23:59.425987648 -0800
++++ avrdude-6.3/arduino.c	2019-11-20 18:52:03.653987648 -0800
+@@ -92,16 +92,11 @@
+   /* Clear DTR and RTS to unload the RESET capacitor 
+    * (for example in Arduino) */
+   serial_set_dtr_rts(&pgm->fd, 0);
+-  usleep(250*1000);
++  usleep(20*1000);
+   /* Set DTR and RTS back to high */
+   serial_set_dtr_rts(&pgm->fd, 1);
+   usleep(50*1000);
+ 
+-  /*
+-   * drain any extraneous input
+-   */
+-  stk500_drain(pgm, 0);
+-
+   if (stk500_getsync(pgm) < 0)
+     return -1;
+ 
+diff -ur avrdude-6.3-orig/ser_posix.c avrdude-6.3/ser_posix.c
+--- avrdude-6.3-orig/ser_posix.c	2019-11-20 18:23:59.425987648 -0800
++++ avrdude-6.3/ser_posix.c	2019-11-20 18:30:02.425987648 -0800
+@@ -436,7 +436,7 @@
+   unsigned char buf;
+ 
+   timeout.tv_sec = 0;
+-  timeout.tv_usec = 250000;
++  timeout.tv_usec = 50000;
+ 
+   if (display) {
+     avrdude_message(MSG_INFO, "drain>");
+diff -ur avrdude-6.3-orig/ser_win32.c avrdude-6.3/ser_win32.c
+--- avrdude-6.3-orig/ser_win32.c	2019-11-20 18:23:59.425987648 -0800
++++ avrdude-6.3/ser_win32.c	2019-11-20 18:53:58.433987648 -0800
+@@ -644,7 +644,7 @@
+ 		return -1;
+ 	}
+ 
+-	serial_w32SetTimeOut(hComPort,250);
++	serial_w32SetTimeOut(hComPort,50);
+   
+ 	if (display) {
+ 		avrdude_message(MSG_INFO, "drain>");
+diff -ur avrdude-6.3-orig/stk500.c avrdude-6.3/stk500.c
+--- avrdude-6.3-orig/stk500.c	2019-11-20 18:23:59.425987648 -0800
++++ avrdude-6.3/stk500.c	2019-11-20 18:41:22.241987648 -0800
+@@ -43,7 +43,7 @@
+ #include "stk500_private.h"
+ 
+ #define STK500_XTAL 7372800U
+-#define MAX_SYNC_ATTEMPTS 10
++#define MAX_SYNC_ATTEMPTS 1
+ 
+ struct pdata
+ {
+@@ -94,14 +94,7 @@
+    * get in sync */
+   buf[0] = Cmnd_STK_GET_SYNC;
+   buf[1] = Sync_CRC_EOP;
+-  
+-  /*
+-   * First send and drain a few times to get rid of line noise 
+-   */
+-   
+-  stk500_send(pgm, buf, 2);
+-  stk500_drain(pgm, 0);
+-  stk500_send(pgm, buf, 2);
++
+   stk500_drain(pgm, 0);
+ 
+   for (attempt = 0; attempt < MAX_SYNC_ATTEMPTS; attempt++) {
