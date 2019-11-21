@@ -6841,6 +6841,12 @@
         ?>  (lte wid 16)  %pawn
       ::                                                ::  ++rank:title
       +$  rank  ?(%czar %king %duke %earl %pawn)        ::  ship width class
+      ::                                                ::  ++name:title
+      ++  name                                          ::  identity
+        |=  who=ship
+        ^-  ship
+        ?.  ?=(%earl (clan who))  who
+        (sein who)
       ::                                                ::  ++saxo:title
       ++  saxo                                          ::  autocanon
         |=  who=ship
