@@ -115,7 +115,7 @@ export class MemberScreen extends Component {
             popout={this.props.popout}
           />
         </div>
-        <div className="w-100 pl3 mt4 cf pr6">
+        <div className="w-100 pl3 mt0 mt4-m mt4-l mt4-xl cf pr6">
           <div className="w-100 w-50-l w-50-xl fl pa2 pr3 pt3 pt0-l pt0-xl">
             <p className="f8 pb2">Members</p>
             <p className="f9 gray2 mb3">{writeText}</p>
