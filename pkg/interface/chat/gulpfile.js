@@ -56,8 +56,9 @@ gulp.task('js-imports', function(cb) {
       plugins: [
         commonjs({
           namedExports: {
-            'node_modules/react/index.js': [ 'Component' ],
-            'node_modules/react-is/index.js': [ 'isValidElementType' ],
+            'node_modules/react/index.js': ['Component', 'cloneElement', 'createContext', 'createElement', 'useState', 'useRef', 'useLayoutEffect', 'useMemo', 'useEffect', 'forwardRef', 'useContext', 'Children' ],
+            'node_modules/react-is/index.js': [ 'isValidElementType', 'isElement', 'ForwardRef' ],
+            'node_modules/react-dom/index.js': [ 'createPortal' ]
           }
         }),
         rootImport({
