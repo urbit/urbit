@@ -97,9 +97,9 @@
   ==
 ::
 +$  collection
-  $:  col=[=bone dat=(each collection-info tang)]
-      pos=(map @tas [=bone dat=(each [post-info manx @t] tang)])
-      com=(map @tas [=bone dat=(each (list [comment-info @t]) tang)])
+  $:  col=(each collection-info tang)
+      pos=(map @tas dat=(each [post-info manx @t] tang))
+      com=(map @tas dat=(each (list [comment-info @t]) tang))
       order=[pin=(list @tas) unpin=(list @tas)]
       contributors=[mod=?(%white %black) who=(set @p)]
       subscribers=(set @p)
