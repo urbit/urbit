@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import { Route, Link } from 'react-router-dom';
 import { uuid, isPatTa, deSig } from '/lib/util';
 import urbitOb from 'urbit-ob';
-
 
 export class NewScreen extends Component {
 
@@ -13,6 +13,7 @@ export class NewScreen extends Component {
       idName: '',
       invites: '',
       security: 'village',
+      securityDescription: 'Invite-only chat. Default membership administration.',
       idError: false,
       inviteError: false,
       allowHistory: true
@@ -32,6 +33,27 @@ export class NewScreen extends Component {
       if (station in props.inbox) {
         props.history.push('/~chat/room' + station);
       }
+    }
+
+    if (prevState.security !== this.state.security) {
+
+      let securityText = '';
+
+      switch (this.state.security) {
+        case 'village':
+          securityText = 'Invite-only chat. Default membership administration.';
+          break;
+        case 'channel':
+          securityText = 'Completely public chat. Default membership administration.';
+          break;
+        case 'journal':
+          securityText = 'Similar to a blog. Publicly readable/subscribable, invited members can write to journal.'
+          break;
+        case 'mailbox':
+          securityText = 'Similar to email. Anyone can write to the mailbox, invited members can read messages.'
+          break;
+      }
+      this.setState({ securityDescription: securityText });
     }
   }
 
@@ -138,15 +160,15 @@ export class NewScreen extends Component {
   }
 
   render() {
-    let createClasses = "db label-regular mt4 btn-font pointer underline bn";
+    let createClasses = "pointer db f9 green2 ba pa2 b--green2";
     if (!this.state.idName) {
-      createClasses = createClasses + ' gray';
+      createClasses = 'pointer db f9 gray2 ba pa2 b--gray3';
     }
 
     let idErrElem = (<span />);
     if (this.state.idError) {
       idErrElem = (
-        <span className="body-small inter nice-red db">
+        <span className="f9 inter red2 db">
           Chat must have a valid name.
         </span>
       );
@@ -155,22 +177,25 @@ export class NewScreen extends Component {
     let invErrElem = (<span />);
     if (this.state.inviteError) {
       invErrElem = (
-        <span className="body-small inter nice-red db">
+        <span className="f9 inter red2 db">
           Invites must be validly formatted ship names.
         </span>
       );
     }
 
     return (
-      <div className="h-100 w-100 pa3 pt2 overflow-x-hidden flex flex-column">
-        <h2 className="mb3">Create</h2>
-        <div className="w-50">
-          <p className="body-medium db">Chat Name</p>
-          <p className="body-small db mt2 mb3">
-            Name this chat. Names must be lowercase and only contain letters, numbers, and dashes.
+      <div className="h-100 w-100 w-50-l w-50-xl pa3 pt2 overflow-x-hidden flex flex-column">
+        <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
+          <Link to="/~chat/">{"⟵ All Chats"}</Link>
+        </div>
+        <h2 className="mb3 f8">Create New Chat</h2>
+        <div className="w-100">
+          <p className="f8 mt3 lh-copy db">Chat Name</p>
+          <p className="f9 gray2 db mb4">
+          Alphanumeric characters, dashes, and slashes only
           </p>
           <textarea 
-            className="body-regular fw-normal ba pa2 db w-100"
+            className="f7 ba b--gray3 pa3 db w-100"
             placeholder="secret-chat"
             rows={1}
             style={{
@@ -178,13 +203,28 @@ export class NewScreen extends Component {
             }}
             onChange={this.idChange} />
           {idErrElem}
-          <p className="body-medium mt3 db">Invites</p>
-          <p className="body-small db mt2 mb3">
-            Invite new participants to this chat.
+          <p className="f8 mt6 lh-copy db">Chat Type</p>
+          <p className="f9 gray2 db mb4">Change the chat's visibility and type</p>
+          <div className="dropdown relative">
+            <select
+              style={{WebkitAppearance: "none"}}
+              className="pa3 f8 bg-white br0 w-100 inter"
+              value={this.state.securityValue}
+              onChange={this.securityChange}>
+              <option value="village">Village</option>
+              <option value="channel">Channel</option>
+              <option value="journal">Journal</option>
+              <option value="mailbox">Mailbox</option>
+            </select>
+          </div>
+          <p className="f9 gray2 db lh-copy pt2 mb4">{this.state.securityDescription}</p>
+          <p className="f8 mt4 lh-copy db">Invites</p>
+          <p className="f9 gray2 db mb4">
+            Invite participants to this chat
           </p>
           <textarea
-            ref={ e => { this.textarea = e; } }
-            className="body-regular mono fw-normal ba pa2 mb2 db w-100"
+            ref={e => { this.textarea = e; }}
+            className="f7 mono ba b--gray3 pa3 mb4 db w-100"
             placeholder="~zod, ~bus"
             spellCheck="false"
             style={{
@@ -193,31 +233,10 @@ export class NewScreen extends Component {
             }}
             onChange={this.invChange} />
           {invErrElem}
-          <select
-            value={this.state.securityValue}
-            onChange={this.securityChange}>
-            <option value="village">Village</option>
-            <option value="channel">Channel</option>
-            <option value="journal">Journal</option>
-            <option value="mailbox">Mailbox</option>
-          </select>
-          <p className="body-medium mt3 db">Chat History</p>
-          <div className="db mt2">
-            <input
-                type="checkbox"
-                checked={this.state.allowHistory}
-                onChange={this.allowHistoryChange.bind(this)}
-                className="dib mr2"
-            />
-            <p className="body-small db mt2 mb3 dib">
-              Allow participants to download the chat history upon joining.
-            </p>
-          </div>
           <button
             onClick={this.onClickCreate.bind(this)}
             className={createClasses}
-            style={{ fontSize: '18px' }}
-          >-> Create</button>
+          >Start Chat</button>
         </div>
       </div>
     );

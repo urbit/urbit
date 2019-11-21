@@ -5,7 +5,6 @@ import Mousetrap from 'mousetrap';
 import classnames from 'classnames';
 
 import { Sigil } from '/components/lib/icons/sigil';
-import { IconSend } from '/components/lib/icons/icon-send';
 
 import { uuid } from '/lib/util';
 
@@ -155,16 +154,16 @@ export class ChatInput extends Component {
 
   readOnlyRender() {
     return (
-      <div className="mt2 pa3 cf flex black bt o-50">
+      <div className="pa3 cf flex black bt b--gray4 o-50">
         <div className="fl" style={{
           marginTop: 4,
-          flexBasis: 32,
-          height: 36
+          flexBasis: 24,
+          height: 24
         }}>
-          <Sigil ship={window.ship} size={32} />
+          <Sigil ship={window.ship} size={24} color="#4330FC" />
         </div>
-        <div className="fr h-100 flex pa2" style={{ flexGrow: 1, height: 40 }}>
-          <p style={{paddingTop: 3}}>This chat is read only and you cannot post.</p>
+        <div className="fr h-100 flex" style={{ flexGrow: 1, height: 28, paddingTop: 6, resize: "none" }}>
+          <p className="pl3">This chat is read only and you cannot post.</p>
         </div>
       </div>
     );
@@ -176,27 +175,26 @@ export class ChatInput extends Component {
     this.bindShortcuts();
     
     return (
-      <div className="pa3 cf flex black bt b--black-30" style={{ flexGrow: 1 }}>
-        <div className="fl" style={{
-          marginTop: 4,
-          flexBasis: 32,
-          height: 36
-        }}>
-          <Sigil ship={window.ship} size={32} />
+      <div className="pa3 cf flex black bt b--gray4" style={{ flexGrow: 1 }}>
+        <div
+          className="fl"
+          style={{
+            marginTop: 4,
+            flexBasis: 24,
+            height: 24
+          }}
+        >
+          <Sigil ship={window.ship} size={24} color="#4330FC" />
         </div>
         <div className="fr h-100 flex" style={{ flexGrow: 1 }}>
           <textarea
-            className={'ml2 mt2 mr2 bn'}
-            style={{ flexGrow: 1, height: 40, paddingTop: 3, resize: 'none' }}
+            className={"pl3 bn"}
+            style={{ flexGrow: 1, height: 28, paddingTop: 6, resize: "none" }}
             ref={this.textareaRef}
             placeholder={props.placeholder}
             value={state.message}
             onChange={this.messageChange}
-            autoFocus={true}
           />
-          <div className="pointer" onClick={this.messageSubmit}>
-            <IconSend />
-          </div>
         </div>
       </div>
     );

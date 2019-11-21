@@ -13,6 +13,7 @@ class Store {
       permissions: {},
       invites: {},
       spinner: false,
+      sidebarShown: true,
       pendingMessages: new Map([])
     };
 

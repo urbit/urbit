@@ -164,7 +164,7 @@ class UrbitApi {
             ship: `~${window.ship}`,
             recipient: ship,
             app: 'chat-hook',
-            text: `You have been invited to /${window.ship}${path}`,
+            text: `~${window.ship}${path}`,
           },
           uid: uuid()
         }

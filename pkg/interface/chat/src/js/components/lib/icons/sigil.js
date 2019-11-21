@@ -13,17 +13,13 @@ export class Sigil extends Component {
       );
     } else {
       return (
-        <div 
-          className="bg-black" 
-          style={{ flexBasis: 32 }}>
-        {
-          sigil({
+        <div style={{ flexBasis: 32, backgroundColor: props.color }}>
+          {sigil({
             patp: props.ship,
             renderer: reactRenderer,
             size: props.size,
-            colors: ['black', 'white'],
-          })
-        }
+            colors: [props.color, "white"]
+          })}
         </div>
       );
     }

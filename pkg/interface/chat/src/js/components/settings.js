@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { deSig } from '/lib/util';
+import { Route, Link } from "react-router-dom";
+import { store } from "/store";
+
 
 import { ChatTabBar } from '/components/lib/chat-tabbar';
 
@@ -43,22 +46,25 @@ export class SettingsScreen extends Component {
   renderDelete() {
     const { props, state } = this;
 
-    let titleText = "Delete Chat";
-    let descriptionText = "Permanently delete this chat.";
-    let buttonText = "-> Delete";
+    let chatOwner = (deSig(props.match.params.ship) === window.ship);
 
-    if (deSig(props.match.params.ship) !== window.ship) {
-      titleText = "Leave Chat"
-      descriptionText = "You will no longer have access to this chat."
-      buttonText = "-> Leave";
-    }
+    let deleteButtonClasses = (chatOwner) ? 'b--red2 red2 pointer' : 'b--grey3 grey3 c-default';
+    let leaveButtonClasses = (!chatOwner) ? "pointer" : "c-default";
 
     return (
-      <div className="w-50 fl pl2 mt3">
-        <p className="body-regular">{titleText}</p>
-        <p className="label-regular gray mb3">{descriptionText}</p>
-        <a onClick={this.deleteChat.bind(this)}
-          className="pointer btn-font underline nice-red">{buttonText}</a>
+      <div>
+      <div className={"w-100 fl mt3 " + ((chatOwner) ? 'o-30' : '')}>
+        <p className="f8 mt3 lh-copy db">Leave Chat</p>
+        <p className="f9 gray2 db mb4">Remove this chat from your chat list. You will need to request for access again.</p>
+        <a onClick={(!chatOwner) ? this.deleteChat.bind(this) : null}
+           className={"dib f9 black ba pa2 b--black " + leaveButtonClasses}>Leave this chat</a>
+      </div>
+        <div className={"w-100 fl mt3 " + ((!chatOwner) ? 'o-30' : '')}>
+        <p className="f8 mt3 lh-copy db">Delete Chat</p>
+        <p className="f9 gray2 db mb4">Permenantly delete this chat. (All current members will no longer see this chat)</p>
+          <a onClick={(chatOwner) ? this.deleteChat.bind(this) : null}
+           className={"dib f9 ba pa2 " + deleteButtonClasses}>Delete this chat</a>
+      </div>
       </div>
     );
   }
@@ -76,35 +82,112 @@ export class SettingsScreen extends Component {
 
       return (
         <div className="h-100 w-100 overflow-x-hidden flex flex-column">
-          <div className='pl3 pt2 bb mb3'>
-            <h2>{state.station.substr(1)}</h2>
+          <div
+            className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
+            style={{ height: "1rem" }}
+          >
+            <Link to="/~chat/">{"⟵ All Chats"}</Link>
+          </div>
+          <div
+            className="pl3 pt4 bb b--gray4 flex relative overflow-x-scroll flex-shrink-0"
+            style={{ height: 48 }}
+          >
+            <a
+              className="pointer"
+              onClick={() => {
+                store.setState(previousState => ({
+                  sidebarShown: !previousState.sidebarShown
+                }));
+              }}
+            >
+              <img
+                className={`v-btm pr3 dn ` + popoutSwitcher}
+                src={
+                  this.props.sidebarShown
+                    ? "/~chat/img/ChatSwitcherLink.png"
+                    : "/~chat/img/ChatSwitcherClosed.png"
+                }
+                height="16"
+                width="16"
+              />
+            </a>
+            <Link to={`/~chat/` + isinPopout + `room` + state.station}>
+              <h2
+                className="mono dib f7 fw4 v-top"
+                style={{ width: "max-content" }}
+              >
+                {state.station.substr(1)}
+              </h2>
+            </Link>
             <ChatTabBar
               {...props}
               station={state.station}
               numPeers={writeGroup.length} />
           </div>
-          <div className="w-100 cf pa3">
-            <h2>{text}</h2>
+          <div className="w-100 pl3 mt4 cf">
+            <h2 className="f8 pb2">{text}</h2>
           </div>
         </div>
       );
     }
 
+      let popoutSwitcher = this.props.popout
+        ? "dn-m dn-l dn-xl"
+        : "dib-m dib-l dib-xl";
+      let isinPopout = this.props.popout ? "popout/" : "";
+
     return (
       <div className="h-100 w-100 overflow-x-hidden flex flex-column">
-        <div className='pl3 pt2 bb mb3'>
-          <h2>{state.station.substr(1)}</h2>
+        <div
+          className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
+          style={{ height: "1rem" }}
+        >
+          <Link to="/~chat/">{"⟵ All Chats"}</Link>
+        </div>
+        <div
+          className="pl3 pt4 bb b--gray4 flex relative overflow-x-scroll flex-shrink-0"
+          style={{ height: 48 }}
+        >
+          <a
+            className="pointer"
+            onClick={() => {
+              store.setState(previousState => ({
+                sidebarShown: !previousState.sidebarShown
+              }));
+            }}
+          >
+            <img
+              className={`v-btm pr3 dn ` + popoutSwitcher}
+              src={
+                this.props.sidebarShown
+                  ? "/~chat/img/ChatSwitcherLink.png"
+                  : "/~chat/img/ChatSwitcherClosed.png"
+              }
+              height="16"
+              width="16"
+            />
+          </a>
+          <Link to={`/~chat/` + isinPopout + `room` + state.station}>
+            <h2
+              className="mono dib f7 fw4 v-top"
+              style={{ width: "max-content" }}
+            >
+              {state.station.substr(1)}
+            </h2>
+          </Link>
           <ChatTabBar
             {...props}
             station={state.station}
             numPeers={writeGroup.length}
-            isOwner={deSig(props.match.params.ship) === window.ship} />
+            isOwner={deSig(props.match.params.ship) === window.ship}
+            popout={this.props.popout}
+          />
         </div>
-        <div className="w-100 cf pa3">
-          <h2>Settings</h2>
+        <div className="w-100 pl3 mt4 cf">
+          <h2 className="f8 pb2">Chat Settings</h2>
           {this.renderDelete()}
         </div>
       </div>
-    )
+    );
   }
 }

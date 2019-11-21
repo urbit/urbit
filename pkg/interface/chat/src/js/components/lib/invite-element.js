@@ -69,39 +69,40 @@ export class InviteElement extends Component {
   render() {
     const { props, state} = this;
     let errorElem = !!state.error ? (
-      <p className="pt2 nice-red label-regular">Invalid ship name.</p>
+      <p className="pt2 red2 f8">Invalid ship name.</p>
     ) : (
       <div></div>
     );
 
     let successElem = !!state.success ? (
-      <p className="pt2 nice-green label-regular">Success!</p>
+      <p className="pt2 green2 f8">Success!</p>
     ) : (
       <div></div>
     );
 
-    let modifyButtonClasses = "label-regular black underline btn-font pointer";
-    if (!state.error) {
-      modifyButtonClasses = modifyButtonClasses + ' black';
+    let modifyButtonClasses = "db f9 ba pa2 b--black pointer";
+    if (state.error) {
+      modifyButtonClasses = modifyButtonClasses + ' gray3';
     }
 
     let buttonText = '';
     if (props.permissions.kind === 'black') {
-      buttonText = '-> Ban';
+      buttonText = 'Ban';
     } else if (props.permissions.kind === 'white') {
-      buttonText = '-> Invite';
+      buttonText = 'Invite';
     }
 
     return (
       <div>
         <textarea
           ref={ e => { this.textarea = e; } }
-          className="w-90 db ba overflow-y-hidden mono gray mb2"
+          className="f7 mono ba b--gray3 pa3 mb4 db w-100"
           style={{
             resize: 'none',
-            height: 150
+            height: 50
           }}
           spellCheck="false"
+          placeholder="~zod, ~bus"
           onChange={this.modifyMembersChange.bind(this)}></textarea>
         <button
           onClick={this.modifyMembers.bind(this)}
