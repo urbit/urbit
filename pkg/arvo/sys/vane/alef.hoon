@@ -1302,9 +1302,9 @@
       =/  old-qos=qos  qos.peer-state
       ::  cancel all timers related to .ship
       ::
-      =.  peer-core
+      =.  event-core
         %+  roll  ~(tap by snd.peer-state)
-        |=  [[=snd=bone =message-pump-state] core=_peer-core]
+        |=  [[=snd=bone =message-pump-state] core=_event-core]
         ^+  core
         ::
         =/  next-wake=(unit @da)
