@@ -1664,6 +1664,11 @@
         =.  peer-core
           (emit duct %pass /wake-fail %d %flog %crud %ames-wake u.error)
         ::
+        ?~  message-pump-state=(~(get by snd.peer-state) bone)
+          peer-core
+        ?~  next-wake.packet-pump-state.u.message-pump-state
+          peer-core
+        ::
         =/  =wire  (make-pump-timer-wire her.channel bone)
         (emit duct %pass wire %b %wait (add now.channel ~s30))
       ::  update and print connection state
