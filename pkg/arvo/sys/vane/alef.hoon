@@ -1662,7 +1662,7 @@
           (emit duct %pass /wake-fail %d %flog %crud %ames-wake u.error)
         ::
         =/  =wire  (make-pump-timer-wire her.channel bone)
-        (emit duct %pass wire %wait (add now.channel ~s30))
+        (emit duct %pass wire %b %wait (add now.channel ~s30))
       ::  update and print connection state
       ::
       =.  peer-core  %-  update-qos
