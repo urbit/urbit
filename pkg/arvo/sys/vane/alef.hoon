@@ -1152,7 +1152,7 @@
     ::    We only accept packets from a ship at their known life, and to
     ::    us at our current life.
     ::
-    ~|  [[her our-life her-life]:channel [sndr-life rcvr-life]:shut-packet]]
+    ~|  [[her our-life her-life]:channel [sndr-life rcvr-life]:shut-packet]
     ?>  =(sndr-life.shut-packet her-life.channel)
     ?>  =(rcvr-life.shut-packet our-life.channel)
     ::  decrypt packet contents using symmetric-key.channel
