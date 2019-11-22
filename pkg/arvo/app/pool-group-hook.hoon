@@ -122,7 +122,6 @@
   --
 ::
 |_  =bowl:gall
-++  five   5
 ++  poke-spider
   |=  [=path =cage]
   ^-  card
@@ -141,7 +140,8 @@
 ++  new-tid
   |=  eny=@uv
   ^-  @t
-  :((cury cat 3) dap.bowl '--' (scot %uv eny))
+  %+  scot  %ta
+  :((cury cat 3) dap.bowl '_' (scot %uv eny))
 ::
 ++  start-contract-read
   |=  [=wire req=proto-read-request:rpc:ethereum]
