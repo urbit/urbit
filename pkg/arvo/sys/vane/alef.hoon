@@ -1147,15 +1147,14 @@
     ::
     =/  =peer-state   +.u.sndr-state
     =/  =channel      [[our sndr.packet] now |2.ames-state -.peer-state]
+    ~|  %ames-crashed-on-packet-from^her.channel
     =/  =shut-packet  (decrypt symmetric-key.channel content.packet)
     ::  ward against replay attacks
     ::
     ::    We only accept packets from a ship at their known life, and to
     ::    us at our current life.
     ::
-    ~|  [sndr=sndr.packet rcvr=rcvr.packet]
-    ~|  [sndr-life=sndr-life.shut-packet expected=her-life.channel]
-    ~|  [rcvr-life=rcvr-life.shut-packet expected=our-life.channel]
+    ~|  [[her our-life her-life]:channel [sndr-life rcvr-life]:shut-packet]
     ?>  =(sndr-life.shut-packet her-life.channel)
     ?>  =(rcvr-life.shut-packet our-life.channel)
     ::  non-galaxy: update route with heard lane or forwarded lane
@@ -1282,11 +1281,6 @@
     ::    Abandon all pretense of continuity and delete all messaging state
     ::    associated with .ship, including sent and unsent messages.
     ::
-    ::    TODO: cancel all timers? otherwise we'll get spurious firings
-    ::    from behn
-    ::
-    ::    TODO: cancel gall subscriptions on breach
-    ::
     ++  on-publ-breach
       |=  =ship
       ^+  event-core
@@ -1307,6 +1301,20 @@
       ::
       =/  =peer-state  +.u.ship-state
       =/  old-qos=qos  qos.peer-state
+      ::  cancel all timers related to .ship
+      ::
+      =.  event-core
+        %+  roll  ~(tap by snd.peer-state)
+        |=  [[=snd=bone =message-pump-state] core=_event-core]
+        ^+  core
+        ::
+        ?~  next-wake=next-wake.packet-pump-state.message-pump-state
+          core
+        ::  note: copies +on-pump-rest:message-pump
+        ::
+        =/  wire  (make-pump-timer-wire ship snd-bone)
+        =/  duct  ~[/ames]
+        (emit:core duct %pass wire %b %rest u.next-wake)
       ::  reset all peer state other than pki data
       ::
       =.  +.peer-state  +:*^peer-state
@@ -1655,10 +1663,22 @@
     ++  on-wake
       |=  [=bone error=(unit tang)]
       ^+  peer-core
-      ::  if we previously errored out, print and try again
+      ::  if we previously errored out, print and reset timer for later
       ::
-      =?  peer-core  ?=(^ error)
-        (emit duct %pass /wake-fail %d %flog %crud %ames-wake u.error)
+      ::    This really shouldn't happen, but if it does, make sure we
+      ::    don't brick either this messaging flow or Behn.
+      ::
+      ?^  error
+        =.  peer-core
+          (emit duct %pass /wake-fail %d %flog %crud %ames-wake u.error)
+        ::
+        ?~  message-pump-state=(~(get by snd.peer-state) bone)
+          peer-core
+        ?~  next-wake.packet-pump-state.u.message-pump-state
+          peer-core
+        ::
+        =/  =wire  (make-pump-timer-wire her.channel bone)
+        (emit duct %pass wire %b %wait (add now.channel ~s30))
       ::  update and print connection state
       ::
       =.  peer-core  %-  update-qos
