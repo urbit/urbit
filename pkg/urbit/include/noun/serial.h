@@ -24,3 +24,8 @@
       */
         void
         u3s_jam_buf(u3_noun a, u3p(u3h_root) bak_p, c3_w* buf_w);
+
+      /* u3s_jam_file(): jam [a] into a file, overwriting
+      */
+        c3_o
+        u3s_jam_file(u3_noun a, c3_c* pas_c);

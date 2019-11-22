@@ -1,6 +1,10 @@
 /* noun/serial.c
 **
 */
+
+#include <errno.h>
+#include <fcntl.h>
+
 #include "all.h"
 
 /* _cs_met0_w(): safe bitwidth for any c3_w
@@ -395,4 +399,104 @@ u3s_jam_buf(u3_noun a, u3p(u3h_root) bak_p, c3_w* buf_w)
   //
   u3a_walk_fore_unsafe(a, &buf_u, _cs_jam_buf_atom_cb,
                                   _cs_jam_buf_cell_cb);
+}
+
+/* u3s_jam_file(): jam [a] into a file, overwriting
+*/
+c3_o
+u3s_jam_file(u3_noun a, c3_c* pas_c)
+{
+  u3p(u3h_root) bak_p;
+  c3_i fid_i = open(pas_c, O_RDWR | O_CREAT | O_TRUNC, 0644);
+  c3_w byt_w, wor_w, len_w;
+
+  if ( fid_i < 0 ) {
+    fprintf(stderr, "jam: open %s: %s\r\n", pas_c, strerror(errno));
+    return c3n;
+  }
+
+  {
+    c3_d len_d = u3s_jam_met(a, &bak_p);
+
+    if ( len_d > 0xffffffffULL ) {
+      fprintf(stderr, "jam: overflow c3_w: %" PRIu64 "\r\n", len_d);
+      u3h_free(bak_p);
+      return c3n;
+    }
+
+    //  length in bytes a la u3i_bytes
+    //
+    byt_w = (c3_w)(len_d >> 3ULL);
+    if ( len_d > (c3_d)(byt_w << 3) ) {
+      byt_w++;
+    }
+
+    //  length in words
+    //
+    wor_w = (c3_w)(len_d >> 5ULL);
+    if ( len_d > (c3_d)(wor_w << 5) ) {
+      wor_w++;
+    }
+
+    //  byte-length of word-length
+    //
+    len_w = 4 * wor_w;
+  }
+
+  //  grow [fid_i] to [len_w]
+  //
+  if ( 0 != ftruncate(fid_i, len_w) ) {
+    fprintf(stderr, "jam: ftruncate grow %s: %s\r\n", pas_c, strerror(errno));
+    goto error;
+  }
+
+  //  mmap [fid_i], jam into it, sync, and unmap
+  //
+  {
+    c3_w* buf_w;
+    void* ptr_v = mmap(0, len_w, PROT_READ|PROT_WRITE, MAP_SHARED, fid_i, 0);
+
+    if ( MAP_FAILED == ptr_v ) {
+      fprintf(stderr, "jam: mmap %s: %s\r\n", pas_c, strerror(errno));
+      goto error;
+    }
+
+    buf_w = ptr_v;
+    u3s_jam_buf(a, bak_p, buf_w);
+
+    if ( 0 != msync(ptr_v, len_w, MS_SYNC) ) {
+      fprintf(stderr, "jam: msync %s: %s\r\n", pas_c, strerror(errno));
+      //  XX ignore return?
+      //
+      munmap(ptr_v, len_w);
+      goto error;
+    }
+
+    if ( 0 != munmap(ptr_v, len_w) ) {
+      fprintf(stderr, "jam: munmap %s: %s\r\n", pas_c, strerror(errno));
+      //  XX fatal error?
+      //
+      goto error;
+    }
+  }
+
+  //  shrink [fid_i] to [byt_w]
+  //
+  if ( 0 != ftruncate(fid_i, byt_w) ) {
+    fprintf(stderr, "jam: ftruncate shrink %s: %s\r\n", pas_c, strerror(errno));
+    goto error;
+  }
+
+  {
+    close(fid_i);
+    u3h_free(bak_p);
+    return c3y;
+  }
+
+  error: {
+    close(fid_i);
+    unlink(pas_c);
+    u3h_free(bak_p);
+    return c3n;
+  }
 }
