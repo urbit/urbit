@@ -1697,6 +1697,118 @@ u3m_boot_lite(void)
   return 0;
 }
 
+/* u3m_rock_stay(): jam state into [dir_c] at [evt_d]
+*/
+c3_o
+u3m_rock_stay(c3_c* dir_c, c3_d evt_d)
+{
+  c3_c nam_c[8193];
+
+  snprintf(nam_c, 8192, "%s", dir_c);
+  mkdir(nam_c, 0700);
+
+  snprintf(nam_c, 8192, "%s/.urb", dir_c);
+  mkdir(nam_c, 0700);
+
+  snprintf(nam_c, 8192, "%s/.urb/roc", dir_c);
+  mkdir(nam_c, 0700);
+
+  snprintf(nam_c, 8192, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, evt_d);
+
+  {
+    u3_noun dat = u3nt(c3__fast, u3k(u3A->roc), u3j_stay());
+    c3_o  ret_o = u3s_jam_file(dat, nam_c);
+    u3z(dat);
+    return ret_o;
+  }
+}
+
+/* u3m_rock_load(): load state from [dir_c] at [evt_d]
+*/
+c3_o
+u3m_rock_load(c3_c* dir_c, c3_d evt_d)
+{
+  c3_c nam_c[8193];
+  snprintf(nam_c, 8192, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, evt_d);
+
+  {
+    u3_noun dat;
+
+    {
+      //  XX u3m_file bails, but we'd prefer to return errors
+      //
+      u3_noun pro = u3m_soft(0, u3ke_cue, u3m_file(nam_c));
+
+      if ( u3_blip != u3h(pro) ) {
+        fprintf(stderr, "rock: unable to cue %s\r\n", nam_c);
+        u3z(pro);
+        return c3n;
+      }
+      else {
+        dat = u3k(u3t(pro));
+        u3z(pro);
+      }
+    }
+
+    {
+      u3_noun roc, rel;
+
+      if ( u3r_pq(dat, c3__fast, &roc, &rel) ) {
+        u3z(dat);
+        return c3n;
+      }
+
+      u3A->roc = u3k(roc);
+      u3j_load(u3k(rel));
+    }
+
+    u3z(dat);
+  }
+
+  u3A->ent_d = evt_d;
+  u3j_ream();
+  u3n_ream();
+
+  return c3y;
+}
+
+/* u3m_rock_drop(): delete saved state from [dir_c] at [evt_d]
+*/
+c3_o
+u3m_rock_drop(c3_c* dir_c, c3_d evt_d)
+{
+  c3_c nam_c[8193];
+  snprintf(nam_c, 8192, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, evt_d);
+
+  if ( 0 != unlink(nam_c) ) {
+    u3l_log("rock: drop %s failed: %s\r\n", nam_c, strerror(errno));
+    return c3n;
+  }
+
+  return c3y;
+}
+
+/* u3m_wipe(): purge and reinitialize loom, with checkpointing
+*/
+void
+u3m_wipe(void)
+{
+  //  clear page flags
+  //
+  memset((void*)u3P.dit_w, 0, u3a_pages >> 3);
+  //  reinitialize checkpoint system
+  //
+  //    NB: callers must first u3e_hold() or u3e_wipe()
+  //
+  u3e_live(c3n, u3P.dir_c);
+  //  reinitialize loom
+  //
+  u3m_pave(c3y, c3n);
+  //  reinitialize jets
+  //
+  u3j_boot(c3y);
+}
+
 /* u3m_reclaim: clear persistent caches to reclaim memory
 */
 void
