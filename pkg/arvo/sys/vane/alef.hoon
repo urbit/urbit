@@ -1630,8 +1630,32 @@
       ::
       ?.  ?=(?(%dead %unborn) -.qos.peer-state)
         peer-core
-      ::  peer has stopped responding; notify client vanes
+      ::  peer has stopped responding; check if our responses are backing up
       ::
+      ::    Only look at response bones.  Request bones are unregulated,
+      ::    since requests tend to be much smaller than responses.
+      ::
+      =/  pumps=(list message-pump-state)
+        %+  murn  ~(tap by snd.peer-state)
+        |=  [=bone =message-pump-state]
+        ?:  =(0 (end 0 1 bone))
+          ~
+        `u=message-pump-state
+      ::  clogged: are five or more response messages unsent to this peer?
+      ::
+      =/  clogged=?
+        =|  acc=@ud
+        |-  ^-  ?
+        ?~  pumps
+          %.n
+        =.  acc  (add acc (sub [next current]:i.pumps))
+        ?:  (gte acc 5)
+          %.y
+        $(pumps t.pumps)
+      ::  if clogged, notify client vanek
+      ::
+      ?.  clogged
+        peer-core
       %+  roll  ~(tap in heeds.peer-state)
       |=([d=^duct core=_peer-core] (emit:core d %give %clog her.channel))
     ::  +on-hear-shut-packet: handle receipt of ack or message fragment
