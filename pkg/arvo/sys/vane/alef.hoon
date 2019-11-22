@@ -1147,13 +1147,14 @@
     ::
     =/  =peer-state   +.u.sndr-state
     =/  =channel      [[our sndr.packet] now |2.ames-state -.peer-state]
+    ~|  %ames-crash-on-packet-from^her
     =/  =shut-packet  (decrypt symmetric-key.channel content.packet)
     ::  ward against replay attacks
     ::
     ::    We only accept packets from a ship at their known life, and to
     ::    us at our current life.
     ::
-    ~|  [[her our-life her-life]:channel [sndr-life rcvr-life]:shut-packet]
+    ~|  lives=[[our-life her-life]:channel [sndr-life rcvr-life]:shut-packet]
     ?>  =(sndr-life.shut-packet her-life.channel)
     ?>  =(rcvr-life.shut-packet our-life.channel)
     ::  non-galaxy: update route with heard lane or forwarded lane
@@ -2706,8 +2707,8 @@
     [%dead %live]    `"; {(scow %p ship)} is ok"
     [%live %dead]    `"; {(scow %p ship)} not responding still trying"
     [%unborn %dead]  `"; {(scow %p ship)} not responding still trying"
-    [%live %unborn]  `"; {(scow %p ship)} is dead"
-    [%dead %unborn]  `"; {(scow %p ship)} is dead"
+    [%live %unborn]  `"; {(scow %p ship)} has sunk"
+    [%dead %unborn]  `"; {(scow %p ship)} has sunk"
   ==
 ::  +split-message: split message into kilobyte-sized fragments
 ::
