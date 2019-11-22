@@ -5570,10 +5570,11 @@
       ?~(jon ~ (some (wit jon)))
     ::                                                  ::  ++ne:dejs:format
     ++  ne                                              ::  number as real
+      =,  ^so
       |=  jon/json
-      ^-  (unit @rd)
-      ::  please implement me, it's not that hard!
-      !!
+      ^-  @rd
+      ?>  ?=([%n *] jon)
+      (rash p.jon (cook ryld (cook royl-cell royl-rn)))
     ::                                                  ::  ++ni:dejs:format
     ++  ni                                              ::  number as integer
       |=  jon/json
@@ -5782,9 +5783,11 @@
       ?~(jon (some ~) (bind (wit jon) some))
     ::
     ++  ne                                              ::  number as real
+      =,  ^so
       |=  jon/json
       ^-  (unit @rd)
-      !!
+      ?.  ?=([%n *] jon)  ~
+      (rush p.jon (cook ryld (cook royl-cell royl-rn)))
     ::
     ++  ni                                              ::  number as integer
       |=  jon/json
