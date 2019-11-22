@@ -1280,11 +1280,6 @@
     ::    Abandon all pretense of continuity and delete all messaging state
     ::    associated with .ship, including sent and unsent messages.
     ::
-    ::    TODO: cancel all timers? otherwise we'll get spurious firings
-    ::    from behn
-    ::
-    ::    TODO: cancel gall subscriptions on breach
-    ::
     ++  on-publ-breach
       |=  =ship
       ^+  event-core
@@ -1305,6 +1300,23 @@
       ::
       =/  =peer-state  +.u.ship-state
       =/  old-qos=qos  qos.peer-state
+      ::  cancel all timers related to .ship
+      ::
+      =.  peer-core
+        %+  roll  ~(tap by snd.peer-state)
+        |=  [[=snd=bone =message-pump-state] core=_peer-core]
+        ^+  core
+        ::
+        =/  next-wake=(unit @da)
+          next-wake.packet-pump-state.message-pump-state.core
+        ::
+        ?~  next-wake
+          core
+        ::  note: copies +on-pump-rest:message-pump
+        ::
+        =/  =wire  (make-pump-timer-wire ship snd-bone)
+        =/  duct   ~[/ames]
+        (emit:core duct %pass wire %b %rest u.next-wake)
       ::  reset all peer state other than pki data
       ::
       =.  +.peer-state  +:*^peer-state
