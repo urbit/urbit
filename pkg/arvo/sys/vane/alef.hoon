@@ -1311,8 +1311,8 @@
           core
         ::  note: copies +on-pump-rest:message-pump
         ::
-        =/  =wire  (make-pump-timer-wire ship snd-bone)
-        =/  duct   ~[/ames]
+        =/  wire  (make-pump-timer-wire ship snd-bone)
+        =/  duct  ~[/ames]
         (emit:core duct %pass wire %b %rest u.next-wake)
       ::  reset all peer state other than pki data
       ::
