@@ -29,3 +29,8 @@
       */
         c3_o
         u3s_jam_file(u3_noun a, c3_c* pas_c);
+
+      /* u3s_cue(): cue [a]
+      */
+        u3_noun
+        u3s_cue(u3_atom a);
