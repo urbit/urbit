@@ -1652,10 +1652,17 @@
     ++  on-wake
       |=  [=bone error=(unit tang)]
       ^+  peer-core
-      ::  if we previously errored out, print and try again
+      ::  if we previously errored out, print and reset timer for later
       ::
-      =?  peer-core  ?=(^ error)
-        (emit duct %pass /wake-fail %d %flog %crud %ames-wake u.error)
+      ::    This really shouldn't happen, but if it does, make sure we
+      ::    don't brick either this messaging flow or Behn.
+      ::
+      ?^  error
+        =.  peer-core
+          (emit duct %pass /wake-fail %d %flog %crud %ames-wake u.error)
+        ::
+        =/  =wire  (make-pump-timer-wire her.channel bone)
+        (emit duct %pass wire %wait (add now.channel ~s30))
       ::  update and print connection state
       ::
       =.  peer-core  %-  update-qos
