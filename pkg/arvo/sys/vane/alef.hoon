@@ -1139,7 +1139,7 @@
     ::
     ?.  ?=([~ %known *] sndr-state)
       (enqueue-alien-todo sndr.packet |=(alien-agenda +<))
-    ::  decrypt packet contents using symmetric-key.channel
+    ::  channel: immutable data about relationship with .sndr.packet
     ::
     ::    If we know them, we have a $channel with them, which we've
     ::    populated with a .symmetric-key derived from our private key
@@ -1147,14 +1147,17 @@
     ::
     =/  =peer-state   +.u.sndr-state
     =/  =channel      [[our sndr.packet] now |2.ames-state -.peer-state]
-    =/  =shut-packet  (decrypt symmetric-key.channel content.packet)
     ::  ward against replay attacks
     ::
     ::    We only accept packets from a ship at their known life, and to
     ::    us at our current life.
     ::
+    ~|  [[her our-life her-life]:channel [sndr-life rcvr-life]:shut-packet]]
     ?>  =(sndr-life.shut-packet her-life.channel)
     ?>  =(rcvr-life.shut-packet our-life.channel)
+    ::  decrypt packet contents using symmetric-key.channel
+    ::
+    =/  =shut-packet  (decrypt symmetric-key.channel content.packet)
     ::  non-galaxy: update route with heard lane or forwarded lane
     ::
     =?  route.peer-state  !=(%czar (clan:title her.channel))
