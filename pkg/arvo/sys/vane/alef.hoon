@@ -1307,10 +1307,7 @@
         |=  [[=snd=bone =message-pump-state] core=_event-core]
         ^+  core
         ::
-        =/  next-wake=(unit @da)
-          next-wake.packet-pump-state.message-pump-state.core
-        ::
-        ?~  next-wake
+        ?~  next-wake=next-wake.packet-pump-state.message-pump-state
           core
         ::  note: copies +on-pump-rest:message-pump
         ::
