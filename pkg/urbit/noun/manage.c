@@ -430,25 +430,25 @@ u3m_file(c3_c* pas_c)
 
 /* u3m_jam_file(): jam [a] into a file, overwriting
 */
-void
+c3_o
 u3m_jam_file(u3_noun a, c3_c* pas_c)
 {
   u3p(u3h_root) bak_p;
   c3_i fid_i = open(pas_c, O_RDWR | O_CREAT | O_TRUNC, 0644);
   c3_w byt_w, wor_w, len_w;
 
-  //  XX mkdirp
-  //
   if ( fid_i < 0 ) {
     fprintf(stderr, "jam: open %s: %s\r\n", pas_c, strerror(errno));
-    u3m_bail(c3__fail);
+    return c3n;
   }
 
   {
     c3_d len_d = u3s_jam_met(a, &bak_p);
 
     if ( len_d > 0xffffffffULL ) {
-      u3m_bail(c3__fail);
+      fprintf(stderr, "jam: overflow c3_w: %" PRIu64 "\r\n", len_d);
+      u3h_free(bak_p);
+      return c3n;
     }
 
     //  length in bytes a la u3i_bytes
@@ -473,8 +473,8 @@ u3m_jam_file(u3_noun a, c3_c* pas_c)
   //  grow [fid_i] to [len_w]
   //
   if ( 0 != ftruncate(fid_i, len_w) ) {
-    fprintf(stderr, "jam: ftruncate 1 %s: %s\r\n", pas_c, strerror(errno));
-    u3m_bail(c3__fail);
+    fprintf(stderr, "jam: ftruncate grow %s: %s\r\n", pas_c, strerror(errno));
+    goto error;
   }
 
   //  mmap [fid_i], jam into it, sync, and unmap
@@ -485,7 +485,7 @@ u3m_jam_file(u3_noun a, c3_c* pas_c)
 
     if ( MAP_FAILED == ptr_v ) {
       fprintf(stderr, "jam: mmap %s: %s\r\n", pas_c, strerror(errno));
-      u3m_bail(c3__fail);
+      goto error;
     }
 
     buf_w = ptr_v;
@@ -493,24 +493,39 @@ u3m_jam_file(u3_noun a, c3_c* pas_c)
 
     if ( 0 != msync(ptr_v, len_w, MS_SYNC) ) {
       fprintf(stderr, "jam: msync %s: %s\r\n", pas_c, strerror(errno));
-      u3m_bail(c3__fail);
+      //  XX ignore return?
+      //
+      munmap(ptr_v, len_w);
+      goto error;
     }
 
     if ( 0 != munmap(ptr_v, len_w) ) {
-      fprintf(stderr, "jam: msync 1 %s: %s\r\n", pas_c, strerror(errno));
-      u3m_bail(c3__fail);
+      fprintf(stderr, "jam: munmap %s: %s\r\n", pas_c, strerror(errno));
+      //  XX fatal error?
+      //
+      goto error;
     }
   }
 
   //  shrink [fid_i] to [byt_w]
   //
   if ( 0 != ftruncate(fid_i, byt_w) ) {
-    fprintf(stderr, "jam: ftruncate 2 %s: %s\r\n", pas_c, strerror(errno));
-    u3m_bail(c3__fail);
+    fprintf(stderr, "jam: ftruncate shrink %s: %s\r\n", pas_c, strerror(errno));
+    goto error;
   }
 
-  close(fid_i);
-  u3h_free(bak_p);
+  {
+    close(fid_i);
+    u3h_free(bak_p);
+    return c3y;
+  }
+
+  error: {
+    close(fid_i);
+    unlink(pas_c);
+    u3h_free(bak_p);
+    return c3n;
+  }
 }
 
 /* _find_north(): in restored image, point to a north home.
