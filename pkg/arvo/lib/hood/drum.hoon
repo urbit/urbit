@@ -566,7 +566,7 @@
   ++  ta-act                                          ::  send action
     |=  act/sole-action
     ^+  +>
-    (ta-poke %sole-action !>(['drum' act]))
+    (ta-poke %sole-action !>(act))
   ::
   ++  ta-aro                                          ::  hear arrow
     |=  key/?($d $l $r $u)
@@ -607,7 +607,10 @@
   ++  ta-det                                          ::  send edit
     |=  ted/sole-edit
     ^+  +>
-    (ta-act %det [[his.ven.say.inp own.ven.say.inp] (sham buf.say.inp) ted])
+    %^    ta-act
+        %drum
+      %det
+    [[his.ven.say.inp own.ven.say.inp] (sham buf.say.inp) ted]
   ::
   ++  ta-bac                                          ::  hear backspace
     ^+  .
@@ -617,7 +620,7 @@
       .(str.u.ris (scag (dec (lent str.u.ris)) str.u.ris))
     ?:  =(0 pos.inp)
       ?~  buf.say.inp
-        (ta-act %clr ~)
+        (ta-act %drum %clr ~)
       ta-bel
     (ta-hom %del (dec pos.inp))
   ::
@@ -905,10 +908,10 @@
     ==
   ::
   ++  ta-ret                                          ::  hear return
-    (ta-act %ret ~)
+    (ta-act %drum %ret ~)
   ::
   ++  ta-tab                                          ::  hear tab
-    (ta-act %tab pos.inp)
+    (ta-act %drum %tab pos.inp)
   ::
   ++  ta-ser                                          ::  reverse search
     |=  ext/(list @c)
