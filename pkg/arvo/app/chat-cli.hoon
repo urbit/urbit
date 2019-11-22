@@ -97,7 +97,7 @@
     =^  cards  all-state
       ?+  mark        (on-poke:def mark vase)
         %noun         (poke-noun:tc mark !<(* vase))
-        %sole-action  (poke-sole-action:tc !<([@t sole-action:sole-sur] vase))
+        %sole-action  (poke-sole-action:tc !<(sole-action:sole-sur vase))
       ==
     [cards this]
   ::
@@ -207,8 +207,8 @@
 ::  +poke-sole-action: handle cli input
 ::
 ++  poke-sole-action
-  ::TODO  use session id to support multiple separate sessions
-  |=  [session=@t act=sole-action:sole-sur]
+  ::TODO  use id.act to support multiple separate sessions
+  |=  [act=sole-action:sole-sur]
   ^-  (quip card state)
   (sole:sh-in act)
 ::  +peer: accept only cli subscriptions from ourselves
@@ -346,8 +346,8 @@
   ++  sole
     |=  act=sole-action:sole-sur
     ^-  (quip card state)
-    ?-  -.act
-      %det  (edit +.act)
+    ?-  -.dat.act
+      %det  (edit +.dat.act)
       %clr  [~ all-state]
       %ret  obey
       %tab  [~ all-state]

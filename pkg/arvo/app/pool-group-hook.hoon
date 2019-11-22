@@ -160,7 +160,7 @@
   :+  `'invitedBy'
     delegated-sending:contracts:azimuth
   :-  'invitedBy(uint32)'
-  :~  [%uint our.bowl]
+  :~  [%uint `@`our.bowl]
   ==
 ::
 ++  poll-invited
