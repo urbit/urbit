@@ -1147,7 +1147,7 @@
     ::
     =/  =peer-state   +.u.sndr-state
     =/  =channel      [[our sndr.packet] now |2.ames-state -.peer-state]
-    ~|  %ames-crash-on-packet-from^her
+    ~|  %ames-crash-on-packet-from^her.channel
     =/  =shut-packet  (decrypt symmetric-key.channel content.packet)
     ::  ward against replay attacks
     ::
