@@ -1656,10 +1656,14 @@ _pier_boot_ready(u3_pier* pir_u)
       //
       _pier_work_boot(pir_u, c3n);
     }
+    else if ( (1ULL + god_u->dun_d) == log_u->com_d ) {
+      fprintf(stderr, "pier: replaying event %" PRIu64 "\r\n",
+                      log_u->com_d);
+    }
     else {
       fprintf(stderr, "pier: replaying events %" PRIu64
                       " through %" PRIu64 "\r\n",
-                      god_u->dun_d,
+                      (c3_d)(1ULL + god_u->dun_d),
                       log_u->com_d);
     }
 
