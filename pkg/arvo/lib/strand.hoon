@@ -151,8 +151,7 @@
       ::
       ?-  -.next.output
           %wait  [[cards %next ~] eval-form]
-          %skip  ~|  [%take-got-skip ?~(in.strand-input ~ [+< +>-]:u.in.strand-input)]
-                 !!
+          %skip  [[cards %next ~] eval-form]
           %fail  [[cards %fail err.next.output] eval-form]
           %done  [[cards %done value.next.output] eval-form]
           %cont
