@@ -111,6 +111,7 @@
       %chat-hook
       %chat-view
       %chat-cli
+      %soto
   ==
 ::
 ++  deft-fish                                           ::  default connects
