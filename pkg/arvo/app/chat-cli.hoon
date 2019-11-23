@@ -121,14 +121,8 @@
 ++  connect
   ^-  move
   [ost.bowl %peer /chat-store [our-self %chat-store] /updates]
-::  +true-self: moons to planets
 ::
-++  true-self
-  |=  who=ship
-  ^-  ship
-  ?.  ?=(%earl (clan:title who))  who
-  (sein:title our.bowl now.bowl who)
-++  our-self  (true-self our.bowl)
+++  our-self  (name:title our.bowl)
 ::  +target-to-path: prepend ship to the path
 ::
 ++  target-to-path
