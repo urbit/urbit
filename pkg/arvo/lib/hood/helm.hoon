@@ -95,7 +95,7 @@
 ::
 ++  poke-mass
   |=  ~  =<  abet
-  (emit %flog /heft %crud %hax-heft ~)
+  (emit %flog /heft %heft ~)
 ::
 ++  poke-automass
   |=  recur=@dr
@@ -106,6 +106,10 @@
 ++  poke-cancel-automass
   |=  ~
   abet:(emit %rest way.mass-timer.sez nex.mass-timer.sez)
+::
+++  poke-pack
+  |=  ~  =<  abet
+  (emit %flog /pack %pack ~)
 ::
 ++  poke-bonk
   |=  ~

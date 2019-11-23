@@ -157,6 +157,7 @@
 ::++  poke-helm-invite          (wrap poke-invite):from-helm
 ++  poke-helm-knob            (wrap poke-knob):from-helm
 ++  poke-helm-mass            (wrap poke-mass):from-helm
+++  poke-helm-pack            (wrap poke-pack):from-helm
 ++  poke-helm-reload          (wrap poke-reload):from-helm
 ++  poke-helm-reload-desk     (wrap poke-reload-desk):from-helm
 ++  poke-helm-reset           (wrap poke-reset):from-helm
