@@ -540,6 +540,12 @@ _worker_sure_feck(u3_noun ovo, u3_noun vir, c3_w pre_w)
         rec_o = c3y;
       }
 
+      //  pack memory on |pack
+      //
+      if ( c3__pack == u3h(fec) ) {
+        pac_o = c3y;
+      }
+
       riv = u3t(riv);
       i_w++;
     }
