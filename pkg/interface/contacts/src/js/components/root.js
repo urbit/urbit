@@ -33,11 +33,8 @@ export class Root extends Component {
         <Route exact path="/~contacts"
           render={ (props) => {
             return (
-              <Skeleton>
+              <Skeleton display="groups">
                 <div className="h-100 w-100 overflow-x-hidden flex flex-column">
-                  <div className="pl3 pr3 pt2 pb3">
-                    <h2>Home</h2>
-                  </div>
                 </div>
               </Skeleton>
             );
