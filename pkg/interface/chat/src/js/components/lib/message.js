@@ -122,7 +122,7 @@ export class Message extends Component {
                 {props.msg.author}
               </p>
               <p className="v-mid mono f9 gray dib">{timestamp}</p>
-              <p className="v-mid mono f9 ml2 gray dib child">{datestamp}</p>
+              <p className="v-mid mono f9 ml2 gray dib child dn-s">{datestamp}</p>
             </div>
             {this.renderContent()}
           </div>

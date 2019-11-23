@@ -190,6 +190,7 @@ export class ChatInput extends Component {
           <textarea
             className={"pl3 bn"}
             style={{ flexGrow: 1, height: 28, paddingTop: 6, resize: "none" }}
+            autoCapitalize="none"
             ref={this.textareaRef}
             placeholder={props.placeholder}
             value={state.message}
