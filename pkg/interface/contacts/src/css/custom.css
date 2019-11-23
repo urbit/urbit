@@ -1,3 +1,8 @@
+html, body, div#root {
+  height: 100%;
+  width: 100%;
+}
+
 p, h1, h2, h3, h4, h5, h6, a, input, textarea, button {
   margin-block-end: unset;
   margin-block-start: unset;
@@ -46,4 +51,20 @@ a {
 
 .mono {
   font-family: "Source Code Pro", monospace;
+}
+
+/* responsive */
+@media all and (max-width: 34.375em) {
+  .flex-basis-100-s {
+    flex-basis: 100%;
+  }
+}
+
+@media all and (min-width: 34.375em) {
+  .db-ns {
+    display: block;
+  }
+  .flex-basis-300-ns {
+    flex-basis: 300px;
+  }
 }

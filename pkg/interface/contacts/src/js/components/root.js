@@ -29,12 +29,12 @@ export class Root extends Component {
 
     return (
       <BrowserRouter>
-        <div>
+        <div class="h-100 w-100">
         <Route exact path="/~contacts"
           render={ (props) => {
             return (
               <Skeleton display="groups">
-                <div className="h-100 w-100 overflow-x-hidden flex flex-column">
+                <div className="h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns">
                 </div>
               </Skeleton>
             );
