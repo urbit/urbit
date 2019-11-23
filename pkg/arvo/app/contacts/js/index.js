@@ -58805,23 +58805,37 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$3 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/skeleton.js";
-
-            class Skeleton extends react_1 {
+            const _jsxFileName$3 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/groups.js";
+            class Groups extends react_1 {
+              // drawer to the left
               render() {
                 return (
-                  react.createElement('div', { className: "h-100 w-100" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 10}}
-                    , react.createElement(HeaderBar, { spinner: this.props.spinner, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 11}} )
+                  react.createElement('div', { className: "br b--gray4 h-100 flex-basis-100-s flex-basis-300-ns"    , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 7}}
+                  )
+                )
+              }
+            }
+
+            const _jsxFileName$4 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/skeleton.js";
+            class Skeleton extends react_1 {
+              render() {
+                  let rightPanelClasses =
+                    this.props.display === "contactCard" ? "db" : "dn db-ns"; 
+
+                return (
+                  react.createElement('div', { className: "h-100 w-100" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 13}}
+                    , react.createElement(HeaderBar, { spinner: this.props.spinner, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 14}} )
                     , react.createElement('div', {
                       className: "cf w-100 flex"  ,
                       style: {
                         height: "calc(100% - 48px)"
-                      }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 12}}
+                      }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 15}}
+                      , react.createElement(Groups, {__self: this, __source: {fileName: _jsxFileName$4, lineNumber: 20}} )
                       , react.createElement('div', {
-                        className: "h-100 w-100" ,
+                        className: "h-100 w-100 " + rightPanelClasses,
                         style: {
                           flexGrow: 1
-                        }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 17}}
+                        }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 21}}
                         , this.props.children
                       )
                     )
@@ -58830,7 +58844,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$4 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/root.js";
+            const _jsxFileName$5 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/root.js";
 
             class Root extends react_1 {
               constructor(props) {
@@ -58850,24 +58864,24 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               render() {
 
                 return (
-                  react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$4, lineNumber: 31}}
-                    , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$4, lineNumber: 32}}
+                  react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 31}}
+                    , react.createElement('div', { class: "h-100 w-100" , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 32}}
                     , react.createElement(Route, { exact: true, path: "/~contacts",
                       render:  (props) => {
                         return (
-                          react.createElement(Skeleton, { display: "groups", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 36}}
-                            , react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 37}}
+                          react.createElement(Skeleton, { display: "groups", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 36}}
+                            , react.createElement('div', { className: "h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"     , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 37}}
                             )
                           )
                         );
-                      }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 33}} )
+                      }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 33}} )
                     )
                   )
                 )
               }
             }
 
-            const _jsxFileName$5 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/index.js";
+            const _jsxFileName$6 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/index.js";
             api.setAuthTokens({
               ship: window.ship
             });
@@ -58875,7 +58889,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
             subscription.start();
 
             reactDom.render((
-              react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$5, lineNumber: 15}} )
+              react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 15}} )
             ), document.querySelectorAll("#root")[0]);
 
 }));
