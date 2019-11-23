@@ -15,101 +15,7 @@ textarea, input, button {
 }
 
 a {
-  color: #000 !important;
-  font-weight: 400 !important;
-}
-
-h2 {
-  font-size: 32px;
-  line-height: 48px;
-  font-weight: bold;
-}
-
-.body-regular {
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 600;
-}
-
-.body-large {
-  font-size: 20px;
-  line-height: 24px;
-}
-
-.body-medium {
-  font-size: 16px;
-  line-height: 19px;
-}
-
-.body-small {
-  font-size: 12px;
-  line-height: 16px;
-  color: #7f7f7f;
-}
-
-.label-regular {
-  font-size: 14px;
-  line-height: 24px;
-}
-
-.label-small {
-  font-size: 14px;
-  line-height: 24px;
-}
-
-.label-small-mono {
-  font-size: 12px;
-  line-height: 24px;
-  font-family: "Source Code Pro", monospace;
-}
-
-.body-regular-400 {
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-}
-
-.plus-font {
-  font-size: 32px;
-  line-height: 24px;
-}
-
-.btn-font {
-  font-size: 14px;
-  line-height: 16px;
-  font-weight: 600 !important;
-}
-
-.fw-normal {
-  font-weight: 400;
-}
-
-.fw-bold {
-  font-weight: bold;
-}
-
-.fs-italic {
-  font-style: italic;
-}
-
-.td-underline {
-  text-decoration: underline;
-}
-
-.bg-v-light-gray {
-  background-color: #f9f9f9;
-}
-
-.nice-green {
-  color: #2AA779 !important;
-}
-
-.bg-nice-green {
-  background: #2ED196;
-}
-
-.nice-red {
-  color: #EE5432 !important;
+  color: #000;
 }
 
 .inter {
@@ -140,8 +46,4 @@ h2 {
 
 .mono {
   font-family: "Source Code Pro", monospace;
-}
-
-.label-small-mono.list-ship {
-  line-height: 29px;
 }
