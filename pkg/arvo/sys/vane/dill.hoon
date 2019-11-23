@@ -204,6 +204,7 @@
           $blew  (send %rez p.p.kyz q.p.kyz)
           $heft  heft
           $lyra  (dump kyz)
+          $pack  (dump kyz)
           $veer  (dump kyz)
           $verb  (dump kyz)
         ==
