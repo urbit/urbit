@@ -59,8 +59,8 @@
   ^-  (quip move _this)
   ?~  old
     :_  this
-    :~  [ost.bol %connect / [~ /'~contact'] %contact-view]
-        (launch-poke [/configs '/~contact/js/tile.js'])
+    :~  [ost.bol %connect / [~ /'~contacts'] %contact-view]
+        (launch-poke [/configs '/~contacts/js/tile.js'])
     ==
   [~ this(+<+ u.old)]
 ::
