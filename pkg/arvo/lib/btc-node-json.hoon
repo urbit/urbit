@@ -301,7 +301,126 @@
     ^-  request:rpc:jstd
     :^  -.req  (method -.req)  %list
     ^-  (list json)
-    ?+    -.req  ~|([%unsupported-request -.req] !!)
+    ?-    -.req
+    ::  Blockchain
+    ::
+        %get-best-block-hash
+      ~
+    ::
+        %get-block
+      ~[s+(hex-to-cord blockhash.req) (feud verbosity.req)]
+      ::
+        %get-blockchain-info
+      ~
+    ::
+        %get-block-count
+      ~
+    ::
+        %get-block-hash
+      ~[(numb height.req)]
+    ::
+        %get-block-header
+      ~[s+(hex-to-cord blockhash.req) (ferm verbose.req %b)]
+    ::
+        %get-block-stats
+      :~  =*  h  hash-or-height.req
+          ?-  -.h
+            %num  (numb +.h)
+            %hex  s+(hex-to-cord +.h)
+          ==
+        ::
+          ?~  stats.req  ~
+          a+(turn u.stats.req |=(a=@t s+a))
+      ==
+    ::
+        %get-chain-tips
+      ~
+    ::
+        %get-chain-tx-stats
+      :~  (feud n-blocks.req)
+        ::
+          ?~  blockhash.req
+            ~
+          s+(hex-to-cord u.blockhash.req)
+      ==
+    ::
+        %get-difficulty
+      ~
+    ::
+        %get-mempool-ancestors
+      ~[s+(hex-to-cord txid.req) (ferm verbose.req %b)]
+    ::
+        %get-mempool-descendants
+      ~[s+(hex-to-cord txid.req) (ferm verbose.req %b)]
+    ::
+        %get-mempool-entry
+      ~[s+(hex-to-cord txid.req)]
+    ::
+        %get-mempool-info
+      ~
+    ::
+        %get-raw-mempool
+      ~[(ferm verbose.req %b)]
+    ::
+        %get-tx-out
+      :~  s+(hex-to-cord txid.req)
+        ::
+          (numb n.req)
+        ::
+          (ferm include-mempool.req %b)
+      ==
+    ::
+        %get-tx-out-proof
+      :~  :-  %a
+          %+  turn  tx-ids.req
+          |=  a=@ux
+          s+(hex-to-cord a)
+        ::
+          ?~  blockhash.req
+            ~
+          s+(hex-to-cord u.blockhash.req)
+      ==
+    ::
+        %get-tx-outset-info
+      ~
+    ::
+        %precious-block
+      ~[s+(hex-to-cord blockhash.req)]
+    ::
+        %prune-blockchain
+      ~[(numb height.req)]
+    ::
+        %save-mempool
+      ~
+    ::
+        %scan-tx-outset
+      :~  s+action.req
+        ::
+          :-  %a
+          %+  turn  scan-objects.req
+          |=  s-o=scan-object
+          ^-  json
+          ?@  s-o
+            s+s-o
+          ?>  ?=([@t (unit range)] s-o)
+          %-  pairs
+          :~  ['desc' s+desc.object.s-o]
+            ::
+              :-  'range'
+              ^-  json
+              ?~  range.object.s-o
+                ~
+              =*  r  u.range.object.s-o
+              ?@  r
+                (numb r)
+              a+~[(numb -.r) (numb +.r)]
+      ==  ==
+    ::
+        %verify-chain
+      ~[(feud check-level.req) (feud n-blocks.req)]
+    ::
+        %verify-tx-out-proof
+      ~[s+(hex-to-cord proof.req)]
     ::  Control
     ::
         %get-memory-info
@@ -1256,6 +1375,347 @@
     ::
     ?>  ?=(%result -.res)
     ?+    id.res  ~|  [%unsupported-response id.res]   !!
+    ::  Blockchain
+    ::
+        %get-best-block-hash
+      [id.res ((cu to-hex so) res.res)]
+    ::
+        %get-block
+      :-  id.res
+      %.  res.res
+      ?+  -.res.res  ~|([%format-not-valid -.res.res] !!)
+            %s
+          (cu to-hex so)
+        ::
+            %o
+          %-  ou
+          :~  ['hash' (un (cu to-hex so))]
+              ['confirmations' (un ni)]
+              ['size' (un ni)]
+              ['strippedsize' (un ni)]
+              ['weight' (un ni)]
+              ['height' (un ni)]
+              ['version' (un no)]
+              ['versionHex' (un (cu to-hex so))]
+              ['merkleroot' (un (cu to-hex so))]
+            ::
+              :-  'tx'
+              =-  (un (ar -))
+              |=  =json
+              %.  json
+              ::  verbosity = 1
+              ::
+              ?:  =(%s -.json)
+                (cu to-hex so)
+              ?.  =(%o -.json)
+                !!
+              ::  verbosity = 2
+              ::
+              raw-transaction:json-parser
+            ::
+              ['time' (un ni)]
+              ['mediantime' (un ni)]
+              ['nonce' (un ni)]
+              ['bits' (un (cu to-hex so))]
+              ['difficulty' (un no)]
+              ['chainwork' (un (cu to-hex so))]
+              ['nTx' (un ni)]
+              ['previousblockhash' (un (cu to-hex so))]
+              ['nextblockhash' (uf ~ (mu (cu to-hex so)))]
+      ==  ==
+    ::
+        %get-blockchain-info
+      :-  id.res
+      %.  res.res
+      %-  ou
+      :~  ['chain' (un (cu network-name so))]
+          ['blocks' (un ni)]
+          ['headers' (un ni)]
+          ['bestblockhash' (un (cu to-hex so))]
+          ['difficulty' (un no)]
+          ['mediantime' (un ni)]
+          ['verificationprogress' (un ni)]
+          ['initialblockdownload' (un bo)]
+          ['chainwork' (un (cu to-hex so))]
+          ['size_on_disk' (un ni)]
+          ['pruned' (un bo)]
+          ['pruneheight' (uf ~ (mu ni))]
+          ['automatic_pruning' (uf ~ (mu bo))]
+          ['prune_target_size' (uf ~ (mu ni))]
+        ::
+          :-  'softforks'
+          =-  (un (ar (ot -)))
+          :~  ['id' so]
+              ['version' no]
+              ['reject' (ot ['status' bo]~)]
+          ==
+        ::
+          :-  'bip9_softforks'
+          =-  (un (om (ou -)))
+          :~  ['status' (uf ~ (mu (cu soft-fork-status so)))]
+              ['bit' (uf ~ (mu ni))]
+            ::
+              :-  'startTime'
+              =-  (un (cu - no))
+              |=  a=@t
+              ^-  ?(@ud %'-1')
+              ?:  =(a '-1')
+                %'-1'
+              (rash a dem)
+            ::
+              ['timeout' (un ni)]
+              ['since' (un ni)]
+            ::
+              :-  'statistics'
+              =-  (uf ~ (mu (ot -)))
+              :~  ['period' ni]
+                  ['threshold' ni]
+                  ['elapsed' ni]
+                  ['count' ni]
+                  ['possible' bo]
+          ==  ==
+        ::
+          ['warnings' (un so)]
+      ==
+    ::
+        %get-block-count
+      [id.res (ni res.res)]
+    ::
+        %get-block-hash
+      [id.res ((cu to-hex so) res.res)]
+    ::
+        %get-block-header
+      :-  id.res
+      ?:  =(%s -.res.res)
+        ((cu to-hex so) res.res)
+      ?.  =(%o -.res.res)  !!
+      %.  res.res
+      %-  ou
+      :~  ['hash' (un (cu to-hex so))]
+          ['confirmations' (un ni)]
+          ['height' (un ni)]
+          ['version' (un no)]
+          ['versionHex' (un (cu to-hex so))]
+          ['merkleroot' (un (cu to-hex so))]
+          ['time' (un ni)]
+          ['mediantime' (un ni)]
+          ['nonce' (un ni)]
+          ['bits' (un (cu to-hex so))]
+          ['difficulty' (un no)]
+          ['chainwork' (un (cu to-hex so))]
+          ['nTx' (un ni)]
+          ['previousblockhash' (un (cu to-hex so))]
+          ['nextblockhash' (uf ~ (mu (cu to-hex so)))]
+      ==
+    ::
+        %get-block-stats
+      :-  id.res
+      %.  res.res
+      %-  ot
+      :~  ['avgfee' no]
+          ['avgfeerate' ni]
+          ['avgtxsize' ni]
+          ['blockhash' (cu to-hex so)]
+        ::
+          :-  'feerate_percentiles'
+          =-  (cu - (ar no))
+          |=  p=(list @t)
+          ?>  ?=([@t @t @t @t @t *] p)
+          :*  i.p
+              i.t.p
+              i.t.t.p
+              i.t.t.t.p
+              i.t.t.t.t.p
+          ==
+        ::
+          ['height' ni]
+          ['ins' ni]
+          ['maxfee' no]
+          ['maxfeerate' no]
+          ['maxtxsize' ni]
+          ['medianfee' no]
+          ['mediantime' ni]
+          ['mediantxsize' ni]
+          ['minfee' no]
+          ['minfeerate' no]
+          ['mintxsize' ni]
+          ['outs' ni]
+          ['subsidy' no]
+          ['swtotal_size' ni]
+          ['swtotal_weight' ni]
+          ['swtxs' ni]
+          ['time' ni]
+          ['total_out' no]
+          ['total_size' ni]
+          ['total_weight' no]
+          ['totalfee' no]
+          ['txs' ni]
+          ['utxo_increase' ni]
+          ['utxo_size_inc' ni]
+      ==
+    ::
+        %get-chain-tips
+      :-  id.res
+      %.  res.res
+      =-  (ar (ot -))
+      :~  ['height' ni]
+          ['hash' (cu to-hex so)]
+          ['branchlen' ni]
+          ['status' (cu chain-status so)]
+      ==
+    ::
+        %get-chain-tx-stats
+      :-  id.res
+      %.  res.res
+      %-  ou
+      :~  ['time' (un ni)]
+          ['txcount' (un ni)]
+          ['window_final_block_hash' (un (cu to-hex so))]
+          ['window_block_count' (un ni)]
+          ['window_tx_count' (uf ~ (mu ni))]
+          ['window_interval' (uf ~ (mu ni))]
+          ['txrate' (uf ~ (mu no))]
+      ==
+    ::
+        %get-difficulty
+      [id.res (no res.res)]
+    ::
+        %get-mempool-ancestors
+      :-  id.res
+      ?:  =(%a -.res.res)
+        %.  res.res
+        (ar (cu to-hex so))
+      ?.  =(%o -.res.res)  !!
+      ::  The parsing rule +hex used in +om
+      ::  will give a raw atom so we reparse
+      ::  the keys to get a @ux
+      ::
+      =-  (turn ~(tap by -) |*([a=@ b=*] [`@ux`a b]))
+      %.  res.res
+      (op hex mem-pool:json-parser)
+    ::
+        %get-mempool-descendants
+      :-  id.res
+      ?:  =(%a -.res.res)
+        %.  res.res
+        (ar (cu to-hex so))
+      ?.  =(%o -.res.res)  !!
+      ::  The parsing rule +hex used in +om
+      ::  will give a raw atom so we reparse
+      ::  the keys to get a @ux
+      ::
+      =-  (turn ~(tap by -) |*([a=@ b=*] [`@ux`a b]))
+      %.  res.res
+      (op hex mem-pool:json-parser)
+    ::
+        %get-mempool-entry
+      [id.res (mem-pool:json-parser res.res)]
+    ::
+        %get-mempool-info
+      :-  id.res
+      %.  res.res
+      %-  ot
+      :~  ['size' ni]
+          ['bytes' ni]
+          ['usage' ni]
+          ['maxmempool' ni]
+          ['mempoolminfee' no]
+          ['minrelaytxfee' no]
+      ==
+    ::
+        %get-raw-mempool
+      :-  id.res
+      ?:  =(%a -.res.res)
+        %.  res.res
+        (ar (cu to-hex so))
+      ?.  =(%o -.res.res)  !!
+      ::  The parsing rule +hex used in +om
+      ::  will give a raw atom so we reparse
+      ::  the keys to get a @ux
+      ::
+      =-  (turn ~(tap by -) |*([a=@ b=*] [`@ux`a b]))
+      %.  res.res
+      (op hex mem-pool:json-parser)
+    ::
+        %get-tx-out
+      :-  id.res
+      ?~  res.res
+        ~
+      %-  some
+      %.  res.res
+      %-  ot
+      :~  ['bestblock' (cu to-hex so)]
+          ['confirmations' ni]
+          ['value' no]
+        ::
+          :-  'scriptPubKey'
+          %-  ot
+          :~  ['asm' so]
+              ['hex' (cu to-hex so)]
+              ['reqSigs' ni]
+              ['type' so]
+              ['addresses' (ar (cu addr-type-validator so))]
+          ==
+        ::
+          ['coinbase' bo]
+      ==
+    ::
+        %get-tx-out-proof
+      [id.res ((cu to-hex so) res.res)]
+    ::
+        %get-tx-outset-info
+      :-  id.res
+      %.  res.res
+      %-  ot
+      :~  ['height' ni]
+          ['bestblock' (cu to-hex so)]
+          ['transactions' ni]
+          ['txouts' ni]
+          ['bogosize' ni]
+          ['hash_serialized_2' (cu to-hex so)]
+          ['disk_size' ni]
+          ['total_amount' no]
+      ==
+    ::
+        %precious-block
+      [id.res ~]
+    ::
+        %prune-blockchain
+      [id.res (ni res.res)]
+    ::
+        %save-mempool
+      [id.res ~]
+    ::
+        %scan-tx-outset
+      :-  id.res
+      %.  res.res
+      %-  ou
+      :~  ['success' (uf ~ (mu bo))]
+          ['searched_items' (uf ~ (mu ni))]
+          ['txouts' (uf ~ (mu ni))]
+          ['height' (uf ~ (mu ni))]
+          ['best-blocks' (uf ~ (mu (cu to-hex so)))]
+        ::
+          :-  'unspents'
+          =-  (un (ar (ot -)))
+          :~  ['txid' (cu to-hex so)]
+              ['vout' ni]
+              ['scriptPubKey' (cu to-hex so)]
+              ['desc' so]
+              ['amount' no]
+              ['height' ni]
+          ==
+        ::
+          ['total_amount' (un no)]
+      ==
+    ::
+        %verify-chain
+      [id.res (bo res.res)]
+    ::
+        %verify-tx-out-proof
+      :-  id.res
+      %.  res.res
+      (ar (cu to-hex so))
     ::  Control
     ::
         %get-memory-info

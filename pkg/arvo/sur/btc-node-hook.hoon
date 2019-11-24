@@ -558,6 +558,106 @@
   |%
   +$  request
     $%
+    ::  Blockchain
+    ::
+        ::  %get-best-block-hash: Returns the hash of the
+        ::  best (tip) block in the longest blockchain.
+        ::
+        [%get-best-block-hash ~]
+        ::  %get-block: Returns an Object/string with information about block
+        ::
+        [%get-block blockhash=@ux verbosity=(unit ?(%0 %1 %2))]
+        ::  %get-blockchain-info: Returns info regarding blockchain processing.
+        ::
+        [%get-blockchain-info ~]
+        ::  %get-block-count: Returns number of blocks in the longest blockchain
+        ::
+        [%get-block-count ~]
+        ::  %get-block-hash: Returns hash of block in best-block-chain at height
+        ::
+        [%get-block-hash height=@ud]
+        ::  %get-block-header: If verbose is false, returns a string that is
+        ::  serialized, hex-encoded data for blockheader 'hash'. If verbose is
+        ::  true, returns an Object
+        ::
+        [%get-block-header blockhash=@ux verbose=(unit ?)]
+        ::  %get-block-stats: Compute per block statistics for a given window.
+        ::
+        $:  %get-block-stats
+            $=  hash-or-height
+            $%  [%hex @ux]
+                [%num @ud]
+            ==
+          ::
+            stats=(unit (list @t))
+        ==
+        ::  %get-chain-tips: Return information about tips in the block tree.
+        ::
+        [%get-chain-tips ~]
+        ::  %get-chain-tx-stats: Compute statistics about total number rate
+        ::  of transactions in the chain.
+        ::
+        [%get-chain-tx-stats n-blocks=(unit @ud) blockhash=(unit @ux)]
+        ::  %get-difficulty: Returns the proof-of-work difficulty as a multiple
+        ::  of the minimum difficulty.
+        ::
+        [%get-difficulty ~]
+        ::  %get-mempool-ancestors: If txid is in the mempool, returns
+        ::  all in-mempool ancestors.
+        ::
+        [%get-mempool-ancestors txid=@ux verbose=(unit ?)]
+        ::  %get-mempool-descendants: If txid is in the mempool, returns
+        ::  all in-mempool descendants.
+        ::
+        [%get-mempool-descendants txid=@ux verbose=(unit ?)]
+        ::  %get-mempool-entry: Returns mempool data for given transaction
+        ::
+        [%get-mempool-entry txid=@ux]
+        ::  %get-mempool-info: Returns details on the active state of the
+        ::  TX memory pool.
+        ::
+        [%get-mempool-info ~]
+        ::  %get-raw-mempool: Returns all transaction ids in memory pool as a
+        ::  json array of string transaction ids.
+        ::
+        [%get-raw-mempool verbose=(unit ?)]
+        ::  %get-tx-out: Returns details about an unspent transaction output.
+        ::
+        [%get-tx-out txid=@ux n=@ud include-mempool=(unit ?)]
+        ::  %get-tx-out-proof: Returns a hex-encoded proof that "txid" was
+        ::  included in a block.
+        ::
+        [%get-tx-out-proof tx-ids=(list @ux) blockhash=(unit @ux)]
+        ::  %get-tx-outset-info: Returns statistics about the unspent
+        ::  transaction output set.
+        ::
+        [%get-tx-outset-info ~]
+        ::  %precious-block: Treats a block as if it were received before
+        ::  others with the same work.
+        ::
+        [%precious-block blockhash=@ux]
+        ::  %prune-blockchain:
+        ::
+        [%prune-blockchain height=@ud]
+        ::  %save-mempool: Dumps the mempool to disk.
+        ::  It will fail until the previous dump is fully loaded.
+        ::
+        [%save-mempool ~]
+        ::  %scan-tx-outset: Scans the unspent transaction output set for
+        ::  entries that match certain output descriptors.
+        ::
+        $:  %scan-tx-outset
+            action=?(%start %abort %status)
+            scan-objects=(list scan-object)
+        ==
+        ::  %verify-chain: Verifies blockchain database.
+        ::
+        [%verify-chain check-level=(unit @ud) n-blocks=(unit @ud)]
+        ::  %verify-tx-out-proof: Verifies that a proof points to a transaction
+        ::  in a block, returning the transaction it commits to
+        :: and throwing an RPC error if the block is not in our best chain
+        ::
+        [%verify-tx-out-proof proof=@ux]
     ::  Control
     ::
         :: %getmemoryinfo: Returns an object containing information about memory
@@ -1144,6 +1244,243 @@
   ::
   +$  response
     $%
+    ::  Blockchain
+    ::
+        [%get-best-block-hash hex=@ux]
+      ::
+        $:  %get-block
+            $?  ::  verbosity = 0
+                ::
+                @ux
+              ::
+                ::  verbosity > 0
+                ::
+                $:  hash=@ux
+                    confirmations=@ud
+                    size=@ud
+                    stripped-size=@ud
+                    weight=@ud
+                    height=@ud
+                    version=@t
+                    version-hex=@ux
+                    merkle-root=@ux
+                  ::
+                    $=  tx
+                    %-  list
+                    $?  ::  verbosity = 1
+                        ::
+                        @ux
+                      ::
+                        ::  verbosity = 2
+                        ::
+                        raw-transaction-rpc-out
+                    ==
+                  ::
+                    time=@ud
+                    median-time=@ud
+                    nonce=@ud
+                    bits=@ux
+                    difficulty=@t
+                    chain-work=@ux
+                    n-tx=@ud
+                    previous-blockhash=@ux
+                    next-blockhash=(unit @ux)
+        ==  ==  ==
+      ::
+        $:  %get-blockchain-info
+            chain=network-name
+            blocks=@ud
+            headers=@ud
+            best-block-hash=@ux
+            difficulty=@t
+            median-time=@ud
+            verification-progress=@ud
+            initial-block-download=?
+            chain-work=@ux
+            size-on-disk=@ud
+            pruned=?
+            pruneheight=(unit @ud)
+            automatic-pruning=(unit ?)
+            prune-target-size=(unit @ud)
+            soft-forks=(list [id=@t version=@t reject-status=?])
+          ::
+            $=  bip9-softforks  %+  map
+                name=@t
+                $:  status=(unit soft-fork-status)
+                    bit=(unit @ud)
+                    start-time=?(%'-1' @ud)
+                    timeout=@ud
+                    since=@ud
+                  ::
+                    $=  statistics
+                    %-  unit
+                    $:  period=@ud
+                        threshold=@ud
+                        elapsed=@ud
+                        count=@ud
+                        possible=?
+                ==  ==
+          ::
+            warnings=@t
+        ==
+      ::
+        [%get-block-count count=@ud]
+        [%get-block-hash hash=@ux]
+      ::
+        $:  %get-block-header
+            $?  :: (for verbose = false)
+                ::
+                @ux
+              ::
+                ::  (for verbose = true)
+                ::
+                $:  hash=@ux
+                    confirmations=@ud
+                    weight=@ud
+                    version=@t
+                    version-hex=@ux
+                    merkle-root=@ux
+                    time=@ud
+                    median-time=@ud
+                    nonce=@ud
+                    bits=@ux
+                    difficulty=@t
+                    chain-work=@ux
+                    n-tx=@ud
+                    previous-blockhash=@ux
+                    next-blockhash=(unit @ux)
+        ==  ==  ==
+      ::
+        $:  %get-block-stats
+            avg-fee=@t
+            avg-feerate=@ud
+            avg-tx-size=@ud
+            block-hash=@ux
+          ::
+            $=  fee-rate-percentiles
+            $:  p-1=@t
+                p-2=@t
+                p-3=@t
+                p-4=@t
+                p-5=@t
+            ==
+          ::
+            height=@ud
+            ins=@ud
+            max-fee=@t
+            max-fee-rate=@t
+            max-tx-size=@ud
+            median-fee=@t
+            median-time=@ud
+            median-tx-size=@ud
+            min-fee=@t
+            min-fee-rate=@t
+            min-tx-size=@ud
+            outs=@ud
+            subsidy=@t
+            swtotal-size=@ud
+            swtotal-weight=@ud
+            swtxs=@ud
+            time=@ud
+            total-out=@t
+            total-size=@ud
+            total-weight=@t
+            total-fee=@t
+            txs=@ud
+            utxo-increase=@ud
+            utxo-size-inc=@ud
+        ==
+      ::
+        $:  %get-chain-tips
+            %-  list
+            $:  height=@ud
+                hash=@ux
+                branch-len=@ud
+                status=chain-status
+        ==  ==
+      ::
+        $:  %get-chain-tx-stats
+            time=@ud
+            tx-count=@ud
+            window-final-block-hash=@ux
+            window-block-count=@ud
+            window-tx-count=(unit @ud)
+            window-interval=(unit @ud)
+            tx-rate=(unit @t)
+        ==
+      ::
+        [%get-difficulty n=@t]
+        [%get-mempool-ancestors mem-pool-response]
+        [%get-mempool-descendants mem-pool-response]
+        [%get-mempool-entry mem-pool]
+      ::
+        $:  %get-mempool-info
+            size=@ud
+            bytes=@ud
+            usage=@ud
+            max-mem-pool=@ud
+            mem-pool-min-fee=@t
+            min-relay-tx-fee=@t
+        ==
+      ::
+        [%get-raw-mempool mem-pool-response]
+      ::
+        $:  %get-tx-out
+            %-  unit
+            $:  best-block=@ux
+                confirmations=@ud
+                value=@t
+              ::
+                $=  script-pubkey
+                $:  asm=@t
+                    hex=@ux
+                    req-sigs=@ud
+                    type=@t
+                    addresses=(list address)
+                ==
+              ::
+                coinbase=?
+        ==  ==
+      ::
+        [%get-tx-out-proof data=@ux]
+      ::
+        $:  %get-tx-outset-info
+            height=@ud
+            best-block=@ux
+            transactions=@ud
+            tx-outs=@ud
+            bogo-size=@ud
+            hash-serialized-2=@ux
+            disk-size=@ud
+            total-amount=@t
+        ==
+      ::
+        [%precious-block ~]
+        [%prune-blockchain height=@ud]
+        [%save-mempool ~]
+      ::
+        $:  %scan-tx-outset
+            success=(unit ?)
+            searched-items=(unit @ud)
+            txouts=(unit @ud)
+            height=(unit @ud)
+            best-blocks=(unit @ux)
+          ::
+            $=  unspents
+            %-  list
+            $:  txid=@ux
+                vout=@ud
+                script-pubkey=@ux
+                desc=@t
+                amount=@t
+                height=@ud
+            ==
+          ::
+            total-amount=@t
+        ==
+      ::
+        [%verify-chain ?]
+        [%verify-tx-out-proof (list @ux)]
     ::  Control
     ::
         $:  %get-memory-info
