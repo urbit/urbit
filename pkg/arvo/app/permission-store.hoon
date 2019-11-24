@@ -1,16 +1,10 @@
-::  permission-store: data store for keeping track of permissions
-::  permissions are white lists or black lists of ships
+::  permission-store: track black- and whitelists of ships
 ::
 /-  *permission-store
 /+  default-agent
 ::
 |%
 +$  card  card:agent:gall
-::
-+$  diff
-  $%  [%permission-initial =permission-map]
-      [%permission-update =permission-update]
-  ==
 ::
 +$  versioned-state
   $%  state-zero
@@ -31,7 +25,7 @@
       pc               ~(. permission-core bowl)
       def              ~(. (default-agent this %|) bowl)
   ::
-  ++  on-init           on-init:def
+  ++  on-init  on-init:def
   ++  on-save  !>(state)
   ++  on-load
     |=  old=vase
@@ -74,7 +68,7 @@
     ^-  (unit (unit cage))
     ?+    path  (on-peek:def path)
         [%x %keys ~]         ``noun+!>(~(key by permissions))
-        [%x %permission *]   
+        [%x %permission *]
       ?~  t.t.path  ~
       ``noun+!>((~(get by permissions) t.t.path))
         [%x %permitted @ *]
@@ -199,5 +193,4 @@
       (update-subscribers /updates upd)
       (update-subscribers [%permission pax] upd)
   ==
-::
 --
