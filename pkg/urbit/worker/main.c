@@ -857,13 +857,9 @@ _worker_poke_exit(c3_w cod_w)                 //  exit code
 /* _worker_poke_boot(): prepare to boot.
 */
 static void
-_worker_poke_boot(u3_noun who, u3_noun fak, c3_w len_w)
+_worker_poke_boot(c3_w len_w)
 {
-  c3_assert( u3_none == u3A->our );
   c3_assert( 0 != len_w );
-
-  u3A->our = who;
-  u3A->fak = fak;
   u3V.len_w = len_w;
 }
 
@@ -883,15 +879,13 @@ _worker_poke(void* vod_p, u3_noun mat)
         goto error;
       }
 
+      //  XX [our fak] ignored. Remove
+      //
       case c3__boot: {
-        u3_noun who, fak, len;
-        c3_w len_w;
+        u3_noun len;
+        c3_w  len_w;
 
-        if ( (c3n == u3r_qual(jar, 0, &who, &fak, &len)) ||
-             (c3n == u3ud(who)) ||
-             (1 < u3r_met(7, who)) ||
-             (c3n == u3ud(fak)) ||
-             (1 < u3r_met(0, fak)) ||
+        if ( (c3n == u3r_qual(jar, 0, 0, 0, &len)) ||
              (c3n == u3ud(len)) ||
              (1 < u3r_met(3, len)) )
         {
@@ -899,11 +893,8 @@ _worker_poke(void* vod_p, u3_noun mat)
         }
 
         len_w = u3r_word(0, len);
-        u3k(who);
-        u3k(fak);
         u3z(jar);
-
-        return _worker_poke_boot(who, fak, len_w);
+        return _worker_poke_boot(len_w);
       }
 
       case c3__work: {
@@ -986,22 +977,18 @@ u3_worker_boot(void)
   c3_d nex_d  = 1ULL;
   u3_noun dat = u3_nul;
 
-  if ( u3_none != u3A->our ) {
-    u3V.mug_l = u3r_mug(u3A->roc);
-    nex_d = u3V.dun_d + 1ULL;
-    dat   = u3nc(u3_nul, u3nt(u3i_chubs(1, &nex_d),
-                              u3V.mug_l,
-                              u3nc(u3k(u3A->our), u3k(u3A->fak))));
-
-    //  disable hashboard for fake ships
-    //
-    if ( c3y == u3A->fak ) {
-      u3C.wag_w |= u3o_hashless;
-    }
-
+  if ( 0 != u3V.dun_d ) {
     //  no boot sequence expected
     //
     u3V.len_w = 0;
+    u3V.mug_l = u3r_mug(u3A->roc);
+    nex_d     = u3V.dun_d + 1ULL;
+    //  XX [our fak] is unused/ignored. Remove.
+    //  Temporarily defaulted to [~zod fake=&]
+    //
+    dat       = u3nc(u3_nul, u3nt(u3i_chubs(1, &nex_d),
+                                  u3V.mug_l,
+                                  u3nc(0, 0)));
   }
 
   u3l_log("work: play %" PRIu64 "\r\n", nex_d);

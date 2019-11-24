@@ -1659,8 +1659,6 @@ u3m_boot(c3_c* dir_c)
   /* Basic initialization.
   */
     memset(u3A, 0, sizeof(*u3A));
-    u3A->our = u3_none;
-
     return 0;
   }
 }
@@ -1692,8 +1690,6 @@ u3m_boot_lite(void)
   /* Basic initialization.
   */
   memset(u3A, 0, sizeof(*u3A));
-  u3A->our = u3_none;
-
   return 0;
 }
 
