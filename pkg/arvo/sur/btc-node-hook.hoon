@@ -385,6 +385,143 @@
   |%
   +$  request
     $%
+    ::  Control
+    ::
+        [%help command=(unit @t)]
+    ::  Generating
+    ::
+        [%generate blocks=@ud max-tries=(unit @ud)]
+    ::  Raw Transactions
+    ::
+        ::  %analyze-psbt: Analyzes and provides information about
+        ::  the current status of a PSBT and its inputs
+        ::
+        [%analyze-psbt psbt=@t]
+        ::  %combine-psbt: Combine multiple partially signed Bitcoin
+        ::  transactions into one transaction.
+        ::
+        [%combine-psbt txs=(list @t)]
+        ::  %combine-raw-transaction: Combine multiple partially signed t
+        ::  ransactions into one transaction.
+        ::
+        [%combine-raw-transaction txs=(list @ux)]
+        ::  %convert-to-psbt: Converts a network serialized transaction to a
+        ::  PSBT.
+        ::
+        $:  %convert-to-psbt
+            hex-string=@ux
+            permit-sig-data=(unit ?)
+            is-witness=(unit ?)
+        ==
+        ::  %create-psbt: Creates a transaction in the Partially Signed
+        ::  Transaction format.
+        ::
+        [%create-psbt partially-signed-transaction]
+        ::  %create-raw-transaction: Create a transaction spending the given
+        ::  inputs and creating new outputs.
+        ::
+        [%create-raw-transaction partially-signed-transaction]
+        ::  %decode-psbt: Return a JSON object representing the serialized,
+        ::  base64-encoded partially signed Bitcoin transaction.
+        ::
+        [%decode-psbt psbt=@t]
+        ::  %decode-raw-transaction: Return a JSON object representing the
+        ::  serialized, hex-encoded transaction.
+        ::
+        [%decode-raw-transaction hex-string=@ux is-witness=?]
+        ::  %decode-script: Decode a hex-encoded script.
+        ::
+        [%decode-script hex-string=@ux]
+        ::  %finalize-psbt: Finalize the inputs of a PSBT.
+        ::
+        [%finalize-psbt psbt=@t extract=(unit ?)]
+        ::  %fund-raw-transaction: Add inputs to a transaction until it has
+        ::  enough in value to meet its out value.
+        ::
+        $:  %fund-raw-transaction
+            hex-string=@ux
+          ::
+            $=  options
+            %-  unit
+            $:  change-address=(unit address)
+                change-position=(unit @ud)
+                change-type=(unit address-type)
+                include-watching=(unit ?)
+                lock-unspents=(unit ?)
+                fee-rate=(unit @t)
+                subtract-fee-from-outputs=(unit (list @ud))
+                replaceable=(unit ?)
+                conf-target=(unit @ud)
+                mode=(unit estimate-mode)
+            ==
+          ::
+            is-witness=?
+        ==
+        ::  %get-raw-transaction: Return the raw transaction data.
+        ::
+        [%get-raw-transaction txid=@ux verbose=(unit ?) blockhash=(unit @ux)]
+        ::  %join-psbts: Joins multiple distinct PSBTs with different inputs
+        ::  and outputs into one PSBT with inputs and outputs from all of
+        ::  the PSBTs
+        ::
+        [%join-psbts txs=(list @t)]
+        ::  %send-raw-transaction: Submits raw transaction
+        ::  (serialized, hex-encoded) to local node and network.
+        ::
+        [%send-raw-transaction hex-string=@ux allow-high-fees=?]
+        ::  %sign-raw-transaction-with-key: Sign inputs for raw transaction
+        ::  (serialized, hex-encoded).
+        ::
+        $:  %sign-raw-transaction-with-key
+            hex-string=@ux
+            priv-keys=(list @t)
+            prev-txs=(unit (list prev-tx))
+            sig-hash-type=(unit sig-hash)
+        ==
+        ::  %test-mempool-accept: Returns result of mempool acceptance tests
+        ::  indicating if raw transaction (serialized, hex-encoded) would be
+        ::  accepted by mempool.
+        ::
+        [%test-mempool-accept raw-txs=(list @ux) allow-high-fees=?]
+        ::  %utxo-update-psbt: Updates a PSBT with witness UTXOs retrieved from
+        ::  the UTXO set or the mempool.
+        ::
+        [%utxo-update-psbt psbt=@t]
+    ::  Util
+    ::
+        ::  %create-multi-sig: Creates a multi-signature address with n
+        ::  signature of m keys required. It returns a json object with the
+        ::  address and redeemScript.
+        ::
+        $:  %create-multi-sig
+            n-required=@ud
+            keys=(list @ux)
+            address-type=(unit address-type)
+        ==
+        ::  %derive-addresses: Derives one or more addresses corresponding to
+        ::  an output descriptor.
+        ::
+        [%derive-addresses descriptor=@t range=(unit range)]
+        ::  %estimate-smart-fee: Estimates the approximate fee per kilobyte
+        ::  needed for a transaction to begin confirmation within conf_target
+        ::  blocks if possible and return the number of blocks for which the
+        ::  estimate is valid.
+        ::
+        [%estimate-smart-fee conf-target=@ud mode=(unit estimate-mode)]
+        ::  %get-descriptor-info: Analyses a descriptor.
+        ::
+        [%get-descriptor-info descriptor=@t]
+        ::  %sign-message-with-privkey: Sign a message with the private key of
+        ::  an address
+        ::
+        [%sign-message-with-privkey privkey=@t message=@t]
+        ::  %validate-address: Return information about the given
+        ::  bitcoin address.
+        ::
+        [%validate-address =address]
+        ::  %verify-message: Verify a signed message
+        ::
+        [%verify-message =address signature=@t message=@t]
     ::  Wallet
     ::
         ::  %abandon-transaction: Mark in-wallet transaction as abandoned.
@@ -724,6 +861,153 @@
   ::
   +$  response
     $%
+    ::  Control
+        [%help ~]
+    ::  Generating
+    ::
+        [%generate blocks=(list blockhash)]
+    ::  Raw Transactions
+    ::
+        $:  %analyze-psbt
+            $=  inputs
+            %-  list
+            $:  has-utxo=?
+                is-final=?
+              ::
+                $=  missing
+                %-  unit
+                $:  pubkeys=(unit (list @ux))
+                    signatures=(unit (list @ux))
+                    redeem-script=(unit @ux)
+                    witness-script=(unit @ux)
+                ==
+              ::
+                next=(unit @t)
+            ==
+          ::
+            estimated-vsize=(unit @t)
+            estimated-feerate=(unit @t)
+            fee=(unit @t)
+            next=@t
+        ==
+      ::
+        [%combine-psbt psbt=@t]
+        [%combine-raw-transaction hex=@ux]
+        [%convert-to-psbt psbt=@t]
+        [%create-psbt psbt=@t]
+        [%create-raw-transaction transaction=@ux]
+      ::
+        $:  %decode-psbt
+            tx=serialized-tx
+          ::
+            unknown=(map @t @t)
+          ::
+            $=  inputs
+            %-  list
+            $:  non-witness-utxo=utxo
+                witness-utxo=utxo
+                partial-signatures=(unit (map pubkey=@ux signature=@ux))
+                sig-hash-type=(unit sig-hash)
+                redeem-script=(unit script)
+                witness-script=(unit script)
+              ::
+                $=  bip32-derivs
+                %-  unit
+                %+  map
+                pubkey=@ux
+                ::
+                $:  master-fingerprint=@t
+                    path=@t
+                ==
+              ::
+                final-script-sig=(unit [asm=@t hex=@ux])
+                final-script-witness=(unit (list @ux))
+                unknown=(unit (map @t @t))
+            ==
+          ::
+            $=  outputs
+            %-  list
+            $:  redeem-script=(unit script)
+                witness-script=(unit script)
+              ::
+                $=  bip32-derivs
+                %-  unit
+                %+  map
+                pubkey=@ux
+                ::
+                $:  master-fingerprint=@t
+                    path=@t
+                ==
+              ::
+                unknown=(unit (map @t @t))
+            ==
+          ::
+            fee=(unit @t)
+        ==
+      ::
+        [%decode-raw-transaction =serialized-tx]
+      ::
+        $:  %decode-script
+            asm=@t
+            hex=(unit @ux)
+            type=@t
+            req-sigs=(unit @ud)
+            addresses=(unit (list address))
+            p2sh=(unit @uc)
+            segwit=(unit segwit-script)
+        ==
+      ::
+        [%finalize-psbt psbt=@t hex=(unit @ux) complete=?]
+        [%fund-raw-transaction hex=@ux fee=@t change-pos=?(@ud %'-1')]
+        [%get-raw-transaction data=?(@ux raw-transaction-rpc-out)]
+        [%join-psbts psbt=@t]
+        [%send-raw-transaction hex=@ux]
+      ::
+        $:  %sign-raw-transaction-with-key
+            hex=@ux
+            complete=?
+            errors=(unit errors)
+        ==
+      ::
+        $:  %test-mempool-accept
+            %-  list
+            $:  txid=@ux
+                allowed=?
+                reject-reason=(unit @t)
+        ==  ==
+      ::
+        [%utxo-update-psbt psbt=@t]
+    ::  Util
+    ::
+        [%create-multi-sig =address redeem-script=@t]
+        [%derive-addresses (list address)]
+      ::
+        $:  %estimate-smart-fee
+            fee-rate=(unit @t)
+            errors=(unit (list @t))
+            blocks=@ud
+        ==
+      ::
+        $:  %get-descriptor-info
+            descriptor=@t
+            is-range=?
+            is-solvable=?
+            has-private-keys=?
+        ==
+      ::
+        [%sign-message-with-privkey signature=@t]
+      ::
+        $:  %validate-address
+            is-valid=?
+            =address
+            script-pubkey=@ux
+            is-script=?
+            is-witness=?
+            witness-version=(unit @t)
+            witness-program=(unit @ux)
+        ==
+      ::
+        [%verify-message ?]
     ::  Wallet
     ::
         [%abandon-transaction ~]

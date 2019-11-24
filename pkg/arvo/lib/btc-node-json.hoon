@@ -286,6 +286,280 @@
     :^  -.req  (method -.req)  %list
     ^-  (list json)
     ?+    -.req  ~|([%unsupported-request -.req] !!)
+    ::  Generating
+    ::
+        %generate
+      :-  (numb blocks.req)
+      ?~  max-tries.req
+        ~
+      [(numb u.max-tries.req) ~]
+    ::  Raw Transactions
+    ::
+        %analyze-psbt
+      :_  ~
+      :-  %s
+      ?^  (de:base64 psbt.req)
+        psbt.req
+      (en:base64 (as-octs:mimes:html psbt.req))
+    ::
+        %combine-psbt
+      :_  ~
+      :-  %a
+      %+  turn   txs.req
+      |=  a=@t
+      :-  %s
+      ?^  (de:base64 a)
+        a
+      (en:base64 (as-octs:mimes:html a))
+    ::
+        %combine-raw-transaction
+      ~[a+(turn txs.req |=(a=@ux s+(hex-to-cord a)))]
+    ::
+        %convert-to-psbt
+      :~  s+(hex-to-cord hex-string.req)
+          (ferm permit-sig-data.req %b)
+          (ferm is-witness.req %b)
+      ==
+    ::
+        %create-psbt
+      :~  :-  %a
+          %+  turn  inputs.req
+          |=  a=input
+          ^-  json
+          %-  pairs  ^-  (list (pair @t json))
+          :~  ['txid' s+(hex-to-cord txid.a)]
+              ['vout' (numb vout.a)]
+              ['sequence' (numb sequence.a)]
+          ==
+        ::
+          =*  out  outputs.req
+          :-  %a
+          %+  weld
+            :_  ~
+            (pairs [-.data.out s+(hex-to-cord +.data.out)]~)
+          ::
+            %+  turn  addresses.out
+            |=  [address=?(address [%bech32 @t]) amount=@t]
+            ^-  json
+            %-  pairs
+            :~  :-  'address'
+                :-  %s
+                ?^  address
+                  +.address
+                (base58-to-cord address)
+              ::
+                ['amount' n+amount]
+            ==
+        ::
+          (feud locktime.req)
+          (ferm replaceable.req %b)
+      ==
+    ::
+        %create-raw-transaction
+      :~  :-  %a
+          ^-  (list json)
+          %+  turn  inputs.req
+          |=  a=input
+          ^-  json
+          %-  pairs
+          ^-  (list (pair @t json))
+          :~  ['txid' s+(hex-to-cord txid.a)]
+              ['vout' (numb vout.a)]
+              ['sequence' (numb sequence.a)]
+          ==
+        ::
+          =*  out  outputs.req
+          :-  %a
+          %+  weld
+            :_  ~
+            (pairs [-.data.out s+(hex-to-cord +.data.out)]~)
+        ::
+          %+  turn  addresses.out
+          |=  [address=?(address [%bech32 @t]) amount=@t]
+          ^-  json
+          %-  pairs
+          :_  ~
+          :_  n+amount
+          ?^  address
+            +.address
+          (base58-to-cord address)
+        ::
+          (feud locktime.req)
+          (ferm replaceable.req %b)
+      ==
+    ::
+        %decode-psbt
+      :_  ~
+      :-  %s
+      ?^  (de:base64 psbt.req)
+        psbt.req
+      (en:base64 (as-octs:mimes:html psbt.req))
+    ::
+        %decode-raw-transaction
+      :~  s+(hex-to-cord hex-string.req)
+          b+is-witness.req
+      ==
+    ::
+        %decode-script
+      ~[s+(hex-to-cord hex-string.req)]
+    ::
+        %finalize-psbt
+      :~  :-  %s
+          ?^  (de:base64 psbt.req)
+            psbt.req
+          (en:base64 (as-octs:mimes:html psbt.req))
+        ::
+          (ferm extract.req %b)
+      ==
+    ::
+        %fund-raw-transaction
+      :~  s+(hex-to-cord hex-string.req)
+        ::
+          %-  pairs
+          ?~  options.req
+            ~
+          =*  opts  u.options.req
+          ::  Excludes ~ elements
+          ::
+          =-  (skip - |=([@t a=json] =(a ~)))
+          ^-  (list (pair @t json))
+          :~  :-  'changeAddress'
+              ?~  change-address.opts
+                ~
+              =*  a  u.change-address.opts
+              [%s ?^(a +.a (base58-to-cord a))]
+            ::
+              ['changePosition' (feud change-position.opts)]
+              ['change_type' (ferm change-type.opts %s)]
+              ['includeWatching' (ferm include-watching.opts %b)]
+              ['lockUnspents' (ferm lock-unspents.opts %b)]
+              ['feeRate' (ferm fee-rate.opts %s)]
+            ::
+              :-  'subtractFeeFromOutputs'
+              ?~  subtract-fee-from-outputs.opts
+                ~
+              :-  %a  ^-  (list json)
+              (turn u.subtract-fee-from-outputs.opts numb)
+            ::
+              ['replaceable' (ferm replaceable.opts %b)]
+              ['conf_target' (feud conf-target.opts)]
+              ['estimate_mode' (ferm mode.opts %s)]
+          ==
+        ::
+          b+is-witness.req
+      ==
+    ::
+        %get-raw-transaction
+      :~  s+(hex-to-cord txid.req)
+          (ferm verbose.req %b)
+        ::
+          ?~  blockhash.req
+            ~
+          s+(hex-to-cord u.blockhash.req)
+      ==
+    ::
+        %join-psbts
+      ~[a+(turn txs.req |=(a=@t s+a))]
+    ::
+        %send-raw-transaction
+      :~  s+(hex-to-cord hex-string.req)
+          b+allow-high-fees.req
+      ==
+    ::
+        %sign-raw-transaction-with-key
+      :~  s+(hex-to-cord hex-string.req)
+        ::
+          :-  %a  ^-  (list json)
+          %+  turn   priv-keys.req
+          |=  a=@t
+          :-  %s
+          ?^  (de:base64 a)
+            a
+          (en:base64 (as-octs:mimes:html a))
+        ::
+          ?~  prev-txs.req
+            ~
+          =*  txs  u.prev-txs.req
+          :-  %a  ^-  (list json)
+          %+  turn  txs
+          |=  a=prev-tx
+          (pairs (prev-txs:json-parser a))
+        ::
+          (ferm sig-hash-type.req %s)
+      ==
+    ::
+        %test-mempool-accept
+      :~  :-  %a  ^-  (list json)
+          %+  turn  raw-txs.req
+          |=(a=@ux s+(hex-to-cord a))
+        ::
+          b+allow-high-fees.req
+      ==
+    ::
+        %utxo-update-psbt
+      :_  ~
+      :-  %s
+      ?^  (de:base64 psbt.req)
+        psbt.req
+      (en:base64 (as-octs:mimes:html psbt.req))
+    ::  Util
+    ::
+        %create-multi-sig
+      :~  (numb n-required.req)
+        ::
+          :-  %a
+          %+  turn  keys.req
+          |=(a=@ux s+(hex-to-cord a))
+        ::
+          (ferm address-type.req %s)
+      ==
+    ::
+        %derive-addresses
+      ::  Sending a (unit range), resulting in a "null" parameter,
+      ::  returns this from the RPC node
+      ::  "Range should not be specified for an un-ranged descriptor"
+      ::
+      =-  (skip - |=(a=json =(a ~)))
+      ^-  (list json)
+      :~  s+descriptor.req
+        ::
+          ?~  range.req
+            ~
+          =*  range  u.range.req
+          ?@  range
+            (numb range)
+          a+~[(numb -.range) (numb +.range)]
+      ==
+    ::
+        %estimate-smart-fee
+      =-  (skip - |=(a=json =(a ~)))
+      ^-  (list json)
+      :~  (numb conf-target.req)
+          (ferm mode.req %s)
+      ==
+    ::
+        %get-descriptor-info
+      ~[s+descriptor.req]
+    ::
+        %sign-message-with-privkey
+      ~[s+privkey.req s+message.req]
+    ::
+        %validate-address
+      :_  ~
+      :-  %s
+      ?^  address.req
+        +.address.req
+      (base58-to-cord address.req)
+    ::
+        %verify-message
+      :~  :-  %s
+          ?^  address.req
+            +.address.req
+          (base58-to-cord address.req)
+        ::
+          s+signature.req
+          s+message.req
+      ==
     ::  Wallet
     ::
         %abandon-transaction
@@ -827,6 +1101,311 @@
     ::
     ?>  ?=(%result -.res)
     ?+    id.res  ~|  [%unsupported-response id.res]   !!
+    ::  Generating
+    ::
+        %generate
+      :-  id.res
+      %.  res.res
+      (ar (cu to-hex so))
+    ::  Raw Transactions
+    ::
+        %analyze-psbt
+      :-  id.res
+      %.  res.res
+      %-  ou
+      :~  :-  'inputs'
+          =-  (un (ar (ou -)))
+          :~  ['has_utxo' (un bo)]
+              ['is_final' (un bo)]
+            ::
+              :-  'missing'
+              =-  (uf ~ (mu (ou -)))
+              :~  :-  'pubkeys'
+                  =-  (uf ~ (mu -))
+                  (ar (cu to-hex so))
+                ::
+                  :-  'signatures'
+                  =-  (uf ~ (mu -))
+                  (ar (cu to-hex so))
+                ::
+                  ['redeemscript' (uf ~ (mu (cu to-hex so)))]
+                  ['witnessscript' (uf ~ (mu (cu to-hex so)))]
+              ==
+            ::
+              ['next' (uf ~ (mu so))]
+          ==
+        ::
+          ['estimated_vsize' (uf ~ (mu no))]
+          ['estimated_feerate' (uf ~ (mu no))]
+          ['fee' (uf ~ (mu no))]
+          ['next' (un so)]
+      ==
+    ::
+        %combine-psbt
+      [id.res (so res.res)]
+    ::
+        %combine-raw-transaction
+      [id.res ((cu to-hex so) res.res)]
+    ::
+        %convert-to-psbt
+      [id.res (so res.res)]
+    ::
+        %create-psbt
+      [id.res (so res.res)]
+    ::
+        %create-raw-transaction
+      [id.res ((cu to-hex so) res.res)]
+    ::
+        %decode-psbt
+      :-  id.res
+      %.  res.res
+      %-  ou
+      :~  :-  'tx'
+          =-  (un (ot -))
+          =,  json-parser
+          :~  ['txid' (cu to-hex so)]
+              ['hash' (cu to-hex so)]
+              ['size' ni]
+              ['vsize' ni]
+              ['weight' ni]
+              ['version' ni]
+              ['locktime' ni]
+              ['vin' vin]
+              ['vout' vout]
+          ==
+        ::
+          ['unknown' (un (om so))]
+        ::
+          :-  'inputs'
+          =-  (un (ar (ou -)))
+          =,  json-parser
+          :~  ['non_witness_utxo' utxo]
+              ['witness_utxo' utxo]
+            ::
+              :-  'partial_signatures'
+              =-  (uf ~ (mu -))
+              (op hex (cu to-hex so))
+            ::
+              ['sighash' (uf ~ (mu (cu sig-hash so)))]
+              ['redeem_script' script]
+              ['witness_script' script]
+            ::
+              :-  'bip32_derivs'
+              =-  (uf ~ (mu -))
+              =-  (op hex (ot -))
+              :~  ['master_fingerprint' so]
+                  ['path' so]
+              ==
+            ::
+              :-  'final_scriptsig'
+              =-  (uf ~ (mu (ot -)))
+              :~  ['asm' so]
+                  ['hex' (cu to-hex so)]
+              ==
+            ::
+              :-  'final_scriptwitness'
+              =-  (uf ~ (mu -))
+              (ar (cu to-hex so))
+            ::
+              ['unknown' (uf ~ (mu (om so)))]
+          ==
+        ::
+          :-  'outputs'
+          =-  (un (ar (ou -)))
+          =,  json-parser
+          :~  ['redeem_script' script]
+              ['witness_script' script]
+            ::
+              :-  'bip32_derivs'
+              =-  (uf ~ (mu -))
+              =-  (op hex (ot -))
+              :~  ['master_fingerprint' so]
+                  ['path' so]
+              ==
+            ::
+              ['unknown' (uf ~ (mu (om so)))]
+          ==
+        ::
+          ['fee' (uf ~ (mu no))]
+      ==
+    ::
+        %decode-raw-transaction
+      :-  id.res
+      %.  res.res
+      %-  ot
+      =,  json-parser
+      :~  ['txid' (cu to-hex so)]
+          ['hash' (cu to-hex so)]
+          ['size' ni]
+          ['vsize' ni]
+          ['weight' ni]
+          ['version' ni]
+          ['locktime' ni]
+          ['vin' vin]
+          ['vout' vout]
+      ==
+    ::
+        %decode-script
+      :-  id.res
+      %.  res.res
+      %-  ou
+      :~  ['asm' (un so)]
+          ['hex' (uf ~ (mu (cu to-hex so)))]
+          ['type' (un so)]
+          ['reqSigs' (uf ~ (mu ni))]
+        ::
+          :-  'addresses'
+          =-  (uf ~ (mu (ar -)))
+          (cu addr-type-validator so)
+        ::
+          :-  'p2sh'
+          (uf ~ (mu (cu @uc so)))
+        ::
+          :-  'segwit'
+          =-  (uf ~ (mu (ou -)))
+          :~  ['asm' (un so)]
+              ['hex' (uf ~ (mu (cu to-hex so)))]
+              ['type' (un so)]
+              ['reqSigs' (uf ~ (mu ni))]
+            ::
+              :-  'addresses'
+              =-  (un (ar -))
+              (cu |=(a=@t bech32+a) so)
+            ::
+              :-  'p2sh-segwit'
+              =-  (uf ~ (mu -))
+              (cu @uc (su fim:ag))
+      ==  ==
+    ::
+        %finalize-psbt
+      :-  id.res
+      %.  res.res
+      %-  ou
+      :~  :-  'psbt'
+          =-  (un (cu - so))
+          |=(a=@t ?>(?=(^ (de:base64 a)) a))
+        ::
+          ['hex' (uf ~ (mu (cu to-hex so)))]
+          ['complete' (un bo)]
+      ==
+    ::
+        %fund-raw-transaction
+      :-  id.res
+      %.  res.res
+      %-  ot
+      :~  ['hex' (cu to-hex so)]
+          ['fee' no]
+        ::
+          :-  'changepos'
+          =-  (cu - no)
+          |=  a=@t
+          ^-  ?(@ud %'-1')
+          ?:  =(a '-1')
+            %'-1'
+          (rash a dem)
+      ==
+    ::
+        %get-raw-transaction
+      :-  id.res
+      %.  res.res
+      ?:  =(%s -.res.res)
+        (cu to-hex so)
+      ?.  =(%o -.res.res)
+        !!
+      raw-transaction:json-parser
+    ::
+        %join-psbts
+      :-  id.res
+      %.  res.res
+      =-  (cu - so)
+      |=(a=@t ?>(?=(^ (de:base64 a)) a))
+    ::
+        %send-raw-transaction
+      [id.res ((cu to-hex so) res.res)]
+    ::
+        %sign-raw-transaction-with-key
+      :-  id.res
+      %.  res.res
+      %-  ou
+      :~  ['hex' (un (cu to-hex so))]
+          ['complete' (un bo)]
+        ::
+          :-  'errors'
+          =-  (uf ~ (mu -))
+          =-  (ar (ot -))
+          :~  ['txid' (cu to-hex so)]
+              ['vout' ni]
+              ['scriptSig' (cu to-hex so)]
+              ['sequence' ni]
+              ['error' so]
+      ==  ==
+    ::
+        %test-mempool-accept
+      :-  id.res
+      %.  res.res
+      =-  (ar (ou -))
+      :~  ['txid' (un (cu to-hex so))]
+          ['allowed' (un bo)]
+          ['reject-reason' (uf ~ (mu so))]
+      ==
+    ::
+        %utxo-update-psbt
+      :-  id.res
+      %.  res.res
+      =-  (cu - so)
+      |=(a=@t ?>(?=(^ (de:base64 a)) a))
+    ::  Util
+    ::
+        %create-multi-sig
+      :-  id.res
+      %.  res.res
+      %-  ot
+      :~  ['address' (cu addr-type-validator so)]
+          ['redeemScript' so]
+      ==
+    ::
+        %derive-addresses
+      :-  id.res
+      %.  res.res
+      (ar (cu addr-type-validator so))
+    ::
+        %estimate-smart-fee
+      :-  id.res
+      %.  res.res
+      %-  ou
+      :~  ['feerate' (uf ~ (mu so))]
+          ['errors' (uf ~ (mu (ar so)))]
+          ['blocks' (un ni)]
+      ==
+    ::
+        %get-descriptor-info
+      :-  id.res
+      %.  res.res
+      %-  ot
+      :~  ['descriptor' so]
+          ['isrange' bo]
+          ['issolvable' bo]
+          ['hasprivatekeys' bo]
+      ==
+    ::
+        %sign-message-with-privkey
+      [id.res (so res.res)]
+    ::
+        %validate-address
+      :-  id.res
+      %.  res.res
+      %-  ou
+      :~  ['isvalid' (un bo)]
+          ['address' (un (cu addr-type-validator so))]
+          ['scriptPubKey' (un (cu to-hex so))]
+          ['isscript' (un bo)]
+          ['iswitness' (un bo)]
+          ['witness_version' (uf ~ (mu so))]
+          ['witness_program' (uf ~ (mu (cu to-hex so)))]
+      ==
+    ::
+        %verify-message
+      [id.res (bo res.res)]
     ::  Wallet
     ::
         %abandon-transaction
