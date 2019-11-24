@@ -44,7 +44,8 @@ export class Root extends Component {
         messagePreviews[stat] = envelopes[envelopes.length - 1];
       }
 
-      unreads[stat] = envelopes.length > state.inbox[stat].config.read;
+      unreads[stat] =
+        state.inbox[stat].config.length > state.inbox[stat].config.read;
     });
     
     let invites = '/chat' in state.invites ?
@@ -113,7 +114,7 @@ export class Root extends Component {
                `/${props.match.params.ship}/${props.match.params.station}`;
              let mailbox = state.inbox[station] || {
                config: {
-                 read: -1,
+                 read: 0,
                  length: 0
                },
                envelopes: []
@@ -127,6 +128,7 @@ export class Root extends Component {
                    api={api}
                    subscription={subscription}
                    read={mailbox.config.read}
+                   length={mailbox.config.length}
                    envelopes={mailbox.envelopes}
                    inbox={state.inbox}
                    group={write}

@@ -1370,8 +1370,8 @@
           %-  ~(uni by `(map path *)`cal.bob-diffs)
           %-  ~(uni by `(map path *)`can.bob-diffs)
           `(map path *)`old.bob-diffs
-        ?^  bof
-          (error:he cas %meet-conflict >(~(run by `(map path *)`bof) _~)< ~)
+        ?.  =(~ bof)
+          (error:he cas %meet-conflict >~(key by bof)< ~)
         =/  old=(map path lobe)
           %+  roll  ~(tap by (~(uni by old.ali-diffs) old.bob-diffs))
           =<  .(old q.bas)
@@ -2370,7 +2370,7 @@
         ?:  =(0 let.dom)  [~ 0]                         ::  avoid underflow
         ?:  %+  gte  p.lok
             =<  t
-            ~|  [%letdom let=let.dom hit=hit.dom hut=(~(run by hut.ran) ,~)]
+            ~|  [%letdom let=let.dom hit=hit.dom hut=~(key by hut.ran)]
             ~|  [%getdom (~(get by hit.dom) let.dom)]
             %-  aeon-to-yaki
             let.dom

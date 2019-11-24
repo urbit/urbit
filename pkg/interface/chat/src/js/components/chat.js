@@ -67,7 +67,7 @@ export class ChatScreen extends Component {
 
   updateReadNumber() {
     const { props, state } = this;
-    if (props.read < props.envelopes.length) {
+    if (props.read < props.length) {
       props.api.chat.read(state.station);
     }
   }

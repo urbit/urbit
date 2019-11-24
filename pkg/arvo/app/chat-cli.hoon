@@ -15,6 +15,7 @@
 /+  sole-lib=sole, chat-eval, default-agent, verb
 ::
 |%
++$  card  card:agent:gall
 +$  state
   $:  grams=(list mail)                             ::  all messages
       known=(set [target serial])                   ::  known message lookup
@@ -40,12 +41,14 @@
       [%say letter]                                 ::  send message
       [%eval cord hoon]                             ::  send #-message
     ::
-      [%create chat-security path (unit glyph)]     ::  create chat
+      ::
+      ::  create chat
+      [%create rw-security path (unit glyph) (unit ?)]
       [%delete path]                                ::  delete chat
       [%invite ?(%r %w %rw) path (set ship)]        ::  allow
       [%banish ?(%r %w %rw) path (set ship)]        ::  disallow
     ::
-      [%join target (unit glyph)]                   ::  join target
+      [%join target (unit glyph) (unit ?)]          ::  join target
       [%leave target]                               ::  nuke target
     ::
       [%bind glyph target]                          ::  bind glyph
@@ -63,7 +66,6 @@
       [%help ~]                                     ::  print usage info
   ==                                                ::
 ::
-+$  card  card:agent:gall
 --
 =|  state
 =*  all-state  -
@@ -120,6 +122,7 @@
           %fact
         ?+  p.cage.sign  ~|([%chat-cli-bad-sub-mark wire p.cage.sign] !!)
           %chat-update  (diff-chat-update:tc wire !<(chat-update q.cage.sign))
+          %chat-two-update  (diff-chat-two-update:tc wire !<(chat-two-update q.cage.sign))
         ==
       ==
     [cards this]
@@ -169,14 +172,8 @@
 ++  connect
   ^-  card
   [%pass /chat-store %agent [our-self %chat-store] %watch /updates]
-::  +true-self: moons to planets
 ::
-++  true-self
-  |=  who=ship
-  ^-  ship
-  ?.  ?=(%earl (clan:title who))  who
-  (sein:title our.bowl now.bowl who)
-++  our-self  (true-self our.bowl)
+++  our-self  (name:title our.bowl)
 ::  +target-to-path: prepend ship to the path
 ::
 ++  target-to-path
@@ -226,6 +223,11 @@
   :-  [prompt:sh-out ~]
   ::  start with fresh sole state
   all-state(state.cli *sole-share:sole-sur)
+::
+++  diff-chat-two-update
+  |=  [=wire upd=chat-two-update]
+  ^-  (quip card state)
+  (read-envelopes (path-to-target path.upd) envelopes.upd)
 ::  +diff-chat-update: get new mailboxes & messages
 ::
 ++  diff-chat-update
@@ -412,13 +414,24 @@
         ;~  (glue ace)
           (tag %create)
           security
-          ;~(plug path (punt ;~(pfix ace glyph)))
+          ;~  plug
+            path
+            (punt ;~(pfix ace glyph))
+            (punt ;~(pfix ace (fuss 'y' 'n')))
+          ==
         ==
         ;~((glue ace) (tag %delete) path)
         ;~((glue ace) (tag %invite) rw path ships)
         ;~((glue ace) (tag %banish) rw path ships)
       ::
-        ;~((glue ace) (tag %join) ;~(plug targ (punt ;~(pfix ace glyph))))
+        ;~  (glue ace)
+          (tag %join)
+          ;~  plug
+            targ
+            (punt ;~(pfix ace glyph))
+            (punt ;~(pfix ace (fuss 'y' 'n')))
+          ==
+        ==
         ;~((glue ace) (tag %leave) targ)
       ::
         ;~((glue ace) (tag %bind) glyph targ)
@@ -676,7 +689,7 @@
     ::  +create: new local mailbox
     ::
     ++  create
-      |=  [security=chat-security =path gyf=(unit char)]
+      |=  [security=rw-security =path gyf=(unit char) allow-history=(unit ?)]
       ^-  (quip card state)
       ::TODO  check if already exists
       =/  =target  [our-self path]
@@ -688,18 +701,22 @@
       %^  act  %do-create  %chat-view
       :-  %chat-view-action
       !>
-      :^  %create  path  security
-      ::  ensure we can read from/write to our own chats
-      ::
-      :-  ::  read
+      :*  %create
+          path
+          security
+          ::  ensure we can read from/write to our own chats
+          ::
+          ::  read
           ?-  security
             ?(%channel %journal)  ~
             ?(%village %mailbox)  [our-self ~ ~]
           ==
-      ::  write
-      ?-  security
-        ?(%channel %mailbox)  ~
-        ?(%village %journal)  [our-self ~ ~]
+          ::  write
+          ?-  security
+            ?(%channel %mailbox)  ~
+            ?(%village %journal)  [our-self ~ ~]
+          ==
+          (fall allow-history %.y)
       ==
     ::  +delete: delete local chats
     ::
@@ -761,7 +778,7 @@
     ::  +join: sync with remote mailbox
     ::
     ++  join
-      |=  [=target gyf=(unit char)]
+      |=  [=target gyf=(unit char) ask-history=(unit ?)]
       ^-  (quip card state)
       =^  moz  all-state
         ?.  ?=(^ gyf)  [~ all-state]
@@ -774,7 +791,7 @@
       %^  act  %do-join  %chat-view
       :-  %chat-view-action
       !>
-      [%join target]
+      [%join ship.target path.target (fall ask-history %.y)]
     ::  +leave: unsync & destroy mailbox
     ::
     ::TODO  allow us to "mute" local chats using this

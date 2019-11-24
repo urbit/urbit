@@ -8,15 +8,16 @@
 ::  or classes).
 ::
 ::  each of these stages is split into cores for each of
-::  arvo's eight major vanes (kernel modules).  these are:
+::  arvo's nine major vanes (kernel modules).  these are:
 ::
 ::      - %ames: networking         (rhymes with "games")
 ::      - %behn: scheduling         ("bane")
 ::      - %clay: revision control   ("play")
 ::      - %dill: console            ("pill")
-::      - %eyre: web                ("fair")
+::      - %eyre: http server        ("fair")
 ::      - %ford: build              ("lord")
 ::      - %gall: application        ("ball")
+::      - %iris: http client        ("virus")
 ::      - %jael: security           ("jail")
 ::
 ::  with %zuse in your core, the engines of any vane are
@@ -6888,6 +6889,12 @@
         ?>  (lte wid 16)  %pawn
       ::                                                ::  ++rank:title
       +$  rank  ?(%czar %king %duke %earl %pawn)        ::  ship width class
+      ::                                                ::  ++name:title
+      ++  name                                          ::  identity
+        |=  who=ship
+        ^-  ship
+        ?.  ?=(%earl (clan who))  who
+        (sein who)
       ::                                                ::  ++saxo:title
       ++  saxo                                          ::  autocanon
         |=  who=ship

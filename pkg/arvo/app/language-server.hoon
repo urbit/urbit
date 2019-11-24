@@ -1,5 +1,6 @@
 /+  *server,
     auto=language-server-complete,
+    lsp-parser=language-server-parser,
     easy-print=language-server-easy-print,
     rune-snippet=language-server-rune-snippet,
     default-agent
@@ -9,6 +10,8 @@
   $:  uri=@t
       $%  [%sync changes=(list change)]
           [%completion position]
+          [%commit @ud]
+          [%hover position]
       ==
   ==
 ::
@@ -67,7 +70,11 @@
       ==
     [cards this]
   ::
-  ++  on-watch  on-watch:def
+  ++  on-watch
+    |=  =path
+    ?.  ?=([%http-response @ ~] path)
+      (on-watch:def path)
+    `this
   ++  on-leave  on-leave:def
   ++  on-peek   on-peek:def
   ++  on-agent  on-agent:def
@@ -95,6 +102,8 @@
     %-  of
     :~  sync+sync
         completion+position
+        commit+ni
+        hover+position
     ==
     ~
   ==
@@ -122,6 +131,12 @@
       ~
     ==
   --
+::
+++  json-response
+  |=  [eyre-id=@ta jon=json]
+  ^-  (list card)
+  (give-simple-payload:app eyre-id (json-response:gen (json-to-octs jon)))
+::
 ::  +handle-http-request: received on a new connection established
 ::
 ++  handle-http-request
@@ -132,23 +147,90 @@
     %-  parser
     (need (de-json:html q.u.body.request.inbound-request))
   =/  buf  (~(gut by bufs) uri.lsp-req *wall)
-  =^  out-jon  buf
+  =^  cards  buf
     ?-  +<.lsp-req
-      %sync        (handle-sync buf +>.lsp-req)
-      %completion  (handle-completion buf +>.lsp-req)
+      %sync        (handle-sync buf eyre-id +>.lsp-req)
+      %completion  (handle-completion buf eyre-id +>.lsp-req)
+      %commit      (handle-commit buf eyre-id uri.lsp-req)
+      %hover       (handle-hover buf eyre-id +>.lsp-req)
     ==
   =.  bufs
     (~(put by bufs) uri.lsp-req buf)
-  :_  state
-  %+  give-simple-payload:app  eyre-id
-  %+  require-authorization:app  inbound-request
-  |=  =inbound-request:eyre
-  ^-  simple-payload:http
-  (json-response:gen (json-to-octs out-jon))
+  [cards state]
+::
+++  regen-diagnostics
+  |=  buf=wall
+  ^-  json
+  =/  t=tape
+    (zing (join "\0a" buf))
+  =/  parse
+    (lily:auto t (lsp-parser *beam))
+  ?:  ?=(%| -.parse)
+    (format-diagnostic p.parse)
+  =,  enjs:format
+  %-  pairs
+  :~  good+b+&
+  ==
+::
+++  format-diagnostic
+  |=  [row=@ col=@]
+  ^-  json
+  =,  enjs:format
+  %-  pairs
+  :~  good+b+|
+      :+  %diagnostics  %a  :_  ~
+      =/  loc  (pairs line+(numb (dec row)) character+(numb col) ~)
+      %-  pairs
+      :~  range+(pairs start+loc end+loc ~)
+          severity+n+'1'
+          message+s+'syntax error'
+      ==
+  ==
+::
+++  handle-commit
+  |=  [buf=wall eyre-id=@ta uri=@t]
+  ^-  [(list card) wall]
+  :_  buf
+  =/  jon
+    (regen-diagnostics buf)
+  :_  (json-response eyre-id jon)
+  :*
+    %pass
+    /commit
+    %agent
+    [our.bow %hood]
+    %poke
+    %kiln-commit
+    !>([q.byk.bow |])
+  ==
+::
+++  handle-hover
+  |=  [buf=wall eyre-id=@ta row=@ud col=@ud]
+  ^-  [(list card) wall]
+  =/  txt
+    (zing (join "\0a" buf))
+  =+  (get-id:auto (get-pos buf row col) txt)
+  ?~  id
+    [(json-response eyre-id *json) buf]
+  =/  match=(unit [=term =type])
+    (search-exact:auto u.id (get-identifiers:auto -:!>(..zuse)))
+  ?~  match
+    [(json-response eyre-id *json) buf]
+  =/  contents
+    %-  crip
+    ;:  weld
+      "`"
+      ~(ram re ~(duck easy-print type.u.match))
+      "`"
+    ==
+  :_  buf
+  %+  json-response  eyre-id
+  %-  pairs:enjs:format
+  [contents+s+contents ~]
 ::
 ++  handle-sync
-  |=  [buf=wall changes=(list change)]
-  :-  *json
+  |=  [buf=wall eyre-id=@ta changes=(list change)]
+  :-  (json-response eyre-id *json)
   |-  ^-  wall
   ?~  changes
     buf
@@ -196,8 +278,8 @@
   (sub a b)
 ::
 ++  handle-completion
-  |=  [buf=wall row=@ud col=@ud]
-  ^-  [json wall]
+  |=  [buf=wall eyre-id=@ta row=@ud col=@ud]
+  ^-  [(list card) wall]
   =/  =tape  (zing (join "\0a" buf))
   =/  pos  (get-pos buf row col)
   :_  buf
@@ -205,27 +287,19 @@
   ::
   =/  rune  (swag [(safe-sub pos 2) 2] tape)
   ?:  (~(has by runes:rune-snippet) rune)
-    (rune-snippet rune)
+    (json-response eyre-id (rune-snippet rune))
   ::  Don't run on large files because it's slow
   ::
   ?:  (gth (lent buf) 1.000)
     =,  enjs:format
-    (pairs good+b+& result+~ ~)
+    (json-response eyre-id (pairs good+b+& result+~ ~))
   ::
   =/  tl
     (tab-list-tape:auto -:!>(..zuse) pos tape)
   =,  enjs:format
+  %+  json-response  eyre-id
   ?:  ?=(%| -.tl)
-    %-  pairs
-    :~  good+b+|
-        :+  %diagnostics  %a  :_  ~
-        =/  loc  (pairs line+(numb (dec row.p.tl)) character+(numb col.p.tl) ~)
-        %-  pairs
-        :~  range+(pairs start+loc end+loc ~)
-            severity+n+'1'
-            message+s+'syntax error'
-        ==
-    ==
+    (format-diagnostic p.tl)
   ?~  p.tl
     *json
   %-  pairs

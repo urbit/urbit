@@ -16,6 +16,7 @@
   $%  [%chat-initial inbox]
       [%chat-configs chat-configs]
       [%chat-update chat-update]
+      [%chat-two-update chat-two-update]
   ==
 --
 ::
@@ -148,10 +149,11 @@
   |=  action=chat-action
   ^-  (quip card _state)
   ?-  -.action
-      %create   (handle-create action)
-      %delete   (handle-delete action)
-      %message  (handle-message action)
-      %read     (handle-read action)
+      %create    (handle-create action)
+      %delete    (handle-delete action)
+      %message   (handle-message action)
+      %messages  (handle-messages action)
+      %read      (handle-read action)
   ==
 ::
 ++  handle-create
@@ -181,16 +183,33 @@
   =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
   ?~  mailbox
     [~ state]
-  =*  letter  letter.envelope.act
-  =?  letter  &(?=(%code -.letter) ?=(~ output.letter))
-    =/  =hoon  (ream expression.letter)
-    letter(output (eval bol hoon))
-  =:  length.config.u.mailbox  +(length.config.u.mailbox)
-      number.envelope.act  +(length.config.u.mailbox)
-      envelopes.u.mailbox  (snoc envelopes.u.mailbox envelope.act)
-  ==
+  =.  letter.envelope.act  (evaluate-letter letter.envelope.act)
+  =.  u.mailbox  (append-envelope u.mailbox envelope.act)
   :-  (send-diff path.act act)
   state(inbox (~(put by inbox) path.act u.mailbox))
+::
+++  handle-messages
+  |=  act=chat-action
+  ^-  (quip card _state)
+  ?>  ?=(%messages -.act)
+  =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
+  ?~  mailbox
+    [~ state]
+  =/  evaluated-envelopes=(list envelope)  ~
+  |-  ^-  (quip card _state)
+  ?~  envelopes.act
+    :_  state(inbox (~(put by inbox) path.act u.mailbox))
+    %+  send-two-diff  path.act
+    :*  %messages
+        path.act
+        (sub length.config.u.mailbox (lent evaluated-envelopes))
+        length.config.u.mailbox 
+        evaluated-envelopes
+    ==
+  =.  letter.i.envelopes.act  (evaluate-letter letter.i.envelopes.act)
+  =.  evaluated-envelopes  (snoc evaluated-envelopes i.envelopes.act)
+  =.  u.mailbox  (append-envelope u.mailbox i.envelopes.act)
+  $(envelopes.act t.envelopes.act)
 ::
 ++  handle-read
   |=  act=chat-action
@@ -203,24 +222,54 @@
   :-  (send-diff path.act act)
   state(inbox (~(put by inbox) path.act u.mailbox))
 ::
+++  evaluate-letter
+  |=  =letter
+  ^-  ^letter
+  =?  letter  &(?=(%code -.letter) ?=(~ output.letter))
+    =/  =hoon  (ream expression.letter)
+    letter(output (eval bol hoon))
+  letter
+::
+++  append-envelope
+  |=  [=mailbox =envelope]
+  ^-  ^mailbox
+  =.  number.envelope  +(length.config.mailbox)
+  =:  length.config.mailbox  +(length.config.mailbox)
+      envelopes.mailbox  (snoc envelopes.mailbox envelope)
+  ==
+  mailbox
+::
 ++  update-subscribers
-  |=  [pax=path act=chat-action]
+  |=  [pax=path act=chat-update]
   ^-  (list card)
   [%give %fact `pax %chat-update !>(act)]~
 ::
 ++  send-diff
-  |=  [pax=path act=chat-action]
+  |=  [pax=path upd=chat-update]
   ^-  (list card)
   %-  zing
-  :~  (update-subscribers /all act)
-      (update-subscribers /updates act)
-      (update-subscribers [%mailbox pax] act)
-      ?.  |(=(%read -.act) =(%message -.act))
+  :~  (update-subscribers /all upd)
+      (update-subscribers /updates upd)
+      (update-subscribers [%mailbox pax] upd)
+      ?.  |(|(=(%read -.upd) =(%message -.upd)) =(%messages -.upd))
         ~
-      (update-subscribers /configs act)
-      ?.  |(=(%create -.act) =(%delete -.act))
+      (update-subscribers /configs upd)
+      ?.  |(=(%create -.upd) =(%delete -.upd))
         ~
-      (update-subscribers /keys act)
+      (update-subscribers /keys upd)
   ==
 ::
+++  send-two-diff
+  |=  [pax=path upd=chat-two-update]
+  ^-  (list card)
+  %-  zing
+  :~  (update-two-subscribers /all upd)
+      (update-two-subscribers /updates upd)
+      (update-two-subscribers [%mailbox pax] upd)
+  ==
+::
+++  update-two-subscribers
+  |=  [pax=path upd=chat-two-update]
+  ^-  (list card)
+  [%give %fact `pax %chat-two-update !>(upd)]~
 --

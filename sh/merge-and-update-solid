@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+usage() {
+    local error="$1"
+
+    cat >&2 <<EOF
+Usage:
+  $0 BRANCH PULL_REQUEST
+
+Synopsis:
+  Useful script for merging a GitHub pull request, resolving any (solid) pill
+  conflicts along the way.
+
+  Strips "origin" from branches.
+
+Example:
+  $0 origin/philip/jael-fix 1953
+
+  Yields:
+
+  Merge branch 'philip/jael-fix' (#1953)
+
+  * origin/philip/jael-fix:
+    jael: process all ships in %full update
+
+  Signed-off-by: Jared Tobin <jared@tlon.io>
+
+Error:
+  -> $error
+EOF
+
+    exit 1
+}
+
+args="$@"
+
+if [[ -z "$args" ]]; then
+    usage "No arguments specified."
+fi
+
+REV=$1
+PR=$2
+
+TARGET=$(echo $REV | sed s_origin/__)
+
+MERGE_MSG="Merge branch '$TARGET' (#$PR)"
+
+PIER="tmp_pill_zod"
+
+cleanup () {
+  if [ -e ./$PIER/.vere.lock ]
+  then kill $(< ./$PIER/.vere.lock) || true;
+  fi
+}
+
+trap cleanup EXIT
+
+git merge --no-ff --signoff --log -X ours -m "$MERGE_MSG" $REV
+
+rm -rf $PIER
+urbit -d -F zod -B bin/solid.pill -A pkg/arvo -c $PIER
+
+herb $PIER -P solid.pill -d '+solid'
+
+mv solid.pill bin/solid.pill
+
+git add bin/solid.pill
+git commit --amend --no-edit
+
+cleanup
+
+rm -rf $PIER
