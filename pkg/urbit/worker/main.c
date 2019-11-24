@@ -46,17 +46,10 @@
 +$  plea
   $%  ::  status on startup
       ::
-      $:  %play
-          $=  p
-          ::  ~ if no snapshot
-          ::
-          %-  unit
-          ::  p: event number expected
-          ::  q: mug of kernel
-          ::  r: identity, fake flag
-          ::
-          [p=@ q=@ r=[our=@p fak=?]]
-      ==
+      ::  p: event number expected
+      ::  q: mug of kernel (or 0)
+      ::
+      [%play p=@ q=@]
       ::  event executed unchanged (in response to %work)
       ::
       $:  %done
@@ -97,11 +90,9 @@
 +$  writ
   $%  ::  prepare to boot
       ::
-      ::  p: identity
-      ::  q: fake?
-      ::  r: number of boot formulas
+      ::  p: length of lifecycle sequence
       ::
-      [%boot p=@p q=? r=@]
+      [%boot p=@]
       ::  exit immediately
       ::
       ::  p: exit code
@@ -879,13 +870,11 @@ _worker_poke(void* vod_p, u3_noun mat)
         goto error;
       }
 
-      //  XX [our fak] ignored. Remove
-      //
       case c3__boot: {
         u3_noun len;
         c3_w  len_w;
 
-        if ( (c3n == u3r_qual(jar, 0, 0, 0, &len)) ||
+        if ( (c3n == u3r_cell(jar, 0, &len)) ||
              (c3n == u3ud(len)) ||
              (1 < u3r_met(3, len)) )
         {
@@ -974,26 +963,23 @@ _worker_poke(void* vod_p, u3_noun mat)
 void
 u3_worker_boot(void)
 {
-  c3_d nex_d  = 1ULL;
-  u3_noun dat = u3_nul;
+  c3_d nex_d = 1ULL;
+
+  //  if a lifecycle sequence is needed, [len_w] will be set on %boot
+  //
+  u3V.len_w = 0;
 
   if ( 0 != u3V.dun_d ) {
-    //  no boot sequence expected
-    //
-    u3V.len_w = 0;
     u3V.mug_l = u3r_mug(u3A->roc);
-    nex_d     = u3V.dun_d + 1ULL;
-    //  XX [our fak] is unused/ignored. Remove.
-    //  Temporarily defaulted to [~zod fake=&]
-    //
-    dat       = u3nc(u3_nul, u3nt(u3i_chubs(1, &nex_d),
-                                  u3V.mug_l,
-                                  u3nc(0, 0)));
+    nex_d    += u3V.dun_d;
+  }
+  else {
+    u3V.mug_l = 0;
   }
 
   u3l_log("work: play %" PRIu64 "\r\n", nex_d);
 
-  _worker_send(u3nc(c3__play, dat));
+  _worker_send(u3nt(c3__play, u3i_chubs(1, &nex_d), u3V.mug_l));
 
   //  measure/print static memory usage if < 1/2 of the loom is available
   //

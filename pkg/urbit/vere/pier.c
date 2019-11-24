@@ -494,14 +494,16 @@ _pier_work_boot(u3_pier* pir_u, c3_o sav_o)
 
   c3_assert( 0 != pir_u->lif_d );
 
-  u3_noun who = u3i_chubs(2, pir_u->who_d);
   u3_noun len = u3i_chubs(1, &pir_u->lif_d);
 
   if ( c3y == sav_o ) {
-    _pier_db_write_header(pir_u, u3k(who), pir_u->fak_o, u3k(len));
+    _pier_db_write_header(pir_u,
+                          u3i_chubs(2, pir_u->who_d),
+                          pir_u->fak_o,
+                          u3k(len));
   }
 
-  u3_noun msg = u3nq(c3__boot, who, pir_u->fak_o, len);
+  u3_noun msg = u3nc(c3__boot, len);
   u3_atom mat = u3ke_jam(msg);
   u3_newt_write(&god_u->inn_u, mat, 0);
 }
@@ -897,30 +899,21 @@ _pier_work_poke(void*   vod_p,
     //  the worker process starts with a %play task,
     //  which tells us where to start playback
     //
-    //    XX [our fak] ignored. Remove
-    //
     case c3__play: {
       c3_d lav_d;
       c3_l mug_l;
 
-      if ( u3_nul == u3t(jar) ) {
-        lav_d = 1ULL;
-        mug_l = 0;
+      if ( (c3n == u3r_trel(jar, 0, &p_jar, &q_jar)) ||
+           (c3n == u3ud(p_jar)) ||
+           (u3r_met(6, p_jar) != 1) ||
+           (c3n == u3ud(q_jar)) ||
+           (1 < u3r_met(5, q_jar))  )
+      {
+        goto error;
       }
-      else {
-        if ( (c3n == u3r_qual(u3t(jar), 0, &p_jar, &q_jar, 0)) ||
-             (c3n == u3ud(p_jar)) ||
-             (u3r_met(6, p_jar) != 1) ||
-             (c3n == u3ud(q_jar)) ||
-             (u3r_met(5, q_jar) != 1)  )
-        {
-          goto error;
-        }
-        else {
-          lav_d = u3r_chub(0, p_jar);
-          mug_l = u3r_word(0, q_jar);
-        }
-      }
+
+      lav_d = u3r_chub(0, p_jar);
+      mug_l = u3r_word(0, q_jar);
 
       _pier_work_play(pir_u, lav_d, mug_l);
       break;
@@ -1035,6 +1028,7 @@ _pier_work_poke(void*   vod_p,
   return;
 
   error: {
+    u3m_p("jar", jar);
     u3z(jar); u3z(mat);
     _pier_work_bail(0, "bad jar");
   }
