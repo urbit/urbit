@@ -68,7 +68,6 @@
     ?+    -.sign  (on-agent:def wire sign)
     ::
         %watch-ack
-    ^-  (quip card _this)
       ?~  p.sign
         [~ this]
       %-  (slog u.p.sign)
@@ -78,7 +77,6 @@
       [~ this]
     ::
         %kick
-    ^-  (quip card _this)
       ?>  ?=([@ @ *] wire)
       =/  =ship  (slav %p i.wire)
       ?.  (~(has by synced.state) wire)
@@ -89,7 +87,6 @@
       [%pass group-wire %agent [ship %group-hook] %watch group-path]~
     ::
         %fact
-    ^-  (quip card _this)
       ?.  ?=(%group-update p.cage.sign)
         (on-agent:def wire sign)
       =^  cards  state
