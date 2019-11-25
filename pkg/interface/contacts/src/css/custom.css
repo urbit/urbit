@@ -19,6 +19,10 @@ textarea, input, button {
   background-color: #fff;
 }
 
+h2 {
+  font-weight: 400;
+}
+
 a {
   color: #000;
 }
