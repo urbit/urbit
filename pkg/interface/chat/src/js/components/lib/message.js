@@ -64,9 +64,10 @@ export class Message extends Component {
       let chatroom = letter.text.match(
         /(~[a-z]{3,6})(-[a-z]{6})?([/])(([a-z])+([/-])?)+/
         );
-      if ((chatroom !== null) 
-        && (chatroom[1].length > 2) 
-        && (urbitOb.isValidPatp(chatroom[1]))) {
+      if ((chatroom !== null) // matched possible chatroom
+        && (chatroom[1].length > 2) // possible ship?
+        && (urbitOb.isValidPatp(chatroom[1]) // valid patp?
+        && (chatroom[0] === letter.text))) { // entire message is room name?
           return (
             <Link
             className="bb b--black f7 mono lh-copy v-top" 
