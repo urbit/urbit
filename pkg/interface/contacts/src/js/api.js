@@ -63,18 +63,6 @@ class UrbitApi {
     });
   }
 
-  addPendingMessage(msg) {
-    if (store.state.pendingMessages.has(msg.path)) {
-      store.state.pendingMessages.get(msg.path).push(msg.envelope);
-    } else {
-      store.state.pendingMessages.set(msg.path, [msg.envelope]);
-    }
-
-    store.setState({
-      pendingMessages: store.state.pendingMessages
-    });
-  }
-
   groupsAction(data) {
     this.action("group-store", "group-action", data);
   }

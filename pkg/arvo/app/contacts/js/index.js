@@ -49766,12 +49766,7 @@
 
             class InitialReducer {
               reduce(json, state) {
-                let data = lodash.get(json, 'chat-initial', false);
-                if (data) {
-                  state.inbox = data;
-                }
-
-                data = lodash.get(json, 'group-initial', false);
+                let data = lodash.get(json, 'group-initial', false);
                 if (data) {
                   for (let group in data) {
                     state.groups[group] = new Set(data[group]);
@@ -50075,18 +50070,6 @@
                     (err) => {
                       reject(err);
                     });
-                });
-              }
-
-              addPendingMessage(msg) {
-                if (store.state.pendingMessages.has(msg.path)) {
-                  store.state.pendingMessages.get(msg.path).push(msg.envelope);
-                } else {
-                  store.state.pendingMessages.set(msg.path, [msg.envelope]);
-                }
-
-                store.setState({
-                  pendingMessages: store.state.pendingMessages
                 });
               }
 
@@ -58811,6 +58794,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               render() {
                 return (
                   react.createElement('div', { className: "br b--gray4 h-100 flex-basis-100-s flex-basis-300-ns"    , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 7}}
+                  , react.createElement('h2', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 8}}, "Your Root Identity"  )
                   )
                 )
               }
@@ -58820,7 +58804,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
             class Skeleton extends react_1 {
               render() {
                   let rightPanelClasses =
-                    this.props.display === "contactCard" ? "db" : "dn db-ns"; 
+                    this.props.activeDrawer === "contactCard" ? "db" : "dn db-ns"; 
 
                 return (
                   react.createElement('div', { className: "h-100 w-100" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 13}}
@@ -58830,7 +58814,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                       style: {
                         height: "calc(100% - 48px)"
                       }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 15}}
-                      , react.createElement(Groups, {__self: this, __source: {fileName: _jsxFileName$4, lineNumber: 20}} )
+                      , react.createElement(Groups, {__self: this, __source: {fileName: _jsxFileName$4, lineNumber: 20}})
                       , react.createElement('div', {
                         className: "h-100 w-100 " + rightPanelClasses,
                         style: {
@@ -58865,13 +58849,12 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
                 return (
                   react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 31}}
-                    , react.createElement('div', { class: "h-100 w-100" , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 32}}
+                    , react.createElement('div', { className: "h-100 w-100" , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 32}}
                     , react.createElement(Route, { exact: true, path: "/~contacts",
                       render:  (props) => {
                         return (
-                          react.createElement(Skeleton, { display: "groups", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 36}}
-                            , react.createElement('div', { className: "h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"     , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 37}}
-                            )
+                          react.createElement(Skeleton, { activeDrawer: "groups", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 36}}
+                            , react.createElement('div', { className: "h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"     , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 37}})
                           )
                         );
                       }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 33}} )
