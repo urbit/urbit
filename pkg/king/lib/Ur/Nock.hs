@@ -51,12 +51,11 @@
 
 module Ur.Nock where
 
-import ClassyPrelude hiding (undefined)
-import Noun
+import Ur.Common hiding (undefined)
 
 import Control.Lens ((&))
 import Prelude      (undefined)
-import Ur.Spock     (Sp, Ix(..), Vl, Dr(..), axis, ix)
+import Ur.Spock     (Sp, Vl)
 
 import qualified Ur.Spock as S
 

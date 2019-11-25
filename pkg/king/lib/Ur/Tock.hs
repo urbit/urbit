@@ -1,15 +1,17 @@
 module Ur.Tock
+{-
     ( Dc(..), Pm(..)
     , S(..)
     , PM, epm
     , ST, edc
-    ) where
+    ) -} where
 
-import Ur.Common hiding (GT, L, R)
+-- import Ur.Common hiding (GT, L, R)
 
 
 -- Concise Sum Types -----------------------------------------------------------
 
+{-
 data S a b = L a | R b
   deriving (Eq, Ord)
 
@@ -37,6 +39,7 @@ data Ex
     | Inc Ex
     | Dec Ex Ex Ex
   deriving (Eq, Ord, Show)
+-}
 
 
 {-
