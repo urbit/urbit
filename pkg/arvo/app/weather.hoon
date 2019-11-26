@@ -23,11 +23,11 @@
 =*  state  -
 ^-  agent:gall
 =<
-  |_  =bowl:gall
+  |_  bol=bowl:gall
   +*  this  .
       weather-core  +>
-      wc    ~(. weather-core bowl)
-      def   ~(. (default-agent this %|) bowl)
+      wc    ~(. weather-core bol)
+      def   ~(. (default-agent this %|) bol)
   ++  on-init
     :_  this
     :~  [%pass /bind/weather %arvo %e %connect [~ /'~weather'] %weather]
