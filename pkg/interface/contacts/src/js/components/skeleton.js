@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 
 import { HeaderBar } from './lib/header-bar';
-import { Groups } from '../groups';
+import { Groups } from './groups';
 
 export class Skeleton extends Component {
   render() {

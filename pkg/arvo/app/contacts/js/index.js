@@ -58686,22 +58686,22 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
             class Subscription {
               start() {
                 if (api.authTokens) {
-                  this.initializeChat();
+                  this.initializeContacts();
                 } else {
                   console.error("~~~ ERROR: Must set api.authTokens before operation ~~~");
                 }
               }
 
-              initializeChat() {
-                api.bind('/primary', 'PUT', api.authTokens.ship, 'chat-view',
-                  this.handleEvent.bind(this),
-                  this.handleError.bind(this),
-                  this.handleQuitAndResubscribe.bind(this));
+              initializeContacts() {
                 api.bind('/primary', 'PUT', api.authTokens.ship, 'invite-view',
                   this.handleEvent.bind(this),
                   this.handleError.bind(this),
                   this.handleQuitAndResubscribe.bind(this));
                 api.bind('/all', 'PUT', api.authTokens.ship, 'group-store',
+                  this.handleEvent.bind(this),
+                  this.handleError.bind(this),
+                  this.handleQuitAndResubscribe.bind(this));
+                  api.bind('/primary', 'PUT', api.authTokens.ship, 'contact-store',
                   this.handleEvent.bind(this),
                   this.handleError.bind(this),
                   this.handleQuitAndResubscribe.bind(this));
@@ -58712,6 +58712,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
 
               handleEvent(diff) {
+                console.log(diff);
                 store.handleEvent(diff);
               }
 
@@ -58726,18 +58727,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               handleQuitAndResubscribe(quit) {
                 // TODO: resubscribe
               }
-
-              fetchMessages(start, end, path) {
-                console.log(start, end, path);
-                fetch(`/~chat/paginate/${start}/${end}${path}`)
-                  .then((response) => response.json())
-                  .then((json) => {
-                    store.handleEvent({
-                      data: json
-                    });
-                  });
-              }
-
             }
 
             let subscription = new Subscription();
@@ -58788,13 +58777,14 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$3 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/groups.js";
+            const _jsxFileName$3 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/groups.js";
             class Groups extends react_1 {
               // drawer to the left
               render() {
                 return (
                   react.createElement('div', { className: "br b--gray4 h-100 flex-basis-100-s flex-basis-300-ns"    , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 7}}
-                  , react.createElement('h2', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 8}}, "Your Root Identity"  )
+                  , react.createElement('h2', { className: "f9 pa4 gray2"  , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 8}}, "Your Root Identity"  )
+                  , react.createElement('h2', { className: "f9 pa4 gray2"  , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 9}}, "Your Groups" )
                   )
                 )
               }
