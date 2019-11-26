@@ -1262,7 +1262,7 @@
         ::
         ?-    public-keys-result
             [%diff @ %rift *]
-          (on-publ-breach who.public-keys-result)
+          event-core
         ::
             [%diff @ %keys *]
           (on-publ-rekey [who to.diff]:public-keys-result)
@@ -1411,6 +1411,15 @@
         ::
         =?  event-core  =(%pawn (clan:title our))
           (send-blob ship (attestation-packet ship life.point))
+        ::  save current duct
+        ::
+        =/  original-duct  duct
+        ::  apply heeds
+        ::
+        =.  event-core
+          %+  roll  ~(tap in heeds.todos)
+          |=  [=^duct core=_event-core]
+          (on-heed:core(duct duct) ship)
         ::  apply outgoing messages, reversing for FIFO order
         ::
         =.  event-core
@@ -1424,7 +1433,7 @@
           |=  [=blob core=_event-core]
           (send-blob:core ship blob)
         ::
-        event-core
+        event-core(duct original-duct)
       --
     ::
     ++  insert-peer-state

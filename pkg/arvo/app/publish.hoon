@@ -2,7 +2,7 @@
 ::  /app/publish.hoon
 ::
 /-  *publish
-/+  *server, *publish, default-agent
+/+  *server, *publish, default-agent, verb
 ::
 /=  index
   /^  $-(json manx)
@@ -57,6 +57,7 @@
 =*  state  -
 ^-  agent:gall
 =<
+  %+  verb  |
   |_  bol=bowl:gall
   +*  this      .
       pub-core  +>

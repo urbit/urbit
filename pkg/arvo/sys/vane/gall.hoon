@@ -779,6 +779,7 @@
     ^+  mo-core
     ::  %u/%leave gets automatically acked
     ::
+    =.  mo-core  (mo-track-ship ship)
     =?  mo-core  ?=(%u -.ames-request)  (mo-give %done ~)
     ::
     =/  =wire  /sys/req/(scot %p ship)/[agent-name]
