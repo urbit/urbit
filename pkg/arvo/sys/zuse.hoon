@@ -5510,6 +5510,39 @@
     |=  cis/coin
     ?.  ?=({$$ case} cis)  ~
     `(unit beam)`[~ [who dex `case`p.cis] (flop t.t.t.pax)]
+  ::
+  ++  json-rn                                           ::  json to rn parser
+    %+  knee  *rn  |.
+    ;~  plug
+      (easy %d)
+      ;~(pose (cold | hep) (easy &))
+      ;~  plug  dim:ag
+        ;~  pose
+          ;~  pfix  dot
+            %+  sear
+              |=  a=tape
+              =/  b  (rust a dum:ag)
+              ?~  b  ~
+              (some [(lent a) u.b])
+            (plus (shim '0' '9'))
+          ==
+          (easy [0 0])
+        ==
+        ;~  pose
+          ;~  pfix
+            (just 'e')
+            ;~  plug
+              ;~(pose (cold | hep) (easy &))
+              ;~  pose
+                ;~(pfix (plus (just '0')) dim:ag)
+                dim:ag
+              ==
+            ==
+          ==
+          (easy [& 0])
+        ==
+      ==
+    ==
   ::                                                    ::  ++enjs:format
   ++  enjs  ^?                                          ::  json encoders
     |%
@@ -5628,9 +5661,9 @@
     ::                                                  ::  ++ne:dejs:format
     ++  ne                                              ::  number as real
       |=  jon/json
-      ^-  (unit @rd)
-      ::  please implement me, it's not that hard!
-      !!
+      ^-  @rd
+      ?>  ?=([%n *] jon)
+      (rash p.jon (cook ryld (cook royl-cell:^so json-rn)))
     ::                                                  ::  ++ni:dejs:format
     ++  ni                                              ::  number as integer
       |=  jon/json
@@ -5841,7 +5874,8 @@
     ++  ne                                              ::  number as real
       |=  jon/json
       ^-  (unit @rd)
-      !!
+      ?.  ?=([%n *] jon)  ~
+      (rush p.jon (cook ryld (cook royl-cell:^so json-rn)))
     ::
     ++  ni                                              ::  number as integer
       |=  jon/json
