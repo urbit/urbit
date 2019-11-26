@@ -243,18 +243,31 @@
   |=  who=ship
   =/  m  (strand ,_state)
   ^-  form:m
-  ?.  =(%earl (clan:title who))
+  =/  clan  (clan:title who)
+  ?-    clan
+      ?(%czar %king %duke)
     ;<  ~  bind:m  (raw-ship:ph-io who `(dawn who ~))
     (pure:m state)
-  =/  spon=ship  (^sein:title who)
-  =/  cub  (pit:nu:crub:crypto 512 (shaz (jam who life=1 %entropy)))
-  =/  =seed:able:jael
-    [who 1 sec:ex:cub ~]
-  =/  =pass  pub:ex:cub
-  =/  com=tape  "|moon {(scow %p who)}, =public-key {(scow %uw pass)}"
-  ;<  ~  bind:m  (dojo:ph-io spon com)
-  ;<  ~  bind:m  (raw-ship:ph-io who `(dawn who `seed))
-  (pure:m state)
+  ::
+      ?(%earl %pawn)
+    =/  spon=ship  (^sein:title who)
+    =/  cub
+      ::  hard-code a valid comet key for convenience so we don't have to mine
+      ::
+      ?:  =(who ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud)
+        0w9N.5uIvA.Jg0cx.NCD2R.o~MtZ.uEQOB.9uTbp.6LHvg.0yYTP.
+        3q3td.T4UF0.d5sDL.JGpZq.S3A92.QUuWg.IHdw7.izyny.j9W92
+      (pit:nu:crub:crypto 512 (shaz (jam who life=1 %entropy)))
+    =/  =seed:able:jael
+      [who 1 sec:ex:cub ~]
+    =/  =pass  pub:ex:cub
+    =/  com=tape
+      =/  rank  ?:(=(%earl clan) "moon" "comet")
+      "|{rank} {(scow %p who)}, =public-key {(scow %uw pass)}"
+    ;<  ~  bind:m  (dojo:ph-io spon com)
+    ;<  ~  bind:m  (raw-ship:ph-io who `(dawn who `seed))
+    (pure:m state)
+  ==
 ::
 ++  dawn
   |=  [who=ship seed=(unit seed:able:jael)]
