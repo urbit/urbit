@@ -58701,7 +58701,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                   this.handleEvent.bind(this),
                   this.handleError.bind(this),
                   this.handleQuitAndResubscribe.bind(this));
-                  api.bind('/primary', 'PUT', api.authTokens.ship, 'contact-store',
+                  api.bind('/all', 'PUT', api.authTokens.ship, 'contact-store',
                   this.handleEvent.bind(this),
                   this.handleError.bind(this),
                   this.handleQuitAndResubscribe.bind(this));
@@ -58712,7 +58712,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
 
               handleEvent(diff) {
-                console.log(diff);
                 store.handleEvent(diff);
               }
 
@@ -58794,7 +58793,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
             class Skeleton extends react_1 {
               render() {
                   let rightPanelClasses =
-                    this.props.activeDrawer === "contactCard" ? "db" : "dn db-ns"; 
+                    this.props.activeDrawer === "rightPanel" ? "db" : "dn db-ns";
 
                 return (
                   react.createElement('div', { className: "h-100 w-100" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 13}}
@@ -58818,7 +58817,50 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$5 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/root.js";
+            const _jsxFileName$5 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/lib/new.js";
+            class NewScreen extends react_1 {
+              constructor(props) {
+                super(props);
+
+                this.state = {
+                  groupName: '',
+                  invites: '',
+                  color: ''
+                };
+
+                this.groupNameChange = this.groupNameChange.bind(this);
+                this.invChange = this.invChange.bind(this);
+                this.colorChange = this.colorChange.bind(this);
+              }
+
+              groupNameChange(event) {
+                this.setState({
+                  groupName: event.target.value
+                });
+              }
+
+              invChange(event) {
+                this.setState({
+                  invites: event.target.value
+                });
+              }
+
+              colorChange(event) {
+                this.setState({
+                  color: event.target.value
+                });
+              }
+
+              render() {
+                return (
+                  react.createElement('div', { className: "h-100 w-100 flex flex-column"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 38}}
+
+                  )
+                )
+              }
+            }
+
+            const _jsxFileName$6 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/root.js";
 
             class Root extends react_1 {
               constructor(props) {
@@ -58838,23 +58880,33 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               render() {
 
                 return (
-                  react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 31}}
-                    , react.createElement('div', { className: "h-100 w-100" , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 32}}
+                  react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$6, lineNumber: 32}}
+                    , react.createElement('div', { className: "h-100 w-100" , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 33}}
                     , react.createElement(Route, { exact: true, path: "/~contacts",
                       render:  (props) => {
                         return (
-                          react.createElement(Skeleton, { activeDrawer: "groups", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 36}}
-                            , react.createElement('div', { className: "h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"     , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 37}})
+                          react.createElement(Skeleton, { activeDrawer: "groups", __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 37}}
+                            , react.createElement('div', { className: "h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"     , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 38}})
                           )
                         );
-                      }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 33}} )
+                      }, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 34}} )
+                      , react.createElement(Route, { exact: true, path: "/~contacts/new", 
+                        render:  (props) => {
+                          return (
+                            react.createElement(Skeleton, {
+                              spinner: this.state.spinner,
+                              activeDrawer: "rightPanel", __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 45}}
+                              , react.createElement(NewScreen, {__self: this, __source: {fileName: _jsxFileName$6, lineNumber: 48}} )
+                            )
+                          );
+                      }, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 42}} )
                     )
                   )
                 )
               }
             }
 
-            const _jsxFileName$6 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/index.js";
+            const _jsxFileName$7 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/index.js";
             api.setAuthTokens({
               ship: window.ship
             });
@@ -58862,7 +58914,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
             subscription.start();
 
             reactDom.render((
-              react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 15}} )
+              react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$7, lineNumber: 15}} )
             ), document.querySelectorAll("#root")[0]);
 
 }));

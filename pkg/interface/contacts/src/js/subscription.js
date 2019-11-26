@@ -22,7 +22,7 @@ export class Subscription {
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this));
-      api.bind('/primary', 'PUT', api.authTokens.ship, 'contact-store',
+      api.bind('/all', 'PUT', api.authTokens.ship, 'contact-store',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this));
@@ -33,7 +33,6 @@ export class Subscription {
   }
 
   handleEvent(diff) {
-    console.log(diff);
     store.handleEvent(diff);
   }
 

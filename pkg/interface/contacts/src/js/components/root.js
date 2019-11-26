@@ -7,6 +7,7 @@ import { api } from '/api';
 import { subscription } from '/subscription';
 import { store } from '/store';
 import { Skeleton } from '/components/skeleton';
+import { NewScreen } from '/components/lib/new';
 
 
 export class Root extends Component {
@@ -37,6 +38,16 @@ export class Root extends Component {
                 <div className="h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"></div>
               </Skeleton>
             );
+          }} />
+          <Route exact path="/~contacts/new" 
+            render={ (props) => {
+              return (
+                <Skeleton
+                  spinner={this.state.spinner}
+                  activeDrawer="rightPanel">
+                  <NewScreen />
+                </Skeleton>
+              );
           }} />
         </div>
       </BrowserRouter>
