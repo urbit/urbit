@@ -58781,9 +58781,16 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               // drawer to the left
               render() {
                 return (
-                  react.createElement('div', { className: "br b--gray4 h-100 flex-basis-100-s flex-basis-300-ns"    , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 7}}
-                    , react.createElement('h2', { className: "f9 pa4 gray2 c-default"   , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 8}}, "Your Root Identity"  )
-                    , react.createElement('h2', { className: "f9 pa4 gray2 c-default"   , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 9}}, "Your Groups" )
+                  react.createElement('div', { className: "br b--gray4 h-100 flex-basis-100-s flex-basis-300-ns relative"     , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 9}}
+                    , react.createElement('h2', { className: "f9 pa4 gray2 c-default"   , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 10}}, "Your Root Identity"  )
+                    , react.createElement('h2', { className: "f9 pa4 gray2 c-default"   , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 11}}, "Your Groups" )
+                    , react.createElement('div', {
+                      className: "dt bt b--gray4 absolute w-100"    ,
+                      style: { bottom: 0, height: 48 }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 12}}
+                      , react.createElement(Link, { to: "/~contacts/new", className: "dtc v-mid" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 15}}
+                        , react.createElement('p', { className: "f9 pl4 black bn"   , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 16}}, "Create New Group"  )
+                      )
+                    )
                   )
                 );
               }
@@ -58853,11 +58860,11 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
               render() {
                 return (
-                  react.createElement('div', { className: "h-100 w-100 flex flex-column"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 38}}
-                    , react.createElement('div', { className: "w-100 w-50-l w-50-xl"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 39}}
-                      , react.createElement('h2', { className: "f8 pl3 pt4"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 40}}, "Create New Group"  )
-                      , react.createElement('h2', { className: "f8 pl3 pt6"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 41}}, "Group Name" )
-                      , react.createElement('p', { className: "f9 pl3 gray2 lh-copy"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 42}}, "Alphanumeric characters only"  )
+                  react.createElement('div', { className: "h-100 w-100 flex flex-column"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 40}}
+                    , react.createElement('div', { className: "w-100 w-50-l w-50-xl"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 41}}
+                      , react.createElement('h2', { className: "f8 pl3 pt4"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 42}}, "Create New Group"  )
+                      , react.createElement('h2', { className: "f8 pl3 pt6"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 43}}, "Group Name" )
+                      , react.createElement('p', { className: "f9 pl3 gray2 lh-copy"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 44}}, "Alphanumeric characters only"  )
                       , react.createElement('textarea', {
                         className: "f7 ba b--gray3 w-100 pa3 ml3 mt2"      ,
                         rows: 1,
@@ -58865,10 +58872,10 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                         style: {
                           resize: "none",
                           height: 48
-                        }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 43}}
+                        }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 45}}
                       )
-                      , react.createElement('h2', { className: "f8 pl3 pt6"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 52}}, "Group Avatar" )
-                      , react.createElement('p', { className: "f9 pl3 gray2 lh-copy"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 53}}, "Select a color to represent your group"
+                      , react.createElement('h2', { className: "f8 pl3 pt6"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 54}}, "Group Avatar" )
+                      , react.createElement('p', { className: "f9 pl3 gray2 lh-copy"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 55}}, "Select a color to represent your group"
 
                       )
                       , react.createElement('textarea', {
@@ -58878,10 +58885,10 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                         style: {
                           resize: "none",
                           height: 48
-                        }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 56}}
+                        }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 58}}
                       )
-                      , react.createElement('h2', { className: "f8 pl3 pt6"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 65}}, "Add Group Members"  )
-                      , react.createElement('p', { className: "f9 pl3 gray2 lh-copy"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 66}}, "Search for ships to invite to your group"
+                      , react.createElement('h2', { className: "f8 pl3 pt6"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 67}}, "Add Group Members"  )
+                      , react.createElement('p', { className: "f9 pl3 gray2 lh-copy"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 68}}, "Search for ships to invite to your group"
 
                       )
                       , react.createElement('textarea', {
@@ -58891,11 +58898,14 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                         style: {
                           resize: "none",
                           height: 48
-                        }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 69}}
+                        }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 71}}
                       )
-                      , react.createElement('button', {
-                      className: "ml3 f8 ba pa2 b--green2 green2"     , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 78}}, "Start Group" )
-                      , react.createElement('button', { className: "f8 ml3 ba pa2 b--black"    , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 80}}, "Cancel")
+                      , react.createElement('button', { className: "ml3 f8 ba pa2 b--green2 green2"     , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 80}}, "Start Group"
+
+                      )
+                      , react.createElement(Link, { to: "/~contacts", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 83}}
+                        , react.createElement('button', { className: "f8 ml3 ba pa2 b--black"    , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 84}}, "Cancel")
+                      )
                     )
                   )
                 );

@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 
+import { Route, Link } from 'react-router-dom';
+
 export class NewScreen extends Component {
   constructor(props) {
     super(props);
@@ -75,9 +77,12 @@ export class NewScreen extends Component {
               height: 48
             }}
           />
-          <button
-          className="ml3 f8 ba pa2 b--green2 green2">Start Group</button>
-          <button className="f8 ml3 ba pa2 b--black">Cancel</button>
+          <button className="ml3 f8 ba pa2 b--green2 green2">
+            Start Group
+          </button>
+          <Link to="/~contacts">
+            <button className="f8 ml3 ba pa2 b--black">Cancel</button>
+          </Link>
         </div>
       </div>
     );
