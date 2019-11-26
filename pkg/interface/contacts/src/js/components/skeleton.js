@@ -7,7 +7,7 @@ import { Groups } from './groups';
 export class Skeleton extends Component {
   render() {
       let rightPanelClasses =
-        this.props.activeDrawer === "contactCard" ? "db" : "dn db-ns"; 
+        this.props.activeDrawer === "rightPanel" ? "db" : "dn db-ns";
 
     return (
       <div className="h-100 w-100">
