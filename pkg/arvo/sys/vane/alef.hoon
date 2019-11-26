@@ -2716,7 +2716,7 @@
   |=  [=message-num =message-blob]
   ^-  (list static-fragment)
   ::
-  =/  fragments=(list fragment)   (rip 20 message-blob)
+  =/  fragments=(list fragment)   (rip 13 message-blob)
   =/  num-fragments=fragment-num  (lent fragments)
   =|  counter=@
   ::
@@ -2741,7 +2741,7 @@
     $(index +(index), sorted [(~(got by fragments) index) sorted])
   ::
   %-  cue
-  %+  can   20
+  %+  can   13
   %+  turn  (flop sorted)
   |=(a=@ [1 a])
 ::  +bind-duct: find or make new $bone for .duct in .ossuary
