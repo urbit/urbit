@@ -373,6 +373,13 @@
     (strand-fail %json-parse-error ~)
   (pure:m u.json)
 ::
+++  hiss-request
+  |=  =hiss:eyre
+  =/  m  (strand ,(unit httr:eyre))
+  ^-  form:m
+  ;<  ~  bind:m  (send-request (hiss-to-request:html hiss))
+  take-maybe-sigh
+::
 ::  Queue on skip, try next on fail %ignore
 ::
 ++  main-loop
@@ -480,6 +487,14 @@
   ;<  ~  bind:m  (flog-text i.wall)
   loop(wall t.wall)
 ::
+++  app-message
+  |=  [app=term =cord =tang]
+  =/  m  (strand ,~)
+  ^-  form:m
+  =/  msg=tape  :(weld (trip app) ": " (trip cord))
+  ;<  ~  bind:m  (flog-text msg)
+  (flog-tang tang)
+::
 ::    ----
 ::
 ::  Handle domains
@@ -492,7 +507,7 @@
 ::
 ::    ----
 ::
-::  Imps
+::  Threads
 ::
 ++  start-thread
   |=  file=term

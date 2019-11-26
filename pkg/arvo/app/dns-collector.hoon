@@ -1,5 +1,5 @@
 /-  dns
-/+  default-agent
+/+  default-agent, verb
 ::
 ::  app types and boilerplate
 ::
@@ -33,6 +33,7 @@
 ::
 ^-  agent:gall
 =|  state=app-state
+%+  verb  |
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
@@ -41,7 +42,6 @@
 ++  on-save   !>(state)
 ++  on-load
   |=  old=vase
-  ~&  >  'grand'
   `this(state !<(app-state old))
 ::
 ++  on-poke
