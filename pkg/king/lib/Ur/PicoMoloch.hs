@@ -1,8 +1,30 @@
+{-
+    Jet's don't work in the simplifier atm, for the usual reason. `add`
+    is curried, and it doesn't make sense to jet curried functions.
+
+    It *does* work in the interpreter, though, which is interesting.
+
+    The interpreter turns the jet into a haskell function at jet-matching
+    time, and tracks applied arguments until it has enough to run the jet.
+    It keeps track of what the AST should be as it goes along, and can
+    still reproduce it if needed.
+
+    This seems like a hack, though. We can only do that because we know
+    a-priori that the jet takes two arguments. If we wanted to optimize
+    the jet call, we wouldn't know how many arguments we should consume
+    before executing. Right?
+
+    Even if it *could* work, it's still a bad idea. Semantically,
+    we're transforming the jetted code, which means that, if we round-trip
+    the AST to disk, it wont jet match when it comes back.
+-}
+
 module Ur.PicoMoloch where
 
-import Ur.Common hiding (flat, A)
+import Ur.Common hiding (flat, A, trace, traceShow)
 import Data.Flat        (Flat, flat, unflat)
 import Control.Lens     (view, from)
+import Debug.Trace      (trace, traceShow)
 
 type N = Atom
 
@@ -49,8 +71,10 @@ eval = \case
          \y → F (e :@ valExp x :@ valExp y)
          \z → traceFn e [x,y,z] (f x y z)
 
-    jet (F e f) | e==add = B (fn2 e addJet)
-    jet v                = B v
+    jet (F e f) | simp e==addRaw = B (fn2 e addJet)
+    jet (F e f)                  = traceShow ("MISMATCH", e, add)
+                                 $ B (fn2 e addJet)
+    jet v                        = B v
 
     inc (N n) = trace "INC" $ N (succ n)
     inc x     = X (Inc :@ valExp x)
@@ -69,10 +93,45 @@ eval = \case
     run (B (F _ f)) x = f x
     run jf          x = X (Run :@ valExp jf :@ valExp x)
 
-    dum = N . view (from atomBytes) . flat . encode . valExp
+    dum = N . view (from atomBytes) . flat . enc . valExp
 
-    evl (N (unflat . view atomBytes -> Right x)) = eval (decode x)
+    evl (N (unflat . view atomBytes -> Right x)) = eval (dec x)
     evl v                                        = X (Evl :@ valExp v)
+
+    addJet (N x) (N y) = trace "ADD" $ N (x+y)
+    addJet x     y     = trace "ADD" $ X (add :@ valExp x :@ valExp y)
+
+
+-- Jets ------------------------------------------------------------------------
+
+{-
+    jet     = \f x -> Run (Box f) x
+    add     = \x y → Fol x Inc y
+    con     = \x y f → f x y
+    car     = \p -> p (\x y -> x)
+    cdr     = \p -> p (\x y -> y)
+    uncurry = \f x y -> f (cons x y)
+    curry   = \p -> p (\x y -> y)
+-}
+addRaw = S :@ Fol :@ (K :@ Inc)
+conRaw = S:@(K:@(S:@(K:@(S:@(K:@(S:@(K:@(S:@S:@(K:@K))):@K)):@S)):@(S:@(S:@K:@K)))):@K
+carRaw = S :@ I :@ (K :@ K)
+cdrRaw = S :@ I :@ (K :@ (S :@ K))
+
+uncurryRaw = S :@ (S :@ (K :@ (S:@(K:@(S:@(K:@S):@K)) :@ S)) :@ K) :@ (K:@con)
+
+curryRaw = S :@ (S:@(K :@ S) :@ (S:@(S:@(K:@S):@K):@(K:@car))) :@ (K :@ cdr)
+
+jet = S :@ (K :@ Run) :@ Box
+add = simp $ jet :@ addRaw
+con = simp $ jet :@ conRaw
+cdr = simp $ jet :@ cdrRaw
+car = simp $ jet :@ carRaw
+cur = simp $ jet :@ uncurryRaw
+unc = simp $ jet :@ curryRaw
+
+
+-- Debug Output ----------------------------------------------------------------
 
 traceFn :: E -> [V] -> V -> V
 traceFn e vs = ( \x
@@ -84,30 +143,6 @@ showSub :: String -> String -> String
 showSub inp oup = inp <> pad <> " --> " <> oup
   where
     pad = replicate (max 0 (65 - length inp)) ' '
-
---  add = \x y → Fol x Inc y
---  add = s :@ Fol :@ (k :@ Inc)
---  s i (k (s (s (k s) k)))
-add ∷ E
-add = S :@ Fol :@ (K :@ Inc)
-
---  add3 = \x -> Fol x Inc 3
---  add3 = (s (s % (k +)) (k 3))
-addThree ∷ E
-addThree = S :@ (S :@ Fol :@ (K :@ Inc)) :@ (K :@ Lit 3)
-
-
-{-
-Sxyz = xy(yz)
-Sxyz = % (k+) (k+0)
--}
-
-addJet ∷ V → V → V
-addJet (N x) (N y) = trace "ADD" $ N (x+y)
-addJet x     y     = trace "ADD" $ X (add :@ valExp x :@ valExp y)
-
-
--- Debug Output ----------------------------------------------------------------
 
 instance Show E where
     show = \case
@@ -141,53 +176,62 @@ simp ∷ E → E
 simp =
     \x -> trace ("\t" <> show x) (go x)
   where
-   go x = let res = bo x in if (res /= x)
-                            then trace (showSub (show x) (show res)) res
-                            else res
-   bo = \case
-    S      → S
-    K      → K
-    I      → I
-    Lit n  → Lit n
-    Inc    → Inc
-    Fol    → Fol
-    Box    → Box
-    Opn    → Opn
-    Run    → Run
-    Evl    → Evl
-    Dum    → Dum
+    go x = let res = bo x in if (res /= x)
+                             then trace (showSub (show x) (show res)) res
+                             else res
+    bo = \case
+        S      → S
+        K      → K
+        I      → I
+        Lit n  → Lit n
+        Inc    → Inc
+        Fol    → Fol
+        Box    → Box
+        Opn    → Opn
+        Run    → Run
+        Evl    → Evl
+        Dum    → Dum
 
-    S     :@ x → S :@ go x
-    K     :@ x → K :@ go x
-    I     :@ x → go x
-    Lit n :@ x → Lit n :@ x
-    Inc   :@ x → go x & \case { Lit n → Lit (succ n);  xv → Inc :@ xv }
-    Fol   :@ x → go x & \case { Lit n -> lNat n;      xv  → Fol :@ xv }
-    Box   :@ x → Box :@ go x
-    Opn   :@ x → go x & \case { Box :@ x → x; sf → Opn :@ sf }
-    Run   :@ x → Run :@ go x
-    Dum   :@ x → Lit $ view (from atomBytes) $ flat $ encode $ go x
-    Evl   :@ x → go x & \case
-                     Lit (unflat . view atomBytes -> Right x) → go (decode x)
-                     xv                                       → Evl :@ xv
+        S     :@ x → S :@ go x
+        K     :@ x → K :@ go x
+        I     :@ x → go x
+        Lit n :@ x → Lit n :@ go x
+        Inc   :@ x → go x & \case { Lit n → Lit (succ n);  xv → Inc :@ xv }
+        Fol   :@ x → go x & \case { Lit n → go (lNat n);   xv → Fol :@ xv }
+        Box   :@ x → Box :@ go x
+        Opn   :@ x → go x & \case { Box :@ x → go x; sf → Opn :@ sf }
+        Run   :@ x → Run :@ go x
+        Dum   :@ x → Lit $ view (from atomBytes) $ flat $ enc $ go x
+        Evl   :@ x → go x & \case
+                         Lit (unflat . view atomBytes -> Right x) → go (dec x)
+                         xv                                       → Evl :@ xv
 
-    Run :@ b :@ x → go b & \case Box :@ f -> go (f :@ x)
-                                 sb       -> Box :@ sb :@ go x
+        K   :@ x :@ _ → go x
+        S   :@ K :@ _ → I
+        S   :@ x :@ y → S :@ go x :@ go y
+        I   :@ x :@ y → go (go x :@ go y)
 
-    K :@ x :@ _ → go x
-    S :@ x :@ y → S :@ go x :@ go y
+        Run :@ b :@ x → go b & \case Box :@ f -> let (xv, fv) = (go x, go f)
+                                                 in if xv == addRaw
+                                                    then trace "ADD" $
+                                                           go (fv :@ xv)
+                                                    else go (fv :@ xv)
+                                     bv       -> Box :@ bv :@ go x
 
-    I :@ x :@ y → go x :@ go y
+        S :@ K :@ _ :@ x → go x
+        S :@ x :@ y :@ z → go (go x :@ z' :@ (go y :@ z')) where z' = go z
 
-    S :@ K :@ _ :@ x → go x
-    S :@ x :@ y :@ z → go (go x :@ z' :@ (go y :@ z')) where z' = go z
+        x :@ y :@ z → let (xv, yv, zv) = (go x, go y, go z)
+                      in case go (xv :@ yv) of
+                           res | x :@ y == res -> trace "ABORT" $ res :@ zv
+                           res                 -> go (res :@ zv)
 
-    x :@ y :@ z → case go (x :@ y) of
-                    res | x :@ y == res -> res :@ go z
-                    res                 -> go (res :@ z)
+    lNat 0 = S :@ K
+    lNat n = S :@ (S :@ (K :@ S) :@ K) :@ lNat (pred n)
 
-   lNat 0 = S :@ K
-   lNat n = S :@ (S :@ (K :@ S) :@ K) :@ lNat (pred n)
+    -- addJet ∷ E → E → E
+    -- addJet (Lit x) (Lit y) = trace "ADD" $ Lit (x+y)
+    -- addJet x       y       = trace "ADD" $ (addRaw :@ x :@ y)
 
 
 -- Optimized Flat-Encoding for Expressions -------------------------------------
@@ -218,8 +262,8 @@ data E3
   deriving (Eq, Ord, Show, Generic)
   deriving anyclass (Flat)
 
-encode :: E -> E1
-encode = go
+enc :: E -> E1
+enc = go
   where
     go = \case
         x :@ y -> EA (go x) (go y)
@@ -235,8 +279,8 @@ encode = go
         Evl    -> E2 $ E3 EEvl
         Dum    -> E2 $ E3 EDum
 
-decode :: E1 -> E
-decode = go
+dec :: E1 -> E
+dec = go
   where
     go = \case
         EA x y           -> go x :@ go y
@@ -251,15 +295,3 @@ decode = go
         E2 (E3 ERun)     -> Run
         E2 (E3 EEvl)     -> Evl
         E2 (E3 EDum)     -> Dum
-
-
--- Pairs -----------------------------------------------------------------------
-
-lCons :: E
-lCons = S:@(K:@(S:@(K:@(S:@(K:@(S:@(K:@(S:@S:@(K:@K))):@K)):@S)):@(S:@(S:@K:@K)))):@K
-
-lCar :: E
-lCar = S :@ I :@ (K :@ K)
-
-lCdr :: E
-lCdr = S :@ I :@ (K :@ (S :@ K))
