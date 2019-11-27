@@ -80,11 +80,14 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    =^  cards  all-state  (prep:tc ~)
-    [cards this]
+    :-  [connect:tc]~
+    %_  this
+      audience  [[our-self /] ~ ~]
+      settings  (sy %showtime %notify ~)
+      width  80
+    ==
   ::
-  ++  on-save
-    !>(all-state)
+  ++  on-save  !>(all-state)
   ::
   ++  on-load
     |=  old-state=vase
@@ -122,7 +125,6 @@
           %fact
         ?+  p.cage.sign  ~|([%chat-cli-bad-sub-mark wire p.cage.sign] !!)
           %chat-update  (diff-chat-update:tc wire !<(chat-update q.cage.sign))
-          %chat-two-update  (diff-chat-two-update:tc wire !<(chat-two-update q.cage.sign))
         ==
       ==
     [cards this]
@@ -223,20 +225,16 @@
   :-  [prompt:sh-out ~]
   ::  start with fresh sole state
   all-state(state.cli *sole-share:sole-sur)
-::
-++  diff-chat-two-update
-  |=  [=wire upd=chat-two-update]
-  ^-  (quip card state)
-  (read-envelopes (path-to-target path.upd) envelopes.upd)
 ::  +diff-chat-update: get new mailboxes & messages
 ::
 ++  diff-chat-update
   |=  [=wire upd=chat-update]
   ^-  (quip card state)
   ?+  -.upd  [~ all-state]
-    %create   (notice-create +.upd)
-    %delete   [[(show-delete:sh-out (path-to-target path.upd)) ~] all-state]
-    %message  (read-envelope (path-to-target path.upd) envelope.upd)
+    %create    (notice-create +.upd)
+    %delete    [[(show-delete:sh-out (path-to-target path.upd)) ~] all-state]
+    %message   (read-envelope (path-to-target path.upd) envelope.upd)
+    %messages  (read-envelopes (path-to-target path.upd) envelopes.upd)
   ==
 ::
 ++  read-envelopes
