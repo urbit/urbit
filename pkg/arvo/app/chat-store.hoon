@@ -209,7 +209,7 @@
   =.  evaluated-envelopes  (snoc evaluated-envelopes i.envelopes.act)
   =.  u.mailbox  (append-envelope u.mailbox i.envelopes.act)
   $(envelopes.act t.envelopes.act)
-:: 
+::
 ++  handle-read
   |=  act=chat-action
   ^-  (quip card _state)
