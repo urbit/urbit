@@ -1085,13 +1085,11 @@
     =/  ship-state  (~(get by peers.ames-state) sndr.packet)
     ?:  ?=([~ %known *] ship-state)
       event-core
-    ::  TODO: is it ok to verify signature before other data, e.g. life?
+    ::  deserialize and type-check packet contents
     ::
-    =+  ;;  =open-packet
-        %-  cue
-        %-  need
-        ?>  ?=(@ content.packet)
-        (sure:as:crypto-core.ames-state content.packet)
+    ?>  ?=(@ content.packet)
+    =+  ;;  [signature=@ signed=@]  (cue content.packet)
+    =+  ;;  =open-packet            (cue signed)
     ::  assert .our and .her and lives match
     ::
     ?>  .=       sndr.open-packet  sndr.packet
@@ -1104,6 +1102,12 @@
     ::  comet public-key must hash to its @p address
     ::
     ?>  =(sndr.packet fig:ex:(com:nu:crub:crypto public-key.open-packet))
+    ::  verify signature
+    ::
+    ::    Logic duplicates +com:nu:crub:crypto and +sure:as:crub:crypto.
+    ::
+    =/  key  (end 8 1 (rsh 3 1 public-key.open-packet))
+    ?>  (veri:ed:crypto signature signed key)
     ::  store comet as peer in our state
     ::
     =.  peers.ames-state
