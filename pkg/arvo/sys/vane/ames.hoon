@@ -1662,7 +1662,16 @@
         |-  ^-  ?
         ?~  pumps
           %.n
-        =.  acc  (add acc (sub [next current]:i.pumps))
+        =.  acc
+          %+  add  acc
+          %+  add
+            ::  in-flight messages
+            ::
+            (sub [next current]:i.pumps)
+          ::  queued messages
+          ::
+          ~(wyt in unsent-messages.i.pumps)
+        ::
         ?:  (gte acc 5)
           %.y
         $(pumps t.pumps)
