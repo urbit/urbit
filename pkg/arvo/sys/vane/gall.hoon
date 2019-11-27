@@ -567,7 +567,7 @@
         %watch-ack
       =/  err=(unit error:ames)
         ?~  p.sign  ~
-        `[%reap u.p.sign]
+        `[%watch-ack u.p.sign]
       (mo-give %done err)
     ==
   ::  +mo-handle-sys-val: inbound validate.
@@ -1206,7 +1206,7 @@
       =?  outgoing.subscribers.current-agent  ?=(%watch-ack -.sign)
         ?^  p.sign
           %-  ~(del by outgoing.subscribers.current-agent)
-          [wire dock]
+          [agent-wire dock]
         %+  ~(jab by outgoing.subscribers.current-agent)  [agent-wire dock]
         |=  [acked=? =path]
         ~|  [%already-acked agent-name wire dock path]
@@ -1422,7 +1422,7 @@
           =/  =tang
             ~[leaf+"subscribe wire not unique" >agent-name< >short-wire< >dock<]
           %-  (slog >out=outgoing.subscribers.current-agent< tang)
-          (ap-specific-take way %watch-ack `tang)
+          (ap-error %watch-not-unique tang)
         $(moves t.moves)
       =.  outgoing.subscribers.current-agent
         (~(put by outgoing.subscribers.current-agent) [short-wire dock] [| path])
