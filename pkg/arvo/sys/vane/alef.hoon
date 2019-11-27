@@ -983,6 +983,8 @@
     ::  failed; send message nack packet
     ::
     =.  event-core  abet:(run-message-sink:peer-core bone %done ok=%.n)
+    =/  =^peer-state  (got-peer-state her)
+    =/  =^channel     [[our her] now |2.ames-state -.peer-state]
     ::  construct nack-trace message, referencing .failed $message-num
     ::
     =/  failed=message-num  last-acked:(~(got by rcv.peer-state) bone)
