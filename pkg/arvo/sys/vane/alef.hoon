@@ -1084,7 +1084,7 @@
     ?:  ?=([~ %known *] ship-state)
       event-core
     ::
-    =/  =open-packet  ;;(open-packet packet)
+    =/  =open-packet  ;;(open-packet content.packet)
     ::  assert .our and .her and lives match
     ::
     ?>  .=       sndr.open-packet  sndr.packet
