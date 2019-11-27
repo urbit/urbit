@@ -13,6 +13,7 @@
     *permission-store, *group-store, *invite-store,
     sole-sur=sole
 /+  sole-lib=sole, chat-eval, default-agent, verb
+    auto=language-server-complete
 ::
 |%
 +$  card  card:agent:gall
@@ -350,8 +351,82 @@
       %det  (edit +.dat.act)
       %clr  [~ all-state]
       %ret  obey
-      %tab  [~ all-state]
+      %tab  (tab +.act)
     ==
+  ::  +tab-list: static list of autocomplete entries
+  ++  tab-list
+    ^-  (list (option:auto tank))
+    :~
+      [%join leaf+";join ~ship/chat-name"]
+      [%leave leaf+";leave ~ship/chat-name"]
+      ::
+      [%create leaf+";create [type] /chat-name [glyph]"]
+      [%delete leaf+";delete /chat-name"]
+      [%invite leaf+";invite (rw | r | w) /chat-name ~ships"]
+      [%banish leaf+";banish (rw | r | w) /chat-name ~ships"]
+    ::
+      [%bind leaf+";bind [glyph] ~ship/chat-name"]
+      [%unbind leaf+";unbind [glyph]"]
+      [%what leaf+";what [glyph]"]
+    ::
+      [%settings leaf+";settings"]
+      [%set leaf+";set key value"]
+      [%unset leaf+";unset key"]
+    ::
+      [%chats leaf+";chats"]
+      [%help leaf+";help"]
+    ==
+  ::  +tab-list: static list of autocomplete entries
+  ++  tab-list
+    ^-  (list (option:auto tank))
+    :~
+      [%join leaf+";join ~ship/chat-name"]
+      [%leave leaf+";leave ~ship/chat-name"]
+      ::
+      [%create leaf+";create [type] /chat-name [glyph]"]
+      [%delete leaf+";delete /chat-name"]
+      [%invite leaf+";invite (rw | r | w) /chat-name ~ships"]
+      [%banish leaf+";banish (rw | r | w) /chat-name ~ships"]
+    ::
+      [%bind leaf+";bind [glyph] ~ship/chat-name"]
+      [%unbind leaf+";unbind [glyph]"]
+      [%what leaf+";what [glyph]"]
+    ::
+      [%settings leaf+";settings"]
+      [%set leaf+";set key value"]
+      [%unset leaf+";unset key"]
+    ::
+      [%chats leaf+";chats"]
+      [%help leaf+";help"]
+    ==
+  ++  tab
+    |=  pos=@ud
+    ^-  (quip move _this)
+    ?.  =(';' (snag 0 buf.state.cli))
+      [~ this]
+    =+  (get-id:auto pos (tufa buf.state.cli))
+    ?~  id
+      [~ this]
+    =/  options=(list (option:auto tank))
+      (search-prefix:auto u.id tab-list)
+    =/  advance=term
+      (longest-match:auto options)
+    =/  to-send=tape
+      (trip (rsh 3 (met 3 u.id) advance))
+    =/  send-pos
+      (add pos (met 3 (fall forward '')))
+    =|  moves=(list move)
+    =?  moves  ?=(^ options)
+      [(tab:sh-out options) moves]
+    =|  fxs=(list sole-effect:sole-sur)
+    |-
+    ?~  to-send
+      [(flop moves) this]
+    =^  char  state.cli
+      (~(transmit sole-lib state.cli) [%ins send-pos `@c`i.to-send])
+    $(moves [(effect:sh-out %det char) moves], send-pos +(send-pos), to-send t.to-send)
+
+
   ::  +edit: apply sole edit
   ::
   ::    called when typing into the cli prompt.
@@ -982,6 +1057,12 @@
     ^-  card
     ::TODO  don't hard-code session id 'drum' here
     [%give %fact `/sole/drum %sole-effect !>(fec)]
+  ::  +tab: print tab-complete list
+  ::
+  ++  tab
+    |=  options=(list [cord tank])
+    ^-  move
+    (effect %tab options)
   ::  +print: puts some text into the cli as-is
   ::
   ++  print
