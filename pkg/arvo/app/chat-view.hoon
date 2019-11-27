@@ -53,24 +53,24 @@
 --
 ^-  agent:gall
 =<
-  |_  =bowl:gall
+  |_  bol=bowl:gall
   +*  this       .
       chat-core  +>
-      cc         ~(. chat-core bowl)
-      def        ~(. (default-agent this %|) bowl)
+      cc         ~(. chat-core bol)
+      def        ~(. (default-agent this %|) bol)
   ::
   ++  on-init
     ^-  (quip card _this)
     =/  launcha  [%launch-action !>([%chat-view /configs '/~chat/js/tile.js'])]
     :_  this
-    :~  [%pass / %agent [our.bol %chat-store] %watch /updates]
+    :~  [%pass /updates %agent [our.bol %chat-store] %watch /updates]
         [%pass / %arvo %e %connect [~ /'~chat'] %chat-view]
-        [%pass /chat-view %agent [our.bowl %launch] %poke launcha]
+        [%pass /chat-view %agent [our.bol %launch] %poke launcha]
     ==
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
-    ?>  (team:title our.bowl src.bowl)
+    ?>  (team:title our.bol src.bol)
     ?+    mark  (on-poke:def mark vase)
         %handle-http-request
       =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
@@ -91,17 +91,35 @@
   ++  on-watch
     |=  =path
     ^-  (quip card _this)
-    ?>  (team:title our.bowl src.bowl)
+    ?>  (team:title our.bol src.bol)
+    |^
     ?:  ?=([%http-response *] path)
       [~ this]
     ?:  =(/primary path)
       ::  create inbox with 100 messages max per mailbox and send that along
       ::  then quit the subscription
       :_  this
-      [%give %fact ~ %json !>((inbox-to-json (truncate-inbox all-scry)))]~
+      [%give %fact ~ %json !>((inbox-to-json truncated-inbox-scry))]~
     ?:  =(/configs path)
       [[%give %fact ~ %json !>(*json)]~ this]
     (on-watch:def path)
+    ::
+    ++  truncated-inbox-scry
+      ^-  inbox
+      =/  =inbox  .^(inbox %gx /=chat-store/(scot %da now.bol)/all/noun)
+      %-  ~(run by inbox)
+      |=  =mailbox
+      ^-  ^mailbox
+      [config.mailbox (truncate-envelopes envelopes.mailbox)]
+    ::
+    ++  truncate-envelopes
+      |=  envelopes=(list envelope)
+      ^-  (list envelope)
+      =/  length  (lent envelopes)
+      ?:  (lth length 100)
+        envelopes
+      (swag [(sub length 100) 100] envelopes)
+    --
   ::
   ++  on-agent
     |=  [=wire =sign:agent:gall]
@@ -262,10 +280,6 @@
   =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/envelopes pax /noun)
   .^((list envelope) %gx pax)
 ::
-++  all-scry
-  ^-  inbox
-  .^(inbox %gx /=chat-store/(scot %da now.bol)/all/noun)
-::
 ++  configs-scry
   ^-  chat-configs
   .^(chat-configs %gx /=chat-store/(scot %da now.bol)/configs/noun)
@@ -296,20 +310,4 @@
         (perm-group-hook-poke [%associate write [[write %black] ~ ~]])
     ==
   ==
-::
-++  truncate-envelopes
-  |=  envelopes=(list envelope)
-  ^-  (list envelope)
-  =/  length  (lent envelopes)
-  ?:  (lth length 100)
-    envelopes
-  (swag [(sub length 100) 100] envelopes)
-::
-++  truncate-inbox
-  |=  =inbox
-  ^-  ^inbox
-  %-  ~(run by inbox)
-  |=  =mailbox
-  ^-  ^mailbox
-  [config.mailbox (truncate-envelopes envelopes.mailbox)]
 --
