@@ -30,16 +30,26 @@
 ::
 +$  chat-configs  (map path config)
 ::
-+$  chat-action
++$  chat-base
   $%  [%create =ship =path]         ::  %create: create a mailbox at ~ship/path
       [%delete =path]               ::  %delete: delete a mailbox at path
       [%message =path =envelope]    ::  %message: append a message to mailbox
       [%read =path]                 ::  %read: set mailbox to read
   ==
 ::
++$  chat-action
+  $%  ::  %messages: append a list of messages to mailbox
+      ::
+      [%messages =path envelopes=(list envelope)]
+      chat-base
+  ==
+::
 +$  chat-update
   $%  [%keys keys=(set path)]
       [%config =path =config]
-      chat-action
+      chat-base
   ==
+::
++$  chat-two-update
+  [%messages =path start=@ud end=@ud envelopes=(list envelope)]
 --

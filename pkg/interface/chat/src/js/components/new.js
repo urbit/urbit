@@ -14,12 +14,14 @@ export class NewScreen extends Component {
       invites: '',
       security: 'village',
       idError: false,
-      inviteError: false
+      inviteError: false,
+      allowHistory: true
     };
 
     this.idChange = this.idChange.bind(this);
     this.invChange = this.invChange.bind(this);
     this.securityChange = this.securityChange.bind(this);
+    this.allowHistoryChange = this.allowHistoryChange.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -45,6 +47,10 @@ export class NewScreen extends Component {
 
   securityChange(event) {
     this.setState({security: event.target.value});
+  }
+
+  allowHistoryChange(event) {
+    this.setState({allowHistory: !!event.target.checked});
   }
 
   onClickCreate() {
@@ -114,14 +120,15 @@ export class NewScreen extends Component {
       readAud = aud.slice(); // white list
       writeAud = []; // black list
     }
-
     this.setState({
       error: false,
       success: true,
       invites: ''
     }, () => {
       props.setSpinner(true);
-      props.api.chatView.create(station, state.security, readAud, writeAud);
+      props.api.chatView.create(
+        station, state.security, readAud, writeAud, state.allowHistory
+      );
       aud.forEach((ship) => {
         if (ship !== `~${window.ship}`) {
           props.api.invite.invite(station, ship);
@@ -194,6 +201,18 @@ export class NewScreen extends Component {
             <option value="journal">Journal</option>
             <option value="mailbox">Mailbox</option>
           </select>
+          <p className="body-medium mt3 db">Chat History</p>
+          <div className="db mt2">
+            <input
+                type="checkbox"
+                checked={this.state.allowHistory}
+                onChange={this.allowHistoryChange.bind(this)}
+                className="dib mr2"
+            />
+            <p className="body-small db mt2 mb3 dib">
+              Allow participants to download the chat history upon joining.
+            </p>
+          </div>
           <button
             onClick={this.onClickCreate.bind(this)}
             className={createClasses}

@@ -216,7 +216,7 @@
   ::
   ++  tracked-vanes
     ^-  (list @tas)
-    ~[%ames %behn %clay %dill %eyre %ford %gall %iris %jael]
+    ~[%alef %ames %behn %clay %dill %eyre %ford %gall %iris %jael]
   ::
   ++  our-home  /(scot %p our)/home/(scot %da now)
   ++  sys-hash  |=(pax/path .^(@uvI %cz :(welp our-home /sys pax)))

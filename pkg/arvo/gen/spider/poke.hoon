@@ -1,3 +1,3 @@
 :-  %say
-|=  [* [=term =mark =vase ~] ~]
-[%spider-imput term mark vase]
+|=  [* [=@ta =mark =vase ~] ~]
+[%spider-input ta mark vase]

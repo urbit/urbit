@@ -122,7 +122,6 @@
   |=  our/ship
   %-  ~(gas in *(set gill:gall))
   ^-  (list gill:gall)
-  ::  [[our %talk] [our %dojo] ~]
   [[our %dojo] ~]
 ::
 ++  make                                                ::  initial part
@@ -200,7 +199,7 @@
 ++  poke-unlink                                       ::  disconnect app
   |=  gyl/gill:gall
   =<  se-abet  =<  se-view
-  (se-klin gyl)
+  (se-drop:(se-pull gyl) & gyl)
 ::
 ++  poke-exit                                         ::  shutdown
   |=  ~
@@ -244,7 +243,7 @@
   ?~  saw  +>
   =+  gyl=(de-gill way)
   ?:  (se-aint gyl)  +>.$
-  %-  se-dump:(se-drop & gyl)
+  %-  se-dump:(se-drop:(se-pull gyl) & gyl)
   :_  u.saw
   >[%drum-coup-fail src.hid gyl]<
 ::
@@ -266,10 +265,9 @@
   ?+  wire  ~|([%drum-bad-take-agent wire -.sign] !!)
       [%drum %phat *]
     ?-  -.sign
-        %http-response       !!
-        %poke-ack            (take-coup-phat t.t.wire p.sign)
-        %watch-ack    (reap-phat t.t.wire p.sign)
-        %kick  (quit-phat t.t.wire)
+        %poke-ack   (take-coup-phat t.t.wire p.sign)
+        %watch-ack  (reap-phat t.t.wire p.sign)
+        %kick       (quit-phat t.t.wire)
         %fact
       %+  diff-sole-effect-phat  t.t.wire
       ?>  ?=(%sole-effect p.cage.sign)
@@ -372,6 +370,7 @@
   ^-  (unit gill:gall)
   =+  wag=se-amor
   ?~  wag  ~
+  ~|  [inx=inx wag=wag fug=fug eel=eel]
   `(snag inx `(list gill:gall)`wag)
 ::
 ++  se-belt                                           ::  handle input
@@ -564,7 +563,7 @@
   ++  ta-act                                          ::  send action
     |=  act/sole-action
     ^+  +>
-    (ta-poke %sole-action !>(['drum' act]))
+    (ta-poke %sole-action !>(act))
   ::
   ++  ta-aro                                          ::  hear arrow
     |=  key/?($d $l $r $u)
@@ -605,7 +604,10 @@
   ++  ta-det                                          ::  send edit
     |=  ted/sole-edit
     ^+  +>
-    (ta-act %det [[his.ven.say.inp own.ven.say.inp] (sham buf.say.inp) ted])
+    %^    ta-act
+        %drum
+      %det
+    [[his.ven.say.inp own.ven.say.inp] (sham buf.say.inp) ted]
   ::
   ++  ta-bac                                          ::  hear backspace
     ^+  .
@@ -615,7 +617,7 @@
       .(str.u.ris (scag (dec (lent str.u.ris)) str.u.ris))
     ?:  =(0 pos.inp)
       ?~  buf.say.inp
-        (ta-act %clr ~)
+        (ta-act %drum %clr ~)
       ta-bel
     (ta-hom %del (dec pos.inp))
   ::
@@ -903,10 +905,10 @@
     ==
   ::
   ++  ta-ret                                          ::  hear return
-    (ta-act %ret ~)
+    (ta-act %drum %ret ~)
   ::
   ++  ta-tab                                          ::  hear tab
-    (ta-act %tab pos.inp)
+    (ta-act %drum %tab pos.inp)
   ::
   ++  ta-ser                                          ::  reverse search
     |=  ext/(list @c)

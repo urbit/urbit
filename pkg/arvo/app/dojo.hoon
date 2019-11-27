@@ -640,8 +640,8 @@
     ::
     ++  dy-type                                         ::  sole action
       |=  act/sole-action
-      ?-  -.act
-        $det  (dy-edit +.act)
+      ?-  -.dat.act
+        $det  (dy-edit +.dat.act)
         $ret  (dy-done (tufa buf.say))
         $clr  dy-stop
         $tab  +>+>
@@ -1172,11 +1172,11 @@
     ^+  +>
     ?^  poy
       he-pine:(~(dy-type dy u.poy) act)
-    ?-  -.act
-      $det  (he-stir +.act)
+    ?-  -.dat.act
+      $det  (he-stir +.dat.act)
       $ret  (he-done (tufa buf.say))
       $clr  he-pine(buf "")
-      $tab  (he-tab +.act)
+      $tab  (he-tab +.dat.act)
     ==
   ::
   ++  he-lame                                           ::  handle error
@@ -1225,8 +1225,8 @@
     ^-  (quip card:agent:gall house)
     ?+  mark  ~|([%dojo-poke-bad-mark mark] !!)
         %sole-action
-      =+  !<([=id =sole-action] vase)
-      he-abet:(~(he-type he hid id ~ (~(got by hoc) id)) sole-action)
+      =/  act  !<(sole-action vase)
+      he-abet:(~(he-type he hid id.act ~ (~(got by hoc) id.act)) act)
     ::
         %lens-command
       =+  !<([=id =command:lens] vase)

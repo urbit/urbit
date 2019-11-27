@@ -156,7 +156,7 @@
         eny=@uvJ
         :: activate
         ::
-        ska=sley
+        ski=sley
     ==
 ~%  %gall-top  ..is  ~
 |%
@@ -547,7 +547,7 @@
     =/  him  (slav %p i.t.path)
     =/  dap  i.t.t.path
     ::
-    ?>  ?=([%g %unto *] sign-arvo)
+    ?>  ?=([?(%g %b) %unto *] sign-arvo)
     =/  =sign:agent  +>.sign-arvo
     ::
     ?-    -.sign
@@ -650,7 +650,7 @@
       !!
     ::
     =/  =sign-arvo  q.hin
-    ?.  ?=([%g %unto *] sign-arvo)
+    ?.  ?=([?(%g %b) %unto *] sign-arvo)
       =/  app
         =/  =term  i.path
         =/  =ship  (slav %p i.t.path)
@@ -779,6 +779,7 @@
     ^+  mo-core
     ::  %u/%leave gets automatically acked
     ::
+    =.  mo-core  (mo-track-ship ship)
     =?  mo-core  ?=(%u -.ames-request)  (mo-give %done ~)
     ::
     =/  =wire  /sys/req/(scot %p ship)/[agent-name]
@@ -1040,7 +1041,7 @@
       =/  tyl  tyl.marked
       ::
       =/  peek-result=(each (unit (unit cage)) tang)
-        (mule |.((on-peek:ap-agent-core [term tyl])))
+        (ap-mule-peek |.((on-peek:ap-agent-core [term tyl])))
       ::
       ?-  -.peek-result
         %&  p.peek-result
@@ -1052,9 +1053,6 @@
       ~/  %ap-update-subscription
       |=  [is-ok=? =other=ship other-agent=term =wire]
       ^+  ap-core
-      ::
-      ::  XX pretty sure this shouldn't be used for pump
-      ::  =/  way  [(scot %p ship) %out wire]
       ::
       ?:  is-ok
         ap-core
@@ -1296,14 +1294,44 @@
       (ap-give %kick ~ ~)
     ::  +ap-kill-down: 2-sided kill from subscriber side
     ::
+    ::    Must process leave first in case kick handler rewatches.
+    ::
     ++  ap-kill-down
       |=  [=wire =dock]
       ^+  ap-core
       ::
       =.  ap-core
-        =/  way  [%out (scot %p p.dock) q.dock wire]
-        (ap-specific-take way %kick ~)
-      (ap-pass wire %agent dock %leave ~)
+        (ap-pass wire %agent dock %leave ~)
+      =/  way  [%out (scot %p p.dock) q.dock wire]
+      (ap-pass way %arvo %b %huck !>([%unto %kick ~]))
+    ::  +ap-mule: run virtualized with intercepted scry, preserving type
+    ::
+    ::    Compare +mute and +mule.  Those pass through scry, which
+    ::    doesn't allow us to catch crashes due to blocking scry.  If
+    ::    you intercept scry, you can't preserve the type
+    ::    polymorphically.  By monomorphizing, we are able to do so
+    ::    safely.
+    ::
+    ++  ap-mule
+      |=  run=_^?(|.(*step:agent))
+      ^-  (each step:agent tang)
+      =/  res  (mock [run %9 2 %0 1] (sloy ski))
+      ?-  -.res
+        %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
+        %1  [%| (turn p.res |=(a=* (smyt (path a))))]
+        %2  [%| p.res]
+      ==
+    ::  +ap-mule-peek: same as +ap-mule but for (unit (unit cage))
+    ::
+    ++  ap-mule-peek
+      |=  run=_^?(|.(*(unit (unit cage))))
+      ^-  (each (unit (unit cage)) tang)
+      =/  res  (mock [run %9 2 %0 1] (sloy ski))
+      ?-  -.res
+        %0  [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
+        %1  [%| (turn p.res |=(a=* (smyt (path a))))]
+        %2  [%| p.res]
+      ==
     ::  +ap-ingest: call agent arm
     ::
     ::    Handle acks here because they need to be emitted before the
@@ -1312,7 +1340,7 @@
     ++  ap-ingest
       |=  [ack=?(%poke-ack %watch-ack ~) run=_^?(|.(*step:agent))]
       ^-  [(unit tang) _ap-core]
-      =/  result  (mule run)
+      =/  result  (ap-mule run)
       =^  new-moves  ap-core  (ap-handle-result result)
       =/  maybe-tang=(unit tang)
         ?:  ?=(%& -.result)

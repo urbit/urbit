@@ -376,7 +376,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   }
   else {
     {
-      u3_noun             msg   = u3i_bytes((c3_w)nrd_i, (c3_y*)buf_u->base);
+      u3_noun msg = u3i_bytes((c3_w)nrd_i, (c3_y*)buf_u->base);
 
       // u3l_log("ames: plan\r\n");
 #if 0

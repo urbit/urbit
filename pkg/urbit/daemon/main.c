@@ -400,7 +400,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "Simple Usage: \n",
     "   %s -c <my-comet> to create a comet (anonymous urbit)\n",
     "   %s -w <my-planet> -k <my-key-file> if you own a planet\n",
-    "   %s <myplanet or mycomet> to restart an existing urbit\n",
+    "   %s <my-planet or my-comet> to restart an existing urbit\n",
     0
   };
 

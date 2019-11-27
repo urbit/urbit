@@ -373,6 +373,13 @@
     (strand-fail %json-parse-error ~)
   (pure:m u.json)
 ::
+++  hiss-request
+  |=  =hiss:eyre
+  =/  m  (strand ,(unit httr:eyre))
+  ^-  form:m
+  ;<  ~  bind:m  (send-request (hiss-to-request:html hiss))
+  take-maybe-sigh
+::
 ::  Queue on skip, try next on fail %ignore
 ::
 ++  main-loop
@@ -480,6 +487,14 @@
   ;<  ~  bind:m  (flog-text i.wall)
   loop(wall t.wall)
 ::
+++  app-message
+  |=  [app=term =cord =tang]
+  =/  m  (strand ,~)
+  ^-  form:m
+  =/  msg=tape  :(weld (trip app) ": " (trip cord))
+  ;<  ~  bind:m  (flog-text msg)
+  (flog-tang tang)
+::
 ::    ----
 ::
 ::  Handle domains
@@ -492,7 +507,7 @@
 ::
 ::    ----
 ::
-::  Imps
+::  Threads
 ::
 ++  start-thread
   |=  file=term
@@ -504,4 +519,24 @@
   ;<  ~  bind:m  (poke-our %spider %spider-start poke-vase)
   ;<  ~  bind:m  (sleep ~s0)  ::  wait for thread to start
   (pure:m tid)
+::
++$  thread-result
+  (each vase [term (list tang)])
+::
+++  await-thread
+  |=  [file=term args=vase]
+  =/  m  (strand ,thread-result)
+  ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl
+  =/  tid  (scot %ta (cat 3 'strand_' (scot %uv (sham file eny.bowl))))
+  =/  tid  (scot %ta (cat 3 'strand_' (scot %uv (sham file eny.bowl))))
+  =/  poke-vase  !>([`tid.bowl `tid file args])
+  ;<  ~      bind:m  (watch-our /awaiting/[tid] %spider /thread-result/[tid])
+  ;<  ~      bind:m  (poke-our %spider %spider-start poke-vase)
+  ;<  ~      bind:m  (sleep ~s0)  ::  wait for thread to start
+  ;<  =cage  bind:m  (take-fact /awaiting/[tid])
+  ?+  p.cage  ~|([%strange-thread-result p.cage file tid] !!)
+    %thread-done  (pure:m %& q.cage)
+    %thread-fail  (pure:m %| !<([term (list tang)] q.cage))
+  ==
 --

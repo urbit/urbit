@@ -8,15 +8,16 @@
 ::  or classes).
 ::
 ::  each of these stages is split into cores for each of
-::  arvo's eight major vanes (kernel modules).  these are:
+::  arvo's nine major vanes (kernel modules).  these are:
 ::
 ::      - %ames: networking         (rhymes with "games")
 ::      - %behn: scheduling         ("bane")
 ::      - %clay: revision control   ("play")
 ::      - %dill: console            ("pill")
-::      - %eyre: web                ("fair")
+::      - %eyre: http server        ("fair")
 ::      - %ford: build              ("lord")
 ::      - %gall: application        ("ball")
+::      - %iris: http client        ("virus")
 ::      - %jael: security           ("jail")
 ::
 ::  with %zuse in your core, the engines of any vane are
@@ -506,6 +507,7 @@
           $>(%crud vane-task)                           ::  error with trace
           [%rest p=@da]                                 ::  cancel alarm
           [%drip p=vase]                                ::  give in next event
+          [%huck p=vase]                                ::  give back
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           [%wait p=@da]                                 ::  set alarm
@@ -1805,14 +1807,14 @@
     ++  gift                                            ::  outgoing result
       $%  [%boon payload=*]                             ::  ames response
           [%done error=(unit error:ames)]               ::  ames message (n)ack
-          {$mass p/mass}                                ::  memory usage
-          {$onto p/(each suss tang)}                    ::  about agent
-          {$unto p/sign:agent}                          ::
+          [%mass p=mass]                                ::  memory usage
+          [%onto p=(each suss tang)]                    ::  about agent
+          [%unto p=sign:agent]                          ::
       ==                                                ::
     ++  task                                            ::  incoming request
       $~  [%vega ~]                                     ::
-      $%  {$conf p/dock q/dock}                         ::  configure app
-          {$deal p/sock q/term r/deal}                  ::  full transmission
+      $%  [$conf p=dock q=dock]                         ::  configure app
+          [$deal p=sock q=term r=deal]                  ::  full transmission
           [%goad force=? agent=(unit dude)]             ::  rebuild agent(s)
           $>(%init vane-task)                           ::  set owner
           $>(%trim vane-task)                           ::  trim state
@@ -1827,24 +1829,24 @@
     %+  map  ,[=wire =ship =term]                       ::
     ,[acked=? =path]                                    ::
   ++  bowl                                              ::  standard app state
-          $:  $:  our/ship                              ::  host
-                  src/ship                              ::  guest
-                  dap/term                              ::  agent
+          $:  $:  our=ship                              ::  host
+                  src=ship                              ::  guest
+                  dap=term                              ::  agent
               ==                                        ::
-              $:  wex/boat                              ::  outgoing subs
-                  sup/bitt                              ::  incoming subs
+              $:  wex=boat                              ::  outgoing subs
+                  sup=bitt                              ::  incoming subs
               ==                                        ::
-              $:  act/@ud                               ::  change number
-                  eny/@uvJ                              ::  entropy
-                  now/@da                               ::  current time
-                  byk/beak                              ::  load source
+              $:  act=@ud                               ::  change number
+                  eny=@uvJ                              ::  entropy
+                  now=@da                               ::  current time
+                  byk=beak                              ::  load source
           ==  ==                                        ::
   ++  dude  term                                        ::  server identity
   ++  gill  (pair ship term)                            ::  general contact
   ++  scar                                              ::  opaque duct
-    $:  p/@ud                                           ::  bone sequence
-        q/(map duct bone)                               ::  by duct
-        r/(map bone duct)                               ::  by bone
+    $:  p=@ud                                           ::  bone sequence
+        q=(map duct bone)                               ::  by duct
+        r=(map bone duct)                               ::  by bone
     ==                                                  ::
   ++  suss  (trel dude @tas @da)                        ::  config report
   ++  well  (pair desk term)                            ::
@@ -2310,6 +2312,7 @@
           $%  gift:able:behn
               [%writ riot:clay]
               $>(%mere gift:able:clay)
+              $>(%unto gift:able:gall)
           ==
       ==
       {$c gift:able:clay}
@@ -6886,6 +6889,12 @@
         ?>  (lte wid 16)  %pawn
       ::                                                ::  ++rank:title
       +$  rank  ?(%czar %king %duke %earl %pawn)        ::  ship width class
+      ::                                                ::  ++name:title
+      ++  name                                          ::  identity
+        |=  who=ship
+        ^-  ship
+        ?.  ?=(%earl (clan who))  who
+        (sein who)
       ::                                                ::  ++saxo:title
       ++  saxo                                          ::  autocanon
         |=  who=ship
@@ -7604,6 +7613,9 @@
         |%
         ++  azimuth
           0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579
+        ::
+        ++  delegated-sending
+          0x1000.0000.0000.0000.0000.0000.0000.0000.0000.0000
         ::
         ++  launch  4.601.630
         --

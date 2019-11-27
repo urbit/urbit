@@ -63,7 +63,7 @@
 ::
 ^-  agent:gall
 =|  state=app-state
-%+  verb  &
+%+  verb  |
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)

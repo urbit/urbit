@@ -10,11 +10,12 @@
 ::    and trust it to take care of the rest.
 ::
 /-  *chat-store, *chat-view, *chat-hook,
-    *permission-store, *group-store,
+    *permission-store, *group-store, *invite-store,
     sole-sur=sole
 /+  sole-lib=sole, chat-eval, default-agent, verb
 ::
 |%
++$  card  card:agent:gall
 +$  state
   $:  grams=(list mail)                             ::  all messages
       known=(set [target serial])                   ::  known message lookup
@@ -40,12 +41,14 @@
       [%say letter]                                 ::  send message
       [%eval cord hoon]                             ::  send #-message
     ::
-      [%create chat-security path (unit glyph)]     ::  create chat
+      ::
+      ::  create chat
+      [%create rw-security path (unit glyph) (unit ?)]
       [%delete path]                                ::  delete chat
       [%invite ?(%r %w %rw) path (set ship)]        ::  allow
       [%banish ?(%r %w %rw) path (set ship)]        ::  disallow
     ::
-      [%join target (unit glyph)]                   ::  join target
+      [%join target (unit glyph) (unit ?)]          ::  join target
       [%leave target]                               ::  nuke target
     ::
       [%bind glyph target]                          ::  bind glyph
@@ -63,7 +66,6 @@
       [%help ~]                                     ::  print usage info
   ==                                                ::
 ::
-+$  card  card:agent:gall
 --
 =|  state
 =*  all-state  -
@@ -120,6 +122,7 @@
           %fact
         ?+  p.cage.sign  ~|([%chat-cli-bad-sub-mark wire p.cage.sign] !!)
           %chat-update  (diff-chat-update:tc wire !<(chat-update q.cage.sign))
+          %chat-two-update  (diff-chat-two-update:tc wire !<(chat-two-update q.cage.sign))
         ==
       ==
     [cards this]
@@ -169,14 +172,8 @@
 ++  connect
   ^-  card
   [%pass /chat-store %agent [our-self %chat-store] %watch /updates]
-::  +true-self: moons to planets
 ::
-++  true-self
-  |=  who=ship
-  ^-  ship
-  ?.  ?=(%earl (clan:title who))  who
-  (sein:title our.bowl now.bowl who)
-++  our-self  (true-self our.bowl)
+++  our-self  (name:title our.bowl)
 ::  +target-to-path: prepend ship to the path
 ::
 ++  target-to-path
@@ -207,7 +204,8 @@
 ::  +poke-sole-action: handle cli input
 ::
 ++  poke-sole-action
-  |=  act=sole-action:sole-sur
+  ::TODO  use id.act to support multiple separate sessions
+  |=  [act=sole-action:sole-sur]
   ^-  (quip card state)
   (sole:sh-in act)
 ::  +peer: accept only cli subscriptions from ourselves
@@ -225,6 +223,11 @@
   :-  [prompt:sh-out ~]
   ::  start with fresh sole state
   all-state(state.cli *sole-share:sole-sur)
+::
+++  diff-chat-two-update
+  |=  [=wire upd=chat-two-update]
+  ^-  (quip card state)
+  (read-envelopes (path-to-target path.upd) envelopes.upd)
 ::  +diff-chat-update: get new mailboxes & messages
 ::
 ++  diff-chat-update
@@ -345,8 +348,8 @@
   ++  sole
     |=  act=sole-action:sole-sur
     ^-  (quip card state)
-    ?-  -.act
-      %det  (edit +.act)
+    ?-  -.dat.act
+      %det  (edit +.dat.act)
       %clr  [~ all-state]
       %ret  obey
       %tab  [~ all-state]
@@ -411,13 +414,24 @@
         ;~  (glue ace)
           (tag %create)
           security
-          ;~(plug path (punt ;~(pfix ace glyph)))
+          ;~  plug
+            path
+            (punt ;~(pfix ace glyph))
+            (punt ;~(pfix ace (fuss 'y' 'n')))
+          ==
         ==
         ;~((glue ace) (tag %delete) path)
         ;~((glue ace) (tag %invite) rw path ships)
         ;~((glue ace) (tag %banish) rw path ships)
       ::
-        ;~((glue ace) (tag %join) ;~(plug targ (punt ;~(pfix ace glyph))))
+        ;~  (glue ace)
+          (tag %join)
+          ;~  plug
+            targ
+            (punt ;~(pfix ace glyph))
+            (punt ;~(pfix ace (fuss 'y' 'n')))
+          ==
+        ==
         ;~((glue ace) (tag %leave) targ)
       ::
         ;~((glue ace) (tag %bind) glyph targ)
@@ -641,6 +655,30 @@
           %poke
           cage
       ==
+    ::  +invite-card: build invite card
+    ::
+    ++  invite-card
+      |=  [where=path who=ship]
+      ^-  card
+      :*  %pass
+          /cli-command/invite
+          %agent
+          [who %invite-hook]  ::NOTE  only place chat-cli pokes others
+          %poke
+          %invite-action
+        ::
+          !>
+          ^-  invite-action
+          :^  %invite  /chat
+            (shax (jam [our-self where] who))
+          ^-  invite
+          =;  desc=cord
+            [our-self %chat-hook where who desc]
+          %-  crip
+          %+  weld
+            "You have been invited to chat at "
+          ~(full tr [our-self where])
+      ==
     ::  +set-target: set audience, update prompt
     ::
     ++  set-target
@@ -651,7 +689,7 @@
     ::  +create: new local mailbox
     ::
     ++  create
-      |=  [security=chat-security =path gyf=(unit char)]
+      |=  [security=rw-security =path gyf=(unit char) allow-history=(unit ?)]
       ^-  (quip card state)
       ::TODO  check if already exists
       =/  =target  [our-self path]
@@ -663,18 +701,22 @@
       %^  act  %do-create  %chat-view
       :-  %chat-view-action
       !>
-      :^  %create  path  security
-      ::  ensure we can read from/write to our own chats
-      ::
-      :-  ::  read
+      :*  %create
+          path
+          security
+          ::  ensure we can read from/write to our own chats
+          ::
+          ::  read
           ?-  security
             ?(%channel %journal)  ~
             ?(%village %mailbox)  [our-self ~ ~]
           ==
-      ::  write
-      ?-  security
-        ?(%channel %mailbox)  ~
-        ?(%village %journal)  [our-self ~ ~]
+          ::  write
+          ?-  security
+            ?(%channel %mailbox)  ~
+            ?(%village %journal)  [our-self ~ ~]
+          ==
+          (fall allow-history %.y)
       ==
     ::  +delete: delete local chats
     ::
@@ -692,6 +734,11 @@
       |=  [allow=? rw=?(%r %w %rw) =path ships=(set ship)]
       ^-  (quip card state)
       :_  all-state
+      =;  cards=(list card)
+        ?.  allow  cards
+        %+  weld  cards
+        %+  turn  ~(tap in ships)
+        (cury invite-card path)
       %+  murn
         ^-  (list term)
         ?-  rw
@@ -731,7 +778,7 @@
     ::  +join: sync with remote mailbox
     ::
     ++  join
-      |=  [=target gyf=(unit char)]
+      |=  [=target gyf=(unit char) ask-history=(unit ?)]
       ^-  (quip card state)
       =^  moz  all-state
         ?.  ?=(^ gyf)  [~ all-state]
@@ -744,7 +791,7 @@
       %^  act  %do-join  %chat-view
       :-  %chat-view-action
       !>
-      [%join target]
+      [%join ship.target path.target (fall ask-history %.y)]
     ::  +leave: unsync & destroy mailbox
     ::
     ::TODO  allow us to "mute" local chats using this
@@ -935,7 +982,8 @@
   ++  effect
     |=  fec=sole-effect:sole-sur
     ^-  card
-    [%give %fact `/sole %sole-effect !>(fec)]
+    ::TODO  don't hard-code session id 'drum' here
+    [%give %fact `/sole/drum %sole-effect !>(fec)]
   ::  +print: puts some text into the cli as-is
   ::
   ++  print
@@ -1060,7 +1108,12 @@
       (lth (lent path.one) (lent path.two))
     ::  if they're from different ships, neither ours, pick hierarchically.
     (lth (xeb ship.one) (xeb ship.two))
-  ::  +phat: render target fully
+  ::  +full: render target fully, always
+  ::
+  ++  full
+    ^-  tape
+    (weld (scow %p ship.one) (spud path.one))
+  ::  +phat: render target with local shorthand
   ::
   ::    renders as ~ship/path.
   ::    for local mailboxes, renders just /path.
