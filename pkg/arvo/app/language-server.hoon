@@ -194,7 +194,7 @@
   =+  (get-id:auto (get-pos buf row col) txt)
   ?~  id
     [(json-response *json) buf]
-  =/  match=(unit [=term =type])
+  =/  match=(unit (option:auto type))
     (search-exact:auto u.id (get-identifiers:auto -:!>(..zuse)))
   ?~  match
     [(json-response *json) buf]
@@ -202,7 +202,7 @@
     %-  crip
     ;:  weld
       "`"
-      ~(ram re ~(duck easy-print type.u.match))
+      ~(ram re ~(duck easy-print detail.u.match))
       "`"
     ==
   :_  buf
