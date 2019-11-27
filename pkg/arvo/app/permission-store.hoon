@@ -51,7 +51,7 @@
           [%all ~]            (give %permission-initial !>(permissions))
           [%updates ~]        ~
           [%permission @ *]
-        =/  =vase  !>([%create path (~(got by permissions) path)])
+        =/  =vase  !>([%create t.path (~(got by permissions) t.path)])
         (give %permission-update vase)
       ==
     [cards this]
@@ -71,6 +71,7 @@
         [%x %permission *]
       ?~  t.t.path  ~
       ``noun+!>((~(get by permissions) t.t.path))
+    ::
         [%x %permitted @ *]
       ?~  t.t.t.path  ~
       =/  pem  (~(get by permissions) t.t.t.path)

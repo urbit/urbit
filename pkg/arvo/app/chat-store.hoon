@@ -2,7 +2,7 @@
 ::
 /+  *chat-json, *chat-eval, default-agent
 |%
-+$  card      card:agent:gall
++$  card  card:agent:gall
 +$  versioned-state
   $%  state-zero
   ==
@@ -16,7 +16,6 @@
   $%  [%chat-initial inbox]
       [%chat-configs chat-configs]
       [%chat-update chat-update]
-      [%chat-two-update chat-two-update]
   ==
 --
 ::
@@ -199,7 +198,7 @@
   |-  ^-  (quip card _state)
   ?~  envelopes.act
     :_  state(inbox (~(put by inbox) path.act u.mailbox))
-    %+  send-two-diff  path.act
+    %+  send-diff  path.act
     :*  %messages
         path.act
         (sub length.config.u.mailbox (lent evaluated-envelopes))
@@ -240,9 +239,9 @@
   mailbox
 ::
 ++  update-subscribers
-  |=  [pax=path act=chat-update]
+  |=  [pax=path update=chat-update]
   ^-  (list card)
-  [%give %fact `pax %chat-update !>(act)]~
+  [%give %fact `pax %chat-update !>(update)]~
 ::
 ++  send-diff
   |=  [pax=path upd=chat-update]
@@ -258,18 +257,4 @@
         ~
       (update-subscribers /keys upd)
   ==
-::
-++  send-two-diff
-  |=  [pax=path upd=chat-two-update]
-  ^-  (list card)
-  %-  zing
-  :~  (update-two-subscribers /all upd)
-      (update-two-subscribers /updates upd)
-      (update-two-subscribers [%mailbox pax] upd)
-  ==
-::
-++  update-two-subscribers
-  |=  [pax=path upd=chat-two-update]
-  ^-  (list card)
-  [%give %fact `pax %chat-two-update !>(upd)]~
 --
