@@ -379,11 +379,11 @@
 +$  packet  [dyad encrypted=? origin=(unit lane) content=*]
 ::  $open-packet: unencrypted packet payload, for comet self-attestation
 ::
-::    The .signature applies to all other fields in this data structure.
+::    This data structure gets signed and jammed to form the .contents
+::    field of a $packet.
 ::
 +$  open-packet
-  $:  =signature
-      =public-key
+  $:  =public-key
       sndr=ship
       =sndr=life
       rcvr=ship
@@ -1085,28 +1085,29 @@
     =/  ship-state  (~(get by peers.ames-state) sndr.packet)
     ?:  ?=([~ %known *] ship-state)
       event-core
+    ::  deserialize and type-check packet contents
     ::
-    =/  =open-packet  ;;(open-packet packet)
+    ?>  ?=(@ content.packet)
+    =+  ;;  [signature=@ signed=@]  (cue content.packet)
+    =+  ;;  =open-packet            (cue signed)
     ::  assert .our and .her and lives match
     ::
     ?>  .=       sndr.open-packet  sndr.packet
     ?>  .=       rcvr.open-packet  our
     ?>  .=  sndr-life.open-packet  1
     ?>  .=  rcvr-life.open-packet  life.ames-state
-    ::  no ghost comets allowed
+    ::  only a star can sponsor a comet
     ::
-    ?>  (lte 256 (^sein:title sndr.packet))
+    ?>  =(%king (clan:title (^sein:title sndr.packet)))
     ::  comet public-key must hash to its @p address
     ::
-    ::    TODO how does this validation work elsewhere?
+    ?>  =(sndr.packet fig:ex:(com:nu:crub:crypto public-key.open-packet))
+    ::  verify signature
     ::
-    ?>  =(`@`sndr.packet `@`(shaf %pawn public-key.open-packet))
-    ::  everything after .signature is signed
+    ::    Logic duplicates +com:nu:crub:crypto and +sure:as:crub:crypto.
     ::
-    ::    TODO: should this double-cue instead of re-jamming?
-    ::
-    =/  signed=@  (jam +.open-packet)
-    ?>  (verify-signature signed [public-key signature]:open-packet)
+    =/  key  (end 8 1 (rsh 3 1 public-key.open-packet))
+    ?>  (veri:ed:crypto signature signed key)
     ::  store comet as peer in our state
     ::
     =.  peers.ames-state
@@ -1149,14 +1150,14 @@
     ::
     =/  =peer-state   +.u.sndr-state
     =/  =channel      [[our sndr.packet] now |2.ames-state -.peer-state]
-    ~|  %ames-crashed-on-packet-from^her.channel
+    ~|  %ames-crash-on-packet-from^her.channel
     =/  =shut-packet  (decrypt symmetric-key.channel content.packet)
     ::  ward against replay attacks
     ::
     ::    We only accept packets from a ship at their known life, and to
     ::    us at our current life.
     ::
-    ~|  [[her our-life her-life]:channel [sndr-life rcvr-life]:shut-packet]
+    ~|  lives=[[our-life her-life]:channel [sndr-life rcvr-life]:shut-packet]
     ?>  =(sndr-life.shut-packet her-life.channel)
     ?>  =(rcvr-life.shut-packet our-life.channel)
     ::  non-galaxy: update route with heard lane or forwarded lane
@@ -1180,7 +1181,7 @@
     =/  =peer-state  (got-peer-state her)
     =/  =channel     [[our her] now |2.ames-state -.peer-state]
     ::
-    abet:(on-memo:(make-peer-core peer-state channel) bone payload)
+    abet:(on-memo:(make-peer-core peer-state channel) bone payload %boon)
   ::  +on-plea: handle request to send message
   ::
   ++  on-plea
@@ -1205,7 +1206,7 @@
         =/  rcvr  [ship her-life.channel]
         "plea {<sndr^rcvr^bone^vane.plea^path.plea>}"
     ::
-    abet:(on-memo:(make-peer-core peer-state channel) bone plea)
+    abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
   ::  +on-take-wake: receive wakeup or error notification from behn
   ::
   ++  on-take-wake
@@ -1573,7 +1574,7 @@
     |=  [her=ship =her=life]
     ^-  blob
     ::
-    =/  signed=_+:*open-packet
+    =/  =open-packet
       :*  ^=  public-key  pub:ex:crypto-core.ames-state
           ^=        sndr  our
           ^=   sndr-life  life.ames-state
@@ -1581,10 +1582,8 @@
           ^=   rcvr-life  her-life
       ==
     ::
-    =/  =private-key  sec:ex:crypto-core.ames-state
-    =/  =signature    (sign-open-packet private-key signed)
-    =/  =open-packet  [signature signed]
-    =/  =packet       [[our her] encrypted=%.n origin=~ open-packet]
+    =/  signed=@  (sign:as:crypto-core.ames-state (jam open-packet))
+    =/  =packet   [[our her] encrypted=%.n origin=~ signed]
     ::
     (encode-packet packet)
   ::  +got-peer-state: lookup .her state or crash
@@ -1637,12 +1636,40 @@
       ::  print message
       ::
       =.  peer-core  (emit duct %pass /qos %d %flog %text u.text)
-      ::  if peer is ok, we're done
+      ::  if peer has stopped responding, check if %boon's are backing up
       ::
       ?.  ?=(?(%dead %unborn) -.qos.peer-state)
         peer-core
-      ::  peer has stopped responding; notify client vanes
+      check-clog
+    ::  +check-clog: notify clients if peer has stopped responding
+    ::
+    ++  check-clog
+      ^+  peer-core
       ::
+      ::    Only look at response bones.  Request bones are unregulated,
+      ::    since requests tend to be much smaller than responses.
+      ::
+      =/  pumps=(list message-pump-state)
+        %+  murn  ~(tap by snd.peer-state)
+        |=  [=bone =message-pump-state]
+        ?:  =(0 (end 0 1 bone))
+          ~
+        `u=message-pump-state
+      ::  clogged: are five or more response messages unsent to this peer?
+      ::
+      =/  clogged=?
+        =|  acc=@ud
+        |-  ^-  ?
+        ?~  pumps
+          %.n
+        =.  acc  (add acc (sub [next current]:i.pumps))
+        ?:  (gte acc 5)
+          %.y
+        $(pumps t.pumps)
+      ::  if clogged, notify client vanek
+      ::
+      ?.  clogged
+        peer-core
       %+  roll  ~(tap in heeds.peer-state)
       |=([d=^duct core=_peer-core] (emit:core d %give %clog her.channel))
     ::  +on-hear-shut-packet: handle receipt of ack or message fragment
@@ -1664,11 +1691,15 @@
     ::  +on-memo: handle request to send message
     ::
     ++  on-memo
-      |=  [=bone payload=*]
+      |=  [=bone payload=* valence=?(%plea %boon)]
       ^+  peer-core
       ::
       =/  =message-blob  (jam payload)
-      (run-message-pump bone %memo message-blob)
+      =.  peer-core  (run-message-pump bone %memo message-blob)
+      ::
+      ?:  &(=(%boon valence) ?=(?(%dead %unborn) -.qos.peer-state))
+        check-clog
+      peer-core
     ::  +on-wake: handle timer expiration
     ::
     ++  on-wake
@@ -2718,8 +2749,8 @@
     [%dead %live]    `"; {(scow %p ship)} is ok"
     [%live %dead]    `"; {(scow %p ship)} not responding still trying"
     [%unborn %dead]  `"; {(scow %p ship)} not responding still trying"
-    [%live %unborn]  `"; {(scow %p ship)} is dead"
-    [%dead %unborn]  `"; {(scow %p ship)} is dead"
+    [%live %unborn]  `"; {(scow %p ship)} has sunk"
+    [%dead %unborn]  `"; {(scow %p ship)} has sunk"
   ==
 ::  +split-message: split message into kilobyte-sized fragments
 ::
@@ -2799,20 +2830,6 @@
   ~|  %ames-wire-timer^wire
   ?>  ?=([%pump @ @ ~] wire)
   [`@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
-::  +sign-open-packet: sign the contents of an $open-packet
-::
-++  sign-open-packet
-  |=  [=private-key signed=_+:*open-packet]
-  ^-  signature
-  ::
-  (sign:ed:crypto private-key (jam signed))
-::  +verify-signature: use .public-key to verify .signature on .content
-::
-++  verify-signature
-  |=  [content=@ =public-key =signature]
-  ^-  ?
-  ::
-  (veri:ed:crypto signature content public-key)
 ::  +derive-symmetric-key: $symmetric-key from $private-key and $public-key
 ::
 ::    Assumes keys have a tag on them like the result of the |ex:crub core.
