@@ -3,7 +3,7 @@
 ::  allow sending chat messages to foreign paths based on write perms
 ::
 /-  *permission-store, *chat-hook, *invite-store
-/+  *chat-json, default-agent
+/+  *chat-json, default-agent, verb
 |%
 +$  card  card:agent:gall
 ::
@@ -31,6 +31,7 @@
 --
 =|  state-zero
 =*  state  -
+%+  verb  |
 ^-  agent:gall
 =<
   |_  bol=bowl:gall

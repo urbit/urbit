@@ -91,7 +91,6 @@
   :~  %lens
       %clock
       %dojo
-      %modulo
       %launch
       %publish
       %weather

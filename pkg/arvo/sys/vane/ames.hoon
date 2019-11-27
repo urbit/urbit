@@ -62,9 +62,9 @@
 =>
 =/  veb
   :*  pak=%.n
-      snd=%.n
-      rcv=%.n
-      odd=%.n
+      snd=%.y
+      rcv=%.y
+      odd=%.y
       msg=%.y
   ==
 |%
@@ -2210,14 +2210,7 @@
   ::
   ++  packet-queue
     %-  (ordered-map live-packet-key live-packet-val)
-    |=  [a=live-packet-key b=live-packet-key]
-    ^-  ?
-    ::
-    ?:  (lth message-num.a message-num.b)
-      %.y
-    ?:  (gth message-num.a message-num.b)
-      %.n
-    (lte fragment-num.a fragment-num.b)
+    lte-packets
   ::  +gauge: inflate a |pump-gauge to track congestion control
   ::
   ++  gauge  (make-pump-gauge now.channel metrics.state)
@@ -2253,7 +2246,8 @@
         =.  live.state   live.res
         =.  packet-pump  (give %send static-fragment.res)
         %-  %+  trace  snd.veb
-            |.("dead {<fragment-num.static-fragment.res^show:gauge>}")
+            =/  nums  [message-num fragment-num]:static-fragment.res
+            |.("dead {<nums^show:gauge>}")
         packet-pump
     ::
     =|  acc=static-fragment
@@ -2314,6 +2308,42 @@
     %+  roll  sent
     |=  [packet=static-fragment core=_packet-pump]
     (give:core %send packet)
+  ::  +fast-resend-after-ack: resend timed out packets
+  ::
+  ::    After we finally receive an ack, we want to resend all the live
+  ::    packets that have been building up.
+  ::
+  ++  fast-resend-after-ack
+    |=  [=message-num =fragment-num]
+    ^+  packet-pump
+    =;  res=[resends=(list static-fragment) live=_live.state]
+      ~&  >  resends=resends.res
+      =.  live.state  live.res
+      %+  reel  resends.res
+      |=  [packet=static-fragment core=_packet-pump]
+      (give:core %send packet)
+    ::
+    =/  gauge  (make-pump-gauge now.channel metrics.state)
+    =/  acc
+      resends=*(list static-fragment)
+    ::
+    %^  (traverse:packet-queue _acc)  live.state  acc
+    |=  $:  acc=_acc
+            key=live-packet-key
+            val=live-packet-val
+        ==
+    ^-  [new-val=(unit live-packet-val) stop=? _acc]
+    ?:  (lte-packets key [message-num fragment-num])
+      ~&  %no-resend
+      [new-val=`val stop=%.n acc]
+    ::
+    ~&  >  [next=(next-expiry:gauge key val) now=now.channel]
+    ?:  (gth (next-expiry:gauge key val) now.channel)
+      [new-val=`val stop=%.y acc]
+    ::
+    =.  last-sent.val  now.channel
+    =.  resends.acc  [(to-static-fragment key val) resends.acc]
+    [new-val=`val stop=%.n acc]
   ::  +on-hear: handle ack on a live packet
   ::
   ::    If the packet was in our queue, delete it and update our
@@ -2339,9 +2369,11 @@
             |.("{<[fragment-num show:gauge]>}")
         ::  .resends is backward, so fold backward and emit
         ::
-        %+  reel  resends.-
-        |=  [packet=static-fragment core=_packet-pump]
-        (give:core %send packet)
+        =.  packet-pump
+          %+  reel  resends.-
+          |=  [packet=static-fragment core=_packet-pump]
+          (give:core %send packet)
+        (fast-resend-after-ack message-num fragment-num)
     ::
     =/  acc
       :*  found=`?`%.n
@@ -2388,7 +2420,7 @@
         =.  live.state     live.-
         ::
         %-  (trace snd.veb |.("done {<message-num^show:gauge>}"))
-        packet-pump
+        (fast-resend-after-ack message-num `fragment-num`0)
     ::
     ^+  [metrics=metrics.state live=live.state]
     ::
@@ -2429,7 +2461,7 @@
     =/  new-wake=(unit @da)
       ?~  head=(peek:packet-queue live.state)
         ~
-      `next-expiry:gauge
+      `(next-expiry:gauge u.head)
     ::  no-op if no change
     ::
     ?:  =(new-wake next-wake.state)  packet-pump
@@ -2466,8 +2498,9 @@
   ::    delay, as opposed to an actual packet loss.
   ::
   ++  next-expiry
+    |=  [live-packet-key live-packet-val]
     ^-  @da
-    (add now rto)
+    (add last-sent rto)
   ::  +num-slots: how many packets can we send right now?
   ::
   ++  num-slots
@@ -2630,6 +2663,9 @@
       (give %send seq %| ok lag=`@dr`0)
     ::  last-acked<seq<=last-heard; heard message, unprocessed
     ::
+    ::    Only true if we've heard some packets we haven't acked, which
+    ::    doesn't happen for boons.
+    ::
     ?:  (lte seq last-heard.state)
       ?:  is-last-fragment
         ::  drop last packet since we don't know whether to ack or nack
@@ -2699,7 +2735,7 @@
     =.  last-heard.state     +(last-heard.state)
     =.  live-messages.state  (~(del by live-messages.state) seq)
     ::
-    %-  (trace msg.veb |.("hear {<her.channel>} {<num-fragments.u.live>}kb"))
+    %-  (trace msg.veb |.("hear {<her.channel>} {<seq>} {<num-fragments.u.live>}kb"))
     =/  message=*  (assemble-fragments [num-fragments fragments]:u.live)
     =.  message-sink  (enqueue-to-vane seq message)
     ::
@@ -2727,7 +2763,11 @@
     =.  last-acked.state  +(last-acked.state)
     =?  nax.state  !ok  (~(put in nax.state) message-num)
     ::
-    (give %send message-num %| ok lag=`@dr`0)
+    =.  message-sink  (give %send message-num %| ok lag=`@dr`0)
+    =/  next  ~(top to pending-vane-ack.state)
+    ?~  next
+      message-sink
+    (give %memo u.next)
   ::  +on-drop: drop .message-num from our .nax state
   ::
   ++  on-drop
@@ -2752,13 +2792,24 @@
     [%live %unborn]  `"; {(scow %p ship)} has sunk"
     [%dead %unborn]  `"; {(scow %p ship)} has sunk"
   ==
+::  +lte-packets: yes if a is before b
+::
+++  lte-packets
+  |=  [a=live-packet-key b=live-packet-key]
+  ^-  ?
+  ::
+  ?:  (lth message-num.a message-num.b)
+    %.y
+  ?:  (gth message-num.a message-num.b)
+    %.n
+  (lte fragment-num.a fragment-num.b)
 ::  +split-message: split message into kilobyte-sized fragments
 ::
 ++  split-message
   |=  [=message-num =message-blob]
   ^-  (list static-fragment)
   ::
-  =/  fragments=(list fragment)   (rip 20 message-blob)
+  =/  fragments=(list fragment)   (rip 13 message-blob)
   =/  num-fragments=fragment-num  (lent fragments)
   =|  counter=@
   ::
@@ -2783,7 +2834,7 @@
     $(index +(index), sorted [(~(got by fragments) index) sorted])
   ::
   %-  cue
-  %+  can   20
+  %+  can   13
   %+  turn  (flop sorted)
   |=(a=@ [1 a])
 ::  +bind-duct: find or make new $bone for .duct in .ossuary
