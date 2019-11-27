@@ -25,9 +25,9 @@
     :~  ::  sys/zuse: standard library
         ::
         [%$ /zuse]
-        ::  sys/vane/alef: network
+        ::  sys/vane/ames: network
         ::
-        [%a /vane/alef]
+        [%a /vane/ames]
         ::  sys/vane/behn: timer
         ::
         [%b /vane/behn]

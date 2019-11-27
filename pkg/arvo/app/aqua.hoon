@@ -370,7 +370,7 @@
       %^  slum  installed  now.hid
       =/  vane
         ?+  v  ~|([%unknown-vane v] !!)
-          %a  %alef
+          %a  %ames
           %b  %behn
           %c  %clay
           %d  %dill
