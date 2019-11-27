@@ -3,7 +3,8 @@
 ::
 =/  debug  |
 |%
-+$  ids  (list [=term =type])
++*  option  [item]
+  [=term detail=item]
 ::
 ::  Like +rose except also produces line number
 ::
@@ -21,7 +22,7 @@
 ++  get-identifiers
   |=  ty=type
   %-  flop
-  |-  ^-  ids
+  |-  ^-  (list (option type))
   ?-    ty
       %noun      ~
       %void      ~
@@ -36,7 +37,7 @@
     :_  ?.  ?=(%gold r.p.q.ty)
           ~
         $(ty p.ty)
-    ^-  (list (pair term type))
+    ^-  (list (option type))
     %-  zing
     %+  turn  ~(tap by q.r.q.ty)
     |=  [term =tome]
@@ -69,11 +70,10 @@
   ==
 ::
 ++  search-exact
-  |=  [sid=term ids=(list [term type])]
-  ^-  (unit [term type])
-  =/  match=(list [term type])
-    %+  skim  ids
-    |=  [id=term ty=type]
+  |*  [sid=term options=(list (option))]
+  =/  match
+    %+  skim  options
+    |=  [id=term *]
     =(sid id)
   ?~  match
     ~
@@ -82,16 +82,16 @@
 ::  Get all the identifiers that start with sid.
 ::
 ++  search-prefix
-  |=  [sid=term =ids]
-  ^-  (list [term type])
+  |*  [sid=term ids=(list (option))]
+  ^+  ids
   %+  skim  ids
-  |=  [id=term ty=type]
+  |=  [id=term *]
   =(sid (end 3 (met 3 sid) id))
 ::
 ::  Get the longest prefix of a list of identifiers.
 ::
 ++  longest-match
-  |=  matches=(list [=term =type])
+  |=  matches=(list (option))
   ^-  term
   ?~  matches
     ''
@@ -307,7 +307,9 @@
   |=  [sut=type gen=hoon]
   %+  bind  (find-type-mule sut gen)
   |=  [id=term typ=type]
-  (longest-match (search-prefix id (get-identifiers typ)))
+  =/  matches=(list (option type))
+    (search-prefix id (get-identifiers typ))
+  (longest-match matches)
 ::
 ::  Same as +advance-hoon, but takes a position and text directly.
 ::
@@ -322,6 +324,7 @@
 ::
 ++  tab-list-hoon
   |=  [sut=type gen=hoon]
+  ^-  (unit (list (option type)))
   %+  bind  (find-type-mule sut gen)
   |=  [id=term typ=type]
   (search-prefix id (get-identifiers typ))
@@ -330,7 +333,7 @@
 ::
 ++  tab-list-tape
   |=  [sut=type pos=@ud code=tape]
-  ^-  (each (unit ids) [row=@ col=@])
+  ^-  (each (unit (list (option type))) [row=@ col=@])
   ~?  >  debug  %start-magick
   =/  magicked  txt:(insert-magic pos code)
   ~?  >  debug  %start-parsing
