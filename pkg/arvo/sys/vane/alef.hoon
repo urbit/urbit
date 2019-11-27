@@ -1091,14 +1091,12 @@
     ?>  .=       rcvr.open-packet  our
     ?>  .=  sndr-life.open-packet  1
     ?>  .=  rcvr-life.open-packet  life.ames-state
-    ::  no ghost comets allowed
+    ::  only a star can sponsor a comet
     ::
-    ?>  (lte 256 (^sein:title sndr.packet))
+    ?>  =(%king (clan:title (^sein:title sndr.packet)))
     ::  comet public-key must hash to its @p address
     ::
-    ::    TODO how does this validation work elsewhere?
-    ::
-    ?>  =(`@`sndr.packet `@`(shaf %pawn public-key.open-packet))
+    ?>  =(sndr.packet fig:ex:(com:nu:crub:crypto public-key.open-packet))
     ::  everything after .signature is signed
     ::
     ::    TODO: should this double-cue instead of re-jamming?
@@ -1178,7 +1176,7 @@
     =/  =peer-state  (got-peer-state her)
     =/  =channel     [[our her] now |2.ames-state -.peer-state]
     ::
-    abet:(on-memo:(make-peer-core peer-state channel) bone payload)
+    abet:(on-memo:(make-peer-core peer-state channel) bone payload %boon)
   ::  +on-plea: handle request to send message
   ::
   ++  on-plea
@@ -1203,7 +1201,7 @@
         =/  rcvr  [ship her-life.channel]
         "plea {<sndr^rcvr^bone^vane.plea^path.plea>}"
     ::
-    abet:(on-memo:(make-peer-core peer-state channel) bone plea)
+    abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
   ::  +on-take-wake: receive wakeup or error notification from behn
   ::
   ++  on-take-wake
@@ -1635,11 +1633,15 @@
       ::  print message
       ::
       =.  peer-core  (emit duct %pass /qos %d %flog %text u.text)
-      ::  if peer is ok, we're done
+      ::  if peer has stopped responding, check if %boon's are backing up
       ::
       ?.  ?=(?(%dead %unborn) -.qos.peer-state)
         peer-core
-      ::  peer has stopped responding; check if our responses are backing up
+      check-clog
+    ::  +check-clog: notify clients if peer has stopped responding
+    ::
+    ++  check-clog
+      ^+  peer-core
       ::
       ::    Only look at response bones.  Request bones are unregulated,
       ::    since requests tend to be much smaller than responses.
@@ -1686,11 +1688,15 @@
     ::  +on-memo: handle request to send message
     ::
     ++  on-memo
-      |=  [=bone payload=*]
+      |=  [=bone payload=* valence=?(%plea %boon)]
       ^+  peer-core
       ::
       =/  =message-blob  (jam payload)
-      (run-message-pump bone %memo message-blob)
+      =.  peer-core  (run-message-pump bone %memo message-blob)
+      ::
+      ?:  &(=(%boon valence) ?=(?(%dead %unborn) -.qos.peer-state))
+        check-clog
+      peer-core
     ::  +on-wake: handle timer expiration
     ::
     ++  on-wake
