@@ -114,7 +114,7 @@
   |=  our/ship
   %-  ~(gas in *(set gill:gall))
   ^-  (list gill:gall)
-  [[our %dojo] ~]
+  [[our %dojo] [our %chat-cli]~]
 ::
 ++  make                                                ::  initial part
   |=  our/ship
