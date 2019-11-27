@@ -88,35 +88,27 @@
     ==
   ?:  lit
     ~
-  :~  %clock
-      %lens
+  :~  %lens
+      %clock
+      %dojo
+      %modulo
+      %launch
+      %publish
+      %weather
+      %group-store
+      %group-hook
+      %permission-store
+      %permission-hook
+      %permission-group-hook
+      %invite-store
+      %invite-hook
+      %invite-view
+      %chat-store
+      %chat-hook
+      %chat-view
+      %chat-cli
+      %soto
   ==
-  ::  %+  welp
-  ::    ?:  ?=(%pawn (clan:title our))  ~
-  ::    :~  %acme
-  ::        %dns
-  ::        %eth-watcher
-  ::        %azimuth-tracker
-  ::    ==
-  ::  :~  %lens
-  ::      %dojo
-  ::      %modulo
-  ::      %launch
-  ::      %publish
-  ::      %weather
-  ::      %group-store
-  ::      %group-hook
-  ::      %permission-store
-  ::      %permission-hook
-  ::      %permission-group-hook
-  ::      %invite-store
-  ::      %invite-hook
-  ::      %invite-view
-  ::      %chat-store
-  ::      %chat-hook
-  ::      %chat-view
-  ::      %chat-cli
-  ::  ==
 ::
 ++  deft-fish                                           ::  default connects
   |=  our/ship
