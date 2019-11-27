@@ -379,11 +379,11 @@
 +$  packet  [dyad encrypted=? origin=(unit lane) content=*]
 ::  $open-packet: unencrypted packet payload, for comet self-attestation
 ::
-::    The .signature applies to all other fields in this data structure.
+::    This data structure gets signed and jammed to form the .contents
+::    field of a $packet.
 ::
 +$  open-packet
-  $:  =signature
-      =public-key
+  $:  =public-key
       sndr=ship
       =sndr=life
       rcvr=ship
@@ -1083,8 +1083,13 @@
     =/  ship-state  (~(get by peers.ames-state) sndr.packet)
     ?:  ?=([~ %known *] ship-state)
       event-core
+    ::  TODO: is it ok to verify signature before other data, e.g. life?
     ::
-    =/  =open-packet  ;;(open-packet content.packet)
+    =+  ;;  =open-packet
+        %-  cue
+        %-  need
+        ?>  ?=(@ content.packet)
+        (sure:as:crypto-core.ames-state content.packet)
     ::  assert .our and .her and lives match
     ::
     ?>  .=       sndr.open-packet  sndr.packet
@@ -1097,12 +1102,6 @@
     ::  comet public-key must hash to its @p address
     ::
     ?>  =(sndr.packet fig:ex:(com:nu:crub:crypto public-key.open-packet))
-    ::  everything after .signature is signed
-    ::
-    ::    TODO: should this double-cue instead of re-jamming?
-    ::
-    =/  signed=@  (jam +.open-packet)
-    ?>  (verify-signature signed [public-key signature]:open-packet)
     ::  store comet as peer in our state
     ::
     =.  peers.ames-state
@@ -1569,7 +1568,7 @@
     |=  [her=ship =her=life]
     ^-  blob
     ::
-    =/  signed=_+:*open-packet
+    =/  =open-packet
       :*  ^=  public-key  pub:ex:crypto-core.ames-state
           ^=        sndr  our
           ^=   sndr-life  life.ames-state
@@ -1577,10 +1576,8 @@
           ^=   rcvr-life  her-life
       ==
     ::
-    =/  =private-key  sec:ex:crypto-core.ames-state
-    =/  =signature    (sign-open-packet private-key signed)
-    =/  =open-packet  [signature signed]
-    =/  =packet       [[our her] encrypted=%.n origin=~ open-packet]
+    =/  signed=@  (sign:as:crypto-core.ames-state (jam open-packet))
+    =/  =packet   [[our her] encrypted=%.n origin=~ signed]
     ::
     (encode-packet packet)
   ::  +got-peer-state: lookup .her state or crash
@@ -2827,20 +2824,6 @@
   ~|  %ames-wire-timer^wire
   ?>  ?=([%pump @ @ ~] wire)
   [`@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
-::  +sign-open-packet: sign the contents of an $open-packet
-::
-++  sign-open-packet
-  |=  [=private-key signed=_+:*open-packet]
-  ^-  signature
-  ::
-  (sign:ed:crypto private-key (jam signed))
-::  +verify-signature: use .public-key to verify .signature on .content
-::
-++  verify-signature
-  |=  [content=@ =public-key =signature]
-  ^-  ?
-  ::
-  (veri:ed:crypto signature content public-key)
 ::  +derive-symmetric-key: $symmetric-key from $private-key and $public-key
 ::
 ::    Assumes keys have a tag on them like the result of the |ex:crub core.
