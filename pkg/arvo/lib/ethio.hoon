@@ -14,28 +14,50 @@
   |=  [url=@ta id=(unit @t) req=request:rpc:ethereum]
   =/  m  (strand:strandio ,json)
   ^-  form:m
-  |^  %+  (retry:strandio json)  `10
-      =/  m  (strand:strandio ,(unit json))
-      ^-  form:m
-      =/  =request:http
-        :*  method=%'POST'
-            url=url
-            header-list=['Content-Type'^'application/json' ~]
-            ^=  body
-            %-  some  %-  as-octt:mimes:html
-            %-  en-json:html
-            (request-to-json:rpc:ethereum id req)
-        ==
-      ;<  ~  bind:m  (send-request:strandio request)
-      ;<  rep=(unit client-response:iris)  bind:m
-        take-maybe-response:strandio
-      ?~  rep
-        (pure:m ~)
-      (parse-response u.rep)
+  ;<  res=(list [id=@t =json])  bind:m
+    (request-batch-rpc-strict url [id req]~)
+  ?:  ?=([* ~] res)
+    (pure:m json.i.res)
+  ~|  [%ethio %unexpected-results (lent res)]
+  !!
+::  +request-batch-rpc-strict: send rpc request, with retry
+::
+::    sends a batch requests. produces results for all requests in the batch,
+::    but only if all of them are successful.
+::
+++  request-batch-rpc-strict
+  |=  [url=@ta reqs=(list [id=(unit @t) req=request:rpc:ethereum])]
+  |^  %+  (retry:strandio results)
+        `10
+      attempt-request
   ::
-  ++  parse-response
+  +$  result   [id=@t =json]
+  +$  results  (list result)
+  ::
+  ++  attempt-request
+    =/  m  (strand:strandio ,(unit results))
+    ^-  form:m
+    =/  =request:http
+      :*  method=%'POST'
+          url=url
+          header-list=['Content-Type'^'application/json' ~]
+        ::
+          ^=  body
+          %-  some  %-  as-octt:mimes:html
+          %-  en-json:html
+          a+(turn reqs request-to-json:rpc:ethereum)
+      ==
+    ;<  ~  bind:m
+      (send-request:strandio request)
+    ;<  rep=(unit client-response:iris)  bind:m
+      take-maybe-response:strandio
+    ?~  rep
+      (pure:m ~)
+    (parse-responses u.rep)
+  ::
+  ++  parse-responses
     |=  =client-response:iris
-    =/  m  (strand:strandio ,(unit json))
+    =/  m  (strand:strandio ,(unit results))
     ^-  form:m
     ?>  ?=(%finished -.client-response)
     ?~  full-file.client-response
@@ -44,20 +66,23 @@
     =/  jon=(unit json)  (de-json:html body)
     ?~  jon
       (pure:m ~)
-    =,  dejs-soft:format
     =/  array=(unit (list response:rpc:jstd))
-      ((ar parse-one-response) u.jon)
+      ((ar:dejs-soft:format parse-one-response) u.jon)
     ?~  array
-      =/  res=(unit response:rpc:jstd)  (parse-one-response u.jon)
-      ?~  res
-        (strand-fail:strandio %request-rpc-parse-error >id< ~)
-      ?:  ?=(%error -.u.res)
-        (strand-fail:strandio %request-rpc-error >id< >+.res< ~)
-      ?.  ?=(%result -.u.res)
-        (strand-fail:strandio %request-rpc-fail >u.res< ~)
-      (pure:m `res.u.res)
-    (strand-fail:strandio %request-rpc-batch >%not-implemented< ~)
-    ::  (pure:m `[%batch u.array])
+      ~&  %incomplete-batch
+      (strand-fail:strandio %rpc-result-incomplete-batch >u.jon< ~)
+    =-  ?~  err  (pure:m `res)
+        ~&  [%error-results err]
+        (pure:m ~)
+    %+  roll  u.array
+    |=  $:  rpc=response:rpc:jstd
+            [res=results err=(list [id=@t code=@t message=@t])]
+        ==
+    ?:  ?=(%error -.rpc)
+      [res [+.rpc err]]
+    ?.  ?=(%result -.rpc)
+      [res [['' 'ethio-rpc-fail' (crip <rpc>)] err]]
+    [[+.rpc res] err]
   ::
   ++  parse-one-response
     |=  =json
