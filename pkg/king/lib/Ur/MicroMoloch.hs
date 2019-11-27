@@ -99,10 +99,10 @@ data Val
     = VFun Exp [Val]
     | VNat Nat
     | VJet Val (Ig (Exp → [Val] → IO Val))
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord)
 
--- instance Show Val where
-    -- show = show . valExp
+instance Show Val where
+    show = show . valExp
 
 
 -- Interpreter -----------------------------------------------------------------
