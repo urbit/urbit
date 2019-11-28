@@ -48,7 +48,8 @@ export class NewScreen extends Component {
             placeholder="example-chat-name"
             style={{
               resize: "none",
-              height: 48
+              height: 48,
+              paddingTop: 14
             }}
           />
           <h2 className="f8 pl3 pt6">Group Avatar</h2>
@@ -61,22 +62,32 @@ export class NewScreen extends Component {
             placeholder="#000000"
             style={{
               resize: "none",
-              height: 48
+              height: 48,
+              paddingTop: 14
             }}
           />
           <h2 className="f8 pl3 pt6">Add Group Members</h2>
           <p className="f9 pl3 gray2 lh-copy">
             Search for ships to invite to your group
           </p>
-          <textarea
-            className="f7 ba b--gray3 w-100 pa3 pl5 ml3 mt2 mb7"
-            rows={1}
-            placeholder="Search for ships..."
-            style={{
-              resize: "none",
-              height: 48
-            }}
-          />
+          <div className="relative">
+            <textarea
+              className="f8 ba b--gray3 w-100 pa3 pl7  ml3 mt2 mb7"
+              rows={1}
+              placeholder="Search for ships..."
+              style={{
+                resize: "none",
+                height: 48,
+                paddingTop: 15
+              }}
+            />
+            <span className="f5 gray3 absolute"
+            style={{transform: "rotate(-45deg)",
+                    left: 21,
+                    top: 18}}>
+                    ⚲
+            </span>
+          </div>
           <button className="ml3 f8 ba pa2 b--green2 green2">
             Start Group
           </button>
