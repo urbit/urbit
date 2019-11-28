@@ -6,10 +6,6 @@
 =,  able:jael
 ::
 =>  |%
-    ++  refresh-rate  ~m5  ::  ~m5
-    --
-::
-=>  |%
     +$  card  card:agent:gall
     +$  app-state
       $:  %0
@@ -34,14 +30,14 @@
 ::
 =>  |%
     ++  wait
-      |=  now=@da
+      |=  [=path now=@da time=@dr]
       ^-  card
-      [%pass /timer %arvo %b %wait (add now refresh-rate)]
+      [%pass [%timer path] %arvo %b %wait (add now time)]
     ::
     ++  wait-shortcut
-      |=  now=@da
+      |=  [=path now=@da]
       ^-  card
-      [%pass /shortcut %arvo %b %wait now]
+      [%pass [%timer path] %arvo %b %wait now]
     ::
     ++  poke-spider
       |=  [=path our=@p =cage]
@@ -70,8 +66,7 @@
 ::
 ++  on-init
   ^-  (quip card _this)
-  ::  start update timer loop
-  [[(wait now.bowl) ~] this]
+  [~ this]
 ::
 ++  on-save   !>(state)
 ++  on-load
@@ -91,11 +86,11 @@
   ?-  -.poke
       %watch
     ::  fully restart the watchdog if it doesn't exist yet,
-    ::  or if the new config changes more than just the url.
+    ::  or if the new config changes more than just the url or refresh rate.
     =/  restart=?
       ?|  !(~(has by dogs.state) path.poke)
-          ?!  .=  ->:(~(got by dogs.state) path.poke)
-                  +.config.poke
+          ?!  .=  ->+:(~(got by dogs.state) path.poke)
+                   +>.config.poke
       ==
     ~?  &((~(has by dogs.state) path.poke) restart)
       [dap.bowl 'overwriting existing watchdog on' path.poke]
@@ -117,7 +112,7 @@
         number  from.config.poke
       ==
     =.  dogs.state  (~(put by dogs.state) path.poke new-dog)
-    [[(wait-shortcut now.bowl) ~] this]
+    [[(wait-shortcut path.poke now.bowl) ~] this]
   ::
       %clear
     =.  dogs.state  (~(del by dogs.state) path.poke)
@@ -273,52 +268,40 @@
   ^-  (quip card agent:gall)
   ?+  +<.sign-arvo  ~|([%strange-sign-arvo -.sign-arvo] !!)
       %wake
-    =;  rest
-      ?.  =(/timer wire)
-        rest
-      [[(wait now.bowl) -.rest] +.rest]
+    ?.  ?=([%timer *] wire)  [~ this]
+    =*  path  t.wire
+    ?.  (~(has by dogs.state) path)
+      [~ this]
+    =/  dog=watchdog
+      (~(got by dogs.state) path)
     ?^  error.sign-arvo
       ::  failed, try again.  maybe should tell user if fails more than
       ::  5 times.
       ::
-      [[(wait now.bowl) ~] this]
-    ::  start all updates in parallel
+      [[(wait path now.bowl refresh-rate.dog)]~ this]
+    ::  start a new thread that checks for updates
     ::
-    =/  dogs=(list [=path dog=watchdog])  ~(tap by dogs.state)
-    =|  cards=(list card)
-    =/  tid-gen  ~(. og eny.bowl)
-    ^-  (quip card agent:gall)
-    =-  [(flop -<) ->]
-    |-  ^-  (quip card agent:gall)
-    =*  loop  $
-    ?~  dogs
-      [cards this]
-    =,  i.dogs
-    ?^  running.dog.i.dogs
+    =-  [cards this(dogs.state (~(put by dogs.state) path dog))]
+    ^-  [cards=(list card) dog=watchdog]
+    ?^  running.dog
       ::  if still running, kill it and restart
       ::
       %-  (slog leaf+"eth-watcher still running; will restart" ~)
       =/  =cage  [%spider-stop !>([u.running.dog |])]
-      =.  cards
-        :*  [%pass [%starting path] %agent [our.bowl %spider] %poke cage]
-            (leave-spider path our.bowl)
-            cards
-        ==
-      loop(i.dogs i.dogs(running.dog ~))
+      :_  dog(running ~)
+      :~  [%pass [%starting path] %agent [our.bowl %spider] %poke cage]
+          (leave-spider path our.bowl)
+      ==
     ::
-    =^  rand  tid-gen  (raws:tid-gen 128)
-    =/  new-tid  (cat 3 'eth-watcher--' (scot %uv rand))
-    =>  .(running.dog.i.dogs `new-tid)
+    =/  new-tid=@ta
+      (cat 3 'eth-watcher--' (scot %uv eny.bowl))
+    :_  dog(running `new-tid)
     =/  args
       :^  ~  `new-tid  %eth-watcher
       !>(`watchpup`[- number pending-logs blocks]:dog)
-    =.  cards
-      :*  (watch-spider path our.bowl /thread-result/[new-tid])
-          (poke-spider path our.bowl %spider-start !>(args))
-          cards
-      ==
-    =.  dogs.state  (~(put by dogs.state) path dog)
-    loop(dogs t.dogs)
+    :~  (watch-spider path our.bowl /thread-result/[new-tid])
+        (poke-spider path our.bowl %spider-start !>(args))
+    ==
   ==
 ::
 ++  on-fail   on-fail:def
