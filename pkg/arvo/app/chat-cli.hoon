@@ -360,8 +360,6 @@
     =^  char  state.cli
       (~(transmit sole-lib state.cli) [%ins send-pos `@c`i.to-send])
     $(moves [(effect:sh-out %det char) moves], send-pos +(send-pos), to-send t.to-send)
-
-
   ::  +edit: apply sole edit
   ::
   ::    called when typing into the cli prompt.
@@ -988,7 +986,6 @@
     |=  options=(list [cord tank])
     ^-  move
     (effect %tab options)
-
   ::  +print: puts some text into the cli as-is
   ::
   ++  print
