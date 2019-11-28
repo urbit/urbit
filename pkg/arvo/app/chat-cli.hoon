@@ -315,20 +315,20 @@
   ++  tab-list
     ^-  (list (option:auto tank))
     :~
-      [%join leaf+";join ~ship/chat-name"]
+      [%join leaf+";join ~ship/chat-name (glyph)"]
       [%leave leaf+";leave ~ship/chat-name"]
       ::
-      [%create leaf+";create [type] /chat-name [glyph]"]
+      [%create leaf+";create [type] /chat-name (glyph)"]
       [%delete leaf+";delete /chat-name"]
-      [%invite leaf+";invite (rw | r | w) /chat-name ~ships"]
-      [%banish leaf+";banish (rw | r | w) /chat-name ~ships"]
+      [%invite leaf+";invite [rw | r | w] /chat-name ~ships"]
+      [%banish leaf+";banish [rw | r | w] /chat-name ~ships"]
     ::
       [%bind leaf+";bind [glyph] ~ship/chat-name"]
       [%unbind leaf+";unbind [glyph]"]
-      [%what leaf+";what [glyph]"]
+      [%what leaf+";what (~ship/chat-name) (glyph)"]
     ::
       [%settings leaf+";settings"]
-      [%set leaf+";set key value"]
+      [%set leaf+";set key (value)"]
       [%unset leaf+";unset key"]
     ::
       [%chats leaf+";chats"]
