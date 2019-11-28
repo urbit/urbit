@@ -359,7 +359,11 @@
       [(flop moves) this]
     =^  char  state.cli
       (~(transmit sole-lib state.cli) [%ins send-pos `@c`i.to-send])
-    $(moves [(effect:sh-out %det char) moves], send-pos +(send-pos), to-send t.to-send)
+    %_  $
+      moves  [(effect:sh-out %det char) moves]
+      send-pos  +(send-pos)
+      to-send  t.to-send
+    ==
   ::  +edit: apply sole edit
   ::
   ::    called when typing into the cli prompt.
