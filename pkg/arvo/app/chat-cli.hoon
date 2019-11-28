@@ -340,14 +340,16 @@
     ?.  =(';' (snag 0 buf.state.cli))
       [~ this]
     =+  (get-id:auto pos (tufa buf.state.cli))
-    ?~  id
-      [~ this]
+    =/  needle=term
+      (fall id '')
+    ?:  &(!=(pos 1) =(0 (met 3 needle)))
+      [~ this]  :: autocomplete empty command iff user at start of command
     =/  options=(list (option:auto tank))
-      (search-prefix:auto u.id tab-list)
+      (search-prefix:auto needle tab-list)
     =/  advance=term
       (longest-match:auto options)
     =/  to-send=tape
-      (trip (rsh 3 (met 3 u.id) advance))
+      (trip (rsh 3 (met 3 needle) advance))
     =/  send-pos
       (add pos (met 3 (fall forward '')))
     =|  moves=(list move)
