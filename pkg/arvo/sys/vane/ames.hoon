@@ -62,11 +62,11 @@
 =>
 =/  veb
   :*  pak=%.n
-      snd=%.y
-      rcv=%.y
-      odd=%.y
-      msg=%.y
-      ges=%.y
+      snd=%.n
+      rcv=%.n
+      odd=%.n
+      msg=%.n
+      ges=%.n
   ==
 |%
 ++  trace
@@ -1653,7 +1653,6 @@
       =/  pumps=(list message-pump-state)
         %+  murn  ~(tap by snd.peer-state)
         |=  [=bone =message-pump-state]
-        ~&  >>>  pump-bone=bone
         ?:  =(0 (end 0 1 bone))
           ~
         `u=message-pump-state
@@ -1663,9 +1662,7 @@
         =|  acc=@ud
         |-  ^-  ?
         ?~  pumps
-          ~&  >>>  %clog-nah
           %.n
-        ~&  [acc=acc next.i.pumps current.i.pumps ~(wyt in unsent-messages.i.pumps)]
         =.  acc
           %+  add  acc
           %+  add
@@ -1677,15 +1674,12 @@
           ~(wyt in unsent-messages.i.pumps)
         ::
         ?:  (gte acc 5)
-          ~&  >>>  %clog-yah
           %.y
         $(pumps t.pumps)
       ::  if clogged, notify client vanek
       ::
       ?.  clogged
-        ~&  >>>  %clog-free
         peer-core
-      ~&  >>>  [%since-ninety-three heeds.peer-state]
       %+  roll  ~(tap in heeds.peer-state)
       |=([d=^duct core=_peer-core] (emit:core d %give %clog her.channel))
     ::  +on-hear-shut-packet: handle receipt of ack or message fragment
@@ -1714,9 +1708,7 @@
       =.  peer-core  (run-message-pump bone %memo message-blob)
       ::
       ?:  &(=(%boon valence) ?=(?(%dead %unborn) -.qos.peer-state))
-        ~&  >>>  %mebbe-clog
         check-clog
-      ~&  >>>  %no-check-clog
       peer-core
     ::  +on-wake: handle timer expiration
     ::
@@ -1906,16 +1898,13 @@
         (~(gut by rcv.peer-state) bone *message-sink-state)
       ::
       =/  message-sink    (make-message-sink message-sink-state channel)
-      ~&  >>  [%starting-work task]
       =^  sink-gifts      message-sink-state  (work:message-sink task)
-      ~&  >>  [%finishing-work task]
       =.  rcv.peer-state  (~(put by rcv.peer-state) bone message-sink-state)
       ::  process effects from |message-sink
       ::
       |^  ^+  peer-core
-          ?~  sink-gifts  ~&  >>  %no-sink-gifts  peer-core
+          ?~  sink-gifts  peer-core
           =*  gift  i.sink-gifts
-          ~&  >>  [%sink-gift gift]
           =.  peer-core
             ?-  -.gift
               %memo  (on-sink-memo [message-num message]:gift)
@@ -1942,7 +1931,6 @@
       ::    even bone, 1 second bit: nack-trace %boon message
       ::
       ++  on-sink-memo
-        ~&  >  [%sink-memo bone=bone]
         ?:  =(1 (end 0 1 bone))
           on-sink-plea
         ?:  =(0 (end 0 1 (rsh 0 1 bone)))
@@ -2172,12 +2160,10 @@
     ::  if nothing to send, no-op
     ::
     ?:  &(=(~ unsent-messages) =(~ unsent-fragments)):state
-      ~&  >  %feed-none
       message-pump
     ::  we have unsent fragments of the current message; feed them
     ::
     ?.  =(~ unsent-fragments.state)
-      ~&  >  %feed-unsent
       =/  res  (feed:packet-pump unsent-fragments.state)
       =+  [unsent packet-pump-gifts packet-pump-state]=res
       ::
@@ -2190,7 +2176,6 @@
       ?~  unsent
         feed-packets
       message-pump
-    ~&  >  %feed-no-unsent
     ::  .unsent-messages is nonempty; pop a message off and feed it
     ::
     =^  =message-blob  unsent-messages.state  ~(get to unsent-messages.state)
@@ -2305,7 +2290,6 @@
     =/  num-slots  num-slots:gauge
     =/  sent       (scag num-slots fragments)
     =/  unsent     (slag num-slots fragments)
-    ~&  >  [%feeding num-slots=num-slots sent=sent unsent=unsent lent=(lent fragments)]
     ::
     :-  unsent
     ^+  packet-pump
@@ -2343,7 +2327,6 @@
     |=  [=message-num =fragment-num]
     ^+  packet-pump
     =;  res=[resends=(list static-fragment) live=_live.state]
-      ~&  >  resends=resends.res
       =.  live.state  live.res
       %+  reel  resends.res
       |=  [packet=static-fragment core=_packet-pump]
@@ -2363,7 +2346,6 @@
       ~&  %no-resend
       [new-val=`val stop=%.n acc]
     ::
-    ~&  >  [next=(next-expiry:gauge key val) now=now.channel]
     ?:  (gth (next-expiry:gauge key val) now.channel)
       [new-val=`val stop=%.y acc]
     ::
@@ -2470,16 +2452,13 @@
     ::    very likely to happen, so it's more important we stay correct.
     ::
     ?:  (lth message-num.key message-num)
-      ~&  >  [%ooo message-num.key message-num]
       [new-val=`val stop=%.y metrics]
     ::  if packet was from acked message, delete it and continue
     ::
     ?:  =(message-num.key message-num)
-      ~&  >  [%acked message-num.key message-num]
       [new-val=~ stop=%.n metrics=(on-ack:gauge -.val)]
     ::  we've gone past the acked message; we're done
     ::
-    ~&  >  [%past message-num.key message-num]
     [new-val=`val stop=%.y metrics]
   ::  +set-wake: set, unset, or reset timer, emitting moves
   ::
@@ -2703,7 +2682,14 @@
       ?:  is-last-fragment
         ::  drop last packet since we don't know whether to ack or nack
         ::
-        %-  (trace rcv.veb |.("hear last in-progress {<her.channel^seq^fragment-num^num-fragments^la=last-acked.state^lh=last-heard.state>}"))
+        %-  %+  trace  rcv.veb
+            |.  ^-  tape
+            =/  data
+              :*  her.channel  seq
+                  fragment-num  num-fragments
+                  la=last-acked.state  lh=last-heard.state
+              ==
+            "hear last in-progress {<data>}"
         message-sink
       ::  ack all other packets
       ::
@@ -2766,7 +2752,6 @@
     ::  we have whole message; update state, assemble, and send to vane
     ::
     =.  last-heard.state     +(last-heard.state)
-    ~&  >  [%incremented-last-heard last-heard.state last-acked.state]
     =.  live-messages.state  (~(del by live-messages.state) seq)
     ::
     %-  (trace msg.veb |.("hear {<her.channel>} {<seq>} {<num-fragments.u.live>}kb"))
@@ -2784,7 +2769,6 @@
     ~?  !empty  already-pending=pending-vane-ack.state
     =.  pending-vane-ack.state  (~(put to pending-vane-ack.state) seq message)
     ?.  empty
-      ~&  >  [%not-empty pending=pending-vane-ack.state]
       message-sink
     (give %memo seq message)
   ::  +on-done: handle confirmation of message processing from vane
@@ -2797,7 +2781,6 @@
     =/  =message-num  message-num.p.pending
     ::
     =.  last-acked.state  +(last-acked.state)
-    ~&  >  [%incremented-last-acked last-heard.state last-acked.state]
     =?  nax.state  !ok  (~(put in nax.state) message-num)
     ::
     =.  message-sink  (give %send message-num %| ok lag=`@dr`0)
