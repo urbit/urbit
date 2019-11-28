@@ -2348,7 +2348,6 @@
         ==
     ^-  [new-val=(unit live-packet-val) stop=? _acc]
     ?:  (lte-packets key [message-num fragment-num])
-      ~&  %no-resend
       [new-val=`val stop=%.n acc]
     ::
     ?:  (gth (next-expiry:gauge key val) now.channel)
