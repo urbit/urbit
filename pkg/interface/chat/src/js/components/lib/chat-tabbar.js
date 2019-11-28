@@ -33,7 +33,7 @@ export class ChatTabBar extends Component {
 
 
     return (
-      <div className="dib flex-shrink-0-m flex-grow-1">
+      <div className="dib flex-shrink-0 flex-grow-1">
         {!!props.isOwner ? (
           <div className={"dib f8 pl6"}>
             <Link

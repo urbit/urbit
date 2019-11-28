@@ -6,6 +6,7 @@ import { store } from "/store";
 
 
 import { ChatTabBar } from '/components/lib/chat-tabbar';
+import SidebarSwitcher from './lib/icons/icon-sidebar-switch';
 
 
 export class SettingsScreen extends Component {
@@ -71,6 +72,7 @@ export class SettingsScreen extends Component {
 
   render() {
     const { props, state } = this;
+    const isinPopout = this.props.popout ? "popout/" : "";
 
     let writeGroup = Array.from(props.group.values());
 
@@ -84,45 +86,28 @@ export class SettingsScreen extends Component {
         <div className="h-100 w-100 overflow-x-hidden flex flex-column">
           <div
             className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
-            style={{ height: "1rem" }}
-          >
+            style={{ height: "1rem" }}>
             <Link to="/~chat/">{"⟵ All Chats"}</Link>
           </div>
           <div
-            className="pl3 pt4 bb b--gray4 flex relative overflow-x-scroll flex-shrink-0"
-            style={{ height: 48 }}
-          >
-            <a
-              className="pointer"
-              onClick={() => {
-                store.setState(previousState => ({
-                  sidebarShown: !previousState.sidebarShown
-                }));
-              }}
-            >
-              <img
-                className={`v-btm pr3 dn ` + popoutSwitcher}
-                src={
-                  this.props.sidebarShown
-                    ? "/~chat/img/ChatSwitcherLink.png"
-                    : "/~chat/img/ChatSwitcherClosed.png"
-                }
-                height="16"
-                width="16"
-              />
-            </a>
+            className="pl3 pt4 bb b--gray4 flex relative overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"
+            style={{ height: 48 }}>
+            <SidebarSwitcher
+              sidebarShown={this.props.sidebarShown}
+              popout={this.props.popout}
+            />
             <Link to={`/~chat/` + isinPopout + `room` + state.station}>
               <h2
                 className="mono dib f7 fw4 v-top"
-                style={{ width: "max-content" }}
-              >
+                style={{ width: "max-content" }}>
                 {state.station.substr(1)}
               </h2>
             </Link>
             <ChatTabBar
               {...props}
               station={state.station}
-              numPeers={writeGroup.length} />
+              numPeers={writeGroup.length}
+            />
           </div>
           <div className="w-100 pl3 mt4 cf">
             <h2 className="f8 pb2">{text}</h2>
@@ -131,47 +116,24 @@ export class SettingsScreen extends Component {
       );
     }
 
-      let popoutSwitcher = this.props.popout
-        ? "dn-m dn-l dn-xl"
-        : "dib-m dib-l dib-xl";
-      let isinPopout = this.props.popout ? "popout/" : "";
-
     return (
       <div className="h-100 w-100 overflow-x-hidden flex flex-column">
         <div
           className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
-          style={{ height: "1rem" }}
-        >
+          style={{ height: "1rem" }}>
           <Link to="/~chat/">{"⟵ All Chats"}</Link>
         </div>
         <div
-          className="pl3 pt4 bb b--gray4 flex relative overflow-x-scroll flex-shrink-0"
-          style={{ height: 48 }}
-        >
-          <a
-            className="pointer"
-            onClick={() => {
-              store.setState(previousState => ({
-                sidebarShown: !previousState.sidebarShown
-              }));
-            }}
-          >
-            <img
-              className={`v-btm pr3 dn ` + popoutSwitcher}
-              src={
-                this.props.sidebarShown
-                  ? "/~chat/img/ChatSwitcherLink.png"
-                  : "/~chat/img/ChatSwitcherClosed.png"
-              }
-              height="16"
-              width="16"
-            />
-          </a>
+          className="pl3 pt4 bb b--gray4 flex relative overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"
+          style={{ height: 48 }}>
+          <SidebarSwitcher
+            sidebarShown={this.props.sidebarShown}
+            popout={this.props.popout}
+          />
           <Link to={`/~chat/` + isinPopout + `room` + state.station}>
             <h2
               className="mono dib f7 fw4 v-top"
-              style={{ width: "max-content" }}
-            >
+              style={{ width: "max-content" }}>
               {state.station.substr(1)}
             </h2>
           </Link>

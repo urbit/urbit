@@ -182,8 +182,7 @@ export class ChatInput extends Component {
             marginTop: 4,
             flexBasis: 24,
             height: 24
-          }}
-        >
+          }}>
           <Sigil ship={window.ship} size={24} color="#4330FC" />
         </div>
         <div className="fr h-100 flex" style={{ flexGrow: 1 }}>
@@ -191,6 +190,10 @@ export class ChatInput extends Component {
             className={"pl3 bn"}
             style={{ flexGrow: 1, height: 28, paddingTop: 6, resize: "none" }}
             autoCapitalize="none"
+            autoFocus={(
+              /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(
+              navigator.userAgent
+            )) ? false : true}
             ref={this.textareaRef}
             placeholder={props.placeholder}
             value={state.message}

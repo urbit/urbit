@@ -49,9 +49,9 @@ export class NewScreen extends Component {
         case 'journal':
           securityText = 'Similar to a blog. Publicly readable/subscribable, invited members can write to journal.'
           break;
-        case 'mailbox':
-          securityText = 'Similar to email. Anyone can write to the mailbox, invited members can read messages.'
-          break;
+        // case 'mailbox':
+        //   securityText = 'Similar to email. Anyone can write to the mailbox, invited members can read messages.'
+        //   break;
       }
       this.setState({ securityDescription: securityText });
     }
@@ -214,7 +214,7 @@ export class NewScreen extends Component {
               <option value="village">Village</option>
               <option value="channel">Channel</option>
               <option value="journal">Journal</option>
-              <option value="mailbox">Mailbox</option>
+              {/* <option value="mailbox">Mailbox</option> */}
             </select>
           </div>
           <p className="f9 gray2 db lh-copy pt2 mb4">{this.state.securityDescription}</p>

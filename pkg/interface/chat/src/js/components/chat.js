@@ -7,6 +7,7 @@ import { store } from "/store";
 
 
 import { Message } from '/components/lib/message';
+import { SidebarSwitcher } from '/components/lib/icons/icon-sidebar-switch.js';
 import { ChatTabBar } from '/components/lib/chat-tabbar';
 import { ChatInput } from '/components/lib/chat-input';
 import { deSig } from '/lib/util';
@@ -217,35 +218,25 @@ export class ChatScreen extends Component {
 
            let group = Array.from(props.group.values());
 
-           let popoutSwitcher = this.props.popout ? "dn-m dn-l dn-xl" : "dib-m dib-l dib-xl";
            let isinPopout = this.props.popout ? "popout/" : "";
+
 
            return (
              <div
                key={state.station}
                className="h-100 w-100 overflow-hidden flex flex-column">
-               <div className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
+               <div
+                 className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
                  style={{ height: "1rem" }}>
                  <Link to="/~chat/">{"⟵ All Chats"}</Link>
                </div>
-               <div className="pl3 pt4 bb b--gray4 flex relative overflow-x-scroll flex-shrink-0"
+               <div
+                 className="pl3 pt4 bb b--gray4 flex relative overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"
                  style={{ height: 48 }}>
-                 <a className="pointer flex-shrink-0"
-                    onClick={() => {
-                     store.setState(previousState => ({
-                       sidebarShown: !previousState.sidebarShown
-                     }));
-                   }}>
-                   <img className={`v-btm pr3 dn ` + popoutSwitcher}
-                     src={
-                       this.props.sidebarShown
-                         ? "/~chat/img/ChatSwitcherLink.png"
-                         : "/~chat/img/ChatSwitcherClosed.png"
-                     }
-                     height="16"
-                     width="16"
-                   />
-                 </a>
+                 <SidebarSwitcher
+                   sidebarShown={this.props.sidebarShown}
+                   popout={this.props.popout}
+                 />
                  <Link to={`/~chat/` + isinPopout + `room` + state.station}>
                    <h2
                      className="mono dib f7 fw4 v-top"
@@ -261,10 +252,12 @@ export class ChatScreen extends Component {
                    popout={this.props.popout}
                  />
                </div>
-               <div className="overflow-y-scroll pt3 pb2 flex flex-column-reverse"
+               <div
+                 className="overflow-y-scroll pt3 pb2 flex flex-column-reverse"
                  style={{ height: "100%", resize: "vertical" }}
                  onScroll={this.onScroll}>
-                 <div ref={el => {
+                 <div
+                   ref={el => {
                      this.scrollElement = el;
                    }}></div>
                  {reversedMessages}

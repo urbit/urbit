@@ -190,6 +190,10 @@ class UrbitApi {
     });
   }
 
+  storeState(state) {
+    store.setState(state);
+  }
+
 }
 
 export let api = new UrbitApi();
