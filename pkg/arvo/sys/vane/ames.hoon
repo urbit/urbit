@@ -1125,7 +1125,7 @@
         life           sndr-life.open-packet
         public-key     public-key.open-packet
         sponsor        (^sein:title sndr.packet)
-        route          `[direct=%.y lane]
+        route          `[direct=%.n lane]
       ==
     ::
     event-core
@@ -2593,7 +2593,7 @@
   ++  clamp-rto
     |=  rto=@dr
     ^+  rto
-    (min ~m2 (max ^~((div ~s1 5)) rto))
+    (min ~s30 (max ^~((div ~s1 5)) rto))
   ::  +in-slow-start: %.y iff we're in "slow-start" mode
   ::
   ++  in-slow-start
