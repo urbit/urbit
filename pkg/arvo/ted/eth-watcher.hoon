@@ -79,9 +79,16 @@
   =/  m  (strand:strandio ,watchpup)
   ^-  form:m
   =/  zoom-margin=number:block  100
+  =/  zoom-step=number:block  100.000
   ?:  (lth latest-number (add number.pup zoom-margin))
     (pure:m pup)
-  =/  to-number=number:block  (sub latest-number zoom-margin)
+  =/  up-to-number=number:block  (sub latest-number zoom-margin)
+  |-
+  =*  loop  $
+  ?:  (gth number.pup up-to-number)
+    (pure:m pup(blocks ~))
+  =/  to-number=number:block
+    (min up-to-number (add number.pup zoom-step))
   ;<  =loglist  bind:m  ::  oldest first
     %:  get-logs-by-range:ethio
       url.pup
@@ -92,7 +99,5 @@
     ==
   =?  pending-logs.pup  ?=(^ loglist)
     (~(put by pending-logs.pup) to-number loglist)
-  =.  number.pup  +(to-number)
-  =.  blocks.pup  ~
-  (pure:m pup)
+  loop(number.pup +(to-number))
 --
