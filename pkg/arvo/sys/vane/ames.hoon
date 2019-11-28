@@ -2771,7 +2771,6 @@
     ^+  message-sink
     ::
     =/  empty=?  =(~ pending-vane-ack.state)
-    ~?  !empty  already-pending=pending-vane-ack.state
     =.  pending-vane-ack.state  (~(put to pending-vane-ack.state) seq message)
     ?.  empty
       message-sink
