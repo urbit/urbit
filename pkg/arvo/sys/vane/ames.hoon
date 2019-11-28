@@ -1532,8 +1532,8 @@
     (emit duct %pass /public-keys %j %public-keys [n=ship ~ ~])
   ::  +send-blob: fire packet at .ship and maybe sponsors
   ::
-  ::    Send to .ship and sponsors until we find a direct lane or
-  ::    encounter .our in the sponsorship chain.
+  ::    Send to .ship and sponsors until we find a direct lane,
+  ::    skipping .our in the sponsorship chain.
   ::
   ::    If we have no PKI data for a recipient, enqueue the packet and
   ::    request the information from Jael if we haven't already.
@@ -1552,6 +1552,9 @@
         ::
         =/  =peer-state  +.u.ship-state
         ::
+        ?:  =(our ship)
+          (try-next-sponsor sponsor.peer-state)
+        ::
         ?~  route=route.peer-state
           (try-next-sponsor sponsor.peer-state)
         ::
@@ -1567,8 +1570,6 @@
       ^+  event-core
       ::
       ?:  =(ship sponsor)
-        event-core
-      ?:  =(our sponsor)
         event-core
       ^$(ship sponsor)
     --
