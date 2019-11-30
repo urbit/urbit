@@ -66,7 +66,9 @@
       rcv=%.n
       odd=%.n
       msg=%.n
-      ges=%.n
+      ges=%.n  ::  congestion control
+      for=%.n  ::  packet forwards
+      rot=%.n  ::  routing attempts
   ==
 |%
 ++  trace
@@ -1071,6 +1073,7 @@
   ++  on-hear-forward
     |=  [=lane =packet ok=?]
     ^+  event-core
+    %-  (trace for.veb |.("forward: {<sndr.packet>} -> {<rcvr.packet>}"))
     ::  set .origin.packet if it doesn't already have one, re-encode, and send
     ::
     =?  origin.packet  ?=(~ origin.packet)  `lane
@@ -1541,6 +1544,7 @@
   ++  send-blob
     |=  [=ship =blob]
     ::
+    %-  (trace rot.veb |.("send-blob: to {<ship>}"))
     |^  ^+  event-core
         ::
         =/  ship-state  (~(get by peers.ames-state) ship)
@@ -1556,8 +1560,10 @@
           (try-next-sponsor sponsor.peer-state)
         ::
         ?~  route=route.peer-state
+          %-  (trace rot.veb |.("no route to:  {<ship>}"))
           (try-next-sponsor sponsor.peer-state)
         ::
+        %-  (trace rot.veb |.("trying route: {<ship>}"))
         =.  event-core
           (emit unix-duct.ames-state %give %send lane.u.route blob)
         ::
