@@ -263,9 +263,10 @@
     =/  cub
       ::  hard-code a valid comet key for convenience so we don't have to mine
       ::
-      ::  ?:  =(who ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud)
-      ::    0w9N.5uIvA.Jg0cx.NCD2R.o~MtZ.uEQOB.9uTbp.6LHvg.0yYTP.
-      ::    3q3td.T4UF0.d5sDL.JGpZq.S3A92.QUuWg.IHdw7.izyny.j9W92
+      ?:  =(who ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud)
+        %-  nol:nu:crub:crypto
+        0w9N.5uIvA.Jg0cx.NCD2R.o~MtZ.uEQOB.9uTbp.6LHvg.0yYTP.
+        3q3td.T4UF0.d5sDL.JGpZq.S3A92.QUuWg.IHdw7.izyny.j9W92
       (pit:nu:crub:crypto 512 (shaz (jam who life=1 %entropy)))
     =/  =seed:able:jael
       [who 1 sec:ex:cub ~]
