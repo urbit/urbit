@@ -384,14 +384,19 @@
   ?:  =(wir /permissions)
     :_  state
     [%pass /permissions %agent [our.bol %permission-store] %watch /updates]~
+  ::
   ?:  ?=([%mailbox @ *] wir)
     ~&  mailbox-kick+wir
     ?.  (~(has by synced) t.wir)
       ::  no-op
       [~ state]
     ~&  %chat-hook-resubscribe
+    ::  TODO: only ask for backlog from previous point
+    =/  =ship  (~(got by synced) t.wir)
+    =/  chat-history  (welp backlog+t.wir /0)
     :_  state
-    [%pass wir %agent [(slav %p i.t.wir) %chat-hook] %watch wir]~
+    [%pass chat-history %agent [ship %chat-hook] %watch chat-history]~
+  ::
   ?:  ?=([%backlog @ *] wir)
     ~&  backlog-kick+wir
     =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
