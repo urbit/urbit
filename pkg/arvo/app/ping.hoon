@@ -56,9 +56,7 @@
   (send-ping our.bowl now.bowl n)
 ::
 ++  on-save   on-save:def
-++  on-load   ::  on-load:def
-  |=  vase
-  on-init
+++  on-load   on-load:def
 ::  +on-poke: positively acknowledge pokes
 ::
 ++  on-poke
