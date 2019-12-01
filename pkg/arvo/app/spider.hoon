@@ -319,7 +319,9 @@
   ?:  (~(has by starting.state) yarn)
     (thread-fail-not-running tid %stopped-before-started ~)
   ~&  [%thread-not-started yarn]
-  `state
+  ?:  nice
+    (thread-done yarn *vase)
+  (thread-fail yarn %cancelled ~)
 ::
 ++  take-input
   |=  [=yarn input=(unit input:strand)]

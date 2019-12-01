@@ -92,16 +92,24 @@
   ++  latest-block
     (add launch:contracts:azimuth (dec (lent logs.state)))
   ::
+  ++  get-single-req
+    |=  req=@t
+    =/  batch
+      ((ar:dejs:format same) (need (de-json:html req)))
+    ?>  ?=([* ~] batch)
+    i.batch
+  ::
   ++  get-id
     |=  req=@t
     =,  dejs:format
-    %.  (need (de-json:html req))
+    %.  (get-single-req req)
     (ot id+so ~)
   ::
   ++  get-method
     |=  req=@t
     =,  dejs:format
-    %.  (need (de-json:html req))
+    ~|  req=req
+    %.  (get-single-req req)
     (ot method+so ~)
   ::
   ++  get-param-obj
@@ -109,7 +117,7 @@
     =,  dejs:format
     %-  hex-to-num:ethereum
     =/  array
-      %.  (need (de-json:html req))
+      %.  (get-single-req req)
       (ot params+(ar (ot param^so ~)) ~)
     ?>  ?=([* ~] array)
     i.array
@@ -119,7 +127,7 @@
     ^-  (unit @ud)
     =,  dejs-soft:format
     =/  array
-      %.  (need (de-json:html req))
+      %.  (get-single-req req)
       (ot params+(ar (ot param^so ~)) ~)
     ?~  array
       ~
@@ -132,7 +140,7 @@
     |=  req=@t
     =,  dejs:format
     =/  id
-      %.  (need (de-json:html req))
+      %.  (get-single-req req)
       (ot params+(at so bo ~) ~)
     -.id
   ::
@@ -142,6 +150,7 @@
     =/  resp
       %-  crip
       %-  en-json:html
+      :-  %a  :_  ~
       %-  pairs
       :~  id+s+(get-id req)
           jsonrpc+s+'2.0'

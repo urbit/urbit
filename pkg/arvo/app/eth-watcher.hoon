@@ -8,7 +8,7 @@
 =>  |%
     +$  card  card:agent:gall
     +$  app-state
-      $:  %1
+      $:  %2
           dogs=(map path watchdog)
       ==
     ::
@@ -74,7 +74,8 @@
   |^
   =+  !<(old-state=app-states old)
   =?  old-state  ?=(%0 -.old-state)
-    ^-  app-state
+    %-  (slog leaf+"upgrading eth-watcher from %0" ~)
+    ^-  app-state-1
     %=    old-state
         -  %1
         dogs
@@ -84,10 +85,25 @@
         ->  [~m5 ->.dog]
       ==
     ==
-  `this(state ?>(?=(%1 -.old-state) old-state))
+  ::
+  =^  cards-1=(list card)  old-state
+    %-  (slog leaf+"upgrading eth-watcher from %1" ~)
+    ?.  ?=(%1 -.old-state)
+      `old-state
+    :_  old-state(- %2)
+    %+  turn  ~(tap by dogs.old-state)
+    |=  [=path dog=watchdog]
+    (wait-shortcut path now.bowl)
+  ::
+  `this(state ?>(?=(%2 -.old-state) old-state))
   ::
   +$  app-states
-    $%(app-state-0 app-state)
+    $%(app-state-0 app-state-1 app-state)
+  ::
+  +$  app-state-1
+    $:  %1
+        dogs=(map path watchdog)
+    ==
   ::
   +$  app-state-0
     $:  %0
@@ -185,11 +201,16 @@
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
-  ?.  ?=([%x %block ^] path)  ~
-  ?.  (~(has by dogs.state) t.t.path)  ~
-  :+  ~  ~
-  :-  %atom
-  !>(number:(~(got by dogs.state) t.t.path))
+  ?+    path  ~
+      [%x %block ^]
+    ?.  (~(has by dogs.state) t.t.path)  ~
+    :+  ~  ~
+    :-  %atom
+    !>(number:(~(got by dogs.state) t.t.path))
+  ::
+      [%x %dogs ~]
+    ``noun+!>(~(key by dogs.state))
+  ==
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
@@ -305,7 +326,7 @@
   ^-  (quip card agent:gall)
   ?+  +<.sign-arvo  ~|([%strange-sign-arvo -.sign-arvo] !!)
       %wake
-    ?.  ?=([%timer *] wire)  [~ this]
+    ?.  ?=([%timer *] wire)  ~&  weird-wire=wire  [~ this]
     =*  path  t.wire
     ?.  (~(has by dogs.state) path)
       [~ this]
@@ -315,13 +336,15 @@
       ::  failed, try again.  maybe should tell user if fails more than
       ::  5 times.
       ::
+      %-  (slog leaf+"eth-watcher failed; will retry" ~)
       [[(wait path now.bowl refresh-rate.dog)]~ this]
     ::  start a new thread that checks for updates
     ::
-    =-  [cards this(dogs.state (~(put by dogs.state) path dog))]
-    ^-  [cards=(list card) dog=watchdog]
-    ?^  running.dog
+    =^  cards-1=(list card)  dog
       ::  if still running, kill it and restart
+      ::
+      ?~  running.dog
+        `dog
       ::
       %-  (slog leaf+"eth-watcher still running; will restart" ~)
       =/  =cage  [%spider-stop !>([u.running.dog |])]
@@ -330,15 +353,19 @@
           (leave-spider path our.bowl)
       ==
     ::
-    =/  new-tid=@ta
-      (cat 3 'eth-watcher--' (scot %uv eny.bowl))
-    :_  dog(running `new-tid)
-    =/  args
-      :^  ~  `new-tid  %eth-watcher
-      !>(`watchpup`[- number pending-logs blocks]:dog)
-    :~  (watch-spider path our.bowl /thread-result/[new-tid])
-        (poke-spider path our.bowl %spider-start !>(args))
-    ==
+    =^  cards-2=(list card)  dog
+      =/  new-tid=@ta
+        (cat 3 'eth-watcher--' (scot %uv eny.bowl))
+      :_  dog(running `new-tid)
+      =/  args
+        :^  ~  `new-tid  %eth-watcher
+        !>(`watchpup`[- number pending-logs blocks]:dog)
+      :~  (watch-spider path our.bowl /thread-result/[new-tid])
+          (poke-spider path our.bowl %spider-start !>(args))
+      ==
+    ::
+    :-  [(wait path now.bowl refresh-rate.dog) (weld cards-1 cards-2)]
+    this(dogs.state (~(put by dogs.state) path dog))
   ==
 ::
 ++  on-fail   on-fail:def
