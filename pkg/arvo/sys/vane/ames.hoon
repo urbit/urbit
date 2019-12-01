@@ -788,6 +788,40 @@
   $%  [%memo =message-num message=*]
       [%send =message-num =ack-meat]
   ==
+::  previous state versions, for +stay/+load migrations
+::
++|  %plasmodics
+::
++$  ames-state-1
+  $:  peers=(map ship ship-state-1)
+      =unix=duct
+      =life
+      crypto-core=acru:ames
+  ==
++$  ship-state-1
+  $%  [%alien alien-agenda]
+      [%known peer-state-1]
+  ==
++$  peer-state-1
+  $:  $:  =symmetric-key
+          =life
+          =public-key
+          sponsor=ship
+      ==
+      route=(unit [direct=? =lane])
+      qos=qos-1
+      =ossuary
+      snd=(map bone message-pump-state)
+      rcv=(map bone message-sink-state)
+      nax=(set [=bone =message-num])
+      heeds=(set duct)
+  ==
++$  qos-1
+  $~  [%unborn ~]
+  $%  [%live last-contact=@da]
+      [%dead last-contact=@da]
+      [%unborn ~]
+  ==
 --
 ::  external vane interface
 ::
@@ -863,21 +897,34 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%larva queued-events ames-state.adult-gate]
+    ++  stay  [%2 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
-          $%  [%larva events=_queued-events state=_ames-state.adult-gate]
-              [%adult state=_ames-state.adult-gate]
-          ==
+          $%  $:  %2
+              $%  [%larva events=_queued-events state=_ames-state.adult-gate]
+                  [%adult state=_ames-state.adult-gate]
+              ==  ==
+          ::
+              $%  [%larva events=_queued-events state=ames-state-1]
+                  [%adult state=ames-state-1]
+          ==  ==
+      ?-    old
+          [%2 %adult *]
+        (load:adult-core %2 state.old)
       ::
-      ?-    -.old
-          %adult
-        (load:adult-core state.old)
+          [%2 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %2 state.old)
+        larval-gate
       ::
-          %larva
+          [%adult *]
+        (load:adult-core %1 state.old)
+      ::
+          [%larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core state.old)
+        =.  adult-gate     (load:adult-core %1 state.old)
         larval-gate
       ==
     --
@@ -942,13 +989,38 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%adult ames-state]
+++  stay  [%2 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
-  |=  old-state=_ames-state
+  |=  $=  old-state
+      $%  [%1 ames-state-1]
+          [%2 ^ames-state]
+      ==
   ^+  ames-gate
-  ames-gate(ames-state old-state)
+  ?-    -.old-state
+      %2
+    ames-gate(ames-state +.old-state)
+  ::
+      %1
+    =>  .(old-state +.old-state)
+    =.  +.ames-state  +.old-state
+    =.  peers.ames-state
+      %-  ~(gas by *(map ship ship-state))
+      %+  turn  ~(tap by peers.old-state)
+      |=  [peer=ship old-ship-state=ship-state-1]
+      ^-  [ship ship-state]
+      ?:  ?=(%alien -.old-ship-state)
+        [peer old-ship-state]
+      :+  peer  %known
+      %=    +.old-ship-state
+          qos
+        ?+  -.qos.old-ship-state  qos.old-ship-state
+          %unborn  [%unborn now]
+        ==
+      ==
+    ames-gate
+  ==
 ::  +scry: dereference namespace
 ::
 ++  scry
