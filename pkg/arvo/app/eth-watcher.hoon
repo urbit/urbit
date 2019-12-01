@@ -95,7 +95,7 @@
     |=  [=path dog=watchdog]
     (wait-shortcut path now.bowl)
   ::
-  `this(state ?>(?=(%2 -.old-state) old-state))
+  [cards-1 this(state ?>(?=(%2 -.old-state) old-state))]
   ::
   +$  app-states
     $%(app-state-0 app-state-1 app-state)
