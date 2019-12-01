@@ -488,12 +488,12 @@
   ==
 ::  $qos: quality of service; how is our connection to a peer doing?
 ::
+::    .last-contact: last time we heard from peer, or if %unborn, when
+::    we first started tracking time
+::
 +$  qos
-  $~  [%unborn ~]
-  $%  [%live last-contact=@da]
-      [%dead last-contact=@da]
-      [%unborn ~]
-  ==
+  $~  [%unborn *@da]
+  [?(%live %dead %unborn) last-contact=@da]
 ::  $ossuary: bone<->duct bijection and .next-bone to map to a duct
 ::
 ::    The first bone is 0. They increment by 4, since each flow includes
@@ -1124,6 +1124,7 @@
         (derive-symmetric-key public-key.open-packet our-private-key)
       ::
       %_  peer-state
+        qos            [%unborn now]
         symmetric-key  symmetric-key
         life           sndr-life.open-packet
         public-key     public-key.open-packet
@@ -1457,6 +1458,7 @@
       =/  =private-key    sec:ex:crypto-core.ames-state
       =/  =symmetric-key  (derive-symmetric-key public-key private-key)
       ::
+      =.  qos.peer-state            [%unborn now]
       =.  life.peer-state           life.point
       =.  public-key.peer-state     public-key
       =.  symmetric-key.peer-state  symmetric-key
@@ -1746,16 +1748,14 @@
       ::  update and print connection state
       ::
       =.  peer-core  %-  update-qos
-        ?:  ?=(%unborn -.qos.peer-state)
-          [%dead now]
-        ?.  ?&  ?=(%live -.qos.peer-state)
-                (gte now (add ~s30 last-contact.qos.peer-state))
-            ==
-          qos.peer-state
-        [%dead last-contact.qos.peer-state]
+        =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
+        =?    -.qos.peer-state
+            (gte now.channel expiry)
+          %dead
+        qos.peer-state
       ::  expire direct route
       ::
-      ::    Since a packet's timer expired, mark the .lane.route as
+      ::    If the peer is not responding, mark the .lane.route as
       ::    indirect.  The next packets we emit will be sent to the
       ::    receiver's sponsorship chain in case the receiver's
       ::    transport address has changed and this lane is no longer
@@ -1764,7 +1764,8 @@
       ::    If .her is a galaxy, the lane will always remain direct.
       ::
       =?    route.peer-state
-          ?&  ?=(^ route.peer-state)
+          ?&  ?=(%dead -.qos.peer-state)
+              ?=(^ route.peer-state)
               direct.u.route.peer-state
               !=(%czar (clan:title her.channel))
           ==
