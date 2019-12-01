@@ -8,7 +8,7 @@
 =>  |%
     +$  card  card:agent:gall
     +$  app-state
-      $:  %0
+      $:  %1
           dogs=(map path watchdog)
       ==
     ::
@@ -71,8 +71,45 @@
 ++  on-save   !>(state)
 ++  on-load
   |=  old=vase
-  =+  !<(old-state=app-state old)
-  `this(state old-state)
+  |^
+  =+  !<(old-state=app-states old)
+  =?  old-state  ?=(%0 -.old-state)
+    ^-  app-state
+    %=    old-state
+        -  %1
+        dogs
+      %-  ~(run by dogs.old-state)
+      |=  dog=watchdog-0
+      %=  dog
+        ->  [~m5 ->.dog]
+      ==
+    ==
+  `this(state ?>(?=(%1 -.old-state) old-state))
+  ::
+  +$  app-states
+    $%(app-state-0 app-state)
+  ::
+  +$  app-state-0
+    $:  %0
+        dogs=(map path watchdog-0)
+    ==
+  ::
+  +$  watchdog-0
+    $:  config-0
+        running=(unit =tid:spider)
+        =number:block
+        =pending-logs
+        =history
+        blocks=(list block)
+    ==
+  ::
+  +$  config-0
+    $:  url=@ta
+        from=number:block
+        contracts=(list address:ethereum)
+        =topics
+    ==
+  --
 ::
 ++  on-poke
   |=  [=mark =vase]
