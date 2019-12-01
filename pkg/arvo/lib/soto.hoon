@@ -53,6 +53,7 @@
         :-  %a
         %+  turn  p.sef
         |=  [=cord =^tank]
+        %+  frond  %tab
         %-  pairs
         :~  match+s+cord
             info+(tape ~(ram re tank))
