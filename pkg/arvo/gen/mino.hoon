@@ -37,13 +37,13 @@
       :~  [%spot 1]
           [%lose 2]
           [%mean 3]
-          [%hand 4]
+      ::  [%hand 4]
           [%hunk 5]
       ==
   %+  mino
     :-  0
     :*  11  [%hunk 1 5]
-        11  [%hand 1 4]
+    ::  11  [%hand 1 4]
         11  [%mean 1 3]
         11  [%lose 1 2]
         11  [%spot 1 1]
