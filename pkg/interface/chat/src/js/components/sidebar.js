@@ -13,6 +13,10 @@ export class Sidebar extends Component {
     this.props.history.push('/~chat/new');
   }
 
+  onClickJoin() {
+    this.props.history.push('/~chat/join')
+  }
+
   render() {
     const { props, state } = this;
     let station = `/${props.match.params.ship}/${props.match.params.station}`;
@@ -67,20 +71,23 @@ export class Sidebar extends Component {
       });
 
     return (
-      <div className="h-100 w-100 overflow-x-hidden flex flex-column">
-        <div className="pl3 pr3 pt2 pb3 cf bb b--black-30" style={{height: '88px'}}>
-          <h2 className="dib w-50 gray"><Link to="/~chat">Chat</Link></h2>
-          <a
-            className="dib tr w-50 pointer plus-font"
-            onClick={this.onClickNew.bind(this)}>+</a>
-        </div>
-        <div className="overflow-y-auto" style={{
-          height: 'calc(100vh - 60px - 48px)'
-        }}>
+      <div className="h-100-minus-96-s h-100 w-100 overflow-x-hidden flex flex-column relative z1">
+        <div className="overflow-y-auto h-100">
           {sidebarInvites}
           {sidebarItems}
         </div>
+        <div className="absolute z2 tc w-100 bg-transparent"
+          style={{ bottom: 10 }}>
+          <a className="dib f9 pa3 bt bb bl br tc pointer bg-white"
+            onClick={this.onClickNew.bind(this)}>
+            Create New Chat
+          </a>
+          <a className="dib f9 pa3 bt bb br tl pointer bg-white"
+            onClick={this.onClickJoin.bind(this)}>
+            Join Existing Chat
+          </a>
+        </div>
       </div>
-    )
+    );
   }
 }

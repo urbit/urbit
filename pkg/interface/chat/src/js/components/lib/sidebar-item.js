@@ -50,30 +50,37 @@ export class SidebarItem extends Component {
   render() {
     const { props, state } = this;
 
-    let unreadElem = !!props.unread ? (
-      <div
-        className="bg-nice-green dib mr2"
-        style={{ borderRadius: 6, width: 12, height: 12 }}>
-      </div>
-    ) : (
-      <div className="dib"></div>
-    );
+    let unreadElem = !!props.unread 
+                     ? "fw7 green2" 
+                     : "";
+
+    let title = props.title.substr(1);
 
     let description = this.getLetter(props.description);
 
-    let selectedCss = !!props.selected ? 'bg-light-gray' : 'bg-white pointer';
+    let selectedCss = !!props.selected ? 'bg-gray5' : 'bg-white pointer';
+    
     return (
-      <div className={'pa3 ' + selectedCss} onClick={this.onClick.bind(this)}>
-        <div className='w-100 v-mid'>
-          {unreadElem}
-          <p className="dib body-regular lh-16">{props.title.substr(1)}</p>
+      <div
+        className={"z1 pa3 pt4 pb4 bb b--gray4 " + selectedCss}
+        onClick={this.onClick.bind(this)}>
+        <div className="w-100 v-mid">
+          <p className={"dib mono f8 " + unreadElem }>
+            <span className={(unreadElem === "") ? "gray3" : ""}>
+              {title.substr(0, title.indexOf("/"))}/
+            </span>
+            {title.substr(title.indexOf("/") + 1)}
+          </p>
         </div>
-        <div className="w-100">
-          <p className='dib gray label-small-mono mr3 lh-16'>{props.ship}</p>
-          <p className='dib gray label-small-mono lh-16'>{state.timeSinceNewestMessage}</p>
+        <div className="w-100 pt1">
+          <p className="dib mono f9 mr3">
+            {props.ship === "" ? "" : "~"}
+            {props.ship}
+          </p>
+          <p className="dib mono f9 gray3">{state.timeSinceNewestMessage}</p>
         </div>
-        <p className='label-small gray clamp-3 lh-16 pt1'>{description}</p>
+        <p className="f8 clamp-3 pt2">{description}</p>
       </div>
-    )
+    );
   }
 }

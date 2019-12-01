@@ -4,6 +4,7 @@
 |%
 +$  config
   $:  url=@ta
+      refresh-rate=@dr
       from=number:block
       contracts=(list address:ethereum)
       =topics
