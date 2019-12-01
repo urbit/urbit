@@ -136,7 +136,6 @@
 ++  poke-reload-desk                                 ::  reload vanes
   |:  $:{syd/desk all/(list term)}  =<  abet
   %-  emil
-  %-  flop
   %+  turn  all
   =+  top=`path`/(scot %p our)/[syd]/(scot %da now)
   =/  van/(list {term ~})
@@ -163,7 +162,7 @@
 ++  poke-reset
   |=  hood-reset
   =<  abet
-  %-  emil  %-  flop
+  %-  emil
   ^-  (list card:agent:gall)
   =/  top=path  /(scot %p our)/home/(scot %da now)/sys
   =/  hun  .^(@ %cx (welp top /hoon/hoon))
