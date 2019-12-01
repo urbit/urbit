@@ -997,6 +997,22 @@
     ?~  pub  ~
     ``[%atom !>(life.u.pub)]
   ::
+      %lyfe                                             ::  unitized %life
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  =([%& our] why)
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who  [~ ~]
+    ::  fake ships always have life=1
+    ::
+    ?:  fak.own.pki.lex
+      ``[%noun !>((some 1))]
+    ?:  =(u.who p.why)
+      ``[%noun !>((some lyf.own.pki.lex))]
+    =/  pub  (~(get by pos.zim.pki.lex) u.who)
+    ?~  pub  ``[%noun !>(~)]
+    ``[%noun !>((some life.u.pub))]
+  ::
       %rift
     ?.  ?=([@ ~] tyl)  [~ ~]
     ?.  =([%& our] why)
@@ -1010,6 +1026,20 @@
     =/  pos  (~(get by pos.zim.pki.lex) u.who)
     ?~  pos  ~
     ``[%atom !>(rift.u.pos)]
+  ::
+      %ryft                                             ::  unitized %rift
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  =([%& our] why)
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who  [~ ~]
+    ::  fake ships always have rift=1
+    ::
+    ?:  fak.own.pki.lex
+      ``[%noun !>((some 1))]
+    =/  pos  (~(get by pos.zim.pki.lex) u.who)
+    ?~  pos  ``[%noun !>(~)]
+    ``[%noun !>((some rift.u.pos))]
   ::
       %vein
     ?.  ?=([@ ~] tyl)  [~ ~]
