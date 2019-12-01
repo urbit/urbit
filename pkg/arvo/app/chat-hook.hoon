@@ -391,9 +391,13 @@
       ::  no-op
       [~ state]
     ~&  %chat-hook-resubscribe
-    ::  TODO: only ask for backlog from previous point
     =/  =ship  (~(got by synced) t.wir)
-    =/  chat-history  (welp backlog+t.wir /0)
+    =/  mailbox=(unit mailbox)  (chat-scry t.wir)
+    =/  chat-history
+      %+  welp  backlog+t.wir
+      ?~  mailbox
+        /0
+      /(scot %ud (lent envelopes.u.mailbox))
     :_  state
     [%pass chat-history %agent [ship %chat-hook] %watch chat-history]~
   ::
