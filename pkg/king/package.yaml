@@ -154,8 +154,8 @@ executables:
     main: Main.hs
     source-dirs: app
     dependencies: ["king"]
-    cc-options: -static
-    ld-options: -static -pthread
+    # cc-options: -static
+    # ld-options: -static -pthread
     ghc-options:
       - -threaded
       - -rtsopts
