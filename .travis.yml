@@ -41,7 +41,7 @@ install:
   - SAVED_OPTIONS=$(set +o)
   - set -ex
   - stack --no-terminal --install-ghc build lmdb
-  # stack --no-terminal --install-ghc build --only-dependencies
+  - stack --no-terminal --install-ghc build --only-dependencies
   - eval "$SAVED_OPTIONS"
 
 
