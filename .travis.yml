@@ -39,6 +39,8 @@ install:
   - echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
   - SAVED_OPTIONS=$(set +o)
   - set -ex
+  - brew install lmdb
+  - stack --no-terminal --install-ghc build lmdb
   - stack --no-terminal --install-ghc build --only-dependencies
   - eval "$SAVED_OPTIONS"
 
