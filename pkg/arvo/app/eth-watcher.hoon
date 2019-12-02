@@ -87,9 +87,9 @@
     ==
   ::
   =^  cards-1=(list card)  old-state
-    %-  (slog leaf+"upgrading eth-watcher from %1" ~)
     ?.  ?=(%1 -.old-state)
       `old-state
+    %-  (slog leaf+"upgrading eth-watcher from %1" ~)
     :_  old-state(- %2)
     %+  turn  ~(tap by dogs.old-state)
     |=  [=path dog=watchdog]

@@ -78,7 +78,7 @@
 ::
 ++  poke-mass
   |=  ~  =<  abet
-  (flog %crud %hax-heft ~)
+  (emit %pass /heft %arvo %d %flog %heft ~)
 ::
 ++  poke-automass
   |=  recur=@dr
@@ -89,6 +89,10 @@
 ++  poke-cancel-automass
   |=  ~
   abet:(emit %pass way.mass-timer.sez %arvo %b %rest nex.mass-timer.sez)
+::
+++  poke-pack
+  |=  ~  =<  abet
+  (emit %pass /pack %arvo %d %flog %pack ~)
 ::
 ++  take-wake-automass
   |=  [way=wire error=(unit tang)]
@@ -189,6 +193,7 @@
   ?+  mark  ~|([%poke-helm-bad-mark mark] !!)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
     %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)
+    %helm-pack             =;(f (f !<(_+<.f vase)) poke-pack)
     %helm-reload           =;(f (f !<(_+<.f vase)) poke-reload)
     %helm-reload-desk      =;(f (f !<(_+<.f vase)) poke-reload-desk)
     %helm-reset            =;(f (f !<(_+<.f vase)) poke-reset)

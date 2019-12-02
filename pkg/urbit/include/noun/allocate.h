@@ -505,4 +505,21 @@
           u3_noun
           u3a_mint(c3_w* sal_w, c3_w len_w);
 
+        /* u3a_walk_fore(): preorder traversal, visits ever limb of a noun.
+        **
+        **   cells are visited *before* their heads and tails
+        **   and can shortcircuit traversal by returning [c3n]
+        */
+          void
+          u3a_walk_fore(u3_noun    a,
+                        void*      ptr_v,
+                        void     (*pat_f)(u3_atom, void*),
+                        c3_o     (*cel_f)(u3_noun, void*));
 
+        /* u3a_walk_fore_unsafe(): u3a_walk_fore(), without overflow checks
+        */
+          void
+          u3a_walk_fore_unsafe(u3_noun    a,
+                               void*      ptr_v,
+                               void     (*pat_f)(u3_atom, void*),
+                               c3_o     (*cel_f)(u3_noun, void*));

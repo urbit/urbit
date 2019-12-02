@@ -254,25 +254,11 @@ _pier_db_load_commits(u3_pier* pir_u,
                       c3_d     lav_d,
                       c3_d     len_d)
 {
-  if (lav_d == 1) {
-    // We are restarting from event 1. That means we need to set the ship from
-    // the log identity information.
-    u3_noun who, fak, len;
-    c3_o ret = u3_lmdb_read_identity(pir_u->log_u->db_u,
-                                     &who,
-                                     &fak,
-                                     &len);
-    if (ret == c3n) {
-      u3l_log("Failed to load identity for replay. Exiting...");
-      u3_pier_bail();
-    }
-
-    _pier_boot_set_ship(pir_u, u3k(who), u3k(fak));
-    pir_u->lif_d = u3r_chub(0, len);
-
-    u3z(who);
-    u3z(fak);
-    u3z(len);
+  if ( 1ULL == lav_d ) {
+    //  We are replaying the entire event log, and must
+    //  read the header to ensure that our %boot msg is correct.
+    //
+    _pier_db_read_header(pir_u);
   }
 
   c3_o ret = u3_lmdb_read_events(pir_u,
@@ -508,14 +494,16 @@ _pier_work_boot(u3_pier* pir_u, c3_o sav_o)
 
   c3_assert( 0 != pir_u->lif_d );
 
-  u3_noun who = u3i_chubs(2, pir_u->who_d);
   u3_noun len = u3i_chubs(1, &pir_u->lif_d);
 
   if ( c3y == sav_o ) {
-    _pier_db_write_header(pir_u, u3k(who), pir_u->fak_o, u3k(len));
+    _pier_db_write_header(pir_u,
+                          u3i_chubs(2, pir_u->who_d),
+                          pir_u->fak_o,
+                          u3k(len));
   }
 
-  u3_noun msg = u3nq(c3__boot, who, pir_u->fak_o, len);
+  u3_noun msg = u3nc(c3__boot, len);
   u3_atom mat = u3ke_jam(msg);
   u3_newt_write(&god_u->inn_u, mat, 0);
 }
@@ -910,38 +898,22 @@ _pier_work_poke(void*   vod_p,
 
     //  the worker process starts with a %play task,
     //  which tells us where to start playback
-    //  (and who we are, if it knows) XX remove in favor of event-log header
     //
     case c3__play: {
       c3_d lav_d;
       c3_l mug_l;
 
-      if ( (c3n == u3r_qual(u3t(jar), 0, &p_jar, &q_jar, &r_jar)) ||
+      if ( (c3n == u3r_trel(jar, 0, &p_jar, &q_jar)) ||
            (c3n == u3ud(p_jar)) ||
            (u3r_met(6, p_jar) != 1) ||
            (c3n == u3ud(q_jar)) ||
-           (u3r_met(5, p_jar) != 1) ||
-           (c3n == u3du(r_jar)) ||
-           (c3n == u3ud(u3h(r_jar))) ||
-           ((c3y != u3t(r_jar)) && (c3n != u3t(r_jar))) )
+           (1 < u3r_met(5, q_jar))  )
       {
-        if ( u3_nul == u3t(jar) ) {
-          lav_d = 1ULL;
-          mug_l = 0;
-        }
-        else {
-          goto error;
-        }
+        goto error;
       }
 
-      if ( u3_nul != u3t(jar) ) {
-        lav_d = u3r_chub(0, p_jar);
-        mug_l = u3r_word(0, q_jar);
-
-        //  single-home
-        //
-        _pier_boot_set_ship(pir_u, u3k(u3h(r_jar)), u3k(u3t(r_jar)));
-      }
+      lav_d = u3r_chub(0, p_jar);
+      mug_l = u3r_word(0, q_jar);
 
       _pier_work_play(pir_u, lav_d, mug_l);
       break;
@@ -1056,6 +1028,7 @@ _pier_work_poke(void*   vod_p,
   return;
 
   error: {
+    u3m_p("jar", jar);
     u3z(jar); u3z(mat);
     _pier_work_bail(0, "bad jar");
   }
@@ -1656,10 +1629,14 @@ _pier_boot_ready(u3_pier* pir_u)
       //
       _pier_work_boot(pir_u, c3n);
     }
+    else if ( (1ULL + god_u->dun_d) == log_u->com_d ) {
+      fprintf(stderr, "pier: replaying event %" PRIu64 "\r\n",
+                      log_u->com_d);
+    }
     else {
       fprintf(stderr, "pier: replaying events %" PRIu64
                       " through %" PRIu64 "\r\n",
-                      god_u->dun_d,
+                      (c3_d)(1ULL + god_u->dun_d),
                       log_u->com_d);
     }
 

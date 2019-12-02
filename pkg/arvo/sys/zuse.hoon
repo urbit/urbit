@@ -710,6 +710,7 @@
           {$logo ~}                                     ::  logout
           {$lyra p/@t q/@t}                             ::  upgrade kernel
           {$mass p/mass}                                ::  memory usage
+          {$pack ~}                                     ::  compact memory
           {$veer p/@ta q/path r/@t}                     ::  install vane
           {$verb ~}                                     ::  verbose mode
       ==                                                ::
@@ -728,6 +729,7 @@
           $>(%init vane-task)                           ::  after gall ready
           {$lyra p/@t q/@t}                             ::  upgrade kernel
           {$noop ~}                                     ::  no operation
+          {$pack ~}                                     ::  compact memory
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
@@ -792,6 +794,7 @@
     $%  {$crud p/@tas q/(list tank)}                    ::
         {$heft ~}                                       ::
         {$lyra p/@t q/@t}                               ::  upgrade kernel
+        {$pack ~}                                       ::  compact memory
         {$text p/tape}                                  ::
         {$veer p/@ta q/path r/@t}                       ::  install vane
         {$verb ~}                                       ::  verbose mode
