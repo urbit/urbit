@@ -626,8 +626,8 @@
       =/  sys-wire  [%sys path]
       ::  TODO: %drip %kick so app crash can't kill the remote %pull
       ::
-      =.  mo-core  (mo-give %unto %kick ~)
       =.  mo-core  (mo-pass sys-wire %a %plea ship %g /ge/[foreign-agent] %u ~)
+      =.  mo-core  (mo-give %unto %kick ~)
       mo-core
     ==
   ::  +mo-handle-use: handle a typed +sign incoming on /use.
