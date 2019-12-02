@@ -2040,6 +2040,10 @@
       ::    could change this to a no-op if we had some sort of security
       ::    reporting.
       ::
+      ::    Note that if we had several consecutive packets in the queue
+      ::    and crashed while processing any of them, the %hole card
+      ::    will turn *all* of them into losts/nacks.
+      ::
       ::    TODO: This handles a previous crash in the client vane, but not in
       ::    Ames itself.
       ::
