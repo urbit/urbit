@@ -1,10 +1,10 @@
-::  Helm: Adjust Ames verbosity
+::  Helm: Adjust vane error verbosity knob
 ::
 /?    310
 ::
 ::::
   ::
 :-  %say
-|=  [^ [veb=(list verb:ames) ~] ~]
-:-  %helm-ames-verb
-veb
+|=  [^ [error-tag=@tas level=?(%hush %soft %loud) ~] ~]
+:-  %helm-knob
+[error-tag level]
