@@ -1,31 +1,65 @@
-language: nix
-nix: 2.1.3
+sudo: required
 
-install:
-  - nix-env -iA cachix -f https://cachix.org/api/v1/install
+language: generic
+
+cache:
+  directories:
+  - $HOME/.ghc
+  - $HOME/.cabal
+  - $HOME/.stack
+  - $TRAVIS_BUILD_DIR/.stack-work
+
+matrix:
+  include:
+  # Build only on macOS
+  - env: BUILD=stack
+    compiler: ": #stack default osx"
+    os: osx
+
+# Build only master and release tags
+branches:
+  only:
+  - master
+  - /^\d+\.\d+\.\d+(\.\d+)?$/
 
 before_install:
-  - git lfs pull
+  # Using compiler above sets CC to an invalid value, so unset it
+  - unset CC
+  - CABALARGS=""
+  - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$HOME/.local/bin:/opt/alex/$ALEXVER/bin:/opt/happy/$HAPPYVER/bin:$HOME/.cabal/bin:$PATH
+  - | # Install stack
+    mkdir -p ~/.local/bin
+    travis_retry curl -L https://get.haskellstack.org/stable/osx-x86_64.tar.gz | tar xz --strip-components=1 --include '*/stack' -C ~/.local/bin
+    # Use the more reliable S3 mirror of Hackage
+    mkdir -p $HOME/.cabal
+    echo 'remote-repo: hackage.haskell.org:http://hackage.fpcomplete.com/' > $HOME/.cabal/config
+    echo 'remote-repo-cache: $HOME/.cabal/packages' >> $HOME/.cabal/config
+
+
+install:
+  - echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
+  - SAVED_OPTIONS=$(set +o)
+  - set -ex
+  - stack --no-terminal --install-ghc build --only-dependencies
+  - eval "$SAVED_OPTIONS"
+
 
 script:
-  - cachix use urbit2
-  - ./sh/cachix || true
+  - export PATH="${PATH}:$(pwd)/bin"
+  - stack build --copy-bins --local-bin-path ./bin
+  - tar -jcvf release/king.tgz bin/king
 
-  - make
-  - make release
 
-  - sh/ci-tests
-
-deploy:
-  - skip_cleanup: true
-    provider: gcs
-    access_key_id: GOOGTADOPP55X5ZTH3IKAXQW
-    secret_access_key:
-      secure: rSPif0VHX3Q3QpWM9iUt/Z9sicCY8ABuwVFPeT3YUnAAmSXM46PIHKieoGs79kx9IelFyQsM8xS0XWyt4S/haR7VaTJY+zHJjf0AnA1sr5ZIV70t3K0SXzq4+E1ffOZRiC0VmHatPz10wjaIpHxpjcROqQV4M1dBCq2H/rpccIE=
-    bucket: bootstrap.urbit.org
-    local-dir: release/
-    acl: public-read
-    on:
-      condition: "-d release/"
-      repo: urbit/urbit
-      all_branches: true
+# deploy:
+#   - skip_cleanup: true
+#     provider: gcs
+#     access_key_id: GOOGTADOPP55X5ZTH3IKAXQW
+#     secret_access_key:
+#       secure: rSPif0VHX3Q3QpWM9iUt/Z9sicCY8ABuwVFPeT3YUnAAmSXM46PIHKieoGs79kx9IelFyQsM8xS0XWyt4S/haR7VaTJY+zHJjf0AnA1sr5ZIV70t3K0SXzq4+E1ffOZRiC0VmHatPz10wjaIpHxpjcROqQV4M1dBCq2H/rpccIE=
+#     bucket: bootstrap.urbit.org
+#     local-dir: release/
+#     acl: public-read
+#     on:
+#       condition: "-d release/"
+#       repo: urbit/urbit
+#       all_branches: true
