@@ -1925,7 +1925,7 @@
           =*  gift  i.pump-gifts
           =.  peer-core
             ?-  -.gift
-              %done  (on-pump-done [message-num ok]:gift)
+              %done  (on-pump-done [message-num error]:gift)
               %send  (on-pump-send static-fragment.gift)
               %wait  (on-pump-wait date.gift)
               %rest  (on-pump-rest date.gift)
@@ -1934,7 +1934,7 @@
       ::  +on-pump-done: handle |message-pump's report of message (n)ack
       ::
       ++  on-pump-done
-        |=  [=message-num ok=?]
+        |=  [=message-num error=(unit error)]
         ^+  peer-core
         ::  if odd bone, ack is on "subscription update" message; no-op
         ::
@@ -1948,21 +1948,9 @@
           =/  target-bone=^bone  (mix 0b10 bone)
           ::
           (run-message-sink target-bone %drop message-num)
-        ::  not a nack-trace bone; positive ack gets emitted trivially
+        ::  not a nack-trace bone; relay ack to client vane
         ::
-        ?:  ok
-          (emit (got-duct bone) %give %done error=~)
-        ::  nack; enqueue, pending nack-trace message
-        ::
-        ::    The pump must never emit duplicate acks.  If we heard the
-        ::    nack-trace message already, the pump should not generate a
-        ::    duplicate %done event when we hear a message nack packet.
-        ::
-        =/  nax-key  [bone message-num]
-        ?<  (~(has in nax.peer-state) nax-key)
-        =.  nax.peer-state  (~(put in nax.peer-state) nax-key)
-        ::
-        peer-core
+        (emit (got-duct bone) %give %done error)
       ::  +on-pump-send: emit message fragment requested by |message-pump
       ::
       ++  on-pump-send
@@ -2208,7 +2196,7 @@
     =?    unsent-fragments.state
         &(=(current next) ?=(^ unsent-fragments)):state
       ::
-      ~>  %slog.0^leaf/"ames: early message ack {<ok^her.channel>}"
+      ~>  %slog.0^leaf/"ames: early message ack {<her.channel>}"
       ~
     ::  clear all packets from this message from the packet pump
     ::
