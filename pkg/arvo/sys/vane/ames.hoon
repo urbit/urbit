@@ -2197,6 +2197,7 @@
     ::  ignore duplicate message acks
     ::
     ?:  (lth message-num current.state)
+      %-  (trace snd.veb |.("duplicate done {<current.state message-num>}"))
       message-pump
     ::  future nack implies positive ack on all earlier messages
     ::
@@ -2239,6 +2240,7 @@
     ::
     =.  queued-message-acks.state
       (~(del by queued-message-acks.state) current.state)
+    ::  give %done to vane
     ::
     =.  message-pump  (give %done current.state ok.u.ack)
     ::
@@ -2506,6 +2508,12 @@
       =.  found.acc    %.y
       =.  metrics.acc  (on-ack:gauge -.val)
       [new-val=~ stop=%.y acc]
+    ::  is this a duplicate ack?
+    ::
+    ?.  (lte-packets key [message-num fragment-num])
+      ::  stop, nothing more to do
+      ::
+      [new-val=`val stop=%.y acc]
     ::  ack was on later packet; mark skipped, tell gauge, and continue
     ::
     =.  skips.val  +(skips.val)
@@ -2539,19 +2547,10 @@
     ^-  [new-val=(unit live-packet-val) stop=? pump-metrics]
     ::
     =/  gauge  (make-pump-gauge now.channel metrics)
-    ::  if we get an out-of-order ack for a message, no-op
-    ::
-    ::    We need to receive message acks in order, so if we get an ack
-    ::    for anything other than the first unacked message, pretend we
-    ::    never heard it.  If the other end is correct, the first
-    ::    message will get acked, and we'll re-send the second message
-    ::    once it times out.
-    ::
-    ::    This arrangement could probably be optimized, but it isn't
-    ::    very likely to happen, so it's more important we stay correct.
+    ::  if we get an out-of-order ack for a message, skip until it
     ::
     ?:  (lth message-num.key message-num)
-      [new-val=`val stop=%.y metrics]
+      [new-val=`val stop=%.n metrics]
     ::  if packet was from acked message, delete it and continue
     ::
     ?:  =(message-num.key message-num)
