@@ -2,11 +2,6 @@ sudo: required
 
 language: generic
 
-addons:
-  homebrew:
-    packages:
-      - lmdb
-
 cache:
   directories:
   - $HOME/.ghc
