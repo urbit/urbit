@@ -16,12 +16,6 @@ matrix:
     compiler: ": #stack default osx"
     os: osx
 
-# Build only master and release tags
-branches:
-  only:
-  - master
-  - /^\d+\.\d+\.\d+(\.\d+)?$/
-
 before_install:
   # Using compiler above sets CC to an invalid value, so unset it
   - unset CC
