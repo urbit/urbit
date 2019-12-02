@@ -1,13 +1,13 @@
 .PHONY: build build-all install cross release test pills clean
 
 build:
-	nix-build -A urbit -A herb -A hello --no-out-link
+	nix-build -A urbit -A herb --no-out-link
 
 build-all:
 	nix-build --no-out-link
 
 install:
-	nix-env -f . -iA urbit -iA urbit-debug -iA herb -iA hello
+	nix-env -f . -iA urbit -iA urbit-debug -iA herb
 
 cross:
 	sh/cross
