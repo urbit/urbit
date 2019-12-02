@@ -4007,6 +4007,10 @@
               {$1 p/(list)}                             ::  blocks
               {$2 p/(list {@ta *})}                     ::  error report
           ==                                            ::
+++  noot  $%  {$0 p/*}                                  ::  success
+              {$1 p/*}                                  ::  block
+              {$2 p/(list tank)}                        ::  stack trace
+          ==                                            ::
 ++  toon  $%  {$0 p/*}                                  ::  success
               {$1 p/(list)}                             ::  blocks
               {$2 p/(list tank)}                        ::  stack trace
@@ -6306,8 +6310,8 @@
 ++  mack
   |=  {sub/* fol/*}
   ^-  (unit)
-  =+  ton=(mink [sub fol] |=({* *} ~))
-  ?.(?=({$0 *} ton) ~ [~ p.ton])
+  =+  ton=(mino [sub fol] |=({* *} ~))
+  ?.(?=({$0 *} ton) ~ [~ product.ton])
 ::
 ++  mino  !.
   ~/  %mino
@@ -6604,6 +6608,44 @@
 ++  mock
   |=  {{sub/* fol/*} gul/$-({* *} (unit (unit)))}
   (mook (mink [sub fol] gul))
+::
+++  moku
+  |=  {{sub/* fol/*} gul/$-({* *} (unit (unit)))}
+  (moko (mino [sub fol] gul))
+::
+++  moko
+  |=  ton/tono
+  ^-  noot
+  ?.  ?=({$2 *} ton)  ton
+  :-  %2
+  =+  yel=(lent trace.ton)
+  =.  trace.ton
+    ?.  (gth yel 1.024)  trace.ton
+    %+  weld
+      (scag 512 trace.ton)
+    ^-  (list {@ta *})
+    :_  (slag (sub yel 512) trace.ton)
+    :-  %lose
+    %+  rap  3
+    "[skipped {(scow %ud (sub yel 1.024))} frames]"
+  |-  ^-  (list tank)
+  ?~  trace.ton  ~
+  =+  rep=$(trace.ton t.trace.ton)
+  ?+    -.i.trace.ton  rep
+      $hunk  [(tank +.i.trace.ton) rep]
+      $lose  [[%leaf (rip 3 (@ +.i.trace.ton))] rep]
+      $hand  [[%leaf (scow %p (mug +.i.trace.ton))] rep]
+      $mean  :_  rep
+             ?@  +.i.trace.ton  [%leaf (rip 3 (@ +.i.trace.ton))]
+             =+  mac=(mack +.i.trace.ton +<.i.trace.ton)
+             ?~(mac [%leaf "####"] (tank u.mac))
+      $spot  :_  rep
+             =+  sot=(spot +.i.trace.ton)
+             :+  %rose  [":" ~ ~]
+             :~  (smyt p.sot)
+                 =>  [ud=|=(a/@u (scow %ud a)) q.sot]
+                 leaf+"<[{(ud p.p)} {(ud q.p)}].[{(ud p.q)} {(ud q.q)}]>"
+  ==         ==
 ::
 ++  mook
   |=  ton/tone
