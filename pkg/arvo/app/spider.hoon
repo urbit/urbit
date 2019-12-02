@@ -1,3 +1,5 @@
+::  Thread manager
+::
 /-  spider
 /+  libstrand=strand, default-agent, verb
 =,  strand=strand:libstrand

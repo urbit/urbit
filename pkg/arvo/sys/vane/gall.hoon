@@ -49,15 +49,12 @@
   ==
 --
 |%
-::  +state-old: upgrade path
-::
-++  state-old  ?(state)
 ::  +state: all state
 ::
 ++  state
   $:  :: state version
       ::
-      %0
+      %1
       :: agents by ship
       ::
       =agents
@@ -1529,14 +1526,184 @@
 ::  +load: recreate vane
 ::
 ++  load
-  ::  |=  *
-  ::  gall-payload
-  |=  =state-old
+  |^
+  |=  =all-state
   ^+  gall-payload
   ::
-  ?-  -.state-old
-    %0  gall-payload(state state-old)
-  ==
+  =?  all-state  ?=(%0 -.all-state)
+    (state-0-to-1 all-state)
+  ::
+  ?>  ?=(%1 -.all-state)
+  gall-payload(state all-state)
+  ::
+  ::  +all-state: upgrade path
+  ::
+  ++  all-state  $%(state-0 ^state)
+  ::
+  ::  Note that if you change sign-arvo, you must ensure that spider
+  ::  gets reloaded.
+  ::
+  ++  state-0-to-1
+    |=  =state-0
+    ^-  ^state
+    %=    state-0
+        -  %1
+        running.agents-0
+      %-  ~(run by running.agents-0.state-0)
+      |=  =running-agent-0
+      ^-  running-agent
+      %=  running-agent-0
+        agent-0  (agent-0-to-1 agent-0.running-agent-0)
+      ==
+    ==
+  ::
+  ++  agent-0-to-1
+    |=  =agent-0
+    ^-  agent
+    |_  =bowl:gall
+    +*  this  .
+        pass  ~(. agent-0 bowl)
+    ++  on-init
+      =^  cards  agent-0  on-init:pass
+      [cards this]
+    ::
+    ++  on-save
+      on-save:pass
+    ::
+    ++  on-load
+      |=  old-state=vase
+      =^  cards  agent-0  (on-load:pass old-state)
+      [cards this]
+    ::
+    ++  on-poke
+      |=  [=mark =vase]
+      =^  cards  agent-0  (on-poke:pass mark vase)
+      [cards this]
+    ::
+    ++  on-watch
+      |=  =path
+      =^  cards  agent-0  (on-watch:pass path)
+      [cards this]
+    ::
+    ++  on-leave
+      |=  =path
+      =^  cards  agent-0  (on-leave:pass path)
+      [cards this]
+    ::
+    ++  on-peek
+      |=  =path
+      (on-peek:pass path)
+    ::
+    ++  on-agent
+      |=  [=wire =sign:agent:gall]
+      =^  cards  agent-0  (on-agent:pass wire sign)
+      [cards this]
+    ::
+    ++  on-arvo
+      |=  [=wire =sign-arvo]
+      ?<  ?=([%d %pack *] sign-arvo)
+      =^  cards  agent-0  (on-arvo:pass wire `sign-arvo-0`sign-arvo)
+      [cards this]
+    ::
+    ++  on-fail
+      |=  [=term =tang]
+      =^  cards  agent-0  (on-fail:pass term tang)
+      [cards this]
+    --
+  ::
+  ++  state-0
+    $:  %0
+        =agents-0
+    ==
+  ::
+  ++  agents-0
+    $:  system-duct=duct
+        contacts=(set ship)
+        running=(map term running-agent-0)
+        blocked=(map term blocked)
+    ==
+  ::
+  ++  running-agent-0
+    $:  cache=worm
+        control-duct=duct
+        live=?
+        =stats
+        =subscribers
+        =agent-0
+        =beak
+        marks=(map duct mark)
+    ==
+  ::
+  ++  agent-0
+    =<  form
+    |%
+    +$  step  (quip card form)
+    +$  card  (wind note gift)
+    +$  note  note:agent
+    +$  task  task:agent
+    +$  gift  gift:agent
+    +$  sign  sign:agent
+    ++  form
+      $_  ^|
+      |_  bowl
+      ++  on-init
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-save
+        *vase
+      ::
+      ++  on-load
+        |~  old-state=vase
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-poke
+        |~  [mark vase]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-watch
+        |~  path
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-leave
+        |~  path
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-peek
+        |~  path
+        *(unit (unit cage))
+      ::
+      ++  on-agent
+        |~  [wire sign]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-arvo
+        |~  [wire sign-arvo-0]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-fail
+        |~  [term tang]
+        *(quip card _^|(..on-init))
+      --
+    --
+  ::
+  ++  sign-arvo-0
+    $%  {$a gift:able:ames}
+        $:  $b
+            $%  gift:able:behn
+                [%writ riot:clay]
+                $>(%mere gift:able:clay)
+                $>(%unto gift:able:gall)
+            ==
+        ==
+        {$c gift:able:clay}
+        {$d $<(%pack gift:able:dill)}
+        {$f gift:able:ford}
+        [%e gift:able:eyre]
+        {$g gift:able:gall}
+        [%i gift:able:iris]
+        {$j gift:able:jael}
+    ==
+  --
 ::  +scry: standard scry
 ::
 ++  scry

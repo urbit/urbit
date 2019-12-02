@@ -50,6 +50,8 @@
   ::  first load; galaxies no-op; everyone else pings sponsor
   ::
   :_  this
+  ?:  =(%czar (clan:title our.bowl))
+    ~
   ~>  %slog.0^leaf/"ping: prep {<our.bowl>}"
   =/  saxo  (tail (saxo:title our.bowl now.bowl our.bowl))
   %-  zing
