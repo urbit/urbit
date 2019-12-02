@@ -394,6 +394,7 @@
     ::    %born: process restart notification
     ::    %crud: crash report
     ::    %init: vane boot
+    ::    %spew: set verbosity toggles
     ::    %vega: kernel reload notification
     ::    %wegh: request for memory usage report
     ::
@@ -407,6 +408,7 @@
           $>(%born vane-task)
           $>(%crud vane-task)
           $>(%init vane-task)
+          [%spew veb=(list verb)]
           $>(%vega vane-task)
           $>(%wegh vane-task)
       ==
@@ -465,6 +467,9 @@
   ::  $address: opaque atomic transport address to or from unix
   ::
   +$  address  @uxaddress
+  ::  $verb: verbosity flag for ames
+  ::
+  +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot)
   ::  $blob: raw atom to or from unix, representing a packet
   ::
   +$  blob  @uxblob
