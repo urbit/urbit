@@ -6782,7 +6782,7 @@
   ::                                            ::::::  special
     {$zpcm p/hoon q/hoon}                               ::  !,
     {$zpbn p/hoon}                                      ::  !>
-    {$zpld p/spec q/hoon}                               ::  !<
+    {$zpgl p/spec q/hoon}                               ::  !<
     {$zpmc p/hoon q/hoon}                               ::  !;
     {$zpts p/hoon}                                      ::  !=
     {$zpvt p/(list wing) q/hoon r/hoon}                 ::  !@
@@ -10459,7 +10459,7 @@
       =+  ref=p:$(gol %noun, gen p.gen)
       [(nice (cell ref p.vos)) (cons [%1 burp(sut p.vos)] q.vos)]
     ::
-        {$zpld *}
+        {$zpgl *}
       =/  typ  (nice (play [%kttr p.gen]))
       =/  val
         =<  q
@@ -10638,7 +10638,7 @@
       =+  vos=$(gol %noun, gen q.gen)       ::  XX validate!
       [(nice (cell (play p.gen) p.vos)) (cell (play(sut dox) p.gen) q.vos)]
     ::
-        {$zpld *}
+        {$zpgl *}
       ::  XX is this right?
       (beth (play [%kttr p.gen]))
     ::
@@ -10945,7 +10945,7 @@
       {$zpcm *}  $(gen p.gen)
       {$lost *}  %void
       {$zpmc *}  (cell $(gen p.gen) $(gen q.gen))
-      {$zpld *}  (play [%kttr p.gen])
+      {$zpgl *}  (play [%kttr p.gen])
       {$zpts *}  %noun
       {$zpvt *}  ?:((feel p.gen) $(gen q.gen) $(gen r.gen))
       {$zpzp *}  %void
@@ -13845,7 +13845,7 @@
                   [',' (rune com %zpcm expb)]
                   [';' (rune mic %zpmc expb)]
                   ['>' (rune ban %zpbn expa)]
-                  ['<' (rune led %zpld exqc)]
+                  ['<' (rune led %zpgl exqc)]
                   ['@' (rune vat %zpvt expy)]
                   ['=' (rune tis %zpts expa)]
                   ['?' (rune wut %zpwt hinh)]
