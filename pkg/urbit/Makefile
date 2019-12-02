@@ -46,18 +46,6 @@ mrproper: clean
 
 ################################################################################
 
-include/ca-bundle.h:
-	@echo XXD -i $(SSL_CERT_FILE)
-	@cat $(SSL_CERT_FILE) > include/ca-bundle.crt
-	@xxd -i include/ca-bundle.crt > include/ca-bundle.h
-	@rm include/ca-bundle.crt
-
-include/ivory.h:
-	@echo XXD -i $(IVORY)
-	@cat $(IVORY) > u3_Ivory.pill
-	@xxd -i u3_Ivory.pill > include/ivory.h
-	@rm u3_Ivory.pill
-
 build/ames_tests: $(common_objs) tests/ames_tests.o
 	@echo CC -o $@
 	@mkdir -p ./build
