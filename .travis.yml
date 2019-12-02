@@ -38,8 +38,8 @@ before_install:
 
 install:
   - echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
-  - SAVED_OPTIONS=$(set +o)
-  - set -ex
+  # SAVED_OPTIONS=$(set +o)
+  # set -ex
   - stack --no-terminal --install-ghc build lmdb
   - stack --no-terminal --install-ghc build --only-dependencies
   - eval "$SAVED_OPTIONS"
@@ -47,8 +47,8 @@ install:
 
 script:
   - export PATH="${PATH}:$(pwd)/bin"
-  # stack build --copy-bins --local-bin-path ./bin
-  # tar -jcvf release/king.tgz bin/king
+  - echo stack build --copy-bins --local-bin-path ./bin
+  - echo tar -jcvf release/king.tgz bin/king
 
 
 # deploy:
