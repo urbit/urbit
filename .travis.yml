@@ -47,9 +47,24 @@ install:
 
 script:
   - export PATH="${PATH}:$(pwd)/bin"
+
+  - wget https://github.com/commercialhaskell/stack/releases/download/v2.1.3/stack-2.1.3-osx-x86_64.tar.gz
+  - tar xfz stack-2.1.3-osx-x86_64.tar.gz
+  - otool -L stack-2.1.3-osx-x86_64/stack
+  - stack-2.1.3-osx-x86_64/stack || true
+
+  - wget https://github.com/dhall-lang/dhall-haskell/releases/download/1.27.0/dhall-1.27.0-x86_64-macos.tar.bz2
+  - tar xfj dhall-1.27.0-x86_64-macos.tar.bz2
+  - otool -L ./bin/dhall
+  - ./bin/dhall || true
+
   - stack build --copy-bins --local-bin-path ./bin
-  - tar -jcvf release/king.tgz bin/king
   - otool -L ./bin/king
+
+  - mkdir -p release
+  - tar -jcvf release/king.tgz bin/king
+
+
 
 
 # deploy:
