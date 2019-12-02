@@ -1,9 +1,11 @@
+::  Ping our sponsorship tree regularly for routing.
+::
 ::  To traverse NAT, we need the response to come back from someone
 ::  we've sent a message to.  We ping our sponsor so that they know
 ::  where we are.  However, we also need to ping our galaxy because if
 ::  the other ship tries to respond directly, it may be blocked by our
 ::  firewall or NAT.  Thus, the response must come from a ship we've
-::  messaged direclty, and the only one we can guarantee is our galaxy.
+::  messaged directly, and the only one we can guarantee is our galaxy.
 ::  Note this issue manifests itself even for bootstrapping a planet to
 ::  talk to its own star.
 ::
