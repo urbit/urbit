@@ -47,8 +47,8 @@ install:
 
 script:
   - export PATH="${PATH}:$(pwd)/bin"
-  - stack build --copy-bins --local-bin-path ./bin
-  - tar -jcvf release/king.tgz bin/king
+  # stack build --copy-bins --local-bin-path ./bin
+  # tar -jcvf release/king.tgz bin/king
 
 
 # deploy:
