@@ -189,7 +189,7 @@
   =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
   ?~  mailbox
     [~ this]
-  =.  letter.envelope.act  (evaluate-letter letter.envelope.act)
+  =.  letter.envelope.act  (evaluate-letter [author letter]:envelope.act)
   =.  u.mailbox  (append-envelope u.mailbox envelope.act)
   :-  (send-diff path.act act)
   this(inbox (~(put by inbox) path.act u.mailbox))
@@ -209,10 +209,10 @@
     :*  %messages
         path.act
         (sub length.config.u.mailbox (lent evaluated-envelopes))
-        length.config.u.mailbox 
+        length.config.u.mailbox
         evaluated-envelopes
     ==
-  =.  letter.i.envelopes.act  (evaluate-letter letter.i.envelopes.act)
+  =.  letter.i.envelopes.act  (evaluate-letter [author letter]:i.envelopes.act)
   =.  evaluated-envelopes  (snoc evaluated-envelopes i.envelopes.act)
   =.  u.mailbox  (append-envelope u.mailbox i.envelopes.act)
   $(envelopes.act t.envelopes.act)
@@ -229,9 +229,13 @@
   this(inbox (~(put by inbox) path.act u.mailbox))
 ::
 ++  evaluate-letter
-  |=  =letter
+  |=  [author=ship =letter]
   ^-  ^letter
-  =?  letter  &(?=(%code -.letter) ?=(~ output.letter))
+  =?  letter
+      ?&  ?=(%code -.letter)
+          ?=(~ output.letter)
+          (team:title our.bol author)
+      ==
     =/  =hoon  (ream expression.letter)
     letter(output (eval bol hoon))
   letter
