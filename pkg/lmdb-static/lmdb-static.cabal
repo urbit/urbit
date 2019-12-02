@@ -1,25 +1,25 @@
 Name: lmdb-static
 Version: 0.2.5
-Synopsis: Lightning MDB bindings 
+Synopsis: Lightning MDB bindings
 Category: Database
 Description:
   LMDB is a read-optimized Berkeley DB replacement developed by Symas
-  for the OpenLDAP project. LMDB has impressive performance characteristics 
+  for the OpenLDAP project. LMDB has impressive performance characteristics
   and a friendly BSD-style OpenLDAP license. See <http://symas.com/mdb/>.
   .
-  This library has Haskell bindings to the LMDB library. You must install 
-  the lmdb development files before installing this library, 
+  This library has Haskell bindings to the LMDB library. You must install
+  the lmdb development files before installing this library,
   e.g. `sudo apt-get install liblmdb-dev` works for Ubuntu 14.04.
   .
   For now, only a low level interface is provided, and the author is moving
-  on to use LMDB rather than further develop its bindings. If a higher level 
-  API is desired, please consider contributing, or develop a separate package. 
-  
+  on to use LMDB rather than further develop its bindings. If a higher level
+  API is desired, please consider contributing, or develop a separate package.
+
 Author: David Barbour
 Maintainer: dmbarbour@gmail.com
 Homepage: http://github.com/dmbarbour/haskell-lmdb
 
-Package-Url: 
+Package-Url:
 Copyright: (c) 2014 by David Barbour
 License: BSD2
 license-file: LICENSE
@@ -40,9 +40,8 @@ Library
   Exposed-Modules:
     Database.LMDB.Raw
 
-  Include-dirs:    cbits
-  Includes:        lmdb.h midl.h
-  C-Sources:       cbits/mdb.c cbits/midl.c
-
-  ghc-options: -Wall -auto-all
-
+  Include-dirs: cbits
+  Includes:     lmdb.h midl.h
+  C-Sources:    cbits/mdb.c cbits/midl.c
+  cc-options:   -Wall -O2 -g -pthread
+  ghc-options:  -Wall -auto-all

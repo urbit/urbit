@@ -33,27 +33,16 @@ before_install:
 
 install:
   - echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
-  # SAVED_OPTIONS=$(set +o)
-  # set -ex
-  - stack --no-terminal --install-ghc build lmdb
-  - stack --no-terminal --install-ghc build --only-dependencies
+  - SAVED_OPTIONS=$(set +o)
+  - set -ex
+  - stack --no-terminal --install-ghc build king --only-dependencies
   - eval "$SAVED_OPTIONS"
 
 
 script:
   - export PATH="${PATH}:$(pwd)/bin"
-
-  - wget https://github.com/commercialhaskell/stack/releases/download/v2.1.3/stack-2.1.3-osx-x86_64.tar.gz
-  - tar xfz stack-2.1.3-osx-x86_64.tar.gz
-  - otool -L stack-2.1.3-osx-x86_64/stack
-
-  - wget https://github.com/dhall-lang/dhall-haskell/releases/download/1.27.0/dhall-1.27.0-x86_64-macos.tar.bz2
-  - tar xfj dhall-1.27.0-x86_64-macos.tar.bz2
-  - otool -L ./bin/dhall
-
   - stack build --copy-bins --local-bin-path ./bin
   - otool -L ./bin/king
-
   - mkdir -p release
   - tar -jcvf release/king.tgz bin/king
 
