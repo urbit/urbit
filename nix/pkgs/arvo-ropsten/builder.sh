@@ -4,7 +4,7 @@ cp -r $src tmp
 chmod -R u+w tmp
 
 ZUSE=tmp/sys/zuse.hoon
-ALEF=tmp/sys/vane/alef.hoon
+AMES=tmp/sys/vane/ames.hoon
 ACME=tmp/app/acme.hoon
 
 # replace the mainnet azimuth contract with the ropsten contract
@@ -12,10 +12,10 @@ sed --in-place \
   's/\(\+\+  contracts  \)mainnet\-contracts/\1ropsten-contracts/' \
   $ZUSE
 
-# increment the %alef protocol version
+# increment the %ames protocol version
 sed -r --in-place \
   's_^(=/  protocol\-version=\?\(.*\)  %)([0-7])_echo "\1$(echo "(\2+1) % 8" | bc)"_e' \
-  $ALEF
+  $AMES
 
 # use the staging API in :acme
 sed --in-place \
