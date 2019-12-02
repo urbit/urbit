@@ -1295,12 +1295,19 @@
     |=  [=wire error=(unit tang)]
     ^+  event-core
     ::
-    =+  ^-  [her=ship =bone]  (parse-pump-timer-wire wire)
+    =/  res=(unit [her=ship =bone])  (parse-pump-timer-wire wire)
+    ?~  res
+      %-  (slog leaf+"got timer for strange wire: {<wire>}" ~)
+      event-core
     ::
-    =/  =peer-state  (got-peer-state her)
-    =/  =channel     [[our her] now |2.ames-state -.peer-state]
+    =/  state=(unit peer-state)  (get-peer-state her.u.res)
+    ?~  state
+      %-  (slog leaf+"got timer for strange ship: {<her.u.res>}, ignoring" ~)
+      event-core
     ::
-    abet:(on-wake:(make-peer-core peer-state channel) bone error)
+    =/  =channel     [[our her.u.res] now |2.ames-state -.u.state]
+    ::
+    abet:(on-wake:(make-peer-core u.state channel) bone.u.res error)
   ::  +on-init: first boot; subscribe to our info from jael
   ::
   ++  on-init
@@ -1673,6 +1680,14 @@
     =/  =packet   [[our her] encrypted=%.n origin=~ signed]
     ::
     (encode-packet packet)
+  ::  +get-peer-state: lookup .her state or ~
+  ::
+  ++  get-peer-state
+    |=  her=ship
+    ^-  (unit peer-state)
+    ::
+    =-  ?.(?=([~ %known *] -) ~ `+.u)
+    (~(get by peers.ames-state) her)
   ::  +got-peer-state: lookup .her state or crash
   ::
   ++  got-peer-state
@@ -2979,11 +2994,16 @@
 ::
 ++  parse-pump-timer-wire
   |=  =wire
-  ^-  [her=ship =bone]
+  ^-  (unit [her=ship =bone])
   ::
   ~|  %ames-wire-timer^wire
-  ?>  ?=([%pump @ @ ~] wire)
-  [`@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
+  ?.  ?=([%pump @ @ ~] wire)
+    ~
+  ?~  ship=`(unit @p)`(slaw %p i.t.wire)
+    ~
+  ?~  bone=`(unit @ud)`(slaw %ud i.t.t.wire)
+    ~
+  `[u.ship u.bone]
 ::  +derive-symmetric-key: $symmetric-key from $private-key and $public-key
 ::
 ::    Assumes keys have a tag on them like the result of the |ex:crub core.
