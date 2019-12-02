@@ -254,18 +254,9 @@ _pier_db_load_commits(u3_pier* pir_u,
                       c3_d     lav_d,
                       c3_d     len_d)
 {
-  if ( 1ULL == lav_d ) {
-    //  We are replaying the entire event log, and must
-    //  read the header to ensure that our %boot msg is correct.
-    //
-    _pier_db_read_header(pir_u);
-  }
-
-  c3_o ret = u3_lmdb_read_events(pir_u,
-                                 lav_d,
-                                 len_d,
-                                 _pier_db_on_commit_loaded);
-  if (ret == c3n) {
+  if ( c3n == u3_lmdb_read_events(pir_u, lav_d, len_d,
+                                  _pier_db_on_commit_loaded) )
+  {
     u3l_log("Failed to read event log for replay. Exiting...");
     u3_pier_bail();
   }
@@ -1617,6 +1608,10 @@ _pier_boot_ready(u3_pier* pir_u)
     //
     pir_u->but_d = log_u->com_d;
 
+    //  read the header, setting identity
+    //
+    _pier_db_read_header(pir_u);
+
     //  begin queuing batches of committed events
     //
     _pier_db_load_commits(pir_u, (1ULL + god_u->dun_d), 1000ULL);
@@ -1651,6 +1646,10 @@ _pier_boot_ready(u3_pier* pir_u)
     //  set the boot barrier to the last computed event
     //
     pir_u->but_d = god_u->dun_d;
+
+    //  read the header, setting identity
+    //
+    _pier_db_read_header(pir_u);
 
     //  resume normal operation
     //
