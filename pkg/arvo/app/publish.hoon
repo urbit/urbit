@@ -1290,60 +1290,85 @@
       .^((list path) %ct (weld our-beak /web/publish/[coll.act]))
     ?>  ?=(^ (find [/web/publish/[coll.act]/publish-info]~ files))
     =/  all=[moves=(list card) builds=(set wire)]
-    %+  roll  files
-    |=  [pax=path out=[moves=(list card) builds=(set wire)]]
-    ?+  pax
-      out
-    ::
-      [%web %publish @tas %publish-info ~]
-      ?>  =(coll.act i.t.t.pax)
-      =/  wir=wire  /collection/[coll.act]
-      =/  schema=schematic:ford
-        :*  %bake
-            %publish-info
-            *coin
-            [[our.bol q.byk.bol] /[coll.act]/publish/web]
-        ==
-      %=  out
-        builds  (~(put in builds.out) wir)
+      %+  roll  files
+      |=  [pax=path out=[moves=(list card) builds=(set wire)]]
+      ?+  pax
+        out
       ::
-          moves
-        :*  [%pass wir %arvo %f %build %.y schema]
-            moves.out
+        [%web %publish @tas %publish-info ~]
+        ?>  =(coll.act i.t.t.pax)
+        =/  wir=wire  /collection/[coll.act]
+        =/  schema=schematic:ford
+          :*  %bake
+              %publish-info
+              *coin
+              [[our.bol q.byk.bol] /[coll.act]/publish/web]
+          ==
+        %=  out
+          builds  (~(put in builds.out) wir)
+        ::
+            moves
+          :*  [%pass wir %arvo %f %build %.y schema]
+              moves.out
+          ==
         ==
+      ::
+        [%web %publish @tas @tas %udon ~]
+        ?>  =(coll.act i.t.t.pax)
+        =/  post  i.t.t.t.pax
+        =/  post-wir=wire  /post/[coll.act]/[post]
+        =/  post-schema=schematic:ford
+          :*  %bake
+              %publish-post
+              *coin
+              [[our.bol q.byk.bol] /[post]/[coll.act]/publish/web]
+          ==
+        ::
+        =/  comments-wir=wire  /comments/[coll.act]/[post]
+        =/  comments-schema=schematic:ford
+          :*  %bake
+              %publish-comments
+              *coin
+              [[our.bol q.byk.bol] /[post]/[coll.act]/publish/web]
+          ==
+        =/  post-perms=task:able:clay
+          :*  %perm  q.byk.bol
+              /web/publish/[coll.act]/[post]/udon
+              %w  `[%white (ships-to-whom (sy src.bol ~))]
+          ==
+        =/  comment-perms=task:able:clay
+          :*  %perm  q.byk.bol
+              /web/publish/[coll.act]/[post]
+              %w  `[%black ~]
+          ==
+        %=    out
+            moves
+          :*  [%pass post-wir %arvo %f %build %.y post-schema]
+              [%pass comments-wir %arvo %f %build %.y comments-schema]
+              [%pass /perms %arvo %c post-perms]
+              [%pass /perms %arvo %c comment-perms]
+              moves.out
+          ==
+        ::
+            builds
+          (~(uni in builds.out) (sy post-wir comments-wir ~))
+        ==
+      ::
       ==
-    ::
-      [%web %publish @tas @tas %udon ~]
-      ?>  =(coll.act i.t.t.pax)
-      =/  post  i.t.t.t.pax
-      =/  post-wir=wire  /post/[coll.act]/[post]
-      =/  post-schema=schematic:ford
-        :*  %bake
-            %publish-post
-            *coin
-            [[our.bol q.byk.bol] /[post]/[coll.act]/publish/web]
-        ==
-      ::
-      =/  comments-wir=wire  /comments/[coll.act]/[post]
-      =/  comments-schema=schematic:ford
-        :*  %bake
-            %publish-comments
-            *coin
-            [[our.bol q.byk.bol] /[post]/[coll.act]/publish/web]
-        ==
-      %=    out
-          moves
-        :*  [%pass post-wir %arvo %f %build %.y post-schema]
-            [%pass comments-wir %arvo %f %build %.y comments-schema]
-            moves.out
-        ==
-      ::
-          builds
-        (~(uni in builds.out) (sy post-wir comments-wir ~))
+    =/  blog-perms=task:able:clay
+      :*  %perm  q.byk.bol
+          /web/publish/[coll.act]
+          %rw  `[%black ~]  `[%white ~]
       ==
-    ::
-    ==
-    :-  moves.all
+    =/  info-perms=task:able:clay
+      :*  %perm  q.byk.bol
+          /web/publish/[coll.act]/publish-info
+          %rw  `*rule:clay  `*rule:clay
+      ==
+    :-  :*  [%pass /perms %arvo %c blog-perms]
+            [%pass /perms %arvo %c info-perms]
+            moves.all
+        ==
     %=  state
       awaiting  (~(put by awaiting) coll.act builds.all ~)
     ==
@@ -1729,7 +1754,7 @@
     [~ state]
   ?>  ?=([%collection @tas ~] wir)
   =/  col=@tas  i.t.wir
-  %-  (slog [leaf+"failed to subscribe to blog: {<col>}"]~)
+  %-  (slog [leaf+"failed to subscribe to blog: {<col>}"] u.err)
   [~ state]
 ::
 --
