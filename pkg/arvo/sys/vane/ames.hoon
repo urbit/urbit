@@ -1161,7 +1161,6 @@
     |=  [=lane =blob]
     ^+  event-core
     ::
-    ~>  %slog.0^leaf/"ames: %hole"
     (on-hear-packet lane (decode-packet blob) ok=%.n)
   ::  +on-hear-packet: handle mildly processed packet receipt
   ::
@@ -1341,12 +1340,12 @@
     ::
     =/  res=(unit [her=ship =bone])  (parse-pump-timer-wire wire)
     ?~  res
-      %-  (slog leaf+"got timer for strange wire: {<wire>}" ~)
+      %-  (slog leaf+"ames: got timer for strange wire: {<wire>}" ~)
       event-core
     ::
     =/  state=(unit peer-state)  (get-peer-state her.u.res)
     ?~  state
-      %-  (slog leaf+"got timer for strange ship: {<her.u.res>}, ignoring" ~)
+      %-  (slog leaf+"ames: got timer for strange ship: {<her.u.res>}, ignoring" ~)
       event-core
     ::
     =/  =channel  [[our her.u.res] now channel-state -.u.state]
