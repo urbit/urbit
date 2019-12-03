@@ -1,4 +1,4 @@
-/-  *contact-store
+/-  *contact-view
 |%
 ++  nu                                              ::  parse number as hex
   |=  jon/json
@@ -88,6 +88,36 @@
       ==
     [*@t *^json]
   ==
+::
+++  json-to-view-action
+  |=  jon=json
+  ^-  contact-view-action
+  =,  dejs:format
+  =<  (parse-json jon)
+  |%
+  ++  parse-json
+    %-  of
+    :~  [%create create]
+        [%delete delete]
+        [%add add]
+        [%remove remove]
+    ==
+  ++  create  (ot [%path pa]~)
+  ++  delete  (ot [%path pa]~)
+  ::
+  ++  add
+    %-  ot
+    :~  [%path pa]
+        [%ship (su ;~(pfix sig fed:ag))]
+        [%contact cont]
+    ==
+  ::
+  ++  remove
+    %-  ot
+    :~  [%path pa]
+        [%ship (su ;~(pfix sig fed:ag))]
+    ==
+  --
 ::
 ++  json-to-action
   |=  jon=json

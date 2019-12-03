@@ -1,6 +1,7 @@
 ::  contact-view: sets up contact JS client and combines commands
 ::  into semantic actions for the UI
 ::
+/-  *group-store
 /+  *server, *contact-json
 /=  index
   /^  octs
@@ -42,11 +43,15 @@
   $%  [%http-response =http-event:http]
       [%connect wire binding:eyre term]
       [%quit ~]
+      [%peer wire dock path]
       [%poke wire dock poke]
+      [%diff %json json]
   ==
 ::
 +$  poke
   $%  [%launch-action [@tas path @t]]
+      [%contact-action contact-action]
+      [%group-action group-action]
   ==
 --
 ::
@@ -59,15 +64,72 @@
   ^-  (quip move _this)
   ?~  old
     :_  this
-    :~  [ost.bol %connect / [~ /'~contacts'] %contact-view]
+    :~  [ost.bol %peer / [our.bol %contact-store] /updates]
+        [ost.bol %connect / [~ /'~contacts'] %contact-view]
         (launch-poke [/configs '/~contacts/js/tile.js'])
+        (contact-poke [%create /~/default])
+        (group-poke [%bundle /~/default])
+        (contact-poke [%add /~/default our.bol *contact])
+        (group-poke [%add [our.bol ~ ~] /~/default])
     ==
   [~ this(+<+ u.old)]
 ::
-++  bound
-  |=  [wir=wire success=? binding=binding:eyre]
+++  poke-json
+  |=  jon=json
   ^-  (quip move _this)
-  [~ this]
+  ?>  (team:title our.bol src.bol)
+  (poke-contact-view-action (json-to-view-action jon))
+::
+++  poke-contact-view-action
+  |=  act=contact-view-action
+  ^-  (quip move _this)
+  ?>  (team:title our.bol src.bol)
+  :_  this
+  ?-  -.act
+      %create
+    :~  (group-poke [%bundle path.act])
+        (contact-poke [%create path.act])
+    ==
+  ::
+      %delete
+    :~  (group-poke [%bundle path.act])
+        (contact-poke [%create path.act])
+    ==
+  ::
+      %add
+    :~  (group-poke [%add [ship.act ~ ~] path.act])
+        (contact-poke [%add path.act ship.act contact.act])
+    ==
+  ::
+      %remove
+    :~  (group-poke [%remove [ship.act ~ ~] path.act])
+        (contact-poke [%remove path.act ship.act])
+    ==
+  ==
+::
+++  peer-primary
+  |=  pax=path
+  ^-  (quip move _this)
+  ?>  (team:title our.bol src.bol)
+  ::  create inbox with 100 messages max per mailbox and send that along
+  ::  then quit the subscription
+  :_  this
+  [ost.bol %diff %json (rolodex-to-json all-scry)]~
+::
+++  diff-contact-update
+  |=  [wir=wire upd=contact-update]
+  ^-  (quip move _this)
+  =/  updates-json  (update-to-json upd)
+  :_  this
+  %+  turn  (prey:pubsub:userlib /primary bol)
+  |=  [=bone *]
+  [bone %diff %json updates-json]
+::
+++  quit
+  |=  wir=wire
+  ^-  (quip move _this)
+  :_  this
+  [ost.bol %peer / [our.bol %contact-store] /updates]~
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bol move this)
@@ -112,11 +174,29 @@
     [ost.bol %http-response (html-response:app index)]~
   ==
 ::
+++  bound
+  |=  [wir=wire success=? binding=binding:eyre]
+  ^-  (quip move _this)
+  [~ this]
 ::
 ::  +utilities
+::
+++  contact-poke
+  |=  act=contact-action
+  ^-  move
+  [ost.bol %poke / [our.bol %contact-store] [%contact-action act]]
 ::
 ++  launch-poke
   |=  [pax=path =cord]
   ^-  move
   [ost.bol %poke / [our.bol %launch] [%launch-action [%contact-view pax cord]]]
+::
+++  group-poke
+  |=  act=group-action
+  ^-  move
+  [ost.bol %poke / [our.bol %group-store] [%group-action act]]
+::
+++  all-scry
+  ^-  rolodex
+  .^(rolodex %gx /=contact-store/(scot %da now.bol)/all/noun)
 --
