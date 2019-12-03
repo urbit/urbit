@@ -143,8 +143,8 @@
   abet:abet:(merge:(work syd) ali sud cas gim)
 ::
 ++  poke-cancel
-  |=  syd/desk
-  abet:(emit %pass /cancel %arvo %c [%drop syd])
+  |=  ~
+  abet:(emit %pass /cancel %arvo %c [%drop %foo])
 ::
 ++  poke-info
   |=  {mez/tape tor/(unit toro)}
