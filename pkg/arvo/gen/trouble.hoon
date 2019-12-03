@@ -24,14 +24,18 @@
   =/  o=@ta  (scot %p our)
   =/  n=@ta  (scot %da now)
   ?~  b  ~[o a n]
-    ~[o a n (scot %p u.b)]
+  ~[o a n (scot %p u.b)]
 ::
 ++  info
   |=  [=term =ship]
+  ::  unitized life and rift
+  =/  lyfe  .^((unit @ud) %j (pathify ~.lyfe `ship))
+  =/  ryft  .^((unit @ud) %j (pathify ~.ryft `ship))
   :*  term
       ship=ship
       point=(crip (slag 2 (scow %ui ship)))
-      life=.^(* %j (pathify ~.life `ship))
-      rift=.^(* %j (pathify ~.rift `ship))
+      ::  report as units
+      life=lyfe
+      rift=ryft
   ==
 --
