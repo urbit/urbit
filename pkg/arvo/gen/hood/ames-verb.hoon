@@ -5,6 +5,6 @@
 ::::
   ::
 :-  %say
-|=  [^ [veb=(list verb:ames) ~] ~]
+|=  [^ veb=(list verb:ames) ~]
 :-  %helm-ames-verb
 veb
