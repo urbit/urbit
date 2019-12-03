@@ -1282,7 +1282,8 @@
     ::    We only accept packets from a ship at their known life, and to
     ::    us at our current life.
     ::
-    ~|  lives=[[our-life her-life]:channel [sndr-life rcvr-life]:shut-packet]
+    ~|  our-life=[expected=our-life.channel got=rcvr-life.shut-packet]
+    ~|  her-life=[expected=her-life.channel got=sndr-life.shut-packet]
     ?>  =(sndr-life.shut-packet her-life.channel)
     ?>  =(rcvr-life.shut-packet our-life.channel)
     ::  non-galaxy: update route with heard lane or forwarded lane
