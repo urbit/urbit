@@ -59,18 +59,21 @@
 =,  able
 =*  point               point:able:jael
 =*  public-keys-result  public-keys-result:able:jael
-=>
-=/  veb
-  :*  pak=%.n
-      snd=%.n
-      rcv=%.n
-      odd=%.n
-      msg=%.n
-      ges=%.n  ::  congestion control
-      for=%.n  ::  packet forwards
-      rot=%.n  ::  routing attempts
+::  veb: verbosity flags
+::
+=/  veb-all-off
+  :*  snd=`?`%.n  ::  sending packets
+      rcv=`?`%.n  ::  receiving packets
+      odd=`?`%.n  ::  unusual events
+      msg=`?`%.n  ::  messages
+      ges=`?`%.n  ::  congestion control
+      for=`?`%.n  ::  packet forwards
+      rot=`?`%.n  ::  routing attempts
   ==
+=>
 |%
+::  +trace: print if .verb is set
+::
 ++  trace
   |=  [verb=? print=(trap tape)]
   ?.  verb
@@ -359,6 +362,7 @@
       ::
       $:  =our=life
           crypto-core=acru:ames
+          veb=_veb-all-off
       ==
       ::  her data, specific to this dyad
       ::
@@ -439,6 +443,7 @@
       =unix=duct
       =life
       crypto-core=acru:ames
+      veb=_veb-all-off
   ==
 ::  $ship-state: all we know about a peer
 ::
@@ -943,6 +948,7 @@
 =|  =ames-state
 |=  [our=ship now=@da eny=@ scry-gate=sley]
 =*  ames-gate  .
+=*  veb  veb.ames-state
 |%
 ::  +call: handle request $task
 ::
@@ -968,6 +974,7 @@
       %hole  (on-hole:event-core [lane blob]:task)
       %init  (on-init:event-core ship=p.task)
       %jilt  (on-jilt:event-core ship.task)
+      %spew  (on-spew:event-core veb.task)
       %vega  on-vega:event-core
       %wegh  on-wegh:event-core
       %plea  (on-plea:event-core [ship plea]:task)
@@ -1013,7 +1020,12 @@
   ::
       %1
     =>  .(old-state +.old-state)
-    =.  +.ames-state  +.old-state
+    =.  +.ames-state
+      :*  unix-duct.old-state
+          life.old-state
+          crypto-core.old-state
+          veb-all-off
+      ==
     =.  peers.ames-state
       %-  ~(gas by *(map ship ship-state))
       %+  turn  ~(tap by peers.old-state)
@@ -1044,10 +1056,12 @@
 ++  per-event
   =|  moves=(list move)
   |=  [[our=ship now=@da eny=@ scry-gate=sley] =duct =ames-state]
+  =*  veb  veb.ames-state
   |%
   ++  event-core  .
   ++  abet  [(flop moves) ames-state]
   ++  emit  |=(=move event-core(moves [move moves]))
+  ++  channel-state  [life crypto-core veb]:ames-state
   ::  +on-take-done: handle notice from vane that it processed a message
   ::
   ++  on-take-done
@@ -1058,7 +1072,7 @@
     =+  ^-  [her=ship =bone]  (parse-bone-wire wire)
     ::
     =/  =peer-state  (got-peer-state her)
-    =/  =channel     [[our her] now |2.ames-state -.peer-state]
+    =/  =channel     [[our her] now channel-state -.peer-state]
     =/  peer-core    (make-peer-core peer-state channel)
     ::  if processing succeded, send positive ack packet and exit
     ::
@@ -1068,7 +1082,7 @@
     ::
     =.  event-core  abet:(run-message-sink:peer-core bone %done ok=%.n)
     =/  =^peer-state  (got-peer-state her)
-    =/  =^channel     [[our her] now |2.ames-state -.peer-state]
+    =/  =^channel     [[our her] now channel-state -.peer-state]
     ::  construct nack-trace message, referencing .failed $message-num
     ::
     =/  failed=message-num  last-acked:(~(got by rcv.peer-state) bone)
@@ -1080,6 +1094,27 @@
     =/  nack-trace-bone=^bone  (mix 0b10 bone)
     ::
     abet:(run-message-pump:peer-core nack-trace-bone %memo message-blob)
+  ::  +on-spew: handle request to set verbosity toggles
+  ::
+  ++  on-spew
+    |=  verbs=(list verb)
+    ^+  event-core
+    ::  start from all %.n's, then flip requested toggles
+    ::
+    =.  veb.ames-state
+      %+  roll  verbs
+      |=  [=verb acc=_veb-all-off]
+      ^+  veb.ames-state
+      ?-  verb
+        %snd  acc(snd %.y)
+        %rcv  acc(rcv %.y)
+        %odd  acc(odd %.y)
+        %msg  acc(msg %.y)
+        %ges  acc(ges %.y)
+        %for  acc(for %.y)
+        %rot  acc(rot %.y)
+      ==
+    event-core
   ::  +on-crud: handle event failure; print to dill
   ::
   ++  on-crud
@@ -1098,7 +1133,7 @@
       todos(heeds (~(put in heeds.todos) duct))
     ::
     =/  =peer-state  +.u.ship-state
-    =/  =channel     [[our ship] now |2.ames-state -.peer-state]
+    =/  =channel     [[our ship] now channel-state -.peer-state]
     abet:on-heed:(make-peer-core peer-state channel)
   ::  +on-jilt: handle request to stop tracking .ship's responsiveness
   ::
@@ -1112,7 +1147,7 @@
       todos(heeds (~(del in heeds.todos) duct))
     ::
     =/  =peer-state  +.u.ship-state
-    =/  =channel     [[our ship] now |2.ames-state -.peer-state]
+    =/  =channel     [[our ship] now channel-state -.peer-state]
     abet:on-jilt:(make-peer-core peer-state channel)
   ::  +on-hear: handle raw packet receipt
   ::
@@ -1240,7 +1275,7 @@
     ::    and their public key using elliptic curve Diffie-Hellman.
     ::
     =/  =peer-state   +.u.sndr-state
-    =/  =channel      [[our sndr.packet] now |2.ames-state -.peer-state]
+    =/  =channel      [[our sndr.packet] now channel-state -.peer-state]
     ~|  %ames-crash-on-packet-from^her.channel
     =/  =shut-packet  (decrypt symmetric-key.channel content.packet)
     ::  ward against replay attacks
@@ -1270,7 +1305,7 @@
     =+  ^-  [her=ship =bone]  (parse-bone-wire wire)
     ::
     =/  =peer-state  (got-peer-state her)
-    =/  =channel     [[our her] now |2.ames-state -.peer-state]
+    =/  =channel     [[our her] now channel-state -.peer-state]
     ::
     abet:(on-memo:(make-peer-core peer-state channel) bone payload %boon)
   ::  +on-plea: handle request to send message
@@ -1288,7 +1323,7 @@
       todos(messages [[duct plea] messages.todos])
     ::
     =/  =peer-state  +.u.ship-state
-    =/  =channel     [[our ship] now |2.ames-state -.peer-state]
+    =/  =channel     [[our ship] now channel-state -.peer-state]
     ::
     =^  =bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
     %-  %+  trace  msg.veb
@@ -1314,7 +1349,7 @@
       %-  (slog leaf+"got timer for strange ship: {<her.u.res>}, ignoring" ~)
       event-core
     ::
-    =/  =channel     [[our her.u.res] now |2.ames-state -.u.state]
+    =/  =channel  [[our her.u.res] now channel-state -.u.state]
     ::
     abet:(on-wake:(make-peer-core u.state channel) bone.u.res error)
   ::  +on-init: first boot; subscribe to our info from jael
@@ -2118,6 +2153,7 @@
 ::
 ++  make-message-pump
   |=  [state=message-pump-state =channel]
+  =*  veb  veb.channel
   =|  gifts=(list message-pump-gift)
   ::
   |%
@@ -2307,6 +2343,7 @@
 ::
 ++  make-packet-pump
   |=  [state=packet-pump-state =channel]
+  =*  veb  veb.channel
   =|  gifts=(list packet-pump-gift)
   |%
   ++  packet-pump  .
@@ -2318,7 +2355,7 @@
     lte-packets
   ::  +gauge: inflate a |pump-gauge to track congestion control
   ::
-  ++  gauge  (make-pump-gauge now.channel metrics.state)
+  ++  gauge  (make-pump-gauge now.channel metrics.state veb.channel)
   ::  +work: handle $packet-pump-task request
   ::
   ++  work
@@ -2427,7 +2464,6 @@
       |=  [packet=static-fragment core=_packet-pump]
       (give:core %send packet)
     ::
-    =/  gauge  (make-pump-gauge now.channel metrics.state)
     =/  acc
       resends=*(list static-fragment)
     ::
@@ -2463,12 +2499,11 @@
         ::
         =.  metrics.state  metrics.-
         =.  live.state     live.-
-        %-  %+  trace
-              ?.  snd.veb  %.n
-              ?|  =(0 fragment-num)
-                  =(0 (mod counter.metrics.state 20))
-              ==
-            |.("{<[fragment-num show:gauge]>}")
+        %-  ?.  ?|  =(0 fragment-num)
+                    =(0 (mod counter.metrics.state 20))
+                ==
+              same
+            (trace snd.veb |.("{<[fragment-num show:gauge]>}"))
         ::  .resends is backward, so fold backward and emit
         ::
         =.  packet-pump
@@ -2492,7 +2527,7 @@
         ==
     ^-  [new-val=(unit live-packet-val) stop=? _acc]
     ::
-    =/  gauge  (make-pump-gauge now.channel metrics.acc)
+    =/  gauge  (make-pump-gauge now.channel metrics.acc veb.channel)
     ::  is this the acked packet?
     ::
     ?:  =(key [message-num fragment-num])
@@ -2539,7 +2574,7 @@
         ==
     ^-  [new-val=(unit live-packet-val) stop=? pump-metrics]
     ::
-    =/  gauge  (make-pump-gauge now.channel metrics)
+    =/  gauge  (make-pump-gauge now.channel metrics veb.channel)
     ::  if we get an out-of-order ack for a message, skip until it
     ::
     ?:  (lth message-num.key message-num)
@@ -2587,8 +2622,8 @@
 ::  +make-pump-gauge: construct |pump-gauge congestion control core
 ::
 ++  make-pump-gauge
-  |=  [now=@da pump-metrics]
-  =*  metrics  +<+
+  |=  [now=@da pump-metrics veb=_veb-all-off]
+  =*  metrics  +<+<
   |%
   ::  +next-expiry: when should a newly sent fresh packet time out?
   ::
@@ -2667,8 +2702,7 @@
   ++  on-timeout
     ^-  pump-metrics
     ::
-    %-  %+  trace  ges.veb
-        |.("timeout update {<show>}")
+    %-  (trace ges.veb |.("timeout update {<show>}"))
     =:  ssthresh  (max 1 (div cwnd 2))
             cwnd  1
              rto  (clamp-rto (mul rto 2))
@@ -2717,6 +2751,7 @@
 ::
 ++  make-message-sink
   |=  [state=message-sink-state =channel]
+  =*  veb  veb.channel
   =|  gifts=(list message-sink-gift)
   |%
   ++  message-sink  .
@@ -2845,7 +2880,8 @@
     =.  last-heard.state     +(last-heard.state)
     =.  live-messages.state  (~(del by live-messages.state) seq)
     ::
-    %-  (trace msg.veb |.("hear {<her.channel>} {<seq>} {<num-fragments.u.live>}kb"))
+    %-  %+  trace  msg.veb
+        |.("hear {<her.channel>} {<seq>} {<num-fragments.u.live>}kb")
     =/  message=*  (assemble-fragments [num-fragments fragments]:u.live)
     =.  message-sink  (enqueue-to-vane seq message)
     ::

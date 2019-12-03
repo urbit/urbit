@@ -180,6 +180,10 @@
   |=  ~  =<  abet
   (flog %verb ~)
 ::
+++  poke-ames-verb
+  |=  veb=(list verb:ames)  =<  abet
+  (emit %pass /helm %arvo %a %spew veb)
+::
 ++  poke-knob
   |=  [error-tag=@tas level=?(%hush %soft %loud)]  =<  abet
   (emit %pass /helm %arvo %d %knob error-tag level)
@@ -198,6 +202,7 @@
     %helm-reload-desk      =;(f (f !<(_+<.f vase)) poke-reload-desk)
     %helm-reset            =;(f (f !<(_+<.f vase)) poke-reset)
     %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
+    %helm-ames-verb        =;(f (f !<(_+<.f vase)) poke-ames-verb)
     %helm-verb             =;(f (f !<(_+<.f vase)) poke-verb)
     %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
     %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
