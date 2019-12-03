@@ -9,11 +9,20 @@
 ::  Note this issue manifests itself even for bootstrapping a planet to
 ::  talk to its own star.
 ::
-/+  default-agent
+/+  default-agent, verb
 =*  point  point:able:kale
 ::
+|%
++$  card  card:agent:gall
++$  ship-state
+  $%  [%idle ~]
+      [%poking ~]
+      [%waiting until=@da]
+  ==
+--
+::
+=|  state=[%0 ships=(map ship [=rift =ship-state])]
 =>  |%
-    +$  card  card:agent:gall
     ::  +print-error: maybe +slog
     ::
     ++  print-error
@@ -24,20 +33,111 @@
     ::  +set-timer: send a card to behn to set a timer
     ::
     ++  set-timer
-      |=  [now=@da n=@ud]
-      ^-  (list card)
-      [%pass /ping-wait/(scot %ud n) %arvo %b %wait `@da`(add ~s30 now)]~
-    ::  +send-ping: scry our sponsor from jael and poke their %ping app
+      |=  [now=@da =ship]
+      ^-  (quip card _state)
+      =/  s  (~(get by ships.state) ship)
+      ?~  s
+        `state
+      ?.  ?=(%poking -.ship-state.u.s)
+        %-  (slog leaf+"ping: strange state {<ship s>}" ~)
+        `state
+      =/  until  (add ~s30 now)
+      =.  ships.state
+        (~(put by ships.state) ship u.s(ship-state [%waiting until]))
+      :_  state
+      [%pass /ping-wait/(scot %p ship) %arvo %b %wait `@da`until]~
+    ::  +send-ping: poke their %ping app
     ::
     ++  send-ping
-      |=  [our=@p now=@da n=@ud]
-      ^-  (list card)
+      |=  [our=@p now=@da =ship]
+      ^-  (quip card _state)
       ::
-      =/  sponsor=ship  (snag n (saxo:title our now our))
+      ?:  =(our ship)
+        `state
+      ~>  %slog.0^leaf/"ping: {<our>} -> {<ship>}"
+      =/  s  (~(get by ships.state) ship)
+      ?~  s
+        `state
+      ?.  ?=(%idle -.ship-state.u.s)
+        `state
+      :_  state(ships (~(put by ships.state) ship u.s(ship-state [%poking ~])))
+      [%pass /ping-send/(scot %p ship) %agent [ship %ping] %poke %noun !>(~)]~
+    ::  +stop-ping-ship: stop ship if not sponsor or old rift
+    ::
+    ++  stop-ping-ship
+      |=  [our=@p now=@da =ship =old=rift =ship-state]
+      ^-  (quip card _state)
+      =+  .^(=new=rift %j /=rift/(scot %da now)/(scot %p ship))
+      ::  if nothing's changed about us, don't cancel
       ::
-      ~>  %slog.0^leaf/"ping: {<our>} -> {<sponsor>}"
-      [%pass /ping-send/(scot %ud n) %agent [sponsor %ping] %poke %noun !>(~)]~
+      ?:  ?&  =(old-rift new-rift)
+              (~(has in (silt (saxo:title our now our))) ship)
+          ==
+        `state
+      ::  otherwise, kill jael subscription and timer
+      ::
+      :_  state(ships (~(del by ships.state) ship))
+      :-  [%pass /jael/(scot %p ship) %arvo %j %nuke (silt ship ~)]
+      ?.  ?=(%waiting -.ship-state)
+        ~
+      [%pass /ping-wait/(scot %p ship) %arvo %b %rest until.ship-state]~
+    ::  +start-ping-ship: start pinging if not already
+    ::
+    ++  start-ping-ship
+      |=  [our=@p now=@da =ship]
+      ^-  (quip card _state)
+      ?:  (~(has by ships.state) ship)
+        `state
+      ::
+      ;<  new-state=_state  (rind card state)
+        =+  .^(=rift %j /=rift/(scot %da now)/(scot %p ship))
+        :_  state(ships (~(put by ships.state) ship rift %idle ~))
+        [%pass /jael/(scot %p ship) %arvo %j %public-keys (silt ship ~)]~
+      =.  state  new-state
+      ::
+      (send-ping our now ship)
+    ::  +kick: idempotent operation to make clean start for all pings
+    ::
+    ++  kick
+      |=  [our=@p now=@da]
+      ^-  (quip card _state)
+      ?:  =(%czar (clan:title our))
+        `state
+      ::
+      =/  old-ships=(list [=ship =rift =ship-state])  ~(tap by ships.state)
+      |-  ^-  (quip card _state)
+      =*  loop  $
+      ?^  old-ships
+        ;<  new-state=_state  (rind card state)
+          (stop-ping-ship our now i.old-ships)
+        =.  state  new-state
+        loop(old-ships t.old-ships)
+      ::
+      =/  new-ships  (saxo:title our now our)
+      |-  ^-  (quip card _state)
+      =*  loop  $
+      ?^  new-ships
+        ;<  new-state=_state  (rind card state)
+          (start-ping-ship our now i.new-ships)
+        =.  state  new-state
+        loop(new-ships t.new-ships)
+      ::
+      `state
+    ::  +rind: bind for the the writer monad on (quip effect state)
+    ::
+    ++  rind
+      |*  [effect=mold state=*]
+      |*  state-type=mold
+      |=  $:  m-b=(quip effect state-type)
+              fun=$-(state-type (quip effect state-type))
+          ==
+      ^-  (quip effect state-type)
+      =^  effects-1=(list effect)  state  m-b
+      =^  effects-2=(list effect)  state  (fun state)
+      [(weld effects-1 effects-2) state]
+    ::
     --
+%+  verb  |
 ^-  agent:gall
 |_  =bowl:gall
 +*  this  .
@@ -47,20 +147,14 @@
 ::
 ++  on-init
   ^-  [(list card) _this]
-  ::  first load; galaxies no-op; everyone else pings sponsor
-  ::
-  :_  this
-  ?:  =(%czar (clan:title our.bowl))
-    ~
-  ~>  %slog.0^leaf/"ping: prep {<our.bowl>}"
-  =/  saxo  (tail (saxo:title our.bowl now.bowl our.bowl))
-  %-  zing
-  %+  turn  (gulf 1 (lent saxo))
-  |=  n=@ud
-  (send-ping our.bowl now.bowl n)
+  =^  cards  state  (kick our.bowl now.bowl)
+  [cards this]
 ::
-++  on-save   on-save:def
-++  on-load   on-load:def
+++  on-save   !>(state)
+++  on-load
+  |=  old=vase
+  =.  state  !<(_state old)
+  on-init
 ::  +on-poke: positively acknowledge pokes
 ::
 ++  on-poke
@@ -69,7 +163,10 @@
 ::
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
-++  on-peek   on-peek:def
+++  on-peek
+  |=  =path
+  ^-  (unit (unit cage))
+  ``noun+!>(state)
 ::  +on-agent: handle ames ack
 ::
 ++  on-agent
@@ -77,21 +174,38 @@
   ^-  [(list card) _this]
   ?>  ?=([%ping-send @ ~] wire)
   ?>  ?=(%poke-ack -.sign)
-  :_  this
   ::
   %-  (print-error "ping: ack" p.sign)
-  (set-timer now.bowl (slav %ud i.t.wire))
+  =^  cards  state
+    (set-timer now.bowl (slav %p i.t.wire))
+  [cards this]
 ::  +on-arvo: handle timer firing
 ::
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  [(list card) _this]
-  ?>  ?=([%ping-wait @ ~] wire)
-  ?>  ?=(%wake +<.sign-arvo)
-  :_  this
-  ~!  error.sign-arvo
-  %-  (print-error "ping: wake" error.sign-arvo)
-  (send-ping our.bowl now.bowl (slav %ud i.t.wire))
+  ?+    wire  !!
+      [%ping-wait @ ~]
+    ?>  ?=(%wake +<.sign-arvo)
+    =/  =ship  (slav %p i.t.wire)
+    =/  s  (~(get by ships.state) ship)
+    ?~  s
+      `this
+    ?.  ?=(%waiting -.ship-state.u.s)
+      %-  (slog leaf+"strange state on wake: {<ship s>}" ~)
+      `this
+    =.  ships.state  (~(put by ships.state) ship u.s(ship-state [%idle ~]))
+    %-  (print-error "ping: wake" error.sign-arvo)
+    =^  cards  state
+      (send-ping our.bowl now.bowl ship)
+    [cards this]
+  ::
+      [%jael @ ~]
+    ::  whenever we get an update from Jael, kick
+    ::
+    ?>  ?=(%public-keys +<.sign-arvo)
+    on-init
+  ==
 ::
 ++  on-fail   on-fail:def
 --
