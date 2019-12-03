@@ -957,7 +957,8 @@
       =?  ap-core  =(ship ship.i.out)
         =/  core
           =.  agent-duct  system-duct.agents.state
-          (ap-specific-take wire.i.out %kick ~)
+          =/  way  [%out (scot %p ship) term.i.out wire.i.out]
+          (ap-specific-take way %kick ~)
         core(agent-duct agent-duct)
       $(out t.out)
     ::  +ap-clog: handle %clog notification from ames
@@ -1415,7 +1416,6 @@
       =/  =path  path.r.q.move.move
       ?:  (~(has by outgoing.subscribers.current-agent) short-wire dock)
         =.  ap-core
-          =/  way  [%out (scot %p p.dock) q.dock short-wire]
           =/  =tang
             ~[leaf+"subscribe wire not unique" >agent-name< >short-wire< >dock<]
           %-  (slog >out=outgoing.subscribers.current-agent< tang)
