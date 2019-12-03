@@ -16,7 +16,8 @@
     (mock [subject nock.p.minted] |=(^ ~))
   ?-  -.toon
     %0  [(sell type.p.minted p.toon) ~]
-    %1  [leaf+"scries unsupported in chat eval" ~]
+    %1  :-  leaf+".^ unsupported in chat eval"
+        (turn ;;((list path) p.toon) smyt)
     %2  [leaf+"crash!" p.toon]
   ==
 --
