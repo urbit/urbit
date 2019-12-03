@@ -17,18 +17,6 @@
       (rash (got %pinned) (fuss %true %false))
   ==
 ::
-++  front-to-comment-info
-  |=  fro=(map knot cord)
-  ^-  comment-info
-  =/  got  ~(got by fro)
-  ~|  %invalid-frontmatter
-  :*  (slav %p (got %creator))
-      (got %collection)
-      (got %post)
-      (slav %da (got %date-created))
-      (slav %da (got %last-modified))
-  ==
-::
 ++  collection-info-to-json
   |=  con=collection-info
   ^-  json
@@ -53,17 +41,6 @@
       :-  %last-modified  (time:enjs:format last-modified.info)
       :-  %pinned         [%b pinned.info]
       :-  %filename       [%s filename.info]
-      :-  %collection     [%s collection.info]
-  ==
-::
-++  comment-info-to-json
-  |=  info=comment-info
-  ^-  json
-  %-  pairs:enjs:format
-  :~  :-  %creator        [%s (scot %p creator.info)]
-      :-  %date-created   (time:enjs:format date-created.info)
-      :-  %last-modified  (time:enjs:format last-modified.info)
-      :-  %post       [%s post.info]
       :-  %collection     [%s collection.info]
   ==
 ::
@@ -108,16 +85,21 @@
   (tang-to-json +.bud)
 ::
 ++  comment-build-to-json
-  |=  bud=(each (list [comment-info @t]) tang)
+  |=  bud=(each (list comment) tang)
   ^-  json
   ?:  ?=(%.y -.bud)
     :-  %a
     %+  turn  p.bud
-    |=  [com=comment-info bod=@t]
+    |=  com=comment
     ^-  json
     %-  pairs:enjs:format
-    :~  info+(comment-info-to-json com)
-        body+s+bod
+    :~  :-  %info
+      %-  pairs:enjs:format
+      :~  :-  %creator        [%s (scot %p author.com)]
+          :-  %date-created   (time:enjs:format date-created.com)
+          :-  %last-modified  (time:enjs:format last-modified.com)
+      ==
+        body+s+body.com
     ==
   (tang-to-json +.bud)
 ::
@@ -125,7 +107,7 @@
   |=  col=collection
   ^-  json
   %-  pairs:enjs:format
-  :~  info+(collection-build-to-json col.col)
+  :~  info+(collection-build-to-json dat.col.col)
   ::
     :+  %posts
       %o
@@ -137,8 +119,8 @@
     %+  ~(put by out)
       post
     %-  pairs:enjs:format
-    :~  post+(post-build-to-json post-build)
-        comments+(comment-build-to-json comm-build)
+    :~  post+(post-build-to-json dat.post-build)
+        comments+(comment-build-to-json dat.comm-build)
     ==
   ::
     :-  %order

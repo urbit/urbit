@@ -1,5 +1,4 @@
 /-  publish
-!:
 |_  com=comment:publish
 ::
 ::
@@ -10,11 +9,9 @@
     (as-octs:mimes:html (of-wain:format txt))
   ++  txt
     ^-  wain
-    :*  (cat 3 'creator: ' (scot %p creator.info.com))
-        (cat 3 'collection: ' collection.info.com)
-        (cat 3 'post: ' post.info.com)
-        (cat 3 'date-created: ' (scot %da date-created.info.com))
-        (cat 3 'last-modified: ' (scot %da last-modified.info.com))
+    :*  (cat 3 'author: ' (scot %p author.com))
+        (cat 3 'date-created: ' (scot %da date-created.com))
+        (cat 3 'last-modified: ' (scot %da last-modified.com))
         '-----'
         (to-wain:format body.com)
     ==
@@ -29,25 +26,17 @@
     ^-  comment:publish
     ::  TODO: putting ~ instead of * breaks this but shouldn't
     ::
-    ?>  ?=  $:  creator=@t
-                collection=@t
-                post=@t
+    ?>  ?=  $:  author=@t
                 date-created=@t
                 last-modified=@t
                 line=@t
                 body=*
              ==
            txs
-    :_  (of-wain:format (wain body.txs))
+    ?>  =(line.txs '-----')
     ::
-    :*  %+  rash  creator.txs
-        ;~(pfix (jest 'creator: ~') fed:ag)
-    ::
-        %+  rash  collection.txs
-        ;~(pfix (jest 'collection: ') (cook crip (star next)))
-    ::
-        %+  rash  post.txs
-        ;~(pfix (jest 'post: ') (cook crip (star next)))
+    :*  %+  rash  author.txs
+        ;~(pfix (jest 'author: ~') fed:ag)
     ::
         %+  rash  date-created.txs
         ;~  pfix
@@ -61,6 +50,7 @@
           (cook year when:so)
         ==
     ::
+        (of-wain:format (wain body.txs))
     ==
   ++  noun  comment:publish
   --

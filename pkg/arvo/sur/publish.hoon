@@ -70,15 +70,12 @@
       pinned=?
   ==
 ::
-+$  comment-info
-  $:  creator=@p
-      collection=@tas
-      post=@tas
++$  comment
+  $:  author=@p
       date-created=@da
       last-modified=@da
+      body=@t
   ==
-::
-+$  comment  [info=comment-info body=@t]
 ::
 +$  perm-config  [read=rule:clay write=rule:clay]
 ::
@@ -97,9 +94,9 @@
   ==
 ::
 +$  collection
-  $:  col=(each collection-info tang)
-      pos=(map @tas dat=(each [post-info manx @t] tang))
-      com=(map @tas dat=(each (list [comment-info @t]) tang))
+  $:  col=[=bone dat=(each collection-info tang)]
+      pos=(map @tas [=bone dat=(each [post-info manx @t] tang)])
+      com=(map @tas [=bone dat=(each (list comment) tang)])
       order=[pin=(list @tas) unpin=(list @tas)]
       contributors=[mod=?(%white %black) who=(set @p)]
       subscribers=(set @p)
