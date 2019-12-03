@@ -1,4 +1,3 @@
 :-  %say
-|=  [* ~ ~]
-[%verb ~]
-
+|=  [* arg=?(~ [%bowl ~]) ~]
+[%verb ?~(arg %loud %bowl)]

@@ -1481,8 +1481,6 @@
           ==
       ^+  event-core
       ::
-      ~>  %slog.0^leaf/"ames: rekey {<our^ship^life>}"
-      ::
       =/  ship-state  (~(get by peers.ames-state) ship)
       ?.  ?=([~ %known *] ship-state)
         =|  =point
