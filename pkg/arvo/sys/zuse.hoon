@@ -2183,7 +2183,9 @@
             %disavow  ~|(%udiff-to-diff-disavow !!)
             %spon     `[%spon sponsor.a-point sponsor.a-udiff]
             %rift
-          ?:  =(rift.a-udiff +(rift.a-point))
+          ?:  (gth rift.a-udiff rift.a-point)
+            ~?  !=(rift.a-udiff +(rift.a-point))
+              [%udiff-to-diff-skipped a-udiff a-point]
             `[%rift rift.a-point rift.a-udiff]
           ~
         ::
