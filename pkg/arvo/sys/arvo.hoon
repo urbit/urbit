@@ -702,41 +702,21 @@
     ::
     ++  poke  |=  *                                     ::  47
               =>  .(+< ;;([now=@da ovo=ovum] +<))
-              =;  taq=_^?(|.(**))
-                =/  res
-                  %+  mock
-                    [taq 9 2 0 1]
-                  |=  [ref=* raw=*]
-                  (^peek now ;;(path raw))
-                |-
-                ?-  -.res
-                    %0  p.res
-                    %1  $(res [%2 leaf+"blocked" >((list path) p.res)< ~])
-                    %2
-                  ~_  leaf+"deterministic error"
-                  |-
-                  ?~  p.res
-                    !!
-                  ~_  i.p.res
-                  $(p.res t.p.res)
-                ==
-              |.
-              ^-  [(list ovum) *]
-              =^  ova  +>+.^$  (^poke now ovo)
+              =^  ova  +>+.$  (^poke now ovo)
               =|  out=(list ovum)
               |-  ^-  [(list ovum) *]
               ?~  ova
-                [(flop out) +>.^^$]
+                [(flop out) +>.^$]
               ::  upgrade the kernel
               ::
               ?:  ?=(%lyra -.q.i.ova)
                 %+  fall
                   (vega now t.ova ;;([@ @] +.q.i.ova))
-                [~ +>.^^$]
+                [~ +>.^$]
               ::  iterate over effects, handling those on arvo proper
               ::  and passing the rest through as output
               ::
-              =^  vov  +>+.^^$  (feck now i.ova)
+              =^  vov  +>+.^$  (feck now i.ova)
               =?  out  ?=(^ vov)  [+.vov out]
               $(ova t.ova)
     ::
