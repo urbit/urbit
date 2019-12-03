@@ -13,8 +13,6 @@
         u3_noun wen;                      //  current time, as text
         u3_noun sev_l;                    //  instance number
         u3_noun sen;                      //  instance string
-        u3_noun our;                      //  identity     XX Remove
-        u3_noun fak;                      //  c3y is fake  XX Remove
         u3_noun roc;                      //  kernel core
       } u3v_arvo;
 
