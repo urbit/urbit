@@ -102,8 +102,7 @@
   |=  act=contact-action
   ^-  (quip move _this)
   ?>  ?=(%create -.act)
-  ?:  (~(has by rolodex) path.act)
-    [~ this]
+  ?<  (~(has by rolodex) path.act)
   :-  (send-diff path.act act)
   this(rolodex (~(put by rolodex) path.act *contacts))
 ::
@@ -111,8 +110,7 @@
   |=  act=contact-action
   ^-  (quip move _this)
   ?>  ?=(%delete -.act)
-  ?.  (~(has by rolodex) path.act)
-    [~ this]
+  ?>  (~(has by rolodex) path.act)
   :-  (send-diff path.act act)
   this(rolodex (~(del by rolodex) path.act))
 ::
@@ -121,7 +119,7 @@
   ^-  (quip move _this)
   ?>  ?=(%add -.act)
   =/  contacts  (~(got by rolodex) path.act)
-  ?>  (~(has by contacts) ship.act)
+  ?<  (~(has by contacts) ship.act)
   =.  contacts  (~(put by contacts) ship.act contact.act)
   :-  (send-diff path.act act)
   this(rolodex (~(put by rolodex) path.act contacts))
@@ -131,7 +129,7 @@
   ^-  (quip move _this)
   ?>  ?=(%remove -.act)
   =/  contacts  (~(got by rolodex) path.act)
-  ?<  (~(has by contacts) ship.act)
+  ?>  (~(has by contacts) ship.act)
   =.  contacts  (~(del by contacts) ship.act)
   :-  (send-diff path.act act)
   this(rolodex (~(put by rolodex) path.act contacts))
@@ -175,5 +173,4 @@
       (update-subscribers /updates upd)
       (update-subscribers [%contacts pax] upd)
   ==
-::
 --
