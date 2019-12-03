@@ -12,7 +12,7 @@ type Typ = Exp
 
 data Exp a
   = Var a
-  | Uni Natural
+  | Typ
   | Fun (Abs a)
   | Lam (Abs a)
   | App (Exp a) (Exp a)
@@ -53,7 +53,7 @@ instance Applicative Exp where
 instance Monad Exp where
   return = Var
   Var a >>= f = f a
-  Uni n >>= _ = Uni n
+  Typ   >>= _ = Typ
   Fun a >>= f = Fun (bindAbs a f)
   Lam a >>= f = Lam (bindAbs a f)
   App x y >>= f = App (x >>= f) (y >>= f)
@@ -66,6 +66,9 @@ lam v t e = Lam (Abs t (abstract1 v e))
 
 fun :: Eq a => a -> Typ a -> Exp a -> Typ a
 fun v t e = Fun (Abs t (abstract1 v e))
+
+infixl 9 @:
+(@:) = App
 
 type Env a = a -> Typ a
 
@@ -80,23 +83,40 @@ extend1 t = extend \() -> t
 
 type Typing = Maybe
 
+-- TODO maybe this should be Typing () for error reporting?
+-- think about env vs instantiate for bindings; if instantiate
+-- as below, should the types be different?
+nest :: Eq a => Typ a -> Typ a -> Bool
+nest Typ Typ = True
+-- following Cardelli 80something, we check the RHSs assuming
+-- the *lesser* of the LHSs for both
+nest (Fun (Abs a b)) (Fun (Abs a' b')) =
+  nest a' a && nest (instantiate1 a' b) (instantiate1 a' b')
+nest Var{} _ = error "nest: free var"
+nest _ Var{} = error "nest: free var"
+nest Lam{} _ = error "nest: lambda"
+nest _ Lam{} = error "nest: lambda"
+nest t@App{} u = nest (whnf t) u
+nest t u@App{} = nest t (whnf u)
+nest _ _ = False
+
 check :: Eq a => Env a -> Exp a -> Typ a -> Typing ()
 check env e t = do
   t' <- infer env e
-  guard (t == t')
+  guard (nest t t')
 
 infer :: forall a. Eq a => Env a -> Exp a -> Typing (Typ a)
 infer env = \case
   Var v -> pure $ env v
-  Uni n -> pure $ Uni (n + 1)
+  Typ -> pure $ Typ
   Lam (Abs t b) -> do
-    Uni _ <- infer env t
+    Typ <- infer env t
     (toScope -> t') <- infer (extend1 t env) (fromScope b)
     pure $ Fun (Abs t t')
   Fun (Abs t b) -> do
-    Uni n <- infer env t
-    Uni k <- infer (extend1 t env) (fromScope b)
-    pure $ Uni (max n k)
+    Typ <- infer env t
+    Typ <- infer (extend1 t env) (fromScope b)
+    pure $ Typ
   App x y -> do
     Fun (Abs t b) <- infer env x
     check env y t
