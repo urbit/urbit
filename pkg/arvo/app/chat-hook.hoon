@@ -380,7 +380,6 @@
 ++  kick
   |=  wir=wire
   ^-  (quip card _state)
-  ~&  chat-hook-kick+wir
   ?:  =(wir /permissions)
     :_  state
     [%pass /permissions %agent [our.bol %permission-store] %watch /updates]~
@@ -402,11 +401,9 @@
     [%pass chat-history %agent [ship %chat-hook] %watch chat-history]~
   ::
   ?:  ?=([%backlog @ *] wir)
-    ~&  backlog-kick+wir
     =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
     =/  mailbox=(unit mailbox)  (chat-scry pax)
     =.  pax  ?~(mailbox wir [%mailbox pax])
-    ~&  chat-hook-resubscribe+pax
     :_  state
     [%pass pax %agent [(slav %p i.t.wir) %chat-hook] %watch pax]~
   !!
