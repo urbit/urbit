@@ -41,7 +41,7 @@ install:
 
 script:
   - export PATH="${PATH}:$(pwd)/bin"
-  - stack build --copy-bins --local-bin-path ./bin
+  - stack build --fast --copy-bins --local-bin-path ./bin
   - otool -L ./bin/king
   - mkdir -p release
   - tar -jcvf release/king.tgz bin/king
