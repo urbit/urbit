@@ -9,18 +9,16 @@ class UrbitApi {
   setAuthTokens(authTokens) {
     this.authTokens = authTokens;
     this.bindPaths = [];
-
-    this.groups = {
-      add: this.groupAdd.bind(this),
-      remove: this.groupRemove.bind(this)
-    };
     
     this.contacts = {
+      edit: this.contactEdit.bind(this)
+    };
+
+    this.contactView = {
       create: this.contactCreate.bind(this),
       delete: this.contactDelete.bind(this),
       add: this.contactAdd.bind(this),
       remove: this.contactRemove.bind(this),
-      edit: this.contactEdit.bind(this)
     };
     
     this.invite = {
@@ -63,36 +61,20 @@ class UrbitApi {
     });
   }
 
-  groupsAction(data) {
-    this.action("group-store", "group-action", data);
-  }
-
-  groupAdd(members, path) {
-    this.groupsAction({
-      add: {
-        members, path
-      }
-    });
-  }
-
-  groupRemove(members, path) {
-    this.groupsAction({
-      remove: {
-        members, path
-      }
-    });
+  contactViewAction(data) {
+    this.action("contact-view", "json", data);
   }
 
   contactAction(data) {
-    this.action("contact-store", "json", data);
+    this.action("contact-store", "contact-action", data);
   }
 
   contactCreate(path) {
-    this.contactAction({ create: { path }});
+    this.contactViewAction({ create: { path }});
   }
 
   contactDelete(path) {
-    this.contactAction({ delete: { path }});
+    this.contactViewAction({ delete: { path }});
   }
 
   contactAdd(path, ship, contact = {
@@ -101,10 +83,10 @@ class UrbitApi {
     phone: '',
     website: '',
     notes: '',
-    color: '0x000000',
+    color: '0',
     avatar: null
   }) {
-    this.contactAction({
+    this.contactViewAction({
       add: {
         path, ship, contact
       }
@@ -112,7 +94,7 @@ class UrbitApi {
   }
 
   contactRemove(path, ship) {
-    this.contactAction({
+    this.contactViewAction({
       remove: {
         path, ship
       }
@@ -126,7 +108,7 @@ class UrbitApi {
     {phone: ''}
     {website: ''}
     {notes: ''}
-    {color: '0xfff'}
+    {color: 'fff'}  // with no 0x prefix
     {avatar: null}
     {avatar: {p: length, q: bytestream}}
     */

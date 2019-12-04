@@ -92,8 +92,8 @@
     ==
   ::
       %delete
-    :~  (group-poke [%bundle path.act])
-        (contact-poke [%create path.act])
+    :~  (group-poke [%unbundle path.act])
+        (contact-poke [%delete path.act])
     ==
   ::
       %add
