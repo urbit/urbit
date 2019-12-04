@@ -62,7 +62,7 @@
         `state
       :_  state(ships (~(put by ships.state) ship u.s(ship-state [%poking ~])))
       [%pass /ping-send/(scot %p ship) %agent [ship %ping] %poke %noun !>(~)]~
-    ::  +stop-ping-ship: stop ship if not sponsor or old rift
+    ::  +stop-ping-ship: stop listening to jael if not sponsor or old rift
     ::
     ++  stop-ping-ship
       |=  [our=@p now=@da =ship =old=rift =ship-state]
@@ -78,7 +78,11 @@
       ::
       :_  state(ships (~(del by ships.state) ship))
       [%pass /jael/(scot %p ship) %arvo %j %nuke (silt ship ~)]~
-    ::  +start-ping-ship: start pinging if not already
+    ::  +start-ping-ship: start listening to jael updates if not already
+    ::
+    ::    While %public-keys is idempotent in most senses, it does
+    ::    trigger a response, and this function is called on that
+    ::    response, so we need a guard to avoid an infinite loop.
     ::
     ++  start-ping-ship
       |=  [our=@p now=@da =ship]
