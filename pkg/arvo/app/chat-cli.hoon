@@ -351,7 +351,7 @@
       %det  (edit +.dat.act)
       %clr  [~ all-state]
       %ret  obey
-      %tab  (tab +.act)
+      %tab  (tab +.dat.act)
     ==
   ::  +tab-list: static list of autocomplete entries
   ++  tab-list
@@ -401,14 +401,14 @@
     ==
   ++  tab
     |=  pos=@ud
-    ^-  (quip move _this)
+    ^-  (quip card state)
     ?.  =(';' (snag 0 buf.state.cli))
-      [~ this]
+      [~ all-state]
     =+  (get-id:auto pos (tufa buf.state.cli))
     =/  needle=term
       (fall id '')
     ?:  &(!=(pos 1) =(0 (met 3 needle)))
-      [~ this]  :: autocomplete empty command iff user at start of command
+      [~ all-state]  :: autocomplete empty command iff user at start of command
     =/  options=(list (option:auto tank))
       (search-prefix:auto needle tab-list)
     =/  advance=term
@@ -417,13 +417,13 @@
       (trip (rsh 3 (met 3 needle) advance))
     =/  send-pos
       (add pos (met 3 (fall forward '')))
-    =|  moves=(list move)
+    =|  moves=(list card)
     =?  moves  ?=(^ options)
       [(tab:sh-out options) moves]
     =|  fxs=(list sole-effect:sole-sur)
     |-
     ?~  to-send
-      [(flop moves) this]
+      [(flop moves) all-state]
     =^  char  state.cli
       (~(transmit sole-lib state.cli) [%ins send-pos `@c`i.to-send])
     %_  $
