@@ -82,7 +82,7 @@
     ^-  (quip card _this)
     :-  [connect:tc]~
     %_  this
-      audience  [[our-self /] ~ ~]
+      audience  [[our-self:tc /] ~ ~]
       settings  (sy %showtime %notify ~)
       width  80
     ==
