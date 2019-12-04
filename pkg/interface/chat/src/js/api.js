@@ -190,10 +190,19 @@ class UrbitApi {
     });
   }
 
-  storeState(state) {
-    store.setState(state);
+  sidebarToggle() {
+    let sidebarBoolean = true;
+    if (store.state.sidebarShown === true) {
+      sidebarBoolean = false;
+    }
+    store.handleEvent({
+      data: {
+        local: {
+          'sidebarToggle': sidebarBoolean
+        }
+      }
+    });
   }
-
 }
 
 export let api = new UrbitApi();
