@@ -96,7 +96,7 @@
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
       [~ %agent * %fact *]
-    ?.  =(watch+wire (scag (lent wire) wire.u.in.tin))
+    ?.  =(watch+wire (scag +((lent wire)) wire.u.in.tin))
       `[%skip ~]
     `[%done (slag (lent wire) wire.u.in.tin) cage.sign.u.in.tin]
   ==

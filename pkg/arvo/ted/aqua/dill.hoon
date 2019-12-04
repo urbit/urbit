@@ -30,7 +30,7 @@
   ~
 --
 ::
-%-  aqua-vane-thread
+%+  aqua-vane-thread  ~[%blit]
 |_  =bowl:spider
 +*  this  .
 ++  handle-unix-effect

@@ -127,6 +127,9 @@
     |-  ^-  (quip card _this)
     ?~  yarns
       `this
+    ?.  ?=([@ ~] i.yarns)
+      $(yarns t.yarns)
+    ~|  killing=i.yarns
     =^  cards-1  state
       (handle-stop-thread:sc (yarn-to-tid i.yarns) |)
     =^  cards-2  this
@@ -136,6 +139,8 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?:  ?=(%spider-kill mark)
+      (on-load on-save)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
         %spider-input  (on-poke-input:sc !<(input vase))

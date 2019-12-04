@@ -71,7 +71,8 @@
     ?~  array
       ~&  %incomplete-batch
       (strand-fail:strandio %rpc-result-incomplete-batch >u.jon< ~)
-    =-  ?~  err  (pure:m `res)
+    =-  ?~  err
+          (pure:m `res)
         ~&  [%error-results err]
         (pure:m ~)
     %+  roll  u.array

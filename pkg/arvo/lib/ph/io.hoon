@@ -11,7 +11,7 @@
 ++  take-unix-effect
   =/  m  (strand ,[ship unix-effect])
   ^-  form:m
-  ;<  =cage  bind:m  (take-fact /effects)
+  ;<  [=path =cage]  bind:m  (take-fact-prefix /effect)
   ?>  ?=(%aqua-effect p.cage)
   (pure:m !<([aqua-effect] q.cage))
 ::
@@ -35,7 +35,7 @@
   ^-  form:m
   ~&  >  "starting"
   ;<  ~  bind:m  (start-threads vane-threads)
-  ;<  ~  bind:m  (watch-our /effects %aqua /effect)
+  ;<  ~  bind:m  (watch-our /effect %aqua /effect)
   ::  Get our very own event with no mistakes in it... yet.
   ::
   ::  We want to wait for the vane threads to actually start and get
@@ -55,7 +55,7 @@
   ^-  form:m
   ~&  >  "done"
   ;<  ~  bind:m  (stop-threads vane-threads)
-  ;<  ~  bind:m  (leave-our /effects %aqua)
+  ;<  ~  bind:m  (leave-our /effect %aqua)
   (pure:m ~)
 ::
 ++  start-threads

@@ -85,7 +85,7 @@
   --
 --
 ::
-%-  aqua-vane-thread
+%+  aqua-vane-thread  ~[%sleep %restore %doze]
 |_  =bowl:spider
 +*  this  .
 ++  handle-unix-effect

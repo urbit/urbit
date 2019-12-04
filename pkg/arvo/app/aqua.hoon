@@ -78,6 +78,8 @@
     ^-  step:agent:gall
     ?:  ?=([?(%effects %effect) ~] path)
       `this
+    ?:  ?=([%effect @ ~] path)
+      `this
     ?.  ?=([?(%effects %effect %evens %boths) @ ~] path)
       ~|  [%aqua-bad-subscribe-path path]
       !!
@@ -251,9 +253,12 @@
     %-  zing
     %+  turn  ~(tap by unix-effects)
     |=  [=ship ufs=(list unix-effect)]
+    %-  zing
     %+  turn  ufs
     |=  uf=unix-effect
-    [%give %fact `path %aqua-effect !>(`aqua-effect`[ship uf])]
+    :~  [%give %fact `/effect %aqua-effect !>(`aqua-effect`[ship uf])]
+        [%give %fact `/effect/[-.q.uf] %aqua-effect !>(`aqua-effect`[ship uf])]
+    ==
   ::
   =.  this
     =/  =path  /effects

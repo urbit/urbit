@@ -48,7 +48,7 @@
   [%| `address:ames``@`ship]
 --
 ::
-%-  aqua-vane-thread
+%+  aqua-vane-thread  ~[%restore %send]
 |_  =bowl:spider
 +*  this  .
 ++  handle-unix-effect

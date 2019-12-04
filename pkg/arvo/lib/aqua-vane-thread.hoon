@@ -16,12 +16,16 @@
 --
 ::
 =;  core
-  |=  handler=vane-handler
+  |=  [effect-filter=(list term) handler=vane-handler]
   ^-  thread:spider
   |=  vase
   =/  m  (strand ,vase)
   ^-  form:m
-  ;<  ~  bind:m  (watch-our:strandio /effects %aqua /effect)
+  =*  loop  $
+  ?^  effect-filter
+    =/  =path  /effect/[i.effect-filter]
+    ;<  ~  bind:m  (watch-our:strandio path %aqua path)
+    loop(effect-filter t.effect-filter)
   ;<  ~  bind:m
     %-  (main-loop:strandio ,_handler)
     :~  handle-unix-effect:core

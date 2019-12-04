@@ -22,7 +22,10 @@
   |=  args=vase
   =/  m  (strand ,vase)
   ^-  form:m
-  ;<  ~  bind:m  (watch-our:strandio /effects %aqua /effect)
+  ;<  ~  bind:m  (watch-our:strandio /effect/request %aqua /effect/request)
+  ::  need blits for raw-ship to check booted
+  ::
+  ;<  ~  bind:m  (watch-our:strandio /effect/blit %aqua /effect/blit)
   ;<  ~  bind:m
     %-  (main-loop:strandio ,state)
     :~  |=(=state ~(handle-unix-effect core state))
