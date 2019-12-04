@@ -37,8 +37,8 @@ export class NewScreen extends Component {
 
   render() {
     return (
-      <div className="h-100 w-100 flex flex-column">
-        <div className="w-100 w-50-l w-50-xl">
+      <div className="h-100 w-100 flex flex-column overflow-y-scroll">
+        <div className="w-100 w-50-l w-50-xl mb4">
           <h2 className="f8 pl3 pt4">Create New Group</h2>
           <h2 className="f8 pl3 pt6">Group Name</h2>
           <p className="f9 pl3 gray2 lh-copy">Alphanumeric characters only</p>

@@ -34,7 +34,7 @@ export class Root extends Component {
         <Route exact path="/~contacts"
           render={ (props) => {
             return (
-              <Skeleton activeDrawer="groups">
+              <Skeleton activeDrawer="groups" contacts={state.contacts}>
                 <div className="h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"></div>
               </Skeleton>
             );
@@ -44,6 +44,7 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={this.state.spinner}
+                  contacts={state.contacts}
                   activeDrawer="rightPanel">
                   <NewScreen />
                 </Skeleton>
