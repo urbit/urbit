@@ -894,9 +894,15 @@
         [~ larval-gate]
       ::  if crashed, print, dequeue, and set next drainage timer
       ::
-      ::    TODO: cleanup duplicate iteration logic
-      ::
       ?^  error.sign
+        ::  .queued-events should never be ~ here, but if it is, don't crash
+        ::
+        ?:  =(~ queued-events)
+          =/  =tang  [leaf/"ames: cursed metamorphosis" u.error.sign]
+          =/  moves  [duct %pass /larva-crash %d %flog %crud %larva tang]~
+          [moves adult-gate]
+        ::  dequeue and discard crashed event
+        ::
         =.  queued-events  +:~(get to queued-events)
         ::  .queued-events has been cleared; metamorphose
         ::
