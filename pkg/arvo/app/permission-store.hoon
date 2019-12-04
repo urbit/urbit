@@ -1,79 +1,95 @@
-::  permission-store: data store for keeping track of permissions
-::  permissions are white lists or black lists of ships
+::  permission-store: track black- and whitelists of ships
 ::
 /-  *permission-store
+/+  default-agent
 ::
 |%
-+$  move  [bone [%diff diff]]
++$  card  card:agent:gall
 ::
-+$  diff
-  $%  [%permission-initial =permission-map]
-      [%permission-update =permission-update]
++$  versioned-state
+  $%  state-zero
   ==
 ::
-+$  state
-  $:  permissions=permission-map
++$  state-zero
+  $:  %0
+      permissions=permission-map
   ==
 --
+=|  state-zero
+=*  state  -
+^-  agent:gall
+=<
+  |_  =bowl:gall
+  +*  this             .
+      permission-core  +>
+      pc               ~(. permission-core bowl)
+      def              ~(. (default-agent this %|) bowl)
+  ::
+  ++  on-init  on-init:def
+  ++  on-save  !>(state)
+  ++  on-load
+    |=  old=vase
+    `this(state !<(state-zero old))
+  ::
+  ++  on-poke
+    |=  [=mark =vase]
+    ^-  (quip card _this)
+    ?>  (team:title our.bowl src.bowl)
+    =^  cards  state
+      ?:  ?=(%permission-action mark)
+        (poke-permission-action:pc !<(permission-action vase))
+      (on-poke:def mark vase)
+    [cards this]
+  ::
+  ++  on-watch
+    |=  =path
+    ^-  (quip card _this)
+    ?>  (team:title our.bowl src.bowl)
+    |^
+    =/  cards=(list card)
+      ?+  path  (on-watch:def path)
+          [%all ~]            (give %permission-initial !>(permissions))
+          [%updates ~]        ~
+          [%permission @ *]
+        =/  =vase  !>([%create t.path (~(got by permissions) t.path)])
+        (give %permission-update vase)
+      ==
+    [cards this]
+    ::
+    ++  give
+      |=  =cage
+      ^-  (list card)
+      [%give %fact ~ cage]~
+    --
+  ::
+  ++  on-leave  on-leave:def
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?+    path  (on-peek:def path)
+        [%x %keys ~]         ``noun+!>(~(key by permissions))
+        [%x %permission *]
+      ?~  t.t.path  ~
+      ``noun+!>((~(get by permissions) t.t.path))
+    ::
+        [%x %permitted @ *]
+      ?~  t.t.t.path  ~
+      =/  pem  (~(get by permissions) t.t.t.path)
+      ?~  pem  ~
+      =/  who  (slav %p i.t.t.path)
+      =/  has  (~(has in who.u.pem) who)
+      ``noun+!>(?-(kind.u.pem %black !has, %white has))
+    ==
+  ++  on-agent  on-agent:def
+  ++  on-arvo   on-arvo:def
+  ++  on-fail   on-fail:def
+  --
 ::
-|_  [bol=bowl:gall %v0 state]
-::
-++  this  .
-::
-::  gall interface
-::
-++  peer-all
-  |=  =path
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  ::  we now proxy all events to this path
-  :_  this
-  [ost.bol %diff %permission-initial permissions]~
-::
-++  peer-updates
-  |=  =path
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  ::  we now proxy all events to this path
-  [~ this]
-::
-++  peer-permission
-  |=  =path
-  ^-  (quip move _this)
-  ?~  path  !!
-  ?>  (team:title our.bol src.bol)
-  ?>  (~(has by permissions) path)
-  :_  this
-  [ost.bol %diff %permission-update [%create path (~(got by permissions) path)]]~
-::
-++  peek-x-keys
-  |=  pax=path
-  ^-  (unit (unit [%noun (set path)]))
-  [~ ~ %noun ~(key by permissions)]
-::
-++  peek-x-permission
-  |=  =path
-  ^-  (unit (unit [%noun (unit permission)]))
-  ?~  path
-    ~
-  [~ ~ %noun (~(get by permissions) path)]
-::
-++  peek-x-permitted
-  |=  =path
-  ^-  (unit (unit [%noun ?]))
-  ?~  path
-    ~
-  =/  pem  (~(get by permissions) t.path)
-  ?~  pem
-    ~
-  =/  who  (slav %p i.path)
-  =/  has  (~(has in who.u.pem) who)
-  :^  ~  ~  %noun
-  ?-(kind.u.pem %black !has, %white has)
+|_  bol=bowl:gall
 ::
 ++  poke-permission-action
   |=  action=permission-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  (team:title our.bol src.bol)
   ?-  -.action
       %add     (handle-add action)
@@ -86,99 +102,96 @@
 ::
 ++  handle-add
   |=  act=permission-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  ?=(%add -.act)
   ?~  path.act
-    [~ this]
+    [~ state]
   ::  TODO: calculate diff
   ::  =+  new=(~(dif in who.what.action) who.u.pem)
   ::  ?~(new ~ `what.action(who new))
   ?.  (~(has by permissions) path.act)
-    [~ this]
+    [~ state]
   :-  (send-diff path.act act)
   =/  perm  (~(got by permissions) path.act)
   =.  who.perm  (~(uni in who.perm) who.act)
-  this(permissions (~(put by permissions) path.act perm))
+  state(permissions (~(put by permissions) path.act perm))
 ::
 ++  handle-remove
   |=  act=permission-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  ?=(%remove -.act)
   ?~  path.act
-    [~ this]
+    [~ state]
   ?.  (~(has by permissions) path.act)
-    [~ this]
+    [~ state]
   =/  perm  (~(got by permissions) path.act)
   =.  who.perm  (~(dif in who.perm) who.act)
   ::  TODO: calculate diff
   ::  =+  new=(~(int in who.what.action) who.u.pem)
   ::  ?~(new ~ `what.action(who new))
   :-  (send-diff path.act act)
-  this(permissions (~(put by permissions) path.act perm))
+  state(permissions (~(put by permissions) path.act perm))
 ::
 ++  handle-create
   |=  act=permission-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  ?=(%create -.act)
   ?~  path.act
-    [~ this]
+    [~ state]
   ?:  (~(has by permissions) path.act)
-    [~ this]
+    [~ state]
   :: TODO: calculate diff
   :-  (send-diff path.act act)
-  this(permissions (~(put by permissions) path.act permission.act))
+  state(permissions (~(put by permissions) path.act permission.act))
 ::
 ++  handle-delete
   |=  act=permission-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  ?=(%delete -.act)
   ?~  path.act
-    [~ this]
+    [~ state]
   ?.  (~(has by permissions) path.act)
-    [~ this]
+    [~ state]
   :-  (send-diff path.act act)
-  this(permissions (~(del by permissions) path.act))
+  state(permissions (~(del by permissions) path.act))
 ::
 ++  handle-allow
   |=  act=permission-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  ?=(%allow -.act)
   ?~  path.act
-    [~ this]
+    [~ state]
   =/  perm  (~(get by permissions) path.act)
   ?~  perm
-    [~ this]
+    [~ state]
   ?:  =(kind.u.perm %white)
     (handle-add [%add +.act])
   (handle-remove [%remove +.act])
 ::
 ++  handle-deny
   |=  act=permission-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  ?=(%deny -.act)
   ?~  path.act
-    [~ this]
+    [~ state]
   =/  perm  (~(get by permissions) path.act)
   ?~  perm
-    [~ this]
+    [~ state]
   ?:  =(kind.u.perm %black)
     (handle-add [%add +.act])
   (handle-remove [%remove +.act])
 ::
 ++  update-subscribers
   |=  [pax=path upd=permission-update]
-  ^-  (list move)
-  %+  turn  (prey:pubsub:userlib pax bol)
-  |=  [=bone *]
-  [bone %diff %permission-update upd]
+  ^-  (list card)
+  [%give %fact `pax %permission-update !>(upd)]~
 ::
 ++  send-diff
   |=  [pax=path upd=permission-update]
-  ^-  (list move)
+  ^-  (list card)
   %-  zing
   :~  (update-subscribers /all upd)
       (update-subscribers /updates upd)
       (update-subscribers [%permission pax] upd)
   ==
-::
 --

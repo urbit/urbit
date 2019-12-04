@@ -1,12 +1,10 @@
 ::  ethio: Asynchronous Ethereum input/output functions.
 ::.
-/+  stdio
+/+  strandio
 =,  ethereum-types
 =,  able:jael
 ::
-|*  [out-poke-data=mold out-peer-data=mold]
 =>  |%
-    ++  stdio   (^stdio out-poke-data out-peer-data)
     +$  topics  (list ?(@ux (list @ux)))
     --
 |%
@@ -14,60 +12,52 @@
 ::
 ++  request-rpc
   |=  [url=@ta id=(unit @t) req=request:rpc:ethereum]
-  =/  m  (async:stdio ,json)
+  =/  m  (strand:strandio ,json)
   ^-  form:m
-  |^  %+  (retry json)  `10
-      =/  m  (async:stdio ,(unit json))
-      ^-  form:m
-      =/  =request:http
-        :*  method=%'POST'
-            url=url
-            header-list=['Content-Type'^'application/json' ~]
-            ^=  body
-            %-  some  %-  as-octt:mimes:html
-            %-  en-json:html
-            (request-to-json:rpc:ethereum id req)
-        ==
-      ;<  ~  bind:m  (send-request:stdio request)
-      ;<  rep=(unit client-response:iris)  bind:m
-        take-maybe-response:stdio
-      ?~  rep
-        (pure:m ~)
-      (parse-response u.rep)
+  ;<  res=(list [id=@t =json])  bind:m
+    (request-batch-rpc-strict url [id req]~)
+  ?:  ?=([* ~] res)
+    (pure:m json.i.res)
+  ~|  [%ethio %unexpected-results (lent res)]
+  !!
+::  +request-batch-rpc-strict: send rpc request, with retry
+::
+::    sends a batch requests. produces results for all requests in the batch,
+::    but only if all of them are successful.
+::
+++  request-batch-rpc-strict
+  |=  [url=@ta reqs=(list [id=(unit @t) req=request:rpc:ethereum])]
+  |^  %+  (retry:strandio results)
+        `10
+      attempt-request
   ::
-  ++  retry
-    |*  result=mold
-    |=  [crash-after=(unit @ud) computation=_*form:(async:stdio (unit result))]
-    =/  m  (async:stdio ,result)
-    =|  try=@ud
-    |^  |-  ^-  form:m
-        =*  loop  $
-        ?:  =(crash-after `try)
-          (async-fail:stdio %retry-too-many ~)
-        ;<  ~                  bind:m  (backoff try ~m1)
-        ;<  res=(unit result)  bind:m  computation
-        ?^  res
-          (pure:m u.res)
-        loop(try +(try))
-    ::
-    ++  backoff
-      |=  [try=@ud limit=@dr]
-      =/  m  (async:stdio ,~)
-      ^-  form:m
-      ;<  eny=@uvJ  bind:m  get-entropy:stdio
-      ;<  now=@da   bind:m  get-time:stdio
-      %-  wait:stdio
-      %+  add  now
-      %+  min  limit
-      ?:  =(0 try)  ~s0
-      %+  add
-        (mul ~s1 (bex (dec try)))
-      (mul ~s0..0001 (~(rad og eny) 1.000))
-    --
+  +$  result   [id=@t =json]
+  +$  results  (list result)
   ::
-  ++  parse-response
+  ++  attempt-request
+    =/  m  (strand:strandio ,(unit results))
+    ^-  form:m
+    =/  =request:http
+      :*  method=%'POST'
+          url=url
+          header-list=['Content-Type'^'application/json' ~]
+        ::
+          ^=  body
+          %-  some  %-  as-octt:mimes:html
+          %-  en-json:html
+          a+(turn reqs request-to-json:rpc:ethereum)
+      ==
+    ;<  ~  bind:m
+      (send-request:strandio request)
+    ;<  rep=(unit client-response:iris)  bind:m
+      take-maybe-response:strandio
+    ?~  rep
+      (pure:m ~)
+    (parse-responses u.rep)
+  ::
+  ++  parse-responses
     |=  =client-response:iris
-    =/  m  (async:stdio ,(unit json))
+    =/  m  (strand:strandio ,(unit results))
     ^-  form:m
     ?>  ?=(%finished -.client-response)
     ?~  full-file.client-response
@@ -76,20 +66,24 @@
     =/  jon=(unit json)  (de-json:html body)
     ?~  jon
       (pure:m ~)
-    =,  dejs-soft:format
     =/  array=(unit (list response:rpc:jstd))
-      ((ar parse-one-response) u.jon)
+      ((ar:dejs-soft:format parse-one-response) u.jon)
     ?~  array
-      =/  res=(unit response:rpc:jstd)  (parse-one-response u.jon)
-      ?~  res
-        (async-fail:stdio %request-rpc-parse-error >id< ~)
-      ?:  ?=(%error -.u.res)
-        (async-fail:stdio %request-rpc-error >id< >+.res< ~)
-      ?.  ?=(%result -.u.res)
-        (async-fail:stdio %request-rpc-fail >u.res< ~)
-      (pure:m `res.u.res)
-    (async-fail:stdio %request-rpc-batch >%not-implemented< ~)
-    ::  (pure:m `[%batch u.array])
+      ~&  %incomplete-batch
+      (strand-fail:strandio %rpc-result-incomplete-batch >u.jon< ~)
+    =-  ?~  err
+          (pure:m `res)
+        ~&  [%error-results err]
+        (pure:m ~)
+    %+  roll  u.array
+    |=  $:  rpc=response:rpc:jstd
+            [res=results err=(list [id=@t code=@t message=@t])]
+        ==
+    ?:  ?=(%error -.rpc)
+      [res [+.rpc err]]
+    ?.  ?=(%result -.rpc)
+      [res [['' 'ethio-rpc-fail' (crip <rpc>)] err]]
+    [[+.rpc res] err]
   ::
   ++  parse-one-response
     |=  =json
@@ -109,19 +103,19 @@
 ::
 ++  read-contract
   |=  [url=@t proto-read-request:rpc:ethereum]
-  =/  m  (async:stdio ,@t)
+  =/  m  (strand:strandio ,@t)
   ;<  =json  bind:m
     %^  request-rpc  url  id
     :+  %eth-call
       ^-  call:rpc:ethereum
       [~ to ~ ~ ~ `tape`(encode-call:rpc:ethereum function arguments)]
     [%label %latest]
-  ?.  ?=(%s -.json)  (async-fail:stdio %request-rpc-fail >json< ~)
+  ?.  ?=(%s -.json)  (strand-fail:strandio %request-rpc-fail >json< ~)
   (pure:m p.json)
 ::
 ++  get-latest-block
   |=  url=@ta
-  =/  m  (async:stdio ,block)
+  =/  m  (strand:strandio ,block)
   ^-  form:m
   ;<  =json  bind:m
     (request-rpc url `'block number' %eth-block-number ~)
@@ -129,7 +123,7 @@
 ::
 ++  get-block-by-number
   |=  [url=@ta =number:block]
-  =/  m  (async:stdio ,block)
+  =/  m  (strand:strandio ,block)
   ^-  form:m
   |^
   ;<  =json  bind:m
@@ -138,7 +132,7 @@
     [%eth-get-block-by-number number |]
   =/  =block  (parse-block json)
   ?.  =(number number.id.block)
-    (async-fail:stdio %reorg-detected >number< >block< ~)
+    (strand-fail:strandio %reorg-detected >number< >block< ~)
   (pure:m block)
   ::
   ++  parse-block
@@ -158,7 +152,7 @@
 ::
 ++  get-logs-by-hash
   |=  [url=@ta =hash:block contracts=(list address) =topics]
-  =/  m  (async:stdio (list event-log:rpc:ethereum))
+  =/  m  (strand:strandio (list event-log:rpc:ethereum))
   ^-  form:m
   ;<  =json  bind:m
     %+  request-rpc  url
@@ -178,7 +172,7 @@
           =from=number:block
           =to=number:block
       ==
-  =/  m  (async:stdio (list event-log:rpc:ethereum))
+  =/  m  (strand:strandio (list event-log:rpc:ethereum))
   ^-  form:m
   ;<  =json  bind:m
     %+  request-rpc  url

@@ -118,25 +118,6 @@
       [%config (conf config.mailbox)]
   ==
 ::
-++  two-update-to-json
-  |=  upd=chat-two-update
-  =,  enjs:format
-  ^-  json
-  %+  frond  %chat-update
-  %-  pairs
-  :~
-    ?:  =(%messages -.upd)
-      ?>  ?=(%messages -.upd)
-      :-  %messages
-      %-  pairs
-      :~  [%path (path path.upd)]
-          [%start (numb start.upd)]
-          [%end (numb end.upd)]
-          [%envelopes [%a (turn envelopes.upd enve)]]
-      ==
-    [*@t *^json]
-  ==
-::
 ++  update-to-json
   |=  upd=chat-update
   =,  enjs:format
@@ -144,28 +125,31 @@
   %+  frond  %chat-update
   %-  pairs
   :~
-    ?:  =(%message -.upd)
-      ?>  ?=(%message -.upd)
+    ?:  ?=(%message -.upd)
       :-  %message
       %-  pairs
       :~  [%path (path path.upd)]
           [%envelope (enve envelope.upd)]
       ==
-    ?:  =(%read -.upd)
-      ?>  ?=(%read -.upd)
+    ?:  ?=(%messages -.upd)
+      :-  %messages
+      %-  pairs
+      :~  [%path (path path.upd)]
+          [%start (numb start.upd)]
+          [%end (numb end.upd)]
+          [%envelopes [%a (turn envelopes.upd enve)]]
+      ==
+    ?:  ?=(%read -.upd)
       [%read (pairs [%path (path path.upd)]~)]
-    ?:  =(%create -.upd)
-      ?>  ?=(%create -.upd)
+    ?:  ?=(%create -.upd)
       :-  %create
       %-  pairs
       :~  [%ship (ship ship.upd)]
           [%path (path path.upd)]
       ==
-    ?:  =(%delete -.upd)
-      ?>  ?=(%delete -.upd)
+    ?:  ?=(%delete -.upd)
       [%delete (pairs [%path (path path.upd)]~)]
-    ?:  =(%config -.upd)
-      ?>  ?=(%config -.upd)
+    ?:  ?=(%config -.upd)
       :-  %config
       %-  pairs
       :~  [%path (path path.upd)]
@@ -270,4 +254,3 @@
     (su (perk %channel %village %journal %mailbox ~))
   --
 --
-

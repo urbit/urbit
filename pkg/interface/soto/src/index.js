@@ -5,7 +5,8 @@ import { api } from '/api';
 import { subscription } from "/subscription";
 
 api.setAuthTokens({
-  ship: window.ship
+  ship: window.ship,
+  dojoId: "soto-" + Math.random().toString(36).substring(2),
 });
 
 subscription.start();

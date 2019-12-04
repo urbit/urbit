@@ -15,7 +15,7 @@ worker_objs = $(shell echo $(worker) | sed 's/\.c/.o/g')
 
 all_objs = $(common_objs) $(daemon_objs) $(worker_objs)
 all_srcs = $(common) $(daemon) $(worker)
-all_exes = ./build/mug_tests ./build/jam_tests \
+all_exes = ./build/ames_tests ./build/mug_tests ./build/jam_tests \
 	./build/noun_tests ./build/hashtable_tests \
 	./build/urbit ./build/urbit-worker
 
@@ -31,7 +31,8 @@ CFLAGS := $(CFLAGS)
 
 all: $(all_exes)
 
-test: build/hashtable_tests build/jam_tests build/mug_tests build/noun_tests
+test: build/ames_tests build/hashtable_tests build/jam_tests build/mug_tests build/noun_tests
+	./build/ames_tests
 	./build/hashtable_tests
 	./build/jam_tests
 	./build/mug_tests
@@ -44,6 +45,11 @@ mrproper: clean
 	rm -f config.mk include/config.h
 
 ################################################################################
+
+build/ames_tests: $(common_objs) tests/ames_tests.o
+	@echo CC -o $@
+	@mkdir -p ./build
+	@$(CC) $^ $(LDFLAGS) -o $@
 
 build/hashtable_tests: $(common_objs) tests/hashtable_tests.o
 	@echo CC -o $@

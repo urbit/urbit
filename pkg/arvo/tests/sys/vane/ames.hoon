@@ -1,176 +1,231 @@
 /+  *test
+/=  ames  /:  /===/sys/vane/ames
+          /!noun/
+::  construct some test fixtures
 ::
-/=  ames-raw  /:  /===/sys/vane/ames
-              /!noun/
-=/  type-spear  -:!>(ames-raw)
+=/  vane  (ames !>(..zuse))
 ::
-=/  test-pit=vase  !>(.)
-=/  ames-gate  (ames-raw test-pit)
+=/  nec  vane
+=/  bud  vane
+::
+=.  our.nec        ~nec
+=.  now.nec        ~1111.1.1
+=.  eny.nec        0xdead.beef
+=.  scry-gate.nec  |=(* ``[%noun !>(*(list turf))])
+::
+=.  our.bud          ~bud
+=.  now.bud          ~1111.1.1
+=.  eny.bud          0xbeef.dead
+=.  scry-gate.bud    |=(* ``[%noun !>(*(list turf))])
+::
+=.  crypto-core.ames-state.nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
+=.  crypto-core.ames-state.bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
+::
+=/  nec-pub  pub:ex:crypto-core.ames-state.nec
+=/  nec-sec  sec:ex:crypto-core.ames-state.nec
+=/  bud-pub  pub:ex:crypto-core.ames-state.bud
+=/  bud-sec  sec:ex:crypto-core.ames-state.bud
+::
+=/  nec-sym  (derive-symmetric-key:vane bud-pub nec-sec)
+=/  bud-sym  (derive-symmetric-key:vane nec-pub bud-sec)
+::
+?>  =(nec-sym bud-sym)
+::
+=.  life.ames-state.nec  2
+=.  peers.ames-state.nec
+  %+  ~(put by peers.ames-state.nec)  ~bud
+  =|  =peer-state:ames
+  =.  -.peer-state
+    :*  symmetric-key=bud-sym
+        life=3
+        public-key=bud-pub
+        sponsor=~nec
+    ==
+  =.  route.peer-state  `[direct=%.y `lane:ames`[%& ~nec]]
+  [%known peer-state]
+::
+=.  life.ames-state.bud  3
+=.  peers.ames-state.bud
+  %+  ~(put by peers.ames-state.bud)  ~nec
+  =|  =peer-state:ames
+  =.  -.peer-state
+    :*  symmetric-key=nec-sym
+        life=2
+        public-key=nec-pub
+        sponsor=~nec
+    ==
+  =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`%lane-bar]]
+  [%known peer-state]
+::  metamorphose
+::
+=>  .(nec +:(call:(nec) ~[//unix] ** %born ~))
+=>  .(bud +:(call:(bud) ~[//unix] ** %born ~))
+::  helper core
+::
+=>
+|%
+++  move-to-packet
+  |=  =move:ames
+  ^-  [=lane:ames =blob:ames]
+  ::
+  ?>  ?=([%give %send *] +.move)
+  [lane blob]:+>+.move
+::
+++  is-move-send
+  |=  =move:ames
+  ^-  ?
+  ?=([%give %send *] card.move)
+::
+++  snag-packet
+  |=  [index=@ud moves=(list move:ames)]
+  ^-  [=lane:ames =blob:ames]
+  ::
+  %-  move-to-packet
+  %+  snag  index
+  (skim moves is-move-send)
+::
+++  call
+  |=  [vane=_nec =duct =task:ames]
+  ^-  [moves=(list move:ames) _nec]
+  ::
+  =/  vane-core  (vane(now `@da`(add ~s1 now.vane)))
+  ::
+  (call:vane-core duct ** task)
+::
+++  take
+  |=  [vane=_nec =wire =duct =sign:ames]
+  ^-  [moves=(list move:ames) _nec]
+  ::
+  =/  vane-core  (vane(now `@da`(add ~s1 now.vane)))
+  ::
+  (take:vane-core wire duct ** sign)
+--
+::  test core
 ::
 |%
-::  tests that %ames asks for private keys on %init
-::
-++  test-init
-  =^  results1  ames-gate
-    =/  =duct  [/ /term/1 / ~]
-    =/  =wire  /our/~nul
-    %:  ames-call
-      ames-gate
-      now=~1234.5.6
-      call-args=[duct type=*type %soft %init ~nul]
-      expected-moves=[[duct %pass wire %j %private-keys ~] [duct %pass / %j %turf ~] ~]
+++  test-packet-encoding  ^-  tang
+  ::
+  =/  =packet:ames
+    :*  [sndr=~nec rcvr=~bud]
+        encrypted=%.n
+        origin=~
+        content=[12 13]
     ==
   ::
-  results1
-::  XX disabled for now as test depends on %ames protocol version
+  =/  encoded  (encode-packet:vane packet)
+  =/  decoded  (decode-packet:vane encoded)
+  ::
+  %+  expect-eq
+    !>  packet
+    !>  decoded
 ::
-::  tests that %ames sends a message to itself
-::
-:: ++  test-send
-::   =/  now  ~1234.5.6
-::   =/  =duct  [/ /term/1 / ~]
-::   =/  =wire  /our/~nul
-::   =/  pact1
-::     0wHfb.1hdCh.0oxed.Ta7-f.4IIDV.4ku6J.PoJe7.AiyMS.w~mfu.V04ja.iXj8d.E3nq7.
-::     gcW-a.0II6T.vb5zH.FHEkp.J7wgT.XTnuu.KaUiu.xZ6dg.qgWSH.3ovaO.dETNQ.5YAOR.
-::     Lw8Mj.iQCrM.-TcjY.gFysP.XCfdx.52ack.MN~yA.0CNFU.0eL1M.Un-ey.CZyf9.Omk2p.
-::     -Wbar.-w2bs.02sNg.340cg.okHUP
-::   =/  pact2
-::         0w78EWp.7898D.odZ3b.7iLvr.vyjzn.XBNaN.vxTZj.b4BFp.EHHvW.IjvpB.j0~87.
-::     t06D0.SbrGK.QlIeE.1Xj1v.CX~YY.c9cAE.eUPSb.gj8-M.e15TJ.EPPXN.efms-.8y9og.
-::     IdyLr.lkZJ5.KMB-F.S7mwd.t5rmo.CEYCp.3zC4n.HYh2T.RgVI8.0eT1z.Jxj9c.m1Sm5.
-::     SaYrP.0LKO3.-w2cA.02sNg.340cg.oi9Nj
-::   =/  vein-data
-::     [life=1 (my [1 sec:ex:(pit:nu:crub:crypto 512 ~nul)] ~)]
-::   ::
-::   =^  results1  ames-gate
-::     %:  ames-call
-::       ames-gate
-::       now
-::       call-args=[duct type=*type %soft [%barn ~]]
-::       expected-moves=[[duct %give %turf ~] ~]
-::     ==
-::   ::
-::   =.  now  (add ~m1 now)
-::   :: ~&  [%fox1 now fox.ames-gate]
-::   =^  results2  ames-gate
-::     %:  ames-take
-::       ames-gate
-::       now
-::       take-args=[wire duct -:!>([%j %private-keys vein-data]) [%j %private-keys vein-data]]
-::       expected-moves=~
-::     ==
-::   ::
-::   =.  now  (add ~m1 now)
-::   :: ~&  [%fox2 now fox.ames-gate]
-::   =^  results3  ames-gate
-::     %:  ames-call
-::       ames-gate
-::       now
-::       call-args=[duct type=*type %soft [%want ~nul /foo 1]]
-::       :~  [duct %pass /pubs/~nul %j %public-keys (silt ~nul ~)]
-::           [duct %give %send *lane:ames pact1]
-::           ::  XX why ~s4 ??
-::           ::
-::           [duct %pass /ames %b %wait (add ~s4 now)]
-::       ==
-::     ==
-::   ::
-::   =.  now  (add ~m1 now)
-::   :: ~&  [%fox3 now fox.ames-gate]
-::   =^  results4  ames-gate
-::     %:  ames-call
-::       ames-gate
-::       now
-::       call-args=[duct type=*type %soft [%want ~nul /foo 2]]
-::       expected-moves=[[duct %give %send *lane:ames pact2] ~]
-::     ==
-::   ::
-::   =.  now  (add ~m1 now)
-::   :: ~&  [%fox4 now fox.ames-gate]
-::   =^  results5  ames-gate
-::     %:  ames-take
-::       ames-gate
-::       now
-::       take-args=[wire duct -:!>([%b %wake ~]) [%b %wake ~]]
-::       :~  [duct %give %send *lane:ames pact1]
-::           [duct %give %send *lane:ames pact2]
-::           [duct %pass /ames %b %wait (add ~s8 now)]
-::       ==
-::     ==
-::   ::
-::   :: ~&  [%fox5 now fox.ames-gate]
-::   :(weld results1 results2 results3 results4 results5)
-::
-++  ames-scry
-  ^-  sley
-  |=  [* (unit (set monk)) =term =beam]
-  ^-  (unit (unit cage))
-  ?:  =(%turf q.beam)
-    (some (some %noun !>(~)))
+++  test-alien-encounter  ^-  tang
   ::
-  ?:  ?&  =(%life q.beam)
-          =(/~nul s.beam)
+  =/  lane-foo=lane:ames  [%| `@ux``@`%lane-foo]
+  ::
+  =/  =plea:ames  [%g /talk [%first %post]]
+  ::
+  =/  =shut-packet:ames
+    :*  sndr-life=4
+        rcvr-life=3
+        bone=1
+        message-num=1
+        [%& num-fragments=1 fragment-num=0 (jam plea)]
+    ==
+  ::
+  =/  =packet:ames
+    :*  [sndr=~bus rcvr=~bud]
+        encrypted=%.y
+        origin=~
+        content=(encrypt:vane nec-sym shut-packet)
+    ==
+  ::
+  =/  =blob:ames   (encode-packet:vane packet)
+  =^  moves1  bud  (call bud ~[//unix] %hear lane-foo blob)
+  =^  moves2  bud
+    =/  =point:ames
+      :*  rift=1
+          life=4
+          keys=[[life=4 [crypto-suite=1 `@`nec-pub]] ~ ~]
+          sponsor=`~bus
       ==
-    (some (some %atom !>(1)))
+    %-  take
+    :^  bud  /public-keys  ~[//unix]
+    ^-  sign:ames
+    [%j %public-keys %full [n=[~bus point] ~ ~]]
+  =^  moves3  bud  (call bud ~[//unix] %hear lane-foo blob)
   ::
-  ?:  ?&  =(%saxo q.beam)
-          =(/~nul s.beam)
-      ==
-    (some (some %noun !>([~nul ~])))
-  ::
-  ?:  ?&  =(%sein q.beam)
-          =(/~nul s.beam)
-      ==
-    (some (some %atom !>(~nul)))
-  ::
-  ?:  ?&  =(%deed q.beam)
-          =(/1/~nul s.beam)
-      ==
-    =/  =deed:ames
-      [life=1 pub:ex:(pit:nu:crub:crypto 512 ~nul) ~]
-    (some (some %noun !>(deed)))
-  ::
-  ~&  [%ames-scry-fail +<]
-  ~
-::
-++  ames-call
-  |=  $:  ames-gate=_ames-gate
-          now=@da
-          call-args=[=duct wrapped-task=(hypo (hobo task:able:ames-gate))]
-          expected-moves=(list move:ames-gate)
-      ==
-  ^-  [tang _ames-gate]
-  ::
-  =/  ames  (ames-gate our=~nul now=now eny=`@`0xdead.beef ames-scry)
-  ::
-  =^  moves  ames-gate
-    (call:ames call-args)
-  ::
-  =/  output=tang
+  ;:  weld
     %+  expect-eq
-      !>  expected-moves
-      !>  moves
+      !>  [~[//unix] %pass /public-keys %j %public-keys [~bus ~ ~]]~
+      !>  moves1
   ::
-  [output ames-gate]
-::
-++  ames-take
-  |=  $:  ames-gate=_ames-gate
-          now=@da
-          take-args=[=wire =duct wrapped-sign=(hypo sign:ames-gate)]
-          expected-moves=(list move:ames-gate)
-      ==
-  ^-  [tang _ames-gate]
-  ::
-  =/  ames  (ames-gate our=~nul now=now eny=`@`0xdead.beef ames-scry)
-  ::
-  =^  moves  ames-gate
-    (take:ames take-args)
-  ::
-  =/  output=tang
     %+  expect-eq
-      !>  expected-moves
-      !>  moves
+      !>  %-  sy
+          :~  :^  ~[//unix]  %pass  /bone/~bus/1
+              [%g %plea ~bus %g /talk [%first %post]]
+          ::
+              :^  ~[//unix]  %pass  /qos
+              [%d %flog %text "; ~bus is your neighbor"]
+          ==
+      !>  (sy ,.moves3)
+  ==
+::
+++  test-message-flow  ^-  tang
+  ::  ~nec -> %plea -> ~bud
   ::
-  [output ames-gate]
+  =^  moves1  nec  (call nec ~[/g/talk] %plea ~bud %g /talk [%get %post])
+  =^  moves2  bud  (call bud ~[//unix] %hear (snag-packet 0 moves1))
+  ::  ~bud -> %done -> ~nec
+  ::
+  =^  moves3  bud  (take bud /bone/~nec/1 ~[//unix] %g %done ~)
+  =^  moves4  nec  (call nec ~[//unix] %hear (snag-packet 0 moves3))
+  ::  ~bud -> %boon -> ~nec
+  ::
+  =^  moves5  bud  (take bud /bone/~nec/1 ~[//unix] %g %boon [%post 'first1!!'])
+  =^  moves6  nec  (call nec ~[//unix] %hear (snag-packet 0 moves5))
+  ::  ~nec -> %done -> ~bud (just make sure ~bud doesn't crash on ack)
+  ::
+  =^  moves7  bud  (call bud ~[//unix] %hear (snag-packet 0 moves6))
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  :~  [~[//unix] %pass /qos %d %flog %text "; ~nec is your neighbor"]
+              [~[//unix] %pass /bone/~nec/1 %g %plea ~nec %g /talk [%get %post]]
+          ==
+      !>  moves2
+  ::
+    %+  expect-eq
+      !>  %-  sy
+          :~  [~[/ames] %pass /pump/~bud/0 %b %rest ~1111.1.1..00.00.02]
+              [~[//unix] %pass /qos %d %flog %text "; ~bud is your neighbor"]
+              [~[/g/talk] %give %done error=~]
+          ==
+      !>  (sy ,.moves4)
+  ::
+    %+  expect-eq
+      !>  [~[/g/talk] %give %boon [%post 'first1!!']]
+      !>  (snag 1 `(list move:ames)`moves6)
+  ==
+::
+++  test-nack  ^-  tang
+  ::  ~nec -> %plea -> ~bud
+  ::
+  =^  moves1  nec  (call nec ~[/g/talk] %plea ~bud %g /talk [%get %post])
+  =^  moves2  bud  (call bud ~[//unix] %hear (snag-packet 0 moves1))
+  ::  ~bud -> nack -> ~nec
+  ::
+  =/  =error:ames  [%flub [%leaf "sinusoidal repleneration"]~]
+  =^  moves3  bud  (take bud /bone/~nec/1 ~[/bud] %g %done `error)
+  =^  moves4  nec  (call nec ~[//unix] %hear (snag-packet 0 moves3))
+  ::  ~bud -> nack-trace -> ~nec
+  ::
+  =^  moves5  nec  (call nec ~[//unix] %hear (snag-packet 1 moves3))
+  ::  ~nec -> ack nack-trace -> ~bud
+  ::
+  =^  moves6  bud  (call bud ~[//unix] %hear (snag-packet 0 moves5))
+  ::
+  %+  expect-eq
+    !>  [~[/g/talk] %give %done `error]
+    !>  (snag 1 `(list move:ames)`moves5)
 --

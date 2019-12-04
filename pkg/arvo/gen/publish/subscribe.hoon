@@ -6,4 +6,3 @@
     ==
 :-  %publish-action
 [%subscribe ship name]
-

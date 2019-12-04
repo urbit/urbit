@@ -12,8 +12,12 @@ export class HeaderBar extends Component {
          </div>
       :  null;
 
+      let popoutHide = (this.props.popout)
+        ? "dn dn-m dn-l dn-xl"
+        : "dn db-m db-l db-xl";
+
     return (
-      <div className="bg-black w-100 justify-between"
+      <div className={`bg-black w-100 justify-between ` + popoutHide}
         style={{ height: 48, padding: 8}}>
         <a className="db"
           style={{ background: '#1A1A1A',

@@ -18,17 +18,12 @@ export class SidebarInvite extends Component {
     return (
       <div className='pa3'>
         <div className='w-100 v-mid'>
-          <div className="dib mr2 bg-nice-green" style={{
-            borderRadius: 12,
-            width: 12,
-            height: 12
-          }}></div>
-          <p className="dib body-regular fw-normal">
+          <p className="dib f8 mono">
             {props.invite.text}
           </p>
         </div>
-        <a className="dib w-50 pointer btn-font nice-green underline" onClick={this.onAccept.bind(this)}>Accept</a>
-        <a className="dib w-50 tr pointer btn-font nice-red underline" onClick={this.onDecline.bind(this)}>Decline</a>
+        <a className="dib pointer pa2 f9 bg-green2 white mt4" onClick={this.onAccept.bind(this)}>Accept Invite</a>
+        <a className="dib pointer ml4 pa2 f9 bg-black white mt4" onClick={this.onDecline.bind(this)}>Decline</a>
       </div>
     )
   }

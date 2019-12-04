@@ -14,7 +14,7 @@ sed --in-place \
 
 # increment the %ames protocol version
 sed -r --in-place \
-  's/^(=\+  protocol\-version=)([0-9])/echo "\1$(echo "(\2+1) % 8" | bc)"/e' \
+  's_^(=/  protocol\-version=\?\(.*\)  %)([0-7])_echo "\1$(echo "(\2+1) % 8" | bc)"_e' \
   $AMES
 
 # use the staging API in :acme

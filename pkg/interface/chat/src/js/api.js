@@ -164,7 +164,7 @@ class UrbitApi {
             ship: `~${window.ship}`,
             recipient: ship,
             app: 'chat-hook',
-            text: `You have been invited to /${window.ship}${path}`,
+            text: `~${window.ship}${path}`,
           },
           uid: uuid()
         }
@@ -190,6 +190,19 @@ class UrbitApi {
     });
   }
 
+  sidebarToggle() {
+    let sidebarBoolean = true;
+    if (store.state.sidebarShown === true) {
+      sidebarBoolean = false;
+    }
+    store.handleEvent({
+      data: {
+        local: {
+          'sidebarToggle': sidebarBoolean
+        }
+      }
+    });
+  }
 }
 
 export let api = new UrbitApi();

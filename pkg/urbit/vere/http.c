@@ -479,7 +479,7 @@ _http_hgen_proceed(h2o_generator_t* neg_u, h2o_req_t* rec_u)
   _cttp_bods_free(gen_u->nud_u);
   gen_u->nud_u = 0;
 
-  if ( 0 != gen_u->bod_u ) {
+  if ( 0 != gen_u->bod_u || c3y == gen_u->dun ) {
     _http_hgen_send(gen_u);
   }
 }

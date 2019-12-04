@@ -2193,3 +2193,130 @@ u3a_lop(c3_w lab_w)
 {
 }
 #endif
+
+/* u3a_walk_fore(): preorder traversal, visits ever limb of a noun.
+**
+**   cells are visited *before* their heads and tails
+**   and can shortcircuit traversal by returning [c3n]
+*/
+void
+u3a_walk_fore(u3_noun    a,
+              void*      ptr_v,
+              void     (*pat_f)(u3_atom, void*),
+              c3_o     (*cel_f)(u3_noun, void*))
+{
+  //  initialize signed stack offsets (relative to N or S road)
+  //
+  c3_o nor_o = u3a_is_north(u3R);
+  c3_ys mov_ys, off_ys;
+  {
+    c3_y wis_y = c3_wiseof(u3_noun);
+    mov_ys = ( c3y == nor_o ? -wis_y : wis_y );
+    off_ys = ( c3y == nor_o ? 0 : -wis_y );
+  }
+
+  //  set stack root, push argument
+  //
+  u3_noun *top, *don;
+  {
+    don         = u3to(u3_noun, u3R->cap_p + off_ys);
+    u3R->cap_p += mov_ys;
+    top         = u3to(u3_noun, u3R->cap_p + off_ys);
+    *top        = a;
+  }
+
+  while ( top != don ) {
+    //  visit an atom, then pop the stack
+    //
+    if ( c3y == u3a_is_atom(a) ) {
+      pat_f(a, ptr_v);
+      u3R->cap_p -= mov_ys;
+      top         = u3to(u3_noun, u3R->cap_p + off_ys);
+    }
+    //  vist a cell, if c3n, pop the stack
+    //
+    else if ( c3n == cel_f(a, ptr_v) ) {
+      u3R->cap_p -= mov_ys;
+      top         = u3to(u3_noun, u3R->cap_p + off_ys);
+
+    }
+    //  otherwise, push the tail and continue into the head
+    //
+    else {
+      *top        = u3t(a);
+      u3R->cap_p += mov_ys;
+
+      if ( c3y == nor_o ) {
+        if( !(u3R->cap_p > u3R->hat_p) ) {
+          u3m_bail(c3__meme);
+        }
+      }
+      else {
+        if( !(u3R->cap_p < u3R->hat_p) ) {
+          u3m_bail(c3__meme);
+        }
+      }
+
+      top  = u3to(u3_noun, u3R->cap_p + off_ys);
+      *top = u3h(a);
+    }
+
+    a = *top;
+  }
+}
+
+/* u3a_walk_fore_unsafe(): u3a_walk_fore(), without overflow checks
+*/
+void
+u3a_walk_fore_unsafe(u3_noun    a,
+                     void*      ptr_v,
+                     void     (*pat_f)(u3_atom, void*),
+                     c3_o     (*cel_f)(u3_noun, void*))
+{
+  //  initialize signed stack offsets (relative to N or S road)
+  //
+  c3_ys mov_ys, off_ys;
+  {
+    c3_y wis_y = c3_wiseof(u3_noun);
+    c3_o nor_o = u3a_is_north(u3R);
+    mov_ys = ( c3y == nor_o ? -wis_y : wis_y );
+    off_ys = ( c3y == nor_o ? 0 : -wis_y );
+  }
+
+  //  set stack root, push argument
+  //
+  u3_noun *top, *don;
+  {
+    don         = u3to(u3_noun, u3R->cap_p + off_ys);
+    u3R->cap_p += mov_ys;
+    top         = u3to(u3_noun, u3R->cap_p + off_ys);
+    *top        = a;
+  }
+
+  while ( top != don ) {
+    //  visit an atom, then pop the stack
+    //
+    if ( c3y == u3a_is_atom(a) ) {
+      pat_f(a, ptr_v);
+      u3R->cap_p -= mov_ys;
+      top         = u3to(u3_noun, u3R->cap_p + off_ys);
+    }
+    //  vist a cell, if c3n, pop the stack
+    //
+    else if ( c3n == cel_f(a, ptr_v) ) {
+      u3R->cap_p -= mov_ys;
+      top         = u3to(u3_noun, u3R->cap_p + off_ys);
+
+    }
+    //  otherwise, push the tail and continue into the head
+    //
+    else {
+      *top        = u3t(a);
+      u3R->cap_p += mov_ys;
+      top         = u3to(u3_noun, u3R->cap_p + off_ys);
+      *top        = u3h(a);
+    }
+
+    a = *top;
+  }
+}

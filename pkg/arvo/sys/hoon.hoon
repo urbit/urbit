@@ -6782,6 +6782,7 @@
   ::                                            ::::::  special
     {$zpcm p/hoon q/hoon}                               ::  !,
     {$zpbn p/hoon}                                      ::  !>
+    {$zpld p/spec q/hoon}                               ::  !<
     {$zpmc p/hoon q/hoon}                               ::  !;
     {$zpts p/hoon}                                      ::  !=
     {$zpvt p/(list wing) q/hoon r/hoon}                 ::  !@
@@ -10458,6 +10459,23 @@
       =+  ref=p:$(gol %noun, gen p.gen)
       [(nice (cell ref p.vos)) (cons [%1 burp(sut p.vos)] q.vos)]
     ::
+        {$zpld *}
+      =/  typ  (nice (play [%kttr p.gen]))
+      =/  val
+        =<  q
+        %_    $
+            gol  %noun
+            gen
+          :^    %wtcl
+              :+  %cncl  [%limb %levi]
+              :~  [%tsbn [%zpbn [%kttr p.gen]] [%$ 2]]
+                  [%tsbn q.gen [%$ 2]]
+              ==
+            [%tsbn q.gen [%$ 3]]
+          [%zpzp ~]
+        ==
+      [typ val]
+    ::
         {$zpts *}   [(nice %noun) [%1 q:$(vet |, gen p.gen)]]
         {$zpvt *}   ?:((feel p.gen) $(gen q.gen) $(gen r.gen))
     ::
@@ -10619,6 +10637,10 @@
         {$zpmc *}
       =+  vos=$(gol %noun, gen q.gen)       ::  XX validate!
       [(nice (cell (play p.gen) p.vos)) (cell (play(sut dox) p.gen) q.vos)]
+    ::
+        {$zpld *}
+      ::  XX is this right?
+      (beth (play [%kttr p.gen]))
     ::
         {$zpvt *}
       =+  [(feel p.gen) (feel(sut dox) p.gen)]
@@ -10923,6 +10945,7 @@
       {$zpcm *}  $(gen p.gen)
       {$lost *}  %void
       {$zpmc *}  (cell $(gen p.gen) $(gen q.gen))
+      {$zpld *}  (play [%kttr p.gen])
       {$zpts *}  %noun
       {$zpvt *}  ?:((feel p.gen) $(gen q.gen) $(gen r.gen))
       {$zpzp *}  %void
@@ -11688,6 +11711,10 @@
 ++  cain  sell                                          ::  $-(vase tank)
 ++  noah  text                                          ::  $-(vase tape)
 ++  onan  seer                                          ::  $-(vise vase)
+++  levi                                                ::  $-([type type] ?)
+  |=  [a=type b=type]
+  (~(nest ut a) & b)
+::
 ++  text                                                ::  tape pretty-print
   |=  vax/vase  ^-  tape
   ~(ram re (sell vax))
@@ -11974,7 +12001,7 @@
       ^=  gen  ^-  hoon
       [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
   =+  gun=(~(mint ut typ) %noun gen)
-  [p.gun .*([q.gat q.sam] q.gun)]
+  [p.gun (slum q.gat q.sam)]
 ::
 ++  slab                                                ::  test if contains
   |=  {cog/@tas typ/type}
@@ -13818,6 +13845,7 @@
                   [',' (rune com %zpcm expb)]
                   [';' (rune mic %zpmc expb)]
                   ['>' (rune ban %zpbn expa)]
+                  ['<' (rune led %zpld exqc)]
                   ['@' (rune vat %zpvt expy)]
                   ['=' (rune tis %zpts expa)]
                   ['?' (rune wut %zpwt hinh)]
@@ -14378,44 +14406,49 @@
       ~>  %slog.[0 foo]
       [| +>+<.$]
     [& +>+<.$(nes (~(put in nes) [sut ref]))]
+  ::  +play: +play:ut, cached
   ::
-  ++  play                                              ::  play:ut
+  ++  play
     |=  {sut/type gen/hoon}
     ^-  {type worm}
     =+  old=(~(get by pay) [sut gen])
     ?^  old  [u.old +>+<.$]
     =+  new=(~(play ut sut) gen)
     [new +>+<.$(pay (~(put by pay) [sut gen] new))]
+  ::  +mint: +mint:ut to noun, cached
   ::
-  ++  mint                                              ::  mint:ut to noun
+  ++  mint
     |=  {sut/type gen/hoon}
     ^-  {(pair type nock) worm}
     =+  old=(~(get by mit) [sut gen])
     ?^  old  [u.old +>+<.$]
     =+  new=(~(mint ut sut) %noun gen)
     [new +>+<.$(mit (~(put by mit) [sut gen] new))]
+  ::  +slam: +slam:ut, cached
   ::
-  ++  slam                                              ::  ++slam, cached
+  ++  slam
     |=  [gat=vase sam=vase]
-    ^-  [vase worm]
     =/  sut=type  [%cell p.gat p.sam]
     =/  gen=hoon  [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
     =^  new=type  +>+<.$  (play sut gen)
     [[new (slum q.gat q.sam)] +>+<.$]
+  ::  +slap: +slap:ut, cached
   ::
-  ++  slap                                              ::  ++slap, cached
+  ++  slap
     |=  {vax/vase gen/hoon}
     ^-  {vase worm}
     =^  gun  +>+<  (mint p.vax gen)
     [[p.gun .*(q.vax q.gun)] +>+<.$]
+  ::  +slot: +slot:ut, cached
   ::
-  ++  slot                                              ::  ++slot, cached
+  ++  slot
     |=  {axe/@ vax/vase}
     ^-  {vase worm}
     =^  gun  +>+<  (mint p.vax [%$ axe])
     [[p.gun .*(q.vax [0 axe])] +>+<.$]
+  ::  +slym: +slym:ut, cached
   ::
-  ++  slym                                              ::  ++slym, cached
+  ++  slym
     |=  {gat/vase sam/*}
     ^-  [vase worm]
     (slap gat(+<.q sam) [%limb %$])

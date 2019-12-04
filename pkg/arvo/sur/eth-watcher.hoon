@@ -4,6 +4,7 @@
 |%
 +$  config
   $:  url=@ta
+      refresh-rate=@dr
       from=number:block
       contracts=(list address:ethereum)
       =topics
@@ -11,6 +12,16 @@
 ::
 +$  loglist  (list event-log:rpc:ethereum)
 +$  topics   (list ?(@ux (list @ux)))
++$  watchpup
+  $:  config
+      =number:block
+      =pending-logs
+      blocks=(list block)
+  ==
+::
+::  disavows: newest block first
++$  disavows      (list id:block)
++$  pending-logs  (map number:block loglist)
 ::
 +$  poke
   $%  ::  %watch: configure a watchdog and fetch initial logs

@@ -20,8 +20,7 @@
   |:($:source +<(mir ((pair @ud (list @c)))))           ::  style-less mir
 ::                                                      ::
 ++  pith-2                                              ::
-  $:  sys/(unit bone)                                   ::  local console
-      eel/(set gill:gall)                               ::  connect to
+  $:  eel/(set gill:gall)                               ::  connect to
       ray/(set well:gall)                               ::
       fur/(map dude:gall (unit server))                 ::  servers
       bin/(map bone source)                             ::  terminals
@@ -44,7 +43,7 @@
       off/@ud                                           ::  window offset
       kil/kill                                          ::  kill buffer
       inx/@ud                                           ::  ring index
-      fug/(map gill:gall (unit target))                ::  connections
+      fug/(map gill:gall (unit target))                 ::  connections
       mir/(pair @ud stub)                               ::  mirrored terminal
   ==                                                    ::
 ++  history                                             ::  past input
@@ -80,24 +79,20 @@
   ::
   =-  (turn - |=(a=term home+a))
   ^-  (list term)
-  ?:  lit
-    :~  %dojo
-        %eth-watcher
-        %azimuth-tracker
-    ==
   %+  welp
-    ?:  ?=(%pawn (clan:title our))  ~
-    :~  %acme
-        %dns
+    :~  %dojo
+        %spider
         %eth-watcher
         %azimuth-tracker
+        %ping
     ==
+  ?:  lit
+    ~
   :~  %lens
+      %clock
       %dojo
-      %modulo
       %launch
       %publish
-      %clock
       %weather
       %group-store
       %group-hook
@@ -118,14 +113,13 @@
   |=  our/ship
   %-  ~(gas in *(set gill:gall))
   ^-  (list gill:gall)
-  [[our %chat-cli] [our %dojo] ~]
+  [[our %dojo] [our %chat-cli]~]
 ::
 ++  make                                                ::  initial part
   |=  our/ship
   ^-  part
   :*  %drum
       %2
-      sys=~
       eel=(deft-fish our)
       ray=~
       fur=~
@@ -146,25 +140,10 @@
 ::::
   ::
 |=  {hid/bowl:gall part}                          ::  main drum work
-=+  (~(gut by bin) ost.hid *source)
+=/  ost  0
+=+  (~(gut by bin) ost *source)
 =*  dev  -
-=>  |%                                                ::  arvo structures
-    ++  pear                                          ::  request
-      $%  {$sole-action p/sole-action}                ::
-      ==                                              ::
-    ++  lime                                          ::  update
-      $%  {$dill-blit dill-blit:dill}                ::
-      ==                                              ::
-    ++  card                                          ::  general card
-      $%  {$conf wire dock ship term}                 ::
-          {$diff lime}                                ::
-          {$peer wire dock path}                      ::
-          {$poke wire dock pear}                      ::
-          {$pull wire dock ~}                        ::
-      ==                                              ::
-    ++  move  (pair bone card)                        ::  user-level move
-    --
-|_  {moz/(list move) biz/(list dill-blit:dill)}
+|_  {moz/(list card:agent:gall) biz/(list dill-blit:dill)}
 ++  diff-sole-effect-phat                             ::  app event
   |=  {way/wire fec/sole-effect}
   =<  se-abet  =<  se-view
@@ -181,7 +160,7 @@
 ::
 ++  poke-set-boot-apps                                ::
   |=  lit/?
-  ^-  (quip move part)
+  ^-  (quip card:agent:gall part)
   ::  We do not run se-abet:se-view here because that starts the apps,
   ::  and some apps are not ready to start (eg Talk crashes because the
   ::  terminal has width 0).  It appears the first message to drum must
@@ -211,7 +190,7 @@
 ++  poke-unlink                                       ::  disconnect app
   |=  gyl/gill:gall
   =<  se-abet  =<  se-view
-  (se-klin gyl)
+  (se-drop:(se-pull gyl) & gyl)
 ::
 ++  poke-exit                                         ::  shutdown
   |=  ~
@@ -221,13 +200,33 @@
   |=  {pax/path txt/@}
   se-abet:(se-blit-sys [%sav pax txt])                ::
 ::
+++  poke
+  |=  [=mark =vase]
+  ?+  mark  ~|([%poke-drum-bad-mark mark] !!)
+    %drum-put            =;(f (f !<(_+<.f vase)) poke-put)
+    %drum-link           =;(f (f !<(_+<.f vase)) poke-link)
+    %drum-unlink         =;(f (f !<(_+<.f vase)) poke-unlink)
+    %drum-exit           =;(f (f !<(_+<.f vase)) poke-exit)
+    %drum-start          =;(f (f !<(_+<.f vase)) poke-start)
+    %drum-set-boot-apps  =;(f (f !<(_+<.f vase)) poke-set-boot-apps)
+  ==
+::
 ++  reap-phat                                         ::  ack connect
   |=  {way/wire saw/(unit tang)}
   =<  se-abet  =<  se-view
   =+  gyl=(de-gill way)
   ?~  saw
     (se-join gyl)
-  (se-dump:(se-drop & gyl) u.saw)
+  ::  Don't print stack trace because we probably just crashed to
+  ::  indicate we don't connect to the console.
+  ::
+  (se-drop & gyl)
+::
+++  take                                              ::
+  |=  [=wire =sign-arvo]
+  %+  take-onto  wire
+  ?>  ?=(%onto +<.sign-arvo)
+  +>.sign-arvo
 ::
 ++  take-coup-phat                                    ::  ack poke
   |=  {way/wire saw/(unit tang)}
@@ -235,9 +234,9 @@
   ?~  saw  +>
   =+  gyl=(de-gill way)
   ?:  (se-aint gyl)  +>.$
-  %-  se-dump:(se-drop & gyl)
+  %-  se-dump:(se-drop:(se-pull gyl) & gyl)
   :_  u.saw
-  >[%drum-coup-fail src.hid ost.hid gyl]<
+  >[%drum-coup-fail src.hid gyl]<
 ::
 ++  take-onto                                         ::  ack start
   |=  {way/wire saw/(each suss:gall tang)}
@@ -252,42 +251,46 @@
             +>.$(fur (~(put by fur) q.wel `[p.wel %da r.p.saw]))
   ==
 ::
+++  take-agent
+  |=  [=wire =sign:agent:gall]
+  ?+  wire  ~|([%drum-bad-take-agent wire -.sign] !!)
+      [%drum %phat *]
+    ?-  -.sign
+        %poke-ack   (take-coup-phat t.t.wire p.sign)
+        %watch-ack  (reap-phat t.t.wire p.sign)
+        %kick       (quit-phat t.t.wire)
+        %fact
+      %+  diff-sole-effect-phat  t.t.wire
+      ?>  ?=(%sole-effect p.cage.sign)
+      !<(sole-effect q.cage.sign)
+   ==
+ ==
+::
 ++  quit-phat                                         ::
   |=  way/wire
   =<  se-abet  =<  se-view
   =+  gyl=(de-gill way)
-  ~&  [%drum-quit src.hid ost.hid gyl]
+  ~&  [%drum-quit src.hid gyl]
   (se-drop %| gyl)
 ::                                                    ::  ::
 ::::                                                  ::  ::
   ::                                                  ::  ::
 ++  se-abet                                           ::  resolve
-  ^-  (quip move part)
+  ^-  (quip card:agent:gall part)
   =*  pith  +<+.$
-  ?.  se-ably
-    =.  .  se-adit
-    [(flop moz) pith]
-  =.  sys  ?^(sys sys `ost.hid)
   =.  .  se-subze:se-adze:se-adit
-  :_  pith(bin (~(put by bin) ost.hid dev))
-  %-  flop
-  ^-  (list move)
-  ?~  biz  moz
-  :_  moz
-  [ost.hid %diff %dill-blit ?~(t.biz i.biz [%mor (flop biz)])]
-::
-++  se-ably  (~(has by sup.hid) ost.hid)              ::  caused by console
+  :_  pith(bin (~(put by bin) ost dev))
+  ^-  (list card:agent:gall)
+  ?~  biz  (flop moz)
+  :_  (flop moz)
+  =/  =dill-blit:dill  ?~(t.biz i.biz [%mor (flop biz)])
+  [%give %fact `/drum %dill-blit !>(dill-blit)]
 ::
 ++  se-adit                                           ::  update servers
   ^+  .
-  %+  roll
-    ::  ensure dojo is first in the list,
-    ::  guaranteeing its display on-boot.
-    ::
-    %+  sort  ~(tap in ray)
-    |=  [a=well:gall b=well:gall]
-    ?:  |(=(%dojo q.a) =(%dojo q.b))  =(%dojo q.a)
-    (aor a b)
+  ::  ensure dojo connects after talk
+  =*  dojo-on-top  aor
+  %+  roll  (sort ~(tap in ray) dojo-on-top)
   =<  .(con +>)
   |:  $:{wel/well:gall con/_..se-adit}  ^+  con
   =.  +>.$  con
@@ -295,7 +298,8 @@
   ?:  &(?=(^ hig) |(?=(~ u.hig) =(p.wel syd.u.u.hig)))  +>.$
   =.  +>.$  (se-text "activated app {(trip p.wel)}/{(trip q.wel)}")
   %-  se-emit(fur (~(put by fur) q.wel ~))
-  [ost.hid %conf [%drum p.wel q.wel ~] [our.hid q.wel] our.hid p.wel]
+  =/  =wire  [%drum p.wel q.wel ~]
+  [%pass wire %arvo %g %conf [our.hid q.wel] our.hid p.wel]
 ::
 ++  se-adze                                           ::  update connections
   ^+  .
@@ -308,14 +312,14 @@
   (se-peer gil)
 ::
 ++  se-subze                                          ::  downdate connections
-  =<  .(dev (~(got by bin) ost.hid))
-  =.  bin  (~(put by bin) ost.hid dev)
+  =<  .(dev (~(got by bin) ost))
+  =.  bin  (~(put by bin) ost dev)
   ^+  .
   %-  ~(rep by bin)
   =<  .(con +>)
   |:  $:{{ost/bone dev/source} con/_.}  ^+  con
-  =+  xeno=se-subze-local:%_(con ost.hid ost, dev dev)
-  xeno(ost.hid ost.hid.con, dev dev.con, bin (~(put by bin) ost dev.xeno))
+  =+  xeno=se-subze-local:%_(con ost ost, dev dev)
+  xeno(ost ost.con, dev dev.con, bin (~(put by bin) ost dev.xeno))
 ::
 ++  se-subze-local
   ^+  .
@@ -330,7 +334,7 @@
 ++  se-aint                                           ::  ignore result
   |=  gyl/gill:gall
   ^-  ?
-  ?.  (~(has by bin) ost.hid)  &
+  ?.  (~(has by bin) ost)  &
   =+  gyr=(~(get by fug) gyl)
   |(?=(~ gyr) ?=(~ u.gyr))
 ::
@@ -357,6 +361,7 @@
   ^-  (unit gill:gall)
   =+  wag=se-amor
   ?~  wag  ~
+  ~|  [inx=inx wag=wag fug=fug eel=eel]
   `(snag inx `(list gill:gall)`wag)
 ::
 ++  se-belt                                           ::  handle input
@@ -431,7 +436,6 @@
 ++  se-dump                                           ::  print tanks
   |=  tac/(list tank)
   ^+  +>
-  ?.  se-ably  ((slog tac) +>.$)
   =/  wol/wall
     (zing (turn (flop tac) |=(a/tank (~(win re a) [0 edg]))))
   |-  ^+  +>.^$
@@ -467,8 +471,7 @@
 ::
 ++  se-blit-sys                                       ::  output to system
   |=  bil/dill-blit:dill  ^+  +>
-  ?~  sys  ~&(%se-blit-no-sys +>)
-  (se-emit [u.sys %diff %dill-blit bil])
+  (se-emit %give %fact `/drum %dill-blit !>(bil))
 ::
 ++  se-show                                           ::  show buffer, raw
   |=  lin/(pair @ud stub)
@@ -505,9 +508,9 @@
   ?:  |(?=(~ gul) (se-aint u.gul))  +
   (se-just ta-vew:(se-tame u.gul))
 ::
-++  se-emit                                           ::  emit move
-  |=  mov/move
-  %_(+> moz [mov moz])
+++  se-emit
+  |=  card:agent:gall
+  %_(+> moz [+< moz])
 ::
 ++  se-text                                           ::  return text
   |=  txt/tape
@@ -515,21 +518,20 @@
   ?.  ((sane %t) (crip txt))  :: XX upstream validation
     ~&  bad-text+<`*`txt>
     +>
-  ?.  se-ably  ((slog [%leaf txt]~) +>.$)
   (se-blit %out (tuba txt))
 ::
 ++  se-poke                                           ::  send a poke
-  |=  {gyl/gill:gall par/pear}
-  (se-emit [ost.hid %poke (en-gill gyl) gyl par])
+  |=  {gyl/gill:gall par/cage}
+  (se-emit %pass (en-gill gyl) %agent gyl %poke par)
 ::
 ++  se-peer                                           ::  send a peer
   |=  gyl/gill:gall
   %-  se-emit(fug (~(put by fug) gyl ~))
-  [ost.hid %peer (en-gill gyl) gyl /sole]
+  [%pass (en-gill gyl) %agent gyl %watch /sole/drum]
 ::
 ++  se-pull                                           ::  cancel subscription
   |=  gyl/gill:gall
-  (se-emit [ost.hid %pull (en-gill gyl) gyl ~])
+  (se-emit %pass (en-gill gyl) %agent gyl %leave ~)
 ::
 ++  se-tame                                           ::  switch connection
   |=  gyl/gill:gall
@@ -547,12 +549,12 @@
     ^+  ..ta
     ..ta(fug (~(put by fug) gyl ``target`+<+))
   ::
-  ++  ta-poke  |=(a/pear +>(..ta (se-poke gyl a)))    ::  poke gyl
+  ++  ta-poke  |=(a/cage +>(..ta (se-poke gyl a)))    ::  poke gyl
   ::
   ++  ta-act                                          ::  send action
     |=  act/sole-action
     ^+  +>
-    (ta-poke %sole-action act)
+    (ta-poke %sole-action !>(act))
   ::
   ++  ta-aro                                          ::  hear arrow
     |=  key/?($d $l $r $u)
@@ -593,7 +595,10 @@
   ++  ta-det                                          ::  send edit
     |=  ted/sole-edit
     ^+  +>
-    (ta-act %det [[his.ven.say.inp own.ven.say.inp] (sham buf.say.inp) ted])
+    %^    ta-act
+        %drum
+      %det
+    [[his.ven.say.inp own.ven.say.inp] (sham buf.say.inp) ted]
   ::
   ++  ta-bac                                          ::  hear backspace
     ^+  .
@@ -603,7 +608,7 @@
       .(str.u.ris (scag (dec (lent str.u.ris)) str.u.ris))
     ?:  =(0 pos.inp)
       ?~  buf.say.inp
-        (ta-act %clr ~)
+        (ta-act %drum %clr ~)
       ta-bel
     (ta-hom %del (dec pos.inp))
   ::
@@ -891,10 +896,10 @@
     ==
   ::
   ++  ta-ret                                          ::  hear return
-    (ta-act %ret ~)
+    (ta-act %drum %ret ~)
   ::
   ++  ta-tab                                          ::  hear tab
-    (ta-act %tab pos.inp)
+    (ta-act %drum %tab pos.inp)
   ::
   ++  ta-ser                                          ::  reverse search
     |=  ext/(list @c)

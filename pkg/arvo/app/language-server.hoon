@@ -2,23 +2,11 @@
     auto=language-server-complete,
     lsp-parser=language-server-parser,
     easy-print=language-server-easy-print,
-    rune-snippet=language-server-rune-snippet
+    rune-snippet=language-server-rune-snippet,
+    default-agent
 |%
-:: +move: output effect
-::
-+$  move  [bone card]
-:: +card: output effect payload
-::
-+$  card
-  $%  [%connect wire binding:eyre term]
-      [%disconnect wire binding:eyre]
-      [%http-response =http-event:http]
-      [%poke wire dock out-pokes]
-  ==
-::
-+$  out-pokes  [%kiln-commit term _|]
-::
-+$  lsp-req 
++$  card  card:agent:gall
++$  lsp-req
   $:  uri=@t
       $%  [%sync changes=(list change)]
           [%completion position]
@@ -41,29 +29,69 @@
 +$  position
   [row=@ud col=@ud]
 ::
-+$  state  bufs=(map uri=@t buf=wall)
++$  all-state  bufs=(map uri=@t buf=wall)
 --
+^-  agent:gall
+=|  all-state
+=*  state  -
+=<
+  |_  =bowl:gall
+  +*  this      .
+      lsp-core  +>
+      lsp       ~(. lsp-core bowl)
+      def       ~(. (default-agent this %|) bowl)
+  ::
+  ++  on-init
+    ^+  on-init:*agent:gall
+    ^-  (quip card _this)
+    ~&  >  %lsp-init
+    :_  this  :_  ~
+    :*  %pass  /connect
+        %arvo  %e
+        %connect  [~ /'~language-server-protocol']  %language-server
+    ==
+  ::
+  ++  on-save   !>(state)
+  ++  on-load
+    ^+  on-load:*agent:gall
+    |=  old-state=vase
+    ^-  (quip card _this)
+    ~&  >  %lsp-upgrade
+    [~ this(state !<(all-state old-state))]
+  ::
+  ++  on-poke
+    ^+  on-poke:*agent:gall
+    |=  [=mark =vase]
+    ^-  (quip card _this)
+    =^  cards  state
+      ?+    mark  (on-poke:def mark vase)
+          %handle-http-request
+        (handle-http-request:lsp !<([eyre-id=@ta inbound-request:eyre] vase))
+      ==
+    [cards this]
+  ::
+  ++  on-watch
+    |=  =path
+    ?.  ?=([%http-response @ ~] path)
+      (on-watch:def path)
+    `this
+  ++  on-leave  on-leave:def
+  ++  on-peek   on-peek:def
+  ++  on-agent  on-agent:def
+  ++  on-arvo
+    ^+  on-arvo:*agent:gall
+    |=  [=wire =sign-arvo]
+    ^-  (quip card _this)
+    =^  cards  state
+      ?+  wire  (on-arvo:def wire sign-arvo)
+        [%connect ~]  ?>(?=(%bound +<.sign-arvo) `state)
+      ==
+    [cards this]
+  ::
+  ++  on-fail   on-fail:def
+  --
 ::
-|_  [bow=bowl:gall state]
-::
-++  this  .
-++  prep
-  |=  old=(unit state)
-  ^-  (quip move _this)
-  ~&  >  %lsp-prep
-  ?~  old
-    :_  this
-    [ost.bow %connect / [~ /'~language-server-protocol'] %language-server]~
-  [~ this(bufs u.old)]
-::
-::  alerts us that we were bound.
-::
-++  bound
-  |=  [wir=wire success=? binding=binding:eyre]
-  ^-  (quip move _this)
-  [~ this]
-::
-::  +poke-handle-http-request: received on a new connection established
+|_  bow=bowl:gall
 ::
 ++  parser
   =,  dejs:format
@@ -105,40 +133,30 @@
   --
 ::
 ++  json-response
-  |=  jon=json
-  ^-  (list move)
-  :_  ~
-  :*
-    ost.bow
-    %http-response
-    (json-response:app (json-to-octs jon))
-  ==
+  |=  [eyre-id=@ta jon=json]
+  ^-  (list card)
+  (give-simple-payload:app eyre-id (json-response:gen (json-to-octs jon)))
 ::
-++  coup
-  |=  [=wire saw=(unit tang)]
-  ^-  (quip move _this)
-  :_  this
-  ~
+::  +handle-http-request: received on a new connection established
 ::
-++  poke-handle-http-request
-  %-  (require-authorization:app ost.bow move this)
-  |=  =inbound-request:eyre
-  ^-  (quip move _this)
+++  handle-http-request
+  |=  [eyre-id=@ta =inbound-request:eyre]
+  ^-  (quip card _state)
   ?>  ?=(^ body.request.inbound-request)
   =/  =lsp-req
     %-  parser
     (need (de-json:html q.u.body.request.inbound-request))
   =/  buf  (~(gut by bufs) uri.lsp-req *wall)
-  =^  moves  buf
+  =^  cards  buf
     ?-  +<.lsp-req
-      %sync        (handle-sync buf +>.lsp-req)
-      %completion  (handle-completion buf +>.lsp-req)
-      %commit      (handle-commit buf uri.lsp-req)
-      %hover       (handle-hover buf +>.lsp-req)
+      %sync        (handle-sync buf eyre-id +>.lsp-req)
+      %completion  (handle-completion buf eyre-id +>.lsp-req)
+      %commit      (handle-commit buf eyre-id uri.lsp-req)
+      %hover       (handle-hover buf eyre-id +>.lsp-req)
     ==
   =.  bufs
     (~(put by bufs) uri.lsp-req buf)
-  [moves this]
+  [cards state]
 ::
 ++  regen-diagnostics
   |=  buf=wall
@@ -170,34 +188,34 @@
   ==
 ::
 ++  handle-commit
-  |=  [buf=wall uri=@t]
-  ^-  [(list move) wall]
+  |=  [buf=wall eyre-id=@ta uri=@t]
+  ^-  [(list card) wall]
   :_  buf
   =/  jon
     (regen-diagnostics buf)
-  :_  (json-response jon)
+  :_  (json-response eyre-id jon)
   :*
-    ost.bow
-    %poke
+    %pass
     /commit
+    %agent
     [our.bow %hood]
+    %poke
     %kiln-commit
-    q.byk.bow
-    |
+    !>([q.byk.bow |])
   ==
 ::
 ++  handle-hover
-  |=  [buf=wall row=@ud col=@ud]
-  ^-  [(list move) wall]
+  |=  [buf=wall eyre-id=@ta row=@ud col=@ud]
+  ^-  [(list card) wall]
   =/  txt
     (zing (join "\0a" buf))
   =+  (get-id:auto (get-pos buf row col) txt)
   ?~  id
-    [(json-response *json) buf]
+    [(json-response eyre-id *json) buf]
   =/  match=(unit [=term =type])
     (search-exact:auto u.id (get-identifiers:auto -:!>(..zuse)))
   ?~  match
-    [(json-response *json) buf]
+    [(json-response eyre-id *json) buf]
   =/  contents
     %-  crip
     ;:  weld
@@ -206,13 +224,13 @@
       "`"
     ==
   :_  buf
-  %-  json-response
+  %+  json-response  eyre-id
   %-  pairs:enjs:format
   [contents+s+contents ~]
 ::
 ++  handle-sync
-  |=  [buf=wall changes=(list change)]
-  :-  (json-response *json)
+  |=  [buf=wall eyre-id=@ta changes=(list change)]
+  :-  (json-response eyre-id *json)
   |-  ^-  wall
   ?~  changes
     buf
@@ -260,8 +278,8 @@
   (sub a b)
 ::
 ++  handle-completion
-  |=  [buf=wall row=@ud col=@ud]
-  ^-  [(list move) wall]
+  |=  [buf=wall eyre-id=@ta row=@ud col=@ud]
+  ^-  [(list card) wall]
   =/  =tape  (zing (join "\0a" buf))
   =/  pos  (get-pos buf row col)
   :_  buf
@@ -269,17 +287,17 @@
   ::
   =/  rune  (swag [(safe-sub pos 2) 2] tape)
   ?:  (~(has by runes:rune-snippet) rune)
-    (json-response (rune-snippet rune))
+    (json-response eyre-id (rune-snippet rune))
   ::  Don't run on large files because it's slow
   ::
   ?:  (gth (lent buf) 1.000)
     =,  enjs:format
-    (json-response (pairs good+b+& result+~ ~))
+    (json-response eyre-id (pairs good+b+& result+~ ~))
   ::
   =/  tl
     (tab-list-tape:auto -:!>(..zuse) pos tape)
   =,  enjs:format
-  %-  json-response
+  %+  json-response  eyre-id
   ?:  ?=(%| -.tl)
     (format-diagnostic p.tl)
   ?~  p.tl

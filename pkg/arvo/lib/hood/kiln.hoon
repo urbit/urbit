@@ -12,7 +12,7 @@
 ++  part  {$kiln $0 pith}                               ::  kiln state
 ++  pith                                                ::  ::
     $:  rem/(map desk per-desk)                         ::
-        syn/(map kiln-sync {let/@ud ust/bone})          ::
+        syn/(map kiln-sync let/@ud)                     ::
         autoload-on/?                                   ::
         cur-hoon/@uvI                                   ::
         cur-arvo/@uvI                                   ::
@@ -59,39 +59,16 @@
   ::                                                    ::  ::
 |=  {bowl:gall part}                                    ::  main kiln work
 ?>  =(src our)
-=>  |%                                                  ::  arvo structures
-    ++  card                                            ::
-      $%  {$build wire ? schematic:ford}                ::
-          {$drop wire @tas}                             ::
-          [%goad wire force=? agent=(unit dude:gall)]   ::
-          {$info wire @tas nori}                        ::
-          {$mont wire @tas beam}                        ::
-          {$dirk wire @tas}                             ::
-          {$ogre wire $@(@tas beam)}                    ::
-          {$merg wire @tas @p @tas case germ}           ::
-          {$perm wire desk path rite}                   ::
-          {$poke wire dock pear}                        ::
-          [%wash wire ~]
-          {$wipe wire @ud}                              ::
-          [%keep wire compiler-cache-size=@ud build-cache-size=@ud]
-          {$wait wire @da}                              ::
-          {$rest wire @da}                              ::
-          {$warp wire ship riff}                        ::
-      ==                                                ::
-    ++  pear                                            ::  poke fruit
-      $%  {$kiln-merge kiln-merge}                      ::
-          {$helm-reload (list term)}                    ::
-          {$helm-reset ~}                              ::
-      ==                                                ::
-    ++  move  (pair bone card)                          ::  user-level move
-    --
-|_  moz/(list move)
+|_  moz/(list card:agent:gall)
 ++  abet                                                ::  resolve
   [(flop moz) `part`+<+.$]
 ::
-++  emit  |=(card %_(+> moz [[ost +<] moz]))            ::  return card
-++  emil                                                ::  return cards
-  |=  (list card)
+++  emit
+  |=  card:agent:gall
+  %_(+> moz [+< moz])
+::
+++  emil                                              ::  return cards
+  |=  (list card:agent:gall)
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
@@ -103,17 +80,17 @@
 ++  poke-commit
   |=  [mon/kiln-commit auto=?]
   =<  abet
-  =.  +>.$  (emit %dirk /commit mon)
+  =.  +>.$  (emit %pass /commit %arvo %c [%dirk mon])
   ?.  auto
     +>.$
   =/  recur  ~s1
   =.  commit-timer
     [/kiln/autocommit (add now recur) recur mon]
-  (emit %wait way.commit-timer nex.commit-timer)
+  (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
 ::
 ++  poke-cancel-autocommit
   |=  ~
-  abet:(emit %rest way.commit-timer nex.commit-timer)
+  abet:(emit %pass way.commit-timer %arvo %b [%rest nex.commit-timer])
 ::
 ++  poke-mount
   |=  kiln-mount
@@ -121,7 +98,7 @@
   ?~  bem
     =+  "can't mount bad path: {<pax>}"
     abet:(spam leaf+- ~)
-  abet:(emit %mont /mount pot u.bem)
+  abet:(emit %pass /mount %arvo %c [%mont pot u.bem])
 ::
 ++  poke-unmount
   |=  mon/kiln-unmount
@@ -130,8 +107,8 @@
     ?~  bem
       =+  "can't unmount bad path: {<mon>}"
       abet:(spam leaf+- ~)
-    abet:(emit %ogre /unmount-beam [[p q r] s]:u.bem)
-  abet:(emit %ogre /unmount-point mon)
+    abet:(emit %pass /unmount-beam %arvo %c [%ogre [[p q r] s]:u.bem])
+  abet:(emit %pass /unmount-point %arvo %c [%ogre mon])
 ::
 ++  poke-track                                        ::
   |=  hos/kiln-sync
@@ -166,14 +143,14 @@
   abet:abet:(merge:(work syd) ali sud cas gim)
 ::
 ++  poke-cancel
-  |=  syd/desk
-  abet:(emit %drop /cancel syd)
+  |=  ~
+  abet:(emit %pass /cancel %arvo %c [%drop %foo])
 ::
 ++  poke-info
   |=  {mez/tape tor/(unit toro)}
   ?~  tor
     abet:(spam leaf+mez ~)
-  abet:(emit:(spam leaf+mez ~) %info /kiln u.tor)
+  abet:(emit:(spam leaf+mez ~) %pass /kiln %arvo %c [%info u.tor])
 ::
 ++  poke-rm
   |=  a/path
@@ -199,14 +176,44 @@
   |=  {syd/desk pax/path pub/?}
   =<  abet
   %-  emit
-  [%perm /kiln/permission syd pax %r ~ ?:(pub %black %white) ~]
+  =/  =rite  [%r ~ ?:(pub %black %white) ~]
+  [%pass /kiln/permission %arvo %c [%perm syd pax rite]]
 ::
 ++  poke-autoload  |=(lod/(unit ?) abet:(poke:autoload lod))
 ++  poke-start-autoload  |=(~ abet:start:autoload)
+++  poke
+  |=  [=mark =vase]
+  ?+  mark  ~|([%poke-kiln-bad-mark mark] !!)
+    %kiln-commit             =;(f (f !<(_+<.f vase)) poke-commit)
+    %kiln-info               =;(f (f !<(_+<.f vase)) poke-info)
+    %kiln-label              =;(f (f !<(_+<.f vase)) poke-label)
+    %kiln-cancel             =;(f (f !<(_+<.f vase)) poke-cancel)
+    %kiln-mount              =;(f (f !<(_+<.f vase)) poke-mount)
+    %kiln-rm                 =;(f (f !<(_+<.f vase)) poke-rm)
+    %kiln-schedule           =;(f (f !<(_+<.f vase)) poke-schedule)
+    %kiln-track              =;(f (f !<(_+<.f vase)) poke-track)
+    %kiln-sync               =;(f (f !<(_+<.f vase)) poke-sync)
+    %kiln-syncs              =;(f (f !<(_+<.f vase)) poke-syncs)
+    %kiln-wipe-ford          =;(f (f !<(_+<.f vase)) poke-wipe-ford)
+    %kiln-keep-ford          =;(f (f !<(_+<.f vase)) poke-keep-ford)
+    %kiln-autoload           =;(f (f !<(_+<.f vase)) poke-autoload)
+    %kiln-overload           =;(f (f !<(_+<.f vase)) poke-overload)
+    %kiln-goad-gall          =;(f (f !<(_+<.f vase)) poke-overload)
+    %kiln-wash-gall          =;(f (f !<(_+<.f vase)) poke-wash-gall)
+    %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
+    %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
+    %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
+    %kiln-cancel-autocommit  =;(f (f !<(_+<.f vase)) poke-cancel-autocommit)
+    %kiln-start-autoload     =;(f (f !<(_+<.f vase)) poke-start-autoload)
+    %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
+  ==
 ::
 ++  autoload
   |%
-  ++  emit  |=(a/card +>(..autoload (^emit a)))
+  ++  emit
+    |=  a/card:agent:gall
+    +>(..autoload (^emit a))
+  ::
   ++  tracked-vanes
     ^-  (list @tas)
     ~[%ames %behn %clay %dill %eyre %ford %gall %iris %jael]
@@ -238,8 +245,7 @@
   ::
   ++  subscribe-next
     %-  emit
-    ^-  card
-    [%warp /kiln/autoload our %home `[%next %z da+now /sys]]
+    [%pass /kiln/autoload %arvo %c [%warp our %home `[%next %z da+now /sys]]]
   ::
   ++  writ  =>(check-new subscribe-next)
   ++  check-new
@@ -251,13 +257,14 @@
       =.  cur-hoon  new-hoon
       =.  cur-arvo  new-arvo
       =.  cur-vanes  rehash-vanes
-      (emit %poke /kiln/reload/hoon [our %hood] %helm-reset ~)
+      (emit %pass /kiln/reload/hoon %agent [our %hood] %poke %helm-reset !>(~))
       ::  XX  updates cur-vanes?
     =/  new-zuse  (sys-hash /zuse/hoon)
     ?:  !=(new-zuse cur-zuse)
       =.  cur-zuse  new-zuse
       =.  cur-vanes  rehash-vanes
-      (emit %poke /kiln/reload/zuse [our %hood] %helm-reload [%zuse tracked-vanes])
+      =/  =cage  [%helm-reload !>([%zuse tracked-vanes])]
+      (emit [%pass /kiln/reload/zuse %agent [our %hood] %poke cage])
     (roll tracked-vanes load-vane)
   ::
   ++  load-vane
@@ -268,7 +275,8 @@
     ?:  =(`new-vane (~(get by cur-vanes) syd))
       +>.$
     =.  cur-vanes  (~(put by cur-vanes) syd new-vane)
-    (emit [%poke /kiln/reload/[syd] [our %hood] %helm-reload ~[syd]])
+    =/  =cage  [%helm-reload !>(~[syd])]
+    (emit %pass /kiln/reload/[syd] %agent [our %hood] %poke cage)
   ::
   ++  coup-reload
     |=  {way/wire saw/(unit tang)}
@@ -280,26 +288,63 @@
   ::  +poke-overload: wipes ford cache at {start}, and then every {recur}.
   |=  [recur=@dr start=@da]
   ?>  (gte start now)
-  abet:(emit %wait /kiln/overload/(scot %dr recur) start)
+  abet:(emit %pass /kiln/overload/(scot %dr recur) %arvo %b [%wait start])
 ::
 ++  poke-wipe-ford
-  |=(percent=@ud abet:(emit %wipe /kiln percent))
+  |=(percent=@ud abet:(emit %pass /kiln %arvo %f [%wipe percent]))
 ::
 ++  poke-keep-ford
   |=  [compiler-cache-size=@ud build-cache-size=@ud]
-  abet:(emit %keep /kiln compiler-cache-size build-cache-size)
+  =<  abet
+  (emit %pass /kiln %arvo %f [%keep compiler-cache-size build-cache-size])
 ::
 ++  poke-goad-gall
   |=  [force=? agent=(unit dude:gall)]
-  abet:(emit %goad /kiln force agent)
+  abet:(emit %pass /kiln %arvo %g %goad force agent)
 ::
-++  poke-wash-gall  |=(* abet:(emit %wash /kiln ~))
+++  poke-wash-gall  |=(* abet:(emit %pass /kiln %arvo %g [%wash ~]))
 ::
-++  mack
-  |=  {way/wire saw/(unit tang)}
+++  done
+  |=  {way/wire saw/(unit error:ames)}
   ~?  ?=(^ saw)  [%kiln-nack u.saw]
   abet
 ::
+++  take-agent
+  |=  [=wire =sign:agent:gall]
+  ?+  wire  ~|([%kiln-bad-take-agent wire -.sign] !!)
+    [%kiln %fancy *]   ?>  ?=(%poke-ack -.sign) 
+                       (take-coup-fancy t.t.wire p.sign)
+    [%kiln %reload *]  ?>  ?=(%poke-ack -.sign)
+                       (take-coup-reload t.t.wire p.sign)
+    [%kiln %spam *]    ?>  ?=(%poke-ack -.sign) 
+                       (take-coup-spam t.t.wire p.sign)
+  ==
+::
+++  take-general
+  |=  [=wire =sign-arvo]
+  ?-  wire
+      [%sync %merg *]   %+  take-mere-sync  t.t.wire
+                        ?>(?=(%mere +<.sign-arvo) +>.sign-arvo)
+      [%autoload *]     %+  take-writ-autoload  t.wire
+                        ?>(?=(%writ +<.sign-arvo) +>.sign-arvo)
+      [%find-ship *]    %+  take-writ-find-ship  t.wire
+                        ?>(?=(%writ +<.sign-arvo) +>.sign-arvo)
+      [%sync *]         %+  take-writ-sync  t.wire
+                        ?>(?=(%writ +<.sign-arvo) +>.sign-arvo)
+      [%overload *]     %+  take-wake-overload  t.wire
+                        ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
+      [%autocommit *]   %+  take-wake-autocommit  t.wire
+                        ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
+      *
+    ?+  +<.sign-arvo  ~|([%kiln-bad-take-card +<.sign-arvo] !!)
+      %done  %+  done  wire
+             ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
+      %made  %+  take-made  wire
+             ?>(?=(%made +<.sign-arvo) +>.sign-arvo)
+      %mere  %+  take-mere  wire
+             ?>(?=(%mere +<.sign-arvo) +>.sign-arvo)
+    ==
+  ==
 ++  take  |=(way/wire ?>(?=({@ ~} way) (work i.way))) ::  general handler
 ++  take-mere                                         ::
   |=  {way/wire are/(each (set path) (pair term tang))}
@@ -386,8 +431,8 @@
   =.  nex.commit-timer  (add now tim.commit-timer)
   =<  abet
   %-  emil
-  :~  [%dirk /commit mon.commit-timer]
-      [%wait way.commit-timer nex.commit-timer]
+  :~  [%pass /commit %arvo %c [%dirk mon.commit-timer]]
+      [%pass way.commit-timer %arvo %b [%wait nex.commit-timer]]
   ==
 ::
 ::
@@ -397,39 +442,43 @@
 ::
 ++  auto
   |=  kiln-sync
-  =+  (~(gut by syn) [syd her sud] [let=*@ud ust=ost])
+  =+  (~(gut by syn) [syd her sud] let=*@ud)
   |%
   ++  abet
-    ..auto(syn (~(put by syn) [syd her sud] let ust))
+    ..auto(syn (~(put by syn) [syd her sud] let))
   ::
   ++  blab
-    |=  new/(list move)
+    |=  new/(list card:agent:gall)
     ^+  +>
     +>.$(moz (welp new moz))
+  ::
+  ++  warp
+    |=  [=wire =ship =riff]
+    (blab [%pass wire %arvo %c [%warp ship riff]] ~)
   ::
   ++  spam  |*(* %_(+> ..auto (^spam +<)))
   ++  stop
     =>  (spam (render "ended autosync" sud her syd) ~)
     =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
-    (blab [ust %warp wire her sud ~] ~)
+    (warp wire her sud ~)
   ::  XX duplicate of start-sync? see |track
   ::
   ++  start-track
     =>  (spam (render "activated track" sud her syd) ~)
     =.  let  1
     =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
-    (blab [ost %warp wire her sud `[%sing %y ud+let /]] ~)
+    (warp wire her sud `[%sing %y ud+let /])
   ::
   ++  start-sync
     =>  (spam (render "finding ship and desk" sud her syd) ~)
     =/  =wire  /kiln/find-ship/[syd]/(scot %p her)/[sud]
-    (blab [ost %warp wire her sud `[%sing %y ud+1 /]] ~)
+    (warp wire her sud `[%sing %y ud+1 /])
   ::
   ++  take-find-ship
     |=  rot=riot
     =>  (spam (render "activated sync" sud her syd) ~)
     =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
-    (blab [ost %warp wire her sud `[%sing %w [%da now] /]] ~)
+    (warp wire her sud `[%sing %w [%da now] /])
   ::
   ++  writ
     |=  rot=riot
@@ -441,7 +490,7 @@
         ~
       start-sync
     =.  let  ?.  ?=($w p.p.u.rot)  let  ud:;;(cass:clay q.q.r.u.rot)
-    =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
+    =/  =wire  /kiln/sync/merg/[syd]/(scot %p her)/[sud]
     ::  germ: merge mode for sync merges
     ::
     ::    Initial merges from any source must use the %init germ.
@@ -464,7 +513,7 @@
     =<  %-  spam
         ?:  =(our her)  ~
         [(render "beginning sync" sud her syd) ~]
-    (blab [ost %merg wire syd her sud ud+let germ] ~)
+    (blab [%pass wire %arvo %c [%merg syd her sud ud+let germ]] ~)
   ::
   ++  mere
     |=  mes=(each (set path) (pair term tang))
@@ -495,7 +544,7 @@
         ==
       ==
     =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
-    (blab [ost %warp wire her sud `[%sing %y ud+let /]] ~)
+    (warp wire her sud `[%sing %y ud+let /])
   --
 ::
 ++  work                                              ::  state machine
@@ -509,7 +558,7 @@
     ..work(rem (~(put by rem) syd auto gem her sud cas))
   ::
   ++  blab
-    |=  new/(list move)
+    |=  new/(list card:agent:gall)
     ^+  +>
     +>.$(moz (welp new moz))
   ::
@@ -530,13 +579,14 @@
   ::
   ++  perform                                         ::
     ^+  .
-    (blab [ost %merg /kiln/[syd] syd her sud cas gem] ~)
+    (blab [%pass /kiln/[syd] %arvo %c [%merg syd her sud cas gem]] ~)
   ::
   ++  fancy-merge                                     ::  send to self
     |=  {syd/desk her/@p sud/desk gem/?($auto germ)}
     ^+  +>
+    =/  =cage  [%kiln-merge !>([syd her sud cas gem])]
     %-  blab  :_  ~
-    [ost %poke /kiln/fancy/[^syd] [our %hood] %kiln-merge [syd her sud cas gem]]
+    [%pass /kiln/fancy/[^syd] %agent [our %hood] %poke cage]
   ::
   ++  spam  ::|=(tang ((slog +<) ..spam))
             |*(* +>(..work (^spam +<)))
@@ -556,7 +606,8 @@
     ?~  saw
       =>  (spam leaf+"%melding %{(trip sud)} into scratch space" ~)
       %-  blab  :_  ~
-      [ost %merg /kiln/[syd] (cat 3 syd '-scratch') her sud cas gem]
+      =/  note  [%merg (cat 3 syd '-scratch') her sud cas gem]
+      [%pass /kiln/[syd] %arvo %c note]
     =+  :-  "failed to set up conflict resolution scratch space"
         "I'm out of ideas"
     lose:(spam leaf+-< leaf+-> u.saw)
@@ -575,7 +626,8 @@
         =+  tic=(cat 3 syd '-scratch')
         %-  blab  :_  ~
         =,  ford
-        :*  ost  %build  /kiln/[syd]  live=%.n
+        :*  %pass  /kiln/[syd]  %arvo  %f
+        :*  %build  live=%.n
             ^-  schematic
             :-  %list
             ^-  (list schematic)
@@ -597,7 +649,7 @@
                 ?~(- %$ i.-)
             ^-  schematic
             [%mash [our tic] for [[her sud] for dali] [[our syd] for dbob]]
-        ==
+        ==  ==
       =+  "failed to merge with strategy meld"
       lose:(spam leaf+- >p.p.are< q.p.are)
     ?:  ?=(%& -.are)
@@ -704,11 +756,12 @@
     =<  win
     %-  blab:(spam tan)
     :_  ~
-    :*  ost  %info  /kiln/[syd]
+    :*  %pass  /kiln/[syd]  %arvo  %c
+    :*  %info
         (cat 3 syd '-scratch')  %&
         %+  murn  can
         |=  {p/path q/(unit miso)}
         `(unit (pair path miso))`?~(q ~ `[p u.q])
-    ==
+    ==  ==
   --
 --

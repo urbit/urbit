@@ -878,3 +878,117 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
   }
   return nuu_o;
 }
+
+static c3_o
+_ce_image_move(u3e_image* img_u, c3_o bak_o)
+{
+  c3_c old_c[8193];
+  c3_c new_c[8193];
+  snprintf(old_c, 8192, "%s/.urb/chk/%s.bin", u3P.dir_c, img_u->nam_c);
+  snprintf(new_c, 8192, "%s.bak", old_c);
+
+  c3_i ret_i;
+
+  if ( c3y == bak_o ) {
+    ret_i = rename(old_c, new_c);
+  }
+  else {
+    ret_i = rename(new_c, old_c);
+  }
+
+  if ( 0 != ret_i ) {
+    u3l_log("loom: %s %s failed: %s\r\n", ( c3y == bak_o ) ? "hold" : "fall",
+                                          img_u->nam_c, strerror(errno));
+    return c3n;
+  }
+
+  return c3y;
+}
+
+/* u3e_hold(): backup memory images
+*/
+c3_o
+u3e_hold(void)
+{
+  if ( (c3n == _ce_image_move(&u3P.nor_u, c3y)) ||
+       (c3n == _ce_image_move(&u3P.sou_u, c3y)) )
+  {
+    return c3n;
+  }
+
+  //  XX sync directory
+
+  return c3y;
+}
+
+static c3_o
+_ce_image_drop(u3e_image* img_u)
+{
+  c3_c pat_c[8193];
+  snprintf(pat_c, 8192, "%s/.urb/chk/%s.bin.bak", u3P.dir_c, img_u->nam_c);
+
+  if ( 0 != unlink(pat_c) ) {
+    u3l_log("loom: drop %s failed: %s\r\n", img_u->nam_c, strerror(errno));
+    return c3n;
+  }
+
+  return c3y;
+}
+
+/* u3e_drop(): remove backed-up memory images
+*/
+c3_o
+u3e_drop(void)
+{
+  if ( (c3n == _ce_image_drop(&u3P.nor_u)) ||
+       (c3n == _ce_image_drop(&u3P.sou_u)) )
+  {
+    return c3n;
+  }
+
+  return c3y;
+}
+
+/* u3e_fall(): restore memory images
+*/
+c3_o
+u3e_fall(void)
+{
+  if ( (c3n == _ce_image_move(&u3P.nor_u, c3n)) ||
+       (c3n == _ce_image_move(&u3P.sou_u, c3n)) )
+  {
+    return c3n;
+  }
+
+  //  XX sync directory
+
+  return c3y;
+}
+
+/* u3e_wipe(): discard memory images
+*/
+c3_o
+u3e_wipe(void)
+{
+  //  XX ensure no patch files are present
+
+  if ( 0 != ftruncate(u3P.nor_u.fid_i, 0) ) {
+    u3l_log("loom: wipe %s failed: %s\r\n", u3P.nor_u.nam_c, strerror(errno));
+    return c3n;
+  }
+
+  if ( 0 != ftruncate(u3P.sou_u.fid_i, 0) ) {
+    u3l_log("loom: wipe %s failed: %s\r\n", u3P.sou_u.nam_c, strerror(errno));
+    return c3n;
+  }
+
+  c3_sync(u3P.nor_u.fid_i);
+  c3_sync(u3P.sou_u.fid_i);
+
+  close(u3P.nor_u.fid_i);
+  close(u3P.sou_u.fid_i);
+
+  //  XX sync directory
+
+  return c3y;
+}

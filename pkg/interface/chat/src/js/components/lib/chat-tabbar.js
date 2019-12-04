@@ -8,54 +8,59 @@ export class ChatTabBar extends Component {
   render() {
     let props = this.props;
 
-    let bbStream = '',
-      bbMembers = '',
-      bbSettings = '';
-
-    let strColor = '',
-      memColor = '',
-      setColor = '';
+    let memColor = '',
+      setColor = '',
+      popout = '';
 
     if (props.location.pathname.includes('/settings')) {
-      bbSettings = ' bb';
-      strColor = 'gray';
-      memColor =  'gray';
+      memColor =  'gray3';
       setColor = 'black';
     } else if (props.location.pathname.includes('/members')) {
-      bbMembers = ' bb';
-      strColor = 'gray';
       memColor =  'black';
-      setColor = 'gray';
+      setColor = 'gray3';
     } else {
-      bbStream = ' bb';
-      strColor = 'black';
-      memColor =  'gray';
-      setColor = 'gray';
+      memColor =  'gray3';
+      setColor = 'gray3';
     }
 
-    let membersText = props.numPeers === 1
-      ? '1 Member' : `${props.numPeers} Members`;
+    (props.location.pathname.includes('/popout')) 
+    ? popout = "popout/"
+    : popout = "";
+
+    let hidePopoutIcon = (this.props.popout) 
+    ? "dn-m dn-l dn-xl" 
+    : "dib-m dib-l dib-xl";
+
 
     return (
-      <div className="w-100" style={{ height:28 }}>
-        <div className={"dib h-100" + bbStream} style={{width:'160px'}}>
-          <Link
-            className={'no-underline label-regular v-mid ' + strColor}
-            to={'/~chat/room' + props.station}>Stream</Link>
-        </div>
-        { !!props.isOwner ? (
-          <div className={"dib h-100" + bbMembers} style={{width:'160px'}}>
+      <div className="dib flex-shrink-0 flex-grow-1">
+        {!!props.isOwner ? (
+          <div className={"dib f8 pl6"}>
             <Link
-              className={'no-underline label-regular v-mid ' + memColor}
-              to={'/~chat/members' + props.station}>{membersText}</Link>
+              className={"no-underline v-top " + memColor}
+              to={`/~chat/` + popout + `members` + props.station}>
+              Members
+            </Link>
           </div>
-          ) : <div className="dib" style={{width:0}}></div>
-        }
-        <div className={"dib h-100" + bbSettings} style={{width:'160px'}}>
+        ) : (
+          <div className="dib" style={{ width: 0 }}></div>
+        )}
+        <div className={"dib f8 pl6 pr6"}>
           <Link
-            className={'no-underline label-regular v-mid ' + setColor}
-            to={'/~chat/settings' + props.station}>Settings</Link>
+            className={"no-underline v-top " + setColor}
+            to={`/~chat/` + popout + `settings` + props.station}>
+            Settings
+          </Link>
         </div>
+        <a href={`/~chat/popout/room` + props.station} target="_blank"
+        className="dib fr">
+          <img
+            className={`v-btm flex-shrink-0 pr2 dn ` + hidePopoutIcon}
+            src="/~chat/img/popout.png"
+            height="16"
+            width="16"
+            style={{ paddingTop: "2px" }}/>
+        </a>
       </div>
     );
   }
