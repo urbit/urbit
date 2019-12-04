@@ -14,7 +14,7 @@ export class NewScreen extends Component {
 
     this.groupNameChange = this.groupNameChange.bind(this);
     this.invChange = this.invChange.bind(this);
-    this.colorChange = this.colorChange.bind(this);
+    // this.colorChange = this.colorChange.bind(this);
   }
 
   groupNameChange(event) {
@@ -29,11 +29,11 @@ export class NewScreen extends Component {
     });
   }
 
-  colorChange(event) {
-    this.setState({
-      color: event.target.value
-    });
-  }
+  // colorChange(event) {
+  //   this.setState({
+  //     color: event.target.value
+  //   });
+  // }
 
   render() {
     return (
@@ -45,14 +45,14 @@ export class NewScreen extends Component {
           <textarea
             className="f7 ba b--gray3 w-100 pa3 ml3 mt2"
             rows={1}
-            placeholder="example-chat-name"
+            placeholder="example-group-name"
             style={{
               resize: "none",
               height: 48,
               paddingTop: 14
             }}
           />
-          <h2 className="f8 pl3 pt6">Group Avatar</h2>
+          {/* <h2 className="f8 pl3 pt6">Group Avatar</h2>
           <p className="f9 pl3 gray2 lh-copy">
             Select a color to represent your group
           </p>
@@ -65,7 +65,7 @@ export class NewScreen extends Component {
               height: 48,
               paddingTop: 14
             }}
-          />
+          /> */}
           <h2 className="f8 pl3 pt6">Add Group Members</h2>
           <p className="f9 pl3 gray2 lh-copy">
             Search for ships to invite to your group

@@ -58781,22 +58781,50 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$3 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/groups.js";
+            const _jsxFileName$3 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/lib/groups-item.js";
+            class GroupsItem extends react_1 {
+                render() {
+                    const { props } = this;
+                    console.log(props.group);
+
+                    return (
+                        react.createElement(Link, {
+                        to: "/" + props.link, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 11}}
+                            , react.createElement('div', { className: "w-100 v-mid f9 pl4"   , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 13}}
+                            , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 14}}, Object.keys(props.group))
+                            )
+                        )
+                    )
+                }
+            }
+
+            const _jsxFileName$4 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/groups.js";
             class Groups extends react_1 {
               // drawer to the left
 
               render() {
-                let groupItems = this.props.contacts;
+                const { props, state } = this;
+
+                let groupItems = Object.keys(props.contacts)
+                .map((path) => {
+                  return (
+                    react.createElement(GroupsItem, {
+                    key: path,
+                    link: path,
+                    group: props.contacts[path], __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 15}})
+                  )
+                });
 
                 return (
-                  react.createElement('div', { className: "br b--gray4 h-100 flex-basis-100-s flex-basis-300-ns relative"     , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 13}}
-                    , react.createElement('h2', { className: "f9 pa4 gray2 c-default"   , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 14}}, "Your Root Identity"  )
-                    , react.createElement('h2', { className: "f9 pa4 gray2 c-default"   , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 15}}, "Your Groups" )
+                  react.createElement('div', { className: "br b--gray4 h-100 flex-basis-100-s flex-basis-300-ns relative"     , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 23}}
+                    , react.createElement('h2', { className: "f9 pa4 gray2 c-default"   , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 24}}, "Your Root Identity"  )
+                    , react.createElement('h2', { className: "f9 pa4 gray2 c-default"   , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 25}}, "Your Groups" )
+                    , groupItems
                     , react.createElement('div', {
                       className: "dt bt b--gray4 absolute w-100"    ,
-                      style: { bottom: 0, height: 48 }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 16}}
-                      , react.createElement(Link, { to: "/~contacts/new", className: "dtc v-mid" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 19}}
-                        , react.createElement('p', { className: "f9 pl4 black bn"   , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 20}}, "Create New Group"  )
+                      style: { bottom: 0, height: 48 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 27}}
+                      , react.createElement(Link, { to: "/~contacts/new", className: "dtc v-mid" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 30}}
+                        , react.createElement('p', { className: "f9 pl4 black bn"   , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 31}}, "Create New Group"  )
                       )
                     )
                   )
@@ -58804,26 +58832,26 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$4 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/skeleton.js";
+            const _jsxFileName$5 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/skeleton.js";
             class Skeleton extends react_1 {
               render() {
                   let rightPanelClasses =
                     this.props.activeDrawer === "rightPanel" ? "db" : "dn db-ns";
 
                 return (
-                  react.createElement('div', { className: "h-100 w-100" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 13}}
-                    , react.createElement(HeaderBar, { spinner: this.props.spinner, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 14}} )
+                  react.createElement('div', { className: "h-100 w-100" , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 13}}
+                    , react.createElement(HeaderBar, { spinner: this.props.spinner, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 14}} )
                     , react.createElement('div', {
                       className: "cf w-100 flex"  ,
                       style: {
                         height: "calc(100% - 48px)"
-                      }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 15}}
-                      , react.createElement(Groups, { contacts: this.props.contacts, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 20}})
+                      }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 15}}
+                      , react.createElement(Groups, { contacts: this.props.contacts, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 20}})
                       , react.createElement('div', {
                         className: "h-100 w-100 " + rightPanelClasses,
                         style: {
                           flexGrow: 1
-                        }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 21}}
+                        }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 21}}
                         , this.props.children
                       )
                     )
@@ -58832,7 +58860,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$5 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/lib/new.js";
+            const _jsxFileName$6 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/lib/new.js";
             class NewScreen extends react_1 {
               constructor(props) {
                 super(props);
@@ -58845,7 +58873,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
                 this.groupNameChange = this.groupNameChange.bind(this);
                 this.invChange = this.invChange.bind(this);
-                this.colorChange = this.colorChange.bind(this);
+                // this.colorChange = this.colorChange.bind(this);
               }
 
               groupNameChange(event) {
@@ -58860,48 +58888,48 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 });
               }
 
-              colorChange(event) {
-                this.setState({
-                  color: event.target.value
-                });
-              }
+              // colorChange(event) {
+              //   this.setState({
+              //     color: event.target.value
+              //   });
+              // }
 
               render() {
                 return (
-                  react.createElement('div', { className: "h-100 w-100 flex flex-column overflow-y-scroll"    , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 40}}
-                    , react.createElement('div', { className: "w-100 w-50-l w-50-xl mb4"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 41}}
-                      , react.createElement('h2', { className: "f8 pl3 pt4"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 42}}, "Create New Group"  )
-                      , react.createElement('h2', { className: "f8 pl3 pt6"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 43}}, "Group Name" )
-                      , react.createElement('p', { className: "f9 pl3 gray2 lh-copy"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 44}}, "Alphanumeric characters only"  )
+                  react.createElement('div', { className: "h-100 w-100 flex flex-column overflow-y-scroll"    , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 40}}
+                    , react.createElement('div', { className: "w-100 w-50-l w-50-xl mb4"   , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 41}}
+                      , react.createElement('h2', { className: "f8 pl3 pt4"  , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 42}}, "Create New Group"  )
+                      , react.createElement('h2', { className: "f8 pl3 pt6"  , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 43}}, "Group Name" )
+                      , react.createElement('p', { className: "f9 pl3 gray2 lh-copy"   , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 44}}, "Alphanumeric characters only"  )
                       , react.createElement('textarea', {
                         className: "f7 ba b--gray3 w-100 pa3 ml3 mt2"      ,
                         rows: 1,
-                        placeholder: "example-chat-name",
+                        placeholder: "example-group-name",
                         style: {
                           resize: "none",
                           height: 48,
                           paddingTop: 14
-                        }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 45}}
+                        }, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 45}}
                       )
-                      , react.createElement('h2', { className: "f8 pl3 pt6"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 55}}, "Group Avatar" )
-                      , react.createElement('p', { className: "f9 pl3 gray2 lh-copy"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 56}}, "Select a color to represent your group"
-
-                      )
-                      , react.createElement('textarea', {
-                        className: "f7 ba b--gray3 w-50 w-25-xl pa3 ml3 mt2"       ,
-                        rows: 1,
-                        placeholder: "#000000",
-                        style: {
+                      /* <h2 className="f8 pl3 pt6">Group Avatar</h2>
+                      <p className="f9 pl3 gray2 lh-copy">
+                        Select a color to represent your group
+                      </p>
+                      <textarea
+                        className="f7 ba b--gray3 w-50 w-25-xl pa3 ml3 mt2"
+                        rows={1}
+                        placeholder="#000000"
+                        style={{
                           resize: "none",
                           height: 48,
                           paddingTop: 14
-                        }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 59}}
-                      )
-                      , react.createElement('h2', { className: "f8 pl3 pt6"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 69}}, "Add Group Members"  )
-                      , react.createElement('p', { className: "f9 pl3 gray2 lh-copy"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 70}}, "Search for ships to invite to your group"
+                        }}
+                      /> */
+                      , react.createElement('h2', { className: "f8 pl3 pt6"  , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 69}}, "Add Group Members"  )
+                      , react.createElement('p', { className: "f9 pl3 gray2 lh-copy"   , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 70}}, "Search for ships to invite to your group"
 
                       )
-                      , react.createElement('div', { className: "relative", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 73}}
+                      , react.createElement('div', { className: "relative", __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 73}}
                         , react.createElement('textarea', {
                           className: "f8 ba b--gray3 w-100 pa3 pl7  ml3 mt2 mb7"         ,
                           rows: 1,
@@ -58910,20 +58938,20 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                             resize: "none",
                             height: 48,
                             paddingTop: 15
-                          }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 74}}
+                          }, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 74}}
                         )
                         , react.createElement('span', { className: "f5 gray3 absolute"  ,
                         style: {transform: "rotate(-45deg)",
                                 left: 21,
-                                top: 18}, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 84}}, "⚲"
+                                top: 18}, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 84}}, "⚲"
 
                         )
                       )
-                      , react.createElement('button', { className: "ml3 f8 ba pa2 b--green2 green2"     , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 91}}, "Start Group"
+                      , react.createElement('button', { className: "ml3 f8 ba pa2 b--green2 green2"     , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 91}}, "Start Group"
 
                       )
-                      , react.createElement(Link, { to: "/~contacts", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 94}}
-                        , react.createElement('button', { className: "f8 ml3 ba pa2 b--black"    , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 95}}, "Cancel")
+                      , react.createElement(Link, { to: "/~contacts", __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 94}}
+                        , react.createElement('button', { className: "f8 ml3 ba pa2 b--black"    , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 95}}, "Cancel")
                       )
                     )
                   )
@@ -58931,7 +58959,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$6 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/root.js";
+            const _jsxFileName$7 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/root.js";
 
             class Root extends react_1 {
               constructor(props) {
@@ -58952,34 +58980,34 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 const { props, state } = this;
 
                 return (
-                  react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$6, lineNumber: 32}}
-                    , react.createElement('div', { className: "h-100 w-100" , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 33}}
+                  react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$7, lineNumber: 32}}
+                    , react.createElement('div', { className: "h-100 w-100" , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 33}}
                     , react.createElement(Route, { exact: true, path: "/~contacts",
                       render:  (props) => {
                         return (
-                          react.createElement(Skeleton, { activeDrawer: "groups", contacts: state.contacts, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 37}}
-                            , react.createElement('div', { className: "h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"     , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 38}})
+                          react.createElement(Skeleton, { activeDrawer: "groups", contacts: state.contacts, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 37}}
+                            , react.createElement('div', { className: "h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"     , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 38}})
                           )
                         );
-                      }, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 34}} )
+                      }, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 34}} )
                       , react.createElement(Route, { exact: true, path: "/~contacts/new", 
                         render:  (props) => {
                           return (
                             react.createElement(Skeleton, {
                               spinner: this.state.spinner,
                               contacts: state.contacts,
-                              activeDrawer: "rightPanel", __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 45}}
-                              , react.createElement(NewScreen, {__self: this, __source: {fileName: _jsxFileName$6, lineNumber: 49}} )
+                              activeDrawer: "rightPanel", __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 45}}
+                              , react.createElement(NewScreen, {__self: this, __source: {fileName: _jsxFileName$7, lineNumber: 49}} )
                             )
                           );
-                      }, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 42}} )
+                      }, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 42}} )
                     )
                   )
                 )
               }
             }
 
-            const _jsxFileName$7 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/index.js";
+            const _jsxFileName$8 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/index.js";
             api.setAuthTokens({
               ship: window.ship
             });
@@ -58987,7 +59015,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
             subscription.start();
 
             reactDom.render((
-              react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$7, lineNumber: 15}} )
+              react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$8, lineNumber: 15}} )
             ), document.querySelectorAll("#root")[0]);
 
 }));
