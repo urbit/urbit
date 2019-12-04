@@ -27,7 +27,7 @@ export class Skeleton extends Component {
           : "h-100-minus-48-s ") + 
           ((this.props.popout)
             ? "h-100"
-            : "h-minus-48-m h-100-minus-48-l h-100-minus-48-xl")}>
+            : "h-100-minus-48-m h-100-minus-48-l h-100-minus-48-xl")}>
           <div className={
               `fl h-100 br b--gray4 overflow-x-hidden 
               flex-basis-full-s flex-basis-300-m flex-basis-300-l 
