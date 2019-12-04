@@ -374,6 +374,11 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   if ( 0 == nrd_i ) {
     _ames_free(buf_u->base);
   }
+  //  check protocol version in header matches 0
+  //
+  else if ( 0 != (0x7 & *((c3_w*)buf_u->base)) ) {
+    _ames_free(buf_u->base);
+  }
   else {
     {
       u3_noun msg = u3i_bytes((c3_w)nrd_i, (c3_y*)buf_u->base);

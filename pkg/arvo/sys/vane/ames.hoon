@@ -892,6 +892,27 @@
       ?.  ?=([%b %wake *] sign)
         ~>  %slog.0^leaf/"ames: larva: strange sign"
         [~ larval-gate]
+      ::  if crashed, print, dequeue, and set next drainage timer
+      ::
+      ::    TODO: cleanup duplicate iteration logic
+      ::
+      ?^  error.sign
+        =.  queued-events  +:~(get to queued-events)
+        ::  .queued-events has been cleared; metamorphose
+        ::
+        ?~  queued-events
+          ~>  %slog.0^leaf/"ames: metamorphosis"
+          [~ adult-gate]
+        ::  set timer to drain next event
+        ::
+        =/  moves
+          =/  =tang  [leaf/"ames: larva: drain crash" u.error.sign]
+          :~  [duct %pass /larva-crash %d %flog %crud %larva tang]
+              [duct %pass /larva %b %wait now]
+          ==
+        [moves larval-gate]
+      ::  normal drain timer; dequeue and run event
+      ::
       =^  first-event  queued-events  ~(get to queued-events)
       =^  moves  adult-gate
         ?-  -.first-event
