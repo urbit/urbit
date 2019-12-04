@@ -73,6 +73,7 @@ render() {
         autoFocus={true}
         className="mono ml1 flex-auto dib w-100"
         cursor={this.props.cursor}
+        onClick={e => store.setState({ cursor: e.target.selectionEnd })}
         onKeyDown={this.keyPress}
         onPaste={e => {e.preventDefault()}}
         ref={this.inputRef}
