@@ -1,3 +1,5 @@
+::  Print keys for a ship
+::
 :-  %say
 |=  [[now=time *] [=ship ~] ~]
 :*  %noun

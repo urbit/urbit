@@ -54,7 +54,6 @@
       ::
       ?:  =(our ship)
         `state
-      ~>  %slog.0^leaf/"ping: {<our>} -> {<ship>}"
       =/  s  (~(get by ships.state) ship)
       ?~  s
         `state

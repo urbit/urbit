@@ -764,7 +764,7 @@
         =/  deal  [hen routes deal]
         (~(put to deals) deal)
       ::
-      ~&  >>  [%gall-not-running agent -.deal]
+      %-  (slog leaf+"gall: not running {<agent>} yet, got {<-.deal>}" ~)
       %_  mo-core
         blocked.agents.state  (~(put by blocked.agents.state) agent blocked)
       ==

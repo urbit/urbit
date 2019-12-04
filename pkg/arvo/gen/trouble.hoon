@@ -1,3 +1,5 @@
+::  Print useful diagnostic information
+::
 :-  %say
 |=  [[now=time * bec=beak] ~ ~]
 =*  our      p.bec
