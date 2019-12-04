@@ -374,9 +374,9 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   if ( 0 == nrd_i ) {
     _ames_free(buf_u->base);
   }
-  //  check header's fourth most significant bit to ignore old protocols
+  //  check protocol version in header matches 0
   //
-  else if ( 0 != (1 & (*((c3_w*)buf_u->base) >> 28)) ) {
+  else if ( 0 != (0x7 & *((c3_w*)buf_u->base)) ) {
     _ames_free(buf_u->base);
   }
   else {
