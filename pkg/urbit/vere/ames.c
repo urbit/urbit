@@ -374,6 +374,11 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   if ( 0 == nrd_i ) {
     _ames_free(buf_u->base);
   }
+  //  check header's fourth most significant bit to ignore old protocols
+  //
+  else if ( 0 != (1 & (*((c3_w*)buf_u->base) >> 28)) ) {
+    _ames_free(buf_u->base);
+  }
   else {
     {
       u3_noun msg = u3i_bytes((c3_w)nrd_i, (c3_y*)buf_u->base);
