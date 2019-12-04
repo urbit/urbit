@@ -57,9 +57,14 @@ export class Share {
           switch (Object.keys(dex)[0]) {
             case 'del': if (at < dex.del) { dex.del++; } break;
             case 'ins': if ((at < dex.ins.at) ||
-                              ((at === dex.ins.at) && !(cha <= dex.ins.cha))) {
+                           ((at === dex.ins.at) && !(cha <= dex.ins.cha))) {
                 dex.ins.at++;
-              } break;
+              } 
+              else if (at >= dex.ins.at) {
+                dex.ins.at = at;  //NOTE possibly unpredictable behaviour
+                dex.ins.at++;     // for sole inserts that aren't tabs
+              }
+              break;
           }
           return dex;
         default: throw `%sole-edit -lost.${str(sin)}`;
