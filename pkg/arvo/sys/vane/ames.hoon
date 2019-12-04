@@ -892,6 +892,15 @@
       ?.  ?=([%b %wake *] sign)
         ~>  %slog.0^leaf/"ames: larva: strange sign"
         [~ larval-gate]
+      ::  if crashed, print, back off a little, and retry
+      ::
+      ?^  error.sign
+        ~>  %slog.0^leaf/"ames: larva drain crash"
+        %-  (slog u.error.sign)
+        =/  moves  [duct %pass /larva %b %wait (add now ~s5)]~
+        [moves larval-gate]
+      ::  normal drain timer; dequeue and run event
+      ::
       =^  first-event  queued-events  ~(get to queued-events)
       =^  moves  adult-gate
         ?-  -.first-event
