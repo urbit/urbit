@@ -473,6 +473,7 @@ _worker_lame(u3_noun now, u3_noun ovo, u3_noun why, u3_noun tan)
     u3_noun lef = u3nc(c3__leaf, u3kb_weld(u3i_tape("bail: "),
                                            u3qc_rip(3, why)));
     u3_noun nat = u3kb_weld(u3k(tan), u3nc(lef, u3_nul));
+    u3m_p("FAIL", nat);
     rep = u3nc(u3k(wir), u3nt(c3__crud, u3k(tag), nat));
   }
 
