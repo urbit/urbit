@@ -2,7 +2,7 @@
 |%
 ++  nu                                              ::  parse number as hex
   |=  jon/json
-  ?>  ?=({$n *} jon)
+  ?>  ?=({$s *} jon)
   (rash p.jon hex)
 ::
 ++  rolodex-to-json
@@ -15,7 +15,7 @@
   |=  [pax=^path =contacts]
   ^-  [cord json]
   :-  (spat pax)
-  (pairs [%contacts (contacts-to-json contacts)]~)
+  (contacts-to-json contacts)
 ::
 ++  contacts-to-json
   |=  con=contacts
@@ -45,6 +45,8 @@
 ++  edit-to-json
   |=  edit=edit-field
   ^-  json
+  =,  enjs:format
+  %+  frond  -.edit
   ?-  -.edit
     %nickname  s+nickname.edit
     %email     s+email.edit
