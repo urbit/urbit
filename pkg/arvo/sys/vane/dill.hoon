@@ -98,11 +98,7 @@
 ++  sign                                                ::  in result $<-
   $~  [%j %init *@p]                                    ::
   $%  $:  %a                                            ::
-          $%  [%nice ~]                                 ::  XX obsolete
-              $>  $?  %mass                             ::
-                      %send                             ::  XX strange
-                  ==                                    ::
-              gift:able:ames                            ::
+          $%  $>(%mass gift:able:ames)                  ::
       ==  ==                                            ::
       $:  %b                                            ::
           $%  $>  $?  %mass                             ::
@@ -110,10 +106,10 @@
                   ==                                    ::
               gift:able:behn                            ::
               $>(%writ gift:able:clay)                  ::  XX %slip
+              $>(%mere gift:able:clay)                  ::  XX %slip
       ==  ==                                            ::
       $:  %c                                            ::
-          $>  $?  %mack                                 ::  XX strange
-                  %mass                                 ::
+          $>  $?  %mass                                 ::
                   %mere                                 ::
                   %note                                 ::
                   %writ                                 ::
@@ -204,6 +200,7 @@
           $blew  (send %rez p.p.kyz q.p.kyz)
           $heft  heft
           $lyra  (dump kyz)
+          $pack  (dump kyz)
           $veer  (dump kyz)
           $verb  (dump kyz)
         ==
@@ -238,8 +235,8 @@
         +>(moz :_(moz [hen %give git]))
       ::
       ++  deal                                          ::  pass to %gall
-        |=  [=wire act=agent-action:gall]
-        (pass wire [%g %deal [our our] ram act])
+        |=  [=wire =deal:gall]
+        (pass wire [%g %deal [our our] ram deal])
       ::
       ++  pass                                          ::  pass note
         |=  [=wire =note]
@@ -395,7 +392,7 @@
         (deal / [%poke %drum-set-boot-apps !>(lit.all)])
       ::
       ++  peer
-        (deal / [%peer /drum])
+        (deal / [%watch /drum])
       ::
       ++  show                                          ::  permit reads on desk
         |=  des/desk
@@ -408,9 +405,6 @@
       ++  autoload
         (deal /autoload [%poke %kiln-start-autoload [%atom %n `~] ~])
       ::
-      ++  pump                                          ::  send diff ack
-        (deal / [%pump ~])
-      ::
       ++  take                                          ::  receive
         |=  {tea/wire sih/sign}
         ^+  +>
@@ -418,16 +412,9 @@
             {?($a $b $c $e $f $g $i $j) $mass *}
           (wegh -.sih p.sih)
         ::
-            {$a $nice *}
-          ::  ~&  [%take-nice-ames sih]
-          +>
-        ::
             [%j %init *]
           ::  pass thru to unix
           ::
-          +>(moz :_(moz [hen %give +.sih]))
-        ::
-            {$a $send *}
           +>(moz :_(moz [hen %give +.sih]))
         ::
             {$g $onto *}
@@ -440,13 +427,12 @@
             {$g $unto *}
           ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
-            $coup  ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
-            $quit  peer
-            $reap  ?~  p.p.+>.sih
-                     +>.$
-                   (dump:(crud %reap u.p.p.+>.sih) %logo ~)
-            $diff  pump:(from ;;(dill-blit q:`vase`+>+>.sih))
-            $http-response  !!
+            $poke-ack   ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
+            $kick       peer
+            $watch-ack  ?~  p.p.+>.sih
+                          +>.$
+                        (dump:(crud %reap u.p.p.+>.sih) %logo ~)
+            $fact       (from ;;(dill-blit q:`vase`+>+>.sih))
           ==
         ::
             {$c $note *}
@@ -455,14 +441,10 @@
             {?($b $c) $writ *}
           init
         ::
-            {$c $mere *}
+            {?($b %c) $mere *}
           ?:  ?=(%& -.p.sih)
             mere
           (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
-        ::
-            {$c $mack *}
-          ?~  p.sih  +>.$
-          (mean >%dill-clay-nack< u.p.sih)
         ::
             {$d $blit *}
           (done +.sih)

@@ -20,7 +20,7 @@ export class Root extends Component {
       <BrowserRouter>
         <div style={{height: "100vh"}}>
         <HeaderBar/>
-        <Route exact path="/~soto" render={ () => {
+        <Route exact path="/~dojo" render={ () => {
           return (
             <div className="pa3 bg-black mono gray3 w-100"
             style={{lineHeight: "1.4", height: "calc(100% - 48px)", cursor: "text"}}>

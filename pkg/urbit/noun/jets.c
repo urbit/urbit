@@ -126,7 +126,7 @@ _cj_bash(u3_noun bat)
       c3_y*   fat_y;
       c3_y    dig_y[32];
 
-      wor_w = u3qe_jam_buf(bat, &bit_w);
+      wor_w = u3s_jam_fib(bat, &bit_w);
       met_w = bit_w >> 3;
       if ( bit_w != met_w << 3 ) {
         ++met_w;
@@ -2189,6 +2189,33 @@ u3j_ream(void)
   u3z(rel);
 
   u3h_walk(u3R->jed.han_p, _cj_ream_hank);
+}
+
+/* u3j_stay(): extract cold state
+*/
+u3_noun
+u3j_stay(void)
+{
+  u3_noun rel = u3_nul;
+  c3_assert(u3R == &(u3H->rod_u));
+  u3h_walk_with(u3R->jed.cod_p, _cj_warm_tap, &rel);
+  return rel;
+}
+
+/* u3j_load(): inject cold state
+*/
+void
+u3j_load(u3_noun rel)
+{
+  u3_noun ler = rel;
+  u3_noun lor;
+
+  while ( u3_nul != ler ) {
+    u3x_cell(ler, &lor, &ler);
+    u3h_put(u3R->jed.cod_p, u3h(lor), u3k(u3t(lor)));
+  }
+
+  u3z(rel);
 }
 
 /* _cj_fink_mark(): mark a u3j_fink for gc.

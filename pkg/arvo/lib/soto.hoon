@@ -8,7 +8,7 @@
   |=  jon=json  ^-  sole-action
   %-  need  %.  jon
   =>  [dejs-soft:format ..sole-action]
-  |^  (fo %ret (of det+change tab+ni ~))
+  |^  (ot id+so dat+(fo %ret (of det+change tab+ni ~)) ~)
   ++  fo
     |*  [a=term b=fist]
     |=(c=json ?.(=([%s a] c) (b c) (some [a ~])))
@@ -53,6 +53,7 @@
         :-  %a
         %+  turn  p.sef
         |=  [=cord =^tank]
+        %+  frond  %tab
         %-  pairs
         :~  match+s+cord
             info+(tape ~(ram re tank))

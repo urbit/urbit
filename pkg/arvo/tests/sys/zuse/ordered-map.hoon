@@ -1,7 +1,7 @@
 ::  TODO: move +ordered-map to zuse
 ::
 /+  *test
-/=  alef  /:  /===/sys/vane/alef
+/=  ames  /:  /===/sys/vane/ames
           /!noun/
 ::
 =/  items-from-keys
@@ -13,7 +13,7 @@
 =/  test-items=(list [@ud @tas])
   (items-from-keys (gulf 0 6))
 ::
-=/  atom-map  ((ordered-map:alef @ud @tas) lte)
+=/  atom-map  ((ordered-map:ames @ud @tas) lte)
 ::
 |%
 ++  test-ordered-map-gas  ^-  tang

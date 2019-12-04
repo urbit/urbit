@@ -6,7 +6,7 @@
     *group-store,
     *permission-group-hook,
     *chat-hook
-/+  *server, *chat-json
+/+  *server, *chat-json, default-agent
 /=  index
   /^  octs
   /;  as-octs:mimes:html
@@ -40,17 +40,7 @@
   /:  /===/app/chat/img  /_  /png/
 ::
 |%
-::
-+$  move  [bone card]
-::
-+$  card
-  $%  [%http-response =http-event:http]
-      [%connect wire binding:eyre term]
-      [%peer wire dock path]
-      [%poke wire dock poke]
-      [%diff %json json]
-      [%quit ~]
-  ==
++$  card  card:agent:gall
 ::
 +$  poke
   $%  [%launch-action [@tas path @t]]
@@ -61,103 +51,155 @@
       [%permission-group-hook-action permission-group-hook-action]
   ==
 --
-::
-|_  [bol=bowl:gall ?]
-::
-++  this  .
-::
-++  prep
-  |=  old=(unit ?)
-  ^-  (quip move _this)
-  ?~  old
+^-  agent:gall
+=<
+  |_  bol=bowl:gall
+  +*  this       .
+      chat-core  +>
+      cc         ~(. chat-core bol)
+      def        ~(. (default-agent this %|) bol)
+  ::
+  ++  on-init
+    ^-  (quip card _this)
+    =/  launcha  [%launch-action !>([%chat-view /configs '/~chat/js/tile.js'])]
     :_  this
-    :~  [ost.bol %peer / [our.bol %chat-store] /updates]
-        [ost.bol %connect / [~ /'~chat'] %chat-view]
-        (launch-poke [/configs '/~chat/js/tile.js'])
+    :~  [%pass /updates %agent [our.bol %chat-store] %watch /updates]
+        [%pass / %arvo %e %connect [~ /'~chat'] %chat-view]
+        [%pass /chat-view %agent [our.bol %launch] %poke launcha]
     ==
-  [~ this(+<+ u.old)]
+  ++  on-poke
+    |=  [=mark =vase]
+    ^-  (quip card _this)
+    ?>  (team:title our.bol src.bol)
+    ?+    mark  (on-poke:def mark vase)
+        %handle-http-request
+      =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
+      :_  this
+      %+  give-simple-payload:app  eyre-id
+      %+  require-authorization:app  inbound-request
+      poke-handle-http-request:cc
+    ::
+        %json
+      :_  this
+      (poke-chat-view-action:cc (json-to-view-action !<(json vase)))
+    ::
+        %chat-view-action
+      :_  this
+      (poke-chat-view-action:cc !<(chat-view-action vase))
+    ==
+  ::
+  ++  on-watch
+    |=  =path
+    ^-  (quip card _this)
+    ?>  (team:title our.bol src.bol)
+    |^
+    ?:  ?=([%http-response *] path)
+      [~ this]
+    ?:  =(/primary path)
+      ::  create inbox with 100 messages max per mailbox and send that along
+      ::  then quit the subscription
+      :_  this
+      [%give %fact ~ %json !>((inbox-to-json truncated-inbox-scry))]~
+    ?:  =(/configs path)
+      [[%give %fact ~ %json !>(*json)]~ this]
+    (on-watch:def path)
+    ::
+    ++  truncated-inbox-scry
+      ^-  inbox
+      =/  =inbox  .^(inbox %gx /=chat-store/(scot %da now.bol)/all/noun)
+      %-  ~(run by inbox)
+      |=  =mailbox
+      ^-  ^mailbox
+      [config.mailbox (truncate-envelopes envelopes.mailbox)]
+    ::
+    ++  truncate-envelopes
+      |=  envelopes=(list envelope)
+      ^-  (list envelope)
+      =/  length  (lent envelopes)
+      ?:  (lth length 100)
+        envelopes
+      (swag [(sub length 100) 100] envelopes)
+    --
+  ::
+  ++  on-agent
+    |=  [=wire =sign:agent:gall]
+    ^-  (quip card _this)
+    ?+    -.sign  (on-agent:def wire sign)
+        %kick
+      :_  this
+      [%pass / %agent [our.bol %chat-store] %watch /updates]~
+    ::
+        %fact
+      ?+  p.cage.sign  (on-agent:def wire sign)
+          %chat-update
+        :_  this
+        (diff-chat-update:cc !<(chat-update q.cage.sign))
+      ==
+    ==
+  ::
+  ++  on-arvo   
+    |=  [=wire =sign-arvo]
+    ^-  (quip card _this)
+    ?.  ?=(%bound +<.sign-arvo)
+      (on-arvo:def wire sign-arvo)
+    [~ this]
+  ::
+  ++  on-save  on-save:def
+  ++  on-load  on-load:def
+  ++  on-leave  on-leave:def
+  ++  on-peek   on-peek:def
+  ++  on-fail   on-fail:def
+  --
 ::
-++  bound
-  |=  [wir=wire success=? binding=binding:eyre]
-  ^-  (quip move _this)
-  [~ this]
+::
+|_  bol=bowl:gall
 ::
 ++  poke-handle-http-request
-  %-  (require-authorization:app ost.bol move this)
   |=  =inbound-request:eyre
-  ^-  (quip move _this)
-  ::
+  ^-  simple-payload:http
   =+  url=(parse-request-line url.request.inbound-request)
-  =/  name=@t
-    =+  back-path=(flop site.url)
-    ?~  back-path
-      ''
-    i.back-path
-  ?:  =(name 'tile')
-    [[ost.bol %http-response (js-response:app tile-js)]~ this]
-  ?+  site.url
-    :_  this
-    [ost.bol %http-response not-found:app]~
+  ?+  site.url  not-found:gen
+      [%'~chat' %css %index ~]  (css-response:gen style)
+      [%'~chat' %js %tile ~]    (js-response:gen tile-js)
+      [%'~chat' %js %index ~]   (js-response:gen script)
   ::
-  ::  styling
+      [%'~chat' %img @t *]
+    =/  name=@t  i.t.t.site.url
+    =/  img  (~(get by chat-png) name)
+    ?~  img
+      not-found:gen
+    (png-response:gen (as-octs:mimes:html u.img))
   ::
-      [%'~chat' %css %index ~]
-    :_  this
-    [ost.bol %http-response (css-response:app style)]~
-  ::
-  ::  javascript
-  ::
-      [%'~chat' %js %index ~]
-    :_  this
-    [ost.bol %http-response (js-response:app script)]~
-  ::
-  ::  images
-  ::
-      [%'~chat' %img *]
-    =/  img  (as-octs:mimes:html (~(got by chat-png) `@ta`name))
-    :_  this
-    [ost.bol %http-response (png-response:app img)]~
-  ::
-    [%'~chat' %paginate @t @t *]
+      [%'~chat' %paginate @t @t *]
     =/  start  (need (rush i.t.t.site.url dem))
     =/  end  (need (rush i.t.t.t.site.url dem))
     =/  pax  t.t.t.t.site.url
     =/  envelopes  (envelope-scry [(scot %ud start) (scot %ud end) pax])
-    :_  this
-    :~
-      :+  ost.bol
-        %http-response
-      %-  json-response:app
-      %-  json-to-octs 
-      %-  two-update-to-json
-      [%messages pax start end envelopes]
-    ==
+    %-  json-response:gen
+    %-  json-to-octs 
+    %-  update-to-json
+    [%messages pax start end envelopes]
   ::
-  ::  inbox page
-  ::
-     [%'~chat' *]
-    :_  this
-    [ost.bol %http-response (html-response:app index)]~
+      [%'~chat' *]  (html-response:gen index)
   ==
 ::
 ++  poke-json
   |=  jon=json
-  ^-  (quip move _this)
+  ^-  (list card)
   ?.  =(src.bol our.bol)
-    [~ this]
+    ~
   (poke-chat-view-action (json-to-view-action jon))
 ::
 ++  poke-chat-view-action
   |=  act=chat-view-action
-  ^-  (quip move _this)
+  ^-  (list card)
   ?.  =(src.bol our.bol)
-    [~ this]
+    ~
   ?-  -.act
       %create
     =/  pax  [(scot %p our.bol) path.act]
     =/  group-read=path  [%chat (weld pax /read)]
     =/  group-write=path  [%chat (weld pax /write)]
-    :_  this
     %-  zing
     :~  :~  (group-poke [%bundle group-read])
             (group-poke [%bundle group-write])
@@ -175,7 +217,6 @@
       %delete
     =/  group-read  [%chat (weld path.act /read)]
     =/  group-write  [%chat (weld path.act /write)]
-    :_  this
     :~  (chat-hook-poke [%remove path.act])
         (permission-hook-poke [%remove group-read])
         (permission-hook-poke [%remove group-write])
@@ -187,97 +228,51 @@
       %join
     =/  group-read  [%chat (scot %p ship.act) (weld path.act /read)]
     =/  group-write  [%chat (scot %p ship.act) (weld path.act /write)]
-    :_  this
     :~  (chat-hook-poke [%add-synced ship.act path.act ask-history.act])
         (permission-hook-poke [%add-synced ship.act group-write])
         (permission-hook-poke [%add-synced ship.act group-read])
     ==
-  ::
   ==
 ::
-++  peer-primary
-  |=  pax=path
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  ::  create inbox with 100 messages max per mailbox and send that along
-  ::  then quit the subscription
-  :_  this
-  [ost.bol %diff %json (inbox-to-json (truncate-inbox all-scry))]~
-::
-++  peer-configs
-  |=  pax=path
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  :_  this
-  [ost.bol %diff %json *json]~
-::
 ++  diff-chat-update
-  |=  [wir=wire upd=chat-update]
-  ^-  (quip move _this)
+  |=  upd=chat-update
+  ^-  (list card)
   =/  updates-json  (update-to-json upd)
   =/  configs-json  (configs-to-json configs-scry)
-  :_  this
-  %+  weld
-    %+  turn  (prey:pubsub:userlib /primary bol)
-    |=  [=bone *]
-    [bone %diff %json updates-json]
-  %+  turn  (prey:pubsub:userlib /configs bol)
-  |=  [=bone *]
-  [bone %diff %json configs-json]
-::
-++  diff-chat-two-update
-  |=  [wir=wire upd=chat-two-update]
-  ^-  (quip move _this)
-  =/  updates-json  (two-update-to-json upd)
-  =/  configs-json  (configs-to-json configs-scry)
-  :_  this
-  %+  weld
-    %+  turn  (prey:pubsub:userlib /primary bol)
-    |=  [=bone *]
-    [bone %diff %json updates-json]
-  %+  turn  (prey:pubsub:userlib /configs bol)
-  |=  [=bone *]
-  [bone %diff %json configs-json]
-
-::
-++  quit
-  |=  wir=wire
-  ^-  (quip move _this)
-  :_  this
-  [ost.bol %peer / [our.bol %chat-store] /updates]~
+  :~  [%give %fact `/primary %json !>(updates-json)]
+      [%give %fact `/configs %json !>(configs-json)]
+  ==
 ::
 ::  +utilities
 ::
-++  launch-poke
-  |=  [=path =cord]
-  ^-  move
-  [ost.bol %poke / [our.bol %launch] [%launch-action %chat-view path cord]]
-::
 ++  chat-poke
   |=  act=chat-action
-  ^-  move
-  [ost.bol %poke / [our.bol %chat-store] [%chat-action act]]
+  ^-  card
+  [%pass / %agent [our.bol %chat-store] %poke %chat-action !>(act)]
 ::
 ++  group-poke
   |=  act=group-action
-  ^-  move
-  [ost.bol %poke / [our.bol %group-store] [%group-action act]]
+  ^-  card
+  [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
 ::
 ++  chat-hook-poke
   |=  act=chat-hook-action
-  ^-  move
-  [ost.bol %poke / [our.bol %chat-hook] [%chat-hook-action act]]
+  ^-  card
+  [%pass / %agent [our.bol %chat-hook] %poke %chat-hook-action !>(act)]
 ::
 ++  permission-hook-poke
   |=  act=permission-hook-action
-  ^-  move
-  [ost.bol %poke / [our.bol %permission-hook] [%permission-hook-action act]]
+  ^-  card
+  :*  %pass  /  %agent  [our.bol %permission-hook]
+      %poke  %permission-hook-action  !>(act)
+  ==
 ::
 ++  perm-group-hook-poke
   |=  act=permission-group-hook-action
-  ^-  move
-  =/  pok  [%permission-group-hook-action act]
-  [ost.bol %poke / [our.bol %permission-group-hook] pok]
+  ^-  card
+  :*  %pass  /  %agent  [our.bol %permission-group-hook]
+      %poke  %permission-group-hook-action  !>(act)
+  ==
 ::
 ++  envelope-scry
   |=  pax=path
@@ -285,17 +280,13 @@
   =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/envelopes pax /noun)
   .^((list envelope) %gx pax)
 ::
-++  all-scry
-  ^-  inbox
-  .^(inbox %gx /=chat-store/(scot %da now.bol)/all/noun)
-::
 ++  configs-scry
   ^-  chat-configs
   .^(chat-configs %gx /=chat-store/(scot %da now.bol)/configs/noun)
 ::
 ++  create-security
   |=  [pax=path sec=rw-security]
-  ^-  (list move)
+  ^-  (list card)
   =/  read   (weld pax /read)
   =/  write  (weld pax /write)
   ?-  sec
@@ -318,23 +309,5 @@
     :~  (perm-group-hook-poke [%associate read [[read %white] ~ ~]])
         (perm-group-hook-poke [%associate write [[write %black] ~ ~]])
     ==
-  ::
   ==
-::
-++  truncate-envelopes
-  |=  envelopes=(list envelope)
-  ^-  (list envelope)
-  =/  length  (lent envelopes)
-  ?:  (lth length 100)
-    envelopes
-  (swag [(sub length 100) 100] envelopes)
-::
-++  truncate-inbox
-  |=  box=inbox
-  ^-  inbox
-  %-  ~(run by box)
-  |=  mail=mailbox
-  ^-  mailbox
-  :-  config.mail
-  (truncate-envelopes envelopes.mail)
 --

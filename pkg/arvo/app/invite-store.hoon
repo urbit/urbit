@@ -1,48 +1,89 @@
-/+  *invite-json
+/+  *invite-json, default-agent
 |%
-+$  move  [bone card]
++$  card  card:agent:gall
 ::
-+$  card
-  $%  [%diff invite-diff]
-      [%quit ~]
-  ==
-::
-+$  state
-  $%  [%0 state-zero]
++$  versioned-state
+  $%  state-zero
   ==
 ::
 +$  state-zero
-  $:  =invites
+  $:  %0
+      =invites
   ==
 --
 ::
-|_  [bol=bowl:gall state]
+=|  state-zero
+=*  state  -
+^-  agent:gall
+=<
+  |_  bol=bowl:gall
+  +*  this      .
+      inv-core  +>
+      ic        ~(. inv-core bol)
+      def       ~(. (default-agent this %|) bol)
+  ++  on-init   on-init:def
+  ++  on-save   !>(state)
+  ++  on-load
+    |=  old=vase
+    `this(state !<(state-zero old))
+  ::
+  ++  on-poke
+    |=  [=mark =vase]
+    ^-  (quip card _this)
+    ?>  (team:title our.bol src.bol)
+    =^  cards  state
+      ?+  mark  (on-poke:def mark vase)
+        %json           (poke-invite-action:ic (json-to-action !<(json vase)))
+        %invite-action  (poke-invite-action:ic !<(invite-action vase))
+      ==
+    [cards this]
+  ::
+  ++  on-watch
+    |=  =path
+    ^-  (quip card _this)
+    =/  cards=(list card)
+      ?+    path  (on-watch:def path)
+          [%all ~]         [%give %fact ~ %invite-initial !>(invites)]~
+          [%updates ~]     ~
+          [%invitatory *]
+        =/  inv=invitatory  (~(got by invites) t.path)
+        [%give %fact ~ %invite-update !>([%invitatory inv])]~
+      ==
+    [cards this]
+  ::
+  ++  on-leave  on-leave:def
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?+  path  (on-peek:def path)
+      [%x %all ~]         (peek-x-all:ic t.t.path)
+      [%x %invitatory *]  (peek-x-invitatory:ic t.t.path)
+      [%x %invite *]      (peek-x-invite:ic t.t.path)
+    ==
+  ::
+  ++  on-agent  on-agent:def
+  ++  on-arvo   on-arvo:def
+  ++  on-fail   on-fail:def
+  --
 ::
-++  this  .
-::
-++  prep
-  |=  old=(unit state)
-  ^-  (quip move _this)
-  ?~  old
-    [~ this]
-  [~ this(+<+ u.old)]
+|_  bol=bowl:gall
 ::
 ++  peek-x-all
   |=  pax=path
-  ^-  (unit (unit [%noun (map path invitatory)]))
-  [~ ~ %noun invites]
+  ^-  (unit (unit cage))
+  [~ ~ %noun !>(invites)]
 ::
 ++  peek-x-invitatory
   |=  pax=path
-  ^-  (unit (unit [%noun (unit invitatory)]))
+  ^-  (unit (unit cage))
   ?~  pax
     ~
   =/  invitatory=(unit invitatory)  (~(get by invites) pax)
-  [~ ~ %noun invitatory]
+  [~ ~ %noun !>(invitatory)]
 ::
 ++  peek-x-invite
   |=  pax=path
-  ^-  (unit (unit [%noun (unit invite)]))
+  ^-  (unit (unit cage))
   ::  /:path/:uid
   =/  pas  (flop pax)
   ?~  pas
@@ -53,41 +94,11 @@
   ?~  invitatory
     ~
   =/  invite=(unit invite)  (~(get by u.invitatory) uid)
-  [~ ~ %noun invite]
-::
-++  peer-all
-  |=  pax=path
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  ::  send all updates from now on
-  :_  this
-  [ost.bol %diff %invite-initial invites]~
-::
-++  peer-updates
-  |=  pax=path
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  ::  send all updates from now on
-  [~ this]
-::
-++  peer-invitatory
-  |=  pax=path
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  =/  inv=(unit invitatory)  (~(get by invites) pax)
-  ?~  inv  !!
-  :_  this
-  [ost.bol %diff %invite-update [%invitatory u.inv]]~
-::
-++  poke-json
-  |=  =json
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  (poke-invite-action (json-to-action json))
+  [~ ~ %noun !>(invite)]
 ::
 ++  poke-invite-action
   |=  action=invite-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  (team:title our.bol src.bol)
   ?-  -.action
       %create   (handle-create action)
@@ -99,73 +110,70 @@
 ::
 ++  handle-create
   |=  act=invite-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  ?=(%create -.act)
   ?:  (~(has by invites) path.act)
-    [~ this]
+    [~ state]
   :-  (send-diff path.act act)
-  this(invites (~(put by invites) path.act *invitatory))
+  state(invites (~(put by invites) path.act *invitatory))
 ::
 ++  handle-delete
   |=  act=invite-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  ?=(%delete -.act)
   ?.  (~(has by invites) path.act)
-    [~ this]
+    [~ state]
   :-  (send-diff path.act act)
-  this(invites (~(del by invites) path.act))
+  state(invites (~(del by invites) path.act))
 ::
 ++  handle-invite
   |=  act=invite-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  ?=(%invite -.act)
   ?.  (~(has by invites) path.act)
-    [~ this]
+    [~ state]
   =/  container  (~(got by invites) path.act)
   =.  uid.act  (sham eny.bol)
   =.  container  (~(put by container) uid.act invite.act)
   :-  (send-diff path.act act)
-  this(invites (~(put by invites) path.act container))
+  state(invites (~(put by invites) path.act container))
 ::
 ++  handle-accept
   |=  act=invite-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  ?=(%accept -.act)
   ?.  (~(has by invites) path.act)
-    [~ this]
+    [~ state]
   =/  container  (~(got by invites) path.act)
   =/  invite  (~(get by container) uid.act)
   ?~  invite
-    [~ this]
+    [~ state]
   =.  container  (~(del by container) uid.act)
   :-  (send-diff path.act [%accepted path.act uid.act u.invite])
-  this(invites (~(put by invites) path.act container))
+  state(invites (~(put by invites) path.act container))
 ::
 ++  handle-decline
   |=  act=invite-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  ?=(%decline -.act)
   ?.  (~(has by invites) path.act)
-    [~ this]
+    [~ state]
   =/  container  (~(got by invites) path.act)
   =/  invite  (~(get by container) uid.act)
   ?~  invite
-    [~ this]
+    [~ state]
   =.  container  (~(del by container) uid.act)
   :-  (send-diff path.act act)
-  this(invites (~(put by invites) path.act container))
+  state(invites (~(put by invites) path.act container))
 ::
 ++  update-subscribers
   |=  [pax=path upd=invite-update]
-  ^-  (list move)
-  %+  turn  (prey:pubsub:userlib pax bol)
-  |=  [=bone *]
-  [bone %diff %invite-update upd]
+  ^-  card
+  [%give %fact `pax %invite-update !>(upd)]
 ::
 ++  send-diff
   |=  [pax=path upd=invite-update]
-  ^-  (list move)
-  %-  zing
+  ^-  (list card)
   :~  (update-subscribers /all upd)
       (update-subscribers /updates upd)
       (update-subscribers [%invitatory pax] upd)

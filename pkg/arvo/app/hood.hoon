@@ -2,6 +2,7 @@
 ::::  /hoon/hood/app                                    ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  zuse version
+/-  *sole
 /+  sole,                                               ::  libraries
     ::  XX these should really be separate apps, as
     ::     none of them interact with each other in
@@ -21,13 +22,18 @@
   =>  |%
       +$  part  [%module %0 pith]
       +$  pith  ~
-      ::
-      +$  move  [bone card]
-      +$  card  $%  [%fake ~]
-                ==
+      ++  take
+        |~  [wire sign-arvo]
+        *(quip card:agent:gall part)
+      ++  take-agent
+        |~  [wire gift:agent:gall]
+        *(quip card:agent:gall part)
+      ++  poke
+        |~  [mark vase]
+        *(quip card:agent:gall part)
       --
   |=  [bowl:gall own=part]
-  |_  moz=(list move)
+  |_  moz=(list card:agent:gall)
   ++  abet  [(flop moz) own]
   --
 --
@@ -77,131 +83,136 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::  app proper
   ::                                                    ::  ::
-=,  gall
-|_  $:  hid/bowl                                        ::  gall environment
-        hood-1                                          ::  module states
-    ==                                                  ::
-++  able                                                ::  find+make part
-  =+  hed=$:hood-head
-  |@  ++  $
-        =+  rep=(~(get by lac) hed)
-        =+  par=?^(rep u.rep `hood-part`(hood-make our.hid hed))
-        ((hood-good hed) par)
-  --
+^-  agent:gall
+=|  hood-1                                              ::  module states
+=>  |%
+    ++  help
+    |=  hid/bowl:gall
+      |%
+      ++  able                                          ::  find+make part
+        =+  hed=$:hood-head
+        |@  ++  $
+              =+  rep=(~(get by lac) hed)
+              =+  par=?^(rep u.rep `hood-part`(hood-make our.hid hed))
+              ((hood-good hed) par)
+        --
+      ::
+      ++  ably                                          ::  save part
+        =+  $:{(list) hood-part}
+        |@  ++  $
+              [+<- (~(put by lac) +<+< +<+)]
+        --
+      ::                                                ::  ::
+      ::::                                              ::  ::  generic handling
+        ::                                              ::  ::
+      ++  prep
+        |=  old/(unit hood-old)  ^-  (quip _!! _+>)
+        :-  ~
+        ?~  old  +>
+        +>(lac (~(run by lac.u.old) hood-port))
+      ::
+      ++  poke-hood-load                                ::  recover lost brain
+        |=  dat/hood-part
+        ?>  =(our.hid src.hid)
+        ~&  loaded+-.dat
+        [~ (~(put by lac) -.dat dat)]
+      ::
+      ::
+      ++  from-module                                   ::  create wrapper
+        |*  _[identity=%module start=..$ finish=_abet]:(hood-module)
+        =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
+        |*  handle/_finish
+        |=  a=_+<.handle
+        =.  +>.handle  (start hid (able identity))
+        ^-  (quip card:agent:gall _lac)
+        %-  ably
+        ^-  (quip card:agent:gall hood-part)
+        (handle a)
+      ::  per-module interface wrappers
+      ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum))
+      ++  from-helm  (from-module %helm [..$ _abet]:(hood-helm))
+      ++  from-kiln  (from-module %kiln [..$ _abet]:(hood-kiln))
+      ++  from-write  (from-module %write [..$ _abet]:(hood-write))
+      --
+    --
+|_  hid/bowl:gall                                       ::  gall environment
+++  on-init
+  `..on-init
 ::
-++  ably                                                ::  save part
-  =+  $:{(list) hood-part}
-  |@  ++  $
-        [(flop +<-) %_(+> lac (~(put by lac) +<+< +<+))]
-  --
-::                                                      ::  ::
-::::                                                    ::  ::  generic handling
-  ::                                                    ::  ::
-++  prep
-  |=  old/(unit hood-old)  ^-  (quip _!! _+>)
-  :-  ~
-  ?~  old  +>
-  +>(lac (~(run by lac.u.old) hood-port))
+++  on-save
+  !>([%1 lac])
 ::
-++  poke-hood-load                                      ::  recover lost brain
-  |=  dat/hood-part
-  ?>  =(our.hid src.hid)
-  ~&  loaded+-.dat
-  [~ %_(+> lac (~(put by lac) -.dat dat))]
+++  on-load
+  |=  =old-state=vase
+  =/  old-state  !<(hood-1 old-state-vase)
+  `..on-init(lac lac.old-state)
 ::
+++  on-poke
+  |=  [=mark =vase]
+  ^-  (quip card:agent:gall agent:gall)
+  =/  h  (help hid)
+  =^  cards  lac
+    ?:  =(%helm (end 3 4 mark))
+      ((wrap poke):from-helm:h mark vase)
+    ?:  =(%drum (end 3 4 mark))
+      ((wrap poke):from-drum:h mark vase)
+    ?:  =(%kiln (end 3 4 mark))
+      ((wrap poke):from-kiln:h mark vase)
+    ?:  =(%write (end 3 5 mark))
+      ((wrap poke):from-write:h mark vase)
+    ::  XX should rename and move to libs
+    ::
+    ?+  mark  ~|([%poke-hood-bad-mark mark] !!)
+      %hood-load  (poke-hood-load:h !<(hood-part vase))
+      %atom       ((wrap poke-atom):from-helm:h !<(@ vase))
+      %dill-belt  ((wrap poke-dill-belt):from-drum:h !<(dill-belt:dill vase))
+      %dill-blit  ((wrap poke-dill-blit):from-drum:h !<(dill-blit:dill vase))
+      %hood-sync  ((wrap poke-sync):from-kiln:h !<([desk ship desk] vase))
+    ==
+  [cards ..on-init]
 ::
-++  from-module                                         ::  create wrapper
-  |*  _[identity=%module start=..$ finish=_abet]:(hood-module)
-  =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
-  |*  handle/_finish
-  |=  a=_+<.handle
-  =.  +>.handle  (start hid (able identity))
-  (ably (handle a))
+++  on-watch
+  |=  =path
+  =/  h  (help hid)
+  =^  cards  lac
+    ?+  path  ~|([%hood-bad-path wire] !!)
+      [%drum *]  ((wrap peer):from-drum:h t.path)
+    ==
+  [cards ..on-init]
 ::
-::  per-module interface wrappers
-++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum))
-++  from-helm  (from-module %helm [..$ _abet]:(hood-helm))
-++  from-kiln  (from-module %kiln [..$ _abet]:(hood-kiln))
-++  from-write  (from-module %write [..$ _abet]:(hood-write))
+++  on-leave
+  |=  path
+  `..on-init
 ::
-::                                                      ::  ::
-::::                                                    ::  ::  switchboard
-  ::                                                    ::  ::
-++  coup-drum-phat            (wrap take-coup-phat):from-drum
-++  coup-helm-hi              (wrap coup-hi):from-helm
-++  coup-kiln-fancy           (wrap take-coup-fancy):from-kiln
-++  coup-kiln-reload          (wrap take-coup-reload):from-kiln
-++  coup-kiln-spam            (wrap take-coup-spam):from-kiln
-++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
-++  init-helm                 |=({way/wire *} [~ +>])
-++  mack-kiln                 (wrap mack):from-kiln
-++  made-write                (wrap made):from-write
-++  made-kiln                 (wrap take-made):from-kiln
-++  mere-kiln                 (wrap take-mere):from-kiln
-++  mere-kiln-sync            (wrap take-mere-sync):from-kiln
-++  wake-kiln-autocommit      (wrap take-wake-autocommit):from-kiln
-++  wake-kiln-overload        (wrap take-wake-overload):from-kiln
-++  wake-helm-automass        (wrap take-wake-automass):from-helm
-++  onto-drum                 (wrap take-onto):from-drum
-++  peer-drum                 (wrap peer):from-drum
-++  poke-atom                 (wrap poke-atom):from-helm
-++  poke-dill-belt            (wrap poke-dill-belt):from-drum
-++  poke-dill-blit            (wrap poke-dill-blit):from-drum
-++  poke-drum-put             (wrap poke-put):from-drum
-++  poke-drum-link            (wrap poke-link):from-drum
-++  poke-drum-unlink          (wrap poke-unlink):from-drum
-++  poke-drum-exit            (wrap poke-exit):from-drum
-++  poke-drum-start           (wrap poke-start):from-drum
-++  poke-drum-set-boot-apps   (wrap poke-set-boot-apps):from-drum
-++  poke-helm-hi              (wrap poke-hi):from-helm
-::++  poke-helm-invite          (wrap poke-invite):from-helm
-++  poke-helm-knob            (wrap poke-knob):from-helm
-++  poke-helm-mass            (wrap poke-mass):from-helm
-++  poke-helm-reload          (wrap poke-reload):from-helm
-++  poke-helm-reload-desk     (wrap poke-reload-desk):from-helm
-++  poke-helm-reset           (wrap poke-reset):from-helm
-++  poke-helm-serve           (wrap poke-serve):from-helm
-++  poke-helm-send-hi         (wrap poke-send-hi):from-helm
-++  poke-helm-verb            (wrap poke-verb):from-helm
-++  poke-helm-rekey           (wrap poke-rekey):from-helm
-++  poke-helm-moon            (wrap poke-moon):from-helm
-++  poke-helm-nuke            (wrap poke-nuke):from-helm
-++  poke-helm-automass        (wrap poke-automass):from-helm
-++  poke-helm-cancel-automass  (wrap poke-cancel-automass):from-helm
-++  poke-helm-bonk            (wrap poke-bonk):from-helm
-++  poke-hood-sync            (wrap poke-sync):from-kiln
-++  poke-kiln-commit          (wrap poke-commit):from-kiln
-++  poke-kiln-info            (wrap poke-info):from-kiln
-++  poke-kiln-label           (wrap poke-label):from-kiln
-++  poke-kiln-merge           (wrap poke-merge):from-kiln
-++  poke-kiln-cancel          (wrap poke-cancel):from-kiln
-++  poke-kiln-cancel-autocommit  (wrap poke-cancel-autocommit):from-kiln
-++  poke-kiln-mount           (wrap poke-mount):from-kiln
-++  poke-kiln-rm              (wrap poke-rm):from-kiln
-++  poke-kiln-schedule        (wrap poke-schedule):from-kiln
-++  poke-kiln-track           (wrap poke-track):from-kiln
-++  poke-kiln-sync            (wrap poke-sync):from-kiln
-++  poke-kiln-syncs           (wrap poke-syncs):from-kiln
-++  poke-kiln-start-autoload  (wrap poke-start-autoload):from-kiln
-++  poke-kiln-wipe-ford       (wrap poke-wipe-ford):from-kiln
-++  poke-kiln-keep-ford       (wrap poke-keep-ford):from-kiln
-++  poke-kiln-autoload        (wrap poke-autoload):from-kiln
-++  poke-kiln-overload        (wrap poke-overload):from-kiln
-++  poke-kiln-goad-gall       (wrap poke-goad-gall):from-kiln
-++  poke-kiln-wash-gall       (wrap poke-wash-gall):from-kiln
-++  poke-kiln-unmount         (wrap poke-unmount):from-kiln
-++  poke-kiln-unsync          (wrap poke-unsync):from-kiln
-++  poke-kiln-permission      (wrap poke-permission):from-kiln
-++  poke-write-sec-atom       (wrap poke-sec-atom):from-write
-++  poke-write-paste          (wrap poke-paste):from-write
-++  poke-write-tree           (wrap poke-tree):from-write
-++  poke-write-wipe           (wrap poke-wipe):from-write
-++  quit-drum-phat            (wrap quit-phat):from-drum
-++  reap-drum-phat            (wrap reap-phat):from-drum
-++  woot-helm                 (wrap take-woot):from-helm
-++  writ-kiln-autoload        (wrap take-writ-autoload):from-kiln
-++  writ-kiln-find-ship       (wrap take-writ-find-ship):from-kiln
-++  writ-kiln-sync            (wrap take-writ-sync):from-kiln
-
-++  bound                     (wrap take-bound):from-helm
+++  on-peek
+  |=  path
+  *(unit (unit cage))
+::
+++  on-agent
+  |=  [=wire =sign:agent:gall]
+  =/  h  (help hid)
+  =^  cards  lac
+    ?+  wire  ~|([%hood-bad-wire wire] !!)
+      [%helm *]   ((wrap take-agent):from-helm:h wire sign)
+      [%kiln *]   ((wrap take-agent):from-kiln:h wire sign)
+      [%drum *]   ((wrap take-agent):from-drum:h wire sign)
+      [%write *]  ((wrap take-agent):from-write:h wire sign)
+    ==
+  [cards ..on-init]
+::
+++  on-arvo
+  |=  [=wire =sign-arvo]
+  =/  h  (help hid)
+  =^  cards  lac
+    ?+  wire  ~|([%hood-bad-wire wire] !!)
+      [%helm *]   ((wrap take):from-helm:h t.wire sign-arvo)
+      [%drum *]   ((wrap take):from-drum:h t.wire sign-arvo)
+      [%kiln *]   ((wrap take-general):from-kiln:h t.wire sign-arvo)
+      [%write *]  ((wrap take):from-write:h t.wire sign-arvo)
+    ==
+  [cards ..on-init]
+::
+++  on-fail
+  |=  [term tang]
+  `..on-init
 --

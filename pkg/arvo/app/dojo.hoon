@@ -2,7 +2,7 @@
 ::::  /hoon/dojo/app                                    ::  ::::
   ::                                                    ::    ::
 /?  309                                                 ::  arvo kelvin
-/-  *sole, lens                                         ::
+/-  *sole, lens                                         ::  console structures
 /+  sole, pprint,                                       ::
     auto=language-server-complete,                      ::
     easy-print=language-server-easy-print               ::
@@ -10,10 +10,11 @@
 ::::                                                    ::  ::::
   ::                                                    ::    ::
 =>  |%                                                  ::  external structures
+    ++  id  @tasession                                  ::  session id
     ++  house                                           ::  all state
       $:  $5
           egg/@u                                        ::  command count
-          hoc/(map bone session)                        ::  conversations
+          hoc/(map id session)                          ::  conversations
       ==                                                ::
     ++  session                                         ::  per conversation
       $:  say/sole-share                                ::  command-line state
@@ -30,7 +31,7 @@
           old/(set term)                                ::  used TLVs
           buf/tape                                      ::  multiline buffer
       ==                                                ::
-    ++  monkey                                         ::  per conversation
+    ++  monkey                                          ::  per conversation
       $:  say/sole-share                                ::  command-line state
           dir/beam                                      ::  active path
           poy/(unit dojo-project)                       ::  working
@@ -63,6 +64,7 @@
       $~  [%ex *hoon]
       $%  {$ur p/@t}                                    ::  http GET request
           {$ge p/dojo-model}                            ::  generator
+          {$te p/term q/(list dojo-source)}             ::  thread
           {$dv p/path}                                  ::  core from source
           {$ex p/hoon}                                  ::  hoon expression
           {$sa p/mark}                                  ::  example mark value
@@ -94,45 +96,6 @@
       ==                                                ::
     ++  bead  {p/(set beam) q/cage}                     ::  computed result
     ++  goal  {p/ship q/term}                           ::  flat application
-    ++  clap                                            ::  action, user
-      $%  {$peer p/path}                                ::  subscribe
-          {$poke p/(cask)}                              ::  apply
-          {$pull ~}                                    ::  unsubscribe
-      ==                                                ::
-    ++  club                                            ::  action, system
-      $%  {$peer p/path}                                ::  subscribe
-          {$poke p/cage}                                ::  apply
-          {$pull ~}                                    ::  unsubscribe
-      ==                                                ::
-    ++  card                                            ::  general card
-      $%  {$diff $sole-effect sole-effect}              ::
-          {$send wire {ship term} clap}                 ::
-          [%request wire request:http outbound-config:iris]  ::  %l
-          [%build wire ? schematic:ford]
-          [%kill wire ~]
-          {$deal wire sock term club}                   ::
-          {$info wire toro:clay}                        ::
-      ==                                                ::
-    ++  move  (pair bone card)                          ::  user-level move
-    ++  sign                                            ::
-      $%  ::  %made: build result; response to %build +task
-          ::
-          $:  %made
-              ::  date: formal date of the build
-              ::
-              date=@da
-              ::  result: result of the build; either complete build, or error
-              ::
-              $=  result
-              $%  ::  %complete: contains the result of the completed build
-                  ::
-                  [%complete build-result=build-result:ford]
-                  ::  %incomplete: couldn't finish build; contains error message
-                  ::
-                  [%incomplete =tang]
-          ==  ==
-          {$unto p/internal-gift:gall}
-      ==
     --
 =>
 |%
@@ -242,6 +205,7 @@
       ;~  pose
         ;~(plug (cold %ur lus) parse-url)
         ;~(plug (cold %ge lus) parse-model)
+        ;~(plug (cold %te hep) sym (star ;~(pfix ace parse-source)))
         ;~(plug (cold %as pad) sym ;~(pfix ace parse-source))
         ;~(plug (cold %do cab) parse-hoon ;~(pfix ace parse-source))
         parse-value
@@ -331,17 +295,15 @@
   ::                                                    ::
 =,  gall
 =+  foo=*monkey
-|_  $:  hid/bowl                                        ::  system state
-        house                                           ::  program state
-    ==                                                  ::
-::
-::  pretty-printer aliases
+=|  house                                               ::  program state
+=*  state  -
+=>  |%
 ::
 ++  xskol  `$-(type tank)`type-to-tank:pprint
 ++  xsell  `$-(vase tank)`vase-to-tank:pprint
 ::
 ++  he                                                  ::  per session
-  |_  {moz/(list move) session}                         ::
+  |_  {hid/bowl:gall =id moz/(list card:agent:gall) session}
   ::
   ++  he-beam
     ^-  beam
@@ -364,20 +326,28 @@
       ?>  ?=($~ pux)
       ::  pin all builds to :now.hid so they don't get cached forever
       ::
-      (he-card(poy `+>+<(pux `way)) %build way live=%.n schematic)
+      %-  he-card(poy `+>+<(pux `way))
+      [%pass way %arvo %f %build live=%.n schematic]
     ::
     ++  dy-request
       |=  [way=wire =request:http]
       ^+  +>+>
       ?>  ?=(~ pux)
-      (he-card(poy `+>+<(pux `way)) %request way request *outbound-config:iris)
+      %-  he-card(poy `+>+<(pux `way))
+      [%pass way %arvo %i %request request *outbound-config:iris]
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
       =.  poy  ~
       ?~  pux  +>
       %.  [%txt "! cancel {<u.pux>}"]
-      he-diff:(he-card [%kill u.pux ~])
+      =<  he-diff
+      %-  he-card
+      ?:  =(/wool u.pux)
+        ::  really shoud stop the thread as well
+        ::
+        [%pass u.pux %agent [our.hid %spider] %leave ~]
+      [%pass u.pux %arvo %f %kill ~]
     ::
     ++  dy-slam                                         ::  call by ford
       |=  {way/wire gat/vase sam/vase}
@@ -434,14 +404,9 @@
         $as  =^(mor +>.$ (dy-init-source q.bul) [bul(q mor) +>.$])
         $do  =^(mor +>.$ (dy-init-source q.bul) [bul(q mor) +>.$])
         $ge  =^(mod +>.$ (dy-init-model p.bul) [[%ge mod] +>.$])
+        $te  =^(mod +>.$ (dy-init-ordered q.bul) [bul(q mod) +>.$])
         $ur  [bul +>.$]
-        $tu  =^  dof  +>.$
-                 |-  ^+  [p.bul +>.^$]
-                 ?~  p.bul  [~ +>.^$]
-                 =^  dis  +>.^$  (dy-init-source i.p.bul)
-                 =^  mor  +>.^$  $(p.bul t.p.bul)
-                 [[dis mor] +>.^$]
-             [[%tu dof] +>.$]
+        $tu  =^(dof +>.$ (dy-init-ordered p.bul) [[%tu dof] +>.$])
       ==
     ::
     ++  dy-init-model                                   ::  ++dojo-model
@@ -572,19 +537,18 @@
       ::
           $poke
         %-  he-card(poy ~)
-        :*  %deal
-            /poke
-            [our.hid p.p.p.mad]
-            q.p.p.mad
+        :*  %pass
+            /poke 
+            %agent
+            p.p.mad
             %poke
             cay
         ==
       ::
           $file
-        %-  he-card(poy ~)  :*
-          %info
-          /file
-          (foal:space:userlib (en-beam:format p.p.mad) cay)
+        %-  he-card(poy ~)
+        :*  %pass  /file  %arvo  %c
+            %info  (foal:space:userlib (en-beam:format p.p.mad) cay)
         ==
       ::
           $flat
@@ -676,8 +640,8 @@
     ::
     ++  dy-type                                         ::  sole action
       |=  act/sole-action
-      ?-  -.act
-        $det  (dy-edit +.act)
+      ?-  -.dat.act
+        $det  (dy-edit +.dat.act)
         $ret  (dy-done (tufa buf.say))
         $clr  dy-stop
         $tab  +>+>
@@ -685,15 +649,18 @@
     ::
     ++  dy-cage       |=(num/@ud (~(got by rez) num))   ::  known cage
     ++  dy-vase       |=(num/@ud q:(dy-cage num))       ::  known vase
+    ++  dy-sore
+      |=  src/(list dojo-source)
+      ^-  vase
+      ?~  src
+        !>(~)
+      (slop (dy-vase p.i.src) $(src t.src))
+    ::
     ++  dy-silk-vase  |=(vax/vase [%$ %noun vax])       ::  vase to silk
     ++  dy-silk-sources                                 ::  arglist to silk
       |=  src/(list dojo-source)
       ^-  schematic:ford
-      ::
-      :+  %$  %noun
-      |-
-      ?~  src  !>(~)
-      (slop (dy-vase p.i.src) $(src t.src))
+      [%$ %noun (dy-sore src)]
     ::
     ++  dy-silk-config                                  ::  configure
       |=  {cay/cage cig/dojo-config}
@@ -757,12 +724,28 @@
       |=  cag/cage
       (dy-hand %noun q.cag)
     ::
+    ++  dy-wool-poke
+      |=  [fil=term src=(list dojo-source)]
+      ^+  +>+>
+      ?>  ?=(~ pux)
+      =/  tid  (scot %ta (cat 3 'dojo_' (scot %uv (sham eny.hid))))
+      =.  poy  `+>+<.$(pux `/wool)
+      =.  +>+>.$
+        %-  he-card
+        [%pass /wool %agent [our.hid %spider] %watch /thread-result/[tid]]
+      %-  he-card
+      =/  =cage  ::  also sub
+        [%spider-start !>([~ `tid fil (dy-sore src)])]
+      [%pass /wool %agent [our.hid %spider] %poke cage]
+    ::
     ++  dy-make                                         ::  build step
       ^+  +>
       ?>  ?=(^ cud)
       =+  bil=q.u.cud                 ::  XX =*
       ?:  ?=($ur -.bil)
         (dy-request /hand `request:http`[%'GET' p.bil ~ ~])
+      ?:  ?=($te -.bil)
+        (dy-wool-poke p.bil q.bil)
       %-  dy-ford
       ^-  [path schematic:ford]
       ?-  -.bil
@@ -835,33 +818,27 @@
     ==
   ::
   ++  he-abet                                           ::  resolve
-    [(flop moz) %_(+> hoc (~(put by hoc) ost.hid +<+))]
-  ::
-  ++  he-abut                                           ::  discard
-    =>  he-stop
-    [(flop moz) %_(+> hoc (~(del by hoc) ost.hid))]
+    [(flop moz) %_(state hoc (~(put by hoc) id +<+>+))]
   ::
   ++  he-card                                           ::  emit gift
-    |=  cad/card
+    |=  =card:agent:gall
     ^+  +>
-    %_(+> moz [[ost.hid cad] moz])
-  ::
-  ++  he-send
-    |=  {way/wire him/ship dap/term cop/clap}
-    ^+  +>
-    (he-card %send way [him dap] cop)
+    =?  card  ?=(%pass -.card)
+      card(p [id p.card])
+    %_(+> moz [card moz])
   ::
   ++  he-diff                                           ::  emit update
     |=  fec/sole-effect
     ^+  +>
-    (he-card %diff %sole-effect fec)
+    (he-card %give %fact `/sole/[id] %sole-effect !>(fec))
   ::
   ++  he-stop                                           ::  abort work
     ^+  .
     ?~(poy . ~(dy-stop dy u.poy))
   ::
   ++  he-peer                                           ::  subscribe to
-    |=(pax/path ?>(=(~ pax) he-prom))
+    |=  pax/path
+    ?>(=(~ pax) he-prom)
   ::
   ++  he-pine                                           ::  restore prompt
     ^+  .
@@ -930,15 +907,44 @@
         (he-diff(poy ~) %tan message.build-result.result)
     ==  ==
   ::
-  ++  he-unto                                           ::  result from behn
-    |=  {way/wire cit/internal-gift:gall}
+  ++  he-unto                                           ::  result from agent
+    |=  {way/wire cit/sign:agent:gall}
     ^+  +>
-    ?.  ?=($coup -.cit)
+    ?.  ?=($poke-ack -.cit)
       ~&  [%strange-unto cit]
       +>
     ?~  p.cit
       (he-diff %txt ">=")
     (he-diff %tan u.p.cit)
+  ::
+  ++  he-wool
+    |=  [way=wire =sign:agent:gall]
+    ^+  +>
+    ?-    -.sign
+        %poke-ack
+      ?~  p.sign
+        +>.$
+      =.  +>.$  (he-diff(poy ~) %tan u.p.sign)
+      (he-card %pass /wool %agent [our.hid %spider] %leave ~)
+    ::
+        %watch-ack
+      ?~  p.sign
+        +>.$
+      (he-diff(poy ~) %tan u.p.sign)
+    ::
+        %fact
+      ?+    p.cage.sign  ~|([%dojo-thread-bad-mark-result p.cage.sign] !!)
+          %thread-fail
+        =+  !<([=term =tang] q.cage.sign)
+        (he-diff(poy ~) %tan leaf+"thread failed: {<term>}" tang)
+      ::
+          %thread-done
+        ?>  ?=(^ poy)
+        (~(dy-hand dy u.poy(pux ~)) %noun q.cage.sign)
+      ==
+    ::
+        %kick  +>.$
+    ==
   ::  +he-http-response: result from http-client
   ::
   ++  he-http-response
@@ -1166,11 +1172,11 @@
     ^+  +>
     ?^  poy
       he-pine:(~(dy-type dy u.poy) act)
-    ?-  -.act
-      $det  (he-stir +.act)
+    ?-  -.dat.act
+      $det  (he-stir +.dat.act)
       $ret  (he-done (tufa buf.say))
       $clr  he-pine(buf "")
-      $tab  (he-tab +.act)
+      $tab  (he-tab +.dat.act)
     ==
   ::
   ++  he-lame                                           ::  handle error
@@ -1198,74 +1204,116 @@
       (sloop b(p face+[a p.b]) c)
     !>([our=our now=now eny=eny]:hid)
   --
+--
+^-  agent:gall
+|_  hid=bowl:gall
+++  on-init
+  `..on-init
 ::
-++  prep
-  |=  old/(unit house)
-  ^+  [~ ..prep]
-  ?~  old  `..prep
-  `..prep(+<+ u.old)
+++  on-save
+  !>(state)
 ::
-::  pattern:  ++  foo  |=(data he-abet:(~(he-foo he (~(got by hoc) ost)) data))
-++  arm  (arm-session ~ (~(got by hoc) ost.hid))
-++  arm-session
-  |=  {moz/(list move) ses/session}
-  =>  ~(. he moz ses)
-  =-  [wrap=- +]
-  =+  he-arm=he-type
-  |@  ++  $
-        |:  +<.he-arm
-        ^-  (quip move _..he)
-        he-abet:(he-arm +<)
-  --
+++  on-load
+  |=  =old-state=vase
+  =/  old-state  !<(house old-state-vase)
+  `..on-init(state old-state)
 ::
-++  peer-sole
-  ~?  !=(our.hid src.hid)  [%dojo-peer-stranger ost.hid src.hid]
-  ?>  (team:title our.hid src.hid)
-  =^  moz  .
-    ?.  (~(has by hoc) ost.hid)  [~ .]
-    ~&  [%dojo-peer-replaced ost.hid]
-    ~(he-abut he ~ (~(got by hoc) ost.hid))
-  =+  ses=%*(. *session -.dir [our.hid %home ud+0])
-  (wrap he-peer):(arm-session moz ses)
-::
-++  poke-sole-action
-  |=  act/sole-action  ~|  poke+act  %.  act
-  (wrap he-type):arm
-::
-++  poke-lens-command
-  |=  com/command:lens  ~|  poke-lens+com  %.  com
-  (wrap he-lens):arm
-::
-++  poke-json
-  |=  jon=json
-  ^-  [(list move) _+>.$]
-  ~&  jon=jon
-  [~ +>.$]
-::  +poke-wipe: clear all dojo sessions
-::
-++  poke-wipe
-  |=  *
-  ^-  [(list move) _+>.$]
-  ~&  %dojo-wipe
-  =.  hoc
-    %-  ~(run by hoc)
-    |=  =session
-    %_  session
-      sur  ~
-      lib  ~
-      var  ~
-      old  ~
+++  on-poke
+  |=  [=mark =vase]
+  ^-  (quip card:agent:gall _..on-init)
+  =^  moves  state
+    ^-  (quip card:agent:gall house)
+    ?+  mark  ~|([%dojo-poke-bad-mark mark] !!)
+        %sole-action
+      =/  act  !<(sole-action vase)
+      he-abet:(~(he-type he hid id.act ~ (~(got by hoc) id.act)) act)
+    ::
+        %lens-command
+      =+  !<([=id =command:lens] vase)
+      he-abet:(~(he-lens he hid id ~ (~(got by hoc) id)) command)
+    ::
+        %json
+      ~&  jon=!<(json vase)
+      `state
+    ::
+        %wipe
+      ~&  %dojo-wipe
+      =.  hoc
+        %-  ~(run by hoc)
+        |=  =session
+        %_  session
+          sur  ~
+          lib  ~
+          var  ~
+          old  ~
+        ==
+      [~ state]
     ==
   ::
-  [~ +>.$]
+  [moves ..on-init]
 ::
-++  made       (wrap he-made):arm
-++  http-response   (wrap he-http-response):arm
-++  lame       (wrap he-lame):arm
-++  unto       (wrap he-unto):arm
-++  pull
-  |=  {pax/path}
-  ^-  (quip move _+>)
-  =^  moz  +>  ~(he-abut he ~ (~(got by hoc) ost.hid))
-  [moz +>.$(hoc (~(del by hoc) ost.hid))]
+++  on-watch
+  |=  =path
+  ^-  (quip card:agent:gall _..on-init)
+  ~?  !=(our.hid src.hid)  [%dojo-peer-stranger src.hid]
+  ?>  (team:title our.hid src.hid)
+  ?>  ?=([%sole @ ~] path)
+  =/  id  i.t.path
+  =?  hoc  (~(has by hoc) id)
+    ~&  [%dojo-peer-replaced id]
+    (~(del by hoc) id)
+  =/  =session  %*(. *session -.dir [our.hid %home ud+0])
+  =^  moves  state
+    he-abet:~(he-prom he hid id ~ session)
+  [moves ..on-init]
+::
+++  on-leave
+  |=  =path
+  ?>  ?=([%sole *] path)
+  =.  hoc  (~(del by hoc) t.path)
+  [~ ..on-init]
+::
+++  on-peek
+  |=  path
+  *(unit (unit cage))
+::
+++  on-agent
+  |=  [=wire =sign:agent:gall]
+  ?>  ?=([@ @ *] wire)
+  =/  =session  (~(got by hoc) i.wire)
+  =/  he-full  ~(. he hid i.wire ~ session)
+  =^  moves  state
+    =<  he-abet
+    ^+  he
+    ?+  i.t.wire  ~|([%dojo-bad-on-agent wire -.sign] !!)
+      %poke  (he-unto:he-full t.wire sign)
+      %wool  (he-wool:he-full t.wire sign)
+    ==
+  [moves ..on-init]
+::
+++  on-arvo
+  |=  [=wire =sign-arvo]
+  ?>  ?=([@ *] wire)
+  =/  =session  (~(got by hoc) i.wire)
+  =/  he-full  ~(. he hid i.wire ~ session)
+  =^  moves  state
+    =<  he-abet
+    ?+    +<.sign-arvo  ~|([%dojo-bad-take +<.sign-arvo] !!)
+        %made           (he-made:he-full t.wire +>.sign-arvo)
+        %http-response  (he-http-response:he-full t.wire +>.sign-arvo)
+    ==
+  [moves ..on-init]
+::  if dojo fails unexpectedly, kill whatever each session is working on
+::
+++  on-fail
+  |=  [=term =tang]
+  =/  sessions=(list (pair id session))  ~(tap by hoc)
+  |-  ^-  (quip card:agent:gall _..on-init)
+  ?~  sessions
+    [~ ..on-init]
+  =^  cards-1  state
+    he-abet:(~(he-lame he hid p.i.sessions ~ q.i.sessions) term tang)
+  =^  cards-2  ..on-init
+    $(sessions t.sessions)
+  [(weld cards-1 cards-2) ..on-init]
 --

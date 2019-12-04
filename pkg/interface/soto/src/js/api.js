@@ -8,7 +8,7 @@ class UrbitApi {
     this.bindPaths = [];
   }
 
-  bind(path, method, ship = this.authTokens.ship, appl = "soto", success, fail) {
+  bind(path, method, ship = this.authTokens.ship, appl = "dojo", success, fail) {
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
     window.subscriptionId = window.urb.subscribe(ship, appl, path, 
@@ -30,7 +30,9 @@ class UrbitApi {
   }
 
   soto(data) {
-    this.action("soto", "json", data); //TODO: revert after #1946
+    this.action("dojo", "sole-action", 
+      {id: this.authTokens.dojoId, dat: data}
+    ); //TODO: revert after #1946
   }
 
   action(appl, mark, data) {

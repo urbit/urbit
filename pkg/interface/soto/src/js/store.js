@@ -26,33 +26,30 @@ export class Store {
         if (dojoReply.map) { 
             return dojoReply.map(reply => this.handleEvent(reply));
         }
+        
         switch(Object.keys(dojoReply)[0]) {
             case 'txt':
-            return this.print(dojoReply.txt);
+                return this.print(dojoReply.txt);
             case 'tab':
-            for (let suggestion of dojoReply.tab) {
-                let match = suggestion.match;
-                let info = suggestion.info;
-                this.print(match + " " + info);
-            }
-            return;
+                this.print(dojoReply.tab.match + " " + dojoReply.tab.info);
+                return;
             case 'tan':
-            return dojoReply.tan.split("\n").map(this.print);
+                return dojoReply.tan.split("\n").map(this.print);
             case 'pro':
-            return this.setState({ prompt: dojoReply.pro.cad });
+                return this.setState({ prompt: dojoReply.pro.cad });
             case 'hop':
-            return this.setState({ cursor: dojoReply.hop });
+                return this.setState({ cursor: dojoReply.hop });
             case 'det':
-            buffer.receive(dojoReply.det);
-            return this.sync(dojoReply.det.ted);
+                buffer.receive(dojoReply.det);
+                return this.sync(dojoReply.det.ted);
             case 'act':
-            switch(dojoReply.act) {
-                case 'clr': return this.setState({txt: []});
-                case 'nex': return this.setState({
-                    input: "",
-                    cursor: 0
-                });
-            } break;
+                switch(dojoReply.act) {
+                    case 'clr': return this.setState({txt: []});
+                    case 'nex': return this.setState({
+                        input: "",
+                        cursor: 0
+                    });
+                } break;
             default: console.log(dojoReply);
         }
     }

@@ -12,9 +12,11 @@
 /-  *chat-store, *chat-view, *chat-hook,
     *permission-store, *group-store, *invite-store,
     sole-sur=sole
-/+  sole-lib=sole, chat-eval, auto=language-server-complete
+/+  sole-lib=sole, chat-eval, default-agent, verb,
+    auto=language-server-complete
 ::
 |%
++$  card  card:agent:gall
 +$  state
   $:  grams=(list mail)                             ::  all messages
       known=(set [target serial])                   ::  known message lookup
@@ -25,7 +27,8 @@
       settings=(set term)                           ::  frontend flags
       width=@ud                                     ::  display width
       timez=(pair ? @ud)                            ::  timezone adjustment
-      cli=[=bone state=sole-share:sole-sur]         ::  console id & state
+      cli=state=sole-share:sole-sur                 ::  console state
+      eny=@uvJ                                      ::  entropy
   ==
 ::
 +$  mail  [source=target envelope]
@@ -64,41 +67,92 @@
       [%help ~]                                     ::  print usage info
   ==                                                ::
 ::
-+$  move  [bone card]
-+$  card
-  $%  [%diff %sole-effect sole-effect:sole-sur]
-      [%poke wire dock out-action]
-      [%peer wire dock path]
-  ==
-::
-+$  out-action
-  $%  [%chat-action chat-action]
-      [%chat-view-action chat-view-action]
-      [%chat-hook-action chat-hook-action]
-      [%group-action group-action]
-      [%invite-action invite-action]
-  ==
 --
+=|  state
+=*  all-state  -
+=<
+  %+  verb  |
+  ^-  agent:gall
+  |_  =bowl:gall
+  +*  this       .
+      talk-core  +>
+      tc         ~(. talk-core(eny eny.bowl) bowl)
+      def        ~(. (default-agent this %|) bowl)
+  ::
+  ++  on-init
+    ^-  (quip card _this)
+    :-  [connect:tc]~
+    %_  this
+      audience  [[our-self:tc /] ~ ~]
+      settings  (sy %showtime %notify ~)
+      width  80
+    ==
+  ::
+  ++  on-save  !>(all-state)
+  ::
+  ++  on-load
+    |=  old-state=vase
+    ^-  (quip card _this)
+    =/  old  !<(state old-state)
+    =^  cards  all-state  (prep:tc `old)
+    [cards this]
+  ::
+  ++  on-poke
+    |=  [=mark =vase]
+    ^-  (quip card _this)
+    =^  cards  all-state
+      ?+  mark        (on-poke:def mark vase)
+        %noun         (poke-noun:tc mark !<(* vase))
+        %sole-action  (poke-sole-action:tc !<(sole-action:sole-sur vase))
+      ==
+    [cards this]
+  ::
+  ++  on-watch
+    |=  =path
+    ^-  (quip card _this)
+    =^  cards  all-state  (peer:tc path)
+    [cards this]
+  ::
+  ++  on-leave  on-leave:def
+  ++  on-peek   on-peek:def
+  ++  on-agent
+    |=  [=wire =sign:agent:gall]
+    ^-  (quip card _this)
+    =^  cards  all-state
+      ?-    -.sign
+          %poke-ack   [- all-state]:(on-agent:def wire sign)
+          %watch-ack  [- all-state]:(on-agent:def wire sign)
+          %kick       ~&  %chat-cli-kicked  `all-state
+          %fact
+        ?+  p.cage.sign  ~|([%chat-cli-bad-sub-mark wire p.cage.sign] !!)
+          %chat-update  (diff-chat-update:tc wire !<(chat-update q.cage.sign))
+        ==
+      ==
+    [cards this]
+  ::
+  ++  on-arvo   on-arvo:def
+  ++  on-fail   on-fail:def
+  --
 ::
-|_  [=bowl:gall state]
-++  this  .
+|_  =bowl:gall
 ::  +prep: setup & state adapter
 ::
 ++  prep
   |=  old=(unit state)
+  ^-  (quip card state)
   ?^  old
-    [~ this(+<+ u.old)]
-  =^  moves  this
+    [~ u.old]
+  =^  cards  all-state
     %_  catch-up
       audience  [[our-self /] ~ ~]
       settings  (sy %showtime %notify ~)
       width  80
     ==
-  [[connect moves] this]
+  [[connect cards] all-state]
 ::  +catch-up: process all chat-store state
 ::
 ++  catch-up
-  ^-  (quip move _this)
+  ^-  (quip card state)
   =/  =inbox
     .^  inbox
         %gx
@@ -107,28 +161,22 @@
         (scot %da now.bowl)
         /all/noun
     ==
-  |-  ^-  (quip move _this)
-  ?~  inbox  [~ this]
+  |-  ^-  (quip card state)
+  ?~  inbox  [~ all-state]
   =*  path  p.n.inbox
   =*  mailbox  q.n.inbox
   =/  =target  (path-to-target path)
-  =^  moves-n  this  (read-envelopes target envelopes.mailbox)
-  =^  moves-l  this  $(inbox l.inbox)
-  =^  moves-r  this  $(inbox r.inbox)
-  [:(weld moves-n moves-l moves-r) this]
+  =^  cards-n  all-state  (read-envelopes target envelopes.mailbox)
+  =^  cards-l  all-state  $(inbox l.inbox)
+  =^  cards-r  all-state  $(inbox r.inbox)
+  [:(weld cards-n cards-l cards-r) all-state]
 ::  +connect: connect to the chat-store
 ::
 ++  connect
-  ^-  move
-  [ost.bowl %peer /chat-store [our-self %chat-store] /updates]
-::  +true-self: moons to planets
+  ^-  card
+  [%pass /chat-store %agent [our-self %chat-store] %watch /updates]
 ::
-++  true-self
-  |=  who=ship
-  ^-  ship
-  ?.  ?=(%earl (clan:title who))  who
-  (sein:title our.bowl now.bowl who)
-++  our-self  (true-self our.bowl)
+++  our-self  (name:title our.bowl)
 ::  +target-to-path: prepend ship to the path
 ::
 ++  target-to-path
@@ -150,73 +198,67 @@
 ::
 ++  poke-noun
   |=  a=*
-  ^-  (quip move _this)
+  ^-  (quip card state)
   ?:  ?=(%connect a)
-    [[connect ~] this]
+    [[connect ~] all-state]
   ?:  ?=(%catch-up a)
     catch-up
-  [~ this]
+  [~ all-state]
 ::  +poke-sole-action: handle cli input
 ::
 ++  poke-sole-action
-  |=  act=sole-action:sole-sur
-  ^-  (quip move _this)
-  ?.  =(bone.cli ost.bowl)
-    ~|(%strange-sole !!)
+  ::TODO  use id.act to support multiple separate sessions
+  |=  [act=sole-action:sole-sur]
+  ^-  (quip card state)
   (sole:sh-in act)
 ::  +peer: accept only cli subscriptions from ourselves
 ::
 ++  peer
   |=  =path
-  ^-  (quip move _this)
+  ^-  (quip card state)
   ?.  (team:title our-self src.bowl)
     ~|  [%peer-talk-stranger src.bowl]
     !!
   ?.  ?=([%sole *] path)
     ~|  [%peer-talk-strange path]
     !!
-  =.  bone.cli  ost.bowl
   ::  display a fresh prompt
   :-  [prompt:sh-out ~]
   ::  start with fresh sole state
-  this(state.cli *sole-share:sole-sur)
-::
-++  diff-chat-two-update
-  |=  [=wire upd=chat-two-update]
-  ^-  (quip move _this)
-  (read-envelopes (path-to-target path.upd) envelopes.upd)
+  all-state(state.cli *sole-share:sole-sur)
 ::  +diff-chat-update: get new mailboxes & messages
 ::
 ++  diff-chat-update
   |=  [=wire upd=chat-update]
-  ^-  (quip move _this)
-  ?+  -.upd  [~ this]
-    %create   (notice-create +.upd)
-    %delete   [[(show-delete:sh-out (path-to-target path.upd)) ~] this]
-    %message  (read-envelope (path-to-target path.upd) envelope.upd)
+  ^-  (quip card state)
+  ?+  -.upd  [~ all-state]
+    %create    (notice-create +.upd)
+    %delete    [[(show-delete:sh-out (path-to-target path.upd)) ~] all-state]
+    %message   (read-envelope (path-to-target path.upd) envelope.upd)
+    %messages  (read-envelopes (path-to-target path.upd) envelopes.upd)
   ==
 ::
 ++  read-envelopes
   |=  [=target envs=(list envelope)]
-  ^-  (quip move _this)
-  ?~  envs  [~ this]
-  =^  moves-i  this  (read-envelope target i.envs)
-  =^  moves-t  this  $(envs t.envs)
-  [(weld moves-i moves-t) this]
+  ^-  (quip card state)
+  ?~  envs  [~ all-state]
+  =^  cards-i  all-state  (read-envelope target i.envs)
+  =^  cards-t  all-state  $(envs t.envs)
+  [(weld cards-i cards-t) all-state]
 ::
 ++  notice-create
   |=  =target
-  ^-  (quip move _this)
-  =^  moves  this
+  ^-  (quip card state)
+  =^  cards  all-state
     ?:  (~(has by bound) target)
-      [~ this]
+      [~ all-state]
     (bind-default-glyph target)
-  [[(show-create:sh-out target) moves] this]
+  [[(show-create:sh-out target) cards] all-state]
 ::  +bind-default-glyph: bind to default, or random available
 ::
 ++  bind-default-glyph
   |=  =target
-  ^-  (quip move _this)
+  ^-  (quip card state)
   =;  =glyph  (bind-glyph glyph target)
   |^  =/  g=glyph  (choose glyphs)
       ?.  (~(has by binds) g)  g
@@ -234,7 +276,7 @@
 ::
 ++  bind-glyph
   |=  [=glyph =target]
-  ^-  (quip move _this)
+  ^-  (quip card state)
   ::TODO  should send these to settings store eventually
   ::  if the target was already bound to another glyph, un-bind that
   ::
@@ -242,16 +284,16 @@
     (~(del ju binds) (~(got by bound) target) target)
   =.  bound  (~(put by bound) target glyph)
   =.  binds  (~(put ju binds) glyph target)
-  [(show-glyph:sh-out glyph `target) this]
+  [(show-glyph:sh-out glyph `target) all-state]
 ::  +unbind-glyph: remove all binding for glyph
 ::
 ++  unbind-glyph
   |=  [=glyph targ=(unit target)]
-  ^-  (quip move _this)
+  ^-  (quip card state)
   ?^  targ
     =.  binds  (~(del ju binds) glyph u.targ)
     =.  bound  (~(del by bound) u.targ)
-    [(show-glyph:sh-out glyph ~) this]
+    [(show-glyph:sh-out glyph ~) all-state]
   =/  ole=(set target)
     (~(get ju binds) glyph)
   =.  binds  (~(del by binds) glyph)
@@ -261,7 +303,7 @@
     =.  bound  $(ole l.ole)
     =.  bound  $(ole r.ole)
     (~(del by bound) n.ole)
-  [(show-glyph:sh-out glyph ~) this]
+  [(show-glyph:sh-out glyph ~) all-state]
 ::  +decode-glyph: find the target that matches a glyph, if any
 ::
 ++  decode-glyph
@@ -284,12 +326,12 @@
 ::
 ++  read-envelope
   |=  [=target =envelope]
-  ^-  (quip move _this)
+  ^-  (quip card state)
   ?:  (~(has in known) [target uid.envelope])
     ::NOTE  we no-op only because edits aren't possible
-    [~ this]
+    [~ all-state]
   :-  (show-envelope:sh-out target envelope)
-  %_  this
+  %_  all-state
     known  (~(put in known) [target uid.envelope])
     grams  [[target envelope] grams]
     count  +(count)
@@ -304,10 +346,10 @@
   ::
   ++  sole
     |=  act=sole-action:sole-sur
-    ^-  (quip move _this)
-    ?-  -.act
-      %det  (edit +.act)
-      %clr  [~ this]
+    ^-  (quip card state)
+    ?-  -.dat.act
+      %det  (edit +.dat.act)
+      %clr  [~ all-state]
       %ret  obey
       %tab  (tab +.act)
     ==
@@ -373,17 +415,17 @@
   ::
   ++  edit
     |=  cal=sole-change:sole-sur
-    ^-  (quip move _this)
+    ^-  (quip card state)
     =^  inv  state.cli  (~(transceive sole-lib state.cli) cal)
     =+  fix=(sanity inv buf.state.cli)
     ?~  lit.fix
-      [~ this]
+      [~ all-state]
     ::  just capital correction
     ?~  err.fix
       (slug fix)
     ::  allow interior edits and deletes
     ?.  &(?=($del -.inv) =(+(p.inv) (lent buf.state.cli)))
-      [~ this]
+      [~ all-state]
     (slug fix)
   ::  +sanity: check input sanity
   ::
@@ -400,13 +442,13 @@
   ::
   ++  slug
     |=  [lit=(list sole-edit:sole-sur) err=(unit @u)]
-    ^-  (quip move _this)
-    ?~  lit  [~ this]
+    ^-  (quip card state)
+    ?~  lit  [~ all-state]
     =^  lic  state.cli
       %-  ~(transmit sole-lib state.cli)
       ^-  sole-edit:sole-sur
       ?~(t.lit i.lit [%mor lit])
-    :_  this
+    :_  all-state
     :_  ~
     %+  effect:sh-out  %mor
     :-  [%det lic]
@@ -603,22 +645,22 @@
   ::    the command (if any) gets echoed to the user.
   ::
   ++  obey
-    ^-  (quip move _this)
+    ^-  (quip card state)
     =+  buf=buf.state.cli
     =+  fix=(sanity [%nop ~] buf)
     ?^  lit.fix
       (slug fix)
     =+  jub=(rust (tufa buf) read)
-    ?~  jub  [[(effect:sh-out %bel ~) ~] this]
+    ?~  jub  [[(effect:sh-out %bel ~) ~] all-state]
     =^  cal  state.cli  (~(transmit sole-lib state.cli) [%set ~])
-    =^  moves  this  (work u.jub)
-    :_  this
+    =^  cards  all-state  (work u.jub)
+    :_  all-state
     %+  weld
-      ^-  (list move)
+      ^-  (list card)
       ::  echo commands into scrollback
       ?.  =(`0 (find ";" buf))  ~
       [(note:sh-out (tufa `(list @)`buf)) ~]
-    :_  moves
+    :_  cards
     %+  effect:sh-out  %mor
     :~  [%nex ~]
         [%det cal]
@@ -627,7 +669,7 @@
   ::
   ++  work
     |=  job=command
-    ^-  (quip move _this)
+    ^-  (quip card state)
     |^  ?-  -.job
           %target    (set-target +.job)
           %say       (say +.job)
@@ -655,28 +697,31 @@
           %chats     chats
           %help      help
         ==
-    ::  +act: build action move
+    ::  +act: build action card
     ::
     ++  act
-      |=  [what=term app=term =out-action]
-      ^-  move
-      :*  ost.bowl
-          %poke
+      |=  [what=term app=term =cage]
+      ^-  card
+      :*  %pass
           /cli-command/[what]
+          %agent
           [our-self app]
-          out-action
-      ==
-    ::  +invite-move: build invite move
-    ::
-    ++  invite-move
-      |=  [where=path who=ship]
-      ^-  move
-      :*  ost.bowl
           %poke
+          cage
+      ==
+    ::  +invite-card: build invite card
+    ::
+    ++  invite-card
+      |=  [where=path who=ship]
+      ^-  card
+      :*  %pass
           /cli-command/invite
+          %agent
           [who %invite-hook]  ::NOTE  only place chat-cli pokes others
+          %poke
           %invite-action
         ::
+          !>
           ^-  invite-action
           :^  %invite  /chat
             (shax (jam [our-self where] who))
@@ -692,23 +737,24 @@
     ::
     ++  set-target
       |=  tars=(set target)
-      ^-  (quip move _this)
+      ^-  (quip card state)
       =.  audience  tars
-      [[prompt:sh-out ~] this]
+      [[prompt:sh-out ~] all-state]
     ::  +create: new local mailbox
     ::
     ++  create
       |=  [security=rw-security =path gyf=(unit char) allow-history=(unit ?)]
-      ^-  (quip move _this)
+      ^-  (quip card state)
       ::TODO  check if already exists
       =/  =target  [our-self path]
       =.  audience  [target ~ ~]
-      =^  moz  this
-        ?.  ?=(^ gyf)  [~ this]
+      =^  moz  all-state
+        ?.  ?=(^ gyf)  [~ all-state]
         (bind-glyph u.gyf target)
-      =-  [[- moz] this]
+      =-  [[- moz] all-state]
       %^  act  %do-create  %chat-view
       :-  %chat-view-action
+      !>
       :*  %create
           path
           security
@@ -730,22 +776,23 @@
     ::
     ++  delete
       |=  =path
-      ^-  (quip move _this)
-      =-  [[- ~] this]
+      ^-  (quip card state)
+      =-  [[- ~] all-state]
       %^  act  %do-delete  %chat-view
       :-  %chat-view-action
+      !>
       [%delete (target-to-path our-self path)]
     ::  +change-permission: modify permissions on a local chat
     ::
     ++  change-permission
       |=  [allow=? rw=?(%r %w %rw) =path ships=(set ship)]
-      ^-  (quip move _this)
-      :_  this
-      =;  moves=(list move)
-        ?.  allow  moves
-        %+  weld  moves
+      ^-  (quip card state)
+      :_  all-state
+      =;  cards=(list card)
+        ?.  allow  cards
+        %+  weld  cards
         %+  turn  ~(tap in ships)
-        (cury invite-move path)
+        (cury invite-card path)
       %+  murn
         ^-  (list term)
         ?-  rw
@@ -754,7 +801,7 @@
           %rw  [%read %write ~]
         ==
       |=  =term
-      ^-  (unit move)
+      ^-  (unit card)
       =.  path
         =-  (snoc `^path`- term)
         [%chat (target-to-path our-self path)]
@@ -777,8 +824,8 @@
         ~
       %-  some
       %^  act  %do-permission  %group-store
-      ^-  out-action
       :-  %group-action
+      !>
       ?:  =(u.whitelist allow)
         [%add ships path]
       [%remove ships path]
@@ -786,42 +833,46 @@
     ::
     ++  join
       |=  [=target gyf=(unit char) ask-history=(unit ?)]
-      ^-  (quip move _this)
-      =^  moz  this
-        ?.  ?=(^ gyf)  [~ this]
+      ^-  (quip card state)
+      =^  moz  all-state
+        ?.  ?=(^ gyf)  [~ all-state]
         (bind-glyph u.gyf target)
       =.  audience  [target ~ ~]
-      =;  =move
-        [[move prompt:sh-out moz] this]
+      =;  =card
+        [[card prompt:sh-out moz] all-state]
       ::TODO  ideally we'd check permission first. attempting this and failing
       ::      gives ugly %chat-hook-reap
       %^  act  %do-join  %chat-view
       :-  %chat-view-action
+      !>
       [%join ship.target path.target (fall ask-history %.y)]
     ::  +leave: unsync & destroy mailbox
     ::
     ::TODO  allow us to "mute" local chats using this
     ++  leave
       |=  =target
-      =-  [[- ~] this]
+      =-  [[- ~] all-state]
       ?:  =(our-self ship.target)
         %-  print:sh-out
         "can't ;leave local chats, maybe use ;delete instead"
       %^  act  %do-leave  %chat-hook
       :-  %chat-hook-action
+      !>
       [%remove (target-to-path target)]
     ::  +say: send messages
     ::
     ++  say
       |=  =letter
-      ^-  (quip move _this)
+      ^-  (quip card state)
+      ~!  bowl
       =/  =serial  (shaf %msg-uid eny.bowl)
-      :_  this(eny.bowl (shax eny.bowl))
-      ^-  (list move)
+      :_  all-state(eny (shax eny.bowl))
+      ^-  (list card)
       %+  turn  ~(tap in audience)
       |=  =target
       %^  act  %out-message  %chat-hook
       :-  %chat-action
+      !>
       :+  %message  (target-to-path target)
       [serial *@ our-self now.bowl letter]
     ::  +eval: run hoon, send code and result as message
@@ -835,8 +886,8 @@
     ::
     ++  lookup-glyph
       |=  qur=(unit $@(glyph target))
-      ^-  (quip move _this)
-      =-  [[- ~] this]
+      ^-  (quip card state)
+      =-  [[- ~] all-state]
       ?^  qur
         ?^  u.qur
           =+  gyf=(~(get by bound) u.qur)
@@ -860,8 +911,8 @@
     ::  +show-settings: print enabled flags, timezone and width settings
     ::
     ++  show-settings
-      ^-  (quip move _this)
-      :_  this
+      ^-  (quip card state)
+      :_  all-state
       :~  %-  print:sh-out
           %-  zing
           ^-  (list tape)
@@ -881,24 +932,24 @@
     ::
     ++  set-setting
       |=  =term
-      ^-  (quip move _this)
-      [~ this(settings (~(put in settings) term))]
+      ^-  (quip card state)
+      [~ all-state(settings (~(put in settings) term))]
     ::  +unset-setting: disable settings flag
     ::
     ++  unset-setting
       |=  =term
-      ^-  (quip move _this)
-      [~ this(settings (~(del in settings) term))]
+      ^-  (quip card state)
+      [~ all-state(settings (~(del in settings) term))]
     ::  +set-width: configure cli printing width
     ::
     ++  set-width
       |=  w=@ud
-      [~ this(width w)]
+      [~ all-state(width w)]
     ::  +set-timezone: configure timestamp printing adjustment
     ::
     ++  set-timezone
       |=  tz=[? @ud]
-      [~ this(timez tz)]
+      [~ all-state(timez tz)]
     ::  +select: expand message from number reference
     ::
     ++  select
@@ -907,7 +958,7 @@
       ::      (with leading zeros used for precision)
       ::
       |=  num=$@(rel=@ud [zeros=@u abs=@ud])
-      ^-  (quip move _this)
+      ^-  (quip card state)
       |^  ?@  num
             =+  tum=(scow %s (new:si | +(num)))
             ?:  (gte rel.num count)
@@ -921,11 +972,11 @@
             (activate (scow %ud msg) (sub count +(msg)))
           %-  just-print
           "…{(reap zeros.num '0')}{(scow %ud abs.num)}: no such telegram"
-      ::  +just-print: full [moves state] output with a single print move
+      ::  +just-print: full [cards state] output with a single print card
       ::
       ++  just-print
         |=  txt=tape
-        [[(print:sh-out txt) ~] this]
+        [[(print:sh-out txt) ~] all-state]
       ::  +index: get message index from absolute reference
       ::
       ++  index
@@ -939,11 +990,11 @@
       ::
       ++  activate
         |=  [number=tape index=@ud]
-        ^-  (quip move _this)
+        ^-  (quip card state)
         =+  gam=(snag index grams)
         =.  audience  [source.gam ~ ~]
-        :_  this
-        ^-  (list move)
+        :_  all-state
+        ^-  (list card)
         :~  (print:sh-out ['?' ' ' number])
             (effect:sh-out ~(render-activate mr gam))
             prompt:sh-out
@@ -952,8 +1003,8 @@
     ::  +chats: display list of local mailboxes
     ::
     ++  chats
-      ^-  (quip move _this)
-      :_  this
+      ^-  (quip card state)
+      :_  all-state
       :_  ~
       %-  print-more:sh-out
       =/  all
@@ -970,8 +1021,8 @@
     ::  +help: print (link to) usage instructions
     ::
     ++  help
-      ^-  (quip move _this)
-      =-  [[- ~] this]
+      ^-  (quip card state)
+      =-  [[- ~] all-state]
       (print:sh-out "see https://urbit.org/using/operations/using-your-ship/#messaging")
     --
   --
@@ -980,36 +1031,37 @@
 ::
 ++  sh-out
   |%
-  ::  +effect: console effect move
+  ::  +effect: console effect card
   ::
   ++  effect
     |=  fec=sole-effect:sole-sur
-    ^-  move
-    [bone.cli %diff %sole-effect fec]
+    ^-  card
+    ::TODO  don't hard-code session id 'drum' here
+    [%give %fact `/sole/drum %sole-effect !>(fec)]
   ::  +tab: print tab-complete list
   ::
   ++  tab
     |=  options=(list [cord tank])
-    ^-  move
+    ^-  card
     (effect %tab options)
   ::  +print: puts some text into the cli as-is
   ::
   ++  print
     |=  txt=tape
-    ^-  move
+    ^-  card
     (effect %txt txt)
   ::  +print-more: puts lines of text into the cli
   ::
   ++  print-more
     |=  txs=(list tape)
-    ^-  move
+    ^-  card
     %+  effect  %mor
     (turn txs |=(t=tape [%txt t]))
   ::  +note: prints left-padded ---| txt
   ::
   ++  note
     |=  txt=tape
-    ^-  move
+    ^-  card
     =+  lis=(simple-wrap txt (sub width 16))
     %-  print-more
     =+  ?:((gth (lent lis) 0) (snag 0 lis) "")
@@ -1019,7 +1071,7 @@
   ::  +prompt: update prompt to display current audience
   ::
   ++  prompt
-    ^-  move
+    ^-  card
     %+  effect  %pro
     :+  &  %talk-line
     ^-  tape
@@ -1045,9 +1097,9 @@
   ::
   ++  show-envelope
     |=  [=target =envelope]
-    ^-  (list move)
+    ^-  (list card)
     %+  weld
-      ^-  (list move)
+      ^-  (list card)
       ?.  =(0 (mod count 5))  ~
       :_  ~
       =+  num=(scow %ud count)
@@ -1069,19 +1121,19 @@
   ::
   ++  show-create
     |=  =target
-    ^-  move
+    ^-  card
     (note "new: {~(phat tr target)}")
   ::  +show-delete: print mailbox deletion notification
   ::
   ++  show-delete
     |=  =target
-    ^-  move
+    ^-  card
     (note "del: {~(phat tr target)}")
   ::  +show-glyph: print glyph un/bind notification
   ::
   ++  show-glyph
     |=  [=glyph target=(unit target)]
-    ^-  (list move)
+    ^-  (list card)
     :_  [prompt ~]
     %-  note
     %+  weld  "set: {[glyph ~]} "

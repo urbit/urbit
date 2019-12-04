@@ -1,4 +1,4 @@
-/+  *server
+/+  *server, default-agent, verb
 /=  tile-js
   /^  octs
   /;  as-octs:mimes:html
@@ -8,61 +8,32 @@
   ==
 =,  format
 ::
-|%
-:: +move: output effect
+%+  verb  |
+^-  agent:gall
+|_  =bowl:gall
++*  this  .
+    def   ~(. (default-agent this %|) bowl)
 ::
-+$  move  [bone card]
-:: +card: output effect payload
-::
-+$  poke
-  $%  [%launch-action [@tas path @t]]
-  ==
-::
-+$  card
-  $%  [%poke wire dock poke]
-      [%http-response =http-event:http]
-      [%connect wire binding:eyre term]
-      [%diff %json json]
-  ==
-::
---
-::
-|_  [bol=bowl:gall ~]
-::
-++  this  .
-::
-++  bound
-  |=  [wir=wire success=? binding=binding:eyre]
-  ^-  (quip move _this)
-  [~ this]
-::
-++  prep
-  |=  old=(unit ~)
-  ^-  (quip move _this)
+++  on-init
+  ^-  (quip card:agent:gall _this)
   =/  launcha
-    [%launch-action [%clock /tile '/~clock/js/tile.js']]
+    [%launch-action !>([%clock /tile '/~clock/js/tile.js'])]
   :_  this
-  :~
-    [ost.bol %connect / [~ /'~clock'] %clock]
-    [ost.bol %poke /clock [our.bol %launch] launcha]
+  :~  [%pass / %arvo %e %connect [~ /'~clock'] %clock]
+      [%pass /clock %agent [our.bowl %launch] %poke launcha]
   ==
-::
-++  peer-tile
-  |=  pax=path
-  ^-  (quip move _this)
-  [[ost.bol %diff %json *json]~ this]
-::
-++  send-tile-diff
-  |=  jon=json
-  ^-  (list move)
-  %+  turn  (prey:pubsub:userlib /tile bol)
-  |=  [=bone ^]
-  [bone %diff %json jon]
-::
-++  poke-handle-http-request
-  %-  (require-authorization:app ost.bol move this)
+++  on-save   on-save:def
+++  on-load   on-load:def
+++  on-poke
+  |=  [=mark =vase]
+  ^-  (quip card:agent:gall _this)
+  ?.  ?=(%handle-http-request mark)
+    (on-poke:def mark vase)
+  =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
+  :_  this
+  %+  give-simple-payload:app  eyre-id
+  %+  require-authorization:app  inbound-request
   |=  =inbound-request:eyre
-  ^-  (quip move _this)
   =/  request-line  (parse-request-line url.request.inbound-request)
   =/  back-path  (flop site.request-line)
   =/  name=@t
@@ -72,9 +43,29 @@
     i.back-path
   ::
   ?~  back-path
-    [[ost.bol %http-response not-found:app]~ this]
+    not-found:gen
   ?:  =(name 'tile')
-    [[ost.bol %http-response (js-response:app tile-js)]~ this]
-  [[ost.bol %http-response not-found:app]~ this]
+    (js-response:gen tile-js)
+  not-found:gen
 ::
+++  on-watch
+  |=  =path
+  ^-  (quip card:agent:gall _this)
+  ?:  ?=([%http-response *] path)
+    `this
+  ?.  =(/tile path)
+    (on-watch:def path)
+  [[%give %fact ~ %json !>(*json)]~ this]
+::
+++  on-leave  on-leave:def
+++  on-peek   on-peek:def
+++  on-agent  on-agent:def
+++  on-arvo
+  |=  [=wire =sign-arvo]
+  ^-  (quip card:agent:gall _this)
+  ?.  ?=(%bound +<.sign-arvo)
+    (on-arvo:def wire sign-arvo)
+  [~ this]
+::
+++  on-fail   on-fail:def
 --

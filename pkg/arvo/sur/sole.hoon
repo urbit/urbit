@@ -4,12 +4,15 @@
 ^?
 |%
 ++  sole-action                                         ::  sole to app
-  $%  ::  {$abo ~}                                      ::  reset interaction
-      {$det sole-change}                                ::  command line edit
-      {$ret ~}                                          ::  submit and clear
-      {$clr ~}                                          ::  exit context
-      {$tab pos/@ud}                                    ::  tab complete
-  ==                                                    ::
+  $:  id=@ta                                            ::  duct id
+    $=  dat
+    $%  ::  {$abo ~}                                    ::  reset interaction
+        {$det sole-change}                              ::  command line edit
+        {$ret ~}                                        ::  submit and clear
+        {$clr ~}                                        ::  exit context
+        {$tab pos/@ud}                                  ::  tab complete
+    ==                                                  ::
+  ==
 ++  sole-buffer  (list @c)                              ::  command state
 ++  sole-change                                         ::  network change
   $:  ler/sole-clock                                    ::  destination clock

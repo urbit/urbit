@@ -43,7 +43,7 @@
     [duct type task]
   ::
   =/  =move:gall-gate
-    =/  =path  /sys/core/[term]/(scot %p ship)/[term]/(scot %da time)
+    =/  =path  /sys/cor/[term]/(scot %p ship)/[term]/(scot %da time)
     =/  =note-arvo
       =/  =schematic:ford  [%core [ship term] /hoon/[term]/app]
       =/  =task:able:ford  [%build %.y schematic]

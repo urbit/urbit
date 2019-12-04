@@ -1,111 +1,161 @@
-::  permission-group-hook:
-::  mirror the ships in some group to some set of permission paths
+::  permission-group-hook: groups into permissions
+::
+::    mirror the ships in specified groups to specified permission paths
 ::
 /-  *group-store, *permission-group-hook
-/+  *permission-json
+/+  *permission-json, default-agent, verb
+::
 |%
-+$  move  [bone card]
-::
-+$  card
-  $%  [%diff [%group-update group-update]]
-      [%poke wire dock poke]
-      [%pull wire dock ~]
-      [%peer wire dock path]
-  ==
-::
 +$  state
-  $%  [%0 state-zero]
+  $%  [%0 state-0]
   ==
 ::
 +$  group-path  path
 ::
 +$  permission-path  path
 ::
-+$  state-zero
++$  state-0
   $:  relation=(map group-path (set permission-path))
   ==
 ::
-+$  poke
-  $%  [%permission-action permission-action]
-  ==
-::
++$  card  card:agent:gall
 --
 ::
-|_  [bol=bowl:gall state]
+=|  state-0
+=*  state  -
 ::
-++  this  .
+%+  verb  |
+^-  agent:gall
+=<
+  |_  =bowl:gall
+  +*  this  .
+      do    ~(. +> bowl)
+      def   ~(. (default-agent this %|) bowl)
+  ::
+  ++  on-init  on-init:def
+  ++  on-save  !>(state)
+  ++  on-load
+    |=  old=vase
+    ^-  (quip card _this)
+    [~ this(state !<(state-0 old))]
+  ::
+  ++  on-poke
+    |=  [=mark =vase]
+    ^-  (quip card _this)
+    ?+  mark  (on-poke:def mark vase)
+        %json
+      ::  only accept json from the host team
+      ::
+      ?>  (team:title our.bowl src.bowl)
+      =^  cards  state
+        %-  handle-action:do
+        %-  json-to-perm-group-hook-action
+        !<(json vase)
+      [cards this]
+    ::
+        %permission-group-hook-action
+      =^  cards  state
+        %-  handle-action:do
+        !<(permission-group-hook-action vase)
+      [cards this]
+    ==
+  ::
+  ++  on-agent
+    |=  [=wire =sign:agent:gall]
+    ^-  (quip card _this)
+    ?.  ?=([%group *] wire)
+      (on-agent:def wire sign)
+    ?-  -.sign
+      %poke-ack  ~|([dap.bowl %unexpected-poke-ack wire] !!)
+    ::
+        %kick
+      :_  this
+      [(watch-group:do t.wire)]~
+    ::
+        %watch-ack
+      ?~  p.sign  [~ this]
+      =/  =tank  leaf+"{(trip dap.bowl)} failed subscribe at {(spud wire)}"
+      %-  (slog tank u.p.sign)
+      [~ this(relation (~(del by relation) t.wire))]
+    ::
+        %fact
+      ?.  ?=(%group-update p.cage.sign)
+        (on-agent:def wire sign)
+      =^  cards  state
+        %-  handle-group-update:do
+        !<(group-update q.cage.sign)
+      [cards this]
+    ==
+  ::
+  ++  on-peek   on-peek:def
+  ++  on-watch  on-watch:def
+  ++  on-leave  on-leave:def
+  ++  on-arvo   on-arvo:def
+  ++  on-fail   on-fail:def
+  --
 ::
-++  prep
-  |=  old=(unit state)
-  ^-  (quip move _this)
-  [~ ?~(old this this(+<+ u.old))]
-::
-++  poke-json
-  |=  =json
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  (poke-permission-group-hook-action (json-to-perm-group-hook-action json))
-::
-++  poke-permission-group-hook-action
+|_  =bowl:gall
+++  handle-action
   |=  act=permission-group-hook-action
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
+  ^-  (quip card _state)
+  ?>  (team:title our.bowl src.bowl)
   ?-  -.act
       %associate   (handle-associate group.act permissions.act)
       %dissociate  (handle-dissociate group.act permissions.act)
   ==
 ::
 ++  handle-associate
-  |=  [group=path permission-paths=(set [path kind])]
-  ^-  (quip move _this)
+  |=  [group=group-path associate=(set [permission-path kind])]
+  ^-  (quip card _state)
   =/  perms  (~(get by relation) group)
   ::  if relation does not exist, create it and subscribe.
-  =/  permissions=(set path)
-    %-  ~(run in permission-paths)
-    |=([=path =kind] path)
+  =/  perm-paths=(set path)
+    (~(run in associate) head)
   ?~  perms
-    =/  group-path  [%group group]
-    :_  this(relation (~(put by relation) group permissions))
-    [ost.bol %peer group-path [our.bol %group-store] group-path]~
+    :-  [(watch-group group)]~
+    state(relation (~(put by relation) group perm-paths))
   ::
-  =.  u.perms  (~(uni in u.perms) permissions)
-  :_  this(relation (~(put by relation) group u.perms))
+  =.  u.perms  (~(uni in u.perms) perm-paths)
+  :_  state(relation (~(put by relation) group u.perms))
   %+  weld
-    %+  turn  ~(tap in permissions)
-    |=(=path (permission-poke path [%delete path]))
-  %+  turn  ~(tap in permission-paths)
+    %+  turn  ~(tap in perm-paths)
+    |=  =path
+    (permission-poke path [%delete path])
+  %+  turn  ~(tap in associate)
   |=  [=path =kind]
-  =/  pem  *permission
+  =|  pem=permission
   =.  kind.pem  kind
   (permission-poke path [%create path pem])
 ::
 ++  handle-dissociate
-  |=  [group=path permissions=(set path)]
-  ^-  (quip move _this)
-  =/  perms  (~(get by relation) group)
-  ?~  perms
-    [~ this]
+  |=  [group=path remove=(set permission-path)]
+  ^-  (quip card _state)
+  =/  perms=(set permission-path)
+    (fall (~(get by relation) group) *(set permission-path))
+  ?:  =(~ perms)
+    [~ state]
+  ::  remove what we must. if that means we are no longer mirroring this group
+  ::  into any permissions, remove it from state entirely.
   ::
-  =.  permissions  (~(del in u.perms) permissions)
-  ?~  permissions
-    :_  this(relation (~(del by relation) group))
-    [(group-pull [%group group])]~
-  [~ this(relation (~(put by relation) group permissions))]
+  =.  perms  (~(del in perms) remove)
+  ?~  perms
+    :_  state(relation (~(del by relation) group))
+    [(group-pull group)]~
+  [~ state(relation (~(put by relation) group perms))]
 ::
-++  diff-group-update
-  |=  [wir=wire diff=group-update]
-  ^-  (quip move _this)
+++  handle-group-update
+  |=  diff=group-update
+  ^-  (quip card _state)
   ?-  -.diff
-      %keys
-    [~ this]
-      %bundle
-    [~ this]
+    %keys     [~ state]
+    %bundle   [~ state]
+  ::
       %path
     ::  set all permissions paths
     =/  perms  (~(get by relation) pax.diff)
     ?~  perms
-      [~ this]
-    :_  this
+      [~ state]
+    :_  state
     %+  turn  ~(tap in u.perms)
     |=  =path
     (permission-poke path [%add path members.diff])
@@ -114,8 +164,8 @@
     ::  set all permissions paths
     =/  perms  (~(get by relation) pax.diff)
     ?~  perms
-      [~ this]
-    :_  this
+      [~ state]
+    :_  state
     %+  turn  ~(tap in u.perms)
     |=  =path
     (permission-poke path [%add path members.diff])
@@ -124,8 +174,8 @@
     ::  set all permissions paths
     =/  perms  (~(get by relation) pax.diff)
     ?~  perms
-      [~ this]
-    :_  this
+      [~ state]
+    :_  state
     %+  turn  ~(tap in u.perms)
     |=  =path
     (permission-poke path [%remove path members.diff])
@@ -134,38 +184,34 @@
     ::  pull subscriptions
     =/  perms  (~(get by relation) pax.diff)
     ?~  perms
-      :_  this(relation (~(del by relation) pax.diff))
-      [(group-pull [%group pax.diff])]~
-    :_  this(relation (~(del by relation) pax.diff))
-    :-  (group-pull [%group pax.diff])
+      :_  state(relation (~(del by relation) pax.diff))
+      [(group-pull pax.diff)]~
+    :_  state(relation (~(del by relation) pax.diff))
+    :-  (group-pull pax.diff)
     %+  turn  ~(tap in u.perms)
     |=  =path
     (permission-poke path [%delete path])
   ==
 ::
-++  quit
-  |=  wir=wire
-  ^-  (quip move _this)
-  ::  no-op
-  [~ this]
-::
-++  reap
-  |=  [wir=wire saw=(unit tang)]
-  ^-  (quip move _this)
-  ?~  saw
-    [~ this]
-  =.  wir  ?^(wir t.wir ~)
-  ~&  %reap-permission-group-hook
-  [((slog u.saw) ~) this(relation (~(del by relation) wir))]
-::
 ++  permission-poke
-  |=  [pax=path action=permission-action]
-  ^-  move
-  [ost.bol %poke pax [our.bol %permission-store] [%permission-action action]]
+  |=  [=wire action=permission-action]
+  ^-  card
+  :*  %pass
+      [%write wire]
+      %agent
+      [our.bowl %permission-store]
+      %poke
+      [%permission-action !>(action)]
+  ==
+::
+++  watch-group
+  |=  =group-path
+  ^-  card
+  =.  group-path  [%group group-path]
+  [%pass group-path %agent [our.bowl %group-store] %watch group-path]
 ::
 ++  group-pull
-  |=  =path
-  ^-  move
-  [ost.bol %pull [%group path] [our.bol %group-store] ~]
-::
+  |=  =group-path
+  ^-  card
+  [%pass [%group group-path] %agent [our.bowl %group-store] %leave ~]
 --

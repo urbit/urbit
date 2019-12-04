@@ -1,5 +1,5 @@
 /-  asn1, hall
-/+  base64, der, primitive-rsa, *pkcs, *jose
+/+  base64, der, primitive-rsa, *pkcs, *jose, default-agent, verb
 =,  eyre
 =*  rsa  primitive-rsa
 ::
@@ -141,25 +141,9 @@
 ::::  acme state
 ::
 |%
-::  +move: output effect
-::
-+$  move  [bone card]
 ::  +card: output effect payload
 ::
-+$  card
-  $%  [%serve wire =binding:eyre =generator:eyre]
-      [%http-response =http-event:http]
-      [%poke wire dock poke]
-      [%request wire request:http outbound-config:iris]
-      [%rule wire %cert (unit [wain wain])]
-      [%wait wire @da]
-      [%flog wire flog:dill]
-  ==
-::  +poke: outgoing app pokes
-::
-+$  poke
-  $%  [%hall-action %phrase audience:hall (list speech:hall)]
-  ==
++$  card  card:agent:gall
 ::  +nonce-next: next effect to emit upon receiving nonce
 ::
 +$  nonce-next
@@ -338,6 +322,69 @@
       challenges=(set @t)
   ==
 --
+=|  acme
+=*  state  -
+=<
+  %+  verb  |
+  |_  =bowl:gall
+  +*  this       .
+      acme-core  +>
+      ac         ~(. acme-core bowl)
+      def        ~(. (default-agent this %|) bowl)
+  ::
+  ++  on-init
+    =/  =binding:eyre
+      [~ /'.well-known'/acme-challenge]
+    =/  =generator:eyre
+      [q.byk.bowl /gen/acme/domain-validation/hoon ~]
+    =/  =card
+      [%pass /acme %arvo %e %serve binding generator]
+    [[card ~] this]
+  ::
+  ++  on-save   !>(state)
+  ++  on-load   |=(old=vase `this(state !<(acme old)))
+  ++  on-poke
+    |=  [=mark =vase]
+    ^-  (quip card _this)
+    =^  cards  state
+      ?+  mark  (on-poke:def mark vase)
+        %acme-order  (poke-acme-order:ac !<((set turf) vase))
+        %noun        (poke-noun:ac !<(* vase))
+        %path        (poke-path:ac !<(path vase))
+      ==
+    [cards this]
+  ::
+  ++  on-watch  on-watch:def
+  ++  on-leave  on-leave:def
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit [%noun vase]))
+    ?+    path  ~
+        [%x %domain-validation @t ~]
+      =*  token  i.t.t.path
+      :^  ~  ~  %noun  !>
+      ?.  (~(has in challenges) token)
+        ~
+      (some (rap 3 [token '.' (pass:thumb:jwk key.act) ~]))
+    ==
+  ::
+  ++  on-agent  on-agent:def
+  ++  on-arvo
+    |=  [=wire =sign-arvo]
+    ^-  (quip card _this)
+    =^  cards  state
+      ?+    wire  (on-arvo:def wire sign-arvo)
+          [%acme *]
+        ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
+          %http-response  (http-response:ac wire +>.sign-arvo)
+          %wake           (wake:ac wire +>.sign-arvo)
+          %bound          (bound:ac wire +>.sign-arvo)
+        ==
+      ==
+    [cards this]
+  ::
+  ++  on-fail   on-fail:def
+  --
 ::
 ::::  acme app
 ::
@@ -346,35 +393,33 @@
 =/  directory-base=purl
   =-  (need (de-purl:html -))
   'https://acme-v02.api.letsencrypt.org/directory'
-::  mov: list of outgoing moves for the current transaction
+::  cards: list of outgoing moves for the current transaction
 ::
-=|  mov=(list move)
+=|  cards=(list card)
 ::
-|_  [bow=bowl:gall acme]
+|_  bow=bowl:gall
 ::  +this: self
 ::
-::    XX Should be a +* core alias, see urbit/arvo#712
-::
 ++  this  .
-::  +emit: emit a move
+::  +emit: emit a card
 ::
 ++  emit
   |=  car=card
-  this(mov [[ost.bow car] mov])
-::  +emil: emit a list of moves
+  this(cards [car cards])
+::  +emil: emit a list of cards
 ::
 ++  emil
   |=  rac=(list card)
   |-  ^+  this
   ?~  rac
     this
-  =.  mov  [[ost.bow i.rac] mov]
+  =.  cards  [i.rac cards]
   $(rac t.rac)
 ::  +abet: finalize transaction
 ::
 ++  abet
-  ^-  (quip move _this)
-  [(flop mov) this(mov ~)]
+  ^-  (quip card _state)
+  [(flop cards) state]
 ::  +backoff: calculate exponential backoff
 ::
 ++  backoff
@@ -395,30 +440,16 @@
 ++  notify
   |=  [=cord =tang]
   ^-  (list card)
-  :-  [%flog / %text :(weld (trip dap.bow) ": " (trip cord))]
+  :-  [%pass / %arvo %d %flog %text :(weld (trip dap.bow) ": " (trip cord))]
   %+  turn
     `wall`(zing (turn (flop tang) (cury wash [0 80])))
-  |=(=tape [%flog / %text tape])
-::  +notify: send :hall notification
-::
-::    XX disabled due to :hall status
-::
-++  notify-disabled
-  |=  [=cord =tang]
-  ^-  card
-  =/  msg=speech:hall
-    :+  %app  dap.bow
-    =/  line  [%lin & cord]
-    ?~(tang line [%fat [%tank tang] line])
-  =/  act
-    [%phrase (sy [our.bow %inbox] ~) [msg ~]]
-  [%poke / [our.bow %hall] %hall-action act]
+  |=(=tape [%pass / %arvo %d %flog %text tape])
 ::  +request: unauthenticated http request
 ::
 ++  request
   |=  [wir=wire req=hiss]
   ^-  card
-  [%request wir (hiss-to-request:html req) *outbound-config:iris]
+  [%pass wir %arvo %i %request (hiss-to-request:html req) *outbound-config:iris]
 ::  +signed-request: JWS JSON POST
 ::
 ++  signed-request
@@ -481,7 +512,7 @@
   ::  too many certificates for these domains
   ::
   ?:  ?=(^ (find "already issued for exact" detail))
-    =.  ..this  (retry:effect try act spur ~d7)
+    =.  ..emit  (retry:effect try act spur ~d7)
     =/  msg=cord
       %+  rap  3
       :~  'rate limit exceeded: '
@@ -497,7 +528,7 @@
   ::  too many certificates for top-level-domain
   ::
   ?:  ?=(^ (find "too many certificates already" detail))
-    =.  ..this  (retry:effect try act spur ~d7)
+    =.  ..emit  (retry:effect try act spur ~d7)
     =/  lul=@dr
       (add ~d7 (mul ~m1 (~(rad og eny.bow) (bex 10))))
     =/  msg=cord
@@ -637,11 +668,11 @@
     ::
     =/  msg=cord
       (cat 3 'retrying certificate request in ' (scot %dr lul))
-    =.  ..this  (emil (notify msg ~))
-    =.  ..this  (retry:effect try %new-order / lul)
+    =.  ..emit  (emil (notify msg ~))
+    =.  ..emit  (retry:effect try %new-order / lul)
     ::  domains might already be validated
     ::
-    =.  ..this  (queue-next-order +(try.order) & dom.order)
+    =.  ..emit  (queue-next-order +(try.order) & dom.order)
     cancel-current-order
   ::  +finalize-order: finalize completed order
   ::
@@ -693,7 +724,7 @@
     ~|  %install-effect-fail
     ?>  ?=(^ liv)
     =/  key=wain  (ring:en:pem:pkcs8 key.u.liv)
-    (emit %rule /install %cert `[key `wain`cer.u.liv])
+    (emit %pass /install %arvo %e %rule %cert `[key `wain`cer.u.liv])
   ::  +get-authz: get next ACME service domain authorization object
   ::
   ++  get-authz
@@ -757,7 +788,7 @@
     |=  [try=@ud act=@tas =wire lull=@dr]
     ::  XX validate wire
     ::
-    (emit %wait (acme-wire +(try) act wire) (add now.bow lull))
+    (emit %pass (acme-wire +(try) act wire) %arvo %b %wait (add now.bow lull))
   --
 ::  |event: accept event, emit next effect(s)
 ::
@@ -1167,11 +1198,11 @@
   --
 ++  http-response
   |=  [=wire response=client-response:iris]
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ::  ignore progress reports
   ::
   ?:  ?=(%progress -.response)
-    [~ this]
+    [~ state]
   ::
   ?>  ?=([%acme ^] wire)
   =<  abet
@@ -1223,26 +1254,11 @@
     ::  XX delete-trial?
     ::
   ==
-::  +peek: read from app state
-::
-++  peek
-    |=  =path
-    ^-  (unit (unit [%noun (unit @t)]))
-    ?+  path
-      ~
-    ::
-        [%x %domain-validation @t ~]
-      =*  token  i.t.t.path
-      :^  ~  ~  %noun
-      ?.  (~(has in challenges) token)
-        ~
-      (some (rap 3 [token '.' (pass:thumb:jwk key.act) ~]))
-    ==
 ::  +wake: timer wakeup event
 ::
 ++  wake
   |=  [wir=wire error=(unit tang)]
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?^  error
     %-  (slog u.error)
     abet
@@ -1257,7 +1273,7 @@
 ::
 ++  poke-noun
   |=  a=*
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   =<  abet
   ?+  a
     this
@@ -1291,7 +1307,7 @@
     =/  bas=path  /(scot %p our.bow)/home/(scot %da now.bow)/acme
     =/  key=wain  .^(wain %cx (weld bas /privkey/pem))
     =/  cer=wain  .^(wain %cx (weld bas /cert/pem))
-    (emit %rule /install %cert `[key cer])
+    (emit %pass /install %arvo %e %rule %cert `[key cer])
   ::
       %init
     init
@@ -1309,30 +1325,16 @@
 ::
 ++  poke-path
   |=(a=path abet:(add-order (sy a ~)))
-::  +prep: initialize and adapt state
-::
-++  prep
-  |=  old=(unit acme)
-  ^-  (quip move _this)
-  ?~  old
-    =/  =binding:eyre
-      [~ /'.well-known'/acme-challenge]
-    =/  =generator:eyre
-      [q.byk.bow /gen/acme/domain-validation/hoon ~]
-    =/  =move
-      [ost.bow %serve /acme binding generator]
-    [[move ~] this]
-  [~ this(+<+ u.old)]
 ::  +bound: response to %serve binding request
 ::
 ++  bound
   |=  [=wire accepted=? =binding:eyre]
   ?:  accepted
-    [~ this]
+    [~ state]
   ::  XX better error message
   ::
   ~&  [%acme-http-path-binding-failed +<]
-  [~ this]
+  [~ state]
 ::  +rekey: create new 2.048 bit RSA key
 ::
 ::    XX do something about this iteration
@@ -1394,11 +1396,11 @@
     ~|(%acme-empty-certificate-order !!)
   ?:  ?=(?(%earl %pawn) (clan:title our.bow))
     this
-  =.  ..this  (queue-next-order 1 | dom)
-  =.  ..this  cancel-current-order
+  =.  ..emit  (queue-next-order 1 | dom)
+  =.  ..emit  cancel-current-order
   ::  notify :hall
   ::
-  =.  ..this
+  =.  ..emit
     =/  msg=cord
       %+  rap  3
       :~  'requesting an https certificate for '

@@ -49,7 +49,7 @@
         ::  sys/vane/iris: http client
         ::
         [%i /vane/iris]
-        ::  sys/vane/jael: security
+        ::  sys/vane/kale: security
         ::
         [%j /vane/jael]
     ==
@@ -63,7 +63,7 @@
 ::
 ++  file-ovum
   =/  directories
-    `(list path)`~[/app /gen /lib /mar /ren /sec /sur /sys /tests /web]
+    `(list path)`~[/app /ted /gen /lib /mar /ren /sec /sur /sys /tests /web]
   |=  bas=path
   ^-  unix-event
   ::
