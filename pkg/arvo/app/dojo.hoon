@@ -1262,10 +1262,10 @@
   =?  hoc  (~(has by hoc) id)
     ~&  [%dojo-peer-replaced id]
     (~(del by hoc) id)
-  =.  hoc
-    =/  =session  %*(. *session -.dir [our.hid %home ud+0])
-    (~(put by hoc) id session)
-  [~ ..on-init]
+  =/  =session  %*(. *session -.dir [our.hid %home ud+0])
+  =^  moves  state
+    he-abet:~(he-prom he hid id ~ session)
+  [moves ..on-init]
 ::
 ++  on-leave
   |=  =path
