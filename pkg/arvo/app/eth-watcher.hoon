@@ -145,8 +145,15 @@
           ?!  .=  ->+:(~(got by dogs.state) path.poke)
                    +>.config.poke
       ==
-    ~?  &((~(has by dogs.state) path.poke) restart)
+    ::
+    =/  already  (~(has by dogs.state) path.poke)
+    ~?  &(already restart)
       [dap.bowl 'overwriting existing watchdog on' path.poke]
+    =/  wait-cards
+      ?:  already
+        ~
+      [(wait-shortcut path.poke now.bowl) ~]
+    ::
     =/  restart-cards
       =/  dog  (~(get by dogs.state) path.poke)
       ?.  ?&  restart
@@ -165,7 +172,7 @@
         number  from.config.poke
       ==
     =.  dogs.state  (~(put by dogs.state) path.poke new-dog)
-    [[(wait-shortcut path.poke now.bowl) ~] this]
+    [wait-cards this]
   ::
       %clear
     =.  dogs.state  (~(del by dogs.state) path.poke)
@@ -349,8 +356,8 @@
       %-  (slog leaf+"eth-watcher still running; will restart" ~)
       =/  =cage  [%spider-stop !>([u.running.dog |])]
       :_  dog(running ~)
-      :~  [%pass [%starting path] %agent [our.bowl %spider] %poke cage]
-          (leave-spider path our.bowl)
+      :~  (leave-spider path our.bowl)
+          [%pass [%starting path] %agent [our.bowl %spider] %poke cage]
       ==
     ::
     =^  cards-2=(list card)  dog
