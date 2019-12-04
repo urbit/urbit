@@ -13,9 +13,7 @@ export class SidebarSwitcher extends Component {
         <a
           className="pointer flex-shrink-0"
           onClick={() => {
-            api.storeState(previousState => ({
-              sidebarShown: !previousState.sidebarShown
-            }));
+            api.sidebarToggle();
           }}>
           <img
             className={`v-btm pr3 dn ` + popoutSwitcher}

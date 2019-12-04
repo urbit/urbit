@@ -3,6 +3,7 @@ import { GroupUpdateReducer } from '/reducers/group-update';
 import { ChatUpdateReducer } from '/reducers/chat-update';
 import { InviteUpdateReducer } from '/reducers/invite-update';
 import { PermissionUpdateReducer } from '/reducers/permission-update';
+import { LocalReducer } from '/reducers/local.js';
 
 
 class Store {
@@ -22,6 +23,7 @@ class Store {
     this.permissionUpdateReducer = new PermissionUpdateReducer();
     this.chatUpdateReducer = new ChatUpdateReducer();
     this.inviteUpdateReducer = new InviteUpdateReducer();
+    this.localReducer = new LocalReducer();
     this.setState = () => {};
   }
 
@@ -38,6 +40,7 @@ class Store {
     this.permissionUpdateReducer.reduce(json, this.state);
     this.chatUpdateReducer.reduce(json, this.state);
     this.inviteUpdateReducer.reduce(json, this.state);
+    this.localReducer.reduce(json, this.state);
 
     this.setState(this.state);
   }
