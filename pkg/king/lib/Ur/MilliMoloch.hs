@@ -2,7 +2,7 @@
     Replace normalization with strict evaluation.
 
     - [X] Implement a strict interpreter
-    - [ ] Jet matching.
+    - [X] Jet matching.
 -}
 
 module Ur.MilliMoloch where
