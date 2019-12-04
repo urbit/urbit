@@ -45,7 +45,8 @@
       =.  ships.state
         (~(put by ships.state) ship u.s(ship-state [%waiting until]))
       :_  state
-      [%pass /ping-wait/(scot %p ship) %arvo %b %wait `@da`until]~
+      =/  =wire  /ping-wait/(scot %p ship)/(scot %da until)
+      [%pass wire %arvo %b %wait `@da`until]~
     ::  +send-ping: poke their %ping app
     ::
     ++  send-ping
@@ -76,25 +77,21 @@
       ::  otherwise, kill jael subscription and timer
       ::
       :_  state(ships (~(del by ships.state) ship))
-      :-  [%pass /jael/(scot %p ship) %arvo %j %nuke (silt ship ~)]
-      ?.  ?=(%waiting -.ship-state)
-        ~
-      [%pass /ping-wait/(scot %p ship) %arvo %b %rest until.ship-state]~
+      [%pass /jael/(scot %p ship) %arvo %j %nuke (silt ship ~)]~
     ::  +start-ping-ship: start pinging if not already
     ::
     ++  start-ping-ship
       |=  [our=@p now=@da =ship]
       ^-  (quip card _state)
-      ?:  (~(has by ships.state) ship)
-        `state
-      ::
       ;<  new-state=_state  (rind card state)
-        =+  .^(=rift %j /=rift/(scot %da now)/(scot %p ship))
-        :_  state(ships (~(put by ships.state) ship rift %idle ~))
-        [%pass /jael/(scot %p ship) %arvo %j %public-keys (silt ship ~)]~
+        (send-ping our now ship)
       =.  state  new-state
       ::
-      (send-ping our now ship)
+      ?:  (~(has by ships.state) ship)
+        `state
+      =+  .^(=rift %j /=rift/(scot %da now)/(scot %p ship))
+      :_  state(ships (~(put by ships.state) ship rift %idle ~))
+      [%pass /jael/(scot %p ship) %arvo %j %public-keys (silt ship ~)]~
     ::  +kick: idempotent operation to make clean start for all pings
     ::
     ++  kick
@@ -158,6 +155,12 @@
 ::
 ++  on-poke
   |=  [=mark =vase]
+  ?:  =(q.vase %kick)
+    =.  ships.state
+      %-  ~(run by ships.state)
+      |=  [=rift =ship-state]
+      [999.999 ship-state]
+    on-init
   `this
 ::
 ++  on-watch  on-watch:def
@@ -184,14 +187,14 @@
   |=  [=wire =sign-arvo]
   ^-  [(list card) _this]
   ?+    wire  !!
-      [%ping-wait @ ~]
+      [%ping-wait @ @ ~]
     ?>  ?=(%wake +<.sign-arvo)
-    =/  =ship  (slav %p i.t.wire)
+    =/  =ship      (slav %p i.t.wire)
+    =/  until=@da  (slav %da i.t.t.wire)
     =/  s  (~(get by ships.state) ship)
     ?~  s
       `this
-    ?.  ?=(%waiting -.ship-state.u.s)
-      %-  (slog leaf+"strange state on wake: {<ship s>}" ~)
+    ?.  =([%waiting until] ship-state.u.s)
       `this
     =.  ships.state  (~(put by ships.state) ship u.s(ship-state [%idle ~]))
     %-  (print-error "ping: wake" error.sign-arvo)
