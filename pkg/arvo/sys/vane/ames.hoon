@@ -897,8 +897,6 @@
       ::    TODO: cleanup duplicate iteration logic
       ::
       ?^  error.sign
-        ~>  %slog.0^leaf/"ames: larva drain crash"
-        %-  (slog u.error.sign)
         =.  queued-events  +:~(get to queued-events)
         ::  .queued-events has been cleared; metamorphose
         ::
@@ -907,8 +905,11 @@
           [~ adult-gate]
         ::  set timer to drain next event
         ::
-        ~>  %slog.0^leaf/"ames: larva: drain"
-        =/  moves  [duct %pass /larva %b %wait now]~
+        =/  moves
+          =/  =tang  [leaf/"ames: larva: drain crash" u.error.sign]
+          :~  [duct %pass /larva-crash %d %flog %crud %larva tang]
+              [duct %pass /larva %b %wait now]
+          ==
         [moves larval-gate]
       ::  normal drain timer; dequeue and run event
       ::
