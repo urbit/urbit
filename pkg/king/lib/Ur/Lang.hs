@@ -48,17 +48,22 @@ import GHC.Natural
 -- Types -----------------------------------------------------------------------
 
 infixl 5 :@;
-data E = E :@ E
+data E = !E :@ !E
        | S
        | K
-       | J Natural Natural
+       | J !Natural !Natural
        | D
+
+       -- Recursion is not possible in a strict language without builtin case.
+       | L
+       | R
+       | C
 
        -- Should not be necessary
        | F
 
        -- Should not be necessary
-       | N Natural
+       | N !Natural
        | Inc
        | Fol
   deriving (Eq, Ord, Show, Generic, NFData, Flat)

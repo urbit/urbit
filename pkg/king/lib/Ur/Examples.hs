@@ -1,8 +1,6 @@
 module Ur.Examples where
 
-import Ur.Common hiding (flat, A, succ, some)
-import Data.Flat (Flat)
-import GHC.Natural
+import Ur.Common hiding (flat, A, succ, some, L, R, C)
 import Ur.Lang
 import Ur.Simplify
 
@@ -40,13 +38,18 @@ ninAddd = toNat (add % thr % (add % thr % thr))
 
 {-
     what1 = fix (\loop x -> x) S
-    what2 = fix (\loop x -> if x then x else loop true)
+    what2 = fix (\loop   -> C id (\x → loop (L x)))
+
+case x of (L lv → lv); (Rif x then x else loop true)
 -}
 what1 = F % (S%K) % S
-what2 = F % (simp (S%(K%(S%(K%(S%(S%i%i)))%K))%(S%i%(K%K)))) % uTrue
+what2 = (S % (K%(C%i))%(S%(S%(K%S)%K)%(K%L))) % (S % (K%(C%i))%(S%(S%(K%S)%K)%(K%L))) % D
+
+what3 = F % (S % (K%(C%i))%(S%(S%(K%S)%K)%(K%L))) % S
+
+----- = F % (S%(K%(S%(K%(S%(S%i%i)))%K))%(S%i%(K%K))) % uFalse
 
 {-
-
     dec x = fold x (maybe (some 0) (some . inc)) none
 
     eqNat x y =

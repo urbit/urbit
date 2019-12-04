@@ -43,7 +43,7 @@
 
 module Ur.Simplify where
 
-import Ur.Common hiding (A, flat, succ)
+import Ur.Common hiding (A, flat, succ, L, R, C)
 import Ur.Lang
 
 import Control.Concurrent (threadDelay)
@@ -64,7 +64,7 @@ simp = \case
     S                → S
     S :@ x           → S :@ go x
     S :@ x :@ y      → S :@ go x :@ go y
-    S :@ x :@ y :@ z → go (go x :@ go z :@ (go y :@ go z))
+    S :@ x :@ y :@ z → go (x :@ z :@ (y :@ z))
 
     K           → K
     K :@ x      → K :@ go x
@@ -79,6 +79,17 @@ simp = \case
     J n t :@ b :@ x           → J n t :@ go b :@ go x
     J n t :@ b :@ x :@ y      → J n t :@ go b :@ go x :@ go y
     J n t :@ b :@ x :@ y :@ z → J n t :@ go b :@ go x :@ go y :@ go z
+
+    L                → L
+    L :@ x           → L :@ go x
+    R                → R
+    R :@ x           → R :@ go x
+    C                → C
+    C :@ l           → C :@ l
+    C :@ l :@ r      → C :@ l :@ r
+    C :@ l :@ r :@ x → go x & \case L :@ lv → go(l :@ lv)
+                                    R :@ rv → go(r :@ rv)
+                                    xv      → C :@ l :@ r :@ xv
 
     -- Can I implement the fixedpoint operator using a jet?
     F           → F
@@ -95,10 +106,22 @@ simp = \case
     f :@ x   → go (go f :@ go x)
   where
     go exp = unsafePerformIO $ do
-        foo <- evaluate (tshow exp)
-        threadDelay 333333
-        print exp
+        unless (simple exp) $ do
+            putStrLn ("\t\t\t" <> tshow exp)
+        res <- evaluate (force $ simp exp)
+        unless (simple exp) $ do
+            print exp
+            putStrLn ("\t" <> tshow res)
+            threadDelay 33333
         pure (simp exp)
+
+    trivial = \case
+        _ :@ _ → False
+        _      → True
+
+    simple = \case
+        x :@ y → trivial x && trivial y
+        e      → trivial e
 
 fromNat ∷ Natural → E
 fromNat 0 = zer
