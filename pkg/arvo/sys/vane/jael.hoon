@@ -1124,6 +1124,13 @@
     !>  ^-  (list ship)
     (~(saxo of [our now eny] lex) u.who)
   ::
+      %subscriptions
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  =([%& our] why)
+      [~ ~]
+    :^  ~  ~  %noun
+    !>([yen ney nel]:zim.pki.lex)
+  ::
       %sources
     ?.  ?=(~ tyl)  [~ ~]
     :^  ~  ~  %noun  !>

@@ -87,15 +87,17 @@
     ++  start-ping-ship
       |=  [our=@p now=@da =ship]
       ^-  (quip card _state)
-      ;<  new-state=_state  (rind card state)
-        (send-ping our now ship)
-      =.  state  new-state
       ::
       ?:  (~(has by ships.state) ship)
-        `state
-      =+  .^(=rift %j /=rift/(scot %da now)/(scot %p ship))
-      :_  state(ships (~(put by ships.state) ship rift %idle ~))
-      [%pass /jael/(scot %p ship) %arvo %j %public-keys (silt ship ~)]~
+        (send-ping our now ship)
+      ::
+      ;<  new-state=_state  (rind card state)
+        =+  .^(=rift %j /=rift/(scot %da now)/(scot %p ship))
+        :_  state(ships (~(put by ships.state) ship rift %idle ~))
+        [%pass /jael/(scot %p ship) %arvo %j %public-keys (silt ship ~)]~
+      =.  state  new-state
+      ::
+      (send-ping our now ship)
     ::  +kick: idempotent operation to make clean start for all pings
     ::
     ++  kick
@@ -154,7 +156,7 @@
 ++  on-load
   |=  old=vase
   =.  state  !<(_state old)
-  on-init
+  (on-poke %noun !>(%kick))
 ::  +on-poke: positively acknowledge pokes
 ::
 ++  on-poke
@@ -210,6 +212,12 @@
     ::  whenever we get an update from Jael, kick
     ::
     ?>  ?=(%public-keys +<.sign-arvo)
+    :_  this
+    [%pass /delay %arvo %b %wait now.bowl]~
+  ::  Delayed until next event so that ames can clear its state
+  ::
+      [%delay ~]
+    ?>  ?=(%wake +<.sign-arvo)
     on-init
   ==
 ::
