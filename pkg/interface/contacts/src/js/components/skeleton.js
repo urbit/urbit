@@ -17,7 +17,7 @@ export class Skeleton extends Component {
           style={{
             height: "calc(100% - 48px)"
           }}>
-          <Groups/>
+          <Groups contacts={this.props.contacts}/>
           <div
             className={"h-100 w-100 " + rightPanelClasses}
             style={{
