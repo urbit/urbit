@@ -1309,7 +1309,10 @@
     ?>  =(rcvr-life.shut-packet our-life.channel)
     ::  non-galaxy: update route with heard lane or forwarded lane
     ::
-    =?  route.peer-state  !=(%czar (clan:title her.channel))
+    =?  route.peer-state
+        ?&  !=(%czar (clan:title her.channel))
+            !=([~ %& *] route.peer-state)
+        ==
       ?~  origin.packet
         `[direct=%.y lane]
       `[direct=%.n u.origin.packet]
@@ -1704,6 +1707,7 @@
     |=  [=ship =blob]
     ::
     %-  (trace rot.veb |.("send-blob: to {<ship>}"))
+    |-
     |^  ^+  event-core
         ::
         =/  ship-state  (~(get by peers.ames-state) ship)
