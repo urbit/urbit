@@ -88,7 +88,8 @@
     ==
   ?:  lit
     ~
-  :~  %lens
+  :~  %acme
+      %lens
       %clock
       %dojo
       %launch
@@ -289,7 +290,7 @@
 ++  se-adit                                           ::  update servers
   ^+  .
   ::  ensure dojo connects after talk
-  =*  dojo-on-top  aor
+  =*  dojo-on-top  |=([a=* b=*] |(=(%dojo a) &(!=(%dojo b) (aor a b))))
   %+  roll  (sort ~(tap in ray) dojo-on-top)
   =<  .(con +>)
   |:  $:{wel/well:gall con/_..se-adit}  ^+  con
