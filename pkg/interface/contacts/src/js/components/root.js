@@ -8,7 +8,8 @@ import { subscription } from '/subscription';
 import { store } from '/store';
 import { Skeleton } from '/components/skeleton';
 import { NewScreen } from '/components/lib/new';
-import { Contacts } from '/components/contacts.js';
+import { Contacts } from '/components/contacts';
+import { ContactCard } from '/components/lib/card'
 
 
 export class Root extends Component {
@@ -51,7 +52,7 @@ export class Root extends Component {
                 </Skeleton>
               );
           }} />
-          <Route exact path="/~contacts/group/:group"
+          <Route exact path="/~contacts/:ship/:group"
             render={ (props) => {
               return(
                 <Skeleton
@@ -60,6 +61,33 @@ export class Root extends Component {
                   activeDrawer="contacts">
                     <Contacts 
                     contacts={state.contacts} />
+                    <div className="h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"></div>
+                  </Skeleton>
+              )
+            }}
+            />
+            <Route exact path="/~contacts/:ship/:group/:contact"
+            render={ (props) => {
+              return(
+                <Skeleton
+                  spinner={state.spinner}
+                  contacts={state.contacts}
+                  activeDrawer="rightPanel">
+                    <Contacts 
+                    contacts={state.contacts} />
+                    <ContactCard/>
+                  </Skeleton>
+              )
+            }}
+            />
+            <Route exact path="/~contacts/me"
+            render={ (props) => {
+              return(
+                <Skeleton
+                  spinner={state.spinner}
+                  contacts={state.contacts}
+                  activeDrawer="rightPanel">
+                    <ContactCard/>
                   </Skeleton>
               )
             }}

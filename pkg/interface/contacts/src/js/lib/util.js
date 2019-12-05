@@ -61,3 +61,8 @@ export function dateToDa(d, mil) {
 export function deSig(ship) {
   return ship.replace('~', '');
 }
+
+export function uxToHex(ux) {
+  let value = ux.substr(2).replace('.', '').padStart(6, '0');
+  return value;
+}
