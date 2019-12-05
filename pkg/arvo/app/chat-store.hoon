@@ -78,7 +78,7 @@
         [%x %all ~]        ``noun+!>(inbox)
         [%x %configs ~]    ``noun+!>((inbox-to-configs inbox))
         [%x %keys ~]       ``noun+!>(~(key by inbox))
-        [%x %envelopes ~]  (peek-x-envelopes:cc t.t.path)
+        [%x %envelopes *]  (peek-x-envelopes:cc t.t.path)
         [%x %mailbox *]
       ?~  t.t.path
         ~
