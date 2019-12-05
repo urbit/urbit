@@ -20,7 +20,7 @@ let
 in
 
 env.make_derivation {
-  CFLAGS           = if debug then "-O0 -g" else "-O3";
+  CFLAGS           = if debug then "-O0 -g" else "-O3 -g";
   LDFLAGS          = if debug then "" else "-s";
   MEMORY_DEBUG     = debug;
   CPU_DEBUG        = debug;
