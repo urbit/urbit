@@ -7,7 +7,7 @@ import { Groups } from './groups';
 export class Skeleton extends Component {
   render() {
       let rightPanelClasses =
-        this.props.activeDrawer === "rightPanel" ? "db" : "dn db-ns";
+        this.props.activeDrawer === "groups" ? "dn db-ns" : "db";
 
     return (
       <div className="h-100 w-100">
@@ -19,7 +19,7 @@ export class Skeleton extends Component {
           }}>
           <Groups contacts={this.props.contacts}/>
           <div
-            className={"h-100 w-100 " + rightPanelClasses}
+            className={"h-100 w-100 flex " + rightPanelClasses}
             style={{
               flexGrow: 1
             }}>
