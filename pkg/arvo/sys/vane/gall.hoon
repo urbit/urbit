@@ -1355,7 +1355,7 @@
     ++  ap-mule
       |=  run=_^?(|.(*step:agent))
       ^-  (each step:agent tang)
-      =/  res  (moku [run %9 2 %0 1] (sloy ski))
+      =/  res  (mock [run %9 2 %0 1] (sloy ski))
       ?-  -.res
         %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
         %1  [%.n (smyt (path p.res)) ~]
@@ -1366,7 +1366,7 @@
     ++  ap-mule-peek
       |=  run=_^?(|.(*(unit (unit cage))))
       ^-  (each (unit (unit cage)) tang)
-      =/  res  (moku [run %9 2 %0 1] (sloy ski))
+      =/  res  (mock [run %9 2 %0 1] (sloy ski))
       ?-  -.res
         %0  [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
         %1  [%.n (smyt (path p.res)) ~]
