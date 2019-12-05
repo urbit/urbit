@@ -1507,7 +1507,7 @@
         =|  =point
         =.  life.point     life
         =.  keys.point     (my [life crypto-suite public-key]~)
-        =.  sponsor.point  `(^sein:title ship)
+        =.  sponsor.point  `(scry-for-sponsor ship)
         ::
         (on-publ-full (my [ship point]~))
       ::
@@ -1549,6 +1549,9 @@
           ?~  points  event-core
           ::
           =+  ^-  [=ship =point]  i.points
+          ::
+          ?.  (~(has by keys.point) life.point)
+            $(points t.points)
           ::
           =/  old-ship-state  (~(get by peers.ames-state) ship)
           ::
@@ -1604,7 +1607,10 @@
       =.  life.peer-state           life.point
       =.  public-key.peer-state     public-key
       =.  symmetric-key.peer-state  symmetric-key
-      =.  sponsor.peer-state        (fall sponsor.point (^sein:title ship))
+      =.  sponsor.peer-state
+        ?^  sponsor.point
+          u.sponsor.point
+        (scry-for-sponsor ship)
       ::  automatically set galaxy route, since unix handles lookup
       ::
       =?  route.peer-state  ?=(%czar (clan:title ship))
@@ -1614,6 +1620,15 @@
         (~(put by peers.ames-state) ship %known peer-state)
       ::
       event-core
+    ::  +scry-for-sponsor: ask jael for .who's sponsoring ship
+    ::
+    ++  scry-for-sponsor
+      |=  who=ship
+      ^-  ship
+      ;;  ship
+      =<  q.q  %-  need  %-  need
+      %-  scry-gate
+      [[%141 %noun] ~ %j `beam`[[our %sein %da now] /(scot %p who)]]
     --
   ::  +on-take-turf: relay %turf move from jael to unix
   ::
