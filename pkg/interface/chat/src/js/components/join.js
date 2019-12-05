@@ -30,7 +30,7 @@ export class JoinScreen extends Component {
         });
         return;
       }
-      this.props.api.chatView.join(ship, station);
+      this.props.api.chatView.join(ship, station, true);
       this.props.history.push('/~chat');
     }
   }
