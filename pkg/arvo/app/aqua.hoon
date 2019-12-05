@@ -151,7 +151,7 @@
     ~&  [who=who %wished (slum wish txt)]
     ..abet-pe
   ::
-  ++  mox  |=(* (moku [snap +<] scry))
+  ++  mox  |=(* (mock [snap +<] scry))
   ::
   ::  Start/stop processing events.  When stopped, events are added to
   ::  our queue but not processed.
@@ -317,8 +317,8 @@
   =.  this  apex-aqua  =<  abet-aqua
   =.  pil  p
   ~&  lent=(met 3 (jam boot-ova.pil))
-  =/  res=noot :: (each * (list tank))
-    (moku [boot-ova.pil [2 [0 3] [0 2]]] scry)
+  =/  res=toon :: (each * (list tank))
+    (mock [boot-ova.pil [2 [0 3] [0 2]]] scry)
   =.  fleet-snaps  ~
   ?-  -.res
       %0

@@ -4755,7 +4755,7 @@
         (return-result u.cached-result)
       ::
       =/  val
-        (moku [q.subject-vase nock.u.slim-result] intercepted-scry)
+        (mock [q.subject-vase nock.u.slim-result] intercepted-scry)
       ::  val is a toon, which might be a list of blocks.
       ::
       ?-    -.val

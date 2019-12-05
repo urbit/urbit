@@ -1445,7 +1445,7 @@
       ::
       =/  possibly-vase=(each vase tang)
         =/  value  q.running-state.current-agent
-        =/  ton  (moku [value q.+<.virtual] ap-namespace-view)
+        =/  ton  (mock [value q.+<.virtual] ap-namespace-view)
         ?-  -.ton
           %0  [%.y p.+<.virtual p.ton]
           %1  [%.n (smyt (path p.ton)) ~]
@@ -2350,7 +2350,7 @@
       =/  =vase  +<.virtual
       =/  =type  p.vase
       =/  nock  q.vase
-      =/  ton  (moku [[q.gat q.arg] nock] ap-namespace-view)
+      =/  ton  (mock [[q.gat q.arg] nock] ap-namespace-view)
       =/  possibly-vase
         ?-  -.ton
           %0  [%.y type p.ton]
