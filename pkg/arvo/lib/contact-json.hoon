@@ -39,7 +39,7 @@
       [%website s+website.con]
       [%notes s+notes.con]
       [%color s+(scot %ux color.con)]
-      [%avatar s+'TODO']
+      [%avatar ~]
   ==
 ::
 ++  edit-to-json
@@ -54,7 +54,7 @@
     %website   s+website.edit
     %notes     s+notes.edit
     %color     s+(scot %ux color.edit)
-    %avatar    s+'TODO'
+    %avatar    ~
   ==
 ::
 ++  update-to-json

@@ -160,12 +160,35 @@
     :_  this
     [ost.bol %http-response (js-response:app script)]~
   ::
-  ::  images
+  ::  user interface images
   ::
       [%'~contacts' %img *]
     =/  img  (as-octs:mimes:html (~(got by contact-png) `@ta`name))
     :_  this
     [ost.bol %http-response (png-response:app img)]~
+  ::
+  ::  avatar images
+  ::
+      [%'~contacts' %avatar @ *]
+    =/  pax=path  `path`t.t.site.url 
+    ~&  pax+pax
+    ?~  pax  [[ost.bol %http-response not-found:app]~ this]
+    =/  pas  `path`(flop pax)
+    ~&  pas+pas
+    ?~  pas  [[ost.bol %http-response not-found:app]~ this]
+    =/  pav  `path`(flop t.pas)
+    ~&  pav+pav
+    =/  contact  (contact-scry `path`(weld pav [name]~))
+    ?~  contact  [[ost.bol %http-response not-found:app]~ this]
+    ?~  avatar.u.contact  [[ost.bol %http-response not-found:app]~ this]
+    =*  avatar  u.avatar.u.contact
+    =*  content-type  content-type.avatar
+    =*  octs  octs.avatar
+    :_  this
+    :~  :*  ost.bol
+            %http-response
+            [%start [200 ['content-type' content-type]~] [~ octs] %.y]
+    ==  ==
   ::
   ::  main page
   ::
@@ -199,4 +222,10 @@
 ++  all-scry
   ^-  rolodex
   .^(rolodex %gx /=contact-store/(scot %da now.bol)/all/noun)
+::
+++  contact-scry
+  |=  pax=path
+  ^-  (unit contact)
+  =.  pax  ;:(weld /=contact-store/(scot %da now.bol)/contact pax /noun)
+  .^((unit contact) %gx pax)
 --
