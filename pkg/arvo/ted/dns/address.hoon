@@ -11,10 +11,12 @@
 ;<  our=ship  bind:m  get-our:strandio
 =/  rac  (clan:title our)
 ?.  ?=(?(%king %duke) rac)
-  ~|  [%dns-collector-bind-invalid rac]  !!
+  %+  strand-fail:strandio  %ship-type-fail
+  [>"can only set DNS for planets and stars"< ~]
 ::
 ?:  (reserved:eyre if.adr)
-  ~|  [%dns-collector-reserved-address if.adr]  !!
+  %+  strand-fail:strandio  %reserved-address
+  [>"ip address {<if.adr>} is reserved"< ~]
 ;<  ~         bind:m  (request-by-ip if.adr)
 ;<  ~         bind:m  take-fact
 (pure:m *vase)
@@ -26,8 +28,8 @@
   =/  collector-app  `dock`[~zod %dns-collector]
   ;<  good=?  bind:m  (self-check-http:libdns |+if 2)
   ?.  good
-    ::  XX details
-    ~|  %bail-early-failed-self-check  !!
+    %+  strand-fail:strandio  %bail-early-self-check
+    [>"couldn't access ship on port 80"< ~]
   ;<  ~       bind:m  (poke:strandio collector-app %dns-address !>([%if if]))
   =/  msg=cord
     (cat 3 'request for DNS sent to ' (scot %p p:collector-app))
