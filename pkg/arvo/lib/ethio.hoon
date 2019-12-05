@@ -126,28 +126,30 @@
   =/  m  (strand:strandio ,block)
   ^-  form:m
   |^
+  %+  (retry:strandio ,block)  `10
+  =/  m  (strand:strandio ,(unit block))
+  ^-  form:m
   ;<  =json  bind:m
     %+  request-rpc  url
     :-  `'block by number'
     [%eth-get-block-by-number number |]
-  =/  =block  (parse-block json)
-  ?.  =(number number.id.block)
-    (strand-fail:strandio %reorg-detected >number< >block< ~)
-  (pure:m block)
+  (pure:m (parse-block json))
   ::
   ++  parse-block
     |=  =json
-    ^-  block
-    =<  [[&1 &2] |2]
-    ^-  [@ @ @]
+    ^-  (unit block)
+    =<  ?~(. ~ `[[&1 &2] |2]:u)
+    ^-  (unit [@ @ @])
     ~|  json
     %.  json
-    =,  dejs:format
+    =,  dejs-soft:format
     %-  ot
-    :~  hash+parse-hex-result:rpc:ethereum
-        number+parse-hex-result:rpc:ethereum
-        'parentHash'^parse-hex-result:rpc:ethereum
+    :~  hash+parse-hex
+        number+parse-hex
+        'parentHash'^parse-hex
     ==
+  ::
+  ++  parse-hex  |=(=json `(unit @)`(some (parse-hex-result:rpc:ethereum json)))
   --
 ::
 ++  get-logs-by-hash
