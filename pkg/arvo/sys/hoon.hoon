@@ -6631,17 +6631,27 @@
   |-  ^-  (list tank)
   ?~  trace.ton  ~
   =+  rep=$(trace.ton t.trace.ton)
+  =*  dat  +.i.trace.ton
   ?+    -.i.trace.ton  rep
-      $hunk  [(tank +.i.trace.ton) rep]
-      $lose  [[%leaf (rip 3 (@ +.i.trace.ton))] rep]
-      $hand  [[%leaf (scow %p (mug +.i.trace.ton))] rep]
-      $mean  :_  rep
-             ?@  +.i.trace.ton  [%leaf (rip 3 (@ +.i.trace.ton))]
-             =+  mac=(mack +.i.trace.ton +<.i.trace.ton)
-             ?~(mac [%leaf "####"] (tank u.mac))
-      $spot  :_  rep
-             =+  sot=(spot +.i.trace.ton)
+      $hunk  =/  sof=(unit tank)  ((soft tank) dat)
+             ?~  sof  rep
+             [u.sof rep]
+      $lose  ?^  dat  rep
+             :_  rep
+             leaf+(rip 3 dat)
+      $hand  :_  rep
+             leaf+(scow %p (mug +.i.trace.ton))
+      $mean  ?@  dat  [leaf+(rip 3 dat) rep]
+             =/  mac  (mack dat -.dat)
+             ?~  mac  [leaf+"####" rep]
+             =/  sof  ((soft tank) u.mac)
+             ?~  sof  rep
+             [u.sof rep]
+      $spot  =/  sof=(unit spot)  ((soft spot) dat)
+             ?~  sof  rep
+             :_  rep
              :+  %rose  [":" ~ ~]
+             =*  sot  u.sof
              :~  (smyt p.sot)
                  =>  [ud=|=(a/@u (scow %ud a)) q.sot]
                  leaf+"<[{(ud p.p)} {(ud q.p)}].[{(ud p.q)} {(ud q.q)}]>"
