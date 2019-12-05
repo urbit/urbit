@@ -181,7 +181,7 @@
   ?>  ?=(%message -.act)
   =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
   ?~  mailbox
-    [~ this]
+    [~ state]
   =.  letter.envelope.act  (evaluate-letter [author letter]:envelope.act)
   =.  u.mailbox  (append-envelope u.mailbox envelope.act)
   :-  (send-diff path.act act)
