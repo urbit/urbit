@@ -110,6 +110,11 @@ export class JoinScreen extends Component {
             placeholder="~zod/chatroom"
             spellCheck="false"
             rows={1}
+            onKeyPress={e => {
+              if (e.key === "Enter") {
+                this.onClickJoin();
+              }
+            }}
             style={{
               resize: 'none',
             }}
