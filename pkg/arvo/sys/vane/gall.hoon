@@ -1355,10 +1355,10 @@
     ++  ap-mule
       |=  run=_^?(|.(*step:agent))
       ^-  (each step:agent tang)
-      =/  res  (mock [run %9 2 %0 1] (sloy ski))
+      =/  res  (moku [run %9 2 %0 1] (sloy ski))
       ?-  -.res
         %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
-        %1  [%| (turn p.res |=(a=* (smyt (path a))))]
+        %1  [%.n (smyt (path p.res)) ~]
         %2  [%| p.res]
       ==
     ::  +ap-mule-peek: same as +ap-mule but for (unit (unit cage))
@@ -1366,10 +1366,10 @@
     ++  ap-mule-peek
       |=  run=_^?(|.(*(unit (unit cage))))
       ^-  (each (unit (unit cage)) tang)
-      =/  res  (mock [run %9 2 %0 1] (sloy ski))
+      =/  res  (moku [run %9 2 %0 1] (sloy ski))
       ?-  -.res
         %0  [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
-        %1  [%| (turn p.res |=(a=* (smyt (path a))))]
+        %1  [%.n (smyt (path p.res)) ~]
         %2  [%| p.res]
       ==
     ::  +ap-ingest: call agent arm
