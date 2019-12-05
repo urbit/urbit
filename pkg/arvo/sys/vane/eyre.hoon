@@ -391,6 +391,18 @@
                padding-top: 22px;
                margin-bottom: 66px;
              }
+             h2 {
+               line-height: 38px;
+               font-size: 32px;
+               -webkit-margin-before: 0;
+               -webkit-margin-after: 0;
+               -webkit-margin-start: 0;
+               -webkit-margin-end: 0;
+               font-weight: 500;
+               flex: 1;
+               padding-top: 22px;
+               margin-bottom: 66px;
+             }
              #main {
                vertical-align: middle;
                display: table-cell;
@@ -431,6 +443,7 @@
         ;div#inner
           ;h1#topborder:"Welcome"
           ;h1#ship-name:"{(scow %p our)}"
+          ;h2:"Get passcode by entering +code at the dojo or from Bridge"
           ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
             ;input(type "password", name "password", placeholder "passcode", autofocus "true");
             ;input(type "hidden", name "redirect", value redirect-str);
