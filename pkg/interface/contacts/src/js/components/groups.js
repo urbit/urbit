@@ -8,14 +8,20 @@ export class Groups extends Component {
 
   render() {
     const { props, state } = this;
+    console.log(props.contacts);
 
     let groupItems = Object.keys(props.contacts)
     .map((path) => {
+      let name = path.substr(1);
+      (name[1] === '/')
+        ? name = '~' + window.ship + name.substr(1)
+        : null;
       return (
         <GroupsItem
         key={path}
         link={path}
-        group={props.contacts[path]}/>
+        name={name}
+        contacts={props.contacts[path]}/>
       )
     });
 

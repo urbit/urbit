@@ -9,9 +9,9 @@ export class GroupsItem extends Component {
 
         return (
             <Link
-            to={"/" + props.link}>
+            to={"~contacts/group" + props.link}>
                 <div className="w-100 v-mid f9 pl4">
-                <p>{Object.keys(props.group)}</p>
+                <p class="mono">{props.name}</p>
                 </div>
             </Link>
         )
