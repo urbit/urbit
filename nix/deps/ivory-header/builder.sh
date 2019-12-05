@@ -13,7 +13,7 @@ fi
 
 #  first 7 bytes != "version" (start of an lfs pointer)
 #
-if [ "$(cat "$IVORY" | head -c 7)" = "version" ]; then
+if [ "$(head -c 7 "$IVORY")" = "version" ]; then
   echo "$IVORY is an LFS pointer (it starts with 'version')"
   echo "to fix, run: git lfs install"
   exit 1
