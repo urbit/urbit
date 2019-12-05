@@ -1,5 +1,5 @@
 ::
-/-  *publish
+/-  *publish, *group-store, *permission-hook, *permission-group-hook
 /+  *server, *publish, cram, default-agent
 ::
 /=  index
@@ -59,6 +59,8 @@
       notes=(map @tas note)
       order=(list @tas)
       pinned=(set @tas)
+      participants=path
+      subscribers=path
   ==
 ::
 +$  versioned-state
@@ -91,6 +93,10 @@
     :~  [%pass /bind %arvo %e %connect [~ /'~publish'] %publish]
         [%pass /tile %agent [our.bol %launch] %poke %launch-action !>(lac)]
         [%pass /read/paths %arvo %c %warp our.bol q.byk.bol `rav]
+        [%pass /permissions %agent [our.bol %permission-store] %watch /updates]
+        :*  %pass  /invites  %agent  [our.bol %invite-store]  %watch
+            /invitatory/publish
+        ==
     ==
   ::
   ++  on-save  !>(state)
@@ -117,14 +123,25 @@
       |=  req=inbound-request:eyre
       ^-  simple-payload:http
       not-found:gen
+    ::
+        %publish-action2
+      =^  cards  state
+        (poke-publish-action-2:main !<(action-2 vas))
+      [cards this]
     ==
   ::
   ++  on-watch
-    |=  =path
+    |=  pax=path
     ^-  (quip card _this)
-    ?+  path  (on-watch:def path)
-      [%http-response *]  [~ this]
-::      [%tile ~]
+    ?+    pax  (on-watch:def pax)
+        [%http-response *]  [~ this]
+    ::
+        [%notebook @ ~]
+      =/  book-name  i.t.pax
+      =/  book  (~(get by books) book-name)
+      !!
+    ::
+        [%tile ~]  !!
     ==
   ::
   ++  on-leave
@@ -137,27 +154,26 @@
     !!
   ::
   ++  on-agent
-    |=  [=wire =sign:agent:gall]
+    |=  [wir=wire sin=sign:agent:gall]
     ^-  (quip card _this)
-    ?-    -.sign
-        %poke-ack
-      ?~  p.sign
-        `this
-      %-  (slog leaf+"poke failed from {<dap.bol>} on wire {<wire>}" u.p.sign)
-      `this
+    ?-    -.sin
+        %poke-ack   (on-agent:def wir sin)
     ::
-        %watch-ack
-      ?~  p.sign
-        `this
-      =/  =tank  leaf+"subscribe failed from {<dap.bol>} on wire {<wire>}"
-      %-  (slog tank u.p.sign)
-      `this
+        %watch-ack  (on-agent:def wir sin)
     ::
-        %kick  `this
+        %kick       (on-agent:def wir sin)
+    ::
         %fact
-      ~|  "unexpected subscription update to {<dap.bol>} on wire {<wire>}"
-      ~|  "with mark {<p.cage.sign>}"
-      !!
+      ?+  wir  (on-agent:def wir sin)
+          [%subscribe @ @ ~]
+        =/  who=@p     (slav %p i.t.wir)
+        =/  book-name  i.t.t.wir
+        !!
+      ::
+          [%permissions ~]  !!
+      ::
+          [%invites ~]  !!
+      ==
     ==
   ::
   ++  on-arvo
@@ -204,6 +220,7 @@
   |=  ran=rant:clay
   ^-  (quip card _state)
   =/  rav  [%next %t [%da now.bol] /app/publish/notebooks]
+  ~&  new-path-list+!<((list path) q.r.ran)
   =/  new  (filter-and-sort-paths !<((list path) q.r.ran))
   =/  dif  (diff-paths our-paths new)
   =^  del-moves  state  (del-paths del.dif)
@@ -331,17 +348,28 @@
     =/  book-name  i.t.t.t.pax
     =/  note-name  i.t.t.t.t.pax
     =/  new-note=note  (scry-note pax)
-    =/  book=notebook
-      %+  fall  (~(get by books.sty) book-name)
-      [book-name now.bol now.bol ~ [note-name]~ ~]
-    =/  old-note  (~(get by notes.book) note-name)
+    =/  old-book  (~(get by books.sty) book-name)
+    =+  ^-  [cards=(list card) new-book=notebook]
+      ?~  old-book
+        :-  ~
+        :*  book-name
+            now.bol
+            now.bol
+            ~
+            [note-name]~
+            ~
+            /publish/[book-name]/participants
+            /publish/[book-name]/subscribers
+        ==
+      [~ u.old-book]
+    =/  old-note  (~(get by notes.new-book) note-name)
     ?^  old-note
       =.  date-created.new-note  date-created.u.old-note
       =.  comments.new-note      comments.u.old-note
-      =.  notes.book  (~(put by notes.book) note-name new-note)
+      =.  notes.new-book  (~(put by notes.new-book) note-name new-note)
       =/  rif=riff:clay  [q.byk.bol `[%next %x [%da now.bol] pax]]
       :-  [%pass (welp /read/note pax) %arvo %c %warp our.bol rif]~
-      sty(books (~(put by books.sty) book-name book))
+      sty(books (~(put by books.sty) book-name new-book))
     ::
     =/  comment-dir    /app/publish/notebooks/[book-name]/[note-name]
     =/  comment-paths  .^((list path) %ct (weld our-beak comment-dir))
@@ -358,10 +386,10 @@
       :-  [[%pass (welp /read/comment pax) %arvo %c %warp our.bol rif] cad]
       (~(put by com) u.comment-name new-com)
     =.  comments.new-note  new-comments
-    =.  notes.book  (~(put by notes.book) note-name new-note)
+    =.  notes.new-book  (~(put by notes.new-book) note-name new-note)
     =/  rif=riff:clay  [q.byk.bol `[%next %x [%da now.bol] pax]]
     :-  [[%pass (welp /read/note pax) %arvo %c %warp our.bol rif] cards]
-    sty(books (~(put by books.sty) book-name book))
+    sty(books (~(put by books.sty) book-name new-book))
   ::
       [%app %publish %notebooks @ @ @ %publish-comment ~]
     =/  book-name  i.t.t.t.pax
@@ -470,7 +498,18 @@
   =.  pax  (weld our-beak pax)
   [%pass (weld /delete pax) %arvo %c %info (fray pax)]
 ::
-++  update-udon-front
+++  delete-dir
+  |=  pax=path
+  ^-  card
+  =/  nor=nori:clay
+    :-  %&
+    %+  turn  .^((list path) %ct (weld our-beak pax))
+    |=  pax=path
+    ^-  [path miso:clay]
+    [pax %del ~]
+  [%pass (weld /delete pax) %arvo %c %info q.byk.bol nor]
+::
+++  add-front-matter
   |=  [fro=(map knot cord) udon=@t]
   ^-  @t
   %-  of-wain:format
@@ -478,7 +517,7 @@
   =/  id  (find ";>" tum)
   ?~  id
     %+  weld  (front-to-wain fro)
-    (to-wain:format (crip (weld ";>\0a" tum)))
+    (to-wain:format (crip :(weld ";>\0a" tum)))
   %+  weld  (front-to-wain fro)
   (to-wain:format (crip (slag u.id tum)))
 ::
@@ -496,6 +535,182 @@
     [':-  :~' ~]
     entries
     ['    ==' ~]
+  ==
+::
+++  group-poke
+  |=  act=group-action
+  ^-  card
+  [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
+::
+++  perm-hook-poke
+  |=  act=permission-hook-action
+  ^-  card
+  :*  %pass
+      /
+      %agent
+      [our.bol %permission-hook]
+      %poke
+      %permission-hook-action
+      !>(act)
+  ==
+::
+++  perm-group-hook-poke
+  |=  act=permission-group-hook-action
+  ^-  card
+  :*  %pass
+      /
+      %agent
+      [our.bol %permission-group-hook]
+      %poke
+      %permission-group-hook-action
+      !>(act)
+  ==
+::
+++  create-security
+  |=  [par=path sub=path sec=rw-security]
+  ^-  (list card)
+  =+  ^-  [par-type=?(%black %white) sub-type=?(%black %white)]
+    ?-  sec
+      %channel  [%black %black]
+      %village  [%white %white]
+      %journal  [%black %white]
+      %mailbox  [%white %black]
+    ==
+  :~  (perm-group-hook-poke [%associate par [[par par-type] ~ ~]])
+      (perm-group-hook-poke [%associate sub [[sub sub-type] ~ ~]])
+  ==
+::
+++  poke-publish-action-2
+  |=  act=action-2
+  ^-  (quip card _state)
+  ?-    -.act
+      %new-book
+    ?>  (team:title our.bol src.bol)
+    =+  ^-  [cards=(list card) par-path=path sub-path=path]
+      ?-  -.group.act
+          %old  [~ par.group.act sub.group.act]
+          %new
+        =/  par-path  /publish/[book.act]/participants
+        =/  sub-path  /publish/[book.act]/subscribers
+        :_  [par-path sub-path]
+        ;:  weld
+          :~  (group-poke [%bundle par-path])
+              (group-poke [%bundle sub-path])
+              (group-poke [%add par.group.act par-path])
+              (group-poke [%add sub.group.act sub-path])
+          ==
+          (create-security par-path sub-path sec.group.act)
+          :~  (perm-hook-poke [%add-owned par-path par-path])
+              (perm-hook-poke [%add-owned sub-path sub-path])
+          ==
+        ==
+      ==
+    =/  new-book=notebook  [title.act now.bol now.bol ~ ~ ~ par-path sub-path]
+    :-  cards
+    state(books (~(put by books) book.act new-book))
+  ::
+      %new-note
+    =/  pax=path  /app/publish/notebooks/[book.act]/[note.act]/udon
+    =/  front=(map knot cord)
+      %-  my
+      :~  title+title.act
+          author+(scot %p src.bol)
+      ==
+    =.  body.act  (cat 3 body.act '\0a')
+    =/  file=@t   (add-front-matter front body.act)
+    :_  state
+    [(write-file pax %udon !>(file))]~
+  ::
+      %new-comment
+    =/  pax=path
+      %+  weld  /app/publish/notebooks
+      /[book.act]/[note.act]/(scot %da now.bol)/publish-comment
+    =/  new-comment=comment
+      :*  author=src.bol
+          date-created=now.bol
+          last-edit=now.bol
+          content=body.act
+      ==
+    :_  state
+    [(write-file pax %publish-comment !>(new-comment))]~
+  ::
+      %edit-book
+    ?>  (team:title our.bol src.bol)
+    =/  book  (~(got by books) book.act)
+    =?  title.book  ?=(^ new-title.act)
+      u.new-title.act
+    =+  ^-  [cards=(list card) par-path=path sub-path=path]
+      ?~  new-group.act
+        [~ participants.book subscribers.book]
+      ?-  -.u.new-group.act
+          %old  [~ par.u.new-group.act sub.u.new-group.act]
+          %new
+        =/  par-path  /publish/[book.act]/participants
+        =/  sub-path  /publish/[book.act]/subscribers
+        :_  [par-path sub-path]
+        %+  weld
+          :~  (group-poke [%bundle par-path])
+              (group-poke [%bundle sub-path])
+              (group-poke [%add par.u.new-group.act par-path])
+              (group-poke [%add sub.u.new-group.act sub-path])
+              (perm-hook-poke [%add-owned par-path par-path])
+              (perm-hook-poke [%add-owned sub-path sub-path])
+          ==
+        (create-security par-path sub-path sec.u.new-group.act)
+      ==
+    =.  participants.book  par-path
+    =.  subscribers.book   sub-path
+    [~ state(books (~(put by books) book.act book))]
+  ::
+      %edit-note
+    =/  pax=path  /app/publish/notebooks/[book.act]/[note.act]/udon
+    =/  front=(map knot cord)
+      %-  my
+      :~  title+new-title.act
+          author+(scot %p src.bol)
+      ==
+    =.  new-body.act  (cat 3 new-body.act '\0a')
+    =/  file=@t   (add-front-matter front new-body.act)
+    :_  state
+    [(write-file pax %udon !>(file))]~
+  ::
+      %edit-comment
+    =/  pax=path
+      %+  weld  /app/publish/notebooks
+      /[book.act]/[note.act]/[comment.act]/publish-comment
+    =/  comment  .^(comment %cx (weld our-beak pax))
+    =.  content.comment    new-body.act
+    =.  last-edit.comment  now.bol
+    :_  state
+    [(write-file pax %publish-comment !>(comment))]~
+  ::
+      %del-book
+    ?>  (team:title our.bol src.bol)
+    =/  pax=path  /app/publish/notebooks/[book.act]
+    :_  state(books (~(del by books) book.act))
+    [(delete-dir pax)]~
+  ::
+      %del-note
+    =/  pax=path  /app/publish/notebooks/[book.act]/[note.act]/udon
+    :_  state
+    [(delete-file pax)]~
+  ::
+      %del-comment
+    =/  pax=path
+      %+  weld  /app/publish/notebooks
+      /[book.act]/[note.act]/[comment.act]/publish-comment
+    :_  state
+    [(delete-file pax)]~
+  ::
+      %subscribe
+    =/  wir=wire  /subscribe/(scot %p who.act)/[book.act]
+    :_  state
+    [%pass wir %agent [who.act %publish] %watch /notebook/[book.act]]~
+  ::
+      %unsubscribe
+    =/  wir=wire  /subscribe/(scot %p who.act)/[book.act]
+    :_  state(subs (~(del by subs) who.act book.act))
+    [%pass wir %agent [who.act %publish] %leave ~]~
   ==
 ::
 --

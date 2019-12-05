@@ -1,3 +1,4 @@
+/-  *rw-security
 |%
 ::
 +$  action
@@ -47,6 +48,28 @@
       [%unsubscribe who=@p coll=@tas]
   ::
       [%read who=@p coll=@tas post=@tas]
+  ==
+::
++$  group-info
+  $%  [%old par=path sub=path]
+      [%new par=(set ship) sub=(set ship) sec=rw-security]
+  ==
+::
++$  action-2
+  $%  [%new-book book=@tas title=@t group=group-info]
+      [%new-note who=@p book=@tas note=@tas title=@t body=@t]
+      [%new-comment who=@p book=@tas note=@tas body=@t]
+  ::
+      [%edit-book book=@tas new-title=(unit @t) new-group=(unit group-info)]
+      [%edit-note who=@p book=@tas note=@tas new-title=@t new-body=@t]
+      [%edit-comment who=@p book=@tas note=@tas comment=@tas new-body=@t]
+  ::
+      [%del-book book=@tas]
+      [%del-note who=@p book=@tas note=@tas]
+      [%del-comment who=@p book=@tas note=@tas comment=@tas]
+  ::
+      [%subscribe who=@p book=@tas]
+      [%unsubscribe who=@p book=@tas]
   ==
 ::
 +$  collection-info
