@@ -19,9 +19,13 @@ let
   ge-additions = env:
     import ./pkgs/ge-additions/cross.nix env;
 
-  urbit = env:
-    import ./pkgs/urbit/release.nix env
-      { ent = ent env; ge-additions = ge-additions env; debug = false; name = "urbit"; };
+  urbit = { env, debug }:
+    import ./pkgs/urbit/release.nix env {
+      inherit debug;
+      name         = if debug then "urbit-debug" else "urbit";
+      ent          = ent env;
+      ge-additions = ge-additions env;
+    };
 
   builds-for-platform = plat:
     plat.deps // {
@@ -29,7 +33,8 @@ let
       inherit (plat.env) cmake_toolchain;
       ent          = ent          plat;
       ge-additions = ge-additions plat;
-      urbit        = urbit        plat;
+      urbit        = urbit { env = plat; debug = false; };
+      urbit-debug  = urbit { env = plat; debug = true;  };
     };
 
   darwin_extra = {
