@@ -1501,42 +1501,48 @@ static void
 _cm_limits(void)
 {
   struct rlimit rlm;
-  c3_i          ret_i;
 
-  /* Moar stack.
-  */
+  //  Moar stack.
+  //
   {
-    ret_i = getrlimit(RLIMIT_STACK, &rlm);
-    c3_assert(0 == ret_i);
-    rlm.rlim_cur = (rlm.rlim_max > (65536 << 10))
-                          ? (65536 << 10)
-                          : rlm.rlim_max;
+    c3_assert( 0 == getrlimit(RLIMIT_STACK, &rlm) );
+
+    rlm.rlim_cur = c3_min(rlm.rlim_max, (65536 << 10));
+
     if ( 0 != setrlimit(RLIMIT_STACK, &rlm) ) {
       u3l_log("boot: stack size: %s\r\n", strerror(errno));
       exit(1);
     }
   }
 
-  /* Moar filez.
-  */
+  //  Moar filez.
+  //
   {
-    ret_i = getrlimit(RLIMIT_NOFILE, &rlm);
-    c3_assert(0 == ret_i);
-    rlm.rlim_cur = 10240; // default OSX max, not in rlim_max irritatingly
+    getrlimit(RLIMIT_NOFILE, &rlm);
+
+  #ifdef U3_OS_osx
+    rlm.rlim_cur = c3_min(OPEN_MAX, rlm.rlim_max);
+  #else
+    rlm.rlim_cur = rlm.rlim_max;
+  #endif
+
+    //  no exit, not a critical limit
+    //
     if ( 0 != setrlimit(RLIMIT_NOFILE, &rlm) ) {
       u3l_log("boot: open file limit: %s\r\n", strerror(errno));
-      //  no exit, not a critical limit
     }
   }
 
-  /* Moar core.
-  */
+  // Moar core.
+  //
   {
     getrlimit(RLIMIT_CORE, &rlm);
     rlm.rlim_cur = RLIM_INFINITY;
+
+    //  no exit, not a critical limit
+    //
     if ( 0 != setrlimit(RLIMIT_CORE, &rlm) ) {
       u3l_log("boot: core limit: %s\r\n", strerror(errno));
-      //  no exit, not a critical limit
     }
   }
 }
