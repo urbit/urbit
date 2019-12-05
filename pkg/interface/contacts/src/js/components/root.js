@@ -8,6 +8,7 @@ import { subscription } from '/subscription';
 import { store } from '/store';
 import { Skeleton } from '/components/skeleton';
 import { NewScreen } from '/components/lib/new';
+import { Contacts } from '/components/contacts.js';
 
 
 export class Root extends Component {
@@ -43,13 +44,26 @@ export class Root extends Component {
             render={ (props) => {
               return (
                 <Skeleton
-                  spinner={this.state.spinner}
+                  spinner={state.spinner}
                   contacts={state.contacts}
                   activeDrawer="rightPanel">
                   <NewScreen />
                 </Skeleton>
               );
           }} />
+          <Route exact path="/~contacts/group/:group"
+            render={ (props) => {
+              return(
+                <Skeleton
+                  spinner={state.spinner}
+                  contacts={state.contacts}
+                  activeDrawer="contacts">
+                    <Contacts 
+                    contacts={state.contacts} />
+                  </Skeleton>
+              )
+            }}
+            />
         </div>
       </BrowserRouter>
     )
