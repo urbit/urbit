@@ -2100,7 +2100,7 @@ u3_pier_punt(c3_l tab_l, u3_noun tac)
 void
 u3_pier_sway(c3_l tab_l, u3_noun tax)
 {
-  u3_noun mok = u3dc("mook", 2, tax);
+  u3_noun mok = u3dc("moko", 2, tax);
 
   u3_pier_punt(tab_l, u3k(u3t(mok)));
   u3z(mok);

@@ -1233,7 +1233,7 @@ u3m_soft(c3_w    sec_w,
         tax = u3k(u3t(u3t(why)));
       }
 
-      mok = u3dc("mook", 2, tax);
+      mok = u3dc("moko", 2, tax);
       pro = u3nc(cod, u3k(u3t(mok)));
 
       u3z(mok);

@@ -4003,16 +4003,8 @@
               {$1 block/*}                              ::  single block
               {$2 trace/(list {@ta *})}                 ::  error report
           ==                                            ::
-++  tone  $%  {$0 p/*}                                  ::  success
-              {$1 p/(list)}                             ::  blocks
-              {$2 p/(list {@ta *})}                     ::  error report
-          ==                                            ::
 ++  noot  $%  {$0 p/*}                                  ::  success
               {$1 p/*}                                  ::  block
-              {$2 p/(list tank)}                        ::  stack trace
-          ==                                            ::
-++  toon  $%  {$0 p/*}                                  ::  success
-              {$1 p/(list)}                             ::  blocks
               {$2 p/(list tank)}                        ::  stack trace
           ==                                            ::
 ++  wonk  =+  veq=$:edge                                ::  product from edge
@@ -6493,122 +6485,6 @@
     [-.target u.mutant]
   --
 ::
-++  mink  !.
-  ~/  %mink
-  |=  {{sub/* fol/*} gul/$-({* *} (unit (unit)))}
-  =+  tax=*(list {@ta *})
-  |-  ^-  tone
-  ?@  fol
-    [%2 tax]
-  ?:  ?=(^ -.fol)
-    =+  hed=$(fol -.fol)
-    ?:  ?=($2 -.hed)
-      hed
-    =+  tal=$(fol +.fol)
-    ?-  -.tal
-      $0  ?-(-.hed $0 [%0 p.hed p.tal], $1 hed)
-      $1  ?-(-.hed $0 tal, $1 [%1 (weld p.hed p.tal)])
-      $2  tal
-    ==
-  ?+    fol
-    [%2 tax]
-  ::
-      {$0 b/@}
-    ?:  =(0 b.fol)  [%2 tax]
-    ?:  =(1 b.fol)  [%0 sub]
-    ?:  ?=(@ sub)   [%2 tax]
-    =+  [now=(cap b.fol) lat=(mas b.fol)]
-    $(b.fol lat, sub ?:(=(2 now) -.sub +.sub))
-  ::
-      {$1 b/*}
-    [%0 b.fol]
-  ::
-      {$2 b/{^ *}}
-    =+  ben=$(fol b.fol)
-    ?.  ?=($0 -.ben)  ben
-    ?>(?=(^ p.ben) $(sub -.p.ben, fol +.p.ben))
-    ::?>(?=(^ p.ben) $([sub fol] p.ben)
-  ::
-      {$3 b/*}
-    =+  ben=$(fol b.fol)
-    ?.  ?=($0 -.ben)  ben
-    [%0 .?(p.ben)]
-  ::
-      {$4 b/*}
-    =+  ben=$(fol b.fol)
-    ?.  ?=($0 -.ben)  ben
-    ?.  ?=(@ p.ben)  [%2 tax]
-    [%0 .+(p.ben)]
-  ::
-      {$5 b/* c/*}
-    =+  hed=$(fol b.fol)
-    ?.  ?=($0 -.hed)  hed
-    =+  tal=$(fol c.fol)
-    ?.  ?=($0 -.tal)  tal
-    [%0 =(p.hed p.tal)]
-  ::
-      {$6 b/* c/* d/*}
-    =+  ben=$(fol b.fol)
-    ?.  ?=($0 -.ben)  ben
-    ?:  =(& p.ben)  $(fol c.fol)
-    ?:  =(| p.ben)  $(fol d.fol)
-    [%2 tax]
-  ::
-      {$7 b/* c/*}
-    =+  ben=$(fol b.fol)
-    ?.  ?=($0 -.ben)  ben
-    $(sub p.ben, fol c.fol)
-  ::
-      {$8 b/* c/*}
-    =+  ben=$(fol b.fol)
-    ?.  ?=($0 -.ben)  ben
-    $(sub [p.ben sub], fol c.fol)
-  ::
-      {$9 b/* c/*}
-    =+  ben=$(fol c.fol)
-    ?.  ?=($0 -.ben)  ben
-    =.  sub  p.ben
-    =+  lof=$(fol [0 b.fol])
-    ?.  ?=($0 -.lof)  lof
-    $(fol p.lof)
-  ::
-      {$10 {b/@ c/*} d/*}
-    =+  bog=$(fol d.fol)
-    ?.  ?=({$0 *} bog)  bog
-    =+  lot=$(fol c.fol)
-    ?.  ?=({$0 *} lot)  lot
-    =+  [axe=b.fol big=p.bog lit=p.lot]
-    ^-  tone
-    :-  %0
-    |-  ^-  p/*
-    ?:  =(2 axe)  [lit +.big]
-    ?:  =(3 axe)  [-.big lit]
-    =+  mor=(mas axe)
-    ?:  =(2 (cap axe))
-      [$(big -.big, axe mor) +.big]
-    [-.big $(big +.big, axe mor)]
-  ::
-      {$11 @ c/*}        $(fol c.fol)
-      {$11 {b/* c/*} d/*}
-    =+  ben=$(fol c.fol)
-    ?.  ?=($0 -.ben)  ben
-    ?:  ?=(?($hunk $hand $lose $mean $spot) b.fol)
-      $(fol d.fol, tax [[b.fol p.ben] tax])
-    $(fol d.fol)
-  ::
-      {$12 b/* c/*}
-    =+  ref=$(fol b.fol)
-    =+  ben=$(fol c.fol)
-    ?.  ?=($0 -.ref)  ref
-    ?.  ?=($0 -.ben)  ben
-    =+  val=(gul p.ref p.ben)
-    ?~(val [%1 p.ben ~] ?~(u.val [%2 [[%hunk (mush p.ben)] tax]] [%0 u.u.val]))
-  ==
-::
-++  mock
-  |=  {{sub/* fol/*} gul/$-({* *} (unit (unit)))}
-  (mook (mink [sub fol] gul))
-::
 ++  moku
   |=  {{sub/* fol/*} gul/$-({* *} (unit (unit)))}
   (moko (mino [sub fol] gul))
@@ -6657,41 +6533,6 @@
                  leaf+"<[{(ud p.p)} {(ud q.p)}].[{(ud p.q)} {(ud q.q)}]>"
   ==         ==
 ::
-++  mook
-  |=  ton/tone
-  ^-  toon
-  ?.  ?=({$2 *} ton)  ton
-  :-  %2
-  :: =.  p.ton  (moop p.ton)
-  =+  yel=(lent p.ton)
-  =.  p.ton
-    ?.  (gth yel 1.024)  p.ton
-    %+  weld
-      (scag 512 p.ton)
-    ^-  (list {@ta *})
-    :_  (slag (sub yel 512) p.ton)
-    :-  %lose
-    %+  rap  3
-    "[skipped {(scow %ud (sub yel 1.024))} frames]"
-  |-  ^-  (list tank)
-  ?~  p.ton  ~
-  =+  rep=$(p.ton t.p.ton)
-  ?+    -.i.p.ton  rep
-      $hunk  [(tank +.i.p.ton) rep]
-      $lose  [[%leaf (rip 3 (@ +.i.p.ton))] rep]
-      $hand  [[%leaf (scow %p (mug +.i.p.ton))] rep]
-      $mean  :_  rep
-             ?@  +.i.p.ton  [%leaf (rip 3 (@ +.i.p.ton))]
-             =+  mac=(mack +.i.p.ton +<.i.p.ton)
-             ?~(mac [%leaf "####"] (tank u.mac))
-      $spot  :_  rep
-             =+  sot=(spot +.i.p.ton)
-             :+  %rose  [":" ~ ~]
-             :~  (smyt p.sot)
-                 =>  [ud=|=(a/@u (scow %ud a)) q.sot]
-                 leaf+"<[{(ud p.p)} {(ud q.p)}].[{(ud p.q)} {(ud q.q)}]>"
-  ==         ==
-::
 ++  mush                                                ::  sane name to leaf
   |=  val/*
   ^-  tank
@@ -6701,10 +6542,10 @@
 ::
 ++  mong
   |=  {{gat/* sam/*} gul/$-({* *} (unit (unit)))}
-  ^-  toon
+  ^-  noot
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
-  (mock [gat(+< sam) %9 2 %0 1] gul)
+  (moku [gat(+< sam) %9 2 %0 1] gul)
 ::
 ++  mule                                                ::  typed virtual
   ~/  %mule
@@ -6720,10 +6561,10 @@
 ++  mute                                                ::  untyped virtual
   |=  taq/_=>(~ ^?(|.(**)))
   ^-  (each * (list tank))
-  =/  ton  (mock [taq %9 2 %0 1] |=((pair) ``.*(~ [%12 1+p 1+q])))
+  =/  ton  (moku [taq %9 2 %0 1] |=((pair) ``.*(~ [%12 1+p 1+q])))
   ?-  -.ton
     $0  [%& p.ton]
-    $1  [%| (turn p.ton |=(a/* (smyt (path a))))]
+    $1  [%| (smyt (path p.ton)) ~]
     $2  [%| p.ton]
   ==
 ::  +slum: slam a gate on a sample using raw nock, untyped

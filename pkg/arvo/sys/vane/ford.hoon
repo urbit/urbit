@@ -4755,7 +4755,7 @@
         (return-result u.cached-result)
       ::
       =/  val
-        (mock [q.subject-vase nock.u.slim-result] intercepted-scry)
+        (moku [q.subject-vase nock.u.slim-result] intercepted-scry)
       ::  val is a toon, which might be a list of blocks.
       ::
       ?-    -.val
@@ -4764,8 +4764,8 @@
         (return-result %success %ride [type.u.slim-result p.val])
       ::
           %1
-        =/  blocked-paths=(list path)  ;;((list path) p.val)
-        (blocked-paths-to-receipt %ride blocked-paths)
+        =/  blocked-path=path  ;;(path p.val)
+        (blocked-paths-to-receipt %ride blocked-path ~)
       ::
           %2
         (return-error [[%leaf "ford: %ride failed to execute:"] p.val])
