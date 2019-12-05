@@ -62755,17 +62755,20 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                   )
                 });
 
+                let activeClasses = (this.props.activeDrawer === "groups") ? "" : "dn-s";
+
                 return (
-                  react.createElement('div', { className: "br b--gray4 h-100 flex-basis-100-s flex-basis-300-ns flex-shrink-0 relative"      , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 51}}
-                    , react.createElement('h2', { className: "f9 pa4 gray2 c-default"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 52}}, "Your Root Identity"  )
+                  react.createElement('div', { className: `br b--gray4 h-100 flex-basis-100-s flex-basis-300-ns 
+                       flex-shrink-0 relative ` + activeClasses, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 53}}
+                    , react.createElement('h2', { className: "f9 pa4 gray2 c-default"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 55}}, "Your Root Identity"  )
                     , rootIdentity
-                    , react.createElement('h2', { className: "f9 pt3 pr4 pb4 pl4 gray2 c-default"      , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 54}}, "Your Groups" )
+                    , react.createElement('h2', { className: "f9 pt3 pr4 pb4 pl4 gray2 c-default"      , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 57}}, "Your Groups" )
                     , groupItems
                     , react.createElement('div', {
                       className: "dt bt b--gray4 absolute w-100"    ,
-                      style: { bottom: 0, height: 48 }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 56}}
-                      , react.createElement(Link, { to: "/~contacts/new", className: "dtc v-mid" , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 59}}
-                        , react.createElement('p', { className: "f9 pl4 black bn"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 60}}, "Create New Group"  )
+                      style: { bottom: 0, height: 48 }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 59}}
+                      , react.createElement(Link, { to: "/~contacts/new", className: "dtc v-mid" , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 62}}
+                        , react.createElement('p', { className: "f9 pl4 black bn"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 63}}, "Create New Group"  )
                       )
                     )
                   )
@@ -62787,12 +62790,13 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                       style: {
                         height: "calc(100% - 48px)"
                       }, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 15}}
-                      , react.createElement(Groups, { contacts: this.props.contacts, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 20}})
+                      , react.createElement(Groups, { contacts: this.props.contacts, 
+                      activeDrawer: this.props.activeDrawer, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 20}})
                       , react.createElement('div', {
                         className: "h-100 w-100 flex " + rightPanelClasses,
                         style: {
                           flexGrow: 1
-                        }, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 21}}
+                        }, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 22}}
                         , this.props.children
                       )
                     )

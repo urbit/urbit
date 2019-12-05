@@ -47,8 +47,11 @@ export class Groups extends Component {
       )
     });
 
+    let activeClasses = (this.props.activeDrawer === "groups") ? "" : "dn-s";
+
     return (
-      <div className="br b--gray4 h-100 flex-basis-100-s flex-basis-300-ns flex-shrink-0 relative">
+      <div className={`br b--gray4 h-100 flex-basis-100-s flex-basis-300-ns 
+                       flex-shrink-0 relative ` + activeClasses}>
         <h2 className="f9 pa4 gray2 c-default">Your Root Identity</h2>
         {rootIdentity}
         <h2 className="f9 pt3 pr4 pb4 pl4 gray2 c-default">Your Groups</h2>

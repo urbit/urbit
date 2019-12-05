@@ -65,6 +65,9 @@ a {
 
 /* responsive */
 @media all and (max-width: 34.375em) {
+  .dn-s {
+    display: none;
+  }
   .flex-basis-100-s {
     flex-basis: 100%;
   }
