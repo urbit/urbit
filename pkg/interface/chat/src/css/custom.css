@@ -95,6 +95,10 @@ h2 {
   cursor: default;
 }
 
+.word-break-all {
+  word-break: break-all;
+}
+
 /* responsive */
 
 @media all and (max-width: 34.375em) {
