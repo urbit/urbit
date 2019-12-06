@@ -69,11 +69,9 @@
     =/  array=(unit (list response:rpc:jstd))
       ((ar:dejs-soft:format parse-one-response) u.jon)
     ?~  array
-      ~&  %incomplete-batch
       (strand-fail:strandio %rpc-result-incomplete-batch >u.jon< ~)
     =-  ?~  err
           (pure:m `res)
-        ~&  [%error-results err]
         (pure:m ~)
     %+  roll  u.array
     |=  $:  rpc=response:rpc:jstd
