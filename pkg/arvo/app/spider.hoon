@@ -398,7 +398,6 @@
 ++  thread-fail
   |=  [=yarn =term =tang]
   ^-  (quip card ^state)
-  %-  (slog leaf+"strand {<yarn>} failed" leaf+<term> tang)
   =/  =tid  (yarn-to-tid yarn)
   =/  fail-cards  (thread-say-fail tid term tang)
   =^  cards  state  (thread-clean yarn)
