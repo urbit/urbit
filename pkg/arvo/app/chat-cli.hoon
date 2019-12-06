@@ -382,7 +382,9 @@
     ?:  ?|  =(~ buf.state.cli)
             !=(';' -.buf.state.cli)
         ==
-      [~ all-state]
+      :_  all-state
+      [(effect:sh-out [%bel ~]) ~]
+    ::
     =+  (get-id:auto pos (tufa buf.state.cli))
     =/  needle=term
       (fall id '')
@@ -400,7 +402,7 @@
     =?  moves  ?=(^ options)
       [(tab:sh-out options) moves]
     =|  fxs=(list sole-effect:sole-sur)
-    |-
+    |-  ^-  (quip card state)
     ?~  to-send
       [(flop moves) all-state]
     =^  char  state.cli
