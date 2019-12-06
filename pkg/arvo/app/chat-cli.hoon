@@ -379,7 +379,9 @@
   ++  tab
     |=  pos=@ud
     ^-  (quip card state)
-    ?.  =(';' (snag 0 buf.state.cli))
+    ?:  ?|  =(~ buf.state.cli)
+            !=(';' -.buf.state.cli)
+        ==
       [~ all-state]
     =+  (get-id:auto pos (tufa buf.state.cli))
     =/  needle=term
