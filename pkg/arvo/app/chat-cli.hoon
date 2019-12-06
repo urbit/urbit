@@ -12,7 +12,7 @@
 /-  *chat-store, *chat-view, *chat-hook,
     *permission-store, *group-store, *invite-store,
     sole-sur=sole
-/+  sole-lib=sole, chat-eval, default-agent, verb
+/+  sole-lib=sole, chat-eval, default-agent, verb,
     auto=language-server-complete
 ::
 |%
@@ -371,29 +371,6 @@
     ::
       [%settings leaf+";settings"]
       [%set leaf+";set key (value)"]
-      [%unset leaf+";unset key"]
-    ::
-      [%chats leaf+";chats"]
-      [%help leaf+";help"]
-    ==
-  ::  +tab-list: static list of autocomplete entries
-  ++  tab-list
-    ^-  (list (option:auto tank))
-    :~
-      [%join leaf+";join ~ship/chat-name"]
-      [%leave leaf+";leave ~ship/chat-name"]
-      ::
-      [%create leaf+";create [type] /chat-name [glyph]"]
-      [%delete leaf+";delete /chat-name"]
-      [%invite leaf+";invite (rw | r | w) /chat-name ~ships"]
-      [%banish leaf+";banish (rw | r | w) /chat-name ~ships"]
-    ::
-      [%bind leaf+";bind [glyph] ~ship/chat-name"]
-      [%unbind leaf+";unbind [glyph]"]
-      [%what leaf+";what [glyph]"]
-    ::
-      [%settings leaf+";settings"]
-      [%set leaf+";set key value"]
       [%unset leaf+";unset key"]
     ::
       [%chats leaf+";chats"]
@@ -1065,7 +1042,7 @@
   ::
   ++  tab
     |=  options=(list [cord tank])
-    ^-  move
+    ^-  card
     (effect %tab options)
   ::  +print: puts some text into the cli as-is
   ::
