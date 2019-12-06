@@ -62951,6 +62951,9 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                   ? {}
                   : props.contacts;
 
+                  let responsiveClasses =
+                    this.props.activeDrawer === "contacts" ? "db" : "dn db-ns";
+
                   let contactItems = (Object.keys(contactProp))
                   .map((contact) => {
                     let path = props.path + "/" + contact;
@@ -62962,13 +62965,14 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                       ship: contact,
                       color: obj.color,
                       path: path,
-                      selected: selected, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 19}}
+                      selected: selected, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 22}}
                       )
                     )
                   });
                     return (
-                        react.createElement('div', { className: "br b--gray4 lh-copy h-100 flex-shrink-0 flex-basis-100-s flex-basis-300-ns relative"       , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 29}}
-                        , react.createElement('h2', { className: "f9 pt4 pr4 pb2 pl4 gray2 c-default"      , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 30}}, "Members")
+                        react.createElement('div', { className: `br b--gray4 lh-copy h-100 flex-shrink-0 
+            flex-basis-100-s flex-basis-300-ns relative ` + responsiveClasses, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 32}}
+                        , react.createElement('h2', { className: "f9 pt4 pr4 pb2 pl4 gray2 c-default"      , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 34}}, "Members")
                         , contactItems
                         )
                     )
@@ -63062,10 +63066,11 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                               activeDrawer: "rightPanel",
                               selected: groupPath, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 83}}
                                 , react.createElement(Contacts, { 
+                                activeDrawer: "rightPanel",
                                 contacts: contactList,
                                 path: groupPath,
                                 selectedContact: thisContactPath, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 88}} )
-                                , react.createElement(ContactCard, {__self: this, __source: {fileName: _jsxFileName$b, lineNumber: 92}})
+                                , react.createElement(ContactCard, {__self: this, __source: {fileName: _jsxFileName$b, lineNumber: 93}})
                               )
                           )
                         }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 75}}
@@ -63077,11 +63082,11 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                               spinner: state.spinner,
                               contacts: state.contacts,
                               activeDrawer: "rightPanel",
-                              selected: "me", __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 100}}
-                                , react.createElement(ContactCard, {__self: this, __source: {fileName: _jsxFileName$b, lineNumber: 105}})
+                              selected: "me", __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 101}}
+                                , react.createElement(ContactCard, {__self: this, __source: {fileName: _jsxFileName$b, lineNumber: 106}})
                               )
                           )
-                        }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 97}}
+                        }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 98}}
                         )
                     )
                   )

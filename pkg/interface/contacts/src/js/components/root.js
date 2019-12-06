@@ -86,6 +86,7 @@ export class Root extends Component {
                   activeDrawer="rightPanel"
                   selected={groupPath}>
                     <Contacts 
+                    activeDrawer="rightPanel"
                     contacts={contactList}
                     path={groupPath}
                     selectedContact={thisContactPath} />

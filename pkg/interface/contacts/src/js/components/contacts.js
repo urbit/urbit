@@ -10,6 +10,9 @@ export class Contacts extends Component {
       ? {}
       : props.contacts;
 
+      let responsiveClasses =
+        this.props.activeDrawer === "contacts" ? "db" : "dn db-ns";
+
       let contactItems = (Object.keys(contactProp))
       .map((contact) => {
         let path = props.path + "/" + contact;
@@ -26,7 +29,8 @@ export class Contacts extends Component {
         )
       })
         return (
-            <div className="br b--gray4 lh-copy h-100 flex-shrink-0 flex-basis-100-s flex-basis-300-ns relative">
+            <div className={`br b--gray4 lh-copy h-100 flex-shrink-0 
+            flex-basis-100-s flex-basis-300-ns relative ` + responsiveClasses}>
             <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Members</h2>
             {contactItems}
             </div>
