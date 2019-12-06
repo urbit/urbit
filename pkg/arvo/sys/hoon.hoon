@@ -3999,17 +3999,9 @@
 ++  pint  {p/{p/@ q/@} q/{p/@ q/@}}                     ::  line+column range
 ++  rule  _|:($:nail $:edge)                            ::  parsing rule
 ++  spot  {p/path q/pint}                               ::  range in file
-++  tono  $%  {$0 product/*}                            ::  success
-              {$1 block/*}                              ::  single block
-              {$2 trace/(list {@ta *})}                 ::  error report
-          ==                                            ::
 ++  tone  $%  {$0 product/*}                            ::  success
               {$1 block/*}                              ::  single block
               {$2 trace/(list {@ta *})}                 ::  error report
-          ==                                            ::
-++  noot  $%  {$0 p/*}                                  ::  success
-              {$1 p/*}                                  ::  block
-              {$2 p/(list tank)}                        ::  stack trace
           ==                                            ::
 ++  toon  $%  {$0 p/*}                                  ::  success
               {$1 p/*}                                  ::  block
@@ -6310,189 +6302,9 @@
 ++  mack
   |=  {sub/* fol/*}
   ^-  (unit)
-  =+  ton=(mino [sub fol] |=({* *} ~))
+  =+  ton=(mink [sub fol] |=({* *} ~))
   ?.(?=({$0 *} ton) ~ [~ product.ton])
 ::
-++  mino  !.
-  ~/  %mino
-  |=  $:  [subject=* formula=*]
-          scry=$-(^ (unit (unit)))
-      ==
-  =|  trace=(list [@ta *])
-  |^  ^-  tono
-      ?+  formula  [%2 trace]
-          [^ *]
-        =/  head  $(formula -.formula)
-        ?.  ?=(%0 -.head)  head
-        =/  tail  $(formula +.formula)
-        ?.  ?=(%0 -.tail)  tail
-        [%0 product.head product.tail]
-      ::
-          [%0 axis=@]
-        =/  part  (frag axis.formula subject)
-        ?~  part  [%2 trace]
-        [%0 u.part]
-      ::
-          [%1 constant=*]
-        [%0 constant.formula]
-      ::
-          [%2 subject=* formula=*]
-        =/  subject  $(formula subject.formula)
-        ?.  ?=(%0 -.subject)  subject
-        =/  formula  $(formula formula.formula)
-        ?.  ?=(%0 -.formula)  formula
-        %=  $
-          subject  product.subject
-          formula  product.formula
-        ==
-      ::
-          [%3 argument=*]
-        =/  argument  $(formula argument.formula)
-        ?.  ?=(%0 -.argument)  argument
-        [%0 .?(product.argument)]
-      ::
-          [%4 argument=*]
-        =/  argument  $(formula argument.formula)
-        ?.  ?=(%0 -.argument)  argument
-        ?^  product.argument  [%2 trace]
-        [%0 .+(product.argument)]
-      ::
-          [%5 a=* b=*]
-        =/  a  $(formula a.formula)
-        ?.  ?=(%0 -.a)  a
-        =/  b  $(formula b.formula)
-        ?.  ?=(%0 -.b)  b
-        [%0 =(product.a product.b)]
-      ::
-          [%6 test=* yes=* no=*]
-        =/  result  $(formula test.formula)
-        ?.  ?=(%0 -.result)  result
-        ?:  =(& product.result)
-          $(formula yes.formula)
-        ?:  =(| product.result)
-          $(formula no.formula)
-        [%2 trace]
-      ::
-          [%7 subject=* next=*]
-        =/  subject  $(formula subject.formula)
-        ?.  ?=(%0 -.subject)  subject
-        %=  $
-          subject  product.subject
-          formula  next.formula
-        ==
-      ::
-          [%8 head=* next=*]
-        =/  head  $(formula head.formula)
-        ?.  ?=(%0 -.head)  head
-        %=  $
-          subject  [product.head subject]
-          formula  next.formula
-        ==
-      ::
-          [%9 axis=@ core=*]
-        =/  core  $(formula core.formula)
-        ?.  ?=(%0 -.core)  core
-        =/  arm  (frag axis.formula product.core)
-        ?~  arm  [%2 trace]
-        %=  $
-          subject  product.core
-          formula  u.arm
-        ==
-      ::
-          [%10 [axis=@ value=*] target=*]
-        ?:  =(0 axis.formula)  [%2 trace]
-        =/  target  $(formula target.formula)
-        ?.  ?=(%0 -.target)  target
-        =/  value  $(formula value.formula)
-        ?.  ?=(%0 -.value)  value
-        =/  mutant=(unit *)
-          (edit axis.formula product.target product.value)
-        ?~  mutant  [%2 trace]
-        [%0 u.mutant]
-      ::
-          [%11 tag=@ next=*]
-        %-  tono
-        .*  .
-        :+  11  tag.formula
-        !=  $(formula next.formula)
-      ::
-          [%11 [tag=@ clue=*] next=*]
-        =/  clue  $(formula clue.formula)
-        ?.  ?=(%0 -.clue)  clue
-        %-  tono
-        .*  .
-        :+  11  [tag.formula 1 product.clue]
-        ?.  ?=(?(%hunk %hand %lose %mean %spot) tag.formula)
-          !=  $(formula next.formula)
-        !=  %=  $
-          formula  next.formula
-          trace   :_  trace
-                   [tag.formula product.clue]
-        ==
-      ::
-          [%12 ref=* path=*]
-        =/  ref  $(formula ref.formula)
-        ?.  ?=(%0 -.ref)  ref
-        =/  path  $(formula path.formula)
-        ?.  ?=(%0 -.path)  path
-        =/  result  (scry product.ref product.path)
-        ?~  result
-          [%1 product.path]
-        ?~  u.result
-          [%2 [%hunk (mush product.path)] trace]
-        [%0 u.u.result]
-      ==
-  ::
-  ++  mush
-    |=  path=*
-    ^-  tank
-    :+  %rose  ["/" "/" ""]
-    =|  out=(list tank)
-    |-  ^+  out
-    ?@  path
-      ?:  =(0 path)
-        (flop out)
-      ~
-    ?^  -.path   ~
-    %=  $
-      path  +.path
-      out   :_  out
-            leaf+(trip -.path)
-    ==
-  ::
-  ++  frag
-    |=  [axis=@ noun=*]
-    ^-  (unit *)
-    ?:  =(0 axis)  ~
-    |-
-    ?:  =(1 axis)
-      `noun
-    ?@  noun  ~
-    %=  $
-      axis  (mas axis)
-      noun  ?:  =(2 (cap axis))
-              -.noun
-            +.noun
-    ==
-  ::
-  ++  edit
-    |=  [axis=@ target=* value=*]
-    ^-  (unit *)
-    ?:  =(1 axis)  `value
-    ?@  target  ~
-    =/  left=?  =(2 (cap axis))
-    =/  mutant
-      %=  $
-        axis    (mas axis)
-        target  ?:(left -.target +.target)
-      ==
-    ?~  mutant  ~
-    :-  ~
-    ?:  left
-      [u.mutant +.target]
-    [-.target u.mutant]
-  --
-  ::
 ++  mink  !.
   ~/  %mink
   |=  $:  [subject=* formula=*]
@@ -6677,57 +6489,9 @@
   |=  {{sub/* fol/*} gul/$-({* *} (unit (unit)))}
   (mook (mink [sub fol] gul))
 ::
-++  moku
-  |=  {{sub/* fol/*} gul/$-({* *} (unit (unit)))}
-  (moko (mino [sub fol] gul))
-::
 ++  mook
   |=  ton/tone
   ^-  toon
-  ?.  ?=({$2 *} ton)  ton
-  :-  %2
-  =+  yel=(lent trace.ton)
-  =.  trace.ton
-    ?.  (gth yel 1.024)  trace.ton
-    %+  weld
-      (scag 512 trace.ton)
-    ^-  (list {@ta *})
-    :_  (slag (sub yel 512) trace.ton)
-    :-  %lose
-    %+  rap  3
-    "[skipped {(scow %ud (sub yel 1.024))} frames]"
-  |-  ^-  (list tank)
-  ?~  trace.ton  ~
-  =+  rep=$(trace.ton t.trace.ton)
-  =*  dat  +.i.trace.ton
-  ?+    -.i.trace.ton  rep
-      $hunk  =/  sof=(unit tank)  ((soft tank) dat)
-             ?~  sof  rep
-             [u.sof rep]
-      $lose  ?^  dat  rep
-             :_  rep
-             leaf+(rip 3 dat)
-      $hand  :_  rep
-             leaf+(scow %p (mug +.i.trace.ton))
-      $mean  ?@  dat  [leaf+(rip 3 dat) rep]
-             =/  mac  (mack dat -.dat)
-             ?~  mac  [leaf+"####" rep]
-             =/  sof  ((soft tank) u.mac)
-             ?~  sof  rep
-             [u.sof rep]
-      $spot  =/  sof=(unit spot)  ((soft spot) dat)
-             ?~  sof  rep
-             :_  rep
-             :+  %rose  [":" ~ ~]
-             =*  sot  u.sof
-             :~  (smyt p.sot)
-                 =>  [ud=|=(a/@u (scow %ud a)) q.sot]
-                 leaf+"<[{(ud p.p)} {(ud q.p)}].[{(ud p.q)} {(ud q.q)}]>"
-  ==         ==
-::
-++  moko
-  |=  ton/tono
-  ^-  noot
   ?.  ?=({$2 *} ton)  ton
   :-  %2
   =+  yel=(lent trace.ton)
