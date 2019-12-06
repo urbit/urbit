@@ -83,15 +83,16 @@ export class MemberScreen extends Component {
           <Link to="/~chat/">{"⟵ All Chats"}</Link>
         </div>
         <div
-          className="pl3 pt4 bb b--gray4 flex relative overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"
+          className="pl3 pt2 bb b--gray4 flex relative overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"
           style={{ height: 48 }}>
           <SidebarSwitcher
             sidebarShown={this.props.sidebarShown}
             popout={this.props.popout}
           />
-          <Link to={`/~chat/` + isinPopout + `room` + state.station}>
+          <Link to={`/~chat/` + isinPopout + `room` + state.station}
+          className="pt2">
             <h2
-              className="mono dib f7 fw4 v-top"
+              className="mono dib f8 fw4 v-top"
               style={{ width: "max-content" }}>
               {state.station.substr(1)}
             </h2>
