@@ -10,7 +10,7 @@ export class ContactItem extends Component {
     
     let selectedClass = (props.selected)
     ? "bg-gray4"
-    : null;
+    : "";
 
     return (
       <Link

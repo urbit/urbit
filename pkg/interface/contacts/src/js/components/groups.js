@@ -19,7 +19,7 @@ export class Groups extends Component {
       let color = uxToHex(ourCard.color);
       let selectedClass = (this.props.selected === "me")
       ? "bg-gray4"
-      : null;
+      : "";
    return (
       <Link 
       key={1}
@@ -57,7 +57,7 @@ export class Groups extends Component {
     let activeClasses = (this.props.activeDrawer === "groups") ? "" : "dn-s";
 
     return (
-      <div className={`br b--gray4 lh-copy h-100 flex-basis-100-s flex-basis-300-ns 
+      <div className={`br b--black lh-copy h-100 flex-basis-100-s flex-basis-300-ns 
                        flex-shrink-0 relative ` + activeClasses}>
         <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Your Root Identity</h2>
         {rootIdentity}

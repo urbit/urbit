@@ -58814,7 +58814,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
                     let selectedClass = (props.selected)
                     ? "bg-gray4"
-                    : null;
+                    : "";
 
                     let memberCount = Object.keys(props.contacts).length;
 
@@ -62734,7 +62734,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                   let color = uxToHex(ourCard.color);
                   let selectedClass = (this.props.selected === "me")
                   ? "bg-gray4"
-                  : null;
+                  : "";
                return (
                   react.createElement(Link, { 
                   key: 1,
@@ -62772,7 +62772,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 let activeClasses = (this.props.activeDrawer === "groups") ? "" : "dn-s";
 
                 return (
-                  react.createElement('div', { className: `br b--gray4 lh-copy h-100 flex-basis-100-s flex-basis-300-ns 
+                  react.createElement('div', { className: `br b--black lh-copy h-100 flex-basis-100-s flex-basis-300-ns 
                        flex-shrink-0 relative ` + activeClasses, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 60}}
                     , react.createElement('h2', { className: "f9 pt4 pr4 pb2 pl4 gray2 c-default"      , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 62}}, "Your Root Identity"  )
                     , rootIdentity
@@ -62927,7 +62927,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 
                 let selectedClass = (props.selected)
                 ? "bg-gray4"
-                : null;
+                : "";
 
                 return (
                   react.createElement(Link, {
@@ -62970,7 +62970,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                     )
                   });
                     return (
-                        react.createElement('div', { className: `br b--gray4 lh-copy h-100 flex-shrink-0 
+                        react.createElement('div', { className: `br b--black lh-copy h-100 flex-shrink-0 
             flex-basis-100-s flex-basis-300-ns relative ` + responsiveClasses, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 32}}
                         , react.createElement('h2', { className: "f9 pt4 pr4 pb2 pl4 gray2 c-default"      , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 34}}, "Members")
                         , contactItems

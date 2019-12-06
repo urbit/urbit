@@ -8,7 +8,7 @@ export class GroupsItem extends Component {
 
         let selectedClass = (props.selected)
         ? "bg-gray4"
-        : null;
+        : "";
 
         let memberCount = Object.keys(props.contacts).length;
 
