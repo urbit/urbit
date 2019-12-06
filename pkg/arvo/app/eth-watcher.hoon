@@ -154,7 +154,7 @@
         ~
       [(wait-shortcut path.poke now.bowl) ~]
     ::
-    =/  restart-cards
+    =/  restart-cards=(list card)
       =/  dog  (~(get by dogs.state) path.poke)
       ?.  ?&  restart
               ?=(^ dog)
@@ -162,7 +162,7 @@
           ==
         ~
       =/  =cage  [%spider-stop !>([u.running.u.dog &])]
-      [%pass [%starting path] %agent [our.bowl %spider] %poke cage]
+      [%pass [%starting path] %agent [our.bowl %spider] %poke cage]~
     =/  new-dog
       =/  dog=watchdog
         ?:  restart  *watchdog
@@ -176,7 +176,7 @@
   ::
       %clear
     =.  dogs.state  (~(del by dogs.state) path.poke)
-    [~ this]
+    [(weld wait-cards restart-cards) this]
   ==
 ::
 ::  +on-watch: subscribe & get initial subscription data
