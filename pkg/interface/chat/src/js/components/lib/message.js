@@ -47,7 +47,7 @@ export class Message extends Component {
         );
       }
       return (
-        <a className="f7 lh-copy v-top bb b--black"
+        <a className="f7 lh-copy v-top bb b--black word-break-all"
           href={letter.url}
           target="_blank"
           rel="noopener noreferrer">

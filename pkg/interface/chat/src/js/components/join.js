@@ -30,7 +30,7 @@ export class JoinScreen extends Component {
         });
         return;
       }
-      this.props.api.chatView.join(ship, station);
+      this.props.api.chatView.join(ship, station, true);
       this.props.history.push('/~chat');
     }
   }
@@ -80,9 +80,9 @@ export class JoinScreen extends Component {
   render() {
     const { props } = this;
 
-    let joinClasses = "db f9 green2 ba pa2 b--green2";
+    let joinClasses = "db f9 green2 ba pa2 b--green2 pointer";
     if ((!this.state.station) || (this.state.station === "/")) {
-      joinClasses = 'db f9 gray2 ba pa2 b--gray3';
+      joinClasses = 'db f9 gray2 ba pa2 b--gray3 pointer';
     }
 
     let errElem = (<span />);
@@ -110,6 +110,11 @@ export class JoinScreen extends Component {
             placeholder="~zod/chatroom"
             spellCheck="false"
             rows={1}
+            onKeyPress={e => {
+              if (e.key === "Enter") {
+                this.onClickJoin();
+              }
+            }}
             style={{
               resize: 'none',
             }}
