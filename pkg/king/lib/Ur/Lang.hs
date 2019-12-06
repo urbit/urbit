@@ -40,7 +40,7 @@
 
 module Ur.Lang where
 
-import Ur.Common hiding (flat, A, succ)
+import Ur.Common hiding (flat, A, succ, L, R, C)
 import Data.Flat (Flat)
 import GHC.Natural
 
@@ -51,7 +51,7 @@ infixl 5 :@;
 data E = !E :@ !E
        | S
        | K
-       | J !Natural !Natural
+       | J !Natural !Text
        | D
 
        -- Recursion is not possible in a strict language without builtin case.
@@ -66,4 +66,22 @@ data E = !E :@ !E
        | N !Natural
        | Inc
        | Fol
-  deriving (Eq, Ord, Show, Generic, NFData, Flat)
+  deriving (Eq, Ord, Generic, NFData, Flat)
+
+instance Show E where
+    show = \case
+        e@(_ :@ _) → "(" <> intercalate "" (show <$> appList [] e) <> ")"
+        S     -> "S"
+        K     -> "K"
+        J n m -> "J{" <> show n <> "," <> show m <> "}"
+        D     -> "D"
+        L     -> "L"
+        R     -> "R"
+        C     -> "C"
+        F     -> "F"
+        N n   -> show n
+        Inc   -> "+"
+        Fol   -> "%"
+      where
+        appList acc (f :@ x) = appList (x:acc) f
+        appList acc x        = x:acc

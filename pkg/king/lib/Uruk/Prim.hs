@@ -7,8 +7,9 @@ module Uruk.Prim
     , eval
     , arity
     , simplify
-    , toNat
+    , church
     , dump
+    , s, k, j, d, j1, j2, j3, j4, jNat
     ) where
 
 import ClassyPrelude
@@ -43,35 +44,41 @@ simplify = curry go
     go ∷ (P, [V P]) → X P
     go ( S, [z,y,x] ) = C x :@ C z :@ (C y :@ C z)
     go ( K, [y,x]   ) = C x
-    go ( D, [x]     ) = (toNat . dump . toExp) x
-    go ( J, [a,n,b] ) = fast a n b
-    go ( J, x:xs    ) = fire x xs
+    go ( D, [x]     ) = (C . eval . church . dump . toExp) x
+    go ( J, [b,n,a] ) = fast a n b
+    go ( J, args    ) = fire args
     go ( _, _       ) = error "bad-simplify"
 
 eval ∷ E P → V P
 eval = toVal simplify . prep arity
 
 fast ∷ V P → V P → V P → X P
-fast arity name body = C (V J arityNum [arity, name, body])
+fast arity name body = C (V J arityNum [body, name, arity])
   where
     arityNum = arity & \case
         V S _ [] → 1
         V K _ [] → 2
         V D _ [] → 3
         V J _ [] → 4
-        _        → error "bad jet arity"
+        e        → error ("bad jet arity: " <> show e)
 
-fire ∷ V P → [V P] → X P
-fire f []     = C f
-fire x [f]    = C f :@ C x
-fire l (x:xs) = fire x xs :@ C l
-
-toNat ∷ Nat → X P
-toNat 0 = C $ eval (C S :@ C K)
-toNat 1 = C $ eval (C S :@ C K :@ C K)
-toNat n = C inc :@ toNat (pred n)
+fire ∷ [V P] → X P
+fire = traceShowId . start . drop 2 . reverse . traceShowId
   where
-    inc = eval (C S :@ (C S :@ (C K :@ C S) :@ C K))
+    start []      = error "bad-fire"
+    start (f:xs)  = go (C f) xs
+    go acc []     = acc
+    go acc (x:xs) = go (acc :@ C x) xs
+
+--  Produces a jetted, church-encoded natural number.
+church ∷ Nat → E P
+church = (jNat :@) . go
+  where
+    go 0 = C S :@ C K
+    go 1 = C S :@ C K :@ C K
+    go n = inc :@ go (pred n)
+
+    inc = C S :@ (C S :@ (C K :@ C S) :@ C K)
 
 dump ∷ E P → Nat
 dump =  snd . go
@@ -89,3 +96,16 @@ dump =  snd . go
             rBits = 1 + xBits + yBits
             rNum  = 1 .|. shiftL xNum 1
                       .|. shiftL yNum (1+xBits)
+
+--  Jets a number with name `S` (0)
+jNat = j2 :@ s
+
+s,k,j,d,j1,j2,j3,j4 ∷ E P
+s = C S
+k = C K
+j = C J
+d = C D
+j1 = j :@ s
+j2 = j :@ k
+j3 = j :@ d
+j4 = j :@ j

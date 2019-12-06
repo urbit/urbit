@@ -1,6 +1,5 @@
 module Ur.Examples where
 
-import Ur.Common hiding (flat, A, succ, some, L, R, C)
 import Ur.Lang
 import Ur.Simplify
 
@@ -15,8 +14,10 @@ i = S%K%K
 two = inc%one
 thr = inc%two
 
-mul = jet 2 $ S%(K%S)%K
-add = jet 2 $ S%(K%(S%(S%(K%S)%(S%(K%(S%(K%S)%K))))))%K
+
+
+mul = J 2 "mul" % (S%(K%S)%K)
+add = J 2 "add" % (S%(K%(S%(S%(K%S)%(S%(K%(S%(K%S)%K))))))%K)
 
 uTrue  = K%(K%K)
 uFalse = K%(K%(S%K))
@@ -26,9 +27,9 @@ uFalse = K%(K%(S%K))
     some     = \x n s -> s x
     maybe    = \l r v -> v l r
 -}
-none = jet 2 $ K
-some = jet 2 $ S%(K%(S%(K%K)%(S%(S%K%K))))%K
-mayb = jet 3 $ S%(K%(S%(K%(S%(K%(S%(K%(S%S%(K%K)))%K))%S))%(S%(S%K%K))))%K
+none = J 2 "none" %(K)
+some = J 2 "some" %(S%(K%(S%(K%K)%(S%(S%K%K))))%K)
+mayb = J 3 "maybe"%(S%(K%(S%(K%(S%(K%(S%(K%(S%S%(K%K)))%K))%S))%(S%(S%K%K))))%K)
 
 twoMuld = toNat (mul % one % two)
 ninMuld = toNat (mul % thr % thr)
@@ -45,7 +46,7 @@ case x of (L lv → lv); (Rif x then x else loop true)
 what1 = F % (S%K) % S
 what2 = (S % (K%(C%i))%(S%(S%(K%S)%K)%(K%L))) % (S % (K%(C%i))%(S%(S%(K%S)%K)%(K%L))) % D
 
-what3 = F % (S % (K%(C%i))%(S%(S%(K%S)%K)%(K%L))) % S
+what3 = F % (S % (K%(C%i))%(S%(S%(K%S)%K)%(K%L))) % (R % zer)
 
 ----- = F % (S%(K%(S%(K%(S%(S%i%i)))%K))%(S%i%(K%K))) % uFalse
 

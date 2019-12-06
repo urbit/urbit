@@ -1,18 +1,4 @@
-{-
-    Generic representation and evaluation of combinator expressions.
-
-    This code will work with any set of combinators, given an arity and
-    an implementation for each.
--}
-
-module Uruk.Exp
-    ( E(..)
-    , V(..)
-    , X
-    , prep
-    , toVal
-    , toExp
-    ) where
+module Ur.CombExp where
 
 import ClassyPrelude
 
@@ -20,17 +6,19 @@ import Data.Flat   (Flat)
 import GHC.Natural (Natural)
 
 
--- Types -----------------------------------------------------------------------
+-- Generic Evaluator for Combinator Expressions --------------------------------
 
 type Nat = Natural
 
 infixl 5 :@;
 
-data E c = C !c | E c :@ E c
-  deriving (Eq, Ord, Generic, NFData, Flat, Functor, Foldable, Traversable)
+data E c = C c | E c :@ E c
+  deriving stock (Eq, Ord, Generic)
+  deriving anyclass (NFData, Flat)
 
-data V c = V !c !Nat [V c]
-  deriving (Eq, Ord, Generic, NFData, Flat, Functor, Foldable, Traversable)
+data V c = V c Nat [V c]
+  deriving stock (Eq, Ord, Generic)
+  deriving anyclass (NFData, Flat)
 
 type X c = E (V c)
 
@@ -52,25 +40,25 @@ instance Show c => Show (E c) where
 
 -- Evaluation ------------------------------------------------------------------
 
-prep :: (c -> Nat) -> E c -> X c
-prep arity = go
+cPrep :: (c -> V c) -> E c -> X c
+cPrep f = go
   where
-    go (C x)    = C (V x (arity x) [])
+    go (C x)    = C (f x)
     go (f :@ x) = go f :@ go x
 
-toVal :: ∀c. (c -> [V c] -> X c) -> X c -> V c
-toVal simp = go
+cEval :: ∀c. (c -> [V c] -> X c) -> X c -> V c
+cEval simp = go
   where
+    goVal (V c 0 k) = go (simp c k)
+    goVal v         = v
+
     go (C v)              = goVal v
     go (C (V c 0 k) :@ x) = go (simp c k :@ x)
     go (C (V c n k) :@ x) = goVal (V c (n-1) (go x : k))
     go (f :@ x :@ y)      = go (C (go (f :@ x)) :@ y)
 
-    goVal (V c 0 k) = go (simp c k)
-    goVal v         = v
-
-toExp :: V c -> E c
-toExp (V p _ xs) = go xs
+cDump :: ∀c. V c -> E c
+cDump (V p _ xs) = go xs
   where go []     = C p
-        go [x]    = C p :@ toExp x
-        go (x:xs) = go xs :@ toExp x
+        go [x]    = C p :@ cDump x
+        go (x:xs) = go xs :@ cDump x
