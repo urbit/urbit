@@ -112,20 +112,17 @@
   =/  perm-paths=(set path)
     (~(run in associate) head)
   ?~  perms
-    :-  [(watch-group group)]~
-    state(relation (~(put by relation) group perm-paths))
+    :_  state(relation (~(put by relation) group perm-paths))
+    (snoc (recreate-permissions perm-paths associate) (watch-group group))
   ::
+  =/  grp  (group-scry group)
   =.  u.perms  (~(uni in u.perms) perm-paths)
   :_  state(relation (~(put by relation) group u.perms))
   %+  weld
-    %+  turn  ~(tap in perm-paths)
-    |=  =path
-    (permission-poke path [%delete path])
-  %+  turn  ~(tap in associate)
-  |=  [=path =kind]
-  =|  pem=permission
-  =.  kind.pem  kind
-  (permission-poke path [%create path pem])
+    (recreate-permissions perm-paths associate)
+  ?~  grp
+    ~
+  (add-members group u.grp u.perms)
 ::
 ++  handle-dissociate
   |=  [group=path remove=(set permission-path)]
@@ -152,13 +149,9 @@
   ::
       %path
     ::  set all permissions paths
-    =/  perms  (~(get by relation) pax.diff)
-    ?~  perms
-      [~ state]
+    =/  perms  (~(got by relation) pax.diff)
     :_  state
-    %+  turn  ~(tap in u.perms)
-    |=  =path
-    (permission-poke path [%add path members.diff])
+    (add-members pax.diff members.diff perms)
   ::
       %add
     ::  set all permissions paths
@@ -203,6 +196,32 @@
       %poke
       [%permission-action !>(action)]
   ==
+::
+++  group-scry
+  |=  pax=path
+  ^-  (unit group)
+  .^((unit group) %gx ;:(weld /=group-store/(scot %da now.bowl) pax /noun))
+::
+++  add-members
+  |=  [pax=path mem=(set ship) perms=(set path)]
+  ^-  (list card)
+  %+  turn  ~(tap in perms)
+  |=  =path
+  (permission-poke path [%add path mem])
+::
+++  recreate-permissions
+  |=  [perm-paths=(set path) associate=(set [permission-path kind])]
+  ^-  (list card)
+  %+  weld
+    %+  turn  ~(tap in perm-paths)
+    |=  =path
+    (permission-poke path [%delete path])
+  %+  turn  ~(tap in associate)
+  |=  [=path =kind]
+  =|  pem=permission
+  =.  kind.pem  kind
+  (permission-poke path [%create path pem])
+::
 ::
 ++  watch-group
   |=  =group-path
