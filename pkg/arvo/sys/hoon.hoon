@@ -6530,7 +6530,7 @@
              :_  rep
              leaf+(rip 3 dat)
       $hand  :_  rep
-             leaf+(scow %p (mug +.i.trace.ton))
+             leaf+(scow %p (mug dat))
       $mean  ?@  dat  [leaf+(rip 3 dat) rep]
              =/  mac  (mack dat -.dat)
              ?~  mac  [leaf+"####" rep]
