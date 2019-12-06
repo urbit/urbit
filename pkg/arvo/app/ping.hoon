@@ -41,7 +41,7 @@
       ?.  ?=(%poking -.ship-state.u.s)
         %-  (slog leaf+"ping: strange state {<ship s>}" ~)
         `state
-      =/  until  (add ~s30 now)
+      =/  until  (add ~m5 now)
       =.  ships.state
         (~(put by ships.state) ship u.s(ship-state [%waiting until]))
       :_  state
