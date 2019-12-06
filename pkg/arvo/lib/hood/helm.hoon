@@ -20,9 +20,6 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-++  hood-nuke                                           ::  block/unblock
-  $:  him/ship                                          ::
-  ==                                                    ::
 ++  hood-reset                                          ::  reset command
   $~                                                    ::
 ++  helm-verb                                           ::  reset command
