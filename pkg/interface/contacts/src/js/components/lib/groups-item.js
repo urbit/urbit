@@ -6,11 +6,18 @@ export class GroupsItem extends Component {
     render() {
         const { props } = this;
 
+        let selectedClass = (props.selected)
+        ? "bg-gray4"
+        : null;
+
+        let memberCount = Object.keys(props.contacts).length;
+
         return (
             <Link
             to={"/~contacts" + props.link}>
-                <div className="w-100 v-mid f9 pl4">
-                <p>{props.name}</p>
+                <div className={"w-100 v-mid f9 pl4 " + selectedClass}>
+                <p className="f9 pt1">{props.name}</p>
+                <p className="f9 pb1 gray2">{memberCount + " Member" + ((memberCount === 1) ? "" : "s")}</p>
                 </div>
             </Link>
         )

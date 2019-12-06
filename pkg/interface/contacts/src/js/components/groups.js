@@ -10,7 +10,6 @@ export class Groups extends Component {
 
   render() {
     const { props, state } = this;
-    console.log(props.contacts);
 
     let rootIdentity = Object.keys(props.contacts)
     .filter((path) => {
@@ -18,11 +17,17 @@ export class Groups extends Component {
     }).map((path) => {
       let ourCard = props.contacts[path][window.ship];
       let color = uxToHex(ourCard.color);
+      let selectedClass = (this.props.selected === "me")
+      ? "bg-gray4"
+      : null;
    return (
-      <Link to={"/~contacts/me"}>
-    <div class="w-100 pl4 f9">
+      <Link 
+      key={1}
+      to={"/~contacts/me"}>
+    <div className={"w-100 pl4 pt1 pb1 f9 mb5 flex justify-start content-center " + selectedClass}>
       <Sigil ship={window.ship} color={color} size={32}/>
-      <p className="w-70 dib v-mid ml2 nowrap pb6">~{window.ship}</p>
+      <p className="f9 w-70 dib v-mid ml2 nowrap mono"
+         style={{paddingTop: 6}}>~{window.ship}</p>
       </div>
       </Link>
     )
@@ -38,10 +43,12 @@ export class Groups extends Component {
       (name.indexOf("/" === 1))
         ? name = name.substr(2)
         : name = name.substr(nameSeparator);
+        let selected = (this.props.selected === path);
       return (
         <GroupsItem
         key={path}
         link={path}
+        selected={selected}
         name={name}
         contacts={props.contacts[path]}/>
       )
@@ -50,11 +57,11 @@ export class Groups extends Component {
     let activeClasses = (this.props.activeDrawer === "groups") ? "" : "dn-s";
 
     return (
-      <div className={`br b--gray4 h-100 flex-basis-100-s flex-basis-300-ns 
+      <div className={`br b--gray4 lh-copy h-100 flex-basis-100-s flex-basis-300-ns 
                        flex-shrink-0 relative ` + activeClasses}>
-        <h2 className="f9 pa4 gray2 c-default">Your Root Identity</h2>
+        <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Your Root Identity</h2>
         {rootIdentity}
-        <h2 className="f9 pt3 pr4 pb4 pl4 gray2 c-default">Your Groups</h2>
+        <h2 className="f9 pt3 pr4 pb2 pl4 gray2 c-default">Your Groups</h2>
         {groupItems}
         <div
           className="dt bt b--gray4 absolute w-100"

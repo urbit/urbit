@@ -54,13 +54,19 @@ export class Root extends Component {
           }} />
           <Route exact path="/~contacts/:ship/:group"
             render={ (props) => {
+              let groupPath = `/${props.match.params.ship}/${props.match.params.group}`;
+
+              let contactList = state.contacts[groupPath];
+
               return(
                 <Skeleton
                   spinner={state.spinner}
                   contacts={state.contacts}
-                  activeDrawer="contacts">
+                  activeDrawer="contacts"
+                  selected={groupPath}>
                     <Contacts 
-                    contacts={state.contacts} />
+                    contacts={contactList}
+                    path={groupPath} />
                     <div className="h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"></div>
                   </Skeleton>
               )
@@ -68,13 +74,21 @@ export class Root extends Component {
             />
             <Route exact path="/~contacts/:ship/:group/:contact"
             render={ (props) => {
+              let groupPath = `/${props.match.params.ship}/${props.match.params.group}`;
+              let thisContactPath = `/${props.match.params.ship}/${props.match.params.group}/${props.match.params.contact}`
+
+              let contactList = state.contacts[groupPath];
+
               return(
                 <Skeleton
                   spinner={state.spinner}
                   contacts={state.contacts}
-                  activeDrawer="rightPanel">
+                  activeDrawer="rightPanel"
+                  selected={groupPath}>
                     <Contacts 
-                    contacts={state.contacts} />
+                    contacts={contactList}
+                    path={groupPath}
+                    selectedContact={thisContactPath} />
                     <ContactCard/>
                   </Skeleton>
               )
@@ -86,7 +100,8 @@ export class Root extends Component {
                 <Skeleton
                   spinner={state.spinner}
                   contacts={state.contacts}
-                  activeDrawer="rightPanel">
+                  activeDrawer="rightPanel"
+                  selected="me">
                     <ContactCard/>
                   </Skeleton>
               )

@@ -18,7 +18,8 @@ export class Skeleton extends Component {
             height: "calc(100% - 48px)"
           }}>
           <Groups contacts={this.props.contacts} 
-          activeDrawer={this.props.activeDrawer}/>
+          activeDrawer={this.props.activeDrawer}
+          selected={this.props.selected}/>
           <div
             className={"h-100 w-100 flex " + rightPanelClasses}
             style={{
