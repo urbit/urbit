@@ -844,10 +844,6 @@ static c3_c* _141_qua_sfix_ha[] = {
   0
 };
 
-static u3j_harm _141_qua_mino_a[] = {{".2", u3we_mino}, {}};
-static c3_c* _141_qua_mino_ha[] = {
-  0
-};
 static u3j_harm _141_qua_mink_a[] = {{".2", u3we_mink}, {}};
 static c3_c* _141_qua_mink_ha[] = {
   0
@@ -884,8 +880,7 @@ static u3j_core _141_qua_d[] =
   { "pose", 7, _141_qua_pose_a, 0, _141_qua_pose_ha },
   { "sfix", 7, _141_qua_sfix_a, 0, _141_qua_sfix_ha },
 
-  { "mino", 7, _141_qua_mino_a, 0, _141_qua_mino_ha },
-  { "mink", 7, _141_qua_mino_a, 0, _141_qua_mink_ha },
+  { "mink", 7, _141_qua_mink_a, 0, _141_qua_mink_ha },
   { "mule", 7, _141_qua_mule_a, 0, _141_qua_mule_ha },
   {}
 };
