@@ -2766,7 +2766,7 @@
   ++  clamp-rto
     |=  rto=@dr
     ^+  rto
-    (min ~s30 (max ^~((div ~s1 5)) rto))
+    (min ~m2 (max ^~((div ~s1 5)) rto))
   ::  +in-slow-start: %.y iff we're in "slow-start" mode
   ::
   ++  in-slow-start
