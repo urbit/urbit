@@ -2,331 +2,314 @@
 ::  and poke the responses into the btc-node-store
 ::
 /-  *btc-node-hook, *btc-node-store, sole
-/+  sole, lib=btc-node-json
+/+  default-agent, sole, lib=btc-node-json, verb
 ::
-=,  sole
-::
-|%
-+$  move  (pair bone card)
-+$  card
-  $%  [%request wire request:http outbound-config:iris]
-      [%diff %sole-effect sole-effect]
-      [%flog wire flog:dill]
-      [%poke wire dock [%btc-node-store-action btc-node-store-action]]
-  ==
-::
-+$  state
-  $%  [%0 state-zero]
-  ==
-::
-+$  state-zero
-  $:  endpoint=@t
-      headers=header-list:http
-      ::  $consol: console state
-      ::
-      ::     $conn:  id for console connection
-      ::     $state: data in the console
-      ::
-      consol=[conn=bone state=sole-share]
-  ==
---
-::
-|_  [bol=bowl:gall state]
-::
-::  %alias: rewording of commonly used nouns
-::
-+|  %alias
-::
-::  %this: common idiom to refer to our whole %app door and its context
-::
-++  this  .
-::
-::  Aliasing arms declared within cores (requiered by gall)
-::
-++  poke-sole-action          poke-sole-action:co:view
-++  peer-sole-action          peer-sole-action:co:view
-:: ++  peer-sole                 peer-sole:co:view
-::
-++  prep
-  |=  old=(unit state)
-  ^-  (quip move _this)
-  ?~  old
-    :-  ~
-    %=  this
-      endpoint  'http://127.0.0.1:8332'
-      headers
-        :~  ['Accept' 'application/json']
-            ['Content-Type' 'text/plain']
-            ['Authorization' 'Basic dXJiaXRjb2luZXI6dXJiaXRjb2luZXI']
-    ==  ==
-  [~ this(+<+ u.old)]
-::
-::  %view
-::
-::    Arms for displaying notes on the console and frontend
-::
-++  view
-  |%
-  ::
-  ::  %co: console
-  ::
-  ::    %sole arms to receive console moves and prompt formatting
-  ::
-  ++  co
-    |%
-    ++  peer-sole
-      |=  path
-      ^-  (quip move _this)
-      ~&  "peered..."
-      =.  consol  [ost.bol *sole-share]
-      ~&  consol
-      [~ this]
-      :: =.  consol  [ost.bol *sole-share]
-      :: :_  this
-      :: [(send (prompt enter))]~
-    ::
-    ++  send
-      |=  e=sole-effect
-      ^-  move
-      [conn.consol %diff %sole-effect e]
-    ::
-    ++  prompt
-      |=  dial=styx
-      ^-  sole-effect
-      pro+[| %$ dial]
-    :: ::
-    ++  enter
-      ^-  styx
-      [[```%y] " | BTC | "]~
-    ::
-    ++  poke-sole-action
-      |=  act=sole-action
-      ^-  (quip move _this)
-      ?.  =(conn.consol ost.bol)  ~|(%strange-sole !!)
-      =*  share  state.consol
-      ?+    -.act  [~ this]
-          ::  %clr: clear screen
-          ::
-          %clr  [~ this]
-      ::
-          ::  %ret: enter key pressed
-          ::
-          %ret  [~ this]
-      ::
-          ::  %det: key press
-          ::  pressed key is stored in the console state
-          ::
-          %det  (edit-sole +.act)
+=>  |%
+    +$  card  card:agent:gall
+    +$  versioned-state
+      $%  [%0 state-zero]
       ==
-    :: ::
-    ++  to-sole
-      |=  inv=sole-edit
-      ^-  [sole-change sole-share]
-      (~(transmit ..transmit state.consol) inv)
     ::
-    ++  edit-sole
-      |=  cal=sole-change
-      ^-  (quip move _this)
-      =^  edit  state.consol
-        (~(transceive ..transceive state.consol) cal)
-      [~ this]
+    +$  state-zero
+      $:  endpoint=@t
+          headers=header-list:http
+      ==
     --
-  --
 ::
-++  poke-atom
-  |=  a=@
-  ^-  (quip move _this)
-  =/  default-wallet=@t
-    =-  .^(@t %gx -)
-    /(scot %p our.bol)/btc-node-store/(scot %da now.bol)/default-wallet/noun
-  =/  n-wallets=@ud
-    =-  .^(@ud %gx -)
-    /(scot %p our.bol)/btc-node-store/(scot %da now.bol)/n-wallets/noun
-  ~&  [default-wallet n-wallets]
-  :_  this
-  [ost.bol %flog / ^-(flog:dill text+"done")]~
+=|  state-zero
+=*  state  -
+::  Main
 ::
-++  poke-noun
-  |=  act=btc-node-hook-action
-  ^-  (quip move _this)
-  =/  body=request:rpc:jstd  (request-to-rpc:btc-rpc:lib act)
-  =/  default-wallet=@t
-    =-  .^(@t %gx -)
-    %+  weld  /(scot %p our.bol)/btc-node-store
-    /(scot %da now.bol)/default-wallet/noun
-  =/  n-wallets=@ud
-    =-  .^(@ud %gx -)
-    %+  weld  /(scot %p our.bol)/btc-node-store
-    /(scot %da now.bol)/n-wallets/noun
-  =/  req=request:http
-    :*  %'POST'
-        ::  URL endpoint
-        ::
-        ?+    -.act
-          endpoint
-        ::
-            %get-balance
-          ::  FIXME: fails when default-wallet is '' and more than 1 wallet
-          ::  has been created
-          ::
-          ::    url='http://127.0.0.1:8332/wallet/'
-          ::
-          ::  this example works with curl:
-          ::
-          ::
-          :: curl --user XXX:YYY
-          ::      --data-binary '{
-          ::        "jsonrpc": "1.0",
-          ::        "id":"curltest",
-          ::        "method": "getwalletinfo",
-          ::        "params": []
-          ::      }'
-          ::      -H 'content-type: text/plain;'
-          ::      http://127.0.0.1:8332/wallet/
-          ::
-          ::  A %switch-wallet command needs to be issued against the store app
-          ::  when a wallet is created
-          ::  e.g.  > btc-node-store|command [%switch-wallet 'local']
-          ::
-          ?:  (lte n-wallets 1)
-            endpoint
-          %-  crip  %+  weld
-            "{(trip endpoint)}/wallet/"
-          ?:  =('' default-wallet)  ~
-          "{(trip default-wallet)}"
-        ::
-            %get-address-info
-          ?:  (lte n-wallets 1)
-            endpoint
-          %-  crip  %+  weld
-            "{(trip endpoint)}/wallet/"
-          ?:  =('' default-wallet)  ~
-          "{(trip default-wallet)}"
-        ::
-            %get-wallet-info
-          ?:  (lte n-wallets 1)
-            endpoint
-          %-  crip  %+  weld
-            "{(trip endpoint)}/wallet/"
-          ?:  =('' default-wallet)  ~
-          "{(trip default-wallet)}"
-        ==
+%+  verb  |
+^-  agent:gall
+=<  |_  =bowl:gall
+    +*  this      .
+        btc-core  +>
+        bc        ~(. btc-core bowl)
+        def       ~(. (default-agent this %|) bowl)
+    ::
+    ++  on-init
+      ^-  (quip card _this)
+      :-  ~
+      %_  this
+        endpoint  'http://127.0.0.1:8332'
         headers
-        %-  some
-          %-  as-octt:mimes:html
-            (en-json:html (request-to-json:rpc:jstd body))
-    ==
-  :_  this
-  [ost.bol %request /[(scot %da now.bol)] req *outbound-config:iris]~
-::
-++  http-response
-  |=  [=wire response=client-response:iris]
-  ^-  (quip move _this)
-  ::  ignore all but %finished
-  ::
-  ?.  ?=(%finished -.response)
-    [~ this]
-  =*  status    status-code.response-header.response
-  ::  Only (FOR NOW) parse successful responses
-  ::
-  =/  hit=httr:eyre
-    (to-httr:iris response-header.response full-file.response)
-  =/  rpc-resp=response:rpc:jstd  (httr-to-rpc-response hit)
-  ?.  =(%result -.rpc-resp)
-    ~&  +.rpc-resp
-    [~ this]
-  ^-  (quip move _this)
-  %-  parse-response
-    ^-  response:btc-rpc
-    %-  parse-response:btc-rpc:lib
-      ^-  response:rpc:jstd
-      rpc-resp
-::
-++  parse-response
-  |=  rpc-resp=response:btc-rpc
-  ^-  (quip move _this)
-  :_  this
-  ;:  weld
-      ::  Print term for each succesful RPC request (used by :ph)
+          :~  ['Accept' 'application/json']
+              ['Content-Type' 'text/plain']
+              ['Authorization' 'Basic dXJiaXRjb2luZXI6dXJiaXRjb2luZXI']
+      ==  ==
+    ::
+    ++  on-save   !>(state)
+    ++  on-load
+      |=  old=vase
+      `this(state !<(state-zero old))
+    ::
+    ++  on-poke
+      |=  [=mark =vase]
+      ^-  (quip card _this)
+      |^  ?+    mark    (on-poke:def mark vase)
+              %btc-node-hook-action
+            (hook-action !<(btc-node-hook-action vase))
+          ==
       ::
-      [ost.bol %flog / [%text (trip -.rpc-resp)]]~
-      ?+    -.rpc-resp  ~|  [%unsupported-response -.rpc-resp]  !!
-          %create-wallet
-        =/  btc-store-req=btc-node-store-action
-          :+  %add-wallet   name.rpc-resp
-          ?:(=('' warning.rpc-resp) ~ (some warning.rpc-resp))
-        [(btc-node-store-poke /store btc-store-req)]~
-      ::
-          %get-address-info
-        ~&  [%address-info +.rpc-resp]
-        ~
-      ::
-          %get-balance
-        :_  ~
-        :*  ost.bol   %flog   /   %text
-            "amount={(trip +.rpc-resp)}"
+      ++  hook-action
+        |=  act=btc-node-hook-action
+        ^-  (quip card _this)
+        =/  body=request:rpc:jstd
+          (request-to-rpc:btc-rpc:lib act)
+        =/  req=request:http
+          :*  %'POST'
+              (endpoint-url:bc act)
+              headers
+              =,  html
+              %-  some
+                %-  as-octt:mimes
+                  (en-json (request-to-json:rpc:jstd body))
+          ==
+        =/  out  *outbound-config:iris
+        :_  this
+        [%pass /[(scot %da now.bowl)] %arvo %i %request req out]~
+      --
+    ::
+    ++  on-watch  on-watch:def
+    ++  on-leave  on-leave:def
+    ++  on-peek   on-peek:def
+    ++  on-agent  on-agent:def
+    ++  on-arvo
+      |=  [=wire =sign-arvo]
+      ^-  (quip card _this)
+      =*  response  client-response.sign-arvo
+      =^  cards  state
+        ?+    +<.sign-arvo    (on-arvo:def wire sign-arvo)
+            %http-response    (http-response:bc wire response)
         ==
-      ::
-          %get-wallet-info
-        =/  btc-store-req=btc-node-store-action
-          [%update-wallet wallet-name.rpc-resp +>:rpc-resp]
-        [(btc-node-store-poke /update btc-store-req)]~
-      ::
-          %list-wallets
-        :~  (btc-node-store-poke /list [%list-wallets ~])
-        :*  ost.bol   %flog   /   %text
-            "wallets={<`wain`+.rpc-resp>}"
-        ==  ==
-      ::
-          %list-transactions
-        ~&  [%transactions +.rpc-resp]
-        ~
-  ==  ==
+      [cards this]
+    ::
+    ++  on-fail   on-fail:def
+    --
 ::
-::  From:
-::  https://github.com/urbit/arvo/pull/973/commits/be296f6897ca6c96225d844912d7e92ea93ea75a#diff-32b4dc798ca3aa3aa5c9fbd963627d4eR1941
+|_  =bowl:gall
 ::
 ++  httr-to-rpc-response
   |=  hit=httr:eyre
   ^-  response:rpc:jstd
   ~|  hit
-  ?.  ?=($2 (div p.hit 100))
-    fail+hit
-  =/  a=json  (need (de-json:html q:(need r.hit)))
+  =/  jon=json  (need (de-json:html q:(need r.hit)))
+  ?.  =(%2 (div p.hit 100))
+    (parse-error jon)
   =,  dejs-soft:format
   ^-  response:rpc:jstd
   =;  dere
-    =+  res=((ar dere) a)
-    ?~  res  (need (dere a))
+    =+  res=((ar dere) jon)
+    ?~  res  (need (dere jon))
     [%batch u.res]
-  |=  a=json
+  |=  jon=json
   ^-  (unit response:rpc:jstd)
-  =/  res=(unit [@t json])
-    ::  TODO  breaks when no id present
-    ::
-    ((ot id+so result+some ~) a)
-    ::  TODO: Modify to use dejs instead of dejs-soft
-    ::
-    :: %.  a
-    :: =-  (ou -)
-    :: :~  ['id' (uf ~ (mu so))]
-    ::     ['result' some]
-    :: ==
-  ?^  res  `[%result u.res]
-  ~|  a
-  :+  ~  %error  %-  need
-  ((ot id+so error+(ot code+no message+so ~) ~) a)
+  =/  res=[id=(unit @t) res=(unit json) err=(unit json)]
+    %.  jon
+    =,  dejs:format
+    =-  (ou -)
+    :~  ['id' (uf ~ (mu so))]
+        ['result' (uf ~ (mu same))]
+        ['error' (uf ~ (mu same))]
+    ==
+  ?:  ?=([^ * ~] res)
+    `[%result [u.id.res ?~(res.res ~ u.res.res)]]
+  ~|  jon
+  `(parse-error jon)
+::
+++  parse-error
+  |=  =json
+  ^-  response:rpc:jstd
+  :-  %error
+  ?~  json  ['' '' '']
+  %.  json
+  =,  dejs:format
+  =-  (ou -)
+  :~  =-  ['id' (uf '' (cu - (mu so)))]
+      |*(a=(unit) ?~(a '' u.a))
+      :-  'error'
+      =-  (uf ['' ''] -)
+      =-  (cu |*(a=(unit) ?~(a ['' ''] u.a)) (mu (ou -)))
+      :~  ['code' (uf '' no)]
+          ['message' (uf '' so)]
+  ==  ==
+::
+++  http-response
+  |=  [=wire response=client-response:iris]
+  ^-  (quip card _state)
+  ?.  ?=(%finished -.response)
+    [~ state]
+  =*  status    status-code.response-header.response
+  =/  rpc-resp=response:rpc:jstd
+    %-  httr-to-rpc-response
+    %+  to-httr:iris
+      response-header.response
+    full-file.response
+  ?.  ?=([%result *] rpc-resp)
+    ~&  [%error +.rpc-resp]
+    [~ state]
+  %-  handle-btc-response
+    (parse-response:btc-rpc:lib rpc-resp)
+::
+++  handle-btc-response
+  |=  btc-resp=btc-node-hook-response
+  ^-  (quip card _state)
+  :_  state
+  ^-  (list card)
+  ?+    -.btc-resp
+      ::  By default we just print all RPC responses that are not
+      ::  considered here explicitly for proper format printing or
+      ::  for being passed on to the store app.
+      ::
+      ~&  btc-resp
+      ~
+  ::
+      :: %abandon-transaction
+      :: %abort-rescan
+      :: %add-multisig-address
+      :: %backup-wallet
+      :: %bump-fee
+      %create-wallet
+    ^-  (list card)
+    =/  btc-store-req=btc-node-store-action
+      :+  %add-wallet   name.btc-resp
+      ?:(=('' warning.btc-resp) ~ (some warning.btc-resp))
+    [(btc-node-store-poke /store btc-store-req)]~
+  ::
+      :: %dump-privkey
+      :: %dump-wallet
+      :: %encrypt-wallet
+      :: %get-addresses-by-label
+  ::
+      %get-address-info
+    ^-  (list card)
+    ~&  [%address-info +.btc-resp]
+    ~
+  ::
+      %get-balance
+    ^-  (list card)
+    ~&  [%amount (trip +.btc-resp)]
+    ~
+  ::
+      :: %get-balance
+      :: %get-new-address
+      :: %get-raw-change-address
+      :: %get-received-by-address
+      :: %get-received-by-label
+      :: %get-transaction
+      :: %get-unconfirmed-balance
+  ::
+      %get-wallet-info
+    ^-  (list card)
+    =/  btc-store-req=btc-node-store-action
+      [%update-wallet wallet-name.btc-resp +>:btc-resp]
+    [(btc-node-store-poke /update btc-store-req)]~
+  ::
+      :: %import-address
+      :: %import-multi
+      :: %import-privkey
+      :: %import-pruned-funds
+      :: %import-pubkey
+      :: %import-wallet
+      :: %key-pool-refill
+      :: %list-address-groupings
+      :: %list-labels
+      :: %list-lock-unspent
+      :: %list-received-by-address
+      :: %list-received-by-label
+      :: %lists-in-ceblock
+  ::
+      %list-transactions
+    ^-  (list card)
+    ~&  [%transactions +.btc-resp]
+    ~
+  ::
+      :: %list-unspent
+      :: %list-wallet-dir
+  ::
+      %list-wallets
+    ^-  (list card)
+    [(btc-node-store-poke /list [%list-wallets ~])]~
+  ::
+      :: %load-wallet
+      :: %lock-unspent
+      :: %remove-pruned-funds
+      :: %rescan-blockchain
+      :: %send-many
+      :: %send-to-address
+      :: %set-hd-seed
+      :: %set-label
+      :: %set-tx-fee
+      :: %sign-message
+      :: %sign-raw-transaction-with-wallet
+      :: %unload-wallet
+      :: %wallet-create-fundedpsbt
+      :: %wallet-lock
+      :: %wallet-passphrase
+      :: %wallet-passphrase-change
+      :: %wallet-process-psbt
+  ==
 ::
 ++  btc-node-store-poke
   |=  [pax=path act=btc-node-store-action]
-  ^-  move
-  ::  TODO: implement +coup arm
-  ::
-  :*  ost.bol
-      %poke
-      pax
-      [our.bol %btc-node-store]
-      [%btc-node-store-action act]
+  ^-  card
+  :*  %pass   pax
+      %agent  [our.bowl %btc-node-store]
+      %poke   [%btc-node-store-action !>(act)]
   ==
 ::
+++  default-wallet
+  .^  @t
+      %gx
+      (scot %p our.bowl)
+      %btc-node-store
+      (scot %da now.bowl)
+      /default-wallet/noun
+  ==
+::
+++  n-wallets
+  .^  @ud
+    %gx
+    (scot %p our.bowl)
+    %btc-node-store
+    (scot %da now.bowl)
+    /n-wallets/noun
+  ==
+::
+++  endpoint-url
+  |=  [act=btc-node-hook-action]
+  ?.  ?|  =(-.act %get-balance)
+          =(-.act %get-address-info)
+          =(-.act %get-wallet-info)
+      ==
+      endpoint
+  ::  FIXME: fails when default-wallet is '' and more than 1 wallet
+  ::  has been created
+  ::
+  ::    url='http://127.0.0.1:18443/wallet/'
+  ::
+  ::  although this example works with curl:
+  ::
+  :: curl --user XXX:YYY
+  ::      --data-binary '{
+  ::        "jsonrpc": "1.0",
+  ::        "id":"curltest",
+  ::        "method": "getwalletinfo",
+  ::        "params": []
+  ::      }'
+  ::      -H 'content-type: text/plain;'
+  ::      http://127.0.0.1:18443/wallet/
+  ::
+  ::  A %switch-wallet command needs to be issued against the store app
+  ::  after a wallet is created, in order to use it.
+  ::
+  ::  e.g.  > :btc-node-store|command [%switch-wallet 'local']
+  ::
+  ?:  (lte n-wallets 1)
+    endpoint
+  %-  crip  %+  weld
+    "{(trip endpoint)}/wallet/"
+  ?:  =('' default-wallet)  ~
+  "{(trip default-wallet)}"
 --
