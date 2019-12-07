@@ -32,7 +32,7 @@ class UrbitApi {
   soto(data) {
     this.action("dojo", "sole-action", 
       {id: this.authTokens.dojoId, dat: data}
-    ); //TODO: revert after #1946
+    );
   }
 
   action(appl, mark, data) {
