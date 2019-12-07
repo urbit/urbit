@@ -33,11 +33,11 @@ export class ChatTabBar extends Component {
 
 
     return (
-      <div className="dib flex-shrink-0 flex-grow-1">
+      <div className="dib pt2 flex-shrink-0 flex-grow-1">
         {!!props.isOwner ? (
           <div className={"dib f8 pl6"}>
             <Link
-              className={"no-underline v-top " + memColor}
+              className={"no-underline " + memColor}
               to={`/~chat/` + popout + `members` + props.station}>
               Members
             </Link>
@@ -47,7 +47,7 @@ export class ChatTabBar extends Component {
         )}
         <div className={"dib f8 pl6 pr6"}>
           <Link
-            className={"no-underline v-top " + setColor}
+            className={"no-underline " + setColor}
             to={`/~chat/` + popout + `settings` + props.station}>
             Settings
           </Link>
@@ -55,11 +55,10 @@ export class ChatTabBar extends Component {
         <a href={`/~chat/popout/room` + props.station} target="_blank"
         className="dib fr">
           <img
-            className={`v-btm flex-shrink-0 pr2 dn ` + hidePopoutIcon}
+            className={`flex-shrink-0 pr2 dn ` + hidePopoutIcon}
             src="/~chat/img/popout.png"
             height="16"
-            width="16"
-            style={{ paddingTop: "2px" }}/>
+            width="16"/>
         </a>
       </div>
     );

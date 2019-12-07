@@ -9,14 +9,14 @@ export class SidebarSwitcher extends Component {
       : "dib-m dib-l dib-xl";
     
     return (
-      <div>
+      <div className="pt2">
         <a
           className="pointer flex-shrink-0"
           onClick={() => {
             api.sidebarToggle();
           }}>
           <img
-            className={`v-btm pr3 dn ` + popoutSwitcher}
+            className={`pr3 dn ` + popoutSwitcher}
             src={
               this.props.sidebarShown
                 ? "/~chat/img/ChatSwitcherLink.png"
