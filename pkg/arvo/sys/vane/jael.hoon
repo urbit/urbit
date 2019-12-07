@@ -875,11 +875,6 @@
     ++  sources
       |=  [whos=(set ship) =source]
       ^+  ..feel
-      ?:  ?=(%& -.source)
-        =/  send-message
-          |=  =message
-          [hen %pass /public-keys %a %plea p.source %j /public-keys message]
-        (emit (send-message %public-keys whos))
       =^  =source-id  this-su  (get-source-id source)
       =.  ..feed
         ?~  whos
@@ -894,6 +889,12 @@
           %-  ~(gas ju ship-sources-reverse.etn)
           (turn whol |=(=ship [source-id ship]))
         ..feed
+      ::
+      ?:  ?=(%& -.source)
+        =/  send-message
+          |=  =message
+          [hen %pass /public-keys %a %plea p.source %j /public-keys message]
+        (emit (send-message %public-keys whos))
       (peer p.source whos)
     --
   ::
