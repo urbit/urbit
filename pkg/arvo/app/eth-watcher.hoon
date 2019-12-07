@@ -149,7 +149,7 @@
     =/  already  (~(has by dogs.state) path.poke)
     ~?  &(already restart)
       [dap.bowl 'overwriting existing watchdog on' path.poke]
-    =/  wait-cards
+    =/  wait-cards=(list card)
       ?:  already
         ~
       [(wait-shortcut path.poke now.bowl) ~]
@@ -162,7 +162,8 @@
           ==
         ~
       =/  =cage  [%spider-stop !>([u.running.u.dog &])]
-      [%pass [%starting path] %agent [our.bowl %spider] %poke cage]~
+      :_  ~
+      `card`[%pass [%starting path.poke] %agent [our.bowl %spider] %poke cage]
     =/  new-dog
       =/  dog=watchdog
         ?:  restart  *watchdog
@@ -172,11 +173,11 @@
         number  from.config.poke
       ==
     =.  dogs.state  (~(put by dogs.state) path.poke new-dog)
-    [wait-cards this]
+    [(weld wait-cards restart-cards) this]
   ::
       %clear
     =.  dogs.state  (~(del by dogs.state) path.poke)
-    [(weld wait-cards restart-cards) this]
+    [~ this]
   ==
 ::
 ::  +on-watch: subscribe & get initial subscription data

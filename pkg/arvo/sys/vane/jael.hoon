@@ -257,14 +257,14 @@
       =.  sig.own.pki  sig.seed.tac
       ::  load our initial public key
       ::
+      =/  spon-ship=(unit ship)
+        =/  flopped-spon  (flop spon.tac)
+        ?~(flopped-spon ~ `ship.i.flopped-spon)
       =.  pos.zim.pki
         =/  cub  (nol:nu:crub:crypto key.seed.tac)
         %+  ~(put by pos.zim.pki)
           our
-        =/  spon-ship
-          =/  flopped-spon  (flop spon.tac)
-          ?~(flopped-spon ~ `ship.i.flopped-spon)
-        [1 lyf.seed.tac (my [lyf.seed.tac [1 pub:ex:cub]] ~) spon-ship]
+        [0 lyf.seed.tac (my [lyf.seed.tac [1 pub:ex:cub]] ~) spon-ship]
       ::  our initial private key
       ::
       =.  lyf.own.pki  lyf.seed.tac
@@ -307,8 +307,20 @@
       ::
       =.  +>.$  (poke-watch hen %azimuth-tracker nod.own.pki)
       =.  +>.$
-        %-  curd  =<  abet
-        (sources:~(feel su hen our pki etn) ~ [%| %azimuth-tracker])
+        ?-    (clan:title our)
+            %czar
+          %-  curd  =<  abet
+          (sources:~(feel su hen our pki etn) ~ [%| %azimuth-tracker])
+        ::
+            *
+          =.  +>.$
+            %-  curd  =<  abet
+            %+  sources:~(feel su hen our pki etn)
+              (silt (turn spon-points head))
+            [%| %azimuth-tracker]
+          %-  curd  =<  abet
+          (sources:~(feel su hen our pki etn) ~ [%& (need spon-ship)])
+        ==
       ::
       =.  moz
         %+  weld  moz
@@ -508,7 +520,7 @@
     ^+  +>
     ?-  hin
         [%a %done *]
-      ?~  error.hin  ~&(%ares-fine +>.$)
+      ?~  error.hin  +>.$
       ~&  [%done-bad tag.u.error.hin]
       %-  (slog tang.u.error.hin)
       ::TODO  fail:et

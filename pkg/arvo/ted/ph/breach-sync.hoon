@@ -1,3 +1,5 @@
+::  This tests that syncs are correctly restarted after a breach
+::
 /-  spider
 /+  *ph-io
 =,  strand=strand:spider
