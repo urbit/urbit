@@ -417,13 +417,17 @@ _ames_io_start(u3_pier* pir_u)
     c3_c* imp_c = u3r_string(imp);
     c3_y  num_y = (c3_y)pir_u->who_d[0];
 
+    if ( 0 != por_s ) {
+      u3l_log("ames: czar: -p %d ignored\n", por_s);
+    }
+
     por_s = _ames_czar_port(num_y);
 
     if ( c3y == u3_Host.ops_u.net ) {
-      u3l_log("ames: czar: %s on %d\n", imp_c, por_s);
+      u3l_log("ames: czar: %s live on %d\n", imp_c, por_s);
     }
     else {
-      u3l_log("ames: czar: %s on %d (localhost only)\n", imp_c, por_s);
+      u3l_log("ames: czar: %s live on %d (localhost only)\n", imp_c, por_s);
     }
 
     u3z(imp);
@@ -465,7 +469,13 @@ _ames_io_start(u3_pier* pir_u)
     sam_u->por_s = ntohs(add_u.sin_port);
   }
 
-  // u3l_log("ames: on localhost, UDP %d.\n", sam_u->por_s);
+  if ( c3y == u3_Host.ops_u.net ) {
+    u3l_log("ames: live on %d\n", por_s);
+  }
+  else {
+    u3l_log("ames: live on %d (localhost only)\n", por_s);
+  }
+
   uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);
 
   sam_u->liv = c3y;
