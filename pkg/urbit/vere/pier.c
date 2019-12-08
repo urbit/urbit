@@ -1770,6 +1770,7 @@ _pier_create(c3_w wag_w, c3_c* pax_c)
   pir_u->sat_e = u3_psat_init;
 
   pir_u->sam_u = c3_calloc(sizeof(u3_ames));
+  pir_u->por_s = u3_Host.ops_u.por_s;
   pir_u->teh_u = c3_calloc(sizeof(u3_behn));
   pir_u->unx_u = c3_calloc(sizeof(u3_unix));
   pir_u->sav_u = c3_calloc(sizeof(u3_save));
