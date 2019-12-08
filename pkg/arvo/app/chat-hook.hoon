@@ -402,6 +402,7 @@
   ::
   ?:  ?=([%backlog @ *] wir)
     =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
+    ?.  (~(has by synced) pax)  [~ state]
     =/  mailbox=(unit mailbox)  (chat-scry pax)
     =.  pax  ?~(mailbox wir [%mailbox pax])
     :_  state
