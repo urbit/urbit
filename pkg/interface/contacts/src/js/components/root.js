@@ -76,8 +76,13 @@ export class Root extends Component {
             render={ (props) => {
               let groupPath = `/${props.match.params.ship}/${props.match.params.group}`;
               let thisContactPath = `/${props.match.params.ship}/${props.match.params.group}/${props.match.params.contact}`
-
-              let contactList = state.contacts[groupPath];
+              let contactList = state.contacts;
+              contactList = (contactList !== undefined)
+              ? state.contacts[groupPath]
+              : {};
+              let contact = (contactList !== undefined)
+              ? contactList[props.match.params.contact]
+              : {};
 
               return(
                 <Skeleton
@@ -90,20 +95,28 @@ export class Root extends Component {
                     contacts={contactList}
                     path={groupPath}
                     selectedContact={thisContactPath} />
-                    <ContactCard/>
+                    <ContactCard
+                    contact={contact}
+                    path={groupPath}/>
                   </Skeleton>
               )
             }}
             />
             <Route exact path="/~contacts/me"
             render={ (props) => {
+              let contactList = state.contacts["/~/default"];
+              let me = (contactList !== undefined) 
+              ? contactList[window.ship]
+              : {};
               return(
                 <Skeleton
                   spinner={state.spinner}
                   contacts={state.contacts}
                   activeDrawer="rightPanel"
                   selected="me">
-                    <ContactCard/>
+                    <ContactCard
+                    path="/~/default"
+                    contact={me}/>
                   </Skeleton>
               )
             }}

@@ -62983,8 +62983,10 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
             class ContactCard extends react_1 {
                 render() {
                     return (
-                        react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 6}}
-
+                        react.createElement('div', { className: "h-100 w-100 flex justify-center overflow-x-hidden"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 7}}
+                          , react.createElement('div', { className: "w-50-xl flex justify-center pt4"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 8}}
+                            , react.createElement(Sigil, { ship: window.ship, size: 128, color: this.props.contact.color, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 9}})
+                          )
                         )
                     )
                 }
@@ -63056,37 +63058,50 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                         render:  (props) => {
                           let groupPath = `/${props.match.params.ship}/${props.match.params.group}`;
                           let thisContactPath = `/${props.match.params.ship}/${props.match.params.group}/${props.match.params.contact}`;
-
-                          let contactList = state.contacts[groupPath];
+                          let contactList = state.contacts;
+                          contactList = (contactList !== undefined)
+                          ? state.contacts[groupPath]
+                          : {};
+                          let contact = (contactList !== undefined)
+                          ? contactList[props.match.params.contact]
+                          : {};
 
                           return(
                             react.createElement(Skeleton, {
                               spinner: state.spinner,
                               contacts: state.contacts,
                               activeDrawer: "rightPanel",
-                              selected: groupPath, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 83}}
+                              selected: groupPath, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 88}}
                                 , react.createElement(Contacts, { 
                                 activeDrawer: "rightPanel",
                                 contacts: contactList,
                                 path: groupPath,
-                                selectedContact: thisContactPath, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 88}} )
-                                , react.createElement(ContactCard, {__self: this, __source: {fileName: _jsxFileName$b, lineNumber: 93}})
+                                selectedContact: thisContactPath, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 93}} )
+                                , react.createElement(ContactCard, {
+                                contact: contact,
+                                path: groupPath, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 98}})
                               )
                           )
                         }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 75}}
                         )
                         , react.createElement(Route, { exact: true, path: "/~contacts/me",
                         render:  (props) => {
+                          let contactList = state.contacts["/~/default"];
+                          let me = (contactList !== undefined) 
+                          ? contactList[window.ship]
+                          : {};
                           return(
                             react.createElement(Skeleton, {
                               spinner: state.spinner,
                               contacts: state.contacts,
                               activeDrawer: "rightPanel",
-                              selected: "me", __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 101}}
-                                , react.createElement(ContactCard, {__self: this, __source: {fileName: _jsxFileName$b, lineNumber: 106}})
+                              selected: "me", __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 112}}
+                                , react.createElement(ContactCard, {
+                                path: "/~/default",
+                                contact: me, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 117}})
                               )
                           )
-                        }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 98}}
+                        }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 105}}
                         )
                     )
                   )

@@ -63,6 +63,10 @@ a {
   cursor: default;
 }
 
+.m0a {
+  margin: 0 auto;
+}
+
 /* responsive */
 @media all and (max-width: 34.375em) {
   .dn-s {
