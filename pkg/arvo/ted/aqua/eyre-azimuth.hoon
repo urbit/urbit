@@ -252,7 +252,7 @@
   ==
 ::
 ++  raw-real-ship
-  |=  who=ship
+  |=  [who=ship lyf=(unit life)]
   =/  m  (strand ,_state)
   ^-  form:m
   =/  clan  (clan:title who)
@@ -270,9 +270,9 @@
         %-  nol:nu:crub:crypto
         0w9N.5uIvA.Jg0cx.NCD2R.o~MtZ.uEQOB.9uTbp.6LHvg.0yYTP.
         3q3td.T4UF0.d5sDL.JGpZq.S3A92.QUuWg.IHdw7.izyny.j9W92
-      (pit:nu:crub:crypto 512 (shaz (jam who life=1 %entropy)))
+      (pit:nu:crub:crypto 512 (shaz (jam who (fall life 1) %entropy)))
     =/  =seed:able:jael
-      [who 1 sec:ex:cub ~]
+      [who (fall lyf 1) sec:ex:cub ~]
     =/  =pass  pub:ex:cub
     =/  com=tape
       =/  rank  ?:(=(%earl clan) "moon" "comet")

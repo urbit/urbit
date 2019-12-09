@@ -19,5 +19,9 @@
 ;<  ~  bind:m  (real-ship az ~dev)
 ;<  ~  bind:m  (send-hi ~linnup-torsyx-linnup-torsyx ~dev)
 ;<  ~  bind:m  (send-hi ~dev ~linnup-torsyx-linnup-torsyx)
+;<  ~  bind:m  (dojo ~linnup-torsyx "|moon-breach ~linnup-torsyx-linnup-torsyx")
+;<  ~  bind:m  (real-ship az ~linnup-torsyx-linnup-torsyx)
+;<  ~  bind:m  (send-hi ~linnup-torsyx-linnup-torsyx ~dev)
+;<  ~  bind:m  (send-hi ~dev ~linnup-torsyx-linnup-torsyx)
 ;<  ~  bind:m  end-azimuth
 (pure:m *vase)

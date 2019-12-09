@@ -123,11 +123,19 @@
     (pure:m ~)
   loop
 ::
+++  real-moon
+  |=  [=tid:spider =ship =life]
+  ~&  >  "booting moon {<ship>}"
+  =/  m  (strand ,~)
+  =/  =vase  !>([tid %azimuth-command !>([%create-ship ship `life])])
+  ;<  ~  bind:m  (poke-our %spider %spider-input vase)
+  (check-ship-booted ship)
+::
 ++  real-ship
   |=  [=tid:spider =ship]
   ~&  >  "booting real {<ship>}"
   =/  m  (strand ,~)
-  =/  =vase  !>([tid %azimuth-command !>([%create-ship ship])])
+  =/  =vase  !>([tid %azimuth-command !>([%create-ship ship lyf=~])])
   ;<  ~  bind:m  (poke-our %spider %spider-input vase)
   (check-ship-booted ship)
 ::
