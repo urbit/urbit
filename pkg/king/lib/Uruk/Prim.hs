@@ -46,7 +46,7 @@ simplify = curry go
     go ( K, [y,x]   ) = C x
     go ( D, [x]     ) = (C . eval . church . dump . toExp) x
     go ( J, [b,n,a] ) = fast a n b
-    go ( J, args    ) = fire args
+    go ( J, args    ) = slow args
     go ( _, _       ) = error "bad-simplify"
 
 eval ∷ E P → V P
@@ -62,10 +62,10 @@ fast arity name body = C (V J arityNum [body, name, arity])
         V J _ [] → 4
         e        → error ("bad jet arity: " <> show e)
 
-fire ∷ [V P] → X P
-fire = traceShowId . start . drop 2 . reverse . traceShowId
+slow ∷ [V P] → X P
+slow = traceShowId . start . drop 2 . reverse . traceShowId
   where
-    start []      = error "bad-fire"
+    start []      = error "bad-slow"
     start (f:xs)  = go (C f) xs
     go acc []     = acc
     go acc (x:xs) = go (acc :@ C x) xs

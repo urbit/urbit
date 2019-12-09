@@ -58,7 +58,13 @@ prep arity = go
     go (C x)    = C (V x (arity x) [])
     go (f :@ x) = go f :@ go x
 
-toVal :: ∀c. (c -> [V c] -> X c) -> X c -> V c
+toExp :: V c -> E c
+toExp (V p _ xs) = go xs
+  where go []     = C p
+        go [x]    = C p :@ toExp x
+        go (x:xs) = go xs :@ toExp x
+
+toVal :: (c -> [V c] -> X c) -> X c -> V c
 toVal simp = go
   where
     go (C v)              = goVal v
@@ -68,9 +74,3 @@ toVal simp = go
 
     goVal (V c 0 k) = go (simp c k)
     goVal v         = v
-
-toExp :: V c -> E c
-toExp (V p _ xs) = go xs
-  where go []     = C p
-        go [x]    = C p :@ toExp x
-        go (x:xs) = go xs :@ toExp x
