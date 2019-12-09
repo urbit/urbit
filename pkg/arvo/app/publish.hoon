@@ -34,35 +34,6 @@
 |%
 +$  card  card:agent:gall
 ::
-+$  comment
-  $:  author=@p
-      date-created=@da
-      last-edit=@da
-      content=@t
-  ==
-::
-+$  note
-  $:  author=@p
-      title=@t
-      filename=@tas
-      date-created=@da
-      last-edit=@da
-      file=@t
-      build=(each manx tang)
-      comments=(map @da comment)
-  ==
-::
-+$  notebook
-  $:  title=@t
-      date-created=@da
-      last-note=@da
-      notes=(map @tas note)
-      order=(list @tas)
-      pinned=(set @tas)
-      participants=path
-      subscribers=path
-  ==
-::
 +$  versioned-state
   $%  [%1 state-one]
   ==
@@ -120,13 +91,11 @@
       :_  this
       %+  give-simple-payload:app    id
       %+  require-authorization:app  req
-      |=  req=inbound-request:eyre
-      ^-  simple-payload:http
-      not-found:gen
+      handle-http-request:main
     ::
         %publish-action2
       =^  cards  state
-        (poke-publish-action-2:main !<(action-2 vas))
+        (poke-publish-action:main !<(action vas))
       [cards this]
     ==
   ::
@@ -138,8 +107,11 @@
     ::
         [%notebook @ ~]
       =/  book-name  i.t.pax
-      =/  book  (~(get by books) book-name)
-      !!
+      =/  book  (~(got by books) book-name)
+      :_  this
+      [%give %fact ~ %publish-book-update !>([%full book-name book])]~
+    ::
+        [%primary ~]  [~ this]
     ::
         [%tile ~]  !!
     ==
@@ -168,7 +140,8 @@
           [%subscribe @ @ ~]
         =/  who=@p     (slav %p i.t.wir)
         =/  book-name  i.t.t.wir
-        !!
+        ?>  ?=(%publish-book-update p.cage.sin)
+        (handle-notebook-delta:main !<(notebook-delta q.cage.sin))
       ::
           [%permissions ~]  !!
       ::
@@ -254,8 +227,11 @@
   =.  comments.new-note      comments.u.old-note
   =.  notes.u.book  (~(put by notes.u.book) note-name new-note)
   =/  rif=riff:clay  [q.byk.bol `[%next %x [%da now.bol] pax]]
-  :-  [%pass (welp /read/note pax) %arvo %c %warp our.bol rif]~
-  state(books (~(put by books) book-name u.book))
+  =/  fac=notebook-delta  [%note book-name note-name new-note]
+  :_  state(books (~(put by books) book-name u.book))
+  :~  [%pass (welp /read/note pax) %arvo %c %warp our.bol rif]
+      [%give %fact `/notebook/[book-name] %publish-book-update !>(fac)]
+  ==
 ::
 ++  read-comment
   |=  [pax=path rot=riot:clay]
@@ -281,8 +257,12 @@
   =.  comments.u.note  (~(put by comments.u.note) u.comment-date new-comment)
   =.  notes.u.book  (~(put by notes.u.book) note-name u.note)
   =/  rif=riff:clay  [q.byk.bol `[%next %x [%da now.bol] pax]]
-  :-  [%pass (welp /read/comment pax) %arvo %c %warp our.bol rif]~
-  state(books (~(put by books) book-name u.book))
+  =/  fac=notebook-delta
+    [%comment book-name note-name u.comment-date new-comment]
+  :_  state(books (~(put by books) book-name u.book))
+  :~  [%pass (welp /read/comment pax) %arvo %c %warp our.bol rif]
+      [%give %fact `/notebook/[book-name] %publish-book-update !>(fac)]
+  ==
 ::
 ++  filter-and-sort-paths
   |=  paths=(list path)
@@ -317,8 +297,9 @@
     ?~  book
       [~ sty]
     =.  notes.u.book  (~(del by notes.u.book) note-name)
-    :-  ~
-    sty(books (~(put by books) book-name u.book))
+    =/  fac=notebook-delta  [%del-note book-name note-name]
+    :_  sty(books (~(put by books) book-name u.book))
+    [%give %fact `/notebook/[book-name] %publish-book-update !>(fac)]~
   ::
       [%app %publish %notebooks @ @ @ %publish-comment ~]
     =/  book-name  i.t.t.t.pax
@@ -334,8 +315,9 @@
       [~ sty]
     =.  comments.u.note  (~(del by comments.u.note) u.comment-date)
     =.  notes.u.book  (~(put by notes.u.book) note-name u.note)
-    :-  ~
-    sty(books (~(put by books.sty) book-name u.book))
+    =/  fac=notebook-delta  [%del-comment book-name note-name u.comment-date]
+    :_  sty(books (~(put by books.sty) book-name u.book))
+    [%give %fact `/notebook/[book-name] %publish-book-update !>(fac)]~
   ==
 ::
 ++  add-paths
@@ -368,8 +350,11 @@
       =.  comments.new-note      comments.u.old-note
       =.  notes.new-book  (~(put by notes.new-book) note-name new-note)
       =/  rif=riff:clay  [q.byk.bol `[%next %x [%da now.bol] pax]]
-      :-  [%pass (welp /read/note pax) %arvo %c %warp our.bol rif]~
-      sty(books (~(put by books.sty) book-name new-book))
+      =/  fac=notebook-delta  [%note book-name note-name new-note]
+      :_  sty(books (~(put by books.sty) book-name new-book))
+      :~  [%pass (welp /read/note pax) %arvo %c %warp our.bol rif]
+          [%give %fact `/notebook/[book-name] %publish-book-update !>(fac)]
+      ==
     ::
     =/  comment-dir    /app/publish/notebooks/[book-name]/[note-name]
     =/  comment-paths  .^((list path) %ct (weld our-beak comment-dir))
@@ -388,8 +373,12 @@
     =.  comments.new-note  new-comments
     =.  notes.new-book  (~(put by notes.new-book) note-name new-note)
     =/  rif=riff:clay  [q.byk.bol `[%next %x [%da now.bol] pax]]
-    :-  [[%pass (welp /read/note pax) %arvo %c %warp our.bol rif] cards]
-    sty(books (~(put by books.sty) book-name new-book))
+    =/  fac=notebook-delta  [%note book-name note-name new-note]
+    :_  sty(books (~(put by books.sty) book-name new-book))
+    :*  [%pass (welp /read/note pax) %arvo %c %warp our.bol rif]
+        [%give %fact `/notebook/[book-name] %publish-book-update !>(fac)]
+        cards
+    ==
   ::
       [%app %publish %notebooks @ @ @ %publish-comment ~]
     =/  book-name  i.t.t.t.pax
@@ -407,8 +396,12 @@
     =.  comments.u.note  (~(put by comments.u.note) u.comment-name new-com)
     =.  notes.u.book  (~(put by notes.u.book) note-name u.note)
     =/  rif=riff:clay  [q.byk.bol `[%next %x [%da now.bol] pax]]
-    :-  [%pass (welp /read/comment pax) %arvo %c %warp our.bol rif]~
-    sty(books (~(put by books.sty) book-name u.book))
+    =/  fac=notebook-delta
+      [%comment book-name note-name u.comment-name new-com]
+    :_  sty(books (~(put by books.sty) book-name u.book))
+    :~  [%pass (welp /read/comment pax) %arvo %c %warp our.bol rif]
+        [%give %fact `/notebook/[book-name] %publish-book-update !>(fac)]
+    ==
   ==
 ::
 ++  scry-note
@@ -580,8 +573,8 @@
       (perm-group-hook-poke [%associate sub [[sub sub-type] ~ ~]])
   ==
 ::
-++  poke-publish-action-2
-  |=  act=action-2
+++  poke-publish-action
+  |=  act=action
   ^-  (quip card _state)
   ?-    -.act
       %new-book
@@ -660,7 +653,10 @@
       ==
     =.  participants.book  par-path
     =.  subscribers.book   sub-path
-    [~ state(books (~(put by books) book.act book))]
+    :_  state(books (~(put by books) book.act book))
+    ?~  new-title.act  ~
+    =/  fac=notebook-delta  [%book-meta book.act u.new-title.act]
+    [%give %fact `/notebook/[book.act] %publish-book-update !>(fac)]~
   ::
       %edit-note
     =/  pax=path  /app/publish/notebooks/[book.act]/[note.act]/udon
@@ -713,4 +709,53 @@
     [%pass wir %agent [who.act %publish] %leave ~]~
   ==
 ::
+++  handle-notebook-delta
+  |=  del=notebook-delta
+  ^-  (quip card _state)
+  ?-    -.del
+      %book
+    :_  state(books (~(put by books) book.del data.del))
+    ~
+  ::
+      %book-meta
+    =/  book  (~(got by books) book.del)
+    =.  title.book  title.del
+    :_  state(books (~(put by books) book.del data.del))
+    ~
+  ::
+      %note
+    =/  book  (~(got by books) book.del)
+    =.  notes.book  (~(put by notes.book) note.del data.del)
+    :_  state(books (~(put by books) book.del data.del))
+    ~
+  ::
+      %comment
+    =/  book  (~(got by books) book.del)
+    =/  note  (~(got by notes.book) note.del)
+    =.  comments.note  (~(put by comments.note) comment-date.del data.del)
+    =.  notes.book  (~(put by notes.book) note.del note)
+    :_  state(books (~(put by books) book.del data.del))
+    ~
+  ::
+      %del-book     !!
+  ::
+      %del-note
+    =/  book  (~(got by books) book.del)
+    =.  notes.book  (~(del by notes.book) note.del)
+    :_  state(books (~(put by books) book.del data.del))
+    ~
+  ::
+      %del-comment
+    =/  book  (~(got by books) book.del)
+    =/  note  (~(got by notes.book) note.del)
+    =.  comments.note  (~(del by comments.note) comment-date.del)
+    =.  notes.book  (~(put by notes.book) note.del note)
+    :_  state(books (~(put by books) book.del data.del))
+    ~
+  ==
+::
+++  handle-http-request
+  |=  req=inbound-request:eyre
+  ^-  simple-payload:http
+  not-found:gen
 --
