@@ -50167,7 +50167,7 @@
                 {notes: ''}
                 {color: 'fff'}  // with no 0x prefix
                 {avatar: null}
-                {avatar: {p: length, q: bytestream}}
+                {avatar: { content-type: '', octs: {p: length, q: bytestream}}}
                 */
                 this.contactAction({
                   edit: {
@@ -62904,10 +62904,46 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
             const _jsxFileName$8 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/contacts.js";
             class Contacts extends react_1 {
+
+              constructor(props) {
+                super(props);
+                this.api = props.api;
+                this.readFile = this.readFile.bind(this);
+              }
+
+                readFile(e) {
+                  let reader = new FileReader();
+
+                  reader.onload = () => {
+                    let arr = reader.result.split(';base64,');
+                    let type = arr[0].split('data:')[1];
+                    let data = arr[1];
+                    this.api.contacts.edit('/~/default', '~zod', {
+                      avatar: {
+                        'content-type': type,
+                        octs: {
+                          p: data.length,
+                          q: data
+                        }
+                      }
+                    });
+                  };
+
+                  reader.readAsDataURL(e.target.files[0]);
+                }
+
                 render() {
                     return (
-                        react.createElement('div', { class: "br b--gray4 h-100 flex-shrink-0 flex-basis-100-s flex-basis-300-ns relative"      , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 6}}
-                            , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$8, lineNumber: 7}}, "Hey.")
+                        react.createElement('div', { class: "br b--gray4 h-100 flex-shrink-0 flex-basis-100-s flex-basis-300-ns relative"      , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 34}}
+                          , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$8, lineNumber: 35}}, "Hey.")
+                          , react.createElement('input', {
+                            id: "upload", ref: "upload", type: "file", accept: "image/*",
+                            onChange: (event)=> { 
+                              this.readFile(event); 
+                            },
+                            onClick: (event)=> { 
+                              event.target.value = null;
+                            }, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 36}} )
                         )
                     )
                 }
@@ -62973,9 +63009,8 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                               spinner: state.spinner,
                               contacts: state.contacts,
                               activeDrawer: "contacts", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 58}}
-                                , react.createElement(Contacts, { 
-                                contacts: state.contacts, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 62}} )
-                                , react.createElement('div', { className: "h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"     , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 64}})
+                              , react.createElement(Contacts, { contacts: state.contacts, api: api, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 62}} )
+                                , react.createElement('div', { className: "h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"     , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 63}})
                               )
                           )
                         }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 55}}
@@ -62986,13 +63021,13 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                             react.createElement(Skeleton, {
                               spinner: state.spinner,
                               contacts: state.contacts,
-                              activeDrawer: "rightPanel", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 72}}
+                              activeDrawer: "rightPanel", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 71}}
                                 , react.createElement(Contacts, { 
-                                contacts: state.contacts, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 76}} )
-                                , react.createElement(ContactCard, {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 78}})
+                                contacts: state.contacts, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 75}} )
+                                , react.createElement(ContactCard, {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 77}})
                               )
                           )
-                        }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 69}}
+                        }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 68}}
                         )
                         , react.createElement(Route, { exact: true, path: "/~contacts/me",
                         render:  (props) => {
@@ -63000,11 +63035,11 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                             react.createElement(Skeleton, {
                               spinner: state.spinner,
                               contacts: state.contacts,
-                              activeDrawer: "rightPanel", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 86}}
-                                , react.createElement(ContactCard, {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 90}})
+                              activeDrawer: "rightPanel", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 85}}
+                                , react.createElement(ContactCard, {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 89}})
                               )
                           )
-                        }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 83}}
+                        }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 82}}
                         )
                     )
                   )

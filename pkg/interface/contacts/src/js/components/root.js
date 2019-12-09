@@ -59,8 +59,7 @@ export class Root extends Component {
                   spinner={state.spinner}
                   contacts={state.contacts}
                   activeDrawer="contacts">
-                    <Contacts 
-                    contacts={state.contacts} />
+                  <Contacts contacts={state.contacts} api={api} />
                     <div className="h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"></div>
                   </Skeleton>
               )

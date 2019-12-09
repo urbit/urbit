@@ -110,7 +110,7 @@ class UrbitApi {
     {notes: ''}
     {color: 'fff'}  // with no 0x prefix
     {avatar: null}
-    {avatar: {p: length, q: bytestream}}
+    {avatar: { content-type: '', octs: {p: length, q: bytestream}}}
     */
     this.contactAction({
       edit: {
