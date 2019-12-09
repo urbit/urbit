@@ -133,7 +133,7 @@ export class Root extends Component {
               let station = `/${props.match.params.ship}/${props.match.params.station}`;
               let mailbox = state.inbox[station] || {
                 config: {
-                  read: -1,
+                  read: 0,
                   length: 0
                 },
                 envelopes: []
@@ -154,6 +154,7 @@ export class Root extends Component {
                     api={api}
                     subscription={subscription}
                     read={mailbox.config.read}
+                    length={mailbox.config.length}
                     envelopes={mailbox.envelopes}
                     inbox={state.inbox}
                     group={write}
