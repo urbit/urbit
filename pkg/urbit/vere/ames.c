@@ -411,6 +411,7 @@ _ames_io_start(u3_pier* pir_u)
   c3_s     por_s = pir_u->por_s;
   u3_noun    who = u3i_chubs(2, pir_u->who_d);
   u3_noun    rac = u3do("clan:title", u3k(who));
+  c3_i     ret_i;
 
   if ( c3__czar == rac ) {
     c3_y num_y = (c3_y)pir_u->who_d[0];
@@ -425,9 +426,8 @@ _ames_io_start(u3_pier* pir_u)
     }
   }
 
-  int ret;
-  if ( 0 != (ret = uv_udp_init(u3L, &sam_u->wax_u)) ) {
-    u3l_log("ames: init: %s\n", uv_strerror(ret));
+  if ( 0 != (ret_i = uv_udp_init(u3L, &sam_u->wax_u)) ) {
+    u3l_log("ames: init: %s\n", uv_strerror(ret_i));
     c3_assert(0);
   }
 
@@ -443,14 +443,17 @@ _ames_io_start(u3_pier* pir_u)
                               htonl(INADDR_LOOPBACK);
     add_u.sin_port = htons(por_s);
 
-    int ret;
-    if ( (ret = uv_udp_bind(&sam_u->wax_u,
-                            (const struct sockaddr*) & add_u, 0)) != 0 ) {
-      u3l_log("ames: bind: %s\n",
-              uv_strerror(ret));
-      if (UV_EADDRINUSE == ret){
+    if ( (ret_i = uv_udp_bind(&sam_u->wax_u,
+                              (const struct sockaddr*)&add_u, 0)) != 0 )
+    {
+      u3l_log("ames: bind: %s\n", uv_strerror(ret_i));
+
+      if ( (c3__czar == rac) &&
+           (UV_EADDRINUSE == ret_i) )
+      {
         u3l_log("    ...perhaps you've got two copies of vere running?\n");
       }
+
       u3_pier_exit(pir_u);
     }
 
