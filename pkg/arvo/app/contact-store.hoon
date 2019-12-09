@@ -1,13 +1,9 @@
-/+  *contact-json
+:: contact-store: data store that holds group-based contact data
+::
+/+  *contact-json, default-agent
 |%
-+$  move  [bone card]
-::
-+$  card
-  $%  [%diff [%contact-update contact-update]]
-      [%quit ~]
-  ==
-::
-+$  state
++$  card  card:agent:gall
++$  versioned-state
   $%  state-zero
   ==
 ::
@@ -15,70 +11,90 @@
   $:  %0
       =rolodex
   ==
++$  diff
+  $%  [%contact-update contact-update]
+  ==
 --
 ::
-|_  [bol=bowl:gall state-zero]
+=|  state-zero
+=*  state  -
+^-  agent:gall
+=<
+  |_  =bowl:gall
+  +*  this       .
+      contact-core  +>
+      cc         ~(. contact-core bowl)
+      def        ~(. (default-agent this %|) bowl)
+  ::
+  ++  on-init   on-init:def
+  ++  on-save   !>(state)
+  ++  on-load
+    |=  old=vase
+    `this(state !<(state-zero old))
+  ::
+  ++  on-poke
+    |=  [=mark =vase]
+    ^-  (quip card _this)
+    ?>  (team:title our.bowl src.bowl)
+    =^  cards  state
+      ?+  mark  (on-poke:def mark vase)
+        ::%json            (poke-json:cc !<(json vase))
+        %contact-action  (poke-contact-action:cc !<(contact-action vase))
+      ==
+    [cards this]
+  ::
+  ++  on-watch
+    |=  =path
+    ^-  (quip card _this)
+    ?>  (team:title our.bowl src.bowl)
+    |^
+    =/  cards=(list card)
+      ?+    path  (on-watch:def path)
+          [%all ~]      (give %contact-update !>([%rolodex rolodex]))
+          [%updates ~]  ~
+          [%contacts @ *]
+        %+  give  %contact-update
+        !>([%contacts t.path (~(got by rolodex) t.path)])
+      ==
+    [cards this]
+    ::
+    ++  give
+      |=  =cage
+      ^-  (list card)
+      [%give %fact ~ cage]~
+    --
+  ::
+  ++  on-leave  on-leave:def
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?+  path  (on-peek:def path)
+        [%x %all ~]       ``noun+!>(rolodex)
+        [%x %contacts *]
+      ?~  t.t.path
+        ~
+      ``noun+!>((~(get by rolodex) t.t.path))
+    ::
+        [%x %contacts *]
+      ::  /:path/:ship
+      =/  pax  `^path`(flop t.t.path)
+      ?~  pax  ~
+      =/  =ship  (slav %p i.pax)
+      ?~  t.pax  ~
+      =>  .(pax `(list @ta)`(flop t.pax))
+      =/  contacts=(unit contacts)  (~(get by rolodex) pax)
+      ?~  contacts
+        ~
+      ``noun+!>((~(get by u.contacts) ship))
+    ==
+  ::
+  ++  on-agent  on-agent:def
+  ++  on-arvo   on-arvo:def
+  ++  on-fail   on-fail:def
+  --
 ::
-++  this  .
 ::
-++  prep
-  |=  old=(unit state)
-  ^-  (quip move _this)
-  :-  ~
-  ?~  old  this
-  ?-  -.old
-      %0  this(+<+ u.old)
-  ==
-::
-++  peek-x-all
-  |=  pax=path
-  ^-  (unit (unit [%noun (map path contacts)]))
-  [~ ~ %noun rolodex]
-::
-++  peek-x-contacts
-  |=  pax=path
-  ^-  (unit (unit [%noun (unit contacts)]))
-  ?~  pax
-    ~
-  =/  contacts=(unit contacts)  (~(get by rolodex) pax)
-  [~ ~ %noun contacts]
-::
-++  peek-x-contact
-  |=  pax=path
-  ^-  (unit (unit [%noun (unit contact)]))
-  ::  /:path/:ship
-  =/  pas  (flop pax)
-  ?~  pas
-    ~
-  =/  =ship  (slav %p i.pas)
-  =.  pax  (scag (dec (lent pax)) `(list @ta)`pax)
-  =/  contacts=(unit contacts)  (~(get by rolodex) pax)
-  ?~  contacts
-    ~
-  =/  contact=(unit contact)  (~(get by u.contacts) ship)
-  [~ ~ %noun contact]
-::
-++  peer-all
-  |=  pax=path
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  ::  send all updates from now on
-  :_  this
-  [ost.bol %diff %contact-update [%rolodex rolodex]]~
-::
-++  peer-updates
-  |=  pax=path
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  ::  send all updates from now on
-  [~ this]
-::
-++  peer-contacts
-  |=  pax=path
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  :_  this
-  [ost.bol %diff %contact-update [%contacts pax (~(got by rolodex) pax)]]~
+|_  bol=bowl:gall
 ::
 ::++  poke-json
 ::  |=  =json
@@ -88,62 +104,57 @@
 ::
 ++  poke-contact-action
   |=  action=contact-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  (team:title our.bol src.bol)
   ?-  -.action
-      %create   (handle-create action)
-      %delete   (handle-delete action)
-      %add      (handle-add action)
-      %remove   (handle-remove action)
-      %edit     (handle-edit action)
+      %create   (handle-create +.action)
+      %delete   (handle-delete +.action)
+      %add      (handle-add +.action)
+      %remove   (handle-remove +.action)
+      %edit     (handle-edit +.action)
   ==
 ::
 ++  handle-create
-  |=  act=contact-action
-  ^-  (quip move _this)
-  ?>  ?=(%create -.act)
-  ?<  (~(has by rolodex) path.act)
-  :-  (send-diff path.act act)
-  this(rolodex (~(put by rolodex) path.act *contacts))
+  |=  =path
+  ^-  (quip card _state)
+  ?<  (~(has by rolodex) path)
+  :-  (send-diff path [%create path])
+  state(rolodex (~(put by rolodex) path *contacts))
 ::
 ++  handle-delete
-  |=  act=contact-action
-  ^-  (quip move _this)
-  ?>  ?=(%delete -.act)
-  ?>  (~(has by rolodex) path.act)
-  :-  (send-diff path.act act)
-  this(rolodex (~(del by rolodex) path.act))
+  |=  =path
+  ^-  (quip card _state)
+  ?>  (~(has by rolodex) path)
+  :-  (send-diff path [%delete path])
+  state(rolodex (~(del by rolodex) path))
 ::
 ++  handle-add
-  |=  act=contact-action
-  ^-  (quip move _this)
-  ?>  ?=(%add -.act)
-  =/  contacts  (~(got by rolodex) path.act)
-  ?<  (~(has by contacts) ship.act)
-  =.  contacts  (~(put by contacts) ship.act contact.act)
-  :-  (send-diff path.act act)
-  this(rolodex (~(put by rolodex) path.act contacts))
+  |=  [=path =ship =contact]
+  ^-  (quip card _state)
+  =/  contacts  (~(got by rolodex) path)
+  ?<  (~(has by contacts) ship)
+  =.  contacts  (~(put by contacts) ship contact)
+  :-  (send-diff path [%add path ship contact])
+  state(rolodex (~(put by rolodex) path contacts))
 ::
 ++  handle-remove
-  |=  act=contact-action
-  ^-  (quip move _this)
-  ?>  ?=(%remove -.act)
-  =/  contacts  (~(got by rolodex) path.act)
-  ?>  (~(has by contacts) ship.act)
-  =.  contacts  (~(del by contacts) ship.act)
-  :-  (send-diff path.act act)
-  this(rolodex (~(put by rolodex) path.act contacts))
+  |=  [=path =ship]
+  ^-  (quip card _state)
+  =/  contacts  (~(got by rolodex) path)
+  ?>  (~(has by contacts) ship)
+  =.  contacts  (~(del by contacts) ship)
+  :-  (send-diff path [%remove path ship])
+  state(rolodex (~(put by rolodex) path contacts))
 ::
 ++  handle-edit
-  |=  act=contact-action
-  ^-  (quip move _this)
-  ?>  ?=(%edit -.act)
-  =/  contacts  (~(got by rolodex) path.act)
-  =/  contact  (~(got by contacts) ship.act)
-  =.  contact  (edit-contact contact edit-field.act)
-  =.  contacts  (~(put by contacts) ship.act contact)
-  :-  (send-diff path.act act)
-  this(rolodex (~(put by rolodex) path.act contacts))
+  |=  [=path =ship =edit-field]
+  ^-  (quip card _state)
+  =/  contacts  (~(got by rolodex) path)
+  =/  contact  (~(got by contacts) ship)
+  =.  contact  (edit-contact contact edit-field)
+  =.  contacts  (~(put by contacts) ship contact)
+  :-  (send-diff path [%edit path ship edit-field])
+  state(rolodex (~(put by rolodex) path contacts))
 ::
 ++  edit-contact
   |=  [con=contact edit=edit-field]
@@ -159,15 +170,13 @@
   ==
 ::
 ++  update-subscribers
-  |=  [pax=path upd=contact-update]
-  ^-  (list move)
-  %+  turn  (prey:pubsub:userlib pax bol)
-  |=  [=bone *]
-  [bone %diff %contact-update upd]
+  |=  [pax=path update=contact-update]
+  ^-  (list card)
+  [%give %fact `pax %contact-update !>(update)]~
 ::
 ++  send-diff
   |=  [pax=path upd=contact-update]
-  ^-  (list move)
+  ^-  (list card)
   %-  zing
   :~  (update-subscribers /all upd)
       (update-subscribers /updates upd)

@@ -32308,7 +32308,6 @@
                 global$2[key$1] = "esm";
               }
             }
-            //# sourceMappingURL=react-router.js.map
 
             /**
              * The public API for a <Router> that uses HTML5 history.
@@ -32608,7 +32607,6 @@
                 style: propTypes.object
               });
             }
-            //# sourceMappingURL=react-router-dom.js.map
 
             var classnames = createCommonjsModule(function (module) {
             /*!
@@ -58761,7 +58759,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
             let subscription = new Subscription();
 
-            const _jsxFileName = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/lib/icons/icon-home.js";
+            const _jsxFileName = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/lib/icons/icon-home.js";
             class IconHome extends react_1 {
               render() {
                 return (
@@ -58770,7 +58768,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$1 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/lib/icons/icon-spinner.js";
+            const _jsxFileName$1 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/lib/icons/icon-spinner.js";
             class IconSpinner extends react_1 {
               render() {
                 return (
@@ -58779,7 +58777,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$2 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/lib/header-bar.js";
+            const _jsxFileName$2 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/lib/header-bar.js";
             class HeaderBar extends react_1 {
               render() {
                 let spin = (this.props.spinner)
@@ -58807,7 +58805,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$3 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/lib/groups-item.js";
+            const _jsxFileName$3 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/lib/groups-item.js";
             class GroupsItem extends react_1 {
                 render() {
                     const { props } = this;
@@ -62693,7 +62691,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
             var dist_2 = dist.sigil;
             var dist_3 = dist.stringRenderer;
 
-            const _jsxFileName$4 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/lib/icons/sigil.js";
+            const _jsxFileName$4 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/lib/icons/sigil.js";
                 
             class Sigil extends react_1 {
               render() {
@@ -62719,7 +62717,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$5 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/groups.js";
+            const _jsxFileName$5 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/groups.js";
             class Groups extends react_1 {
               // drawer to the left
 
@@ -62790,7 +62788,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$6 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/skeleton.js";
+            const _jsxFileName$6 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/skeleton.js";
             class Skeleton extends react_1 {
               render() {
                   let rightPanelClasses =
@@ -62820,7 +62818,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$7 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/lib/new.js";
+            const _jsxFileName$7 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/lib/new.js";
             class NewScreen extends react_1 {
               constructor(props) {
                 super(props);
@@ -62919,7 +62917,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$8 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/lib/contact-item.js";
+            const _jsxFileName$8 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/lib/contact-item.js";
 
             class ContactItem extends react_1 {
               render() {
@@ -62942,7 +62940,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$9 = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/contacts.js";
+            const _jsxFileName$9 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/contacts.js";
             class Contacts extends react_1 {
                 render() {
                   const { props } = this;
@@ -62979,7 +62977,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 }
             }
 
-            const _jsxFileName$a = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/lib/card.js";
+            const _jsxFileName$a = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/lib/card.js";
             class ContactCard extends react_1 {
                 render() {
                     return (
@@ -62992,7 +62990,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 }
             }
 
-            const _jsxFileName$b = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/js/components/root.js";
+            const _jsxFileName$b = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/root.js";
 
             class Root extends react_1 {
               constructor(props) {
@@ -63109,7 +63107,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$c = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/src/index.js";
+            const _jsxFileName$c = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/index.js";
             api.setAuthTokens({
               ship: window.ship
             });

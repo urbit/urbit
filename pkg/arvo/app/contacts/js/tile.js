@@ -19377,7 +19377,7 @@
             }.call(commonjsGlobal));
             });
 
-            const _jsxFileName = "/Users/matilde/git/tlon/urbit/pkg/interface/contacts/tile/tile.js";
+            const _jsxFileName = "/Users/logan/Dev/urbit/pkg/interface/contacts/tile/tile.js";
 
             class ContactTile extends react_1 {
 

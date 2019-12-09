@@ -2,7 +2,7 @@
 ::  into semantic actions for the UI
 ::
 /-  *group-store
-/+  *server, *contact-json
+/+  *server, *contact-json, default-agent
 /=  index
   /^  octs
   /;  as-octs:mimes:html
@@ -36,55 +36,90 @@
   /:  /===/app/contacts/img  /_  /png/
 ::
 |%
-::
-+$  move  [bone card]
-::
-+$  card
-  $%  [%http-response =http-event:http]
-      [%connect wire binding:eyre term]
-      [%quit ~]
-      [%peer wire dock path]
-      [%poke wire dock poke]
-      [%diff %json json]
-  ==
-::
-+$  poke
-  $%  [%launch-action [@tas path @t]]
-      [%contact-action contact-action]
-      [%group-action group-action]
-  ==
++$  card  card:agent:gall
 --
 ::
-|_  [bol=bowl:gall ?]
-::
-++  this  .
-::
-++  prep
-  |=  old=(unit ?)
-  ^-  (quip move _this)
-  ?~  old
+^-  agent:gall
+=<
+  |_  =bowl:gall
+  +*  this       .
+      contact-core  +>
+      cc         ~(. contact-core bowl)
+      def        ~(. (default-agent this %|) bowl)
+  ::
+  ++  on-init
+    ^-  (quip card _this)
     :_  this
-    :~  [ost.bol %peer / [our.bol %contact-store] /updates]
-        [ost.bol %connect / [~ /'~contacts'] %contact-view]
-        (launch-poke [/configs '/~contacts/js/tile.js'])
-        (contact-poke [%create /~/default])
-        (group-poke [%bundle /~/default])
-        (contact-poke [%add /~/default our.bol *contact])
-        (group-poke [%add [our.bol ~ ~] /~/default])
+    :~  [%pass /updates %agent [our.bowl %contact-store] %watch /updates]
+        [%pass / %arvo %e %connect [~ /'~contacts'] %contact-view]
+        (launch-poke:cc [%contact-view /primary '/~contacts/js/tile.js'])
+        (contact-poke:cc [%create /~/default])
+        (group-poke:cc [%bundle /~/default])
+        (contact-poke:cc [%add /~/default our.bowl *contact])
+        (group-poke:cc [%add [our.bowl ~ ~] /~/default])
     ==
-  [~ this(+<+ u.old)]
+  ::
+  ++  on-save   on-save:def
+  ++  on-load   on-load:def
+  ++  on-poke
+    |=  [=mark =vase]
+    ^-  (quip card _this)
+    ?>  (team:title our.bowl src.bowl)
+    ?+  mark  (on-poke:def mark vase)
+        %json                 [(poke-json:cc !<(json vase)) this]
+        %handle-http-request
+      =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
+      :_  this
+      %+  give-simple-payload:app  eyre-id
+      %+  require-authorization:app  inbound-request
+      poke-handle-http-request:cc
+    ==
+  ::
+  ++  on-watch
+    |=  =path
+    ^-  (quip card _this)
+    ?>  (team:title our.bowl src.bowl)
+    ?:  ?=([%http-response *] path)  [~ this]
+    ?.  =(/primary path)  (on-watch:def path)
+    [[%give %fact ~ %json !>((rolodex-to-json all-scry:cc))]~ this]
+  ::
+  ++  on-agent
+    |=  [=wire =sign:agent:gall]
+    ^-  (quip card _this)
+    ?+  -.sign  (on-agent:def wire sign)
+        %kick
+      [[%pass / %agent [our.bol %contact-store] %watch /updates]~ this]
+    ::
+        %fact
+      ?+  p.cage.sign  (on-agent:def wire sign)
+          %contact-update
+        =/  update=json  (update-to-json !<(contact-update q.cage.sign))
+        [[%give %fact `/primary %json !>(update)]~ this]
+      ==
+    ==
+  ::
+  ++  on-arvo   
+    |=  [=wire =sign-arvo]
+    ^-  (quip card _this)
+    ?.  ?=(%bound +<.sign-arvo)
+      (on-arvo:def wire sign-arvo)
+    [~ this]
+  ::
+  ++  on-leave  on-leave:def
+  ++  on-peek   on-peek:def
+  ++  on-fail   on-fail:def
+  --
 ::
+|_  bol=bowl:gall
 ++  poke-json
   |=  jon=json
-  ^-  (quip move _this)
+  ^-  (list card)
   ?>  (team:title our.bol src.bol)
   (poke-contact-view-action (json-to-view-action jon))
 ::
 ++  poke-contact-view-action
   |=  act=contact-view-action
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  :_  this
+  ^-  (list card)
   ?-  -.act
       %create
     :~  (group-poke [%bundle path.act])
@@ -106,95 +141,41 @@
         (contact-poke [%remove path.act ship.act])
     ==
   ==
-::
-++  peer-primary
-  |=  pax=path
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  ::  create inbox with 100 messages max per mailbox and send that along
-  ::  then quit the subscription
-  :_  this
-  [ost.bol %diff %json (rolodex-to-json all-scry)]~
-::
-++  diff-contact-update
-  |=  [wir=wire upd=contact-update]
-  ^-  (quip move _this)
-  =/  updates-json  (update-to-json upd)
-  :_  this
-  %+  turn  (prey:pubsub:userlib /primary bol)
-  |=  [=bone *]
-  [bone %diff %json updates-json]
-::
-++  quit
-  |=  wir=wire
-  ^-  (quip move _this)
-  :_  this
-  [ost.bol %peer / [our.bol %contact-store] /updates]~
-::
 ++  poke-handle-http-request
-  %-  (require-authorization:app ost.bol move this)
   |=  =inbound-request:eyre
-  ^-  (quip move _this)
-  ::
+  ^-  simple-payload:http
   =+  url=(parse-request-line url.request.inbound-request)
   =/  name=@t
     =+  back-path=(flop site.url)
     ?~  back-path
       ''
     i.back-path
-  ?:  =(name 'tile')
-    [[ost.bol %http-response (js-response:app tile-js)]~ this]
-  ?+  site.url
-    :_  this
-    [ost.bol %http-response not-found:app]~
-  ::
-  ::  styling
-  ::
-      [%'~contacts' %css %index ~]
-    :_  this
-    [ost.bol %http-response (css-response:app style)]~
-  ::
-  ::  javascript
-  ::
-      [%'~contacts' %js %index ~]
-    :_  this
-    [ost.bol %http-response (js-response:app script)]~
-  ::
-  ::  images
-  ::
+  ?+  site.url  not-found:gen
+      [%'~contacts' %css %index ~]  (css-response:gen style)
+      [%'~contacts' %js %index ~]   (js-response:gen script)
+      [%'~contacts' %js %tile ~]    (js-response:gen tile-js)
       [%'~contacts' %img *]
-    =/  img  (as-octs:mimes:html (~(got by contact-png) `@ta`name))
-    :_  this
-    [ost.bol %http-response (png-response:app img)]~
+    (png-response:gen (as-octs:mimes:html (~(got by contact-png) `@ta`name)))
   ::
-  ::  main page
-  ::
-     [%'~contacts' *]
-    :_  this
-    [ost.bol %http-response (html-response:app index)]~
+      [%'~contacts' *]  (html-response:gen index)
   ==
-::
-++  bound
-  |=  [wir=wire success=? binding=binding:eyre]
-  ^-  (quip move _this)
-  [~ this]
 ::
 ::  +utilities
 ::
 ++  contact-poke
   |=  act=contact-action
-  ^-  move
-  [ost.bol %poke / [our.bol %contact-store] [%contact-action act]]
+  ^-  card
+   [%pass / %agent [our.bol %contact-store] %poke %contact-action !>(act)]
 ::
 ++  launch-poke
-  |=  [pax=path =cord]
-  ^-  move
-  [ost.bol %poke / [our.bol %launch] [%launch-action [%contact-view pax cord]]]
+  |=  act=[@tas path @t]
+  ^-  card
+   [%pass / %agent [our.bol %launch] %poke %launch-action !>(act)]
 ::
 ++  group-poke
   |=  act=group-action
-  ^-  move
-  [ost.bol %poke / [our.bol %group-store] [%group-action act]]
+  ^-  card
+  [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
 ::
 ++  all-scry
   ^-  rolodex
