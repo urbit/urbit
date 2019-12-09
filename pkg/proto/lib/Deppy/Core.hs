@@ -24,6 +24,7 @@ data Exp a
   | App (Exp a) (Exp a)
   | Hed (Exp a)
   | Tal (Exp a)
+  | Cas (Typ a) (Exp a) (Map Tag (Exp a))
   deriving (Functor, Foldable, Traversable)
 
 type Tag = Natural
@@ -73,6 +74,7 @@ instance Monad Exp where
   App x y >>= f = App (x >>= f) (y >>= f)
   Hed x >>= f = Hed (x >>= f)
   Tal x >>= f = Tal (x >>= f)
+  Cas t x cs >>= f = Cas (t >>= f) (x >>= f) (cs <&> (>>= f))
 
 bindAbs :: Abs a -> (a -> Exp b) -> Abs b
 bindAbs (Abs s b) f = Abs (s >>= f) (b >>>= f)
@@ -136,12 +138,15 @@ nest env t@Hed{} u = nest env (whnf t) u
 nest env t u@Hed{} = nest env t (whnf u)
 nest env t@Tal{} u = nest env (whnf t) u
 nest env t u@Tal{} = nest env t (whnf u)
+-- TODO meet and join bro
+nest env (Cas t _ _) u = nest env t u
+nest env t (Cas u _ _) = nest env t u
 nest _ _ _ = False
 
 check :: Eq a => Env a -> Exp a -> Typ a -> Typing ()
 check env e t = do
   t' <- infer env e
-  guard (nest env t t')
+  guard (nest env t' t)
 
 infer :: forall a. Eq a => Env a -> Exp a -> Typing (Typ a)
 infer env = \case
@@ -167,16 +172,23 @@ infer env = \case
     u <- infer env y
     pure $ Cel (Abs t (abstract (const Nothing) u))
   Tag t -> pure $ Wut (singleton t)
+  App x y -> do
+    Fun (Abs t b) <- infer env x
+    check env y t
+    pure $ whnf (instantiate1 y b)
   Hed x -> do
     Cel (Abs t _) <- infer env x
     pure t
   Tal x -> do
     Cel (Abs _ u) <- infer env x
     pure $ instantiate1 (whnf $ Hed $ x) u
-  App x y -> do
-    Fun (Abs t b) <- infer env x
-    check env y t
-    pure $ whnf (instantiate1 y b)
+  Cas t x cs -> do
+    Typ <- infer env t
+    Wut ts <- infer env x
+    -- pretty restrictive - do we want?
+    guard (ts == keysSet cs)
+    traverse_ (\e -> check env e t) cs
+    pure t
 
 whnf :: Eq a => Exp a -> Exp a
 whnf = \case
