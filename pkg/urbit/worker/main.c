@@ -24,6 +24,8 @@
 #include "all.h"
 #include <vere/vere.h>
 
+#define ZUSE 309
+
     typedef struct _u3_worker {
       c3_w    len_w;                        //  boot sequence length
       u3_noun roe;                          //  lifecycle formulas
@@ -120,6 +122,41 @@ void _worker_space(FILE* fil_u,  c3_w n)
 {
   for (; n > 0; n--)
     (fprintf(fil_u," "));
+}
+
+/* _worker_read_zuse(): read +zuse via +wish.
+*/
+static u3_noun
+_worker_read_zuse(u3_noun non)
+{
+  return u3v_wish("zuse");
+}
+
+/* _worker_check_zuse(): check arvo compatibility.
+*/
+void
+_worker_check_zuse(void)
+{
+  u3_noun pro = u3m_soft(0, _worker_read_zuse, c3y);
+
+  if ( u3_blip != u3h(pro) ) {
+    fprintf(stderr, "fatal error: +zuse not present\n");
+    exit(1);
+  }
+  else {
+    u3_noun ver = u3k(u3t(pro));
+
+    if ( ver != ZUSE ) {
+      fprintf(stderr,
+              "work: zuse incompatible (have %u, need %u)\r\n",
+              ver,
+              ZUSE
+             );
+      exit(1);
+    }
+  }
+
+  u3z(pro);
 }
 
 /* _worker_print_memory(): print memory amount.
@@ -735,6 +772,8 @@ _worker_work_boot(c3_d evt_d, u3_noun job)
     u3V.mug_l  = u3r_mug(u3A->roc);
     u3A->ent_d = u3V.dun_d;
 
+    _worker_check_zuse();
+
     u3l_log("work: (%" PRIu64 ")| core: %x\r\n", evt_d, u3V.mug_l);
   }
   else {
@@ -972,6 +1011,8 @@ u3_worker_boot(void)
   if ( 0 != u3V.dun_d ) {
     u3V.mug_l = u3r_mug(u3A->roc);
     nex_d    += u3V.dun_d;
+
+    _worker_check_zuse();
   }
   else {
     u3V.mug_l = 0;
