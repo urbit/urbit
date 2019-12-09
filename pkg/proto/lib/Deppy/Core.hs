@@ -4,7 +4,9 @@ import ClassyPrelude
 
 import Bound
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
+import Data.Maybe (fromJust)
 import Data.Set (isSubsetOf)
+import qualified Data.Set as Set
 import Numeric.Natural
 
 type Typ = Exp
@@ -25,6 +27,8 @@ data Exp a
   | Hed (Exp a)
   | Tal (Exp a)
   | Cas (Typ a) (Exp a) (Map Tag (Exp a))
+  -- recursion
+  | Rec (Abs a)
   deriving (Functor, Foldable, Traversable)
 
 type Tag = Natural
@@ -75,6 +79,7 @@ instance Monad Exp where
   Hed x >>= f = Hed (x >>= f)
   Tal x >>= f = Tal (x >>= f)
   Cas t x cs >>= f = Cas (t >>= f) (x >>= f) (cs <&> (>>= f))
+  Rec a >>= f = Rec (bindAbs a f)
 
 bindAbs :: Abs a -> (a -> Exp b) -> Abs b
 bindAbs (Abs s b) f = Abs (s >>= f) (b >>>= f)
@@ -97,6 +102,7 @@ cel_ t u = Cel (Abs t (abstract (const Nothing) u))
 infixl 9 @:
 (@:) = App
 
+-- typing environment
 type Env a = a -> Typ a
 
 extend :: (b -> Typ a) -> Env a -> Env (Var b a)
@@ -108,47 +114,55 @@ extend handleNewBindings oldEnv = \case
 extend1 :: Typ a -> Env a -> Env (Var () a)
 extend1 t = extend \() -> t
 
+-- amber rule assumptions
+type Asm a = Set (Typ a, Typ a)
+
+extendAsm :: (Ord a, Ord b) => Asm a -> Asm (Var b a)
+extendAsm = Set.map \(t, u) -> (F <$> t, F <$> u)
+
 type Typing = Maybe
 
 -- TODO maybe this should be Typing () for error reporting?
 -- think about env vs instantiate for bindings; if instantiate
 -- as below, should the types be different?
 -- better organize
-nest :: Eq a => Env a -> Typ a -> Typ a -> Bool
-nest _ Typ Typ = True
-nest _ (Var v) (Var v') = v == v'  -- TODO amber for Rec
-nest env (Var v) u = nest env (env v) u
-nest env t (Var v) = nest env t (env v)
+nest :: Ord a => Env a -> Asm a -> Typ a -> Typ a -> Bool
+nest _ _ Typ Typ = True
+nest _ _ (Var v) (Var v') = v == v'  -- TODO amber for Rec
+nest env asm (Var v) u = nest env asm (env v) u
+nest env asm t (Var v) = nest env asm t (env v)
 -- following Cardelli 80something, we check the RHSs assuming
 -- the putatively *lesser* of the LHSs for both
-nest env (Fun (Abs a b)) (Fun (Abs a' b')) =
-  nest env a' a && nest (extend1 a' env) (fromScope b) (fromScope b')
-nest env (Cel (Abs a b)) (Cel (Abs a' b')) =
-  nest env a a' && nest (extend1 a env) (fromScope b) (fromScope b')
-nest env (Wut ls) (Wut ls') = ls `isSubsetOf` ls'
-nest _ Lam{} _ = error "nest: lambda"
-nest _ _ Lam{} = error "nest: lambda"
-nest _ Cns{} _ = error "nest: cons"
-nest _ _ Cns{} = error "nest: cons"
-nest _ Tag{} _ = error "nest: tag"
-nest _ _ Tag{} = error "nest: tag"
-nest env t@App{} u = nest env (whnf t) u
-nest env t u@App{} = nest env t (whnf u)
-nest env t@Hed{} u = nest env (whnf t) u
-nest env t u@Hed{} = nest env t (whnf u)
-nest env t@Tal{} u = nest env (whnf t) u
-nest env t u@Tal{} = nest env t (whnf u)
+nest env asm (Fun (Abs a b)) (Fun (Abs a' b')) =
+  nest env asm a' a && nest (extend1 a' env) (extendAsm asm) (fromScope b) (fromScope b')
+nest env asm (Cel (Abs a b)) (Cel (Abs a' b')) =
+  nest env asm a a' && nest (extend1 a env) (extendAsm asm) (fromScope b) (fromScope b')
+nest env asm (Wut ls) (Wut ls') = ls `isSubsetOf` ls'
+nest _ _ Lam{} _ = error "nest: lambda"
+nest _ _ _ Lam{} = error "nest: lambda"
+nest _ _ Cns{} _ = error "nest: cons"
+nest _ _ _ Cns{} = error "nest: cons"
+nest _ _ Tag{} _ = error "nest: tag"
+nest _ _ _ Tag{} = error "nest: tag"
+nest env asm t@App{} u = nest env asm (whnf t) u
+nest env asm t u@App{} = nest env asm t (whnf u)
+nest env asm t@Hed{} u = nest env asm (whnf t) u
+nest env asm t u@Hed{} = nest env asm t (whnf u)
+nest env asm t@Tal{} u = nest env asm (whnf t) u
+nest env asm t u@Tal{} = nest env asm t (whnf u)
 -- TODO meet and join bro
-nest env (Cas t _ _) u = nest env t u
-nest env t (Cas u _ _) = nest env t u
-nest _ _ _ = False
+nest env asm (Cas t _ _) u = nest env asm t u
+nest env asm t (Cas u _ _) = nest env asm t u
+nest _ _ Rec{} _ = undefined
+nest _ _ _ Rec{} = undefined
+nest _ _ _ _ = False
 
-check :: Eq a => Env a -> Exp a -> Typ a -> Typing ()
+check :: Ord a => Env a -> Exp a -> Typ a -> Typing ()
 check env e t = do
   t' <- infer env e
-  guard (nest env t' t)
+  guard (nest env mempty t' t)
 
-infer :: forall a. Eq a => Env a -> Exp a -> Typing (Typ a)
+infer :: forall a. Ord a => Env a -> Exp a -> Typing (Typ a)
 infer env = \case
   Var v -> pure $ env v
   Typ -> pure Typ
@@ -189,10 +203,16 @@ infer env = \case
     guard (ts == keysSet cs)
     traverse_ (\e -> check env e t) cs
     pure t
+  Rec (Abs t b) -> do
+    Typ <- infer env t
+    -- todo can F <$> be made faster?
+    check (extend1 t env) (fromScope b) (F <$> t)
+    pure t
 
 whnf :: Eq a => Exp a -> Exp a
 whnf = \case
-  App (whnf -> Lam (Abs _ b)) x -> instantiate1 x b
-  Hed (whnf -> Cns x _) -> x
-  Tal (whnf -> Cns _ y) -> y
+  App (whnf -> Lam (Abs _ b)) x -> whnf $ instantiate1 x b
+  Hed (whnf -> Cns x _) -> whnf x
+  Tal (whnf -> Cns _ y) -> whnf y
+  Cas _ (whnf -> Tag t) cs -> whnf $ fromJust $ lookup t cs
   e -> e
