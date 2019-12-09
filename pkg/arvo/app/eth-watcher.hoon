@@ -8,7 +8,7 @@
 =>  |%
     +$  card  card:agent:gall
     +$  app-state
-      $:  %2
+      $:  %3
           dogs=(map path watchdog)
       ==
     ::
@@ -92,17 +92,52 @@
     %-  (slog leaf+"upgrading eth-watcher from %1" ~)
     :_  old-state(- %2)
     %+  turn  ~(tap by dogs.old-state)
-    |=  [=path dog=watchdog]
+    |=  [=path dog=watchdog-1]
     (wait-shortcut path now.bowl)
   ::
-  [cards-1 this(state ?>(?=(%2 -.old-state) old-state))]
+  =?  old-state  ?=(%2 -.old-state)
+    %-  (slog leaf+"upgrading eth-watcher from %2" ~)
+    ^-  app-state
+    %=    old-state
+        -  %3
+        dogs
+      %-  ~(run by dogs.old-state)
+      |=  dog=watchdog-1
+      %=  dog
+        ->  [| ->.dog]
+      ==
+    ==
+  ::
+  [cards-1 this(state ?>(?=(%3 -.old-state) old-state))]
   ::
   +$  app-states
-    $%(app-state-0 app-state-1 app-state)
+    $%(app-state-0 app-state-1 app-state-2 app-state)
+  ::
+  +$  app-state-2
+    $:  %2
+        dogs=(map path watchdog-1)
+    ==
   ::
   +$  app-state-1
     $:  %1
-        dogs=(map path watchdog)
+        dogs=(map path watchdog-1)
+    ==
+  ::
+  +$  watchdog-1
+    $:  config-1
+        running=(unit =tid:spider)
+        =number:block
+        =pending-logs
+        =history
+        blocks=(list block)
+    ==
+  ::
+  +$  config-1
+    $:  url=@ta
+        refresh-rate=@dr
+        from=number:block
+        contracts=(list address:ethereum)
+        =topics
     ==
   ::
   +$  app-state-0
@@ -218,6 +253,9 @@
   ::
       [%x %dogs ~]
     ``noun+!>(~(key by dogs.state))
+  ::
+      [%x %dogs %configs ~]
+    ``noun+!>((~(run by dogs.state) |=(=watchdog -.watchdog)))
   ==
 ::
 ++  on-agent
