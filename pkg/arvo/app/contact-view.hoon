@@ -2,7 +2,7 @@
 ::  into semantic actions for the UI
 ::
 /-  *group-store
-/+  *server, *contact-json
+/+  *server, *contact-json, base64
 /=  index
   /^  octs
   /;  as-octs:mimes:html
@@ -171,23 +171,26 @@
   ::
       [%'~contacts' %avatar @ *]
     =/  pax=path  `path`t.t.site.url 
-    ~&  pax+pax
     ?~  pax  [[ost.bol %http-response not-found:app]~ this]
     =/  pas  `path`(flop pax)
-    ~&  pas+pas
     ?~  pas  [[ost.bol %http-response not-found:app]~ this]
     =/  pav  `path`(flop t.pas)
     ~&  pav+pav
+    ~&  name+name
     =/  contact  (contact-scry `path`(weld pav [name]~))
     ?~  contact  [[ost.bol %http-response not-found:app]~ this]
     ?~  avatar.u.contact  [[ost.bol %http-response not-found:app]~ this]
     =*  avatar  u.avatar.u.contact
     =*  content-type  content-type.avatar
     =*  octs  octs.avatar
+    ~&  type+content-type
     :_  this
     :~  :*  ost.bol
             %http-response
-            [%start [200 ['content-type' content-type]~] [~ octs] %.y]
+            :^  %start
+            [200 ['content-type' content-type]~]
+            [~ (need (de:base64 q.octs))]
+            %.y
     ==  ==
   ::
   ::  main page
@@ -196,6 +199,7 @@
     :_  this
     [ost.bol %http-response (html-response:app index)]~
   ==
+::
 ::
 ++  bound
   |=  [wir=wire success=? binding=binding:eyre]

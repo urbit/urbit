@@ -854,6 +854,14 @@
   ?~  b  0
   (add (lsh a c (end a 1 i.b)) $(c +(c), b t.b))
 ::
+++  repn
+  ~/  %repn
+  |=  [bits=@ud x=(list @)]
+  =|  c=@ud
+  |-  ^-  @
+  ?~  x  0
+  (add (lsh 0 (mul bits c) (end 0 bits i.x)) $(c +(c), x t.x))
+::
 ++  rev
   ::  reverses block order, accounting for leading zeroes
   ::
