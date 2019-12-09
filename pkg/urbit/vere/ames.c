@@ -408,30 +408,21 @@ static void
 _ames_io_start(u3_pier* pir_u)
 {
   u3_ames* sam_u = pir_u->sam_u;
-  c3_s por_s     = pir_u->por_s;
-  u3_noun who    = u3i_chubs(2, pir_u->who_d);
-  u3_noun rac    = u3do("clan:title", u3k(who));
+  c3_s     por_s = pir_u->por_s;
+  u3_noun    who = u3i_chubs(2, pir_u->who_d);
+  u3_noun    rac = u3do("clan:title", u3k(who));
 
   if ( c3__czar == rac ) {
-    u3_noun imp = u3dc("scot", 'p', u3k(who));
-    c3_c* imp_c = u3r_string(imp);
-    c3_y  num_y = (c3_y)pir_u->who_d[0];
+    c3_y num_y = (c3_y)pir_u->who_d[0];
+    c3_s zar_s = _ames_czar_port(num_y);
 
-    if ( 0 != por_s ) {
-      u3l_log("ames: czar: -p %d ignored\n", por_s);
+    if ( 0 == por_s ) {
+      por_s = zar_s;
     }
-
-    por_s = _ames_czar_port(num_y);
-
-    if ( c3y == u3_Host.ops_u.net ) {
-      u3l_log("ames: czar: %s live on %d\n", imp_c, por_s);
+    else if ( por_s != zar_s ) {
+      u3l_log("ames: czar: overriding port %d with -p %d\n", zar_s, por_s);
+      u3l_log("ames: czar: WARNING: %d required for discoverability\n", zar_s);
     }
-    else {
-      u3l_log("ames: czar: %s live on %d (localhost only)\n", imp_c, por_s);
-    }
-
-    u3z(imp);
-    free(imp_c);
   }
 
   int ret;
