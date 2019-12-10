@@ -1,11 +1,5 @@
 /+  *test
 |%
-++  repn
-  |=  [bits=@ud x=(list @)]
-  =|  c=@ud
-  |-  ^-  @
-  ?~  x  0
-  (add (lsh 0 (mul bits c) (end 0 bits i.x)) $(c +(c), x t.x))
 ++  test-bits
   ;:  weld
     ::
