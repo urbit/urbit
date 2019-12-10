@@ -55,6 +55,8 @@ u3_noun u3wc_repn(u3_noun cor) {
 
   u3l_log("WE'RE ALL GOING TO DIE\n");
 
+  return 0;
+
   if ( (c3n == u3r_mean(cor, u3x_sam_2, &bits, u3x_sam_3, &atom, 0)) ||
        (c3n == u3ud(bits)) ||
        (c3n == u3ud(atom)) )
