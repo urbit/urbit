@@ -31,8 +31,6 @@
 #include "all.h"
 #include "vere/vere.h"
 
-#undef NEWT_VERBOSE
-
 /* _newt_gain_meat(): add a block to an existing message
 */
 static void
@@ -46,17 +44,6 @@ _newt_gain_meat(u3_moat* mot_u)
   met_u->nex_u = 0;
   met_u->len_d = mot_u->len_d;
   memcpy(met_u->hun_y, mot_u->rag_y, mot_u->len_d);
-
-#ifdef NEWT_VERBOSE
-  u3l_log("newt: %d: create: msg %p, new block %p, len %"
-          PRIu64 ", has %" PRIu64 ", needs %" PRIu64 "\r\n",
-          getpid(),
-          mot_u->mes_u,
-          met_u,
-          met_u->len_d,
-          mot_u->mes_u->has_d,
-          mot_u->mes_u->len_d);
-#endif
 
   //  enqueue block
   //
@@ -104,12 +91,6 @@ _newt_gain_mess(u3_moat* mot_u)
             getpid(),
             nel_d);
   }
-
-#ifdef NEWT_VERBOSE
-  u3l_log("newt: %d: parsed length %" PRIu64 "\r\n",
-          getpid(),
-          nel_d);
-#endif
 
   mot_u->len_d -= 8ULL;
 
@@ -202,11 +183,29 @@ _newt_poke_mess(u3_moat* mot_u)
   }
 }
 
-/* _newt_consume(): advance buffer processing.
+/* u3_newt_decode(): decode a (partial) length-prefixed byte buffer
 */
-static void
-_newt_consume(u3_moat* mot_u)
+void
+u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_w len_w)
 {
+  //  grow read buffer by `len_d` bytes
+  //
+  if ( mot_u->rag_y ) {
+    //  XX check SIZE_MAX?
+    //
+    c3_d nel_d = mot_u->len_d + len_w;
+
+    mot_u->rag_y = c3_realloc(mot_u->rag_y, nel_d);
+    memcpy(mot_u->rag_y + mot_u->len_d, buf_y, len_w);
+
+    mot_u->len_d = nel_d;
+    c3_free(buf_y);
+  }
+  else {
+    mot_u->rag_y = buf_y;
+    mot_u->len_d = (c3_d)len_w;
+  }
+
   //  process stray bytes, trying to create a new message
   //  or add a block to an existing one.
   //
@@ -218,6 +217,9 @@ _newt_consume(u3_moat* mot_u)
       //
       if ( 8ULL <= mot_u->len_d ) {
         _newt_gain_mess(mot_u);
+      }
+      else {
+        break;
       }
     }
     else {
@@ -256,6 +258,7 @@ _newt_read_cb(uv_stream_t*    str_u,
   u3_moat* mot_u = (void *)str_u;
 
   if ( 0 > len_i ) {
+    c3_free(buf_u->base);
     uv_read_stop(str_u);
     mot_u->bal_f(mot_u->vod_p, uv_strerror(len_i));
   }
@@ -265,37 +268,7 @@ _newt_read_cb(uv_stream_t*    str_u,
     c3_free(buf_u->base);
   }
   else {
-    c3_d len_d = (c3_d)len_i;
-
-#ifdef NEWT_VERBOSE
-    u3l_log("newt: %d: read %ld\r\n", getpid(), len_i);
-
-    u3l_log("newt: %d: <bytes>", getpid());
-    for ( int i = 0; i < len_i; i++) {
-      if (0 == (i % 16)) u3l_log("\r\n");
-      u3l_log("  %02x", (unsigned) buf_u->base[i]);
-    }
-
-    u3l_log("\r\nnewt: %d: </bytes>\r\n", getpid());
-#endif
-
-    //  grow read buffer by `len_d` bytes
-    //
-    if ( mot_u->rag_y ) {
-      c3_d nel_d = mot_u->len_d + len_d;
-
-      mot_u->rag_y = c3_realloc(mot_u->rag_y, nel_d);
-      memcpy(mot_u->rag_y + mot_u->len_d, buf_u->base, len_d);
-
-      mot_u->len_d = nel_d;
-      c3_free(buf_u->base);
-    }
-    else {
-      mot_u->rag_y = (c3_y *)buf_u->base;
-      mot_u->len_d = len_d;
-    }
-
-    _newt_consume(mot_u);
+    u3_newt_decode(mot_u, (c3_y*)buf_u->base, (c3_w)len_i);
   }
 }
 
@@ -319,23 +292,23 @@ u3_newt_read(u3_moat* mot_u)
   }
 }
 
-/* write request for newt
+/* u3_write_t: write request for newt
 */
-  struct _u3_write_t {
-    uv_write_t wri_u;
-    u3_mojo*   moj_u;
-    void*      vod_p;
-    c3_y*      buf_y;
-  };
+typedef struct _u3_write_t {
+  uv_write_t wri_u;
+  u3_mojo*   moj_u;
+  void*      vod_p;
+  c3_y*      buf_y;
+} u3_write_t;
 
 /* _newt_write_cb(): generic write callback.
 */
 static void
 _newt_write_cb(uv_write_t* wri_u, c3_i sas_i)
 {
-  struct _u3_write_t* req_u = (struct _u3_write_t*)wri_u;
-  void*               vod_p = req_u->vod_p;
-  u3_mojo*            moj_u = req_u->moj_u;
+  u3_write_t* req_u = (struct _u3_write_t*)wri_u;
+  void*       vod_p = req_u->vod_p;
+  u3_mojo*    moj_u = req_u->moj_u;
 
   free(req_u->buf_y);
   free(req_u);
@@ -346,6 +319,31 @@ _newt_write_cb(uv_write_t* wri_u, c3_i sas_i)
   }
 }
 
+/* u3_newt_encode(): encode an atom to a length-prefixed byte buffer
+*/
+c3_y*
+u3_newt_encode(u3_atom mat, c3_w* len_w)
+{
+  c3_w  met_w = u3r_met(3, mat);
+  c3_y* buf_y;
+
+  *len_w = 8 + met_w;
+  buf_y  = c3_malloc(*len_w);
+
+  //  write header; c3_d is futureproofing
+  //
+  buf_y[0] = ((met_w >> 0) & 0xff);
+  buf_y[1] = ((met_w >> 8) & 0xff);
+  buf_y[2] = ((met_w >> 16) & 0xff);
+  buf_y[3] = ((met_w >> 24) & 0xff);
+  buf_y[4] = buf_y[5] = buf_y[6] = buf_y[7] = 0;
+
+  u3r_bytes(0, met_w, buf_y + 8, mat);
+  u3z(mat);
+
+  return buf_y;
+}
+
 /* u3_newt_write(): write atom to stream; free atom.
 */
 void
@@ -353,44 +351,19 @@ u3_newt_write(u3_mojo* moj_u,
               u3_atom  mat,
               void*    vod_p)
 {
-  c3_w                len_w = u3r_met(3, mat);
-  c3_y*               buf_y = c3_malloc(len_w + 8);
-  struct _u3_write_t* req_u = c3_malloc(sizeof(*req_u));
-  uv_buf_t            buf_u;
-  c3_i                err_i;
-
-  /* write header; c3_d is futureproofing
-  */
-  buf_y[0] = ((len_w >> 0) & 0xff);
-  buf_y[1] = ((len_w >> 8) & 0xff);
-  buf_y[2] = ((len_w >> 16) & 0xff);
-  buf_y[3] = ((len_w >> 24) & 0xff);
-  buf_y[4] = buf_y[5] = buf_y[6] = buf_y[7] = 0;
-  u3r_bytes(0, len_w, buf_y + 8, mat);
-  u3z(mat);
+  u3_write_t* req_u = c3_malloc(sizeof(*req_u));
+  c3_w        len_w;
+  c3_y*       buf_y = u3_newt_encode(mat, &len_w);
+  uv_buf_t    buf_u;
+  c3_i        err_i;
 
   req_u->moj_u = moj_u;
   req_u->buf_y = buf_y;
-  buf_u.base = (c3_c*) buf_y;
-  buf_u.len = len_w + 8;
-
-#ifdef NEWT_VERBOSE
-  u3l_log("newt: %d: write %d\n", getpid(), len_w + 8);
-#endif
-
-#ifdef NEWT_VERBOSE
-    u3l_log("newt: %d: <bytes>", getpid());
-  for ( int i = 0; i < len_w+8; i++) {
-    if (0 == (i % 16)) u3l_log("\r\n");
-    u3l_log("  %02x", (unsigned) buf_u.base[i]);
-  }
-  u3l_log("\r\nnewt: %d: </bytes>\r\n", getpid());
-#endif
+  buf_u = uv_buf_init((c3_c*)buf_y, len_w);
 
   if ( 0 != (err_i = uv_write((uv_write_t*)req_u,
                               (uv_stream_t*)&moj_u->pyp_u,
-                              &buf_u,
-                              1,
+                              &buf_u, 1,
                               _newt_write_cb)) )
   {
     moj_u->bal_f(moj_u, uv_strerror(err_i));
