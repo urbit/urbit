@@ -54,7 +54,7 @@
 ++  state
   $:  :: state version
       ::
-      %1
+      %2
       :: agents by ship
       ::
       =agents
@@ -75,6 +75,9 @@
   $:  ::  system duct
       ::
       system-duct=duct
+      ::  outstanding request queue
+      ::
+      outstanding=(map [wire duct] (qeu remote-request))
       ::  foreign contacts
       ::
       contacts=(set ship)
@@ -351,24 +354,26 @@
     ^+  mo-core
     ::
     =.  mo-core  (mo-track-ship ship)
+    ?<  ?=(?(%raw-poke %poke-as) -.deal)
     =/  =ames-request
       ?-  -.deal
         %poke      [%m p.cage.deal q.q.cage.deal]
         %leave     [%u ~]
-        %raw-poke  !!
-        %poke-as   !!
         %watch-as  [%l deal]
         %watch     [%s path.deal]
       ==
     ::
     =/  wire
-      =/  action  -.deal
-      /sys/way/(scot %p ship)/[foreign-agent]/[action]
+      /sys/way/(scot %p ship)/[foreign-agent]
     ::
     =/  =note-arvo
       =/  =path  /ge/[foreign-agent]
       [%a %plea ship %g path ames-request]
     ::
+    =.  outstanding.agents.state
+      =/  stand
+        (~(gut by outstanding.agents.state) [wire hen] *(qeu remote-request))
+      (~(put by outstanding.agents.state) [wire hen] (~(put to stand) -.deal))
     (mo-pass wire note-arvo)
   ::  +mo-track-ship: subscribe to ames and jael for notices about .ship
   ::
@@ -596,16 +601,27 @@
   ::  +mo-handle-sys-way: handle response to outgoing remote request
   ::
   ++  mo-handle-sys-way
-    |=  [=path =sign-arvo]
+    |=  [=wire =sign-arvo]
     ^+  mo-core
-    ::
-    ?>  ?=([%way @ @ @ ~] path)
-    =/  =ship           (slav %p i.t.path)
-    =/  foreign-agent   i.t.t.path
-    =/  remote-request  (remote-request i.t.t.t.path)
+    ?>  ?=([%way @ @ $@(~ [@ ~])] wire)
+    =/  =ship           (slav %p i.t.wire)
+    =/  foreign-agent   i.t.t.wire
     ::
     ?+    sign-arvo  !!
         [%a %done *]
+      =^  remote-request  outstanding.agents.state
+        ?~  t.t.t.wire
+          =/  stand
+            %+  ~(gut by outstanding.agents.state)  [sys+wire hen]
+            *(qeu remote-request)
+          ~|  [sys+wire=wire hen=hen stand=stand outs=outstanding.agents.state]
+          =^  rr  stand  ~(get to stand)
+          [rr (~(put by outstanding.agents.state) [wire hen] stand)]
+        ::  non-null case of wire is old, remove on next breach after
+        ::  2019/12
+        ::
+        [;;(remote-request i.t.t.t.wire) outstanding.agents.state]
+      ::
       =/  err=(unit tang)
         ?~  error=error.sign-arvo
           ~
@@ -619,11 +635,18 @@
       ==
     ::
         [%a %boon *]
+      ?^  t.t.t.wire
+        ::  kill subscriptions which use the old wire format
+        ::
+        !!
       =/  =ames-response  ;;(ames-response payload.sign-arvo)
       (mo-handle-ames-response ames-response)
     ::
         [%a %lost *]
-      =/  sys-wire  [%sys path]
+      ::  note this should only happen on reverse bones, so only facts
+      ::  and kicks
+      ::
+      =/  sys-wire  [%sys wire]
       ::  TODO: %drip %kick so app crash can't kill the remote %pull
       ::
       =.  mo-core  (mo-pass sys-wire %a %plea ship %g /ge/[foreign-agent] %u ~)
@@ -917,13 +940,16 @@
         =/  =duct  system-duct.agents.state
         =/  =wire  p.card
         =/  =neat:agent  q.card
-        =?  wire  ?=(%agent -.neat)
-          [%out (scot %p ship.neat) name.neat wire]
         =.  wire
-          ::  Is it bad that this includes attributing ship?  May create
-          ::  spurious duct mismatches
-          ::
-          [%use agent-name (scot %p attributing.agent-routes) wire]
+          ?:  ?=(%agent -.neat)
+            ::  remove `our` in next breach after 2019/12 and reflect in
+            ::  +mo-handle-use (non-unto case)
+            ::
+            :-  (scot %p our)
+            [%out (scot %p ship.neat) name.neat wire]
+          [(scot %p attributing.agent-routes) wire]
+        =.  wire
+          [%use agent-name wire]
         =/  =note-arvo
           ?-    -.neat
               %arvo  note-arvo.neat
@@ -1533,19 +1559,42 @@
   =?  all-state  ?=(%0 -.all-state)
     (state-0-to-1 all-state)
   ::
-  ?>  ?=(%1 -.all-state)
+  =?  all-state  ?=(%1 -.all-state)
+    (state-1-to-2 all-state)
+  ::
+  ?>  ?=(%2 -.all-state)
   gall-payload(state all-state)
   ::
   ::  +all-state: upgrade path
   ::
-  ++  all-state  $%(state-0 ^state)
+  ++  all-state  $%(state-0 state-1 ^state)
   ::
   ::  Note that if you change sign-arvo, you must ensure that spider
   ::  gets reloaded.
   ::
+  ++  state-1-to-2
+    |=  =state-1
+    ^-  ^state
+    %=    state-1
+        -           %2
+        +.agents-1  [~ +.agents-1.state-1]
+    ==
+  ::
+  ++  state-1
+    $:  %1
+        =agents-1
+    ==
+  ::
+  ++  agents-1
+    $:  system-duct=duct
+        contacts=(set ship)
+        running=(map term running-agent)
+        blocked=(map term blocked)
+    ==
+  ::
   ++  state-0-to-1
     |=  =state-0
-    ^-  ^state
+    ^-  state-1
     %=    state-0
         -  %1
         running.agents-0
