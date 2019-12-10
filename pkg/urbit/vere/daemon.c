@@ -600,7 +600,7 @@ _boothack_key(u3_noun kef)
     if ( u3_nul == des ) {
       c3_c* kef_c = u3r_string(kef);
       u3l_log("dawn: invalid private keys: %s\r\n", kef_c);
-      free(kef_c);
+      c3_free(kef_c);
       exit(1);
     }
 
@@ -631,7 +631,7 @@ _boothack_key(u3_noun kef)
               u3_Host.ops_u.who_c, how_c);
 
       u3z(how);
-      free(how_c);
+      c3_free(how_c);
       exit(1);
     }
 
@@ -973,7 +973,7 @@ u3_daemon_grab(void* vod_p)
     fil_u = fopen(man_c, "w");
     fprintf(fil_u, "%s\r\n", wen_c);
 
-    free(wen_c);
+    c3_free(wen_c);
     u3z(wen);
   }
 #else
