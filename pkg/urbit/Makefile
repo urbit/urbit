@@ -31,11 +31,12 @@ CFLAGS := $(CFLAGS)
 
 all: $(all_exes)
 
-test: build/ames_tests build/hashtable_tests build/jam_tests build/mug_tests build/noun_tests
+test: build/ames_tests build/hashtable_tests build/jam_tests build/mug_tests build/newt_tests build/noun_tests
 	./build/ames_tests
 	./build/hashtable_tests
 	./build/jam_tests
 	./build/mug_tests
+	./build/newt_tests
 	./build/noun_tests
 
 clean:
@@ -62,6 +63,11 @@ build/jam_tests: $(common_objs) tests/jam_tests.o
 	@$(CC) $^ $(LDFLAGS) -o $@
 
 build/mug_tests: $(common_objs) tests/mug_tests.o
+	@echo CC -o $@
+	@mkdir -p ./build
+	@$(CC) $^ $(LDFLAGS) -o $@
+
+build/newt_tests: $(common_objs) tests/newt_tests.o
 	@echo CC -o $@
 	@mkdir -p ./build
 	@$(CC) $^ $(LDFLAGS) -o $@
