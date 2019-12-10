@@ -249,12 +249,12 @@ _ce_patch_read_control(u3_ce_patch* pat_u)
     len_w = (c3_w) buf_u.st_size;
   }
 
-  pat_u->con_u = malloc(len_w);
+  pat_u->con_u = c3_malloc(len_w);
   if ( (len_w != read(pat_u->ctl_i, pat_u->con_u, len_w)) ||
         (len_w != sizeof(u3e_control) +
                   (pat_u->con_u->pgs_w * sizeof(u3e_line))) )
   {
-    free(pat_u->con_u);
+    c3_free(pat_u->con_u);
     pat_u->con_u = 0;
     return c3n;
   }
@@ -347,10 +347,10 @@ _ce_patch_verify(u3_ce_patch* pat_u)
 static void
 _ce_patch_free(u3_ce_patch* pat_u)
 {
-  free(pat_u->con_u);
+  c3_free(pat_u->con_u);
   close(pat_u->ctl_i);
   close(pat_u->mem_i);
-  free(pat_u);
+  c3_free(pat_u);
 }
 
 /* _ce_patch_open(): open patch, if any.
@@ -380,7 +380,7 @@ _ce_patch_open(void)
     _ce_patch_delete();
     return 0;
   }
-  pat_u = malloc(sizeof(u3_ce_patch));
+  pat_u = c3_malloc(sizeof(u3_ce_patch));
   pat_u->ctl_i = ctl_i;
   pat_u->mem_i = mem_i;
   pat_u->con_u = 0;
@@ -388,7 +388,7 @@ _ce_patch_open(void)
   if ( c3n == _ce_patch_read_control(pat_u) ) {
     close(pat_u->ctl_i);
     close(pat_u->mem_i);
-    free(pat_u);
+    c3_free(pat_u);
 
     _ce_patch_delete();
     return 0;
@@ -566,11 +566,11 @@ _ce_patch_compose(void)
     return 0;
   }
   else {
-    u3_ce_patch* pat_u = malloc(sizeof(u3_ce_patch));
+    u3_ce_patch* pat_u = c3_malloc(sizeof(u3_ce_patch));
     c3_w i_w, pgc_w;
 
     _ce_patch_create(pat_u);
-    pat_u->con_u = malloc(sizeof(u3e_control) + (pgs_w * sizeof(u3e_line)));
+    pat_u->con_u = c3_malloc(sizeof(u3e_control) + (pgs_w * sizeof(u3e_line)));
     pgc_w = 0;
 
     for ( i_w = 0; i_w < nor_w; i_w++ ) {

@@ -803,7 +803,7 @@ _pier_work_stdr(u3_writ* wit_u, u3_noun cord)
 {
   c3_c* str = u3r_string(cord);
   u3C.stderr_log_f(str);
-  free(str);
+  c3_free(str);
 }
 
 /* _pier_work_slog(): print directly.
@@ -1341,7 +1341,7 @@ _pier_boot_dispose(u3_boot* bot_u)
 
   u3z(bot_u->pil);
   u3z(bot_u->ven);
-  free(bot_u);
+  c3_free(bot_u);
   pir_u->bot_u = 0;
 }
 

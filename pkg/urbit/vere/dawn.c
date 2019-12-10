@@ -205,7 +205,7 @@ _dawn_fail(u3_noun who, u3_noun rac, u3_noun sas)
   u3m_p("pre-boot error", u3t(sas));
 
   u3z(how);
-  free(how_c);
+  c3_free(how_c);
   exit(1);
 }
 
@@ -440,7 +440,7 @@ u3_dawn_vent(u3_noun seed)
       c3_c* who_c = u3r_string(who);
       u3l_log("boot: retrieving keys for sponsor %s\r\n", who_c);
       u3z(who);
-      free(who_c);
+      c3_free(who_c);
     }
 
     //  retrieve +point:azimuth of pos (sponsor of ship)
@@ -519,12 +519,12 @@ _dawn_come(u3_noun stars)
         fclose(fil_u);
       }
 
-      free(key_c);
+      c3_free(key_c);
       u3z(key);
     }
 #endif
 
-    free(who_c);
+    c3_free(who_c);
     u3z(who);
   }
 

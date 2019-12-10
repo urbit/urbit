@@ -1815,7 +1815,7 @@ _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_w eus_w, c3_w use_w)
   if ( box_u->cod_w ) {
     c3_c* cod_c = u3m_pretty(box_u->cod_w);
     fprintf(stderr, "code: %s\r\n", cod_c);
-    free(cod_c);
+    c3_free(cod_c);
   }
 
   u3a_print_memory(stderr, "    size", box_u->siz_w);
@@ -1823,7 +1823,7 @@ _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_w eus_w, c3_w use_w)
   {
     c3_c* dat_c = _ca_print_box(box_u);
     fprintf(stderr, "    data: %s\r\n", dat_c);
-    free(dat_c);
+    c3_free(dat_c);
   }
 }
 
@@ -1843,7 +1843,7 @@ _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_ws use_ws)
   {
     c3_c* dat_c = _ca_print_box(box_u);
     fprintf(stderr, "    data: %s\r\n", dat_c);
-    free(dat_c);
+    c3_free(dat_c);
   }
 }
 
