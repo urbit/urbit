@@ -257,7 +257,7 @@
 
     /* u3_poke: poke callback function.
     */
-      typedef void (*u3_poke)(void*, u3_noun);
+      typedef void (*u3_poke)(void*, u3_atom);
 
     /* u3_bail: bailout callback function.
     */
@@ -1172,6 +1172,16 @@
 
     /**  Stream messages.
     **/
+      /* u3_newt_encode(): encode an atom to a length-prefixed byte buffer
+      */
+        c3_y*
+        u3_newt_encode(u3_atom mat, c3_w* len_w);
+
+      /* u3_newt_decode(): decode a (partial) length-prefixed byte buffer
+      */
+        void
+        u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_w len_w);
+
       /* u3_newt_write(): write atom to stream; free atom.
       */
         void
