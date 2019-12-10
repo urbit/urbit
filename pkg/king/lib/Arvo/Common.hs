@@ -2,16 +2,14 @@ module Arvo.Common
   ( KingId(..), ServId(..)
   , Json, JsonNode(..)
   , Desk(..), Mime(..)
-  , Lane(..), Port(..), Turf(..)
+  , Port(..), Turf(..)
   , HttpServerConf(..), PEM(..), Key, Cert
   , HttpEvent(..), Method, Header(..), ResponseHeader(..)
   , ReOrg(..), reorgThroughNoun
-  , AmesDest(..), Ipv4(..), Ipv6(..), Galaxy(..)
+  , AmesDest(..), Ipv4(..), Ipv6(..), Galaxy(..), AmesAddress(..)
   ) where
 
-import Urbit.Time
 import UrbitPrelude hiding (Term)
-import Data.Ord.Unicode
 
 import qualified Network.HTTP.Types.Method as H
 
@@ -119,7 +117,7 @@ data JsonNode
 deriveNoun ''JsonNode
 
 
--- Lanes and Ames Destinations -------------------------------------------------
+-- Ames Destinations -------------------------------------------------
 
 -- Network Port
 newtype Port = Port { unPort :: Word16 }
@@ -136,39 +134,14 @@ newtype Ipv6 = Ipv6 { unIpv6 :: Word128 }
 newtype Galaxy = Galaxy { unGalaxy :: Word8 }
   deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
 
-{-
-    The `Wen` field is (IIUC) the last time that we were sure that this
-    DNS lookup worked.  This is set when we receive a %hear event.
--}
-data Lane
-    = If Wen Port Ipv4           -- Ipv4
-    | Is Port (Maybe Lane) Ipv6  -- Ipv6 with fallback
-    | Ix Wen Port Ipv4           -- Not used (Same behavior as `If`)
+data AmesAddress
+    = AAIpv4 Ipv4 Port
+    | AAVoid Void
   deriving (Eq, Ord, Show)
 
-deriveNoun ''Lane
+deriveNoun ''AmesAddress
 
-data AmesDest
-    = ADGala Wen Galaxy
-    | ADIpv4 Wen Port Ipv4
-  deriving (Eq, Ord, Show)
-
-instance ToNoun AmesDest where
-  toNoun = toNoun . \case
-    ADGala w g   -> If w 0 (256 + fromIntegral g)
-    ADIpv4 w p a -> If w p a
-
-instance FromNoun AmesDest where
-  parseNoun = named "AmesDest" . (parseNoun >=> parseLane)
-    where
-    parseLane :: Lane -> Parser AmesDest
-    parseLane = \case
-      If w _ 0                  -> fail "Sending to 0.0.0.0 is not supported"
-      If w _ a | a≥256 && a≤512 -> pure $ ADGala w $ fromIntegral $ a `mod` 256
-      If w p a                  -> pure $ ADIpv4 w p a
-      Ix w p a                  -> parseLane (If w p a)
-      Is _ (Just fb) _          -> parseLane fb
-      Is _ Nothing   _          -> fail "ipv6 is not supported"
+type AmesDest = Each Galaxy (Jammed AmesAddress)
 
 
 -- Path+Tagged Restructuring ---------------------------------------------------

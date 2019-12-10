@@ -6,7 +6,7 @@ module Noun.Conversions
   , Bytes(..), Octs(..), File(..)
   , Cord(..), Knot(..), Term(..), Tape(..), Tour(..)
   , BigTape(..), BigCord(..)
-  , Wall
+  , Wall, Each(..)
   , UD(..), UV(..), UW(..), cordToUW
   , Mug(..), Path(..), EvilPath(..), Ship(..)
   , Lenient(..), pathToFilePath, filePathToPath
@@ -14,7 +14,7 @@ module Noun.Conversions
 
 import ClassyPrelude hiding (hash)
 
-import Control.Lens hiding (Index, (<.>))
+import Control.Lens hiding (Index, Each, (<.>))
 import Data.Void
 import Data.Word
 import Noun.Atom
@@ -685,21 +685,24 @@ instance FromNoun a => FromNoun (Maybe a) where
     where
       unexpected s = fail ("Expected unit value, but got " <> s)
 
+-- Each is a direct translation of Hoon +each, preserving order
 
--- Either is `each` ------------------------------------------------------------
+data Each a b
+    = EachYes a
+    | EachNo b
+  deriving (Eq, Ord, Show)
 
-instance (ToNoun a, ToNoun b) => ToNoun (Either a b) where
-  toNoun (Left x)  = Cell (Atom 0) (toNoun x)
-  toNoun (Right x) = Cell (Atom 1) (toNoun x)
+instance (ToNoun a, ToNoun b) => ToNoun (Each a b) where
+  toNoun (EachYes x)  = Cell (Atom 0) (toNoun x)
+  toNoun (EachNo x) = Cell (Atom 1) (toNoun x)
 
-instance (FromNoun a, FromNoun b) => FromNoun (Either a b) where
-  parseNoun n = named "Either" $ do
+instance (FromNoun a, FromNoun b) => FromNoun (Each a b) where
+  parseNoun n = named "Each" $ do
       (Atom tag, v) <- parseNoun n
       case tag of
-        0 -> named "%|" (Left <$> parseNoun v)
-        1 -> named "%&" (Right <$> parseNoun v)
+        0 -> named "%y" (EachYes <$> parseNoun v)
+        1 -> named "%|" (EachNo <$> parseNoun v)
         n -> fail ("Each has invalid head-atom: " <> show n)
-
 
 -- Tuple Conversions -----------------------------------------------------------
 

@@ -17,7 +17,7 @@ import ClassyPrelude
 import Noun
 
 import Control.Lens hiding (Index, cons, index, snoc, uncons, unsnoc, (<.>),
-                     (<|))
+                     (<|), Each)
 
 import Control.Arrow    ((<<<), (>>>))
 import Data.Acquire     (Acquire, mkAcquire, with)

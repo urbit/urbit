@@ -23,7 +23,7 @@ type Oath = Atom -- Signature
 
 -- Parsed URLs -----------------------------------------------------------------
 
-type Host = Either Turf Ipv4
+type Host = Each Turf Ipv4
 type Hart = (Bool, Maybe Atom, Host)
 type Pork = (Maybe Knot, [Cord])
 type Quay = [(Cord, Cord)]
@@ -191,8 +191,7 @@ deriveNoun ''HttpServerReq
 
 data AmesEv
     = AmesEvHear ()   AmesDest Bytes
-    | AmesEvWake ()   ()
-    | AmesEvWant Path Ship Path Noun
+    | AmesEvHole ()   AmesDest Bytes
     | AmesEvCrud Path Cord Tang
   deriving (Eq, Ord, Show)
 
@@ -236,7 +235,7 @@ deriveNoun ''BehnEv
 -- Newt Events -----------------------------------------------------------------
 
 data NewtEv
-    = NewtEvBarn (KingId, ()) ()
+    = NewtEvBorn (KingId, ()) ()
     | NewtEvCrud Path         Cord Tang
   deriving (Eq, Ord, Show)
 
