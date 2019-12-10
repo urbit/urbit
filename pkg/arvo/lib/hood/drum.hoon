@@ -438,7 +438,7 @@
   |=  tac/(list tank)
   ^+  +>
   =/  wol/wall
-    (zing (turn tac |=(a/tank (~(win re a) [0 edg]))))
+    (zing (turn (flop tac) |=(a/tank (~(win re a) [0 edg]))))
   |-  ^+  +>.^$
   ?~  wol  +>.^$
   ?.  ((sane %t) (crip i.wol))  :: XX upstream validation

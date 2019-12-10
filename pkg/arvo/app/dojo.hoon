@@ -936,7 +936,8 @@
       ?+    p.cage.sign  ~|([%dojo-thread-bad-mark-result p.cage.sign] !!)
           %thread-fail
         =+  !<([=term =tang] q.cage.sign)
-        (he-diff(poy ~) %tan leaf+"thread failed: {<term>}" tang)
+        %+  he-diff(poy ~)  %tan
+        (flop `^tang`[leaf+"thread failed: {<term>}" tang])
       ::
           %thread-done
         ?>  ?=(^ poy)
