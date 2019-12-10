@@ -1,2 +1,4 @@
 bin/* filter=lfs diff=lfs merge=lfs -text
 bin/*/* filter=lfs diff=lfs merge=lfs -text
+pkg/arvo/**/*.js binary
+pkg/arvo/**/*.css binary

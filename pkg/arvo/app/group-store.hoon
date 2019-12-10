@@ -1,15 +1,17 @@
 ::  group-store: data store for groups of ships 
 ::
 /-  *group-store
+/+  default-agent
 |%
-+$  move  [bone [%diff diff]]
++$  card  card:agent:gall
 ::
-+$  state
-  $%  [%0 state-zero]
++$  versioned-state
+  $%  state-zero
   ==
 ::
 +$  state-zero
-  $:  =groups
+  $:  %0
+      =groups
   ==
 ::
 +$  diff
@@ -18,50 +20,71 @@
   ==
 --
 ::
-|_  [bol=bowl:gall state]
+=|  state-zero
+=*  state  -
+^-  agent:gall
+=<
+  |_  =bowl:gall
+  +*  this        .
+      group-core  +>
+      gc          ~(. group-core bowl)   
+      def         ~(. (default-agent this %|) bowl)
+  ::
+  ++  on-init            on-init:def
+  ++  on-save   !>(state)
+  ++  on-load
+    |=  old=vase
+    `this(state !<(state-zero old))
+  ::
+  ++  on-poke
+    |=  [=mark =vase]
+    ^-  (quip card _this)
+    ?>  (team:title our.bowl src.bowl)
+    =^  cards  state
+      ?:  ?=(%group-action mark)
+        (poke-group-action:gc !<(group-action vase))
+      (on-poke:def mark vase)
+    [cards this]
+  ::
+  ++  on-watch
+    |=  =path
+    ^-  (quip card _this)
+    ?>  (team:title our.bowl src.bowl)
+    |^
+    =/  cards=(list card)
+      ?+    path  (on-watch:def path)
+          [%all ~]   (give %group-initial !>(groups))
+          [%keys ~]  (give %group-update !>([%keys ~(key by groups)]))
+          [%group *]
+        (give %group-update !>([%path (~(got by groups) t.path) t.path]))
+      ==
+    [cards this]
+    ::
+    ++  give
+      |=  =cage
+      ^-  (list card)
+      [%give %fact ~ cage]~
+    --
+  ::
+  ++  on-leave  on-leave:def
+  ::
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?+  path  (on-peek:def path)
+      [%x *]  ``noun+!>((~(get by groups) t.path))
+    ==
+  ::
+  ++  on-agent  on-agent:def 
+  ++  on-arvo   on-arvo:def 
+  ++  on-fail   on-fail:def 
+  --
 ::
-++  this  .
-::
-++  prep
-  |=  old=(unit state)
-  ^-  (quip move _this)
-  [~ ?~(old this this(+<+ u.old))]
-::
-++  peek-x
-  |=  pax=path
-  ^-  (unit (unit [%noun (unit group)]))
-  ?~  pax
-    [~ ~ %noun ~]
-  =/  grp=(unit group)  (~(get by groups) pax)
-  [~ ~ %noun grp]
-::
-++  peer-all
-  |=  pax=path
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  ::  we now proxy all events to this path
-  :_  this
-  [ost.bol %diff %group-initial groups]~
-::
-++  peer-keys
-  |=  pax=path
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  ::  we send the list of keys then send events when they change
-  :_  this
-  [ost.bol %diff %group-update [%keys ~(key by groups)]]~
-::
-++  peer-group
-  |=  pax=path
-  ^-  (quip move _this)
-  ?>  (team:title our.bol src.bol)
-  =/  grp  (~(got by groups) pax)
-  :_  this
-  [ost.bol %diff %group-update [%path grp pax]]~
+|_  bol=bowl:gall
 ::
 ++  poke-group-action
   |=  action=group-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  (team:title our.bol src.bol)
   ?-  -.action
       %add       (handle-add action)
@@ -72,66 +95,64 @@
 ::
 ++  handle-add
   |=  act=group-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  ?=(%add -.act)
   ?~  pax.act
-    [~ this]
+    [~ state]
   ?.  (~(has by groups) pax.act)
-    [~ this]
+    [~ state]
   =/  members  (~(got by groups) pax.act)
   =.  members  (~(uni in members) members.act)
   ?:  =(members (~(got by groups) pax.act))
-    [~ this]
+    [~ state]
   :-  (send-diff pax.act act)
-  this(groups (~(put by groups) pax.act members))
+  state(groups (~(put by groups) pax.act members))
 ::
 ++  handle-remove
   |=  act=group-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  ?=(%remove -.act)
   ?~  pax.act
-    [~ this]
+    [~ state]
   ?.  (~(has by groups) pax.act)
-    [~ this]
+    [~ state]
   =/  members  (~(got by groups) pax.act)
   =.  members  (~(dif in members) members.act)
   ?:  =(members (~(got by groups) pax.act))
-    [~ this]
+    [~ state]
   :-  (send-diff pax.act act)
-  this(groups (~(put by groups) pax.act members))
+  state(groups (~(put by groups) pax.act members))
 ::
 ++  handle-bundle
   |=  act=group-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  ?=(%bundle -.act)
   ?~  pax.act
-    [~ this]
+    [~ state]
   ?:  (~(has by groups) pax.act)
-    [~ this]
+    [~ state]
   :-  (send-diff pax.act act)
-  this(groups (~(put by groups) pax.act *group))
+  state(groups (~(put by groups) pax.act *group))
 ::
 ++  handle-unbundle
   |=  act=group-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?>  ?=(%unbundle -.act)
   ?~  pax.act
-    [~ this]
+    [~ state]
   ?.  (~(has by groups) pax.act)
-    [~ this]
+    [~ state]
   :-  (send-diff pax.act act)
-  this(groups (~(del by groups) pax.act))
+  state(groups (~(del by groups) pax.act))
 ::
 ++  update-subscribers
   |=  [pax=path act=group-action]
-  ^-  (list move)
-  %+  turn  (prey:pubsub:userlib pax bol)
-  |=  [=bone *]
-  [bone %diff %group-update act]
+  ^-  (list card)
+  [%give %fact `pax %group-update !>(act)]~
 ::
 ++  send-diff
   |=  [pax=path act=group-action]
-  ^-  (list move)
+  ^-  (list card)
   %-  zing
   :~  (update-subscribers /all act)
       (update-subscribers [%group pax] act)
@@ -141,4 +162,3 @@
   ==
 ::
 --
-

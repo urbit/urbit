@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+usage() {
+    local error="$1"
+
+    cat >&2 <<EOF
+Usage:
+  $0 FROM_REVISION TO_REVISION
+
+Synopsis:
+  Test an Arvo OTA update on a fake ship.
+
+Example:
+  $0 arvo.2019.11.6 arvo.2019.11.8
+
+Error:
+  -> $error
+EOF
+
+    exit 1
+}
+
+args="$@"
+
+if [[ -z "$args" ]]; then
+    usage "No arguments specified."
+fi
+
+FROM=$1
+TO=$2
+
+SHIP="zod"
+START=$(git rev-parse HEAD)
+
+cleanup () {
+  if [ -e ./$PIER/.vere.lock ]
+  then kill $(< ./$PIER/.vere.lock) || true;
+  fi
+}
+
+trap cleanup EXIT
+
+boot_ship() {
+  ship=$1
+  rev=$2
+
+  git checkout $rev
+  make install
+  urbit -d -F $ship -B bin/brass.pill
+}
+
+mount_home() {
+  pier=$1
+
+  herb ./$pier -p hood -d "+hood/mount /=home="
+}
+
+update_arvo() {
+  pier=$1
+  rev=$2
+
+  git checkout $rev
+  rsync -zr --delete ./pkg/arvo/ ./$pier/home
+  herb ./$pier -p hood -d "+hood/commit %home"
+}
+
+boot_ship $SHIP $FROM
+mount_home $SHIP
+update_arvo $SHIP $TO
+
+cleanup
+
+git checkout $START

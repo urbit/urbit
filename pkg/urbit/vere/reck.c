@@ -113,13 +113,21 @@ _reck_kick_term(u3_pier* pir_u, u3_noun pox, c3_l tid_l, u3_noun fav)
       u3z(pox); u3z(fav); return c3y;
     } break;
 
-    case c3__mass: p_fav = u3t(fav);
+    case c3__mass:
     {
       u3z(pox); u3z(fav);
 
       //  gc the daemon area
       //
       uv_timer_start(&u3K.tim_u, (uv_timer_cb)u3_daemon_grab, 0, 0);
+      return c3y;
+    } break;
+
+    //  ignore pack (processed in worker)
+    //
+    case c3__pack:
+    {
+      u3z(pox); u3z(fav);
       return c3y;
     } break;
   }

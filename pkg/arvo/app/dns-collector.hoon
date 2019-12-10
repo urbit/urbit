@@ -1,8 +1,10 @@
 /-  dns
+/+  default-agent, verb
 ::
 ::  app types and boilerplate
 ::
 =>  |%
+    +$  card  card:agent:gall
     +$  app-state
       $:  %0
           requested=(map ship address:dns)
@@ -17,83 +19,56 @@
           [%dns-complete =ship =binding:dns]
           [%noun noun=*]
       ==
-    +$  out-poke-data
-      $%  [%drum-unlink =dock]
-      ==
     +$  out-peer-data
       $%  [%dns-binding =binding:dns]
           [%dns-request =request:dns]
       ==
-    +$  card
-      $%  [%diff out-peer-data]
-          [%poke wire =dock out-poke-data]
-      ==
-    +$  move  [bone card]
     --
-::
-=|  moves=(list move)
-|_  [=bowl:gall state=app-state]
-::
-++  this  .
-::
-++  abet
-  ^-  (quip move _this)
-  [(flop moves) this(moves ~)]
-::
-++  emit
-  |=  mov=move
-  ^+  this
-  this(moves [mov moves])
-::
-++  emil
-  |=  moz=(list move)
-  |-  ^+  this
-  ?~  moz
-    this
-  $(moz t.moz, ..this (emit i.moz))
-::
-++  poke-app
-  |=  [=wire =dock =out-poke-data]
-  ^+  this
-  (emit [ost.bowl %poke wire dock out-poke-data])
-::
+|%
 ++  give-result
-  |=  [=the=path =out-peer-data]
-  ^+  this
-  %-  emil
-  %+  turn
-    ^-  (list bone)
-    %+  murn  ~(tap by sup.bowl)
-    |=  [ost=bone =ship =sub=path]
-    `(unit bone)`?.(=(the-path sub-path) ~ (some ost))
-  |=  =bone
-  [bone %diff out-peer-data]
+  |=  [=the=path =cage]
+  ^-  card
+  [%give %fact `the-path cage]
+--
 ::
-++  prep
-  |=  old=(unit app-state)
-  ^-  (quip move _this)
-  =<  abet
-  ?~  old
-    (poke-app /unlink [[our %hood] [%drum-unlink our dap]]:bowl)
-  this(state u.old)
+^-  agent:gall
+=|  state=app-state
+%+  verb  |
+|_  =bowl:gall
++*  this  .
+    def   ~(. (default-agent this %|) bowl)
 ::
-++  poke
-  |=  =in-poke-data
-  ^-  (quip move _this)
-  =<  abet
-  ?-  -.in-poke-data
-      %noun
-    ?:  ?=(%debug noun.in-poke-data)
-      ~&  bowl
-      ~&  state
-      this
+++  on-init   on-init:def
+++  on-save   !>(state)
+++  on-load
+  |=  old=vase
+  `this(state !<(app-state old))
+::
+++  on-poke
+  |=  [=mark =vase]
+  ^-  (quip card _this)
+  |^
+  ?+  mark  (on-poke:def mark vase)
+    %noun          (handle-noun !<(noun vase))
+    %dns-address   (handle-dns-address !<(address:dns vase))
+    %dns-complete  (handle-dns-complete !<([ship binding:dns] vase))
+  ==
+  ::
+  ++  handle-noun
+    |=  noun=*
+    ^-  (quip card _this)
+    ?:  ?=(%debug noun)
+      ~&  bowl=bowl
+      ~&  state=state
+      `this
     ::
     ~&  %poke-unknown
-    this
+    `this
   ::
-      %dns-address
+  ++  handle-dns-address
+    |=  adr=address:dns
+    ^-  (quip card _this)
     =*  who  src.bowl
-    =*  adr  address.in-poke-data
     =/  rac  (clan:title who)
     ?.  ?=(?(%king %duke) rac)
       ~|  [%dns-collector-bind-invalid who]  !!
@@ -104,23 +79,26 @@
     =/  dun=(unit binding:dns)  (~(get by completed.state) who)
     ?:  &(?=(^ dun) =(adr address.u.dun))
       =.  requested.state  (~(del by requested.state) who)
-      (give-result /(scot %p who) %dns-binding u.dun)
+      :_  this  :_  ~
+      (give-result /(scot %p who) %dns-binding !>(u.dun))
     ::
     ?:  &(?=(^ req) =(adr u.req))
-      this
+      `this
     ::  XX check address?
     =/  =request:dns  [who adr]
     =.  requested.state  (~(put by requested.state) request)
-    (give-result /requests %dns-request request)
+    :_  this  :_  ~
+    (give-result /requests %dns-request !>(request))
   ::
-      %dns-complete
+  ++  handle-dns-complete
+    |=  [who=ship =binding:dns]
+    ^-  (quip card _this)
     ::  XX or confirm valid binding?
     ::
     ?.  (team:title [our src]:bowl)
       ~|  %complete-yoself  !!
-    =*  who  ship.in-poke-data
-    =*  adr  address.binding.in-poke-data
-    =*  tuf  turf.binding.in-poke-data
+    =*  adr  address.binding
+    =*  tuf  turf.binding
     =/  req=(unit address:dns)  (~(get by requested.state) who)
     ::  ignore established bindings that don't match requested
     ::
@@ -128,47 +106,49 @@
             !=(adr u.req)
         ==
       ~&  %unknown-complete
-      this
+      `this
     =:  requested.state  (~(del by requested.state) who)
         completed.state  (~(put by completed.state) who [adr tuf])
       ==
-    (give-result /(scot %p who) %dns-binding adr tuf)
-  ==
+    :_  this  :_  ~
+    (give-result /(scot %p who) %dns-binding !>([adr tuf]))
+  --
 ::
-++  peek
+++  on-watch
   |=  =path
-  ^-  (unit (unit peek-data))
-  ?+  path  [~ ~]
-      [%x %requested ~]
-    [~ ~ %requested ~(tap by requested.state)]
-  ::
-      [%x %completed ~]
-    [~ ~ %completed ~(tap by completed.state)]
-  ==
-::
-++  peer
-  |=  =path
-  ^-  (quip move _this)
-  =<  abet
-  ::  will be immediately unlinked, see +prep
-  ::
+  ^-  (quip card _this)
   ?:  ?=([%sole *] path)
-    this
+    !!
   ?.  ?=([@ ~] path)
     ~|  %invalid-path  !!
   ?:  ?=(%requests i.path)
     =/  requests  ~(tap by requested.state)
-    |-  ^+  this
+    |-  ^-  (quip card _this)
     =*  loop  $
     ?~  requests
-      this
-    =.  ..this  (give-result path %dns-request i.requests)
-    loop(requests t.requests)
+      `this
+    =/  card  (give-result path %dns-request !>(i.requests))
+    =^  cards  this  loop(requests t.requests)
+    [[card cards] this]
   ::
   =/  who=(unit @p)  (slaw %p i.path)
   ?~  who
     ~|  %invalid-path  !!
   ?~  dun=(~(get by completed.state) u.who)
-    this
-  (give-result path %dns-binding u.dun)
+    `this
+  :_  this  :_  ~
+  (give-result path %dns-binding !>(u.dun))
+::
+++  on-leave  on-leave:def
+++  on-peek
+  |=  =path
+  ^-  (unit (unit cage))
+  ?+  path  [~ ~]
+      [%x %requested ~]  [~ ~ %requested !>(~(tap by requested.state))]
+      [%x %completed ~]  [~ ~ %completed !>(~(tap by completed.state))]
+  ==
+::
+++  on-agent  on-agent:def
+++  on-arvo   on-arvo:def
+++  on-fail   on-fail:def
 --

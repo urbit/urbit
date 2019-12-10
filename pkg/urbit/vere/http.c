@@ -479,7 +479,7 @@ _http_hgen_proceed(h2o_generator_t* neg_u, h2o_req_t* rec_u)
   _cttp_bods_free(gen_u->nud_u);
   gen_u->nud_u = 0;
 
-  if ( 0 != gen_u->bod_u ) {
+  if ( 0 != gen_u->bod_u || c3y == gen_u->dun ) {
     _http_hgen_send(gen_u);
   }
 }
@@ -518,12 +518,14 @@ _http_start_respond(u3_hreq* req_u,
   c3_i has_len_i = 0;
 
   while ( 0 != hed_u ) {
-    h2o_add_header_by_str(&rec_u->pool, &rec_u->res.headers,
-                          hed_u->nam_c, hed_u->nam_w, 0, 0,
-                          hed_u->val_c, hed_u->val_w);
-
     if ( 0 == strncmp(hed_u->nam_c, "content-length", 14) ) {
       has_len_i = 1;
+    }
+
+    else {
+      h2o_add_header_by_str(&rec_u->pool, &rec_u->res.headers,
+                            hed_u->nam_c, hed_u->nam_w, 0, 0,
+                            hed_u->val_c, hed_u->val_w);
     }
 
     hed_u = hed_u->nex_u;

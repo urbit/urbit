@@ -299,8 +299,7 @@
 ::  Foreign desk data.
 ::
 ++  rung
-          $:  rit=rift                                  ::  rift of 1st contact
-              rus=(map desk rede)                       ::  neighbor desks
+          $:  rus=(map desk rede)                       ::  neighbor desks
           ==
 ::
 ::  Hash of a commit, for lookup in the object store (hut.ran)
@@ -471,7 +470,7 @@
 ++  note                                                ::  out request $->
   $~  [%b %wait *@da]                                   ::
   $%  $:  %a                                            ::  to %ames
-          $>(%want task:able:ames)                      ::
+          $>(%plea task:able:ames)                      ::
       ==                                                ::
       $:  %b                                            ::  to %behn
           $>  $?  %drip                                 ::
@@ -508,7 +507,9 @@
           $%  [%init-clad ~]                            ::
       ==  ==                                            ::
       $:  %a                                            ::  by %ames
-          $>  $?  %woot                                 ::
+          $>  $?  %boon                                 ::  response
+                  %done                                 ::  (n)ack
+                  %lost                                 ::  lost boon
               ==                                        ::
           gift:able:ames                                ::
       ==                                                ::
@@ -532,12 +533,6 @@
       $:  @tas                                          ::  by any
           $>(%crud vane-task)                           ::  XX strange
   ==  ==                                                ::
---
-::
-::  Old state types for ++load
-::
-=>  |%
-+$  raft-1  raft
 --  =>
 ::  %utilities
 ::
@@ -1375,8 +1370,8 @@
           %-  ~(uni by `(map path *)`cal.bob-diffs)
           %-  ~(uni by `(map path *)`can.bob-diffs)
           `(map path *)`old.bob-diffs
-        ?^  bof
-          (error:he cas %meet-conflict >(~(run by `(map path *)`bof) ,~)< ~)
+        ?.  =(~ bof)
+          (error:he cas %meet-conflict >~(key by bof)< ~)
         =/  old=(map path lobe)
           %+  roll  ~(tap by (~(uni by old.ali-diffs) old.bob-diffs))
           =<  .(old q.bas)
@@ -2375,7 +2370,7 @@
         ?:  =(0 let.dom)  [~ 0]                         ::  avoid underflow
         ?:  %+  gte  p.lok
             =<  t
-            ~|  [%letdom let=let.dom hit=hit.dom hut=(~(run by hut.ran) ,~)]
+            ~|  [%letdom let=let.dom hit=hit.dom hut=~(key by hut.ran)]
             ~|  [%getdom (~(get by hit.dom) let.dom)]
             %-  aeon-to-yaki
             let.dom
@@ -2662,8 +2657,6 @@
       ::  save foreign +rede
       ::
       =/  run  (~(gut by hoy.ruf) her *rung)
-      =?  rit.run  =(0 rit.run)
-        (fall (rift-scry her) *rift)
       =/  rug  (~(put by rus.run) syd red)
       ruf(hoy (~(put by hoy.ruf) her run(rus rug)))
     ::  save domestic +room
@@ -2672,19 +2665,6 @@
       hun.rom  (need hun)
       dos.rom  (~(put by dos.rom.ruf) syd [qyx dom per pew]:red)
     ==
-  ::
-  ::  +rift-scry: for a +rift
-  ::
-  ++  rift-scry
-    |=  who=ship
-    ^-  (unit rift)
-    =;  rit
-      ?~(rit ~ u.rit)
-    ;;  (unit (unit rift))
-    %-  (sloy-light ski)
-    =/  pur=spur
-      /(scot %p who)
-    [[151 %noun] %j our %rift da+now pur]
   ::
   ::  Handle `%sing` requests
   ::
@@ -2807,8 +2787,13 @@
   ::  Transfer a request to another ship's clay.
   ::
   ++  send-over-ames
-    |=  {a/duct b/path c/ship d/{p/@ud q/riff}}
-    (emit a %pass b %a %want c [%c %question p.q.d (scot %ud p.d) ~] q.d)
+    |=  [=duct =ship index=@ud =riff]
+    ^+  +>
+    ::
+    =/  =desk  p.riff
+    =/  =wire  /warp-index/(scot %p ship)/(scot %tas desk)/(scot %ud index)
+    =/  =path  [%question desk (scot %ud index) ~]
+    (emit duct %pass wire %a %plea ship %c path riff)
   ::
   ::  Create a request that cannot be filled immediately.
   ::
@@ -2832,7 +2817,7 @@
     =+  inx=nix.u.ref
     =.  +>+.$
       =<  ?>(?=(^ ref) .)
-      (send-over-ames hen [(scot %ud inx) ~] her inx syd ~ rave)
+      (send-over-ames hen her inx syd `rave)
     %=  +>+.$
       nix.u.ref  +(nix.u.ref)
       bom.u.ref  (~(put by bom.u.ref) inx [hen rave])
@@ -2930,12 +2915,21 @@
       ?:  |(?=(%& -.w) (~(has by cez) p.w))  s
       (~(put in s) p.w)
     ?^  mis
-      =-  (emit hen %give %mack `[%leaf "No such group(s): {-}"]~)
+      ::  TODO remove this nasty hack
+      ::
+      ?.  ?=([[%a *] *] hen)
+        +>.$
+      =-  (emit hen %give %done `[%perm-fail [%leaf "No such group(s): {-}"]~])
       %+  roll  ~(tap in `(set @ta)`mis)
       |=  {g/@ta t/tape}
       ?~  t  (trip g)
       :(weld t ", " (trip g))
-    =<  (emit hen %give %mack ~)
+    ::  TODO remove this nasty hack
+    ::
+    =<  ?.  ?=([[%a *] *] hen)
+          .
+        (emit hen %give %done ~)
+    ::
     ?-  -.rit
       $r    wake(per (put-perm per pax red.rit))
       $w    wake(pew (put-perm pew pax wit.rit))
@@ -2986,7 +2980,7 @@
     =:  fod.u.ref  (~(del by fod.u.ref) hen)
         bom.u.ref  (~(del by bom.u.ref) u.nux)
       ==
-    (send-over-ames hen [(scot %ud u.nux) ~] her u.nux syd ~)
+    (send-over-ames hen her u.nux syd ~)
   ::
   ::  Handles a request.
   ::
@@ -3077,7 +3071,7 @@
     |=  err=(pair term tang)
     ^+  +>
     =.  +>.$
-      (emit [hen %give %mere %| err])
+      (emit [hen %slip %b %drip !>([%mere %| err])])
     finish-write
   ::
   ::  Release effects and apply state changes
@@ -3085,7 +3079,7 @@
   ++  done-merge
     |=  [conflicts=(set path) =dome =rang]
     ^+  +>
-    =.  +>.$  (emit [hen %give %mere %& conflicts])
+    =.  +>.$  (emit [hen %slip %b %drip !>([%mere %& conflicts])])
     =:  dom      dome
         hut.ran  (~(uni by hut.rang) hut.ran)
         lat.ran  (~(uni by lat.rang) lat.ran)
@@ -4054,7 +4048,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%1                                        ::  vane version
+    $:  ver=%2                                        ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [our=ship now=@da eny=@uvJ ski=sley]              ::  current invocation
@@ -4127,7 +4121,7 @@
     =|  mos/(list move)
     =/  des  ~(tap in ~(key by dos.rom.ruf))
     |-
-    ?~  des  [[[hen %give %mack ~] mos] ..^^$]
+    ?~  des  [[[hen %give %done ~] mos] ..^^$]
     =/  den  ((de our now ski hen ruf) our i.des)
     =^  mor  ruf
       =<  abet:wake
@@ -4338,25 +4332,19 @@
       (start-request:den for u.q.rif)
     [mos ..^$]
   ::
-      %west
-    =*  wer  p.req
-    =*  pax  q.req
-    =*  res  r.req
-    ?:  ?=({%question *} pax)
-      =+  ryf=;;(riff res)
-      :_  ..^$
-      :~  [hen %give %mack ~]
-          =/  =wire
-            [(scot %p our) (scot %p wer) t.pax]
-          [hen %pass wire %c %werp wer our ryf]
-      ==
-    ?>  ?=({%answer @ @ ~} pax)
-    =+  syd=(slav %tas i.t.pax)
-    =+  inx=(slav %ud i.t.t.pax)
-    =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) wer syd)
-      abet:(take-foreign-answer:den inx ;;((unit rand) res))
-    [[[hen %give %mack ~] mos] ..^$]
+      %plea
+    =*  her  ship.req
+    =*  pax  path.plea.req
+    =*  res  payload.plea.req
+    ::
+    ?>  ?=({%question *} pax)
+    =+  ryf=;;(riff res)
+    :_  ..^$
+    :~  [hen %give %done ~]
+        =/  =wire
+          [%foreign-warp (scot %p her) t.pax]
+        [hen %pass wire %c %werp her our ryf]
+    ==
   ::
       %wegh
     :_  ..^$  :_  ~
@@ -4373,16 +4361,9 @@
   ==
 ::
 ++  load
-  =>  |%
-      +$  axle  [%1 ruf-1=raft]
-      --
-  ::  |=  *
-  ::  ..^$
-  ::  XX switch back
-  |=  old=axle
-  ^+  ..^$
-  ?>  ?=(%1 -.old)
-  %_(..^$ ruf ruf-1.old)
+  !:
+  |=  [%2 =raft]
+  ..^$(ruf raft)
 ::
 ++  scry                                              ::  inspect
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
@@ -4412,7 +4393,7 @@
   ?:  ?=(%& -.u.u.-)  ``p.u.u.-
   ~
 ::
-++  stay  [%1 ruf]
+++  stay  [ver ruf]
 ++  take                                              ::  accept response
   |=  [tea=wire hen=duct hin=(hypo sign)]
   ^+  [*(list move) ..^$]
@@ -4436,6 +4417,11 @@
       =/  den  ((de our now ski hen ruf) our syd)
       abet:(take-mount:den q.hin)
     [mos ..^$]
+  ::
+  ?:  ?=([%foreign-warp *] tea)
+    ?>  ?=(%writ +<.q.hin)
+    :_  ..^$
+    [hen %give %boon `(unit rand)`(bind `riot`p.q.hin rant-to-rand)]~
   ::
   ?:  ?=([%foreign-request @ @ @ *] tea)
     =/  her  (slav %p i.t.tea)
@@ -4470,15 +4456,40 @@
         `cage`(result-to-cage:ford build-result.result.q.hin)
     ==  ==
   ::
+  ?:  ?=([%warp-index @ @ @ ~] tea)
+    ?+    +<.q.hin  ~|  %clay-warp-index-strange  !!
+        %done
+      ?~  error.q.hin
+        [~ ..^$]
+      ::  TODO better error handling
+      ::
+      ~&  %clay-take-warp-index-error^our^tea^tag.u.error.q.hin
+      %-  (slog tang.u.error.q.hin)
+      [~ ..^$]
+    ::
+        %lost
+      ~|  %clay-take-lost^our
+      ::  TODO better error handling
+      !!
+    ::
+        %boon
+      =+  ;;  res=(unit rand)  payload.q.hin
+      ::
+      =/  her=ship   (slav %p i.t.tea)
+      =/  =desk      (slav %tas i.t.t.tea)
+      =/  index=@ud  (slav %ud i.t.t.t.tea)
+      ::
+      =^  mos  ruf
+        =/  den  ((de our now ski hen ruf) her desk)
+        abet:(take-foreign-answer:den index res)
+      [mos ..^$]
+    ==
+  ::
   ?:  ?=([%sinks ~] tea)
     ?>  ?=(%public-keys +<.q.hin)
-    ?:  ?=(%full -.public-keys-result.q.hin)
-      [~ ..^$]
-    ?.  ?=(%rift -.diff.public-keys-result.q.hin)
+    ?.  ?=(%breach -.public-keys-result.q.hin)
       [~ ..^$]
     =/  who  who.public-keys-result.q.hin
-    =/  to-rift  to.diff.public-keys-result.q.hin
-    ::
     ?:  =(our who)
       [~ ..^$]
     ::  Cancel subscriptions
@@ -4486,8 +4497,6 @@
     =/  foreign-desk=(unit rung)
       (~(get by hoy.ruf) who)
     ?~  foreign-desk
-      [~ ..^$]
-    ?:  (gte rit.u.foreign-desk to-rift)
       [~ ..^$]
     =/  cancel-ducts=(list duct)
       %-  zing  ^-  (list (list duct))
@@ -4565,25 +4574,16 @@
     ::
     (handle-task hen queued-task)
   ::
-      %writ
-    ?>  ?=({@ @ *} tea)
-    ~|  i=i.tea
-    ~|  it=i.t.tea
-    =+  him=(slav %p i.t.tea)
-    :_  ..^$
-    :~  :*  hen  %pass  /writ-want  %a
-            %want  him  [%c %answer t.t.tea]
-            (bind p.+.q.hin rant-to-rand)
-        ==
-    ==
+      ::  handled in the wire dispatcher
+      ::
+      %boon  !!
+      %lost  !!
+      %writ  !!
   ::
-      %woot
-    ?~  q.q.hin
+      %done
+    ?~  error=error.q.hin
       [~ ..^$]
-    ~&  [%clay-lost p.q.hin tea]
-    ?~  u.q.q.hin
-      [~ ..^$]
-    %-  (slog >p.u.u.q.q.hin< q.u.u.q.q.hin)
+    %-  (slog >%clay-lost< >tag.u.error< tang.u.error)
     [~ ..^$]
   ==
 ::
@@ -4630,18 +4630,4 @@
   ?~  -
     `[paf %ins %mime -:!>(*mime) u.mim]
   `[paf %mut %mime -:!>(*mime) u.mim]
-::
-::  +rift-scry: for a +rift
-::
-++  rift-scry
-  ~%  %rift-scry  ..is  ~
-  |=  who=ship
-  ^-  (unit rift)
-  =;  lyf
-    ?~(lyf ~ u.lyf)
-  ;;  (unit (unit rift))
-  %-  (sloy-light ski)
-  =/  pur=spur
-    /(scot %p who)
-  [[151 %noun] %j our %rift da+now pur]
 --

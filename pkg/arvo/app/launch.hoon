@@ -1,5 +1,5 @@
 /-  launch
-/+  *server
+/+  *server, default-agent
 ::
 /=  index
   /^  $-(marl manx)
@@ -22,129 +22,143 @@
   /^  (map knot @)
   /:  /===/app/launch/img  /_  /png/
 ::
-=,  launch
-::
 |%
-+$  state
-  $%  [%0 tiles=(set tile) data=tile-data path-to-tile=(map path @tas)]
++$  versioned-state
+  $%  state-zero
+  ==
++$  state-zero
+  $:  %0
+      tiles=(set tile:launch)
+      data=tile-data:launch
+      path-to-tile=(map path @tas)
   ==
 ::
-+$  move  [bone card]
-::
-+$  card
-  $%  [%http-response =http-event:http]
-      [%connect wire binding:eyre term]
-      [%peer wire dock path]
-      [%diff %json json]
-  ==
++$  card  card:agent:gall
 --
 ::
-|_  [bol=bowl:gall sta=state]
+=|  state-zero
+=*  state  -
+^-  agent:gall
+|_  bol=bowl:gall
++*  this  .
+    def   ~(. (default-agent this %|) bol)
+++  on-init
+  ^-  (quip card _this)
+  :_  this
+  [%pass / %arvo %e %connect [~ /] %launch]~
 ::
-++  this  .
+++  on-save  !>(state)
 ::
-++  prep
-  |=  old=(unit state)
-  ^-  (quip move _this)
-  ?~  old
+++  on-load
+  |=  old=vase
+  `this(state !<(state-zero old))
+::
+++  on-poke
+  |=  [mar=mark vas=vase]
+  ^-  (quip card _this)
+  ?+    mar  (on-poke:def mar vas)
+  ::
+      %launch-action
+    =/  act  !<(action:launch vas)
+    =/  beforedata  (~(get by data) name.act)
+    =/  newdata
+      ?~  beforedata
+        (~(put by data) name.act [*json url.act])
+      (~(put by data) name.act [jon.u.beforedata url.act])
+    =/  new-tile  `tile:launch`[`@tas`name.act `path`subscribe.act]
+    :-  [%pass subscribe.act %agent [our.bol name.act] %watch subscribe.act]~
+    %=  this
+      tiles         (~(put in tiles) new-tile)
+      data          newdata
+      path-to-tile  (~(put by path-to-tile) subscribe.act name.act)
+    ==
+  ::
+      %handle-http-request
+    =+  !<([eyre-id=@ta =inbound-request:eyre] vas)
     :_  this
-    [ost.bol %connect / [~ /] %launch]~
-  [~ this(sta u.old)]
-::
-++  poke-launch-action
-  |=  act=action
-  ^-  (quip move _this)
-  =/  beforedata  (~(get by data.sta) name.act)
-  =/  newdata
-    ?~  beforedata
-      (~(put by data.sta) name.act [*json url.act])
-    (~(put by data.sta) name.act [jon.u.beforedata url.act])
-  :-  [ost.bol %peer subscribe.act [our.bol name.act] subscribe.act]~
-  %=  this
-    tiles.sta  (~(put in tiles.sta) [name.act subscribe.act])
-    data.sta  newdata
-    path-to-tile.sta  (~(put by path-to-tile.sta) subscribe.act name.act)
+    %+  give-simple-payload:app    eyre-id
+    %+  require-authorization:app  inbound-request
+    |=  =inbound-request:eyre
+    ^-  simple-payload:http
+    =/  request-line  (parse-request-line url.request.inbound-request)
+    =/  name=@t
+      =/  back-path  (flop site.request-line)
+      ?~  back-path
+        ''
+      i.back-path
+    ?+  site.request-line
+      not-found:gen
+    ::
+        ~
+      =/  hym=manx
+        %-  index
+        ^-  marl
+        %+  turn  ~(tap by data)
+        |=  [key=@tas [jon=json url=@t]]
+        ^-  manx
+        ;script@"{(trip url)}";
+      (manx-response:gen hym)
+    ::
+        [%'~launch' %css %index ~]       :: styling
+      (css-response:gen style)
+    ::
+        [%'~launch' %js %index ~]        :: javascript
+      (js-response:gen script)
+    ::
+        [%'~launch' %img *]              :: images
+      =/  img=(unit @)  (~(get by launch-png) `@ta`name)
+      ?~  img
+        not-found:gen
+      (png-response:gen (as-octs:mimes:html u.img))
+    ::
+        [%'~modulo' %session ~]
+      =/  session-js
+        %-  as-octt:mimes:html
+        ;:  weld
+            "window.ship = '{+:(scow %p our.bol)}';"
+            "window.urb = new Channel();"
+        ==
+      (js-response:gen session-js)
+    ==
   ==
 ::
-++  peer-main
-  |=  [pax=path]
-  ^-  (quip move _this)
-  =/  data/json
+++  on-watch
+  |=  pax=path
+  ^-  (quip card _this)
+  ?:  ?=([%http-response *] pax)
+    [~ this]
+  ?.  ?=([%main *] pax)
+    (on-watch:def pax)
+  =/  data=json
     %-  pairs:enjs:format
-    %+  turn  ~(tap by data.sta)
+    %+  turn  ~(tap by data)
     |=  [key=@tas [jon=json url=@t]]
     [key jon]
   :_  this
-  [ost.bol %diff %json data]~
+  [%give %fact ~ %json !>(data)]~
 ::
-++  diff-json
-  |=  [pax=path jon=json]
-  ^-  (quip move _this)
-  =/  name/@tas  (~(got by path-to-tile.sta) pax)
-  =/  data/(unit [json url=@t])  (~(get by data.sta) name)
-  ?~  data
-    [~ this]
+++  on-leave  on-leave:def
+++  on-peek   on-peek:def
+++  on-fail   on-fail:def
+++  on-agent
+  |=  [wir=wire sin=sign:agent:gall]
+  ^-  (quip card _this)
+  ?.  ?=(%fact -.sin)
+    (on-agent:def wir sin)
+  ?.  ?=(%json p.cage.sin)
+    (on-agent:def wir sin)
   ::
-  :-
-  %+  turn  (prey:pubsub:userlib /main bol)
-  |=  [=bone *]
-  [bone %diff %json (frond:enjs:format name jon)]
-  ::
-  %=  this
-    data.sta  (~(put by data.sta) name [jon url.u.data])
-  ==
+  =/  jon=json   !<(json q.cage.sin)
+  =/  name=@tas  (~(got by path-to-tile) wir)
+  =/  dat=(unit [json url=@t])  (~(get by data) name)
+  ?~  dat  [~ this]
+  :_  this(data (~(put by data) name [jon url.u.dat]))
+  [%give %fact `/main %json !>((frond:enjs:format name jon))]~
 ::
-++  generate-script-marl
-  |=  data=tile-data
-  ^-  marl
-  %+  turn  ~(tap by data)
-  |=  [key=@tas [jon=json url=@t]]
-  ^-  manx
-  ;script@"{(trip url)}";
-::
-++  poke-handle-http-request
-  %-  (require-authorization:app ost.bol move this)
-  |=  =inbound-request:eyre
-  ^-  (quip move _this)
-  ::
-  =/  request-line  (parse-request-line url.request.inbound-request)
-  =/  name=@t
-    =/  back-path  (flop site.request-line)
-    ?~  back-path
-      ''
-    i.back-path
-  =/  site  (flop site.request-line)
-  ?~  site
-    =/  hym=manx  (index (generate-script-marl data.sta))
-    :_  this
-    [ost.bol %http-response (manx-response:app hym)]~
-  ?+  site.request-line
-    :_  this
-    [ost.bol %http-response not-found:app]~
-  ::
-  ::  styling
-  ::
-      [%'~launch' %css %index ~]
-    :_  this
-    [ost.bol %http-response (css-response:app style)]~
-  ::
-  ::  javascript
-  ::
-      [%'~launch' %js %index ~]
-    :_  this
-    [ost.bol %http-response (js-response:app script)]~
-  ::
-  ::  images
-  ::
-      [%'~launch' %img *]
-    =/  img  (as-octs:mimes:html (~(got by launch-png) `@ta`name))
-    :_  this
-    [ost.bol %http-response (png-response:app img)]~
-  ==
-::
-++  bound
-  |=  [wir=wire success=? binding=binding:eyre]
-  ^-  (quip move _this)
+++  on-arvo
+  |=  [wir=wire sin=sign-arvo]
+  ^-  (quip card:agent:gall _this)
+  ?.  ?=(%bound +<.sin)
+    (on-arvo:def wir sin)
   [~ this]
-::
 --

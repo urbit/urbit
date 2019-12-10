@@ -6,7 +6,7 @@
 /+  *generators
 :-  %ask
 |=  [[now=@da eny=@uvJ bec=beak] ~ ~]
-^-  (sole-result [%dns-auto (list turf)])
+^-  (sole-result [%dns-auto ~])
 =*  our  p.bec
 =/  rac  (clan:title our)
 ::
@@ -23,7 +23,4 @@
   %+  print  leaf+msg3
   %+  print  leaf+msg2
   (print leaf+msg1 no-product)
-::
-=/  ames-domains=(list turf)
-  .^((list turf) %j /(scot %p our)/turf/(scot %da now))
-(produce [%dns-auto ames-domains])
+(produce [%dns-auto ~])

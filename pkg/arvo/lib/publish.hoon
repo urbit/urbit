@@ -125,7 +125,7 @@
   |=  col=collection
   ^-  json
   %-  pairs:enjs:format
-  :~  info+(collection-build-to-json dat.col.col)
+  :~  info+(collection-build-to-json col.col)
   ::
     :+  %posts
       %o
@@ -137,8 +137,8 @@
     %+  ~(put by out)
       post
     %-  pairs:enjs:format
-    :~  post+(post-build-to-json dat.post-build)
-        comments+(comment-build-to-json dat.comm-build)
+    :~  post+(post-build-to-json post-build)
+        comments+(comment-build-to-json comm-build)
     ==
   ::
     :-  %order

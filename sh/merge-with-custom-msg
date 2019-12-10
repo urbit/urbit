@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+usage() {
+    local error="$1"
+
+    cat >&2 <<EOF
+Usage:
+  $0 BRANCH PULL_REQUEST
+
+Synopsis:
+  Useful script for merging a GitHub pull request with a custom merge commit
+  message.
+
+  Strips "origin" from branch names in title.
+
+Example:
+  $0 origin/philip/jael-fix 1953
+
+  Yields:
+
+  Merge branch 'philip/jael-fix' (#1953)
+
+  * origin/philip/jael-fix:
+    jael: process all ships in %full update
+
+  Signed-off-by: Jared Tobin <jared@tlon.io>
+
+Error:
+  -> $error
+EOF
+
+    exit 1
+}
+
+args="$@"
+
+if [[ -z "$args" ]]; then
+    usage "No arguments specified."
+fi
+
+REV=$1
+PR=$2
+
+TARGET=$(echo $REV | sed s_origin/__)
+
+MERGE_MSG="Merge branch '$TARGET' (#$PR)"
+
+git merge --no-ff --signoff --log -m "$MERGE_MSG" $REV
+

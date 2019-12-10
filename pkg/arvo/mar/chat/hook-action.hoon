@@ -20,16 +20,18 @@
       %-  ot
       :~  [%path pa]
           [%security sec] 
+          [%allow-history bo]
       ==
     ::
     ++  add-synced
       %-  ot
       :~  [%ship (su ;~(pfix sig fed:ag))]
           [%path pa]
+          [%ask-history bo]
       ==
     ::
     ++  sec
-      ^-  $-(^json chat-security)
+      ^-  $-(^json rw-security)
       (su (perk %channel %village %journal %mailbox ~))
     ::
     --

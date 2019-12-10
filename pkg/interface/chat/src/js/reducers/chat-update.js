@@ -18,15 +18,18 @@ export class ChatUpdateReducer {
     let data = _.get(json, 'message', false);
     if (data) {
       state.inbox[data.path].envelopes.push(data.envelope);
+      state.inbox[data.path].config.length
+        = state.inbox[data.path].config.length + 1;
     }
   }
 
   messages(json, state) {
     let data = _.get(json, 'messages', false);
     if (data) {
-      console.log(data);
       state.inbox[data.path].envelopes = 
         data.envelopes.concat(state.inbox[data.path].envelopes);
+      state.inbox[data.path].config.length = 
+        state.inbox[data.path].config.length + data.envelopes.length;
     }
   }
 
@@ -34,7 +37,7 @@ export class ChatUpdateReducer {
     let data = _.get(json, 'read', false);
     if (data) {
       state.inbox[data.path].config.read =
-        state.inbox[data.path].envelopes.length;
+        state.inbox[data.path].config.length;
     }
   }
 
@@ -44,8 +47,8 @@ export class ChatUpdateReducer {
       state.inbox[`/~${data.ship}${data.path}`] = {
         envelopes: [],
         config: {
-          read:0,
-          length: 0,
+          read: 0,
+          length: 0
         }
       };
     }

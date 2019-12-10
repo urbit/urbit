@@ -46,17 +46,10 @@
 +$  plea
   $%  ::  status on startup
       ::
-      $:  %play
-          $=  p
-          ::  ~ if no snapshot
-          ::
-          %-  unit
-          ::  p: event number expected
-          ::  q: mug of kernel
-          ::  r: identity, fake flag
-          ::
-          [p=@ q=@ r=[our=@p fak=?]]
-      ==
+      ::  p: event number expected
+      ::  q: mug of kernel (or 0)
+      ::
+      [%play p=@ q=@]
       ::  event executed unchanged (in response to %work)
       ::
       $:  %done
@@ -97,11 +90,9 @@
 +$  writ
   $%  ::  prepare to boot
       ::
-      ::  p: identity
-      ::  q: fake?
-      ::  r: number of boot formulas
+      ::  p: length of lifecycle sequence
       ::
-      [%boot p=@p q=? r=@]
+      [%boot p=@]
       ::  exit immediately
       ::
       ::  p: exit code
@@ -306,6 +297,7 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
     tot_w += u3a_maid(fil_u, "effects", u3a_mark_noun(vir));
 
     u3a_print_memory(fil_u, "total marked", tot_w);
+    u3a_print_memory(fil_u, "free lists", u3a_idle(u3R));
     u3a_print_memory(fil_u, "sweep", u3a_sweep());
 
     fflush(fil_u);
@@ -316,6 +308,62 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
     }
 #endif
   }
+}
+
+/* _worker_static_grab(): garbage collect, checking for profiling. RETAIN.
+*/
+static void
+_worker_static_grab(void)
+{
+  c3_assert( u3R == &(u3H->rod_u) );
+
+  fprintf(stderr, "work: measuring memory:\r\n");
+  u3a_print_memory(stderr, "total marked", u3m_mark(stderr));
+  u3a_print_memory(stderr, "free lists", u3a_idle(u3R));
+  u3a_print_memory(stderr, "sweep", u3a_sweep());
+  fprintf(stderr, "\r\n");
+  fflush(stderr);
+}
+
+/* _worker_pack(): deduplicate and compact memory
+*/
+static void
+_worker_pack(void)
+{
+  _worker_static_grab();
+  u3l_log("work: compacting loom\r\n");
+
+  if ( c3n == u3m_rock_stay(u3V.dir_c, u3V.dun_d) ) {
+    u3l_log("work: unable to jam state\r\n");
+    return;
+  }
+
+  if ( c3n == u3e_hold() ) {
+    u3l_log("work: unable to backup checkpoint\r\n");
+    return;
+  }
+
+  u3m_wipe();
+
+  if ( c3n == u3m_rock_load(u3V.dir_c, u3V.dun_d) ) {
+    u3l_log("work: compaction failed, restoring checkpoint\r\n");
+
+    if ( c3n == u3e_fall() ) {
+      fprintf(stderr, "work: unable to restore checkpoint\r\n");
+      c3_assert(0);
+    }
+  }
+
+  if ( c3n == u3e_drop() ) {
+    u3l_log("work: warning: orphaned backup checkpoint file\r\n");
+  }
+
+  if ( c3n == u3m_rock_drop(u3V.dir_c, u3V.dun_d) ) {
+    u3l_log("work: warning: orphaned state file\r\n");
+  }
+
+  u3l_log("work: compacted loom\r\n");
+  _worker_static_grab();
 }
 
 /* _worker_fail(): failure stub.
@@ -340,10 +388,6 @@ _worker_send(u3_noun job)
 static void
 _worker_send_replace(c3_d evt_d, u3_noun job)
 {
-  u3l_log("worker_send_replace %" PRIu64 " %s\r\n",
-          evt_d,
-          u3r_string(u3h(u3t(u3t(job)))));
-
   _worker_send(u3nt(c3__work,
                     u3i_chubs(1, &evt_d),
                     u3ke_jam(u3nc(u3V.mug_l, job))));
@@ -379,10 +423,14 @@ _worker_send_slog(u3_noun hod)
 /* _worker_lame(): event failed, replace with error event.
 */
 static void
-_worker_lame(c3_d evt_d, u3_noun now, u3_noun ovo, u3_noun why, u3_noun tan)
+_worker_lame(u3_noun now, u3_noun ovo, u3_noun why, u3_noun tan)
 {
   u3_noun rep;
   u3_noun wir, tag, cad;
+  c3_o pac_o = c3n;
+  c3_d evt_d = u3V.sen_d;
+
+  u3V.sen_d = u3V.dun_d;
 
   u3x_trel(ovo, &wir, &tag, &cad);
 
@@ -428,22 +476,27 @@ _worker_lame(c3_d evt_d, u3_noun now, u3_noun ovo, u3_noun why, u3_noun tan)
     rep = u3nc(u3k(wir), u3nt(c3__crud, u3k(tag), nat));
   }
 
+  pac_o = _(c3__meme == why);
+
   _worker_send_replace(evt_d, u3nc(now, rep));
 
   u3z(ovo); u3z(why); u3z(tan);
+
+  //  XX review, always pack on meme?
+  //
+  if ( c3y == pac_o ) {
+    _worker_pack();
+  }
 }
 
-/* _worker_sure(): event succeeded, report completion.
+/* _worker_sure_feck(): event succeeded, send effects.
 */
 static void
-_worker_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
+_worker_sure_feck(u3_noun ovo, u3_noun vir, c3_w pre_w)
 {
-  u3z(u3A->roc);
-  u3A->roc   = cor;
-  u3A->ent_d = u3V.dun_d;
-  u3V.mug_l  = u3r_mug(u3A->roc);
-
   u3_noun sac = u3_nul;
+  c3_o  pac_o = c3n;
+  c3_o  rec_o = c3n;
 
   //  intercept |mass, observe |reset
   //
@@ -475,12 +528,75 @@ _worker_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
       //  reclaim memory from persistent caches on |reset
       //
       if ( c3__vega == u3h(fec) ) {
-        u3m_reclaim();
+        rec_o = c3y;
+      }
+
+      //  pack memory on |pack
+      //
+      if ( c3__pack == u3h(fec) ) {
+        pac_o = c3y;
       }
 
       riv = u3t(riv);
       i_w++;
     }
+  }
+
+  //  after a successful event, we check for memory pressure.
+  //
+  //    if we've exceeded either of two thresholds, we reclaim
+  //    from our persistent caches, and notify the daemon
+  //    (via a "fake" effect) that arvo should trim state
+  //    (trusting that the daemon will enqueue an appropriate event).
+  //    For future flexibility, the urgency of the notification is represented
+  //    by a *decreasing* number: 0 is maximally urgent, 1 less so, &c.
+  //
+  //    high-priority: 2^22 contiguous words remaining (~8 MB)
+  //    low-priority:  2^27 contiguous words remaining (~536 MB)
+  //    XX maybe use 2^23 (~16 MB) and 2^26 (~268 MB?
+  //
+  {
+    u3_noun pri = u3_none;
+    c3_w pos_w = u3a_open(u3R);
+    c3_w low_w = (1 << 27);
+    c3_w hig_w = (1 << 22);
+
+    if ( (pre_w > low_w) && !(pos_w > low_w) ) {
+      //  XX set flag(s) in u3V so we don't repeat endlessly?
+      //  XX pack here too?
+      //
+      pac_o = c3y;
+      rec_o = c3y;
+      pri   = 1;
+    }
+    else if ( (pre_w > hig_w) && !(pos_w > hig_w) ) {
+      //  XX we should probably jam/cue our entire state at this point
+      //
+      pac_o = c3y;
+      rec_o = c3y;
+      pri   = 0;
+    }
+    //  reclaim memory from persistent caches periodically
+    //
+    //    XX this is a hack to work two things
+    //    - bytecode caches grow rapidly and can't be simply capped
+    //    - we don't make very effective use of our free lists
+    //
+    else {
+      rec_o = _(0 == (u3V.dun_d % 1000ULL));
+    }
+
+    //  notify daemon of memory pressure via "fake" effect
+    //
+    if ( u3_none != pri ) {
+      u3_noun cad = u3nc(u3nt(u3_blip, c3__arvo, u3_nul),
+                         u3nc(c3__trim, pri));
+      vir = u3nc(cad, vir);
+    }
+  }
+
+  if ( c3y == rec_o ) {
+    u3m_reclaim();
   }
 
   //  XX this runs on replay too
@@ -489,6 +605,23 @@ _worker_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
   _worker_send_complete(vir);
 
   u3z(sac); u3z(ovo);
+
+  if ( c3y == pac_o ) {
+    _worker_pack();
+  }
+}
+
+/* _worker_sure_core(): event succeeded, save state.
+*/
+static void
+_worker_sure_core(u3_noun cor)
+{
+  u3V.dun_d = u3V.sen_d;
+
+  u3z(u3A->roc);
+  u3A->roc   = cor;
+  u3A->ent_d = u3V.dun_d;
+  u3V.mug_l  = u3r_mug(u3A->roc);
 }
 
 /* _worker_work_live(): apply event.
@@ -542,7 +675,6 @@ _worker_work_live(c3_d evt_d, u3_noun job)
   //  event rejected
   //
   if ( u3_blip != u3h(gon) ) {
-    u3V.sen_d = u3V.dun_d;
     //  restore previous time
     //
     u3_noun nex = u3A->now;
@@ -554,13 +686,11 @@ _worker_work_live(c3_d evt_d, u3_noun job)
     u3k(ovo); u3k(why); u3k(tan);
     u3z(gon); u3z(job);
 
-    _worker_lame(evt_d, nex, ovo, why, tan);
+    _worker_lame(nex, ovo, why, tan);
   }
   //  event accepted
   //
   else {
-    c3_o rec_o = c3n;
-
     //  vir/(list ovum)  list of effects
     //  cor/arvo         arvo core
     //
@@ -570,57 +700,8 @@ _worker_work_live(c3_d evt_d, u3_noun job)
     u3k(ovo); u3k(vir); u3k(cor);
     u3z(gon); u3z(job); u3z(last_date);
 
-    u3V.dun_d = u3V.sen_d;
-
-    //  after a successful event, we check for memory pressure.
-    //
-    //    if we've exceeded either of two thresholds, we reclaim
-    //    from our persistent caches, and notify the daemon
-    //    (via a "fake" effect) that arvo should trim state
-    //    (trusting that the daemon will enqueue an appropriate event).
-    //    For future flexibility, the urgency of the notification is represented
-    //    by a *decreasing* number: 0 is maximally urgent, 1 less so, &c.
-    //
-    //    high-priority: 2^22 contiguous words remaining (~8 MB)
-    //    low-priority:  2^27 contiguous words remaining (~536 MB)
-    //    XX maybe use 2^23 (~16 MB) and 2^26 (~268 MB?
-    //
-    //    XX refactor: we should measure memory after losing the old kernel
-    //
-    {
-      u3_noun pri = u3_none;
-      c3_w pos_w = u3a_open(u3R);
-      c3_w low_w = (1 << 27);
-      c3_w hig_w = (1 << 22);
-
-      if ( (pre_w > low_w) && !(pos_w > low_w) ) {
-        //  XX set flag in u3V so we don't repeat endlessly?
-        //
-        rec_o = c3y;
-        pri   = 1;
-      }
-      else if ( (pre_w > hig_w) && !(pos_w > hig_w) ) {
-        //  XX we should probably jam/cue our entire state at this point
-        //
-        rec_o = c3y;
-        pri   = 0;
-      }
-
-      //  notify daemon of memory pressure via "fake" effect
-      //
-      if ( u3_none != pri ) {
-        u3_noun cad = u3nc(u3nt(u3_blip, c3__arvo, u3_nul),
-                           u3nc(c3__trim, pri));
-        vir = u3nc(cad, vir);
-      }
-    }
-
-    _worker_sure(ovo, vir, cor);
-
-
-    if ( c3y == rec_o ) {
-      u3m_reclaim();
-    }
+    _worker_sure_core(cor);
+    _worker_sure_feck(ovo, vir, pre_w);
   }
 }
 
@@ -767,13 +848,9 @@ _worker_poke_exit(c3_w cod_w)                 //  exit code
 /* _worker_poke_boot(): prepare to boot.
 */
 static void
-_worker_poke_boot(u3_noun who, u3_noun fak, c3_w len_w)
+_worker_poke_boot(c3_w len_w)
 {
-  c3_assert( u3_none == u3A->our );
   c3_assert( 0 != len_w );
-
-  u3A->our = who;
-  u3A->fak = fak;
   u3V.len_w = len_w;
 }
 
@@ -794,14 +871,10 @@ _worker_poke(void* vod_p, u3_noun mat)
       }
 
       case c3__boot: {
-        u3_noun who, fak, len;
-        c3_w len_w;
+        u3_noun len;
+        c3_w  len_w;
 
-        if ( (c3n == u3r_qual(jar, 0, &who, &fak, &len)) ||
-             (c3n == u3ud(who)) ||
-             (1 < u3r_met(7, who)) ||
-             (c3n == u3ud(fak)) ||
-             (1 < u3r_met(0, fak)) ||
+        if ( (c3n == u3r_cell(jar, 0, &len)) ||
              (c3n == u3ud(len)) ||
              (1 < u3r_met(3, len)) )
         {
@@ -809,11 +882,8 @@ _worker_poke(void* vod_p, u3_noun mat)
         }
 
         len_w = u3r_word(0, len);
-        u3k(who);
-        u3k(fak);
         u3z(jar);
-
-        return _worker_poke_boot(who, fak, len_w);
+        return _worker_poke_boot(len_w);
       }
 
       case c3__work: {
@@ -893,30 +963,35 @@ _worker_poke(void* vod_p, u3_noun mat)
 void
 u3_worker_boot(void)
 {
-  c3_d nex_d  = 1ULL;
-  u3_noun dat = u3_nul;
+  c3_d nex_d = 1ULL;
 
-  if ( u3_none != u3A->our ) {
+  //  if a lifecycle sequence is needed, [len_w] will be set on %boot
+  //
+  u3V.len_w = 0;
+
+  if ( 0 != u3V.dun_d ) {
     u3V.mug_l = u3r_mug(u3A->roc);
-    nex_d = u3V.dun_d + 1ULL;
-    dat   = u3nc(u3_nul, u3nt(u3i_chubs(1, &nex_d),
-                              u3V.mug_l,
-                              u3nc(u3k(u3A->our), u3k(u3A->fak))));
-
-    //  disable hashboard for fake ships
-    //
-    if ( c3y == u3A->fak ) {
-      u3C.wag_w |= u3o_hashless;
-    }
-
-    //  no boot sequence expected
-    //
-    u3V.len_w = 0;
+    nex_d    += u3V.dun_d;
+  }
+  else {
+    u3V.mug_l = 0;
   }
 
   u3l_log("work: play %" PRIu64 "\r\n", nex_d);
 
-  _worker_send(u3nc(c3__play, dat));
+  _worker_send(u3nt(c3__play, u3i_chubs(1, &nex_d), u3V.mug_l));
+
+  //  measure/print static memory usage if < 1/2 of the loom is available
+  //
+  {
+    c3_w pen_w = u3a_open(u3R);
+
+    if ( !(pen_w > (1 << 28)) ) {
+      fprintf(stderr, "\r\n");
+      u3a_print_memory(stderr, "work: contiguous free space", pen_w);
+      _worker_static_grab();
+    }
+  }
 }
 
 /* main(): main() when run as urbit-worker

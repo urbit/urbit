@@ -848,7 +848,7 @@ u3_term_get_blew(c3_l tid_l)
   c3_l           col_l, row_l;
 
   struct winsize siz_u;
-  if ( (c3y == u3_Host.ops_u.tem) &&
+  if ( (c3n == u3_Host.ops_u.tem) &&
        uty_u && (0 == ioctl(uty_u->fid_i, TIOCGWINSZ, &siz_u)) )
   {
     col_l = siz_u.ws_col;
