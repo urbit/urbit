@@ -489,7 +489,7 @@ _dawn_come(u3_noun stars)
     eny = u3i_words(16, eny_w);
 
     u3l_log("boot: mining a comet. May take up to an hour.\r\n");
-    u3l_log("If you want to boot faster, get an Azimuth point.\r\n");
+    u3l_log("If you want to boot faster, get an Urbit identity.\r\n");
 
     seed = u3dc("come:dawn", u3k(stars), u3k(eny));
     u3z(eny);
