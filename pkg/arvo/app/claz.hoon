@@ -6,25 +6,20 @@
 =,  azimuth
 ::
 |%
-++  state-0
++$  state-0
   $:  %0
       in-progress=(unit command)
   ==
 ::
-::  internal types
-::
 +$  rpc-result  [id=@t res=@t]
 +$  card  card:agent:gall
-::
-::  constants
-::TODO  from zuse instaed`
 ::
 ++  node-url           'http://eth-mainnet.urbit.org:8545'
 --
 ::
 =|  state-0
 =*  state  -
-%+  verb  &
+%+  verb  |
 =<
   |_  =bowl:gall
   +*  this  .
