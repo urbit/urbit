@@ -16,6 +16,7 @@ install:
   - nix-env -iA cachix -f https://cachix.org/api/v1/install
   - stack --no-terminal --install-ghc build king --only-dependencies
 
+# TODO Only do release builds on the `pull` branch?
 script:
   - cachix use urbit2
   - ./sh/cachix || true

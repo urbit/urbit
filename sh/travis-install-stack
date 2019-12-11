@@ -5,13 +5,13 @@ set -ex
 mkdir -p ~/.local/bin
 
 # OSX
-# travis_retry curl -L https://get.haskellstack.org/stable/osx-x86_64.tar.gz | tar xz --strip-components=1 --include '*/stack' -C ~/.local/bin
+# curl -L https://get.haskellstack.org/stable/osx-x86_64.tar.gz | tar xz --strip-components=1 --include '*/stack' -C ~/.local/bin
 
 mkdir -p tmp
 
 pax="https://get.haskellstack.org/stable/linux-x86_64.tar.gz"
 
-travis_retry curl -L $pax | tar xz -C tmp
+curl -L $pax | tar xz -C tmp
 
 mv tmp/stack-*/stack ~/.local/bin
 
