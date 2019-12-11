@@ -154,6 +154,8 @@ _dawn_get_jam(c3_c* url_c)
   u3_noun jammed = u3k(u3t(octs));
   u3z(octs);
 
+  c3_free(buf_u.base);
+
   return u3ke_cue(jammed);
 }
 
@@ -162,7 +164,12 @@ _dawn_get_jam(c3_c* url_c)
 static u3_noun
 _dawn_eth_rpc(c3_c* url_c, u3_noun oct)
 {
-  return _dawn_buf_to_oct(_dawn_post_json(url_c, _dawn_oct_to_buf(oct)));
+  uv_buf_t buf_u = _dawn_post_json(url_c, _dawn_oct_to_buf(oct));
+  u3_noun    pro = _dawn_buf_to_oct(buf_u);
+
+  c3_free(buf_u.base);
+
+  return pro;
 }
 
 /* _dawn_fail(): pre-boot validation failed
