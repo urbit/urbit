@@ -97,6 +97,7 @@ headNote _version = string $ intercalate "\n"
   , "Version " <> VERSION_king
   ]
 
+-- TODO This needs to be updated.
 footNote :: String -> Doc
 footNote exe = string $ intercalate "\n"
   [ "Development Usage:"

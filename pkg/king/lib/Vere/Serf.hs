@@ -84,10 +84,8 @@ data Serf e = Serf
 data ShipId = ShipId Ship Bool
   deriving (Eq, Ord, Show)
 
-type Play = Maybe (EventId, Mug, ShipId)
-
 data Plea
-    = PPlay Play
+    = PPlay EventId Mug
     | PWork Work
     | PDone EventId Mug FX
     | PStdr EventId Cord
@@ -101,7 +99,7 @@ type SerfResp      = Either ReplacementEv WorkResult
 data SerfExn
     = BadComputeId EventId WorkResult
     | BadReplacementId EventId ReplacementEv
-    | UnexpectedPlay EventId Play
+    | UnexpectedPlay EventId (EventId, Mug)
     | BadPleaAtom Atom
     | BadPleaNoun Noun [Text] Text
     | ReplacedEventDuringReplay EventId ReplacementEv
@@ -296,7 +294,7 @@ recvPlea w = do
   a <- recvAtom w
   logDebug "(recvPlea) Got atom"
   n <- fromRightExn (cue a) (const $ BadPleaAtom a)
-  p <- fromRightExn (fromNounErr n) (\(p,m) -> BadPleaNoun (traceShowId n) p m)
+  p <- fromRightExn (fromNounErr n) (\(p,m) -> BadPleaNoun n p m)
 
   case p of PStdr e msg   -> do printErr (sStderr w) (cordText msg)
                                 recvPlea w
@@ -311,12 +309,11 @@ recvPlea w = do
 handshake :: HasLogFunc e => Serf e -> LogIdentity -> RIO e SerfState
 handshake serf ident = do
     ss@SerfState{..} <- recvPlea serf >>= \case
-      PPlay Nothing          -> pure $ SerfState 1 (Mug 0)
-      PPlay (Just (e, m, _)) -> pure $ SerfState e m
-      x                      -> throwIO (InvalidInitialPlea x)
+      PPlay e m -> pure $ SerfState e m
+      x         -> throwIO (InvalidInitialPlea x)
 
     when (ssNextEv == 1) $ do
-        sendOrder serf (OBoot ident)
+        sendOrder serf (OBoot (lifecycleLen ident))
 
     pure ss
 
@@ -342,7 +339,7 @@ sendWork w job =
 
     loop :: RIO e SerfResp
     loop = recvPlea w >>= \case
-      PPlay p       -> throwIO (UnexpectedPlay eId p)
+      PPlay e m     -> throwIO (UnexpectedPlay eId (e, m))
       PDone i m o   -> produce (SerfState (i+1) m, o)
       PWork work    -> replace (DoWork work)
       PStdr _ cord  -> printErr (sStderr w) (cordText cord) >> loop
@@ -513,8 +510,8 @@ doCollectFX serf = go
             yield (jobId jb, fx)
             go ss
 
-replaceMug :: Job -> Mug -> Job
-replaceMug jb mug =
+_replaceMug :: Job -> Mug -> Job
+_replaceMug jb mug =
   case jb of
     DoWork (Work eId _ w o)  -> DoWork (Work eId mug w o)
     RunNok (LifeCyc eId _ n) -> RunNok (LifeCyc eId mug n)
