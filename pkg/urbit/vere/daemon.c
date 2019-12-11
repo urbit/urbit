@@ -928,8 +928,8 @@ u3_daemon_commence()
     }
   }
 
-  /* listen on command socket
-  */
+  //  listen on command socket
+  //
   {
     c3_c buf_c[256];
 
@@ -948,7 +948,6 @@ u3_daemon_commence()
   uv_run(u3L, UV_RUN_DEFAULT);
 
   _daemon_loop_exit();
-  exit(0);
 }
 
 /* u3_daemon_bail(): immediately shutdown.
