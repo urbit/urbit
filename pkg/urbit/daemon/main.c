@@ -754,7 +754,18 @@ main(c3_i   argc,
       SSL_load_error_strings();
     }
 
+    //  initialize curl
+    //
+    if ( 0 != curl_global_init(CURL_GLOBAL_DEFAULT) ) {
+      u3l_log("boot: curl initialization failed\r\n");
+      exit(1);
+    }
+
     u3_daemon_commence();
+
+    //  uninitialize curl
+    //
+    curl_global_cleanup();
 
     //  uninitialize OpenSSL
     //
