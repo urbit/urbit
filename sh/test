@@ -2,6 +2,8 @@
 
 set -e
 
+stack test king --fast
+
 pkg=$(nix-build nix/ops -A test --no-out-link "$@")
 
 hdr () {
