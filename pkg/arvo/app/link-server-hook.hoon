@@ -29,7 +29,7 @@
 =|  state-0
 =*  state  -
 ::
-%+  verb  &
+%+  verb  |
 ^-  agent:gall
 =<
   |_  =bowl:gall
