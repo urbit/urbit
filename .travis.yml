@@ -21,7 +21,9 @@ before_install:
   - | # Install stack
     mkdir -p ~/.local/bin
     # travis_retry curl -L https://get.haskellstack.org/stable/osx-x86_64.tar.gz | tar xz --strip-components=1 --include '*/stack' -C ~/.local/bin
-    travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --strip-components=1 --include '*/stack' -C ~/.local/bin
+    mkdir -p tmp
+    travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz -C tmp
+    mv tmp/stack-*/stack ~/.local/bin
     # Use the more reliable S3 mirror of Hackage
     mkdir -p $HOME/.cabal
     echo 'remote-repo: hackage.haskell.org:http://hackage.fpcomplete.com/' > $HOME/.cabal/config
