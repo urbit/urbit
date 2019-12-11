@@ -126,6 +126,51 @@ type Typing = Maybe
 -- think about env vs instantiate for bindings; if instantiate
 -- as below, should the types be different?
 -- better organize
+nest :: Ord a => Env a -> Typ a -> Typ a -> Typing ()
+nest env = fmap void . go env mempty
+  where
+    go :: Ord a => Env a -> Asm a -> Typ a -> Typ a -> Typing (Asm a)
+    go env asm0 t0 u0 =
+      if t0 == u0
+        then pure asm0
+        else let asm = Set.insert (t0, u0) asm0 in
+          case (t0, u0) of
+            (Typ, Typ) -> pure asm
+            -- FIXME yeah actually I think this is wrong
+            -- we're comaring the type of a type variable with 
+            -- (Var v, u) -> go env asm (env v) u
+            -- (t, Var v) -> go env asm t (env v)
+            -- following Cardelli 80something, we check the RHSs assuming
+            -- the putatively *lesser* of the LHSs for both
+            (Fun (Abs a b), Fun (Abs a' b')) -> do
+              asm <- go env asm a' a
+              go (extend1 a' env) (extendAsm asm) (fromScope b) (fromScope b')
+            (Cel (Abs a b), Cel (Abs a' b')) -> do
+              asm <- go env asm a a'
+              go (extend1 a env) (extendAsm asm) (fromScope b) (fromScope b')
+            (Wut ls, Wut ls') -> do
+              guard (ls `isSubsetOf` ls')
+              pure asm
+            -- TODO put into Typing errors
+            (Lam{}, _) -> error "nest: lambda"
+            (_, Lam{}) -> error "nest: lambda"
+            (Cns{}, _) -> error "nest: cons"
+            (_, Cns{}) -> error "nest: cons"
+            (Tag{}, _) -> error "nest: tag"
+            (_, Tag{}) -> error "nest: tag"
+            (t@App{}, u) -> go env asm (whnf t) u
+            (t, u@App{}) -> go env asm t (whnf u)
+            (t@Hed{}, u) -> go env asm (whnf t) u
+            (t, u@Hed{}) -> go env asm t (whnf u)
+            (t@Tal{}, u) -> go env asm (whnf t) u
+            (t, u@Tal{}) -> go env asm t (whnf u)
+            (t@Cas{}, u) -> go env asm (whnf t) u
+            (t, u@Cas{}) -> go env asm t (whnf u)
+            (t@(Rec (Abs _ b)), u) -> go env asm (instantiate1 t b) u
+            (t, u@(Rec (Abs _ b))) -> go env asm t (instantiate1 u b)
+
+            
+{-
 nest :: Ord a => Env a -> Asm a -> Typ a -> Typ a -> Bool
 nest _ _ Typ Typ = True
 nest _ _ (Var v) (Var v') = v == v'  -- TODO amber for Rec
@@ -153,14 +198,16 @@ nest env asm t u@Tal{} = nest env asm t (whnf u)
 -- TODO meet and join bro
 nest env asm (Cas t _ _) u = nest env asm t u
 nest env asm t (Cas u _ _) = nest env asm t u
+nest env asm (Rec (Abs t b)) (Rec (Abs t' b')) = undefined
 nest _ _ Rec{} _ = undefined
 nest _ _ _ Rec{} = undefined
 nest _ _ _ _ = False
+-}
 
 check :: Ord a => Env a -> Exp a -> Typ a -> Typing ()
 check env e t = do
   t' <- infer env e
-  guard (nest env mempty t' t)
+  nest env t' t
 
 infer :: forall a. Ord a => Env a -> Exp a -> Typing (Typ a)
 infer env = \case
@@ -215,4 +262,5 @@ whnf = \case
   Hed (whnf -> Cns x _) -> whnf x
   Tal (whnf -> Cns _ y) -> whnf y
   Cas _ (whnf -> Tag t) cs -> whnf $ fromJust $ lookup t cs
+  e@(Rec (Abs _ b)) -> whnf $ instantiate1 e b
   e -> e
