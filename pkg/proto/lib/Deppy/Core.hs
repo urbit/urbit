@@ -102,7 +102,7 @@ cel_ t u = Cel (Abs t (abstract (const Nothing) u))
 infixl 9 @:
 (@:) = App
 
--- typing environment
+-- | typing environment
 type Env a = a -> Typ a
 
 extend :: (b -> Typ a) -> Env a -> Env (Var b a)
@@ -114,11 +114,22 @@ extend handleNewBindings oldEnv = \case
 extend1 :: Typ a -> Env a -> Env (Var () a)
 extend1 t = extend \() -> t
 
--- amber rule assumptions
+-- | amber rule assumptions
 type Asm a = Set (Typ a, Typ a)
 
 extendAsm :: (Ord a, Ord b) => Asm a -> Asm (Var b a)
 extendAsm = Set.map \(t, u) -> (F <$> t, F <$> u)
+
+-- | Remove types that mention variables that are no longer in scope
+retractAsm :: (Ord a, Ord b) => Asm (Var b a) -> Asm a
+retractAsm = foldMap wither
+  where
+    wither = \case
+      (cleanTyp -> Just t, cleanTyp -> Just u) -> singleton (t, u)
+      _ -> mempty
+    cleanTyp = traverse \case
+      F v -> pure v
+      B _ -> Nothing
 
 type Typing = Maybe
 
@@ -144,10 +155,12 @@ nest env = fmap void . go env mempty
             -- the putatively *lesser* of the LHSs for both
             (Fun (Abs a b), Fun (Abs a' b')) -> do
               asm <- go env asm a' a
-              go (extend1 a' env) (extendAsm asm) (fromScope b) (fromScope b')
+              retractAsm <$>
+                go (extend1 a' env) (extendAsm asm) (fromScope b) (fromScope b')
             (Cel (Abs a b), Cel (Abs a' b')) -> do
               asm <- go env asm a a'
-              go (extend1 a env) (extendAsm asm) (fromScope b) (fromScope b')
+              retractAsm <$>
+                go (extend1 a env) (extendAsm asm) (fromScope b) (fromScope b')
             (Wut ls, Wut ls') -> do
               guard (ls `isSubsetOf` ls')
               pure asm
