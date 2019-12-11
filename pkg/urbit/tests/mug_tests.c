@@ -89,6 +89,9 @@ _test_mug(void)
       fprintf(stderr, "fail (i) (4)\r\n");
       exit(1);
     }
+
+    c3_free(str_y);
+    c3_free(str_w);
   }
 
   fprintf(stderr, "test_mug: ok\n");
