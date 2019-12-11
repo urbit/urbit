@@ -18,11 +18,12 @@
     (request-batch-rpc-strict url [id req]~)
   ?:  ?=([* ~] res)
     (pure:m json.i.res)
-  ~|  [%ethio %unexpected-results (lent res)]
-  !!
+  %+  strand-fail:strandio
+    %unexpected-multiple-results
+  [>(lent res)< ~]
 ::  +request-batch-rpc-strict: send rpc request, with retry
 ::
-::    sends a batch requests. produces results for all requests in the batch,
+::    sends a batch request. produces results for all requests in the batch,
 ::    but only if all of them are successful.
 ::
 ++  request-batch-rpc-strict
