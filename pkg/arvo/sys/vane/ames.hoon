@@ -1220,7 +1220,7 @@
     ::
     =?  origin.packet  ?=(~ origin.packet)  `lane
     =/  =blob  (encode-packet packet)
-    (send-blob rcvr.packet blob)
+    (send-blob & rcvr.packet blob)
   ::  +on-hear-open: handle receipt of plaintext comet self-attestation
   ::
   ++  on-hear-open
@@ -1577,7 +1577,7 @@
         ::  if we're a comet, send self-attestation packet first
         ::
         =?  event-core  =(%pawn (clan:title our))
-          (send-blob ship (attestation-packet ship life.point))
+          (send-blob | ship (attestation-packet ship life.point))
         ::  save current duct
         ::
         =/  original-duct  duct
@@ -1598,7 +1598,7 @@
         =.  event-core
           %+  roll  ~(tap in packets.todos)
           |=  [=blob core=_event-core]
-          (send-blob:core ship blob)
+          (send-blob:core | ship blob)
         ::
         event-core(duct original-duct)
       --
@@ -1710,7 +1710,7 @@
   ::    request the information from Jael if we haven't already.
   ::
   ++  send-blob
-    |=  [=ship =blob]
+    |=  [for=? =ship =blob]
     ::
     %-  (trace rot.veb |.("send-blob: to {<ship>}"))
     |-
@@ -1726,6 +1726,10 @@
         =/  =peer-state  +.u.ship-state
         ::
         ?:  =(our ship)
+          ::  if forwarding, don't send to sponsor to avoid loops
+          ::
+          ?:  for
+            event-core
           (try-next-sponsor sponsor.peer-state)
         ::
         ?~  route=route.peer-state
@@ -1967,7 +1971,7 @@
           ?&  ?=(%pawn (clan:title our))
               =(1 current:(~(got by snd.peer-state) bone))
           ==
-        (send-blob her.channel (attestation-packet [her her-life]:channel))
+        (send-blob | her.channel (attestation-packet [her her-life]:channel))
       ::  maybe resend some timed out packets
       ::
       (run-message-pump bone %wake ~)
@@ -1984,7 +1988,7 @@
       =/  =packet  [[our her.channel] encrypted=%.y origin=~ content]
       =/  =blob    (encode-packet packet)
       ::
-      =.  event-core  (send-blob her.channel blob)
+      =.  event-core  (send-blob | her.channel blob)
       peer-core
     ::  +got-duct: look up $duct by .bone, asserting already bound
     ::
