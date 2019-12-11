@@ -101,16 +101,52 @@
 ::  +read-contract: calls a read function on a contract, produces result hex
 ::
 ++  read-contract
-  |=  [url=@t proto-read-request:rpc:ethereum]
+  |=  [url=@t req=proto-read-request:rpc:ethereum]
   =/  m  (strand:strandio ,@t)
-  ;<  =json  bind:m
-    %^  request-rpc  url  id
+  ;<  res=(list [id=@t res=@t])  bind:m
+    (batch-read-contract-strict url [req]~)
+  ?:  ?=([* ~] res)
+    (pure:m res.i.res)
+  %+  strand-fail:strandio
+    %unexpected-multiple-results
+  [>(lent res)< ~]
+::  +batch-read-contract-strict: calls read functions on contracts
+::
+::    sends a batch request. produces results for all requests in the batch,
+::    but only if all of them are successful.
+::
+++  batch-read-contract-strict
+  |=  [url=@t reqs=(list proto-read-request:rpc:ethereum)]
+  |^  =/  m  (strand:strandio ,results)
+      ^-  form:m
+      ;<  res=(list [id=@t =json])  bind:m
+        %+  request-batch-rpc-strict  url
+        (turn reqs proto-to-rpc)
+      =+  ^-  [=results =failures]
+        (roll res response-to-result)
+      ?~  failures  (pure:m results)
+      (strand-fail:strandio %batch-read-failed-for >failures< ~)
+  ::
+  +$  results   (list [id=@t res=@t])
+  +$  failures  (list [id=@t =json])
+  ::
+  ++  proto-to-rpc
+    |=  proto-read-request:rpc:ethereum
+    ^-  [(unit @t) request:rpc:ethereum]
+    :-  id
     :+  %eth-call
       ^-  call:rpc:ethereum
       [~ to ~ ~ ~ `tape`(encode-call:rpc:ethereum function arguments)]
     [%label %latest]
-  ?.  ?=(%s -.json)  (strand-fail:strandio %request-rpc-fail >json< ~)
-  (pure:m p.json)
+  ::
+  ++  response-to-result
+    |=  [[id=@t =json] =results =failures]
+    ^+  [results failures]
+    ?:  ?=(%s -.json)
+      [[id^p.json results] failures]
+    [results [id^json failures]]
+  --
+::
 ::
 ++  get-latest-block
   |=  url=@ta
