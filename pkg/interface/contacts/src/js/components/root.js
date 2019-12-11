@@ -9,7 +9,8 @@ import { store } from '/store';
 import { Skeleton } from '/components/skeleton';
 import { NewScreen } from '/components/lib/new';
 import { Contacts } from '/components/contacts';
-import { ContactCard } from '/components/lib/card'
+import { ContactCard } from '/components/lib/card';
+import { AddScreen } from '/components/lib/add-contact';
 
 
 export class Root extends Component {
@@ -48,7 +49,10 @@ export class Root extends Component {
                   spinner={state.spinner}
                   contacts={state.contacts}
                   activeDrawer="rightPanel">
-                  <NewScreen />
+                  <NewScreen 
+                    setSpinner={this.setSpinner}
+                    api={api}
+                  />
                 </Skeleton>
               );
           }} />
@@ -66,12 +70,37 @@ export class Root extends Component {
                   selected={groupPath}>
                     <Contacts 
                     contacts={contactList}
+                    activeDrawer="contacts"
                     path={groupPath} />
                     <div className="h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"></div>
                   </Skeleton>
               )
             }}
             />
+          <Route exact path="/~contacts/add/:ship/:group"
+            render={(props) => {
+              let groupPath = `/${props.match.params.ship}/${props.match.params.group}`;
+
+              let contactList = state.contacts[groupPath];
+
+              return (
+                <Skeleton
+                  spinner={state.spinner}
+                  contacts={state.contacts}
+                  activeDrawer="rightPanel"
+                  selected={groupPath}>
+                  <Contacts
+                    contacts={contactList}
+                    activeDrawer="rightPanel"
+                    path={groupPath} />
+                  <AddScreen 
+                    path={groupPath}
+                    contacts={contactList}
+                  />
+                </Skeleton>
+              )
+            }}
+          />
             <Route exact path="/~contacts/:ship/:group/:contact"
             render={ (props) => {
               let groupPath = `/${props.match.params.ship}/${props.match.params.group}`;
@@ -97,7 +126,9 @@ export class Root extends Component {
                     selectedContact={thisContactPath} />
                     <ContactCard
                     contact={contact}
-                    path={groupPath}/>
+                    path={groupPath}
+                    ship={props.match.params.contact}
+                    />
                   </Skeleton>
               )
             }}
@@ -116,7 +147,9 @@ export class Root extends Component {
                   selected="me">
                     <ContactCard
                     path="/~/default"
-                    contact={me}/>
+                    contact={me}
+                    ship={window.ship}
+                    />
                   </Skeleton>
               )
             }}
