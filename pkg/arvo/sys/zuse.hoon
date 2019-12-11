@@ -8376,7 +8376,7 @@
                   top=(list ?(@ux (list @ux)))
               ==
               [%eth-get-filter-changes fid=@ud]
-              [%eth-get-transaction-count adr=address]
+              [%eth-get-transaction-count adr=address =block]
               [%eth-get-transaction-receipt txh=@ux]
               [%eth-send-raw-transaction dat=@ux]
           ==
@@ -8597,7 +8597,10 @@
         ['eth_getFilterChanges' (tape (num-to-hex fid.req)) ~]
       ::
           %eth-get-transaction-count
-        ['eth_getTransactionCount' (tape (address-to-hex adr.req)) ~]
+        :-  'eth_getTransactionCount'
+        :~  (tape (address-to-hex adr.req))
+            (block-to-json block.req)
+        ==
       ::
           %eth-get-transaction-receipt
         ['eth_getTransactionReceipt' (tape (transaction-to-hex txh.req)) ~]
@@ -8671,6 +8674,8 @@
     ++  parse-eth-block-number  parse-hex-result
     ::
     ++  parse-transaction-hash  parse-hex-result
+    ::
+    ++  parse-eth-get-transaction-count  parse-hex-result
     ::
     ++  parse-event-logs
       (ar:dejs:format parse-event-log)
