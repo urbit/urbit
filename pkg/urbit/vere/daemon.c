@@ -490,7 +490,13 @@ _daemon_get_atom(c3_c* url_c)
 
   curl_easy_cleanup(curl);
 
-  return u3i_bytes(buf_u.len, (const c3_y*)buf_u.base);
+  {
+    u3_noun pro = u3i_bytes(buf_u.len, (const c3_y*)buf_u.base);
+
+    c3_free(buf_u.base);
+
+    return pro;
+  }
 }
 
 /* _get_cmd_output(): Run a shell command and capture its output.
