@@ -32308,6 +32308,7 @@
                 global$2[key$1] = "esm";
               }
             }
+            //# sourceMappingURL=react-router.js.map
 
             /**
              * The public API for a <Router> that uses HTML5 history.
@@ -32607,6 +32608,7 @@
                 style: propTypes.object
               });
             }
+            //# sourceMappingURL=react-router-dom.js.map
 
             var classnames = createCommonjsModule(function (module) {
             /*!
@@ -49762,6 +49764,10 @@
               return str.slice(0,-1);
             }
 
+            function deSig(ship) {
+              return ship.replace('~', '');
+            }
+
             function uxToHex(ux) {
               let value = ux.substr(2).replace('.', '').padStart(6, '0');
               return value;
@@ -58759,7 +58765,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
             let subscription = new Subscription();
 
-            const _jsxFileName = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/lib/icons/icon-home.js";
+            const _jsxFileName = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/lib/icons/icon-home.js";
             class IconHome extends react_1 {
               render() {
                 return (
@@ -58768,7 +58774,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$1 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/lib/icons/icon-spinner.js";
+            const _jsxFileName$1 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/lib/icons/icon-spinner.js";
             class IconSpinner extends react_1 {
               render() {
                 return (
@@ -58777,7 +58783,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$2 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/lib/header-bar.js";
+            const _jsxFileName$2 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/lib/header-bar.js";
             class HeaderBar extends react_1 {
               render() {
                 let spin = (this.props.spinner)
@@ -58788,7 +58794,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                   :  null;
 
                 return (
-                  react.createElement('div', { className: "bg-black w-100 justify-between"  ,
+                  react.createElement('div', { className: "bg-black w-100 dn db-m db-l db-xl justify-between"      ,
                     style: { height: 48, padding: 8}, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 16}}
                     , react.createElement('a', { className: "db",
                       style: { background: '#1A1A1A',
@@ -58805,7 +58811,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$3 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/lib/groups-item.js";
+            const _jsxFileName$3 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/lib/groups-item.js";
             class GroupsItem extends react_1 {
                 render() {
                     const { props } = this;
@@ -62691,7 +62697,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
             var dist_2 = dist.sigil;
             var dist_3 = dist.stringRenderer;
 
-            const _jsxFileName$4 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/lib/icons/sigil.js";
+            const _jsxFileName$4 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/lib/icons/sigil.js";
                 
             class Sigil extends react_1 {
               render() {
@@ -62717,7 +62723,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$5 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/groups.js";
+            const _jsxFileName$5 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/groups.js";
             class Groups extends react_1 {
               // drawer to the left
 
@@ -62753,9 +62759,10 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 .map((path) => {
                   let name = path.substr(1);
                   let nameSeparator = name.indexOf("/");
-                  (name.indexOf("/" === 1))
+                  (name === "/~/default")
                     ? name = name.substr(2)
-                    : name = name.substr(nameSeparator);
+                    : name = name.substr(nameSeparator + 1); // hides owner of list from UI
+                                                             // if unwanted, remove this
                     let selected = (this.props.selected === path);
                   return (
                     react.createElement(GroupsItem, {
@@ -62763,24 +62770,29 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                     link: path,
                     selected: selected,
                     name: name,
-                    contacts: props.contacts[path], __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 48}})
+                    contacts: props.contacts[path], __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 49}})
                   )
                 });
 
                 let activeClasses = (this.props.activeDrawer === "groups") ? "" : "dn-s";
 
                 return (
-                  react.createElement('div', { className: `br b--black lh-copy h-100 flex-basis-100-s flex-basis-300-ns 
-                       flex-shrink-0 relative ` + activeClasses, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 60}}
-                    , react.createElement('h2', { className: "f9 pt4 pr4 pb2 pl4 gray2 c-default"      , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 62}}, "Your Root Identity"  )
-                    , rootIdentity
-                    , react.createElement('h2', { className: "f9 pt3 pr4 pb2 pl4 gray2 c-default"      , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 64}}, "Your Groups" )
-                    , groupItems
+                  react.createElement('div', { className: `bn br-m br-l br-xl b--black lh-copy h-100 flex-basis-100-s
+       flex-basis-30-ns flex-shrink-0 mw5-m mw5-l mw5-xl pt3 pt0-m pt0-l pt0-xl
+        relative ` + activeClasses, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 61}}
+                    /*TODO Add invite items */
+                    , react.createElement('a', { className: "db dn-m dn-l dn-xl f8 pb6 pl3"      , href: "/", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 65}}, "⟵ Landscape" )
+                    , react.createElement('div', { className: "overflow-y-scroll h-100" , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 66}}
+                      , react.createElement('h2', { className: "f9 pt4 pr4 pb2 pl4 gray2 c-default"      , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 67}}, "Your Root Identity"  )
+                      , rootIdentity
+                      , react.createElement('h2', { className: "f9 pt3 pr4 pb2 pl4 gray2 c-default"      , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 69}}, "Your Groups" )
+                      , groupItems
+                    )
                     , react.createElement('div', {
-                      className: "dt bt b--gray4 absolute w-100"    ,
-                      style: { bottom: 0, height: 48 }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 66}}
-                      , react.createElement(Link, { to: "/~contacts/new", className: "dtc v-mid" , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 69}}
-                        , react.createElement('p', { className: "f9 pl4 black bn"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 70}}, "Create New Group"  )
+                      className: "bg-white z2 dt bt b--gray4 absolute w-100"      ,
+                      style: { bottom: 0, height: 48 }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 72}}
+                      , react.createElement(Link, { to: "/~contacts/new", className: "dtc v-mid" , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 75}}
+                        , react.createElement('p', { className: "f9 pl4 black bn"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 76}}, "Create New Group"  )
                       )
                     )
                   )
@@ -62788,28 +62800,25 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$6 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/skeleton.js";
+            const _jsxFileName$6 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/skeleton.js";
             class Skeleton extends react_1 {
               render() {
                   let rightPanelClasses =
-                    this.props.activeDrawer === "groups" ? "dn db-ns" : "db";
+                    this.props.activeDrawer === "groups" ? "dn flex-m flex-l flex-xl" : "flex";
 
                 return (
                   react.createElement('div', { className: "h-100 w-100" , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 13}}
                     , react.createElement(HeaderBar, { spinner: this.props.spinner, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 14}} )
                     , react.createElement('div', {
-                      className: "cf w-100 flex"  ,
-                      style: {
-                        height: "calc(100% - 48px)"
-                      }, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 15}}
+                      className: "cf w-100 h-100 h-100-m-48-ns flex"    , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 15}}
                       , react.createElement(Groups, { contacts: this.props.contacts, 
                       activeDrawer: this.props.activeDrawer,
-                      selected: this.props.selected, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 20}})
+                      selected: this.props.selected, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 17}})
                       , react.createElement('div', {
-                        className: "h-100 w-100 flex " + rightPanelClasses,
+                        className: "h-100 w-100 " + rightPanelClasses,
                         style: {
                           flexGrow: 1
-                        }, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 23}}
+                        }, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 20}}
                         , this.props.children
                       )
                     )
@@ -62818,7 +62827,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$7 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/lib/new.js";
+            const _jsxFileName$7 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/lib/new.js";
             class NewScreen extends react_1 {
               constructor(props) {
                 super(props);
@@ -62826,7 +62835,9 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 this.state = {
                   groupName: '',
                   invites: '',
-                  color: ''
+                  color: '',
+                  groupNameError: false,
+                  inviteError: false
                 };
 
                 this.groupNameChange = this.groupNameChange.bind(this);
@@ -62852,13 +62863,87 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               //   });
               // }
 
+              onClickCreate() {
+                const { props, state } = this;
+                if (!state.groupName) {
+                  this.setState({
+                    groupNameError: true,
+                    inviteError: false
+                  });
+                  return;
+                }
+                let group = `/~${window.ship}` + `/${state.groupName}`;
+
+                let aud = [];
+                let isValid = true;
+
+                if (state.invites.length > 2) {
+                  aud = state.invites.split(',')
+                  .map((mem) => `~${deSig(mem.trim())}`);
+
+                  aud.forEach((mem) => {
+                    if (!src.isValidPatp(mem)) {
+                      isValid = false;
+                    }
+                  });
+                }
+
+                if (!isValid) {
+                  this.setState({
+                    inviteError: true,
+                    groupNameError: false
+                  });
+                  return;
+                }
+
+                if (this.textarea) {
+                  this.textarea.value = '';
+                }
+                this.setState({
+                  error: false,
+                  success: true,
+                  invites: ''
+                }, () => {
+                  props.setSpinner(true);
+                  props.api.contactCreate(group);
+                  //TODO add YOU to the group, but without invites
+                  aud.forEach((ship) => {
+                    if (ship !== `~${window.ship}`) {
+                      props.api.invite.invite(group, ship);
+                    }
+                  });
+                });
+              }
+
               render() {
+
+                let groupNameErrElem = (react.createElement('span', {__self: this, __source: {fileName: _jsxFileName$7, lineNumber: 96}} ));
+                if (this.state.groupNameError) {
+                  groupNameErrElem = (
+                    react.createElement('span', { className: "f9 inter red2 ml3 mt1 db"     , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 99}}, "Group must have a valid name."
+
+                    )
+                  );
+                }
+
+                let invErrElem = (react.createElement('span', {__self: this, __source: {fileName: _jsxFileName$7, lineNumber: 105}} ));
+                if (this.state.inviteError) {
+                  invErrElem = (
+                    react.createElement('span', { className: "f9 inter red2 ml3 mb5 db"     , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 108}}, "Invites must be validly formatted ship names."
+
+                    )
+                  );
+                }
+
                 return (
-                  react.createElement('div', { className: "h-100 w-100 flex flex-column overflow-y-scroll"    , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 40}}
-                    , react.createElement('div', { className: "w-100 w-50-l w-50-xl mb4"   , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 41}}
-                      , react.createElement('h2', { className: "f8 pl3 pt4"  , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 42}}, "Create New Group"  )
-                      , react.createElement('h2', { className: "f8 pl3 pt6"  , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 43}}, "Group Name" )
-                      , react.createElement('p', { className: "f9 pl3 gray2 lh-copy"   , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 44}}, "Alphanumeric characters only"  )
+                  react.createElement('div', { className: "h-100 w-100 flex flex-column overflow-y-scroll"    , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 115}}
+                    , react.createElement('div', { className: "w-100 dn-m dn-l dn-xl inter pt1 pb6 pl3 pt3 f8"         , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 116}}
+                      , react.createElement(Link, { to: "/~contacts/", __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 117}}, "⟵ All Groups")
+                    )
+                    , react.createElement('div', { className: "w-100 w-50-l w-50-xl mb4 pr6 pr0-l pr0-xl"      , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 119}}
+                      , react.createElement('h2', { className: "f8 pl3 pt4"  , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 120}}, "Create New Group"  )
+                      , react.createElement('h2', { className: "f8 pl3 pt6"  , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 121}}, "Group Name" )
+                      , react.createElement('p', { className: "f9 pl3 gray2 lh-copy"   , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 122}}, "Alphanumeric characters and hyphens only"    )
                       , react.createElement('textarea', {
                         className: "f7 ba b--gray3 w-100 pa3 ml3 mt2"      ,
                         rows: 1,
@@ -62867,8 +62952,9 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                           resize: "none",
                           height: 48,
                           paddingTop: 14
-                        }, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 45}}
-                      )
+                        },
+                        onChange: this.groupNameChange, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 123}})
+                      , groupNameErrElem
                       /* <h2 className="f8 pl3 pt6">Group Avatar</h2>
                       <p className="f9 pl3 gray2 lh-copy">
                         Select a color to represent your group
@@ -62883,33 +62969,36 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                           paddingTop: 14
                         }}
                       /> */
-                      , react.createElement('h2', { className: "f8 pl3 pt6"  , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 69}}, "Add Group Members"  )
-                      , react.createElement('p', { className: "f9 pl3 gray2 lh-copy"   , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 70}}, "Search for ships to invite to your group"
+                      , react.createElement('h2', { className: "f8 pl3 pt6"  , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 148}}, "Add Group Members"  )
+                      , react.createElement('p', { className: "f9 pl3 gray2 lh-copy"   , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 149}}, "Invite ships to your group"
 
                       )
-                      , react.createElement('div', { className: "relative", __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 73}}
+                      , react.createElement('div', { className: "relative", __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 152}}
                         , react.createElement('textarea', {
-                          className: "f8 ba b--gray3 w-100 pa3 pl7  ml3 mt2 mb7"         ,
+                          className: "f8 ba b--gray3 w-100 pa3 pl3 ml3 mt2 mb2"        ,
                           rows: 1,
-                          placeholder: "Search for ships..."  ,
+                          placeholder: "~zod, ~dopzod, ~ravmel-ropdyl"  ,
                           style: {
                             resize: "none",
                             height: 48,
                             paddingTop: 15
-                          }, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 74}}
-                        )
-                        , react.createElement('span', { className: "f5 gray3 absolute"  ,
-                        style: {transform: "rotate(-45deg)",
+                          },
+                          onChange: this.invChange, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 153}})
+                        , invErrElem
+                        /* <span className="f5 gray3 absolute"
+                        style={{transform: "rotate(-45deg)",
                                 left: 21,
-                                top: 18}, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 84}}, "⚲"
-
-                        )
+                                top: 18}}>
+                                ⚲
+                        </span> */
                       )
-                      , react.createElement('button', { className: "ml3 f8 ba pa2 b--green2 green2"     , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 91}}, "Start Group"
+                      , react.createElement('button', { 
+                      onClick: this.onClickCreate.bind(this),
+                      className: "ml3 f8 ba pa2 b--green2 green2 pointer"      , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 171}}, "Start Group"
 
                       )
-                      , react.createElement(Link, { to: "/~contacts", __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 94}}
-                        , react.createElement('button', { className: "f8 ml3 ba pa2 b--black"    , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 95}}, "Cancel")
+                      , react.createElement(Link, { to: "/~contacts", __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 176}}
+                        , react.createElement('button', { className: "f8 ml3 ba pa2 b--black pointer"     , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 177}}, "Cancel")
                       )
                     )
                   )
@@ -62917,7 +63006,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$8 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/lib/contact-item.js";
+            const _jsxFileName$8 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/lib/contact-item.js";
 
             class ContactItem extends react_1 {
               render() {
@@ -62940,7 +63029,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$9 = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/contacts.js";
+            const _jsxFileName$9 = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/contacts.js";
             class Contacts extends react_1 {
                 render() {
                   const { props } = this;
@@ -62968,29 +63057,73 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                     )
                   });
                     return (
-                        react.createElement('div', { className: `br b--black lh-copy h-100 flex-shrink-0 
-            flex-basis-100-s flex-basis-300-ns relative ` + responsiveClasses, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 32}}
-                        , react.createElement('h2', { className: "f9 pt4 pr4 pb2 pl4 gray2 c-default"      , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 34}}, "Members")
-                        , contactItems
-                        )
-                    )
-                }
-            }
-
-            const _jsxFileName$a = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/lib/card.js";
-            class ContactCard extends react_1 {
-                render() {
-                    return (
-                        react.createElement('div', { className: "h-100 w-100 flex justify-center overflow-x-hidden"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 7}}
-                          , react.createElement('div', { className: "w-50-xl flex justify-center pt4"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 8}}
-                            , react.createElement(Sigil, { ship: window.ship, size: 128, color: this.props.contact.color, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 9}})
+                        react.createElement('div', { className: `bn br-m br-l br-xl b--black lh-copy h-100 flex-shrink-0 
+            flex-basis-100-s flex-basis-30-ns mw5-m mw5-l mw5-xl relative 
+            overflow-hidden ` + responsiveClasses, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 32}}
+                          , react.createElement('div', { className: "pt3 pb6 pl3 f8 db dn-m dn-l dn-xl"       , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 35}}
+                            , react.createElement(Link, { to: "/~contacts/", __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 36}}, "⟵ All Groups")
+                          )
+                          , react.createElement('div', { className: "overflow-y-scroll h-100" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 38}}
+                            , react.createElement('h2', { className: "f9 pt4 pr4 pb2 pl4 gray2 c-default"      , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 39}}, "Members")
+                            , contactItems
+                          )
+                          , react.createElement('div', {
+                            className: "bg-white z2 bt b--gray4 absolute w-100 " +
+                            ((this.props.path.includes(window.ship))
+                              ? "dt"
+                              : "dn"),
+                            style: { bottom: 0, height: 48 }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 42}}
+                            , react.createElement(Link, { to: "/~contacts/add" + props.path, className: "dtc v-mid" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 48}}
+                              , react.createElement('p', { className: "f9 pl4 black bn"   , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 49}}, "Add New Member to Group"    )
+                            )
                           )
                         )
                     )
                 }
             }
 
-            const _jsxFileName$b = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/js/components/root.js";
+            const _jsxFileName$a = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/lib/card.js";
+            class ContactCard extends react_1 {
+                render() {
+                  //TODO "Share card" if it's /me -> sends to /~/default of recipient
+                    return (
+                        react.createElement('div', { className: "h-100 w-100 overflow-x-hidden"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 10}}
+                        , react.createElement('div', { className: "w-100 h2 dn-m dn-l dn-xl inter pb6 pl3 pt3 f8"         , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 11}}
+                          , react.createElement(Link, { to: "/~contacts/", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 12}}, "⟵")
+                        )
+                        , react.createElement('div', { className: "w-100 bb b--gray4"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 14}}
+                          , react.createElement('button', { className: "ml3 mt2 mb2 f9 pa2 ba br3 b--black"       , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 15}}, "Edit Contact Info"  )
+                        )
+                        , react.createElement('div', { className: "w-100 flex justify-center pa4 pa0-xl pt4-xl"     , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 17}}
+                          , react.createElement('div', { className: "w-100 mw6 tc"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 18}}
+                          /*TODO default to sigil, but show avatar if exists for contact */
+                            , react.createElement(Sigil, { ship: this.props.ship, size: 128, color: this.props.contact.color, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 20}})
+                            , react.createElement('div', { className: "w-100 pt8 lh-copy tl"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 21}}
+                              , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 22}}, "Ship Name" )
+                              , react.createElement('p', { className: "f8 mono" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 23}}, "~", this.props.ship)
+                            )
+                          )
+                        )
+                        )
+                    )
+                }
+            }
+
+            const _jsxFileName$b = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/lib/add-contact.js";
+            class AddScreen extends react_1 {
+              render() {
+                const { props } = this; 
+                return (
+                  react.createElement('div', { className: "h-100 w-100 flex flex-column overflow-y-scroll"    , __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 8}}
+                    , react.createElement('div', { className: "w-100 dn-m dn-l dn-xl inter pt1 pb6 pl3 pt3 f8"         , __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 9}}
+                      , react.createElement(Link, { to: "/~contacts" + props.path, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 10}}, "⟵ All Contacts")
+                    )
+                  )
+                )
+              }
+            }
+
+            const _jsxFileName$c = "/Users/matilde/git/urbit/pkg/interface/contacts/src/js/components/root.js";
 
             class Root extends react_1 {
               constructor(props) {
@@ -63011,27 +63144,30 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 const { props, state } = this;
 
                 return (
-                  react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$b, lineNumber: 34}}
-                    , react.createElement('div', { className: "h-100 w-100" , __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 35}}
+                  react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$c, lineNumber: 35}}
+                    , react.createElement('div', { className: "h-100 w-100" , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 36}}
                     , react.createElement(Route, { exact: true, path: "/~contacts",
                       render:  (props) => {
                         return (
-                          react.createElement(Skeleton, { activeDrawer: "groups", contacts: state.contacts, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 39}}
-                            , react.createElement('div', { className: "h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"     , __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 40}})
+                          react.createElement(Skeleton, { activeDrawer: "groups", contacts: state.contacts, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 40}}
+                            , react.createElement('div', { className: "h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"     , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 41}})
                           )
                         );
-                      }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 36}} )
+                      }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 37}} )
                       , react.createElement(Route, { exact: true, path: "/~contacts/new", 
                         render:  (props) => {
                           return (
                             react.createElement(Skeleton, {
                               spinner: state.spinner,
                               contacts: state.contacts,
-                              activeDrawer: "rightPanel", __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 47}}
-                              , react.createElement(NewScreen, {__self: this, __source: {fileName: _jsxFileName$b, lineNumber: 51}} )
+                              activeDrawer: "rightPanel", __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 48}}
+                              , react.createElement(NewScreen, { 
+                                setSpinner: this.setSpinner,
+                                api: api, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 52}}
+                              )
                             )
                           );
-                      }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 44}} )
+                      }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 45}} )
                       , react.createElement(Route, { exact: true, path: "/~contacts/:ship/:group",
                         render:  (props) => {
                           let groupPath = `/${props.match.params.ship}/${props.match.params.group}`;
@@ -63043,15 +63179,40 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                               spinner: state.spinner,
                               contacts: state.contacts,
                               activeDrawer: "contacts",
-                              selected: groupPath, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 62}}
+                              selected: groupPath, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 66}}
                                 , react.createElement(Contacts, { 
                                 contacts: contactList,
-                                path: groupPath, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 67}} )
-                                , react.createElement('div', { className: "h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"     , __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 70}})
+                                activeDrawer: "contacts",
+                                path: groupPath, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 71}} )
+                                , react.createElement('div', { className: "h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"     , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 75}})
                               )
                           )
-                        }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 55}}
+                        }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 59}}
                         )
+                      , react.createElement(Route, { exact: true, path: "/~contacts/add/:ship/:group",
+                        render: (props) => {
+                          let groupPath = `/${props.match.params.ship}/${props.match.params.group}`;
+
+                          let contactList = state.contacts[groupPath];
+
+                          return (
+                            react.createElement(Skeleton, {
+                              spinner: state.spinner,
+                              contacts: state.contacts,
+                              activeDrawer: "rightPanel",
+                              selected: groupPath, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 87}}
+                              , react.createElement(Contacts, {
+                                contacts: contactList,
+                                activeDrawer: "rightPanel",
+                                path: groupPath, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 92}} )
+                              , react.createElement(AddScreen, { 
+                                path: groupPath,
+                                contacts: contactList, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 96}}
+                              )
+                            )
+                          )
+                        }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 80}}
+                      )
                         , react.createElement(Route, { exact: true, path: "/~contacts/:ship/:group/:contact",
                         render:  (props) => {
                           let groupPath = `/${props.match.params.ship}/${props.match.params.group}`;
@@ -63069,18 +63230,20 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                               spinner: state.spinner,
                               contacts: state.contacts,
                               activeDrawer: "rightPanel",
-                              selected: groupPath, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 88}}
+                              selected: groupPath, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 117}}
                                 , react.createElement(Contacts, { 
                                 activeDrawer: "rightPanel",
                                 contacts: contactList,
                                 path: groupPath,
-                                selectedContact: thisContactPath, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 93}} )
+                                selectedContact: thisContactPath, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 122}} )
                                 , react.createElement(ContactCard, {
                                 contact: contact,
-                                path: groupPath, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 98}})
+                                path: groupPath,
+                                ship: props.match.params.contact, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 127}}
+                                )
                               )
                           )
-                        }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 75}}
+                        }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 104}}
                         )
                         , react.createElement(Route, { exact: true, path: "/~contacts/me",
                         render:  (props) => {
@@ -63093,13 +63256,15 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                               spinner: state.spinner,
                               contacts: state.contacts,
                               activeDrawer: "rightPanel",
-                              selected: "me", __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 112}}
+                              selected: "me", __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 143}}
                                 , react.createElement(ContactCard, {
                                 path: "/~/default",
-                                contact: me, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 117}})
+                                contact: me,
+                                ship: window.ship, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 148}}
+                                )
                               )
                           )
-                        }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 105}}
+                        }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 136}}
                         )
                     )
                   )
@@ -63107,7 +63272,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$c = "/Users/logan/Dev/urbit/pkg/interface/contacts/src/index.js";
+            const _jsxFileName$d = "/Users/matilde/git/urbit/pkg/interface/contacts/src/index.js";
             api.setAuthTokens({
               ship: window.ship
             });
@@ -63115,7 +63280,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
             subscription.start();
 
             reactDom.render((
-              react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$c, lineNumber: 15}} )
+              react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$d, lineNumber: 15}} )
             ), document.querySelectorAll("#root")[0]);
 
 }));

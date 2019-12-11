@@ -40,9 +40,10 @@ export class Groups extends Component {
     .map((path) => {
       let name = path.substr(1);
       let nameSeparator = name.indexOf("/");
-      (name.indexOf("/" === 1))
+      (name === "/~/default")
         ? name = name.substr(2)
-        : name = name.substr(nameSeparator);
+        : name = name.substr(nameSeparator + 1); // hides owner of list from UI
+                                                 // if unwanted, remove this
         let selected = (this.props.selected === path);
       return (
         <GroupsItem
@@ -57,14 +58,19 @@ export class Groups extends Component {
     let activeClasses = (this.props.activeDrawer === "groups") ? "" : "dn-s";
 
     return (
-      <div className={`br b--black lh-copy h-100 flex-basis-100-s flex-basis-300-ns 
-                       flex-shrink-0 relative ` + activeClasses}>
-        <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Your Root Identity</h2>
-        {rootIdentity}
-        <h2 className="f9 pt3 pr4 pb2 pl4 gray2 c-default">Your Groups</h2>
-        {groupItems}
+      <div className={`bn br-m br-l br-xl b--black lh-copy h-100 flex-basis-100-s
+       flex-basis-30-ns flex-shrink-0 mw5-m mw5-l mw5-xl pt3 pt0-m pt0-l pt0-xl
+        relative ` + activeClasses}>
+        {/*TODO Add invite items */}
+        <a className="db dn-m dn-l dn-xl f8 pb6 pl3" href="/">⟵ Landscape</a>
+        <div className="overflow-y-scroll h-100">
+          <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Your Root Identity</h2>
+          {rootIdentity}
+          <h2 className="f9 pt3 pr4 pb2 pl4 gray2 c-default">Your Groups</h2>
+          {groupItems}
+        </div>
         <div
-          className="dt bt b--gray4 absolute w-100"
+          className="bg-white z2 dt bt b--gray4 absolute w-100"
           style={{ bottom: 0, height: 48 }}>
           <Link to="/~contacts/new" className="dtc v-mid">
             <p className="f9 pl4 black bn">Create New Group</p>

@@ -81,7 +81,10 @@ a {
   .db-ns {
     display: block;
   }
-  .flex-basis-300-ns {
-    flex-basis: 300px;
+  .flex-basis-30-ns {
+    flex-basis: 30vw;
+  }
+  .h-100-m-48-ns {
+    height: calc(100% - 48px);
   }
 }

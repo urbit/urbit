@@ -13,7 +13,7 @@ export class HeaderBar extends Component {
       :  null;
 
     return (
-      <div className="bg-black w-100 justify-between"
+      <div className="bg-black w-100 dn db-m db-l db-xl justify-between"
         style={{ height: 48, padding: 8}}>
         <a className="db"
           style={{ background: '#1A1A1A',
