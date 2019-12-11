@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -ex
+
+mkdir -p ~/.local/bin
+
+# OSX
+# curl -L https://get.haskellstack.org/stable/osx-x86_64.tar.gz | tar xz --strip-components=1 --include '*/stack' -C ~/.local/bin
+
+mkdir -p tmp
+
+pax="https://get.haskellstack.org/stable/linux-x86_64.tar.gz"
+
+curl -L $pax | tar xz -C tmp
+
+mv tmp/stack-*/stack ~/.local/bin
+
+# Use the more reliable S3 mirror of Hackage
+mkdir -p ~/.cabal
+
+cat > ~/.cabal/config <<EOF
+remote-repo: hackage.haskell.org:http://hackage.fpcomplete.com/
+remote-repo-cache: $HOME/.cabal/packages
+EOF
