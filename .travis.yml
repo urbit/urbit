@@ -50,7 +50,9 @@ script:
 
   # King Haskell
   # - export PATH="${PATH}:$(pwd)/bin"
-  - stack build king --test --fast --copy-bins --local-bin-path ./bin
+  - stack build king --fast
+  - stack install king --local-bin-path ./bin
+  - stack test king --fast
   # # otool -L ./bin/king-linux64-demo
   # - mv bin/king release/king-linux64-demo
 
