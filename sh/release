@@ -14,6 +14,13 @@ fi
 
 mkdir -p release
 
+stack clean # Make sure we optimize
+stack install king --local-bin-path ./release
+mv release/king release/king-linux64-$ver
+
+# OSX
+# otool -L ./release/king-darwin-$ver
+
 for plat in linux64 darwin
 do
   sh/cross urbit "$plat"
