@@ -222,4 +222,14 @@
     ==
   %-  pure:m
   (parse-event-logs:rpc:ethereum json)
+::
+++  get-next-nonce
+  |=  [url=@ta =address]
+  =/  m  (strand:strandio ,@ud)
+  ^-  form:m
+  ;<  =json  bind:m
+    %^  request-rpc  url  `'nonce'
+    [%eth-get-transaction-count address [%label %latest]]
+  %-  pure:m
+  (parse-eth-get-transaction-count:rpc:ethereum json)
 --
