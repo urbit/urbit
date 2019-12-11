@@ -15,39 +15,15 @@
   (x==0) ? 0 :       \
   1 + ((x - 1) / y);
 
-//  repn :: Word -> [Word] -> Atom
-//  repn bits blox =
-//      (bits > 64) & \case
-//          True  → error "repn only works with block sizes <= 64"
-//          False → view (from atomWords)
-//                $ VP.fromList
-//                $ finish
-//                $ foldl' f ([], 0, 0)
-//                $ zip (repeat bits) blox
-//    where
-//      finish (acc, wor, n) = reverse
-//                           $ dropWhile (==0)
-//                           $ case n of { 0 -> acc; _ -> wor:acc }
-//
-//      slice size off wor = shiftL (takeBits size wor)
-//                         $ fromIntegral off
-//
-//      f (acc, wor, off) (remBlok, blok) =
-//          let rem = 64 - off in
-//          compare remBlok rem & \case
-//              LT -> (acc, res, off+bits)
-//                where res = wor .|. slice bits off blok
-//              EQ -> (res:acc, 0, 0)
-//                where res = (wor .|. slice bits off blok)
-//              GT -> f (res:acc, 0, 0) (remBlok', blok')
-//                where res      = wor .|. slice rem off blok
-//                      remBlok' = remBlok-rem
-//                      blok'    = shiftR blok (fromIntegral bits)
-
+/*
+  TODO Don't do the double flop.
+*/
 u3_noun u3qc_repn(u3_atom bits, u3_noun blox) {
     if ( !_(u3a_is_cat(bits) || bits==0 || bits>31) ) {
         return u3m_bail(c3__fail);
     }
+
+    blox = u3kb_flop(blox);
 
     //
     //  We need to enforce the invariant that the result does not contain
@@ -69,10 +45,10 @@ u3_noun u3qc_repn(u3_atom bits, u3_noun blox) {
 
         if (blok_n != 0) break;
 
-        u3l_log("strip\n");
-
         blox = u3t(blox);
     }
+
+    blox = u3kb_flop(blox);
 
     //
     //  Calculate input and output size.
@@ -80,8 +56,6 @@ u3_noun u3qc_repn(u3_atom bits, u3_noun blox) {
     c3_w num_blox = u3qb_lent(blox);
     c3_w bit_widt = num_blox * bits;
     c3_w wor_widt = DIVCEIL(bit_widt, 32);
-
-    u3l_log("%d*%d=%d [%d]\n", bits, num_blox, bit_widt, wor_widt);
 
     //
     //  Allocate a proto-atom. This is u3a_slab without initialization.
@@ -102,60 +76,54 @@ u3_noun u3qc_repn(u3_atom bits, u3_noun blox) {
     //  Bits are pushed into the `acc` register and flushed to the buffer
     //  once full.
     //
+    //  acc  register
+    //  idx  where the register will be flushed to
+    //  use  number of register bits filled (used)
+    //
 
-    c3_w acc = 0;      // Word to write into
-    c3_w acc_idx = 0;  // Where the word will be written to
-    c3_w acc_used = 0; // Number of bits used in acc.
+    c3_w acc=0, idx=0, use=0;
 
     void flush() {
-        u3l_log("%d @ %d\n", acc, acc_idx);
-        buf[acc_idx++] = acc;
+        buf[idx++] = acc;
         acc = 0;
-        acc_used = 0;
+        use = 0;
     }
 
     c3_w slice(c3_w sz, c3_w off, c3_w val) {
-       u3l_log("slice(%d,%d,%d) = %d\n", sz, off, val, TAKEBITS(sz, val) << off);
        return TAKEBITS(sz, val) << off;
     }
 
     for (c3_w i=0; i<num_blox; i++) {
-        c3_w block = u3a_h(blox);
+        c3_w blok = u3a_h(blox);
         blox = u3t(blox);
 
-        u3l_log("#%d = %d\n", i, block);
-
-        for (c3_w rem_in_block=bits; rem_in_block;) {
-            c3_w rem_in_acc = 32 - acc_used;
-            if (rem_in_block == rem_in_acc) {                       //  EQ
-                acc |= slice(rem_in_block, acc_used, block);
-                u3l_log("acc:%d\n", acc);
+        for (c3_w rem_in_blok=bits; rem_in_blok;) {
+            c3_w rem_in_acc = 32 - use;
+            if (rem_in_blok == rem_in_acc) {            //  EQ
+                acc |= slice(rem_in_blok, use, blok);
                 flush();
-                rem_in_block = 0;
-            } else if (rem_in_block < rem_in_acc) {                 //  LT
-                acc |= slice(rem_in_block, acc_used, block);
-                u3l_log("acc:%d\n", acc);
-                acc_used += rem_in_block;
-                rem_in_block = 0;
-            } else {                                                //  GT
-                acc |= slice(rem_in_acc, acc_used, block);
-                u3l_log("acc:%d\n", acc);
-                rem_in_block -= rem_in_acc;
-                block = block >> rem_in_acc;
+                rem_in_blok = 0;
+            } else if (rem_in_blok < rem_in_acc) {      //  LT
+                acc |= slice(rem_in_blok, use, blok);
+                use += rem_in_blok;
+                rem_in_blok = 0;
+            } else {                                    //  GT
+                acc |= slice(rem_in_acc, use, blok);
+                rem_in_blok -= rem_in_acc;
+                blok = blok >> rem_in_acc;
                 flush();
             }
         }
 
-        u3l_log("acc:%d acc_idx:%d acc_used:%d\n", acc, acc_idx, acc_used);
     }
 
     //
     //  If the last word isn't fully used, it will still need to be
     //  flushed.
     //
-    if (acc_used) flush();
+    if (use) flush();
 
-    return u3a_mint(buf, wor_widt);
+    return u3a_malt(buf);
 }
 
 u3_noun u3wc_repn(u3_noun cor) {
