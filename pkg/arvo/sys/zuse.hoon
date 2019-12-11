@@ -7632,6 +7632,9 @@
         ++  azimuth
           0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb
         ::
+        ++  ecliptic
+          0x6ac0.7b7c.4601.b5ce.11de.8dfe.6335.b871.c7c4.dd4d
+        ::
         ++  linear-star-release
           0x86cd.9cd0.992f.0423.1751.e376.1de4.5cec.ea5d.1801
         ::
@@ -7657,10 +7660,20 @@
         ++  azimuth
           0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579
         ::
+        ++  ecliptic
+          0x8b9f.86a2.8921.d9c7.05b3.113a.755f.b979.e1bd.1bce
+        ::
+        ++  linear-star-release
+          0x1f8e.dd03.1ee4.1474.0aed.b39b.84fb.8f2f.66ca.422f
+        ::
+        ++  conditional-star-release
+          0x0
+        ::
         ++  delegated-sending
-          0x1000.0000.0000.0000.0000.0000.0000.0000.0000.0000
+          0x3e8c.a510.354b.c2fd.bbd6.1502.52d9.3105.c9c2.7bbe
         ::
         ++  launch  4.601.630
+        ++  public  launch
         --
       ::
         ::  ++  azimuth  0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381  ::  local bridge
