@@ -44,60 +44,118 @@
 //                      remBlok' = remBlok-rem
 //                      blok'    = shiftR blok (fromIntegral bits)
 
-#define SLICE(x,y,z) u3m_bail(c3__fail)
-#define HEAD(x) u3m_bail(c3__fail)
-#define TAIL(x) u3m_bail(c3__fail)
-
-u3_noun u3qc_repn(u3_atom bits, u3_cell blox) {
+u3_noun u3qc_repn(u3_atom bits, u3_noun blox) {
     if ( !_(u3a_is_cat(bits) || bits==0 || bits>31) ) {
         return u3m_bail(c3__fail);
     }
 
+    //
+    //  We need to enforce the invariant that the result does not contain
+    //  leading (? TODO). Since each input block must be smaller than
+    //  a word, simply stripping off leading zero blocks is enough to
+    //  ensure this.
+    //
+    //  We also verify that each input block is a direct atom.
+    //
+    while (1) {
+        if (blox == 0) {
+            return 0;
+        }
+
+        u3_noun blok_n = u3h(blox);
+
+        if (!_(u3a_is_cat(blok_n)))
+            return u3m_bail(c3__fail);
+
+        if (blok_n != 0) break;
+
+        u3l_log("strip\n");
+
+        blox = u3t(blox);
+    }
+
+    //
+    //  Calculate input and output size.
+    //
     c3_w num_blox = u3qb_lent(blox);
     c3_w bit_widt = num_blox * bits;
     c3_w wor_widt = DIVCEIL(bit_widt, 32);
 
-    c3_w *buf = malloc(4*wor_widt); // TODO Allocate an atom on the loom.
+    u3l_log("%d*%d=%d [%d]\n", bits, num_blox, bit_widt, wor_widt);
+
+    //
+    //  Allocate a proto-atom. This is u3a_slab without initialization.
+    //
+    c3_w* buf;
+    {
+        c3_w*     nov_w = u3a_walloc(wor_widt + c3_wiseof(u3a_atom));
+        u3a_atom* pug_u = (void *)nov_w;
+
+        pug_u->mug_w = 0;
+        pug_u->len_w = wor_widt;
+        buf          = pug_u->buf_w;
+    }
+
+    //
+    //  Fill the atom buffer with bits from each block.
+    //
+    //  Bits are pushed into the `acc` register and flushed to the buffer
+    //  once full.
+    //
 
     c3_w acc = 0;      // Word to write into
     c3_w acc_idx = 0;  // Where the word will be written to
     c3_w acc_used = 0; // Number of bits used in acc.
 
-// #define FLUSH { buf[acc_idx++] = acc; acc = acc_used = 0; }
-// #define DIVCEIL(x,y) \
+    void flush() {
+        u3l_log("%d @ %d\n", acc, acc_idx);
+        buf[acc_idx++] = acc;
+        acc = 0;
+        acc_used = 0;
+    }
+
+    c3_w slice(c3_w sz, c3_w off, c3_w val) {
+       u3l_log("slice(%d,%d,%d) = %d\n", sz, off, val, TAKEBITS(sz, val) << off);
+       return TAKEBITS(sz, val) << off;
+    }
 
     for (c3_w i=0; i<num_blox; i++) {
-        //  TODO Make sure `blox` is cell.
-        //  TODO Make sure head of `blox` is cell.
+        c3_w block = u3a_h(blox);
+        blox = u3t(blox);
 
-        c3_w block = HEAD(blox);
-        blox = TAIL(blox);
+        u3l_log("#%d = %d\n", i, block);
 
         for (c3_w rem_in_block=bits; rem_in_block;) {
-            c3_w rem_in_acc   = 32 - acc_used;
+            c3_w rem_in_acc = 32 - acc_used;
             if (rem_in_block == rem_in_acc) {                       //  EQ
-                acc |= SLICE(rem_in_block, acc_used, block);
-                buf[acc_idx++] = acc; acc = acc_used = 0;
+                acc |= slice(rem_in_block, acc_used, block);
+                u3l_log("acc:%d\n", acc);
+                flush();
                 rem_in_block = 0;
             } else if (rem_in_block < rem_in_acc) {                 //  LT
-                acc |= SLICE(rem_in_block, acc_used, block);
+                acc |= slice(rem_in_block, acc_used, block);
+                u3l_log("acc:%d\n", acc);
                 acc_used += rem_in_block;
                 rem_in_block = 0;
             } else {                                                //  GT
-                acc |= SLICE(rem_in_acc, acc_used, block);
+                acc |= slice(rem_in_acc, acc_used, block);
+                u3l_log("acc:%d\n", acc);
                 rem_in_block -= rem_in_acc;
                 block = block >> rem_in_acc;
-                buf[acc_idx++] = acc; acc = acc_used = 0;
+                flush();
             }
         }
+
+        u3l_log("acc:%d acc_idx:%d acc_used:%d\n", acc, acc_idx, acc_used);
     }
 
-    //  TODO Remove leading zeros and reallocate.
-    if (buf[0]==0) {
-        return u3m_bail(c3__fail);
-    }
+    //
+    //  If the last word isn't fully used, it will still need to be
+    //  flushed.
+    //
+    if (acc_used) flush();
 
-  return 0;
+    return u3a_mint(buf, wor_widt);
 }
 
 u3_noun u3wc_repn(u3_noun cor) {
