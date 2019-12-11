@@ -53,14 +53,8 @@ u3_noun u3qc_repn(u3_atom bits, u3_noun blox) {
 
     c3_w acc=0, use=0, *cur=buf;
 
-    void flush() {
-        *cur++ = acc;
-        acc = use = 0;
-    }
-
-    c3_w slice(c3_w sz, c3_w off, c3_w val) {
-       return TAKEBITS(sz, val) << off;
-    }
+#   define FLUSH() *cur++=acc; acc=use=0
+#   define SLICE(sz,off,val) TAKEBITS(sz, val) << off
 
     for (c3_w i=0; i<num_blox; i++) {
         u3_noun blok_n = u3h(blox);
@@ -74,18 +68,18 @@ u3_noun u3qc_repn(u3_atom bits, u3_noun blox) {
         for (c3_w rem_in_blok=bits; rem_in_blok;) {
             c3_w rem_in_acc = 32 - use;
             if (rem_in_blok == rem_in_acc) {            //  EQ
-                acc |= slice(rem_in_blok, use, blok);
-                flush();
+                acc |= SLICE(rem_in_blok, use, blok);
+                FLUSH();
                 rem_in_blok = 0;
             } else if (rem_in_blok < rem_in_acc) {      //  LT
-                acc |= slice(rem_in_blok, use, blok);
+                acc |= SLICE(rem_in_blok, use, blok);
                 use += rem_in_blok;
                 rem_in_blok = 0;
             } else {                                    //  GT
-                acc |= slice(rem_in_acc, use, blok);
+                acc |= SLICE(rem_in_acc, use, blok);
                 rem_in_blok -= rem_in_acc;
                 blok = blok >> rem_in_acc;
-                flush();
+                FLUSH();
             }
         }
     }
@@ -94,7 +88,7 @@ u3_noun u3qc_repn(u3_atom bits, u3_noun blox) {
     //  If the last word isn't fully used, it will still need to be
     //  flushed.
     //
-    if (use) flush();
+    if (use) FLUSH();
 
     return u3a_malt(buf);
 }
