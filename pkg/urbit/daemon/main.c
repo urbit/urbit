@@ -13,6 +13,9 @@
 #include <termios.h>
 #include <ncurses/term.h>
 #include <dirent.h>
+#include <openssl/conf.h>
+#include <openssl/engine.h>
+#include <openssl/err.h>
 #include <openssl/ssl.h>
 #include <h2o.h>
 #include <curl/curl.h>
@@ -744,12 +747,27 @@ main(c3_i   argc,
       }
     }
 
-    /*  Initialize OpenSSL for client and server
-    */
-    SSL_library_init();
-    SSL_load_error_strings();
+    //  Initialize OpenSSL for client and server
+    //
+    {
+      SSL_library_init();
+      SSL_load_error_strings();
+    }
 
     u3_daemon_commence();
+
+    //  uninitialize OpenSSL
+    //
+    //    see https://wiki.openssl.org/index.php/Library_Initialization
+    //
+    {
+      ENGINE_cleanup();
+      CONF_modules_unload(1);
+      EVP_cleanup();
+      CRYPTO_cleanup_all_ex_data();
+      SSL_COMP_free_compression_methods();
+      ERR_free_strings();
+    }
   }
 
   return 0;
