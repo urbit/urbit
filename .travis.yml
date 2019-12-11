@@ -37,8 +37,7 @@ install:
   - SAVED_OPTIONS=$(set +o)
   - set -ex
   - stack --no-terminal --install-ghc build lmdb-static
-  - stack --no-terminal --install-ghc build classy-prelude lens
-  # stack --no-terminal --install-ghc build king --only-dependencies
+  - stack --no-terminal --install-ghc build king --only-dependencies
   - eval "$SAVED_OPTIONS"
 
 script:
@@ -49,13 +48,13 @@ script:
   # - make
   # - make release
 
-  # - sh/ci-tests
-
   # King Haskell
   # - export PATH="${PATH}:$(pwd)/bin"
-  # - stack build --fast --copy-bins --local-bin-path ./bin
-  # otool -L ./bin/king-linux64-demo
+  - stack build --test --fast --copy-bins --local-bin-path ./bin
+  # # otool -L ./bin/king-linux64-demo
   # - mv bin/king release/king-linux64-demo
+
+  # - sh/ci-tests
 
 # deploy:
   # - skip_cleanup: true
