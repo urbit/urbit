@@ -393,6 +393,7 @@
     ::    %born: process restart notification
     ::    %crud: crash report
     ::    %init: vane boot
+    ::    %sift: limit verbosity to .ships
     ::    %spew: set verbosity toggles
     ::    %vega: kernel reload notification
     ::    %wegh: request for memory usage report
@@ -407,6 +408,7 @@
           $>(%born vane-task)
           $>(%crud vane-task)
           $>(%init vane-task)
+          [%sift ships=(list ship)]
           [%spew veb=(list verb)]
           $>(%vega vane-task)
           $>(%wegh vane-task)
