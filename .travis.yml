@@ -10,7 +10,7 @@ jobs:
       - sh/travis-install-stack
 
     install:
-      # nix-env -iA cachix -f https://cachix.org/api/v1/install
+      - nix-env -iA cachix -f https://cachix.org/api/v1/install
       - stack --no-terminal --install-ghc build king --only-dependencies
 
     script:
