@@ -1335,7 +1335,7 @@
     ?>  ?=(^ c)
     ?:  (mor n.a n.c)
       a(r c)
-    c(r a(r l.c))
+    c(l a(r l.c))
   ::
   ++  rep                                               ::  replace by product
     |*  b/_=>(~ |=({* *} +<+))
