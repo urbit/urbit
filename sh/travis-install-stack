@@ -2,20 +2,39 @@
 
 set -ex
 
+
+##
+##  Make sure this is running OSX/Linux in Travis
+##
+
+os="$TRAVIS_OS_NAME"
+
+[ "$os" = osx ] || [ "$os" = linux ]
+
+
+##
+##  Download the stack executable.
+##
+
 mkdir -p ~/.local/bin
 
-# OSX
-# curl -L https://get.haskellstack.org/stable/osx-x86_64.tar.gz | tar xz --strip-components=1 --include '*/stack' -C ~/.local/bin
+stackurl="https://get.haskellstack.org/stable/$os-x86_64.tar.gz"
 
-mkdir -p tmp
+case $os in
+    osx)
+        curl -L "$stackurl" |
+            tar xz --strip-components=1 --include '*/stack' -C ~/.local/bin
+    linux)
+        mkdir -p tmp
+        curl -L "$stackurl" | tar xz -C tmp
+        mv tmp/stack-*/stack ~/.local/bin
+esac
 
-pax="https://get.haskellstack.org/stable/linux-x86_64.tar.gz"
 
-curl -L $pax | tar xz -C tmp
+##
+##  Use the more reliable S3 mirror of Hackage.
+##
 
-mv tmp/stack-*/stack ~/.local/bin
-
-# Use the more reliable S3 mirror of Hackage
 mkdir -p ~/.cabal
 
 cat > ~/.cabal/config <<EOF
