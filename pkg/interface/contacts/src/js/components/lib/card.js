@@ -16,6 +16,18 @@ export class ContactCard extends Component {
     this.sigilColorSet = this.sigilColorSet.bind(this);
   }
 
+  componentDidUpdate() {
+    let currentColor = (this.props.contact.color) ? this.props.contact.color : "0x0";
+    let currentHex = uxToHex(currentColor);
+    let hexExp = /#?([0-9A-Fa-f]{6})/
+    let hexTest = hexExp.exec(this.state.colorToSet);
+
+    if ((hexTest) && (hexTest[1] !== currentHex)) {
+      let ship = "~" + this.props.ship;
+      api.contactEdit(this.props.path, ship, {color: hexTest[1]});
+    }
+  }
+
   editToggle() {
     let editSwitch = this.state.edit;
     editSwitch = !editSwitch;
@@ -23,7 +35,6 @@ export class ContactCard extends Component {
   }
 
   sigilColorSet(event) {
-    //TODO regex for complete hex value and submit as change
     this.setState({colorToSet: event.target.value});
   }
 
@@ -57,8 +68,8 @@ export class ContactCard extends Component {
            defaultValue={"#" + hexColor}
            style={{
              resize: "none",
-             height: 48,
-             paddingTop: 14,
+             height: 40,
+             paddingTop: 10,
               width: 114
             }}></textarea>
         </div>
@@ -69,7 +80,7 @@ export class ContactCard extends Component {
     return (
       <div className="w-100 flex justify-center pa4 pa0-xl pt4-xl">
         <div className="w-100 mw6 tc">
-          <Sigil ship={this.props.ship} size={128} color={hexColor} />
+          <Sigil ship={this.props.ship} size={128} color={"#" + hexColor} />
           {sigilColor}
           <button className="f9 b--black ba pa2">Upload an Image</button>
 
@@ -96,7 +107,7 @@ export class ContactCard extends Component {
       <div className="w-100 flex justify-center pa4 pa0-xl pt4-xl">
         <div className="w-100 mw6 tc">
           {/*TODO default to sigil, but show avatar if exists for contact */}
-          <Sigil ship={this.props.ship} size={128} color={hexColor} />
+          <Sigil ship={this.props.ship} size={128} color={"#" + hexColor} />
           <div className="w-100 pt8 lh-copy tl">
             <p className="f9 gray2">Ship Name</p>
             <p className="f8 mono">~{this.props.ship}</p>

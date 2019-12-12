@@ -62744,7 +62744,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                   key: 1,
                   to: "/~contacts/me", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 24}}
                 , react.createElement('div', { className: "w-100 pl4 pt1 pb1 f9 mb5 flex justify-start content-center " + selectedClass, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 27}}
-                  , react.createElement(Sigil, { ship: window.ship, color: color, size: 32, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 28}})
+                  , react.createElement(Sigil, { ship: window.ship, color: "#" + color, size: 32, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 28}})
                   , react.createElement('p', { className: "f9 w-70 dib v-mid ml2 nowrap mono"      ,
                      style: {paddingTop: 6}, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 29}}, "~", window.ship)
                   )
@@ -63016,13 +63016,15 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 ? "bg-gray4"
                 : "";
 
+                let hexColor = uxToHex(props.color);
+
                 return (
                   react.createElement(Link, {
-                  to: "/~contacts" + props.path, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 16}}
-                    , react.createElement('div', { className: "pl4 pt1 pb1 f9 flex justify-start content-center " + selectedClass, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 18}}
-                    , react.createElement(Sigil, { ship: props.ship, color: props.color, size: 32, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 19}})
+                  to: "/~contacts" + props.path, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 18}}
+                    , react.createElement('div', { className: "pl4 pt1 pb1 f9 flex justify-start content-center " + selectedClass, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 20}}
+                      , react.createElement(Sigil, { ship: props.ship, color: "#" + hexColor, size: 32, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 21}})
                     , react.createElement('p', { className: "f9 w-70 dib v-mid ml2 nowrap mono"      ,
-                       style: {paddingTop: 6}, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 20}}, "~", props.ship)
+                       style: {paddingTop: 6}, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 22}}, "~", props.ship)
                     )
                   )
                 )
@@ -63096,6 +63098,18 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 this.sigilColorSet = this.sigilColorSet.bind(this);
               }
 
+              componentDidUpdate() {
+                let currentColor = (this.props.contact.color) ? this.props.contact.color : "0x0";
+                let currentHex = uxToHex(currentColor);
+                let hexExp = /#?([0-9A-Fa-f]{6})/;
+                let hexTest = hexExp.exec(this.state.colorToSet);
+
+                if ((hexTest) && (hexTest[1] !== currentHex)) {
+                  let ship = "~" + this.props.ship;
+                  api.contactEdit(this.props.path, ship, {color: hexTest[1]});
+                }
+              }
+
               editToggle() {
                 let editSwitch = this.state.edit;
                 editSwitch = !editSwitch;
@@ -63103,7 +63117,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
 
               sigilColorSet(event) {
-                //TODO regex for complete hex value and submit as change
                 this.setState({colorToSet: event.target.value});
               }
 
@@ -63129,37 +63142,37 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 if (this.props.contact.avatar === "TODO") { //TODO change to empty string once we have avatars
                   sigilColor = (
                     react.createElement('div', { className: "tl mt4 mb4 w-auto ml-auto mr-auto"     ,
-                    style: { width: "fit-content" }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 51}}
-                    , react.createElement('p', { className: "f9 gray2 lh-copy"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 53}}, "Sigil Color" )
+                    style: { width: "fit-content" }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 62}}
+                    , react.createElement('p', { className: "f9 gray2 lh-copy"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 64}}, "Sigil Color" )
                       , react.createElement('textarea', {
                        className: "b--gray4 black f7 ba db pl2"     ,
                        onChange: this.sigilColorSet,
                        defaultValue: "#" + hexColor,
                        style: {
                          resize: "none",
-                         height: 48,
-                         paddingTop: 14,
+                         height: 40,
+                         paddingTop: 10,
                           width: 114
-                        }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 54}})
+                        }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 65}})
                     )
                   );
                   //TODO The fields to actually edit, using the api hooks for those atomic actions
                 }
 
                 return (
-                  react.createElement('div', { className: "w-100 flex justify-center pa4 pa0-xl pt4-xl"     , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 70}}
-                    , react.createElement('div', { className: "w-100 mw6 tc"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 71}}
-                      , react.createElement(Sigil, { ship: this.props.ship, size: 128, color: hexColor, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 72}} )
+                  react.createElement('div', { className: "w-100 flex justify-center pa4 pa0-xl pt4-xl"     , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 81}}
+                    , react.createElement('div', { className: "w-100 mw6 tc"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 82}}
+                      , react.createElement(Sigil, { ship: this.props.ship, size: 128, color: "#" + hexColor, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 83}} )
                       , sigilColor
-                      , react.createElement('button', { className: "f9 b--black ba pa2"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 74}}, "Upload an Image"  )
+                      , react.createElement('button', { className: "f9 b--black ba pa2"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 85}}, "Upload an Image"  )
 
-                      , react.createElement('div', { className: "w-100 pt8 lh-copy tl"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 76}}
-                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 77}}, "Ship Name" )
-                        , react.createElement('p', { className: "f8 mono" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 78}}, "~", this.props.ship)
-                        , react.createElement('p', { className: "f9 gray2 mt3"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 79}}, "Ship Type" )
-                        , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 80}}, shipType)
+                      , react.createElement('div', { className: "w-100 pt8 lh-copy tl"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 87}}
+                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 88}}, "Ship Name" )
+                        , react.createElement('p', { className: "f8 mono" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 89}}, "~", this.props.ship)
+                        , react.createElement('p', { className: "f9 gray2 mt3"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 90}}, "Ship Type" )
+                        , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 91}}, shipType)
 
-                        , react.createElement('hr', { className: "mv8 gray4 b--gray4 bb-0 b--solid"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 82}} )
+                        , react.createElement('hr', { className: "mv8 gray4 b--gray4 bb-0 b--solid"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 93}} )
                       )
                     )
                   )
@@ -63173,57 +63186,57 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 
                 return (
-                  react.createElement('div', { className: "w-100 flex justify-center pa4 pa0-xl pt4-xl"     , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 96}}
-                    , react.createElement('div', { className: "w-100 mw6 tc"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 97}}
+                  react.createElement('div', { className: "w-100 flex justify-center pa4 pa0-xl pt4-xl"     , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 107}}
+                    , react.createElement('div', { className: "w-100 mw6 tc"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 108}}
                       /*TODO default to sigil, but show avatar if exists for contact */
-                      , react.createElement(Sigil, { ship: this.props.ship, size: 128, color: hexColor, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 99}} )
-                      , react.createElement('div', { className: "w-100 pt8 lh-copy tl"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 100}}
-                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 101}}, "Ship Name" )
-                        , react.createElement('p', { className: "f8 mono" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 102}}, "~", this.props.ship)
-                        , react.createElement('p', { className: "f9 gray2 mt3"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 103}}, "Ship Type" )
-                        , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 104}}, shipType)
+                      , react.createElement(Sigil, { ship: this.props.ship, size: 128, color: "#" + hexColor, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 110}} )
+                      , react.createElement('div', { className: "w-100 pt8 lh-copy tl"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 111}}
+                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 112}}, "Ship Name" )
+                        , react.createElement('p', { className: "f8 mono" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 113}}, "~", this.props.ship)
+                        , react.createElement('p', { className: "f9 gray2 mt3"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 114}}, "Ship Type" )
+                        , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 115}}, shipType)
 
-                        , react.createElement('hr', { className: "mv8 gray4 b--gray4 bb-0 b--solid"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 106}} )
-                        , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 107}}
+                        , react.createElement('hr', { className: "mv8 gray4 b--gray4 bb-0 b--solid"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 117}} )
+                        , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 118}}
                           , (() => {
                             if (this.props.contact.nickname) {
                               return (
-                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 111}}
-                                  , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 112}}, "Nickname")
-                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 113}}, this.props.contact.nickname)
+                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 122}}
+                                  , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 123}}, "Nickname")
+                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 124}}, this.props.contact.nickname)
                                 )
                               )
                             }
 
                             if (this.props.contact.email) {
                               return (
-                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 120}}
-                                  , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 121}}, "Email")
-                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 122}}, this.props.contact.email)
+                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 131}}
+                                  , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 132}}, "Email")
+                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 133}}, this.props.contact.email)
                                 )
                               )
                             }
                             if (this.props.contact.phone) {
                               return (
-                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 128}}
-                                  , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 129}}, "Phone")
-                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 130}}, this.props.contact.phone)
+                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 139}}
+                                  , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 140}}, "Phone")
+                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 141}}, this.props.contact.phone)
                                 )
                               )
                             }
                             if (this.props.contact.website) {
                               return (
-                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 136}}
-                                  , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 137}}, "Website")
-                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 138}}, this.props.contact.website)
+                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 147}}
+                                  , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 148}}, "Website")
+                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 149}}, this.props.contact.website)
                                 )
                               )
                             }
                             if (this.props.contact.notes) {
                               return (
-                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 144}}
-                                  , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 145}}, "Notes")
-                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 146}}, this.props.contact.notes)
+                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 155}}
+                                  , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 156}}, "Notes")
+                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 157}}, this.props.contact.notes)
                                 )
                               )
                             }
@@ -63259,20 +63272,20 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
                   //TODO "Share card" if it's /me -> sends to /~/default of recipient
                     return (
-                        react.createElement('div', { className: "h-100 w-100 overflow-x-hidden"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 182}}
-                        , react.createElement('div', { className: "w-100 h2 dn-m dn-l dn-xl inter pb6 pl3 pt3 f8"         , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 183}}
-                          , react.createElement(Link, { to: "/~contacts/", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 184}}, "⟵")
+                        react.createElement('div', { className: "h-100 w-100 overflow-x-hidden"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 193}}
+                        , react.createElement('div', { className: "w-100 h2 dn-m dn-l dn-xl inter pb6 pl3 pt3 f8"         , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 194}}
+                          , react.createElement(Link, { to: "/~contacts/", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 195}}, "⟵")
                         )
-                        , react.createElement('div', { className: "w-100 bb b--gray4"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 186}}
+                        , react.createElement('div', { className: "w-100 bb b--gray4"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 197}}
                           , react.createElement('button', { 
                             onClick: this.editToggle,
-                          className: `ml3 mt2 mb2 f9 pa2 ba br3 pointer b--black ` + ourOption, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 187}}
+                          className: `ml3 mt2 mb2 f9 pa2 ba br3 pointer b--black ` + ourOption, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 198}}
                             , editInfoText
                           )
-                          , react.createElement('button', { className: `ml3 mt2 mb2 f9 pa2 ba br3 b--black ` + localOption, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 192}}, "Share Contact Info"
+                          , react.createElement('button', { className: `ml3 mt2 mb2 f9 pa2 ba br3 b--black ` + localOption, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 203}}, "Share Contact Info"
 
                           )
-                          , react.createElement('button', { className: `ml3 mt2 mb2 f9 pa2 ba red2 br3 b--red2 ` + adminOption, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 195}}, "Remove from Group"
+                          , react.createElement('button', { className: `ml3 mt2 mb2 f9 pa2 ba red2 br3 b--red2 ` + adminOption, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 206}}, "Remove from Group"
 
                           )
                         )

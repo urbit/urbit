@@ -25,7 +25,7 @@ export class Groups extends Component {
       key={1}
       to={"/~contacts/me"}>
     <div className={"w-100 pl4 pt1 pb1 f9 mb5 flex justify-start content-center " + selectedClass}>
-      <Sigil ship={window.ship} color={color} size={32}/>
+      <Sigil ship={window.ship} color={"#" + color} size={32}/>
       <p className="f9 w-70 dib v-mid ml2 nowrap mono"
          style={{paddingTop: 6}}>~{window.ship}</p>
       </div>
