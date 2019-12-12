@@ -4,7 +4,8 @@
 
 module Uruk.Prim
     ( P(..)
-    , eval
+    , evalEager
+    , evalLazy
     , arity
     , simplify
     , church
@@ -38,22 +39,35 @@ arity = \case { S → 3; K → 2; D → 1; J → 3 }
     This function will crash if combinators are simplified with the
     wrong number of arguments.
 -}
-simplify ∷ P → [Val P] → Thunk P
-simplify = curry go
+simplify ∷ ∀v
+         . Show (v P)
+         ⇒ (Exp (v P) → Val P)
+         → (Val P → Exp (v P))
+         → P → [v P]
+         → Exp (v P)
+simplify force fromVal = curry go
   where
-    go ∷ (P, [Val P]) → Thunk P
+    go ∷ (P, [v P]) → Exp (v P)
     go ( S, [z,y,x] ) = A x :@ A z :@ (A y :@ A z)
     go ( K, [y,x]   ) = A x
-    go ( D, [x]     ) = (A . eval . church . dump . valToExp) x
-    go ( J, [b,n,a] ) = fast a n b
+    go ( D, [x]     ) = jam x
+    go ( J, [b,n,a] ) = fast fromVal (norm a) (norm n) (norm b)
     go ( J, args    ) = slow args
     go ( _, _       ) = error "bad-simplify"
+    norm = force . A
+    jam = fromVal . evalEager . church . dump . valToExp . norm
 
-eval ∷ Exp P → Val P
-eval = forceEager simplify . expToThunk arity
+evalEager ∷ Exp P → Val P
+evalEager = forceEager simplify . expToPartial arity
 
-fast ∷ Val P → Val P → Val P → Thunk P
-fast arity name body = A (V J arityNum [body, name, arity])
+evalLazy ∷ Exp P → Val P
+evalLazy = forceLazy simplify . expToLazy arity
+
+fast ∷ ∀v
+     . (Val P → Exp (v P))
+     → Val P → Val P → Val P
+     → Exp (v P)
+fast fromVal arity name body = fromVal (V J arityNum [body, name, arity])
   where
     arityNum = arity & \case
         V S _ [] → 1
@@ -62,7 +76,7 @@ fast arity name body = A (V J arityNum [body, name, arity])
         V J _ [] → 4
         e        → error ("bad jet arity: " <> show e)
 
-slow ∷ [Val P] → Thunk P
+slow ∷ Show (v P) => [v P] → Exp (v P)
 slow = traceShowId . start . drop 2 . reverse . traceShowId
   where
     start []      = error "bad-slow"

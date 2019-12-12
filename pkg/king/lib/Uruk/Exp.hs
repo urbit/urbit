@@ -8,10 +8,11 @@
 module Uruk.Exp
     ( Exp(..)
     , Val(..)
-    , Thunk
+    , Partial
     , Whnf(..)
-    , Partial(..)
-    , expToThunk
+    , Lazy(..)
+    , expToPartial
+    , expToLazy
     , forceEager
     , forceLazy
     , whnf
@@ -34,19 +35,47 @@ infixl 5 :@;
 data Exp a = A !a | Exp a :@ Exp a
   deriving (Eq, Ord, Generic, NFData, Flat, Functor, Foldable, Traversable)
 
+{-
+    A fully evaluated value.
+
+    This is a "closure":
+      - A combinator
+      - The number of arguments that can be given without reduction.
+      - A list of already-applied arguments.
+-}
 data Val a = V !a !Nat ![Val a]
   deriving (Eq, Ord, Generic, NFData, Flat, Functor, Foldable, Traversable)
 
-type Thunk a = Exp (Val a)
+{-
+    A partially-evaluated value: An expression with fully-evaluated
+    values at the leaves.
+-}
+type Partial a = Exp (Val a)
 
-data Partial a
+{-
+    A lazy value. Either:
+
+    - It's already fully evaluated.
+    - It's an expression with lazy values at its leaves.
+    - Or a `Val` with lazy values in the closure.
+
+    The interesting thing about this, is that forcing it will do no work
+    for sub-trees that have already been evaluated.
+-}
+data Lazy a
     = Norm !(Val a)
-    | Lazy (Exp (Partial a))
+    | Lazy (Exp (Lazy a))
     | Weak !(Whnf a)
   deriving (Eq, Ord, Generic, NFData, Flat, Functor, Foldable, Traversable)
+  deriving Show
 
-data Whnf a = Whnf !a !Nat [Partial a]
+{-
+    A lazy value that has been evaluated just enough that the combinator
+    is known.
+-}
+data Whnf a = Whnf !a !Nat [Lazy a]
   deriving (Eq, Ord, Generic, NFData, Flat, Functor, Foldable, Traversable)
+  deriving Show
 
 
 -- Instances -------------------------------------------------------------------
@@ -57,8 +86,8 @@ instance Show c => Show (Val c) where
 
 instance Show a => Show (Exp a) where
   show = \case
-     A x    -> show x
-     x :@ y -> "(" <> concat (show <$> appList x [y]) <> ")"
+     A x    → show x
+     x :@ y → "(" <> concat (show <$> appList x [y]) <> ")"
     where
       appList (f :@ x) acc = appList f (x:acc)
       appList e        acc = (e:acc)
@@ -66,44 +95,69 @@ instance Show a => Show (Exp a) where
 
 -- Evaluation ------------------------------------------------------------------
 
-expToThunk :: (a -> Nat) -> Exp a -> Thunk a
-expToThunk arity = go
+expToPartial :: (a → Nat) → Exp a → Partial a
+expToPartial arity = go
   where
-    go (A x)    = A (V x (arity x) [])
+    go (A x)    = A (V x (arity x - 1) [])
     go (f :@ x) = go f :@ go x
 
-valToExp :: Val a -> Exp a
+expToLazy :: ∀a. (a → Nat) → Exp a → Lazy a
+expToLazy arity = go
+  where
+    go :: Exp a → Lazy a
+    go (A x)    = Norm (V x (arity x - 1) [])
+    go (f :@ x) = Lazy (A (go f) :@ A (go x))
+
+valToExp :: Val a → Exp a
 valToExp (V p _ xs) = go xs
   where go []     = A p
         go [x]    = A p :@ valToExp x
         go (x:xs) = go xs :@ valToExp x
 
-forceEager :: (a -> [Val a] -> Thunk a) -> Thunk a -> Val a
-forceEager simp = go
+-- simplify ∷ ∀v
+         -- . Show (v P)
+         -- ⇒ (v P → Val P, Val P → v P)
+         -- → P → [v P]
+         -- → Exp (v P)
+
+forceEager :: ( (Exp (Val a) → Val a)
+              → (Val a → Exp (Val a))
+              → a → [Val a] → Partial a
+              )
+           → Partial a
+           → Val a
+forceEager simp' = go
   where
-    go (A v)              = goVal v
-    go (A (V c 0 k) :@ x) = go (simp c k :@ x)
-    go (A (V c n k) :@ x) = goVal (V c (n-1) (go x : k))
+    simp = simp' go A
+    go (A v)              = v
+    go (A (V c 0 k) :@ x) = go (simp c (go x : k))
+    go (A (V c n k) :@ x) = V c (n-1) (go x : k)
     go (f :@ x :@ y)      = go (A (go (f :@ x)) :@ y)
 
-    goVal (V c 0 k) = go (simp c k)
-    goVal v         = v
-
 --  Lazy evaluation
-whnf :: ∀a. (a -> [Partial a] -> Whnf a) -> Partial a -> Whnf a
+whnf :: ∀a. (a → [Lazy a] → Whnf a) → Lazy a → Whnf a
 whnf simp = go
   where
     ev (A x)    = go x
-    ev (x :@ y) = ev x & \case Whnf a 1 k -> simp a (Lazy y : k)
-                               Whnf a n k -> Whnf a (n-1) (Lazy y : k)
+    ev (x :@ y) = ev x & \case Whnf a 0 k → simp a (Lazy y : k)
+                               Whnf a n k → Whnf a (n-1) (Lazy y : k)
 
     go (Norm (V c n k)) = Whnf c n (Norm <$> k)
     go (Weak x)         = x
     go (Lazy x)         = ev x
 
-forceLazy :: ∀a. (a -> [Partial a] -> Whnf a) -> Partial a -> Val a
-forceLazy simp = go
+forceLazy ∷ ∀a
+          . ( (Exp (Lazy a) → Val a)
+            → (Val a → Exp (Lazy a))
+            → a → [Lazy a] → Exp (Lazy a)
+            )
+          → Lazy a
+          → Val a
+forceLazy simp' = go
   where
-    go :: Partial a -> Val a
+    simp ∷ a → [Lazy a] → Whnf a
+    simp x y = whnf simp $ Lazy $ simp' (go . Lazy) (A . Norm) x y
+
+    go ∷ Lazy a → Val a
     go v = V c n (go <$> k)
       where Whnf c n k = whnf simp v
