@@ -2,21 +2,21 @@
 
 jobs:
   include:
-# - os: linux
-#   language: nix
-#   nix: 2.1.3
-#   install:
-#     - nix-env -iA cachix -f https://cachix.org/api/v1/install
+  - os: linux
+    language: nix
+    nix: 2.1.3
+    install:
+      - nix-env -iA cachix -f https://cachix.org/api/v1/install
 
-#   script:
-#     - cachix use urbit2
-#     - ./sh/cachix
-#     - make build-fast
-#     - make release
-#     - sh/ci-tests
+    script:
+      - cachix use urbit2
+      - ./sh/cachix
+      - make build-fast
+      - make release
+      - sh/ci-tests
 
-#   before_install:
-#     - git lfs pull
+    before_install:
+      - git lfs pull
 
   - os: osx
     language: generic
