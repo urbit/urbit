@@ -1890,6 +1890,9 @@
         (run-message-sink bone %hear lane shut-packet ok)
       ::  ignore .ok for |message-pump; just try again on error
       ::
+      ::    Note this implies that vanes should never crash on %done,
+      ::    since we have no way to continue using the flow if they do.
+      ::
       (run-message-pump bone %hear [message-num +.meat]:shut-packet)
     ::  +on-memo: handle request to send message
     ::
