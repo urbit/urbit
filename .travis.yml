@@ -15,6 +15,9 @@ jobs:
 #     - make release
 #     - sh/ci-tests
 
+#   before_install:
+#     - git lfs pull
+
   - os: osx
     language: generic
     sudo: required
@@ -35,7 +38,6 @@ cache:
   - $TRAVIS_BUILD_DIR/.stack-work
 
 before_install:
-  - git lfs pull
   - sh/travis-install-stack
 
 install:
