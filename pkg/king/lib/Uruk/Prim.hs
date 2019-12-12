@@ -38,22 +38,22 @@ arity = \case { S → 3; K → 2; D → 1; J → 3 }
     This function will crash if combinators are simplified with the
     wrong number of arguments.
 -}
-simplify ∷ P → [V P] → X P
+simplify ∷ P → [Val P] → Thunk P
 simplify = curry go
   where
-    go ∷ (P, [V P]) → X P
-    go ( S, [z,y,x] ) = C x :@ C z :@ (C y :@ C z)
-    go ( K, [y,x]   ) = C x
-    go ( D, [x]     ) = (C . eval . church . dump . toExp) x
+    go ∷ (P, [Val P]) → Thunk P
+    go ( S, [z,y,x] ) = A x :@ A z :@ (A y :@ A z)
+    go ( K, [y,x]   ) = A x
+    go ( D, [x]     ) = (A . eval . church . dump . valToExp) x
     go ( J, [b,n,a] ) = fast a n b
     go ( J, args    ) = slow args
     go ( _, _       ) = error "bad-simplify"
 
-eval ∷ E P → V P
-eval = toVal simplify . prep arity
+eval ∷ Exp P → Val P
+eval = forceEager simplify . expToThunk arity
 
-fast ∷ V P → V P → V P → X P
-fast arity name body = C (V J arityNum [body, name, arity])
+fast ∷ Val P → Val P → Val P → Thunk P
+fast arity name body = A (V J arityNum [body, name, arity])
   where
     arityNum = arity & \case
         V S _ [] → 1
@@ -62,33 +62,33 @@ fast arity name body = C (V J arityNum [body, name, arity])
         V J _ [] → 4
         e        → error ("bad jet arity: " <> show e)
 
-slow ∷ [V P] → X P
+slow ∷ [Val P] → Thunk P
 slow = traceShowId . start . drop 2 . reverse . traceShowId
   where
     start []      = error "bad-slow"
-    start (f:xs)  = go (C f) xs
+    start (f:xs)  = go (A f) xs
     go acc []     = acc
-    go acc (x:xs) = go (acc :@ C x) xs
+    go acc (x:xs) = go (acc :@ A x) xs
 
 --  Produces a jetted, church-encoded natural number.
-church ∷ Nat → E P
+church ∷ Nat → Exp P
 church = (jNat :@) . go
   where
-    go 0 = C S :@ C K
-    go 1 = C S :@ C K :@ C K
+    go 0 = A S :@ A K
+    go 1 = A S :@ A K :@ A K
     go n = inc :@ go (pred n)
 
-    inc = C S :@ (C S :@ (C K :@ C S) :@ C K)
+    inc = A S :@ (A S :@ (A K :@ A S) :@ A K)
 
-dump ∷ E P → Nat
+dump ∷ Exp P → Nat
 dump =  snd . go
   where
-    go ∷ E P → (Int, Nat)
+    go ∷ Exp P → (Int, Nat)
     go = \case
-        C S    → (2, 0)
-        C K    → (2, 2)
-        C D    → (2, 4)
-        C J    → (2, 6)
+        A S    → (2, 0)
+        A K    → (2, 2)
+        A D    → (2, 4)
+        A J    → (2, 6)
         x :@ y → (rBits, rNum)
           where
             (xBits, xNum) = go x
@@ -100,11 +100,11 @@ dump =  snd . go
 --  Jets a number with name `S` (0)
 jNat = j2 :@ s
 
-s,k,j,d,j1,j2,j3,j4 ∷ E P
-s = C S
-k = C K
-j = C J
-d = C D
+s,k,j,d,j1,j2,j3,j4 ∷ Exp P
+s = A S
+k = A K
+j = A J
+d = A D
 j1 = j :@ s
 j2 = j :@ k
 j3 = j :@ d

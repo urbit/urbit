@@ -6,18 +6,23 @@
 -}
 
 module Uruk.Exp
-    ( E(..)
-    , V(..)
-    , X
-    , prep
-    , toVal
-    , toExp
+    ( Exp(..)
+    , Val(..)
+    , Thunk
+    , Whnf(..)
+    , Partial(..)
+    , expToThunk
+    , forceEager
+    , forceLazy
+    , whnf
+    , valToExp
     ) where
 
 import ClassyPrelude
 
-import Data.Flat   (Flat)
-import GHC.Natural (Natural)
+import Data.Flat     (Flat)
+import GHC.Natural   (Natural)
+import Data.Function ((&))
 
 
 -- Types -----------------------------------------------------------------------
@@ -26,24 +31,33 @@ type Nat = Natural
 
 infixl 5 :@;
 
-data E c = C !c | E c :@ E c
+data Exp a = A !a | Exp a :@ Exp a
   deriving (Eq, Ord, Generic, NFData, Flat, Functor, Foldable, Traversable)
 
-data V c = V !c !Nat [V c]
+data Val a = V !a !Nat ![Val a]
   deriving (Eq, Ord, Generic, NFData, Flat, Functor, Foldable, Traversable)
 
-type X c = E (V c)
+type Thunk a = Exp (Val a)
+
+data Partial a
+    = Norm !(Val a)
+    | Lazy (Exp (Partial a))
+    | Weak !(Whnf a)
+  deriving (Eq, Ord, Generic, NFData, Flat, Functor, Foldable, Traversable)
+
+data Whnf a = Whnf !a !Nat [Partial a]
+  deriving (Eq, Ord, Generic, NFData, Flat, Functor, Foldable, Traversable)
 
 
 -- Instances -------------------------------------------------------------------
 
-instance Show c => Show (V c) where
+instance Show c => Show (Val c) where
   show (V c _ []) = show c
   show (V c _ xs) = "(" <> show c <> (concat $ show <$> reverse xs) <> ")"
 
-instance Show c => Show (E c) where
+instance Show a => Show (Exp a) where
   show = \case
-     C c    -> show c
+     A x    -> show x
      x :@ y -> "(" <> concat (show <$> appList x [y]) <> ")"
     where
       appList (f :@ x) acc = appList f (x:acc)
@@ -52,25 +66,44 @@ instance Show c => Show (E c) where
 
 -- Evaluation ------------------------------------------------------------------
 
-prep :: (c -> Nat) -> E c -> X c
-prep arity = go
+expToThunk :: (a -> Nat) -> Exp a -> Thunk a
+expToThunk arity = go
   where
-    go (C x)    = C (V x (arity x) [])
+    go (A x)    = A (V x (arity x) [])
     go (f :@ x) = go f :@ go x
 
-toExp :: V c -> E c
-toExp (V p _ xs) = go xs
-  where go []     = C p
-        go [x]    = C p :@ toExp x
-        go (x:xs) = go xs :@ toExp x
+valToExp :: Val a -> Exp a
+valToExp (V p _ xs) = go xs
+  where go []     = A p
+        go [x]    = A p :@ valToExp x
+        go (x:xs) = go xs :@ valToExp x
 
-toVal :: (c -> [V c] -> X c) -> X c -> V c
-toVal simp = go
+forceEager :: (a -> [Val a] -> Thunk a) -> Thunk a -> Val a
+forceEager simp = go
   where
-    go (C v)              = goVal v
-    go (C (V c 0 k) :@ x) = go (simp c k :@ x)
-    go (C (V c n k) :@ x) = goVal (V c (n-1) (go x : k))
-    go (f :@ x :@ y)      = go (C (go (f :@ x)) :@ y)
+    go (A v)              = goVal v
+    go (A (V c 0 k) :@ x) = go (simp c k :@ x)
+    go (A (V c n k) :@ x) = goVal (V c (n-1) (go x : k))
+    go (f :@ x :@ y)      = go (A (go (f :@ x)) :@ y)
 
     goVal (V c 0 k) = go (simp c k)
     goVal v         = v
+
+--  Lazy evaluation
+whnf :: ∀a. (a -> [Partial a] -> Whnf a) -> Partial a -> Whnf a
+whnf simp = go
+  where
+    ev (A x)    = go x
+    ev (x :@ y) = ev x & \case Whnf a 1 k -> simp a (Lazy y : k)
+                               Whnf a n k -> Whnf a (n-1) (Lazy y : k)
+
+    go (Norm (V c n k)) = Whnf c n (Norm <$> k)
+    go (Weak x)         = x
+    go (Lazy x)         = ev x
+
+forceLazy :: ∀a. (a -> [Partial a] -> Whnf a) -> Partial a -> Val a
+forceLazy simp = go
+  where
+    go :: Partial a -> Val a
+    go v = V c n (go <$> k)
+      where Whnf c n k = whnf simp v
