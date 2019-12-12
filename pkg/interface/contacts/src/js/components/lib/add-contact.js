@@ -4,6 +4,7 @@ import { Route, Link } from 'react-router-dom';
 export class AddScreen extends Component {
   render() {
     const { props } = this; 
+    //TODO This. Waiting on contact-hook
     return (
       <div className="h-100 w-100 flex flex-column overflow-y-scroll">
         <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 pl3 pt3 f8">
