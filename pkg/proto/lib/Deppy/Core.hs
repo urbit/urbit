@@ -99,6 +99,9 @@ cel v t u = Cel (Abs t (abstract1 v u))
 cel_ :: Typ a -> Typ a -> Typ a
 cel_ t u = Cel (Abs t (abstract (const Nothing) u))
 
+rec :: Eq a => a -> Typ a -> Exp a -> Exp a
+rec v t e = Rec (Abs t (abstract1 v e))
+
 infixl 9 @:
 (@:) = App
 
@@ -133,16 +136,16 @@ retractAsm = foldMap wither
 
 type Typing = Maybe
 
--- TODO maybe this should be Typing () for error reporting?
--- think about env vs instantiate for bindings; if instantiate
--- as below, should the types be different?
--- better organize
-nest :: Ord a => Env a -> Typ a -> Typ a -> Typing ()
+-- TODO
+--   - better errors
+--   - state monad for Asm (how to handle polymorphic recursion?)
+nest :: (Show a, Ord a) => Env a -> Typ a -> Typ a -> Typing ()
 nest env = fmap void . go env mempty
   where
-    go :: Ord a => Env a -> Asm a -> Typ a -> Typ a -> Typing (Asm a)
-    go env asm0 t0 u0 =
-      if t0 == u0
+    go :: (Show a, Ord a) => Env a -> Asm a -> Typ a -> Typ a -> Typing (Asm a)
+    -- FIXME use a better more aggro normal form
+    go env asm0 (whnf -> t0) (whnf -> u0) =
+      if t0 == u0 || member (t0, u0) asm0
         then pure asm0
         else let asm = Set.insert (t0, u0) asm0 in
           case (t0, u0) of
@@ -154,13 +157,13 @@ nest env = fmap void . go env mempty
             -- following Cardelli 80something, we check the RHSs assuming
             -- the putatively *lesser* of the LHSs for both
             (Fun (Abs a b), Fun (Abs a' b')) -> do
-              asm <- go env asm a' a
+              asm' <- go env asm a' a
               retractAsm <$>
-                go (extend1 a' env) (extendAsm asm) (fromScope b) (fromScope b')
+                go (extend1 a' env) (extendAsm asm') (fromScope b) (fromScope b')
             (Cel (Abs a b), Cel (Abs a' b')) -> do
-              asm <- go env asm a a'
+              asm' <- go env asm a a'
               retractAsm <$>
-                go (extend1 a env) (extendAsm asm) (fromScope b) (fromScope b')
+                go (extend1 a env) (extendAsm asm') (fromScope b) (fromScope b')
             (Wut ls, Wut ls') -> do
               guard (ls `isSubsetOf` ls')
               pure asm
@@ -171,20 +174,38 @@ nest env = fmap void . go env mempty
             (_, Cns{}) -> error "nest: cons"
             (Tag{}, _) -> error "nest: tag"
             (_, Tag{}) -> error "nest: tag"
-            (t@App{}, u) -> go env asm (whnf t) u
-            (t, u@App{}) -> go env asm t (whnf u)
-            (t@Hed{}, u) -> go env asm (whnf t) u
-            (t, u@Hed{}) -> go env asm t (whnf u)
-            (t@Tal{}, u) -> go env asm (whnf t) u
-            (t, u@Tal{}) -> go env asm t (whnf u)
+            -- Special rule for the Cas eliminator to enable sums and products
+            (Cas _ e cs, Cas _ e' cs') -> do
+                guard (whnf e == whnf e')
+                Wut s <- infer env e
+                -- TODO I should thread changing asm through the traversal
+                -- but I can't be bothered right now. Perf regression.
+                asm <$ traverse_ chk (setToList s)
+              where 
+                chk tag = case (lookup tag cs, lookup tag cs') of
+                  (Just t, Just u) -> go env asm t u
+                  _ -> error "the Spanish inquisition"
+            (Cas _ e cs, u) -> do
+              Wut s <- infer env e
+              -- TODO thread asms
+              asm <$ traverse_
+                (\tag -> go env asm (fromJust $ lookup tag cs) u)
+                s
+            (t, Cas _ e cs) -> do
+              Wut s <- infer env e
+              -- TODO thread asms
+              asm <$ traverse_
+                (\tag -> go env asm t (fromJust $ lookup tag cs))
+                s
             (t@Cas{}, u) -> go env asm (whnf t) u
             (t, u@Cas{}) -> go env asm t (whnf u)
             (t@(Rec (Abs _ b)), u) -> go env asm (instantiate1 t b) u
             (t, u@(Rec (Abs _ b))) -> go env asm t (instantiate1 u b)
+            _ -> Nothing
 
             
 {-
-nest :: Ord a => Env a -> Asm a -> Typ a -> Typ a -> Bool
+nest :: (Show a, Ord a) => Env a -> Asm a -> Typ a -> Typ a -> Bool
 nest _ _ Typ Typ = True
 nest _ _ (Var v) (Var v') = v == v'  -- TODO amber for Rec
 nest env asm (Var v) u = nest env asm (env v) u
@@ -204,7 +225,7 @@ nest _ _ Tag{} _ = error "nest: tag"
 nest _ _ _ Tag{} = error "nest: tag"
 nest env asm t@App{} u = nest env asm (whnf t) u
 nest env asm t u@App{} = nest env asm t (whnf u)
-nest env asm t@Hed{} u = nest env asm (whnf t) u
+<nest env asm t@Hed{} u = nest env asm (whnf t) u
 nest env asm t u@Hed{} = nest env asm t (whnf u)
 nest env asm t@Tal{} u = nest env asm (whnf t) u
 nest env asm t u@Tal{} = nest env asm t (whnf u)
@@ -217,12 +238,12 @@ nest _ _ _ Rec{} = undefined
 nest _ _ _ _ = False
 -}
 
-check :: Ord a => Env a -> Exp a -> Typ a -> Typing ()
+check :: (Show a, Ord a) => Env a -> Exp a -> Typ a -> Typing ()
 check env e t = do
   t' <- infer env e
   nest env t' t
 
-infer :: forall a. Ord a => Env a -> Exp a -> Typing (Typ a)
+infer :: forall a. (Show a, Ord a) => Env a -> Exp a -> Typing (Typ a)
 infer env = \case
   Var v -> pure $ env v
   Typ -> pure Typ
@@ -269,11 +290,35 @@ infer env = \case
     check (extend1 t env) (fromScope b) (F <$> t)
     pure t
 
-whnf :: Eq a => Exp a -> Exp a
+whnf :: (Show a, Eq a) => Exp a -> Exp a
 whnf = \case
   App (whnf -> Lam (Abs _ b)) x -> whnf $ instantiate1 x b
   Hed (whnf -> Cns x _) -> whnf x
   Tal (whnf -> Cns _ y) -> whnf y
   Cas _ (whnf -> Tag t) cs -> whnf $ fromJust $ lookup t cs
   e@(Rec (Abs _ b)) -> whnf $ instantiate1 e b
-  e -> e
+  e -> trace "sadface" e
+{-
+  = Var a
+  -- types
+  | Typ
+  | Fun (Abs a)
+  | Cel (Abs a)
+  | Wut (Set Tag)
+  -- introduction forms
+  | Lam (Abs a)
+  | Cns (Exp a) (Exp a)
+  | Tag Tag
+  -- elimination forms
+  | App (Exp a) (Exp a)
+  | Hed (Exp a)
+  | Tal (Exp a)
+  | Cas (Typ a) (Exp a) (Map Tag (Exp a))
+  -- recursion
+  | Rec (Abs a)
+-}
+
+nf :: (Show a, Eq a) => Exp a -> Exp a
+nf = traceShowId . \case
+  Typ -> Typ
+  _ -> undefined
