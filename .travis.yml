@@ -1,5 +1,43 @@
-language: nix
-nix: 2.1.3
+# TODO Only do release builds on the `pull` branch?
+
+jobs:
+  include:
+  - os: linux
+    language: nix
+    nix: 2.1.3
+    before_install:
+      - git lfs pull
+      - sh/travis-install-stack
+
+    install:
+      - nix-env -iA cachix -f https://cachix.org/api/v1/install
+      - stack --no-terminal --install-ghc build king --only-dependencies
+
+    script:
+      - cachix use urbit2
+      - ./sh/cachix
+      - make build-fast
+      - make release
+      - sh/ci-tests
+
+  - os: osx
+    language: generic
+    sudo: required
+
+    before_install:
+      - sh/travis-install-stack
+
+    install:
+      - stack --no-terminal --install-ghc build king --only-dependencies
+
+    script:
+      - ver="$(git rev-parse HEAD)"
+      - if [ -n "${TRAVIS_COMMIT-}" ]; then ver="$TRAVIS_COMMIT"; fi
+      - if [ -n "${TRAVIS_TAG-}" ]; then ver="$TRAVIS_TAG"; fi
+      - stack clean
+      - stack install king --local-bin-path ./release
+      - mv release/king release/king-darwin-$ver
+      - otool -L release/king-darwin-$ver
 
 cache:
   directories:
@@ -7,22 +45,6 @@ cache:
   - $HOME/.cabal
   - $HOME/.stack
   - $TRAVIS_BUILD_DIR/.stack-work
-
-before_install:
-  - git lfs pull
-  - sh/travis-install-stack
-
-install:
-  - nix-env -iA cachix -f https://cachix.org/api/v1/install
-  - stack --no-terminal --install-ghc build king --only-dependencies
-
-# TODO Only do release builds on the `pull` branch?
-script:
-  - cachix use urbit2
-  - ./sh/cachix || true
-  - make build-fast
-  - make release
-  - sh/ci-tests
 
 deploy:
   - skip_cleanup: true
