@@ -24,10 +24,12 @@ case $os in
     osx)
         curl -L "$stackurl" |
             tar xz --strip-components=1 --include '*/stack' -C ~/.local/bin
+        ;;
     linux)
         mkdir -p tmp
         curl -L "$stackurl" | tar xz -C tmp
         mv tmp/stack-*/stack ~/.local/bin
+        ;;
 esac
 
 
