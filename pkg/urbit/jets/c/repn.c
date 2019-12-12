@@ -16,7 +16,7 @@
   1 + ((x - 1) / y);
 
 u3_noun u3qc_repn(u3_atom bits, u3_noun blox) {
-    if ( !_(u3a_is_cat(bits) || bits==0 || bits>31) ) {
+    if ( (c3n == u3a_is_cat(bits) || bits==0 || bits>31) ) {
         return u3m_bail(c3__fail);
     }
 
@@ -60,8 +60,9 @@ u3_noun u3qc_repn(u3_atom bits, u3_noun blox) {
         u3_noun blok_n = u3h(blox);
         blox = u3t(blox);
 
-        if (!_(u3a_is_cat(blok_n)))
+        if ( c3n == u3a_is_cat(blok_n) ) {
             return u3m_bail(c3__fail);
+        }
 
         c3_w blok = blok_n;
 
@@ -71,11 +72,13 @@ u3_noun u3qc_repn(u3_atom bits, u3_noun blox) {
                 acc |= SLICE(rem_in_blok, use, blok);
                 FLUSH();
                 rem_in_blok = 0;
-            } else if (rem_in_blok < rem_in_acc) {      //  LT
+            }
+            else if (rem_in_blok < rem_in_acc) {        //  LT
                 acc |= SLICE(rem_in_blok, use, blok);
                 use += rem_in_blok;
                 rem_in_blok = 0;
-            } else {                                    //  GT
+            }
+            else {                                      //  GT
                 acc |= SLICE(rem_in_acc, use, blok);
                 rem_in_blok -= rem_in_acc;
                 blok = blok >> rem_in_acc;
@@ -88,13 +91,15 @@ u3_noun u3qc_repn(u3_atom bits, u3_noun blox) {
     //  If the last word isn't fully used, it will still need to be
     //  flushed.
     //
-    if (use) FLUSH();
+    if (use) {
+        FLUSH();
+    }
 
     return u3a_malt(buf);
 }
 
 u3_noun u3wc_repn(u3_noun cor) {
-  u3_noun bits, blox=0;
+  u3_noun bits, blox;
 
   if ( (c3n == u3r_mean(cor, u3x_sam_2, &bits, u3x_sam_3, &blox, 0)) ||
        (c3n == u3ud(bits)) )
