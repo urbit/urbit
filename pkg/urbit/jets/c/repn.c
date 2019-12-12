@@ -15,7 +15,8 @@
   (x==0) ? 0 :       \
   1 + ((x - 1) / y);
 
-u3_noun u3qc_repn(u3_atom bits, u3_noun blox) {
+u3_noun
+u3qc_repn(u3_atom bits, u3_noun blox) {
     if ( (c3n == u3a_is_cat(bits) || bits==0 || bits>31) ) {
         return u3m_bail(c3__fail);
     }
@@ -98,7 +99,8 @@ u3_noun u3qc_repn(u3_atom bits, u3_noun blox) {
     return u3a_malt(buf);
 }
 
-u3_noun u3wc_repn(u3_noun cor) {
+u3_noun
+u3wc_repn(u3_noun cor) {
   u3_noun bits, blox;
 
   if ( (c3n == u3r_mean(cor, u3x_sam_2, &bits, u3x_sam_3, &blox, 0)) ||
@@ -110,7 +112,8 @@ u3_noun u3wc_repn(u3_noun cor) {
   return u3qc_repn(bits, blox);
 }
 
-u3_noun u3kc_repn(u3_atom bits, u3_atom blox) {
+u3_noun
+u3kc_repn(u3_atom bits, u3_atom blox) {
   u3_noun res = u3qc_repn(bits, blox);
   u3z(bits), u3z(blox);
   return res;
