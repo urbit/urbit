@@ -1771,7 +1771,8 @@
   ++  send-blob
     |=  [for=? =ship =blob]
     ::
-    %-  (trace rot.veb ship |.("send-blob: to {<ship>}"))
+    =/  final-ship  ship
+    %-  (trace rot.veb final-ship |.("send-blob: to {<ship>}"))
     |-
     |^  ^+  event-core
         ::
@@ -1792,10 +1793,10 @@
           (try-next-sponsor sponsor.peer-state)
         ::
         ?~  route=route.peer-state
-          %-  (trace rot.veb ship |.("no route to:  {<ship>}"))
+          %-  (trace rot.veb final-ship |.("no route to:  {<ship>}"))
           (try-next-sponsor sponsor.peer-state)
         ::
-        %-  (trace rot.veb ship |.("trying route: {<ship>}"))
+        %-  (trace rot.veb final-ship |.("trying route: {<ship>}"))
         =.  event-core
           (emit unix-duct.ames-state %give %send lane.u.route blob)
         ::
