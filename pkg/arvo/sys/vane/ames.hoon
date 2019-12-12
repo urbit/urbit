@@ -1078,45 +1078,52 @@
           [%2 ames-state-2]
           [%3 ^ames-state]
       ==
-  ^+  ames-gate
-  ?-    -.old-state
-      %3
-    ames-gate(ames-state +.old-state)
+  |^  ^+  ames-gate
+      ::
+      =?  old-state  ?=(%1 -.old-state)  %2^(state-1-to-2 +.old-state)
+      =?  old-state  ?=(%2 -.old-state)  %3^(state-2-to-3 +.old-state)
+      ::
+      ?>  ?=(%3 -.old-state)
+      ames-gate(ames-state +.old-state)
   ::
-      %2
-    =.  ames-state
-      :*  peers.old-state
-          unix-duct.old-state
-          life.old-state
-          crypto-core.old-state
-          bug=[veb=veb.old-state ships=~]
+  ++  state-1-to-2
+    |=  =ames-state-1
+    ^-  ames-state-2
+    ::
+    =|  =ames-state-2
+    =.  +.ames-state-2
+      :*  unix-duct.ames-state-1
+          life.ames-state-1
+          crypto-core.ames-state-1
+          veb=veb-all-off
       ==
-    ames-gate
-  ::
-      %1
-    =>  .(old-state +.old-state)
-    =.  +.ames-state
-      :*  unix-duct.old-state
-          life.old-state
-          crypto-core.old-state
-          bug=[veb=veb-all-off ships=~]
-      ==
-    =.  peers.ames-state
+    =.  peers.ames-state-2
       %-  ~(gas by *(map ship ship-state))
-      %+  turn  ~(tap by peers.old-state)
-      |=  [peer=ship old-ship-state=ship-state-1]
+      %+  turn  ~(tap by peers.ames-state-1)
+      |=  [peer=ship =ship-state-1]
       ^-  [ship ship-state]
-      ?:  ?=(%alien -.old-ship-state)
-        [peer old-ship-state]
+      ?:  ?=(%alien -.ship-state-1)
+        [peer ship-state-1]
       :+  peer  %known
-      %=    +.old-ship-state
+      %=    +.ship-state-1
           qos
-        ?+  -.qos.old-ship-state  qos.old-ship-state
+        ?+  -.qos.ship-state-1  qos.ship-state-1
           %unborn  [%unborn now]
         ==
       ==
-    ames-gate
-  ==
+    ames-state-2
+  ::
+  ++  state-2-to-3
+    |=  =ames-state-2
+    ^-  ^ames-state
+    ::
+    :*  peers.ames-state-2
+        unix-duct.ames-state-2
+        life.ames-state-2
+        crypto-core.ames-state-2
+        bug=[veb=veb.ames-state-2 ships=~]
+    ==
+  --
 ::  +scry: dereference namespace
 ::
 ++  scry
