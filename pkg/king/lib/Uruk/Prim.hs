@@ -67,7 +67,7 @@ fast ∷ ∀v
      . (Val P → Exp (v P))
      → Val P → Val P → Val P
      → Exp (v P)
-fast fromVal arity name body = fromVal (V J arityNum [body, name, arity])
+fast fromVal arity name body = fromVal (V J (arityNum-1) [body, name, arity])
   where
     arityNum = arity & \case
         V S _ [] → 1
