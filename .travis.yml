@@ -15,10 +15,10 @@ jobs:
 
     script:
       - cachix use urbit2
-      # ./sh/cachix
-      # make build-fast
-      # make release
-      # sh/ci-tests
+      - ./sh/cachix
+      - make build-fast
+      - make release
+      - sh/ci-tests
 
   - os: osx
     language: generic
