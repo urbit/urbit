@@ -221,7 +221,9 @@ checkEvs pierPath first last = do
 
     showEvents :: EventId -> EventId -> ConduitT ByteString Void (RIO e) ()
     showEvents eId _ | eId > last = pure ()
-    showEvents eId cycle          =
+    showEvents eId cycle          = do
+        when (eId `mod` 10000 == 0) $ do
+            lift $ logTrace (display ("#" <> tshow eId))
         await >>= \case
             Nothing -> lift $ logTrace "Everything checks out."
             Just bs -> do
@@ -229,8 +231,9 @@ checkEvs pierPath first last = do
                     n <- io $ cueBSExn bs
                     when (eId > cycle) $ do
                         (mug, wen, evNoun) <- unpackJob n
-                        fromNounErr evNoun &
-                            either (logError . displayShow) pure
+                        fromNounErr evNoun & \case
+                            Left err        -> logError (displayShow (eId, err))
+                            Right (_ ∷ Ev) -> pure ()
                 showEvents (succ eId) cycle
 
     unpackJob :: Noun -> RIO e (Mug, Wen, Noun)
