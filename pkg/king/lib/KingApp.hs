@@ -39,7 +39,7 @@ withLogFileHandle act = do
 runApp :: RIO App a -> IO a
 runApp inner = do
     withLogFileHandle $ \logFile -> do
-        logOptions <- logOptionsHandle logFile True
+        logOptions <- logOptionsHandle stderr True
             <&> setLogUseTime True
             <&> setLogUseLoc False
 
@@ -78,7 +78,7 @@ instance HasNetworkConfig PierApp where
 runPierApp :: PierConfig -> NetworkConfig -> RIO PierApp a -> IO a
 runPierApp pierConfig networkConfig inner = do
     withLogFileHandle $ \logFile -> do
-        logOptions <- logOptionsHandle logFile True
+        logOptions <- logOptionsHandle stderr True
             <&> setLogUseTime True
             <&> setLogUseLoc False
 
