@@ -30,7 +30,6 @@ export class Contacts extends Component {
         )
       })
       //TODO if your contact in this group is completely empty, show prompt to "share details selectively", using your root identity as template
-      // (will require its own route, see root.js)
         return (
             <div className={`bn br-m br-l br-xl b--black lh-copy h-100 flex-shrink-0 
             flex-basis-100-s flex-basis-30-ns mw5-m mw5-l mw5-xl relative 

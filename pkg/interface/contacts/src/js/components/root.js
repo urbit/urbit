@@ -175,7 +175,6 @@ export class Root extends Component {
               )
             }}
           />
-            {/*TODO /~contacts/share/:ship/:group/me for autofilling your template for sharing details to a group for the invite flow */}
             <Route exact path="/~contacts/me"
             render={ (props) => {
               let contactList = state.contacts["/~/default"];

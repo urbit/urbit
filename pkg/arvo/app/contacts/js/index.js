@@ -63065,16 +63065,15 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                     )
                   });
                   //TODO if your contact in this group is completely empty, show prompt to "share details selectively", using your root identity as template
-                  // (will require its own route, see root.js)
                     return (
                         react.createElement('div', { className: `bn br-m br-l br-xl b--black lh-copy h-100 flex-shrink-0 
             flex-basis-100-s flex-basis-30-ns mw5-m mw5-l mw5-xl relative 
-            overflow-hidden ` + responsiveClasses, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 35}}
-                          , react.createElement('div', { className: "pt3 pb6 pl3 f8 db dn-m dn-l dn-xl"       , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 38}}
-                            , react.createElement(Link, { to: "/~contacts/", __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 39}}, "⟵ All Groups")
+            overflow-hidden ` + responsiveClasses, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 34}}
+                          , react.createElement('div', { className: "pt3 pb6 pl3 f8 db dn-m dn-l dn-xl"       , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 37}}
+                            , react.createElement(Link, { to: "/~contacts/", __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 38}}, "⟵ All Groups")
                           )
-                          , react.createElement('div', { className: "overflow-y-scroll h-100" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 41}}
-                            , react.createElement('h2', { className: "f9 pt4 pr4 pb2 pl4 gray2 c-default"      , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 42}}, "Members")
+                          , react.createElement('div', { className: "overflow-y-scroll h-100" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 40}}
+                            , react.createElement('h2', { className: "f9 pt4 pr4 pb2 pl4 gray2 c-default"      , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 41}}, "Members")
                             , contactItems
                           )
                           , react.createElement('div', {
@@ -63082,9 +63081,9 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                             ((this.props.path.includes(window.ship))
                               ? "dt"
                               : "dn"),
-                            style: { bottom: 0, height: 48 }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 45}}
-                            , react.createElement(Link, { to: "/~contacts/add" + props.path, className: "dtc v-mid" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 51}}
-                              , react.createElement('p', { className: "f9 pl4 black bn"   , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 52}}, "Add New Member to Group"    )
+                            style: { bottom: 0, height: 48 }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 44}}
+                            , react.createElement(Link, { to: "/~contacts/add" + props.path, className: "dtc v-mid" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 50}}
+                              , react.createElement('p', { className: "f9 pl4 black bn"   , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 51}}, "Add New Member to Group"    )
                             )
                           )
                         )
@@ -63574,7 +63573,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                           )
                         }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 136}}
                       )
-                        /*TODO /~contacts/share/:ship/:group/me for autofilling your template for sharing details to a group for the invite flow */
                         , react.createElement(Route, { exact: true, path: "/~contacts/me",
                         render:  (props) => {
                           let contactList = state.contacts["/~/default"];
@@ -63586,15 +63584,15 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                               spinner: state.spinner,
                               contacts: state.contacts,
                               activeDrawer: "rightPanel",
-                              selected: "me", __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 186}}
+                              selected: "me", __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 185}}
                                 , react.createElement(ContactCard, {
                                 path: "/~/default",
                                 contact: me,
-                                ship: window.ship, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 191}}
+                                ship: window.ship, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 190}}
                                 )
                               )
                           )
-                        }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 179}}
+                        }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 178}}
                         )
                     )
                   )
