@@ -172,9 +172,9 @@ data HttpClientEv
   deriving (Eq, Ord, Show)
 
 data HttpServerEv
-    = HttpServerEvRequest       (ServId, UD, UD, ()) HttpServerReq
-    | HttpServerEvCancelRequest (ServId, UD, UD, ()) ()
-    | HttpServerEvRequestLocal  (ServId, UD, UD, ()) HttpServerReq
+    = HttpServerEvRequest       (ServId, Atom, UD, ()) HttpServerReq
+    | HttpServerEvCancelRequest (ServId, Atom, UD, ()) ()
+    | HttpServerEvRequestLocal  (ServId, Atom, UD, ()) HttpServerReq
     | HttpServerEvLive          (ServId, ())         Port (Maybe Port)
     | HttpServerEvBorn          (KingId, ())         ()
     | HttpServerEvCrud          Path                 Cord Tang
