@@ -33,7 +33,7 @@ newtype ServId = ServId { unServId :: UV }
 
 -- Http Common -----------------------------------------------------------------
 
-data Header = Header Cord Cord
+data Header = Header Cord Bytes
   deriving (Eq, Ord, Show)
 
 data ResponseHeader = ResponseHeader
