@@ -11,9 +11,8 @@
     ^-  wain
     :*  (cat 3 'author: ' (scot %p author.com))
         (cat 3 'date-created: ' (scot %da date-created.com))
-        (cat 3 'last-modified: ' (scot %da last-modified.com))
         '-----'
-        (to-wain:format body.com)
+        (to-wain:format content.com)
     ==
   --
 ++  grab
@@ -28,7 +27,6 @@
     ::
     ?>  ?=  $:  author=@t
                 date-created=@t
-                last-modified=@t
                 line=@t
                 body=*
              ==
@@ -41,12 +39,6 @@
         %+  rash  date-created.txs
         ;~  pfix
           (jest 'date-created: ~')
-          (cook year when:so)
-        ==
-    ::
-        %+  rash  last-modified.txs
-        ;~  pfix
-          (jest 'last-modified: ~')
           (cook year when:so)
         ==
     ::

@@ -2,18 +2,18 @@
 |%
 ::
 +$  group-info
-  $%  [%old par=path sub=path]
-      [%new par=(set ship) sub=(set ship) sec=rw-security]
+  $%  [%old writers=path subscribers=path]
+      [%new writers=(set ship) subscribers=(set ship) sec=rw-security]
   ==
 ::
 +$  action
-  $%  [%new-book book=@tas title=@t group=group-info]
+  $%  [%new-book book=@tas title=@t about=@t coms=? group=group-info]
       [%new-note who=@p book=@tas note=@tas title=@t body=@t]
       [%new-comment who=@p book=@tas note=@tas body=@t]
   ::
-      [%edit-book book=@tas new-title=(unit @t) new-group=(unit group-info)]
-      [%edit-note who=@p book=@tas note=@tas new-title=@t new-body=@t]
-      [%edit-comment who=@p book=@tas note=@tas comment=@tas new-body=@t]
+      [%edit-book book=@tas title=@t about=@t coms=? group=(unit group-info)]
+      [%edit-note who=@p book=@tas note=@tas title=@t body=@t]
+      [%edit-comment who=@p book=@tas note=@tas comment=@tas body=@t]
   ::
       [%del-book book=@tas]
       [%del-note who=@p book=@tas note=@tas]
@@ -26,7 +26,6 @@
 +$  comment
   $:  author=@p
       date-created=@da
-      last-edit=@da
       content=@t
   ==
 ::
@@ -43,23 +42,39 @@
 ::
 +$  notebook
   $:  title=@t
+      description=@t
+      comments=?
+      writers=path
+      subscribers=path
       date-created=@da
       notes=(map @tas note)
       order=(list @tas)
       pinned=(set @tas)
-      participants=path
+  ==
+::
++$  notebook-info
+  $:  title=@t
+      description=@t
+      comments=?
+      writers=path
       subscribers=path
   ==
 ::
 +$  notebook-delta
-  $%  [%book book=@tas data=notebook]
-      [%book-meta book=@tas title=@t]
-      [%note book=@tas note=@tas data=note]
-      [%comment book=@tas note=@tas comment-date=@da data=comment]
-      [%del-book book=@tas]
-      [%del-note book=@tas note=@tas]
-      [%del-comment book=@tas note=@tas comment=@da]
+  $%  [%add-book host=@p book=@tas data=notebook]
+      [%add-note host=@p book=@tas note=@tas data=note]
+      [%add-comment host=@p book=@tas note=@tas comment-date=@da data=comment]
+  ::
+      [%edit-book host=@p book=@tas data=notebook]
+      [%edit-note host=@p book=@tas note=@tas data=note]
+      [%edit-comment host=@p book=@tas note=@tas comment-date=@da data=comment]
+  ::
+      [%del-book host=@p book=@tas]
+      [%del-note host=@p book=@tas note=@tas]
+      [%del-comment host=@p book=@tas note=@tas comment=@da]
   ==
 ::
-+$  primary-delta  !!
++$  primary-delta
+  $%  notebook-delta
+  ==
 --
