@@ -237,21 +237,12 @@ sendOrder w o = do
 sendBytes :: HasLogFunc e => Serf e -> ByteString -> RIO e ()
 sendBytes s bs = handle ioErr $ do
     sendLen s (length bs)
-    hFlush (sendHandle s)
-
-    hack
-
     hPut (sendHandle s) bs
     hFlush (sendHandle s)
-
-    hack
 
   where
     ioErr :: IOError -> RIO e ()
     ioErr _ = throwIO SerfConnectionClosed
-
-    -- TODO WHY DOES THIS MATTER?????
-    hack = threadDelay 10000
 
 recvLen :: (MonadIO m, HasLogFunc e) => Serf e -> m Word64
 recvLen w = io $ do
