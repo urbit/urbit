@@ -63098,16 +63098,26 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 this.state = {
                   edit: false,
                   colorToSet: "",
-                  nickNameToSet: ""
+                  nickNameToSet: "",
+                  emailToSet: "",
+                  phoneToSet: "",
+                  websiteToSet: "",
+                  notesToSet: ""
                 };
                 this.editToggle = this.editToggle.bind(this);
                 this.sigilColorSet = this.sigilColorSet.bind(this);
                 this.nickNameToSet = this.nickNameToSet.bind(this);
+                this.emailToSet = this.emailToSet.bind(this);
+                this.phoneToSet = this.phoneToSet.bind(this);
+                this.websiteToSet = this.websiteToSet.bind(this);
+                this.notesToSet = this.notesToSet.bind(this);
                 this.setField = this.setField.bind(this);
 
               }
 
               componentDidUpdate() {
+                // sigil color updates are done by keystroke parsing on update
+                // other field edits are exclusively handled by setField()
                 let currentColor = (this.props.contact.color) ? this.props.contact.color : "0x0";
                 let currentHex = uxToHex(currentColor);
                 let hexExp = /#?([0-9A-Fa-f]{6})/;
@@ -63125,8 +63135,28 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 this.setState({edit: editSwitch});
               }
 
+              emailToSet(event) {
+                this.setState({ emailToSet: event.target.value });
+              }
+
               nickNameToSet(event) {
                 this.setState({ nickNameToSet: event.target.value });
+              }
+
+              notesToSet(event) {
+                this.setState({ notesToSet: event.target.value });
+              }
+
+              phoneToSet(event) {
+                this.setState({ phoneToSet: event.target.value });
+              }
+
+              sigilColorSet(event) {
+                this.setState({ colorToSet: event.target.value });
+              }
+
+              websiteToSet(event) {
+                this.setState({ websiteToSet: event.target.value });
               }
 
               shipParser(ship) {
@@ -63141,28 +63171,110 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
               setField(field) {
                 let ship = "~" + this.props.ship;
+                let emailTest = new RegExp('' 
+                  + /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*/.source 
+                  + /@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.source
+                );
+
+                let phoneTest = new RegExp(''
+                  + /^\s*(?:\+?(\d{1,3}))?/.source
+                  + /([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$/.source
+                );
+
+                let websiteTest = new RegExp(''
+                  + /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}/.source
+                  + /\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.source
+                );
+
                 switch (field) {
+                  case "email": {
+                    if ((this.state.emailToSet === "")
+                      || (this.state.emailToSet === this.props.contact.email)) {
+                      return false;
+                    }
+                    let emailTestResult = emailTest.exec(this.state.emailToSet);
+                    if (emailTestResult) {
+                      api.contactEdit(this.props.path, ship, { email: this.state.emailToSet });
+                    }
+                    break;
+                  }
                   case "nickname": {
                     if ((this.state.nickNameToSet === "")
-                    || (this.state.nickNameToSet === this.props.contact.nickname)) {
+                      || (this.state.nickNameToSet === this.props.contact.nickname)) {
                       return false;
                     }
                     api.contactEdit(this.props.path, ship, { nickname: this.state.nickNameToSet });
+                    break;
+                  }
+                  case "notes": {
+                    if ((this.state.notesToSet === "")
+                      || (this.state.notesToSet === this.props.contact.notes)) {
+                      return false;
+                    }
+                    api.contactEdit(this.props.path, ship, { notes: this.state.notesToSet });
+                    break;
+                  }
+                  case "phone": {
+                    if ((this.state.phoneToSet === "")
+                      || (this.state.phoneToSet === this.props.contact.phone)) {
+                      return false;
+                    }
+                    let phoneTestResult = phoneTest.exec(this.state.phoneToSet);
+                    if (phoneTestResult) {
+                      api.contactEdit(this.props.path, ship, { phone: this.state.phoneToSet });
+                    }
+                    break;
+                  }
+                  case "website": {
+                    if ((this.state.websiteToSet === "")
+                      || (this.state.websiteToSet === this.props.contact.website)) {
+                      return false;
+                    }
+                    let websiteTestResult = websiteTest.exec(this.state.websiteToSet);
+                    if (websiteTestResult) {
+                      api.contactEdit(this.props.path, ship, { website: this.state.websiteToSet });
+                    }
                     break;
                   }
                   case "removeAvatar": {
                     api.contactEdit(this.props.path, ship, { avatar: null });
                     break;
                   }
+                  case "removeEmail": {
+                    this.setState({ emailToSet: "" });
+                    api.contactEdit(this.props.path, ship, { email: "" });
+                    this.refs.email.value = "";
+                    break;
+                  }
+                  case "removeNickname": {
+                    this.setState({ nicknameToSet: "" });
+                    api.contactEdit(this.props.path, ship, { nickname: "" });
+                    this.refs.nickname.value = "";
+                    break;
+                  }
+                  case "removePhone": {
+                    this.setState({ phoneToSet: "" });
+                    api.contactEdit(this.props.path, ship, { phone: "" });
+                    this.refs.phone.value = "";
+                    break;
+                  }
+                  case "removeWebsite": {
+                    this.setState({ websiteToSet: "" });
+                    api.contactEdit(this.props.path, ship, { website: "" });
+                    this.refs.website.value = "";
+                    break;
+                  }
+                  case "removeNotes": {
+                    this.setState({ notesToSet: "" });
+                    api.contactEdit(this.props.path, ship, { notes: "" });
+                    this.refs.notes.value = "";
+                    break;
+                  }
                 }
               }
 
-              sigilColorSet(event) {
-                this.setState({ colorToSet: event.target.value });
-              }
-
               renderEditCard() {
-
+                // if this is our first edit in a new group, propagate from root identity
                 let defaultValue = {
                   nickname: (this.props.share) 
                   ? this.props.rootIdentity.nickname
@@ -63175,7 +63287,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                   : this.props.contact.phone,
                   website: (this.props.share)
                   ? this.props.rootIdentity.website
-                  : this.props.contact.phone,
+                  : this.props.contact.website,
                   notes: (this.props.share)
                   ? this.props.rootIdentity.notes
                   : this.props.contact.notes
@@ -63183,16 +63295,21 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
                 let shipType = this.shipParser(this.props.ship);
 
-                let currentColor = (this.props.contact.color) ? this.props.contact.color : "0x0";
+                let currentColor = (this.props.contact.color) 
+                ? this.props.contact.color 
+                : "0x0";
+
                 let hexColor = uxToHex(currentColor);
 
                 let sigilColor = "";
+                let hasAvatar = (this.props.contact.avatar !== "TODO");
+
 
                 if (!hasAvatar) { 
                   sigilColor = (
                     react.createElement('div', { className: "tl mt4 mb4 w-auto ml-auto mr-auto"     ,
-                    style: { width: "fit-content" }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 106}}
-                    , react.createElement('p', { className: "f9 gray2 lh-copy"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 108}}, "Sigil Color" )
+                    style: { width: "fit-content" }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 223}}
+                    , react.createElement('p', { className: "f9 gray2 lh-copy"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 225}}, "Sigil Color" )
                       , react.createElement('textarea', {
                        className: "b--gray4 black f7 ba db pl2"     ,
                        onChange: this.sigilColorSet,
@@ -63202,22 +63319,21 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                          height: 40,
                          paddingTop: 10,
                           width: 114
-                        }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 109}})
+                        }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 226}})
                     )
                   );
-                  //TODO The fields to actually edit, using the api hooks for those atomic actions
                 }
 
                 let removeImage = "";
                 let avatar = (hasAvatar) 
-                  ? react.createElement('img', { className: "dib h-auto" , width: 128, src: this.props.contact.avatar, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 126}} ) 
-                  : react.createElement(Sigil, { ship: this.props.ship, size: 128, color: "#" + hexColor, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 127}} );
+                  ? react.createElement('img', { className: "dib h-auto" , width: 128, src: this.props.contact.avatar, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 242}} ) 
+                  : react.createElement(Sigil, { ship: this.props.ship, size: 128, color: "#" + hexColor, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 243}} );
 
                 if (hasAvatar) {
                   removeImage = (
-                    react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 131}}
+                    react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 247}}
                       , react.createElement('button', { class: "f9 black pointer db"   ,
-                        onClick: () => this.setField("removeAvatar"), __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 132}}, "Remove photo"
+                        onClick: () => this.setField("removeAvatar"), __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 248}}, "Remove photo"
 
                         )
                     )
@@ -63225,47 +63341,153 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 }
 
                 return (
-                  react.createElement('div', { className: "w-100 flex justify-center pa4 pa0-xl pt4-xl"     , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 141}}
-                    , react.createElement('div', { className: "w-100 mw6 tc"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 142}}
+                  react.createElement('div', { className: "w-100 mt8 flex justify-center pa4 pt8 pt0-l pa0-xl pt4-xl"        , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 257}}
+                    , react.createElement('div', { className: "w-100 mw6 tc"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 258}}
                       , avatar
                       , sigilColor
-                      , react.createElement('button', { className: "f9 b--black ba pa2"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 145}}, "Upload an Image"  )
+                      , react.createElement('button', { className: "f9 b--black ba pa2"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 261}}, "Upload an Image"  )
                       , removeImage
 
-                      , react.createElement('div', { className: "w-100 pt8 lh-copy tl"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 148}}
-                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 149}}, "Ship Name" )
-                        , react.createElement('p', { className: "f8 mono" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 150}}, "~", this.props.ship)
-                        , react.createElement('p', { className: "f9 gray2 mt3"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 151}}, "Ship Type" )
-                        , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 152}}, shipType)
+                      , react.createElement('div', { className: "w-100 pt8 lh-copy tl"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 264}}
+                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 265}}, "Ship Name" )
+                        , react.createElement('p', { className: "f8 mono" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 266}}, "~", this.props.ship)
+                        , react.createElement('p', { className: "f9 gray2 mt3"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 267}}, "Ship Type" )
+                        , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 268}}, shipType)
 
-                        , react.createElement('hr', { className: "mv8 gray4 b--gray4 bb-0 b--solid"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 154}} )
-                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 155}}, "Nickname")
-                          , react.createElement('div', { className: "w-100 flex" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 156}}
+                        , react.createElement('hr', { className: "mv8 gray4 b--gray4 bb-0 b--solid"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 270}} )
+
+                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 272}}, "Nickname")
+                          , react.createElement('div', { className: "w-100 flex" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 273}}
                             , react.createElement('textarea', {
+                             ref: "nickname",
                              className: "w-100 ba pl3 b--gray4"   ,
                              style: { resize: "none",
                                       height: 40,
                                       paddingTop: 10 },
                              onChange: this.nickNameToSet,
-                            defaultValue: defaultValue.nickname, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 157}}
-                             )
-                            , react.createElement('button', { className: "f9 ml3 ba pa2 pl3 pr3 b--red2 red2 " +
-                            ((this.props.contact.nickname === "") ? "dn" : "dib"), __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 165}}, "Delete"
+                            defaultValue: defaultValue.nickname, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 274}})
+                            , react.createElement('button', { className: "f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
+                            ((this.props.contact.nickname === "") ? "dn" : "dib"),
+                            onClick: () => this.setField("removeNickname"), __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 282}}, "Delete"
 
                             )
                           )
-                          , react.createElement('button', { className: "db mv2 f9 ba pa2 pl3 pr3 " +
+                          , react.createElement('button', { className: "pointer db mv2 f9 ba pa2 pl3 pr3 " +
                           (((this.props.contact.nickname === this.state.nickNameToSet)
                           || (this.state.nickNameToSet === ""))
                           ? "b--gray4 gray4" 
                           : "b--black"),
-                          onClick: () => this.setField("nickname"), __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 170}}, "Save"
+                          onClick: () => this.setField("nickname"), __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 288}}, "Save"
 
                           )
-                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 178}}, "Email")
-                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 179}}, "Phone")
-                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 180}}, "Website")
-                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 181}}, "Notes")
+
+                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 297}}, "Email")
+                        , react.createElement('div', { className: "w-100 flex" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 298}}
+                          , react.createElement('textarea', {
+                            ref: "email",
+                            className: "w-100 ba pl3 b--gray4"   ,
+                            style: {
+                              resize: "none",
+                              height: 40,
+                              paddingTop: 10
+                            },
+                            onChange: this.emailToSet,
+                            defaultValue: defaultValue.email, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 299}} )
+                          , react.createElement('button', { className: "f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
+                            ((this.props.contact.email === "") ? "dn" : "dib"),
+                            onClick: () => this.setField("removeEmail"), __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 309}}, "Delete"
+
+                            )
+                        )
+                        , react.createElement('button', { className: "pointer db mv2 f9 ba pa2 pl3 pr3 " +
+                          (((this.props.contact.email === this.state.emailToSet)
+                          || (this.state.emailToSet === ""))
+                            ? "b--gray4 gray4"
+                            : "b--black"),
+                          onClick: () => this.setField("email"), __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 315}}, "Save"
+
+                          )
+
+                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 324}}, "Phone")
+                        , react.createElement('div', { className: "w-100 flex" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 325}}
+                          , react.createElement('textarea', {
+                            ref: "phone",
+                            className: "w-100 ba pl3 b--gray4"   ,
+                            style: {
+                              resize: "none",
+                              height: 40,
+                              paddingTop: 10
+                            },
+                            onChange: this.phoneToSet,
+                            defaultValue: defaultValue.phone, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 326}} )
+                          , react.createElement('button', { className: "f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
+                            ((this.props.contact.phone === "") ? "dn" : "dib"),
+                            onClick: () => this.setField("removePhone"), __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 336}}, "Delete"
+
+                            )
+                        )
+                        , react.createElement('button', { className: "pointer db mv2 f9 ba pa2 pl3 pr3 " +
+                          (((this.props.contact.phone === this.state.phoneToSet)
+                          || (this.state.phoneToSet === ""))
+                            ? "b--gray4 gray4"
+                            : "b--black"),
+                          onClick: () => this.setField("phone"), __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 342}}, "Save"
+
+                          )
+
+                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 351}}, "Website")
+                        , react.createElement('div', { className: "w-100 flex" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 352}}
+                          , react.createElement('textarea', {
+                            ref: "website",
+                            className: "w-100 ba pl3 b--gray4"   ,
+                            style: {
+                              resize: "none",
+                              height: 40,
+                              paddingTop: 10
+                            },
+                            onChange: this.websiteToSet,
+                            defaultValue: defaultValue.website, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 353}} )
+                          , react.createElement('button', { className: "f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
+                            ((this.props.contact.website === "") ? "dn" : "dib"),
+                            onClick: () => this.setField("removeWebsite"), __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 363}}, "Delete"
+
+                            )
+                        )
+                        , react.createElement('button', { className: "pointer db mv2 f9 ba pa2 pl3 pr3 " +
+                          (((this.props.contact.website === this.state.websiteToSet)
+                            || (this.state.websitetoSet === ""))
+                            ? "b--gray4 gray4"
+                            : "b--black"),
+                          onClick: () => this.setField("website"), __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 369}}, "Save"
+
+                          )
+
+                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 378}}, "Notes")
+                        , react.createElement('div', { className: "w-100 flex" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 379}}
+                          , react.createElement('textarea', {
+                            ref: "notes",
+                            className: "w-100 ba pl3 b--gray4"   ,
+                            style: {
+                              resize: "none",
+                              height: 40,
+                              paddingTop: 10
+                            },
+                            onChange: this.notesToSet,
+                            defaultValue: defaultValue.notes, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 380}} )
+                          , react.createElement('button', { className: "f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
+                            ((this.props.contact.notes === "") ? "dn" : "dib"),
+                            onClick: () => this.setField("removeNotes"), __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 390}}, "Delete"
+
+                            )
+                        )
+                        , react.createElement('button', { className: "pointer db mv2 f9 ba pa2 pl3 pr3 " +
+                          (((this.props.contact.notes === this.state.notesToSet)
+                            || (this.state.notesToSet === ""))
+                            ? "b--gray4 gray4"
+                            : "b--black"),
+                          onClick: () => this.setField("notes"), __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 396}}, "Save"
+
+                          )
 
                       )
                     )
@@ -63278,63 +63500,76 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 let currentColor = (this.props.contact.color) ? this.props.contact.color : "0x0";
                 let hexColor = uxToHex(currentColor);
 
-                const hasAvatar = (this.props.contact.avatar !== "TODO");
+                let hasAvatar = (this.props.contact.avatar !== "TODO");
 
                 let avatar = (hasAvatar)
-                  ? react.createElement('img', { className: "dib h-auto" , width: 128, src: this.props.contact.avatar, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 197}} )
-                  : react.createElement(Sigil, { ship: this.props.ship, size: 128, color: "#" + hexColor, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 198}} );
+                  ? react.createElement('img', { className: "dib h-auto" , width: 128, src: this.props.contact.avatar, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 419}} )
+                  : react.createElement(Sigil, { ship: this.props.ship, size: 128, color: "#" + hexColor, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 420}} );
 
                 return (
-                  react.createElement('div', { className: "w-100 flex justify-center pa4 pa0-xl pt4-xl"     , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 201}}
-                    , react.createElement('div', { className: "w-100 mw6 tc"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 202}}
+                  react.createElement('div', { className: "w-100 mt8 flex justify-center pa4 pt8 pt0-l pa0-xl pt4-xl"        , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 423}}
+                    , react.createElement('div', { className: "w-100 mw6 tc"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 424}}
                       , avatar
-                      , react.createElement('div', { className: "w-100 pt8 lh-copy tl"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 204}}
-                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 205}}, "Ship Name" )
-                        , react.createElement('p', { className: "f8 mono" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 206}}, "~", this.props.ship)
-                        , react.createElement('p', { className: "f9 gray2 mt3"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 207}}, "Ship Type" )
-                        , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 208}}, shipType)
+                      , react.createElement('div', { className: "w-100 pt8 lh-copy tl"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 426}}
+                        , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 427}}, "Ship Name" )
+                        , react.createElement('p', { className: "f8 mono" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 428}}, "~", this.props.ship)
+                        , react.createElement('p', { className: "f9 gray2 mt3"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 429}}, "Ship Type" )
+                        , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 430}}, shipType)
 
-                        , react.createElement('hr', { className: "mv8 gray4 b--gray4 bb-0 b--solid"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 210}} )
-                        , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 211}}
+                        , react.createElement('hr', { className: "mv8 gray4 b--gray4 bb-0 b--solid"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 432}} )
+                        , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 433}}
                           , (() => {
                             if (this.props.contact.nickname) {
                               return (
-                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 215}}
-                                  , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 216}}, "Nickname")
-                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 217}}, this.props.contact.nickname)
+                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 437}}
+                                  , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 438}}, "Nickname")
+                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 439}}, this.props.contact.nickname)
                                 )
                               )
                             }
-
+                          })()
+                          , (() => {
                             if (this.props.contact.email) {
                               return (
-                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 224}}
-                                  , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 225}}, "Email")
-                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 226}}, this.props.contact.email)
+                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 447}}
+                                  , react.createElement('p', { className: "f9 mt6 gray2"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 448}}, "Email")
+                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 449}}, this.props.contact.email)
                                 )
                               )
                             }
+                          })()
+                          , (() => {
                             if (this.props.contact.phone) {
                               return (
-                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 232}}
-                                  , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 233}}, "Phone")
-                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 234}}, this.props.contact.phone)
+                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 457}}
+                                  , react.createElement('p', { className: "f9 mt6 gray2"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 458}}, "Phone")
+                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 459}}, this.props.contact.phone)
                                 )
                               )
                             }
+                          })()
+                          , (() => {
                             if (this.props.contact.website) {
+                              
+                              let href = (this.props.contact.website.includes("://"))
+                              ? this.props.contact.website
+                              : "http://" + this.props.contact.website;
+
                               return (
-                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 240}}
-                                  , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 241}}, "Website")
-                                  , react.createElement('a', { className: "bb b--black f8"  , href: this.props.contact.website, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 242}}, this.props.contact.website)
+                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 472}}
+                                  , react.createElement('p', { className: "f9 mt6 gray2"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 473}}, "Website")
+                                  , react.createElement('a', { target: "_blank", className: "bb b--black f8"  , 
+                                    href: href, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 474}}, this.props.contact.website)
                                 )
                               )
                             }
+                          })()
+                          , (() => {
                             if (this.props.contact.notes) {
                               return (
-                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 248}}
-                                  , react.createElement('p', { className: "f9 gray2" , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 249}}, "Notes")
-                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 250}}, this.props.contact.notes)
+                                react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 483}}
+                                  , react.createElement('p', { className: "f9 mt6 gray2"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 484}}, "Notes")
+                                  , react.createElement('p', { className: "f8", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 485}}, this.props.contact.notes)
                                 )
                               )
                             }
@@ -63370,21 +63605,22 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
                   //TODO "Share card" if it's /me -> sends to /~/default of recipient
                     return (
-                        react.createElement('div', { className: "h-100 w-100 overflow-x-hidden"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 286}}
-                        , react.createElement('div', { className: "w-100 h2 dn-m dn-l dn-xl inter pb6 pl3 pt3 f8"         , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 287}}
-                          , react.createElement(Link, { to: "/~contacts/", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 288}}, "⟵")
-                        )
-                        , react.createElement('div', { className: "w-100 bb b--gray4"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 290}}
+                        react.createElement('div', { className: "h-100 w-100 overflow-x-hidden"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 521}}
+
+                        , react.createElement('div', { className: "w-100 bg-white fixed bb b--gray4"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 523}}
+                          , react.createElement('div', { className: "w-100 h2 dn-m dn-l dn-xl inter pb6 pl3 pt3 f8"         , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 524}}
+                            , react.createElement(Link, { to: "/~contacts/", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 525}}, "⟵")
+                          )
                           , react.createElement('button', { 
                             onClick: this.editToggle,
-                          className: `ml3 mt2 mb2 f9 pa2 ba br3 pointer b--black ` + ourOption, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 291}}
+                          className: `ml3 mt2 mb2 f9 pa1 ba br2 pointer b--black ` + ourOption, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 527}}
                             , editInfoText
                           )
-                          , react.createElement('button', { className: `ml3 mt2 mb2 f9 pa2 ba br3 b--black ` + localOption, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 296}}, "Share Contact Info"
+                          , react.createElement('button', { className: `ml3 mt2 mb2 f9 pa1 ba br2 b--black ` + localOption, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 532}}, "Share Contact Info"
 
                           )
-                          , react.createElement('button', { className: `ml3 mt2 mb2 f9 pa2 ba red2 br3 b--red2 ` + adminOption,
-                          onClick: this.removeContact, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 299}}, "Remove from Group"
+                          , react.createElement('button', { className: `ml3 mt2 mb2 f9 pa1 ba red2 br2 b--red2 ` + adminOption,
+                          onClick: this.removeContact, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 535}}, "Remove from Group"
 
                           )
                         )
