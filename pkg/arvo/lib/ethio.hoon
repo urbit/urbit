@@ -21,7 +21,7 @@
   %+  strand-fail:strandio
     %unexpected-multiple-results
   [>(lent res)< ~]
-::  +request-batch-rpc-strict: send rpc request, with retry
+::  +request-batch-rpc-strict: send rpc requests, with retry
 ::
 ::    sends a batch request. produces results for all requests in the batch,
 ::    but only if all of them are successful.
@@ -32,8 +32,39 @@
         `10
       attempt-request
   ::
-  +$  result   [id=@t =json]
-  +$  results  (list result)
+  +$  results  (list [id=@t =json])
+  ::
+  ++  attempt-request
+    =/  m  (strand:strandio ,(unit results))
+    ^-  form:m
+    ;<  responses=(list response:rpc:jstd)  bind:m
+      (request-batch-rpc-loose url reqs)
+    =-  ?~  err
+          (pure:m `res)
+        (pure:m ~)
+    %+  roll  responses
+    |=  $:  rpc=response:rpc:jstd
+            [res=results err=(list [id=@t code=@t message=@t])]
+        ==
+    ?:  ?=(%error -.rpc)
+      [res [+.rpc err]]
+    ?.  ?=(%result -.rpc)
+      [res [['' 'ethio-rpc-fail' (crip <rpc>)] err]]
+    [[+.rpc res] err]
+  --
+::  +request-batch-rpc-loose: send rpc requests, with retry
+::
+::    sends a batch request. produces results for all requests in the batch,
+::    including the ones that are unsuccessful.
+::
+++  request-batch-rpc-loose
+  |=  [url=@ta reqs=(list [id=(unit @t) req=request:rpc:ethereum])]
+  |^  %+  (retry:strandio results)
+        `10
+      attempt-request
+  ::
+  +$  result   response:rpc:jstd
+  +$  results  (list response:rpc:jstd)
   ::
   ++  attempt-request
     =/  m  (strand:strandio ,(unit results))
@@ -71,18 +102,7 @@
       ((ar:dejs-soft:format parse-one-response) u.jon)
     ?~  array
       (strand-fail:strandio %rpc-result-incomplete-batch >u.jon< ~)
-    =-  ?~  err
-          (pure:m `res)
-        (pure:m ~)
-    %+  roll  u.array
-    |=  $:  rpc=response:rpc:jstd
-            [res=results err=(list [id=@t code=@t message=@t])]
-        ==
-    ?:  ?=(%error -.rpc)
-      [res [+.rpc err]]
-    ?.  ?=(%result -.rpc)
-      [res [['' 'ethio-rpc-fail' (crip <rpc>)] err]]
-    [[+.rpc res] err]
+    (pure:m array)
   ::
   ++  parse-one-response
     |=  =json
@@ -98,6 +118,7 @@
     =,  dejs-soft:format
     (ot id+so error+(ot code+no message+so ~) ~)
   --
+::
 ::  +read-contract: calls a read function on a contract, produces result hex
 ::
 ++  read-contract
