@@ -432,7 +432,7 @@ runShip (CLI.Run pierPath) opts = do
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
 startBrowser pierPath = runRAcquire $ do
-    lockFile pierPath
+    -- lockFile pierPath
     log <- Log.existing (pierPath <> "/.urb/log")
     rio $ EventBrowser.run log
 

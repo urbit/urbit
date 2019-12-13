@@ -68,7 +68,7 @@ rawOpen :: MonadIO m => FilePath -> m Env
 rawOpen dir = io $ do
     env <- mdb_env_create
     mdb_env_set_maxdbs env 3
-    mdb_env_set_mapsize env (40 * 1024 * 1024 * 1024)
+    mdb_env_set_mapsize env (100 * 1024 * 1024 * 1024)
     mdb_env_open env dir []
     pure env
 
