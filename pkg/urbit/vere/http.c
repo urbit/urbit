@@ -437,11 +437,14 @@ _http_hgen_send(u3_hgen* gen_u)
   else {
     h2o_send(rec_u, vec_u, len_w, H2O_SEND_STATE_FINAL);
 
-    u3_h2o_serv* h2o_u = req_u->hon_u->htp_u->h2o_u;
+    //  XX this attempt to gracefully shutdown faster
+    //  is segfaulting when triggered over tls
+    //
+    // u3_h2o_serv* h2o_u = req_u->hon_u->htp_u->h2o_u;
 
-    if ( 0 != h2o_u->ctx_u.shutdown_requested ) {
-      rec_u->http1_is_persistent = 0;
-    }
+    // if ( 0 != h2o_u->ctx_u.shutdown_requested ) {
+    //   rec_u->http1_is_persistent = 0;
+    // }
   }
 
   // not ready again until _proceed
