@@ -14,13 +14,18 @@ export class ContactItem extends Component {
 
     let hexColor = uxToHex(props.color);
 
+    let name = (props.nickname)
+    ? props.nickname
+    : "~" + props.ship;
+
     return (
       <Link
       to={"/~contacts" + props.path}>
         <div className={"pl4 pt1 pb1 f9 flex justify-start content-center " + selectedClass}>
           <Sigil ship={props.ship} color={"#" + hexColor} size={32}/>
-        <p className="f9 w-70 dib v-mid ml2 nowrap mono"
-           style={{paddingTop: 6}}>~{props.ship}</p>
+        <p className={"f9 w-70 dib v-mid ml2 nowrap " +
+        ((props.nickname) ? "" : "mono")}
+            style={{ paddingTop: 6 }}>{name}</p>
         </div>
       </Link>
     )

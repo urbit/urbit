@@ -133,6 +133,48 @@ export class Root extends Component {
               )
             }}
             />
+          <Route exact path="/~contacts/share/:ship/:group"
+            render={(props) => {
+              let groupPath = `/${props.match.params.ship}/${props.match.params.group}`;
+              let thisContactPath = `/${props.match.params.ship}/${props.match.params.group}/${window.ship}`
+              let contactList = state.contacts;
+              contactList = (contactList !== undefined)
+                ? state.contacts[groupPath]
+                : {};
+              let contact = (contactList !== undefined)
+                ? contactList[window.ship]
+                : {};
+
+              let defaultList = (contactList !== undefined)
+              ? contactList["/~/default"]
+              : {};
+              
+              let rootIdentity = (contactList !== undefined)
+              ? defaultList[window.ship]
+              : {};
+
+              return (
+                <Skeleton
+                  spinner={state.spinner}
+                  contacts={state.contacts}
+                  activeDrawer="rightPanel"
+                  selected={groupPath}>
+                  <Contacts
+                    activeDrawer="rightPanel"
+                    contacts={contactList}
+                    path={groupPath}
+                    selectedContact={thisContactPath} />
+                  <ContactCard
+                    contact={contact}
+                    path={groupPath}
+                    ship={window.ship}
+                    share={true}
+                    rootIdentity={rootIdentity}
+                  />
+                </Skeleton>
+              )
+            }}
+          />
             {/*TODO /~contacts/share/:ship/:group/me for autofilling your template for sharing details to a group for the invite flow */}
             <Route exact path="/~contacts/me"
             render={ (props) => {

@@ -22,6 +22,7 @@ export class Contacts extends Component {
           <ContactItem
           key={contact}
           ship={contact}
+          nickname={obj.nickname}
           color={obj.color}
           path={path}
           selected={selected}
