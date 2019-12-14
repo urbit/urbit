@@ -24,12 +24,12 @@
   ==
 ::  bootstrapping to get %goad started OTA
 ::
-++  on-save   !>(%1)
+++  on-save   !>(%2)
 ++  on-load
   |=  old-state=vase
-  =/  old  !<(?(~ %1) old-state)
+  =/  old  !<(?(~ %1 %2) old-state)
   =^  cards  this
-    ?.  ?=(~ old)
+    ?:  ?=(%2 old)
       `this
     :_  this  :_  ~
     [%pass /behn %arvo %b %wait +(now.bowl)]

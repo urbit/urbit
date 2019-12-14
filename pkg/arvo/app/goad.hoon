@@ -12,7 +12,8 @@
     [%pass /behn %arvo %b %wait +(now.bowl)]
   ::
   ++  goad
-    :~  [%pass /gall %arvo %g %goad | ~]
+    |=  force=?
+    :~  [%pass /gall %arvo %g %goad force ~]
     ==
   --
 ::
@@ -22,11 +23,18 @@
 ++  on-init
   ::  subscribe to /sys and do initial goad
   ::
-  [[(warp bowl) goad] this]
+  [[(warp bowl) (wait bowl) ~] this]
 ::
 ++  on-save   on-save:def
 ++  on-load   on-load:def
-++  on-poke   on-poke:def
+++  on-poke
+  |=  [=mark =vase]
+  ?:  ?=([%noun * %go] +<)
+    [(goad |) this]
+  ?:  ?=([%noun * %force] +<)
+    [(goad &) this]
+  (on-poke:def mark vase)
+::
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
@@ -50,7 +58,8 @@
     ?^  error.sign-arvo
       :_  this  :_  ~
       [%pass /dill %arvo %d %flog %crud %goad-fail u.error.sign-arvo]
-    [goad this]
+    %-  (slog leaf+"goad: recompiling all apps" ~)
+    [(goad |) this]
   ==
 ::
 ++  on-fail   on-fail:def
