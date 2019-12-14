@@ -22,8 +22,20 @@
   :~  [%pass / %arvo %e %connect [~ /'~clock'] %clock]
       [%pass /clock %agent [our.bowl %launch] %poke launcha]
   ==
-++  on-save   on-save:def
-++  on-load   on-load:def
+::  bootstrapping to get %goad started OTA
+::
+++  on-save   !>(%1)
+++  on-load
+  |=  old-state=vase
+  =/  old  !<(?(~ %1) old-state)
+  =^  cards  this
+    ?.  ?=(~ old)
+      `this
+    :_  this  :_  ~
+    [%pass /behn %arvo %b %wait +(now.bowl)]
+  ::
+  [cards this]
+::
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:agent:gall _this)
@@ -63,6 +75,13 @@
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card:agent:gall _this)
+  ?:  ?=(%wake +<.sign-arvo)
+    ?^  error.sign-arvo
+      :_  this  :_  ~
+      [%pass /dill %arvo %d %flog %crud %clock-fail u.error.sign-arvo]
+    :_  this  :_  ~
+    [%pass /gall %arvo %g %goad | `%hood]
+  ::
   ?.  ?=(%bound +<.sign-arvo)
     (on-arvo:def wire sign-arvo)
   [~ this]

@@ -85,6 +85,7 @@
         %eth-watcher
         %azimuth-tracker
         %ping
+        %goad
     ==
   ?:  lit
     ~
@@ -211,6 +212,11 @@
     %drum-start          =;(f (f !<(_+<.f vase)) poke-start)
     %drum-set-boot-apps  =;(f (f !<(_+<.f vase)) poke-set-boot-apps)
   ==
+::
+++  on-load
+  |=  %1
+  =<  se-abet  =<  se-view
+  (se-born %home %goad)
 ::
 ++  reap-phat                                         ::  ack connect
   |=  {way/wire saw/(unit tang)}
