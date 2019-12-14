@@ -8040,39 +8040,41 @@
       $%  [%l l=(list item)]
           [%b b=byts]
       ==
+    ::  +encode-atoms: encode list of atoms as a %l of %b items
     ::
-    ::  treat atoms as list of items
     ++  encode-atoms
       |=  l=(list @)
+      ^-  @
       %+  encode  %l
       %+  turn  l
       |=(a=@ b+[(met 3 a) a])
     ::
     ++  encode
       |=  in=item
-      ^-  @
-      ?-  -.in
-          %b
-        ?:  &(=(1 wid.b.in) (lth dat.b.in 0x80))
-          dat.b.in
-        %^  cat  3  dat.b.in
-        ::TODO  unsure if this should pass wid or (met 3 dat)...
-        (encode-length wid.b.in 0x80)
+      |^  ^-  @
+          ?-  -.in
+              %b
+            ?:  &(=(1 wid.b.in) (lte dat.b.in 0x7f))
+              dat.b.in
+            %^  cat  3  dat.b.in
+            ::TODO  unsure if this should pass wid or (met 3 dat)...
+            (encode-length wid.b.in 0x80)
+          ::
+              %l
+            =/  out=@
+              %+  roll  l.in
+              |=  [ni=item en=@]
+              (cat 3 (encode ni) en)
+            %^  cat  3  out
+            (encode-length (met 3 out) 0xc0)
+          ==
       ::
-          %l
-        =/  out=@
-          %+  roll  l.in
-          |=  [ni=item en=@]
-          (cat 3 (encode ni) en)
-        %^  cat  3  out
-        (encode-length (met 3 out) 0xc0)
-      ==
-    ::
-    ++  encode-length
-      |=  [len=@ off=@]
-      ?:  (lth len 56)  (add len off)
-      =-  (cat 3 len -)
-      :(add (met 3 len) off 55)
+      ++  encode-length
+        |=  [len=@ off=@]
+        ?:  (lth len 56)  (add len off)
+        =-  (cat 3 len -)
+        :(add (met 3 len) off 55)
+      --
     ::
     ::TODO  decode
     ::
