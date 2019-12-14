@@ -31,3 +31,9 @@ nix-build --no-out-link          \
   > .cache.list
 
 cachix push urbit2 < .cache.list
+
+pushd ./pkg/hs
+
+nix-build --no-link -A fullBuildScript | cachix push urbit2
+
+popd
