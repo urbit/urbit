@@ -8074,9 +8074,90 @@
         =-  (cat 3 len -)
         :(add (met 3 len) off 55)
       --
+    ::  +decode-atoms: decode expecting a %l of %b items, producing atoms within
     ::
-    ::TODO  decode
+    ++  decode-atoms
+      |=  dat=@
+      ^-  (list @)
+      =/  i=item  (decode dat)
+      ~|  [%unexpected-data i]
+      ?>  ?=(%l -.i)
+      %+  turn  l.i
+      |=  i=item
+      ~|  [%unexpected-list i]
+      ?>  ?=(%b -.i)
+      dat.b.i
     ::
+    ++  decode
+      |=  dat=@
+      ^-  item
+      =/  bytes=(list @)  (flop (rip 3 dat))
+      =?  bytes  ?=(~ bytes)  ~[0]
+      |^  item:decode-head
+      ::
+      ++  decode-head
+        ^-  [done=@ud =item]
+        ?~  bytes
+          ~|  %rlp-unexpected-end
+          !!
+        =*  byt  i.bytes
+        ::  byte in 0x00-0x79 range encodes itself
+        ::
+        ?:  (lte byt 0x79)
+          :-  1
+          [%b 1^byt]
+        ::  byte in 0x80-0xb7 range encodes string length
+        ::
+        ?:  (lte byt 0xb7)
+          =+  len=(sub byt 0x80)
+          :-  +(len)
+          :-  %b
+          len^(get-value 1 len)
+        ::  byte in 0xb8-0xbf range encodes string length length
+        ::
+        ?:  (lte byt 0xbf)
+          =+  led=(sub byt 0xb7)
+          =+  len=(get-value 1 led)
+          :-  (add +(led) len)
+          :-  %b
+          len^(get-value +(led) len)
+        ::  byte in 0xc0-f7 range encodes list length
+        ::
+        ?:  (lte byt 0xf7)
+          =+  len=(sub byt 0xc0)
+          :-  +(len)
+          :-  %l
+          %.  len
+          decode-list(bytes (slag 1 `(list @)`bytes))
+        ::  byte in 0xf8-ff range encodes list length length
+        ::
+        ?:  (lte byt 0xff)
+          =+  led=(sub byt 0xf7)
+          =+  len=(get-value 1 led)
+          :-  (add +(led) len)
+          :-  %l
+          %.  len
+          decode-list(bytes (slag +(led) `(list @)`bytes))
+        ~|  [%rip-not-bloq-3 `@ux`byt]
+        !!
+      ::
+      ++  decode-list
+        |=  rem=@ud
+        ^-  (list item)
+        ?:  =(0 rem)  ~
+        =+  ^-  [don=@ud =item]  ::TODO  =/
+          decode-head
+        :-  item
+        %=  $
+          rem    (sub rem don)
+          bytes  (slag don bytes)
+        ==
+      ::
+      ++  get-value
+        |=  [at=@ud to=@ud]
+        ^-  @
+        (rep 3 (flop (swag [at to] bytes)))
+      --
     --
   ::
   ::  abi en/decoding
