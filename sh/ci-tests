@@ -2,6 +2,8 @@
 
 set -ex
 
+STACK_YAML="`pwd`/pkg/hs/stack.yaml"
+
 stack test king --fast
 
 if [ "$TRAVIS_PULL_REQUEST" = false ]

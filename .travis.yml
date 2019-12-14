@@ -5,6 +5,7 @@ jobs:
   - os: linux
     language: nix
     nix: 2.1.3
+    env: STACK_YAML=pkg/hs/stack.yaml
     before_install:
       - git lfs pull
       - sh/travis-install-stack
@@ -23,6 +24,7 @@ jobs:
   - os: osx
     language: generic
     sudo: required
+    env: STACK_YAML=pkg/hs/stack.yaml
 
     before_install:
       - sh/travis-install-stack

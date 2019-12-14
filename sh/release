@@ -2,6 +2,8 @@
 
 set -e
 
+STACK_YAML="`pwd`/pkg/hs/stack.yaml"
+
 if [ -n "${TRAVIS_TAG-}" ]
 then
   ver="$TRAVIS_TAG"
