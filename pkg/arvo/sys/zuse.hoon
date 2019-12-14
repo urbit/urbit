@@ -8060,8 +8060,7 @@
               %b
             ?:  &(=(1 wid.b.in) (lte dat.b.in 0x7f))
               dat.b.in
-            %^  cat  3  dat.b.in
-            ::TODO  unsure if this should pass wid or (met 3 dat)...
+            =-  (can 3 ~[b.in [(met 3 -) -]])
             (encode-length wid.b.in 0x80)
           ::
               %l
