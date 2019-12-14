@@ -201,8 +201,9 @@
   ++  read-nonce
     |=  tex=cord
     ^-  @ud
-    ~|  %nonce-reading-unimplemented
-    !!  ::TODO  implement rlp decoding, then decode tex to get nonce
+    %+  snag  0
+    %-  decode-atoms:rlp:ethereum
+    (tape-to-ux (trip tex))
   --
 ::
 ::
