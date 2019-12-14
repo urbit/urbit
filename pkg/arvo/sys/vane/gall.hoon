@@ -229,7 +229,6 @@
     =<  mo-boot
     =/  =note-arvo  [%f %kill ~]
     (mo-pass wire note-arvo)
-    ::
   ::
   ::  +mo-goad: rebuild agent(s)
   ::
@@ -1574,9 +1573,6 @@
   ::  +all-state: upgrade path
   ::
   ++  all-state  $%(state-0 state-1 ^state)
-  ::
-  ::  Note that if you change sign-arvo, you must ensure that spider
-  ::  gets reloaded.
   ::
   ++  state-1-to-2
     |=  =state-1
