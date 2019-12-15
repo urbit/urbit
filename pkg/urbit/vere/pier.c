@@ -1041,13 +1041,10 @@ _pier_work_create(u3_pier* pir_u)
   {
     c3_c* arg_c[5];
     c3_c* bin_c = u3_Host.wrk_c;
-    c3_c* pax_c;
+    c3_c* pax_c = pir_u->pax_c;
     c3_c  key_c[256];
     c3_c  wag_c[11];
     c3_i  err_i;
-
-    pax_c = c3_malloc(1 + strlen(pir_u->pax_c));
-    strcpy(pax_c, pir_u->pax_c);
 
     sprintf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64 "",
                    pir_u->key_d[0],
