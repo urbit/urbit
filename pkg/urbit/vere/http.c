@@ -325,9 +325,9 @@ _http_req_done(void* ptr_v)
 {
   u3_hreq* req_u = (u3_hreq*)ptr_v;
 
-  // client canceled request
-  if ( (u3_rsat_plan == req_u->sat_e ) ||
-       (0 != req_u->gen_u && c3n == ((u3_hgen*)req_u->gen_u)->dun )) {
+  //  client canceled request before response
+  //
+  if ( u3_rsat_plan == req_u->sat_e ) {
     _http_req_kill(req_u);
   }
 
@@ -461,7 +461,13 @@ _http_hgen_send(u3_hgen* gen_u)
 static void
 _http_hgen_stop(h2o_generator_t* neg_u, h2o_req_t* rec_u)
 {
-  // kill request in %light
+  u3_hgen* gen_u = (u3_hgen*)neg_u;
+
+  //  response not complete, enqueue cancel
+  //
+  if ( c3n == gen_u->dun ) {
+    _http_req_kill(gen_u->req_u);
+  }
 }
 
 /* _http_hgen_proceed(): h2o is ready for more response data.
