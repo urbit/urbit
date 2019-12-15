@@ -428,29 +428,32 @@ _http_hgen_send(u3_hgen* gen_u)
   c3_w len_w;
   h2o_iovec_t* vec_u = _cttp_bods_to_vec(gen_u->bod_u, &len_w);
 
+  //  not ready again until _proceed
+  //
+  gen_u->red = c3n;
+
+  //  stash [bod_u] to free later
+  //
+  gen_u->nud_u = gen_u->bod_u;
+  gen_u->bod_u = 0;
+
   if ( c3n == gen_u->dun ) {
     h2o_send(rec_u, vec_u, len_w, H2O_SEND_STATE_IN_PROGRESS);
-
-    // Restart the timer
     uv_timer_start(req_u->tim_u, _http_req_timer_cb, 45 * 1000, 0);
   }
   else {
-    h2o_send(rec_u, vec_u, len_w, H2O_SEND_STATE_FINAL);
-
+    //  close connection if shutdown pending
+    //
     u3_h2o_serv* h2o_u = req_u->hon_u->htp_u->h2o_u;
 
     if ( 0 != h2o_u->ctx_u.shutdown_requested ) {
       rec_u->http1_is_persistent = 0;
     }
+
+    h2o_send(rec_u, vec_u, len_w, H2O_SEND_STATE_FINAL);
   }
 
-  // not ready again until _proceed
-  gen_u->red = c3n;
-
-  // stash bod_u to be free'd later
-  gen_u->nud_u = gen_u->bod_u;
-  gen_u->bod_u = 0;
-  free(vec_u);
+  c3_free(vec_u);
 }
 
 /* _http_hgen_stop(): h2o is closing an in-progress response.
