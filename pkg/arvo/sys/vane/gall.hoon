@@ -229,7 +229,6 @@
     =<  mo-boot
     =/  =note-arvo  [%f %kill ~]
     (mo-pass wire note-arvo)
-    ::
   ::
   ::  +mo-goad: rebuild agent(s)
   ::
@@ -1233,13 +1232,19 @@
           [agent-wire dock]
         %+  ~(jab by outgoing.subscribers.current-agent)  [agent-wire dock]
         |=  [acked=? =path]
-        ~|  [%already-acked agent-name wire dock path]
-        ?<  acked
+        =.  .
+          ?.  acked
+            .
+          %-  =/  =tape
+                "{<agent-name>}: received 2nd watch-ack on {<wire dock path>}"
+              (slog leaf+tape ~)
+          .
         [& path]
       ::
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
         (on-agent:ap-agent-core agent-wire sign)
+      ::  if failed %fact handling, kill subscription
       ::
       =?  ap-core  ?=(%fact -.sign)
         (ap-update-subscription =(~ maybe-tang) p.dock q.dock agent-wire)
@@ -1568,9 +1573,6 @@
   ::  +all-state: upgrade path
   ::
   ++  all-state  $%(state-0 state-1 ^state)
-  ::
-  ::  Note that if you change sign-arvo, you must ensure that spider
-  ::  gets reloaded.
   ::
   ++  state-1-to-2
     |=  =state-1

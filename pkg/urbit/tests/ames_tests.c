@@ -39,6 +39,6 @@ main(int argc, char* argv[])
 
   _test_ames();
 
-  fprintf(stderr, "ames okeedokee");
+  fprintf(stderr, "ames okeedokee\n");
   return 0;
 }

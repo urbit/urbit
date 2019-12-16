@@ -20,3 +20,4 @@ s/*
 **/*.swp
 **/*.swo
 **/*-min.js
+pkg/interface/link-webext/web-ext-artifacts

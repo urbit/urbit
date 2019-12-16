@@ -65,20 +65,24 @@
   :*  snd=`?`%.n  ::  sending packets
       rcv=`?`%.n  ::  receiving packets
       odd=`?`%.n  ::  unusual events
-      msg=`?`%.n  ::  messages
+      msg=`?`%.n  ::  message-level events
       ges=`?`%.n  ::  congestion control
-      for=`?`%.n  ::  packet forwards
+      for=`?`%.n  ::  packet forwarding
       rot=`?`%.n  ::  routing attempts
   ==
 =>
 |%
-::  +trace: print if .verb is set
+::  +trace: print if .verb is set and we're tracking .ship
 ::
 ++  trace
-  |=  [verb=? print=(trap tape)]
+  |=  [verb=? =ship ships=(set ship) print=(trap tape)]
+  ^+  same
   ?.  verb
     same
-  (slog leaf/"ames: {(print)}" ~)
+  ?.  =>  [ship=ship ships=ships in=in]
+      ~+  |(=(~ ships) (~(has in ships) ship))
+    same
+  (slog leaf/"ames: {(scow %p ship)}: {(print)}" ~)
 --
 =>
 |%
@@ -362,7 +366,7 @@
       ::
       $:  =our=life
           crypto-core=acru:ames
-          veb=_veb-all-off
+          =bug
       ==
       ::  her data, specific to this dyad
       ::
@@ -438,12 +442,27 @@
 ::
 ::  $ames-state: state for entire vane
 ::
+::    peers:       states of connections to other ships
+::    unix-duct:   handle to give moves to unix
+::    life:        our $life; how many times we've rekeyed
+::    crypto-core: interface for encryption and signing
+::    bug:         debug printing configuration
+::
 +$  ames-state
   $:  peers=(map ship ship-state)
       =unix=duct
       =life
       crypto-core=acru:ames
-      veb=_veb-all-off
+      =bug
+  ==
+::  $bug: debug printing configuration
+::
+::    veb: verbosity toggles
+::    ships: identity filter; if ~, print for all
+::
++$  bug
+  $:  veb=_veb-all-off
+      ships=(set ship)
   ==
 ::  $ship-state: all we know about a peer
 ::
@@ -768,7 +787,7 @@
   $%  [%hear =message-num =fragment-num]
       [%done =message-num lag=@dr]
       [%halt ~]
-      [%wake ~]
+      [%wake current=message-num]
   ==
 ::  $packet-pump-gift: effect from |packet-pump
 ::
@@ -804,7 +823,15 @@
   ==
 ::  previous state versions, for +stay/+load migrations
 ::
-+|  %plasmodics
++|  %plasmonics
+::
++$  ames-state-2
+  $:  peers=(map ship ship-state)
+      =unix=duct
+      =life
+      crypto-core=acru:ames
+      veb=_veb-all-off
+  ==
 ::
 +$  ames-state-1
   $:  peers=(map ship ship-state-1)
@@ -938,29 +965,38 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%2 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%3 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
-          $%  $:  %2
+          $%  $:  %3
               $%  [%larva events=_queued-events state=_ames-state.adult-gate]
                   [%adult state=_ames-state.adult-gate]
+              ==  ==
+          ::
+              $:  %2
+              $%  [%larva events=_queued-events state=ames-state-2]
+                  [%adult state=ames-state-2]
               ==  ==
           ::
               $%  [%larva events=_queued-events state=ames-state-1]
                   [%adult state=ames-state-1]
           ==  ==
       ?-    old
-          [%2 %adult *]
-        (load:adult-core %2 state.old)
+          [%3 %adult *]  (load:adult-core %3 state.old)
+          [%2 %adult *]  (load:adult-core %2 state.old)
+          [%adult *]     (load:adult-core %1 state.old)
+      ::
+          [%3 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %3 state.old)
+        larval-gate
       ::
           [%2 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
         =.  adult-gate     (load:adult-core %2 state.old)
         larval-gate
-      ::
-          [%adult *]
-        (load:adult-core %1 state.old)
       ::
           [%larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
@@ -975,7 +1011,7 @@
 =|  =ames-state
 |=  [our=ship now=@da eny=@ scry-gate=sley]
 =*  ames-gate  .
-=*  veb  veb.ames-state
+=*  veb  veb.bug.ames-state
 |%
 ::  +call: handle request $task
 ::
@@ -1001,6 +1037,7 @@
       %hole  (on-hole:event-core [lane blob]:task)
       %init  (on-init:event-core ship=p.task)
       %jilt  (on-jilt:event-core ship.task)
+      %sift  (on-sift:event-core ships.task)
       %spew  (on-spew:event-core veb.task)
       %vega  on-vega:event-core
       %wegh  on-wegh:event-core
@@ -1032,43 +1069,61 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%2 %adult ames-state]
+++  stay  [%3 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   |=  $=  old-state
       $%  [%1 ames-state-1]
-          [%2 ^ames-state]
+          [%2 ames-state-2]
+          [%3 ^ames-state]
       ==
-  ^+  ames-gate
-  ?-    -.old-state
-      %2
-    ames-gate(ames-state +.old-state)
+  |^  ^+  ames-gate
+      ::
+      =?  old-state  ?=(%1 -.old-state)  %2^(state-1-to-2 +.old-state)
+      =?  old-state  ?=(%2 -.old-state)  %3^(state-2-to-3 +.old-state)
+      ::
+      ?>  ?=(%3 -.old-state)
+      ames-gate(ames-state +.old-state)
   ::
-      %1
-    =>  .(old-state +.old-state)
-    =.  +.ames-state
-      :*  unix-duct.old-state
-          life.old-state
-          crypto-core.old-state
-          veb-all-off
+  ++  state-1-to-2
+    |=  =ames-state-1
+    ^-  ames-state-2
+    ::
+    =|  =ames-state-2
+    =.  +.ames-state-2
+      :*  unix-duct.ames-state-1
+          life.ames-state-1
+          crypto-core.ames-state-1
+          veb=veb-all-off
       ==
-    =.  peers.ames-state
+    =.  peers.ames-state-2
       %-  ~(gas by *(map ship ship-state))
-      %+  turn  ~(tap by peers.old-state)
-      |=  [peer=ship old-ship-state=ship-state-1]
+      %+  turn  ~(tap by peers.ames-state-1)
+      |=  [peer=ship =ship-state-1]
       ^-  [ship ship-state]
-      ?:  ?=(%alien -.old-ship-state)
-        [peer old-ship-state]
+      ?:  ?=(%alien -.ship-state-1)
+        [peer ship-state-1]
       :+  peer  %known
-      %=    +.old-ship-state
+      %=    +.ship-state-1
           qos
-        ?+  -.qos.old-ship-state  qos.old-ship-state
+        ?+  -.qos.ship-state-1  qos.ship-state-1
           %unborn  [%unborn now]
         ==
       ==
-    ames-gate
-  ==
+    ames-state-2
+  ::
+  ++  state-2-to-3
+    |=  =ames-state-2
+    ^-  ^ames-state
+    ::
+    :*  peers.ames-state-2
+        unix-duct.ames-state-2
+        life.ames-state-2
+        crypto-core.ames-state-2
+        bug=[veb=veb.ames-state-2 ships=~]
+    ==
+  --
 ::  +scry: dereference namespace
 ::
 ++  scry
@@ -1083,12 +1138,16 @@
 ++  per-event
   =|  moves=(list move)
   |=  [[our=ship now=@da eny=@ scry-gate=sley] =duct =ames-state]
-  =*  veb  veb.ames-state
+  =*  veb  veb.bug.ames-state
   |%
   ++  event-core  .
   ++  abet  [(flop moves) ames-state]
   ++  emit  |=(=move event-core(moves [move moves]))
-  ++  channel-state  [life crypto-core veb]:ames-state
+  ++  channel-state  [life crypto-core bug]:ames-state
+  ++  trace
+    |=  [verb=? =ship print=(trap tape)]
+    ^+  same
+    (^trace verb ship ships.bug.ames-state print)
   ::  +on-take-done: handle notice from vane that it processed a message
   ::
   ++  on-take-done
@@ -1121,17 +1180,24 @@
     =/  nack-trace-bone=^bone  (mix 0b10 bone)
     ::
     abet:(run-message-pump:peer-core nack-trace-bone %memo message-blob)
-  ::  +on-spew: handle request to set verbosity toggles
+  ::  +on-sift: handle request to filter debug output by ship
+  ::
+  ++  on-sift
+    |=  ships=(list ship)
+    ^+  event-core
+    =.  ships.bug.ames-state  (sy ships)
+    event-core
+  ::  +on-spew: handle request to set verbosity toggles on debug output
   ::
   ++  on-spew
     |=  verbs=(list verb)
     ^+  event-core
     ::  start from all %.n's, then flip requested toggles
     ::
-    =.  veb.ames-state
+    =.  veb.bug.ames-state
       %+  roll  verbs
       |=  [=verb acc=_veb-all-off]
-      ^+  veb.ames-state
+      ^+  veb.bug.ames-state
       ?-  verb
         %snd  acc(snd %.y)
         %rcv  acc(rcv %.y)
@@ -1187,7 +1253,6 @@
   ++  on-hole
     |=  [=lane =blob]
     ^+  event-core
-    ::
     (on-hear-packet lane (decode-packet blob) ok=%.n)
   ::  +on-hear-packet: handle mildly processed packet receipt
   ::
@@ -1215,7 +1280,8 @@
   ++  on-hear-forward
     |=  [=lane =packet ok=?]
     ^+  event-core
-    %-  (trace for.veb |.("forward: {<sndr.packet>} -> {<rcvr.packet>}"))
+    %-  %^  trace  for.veb  sndr.packet
+        |.("forward: {<sndr.packet>} -> {<rcvr.packet>}")
     ::  set .origin.packet if it doesn't already have one, re-encode, and send
     ::
     =?  origin.packet  ?=(~ origin.packet)  `lane
@@ -1356,7 +1422,7 @@
     =/  =channel     [[our ship] now channel-state -.peer-state]
     ::
     =^  =bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
-    %-  %+  trace  msg.veb
+    %-  %^  trace  msg.veb  ship
         |.  ^-  tape
         =/  sndr  [our our-life.channel]
         =/  rcvr  [ship her-life.channel]
@@ -1712,7 +1778,8 @@
   ++  send-blob
     |=  [for=? =ship =blob]
     ::
-    %-  (trace rot.veb |.("send-blob: to {<ship>}"))
+    =/  final-ship  ship
+    %-  (trace rot.veb final-ship |.("send-blob: to {<ship>}"))
     |-
     |^  ^+  event-core
         ::
@@ -1733,10 +1800,10 @@
           (try-next-sponsor sponsor.peer-state)
         ::
         ?~  route=route.peer-state
-          %-  (trace rot.veb |.("no route to:  {<ship>}"))
+          %-  (trace rot.veb final-ship |.("no route to:  {<ship>}"))
           (try-next-sponsor sponsor.peer-state)
         ::
-        %-  (trace rot.veb |.("trying route: {<ship>}"))
+        %-  (trace rot.veb final-ship |.("trying route: {<ship>}"))
         =.  event-core
           (emit unix-duct.ames-state %give %send lane.u.route blob)
         ::
@@ -1802,10 +1869,10 @@
   ::
   ++  make-peer-core
     |=  [=peer-state =channel]
+    =*  veb  veb.bug.channel
     |%
     ++  peer-core  .
     ++  emit  |=(move peer-core(event-core (^emit +<)))
-    ::
     ++  abet
       ^+  event-core
       ::
@@ -1813,7 +1880,10 @@
         (~(put by peers.ames-state) her.channel %known peer-state)
       ::
       event-core
-    ::
+    ++  trace
+      |=  [verb=? print=(trap tape)]
+      ^+  same
+      (^trace verb her.channel print)
     ++  on-heed  peer-core(heeds.peer-state (~(put in heeds.peer-state) duct))
     ++  on-jilt  peer-core(heeds.peer-state (~(del in heeds.peer-state) duct))
     ::  +update-qos: update and maybe print connection status
@@ -1889,6 +1959,9 @@
       ?:  ?=(%& -.meat.shut-packet)
         (run-message-sink bone %hear lane shut-packet ok)
       ::  ignore .ok for |message-pump; just try again on error
+      ::
+      ::    Note this implies that vanes should never crash on %done,
+      ::    since we have no way to continue using the flow if they do.
       ::
       (run-message-pump bone %hear [message-num +.meat]:shut-packet)
     ::  +on-memo: handle request to send message
@@ -2210,13 +2283,17 @@
 ::
 ++  make-message-pump
   |=  [state=message-pump-state =channel]
-  =*  veb  veb.channel
+  =*  veb  veb.bug.channel
   =|  gifts=(list message-pump-gift)
   ::
   |%
   ++  message-pump  .
   ++  give  |=(gift=message-pump-gift message-pump(gifts [gift gifts]))
   ++  packet-pump  (make-packet-pump packet-pump-state.state channel)
+  ++  trace
+    |=  [verb=? print=(trap tape)]
+    ^+  same
+    (^trace verb her.channel ships.bug.channel print)
   ::  +work: handle a $message-pump-task
   ::
   ++  work
@@ -2226,6 +2303,7 @@
     =~  (dispatch-task task)
         feed-packets
         (run-packet-pump %halt ~)
+        assert
         [(flop gifts) state]
     ==
   ::  +dispatch-task: perform task-specific processing
@@ -2236,7 +2314,7 @@
     ::
     ?-  -.task
       %memo  (on-memo message-blob.task)
-      %wake  (run-packet-pump task)
+      %wake  (run-packet-pump %wake current.state)
       %hear
         ?-  -.ack-meat.task
           %&  (on-hear [message-num fragment-num=p.ack-meat]:task)
@@ -2395,16 +2473,30 @@
     =.  message-pump  (give i.packet-pump-gifts)
     ::
     $(packet-pump-gifts t.packet-pump-gifts)
+  ::  +assert: sanity checks to isolate error cases
+  ::
+  ++  assert
+    ^+  message-pump
+    =/  top-live
+      (peek:packet-queue:*make-packet-pump live.packet-pump-state.state)
+    ?.  |(?=(~ top-live) (gte current.state message-num.key.u.top-live))
+      ~|  [%strange-current current=current.state key.u.top-live]
+      !!
+    message-pump
   --
 ::  +make-packet-pump: construct |packet-pump core
 ::
 ++  make-packet-pump
   |=  [state=packet-pump-state =channel]
-  =*  veb  veb.channel
+  =*  veb  veb.bug.channel
   =|  gifts=(list packet-pump-gift)
   |%
   ++  packet-pump  .
   ++  give  |=(packet-pump-gift packet-pump(gifts [+< gifts]))
+  ++  trace
+    |=  [verb=? print=(trap tape)]
+    ^+  same
+    (^trace verb her.channel ships.bug.channel print)
   ::  +packet-queue: type for all sent fragments, ordered by sequence number
   ::
   ++  packet-queue
@@ -2412,7 +2504,7 @@
     lte-packets
   ::  +gauge: inflate a |pump-gauge to track congestion control
   ::
-  ++  gauge  (make-pump-gauge now.channel metrics.state veb.channel)
+  ++  gauge  (make-pump-gauge now.channel metrics.state [her bug]:channel)
   ::  +work: handle $packet-pump-task request
   ::
   ++  work
@@ -2424,12 +2516,13 @@
     ?-  -.task
       %hear  (on-hear [message-num fragment-num]:task)
       %done  (on-done message-num.task)
-      %wake  on-wake
+      %wake  (on-wake current.task)
       %halt  set-wake
     ==
   ::  +on-wake: handle packet timeout
   ::
   ++  on-wake
+    |=  current=message-num
     ^+  packet-pump
     ::  assert temporal coherence
     ::
@@ -2443,13 +2536,14 @@
     ::
     =-  =*  res  -
         =.  live.state   live.res
-        =.  packet-pump  (give %send static-fragment.res)
-        %-  %+  trace  snd.veb
-            =/  nums  [message-num fragment-num]:static-fragment.res
-            |.("dead {<nums^show:gauge>}")
+        =?  packet-pump  ?=(^ static-fragment)
+          %-  %+  trace  snd.veb
+              =/  nums  [message-num fragment-num]:u.static-fragment.res
+              |.("dead {<nums^show:gauge>}")
+          (give %send u.static-fragment.res)
         packet-pump
     ::
-    =|  acc=static-fragment
+    =|  acc=(unit static-fragment)
     ^+  [static-fragment=acc live=live.state]
     ::
     %^  (traverse:packet-queue _acc)  live.state  acc
@@ -2458,12 +2552,18 @@
             val=live-packet-val
         ==
     ^-  [new-val=(unit live-packet-val) stop=? _acc]
+    ::  if already acked later message, don't resend
+    ::
+    ?:  (lth message-num.key current)
+      %-  %-  slog  :_  ~
+          leaf+"ames: strange wake queue, expected {<current>}, got {<key>}"
+      [~ stop=%.n ~]
     ::  packet has expired; update it in-place, stop, and produce it
     ::
     =.  last-sent.val  now.channel
     =.  retries.val    +(retries.val)
     ::
-    [`val stop=%.y (to-static-fragment key val)]
+    [`val stop=%.y `(to-static-fragment key val)]
   ::  +feed: try to send a list of packets, returning unsent and effects
   ::
   ++  feed
@@ -2584,7 +2684,7 @@
         ==
     ^-  [new-val=(unit live-packet-val) stop=? _acc]
     ::
-    =/  gauge  (make-pump-gauge now.channel metrics.acc veb.channel)
+    =/  gauge  (make-pump-gauge now.channel metrics.acc [her bug]:channel)
     ::  is this the acked packet?
     ::
     ?:  =(key [message-num fragment-num])
@@ -2631,7 +2731,7 @@
         ==
     ^-  [new-val=(unit live-packet-val) stop=? pump-metrics]
     ::
-    =/  gauge  (make-pump-gauge now.channel metrics veb.channel)
+    =/  gauge  (make-pump-gauge now.channel metrics [her bug]:channel)
     ::  if we get an out-of-order ack for a message, skip until it
     ::
     ?:  (lth message-num.key message-num)
@@ -2679,9 +2779,14 @@
 ::  +make-pump-gauge: construct |pump-gauge congestion control core
 ::
 ++  make-pump-gauge
-  |=  [now=@da pump-metrics veb=_veb-all-off]
+  |=  [now=@da pump-metrics =ship =bug]
+  =*  veb  veb.bug
   =*  metrics  +<+<
   |%
+  ++  trace
+    |=  [verb=? print=(trap tape)]
+    ^+  same
+    (^trace verb ship ships.bug print)
   ::  +next-expiry: when should a newly sent fresh packet time out?
   ::
   ::    Use rtt + 4*sigma, where sigma is the mean deviation of rtt.
@@ -2808,11 +2913,17 @@
 ::
 ++  make-message-sink
   |=  [state=message-sink-state =channel]
-  =*  veb  veb.channel
+  =*  veb  veb.bug.channel
   =|  gifts=(list message-sink-gift)
   |%
   ++  message-sink  .
   ++  give  |=(message-sink-gift message-sink(gifts [+< gifts]))
+  ++  trace
+    |=  [verb=? print=(trap tape)]
+    ^+  same
+    (^trace verb her.channel ships.bug.channel print)
+  ::  +work: handle a $message-sink-task
+  ::
   ++  work
     |=  task=message-sink-task
     ^+  [gifts state]

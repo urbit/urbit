@@ -408,31 +408,26 @@ static void
 _ames_io_start(u3_pier* pir_u)
 {
   u3_ames* sam_u = pir_u->sam_u;
-  c3_s por_s     = pir_u->por_s;
-  u3_noun who    = u3i_chubs(2, pir_u->who_d);
-  u3_noun rac    = u3do("clan:title", u3k(who));
+  c3_s     por_s = pir_u->por_s;
+  u3_noun    who = u3i_chubs(2, pir_u->who_d);
+  u3_noun    rac = u3do("clan:title", u3k(who));
+  c3_i     ret_i;
 
   if ( c3__czar == rac ) {
-    u3_noun imp = u3dc("scot", 'p', u3k(who));
-    c3_c* imp_c = u3r_string(imp);
-    c3_y  num_y = (c3_y)pir_u->who_d[0];
+    c3_y num_y = (c3_y)pir_u->who_d[0];
+    c3_s zar_s = _ames_czar_port(num_y);
 
-    por_s = _ames_czar_port(num_y);
-
-    if ( c3y == u3_Host.ops_u.net ) {
-      u3l_log("ames: czar: %s on %d\n", imp_c, por_s);
+    if ( 0 == por_s ) {
+      por_s = zar_s;
     }
-    else {
-      u3l_log("ames: czar: %s on %d (localhost only)\n", imp_c, por_s);
+    else if ( por_s != zar_s ) {
+      u3l_log("ames: czar: overriding port %d with -p %d\n", zar_s, por_s);
+      u3l_log("ames: czar: WARNING: %d required for discoverability\n", zar_s);
     }
-
-    u3z(imp);
-    free(imp_c);
   }
 
-  int ret;
-  if ( 0 != (ret = uv_udp_init(u3L, &sam_u->wax_u)) ) {
-    u3l_log("ames: init: %s\n", uv_strerror(ret));
+  if ( 0 != (ret_i = uv_udp_init(u3L, &sam_u->wax_u)) ) {
+    u3l_log("ames: init: %s\n", uv_strerror(ret_i));
     c3_assert(0);
   }
 
@@ -448,14 +443,17 @@ _ames_io_start(u3_pier* pir_u)
                               htonl(INADDR_LOOPBACK);
     add_u.sin_port = htons(por_s);
 
-    int ret;
-    if ( (ret = uv_udp_bind(&sam_u->wax_u,
-                            (const struct sockaddr*) & add_u, 0)) != 0 ) {
-      u3l_log("ames: bind: %s\n",
-              uv_strerror(ret));
-      if (UV_EADDRINUSE == ret){
+    if ( (ret_i = uv_udp_bind(&sam_u->wax_u,
+                              (const struct sockaddr*)&add_u, 0)) != 0 )
+    {
+      u3l_log("ames: bind: %s\n", uv_strerror(ret_i));
+
+      if ( (c3__czar == rac) &&
+           (UV_EADDRINUSE == ret_i) )
+      {
         u3l_log("    ...perhaps you've got two copies of vere running?\n");
       }
+
       u3_pier_exit(pir_u);
     }
 
@@ -465,7 +463,13 @@ _ames_io_start(u3_pier* pir_u)
     sam_u->por_s = ntohs(add_u.sin_port);
   }
 
-  // u3l_log("ames: on localhost, UDP %d.\n", sam_u->por_s);
+  if ( c3y == u3_Host.ops_u.net ) {
+    u3l_log("ames: live on %d\n", por_s);
+  }
+  else {
+    u3l_log("ames: live on %d (localhost only)\n", por_s);
+  }
+
   uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);
 
   sam_u->liv = c3y;

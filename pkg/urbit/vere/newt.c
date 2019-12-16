@@ -181,6 +181,8 @@ _newt_poke_mess(u3_moat* mot_u)
     u3_noun mat = u3i_bytes((c3_w)len_d, buf_y);
     mot_u->pok_f(mot_u->vod_p, mat);
   }
+
+  c3_free(buf_y);
 }
 
 /* u3_newt_decode(): decode a (partial) length-prefixed byte buffer

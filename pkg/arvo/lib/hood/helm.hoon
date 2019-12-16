@@ -177,6 +177,10 @@
   |=  ~  =<  abet
   (flog %verb ~)
 ::
+++  poke-ames-sift
+  |=  ships=(list ship)  =<  abet
+  (emit %pass /helm %arvo %a %sift ships)
+::
 ++  poke-ames-verb
   |=  veb=(list verb:ames)  =<  abet
   (emit %pass /helm %arvo %a %spew veb)
@@ -199,6 +203,7 @@
     %helm-reload-desk      =;(f (f !<(_+<.f vase)) poke-reload-desk)
     %helm-reset            =;(f (f !<(_+<.f vase)) poke-reset)
     %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
+    %helm-ames-sift        =;(f (f !<(_+<.f vase)) poke-ames-sift)
     %helm-ames-verb        =;(f (f !<(_+<.f vase)) poke-ames-verb)
     %helm-verb             =;(f (f !<(_+<.f vase)) poke-verb)
     %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)

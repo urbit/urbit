@@ -325,9 +325,9 @@ _http_req_done(void* ptr_v)
 {
   u3_hreq* req_u = (u3_hreq*)ptr_v;
 
-  // client canceled request
-  if ( (u3_rsat_plan == req_u->sat_e ) ||
-       (0 != req_u->gen_u && c3n == ((u3_hgen*)req_u->gen_u)->dun )) {
+  //  client canceled request before response
+  //
+  if ( u3_rsat_plan == req_u->sat_e ) {
     _http_req_kill(req_u);
   }
 
@@ -420,7 +420,6 @@ static void
 _http_hgen_send(u3_hgen* gen_u)
 {
   c3_assert( c3y == gen_u->red );
-  c3_assert( 0 == gen_u->nud_u );
 
   u3_hreq* req_u = gen_u->req_u;
   h2o_req_t* rec_u = req_u->rec_u;
@@ -428,29 +427,33 @@ _http_hgen_send(u3_hgen* gen_u)
   c3_w len_w;
   h2o_iovec_t* vec_u = _cttp_bods_to_vec(gen_u->bod_u, &len_w);
 
+  //  not ready again until _proceed
+  //
+  gen_u->red = c3n;
+
+  //  stash [bod_u] to free later
+  //
+  _cttp_bods_free(gen_u->nud_u);
+  gen_u->nud_u = gen_u->bod_u;
+  gen_u->bod_u = 0;
+
   if ( c3n == gen_u->dun ) {
     h2o_send(rec_u, vec_u, len_w, H2O_SEND_STATE_IN_PROGRESS);
-
-    // Restart the timer
     uv_timer_start(req_u->tim_u, _http_req_timer_cb, 45 * 1000, 0);
   }
   else {
-    h2o_send(rec_u, vec_u, len_w, H2O_SEND_STATE_FINAL);
-
+    //  close connection if shutdown pending
+    //
     u3_h2o_serv* h2o_u = req_u->hon_u->htp_u->h2o_u;
 
     if ( 0 != h2o_u->ctx_u.shutdown_requested ) {
       rec_u->http1_is_persistent = 0;
     }
+
+    h2o_send(rec_u, vec_u, len_w, H2O_SEND_STATE_FINAL);
   }
 
-  // not ready again until _proceed
-  gen_u->red = c3n;
-
-  // stash bod_u to be free'd later
-  gen_u->nud_u = gen_u->bod_u;
-  gen_u->bod_u = 0;
-  free(vec_u);
+  c3_free(vec_u);
 }
 
 /* _http_hgen_stop(): h2o is closing an in-progress response.
@@ -458,7 +461,13 @@ _http_hgen_send(u3_hgen* gen_u)
 static void
 _http_hgen_stop(h2o_generator_t* neg_u, h2o_req_t* rec_u)
 {
-  // kill request in %light
+  u3_hgen* gen_u = (u3_hgen*)neg_u;
+
+  //  response not complete, enqueue cancel
+  //
+  if ( c3n == gen_u->dun ) {
+    _http_req_kill(gen_u->req_u);
+  }
 }
 
 /* _http_hgen_proceed(): h2o is ready for more response data.
@@ -473,11 +482,6 @@ _http_hgen_proceed(h2o_generator_t* neg_u, h2o_req_t* rec_u)
   c3_assert( rec_u == req_u->rec_u );
 
   gen_u->red = c3y;
-
-  _http_heds_free(gen_u->hed_u);
-  gen_u->hed_u = 0;
-  _cttp_bods_free(gen_u->nud_u);
-  gen_u->nud_u = 0;
 
   if ( 0 != gen_u->bod_u || c3y == gen_u->dun ) {
     _http_hgen_send(gen_u);
@@ -514,6 +518,7 @@ _http_start_respond(u3_hreq* req_u,
                       "hosed";
 
   u3_hhed* hed_u = _http_heds_from_noun(u3k(headers));
+  u3_hhed* deh_u = hed_u;
 
   c3_i has_len_i = 0;
 
@@ -521,7 +526,6 @@ _http_start_respond(u3_hreq* req_u,
     if ( 0 == strncmp(hed_u->nam_c, "content-length", 14) ) {
       has_len_i = 1;
     }
-
     else {
       h2o_add_header_by_str(&rec_u->pool, &rec_u->res.headers,
                             hed_u->nam_c, hed_u->nam_w, 0, 0,
@@ -539,7 +543,7 @@ _http_start_respond(u3_hreq* req_u,
   gen_u->bod_u = ( u3_nul == data ) ?
                  0 : _cttp_bod_from_octs(u3k(u3t(data)));
   gen_u->nud_u = 0;
-  gen_u->hed_u = hed_u;
+  gen_u->hed_u = deh_u;
   gen_u->req_u = req_u;
 
   //  if we don't explicitly set this field, h2o will send with
