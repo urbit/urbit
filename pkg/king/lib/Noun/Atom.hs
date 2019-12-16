@@ -16,7 +16,7 @@ import ClassyPrelude
 import Control.Lens  hiding (Index)
 
 import Data.Bits                 (shiftL, shiftR, (.&.), (.|.))
-import GHC.Exts                  (sizeofByteArray#)
+import GHC.Exts                  (sizeofByteArray#, Ptr(Ptr))
 import GHC.Int                   (Int(..))
 import GHC.Integer.GMP.Internals (BigNat(..), bigNatToWord, sizeofBigNat#)
 import GHC.Integer.GMP.Internals (indexBigNat#)
@@ -27,11 +27,12 @@ import GHC.Prim                  (Word#, int2Word#, subIntC#, timesWord#)
 import GHC.Word                  (Word(..))
 import System.IO.Unsafe          (unsafePerformIO)
 
-import qualified Data.ByteString          as BS
-import qualified Data.ByteString.Unsafe   as BU
-import qualified Data.Primitive.ByteArray as Prim
-import qualified Data.Primitive.Types     as Prim
-import qualified Data.Vector.Primitive    as VP
+import qualified Data.ByteString           as BS
+import qualified Data.ByteString.Internal  as BS
+import qualified Data.Primitive.ByteArray  as Prim
+import qualified Data.Primitive.Types      as Prim
+import qualified Data.Vector.Primitive     as VP
+import qualified Foreign.ForeignPtr.Unsafe as Ptr
 
 
 -- Types -----------------------------------------------------------------------
@@ -163,10 +164,6 @@ bsToWords bs =
 
 {-
     TODO Support Big-Endian
-    TODO This still has a (small) risk of segfaulting. The right thing to
-         do is to manually copy the data to the C heap, setup the
-         finalizers, and then manually construct a bytestring from
-         that pointer.
 -}
 bytesBS :: Iso' (VP.Vector Word8) ByteString
 bytesBS = iso to from
@@ -174,9 +171,10 @@ bytesBS = iso to from
     to :: VP.Vector Word8 -> ByteString
     to (VP.Vector off sz buf) =
         unsafePerformIO $ do
-          Prim.Addr ptr <- evaluate $ Prim.byteArrayContents buf
-          bs <- BU.unsafePackAddressLen sz ptr
-          evaluate $ force $ BS.copy $ BS.drop off bs
+            fp <- BS.mallocByteString sz
+            let Ptr a = Ptr.unsafeForeignPtrToPtr fp -- Safe b/c returning fp
+            Prim.copyByteArrayToAddr (Prim.Addr a) buf 0 sz
+            pure (BS.PS fp off sz)
 
     from :: ByteString -> VP.Vector Word8
     from bs = VP.generate (length bs) (BS.index bs)
