@@ -29,19 +29,19 @@ import Data.Bits
 infixl 5 :@;
 
 data Ur
-    = S
+    = J
+    | S
     | K
     | D
-    | J
     | Ur :@ Ur
   deriving (Eq, Ord)
 
 instance Show Ur where
     show = \case
-        S      → "0"
+        J      → "0"
         K      → "1"
-        D      → "2"
-        J      → "3"
+        S      → "2"
+        D      → "3"
         x :@ y → "[" <> intercalate " " (show <$> flatten x [y]) <> "]"
       where
         flatten (x :@ y) acc = flatten x (y : acc)
@@ -99,10 +99,10 @@ jam ∷ Ur → Ur
 jam = church . snd . go
   where
     go ∷ Ur → (Int, Natural)
-    go S      = (3, 0)
+    go J      = (3, 0)
     go K      = (3, 2)
-    go D      = (3, 4)
-    go J      = (3, 6)
+    go S      = (3, 4)
+    go D      = (3, 6)
     go (x:@y) = (rBits, rNum)
         where (xBits, xNum) = go x
               (yBits, yNum) = go y
