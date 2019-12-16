@@ -86,6 +86,10 @@ infixl 5 :#
 
 data Com = Com :# Com | S | I | C | K | B | Sn Int | Bn Int | Cn Int
 
+sz ∷ Com → Int
+sz (x :# y) = sz x + sz y
+sz _        = 1
+
 instance Show Com where
     show = \case
         S    → "s"
@@ -142,3 +146,14 @@ logBulk b = case b of
     bits acc n | (q, r) <- divMod n 2 = bits (r:acc) q
     b0 = C:#B:#(S:#B:#I)
     b1 = C:#(B:#S:#(B:#(B:#B):#(C:#B:#(S:#B:#I)))):#B
+
+bulk :: Com -> Com
+bulk b = case b of
+  Bn n | n>=30  -> logBulk (Bn n)
+  Bn n          -> linBulk (Bn n)
+  Cn n | n >=15 -> logBulk (Cn n)
+  Cn n          -> linBulk (Cn n)
+  Sn n | n >=15 -> logBulk (Sn n)
+  Sn n          -> linBulk (Sn n)
+  x :# y        -> bulk x :# bulk y
+  _             -> b
