@@ -27,7 +27,8 @@ data Exp a
   | Hed (Exp a)
   | Tal (Exp a)
   | Cas (Typ a) (Exp a) (Map Tag (Exp a))
-  -- recursion
+  -- recursion, flow control
+  | Let (Exp a) (Scope () Exp a)
   | Rec (Abs a)
   deriving (Functor, Foldable, Traversable)
 
@@ -79,6 +80,7 @@ instance Monad Exp where
   Hed x >>= f = Hed (x >>= f)
   Tal x >>= f = Tal (x >>= f)
   Cas t x cs >>= f = Cas (t >>= f) (x >>= f) (cs <&> (>>= f))
+  Let a b >>= f = Let (a >>= f) (b >>>= f)
   Rec a >>= f = Rec (bindAbs a f)
 
 bindAbs :: Abs a -> (a -> Exp b) -> Abs b
@@ -101,6 +103,13 @@ cel_ t u = Cel (Abs t (abstract (const Nothing) u))
 
 rec :: Eq a => a -> Typ a -> Exp a -> Exp a
 rec v t e = Rec (Abs t (abstract1 v e))
+
+ledt :: Eq a => a -> Exp a -> Exp a -> Exp a
+ledt v e e' = Let e (abstract1 v e')
+
+wut = Wut . setFromList
+
+cas t e cs = Cas t e (mapFromList cs)
 
 infixl 9 @:
 (@:) = App
@@ -203,41 +212,6 @@ nest env = fmap void . go env mempty
             (t, u@(Rec (Abs _ b))) -> go env asm t (instantiate1 u b)
             _ -> Nothing
 
-            
-{-
-nest :: (Show a, Ord a) => Env a -> Asm a -> Typ a -> Typ a -> Bool
-nest _ _ Typ Typ = True
-nest _ _ (Var v) (Var v') = v == v'  -- TODO amber for Rec
-nest env asm (Var v) u = nest env asm (env v) u
-nest env asm t (Var v) = nest env asm t (env v)
--- following Cardelli 80something, we check the RHSs assuming
--- the putatively *lesser* of the LHSs for both
-nest env asm (Fun (Abs a b)) (Fun (Abs a' b')) =
-  nest env asm a' a && nest (extend1 a' env) (extendAsm asm) (fromScope b) (fromScope b')
-nest env asm (Cel (Abs a b)) (Cel (Abs a' b')) =
-  nest env asm a a' && nest (extend1 a env) (extendAsm asm) (fromScope b) (fromScope b')
-nest env asm (Wut ls) (Wut ls') = ls `isSubsetOf` ls'
-nest _ _ Lam{} _ = error "nest: lambda"
-nest _ _ _ Lam{} = error "nest: lambda"
-nest _ _ Cns{} _ = error "nest: cons"
-nest _ _ _ Cns{} = error "nest: cons"
-nest _ _ Tag{} _ = error "nest: tag"
-nest _ _ _ Tag{} = error "nest: tag"
-nest env asm t@App{} u = nest env asm (whnf t) u
-nest env asm t u@App{} = nest env asm t (whnf u)
-<nest env asm t@Hed{} u = nest env asm (whnf t) u
-nest env asm t u@Hed{} = nest env asm t (whnf u)
-nest env asm t@Tal{} u = nest env asm (whnf t) u
-nest env asm t u@Tal{} = nest env asm t (whnf u)
--- TODO meet and join bro
-nest env asm (Cas t _ _) u = nest env asm t u
-nest env asm t (Cas u _ _) = nest env asm t u
-nest env asm (Rec (Abs t b)) (Rec (Abs t' b')) = undefined
-nest _ _ Rec{} _ = undefined
-nest _ _ _ Rec{} = undefined
-nest _ _ _ _ = False
--}
-
 check :: (Show a, Ord a) => Env a -> Exp a -> Typ a -> Typing ()
 check env e t = do
   t' <- infer env e
@@ -284,6 +258,10 @@ infer env = \case
     guard (ts == keysSet cs)
     traverse_ (\e -> check env e t) cs
     pure t
+  -- Let e b -> do
+  -- -- TODO is below faster, or infer env (instantiate1 e b)?
+  -- t <- infer env e
+  -- instantiate1 e $ infer (extend1 t env) (fromScope b)
   Rec (Abs t b) -> do
     Typ <- infer env t
     -- todo can F <$> be made faster?
