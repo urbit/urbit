@@ -21,23 +21,10 @@
 ::  We get ++unix-event and ++pill from /-aquarium
 ::
 /-  aquarium
-/+  pill
+/+  pill, default-agent
 =,  pill-lib=pill
 =,  aquarium
 =>  $~  |%
-    +$  move  (pair bone card)
-    +$  card
-      $%  [%diff diff-type]
-      ==
-    ::
-    ::  Outgoing subscription updates
-    ::
-    +$  diff-type
-      $%  [%aqua-effects aqua-effects]
-          [%aqua-events aqua-events]
-          [%aqua-boths aqua-boths]
-      ==
-    ::
     +$  state
       $:  %0
           pil=pill
@@ -54,7 +41,60 @@
           processing-events=?
       ==
     --
-=,  gall
+::
+=|  state
+=*  all-state  -
+=<
+  ^-  agent:gall
+  |_  =bowl:gall
+  +*  this       .
+      aqua-core  +>
+      ac         ~(. aqua-core bowl)
+      def        ~(. (default-agent this %|) bowl)
+  ++  on-init           `this
+  ++  on-save  !>(all-state)
+  ++  on-load
+    |=  old-state=vase
+    ^-  step:agent:gall
+    ~&  prep=%aqua
+    =+  new=((soft state) !<(* old-state))
+    ?~  new
+      `this
+    `this(all-state u.new)
+  ::
+  ++  on-poke
+    |=  [=mark =vase]
+    ^-  step:agent:gall
+    =^  cards  all-state
+      ?+  mark  ~|([%aqua-bad-mark mark] !!)
+          %aqua-events  (poke-aqua-events:ac !<((list aqua-event) vase))
+          %pill         (poke-pill:ac !<(pill vase))
+          %noun         (poke-noun:ac !<(* vase))
+      ==
+    [cards this]
+  ::
+  ++  on-watch
+    |=  =path
+    ^-  step:agent:gall
+    ?:  ?=([?(%effects %effect) ~] path)
+      `this
+    ?:  ?=([%effect @ ~] path)
+      `this
+    ?.  ?=([?(%effects %effect %evens %boths) @ ~] path)
+      ~|  [%aqua-bad-subscribe-path path]
+      !!
+    ?~  (slaw %p i.t.path)
+      ~|  [%aqua-bad-subscribe-path-ship path]
+      !!
+    `this
+  ::
+  ++  on-leave  on-leave:def
+  ++  on-peek   peek:ac
+  ::
+  ++  on-agent  on-agent:def
+  ++  on-arvo   on-arvo:def
+  ++  on-fail   on-fail:def
+  --
 ::
 ::  unix-{effects,events,boths}: collect jar of effects and events to
 ::    brodcast all at once to avoid gall backpressure
@@ -63,10 +103,8 @@
 =|  unix-effects=(jar ship unix-effect)
 =|  unix-events=(jar ship unix-timed-event)
 =|  unix-boths=(jar ship unix-both)
-=|  moves=(list move)
-|_  $:  hid=bowl
-        state
-    ==
+=|  cards=(list card:agent:gall)
+|_  hid=bowl:gall
 ::
 ::  Represents a single ship's state.
 ::
@@ -99,11 +137,11 @@
     =.  next-events  (~(gas to next-events) ues)
     ..abet-pe
   ::
-  ::  Send moves to host arvo
+  ::  Send cards to host arvo
   ::
-  ++  emit-moves
-    |=  ms=(list move)
-    =.  this  (^emit-moves ms)
+  ++  emit-cards
+    |=  ms=(list card:agent:gall)
+    =.  this  (^emit-cards ms)
     ..abet-pe
   ::
   ::  Process the events in our queue.
@@ -200,7 +238,7 @@
 ::
 ++  apex-aqua
   ^+  this
-  =:  moves         ~
+  =:  cards         ~
       unix-effects  ~
       unix-events   ~
       unix-boths    ~
@@ -208,46 +246,63 @@
   this
 ::
 ++  abet-aqua
-  ^-  (quip move _this)
+  ^-  (quip card:agent:gall state)
   =.  this
-    %-  emit-moves
-    %-  zing  ^-  (list (list move))
-    %+  turn  ~(tap by sup.hid)
-    |=  [b=bone her=ship pax=path]
-    ^-  (list move)
-    ?+    pax  ~
-        [%effects @ ~]
-      =/  who  (slav %p i.t.pax)
-      =/  ufs  (~(get ja unix-effects) who)
-      ?~  ufs
-        ~
-      [b %diff %aqua-effects who (flop ufs)]~
-    ::
-        [%effects ~]
-      %+  turn
-        ~(tap by unix-effects)
-      |=  [who=ship ufs=(list unix-effect)]
-      [b %diff %aqua-effects who (flop ufs)]
-    ::
-        [%events @ ~]
-      =/  who  (slav %p i.t.pax)
-      =/  ve  (~(get ja unix-events) who)
-      ?~  ve
-        ~
-      [b %diff %aqua-events who (flop ve)]~
-    ::
-        [%boths @ ~]
-      =/  who  (slav %p i.t.pax)
-      =/  bo  (~(get ja unix-boths) who)
-      ?~  bo
-        ~
-      [b %diff %aqua-boths who (flop bo)]~
+    =/  =path  /effect
+    %-  emit-cards
+    %-  zing
+    %+  turn  ~(tap by unix-effects)
+    |=  [=ship ufs=(list unix-effect)]
+    %-  zing
+    %+  turn  ufs
+    |=  uf=unix-effect
+    :~  [%give %fact `/effect %aqua-effect !>(`aqua-effect`[ship uf])]
+        [%give %fact `/effect/[-.q.uf] %aqua-effect !>(`aqua-effect`[ship uf])]
     ==
-  [(flop moves) this]
+  ::
+  =.  this
+    =/  =path  /effects
+    %-  emit-cards
+    %+  turn  ~(tap by unix-effects)
+    |=  [=ship ufs=(list unix-effect)]
+    [%give %fact `path %aqua-effects !>(`aqua-effects`[ship (flop ufs)])]
+  ::
+  =.  this
+    %-  emit-cards
+    %-  zing
+    %+  turn  ~(tap by unix-effects)
+    |=  [=ship ufs=(list unix-effect)]
+    =/  =path  /effect/(scot %p ship)
+    %+  turn  ufs
+    |=  uf=unix-effect
+    [%give %fact `path %aqua-effect !>(`aqua-effect`[ship uf])]
+  ::
+  =.  this
+    %-  emit-cards
+    %+  turn  ~(tap by unix-effects)
+    |=  [=ship ufs=(list unix-effect)]
+    =/  =path  /effects/(scot %p ship)
+    [%give %fact `path %aqua-effects !>(`aqua-effects`[ship (flop ufs)])]
+  ::
+  =.  this
+    %-  emit-cards
+    %+  turn  ~(tap by unix-events)
+    |=  [=ship ve=(list unix-timed-event)]
+    =/  =path  /events/(scot %p ship)
+    [%give %fact `path %aqua-events !>(`aqua-events`[ship (flop ve)])]
+  ::
+  =.  this
+    %-  emit-cards
+    %+  turn  ~(tap by unix-boths)
+    |=  [=ship bo=(list unix-both)]
+    =/  =path  /boths/(scot %p ship)
+    [%give %fact `path %aqua-boths !>(`aqua-boths`[ship (flop bo)])]
+  ::
+  [(flop cards) all-state]
 ::
-++  emit-moves
-  |=  ms=(list move)
-  =.  moves  (weld ms moves)
+++  emit-cards
+  |=  ms=(list card:agent:gall)
+  =.  cards  (weld ms cards)
   this
 ::
 ::
@@ -269,51 +324,12 @@
   =.  this  abet-pe:plow:(pe u.who)
   $
 ::
-::  Subscribe to effects from a ship
-::
-++  peer-effects
-  |=  pax=path
-  ^-  (quip move _this)
-  ?.  ?=([@ *] pax)
-    ~&  [%aqua-bad-peer-effects pax]
-    `this
-  ?~  (slaw %p i.pax)
-    ~&  [%aqua-bad-peer-effects-ship pax]
-    !!
-  `this
-::
-::  Subscribe to events to a ship
-::
-++  peer-events
-  |=  pax=path
-  ^-  (quip move _this)
-  ?.  ?=([@ ~] pax)
-    ~&  [%aqua-bad-peer-events pax]
-    `this
-  ?~  (slaw %p i.pax)
-    ~&  [%aqua-bad-peer-events-ship pax]
-    !!
-  `this
-::
-::  Subscribe to both events and effects of a ship
-::
-++  peer-boths
-  |=  pax=path
-  ^-  (quip move _this)
-  ?.  ?=([@ ~] pax)
-    ~&  [%aqua-bad-peer-boths pax]
-    `this
-  ?~  (slaw %p i.pax)
-    ~&  [%aqua-bad-peer-boths-ship pax]
-    !!
-  `this
-::
 ::  Load a pill and assemble arvo.  Doesn't send any of the initial
 ::  events.
 ::
 ++  poke-pill
   |=  p=pill
-  ^-  (quip move _this)
+  ^-  (quip card:agent:gall state)
   =.  this  apex-aqua  =<  abet-aqua
   =.  pil  p
   ~&  lent=(met 3 (jam boot-ova.pil))
@@ -344,7 +360,7 @@
 ::
 ++  poke-noun
   |=  val=*
-  ^-  (quip move _this)
+  ^-  (quip card:agent:gall state)
   =.  this  apex-aqua  =<  abet-aqua
   ^+  this
   ::  Could potentially factor out the three lines of turn-ships
@@ -355,8 +371,8 @@
     ?>  ?=([[%7 * %1 installed=*] ~] boot-ova.pil)
     =.  installed.boot-ova.pil
       %+  roll  (,(list term) vs.val)
-      |=  [v=term _installed.boot-ova.pil]
-      %^  slum  installed.boot-ova.pil  now.hid
+      |=  [v=term =_installed.boot-ova.pil]
+      %^  slum  installed  now.hid
       =/  vane
         ?+  v  ~|([%unknown-vane v] !!)
           %a  %ames
@@ -367,25 +383,26 @@
           %f  %ford
           %g  %gall
           %j  %jael
+          %g  %gall
         ==
       =/  pax
         /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/[vane]
       =/  txt  .^(@ %cx (weld pax /hoon))
       [/vane/[vane] [%veer v pax txt]]
     =>  .(this ^+(this this))
-    =^  ms  this  (poke-pill pil)
-    (emit-moves ms)
+    =^  ms  all-state  (poke-pill pil)
+    (emit-cards ms)
   ::
       [%swap-files ~]
     =.  userspace-ova.pil
-      =/  slim-dirs
-        `(list path)`~[/app /gen /lib /mar /sur /hoon/sys /arvo/sys /zuse/sys]
+      =/  slim-dirs=(list path)
+        ~[/app /ted /gen /lib /mar /sur /hoon/sys /arvo/sys /zuse/sys]
       :_  ~
       %-  unix-event
       %-  %*(. file-ovum:pill-lib directories slim-dirs)
       /(scot %p our.hid)/home/(scot %da now.hid)
-    =^  ms  this  (poke-pill pil)
-    (emit-moves ms)
+    =^  ms  all-state  (poke-pill pil)
+    (emit-cards ms)
   ::
       [%wish hers=* p=@t]
     %+  turn-ships  ((list ship) hers.val)
@@ -414,7 +431,7 @@
 ::
 ++  poke-aqua-events
   |=  events=(list aqua-event)
-  ^-  (quip move _this)
+  ^-  (quip card:agent:gall state)
   =.  this  apex-aqua  =<  abet-aqua
   %+  turn-events  events
   |=  [ae=aqua-event thus=_this]
@@ -428,7 +445,7 @@
       ^-  (list unix-event)
       :~  [/ %wack 0]  ::  eny
           [/ %whom who.ae]  ::  eny
-          [//newt/0v1n.2m9vh %barn ~]
+          [//newt/0v1n.2m9vh %born ~]
           [//behn/0v1n.2m9vh %born ~]
           :^  //term/1  %boot  &
           ?~  keys.ae
@@ -514,63 +531,23 @@
 ::
 ::  Check whether we have a snapshot
 ::
-++  peek-x-fleet-snap
-  |=  pax=path
-  ^-  (unit (unit [%noun noun]))
-  ?.  ?=([@ ~] pax)
-    ~
-  :^  ~  ~  %noun
-  (~(has by fleet-snaps) i.pax)
-::
-::  Pass scry into child ship
-::
-++  peek-x-i
-  |=  pax=path
-  ^-  (unit (unit [%noun noun]))
-  ?.  ?=([@ @ @ @ @ *] pax)
-    ~
-  =/  who  (slav %p i.pax)
-  =/  pier  (~(get by piers) who)
-  ?~  pier
-    ~
-  :^  ~  ~  %noun
-  (peek:(pe who) t.pax)
-::
-::  Get all created ships
-::
-++  peek-x-ships
-  |=  pax=path
-  ^-  (unit (unit [%noun (list ship)]))
-  ?.  ?=(~ pax)
-    ~
-  :^  ~  ~  %noun
-  `(list ship)`(turn ~(tap by piers) head)
-::
-::
-::
-++  peek-x-pill
-  |=  pax=path
-  ^-  (unit (unit [%pill pill]))
-  =/  pill-size  (met 3 (jam pil))
-  ?:  (lth pill-size 100)
-    ~&  [%no-pill size=pill-size]
-    [~ ~]
-  ``pill+pil
+++  peek
+  |=  =path
+  ^-  (unit (unit cage))
+  ?+  path  ~
+      [%x %fleet-snap @ ~]  ``noun+!>((~(has by fleet-snaps) i.t.t.path))
+      [%x %ships ~]         ``noun+!>((turn ~(tap by piers) head))
+      [%x %pill ~]          ``pill+!>(pil)
+      [%x %i @ @ @ @ @ *]
+    =/  who  (slav %p i.t.t.path)
+    =/  pier  (~(get by piers) who)
+    ?~  pier
+      ~
+    :^  ~  ~  %noun  !>
+    (peek:(pe who) t.t.t.path)
+  ==
 ::
 ::  Trivial scry for mock
 ::
 ++  scry  |=([* *] ~)
-::
-::  Throw away old state if it doesn't soft to new state.
-::
-++  prep
-  |=  old/(unit noun)
-  ^-  [(list move) _+>.$]
-  ~&  prep=%aqua
-  ?~  old
-    `+>.$
-  =+  new=((soft state) u.old)
-  ?~  new
-    `+>.$
-  `+>.$(+<+ u.new)
 --

@@ -2,6 +2,8 @@
 
 set -ex
 
+stack test king --fast
+
 if [ "$TRAVIS_PULL_REQUEST" = false ]
 then
 

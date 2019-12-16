@@ -60,7 +60,7 @@ data Config = Config FilePath [Flag]
   deriving (Show)
 
 serf :: HasLogFunc e => Text -> RIO e ()
-serf msg = logInfo $ display ("SERF: " <> msg)
+serf msg = pure () -- logInfo $ display ("SERF: " <> msg)
 
 
 -- Types -----------------------------------------------------------------------
@@ -84,10 +84,8 @@ data Serf e = Serf
 data ShipId = ShipId Ship Bool
   deriving (Eq, Ord, Show)
 
-type Play = Maybe (EventId, Mug, ShipId)
-
 data Plea
-    = PPlay Play
+    = PPlay EventId Mug
     | PWork Work
     | PDone EventId Mug FX
     | PStdr EventId Cord
@@ -101,7 +99,7 @@ type SerfResp      = Either ReplacementEv WorkResult
 data SerfExn
     = BadComputeId EventId WorkResult
     | BadReplacementId EventId ReplacementEv
-    | UnexpectedPlay EventId Play
+    | UnexpectedPlay EventId (EventId, Mug)
     | BadPleaAtom Atom
     | BadPleaNoun Noun [Text] Text
     | ReplacedEventDuringReplay EventId ReplacementEv
@@ -232,28 +230,19 @@ sendLen s i = do
 
 sendOrder :: HasLogFunc e => Serf e -> Order -> RIO e ()
 sendOrder w o = do
-  logDebug $ display ("(sendOrder) " <> tshow o)
+  -- logDebug $ display ("(sendOrder) " <> tshow o)
   sendBytes w $ jamBS $ toNoun o
-  logDebug "(sendOrder) Done"
+  -- logDebug "(sendOrder) Done"
 
 sendBytes :: HasLogFunc e => Serf e -> ByteString -> RIO e ()
 sendBytes s bs = handle ioErr $ do
     sendLen s (length bs)
-    hFlush (sendHandle s)
-
-    hack
-
     hPut (sendHandle s) bs
     hFlush (sendHandle s)
-
-    hack
 
   where
     ioErr :: IOError -> RIO e ()
     ioErr _ = throwIO SerfConnectionClosed
-
-    -- TODO WHY DOES THIS MATTER?????
-    hack = threadDelay 10000
 
 recvLen :: (MonadIO m, HasLogFunc e) => Serf e -> m Word64
 recvLen w = io $ do
@@ -292,17 +281,17 @@ shutdown serf code = sendOrder serf (OExit code)
 -}
 recvPlea :: HasLogFunc e => Serf e -> RIO e Plea
 recvPlea w = do
-  logDebug "(recvPlea) Waiting"
+  -- logDebug "(recvPlea) Waiting"
   a <- recvAtom w
-  logDebug "(recvPlea) Got atom"
+  -- logDebug "(recvPlea) Got atom"
   n <- fromRightExn (cue a) (const $ BadPleaAtom a)
-  p <- fromRightExn (fromNounErr n) (\(p,m) -> BadPleaNoun (traceShowId n) p m)
+  p <- fromRightExn (fromNounErr n) (\(p,m) -> BadPleaNoun n p m)
 
   case p of PStdr e msg   -> do printErr (sStderr w) (cordText msg)
                                 recvPlea w
             PSlog _ pri t -> do printTank (sStderr w) pri t
                                 recvPlea w
-            _             -> do logTrace "recvPlea got something else"
+            _             -> do -- logTrace "recvPlea got something else"
                                 pure p
 
 {-
@@ -311,12 +300,11 @@ recvPlea w = do
 handshake :: HasLogFunc e => Serf e -> LogIdentity -> RIO e SerfState
 handshake serf ident = do
     ss@SerfState{..} <- recvPlea serf >>= \case
-      PPlay Nothing          -> pure $ SerfState 1 (Mug 0)
-      PPlay (Just (e, m, _)) -> pure $ SerfState e m
-      x                      -> throwIO (InvalidInitialPlea x)
+      PPlay e m -> pure $ SerfState e m
+      x         -> throwIO (InvalidInitialPlea x)
 
     when (ssNextEv == 1) $ do
-        sendOrder serf (OBoot ident)
+        sendOrder serf (OBoot (lifecycleLen ident))
 
     pure ss
 
@@ -325,7 +313,7 @@ sendWork w job =
   do
     sendOrder w (OWork job)
     res <- loop
-    logTrace ("[sendWork] Got response")
+    -- logTrace ("[sendWork] Got response")
     pure res
   where
     eId = jobId job
@@ -342,7 +330,7 @@ sendWork w job =
 
     loop :: RIO e SerfResp
     loop = recvPlea w >>= \case
-      PPlay p       -> throwIO (UnexpectedPlay eId p)
+      PPlay e m     -> throwIO (UnexpectedPlay eId (e, m))
       PDone i m o   -> produce (SerfState (i+1) m, o)
       PWork work    -> replace (DoWork work)
       PStdr _ cord  -> printErr (sStderr w) (cordText cord) >> loop
@@ -463,7 +451,7 @@ toJobs ident eId =
     await >>= \case
         Nothing -> lift $ logTrace "[toJobs] no more jobs"
         Just at -> do yield =<< lift (fromAtom at)
-                      lift $ logTrace $ display ("[toJobs] " <> tshow eId)
+                      -- lift $ logTrace $ display ("[toJobs] " <> tshow eId)
                       toJobs ident (eId+1)
   where
     isNock = eId <= fromIntegral (lifecycleLen ident)
@@ -509,12 +497,13 @@ doCollectFX serf = go
         Just jb -> do
             -- jb <- pure $ replaceMug jb (ssLastMug ss)
             (_, ss, fx) <- lift $ doJob serf jb
-            lift $ logTrace $ displayShow (jobId jb)
+            when (0 == (jobId jb `mod` 10_000)) $ do
+                lift $ logTrace $ displayShow (jobId jb)
             yield (jobId jb, fx)
             go ss
 
-replaceMug :: Job -> Mug -> Job
-replaceMug jb mug =
+_replaceMug :: Job -> Mug -> Job
+_replaceMug jb mug =
   case jb of
     DoWork (Work eId _ w o)  -> DoWork (Work eId mug w o)
     RunNok (LifeCyc eId _ n) -> RunNok (LifeCyc eId mug n)

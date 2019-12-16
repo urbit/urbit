@@ -71,7 +71,7 @@ jobMug (DoWork (Work _ mug _ _))  = mug
 --------------------------------------------------------------------------------
 
 data Order
-    = OBoot LogIdentity
+    = OBoot Word -- lifecycle length
     | OExit Word8
     | OSave EventId
     | OWork Job

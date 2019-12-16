@@ -25,6 +25,12 @@ class UrbitApi {
       delete: this.chatViewDelete.bind(this),
       join: this.chatViewJoin.bind(this),
     };
+    
+    this.invite = {
+      accept: this.inviteAccept.bind(this),
+      decline: this.inviteDecline.bind(this),
+      invite: this.inviteInvite.bind(this)
+    };
   }
 
   bind(path, method, ship = this.authTokens.ship, app, success, fail, quit) {
@@ -122,10 +128,11 @@ class UrbitApi {
     this.action("chat-view", "json", data);
   }
 
-  chatViewCreate(path, security, read, write) {
+  chatViewCreate(path, security, read, write, allowHistory) {
     this.chatViewAction({
       create: {
-        path, security, read, write
+        path, security, read, write,
+        'allow-history': allowHistory
       }
     });
   }
@@ -134,10 +141,68 @@ class UrbitApi {
     this.chatViewAction({ delete: { path } });
   }
 
-  chatViewJoin(ship, path) {
-    this.chatViewAction({ join: { ship, path } });
+  chatViewJoin(ship, path, askHistory) {
+    this.chatViewAction({ 
+      join: {
+        ship, path,
+        'ask-history': askHistory
+      }
+    });
   }
 
+  inviteAction(data) {
+    this.action("invite-store", "json", data);
+  }
+  
+  inviteInvite(path, ship) {
+    this.action("invite-hook", "json", 
+      {
+        invite: {
+          path: '/chat',
+          invite: {
+            path,
+            ship: `~${window.ship}`,
+            recipient: ship,
+            app: 'chat-hook',
+            text: `~${window.ship}${path}`,
+          },
+          uid: uuid()
+        }
+      }
+    );
+  }
+
+  inviteAccept(uid) {
+    this.inviteAction({
+      accept: {
+        path: '/chat',
+        uid
+      }
+    });
+  }
+  
+  inviteDecline(uid) {
+    this.inviteAction({
+      decline: {
+        path: '/chat',
+        uid
+      }
+    });
+  }
+
+  sidebarToggle() {
+    let sidebarBoolean = true;
+    if (store.state.sidebarShown === true) {
+      sidebarBoolean = false;
+    }
+    store.handleEvent({
+      data: {
+        local: {
+          'sidebarToggle': sidebarBoolean
+        }
+      }
+    });
+  }
 }
 
 export let api = new UrbitApi();

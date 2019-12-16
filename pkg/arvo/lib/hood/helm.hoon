@@ -20,9 +20,6 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-++  hood-nuke                                           ::  block/unblock
-  $:  him/ship                                          ::
-  ==                                                    ::
 ++  hood-reset                                          ::  reset command
   $~                                                    ::
 ++  helm-verb                                           ::  reset command
@@ -34,36 +31,23 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |:  $:{bowl:gall part}                                  ::  main helm work
+=/  ost  0
 =+  sez=(~(gut by hoc) ost $:session)
-=>  |%                                                  ::  arvo structures
-    ++  card                                            ::
-      $%  [%bonk wire ~]                                ::
-          {$conf wire dock ship term}                   ::
-          {$flog wire flog:dill}                        ::
-          [%knob wire @tas ?(%hush %soft %loud)]        ::
-          {$nuke wire ship}                             ::
-          [%serve wire binding:eyre generator:eyre]     ::
-          {$poke wire dock pear}                        ::
-          {$rest wire @da}                              ::
-          {$wait wire @da}                              ::
-          {$rekey wire life ring}                       ::
-          {$moon wire ship udiff:point:able:jael}       ::
-      ==                                                ::
-    ++  move  (pair bone card)                          ::  user-level move
-    ++  pear                                            ::  poke fruit
-      $%  {$hood-unsync desk ship desk}                 ::
-          {$helm-hi cord}                               ::
-          {$drum-start well:gall}                       ::
-      ==                                                ::
-    --
-=+  moz=((list move))
+=|  moz=(list card:agent:gall)
 |%
-++  abet                                              ::  resolve
+++  abet
   [(flop moz) %_(+<+.$ hoc (~(put by hoc) ost sez))]
 ::
-++  emit  |=(card %_(+> moz [[ost +<] moz]))          ::  return card
+++  emit
+  |=  card:agent:gall
+  %_(+> moz [+< moz])
+::
+++  flog
+  |=  =flog:dill
+  (emit %pass /di %arvo %d %flog flog)
+::
 ++  emil                                              ::  return cards
-  |=  (list card)
+  |=  (list card:agent:gall)
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
@@ -80,38 +64,32 @@
   ?.  =(our who.u.sed)
     ~&  [%wrong-private-key-ship who.u.sed]
     +>.$
-  (emit %rekey / lyf.u.sed key.u.sed)
+  (emit %pass / %arvo %j %rekey lyf.u.sed key.u.sed)
 ::
 ++  poke-moon                                        ::  rotate moon keys
   |=  sed=(unit [=ship =udiff:point:able:jael])
   =<  abet
   ?~  sed
     +>.$
-  (emit %moon / u.sed)
-::
-++  poke-nuke                                         ::  initialize
-  |=  him/ship  =<  abet
-  (emit %nuke /helm him)
+  (emit %pass / %arvo %j %moon u.sed)
 ::
 ++  poke-mass
   |=  ~  =<  abet
-  (emit %flog /heft %crud %hax-heft ~)
+  (emit %pass /heft %arvo %d %flog %heft ~)
 ::
 ++  poke-automass
   |=  recur=@dr
   =.  mass-timer.sez
     [/helm/automass (add now recur) recur]
-  abet:(emit %wait way.mass-timer.sez nex.mass-timer.sez)
+  abet:(emit %pass way.mass-timer.sez %arvo %b %wait nex.mass-timer.sez)
 ::
 ++  poke-cancel-automass
   |=  ~
-  abet:(emit %rest way.mass-timer.sez nex.mass-timer.sez)
+  abet:(emit %pass way.mass-timer.sez %arvo %b %rest nex.mass-timer.sez)
 ::
-++  poke-bonk
-  |=  ~
-  ~&  .^((unit @da) %a /(scot %p our)/time/(scot %da now)/(scot %p our))
-  %-  %-  slog  :_  ~  .^(tank %b /(scot %p our)/timers/(scot %da now))
-  abet:(emit %bonk /bonk ~)
+++  poke-pack
+  |=  ~  =<  abet
+  (emit %pass /pack %arvo %d %flog %pack ~)
 ::
 ++  take-wake-automass
   |=  [way=wire error=(unit tang)]
@@ -122,14 +100,17 @@
   =.  nex.mass-timer.sez  (add now tim.mass-timer.sez)
   =<  abet
   %-  emil
-  :~  [%flog /heft %crud %hax-heft ~]
-      [%wait way.mass-timer.sez nex.mass-timer.sez]
+  :~  [%pass /heft %arvo %d %flog %crud %hax-heft ~]
+      [%pass way.mass-timer.sez %arvo %b %wait nex.mass-timer.sez]
   ==
 ::
 ++  poke-send-hi
   |=  {her/ship mes/(unit tape)}  =<  abet
-  %^  emit  %poke  /helm/hi/(scot %p her)
-  [[her %hood] %helm-hi ?~(mes '' (crip u.mes))]
+  %-  emit
+  :*  %pass  /helm/hi/(scot %p her)
+      %agent  [her %hood]  %poke
+      %helm-hi  !>(?~(mes '' (crip u.mes)))
+  ==
 ::
 ::
 ++  poke-hi
@@ -138,25 +119,24 @@
   ?:  =(%fail mes)
     ~&  %poke-hi-fail
     !!
-  abet:(emit %flog /di %text "< {<src>}: {(trip mes)}")
+  abet:(flog %text "< {<src>}: {(trip mes)}")
 ::
 ++  poke-atom
   |=  ato/@
   =+  len=(scow %ud (met 3 ato))
   =+  gum=(scow %p (mug ato))
   =<  abet
-  (emit %flog /di %text "< {<src>}: atom: {len} bytes, mug {gum}")
+  (flog %text "< {<src>}: atom: {len} bytes, mug {gum}")
 ::
 ++  coup-hi
   |=  {pax/path cop/(unit tang)}  =<  abet
   ?>  ?=({@t ~} pax)
-  (emit %flog ~ %text "hi {(trip i.pax)} {?~(cop "" "un")}successful")
+  (flog %text "hi {(trip i.pax)} {?~(cop "" "un")}successful")
 ::
 ++  poke-reload  |=(all/(list term) (poke-reload-desk %home all))
 ++  poke-reload-desk                                 ::  reload vanes
   |:  $:{syd/desk all/(list term)}  =<  abet
   %-  emil
-  %-  flop
   %+  turn  all
   =+  top=`path`/(scot %p our)/[syd]/(scot %da now)
   =/  van/(list {term ~})
@@ -174,7 +154,7 @@
   =+  zus==('z' tip)
   =+  way=?:(zus (welp top /sys/[nam]) (welp top /sys/vane/[nam]))
   =+  fil=.^(@ %cx (welp way /hoon))
-  [%flog /reload [%veer ?:(=('z' tip) %$ tip) way fil]]
+  [%pass /reload %arvo %d %flog %veer ?:(=('z' tip) %$ tip) way fil]
 ::  +poke-reset:  send %lyra to initiate kernel upgrade
 ::
 ::    And reinstall %zuse and the vanes with %veer.
@@ -183,42 +163,74 @@
 ++  poke-reset
   |=  hood-reset
   =<  abet
-  %-  emil  %-  flop
-  ^-  (list card)
+  %-  emil
+  ^-  (list card:agent:gall)
   =/  top=path  /(scot %p our)/home/(scot %da now)/sys
   =/  hun  .^(@ %cx (welp top /hoon/hoon))
   =/  arv  .^(@ %cx (welp top /arvo/hoon))
-  :-  [%flog /reset [%lyra `@t`hun `@t`arv]]
+  :-  [%pass /reset %arvo %d %flog %lyra `@t`hun `@t`arv]
   %+  turn
     (module-ova:pill top)
-  |=(a=[wire flog:dill] [%flog a])
+  |=([=wire =flog:dill] [%pass wire %arvo %d %flog flog])
 ::
 ++  poke-verb                                         ::  toggle verbose
   |=  ~  =<  abet
-  (emit %flog /helm %verb ~)
+  (flog %verb ~)
+::
+++  poke-ames-sift
+  |=  ships=(list ship)  =<  abet
+  (emit %pass /helm %arvo %a %sift ships)
+::
+++  poke-ames-verb
+  |=  veb=(list verb:ames)  =<  abet
+  (emit %pass /helm %arvo %a %spew veb)
 ::
 ++  poke-knob
   |=  [error-tag=@tas level=?(%hush %soft %loud)]  =<  abet
-  (emit %knob /helm error-tag level)
-::
-++  take-onto                                         ::  result of %conf
-  |=  saw/(each suss:gall tang)  =<  abet
-  %-  emit
-  ?-   -.saw
-    %|  [%flog ~ %crud %onto `tang`p.saw]
-    %&  [%flog ~ %text "<{<p.saw>}>"]
-  ==
-::
-++  take-woot                                         ::  result of %want
-  |=  {way/wire her/ship cop/coop}  =<  abet
-  (emit %flog ~ %text "woot: {<[way cop]>}")
+  (emit %pass /helm %arvo %d %knob error-tag level)
 ::
 ++  poke-serve
   |=  [=binding:eyre =generator:eyre]  =<  abet
-  (emit %serve /helm/serv binding generator)
+  (emit %pass /helm/serv %arvo %e %serve binding generator)
+::
+++  poke
+  |=  [=mark =vase]
+  ?+  mark  ~|([%poke-helm-bad-mark mark] !!)
+    %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
+    %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)
+    %helm-pack             =;(f (f !<(_+<.f vase)) poke-pack)
+    %helm-reload           =;(f (f !<(_+<.f vase)) poke-reload)
+    %helm-reload-desk      =;(f (f !<(_+<.f vase)) poke-reload-desk)
+    %helm-reset            =;(f (f !<(_+<.f vase)) poke-reset)
+    %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
+    %helm-ames-sift        =;(f (f !<(_+<.f vase)) poke-ames-sift)
+    %helm-ames-verb        =;(f (f !<(_+<.f vase)) poke-ames-verb)
+    %helm-verb             =;(f (f !<(_+<.f vase)) poke-verb)
+    %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
+    %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
+    %helm-automass         =;(f (f !<(_+<.f vase)) poke-automass)
+    %helm-cancel-automass  =;(f (f !<(_+<.f vase)) poke-cancel-automass)
+    %helm-moon             =;(f (f !<(_+<.f vase)) poke-moon)
+    %helm-serve            =;(f (f !<(_+<.f vase)) poke-serve)
+  ==
+::
+++  take-agent
+  |=  [=wire =sign:agent:gall]
+  ?+  wire  ~|([%helm-bad-take-agent wire -.sign] !!)
+    [%helm %hi *]  ?>  ?=(%poke-ack -.sign)
+                   (coup-hi t.t.wire p.sign)
+  ==
 ::
 ++  take-bound
   |=  [wir=wire success=? binding=binding:eyre]  =<  abet
-  (emit %flog ~ %text "bound: {<success>}")
+  (flog %text "bound: {<success>}")
 ::
+++  take
+  |=  [=wire =sign-arvo]
+  ?+  wire  ~|([%helm-bad-take-wire wire +<.sign-arvo] !!)
+    [%automass *]  %+  take-wake-automass  t.wire
+                   ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
+    [%serv *]      %+  take-bound  t.wire
+                   ?>(?=(%bound +<.sign-arvo) +>.sign-arvo)
+  ==
 --

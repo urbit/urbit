@@ -1,147 +1,266 @@
 ::  gaze: azimuth statistics
 ::
-/+  *eth-watcher
+::    general flow:
+::    - receive events
+::    - process events whose timestamp is known
+::    - request timestamps for unknown block numbers (if not already running)
+::    - receive timestamps, process events
 ::
+/-  eth-watcher
+/+  default-agent, verb
 =,  ethereum
 =,  azimuth
 ::
-|%
-++  state
-  $:  ::  qued: event logs waiting on block timestamp, oldest first
-      ::  time: timstamps of block numbers
-      ::  seen: events sorted by timestamp, newest first
-      ::  days: stats by day, newest first
+=>  |%
+    +$  state-0
+      $:  %0
+          ::  qued: event logs waiting on block timestamp, oldest first
+          ::  time: timstamps of block numbers
+          ::  seen: events sorted by timestamp, newest first
+          ::  days: stats by day, newest first
+          ::
+          running=(unit @ta)
+          qued=loglist
+          time=(map @ud @da)
+          seen=(list [wen=@da wat=event])
+          days=(list [day=@da sat=stats])
+      ==
+    ::
+    +$  loglist  loglist:eth-watcher
+    +$  event
+      $%  [%azimuth who=ship dif=diff-point]
+          [%invite by=ship of=ship gift=ship to=address]
+      ==
+    ::
+    +$  stats
+      $:  spawned=(list @p)
+          activated=(list @p)
+          transfer-p=(list @p)
+          transferred=(list @p)
+          configured=(list @p)
+          breached=(list @p)
+          request=(list @p)
+          sponsor=(list @p)
+          management-p=(list @p)
+          voting-p=(list @p)
+          spawn-p=(list @p)
+          invites-senders=(list @p)
+      ==
+    ::
+    +$  card  card:agent:gall
+    ::
+    ++  node-url  'http://eth-mainnet.urbit.org:8545'
+    ++  refresh-rate  ~h1
+    --
+::
+=|  state-0
+=*  state  -
+::
+%+  verb  |
+^-  agent:gall
+=<
+  |_  =bowl:gall
+  +*  this  .
+      do    ~(. +> bowl)
+      def   ~(. (default-agent this %|) bowl)
+  ::
+  ++  on-init
+    ^-  (quip card _this)
+    [setup-cards:do this]
+  ::
+  ++  on-save  !>(state)
+  ++  on-load
+    |=  old=vase
+    ^-  (quip card _this)
+    [~ this(state !<(state-0 old))]
+  ::
+  ++  on-poke
+    |=  [=mark =vase]
+    ^-  (quip card _this)
+    ?>  ?=(%noun mark)
+    =/  =noun  !<(noun vase)
+    |-  ^-  [cards=(list card) =_this]
+    ?+  noun  ~|([dap.bowl %unknown-poke noun] !!)
+        %reconnect
+      :_  this
+      :~  leave-eth-watcher:do
+          watch-eth-watcher:do
+      ==
+    ::
+        %reload
+      :-  cards:$(noun %reconnect)
+      this(qued ~, seen ~, days ~)
+    ::
+        %rewatch
+      :_  this:$(noun %reset)
+      :~  leave-eth-watcher:do
+          clear-eth-watcher:do
+          setup-eth-watcher:do
+          await-eth-watcher:do
+      ==
+    ::
+        %export
+      [export:do this]
+    ::
+        %debug
+      ~&  latest=(turn (scag 5 seen) head)
+      ~&  oldest=(turn (slag (sub (max 5 (lent seen)) 5) seen) head)
+      ~&  :-  'order is'
+          =-  ?:(sane 'sane' 'insane')
+          %+  roll  seen
+          |=  [[this=@da *] last=@da sane=?]
+          :-  this
+          ?:  =(*@da last)  &
+          (lte this last)
+      ~&  time=~(wyt by time)
+      ~&  qued=(lent qued)
+      ~&  days=(lent days)
+      [~ this]
+    ==
+  ::
+  ++  on-agent
+    |=  [=wire =sign:agent:gall]
+    ^-  (quip card _this)
+    ?+  -.sign  (on-agent:def wire sign)
+        %kick
+      ?.  =(/watcher wire)  [~ this]
+      [[watch-eth-watcher:do]~ this]
+    ::
+        %fact
+      ?+  wire  (on-agent:def wire sign)
+          [%watcher ~]
+        ?.  ?=(%eth-watcher-diff p.cage.sign)
+          (on-agent:def wire sign)
+        =^  cards  state
+          %-  handle-eth-watcher-diff:do
+          !<(diff:eth-watcher q.cage.sign)
+        [cards this]
       ::
-      qued=loglist
-      time=(map @ud @da)
-      seen=(list [wen=@da wat=event])
-      days=(list [day=@da sat=stats])
-  ==
-::
-++  event
-  $%  [%azimuth who=ship dif=diff-point]
-      ::TODO  [%invites *]
-  ==
-::
-++  stats
-  $:  spawned=(list @p)
-      activated=(list @p)
-      transfer-p=(list @p)
-      transferred=(list @p)
-      configured=(list @p)
-      breached=(list @p)
-      request=(list @p)
-      sponsor=(list @p)
-      management-p=(list @p)
-      voting-p=(list @p)
-      spawn-p=(list @p)
-  ==
-::
-::
-++  move  (pair bone card)
-++  card
-  $%  [%poke wire [ship %eth-watcher] %eth-watcher-action action]
-      [%peer wire [ship %eth-watcher] path]
-      [%hiss wire (unit user:eyre) mark %hiss hiss:eyre]
-      [%wait wire @da]
-      [%info wire desk nori:clay]
-  ==
---
-::
-|_  [bowl:gall state]
-++  node-url  (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
-++  export-frequency  ~h1
-::
-++  prep
-  |=  old=(unit state)
-  ?~  old
-    :_  ..prep
-    [ost %wait /export (add now export-frequency)]~
-  [~ ..prep(+<+ u.old)]
-::
-::  +poke-noun: do a thing
-::
-::    %kick-watcher:  reset, tell %eth-watcher to look for events for us
-::    %regaze:        reset (but keep timestamps), subscribe to eth-watcher
-::    %debug:         print debug info
-::
-++  poke-noun
-  |=  a=?(%kick-watcher %regaze %debug)
-  ^-  (quip move _+>)
-  ?-  a
-      %kick-watcher
-    :_  +>.$(qued ~, seen ~, days ~, time ~)
-    :~
-      :-  ost
-      :*  %poke
-          /look
-          [our %eth-watcher]
-          %eth-watcher-action
+          [%timestamps @ ~]
+        ?+  p.cage.sign  (on-agent:def wire sign)
+            %thread-fail
+          =+  !<([=term =tang] q.cage.sign)
+          =/  =tank  leaf+"{(trip dap.bowl)} thread failed; will retry"
+          %-  (slog tank leaf+<term> tang)
+          =^  cards  state
+            request-timestamps:do
+          [cards this]
         ::
-          ^-  action
-          :+  %watch  dap
-          :*  node-url
-              public:contracts
-              ~
-              ~[azimuth:contracts]
-              ~
-          ==
+            %thread-done
+          =^  cards  state
+            %-  save-timestamps:do
+            !<((list [@ud @da]) q.cage.sign)
+          [cards this]
+        ==
       ==
     ==
   ::
-      %regaze
-    :_  +>.$(qued ~, seen ~, days ~)
-    :~
-      :-  ost
-      :*  %peer
-          /look
-          [our %eth-watcher]
-          /[dap]
-      ==
+  ++  on-arvo
+    |=  [=wire =sign-arvo]
+    ^-  (quip card _this)
+    ?+  +<.sign-arvo  ~|([dap.bowl %strange-arvo-sign +<.sign-arvo] !!)
+        %wake
+      ?:  =(/export wire)
+        [[wait-export:do export:do] this]
+      ?:  =(/watch wire)
+        [[watch-eth-watcher:do]~ this]
+      ~&  [dap.bowl %strange-wake wire]
+      [~ this]
     ==
   ::
-      %debug
-    ~&  latest=(turn (scag 5 seen) head)
-    ~&  oldest=(turn (slag (sub (lent seen) 5) seen) head)
-    ~&  :-  'order is'
-        =-  ?:(sane 'sane' 'insane')
-        %+  roll  seen
-        |=  [[this=@da *] last=@da sane=?]
-        :-  this
-        ?:  =(*@da last)  &
-        (lte this last)
-    ~&  time=~(wyt by time)
-    ~&  qued=(lent qued)
-    ~&  days=(lent days)
-    [~ +>.$]
+  ++  on-peek   on-peek:def
+  ++  on-watch  on-watch:def
+  ++  on-leave  on-leave:def
+  ++  on-fail   on-fail:def
+  --
+::
+|_  =bowl:gall
+++  setup-cards
+  ^-  (list card)
+  :~  wait-export
+      setup-eth-watcher
+      ::  we punt on subscribing to the eth-watcher for a little while.
+      ::  this way we get a %history diff containing all past events,
+      ::  instead of so many individual %log diffs that we bail meme.
+      ::  (to repro, replace this with `watch-eth-watcher`)
+      ::
+      await-eth-watcher
   ==
 ::
-::  +diff-eth-watcher-update: process new logs, clear state on rollback
+++  wait
+  |=  [=wire =@dr]
+  ^-  card
+  [%pass wire %arvo %b %wait (add now.bowl dr)]
 ::
-++  diff-eth-watcher-update
-  |=  [=wire =^update]
-  ^-  (quip move _+>)
-  =^  logs  +>.$
-    ?-  -.update
-      %snap  ~&  [%got-snap (lent logs.snapshot.update)]
-             [logs.snapshot.update +>.$(qued ~, seen ~)]
-      %logs  ~&  [%got-logs (lent loglist.update)]
-             [loglist.update +>.$]
+++  wait-export  (wait /export refresh-rate)
+::
+++  to-eth-watcher
+  |=  [=wire =task:agent:gall]
+  ^-  card
+  [%pass wire %agent [our.bowl %eth-watcher] task]
+::
+++  setup-eth-watcher
+  %+  to-eth-watcher  /setup
+  :+  %poke   %eth-watcher-poke
+  !>  ^-  poke:eth-watcher
+  :+  %watch  /[dap.bowl]
+  :*  node-url
+      refresh-rate
+      public:mainnet-contracts
+      ~[azimuth delegated-sending]:mainnet-contracts
+      ~
+  ==
+::
+::  see also comment in +setup-cards
+++  await-eth-watcher  (wait /watch ~m30)
+::
+++  watch-eth-watcher
+  %+  to-eth-watcher  /watcher
+  [%watch /logs/[dap.bowl]]
+::
+++  leave-eth-watcher
+  %+  to-eth-watcher  /watcher
+  [%leave ~]
+::
+++  clear-eth-watcher
+  %+  to-eth-watcher  /clear
+  :+  %poke  %eth-watcher-poke
+  !>  ^-  poke:eth-watcher
+  [%clear /logs/[dap.bowl]]
+::
+++  poke-spider
+  |=  [=wire =cage]
+  ^-  card
+  [%pass wire %agent [our.bowl %spider] %poke cage]
+::
+++  watch-spider
+  |=  [=wire =sub=path]
+  ^-  card
+  [%pass wire %agent [our.bowl %spider] %watch sub-path]
+::
+::  +handle-eth-watcher-diff: process new logs, clear state on rollback
+::
+::    processes logs for which we know the timestamp
+::    adds timestamp-less logs to queue
+::
+++  handle-eth-watcher-diff
+  |=  =diff:eth-watcher
+  ^-  (quip card _state)
+  =^  logs  state
+    ^-  [loglist _state]
+    ?-  -.diff
+      %history  ~&  [%got-history (lent loglist.diff)]
+                [loglist.diff state(qued ~, seen ~)]
+      %log      ~&  %got-log
+                [[event-log.diff ~] state]
+      %disavow  ~&  %disavow-unimplemented
+                [~ state]
     ==
-  ?~  logs  [~ +>.$]
-  =-  =^  moz  +>.$  (queue-logs mistime)  ::  oldest first
-      =.  +>.$  (process-logs havtime)  ::  oldest first
-      [moz +>.$]
-  ::  sort based on timstamp known, throw out lockup logs
-  ::
-  %+  roll  `loglist`logs
-  |=  [log=event-log:rpc havtime=loglist mistime=loglist]
-  ^+  [havtime mistime]
-  =+  bon=block-number:(need mined.log)
-  ?:  (is-lockup-block bon)  [havtime mistime]
-  ?:  (~(has by time) bon)
-    [[log havtime] mistime]
-  [havtime [log mistime]]
+  %-  process-logs
+  %+  skip  logs
+  |=  =event-log:rpc
+  %-  is-lockup-block
+  block-number:(need mined.event-log)
 ::
 ::  +is-lockup-block: whether the block contains lockup/ignorable transactions
 ::
@@ -160,83 +279,56 @@
   ?:  in  &
   &((gte num start) (lte num end))
 ::
-::  +queue-logs: hold on to new logs, requesting timestamps for them
-::
-++  queue-logs
-  |=  logs=loglist  ::  oldest first
-  ^-  (quip move _+>)
-  ?~  logs  [~ +>]
-  :-  [(request-timestamps logs) ~]
-  +>(qued (weld qued logs))
-::
 ::  +request-timestamps: request block timestamps for the logs as necessary
 ::
+::    will come back as a thread result
+::
 ++  request-timestamps
-  |=  logs=loglist
-  ^-  move
-  =-  [ost %hiss /timestamps ~ %json-rpc-response %hiss -]
-  ^-  hiss:eyre
-  %+  json-request:rpc  node-url
-  :-  %a
-  ^-  (list json)
-  %+  turn
-    ^-  (list @ud)
-    =-  ~(tap in -)
-    %-  ~(gas in *(set @ud))
-    ^-  (list @ud)
-    %+  turn  logs
-    |=  log=event-log:rpc
-    block-number:(need mined.log)
-  |=  num=@ud
-  ^-  json
-  ~!  *request:rpc
-  %+  request-to-json:rpc
-    `(scot %ud num)
-  [%eth-get-block-by-number num |]
+  ^-  (quip card _state)
+  ?~  qued  [~ state]
+  ?^  running  [~ state]
+  =/  tid=@ta
+    %+  scot  %ta
+    :((cury cat 3) dap.bowl '_' (scot %uv eny.bowl))
+  :_  state(running `tid)
+  :~  (watch-spider /timestamps/[tid] /thread-result/[tid])
+    ::
+      %+  poke-spider  /timestamps/[tid]
+      :-  %spider-start
+      =-  !>([~ `tid %eth-get-timestamps -])
+      !>  ^-  [@t (list @ud)]
+      :-  node-url
+      =-  ~(tap in -)
+      %-  ~(gas in *(set @ud))
+      ^-  (list @ud)
+      %+  turn  qued
+      |=  log=event-log:rpc
+      block-number:(need mined.log)
+  ==
 ::
-::  +sigh-json-rpc-response: get block details, extract timestamps
+::  +save-timestamps: store timestamps into state
 ::
-++  sigh-json-rpc-response
-  |=  [=wire =response:rpc:jstd]
-  ^-  (quip move _+>)
-  ?>  ?=([%timestamps ~] wire)
-  ?:  ?=(?(%error %fail) -.response)
-    ~?  ?=(%error -.response)  [%rpc-error +.response]
-    ~?  ?=(%fail -.response)   [%httr-fail hit.response]
-    ~&  %retrying-timestamps
-    [[(request-timestamps qued) ~] +>]
-  ?>  ?=(%batch -.response)
-  =-  [~ (process-logs(time -, qued ~) qued)]
-  %-  ~(gas by time)
-  =/  max=@ud
-    (roll ~(tap in ~(key by time)) max)
-  ::  for every result, get the block number and timestamp
-  ::
-  %+  turn  bas.response
-  |=  res=response:rpc:jstd
-  ^-  (pair @ud @da)
-  ~|  res
-  ?>  ?=(%result -.res)
-  ~|  id.res
-  :-  (slav %ud id.res)
-  %-  from-unix:chrono:userlib
-  %-  parse-hex-result:rpc
-  ?>  ?=(%o -.res.res)
-  (~(got by p.res.res) 'timestamp')
+++  save-timestamps
+  |=  timestamps=(list [@ud @da])
+  ^-  (quip card _state)
+  =.  time     (~(gas by time) timestamps)
+  =.  running   ~
+  (process-logs ~)
 ::
-::  +process logs that are in the queue
+::  +process-logs: handle new incoming logs
 ::
 ++  process-logs
-  |=  logs=loglist  ::  oldest first
-  ^+  +>
-  ?~  logs  +>
-  =-  %_  +>.$
+  |=  new=loglist  ::  oldest first
+  ^-  (quip card _state)
+  =.  qued  (weld qued new)
+  ?~  qued  [~ state]
+  =-  %_  request-timestamps
         qued  (flop rest)  ::  oldest first
         seen  (weld logs seen)  ::  newest first
         days  (count-events (flop logs))  ::  oldest first
       ==
-  %+  roll  `loglist`logs
-  |=  [log=event-log:rpc rest=loglist logs=(list [wen=@da wat=event])]
+  %+  roll  `loglist`qued
+  |=  [log=event-log:rpc [rest=loglist logs=(list [wen=@da wat=event])]]
   ::  to ensure logs are processed in sane order,
   ::  stop processing as soon as we skipped one
   ::
@@ -255,11 +347,28 @@
 ++  event-log-to-event
   |=  log=event-log:rpc
   ^-  (unit event)
-  ?:  =(azimuth:contracts address.log)
+  ?:  =(azimuth:mainnet-contracts address.log)
     =+  (event-log-to-point-diff log)
     ?~  -  ~
     `azimuth+u
-  ::TODO  delegated sending support
+  ?:  =(delegated-sending:mainnet-contracts address.log)
+    ?.  .=  i.topics.log
+        0x4763.8e3c.ddee.2204.81e4.c3f9.183d.639c.
+          0efe.a7f0.5fcd.2df4.1888.5572.9f71.5419
+      ~
+    =+  ^-  [of=@ pool=@]  ::TODO  =/
+      ~|  t.topics.log
+      %+  decode-topics:abi:ethereum  t.topics.log
+      ~[%uint %uint]
+    =+  ^-  [by=@ gift=@ to=@]  ::TODO  =/
+      ~|  data.log
+      %+  decode-topics:abi:ethereum
+        %+  rash  data.log
+        =-  ;~(pfix (jest '0x') -)
+        %+  stun  [3 3]
+        (bass 16 (stun [64 64] hit))
+      ~[%uint %uint %address]
+    `invite+[by of gift to]
   ~
 ::
 ::  +count-events: add events to the daily stats
@@ -304,33 +413,34 @@
 ++  count-event
   |=  [eve=event sat=stats]
   ^-  stats
-  ?>  ?=(%azimuth -.eve)
-  ?+  -.dif.eve  sat
-    %spawned           sat(spawned [who.dif.eve spawned.sat])
-    %activated         sat(activated [who.eve activated.sat])
-    %transfer-proxy    ?:  =(0x0 new.dif.eve)  sat
-                       sat(transfer-p [who.eve transfer-p.sat])
-    %owner             sat(transferred [who.eve transferred.sat])
-    %keys              sat(configured [who.eve configured.sat])
-    %continuity        sat(breached [who.eve breached.sat])
-    %escape            ?~  new.dif.eve  sat
-                       sat(request [who.eve request.sat])
-    %sponsor           ?.  has.new.dif.eve  sat
-                       sat(sponsor [who.eve sponsor.sat])
-    %management-proxy  sat(management-p [who.eve management-p.sat])
-    %voting-proxy      sat(voting-p [who.eve voting-p.sat])
-    %spawn-proxy       sat(spawn-p [who.eve spawn-p.sat])
+  ?-  -.eve
+    %invite  sat(invites-senders [by.eve invites-senders.sat])
+  ::
+      %azimuth
+    ?+  -.dif.eve  sat
+      %spawned           sat(spawned [who.dif.eve spawned.sat])
+      %activated         sat(activated [who.eve activated.sat])
+      %transfer-proxy    ?:  =(0x0 new.dif.eve)  sat
+                         sat(transfer-p [who.eve transfer-p.sat])
+      %owner             sat(transferred [who.eve transferred.sat])
+      %keys              sat(configured [who.eve configured.sat])
+      %continuity        sat(breached [who.eve breached.sat])
+      %escape            ?~  new.dif.eve  sat
+                         sat(request [who.eve request.sat])
+      %sponsor           ?.  has.new.dif.eve  sat
+                         sat(sponsor [who.eve sponsor.sat])
+      %management-proxy  sat(management-p [who.eve management-p.sat])
+      %voting-proxy      sat(voting-p [who.eve voting-p.sat])
+      %spawn-proxy       sat(spawn-p [who.eve spawn-p.sat])
+    ==
   ==
 ::
 ::
-::  +wake-export: periodically export data
+::  +export: periodically export data
 ::
-++  wake-export
-  |=  [=wire ~]
-  ^-  (quip move _+>)
-  :_  +>
-  :~  [ost %wait /export (add now export-frequency)]
-      (export-move %days (export-days days))
+++  export
+  ^-  (list card)
+  :~  (export-move %days (export-days days))
       (export-move %months (export-months days))
       (export-move %events export-raw)
   ==
@@ -339,10 +449,10 @@
 ::
 ++  export-move
   |=  [nom=@t dat=(list @t)]
-  ^-  move
-  :^  ost  %info  /export/[nom]
+  ^-  card
+  =-  [%pass /export/[nom] %arvo %c %info -]
   %+  foal:space:userlib
-    /(scot %p our)/home/(scot %da now)/gaze-exports/[nom]/txt
+    /(scot %p our.bowl)/home/(scot %da now.bowl)/gaze-exports/[nom]/txt
   [%txt !>(dat)]
 ::
 ::  +peek-x: accept gall scry
@@ -351,7 +461,7 @@
 ::    %/months/txt: per month, digest stats
 ::    %/raw/txt:    all observed events
 ::
-++  peek-x
+++  peek-x  ::TODO
   |=  pax=path
   ^-  (unit (unit (pair mark *)))
   ?~  pax  ~
@@ -395,6 +505,7 @@
       (weld management-p.sat management-p.sat.i.mos)
       (weld voting-p.sat voting-p.sat.i.mos)
       (weld spawn-p.sat spawn-p.sat.i.mos)
+      (weld invites-senders.sat invites-senders.sat.i.mos)
   ==
 ::
 ::  +export-days: generate a csv of stats per day
@@ -412,21 +523,24 @@
         "configured,"
         "configured (unique),"
         "escape request,"
-        "sponsor change"
+        "sponsor change,"
+        "invites,"
+        "invites (unique senders)"
       ==
   |^  ^-  (list @t)
       %+  turn  days
       |=  [day=@da stats]
       %-  crip
       ;:  weld
-        (scow %da day)        ","
-        (count spawned)       ","
-        (count activated)     ","
-        (count transfer-p)    ","
-        (unique transferred)  ","
-        (unique configured)   ","
-        (count request)       ","
-        (count sponsor)
+        (scow %da day)            ","
+        (count spawned)           ","
+        (count activated)         ","
+        (count transfer-p)        ","
+        (unique transferred)      ","
+        (unique configured)       ","
+        (count request)           ","
+        (count sponsor)           ","
+        (unique invites-senders)
       ==
   ::
   ++  count
@@ -452,20 +566,25 @@
         "date,"
         "point,"
         "event,"
-        "field 1"
+        "field 1,field2,field3"
       ==
   |^  ^-  (list @t)
       %+  turn  seen
-      |=  [wen=@da wat=event]
-      %-  crip
-      ;:  weld
-        (scow %da wen)  ","
-        (pon who.wat)   ","
-        (point-diff-to-row dif.wat)
-      ==
+      :: (cork tail event-to-row crip)
+      |=  [wen=@da =event]
+      (crip "{(scow %da wen)},{(event-to-row event)}")
+  ::
+  ++  event-to-row
+    |=  =event
+    ?-  -.event
+      %azimuth  (point-diff-to-row +.event)
+      %invite   (invite-to-row +.event)
+    ==
   ::
   ++  point-diff-to-row
-    |=  dif=diff-point
+    |=  [who=ship dif=diff-point]
+    ^-  tape
+    %+  weld  "{(pon who)},"
     ?-  -.dif
       %full               "full,"
       %owner              "owner,{(adr new.dif)}"
@@ -473,13 +592,17 @@
       %spawned            "spawned,{(pon who.dif)}"
       %keys               "keys,{(num life.dif)}"
       %continuity         "breached,{(num new.dif)}"
-      %sponsor            "sponsor,{(spo has.new.dif)} {(pon who.new.dif)}"
+      %sponsor            "sponsor,{(spo has.new.dif)},{(pon who.new.dif)}"
       %escape             "escape-req,{(req new.dif)}"
       %management-proxy   "management-p,{(adr new.dif)}"
       %voting-proxy       "voting-p,{(adr new.dif)}"
       %spawn-proxy        "spawn-p,{(adr new.dif)}"
       %transfer-proxy     "transfer-p,{(adr new.dif)}"
     ==
+  ::
+  ++  invite-to-row
+    |=  [by=ship of=ship ship to=address]
+    "{(pon by)},invite,{(pon of)},{(adr to)}"
   ::
   ++  num  (d-co:co 1)
   ++  pon  (cury scow %p)

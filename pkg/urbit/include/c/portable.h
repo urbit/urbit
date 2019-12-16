@@ -53,6 +53,7 @@
 #     include <stdio.h>
 #     include <sys/time.h>
 #     include <sys/resource.h>
+#     include <sys/syslimits.h>
 #     include <sys/mman.h>
 
 #   elif defined(U3_OS_bsd)

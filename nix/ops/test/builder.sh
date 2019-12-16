@@ -43,6 +43,10 @@ herb ./ship -d '+test, =seed `@uvI`(shaz %reproducible)' |
 
 herb ./ship -p hood -d '+hood/mass'
 
+herb ./ship -d '~&  ~  ~&  %start-pack  ~'
+herb ./ship -p hood -d '+hood/pack'
+herb ./ship -d '~&  ~  ~&  %finish-pack  ~'
+
 shutdown
 
 # Collect output

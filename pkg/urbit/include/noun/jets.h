@@ -190,6 +190,16 @@
         void
         u3j_ream(void);
 
+      /* u3j_stay(): extract cold state
+      */
+        u3_noun
+        u3j_stay(void);
+
+      /* u3j_load(): inject cold state
+      */
+        void
+        u3j_load(u3_noun rel);
+
       /* u3j_reap(): promote jet state.
       */
         void

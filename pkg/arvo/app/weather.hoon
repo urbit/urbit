@@ -1,4 +1,4 @@
-/+  *server
+/+  *server, *server, default-agent
 /=  tile-js
   /^  octs
   /;  as-octs:mimes:html
@@ -12,127 +12,139 @@
 =,  format
 ::
 |%
-:: +move: output effect
 ::
-+$  move  [bone card]
-:: +card: output effect payload
-::
-+$  card
-  $%  [%poke wire dock poke]
-      [%http-response =http-event:http]
-      [%diff %json json]
-      [%connect wire binding:eyre term]
-      [%request wire request:http outbound-config:iris]
-      [%wait wire @da]
++$  card  card:agent:gall
++$  versioned-state
+  $%  state-zero
   ==
-+$  poke
-  $%  [%launch-action [@tas path @t]]
-  ==
-+$  state
-  $%  [%0 data=json time=@da location=@t timer=(unit @da)]
-  ==
++$  state-zero  [%0 data=json time=@da location=@t timer=(unit @da)]
 --
+=|  state-zero
+=*  state  -
+^-  agent:gall
+=<
+  |_  bol=bowl:gall
+  +*  this  .
+      weather-core  +>
+      wc    ~(. weather-core bol)
+      def   ~(. (default-agent this %|) bol)
+  ++  on-init
+    :_  this
+    :~  [%pass /bind/weather %arvo %e %connect [~ /'~weather'] %weather]
+        :*  %pass  /launch/weather  %agent  [our.bol %launch]  %poke
+            %launch-action  !>([%weather /weathertile '/~weather/js/tile.js'])
+        ==
+    ==
+  ++  on-save  !>(state)
+  ++  on-load
+    |=  old=vase
+    `this(state !<(state-zero old))
+  ::
+  ++  on-poke
+    |=  [=mark =vase]
+    ^-  (quip card _this)
+    =^  cards  state
+      ?+    mark  (on-poke:def mark vase)
+          %json
+        (poke-json:wc !<(json vase))
+          %handle-http-request
+        =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
+        :_  state
+        %+  give-simple-payload:app  eyre-id
+        %+  require-authorization:app  inbound-request
+        poke-handle-http-request:wc
+      ==
+    [cards this]
+  ::
+  ++  on-watch
+    |=  =wire
+    ^-  (quip card _this)
+    ?:  ?=([%weathertile ~] wire)
+      :_  this
+      [%give %fact ~ %json !>(data)]~
+    ?:  ?=([%http-response *] wire)
+      [~ this]
+    (on-watch:def wire)
+  ::
+  ++  on-arvo
+    |=  [=wire =sign-arvo]
+    ^-  (quip card:agent:gall _this)
+    ?:  ?=(%bound +<.sign-arvo)
+      [~ this]
+    ?:  ?=(%wake +<.sign-arvo)
+      =^  cards  state
+        (wake:wc wire error.sign-arvo)
+      [cards this]
+    ?:  ?=(%http-response +<.sign-arvo)
+      =^  cards  state
+        (http-response:wc wire client-response.sign-arvo)
+      [cards this]
+    (on-arvo:def wire sign-arvo)
+
+  ::
+  ++  on-leave  on-leave:def
+  ++  on-peek   on-peek:def
+  ++  on-agent  on-agent:def
+  ++  on-fail   on-fail:def
+  --
 ::
-|_  [bol=bowl:gall state]
-::
-++  this  .
-::
-++  bound
-  |=  [wir=wire success=? binding=binding:eyre]
-  ^-  (quip move _this)
-  [~ this]
-::
-++  prep
-  |=  old=(unit state)
-  ^-  (quip move _this)
-  =/  launcha
-    [%launch-action [%weather /weathertile '/~weather/js/tile.js']]
-  :-
-  :~
-    [ost.bol %connect / [~ /'~weather'] %weather]
-    [ost.bol %poke /weather [our.bol %launch] launcha]
-  ==
-  ?~  old
-    this
-  %=  this
-    data  data.u.old
-    time  time.u.old
-  ==
-::
-++  peer-weathertile
-  |=  pax=path
-  ^-  (quip move _this)
-  [[ost.bol %diff %json data]~ this]
+|_  bol=bowl:gall
 ::
 ++  poke-json
   |=  jon=json
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?.  ?=(%s -.jon)
-    [~ this]
-  =/  str/@t  +.jon
-  =/  req/request:http  (request-darksky str)
+    [~ state]
+  =/  str=@t  +.jon
+  =/  req=request:http  (request-darksky str)
   =/  out  *outbound-config:iris
-  =/  lismov  [ost.bol %request /[(scot %da now.bol)] req out]~
+  =/  lismov  [%pass /[(scot %da now.bol)] %arvo %i %request req out]~
   ?~  timer
-    :-  [[ost.bol %wait /timer (add now.bol ~h3)] lismov]
-    %=  this
+    :-  [[%pass /timer %arvo %b %wait (add now.bol ~h3)] lismov]
+    %=  state 
       location  str
-      timer  `(add now.bol ~h3)
+      timer    `(add now.bol ~h3)
     ==
-  :-  lismov
-  %=  this
-    location  str
-  ==
+  [lismov state(location str)]
 ::
 ++  request-darksky
   |=  location=@t
   ^-  request:http
-  =/  base
-    "https://api.darksky.net/forecast/634639c10670c7376dc66b6692fe57ca/"
-  =/  url/@t  %-  crip
-    :(weld base (trip location) "?units=auto")
+  =/  base  'https://api.darksky.net/forecast/634639c10670c7376dc66b6692fe57ca/'
+  =/  url=@t  (cat 3 (cat 3 base location) '?units=auto')
   =/  hed  [['Accept' 'application/json']]~
   [%'GET' url hed *(unit octs)]
 ::
-++  send-tile-diff
-  |=  jon=json
-  ^-  (list move)
-  %+  turn  (prey:pubsub:userlib /weathertile bol)
-  |=  [=bone ^]
-  [bone %diff %json jon]
-::
 ++  http-response
   |=  [=wire response=client-response:iris]
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ::  ignore all but %finished
   ?.  ?=(%finished -.response)
-    [~ this]
-  =/  data/(unit mime-data:iris)  full-file.response
+    [~ state]
+  =/  data=(unit mime-data:iris)  full-file.response
   ?~  data
     :: data is null
-    [~ this]
-  =/  ujon/(unit json)  (de-json:html q.data.u.data)
+    [~ state]
+  =/  ujon=(unit json)  (de-json:html q.data.u.data)
   ?~  ujon
-     [~ this]
+     [~ state]
   ?>  ?=(%o -.u.ujon)
   ?:  (gth 200 status-code.response-header.response)
-    ~&  weather+u.ujon
-    ~&  weather+location
-    [~ this]
-  =/  jon/json  %-  pairs:enjs:format  :~
+    [~ state]
+  =/  jon=json  %-  pairs:enjs:format  :~
     currently+(~(got by p.u.ujon) 'currently')
     daily+(~(got by p.u.ujon) 'daily')
   ==
-  :-  (send-tile-diff jon)
-  %=  this
+  :-  [%give %fact `/weathertile %json !>(jon)]~
+  %=  state
     data  jon
     time  now.bol
   ==
 ::
 ++  poke-handle-http-request
-  %-  (require-authorization:app ost.bol move this)
   |=  =inbound-request:eyre
-  ^-  (quip move _this)
+  ^-  simple-payload:http
+  ::
   =/  request-line  (parse-request-line url.request.inbound-request)
   =/  back-path  (flop site.request-line)
   =/  name=@t
@@ -142,28 +154,27 @@
     i.back-path
   ::
   ?~  back-path
-    :_  this  ~
+    not-found:gen
   ?:  =(name 'tile')
-    [[ost.bol %http-response (js-response:app tile-js)]~ this]
+    (js-response:gen tile-js)
   ?:  (lte (lent back-path) 1)
-    [[ost.bol %http-response not-found:app]~ this]
+    not-found:gen
   ?:  =(&2:site.request-line 'img')
     =/  img  (as-octs:mimes:html (~(got by weather-png) `@ta`name))
-    [[ost.bol %http-response (png-response:app img)]~ this]
-  [~ this]
+    (png-response:gen img)
+  not-found:gen
 ::
 ++  wake
   |=  [wir=wire err=(unit tang)]
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?~  err
     =/  req/request:http  (request-darksky location)
     =/  out  *outbound-config:iris
-    :_  this(timer `(add now.bol ~h3))
-    :~
-      [ost.bol %request /[(scot %da now.bol)] req out]
-      [ost.bol %wait /timer (add now.bol ~h3)]
+    :_  state(timer `(add now.bol ~h3))
+    :~  [%pass /[(scot %da now.bol)] %arvo %i %request req out]
+        [%pass /timer %arvo %b %wait (add now.bol ~h3)]
     ==
-  ~&  err
-  [~ this]
+  %-  (slog u.err)
+  [~ state]
 ::
 --

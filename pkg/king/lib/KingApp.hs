@@ -1,11 +1,13 @@
 module KingApp
     ( App
     , runApp
+    , runPierApp
     , HasAppName(..)
     ) where
 
-import UrbitPrelude
+import Config
 import RIO.Directory
+import UrbitPrelude
 
 --------------------------------------------------------------------------------
 
@@ -37,7 +39,7 @@ withLogFileHandle act = do
 runApp :: RIO App a -> IO a
 runApp inner = do
     withLogFileHandle $ \logFile -> do
-        logOptions <- logOptionsHandle logFile True
+        logOptions <- logOptionsHandle stderr True
             <&> setLogUseTime True
             <&> setLogUseLoc False
 
@@ -45,5 +47,46 @@ runApp inner = do
             go $ App { _appLogFunc = logFunc
                      , _appName    = "Vere"
                      }
+  where
+    go app = runRIO app inner
+
+
+--------------------------------------------------------------------------------
+
+-- A PierApp is like an App, except that it also provides a PierConfig
+data PierApp = PierApp
+    { _shipAppLogFunc       :: !LogFunc
+    , _shipAppName          :: !Utf8Builder
+    , _shipAppPierConfig    :: !PierConfig
+    , _shipAppNetworkConfig :: !NetworkConfig
+    }
+
+makeLenses ''PierApp
+
+instance HasLogFunc PierApp where
+    logFuncL = shipAppLogFunc
+
+instance HasAppName PierApp where
+    appNameL = shipAppName
+
+instance HasPierConfig PierApp where
+    pierConfigL = shipAppPierConfig
+
+instance HasNetworkConfig PierApp where
+    networkConfigL = shipAppNetworkConfig
+
+runPierApp :: PierConfig -> NetworkConfig -> RIO PierApp a -> IO a
+runPierApp pierConfig networkConfig inner = do
+    withLogFileHandle $ \logFile -> do
+        logOptions <- logOptionsHandle stderr True
+            <&> setLogUseTime True
+            <&> setLogUseLoc False
+
+        withLogFunc logOptions $ \logFunc ->
+            go $ PierApp { _shipAppLogFunc = logFunc
+                         , _shipAppName    = "Vere"
+                         , _shipAppPierConfig = pierConfig
+                         , _shipAppNetworkConfig = networkConfig
+                         }
   where
     go app = runRIO app inner

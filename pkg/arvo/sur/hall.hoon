@@ -26,11 +26,11 @@
 +|  %query-models
 ::
 ++  query                                               ::  query paths
-  $%  {$client ~}                                      ::  shared ui state
+  $%  {$client ~}                                       ::  shared ui state
       {$circles who/ship}                               ::  readable circles
-      {$public ~}                                      ::  public memberships
+      {$public ~}                                       ::  public memberships
       {$burden who/ship}  ::TODO  eventually, nom/name. ::  duties to share
-      {$report ~}                                      ::  duty reports
+      {$report ~}                                       ::  duty reports
       {$peers nom/name}                                 ::  readers of story
       $:  $circle                                       ::  story query
           nom/name                                      ::  circle name
@@ -63,7 +63,7 @@
       {$circles cis/(set name)}                         ::  /circles
       {$public cis/(set circle)}                        ::  /public
       {$burden sos/(map name burden)}                   ::  /burden
-      {$report ~}                                      ::  /report
+      {$report ~}                                       ::  /report
       {$peers pes/(jar ship query)}                     ::  /peers
       {$circle package}                                 ::  /circle
   ==                                                    ::
@@ -103,7 +103,7 @@
       {$peer add/? who/ship qer/query}                  ::  gain/lose subscriber
       {$config cir/circle dif/diff-config}              ::  new/changed config
       {$status cir/circle who/ship dif/diff-status}     ::  new/changed status
-      {$remove ~}                                      ::  removed story
+      {$remove ~}                                       ::  removed story
   ==                                                    ::
 ++  rumor-story                                         ::  story rumor
   $%  {$gram src/circle nev/envelope}                   ::  new/changed message
@@ -172,7 +172,7 @@
 ++  command                                             ::  effect on story
   $%  {$publish tos/(list thought)}                     ::  deliver
       {$present nos/(set name) dif/diff-status}         ::  status update
-      {$bearing ~}                                     ::  prompt to listen
+      {$bearing ~}                                      ::  prompt to listen
   ==                                                    ::
 ::
 ::  #

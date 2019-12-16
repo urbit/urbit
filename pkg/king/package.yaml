@@ -1,5 +1,5 @@
 name: king
-version: 0.9.0
+version: 0.9.1
 license: AGPL-3.0-only
 
 flags:
@@ -60,7 +60,7 @@ dependencies:
   - iproute
   - largeword
   - lens
-  - lmdb
+  - lmdb-static
   - lock-file
   - megaparsec
   - memory
@@ -79,8 +79,6 @@ dependencies:
   - regex-tdfa-text
   - resourcet
   - rio
-  - sdl2
-  - sdl2-image
   - semigroups
   - smallcheck
   - stm

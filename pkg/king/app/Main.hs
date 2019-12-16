@@ -1,9 +1,4 @@
 {-
-    # Booting a Ship
-
-    - TODO Don't just boot, also run the ship (unless `-x` is set).
-    - TODO Figure out why ships booted by us don't work.
-
     # Event Pruning
 
     - `king discard-events NUM_EVENTS`: Delete the last `n` events from
@@ -12,31 +7,6 @@
     - `king discard-events-interactive`: Iterate through the events in
       the event log, from last to first, pretty-print each event, and
       ask if it should be pruned.
-
-
-    # `-L` -- Local-Only Networking
-
-    Localhost-only networking, even on real ships.
-
-
-    # `-O` -- Networking Disabled
-
-    Run networking drivers, but configure them to never send any packages
-    and to never open any ports.
-
-
-    # `-N` -- Dry Run
-
-    Disable all persistence and use no-op networking.
-
-
-    # `-x` -- Exit Immediately
-
-    When creating a new ship, or booting an existing one, simply get to
-    a good state, snapshot, and then exit. Don't do anything that has
-    any effect on the outside world, just boot or catch the snapshot up
-    to the event log.
-
 
     # Implement subcommands to test event and effect parsing.
 
@@ -77,7 +47,6 @@
     - `DryRun`: TODO Just the `-N` flag?
     - `Quiet`: TODO Just the `-q` flag?
     - `Hashless`: Don't use hashboard for jets.
-    - `Trace`: TODO What does this do?
 -}
 
 module Main (main) where
@@ -85,6 +54,7 @@ module Main (main) where
 import UrbitPrelude
 
 import Arvo
+import Config
 import Data.Acquire
 import Data.Conduit
 import Data.Conduit.List       hiding (catMaybes, map, replicate, take)
@@ -102,7 +72,7 @@ import Control.Concurrent   (myThreadId, runInBoundThread)
 import Control.Exception    (AsyncException(UserInterrupt))
 import Control.Lens         ((&))
 import Data.Default         (def)
-import KingApp              (runApp)
+import KingApp              (runApp, runPierApp)
 import System.Environment   (getProgName)
 import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
 import System.Random        (randomIO)
@@ -153,22 +123,80 @@ toSerfFlags CLI.Opts{..} = catMaybes m
     from False _   = Nothing
 
 
-tryBootFromPill :: HasLogFunc e
-                => Pill -> FilePath -> Bool -> Serf.Flags -> Ship
+toPierConfig :: FilePath -> CLI.Opts -> PierConfig
+toPierConfig pierPath CLI.Opts{..} = PierConfig
+  { pcPierPath = pierPath
+  , pcDryRun = oDryRun
+  }
+
+toNetworkConfig :: CLI.Opts -> NetworkConfig
+toNetworkConfig CLI.Opts{..} = NetworkConfig
+  { ncNetworking = if oDryRun then NetworkNone
+                   else if oOffline then NetworkNone
+                   else if oLocalhost then NetworkLocalhost
+                   else NetworkNormal
+  , ncAmesPort = oAmesPort
+  }
+
+tryBootFromPill :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
+                => Bool -> Pill -> Bool -> Serf.Flags -> Ship
                 -> LegacyBootEvent
                 -> RIO e ()
-tryBootFromPill pill shipPath lite flags ship boot = do
-    rwith bootedPier $ \(serf, log, ss) -> do
-        logTrace "Booting"
+tryBootFromPill oExit pill lite flags ship boot =
+  do
+    runOrExitImmediately bootedPier oExit
+  where
+    bootedPier = do
+        getPierPath >>= lockFile
+        rio $ logTrace "Starting boot"
+        sls <- Pier.booted pill lite flags ship boot
+        rio $ logTrace "Completed boot"
+        pure sls
+
+runOrExitImmediately :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
+                     => RAcquire e (Serf e, Log.EventLog, SerfState)
+                     -> Bool
+                     -> RIO e ()
+runOrExitImmediately getPier oExit =
+  do
+    rwith getPier $ if oExit then shutdownImmediately else runPier
+  where
+    shutdownImmediately (serf, log, ss) = do
+        logTrace "Sending shutdown signal"
         logTrace $ displayShow ss
         io $ threadDelay 500000
         ss <- shutdown serf 0
         logTrace $ displayShow ss
-        logTrace "Booted!"
+        logTrace "Shutdown!"
+
+    runPier sls = do
+        runRAcquire $ Pier.pier sls
+
+tryPlayShip :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
+            => Bool -> Bool -> Serf.Flags -> RIO e ()
+tryPlayShip exitImmediately fullReplay flags =
+  do
+    when fullReplay $ do
+      wipeSnapshot
+    runOrExitImmediately resumeShip exitImmediately
   where
-    bootedPier = do
-        lockFile shipPath
-        Pier.booted pill shipPath lite flags ship boot
+    wipeSnapshot = do
+        shipPath <- getPierPath
+        logTrace "wipeSnapshot"
+        logDebug $ display $ pack @Text ("Wiping " <> north shipPath)
+        logDebug $ display $ pack @Text ("Wiping " <> south shipPath)
+        removeFileIfExists (north shipPath)
+        removeFileIfExists (south shipPath)
+
+    north shipPath = shipPath <> "/.urb/chk/north.bin"
+    south shipPath = shipPath <> "/.urb/chk/south.bin"
+
+    resumeShip = do
+        getPierPath >>= lockFile
+        rio $ logTrace "RESUMING SHIP"
+        sls <- Pier.resumed flags
+        rio $ logTrace "SHIP RESUMED"
+        pure sls
 
 runAcquire :: (MonadUnliftIO m,  MonadIO m)
            => Acquire a -> m a
@@ -177,44 +205,6 @@ runAcquire act = with act pure
 runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
             => RAcquire e a -> m e a
 runRAcquire act = rwith act pure
-
-tryPlayShip :: HasLogFunc e => FilePath -> Serf.Flags -> RIO e ()
-tryPlayShip shipPath flags = do
-    runRAcquire $ do
-        lockFile shipPath
-        rio $ logTrace "RESUMING SHIP"
-        sls <- Pier.resumed shipPath flags
-        rio $ logTrace "SHIP RESUMED"
-        Pier.pier shipPath Nothing sls
-
-tryResume :: HasLogFunc e => FilePath -> Serf.Flags -> RIO e ()
-tryResume shipPath flags = do
-    rwith resumedPier $ \(serf, log, ss) -> do
-        logTrace (displayShow ss)
-        threadDelay 500000
-        ss <- shutdown serf 0
-        logTrace (displayShow ss)
-        logTrace "Resumed!"
-  where
-    resumedPier = do
-        lockFile shipPath
-        Pier.resumed shipPath flags
-
-tryFullReplay :: HasLogFunc e => FilePath -> Serf.Flags -> RIO e ()
-tryFullReplay shipPath flags = do
-    wipeSnapshot
-    tryResume shipPath flags
-  where
-    wipeSnapshot = do
-        logTrace "wipeSnapshot"
-        logDebug $ display $ pack @Text ("Wiping " <> north)
-        logDebug $ display $ pack @Text ("Wiping " <> south)
-        removeFileIfExists north
-        removeFileIfExists south
-
-    north = shipPath <> "/.urb/chk/north.bin"
-    south = shipPath <> "/.urb/chk/south.bin"
-
 
 --------------------------------------------------------------------------------
 
@@ -231,7 +221,9 @@ checkEvs pierPath first last = do
 
     showEvents :: EventId -> EventId -> ConduitT ByteString Void (RIO e) ()
     showEvents eId _ | eId > last = pure ()
-    showEvents eId cycle          =
+    showEvents eId cycle          = do
+        when (eId `mod` 10000 == 0) $ do
+            lift $ logTrace (display ("#" <> tshow eId))
         await >>= \case
             Nothing -> lift $ logTrace "Everything checks out."
             Just bs -> do
@@ -239,8 +231,9 @@ checkEvs pierPath first last = do
                     n <- io $ cueBSExn bs
                     when (eId > cycle) $ do
                         (mug, wen, evNoun) <- unpackJob n
-                        fromNounErr evNoun &
-                            either (logError . displayShow) pure
+                        fromNounErr evNoun & \case
+                            Left err        -> logError (displayShow (eId, err))
+                            Right (_ ∷ Ev) -> pure ()
                 showEvents (succ eId) cycle
 
     unpackJob :: Noun -> RIO e (Mug, Wen, Noun)
@@ -371,7 +364,7 @@ newShip CLI.New{..} opts
   | CLI.BootFake name <- nBootType = do
       pill <- pillFrom nPillSource
       ship <- shipFrom name
-      tryBootFromPill pill (pierPath name) nLite flags ship (Fake ship)
+      runTryBootFromPill pill name ship (Fake ship)
 
   | CLI.BootFromKeyfile keyFile <- nBootType = do
       text <- readFileUtf8 keyFile
@@ -415,20 +408,31 @@ newShip CLI.New{..} opts
         Left x -> error $ unpack x
         Right dawn -> do
           let ship = sShip $ dSeed dawn
-          path <- pierPath <$> nameFromShip ship
-          tryBootFromPill pill path nLite flags ship (Dawn dawn)
+          name <- nameFromShip ship
+          runTryBootFromPill pill name ship (Dawn dawn)
 
     flags = toSerfFlags opts
 
+    -- Now that we have all the information for running an application with a
+    -- PierConfig, do so.
+    runTryBootFromPill pill name ship bootEvent = do
+      let pierConfig = toPierConfig (pierPath name) opts
+      let networkConfig = toNetworkConfig opts
+      io $ runPierApp pierConfig networkConfig $
+        tryBootFromPill (CLI.oExit opts) pill nLite flags ship bootEvent
 
 
-runShip :: HasLogFunc e => CLI.Run -> CLI.Opts -> RIO e ()
-runShip (CLI.Run pierPath) opts = tryPlayShip pierPath (toSerfFlags opts)
+runShip :: CLI.Run -> CLI.Opts -> IO ()
+runShip (CLI.Run pierPath) opts = do
+    let pierConfig = toPierConfig pierPath opts
+    let networkConfig = toNetworkConfig opts
+    runPierApp pierConfig networkConfig $
+      tryPlayShip (CLI.oExit opts) (CLI.oFullReplay opts) (toSerfFlags opts)
 
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
 startBrowser pierPath = runRAcquire $ do
-    lockFile pierPath
+    -- lockFile pierPath
     log <- Log.existing (pierPath <> "/.urb/log")
     rio $ EventBrowser.run log
 
@@ -470,17 +474,17 @@ main = do
 
     installHandler sigTERM (Catch onTermSig) Nothing
 
-    CLI.parseArgs >>= runApp . \case
+    CLI.parseArgs >>= \case
         CLI.CmdRun r o                            -> runShip r o
-        CLI.CmdNew n o                            -> newShip n o
-        CLI.CmdBug (CLI.CollectAllFX pax)         -> collectAllFx pax
-        CLI.CmdBug (CLI.EventBrowser pax)         -> startBrowser pax
-        CLI.CmdBug (CLI.ValidatePill pax pil seq) -> testPill pax pil seq
-        CLI.CmdBug (CLI.ValidateEvents pax f l)   -> checkEvs pax f l
-        CLI.CmdBug (CLI.ValidateFX pax f l)       -> checkFx  pax f l
-        CLI.CmdBug (CLI.CheckDawn pax)            -> checkDawn pax
-        CLI.CmdBug CLI.CheckComet                 -> checkComet
-        CLI.CmdCon port                           -> connTerm port
+        CLI.CmdNew n o                            -> runApp $ newShip n o
+        CLI.CmdBug (CLI.CollectAllFX pax)         -> runApp $ collectAllFx pax
+        CLI.CmdBug (CLI.EventBrowser pax)         -> runApp $ startBrowser pax
+        CLI.CmdBug (CLI.ValidatePill pax pil seq) -> runApp $ testPill pax pil seq
+        CLI.CmdBug (CLI.ValidateEvents pax f l)   -> runApp $ checkEvs pax f l
+        CLI.CmdBug (CLI.ValidateFX pax f l)       -> runApp $ checkFx  pax f l
+        CLI.CmdBug (CLI.CheckDawn pax)            -> runApp $ checkDawn pax
+        CLI.CmdBug CLI.CheckComet                 -> runApp $ checkComet
+        CLI.CmdCon port                           -> runApp $ connTerm port
 
 
 --------------------------------------------------------------------------------

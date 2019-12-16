@@ -6,7 +6,7 @@ module Noun.Conversions
   , Bytes(..), Octs(..), File(..)
   , Cord(..), Knot(..), Term(..), Tape(..), Tour(..)
   , BigTape(..), BigCord(..)
-  , Wall
+  , Wall, Each(..)
   , UD(..), UV(..), UW(..), cordToUW
   , Mug(..), Path(..), EvilPath(..), Ship(..)
   , Lenient(..), pathToFilePath, filePathToPath
@@ -14,7 +14,7 @@ module Noun.Conversions
 
 import ClassyPrelude hiding (hash)
 
-import Control.Lens hiding (Index, (<.>))
+import Control.Lens hiding (Index, Each, (<.>))
 import Data.Void
 import Data.Word
 import Noun.Atom
@@ -685,34 +685,36 @@ instance FromNoun a => FromNoun (Maybe a) where
     where
       unexpected s = fail ("Expected unit value, but got " <> s)
 
+-- Each is a direct translation of Hoon +each, preserving order
+data Each a b
+    = EachYes a
+    | EachNo b
+  deriving (Eq, Ord, Show)
 
--- Either is `each` ------------------------------------------------------------
+instance (ToNoun a, ToNoun b) => ToNoun (Each a b) where
+    toNoun (EachYes x) = C (A 0) (toNoun x)
+    toNoun (EachNo x)  = C (A 1) (toNoun x)
 
-instance (ToNoun a, ToNoun b) => ToNoun (Either a b) where
-  toNoun (Left x)  = Cell (Atom 0) (toNoun x)
-  toNoun (Right x) = Cell (Atom 1) (toNoun x)
-
-instance (FromNoun a, FromNoun b) => FromNoun (Either a b) where
-  parseNoun n = named "Either" $ do
-      (Atom tag, v) <- parseNoun n
-      case tag of
-        0 -> named "%|" (Left <$> parseNoun v)
-        1 -> named "%&" (Right <$> parseNoun v)
-        n -> fail ("Each has invalid head-atom: " <> show n)
-
+instance (FromNoun a, FromNoun b) => FromNoun (Each a b) where
+    parseNoun n = named "Each" $ do
+        (Atom tag, v) <- parseNoun n
+        case tag of
+            0 -> named "&" (EachYes <$> parseNoun v)
+            1 -> named "|" (EachNo <$> parseNoun v)
+            n -> fail ("Each has invalid head-atom: " <> show n)
 
 -- Tuple Conversions -----------------------------------------------------------
 
 instance ToNoun () where
-  toNoun () = Atom 0
+    toNoun () = Atom 0
 
 instance FromNoun () where
-  parseNoun = named "()" . \case
-    Atom 0 -> pure ()
-    x      -> fail ("expecting `~`, but got " <> show x)
+    parseNoun = named "()" . \case
+        Atom 0 -> pure ()
+        x      -> fail ("expecting `~`, but got " <> show x)
 
 instance (ToNoun a, ToNoun b) => ToNoun (a, b) where
-  toNoun (x, y) = Cell (toNoun x) (toNoun y)
+    toNoun (x, y) = Cell (toNoun x) (toNoun y)
 
 
 shortRec :: Word -> Parser a

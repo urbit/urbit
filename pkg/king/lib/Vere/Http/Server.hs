@@ -26,6 +26,7 @@
 module Vere.Http.Server where
 
 import Arvo            hiding (ServerId, reqBody, reqUrl, secure)
+import Config
 import Data.Conduit
 import Noun
 import UrbitPrelude    hiding (Builder)
@@ -47,7 +48,7 @@ import qualified Network.Wai.Handler.WarpTLS as W
 
 -- Internal Types --------------------------------------------------------------
 
-type ReqId = UD
+type ReqId = Atom
 type SeqId = UD -- Unused, always 1
 
 {-
@@ -384,10 +385,10 @@ app env sId liv plan which req respond =
 {-
     TODO Need to find an open port.
 -}
-startServ :: HasLogFunc e
-          => FilePath -> HttpServerConf -> (Ev -> STM ())
+startServ :: (HasPierConfig e, HasLogFunc e)
+          => HttpServerConf -> (Ev -> STM ())
           -> RIO e Serv
-startServ pierPath conf plan = do
+startServ conf plan = do
   logDebug "startServ"
 
   let tls = hscSecure conf <&> \(PEM key, PEM cert) ->
@@ -428,6 +429,7 @@ startServ pierPath conf plan = do
                       $ W.runTLSSocket tlsOpts httpsOpts httpsSock
                       $ app env sId liv plan Secure
 
+  pierPath <- getPierPath
   let por = Ports (tls <&> const httpsPort) httpPort loopPort
       fil = pierPath <> "/.http.ports"
 
@@ -459,10 +461,10 @@ respond (Drv v) reqId ev = do
                       for_ (reorgHttpEvent ev) $
                         atomically . respondToLiveReq (sLiveReqs sv) reqId
 
-serv :: ∀e. HasLogFunc e
-     => FilePath -> KingId -> QueueEv
+serv :: ∀e. (HasPierConfig e, HasLogFunc e)
+     => KingId -> QueueEv
      -> ([Ev], RAcquire e (EffCb e HttpServerEf))
-serv pier king plan =
+serv king plan =
     (initialEvents, runHttpServer)
   where
     initialEvents :: [Ev]
@@ -474,7 +476,7 @@ serv pier king plan =
     restart :: Drv -> HttpServerConf -> RIO e Serv
     restart (Drv var) conf = do
         logDebug "Restarting http server"
-        res <- fromEither =<< restartService var (startServ pier conf plan) killServ
+        res <- fromEither =<< restartService var (startServ conf plan) killServ
         logDebug "Done restating http server"
         pure res
 
