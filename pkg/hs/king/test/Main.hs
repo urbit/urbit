@@ -24,7 +24,8 @@ import qualified NounConversionTests
 
 main :: IO ()
 main = do
-    makeAbsolute "../.." >>= setCurrentDirectory
+    makeAbsolute "../../.." >>= setCurrentDirectory
+    getCurrentDirectory >>= print
     setEnv "TASTY_NUM_THREADS" "1"
     runInBoundThread $ defaultMain $ testGroup "Urbit"
         [ AmesTests.tests
