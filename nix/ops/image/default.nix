@@ -8,22 +8,19 @@ pkgs.dockerTools.buildImage {
 
     set -euo pipefail
 
-    export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
-
     ${pkgs.dockerTools.shadowSetup}
 
-    mkdir -p /bin /share /data /tmp
+    mkdir -p /share /data /tmp
 
     ${pkgs.coreutils}/bin/ln -sf ${pill} /share/urbit.pill
-    ${pkgs.coreutils}/bin/ln -sf ${entrypoint} /bin/urbit
   '';
 
+  contents = [ urbit ];
+
   config = {
-    Entrypoint = [ "urbit" ];
+    Entrypoint = [ urbit.meta.name ];
 
     WorkingDir = "/data";
-
-    Env = [ "PATH=/bin" ];
 
     Volumes = {
       "/data" = {};
