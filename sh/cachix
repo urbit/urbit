@@ -30,10 +30,39 @@ nix-build --no-out-link          \
           nix/cachix/release.nix \
   > .cache.list
 
+
 cachix push urbit2 < .cache.list
+
+cachix use urbit3
 
 pushd ./pkg/hs
 
-nix-build --no-link -A fullBuildScript | cachix push urbit2
+nix-build --no-link -A fullBuildScript |
+    cachix push urbit3
+
+/nix/store/phhk761qzgic688rnfhbn5jq7ra1im1q-stack2nix-build-script.sh |
+    cachix push urbit3
+
+/nix/store/frsdhkhqd7fpzbmnzd9zmvq9klw20svm-nix-2.2.2/bin/nix-build  \
+    --no-link -A static_package --argstr stack2nix-output-path       \
+    /nix/store/l0gaf46sjxpiswdyawi870nvfdd8xvg3-stack2nix-output.nix |
+    cachix push urbit3
+
+popd
+
+cachix use urbit2
+
+pushd ./pkg/hs
+
+nix-build --no-link -A fullBuildScript |
+    cachix push urbit2
+
+/nix/store/phhk761qzgic688rnfhbn5jq7ra1im1q-stack2nix-build-script.sh |
+    cachix push urbit2
+
+/nix/store/frsdhkhqd7fpzbmnzd9zmvq9klw20svm-nix-2.2.2/bin/nix-build  \
+    --no-link -A static_package --argstr stack2nix-output-path       \
+    /nix/store/l0gaf46sjxpiswdyawi870nvfdd8xvg3-stack2nix-output.nix |
+    cachix push urbit2
 
 popd

@@ -16,12 +16,7 @@ fi
 
 mkdir -p release
 
-stack clean # Make sure we optimize
-stack install king --local-bin-path ./release
-mv release/king release/king-linux64-$ver
-
-# OSX
-# otool -L ./release/king-darwin-$ver
+cp $(nix-build --no-link -A fullBuildScript) release/king-linux64-$ver
 
 for plat in linux64 darwin
 do
