@@ -15,6 +15,7 @@ module Uruk.Demo
     , reduce
     , jam
     , church
+    , jet
     ) where
 
 import ClassyPrelude
@@ -71,10 +72,10 @@ reduce = \case
     D:@x                   -> reduce x & \case
                                 Nothing -> Just (jam x)
                                 Just xv -> Just (D :@ xv)
-    J:@S:@n:@b:@p          -> Just (b:@p)
+    J:@J:@n:@b:@p          -> Just (b:@p)
     J:@K:@n:@b:@p:@q       -> Just (b:@p:@q)
-    J:@D:@n:@b:@p:@q:@r    -> Just (b:@p:@q:@r)
-    J:@J:@n:@b:@p:@q:@r:@s -> Just (b:@p:@q:@r:@s)
+    J:@S:@n:@b:@p:@q:@r    -> Just (b:@p:@q:@r)
+    J:@D:@n:@b:@p:@q:@r:@s -> Just (b:@p:@q:@r:@s)
     x:@y                   -> case (reduce x, reduce y) of
                                 (Nothing, Nothing) -> Nothing
                                 (Just xv, _      ) -> Just (xv :@ y)
@@ -90,7 +91,18 @@ church = jetNat . go
     go 0 = S :@ K
     go n = S :@ (S:@(K:@S):@K) :@ go (pred n)
 
-    jetNat n = J :@ K :@ S :@ n
+    jetNat = jet 1 "nat"
+
+-- XX TODO church encoded cords for names
+jet 0 _  b = b
+jet 1 nm b = J :@ J :@ cord nm :@ b
+jet 2 nm b = J :@ K :@ cord nm :@ b
+jet 3 nm b = J :@ S :@ cord nm :@ b
+jet 4 nm b = J :@ D :@ cord nm :@ b
+jet n nm b = J :@ church (pred n) :@ cord nm :@ b
+
+cord ∷ Text → Ur
+cord _ = S -- TODO
 
 --
 --  Serialize and Uruk expression and church-encode it.
