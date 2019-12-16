@@ -19,11 +19,9 @@ in pkgs.dockerTools.buildImage {
 
     set -euo pipefail
 
-    export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
-
     ${pkgs.dockerTools.shadowSetup}
 
-    mkdir -p /bin /share /data /tmp
+    mkdir -p /share /data /tmp
 
     ${link solid "/share/solid.pill"}
     ${link brass "/share/brass.pill"}
@@ -33,11 +31,9 @@ in pkgs.dockerTools.buildImage {
   contents = [ urbit herb ];
 
   config = {
-    Entrypoint = [ "urbit" ];
+    Entrypoint = [ urbit.meta.name ];
 
     WorkingDir = "/data";
-
-    Env = [ "PATH=/bin" ];
 
     Volumes = {
       "/data" = {};
