@@ -22,7 +22,7 @@ data Ev = Blits [Blit]
   deriving (Show)
 
 data Client = Client
-    { take :: STM Belt
+    { take :: STM (Maybe Belt)
     , give :: [Ev] -> STM ()
     }
 

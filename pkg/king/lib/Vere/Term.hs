@@ -3,7 +3,7 @@ module Vere.Term
     , localClient
     , connectToRemote
     , runTerminalClient
-    , termServer
+    , connClient
     , term
     ) where
 
@@ -113,31 +113,11 @@ isTerminalBlit _         = True
 
 --------------------------------------------------------------------------------
 
-{-
-    TODO XX HACK: We don't have any good way of handling client
-        disconnect, so we just retry. This will probably waste CPU.
--}
-termServer :: ∀e. HasLogFunc e
-           => RAcquire e (STM (Maybe Client), Port)
-termServer = fst <$> mkRAcquire start stop
-  where
-    stop = cancel . snd
-    start = do
-        serv <- Serv.wsServer @Belt @[Term.Ev]
-
-        let getClient = do
-                Serv.sAccept serv <&> \case
-                    Nothing -> Nothing
-                    Just c  -> Just $ Client
-                        { give = Serv.cSend c
-                        , take = Serv.cRecv c >>= \case
-                                     Nothing -> empty
-                                     Just ev -> pure ev
-                        }
-
-        pure ( (getClient, Port $ fromIntegral $ Serv.sData serv)
-             , Serv.sAsync serv
-             )
+connClient :: Serv.Conn Belt [Term.Ev] -> Client
+connClient c = Client
+    { give = Serv.cSend c
+    , take = Serv.cRecv c
+    }
 
 connectToRemote :: ∀e. HasLogFunc e
                 => Port
@@ -147,10 +127,13 @@ connectToRemote port local = mkRAcquire start stop
   where
     stop (x, y) = cancel x >> cancel y
     start = do
-        Serv.Client{..} <- Serv.wsClient (fromIntegral port)
+        Serv.Client{..} <- Serv.wsClient "/terminal/0" (fromIntegral port)
 
+        -- TODO XX Handle disconnect more cleanly.
         ferry <- async $ forever $ atomically $ asum
-            [ Term.take local >>= Serv.cSend cConn
+            [ Term.take local >>= \case
+                  Nothing -> empty
+                  Just ev -> Serv.cSend cConn ev
             , Serv.cRecv cConn >>= \case
                   Nothing -> empty
                   Just ev -> Term.give local ev
@@ -164,11 +147,13 @@ instance HasConfigDir HackConfigDir where configDirL = hcdPax
 
 runTerminalClient :: ∀e. HasLogFunc e => FilePath -> RIO e ()
 runTerminalClient pier = runRAcquire $ do
-    mPort          <- runRIO (HCD pier) readPortsFile
-    port           <- maybe (error "Can't connect") pure mPort
-    (tsize, local) <- localClient
-    (tid1, tid2)   <- connectToRemote (Port $ fromIntegral port) local
-    atomically $ waitSTM tid1 <|> waitSTM tid2
+    mPort      <- runRIO (HCD pier) readPortsFile
+    port       <- maybe (error "Can't connect") pure mPort
+    mExit      <- io newEmptyTMVarIO
+    (siz, cli) <- localClient (putTMVar mExit ())
+    (tid, sid) <- connectToRemote (Port $ fromIntegral port) cli
+    atomically $ waitSTM tid <|> waitSTM sid <|> takeTMVar mExit
+
   where
     runRAcquire :: RAcquire e () -> RIO e ()
     runRAcquire act = rwith act $ const $ pure ()
@@ -176,8 +161,10 @@ runTerminalClient pier = runRAcquire $ do
 {-
     Initializes the generalized input/output parts of the terminal.
 -}
-localClient :: ∀e. HasLogFunc e => RAcquire e (TSize.Window Word, Client)
-localClient = fst <$> mkRAcquire start stop
+localClient :: ∀e. HasLogFunc e
+            => STM ()
+            -> RAcquire e (TSize.Window Word, Client)
+localClient doneSignal = fst <$> mkRAcquire start stop
   where
     start :: HasLogFunc e => RIO e ((TSize.Window Word, Client), Private)
     start = do
@@ -202,7 +189,7 @@ localClient = fst <$> mkRAcquire start stop
       pReaderThread <- asyncBound
           (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
 
-      let client = Client { take = readTQueue tsReadQueue
+      let client = Client { take = Just <$> readTQueue tsReadQueue
                           , give = writeTQueue tsWriteQueue
                           }
 
@@ -504,8 +491,10 @@ localClient = fst <$> mkRAcquire start stop
                   writeTQueue rq $ Ctl $ Cord "c"
                 loop rd
               else if w <= 26 then do
-                sendBelt $ Ctl $ Cord $ pack [BS.w2c (w + 97 - 1)]
-                loop rd
+                case pack [BS.w2c (w + 97 - 1)] of
+                    "d" -> atomically doneSignal
+                    c   -> do sendBelt $ Ctl $ Cord c
+                              loop rd
               else if w == 27 then do
                 loop rd { rdEscape = True }
               else do
@@ -537,28 +526,31 @@ term (tsize, Client{..}) shutdownSTM king enqueueEv =
 
     runTerm :: RAcquire e (EffCb e TermEf)
     runTerm = do
-      tim <- mkRAcquire start cancel
+      tim <- mkRAcquire (async readLoop) cancel
       pure handleEffect
 
-    start :: RIO e (Async ())
-    start = async readBelt
-
-    readBelt :: RIO e ()
-    readBelt = forever $ do
-      b <- atomically take
-      let blip = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ b
-      atomically $ enqueueEv $ blip
+    {-
+        Because our terminals are always `Demux`ed, we don't have to
+        care about disconnections.
+    -}
+    readLoop :: RIO e ()
+    readLoop = forever $ do
+        atomically take >>= \case
+            Nothing -> pure ()
+            Just b  -> do
+                let blip = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ b
+                atomically $ enqueueEv $ blip
 
     handleEffect :: TermEf -> RIO e ()
     handleEffect = \case
-      TermEfBlit _ blits -> do
-        let (termBlits, fsWrites) = partition isTerminalBlit blits
-        atomically $ give [Term.Blits termBlits]
-        for_ fsWrites handleFsWrite
-      TermEfInit _ _ -> pure ()
-      TermEfLogo path _ -> do
-        atomically $ shutdownSTM
-      TermEfMass _ _ -> pure ()
+        TermEfInit _ _     -> pure ()
+        TermEfMass _ _     -> pure ()
+        TermEfLogo _ _     -> atomically shutdownSTM
+        TermEfBlit _ blits -> do
+            let (termBlits, fsWrites) = partition isTerminalBlit blits
+            atomically $ give [Term.Blits termBlits]
+            for_ fsWrites handleFsWrite
+
 
     handleFsWrite :: Blit -> RIO e ()
     handleFsWrite (Sag path noun) = performPut path (jamBS noun)

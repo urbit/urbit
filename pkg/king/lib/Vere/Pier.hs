@@ -152,7 +152,12 @@ pier (serf, log, ss) = do
     saveM     <- newEmptyTMVarIO
     shutdownM <- newEmptyTMVarIO
 
-    _api ← King.kingAPI
+    kapi ← King.kingAPI
+
+    termApiQ <- atomically $ do
+        q <- newTQueue
+        writeTVar (King.kTermConn kapi) (Just $ writeTQueue q)
+        pure q
 
     let shutdownEvent = putTMVar shutdownM ()
 
@@ -160,28 +165,22 @@ pier (serf, log, ss) = do
 
     -- (sz, local) <- Term.localClient
 
-    (waitExternalTerm, termServPort) <- Term.termServer
+    -- (waitExternalTerm, termServPort) <- Term.termServer
 
     (demux, muxed) <- atomically $ do
         res <- Term.mkDemux
         --  Term.addDemux local res
         pure (res, Term.useDemux res)
 
-    rio $ logInfo $ display $
-        "TERMSERV Terminal Server running on port: " <> tshow termServPort
+    -- rio $ logInfo $ display $
+        -- "TERMSERV Terminal Server running on port: " <> tshow termServPort
 
-    let listenLoop = do
+    acquireWorker $ forever $ do
             logTrace "TERMSERV Waiting for external terminal."
-            ok <- atomically $ do
-                waitExternalTerm >>= \case
-                    Nothing  -> pure False
-                    Just ext -> Term.addDemux ext demux >> pure True
-            if ok
-               then do logTrace "TERMSERV External terminal connected"
-                       listenLoop
-               else logTrace "TERMSERV Termainal server is dead"
-
-    acquireWorker listenLoop
+            atomically $ do
+                ext <- Term.connClient <$> readTQueue termApiQ
+                Term.addDemux ext demux
+            logTrace "TERMSERV External terminal connected."
 
     swapMVar (sStderr serf) (atomically . Term.trace muxed)
 
