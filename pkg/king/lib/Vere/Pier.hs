@@ -154,13 +154,13 @@ pier (serf, log, ss) = do
 
     inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
-    (sz, local) <- Term.localClient
+    -- (sz, local) <- Term.localClient
 
     (waitExternalTerm, termServPort) <- Term.termServer
 
     (demux, muxed) <- atomically $ do
         res <- Term.mkDemux
-        Term.addDemux local res
+        --  Term.addDemux local res
         pure (res, Term.useDemux res)
 
     rio $ logInfo $ display $
@@ -193,7 +193,7 @@ pier (serf, log, ss) = do
             drivers inst ship (isFake logId)
                 (writeTQueue computeQ)
                 shutdownEvent
-                (sz, muxed)
+                (TSize.Window 80 24, muxed)
                 showErr
 
     io $ atomically $ for_ bootEvents (writeTQueue computeQ)

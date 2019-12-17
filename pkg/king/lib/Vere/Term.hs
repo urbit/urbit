@@ -509,7 +509,7 @@ localClient = fst <$> mkRAcquire start stop
 
         sendBelt :: HasLogFunc e => Belt -> RIO e ()
         sendBelt b = do
-          logDebug $ displayShow ("terminalBelt", b)
+          -- logDebug $ displayShow ("terminalBelt", b)
           atomically $ writeTQueue rq b
 
 --------------------------------------------------------------------------------
