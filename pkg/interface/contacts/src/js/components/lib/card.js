@@ -6,8 +6,8 @@ import { api } from '/api';
 import { Route, Link } from 'react-router-dom';
 
 export class ContactCard extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       edit: false,
       colorToSet: "",
@@ -25,20 +25,20 @@ export class ContactCard extends Component {
     this.websiteToSet = this.websiteToSet.bind(this);
     this.notesToSet = this.notesToSet.bind(this);
     this.setField = this.setField.bind(this);
-
   }
 
   componentDidUpdate() {
+    const { props } = this;
     // sigil color updates are done by keystroke parsing on update
     // other field edits are exclusively handled by setField()
-    let currentColor = (this.props.contact.color) ? this.props.contact.color : "0x0";
+    let currentColor = (props.contact.color) ? props.contact.color : "0x0";
     let currentHex = uxToHex(currentColor);
     let hexExp = /#?([0-9A-Fa-f]{6})/
     let hexTest = hexExp.exec(this.state.colorToSet);
 
     if ((hexTest) && (hexTest[1] !== currentHex)) {
-      let ship = "~" + this.props.ship;
-      api.contactEdit(this.props.path, ship, {color: hexTest[1]});
+      let ship = "~" + props.ship;
+      api.contactEdit(props.path, ship, {color: hexTest[1]});
     }
   }
 
@@ -83,7 +83,8 @@ export class ContactCard extends Component {
   }
 
   setField(field) {
-    let ship = "~" + this.props.ship;
+    const { props, state } = this;
+    let ship = "~" + props.ship;
     let emailTest = new RegExp('' 
       + /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*/.source 
       + /@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.source
@@ -101,85 +102,95 @@ export class ContactCard extends Component {
 
     switch (field) {
       case "email": {
-        if ((this.state.emailToSet === "")
-          || (this.state.emailToSet === this.props.contact.email)) {
+        if (
+          (state.emailToSet === "") ||
+          (state.emailToSet === props.contact.email)
+        ) {
           return false;
         }
-        let emailTestResult = emailTest.exec(this.state.emailToSet);
+        let emailTestResult = emailTest.exec(state.emailToSet);
         if (emailTestResult) {
-          api.contactEdit(this.props.path, ship, { email: this.state.emailToSet });
+          api.contactEdit(props.path, ship, { email: state.emailToSet });
         }
         break;
       }
       case "nickname": {
-        if ((this.state.nickNameToSet === "")
-          || (this.state.nickNameToSet === this.props.contact.nickname)) {
+        if (
+          (state.nickNameToSet === "") ||
+          (state.nickNameToSet === props.contact.nickname)
+        ) {
           return false;
         }
-        api.contactEdit(this.props.path, ship, { nickname: this.state.nickNameToSet });
+        api.contactEdit(props.path, ship, { nickname: state.nickNameToSet });
         break;
       }
       case "notes": {
-        if ((this.state.notesToSet === "")
-          || (this.state.notesToSet === this.props.contact.notes)) {
+        if (
+          (state.notesToSet === "") ||
+          (state.notesToSet === props.contact.notes)
+        ) {
           return false;
         }
-        api.contactEdit(this.props.path, ship, { notes: this.state.notesToSet });
+        api.contactEdit(props.path, ship, { notes: state.notesToSet });
         break;
       }
       case "phone": {
-        if ((this.state.phoneToSet === "")
-          || (this.state.phoneToSet === this.props.contact.phone)) {
+        if (
+          (state.phoneToSet === "") ||
+          (state.phoneToSet === props.contact.phone)
+        ) {
           return false;
         }
-        let phoneTestResult = phoneTest.exec(this.state.phoneToSet);
+        let phoneTestResult = phoneTest.exec(state.phoneToSet);
         if (phoneTestResult) {
-          api.contactEdit(this.props.path, ship, { phone: this.state.phoneToSet });
+          api.contactEdit(props.path, ship, { phone: state.phoneToSet });
         }
         break;
       }
       case "website": {
-        if ((this.state.websiteToSet === "")
-          || (this.state.websiteToSet === this.props.contact.website)) {
+        if (
+          (state.websiteToSet === "") ||
+          (state.websiteToSet === props.contact.website)
+        ) {
           return false;
         }
-        let websiteTestResult = websiteTest.exec(this.state.websiteToSet);
+        let websiteTestResult = websiteTest.exec(state.websiteToSet);
         if (websiteTestResult) {
-          api.contactEdit(this.props.path, ship, { website: this.state.websiteToSet });
+          api.contactEdit(props.path, ship, { website: state.websiteToSet });
         }
         break;
       }
       case "removeAvatar": {
-        api.contactEdit(this.props.path, ship, { avatar: null });
+        api.contactEdit(props.path, ship, { avatar: null });
         break;
       }
       case "removeEmail": {
         this.setState({ emailToSet: "" });
-        api.contactEdit(this.props.path, ship, { email: "" });
+        api.contactEdit(props.path, ship, { email: "" });
         this.refs.email.value = "";
         break;
       }
       case "removeNickname": {
         this.setState({ nicknameToSet: "" });
-        api.contactEdit(this.props.path, ship, { nickname: "" });
+        api.contactEdit(props.path, ship, { nickname: "" });
         this.refs.nickname.value = "";
         break;
       }
       case "removePhone": {
         this.setState({ phoneToSet: "" });
-        api.contactEdit(this.props.path, ship, { phone: "" });
+        api.contactEdit(props.path, ship, { phone: "" });
         this.refs.phone.value = "";
         break;
       }
       case "removeWebsite": {
         this.setState({ websiteToSet: "" });
-        api.contactEdit(this.props.path, ship, { website: "" });
+        api.contactEdit(props.path, ship, { website: "" });
         this.refs.website.value = "";
         break;
       }
       case "removeNotes": {
         this.setState({ notesToSet: "" });
-        api.contactEdit(this.props.path, ship, { notes: "" });
+        api.contactEdit(props.path, ship, { notes: "" });
         this.refs.notes.value = "";
         break;
       }
@@ -187,35 +198,36 @@ export class ContactCard extends Component {
   }
 
   renderEditCard() {
+    const { props } = this;
     // if this is our first edit in a new group, propagate from root identity
     let defaultValue = {
-      nickname: (this.props.share) 
-      ? this.props.rootIdentity.nickname
-      : this.props.contact.nickname,
-      email: (this.props.share)
-      ? this.props.rootIdentity.email
-      : this.props.contact.email,
-      phone: (this.props.share)
-      ? this.props.rootIdentity.phone
-      : this.props.contact.phone,
-      website: (this.props.share)
-      ? this.props.rootIdentity.website
-      : this.props.contact.website,
-      notes: (this.props.share)
-      ? this.props.rootIdentity.notes
-      : this.props.contact.notes
+      nickname: (props.share) 
+      ? props.rootIdentity.nickname
+      : props.contact.nickname,
+      email: (props.share)
+      ? props.rootIdentity.email
+      : props.contact.email,
+      phone: (props.share)
+      ? props.rootIdentity.phone
+      : props.contact.phone,
+      website: (props.share)
+      ? props.rootIdentity.website
+      : props.contact.website,
+      notes: (props.share)
+      ? props.rootIdentity.notes
+      : props.contact.notes
     }
 
-    let shipType = this.shipParser(this.props.ship);
+    let shipType = this.shipParser(props.ship);
 
-    let currentColor = (this.props.contact.color) 
-    ? this.props.contact.color 
+    let currentColor = (props.contact.color) 
+    ? props.contact.color 
     : "0x0";
 
     let hexColor = uxToHex(currentColor);
 
     let sigilColor = "";
-    let hasAvatar = (this.props.contact.avatar !== "TODO");
+    let hasAvatar = (props.contact.avatar !== "TODO");
 
 
     if (!hasAvatar) { 
@@ -239,8 +251,8 @@ export class ContactCard extends Component {
 
     let removeImage = "";
     let avatar = (hasAvatar) 
-      ? <img className="dib h-auto" width={128} src={this.props.contact.avatar} /> 
-      : <Sigil ship={this.props.ship} size={128} color={"#" + hexColor} />;
+      ? <img className="dib h-auto" width={128} src={props.contact.avatar} /> 
+      : <Sigil ship={props.ship} size={128} color={"#" + hexColor} />;
 
     if (hasAvatar) {
       removeImage = (
@@ -263,7 +275,7 @@ export class ContactCard extends Component {
 
           <div className="w-100 pt8 lh-copy tl">
             <p className="f9 gray2">Ship Name</p>
-            <p className="f8 mono">~{this.props.ship}</p>
+            <p className="f8 mono">~{props.ship}</p>
             <p className="f9 gray2 mt3">Ship Type</p>
             <p className="f8">{shipType}</p>
 
@@ -279,21 +291,24 @@ export class ContactCard extends Component {
                           paddingTop: 10 }}
                  onChange={this.nickNameToSet}
                 defaultValue={defaultValue.nickname}/>
-                <button className={"f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
-                ((this.props.contact.nickname === "") ? "dn" : "dib")}
+                <button
+                  className={"f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
+                    ((props.contact.nickname === "") ? "dn" : "dib")
+                  }
                 onClick={() => this.setField("removeNickname")}>
                 Delete
                 </button>
               </div>
-              <button className={"pointer db mv2 f9 ba pa2 pl3 pr3 " +
-              (((this.props.contact.nickname === this.state.nickNameToSet)
-              || (this.state.nickNameToSet === ""))
-              ? "b--gray4 gray4" 
-              : "b--black")}
-              onClick={() => this.setField("nickname")}>
+              <button
+                className={"pointer db mv2 f9 ba pa2 pl3 pr3 " +
+                  ((
+                    (props.contact.nickname === this.state.nickNameToSet)
+                    || (this.state.nickNameToSet === "")
+                  ) ? "b--gray4 gray4" : "b--black")
+                }
+                onClick={() => this.setField("nickname")}>
                 Save
               </button>
-
             <p className="f9 gray2">Email</p>
             <div className="w-100 flex">
               <textarea
@@ -307,20 +322,19 @@ export class ContactCard extends Component {
                 onChange={this.emailToSet}
                 defaultValue={defaultValue.email} />
               <button className={"f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
-                ((this.props.contact.email === "") ? "dn" : "dib")}
+                ((props.contact.email === "") ? "dn" : "dib")}
                 onClick={() => this.setField("removeEmail")}>
                 Delete
-                </button>
+              </button>
             </div>
             <button className={"pointer db mv2 f9 ba pa2 pl3 pr3 " +
-              (((this.props.contact.email === this.state.emailToSet)
+              (((props.contact.email === this.state.emailToSet)
               || (this.state.emailToSet === ""))
                 ? "b--gray4 gray4"
                 : "b--black")}
               onClick={() => this.setField("email")}>
               Save
-              </button>
-
+            </button>
             <p className="f9 gray2">Phone</p>
             <div className="w-100 flex">
               <textarea
@@ -334,20 +348,19 @@ export class ContactCard extends Component {
                 onChange={this.phoneToSet}
                 defaultValue={defaultValue.phone} />
               <button className={"f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
-                ((this.props.contact.phone === "") ? "dn" : "dib")}
+                ((props.contact.phone === "") ? "dn" : "dib")}
                 onClick={() => this.setField("removePhone")}>
                 Delete
                 </button>
             </div>
             <button className={"pointer db mv2 f9 ba pa2 pl3 pr3 " +
-              (((this.props.contact.phone === this.state.phoneToSet)
+              (((props.contact.phone === this.state.phoneToSet)
               || (this.state.phoneToSet === ""))
                 ? "b--gray4 gray4"
                 : "b--black")}
               onClick={() => this.setField("phone")}>
               Save
-              </button>
-
+            </button>
             <p className="f9 gray2">Website</p>
             <div className="w-100 flex">
               <textarea
@@ -361,13 +374,13 @@ export class ContactCard extends Component {
                 onChange={this.websiteToSet}
                 defaultValue={defaultValue.website} />
               <button className={"f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
-                ((this.props.contact.website === "") ? "dn" : "dib")}
+                ((props.contact.website === "") ? "dn" : "dib")}
                 onClick={() => this.setField("removeWebsite")}>
                 Delete
                 </button>
             </div>
             <button className={"pointer db mv2 f9 ba pa2 pl3 pr3 " +
-              (((this.props.contact.website === this.state.websiteToSet)
+              (((props.contact.website === this.state.websiteToSet)
                 || (this.state.websitetoSet === ""))
                 ? "b--gray4 gray4"
                 : "b--black")}
@@ -388,13 +401,13 @@ export class ContactCard extends Component {
                 onChange={this.notesToSet}
                 defaultValue={defaultValue.notes} />
               <button className={"f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
-                ((this.props.contact.notes === "") ? "dn" : "dib")}
+                ((props.contact.notes === "") ? "dn" : "dib")}
                 onClick={() => this.setField("removeNotes")}>
                 Delete
                 </button>
             </div>
             <button className={"pointer db mv2 f9 ba pa2 pl3 pr3 " +
-              (((this.props.contact.notes === this.state.notesToSet)
+              (((props.contact.notes === this.state.notesToSet)
                 || (this.state.notesToSet === ""))
                 ? "b--gray4 gray4"
                 : "b--black")}
@@ -409,15 +422,19 @@ export class ContactCard extends Component {
   }
 
   renderCard() {
-    let shipType = this.shipParser(this.props.ship);
-    let currentColor = (this.props.contact.color) ? this.props.contact.color : "0x0";
+    const { props } = this;
+    let shipType = this.shipParser(props.ship);
+    let currentColor = props.contact.color ? props.contact.color : "0x0";
     let hexColor = uxToHex(currentColor);
 
-    let hasAvatar = (this.props.contact.avatar !== "TODO");
+    let avatar = 
+      (props.contact.avatar !== "TODO") ?
+      <img className="dib h-auto" width={128} src={props.contact.avatar} /> :
+      <Sigil ship={props.ship} size={128} color={"#" + hexColor} />;
 
-    let avatar = (hasAvatar)
-      ? <img className="dib h-auto" width={128} src={this.props.contact.avatar} />
-      : <Sigil ship={this.props.ship} size={128} color={"#" + hexColor} />;
+    let websiteHref =
+      (props.contact.website && props.contact.website.includes("://")) ?
+      props.contact.website : "http://" + props.contact.website;
 
     return (
       <div className="w-100 mt8 flex justify-center pa4 pt8 pt0-l pa0-xl pt4-xl">
@@ -425,122 +442,99 @@ export class ContactCard extends Component {
           {avatar}
           <div className="w-100 pt8 lh-copy tl">
             <p className="f9 gray2">Ship Name</p>
-            <p className="f8 mono">~{this.props.ship}</p>
+            <p className="f8 mono">~{props.ship}</p>
             <p className="f9 gray2 mt3">Ship Type</p>
             <p className="f8">{shipType}</p>
-
             <hr className="mv8 gray4 b--gray4 bb-0 b--solid" />
             <div>
-              {(() => {
-                if (this.props.contact.nickname) {
-                  return (
-                    <div>
-                      <p className="f9 gray2">Nickname</p>
-                      <p className="f8">{this.props.contact.nickname}</p>
-                    </div>
-                  )
-                }
-              })()}
-              {(() => {
-                if (this.props.contact.email) {
-                  return (
-                    <div>
-                      <p className="f9 mt6 gray2">Email</p>
-                      <p className="f8">{this.props.contact.email}</p>
-                    </div>
-                  )
-                }
-              })()}
-              {(() => {
-                if (this.props.contact.phone) {
-                  return (
-                    <div>
-                      <p className="f9 mt6 gray2">Phone</p>
-                      <p className="f8">{this.props.contact.phone}</p>
-                    </div>
-                  )
-                }
-              })()}
-              {(() => {
-                if (this.props.contact.website) {
-                  
-                  let href = (this.props.contact.website.includes("://"))
-                  ? this.props.contact.website
-                  : "http://" + this.props.contact.website;
-
-                  return (
-                    <div>
-                      <p className="f9 mt6 gray2">Website</p>
-                      <a target="_blank" className="bb b--black f8" 
-                        href={href}>{this.props.contact.website}</a>
-                    </div>
-                  )
-                }
-              })()}
-              {(() => {
-                if (this.props.contact.notes) {
-                  return (
-                    <div>
-                      <p className="f9 mt6 gray2">Notes</p>
-                      <p className="f8">{this.props.contact.notes}</p>
-                    </div>
-                  )
-                }
-              })()}
+              { !!props.contact.nickname ? (
+                  <div>
+                    <p className="f9 gray2">Nickname</p>
+                    <p className="f8">{props.contact.nickname}</p>
+                  </div>
+                ) : null
+              }
+              { !!props.contact.email ? (
+                  <div>
+                    <p className="f9 mt6 gray2">Email</p>
+                    <p className="f8">{props.contact.email}</p>
+                  </div>
+                ) : null
+              }
+              { !!props.contact.phone ? (
+                  <div>
+                    <p className="f9 mt6 gray2">Phone</p>
+                    <p className="f8">{props.contact.phone}</p>
+                  </div>
+                ) : null
+              }
+              { !!props.contact.website ? (
+                  <div>
+                    <p classname="f9 mt6 gray2">website</p>
+                    <a target="_blank"
+                       classname="bb b--black f8" 
+                       href={websiteHref}>
+                      {props.contact.website}
+                    </a>
+                  </div>
+                ) : null
+              }
+              { !!props.contact.notes ? (
+                  <div>
+                    <p classname="f9 mt6 gray2">notes</p>
+                    <p classname="f8">{props.contact.notes}</p>
+                  </div>
+                ) : null
+              }
             </div>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
-    render() {
+  render() {
+    const { props, state } = this;
 
-      let ourOption = (this.props.ship === window.ship)
-      ? "dib"
-      : "dn";
+    let editInfoText =
+      state.edit ? "Finish Editing" : "Edit Contact Info";
 
-      let localOption = ((this.props.ship === window.ship) && (this.props.path === "/~/default"))
-      ? "dib"
-      : "dn";
+    let ourOpt = (props.ship === window.ship) ? "dib" : "dn";
+    let localOpt =
+      ((props.ship === window.ship) && (props.path === "/~/default"))
+      ? "dib" : "dn";
+    let adminOpt =
+      (props.path.includes(window.ship) && (props.ship !== window.ship))
+      ? "dib" : "dn";
 
-      let editInfoText = (this.state.edit)
-      ? "Finish Editing"
-      : "Edit Contact Info";
+    let card = (state.edit) ? this.renderEditCard() : this.renderCard();
 
-      let adminOption = (this.props.path.includes(window.ship) && (this.props.ship !== window.ship))
-      ? "dib"
-      : "dn";
-
-      let card = (this.state.edit)
-      ? this.renderEditCard()
-      : this.renderCard();
-
-      //TODO "Share card" if it's /me -> sends to /~/default of recipient
-        return (
-            <div className="h-100 w-100 overflow-x-hidden">
-
-            <div className="w-100 bg-white fixed bb b--gray4">
-              <div className="w-100 h2 dn-m dn-l dn-xl inter pb6 pl3 pt3 f8">
-                <Link to="/~contacts/">{"⟵"}</Link>
-              </div>
-              <button 
-                onClick={this.editToggle}
-              className={`ml3 mt2 mb2 f9 pa1 ba br2 pointer b--black ` + ourOption}>
-                {editInfoText}
-              </button>
-              <button className={`ml3 mt2 mb2 f9 pa1 ba br2 b--black ` + localOption}>
-                Share Contact Info
-              </button>
-              <button className={`ml3 mt2 mb2 f9 pa1 ba red2 br2 b--red2 ` + adminOption}
-              onClick={this.removeContact}>
-                Remove from Group
-              </button>
-            </div>
-              {card}
-            </div>
-        )
-    }
+    //TODO "Share card" if it's /me -> sends to /~/default of recipient
+    return (
+      <div className="h-100 w-100 overflow-x-hidden">
+        <div className="w-100 bg-white fixed bb b--gray4">
+          <div className="w-100 h2 dn-m dn-l dn-xl inter pb6 pl3 pt3 f8">
+            <Link to="/~contacts/">{"⟵"}</Link>
+          </div>
+          <button 
+            onClick={this.editToggle}
+            className={`ml3 mt2 mb2 f9 pa1 ba br2 pointer b--black ` + ourOpt}>
+            {editInfoText}
+          </button>
+          <button
+            className={`ml3 mt2 mb2 f9 pa1 ba br2 b--black ` + localOpt}>
+            Share Contact Info
+          </button>
+          <button
+            className={`ml3 mt2 mb2 f9 pa1 ba red2 br2 b--red2 ` + adminOpt}
+            onClick={this.removeContact}>
+            Remove from Group
+          </button>
+        </div>
+        {card}
+      </div>
+    );
+  }
 }
 
-export default ContactCard
+export default ContactCard;
