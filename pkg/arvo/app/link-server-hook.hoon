@@ -112,8 +112,7 @@
   ?.  ?&  authenticated.inbound-request
           =(src.bowl our.bowl)
       ==
-    ::TODO  `*octs -> ~ everywhere once no-data bug is fixed
-    (give-simple-payload:app eyre-id [[403 ~] `*octs])
+    (give-simple-payload:app eyre-id [[403 ~] ~])
   ::  request-line: parsed url + params
   ::
   =/  =request-line
@@ -126,7 +125,7 @@
   ^-  [cards=(list card) =simple-payload:http]
   ?+  method.request.inbound-request  [~ not-found:gen]
       %'OPTIONS'
-    [~ (include-cors-headers req-head [[200 ~] `*octs])]
+    [~ (include-cors-headers req-head [[200 ~] ~])]
   ::
       %'GET'
     [~ (handle-get req-head request-line)]
@@ -145,7 +144,7 @@
     ::TODO  it would be more correct to wait for the %poke-ack instead of
     ::      sending this response right away... but link-store pokes can't
     ::      actually fail right now, so it's fine.
-    [[?:(success 200 400) ~] `*octs]
+    [[?:(success 200 400) ~] ~]
   ^-  [success=? cards=(list card)]
   ?~  body  [| ~]
   ?+  request-line  [| ~]
