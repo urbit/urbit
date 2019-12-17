@@ -39,9 +39,7 @@ eventSanity = all $ \(EvEx e n) -> toNoun e == n
 
 instance Arbitrary EvExample where
   arbitrary = oneof $ fmap pure $
-    [ EvEx (EvBlip $ BlipEvAmes $ AmesEvWant (Path []) (Ship 0) (Path []) (A 0))
-           (toNoun (Path ["", "ames"], (Cord "want", (), (), ())))
-    , EvEx (EvVane $ VaneVane $ VEVeer (Jael, ()) "" (Path []) "")
+    [ EvEx (EvVane $ VaneVane $ VEVeer (Jael, ()) "" (Path []) "")
            (toNoun (Path ["vane", "vane", "jael"], Cord "veer", (), (), ()))
     ]
 
@@ -99,19 +97,19 @@ genIpv4 = do
     then genIpv4
     else pure (Ipv4 x)
 
-instance Arbitrary AmesDest where
-  arbitrary = oneof [ ADGala <$> arb <*> arb
-                    , ADIpv4 <$> arb <*> arb <*> genIpv4
-                    ]
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Each a b) where
+  arbitrary = oneof [ EachNo <$> arb, EachYes <$> arb ]
+
+instance (Arbitrary a) => Arbitrary (Jammed a) where
+  arbitrary = Jammed <$> arbitrary
 
 instance Arbitrary Ef where
   arbitrary = oneof [ EfVega <$> arb <*> arb
                     ]
 
 instance Arbitrary AmesEv where
-  arbitrary = oneof [ AmesEvHear () <$> arb     <*> arb
-                    , AmesEvWake    <$> pure () <*> pure ()
-                    , AmesEvWant    <$> arb     <*> arb     <*> arb <*> arb
+  arbitrary = oneof [ AmesEvHear () <$> arb <*> arb
+                    , AmesEvHole () <$> arb <*> arb
                     ]
 
 instance Arbitrary HttpRequest where
@@ -164,6 +162,10 @@ instance Arbitrary ServId where arbitrary = ServId <$> arb
 instance Arbitrary UD where arbitrary = UD <$> arb
 instance Arbitrary UV where arbitrary = UV <$> arb
 
+instance Arbitrary AmesAddress where
+  arbitrary = AAIpv4 <$> arb <*> arb
+
+instance Arbitrary Ipv4   where arbitrary = Ipv4 <$> arb
 
 -- Generate Arbitrary Values ---------------------------------------------------
 

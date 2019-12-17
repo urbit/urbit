@@ -33,7 +33,7 @@ turfEf :: NewtEf
 turfEf = NewtEfTurf (0, ()) []
 
 sendEf :: Galaxy -> Wen -> Bytes -> NewtEf
-sendEf g w bs = NewtEfSend (0, ()) (ADGala w g) bs
+sendEf g w bs = NewtEfSend (0, ()) (EachYes g) bs
 
 data NetworkTestApp = NetworkTestApp
     { _ntaLogFunc       :: !LogFunc
@@ -74,9 +74,9 @@ waitForPacket q val = go
   where
     go =
       atomically (readTQueue q) >>= \case
-        EvBlip (BlipEvAmes (AmesEvWake () ()))   -> go
-        EvBlip (BlipEvAmes (AmesEvHear () _ bs)) -> pure (bs == val)
-        _                                        -> pure False
+        EvBlip (BlipEvNewt (NewtEvBorn (_, ()) ())) -> go
+        EvBlip (BlipEvAmes (AmesEvHear () _ bs))    -> pure (bs == val)
+        _                                           -> pure False
 
 runRAcquire :: RAcquire e a -> RIO e a
 runRAcquire acq = rwith acq pure
@@ -170,9 +170,15 @@ instance Arbitrary BigCord where
   arbitrary = BigCord <$> arb
 
 instance Arbitrary AmesDest where
-  arbitrary = oneof [ ADGala <$> arb <*> arb
-                    , ADIpv4 <$> arb <*> arb <*> genIpv4
+  arbitrary = oneof [ EachYes <$> arb
+                    , EachNo <$> arb
                     ]
+
+instance Arbitrary a => Arbitrary (Jammed a) where
+  arbitrary = Jammed <$> arbitrary
+
+instance Arbitrary AmesAddress where
+  arbitrary = AAIpv4 <$> arb <*> arb
 
 instance Arbitrary Ship where
   arbitrary = Ship <$> arb
