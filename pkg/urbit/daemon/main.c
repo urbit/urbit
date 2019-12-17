@@ -50,7 +50,7 @@ _main_readw(const c3_c* str_c, c3_w max_w, c3_w* out_w)
 c3_c*
 _main_presig(c3_c* txt_c)
 {
-  c3_c* new_c = malloc(2 + strlen(txt_c));
+  c3_c* new_c = c3_malloc(2 + strlen(txt_c));
 
   if ( '~' == *txt_c ) {
     strcpy(new_c, txt_c);
@@ -663,15 +663,15 @@ main(c3_i   argc,
     // allocates more memory as needed if the path is too large
     //
     while ( abs_c != getcwd(abs_c, mprint_i) ) {
-      free(abs_c);
+      c3_free(abs_c);
       mprint_i *= 2;
       abs_c = c3_malloc(mprint_i);
     }
     printf("boot: home is %s/%s\n", abs_c, u3_Host.dir_c);
-    free(abs_c);
+    c3_free(abs_c);
   } else {
     printf("boot: home is %s\n", abs_c);
-    free(abs_c);
+    c3_free(abs_c);
   }
   // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 

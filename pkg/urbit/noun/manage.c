@@ -417,12 +417,12 @@ u3m_file(c3_c* pas_c)
   close(fid_i);
 
   if ( fln_w != red_w ) {
-    free(pad_y);
+    c3_free(pad_y);
     return u3m_bail(c3__fail);
   }
   else {
     u3_noun pad = u3i_bytes(fln_w, (c3_y *)pad_y);
-    free(pad_y);
+    c3_free(pad_y);
 
     return pad;
   }
@@ -1354,7 +1354,7 @@ _cm_in_pretty(u3_noun som, c3_o sel_o, c3_c* str_c)
       }
       else {
         c3_w len_w = u3r_met(3, som);
-        c3_c *buf_c = malloc(2 + (2 * len_w) + 1);
+        c3_c *buf_c = c3_malloc(2 + (2 * len_w) + 1);
         c3_w i_w = 0;
         c3_w a_w = 0;
 
@@ -1376,7 +1376,7 @@ _cm_in_pretty(u3_noun som, c3_o sel_o, c3_c* str_c)
 
         if ( str_c ) { strcpy(str_c, buf_c); str_c += len_w; }
 
-        free(buf_c);
+        c3_free(buf_c);
         return len_w;
       }
     }
@@ -1389,7 +1389,7 @@ c3_c*
 u3m_pretty(u3_noun som)
 {
   c3_w len_w = _cm_in_pretty(som, c3y, 0);
-  c3_c* pre_c = malloc(len_w + 1);
+  c3_c* pre_c = c3_malloc(len_w + 1);
 
   _cm_in_pretty(som, c3y, pre_c);
   pre_c[len_w] = 0;
@@ -1439,7 +1439,7 @@ c3_c*
 u3m_pretty_path(u3_noun som)
 {
   c3_w len_w = _cm_in_pretty_path(som, NULL);
-  c3_c* pre_c = malloc(len_w + 1);
+  c3_c* pre_c = c3_malloc(len_w + 1);
 
   _cm_in_pretty_path(som, pre_c);
   pre_c[len_w] = 0;
@@ -1454,7 +1454,7 @@ u3m_p(const c3_c* cap_c, u3_noun som)
   c3_c* pre_c = u3m_pretty(som);
 
   u3l_log("%s: %s\r\n", cap_c, pre_c);
-  free(pre_c);
+  c3_free(pre_c);
 }
 
 /* u3m_tape(): dump a tape to stdout.

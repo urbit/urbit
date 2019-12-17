@@ -135,7 +135,7 @@ c3_o _perform_put_on_database_noun(MDB_txn* transaction_u,
 
   // copy the jammed noun into a byte buffer we can hand to lmdb
   c3_w  len_w   = u3r_met(3, mat);
-  c3_y* bytes_y = (c3_y*) malloc(len_w);
+  c3_y* bytes_y = c3_malloc(len_w);
   u3r_bytes(0, len_w, bytes_y, mat);
 
   c3_o ret = _perform_put_on_database_raw(
@@ -145,7 +145,7 @@ c3_o _perform_put_on_database_noun(MDB_txn* transaction_u,
       key, strlen(key),
       bytes_y, len_w);
 
-  free(bytes_y);
+  c3_free(bytes_y);
   u3z(mat);
 
   return ret;
@@ -230,11 +230,11 @@ u3_lmdb_build_write_request(u3_writ* event_u, c3_d count)
 */
 void u3_lmdb_free_write_request(struct u3_lmdb_write_request* request) {
   for (c3_d i = 0; i < request->event_count; ++i)
-    free(request->malloced_event_data[i]);
+    c3_free(request->malloced_event_data[i]);
 
-  free(request->malloced_event_data);
-  free(request->malloced_event_data_size);
-  free(request);
+  c3_free(request->malloced_event_data);
+  c3_free(request->malloced_event_data_size);
+  c3_free(request);
 }
 
 /* _write_request_data: callback struct for u3_lmdb_write_event()
@@ -344,8 +344,8 @@ static void _u3_lmdb_write_event_after_cb(uv_work_t* req, int status) {
                     data->request->event_count);
 
   u3_lmdb_free_write_request(data->request);
-  free(data);
-  free(req);
+  c3_free(data);
+  c3_free(req);
 }
 
 /* u3_lmdb_write_event(): Asynchronously writes events to the database.

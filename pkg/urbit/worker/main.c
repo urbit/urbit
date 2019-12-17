@@ -169,7 +169,7 @@ _worker_prof(FILE* fil_u, c3_w den, u3_noun mas)
     {
       c3_c* lab_c = u3m_pretty(h_mas);
       fprintf(fil_u, "h_mas: %s", lab_c);
-      free(lab_c);
+      c3_free(lab_c);
     }
     return tot_w;
   }
@@ -179,7 +179,7 @@ _worker_prof(FILE* fil_u, c3_w den, u3_noun mas)
     {
       c3_c* lab_c = u3m_pretty(h_mas);
       fprintf(fil_u, "%s: ", lab_c);
-      free(lab_c);
+      c3_free(lab_c);
     }
 
     u3_noun it_mas, tt_mas;
@@ -277,7 +277,7 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
       fil_u = fopen(man_c, "w");
       fprintf(fil_u, "%s\r\n", wen_c);
 
-      free(wen_c);
+      c3_free(wen_c);
       u3z(wen);
     }
 #else
@@ -668,7 +668,7 @@ _worker_work_live(c3_d evt_d, u3_noun job)
               clr_w, txt_c, evt_d, ms_w,
               (int) (d0.tv_usec % 1000) / 10);
     }
-    free(txt_c);
+    c3_free(txt_c);
   }
 #endif
 
@@ -796,9 +796,17 @@ _worker_poke_work(c3_d    evt_d,              //  event number
     u3_noun wir = u3h(u3t(job));
     u3_noun cad = u3h(u3t(u3t(job)));
 
+    //  XX these allocations should only be performed if tracing is enabled
+    //
     c3_c lab_c[2048];
-    snprintf(lab_c, 2048, "event %" PRIu64 ": [%s %s]", evt_d,
-             u3m_pretty_path(wir), u3m_pretty(cad));
+    {
+      c3_c* cad_c = u3m_pretty(cad);
+      c3_c* wir_c = u3m_pretty_path(wir);
+      snprintf(lab_c, 2048, "event %" PRIu64 ": [%s %s]",
+                            evt_d, wir_c, cad_c);
+      c3_free(cad_c);
+      c3_free(wir_c);
+    }
 
     u3t_event_trace(lab_c, 'B');
     _worker_work_live(evt_d, job);
@@ -831,7 +839,7 @@ _worker_poke_exit(c3_w cod_w)                 //  exit code
 
       fil_u = fopen(man_c, "w");
 
-      free(wen_c);
+      c3_free(wen_c);
       u3z(wen);
     }
 

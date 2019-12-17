@@ -88,7 +88,7 @@ _term_close_cb(uv_handle_t* han_t)
     u3_pier_plan(u3k(pax), u3nc(c3__hook, u3_nul));
     u3z(pax);
   }
-  free(tty_u);
+  c3_free(tty_u);
 }
 #endif
 
@@ -325,8 +325,8 @@ _term_write_cb(uv_write_t* wri_u, c3_i sas_i)
     u3l_log("term: write: %s\n", uv_strerror(sas_i));
   }
 
-  free(wri_u->data);
-  free(wri_u);
+  c3_free(wri_u->data);
+  c3_free(wri_u);
 }
 
 /* _term_it_write_buf(): write buffer uv style.
@@ -363,7 +363,7 @@ _term_it_write_old(u3_utty* uty_u,
     memcpy(buf_y, old_u->hun_y, old_u->len_w);
     buf_u = uv_buf_init((c3_c*)buf_y, old_u->len_w);
 
-    free(old_u);
+    c3_free(old_u);
   }
   _term_it_write_buf(uty_u, buf_u);
 }
@@ -406,7 +406,7 @@ _term_it_show_wide(u3_utty* uty_u, c3_w len_w, c3_w* txt_w)
   c3_c*   txt_c = u3r_string(txt);
 
   _term_it_write_str(uty_u, txt_c);
-  free(txt_c);
+  c3_free(txt_c);
   u3z(txt);
 
   uty_u->tat_u.mir.cus_w += len_w;
@@ -465,7 +465,7 @@ _term_it_show_line(u3_utty* uty_u, c3_w* lin_w, c3_w len_w)
 
   if ( lin_w != uty_u->tat_u.mir.lin_w ) {
     if ( uty_u->tat_u.mir.lin_w ) {
-      free(uty_u->tat_u.mir.lin_w);
+      c3_free(uty_u->tat_u.mir.lin_w);
     }
     uty_u->tat_u.mir.lin_w = lin_w;
   }
@@ -569,8 +569,8 @@ _term_it_save(u3_noun pax, u3_noun pad)
 
   u3_walk_save(pax_c, 0, pad, bas_c, xap);
 
-  free(pax_c);
-  free(bas_c);
+  c3_free(pax_c);
+  c3_free(bas_c);
 }
 
 /* _term_io_belt(): send belt.
@@ -731,7 +731,7 @@ _term_read_cb(uv_stream_t* tcp_u,
 {
   u3_utty* uty_u = (u3_utty*)(void*)tcp_u;
   _term_suck(uty_u, (const c3_y*)buf_u->base, siz_i);
-  free(buf_u->base);
+  c3_free(buf_u->base);
 }
 
 /* _term_spin_write_str(): write null-terminated string
@@ -835,7 +835,7 @@ u3_term_start_spinner(c3_c* why_c, c3_o now_o)
     u3_utty* uty_u = _term_main();
     u3_utat* tat_u = &uty_u->tat_u;
 
-    free(tat_u->  sun_u.why_c);
+    c3_free(tat_u->  sun_u.why_c);
     tat_u->sun_u.why_c = why_c;
 
     tat_u->sun_u.eve_d = 0;
@@ -1058,7 +1058,7 @@ _term_ef_blit(u3_utty* uty_u,
 
         _term_it_show_clear(uty_u);
         _term_it_write_str(uty_u, txt_c);
-        free(txt_c);
+        c3_free(txt_c);
 
         _term_it_show_more(uty_u);
         _term_it_refresh_line(uty_u);

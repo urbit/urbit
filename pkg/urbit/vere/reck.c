@@ -67,7 +67,7 @@ _reck_orchid(u3_noun fot, u3_noun txt, c3_l* tid_l)
 {
   c3_c* str = u3r_string(txt);
   c3_d ato_d = strtol(str, NULL, 10);
-  free(str);
+  c3_free(str);
 
   if ( ato_d >= 0x80000000ULL ) {
     return c3n;

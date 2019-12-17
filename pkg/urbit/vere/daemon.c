@@ -490,7 +490,13 @@ _daemon_get_atom(c3_c* url_c)
 
   curl_easy_cleanup(curl);
 
-  return u3i_bytes(buf_u.len, (const c3_y*)buf_u.base);
+  {
+    u3_noun pro = u3i_bytes(buf_u.len, (const c3_y*)buf_u.base);
+
+    c3_free(buf_u.base);
+
+    return pro;
+  }
 }
 
 /* _get_cmd_output(): Run a shell command and capture its output.
@@ -600,7 +606,7 @@ _boothack_key(u3_noun kef)
     if ( u3_nul == des ) {
       c3_c* kef_c = u3r_string(kef);
       u3l_log("dawn: invalid private keys: %s\r\n", kef_c);
-      free(kef_c);
+      c3_free(kef_c);
       exit(1);
     }
 
@@ -631,7 +637,7 @@ _boothack_key(u3_noun kef)
               u3_Host.ops_u.who_c, how_c);
 
       u3z(how);
-      free(how_c);
+      c3_free(how_c);
       exit(1);
     }
 
@@ -826,14 +832,26 @@ _daemon_sign_hold(void)
 **  (as if we were a client process)
 */
 void
-_boothack_cb(uv_connect_t *conn, int status)
+_boothack_cb(uv_connect_t* con_u, c3_i sas_i)
 {
-  u3_mojo *moj_u = conn->data;
+  u3_mojo *moj_u = con_u->data;
 
-  u3_noun dom = u3nc(c3__doom, _boothack_doom());
-  u3_atom mat = u3ke_jam(dom);
+  if ( 0 != sas_i ) {
+    u3l_log("boot: doom failed: %s\r\n", uv_strerror(sas_i));
+    u3_daemon_bail();
+  }
+  else {
+    u3_noun dom = u3nc(c3__doom, _boothack_doom());
+    u3_atom mat = u3ke_jam(dom);
+    u3_newt_write(moj_u, mat, 0);
 
-  u3_newt_write(moj_u, mat, 0);
+    c3_free(con_u);
+
+    //  XX [moj_u] is leaked, newt.c doesn't give us a callback
+    //  after which we could close and free it ...
+    //
+    // uv_close((uv_handle_t*)&moj_u->pyp_u, (uv_close_cb)c3_free);
+  }
 }
 
 /* _daemon_loop_init(): stuff that comes before the event loop
@@ -844,13 +862,14 @@ _daemon_loop_init()
   _daemon_sign_init();
   _daemon_sign_move();
 
-  /* boot hack */
+  //  boot hack: send pier %boot command via %doom cmd socket msg
+  //
   {
-    u3_moor *mor_u = c3_malloc(sizeof(u3_moor));
-    uv_connect_t *conn = c3_malloc(sizeof(uv_connect_t));
-    conn->data = mor_u;
+    u3_moor*      mor_u = c3_malloc(sizeof(u3_moor));
+    uv_connect_t* con_u = c3_malloc(sizeof(uv_connect_t));
+    con_u->data = mor_u;
     uv_pipe_init(u3L, &mor_u->pyp_u, 0);
-    uv_pipe_connect(conn, &mor_u->pyp_u, u3K.soc_c, _boothack_cb);
+    uv_pipe_connect(con_u, &mor_u->pyp_u, u3K.soc_c, _boothack_cb);
   }
 }
 
@@ -973,7 +992,7 @@ u3_daemon_grab(void* vod_p)
     fil_u = fopen(man_c, "w");
     fprintf(fil_u, "%s\r\n", wen_c);
 
-    free(wen_c);
+    c3_free(wen_c);
     u3z(wen);
   }
 #else
