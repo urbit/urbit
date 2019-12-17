@@ -28,6 +28,7 @@ tests:
       - -with-rtsopts=-N
 
 dependencies:
+  - aeson
   - async
   - base
   - base-unicode-symbols
@@ -105,6 +106,7 @@ dependencies:
   - vector
   - wai
   - wai-conduit
+  - wai-websockets
   - warp
   - warp-tls
   - web3

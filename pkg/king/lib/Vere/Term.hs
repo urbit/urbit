@@ -559,7 +559,7 @@ term (tsize, Client{..}) shutdownSTM king enqueueEv =
 
     performPut :: Path -> ByteString -> RIO e ()
     performPut path bs = do
-      pierPath <- getPierPath
+      pierPath <- view pierPathL
       let putOutFile = pierPath </> ".urb" </> "put" </> (pathToFilePath path)
       createDirectoryIfMissing True (takeDirectory putOutFile)
       writeFile putOutFile bs

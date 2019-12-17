@@ -429,7 +429,7 @@ startServ conf plan = do
                       $ W.runTLSSocket tlsOpts httpsOpts httpsSock
                       $ app env sId liv plan Secure
 
-  pierPath <- getPierPath
+  pierPath <- view pierPathL
   let por = Ports (tls <&> const httpsPort) httpPort loopPort
       fil = pierPath <> "/.http.ports"
 

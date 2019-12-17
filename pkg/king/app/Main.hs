@@ -72,7 +72,7 @@ import Control.Concurrent   (myThreadId, runInBoundThread)
 import Control.Exception    (AsyncException(UserInterrupt))
 import Control.Lens         ((&))
 import Data.Default         (def)
-import KingApp              (runApp, runPierApp)
+import King.App             (runApp, runPierApp)
 import System.Environment   (getProgName)
 import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
 import System.Random        (randomIO)
@@ -125,29 +125,28 @@ toSerfFlags CLI.Opts{..} = catMaybes m
 
 toPierConfig :: FilePath -> CLI.Opts -> PierConfig
 toPierConfig pierPath CLI.Opts{..} = PierConfig
-  { pcPierPath = pierPath
-  , pcDryRun = oDryRun
-  }
+    { _pcPierPath = pierPath
+    , _pcDryRun   = oDryRun
+    }
 
 toNetworkConfig :: CLI.Opts -> NetworkConfig
 toNetworkConfig CLI.Opts{..} = NetworkConfig
-  { ncNetworking = if oDryRun then NetworkNone
-                   else if oOffline then NetworkNone
-                   else if oLocalhost then NetworkLocalhost
-                   else NetworkNormal
-  , ncAmesPort = oAmesPort
-  }
+    { ncNetworking = if oDryRun then NetworkNone
+                     else if oOffline then NetworkNone
+                     else if oLocalhost then NetworkLocalhost
+                     else NetworkNormal
+    , ncAmesPort = oAmesPort
+    }
 
 tryBootFromPill :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
                 => Bool -> Pill -> Bool -> Serf.Flags -> Ship
                 -> LegacyBootEvent
                 -> RIO e ()
 tryBootFromPill oExit pill lite flags ship boot =
-  do
     runOrExitImmediately bootedPier oExit
   where
     bootedPier = do
-        getPierPath >>= lockFile
+        view pierPathL >>= lockFile
         rio $ logTrace "Starting boot"
         sls <- Pier.booted pill lite flags ship boot
         rio $ logTrace "Completed boot"
@@ -158,7 +157,6 @@ runOrExitImmediately :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
                      -> Bool
                      -> RIO e ()
 runOrExitImmediately getPier oExit =
-  do
     rwith getPier $ if oExit then shutdownImmediately else runPier
   where
     shutdownImmediately (serf, log, ss) = do
@@ -174,14 +172,12 @@ runOrExitImmediately getPier oExit =
 
 tryPlayShip :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
             => Bool -> Bool -> Serf.Flags -> RIO e ()
-tryPlayShip exitImmediately fullReplay flags =
-  do
-    when fullReplay $ do
-      wipeSnapshot
+tryPlayShip exitImmediately fullReplay flags = do
+    when fullReplay wipeSnapshot
     runOrExitImmediately resumeShip exitImmediately
   where
     wipeSnapshot = do
-        shipPath <- getPierPath
+        shipPath <- view pierPathL
         logTrace "wipeSnapshot"
         logDebug $ display $ pack @Text ("Wiping " <> north shipPath)
         logDebug $ display $ pack @Text ("Wiping " <> south shipPath)
@@ -192,7 +188,7 @@ tryPlayShip exitImmediately fullReplay flags =
     south shipPath = shipPath <> "/.urb/chk/south.bin"
 
     resumeShip = do
-        getPierPath >>= lockFile
+        view pierPathL >>= lockFile
         rio $ logTrace "RESUMING SHIP"
         sls <- Pier.resumed flags
         rio $ logTrace "SHIP RESUMED"

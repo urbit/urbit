@@ -14,7 +14,7 @@ import Data.Conduit.List hiding (filter)
 import Control.Concurrent (runInBoundThread, threadDelay)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
-import KingApp            (runApp, App)
+import King.App           (App, runApp)
 
 import qualified Vere.Log as Log
 

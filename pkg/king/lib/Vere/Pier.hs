@@ -95,7 +95,7 @@ booted pill lite flags ship boot = do
 
   rio $ logTrace "BootSeq Computed"
 
-  pierPath <- getPierPath
+  pierPath <- view pierPathL
 
   liftRIO (setupPierDirectory pierPath)
 
@@ -125,7 +125,7 @@ resumed :: (HasPierConfig e, HasLogFunc e)
         => Serf.Flags
         -> RAcquire e (Serf e, EventLog, SerfState)
 resumed flags = do
-    top    <- getPierPath
+    top    <- view pierPathL
     log    <- Log.existing (top <> "/.urb/log")
     serf   <- Serf.run (Serf.Config top flags)
     serfSt <- rio $ Serf.replay serf log
@@ -394,7 +394,7 @@ runPersist log inpQ out =
   where
     runThread :: RIO e (Async ())
     runThread = asyncBound $ do
-        dryRun <- getIsDryRun
+        dryRun <- view dryRunL
         forever $ do
             writs  <- atomically getBatchFromQueue
             unless dryRun $ do

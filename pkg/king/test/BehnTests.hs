@@ -19,7 +19,7 @@ import Vere.Pier.Types
 import Control.Concurrent (runInBoundThread, threadDelay)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
-import KingApp            (runApp)
+import King.App           (runApp)
 import Network.Socket     (tupleToHostAddress)
 
 import qualified Urbit.Time as Time

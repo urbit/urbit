@@ -2,25 +2,25 @@ module Config where
 
 import UrbitPrelude
 
--- All the configuration data revolving around a ship and the current execution
--- options.
+{-
+    All the configuration data revolving around a ship and the current
+    execution options.
+-}
 data PierConfig = PierConfig
-  { pcPierPath :: FilePath
-  , pcDryRun   :: Bool
-  } deriving (Show)
+    { _pcPierPath :: FilePath
+    , _pcDryRun   :: Bool
+    } deriving (Show)
+
+makeLenses ''PierConfig
 
 class HasPierConfig env where
     pierConfigL :: Lens' env PierConfig
 
-getPierPath :: (MonadReader env m, HasPierConfig env) => m FilePath
-getPierPath = do
-  PierConfig{..} <- view pierConfigL
-  pure pcPierPath
+pierPathL ∷ HasPierConfig a => Lens' a FilePath
+pierPathL = pierConfigL . pcPierPath
 
-getIsDryRun :: (MonadReader env m, HasPierConfig env) => m Bool
-getIsDryRun = do
-  PierConfig{..} <- view pierConfigL
-  pure pcDryRun
+dryRunL :: HasPierConfig a => Lens' a Bool
+dryRunL = pierConfigL . pcDryRun
 
 -------------------------------------------------------------------------------
 

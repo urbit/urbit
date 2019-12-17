@@ -117,7 +117,7 @@ clay king enqueueEv =
     handleEffect cd = \case
       SyncEfHill _ mountPoints -> do
         logDebug $ displayShow ("(clay) known mount points:", mountPoints)
-        pierPath <- getPierPath
+        pierPath <- view pierPathL
         mountPairs <- flip mapM mountPoints $ \desk -> do
           ss <- takeFilesystemSnapshot (pierPath </> (deskToPath desk))
           pure (desk, ss)
@@ -127,7 +127,7 @@ clay king enqueueEv =
         logDebug $ displayShow ("(clay) dirk:", p, desk)
         m <- atomically $ readTVar (cdMountPoints cd)
         let snapshot = M.findWithDefault M.empty desk m
-        pierPath <- getPierPath
+        pierPath <- view pierPathL
         let dir = pierPath </> deskToPath desk
         actions <- buildActionListFromDifferences dir snapshot
 
@@ -147,7 +147,7 @@ clay king enqueueEv =
         m <- atomically $ readTVar (cdMountPoints cd)
         let mountPoint = M.findWithDefault M.empty desk m
 
-        pierPath <- getPierPath
+        pierPath <- view pierPathL
         let dir = pierPath </> deskToPath desk
         let hashedActions = map (calculateActionHash dir) actions
         for_ hashedActions (performAction mountPoint)
@@ -158,7 +158,7 @@ clay king enqueueEv =
 
       SyncEfOgre p desk -> do
         logDebug $ displayShow ("(clay) ogre:", p, desk)
-        pierPath <- getPierPath
+        pierPath <- view pierPathL
         removeDirectoryRecursive $ pierPath </> deskToPath desk
         atomically $ modifyTVar (cdMountPoints cd) (M.delete desk)
 
