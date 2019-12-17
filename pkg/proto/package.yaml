@@ -80,10 +80,16 @@ executables:
 
 tests:
   proto-test:
-    main: Spec.hs
     source-dirs: test
+    main: Main.hs
     dependencies:
       - proto
+      - tasty
+      - tasty-hunit
+      - tasty-quickcheck
+      - tasty-smallcheck
+      - tasty-golden
+      - tasty-th
     ghc-options:
       - -threaded
       - -rtsopts

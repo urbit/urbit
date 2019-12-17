@@ -275,7 +275,7 @@ whnf = \case
   Tal (whnf -> Cns _ y) -> whnf y
   Cas _ (whnf -> Tag t) cs -> whnf $ fromJust $ lookup t cs
   e@(Rec (Abs _ b)) -> whnf $ instantiate1 e b
-  e -> trace "sadface" e
+  e -> e
 {-
   = Var a
   -- types
