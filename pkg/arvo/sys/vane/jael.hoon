@@ -308,11 +308,15 @@
       ::
       ::  start subscriptions
       ::
-      ::  get everything from azimuth-tracker because jael subscriptions
-      ::  seem to be flaky for now
-      ::
       =.  +>.$  (poke-watch hen %azimuth-tracker nod.own.pki)
       =.  +>.$
+        ::  get everything from azimuth-tracker because jael subscriptions
+        ::  seem to be flaky for now
+        ::
+        ?:  &
+          %-  curd  =<  abet
+          (sources:~(feel su hen our now pki etn) ~ [%| %azimuth-tracker])
+        ::
         ?-    (clan:title our)
             %czar
           %-  curd  =<  abet
