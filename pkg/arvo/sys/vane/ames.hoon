@@ -1792,6 +1792,20 @@
         ::
         =/  =peer-state  +.u.ship-state
         ::
+        ::  XX  routing hack to mimic old ames.
+        ::
+        ::    Before removing this, consider: moons when their planet is
+        ::    behind a NAT; a planet receiving initial acknowledgment
+        ::    from a star; a planet talking to another planet under
+        ::    another galaxy.
+        ::
+        ?:  ?|  =(our ship)
+                ?&  !=(final-ship ship)
+                    !=(%czar (clan:title ship))
+                ==
+            ==
+          (try-next-sponsor sponsor.peer-state)
+        ::
         ?:  =(our ship)
           ::  if forwarding, don't send to sponsor to avoid loops
           ::
