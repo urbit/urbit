@@ -3009,7 +3009,9 @@
     ::
     ?:  already-heard-fragment
       ?:  is-last-fragment
-        %-  (trace rcv.veb |.("hear last dupe {<her.channel^seq>}"))
+        %-  %+  trace  rcv.veb  |.
+            =/  data  [her.channel seq last-heard.state last-acked.state]
+            "hear last dupe {<data>}"
         message-sink
       %-  (trace rcv.veb |.("send dupe ack {<her.channel^seq^fragment-num>}"))
       (give %send seq %& fragment-num)
