@@ -13,7 +13,8 @@
   ::
   ++  goad
     |=  force=?
-    :~  [%pass /gall %arvo %g %goad force ~]
+    :~  [%pass /wipe %arvo %f %wipe 100]
+        [%pass /gall %arvo %g %goad force ~]
     ==
   --
 ::
