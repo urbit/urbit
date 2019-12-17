@@ -12,6 +12,7 @@ import System.Random
 import Vere.Pier.Types
 
 import Data.Text          (append)
+import King.App           (HasConfigDir(..))
 import System.Posix.Files (ownerModes, setFileMode)
 import Vere.Ames          (ames)
 import Vere.Behn          (behn)
@@ -23,6 +24,7 @@ import Vere.Serf          (Serf, SerfState(..), doJob, sStderr)
 
 import RIO.Directory
 
+import qualified King.API                     as King
 import qualified System.Console.Terminal.Size as TSize
 import qualified System.Entropy               as Ent
 import qualified Urbit.Time                   as Time
@@ -140,7 +142,7 @@ resumed flags = do
 acquireWorker :: RIO e () -> RAcquire e (Async ())
 acquireWorker act = mkRAcquire (async act) cancel
 
-pier :: ∀e. (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
+pier :: ∀e. (HasConfigDir e, HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
      => (Serf e, EventLog, SerfState)
      -> RAcquire e ()
 pier (serf, log, ss) = do
@@ -149,6 +151,8 @@ pier (serf, log, ss) = do
     executeQ  <- newTQueueIO
     saveM     <- newEmptyTMVarIO
     shutdownM <- newEmptyTMVarIO
+
+    _api ← King.kingAPI
 
     let shutdownEvent = putTMVar shutdownM ()
 

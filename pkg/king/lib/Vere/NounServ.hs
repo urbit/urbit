@@ -87,7 +87,7 @@ wsClient por = do
     -- logDebug "NOUNSERV (wsClie) Trying to connect"
 
     tid <- io $ async
-              $ WS.runClient "127.0.0.1" por "/"
+              $ WS.runClient "127.0.0.1" por "/terminal/~zod/1"
               $ runRIO env . wsConn "NOUNSERV (wsClie) " inp out
 
     pure $ Client con tid

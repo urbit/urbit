@@ -85,7 +85,7 @@ data Cmd
     = CmdNew New Opts
     | CmdRun Run Opts
     | CmdBug Bug
-    | CmdCon Word16
+    | CmdCon FilePath
   deriving (Show)
 
 --------------------------------------------------------------------------------
@@ -172,12 +172,12 @@ pillFromURL = PillSourceURL <$> strOption
                     <> value defaultPillURL
                     <> help "URL to pill file")
 
+pierPath :: Parser FilePath
+pierPath = strArgument (metavar "PIER" <> help "Path to pier")
+
 new :: Parser New
 new = do
-    nPierPath <- optional
-               $ strArgument
-                     $ metavar "PIER"
-                    <> help "Path to pier"
+    nPierPath <- optional pierPath
 
     nBootType <- newComet <|> newFakeship <|> newFromKeyfile
 
@@ -265,7 +265,7 @@ newShip = CmdNew <$> new <*> opts
 
 runShip :: Parser Cmd
 runShip = do
-    rPierPath <- strArgument (metavar "PIER" <> help "Path to pier")
+    rPierPath <- pierPath
     o         <- opts
     pure (CmdRun (Run{..}) o)
 
@@ -280,9 +280,6 @@ valPill = do
                        <> help "Print boot sequence"
 
     pure ValidatePill{..}
-
-pierPath :: Parser FilePath
-pierPath = strArgument (metavar "PIER" <> help "Path to pier")
 
 keyfilePath :: Parser FilePath
 keyfilePath = strArgument (metavar "KEYFILE" <> help "Path to key file")
@@ -344,11 +341,7 @@ bugCmd = fmap CmdBug
             )
 
 conCmd :: Parser Cmd
-conCmd = do
-    port <- argument auto ( metavar "PORT"
-                         <> help "Port of terminal server"
-                          )
-    pure (CmdCon port)
+conCmd = CmdCon <$> pierPath
 
 allFx :: Parser Bug
 allFx = do

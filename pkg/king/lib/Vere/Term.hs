@@ -21,6 +21,8 @@ import UrbitPrelude          hiding (getCurrentTime)
 import Vere.Pier.Types
 
 import Data.List     ((!!))
+import King.API      (readPortsFile)
+import King.App      (HasConfigDir(..))
 import RIO.Directory (createDirectoryIfMissing)
 import Vere.Term.API (Client(Client))
 
@@ -156,10 +158,16 @@ connectToRemote port local = mkRAcquire start stop
 
         pure (ferry, cAsync)
 
-runTerminalClient :: ∀e. HasLogFunc e => Port -> RIO e ()
-runTerminalClient port = runRAcquire $ do
+data HackConfigDir = HCD { _hcdPax :: FilePath }
+makeLenses ''HackConfigDir
+instance HasConfigDir HackConfigDir where configDirL = hcdPax
+
+runTerminalClient :: ∀e. HasLogFunc e => FilePath -> RIO e ()
+runTerminalClient pier = runRAcquire $ do
+    mPort          <- runRIO (HCD pier) readPortsFile
+    port           <- maybe (error "Can't connect") pure mPort
     (tsize, local) <- localClient
-    (tid1, tid2) <- connectToRemote port local
+    (tid1, tid2)   <- connectToRemote (Port $ fromIntegral port) local
     atomically $ waitSTM tid1 <|> waitSTM tid2
   where
     runRAcquire :: RAcquire e () -> RIO e ()

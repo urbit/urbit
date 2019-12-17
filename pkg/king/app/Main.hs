@@ -72,8 +72,9 @@ import Control.Concurrent   (myThreadId, runInBoundThread)
 import Control.Exception    (AsyncException(UserInterrupt))
 import Control.Lens         ((&))
 import Data.Default         (def)
-import King.App             (runApp, runPierApp)
+import King.App             (runApp, runPierApp, HasConfigDir(..))
 import System.Environment   (getProgName)
+import System.Exit          (exitSuccess)
 import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
 import System.Random        (randomIO)
 import Text.Show.Pretty     (pPrint)
@@ -138,7 +139,9 @@ toNetworkConfig CLI.Opts{..} = NetworkConfig
     , ncAmesPort = oAmesPort
     }
 
-tryBootFromPill :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
+tryBootFromPill :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
+                   , HasConfigDir e
+                   )
                 => Bool -> Pill -> Bool -> Serf.Flags -> Ship
                 -> LegacyBootEvent
                 -> RIO e ()
@@ -152,7 +155,9 @@ tryBootFromPill oExit pill lite flags ship boot =
         rio $ logTrace "Completed boot"
         pure sls
 
-runOrExitImmediately :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
+runOrExitImmediately :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
+                        , HasConfigDir e
+                        )
                      => RAcquire e (Serf e, Log.EventLog, SerfState)
                      -> Bool
                      -> RIO e ()
@@ -170,7 +175,9 @@ runOrExitImmediately getPier oExit =
     runPier sls = do
         runRAcquire $ Pier.pier sls
 
-tryPlayShip :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
+tryPlayShip :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
+               , HasConfigDir e
+               )
             => Bool -> Bool -> Serf.Flags -> RIO e ()
 tryPlayShip exitImmediately fullReplay flags = do
     when fullReplay wipeSnapshot
@@ -471,23 +478,23 @@ main = do
     installHandler sigTERM (Catch onTermSig) Nothing
 
     CLI.parseArgs >>= \case
-        CLI.CmdRun r o                            -> runShip r o
-        CLI.CmdNew n o                            -> runApp $ newShip n o
-        CLI.CmdBug (CLI.CollectAllFX pax)         -> runApp $ collectAllFx pax
-        CLI.CmdBug (CLI.EventBrowser pax)         -> runApp $ startBrowser pax
-        CLI.CmdBug (CLI.ValidatePill pax pil seq) -> runApp $ testPill pax pil seq
-        CLI.CmdBug (CLI.ValidateEvents pax f l)   -> runApp $ checkEvs pax f l
-        CLI.CmdBug (CLI.ValidateFX pax f l)       -> runApp $ checkFx  pax f l
-        CLI.CmdBug (CLI.CheckDawn pax)            -> runApp $ checkDawn pax
-        CLI.CmdBug CLI.CheckComet                 -> runApp $ checkComet
-        CLI.CmdCon port                           -> runApp $ connTerm port
+        CLI.CmdRun r o                          -> runShip r o
+        CLI.CmdNew n o                          -> runApp $ newShip n o
+        CLI.CmdBug (CLI.CollectAllFX pax)       -> runApp $ collectAllFx pax
+        CLI.CmdBug (CLI.EventBrowser pax)       -> runApp $ startBrowser pax
+        CLI.CmdBug (CLI.ValidatePill pax pil s) -> runApp $ testPill pax pil s
+        CLI.CmdBug (CLI.ValidateEvents pax f l) -> runApp $ checkEvs pax f l
+        CLI.CmdBug (CLI.ValidateFX pax f l)     -> runApp $ checkFx  pax f l
+        CLI.CmdBug (CLI.CheckDawn pax)          -> runApp $ checkDawn pax
+        CLI.CmdBug CLI.CheckComet               -> runApp $ checkComet
+        CLI.CmdCon pier                         -> runApp $ connTerm pier
 
 
 --------------------------------------------------------------------------------
 
-connTerm :: ∀e. HasLogFunc e => Word16 -> RIO e ()
-connTerm port =
-    Term.runTerminalClient (fromIntegral port)
+connTerm :: ∀e. HasLogFunc e => FilePath -> RIO e ()
+connTerm pier =
+    Term.runTerminalClient pier
 
 --------------------------------------------------------------------------------
 

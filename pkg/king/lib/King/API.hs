@@ -1,3 +1,9 @@
+{-
+    TODO This has a bunch of stub logic that was intended for an
+         architecture with a single Urbit daemon running multiple
+         ships. Do it or strip it out.
+-}
+
 module King.API (kingAPI, readPortsFile) where
 
 import UrbitPrelude
@@ -7,7 +13,7 @@ import RIO.Directory
 import King.App       (HasConfigDir(..))
 import Network.Socket (Socket)
 import Prelude        (read)
-import Vere.LockFile  (lockFile)
+--  rt Vere.LockFile  (lockFile)
 
 import qualified Network.HTTP.Types             as H
 import qualified Network.Wai                    as W
@@ -70,7 +76,7 @@ readPortsFile :: HasConfigDir e => RIO e (Maybe Word)
 readPortsFile = do
     (_, fil) <- portsFilePath
     bs <- readFile fil
-    evaluate (read $ unpack $ decodeUtf8 bs)
+    evaluate (readMay $ unpack $ decodeUtf8 bs)
 
 kingServer :: HasLogFunc e => (Int, Socket) -> RAcquire e King
 kingServer is =
@@ -90,7 +96,7 @@ kingAPI :: (HasConfigDir e, HasLogFunc e)
 kingAPI = do
     (port, sock) <- io $ W.openFreePort
     (dir, fil)   <- portsFile (fromIntegral port)
-    lockFile dir
+    -- lockFile dir
     kingServer (port, sock)
 
 stubStatus :: StatusResp
