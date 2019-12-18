@@ -55,7 +55,7 @@ herb ./ship -d '~&  ~  ~&  %start-pack  ~'
 herb ./ship -p hood -d '+hood/pack'
 herb ./ship -d '~&  ~  ~&  %finish-pack  ~'
 
-shutdown
+herb ./ship -p hood -d '+hood/exit' || true
 
 while [ -f ship/.vere.lock ]
 do
