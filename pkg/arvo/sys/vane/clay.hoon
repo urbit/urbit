@@ -3890,12 +3890,18 @@
     ::  at any of its children.
     ::
     ++  read-u
-      |=  {yon/aeon pax/path}
-      ^-  (unit (unit (each {$null (hypo ~)} lobe)))
-      =+  tak=(~(get by hit.dom) yon)
-      ?~  tak
+      |=  [yon=aeon pax=path]
+      ^-  (unit (unit (each [%flag (hypo ?)] lobe)))
+      ::  if asked for a future version, we don't have an answer
+      ::
+      ?~  tak=(~(get by hit.dom) yon)
         ~
-      ``[%& %null [%atom %n ~] ~]
+      ::  look up the yaki snapshot based on the version
+      ::
+      =/  yak=yaki  (tako-to-yaki u.tak)
+      ::  produce the result based on whether or not there's a file at :pax
+      ::
+      ``[%& %flag -:!>(*?) (~(has by q.yak) pax)]
     ::
     ::  Gets the dome (desk state) at a particular aeon.
     ::
