@@ -6108,6 +6108,7 @@
 ::  and a namespace function
 ::
 |=  [our=ship now=@da eny=@uvJ scry-gate=sley]
+=*  ford-gate  .
 ::  allow jets to be registered within this core
 ::
 ~%  %ford  ..is  ~
@@ -6332,12 +6333,16 @@
   --
 ::  +load: migrate old state to new state (called on vane reload)
 ::
+::    Trim builds completely in case a change to our code invalidated an
+::    old build result.
+::
 ++  load
   |=  old=axle
-  ^+  ..^$
+  ^+  ford-gate
   ::
-  ~!  %loading
-  ..^$(ax old)
+  =.  ax  old
+  =.  ford-gate  +:(call ~[/ford-load-self] *type %trim 0)
+  ford-gate
 ::  +stay: produce current state
 ::
 ++  stay  `axle`ax
@@ -6346,9 +6351,4 @@
 ++  scry
   |=  *
   [~ ~]
-::  %utilities
-::
-::+|
-::
-++  ford-gate  ..$
 --
