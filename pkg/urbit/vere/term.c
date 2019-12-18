@@ -835,7 +835,7 @@ u3_term_start_spinner(c3_c* why_c, c3_o now_o)
     u3_utty* uty_u = _term_main();
     u3_utat* tat_u = &uty_u->tat_u;
 
-    c3_free(tat_u->  sun_u.why_c);
+    c3_free(tat_u->sun_u.why_c);
     tat_u->sun_u.why_c = why_c;
 
     tat_u->sun_u.eve_d = 0;
@@ -854,6 +854,9 @@ u3_term_start_spinner(c3_c* why_c, c3_o now_o)
                      wen_d, _SPIN_RATE_US);
     }
   }
+  else {
+    c3_free(why_c);
+  }
 }
 
 /* u3_term_stop_spinner(): reset spinner state and restore input line.
@@ -864,6 +867,9 @@ u3_term_stop_spinner(void)
   if ( c3n == u3_Host.ops_u.tem ) {
     u3_utty* uty_u = _term_main();
     u3_utat* tat_u = &uty_u->tat_u;
+
+    c3_free(tat_u->sun_u.why_c);
+    tat_u->sun_u.why_c = 0;
 
     uv_timer_stop(&tat_u->sun_u.tim_u);
 
