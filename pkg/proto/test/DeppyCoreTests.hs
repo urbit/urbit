@@ -38,7 +38,31 @@ case_free_vars_don't_nest = nest emp "x" "y" @?= Nothing
 
 -- cases and cores
 
--- case_case_sub = undefined
+coreT, caseT :: (Eq a, IsString a) => [(Tag, Typ a)] -> Typ a
+
+coreT as =
+  fun "$private_var_name"
+    (wut $ map fst as)
+    (cas "$private_var_name" as)
+
+caseT cs =
+  cel "$private_var_name"
+    (wut $ map fst cs)
+    (cas "$private_var_name" cs)
+
+case_core_sub =
+  nest
+    emp
+    (coreT [(0, "x"), (1, wut [111])])
+    (coreT [(1, wut [111, 222])])
+  @?= pure ()
+
+case_case_sub =
+  nest
+    emp
+    (caseT [(1, wut [111])])
+    (caseT [(0, "x"), (1, wut [111, 222])])
+  @?= pure ()
 
 -- distribution
 
@@ -49,6 +73,24 @@ case_cas_cel_in_cel_cas =
     (cel_ (cas "y" [(2, "t1"), (3, "t3")]) (cas "y" [(2, "t2"), (3, "t4")]))
   @?= pure ()
 
+case_cel_cas_not_in_cas_cel =
+  nest
+    (env [("x", wut [0, 1]), ("y", wut [2, 3])])
+    (cel_ (cas "y" [(2, "t1"), (3, "t3")]) (cas "y" [(2, "t2"), (3, "t4")]))
+    (cas "x" [(0, cel_ "t1" "t2"), (1, cel_ "t3" "t4")])
+  @?= Nothing
+
+case_cel_cas_in_cas_cel =
+  nest
+    (env [("x", wut [0, 1, 2, 3]), ("y", wut [2, 3])])
+    (cel_ (cas "y" [(2, "t1"), (3, "t3")]) (cas "y" [(2, "t2"), (3, "t4")]))
+    (cas "x" [ (0, cel_ "t1" "t2")
+             , (1, cel_ "t3" "t4")
+             , (2, cel_ "t1" "t4")
+             , (3, cel_ "t3" "t2")
+             ])
+  @?= Nothing
+
 -- silly recursion
 
 case_dangling_rec_in = nest emp (rec "_" Typ $ wut [1]) (wut [1,2]) @?= pure ()
@@ -58,6 +100,21 @@ case_in_dangling_rec = nest emp (wut [1]) (rec "_" Typ $ wut [1,2]) @?= pure ()
 case_dangling_rec_not_in = nest emp (rec "_" Typ $ wut [1,2]) (wut [1]) @?= Nothing
 
 case_not_in_dangling_rec = nest emp (wut [1,2]) (rec "_" Typ $ wut [1]) @?= Nothing
+
+-- recursive types
+
+-- these cases are taken from Harper, PFPL 2 ed., pp. 220-221
+
+case_harper_bad_rec_doesn't_nest =
+  nest
+    emp
+    (rec "t" Typ $ coreT [(0, fun_ "t" $ wut [11]),     (1, fun_ "t" $ wut [11, 22])])
+    (rec "t" Typ $ coreT [(0, fun_ "t" $ wut [11, 22]), (1, fun_ "t" $ wut [11, 22])])
+  @?= Nothing
+
+labeled_binary = rec "t" Typ $ caseT [ (0, wut [0])
+                                     , (1, coreT [(10, wut [123]), undefined])
+                                     ]
 
 -- list test cases
 
