@@ -175,16 +175,24 @@
     (curr rush dim:ag)
   ?+  request-line  not-found:gen
   ::TODO  expose submissions, other data
+  ::  submissions by recency as json
+  ::
+      [[[~ %json] [%'~link' %submissions ^]] *]
+    %-  json-response:gen
+    %-  json-to-octs  ::TODO  include in +json-response:gen
+    :-  %a
+    %+  turn
+      (get-submissions t.t.site.request-line p)
+    submission:en-json
   ::  local links by recency as json
   ::
       [[[~ %json] [%'~link' %local-pages ^]] *]
     %-  json-response:gen
     %-  json-to-octs  ::TODO  include in +json-response:gen
-    ^-  json
     :-  %a
     %+  turn
-      `pages`(get-pages t.t.site.request-line p)
-    `$-(page json)`page:en-json
+      (get-local-pages t.t.site.request-line p)
+    page:en-json
   ==
 ::
 ++  include-cors-headers
@@ -210,14 +218,30 @@
   ==
 ::
 ++  page-size  25
-++  get-pages
+++  get-paginated
+  |*  [l=(list) p=(unit @ud)]
+  ?~  p  l
+  %+  scag  page-size
+  %+  slag  (mul u.p page-size)
+  l
+::
+++  get-submissions
+  |=  [=path p=(unit @ud)]
+  ^-  submissions
+  =-  (get-paginated - p)
+  .^  submissions
+    %gx
+    (scot %p our.bowl)
+    %link-store
+    (scot %da now.bowl)
+    %submissions
+    (snoc path %noun)
+  ==
+::
+++  get-local-pages
   |=  [=path p=(unit @ud)]
   ^-  pages
-  =;  =pages
-    ?~  p  pages
-    %+  scag  page-size
-    %+  slag  (mul u.p page-size)
-    pages
+  =-  (get-paginated - p)
   .^  pages
     %gx
     (scot %p our.bowl)

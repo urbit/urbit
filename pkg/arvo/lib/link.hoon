@@ -25,6 +25,13 @@
 ++  en-json
   =,  enjs:format
   |%
+  ++  submission
+    |=  sub=^submission
+    ^-  json
+    =+  p=(page +.sub)
+    ?>  ?=([%o *] p)
+    o+(~(put by p.p) 'ship' (ship ship.sub))
+  ::
   ++  page
     |=  =^page
     ^-  json
