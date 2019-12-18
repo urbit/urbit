@@ -42,7 +42,6 @@
   $:  our-paths=(list path)
       books=(map @tas notebook)
       subs=(map [@p @tas] notebook)
-      unread=(set [@p @tas @tas])
   ==
 --
 ::
@@ -273,9 +272,9 @@
   =/  comment-date  (slaw %da i.t.t.t.t.t.pax)
   ?~  comment-date
     [~ state]
-  =/  book-name     i.t.t.t.pax
-  =/  note-name     i.t.t.t.t.pax
-  =/  new-comment  !<(comment q.r.u.rot)
+  =/  book-name      i.t.t.t.pax
+  =/  note-name      i.t.t.t.t.pax
+  =/  new-comment    !<(comment q.r.u.rot)
   =/  rif=riff:clay  [q.byk.bol `[%next %x [%da now.bol] pax]]
   =/  delta=notebook-delta
     [%edit-comment our.bol book-name note-name u.comment-date new-comment]
@@ -508,6 +507,7 @@
       note-name
       now.bol
       now.bol
+      %.n
       udon
       build
       ~
@@ -701,9 +701,9 @@
           writers-path
           subscribers-path
       ==
-    =/  pax=path  /app/publish/notebooks/[book.act]
+    =/  pax=path  /app/publish/notebooks/[book.act]/publish-info
     :_  state
-    [(write-file pax %publish-info !>(notebook-info)) cards]
+    [(write-file pax %publish-info !>(new-info)) cards]
   ::
       %edit-note
     ?:  &(=(src.bol our.bol) !=(our.bol who.act))
@@ -765,8 +765,11 @@
       %unsubscribe
     ?>  (team:title our.bol src.bol)
     =/  wir=wire  /subscribe/(scot %p who.act)/[book.act]
+    =/  del=primary-delta  [%del-book who.act book.act]
     :_  state(subs (~(del by subs) who.act book.act))
-    [%pass wir %agent [who.act %publish] %leave ~]~
+    :~  [%pass wir %agent [who.act %publish] %leave ~]
+        [%give %fact `/primary %publish-primary-delta !>(del)]
+    ==
   ==
 ::
 ++  get-notebook
@@ -799,6 +802,7 @@
       (get-notebook host.del book.del)
     ?~  book
       [~ state]
+    =.  read.data.del  =(our.bol author.data.del)
     =.  notes.u.book  (~(put by notes.u.book) note.del data.del)
     (emit-updates-and-state host.del book.del u.book del)
   ::
@@ -824,7 +828,6 @@
         date-created  date-created.u.old-book
         notes         notes.u.old-book
         order         order.u.old-book
-        pinned        pinned.u.old-book
       ==
     (emit-updates-and-state host.del book.del new-book del)
   ::
@@ -840,6 +843,7 @@
       %=  data.del
         date-created  date-created.u.old-note
         comments      comments.u.old-note
+        read          read.u.old-note
       ==
     =.  notes.u.book  (~(put by notes.u.book) note.del new-note)
     (emit-updates-and-state host.del book.del u.book del)
@@ -915,7 +919,7 @@
       [[[~ %json] [%'~publish' %notebooks ~]] ~]
     %-  json-response:gen
     %-  json-to-octs
-    (notebooks-list-json our.bol books subs)
+    (notebooks-map-json our.bol books subs)
   ::
   ::  notes pagination
       [[[~ %json] [%'~publish' %notes @ @ @ @ ~]] ~]
@@ -937,6 +941,7 @@
       not-found:gen
     %-  json-response:gen
     %-  json-to-octs
+    :-  %o
     (notes-page notes.u.book u.start u.length)
   ::
   ::  comments pagination
@@ -965,15 +970,52 @@
     %-  json-to-octs
     (comments-page comments.u.note u.start u.length)
   ::
+  ::  single notebook with initial 50 notes in short form, as json
+      [[[~ %json] [%'~publish' @ @ ~]] ~]
+    =,  enjs:format
+    =/  host=(unit @p)  (slaw %p i.t.site.url)
+    ?~  host
+      not-found:gen
+    =/  book-name  i.t.t.site.url
+    =/  book=(unit notebook)
+      ?:  =(our.bol u.host)
+        (~(get by books) book-name)
+      (~(get by subs) u.host book-name)
+    ?~  book
+      not-found:gen
+    =/  notebook-json  (notebook-full-json u.host book-name u.book)
+    ?>  ?=(%o -.notebook-json)
+    =.  p.notebook-json
+      (~(uni by p.notebook-json) (notes-page notes.u.book 0 50))
+    =/  jon=json  (pairs notebook+notebook-json ~)
+    (json-response:gen (json-to-octs jon))
+  ::
+  ::  single note, with initial 50 comments, as json
+      [[[~ %json] [%'~publish' @ @ @ ~]] ~]
+    =,  enjs:format
+    =/  host=(unit @p)  (slaw %p i.t.site.url)
+    ?~  host
+      not-found:gen
+    =/  book-name  i.t.t.site.url
+    =/  book=(unit notebook)
+      ?:  =(our.bol u.host)
+        (~(get by books) book-name)
+      (~(get by subs) u.host book-name)
+    ?~  book
+      not-found:gen
+    =/  note-name  i.t.t.t.site.url
+    =/  note=(unit note)  (~(get by notes.u.book) note-name)
+    ?~  note
+      not-found:gen
+    =/  jon=json  o+(note-presentation-json u.book note-name u.note)
+    (json-response:gen (json-to-octs jon))
+  ::
   ::  presentation endpoints
   ::
   ::  all notebooks, short form, wrapped in html
       [[~ [%'~publish' ~]] ~]
     =,  enjs:format
-    =/  jon=json
-      %-  pairs
-      :~  notebooks+(notebooks-list-json our.bol books subs)
-      ==
+    =/  jon=json  (pairs notebooks+(notebooks-map-json our.bol books subs) ~)
     (manx-response:gen (index jon))
   ::
   ::  single notebook, with initial 50 notes in short form, wrapped in html
@@ -989,12 +1031,18 @@
       (~(get by subs) u.host book-name)
     ?~  book
       not-found:gen
-    =/  jon=json
-      %-  pairs
-      :~  notebooks+(notebooks-list-json our.bol books subs)
-          notebook+(notebook-full-json u.host book-name u.book)
-          notes+(notes-page notes.u.book 0 50)
-      ==
+    =/  notebook-json  (notebook-full-json u.host book-name u.book)
+    ?>  ?=(%o -.notebook-json)
+    =.  p.notebook-json
+      (~(uni by p.notebook-json) (notes-page notes.u.book 0 50))
+    =/  notebooks-json  (notebooks-map-json our.bol books subs)
+    ?>  ?=(%o -.notebooks-json)
+    =/  host-books-json  (~(got by p.notebooks-json) (scot %p u.host))
+    ?>  ?=(%o -.host-books-json)
+    =.  p.host-books-json  (~(put by p.host-books-json) book-name notebook-json)
+    =.  p.notebooks-json
+      (~(put by p.notebooks-json) (scot %p u.host) host-books-json)
+    =/  jon=json  (pairs notebooks+notebooks-json ~)
     (manx-response:gen (index jon))
   ::
   ::  single note, with initial 50 comments, wrapped in html
@@ -1014,14 +1062,18 @@
     =/  note=(unit note)  (~(get by notes.u.book) note-name)
     ?~  note
       not-found:gen
-    =/  jon=json
-      %-  pairs
-      :~  notebooks+(notebooks-list-json our.bol books subs)
-          notebook+(notebook-full-json u.host book-name u.book)
-          notes+(notes-page notes.u.book 0 50)
-          note+(note-full-json u.host book-name note-name u.note)
-          comments+(comments-page comments.u.note 0 50)
-      ==
+    =/  notebook-json  (notebook-full-json u.host book-name u.book)
+    ?>  ?=(%o -.notebook-json)
+    =/  note-json  (note-presentation-json u.book note-name u.note)
+    =.  p.notebook-json  (~(uni by p.notebook-json) note-json)
+    =/  notebooks-json  (notebooks-map-json our.bol books subs)
+    ?>  ?=(%o -.notebooks-json)
+    =/  host-books-json  (~(got by p.notebooks-json) (scot %p u.host))
+    ?>  ?=(%o -.host-books-json)
+    =.  p.host-books-json  (~(put by p.host-books-json) book-name notebook-json)
+    =.  p.notebooks-json
+      (~(put by p.notebooks-json) (scot %p u.host) host-books-json)
+    =/  jon=json  (pairs notebooks+notebooks-json ~)
     (manx-response:gen (index jon))
   ==
 ::

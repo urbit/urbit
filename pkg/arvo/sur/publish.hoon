@@ -35,6 +35,7 @@
       filename=@tas
       date-created=@da
       last-edit=@da
+      read=?
       file=@t
       build=(each manx tang)
       comments=(map @da comment)
@@ -49,7 +50,7 @@
       date-created=@da
       notes=(map @tas note)
       order=(list @tas)
-      pinned=(set @tas)
+      unread=(set @tas)
   ==
 ::
 +$  notebook-info

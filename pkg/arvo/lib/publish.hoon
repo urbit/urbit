@@ -37,6 +37,15 @@
       result+(tang-to-json p.build)
   ==
 ::
+++  count-unread
+  |=  notes=(map @tas note)
+  ^-  @ud
+  %-  ~(rep by notes)
+  |=  [[key=@tas val=note] count=@ud]
+  ?:  read.val
+    count
+  +(count)
+::
 ++  notebooks-list-json
   |=  [our=@p books=(map @tas notebook) subs=(map [@p @tas] notebook)]
   ^-  json
@@ -45,91 +54,163 @@
   %+  weld
     %+  turn  ~(tap by books)
     |=  [name=@tas book=notebook]
-    (notebook-short-json our name book)
+    (notebook-short-json book)
   %+  turn  ~(tap by subs)
   |=  [[host=@p name=@tas] book=notebook]
-  (notebook-short-json host name book)
+  (notebook-short-json book)
+::
+++  notebooks-map-json
+  |=  [our=@p books=(map @tas notebook) subs=(map [@p @tas] notebook)]
+  ^-  json
+  =,  enjs:format
+  =/  subs-notebooks-map=json 
+    %-  ~(rep by subs)
+    |=  [[[host=@p book-name=@tas] book=notebook] out=json]
+    ^-  json
+    =/  host-ta  (scot %p host)
+    ?~  out
+      (frond host-ta (frond book-name (notebook-short-json book)))
+    ?>  ?=(%o -.out)
+    =/  books  (~(get by p.out) host-ta)
+    ?~  books
+      :-  %o
+      (~(put by p.out) host-ta (frond book-name (notebook-short-json book)))
+    ?>  ?=(%o -.u.books)
+    =.  p.u.books  (~(put by p.u.books) book-name (notebook-short-json book))
+    :-  %o
+    (~(put by p.out) host-ta u.books)
+  =?  subs-notebooks-map  ?=(~ subs-notebooks-map)
+    [%o ~]
+  =/  our-notebooks-map=json
+    %-  ~(rep by books)
+    |=  [[book-name=@tas book=notebook] out=json]
+    ^-  json
+    ?~  out
+      (frond book-name (notebook-short-json book))
+    ?>  ?=(%o -.out)
+    :-  %o
+    (~(put by p.out) book-name (notebook-short-json book))
+  ?~  our-notebooks-map
+    subs-notebooks-map
+  ?>  ?=(%o -.subs-notebooks-map)
+  :-  %o
+  (~(put by p.subs-notebooks-map) (scot %p our) our-notebooks-map)
 ::
 ++  notebook-short-json
+  |=  book=notebook
+  ^-  json
+  =,  enjs:format
+  %-  pairs
+  :~  title+s+title.book
+      date-created+(time date-created.book)
+      num-notes+(numb ~(wyt by notes.book))
+      num-unread+(numb (count-unread notes.book))
+  ==
+::
+++  notebook-full-json
   |=  [host=@p book-name=@tas book=notebook]
   ^-  json
   =,  enjs:format
   %-  pairs
-  :~  host+(ship host)
-      id+s+book-name
-      title+s+title.book
+  :~  title+s+title.book
       date-created+(time date-created.book)
       num-notes+(numb ~(wyt by notes.book))
+      num-unread+(numb (count-unread notes.book))
+      notes-by-date+(notes-by-date notes.book)
+  ::  XX settings stuff, subscribers
   ==
 ::
-++  notebook-full-json
-  |=  [host=@p name=@tas book=notebook]
-  ^-  json
+++  note-presentation-json
+  |=  [book=notebook note-name=@tas not=note]
+  ^-  (map @t json)
   =,  enjs:format
-  %-  pairs
-  :~  host+(ship host)
-      id+s+name
-      title+s+title.book
-      date-created+(time date-created.book)
-  ::  subscribers
-  ::  notes
-  ==
-::
-++  note-short-json
-  |=  [host=@p book-name=@tas note-name=@tas =note]
-  ^-  json
-  =,  enjs:format
-  %-  pairs
-  :~  host+(ship host)
-      book-id+s+book-name
-      note-id+s+note-name
-      author+(ship author.note)
-      title+s+title.note
-      date-created+(time date-created.note)
-      num-comments+(numb ~(wyt by comments.note))
+  =/  notes-list=(list [@tas note])
+    %+  sort  ~(tap by notes.book)
+    |=  [[@tas n1=note] [@tas n2=note]]
+    (gte date-created.n1 date-created.n2)
+  =/  idx=@  (need (find [note-name not]~ notes-list))
+  =/  next=(unit [name=@tas not=note])
+    ?:  =(idx 0)  ~
+    `(snag (dec idx) notes-list)
+  =/  prev=(unit [name=@tas not=note])
+    ?:  =(+(idx) (lent notes-list))  ~
+    `(snag +(idx) notes-list)
+  =/  current=json  (note-full-json note-name not)
+  ?>  ?=(%o -.current)
+  =.  p.current  (~(put by p.current) %prev-note ?~(prev ~ s+name.u.prev))
+  =.  p.current  (~(put by p.current) %next-note ?~(next ~ s+name.u.next))
+  =/  notes=(list [@t json])  [note-name current]~
+  =?  notes  ?=(^ prev)
+    [[name.u.prev (note-short-json name.u.prev not.u.prev)] notes]
+  =?  notes  ?=(^ next)
+    [[name.u.next (note-short-json name.u.next not.u.next)] notes]
+  %-  my
+  :~  notes+(pairs notes)
+      notes-by-date+a+(turn notes-list |=([name=@tas *] s+name))
   ==
 ::
 ++  note-full-json
-  |=  [host=@p book-name=@tas note-name=@tas =note]
+  |=  [note-name=@tas =note]
   ^-  json
   =,  enjs:format
   %-  pairs
-  :~  host+(ship host)
-      book-id+s+book-name
-      note-id+s+note-name
-      author+(ship author.note)
+  :~  note-id+s+note-name
+      author+s+(scot %p author.note)
       title+s+title.note
       date-created+(time date-created.note)
       build+(note-build-to-json build.note)
       file+s+file.note
+      num-comments+(numb ~(wyt by comments.note))
+      comments+(comments-page comments.note 0 50)
+      read+b+read.note
   ==
 ::
-++  notes-page
-  |=  [notes=(map @tas note) start=@ud length=@ud]
+++  notes-by-date
+  |=  notes=(map @tas note)
   ^-  json
   =/  notes-list=(list [@tas note])
     %+  sort  ~(tap by notes)
     |=  [[@tas n1=note] [@tas n2=note]]
     (gte date-created.n1 date-created.n2)
-  %-  notes-list-json
-  (scag length (slag start notes-list))
-::
-++  notes-list-json
-  |=  notes=(list [@tas note])
-  ^-  json
-  =,  enjs:format
   :-  %a
-  %+  turn  notes
+  %+  turn  notes-list
+  |=  [name=@tas note]
+  ^-  json
+  [%s name]
+::
+++  note-short-json
   |=  [note-name=@tas =note]
   ^-  json
+  =,  enjs:format
   %-  pairs
   :~  note-id+s+note-name
-      author+(ship author.note)
+      author+s+(scot %p author.note)
       title+s+title.note
       date-created+(time date-created.note)
       num-comments+(numb ~(wyt by comments.note))
-  ::  snippet
+      read+b+read.note
+  ::  XX snippet
   ==
+::
+++  notes-page
+  |=  [notes=(map @tas note) start=@ud length=@ud]
+  ^-  (map @t json)
+  =/  notes-list=(list [@tas note])
+    %+  sort  ~(tap by notes)
+    |=  [[@tas n1=note] [@tas n2=note]]
+    (gte date-created.n1 date-created.n2)
+  %-  my
+  :~  notes-by-date+a+(turn notes-list |=([name=@tas *] s+name))
+      notes+o+(notes-list-json (scag length (slag start notes-list)))
+  ==
+::
+++  notes-list-json
+  |=  notes=(list [@tas note])
+  ^-  (map @t json)
+  %+  roll  notes
+  |=  [[name=@tas not=note] out-map=(map @t json)]
+  ^-  (map @t json)
+  (~(put by out-map) name (note-short-json name not))
 ::
 ++  comments-page
   |=  [comments=(map @da comment) start=@ud end=@ud]
@@ -155,7 +236,7 @@
   %+  frond:enjs:format
     (scot %da date)
   %-  pairs
-  :~  author+(ship author.com)
+  :~  author+s+(scot %p author.com)
       date-created+(time date-created.com)
       content+s+content.com
   ==
