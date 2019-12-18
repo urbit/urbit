@@ -205,6 +205,7 @@
   !>  ^-  poke:eth-watcher
   :+  %watch  /[dap.bowl]
   :*  node-url
+      |
       refresh-rate
       public:mainnet-contracts
       ~[azimuth delegated-sending]:mainnet-contracts
