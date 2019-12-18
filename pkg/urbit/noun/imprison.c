@@ -472,7 +472,6 @@ u3i_list(u3_weak one, ...);
     return cut_t ? cut_w : i_w;
   }
 
-  __attribute__((no_sanitize_address))
   static u3_noun                            //  transfer
   _molt_apply(u3_noun            som,       //  retain
               c3_w               len_w,
@@ -498,7 +497,6 @@ u3i_list(u3_weak one, ...);
     }
   }
 
-__attribute__((no_sanitize_address))
 u3_noun
 u3i_molt(u3_noun som, ...)
 {
