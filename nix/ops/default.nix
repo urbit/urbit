@@ -74,8 +74,13 @@ rec {
   };
 
   image = import ./image {
-    inherit pkgs urbit;
-    pill = bootsolid;
+    inherit pkgs herb urbit solid;
+  };
+
+  image-ropsten = import ./image {
+    inherit pkgs herb urbit;
+    brass = brass-ropsten;
+    ivory = ivory-ropsten;
   };
 
 }
