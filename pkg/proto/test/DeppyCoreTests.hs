@@ -45,8 +45,8 @@ case_free_vars_don't_nest = nest emp "x" "y" @?= Nothing
 case_cas_cel_in_cel_cas =
   nest
     (env [("x", wut [0, 1]), ("y", wut [2, 3])])
-    (cas Typ "x" [(0, cel_ "t1" "t2"), (1, cel_ "t3" "t4")])
-    (cel_ (cas Typ "y" [(2, "t1"), (3, "t3")]) (cas Typ "y" [(2, "t2"), (3, "t4")]))
+    (cas "x" [(0, cel_ "t1" "t2"), (1, cel_ "t3" "t4")])
+    (cel_ (cas "y" [(2, "t1"), (3, "t3")]) (cas "y" [(2, "t2"), (3, "t4")]))
   @?= pure ()
 
 -- silly recursion
@@ -70,6 +70,15 @@ nilT t = cel_ (Tag NIL) (Tag SIG)
 consT t self = cel_ (Tag CONS) $ cel_ t self
 
 listCellT = undefined
+
+-- typings
+
+case_cas_rule_doesn't_screw_us =
+  check
+    (env [("x", wut [0, 1])])
+    (cas "x" [(0, Tag 111), (1, Tag 222)])
+    (wut [111, 222])
+  @?= pure ()
 
 
 tests :: TestTree

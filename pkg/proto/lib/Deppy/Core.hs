@@ -27,7 +27,7 @@ data Exp a
   | App (Exp a) (Exp a)
   | Hed (Exp a)
   | Tal (Exp a)
-  | Cas (Typ a) (Exp a) (Map Tag (Exp a))
+  | Cas (Exp a) (Map Tag (Exp a))
   -- recursion, flow control
   | Let (Exp a) (Scope () Exp a)
   | Rec (Abs a)
@@ -80,7 +80,7 @@ instance Monad Exp where
   App x y >>= f = App (x >>= f) (y >>= f)
   Hed x >>= f = Hed (x >>= f)
   Tal x >>= f = Tal (x >>= f)
-  Cas t x cs >>= f = Cas (t >>= f) (x >>= f) (cs <&> (>>= f))
+  Cas x cs >>= f = Cas (x >>= f) (cs <&> (>>= f))
   Let a b >>= f = Let (a >>= f) (b >>>= f)
   Rec a >>= f = Rec (bindAbs a f)
 
@@ -110,7 +110,7 @@ ledt v e e' = Let e (abstract1 v e')
 
 wut = Wut . setFromList
 
-cas t e cs = Cas t e (mapFromList cs)
+cas e cs = Cas e (mapFromList cs)
 
 infixl 9 @:
 (@:) = App
@@ -161,7 +161,8 @@ nest env = fmap void . go env mempty
     go env asm0 (whnf -> t0) (whnf -> u0) =
       if t0 == u0 || member (t0, u0) asm0
         then pure asm0
-        else let asm = Set.insert (t0, u0) asm0 in traceAwesome "nest" (t0, u0)
+        else let asm = Set.insert (t0, u0) asm0 in
+          --traceAwesome "nest" (t0, u0)
           case (t0, u0) of
             (Typ, Typ) -> pure asm
             -- FIXME yeah actually I think this is wrong
@@ -190,7 +191,7 @@ nest env = fmap void . go env mempty
             (_, Tag{}) -> error "nest: tag"
             -- Special rule for the Cas eliminator to enable sums and products
             -- TODO nf
-            (Cas _ e cs, Cas _ e' cs') | whnf e == whnf e' -> do
+            (Cas e cs, Cas e' cs') | whnf e == whnf e' -> do
                 Wut s <- infer env e
                 -- TODO I should thread changing asm through the traversal
                 -- but I can't be bothered right now. Perf regression.
@@ -199,7 +200,7 @@ nest env = fmap void . go env mempty
                 chk tag = case (lookup tag cs, lookup tag cs') of
                   (Just t, Just u) -> go env asm t u
                   _ -> error "the Spanish inquisition"
-            (Cas _ e cs, u) -> do
+            (Cas e cs, u) -> do
               Wut (setToList -> s) <- infer env e
               -- TODO thread asms
               -- all of the cases nest in u
@@ -211,8 +212,8 @@ nest env = fmap void . go env mempty
             -- Sadly may not be fixable. Hoon.hoon also errs like this
             -- The previous case is biconditional, as it amounts to the
             -- definition of join.
-            (t, Cas _ e cs) -> do
-              Wut (setToList -> s) <- trace "bye" $ infer env e
+            (t, Cas e cs) -> do
+              Wut (setToList -> s) <- infer env e
               -- TODO thread asms
               -- u nests in any of the cases
               asm <$ asum (fmap
@@ -261,13 +262,11 @@ infer env = \case
   Tal x -> do
     Cel (Abs _ u) <- infer env x
     pure $ instantiate1 (whnf $ Hed $ x) u
-  Cas t x cs -> do
-    Typ <- infer env t
-    Wut ts <- infer env x
-    -- pretty restrictive - do we want?
-    guard (ts == keysSet cs)
-    traverse_ (\e -> check env e t) cs
-    pure t
+  Cas x cs -> do
+    Wut s <- infer env x
+    -- TODO pretty restrictive - do we want?
+    guard (s == keysSet cs)
+    Cas x <$> traverse (infer env) cs
   -- Let e b -> do
   -- -- TODO is below faster, or infer env (instantiate1 e b)?
   -- t <- infer env e
@@ -283,7 +282,7 @@ whnf = \case
   App (whnf -> Lam (Abs _ b)) x -> whnf $ instantiate1 x b
   Hed (whnf -> Cns x _) -> whnf x
   Tal (whnf -> Cns _ y) -> whnf y
-  Cas _ (whnf -> Tag t) cs -> whnf $ fromJust $ lookup t cs
+  Cas (whnf -> Tag t) cs -> whnf $ fromJust $ lookup t cs
   e@(Rec (Abs _ b)) -> whnf $ instantiate1 e b
   e -> e
 {-
