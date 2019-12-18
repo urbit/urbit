@@ -119,7 +119,7 @@
     %-  parse-request-line
     url.request.inbound-request
   =*  req-head  header-list.request.inbound-request
-  =-  ::TODO  =;  [cards=(list card) =simple-payload:http]
+  =-  ::TODO  =;
     %+  weld  cards
     (give-simple-payload:app eyre-id simple-payload)
   ^-  [cards=(list card) =simple-payload:http]
@@ -137,7 +137,7 @@
 ++  handle-post
   |=  [request-headers=header-list:http =request-line body=(unit octs)]
   ^-  [(list card) simple-payload:http]
-  =-  ::TODO  =;  [success=? cards=(list card)]
+  =-  ::TODO  =;
     :-  cards
     %+  include-cors-headers
       request-headers
@@ -173,8 +173,19 @@
   =/  p=(unit @ud)
     %+  biff  (~(get by args) 'p')
     (curr rush dim:ag)
-  ?+  request-line  not-found:gen
-  ::TODO  expose submissions, other data
+  ?+  request-line
+  ::  for the default case, try to load file from clay
+  ::
+      ?~  ext.request-line  not-found:gen
+      =/  file=(unit octs)
+        ?.  ?=([%'~link' *] site.request-line)  ~
+        (get-file-at /app/link [t.site u.ext]:request-line)
+      ?~  file  not-found:gen
+      ?+  u.ext.request-line  not-found:gen
+        %html  (html-response:gen u.file)
+        %js    (js-response:gen u.file)
+        %css   (css-response:gen u.file)
+      ==
   ::  submissions by recency as json
   ::
       [[[~ %json] [%'~link' %submissions ^]] *]
@@ -250,4 +261,23 @@
     %local-pages
     (snoc path %noun)
   ==
+::
+++  get-file-at
+  |=  [base=path file=path ext=@ta]
+  ^-  (unit octs)
+  ::  only expose html, css and js files for now
+  ::
+  ?.  ?=(?(%html %css %js) ext)
+    ~
+  =/  =path
+    :*  (scot %p our.bowl)
+        q.byk.bowl
+        (scot %da now.bowl)
+        (snoc (weld base file) ext)
+    ==
+  ?.  .^(? %cu path)
+    ~
+  %-  some
+  %-  as-octs:mimes:html
+  .^(@ %cx path)
 --
