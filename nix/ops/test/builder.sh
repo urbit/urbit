@@ -2,6 +2,8 @@ source $stdenv/setup
 
 set -ex
 
+export ASAN_OPTIONS="detect_leaks=1:allow_user_segv_handler=1:log_path=asan.log"
+
 cp -r $SHIP ./ship
 chmod -R u+rw ./ship
 
@@ -19,6 +21,12 @@ shutdown () {
 }
 
 trap shutdown EXIT
+
+if ! [ -f ship/.vere.lock ]
+then
+    echo "Lockfile missing."
+    exit 1
+fi
 
 herb ./ship -p hood -d '+hood/mass'
 
@@ -48,6 +56,22 @@ herb ./ship -p hood -d '+hood/pack'
 herb ./ship -d '~&  ~  ~&  %finish-pack  ~'
 
 shutdown
+
+while [ -f ship/.vere.lock ]
+do
+    echo "... awaiting exit"
+    sleep 3
+done
+
+if [ -n "$(find . -maxdepth 1 -type f -name 'asan.log.*' -print -quit)" ]
+then
+    for f in ./asan.log.*
+    do
+        echo "    $f:"
+        cat "$f"
+    done
+    exit 1
+fi
 
 # Collect output
 
