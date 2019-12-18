@@ -161,7 +161,6 @@ u3r_at(u3_atom a, u3_noun b)
     }
   }
 
-__attribute__((no_sanitize_address))
 c3_o
 u3r_vmean(u3_noun som, va_list ap)
 {
