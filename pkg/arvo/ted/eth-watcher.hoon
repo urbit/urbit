@@ -15,6 +15,8 @@
 ;<  =latest=block                 bind:m  (get-latest-block:ethio url.pup)
 ;<  pup=watchpup   bind:m         (zoom pup number.id.latest-block)
 =|  vows=disavows
+?.  eager.pup
+  (pure:m !>([vows pup]))
 |-  ^-  form:m
 =*  loop  $
 ?:  (gth number.pup number.id.latest-block)
@@ -72,7 +74,7 @@
 ::
 ::    Zooming doesn't go forward one block at a time.  As a
 ::    consequence, it cannot detect and handle reorgs.  Only use it
-::    at a safe distance -- 500 blocks ago is probably sufficient.
+::    at a safe distance -- 100 blocks ago is probably sufficient.
 ::
 ++  zoom
   |=  [pup=watchpup =latest=number:block]

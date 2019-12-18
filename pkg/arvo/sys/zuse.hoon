@@ -2185,13 +2185,17 @@
             %disavow  ~|(%udiff-to-diff-disavow !!)
             %spon     `[%spon sponsor.a-point sponsor.a-udiff]
             %rift
-          ?:  (gth rift.a-udiff rift.a-point)
-            ~?  !=(rift.a-udiff +(rift.a-point))
-              [%udiff-to-diff-skipped a-udiff a-point]
-            `[%rift rift.a-point rift.a-udiff]
-          ~
+          ?.  (gth rift.a-udiff rift.a-point)
+            ~
+          ~?  !=(rift.a-udiff +(rift.a-point))
+            [%udiff-to-diff-skipped-rift a-udiff a-point]
+          `[%rift rift.a-point rift.a-udiff]
         ::
             %keys
+          ?.  (gth life.a-udiff life.a-point)
+            ~
+          ~?  !=(life.a-udiff +(life.a-point))
+            [%udiff-to-diff-skipped-life a-udiff a-point]
           :^  ~  %keys
             [life.a-point (~(gut by keys.a-point) life.a-point *[@ud pass])]
           [life crypto-suite pass]:a-udiff
