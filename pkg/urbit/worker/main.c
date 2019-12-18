@@ -889,6 +889,10 @@ _worker_poke_exit(c3_w cod_w)                 //  exit code
     }
   }
 
+  //  XX move to jets.c
+  //
+  c3_free(u3D.ray_u);
+
   exit(cod_w);
 }
 
