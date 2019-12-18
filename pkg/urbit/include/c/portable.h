@@ -74,14 +74,29 @@
 
 #   else
       #error "port: headers"
+#   endif
 
+#   ifndef __has_feature
+#     define __has_feature(x) 0
+#   endif
+
+#   if __has_feature(address_sanitizer) || defined(__SANITIZE_ADDRESS__)
+#     define ASAN_ENABLED
 #   endif
 
   /** Address space layout.
   **/
 #   if defined(U3_OS_linux)
-#     define U3_OS_LoomBase 0x36000000
-#     define U3_OS_LoomBits 29              //  ie, 2^29 words == 2GB
+#     ifdef __LP64__
+#       ifdef ASAN_ENABLED
+#         define U3_OS_LoomBase 0x10007ffff000
+#       else
+#         define U3_OS_LoomBase 0x200000000
+#       endif
+#     else
+#       define U3_OS_LoomBase 0x36000000
+#     endif
+#       define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
 #   elif defined(U3_OS_osx)
 #     ifdef __LP64__
 #       define U3_OS_LoomBase 0x200000000
