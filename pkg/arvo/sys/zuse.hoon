@@ -4946,7 +4946,7 @@
         $(rob (put-word rob col -), sin +(sin))
       ::
       ::  c1, c2: prns for picking reference block
-      =+  ^-  [c1=@ c2=@]  ::TODO  =/ w/o face
+      =/  [c1=@ c2=@]
         ?:  do-i  (snag sin rands)
         =+  =-  (snag - rob)
             ?:  =(0 col)  (dec columns)
@@ -6632,7 +6632,7 @@
         [~ ~]
       ?^  t.rax
         [p.pok [ire q.pok]]:[pok=$(rax t.rax) ire=i.rax]
-      =+  ^-  raf/(like term)
+      =/  raf/(like term)
           =>  |=(a/@ ((sand %tas) (crip (flop (trip a)))))
           (;~(sfix (sear . sym) dot) [1^1 (flop (trip i.rax))])
       ?~  q.raf
@@ -7814,7 +7814,7 @@
     ~?  ?=(~ mined.log)  %processing-unmined-event
     ::
     ?:  =(i.topics.log owner-changed)
-      =+  ^-  [who=@ wer=address]
+      =/  [who=@ wer=address]
           (decode-topics t.topics.log ~[%uint %address])
       `[who %owner wer]
     ::
@@ -7824,12 +7824,12 @@
       `[who %activated who]
     ::
     ?:  =(i.topics.log spawned)
-      =+  ^-  [pre=@ who=@]
+      =/  [pre=@ who=@]
           (decode-topics t.topics.log ~[%uint %uint])
       `[pre %spawned who]
     ::
     ?:  =(i.topics.log escape-requested)
-      =+  ^-  [who=@ wer=@]
+      =/  [who=@ wer=@]
           (decode-topics t.topics.log ~[%uint %uint])
       `[who %escape `wer]
     ::
@@ -7838,18 +7838,18 @@
       `[who %escape ~]
     ::
     ?:  =(i.topics.log escape-accepted)
-      =+  ^-  [who=@ wer=@]
+      =/  [who=@ wer=@]
           (decode-topics t.topics.log ~[%uint %uint])
       `[who %sponsor & wer]
     ::
     ?:  =(i.topics.log lost-sponsor)
-      =+  ^-  [who=@ pos=@]
+      =/  [who=@ pos=@]
           (decode-topics t.topics.log ~[%uint %uint])
       `[who %sponsor | pos]
     ::
     ?:  =(i.topics.log changed-keys)
       =/  who=@  (decode-topics t.topics.log ~[%uint])
-      =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
+      =/  [enc=octs aut=octs sut=@ud rev=@ud]
           %+  decode-results  data.log
           ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
       `[who %keys rev (pass-from-eth enc aut sut)]
@@ -7860,22 +7860,22 @@
       `[who %continuity num]
     ::
     ?:  =(i.topics.log changed-management-proxy)
-      =+  ^-  [who=@ sox=address]
+      =/  [who=@ sox=address]
           (decode-topics t.topics.log ~[%uint %address])
       `[who %management-proxy sox]
     ::
     ?:  =(i.topics.log changed-voting-proxy)
-      =+  ^-  [who=@ tox=address]
+      =/  [who=@ tox=address]
           (decode-topics t.topics.log ~[%uint %address])
       `[who %voting-proxy tox]
     ::
     ?:  =(i.topics.log changed-spawn-proxy)
-      =+  ^-  [who=@ sox=address]
+      =/  [who=@ sox=address]
           (decode-topics t.topics.log ~[%uint %address])
       `[who %spawn-proxy sox]
     ::
     ?:  =(i.topics.log changed-transfer-proxy)
-      =+  ^-  [who=@ tox=address]
+      =/  [who=@ tox=address]
           (decode-topics t.topics.log ~[%uint %address])
       `[who %transfer-proxy tox]
     ::

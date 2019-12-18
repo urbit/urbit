@@ -968,7 +968,7 @@
   ++  he-lens
     |=  com/command:lens
     ^+  +>
-    =+  ^-  source/dojo-source
+    =/  source=dojo-source
         =|  num/@
         =-  ?.  ?=($send-api -.sink.com)  ::  XX  num is incorrect
               sor
@@ -1109,7 +1109,7 @@
     |=  pos=@ud
     ^+  +>
     =*  res  +>
-    =+  ^-  [back-pos=@ud fore-pos=@ud txt=tape]
+    =/  [back-pos=@ud fore-pos=@ud txt=tape]
         (insert-magic:auto (add (lent buf) pos) :(weld buf (tufa buf.say)))
     =/  id-len  (sub fore-pos back-pos)
     =/  fore-pos-diff  (sub fore-pos pos)

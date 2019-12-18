@@ -185,7 +185,7 @@
     ::  nex: offset of value bytes from fuz
     ::  len: length of value bytes
     ::
-    =+  ^-  [nex=@ len=@]
+    =/  [nex=@ len=@]
       ::  faz: meaningful bits in fuz
       ::
       =/  faz  (end 0 7 fuz)

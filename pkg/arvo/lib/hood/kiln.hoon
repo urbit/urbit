@@ -378,7 +378,7 @@
 ++  take-mere-sync                                    ::
   |=  {way/wire mes/(each (set path) (pair term tang))}
   ?>  ?=({@ @ @ *} way)
-  =+  ^-  hos/kiln-sync
+  =/  hos/kiln-sync
       :*  syd=(slav %tas i.way)
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
@@ -388,7 +388,7 @@
 ++  take-writ-find-ship                               ::
   |=  {way/wire rot/riot}
   ?>  ?=({@ @ @ *} way)
-  =+  ^-  hos/kiln-sync
+  =/  hos/kiln-sync
       :*  syd=(slav %tas i.way)
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
@@ -398,7 +398,7 @@
 ++  take-writ-sync                                    ::
   |=  {way/wire rot/riot}
   ?>  ?=({@ @ @ *} way)
-  =+  ^-  hos/kiln-sync
+  =/  hos/kiln-sync
       :*  syd=(slav %tas i.way)
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
@@ -549,7 +549,7 @@
 ::
 ++  work                                              ::  state machine
   |=  syd/desk
-  =+  ^-  per-desk
+  =/  ,per-desk
       %+  ~(gut by rem)  syd
       =+  *per-desk
       %_(- cas [%da now])
@@ -644,7 +644,7 @@
               [%scry %c %x [[our syd] (flop pax)]]
             =/  dali=schematic  [%diff [our syd] base alis]
             =/  dbob=schematic  [%diff [our syd] base bobs]
-            =+  ^-  for/mark
+            =/  for=mark
                 =+  (slag (dec (lent pax)) pax)
                 ?~(- %$ i.-)
             ^-  schematic
@@ -713,7 +713,7 @@
       =+  "failed to mash"
       lose:(spam leaf+- message.build-result.result)
     ?>  ?=([%complete %success %list *] result)
-    =+  ^-  can/(list (pair path (unit miso)))
+    =/  can=(list (pair path (unit miso)))
         %+  turn  results.build-result.result
         |=  res=build-result:ford
         ^-  (pair path (unit miso))
@@ -731,7 +731,7 @@
     =+  annotated=(turn `(list (pair path *))`-.notated head)
     =+  unnotated=(turn `(list (pair path *))`+.notated head)
     =+  `desk`(cat 3 syd '-scratch')
-    =+  ^-  tan/(list tank)
+    =/  tan=(list tank)
         %-  zing
         ^-  (list (list tank))
         :~  %-  tape-to-tanks

@@ -15,7 +15,7 @@
     ~(tap by dir:.^(arch %cy (welp top /sys/vane)))
   ?.  =(1 (met 3 tam))
     tam
-  =+  ^-  zaz=(list [p=knot ~])
+  =/  zaz=(list [p=knot ~])
       (skim van |=([a=term ~] =(tam (end 3 1 a))))
   ?>  ?=([[@ ~] ~] zaz)
   `term`p.i.zaz
