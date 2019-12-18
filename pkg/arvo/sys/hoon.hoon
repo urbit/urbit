@@ -14254,6 +14254,7 @@
           [%name term %spec spec %base %noun]
         wyde
       ==
+    ::
       %+  cook
         |=  [=term =(unit spec)]
         ^-  skin
@@ -14265,6 +14266,12 @@
         ::
         (punt ;~(pfix ;~(pose net tis) wyde))
       ==
+    ::
+      %+  cook
+        |=  =spec
+        ^-  skin
+        [%spec spec %base %noun]
+      wyde
     ==
   ++  tall                                              ::  full tall form
     %+  knee  *hoon
