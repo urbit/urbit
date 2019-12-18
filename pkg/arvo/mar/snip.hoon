@@ -23,7 +23,7 @@
     |-  ^-  {rem/@u res/marl}
     ?~  mal  [lim ~]
     ?~  lim  [0 ~]
-    =+  ^-  {lam/@u hed/manx}
+    =/  {lam/@u hed/manx}
       ?:  ?=(_;/(**) i.mal)
         [lim ;/(tay)]:(deword lim v.i.a.g.i.mal)
       [rem ele(c res)]:[ele=i.mal $(mal c.i.mal)]

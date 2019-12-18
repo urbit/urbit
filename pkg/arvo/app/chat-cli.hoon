@@ -1387,7 +1387,7 @@
   |=  [txt=tape wid=@ud]
   ^-  (list tape)
   ?~  txt  ~
-  =+  ^-  [end=@ud nex=?]
+  =/  [end=@ud nex=?]
     ?:  (lte (lent txt) wid)  [(lent txt) &]
     =+  ace=(find " " (flop (scag +(wid) `tape`txt)))
     ?~  ace  [wid |]
