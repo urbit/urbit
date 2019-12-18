@@ -2,18 +2,21 @@ module DeppyCoreTests where
 
 import ClassyPrelude
 
+import qualified Data.Map as Map
+import Data.Maybe (fromJust)
 import Test.Tasty
 import Test.Tasty.HUnit
 import Test.Tasty.TH
 
 import Deppy.Core
 
-instance IsString (Exp String) where
-  fromString = Var
+instance IsString s => IsString (Typ s) where
+  fromString = Var . fromString
 
 -- basic subtyping tests
 
 emp = const undefined
+env bs v = fromJust $ Map.lookup v $ mapFromList bs
 
 case_type_in_type = nest @String emp Typ Typ @?= pure ()
 
@@ -29,13 +32,22 @@ case_cel_co = nest @String emp (cel_ (wut [1]) (wut [3])) (cel_ (wut [1,2]) (wut
 
 case_fun_contra = nest @String emp (fun_ (wut [1,2]) (wut [3])) (fun_ (wut [1]) (wut [3,4])) @?= pure ()
 
+-- used for other tests
+case_free_var_nests = nest emp "x" "x" @?= pure ()
+case_free_vars_don't_nest = nest emp "x" "y" @?= Nothing
+
 -- cases and cores
 
 -- case_case_sub = undefined
 
 -- distribution
 
--- case_cas_cel_in_cel_cas = nest emp (cas (Var "x") Typ [(0, cel_ (wut [0]) (wut [1])), (1, cel_ (wut [2]), (wut [3]]
+case_cas_cel_in_cel_cas =
+  nest
+    (env [("x", wut [0, 1]), ("y", wut [2, 3])])
+    (cas Typ "x" [(0, cel_ "t1" "t2"), (1, cel_ "t3" "t4")])
+    (cel_ (cas Typ "y" [(2, "t1"), (3, "t3")]) (cas Typ "y" [(2, "t2"), (3, "t4")]))
+  @?= pure ()
 
 -- silly recursion
 

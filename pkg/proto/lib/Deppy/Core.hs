@@ -8,6 +8,7 @@ import Data.Maybe (fromJust)
 import Data.Set (isSubsetOf)
 import qualified Data.Set as Set
 import Numeric.Natural
+import Text.Show.Pretty (ppShow)
 
 type Typ = Exp
 
@@ -145,6 +146,10 @@ retractAsm = foldMap wither
 
 type Typing = Maybe
 
+tracePpShowId a = trace (ppShow a) a
+
+traceAwesome s a b = trace (s <>":\n" <> ppShow a <> "\n" <> s <> " val:\n" <> ppShow b) b
+
 -- TODO
 --   - better errors
 --   - state monad for Asm (how to handle polymorphic recursion?)
@@ -156,7 +161,7 @@ nest env = fmap void . go env mempty
     go env asm0 (whnf -> t0) (whnf -> u0) =
       if t0 == u0 || member (t0, u0) asm0
         then pure asm0
-        else let asm = Set.insert (t0, u0) asm0 in
+        else let asm = Set.insert (t0, u0) asm0 in traceAwesome "nest" (t0, u0)
           case (t0, u0) of
             (Typ, Typ) -> pure asm
             -- FIXME yeah actually I think this is wrong
@@ -184,8 +189,8 @@ nest env = fmap void . go env mempty
             (Tag{}, _) -> error "nest: tag"
             (_, Tag{}) -> error "nest: tag"
             -- Special rule for the Cas eliminator to enable sums and products
-            (Cas _ e cs, Cas _ e' cs') -> do
-                guard (whnf e == whnf e')
+            -- TODO nf
+            (Cas _ e cs, Cas _ e' cs') | whnf e == whnf e' -> do
                 Wut s <- infer env e
                 -- TODO I should thread changing asm through the traversal
                 -- but I can't be bothered right now. Perf regression.
@@ -195,19 +200,24 @@ nest env = fmap void . go env mempty
                   (Just t, Just u) -> go env asm t u
                   _ -> error "the Spanish inquisition"
             (Cas _ e cs, u) -> do
-              Wut s <- infer env e
+              Wut (setToList -> s) <- infer env e
               -- TODO thread asms
+              -- all of the cases nest in u
               asm <$ traverse_
                 (\tag -> go env asm (fromJust $ lookup tag cs) u)
                 s
+            -- FIXME sufficient but not necessary.
+            -- Consider ?(#a #b #c) <= ?% _ $x ?(#a #b) $y ?(#b #c).
+            -- Sadly may not be fixable. Hoon.hoon also errs like this
+            -- The previous case is biconditional, as it amounts to the
+            -- definition of join.
             (t, Cas _ e cs) -> do
-              Wut s <- infer env e
+              Wut (setToList -> s) <- trace "bye" $ infer env e
               -- TODO thread asms
-              asm <$ traverse_
+              -- u nests in any of the cases
+              asm <$ asum (fmap
                 (\tag -> go env asm t (fromJust $ lookup tag cs))
-                s
-            (t@Cas{}, u) -> go env asm (whnf t) u
-            (t, u@Cas{}) -> go env asm t (whnf u)
+                s)
             (t@(Rec (Abs _ b)), u) -> go env asm (instantiate1 t b) u
             (t, u@(Rec (Abs _ b))) -> go env asm t (instantiate1 u b)
             _ -> Nothing
