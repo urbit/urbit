@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -ex
 
 STACK_YAML="`pwd`/pkg/hs/stack.yaml"
 
@@ -16,7 +16,13 @@ fi
 
 mkdir -p release
 
-cp $(nix-build --no-link -A fullBuildScript) release/king-linux64-$ver
+pushd pkg/hs
+
+king=$(bash $(nix-build --no-link -A fullBuildScript))
+
+popd
+
+cp "$king"/bin/king "release/king-linux64-$ver"
 
 for plat in linux64 darwin
 do
