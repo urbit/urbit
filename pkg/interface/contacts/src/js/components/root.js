@@ -7,9 +7,9 @@ import { api } from '/api';
 import { subscription } from '/subscription';
 import { store } from '/store';
 import { Skeleton } from '/components/skeleton';
-import { NewScreen } from '/components/lib/new';
+import { NewScreen } from '/components/new';
 import { Contacts } from '/components/contacts';
-import { ContactCard } from '/components/lib/card';
+import { ContactCard } from '/components/lib/contact-card';
 import { AddScreen } from '/components/lib/add-contact';
 
 

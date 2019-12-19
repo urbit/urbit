@@ -81,13 +81,8 @@ export class NewScreen extends Component {
       invites: ''
     }, () => {
       props.setSpinner(true);
-      props.api.contactCreate(group);
       //TODO add YOU to the group, but without invites
-      aud.forEach((ship) => {
-        if (ship !== `~${window.ship}`) {
-          props.api.invite.invite(group, ship);
-        }
-      });
+      props.api.contactCreate(group, aud);
     });
   }
   
@@ -97,90 +92,82 @@ export class NewScreen extends Component {
     if (this.state.groupNameError) {
       groupNameErrElem = (
         <span className="f9 inter red2 ml3 mt1 db">
-        Group must have a valid name.
+          Group must have a valid name.
         </span>
         );
-      }
+    }
+    
+    let invErrElem = (<span />);
+    if (this.state.inviteError) {
+    invErrElem = (
+      <span className="f9 inter red2 ml3 mb5 db">
+      Invites must be validly formatted ship names.
+      </span>
+      );
+    }
+
+    /*
+     {<h2 className="f8 pl3 pt6">Group Avatar</h2>
+        <p className="f9 pl3 gray2 lh-copy">
+        Select a color to represent your group
+        </p>
+        <textarea
+        className="f7 ba b--gray3 w-50 w-25-xl pa3 ml3 mt2"
+        rows={1}
+        placeholder="#000000"
+        style={{
+          resize: "none",
+          height: 48,
+          paddingTop: 14
+        }}
+      />}
+    */
       
-      let invErrElem = (<span />);
-      if (this.state.inviteError) {
-        invErrElem = (
-          <span className="f9 inter red2 ml3 mb5 db">
-          Invites must be validly formatted ship names.
-          </span>
-          );
-        }
-        
-        return (
-          <div className="h-100 w-100 flex flex-column overflow-y-scroll">
-          <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 pl3 pt3 f8">
+    return (
+      <div className="h-100 w-100 flex flex-column overflow-y-scroll">
+        <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 pl3 pt3 f8">
           <Link to="/~contacts/">{"⟵ All Groups"}</Link>
-          </div>
-          <div className="w-100 w-50-l w-50-xl mb4 pr6 pr0-l pr0-xl">
+        </div>
+        <div className="w-100 w-50-l w-50-xl mb4 pr6 pr0-l pr0-xl">
           <h2 className="f8 pl3 pt4">Create New Group</h2>
           <h2 className="f8 pl3 pt6">Group Name</h2>
           <p className="f9 pl3 gray2 lh-copy">Alphanumeric characters and hyphens only</p>
           <textarea
-          className="f7 ba b--gray3 w-100 pa3 ml3 mt2"
-          rows={1}
-          placeholder="example-group-name"
-          style={{
-            resize: "none",
-            height: 48,
-            paddingTop: 14
-          }}
-          onChange={this.groupNameChange}/>
+            className="f7 ba b--gray3 w-100 pa3 ml3 mt2"
+            rows={1}
+            placeholder="example-group-name"
+            style={{
+              resize: "none",
+              height: 48,
+              paddingTop: 14
+            }}
+            onChange={this.groupNameChange} />
           {groupNameErrElem}
-          {/* <h2 className="f8 pl3 pt6">Group Avatar</h2>
-          <p className="f9 pl3 gray2 lh-copy">
-          Select a color to represent your group
-          </p>
+          <h2 className="f8 pl3 pt6">Add Group Members</h2>
+          <p className="f9 pl3 gray2 lh-copy">Invite ships to your group</p>
+          <div className="relative">
           <textarea
-          className="f7 ba b--gray3 w-50 w-25-xl pa3 ml3 mt2"
+          className="f8 ba b--gray3 w-100 pa3 pl3 ml3 mt2 mb2"
           rows={1}
-          placeholder="#000000"
+          placeholder="~zod, ~dopzod, ~ravmel-ropdyl"
           style={{
             resize: "none",
             height: 48,
-            paddingTop: 14
+            paddingTop: 15
           }}
-        /> */}
-        <h2 className="f8 pl3 pt6">Add Group Members</h2>
-        <p className="f9 pl3 gray2 lh-copy">
-        Invite ships to your group
-        </p>
-        <div className="relative">
-        <textarea
-        className="f8 ba b--gray3 w-100 pa3 pl3 ml3 mt2 mb2"
-        rows={1}
-        placeholder="~zod, ~dopzod, ~ravmel-ropdyl"
-        style={{
-          resize: "none",
-          height: 48,
-          paddingTop: 15
-        }}
-        onChange={this.invChange}/>
-        {invErrElem}
-        {/* <span className="f5 gray3 absolute"
-        style={{transform: "rotate(-45deg)",
-        left: 21,
-        top: 18}}>
-        ⚲
-      </span> */}
+          onChange={this.invChange}/>
+          {invErrElem}
+        </div>
+        <button 
+          onClick={this.onClickCreate.bind(this)}
+          className="ml3 f8 ba pa2 b--green2 green2 pointer">
+          Start Group
+        </button>
+        <Link to="/~contacts">
+          <button className="f8 ml3 ba pa2 b--black pointer">Cancel</button>
+        </Link>
+        </div>
       </div>
-      <button 
-      onClick={this.onClickCreate.bind(this)}
-      className="ml3 f8 ba pa2 b--green2 green2 pointer">
-      Start Group
-      </button>
-      <Link to="/~contacts">
-      <button className="f8 ml3 ba pa2 b--black pointer">Cancel</button>
-      </Link>
-      </div>
-      </div>
-      );
-    }
+    );
   }
-  
-  export default NewScreen
-  
+}

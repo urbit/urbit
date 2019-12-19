@@ -470,9 +470,9 @@ export class ContactCard extends Component {
               }
               { !!props.contact.website ? (
                   <div>
-                    <p classname="f9 mt6 gray2">website</p>
+                    <p className="f9 mt6 gray2">website</p>
                     <a target="_blank"
-                       classname="bb b--black f8" 
+                       className="bb b--black f8" 
                        href={websiteHref}>
                       {props.contact.website}
                     </a>
@@ -481,8 +481,8 @@ export class ContactCard extends Component {
               }
               { !!props.contact.notes ? (
                   <div>
-                    <p classname="f9 mt6 gray2">notes</p>
-                    <p classname="f8">{props.contact.notes}</p>
+                    <p className="f9 mt6 gray2">notes</p>
+                    <p className="f8">{props.contact.notes}</p>
                   </div>
                 ) : null
               }
@@ -537,4 +537,3 @@ export class ContactCard extends Component {
   }
 }
 
-export default ContactCard;

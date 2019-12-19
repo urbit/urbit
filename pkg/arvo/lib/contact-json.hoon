@@ -104,7 +104,13 @@
         [%add add]
         [%remove remove]
     ==
-  ++  create  (ot [%path pa]~)
+  ::
+  ++  create
+    %-  ot
+    :~  [%path pa]
+        [%members (as (su ;~(pfix sig fed:ag)))]
+    ==
+  ::
   ++  delete  (ot [%path pa]~)
   ::
   ++  add

@@ -69,8 +69,8 @@ class UrbitApi {
     this.action("contact-store", "contact-action", data);
   }
 
-  contactCreate(path) {
-    this.contactViewAction({ create: { path }});
+  contactCreate(path, members = []) {
+    this.contactViewAction({ create: { path, members }});
   }
 
   contactDelete(path) {
