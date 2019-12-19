@@ -131,12 +131,13 @@ module Database.LMDB.Raw
 
 #include <lmdb.h>
 
+import Prelude
+
 import Foreign
 import Foreign.C
-import Control.Applicative
 import Control.Monad
 import Control.Exception
-import Control.Concurrent 
+import Control.Concurrent
 import qualified Data.Array.Unboxed as A
 import qualified Data.List as L
 import Data.Typeable

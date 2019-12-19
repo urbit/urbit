@@ -43,5 +43,47 @@ Library
   Include-dirs: cbits
   Includes:     lmdb.h midl.h
   C-Sources:    cbits/mdb.c cbits/midl.c
-  cc-options:   -Wall -O2 -g -pthread
-  ghc-options:  -Wall -auto-all
+  cc-options:   -Wall -O2 -g -pthread -fPIC
+  ghc-options:  -Wall -fprof-auto -fPIC
+
+ default-extensions: ApplicativeDo
+                   , BangPatterns
+                   , BlockArguments
+                   , DataKinds
+                   , DefaultSignatures
+                   , DeriveAnyClass
+                   , DeriveDataTypeable
+                   , DeriveFoldable
+                   , DeriveGeneric
+                   , DeriveTraversable
+                   , DerivingStrategies
+                   , EmptyCase
+                   , EmptyDataDecls
+                   , FlexibleContexts
+                   , FlexibleInstances
+                   , FunctionalDependencies
+                   , GADTs
+                   , GeneralizedNewtypeDeriving
+                   , LambdaCase
+                   , MagicHash
+                   , MultiParamTypeClasses
+                   , NamedFieldPuns
+                   , NoImplicitPrelude
+                   , NumericUnderscores
+                   , OverloadedStrings
+                   , PartialTypeSignatures
+                   , PatternSynonyms
+                   , QuasiQuotes
+                   , Rank2Types
+                   , RankNTypes
+                   , RecordWildCards
+                   , ScopedTypeVariables
+                   , StandaloneDeriving
+                   , TemplateHaskell
+                   , TupleSections
+                   , TypeApplications
+                   , TypeFamilies
+                   , TypeOperators
+                   , UnboxedTuples
+                   , UnicodeSyntax
+                   , ViewPatterns
