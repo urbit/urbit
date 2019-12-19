@@ -1,10 +1,9 @@
-# TODO Only do release builds on the `pull` branch?
-
 jobs:
   include:
   - os: linux
     language: nix
     nix: 2.1.3
+    env: STACK_YAML=pkg/hs/stack.yaml
     before_install:
       - git lfs pull
       - sh/travis-install-stack
@@ -16,13 +15,15 @@ jobs:
     script:
       - cachix use urbit2
       - ./sh/cachix
-      - make build-fast
+      - make build
       - make release
+      - sh/release-king-linux64-dynamic
       - sh/ci-tests
 
   - os: osx
     language: generic
     sudo: required
+    env: STACK_YAML=pkg/hs/stack.yaml
 
     before_install:
       - sh/travis-install-stack
@@ -31,13 +32,7 @@ jobs:
       - stack --no-terminal --install-ghc build king --only-dependencies
 
     script:
-      - ver="$(git rev-parse HEAD)"
-      - if [ -n "${TRAVIS_COMMIT-}" ]; then ver="$TRAVIS_COMMIT"; fi
-      - if [ -n "${TRAVIS_TAG-}" ]; then ver="$TRAVIS_TAG"; fi
-      - stack clean
-      - stack install king --local-bin-path ./release
-      - mv release/king release/king-darwin-$ver
-      - otool -L release/king-darwin-$ver
+      - sh/release-king-darwin-dynamic
 
 cache:
   directories:

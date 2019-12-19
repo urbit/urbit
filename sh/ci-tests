@@ -2,7 +2,9 @@
 
 set -ex
 
-stack test king --fast
+export STACK_YAML="`pwd`/pkg/hs/stack.yaml"
+
+stack test king
 
 if [ "$TRAVIS_PULL_REQUEST" = false ]
 then

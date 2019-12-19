@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -ex
+
+if [ -n "${TRAVIS_TAG-}" ]
+then
+  ver="$TRAVIS_TAG"
+elif [ -n "${TRAVIS_COMMIT-}" ]
+then
+  ver="$TRAVIS_COMMIT"
+else
+  ver="$(git rev-parse HEAD)"
+fi
+
+pushd pkg/hs
+
+king=$(bash $(nix-build --no-link -A fullBuildScript))
+
+popd
+
+out="release/king-linux64-static-$ver"
+
+cp "$king"/bin/king "$out"
+
+ldd "$out"
