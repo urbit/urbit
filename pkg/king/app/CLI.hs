@@ -134,7 +134,7 @@ parseArgs = do
 --------------------------------------------------------------------------------
 
 defaultPillURL :: String
-defaultPillURL = "https://bootstrap.urbit.org/urbit-" <> VERSION_king <> ".pill"
+defaultPillURL = "https://bootstrap.urbit.org/urbit-v" <> VERSION_king <> ".pill"
 
 --------------------------------------------------------------------------------
 
