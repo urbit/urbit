@@ -1,6 +1,7 @@
 name: king
 version: 0.10.1
-license: AGPL-3.0-only
+license: MIT
+license-file: LICENSE
 
 flags:
   Release:
@@ -126,7 +127,6 @@ default-extensions:
   - DerivingStrategies
   - EmptyCase
   - EmptyDataDecls
-  - EmptyDataDeriving
   - FlexibleContexts
   - FlexibleInstances
   - FunctionalDependencies
