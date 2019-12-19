@@ -31,23 +31,14 @@ _ames_alloc(uv_handle_t* had_u,
   *buf = uv_buf_init(ptr_v, 2048);
 }
 
-/* _ames_free(): contrasting free.
-*/
-static void
-_ames_free(void* ptr_v)
-{
-//  u3l_log("free %p\n", ptr_v);
-  free(ptr_v);
-}
-
 /* _ames_pact_free(): free packet struct.
 */
 static void
 _ames_pact_free(u3_pact* pac_u)
 {
-  free(pac_u->hun_y);
-  free(pac_u->dns_c);
-  free(pac_u);
+  c3_free(pac_u->hun_y);
+  c3_free(pac_u->dns_c);
+  c3_free(pac_u);
 }
 
 /* _ames_send_cb(): send callback.
@@ -178,7 +169,7 @@ _ames_czar_cb(uv_getaddrinfo_t* adr_u,
 
         u3l_log("ames: czar %s: ip %s\n", pac_u->dns_c, nam_c);
 
-        free(nam_c); u3z(nam);
+        c3_free(nam_c); u3z(nam);
       }
 #endif
 
@@ -189,7 +180,7 @@ _ames_czar_cb(uv_getaddrinfo_t* adr_u,
     rai_u = rai_u->ai_next;
   }
 
-  free(adr_u);
+  c3_free(adr_u);
   uv_freeaddrinfo(aif_u);
 }
 
@@ -245,7 +236,7 @@ _ames_czar(u3_pact* pac_u, c3_c* bos_c)
     c3_c*  nam_c = u3r_string(nam);
     u3l_log("ames: no galaxy domain for %s, no-op\r\n", nam_c);
 
-    free(nam_c);
+    c3_free(nam_c);
     u3z(nam);
     return;
   }
@@ -269,7 +260,7 @@ _ames_czar(u3_pact* pac_u, c3_c* bos_c)
     snprintf(pac_u->dns_c, 256, "%s.%s", nam_c + 1, bos_c);
     // u3l_log("czar %s, dns %s\n", nam_c, pac_u->dns_c);
 
-    free(nam_c);
+    c3_free(nam_c);
     u3z(nam);
 
     {
@@ -372,12 +363,12 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   // u3l_log("ames: rx %p\r\n", buf_u.base);
 
   if ( 0 == nrd_i ) {
-    _ames_free(buf_u->base);
+    c3_free(buf_u->base);
   }
   //  check protocol version in header matches 0
   //
   else if ( 0 != (0x7 & *((c3_w*)buf_u->base)) ) {
-    _ames_free(buf_u->base);
+    c3_free(buf_u->base);
   }
   else {
     {
@@ -398,7 +389,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
       u3_pier_plan(u3nt(u3_blip, c3__ames, u3_nul), mov);
 #endif
     }
-    _ames_free(buf_u->base);
+    c3_free(buf_u->base);
   }
 }
 

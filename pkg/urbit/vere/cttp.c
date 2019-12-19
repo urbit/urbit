@@ -32,7 +32,7 @@ _cttp_bods_free(u3_hbod* bod_u)
   while ( bod_u ) {
     u3_hbod* nex_u = bod_u->nex_u;
 
-    free(bod_u);
+    c3_free(bod_u);
     bod_u = nex_u;
   }
 }
@@ -102,7 +102,7 @@ _cttp_bods_to_octs(u3_hbod* bod_u)
     }
   }
   cos = u3i_bytes(len_w, buf_y);
-  free(buf_y);
+  c3_free(buf_y);
   return u3nc(len_w, cos);
 }
 
@@ -177,9 +177,9 @@ _cttp_heds_free(u3_hhed* hed_u)
   while ( hed_u ) {
     u3_hhed* nex_u = hed_u->nex_u;
 
-    free(hed_u->nam_c);
-    free(hed_u->val_c);
-    free(hed_u);
+    c3_free(hed_u->nam_c);
+    c3_free(hed_u->val_c);
+    c3_free(hed_u);
     hed_u = nex_u;
   }
 }
@@ -258,7 +258,7 @@ static void
 _cttp_cres_free(u3_cres* res_u)
 {
   _cttp_bods_free(res_u->bod_u);
-  free(res_u);
+  c3_free(res_u);
 }
 
 /* _cttp_cres_new(): create a response
@@ -521,12 +521,12 @@ _cttp_creq_free(u3_creq* ceq_u)
     _cttp_cres_free(ceq_u->res_u);
   }
 
-  free(ceq_u->hot_c);
-  free(ceq_u->por_c);
-  free(ceq_u->met_c);
-  free(ceq_u->url_c);
-  free(ceq_u->vec_u);
-  free(ceq_u);
+  c3_free(ceq_u->hot_c);
+  c3_free(ceq_u->por_c);
+  c3_free(ceq_u->met_c);
+  c3_free(ceq_u->url_c);
+  c3_free(ceq_u->vec_u);
+  c3_free(ceq_u);
 }
 
 /* _cttp_creq_new(): create a u3_creq from an +http-request 
@@ -663,7 +663,7 @@ _cttp_creq_fire(u3_creq* ceq_u)
     }
 
     _cttp_creq_fire_body(ceq_u, _cttp_bod_new(len_w, hos_c));
-    free(hos_c);
+    c3_free(hos_c);
   }
 
   _cttp_creq_fire_heds(ceq_u, ceq_u->hed_u);
@@ -844,7 +844,7 @@ _cttp_creq_connect(u3_creq* ceq_u)
     c3_c* hot_c = c3_malloc(len_w);
     strncpy(hot_c, ceq_u->hot_c, len_w);
 
-    free(ceq_u->cli_u->ssl.server_name);
+    c3_free(ceq_u->cli_u->ssl.server_name);
     ceq_u->cli_u->ssl.server_name = hot_c;
   }
 
@@ -875,7 +875,7 @@ _cttp_creq_resolve_cb(uv_getaddrinfo_t* adr_u,
     _cttp_creq_connect(ceq_u);
   }
 
-  free(adr_u);
+  c3_free(adr_u);
   uv_freeaddrinfo(aif_u);
 }
 
@@ -1023,6 +1023,6 @@ void
 u3_cttp_io_exit(void)
 {
     SSL_CTX_free(u3_Host.ctp_u.tls_u);
-    free(u3_Host.ctp_u.ctx_u->io_timeout);
-    free(u3_Host.ctp_u.ctx_u);
+    c3_free(u3_Host.ctp_u.ctx_u->io_timeout);
+    c3_free(u3_Host.ctp_u.ctx_u);
 }

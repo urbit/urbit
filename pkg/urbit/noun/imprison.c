@@ -65,7 +65,7 @@ u3i_chubs(c3_w        a_w,
     b_w[(2 * i_w) + 1] = b_d[i_w] >> 32ULL;
   }
   p = u3i_words((a_w * 2), b_w);
-  free(b_w);
+  c3_free(b_w);
   return p;
 }
 

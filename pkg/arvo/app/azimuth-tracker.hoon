@@ -88,7 +88,8 @@
   ^-  card:agent:gall
   =/  args=vase  !>
     :*  %watch  /[dap]
-        url.state  ~m5  launch:contracts:azimuth
+        url.state  =(%czar (clan:title our))  ~m5
+        launch:contracts:azimuth
         ~[azimuth:contracts:azimuth]
         (topics whos.state)
     ==

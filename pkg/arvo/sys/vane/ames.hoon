@@ -2217,17 +2217,29 @@
         ^+  peer-core
         ::  send ack unconditionally
         ::
+        =.  peer-core  (emit (got-duct bone) %give %boon message)
         =.  peer-core  (run-message-sink bone %done ok=%.y)
         ::
         ?.  ?=([%hear * * ok=%.n] task)
           ::  fresh boon; give message to client vane
           ::
-          %-  (trace msg.veb |.("boon {<her.channel^bone>}"))
-          (emit (got-duct bone) %give %boon message)
+          %-  (trace msg.veb |.("boon {<her.channel^bone -.task>}"))
+          peer-core
         ::  we previously crashed on this message; notify client vane
         ::
-        %-  (trace msg.veb |.("crashed on boon {<her.channel^bone>}"))
-        (emit (got-duct bone) %give %lost ~)
+        %-  (trace msg.veb |.("crashed on boon {<her.channel^bone -.task>}"))
+        boon-to-lost
+      ::  +boon-to-lost: convert all boons to losts
+      ::
+      ++  boon-to-lost
+        ^+  peer-core
+        =.  moves
+          %+  turn  moves
+          |=  =move
+          ?.  ?=([* %give %boon *] move)
+            move
+          [duct.move %give %lost ~]
+        peer-core
       ::  +on-sink-nack-trace: handle nack-trace received by |message-sink
       ::
       ++  on-sink-nack-trace
@@ -3009,7 +3021,9 @@
     ::
     ?:  already-heard-fragment
       ?:  is-last-fragment
-        %-  (trace rcv.veb |.("hear last dupe {<her.channel^seq>}"))
+        %-  %+  trace  rcv.veb  |.
+            =/  data  [her.channel seq last-heard.state last-acked.state]
+            "hear last dupe {<data>}"
         message-sink
       %-  (trace rcv.veb |.("send dupe ack {<her.channel^seq^fragment-num>}"))
       (give %send seq %& fragment-num)

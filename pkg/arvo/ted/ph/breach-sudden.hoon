@@ -1,3 +1,7 @@
+::  This tests whether we can handle the case where our immediate
+::  sponsor dies without telling us about its breach, so we must hear
+::  about it from somewhere else.
+::
 /-  spider
 /+  *ph-io
 =,  strand=strand:spider

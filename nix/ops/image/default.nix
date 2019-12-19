@@ -1,6 +1,17 @@
-{ pkgs, urbit, pill }:
+{ pkgs
+, herb
+, urbit
+, solid ? null
+, brass ? null
+, ivory ? null
+}:
 
-pkgs.dockerTools.buildImage {
+let
+  link = pill: path:
+    if pill == null then ""
+                    else "${pkgs.coreutils}/bin/ln -sf ${pill} ${path}";
+
+in pkgs.dockerTools.buildImage {
   name = urbit.meta.name;
 
   runAsRoot = ''
@@ -8,22 +19,21 @@ pkgs.dockerTools.buildImage {
 
     set -euo pipefail
 
-    export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
-
     ${pkgs.dockerTools.shadowSetup}
 
-    mkdir -p /bin /share /data /tmp
+    mkdir -p /share /data /tmp
 
-    ${pkgs.coreutils}/bin/ln -sf ${pill} /share/urbit.pill
-    ${pkgs.coreutils}/bin/ln -sf ${entrypoint} /bin/urbit
+    ${link solid "/share/solid.pill"}
+    ${link brass "/share/brass.pill"}
+    ${link ivory "/share/ivory.pill"}
   '';
 
+  contents = [ urbit herb ];
+
   config = {
-    Entrypoint = [ "urbit" ];
+    Entrypoint = [ urbit.meta.name ];
 
     WorkingDir = "/data";
-
-    Env = [ "PATH=/bin" ];
 
     Volumes = {
       "/data" = {};

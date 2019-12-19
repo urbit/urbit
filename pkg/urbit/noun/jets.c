@@ -414,7 +414,7 @@ _cj_chum(u3_noun chu)
       memset(buf, 0, 33);
       snprintf(buf, 32, "%s%d", h_chu_c, t_chu);
 
-      free(h_chu_c);
+      c3_free(h_chu_c);
       return strdup(buf);
     }
   }
@@ -440,7 +440,7 @@ _cj_je_fsck(u3_noun clu)
     q_clu = u3t(u3t(q_clu));
   }
   if ( !_(u3du(q_clu)) ) {
-    u3z(clu); free(nam_c); return u3_none;
+    u3z(clu); c3_free(nam_c); return u3_none;
   }
 
   if ( (1 == u3h(q_clu)) && (0 == u3t(q_clu)) ) {
@@ -448,7 +448,7 @@ _cj_je_fsck(u3_noun clu)
   }
   else {
     if ( (0 != u3h(q_clu)) || !_(u3a_is_cat(axe_l = u3t(q_clu))) ) {
-      u3z(clu); free(nam_c); return u3_none;
+      u3z(clu); c3_free(nam_c); return u3_none;
     }
   }
 
@@ -462,7 +462,7 @@ _cj_je_fsck(u3_noun clu)
            (c3n == u3r_cell(ir_clu, &pir_clu, &qir_clu)) ||
            (c3n == u3ud(pir_clu)) )
       {
-        u3z(huk); u3z(clu); free(nam_c); return u3_none;
+        u3z(huk); u3z(clu); c3_free(nam_c); return u3_none;
       }
       huk = u3kdb_put(huk, u3k(pir_clu), u3k(qir_clu));
       r_clu = tr_clu;
@@ -472,7 +472,7 @@ _cj_je_fsck(u3_noun clu)
 
   {
     u3_noun pro = u3nt(u3i_string(nam_c), axe_l, huk);
-    free(nam_c);
+    c3_free(nam_c);
     return pro;
   }
 }
@@ -825,7 +825,7 @@ u3j_boot(c3_o nuu_o)
   u3D.len_l =_cj_count(0, u3D.dev_u);
   u3D.all_l = (2 * u3D.len_l) + 1024;     //  horrid heuristic
 
-  u3D.ray_u = (u3j_core*) malloc(u3D.all_l * sizeof(u3j_core));
+  u3D.ray_u = c3_malloc(u3D.all_l * sizeof(u3j_core));
   memset(u3D.ray_u, 0, (u3D.all_l * sizeof(u3j_core)));
 
   if ( c3n == nuu_o ) {
