@@ -113,8 +113,15 @@ serveTerminal env api word =
                 inp <- io $ newTBMChanIO 5
                 out <- io $ newTBMChanIO 5
                 atomically $ sp $ NounServ.mkConn inp out
-                runRIO env $
-                    NounServ.wsConn "NOUNSERV (wsServ) " inp out wsc
+                let doit = runRIO env
+                         $ NounServ.wsConn "NOUNSERV (wsServ) " inp out wsc
+
+                -- If `wai` kills this thread for any reason, the TBMChans
+                -- *need* to be closed. If they are not closed, the
+                -- terminal will not know that they disconnected.
+                finally doit $ atomically $ do
+                    closeTBMChan inp
+                    closeTBMChan out
 
 data BadShip = BadShip Text
   deriving (Show, Exception)

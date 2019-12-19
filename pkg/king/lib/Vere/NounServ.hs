@@ -40,17 +40,20 @@ data Server i o a = Server
 
 --------------------------------------------------------------------------------
 
+withRIOThread ∷ RIO e a → RIO e (Async a)
+withRIOThread act = do
+    env <- ask
+    io $ async $ runRIO env $ act
+
 wsConn :: (FromNoun i, ToNoun o, Show i, Show o, HasLogFunc e)
        => Utf8Builder
        -> TBMChan i -> TBMChan o
        -> WS.Connection
        -> RIO e ()
 wsConn pre inp out wsc = do
-    env <- ask
-
     logWarn (pre <> "(wcConn) Connected!")
 
-    writer <- io $ async $ runRIO env $ forever $ do
+    writer <- withRIOThread $ forever $ do
         logWarn (pre <> "(wsConn) Waiting for data.")
         byt <- io $ toStrict <$> WS.receiveData wsc
         logWarn (pre <> "Got data")
@@ -58,7 +61,7 @@ wsConn pre inp out wsc = do
         logWarn (pre <> "(wsConn) Decoded data, writing to chan")
         atomically $ writeTBMChan inp dat
 
-    reader <- io $ async $ runRIO env $ forever $ do
+    reader <- withRIOThread $ forever $ do
         logWarn (pre <> "Waiting for data from chan")
         atomically (readTBMChan out) >>= \case
             Nothing  -> do
@@ -68,14 +71,15 @@ wsConn pre inp out wsc = do
                 logWarn (pre <> "(wsConn) Got message! " <> displayShow msg)
                 io $ WS.sendBinaryData wsc $ fromStrict $ jamBS $ toNoun msg
 
-    res <- atomically (waitCatchSTM writer <|> waitCatchSTM reader)
+    let cleanup = do
+            atomically (closeTBMChan inp >> closeTBMChan out)
+            cancel writer
+            cancel reader
 
-    logWarn $ displayShow (res :: Either SomeException ())
+    flip finally cleanup $ do
+         res <- atomically (waitCatchSTM writer <|> waitCatchSTM reader)
+         logWarn $ displayShow (res :: Either SomeException ())
 
-    atomically (closeTBMChan inp >> closeTBMChan out)
-
-    cancel writer
-    cancel reader
 
 --------------------------------------------------------------------------------
 
