@@ -6,12 +6,13 @@ module Arvo.Common
   , HttpServerConf(..), PEM(..), Key, Cert
   , HttpEvent(..), Method, Header(..), ResponseHeader(..)
   , ReOrg(..), reorgThroughNoun
-  , AmesDest(..), Ipv4(..), Ipv6(..), Galaxy(..), AmesAddress(..)
+  , AmesDest(..), Ipv4(..), Ipv6(..), Patp(..), Galaxy, AmesAddress(..)
   ) where
 
 import UrbitPrelude hiding (Term)
 
 import qualified Network.HTTP.Types.Method as H
+import qualified Urbit.Ob                  as Ob
 
 
 -- Misc Types ------------------------------------------------------------------
@@ -119,6 +120,9 @@ deriveNoun ''JsonNode
 
 -- Ames Destinations -------------------------------------------------
 
+newtype Patp a = Patp { unPatp :: a }
+  deriving newtype (Eq, Ord, Enum, Real, Integral, Num, ToNoun, FromNoun)
+
 -- Network Port
 newtype Port = Port { unPort :: Word16 }
   deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
@@ -131,8 +135,10 @@ newtype Ipv4 = Ipv4 { unIpv4 :: Word32 }
 newtype Ipv6 = Ipv6 { unIpv6 :: Word128 }
   deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
 
-newtype Galaxy = Galaxy { unGalaxy :: Word8 }
-  deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
+type Galaxy = Patp Word8
+
+instance Integral a => Show (Patp a) where
+  show = show . Ob.renderPatp . Ob.patp . fromIntegral . unPatp
 
 data AmesAddress
     = AAIpv4 Ipv4 Port

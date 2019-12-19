@@ -31,10 +31,10 @@ data NetworkMode = Fake | Localhost | Real | NoNetwork
 -- Utils -----------------------------------------------------------------------
 
 galaxyPort :: NetworkMode -> Galaxy -> PortNumber
-galaxyPort Fake (Galaxy g)      = fromIntegral g + 31337
-galaxyPort Localhost (Galaxy g) = fromIntegral g + 13337
-galaxyPort Real (Galaxy g)      = fromIntegral g + 13337
-galaxyPort NoNetwork _          = fromIntegral 0
+galaxyPort Fake (Patp g)      = fromIntegral g + 31337
+galaxyPort Localhost (Patp g) = fromIntegral g + 13337
+galaxyPort Real (Patp g)      = fromIntegral g + 13337
+galaxyPort NoNetwork _        = fromIntegral 0
 
 listenPort :: NetworkMode -> Ship -> PortNumber
 listenPort m s | s < 256 = galaxyPort m (fromIntegral s)
@@ -66,13 +66,13 @@ hearEv :: PortNumber -> HostAddress -> ByteString -> Ev
 hearEv p a bs =
     EvBlip $ BlipEvAmes $ AmesEvHear () dest (MkBytes bs)
   where
-    dest = EachNo $ Jammed $ AAIpv4 (Ipv4 a) (fromIntegral p) 
+    dest = EachNo $ Jammed $ AAIpv4 (Ipv4 a) (fromIntegral p)
 
 _turfText :: Turf -> Text
 _turfText = intercalate "." . reverse . fmap unCord . unTurf
 
 renderGalaxy :: Galaxy -> Text
-renderGalaxy = Ob.renderPatp . Ob.patp . fromIntegral . unGalaxy
+renderGalaxy = Ob.renderPatp . Ob.patp . fromIntegral . unPatp
 
 --------------------------------------------------------------------------------
 
@@ -287,7 +287,7 @@ ames inst who isFake enqueueEv stderr =
               pure sockaddr
 
         buildDNS :: Galaxy -> Turf -> RIO e String
-        buildDNS (Galaxy g) turf = do
+        buildDNS (Patp g) turf = do
           let nameWithSig = Ob.renderPatp $ Ob.patp $ fromIntegral g
           name <- case stripPrefix "~" nameWithSig of
               Nothing -> error "Urbit.ob didn't produce string with ~"
