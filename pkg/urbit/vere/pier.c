@@ -643,11 +643,11 @@ static void
 _pier_work_spin_start(u3_writ* wit_u)
 {
   u3_pier* pir_u = wit_u->pir_u;
-  c3_o now_o = c3n;
-  c3_c* why_c = 0;
+  c3_o     now_o = c3n;
+  u3_noun    say = u3_blip;
 
   if ( wit_u->evt_d <= pir_u->lif_d ) {
-    why_c = strdup("nock");
+    say = c3__nock;
   }
   else {
     u3_noun why;
@@ -661,7 +661,7 @@ _pier_work_spin_start(u3_writ* wit_u)
 
 
       if ( c3__term != why ) {
-        why_c = u3r_string(why);
+        say = why;
       }
       else if (  ( u3_none != (cad = u3r_at(7, wit_u->job)) ) &&
                  ( u3_none != (tag = u3r_at(2, cad)) ) &&
@@ -674,7 +674,7 @@ _pier_work_spin_start(u3_writ* wit_u)
     }
   }
 
-  u3_term_start_spinner(why_c, now_o);
+  u3_term_start_spinner(say, now_o);
 }
 
 /* _pier_work_spin_stop(): deactivate spinner.
