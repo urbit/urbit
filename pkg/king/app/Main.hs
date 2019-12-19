@@ -64,6 +64,7 @@ import Noun                    hiding (Parser)
 import Noun.Atom
 import Noun.Conversions        (cordToUW)
 import RIO.Directory
+import System.ProgressBar
 import Vere.Pier
 import Vere.Pier.Types
 import Vere.Serf
@@ -216,29 +217,36 @@ checkEvs :: forall e. HasLogFunc e => FilePath -> Word64 -> Word64 -> RIO e ()
 checkEvs pierPath first last = do
     rwith (Log.existing logPath) $ \log -> do
         let ident = Log.identity log
+        let pbSty = defStyle { stylePostfix = exact }
         logTrace (displayShow ident)
+
+        last <- Log.lastEv log <&> \lastReal -> min last lastReal
+
+        let evCount = fromIntegral (last - first)
+        print (last, first, evCount)
+        pb <- io $ newProgressBar pbSty 10 (Progress 1 evCount ())
+
         runConduit $ Log.streamEvents log first
-                  .| showEvents first (fromIntegral $ lifecycleLen ident)
+                  .| showEvents pb first (fromIntegral $ lifecycleLen ident)
   where
     logPath :: FilePath
     logPath = pierPath <> "/.urb/log"
 
-    showEvents :: EventId -> EventId -> ConduitT ByteString Void (RIO e) ()
-    showEvents eId _ | eId > last = pure ()
-    showEvents eId cycle          = do
-        when (eId `mod` 10000 == 0) $ do
-            lift $ logTrace (display ("#" <> tshow eId))
-        await >>= \case
-            Nothing -> lift $ logTrace "Everything checks out."
-            Just bs -> do
-                lift $ do
-                    n <- io $ cueBSExn bs
-                    when (eId > cycle) $ do
-                        (mug, wen, evNoun) <- unpackJob n
-                        fromNounErr evNoun & \case
-                            Left err        -> logError (displayShow (eId, err))
-                            Right (_ ∷ Ev) -> pure ()
-                showEvents (succ eId) cycle
+    showEvents :: ProgressBar () -> EventId -> EventId
+               -> ConduitT ByteString Void (RIO e) ()
+    showEvents pb eId _ | eId > last = pure ()
+    showEvents pb eId cycle          = await >>= \case
+        Nothing -> lift $ logTrace "Everything checks out."
+        Just bs -> do
+            io $ incProgress pb 1
+            lift $ do
+                n <- io $ cueBSExn bs
+                when (eId > cycle) $ do
+                    (mug, wen, evNoun) <- unpackJob n
+                    fromNounErr evNoun & \case
+                        Left err       -> logError (displayShow (eId, err))
+                        Right (_ ∷ Ev) -> pure ()
+            showEvents pb (succ eId) cycle
 
     unpackJob :: Noun -> RIO e (Mug, Wen, Noun)
     unpackJob = io . fromNounExn
