@@ -359,7 +359,8 @@ replayJob serf job = do
 
 --------------------------------------------------------------------------------
 
-updateProgressBar :: Int -> Text -> Maybe (ProgressBar ())
+updateProgressBar :: HasLogFunc e
+                  => Int -> Text -> Maybe (ProgressBar ())
                   -> RIO e (Maybe (ProgressBar ()))
 updateProgressBar count startMsg = \case
     Nothing -> do
@@ -368,10 +369,10 @@ updateProgressBar count startMsg = \case
       -- bar when the snapshot is caught up to the log.
       putStrLn startMsg
       let style = defStyle { stylePostfix = exact }
-      pb <- io $ newProgressBar style 10 (Progress 0 count ())
+      pb <- newProgressBar style 10 (Progress 0 count ())
       pure (Just pb)
     Just pb -> do
-      io $ incProgress pb 1
+      incProgress pb 1
       pure (Just pb)
 
 --------------------------------------------------------------------------------
