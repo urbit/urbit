@@ -63,4 +63,6 @@ u3_save_io_init(u3_pier *pir_u)
 void
 u3_save_io_exit(u3_pier *pir_u)
 {
+  u3_save* sav_u = pir_u->sav_u;
+  uv_close((uv_handle_t*)&sav_u->tim_u, 0);
 }

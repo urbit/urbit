@@ -31,6 +31,8 @@ u3_behn_io_init(u3_pier *pir_u)
 void
 u3_behn_io_exit(u3_pier *pir_u)
 {
+  u3_behn* teh_u = pir_u->teh_u;
+  uv_close((uv_handle_t*)&teh_u->tim_u, 0);
 }
 
 /* _behn_time_cb(): timer callback.
