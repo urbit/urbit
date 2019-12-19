@@ -20,6 +20,7 @@ module System.ProgressBar
       -- * Progress bars
       ProgressBar
     , newProgressBar
+    , killProgressBar
     , hNewProgressBar
     , renderProgressBar
     , updateProgress
@@ -44,7 +45,6 @@ module System.ProgressBar
     , renderDuration
     ) where
 
-import "base" Control.Concurrent.MVar ( MVar, newMVar, modifyMVar_)
 import "base" Control.Monad ( when )
 import "base" Data.Int       ( Int64 )
 import "base" Data.Monoid    ( Monoid, mempty )
@@ -52,14 +52,16 @@ import "base" Data.Ratio     ( Ratio, (%) )
 import "base" Data.Semigroup ( Semigroup, (<>) )
 import "base" Data.String    ( IsString, fromString )
 import "base" GHC.Generics   ( Generic )
-import "base" System.IO      ( Handle, stderr, hFlush )
 import "deepseq" Control.DeepSeq ( NFData, rnf )
 import qualified "terminal-size" System.Console.Terminal.Size as TS
 import qualified "text" Data.Text.Lazy             as TL
 import qualified "text" Data.Text.Lazy.Builder     as TLB
 import qualified "text" Data.Text.Lazy.Builder.Int as TLB
-import qualified "text" Data.Text.Lazy.IO          as TL
 import "time" Data.Time.Clock ( UTCTime, NominalDiffTime, diffUTCTime, getCurrentTime )
+
+import ClassyPrelude (liftIO, MVar, newMVar, modifyMVar_)
+
+import RIO (logSticky, logStickyDone, HasLogFunc, RIO, display)
 
 --------------------------------------------------------------------------------
 
@@ -75,7 +77,6 @@ data ProgressBar s
      , pbStateMv :: !(MVar (State s))
      , pbRefreshDelay :: !Double
      , pbStartTime :: !UTCTime
-     , pbHandle :: !Handle
      }
 
 instance (NFData s) => NFData (ProgressBar s) where
@@ -83,7 +84,6 @@ instance (NFData s) => NFData (ProgressBar s) where
         `seq` pbStateMv pb
         `seq` pbRefreshDelay pb
         `seq` pbStartTime pb
-        -- pbHandle is ignored
         `seq` ()
 
 -- | State of a progress bar.
@@ -120,28 +120,27 @@ progressFinished p = progressDone p >= progressTodo p
 -- The progress bar is written to 'stderr'. Write to another handle
 -- with 'hNewProgressBar'.
 newProgressBar
-    :: Style s -- ^ Visual style of the progress bar.
+    :: HasLogFunc e
+    => Style s -- ^ Visual style of the progress bar.
     -> Double -- ^ Maximum refresh rate in Hertz.
     -> Progress s -- ^ Initial progress.
-    -> IO (ProgressBar s)
-newProgressBar = hNewProgressBar stderr
+    -> RIO e (ProgressBar s)
+newProgressBar = hNewProgressBar
 
 -- | Creates a progress bar which outputs to the given handle.
 --
 -- See 'newProgressBar'.
 hNewProgressBar
-    :: Handle
-       -- ^ File handle on which the progress bar is drawn. Usually
-       -- you select a standard stream like 'stderr' or 'stdout'.
-    -> Style s -- ^ Visual style of the progress bar.
+    :: HasLogFunc e
+    => Style s -- ^ Visual style of the progress bar.
     -> Double -- ^ Maximum refresh rate in Hertz.
     -> Progress s -- ^ Initial progress.
-    -> IO (ProgressBar s)
-hNewProgressBar hndl style maxRefreshRate initProgress = do
+    -> RIO e (ProgressBar s)
+hNewProgressBar style maxRefreshRate initProgress = do
     style' <- updateWidth style
 
-    startTime <- getCurrentTime
-    hPutProgressBar hndl style' initProgress (Timing startTime startTime)
+    startTime <- liftIO getCurrentTime
+    hPutProgressBar style' initProgress (Timing startTime startTime)
 
     stateMv <- newMVar
       State
@@ -153,16 +152,15 @@ hNewProgressBar hndl style maxRefreshRate initProgress = do
          , pbStateMv = stateMv
          , pbRefreshDelay = recip maxRefreshRate
          , pbStartTime = startTime
-         , pbHandle = hndl
          }
 
 -- | Update the width based on the current terminal.
-updateWidth :: Style s -> IO (Style s)
+updateWidth :: Style s -> RIO e (Style s)
 updateWidth style =
     case styleWidth style of
       ConstantWidth {} -> pure style
       TerminalWidth {} -> do
-        mbWindow <- TS.size
+        mbWindow <- liftIO TS.size
         pure $ case mbWindow of
           Nothing -> style
           Just window -> style{ styleWidth = TerminalWidth (TS.width window) }
@@ -174,18 +172,19 @@ updateWidth style =
 --
 -- There is a maximum refresh rate. This means that some updates might not be drawn.
 updateProgress
-    :: forall s
-     . ProgressBar s -- ^ Progress bar to update.
+    :: forall s e
+     . HasLogFunc e
+    => ProgressBar s -- ^ Progress bar to update.
     -> (Progress s -> Progress s) -- ^ Function to change the progress.
-    -> IO ()
+    -> RIO e ()
 updateProgress progressBar f = do
-    updateTime <- getCurrentTime
+    updateTime <- liftIO getCurrentTime
     modifyMVar_ (pbStateMv progressBar) $ renderAndUpdate updateTime
   where
-    renderAndUpdate :: UTCTime -> State s -> IO (State s)
+    renderAndUpdate :: UTCTime -> State s -> RIO e (State s)
     renderAndUpdate updateTime state = do
         when shouldRender $
-          hPutProgressBar hndl (pbStyle progressBar) newProgress timing
+          hPutProgressBar (pbStyle progressBar) newProgress timing
         pure State
              { stProgress = newProgress
              , stRenderTime = if shouldRender then updateTime else stRenderTime state
@@ -206,29 +205,24 @@ updateProgress progressBar f = do
         secSinceLastRender :: Double
         secSinceLastRender = realToFrac $ diffUTCTime updateTime (stRenderTime state)
 
-    hndl = pbHandle progressBar
-
 -- | Increment the progress of an existing progress bar.
 --
 -- See 'updateProgress' for more information.
 incProgress
-    :: ProgressBar s -- ^ Progress bar which needs an update.
+    :: HasLogFunc e
+    => ProgressBar s -- ^ Progress bar which needs an update.
     -> Int -- ^ Amount by which to increment the progress.
-    -> IO ()
+    -> RIO e ()
 incProgress pb n = updateProgress pb $ \p -> p{ progressDone = progressDone p + n }
 
-hPutProgressBar :: Handle -> Style s -> Progress s -> Timing -> IO ()
-hPutProgressBar hndl style progress timing = do
-    TL.hPutStr hndl $ renderProgressBar style progress timing
-    TL.hPutStr hndl $
-      if progressFinished progress
-      then case styleOnComplete style of
-             WriteNewline -> "\n"
-             -- Move to beginning of line and then clear everything to
-             -- the right of the cursor.
-             Clear -> "\r\ESC[K"
-      else "\r"
-    hFlush hndl
+killProgressBar :: HasLogFunc e => ProgressBar s -> RIO e ()
+killProgressBar _ = pure ()
+
+hPutProgressBar :: HasLogFunc e => Style s -> Progress s -> Timing -> RIO e ()
+hPutProgressBar style progress timing = do
+    logSticky (display (renderProgressBar style progress timing))
+    when (progressFinished progress) $ do
+        logStickyDone ""
 
 -- | Renders a progress bar.
 --

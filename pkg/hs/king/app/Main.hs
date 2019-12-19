@@ -64,7 +64,6 @@ import Noun                    hiding (Parser)
 import Noun.Atom
 import Noun.Conversions        (cordToUW)
 import RIO.Directory
-import System.ProgressBar
 import Vere.Pier
 import Vere.Pier.Types
 import Vere.Serf
@@ -92,6 +91,7 @@ import qualified EventBrowser                 as EventBrowser
 import qualified Network.HTTP.Client          as C
 import qualified System.Console.Terminal.Size as TSize
 import qualified System.IO.LockFile.Internal  as Lock
+import qualified System.ProgressBar           as PB
 import qualified Urbit.Ob                     as Ob
 import qualified Vere.Log                     as Log
 import qualified Vere.Pier                    as Pier
@@ -219,14 +219,14 @@ checkEvs :: forall e. HasLogFunc e => FilePath -> Word64 -> Word64 -> RIO e ()
 checkEvs pierPath first last = do
     rwith (Log.existing logPath) $ \log -> do
         let ident = Log.identity log
-        let pbSty = defStyle { stylePostfix = exact }
+        let pbSty = PB.defStyle { PB.stylePostfix = PB.exact }
         logTrace (displayShow ident)
 
         last <- Log.lastEv log <&> \lastReal -> min last lastReal
 
         let evCount = fromIntegral (last - first)
-        print (last, first, evCount)
-        pb <- io $ newProgressBar pbSty 10 (Progress 1 evCount ())
+
+        pb <- PB.newProgressBar pbSty 10 (PB.Progress 1 evCount ())
 
         runConduit $ Log.streamEvents log first
                   .| showEvents pb first (fromIntegral $ lifecycleLen ident)
@@ -234,13 +234,15 @@ checkEvs pierPath first last = do
     logPath :: FilePath
     logPath = pierPath <> "/.urb/log"
 
-    showEvents :: ProgressBar () -> EventId -> EventId
+    showEvents :: PB.ProgressBar () -> EventId -> EventId
                -> ConduitT ByteString Void (RIO e) ()
     showEvents pb eId _ | eId > last = pure ()
     showEvents pb eId cycle          = await >>= \case
-        Nothing -> lift $ logTrace "Everything checks out."
+        Nothing -> do
+            lift $ PB.killProgressBar pb
+            lift $ logTrace "Everything checks out."
         Just bs -> do
-            io $ incProgress pb 1
+            lift $ PB.incProgress pb 1
             lift $ do
                 n <- io $ cueBSExn bs
                 when (eId > cycle) $ do

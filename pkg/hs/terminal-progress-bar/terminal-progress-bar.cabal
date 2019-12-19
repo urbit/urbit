@@ -37,6 +37,8 @@ library
       , terminal-size >= 0.3.2
       , text          >= 1.2
       , time          >= 1.8
+      , rio
+      , classy-prelude
     exposed-modules: System.ProgressBar
     ghc-options: -Wall
     default-language: Haskell2010
