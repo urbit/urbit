@@ -787,12 +787,11 @@ _term_spin_timer_cb(uv_timer_t* tim_u)
   *cur_c++ = daz_c[lag_d % strlen(daz_c)];
   c3_w sol_w = 1;  //  spinner length (utf-32)
 
-  if ( tat_u->sun_u.why_c ) {
+  if ( tat_u->sun_u.why_c[0] ) {
     strncpy(cur_c, dal_c, 2);
     cur_c += 2;
     sol_w += 1;  //  length of dal_c (utf-32)
 
-    // c3_w wel_w = strlen(tat_u.sun_u->why_c);
     strncpy(cur_c, tat_u->sun_u.why_c, 4);
     cur_c += 4;
     sol_w += 4;  // XX assumed utf-8
@@ -826,17 +825,17 @@ _term_spin_timer_cb(uv_timer_t* tim_u)
 #define _SPIN_RATE_US 250UL  //  spinner rate (ms/frame)
 #define _SPIN_IDLE_US 500UL  //  spinner cools down if stopped this long
 
-/* u3_term_start_spinner(): prepare spinner state
+/* u3_term_start_spinner(): prepare spinner state. RETAIN.
 */
 void
-u3_term_start_spinner(c3_c* why_c, c3_o now_o)
+u3_term_start_spinner(u3_noun say, c3_o now_o)
 {
   if ( c3n == u3_Host.ops_u.tem ) {
     u3_utty* uty_u = _term_main();
     u3_utat* tat_u = &uty_u->tat_u;
 
-    c3_free(tat_u->sun_u.why_c);
-    tat_u->sun_u.why_c = why_c;
+    tat_u->sun_u.why_c[4] = 0;
+    u3r_bytes(0, 4, (c3_y*)tat_u->sun_u.why_c, say);
 
     tat_u->sun_u.eve_d = 0;
     // XX must be c3n for cursor backoff from EOL?
@@ -854,9 +853,6 @@ u3_term_start_spinner(c3_c* why_c, c3_o now_o)
                      wen_d, _SPIN_RATE_US);
     }
   }
-  else {
-    c3_free(why_c);
-  }
 }
 
 /* u3_term_stop_spinner(): reset spinner state and restore input line.
@@ -868,8 +864,7 @@ u3_term_stop_spinner(void)
     u3_utty* uty_u = _term_main();
     u3_utat* tat_u = &uty_u->tat_u;
 
-    c3_free(tat_u->sun_u.why_c);
-    tat_u->sun_u.why_c = 0;
+    memset(tat_u->sun_u.why_c, 0, 5);
 
     uv_timer_stop(&tat_u->sun_u.tim_u);
 
