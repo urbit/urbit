@@ -1261,16 +1261,16 @@ _pier_loop_exit(u3_pier* pir_u)
   //  XX legacy handlers, not yet scoped to a pier
   //
   {
-    cod_l = u3a_lush(c3__term);
-    u3_term_io_exit();
-    u3a_lop(cod_l);
-
     cod_l = u3a_lush(c3__http);
     u3_http_io_exit();
     u3a_lop(cod_l);
 
     cod_l = u3a_lush(c3__cttp);
     u3_cttp_io_exit();
+    u3a_lop(cod_l);
+
+    cod_l = u3a_lush(c3__term);
+    u3_term_io_exit();
     u3a_lop(cod_l);
   }
 }
