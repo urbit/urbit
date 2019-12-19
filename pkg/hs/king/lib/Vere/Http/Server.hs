@@ -48,7 +48,7 @@ import qualified Network.Wai.Handler.WarpTLS as W
 
 -- Internal Types --------------------------------------------------------------
 
-type ReqId = Atom
+type ReqId = UD
 type SeqId = UD -- Unused, always 1
 
 {-
