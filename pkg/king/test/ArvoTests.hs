@@ -85,10 +85,12 @@ instance Arbitrary File     where arbitrary = File <$> arb
 instance Arbitrary Cord     where arbitrary = Cord <$> arb
 instance Arbitrary Wen      where arbitrary = Wen <$> arb
 instance Arbitrary Gap      where arbitrary = Gap . abs <$> arb
-instance Arbitrary Galaxy   where arbitrary = Galaxy <$> arb
 instance Arbitrary Port     where arbitrary = Port <$> arb
 instance Arbitrary Ship     where arbitrary = Ship <$> arb
 instance Arbitrary Address  where arbitrary = AAmes <$> arb
+
+instance Arbitrary a => Arbitrary (Patp a) where
+    arbitrary = Patp <$> arb
 
 genIpv4 :: Gen Ipv4
 genIpv4 = do

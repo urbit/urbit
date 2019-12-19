@@ -113,8 +113,8 @@ twoTalk = forAll arbitrary (ioProperty . runNetworkApp . runTest)
     go aliceShip bobShip val = runRAcquire $ do
         (aliceQ, alice) <- runGala aliceShip
         (bobQ,   bob)   <- runGala bobShip
-        sendThread alice (Galaxy bobShip,   val)
-        sendThread bob   (Galaxy aliceShip, val)
+        sendThread alice (Patp bobShip,   val)
+        sendThread bob   (Patp aliceShip, val)
         liftIO (waitForPacket aliceQ val >> waitForPacket bobQ val)
 
 tests :: TestTree
@@ -140,9 +140,11 @@ instance Arbitrary Ipv4   where arbitrary = Ipv4 <$> arb
 instance Arbitrary Port   where arbitrary = Port <$> arb
 instance Arbitrary Wen    where arbitrary = Wen <$> arb
 instance Arbitrary Gap    where arbitrary = Gap . abs <$> arb
-instance Arbitrary Galaxy where arbitrary = Galaxy <$> arb
 instance Arbitrary Bytes  where arbitrary = pure (MkBytes "wtfbbq")
                                          -- MkBytes . take 100 <$> arb
+
+instance Arbitrary a => Arbitrary (Patp a) where
+    arbitrary = Patp <$> arb
 
 instance Arbitrary ByteString where
   arbitrary = pack <$> arbitrary
