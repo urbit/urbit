@@ -91,7 +91,8 @@ wsClient pax por = do
 
     tid <- io $ async
               $ WS.runClient "127.0.0.1" por (unpack pax)
-              $ runRIO env . wsConn "NOUNSERV (wsClie) " inp out
+              $ \con -> WS.withPingThread con 15 (pure ()) $
+                            runRIO env (wsConn "NOUNSERV (wsClie) " inp out con)
 
     pure $ Client con tid
 
