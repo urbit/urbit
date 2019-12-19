@@ -8044,42 +8044,124 @@
       $%  [%l l=(list item)]
           [%b b=byts]
       ==
+    ::  +encode-atoms: encode list of atoms as a %l of %b items
     ::
-    ::  treat atoms as list of items
     ++  encode-atoms
       |=  l=(list @)
+      ^-  @
       %+  encode  %l
       %+  turn  l
       |=(a=@ b+[(met 3 a) a])
     ::
     ++  encode
       |=  in=item
-      ^-  @
-      ?-  -.in
-          %b
-        ?:  &(=(1 wid.b.in) (lth dat.b.in 0x80))
-          dat.b.in
-        %^  cat  3  dat.b.in
-        ::TODO  unsure if this should pass wid or (met 3 dat)...
-        (encode-length wid.b.in 0x80)
+      |^  ^-  @
+          ?-  -.in
+              %b
+            ?:  &(=(1 wid.b.in) (lte dat.b.in 0x7f))
+              dat.b.in
+            =-  (can 3 ~[b.in [(met 3 -) -]])
+            (encode-length wid.b.in 0x80)
+          ::
+              %l
+            =/  out=@
+              %+  roll  l.in
+              |=  [ni=item en=@]
+              (cat 3 (encode ni) en)
+            %^  cat  3  out
+            (encode-length (met 3 out) 0xc0)
+          ==
       ::
-          %l
-        =/  out=@
-          %+  roll  l.in
-          |=  [ni=item en=@]
-          (cat 3 (encode ni) en)
-        %^  cat  3  out
-        (encode-length (met 3 out) 0xc0)
-      ==
+      ++  encode-length
+        |=  [len=@ off=@]
+        ?:  (lth len 56)  (add len off)
+        =-  (cat 3 len -)
+        :(add (met 3 len) off 55)
+      --
+    ::  +decode-atoms: decode expecting a %l of %b items, producing atoms within
     ::
-    ++  encode-length
-      |=  [len=@ off=@]
-      ?:  (lth len 56)  (add len off)
-      =-  (cat 3 len -)
-      :(add (met 3 len) off 55)
+    ++  decode-atoms
+      |=  dat=@
+      ^-  (list @)
+      =/  i=item  (decode dat)
+      ~|  [%unexpected-data i]
+      ?>  ?=(%l -.i)
+      %+  turn  l.i
+      |=  i=item
+      ~|  [%unexpected-list i]
+      ?>  ?=(%b -.i)
+      dat.b.i
     ::
-    ::TODO  decode
-    ::
+    ++  decode
+      |=  dat=@
+      ^-  item
+      =/  bytes=(list @)  (flop (rip 3 dat))
+      =?  bytes  ?=(~ bytes)  ~[0]
+      |^  item:decode-head
+      ::
+      ++  decode-head
+        ^-  [done=@ud =item]
+        ?~  bytes
+          ~|  %rlp-unexpected-end
+          !!
+        =*  byt  i.bytes
+        ::  byte in 0x00-0x79 range encodes itself
+        ::
+        ?:  (lte byt 0x79)
+          :-  1
+          [%b 1^byt]
+        ::  byte in 0x80-0xb7 range encodes string length
+        ::
+        ?:  (lte byt 0xb7)
+          =+  len=(sub byt 0x80)
+          :-  +(len)
+          :-  %b
+          len^(get-value 1 len)
+        ::  byte in 0xb8-0xbf range encodes string length length
+        ::
+        ?:  (lte byt 0xbf)
+          =+  led=(sub byt 0xb7)
+          =+  len=(get-value 1 led)
+          :-  (add +(led) len)
+          :-  %b
+          len^(get-value +(led) len)
+        ::  byte in 0xc0-f7 range encodes list length
+        ::
+        ?:  (lte byt 0xf7)
+          =+  len=(sub byt 0xc0)
+          :-  +(len)
+          :-  %l
+          %.  len
+          decode-list(bytes (slag 1 `(list @)`bytes))
+        ::  byte in 0xf8-ff range encodes list length length
+        ::
+        ?:  (lte byt 0xff)
+          =+  led=(sub byt 0xf7)
+          =+  len=(get-value 1 led)
+          :-  (add +(led) len)
+          :-  %l
+          %.  len
+          decode-list(bytes (slag +(led) `(list @)`bytes))
+        ~|  [%rip-not-bloq-3 `@ux`byt]
+        !!
+      ::
+      ++  decode-list
+        |=  rem=@ud
+        ^-  (list item)
+        ?:  =(0 rem)  ~
+        =+  ^-  [don=@ud =item]  ::TODO  =/
+          decode-head
+        :-  item
+        %=  $
+          rem    (sub rem don)
+          bytes  (slag don bytes)
+        ==
+      ::
+      ++  get-value
+        |=  [at=@ud to=@ud]
+        ^-  @
+        (rep 3 (flop (swag [at to] bytes)))
+      --
     --
   ::
   ::  abi en/decoding
