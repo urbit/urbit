@@ -68,6 +68,7 @@ import System.ProgressBar
 import Vere.Pier
 import Vere.Pier.Types
 import Vere.Serf
+import Vere.Dawn
 
 import Control.Concurrent   (myThreadId, runInBoundThread)
 import Control.Exception    (AsyncException(UserInterrupt))
@@ -75,26 +76,27 @@ import Control.Lens         ((&))
 import Data.Default         (def)
 import King.App             (runApp, runAppLogFile, runPierApp)
 import King.App             (HasConfigDir(..))
+import RIO                  (logSticky, logStickyDone)
 import System.Environment   (getProgName)
 import System.Exit          (exitSuccess)
 import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
 import System.Random        (randomIO)
 import Text.Show.Pretty     (pPrint)
 import Urbit.Time           (Wen)
-import Vere.Dawn
 import Vere.LockFile        (lockFile)
 
-import qualified CLI                         as CLI
-import qualified Data.Set                    as Set
-import qualified Data.Text                   as T
-import qualified EventBrowser                as EventBrowser
-import qualified Network.HTTP.Client         as C
-import qualified System.IO.LockFile.Internal as Lock
-import qualified Urbit.Ob                    as Ob
-import qualified Vere.Log                    as Log
-import qualified Vere.Pier                   as Pier
-import qualified Vere.Serf                   as Serf
-import qualified Vere.Term                   as Term
+import qualified CLI                          as CLI
+import qualified Data.Set                     as Set
+import qualified Data.Text                    as T
+import qualified EventBrowser                 as EventBrowser
+import qualified Network.HTTP.Client          as C
+import qualified System.Console.Terminal.Size as TSize
+import qualified System.IO.LockFile.Internal  as Lock
+import qualified Urbit.Ob                     as Ob
+import qualified Vere.Log                     as Log
+import qualified Vere.Pier                    as Pier
+import qualified Vere.Serf                    as Serf
+import qualified Vere.Term                    as Term
 
 --------------------------------------------------------------------------------
 
@@ -370,7 +372,7 @@ newShip CLI.New{..} opts
       putStrLn "boot: mining a comet"
       eny <- io $ randomIO
       let seed = mineComet (Set.fromList starList) eny
-      putStrLn ("boot: found comet " ++ (renderShip (sShip seed)))
+      putStrLn ("boot: found comet " ++ renderShip (sShip seed))
       bootFromSeed pill seed
 
   | CLI.BootFake name <- nBootType = do
@@ -431,7 +433,8 @@ newShip CLI.New{..} opts
       let pierConfig = toPierConfig (pierPath name) opts
       let networkConfig = toNetworkConfig opts
       io $ runPierApp pierConfig networkConfig $
-        tryBootFromPill (CLI.oExit opts) pill nLite flags ship bootEvent
+        tryBootFromPill True pill nLite flags ship bootEvent
+------  tryBootFromPill (CLI.oExit opts) pill nLite flags ship bootEvent
 
 
 runShip :: CLI.Run -> CLI.Opts -> IO ()
