@@ -171,7 +171,7 @@ runOrExitImmediately getPier oExit =
     shutdownImmediately (serf, log, ss) = do
         logTrace "Sending shutdown signal"
         logTrace $ displayShow ss
-        io $ threadDelay 500000
+        io $ threadDelay 500000 -- Why is this here? Do I need to force a snapshot to happen?
         ss <- shutdown serf 0
         logTrace $ displayShow ss
         logTrace "Shutdown!"

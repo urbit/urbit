@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wwarn #-}
+
 {-
     TODO What is this about?
 
@@ -16,11 +18,6 @@
                             (status < 400) ? "moved" :
                             (status < 500) ? "missing" :
                             "hosed";
-
-    TODO This uses `W.openFreePort` to find a free port, but I actually
-         want to mimick the old kings behavior and try 8080, then 8081,
-         etc. I think I'll have to reimplement a varianet of
-         `openFreePort` myself, but this will work for now.
 -}
 
 module Vere.Http.Server where
@@ -40,6 +37,7 @@ import System.Random       (randomIO)
 import Vere.Http           (convertHeaders, unconvertHeaders)
 
 import qualified Network.HTTP.Types          as H
+import qualified Network.Socket              as Net
 import qualified Network.Wai                 as W
 import qualified Network.Wai.Conduit         as W
 import qualified Network.Wai.Handler.Warp    as W
@@ -48,7 +46,7 @@ import qualified Network.Wai.Handler.WarpTLS as W
 
 -- Internal Types --------------------------------------------------------------
 
-type ReqId = Atom
+type ReqId = UD
 type SeqId = UD -- Unused, always 1
 
 {-
@@ -282,7 +280,6 @@ reqEv sId reqId which addr req =
                    $ HttpServerReq (which == Secure) addr req
 
 
-
 -- Http Server Flows -----------------------------------------------------------
 
 data Req
@@ -383,12 +380,44 @@ app env sId liv plan which req respond =
 -- Top-Level Driver Interface --------------------------------------------------
 
 {-
+    TODO if a bunch of these fail, then I get errors. Something is wrong.
+
+        ...
+        [warn] Network.Socket.socket: resource exhausted (Too many open files)
+        [warn] Failed to open port 48541
+        ...
+-}
+
+openPort :: HasLogFunc e => [W.Port] -> RIO e (W.Port, Net.Socket)
+openPort = \case
+    []   -> io W.openFreePort
+    x:xs -> io (tryOpenPort x) >>= \case
+                Left err -> do
+                    logWarn (display ("Failed to open port " <> tshow x))
+                    logWarn (display (tshow err))
+                    openPort xs
+                Right ps -> do
+                    logTrace (display ("Opening port " <> tshow (fst ps)))
+                    pure ps
+  where
+    -- TODO XX Don't catch SomeException. Catch specific excception. This
+    -- is actually a really foul hack. Change this now!
+    tryOpenPort ∷ W.Port → IO (Either SomeException (W.Port, Net.Socket))
+    tryOpenPort por = try $ do
+        s <- Net.socket Net.AF_INET Net.Stream Net.defaultProtocol
+        localhost <- Net.inet_addr "127.0.0.1"
+        Net.bind s (Net.SockAddrInet (fromIntegral por) localhost)
+        Net.listen s 1
+        port <- Net.socketPort s
+        return (fromIntegral port, s)
+
+{-
     TODO Need to find an open port.
 -}
 startServ :: (HasPierConfig e, HasLogFunc e)
-          => HttpServerConf -> (Ev -> STM ())
+          => Bool -> HttpServerConf -> (Ev -> STM ())
           -> RIO e Serv
-startServ conf plan = do
+startServ isFake conf plan = do
   logDebug "startServ"
 
   let tls = hscSecure conf <&> \(PEM key, PEM cert) ->
@@ -397,9 +426,12 @@ startServ conf plan = do
   sId <- io $ ServId . UV . fromIntegral <$> (randomIO :: IO Word32)
   liv <- newTVarIO emptyLiveReqs
 
-  (httpPortInt,  httpSock)  <- io $ W.openFreePort -- 8080  -- 80 if real ship
-  (httpsPortInt, httpsSock) <- io $ W.openFreePort -- 8443  -- 443 if real ship
-  (loopPortInt,  loopSock)  <- io $ W.openFreePort -- 12321 -- ??? if real ship
+  let insP = [8080..8085]
+      secP = [8443..8448]
+
+  (httpPortInt,  httpSock)  <- openPort (if isFake then insP else 80:insP)
+  (httpsPortInt, httpsSock) <- openPort (if isFake then secP else 443:secP)
+  (loopPortInt,  loopSock)  <- openPort [12321..12326]
 
   let httpPort  = Port (fromIntegral httpPortInt)
       httpsPort = Port (fromIntegral httpsPortInt)
@@ -462,9 +494,9 @@ respond (Drv v) reqId ev = do
                         atomically . respondToLiveReq (sLiveReqs sv) reqId
 
 serv :: ∀e. (HasPierConfig e, HasLogFunc e)
-     => KingId -> QueueEv
+     => KingId -> QueueEv -> Bool
      -> ([Ev], RAcquire e (EffCb e HttpServerEf))
-serv king plan =
+serv king plan isFake =
     (initialEvents, runHttpServer)
   where
     initialEvents :: [Ev]
@@ -476,7 +508,8 @@ serv king plan =
     restart :: Drv -> HttpServerConf -> RIO e Serv
     restart (Drv var) conf = do
         logDebug "Restarting http server"
-        res <- fromEither =<< restartService var (startServ conf plan) killServ
+        res <- fromEither =<<
+                 restartService var (startServ isFake conf plan) killServ
         logDebug "Done restating http server"
         pure res
 
