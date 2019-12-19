@@ -60,7 +60,7 @@ data Config = Config FilePath [Flag]
   deriving (Show)
 
 serf :: HasLogFunc e => Text -> RIO e ()
-serf msg = pure () -- logInfo $ display ("SERF: " <> msg)
+serf msg = logInfo $ display ("SERF: " <> msg)
 
 
 -- Types -----------------------------------------------------------------------
@@ -281,9 +281,9 @@ shutdown serf code = sendOrder serf (OExit code)
 -}
 recvPlea :: HasLogFunc e => Serf e -> RIO e Plea
 recvPlea w = do
-  -- logDebug "(recvPlea) Waiting"
+  logDebug "(recvPlea) Waiting"
   a <- recvAtom w
-  -- logDebug "(recvPlea) Got atom"
+  logDebug "(recvPlea) Got atom"
   n <- fromRightExn (cue a) (const $ BadPleaAtom a)
   p <- fromRightExn (fromNounErr n) (\(p,m) -> BadPleaNoun n p m)
 
@@ -291,7 +291,7 @@ recvPlea w = do
                                 recvPlea w
             PSlog _ pri t -> do printTank (sStderr w) pri t
                                 recvPlea w
-            _             -> do -- logTrace "recvPlea got something else"
+            _             -> do logTrace "recvPlea got something else"
                                 pure p
 
 {-
@@ -313,7 +313,7 @@ sendWork w job =
   do
     sendOrder w (OWork job)
     res <- loop
-    -- logTrace ("[sendWork] Got response")
+    logTrace ("[sendWork] Got response")
     pure res
   where
     eId = jobId job
@@ -451,7 +451,7 @@ toJobs ident eId =
     await >>= \case
         Nothing -> lift $ logTrace "[toJobs] no more jobs"
         Just at -> do yield =<< lift (fromAtom at)
-                      -- lift $ logTrace $ display ("[toJobs] " <> tshow eId)
+                      lift $ logTrace $ display ("[toJobs] " <> tshow eId)
                       toJobs ident (eId+1)
   where
     isNock = eId <= fromIntegral (lifecycleLen ident)
