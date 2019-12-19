@@ -231,7 +231,8 @@
     */
       typedef struct _u3_cttp {
         u3_creq*         ceq_u;             //  request list
-        h2o_http1client_ctx_t*              //
+        h2o_timeout_t    tim_u;             //  request timeout
+        h2o_http1client_ctx_t               //
                          ctx_u;             //  h2o client ctx
         void*            tls_u;             //  client SSL_CTX*
       } u3_cttp;
