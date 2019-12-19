@@ -405,7 +405,7 @@ openPort = \case
     tryOpenPort ∷ W.Port → IO (Either SomeException (W.Port, Net.Socket))
     tryOpenPort por = try $ do
         s <- Net.socket Net.AF_INET Net.Stream Net.defaultProtocol
-        localhost <- Net.inet_addr "127.0.0.1"
+        localhost <- Net.inet_addr "0.0.0.0"
         Net.bind s (Net.SockAddrInet (fromIntegral por) localhost)
         Net.listen s 1
         port <- Net.socketPort s
@@ -440,8 +440,10 @@ startServ isFake conf plan = do
   let loopOpts  = W.defaultSettings & W.setPort (fromIntegral loopPort)
                                     & W.setHost "127.0.0.1"
                                     & W.setTimeout (5 * 60)
-      httpOpts  = W.defaultSettings & W.setPort (fromIntegral httpPort)
-      httpsOpts = W.defaultSettings & W.setPort (fromIntegral httpsPort)
+      httpOpts  = W.defaultSettings & W.setHost "*"
+                                    & W.setPort (fromIntegral httpPort)
+      httpsOpts = W.defaultSettings & W.setHost "*"
+                                    & W.setPort (fromIntegral httpsPort)
 
   env <- ask
 
