@@ -1,12 +1,16 @@
 module King.App
     ( App
     , runApp
+    , runAppLogFile
+    , runAppLogHandle
     , runPierApp
     , HasConfigDir(..)
     ) where
 
 import Config
 import UrbitPrelude
+
+import System.Directory (createDirectoryIfMissing, getHomeDirectory)
 
 --------------------------------------------------------------------------------
 
@@ -22,9 +26,9 @@ makeLenses ''App
 instance HasLogFunc App where
     logFuncL = appLogFunc
 
-runApp :: RIO App a -> IO a
-runApp inner = do
-    logOptions <- logOptionsHandle stderr True
+runAppLogHandle :: Handle -> RIO App a -> IO a
+runAppLogHandle logHandle inner = do
+    logOptions <- logOptionsHandle logHandle True
         <&> setLogUseTime True
         <&> setLogUseLoc False
 
@@ -32,6 +36,21 @@ runApp inner = do
         go (App logFunc)
   where
     go app = runRIO app inner
+
+runApp :: RIO App a -> IO a
+runApp = runAppLogHandle stdout
+
+runAppLogFile :: RIO App a -> IO a
+runAppLogFile inner = withLogFileHandle (\h -> runAppLogHandle h inner)
+  where
+    withLogFileHandle :: (Handle -> IO a) -> IO a
+    withLogFileHandle act = do
+        home <- getHomeDirectory
+        let logDir = home </> ".urbit"
+        createDirectoryIfMissing True logDir
+        withFile (logDir </> "king.log") AppendMode $ \handle -> do
+            hSetBuffering handle LineBuffering
+            act handle
 
 
 --------------------------------------------------------------------------------
@@ -59,7 +78,7 @@ instance HasConfigDir PierApp where
 
 runPierApp :: PierConfig -> NetworkConfig -> RIO PierApp a -> IO a
 runPierApp pierConfig networkConfig inner = do
-    logOptions <- logOptionsHandle stderr True
+    logOptions <- logOptionsHandle stdout True
         <&> setLogUseTime True
         <&> setLogUseLoc False
 

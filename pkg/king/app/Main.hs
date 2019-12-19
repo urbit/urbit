@@ -72,7 +72,8 @@ import Control.Concurrent   (myThreadId, runInBoundThread)
 import Control.Exception    (AsyncException(UserInterrupt))
 import Control.Lens         ((&))
 import Data.Default         (def)
-import King.App             (runApp, runPierApp, HasConfigDir(..))
+import King.App             (runApp, runAppLogFile, runPierApp)
+import King.App             (HasConfigDir(..))
 import System.Environment   (getProgName)
 import System.Exit          (exitSuccess)
 import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
@@ -487,7 +488,7 @@ main = do
         CLI.CmdBug (CLI.ValidateFX pax f l)     -> runApp $ checkFx  pax f l
         CLI.CmdBug (CLI.CheckDawn pax)          -> runApp $ checkDawn pax
         CLI.CmdBug CLI.CheckComet               -> runApp $ checkComet
-        CLI.CmdCon pier                         -> runApp $ connTerm pier
+        CLI.CmdCon pier                         -> runAppLogFile $ connTerm pier
 
 
 --------------------------------------------------------------------------------

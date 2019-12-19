@@ -40,7 +40,7 @@ data Server i o a = Server
 
 --------------------------------------------------------------------------------
 
-wsConn :: (FromNoun i, ToNoun o) -- , HasLogFunc e)
+wsConn :: (FromNoun i, ToNoun o, Show i, Show o, HasLogFunc e)
        => Utf8Builder
        -> TBMChan i -> TBMChan o
        -> WS.Connection
@@ -48,29 +48,29 @@ wsConn :: (FromNoun i, ToNoun o) -- , HasLogFunc e)
 wsConn pre inp out wsc = do
     env <- ask
 
-    --  logWarn (pre <> "(wcConn) Connected!")
+    logWarn (pre <> "(wcConn) Connected!")
 
     writer <- io $ async $ runRIO env $ forever $ do
-        --  logWarn (pre <> "(wsConn) Waiting for data.")
+        logWarn (pre <> "(wsConn) Waiting for data.")
         byt <- io $ toStrict <$> WS.receiveData wsc
-        --  logWarn (pre <> "Got data")
+        logWarn (pre <> "Got data")
         dat <- cueBSExn byt >>= fromNounExn
-        --  logWarn (pre <> "(wsConn) Decoded data, writing to chan")
+        logWarn (pre <> "(wsConn) Decoded data, writing to chan")
         atomically $ writeTBMChan inp dat
 
     reader <- io $ async $ runRIO env $ forever $ do
-        --  logWarn (pre <> "Waiting for data from chan")
+        logWarn (pre <> "Waiting for data from chan")
         atomically (readTBMChan out) >>= \case
             Nothing  -> do
-                --  logWarn (pre <> "(wsConn) Connection closed")
+                logWarn (pre <> "(wsConn) Connection closed")
                 error "dead-conn"
             Just msg -> do
-                -- logWarn (pre <> "(wsConn) Got message! " <> displayShow msg)
+                logWarn (pre <> "(wsConn) Got message! " <> displayShow msg)
                 io $ WS.sendBinaryData wsc $ fromStrict $ jamBS $ toNoun msg
 
     res <- atomically (waitCatchSTM writer <|> waitCatchSTM reader)
 
-    --  logWarn $ displayShow (res :: Either SomeException ())
+    logWarn $ displayShow (res :: Either SomeException ())
 
     atomically (closeTBMChan inp >> closeTBMChan out)
 
@@ -79,7 +79,7 @@ wsConn pre inp out wsc = do
 
 --------------------------------------------------------------------------------
 
-wsClient :: ∀i o e. (ToNoun o, FromNoun i, HasLogFunc e)
+wsClient :: ∀i o e. (ToNoun o, FromNoun i, Show o, Show i, HasLogFunc e)
          => Text -> W.Port -> RIO e (Client i o)
 wsClient pax por = do
     env <- ask
@@ -87,7 +87,7 @@ wsClient pax por = do
     out <- io $ newTBMChanIO 5
     con <- pure (mkConn inp out)
 
-    -- logDebug "NOUNSERV (wsClie) Trying to connect"
+    logDebug "NOUNSERV (wsClie) Trying to connect"
 
     tid <- io $ async
               $ WS.runClient "127.0.0.1" por (unpack pax)
@@ -97,7 +97,7 @@ wsClient pax por = do
 
 --------------------------------------------------------------------------------
 
-wsServApp :: (HasLogFunc e, ToNoun o, FromNoun i)
+wsServApp :: (HasLogFunc e, ToNoun o, FromNoun i, Show i, Show o)
           => (Conn i o -> STM ())
           -> WS.PendingConnection
           -> RIO e ()
@@ -109,7 +109,7 @@ wsServApp cb pen = do
     atomically $ cb (mkConn inp out)
     wsConn "NOUNSERV (wsServ) " inp out wsc
 
-wsServer :: ∀i o e. (ToNoun o, FromNoun i, HasLogFunc e)
+wsServer :: ∀i o e. (ToNoun o, FromNoun i, Show i, Show o, HasLogFunc e)
          => RIO e (Server i o W.Port)
 wsServer = do
     con <- io $ newTBMChanIO 5
