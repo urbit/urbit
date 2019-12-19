@@ -394,7 +394,7 @@
           c3_o       diz_o;                 //  spinner activated
           c3_d       eve_d;                 //  spin count
           c3_d       end_d;                 //  spinner end tick (ms)
-          c3_c*      why_c;                 //  spinner label
+          c3_c       why_c[5];              //  spinner label
         } sun_u;
       } u3_utat;
 
@@ -871,7 +871,7 @@
       /* u3_term_start_spinner(): prepare spinner state. RETAIN.
       */
         void
-        u3_term_start_spinner(c3_c* why_c, c3_o now_o);
+        u3_term_start_spinner(u3_noun say, c3_o now_o);
 
       /* u3_term_stop_spinner(): reset spinner state and restore input line.
       */
