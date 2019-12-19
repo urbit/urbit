@@ -66,12 +66,13 @@ case_case_sub =
 
 -- distribution
 
-case_cas_cel_in_cel_cas =
-  nest
-    (env [("x", wut [0, 1]), ("y", wut [2, 3])])
-    (cas "x" [(0, cel_ "t1" "t2"), (1, cel_ "t3" "t4")])
-    (cel_ (cas "y" [(2, "t1"), (3, "t3")]) (cas "y" [(2, "t2"), (3, "t4")]))
-  @?= pure ()
+-- WRONG.
+-- case_cas_cel_in_cel_cas =
+--   nest
+--     (env [("x", wut [0, 1]), ("y", wut [2, 3])])
+--     (cas "x" [(0, cel_ "t1" "t2"), (1, cel_ "t3" "t4")])
+--     (cel_ (cas "y" [(2, "t1"), (3, "t3")]) (cas "y" [(2, "t2"), (3, "t4")]))
+--   @?= pure ()
 
 case_cel_cas_not_in_cas_cel =
   nest

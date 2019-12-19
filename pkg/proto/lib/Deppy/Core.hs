@@ -15,22 +15,22 @@ type Typ = Exp
 data Exp a
   = Var a
   -- types
-  | Typ
-  | Fun (Abs a)
-  | Cel (Abs a)
-  | Wut (Set Tag)
+  | Typ                            -- #
+  | Fun (Abs a)                    -- #<v/t t>  #-  v/t  t
+  | Cel (Abs a)                    -- #[v/t t]  #:  v/t  t
+  | Wut (Set Tag)                  -- #foo, ?(#foo #bar)
   -- introduction forms
-  | Lam (Abs a)
-  | Cns (Exp a) (Exp a)
-  | Tag Tag
+  | Lam (Abs a)                    -- <v/t e>  |=  v/t  e
+  | Cns (Exp a) (Exp a)            -- [e f]    :-  e f
+  | Tag Tag                        -- %foo
   -- elimination forms
-  | App (Exp a) (Exp a)
-  | Hed (Exp a)
-  | Tal (Exp a)
-  | Cas (Exp a) (Map Tag (Exp a))
+  | App (Exp a) (Exp a)            -- (e f)
+  | Hed (Exp a)                    -- e.-
+  | Tal (Exp a)                    -- e.+
+  | Cas (Exp a) (Map Tag (Exp a))  -- ?%  e  $foo  f  $bar  g  ==
   -- recursion, flow control
-  | Let (Exp a) (Scope () Exp a)
-  | Rec (Abs a)
+  | Let (Exp a) (Scope () Exp a)   -- =/
+  | Rec (Abs a)                    -- ..  v/t  e
   deriving (Functor, Foldable, Traversable)
 
 type Tag = Natural
@@ -182,13 +182,6 @@ nest env = fmap void . go env mempty
             (Wut ls, Wut ls') -> do
               guard (ls `isSubsetOf` ls')
               pure asm
-            -- TODO put into Typing errors
-            (Lam{}, _) -> error "nest: lambda"
-            (_, Lam{}) -> error "nest: lambda"
-            (Cns{}, _) -> error "nest: cons"
-            (_, Cns{}) -> error "nest: cons"
-            (Tag{}, _) -> error "nest: tag"
-            (_, Tag{}) -> error "nest: tag"
             -- Special rule for the Cas eliminator to enable sums and products
             -- TODO nf
             (Cas e cs, Cas e' cs') | whnf e == whnf e' -> do
@@ -200,6 +193,10 @@ nest env = fmap void . go env mempty
                 chk tag = case (lookup tag cs, lookup tag cs') of
                   (Just t, Just u) -> go env asm t u
                   _ -> error "the Spanish inquisition"
+            -- the below two rules are optimizations of
+            -- (Cas e cs, u) -> go env asm (Cas e cs) (Cas e (mk u))
+            -- (t, Cas e cs) -> go env asm (Cas e (mk t)) (Cas e cs)
+            -- where mk = <map representing (const u)>
             (Cas e cs, u) -> do
               Wut (setToList -> s) <- infer env e
               -- TODO thread asms
@@ -207,18 +204,13 @@ nest env = fmap void . go env mempty
               asm <$ traverse_
                 (\tag -> go env asm (fromJust $ lookup tag cs) u)
                 s
-            -- FIXME sufficient but not necessary.
-            -- Consider ?(#a #b #c) <= ?% _ $x ?(#a #b) $y ?(#b #c).
-            -- Sadly may not be fixable. Hoon.hoon also errs like this
-            -- The previous case is biconditional, as it amounts to the
-            -- definition of join.
             (t, Cas e cs) -> do
               Wut (setToList -> s) <- infer env e
               -- TODO thread asms
-              -- u nests in any of the cases
-              asm <$ asum (fmap
+              -- u nests in all of the cases
+              asm <$ traverse_
                 (\tag -> go env asm t (fromJust $ lookup tag cs))
-                s)
+                s
             (t@(Rec (Abs _ b)), u) -> go env asm (instantiate1 t b) u
             (t, u@(Rec (Abs _ b))) -> go env asm t (instantiate1 u b)
             _ -> Nothing
@@ -246,8 +238,10 @@ infer env = \case
     Typ <- infer env t
     (toScope -> t') <- infer (extend1 t env) (fromScope b)
     pure $ Fun (Abs t t')
+  -- //  [@ 1]  #[# @]  ?<= #[t/# t]
   Cns x y -> do
     -- Infer non-dependent pairs; if you want dependency, you must annotate
+    -- FIXME problem: [@ 1] not of type #[t/# t]; no way to create vases
     t <- infer env x
     u <- infer env y
     pure $ Cel (Abs t (abstract (const Nothing) u))
