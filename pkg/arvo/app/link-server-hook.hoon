@@ -204,6 +204,15 @@
     %+  turn
       (get-local-pages t.t.site.request-line p)
     page:en-json
+  ::  comments by recency as json
+  ::
+      [[[~ %json] [%'~link' %discussions @ ^]] *]
+    %-  json-response:gen
+    %-  json-to-octs  ::TODO  include in +json-response:gen
+    :-  %a
+    %+  turn
+      (get-discussions t.t.site.request-line p)
+    comment:en-json
   ==
 ::
 ++  include-cors-headers
@@ -259,6 +268,19 @@
     %link-store
     (scot %da now.bowl)
     %local-pages
+    (snoc path %noun)
+  ==
+::
+++  get-discussions
+  |=  [=path p=(unit @ud)]
+  ^-  comments
+  =-  (get-paginated - p)
+  .^  comments
+    %gx
+    (scot %p our.bowl)
+    %link-store
+    (scot %da now.bowl)
+    %discussions
     (snoc path %noun)
   ==
 ::

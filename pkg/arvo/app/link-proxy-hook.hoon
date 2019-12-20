@@ -17,8 +17,11 @@
 ::    whatever's returned by the scry at that path, but perhaps that should
 ::    become part of the stores standard anyway.
 ::
-/-  *link, group-store
-/+  default-agent, verb
+::    when adding support for new paths, the only things you'll likely want
+::    to touch are +permitted, +initial-response, & maybe +handle-group-update.
+::
+/-  group-store
+/+  *link, default-agent, verb
 |%
 +$  state-0
   $:  %0
@@ -95,9 +98,10 @@
 ++  permitted
   |=  [who=ship =path]
   ^-  ?
-  ::  we only expose /local-pages, and only to ships in the relevant group
+  ::  we only expose /local-pages and /annotations,
+  ::  and only to ships in the relevant group
   ::
-  ?.  ?=([%local-pages ^] path)  |
+  ?.  ?=([?(%local-pages %annotations) ^] path)  |
   =;  group
     ?&  ?=(^ group)
         (~(has in u.group) who)
@@ -135,7 +139,6 @@
       %fact
     =*  mark  p.cage.sign
     =*  vase  q.cage.sign
-    ~&  [dap.bowl %fact mark]
     ?+  mark  ~|([dap.bowl %unexpected-mark mark] !!)
       %group-initial  [~ state]
       %group-update   (handle-group-update !<(group-update:group-store vase))
@@ -154,11 +157,14 @@
   ::
   ?:  =(our.bowl i.whos)
     $(whos t.whos)
-  :_  $(whos t.whos)
+  %+  weld  $(whos t.whos)
   ::NOTE  this depends kind of unfortunately on the fact that we only accept
   ::      subscriptions to /local-pages/* paths. it'd be more correct if we
   ::      "just" looked at all paths in the map, and found the matching ones.
-  (kick-proxy i.whos [%local-pages pax.upd])
+  ::TODO  what exactly did i mean by this?
+  :~  (kick-proxy i.whos [%local-pages pax.upd])
+      (kick-proxy i.whos [%annotations pax.upd])
+  ==
 ::
 ::  proxy subscriptions
 ::
@@ -197,9 +203,16 @@
 ++  initial-response
   |=  =path
   ^-  card
-  =/  initial=update
+  =;  initial=update
+    [%give %fact ~ %link-update !>(initial)]
+  ?+  path  !!
+      [%local-pages ^]
     [%local-pages path .^(pages %gx path)]
-  [%give %fact ~ %link-update !>(initial)]
+  ::
+      [%annotations @ ^]
+    =+  (split-discussion-path t.path)
+    [%annotations path url .^(notes %gx path)]
+  ==
 ::
 ++  start-proxy
   |=  [who=ship =path]
