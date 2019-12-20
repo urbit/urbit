@@ -30,7 +30,7 @@
 ::  +action: local actions
 ::
 +$  action
-  $%  [%add =path title=@t =url]
+  $%  [%save =path title=@t =url]
       [%hear =path from=ship =page]  ::TODO  just =submission?
   ==
 ::  +update: local updates

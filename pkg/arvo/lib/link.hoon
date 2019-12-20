@@ -48,8 +48,8 @@
   ++  action
     |=  =json
     ^-  ^action
-    ?>  ?=([%o [%add *] ~ ~] json)
-    :-  %add  ::TODO  +of doesn't please type system?
+    ?>  ?=([%o [%save *] ~ ~] json)
+    :-  %save  ::TODO  +of doesn't please type system?
     %.  q.n.p.json
     (ot 'path'^pa 'title'^so 'url'^so ~)
   --

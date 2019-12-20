@@ -107,12 +107,12 @@
   |=  =action
   ^-  (quip card _state)
   ?-  -.action
-    %add   (add-page +.action)
+    %save  (save-page +.action)
     %hear  (hear-submission +.action)
   ==
-::  +add-page: save a page ourselves
+::  +save-page: save a page ourselves
 ::
-++  add-page
+++  save-page
   |=  [=path title=@t =url]
   ^-  (quip card _state)
   ?<  =(~ path)

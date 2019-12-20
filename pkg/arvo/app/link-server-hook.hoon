@@ -101,7 +101,7 @@
 ++  do-add
   |=  [=path title=@t =url]
   ^-  card
-  (do-action %add path title url)
+  (do-action %save path title url)
 ::
 ++  handle-http-request
   |=  [eyre-id=@ta =inbound-request:eyre]
