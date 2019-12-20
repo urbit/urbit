@@ -7,7 +7,6 @@ import Bound.Scope
 import Control.Monad.Morph (hoist)
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 import Data.Foldable (foldl1, foldr1)
-import Data.List.NonEmpty (NonEmpty)
 import Data.Word
 import Numeric.Natural
 
@@ -46,10 +45,6 @@ data Hoon a
   | KetHep (Hoon a) (Hoon a)
   | WutCen (Hoon a) (Map Atom (Hoon a))
   deriving (Functor, Foldable, Traversable)
-
-data PolyAbs a
-  = Body (Hoon a)
-  | Bind (Hoon a) (Scope () PolyAbs a)
 
 deriveEq1   ''Hoon
 deriveOrd1  ''Hoon
