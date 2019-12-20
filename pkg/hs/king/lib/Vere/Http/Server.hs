@@ -315,18 +315,19 @@ streamBlocks env init tmv =
     for_ init yieldÇunk >> go
   where
     yieldFlush = \x -> yield (Chunk x) >> yield Flush
-    logDupHead = runRIO env
-               $ logError "Multiple %head actions on one request"
+    logDupHead = runRIO env (logError "Multiple %head actions on one request")
 
     yieldÇunk  = \case
-      "" -> pure ()
-      c  -> (yieldFlush . fromByteString . unOcts . unFile) c
+        "" -> runRIO env (logTrace "sending empty chunk")
+        c  -> do runRIO env (logTrace (display ("sending chunk " <> tshow c)))
+                 (yieldFlush . fromByteString . unOcts . unFile) c
 
     go = atomically (readTQueue tmv) >>= \case
-           RAHead head c -> logDupHead >> yieldÇunk c >> go
-           RAFull head c -> logDupHead >> yieldÇunk c >> go
-           RABloc c      -> yieldÇunk c
-           RADone        -> pure ()
+             RAHead head c -> logDupHead >> yieldÇunk c >> go
+             RAFull head c -> logDupHead >> yieldÇunk c >> go
+             RABloc c      -> yieldÇunk c
+             RADone        -> do runRIO env (logTrace "Stream finished")
+                                 pure ()
 
 sendResponse :: HasLogFunc e
              => (W.Response -> IO W.ResponseReceived)
