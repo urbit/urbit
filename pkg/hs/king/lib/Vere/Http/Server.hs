@@ -380,36 +380,44 @@ app env sId liv plan which req respond =
 -- Top-Level Driver Interface --------------------------------------------------
 
 {-
-    TODO if a bunch of these fail, then I get errors. Something is wrong.
+    Opens a socket on some port, accepting connections from `127.0.0.1`
+    if fake and `0.0.0.0` if real.
 
-        ...
-        [warn] Network.Socket.socket: resource exhausted (Too many open files)
-        [warn] Failed to open port 48541
-        ...
+    It will attempt to open a socket on each of the supplied ports in
+    order. If they all fail, it will ask the operating system to give
+    us an open socket on *any* open port. If that fails, it will throw
+    an exception.
 -}
-
-openPort :: HasLogFunc e => [W.Port] -> RIO e (W.Port, Net.Socket)
-openPort = \case
-    []   -> io W.openFreePort
-    x:xs -> io (tryOpenPort x) >>= \case
-                Left err -> do
-                    logWarn (display ("Failed to open port " <> tshow x))
-                    logWarn (display (tshow err))
-                    openPort xs
-                Right ps -> do
-                    logTrace (display ("Opening port " <> tshow (fst ps)))
-                    pure ps
+openPort :: HasLogFunc e => Bool -> [W.Port] -> RIO e (W.Port, Net.Socket)
+openPort isFake = go
   where
-    -- TODO XX Don't catch SomeException. Catch specific excception. This
-    -- is actually a really foul hack. Change this now!
-    tryOpenPort ∷ W.Port → IO (Either SomeException (W.Port, Net.Socket))
-    tryOpenPort por = try $ do
-        s <- Net.socket Net.AF_INET Net.Stream Net.defaultProtocol
-        localhost <- Net.inet_addr "0.0.0.0"
-        Net.bind s (Net.SockAddrInet (fromIntegral por) localhost)
-        Net.listen s 1
-        port <- Net.socketPort s
-        return (fromIntegral port, s)
+    go = \case
+        []   -> io W.openFreePort
+        x:xs -> io (tryOpen x) >>= \case
+                    Left (err∷IOError) -> do
+                        logWarn (display ("Failed to open port " <> tshow x))
+                        logWarn (display (tshow err))
+                        go xs
+                    Right ps -> do
+                        logTrace (display ("Opening port " <> tshow (fst ps)))
+                        pure ps
+
+    bindTo = if isFake then "127.0.0.1" else "0.0.0.0"
+
+    bindListenPort ∷ W.Port → Net.Socket → IO Net.PortNumber
+    bindListenPort por sok = do
+        bindAddr <- Net.inet_addr bindTo
+        Net.bind sok (Net.SockAddrInet (fromIntegral por) bindAddr)
+        Net.listen sok 1
+        Net.socketPort sok
+
+    --  `inet_addr`, `bind`, and `listen` all throw `IOError` if they fail.
+    tryOpen ∷ W.Port → IO (Either IOError (W.Port, Net.Socket))
+    tryOpen por = do
+        sok <- Net.socket Net.AF_INET Net.Stream Net.defaultProtocol
+        try (bindListenPort por sok) >>= \case
+            Left exn  -> Net.close sok $> Left exn
+            Right por -> pure (Right (fromIntegral por, sok))
 
 {-
     TODO Need to find an open port.
@@ -426,12 +434,12 @@ startServ isFake conf plan = do
   sId <- io $ ServId . UV . fromIntegral <$> (randomIO :: IO Word32)
   liv <- newTVarIO emptyLiveReqs
 
-  let insP = [8080..8085]
-      secP = [8443..8448]
+  let insPor = if isFake then [8080..8085] else (80  : [8080..8085])
+      secPor = if isFake then [8443..8448] else (443 : [8443..8448])
 
-  (httpPortInt,  httpSock)  <- openPort (if isFake then insP else 80:insP)
-  (httpsPortInt, httpsSock) <- openPort (if isFake then secP else 443:secP)
-  (loopPortInt,  loopSock)  <- openPort [12321..12326]
+  (httpPortInt,  httpSock)  <- openPort isFake insPor
+  (httpsPortInt, httpsSock) <- openPort isFake secPor
+  (loopPortInt,  loopSock)  <- openPort isFake [12321..12326]
 
   let httpPort  = Port (fromIntegral httpPortInt)
       httpsPort = Port (fromIntegral httpsPortInt)
