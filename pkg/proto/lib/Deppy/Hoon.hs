@@ -19,15 +19,18 @@ data Hoon a
   = Var a
   -- irregular forms
   | Hax
-  | Fun (NonEmpty (Hoon a)) (Scope Word Hoon a)
-  | Cel (NonEmpty (Hoon a)) (Scope Word Hoon a)
+  | Fun (Hoon a) (Scope () Hoon a)
+  | Cel (Hoon a) (Scope () Hoon a)
   | Wut (Set Atom)
-  | Lam (NonEmpty (Hoon a)) (Scope Word Hoon a)
-  | Cns (NonEmpty (Hoon a))
+  --
+  | Lam (Hoon a) (Scope () Hoon a)
+  | Cns (Hoon a) (Hoon a)
   | Tag Atom
-  | App (NonEmpty (Hoon a))
+  --
+  | App (Hoon a) (Hoon a)
   | Hed (Hoon a)
   | Tal (Hoon a)
+  --
   | The (Hoon a) (Hoon a)
   | Fas (Hoon a) (Hoon a)
   -- Runes
@@ -65,19 +68,26 @@ desugar = go
     go :: Hoon a -> C.Exp a
     go = \case
       Var v -> C.Var v
-      Hax -> C.Typ
       --
+      Hax -> C.Typ
+      Fun t b -> C.Fun $ C.Abs (go t) (hoist go b)
+      Cel t b -> C.Cel $ C.Abs (go t) (hoist go b)
       Wut a -> C.Wut a
       --
+      Lam t b -> C.Lam $ C.Abs (go t) (hoist go b)
+      Cns h j -> C.Cns (go h) (go j) Nothing
+      --
       Tag t -> C.Tag t
-      App hs -> foldl1 C.App $ map go hs
+      App h j -> C.App (go h) (go j)
       Hed h -> C.Hed (go h)
       Tal h -> C.Tal (go h)
+      --
       The ht c@Cns{} ->
         let C.Cns e f _ = go c
         in  C.Cns e f (Just $ go ht)
       The ht hv -> the (go ht) (go hv)
       Fas hv ht -> go $ The ht hv
+      --
       HaxBuc tcs -> C.Cel (mkCasAbs tcs)
       HaxCen tcs -> C.Fun (mkCasAbs tcs)
       BarCen cs -> C.Lam (mkCasAbs cs)
@@ -85,7 +95,6 @@ desugar = go
       CenHep h j -> C.App (go h) (go j)
       TisFas h h' -> C.Let (go h) (hoist go h')
       DotDot h h' -> C.Rec $ C.Abs (go h) (hoist desugar h')
-      -- TODO kethep etc on cells
       KetFas hv ht -> go $ The ht hv
       KetHep ht hv -> go $ The ht hv
       WutCen h cs -> C.Cas (go h) (go <$> cs)
