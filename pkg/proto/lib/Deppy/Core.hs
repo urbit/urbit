@@ -15,22 +15,22 @@ type Typ = Exp
 data Exp a
   = Var a
   -- types
-  | Typ                            -- #
-  | Fun (Abs a)                    -- #<v/t t>  #-  v/t  t
-  | Cel (Abs a)                    -- #[v/t t]  #:  v/t  t
-  | Wut (Set Tag)                  -- #foo, ?(#foo #bar)
+  | Typ                                  -- #
+  | Fun (Abs a)                          -- #<v/t t>  #-  v/t  t
+  | Cel (Abs a)                          -- #[v/t t]  #:  v/t  t
+  | Wut (Set Tag)                        -- #foo, ?(#foo #bar)
   -- introduction forms
-  | Lam (Abs a)                    -- <v/t e>  |=  v/t  e
-  | Cns (Exp a) (Exp a)            -- [e f]    :-  e f
-  | Tag Tag                        -- %foo
+  | Lam (Abs a)                          -- <v/t e>  |=  v/t  e
+  | Cns (Exp a) (Exp a) (Maybe (Exp a))  -- [e f]    :-  e f
+  | Tag Tag                              -- %foo
   -- elimination forms
-  | App (Exp a) (Exp a)            -- (e f)
-  | Hed (Exp a)                    -- e.-
-  | Tal (Exp a)                    -- e.+
-  | Cas (Exp a) (Map Tag (Exp a))  -- ?%  e  $foo  f  $bar  g  ==
+  | App (Exp a) (Exp a)                  -- (e f)
+  | Hed (Exp a)                          -- e.-
+  | Tal (Exp a)                          -- e.+
+  | Cas (Exp a) (Map Tag (Exp a))        -- ?%  e  $foo  f  $bar  g  ==
   -- recursion, flow control
-  | Let (Exp a) (Scope () Exp a)   -- =/
-  | Rec (Abs a)                    -- ..  v/t  e
+  | Let (Exp a) (Scope () Exp a)         -- =/  v  e
+  | Rec (Abs a)                          -- ..  v/t  e
   deriving (Functor, Foldable, Traversable)
 
 type Tag = Natural
@@ -75,7 +75,7 @@ instance Monad Exp where
   Cel a >>= f = Cel (bindAbs a f)
   Wut ls >>= _ = Wut ls
   Lam a >>= f = Lam (bindAbs a f)
-  Cns x y >>= f = Cns (x >>= f) (y >>= f)
+  Cns x y m >>= f = Cns (x >>= f) (y >>= f) ((>>= f) <$> m)
   Tag l >>= _ = Tag l
   App x y >>= f = App (x >>= f) (y >>= f)
   Hed x >>= f = Hed (x >>= f)
@@ -239,7 +239,13 @@ infer env = \case
     (toScope -> t') <- infer (extend1 t env) (fromScope b)
     pure $ Fun (Abs t t')
   -- //  [@ 1]  #[# @]  ?<= #[t/# t]
-  Cns x y -> do
+  Cns x y (Just (whnf -> t@(Cel (Abs l r)))) -> do
+     Typ <- infer env t
+     check env x l
+     check env y (instantiate1 x r)
+     pure t
+  Cns _ _ (Just _) -> Nothing
+  Cns x y Nothing -> do
     -- Infer non-dependent pairs; if you want dependency, you must annotate
     -- FIXME problem: [@ 1] not of type #[t/# t]; no way to create vases
     t <- infer env x
@@ -274,8 +280,8 @@ infer env = \case
 whnf :: (Show a, Eq a) => Exp a -> Exp a
 whnf = \case
   App (whnf -> Lam (Abs _ b)) x -> whnf $ instantiate1 x b
-  Hed (whnf -> Cns x _) -> whnf x
-  Tal (whnf -> Cns _ y) -> whnf y
+  Hed (whnf -> Cns x _ _) -> whnf x
+  Tal (whnf -> Cns _ y _) -> whnf y
   Cas (whnf -> Tag t) cs -> whnf $ fromJust $ lookup t cs
   e@(Rec (Abs _ b)) -> whnf $ instantiate1 e b
   e -> e

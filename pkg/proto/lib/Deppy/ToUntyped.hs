@@ -16,7 +16,7 @@ toUntyped = \case
   Cel{}         -> U.Atm 799
   Wut{}         -> U.Atm 810
   Lam (Abs _ b) -> U.Lam (hoistScope toUntyped b)
-  Cns e f       -> U.Cel (toUntyped e) (toUntyped f)
+  Cns e f _     -> U.Cel (toUntyped e) (toUntyped f)
   Tag a         -> U.Atm a
   App e f       -> U.App (toUntyped e) (toUntyped f)
   Hed e         -> U.Axs 2 (toUntyped e)
