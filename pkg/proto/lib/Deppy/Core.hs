@@ -267,10 +267,7 @@ infer env = \case
     -- TODO pretty restrictive - do we want?
     guard (s == keysSet cs)
     Cas x <$> traverse (infer env) cs
-  -- Let e b -> do
-  -- -- TODO is below faster, or infer env (instantiate1 e b)?
-  -- t <- infer env e
-  -- instantiate1 e $ infer (extend1 t env) (fromScope b)
+  Let e b -> infer env (instantiate1 e b)  -- how bad an idea is this?
   Rec (Abs t b) -> do
     Typ <- infer env t
     -- todo can F <$> be made faster?
