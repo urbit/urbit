@@ -26,51 +26,6 @@ type Sym  = Text
 
 -- CST -------------------------------------------------------------------------
 
-{-data Pat
-    = PatTar
-    | PatTag Sym
-  deriving (Eq, Ord, Show)
-
-data CST
-    = WutCol CST CST CST          --  ?:(c t f)
-    | WutPat CST CST CST          --  ?@(c t f)
-    | WutKet CST CST CST          --  ?^(c t f)
-    | WutPam [CST]                --  ?&(c cs ...)
-    | WutBar [CST]                --  ?|(c cs ...)
-    | WutHep CST [(Pat, CST)]     --  ?-(c p e ps es ...)
-    | TisFas Sym CST CST          --  =/(x 3 x)
-    | ColHep CST CST              --  :-(a b)
-    | ColLus CST CST CST          --  :+(a b c)
-    | ColKet CST CST CST CST      --  :^(a b c d)
-    | ColTar [CST]                --  :*(a as ...)
-    | ColSig [CST]                --  :~(a as ...)
-    | BarTis Sym CST              --  |=(s h)
-    | BarHep Sym Sym CST CST      --  |-(rec var init body)
-    | BarCen [(Pat, CST)]         --  |%  %a  3  ==
-    | CenHep CST CST              --  %-  f  x
-    | CenDot CST CST              --  %.  x  f
-    | DotDot Sym CST              --  ..  $  f
-    | SigFas CST CST
-    | ZapZap                      --  !!
-    | Tupl [CST]                  --  [a b ...]
-    | Var  Sym                    --  a
-    | Atom Nat                    --  3
-    | Tag Text                    --  %asdf
-    | Cord Text                   --  'cord'
-    | Tape Text                   --  "tape"
-    | Incr CST                    --  .+(3)
-    | IncrIrr CST                 --  +(3)
-    | AppIrr CST CST              --  (x y)
-    | IsEq CST CST                --  .=(3 4)
-    | IsEqIrr CST CST             --  =(3 4)
-    | Pam                         --  &
-    | Bar                         --  |
-    | Yes                         --  %.y
-    | No                          --  %.n
-    | Sig                         --  ~
-  deriving (Eq, Ord, Show)-}
-
-
 instance Show CST where
   show = \case
       Var t -> unpack t
@@ -242,11 +197,36 @@ runeN node elem = node <$> parseRune tall wide
         wide = pal *> option [] elems <* par
                  where elems = (:) <$> elem <*> many (ace >> elem)
 
-jogging :: Parser a -> Parser b -> Parser [(a, b)]
-jogging a b = parseRune tall wide
+runeJogging :: Parser a -> Parser b -> Parser [(a, b)]
+runeJogging a b = parseRune tall wide
   where
-    tall = undefined
-    wide = undefined
+    tall = gap *> many ((,) <$> (a <* gap) <*> (b <* gap)) <* string "=="
+    wide = grouped "(" ", " ")" ((,) <$> (a <* ace) <*> b)
+
+runeJogging1 :: Parser a -> Parser b -> Parser c -> Parser (a, [(b, c)])
+runeJogging1 a b c = parseRune tall wide
+  where
+    tall = do
+      gap
+      x <- a
+      gap
+      elems <- many do
+        y <- b
+        gap
+        z <- c
+        gap
+        pure (y, z)
+      string "=="
+      pure (x, elems)
+    wide = do
+      string "("
+      x <- a
+      elems <- grouped "; " ", " ")" do
+        y <- b
+        ace
+        z <- c
+        pure (y, z)
+      pure (x, elems)
 
 runeNE ∷ (NonEmpty a → b) → Parser a → Parser b
 runeNE node elem = node <$> parseRune tall wide

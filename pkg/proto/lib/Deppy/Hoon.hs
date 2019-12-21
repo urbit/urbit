@@ -134,7 +134,6 @@ resugar = go
       C.Var v -> Var v
       --
       C.Typ             -> Hax
-      -- TODO recognize #$, #%
       C.Fun (C.Abs t b) -> Fun (go t) (hoist go b)
       C.Cel (C.Abs t b) -> Cel (go t) (hoist go b)
       C.Wut as          -> Wut as
@@ -144,7 +143,6 @@ resugar = go
       C.Cns e f Nothing  -> Cns (go e) (go f)
       C.Tag a            -> Tag a
       --
-      -- TODO recognise C.Apps which represent The
       C.App e f  -> App (go e) (go f)
       C.Hed e    -> Hed (go e)
       C.Tal e    -> Tal (go e)
