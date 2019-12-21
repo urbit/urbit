@@ -59,7 +59,7 @@
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
   ::
   |^  |=  bs=octs  ^-  cord
-      =+  ^-  [padding=@ blocks=(list word24)]
+      =/  [padding=@ blocks=(list word24)]
           (octs-to-blocks bs)
       (crip (flop (unpad padding (encode-blocks blocks))))
   ::

@@ -120,10 +120,9 @@
     %-  parse-request-line
     url.request.inbound-request
   =*  req-head  header-list.request.inbound-request
-  =-  ::TODO  =;  [cards=(list card) =simple-payload:http]
+  =;  [cards=(list card) =simple-payload:http]
     %+  weld  cards
     (give-simple-payload:app eyre-id simple-payload)
-  ^-  [cards=(list card) =simple-payload:http]
   ?+  method.request.inbound-request  [~ not-found:gen]
       %'OPTIONS'
     [~ (include-cors-headers req-head [[200 ~] `*octs])]
@@ -138,7 +137,7 @@
 ++  handle-post
   |=  [request-headers=header-list:http =request-line body=(unit octs)]
   ^-  [(list card) simple-payload:http]
-  =-  ::TODO  =;  [success=? cards=(list card)]
+  =;  [success=? cards=(list card)]
     :-  cards
     %+  include-cors-headers
       request-headers
@@ -146,7 +145,6 @@
     ::      sending this response right away... but link-store pokes can't
     ::      actually fail right now, so it's fine.
     [[?:(success 200 400) ~] `*octs]
-  ^-  [success=? cards=(list card)]
   ?~  body  [| ~]
   ?+  request-line  [| ~]
       [[~ [%'~link' %add ^]] ~]
