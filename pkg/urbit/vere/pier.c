@@ -1845,6 +1845,12 @@ _pier_exit_really_really_done(uv_timer_t* tim_u)
       pir_w++;
 
       if ( rip_u == pir_u ) {
+        c3_free(pir_u->who_c);
+        c3_free(pir_u->pax_c);
+        c3_free(pir_u->sam_u);
+        c3_free(pir_u->teh_u);
+        c3_free(pir_u->unx_u);
+        c3_free(pir_u->sav_u);
         c3_free(pir_u);
         len_w--;
         rip_u = u3K.tab_u[++i_w];
@@ -1856,9 +1862,12 @@ _pier_exit_really_really_done(uv_timer_t* tim_u)
     u3K.len_w = len_w;
 
     if ( 0 == u3K.len_w ) {
+      c3_free(u3K.tab_u);
       u3_daemon_done();
     }
   }
+
+  c3_free(tim_u);
 }
 
 /* _pier_exit_really_done():
