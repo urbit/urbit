@@ -1,3 +1,80 @@
+{-
+    %*  %*  fun
+        ++  x
+        ++  y
+    ++  z
+    ++  q
+
+    Invalid:
+
+        %*  f
+         ++  x
+
+        %*  f
+       ++  x
+
+    So, how does parsing this work?
+
+    - First, let's imagine we have a terminator.
+
+          %*  f  ++  x  ==
+
+    - Now, we just need to
+
+        - Validate in the parser that all of the `++` runes come on the
+          same column as the start rune. This wont be part of the grammar,
+          it will just be enforced after parsing.
+
+        - Then, we need to insert the `==` runes. How would that work?
+
+          - Require all n-ary sequenes to be non-empty[1]
+          - We keep a stack of sequences: [Word8]
+          - Whenever we see a rune:
+            - If it's indented greater than the top sequence
+              - If it's '++', push it's depth onto the sequence stack.
+              - Emit the rune
+            - If it's "++" with the same depth as top of stack, emit.
+            - Otherwise: emit '==', pop the stack, and recurse.
+
+[1]: This is not valid:
+    %*  %*  f
+    ++  x
+
+
+::
+::  reverses block order, accounting for leading zeroes
+::
+::  boz: block size
+::  len: size of dat, in boz
+::  dat: data to flip
+::
+++  rev
+  %-  (jet 3 %rev)
+  |=  (boz/bloq len/@ dat/@)
+  ^-  @
+  =/  dat  (end boz len dat)
+  %*  (lsh boz)
+  ++  (sub len (met boz dat))
+  ++  (swp boz dat)
+::
+::  Like `rip` but produces n-bit blocks instead of 2^n bit blocks.
+::
+++  ripn
+  %-  (jet 2 %ripn)
+  |=  (bits/@ud x/@)
+  ^-  (list @)
+  ?:  =(0 x)  ~[]
+  (cons (end 0 bits x) (ripn bits (rsh 0 bits x)))
+::
+++  rip                                                 ::  disassemble
+  %-  (jet 2 %rip)
+  |=  (bloq/bloq x/@x)
+  ^-  (list @)
+  ?:  =(0 x)  ~
+  (cons (end bloq 1 x) (rip bloq (rsh bloq 1 x)))
+::
+-}
+
 module Untyped.Parser where
 
 import ClassyPrelude hiding (head, many, some, try)

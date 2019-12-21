@@ -11,11 +11,14 @@ dependencies:
   - deriving-compat
   - king
   - lens
+  - lexer-applicative
   - megaparsec
   - mtl
   - multimap
   - para
   - pretty-show
+  - regex-applicative
+  - srcloc
   - text
   - transformers
   - transformers-compat
