@@ -102,7 +102,7 @@
     ^-  (quip card _this)
     =^  cards  all-state
       ?+  mark        (on-poke:def mark vase)
-        %noun         (poke-noun:tc mark !<(* vase))
+        %noun         (poke-noun:tc !<(* vase))
         %sole-action  (poke-sole-action:tc !<(sole-action:sole-sur vase))
       ==
     [cards this]
