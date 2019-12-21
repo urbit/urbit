@@ -76,10 +76,6 @@ import Data.Default         (def)
 import King.App             (runApp, runAppLogFile, runPierApp)
 import King.App             (HasConfigDir(..))
 import RIO                  (logSticky, logStickyDone)
-import System.Environment   (getProgName)
-import System.Exit          (exitSuccess)
-import System.Posix.Signals (Handler(Catch), installHandler, sigTERM)
-import System.Random        (randomIO)
 import Text.Show.Pretty     (pPrint)
 import Urbit.Time           (Wen)
 import Vere.LockFile        (lockFile)
@@ -90,8 +86,12 @@ import qualified Data.Text                    as T
 import qualified EventBrowser                 as EventBrowser
 import qualified Network.HTTP.Client          as C
 import qualified System.Console.Terminal.Size as TSize
+import qualified System.Environment           as Sys
+import qualified System.Exit                  as Sys
 import qualified System.IO.LockFile.Internal  as Lock
+import qualified System.Posix.Signals         as Sys
 import qualified System.ProgressBar           as PB
+import qualified System.Random                as Sys
 import qualified Urbit.Ob                     as Ob
 import qualified Vere.Log                     as Log
 import qualified Vere.Pier                    as Pier
@@ -372,7 +372,7 @@ newShip CLI.New{..} opts
       putStrLn ("boot: " ++ (tshow $ length starList) ++
                 " star(s) currently accepting comets")
       putStrLn "boot: mining a comet"
-      eny <- io $ randomIO
+      eny <- io $ Sys.randomIO
       let seed = mineComet (Set.fromList starList) eny
       putStrLn ("boot: found comet " ++ renderShip (sShip seed))
       bootFromSeed pill seed
@@ -479,9 +479,25 @@ checkComet = do
   let starNames = map (Ob.renderPatp . Ob.patp . fromIntegral) starList
   print starNames
   putStrLn "Trying to mine a comet..."
-  eny <- io $ randomIO
+  eny <- io $ Sys.randomIO
   let s = mineComet (Set.fromList starList) eny
   print s
+
+{-
+    The release executable links against a terminfo library that tries
+    to find the terminfo database in `/nix/store/...`. Hack around this
+    by setting `TERMINFO_DIRS` to the standard locations, but don't
+    overwrite it if it's already been set by the user.
+-}
+terminfoHack ∷ IO ()
+terminfoHack =
+    Sys.lookupEnv var >>= maybe (Sys.setEnv var dirs) (const $ pure ())
+  where
+    var = "TERMINFO_DIRS"
+    dirs = intercalate ":"
+      [ "/usr/share/terminfo"
+      , "/lib/terminfo"
+      ]
 
 main :: IO ()
 main = do
@@ -489,7 +505,9 @@ main = do
 
     let onTermSig = throwTo mainTid UserInterrupt
 
-    installHandler sigTERM (Catch onTermSig) Nothing
+    Sys.installHandler Sys.sigTERM (Sys.Catch onTermSig) Nothing
+
+    terminfoHack
 
     CLI.parseArgs >>= \case
         CLI.CmdRun r o                          -> runShip r o
