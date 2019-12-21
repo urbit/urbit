@@ -1851,6 +1851,8 @@ _pier_exit_really_really_done(uv_timer_t* tim_u)
         c3_free(pir_u->teh_u);
         c3_free(pir_u->unx_u);
         c3_free(pir_u->sav_u);
+        c3_free(pir_u->god_u);
+        c3_free(pir_u->log_u);
         c3_free(pir_u);
         len_w--;
         rip_u = u3K.tab_u[++i_w];
@@ -1886,7 +1888,7 @@ _pier_exit_really_done(uv_handle_t* han_u)
     tim_u->data = pir_u;
 
     uv_timer_init(u3L, tim_u);
-    uv_timer_start(tim_u, _pier_exit_really_really_done, 1000, 0);
+    uv_timer_start(tim_u, _pier_exit_really_really_done, 6000, 0);
   }
 }
 
