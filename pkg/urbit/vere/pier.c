@@ -473,7 +473,11 @@ static void
 _pier_work_bail(void*       vod_p,
                 const c3_c* err_c)
 {
-  fprintf(stderr, "\rpier: work error: %s\r\n", err_c);
+  u3_pier* pir_u = vod_p;
+
+  if ( u3_psat_done != pir_u->sat_e ) {
+    fprintf(stderr, "\rpier: work error: %s\r\n", err_c);
+  }
 }
 
 /* _pier_work_boot(): prepare for boot.
@@ -859,15 +863,20 @@ _pier_work_exit(uv_process_t* req_u,
   u3_controller* god_u = (void *) req_u;
   u3_pier* pir_u = god_u->pir_u;
 
-  fprintf(stderr, "\rpier: work exit: status %" PRId64 ", signal %d\r\n",
-                  sas_i, sig_i);
-  uv_close((uv_handle_t*) req_u, 0);
+  uv_close((uv_handle_t*)req_u, 0);
 
-  //  XX dispose
-  //
-  pir_u->god_u = 0;
+  uv_close((uv_handle_t*)&god_u->inn_u.pyp_u, 0);
+  uv_close((uv_handle_t*)&god_u->out_u.pyp_u, 0);
 
-  u3_pier_bail();
+  if ( u3_psat_done != pir_u->sat_e ) {
+    fprintf(stderr, "\rpier: work exit: status %" PRId64 ", signal %d\r\n",
+                    sas_i, sig_i);
+    //  XX dispose
+    //
+    pir_u->god_u = 0;
+
+    u3_pier_bail();
+  }
 }
 
 /* _pier_work_poke(): handle subprocess result.  transfer nouns.
@@ -1021,7 +1030,7 @@ _pier_work_poke(void*   vod_p,
   error: {
     u3m_p("jar", jar);
     u3z(jar); u3z(mat);
-    _pier_work_bail(0, "bad jar");
+    _pier_work_bail(vod_p, "bad jar");
   }
 }
 
@@ -1818,6 +1827,60 @@ u3_pier_interrupt(u3_pier* pir_u)
   uv_process_kill(&pir_u->god_u->cub_u, SIGINT);
 }
 
+/* _pier_exit_really_really_done():
+*/
+static void
+_pier_exit_really_really_done(uv_timer_t* tim_u)
+{
+  u3_pier* pir_u = tim_u->data;
+
+  //  XX uninstall pier from u3K.tab_u, dispose
+  {
+    c3_w     len_w = u3K.len_w;
+    c3_w     pir_w = 0;
+    u3_pier* rip_u;
+
+    for ( c3_w i_w = 0; i_w < u3K.len_w; i_w++ ) {
+      rip_u = u3K.tab_u[i_w];
+      pir_w++;
+
+      if ( rip_u == pir_u ) {
+        c3_free(pir_u);
+        len_w--;
+        rip_u = u3K.tab_u[++i_w];
+      }
+
+      u3K.tab_u[pir_w] = rip_u;
+    }
+
+    u3K.len_w = len_w;
+
+    if ( 0 == u3K.len_w ) {
+      u3_daemon_done();
+    }
+  }
+}
+
+/* _pier_exit_really_done():
+*/
+static void
+_pier_exit_really_done(uv_handle_t* han_u)
+{
+  u3_pier* pir_u = han_u->data;
+
+  fprintf(stderr, "pier really done\n");
+  uv_print_all_handles(u3L, stderr);
+
+  {
+    uv_timer_t* tim_u = c3_malloc(sizeof(*tim_u));
+
+    tim_u->data = pir_u;
+
+    uv_timer_init(u3L, tim_u);
+    uv_timer_start(tim_u, _pier_exit_really_really_done, 1000, 0);
+  }
+}
+
 /* _pier_exit_done(): synchronously shutting down
 */
 static void
@@ -1831,11 +1894,17 @@ _pier_exit_done(u3_pier* pir_u)
 
   _pier_loop_exit(pir_u);
 
-  //  XX uninstall pier from u3K.tab_u, dispose
-
-  //  XX no can do
+  //  it's fine to leak resources on exit if no one is looking
   //
-  uv_stop(u3L);
+  if ( 0 ) {
+    uv_stop(u3L);
+  }
+  //  gracefully dispose everything for memory checking
+  //
+  else {
+    uv_close((uv_handle_t*)&pir_u->pep_u, 0);
+    uv_close((uv_handle_t*)&pir_u->idl_u, _pier_exit_really_done);
+  }
 }
 
 /* u3_pier_exit(): trigger a gentle shutdown.

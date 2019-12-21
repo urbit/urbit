@@ -828,6 +828,18 @@ _daemon_sign_hold(void)
   }
 }
 
+/* _daemon_sign_close(): dispose daemon signal handlers
+*/
+static void
+_daemon_sign_close(void)
+{
+  u3_usig* sig_u;
+
+  for ( sig_u = u3_Host.sig_u; sig_u; sig_u = sig_u->nex_u ) {
+    uv_close((uv_handle_t*)&sig_u->sil_u, (uv_close_cb)free);
+  }
+}
+
 /* _boothack_cb(): callback for the boothack self-connection
 **  (as if we were a client process)
 */
@@ -866,8 +878,10 @@ _daemon_loop_init()
   //
   {
     u3_moor*      mor_u = c3_malloc(sizeof(u3_moor));
+    mor_u->vod_p        = mor_u;
+    mor_u->bal_f        = (u3_bail)_daemon_bail;
     uv_connect_t* con_u = c3_malloc(sizeof(uv_connect_t));
-    con_u->data = mor_u;
+    con_u->data         = mor_u;
     uv_pipe_init(u3L, &mor_u->pyp_u, 0);
     uv_pipe_connect(con_u, &mor_u->pyp_u, u3K.soc_c, _boothack_cb);
   }
@@ -948,6 +962,34 @@ u3_daemon_commence()
   uv_run(u3L, UV_RUN_DEFAULT);
 
   _daemon_loop_exit();
+}
+
+static void
+_daemon_really_really_done(uv_handle_t* han_u)
+{
+  //  XX no can do
+  //
+  fprintf(stderr, "really really done\n");
+  uv_print_all_handles(u3L, stderr);
+  uv_stop(u3L);
+}
+
+static void
+_daemon_really_done(uv_timer_t* tim_u)
+{
+  uv_close((uv_handle_t*)&u3K.tim_u, _daemon_really_really_done);
+}
+
+/* u3_daemon_done(): all piers closed
+*/
+void
+u3_daemon_done(void)
+{
+  _daemon_sign_close();
+  uv_close((uv_handle_t*)&u3K.cmd_u, 0);
+  uv_close((uv_handle_t*)&u3K.cli_u->pyp_u, 0);
+
+  uv_timer_start(&u3K.tim_u, _daemon_really_done, 1000, 0);
 }
 
 /* u3_daemon_bail(): immediately shutdown.

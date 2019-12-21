@@ -1293,6 +1293,11 @@
         void
         u3_daemon_commence();
 
+      /* u3_daemon_done(): all piers closed
+      */
+        void
+        u3_daemon_done(void);
+
       /* u3_daemon_bail(): immediately shutdown.
       */
         void
