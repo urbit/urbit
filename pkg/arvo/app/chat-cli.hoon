@@ -122,7 +122,7 @@
       ?-    -.sign
           %poke-ack   [- all-state]:(on-agent:def wire sign)
           %watch-ack  [- all-state]:(on-agent:def wire sign)
-          %kick       ~&  %chat-cli-kicked  `all-state
+          %kick       [?:(?=([%chat-store ~] wire) ~[connect] ~) all-state]
           %fact
         ?+  p.cage.sign  ~|([%chat-cli-bad-sub-mark wire p.cage.sign] !!)
           %chat-update  (diff-chat-update:tc wire !<(chat-update q.cage.sign))
@@ -141,7 +141,10 @@
   |=  old=(unit state)
   ^-  (quip card state)
   ?^  old
-    [~ u.old]
+    :_  u.old
+    ?:  (~(has by wex.bowl) [/chat-store our-self %chat-store])
+      ~
+    ~[connect]
   =^  cards  all-state
     %_  catch-up
       audience  [[our-self /] ~ ~]
