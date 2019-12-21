@@ -1352,6 +1352,7 @@
         ~(glyph tr source)
       =/  lis=(list tape)
         %+  simple-wrap
+          ~|  [%weird-text `@`+.letter]
           `tape``(list @)`(tuba (trip +.letter))
         (sub wyd (min (div wyd 2) (lent pef)))
       =+  lef=(lent pef)
