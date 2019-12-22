@@ -19,17 +19,17 @@ module Uruk.JetDemo
     , dash
     , j1, j2, j3, j4
     , j_nat
-    , j_zer, zer
-    , j_inc, inc
-    , j_one, one
-    , j_fol, fol
-    , j_dec, dec
-    , j_add, add
-    , j_lef, lef
-    , j_rit, rit
-    , j_cas, cas
+    , j_zer, l_zer, zer
+    , j_inc, l_inc, inc
+    , j_one, l_one, one
+    , j_fol, l_fol, fol
+    , j_dec, l_dec, dec
+    , j_add, l_add, add
+    , j_lef, l_lef, lef
+    , j_rit, l_rit, rit
+    , j_cas, l_cas, cas
     , Match(..)
-    , valUr
+    , urVal, valUr
     , jetExp
     ) where
 
@@ -130,6 +130,7 @@ data Match = MkMatch
     , mName ∷ Val
     , mBody ∷ Val
     }
+  deriving (Show)
 
 match ∷ Ur → Natural → Ur → Ur → Match
 match j n t b = MkMatch (urVal j) (fromIntegral n) (urVal t) (urVal b)
@@ -139,6 +140,7 @@ data Check = MkCheck
     , cName ∷ Val
     , cPred ∷ Named (Val → Maybe Val)
     }
+  deriving (Show)
 
 check ∷ String → Natural → Ur → (Val → Maybe Ur) → Check
 check nm n t p = MkCheck (fromIntegral n) (urVal t)
@@ -189,37 +191,61 @@ j2 = J 2 :@ K
 j3 = J 3 :@ K
 j4 = J 4 :@ K
 
---  zer i z = z
---  suc n = \i z → i (n i z)
+{-
+    TODO:
+
+    Jet registration becomes an infinite loop because jet bodies are
+    normalized, but jet matching in the bodies depends on the jet
+    dashboard, which depends on the normalized jet body.
+
+    Giving each jet a unique name would solve this, but maybe it's still
+    posible to run into this problem by accident? Whatever.
+
+    For now, I'm hacking around this by using a unjetted version of
+    `fol` in jet bodies.
+-}
+
+--  zer = \i z -> z
+--  suc = \n -> \i z -> i (n i z)
 --  one = inc zer
---  fol n = n inc zer
---  inc n = jet1 (\i z → i (n i z))
-j_zer = match (Nat 0) 2 emp (S :@ K)
-j_one = match (Nat 1) 2 emp (S :@ (S:@(K:@S):@K) :@ (S:@K))
-j_fol = match Fol     1 emp (S:@(S:@I:@(K:@(S:@(S:@(K:@S):@K)))):@(K:@(S:@K)))
-j_inc = match Inc     1 emp (S:@(K:@j2):@(S:@(K:@(S:@(S:@(K:@S):@K))):@Fol))
-j_dec = match Dec     1 emp (D :@ D :@ D)
-j_add = match Add     2 emp (S:@(S:@I:@(K:@Inc)):@(S:@(S:@I:@(K:@Inc)):@(K:@(S:@K))))
-j_nat = check "nat" 2 K (fmap Nat <$> unChurch . valUr)
-
--- fol = (S:@(S:@(S:@K:@K):@(K:@(S:@(S:@(K:@S):@K)))):@(K:@(S:@K)))
-
---  left x l r = l x
---  right x l r = r x
---  case b l r = b l r
-j_lef = match Lef 3 emp (S:@(K:@(S:@(K:@(S:@(K:@K))):@(S:@I))):@K)
-j_rit = match Rit 3 emp (S:@(K:@(S:@(K:@K):@(S:@I))):@K)
-j_cas = match Cas 3 emp I
+--  fol = \n -> n inc zer
+--  inc = \n -> j2 (\i z -> i (fol n i z))
+--  add = \x y -> j2 (fol (\i z -> (fol x) i (fol y)))
+--  lef = \x l r -> l x
+--  rit = \x l r -> r x
+--  cas = \b l r -> b l r
+l_zer = S :@ K
+l_one = S :@ (S:@(K:@S):@K) :@ (S:@K)
+l_fol = S :@ (S:@I:@(K:@(S:@(S:@(K:@S):@K)))) :@ (K:@(S:@K))
+l_inc = S :@ (K:@j2) :@ (S:@(K:@(S:@(S:@(K:@S):@K))) :@ l_fol)
+l_dec = D :@ D :@ D
+-- dd = S :@ (K:@(S:@(K:@j2))) :@ (S:@(K:@(S:@(K:@(S:@(K:@K))))):@(S:@(S:@(K:@(S:@(K:@(S:@(K:@S):@K)):@S)):@l_fol):@(K:@(S:@(K:@K):@l_fol))))
+-- dd = S :@ (K:@(S:@(K:@j2))) :@ (S:@(K:@(S:@(K:@l_fol))):@(S:@(K:@(S:@(K:@(S:@(K:@K))))):@(S:@(K:@(S:@(K:@(S:@S:@(K:@K))):@K)):@S)))
+l_add = S :@ (K:@(S:@(K:@j2))) :@ (S:@(K:@(S:@(K:@l_fol))):@(S:@(K:@(S:@(K:@(S:@(K:@K))))):@(S:@(S:@(K:@(S:@(K:@(S:@(K:@S):@K)):@S)):@l_fol):@(K:@(S:@(K:@K):@l_fol)))))
+l_lef = S :@ (K:@(S:@(K:@(S:@(K:@K))):@(S:@I))) :@ K
+l_rit = S :@ (K:@(S:@(K:@K):@(S:@I))) :@ K
+l_cas = I
 
 zer = jetExp j_zer
 one = jetExp j_one
 fol = jetExp j_fol
 inc = jetExp j_inc
-lef = jetExp j_lef
 dec = jetExp j_dec
 add = jetExp j_add
+lef = jetExp j_lef
 rit = jetExp j_rit
 cas = jetExp j_cas
+
+j_zer = match (Nat 0) 2 emp l_zer
+j_one = match (Nat 1) 2 emp l_one
+j_fol = match Fol     1 emp l_fol
+j_inc = match Inc     1 emp l_inc
+j_dec = match Dec     1 emp l_dec
+j_add = match Add     2 emp l_add
+j_lef = match Lef 3 emp l_lef
+j_rit = match Rit 3 emp l_rit
+j_cas = match Cas 3 emp l_cas
+j_nat = check "nat" 2 K (fmap Nat <$> unChurch . valUr)
 
 dash ∷ DashBoard
 dash = mkDash
@@ -272,8 +298,11 @@ reduce = \case
     Inc :@ Nat n → Just (Nat (succ n))
     Inc :@ x     → Just (jetBod j_inc :@ x)
 
+    Fol :@ Nat x → Just (church x)
+    Fol :@ x     → Just (l_fol :@ x)
+
     Add :@ Nat x :@ Nat y → Just (Nat (x+y))
-    Add :@ _     :@ _     → error "bad-add"
+    Add :@ x     :@ y     → Just (l_add :@ x :@ y)
 
     --  Doesn't reduce
     _ → Nothing
