@@ -830,7 +830,7 @@
   ++  he-diff                                           ::  emit update
     |=  fec/sole-effect
     ^+  +>
-    (he-card %give %fact `/sole/[id] %sole-effect !>(fec))
+    (he-card %give %fact ~[/sole/[id]] %sole-effect !>(fec))
   ::
   ++  he-stop                                           ::  abort work
     ^+  .

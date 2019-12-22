@@ -135,7 +135,7 @@
     currently+(~(got by p.u.ujon) 'currently')
     daily+(~(got by p.u.ujon) 'daily')
   ==
-  :-  [%give %fact `/weathertile %json !>(jon)]~
+  :-  [%give %fact ~[/weathertile] %json !>(jon)]~
   %=  state
     data  jon
     time  now.bol

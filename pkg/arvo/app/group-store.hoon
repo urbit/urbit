@@ -151,7 +151,7 @@
 ++  update-subscribers
   |=  [pax=path act=group-action]
   ^-  (list card)
-  [%give %fact `pax %group-update !>(act)]~
+  [%give %fact ~[pax] %group-update !>(act)]~
 ::
 ++  send-diff
   |=  [pax=path act=group-action]

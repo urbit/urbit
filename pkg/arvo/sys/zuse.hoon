@@ -1887,8 +1887,8 @@
           [%poke-as =mark =cage]
       ==
     +$  gift
-      $%  [%fact path=(unit path) =cage]
-          [%kick path=(unit path) ship=(unit ship)]
+      $%  [%fact paths=(list path) =cage]
+          [%kick paths=(list path) ship=(unit ship)]
           [%watch-ack p=(unit tang)]
           [%poke-ack p=(unit tang)]
       ==

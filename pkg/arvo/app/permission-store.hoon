@@ -187,7 +187,7 @@
 ++  update-subscribers
   |=  [pax=path upd=permission-update]
   ^-  (list card)
-  [%give %fact `pax %permission-update !>(upd)]~
+  [%give %fact ~[pax] %permission-update !>(upd)]~
 ::
 ++  send-diff
   |=  [pax=path upd=permission-update]

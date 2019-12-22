@@ -59,7 +59,7 @@
     ?>  ?=(%invite-update p.cage.sign)
     :~  :*
       %give   %fact
-      `/primary  %json
+      ~[/primary]  %json
       !>((update-to-json !<(invite-update q.cage.sign)))
     ==  ==
   ==
