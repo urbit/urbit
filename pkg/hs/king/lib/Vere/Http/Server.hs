@@ -93,6 +93,9 @@ data Serv = Serv
     , sLoopTid   :: Async ()
     , sHttpTid   :: Async ()
     , sHttpsTid  :: Maybe (Async ())
+    , sLoopSock  :: Net.Socket
+    , sHttpSock  :: Net.Socket
+    , sHttpsSock :: Net.Socket
     , sPorts     :: Ports
     , sPortsFile :: FilePath
     , sLiveReqs  :: TVar LiveReqs
@@ -486,13 +489,19 @@ startServ isFake conf plan = do
 
   logDebug "Finished started HTTP Servers"
 
-  pure $ Serv sId conf loopTid httpTid httpsTid por fil liv
+  pure $ Serv sId conf
+              loopTid httpTid httpsTid
+              httpSock httpsSock loopSock
+              por fil liv
 
 killServ :: HasLogFunc e => Serv -> RIO e ()
 killServ Serv{..} = do
     cancel sLoopTid
     cancel sHttpTid
     traverse_ cancel sHttpsTid
+    io $ Net.close sHttpSock
+    io $ Net.close sHttpsSock
+    io $ Net.close sLoopSock
     removePortsFile sPortsFile
     (void . waitCatch) sLoopTid
     (void . waitCatch) sHttpTid
