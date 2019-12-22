@@ -337,7 +337,7 @@
     :_  dog(history actual-history)
     %+  turn  actual-vows
     |=  =id:block
-    [%give %fact `[%logs path] %eth-watcher-diff !>([%disavow id])]
+    [%give %fact [%logs path]~ %eth-watcher-diff !>([%disavow id])]
   ::
   ++  release-logs
     |=  [=path dog=watchdog]
@@ -362,7 +362,7 @@
       %+  turn  loglist
       |=  =event-log:rpc:ethereum
       ^-  card
-      [%give %fact `[%logs path] %eth-watcher-diff !>([%log event-log])]
+      [%give %fact [%logs path]~ %eth-watcher-diff !>([%log event-log])]
     =^  cards-2  dog  $(numbers t.numbers)
     [(weld cards-1 cards-2) dog]
   --

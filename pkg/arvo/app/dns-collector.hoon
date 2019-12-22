@@ -28,7 +28,7 @@
 ++  give-result
   |=  [=the=path =cage]
   ^-  card
-  [%give %fact `the-path cage]
+  [%give %fact ~[the-path] cage]
 --
 ::
 ^-  agent:gall

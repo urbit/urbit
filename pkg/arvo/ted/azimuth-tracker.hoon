@@ -120,8 +120,8 @@
     (pure:m ~)
   =/  =path  /(scot %p ship.i.udiffs)
   =/  cards
-    :~  [%give %fact `/ %azimuth-udiff !>(i.udiffs)]
-        [%give %fact `path %azimuth-udiff !>(i.udiffs)]
+    :~  [%give %fact ~[/] %azimuth-udiff !>(i.udiffs)]
+        [%give %fact ~[path] %azimuth-udiff !>(i.udiffs)]
     ==
   ;<  ~  bind:m  (send-raw-cards:strandio cards)
   loop(udiffs t.udiffs)

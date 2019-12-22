@@ -1044,7 +1044,7 @@
     |=  fec=sole-effect:sole-sur
     ^-  card
     ::TODO  don't hard-code session id 'drum' here
-    [%give %fact `/sole/drum %sole-effect !>(fec)]
+    [%give %fact ~[/sole/drum] %sole-effect !>(fec)]
   ::  +tab: print tab-complete list
   ::
   ++  tab

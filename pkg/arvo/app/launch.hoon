@@ -153,7 +153,7 @@
   =/  dat=(unit [json url=@t])  (~(get by data) name)
   ?~  dat  [~ this]
   :_  this(data (~(put by data) name [jon url.u.dat]))
-  [%give %fact `/main %json !>((frond:enjs:format name jon))]~
+  [%give %fact ~[/main] %json !>((frond:enjs:format name jon))]~
 ::
 ++  on-arvo
   |=  [wir=wire sin=sign-arvo]
