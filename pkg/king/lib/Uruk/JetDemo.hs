@@ -31,6 +31,7 @@ module Uruk.JetDemo
     , Match(..)
     , urVal, valUr
     , jetExp
+    , pattern I
     ) where
 
 import ClassyPrelude
@@ -303,6 +304,13 @@ reduce = \case
 
     Add :@ Nat x :@ Nat y → Just (Nat (x+y))
     Add :@ x     :@ y     → Just (l_add :@ x :@ y)
+
+    Cas :@ (Lef :@ x) :@ l :@ r → Just (l :@ x)
+    Cas :@ (Rit :@ x) :@ l :@ r → Just (r :@ x)
+    Cas :@ x          :@ l :@ r → Just (l_cas :@ l :@ r)
+
+    Rit :@ x :@ _ :@ r → Just (r :@ x)
+    Lef :@ x :@ l :@ _ → Just (l :@ x)
 
     --  Doesn't reduce
     _ → Nothing
