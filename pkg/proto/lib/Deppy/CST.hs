@@ -55,15 +55,18 @@ data CST
 
 type Binder = (Maybe Text, CST)
 
-abstractify :: CST -> H.Hoon (Name Text Text)
+abstractify :: CST -> H.Hoon Text
 abstractify = go
   where
     go = \case
-      Var v -> H.Var (Name v v)
+      Var v -> H.Var v
       --
       Hax -> H.Hax
+      Fun bs c -> bindMany H.Fun bs (go c)
+      Cel bs c -> bindMany H.Cel bs (go c)
       Wut s -> H.Wut s
       --
+      Lam bs c -> bindMany H.Lam bs (go c)
       Cns cs -> foldr1 H.Cns $ go <$> cs
       Tag a -> H.Tag a
       App cs -> foldl1 H.App $ go <$> cs
@@ -78,12 +81,23 @@ abstractify = go
       --
       HaxBuc tcs -> H.HaxBuc (go <$> tcs)
       HaxCen tcs -> H.HaxCen (go <$> tcs)
+      HaxCol bs c -> bindMany H.HaxCol bs (go c)
+      HaxHep bs c -> bindMany H.HaxHep bs (go c)
       --
       BarCen cs -> H.BarCen (go <$> cs)
-    binder con bs c = foldr step c bs
-      where
-        step = undefined
-    -- free = Scope . pure . F
+      BarTis bs c -> bindMany H.BarTis bs (go c)
+      CenDot c d -> H.CenDot (go c) (go d)
+      CenHep c d -> H.CenHep (go c) (go d)
+      ColHep c d -> H.ColHep (go c) (go d)
+      ColTar cs -> H.ColTar (go <$> cs)
+      TisFas v c d -> H.TisFas (go c) (abstract1 v $ go d)
+      DotDot b c -> bind H.DotDot b (go c)
+      KetFas c d -> H.KetFas (go c) (go d)
+      KetHep c d -> H.KetHep (go c) (go d)
+      WutCen c cs -> H.WutCen (go c) (go <$> cs)
+    bind ctor (Just v,  c) h = ctor (go c) (abstract1 v h)
+    bind ctor (Nothing, c) h = ctor (go c) (abstract (const Nothing) h)
+    bindMany ctor bs h = foldr (bind ctor) h bs
 
 concretize :: H.Hoon (Name Text a) -> CST
 concretize = go
