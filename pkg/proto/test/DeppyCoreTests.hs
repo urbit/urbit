@@ -18,19 +18,19 @@ instance IsString s => IsString (Typ s) where
 emp = const undefined
 env bs v = fromJust $ Map.lookup v $ mapFromList bs
 
-case_type_in_type = nest @String emp Typ Typ @?= pure ()
+case_type_in_type = nest @Text emp Typ Typ @?= pure ()
 
-case_type_not_in_wut = nest @String emp Typ (wut [1]) @?= Nothing
+case_type_not_in_wut = nest @Text emp Typ (wut [1]) @?= Nothing
 
-case_wut_not_in_type = nest @String emp (wut [1]) Typ @?= Nothing
+case_wut_not_in_type = nest @Text emp (wut [1]) Typ @?= Nothing
 
-case_wut_in_wut = nest @String emp (wut [1]) (wut [1,2]) @?= pure ()
+case_wut_in_wut = nest @Text emp (wut [1]) (wut [1,2]) @?= pure ()
 
-case_wut_not_in_wut = nest @String emp (wut [1,2]) (wut [1]) @?= Nothing
+case_wut_not_in_wut = nest @Text emp (wut [1,2]) (wut [1]) @?= Nothing
 
-case_cel_co = nest @String emp (cel_ (wut [1]) (wut [3])) (cel_ (wut [1,2]) (wut [3,4])) @?= pure ()
+case_cel_co = nest @Text emp (cel_ (wut [1]) (wut [3])) (cel_ (wut [1,2]) (wut [3,4])) @?= pure ()
 
-case_fun_contra = nest @String emp (fun_ (wut [1,2]) (wut [3])) (fun_ (wut [1]) (wut [3,4])) @?= pure ()
+case_fun_contra = nest @Text emp (fun_ (wut [1,2]) (wut [3])) (fun_ (wut [1]) (wut [3,4])) @?= pure ()
 
 -- used for other tests
 case_free_var_nests = nest emp "x" "x" @?= pure ()
@@ -38,7 +38,7 @@ case_free_vars_don't_nest = nest emp "x" "y" @?= Nothing
 
 -- cases and cores
 
-coreT, caseT :: (Eq a, IsString a) => [(Tag, Typ a)] -> Typ a
+coreT, caseT :: [(Tag, Typ Text)] -> Typ Text
 
 coreT as =
   fun "$private_var_name"

@@ -5,7 +5,11 @@ import Prelude (foldr1)
 
 import Bound
 import Bound.Name
+import Bound.Scope
+import Control.Lens.Plated
 import Control.Monad.Morph (hoist)
+import Data.Data (Data)
+import Data.Data.Lens (uniplate)
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 import Numeric.Natural
 
@@ -51,7 +55,7 @@ data Hoon a
   | KetFas (Hoon a) (Hoon a)
   | KetHep (Hoon a) (Hoon a)
   | WutCen (Hoon a) (Map Atom (Hoon a))
-  deriving (Functor, Foldable, Traversable)
+  deriving (Functor, Foldable, Traversable, Data, Typeable)
 
 deriveEq1   ''Hoon
 deriveOrd1  ''Hoon
@@ -61,6 +65,9 @@ makeBound   ''Hoon
 deriving instance Eq a   => Eq   (Hoon a)
 deriving instance Ord a  => Ord  (Hoon a)
 deriving instance Read a => Read (Hoon a)
+
+instance (Data a) => Plated (Hoon a) where
+  plate = uniplate
 
 desugar :: Hoon a -> C.Exp a
 desugar = go
@@ -120,10 +127,10 @@ mkCasAbs :: Map Atom (Hoon a) -> C.Abs a
 mkCasAbs cs = C.Abs ty body
   where
     ty = C.Wut (keysSet cs)
-    body = Scope $ C.Cas (C.Var $ B (Name "_" ())) (fmap (free . desugar) cs)
+    body = Scope $ C.Cas (C.Var $ B (Name "α" ())) (fmap (free . desugar) cs)
 
 the :: C.Exp a -> C.Exp a -> C.Exp a
-the t e = C.App (C.Lam $ C.Abs t (toScope $ C.Var $ B (Name "_" ()))) e
+the t e = C.App (C.Lam $ C.Abs t (toScope $ C.Var $ B (Name "θ" ()))) e
 
 resugar :: C.Exp a -> Hoon a
 resugar = go
@@ -149,3 +156,18 @@ resugar = go
       --
       C.Let e b         -> TisFas (go e) (hoist go b)
       C.Rec (C.Abs t b) -> DotDot (go t) (hoist go b)
+
+resugar' :: Data a => C.Exp a -> Hoon a
+resugar' = tr . resugar
+  where
+    tr = transform \case
+      Fun (Wut s) b@(Scope (WutCen (Var (B _)) cs))
+        | [x] <- bindings b
+        -> Cls $ (instantiate (const $ error "Do not want!") . Scope) <$> cs
+      Cel (Wut s) b@(Scope (WutCen (Var (B _)) cs))
+        | [x] <- bindings b
+        -> HaxBuc $ (instantiate (const $ error "Do not want!") . Scope) <$> cs
+      Lam (Wut s) b@(Scope (WutCen (Var (B _)) cs))
+        | [x] <- bindings b
+        -> Obj $ (instantiate (const $ error "Do not want!") . Scope) <$> cs
+      h -> h

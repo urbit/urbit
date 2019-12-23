@@ -18,11 +18,12 @@ instance Show (H.Hoon Text) where
 instance Show CST where
   show = \case
       Var t -> unpack t
-      Hax -> "$"
-      Fun bs x -> "$<" <> showBound bs x <> ">"
-      Cel bs x -> "$[" <> showBound bs x <> "]"
+      Hax -> "#"
+      Fun bs x -> "<|" <> showBound bs x <> "|>"
+      Cel bs x -> "[|" <> showBound bs x <> "|]"
+
       Wut (setToList -> [x]) -> showTag "$" "$" x
-      Wut (setToList -> xs) -> "?(" <> intercalate " " (showTag "$" "$" <$> xs) <> ")"
+      Wut (setToList -> xs) -> "?(" <> intercalate " " (showTag "" "" <$> xs) <> ")"
       Lam bs x -> "<" <> showBound bs x <> ">"
       Cns xs -> "[" <> showGroup xs <> "]"
       Tag a -> showTag "%" "" a
@@ -32,10 +33,10 @@ instance Show CST where
       The x y -> "`" <> show x <> "`" <> show y
       Fas x y -> show x <> "/" <> show y
       Obj (mapToList -> cs) -> "{" <> showEnts cs <> "}"
-      Cls (mapToList -> tcs) -> "${" <> showEnts tcs <> "}"
+      Cls (mapToList -> tcs) -> "{|" <> showEnts tcs <> "|}"
       Col a x -> showTag "" "" a <> ":" <> show x
       HaxBuc (mapToList -> cs) -> "$%(" <> showEnts cs <> ")"
-      HaxCen (mapToList -> cs) -> "$`(" <> showEnts cs <> ")"
+      HaxCen (mapToList -> cs) -> "$=(" <> showEnts cs <> ")"
       HaxCol bs x -> "$:(" <> showBound bs x <> ")"
       HaxHep bs x -> "$-(" <> showBound bs x <> ")"
       BarCen (mapToList -> cs) -> "|%(" <> showEnts cs <> ")"

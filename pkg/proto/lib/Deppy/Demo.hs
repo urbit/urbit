@@ -25,7 +25,7 @@ demo prog = parseCst prog & \case
     putStrLn ("core: " <> show e)
     let t = infer env e
     case t of
-      Just t -> putStrLn ("type: " <> show t)
+      Just t -> putStrLn ("type: " <> show (H.resugar' t))
       Nothing -> putStrLn "<type error>"
     let n = copy $ toUntyped e
     putStrLn ("nock: " <> show n)

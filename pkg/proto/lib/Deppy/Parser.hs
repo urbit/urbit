@@ -107,10 +107,10 @@ irregular :: Parser CST
 irregular =
   inWideMode $ choice
     [ Col <$> try (textToAtom <$> sym <* char ':') <*> cst
-    , notAllow Fun <$> grouped "$<" " " ">" binder
-    , notAllow Cel <$> grouped "$[" " " "]" binder
+    , notAllow Fun <$> grouped "<|" " " "|>" binder
+    , notAllow Cel <$> grouped "[|" " " "|]" binder
     , Wut . singleton <$> try tagTy
-    , Wut . setFromList <$> grouped "?(" " " ")" tagTy
+    , Wut . setFromList <$> grouped "?(" " " ")" (atom <|> textToAtom <$> sym)
     , notAllow Lam <$> grouped "<" " " ">" binder
     , Cns <$> grouped "[" " " "]" cst
     , Tag . textToAtom <$> tag
@@ -120,9 +120,9 @@ irregular =
     , Tal <$> (string "+." *> cst)
     , The <$> (char '`' *> cst <* char '`') <*> cst
     -- , Fas TODO
+    , Cls . mapFromList <$> grouped "{|" ", " "|}" entry
     , Obj . mapFromList <$> grouped "{" ", " "}" entry
-    , Cls . mapFromList <$> grouped "${" ", " "}" entry
-    , Hax <$ char '$'
+    , Hax <$ char '#'
     , Var <$> sym
     ]
   where
@@ -136,7 +136,7 @@ irregular =
 rune ∷ Parser CST
 rune = runeSwitch
   [ ("$%", runeJogging (HaxBuc . mapFromList) (textToAtom <$> sym) cst)
-  , ("$`", runeJogging (HaxCen . mapFromList) (textToAtom <$> sym) cst)
+  , ("$=", runeJogging (HaxCen . mapFromList) (textToAtom <$> sym) cst)
   , ("$:", runeN (notAllow HaxCol) binder)
   , ("$-", runeN (notAllow HaxHep) binder)
   , ("|%", barCen)
