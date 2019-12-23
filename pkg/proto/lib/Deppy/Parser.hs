@@ -1,6 +1,7 @@
 module Deppy.Parser where
 
 import ClassyPrelude hiding (head, many, some, try, init, last)
+import Control.Arrow ((>>>))
 import Control.Lens
 import Numeric.Natural
 
@@ -14,12 +15,28 @@ import Prelude            (head, init, last)
 import qualified Prelude
 
 import Deppy.CST
+import qualified Deppy.Hoon as Hoon
+import qualified Deppy.Core as Core
+import Deppy.Showings ()
 import SimpleNoun (textToAtom)
 
 -- Types -----------------------------------------------------------------------
 
 type Nat  = Natural
 type Sym  = Text
+
+-- Marvelous convenience -------------------------------------------------------
+
+instance IsString CST where
+  fromString = pack >>> parseCst >>> \case
+    Right c -> c
+    Left er -> error $ unpack er
+
+instance IsString (Hoon.Hoon Text) where
+  fromString = abstractify . fromString
+
+instance IsString (Core.Exp Text) where
+  fromString = Hoon.desugar . fromString
 
 -- Parser Monad ----------------------------------------------------------------
 
@@ -92,9 +109,8 @@ irregular =
     [ Col <$> try (textToAtom <$> sym <* char ':') <*> cst
     , notAllow Fun <$> grouped "$<" " " ">" binder
     , notAllow Cel <$> grouped "$[" " " "]" binder
-    , Wut . singleton . textToAtom <$> try (char '$' *> sym)
-    , Wut . setFromList . fmap textToAtom <$> grouped "?(" " " ")" (char '$' *> sym)
-    , Hax <$ char '$'
+    , Wut . singleton <$> try tagTy
+    , Wut . setFromList <$> grouped "?(" " " ")" tagTy
     , notAllow Lam <$> grouped "<" " " ">" binder
     , Cns <$> grouped "[" " " "]" cst
     , Tag . textToAtom <$> tag
@@ -106,9 +122,11 @@ irregular =
     -- , Fas TODO
     , Obj . mapFromList <$> grouped "{" ", " "}" entry
     , Cls . mapFromList <$> grouped "${" ", " "}" entry
+    , Hax <$ char '$'
     , Var <$> sym
     ]
   where
+    tagTy = char '$' *> (atom <|> textToAtom <$> sym)
     entry = do
       tag <- sym
       char ' '
@@ -251,14 +269,20 @@ runeJogging1 node a b c = parseRune tall wide
       string "=="
       pure $ node x elems
     wide = do
-      string "("
-      x <- a
-      elems <- grouped "; " ", " ")" do
-        y <- b
-        ace
-        z <- c
-        pure (y, z)
-      pure $ node x elems
+        string "("
+        x <- a
+        elems <- wideBody <|> (char ')' $> [])
+        pure $ node x elems
+      where
+        wideBody = do
+          hack <- grouped "; " ", " ")" do
+            y <- b
+            ace
+            z <- c
+            pure (y, z)
+          case hack of
+            [] -> fail "leave off '; ' for empty jogging segment"
+            _  -> pure hack
 
 -- Entry Point -----------------------------------------------------------------
 
@@ -268,8 +292,8 @@ hoonFile = do
   option () whitespace
   eof
   pure h
-parse ∷ Text → Either Text CST
-parse txt =
+parseCst ∷ Text → Either Text CST
+parseCst txt =
   runParser (evalStateT hoonFile Tall) "stdin" txt & \case
     Left  e → Left (pack $ errorBundlePretty e)
     Right x → pure x

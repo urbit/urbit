@@ -3,7 +3,9 @@ module Deppy.ToUntyped where
 import ClassyPrelude
 
 import Bound
-import Bound.Scope (hoistScope)
+import Bound.Name
+import Bound.Scope
+import Control.Monad.Morph (hoist)
 
 import Deppy.Core
 import qualified Untyped.Core as U
@@ -15,7 +17,7 @@ toUntyped = \case
   Fun{}         -> U.Atm 788
   Cel{}         -> U.Atm 799
   Wut{}         -> U.Atm 810
-  Lam (Abs _ b) -> U.Lam (hoistScope toUntyped b)
+  Lam (Abs _ b) -> U.Lam (hoist toUntyped $ forget b)
   Cns e f _     -> U.Cel (toUntyped e) (toUntyped f)
   Tag a         -> U.Atm a
   App e f       -> U.App (toUntyped e) (toUntyped f)
@@ -25,5 +27,7 @@ toUntyped = \case
     where
       step (tag, f) acc = U.Ift (U.Eql (U.Var (B ())) (U.Atm tag)) (go f) acc
       go = U.Var . F . toUntyped
-  Let e b       -> U.Let (toUntyped e) (hoistScope toUntyped b)
-  Rec (Abs _ b) -> U.Fix (hoistScope toUntyped b)
+  Let e b       -> U.Let (toUntyped e) (hoist toUntyped $ forget b)
+  Rec (Abs _ b) -> U.Fix (hoist toUntyped $ forget b)
+
+forget = mapBound \(Name n b) -> b

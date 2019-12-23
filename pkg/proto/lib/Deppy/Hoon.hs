@@ -4,6 +4,7 @@ import ClassyPrelude
 import Prelude (foldr1)
 
 import Bound
+import Bound.Name
 import Control.Monad.Morph (hoist)
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 import Numeric.Natural
@@ -16,11 +17,11 @@ data Hoon a
   = Var a
   -- irregular forms
   | Hax
-  | Fun (Hoon a) (Scope () Hoon a)
-  | Cel (Hoon a) (Scope () Hoon a)
+  | Fun (Hoon a) (Scope (Name Text ()) Hoon a)
+  | Cel (Hoon a) (Scope (Name Text ()) Hoon a)
   | Wut (Set Atom)
   --
-  | Lam (Hoon a) (Scope () Hoon a)
+  | Lam (Hoon a) (Scope (Name Text ()) Hoon a)
   | Cns (Hoon a) (Hoon a)
   | Tag Atom
   --
@@ -36,17 +37,17 @@ data Hoon a
   -- Runes
   | HaxBuc (Map Atom (Hoon a))
   | HaxCen (Map Atom (Hoon a))
-  | HaxCol (Hoon a) (Scope () Hoon a)
-  | HaxHep (Hoon a) (Scope () Hoon a)
+  | HaxCol (Hoon a) (Scope (Name Text ()) Hoon a)
+  | HaxHep (Hoon a) (Scope (Name Text ()) Hoon a)
   --
   | BarCen (Map Atom (Hoon a))
-  | BarTis (Hoon a) (Scope () Hoon a)
+  | BarTis (Hoon a) (Scope (Name Text ()) Hoon a)
   | CenDot (Hoon a) (Hoon a)
   | CenHep (Hoon a) (Hoon a)
   | ColHep (Hoon a) (Hoon a)
   | ColTar [Hoon a]
-  | TisFas (Hoon a) (Scope () Hoon a)
-  | DotDot (Hoon a) (Scope () Hoon a)
+  | TisFas (Hoon a) (Scope (Name Text ()) Hoon a)
+  | DotDot (Hoon a) (Scope (Name Text ()) Hoon a)
   | KetFas (Hoon a) (Hoon a)
   | KetHep (Hoon a) (Hoon a)
   | WutCen (Hoon a) (Map Atom (Hoon a))
@@ -55,13 +56,11 @@ data Hoon a
 deriveEq1   ''Hoon
 deriveOrd1  ''Hoon
 deriveRead1 ''Hoon
-deriveShow1 ''Hoon
 makeBound   ''Hoon
 
 deriving instance Eq a   => Eq   (Hoon a)
 deriving instance Ord a  => Ord  (Hoon a)
 deriving instance Read a => Read (Hoon a)
-deriving instance Show a => Show (Hoon a)
 
 desugar :: Hoon a -> C.Exp a
 desugar = go
@@ -121,10 +120,10 @@ mkCasAbs :: Map Atom (Hoon a) -> C.Abs a
 mkCasAbs cs = C.Abs ty body
   where
     ty = C.Wut (keysSet cs)
-    body = Scope $ C.Cas (C.Var $ B ()) (fmap (free . desugar) cs)
+    body = Scope $ C.Cas (C.Var $ B (Name "_" ())) (fmap (free . desugar) cs)
 
 the :: C.Exp a -> C.Exp a -> C.Exp a
-the t e = C.App (C.Lam $ C.Abs t (toScope $ C.Var $ B ())) e
+the t e = C.App (C.Lam $ C.Abs t (toScope $ C.Var $ B (Name "_" ()))) e
 
 resugar :: C.Exp a -> Hoon a
 resugar = go

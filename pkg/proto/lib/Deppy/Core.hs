@@ -3,65 +3,63 @@ module Deppy.Core where
 import ClassyPrelude
 
 import Bound
+import Bound.Name
+import Bound.Scope
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 import Data.Maybe (fromJust)
 import Data.Set (isSubsetOf)
-import qualified Data.Set as Set
 import Numeric.Natural
 import Text.Show.Pretty (ppShow)
+import qualified Data.Set as Set
 
 type Typ = Exp
 
 data Exp a
   = Var a
   -- types
-  | Typ                                  -- #
-  | Fun (Abs a)                          -- #<v/t t>  #-  v/t  t
-  | Cel (Abs a)                          -- #[v/t t]  #:  v/t  t
-  | Wut (Set Tag)                        -- #foo, ?(#foo #bar)
+  | Typ                                       -- #
+  | Fun (Abs a)                               -- #<v/t t>  #-  v/t  t
+  | Cel (Abs a)                               -- #[v/t t]  #:  v/t  t
+  | Wut (Set Tag)                             -- #foo, ?(#foo #bar)
   -- introduction forms
-  | Lam (Abs a)                          -- <v/t e>  |=  v/t  e
-  | Cns (Exp a) (Exp a) (Maybe (Exp a))  -- [e f]    :-  e f
-  | Tag Tag                              -- %foo
+  | Lam (Abs a)                               -- <v/t e>  |=  v/t  e
+  | Cns (Exp a) (Exp a) (Maybe (Exp a))       -- [e f]    :-  e f
+  | Tag Tag                                   -- %foo
   -- elimination forms
-  | App (Exp a) (Exp a)                  -- (e f)
-  | Hed (Exp a)                          -- e.-
-  | Tal (Exp a)                          -- e.+
-  | Cas (Exp a) (Map Tag (Exp a))        -- ?%  e  $foo  f  $bar  g  ==
+  | App (Exp a) (Exp a)                       -- (e f)
+  | Hed (Exp a)                               -- e.-
+  | Tal (Exp a)                               -- e.+
+  | Cas (Exp a) (Map Tag (Exp a))             -- ?%  e  $foo  f  $bar  g  ==
   -- recursion, flow control
-  | Let (Exp a) (Scope () Exp a)         -- =/  v  e
-  | Rec (Abs a)                          -- ..  v/t  e
+  | Let (Exp a) (Scope (Name Text ()) Exp a)  -- =/  v  e
+  | Rec (Abs a)                               -- ..  v/t  e
   deriving (Functor, Foldable, Traversable)
 
 type Tag = Natural
 
 data Abs a = Abs
   { spec :: Typ a
-  , body :: Scope () Exp a
+  , body :: Scope (Name Text ()) Exp a
   }
   deriving (Functor, Foldable, Traversable)
 
 deriveEq1   ''Abs
 deriveOrd1  ''Abs
 deriveRead1 ''Abs
-deriveShow1 ''Abs
 --makeBound   ''Abs
 
 deriveEq1   ''Exp
 deriveOrd1  ''Exp
 deriveRead1 ''Exp
-deriveShow1 ''Exp
 --makeBound   ''Exp
 
 deriving instance Eq a   => Eq (Abs a)
 deriving instance Ord a  => Ord (Abs a)
 deriving instance Read a => Read (Abs a)
-deriving instance Show a => Show (Abs a)
 
 deriving instance Eq a   => Eq (Exp a)
 deriving instance Ord a  => Ord (Exp a)
 deriving instance Read a => Read (Exp a)
-deriving instance Show a => Show (Exp a)
 
 instance Applicative Exp where
   pure = Var
@@ -87,26 +85,26 @@ instance Monad Exp where
 bindAbs :: Abs a -> (a -> Exp b) -> Abs b
 bindAbs (Abs s b) f = Abs (s >>= f) (b >>>= f)
 
-lam :: Eq a => a -> Typ a -> Exp a -> Exp a
-lam v t e = Lam (Abs t (abstract1 v e))
+lam :: Text -> Typ Text -> Exp Text -> Exp Text
+lam v t e = Lam (Abs t (abstract1Name v e))
 
-fun :: Eq a => a -> Typ a -> Typ a -> Typ a
-fun v t u = Fun (Abs t (abstract1 v u))
+fun :: Text -> Typ Text -> Exp Text -> Exp Text
+fun v t u = Fun (Abs t (abstract1Name v u))
 
-fun_ :: Typ a -> Typ a -> Typ a
-fun_ t u = Fun (Abs t (abstract (const Nothing) u))
+fun_ :: Typ Text -> Typ Text -> Typ Text
+fun_ t u = Fun (Abs t (abstractName (const Nothing) u))
 
-cel :: Eq a => a -> Typ a -> Typ a -> Typ a
-cel v t u = Cel (Abs t (abstract1 v u))
+cel :: Text -> Typ Text -> Exp Text -> Exp Text
+cel v t u = Cel (Abs t (abstract1Name v u))
 
-cel_ :: Typ a -> Typ a -> Typ a
-cel_ t u = Cel (Abs t (abstract (const Nothing) u))
+cel_ :: Typ Text -> Typ Text -> Typ Text
+cel_ t u = Cel (Abs t (abstractName (const Nothing) u))
 
-rec :: Eq a => a -> Typ a -> Exp a -> Exp a
-rec v t e = Rec (Abs t (abstract1 v e))
+rec :: Text -> Typ Text -> Exp Text -> Exp Text
+rec v t e = Rec (Abs t (abstract1Name v e))
 
-ledt :: Eq a => a -> Exp a -> Exp a -> Exp a
-ledt v e e' = Let e (abstract1 v e')
+ledt :: Text -> Exp Text -> Exp Text -> Exp Text
+ledt v e e' = Let e (abstract1Name v e')
 
 wut = Wut . setFromList
 
@@ -150,6 +148,9 @@ tracePpShowId a = trace (ppShow a) a
 
 traceAwesome s a b = trace (s <>":\n" <> ppShow a <> "\n" <> s <> " val:\n" <> ppShow b) b
 
+fromNScope :: Monad f => Scope (Name n b) f a -> f (Var b a)
+fromNScope = fromScope . mapBound (\(Name _ b) -> b)
+
 -- TODO
 --   - better errors
 --   - state monad for Asm (how to handle polymorphic recursion?)
@@ -174,11 +175,11 @@ nest env = fmap void . go env mempty
             (Fun (Abs a b), Fun (Abs a' b')) -> do
               asm' <- go env asm a' a
               retractAsm <$>
-                go (extend1 a' env) (extendAsm asm') (fromScope b) (fromScope b')
+                go (extend1 a' env) (extendAsm asm') (fromNScope b) (fromNScope b')
             (Cel (Abs a b), Cel (Abs a' b')) -> do
               asm' <- go env asm a a'
               retractAsm <$>
-                go (extend1 a env) (extendAsm asm') (fromScope b) (fromScope b')
+                go (extend1 a env) (extendAsm asm') (fromNScope b) (fromNScope b')
             (Wut ls, Wut ls') -> do
               guard (ls `isSubsetOf` ls')
               pure asm
@@ -225,22 +226,22 @@ infer env = \case
   Var v -> pure $ env v
   Typ -> pure Typ
   Fun (Abs t b) -> do
-    Typ <- infer env t
-    Typ <- infer (extend1 t env) (fromScope b)
+    check env t Typ
+    check (extend1 t env) (fromNScope b) Typ
     pure Typ
   Cel (Abs t b) -> do
-    Typ <- infer env t
-    Typ <- infer (extend1 t env) (fromScope b)
+    check env t Typ
+    check (extend1 t env) (fromNScope b) Typ
     pure Typ
   Wut _ -> pure Typ
   Lam (Abs t b) -> do
     -- TODO do I need (whnf -> Typ)? (and elsewhere)
-    Typ <- infer env t
-    (toScope -> t') <- infer (extend1 t env) (fromScope b)
+    check env t Typ
+    t'  <- toScope <$> infer (extend (const t) env) (fromScope b)
     pure $ Fun (Abs t t')
   -- //  [@ 1]  #[# @]  ?<= #[t/# t]
   Cns x y (Just (whnf -> t@(Cel (Abs l r)))) -> do
-     Typ <- infer env t
+     check env t Typ
      check env x l
      check env y (instantiate1 x r)
      pure t
@@ -269,9 +270,9 @@ infer env = \case
     Cas x <$> traverse (infer env) cs
   Let e b -> infer env (instantiate1 e b)  -- how bad an idea is this?
   Rec (Abs t b) -> do
-    Typ <- infer env t
+    check env t Typ
     -- todo can F <$> be made faster?
-    check (extend1 t env) (fromScope b) (F <$> t)
+    check (extend1 t env) (fromNScope b) (F <$> t)
     pure t
 
 whnf :: (Show a, Eq a) => Exp a -> Exp a
@@ -302,7 +303,7 @@ whnf = \case
   | Rec (Abs a)
 -}
 
-nf :: (Show a, Eq a) => Exp a -> Exp a
-nf = traceShowId . \case
+nf :: (Eq a) => Exp a -> Exp a
+nf = \case
   Typ -> Typ
   _ -> undefined

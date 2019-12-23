@@ -5,6 +5,10 @@ import Prelude (foldl1, foldr1)
 
 import Bound
 import Bound.Name
+import Bound.Scope
+import Control.Lens.Plated
+import Data.Data (Data)
+import Data.Data.Lens (uniplate)
 import Data.Function ((&))
 import Numeric.Natural
 
@@ -51,9 +55,12 @@ data CST
   | KetFas CST CST
   | KetHep CST CST
   | WutCen CST (Map Atom CST)
-  deriving (Read, Eq, Ord)
+  deriving (Read, Eq, Ord, Data, Typeable)
 
 type Binder = (Maybe Text, CST)
+
+instance Plated CST where
+  plate = uniplate
 
 abstractify :: CST -> H.Hoon Text
 abstractify = go
@@ -90,67 +97,79 @@ abstractify = go
       CenHep c d -> H.CenHep (go c) (go d)
       ColHep c d -> H.ColHep (go c) (go d)
       ColTar cs -> H.ColTar (go <$> cs)
-      TisFas v c d -> H.TisFas (go c) (abstract1 v $ go d)
+      TisFas v c d -> H.TisFas (go c) (abstract1Name v $ go d)
       DotDot b c -> bind H.DotDot b (go c)
       KetFas c d -> H.KetFas (go c) (go d)
       KetHep c d -> H.KetHep (go c) (go d)
       WutCen c cs -> H.WutCen (go c) (go <$> cs)
-    bind ctor (Just v,  c) h = ctor (go c) (abstract1 v h)
+    bind ctor (Just v,  c) h = ctor (go c) (abstract1Name v h)
     bind ctor (Nothing, c) h = ctor (go c) (abstract (const Nothing) h)
     bindMany ctor bs h = foldr (bind ctor) h bs
 
-concretize :: H.Hoon (Name Text a) -> CST
-concretize = go
+concretize :: H.Hoon Text -> CST
+concretize = dissociate . go
   where
     go = \case
-      H.Var v -> Var (name v)
+      H.Var v -> Var v
+      --
+      H.Hax -> Hax
+      H.Fun t b -> unbindPoly Fun t b
+      H.Cel t b -> unbindPoly Cel t b
+      H.Wut s -> Wut s
+      --
+      H.Lam t b -> unbindPoly Lam t b
+      H.Cns h j -> Cns [go h, go j]
 
-instance Show CST where
-  show = \case
-      Var t -> unpack t
-      Hax -> "$"
-      Fun bs x -> "$<" <> showBound bs x <> ">"
-      Cel bs x -> "$[" <> showBound bs x <> "]"
-      Wut (setToList -> [x]) -> showTag "$" "$" x
-      Wut (setToList -> xs) -> "?(" <> intercalate " " (showTag "$" "$" <$> xs) <> ")"
-      Lam bs x -> "<" <> showBound bs x <> ">"
-      Cns xs -> "[" <> showGroup xs <> "]"
-      Tag a -> showTag "%" "" a
-      App xs -> "(" <> showGroup xs <> ")"
-      Hed x -> "-." <> show x
-      Tal x -> "+." <> show x
-      The x y -> "`" <> show x <> "`" <> show y
-      Fas x y -> show x <> "/" <> show y
-      Obj (mapToList -> cs) -> "{" <> showEnts cs <> "}"
-      Cls (mapToList -> tcs) -> "${" <> showEnts tcs <> "}"
-      Col a x -> showTag "" "" a <> ":" <> show x
-      HaxBuc (mapToList -> cs) -> "$%(" <> showEnts cs <> ")"
-      HaxCen (mapToList -> cs) -> "$`(" <> showEnts cs <> ")"
-      HaxCol bs x -> "$:(" <> showBound bs x <> ")"
-      HaxHep bs x -> "$-(" <> showBound bs x <> ")"
-      BarCen (mapToList -> cs) -> "|%(" <> showEnts cs <> ")"
-      BarTis bs x -> "|=(" <> showBound bs x <> ")"
-      CenDot x y -> "%.(" <> show x <> " " <> show y <> ")"
-      CenHep x y -> "%-(" <> show x <> " " <> show y <> ")"
-      ColHep x y -> ":-(" <> show x <> " " <> show y <> ")"
-      ColTar xs -> ":*(" <> showGroup xs <> ")"
-      TisFas t x y -> "=/(" <> unpack t <> show x <> " " <> show y <> ")"
-      DotDot x y -> "..(" <> showBinder x <> " " <> show y <> ")"
-      KetFas x y -> "^/(" <> show x <> " " <> show y <> ")"
-      KetHep x y -> "^-(" <> show x <> " " <> show y <> ")"
-      WutCen x (mapToList -> cs) -> "?%(" <> show x <> "; " <> showEnts' cs <> ")"
-    where
-      showEnts  xs = intercalate ", " (showEnt "" <$> xs)
-      showEnts' xs = intercalate ", " (showEnt "%" <$> xs)
-      showEnt s (x, y) = showTag s "" x <> " " <> show y
-      showGroup xs = intercalate " " (show <$> xs)
-      showTag p1 p2 x = N.fromNoun (N.A x) &
-        \case
-          Just (N.Cord x) | okay x -> p1 <> unpack x
-          _ -> p2 <> show x
-      okay = all (flip elem ['a'..'z'])
-      showBound bs x =  showBinders bs <> " " <> show x
-      showBinders bs = intercalate " " (showBinder <$> bs)
-      showBinder (Nothing, x) = show x
-      showBinder (Just t, x) = unpack t <> "/" <> show x
-   
+      H.Tag a -> Tag a
+      H.App h j -> App [go h, go j]
+      H.Hed c -> Hed (go c)
+      H.Tal c -> Tal (go c)
+
+      H.The c d -> The (go c) (go d)
+      H.Fas c d -> Fas (go c) (go d)
+      H.Obj cs  -> Obj (go <$> cs)
+
+      H.Cls tcs -> Cls (go <$> tcs)
+      H.Col a c -> Col a (go c)
+
+      H.HaxBuc tcs -> HaxBuc (go <$> tcs)
+      H.HaxCen tcs -> HaxCen (go <$> tcs)
+
+      H.HaxCol t b -> unbindPoly HaxCol t b
+      H.HaxHep t b -> unbindPoly HaxHep t b
+
+      H.BarCen cs -> BarCen (go <$> cs)
+      H.BarTis t b -> unbindPoly BarTis t b
+
+      H.CenDot c d -> CenDot (go c) (go d)
+      H.CenHep c d -> CenHep (go c) (go d)
+      H.ColHep c d -> ColHep (go c) (go d)
+      H.ColTar cs -> ColTar (go <$> cs)
+      H.TisFas h b -> TisFas (fromMaybe "_" bnd) (go h) c
+        where
+          ((bnd, _), c) = unbind H.Hax b
+      H.DotDot t b -> DotDot bnd c
+        where
+          (bnd, c) = unbind t b
+      H.KetFas c d -> KetFas (go c) (go d)
+      H.KetHep c d -> KetHep (go c) (go d)
+      H.WutCen c cs -> WutCen (go c) (go <$> cs)
+
+    unbindPoly ctor t b = let (bdr, bod) = unbind t b in ctor [bdr] bod
+    unbind :: H.Hoon Text -> Scope (Name Text ()) H.Hoon Text -> (Binder, CST)
+    unbind t b = ((bnd, go t), go $ instantiate (\(Name n _) -> H.Var n) b)
+      where
+        bnd | ((Name n _):_) <- bindings b = Just n
+            | otherwise                    = Nothing
+
+    dissociate = transform \case
+      Fun bs (Fun bs' c) -> Fun (bs <> bs') c
+      Cel bs (Cel bs' c) -> Cel (bs <> bs') c
+      Lam bs (Lam bs' c) -> Lam (bs <> bs') c
+      Cns [c, Cns ds] -> Cns (c:ds)
+      App (App cs : ds) -> App (cs <> ds)
+      HaxCol bs (HaxCol bs' c) -> HaxCol (bs <> bs') c
+      HaxHep bs (HaxHep bs' c) -> HaxHep (bs <> bs') c
+      BarTis bs (BarTis bs' c) -> BarTis (bs <> bs') c
+      c -> c
+

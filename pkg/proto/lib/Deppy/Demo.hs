@@ -7,6 +7,7 @@ import Data.Function ((&))
 import Text.Show.Pretty
 
 import Deppy.Parser
+import Deppy.Showings ()
 import Deppy.CST as C
 import Deppy.Hoon as H
 import Deppy.Core
@@ -14,7 +15,7 @@ import Deppy.ToUntyped
 import Untyped.Core (copy)
 
 demo :: Text -> IO ()
-demo prog = parse prog & \case
+demo prog = parseCst prog & \case
   Left err -> putStrLn ("parse error: " <> unpack err)
   Right c -> do
     putStrLn ("parsed: " <> ppShow c)
