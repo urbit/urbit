@@ -56,7 +56,7 @@ export class Message extends Component {
       );
     } else if ('me' in letter) {
       return (
-        <p className='f7 lh-copy v-top'>
+        <p className='f7 i lh-copy v-top'>
           {letter.me}
         </p>
       );
