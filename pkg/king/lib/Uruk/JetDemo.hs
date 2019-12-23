@@ -28,6 +28,9 @@ module Uruk.JetDemo
     , j_lef, l_lef, lef
     , j_rit, l_rit, rit
     , j_cas, l_cas, cas
+    , j_con, l_con, con
+    , j_car, l_car, car
+    , j_cdr, l_cdr, cdr
     , Match(..)
     , urVal, valUr
     , jetExp
@@ -59,6 +62,9 @@ data Ur
     | Lef
     | Rit
     | Cas
+    | Con
+    | Car
+    | Cdr
     | Ur :@ Ur
     | Jc Natural Ur Ur [Ur]
   deriving (Eq, Ord)
@@ -84,7 +90,10 @@ instance Show Ur where
         Lef         → "lef"
         Rit         → "rit"
         Fol         → "fol"
-        Cas         → "case"
+        Cas         → "cas"
+        Con         → "con"
+        Car         → "car"
+        Cdr         → "cdr"
         J n         → replicate (fromIntegral n) '0'
         Jc n t b xs → close n t b xs
         x :@ y → "[" <> intercalate " " (show <$> flatten x [y]) <> "]"
@@ -215,17 +224,21 @@ j4 = J 4 :@ K
 --  lef = \x l r -> l x
 --  rit = \x l r -> r x
 --  cas = \b l r -> b l r
+--  con = \x y f -> f x y
+--  car = \p -> p (\x y -> x)
+--  cdr = \p -> b (\x y -> y)
 l_zer = S :@ K
 l_one = S :@ (S:@(K:@S):@K) :@ (S:@K)
 l_fol = S :@ (S:@I:@(K:@(S:@(S:@(K:@S):@K)))) :@ (K:@(S:@K))
 l_inc = S :@ (K:@j2) :@ (S:@(K:@(S:@(S:@(K:@S):@K))) :@ l_fol)
-l_dec = D :@ D :@ D
--- dd = S :@ (K:@(S:@(K:@j2))) :@ (S:@(K:@(S:@(K:@(S:@(K:@K))))):@(S:@(S:@(K:@(S:@(K:@(S:@(K:@S):@K)):@S)):@l_fol):@(K:@(S:@(K:@K):@l_fol))))
--- dd = S :@ (K:@(S:@(K:@j2))) :@ (S:@(K:@(S:@(K:@l_fol))):@(S:@(K:@(S:@(K:@(S:@(K:@K))))):@(S:@(K:@(S:@(K:@(S:@S:@(K:@K))):@K)):@S)))
+l_dec = D :@ D :@ D -- TODO
 l_add = S :@ (K:@(S:@(K:@j2))) :@ (S:@(K:@(S:@(K:@l_fol))):@(S:@(K:@(S:@(K:@(S:@(K:@K))))):@(S:@(S:@(K:@(S:@(K:@(S:@(K:@S):@K)):@S)):@l_fol):@(K:@(S:@(K:@K):@l_fol)))))
 l_lef = S :@ (K:@(S:@(K:@(S:@(K:@K))):@(S:@I))) :@ K
 l_rit = S :@ (K:@(S:@(K:@K):@(S:@I))) :@ K
 l_cas = I
+l_con = S:@(K:@(S:@(K:@(S:@(K:@(S:@(K:@(S:@S:@(K:@K))):@K)):@S)):@(S:@I))):@K
+l_car = S:@I:@(K:@K)
+l_cdr = S:@I:@(K:@(S:@K))
 
 zer = jetExp j_zer
 one = jetExp j_one
@@ -236,6 +249,9 @@ add = jetExp j_add
 lef = jetExp j_lef
 rit = jetExp j_rit
 cas = jetExp j_cas
+con = jetExp j_con
+car = jetExp j_car
+cdr = jetExp j_cdr
 
 j_zer = match (Nat 0) 2 emp l_zer
 j_one = match (Nat 1) 2 emp l_one
@@ -246,6 +262,9 @@ j_add = match Add     2 emp l_add
 j_lef = match Lef 3 emp l_lef
 j_rit = match Rit 3 emp l_rit
 j_cas = match Cas 3 emp l_cas
+j_con = match Con 3 emp l_con
+j_car = match Car 1 emp l_car
+j_cdr = match Cdr 1 emp l_cdr
 j_nat = check "nat" 2 K (fmap Nat <$> unChurch . valUr)
 
 dash ∷ DashBoard
@@ -257,6 +276,9 @@ dash = mkDash
     , simpleEnt j_add
     , simpleEnt j_lef
     , simpleEnt j_rit
+    , simpleEnt j_con
+    , simpleEnt j_car
+    , simpleEnt j_cdr
     , predikEnt j_nat
     ]
 
@@ -309,6 +331,14 @@ reduce = \case
     Cas :@ (Rit :@ x) :@ l :@ r → Just (r :@ x)
     Cas :@ x          :@ l :@ r → Just (l_cas :@ l :@ r)
 
+    Con :@ x :@ y :@ z → Just (z :@ x :@ y)
+
+    Car :@ (Con :@ x :@ _) → Just x
+    Car :@ p               → Just (l_car :@ p)
+
+    Cdr :@ (Con :@ _ :@ y) → Just y
+    Cdr :@ p               → Just (l_cdr :@ p)
+
     Rit :@ x :@ _ :@ r → Just (r :@ x)
     Lef :@ x :@ l :@ _ → Just (l :@ x)
 
@@ -351,6 +381,9 @@ jam = churchJet . snd . go
     go Lef           = go (jetExp j_lef)
     go Rit           = go (jetExp j_rit)
     go Cas           = go (jetExp j_cas)
+    go Con           = go (jetExp j_con)
+    go Car           = go (jetExp j_car)
+    go Cdr           = go (jetExp j_cdr)
     go (Nat n)       = go (churchJet n)
     go S             = (3, 0)
     go K             = (3, 2)
