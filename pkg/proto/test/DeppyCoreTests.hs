@@ -3,6 +3,7 @@ module DeppyCoreTests where
 import ClassyPrelude
 
 import qualified Data.Map as Map
+import Data.Either
 import Data.Maybe (fromJust)
 import Test.Tasty
 import Test.Tasty.HUnit
@@ -13,6 +14,8 @@ import Deppy.Core
 instance IsString s => IsString (Typ s) where
   fromString = Var . fromString
 
+assertLeft = assertBool "expected type error" . isLeft
+
 -- basic subtyping tests
 
 emp = const undefined
@@ -20,13 +23,13 @@ env bs v = fromJust $ Map.lookup v $ mapFromList bs
 
 case_type_in_type = nest @Text emp Typ Typ @?= pure ()
 
-case_type_not_in_wut = nest @Text emp Typ (wut [1]) @?= Nothing
+case_type_not_in_wut = assertLeft $ nest @Text emp Typ (wut [1])
 
-case_wut_not_in_type = nest @Text emp (wut [1]) Typ @?= Nothing
+case_wut_not_in_type = assertLeft $ nest @Text emp (wut [1]) Typ
 
 case_wut_in_wut = nest @Text emp (wut [1]) (wut [1,2]) @?= pure ()
 
-case_wut_not_in_wut = nest @Text emp (wut [1,2]) (wut [1]) @?= Nothing
+case_wut_not_in_wut = assertLeft $ nest @Text emp (wut [1,2]) (wut [1])
 
 case_cel_co = nest @Text emp (cel_ (wut [1]) (wut [3])) (cel_ (wut [1,2]) (wut [3,4])) @?= pure ()
 
@@ -34,7 +37,7 @@ case_fun_contra = nest @Text emp (fun_ (wut [1,2]) (wut [3])) (fun_ (wut [1]) (w
 
 -- used for other tests
 case_free_var_nests = nest emp "x" "x" @?= pure ()
-case_free_vars_don't_nest = nest emp "x" "y" @?= Nothing
+case_free_vars_don't_nest = assertLeft $ nest emp "x" "y"
 
 -- cases and cores
 
@@ -74,14 +77,13 @@ case_case_sub =
 --     (cel_ (cas "y" [(2, "t1"), (3, "t3")]) (cas "y" [(2, "t2"), (3, "t4")]))
 --   @?= pure ()
 
-case_cel_cas_not_in_cas_cel =
+case_cel_cas_not_in_cas_cel = assertLeft $
   nest
     (env [("x", wut [0, 1]), ("y", wut [2, 3])])
     (cel_ (cas "y" [(2, "t1"), (3, "t3")]) (cas "y" [(2, "t2"), (3, "t4")]))
     (cas "x" [(0, cel_ "t1" "t2"), (1, cel_ "t3" "t4")])
-  @?= Nothing
 
-case_cel_cas_in_cas_cel =
+case_cel_cas_in_cas_cel = assertLeft $
   nest
     (env [("x", wut [0, 1, 2, 3]), ("y", wut [2, 3])])
     (cel_ (cas "y" [(2, "t1"), (3, "t3")]) (cas "y" [(2, "t2"), (3, "t4")]))
@@ -90,7 +92,6 @@ case_cel_cas_in_cas_cel =
              , (2, cel_ "t1" "t4")
              , (3, cel_ "t3" "t2")
              ])
-  @?= Nothing
 
 -- silly recursion
 
@@ -98,20 +99,19 @@ case_dangling_rec_in = nest emp (rec "_" Typ $ wut [1]) (wut [1,2]) @?= pure ()
 
 case_in_dangling_rec = nest emp (wut [1]) (rec "_" Typ $ wut [1,2]) @?= pure ()
 
-case_dangling_rec_not_in = nest emp (rec "_" Typ $ wut [1,2]) (wut [1]) @?= Nothing
+case_dangling_rec_not_in = assertLeft $ nest emp (rec "_" Typ $ wut [1,2]) (wut [1])
 
-case_not_in_dangling_rec = nest emp (wut [1,2]) (rec "_" Typ $ wut [1]) @?= Nothing
+case_not_in_dangling_rec = assertLeft $ nest emp (wut [1,2]) (rec "_" Typ $ wut [1])
 
 -- recursive types
 
 -- these cases are taken from Harper, PFPL 2 ed., pp. 220-221
 
-case_harper_bad_rec_doesn't_nest =
+case_harper_bad_rec_doesn't_nest = assertLeft $
   nest
     emp
     (rec "t" Typ $ coreT [(0, fun_ "t" $ wut [11]),     (1, fun_ "t" $ wut [11, 22])])
     (rec "t" Typ $ coreT [(0, fun_ "t" $ wut [11, 22]), (1, fun_ "t" $ wut [11, 22])])
-  @?= Nothing
 
 labeled_binary = rec "t" Typ $ caseT [ (0, wut [0])
                                      , (1, coreT [(10, wut [123]), undefined])

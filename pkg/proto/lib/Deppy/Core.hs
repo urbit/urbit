@@ -5,6 +5,9 @@ import ClassyPrelude
 import Bound
 import Bound.Name
 import Bound.Scope
+import Control.Arrow ((>>>))
+import Control.Monad.Fail
+import Control.Monad.Trans.Error
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 import Data.Maybe (fromJust)
 import Data.Set (isSubsetOf)
@@ -129,6 +132,77 @@ extend handleNewBindings oldEnv = \case
 extend1 :: Typ a -> Env a -> Env (Var () a)
 extend1 t = extend \() -> t
 
+data TypeError where
+  NestFail :: forall a. (Show a) => Typ a -> Typ a -> TypeError
+  NotTyp   :: forall a. (Show a) => Typ a -> TypeError
+  NotFun   :: forall a. (Show a) => Typ a -> TypeError
+  NotCel   :: forall a. (Show a) => Typ a -> TypeError
+  NotWut   :: forall a. (Show a) => Typ a -> TypeError
+  Other    :: String -> TypeError
+
+deriving instance Show TypeError
+
+instance Eq TypeError where
+  NestFail t u == NestFail t' u' = True  -- FIXME bleh
+  Other s == Other s' = s == s'
+  _ == _ = False
+
+type Typing = Either TypeError
+
+-- So that we can have refutable pattern binds in the typing monad.
+-- TODO better error messages for these, also shouldn't they always
+-- be extractFoos?
+instance MonadFail Typing where
+  fail = Left . Other
+
+-- Needed for use of `guard` in the typing monad, even though it's deprecated.
+-- WTF??
+-- TODO replace guards with things that will generate better error msgs.
+instance Error TypeError where
+  strMsg = Other
+
+-- Type Extractors -------------------------------------------------------------
+
+free :: Applicative f => f a -> Scope b f a
+free = Scope . pure . F
+
+extractTyp :: (Eq a, Show a) => Typ a -> Typing ()
+extractTyp = whnf >>> \case
+  Typ -> pure ()
+  Cas _ cs -> traverse_ extractTyp cs
+  e -> Left (NotTyp e)
+
+extractFun :: (Eq a, Show a) => Typ a -> Typing (Abs a)
+extractFun = whnf >>> \case
+  Fun a -> pure a
+  Cas e cs -> do
+    absMap <- traverse extractFun cs
+    let specMap = spec <$> absMap
+    let bodyMap = body <$> absMap
+    let body = Scope $ Cas (Var $ F e) (unscope <$> bodyMap)
+    pure (Abs (Cas e specMap) body)
+  e -> Left (NotFun e)
+
+extractCel :: (Eq a, Show a) => Typ a -> Typing (Abs a)
+extractCel = whnf >>> \case
+  Cel a -> pure a
+  Cas e cs -> do
+    absMap <- traverse extractFun cs
+    let specMap = spec <$> absMap
+    let bodyMap = body <$> absMap
+    let body = Scope $ Cas (Var $ F e) (unscope <$> bodyMap)
+    pure (Abs (Cas e specMap) body)
+  e -> Left (NotCel e)
+
+extractWut :: (Eq a, Show a) => Typ a -> Typing (Set Tag)
+extractWut = whnf >>> \case
+  Wut s -> pure s
+  -- the union of all the wuts
+  Cas _ cs -> fold <$> traverse extractWut cs
+  e -> Left (NotWut e)
+
+-- Subtyping Check -------------------------------------------------------------
+
 -- | amber rule assumptions
 type Asm a = Set (Typ a, Typ a)
 
@@ -145,8 +219,6 @@ retractAsm = foldMap wither
     cleanTyp = traverse \case
       F v -> pure v
       B _ -> Nothing
-
-type Typing = Maybe
 
 tracePpShowId a = trace (ppShow a) a
 
@@ -170,10 +242,6 @@ nest env = fmap void . go env mempty
           --traceAwesome "nest" (t0, u0)
           case (t0, u0) of
             (Typ, Typ) -> pure asm
-            -- FIXME yeah actually I think this is wrong
-            -- we're comaring the type of a type variable with 
-            -- (Var v, u) -> go env asm (env v) u
-            -- (t, Var v) -> go env asm t (env v)
             -- following Cardelli 80something, we check the RHSs assuming
             -- the putatively *lesser* of the LHSs for both
             (Fun (Abs a b), Fun (Abs a' b')) -> do
@@ -185,7 +253,9 @@ nest env = fmap void . go env mempty
               retractAsm <$>
                 go (extend1 a env) (extendAsm asm') (fromNScope b) (fromNScope b')
             (Wut ls, Wut ls') -> do
-              guard (ls `isSubsetOf` ls')
+              -- guard (ls `isSubsetOf` ls')
+              when (not (ls `isSubsetOf` ls')) $
+                Left (NestFail t0 u0)
               pure asm
             -- Special rule for the Cas eliminator to enable sums and products
             -- TODO nf
@@ -218,7 +288,9 @@ nest env = fmap void . go env mempty
                 s
             (t@(Rec (Abs _ b)), u) -> go env asm (instantiate1 t b) u
             (t, u@(Rec (Abs _ b))) -> go env asm t (instantiate1 u b)
-            _ -> Nothing
+            _ -> Left (NestFail t0 u0)
+
+-- Type Checking and Inference -------------------------------------------------
 
 check :: (Show a, Ord a) => Env a -> Exp a -> Typ a -> Typing ()
 check env e t = do
@@ -244,12 +316,13 @@ infer env = \case
     t' <- toScope <$> infer (extend (const t) env) (fromScope b)
     pure $ Fun (Abs t t')
   -- //  [@ 1]  #[# @]  ?<= #[t/# t]
+  -- TODO extractCel
   Cns x y (Just (whnf -> t@(Cel (Abs l r)))) -> do
      check env t Typ
      check env x l
      check env y (instantiate1 x r)
      pure t
-  Cns _ _ (Just _) -> Nothing
+  Cns _ _ (Just _) -> Left $ Other "not a cell"
   Cns x y Nothing -> do
     -- Infer non-dependent pairs; if you want dependency, you must annotate
     -- FIXME problem: [@ 1] not of type #[t/# t]; no way to create vases
@@ -278,6 +351,8 @@ infer env = \case
     -- todo can F <$> be made faster?
     check (extend1 t env) (fromNScope b) (F <$> t)
     pure t
+
+-- Normal Forms ----------------------------------------------------------------
 
 whnf :: (Show a, Eq a) => Exp a -> Exp a
 whnf = \case
