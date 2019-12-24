@@ -4,7 +4,6 @@ import ClassyPrelude hiding (putStrLn)
 import Prelude (putStrLn)
 
 import Data.Function ((&))
-import Text.Show.Pretty
 
 import Deppy.Parser
 import Deppy.Showings
@@ -18,7 +17,7 @@ demo :: Text -> IO ()
 demo prog = parseCst prog & \case
   Left err -> putStrLn ("parse error: " <> unpack err)
   Right c -> do
-    putStrLn ("parsed: " <> ppShow c)
+    putStrLn ("parsed: " <> display c)
     let h = C.abstractify c
     putStrLn ("ast: " <> display h)
     let e = H.desugar h
