@@ -24,7 +24,10 @@ module Uruk.JetDemo
     , j_one, l_one, one
     , j_fol, l_fol, fol
     , j_dec, l_dec, dec
+    , j_mul, l_mul, mul
+    , j_sub, l_sub, sub
     , j_add, l_add, add
+    , j_uni, l_uni, uni
     , j_lef, l_lef, lef
     , j_rit, l_rit, rit
     , j_cas, l_cas, cas
@@ -59,6 +62,9 @@ data Ur
     | Add
     | Inc
     | Dec
+    | Mul
+    | Sub
+    | Uni
     | Lef
     | Rit
     | Cas
@@ -80,23 +86,31 @@ jetUnclosure n tag bod = go (J n :@ tag :@ bod) . reverse
 
 instance Show Ur where
     show = \case
+        x :@ y      → "[" <> intercalate " " (show <$> flatten x [y]) <> "]"
+        J n         → replicate (fromIntegral n) '0'
         K           → "1"
         S           → "2"
         D           → "3"
+        Jc n t b xs → close n t b xs
+
         Nat n       → "#" <> show n
+
+        Fol         → "fol"
         Add         → "add"
         Inc         → "inc"
         Dec         → "dec"
+        Mul         → "mul"
+        Sub         → "sub"
+
         Lef         → "lef"
         Rit         → "rit"
-        Fol         → "fol"
         Cas         → "cas"
+
         Con         → "con"
         Car         → "car"
         Cdr         → "cdr"
-        J n         → replicate (fromIntegral n) '0'
-        Jc n t b xs → close n t b xs
-        x :@ y → "[" <> intercalate " " (show <$> flatten x [y]) <> "]"
+        Uni         → "uni"
+
       where
         flatten (x :@ y) acc = flatten x (y : acc)
         flatten x        acc = (x : acc)
@@ -215,12 +229,21 @@ j4 = J 4 :@ K
     `fol` in jet bodies.
 -}
 
+ch_succ = S :@ (S :@ (K :@ S) :@ K)
+ch_zero = S :@ K
+
 --  zer = \i z -> z
 --  suc = \n -> \i z -> i (n i z)
 --  one = inc zer
 --  fol = \n -> n inc zer
 --  inc = \n -> j2 (\i z -> i (fol n i z))
 --  add = \x y -> j2 (fol (\i z -> (fol x) i (fol y)))
+--  uni = K
+--  dec = \n -> C (n (\x -> C x (\y -> R zer) (\y -> R (inc y))) (L uni))
+--                (\g -> L uni)
+--                (\g -> R (j2 (fol g)))
+--  mul =
+--  sub = \x y -> y (\z -> CAS z LEF DEC) (RIT x)
 --  lef = \x l r -> l x
 --  rit = \x l r -> r x
 --  cas = \b l r -> b l r
@@ -231,8 +254,11 @@ l_zer = S :@ K
 l_one = S :@ (S:@(K:@S):@K) :@ (S:@K)
 l_fol = S :@ (S:@I:@(K:@(S:@(S:@(K:@S):@K)))) :@ (K:@(S:@K))
 l_inc = S :@ (K:@j2) :@ (S:@(K:@(S:@(S:@(K:@S):@K))) :@ l_fol)
-l_dec = D :@ D :@ D -- TODO
+l_dec = S:@(S:@(S:@(K:@cas):@(S:@(S:@I:@(K:@(S:@(S:@cas:@(K:@(K:@(rit:@ch_zero)))):@(K:@(S:@(K:@rit):@ch_succ))))):@(K:@(lef:@uni)))):@(K:@(K:@(lef :@ uni)))):@(K:@(S:@(K:@rit):@(S:@(K:@j2):@fol)))
+l_mul = D :@ D :@ D -- TODO
+l_sub = S:@(K:@(S:@(S:@I:@(K:@(S:@(S:@cas:@(K:@lef)):@(K:@l_dec)))))):@(S:@(K:@K):@rit)
 l_add = S :@ (K:@(S:@(K:@j2))) :@ (S:@(K:@(S:@(K:@l_fol))):@(S:@(K:@(S:@(K:@(S:@(K:@K))))):@(S:@(S:@(K:@(S:@(K:@(S:@(K:@S):@K)):@S)):@l_fol):@(K:@(S:@(K:@K):@l_fol)))))
+l_uni = K
 l_lef = S :@ (K:@(S:@(K:@(S:@(K:@K))):@(S:@I))) :@ K
 l_rit = S :@ (K:@(S:@(K:@K):@(S:@I))) :@ K
 l_cas = I
@@ -240,12 +266,23 @@ l_con = S:@(K:@(S:@(K:@(S:@(K:@(S:@(K:@(S:@S:@(K:@K))):@K)):@S)):@(S:@I))):@K
 l_car = S:@I:@(K:@K)
 l_cdr = S:@I:@(K:@(S:@K))
 
+
+
+
+
+
+
+
+
 zer = jetExp j_zer
 one = jetExp j_one
 fol = jetExp j_fol
 inc = jetExp j_inc
-dec = jetExp j_dec
 add = jetExp j_add
+dec = jetExp j_dec
+mul = jetExp j_mul
+sub = jetExp j_sub
+uni = jetExp j_uni
 lef = jetExp j_lef
 rit = jetExp j_rit
 cas = jetExp j_cas
@@ -255,25 +292,32 @@ cdr = jetExp j_cdr
 
 j_zer = match (Nat 0) 2 emp l_zer
 j_one = match (Nat 1) 2 emp l_one
-j_fol = match Fol     1 emp l_fol
-j_inc = match Inc     1 emp l_inc
-j_dec = match Dec     1 emp l_dec
-j_add = match Add     2 emp l_add
+j_nat = check "nat" 2 K (fmap Nat <$> unChurch . valUr)
+
+j_fol = match Fol 1 emp l_fol
+j_inc = match Inc 1 emp l_inc
+j_dec = match Dec 1 emp l_dec
+j_mul = match Mul 2 emp l_mul
+j_sub = match Sub 2 emp l_sub
+j_add = match Add 2 emp l_add
+j_uni = match Uni 1 emp l_uni
 j_lef = match Lef 3 emp l_lef
 j_rit = match Rit 3 emp l_rit
 j_cas = match Cas 3 emp l_cas
 j_con = match Con 3 emp l_con
 j_car = match Car 1 emp l_car
 j_cdr = match Cdr 1 emp l_cdr
-j_nat = check "nat" 2 K (fmap Nat <$> unChurch . valUr)
 
 dash ∷ DashBoard
-dash = mkDash
+dash = mkDash -- $ const [] $
     [ simpleEnt j_zer
     , simpleEnt j_one
     , simpleEnt j_fol
     , simpleEnt j_inc
     , simpleEnt j_add
+--  , simpleEnt j_dec
+    , simpleEnt j_sub
+    , simpleEnt j_uni
     , simpleEnt j_lef
     , simpleEnt j_rit
     , simpleEnt j_con
@@ -281,7 +325,6 @@ dash = mkDash
     , simpleEnt j_cdr
     , predikEnt j_nat
     ]
-
 
 
 -- Evaluation ------------------------------------------------------------------
@@ -318,14 +361,26 @@ reduce = \case
     --  Fire jet
     Nat n :@ x :@ y → Just (church n :@ x :@ y)
 
-    Inc :@ Nat n → Just (Nat (succ n))
-    Inc :@ x     → Just (jetBod j_inc :@ x)
+    Fol :@ x → x & \case
+        Nat x → Just (church x)
+        x     → Just (l_fol :@ x)
 
-    Fol :@ Nat x → Just (church x)
-    Fol :@ x     → Just (l_fol :@ x)
+    Inc :@ x → Just $ case x of
+        Nat n → Nat (succ n)
+        x     → l_inc :@ x
 
-    Add :@ Nat x :@ Nat y → Just (Nat (x+y))
-    Add :@ x     :@ y     → Just (l_add :@ x :@ y)
+    Dec :@ x → Just $ case x of
+        Nat 0 → Lef :@ Uni
+        Nat n → Rit :@ Nat (pred n)
+        x     → l_rit :@ x
+
+    Add :@ x :@ y → Just $ case (x, y) of
+        (Nat x, Nat y) → Nat (x+y)
+        (x,     y    ) → l_add :@ x :@ y
+
+    Sub :@ x :@ y → Just $ case (x, y) of
+        (Nat x, Nat y) → if y > x then Lef :@ Uni else Rit :@ Nat (x-y)
+        (_,     _    ) → l_sub :@ x :@ y
 
     Cas :@ (Lef :@ x) :@ l :@ r → Just (l :@ x)
     Cas :@ (Rit :@ x) :@ l :@ r → Just (r :@ x)
@@ -377,7 +432,10 @@ jam = churchJet . snd . go
     go Inc           = go (jetExp j_inc)
     go Fol           = go (jetExp j_fol)
     go Dec           = go (jetExp j_dec)
+    go Mul           = go (jetExp j_mul)
+    go Sub           = go (jetExp j_sub)
     go Add           = go (jetExp j_add)
+    go Uni           = go (jetExp j_uni)
     go Lef           = go (jetExp j_lef)
     go Rit           = go (jetExp j_rit)
     go Cas           = go (jetExp j_cas)
