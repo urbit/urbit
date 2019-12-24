@@ -128,10 +128,10 @@ irregular =
   where
     tagTy = char '$' *> (atom <|> textToAtom <$> sym)
     entry = do
-      tag <- sym
+      tag <- atom <|> textToAtom <$> sym
       char ' '
       c <- cst
-      pure (textToAtom tag, c)
+      pure (tag, c)
 
 rune ∷ Parser CST
 rune = runeSwitch

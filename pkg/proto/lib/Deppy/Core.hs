@@ -46,20 +46,24 @@ data Abs a = Abs
 deriveEq1   ''Abs
 deriveOrd1  ''Abs
 deriveRead1 ''Abs
+deriveShow1 ''Abs
 --makeBound   ''Abs
 
 deriveEq1   ''Exp
 deriveOrd1  ''Exp
 deriveRead1 ''Exp
+deriveShow1 ''Exp
 --makeBound   ''Exp
 
-deriving instance Eq a   => Eq (Abs a)
-deriving instance Ord a  => Ord (Abs a)
+deriving instance Eq a   => Eq   (Abs a)
+deriving instance Ord a  => Ord  (Abs a)
 deriving instance Read a => Read (Abs a)
+deriving instance Show a => Show (Abs a)
 
-deriving instance Eq a   => Eq (Exp a)
-deriving instance Ord a  => Ord (Exp a)
+deriving instance Eq a   => Eq   (Exp a)
+deriving instance Ord a  => Ord  (Exp a)
 deriving instance Read a => Read (Exp a)
+deriving instance Show a => Show (Exp a)
 
 instance Applicative Exp where
   pure = Var
@@ -237,7 +241,7 @@ infer env = \case
   Lam (Abs t b) -> do
     -- TODO do I need (whnf -> Typ)? (and elsewhere)
     check env t Typ
-    t'  <- toScope <$> infer (extend (const t) env) (fromScope b)
+    t' <- toScope <$> infer (extend (const t) env) (fromScope b)
     pure $ Fun (Abs t t')
   -- //  [@ 1]  #[# @]  ?<= #[t/# t]
   Cns x y (Just (whnf -> t@(Cel (Abs l r)))) -> do

@@ -9,11 +9,9 @@ import Bound.Scope
 import Control.Lens.Plated
 import Data.Data (Data)
 import Data.Data.Lens (uniplate)
-import Data.Function ((&))
 import Numeric.Natural
 
 import qualified Deppy.Hoon as H
-import qualified Noun as N
 
 type Atom = Natural
 
@@ -55,7 +53,7 @@ data CST
   | KetFas CST CST
   | KetHep CST CST
   | WutCen CST (Map Atom CST)
-  deriving (Read, Eq, Ord, Data, Typeable)
+  deriving (Eq, Ord, Read, Show, Data, Typeable)
 
 type Binder = (Maybe Text, CST)
 

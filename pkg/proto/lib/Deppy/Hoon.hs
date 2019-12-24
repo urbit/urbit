@@ -6,8 +6,8 @@ import Prelude (foldr1)
 import Bound
 import Bound.Name
 import Bound.Scope
-import Control.Lens.Plated
 import Control.Monad.Morph (hoist)
+import Control.Lens.Plated
 import Data.Data (Data)
 import Data.Data.Lens (uniplate)
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
@@ -60,11 +60,13 @@ data Hoon a
 deriveEq1   ''Hoon
 deriveOrd1  ''Hoon
 deriveRead1 ''Hoon
+deriveShow1 ''Hoon
 makeBound   ''Hoon
 
 deriving instance Eq a   => Eq   (Hoon a)
 deriving instance Ord a  => Ord  (Hoon a)
 deriving instance Read a => Read (Hoon a)
+deriving instance Show a => Show (Hoon a)
 
 instance (Data a) => Plated (Hoon a) where
   plate = uniplate
@@ -160,7 +162,9 @@ resugar = go
 resugar' :: Data a => C.Exp a -> Hoon a
 resugar' = tr . resugar
   where
-    tr = transform \case
+    tr :: (Data a) => Hoon a -> Hoon a
+    tr = transform (change)
+    change = \case
       Fun (Wut s) b@(Scope (WutCen (Var (B _)) cs))
         | [x] <- bindings b
         -> Cls $ (instantiate (const $ error "Do not want!") . Scope) <$> cs
@@ -171,3 +175,21 @@ resugar' = tr . resugar
         | [x] <- bindings b
         -> Obj $ (instantiate (const $ error "Do not want!") . Scope) <$> cs
       h -> h
+    -- too bad biplate/template seem broken
+    dive :: (Data a) => Hoon a -> Hoon a
+    dive = \case
+      -- Make sure every ctor that has a Scope child appears here.
+      Fun    h b -> Fun    h (hoistScope' tr b)
+      Cel    h b -> Cel    h (hoistScope' tr b)
+      Lam    h b -> Lam    h (hoistScope' tr b)
+      HaxCol h b -> HaxCol h (hoistScope' tr b)
+      HaxHep h b -> HaxHep h (hoistScope' tr b)
+      BarTis h b -> BarTis h (hoistScope' tr b)
+      TisFas h b -> TisFas h (hoistScope' tr b)
+      DotDot h b -> DotDot h (hoistScope' tr b)
+      h -> h
+
+-- Same definition as Bound.Scope.hoistScope, but different type.
+hoistScope' :: (Functor f, Data a, Data b, Data (g a))
+            => (forall x. Data x => f x -> g x) -> Scope b f a -> Scope b g a
+hoistScope' t (Scope b) = Scope $ t (fmap t <$> b)

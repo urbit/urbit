@@ -7,7 +7,7 @@ import Data.Function ((&))
 import Text.Show.Pretty
 
 import Deppy.Parser
-import Deppy.Showings ()
+import Deppy.Showings
 import Deppy.CST as C
 import Deppy.Hoon as H
 import Deppy.Core
@@ -20,12 +20,12 @@ demo prog = parseCst prog & \case
   Right c -> do
     putStrLn ("parsed: " <> ppShow c)
     let h = C.abstractify c
-    putStrLn ("ast: " <> show h)
+    putStrLn ("ast: " <> display h)
     let e = H.desugar h
-    putStrLn ("core: " <> show e)
+    putStrLn ("core: " <> display e)
     let t = infer env e
     case t of
-      Just t -> putStrLn ("type: " <> show (H.resugar' t))
+      Just t -> putStrLn ("type: " <> display (H.resugar' t))
       Nothing -> putStrLn "<type error>"
     let n = copy $ toUntyped e
     putStrLn ("nock: " <> show n)
