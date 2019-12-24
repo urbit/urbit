@@ -151,7 +151,7 @@ type Typing = Either TypeError
 
 -- So that we can have refutable pattern binds in the typing monad.
 -- TODO better error messages for these, also shouldn't they always
--- be extractFoos?
+-- be expectFoos?
 instance MonadFail Typing where
   fail = Left . Other
 
@@ -166,39 +166,40 @@ instance Error TypeError where
 free :: Applicative f => f a -> Scope b f a
 free = Scope . pure . F
 
-extractTyp :: (Eq a, Show a) => Typ a -> Typing ()
-extractTyp = whnf >>> \case
+-- PROP equiv to nest _ Typ
+expectTyp :: (Eq a, Show a) => Typ a -> Typing ()
+expectTyp = whnf >>> \case
   Typ -> pure ()
-  Cas _ cs -> traverse_ extractTyp cs
+  Cas _ cs -> traverse_ expectTyp cs
   e -> Left (NotTyp e)
 
-extractFun :: (Eq a, Show a) => Typ a -> Typing (Abs a)
-extractFun = whnf >>> \case
+expectFun :: (Eq a, Show a) => Typ a -> Typing (Abs a)
+expectFun = whnf >>> \case
   Fun a -> pure a
   Cas e cs -> do
-    absMap <- traverse extractFun cs
+    absMap <- traverse expectFun cs
     let specMap = spec <$> absMap
     let bodyMap = body <$> absMap
     let body = Scope $ Cas (Var $ F e) (unscope <$> bodyMap)
     pure (Abs (Cas e specMap) body)
   e -> Left (NotFun e)
 
-extractCel :: (Eq a, Show a) => Typ a -> Typing (Abs a)
-extractCel = whnf >>> \case
+expectCel :: (Eq a, Show a) => Typ a -> Typing (Abs a)
+expectCel = whnf >>> \case
   Cel a -> pure a
   Cas e cs -> do
-    absMap <- traverse extractFun cs
+    absMap <- traverse expectFun cs
     let specMap = spec <$> absMap
     let bodyMap = body <$> absMap
     let body = Scope $ Cas (Var $ F e) (unscope <$> bodyMap)
     pure (Abs (Cas e specMap) body)
   e -> Left (NotCel e)
 
-extractWut :: (Eq a, Show a) => Typ a -> Typing (Set Tag)
-extractWut = whnf >>> \case
+expectWut :: (Eq a, Show a) => Typ a -> Typing (Set Tag)
+expectWut = whnf >>> \case
   Wut s -> pure s
   -- the union of all the wuts
-  Cas _ cs -> fold <$> traverse extractWut cs
+  Cas _ cs -> fold <$> traverse expectWut cs
   e -> Left (NotWut e)
 
 -- Subtyping Check -------------------------------------------------------------
@@ -302,52 +303,47 @@ infer env = \case
   Var v -> pure $ env v
   Typ -> pure Typ
   Fun (Abs t b) -> do
-    check env t Typ
-    check (extend1 t env) (fromNScope b) Typ
+    expectTyp =<< infer env t
+    expectTyp =<< infer (extend1 t env) (fromNScope b) -- TODO more efficient?
     pure Typ
   Cel (Abs t b) -> do
-    check env t Typ
-    check (extend1 t env) (fromNScope b) Typ
+    expectTyp =<< infer env t
+    expectTyp =<< infer (extend1 t env) (fromNScope b)
     pure Typ
   Wut _ -> pure Typ
   Lam (Abs t b) -> do
-    -- TODO do I need (whnf -> Typ)? (and elsewhere)
-    check env t Typ
+    expectTyp =<< infer env t
+    -- TODO hoist?
     t' <- toScope <$> infer (extend (const t) env) (fromScope b)
     pure $ Fun (Abs t t')
-  -- //  [@ 1]  #[# @]  ?<= #[t/# t]
-  -- TODO extractCel
-  Cns x y (Just (whnf -> t@(Cel (Abs l r)))) -> do
-     check env t Typ
-     check env x l
-     check env y (instantiate1 x r)
-     pure t
-  Cns _ _ (Just _) -> Left $ Other "not a cell"
+  Cns x y (Just t) -> do
+    (Abs l r) <- expectCel t
+    check env x l
+    check env y (instantiate1 x r)
+    pure t
   Cns x y Nothing -> do
     -- Infer non-dependent pairs; if you want dependency, you must annotate
-    -- FIXME problem: [@ 1] not of type #[t/# t]; no way to create vases
-    t <- infer env x
-    u <- infer env y
-    pure $ Cel (Abs t (abstract (const Nothing) u))
+    l <- infer env x
+    r <- infer env y
+    pure $ Cel (Abs l (free r))
   Tag t -> pure $ Wut (singleton t)
   App x y -> do
-    Fun (Abs t b) <- infer env x
+    (Abs t b) <- expectFun =<< infer env x
     check env y t
     pure $ whnf (instantiate1 y b)
   Hed x -> do
-    Cel (Abs t _) <- infer env x
+    (Abs t _) <- expectCel =<< infer env x
     pure t
   Tal x -> do
-    Cel (Abs _ u) <- infer env x
+    (Abs _ u) <- expectCel =<< infer env x
     pure $ instantiate1 (whnf $ Hed $ x) u
   Cas x cs -> do
-    Wut s <- infer env x
-    -- TODO pretty restrictive - do we want?
-    guard (s == keysSet cs)
+    s <- expectWut =<< infer env x
+    guard (s `isSubsetOf` keysSet cs)
     Cas x <$> traverse (infer env) cs
-  Let e b -> infer env (instantiate1 e b)  -- how bad an idea is this?
+  Let e b -> infer env (instantiate1 e b)  -- TODO efficiency?
   Rec (Abs t b) -> do
-    check env t Typ
+    expectTyp =<< infer env t
     -- todo can F <$> be made faster?
     check (extend1 t env) (fromNScope b) (F <$> t)
     pure t
