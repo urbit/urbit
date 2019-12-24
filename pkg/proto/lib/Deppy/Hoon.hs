@@ -163,6 +163,7 @@ resugar' :: Data a => C.Exp a -> Hoon a
 resugar' = tr . resugar
   where
     tr :: (Data a) => Hoon a -> Hoon a
+    -- this version diverges: tr = transform (change . dive). Why??
     tr = transform (change)
     change = \case
       Fun (Wut s) b@(Scope (WutCen (Var (B _)) cs))
