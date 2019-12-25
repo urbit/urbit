@@ -12,13 +12,23 @@
 module Uruk.JetDemo
     ( Ur(..)
     , normalize
+    , normalizeN
     , reduce
     , jam
     , church
     , unChurch
     , dash
-    , j1, j2, j3, j4
+    , pattern J1
+    , pattern J2
+    , pattern J3
+    , pattern J4
+    , pattern I
+    , pattern Z
     , j_nat
+    , wait1
+    , wait2
+    , wait3
+    , j_fix, l_fix, fix
     , j_zer, l_zer, zer
     , j_inc, l_inc, inc
     , j_one, l_one, one
@@ -37,7 +47,6 @@ module Uruk.JetDemo
     , Match(..)
     , urVal, valUr
     , jetExp
-    , pattern I
     ) where
 
 import ClassyPrelude
@@ -57,6 +66,10 @@ data Ur
     | K
     | D
     | J Natural
+    | Wait1
+    | Wait2
+    | Wait3
+    | Fix
     | Nat Natural
     | Fol
     | Add
@@ -86,6 +99,7 @@ jetUnclosure n tag bod = go (J n :@ tag :@ bod) . reverse
 
 instance Show Ur where
     show = \case
+        S :@ K :@ K → "id"
         x :@ y      → "[" <> intercalate " " (show <$> flatten x [y]) <> "]"
         J n         → replicate (fromIntegral n) '0'
         K           → "1"
@@ -94,6 +108,8 @@ instance Show Ur where
         Jc n t b xs → close n t b xs
 
         Nat n       → "#" <> show n
+
+        Fix         → "fix"
 
         Fol         → "fol"
         Add         → "add"
@@ -110,6 +126,10 @@ instance Show Ur where
         Car         → "car"
         Cdr         → "cdr"
         Uni         → "uni"
+
+        Wait1       → "w1"
+        Wait2       → "w2"
+        Wait3       → "w3"
 
       where
         flatten (x :@ y) acc = flatten x (y : acc)
@@ -210,10 +230,14 @@ emp = K
 
 pattern I = S :@ K :@ K
 
-j1 = J 1 :@ K
-j2 = J 2 :@ K
-j3 = J 3 :@ K
-j4 = J 4 :@ K
+pattern J1 = J 1 :@ K
+pattern J2 = J 2 :@ K
+pattern J3 = J 3 :@ K
+pattern J4 = J 4 :@ K
+
+-- Z = \f -> (\x -> f (\v -> wait2 x x v)) (\x -> f (\v -> wait2 x x v))
+pattern Z = S :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait2:@I)))
+              :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait2:@I)))
 
 {-
     TODO:
@@ -236,12 +260,12 @@ ch_zero = S :@ K
 --  suc = \n -> \i z -> i (n i z)
 --  one = inc zer
 --  fol = \n -> n inc zer
---  inc = \n -> j2 (\i z -> i (fol n i z))
---  add = \x y -> j2 (fol (\i z -> (fol x) i (fol y)))
+--  inc = \n -> J2 (\i z -> i (fol n i z))
+--  add = \x y -> J2 (fol (\i z -> (fol x) i (fol y)))
 --  uni = K
 --  dec = \n -> C (n (\x -> C x (\y -> R zer) (\y -> R (inc y))) (L uni))
 --                (\g -> L uni)
---                (\g -> R (j2 (fol g)))
+--                (\g -> R (J2 (fol g)))
 --  mul =
 --  sub = \x y -> y (\z -> CAS z LEF DEC) (RIT x)
 --  lef = \x l r -> l x
@@ -250,14 +274,39 @@ ch_zero = S :@ K
 --  con = \x y f -> f x y
 --  car = \p -> p (\x y -> x)
 --  cdr = \p -> b (\x y -> y)
+
+j_wait1 = match Wait1 2 emp I
+j_wait2 = match Wait2 3 emp I
+j_wait3 = match Wait3 4 emp I
+
+wait1 = jetExp j_wait1
+wait2 = jetExp j_wait2
+wait3 = jetExp j_wait3
+
+-- fix f x = f (Wait2 fix f) x
+-- fix = Z (\fx -> wait2 Jet2 (\f x -> f (fx f) x))
+l_fix = ( (S :@ ((S :@ K) :@ K))
+          :@
+          ((Wait2
+            :@
+            ((S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ ((S :@ K) :@ K)))))
+             :@
+             ((S :@ Wait2) :@ ((S :@ K) :@ K))))
+           :@
+           ((S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ ((S :@ K) :@ K)))))
+            :@
+            ((S :@ Wait2) :@ ((S :@ K) :@ K)))))
+j_fix = match Fix 2 emp l_fix
+fix = jetExp j_fix
+
 l_zer = S :@ K
 l_one = S :@ (S:@(K:@S):@K) :@ (S:@K)
 l_fol = S :@ (S:@I:@(K:@(S:@(S:@(K:@S):@K)))) :@ (K:@(S:@K))
-l_inc = S :@ (K:@j2) :@ (S:@(K:@(S:@(S:@(K:@S):@K))) :@ l_fol)
-l_dec = S:@(S:@(S:@(K:@cas):@(S:@(S:@I:@(K:@(S:@(S:@cas:@(K:@(K:@(rit:@ch_zero)))):@(K:@(S:@(K:@rit):@ch_succ))))):@(K:@(lef:@uni)))):@(K:@(K:@(lef :@ uni)))):@(K:@(S:@(K:@rit):@(S:@(K:@j2):@fol)))
+l_inc = S :@ (K:@J2) :@ (S:@(K:@(S:@(S:@(K:@S):@K))) :@ l_fol)
+l_dec = S:@(S:@(S:@(K:@cas):@(S:@(S:@I:@(K:@(S:@(S:@cas:@(K:@(K:@(rit:@ch_zero)))):@(K:@(S:@(K:@rit):@ch_succ))))):@(K:@(lef:@uni)))):@(K:@(K:@(lef :@ uni)))):@(K:@(S:@(K:@rit):@(S:@(K:@J2):@fol)))
 l_mul = D :@ D :@ D -- TODO
-l_sub = S:@(K:@(S:@(S:@I:@(K:@(S:@(S:@cas:@(K:@lef)):@(K:@l_dec)))))):@(S:@(K:@K):@rit)
-l_add = S :@ (K:@(S:@(K:@j2))) :@ (S:@(K:@(S:@(K:@l_fol))):@(S:@(K:@(S:@(K:@(S:@(K:@K))))):@(S:@(S:@(K:@(S:@(K:@(S:@(K:@S):@K)):@S)):@l_fol):@(K:@(S:@(K:@K):@l_fol)))))
+l_sub = S:@(K:@(S:@(S:@I:@(K:@(S:@(S:@cas:@(K:@lef)):@(K:@Dec)))))):@(S:@(K:@K):@rit)
+l_add = S :@ (K:@(S:@(K:@J2))) :@ (S:@(K:@(S:@(K:@l_fol))):@(S:@(K:@(S:@(K:@(S:@(K:@K))))):@(S:@(S:@(K:@(S:@(K:@(S:@(K:@S):@K)):@S)):@l_fol):@(K:@(S:@(K:@K):@l_fol)))))
 l_uni = K
 l_lef = S :@ (K:@(S:@(K:@(S:@(K:@K))):@(S:@I))) :@ K
 l_rit = S :@ (K:@(S:@(K:@K):@(S:@I))) :@ K
@@ -265,14 +314,6 @@ l_cas = I
 l_con = S:@(K:@(S:@(K:@(S:@(K:@(S:@(K:@(S:@S:@(K:@K))):@K)):@S)):@(S:@I))):@K
 l_car = S:@I:@(K:@K)
 l_cdr = S:@I:@(K:@(S:@K))
-
-
-
-
-
-
-
-
 
 zer = jetExp j_zer
 one = jetExp j_one
@@ -300,7 +341,7 @@ j_dec = match Dec 1 emp l_dec
 j_mul = match Mul 2 emp l_mul
 j_sub = match Sub 2 emp l_sub
 j_add = match Add 2 emp l_add
-j_uni = match Uni 1 emp l_uni
+j_uni = match Uni 2 emp l_uni
 j_lef = match Lef 3 emp l_lef
 j_rit = match Rit 3 emp l_rit
 j_cas = match Cas 3 emp l_cas
@@ -309,13 +350,18 @@ j_car = match Car 1 emp l_car
 j_cdr = match Cdr 1 emp l_cdr
 
 dash ∷ DashBoard
-dash = mkDash -- $ const [] $
-    [ simpleEnt j_zer
+dash = mkDash
+    [ simpleEnt j_wait1
+    , simpleEnt j_wait1
+    , simpleEnt j_wait2
+    , simpleEnt j_wait3
+    , simpleEnt j_fix
+    , simpleEnt j_zer
     , simpleEnt j_one
     , simpleEnt j_fol
     , simpleEnt j_inc
     , simpleEnt j_add
---  , simpleEnt j_dec
+    , simpleEnt j_dec
     , simpleEnt j_sub
     , simpleEnt j_uni
     , simpleEnt j_lef
@@ -339,31 +385,44 @@ normalize ur = do
         Nothing -> pure ur
         Just ru -> normalize ru
 
+normalizeN ∷ Natural -> Ur → IO Ur
+normalizeN 0 ur = pure ur
+normalizeN n ur = do
+    putStrLn (">>  " <> tshow ur)
+    reduce ur & \case
+        Nothing -> pure ur
+        Just ru -> normalizeN (n-1) ru
+
 --
 --  Perform one reduction step. Return Nothing if the input is fully
 --  normalized.
 --
 reduce ∷ Ur → Maybe Ur
 reduce = \case
+    K :@ x :@ y → Just x
+
     (reduce → Just xv) :@ y → Just (xv :@ y)
     x :@ (reduce → Just yv) → Just (x  :@ yv)
 
     -- Uruk
-    K :@ x :@ y      → Just x
     S :@ x :@ y :@ z → Just (x:@z:@(y:@z))
     D :@ x           → Just (jam x)
     J n :@ J 1       → Just (J (succ n))
-    J n :@ t :@ b    → dashLookup n t b <|> pure (Jc n t b [])
+    J n :@ t :@ b    → dashLookup n t b <|> Just (Jc n t b [])
 
     Jc n t b xs | n==len xs → Just (apply b xs)
     Jc n t b xs :@ x        → Just (Jc n t b (x:xs))
 
-    --  Fire jet
+    Wait1 :@ f :@ x           → Just (f :@ x)
+    Wait2 :@ f :@ x :@ y      → Just (f :@ x :@ y)
+    Wait3 :@ f :@ x :@ y :@ z → Just (f :@ x :@ y :@ z)
+
+    Fix   :@ f :@ x → Just (f :@ (Fix :@ f) :@ x)
     Nat n :@ x :@ y → Just (church n :@ x :@ y)
 
-    Fol :@ x → x & \case
-        Nat x → Just (church x)
-        x     → Just (l_fol :@ x)
+    Fol :@ x → Just $ x & \case
+        Nat x → church x
+        x     → l_fol :@ x
 
     Inc :@ x → Just $ case x of
         Nat n → Nat (succ n)
@@ -382,22 +441,25 @@ reduce = \case
         (Nat x, Nat y) → if y > x then Lef :@ Uni else Rit :@ Nat (x-y)
         (_,     _    ) → l_sub :@ x :@ y
 
-    Cas :@ (Lef :@ x) :@ l :@ r → Just (l :@ x)
-    Cas :@ (Rit :@ x) :@ l :@ r → Just (r :@ x)
-    Cas :@ x          :@ l :@ r → Just (l_cas :@ l :@ r)
+    Cas :@ s :@ l :@ r → Just $ case s of
+        Lef :@ x → l :@ x
+        Rit :@ x → r :@ x
+        _        → l_cas :@ l :@ r
 
     Con :@ x :@ y :@ z → Just (z :@ x :@ y)
 
-    Car :@ (Con :@ x :@ _) → Just x
-    Car :@ p               → Just (l_car :@ p)
+    Car :@ p → case p of
+        Con :@ x :@ _ → Just x
+        _             → Just (l_cdr :@ p)
 
-    Cdr :@ (Con :@ _ :@ y) → Just y
-    Cdr :@ p               → Just (l_cdr :@ p)
+    Cdr :@ p → Just $ case p of
+        Con :@ _ :@ y → y
+        _             → l_cdr :@ p
 
     Rit :@ x :@ _ :@ r → Just (r :@ x)
     Lef :@ x :@ l :@ _ → Just (l :@ x)
+    Uni :@ x :@ y      → Just x -- Uni it `k`
 
-    --  Doesn't reduce
     _ → Nothing
   where
     len = fromIntegral . length
@@ -406,8 +468,8 @@ reduce = \case
     apply f = go f . reverse
       where go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
 
-jetBod ∷ Match → Ur
-jetBod = valUr . mBody
+_jetBod ∷ Match → Ur
+_jetBod = valUr . mBody
 
 jetExp ∷ Match → Ur
 jetExp (MkMatch _ n t b) = J (fromIntegral n) :@ valUr t :@ valUr b
@@ -420,7 +482,7 @@ church 0 = S :@ K
 church n = S :@ (S:@(K:@S):@K) :@ church (pred n)
 
 churchJet ∷ Natural → Ur
-churchJet n = J 2 :@ K :@ church n
+churchJet n = Nat n -- J 2 :@ K :@ church n
 
 --
 --  Serialize and Uruk expression and church-encode it.
@@ -429,6 +491,10 @@ jam ∷ Ur → Ur
 jam = churchJet . snd . go
   where
     go ∷ Ur → (Int, Natural)
+    go Wait1         = go (jetExp j_wait1)
+    go Wait2         = go (jetExp j_wait2)
+    go Wait3         = go (jetExp j_wait3)
+    go Fix           = go (jetExp j_fix)
     go Inc           = go (jetExp j_inc)
     go Fol           = go (jetExp j_fol)
     go Dec           = go (jetExp j_dec)
@@ -443,10 +509,10 @@ jam = churchJet . snd . go
     go Car           = go (jetExp j_car)
     go Cdr           = go (jetExp j_cdr)
     go (Nat n)       = go (churchJet n)
-    go S             = (3, 0)
+    go (J 1)         = (3, 0)
     go K             = (3, 2)
-    go D             = (3, 4)
-    go (J 1)         = (3, 6)
+    go S             = (3, 4)
+    go D             = (3, 6)
     go (J n)         = go (jetExpand n)
     go (Jc n t b xs) = go (jetUnclosure n t b xs)
     go (x:@y)  = (rBits, rNum)
