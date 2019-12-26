@@ -25,6 +25,7 @@ module Uruk.JetDemo
     , pattern I
     , pattern Z
     , j_nat
+    , wait0
     , wait1
     , wait2
     , wait3
@@ -47,6 +48,8 @@ module Uruk.JetDemo
     , Match(..)
     , urVal, valUr
     , jetExp
+    , churchJet
+    , waitJet
     ) where
 
 import ClassyPrelude
@@ -62,13 +65,13 @@ import GHC.Natural      (Natural)
 infixl 5 :@;
 
 data Ur
-    = S
-    | K
-    | D
+    = Ur :@ Ur
     | J Natural
-    | Wait1
-    | Wait2
-    | Wait3
+    | K
+    | S
+    | D
+    | Val Natural Ur [Ur]
+    | Wait Natural
     | Fix
     | Nat Natural
     | Fol
@@ -84,28 +87,27 @@ data Ur
     | Con
     | Car
     | Cdr
-    | Ur :@ Ur
-    | Jc Natural Ur Ur [Ur]
   deriving (Eq, Ord)
 
 jetExpand ∷ Natural → Ur
 jetExpand = go
-  where go = \case { 0 → no; 1 → J 1; n → go (pred n) :@ J 1 }
-        no = error "impossible J value"
+  where go = \case { 0 → J 0; n → go (pred n) :@ J 0 }
 
-jetUnclosure ∷ Natural → Ur → Ur → [Ur] → Ur
-jetUnclosure n tag bod = go (J n :@ tag :@ bod) . reverse
+unVal ∷ Ur → [Ur] → Ur
+unVal u = go u . reverse
   where go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
 
 instance Show Ur where
     show = \case
         S :@ K :@ K → "id"
+
         x :@ y      → "[" <> intercalate " " (show <$> flatten x [y]) <> "]"
+
         J n         → replicate (fromIntegral n) '0'
         K           → "1"
         S           → "2"
         D           → "3"
-        Jc n t b xs → close n t b xs
+        Val _ u us  → close u us
 
         Nat n       → "#" <> show n
 
@@ -127,22 +129,13 @@ instance Show Ur where
         Cdr         → "cdr"
         Uni         → "uni"
 
-        Wait1       → "w1"
-        Wait2       → "w2"
-        Wait3       → "w3"
+        Wait n      → "wait-" <> show n
 
       where
         flatten (x :@ y) acc = flatten x (y : acc)
         flatten x        acc = (x : acc)
 
-        close n t b = \case
-            [] → mconcat [ "{", show (J n), " ", show t, " ", show b, "}" ]
-            xs → mconcat [ "<"
-                         , close n t b []
-                         , " "
-                         , intercalate " " (show <$> reverse xs)
-                         , ">"
-                         ]
+        close u us = "{" <> intercalate " " (show <$> u : reverse us) <> "}"
 
 
 -- Normalized Values -----------------------------------------------------------
@@ -230,14 +223,14 @@ emp = K
 
 pattern I = S :@ K :@ K
 
-pattern J1 = J 1 :@ K
-pattern J2 = J 2 :@ K
-pattern J3 = J 3 :@ K
-pattern J4 = J 4 :@ K
+pattern J1 = J 0 :@ K
+pattern J2 = J 1 :@ K
+pattern J3 = J 2 :@ K
+pattern J4 = J 3 :@ K
 
 -- Z = \f -> (\x -> f (\v -> wait2 x x v)) (\x -> f (\v -> wait2 x x v))
-pattern Z = S :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait2:@I)))
-              :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait2:@I)))
+pattern Z = S :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait 2:@I)))
+              :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait 2:@I)))
 
 {-
     TODO:
@@ -275,27 +268,29 @@ ch_zero = S :@ K
 --  car = \p -> p (\x y -> x)
 --  cdr = \p -> b (\x y -> y)
 
-j_wait1 = match Wait1 2 emp I
-j_wait2 = match Wait2 3 emp I
-j_wait3 = match Wait3 4 emp I
+j_wait0 = match (Wait 0) 1 I I
+j_wait1 = match (Wait 1) 2 I I
+j_wait2 = match (Wait 2) 3 I I
+j_wait3 = match (Wait 3) 4 I I
 
+wait0 = jetExp j_wait0
 wait1 = jetExp j_wait1
 wait2 = jetExp j_wait2
 wait3 = jetExp j_wait3
 
--- fix f x = f (Wait2 fix f) x
+-- fix f x = f ((Wait 2) fix f) x
 -- fix = Z (\fx -> wait2 Jet2 (\f x -> f (fx f) x))
 l_fix = ( (S :@ ((S :@ K) :@ K))
           :@
-          ((Wait2
+          ((Wait 2
             :@
             ((S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ ((S :@ K) :@ K)))))
              :@
-             ((S :@ Wait2) :@ ((S :@ K) :@ K))))
+             ((S :@ Wait 2) :@ ((S :@ K) :@ K))))
            :@
            ((S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ ((S :@ K) :@ K)))))
             :@
-            ((S :@ Wait2) :@ ((S :@ K) :@ K)))))
+            ((S :@ Wait 2) :@ ((S :@ K) :@ K)))))
 j_fix = match Fix 2 emp l_fix
 fix = jetExp j_fix
 
@@ -351,7 +346,7 @@ j_cdr = match Cdr 1 emp l_cdr
 
 dash ∷ DashBoard
 dash = mkDash
-    [ simpleEnt j_wait1
+    [ simpleEnt j_wait0
     , simpleEnt j_wait1
     , simpleEnt j_wait2
     , simpleEnt j_wait3
@@ -407,15 +402,13 @@ reduce = \case
     -- Uruk
     S :@ x :@ y :@ z → Just (x:@z:@(y:@z))
     D :@ x           → Just (jam x)
-    J n :@ J 1       → Just (J (succ n))
-    J n :@ t :@ b    → dashLookup n t b <|> Just (Jc n t b [])
+    J n :@ J 0       → Just (J (succ n))
+    J n :@ t :@ b    → dashLookup n t b <|> Just (Val n (J n :@ t :@ b) [])
 
-    Jc n t b xs | n==len xs → Just (apply b xs)
-    Jc n t b xs :@ x        → Just (Jc n t b (x:xs))
+    Val 0 u us :@ x → Just (apply u (reverse (x:us)))
+    Val n u us :@ x → Just (Val (pred n) u (x:us))
 
-    Wait1 :@ f :@ x           → Just (f :@ x)
-    Wait2 :@ f :@ x :@ y      → Just (f :@ x :@ y)
-    Wait3 :@ f :@ x :@ y :@ z → Just (f :@ x :@ y :@ z)
+    Wait n → Just (Val n (Wait n) [])
 
     Fix   :@ f :@ x → Just (f :@ (Fix :@ f) :@ x)
     Nat n :@ x :@ y → Just (church n :@ x :@ y)
@@ -462,11 +455,14 @@ reduce = \case
 
     _ → Nothing
   where
-    len = fromIntegral . length
-
     apply ∷ Ur → [Ur] → Ur
-    apply f = go f . reverse
-      where go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
+    apply = curry \case
+        ( J n :@ t :@ b, us   ) -> go b us
+        ( Wait _,        u:us ) -> go u us
+        ( Wait _,        []   ) -> error "impossible"
+        ( f,             us   ) -> error "impossible"
+      where
+        go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
 
 _jetBod ∷ Match → Ur
 _jetBod = valUr . mBody
@@ -482,39 +478,44 @@ church 0 = S :@ K
 church n = S :@ (S:@(K:@S):@K) :@ church (pred n)
 
 churchJet ∷ Natural → Ur
-churchJet n = Nat n -- J 2 :@ K :@ church n
+churchJet n = J 2 :@ K :@ church n
+
+waitJet ∷ Natural → Ur
+waitJet n = J (succ n) :@ I :@ I
 
 --
 --  Serialize and Uruk expression and church-encode it.
 --
 jam ∷ Ur → Ur
-jam = churchJet . snd . go
+jam = Nat . snd . go
   where
     go ∷ Ur → (Int, Natural)
-    go Wait1         = go (jetExp j_wait1)
-    go Wait2         = go (jetExp j_wait2)
-    go Wait3         = go (jetExp j_wait3)
-    go Fix           = go (jetExp j_fix)
-    go Inc           = go (jetExp j_inc)
-    go Fol           = go (jetExp j_fol)
-    go Dec           = go (jetExp j_dec)
-    go Mul           = go (jetExp j_mul)
-    go Sub           = go (jetExp j_sub)
-    go Add           = go (jetExp j_add)
-    go Uni           = go (jetExp j_uni)
-    go Lef           = go (jetExp j_lef)
-    go Rit           = go (jetExp j_rit)
-    go Cas           = go (jetExp j_cas)
-    go Con           = go (jetExp j_con)
-    go Car           = go (jetExp j_car)
-    go Cdr           = go (jetExp j_cdr)
-    go (Nat n)       = go (churchJet n)
-    go (J 1)         = (3, 0)
-    go K             = (3, 2)
-    go S             = (3, 4)
-    go D             = (3, 6)
-    go (J n)         = go (jetExpand n)
-    go (Jc n t b xs) = go (jetUnclosure n t b xs)
+    go (Wait 0)     = go (jetExp j_wait0)
+    go (Wait 1)     = go (jetExp j_wait1)
+    go (Wait 2)     = go (jetExp j_wait2)
+    go (Wait 3)     = go (jetExp j_wait3)
+    go Fix          = go (jetExp j_fix)
+    go Inc          = go (jetExp j_inc)
+    go Fol          = go (jetExp j_fol)
+    go Dec          = go (jetExp j_dec)
+    go Mul          = go (jetExp j_mul)
+    go Sub          = go (jetExp j_sub)
+    go Add          = go (jetExp j_add)
+    go Uni          = go (jetExp j_uni)
+    go Lef          = go (jetExp j_lef)
+    go Rit          = go (jetExp j_rit)
+    go Cas          = go (jetExp j_cas)
+    go Con          = go (jetExp j_con)
+    go Car          = go (jetExp j_car)
+    go Cdr          = go (jetExp j_cdr)
+    go (Nat n)      = go (churchJet n)
+    go (Wait n)     = go (waitJet n)
+    go (J 0)        = (3, 0)
+    go K            = (3, 2)
+    go S            = (3, 4)
+    go D            = (3, 6)
+    go (J n)        = go (jetExpand n)
+    go (Val _ u us) = go (unVal u us)
     go (x:@y)  = (rBits, rNum)
         where (xBits, xNum) = go x
               (yBits, yNum) = go y
