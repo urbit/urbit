@@ -10,7 +10,7 @@ import Untyped.Parser  -- remove after we've moved the CST type
 hone :: CST -> H.Hoon Sym
 hone = go
   where
-    go = \case 
+    go = \case
       WutCol c d e -> H.WutCol (go c) (go d) (go e)
       WutPat c d e -> H.WutPat (go c) (go d) (go e)
       WutKet c d e -> H.WutKet (go c) (go d) (go e)

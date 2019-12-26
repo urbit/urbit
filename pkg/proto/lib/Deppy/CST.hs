@@ -170,4 +170,3 @@ concretize = dissociate . go
       HaxHep bs (HaxHep bs' c) -> HaxHep (bs <> bs') c
       BarTis bs (BarTis bs' c) -> BarTis (bs <> bs') c
       c -> c
-
