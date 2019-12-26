@@ -9,55 +9,13 @@
     since it shows each reduction step.
 -}
 
-module Uruk.JetDemo
-    ( Ur(..)
-    , normalize
-    , normalizeN
-    , reduce
-    , jam
-    , church
-    , unChurch
-    , dash
-    , pattern J1
-    , pattern J2
-    , pattern J3
-    , pattern J4
-    , pattern I
-    , pattern Z
-    , j_nat
-    , wait0
-    , wait1
-    , wait2
-    , wait3
-    , j_fix, l_fix, fix
-    , j_zer, l_zer, zer
-    , j_inc, l_inc, inc
-    , j_one, l_one, one
-    , j_fol, l_fol, fol
-    , j_dec, l_dec, dec
-    , j_mul, l_mul, mul
-    , j_sub, l_sub, sub
-    , j_add, l_add, add
-    , j_uni, l_uni, uni
-    , j_lef, l_lef, lef
-    , j_rit, l_rit, rit
-    , j_cas, l_cas, cas
-    , j_con, l_con, con
-    , j_car, l_car, car
-    , j_cdr, l_cdr, cdr
-    , Match(..)
-    , urVal, valUr
-    , jetExp
-    , churchJet
-    , waitJet
-    ) where
+module Uruk.JetDemo where
 
 import ClassyPrelude
 
--- ort Control.Arrow ((>>>))
 import Data.Bits
-import Data.Function    ((&))
-import GHC.Natural      (Natural)
+import Data.Function ((&))
+import GHC.Natural   (Natural)
 
 
 -- Types -----------------------------------------------------------------------
@@ -156,7 +114,6 @@ data Named a = Named { _nName ∷ String, unNamed ∷ a }
 
 instance Show (Named a) where
   show (Named s _) = s
-
 
 
 --------------------------------------------------------------------------------
