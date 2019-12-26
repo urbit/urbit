@@ -61,7 +61,7 @@ instance Show Ur where
 
         x :@ y      → "[" <> intercalate " " (show <$> flatten x [y]) <> "]"
 
-        J n         → replicate (fromIntegral n) '0'
+        J n         → replicate (fromIntegral (succ n)) '0'
         K           → "1"
         S           → "2"
         D           → "3"
@@ -129,42 +129,37 @@ data Match = MkMatch
 match ∷ Ur → Natural → Ur → Ur → Match
 match j n t b = MkMatch (urVal j) (fromIntegral n) (urVal t) (urVal b)
 
-data Check = MkCheck
-    { cArgs ∷ Word
-    , cName ∷ Val
-    , cPred ∷ Named (Val → Maybe Val)
-    }
+type Check = Named (Word → JetTag → Val → Maybe Val)
+
+type DashEntry = Either Match Check
+
+type JetTag  = Val
+type Matches = Map (Word, JetTag, Val) Val
+
+data Dash = Dash Matches [Check]
   deriving (Show)
 
-check ∷ String → Natural → Ur → (Val → Maybe Ur) → Check
-check nm n t p = MkCheck (fromIntegral n) (urVal t)
-               $ Named nm (fmap urVal <$> p)
-
-type DashEntry = ((Word, Val), Named (Val → Maybe Val))
-type DashBoard = Map (Word, Val) [Named (Val → Maybe Val)]
-
 simpleEnt ∷ Match → DashEntry
-simpleEnt MkMatch{..} =
-    (,) (mArgs, mName)
-        (Named (show mBody) (\b → guard (b==mBody) $> mFast))
+simpleEnt = Left
 
 predikEnt ∷ Check → DashEntry
-predikEnt MkCheck{..} = ((cArgs, cName), cPred)
+predikEnt = Right
 
-mkDash ∷ [DashEntry] → DashBoard
-mkDash = foldl' go mempty
+mkDash ∷ [DashEntry] → Dash
+mkDash = foldl' go (Dash mempty [])
   where
-    go ∷ DashBoard → DashEntry → DashBoard
-    go acc (k,v) = lookup k acc & \case
-                       Nothing → insertMap k [v] acc
-                       Just vs → insertMap k (v:vs) acc
+    go ∷ Dash → DashEntry → Dash
+    go (Dash ms cs) = \case
+        Left (MkMatch{..}) → Dash (insertMap (mArgs,mName,mBody) mFast ms) cs
+        Right chk          → Dash ms (chk : cs)
 
 dashLookup ∷ Natural → Ur → Ur → Maybe Ur
-dashLookup n t b = lookup (fromIntegral n, MkVal t) dash & \case
-    Nothing → Nothing
-    Just xs → valUr <$> asum (($ b') . unNamed <$> xs)
+dashLookup n t b = valUr <$> (findMatch <|> passCheck)
   where
-    b' = urVal b
+    (nw,tv,bv) = (fromIntegral n, urVal t, urVal b)
+    Dash ms cs = dash
+    findMatch  = lookup (nw, tv, bv) ms
+    passCheck  = headMay (mapMaybe (\(Named n ok) -> ok nw tv bv) cs)
 
 
 -- Jet Dashboard ---------------------------------------------------------------
@@ -225,16 +220,6 @@ ch_zero = S :@ K
 --  car = \p -> p (\x y -> x)
 --  cdr = \p -> b (\x y -> y)
 
-j_wait0 = match (Wait 0) 1 I I
-j_wait1 = match (Wait 1) 2 I I
-j_wait2 = match (Wait 2) 3 I I
-j_wait3 = match (Wait 3) 4 I I
-
-wait0 = jetExp j_wait0
-wait1 = jetExp j_wait1
-wait2 = jetExp j_wait2
-wait3 = jetExp j_wait3
-
 -- fix f x = f ((Wait 2) fix f) x
 -- fix = Z (\fx -> wait2 Jet2 (\f x -> f (fx f) x))
 l_fix = ( (S :@ ((S :@ K) :@ K))
@@ -255,9 +240,9 @@ l_zer = S :@ K
 l_one = S :@ (S:@(K:@S):@K) :@ (S:@K)
 l_fol = S :@ (S:@I:@(K:@(S:@(S:@(K:@S):@K)))) :@ (K:@(S:@K))
 l_inc = S :@ (K:@J2) :@ (S:@(K:@(S:@(S:@(K:@S):@K))) :@ l_fol)
-l_dec = S:@(S:@(S:@(K:@cas):@(S:@(S:@I:@(K:@(S:@(S:@cas:@(K:@(K:@(rit:@ch_zero)))):@(K:@(S:@(K:@rit):@ch_succ))))):@(K:@(lef:@uni)))):@(K:@(K:@(lef :@ uni)))):@(K:@(S:@(K:@rit):@(S:@(K:@J2):@fol)))
+l_dec = S:@(S:@(S:@(K:@Cas):@(S:@(S:@I:@(K:@(S:@(S:@Cas:@(K:@(K:@(Rit:@ch_zero)))):@(K:@(S:@(K:@Rit):@ch_succ))))):@(K:@(Lef:@Uni)))):@(K:@(K:@(Lef :@ Uni)))):@(K:@(S:@(K:@Rit):@(S:@(K:@J2):@Fol)))
 l_mul = D :@ D :@ D -- TODO
-l_sub = S:@(K:@(S:@(S:@I:@(K:@(S:@(S:@cas:@(K:@lef)):@(K:@Dec)))))):@(S:@(K:@K):@rit)
+l_sub = S:@(K:@(S:@(S:@I:@(K:@(S:@(S:@Cas:@(K:@Lef)):@(K:@Dec)))))):@(S:@(K:@K):@Rit)
 l_add = S :@ (K:@(S:@(K:@J2))) :@ (S:@(K:@(S:@(K:@l_fol))):@(S:@(K:@(S:@(K:@(S:@(K:@K))))):@(S:@(S:@(K:@(S:@(K:@(S:@(K:@S):@K)):@S)):@l_fol):@(K:@(S:@(K:@K):@l_fol)))))
 l_uni = K
 l_lef = S :@ (K:@(S:@(K:@(S:@(K:@K))):@(S:@I))) :@ K
@@ -285,7 +270,18 @@ cdr = jetExp j_cdr
 
 j_zer = match (Nat 0) 2 emp l_zer
 j_one = match (Nat 1) 2 emp l_one
-j_nat = check "nat" 2 K (fmap Nat <$> unChurch . valUr)
+
+j_nat ∷ Check
+j_nat = Named "nat" chk
+  where chk ∷ Word → JetTag → Val → Maybe Val
+        chk 2 (MkVal K) u = MkVal . Nat <$> unChurch (valUr u)
+        chk _ _         _ = Nothing
+
+j_wait ∷ Check
+j_wait = Named "wait" chk
+  where chk ∷ Word → JetTag → Val → Maybe Val
+        chk n (MkVal I) (MkVal I) = Just $ MkVal $ Wait $ fromIntegral n
+        chk _ _         _         = Nothing
 
 j_fol = match Fol 1 emp l_fol
 j_inc = match Inc 1 emp l_inc
@@ -301,15 +297,9 @@ j_con = match Con 3 emp l_con
 j_car = match Car 1 emp l_car
 j_cdr = match Cdr 1 emp l_cdr
 
-dash ∷ DashBoard
+dash ∷ Dash
 dash = mkDash
-    [ simpleEnt j_wait0
-    , simpleEnt j_wait1
-    , simpleEnt j_wait2
-    , simpleEnt j_wait3
-    , simpleEnt j_fix
-    , simpleEnt j_zer
-    , simpleEnt j_one
+    [ simpleEnt j_fix
     , simpleEnt j_fol
     , simpleEnt j_inc
     , simpleEnt j_add
@@ -322,6 +312,7 @@ dash = mkDash
     , simpleEnt j_car
     , simpleEnt j_cdr
     , predikEnt j_nat
+    , predikEnt j_wait
     ]
 
 
@@ -367,7 +358,8 @@ reduce = \case
 
     Wait n → Just (Val n (Wait n) [])
 
-    Fix   :@ f :@ x → Just (f :@ (Fix :@ f) :@ x)
+    --x   :@ f :@ x → Just (f :@ (Fix :@ f) :@ x)
+    Fix   :@ f :@ x → Just (l_fix :@ f :@ x)
     Nat n :@ x :@ y → Just (church n :@ x :@ y)
 
     Fol :@ x → Just $ x & \case
@@ -408,7 +400,7 @@ reduce = \case
 
     Rit :@ x :@ _ :@ r → Just (r :@ x)
     Lef :@ x :@ l :@ _ → Just (l :@ x)
-    Uni :@ x :@ y      → Just x -- Uni it `k`
+    Uni :@ x :@ y      → Just x -- Uni is `k`
 
     _ → Nothing
   where
@@ -421,8 +413,8 @@ reduce = \case
       where
         go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
 
-_jetBod ∷ Match → Ur
-_jetBod = valUr . mBody
+jetBod ∷ Match → Ur
+jetBod = valUr . mBody
 
 jetExp ∷ Match → Ur
 jetExp (MkMatch _ n t b) = J (fromIntegral n) :@ valUr t :@ valUr b
@@ -438,7 +430,7 @@ churchJet ∷ Natural → Ur
 churchJet n = J 2 :@ K :@ church n
 
 waitJet ∷ Natural → Ur
-waitJet n = J (succ n) :@ I :@ I
+waitJet n = J n :@ I :@ I
 
 --
 --  Serialize and Uruk expression and church-encode it.
@@ -447,10 +439,6 @@ jam ∷ Ur → Ur
 jam = Nat . snd . go
   where
     go ∷ Ur → (Int, Natural)
-    go (Wait 0)     = go (jetExp j_wait0)
-    go (Wait 1)     = go (jetExp j_wait1)
-    go (Wait 2)     = go (jetExp j_wait2)
-    go (Wait 3)     = go (jetExp j_wait3)
     go Fix          = go (jetExp j_fix)
     go Inc          = go (jetExp j_inc)
     go Fol          = go (jetExp j_fol)
