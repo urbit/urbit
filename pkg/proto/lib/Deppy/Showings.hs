@@ -51,6 +51,8 @@ instance Display CST where
       ColTar xs -> ":*(" <> displayGroup xs <> ")"
       TisFas t x y -> "=/(" <> unpack t <> display x <> " " <> display y <> ")"
       DotDot x y -> "..(" <> displayBinder x <> " " <> display y <> ")"
+      DotGal x -> ".<(" <> display x <> ")"
+      DotGar x -> ".>(" <> display x <> ")"
       KetFas x y -> "^/(" <> display x <> " " <> display y <> ")"
       KetHep x y -> "^-(" <> display x <> " " <> display y <> ")"
       WutCen x cs -> case mapToList cs of

@@ -4,7 +4,7 @@ import ClassyPrelude hiding (putStrLn)
 import Prelude (putStrLn)
 
 import Data.Function    ((&))
-import Text.Show.Pretty (ppShow)
+-- ort Text.Show.Pretty (ppShow)
 
 import Deppy.Core
 import Deppy.Parser hiding (Wide)
@@ -38,7 +38,7 @@ demoCST :: Text -> IO ()
 demoCST prog = parseCst prog & \case
   Left err -> putStrLn ("parse error: " <> unpack err)
   Right c  -> do r <- pure (toRunic c)
-                 putStrLn (ppShow r)
+                 -- StrLn (ppShow r)
                  putStrLn (runic r)
 
 --------------------------------------------------------------------------------
@@ -85,8 +85,8 @@ wide = go
 tall ∷ Runic → Text
 tall = go 0
   where
-    go d (wide -> t) | length t < 2 = indent d t
-    go d v                          = ta d v
+    go d (wide -> t) | length t < 40 = indent d t
+    go d v                           = ta d v
 
     indent d t = replicate d ' ' <> t <> "\n"
 
@@ -151,7 +151,9 @@ toRunic = go
         C.Tag a        -> tagLit a
         C.Col a x      -> appTag a x
         C.Hed x        -> hed x
+        C.DotGal x     -> hed x
         C.Tal x        -> tal x
+        C.DotGar x     -> tal x
         C.HaxBuc xs    -> tagUnion xs
         C.Obj cs       -> recLit cs
         C.BarCen cs    -> recLit cs

@@ -52,6 +52,8 @@ data Hoon a
   | ColTar [Hoon a]
   | TisFas (Hoon a) (Scope (Name Text ()) Hoon a)
   | DotDot (Hoon a) (Scope (Name Text ()) Hoon a)
+  | DotGal (Hoon a)
+  | DotGar (Hoon a)
   | KetFas (Hoon a) (Hoon a)
   | KetHep (Hoon a) (Hoon a)
   | WutCen (Hoon a) (Map Atom (Hoon a))
@@ -118,6 +120,8 @@ desugar = go
       ColTar hs    -> foldr1 (\e f -> C.Cns e f Nothing) $ go <$> hs
       TisFas h b   -> C.Let (go h) (hoist go b)
       DotDot h b   -> C.Rec $ C.Abs (go h) (hoist desugar b)
+      DotGal h     -> C.Hed (go h)
+      DotGar h     -> C.Tal (go h)
       KetFas hv ht -> go $ The ht hv
       KetHep ht hv -> go $ The ht hv
       WutCen h cs  -> C.Cas (go h) (go <$> cs)
