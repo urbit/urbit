@@ -124,6 +124,7 @@ irregular =
     , Obj . mapFromList <$> grouped "{" ", " "}" entry
     , Hax <$ char '#'
     , Var <$> sym
+    , Tag 0 <$ char '~'
     ]
   where
     tagTy = char '$' *> (atom <|> textToAtom <$> sym)
@@ -147,6 +148,8 @@ rune = runeSwitch
   , (":*", runeN ColTar cst)
   , ("=/", rune3 TisFas sym cst cst)
   , ("..", rune2 DotDot binder cst)
+  , (".<", rune1 DotGal cst)
+  , (".>", rune1 DotGar cst)
   , ("^/", rune2 KetFas cst cst)
   , ("^-", rune2 KetHep cst cst)
   , ("?%", runeJogging1 wutCen cst (textToAtom <$> tag <|> atom) cst)

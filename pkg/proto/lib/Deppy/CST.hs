@@ -50,6 +50,8 @@ data CST
   | ColTar [CST]
   | TisFas Text CST CST
   | DotDot Binder CST
+  | DotGal CST
+  | DotGar CST
   | KetFas CST CST
   | KetHep CST CST
   | WutCen CST (Map Atom CST)
@@ -97,6 +99,8 @@ abstractify = go
       ColTar cs -> H.ColTar (go <$> cs)
       TisFas v c d -> H.TisFas (go c) (abstract1Name v $ go d)
       DotDot b c -> bind H.DotDot b (go c)
+      DotGal c -> H.DotGal (go c)
+      DotGar c -> H.DotGar (go c)
       KetFas c d -> H.KetFas (go c) (go d)
       KetHep c d -> H.KetHep (go c) (go d)
       WutCen c cs -> H.WutCen (go c) (go <$> cs)
