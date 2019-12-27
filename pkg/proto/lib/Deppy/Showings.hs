@@ -49,7 +49,7 @@ instance Display CST where
       CenHep x y -> "%-(" <> display x <> " " <> display y <> ")"
       ColHep x y -> ":-(" <> display x <> " " <> display y <> ")"
       ColTar xs -> ":*(" <> displayGroup xs <> ")"
-      TisFas t x y -> "=/(" <> unpack t <> display x <> " " <> display y <> ")"
+      TisFas t x y -> "=/(" <> unpack t <> " " <> display x <> " " <> display y <> ")"
       DotDot x y -> "..(" <> displayBinder x <> " " <> display y <> ")"
       DotGal x -> ".<(" <> display x <> ")"
       DotGar x -> ".>(" <> display x <> ")"

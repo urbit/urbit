@@ -34,6 +34,11 @@ demo prog = parseCst prog & \case
   where
     env v = error ("error: free variable: " <> show v)
 
+filo :: FilePath -> Text -> IO ()
+filo fn expr = do
+  decls <- readFileUtf8 fn
+  demo (decls <> "\n" <> expr)
+
 demoCST :: Text -> IO ()
 demoCST prog = parseCst prog & \case
   Left err -> putStrLn ("parse error: " <> unpack err)
@@ -261,5 +266,5 @@ toRunic = go
       where
         okay = all (flip elem ['a'..'z'])
 
-
+env v = error ("error: free variable: " <> show v)
 -- Abstract Syntax Tree --------------------------------------------------------

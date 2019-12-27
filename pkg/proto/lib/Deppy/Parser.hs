@@ -69,8 +69,9 @@ whitespace = ace <|> gap
 
 -- Literals --------------------------------------------------------------------
 
+-- TODO - only in middle, support prime
 alpha ∷ Parser Char
-alpha = oneOf (['a'..'z'] ++ ['A'..'Z'])
+alpha = oneOf (['-'] ++ ['a'..'z'] ++ ['A'..'Z'])
 
 sym ∷ Parser Sym
 sym = pack <$> some alpha
@@ -125,6 +126,7 @@ irregular =
     , Hax <$ char '#'
     , Var <$> sym
     , Tag 0 <$ char '~'
+    , Wut (singleton 0) <$ string "$~"
     ]
   where
     tagTy = char '$' *> (atom <|> textToAtom <$> sym)
@@ -137,7 +139,7 @@ irregular =
 rune ∷ Parser CST
 rune = runeSwitch
   [ ("$%", runeJogging (HaxBuc . mapFromList) (textToAtom <$> sym) cst)
-  , ("$=", runeJogging (HaxCen . mapFromList) (textToAtom <$> sym) cst)
+  , ("$`", runeJogging (HaxCen . mapFromList) (textToAtom <$> sym) cst)
   , ("$:", runeN (notAllow HaxCol) binder)
   , ("$-", runeN (notAllow HaxHep) binder)
   , ("|%", barCen)
@@ -189,7 +191,7 @@ grouped open delim close elem = string open >> body
 
 -- | A binder is a cst prefixed by an optional sym-and-'/'
 binder :: Parser Binder
-binder = (,) <$> parseMay tag <*> inWideMode cst
+binder = (,) <$> parseMay tag <*> {-inWideMode-} cst
   where
     tag = try $ sym <* char '/'
 
