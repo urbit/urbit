@@ -83,12 +83,11 @@ tall = go 0
 
         RunN t xs → fromMaybe (runNDent d t xs) (runNInline d t xs)
 
-        Jog0 t xs   → mconcat ([line d t] <> bod <> [line d "=="])
-          where bod ∷ [Text]
-                bod = (xs <&> (\(h,t) → go (d+2) h <> go (d+4) t))
+        Jog0 t xs → mconcat ([line d t] <> bod <> [line d "=="])
+          where bod = fromMaybe (jogTallBody d xs) (jogWideBody d xs)
 
         Jog1 t x xs → mconcat ([line d (t<>hed)] <> bod <> [line d "=="])
-          where bod = fromMaybe (jog1TallBody d xs) (jog1WideBody d xs)
+          where bod = fromMaybe (jogTallBody d xs) (jogWideBody d xs)
                 hed = "  " <> wide x
 
         Mode _ t → go d t
@@ -105,21 +104,29 @@ tall = go 0
     runNDent d t xs = mconcat $ [line d t] <> (go (d+2) <$> xs) <> [line d "=="]
 
     runNInline :: Int -> Text -> [Runic] -> Maybe Text
+    runNInline d t [] = Nothing
     runNInline d t xs = do
         let bod = T.lines $ mconcat $ fmap (go (d+4)) xs
-        wid <- maximum <$> fromNullable (length <$> bod)
+            wid = maximumEx $ fmap length bod
         bod <- fromNullable bod
         guard (wid < 80)
         let (b, bs)   = splitFirst bod
         let muck head = indent d t <> "  " <> T.strip head
         pure $ unlines $ [muck b] <> bs <> [indent d "=="]
 
-    jog1TallBody d = fmap (\(h,t) → go (d+2) h <> go (d+4) t)
+    jogTallBody d = fmap (\(h,t) → go (d+2) h <> go (d+4) t)
 
-    jog1WideBody d = sequence . fmap \(h,t) → do
-        let ln = wide h <> "  " <> wide t
-        guard (length ln <= (53 - d))
-        pure (line (d+2) ln)
+    jogWideBody ∷ Int → [(Runic, Runic)] → Maybe [Text]
+    jogWideBody d [] = Nothing
+    jogWideBody d xs = do
+        let heads  = fst <$> xs
+            hedWid = maximumEx (length . wide <$> heads) :: Int
+        sequence $ xs <&> \(h,t) → do
+            let hed = wide h
+            let gap = T.replicate (2 + (hedWid - length hed)) " "
+            let lin = wide h <> gap <> wide t
+            guard (length lin <= (53 - d))
+            pure (line (d+2) lin)
 
 toRunic ∷ C.CST → Runic
 toRunic = go
