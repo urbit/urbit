@@ -58,15 +58,15 @@ export class SidebarItem extends Component {
 
     let description = this.getLetter(props.description);
 
-    let selectedCss = !!props.selected ? 'bg-gray5' : 'bg-white pointer';
+    let selectedCss = !!props.selected ? 'bg-gray5 bg-gray0-d gray3-d' : 'bg-white bg-black-d gray3-d pointer';
     
     return (
       <div
-        className={"z1 pa3 pt4 pb4 bb b--gray4 " + selectedCss}
+        className={"z1 pa3 pt4 pb4 bb b--gray4 b--gray2-d " + selectedCss}
         onClick={this.onClick.bind(this)}>
         <div className="w-100 v-mid">
           <p className={"dib mono f8 " + unreadElem }>
-            <span className={(unreadElem === "") ? "gray3" : ""}>
+            <span className={(unreadElem === "") ? "gray3 gray2-d" : ""}>
               {title.substr(0, title.indexOf("/"))}/
             </span>
             {title.substr(title.indexOf("/") + 1)}

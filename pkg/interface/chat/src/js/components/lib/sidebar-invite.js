@@ -18,7 +18,7 @@ export class SidebarInvite extends Component {
     return (
       <div className='pa3'>
         <div className='w-100 v-mid'>
-          <p className="dib f8 mono">
+          <p className="dib f8 mono gray4-d">
             {props.invite.text}
           </p>
         </div>
@@ -28,7 +28,7 @@ export class SidebarInvite extends Component {
           Accept Invite
         </a>
         <a
-          className="dib pointer ml4 pa2 f9 bg-black white mt4"
+          className="dib pointer ml4 pa2 f9 bg-black bg-gray0-d white mt4"
           onClick={this.onDecline.bind(this)}>
           Decline
         </a>
