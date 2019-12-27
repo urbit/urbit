@@ -20,14 +20,14 @@ demo :: Text -> IO ()
 demo prog = parseCst prog & \case
   Left err -> putStrLn ("parse error: " <> unpack err)
   Right c -> do
-    putStrLn ("parsed: " <> display c)
+    putStrLn ("parsed: " <> runic (toRunic c))
     let h = C.abstractify c
-    putStrLn ("ast: " <> display h)
+    putStrLn ("ast: " <> runic (toRunic $ C.concretize h))
     let e = H.desugar h
-    putStrLn ("core: " <> display e)
+    putStrLn ("core: " <> runic (toRunic $ C.concretize $ H.resugar e))
     let t = infer env e
     case t of
-      Right t -> putStrLn ("type: " <> display (H.resugar' t))
+      Right t -> putStrLn ("type: " <> runic (toRunic $ C.concretize $ H.resugar' t))
       Left er -> putStrLn ("<type error>: " <> show er)
     let n = copy $ toUntyped e
     putStrLn ("nock: " <> show n)
@@ -38,6 +38,11 @@ filo :: FilePath -> Text -> IO ()
 filo fn expr = do
   decls <- readFileUtf8 fn
   demo (decls <> "\n" <> expr)
+
+filoCST :: FilePath -> Text -> IO ()
+filoCST fn expr = do
+  decls <- readFileUtf8 fn
+  demoCST (decls <> "\n" <> expr)
 
 demoCST :: Text -> IO ()
 demoCST prog = parseCst prog & \case
@@ -76,7 +81,7 @@ wide = go
         Bind t v    → mconcat [t, "/", go v]
         Pair i h t  → mconcat [go h, i, go t]
         Jog0 i xs   → i <> "(" <> bod <> ")"
-          where bod = intercalate " " (xs <&> (\(h,t) → go h <> " " <> go t))
+          where bod = intercalate ", " (xs <&> (\(h,t) → go h <> " " <> go t))
         Jog1 i x [] → i <> "(" <> go x <> ")"
         Jog1 i x xs → i <> "(" <> go x <> "; " <> bod <> ")"
           where bod = intercalate ", " $ xs <&> (\(h,t) → go h <> " " <> go t)
@@ -208,7 +213,7 @@ toRunic = go
 
     recTy xs = Mode wide tall
       where wide = JFix "{|" "|}" $ entJog $ mapToList xs
-            tall = Jog0 "$=" $ jog (tag "" "") go xs
+            tall = Jog0 "$`" $ jog (tag "" "") go xs
 
     pie bs x = Mode wide tall
       where wide = IFix "<|" "|>" $ fmap binder bs <> [go x]

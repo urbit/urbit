@@ -188,7 +188,7 @@ expectCel :: (Eq a, Show a) => Typ a -> Typing (Abs a)
 expectCel = whnf >>> \case
   Cel a -> pure a
   Cas e cs -> do
-    absMap <- traverse expectFun cs
+    absMap <- traverse expectCel cs
     let specMap = spec <$> absMap
     let bodyMap = body <$> absMap
     let body = Scope $ Cas (Var $ F e) (unscope <$> bodyMap)

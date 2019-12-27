@@ -7,7 +7,7 @@
 =/  maybe
   |=  a/#
       $%  some  a
-          none  $a
+          none  $~
   ==  ==
 =/  list-abs
   $:
@@ -19,3 +19,32 @@
       tail  <|a/# (list a) (maybe (list a))|>
     ==
   ==
+=/  cons-list
+  =/  list
+    |=  a/#
+      ..  l/#
+      $%  cons  [|a l|]
+          nil   $~
+    ==  ==
+  ^-  list-abs
+  :-  list
+  |%
+  ++  nil  <a/# [%nil ~]>
+  ++  cons
+    |=  a/#  x/a  xs/(list a)
+      [%cons x xs]
+    ==
+  ++  head
+    |=  a/#  xs/(list a)
+      ?%  -.xs
+        %cons  [%none ~]
+        %nil   [%none ~]
+    ==  ==
+  ++  tail
+    |=  a/#  xs/(list a)
+      ^-  (maybe (list a))
+      ?%  -.xs
+        %cons  [%some +.xs]
+        %nil   [%none ~]
+    ==  ==
+  --
