@@ -57,18 +57,84 @@ data Hoon a
   | KetFas (Hoon a) (Hoon a)
   | KetHep (Hoon a) (Hoon a)
   | WutCen (Hoon a) (Map Atom (Hoon a))
+  | WutHax (Hoon a) (Map Atom (Scope (Name Text ()) Hoon a))
   deriving (Functor, Foldable, Traversable, Data, Typeable)
 
 deriveEq1   ''Hoon
 deriveOrd1  ''Hoon
 deriveRead1 ''Hoon
 deriveShow1 ''Hoon
-makeBound   ''Hoon
 
 deriving instance Eq a   => Eq   (Hoon a)
 deriving instance Ord a  => Ord  (Hoon a)
 deriving instance Read a => Read (Hoon a)
 deriving instance Show a => Show (Hoon a)
+
+instance Applicative Hoon where
+  pure = Var
+  (<*>) = ap
+
+instance Monad Hoon where
+  return = Var
+  --
+  Var a >>= f = f a
+  --
+  Hax     >>= _ = Hax
+  Fun t b >>= f = Fun (t >>= f) (b >>>= f)
+  Cel t b >>= f = Cel (t >>= f) (b >>>= f)
+  Wut ls  >>= _ = Wut ls
+  --
+  Lam t b >>= f = Lam (t >>= f) (b >>>= f)
+  Cns x y >>= f = Cns (x >>= f) (y >>= f) 
+  Tag l   >>= _ = Tag l
+  --
+  App x y >>= f = App (x >>= f) (y >>= f)
+  Hed x   >>= f = Hed (x >>= f)
+  Tal x   >>= f = Tal (x >>= f)
+  --
+  The x y >>= f = The (x >>= f) (y >>= f)
+  Fas x y >>= f = Fas (x >>= f) (y >>= f)
+  Obj cs  >>= f = Obj (cs  <&> (>>= f))
+  Cls tcs >>= f = Cls (tcs <&> (>>= f))
+  Col a x >>= f = Col a (x >>= f)
+  --
+  HaxBuc tcs >>= f = HaxBuc (tcs <&> (>>= f))
+  HaxCen tcs >>= f = HaxCen (tcs <&> (>>= f))
+  HaxCol x b >>= f = HaxCol (x >>= f) (b >>>= f)
+  HaxHep x b >>= f = HaxHep (x >>= f) (b >>>= f)
+  --
+  BarCen cs   >>= f = BarCen (cs <&> (>>= f))
+  BarTis x b  >>= f = BarTis (x >>= f) (b >>>= f)
+  CenDot x y  >>= f = CenDot (x >>= f) (y >>= f)
+  CenHep x y  >>= f = CenHep (x >>= f) (y >>= f)
+  ColHep x y  >>= f = ColHep (x >>= f) (y >>= f)
+  ColTar xs   >>= f = ColTar (xs <&> (>>= f))
+  TisFas a b  >>= f = TisFas (a >>= f) (b >>>= f)
+  DotDot t b  >>= f = DotDot (t >>= f) (b >>>= f)
+  DotGal x    >>= f = DotGal (x >>= f)
+  DotGar x    >>= f = DotGar (x >>= f)
+  KetFas x y  >>= f = KetFas (x >>= f) (y >>= f)
+  KetHep x y  >>= f = KetHep (x >>= f) (y >>= f)
+  WutCen x cs >>= f = WutCen (x >>= f) (cs <&> (>>= f))
+  WutHax x bs >>= f = WutHax (x >>= f) (bs <&> (>>>= f))
+
+{-
+  | BarCen (Map Atom (Hoon a))
+  | BarTis (Hoon a) (Scope (Name Text ()) Hoon a)
+  | CenDot (Hoon a) (Hoon a)
+  | CenHep (Hoon a) (Hoon a)
+  | ColHep (Hoon a) (Hoon a)
+  | ColTar [Hoon a]
+  | TisFas (Hoon a) (Scope (Name Text ()) Hoon a)
+  | DotDot (Hoon a) (Scope (Name Text ()) Hoon a)
+  | DotGal (Hoon a)
+  | DotGar (Hoon a)
+  | KetFas (Hoon a) (Hoon a)
+  | KetHep (Hoon a) (Hoon a)
+  | WutCen (Hoon a) (Map Atom (Hoon a))
+  | WutHax (Hoon a) (Map Atom (Scope (Name Text ()) Hoon a))-}
+
+
 
 instance (Data a) => Plated (Hoon a) where
   plate = uniplate
@@ -125,6 +191,7 @@ desugar = go
       KetFas hv ht -> go $ The ht hv
       KetHep ht hv -> go $ The ht hv
       WutCen h cs  -> C.Cas (go h) (go <$> cs)
+      WutHax h bs  -> C.Mat (go h) (hoist go <$> bs)
 
 free :: Applicative f => f a -> f (Var b (f a))
 free = pure . F
@@ -159,6 +226,7 @@ resugar = go
       C.Hed e    -> Hed (go e)
       C.Tal e    -> Tal (go e)
       C.Cas e cs -> WutCen (go e) (go <$> cs)
+      C.Mat e bs -> WutHax (go e) (hoist go <$> bs)
       --
       C.Let e b         -> TisFas (go e) (hoist go b)
       C.Rec (C.Abs t b) -> DotDot (go t) (hoist go b)

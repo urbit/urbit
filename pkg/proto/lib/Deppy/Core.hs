@@ -10,39 +10,42 @@ import Control.Monad.Fail
 import Control.Monad.Trans.Error
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 import Data.Maybe (fromJust)
+import qualified Data.Map.Internal
 import Data.Set (isSubsetOf)
 import Numeric.Natural
 import Text.Show.Pretty (ppShow)
 import qualified Data.Set as Set
 
 type Typ = Exp
+type Bnd a = Scope (Name Text ()) Exp a
 
 data Exp a
   = Var a
   -- types
-  | Typ                                       -- #
-  | Fun (Abs a)                               -- #<v/t t>  #-  v/t  t
-  | Cel (Abs a)                               -- #[v/t t]  #:  v/t  t
-  | Wut (Set Tag)                             -- #foo, ?(#foo #bar)
+  | Typ                                  -- #
+  | Fun (Abs a)                          -- #<v/t t>  #-  v/t  t
+  | Cel (Abs a)                          -- #[v/t t]  #:  v/t  t
+  | Wut (Set Tag)                        -- #foo, ?(#foo #bar)
   -- introduction forms
-  | Lam (Abs a)                               -- <v/t e>  |=  v/t  e
-  | Cns (Exp a) (Exp a) (Maybe (Exp a))       -- [e f]    :-  e f
-  | Tag Tag                                   -- %foo
+  | Lam (Abs a)                          -- <v/t e>  |=  v/t  e
+  | Cns (Exp a) (Exp a) (Maybe (Exp a))  -- [e f]    :-  e f
+  | Tag Tag                              -- %foo
   -- elimination forms
-  | App (Exp a) (Exp a)                       -- (e f)
-  | Hed (Exp a)                               -- e.-
-  | Tal (Exp a)                               -- e.+
-  | Cas (Exp a) (Map Tag (Exp a))             -- ?%  e  $foo  f  $bar  g  ==
+  | App (Exp a) (Exp a)                  -- (e f)
+  | Hed (Exp a)                          -- e.-
+  | Tal (Exp a)                          -- e.+
+  | Cas (Exp a) (Map Tag (Exp a))        -- ?%  e  $foo  f  $bar  g  ==
+  | Mat (Exp a) (Map Tag (Bnd a))        -- ?#  e  [$foo v]  f  [$bar v]  g  ==
   -- recursion, flow control
-  | Let (Exp a) (Scope (Name Text ()) Exp a)  -- =/  v  e
-  | Rec (Abs a)                               -- ..  v/t  e
+  | Let (Exp a) (Bnd a)                  -- =/  v  e
+  | Rec (Abs a)                          -- ..  v/t  e
   deriving (Functor, Foldable, Traversable)
 
 type Tag = Natural
 
 data Abs a = Abs
   { spec :: Typ a
-  , body :: Scope (Name Text ()) Exp a
+  , body :: Bnd a
   }
   deriving (Functor, Foldable, Traversable)
 
@@ -86,6 +89,7 @@ instance Monad Exp where
   Hed x >>= f = Hed (x >>= f)
   Tal x >>= f = Tal (x >>= f)
   Cas x cs >>= f = Cas (x >>= f) (cs <&> (>>= f))
+  Mat x cs >>= f = Mat (x >>= f) (cs <&> (>>>= f))
   Let a b >>= f = Let (a >>= f) (b >>>= f)
   Rec a >>= f = Rec (bindAbs a f)
 
@@ -134,10 +138,13 @@ extend1 t = extend \() -> t
 
 data TypeError where
   NestFail :: forall a. (Show a) => Typ a -> Typ a -> TypeError
+  -- | expected a type isomorphic to Typ (not a type, the Typ)
   NotTyp   :: forall a. (Show a) => Typ a -> TypeError
+  -- | expected a type isomorphic to a function (pi) type
   NotFun   :: forall a. (Show a) => Typ a -> TypeError
   NotCel   :: forall a. (Show a) => Typ a -> TypeError
   NotWut   :: forall a. (Show a) => Typ a -> TypeError
+  NotHaxBuc:: forall a. (Show a) => Typ a -> TypeError
   Other    :: String -> TypeError
 
 deriving instance Show TypeError
@@ -341,6 +348,28 @@ infer env = \case
     s <- expectWut =<< infer env x
     guard (s `isSubsetOf` keysSet cs)
     Cas x <$> traverse (infer env) cs
+  Mat x cs -> do
+    xt <- infer env x
+    (Abs t b) <- expectCel xt
+    s <- expectWut t
+    guard (s `isSubsetOf` keysSet cs)
+    -- yeah
+    case whnf (fromScope b) of
+      Cas (Var v@(B _)) tcs -> do
+        resultTys <- for (mapToList tcs) \(tag, talTy) -> do
+          let talTy' = whnf $ instantiate1 (Tag tag) (toScope talTy)
+          rhsTy <- infer (extend1 talTy' env) (fromNScope $ fromJust $ lookup tag cs)
+          pure (tag, rhsTy)
+        let namedResultTys = (mapFromList resultTys) <&> fmap \case
+              B () -> B (Name (pack "γ") ())
+              F x  -> F x
+        let ty = Cas (Var v) namedResultTys
+        pure (instantiate1 (Hed x) (toScope ty))
+      talTy -> do
+        let applicableCases = Data.Map.Internal.fromSet (fromJust . flip lookup cs) s
+        let applicableCases' = instantiate1 (Tal x) <$> applicableCases
+        rhsTys <- traverse (infer env) applicableCases'
+        pure $ Cas (whnf $ Hed x) rhsTys
   Let e b -> do
     _ <- infer env e  -- RHS must typecheck even if unused lol
     infer env (instantiate1 e b)  -- TODO efficiency?

@@ -55,6 +55,7 @@ data CST
   | KetFas CST CST
   | KetHep CST CST
   | WutCen CST (Map Atom CST)
+  | WutHax CST (Map Atom (Text, CST))
   deriving (Eq, Ord, Read, Show, Data, Typeable)
 
 type Binder = (Maybe Text, CST)
@@ -104,6 +105,7 @@ abstractify = go
       KetFas c d -> H.KetFas (go c) (go d)
       KetHep c d -> H.KetHep (go c) (go d)
       WutCen c cs -> H.WutCen (go c) (go <$> cs)
+      WutHax c cs -> H.WutHax (go c) (cs <&> \(v, d) -> abstract1Name v $ go d)
     bind ctor (Just v,  c) h = ctor (go c) (abstract1Name v h)
     bind ctor (Nothing, c) h = ctor (go c) (abstract (const Nothing) h)
     bindMany ctor bs h = foldr (bind ctor) h bs
@@ -153,9 +155,16 @@ concretize = dissociate . go
       H.DotDot t b -> DotDot bnd c
         where
           (bnd, c) = unbind t b
+      H.DotGal c -> DotGal (go c)
+      H.DotGar c -> DotGar (go c)
       H.KetFas c d -> KetFas (go c) (go d)
       H.KetHep c d -> KetHep (go c) (go d)
       H.WutCen c cs -> WutCen (go c) (go <$> cs)
+      H.WutHax c cs -> WutHax (go c) (yo <$> cs)
+        where
+          yo b = (fromMaybe "_" bnd, d)
+            where
+              ((bnd, _), d) = unbind H.Hax b
 
     unbindPoly ctor t b = let (bdr, bod) = unbind t b in ctor [bdr] bod
     unbind :: H.Hoon Text -> Scope (Name Text ()) H.Hoon Text -> (Binder, CST)

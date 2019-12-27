@@ -27,6 +27,7 @@ toUntyped = \case
     where
       step (tag, f) acc = U.Ift (U.Eql (U.Var (B ())) (U.Atm tag)) (go f) acc
       go = U.Var . F . toUntyped
+  Mat e bs      -> toUntyped $ Cas (Hed e) (instantiate1 (Tal e) <$> bs)
   Let e b       -> U.Let (toUntyped e) (hoist toUntyped $ forget b)
   Rec (Abs _ b) -> U.Fix (hoist toUntyped $ forget b)
 

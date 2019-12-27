@@ -58,6 +58,9 @@ instance Display CST where
       WutCen x cs -> case mapToList cs of
         [] -> "?%(" <> display x <> ")"
         cs -> "?%(" <> display x <> "; " <> displayEnts' cs <> ")"
+      WutHax x cs -> case mapToList cs of
+        [] -> "?#(" <> display x <> ")"
+        cs -> "?#(" <> display x <> "; " <> displayCelPats cs <> ")"
     where
       displayEnts  xs = intercalate ", " (displayEnt "" <$> xs)
       displayEnts' xs = intercalate ", " (displayEnt "%" <$> xs)
@@ -72,4 +75,11 @@ instance Display CST where
       displayBinders bs = intercalate " " (displayBinder <$> bs)
       displayBinder (Nothing, x) = display x
       displayBinder (Just t, x) = unpack t <> "/" <> display x
+      displayCelPats xs = intercalate ", " (displayCelPat <$> xs)
+      displayCelPat (a, (v, c)) = "["
+                               <> displayTag "%" "" a
+                               <> " "
+                               <> unpack v
+                               <> "] "
+                               <> display c
    

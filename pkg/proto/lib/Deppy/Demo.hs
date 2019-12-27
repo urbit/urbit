@@ -34,6 +34,24 @@ demo prog = parseCst prog & \case
   where
     env v = error ("error: free variable: " <> show v)
 
+demo' :: Text -> IO ()
+demo' prog = parseCst prog & \case
+  Left err -> putStrLn ("parse error: " <> unpack err)
+  Right c -> do
+    putStrLn ("parsed: " <> display c)
+    let h = C.abstractify c
+    putStrLn ("ast: " <> display h)
+    let e = H.desugar h
+    putStrLn ("core: " <> display e)
+    let t = infer env e
+    case t of
+      Right t -> putStrLn ("type: " <> display (H.resugar' t))
+      Left er -> putStrLn ("<type error>: " <> show er)
+    let n = copy $ toUntyped e
+    putStrLn ("nock: " <> show n)
+  where
+    env v = error ("error: free variable: " <> show v)
+
 filo :: FilePath -> Text -> IO ()
 filo fn expr = do
   decls <- readFileUtf8 fn
@@ -194,6 +212,7 @@ toRunic = go
         C.TisFas t x y -> let_ t x y
         C.DotDot x y   -> fix x y
         C.WutCen x cs  -> switch x cs
+        C.WutHax x cs  -> switch' x cs
 
     tagLit a = tag "%" "" a
 
@@ -220,6 +239,8 @@ toRunic = go
             tall = RunN "$-" $ fmap binder bs <> [go x]
 
     switch x cs = Jog1 "?%" (go x) (jog (tag "%" "") go cs)
+
+    switch' x cs = Jog1 "?#" (go x) undefined
 
     recLit cs = Mode wide tall
       where wide = JFix "{" "}" $ entJog $ mapToList cs

@@ -154,10 +154,15 @@ rune = runeSwitch
   , (".>", rune1 DotGar cst)
   , ("^/", rune2 KetFas cst cst)
   , ("^-", rune2 KetHep cst cst)
-  , ("?%", runeJogging1 wutCen cst (textToAtom <$> tag <|> atom) cst)
+  , ("?%", runeJogging1 wutCen cst tagPat cst)
+  , ("?#", runeJogging1 wutHax cst celPat cst)
   ]
   where
+    tagPat = textToAtom <$> tag <|> atom
     wutCen c cs = WutCen c (mapFromList cs)
+    celPat = char '[' *> ((,) <$> tagPat <*> (ace *> sym)) <* char ']'
+    wutHax c stuff =
+      WutHax c (mapFromList $ map (\((a, v), d) -> (a, (v, d))) stuff)
 
 runeSwitch ∷ [(Text, Parser a)] → Parser a
 runeSwitch = choice . fmap (\(s, p) → string s *> p)
