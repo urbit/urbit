@@ -9,7 +9,7 @@
       $%  some  a
           none  $~
   ==  ==
-=/  list-abs
+=/  list-sig
   $:
     list/<|# #|>
     $`
@@ -19,14 +19,14 @@
       tail  <|a/# (list a) (maybe (list a))|>
     ==
   ==
-=/  cons-list
+=/  cons-list-module
   =/  list
     |=  a/#
       ..  l/#
       $%  cons  [|a l|]
           nil   $~
     ==  ==
-  ^-  list-abs
+  ^-  list-sig
   :-  list
   |%
   ++  nil  <a/# [%nil ~]>
@@ -36,15 +36,44 @@
     ==
   ++  head
     |=  a/#  xs/(list a)
-      ?%  -.xs
-        %cons  [%none ~]
-        %nil   [%none ~]
+      ?#  xs
+        [%cons y]  [%some -.y]
+        [%nil y]   [%none ~]
     ==  ==
   ++  tail
     |=  a/#  xs/(list a)
       ^-  (maybe (list a))
-      ?%  -.xs
-        %cons  [%some +.xs]
-        %nil   [%none ~]
+      ?#  xs
+        [%cons y]  [%some +.y]
+        [%nil y]   [%none ~]
+    ==  ==
+  --
+=/  snoc-list-module
+  =/  list
+    |=  a/#
+      ..  l/#
+      $%  snoc  [|l a|]
+          nil   $~
+    ==  ==
+  ^-  list-sig
+  :-  list
+  |%
+  ++  nil  <a/# [%nil ~]>
+  ++  cons
+    |=  a/#  x/a  xs/(list a)
+      [%snoc xs x]
+    ==
+  ++  head
+    |=  a/#  xs/(list a)
+      ?#  xs
+        [%cons y]  [%some -.y]
+        [%nil y]   [%none ~]
+    ==  ==
+  ++  tail
+    |=  a/#  xs/(list a)
+      ^-  (maybe (list a))
+      ?#  xs
+        [%cons y]  [%some +.y]
+        [%nil y]   [%none ~]
     ==  ==
   --

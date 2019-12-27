@@ -70,7 +70,7 @@ instance Display CST where
         \case
           Just (N.Cord x) | okay x -> p1 <> unpack x
           _ -> p2 <> show x
-      okay = all (flip elem ['a'..'z'])
+      okay xs = not (null xs) && all (flip elem ('-':['a'..'z'])) xs
       displayBound bs x =  displayBinders bs <> " " <> display x
       displayBinders bs = intercalate " " (displayBinder <$> bs)
       displayBinder (Nothing, x) = display x
