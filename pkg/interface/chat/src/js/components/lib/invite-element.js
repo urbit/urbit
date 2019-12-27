@@ -80,7 +80,7 @@ export class InviteElement extends Component {
       <div></div>
     );
 
-    let modifyButtonClasses = "db f9 ba pa2 b--black pointer";
+    let modifyButtonClasses = "db f9 ba pa2 white-d bg-gray0-d b--black b--gray2-d pointer";
     if (state.error) {
       modifyButtonClasses = modifyButtonClasses + ' gray3';
     }
@@ -96,7 +96,7 @@ export class InviteElement extends Component {
       <div>
         <textarea
           ref={ e => { this.textarea = e; } }
-          className="f7 mono ba b--gray3 pa3 mb4 db w-100"
+          className="f7 mono ba b--gray3 bg-black-d white-d pa3 mb4 db w-100"
           style={{
             resize: 'none',
             height: 50

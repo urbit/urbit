@@ -78,11 +78,11 @@ export class Sidebar extends Component {
         </div>
         <div className="absolute z2 tc w-100 bg-transparent"
           style={{ bottom: 10 }}>
-          <a className="dib f9 pa3 bt bb bl br tc pointer bg-white"
+          <a className="dib f9 pa3 bt bb bl br tc pointer bg-white bg-gray0-d gray4-d b--gray2-d"
             onClick={this.onClickNew.bind(this)}>
             Create New Chat
           </a>
-          <a className="dib f9 pa3 bt bb br tl pointer bg-white"
+          <a className="dib f9 pa3 bt bb br tl pointer bg-white bg-gray0-d gray4-d b--gray2-d"
             onClick={this.onClickJoin.bind(this)}>
             Join Existing Chat
           </a>
