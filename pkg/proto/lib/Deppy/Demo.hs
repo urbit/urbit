@@ -72,9 +72,9 @@ wide = go
         Pair i h t  → mconcat [go h, i, go t]
         Jog0 i xs   → i <> "(" <> bod <> ")"
           where bod = intercalate " " (xs <&> (\(h,t) → go h <> " " <> go t))
-        Jog1 i x xs → i <> "(" <> bod <> ")"
-          where bod = intercalate " "
-                    $ (:) (go x <> ";") (xs <&> (\(h,t) → go h <> ", " <> go t))
+        Jog1 i x [] → i <> "(" <> go x <> ")"
+        Jog1 i x xs → i <> "(" <> go x <> "; " <> bod <> ")"
+          where bod = intercalate ", " $ xs <&> (\(h,t) → go h <> " " <> go t)
         Wide x      → go x
         Pref t x    → t <> go x
         Tied x y    → go x <> go y
@@ -85,38 +85,43 @@ wide = go
 tall ∷ Runic → Text
 tall = go 0
   where
-    go d (wide -> t) | length t < 40 = indent d t
+    go d (wide -> t) | length t < 40 = line d t
     go d v                           = ta d v
 
-    indent d t = replicate d ' ' <> t <> "\n"
+    indent d t = replicate d ' ' <> t
+
+    line d t = indent d t <> "\n"
 
     ta d = \case
-        Leaf t → indent d t
+        Leaf t → line d t
 
-        RunC t xs → indent d t <> bod (length xs - 1) xs
+        RunC t xs → case xs of
+                      []   -> line d t <> bod (length xs - 1) xs
+                      x:xs -> indent d t <> "  " <> wide x <> "\n"
+                           <> bod (length xs - 1) xs
           where bod n []     = ""
                 bod n (x:xs) = go (d + n*2) x <> bod (pred n) xs
 
-        RunN t xs → mconcat ([indent d t] <> bod <> [indent d "=="])
+        RunN t xs → mconcat ([line d t] <> bod <> [line d "=="])
           where bod = go (d+2) <$> xs
 
-        Jog0 t xs   → mconcat ([indent d t] <> bod <> [indent d "=="])
+        Jog0 t xs   → mconcat ([line d t] <> bod <> [line d "=="])
           where bod ∷ [Text]
                 bod = (xs <&> (\(h,t) → go (d+2) h <> go (d+4) t))
 
-        Jog1 t x xs → mconcat ([indent d (t<>hed)] <> bod <> [indent d "=="])
+        Jog1 t x xs → mconcat ([line d (t<>hed)] <> bod <> [line d "=="])
           where bod = xs <&> (\(h,t) → go (d+2) h <> go (d+4) t)
                 hed = "  " <> wide x
 
         Mode _ t → go d t
 
-        IFix h t xs → indent d $ wide $ IFix h t xs
-        JFix h t xs → indent d $ wide $ JFix h t xs
-        Bind t v    → indent d $ wide $ Bind t v
-        Pair i h t  → indent d $ wide $ Pair i h t
-        Wide x      → indent d $ wide x
-        Pref t x    → indent d $ wide $ Pref t x
-        Tied x y    → indent d $ wide $ Tied x y
+        IFix h t xs → line d $ wide $ IFix h t xs
+        JFix h t xs → line d $ wide $ JFix h t xs
+        Bind t v    → line d $ wide $ Bind t v
+        Pair i h t  → line d $ wide $ Pair i h t
+        Wide x      → line d $ wide x
+        Pref t x    → line d $ wide $ Pref t x
+        Tied x y    → line d $ wide $ Tied x y
 
 runic = unpack . tall
 
@@ -216,7 +221,7 @@ toRunic = go
       where wide = Tied (IFix "`" "`" [go x]) (go y)
             tall = RunC "^-" [go x, go y]
 
-    let_ t x y = RunC "=/" [Bind t (go x), go y]
+    let_ t x y = RunC "=/" [Leaf t, go x, go y]
 
     apply xs = Mode wide tall
       where wide = IFix "(" ")" xs
@@ -249,6 +254,7 @@ toRunic = go
     binder ( Nothing, x ) = go x
     binder ( Just t,  x ) = Bind t (go x)
 
+    tag t n 0 = Leaf (n <> "0")
     tag t n x = N.fromNoun (N.A x) & \case
         Just (N.Cord c) | okay c -> Leaf (t <> c)
         _                        -> Leaf (n <> tshow x)
