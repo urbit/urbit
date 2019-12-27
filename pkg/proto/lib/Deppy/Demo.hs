@@ -29,4 +29,9 @@ demo prog = parseCst prog & \case
     let n = copy $ toUntyped e
     putStrLn ("nock: " <> show n)
 
+filo :: FilePath -> Text -> IO ()
+filo fn expr = do
+  decls <- readFileUtf8 fn
+  demo (decls <> "\n" <> expr)
+
 env v = error ("error: free variable: " <> show v)

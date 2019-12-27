@@ -341,7 +341,9 @@ infer env = \case
     s <- expectWut =<< infer env x
     guard (s `isSubsetOf` keysSet cs)
     Cas x <$> traverse (infer env) cs
-  Let e b -> infer env (instantiate1 e b)  -- TODO efficiency?
+  Let e b -> do
+    _ <- infer env e  -- RHS must typecheck even if unused lol
+    infer env (instantiate1 e b)  -- TODO efficiency?
   Rec (Abs t b) -> do
     expectTyp =<< infer env t
     -- todo can F <$> be made faster?
