@@ -29,6 +29,7 @@ data Ur
     | S
     | D
     | Val Natural Ur [Ur]
+    | Eye
     | Wait Natural
     | Fix
     | Nat Natural
@@ -57,8 +58,6 @@ unVal u = go u . reverse
 
 instance Show Ur where
     show = \case
-        S :@ K :@ K → "id"
-
         x :@ y      → "[" <> intercalate " " (show <$> flatten x [y]) <> "]"
 
         J n         → replicate (fromIntegral (succ n)) '0'
@@ -71,6 +70,7 @@ instance Show Ur where
 
         Fix         → "fix"
 
+        Eye         → "eye"
         Fol         → "fol"
         Add         → "add"
         Inc         → "inc"
@@ -127,7 +127,7 @@ data Match = MkMatch
   deriving (Show)
 
 match ∷ Ur → Natural → Ur → Ur → Match
-match j n t b = MkMatch (urVal j) (fromIntegral n) (urVal t) (urVal b)
+match j n t b = MkMatch (urVal j) (fromIntegral (n-1)) (urVal t) (urVal b)
 
 type Check = Named (Word → JetTag → Val → Maybe Val)
 
@@ -173,16 +173,14 @@ unChurch = \case
 emp ∷ Ur
 emp = K
 
-pattern I = S :@ K :@ K
-
 pattern J1 = J 0 :@ K
 pattern J2 = J 1 :@ K
 pattern J3 = J 2 :@ K
 pattern J4 = J 3 :@ K
 
 -- Z = \f -> (\x -> f (\v -> wait2 x x v)) (\x -> f (\v -> wait2 x x v))
-pattern Z = S :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait 2:@I)))
-              :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait 2:@I)))
+pattern Z = S :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait 2:@Eye)))
+              :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait 2:@Eye)))
 
 {-
     TODO:
@@ -197,6 +195,10 @@ pattern Z = S :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait 2:@I)))
     For now, I'm hacking around this by using a unjetted version of
     `fol` in jet bodies.
 -}
+
+l_eye = S :@ K :@ K
+j_eye = match Eye 1 emp l_eye
+eye   = jetExp j_eye
 
 ch_succ = S :@ (S :@ (K :@ S) :@ K)
 ch_zero = S :@ K
@@ -233,24 +235,25 @@ l_fix = ( (S :@ ((S :@ K) :@ K))
            ((S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ ((S :@ K) :@ K)))))
             :@
             ((S :@ Wait 2) :@ ((S :@ K) :@ K)))))
+
 j_fix = match Fix 2 emp l_fix
 fix = jetExp j_fix
 
 l_zer = S :@ K
 l_one = S :@ (S:@(K:@S):@K) :@ (S:@K)
-l_fol = S :@ (S:@I:@(K:@(S:@(S:@(K:@S):@K)))) :@ (K:@(S:@K))
+l_fol = S :@ (S:@Eye:@(K:@(S:@(S:@(K:@S):@K)))) :@ (K:@(S:@K))
 l_inc = S :@ (K:@J2) :@ (S:@(K:@(S:@(S:@(K:@S):@K))) :@ l_fol)
-l_dec = S:@(S:@(S:@(K:@Cas):@(S:@(S:@I:@(K:@(S:@(S:@Cas:@(K:@(K:@(Rit:@ch_zero)))):@(K:@(S:@(K:@Rit):@ch_succ))))):@(K:@(Lef:@Uni)))):@(K:@(K:@(Lef :@ Uni)))):@(K:@(S:@(K:@Rit):@(S:@(K:@J2):@Fol)))
+l_dec = S:@(S:@(S:@(K:@Cas):@(S:@(S:@Eye:@(K:@(S:@(S:@Cas:@(K:@(K:@(Rit:@ch_zero)))):@(K:@(S:@(K:@Rit):@ch_succ))))):@(K:@(Lef:@Uni)))):@(K:@(K:@(Lef :@ Uni)))):@(K:@(S:@(K:@Rit):@(S:@(K:@J2):@Fol)))
 l_mul = D :@ D :@ D -- TODO
-l_sub = S:@(K:@(S:@(S:@I:@(K:@(S:@(S:@Cas:@(K:@Lef)):@(K:@Dec)))))):@(S:@(K:@K):@Rit)
+l_sub = S:@(K:@(S:@(S:@Eye:@(K:@(S:@(S:@Cas:@(K:@Lef)):@(K:@Dec)))))):@(S:@(K:@K):@Rit)
 l_add = S :@ (K:@(S:@(K:@J2))) :@ (S:@(K:@(S:@(K:@l_fol))):@(S:@(K:@(S:@(K:@(S:@(K:@K))))):@(S:@(S:@(K:@(S:@(K:@(S:@(K:@S):@K)):@S)):@l_fol):@(K:@(S:@(K:@K):@l_fol)))))
 l_uni = K
-l_lef = S :@ (K:@(S:@(K:@(S:@(K:@K))):@(S:@I))) :@ K
-l_rit = S :@ (K:@(S:@(K:@K):@(S:@I))) :@ K
-l_cas = I
-l_con = S:@(K:@(S:@(K:@(S:@(K:@(S:@(K:@(S:@S:@(K:@K))):@K)):@S)):@(S:@I))):@K
-l_car = S:@I:@(K:@K)
-l_cdr = S:@I:@(K:@(S:@K))
+l_lef = S :@ (K:@(S:@(K:@(S:@(K:@K))):@(S:@Eye))) :@ K
+l_rit = S :@ (K:@(S:@(K:@K):@(S:@Eye))) :@ K
+l_cas = Eye
+l_con = S:@(K:@(S:@(K:@(S:@(K:@(S:@(K:@(S:@S:@(K:@K))):@K)):@S)):@(S:@Eye))):@K
+l_car = S:@Eye:@(K:@K)
+l_cdr = S:@Eye:@(K:@(S:@K))
 
 zer = jetExp j_zer
 one = jetExp j_one
@@ -280,8 +283,8 @@ j_nat = Named "nat" chk
 j_wait ∷ Check
 j_wait = Named "wait" chk
   where chk ∷ Word → JetTag → Val → Maybe Val
-        chk n (MkVal I) (MkVal I) = Just $ MkVal $ Wait $ fromIntegral n
-        chk _ _         _         = Nothing
+        chk n (MkVal Eye) (MkVal Eye) = Just $ MkVal $ Wait $ fromIntegral n
+        chk _ _           _           = Nothing
 
 j_fol = match Fol 1 emp l_fol
 j_inc = match Inc 1 emp l_inc
@@ -299,7 +302,8 @@ j_cdr = match Cdr 1 emp l_cdr
 
 dash ∷ Dash
 dash = mkDash
-    [ simpleEnt j_fix
+    [ simpleEnt j_eye
+    , simpleEnt j_fix
     , simpleEnt j_fol
     , simpleEnt j_inc
     , simpleEnt j_add
@@ -356,10 +360,14 @@ reduce = \case
     Val 0 u us :@ x → Just (apply u (reverse (x:us)))
     Val n u us :@ x → Just (Val (pred n) u (x:us))
 
+    -- Jets
+
+    Eye :@ x → Just x
+
     Wait n → Just (Val n (Wait n) [])
 
-    --x   :@ f :@ x → Just (f :@ (Fix :@ f) :@ x)
-    Fix   :@ f :@ x → Just (l_fix :@ f :@ x)
+    Fix   :@ f :@ x → Just (f :@ (Fix :@ f) :@ x)
+    --    :@ f :@ x → Just (l_fix :@ f :@ x)
     Nat n :@ x :@ y → Just (church n :@ x :@ y)
 
     Fol :@ x → Just $ x & \case
@@ -430,7 +438,7 @@ churchJet ∷ Natural → Ur
 churchJet n = J 2 :@ K :@ church n
 
 waitJet ∷ Natural → Ur
-waitJet n = J n :@ I :@ I
+waitJet n = J n :@ Eye :@ Eye
 
 --
 --  Serialize and Uruk expression and church-encode it.
@@ -439,6 +447,7 @@ jam ∷ Ur → Ur
 jam = Nat . snd . go
   where
     go ∷ Ur → (Int, Natural)
+    go Eye          = go (jetExp j_eye)
     go Fix          = go (jetExp j_fix)
     go Inc          = go (jetExp j_inc)
     go Fol          = go (jetExp j_fol)
