@@ -338,7 +338,9 @@ dash = mkDash
     , simpleEnt j_car
     , simpleEnt j_cdr
     , predikEnt j_nat
+    , predikEnt j_clin
     , predikEnt j_slin
+    , predikEnt j_blin
     , predikEnt j_wait
     ]
 
@@ -484,12 +486,29 @@ cLinJet n = J (n+1) :@ K :@ cLin n
 sLinJet 0 = error "impossible SLin jet"
 sLinJet n = J (n+1) :@ K :@ sLin n
 
+j_blin ∷ Check
+j_blin = Named "slin" chk
+  where
+    chk n (MkVal K) (MkVal b)     = MkVal . BLin <$> go n b
+    chk n _         k             = Nothing
+    go 2 B                        = Just 1
+    go n (B:@B:@(go(n-1)→Just r)) = Just (r+1)
+    go n _                        = Nothing
+
+j_clin ∷ Check
+j_clin = Named "slin" chk
+  where
+    chk n (MkVal K) (MkVal b)             = MkVal . CLin <$> go n b
+    chk n _         k                     = Nothing
+    go 2 C                                = Just 1
+    go n (B:@(B:@C):@B:@(go(n-1)→Just r)) = Just (r+1)
+    go n _                                = Nothing
+
 j_slin ∷ Check
 j_slin = Named "slin" chk
   where
-    chk n (MkVal K) (MkVal k) = MkVal . SLin <$> go n k
-    chk n _         k         = Nothing
-
+    chk n (MkVal K) (MkVal b)             = MkVal . SLin <$> go n b
+    chk n _         k                     = Nothing
     go 2 S                                = Just 1
     go n (B:@(B:@S):@B:@(go(n-1)→Just r)) = Just (r+1)
     go n _                                = Nothing
