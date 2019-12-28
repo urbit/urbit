@@ -386,8 +386,13 @@ reduce = \case
     Val n u us :@ x → Just (Val (pred n) u (x:us))
 
     -- Jets
+    I :@ x           → Just x
+    B :@ f :@ g :@ x → Just (g :@ (f :@ x))
+    C :@ f :@ g :@ x → Just (f :@ x :@ g)
 
-    I :@ x → Just x
+    SLin n → Just (Val (n+1) (SLin n) [])
+    BLin n → Just (Val (n+1) (BLin n) [])
+    CLin n → Just (Val (n+1) (CLin n) [])
 
     Wait n → Just (Val n (Wait n) [])
 
@@ -439,10 +444,12 @@ reduce = \case
   where
     apply ∷ Ur → [Ur] → Ur
     apply = curry \case
-        ( J n :@ t :@ b, us   ) -> go b us
-        ( Wait _,        u:us ) -> go u us
-        ( Wait _,        []   ) -> error "impossible"
-        ( f,             us   ) -> error "impossible"
+        ( J n :@ t :@ b, us     ) -> go b us
+        ( Wait _,        u:us   ) -> go u us
+        ( BLin _,        f:g:xs ) -> f :@ go g xs
+        ( CLin _,        f:g:xs ) -> go f xs :@ g
+        ( SLin _,        f:g:xs ) -> go f xs :@ go g xs
+        ( _,             _      ) -> error "impossible"
       where
         go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
 
@@ -487,7 +494,7 @@ sLinJet 0 = error "impossible SLin jet"
 sLinJet n = J (n+1) :@ K :@ sLin n
 
 j_blin ∷ Check
-j_blin = Named "slin" chk
+j_blin = Named "blin" chk
   where
     chk n (MkVal K) (MkVal b)     = MkVal . BLin <$> go n b
     chk n _         k             = Nothing
@@ -496,22 +503,22 @@ j_blin = Named "slin" chk
     go n _                        = Nothing
 
 j_clin ∷ Check
-j_clin = Named "slin" chk
+j_clin = Named "clin" chk
   where
-    chk n (MkVal K) (MkVal b)             = MkVal . CLin <$> go n b
-    chk n _         k                     = Nothing
-    go 2 C                                = Just 1
-    go n (B:@(B:@C):@B:@(go(n-1)→Just r)) = Just (r+1)
-    go n _                                = Nothing
+    chk n (MkVal K) (MkVal b)          = MkVal . CLin <$> go n b
+    chk n _         k                  = Nothing
+    go 2 C                             = Just 1
+    go n (B:@(B:@C:@(go(n-1)→Just r))) = Just (r+1)
+    go n _                             = Nothing
 
 j_slin ∷ Check
 j_slin = Named "slin" chk
   where
-    chk n (MkVal K) (MkVal b)             = MkVal . SLin <$> go n b
-    chk n _         k                     = Nothing
-    go 2 S                                = Just 1
-    go n (B:@(B:@S):@B:@(go(n-1)→Just r)) = Just (r+1)
-    go n _                                = Nothing
+    chk n (MkVal K) (MkVal b)          = MkVal . SLin <$> go n b
+    chk n _         k                  = Nothing
+    go 2 S                             = Just 1
+    go n (B:@(B:@S:@(go(n-1)→Just r))) = Just (r+1)
+    go n _                             = Nothing
 
 
 --
