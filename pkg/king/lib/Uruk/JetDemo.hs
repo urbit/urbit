@@ -29,7 +29,12 @@ data Ur
     | S
     | D
     | Val Natural Ur [Ur]
-    | Eye
+    | I
+    | B
+    | C
+    | Sn Natural
+    | Bn Natural
+    | Cn Natural
     | Wait Natural
     | Fix
     | Nat Natural
@@ -58,19 +63,26 @@ unVal u = go u . reverse
 
 instance Show Ur where
     show = \case
-        x :@ y      → "[" <> intercalate " " (show <$> flatten x [y]) <> "]"
+        x :@ y      → "(" <> intercalate " " (show <$> flatten x [y]) <> ")"
 
-        J n         → replicate (fromIntegral (succ n)) '0'
-        K           → "1"
-        S           → "2"
-        D           → "3"
+        J n         → replicate (fromIntegral (succ n)) 'J'
+        K           → "K"
+        S           → "S"
+        D           → "D"
         Val _ u us  → close u us
 
         Nat n       → "#" <> show n
 
         Fix         → "fix"
 
-        Eye         → "eye"
+        I           → "I"
+        B           → "B"
+        C           → "C"
+
+        Sn n        → "I" <> show n
+        Bn n        → "B" <> show n
+        Cn n        → "C" <> show n
+
         Fol         → "fol"
         Add         → "add"
         Inc         → "inc"
@@ -93,7 +105,7 @@ instance Show Ur where
         flatten (x :@ y) acc = flatten x (y : acc)
         flatten x        acc = (x : acc)
 
-        close u us = "{" <> intercalate " " (show <$> u : reverse us) <> "}"
+        close u us = "[| " <> intercalate " " (show <$> u : reverse us) <> " |]"
 
 
 -- Normalized Values -----------------------------------------------------------
@@ -179,8 +191,8 @@ pattern J3 = J 2 :@ K
 pattern J4 = J 3 :@ K
 
 -- Z = \f -> (\x -> f (\v -> wait2 x x v)) (\x -> f (\v -> wait2 x x v))
-pattern Z = S :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait 2:@Eye)))
-              :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait 2:@Eye)))
+pattern Z = S :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait 2:@I)))
+              :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait 2:@I)))
 
 {-
     TODO:
@@ -196,9 +208,17 @@ pattern Z = S :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait 2:@Eye)))
     `fol` in jet bodies.
 -}
 
-l_eye = S :@ K :@ K
-j_eye = match Eye 1 emp l_eye
-eye   = jetExp j_eye
+l_i = S :@ K :@ K
+j_i = match I 1 emp l_i
+i   = jetExp j_i
+
+l_b = S :@ (K :@ S) :@ K
+j_b = match B 3 emp l_b
+b   = jetExp j_b
+
+l_c = S :@ (K :@ (S :@ (K :@ (S :@ S :@ (K :@ K))) :@ K)) :@ S
+j_c = match C 3 emp l_c
+c   = jetExp j_c
 
 ch_succ = S :@ (S :@ (K :@ S) :@ K)
 ch_zero = S :@ K
@@ -241,19 +261,19 @@ fix = jetExp j_fix
 
 l_zer = S :@ K
 l_one = S :@ (S:@(K:@S):@K) :@ (S:@K)
-l_fol = S :@ (S:@Eye:@(K:@(S:@(S:@(K:@S):@K)))) :@ (K:@(S:@K))
+l_fol = S :@ (S:@I:@(K:@(S:@(S:@(K:@S):@K)))) :@ (K:@(S:@K))
 l_inc = S :@ (K:@J2) :@ (S:@(K:@(S:@(S:@(K:@S):@K))) :@ l_fol)
-l_dec = S:@(S:@(S:@(K:@Cas):@(S:@(S:@Eye:@(K:@(S:@(S:@Cas:@(K:@(K:@(Rit:@ch_zero)))):@(K:@(S:@(K:@Rit):@ch_succ))))):@(K:@(Lef:@Uni)))):@(K:@(K:@(Lef :@ Uni)))):@(K:@(S:@(K:@Rit):@(S:@(K:@J2):@Fol)))
+l_dec = S:@(S:@(S:@(K:@Cas):@(S:@(S:@I:@(K:@(S:@(S:@Cas:@(K:@(K:@(Rit:@ch_zero)))):@(K:@(S:@(K:@Rit):@ch_succ))))):@(K:@(Lef:@Uni)))):@(K:@(K:@(Lef :@ Uni)))):@(K:@(S:@(K:@Rit):@(S:@(K:@J2):@Fol)))
 l_mul = D :@ D :@ D -- TODO
-l_sub = S:@(K:@(S:@(S:@Eye:@(K:@(S:@(S:@Cas:@(K:@Lef)):@(K:@Dec)))))):@(S:@(K:@K):@Rit)
+l_sub = S:@(K:@(S:@(S:@I:@(K:@(S:@(S:@Cas:@(K:@Lef)):@(K:@Dec)))))):@(S:@(K:@K):@Rit)
 l_add = S :@ (K:@(S:@(K:@J2))) :@ (S:@(K:@(S:@(K:@l_fol))):@(S:@(K:@(S:@(K:@(S:@(K:@K))))):@(S:@(S:@(K:@(S:@(K:@(S:@(K:@S):@K)):@S)):@l_fol):@(K:@(S:@(K:@K):@l_fol)))))
 l_uni = K
-l_lef = S :@ (K:@(S:@(K:@(S:@(K:@K))):@(S:@Eye))) :@ K
-l_rit = S :@ (K:@(S:@(K:@K):@(S:@Eye))) :@ K
-l_cas = Eye
-l_con = S:@(K:@(S:@(K:@(S:@(K:@(S:@(K:@(S:@S:@(K:@K))):@K)):@S)):@(S:@Eye))):@K
-l_car = S:@Eye:@(K:@K)
-l_cdr = S:@Eye:@(K:@(S:@K))
+l_lef = S :@ (K:@(S:@(K:@(S:@(K:@K))):@(S:@I))) :@ K
+l_rit = S :@ (K:@(S:@(K:@K):@(S:@I))) :@ K
+l_cas = I
+l_con = S:@(K:@(S:@(K:@(S:@(K:@(S:@(K:@(S:@S:@(K:@K))):@K)):@S)):@(S:@I))):@K
+l_car = S:@I:@(K:@K)
+l_cdr = S:@I:@(K:@(S:@K))
 
 zer = jetExp j_zer
 one = jetExp j_one
@@ -283,8 +303,8 @@ j_nat = Named "nat" chk
 j_wait ∷ Check
 j_wait = Named "wait" chk
   where chk ∷ Word → JetTag → Val → Maybe Val
-        chk n (MkVal Eye) (MkVal Eye) = Just $ MkVal $ Wait $ fromIntegral n
-        chk _ _           _           = Nothing
+        chk n (MkVal I) (MkVal I) = Just $ MkVal $ Wait $ fromIntegral n
+        chk _ _         _         = Nothing
 
 j_fol = match Fol 1 emp l_fol
 j_inc = match Inc 1 emp l_inc
@@ -302,7 +322,9 @@ j_cdr = match Cdr 1 emp l_cdr
 
 dash ∷ Dash
 dash = mkDash
-    [ simpleEnt j_eye
+    [ simpleEnt j_i
+    , simpleEnt j_b
+    , simpleEnt j_c
     , simpleEnt j_fix
     , simpleEnt j_fol
     , simpleEnt j_inc
@@ -362,7 +384,7 @@ reduce = \case
 
     -- Jets
 
-    Eye :@ x → Just x
+    I :@ x → Just x
 
     Wait n → Just (Val n (Wait n) [])
 
@@ -438,7 +460,7 @@ churchJet ∷ Natural → Ur
 churchJet n = J 2 :@ K :@ church n
 
 waitJet ∷ Natural → Ur
-waitJet n = J n :@ Eye :@ Eye
+waitJet n = J n :@ I :@ I
 
 --
 --  Serialize and Uruk expression and church-encode it.
@@ -447,7 +469,12 @@ jam ∷ Ur → Ur
 jam = Nat . snd . go
   where
     go ∷ Ur → (Int, Natural)
-    go Eye          = go (jetExp j_eye)
+    go I            = go (jetExp j_i)
+    go B            = go (jetExp j_b)
+    go C            = go (jetExp j_c)
+    go (Sn n)       = undefined
+    go (Bn n)       = undefined
+    go (Cn n)       = undefined
     go Fix          = go (jetExp j_fix)
     go Inc          = go (jetExp j_inc)
     go Fol          = go (jetExp j_fol)
