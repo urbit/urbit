@@ -65,23 +65,23 @@ instance Show Ur where
     show = \case
         x :@ y      → "(" <> intercalate " " (show <$> flatten x [y]) <> ")"
 
-        J n         → replicate (fromIntegral (succ n)) 'J'
-        K           → "K"
-        S           → "S"
-        D           → "D"
+        J n         → replicate (fromIntegral (succ n)) 'j'
+        K           → "k"
+        S           → "s"
+        D           → "d"
         Val _ u us  → close u us
 
         Nat n       → "#" <> show n
 
         Fix         → "fix"
 
-        I           → "I"
-        B           → "B"
-        C           → "C"
+        I           → "i"
+        B           → "b"
+        C           → "c"
 
-        Sn n        → "I" <> show n
-        Bn n        → "B" <> show n
-        Cn n        → "C" <> show n
+        Sn n        → "i" <> show n
+        Bn n        → "b" <> show n
+        Cn n        → "c" <> show n
 
         Fol         → "fol"
         Add         → "add"
@@ -244,17 +244,16 @@ ch_zero = S :@ K
 
 -- fix f x = f ((Wait 2) fix f) x
 -- fix = Z (\fx -> wait2 Jet2 (\f x -> f (fx f) x))
-l_fix = ( (S :@ ((S :@ K) :@ K))
+l_fix = ( (S :@ I)
           :@
-          ((Wait 2
-            :@
-            ((S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ ((S :@ K) :@ K)))))
+          ((Wait 2 :@
+            ((S :@ (K :@ ((S :@ (K :@ (J 1 :@ K))) :@ (S :@ I))))
              :@
-             ((S :@ Wait 2) :@ ((S :@ K) :@ K))))
+             ((S :@ Wait 2) :@ I)))
            :@
-           ((S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ ((S :@ K) :@ K)))))
+           ((S :@ (K :@ ((S :@ (K :@ (J 1 :@ K))) :@ (S :@ I))))
             :@
-            ((S :@ Wait 2) :@ ((S :@ K) :@ K)))))
+            ((S :@ Wait 2) :@ I))))
 
 j_fix = match Fix 2 emp l_fix
 fix = jetExp j_fix
@@ -457,7 +456,7 @@ church 0 = S :@ K
 church n = S :@ (S:@(K:@S):@K) :@ church (pred n)
 
 churchJet ∷ Natural → Ur
-churchJet n = J 2 :@ K :@ church n
+churchJet n = J 1 :@ K :@ church n
 
 waitJet ∷ Natural → Ur
 waitJet n = J n :@ I :@ I
