@@ -215,7 +215,10 @@ toRunic = go
 
     lambda bs x = Mode wide tall
       where wide = IFix "<" ">" (fmap binder bs <> [go x])
-            tall = RunN "|=" (fmap binder bs <> [go x])
+            tall = case bs of
+                     []  -> go x
+                     [b] -> RunC "|=" [binder b, go x]
+                     bs  -> RunC "|=" [IFix "(" ")" (binder<$>bs), go x]
 
     cellTy bs x = Mode wide tall
       where
