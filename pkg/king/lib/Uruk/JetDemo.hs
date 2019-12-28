@@ -12,9 +12,10 @@
 module Uruk.JetDemo where
 
 import ClassyPrelude
-
 import Data.Bits
+
 import Data.Function ((&))
+import Data.List     ((!!), iterate)
 import GHC.Natural   (Natural)
 
 
@@ -32,9 +33,9 @@ data Ur
     | I
     | B
     | C
-    | Sn Natural
-    | Bn Natural
-    | Cn Natural
+    | SLin Natural
+    | BLin Natural
+    | CLin Natural
     | Wait Natural
     | Fix
     | Nat Natural
@@ -79,9 +80,9 @@ instance Show Ur where
         B           → "b"
         C           → "c"
 
-        Sn n        → "i" <> show n
-        Bn n        → "b" <> show n
-        Cn n        → "c" <> show n
+        BLin n      → "b" <> show n
+        CLin n      → "c" <> show n
+        SLin n      → "s" <> show n
 
         Fol         → "fol"
         Add         → "add"
@@ -337,6 +338,7 @@ dash = mkDash
     , simpleEnt j_car
     , simpleEnt j_cdr
     , predikEnt j_nat
+    , predikEnt j_slin
     , predikEnt j_wait
     ]
 
@@ -461,6 +463,38 @@ churchJet n = J 1 :@ K :@ church n
 waitJet ∷ Natural → Ur
 waitJet n = J n :@ I :@ I
 
+int ∷ Integral a => a -> Int
+int = fromIntegral
+
+
+-- Bulk Variants of B, C, and S ------------------------------------------------
+
+bLin, cLin, sLin ∷ Natural → Ur
+
+bLin n = iterate ((B:@        B):@) B !! (int n - 1)
+cLin n = iterate ((B:@(B:@C):@B):@) C !! (int n - 1)
+sLin n = iterate ((B:@(B:@S):@B):@) S !! (int n - 1)
+
+bLinJet, cLinJet, sLinJet ∷ Natural → Ur
+
+bLinJet 0 = error "impossible BLin jet"
+bLinJet n = J (n+1) :@ K :@ bLin n
+cLinJet 0 = error "Impossible CLin Jet"
+cLinJet n = J (n+1) :@ K :@ cLin n
+sLinJet 0 = error "impossible SLin jet"
+sLinJet n = J (n+1) :@ K :@ sLin n
+
+j_slin ∷ Check
+j_slin = Named "slin" chk
+  where
+    chk n (MkVal K) (MkVal k) = MkVal . SLin <$> go n k
+    chk n _         k         = Nothing
+
+    go 2 S                                = Just 1
+    go n (B:@(B:@S):@B:@(go(n-1)→Just r)) = Just (r+1)
+    go n _                                = Nothing
+
+
 --
 --  Serialize and Uruk expression and church-encode it.
 --
@@ -471,9 +505,9 @@ jam = Nat . snd . go
     go I            = go (jetExp j_i)
     go B            = go (jetExp j_b)
     go C            = go (jetExp j_c)
-    go (Sn n)       = undefined
-    go (Bn n)       = undefined
-    go (Cn n)       = undefined
+    go (SLin n)     = go (sLinJet n)
+    go (BLin n)     = go (bLinJet n)
+    go (CLin n)     = go (cLinJet n)
     go Fix          = go (jetExp j_fix)
     go Inc          = go (jetExp j_inc)
     go Fol          = go (jetExp j_fol)
