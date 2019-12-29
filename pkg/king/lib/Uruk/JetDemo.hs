@@ -387,7 +387,7 @@ reduce = \case
 
     -- Jets
     I :@ x           → Just x
-    B :@ f :@ g :@ x → Just (g :@ (f :@ x))
+    B :@ f :@ g :@ x → Just (f :@ (g :@ x))
     C :@ f :@ g :@ x → Just (f :@ x :@ g)
 
     SLin n → Just (Val (n+1) (SLin n) [])
