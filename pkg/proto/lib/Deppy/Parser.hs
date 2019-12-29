@@ -143,7 +143,7 @@ rune = runeSwitch
   , ("$:", runeN (notAllow HaxCol) binder)
   , ("$-", runeN (notAllow HaxHep) binder)
   , ("|%", barCen)
-  , ("|=", runeN (notAllow BarTis) binder)
+  , ("|=", rune2 BarTis benJamin cst)
   , ("%-", rune2 CenHep cst cst)
   , ("%.", rune2 CenDot cst cst)
   , (":-", rune2 ColHep cst cst)
@@ -158,6 +158,8 @@ rune = runeSwitch
   , ("?#", runeJogging1 wutHax cst celPat cst)
   ]
   where
+    benJamin = grouped "(" " " ")" binder
+           <|> (: []) <$> binder
     tagPat = textToAtom <$> tag <|> atom
     wutCen c cs = WutCen c (mapFromList cs)
     celPat = char '[' *> ((,) <$> tagPat <*> (ace *> sym)) <* char ']'

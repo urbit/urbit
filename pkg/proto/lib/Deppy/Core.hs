@@ -137,14 +137,14 @@ extend1 :: Typ a -> Env a -> Env (Var () a)
 extend1 t = extend \() -> t
 
 data TypeError where
-  NestFail :: forall a. (Show a) => Typ a -> Typ a -> TypeError
+  NestFail :: forall a. IsVar a => Typ a -> Typ a -> TypeError
   -- | expected a type isomorphic to Typ (not a type, the Typ)
-  NotTyp   :: forall a. (Show a) => Typ a -> TypeError
+  NotTyp   :: forall a. IsVar a => Typ a -> TypeError
   -- | expected a type isomorphic to a function (pi) type
-  NotFun   :: forall a. (Show a) => Typ a -> TypeError
-  NotCel   :: forall a. (Show a) => Typ a -> TypeError
-  NotWut   :: forall a. (Show a) => Typ a -> TypeError
-  NotHaxBuc:: forall a. (Show a) => Typ a -> TypeError
+  NotFun   :: forall a. IsVar a => Typ a -> TypeError
+  NotCel   :: forall a. IsVar a => Typ a -> TypeError
+  NotWut   :: forall a. IsVar a => Typ a -> TypeError
+  NotHaxBuc:: forall a. IsVar a => Typ a -> TypeError
   Other    :: String -> TypeError
 
 deriving instance Show TypeError
@@ -153,6 +153,26 @@ instance Eq TypeError where
   NestFail t u == NestFail t' u' = True  -- FIXME bleh
   Other s == Other s' = s == s'
   _ == _ = False
+
+-- Used for the RunicShow printing of type errors
+class Unvar a where
+  unvar :: a -> Text
+
+instance Unvar Text where
+  unvar = id
+
+instance Unvar a => Unvar (Var (Name Text b) a) where
+  unvar = \case
+    F v -> unvar v
+    B (Name n _) -> n
+
+-- FIXME HACK
+instance Unvar a => Unvar (Var () a) where
+  unvar = \case
+    F v -> unvar v
+    B _ -> "MISSING_VAR_NAME"
+
+type IsVar a = (Eq a, Ord a, Show a, Unvar a)
 
 type Typing = Either TypeError
 
@@ -174,13 +194,13 @@ free :: Applicative f => f a -> Scope b f a
 free = Scope . pure . F
 
 -- PROP equiv to nest _ Typ
-expectTyp :: (Eq a, Show a) => Typ a -> Typing ()
+expectTyp :: IsVar a => Typ a -> Typing ()
 expectTyp = whnf >>> \case
   Typ -> pure ()
   Cas _ cs -> traverse_ expectTyp cs
   e -> Left (NotTyp e)
 
-expectFun :: (Eq a, Show a) => Typ a -> Typing (Abs a)
+expectFun :: IsVar a => Typ a -> Typing (Abs a)
 expectFun = whnf >>> \case
   Fun a -> pure a
   Cas e cs -> do
@@ -191,7 +211,7 @@ expectFun = whnf >>> \case
     pure (Abs (Cas e specMap) body)
   e -> Left (NotFun e)
 
-expectCel :: (Eq a, Show a) => Typ a -> Typing (Abs a)
+expectCel :: IsVar a => Typ a -> Typing (Abs a)
 expectCel = whnf >>> \case
   Cel a -> pure a
   Cas e cs -> do
@@ -202,7 +222,7 @@ expectCel = whnf >>> \case
     pure (Abs (Cas e specMap) body)
   e -> Left (NotCel e)
 
-expectWut :: (Eq a, Show a) => Typ a -> Typing (Set Tag)
+expectWut :: IsVar a => Typ a -> Typing (Set Tag)
 expectWut = whnf >>> \case
   Wut s -> pure s
   -- the union of all the wuts
@@ -238,10 +258,10 @@ fromNScope = fromScope . mapBound (\(Name _ b) -> b)
 -- TODO
 --   - better errors
 --   - state monad for Asm (how to handle polymorphic recursion?)
-nest :: (Show a, Ord a) => Env a -> Typ a -> Typ a -> Typing ()
+nest :: IsVar a => Env a -> Typ a -> Typ a -> Typing ()
 nest env = fmap void . go env mempty
   where
-    go :: (Show a, Ord a) => Env a -> Asm a -> Typ a -> Typ a -> Typing (Asm a)
+    go :: IsVar a => Env a -> Asm a -> Typ a -> Typ a -> Typing (Asm a)
     -- FIXME use a better more aggro normal form
     go env asm0 (whnf -> t0) (whnf -> u0) =
       if t0 == u0 || member (t0, u0) asm0
@@ -300,12 +320,12 @@ nest env = fmap void . go env mempty
 
 -- Type Checking and Inference -------------------------------------------------
 
-check :: (Show a, Ord a) => Env a -> Exp a -> Typ a -> Typing ()
+check :: IsVar a => Env a -> Exp a -> Typ a -> Typing ()
 check env e t = do
   t' <- infer env e
   nest env t' t
 
-infer :: forall a. (Show a, Ord a) => Env a -> Exp a -> Typing (Typ a)
+infer :: forall a. IsVar a => Env a -> Exp a -> Typing (Typ a)
 infer env = \case
   Var v -> pure $ env v
   Typ -> pure Typ
@@ -381,35 +401,30 @@ infer env = \case
 
 -- Normal Forms ----------------------------------------------------------------
 
-whnf :: (Show a, Eq a) => Exp a -> Exp a
+whnf :: IsVar a => Exp a -> Exp a
 whnf = \case
-  App (whnf -> Lam (Abs _ b)) x -> whnf $ instantiate1 x b
-  Hed (whnf -> Cns x _ _) -> whnf x
-  Tal (whnf -> Cns _ y _) -> whnf y
-  Cas (whnf -> Tag t) cs -> whnf $ fromJust $ lookup t cs
+  e@Var{} -> e
+  --
+  Typ     -> Typ
+  e@Fun{} -> e
+  e@Cel{} -> e
+  e@Wut{} -> e
+  --
+  e@Lam{} -> e
+  e@Cns{} -> e  -- TODO do we want to eval inside?
+  e@Tag{} -> e
+  --
+  App (whnf -> Lam (Abs _ b)) x  -> whnf $ instantiate1 x b
+  Hed (whnf -> Cns x _ _)        -> whnf x
+  Tal (whnf -> Cns _ y _)        -> whnf y
+  Cas (whnf -> Tag t)         cs -> whnf $ fromJust $ lookup t cs
+  Mat (whnf -> Cns (whnf -> Tag t) r _) cs ->
+    whnf $ instantiate1 r $ fromJust $ lookup t cs
+  e@App{} -> e
+  e@Hed{} -> e
+  e@Tal{} -> e
+  e@Cas{} -> e
+  e@Mat{} -> e
+  --
+  Let e b -> whnf $ instantiate1 e b
   e@(Rec (Abs _ b)) -> whnf $ instantiate1 e b
-  e -> e
-{-
-  = Var a
-  -- types
-  | Typ
-  | Fun (Abs a)
-  | Cel (Abs a)
-  | Wut (Set Tag)
-  -- introduction forms
-  | Lam (Abs a)
-  | Cns (Exp a) (Exp a)
-  | Tag Tag
-  -- elimination forms
-  | App (Exp a) (Exp a)
-  | Hed (Exp a)
-  | Tal (Exp a)
-  | Cas (Typ a) (Exp a) (Map Tag (Exp a))
-  -- recursion
-  | Rec (Abs a)
--}
-
-nf :: (Eq a) => Exp a -> Exp a
-nf = \case
-  Typ -> Typ
-  _ -> undefined

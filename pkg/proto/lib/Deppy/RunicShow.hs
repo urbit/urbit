@@ -2,6 +2,8 @@ module Deppy.RunicShow where
 
 import ClassyPrelude
 
+import Bound
+import Bound.Name
 import Data.Function ((&))
 
 import qualified Data.Text  as T
@@ -20,7 +22,28 @@ instance RunicShow (H.Hoon Text) where
   runic = runic . C.concretize
 
 instance RunicShow (D.Exp Text) where
-  runic = runic. H.resugar
+  runic = runic . H.resugar
+
+-- TODO how bad is UndecidableInstances?
+-- instance (Functor f, Unvar a, RunicShow (f Text)) => RunicShow (f a) where
+--   runic = runic . fmap unvar
+
+instance RunicShow D.TypeError where
+  runic = \case
+    D.NestFail t u ->
+      "[nest-fail]\nACTUAL:\n" <>
+      runic (D.unvar <$> t) <>
+      "\nACTUAL:\n" <>
+      runic (D.unvar <$> u)
+    D.NotTyp t -> "[not-hax]\n" <> runic (D.unvar <$> t)
+    D.NotFun t -> "[not-hax]\n" <> runic (D.unvar <$> t)
+    D.NotCel t -> "[not-hax]\n" <> runic (D.unvar <$> t)
+    D.NotWut t -> "[not-hax]\n" <> runic (D.unvar <$> t)
+    D.NotHaxBuc t -> "[not-$%]\n" <> runic (D.unvar <$> t)
+    D.Other s ->
+      "[other] Your program has the type error '" <>
+      s <> "'. This probably corresponds to a `guard`" <>
+      " condition in Deppy.Core. Terribly sorry."
 
 data Runic
     = Leaf Text

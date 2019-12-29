@@ -6,9 +6,9 @@
 =/  or     <a/bool b/bool `bool`?%(a; 1 true, 0 b)>
 =/  maybe
   |=  a/#
-      $%  some  a
-          none  $~
-  ==  ==
+  $%  some  a
+      none  $~
+  ==
 =/  list-sig
   $:
     list/<|# #|>
@@ -22,58 +22,56 @@
 =/  cons-list-module
   =/  list
     |=  a/#
-      ..  l/#
-      $%  cons  [|a l|]
-          nil   $~
-    ==  ==
+    ..  l/#
+    $%  cons  [|a l|]
+        nil   $~
+    ==
   ^-  list-sig
   :-  list
   |%
   ++  nil  <a/# [%nil ~]>
   ++  cons
-    |=  a/#  x/a  xs/(list a)
-      [%cons x xs]
-    ==
+    |=  (a/# x/a xs/(list a))
+    [%cons x xs]
   ++  head
-    |=  a/#  xs/(list a)
-      ?#  xs
-        [%cons y]  [%some -.y]
-        [%nil y]   [%none ~]
-    ==  ==
+    |=  (a/# xs/(list a))
+    ?#  xs
+      [%cons y]  [%some -.y]
+      [%nil y]   [%none ~]
+    ==
   ++  tail
-    |=  a/#  xs/(list a)
-      ^-  (maybe (list a))
-      ?#  xs
-        [%cons y]  [%some +.y]
-        [%nil y]   [%none ~]
-    ==  ==
+    |=  (a/# xs/(list a))
+    ^-  (maybe (list a))
+    ?#  xs
+      [%cons y]  [%some +.y]
+      [%nil y]   [%none ~]
+    ==
   --
 =/  snoc-list-module
   =/  list
     |=  a/#
-      ..  l/#
-      $%  snoc  [|l a|]
-          nil   $~
-    ==  ==
+    ..  l/#
+    $%  snoc  [|l a|]
+        nil   $~
+    ==
   ^-  list-sig
   :-  list
   |%
   ++  nil  <a/# [%nil ~]>
   ++  cons
-    |=  a/#  x/a  xs/(list a)
-      [%snoc xs x]
-    ==
+    |=  (a/# x/a xs/(list a))
+    [%snoc xs x]
   ++  head
-    |=  a/#  xs/(list a)
-      ?#  xs
-        [%cons y]  [%some -.y]
-        [%nil y]   [%none ~]
-    ==  ==
+    |=  (a/# xs/(list a))
+    ?#  xs
+      [%snoc y]  [%some +.y]
+      [%nil y]   [%none ~]
+    ==
   ++  tail
-    |=  a/#  xs/(list a)
-      ^-  (maybe (list a))
-      ?#  xs
-        [%cons y]  [%some +.y]
-        [%nil y]   [%none ~]
-    ==  ==
+    |=  (a/# xs/(list a))
+    ^-  (maybe (list a))
+    ?#  xs
+      [%snoc y]  [%some -.y]
+      [%nil y]   [%none ~]
+    ==
   --

@@ -24,7 +24,6 @@ instance Display CST where
       Hax -> "#"
       Fun bs x -> "<|" <> displayBound bs x <> "|>"
       Cel bs x -> "[|" <> displayBound bs x <> "|]"
-
       Wut (setToList -> [x]) -> displayTag "$" "$" x
       Wut (setToList -> xs) ->
         "?(" <> intercalate " " (displayTag "" "" <$> xs) <> ")"
@@ -44,7 +43,8 @@ instance Display CST where
       HaxCol bs x -> "$:(" <> displayBound bs x <> ")"
       HaxHep bs x -> "$-(" <> displayBound bs x <> ")"
       BarCen (mapToList -> cs) -> "|%(" <> displayEnts cs <> ")"
-      BarTis bs x -> "|=(" <> displayBound bs x <> ")"
+      BarTis [b] x -> "|=(" <> displayBinder b <> " " <> display x <> ")"
+      BarTis bs  x -> "|=((" <> displayBinders bs <> ") " <> display x <> ")"
       CenDot x y -> "%.(" <> display x <> " " <> display y <> ")"
       CenHep x y -> "%-(" <> display x <> " " <> display y <> ")"
       ColHep x y -> ":-(" <> display x <> " " <> display y <> ")"
