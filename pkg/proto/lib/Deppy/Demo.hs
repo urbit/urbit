@@ -27,6 +27,8 @@ demo prog = parseCst prog & \case
     case t of
       Right t -> putStrLn ("TYPE:\n" <> runic (H.resugar' t))
       Left er -> putStrLn ("<type error>: " <> runic er)
+    let w = whnf e
+    putStrLn ("WHNF:\n" <> runic (H.resugar' w))
     let n = copy $ toUntyped e
     putStrLn ("nock: " <> show n)
   where

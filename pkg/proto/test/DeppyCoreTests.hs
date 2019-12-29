@@ -36,8 +36,8 @@ case_cel_co = nest @Text emp (cel_ (wut [1]) (wut [3])) (cel_ (wut [1,2]) (wut [
 case_fun_contra = nest @Text emp (fun_ (wut [1,2]) (wut [3])) (fun_ (wut [1]) (wut [3,4])) @?= pure ()
 
 -- used for other tests
-case_free_var_nests = nest emp "x" "x" @?= pure ()
-case_free_vars_don't_nest = assertLeft $ nest emp "x" "y"
+case_free_var_nests = nest @Text emp "x" "x" @?= pure ()
+case_free_vars_don't_nest = assertLeft $ nest @Text emp "x" "y"
 
 -- cases and cores
 
@@ -132,7 +132,7 @@ listCellT = undefined
 -- typings
 
 case_cas_rule_doesn't_screw_us =
-  check
+  check @Text
     (env [("x", wut [0, 1])])
     (cas "x" [(0, Tag 111), (1, Tag 222)])
     (wut [111, 222])
