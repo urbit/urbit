@@ -234,7 +234,9 @@ toRunic = go
 
     apply xs = Mode wide tall
       where wide = IFix "(" ")" xs
-            tall = RunN "%-" xs
+            tall = case length xs of
+                     2 -> RunC "%-" xs
+                     n -> RunN "%*" xs
 
     lambda bs x = Mode wide tall
       where wide = IFix "<" ">" (fmap binder bs <> [go x])
