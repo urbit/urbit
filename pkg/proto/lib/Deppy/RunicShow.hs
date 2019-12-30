@@ -33,7 +33,7 @@ instance RunicShow D.TypeError where
     D.NestFail t u ->
       "[nest-fail]\nACTUAL:\n" <>
       runic (D.unvar <$> t) <>
-      "\nACTUAL:\n" <>
+      "\nEXPECTED:\n" <>
       runic (D.unvar <$> u)
     D.NotTyp t -> "[not-hax]\n" <> runic (D.unvar <$> t)
     D.NotFun t -> "[not-hax]\n" <> runic (D.unvar <$> t)

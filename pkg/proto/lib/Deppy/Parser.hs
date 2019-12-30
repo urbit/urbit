@@ -71,10 +71,11 @@ whitespace = ace <|> gap
 
 -- TODO - only in middle, support prime
 alpha ∷ Parser Char
-alpha = oneOf (['-'] ++ ['a'..'z'] ++ ['A'..'Z'])
+alpha = oneOf (['a'..'z'])
+symChar = oneOf (['-'] ++ ['a'..'z'] ++ ['0'..'9'])
 
 sym ∷ Parser Sym
-sym = pack <$> some alpha
+sym = pack <$> ((:) <$> alpha <*> many symChar)
 
 atom ∷ Parser Nat
 atom = do
