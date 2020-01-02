@@ -1,4 +1,11 @@
 {-
+    DONE Refactor jet handling.
+    TODO Cleanup jet refactor.
+    TODO Normalization without jets (all jets implemented with their code)
+    TODO Turn all matched jets into unmatched jets.
+    TODO Rematch all jets.
+    TODO Write tests (show that jets matching doesn't affect result)
+
     This is an extremely simple (and very, very slow) Uruk evaluator.
 
     It evaluates Uruk by applying reduction rules until we reach a normal
@@ -23,19 +30,18 @@ import GHC.Natural   (Natural)
 
 infixl 5 :@;
 
-data Ur
-    = Ur :@ Ur
-    | J Natural
-    | K
-    | S
-    | D
-    | Val Natural Ur [Ur]
-    | I
-    | B
-    | C
-    | SLin Natural
-    | BLin Natural
-    | CLin Natural
+pattern I = Fast 0 Eye []
+pattern B = Fast 2 Bee []
+pattern C = Fast 2 Sea []
+
+data Jet
+    = Slow Natural Ur Ur -- arity, tag, body
+    | Eye
+    | Bee
+    | Sea
+    | Sn Natural
+    | Bn Natural
+    | Cn Natural
     | Wait Natural
     | Fix
     | Nat Natural
@@ -54,35 +60,55 @@ data Ur
     | Cdr
   deriving (Eq, Ord)
 
+data Ur
+    = Ur :@ Ur
+    | J Natural
+    | K
+    | S
+    | D
+    | Fast Natural Jet [Ur]
+  deriving (Eq, Ord)
+
 jetExpand ∷ Natural → Ur
 jetExpand = go
   where go = \case { 0 → J 0; n → go (pred n) :@ J 0 }
 
-unVal ∷ Ur → [Ur] → Ur
-unVal u = go u . reverse
+unSlow ∷ Ur → [Ur] → Ur
+unSlow u = go u . reverse
   where go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
 
 instance Show Ur where
     show = \case
         x :@ y      → "(" <> intercalate " " (show <$> flatten x [y]) <> ")"
+        J n          → replicate (fromIntegral (succ n)) 'j'
+        K            → "k"
+        S            → "s"
+        D            → "d"
+        Fast _ j []  → show j
+        Fast _ j us  → fast j us
+      where
+        flatten (x :@ y) acc = flatten x (y : acc)
+        flatten x        acc = (x : acc)
 
-        J n         → replicate (fromIntegral (succ n)) 'j'
-        K           → "k"
-        S           → "s"
-        D           → "d"
-        Val _ u us  → close u us
+        fast ∷ Jet → [Ur] → String
+        fast j us = "[" <> intercalate " " (show j : (show <$> reverse us))
+                          <> "]"
+
+instance Show Jet where
+    show = \case
+        Slow n t b → show (J n :@ t :@ b)
 
         Nat n       → "#" <> show n
 
         Fix         → "fix"
 
-        I           → "i"
-        B           → "b"
-        C           → "c"
+        Eye         → "i"
+        Bee         → "b"
+        Sea         → "c"
 
-        BLin n      → "b" <> show n
-        CLin n      → "c" <> show n
-        SLin n      → "s" <> show n
+        Bn n      → "b" <> show n
+        Cn n      → "c" <> show n
+        Sn n      → "s" <> show n
 
         Fol         → "fol"
         Add         → "add"
@@ -101,12 +127,6 @@ instance Show Ur where
         Uni         → "uni"
 
         Wait n      → "wait-" <> show n
-
-      where
-        flatten (x :@ y) acc = flatten x (y : acc)
-        flatten x        acc = (x : acc)
-
-        close u us = "[| " <> intercalate " " (show <$> u : reverse us) <> " |]"
 
 
 -- Normalized Values -----------------------------------------------------------
@@ -132,22 +152,22 @@ instance Show (Named a) where
 --------------------------------------------------------------------------------
 
 data Match = MkMatch
-    { mFast ∷ Val
+    { mFast ∷ Jet
     , mArgs ∷ Word
     , mName ∷ Val
     , mBody ∷ Val
     }
   deriving (Show)
 
-match ∷ Ur → Natural → Ur → Ur → Match
-match j n t b = MkMatch (urVal j) (fromIntegral (n-1)) (urVal t) (urVal b)
+match ∷ Jet → Natural → Ur → Ur → Match
+match j n t b = MkMatch j (fromIntegral (n-1)) (urVal t) (urVal b)
 
-type Check = Named (Word → JetTag → Val → Maybe Val)
+type Check = Named (Word → JetTag → Val → Maybe Jet)
 
 type DashEntry = Either Match Check
 
 type JetTag  = Val
-type Matches = Map (Word, JetTag, Val) Val
+type Matches = Map (Word, JetTag, Val) Jet
 
 data Dash = Dash Matches [Check]
   deriving (Show)
@@ -166,8 +186,8 @@ mkDash = foldl' go (Dash mempty [])
         Left (MkMatch{..}) → Dash (insertMap (mArgs,mName,mBody) mFast ms) cs
         Right chk          → Dash ms (chk : cs)
 
-dashLookup ∷ Natural → Ur → Ur → Maybe Ur
-dashLookup n t b = valUr <$> (findMatch <|> passCheck)
+dashLookup ∷ Natural → Ur → Ur → Maybe Jet
+dashLookup n t b = findMatch <|> passCheck
   where
     (nw,tv,bv) = (fromIntegral n, urVal t, urVal b)
     Dash ms cs = dash
@@ -191,9 +211,11 @@ pattern J2 = J 1 :@ K
 pattern J3 = J 2 :@ K
 pattern J4 = J 3 :@ K
 
+pattern W2 = Fast 2 (Wait 2) []
+
 -- Z = \f -> (\x -> f (\v -> wait2 x x v)) (\x -> f (\v -> wait2 x x v))
-pattern Z = S :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait 2:@I)))
-              :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait 2:@I)))
+pattern Z = S :@ (S:@(S:@(K:@S):@K):@(K:@(S:@W2:@I)))
+              :@ (S:@(S:@(K:@S):@K):@(K:@(S:@W2:@I)))
 
 {-
     TODO:
@@ -210,16 +232,16 @@ pattern Z = S :@ (S:@(S:@(K:@S):@K):@(K:@(S:@Wait 2:@I)))
 -}
 
 l_i = S :@ K :@ K
-j_i = match I 1 emp l_i
-i   = jetExp j_i
+j_i = match Eye 1 emp l_i
+e_i = jetExp j_i
 
 l_b = S :@ (K :@ S) :@ K
-j_b = match B 3 emp l_b
-b   = jetExp j_b
+j_b = match Bee 3 emp l_b
+e_b = jetExp j_b
 
 l_c = S :@ (K :@ (S :@ (K :@ (S :@ S :@ (K :@ K))) :@ K)) :@ S
-j_c = match C 3 emp l_c
-c   = jetExp j_c
+j_c = match Sea 3 emp l_c
+e_c = jetExp j_c
 
 ch_succ = S :@ (S :@ (K :@ S) :@ K)
 ch_zero = S :@ K
@@ -243,29 +265,37 @@ ch_zero = S :@ K
 --  car = \p -> p (\x y -> x)
 --  cdr = \p -> b (\x y -> y)
 
--- fix f x = f ((Wait 2) fix f) x
+-- fix f x = f (W2 fix f) x
 -- fix = Z (\fx -> wait2 Jet2 (\f x -> f (fx f) x))
 l_fix = ( (S :@ I)
           :@
-          ((Wait 2 :@
+          ((W2 :@
             ((S :@ (K :@ ((S :@ (K :@ (J 1 :@ K))) :@ (S :@ I))))
              :@
-             ((S :@ Wait 2) :@ I)))
+             ((S :@ W2) :@ I)))
            :@
            ((S :@ (K :@ ((S :@ (K :@ (J 1 :@ K))) :@ (S :@ I))))
             :@
-            ((S :@ Wait 2) :@ I))))
+            ((S :@ W2) :@ I))))
 
 j_fix = match Fix 2 emp l_fix
 fix = jetExp j_fix
+
+rit = fast Rit
+dec = fast Dec
+fol = fast Fol
+lef = fast Lef
+cas = fast Cas
+uni = fast Uni
+wait n = fast (Wait n)
 
 l_zer = S :@ K
 l_one = S :@ (S:@(K:@S):@K) :@ (S:@K)
 l_fol = S :@ (S:@I:@(K:@(S:@(S:@(K:@S):@K)))) :@ (K:@(S:@K))
 l_inc = S :@ (K:@J2) :@ (S:@(K:@(S:@(S:@(K:@S):@K))) :@ l_fol)
-l_dec = S:@(S:@(S:@(K:@Cas):@(S:@(S:@I:@(K:@(S:@(S:@Cas:@(K:@(K:@(Rit:@ch_zero)))):@(K:@(S:@(K:@Rit):@ch_succ))))):@(K:@(Lef:@Uni)))):@(K:@(K:@(Lef :@ Uni)))):@(K:@(S:@(K:@Rit):@(S:@(K:@J2):@Fol)))
+l_dec = S:@(S:@(S:@(K:@cas):@(S:@(S:@I:@(K:@(S:@(S:@cas:@(K:@(K:@(rit:@ch_zero)))):@(K:@(S:@(K:@rit):@ch_succ))))):@(K:@(lef:@uni)))):@(K:@(K:@(lef :@ uni)))):@(K:@(S:@(K:@rit):@(S:@(K:@J2):@fol)))
 l_mul = D :@ D :@ D -- TODO
-l_sub = S:@(K:@(S:@(S:@I:@(K:@(S:@(S:@Cas:@(K:@Lef)):@(K:@Dec)))))):@(S:@(K:@K):@Rit)
+l_sub = S:@(K:@(S:@(S:@I:@(K:@(S:@(S:@cas:@(K:@lef)):@(K:@dec)))))):@(S:@(K:@K):@rit)
 l_add = S :@ (K:@(S:@(K:@J2))) :@ (S:@(K:@(S:@(K:@l_fol))):@(S:@(K:@(S:@(K:@(S:@(K:@K))))):@(S:@(S:@(K:@(S:@(K:@(S:@(K:@S):@K)):@S)):@l_fol):@(K:@(S:@(K:@K):@l_fol)))))
 l_uni = K
 l_lef = S :@ (K:@(S:@(K:@(S:@(K:@K))):@(S:@I))) :@ K
@@ -275,35 +305,35 @@ l_con = S:@(K:@(S:@(K:@(S:@(K:@(S:@(K:@(S:@S:@(K:@K))):@K)):@S)):@(S:@I))):@K
 l_car = S:@I:@(K:@K)
 l_cdr = S:@I:@(K:@(S:@K))
 
-zer = jetExp j_zer
-one = jetExp j_one
-fol = jetExp j_fol
-inc = jetExp j_inc
-add = jetExp j_add
-dec = jetExp j_dec
-mul = jetExp j_mul
-sub = jetExp j_sub
-uni = jetExp j_uni
-lef = jetExp j_lef
-rit = jetExp j_rit
-cas = jetExp j_cas
-con = jetExp j_con
-car = jetExp j_car
-cdr = jetExp j_cdr
+e_zer = jetExp j_zer
+e_one = jetExp j_one
+e_fol = jetExp j_fol
+e_inc = jetExp j_inc
+e_add = jetExp j_add
+e_dec = jetExp j_dec
+e_mul = jetExp j_mul
+e_sub = jetExp j_sub
+e_uni = jetExp j_uni
+e_lef = jetExp j_lef
+e_rit = jetExp j_rit
+e_cas = jetExp j_cas
+e_con = jetExp j_con
+e_car = jetExp j_car
+e_cdr = jetExp j_cdr
 
 j_zer = match (Nat 0) 2 emp l_zer
 j_one = match (Nat 1) 2 emp l_one
 
 j_nat ∷ Check
 j_nat = Named "nat" chk
-  where chk ∷ Word → JetTag → Val → Maybe Val
-        chk 2 (MkVal K) u = MkVal . Nat <$> unChurch (valUr u)
+  where chk ∷ Word → JetTag → Val → Maybe Jet
+        chk 2 (MkVal K) u = Nat <$> unChurch (valUr u)
         chk _ _         _ = Nothing
 
 j_wait ∷ Check
 j_wait = Named "wait" chk
-  where chk ∷ Word → JetTag → Val → Maybe Val
-        chk n (MkVal I) (MkVal I) = Just $ MkVal $ Wait $ fromIntegral n
+  where chk ∷ Word → JetTag → Val → Maybe Jet
+        chk n (MkVal I) (MkVal I) = Just $ Wait $ fromIntegral n
         chk _ _         _         = Nothing
 
 j_fol = match Fol 1 emp l_fol
@@ -371,87 +401,107 @@ normalizeN n ur = do
 --
 reduce ∷ Ur → Maybe Ur
 reduce = \case
-    K :@ x :@ y → Just x
-
-    (reduce → Just xv) :@ y → Just (xv :@ y)
-    x :@ (reduce → Just yv) → Just (x  :@ yv)
-
-    -- Uruk
-    S :@ x :@ y :@ z → Just (x:@z:@(y:@z))
-    D :@ x           → Just (jam x)
-    J n :@ J 0       → Just (J (succ n))
-    J n :@ t :@ b    → dashLookup n t b <|> Just (Val n (J n :@ t :@ b) [])
-
-    Val 0 u us :@ x → Just (apply u (reverse (x:us)))
-    Val n u us :@ x → Just (Val (pred n) u (x:us))
-
-    -- Jets
-    I :@ x           → Just x
-    B :@ f :@ g :@ x → Just (f :@ (g :@ x))
-    C :@ f :@ g :@ x → Just (f :@ x :@ g)
-
-    SLin n → Just (Val (n+1) (SLin n) [])
-    BLin n → Just (Val (n+1) (BLin n) [])
-    CLin n → Just (Val (n+1) (CLin n) [])
-
-    Wait n → Just (Val n (Wait n) [])
-
-    Fix   :@ f :@ x → Just (f :@ (Fix :@ f) :@ x)
-    --    :@ f :@ x → Just (l_fix :@ f :@ x)
-    Nat n :@ x :@ y → Just (church n :@ x :@ y)
-
-    Fol :@ x → Just $ x & \case
-        Nat x → church x
-        x     → l_fol :@ x
-
-    Inc :@ x → Just $ case x of
-        Nat n → Nat (succ n)
-        x     → l_inc :@ x
-
-    Dec :@ x → Just $ case x of
-        Nat 0 → Lef :@ Uni
-        Nat n → Rit :@ Nat (pred n)
-        x     → l_rit :@ x
-
-    Add :@ x :@ y → Just $ case (x, y) of
-        (Nat x, Nat y) → Nat (x+y)
-        (x,     y    ) → l_add :@ x :@ y
-
-    Sub :@ x :@ y → Just $ case (x, y) of
-        (Nat x, Nat y) → if y > x then Lef :@ Uni else Rit :@ Nat (x-y)
-        (_,     _    ) → l_sub :@ x :@ y
-
-    Cas :@ s :@ l :@ r → Just $ case s of
-        Lef :@ x → l :@ x
-        Rit :@ x → r :@ x
-        _        → l_cas :@ l :@ r
-
-    Con :@ x :@ y :@ z → Just (z :@ x :@ y)
-
-    Car :@ p → case p of
-        Con :@ x :@ _ → Just x
-        _             → Just (l_cdr :@ p)
-
-    Cdr :@ p → Just $ case p of
-        Con :@ _ :@ y → y
-        _             → l_cdr :@ p
-
-    Rit :@ x :@ _ :@ r → Just (r :@ x)
-    Lef :@ x :@ l :@ _ → Just (l :@ x)
-    Uni :@ x :@ y      → Just x -- Uni is `k`
-
-    _ → Nothing
+    K :@ x :@ y             → Just $ x
+    (reduce → Just xv) :@ y → Just $ xv :@ y
+    x :@ (reduce → Just yv) → Just $ x  :@ yv
+    S :@ x :@ y :@ z        → Just $ x:@z:@(y:@z)
+    D :@ x                  → Just $ jam x
+    J n :@ J 0              → Just $ J (succ n)
+    J n :@ t :@ b           → Just $ Fast n (match n t b) []
+    Fast 0 u us :@ x        → Just $ runJet u (reverse (x:us))
+    Fast n u us :@ x        → Just $ Fast (pred n) u (x:us)
+    _                       → Nothing
   where
-    apply ∷ Ur → [Ur] → Ur
-    apply = curry \case
-        ( J n :@ t :@ b, us     ) -> go b us
-        ( Wait _,        u:us   ) -> go u us
-        ( BLin _,        f:g:xs ) -> f :@ go g xs
-        ( CLin _,        f:g:xs ) -> go f xs :@ g
-        ( SLin _,        f:g:xs ) -> go f xs :@ go g xs
-        ( _,             _      ) -> error "impossible"
-      where
-        go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
+    match ∷ Natural → Ur → Ur → Jet
+    match n t b = fromMaybe (Slow n t b) $ dashLookup n t b
+
+runJet ∷ Jet → [Ur] → Ur
+runJet = curry \case
+    ( Slow n t b,  us      ) → go b us
+    ( Wait _,      u:us    ) → go u us
+    ( Eye,         [x]     ) → x
+    ( Bee,         [f,g,x] ) → f :@ (g :@ x)
+    ( Sea,         [f,g,x] ) → f :@ x :@ g
+    ( Bn _,        f:g:xs  ) → f :@ go g xs
+    ( Cn _,        f:g:xs  ) → go f xs :@ g
+    ( Sn _,        f:g:xs  ) → go f xs :@ go g xs
+    ( Fix,         [f,x]   ) → f :@ (fast Fix :@ f) :@ x
+    ( Nat n,       [x,y]   ) → church n :@ x :@ y
+
+    ( Fol,         [x]     ) → x & \case
+        Fast _ (Nat x) [] → church x
+        x                 → l_fol :@ x
+
+    ( Inc,         [x]     ) → x & \case
+        Fast _ (Nat n) [] → fast $ Nat (succ n)
+        x                 → l_inc :@ x
+
+    ( Dec,         [x]     ) → x & \case
+        Fast _ (Nat 0) [] → lef :@ uni
+        Fast _ (Nat n) [] → rit :@ fast (Nat (pred n))
+        x                 → l_rit :@ x
+
+    ( Add,         [x,y]   ) → (x,y) & \case
+        ( Fast _ (Nat x) [], Fast _ (Nat y) [] ) → fast $ Nat (x+y)
+        ( x,                 y                 ) → l_add :@ x :@ y
+
+    ( Sub,         [x,y]   ) → (x,y) & \case
+        ( Fast _ (Nat x) [], Fast _ (Nat y) [] ) → sub x y
+        ( _,                 _                 ) → l_sub :@ x :@ y
+
+    ( Cas,         [s,l,r] ) → s & \case
+        Fast _ Lef [x] → l :@ x
+        Fast _ Rit [x] → r :@ x
+        _              → l_cas :@ l :@ r
+
+    ( Con,         [x,y,z] ) → z :@ x :@ y
+
+    ( Car,         [p]     ) → p & \case
+        Fast _ Con [x,_] → x
+        _                → l_cdr :@ p
+
+    ( Cdr,         [p]     ) → p & \case
+        Fast _ Con [_,y] → y
+        _                → l_cdr :@ p
+
+    ( Rit,         [x,_,r] ) → r :@ x
+    ( Lef,         [x,l,_] ) → l :@ x
+    ( Uni,         [x,y]   ) → x -- Uni is `k`
+
+    ( j,           xs      ) → error ("bad jet arity: " <> show (j, length xs))
+  where
+    sub ∷ Natural → Natural → Ur
+    sub x y | y > x = fast Lef :@ fast Uni
+    sub x y         = fast Rit :@ fast (Nat (x-y))
+
+    go ∷ Ur → [Ur] → Ur
+    go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
+
+jetArity ∷ Jet → Natural
+jetArity = \case
+    Slow n _ _ → n
+    Eye        → 1
+    Bee        → 3
+    Sea        → 3
+    Sn n       → n+2
+    Bn n       → n+2
+    Cn n       → n+2
+    Wait n     → n+1
+    Fix        → 2
+    Nat _      → 2
+    Fol        → 1
+    Add        → 2
+    Inc        → 1
+    Dec        → 1
+    Mul        → 2
+    Sub        → 2
+    Uni        → 2
+    Lef        → 3
+    Rit        → 3
+    Cas        → 3
+    Con        → 3
+    Car        → 1
+    Cdr        → 1
 
 jetBod ∷ Match → Ur
 jetBod = valUr . mBody
@@ -478,25 +528,25 @@ int = fromIntegral
 
 -- Bulk Variants of B, C, and S ------------------------------------------------
 
-bLin, cLin, sLin ∷ Natural → Ur
+bn, cn, sn ∷ Natural → Ur
 
-bLin n = iterate ((B:@        B):@) B !! (int n - 1)
-cLin n = iterate ((B:@(B:@C):@B):@) C !! (int n - 1)
-sLin n = iterate ((B:@(B:@S):@B):@) S !! (int n - 1)
+bn n = iterate ((B:@        B):@) B !! (int n - 1)
+cn n = iterate ((B:@(B:@C):@B):@) C !! (int n - 1)
+sn n = iterate ((B:@(B:@S):@B):@) S !! (int n - 1)
 
-bLinJet, cLinJet, sLinJet ∷ Natural → Ur
+bnJet, cnJet, snJet ∷ Natural → Ur
 
-bLinJet 0 = error "impossible BLin jet"
-bLinJet n = J (n+1) :@ K :@ bLin n
-cLinJet 0 = error "Impossible CLin Jet"
-cLinJet n = J (n+1) :@ K :@ cLin n
-sLinJet 0 = error "impossible SLin jet"
-sLinJet n = J (n+1) :@ K :@ sLin n
+bnJet 0 = error "impossible BLnjet"
+bnJet n = J (n+1) :@ K :@ bn n
+cnJet 0 = error "Impossible Cn Jet"
+cnJet n = J (n+1) :@ K :@ cn n
+snJet 0 = error "impossible Sn jet"
+snJet n = J (n+1) :@ K :@ sn n
 
 j_blin ∷ Check
 j_blin = Named "blin" chk
   where
-    chk n (MkVal K) (MkVal b)     = MkVal . BLin <$> go n b
+    chk n (MkVal K) (MkVal b)     = Bn <$> go n b
     chk n _         k             = Nothing
     go 2 B                        = Just 1
     go n (B:@B:@(go(n-1)→Just r)) = Just (r+1)
@@ -505,60 +555,73 @@ j_blin = Named "blin" chk
 j_clin ∷ Check
 j_clin = Named "clin" chk
   where
-    chk n (MkVal K) (MkVal b)          = MkVal . CLin <$> go n b
+    chk n (MkVal K) (MkVal b)          = Cn <$> go n b
     chk n _         k                  = Nothing
     go 2 C                             = Just 1
     go n (B:@(B:@C:@(go(n-1)→Just r))) = Just (r+1)
     go n _                             = Nothing
 
+fast ∷ Jet → Ur
+fast j = Fast (jetArity j - 1) j []
+
 j_slin ∷ Check
 j_slin = Named "slin" chk
   where
-    chk n (MkVal K) (MkVal b)          = MkVal . SLin <$> go n b
+    chk n (MkVal K) (MkVal b)          = Sn <$> go n b
     chk n _         k                  = Nothing
     go 2 S                             = Just 1
     go n (B:@(B:@S:@(go(n-1)→Just r))) = Just (r+1)
     go n _                             = Nothing
 
+unMatch ∷ Jet → Ur
+unMatch = go
+  where
+    go ∷ Jet → Ur
+    go = \case
+        Eye        → jetExp j_i
+        Bee        → jetExp j_b
+        Sea        → jetExp j_c
+        Sn n       → snJet n
+        Bn n       → bnJet n
+        Cn n       → cnJet n
+        Fix        → jetExp j_fix
+        Inc        → jetExp j_inc
+        Fol        → jetExp j_fol
+        Dec        → jetExp j_dec
+        Mul        → jetExp j_mul
+        Sub        → jetExp j_sub
+        Add        → jetExp j_add
+        Uni        → jetExp j_uni
+        Lef        → jetExp j_lef
+        Rit        → jetExp j_rit
+        Cas        → jetExp j_cas
+        Con        → jetExp j_con
+        Car        → jetExp j_car
+        Cdr        → jetExp j_cdr
+        Nat n      → churchJet n
+        Wait n     → waitJet n
+        Slow n t b → J n :@ t :@ b
+
+unFast ∷ Ur → [Ur] → Ur
+unFast x xs = foldl' (:@) x xs
 
 --
---  Serialize and Uruk expression and church-encode it.
+--  Serialize and Uruk expression to a natural.
 --
 jam ∷ Ur → Ur
-jam = Nat . snd . go
+jam = fast . Nat . snd . go
   where
     go ∷ Ur → (Int, Natural)
-    go I            = go (jetExp j_i)
-    go B            = go (jetExp j_b)
-    go C            = go (jetExp j_c)
-    go (SLin n)     = go (sLinJet n)
-    go (BLin n)     = go (bLinJet n)
-    go (CLin n)     = go (cLinJet n)
-    go Fix          = go (jetExp j_fix)
-    go Inc          = go (jetExp j_inc)
-    go Fol          = go (jetExp j_fol)
-    go Dec          = go (jetExp j_dec)
-    go Mul          = go (jetExp j_mul)
-    go Sub          = go (jetExp j_sub)
-    go Add          = go (jetExp j_add)
-    go Uni          = go (jetExp j_uni)
-    go Lef          = go (jetExp j_lef)
-    go Rit          = go (jetExp j_rit)
-    go Cas          = go (jetExp j_cas)
-    go Con          = go (jetExp j_con)
-    go Car          = go (jetExp j_car)
-    go Cdr          = go (jetExp j_cdr)
-    go (Nat n)      = go (churchJet n)
-    go (Wait n)     = go (waitJet n)
-    go (J 0)        = (3, 0)
-    go K            = (3, 2)
-    go S            = (3, 4)
-    go D            = (3, 6)
-    go (J n)        = go (jetExpand n)
-    go (Val _ u us) = go (unVal u us)
-    go (x:@y)  = (rBits, rNum)
-        where (xBits, xNum) = go x
-              (yBits, yNum) = go y
-              rBits = 1 + xBits + yBits
-              rNum  = 1 .|. shiftL xNum 1
-                        .|. shiftL yNum (1+xBits)
+    go = \case
+        J 0         → (3, 0)
+        K           → (3, 2)
+        S           → (3, 4)
+        D           → (3, 6)
+        J n         → go (jetExpand n)
+        Fast _ j xs → go (unMatch j)
+        x :@ y      → (rBits, rNum)
+          where (xBits, xNum) = go x
+                (yBits, yNum) = go y
+                rBits = 1 + xBits + yBits
+                rNum  = 1 .|. shiftL xNum 1
+                          .|. shiftL yNum (1+xBits)

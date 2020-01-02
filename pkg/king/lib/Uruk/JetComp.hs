@@ -39,6 +39,11 @@ instance Show Com where
 
 --------------------------------------------------------------------------------
 
+add = Prim (Ur.fast Ur.Add)
+inc = Prim (Ur.fast Ur.Inc)
+
+nat n = Prim (Ur.fast (Ur.Nat n))
+
 try ∷ Exp → Ur
 try = ur . snd . ski . expDeb
 
@@ -85,9 +90,9 @@ ur = \case
     Bn 1        -> Ur.B
     Cn 1        -> Ur.C
     Sn 1        -> Ur.S
-    Bn n        -> Ur.BLin n
-    Cn n        -> Ur.CLin n
-    Sn n        -> Ur.SLin n
+    Bn n        -> Ur.fast $ Ur.Bn n
+    Cn n        -> Ur.fast $ Ur.Cn n
+    Sn n        -> Ur.fast $ Ur.Sn n
     x :# y      -> ur x :@ ur y
     B           -> Ur.B
     C           -> Ur.C
