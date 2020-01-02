@@ -20,6 +20,7 @@ module Uruk.JetDemo where
 
 import ClassyPrelude
 import Data.Bits
+import Data.Void
 
 import Data.Function ((&))
 import Data.List     ((!!), iterate)
@@ -60,14 +61,16 @@ data Jet
     | Cdr
   deriving (Eq, Ord)
 
-data Ur
-    = Ur :@ Ur
+data UrPoly j
+    = UrPoly j :@ UrPoly j
     | J Natural
     | K
     | S
     | D
-    | Fast Natural Jet [Ur]
+    | Fast Natural j [UrPoly j]
   deriving (Eq, Ord)
+
+type Ur = UrPoly Jet
 
 jetExpand ∷ Natural → Ur
 jetExpand = go
@@ -84,7 +87,6 @@ instance Show Ur where
         K            → "k"
         S            → "s"
         D            → "d"
-        Fast _ j []  → show j
         Fast _ j us  → fast j us
       where
         flatten (x :@ y) acc = flatten x (y : acc)
@@ -327,8 +329,8 @@ j_one = match (Nat 1) 2 emp l_one
 j_nat ∷ Check
 j_nat = Named "nat" chk
   where chk ∷ Word → JetTag → Val → Maybe Jet
-        chk 2 (MkVal K) u = Nat <$> unChurch (valUr u)
-        chk _ _         _ = Nothing
+        chk 1 (MkVal K) u = Nat <$> unChurch (valUr u)
+        chk n t         b = Nothing
 
 j_wait ∷ Check
 j_wait = Named "wait" chk
@@ -368,9 +370,9 @@ dash = mkDash
     , simpleEnt j_car
     , simpleEnt j_cdr
     , predikEnt j_nat
-    , predikEnt j_clin
-    , predikEnt j_slin
-    , predikEnt j_blin
+    , predikEnt j_cn
+    , predikEnt j_sn
+    , predikEnt j_bn
     , predikEnt j_wait
     ]
 
@@ -413,7 +415,8 @@ reduce = \case
     _                       → Nothing
   where
     match ∷ Natural → Ur → Ur → Jet
-    match n t b = fromMaybe (Slow n t b) $ dashLookup n t b
+    -- ch n t b = fromMaybe (Slow n t b) $ dashLookup n t b
+    match n t b = fromMaybe (error $ show (n,t,b)) $ dashLookup n t b
 
 runJet ∷ Jet → [Ur] → Ur
 runJet = curry \case
@@ -543,8 +546,8 @@ cnJet n = J (n+1) :@ K :@ cn n
 snJet 0 = error "impossible Sn jet"
 snJet n = J (n+1) :@ K :@ sn n
 
-j_blin ∷ Check
-j_blin = Named "blin" chk
+j_bn ∷ Check
+j_bn = Named "bn" chk
   where
     chk n (MkVal K) (MkVal b)     = Bn <$> go n b
     chk n _         k             = Nothing
@@ -552,8 +555,8 @@ j_blin = Named "blin" chk
     go n (B:@B:@(go(n-1)→Just r)) = Just (r+1)
     go n _                        = Nothing
 
-j_clin ∷ Check
-j_clin = Named "clin" chk
+j_cn ∷ Check
+j_cn = Named "cn" chk
   where
     chk n (MkVal K) (MkVal b)          = Cn <$> go n b
     chk n _         k                  = Nothing
@@ -564,8 +567,8 @@ j_clin = Named "clin" chk
 fast ∷ Jet → Ur
 fast j = Fast (jetArity j - 1) j []
 
-j_slin ∷ Check
-j_slin = Named "slin" chk
+j_sn ∷ Check
+j_sn = Named "sn" chk
   where
     chk n (MkVal K) (MkVal b)          = Sn <$> go n b
     chk n _         k                  = Nothing
@@ -604,6 +607,25 @@ unMatch = go
 
 unFast ∷ Ur → [Ur] → Ur
 unFast x xs = foldl' (:@) x xs
+
+withoutJets ∷ Ur → Ur
+withoutJets = allowJets . unJet
+
+allowJets ∷ UrPoly Void → UrPoly Jet
+allowJets (Fast _ j _) = absurd j
+allowJets (x :@ y)     = allowJets x :@ allowJets y
+allowJets (J n)        = J n
+allowJets K            = K
+allowJets S            = S
+allowJets D            = D
+
+unJet ∷ UrPoly Jet → UrPoly Void
+unJet (Fast _ j xs) = unJet (foldr (:@) (unMatch j) xs)
+unJet (x :@ y)      = unJet x :@ unJet y
+unJet (J n)         = J n
+unJet K             = K
+unJet S             = S
+unJet D             = D
 
 --
 --  Serialize and Uruk expression to a natural.

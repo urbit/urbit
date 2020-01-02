@@ -3,7 +3,7 @@ module Uruk.JetComp where
 import ClassyPrelude hiding (try)
 
 import GHC.Natural  (Natural)
-import Uruk.JetDemo (Ur((:@)))
+import Uruk.JetDemo (Ur, UrPoly((:@)))
 
 import qualified Uruk.JetDemo as Ur
 
