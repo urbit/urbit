@@ -405,8 +405,8 @@ reduce ∷ Ur → Maybe Ur
 reduce = \case
     K :@ x :@ y             → Just $ x
     (reduce → Just xv) :@ y → Just $ xv :@ y
-    x :@ (reduce → Just yv) → Just $ x  :@ yv
-    S :@ x :@ y :@ z        → Just $ x:@z:@(y:@z)
+    x :@ (reduce → Just yv) → Just $ x :@ yv
+    S :@ x :@ y :@ z        → Just $ x :@ z :@ (y :@ z)
     D :@ x                  → Just $ jam x
     J n :@ J 0              → Just $ J (succ n)
     J n :@ t :@ b           → Just $ Fast n (match n t b) []
@@ -549,32 +549,32 @@ snJet n = J (n+1) :@ K :@ sn n
 j_bn ∷ Check
 j_bn = Named "bn" chk
   where
-    chk n (MkVal K) (MkVal b)     = Bn <$> go n b
-    chk n _         k             = Nothing
-    go 2 B                        = Just 1
-    go n (B:@B:@(go(n-1)→Just r)) = Just (r+1)
-    go n _                        = Nothing
+    chk n (MkVal K) (MkVal b)               = Bn <$> go n b
+    chk n _         k                       = Nothing
+    go 2 B                                  = Just 1
+    go n (Fast 0 Bee [go(n-1) → Just r, b]) = Just (r+1)
+    go n e                                  = Nothing
 
 j_cn ∷ Check
 j_cn = Named "cn" chk
   where
-    chk n (MkVal K) (MkVal b)          = Cn <$> go n b
-    chk n _         k                  = Nothing
-    go 2 C                             = Just 1
-    go n (B:@(B:@C:@(go(n-1)→Just r))) = Just (r+1)
-    go n _                             = Nothing
-
-fast ∷ Jet → Ur
-fast j = Fast (jetArity j - 1) j []
+    chk n (MkVal K) (MkVal b)                          = Cn <$> go n b
+    chk n _         k                                  = Nothing
+    go 2 C                                             = Just 1
+    go n (Fast 0 Bee [Fast 1 Bee [go(n-1)→Just r], C]) = Just (r+1)
+    go n _                                             = Nothing
 
 j_sn ∷ Check
 j_sn = Named "sn" chk
   where
-    chk n (MkVal K) (MkVal b)          = Sn <$> go n b
-    chk n _         k                  = Nothing
-    go 2 S                             = Just 1
-    go n (B:@(B:@S:@(go(n-1)→Just r))) = Just (r+1)
-    go n _                             = Nothing
+    chk n (MkVal K) (MkVal b)                          = Sn <$> go n b
+    chk n _         k                                  = Nothing
+    go 2 S                                             = Just 1
+    go n (Fast 0 Bee [Fast 1 Bee [go(n-1)→Just r], S]) = Just (r+1)
+    go n _                                             = Nothing
+
+fast ∷ Jet → Ur
+fast j = Fast (jetArity j - 1) j []
 
 unMatch ∷ Jet → Ur
 unMatch = go
