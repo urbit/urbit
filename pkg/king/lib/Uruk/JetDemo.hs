@@ -54,14 +54,10 @@ import GHC.Natural   (Natural)
 
 infixl 5 :@;
 
-pattern I = Fast 1 Eye []
-pattern B = Fast 3 Bee []
-pattern C = Fast 3 Sea []
-
 pattern Nat n = Fast 2 (JNat n) []
 
 data Jet
-    = Slow Natural Ur Ur -- arity, tag, body
+    = Slow Natural Ur Ur -- unmatched jet: arity, tag, body
     | Eye
     | Bee
     | Sea
@@ -250,18 +246,6 @@ pattern Z = S :@ (S:@(S:@(K:@S):@K):@(K:@(S:@W2:@I)))
     `fol` in jet bodies.
 -}
 
-l_i = S :@ K :@ K
-j_i = match Eye 1 emp l_i
-e_i = jetExp j_i
-
-l_b = S :@ (K :@ S) :@ K
-j_b = match Bee 3 emp l_b
-e_b = jetExp j_b
-
-l_c = S :@ (K :@ (S :@ (K :@ (S :@ S :@ (K :@ K))) :@ K)) :@ S
-j_c = match Sea 3 emp l_c
-e_c = jetExp j_c
-
 ch_succ = S :@ (S :@ (K :@ S) :@ K)
 ch_zero = S :@ K
 
@@ -363,9 +347,9 @@ j_cdr = match Cdr 1 emp l_cdr
 
 dash ∷ Dash
 dash = mkDash
-    [ simpleEnt j_i
-    , simpleEnt j_b
-    , simpleEnt j_c
+    [ simpleEnt (monoJet mjI)
+    , simpleEnt (monoJet mjB)
+    , simpleEnt (monoJet mjC)
     , simpleEnt j_fix
     , simpleEnt j_fol
     , simpleEnt (monoJet mjInc)
@@ -431,12 +415,12 @@ runJet ∷ Jet → [Ur] → Ur
 runJet = curry \case
     (JAdd, xs) → runMonoJet mjAdd xs
     (JInc, xs) → runMonoJet mjInc xs
+    (Bee, xs)  → runMonoJet mjB xs
+    (Sea, xs)  → runMonoJet mjC xs
 
     ( Slow n t b,  us      ) → go b us
     ( Wait _,      u:us    ) → go u us
     ( Eye,         [x]     ) → x
-    ( Bee,         [f,g,x] ) → f :@ (g :@ x)
-    ( Sea,         [f,g,x] ) → f :@ x :@ g
     ( Bn _,        f:g:xs  ) → f :@ go g xs
     ( Cn _,        f:g:xs  ) → go f xs :@ g
     ( Sn _,        f:g:xs  ) → go f xs :@ go g xs
@@ -585,9 +569,9 @@ unMatch = go
   where
     go ∷ Jet → Ur
     go = \case
-        Eye        → jetExp j_i
-        Bee        → jetExp j_b
-        Sea        → jetExp j_c
+        Eye        → mjExp mjI
+        Bee        → mjExp mjB
+        Sea        → mjExp mjC
         Sn n       → snJet n
         Bn n       → bnJet n
         Cn n       → cnJet n
@@ -673,6 +657,54 @@ runMonoJet MonoJet{..} xs =
     fallback = Fast 0 (Slow mjArgs (valUr mjName) (valUr mjBody)) xs
 
 
+-- Identity  -------------------------------------------------------------------
+
+pattern I = Fast 1 Eye []
+
+{-
+    id = \x -> x
+-}
+mjI ∷ MonoJet
+mjI = MonoJet{..}
+  where
+    mjFast = Eye
+    mjArgs = 1
+    mjName = MkVal K
+    mjExec [x] = Just x
+    mjExec _   = error "bad-id"
+    mjBody = MkVal (S :@ K :@ K)
+
+
+-- Flip ------------------------------------------------------------------------
+
+pattern C = Fast 3 Sea []
+
+mjC ∷ MonoJet
+mjC = MonoJet{..}
+  where
+    mjFast = Sea
+    mjArgs = 3
+    mjName = MkVal K
+    mjExec = \case [f,g,x] → Just (f :@ x :@ g)
+                   _       → error "bad-C"
+    mjBody = MkVal (S :@ (K :@ (S :@ (K :@ (S :@ S :@ (K :@ K))) :@ K)) :@ S)
+
+
+-- Function Composition --------------------------------------------------------
+
+pattern B = Fast 3 Bee []
+
+mjB ∷ MonoJet
+mjB = MonoJet{..}
+  where
+    mjFast = Bee
+    mjArgs = 3
+    mjName = MkVal K
+    mjExec = \case [f,g,x] → Just (f :@ (g :@ x))
+                   _       → error "bad-B"
+    mjBody = MkVal (S :@ (K :@ S) :@ K)
+
+
 -- Increment -------------------------------------------------------------------
 
 pattern Inc = Fast 1 JInc []
@@ -687,7 +719,8 @@ mjInc = MonoJet{..}
     mjArgs = 1
     mjName = MkVal K
     mjExec [Nat x] = Just $ Nat $ succ x
-    mjExec _       = Nothing
+    mjExec [_]     = Nothing
+    mjExec _       = error "bad-inc"
     mjBody = MkVal $
         S :@ (K :@ J2)
           :@ (S :@ (K :@ (S :@ (S :@ (K :@ S) :@ K)))
