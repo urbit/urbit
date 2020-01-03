@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+whitespace=$(find . \
+             \( -path ./.git -o \
+                -path ./nix -o \
+                -path ./bin \) -prune \
+             -o -type f -exec egrep -lI " +$" {} \;);
+
+if [ ! -z "$whitespace" ]
+then
+  echo "found trailing whitespace in:";
+  echo "$whitespace";
+  exit 1;
+fi
