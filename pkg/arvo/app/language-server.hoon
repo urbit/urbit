@@ -1,3 +1,4 @@
+/-  lsp-sur=language-server
 /+  *server,
     auto=language-server-complete,
     lsp-parser=language-server-parser,
@@ -63,17 +64,20 @@
     ^+  on-poke:*agent:gall
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ~&  'poked with mark'
+    ~&  mark
     =^  cards  state
       ?+    mark  (on-poke:def mark vase)
           %handle-http-request
         (handle-http-request:lsp !<([eyre-id=@ta inbound-request:eyre] vase))
-          %json
-        (handle-json-rpc:lsp !<(json vase))
+          %language-server-rpc-request
+        (handle-json-rpc:lsp !<(request-message:lsp-sur vase))
       ==
     [cards this]
   ::
   ++  on-watch
     |=  =path
+    ~&  'subscribe on path'
     ?:  ?=([%primary ~] path)
       `this
     ?.  ?=([%http-response @ ~] path)
@@ -141,13 +145,41 @@
   ^-  (list card)
   (give-simple-payload:app eyre-id (json-response:gen (json-to-octs jon)))
 ::
-++  handle-json-rpc
-  |=  jon=json
-  ^-  (quip card _state)
-  ~&  "Received JSON req"
-  :_  state
-  [%give %fact `/primary %json !>([%s 'test-json'])]~
+++  give-new-diagnostics
+  |=  [diagnostics=(list diagnostic) uri=@t]
+  ^-  (list card)
+  :_  ~
+  [%fact `/primary %language-server-rpc-response !>(['textDocument/publishDiagnostics' uri diagnostics])]
 
+::
+++  handle-json-rpc
+  |=  req=request-message:lsp-sur
+  ~&  'got json-rpc message'
+  ^-  (quip card _state)
+  =^  cards  state
+    ?+  +<.req  [~ state]
+        %text-document--did-open
+      (handle-did-open +>.req)
+        %text-document--did-change
+      (handle-did-change +>.req)
+    ==
+  [cards state]
+::
+++  handle-did-change
+  |=  [document=versioned-doc-id:lsp-sur changes=(list change:lsp-sur)]
+  ^-  (quip card _state)
+  =/  updated=wall
+    (sync-buf (~(got by bufs) uri.document) changes)
+  =.  bufs
+    (~(put by bufs) uri.document updated)
+  `state
+::
+++  handle-did-open
+  |=  item=text-document-item:lsp-sur
+  ^-  (quip card _state)
+  =.  bufs
+    (~(put by bufs) uri.item (to-wall (trip text.item)))
+  [~ state]
 ::
 ::  +handle-http-request: received on a new connection established
 ::
@@ -240,9 +272,8 @@
   %-  pairs:enjs:format
   [contents+s+contents ~]
 ::
-++  handle-sync
-  |=  [buf=wall eyre-id=@ta changes=(list change)]
-  :-  (json-response eyre-id *json)
+++  sync-buf
+  |=  [buf=wall changes=(list change:lsp-sur)]
   |-  ^-  wall
   ?~  changes
     buf
@@ -261,6 +292,12 @@
     ==
   =.  buf  (to-wall tape)
   $(changes t.changes)
+::
+++  handle-sync
+  |=  [buf=wall eyre-id=@ta changes=(list change)]
+  :-  (json-response eyre-id *json)
+  (sync-buf buf changes)
+
 ::
 ++  to-wall
   |=  =tape

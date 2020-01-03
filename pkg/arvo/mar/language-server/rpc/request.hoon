@@ -1,10 +1,11 @@
 /-  *language-server
-|_  req=request
+/+  lsp-json=language-server-json
+|_  req=request-message
 ++  grab
   |%
-  ++  noun  request
+  ++  noun  req
   ++  json
-
-
+    |=  jon=^json
+    (parse-request:lsp-json jon)
   --
 --
