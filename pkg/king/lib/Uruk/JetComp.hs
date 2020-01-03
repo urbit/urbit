@@ -39,10 +39,11 @@ instance Show Com where
 
 --------------------------------------------------------------------------------
 
-add = Prim (Ur.fast Ur.Add)
-inc = Prim (Ur.fast Ur.Inc)
+add = Prim Ur.Add
+inc = Prim Ur.Inc
+cons = Prim (Ur.fast Ur.Con)
 
-nat n = Prim (Ur.fast (Ur.Nat n))
+nat n = Prim (Ur.Nat n)
 
 try ∷ Exp → Ur
 try = ur . snd . ski . expDeb
