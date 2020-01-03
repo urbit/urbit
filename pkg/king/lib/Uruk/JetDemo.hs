@@ -79,9 +79,9 @@ data Jet
     | JLef
     | JRit
     | Cas
-    | Con
-    | Car
-    | Cdr
+    | JCon
+    | JCar
+    | JCdr
   deriving (Eq, Ord)
 
 data UrPoly j
@@ -138,9 +138,9 @@ instance Show Jet where
         JLef        → "L"
         JRit        → "R"
         Cas        → "%"
-        Con        → "&"
-        Car        → "<"
-        Cdr        → ">"
+        JCon        → "&"
+        JCar        → "<"
+        JCdr        → ">"
         JUni        → "~"
         Wait n     → "w" <> show n
 
@@ -256,9 +256,6 @@ ch_zero = S :@ K
 --  fol = \n -> n inc zer
 --  mul =
 --  cas = \b l r -> b l r
---  con = \x y f -> f x y
---  car = \p -> p (\x y -> x)
---  cdr = \p -> b (\x y -> y)
 
 cas = fast Cas
 wait n = fast (Wait n)
@@ -267,17 +264,11 @@ l_zer = S :@ K
 l_one = S :@ (S:@(K:@S):@K) :@ (S:@K)
 l_mul = D :@ D :@ D -- TODO
 l_cas = I
-l_con = S:@(K:@(S:@(K:@(S:@(K:@(S:@(K:@(S:@S:@(K:@K))):@K)):@S)):@(S:@I))):@K
-l_car = S:@I:@(K:@K)
-l_cdr = S:@I:@(K:@(S:@K))
 
 e_zer = jetExp j_zer
 e_one = jetExp j_one
 e_mul = jetExp j_mul
 e_cas = jetExp j_cas
-e_con = jetExp j_con
-e_car = jetExp j_car
-e_cdr = jetExp j_cdr
 
 j_zer = match (JNat 0) 2 emp l_zer
 j_one = match (JNat 1) 2 emp l_one
@@ -296,27 +287,24 @@ j_wait = Named "wait" chk
 
 j_mul = match Mul 2 emp l_mul
 j_cas = match Cas 3 emp l_cas
-j_con = match Con 3 emp l_con
-j_car = match Car 1 emp l_car
-j_cdr = match Cdr 1 emp l_cdr
 
 dash ∷ Dash
 dash = mkDash
-    [ simpleEnt (monoJet mjI)
-    , simpleEnt (monoJet mjB)
-    , simpleEnt (monoJet mjC)
-    , simpleEnt (monoJet mjFix)
-    , simpleEnt (monoJet mjFol)
-    , simpleEnt (monoJet mjInc)
-    , simpleEnt (monoJet mjAdd)
-    , simpleEnt (monoJet mjDec)
-    , simpleEnt (monoJet mjSub)
-    , simpleEnt (monoJet mjUni)
-    , simpleEnt (monoJet mjLef)
-    , simpleEnt (monoJet mjRit)
-    , simpleEnt j_con
-    , simpleEnt j_car
-    , simpleEnt j_cdr
+    [ simpleEnt (singJet sjI)
+    , simpleEnt (singJet sjB)
+    , simpleEnt (singJet sjC)
+    , simpleEnt (singJet sjFix)
+    , simpleEnt (singJet sjFol)
+    , simpleEnt (singJet sjInc)
+    , simpleEnt (singJet sjAdd)
+    , simpleEnt (singJet sjDec)
+    , simpleEnt (singJet sjSub)
+    , simpleEnt (singJet sjUni)
+    , simpleEnt (singJet sjLef)
+    , simpleEnt (singJet sjRit)
+    , simpleEnt (singJet sjCon)
+    , simpleEnt (singJet sjCar)
+    , simpleEnt (singJet sjCdr)
     , predikEnt j_nat
     , predikEnt j_cn
     , predikEnt j_sn
@@ -368,17 +356,20 @@ reduce = \case
 
 runJet ∷ Jet → [Ur] → Ur
 runJet = curry \case
-    (JAdd, xs) → runMonoJet mjAdd xs
-    (JInc, xs) → runMonoJet mjInc xs
-    (Bee,  xs) → runMonoJet mjB   xs
-    (Sea,  xs) → runMonoJet mjC   xs
-    (JFix, xs) → runMonoJet mjFix xs
-    (JFol, xs) → runMonoJet mjFol xs
-    (JDec, xs) → runMonoJet mjDec xs
-    (JSub, xs) → runMonoJet mjSub xs
-    (JUni, xs) → runMonoJet mjUni xs
-    (JLef, xs) → runMonoJet mjLef xs
-    (JRit, xs) → runMonoJet mjRit xs
+    (JAdd, xs) → runSingJet sjAdd xs
+    (JInc, xs) → runSingJet sjInc xs
+    (Bee,  xs) → runSingJet sjB   xs
+    (Sea,  xs) → runSingJet sjC   xs
+    (JFix, xs) → runSingJet sjFix xs
+    (JFol, xs) → runSingJet sjFol xs
+    (JDec, xs) → runSingJet sjDec xs
+    (JSub, xs) → runSingJet sjSub xs
+    (JUni, xs) → runSingJet sjUni xs
+    (JLef, xs) → runSingJet sjLef xs
+    (JRit, xs) → runSingJet sjRit xs
+    (JCon, xs) → runSingJet sjCon xs
+    (JCar, xs) → runSingJet sjCar xs
+    (JCdr, xs) → runSingJet sjCdr xs
 
     ( Slow n t b,  us      ) → go b us
     ( Wait _,      u:us    ) → go u us
@@ -392,16 +383,6 @@ runJet = curry \case
         Fast _ JLef [x] → l :@ x
         Fast _ JRit [x] → r :@ x
         _              → l_cas :@ l :@ r
-
-    ( Con,         [x,y,z] ) → z :@ x :@ y
-
-    ( Car,         [p]     ) → p & \case
-        Fast _ Con [x,_] → x
-        _                → l_cdr :@ p
-
-    ( Cdr,         [p]     ) → p & \case
-        Fast _ Con [_,y] → y
-        _                → l_cdr :@ p
 
     ( j,           xs      ) → error ("bad jet arity: " <> show (j, length xs))
   where
@@ -431,9 +412,9 @@ jetArity = \case
     JLef        → 3
     JRit        → 3
     Cas        → 3
-    Con        → 3
-    Car        → 1
-    Cdr        → 1
+    JCon        → 3
+    JCar        → 1
+    JCdr        → 1
 
 jetBod ∷ Match → Ur
 jetBod = valUr . mBody
@@ -507,26 +488,26 @@ unMatch = go
   where
     go ∷ Jet → Ur
     go = \case
-        Eye        → mjExp mjI
-        Bee        → mjExp mjB
-        Sea        → mjExp mjC
+        Eye        → sjExp sjI
+        Bee        → sjExp sjB
+        Sea        → sjExp sjC
         Sn n       → snJet n
         Bn n       → bnJet n
         Cn n       → cnJet n
-        JFix       → mjExp mjFix
-        JInc       → mjExp mjInc
-        JFol       → mjExp mjFol
-        JDec        → mjExp mjDec
+        JFix       → sjExp sjFix
+        JInc       → sjExp sjInc
+        JFol       → sjExp sjFol
+        JDec        → sjExp sjDec
         Mul        → jetExp j_mul
-        JSub        → mjExp mjSub
-        JAdd       → mjExp mjAdd
-        JUni       → mjExp mjUni
-        JLef        → mjExp mjLef
-        JRit        → mjExp mjRit
+        JSub        → sjExp sjSub
+        JAdd       → sjExp sjAdd
+        JUni       → sjExp sjUni
+        JLef        → sjExp sjLef
+        JRit        → sjExp sjRit
         Cas        → jetExp j_cas
-        Con        → jetExp j_con
-        Car        → jetExp j_car
-        Cdr        → jetExp j_cdr
+        JCon        → sjExp sjCon
+        JCar        → sjExp sjCar
+        JCdr        → sjExp sjCdr
         JNat n     → churchJet n
         Wait n     → waitJet n
         Slow n t b → J n :@ t :@ b
@@ -574,25 +555,25 @@ jam = Nat . snd . go
 
 -- Jets with Fixed Bodies and Arities ------------------------------------------
 
-data MonoJet = MonoJet
-  { mjFast ∷ Jet
-  , mjArgs ∷ Positive
-  , mjName ∷ Val
-  , mjBody ∷ Val
-  , mjExec ∷ [Ur] → Maybe Ur
+data SingJet = SingJet
+  { sjFast ∷ Jet
+  , sjArgs ∷ Positive
+  , sjName ∷ Val
+  , sjBody ∷ Val
+  , sjExec ∷ [Ur] → Maybe Ur
   }
 
-monoJet ∷ MonoJet → Match
-monoJet MonoJet{..} = MkMatch mjFast mjArgs mjName mjBody
+singJet ∷ SingJet → Match
+singJet SingJet{..} = MkMatch sjFast sjArgs sjName sjBody
 
-mjExp ∷ MonoJet → Ur
-mjExp (MonoJet _ n t b _) = J n :@ valUr t :@ valUr b
+sjExp ∷ SingJet → Ur
+sjExp (SingJet _ n t b _) = J n :@ valUr t :@ valUr b
 
-runMonoJet ∷ MonoJet → [Ur] → Ur
-runMonoJet MonoJet{..} xs =
-    fromMaybe fallback (mjExec xs)
+runSingJet ∷ SingJet → [Ur] → Ur
+runSingJet SingJet{..} xs =
+    fromMaybe fallback (sjExec xs)
   where
-    fallback = Fast 0 (Slow mjArgs (valUr mjName) (valUr mjBody)) xs
+    fallback = Fast 0 (Slow sjArgs (valUr sjName) (valUr sjBody)) xs
 
 
 -- Identity  -------------------------------------------------------------------
@@ -602,75 +583,75 @@ pattern I = Fast 1 Eye []
 {-
     id = \x -> x
 -}
-mjI ∷ MonoJet
-mjI = MonoJet{..}
+sjI ∷ SingJet
+sjI = SingJet{..}
   where
-    mjFast = Eye
-    mjArgs = 1
-    mjName = MkVal K
-    mjExec [x] = Just x
-    mjExec _   = error "bad-id"
-    mjBody = MkVal (S :@ K :@ K)
+    sjFast = Eye
+    sjArgs = 1
+    sjName = MkVal K
+    sjExec [x] = Just x
+    sjExec _   = error "bad-id"
+    sjBody = MkVal (S :@ K :@ K)
 
 
 -- Flip ------------------------------------------------------------------------
 
 pattern C = Fast 3 Sea []
 
-mjC ∷ MonoJet
-mjC = MonoJet{..}
+sjC ∷ SingJet
+sjC = SingJet{..}
   where
-    mjFast = Sea
-    mjArgs = 3
-    mjName = MkVal K
-    mjExec = \case [f,g,x] → Just (f :@ x :@ g)
+    sjFast = Sea
+    sjArgs = 3
+    sjName = MkVal K
+    sjExec = \case [f,g,x] → Just (f :@ x :@ g)
                    _       → error "bad-C"
-    mjBody = MkVal (S :@ (K :@ (S :@ (K :@ (S :@ S :@ (K :@ K))) :@ K)) :@ S)
+    sjBody = MkVal (S :@ (K :@ (S :@ (K :@ (S :@ S :@ (K :@ K))) :@ K)) :@ S)
 
 
 -- Function Composition --------------------------------------------------------
 
 pattern B = Fast 3 Bee []
 
-mjB ∷ MonoJet
-mjB = MonoJet{..}
+sjB ∷ SingJet
+sjB = SingJet{..}
   where
-    mjFast = Bee
-    mjArgs = 3
-    mjName = MkVal K
-    mjExec = \case [f,g,x] → Just (f :@ (g :@ x))
+    sjFast = Bee
+    sjArgs = 3
+    sjName = MkVal K
+    sjExec = \case [f,g,x] → Just (f :@ (g :@ x))
                    _       → error "bad-B"
-    mjBody = MkVal (S :@ (K :@ S) :@ K)
+    sjBody = MkVal (S :@ (K :@ S) :@ K)
 
 
 -- Unit ------------------------------------------------------------------------
 
 pattern Uni = Fast 2 JUni []
 
-mjUni ∷ MonoJet
-mjUni = MonoJet{..}
+sjUni ∷ SingJet
+sjUni = SingJet{..}
   where
-    mjFast = JUni
-    mjArgs = 2
-    mjName = MkVal K
-    mjExec [x,_] = Just x
-    mjExec _     = error "bad-uni"
-    mjBody = MkVal K
+    sjFast = JUni
+    sjArgs = 2
+    sjName = MkVal K
+    sjExec [x,_] = Just x
+    sjExec _     = error "bad-uni"
+    sjBody = MkVal K
 
 
 -- Left ------------------------------------------------------------------------
 
 pattern Lef = Fast 3 JLef []
 
-mjLef ∷ MonoJet
-mjLef = MonoJet{..}
+sjLef ∷ SingJet
+sjLef = SingJet{..}
   where
-    mjFast = JLef
-    mjArgs = 3
-    mjName = MkVal (Nat 9)
-    mjExec [x,l,_] = Just (l :@ x)
-    mjExec _       = error "bad-lef"
-    mjBody = MkVal (S :@ (K:@(S:@(K:@(S:@(K:@K))):@(S:@I))) :@ K)
+    sjFast = JLef
+    sjArgs = 3
+    sjName = MkVal (Nat 9)
+    sjExec [x,l,_] = Just (l :@ x)
+    sjExec _       = error "bad-lef"
+    sjBody = MkVal (S :@ (K:@(S:@(K:@(S:@(K:@K))):@(S:@I))) :@ K)
 
 
 -- Right -----------------------------------------------------------------------
@@ -680,15 +661,15 @@ pattern Rit = Fast 3 JRit []
 {-
     rit = \x l r -> r x
 -}
-mjRit ∷ MonoJet
-mjRit = MonoJet{..}
+sjRit ∷ SingJet
+sjRit = SingJet{..}
   where
-    mjFast = JRit
-    mjArgs = 3
-    mjName = MkVal (Nat 10)
-    mjExec [x,_,r] = Just (r :@ x)
-    mjExec _       = error "bad-rit"
-    mjBody = MkVal (S :@ (K:@(S:@(K:@K):@(S:@I))) :@ K)
+    sjFast = JRit
+    sjArgs = 3
+    sjName = MkVal (Nat 10)
+    sjExec [x,_,r] = Just (r :@ x)
+    sjExec _       = error "bad-rit"
+    sjBody = MkVal (S :@ (K:@(S:@(K:@K):@(S:@I))) :@ K)
 
 
 -- Recursion -------------------------------------------------------------------
@@ -699,15 +680,15 @@ pattern Fix = Fast 2 JFix []
     fix f x = f (W2 fix f) x
     fix = Z (\fx -> wait2 Jet2 (\f x -> f (fx f) x))
 -}
-mjFix ∷ MonoJet
-mjFix = MonoJet{..}
+sjFix ∷ SingJet
+sjFix = SingJet{..}
   where
-    mjFast = JFix
-    mjArgs = 2
-    mjName = MkVal (Nat 2)
-    mjExec [f,x] = Just (f :@ (Fix :@ f) :@ x)
-    mjExec _     = error "bad-fix"
-    mjBody = MkVal $
+    sjFast = JFix
+    sjArgs = 2
+    sjName = MkVal (Nat 2)
+    sjExec [f,x] = Just (f :@ (Fix :@ f) :@ x)
+    sjExec _     = error "bad-fix"
+    sjBody = MkVal $
         ( (S :@ I)
           :@
           ((W2 :@
@@ -727,16 +708,16 @@ pattern Fol = Fast 1 JFol []
 {-
     fol = \n -> n inc zer
 -}
-mjFol ∷ MonoJet
-mjFol = MonoJet{..}
+sjFol ∷ SingJet
+sjFol = SingJet{..}
   where
-    mjFast = JFol
-    mjArgs = 1
-    mjName = MkVal (Nat 2)
-    mjExec [Nat x] = Just (church x)
-    mjExec [_]     = Nothing
-    mjExec _       = error "bad-fol"
-    mjBody = MkVal $
+    sjFast = JFol
+    sjArgs = 1
+    sjName = MkVal (Nat 2)
+    sjExec [Nat x] = Just (church x)
+    sjExec [_]     = Nothing
+    sjExec _       = error "bad-fol"
+    sjBody = MkVal $
         S :@ (S :@ I :@ (K :@ (S :@ (S :@ (K :@ S) :@ K))))
           :@ (K :@ (S :@ K))
 
@@ -748,16 +729,16 @@ pattern Inc = Fast 1 JInc []
 {-
     inc = \n -> J2 (\i z -> i (fol n i z))
 -}
-mjInc ∷ MonoJet
-mjInc = MonoJet{..}
+sjInc ∷ SingJet
+sjInc = SingJet{..}
   where
-    mjFast = JInc
-    mjArgs = 1
-    mjName = MkVal (Nat 1)
-    mjExec [Nat x] = Just $ Nat $ succ x
-    mjExec [_]     = Nothing
-    mjExec _       = error "bad-inc"
-    mjBody = MkVal $
+    sjFast = JInc
+    sjArgs = 1
+    sjName = MkVal (Nat 1)
+    sjExec [Nat x] = Just $ Nat $ succ x
+    sjExec [_]     = Nothing
+    sjExec _       = error "bad-inc"
+    sjBody = MkVal $
         S :@ (K :@ J2)
           :@ (S :@ (K :@ (S :@ (S :@ (K :@ S) :@ K)))
                 :@ Fol)
@@ -772,19 +753,19 @@ pattern Dec = Fast 1 JDec []
                   (\g -> L uni)
                   (\g -> R (J2 (fol g)))
 -}
-mjDec ∷ MonoJet
-mjDec = MonoJet{..}
+sjDec ∷ SingJet
+sjDec = SingJet{..}
   where
-    mjFast = JDec
-    mjArgs = 1
-    mjName = MkVal (Nat 3)
+    sjFast = JDec
+    sjArgs = 1
+    sjName = MkVal (Nat 3)
 
-    mjExec [Nat 0] = Just (Lef :@ Uni)
-    mjExec [Nat x] = Just (Rit :@ Nat (pred x))
-    mjExec [_]     = Nothing
-    mjExec _       = error "bad-dec"
+    sjExec [Nat 0] = Just (Lef :@ Uni)
+    sjExec [Nat x] = Just (Rit :@ Nat (pred x))
+    sjExec [_]     = Nothing
+    sjExec _       = error "bad-dec"
 
-    mjBody = MkVal $
+    sjBody = MkVal $
         S :@ (S :@ (S :@ (K :@ cas)
                       :@ (S :@ (S :@ I
                                   :@ (K :@ (S :@ (S :@ cas
@@ -802,15 +783,15 @@ pattern Add = Fast 2 JAdd []
 {-
     add = \x y -> J2 (fol (\i z -> (fol x) i (fol y)))
 -}
-mjAdd ∷ MonoJet
-mjAdd = MonoJet{..}
+sjAdd ∷ SingJet
+sjAdd = SingJet{..}
   where
-    mjFast = JAdd
-    mjArgs = 2
-    mjName = MkVal K
-    mjExec [Nat x, Nat y] = Just $ Nat (x+y)
-    mjExec _              = Nothing
-    mjBody = MkVal $
+    sjFast = JAdd
+    sjArgs = 2
+    sjName = MkVal K
+    sjExec [Nat x, Nat y] = Just $ Nat (x+y)
+    sjExec _              = Nothing
+    sjBody = MkVal $
         S :@ (K :@ (S :@ (K :@ J2)))
           :@ (S :@ (K :@ (S :@ (K :@ Fol)))
                 :@ (S :@ (K :@ (S :@ (K :@ (S :@ (K :@ K)))))
@@ -827,19 +808,75 @@ pattern Sub = Fast 2 JSub []
 {-
     sub = \x y -> y (\z -> CAS z LEF DEC) (RIT x)
 -}
-mjSub ∷ MonoJet
-mjSub = MonoJet{..}
+sjSub ∷ SingJet
+sjSub = SingJet{..}
   where
-    mjFast = JSub
-    mjArgs = 2
-    mjName = MkVal (Nat 4)
-    mjExec [Nat x, Nat y] = Just $ sub x y
-    mjExec [_,     _    ] = Nothing
-    mjExec _              = error "bad-sub"
-    mjBody = MkVal $
+    sjFast = JSub
+    sjArgs = 2
+    sjName = MkVal (Nat 4)
+    sjExec [Nat x, Nat y] = Just $ sub x y
+    sjExec [_,     _    ] = Nothing
+    sjExec _              = error "bad-sub"
+    sjBody = MkVal $
         S :@ (K :@ (S:@(S:@I:@(K:@(S:@(S:@cas:@(K:@Lef)):@(K:@Dec))))))
           :@ (S :@ (K :@ K) :@ Rit)
 
     sub ∷ Natural → Natural → Ur
     sub x y | y > x = fast JLef :@ Uni
     sub x y         = fast JRit :@ Nat (x-y)
+
+
+-- Cons ------------------------------------------------------------------------
+
+pattern Con = Fast 3 JCon []
+
+{-
+    con = \x y f -> f x y
+-}
+sjCon ∷ SingJet
+sjCon = SingJet{..}
+  where
+    sjFast = JCon
+    sjArgs = 3
+    sjName = MkVal (Nat 12)
+    sjExec [x,y,f] = Just (f :@ x :@ y)
+    sjExec _       = error "bad-con"
+    sjBody = MkVal $
+        S :@ (K:@(S:@(K:@(S:@(K:@(S:@(K:@(S:@S:@(K:@K))):@K)):@S)):@(S:@I)))
+          :@ K
+
+
+-- Car -------------------------------------------------------------------------
+
+{-
+    car = \p -> p (\x y -> x)
+-}
+sjCar ∷ SingJet
+sjCar = SingJet{..}
+  where
+    sjFast = JCar
+    sjArgs = 1
+    sjName = MkVal (Nat 13)
+    sjExec [Fast _ JCon [x,_]] = Just x
+    sjExec [_]                 = Nothing
+    sjExec _                   = error "bad-car"
+    sjBody = MkVal $
+        S :@ I :@ (K :@ K)
+
+
+-- Cdr -------------------------------------------------------------------------
+
+{-
+    cdr = \p -> b (\x y -> y)
+-}
+sjCdr ∷ SingJet
+sjCdr = SingJet{..}
+  where
+    sjFast = JCdr
+    sjArgs = 1
+    sjName = MkVal (Nat 14)
+    sjExec [Fast _ JCon [_,y]] = Just y
+    sjExec [_]                 = Nothing
+    sjExec _                   = error "bad-cdr"
+    sjBody = MkVal $
+        S :@ I :@ (K :@ (S :@ K))

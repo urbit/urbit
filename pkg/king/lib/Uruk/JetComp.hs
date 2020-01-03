@@ -43,7 +43,7 @@ instance Show Com where
 
 add = Prim Ur.Add
 inc = Prim Ur.Inc
-cons = Prim (Ur.fast Ur.Con)
+cons = Prim Ur.Con
 
 nat n = Prim (Ur.Nat n)
 
