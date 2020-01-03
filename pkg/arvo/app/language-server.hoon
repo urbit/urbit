@@ -67,11 +67,15 @@
       ?+    mark  (on-poke:def mark vase)
           %handle-http-request
         (handle-http-request:lsp !<([eyre-id=@ta inbound-request:eyre] vase))
+          %json
+        (handle-json-rpc:lsp !<(json vase))
       ==
     [cards this]
   ::
   ++  on-watch
     |=  =path
+    ?:  ?=([%primary ~] path)
+      `this
     ?.  ?=([%http-response @ ~] path)
       (on-watch:def path)
     `this
@@ -97,8 +101,8 @@
   =,  dejs:format
   |^
   %:  ot
-    uri+so
-    :-  %data
+    method+so
+    :-  %params
     %-  of
     :~  sync+sync
         completion+position
@@ -136,6 +140,14 @@
   |=  [eyre-id=@ta jon=json]
   ^-  (list card)
   (give-simple-payload:app eyre-id (json-response:gen (json-to-octs jon)))
+::
+++  handle-json-rpc
+  |=  jon=json
+  ^-  (quip card _state)
+  ~&  "Received JSON req"
+  :_  state
+  [%give %fact `/primary %json !>([%s 'test-json'])]~
+
 ::
 ::  +handle-http-request: received on a new connection established
 ::
