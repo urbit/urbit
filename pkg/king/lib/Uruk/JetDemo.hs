@@ -32,6 +32,7 @@
         - unmatch jets, normalize with jets
         - unmatch jets, normalize without jets, match jets
 
+    TODO Use cords for jet names.
     TODO Hook up front-end to JetComp
     TODO Implement REPL.
     TODO Implement script-runner.
@@ -253,27 +254,18 @@ ch_zero = S :@ K
 --  suc = \n -> \i z -> i (n i z)
 --  one = inc zer
 --  fol = \n -> n inc zer
---  uni = K
 --  mul =
---  lef = \x l r -> l x
---  rit = \x l r -> r x
 --  cas = \b l r -> b l r
 --  con = \x y f -> f x y
 --  car = \p -> p (\x y -> x)
 --  cdr = \p -> b (\x y -> y)
 
-pattern Rit = Fast 3 JRit []
-pattern Lef = Fast 3 JLef []
 cas = fast Cas
-pattern Uni = Fast 2 JUni []
 wait n = fast (Wait n)
 
 l_zer = S :@ K
 l_one = S :@ (S:@(K:@S):@K) :@ (S:@K)
 l_mul = D :@ D :@ D -- TODO
-l_uni = K
-l_lef = S :@ (K:@(S:@(K:@(S:@(K:@K))):@(S:@I))) :@ K
-l_rit = S :@ (K:@(S:@(K:@K):@(S:@I))) :@ K
 l_cas = I
 l_con = S:@(K:@(S:@(K:@(S:@(K:@(S:@(K:@(S:@S:@(K:@K))):@K)):@S)):@(S:@I))):@K
 l_car = S:@I:@(K:@K)
@@ -282,9 +274,6 @@ l_cdr = S:@I:@(K:@(S:@K))
 e_zer = jetExp j_zer
 e_one = jetExp j_one
 e_mul = jetExp j_mul
-e_uni = jetExp j_uni
-e_lef = jetExp j_lef
-e_rit = jetExp j_rit
 e_cas = jetExp j_cas
 e_con = jetExp j_con
 e_car = jetExp j_car
@@ -306,9 +295,6 @@ j_wait = Named "wait" chk
         chk _ _         _         = Nothing
 
 j_mul = match Mul 2 emp l_mul
-j_uni = match JUni 2 emp l_uni
-j_lef = match JLef 3 emp l_lef
-j_rit = match JRit 3 emp l_rit
 j_cas = match Cas 3 emp l_cas
 j_con = match Con 3 emp l_con
 j_car = match Car 1 emp l_car
@@ -325,9 +311,9 @@ dash = mkDash
     , simpleEnt (monoJet mjAdd)
     , simpleEnt (monoJet mjDec)
     , simpleEnt (monoJet mjSub)
-    , simpleEnt j_uni
-    , simpleEnt j_lef
-    , simpleEnt j_rit
+    , simpleEnt (monoJet mjUni)
+    , simpleEnt (monoJet mjLef)
+    , simpleEnt (monoJet mjRit)
     , simpleEnt j_con
     , simpleEnt j_car
     , simpleEnt j_cdr
@@ -390,6 +376,9 @@ runJet = curry \case
     (JFol, xs) → runMonoJet mjFol xs
     (JDec, xs) → runMonoJet mjDec xs
     (JSub, xs) → runMonoJet mjSub xs
+    (JUni, xs) → runMonoJet mjUni xs
+    (JLef, xs) → runMonoJet mjLef xs
+    (JRit, xs) → runMonoJet mjRit xs
 
     ( Slow n t b,  us      ) → go b us
     ( Wait _,      u:us    ) → go u us
@@ -413,10 +402,6 @@ runJet = curry \case
     ( Cdr,         [p]     ) → p & \case
         Fast _ Con [_,y] → y
         _                → l_cdr :@ p
-
-    ( JRit,         [x,_,r] ) → r :@ x
-    ( JLef,         [x,l,_] ) → l :@ x
-    ( JUni,        [x,y]   ) → x -- Uni is `k`
 
     ( j,           xs      ) → error ("bad jet arity: " <> show (j, length xs))
   where
@@ -535,9 +520,9 @@ unMatch = go
         Mul        → jetExp j_mul
         JSub        → mjExp mjSub
         JAdd       → mjExp mjAdd
-        JUni       → jetExp j_uni
-        JLef        → jetExp j_lef
-        JRit        → jetExp j_rit
+        JUni       → mjExp mjUni
+        JLef        → mjExp mjLef
+        JRit        → mjExp mjRit
         Cas        → jetExp j_cas
         Con        → jetExp j_con
         Car        → jetExp j_car
@@ -656,6 +641,54 @@ mjB = MonoJet{..}
     mjExec = \case [f,g,x] → Just (f :@ (g :@ x))
                    _       → error "bad-B"
     mjBody = MkVal (S :@ (K :@ S) :@ K)
+
+
+-- Unit ------------------------------------------------------------------------
+
+pattern Uni = Fast 2 JUni []
+
+mjUni ∷ MonoJet
+mjUni = MonoJet{..}
+  where
+    mjFast = JUni
+    mjArgs = 2
+    mjName = MkVal K
+    mjExec [x,_] = Just x
+    mjExec _     = error "bad-uni"
+    mjBody = MkVal K
+
+
+-- Left ------------------------------------------------------------------------
+
+pattern Lef = Fast 3 JLef []
+
+mjLef ∷ MonoJet
+mjLef = MonoJet{..}
+  where
+    mjFast = JLef
+    mjArgs = 3
+    mjName = MkVal (Nat 9)
+    mjExec [x,l,_] = Just (l :@ x)
+    mjExec _       = error "bad-lef"
+    mjBody = MkVal (S :@ (K:@(S:@(K:@(S:@(K:@K))):@(S:@I))) :@ K)
+
+
+-- Right -----------------------------------------------------------------------
+
+pattern Rit = Fast 3 JRit []
+
+{-
+    rit = \x l r -> r x
+-}
+mjRit ∷ MonoJet
+mjRit = MonoJet{..}
+  where
+    mjFast = JRit
+    mjArgs = 3
+    mjName = MkVal (Nat 10)
+    mjExec [x,_,r] = Just (r :@ x)
+    mjExec _       = error "bad-rit"
+    mjBody = MkVal (S :@ (K:@(S:@(K:@K):@(S:@I))) :@ K)
 
 
 -- Recursion -------------------------------------------------------------------
