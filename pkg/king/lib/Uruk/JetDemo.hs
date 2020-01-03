@@ -66,17 +66,17 @@ data Jet
     | Bn Positive
     | Cn Positive
     | Wait Positive
-    | Fix
+    | JFix
     | JNat Natural
     | JFol
     | JAdd
     | JInc
-    | Dec
+    | JDec
     | Mul
-    | Sub
+    | JSub
     | JUni
-    | Lef
-    | Rit
+    | JLef
+    | JRit
     | Cas
     | Con
     | Car
@@ -121,7 +121,7 @@ instance Show Jet where
     show = \case
         Slow n t b → show (J n :@ t :@ b)
         JNat n     → "#" <> show n
-        Fix        → "!"
+        JFix        → "!"
         Eye        → "i"
         Bee        → "b"
         Sea        → "c"
@@ -131,11 +131,11 @@ instance Show Jet where
         JFol        → ","
         JAdd        → "+"
         JInc        → "^"
-        Dec        → "_"
+        JDec        → "_"
         Mul        → "*"
-        Sub        → "-"
-        Lef        → "L"
-        Rit        → "R"
+        JSub        → "-"
+        JLef        → "L"
+        JRit        → "R"
         Cas        → "%"
         Con        → "&"
         Car        → "<"
@@ -254,11 +254,7 @@ ch_zero = S :@ K
 --  one = inc zer
 --  fol = \n -> n inc zer
 --  uni = K
---  dec = \n -> C (n (\x -> C x (\y -> R zer) (\y -> R (inc y))) (L uni))
---                (\g -> L uni)
---                (\g -> R (J2 (fol g)))
 --  mul =
---  sub = \x y -> y (\z -> CAS z LEF DEC) (RIT x)
 --  lef = \x l r -> l x
 --  rit = \x l r -> r x
 --  cas = \b l r -> b l r
@@ -266,36 +262,15 @@ ch_zero = S :@ K
 --  car = \p -> p (\x y -> x)
 --  cdr = \p -> b (\x y -> y)
 
--- fix f x = f (W2 fix f) x
--- fix = Z (\fx -> wait2 Jet2 (\f x -> f (fx f) x))
-l_fix = ( (S :@ I)
-          :@
-          ((W2 :@
-            ((S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ I))))
-             :@
-             ((S :@ W2) :@ I)))
-           :@
-           ((S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ I))))
-            :@
-            ((S :@ W2) :@ I))))
-
-j_fix = match Fix 2 emp l_fix
-fix = jetExp j_fix
-
-rit = fast Rit
-dec = fast Dec
-pattern Fol = Fast 1 JFol []
-lef = fast Lef
+pattern Rit = Fast 3 JRit []
+pattern Lef = Fast 3 JLef []
 cas = fast Cas
 pattern Uni = Fast 2 JUni []
 wait n = fast (Wait n)
 
 l_zer = S :@ K
 l_one = S :@ (S:@(K:@S):@K) :@ (S:@K)
-l_fol = S :@ (S:@I:@(K:@(S:@(S:@(K:@S):@K)))) :@ (K:@(S:@K))
-l_dec = S:@(S:@(S:@(K:@cas):@(S:@(S:@I:@(K:@(S:@(S:@cas:@(K:@(K:@(rit:@ch_zero)))):@(K:@(S:@(K:@rit):@ch_succ))))):@(K:@(lef:@Uni)))):@(K:@(K:@(lef :@ Uni)))):@(K:@(S:@(K:@rit):@(S:@(K:@J2):@Fol)))
 l_mul = D :@ D :@ D -- TODO
-l_sub = S:@(K:@(S:@(S:@I:@(K:@(S:@(S:@cas:@(K:@lef)):@(K:@dec)))))):@(S:@(K:@K):@rit)
 l_uni = K
 l_lef = S :@ (K:@(S:@(K:@(S:@(K:@K))):@(S:@I))) :@ K
 l_rit = S :@ (K:@(S:@(K:@K):@(S:@I))) :@ K
@@ -306,10 +281,7 @@ l_cdr = S:@I:@(K:@(S:@K))
 
 e_zer = jetExp j_zer
 e_one = jetExp j_one
-e_fol = jetExp j_fol
-e_dec = jetExp j_dec
 e_mul = jetExp j_mul
-e_sub = jetExp j_sub
 e_uni = jetExp j_uni
 e_lef = jetExp j_lef
 e_rit = jetExp j_rit
@@ -333,13 +305,10 @@ j_wait = Named "wait" chk
         chk n (MkVal I) (MkVal I) = Just $ Wait $ fromIntegral n
         chk _ _         _         = Nothing
 
-j_fol = match JFol 1 emp l_fol
-j_dec = match Dec 1 emp l_dec
 j_mul = match Mul 2 emp l_mul
-j_sub = match Sub 2 emp l_sub
 j_uni = match JUni 2 emp l_uni
-j_lef = match Lef 3 emp l_lef
-j_rit = match Rit 3 emp l_rit
+j_lef = match JLef 3 emp l_lef
+j_rit = match JRit 3 emp l_rit
 j_cas = match Cas 3 emp l_cas
 j_con = match Con 3 emp l_con
 j_car = match Car 1 emp l_car
@@ -350,12 +319,12 @@ dash = mkDash
     [ simpleEnt (monoJet mjI)
     , simpleEnt (monoJet mjB)
     , simpleEnt (monoJet mjC)
-    , simpleEnt j_fix
-    , simpleEnt j_fol
+    , simpleEnt (monoJet mjFix)
+    , simpleEnt (monoJet mjFol)
     , simpleEnt (monoJet mjInc)
     , simpleEnt (monoJet mjAdd)
-    , simpleEnt j_dec
-    , simpleEnt j_sub
+    , simpleEnt (monoJet mjDec)
+    , simpleEnt (monoJet mjSub)
     , simpleEnt j_uni
     , simpleEnt j_lef
     , simpleEnt j_rit
@@ -415,8 +384,12 @@ runJet ∷ Jet → [Ur] → Ur
 runJet = curry \case
     (JAdd, xs) → runMonoJet mjAdd xs
     (JInc, xs) → runMonoJet mjInc xs
-    (Bee, xs)  → runMonoJet mjB xs
-    (Sea, xs)  → runMonoJet mjC xs
+    (Bee,  xs) → runMonoJet mjB   xs
+    (Sea,  xs) → runMonoJet mjC   xs
+    (JFix, xs) → runMonoJet mjFix xs
+    (JFol, xs) → runMonoJet mjFol xs
+    (JDec, xs) → runMonoJet mjDec xs
+    (JSub, xs) → runMonoJet mjSub xs
 
     ( Slow n t b,  us      ) → go b us
     ( Wait _,      u:us    ) → go u us
@@ -424,25 +397,11 @@ runJet = curry \case
     ( Bn _,        f:g:xs  ) → f :@ go g xs
     ( Cn _,        f:g:xs  ) → go f xs :@ g
     ( Sn _,        f:g:xs  ) → go f xs :@ go g xs
-    ( Fix,         [f,x]   ) → f :@ (fast Fix :@ f) :@ x
     ( JNat n,      [x,y]   ) → church n :@ x :@ y
 
-    ( JFol,         [x]     ) → x & \case
-        Nat x → church x
-        x     → l_fol :@ x
-
-    ( Dec,         [x]     ) → x & \case
-        Nat 0 → lef :@ Uni
-        Nat n → rit :@ Nat (pred n)
-        x     → l_rit :@ x
-
-    ( Sub,         [x,y]   ) → (x,y) & \case
-        ( Nat x, Nat y ) → sub x y
-        ( _,     _     ) → l_sub :@ x :@ y
-
     ( Cas,         [s,l,r] ) → s & \case
-        Fast _ Lef [x] → l :@ x
-        Fast _ Rit [x] → r :@ x
+        Fast _ JLef [x] → l :@ x
+        Fast _ JRit [x] → r :@ x
         _              → l_cas :@ l :@ r
 
     ( Con,         [x,y,z] ) → z :@ x :@ y
@@ -455,15 +414,12 @@ runJet = curry \case
         Fast _ Con [_,y] → y
         _                → l_cdr :@ p
 
-    ( Rit,         [x,_,r] ) → r :@ x
-    ( Lef,         [x,l,_] ) → l :@ x
+    ( JRit,         [x,_,r] ) → r :@ x
+    ( JLef,         [x,l,_] ) → l :@ x
     ( JUni,        [x,y]   ) → x -- Uni is `k`
 
     ( j,           xs      ) → error ("bad jet arity: " <> show (j, length xs))
   where
-    sub ∷ Natural → Natural → Ur
-    sub x y | y > x = fast Lef :@ Uni
-    sub x y         = fast Rit :@ Nat (x-y)
 
     go ∷ Ur → [Ur] → Ur
     go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
@@ -478,17 +434,17 @@ jetArity = \case
     Bn n       → n+2
     Cn n       → n+2
     Wait n     → n+1
-    Fix        → 2
+    JFix        → 2
     JNat _     → 2
     JFol        → 1
     JAdd        → 2
     JInc        → 1
-    Dec        → 1
+    JDec        → 1
     Mul        → 2
-    Sub        → 2
+    JSub        → 2
     JUni       → 2
-    Lef        → 3
-    Rit        → 3
+    JLef        → 3
+    JRit        → 3
     Cas        → 3
     Con        → 3
     Car        → 1
@@ -572,16 +528,16 @@ unMatch = go
         Sn n       → snJet n
         Bn n       → bnJet n
         Cn n       → cnJet n
-        Fix        → jetExp j_fix
+        JFix       → mjExp mjFix
         JInc       → mjExp mjInc
-        JFol       → jetExp j_fol
-        Dec        → jetExp j_dec
+        JFol       → mjExp mjFol
+        JDec        → mjExp mjDec
         Mul        → jetExp j_mul
-        Sub        → jetExp j_sub
+        JSub        → mjExp mjSub
         JAdd       → mjExp mjAdd
         JUni       → jetExp j_uni
-        Lef        → jetExp j_lef
-        Rit        → jetExp j_rit
+        JLef        → jetExp j_lef
+        JRit        → jetExp j_rit
         Cas        → jetExp j_cas
         Con        → jetExp j_con
         Car        → jetExp j_car
@@ -702,6 +658,56 @@ mjB = MonoJet{..}
     mjBody = MkVal (S :@ (K :@ S) :@ K)
 
 
+-- Recursion -------------------------------------------------------------------
+
+pattern Fix = Fast 2 JFix []
+
+{-
+    fix f x = f (W2 fix f) x
+    fix = Z (\fx -> wait2 Jet2 (\f x -> f (fx f) x))
+-}
+mjFix ∷ MonoJet
+mjFix = MonoJet{..}
+  where
+    mjFast = JFix
+    mjArgs = 2
+    mjName = MkVal (Nat 2)
+    mjExec [f,x] = Just (f :@ (Fix :@ f) :@ x)
+    mjExec _     = error "bad-fix"
+    mjBody = MkVal $
+        ( (S :@ I)
+          :@
+          ((W2 :@
+            ((S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ I))))
+             :@
+             ((S :@ W2) :@ I)))
+           :@
+           ((S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ I))))
+            :@
+            ((S :@ W2) :@ I))))
+
+
+-- Nat to Church Natural -------------------------------------------------------
+
+pattern Fol = Fast 1 JFol []
+
+{-
+    fol = \n -> n inc zer
+-}
+mjFol ∷ MonoJet
+mjFol = MonoJet{..}
+  where
+    mjFast = JFol
+    mjArgs = 1
+    mjName = MkVal (Nat 2)
+    mjExec [Nat x] = Just (church x)
+    mjExec [_]     = Nothing
+    mjExec _       = error "bad-fol"
+    mjBody = MkVal $
+        S :@ (S :@ I :@ (K :@ (S :@ (S :@ (K :@ S) :@ K))))
+          :@ (K :@ (S :@ K))
+
+
 -- Increment -------------------------------------------------------------------
 
 pattern Inc = Fast 1 JInc []
@@ -722,6 +728,38 @@ mjInc = MonoJet{..}
         S :@ (K :@ J2)
           :@ (S :@ (K :@ (S :@ (S :@ (K :@ S) :@ K)))
                 :@ Fol)
+
+
+-- Decrement -------------------------------------------------------------------
+
+pattern Dec = Fast 1 JDec []
+
+{-
+    dec = \n -> C (n (\x -> C x (\y -> R zer) (\y -> R (inc y))) (L uni))
+                  (\g -> L uni)
+                  (\g -> R (J2 (fol g)))
+-}
+mjDec ∷ MonoJet
+mjDec = MonoJet{..}
+  where
+    mjFast = JDec
+    mjArgs = 1
+    mjName = MkVal (Nat 3)
+
+    mjExec [Nat 0] = Just (Lef :@ Uni)
+    mjExec [Nat x] = Just (Rit :@ Nat (pred x))
+    mjExec [_]     = Nothing
+    mjExec _       = error "bad-dec"
+
+    mjBody = MkVal $
+        S :@ (S :@ (S :@ (K :@ cas)
+                      :@ (S :@ (S :@ I
+                                  :@ (K :@ (S :@ (S :@ cas
+                                                    :@ (K:@(K:@(Rit:@ch_zero))))
+                                              :@ (K:@(S:@(K:@Rit):@ch_succ)))))
+                            :@ (K :@ (Lef :@ Uni))))
+                :@ (K :@ (K :@ (Lef :@ Uni))))
+          :@ (K:@(S:@(K:@Rit):@(S:@(K:@J2):@Fol)))
 
 
 -- Add -------------------------------------------------------------------------
@@ -747,3 +785,28 @@ mjAdd = MonoJet{..}
                                               :@ S))
                                   :@ Fol)
                             :@ (K :@ (S :@ (K :@ K) :@ Fol)))))
+
+
+-- Subtract --------------------------------------------------------------------
+
+pattern Sub = Fast 2 JSub []
+
+{-
+    sub = \x y -> y (\z -> CAS z LEF DEC) (RIT x)
+-}
+mjSub ∷ MonoJet
+mjSub = MonoJet{..}
+  where
+    mjFast = JSub
+    mjArgs = 2
+    mjName = MkVal (Nat 4)
+    mjExec [Nat x, Nat y] = Just $ sub x y
+    mjExec [_,     _    ] = Nothing
+    mjExec _              = error "bad-sub"
+    mjBody = MkVal $
+        S :@ (K :@ (S:@(S:@I:@(K:@(S:@(S:@cas:@(K:@Lef)):@(K:@Dec))))))
+          :@ (S :@ (K :@ K) :@ Rit)
+
+    sub ∷ Natural → Natural → Ur
+    sub x y | y > x = fast JLef :@ Uni
+    sub x y         = fast JRit :@ Nat (x-y)
