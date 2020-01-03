@@ -64,6 +64,7 @@ dependencies:
   - network
   - optparse-applicative
   - para
+  - positive
   - pretty-show
   - primitive
   - process

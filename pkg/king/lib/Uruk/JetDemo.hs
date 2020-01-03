@@ -45,9 +45,10 @@ import ClassyPrelude
 import Data.Bits
 import Data.Void
 
-import Data.Function ((&))
-import Data.List     ((!!), iterate)
-import GHC.Natural   (Natural)
+import Data.Function    ((&))
+import Data.List        (iterate, (!!))
+import Numeric.Natural  (Natural)
+import Numeric.Positive (Positive)
 
 
 -- Types -----------------------------------------------------------------------
@@ -57,14 +58,14 @@ infixl 5 :@;
 pattern Nat n = Fast 2 (JNat n) []
 
 data Jet
-    = Slow Natural Ur Ur -- unmatched jet: arity, tag, body
+    = Slow Positive Ur Ur -- unmatched jet: arity, tag, body
     | Eye
     | Bee
     | Sea
-    | Sn Natural
-    | Bn Natural
-    | Cn Natural
-    | Wait Natural
+    | Sn Positive
+    | Bn Positive
+    | Cn Positive
+    | Wait Positive
     | Fix
     | JNat Natural
     | JFol
@@ -84,16 +85,16 @@ data Jet
 
 data UrPoly j
     = UrPoly j :@ UrPoly j
-    | J Natural
+    | J Positive
     | K
     | S
     | D
-    | Fast Natural j [UrPoly j]
+    | Fast !Natural j [UrPoly j]
   deriving (Eq, Ord)
 
 type Ur = UrPoly Jet
 
-jetExpand ∷ Natural → Ur
+jetExpand ∷ Positive → Ur
 jetExpand = go
   where go = \case { 1 → J 1; n → go (pred n) :@ J 1 }
 
@@ -101,10 +102,10 @@ unSlow ∷ Ur → [Ur] → Ur
 unSlow u = go u . reverse
   where go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
 
-instance Show Ur where
+instance Show a => Show (UrPoly a) where
     show = \case
         x :@ y      → "(" <> intercalate "" (show <$> flatten x [y]) <> ")"
-        J n          → replicate (fromIntegral (succ n)) 'j'
+        J n          → replicate (fromIntegral n) 'j'
         K            → "k"
         S            → "s"
         D            → "d"
@@ -114,7 +115,6 @@ instance Show Ur where
         flatten (x :@ y) acc = flatten x (y : acc)
         flatten x        acc = (x : acc)
 
-        fast ∷ Jet → [Ur] → String
         fast j us = "[" <> intercalate "" (show j : fmap show us) <> "]"
 
 instance Show Jet where
@@ -168,21 +168,21 @@ instance Show (Named a) where
 
 data Match = MkMatch
     { mFast ∷ Jet
-    , mArgs ∷ Natural
+    , mArgs ∷ Positive
     , mName ∷ Val
     , mBody ∷ Val
     }
   deriving (Show)
 
-match ∷ Jet → Natural → Ur → Ur → Match
+match ∷ Jet → Positive → Ur → Ur → Match
 match j n t b = MkMatch j n (urVal t) (urVal b)
 
-type Check = Named (Natural → JetTag → Val → Maybe Jet)
+type Check = Named (Positive → JetTag → Val → Maybe Jet)
 
 type DashEntry = Either Match Check
 
 type JetTag  = Val
-type Matches = Map (Natural, JetTag, Val) Jet
+type Matches = Map (Positive, JetTag, Val) Jet
 
 data Dash = Dash Matches [Check]
   deriving (Show)
@@ -201,7 +201,7 @@ mkDash = foldl' go (Dash mempty [])
         Left (MkMatch{..}) → Dash (insertMap (mArgs,mName,mBody) mFast ms) cs
         Right chk          → Dash ms (chk : cs)
 
-dashLookup ∷ Natural → Ur → Ur → Maybe Jet
+dashLookup ∷ Positive → Ur → Ur → Maybe Jet
 dashLookup n t b = findMatch <|> passCheck
   where
     (tv,bv)    = (urVal t, urVal b)
@@ -323,13 +323,13 @@ j_one = match (JNat 1) 2 emp l_one
 
 j_nat ∷ Check
 j_nat = Named "nat" chk
-  where chk ∷ Natural → JetTag → Val → Maybe Jet
+  where chk ∷ Positive → JetTag → Val → Maybe Jet
         chk 2 (MkVal K) u = JNat <$> unChurch (valUr u)
         chk n t         b = Nothing
 
 j_wait ∷ Check
 j_wait = Named "wait" chk
-  where chk ∷ Natural → JetTag → Val → Maybe Jet
+  where chk ∷ Positive → JetTag → Val → Maybe Jet
         chk n (MkVal I) (MkVal I) = Just $ Wait $ fromIntegral n
         chk _ _         _         = Nothing
 
@@ -402,12 +402,12 @@ reduce = \case
     S :@ x :@ y :@ z        → Just $ x :@ z :@ (y :@ z)
     D :@ x                  → Just $ jam x
     J n :@ J 1              → Just $ J (succ n)
-    J n :@ t :@ b           → Just $ Fast n (match n t b) []
+    J n :@ t :@ b           → Just $ Fast (fromIntegral n) (match n t b) []
     Fast 0 u us             → Just $ runJet u us
     Fast n u us :@ x        → Just $ Fast (pred n) u (us <> [x])
     _                       → Nothing
   where
-    match ∷ Natural → Ur → Ur → Jet
+    match ∷ Positive → Ur → Ur → Jet
     -- ch n t b = fromMaybe (Slow n t b) $ dashLookup n t b
     match n t b = fromMaybe (error $ show (n,t,b)) $ dashLookup n t b
 
@@ -468,7 +468,7 @@ runJet = curry \case
     go ∷ Ur → [Ur] → Ur
     go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
 
-jetArity ∷ Jet → Natural
+jetArity ∷ Jet → Positive
 jetArity = \case
     Slow n _ _ → n
     Eye        → 1
@@ -510,7 +510,7 @@ church n = S :@ (S:@(K:@S):@K) :@ church (pred n)
 churchJet ∷ Natural → Ur
 churchJet n = J 2 :@ K :@ church n
 
-waitJet ∷ Natural → Ur
+waitJet ∷ Positive → Ur
 waitJet n = J (n+1) :@ I :@ I
 
 int ∷ Integral a => a -> Int
@@ -519,19 +519,16 @@ int = fromIntegral
 
 -- Bulk Variants of B, C, and S ------------------------------------------------
 
-bn, cn, sn ∷ Natural → Ur
+bn, cn, sn ∷ Positive → Ur
 
 bn n = iterate ((B:@        B):@) B !! (int n - 1)
 cn n = iterate ((B:@(B:@C):@B):@) C !! (int n - 1)
 sn n = iterate ((B:@(B:@S):@B):@) S !! (int n - 1)
 
-bnJet, cnJet, snJet ∷ Natural → Ur
+bnJet, cnJet, snJet ∷ Positive → Ur
 
-bnJet 0 = error "impossible BLnjet"
 bnJet n = J (n+2) :@ K :@ bn n
-cnJet 0 = error "Impossible Cn Jet"
 cnJet n = J (n+2) :@ K :@ cn n
-snJet 0 = error "impossible Sn jet"
 snJet n = J (n+2) :@ K :@ sn n
 
 j_bn ∷ Check
@@ -562,7 +559,7 @@ j_sn = Named "sn" chk
     go n _                                             = Nothing
 
 fast ∷ Jet → Ur
-fast j = Fast (jetArity j) j []
+fast j = Fast (fromIntegral $ jetArity j) j []
 
 unMatch ∷ Jet → Ur
 unMatch = go
@@ -576,8 +573,8 @@ unMatch = go
         Bn n       → bnJet n
         Cn n       → cnJet n
         Fix        → jetExp j_fix
-        JInc        → mjExp mjInc
-        JFol        → jetExp j_fol
+        JInc       → mjExp mjInc
+        JFol       → jetExp j_fol
         Dec        → jetExp j_dec
         Mul        → jetExp j_mul
         Sub        → jetExp j_sub
@@ -638,7 +635,7 @@ jam = Nat . snd . go
 
 data MonoJet = MonoJet
   { mjFast ∷ Jet
-  , mjArgs ∷ Natural
+  , mjArgs ∷ Positive
   , mjName ∷ Val
   , mjBody ∷ Val
   , mjExec ∷ [Ur] → Maybe Ur
@@ -717,7 +714,7 @@ mjInc = MonoJet{..}
   where
     mjFast = JInc
     mjArgs = 1
-    mjName = MkVal K
+    mjName = MkVal (Nat 1)
     mjExec [Nat x] = Just $ Nat $ succ x
     mjExec [_]     = Nothing
     mjExec _       = error "bad-inc"

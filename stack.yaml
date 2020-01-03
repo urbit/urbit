@@ -9,6 +9,7 @@ extra-deps:
   - base58-bytestring-0.1.0@sha256:a1da72ee89d5450bac1c792d9fcbe95ed7154ab7246f2172b57bd4fd9b5eab79
   - lock-file-0.7.0.0@sha256:3ad84b5e454145e1d928063b56abb96db24a99a21b493989520e58fa0ab37b00
   - urbit-hob-0.3.0@sha256:4871bd8ad01171ae5d4e50a344f4b8757e9eee80f62ab40a80f5311cd443b115
+  - positive-0.4.1@sha256:c280a62556dac7f0de151da8c4e72cdb785803f1fe98dae9e9d1e1a39cd163a7
 
 nix:
   packages:

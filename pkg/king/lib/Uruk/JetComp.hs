@@ -2,8 +2,9 @@ module Uruk.JetComp where
 
 import ClassyPrelude hiding (try)
 
-import GHC.Natural  (Natural)
-import Uruk.JetDemo (Ur, UrPoly((:@)))
+import Numeric.Natural  (Natural)
+import Numeric.Positive (Positive)
+import Uruk.JetDemo     (Ur, UrPoly((:@)))
 
 import qualified Uruk.JetDemo as Ur
 
@@ -11,6 +12,7 @@ import qualified Uruk.JetDemo as Ur
 -- Types -----------------------------------------------------------------------
 
 type Nat = Natural
+type Pos = Positive
 
 data Exp = Lam Exp | Var Nat | Go Exp Exp | Prim Ur
 
@@ -18,7 +20,7 @@ data Deb = Zero | Succ Deb | DPrim Ur | Abs Deb | App Deb Deb
 
 infixl 5 :#
 
-data Com = Com :# Com | P Ur | I | K | S | Sn Nat | C | Cn Nat | B | Bn Nat
+data Com = Com :# Com | P Ur | I | K | S | Sn Pos | C | Cn Pos | B | Bn Pos
 
 instance Show Com where
     show = \case
@@ -77,11 +79,14 @@ ski deb = case deb of
   where
   f (a, x) (b, y) = case (a, b) of
     (0, 0)             ->         x :# y
-    (0, n)             -> Bn n :# x :# y
-    (n, 0)             -> Cn n :# x :# y
-    (n, m) | n == m    -> Sn n :# x :# y
-           | n < m     ->                Bn (m - n) :# (Sn n :# x) :# y
-           | otherwise -> Cn (n - m) :# (Bn (n - m) :#  Sn m :# x) :# y
+    (0, n)             -> Bn (p n) :# x :# y
+    (n, 0)             -> Cn (p n) :# x :# y
+    (n, m) | n == m    -> Sn (p n) :# x :# y
+           | n < m     ->                 Bn(p(m-n)) :# (Sn (p n) :# x) :# y
+           | otherwise -> Cn (p(n-m)) :# (Bn(p(n-m)) :#  Sn (p m) :# x) :# y
+
+  p ∷ Natural → Positive
+  p = fromIntegral
 
 {-
   Compile Oleg's combinators to jetted Ur combinators.
