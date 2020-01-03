@@ -42,8 +42,8 @@
   ^-  json
   :-  %o
   %:  malt
-    ['uri' %s 'file://']
-    ['version' %s '1']
+    ['uri' `json`[%s 'file://']]
+    ['version' `json`[%n '1']]
     ~
   ==
 ::
@@ -89,9 +89,9 @@
   :-  %o
   ^-  (map cord json)
   %:  malt
-    ['text' %s 'text']
-    ['uri' %s 'file://uri']
-    ['version' %s '1']
+    ['text' `json`[%s 'text']]
+    ['uri' `json`[%s 'file://uri']]
+    ['version' `json`[%n '1']]
     ~
   ==
 ::
@@ -123,6 +123,8 @@
 ++  parse-request
   =,  dejs-soft:format
   |=  jon=json
+  ~&  jon
+  ~&  "request parsing"
   ?>  ?=([%o *] jon)
   =/  method=cord
     =+  `json`(~(got by p.jon) 'method')
@@ -135,7 +137,7 @@
   ::  ^-  request:lsp
   ^-  request-message:lsp
   :-  id
-  ?+  method  !!
+  ?+  method  [%unknown ~]
       %text-document--did-change
     (parse-text-document--did-change params)
       %text-document--did-open
@@ -149,7 +151,7 @@
   =,  dejs:format
   %:  ot
     uri+so
-    version+so
+    version+ni
     text+so
     ~
   ==
@@ -178,7 +180,7 @@
   =,  dejs:format
   %:  ot
     uri+so
-    version+so
+    version+ni
     ~
   ==
 ++  parse-text-document-changes
@@ -205,4 +207,43 @@
     character+ni
     ~
 ==
+++  enjs
+  =,  enjs:format
+  |%
+  ++  response
+    |=  =response:lsp
+    ^-  json
+    ?+  -.lsp  !!
+        %'textDocument/publishDiagnostics'
+      ()
+  ++  position
+    |=  =position:lsp
+    ^-  json
+    %:  pairs
+      row+(numb row.position)
+      col+(numb row.position)
+      ~
+    ==
+  ++  range
+    |=  =range:lsp
+    ^-  json
+    %:  pairs
+      start+(position start.range)
+      end+(position end.range)
+      ~
+    ==
+  ::
+  ++  diagnostic
+    |=  diag=diagnostic:lsp
+    ^-  json
+    %:  pairs
+      range+(range range.diag)
+      severity+(numb severity.diag)
+      message+s+message.diag
+      ~
+    ==
+  ++  publish-diagnostics
+    |=  pub=publish-diagnostics
+
+
 --

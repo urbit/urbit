@@ -1,7 +1,7 @@
 |%
 ::
 +$  versioned-doc-id
-  [uri=@t version=@t]
+  [uri=@t version=@]
 ::
 ::  ++  request
 ::    |%
@@ -10,24 +10,40 @@
   ::  $%
   ::    text-document--did-change:request
   ::  ==
-+$  response-kind
-  [method=cord result=mold]
++$  response-message
+  [id=(unit cord) all:response]
 ::
 +$  request-message
   [id=(unit cord) all:request]
 ::
 ++  response
-  |*  kind=response-kind
-  [id=(unit term) kind]
+  |%
+  ::
+  +$  all
+    $%
+      publish-diagnostics
+      unknown
+    ==
+  ::
+  +$  unknown
+    [%unknown ~]
+  ::
+  +$  publish-diagnostics
+    [%'textDocument/publishDiagnostics' uri=@t diagnostics=(list diagnostic)]
+  ::
+
 ::
 ::  ++  notification
 ::    |*  kind=response-kind
 ::    kind
++$  diagnostic
+  [=range severity=@ud message=@t]
+::
 +$  position
   [row=@ud col=@ud]
 ::
 +$  text-document-item
-  [uri=@t version=@t text=@t]
+  [uri=@t version=@ text=@t]
 ::
 ++  request
   |%
@@ -35,11 +51,14 @@
     $%
       text-document--did-change
       text-document--did-open
+      unknown
     ==
   +$  text-document--did-change
     [%text-document--did-change versioned-doc-id changes=(list change)]
   +$  text-document--did-open
     [%text-document--did-open text-document-item]
+  +$  unknown
+    [%unknown ~]
   --
 ::
 +$  change
