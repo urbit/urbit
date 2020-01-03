@@ -2,7 +2,7 @@
 /+  publish
 /=  result
   /^  (list comment:publish)
-  /;  
+  /;
   |=  comments=(map knot comment:publish)
   ^-  (list [comment-info:publish @t])
   %+  sort  ~(val by comments)

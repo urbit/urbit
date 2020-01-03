@@ -13,14 +13,14 @@
     %+  frond  -.rum
     ?-  -.rum
         %collection
-      %-  pairs 
+      %-  pairs
       :~  [%coll s+col.rum]
           [%who (ship who.rum)]
           [%data (collection-build-to-json dat.rum)]
       ==
     ::
         %post
-      %-  pairs 
+      %-  pairs
       :~  [%coll s+col.rum]
           [%post s+pos.rum]
           [%who (ship who.rum)]
@@ -28,7 +28,7 @@
       ==
     ::
         %comments
-      %-  pairs 
+      %-  pairs
       :~  [%coll s+col.rum]
           [%post s+pos.rum]
           [%who (ship who.rum)]

@@ -37,7 +37,7 @@ export class SidebarItem extends Component {
 
   getLetter(lett) {
     if ('text' in lett) {
-      return lett.text; 
+      return lett.text;
     } else if ('url' in lett) {
       return lett.url;
     } else if ('code' in lett) {
@@ -50,8 +50,8 @@ export class SidebarItem extends Component {
   render() {
     const { props, state } = this;
 
-    let unreadElem = !!props.unread 
-                     ? "fw7 green2" 
+    let unreadElem = !!props.unread
+                     ? "fw7 green2"
                      : "";
 
     let title = props.title.substr(1);
@@ -59,7 +59,7 @@ export class SidebarItem extends Component {
     let description = this.getLetter(props.description);
 
     let selectedCss = !!props.selected ? 'bg-gray5' : 'bg-white pointer';
-    
+
     return (
       <div
         className={"z1 pa3 pt4 pb4 bb b--gray4 " + selectedCss}

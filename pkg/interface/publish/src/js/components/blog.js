@@ -54,7 +54,7 @@ export class Blog extends Component {
         awaiting: false,
         pathData: [
           { text: "Home", url: "/~publish/recent" },
-          { text: blog.info.title, 
+          { text: blog.info.title,
             url: `/~publish/${blog.info.owner}/${blog.info.filename}` }
         ],
       });
@@ -62,7 +62,7 @@ export class Blog extends Component {
       this.props.setSpinner(false);
     } else if (diff.data.remove) {
       if (diff.data.remove.post) {
-       // XX TODO 
+       // XX TODO
       } else {
         this.props.history.push("/~publish/recent");
       }
@@ -203,7 +203,7 @@ export class Blog extends Component {
         blogHost: blog.info.owner,
         pathData: [
           { text: "Home", url: "/~publish/recent" },
-          { text: blog.info.title, 
+          { text: blog.info.title,
             url: `/~publish/${blog.info.owner}/${blog.info.filename}` }
         ],
       };
@@ -279,7 +279,7 @@ export class Blog extends Component {
       let viewSettings = (this.props.ship === window.ship)
         ? this.viewSettings
         : null;
-      
+
       if (this.state.view === 'notes') {
         return (
           <div>

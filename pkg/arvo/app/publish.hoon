@@ -243,7 +243,7 @@
 ++  write-file
   =,  space:userlib
   |=  [pax=path cay=cage]
-  ^-  card 
+  ^-  card
   =.  pax  (weld our-beak pax)
   [%pass (weld /write-file pax) %arvo %c %info (foal pax cay)]
 ::

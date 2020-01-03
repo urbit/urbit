@@ -7,7 +7,7 @@ export class SidebarSwitcher extends Component {
     let popoutSwitcher = this.props.popout
       ? "dn-m dn-l dn-xl"
       : "dib-m dib-l dib-xl";
-    
+
     return (
       <div className="pt2">
         <a

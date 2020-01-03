@@ -73,7 +73,7 @@ export class Root extends Component {
                 <Skeleton
                   spinner={this.state.spinner}
                   children={
-                    <NewBlog api={api} 
+                    <NewBlog api={api}
                       {...this.state}
                       setSpinner={this.setSpinner}
                       {...props}/>

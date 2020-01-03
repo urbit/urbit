@@ -43,10 +43,10 @@
     :*  %+  rash  creator.txs
         ;~(pfix (jest 'creator: ~') fed:ag)
     ::
-        %+  rash  collection.txs 
+        %+  rash  collection.txs
         ;~(pfix (jest 'collection: ') (cook crip (star next)))
     ::
-        %+  rash  post.txs 
+        %+  rash  post.txs
         ;~(pfix (jest 'post: ') (cook crip (star next)))
     ::
         %+  rash  date-created.txs

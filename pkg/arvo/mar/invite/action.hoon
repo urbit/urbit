@@ -4,7 +4,7 @@
 ++  grab
   |%
   ++  noun  invite-action
-  ++  json  
+  ++  json
     |=  jon=^json
     (json-to-action jon)
   --

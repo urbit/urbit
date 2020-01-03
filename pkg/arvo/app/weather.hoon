@@ -101,7 +101,7 @@
   =/  lismov  [%pass /[(scot %da now.bol)] %arvo %i %request req out]~
   ?~  timer
     :-  [[%pass /timer %arvo %b %wait (add now.bol ~h3)] lismov]
-    %=  state 
+    %=  state
       location  str
       timer    `(add now.bol ~h3)
     ==

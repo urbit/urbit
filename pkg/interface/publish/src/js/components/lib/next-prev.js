@@ -57,7 +57,7 @@ class Preview extends Component {
 
       let date = moment(previewProps.date).fromNow();
       let authorDate = `${previewProps.author} • ${date}`
-      let collLink = "/~publish/" + 
+      let collLink = "/~publish/" +
         previewProps.blogOwner + "/" +
         previewProps.collectionName;
       let postLink = collLink + "/" + previewProps.postName;

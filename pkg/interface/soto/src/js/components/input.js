@@ -12,7 +12,7 @@ export class Input extends Component {
   componentDidUpdate() {
       this.inputRef.current.setSelectionRange(this.props.cursor, this.props.cursor);
     }
-  
+
   keyPress = (e) => {
     e.preventDefault();
 
@@ -47,7 +47,7 @@ export class Input extends Component {
     }
 
   }
-  
+
   // tab completion
   else if (e.key === "Tab") {
     api.soto({tab: this.props.cursor});
@@ -68,8 +68,8 @@ render() {
       <span id="prompt">
         {this.props.prompt}
       </span>
-      <input 
-        autoCorrect="false" 
+      <input
+        autoCorrect="false"
         autoFocus={true}
         className="mono ml1 flex-auto dib w-100"
         cursor={this.props.cursor}

@@ -137,7 +137,7 @@
       ==
     ==
   ::
-  ++  on-arvo   
+  ++  on-arvo
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
     ?.  ?=(%bound +<.sign-arvo)
@@ -176,7 +176,7 @@
     =/  pax  t.t.t.t.site.url
     =/  envelopes  (envelope-scry [(scot %ud start) (scot %ud end) pax])
     %-  json-response:gen
-    %-  json-to-octs 
+    %-  json-to-octs
     %-  update-to-json
     [%messages pax start end envelopes]
   ::

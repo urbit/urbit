@@ -14,7 +14,7 @@ export class Store {
         this.sync = this.sync.bind(this);
         this.print = this.print.bind(this);
     }
-    
+
     handleEvent(data) {
         // recursive handler
         if (data.data) {
@@ -23,10 +23,10 @@ export class Store {
             var dojoReply = data;
         }
         // %mor sole-effects are nested, so throw back to handler
-        if (dojoReply.map) { 
+        if (dojoReply.map) {
             return dojoReply.map(reply => this.handleEvent(reply));
         }
-        
+
         switch(Object.keys(dojoReply)[0]) {
             case 'txt':
                 return this.print(dojoReply.txt);
@@ -53,25 +53,25 @@ export class Store {
             default: console.log(dojoReply);
         }
     }
-    
+
     doEdit(ted) {
         let detSend = buffer.transmit(ted);
         this.sync(ted);
         return api.soto({det: detSend});
     }
-    
+
     print(txt) {
         let textLog = this.state.txt;
         textLog.push(txt);
         return this.setState({ txt: textLog });
     }
-    
+
     sync(ted) {
         return this.setState({ input: buffer.buf,
             cursor: buffer.transpose(ted, this.state.cursor)
         });
     }
-    
+
     setStateHandler(setState) {
         this.setState = setState;
     }

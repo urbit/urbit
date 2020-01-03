@@ -3,7 +3,7 @@
 /=  args  /$  ,[beam *]
 /=  result
   /^  [post-info:publish manx @t]
-  /;  
+  /;
   |=  $:  post-front=(map knot cord)
           post-content=manx
           post-raw=wain
