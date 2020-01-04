@@ -5605,6 +5605,15 @@
 ++  but  (cook |=(a/@ (sub a '0')) (shim '0' '1'))      ::  binary digit
 ++  cit  (cook |=(a/@ (sub a '0')) (shim '0' '7'))      ::  octal digit
 ++  dem  (bass 10 (most gon dit))                       ::  decimal to atom
+++  dsm                                                 ::  decimal to signed int
+  %+  cook
+    |=  [s=? n=@]
+    ^-  @s
+    ?:  s
+      (mul n 2)
+    (dec (mul n 2))
+  ::
+  ;~(plug ;~(pose (cold | hep) (easy &)) dem)
 ++  dit  (cook |=(a/@ (sub a '0')) (shim '0' '9'))      ::  decimal digit
 ++  dog  ;~(plug dot gay)                               ::  .  number separator
 ++  dof  ;~(plug hep gay)                               ::  - @q separator
