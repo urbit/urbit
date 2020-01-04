@@ -9,6 +9,7 @@
         defined together. The current approach is easy to fuck up and hard
         to test.
 
+    TODO Jet equality for naturals.
     TODO Simplify Nat jets
 
       - Write a `nat` function that converts a church encoded natural
@@ -33,11 +34,15 @@
         - unmatch jets, normalize without jets, match jets
 
     TODO Use cords for jet names.
+
+    TODO Update printer to print cords.
+
     TODO Hook up front-end to JetComp
     TODO Implement REPL.
     TODO Implement script-runner.
     TODO Define jets in front-end language using template haskell.
-    TODO Implement jet equality.
+
+      - Right now, jets are just defined as a big pile of S and K.
 -}
 
 module Uruk.JetDemo where
@@ -75,6 +80,8 @@ data Jet
     | JDec
     | Mul
     | JSub
+    | JDed
+    | JLaz
     | JUni
     | JLef
     | JRit
@@ -90,6 +97,7 @@ data UrPoly j
     | K
     | S
     | D
+    | Lazy (UrPoly j)
     | Fast !Natural j [UrPoly j]
   deriving (Eq, Ord)
 
@@ -110,6 +118,7 @@ instance Show a => Show (UrPoly a) where
         K            → "k"
         S            → "s"
         D            → "d"
+        Lazy x       → "{" <> show x <> "}"
         Fast _ j []  → show j
         Fast _ j us  → fast j us
       where
@@ -141,6 +150,8 @@ instance Show Jet where
         JCon        → "&"
         JCar        → "<"
         JCdr        → ">"
+        JDed        → "u"
+        JLaz        → "|"
         JUni        → "~"
         Wait n     → "w" <> show n
 
@@ -342,6 +353,7 @@ reduce = \case
     K :@ x :@ y             → Just $ x
     (reduce → Just xv) :@ y → Just $ xv :@ y
     x :@ (reduce → Just yv) → Just $ x :@ yv
+    Lazy x :@ y             → Just $ x :@ y
     S :@ x :@ y :@ z        → Just $ x :@ z :@ (y :@ z)
     D :@ x                  → Just $ jam x
     J n :@ J 1              → Just $ J (succ n)
@@ -364,6 +376,8 @@ runJet = curry \case
     (JFol, xs) → runSingJet sjFol xs
     (JDec, xs) → runSingJet sjDec xs
     (JSub, xs) → runSingJet sjSub xs
+    (JDed, xs) → runSingJet sjDed xs
+    (JLaz, xs) → runSingJet sjLaz xs
     (JUni, xs) → runSingJet sjUni xs
     (JLef, xs) → runSingJet sjLef xs
     (JRit, xs) → runSingJet sjRit xs
@@ -408,6 +422,8 @@ jetArity = \case
     JDec        → 1
     Mul        → 2
     JSub        → 2
+    JDed       → 1
+    JLaz       → sjArgs sjLaz
     JUni       → 2
     JLef        → 3
     JRit        → 3
@@ -501,6 +517,8 @@ unMatch = go
         Mul        → jetExp j_mul
         JSub        → sjExp sjSub
         JAdd       → sjExp sjAdd
+        JDed       → sjExp sjDed
+        JLaz       → sjExp sjLaz
         JUni       → sjExp sjUni
         JLef        → sjExp sjLef
         JRit        → sjExp sjRit
@@ -517,6 +535,7 @@ withoutJets = allowJets . unJet
 
 allowJets ∷ UrPoly Void → UrPoly Jet
 allowJets (Fast _ j _) = absurd j
+allowJets (Lazy x)     = allowJets x
 allowJets (x :@ y)     = allowJets x :@ allowJets y
 allowJets (J n)        = J n
 allowJets K            = K
@@ -525,6 +544,7 @@ allowJets D            = D
 
 unJet ∷ UrPoly Jet → UrPoly Void
 unJet (Fast _ j xs) = unJet (foldl' (:@) (unMatch j) xs)
+unJet (Lazy x)      = Lazy (unJet x)
 unJet (x :@ y)      = unJet x :@ unJet y
 unJet (J n)         = J n
 unJet K             = K
@@ -544,6 +564,7 @@ jam = Nat . snd . go
         S           → (3, 4)
         D           → (3, 6)
         J n         → go (jetExpand n)
+        Lazy x      → go x
         Fast _ j xs → go (foldl' (:@) (unMatch j) xs)
         x :@ y      → (rBits, rNum)
           where (xBits, xNum) = go x
@@ -622,6 +643,36 @@ sjB = SingJet{..}
     sjExec = \case [f,g,x] → Just (f :@ (g :@ x))
                    _       → error "bad-B"
     sjBody = MkVal (S :@ (K :@ S) :@ K)
+
+
+-- Crash -----------------------------------------------------------------------
+
+pattern Ded = Fast 1 JDed []
+
+sjDed ∷ SingJet
+sjDed = SingJet{..}
+  where
+    sjFast = JDed
+    sjArgs = 1
+    sjName = MkVal K
+    sjExec _ = error "ded"
+    sjBody = MkVal (Fast 1 JFix [I])
+
+
+-- Lazy Application ------------------------------------------------------------
+
+pattern Laz = Fast 2 JLaz []
+
+sjLaz ∷ SingJet
+sjLaz = SingJet{..}
+  where
+    sjFast = JLaz
+    sjArgs = 2
+    sjName = MkVal (Nat 15)
+    sjExec [x,y] = Just $ Lazy (x :@ y)
+    sjExec _     = error "bad-laz"
+    sjBody = MkVal I
+
 
 
 -- Unit ------------------------------------------------------------------------
