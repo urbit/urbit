@@ -72,7 +72,7 @@ export class Sidebar extends Component {
 
     return (
       <div className="h-100-minus-96-s h-100 w-100 overflow-x-hidden flex flex-column relative z1">
-        <div className="overflow-y-auto h-100">
+        <div className="overflow-y-auto pb9 h-100">
           {sidebarInvites}
           {sidebarItems}
         </div>
