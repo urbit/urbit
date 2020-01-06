@@ -324,6 +324,17 @@ normalize ur = do
         Nothing -> pure ur
         Just ru -> normalize ru
 
+--
+--  Repeatedly perform reductions until the input is in
+--  weak-head-normal-form.
+--
+whnf ∷ Ur → IO Ur
+whnf ur = do
+    putStrLn (">>  " <> tshow ur)
+    weak ur & \case
+        Nothing -> pure ur
+        Just ru -> whnf ru
+
 normalizeN ∷ Natural -> Ur → IO Ur
 normalizeN 0 ur = pure ur
 normalizeN n ur = do
@@ -333,13 +344,33 @@ normalizeN n ur = do
         Just ru -> normalizeN (n-1) ru
 
 --
---  Perform one reduction step. Return Nothing if the input is fully
---  normalized.
+--  Perform one reduction step. Return Nothing if the input is in
+--  weak-head-normal-form.
 --
 reduce ∷ Ur → Maybe Ur
-reduce = go
+reduce (weak → Just x) = Just x
+reduce ur              = go ur
   where
     go = \case
+        Fast n u us             → Fast n u <$> reduceArgs us
+        x :@ (reduce → Just yv) → Just $ x :@ yv
+        _                       → Nothing
+
+    reduceArgs ∷ [Ur] → Maybe [Ur]
+    reduceArgs []     = Nothing
+    reduceArgs (x:xs) = reduce x & \case
+        Nothing → (x :) <$> reduceArgs xs
+        Just xv → Just (xv : xs)
+
+--
+--  Perform one reduction step. Return Nothing if the input is in
+--  weak-head-normal-form.
+--
+weak ∷ Ur → Maybe Ur
+weak = w
+  where
+    go = reduce
+    w = \case
         K :@ x :@ y             → Just $ x
         S :@ x :@ y :@ z        → Just $ x :@ z :@ (y :@ z)
         D :@ (go→Just x)        → Just $ D :@ x
@@ -351,21 +382,14 @@ reduce = go
         Fast 0 u us             → Just $ runJet u us
         Fast 1 u us :@ x        → Just $ runJet u (us <> [x])
         Fast n u us :@ x        → Just $ Fast (pred n) u (us <> [x])
-        Fast n u us             → Fast n u <$> reduceArgs us
-        (go → Just xv) :@ y     → Just $ xv :@ y
-        x :@ (go → Just yv)     → Just $ x :@ yv
+        (weak → Just xv) :@ y   → Just $ xv :@ y
         _                       → Nothing
-
-    reduceArgs ∷ [Ur] → Maybe [Ur]
-    reduceArgs []     = Nothing
-    reduceArgs (x:xs) = reduce x & \case
-        Nothing → (x :) <$> reduceArgs xs
-        Just xv → Just (xv : xs)
 
     match ∷ Positive → Ur → Ur → Jet
     -- ch n t b = Slow n t b
     -- ch n t b = fromMaybe (Slow n t b) $ dashLookup n t b
     match n t b = fromMaybe (error $ show (n,t,b)) $ dashLookup n t b
+
 
 runJet ∷ Jet → [Ur] → Ur
 runJet = curry \case
@@ -707,9 +731,9 @@ sjCas = SingJet{..}
     sjExec _       = error "bad-lef"
     sjBody = MkVal I
 
+    run (weak→Just x)     l r = Just $ Fast 0 JCas [x,l,r]
     run (Fast _ JLef [x]) l r = Just (l :@ x)
     run (Fast _ JRit [x]) l r = Just (r :@ x)
-    run (reduce→Just x)   l r = Just $ Fast 0 JCas [x,l,r]
     run _                 l r = Nothing
 
 
@@ -788,10 +812,10 @@ sjFol = SingJet{..}
     sjFast = JFol
     sjArgs = 1
     sjName = MkVal (Nat 2)
-    sjExec [reduce→Just x] = Just $ Fast 0 sjFast [x]
-    sjExec [Nat x]         = Just (church x)
-    sjExec [_]             = Nothing
-    sjExec _               = error "bad-fol"
+    sjExec [weak→Just x] = Just $ Fast 0 sjFast [x]
+    sjExec [Nat x]       = Just (church x)
+    sjExec [_]           = Nothing
+    sjExec _             = error "bad-fol"
     sjBody = MkVal $
         S :@ (S :@ I :@ (K :@ (S :@ (S :@ (K :@ S) :@ K))))
           :@ (K :@ (S :@ K))
@@ -810,10 +834,10 @@ sjInc = SingJet{..}
     sjFast = JInc
     sjArgs = 1
     sjName = MkVal (Nat 1)
-    sjExec [reduce→Just x] = Just $ Fast 0 sjFast [x]
-    sjExec [Nat x]         = Just $ Nat $ succ x
-    sjExec [_]             = Nothing
-    sjExec _               = error "bad-inc"
+    sjExec [weak→Just x] = Just $ Fast 0 sjFast [x]
+    sjExec [Nat x]       = Just $ Nat $ succ x
+    sjExec [_]           = Nothing
+    sjExec _             = error "bad-inc"
     sjBody = MkVal $
         S :@ (K :@ Pak) :@ (S :@ (S :@ (K :@ S) :@ K))
 
@@ -833,11 +857,11 @@ sjDec = SingJet{..}
     sjArgs = 1
     sjName = MkVal (Nat 3)
 
-    sjExec [reduce→Just x] = Just $ Fast 0 sjFast [x]
-    sjExec [Nat 0]         = Just (Lef :@ Uni)
-    sjExec [Nat x]         = Just (Rit :@ Nat (pred x))
-    sjExec [_]             = Nothing
-    sjExec _               = error "bad-dec"
+    sjExec [weak→Just x] = Just $ Fast 0 sjFast [x]
+    sjExec [Nat 0]       = Just (Lef :@ Uni)
+    sjExec [Nat x]       = Just (Rit :@ Nat (pred x))
+    sjExec [_]           = Nothing
+    sjExec _             = error "bad-dec"
 
     sjBody = MkVal $
         S :@ (S :@ I
@@ -859,11 +883,10 @@ sjAdd = SingJet{..}
     sjFast = JAdd
     sjArgs = 2
     sjName = MkVal K
-    sjExec _                  = Nothing
-    sjExec [reduce→Just x, y] = Just $ Fast 0 sjFast [x, y]
-    sjExec [x, reduce→Just y] = Just $ Fast 0 sjFast [x, y]
-    sjExec [Nat x, Nat y]     = Just $ Nat (x+y)
-    sjExec _                  = Nothing
+    sjExec [weak→Just x, y] = Just $ Fast 0 sjFast [x, y]
+    sjExec [x, weak→Just y] = Just $ Fast 0 sjFast [x, y]
+    sjExec [Nat x, Nat y]   = Just $ Nat (x+y)
+    sjExec _                = Nothing
     sjBody = MkVal $
         S :@ (K :@ (S :@ (K :@ Pak)))
           :@ (S :@ (K :@ S)
@@ -884,11 +907,11 @@ sjSub = SingJet{..}
     sjFast = JSub
     sjArgs = 2
     sjName = MkVal (Nat 4)
-    sjExec [reduce→Just x, y] = Just $ Fast 0 sjFast [x, y]
-    sjExec [x, reduce→Just y] = Just $ Fast 0 sjFast [x, y]
-    sjExec [Nat x, Nat y]     = Just $ sub x y
-    sjExec [_, _]             = Nothing
-    sjExec _                  = error "bad-sub"
+    sjExec [weak→Just x, y] = Just $ Fast 0 sjFast [x, y]
+    sjExec [x, weak→Just y] = Just $ Fast 0 sjFast [x, y]
+    sjExec [Nat x, Nat y]   = Just $ sub x y
+    sjExec [_, _]           = Nothing
+    sjExec _                = error "bad-sub"
     sjBody = MkVal $
         S :@ (K :@ (S:@(S:@I:@(K:@(S:@(S:@Cas:@(K:@Lef)):@(K:@Dec))))))
           :@ (S :@ (K :@ K) :@ Rit)
@@ -931,8 +954,8 @@ sjCar = SingJet{..}
     sjFast = JCar
     sjArgs = 1
     sjName = MkVal (Nat 13)
+    sjExec [weak→Just x]       = Just $ Fast 0 sjFast [x]
     sjExec [Fast _ JCon [x,_]] = Just x
-    sjExec [reduce→Just x]     = Just $ Fast 0 sjFast [x]
     sjExec [_]                 = Nothing
     sjExec _                   = error "bad-car"
     sjBody = MkVal $
@@ -952,8 +975,8 @@ sjCdr = SingJet{..}
     sjFast = JCdr
     sjArgs = 1
     sjName = MkVal (Nat 14)
+    sjExec [weak→Just x]       = Just $ Fast 0 sjFast [x]
     sjExec [Fast _ JCon [_,y]] = Just y
-    sjExec [reduce→Just x]     = Just $ Fast 0 sjFast [x]
     sjExec [_]                 = Nothing
     sjExec _                   = error "bad-cdr"
     sjBody = MkVal $
@@ -982,10 +1005,10 @@ sjPak = SingJet{..}
     sjFast = JPak
     sjArgs = 1
     sjName = MkVal (Nat 16)
-    sjExec [Nat n]         = Just $ Nat n
-    sjExec [reduce→Just x] = Just $ Fast 0 JPak [x]
-    sjExec [_]             = Nothing
-    sjExec _               = error "bad-pak"
+    sjExec [weak→Just x] = Just $ Fast 0 JPak [x]
+    sjExec [Nat n]       = Just $ Nat n
+    sjExec [_]           = Nothing
+    sjExec _             = error "bad-pak"
     sjBody = MkVal $
         S :@ (K :@ J2)
           :@ (S :@ (S :@ I :@ (K :@ succ))
