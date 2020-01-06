@@ -823,9 +823,8 @@ sjInc = SingJet{..}
 pattern Dec = Fast 1 JDec []
 
 {-
-    dec = \n -> C (n (\x -> C x (\y -> R zer) (\y -> R (inc y))) (L uni))
-                  (\g -> L uni)
-                  (\g -> R (J2 (fol g)))
+    dec = \n -> n (\x -> C x (\y -> Rit 0) (\y -> Rit (Inc y)))
+                  (Lef Uni)
 -}
 sjDec ∷ SingJet
 sjDec = SingJet{..}
@@ -841,14 +840,10 @@ sjDec = SingJet{..}
     sjExec _               = error "bad-dec"
 
     sjBody = MkVal $
-        S :@ (S :@ (S :@ (K :@ Cas)
-                      :@ (S :@ (S :@ I
-                                  :@ (K :@ (S :@ (S :@ Cas
-                                                    :@ (K:@(K:@(Rit:@ch_zero))))
-                                              :@ (K:@(S:@(K:@Rit):@ch_succ)))))
-                            :@ (K :@ (Lef :@ Uni))))
-                :@ (K :@ (K :@ (Lef :@ Uni))))
-          :@ (K:@(S:@(K:@Rit):@(S:@(K:@J2):@Fol)))
+        S :@ (S :@ I
+                :@ (K :@ (S :@ (S :@ Cas :@ (K :@ (K :@ (Rit :@ Nat 0))))
+                            :@ (K :@ (S :@ (K :@ Rit) :@ Inc)))))
+          :@ (K :@ (Lef :@ Uni))
 
 
 -- Add -------------------------------------------------------------------------
