@@ -78,8 +78,8 @@
   ?~  udiffs
     ~
   =/  =path  /(scot %p ship.i.udiffs)
-  :*  [%give %fact `/ %azimuth-udiff !>(i.udiffs)]
-      [%give %fact `path %azimuth-udiff !>(i.udiffs)]
+  :*  [%give %fact ~[/] %azimuth-udiff !>(i.udiffs)]
+      [%give %fact ~[path] %azimuth-udiff !>(i.udiffs)]
       $(udiffs t.udiffs)
   ==
 ::

@@ -239,8 +239,8 @@
   ^-  (list card)
   =/  updates-json  (update-to-json upd)
   =/  configs-json  (configs-to-json configs-scry)
-  :~  [%give %fact `/primary %json !>(updates-json)]
-      [%give %fact `/configs %json !>(configs-json)]
+  :~  [%give %fact ~[/primary] %json !>(updates-json)]
+      [%give %fact ~[/configs] %json !>(configs-json)]
   ==
 ::
 ::  +utilities

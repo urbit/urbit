@@ -730,15 +730,15 @@
 ++  affection-primary
   |=  del=delta
   ^-  (list card)
-  [%give %fact `/primary %publish-rumor !>(del)]~
+  [%give %fact ~[/primary] %publish-rumor !>(del)]~
 ::  +affection: rumors to interested
 ::
 ++  affection
   |=  del=delta
   ^-  (list card)
   =/  wir=wire  /collection/[col.del]
-  :~  [%give %fact `/primary %publish-rumor !>(del)]
-      [%give %fact `wir %publish-rumor !>(del)]
+  :~  [%give %fact ~[/primary] %publish-rumor !>(del)]
+      [%give %fact ~[wir] %publish-rumor !>(del)]
   ==
 ::
 ++  get-post-by-index
@@ -1263,7 +1263,7 @@
     =/  upd=update  [%invite %.y src.bol coll.act title.act]
     :_  state
     %+  welp  make-tile-moves
-    [%give %fact `/primary %publish-update !>(upd)]~
+    [%give %fact ~[/primary] %publish-update !>(upd)]~
   ::
   ::  %reject-invite: remove invite from list, acceptance is handled by
   ::                  %subscribe action
@@ -1276,7 +1276,7 @@
     =/  upd=update  [%invite %.n who.act coll.act u.title]
     :_  state
     %+  welp  make-tile-moves
-    [%give %fact `/primary %publish-update !>(upd)]~
+    [%give %fact ~[/primary] %publish-update !>(upd)]~
   ::
   ::  %serve:
   ::
@@ -1406,7 +1406,7 @@
       [%pass wir %agent [who.act %publish] %watch wir]~
       ?~  title  ~
       =/  upd=update  [%invite %.n who.act coll.act u.title]
-      [%give %fact `/primary %publish-update !>(upd)]~
+      [%give %fact ~[/primary] %publish-update !>(upd)]~
     ==
   ::
   ::  %unsubscribe: unsub from a foreign blog, delete all state related to it
@@ -1435,7 +1435,7 @@
     :-  [%pass wir %agent [who.act %publish] %leave ~]
     %+  welp  make-tile-moves
     =/  rum=rumor  [%remove who.act coll.act ~]
-    [%give %fact `/primary %publish-rumor !>(rum)]~
+    [%give %fact ~[/primary] %publish-rumor !>(rum)]~
   ::
   ::  %read: notify that we've seen a post
   ::
@@ -1445,7 +1445,7 @@
     %+  welp  make-tile-moves
     ::
     =/  upd=update  [%unread %.n (sy [who.act coll.act post.act] ~)]
-    [%give %fact `/primary %publish-update !>(upd)]~
+    [%give %fact ~[/primary] %publish-update !>(upd)]~
   ::
   ==
 ::
@@ -1597,7 +1597,7 @@
 ::
 ++  make-tile-moves
   ^-  (list card)
-  [%give %fact `/publishtile %json !>(make-tile-json)]~
+  [%give %fact ~[/publishtile] %json !>(make-tile-json)]~
 ::
 ++  make-tile-json
   ^-  json

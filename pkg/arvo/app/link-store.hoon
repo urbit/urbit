@@ -131,7 +131,7 @@
   :_  state
   :_  cards
   :+  %give  %fact
-  :+  `[%local-pages path]
+  :+  [%local-pages path]~
     %link-update
   !>([%local-pages path [page]~])
 ::  +hear-submission: record page someone else saved
@@ -154,7 +154,7 @@
   :_  state
   :_  ~
   :+  %give  %fact
-  :+  `[%submissions path]
+  :+  [%submissions path]~
     %link-update
   !>([%submissions path [submission]~])
 ::
