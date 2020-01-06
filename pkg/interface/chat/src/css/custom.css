@@ -180,6 +180,9 @@ h2 {
   .invert-d {
     filter: invert(1);
   }
+  .o-60-d {
+    opacity: .6;
+  }
   a {
     color: #fff;
   }
