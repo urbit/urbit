@@ -25,6 +25,9 @@
         fastDec n = n-1
         ```
 
+    DONE Compile Ackermann to Uruk and run it.
+
+
     -- Flesh out Jets ----------------------------------------------------------
 
     TODO Cleanup jet refactor.
@@ -33,7 +36,6 @@
         defined together. The current approach is easy to fuck up and hard
         to test.
 
-    TODO Compile Ackermann to Uruk and run it.
 
     -- Testing -----------------------------------------------------------------
 
@@ -51,6 +53,7 @@
         - unmatch jets, normalize with jets
         - unmatch jets, normalize without jets, match jets
 
+
     -- Front End ---------------------------------------------------------------
 
     TODO Use cords for jet names.
@@ -61,6 +64,7 @@
     TODO Hook up front-end to JetComp
     TODO Implement REPL.
     TODO Implement script-runner.
+
 
     -- High-Level Jet Definition -----------------------------------------------
 
@@ -1217,8 +1221,22 @@ sjMul = SingJet{..}
 
     ack =
       (fix
-        (\go m n ->
-          (if (eql m 0) (inc n)
-            (if (eql n 0) (go (fastDec m) 1)
-              (go (fastDec m) (go m (fastDec n)))))))
+        (\l m n ->
+          (iff (zer m) (inc n)
+            (iff (zer n) (l (fec m) 1)
+              (l (fec m) (l m (fec n)))))))
+
+    ack = (fix (\l m n -> (iff (zer m) (inc n) (iff (zer n) (l (fec m) 1) (l (fec m) (l m (fec n)))))))
 -}
+
+ack ∷ Ur
+ack =
+    Fix
+      :@
+    (S :@ (K :@ (S :@ (S :@ (K :@ S)
+                         :@ (S :@ (S :@ (K :@ (S :@ (K :@ S) :@ K))
+                                     :@ (S :@ (K :@ Iff) :@ Zer))
+                               :@ (K :@ Inc)))))
+       :@ (S :@ (S:@(K:@(S:@(K:@S):@(S:@(K:@S)))):@(S :@ (K:@(S:@(K:@(S:@(S:@(K:@Iff):@Zer)))))
+                                                      :@ (S:@(K:@(S:@(K:@K))):@(S:@(S:@(K:@S):@(S:@(S:@(K:@S):@K):@(K:@Fec))):@(K:@(K:@Nat 1))))))
+             :@ (S:@(S:@(K:@(S:@(K:@S):@(S:@(K:@(S:@(K:@S):@K))))):@(S:@(S:@(K:@S):@K):@(K:@Fec))):@(S:@(S:@(K:@S):@(S:@(K:@(S:@(K:@S):@K)))):@(K:@(K:@Fec))))))
