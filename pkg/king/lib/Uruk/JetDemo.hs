@@ -34,6 +34,7 @@
         - unmatch jets, normalize without jets, match jets
 
     TODO Use cords for jet names.
+    TODO Make the `Lazy` jet take variable number of arguments.
 
     TODO Update printer to print cords.
 
@@ -284,12 +285,6 @@ e_cas = jetExp j_cas
 j_zer = match (JNat 0) 2 emp l_zer
 j_one = match (JNat 1) 2 emp l_one
 
-j_nat ∷ Check
-j_nat = Named "nat" chk
-  where chk ∷ Positive → JetTag → Val → Maybe Jet
-        chk 2 (MkVal K) u = JNat <$> unChurch (valUr u)
-        chk n t         b = Nothing
-
 j_wait ∷ Check
 j_wait = Named "wait" chk
   where chk ∷ Positive → JetTag → Val → Maybe Jet
@@ -407,30 +402,30 @@ runJet = curry \case
 jetArity ∷ Jet → Positive
 jetArity = \case
     Slow n _ _ → n
-    Eye        → 1
-    Bee        → 3
-    Sea        → 3
+    Eye        → sjArgs sjI
+    Bee        → sjArgs sjB
+    Sea        → sjArgs sjC
     Sn n       → n+2
     Bn n       → n+2
     Cn n       → n+2
     Wait n     → n+1
-    JFix        → 2
+    JFix       → sjArgs sjFix
     JNat _     → 2
-    JFol        → 1
-    JAdd        → 2
-    JInc        → 1
-    JDec        → 1
+    JFol       → sjArgs sjFol
+    JAdd       → sjArgs sjAdd
+    JInc       → sjArgs sjInc
+    JDec       → sjArgs sjDec
     Mul        → 2
-    JSub        → 2
-    JDed       → 1
+    JSub       → sjArgs sjSub
+    JDed       → sjArgs sjDed
     JLaz       → sjArgs sjLaz
-    JUni       → 2
-    JLef        → 3
-    JRit        → 3
+    JUni       → sjArgs sjUni
+    JLef       → sjArgs sjLef
+    JRit       → sjArgs sjRit
     Cas        → 3
-    JCon        → 3
-    JCar        → 1
-    JCdr        → 1
+    JCon       → sjArgs sjCon
+    JCar       → sjArgs sjCar
+    JCdr       → sjArgs sjCdr
 
 jetBod ∷ Match → Ur
 jetBod = valUr . mBody
@@ -595,6 +590,30 @@ runSingJet SingJet{..} xs =
     fromMaybe fallback (sjExec xs)
   where
     fallback = Fast 0 (Slow sjArgs (valUr sjName) (valUr sjBody)) xs
+
+
+-- Jets with Varied Bodies and Arities -----------------------------------------
+
+data ManyJet = ManyJet
+  { mjName ∷ Val
+  , mjArgs ∷ Jet → Positive
+  , mjBody ∷ Jet → Ur
+  , mjRead ∷ Val → Maybe Jet
+  , mjExec ∷ Jet → [Ur] → Maybe Ur
+  }
+
+-- manyJet ∷ ManyJet → Match
+-- manyJet ManyJet{..} = MkMatch mjFast mjArgs mjName mjBody
+
+-- mjExp ∷ ManyJet → Ur
+-- mjExp (ManyJet _ n t b _) = J n :@ valUr t :@ valUr b
+
+-- runManyJet ∷ ManyJet → [Ur] → Ur
+-- runManyJet ManyJet{..} xs =
+    -- fromMaybe fallback (mjExec xs)
+  -- where
+    -- fallback = Fast 0 (Slow mjArgs (valUr mjName) (valUr mjBody)) xs
+
 
 
 -- Identity  -------------------------------------------------------------------
@@ -765,9 +784,10 @@ sjFol = SingJet{..}
     sjFast = JFol
     sjArgs = 1
     sjName = MkVal (Nat 2)
-    sjExec [Nat x] = Just (church x)
-    sjExec [_]     = Nothing
-    sjExec _       = error "bad-fol"
+    sjExec [Lazy x] = Just (Fol :@ x)
+    sjExec [Nat x]  = Just (church x)
+    sjExec [_]      = Nothing
+    sjExec _        = error "bad-fol"
     sjBody = MkVal $
         S :@ (S :@ I :@ (K :@ (S :@ (S :@ (K :@ S) :@ K))))
           :@ (K :@ (S :@ K))
@@ -786,9 +806,10 @@ sjInc = SingJet{..}
     sjFast = JInc
     sjArgs = 1
     sjName = MkVal (Nat 1)
-    sjExec [Nat x] = Just $ Nat $ succ x
-    sjExec [_]     = Nothing
-    sjExec _       = error "bad-inc"
+    sjExec [Lazy x] = Just (Inc :@ x)
+    sjExec [Nat x]  = Just $ Nat $ succ x
+    sjExec [_]      = Nothing
+    sjExec _        = error "bad-inc"
     sjBody = MkVal $
         S :@ (K :@ J2)
           :@ (S :@ (K :@ (S :@ (S :@ (K :@ S) :@ K)))
@@ -811,10 +832,11 @@ sjDec = SingJet{..}
     sjArgs = 1
     sjName = MkVal (Nat 3)
 
-    sjExec [Nat 0] = Just (Lef :@ Uni)
-    sjExec [Nat x] = Just (Rit :@ Nat (pred x))
-    sjExec [_]     = Nothing
-    sjExec _       = error "bad-dec"
+    sjExec [Lazy x] = Just (Dec :@ x)
+    sjExec [Nat 0]  = Just (Lef :@ Uni)
+    sjExec [Nat x]  = Just (Rit :@ Nat (pred x))
+    sjExec [_]      = Nothing
+    sjExec _        = error "bad-dec"
 
     sjBody = MkVal $
         S :@ (S :@ (S :@ (K :@ cas)
@@ -840,7 +862,9 @@ sjAdd = SingJet{..}
     sjFast = JAdd
     sjArgs = 2
     sjName = MkVal K
-    sjExec [Nat x, Nat y] = Just $ Nat (x+y)
+    sjExec [Lazy x, y     ] = Just $ (Add :@ x :@ y)
+    sjExec [x,      Lazy y] = Just $ (Add :@ x :@ y)
+    sjExec [Nat  x, Nat y ] = Just $ Nat (x+y)
     sjExec _              = Nothing
     sjBody = MkVal $
         S :@ (K :@ (S :@ (K :@ J2)))
@@ -865,9 +889,11 @@ sjSub = SingJet{..}
     sjFast = JSub
     sjArgs = 2
     sjName = MkVal (Nat 4)
-    sjExec [Nat x, Nat y] = Just $ sub x y
-    sjExec [_,     _    ] = Nothing
-    sjExec _              = error "bad-sub"
+    sjExec [Lazy x, y     ] = Just $ Sub :@ x :@ y
+    sjExec [x,      Lazy y] = Just $ Sub :@ x :@ y
+    sjExec [Nat x,  Nat y ] = Just $ sub x y
+    sjExec [_,      _     ] = Nothing
+    sjExec _                = error "bad-sub"
     sjBody = MkVal $
         S :@ (K :@ (S:@(S:@I:@(K:@(S:@(S:@cas:@(K:@Lef)):@(K:@Dec))))))
           :@ (S :@ (K :@ K) :@ Rit)
@@ -899,6 +925,8 @@ sjCon = SingJet{..}
 
 -- Car -------------------------------------------------------------------------
 
+pattern Car = Fast 1 JCar []
+
 {-
     car = \p -> p (\x y -> x)
 -}
@@ -908,6 +936,7 @@ sjCar = SingJet{..}
     sjFast = JCar
     sjArgs = 1
     sjName = MkVal (Nat 13)
+    sjExec [Lazy x]            = Just (Car :@ x)
     sjExec [Fast _ JCon [x,_]] = Just x
     sjExec [_]                 = Nothing
     sjExec _                   = error "bad-car"
@@ -916,6 +945,8 @@ sjCar = SingJet{..}
 
 
 -- Cdr -------------------------------------------------------------------------
+
+pattern Cdr = Fast 1 JCdr []
 
 {-
     cdr = \p -> b (\x y -> y)
@@ -926,8 +957,18 @@ sjCdr = SingJet{..}
     sjFast = JCdr
     sjArgs = 1
     sjName = MkVal (Nat 14)
+    sjExec [Lazy x]            = Just (Cdr :@ x)
     sjExec [Fast _ JCon [_,y]] = Just y
     sjExec [_]                 = Nothing
     sjExec _                   = error "bad-cdr"
     sjBody = MkVal $
         S :@ I :@ (K :@ (S :@ K))
+
+
+-- Natural Numbers -------------------------------------------------------------
+
+j_nat ∷ Check
+j_nat = Named "nat" chk
+  where chk ∷ Positive → JetTag → Val → Maybe Jet
+        chk 2 (MkVal K) u = JNat <$> unChurch (valUr u)
+        chk n t         b = Nothing
