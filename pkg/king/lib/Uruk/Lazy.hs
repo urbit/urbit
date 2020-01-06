@@ -244,49 +244,6 @@ pattern J4 = J 4 :@ K
 
 pattern W2 = Fast 3 (Wait 2) []
 
--- Z = \f -> (\x -> f (\v -> wait2 x x v)) (\x -> f (\v -> wait2 x x v))
-pattern Z = S :@ (S:@(S:@(K:@S):@K):@(K:@(S:@W2:@I)))
-              :@ (S:@(S:@(K:@S):@K):@(K:@(S:@W2:@I)))
-
-{-
-    TODO:
-
-    Jet registration becomes an infinite loop because jet bodies are
-    normalized, but jet matching in the bodies depends on the jet
-    dashboard, which depends on the normalized jet body.
-
-    Giving each jet a unique name would solve this, but maybe it's still
-    posible to run into this problem by accident? Whatever.
-
-    For now, I'm hacking around this by using a unjetted version of
-    `fol` in jet bodies.
--}
-
-ch_succ = S :@ (S :@ (K :@ S) :@ K)
-ch_zero = S :@ K
-
-
---  zer = \i z -> z
---  suc = \n -> \i z -> i (n i z)
---  one = inc zer
---  fol = \n -> n inc zer
---  mul =
-
-wait n = fast (Wait n)
-
-l_zer = S :@ K
-l_one = S :@ (S:@(K:@S):@K) :@ (S:@K)
-l_mul = D :@ D :@ D -- TODO
-
-e_zer = jetExp j_zer
-e_one = jetExp j_one
-e_mul = jetExp j_mul
-
-j_zer = match (JNat 0) 2 emp l_zer
-j_one = match (JNat 1) 2 emp l_one
-
-j_mul = match Mul 2 emp l_mul
-
 dash ∷ Dash
 dash = mkDash
     [ simpleEnt (singJet sjI)
@@ -471,52 +428,11 @@ jetExp (MkMatch _ n t b) = J (fromIntegral n) :@ valUr t :@ valUr b
 --
 church ∷ Natural → Ur
 church 0 = S :@ K
-church n = S :@ (S:@(K:@S):@K) :@ church (pred n)
+church n = S :@ (S :@ (K :@ S) :@ K) :@ church (pred n)
 
 churchJet ∷ Natural → Ur
 churchJet n = J 2 :@ K :@ church n
 
-
--- Bulk Variants of B, C, and S ------------------------------------------------
-
-bn, cn, sn ∷ Positive → Ur
-
-bn n = iterate ((B:@        B):@) B !! (fromIntegral n - 1)
-cn n = iterate ((B:@(B:@C):@B):@) C !! (fromIntegral n - 1)
-sn n = iterate ((B:@(B:@S):@B):@) S !! (fromIntegral n - 1)
-
-bnJet, cnJet, snJet ∷ Positive → Ur
-
-bnJet n = J (n+2) :@ K :@ bn n
-cnJet n = J (n+2) :@ K :@ cn n
-snJet n = J (n+2) :@ K :@ sn n
-
-j_bn ∷ Check
-j_bn = Named "bn" chk
-  where
-    chk n (MkVal K) (MkVal b)               = Bn <$> go n b
-    chk n _         k                       = Nothing
-    go 3 B                                  = Just 1
-    go n (Fast 1 Bee [B, go(n-1) → Just r]) = Just (r+1)
-    go n e                                  = Nothing
-
-j_cn ∷ Check
-j_cn = Named "cn" chk
-  where
-    chk n (MkVal K) (MkVal b)                          = Cn <$> go n b
-    chk n _         k                                  = Nothing
-    go 3 C                                             = Just 1
-    go n (Fast 1 Bee [C, Fast 2 Bee [go(n-1)→Just r]]) = Just (r+1)
-    go n _                                             = Nothing
-
-j_sn ∷ Check
-j_sn = Named "sn" chk
-  where
-    chk n (MkVal K) (MkVal b)                          = Sn <$> go n b
-    chk n _         k                                  = Nothing
-    go 3 S                                             = Just 1
-    go n (Fast 1 Bee [s, Fast 2 Bee [go(n-1)→Just r]]) = Just (r+1)
-    go n _                                             = Nothing
 
 fast ∷ Jet → Ur
 fast j = Fast (fromIntegral $ jetArity j) j []
@@ -619,13 +535,13 @@ runSingJet SingJet{..} xs =
 
 -- Jets with Varied Bodies and Arities -----------------------------------------
 
-data ManyJet = ManyJet
-  { mjName ∷ Val
-  , mjArgs ∷ Jet → Positive
-  , mjBody ∷ Jet → Ur
-  , mjRead ∷ Val → Maybe Jet
-  , mjExec ∷ Jet → [Ur] → Maybe Ur
-  }
+-- data ManyJet = ManyJet
+    -- { mjName ∷ Val
+    -- , mjArgs ∷ Jet → Positive
+    -- , mjBody ∷ Jet → Ur
+    -- , mjRead ∷ Val → Maybe Jet
+    -- , mjExec ∷ Jet → [Ur] → Maybe Ur
+    -- }
 
 -- manyJet ∷ ManyJet → Match
 -- manyJet ManyJet{..} = MkMatch mjFast mjArgs mjName mjBody
@@ -659,6 +575,24 @@ sjI = SingJet{..}
     sjBody = MkVal (S :@ K :@ K)
 
 
+-- Bulk S Combinator -----------------------------------------------------------
+
+sn ∷ Positive → Ur
+sn n = iterate ((B:@(B:@S):@B):@) S !! (fromIntegral n - 1)
+
+snJet ∷ Positive → Ur
+snJet n = J (n+2) :@ K :@ sn n
+
+j_sn ∷ Check
+j_sn = Named "sn" chk
+  where
+    chk n (MkVal K) (MkVal b)                          = Sn <$> go n b
+    chk n _         k                                  = Nothing
+    go 3 S                                             = Just 1
+    go n (Fast 1 Bee [s, Fast 2 Bee [go(n-1)→Just r]]) = Just (r+1)
+    go n _                                             = Nothing
+
+
 -- Flip ------------------------------------------------------------------------
 
 pattern C = Fast 3 Sea []
@@ -674,6 +608,24 @@ sjC = SingJet{..}
     sjBody = MkVal (S :@ (K :@ (S :@ (K :@ (S :@ S :@ (K :@ K))) :@ K)) :@ S)
 
 
+-- Bulk Flip -------------------------------------------------------------------
+
+cn ∷ Positive → Ur
+cn n = iterate ((B:@(B:@C):@B):@) C !! (fromIntegral n - 1)
+
+cnJet ∷ Positive → Ur
+cnJet n = J (n+2) :@ K :@ cn n
+
+j_cn ∷ Check
+j_cn = Named "cn" chk
+  where
+    chk n (MkVal K) (MkVal b)                          = Cn <$> go n b
+    chk n _         k                                  = Nothing
+    go 3 C                                             = Just 1
+    go n (Fast 1 Bee [C, Fast 2 Bee [go(n-1)→Just r]]) = Just (r+1)
+    go n _                                             = Nothing
+
+
 -- Function Composition --------------------------------------------------------
 
 pattern B = Fast 3 Bee []
@@ -687,6 +639,24 @@ sjB = SingJet{..}
     sjExec = \case [f,g,x] → Just (f :@ (g :@ x))
                    _       → error "bad-B"
     sjBody = MkVal (S :@ (K :@ S) :@ K)
+
+
+-- Bulk Composition ------------------------------------------------------------
+
+bnJet ∷ Positive → Ur
+bnJet n = J (n+2) :@ K :@ bn n
+
+bn ∷ Positive → Ur
+bn n = iterate ((B:@B):@) B !! (fromIntegral n - 1)
+
+j_bn ∷ Check
+j_bn = Named "bn" chk
+  where
+    chk n (MkVal K) (MkVal b)               = Bn <$> go n b
+    chk n _         k                       = Nothing
+    go 3 B                                  = Just 1
+    go n (Fast 1 Bee [B, go(n-1) → Just r]) = Just (r+1)
+    go n e                                  = Nothing
 
 
 -- Crash -----------------------------------------------------------------------
@@ -776,6 +746,10 @@ sjRit = SingJet{..}
 
 
 -- Recursion -------------------------------------------------------------------
+
+-- Z = \f -> (\x -> f (\v -> W2 x x v)) (\x -> f (\v -> W2 x x v))
+pattern Z = S :@ (S:@(S:@(K:@S):@K):@(K:@(S:@W2:@I)))
+              :@ (S:@(S:@(K:@S):@K):@(K:@(S:@W2:@I)))
 
 pattern Fix = Fast 2 JFix []
 
@@ -1074,3 +1048,10 @@ sjEql = SingJet{..}
                           :@ (S :@ (K :@ (S :@ (K :@ Cas))) :@ Sub))
                     :@ (K :@ (K :@ (K :@ no)))))
         :@ (K :@ (K :@ isZero))
+
+
+-- Atom Multiplication ---------------------------------------------------------
+
+l_mul = D :@ D :@ D -- TODO
+e_mul = jetExp j_mul
+j_mul = match Mul 2 emp l_mul
