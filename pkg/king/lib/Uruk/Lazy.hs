@@ -12,6 +12,8 @@
         execute the natural number against l_zero and l_succ, and jet
         the result.
 
+    DONE Jet equality for naturals.
+
     ----------------------------------------------------------------------------
 
     TODO Cleanup jet refactor.
@@ -19,8 +21,6 @@
       - Rearrange things so that jet matching, arity, and reduction are
         defined together. The current approach is easy to fuck up and hard
         to test.
-
-    TODO Jet equality for naturals.
 
     TODO Normalization without jets (all jets implemented with their code)
 
@@ -80,6 +80,7 @@ data Jet
     | JNat !Natural
     | JPak
     | JFol
+    | JEql
     | JAdd
     | JInc
     | JDec
@@ -143,6 +144,7 @@ instance Show Jet where
         Sn n       → "s" <> show n
         JFol        → ","
         JAdd        → "+"
+        JEql        → "="
         JInc        → "^"
         JDec        → "_"
         Mul        → "*"
@@ -302,6 +304,9 @@ dash = mkDash
     , simpleEnt (singJet sjCon)
     , simpleEnt (singJet sjCar)
     , simpleEnt (singJet sjCdr)
+    , simpleEnt (singJet sjEql)
+    , simpleEnt (singJet sjCas)
+    , simpleEnt (singJet sjPak)
     , predikEnt j_nat
     , predikEnt j_cn
     , predikEnt j_sn
@@ -396,6 +401,7 @@ runJet = curry \case
     (JPak, xs) → runSingJet sjPak xs
     (JAdd, xs) → runSingJet sjAdd xs
     (JInc, xs) → runSingJet sjInc xs
+    (JEql, xs) → runSingJet sjEql xs
     (Eye,  xs) → runSingJet sjI   xs
     (Bee,  xs) → runSingJet sjB   xs
     (Sea,  xs) → runSingJet sjC   xs
@@ -440,6 +446,7 @@ jetArity = \case
     JPak       → sjArgs sjPak
     JFol       → sjArgs sjFol
     JAdd       → sjArgs sjAdd
+    JEql       → sjArgs sjEql
     JInc       → sjArgs sjInc
     JDec       → sjArgs sjDec
     Mul        → 2
@@ -527,6 +534,7 @@ unMatch = go
         Cn n       → cnJet n
         JFix       → sjExp sjFix
         JInc       → sjExp sjInc
+        JEql       → sjExp sjEql
         JFol       → sjExp sjFol
         JDec        → sjExp sjDec
         Mul        → jetExp j_mul
@@ -860,9 +868,9 @@ sjDec = SingJet{..}
 
     sjBody = MkVal $
         S :@ (S :@ I
-                :@ (K :@ (S :@ (S :@ Cas :@ (K :@ (K :@ (Rit :@ Nat 0))))
+                :@ (K :@ (S :@ (S :@ Cas :@ (K :@ (K :@ Fast 2 JRit [Nat 0])))
                             :@ (K :@ (S :@ (K :@ Rit) :@ Inc)))))
-          :@ (K :@ (Lef :@ Uni))
+          :@ (K :@ (Fast 2 JLef [Uni]))
 
 
 -- Add -------------------------------------------------------------------------
@@ -1032,3 +1040,37 @@ j_wait = Named "wait" chk
   where chk ∷ Positive → JetTag → Val → Maybe Jet
         chk n (MkVal I) (MkVal I) = Just $ Wait (fromIntegral n - 1)
         chk _ _         _         = Nothing
+
+
+-- Natural Equality ------------------------------------------------------------
+
+pattern Eql = Fast 2 JEql []
+
+{-
+    ya = Nat 0
+    no = Nat 1
+    isZero = \n   -> n (K No) Ya
+    equals = \x y -> Cas (sub x y) (K No) IsZero
+-}
+sjEql ∷ SingJet
+sjEql = SingJet{..}
+  where
+    sjFast = JEql
+    sjArgs = 2
+    sjName = MkVal K
+    sjExec [weak→Just x, y] = Just $ Fast 0 sjFast [x, y]
+    sjExec [x, weak→Just y] = Just $ Fast 0 sjFast [x, y]
+    sjExec [Nat x, Nat y]   = Just $ if x==y then ya else no
+    sjExec _                = Nothing
+
+    sjBody = MkVal isEqul
+
+    no = Nat 0
+    ya = Nat 1
+    isZero = S :@ (S :@ I :@ (K :@ (K :@ no))) :@ (K :@ ya)
+    isEqul =
+      S :@ (S :@ (K :@ S)
+              :@ (S :@ (S :@ (K :@ S)
+                          :@ (S :@ (K :@ (S :@ (K :@ Cas))) :@ Sub))
+                    :@ (K :@ (K :@ (K :@ no)))))
+        :@ (K :@ (K :@ isZero))
