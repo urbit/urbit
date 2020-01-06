@@ -95,6 +95,7 @@ data Jet
     | JAdd
     | JInc
     | JDec
+    | JFec
     | JMul
     | JSub
     | JDed
@@ -158,6 +159,7 @@ instance Show Jet where
         JEql        → "="
         JInc        → "^"
         JDec        → "_"
+        JFec        → "__"
         JMul        → "*"
         JSub        → "-"
         JLef        → "L"
@@ -266,6 +268,7 @@ dash = mkDash
     , simpleEnt (singJet sjAdd)
     , simpleEnt (singJet sjMul)
     , simpleEnt (singJet sjDec)
+    , simpleEnt (singJet sjFec)
     , simpleEnt (singJet sjSub)
     , simpleEnt (singJet sjUni)
     , simpleEnt (singJet sjLef)
@@ -378,6 +381,7 @@ runJet = curry \case
     (JFix, xs) → runSingJet sjFix xs
     (JFol, xs) → runSingJet sjFol xs
     (JDec, xs) → runSingJet sjDec xs
+    (JFec, xs) → runSingJet sjFec xs
     (JSub, xs) → runSingJet sjSub xs
     (JDed, xs) → runSingJet sjDed xs
     (JUni, xs) → runSingJet sjUni xs
@@ -421,6 +425,7 @@ jetArity = \case
     JEql       → sjArgs sjEql
     JInc       → sjArgs sjInc
     JDec       → sjArgs sjDec
+    JFec       → sjArgs sjFec
     JMul       → sjArgs sjMul
     JSub       → sjArgs sjSub
     JDed       → sjArgs sjDed
@@ -465,6 +470,7 @@ unMatch = go
         JEql       → sjExp sjEql
         JFol       → sjExp sjFol
         JDec       → sjExp sjDec
+        JFec       → sjExp sjFec
         JMul       → sjExp sjMul
         JSub       → sjExp sjSub
         JAdd       → sjExp sjAdd
@@ -862,6 +868,32 @@ sjDec = SingJet{..}
                 :@ (K :@ (S :@ (S :@ Cas :@ (K :@ (K :@ Fast 2 JRit [Nat 0])))
                             :@ (K :@ (S :@ (K :@ Rit) :@ Inc)))))
           :@ (K :@ (Fast 2 JLef [Uni]))
+
+
+-- Fast Decrement --------------------------------------------------------------
+
+pattern Fec = Fast 1 JFec []
+
+{-
+    fec = \n -> Cas (dec n) (k 0) i
+-}
+sjFec ∷ SingJet
+sjFec = SingJet{..}
+  where
+    sjFast = JFec
+    sjArgs = 1
+    sjName = MkVal (Nat 3)
+
+    sjExec [weak→Just x] = Just $ Fast 0 sjFast [x]
+    sjExec [Nat 0]       = Just (Nat 0)
+    sjExec [Nat x]       = Just (Nat (pred x))
+    sjExec [_]           = Nothing
+    sjExec _             = error "bad-dec"
+
+    sjBody = MkVal $
+        S :@ (S :@ (S :@ (K :@ Cas) :@ Dec)
+                :@ (K :@ (K :@ Nat 0)))
+          :@ (K :@ I)
 
 
 -- Add -------------------------------------------------------------------------
