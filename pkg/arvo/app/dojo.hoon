@@ -538,7 +538,7 @@
           $poke
         %-  he-card(poy ~)
         :*  %pass
-            /poke 
+            /poke
             %agent
             p.p.mad
             %poke
@@ -1141,11 +1141,11 @@
     ::  If couldn't search (eg cursor not in appropriate position), do
     ::  nothing.
     ::
-    ?:  ?=(~ tl) 
+    ?:  ?=(~ tl)
       res
     ::  If no options, ring the bell
     ::
-    ?:  =([~ ~] tl) 
+    ?:  =([~ ~] tl)
       (he-diff %bel ~)
     ::  If only one option, don't print unless the option is already
     ::  typed in.

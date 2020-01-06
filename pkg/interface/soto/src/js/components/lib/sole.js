@@ -12,11 +12,11 @@ export class Share {
     this.leg = leg;
   }
 
-  abet() { 
-    return { buf:this.buf, 
-             leg:this.leg.slice(), 
-             ven:this.ven.slice() 
-           }; 
+  abet() {
+    return { buf:this.buf,
+             leg:this.leg.slice(),
+             ven:this.ven.slice()
+           };
     }
 
   apply(ted){
@@ -59,7 +59,7 @@ export class Share {
             case 'ins': if ((at < dex.ins.at) ||
                            ((at === dex.ins.at) && !(cha <= dex.ins.cha))) {
                 dex.ins.at++;
-              } 
+              }
               else if (at >= dex.ins.at) {
                 dex.ins.at = at;  //NOTE possibly unpredictable behaviour
                 dex.ins.at++;     // for sole inserts that aren't tabs
@@ -82,9 +82,9 @@ export class Share {
     switch (false) {
       case 'nop' !== ted: return ted;
       case !ted.map:
-        return ted.map( tad => { 
-          const res = this.inverse(tad); 
-          this.apply(tad); 
+        return ted.map( tad => {
+          const res = this.inverse(tad);
+          this.apply(tad);
           return res;
         }).reverse();
       default: switch (Object.keys(ted)[0]) {
@@ -97,18 +97,18 @@ export class Share {
   }
 
   receive({ler,ted}){
-    if (!(ler[1] === this.ven[1])) { 
+    if (!(ler[1] === this.ven[1])) {
       throw `-out-of-sync.[${str(ler)} ${str(this.ven)}]`;
     }
-    this.leg = this.leg.slice((this.leg.length + ler[0]) - this.ven[0]); 
+    this.leg = this.leg.slice((this.leg.length + ler[0]) - this.ven[0]);
     const dat = this.transmute(this.leg, ted);
-    this.ven[1]++; 
-    this.apply(dat); 
+    this.ven[1]++;
+    this.apply(dat);
     return dat;
   }
 
-  remit() { 
-    throw 'stub'; 
+  remit() {
+    throw 'stub';
   }
 
   transmit(ted){
@@ -126,12 +126,12 @@ export class Share {
   transpose(ted,pos){
     if (pos === undefined) {
       return this.transpose(this.leg, ted);
-    } 
+    }
     else {
       let left;
-      return ((left = 
+      return ((left =
           (this.transmute(
-            ted, {ins: {at: pos}})).ins) != null ? 
+            ted, {ins: {at: pos}})).ins) != null ?
             left : { at:0 }
           ).at;
       }

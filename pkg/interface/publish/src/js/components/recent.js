@@ -14,7 +14,7 @@ export class Recent extends Component {
   buildRecent() {
     var recent = [];
     var group = {
-      date: new Date(), 
+      date: new Date(),
       posts: [],
     };
 

@@ -64,7 +64,7 @@ export class ChatInput extends Component {
         }
     });
   }
-  
+
   bindShortcuts() {
     Mousetrap(this.textareaRef.current).bind('enter', e => {
       e.preventDefault();
@@ -173,7 +173,7 @@ export class ChatInput extends Component {
     const { props, state } = this;
 
     this.bindShortcuts();
-    
+
     return (
       <div className="pa3 cf flex black bt b--gray4" style={{ flexGrow: 1 }}>
         <div

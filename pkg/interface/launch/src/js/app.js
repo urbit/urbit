@@ -18,12 +18,12 @@ export default class App extends Component {
     return (
        <BrowserRouter>
          <div>
-          <Route exact path="/" 
+          <Route exact path="/"
             render={ (props) => {
               return (
-                <Home 
+                <Home
                   {...props}
-                  data={this.state} 
+                  data={this.state}
                   keys={new Set(Object.keys(this.state))}
                 />
               );

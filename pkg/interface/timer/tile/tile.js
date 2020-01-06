@@ -48,10 +48,10 @@ export default class TimerTile extends Component {
     }
     else if(props.data == "alarm"  ) {
       //api still delivers alarm events for cancelled timers, so make sure that it's actually time to fire the alarm before doing so
-      if( this.state && this.state.mode == "running" && this.state.time < 500 ) { 
+      if( this.state && this.state.mode == "running" && this.state.time < 500 ) {
          return {mode: "alarm", time:0};
       }
-      else { 
+      else {
         if(!this.state) { return {mode: "waiting", time: timerLength} }
         else {
           //no change
@@ -64,7 +64,7 @@ export default class TimerTile extends Component {
     }
   }
 
-  componentWillReceiveProps(newProps) {    
+  componentWillReceiveProps(newProps) {
     this.setState(this.getStateFromProps(newProps));
   }
 
@@ -78,7 +78,7 @@ export default class TimerTile extends Component {
 
     var easedRatio = ( -( Math.cos( Math.PI * ratio ) - 1 ) / 4) + (ratio/2);
     //from here https://easings.net/en#easeInOutSine
-    
+
 
     //define scale based on time elapsed
     var easedRatioCubic  =  ratio < 0.5 ?
@@ -94,13 +94,13 @@ export default class TimerTile extends Component {
 
     var rotation = ((ratio+easedRatio)/2) * -1 * Math.PI;
 
-    //generate star shape thing 
+    //generate star shape thing
     var points = [];
     for(var i = 0; i < 14; i++) {
       var deg = i * (Math.PI / 7);
       var p = ptc( i % 2 == 0 ? 15  : 40, deg);
 
-  
+
       points[i] = p;
     }
 
@@ -130,7 +130,7 @@ export default class TimerTile extends Component {
           ye = y + h,           // y-end
           xm = x + w / 2,       // x-middle
           ym = y + h / 2;       // y-middle
-    
+
       ctx.beginPath();
       ctx.moveTo(x, ym);
       ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
@@ -140,7 +140,7 @@ export default class TimerTile extends Component {
       //ctx.closePath(); // not used correctly, see comments (use to close off open path)
       ctx.fill();
     }
-    
+
     drawEllipse(ctx,-5,-5,10,10);
 
     ctx.restore()
@@ -159,7 +159,7 @@ export default class TimerTile extends Component {
     ctx.beginPath();
     ctx.arc(outerSize/2, outerSize/2, innerSize/2, 0, 2 * Math.PI);
     ctx.fill();
-    
+
     //draw line separating top from bottom
     ctx.strokeStyle = "black";
     ctx.beginPath();
@@ -169,13 +169,13 @@ export default class TimerTile extends Component {
 
     this.greenPart(ctx);
 
-    if(this.state.mode == "running") { 
+    if(this.state.mode == "running") {
       var time =  -1 * ((new Date()).getTime() - this.state.startTime);
       //javascript time can be ahead of the urbit alarm, so we dont want to show negative nubmers
       if(time < 0) { time = 0; }
       this.setState({time: time})
     }
-    window.requestAnimationFrame(this.animate) 
+    window.requestAnimationFrame(this.animate)
 
   }
 
@@ -217,7 +217,7 @@ export default class TimerTile extends Component {
 
     var interaction;
     var interactionStyle = "link underline black hover-white";
-    if(this.state.mode == "running") { 
+    if(this.state.mode == "running") {
       interaction = <a className={interactionStyle} onClick={this.stopTimer}>Stop</a>;
     }
     else if(this.state.mode == "alarm") {
@@ -227,13 +227,13 @@ export default class TimerTile extends Component {
       interaction = <a className={interactionStyle} onClick={this.startTimer}>Start</a>;
 
     }
-    
+
     return this.renderWrapper((
       <div style={{ position: "relative",
         fontFamily: "-apple-system,BlinkMacSystemFont,avenir next,avenir,helvetica neue,helvetica,ubuntu,roboto,noto,segoe ui,arial,sans-serif"
         }}>
         <canvas id="timer-canvas" width={outerSize} height={outerSize}></canvas>
-        
+
         <div id="timer-display" style={{
           width: "100%",
           textAlign: "center",
@@ -243,12 +243,12 @@ export default class TimerTile extends Component {
           fontSize:"28px",
           fontWeight:"300"
         }}>
-         {this.state.mode == "running" ? this.formatTime(this.state.time) : 
+         {this.state.mode == "running" ? this.formatTime(this.state.time) :
           this.state.mode == "alarm" ?
           <div>
             <Flashing>00:00</Flashing>
             {
-              this.state.playSound 
+              this.state.playSound
               ?
               <audio src="http://maxwellsfoley.com/ding.mp3" loop={true} autoPlay/>
               :

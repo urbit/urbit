@@ -529,7 +529,7 @@ _cttp_creq_free(u3_creq* ceq_u)
   c3_free(ceq_u);
 }
 
-/* _cttp_creq_new(): create a u3_creq from an +http-request 
+/* _cttp_creq_new(): create a u3_creq from an +http-request
  *
  *   If we were rewriting all of this from scratch, this isn't how we'd do it.
  *

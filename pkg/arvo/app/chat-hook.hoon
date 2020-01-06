@@ -77,7 +77,7 @@
     ?+  -.sign  (on-agent:def wire sign)
         %watch-ack
       =^  cards  state
-        (watch-ack:cc wire p.sign) 
+        (watch-ack:cc wire p.sign)
       [cards this]
     ::
         %kick

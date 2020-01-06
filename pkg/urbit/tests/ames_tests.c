@@ -18,7 +18,7 @@ _test_ames(void)
   u3_lane lan_u;
   lan_u.pip_w = 0x7f000001;
   lan_u.por_s = 12345;
- 
+
   u3_noun lan = u3_ames_encode_lane(lan_u);
   u3_lane nal_u = u3_ames_decode_lane(u3k(lan));
   u3_lane nal_u2 = u3_ames_decode_lane(lan);

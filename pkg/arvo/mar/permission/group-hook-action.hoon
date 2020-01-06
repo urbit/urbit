@@ -4,7 +4,7 @@
 ++  grab
   |%
   ++  noun  permission-group-hook-action
-  ++  json  
+  ++  json
     |=  jon=^json
     (json-to-perm-group-hook-action jon)
   --

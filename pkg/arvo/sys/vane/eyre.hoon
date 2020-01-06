@@ -637,7 +637,7 @@
       this.outstandingSubscriptions.set(
         id,
         {
-          err: connectionErrFunc, 
+          err: connectionErrFunc,
           event: eventFunc,
           quit: quitFunc
         }

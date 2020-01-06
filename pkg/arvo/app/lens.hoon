@@ -83,7 +83,7 @@
     %+  give-simple-payload:app  eyre-id.u.job.state
     [[200 ~] `(as-octt:mimes:html "\"Imported data\"")]
   ::
-      [%export ~] 
+      [%export ~]
     ?+    -.sign  (on-agent:def wire sign)
         %watch-ack
       ?~  p.sign

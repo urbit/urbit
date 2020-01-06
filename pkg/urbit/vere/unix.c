@@ -19,7 +19,7 @@ c3_w u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
 {
   errno = 0;
   struct dirent * tmp_u = readdir(dirp);
-  
+
   if (NULL == tmp_u){
     *result = NULL;
     return (errno);  // either success or error code
@@ -27,10 +27,10 @@ c3_w u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
     memcpy(entry, tmp_u, sizeof(struct dirent));
     *result = entry;
   }
-  
+
   return(0);
 }
- 
+
 
 /* _unix_down(): descend path.
 */

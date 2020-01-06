@@ -14,7 +14,7 @@ class UrbitApi {
       add: this.groupAdd.bind(this),
       remove: this.groupRemove.bind(this)
     };
-    
+
     this.chat = {
       message: this.chatMessage.bind(this),
       read: this.chatRead.bind(this)
@@ -25,7 +25,7 @@ class UrbitApi {
       delete: this.chatViewDelete.bind(this),
       join: this.chatViewJoin.bind(this),
     };
-    
+
     this.invite = {
       accept: this.inviteAccept.bind(this),
       decline: this.inviteDecline.bind(this),
@@ -36,7 +36,7 @@ class UrbitApi {
   bind(path, method, ship = this.authTokens.ship, app, success, fail, quit) {
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
-    window.subscriptionId = window.urb.subscribe(ship, app, path, 
+    window.subscriptionId = window.urb.subscribe(ship, app, path,
       (err) => {
         fail(err);
       },
@@ -59,7 +59,7 @@ class UrbitApi {
       window.urb.poke(ship, appl, mark, data,
         (json) => {
           resolve(json);
-        }, 
+        },
         (err) => {
           reject(err);
         });
@@ -142,7 +142,7 @@ class UrbitApi {
   }
 
   chatViewJoin(ship, path, askHistory) {
-    this.chatViewAction({ 
+    this.chatViewAction({
       join: {
         ship, path,
         'ask-history': askHistory
@@ -153,9 +153,9 @@ class UrbitApi {
   inviteAction(data) {
     this.action("invite-store", "json", data);
   }
-  
+
   inviteInvite(path, ship) {
-    this.action("invite-hook", "json", 
+    this.action("invite-hook", "json",
       {
         invite: {
           path: '/chat',
@@ -180,7 +180,7 @@ class UrbitApi {
       }
     });
   }
-  
+
   inviteDecline(uid) {
     this.inviteAction({
       decline: {

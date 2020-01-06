@@ -37,7 +37,7 @@ export class Root extends Component {
     let unreads = {};
     Object.keys(state.inbox).forEach((stat) => {
       let envelopes = state.inbox[stat].envelopes;
-      
+
       if (envelopes.length === 0) {
         messagePreviews[stat] = false;
       } else {
@@ -47,7 +47,7 @@ export class Root extends Component {
       unreads[stat] =
         state.inbox[stat].config.length > state.inbox[stat].config.read;
     });
-    
+
     let invites = '/chat' in state.invites ?
       state.invites['/chat'] : {};
 

@@ -4,7 +4,7 @@
 ++  grab
   |%
   ++  noun  chat-view-action
-  ++  json  
+  ++  json
     |=  jon=^json
     (json-to-view-action jon)
   --

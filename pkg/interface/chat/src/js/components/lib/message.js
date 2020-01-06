@@ -14,8 +14,8 @@ export class Message extends Component {
     let letter = props.msg.letter;
 
     if ('code' in letter) {
-      let outputElement = 
-        (!!letter.code.output && 
+      let outputElement =
+        (!!letter.code.output &&
          letter.code.output.length && letter.code.output.length > 0) ?
         (
           <pre className="clamp-attachment pa1 mt0 mb0">
@@ -70,7 +70,7 @@ export class Message extends Component {
         && (chatroom[0] === letter.text))) { // entire message is room name?
           return (
             <Link
-            className="bb b--black f7 mono lh-copy v-top" 
+            className="bb b--black f7 mono lh-copy v-top"
             to={"/~chat/join/" + chatroom.input}>
               {letter.text}
             </Link>
@@ -108,9 +108,9 @@ export class Message extends Component {
             <Sigil
               ship={props.msg.author}
               size={24}
-              color={((props.msg.author === window.ship) 
+              color={((props.msg.author === window.ship)
               || (props.msg.author.substr(1) === window.ship))
-              ? "#4330FC" 
+              ? "#4330FC"
               : "#000000"}
             />
           </div>
