@@ -3,13 +3,6 @@
     DONE Stop storing `Fast` arguments in reverse order.
     DONE Store arity (not arity - 1) in Fast.
 
-    TODO Cleanup jet refactor.
-
-      - Rearrange things so that jet matching, arity, and reduction are
-        defined together. The current approach is easy to fuck up and hard
-        to test.
-
-    TODO Jet equality for naturals.
     DONE Simplify Nat jets
 
       - Write a `pak` function that converts a church encoded natural
@@ -18,6 +11,16 @@
         do the operation and then call the nat jet. The nat jet should
         execute the natural number against l_zero and l_succ, and jet
         the result.
+
+    ----------------------------------------------------------------------------
+
+    TODO Cleanup jet refactor.
+
+      - Rearrange things so that jet matching, arity, and reduction are
+        defined together. The current approach is easy to fuck up and hard
+        to test.
+
+    TODO Jet equality for naturals.
 
     TODO Normalization without jets (all jets implemented with their code)
 
@@ -35,7 +38,8 @@
 
     TODO Use cords for jet names.
 
-    TODO Update printer to print cords.
+        - Implement Text -> Atom
+        - Update nat printer to print strings where possible.
 
     TODO Hook up front-end to JetComp
     TODO Implement REPL.
@@ -71,7 +75,7 @@ data Jet
     | Sn !Positive
     | Bn !Positive
     | Cn !Positive
-    | Wait !Positive
+    | Wait !Natural
     | JFix
     | JNat !Natural
     | JPak
@@ -89,7 +93,7 @@ data Jet
     | JCon
     | JCar
     | JCdr
-  deriving (Eq, Ord)
+  deriving (Eq, Ord) -- , Show)
 
 data UrPoly j
     = UrPoly j :@ UrPoly j
@@ -98,7 +102,7 @@ data UrPoly j
     | S
     | D
     | Fast !Natural j [UrPoly j]
-  deriving (Eq, Ord)
+  deriving (Eq, Ord) -- , Show)
 
 type Ur = UrPoly Jet
 
@@ -279,12 +283,6 @@ e_mul = jetExp j_mul
 j_zer = match (JNat 0) 2 emp l_zer
 j_one = match (JNat 1) 2 emp l_one
 
-j_wait ∷ Check
-j_wait = Named "wait" chk
-  where chk ∷ Positive → JetTag → Val → Maybe Jet
-        chk n (MkVal I) (MkVal I) = Just $ Wait $ fromIntegral n
-        chk _ _         _         = Nothing
-
 j_mul = match Mul 2 emp l_mul
 
 dash ∷ Dash
@@ -353,6 +351,7 @@ reduce ur              = go ur
   where
     go = \case
         Fast n u us             → Fast n u <$> reduceArgs us
+        (reduce → Just xv) :@ y → Just $ xv :@ y
         x :@ (reduce → Just yv) → Just $ x :@ yv
         _                       → Nothing
 
@@ -380,6 +379,7 @@ weak = w
         J n :@ t :@ (go→Just b) → Just $ J n :@ t :@ b
         J n :@ t :@ b           → Just $ Fast (fromIntegral n) (match n t b) []
         Fast 0 u us             → Just $ runJet u us
+        Fast 0 u us :@ x        → Just $ runJet u us :@ x
         Fast 1 u us :@ x        → Just $ runJet u (us <> [x])
         Fast n u us :@ x        → Just $ Fast (pred n) u (us <> [x])
         (weak → Just xv) :@ y   → Just $ xv :@ y
@@ -434,7 +434,7 @@ jetArity = \case
     Sn n       → n+2
     Bn n       → n+2
     Cn n       → n+2
-    Wait n     → n+1
+    Wait n     → waitArity n
     JFix       → sjArgs sjFix
     JNat _     → 2
     JPak       → sjArgs sjPak
@@ -468,9 +468,6 @@ church n = S :@ (S:@(K:@S):@K) :@ church (pred n)
 
 churchJet ∷ Natural → Ur
 churchJet n = J 2 :@ K :@ church n
-
-waitJet ∷ Positive → Ur
-waitJet n = J (n+1) :@ I :@ I
 
 
 -- Bulk Variants of B, C, and S ------------------------------------------------
@@ -783,20 +780,18 @@ sjFix = SingJet{..}
   where
     sjFast = JFix
     sjArgs = 2
-    sjName = MkVal (Nat 2)
+    sjName = MkVal K
+    -- xec [f,x] = Nothing
     sjExec [f,x] = Just (f :@ (Fix :@ f) :@ x)
     sjExec _     = error "bad-fix"
     sjBody = MkVal $
-        ( (S :@ I)
-          :@
-          ((W2 :@
-            ((S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ I))))
-             :@
-             ((S :@ W2) :@ I)))
-           :@
-           ((S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ I))))
-            :@
-            ((S :@ W2) :@ I))))
+        S :@ I
+          :@ Fast 1 (Wait 2)
+            [ (S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ I))))
+                :@ ((S :@ Fast 3 (Wait 2) []) :@ I)
+            , (S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ I))))
+                :@ ((S :@ Fast 3 (Wait 2) []) :@ I)
+            ]
 
 
 -- Nat to Church Natural -------------------------------------------------------
@@ -1016,3 +1011,24 @@ sjPak = SingJet{..}
 
     succ = S :@ (S :@ (K :@ S) :@ K)
     zero = S :@ K
+
+
+-- Delayed Evaluation ----------------------------------------------------------
+
+waitJet ∷ Natural → Ur
+waitJet n = J (fromIntegral $ n+1) :@ I :@ I
+
+waitArity ∷ Natural → Positive
+waitArity n = fromIntegral (n+1)
+
+waitExec ∷ Natural → [Ur] → Maybe Ur
+waitExec _ []     = Nothing
+waitExec _ (u:us) = Just (go u us)
+  where
+    go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
+
+j_wait ∷ Check
+j_wait = Named "wait" chk
+  where chk ∷ Positive → JetTag → Val → Maybe Jet
+        chk n (MkVal I) (MkVal I) = Just $ Wait (fromIntegral n - 1)
+        chk _ _         _         = Nothing
