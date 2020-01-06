@@ -14,7 +14,18 @@
 
     DONE Jet equality for naturals.
 
+    DONE Implement Atom Multiplication
+
     ----------------------------------------------------------------------------
+
+    TODO Implement Bool Jets: True, False, If
+
+    TODO Implement Fast Decrement
+
+        ```
+        fastDec 0 = 0
+        fastDec n = n-1
+        ```
 
     TODO Cleanup jet refactor.
 
@@ -84,7 +95,7 @@ data Jet
     | JAdd
     | JInc
     | JDec
-    | Mul
+    | JMul
     | JSub
     | JDed
     | JUni
@@ -147,7 +158,7 @@ instance Show Jet where
         JEql        → "="
         JInc        → "^"
         JDec        → "_"
-        Mul        → "*"
+        JMul        → "*"
         JSub        → "-"
         JLef        → "L"
         JRit        → "R"
@@ -253,6 +264,7 @@ dash = mkDash
     , simpleEnt (singJet sjFol)
     , simpleEnt (singJet sjInc)
     , simpleEnt (singJet sjAdd)
+    , simpleEnt (singJet sjMul)
     , simpleEnt (singJet sjDec)
     , simpleEnt (singJet sjSub)
     , simpleEnt (singJet sjUni)
@@ -357,6 +369,7 @@ runJet ∷ Jet → [Ur] → Ur
 runJet = curry \case
     (JPak, xs) → runSingJet sjPak xs
     (JAdd, xs) → runSingJet sjAdd xs
+    (JMul, xs) → runSingJet sjMul xs
     (JInc, xs) → runSingJet sjInc xs
     (JEql, xs) → runSingJet sjEql xs
     (Eye,  xs) → runSingJet sjI   xs
@@ -391,22 +404,24 @@ runJet = curry \case
 jetArity ∷ Jet → Positive
 jetArity = \case
     Slow n _ _ → n
-    Eye        → sjArgs sjI
-    Bee        → sjArgs sjB
-    Sea        → sjArgs sjC
+
     Sn n       → n+2
     Bn n       → n+2
     Cn n       → n+2
     Wait n     → waitArity n
-    JFix       → sjArgs sjFix
     JNat _     → 2
+
+    Eye        → sjArgs sjI
+    Bee        → sjArgs sjB
+    Sea        → sjArgs sjC
+    JFix       → sjArgs sjFix
     JPak       → sjArgs sjPak
     JFol       → sjArgs sjFol
     JAdd       → sjArgs sjAdd
     JEql       → sjArgs sjEql
     JInc       → sjArgs sjInc
     JDec       → sjArgs sjDec
-    Mul        → 2
+    JMul       → sjArgs sjMul
     JSub       → sjArgs sjSub
     JDed       → sjArgs sjDed
     JUni       → sjArgs sjUni
@@ -445,28 +460,30 @@ unMatch = go
         Eye        → sjExp sjI
         Bee        → sjExp sjB
         Sea        → sjExp sjC
-        Sn n       → snJet n
-        Bn n       → bnJet n
-        Cn n       → cnJet n
         JFix       → sjExp sjFix
         JInc       → sjExp sjInc
         JEql       → sjExp sjEql
         JFol       → sjExp sjFol
-        JDec        → sjExp sjDec
-        Mul        → jetExp j_mul
-        JSub        → sjExp sjSub
+        JDec       → sjExp sjDec
+        JMul       → sjExp sjMul
+        JSub       → sjExp sjSub
         JAdd       → sjExp sjAdd
         JDed       → sjExp sjDed
         JUni       → sjExp sjUni
-        JLef        → sjExp sjLef
-        JRit        → sjExp sjRit
-        JCas        → sjExp sjCas
-        JCon        → sjExp sjCon
-        JCar        → sjExp sjCar
-        JCdr        → sjExp sjCdr
+        JLef       → sjExp sjLef
+        JRit       → sjExp sjRit
+        JCas       → sjExp sjCas
+        JCon       → sjExp sjCon
+        JCar       → sjExp sjCar
+        JCdr       → sjExp sjCdr
+
         JNat n     → churchJet n
         JPak       → sjExp sjPak
         Wait n     → waitJet n
+        Sn n       → snJet n
+        Bn n       → bnJet n
+        Cn n       → cnJet n
+
         Slow n t b → J n :@ t :@ b
 
 withoutJets ∷ Ur → Ur
@@ -1052,6 +1069,40 @@ sjEql = SingJet{..}
 
 -- Atom Multiplication ---------------------------------------------------------
 
-l_mul = D :@ D :@ D -- TODO
-e_mul = jetExp j_mul
-j_mul = match Mul 2 emp l_mul
+pattern Mul = Fast 2 JMul []
+
+{-
+    mul = \x y -> Pak (\i z -> x (y i) z)
+-}
+sjMul ∷ SingJet
+sjMul = SingJet{..}
+  where
+    sjFast = JMul
+    sjArgs = 2
+    sjName = MkVal K
+    sjExec [weak→Just x, y] = Just $ Fast 0 sjFast [x, y]
+    sjExec [x, weak→Just y] = Just $ Fast 0 sjFast [x, y]
+    sjExec [Nat x, Nat y]   = Just $ Nat (x*y)
+    sjExec _                = Nothing
+    sjBody = MkVal $
+        S :@ (K :@ (S :@ (K :@ Pak)))
+          :@ (S :@ (K :@ S) :@ K)
+
+
+-- Ackermann Function ----------------------------------------------------------
+
+{-
+    ++  ack
+      ..  go/<@ @ @>
+      |=  (m/@ n/@)
+      ?:  =(m 0)  (inc n)
+      ?:  =(n 0)  (go (fast-dec m) 1)
+      (go (fast-dec m) (go m (fast-dec n)))
+
+    ack =
+      (fix
+        (\go m n ->
+          (if (eql m 0) (inc n)
+            (if (eql n 0) (go (fastDec m) 1)
+              (go (fastDec m) (go m (fastDec n)))))))
+-}
