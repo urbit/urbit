@@ -16,22 +16,26 @@
 
     DONE Implement Atom Multiplication
 
-    ----------------------------------------------------------------------------
+    DONE Implement Bool Jets: True, False, If
 
-    TODO Implement Bool Jets: True, False, If
-
-    TODO Implement Fast Decrement
+    DONE Implement Fast Decrement
 
         ```
         fastDec 0 = 0
         fastDec n = n-1
         ```
 
+    -- Flesh out Jets ----------------------------------------------------------
+
     TODO Cleanup jet refactor.
 
       - Rearrange things so that jet matching, arity, and reduction are
         defined together. The current approach is easy to fuck up and hard
         to test.
+
+    TODO Compile Ackermann to Uruk and run it.
+
+    -- Testing -----------------------------------------------------------------
 
     TODO Normalization without jets (all jets implemented with their code)
 
@@ -47,6 +51,8 @@
         - unmatch jets, normalize with jets
         - unmatch jets, normalize without jets, match jets
 
+    -- Front End ---------------------------------------------------------------
+
     TODO Use cords for jet names.
 
         - Implement Text -> Atom
@@ -55,6 +61,9 @@
     TODO Hook up front-end to JetComp
     TODO Implement REPL.
     TODO Implement script-runner.
+
+    -- High-Level Jet Definition -----------------------------------------------
+
     TODO Define jets in front-end language using template haskell.
 
       - Right now, jets are just defined as a big pile of S and K.
@@ -76,8 +85,6 @@ import Numeric.Positive (Positive)
 
 infixl 5 :@;
 
-pattern Nat n = Fast 2 (JNat n) []
-
 data Jet
     = Slow !Positive !Ur !Ur -- unmatched jet: arity, tag, body
     | Eye
@@ -89,6 +96,8 @@ data Jet
     | Wait !Natural
     | JFix
     | JNat !Natural
+    | JBol !Bool
+    | JIff
     | JPak
     | JFol
     | JEql
@@ -154,6 +163,9 @@ instance Show Jet where
         Bn n       → "b" <> show n
         Cn n       → "c" <> show n
         Sn n       → "s" <> show n
+        JBol True   → "Y"
+        JBol False  → "N"
+        JIff        → "?"
         JFol        → ","
         JAdd        → "+"
         JEql        → "="
@@ -280,6 +292,7 @@ dash = mkDash
     , simpleEnt (singJet sjCas)
     , simpleEnt (singJet sjPak)
     , predikEnt j_nat
+    , predikEnt j_bol
     , predikEnt j_cn
     , predikEnt j_sn
     , predikEnt j_bn
@@ -378,6 +391,7 @@ runJet = curry \case
     (Eye,  xs) → runSingJet sjI   xs
     (Bee,  xs) → runSingJet sjB   xs
     (Sea,  xs) → runSingJet sjC   xs
+    (JIff, xs) → runSingJet sjIff xs
     (JFix, xs) → runSingJet sjFix xs
     (JFol, xs) → runSingJet sjFol xs
     (JDec, xs) → runSingJet sjDec xs
@@ -398,6 +412,7 @@ runJet = curry \case
     ( Cn _,        f:g:xs  ) → go f xs :@ g
     ( Sn _,        f:g:xs  ) → go f xs :@ go g xs
     ( JNat n,      [x,y]   ) → church n :@ x :@ y
+    ( JBol c,      [x,y]   ) → if c then x else y
 
     ( j,           xs      ) → error ("bad jet arity: " <> show (j, length xs))
   where
@@ -414,10 +429,12 @@ jetArity = \case
     Cn n       → n+2
     Wait n     → waitArity n
     JNat _     → 2
+    JBol _     → 2
 
     Eye        → sjArgs sjI
     Bee        → sjArgs sjB
     Sea        → sjArgs sjC
+    JIff       → sjArgs sjIff
     JFix       → sjArgs sjFix
     JPak       → sjArgs sjPak
     JFol       → sjArgs sjFol
@@ -466,6 +483,7 @@ unMatch = go
         Bee        → sjExp sjB
         Sea        → sjExp sjC
         JFix       → sjExp sjFix
+        JIff       → sjExp sjIff
         JInc       → sjExp sjInc
         JEql       → sjExp sjEql
         JFol       → sjExp sjFol
@@ -484,6 +502,7 @@ unMatch = go
         JCdr       → sjExp sjCdr
 
         JNat n     → churchJet n
+        JBol b     → boolJet b
         JPak       → sjExp sjPak
         Wait n     → waitJet n
         Sn n       → snJet n
@@ -711,8 +730,46 @@ sjUni = SingJet{..}
     sjBody = MkVal K
 
 
--- Case ------------------------------------------------------------------------
+-- Boolean ---------------------------------------------------------------------
 
+pattern Bol n = Fast 2 (JBol n) []
+
+j_bol ∷ Check
+j_bol = Named "bol" chk
+  where chk ∷ Positive → JetTag → Val → Maybe Jet
+        chk 2 (MkVal S) (MkVal K)        = Just (JBol True)
+        chk 2 (MkVal S) (MkVal (S :@ K)) = Just (JBol False)
+        chk n t         b                = Nothing
+
+encBool ∷ Bool → Ur
+encBool True  = K
+encBool False = S :@ K
+
+boolJet ∷ Bool → Ur
+boolJet b = J 2 :@ S :@ encBool b
+
+
+-- If --------------------------------------------------------------------------
+
+pattern Iff = Fast 3 JIff []
+
+{-
+    cas = \b l r -> b l r
+-}
+sjIff ∷ SingJet
+sjIff = SingJet{..}
+  where
+    sjFast = JIff
+    sjArgs = 3
+    sjName = MkVal (Nat 16)
+    sjExec [weak→Just x,t,f] = Just (Fast 0 JIff [x,t,f])
+    sjExec [Bol c,t,f]       = Just (if c then t else f)
+    sjExec [_,_,_]           = Nothing
+    sjExec _                 = error "bad-iff"
+    sjBody = MkVal I
+
+
+-- Case ------------------------------------------------------------------------
 
 pattern Cas = Fast 3 JCas []
 
@@ -1010,6 +1067,8 @@ sjCdr = SingJet{..}
 
 
 -- Natural Numbers -------------------------------------------------------------
+
+pattern Nat n = Fast 2 (JNat n) []
 
 j_nat ∷ Check
 j_nat = Named "nat" chk
