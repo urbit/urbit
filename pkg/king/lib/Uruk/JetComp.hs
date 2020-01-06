@@ -4,9 +4,9 @@ import ClassyPrelude hiding (try)
 
 import Numeric.Natural  (Natural)
 import Numeric.Positive (Positive)
-import Uruk.JetDemo     (Ur, UrPoly((:@)))
+import Uruk.Lazy     (Ur, UrPoly((:@)))
 
-import qualified Uruk.JetDemo as Ur
+import qualified Uruk.Lazy as Ur
 
 
 -- Types -----------------------------------------------------------------------
@@ -44,6 +44,7 @@ instance Show Com where
 add = Prim Ur.Add
 inc = Prim Ur.Inc
 cons = Prim Ur.Con
+pak = Prim Ur.Pak
 
 nat n = Prim (Ur.Nat n)
 

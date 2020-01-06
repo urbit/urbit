@@ -10,9 +10,9 @@
         to test.
 
     TODO Jet equality for naturals.
-    TODO Simplify Nat jets
+    DONE Simplify Nat jets
 
-      - Write a `nat` function that converts a church encoded natural
+      - Write a `pak` function that converts a church encoded natural
         into a jetted church encoded natural. In jets that operate on
         nats, don't bother keeping everything in the right shape. Simply
         do the operation and then call the nat jet. The nat jet should
@@ -851,7 +851,7 @@ sjDec = SingJet{..}
 pattern Add = Fast 2 JAdd []
 
 {-
-    add = \x y -> J2 (fol (\i z -> (fol x) i (fol y)))
+    add = \x y -> Pak (\i z -> x i (y i z))
 -}
 sjAdd ∷ SingJet
 sjAdd = SingJet{..}
@@ -859,18 +859,16 @@ sjAdd = SingJet{..}
     sjFast = JAdd
     sjArgs = 2
     sjName = MkVal K
+    sjExec _                  = Nothing
     sjExec [reduce→Just x, y] = Just $ Fast 0 sjFast [x, y]
     sjExec [x, reduce→Just y] = Just $ Fast 0 sjFast [x, y]
     sjExec [Nat x, Nat y]     = Just $ Nat (x+y)
     sjExec _                  = Nothing
     sjBody = MkVal $
-        S :@ (K :@ (S :@ (K :@ J2)))
-          :@ (S :@ (K :@ (S :@ (K :@ Fol)))
-                :@ (S :@ (K :@ (S :@ (K :@ (S :@ (K :@ K)))))
-                      :@ (S :@ (S :@ (K :@ (S :@ (K :@ (S :@ (K :@ S) :@ K))
-                                              :@ S))
-                                  :@ Fol)
-                            :@ (K :@ (S :@ (K :@ K) :@ Fol)))))
+        S :@ (K :@ (S :@ (K :@ Pak)))
+          :@ (S :@ (K :@ S)
+                :@ (S :@ (K :@ (S :@ (K :@ S) :@ K))))
+
 
 
 -- Subtract --------------------------------------------------------------------
@@ -976,9 +974,6 @@ j_nat = Named "nat" chk
 pattern Pak = Fast 1 JPak []
 
 {-
-    cdr = \p -> b (\x y -> y)
-    pak = \n -> J2 (\i z -> n i z)
-
     pak = \n -> J2 (n inc zero)
 -}
 sjPak ∷ SingJet
