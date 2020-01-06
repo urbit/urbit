@@ -100,6 +100,7 @@ data Jet
     | JIff
     | JPak
     | JFol
+    | JZer
     | JEql
     | JAdd
     | JInc
@@ -156,32 +157,33 @@ instance Show Jet where
         Slow n t b → show (J n :@ t :@ b)
         JNat n     → "#" <> show n
         JPak       → "p"
-        JFix        → "!"
+        JFix       → "!"
         Eye        → "i"
         Bee        → "b"
         Sea        → "c"
         Bn n       → "b" <> show n
         Cn n       → "c" <> show n
         Sn n       → "s" <> show n
-        JBol True   → "Y"
-        JBol False  → "N"
-        JIff        → "?"
-        JFol        → ","
-        JAdd        → "+"
-        JEql        → "="
-        JInc        → "^"
-        JDec        → "_"
-        JFec        → "__"
-        JMul        → "*"
-        JSub        → "-"
-        JLef        → "L"
-        JRit        → "R"
-        JCas        → "%"
-        JCon        → "&"
-        JCar        → "<"
-        JCdr        → ">"
-        JDed        → "u"
-        JUni        → "~"
+        JBol True  → "Y"
+        JBol False → "N"
+        JIff       → "?"
+        JFol       → ","
+        JAdd       → "+"
+        JEql       → "="
+        JZer       → "{=0}"
+        JInc       → "^"
+        JDec       → "_"
+        JFec       → "__"
+        JMul       → "*"
+        JSub       → "-"
+        JLef       → "L"
+        JRit       → "R"
+        JCas       → "%"
+        JCon       → "&"
+        JCar       → "<"
+        JCdr       → ">"
+        JDed       → "u"
+        JUni       → "~"
         Wait n     → "w" <> show n
 
 
@@ -288,6 +290,7 @@ dash = mkDash
     , simpleEnt (singJet sjCon)
     , simpleEnt (singJet sjCar)
     , simpleEnt (singJet sjCdr)
+    , simpleEnt (singJet sjZer)
     , simpleEnt (singJet sjEql)
     , simpleEnt (singJet sjCas)
     , simpleEnt (singJet sjPak)
@@ -388,6 +391,7 @@ runJet = curry \case
     (JMul, xs) → runSingJet sjMul xs
     (JInc, xs) → runSingJet sjInc xs
     (JEql, xs) → runSingJet sjEql xs
+    (JZer, xs) → runSingJet sjZer xs
     (Eye,  xs) → runSingJet sjI   xs
     (Bee,  xs) → runSingJet sjB   xs
     (Sea,  xs) → runSingJet sjC   xs
@@ -439,6 +443,7 @@ jetArity = \case
     JPak       → sjArgs sjPak
     JFol       → sjArgs sjFol
     JAdd       → sjArgs sjAdd
+    JZer       → sjArgs sjZer
     JEql       → sjArgs sjEql
     JInc       → sjArgs sjInc
     JDec       → sjArgs sjDec
@@ -485,6 +490,7 @@ unMatch = go
         JFix       → sjExp sjFix
         JIff       → sjExp sjIff
         JInc       → sjExp sjInc
+        JZer       → sjExp sjZer
         JEql       → sjExp sjEql
         JFol       → sjExp sjFol
         JDec       → sjExp sjDec
@@ -733,6 +739,8 @@ sjUni = SingJet{..}
 -- Boolean ---------------------------------------------------------------------
 
 pattern Bol n = Fast 2 (JBol n) []
+pattern No = Bol False
+pattern Ya = Bol True
 
 j_bol ∷ Check
 j_bol = Named "bol" chk
@@ -1124,14 +1132,34 @@ j_wait = Named "wait" chk
         chk _ _         _         = Nothing
 
 
+-- Natural Is Zero Test --------------------------------------------------------
+
+pattern Zer = Fast 1 JZer []
+
+{-
+    isZero = \n -> n (K No) Ya
+-}
+sjZer ∷ SingJet
+sjZer = SingJet{..}
+  where
+    sjFast = JZer
+    sjArgs = 1
+    sjName = MkVal K
+    sjExec [weak→Just x] = Just $ Fast 0 sjFast [x]
+    sjExec [Nat x]       = Just $ if x==0 then Ya else No
+    sjExec [_]           = Nothing
+    sjExec _             = error "bad-zer"
+
+    sjBody = MkVal $
+        S :@ (S :@ I :@ (K :@ (K :@ No))) :@ (K :@ Ya)
+
+
+
 -- Natural Equality ------------------------------------------------------------
 
 pattern Eql = Fast 2 JEql []
 
 {-
-    ya = Nat 0
-    no = Nat 1
-    isZero = \n   -> n (K No) Ya
     equals = \x y -> Cas (sub x y) (K No) IsZero
 -}
 sjEql ∷ SingJet
@@ -1140,22 +1168,19 @@ sjEql = SingJet{..}
     sjFast = JEql
     sjArgs = 2
     sjName = MkVal K
+
     sjExec [weak→Just x, y] = Just $ Fast 0 sjFast [x, y]
     sjExec [x, weak→Just y] = Just $ Fast 0 sjFast [x, y]
-    sjExec [Nat x, Nat y]   = Just $ if x==y then ya else no
-    sjExec _                = Nothing
+    sjExec [Nat x, Nat y]   = Just $ if x==y then Ya else No
+    sjExec [_,_]            = Nothing
+    sjExec _                = error "bad-eql"
 
-    sjBody = MkVal isEqul
-
-    no = Nat 0
-    ya = Nat 1
-    isZero = S :@ (S :@ I :@ (K :@ (K :@ no))) :@ (K :@ ya)
-    isEqul =
-      S :@ (S :@ (K :@ S)
-              :@ (S :@ (S :@ (K :@ S)
-                          :@ (S :@ (K :@ (S :@ (K :@ Cas))) :@ Sub))
-                    :@ (K :@ (K :@ (K :@ no)))))
-        :@ (K :@ (K :@ isZero))
+    sjBody = MkVal $
+        S :@ (S :@ (K :@ S)
+                :@ (S :@ (S :@ (K :@ S)
+                            :@ (S :@ (K :@ (S :@ (K :@ Cas))) :@ Sub))
+                      :@ (K :@ (K :@ (K :@ No)))))
+          :@ (K :@ (K :@ Zer))
 
 
 -- Atom Multiplication ---------------------------------------------------------
