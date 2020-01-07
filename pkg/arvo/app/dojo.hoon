@@ -538,7 +538,7 @@
           $poke
         %-  he-card(poy ~)
         :*  %pass
-            /poke 
+            /poke
             %agent
             p.p.mad
             %poke
@@ -830,7 +830,7 @@
   ++  he-diff                                           ::  emit update
     |=  fec/sole-effect
     ^+  +>
-    (he-card %give %fact `/sole/[id] %sole-effect !>(fec))
+    (he-card %give %fact ~[/sole/[id]] %sole-effect !>(fec))
   ::
   ++  he-stop                                           ::  abort work
     ^+  .
@@ -968,7 +968,7 @@
   ++  he-lens
     |=  com/command:lens
     ^+  +>
-    =+  ^-  source/dojo-source
+    =/  source=dojo-source
         =|  num/@
         =-  ?.  ?=($send-api -.sink.com)  ::  XX  num is incorrect
               sor
@@ -1109,7 +1109,7 @@
     |=  pos=@ud
     ^+  +>
     =*  res  +>
-    =+  ^-  [back-pos=@ud fore-pos=@ud txt=tape]
+    =/  [back-pos=@ud fore-pos=@ud txt=tape]
         (insert-magic:auto (add (lent buf) pos) :(weld buf (tufa buf.say)))
     =/  id-len  (sub fore-pos back-pos)
     =/  fore-pos-diff  (sub fore-pos pos)
@@ -1141,11 +1141,11 @@
     ::  If couldn't search (eg cursor not in appropriate position), do
     ::  nothing.
     ::
-    ?:  ?=(~ tl) 
+    ?:  ?=(~ tl)
       res
     ::  If no options, ring the bell
     ::
-    ?:  =([~ ~] tl) 
+    ?:  =([~ ~] tl)
       (he-diff %bel ~)
     ::  If only one option, don't print unless the option is already
     ::  typed in.

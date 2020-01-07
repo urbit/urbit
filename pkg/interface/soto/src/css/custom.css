@@ -6,8 +6,8 @@ p, input {
   font-family: "Source Code Pro", monospace;
 }
 
-textarea, select, input, button { 
-  outline: none; 
+textarea, select, input, button {
+  outline: none;
   -webkit-appearance: none;
   border: none;
   background-color: #fff;

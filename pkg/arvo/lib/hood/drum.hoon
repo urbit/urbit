@@ -291,7 +291,7 @@
   ?~  biz  (flop moz)
   :_  (flop moz)
   =/  =dill-blit:dill  ?~(t.biz i.biz [%mor (flop biz)])
-  [%give %fact `/drum %dill-blit !>(dill-blit)]
+  [%give %fact ~[/drum] %dill-blit !>(dill-blit)]
 ::
 ++  se-adit                                           ::  update servers
   ^+  .
@@ -478,7 +478,7 @@
 ::
 ++  se-blit-sys                                       ::  output to system
   |=  bil/dill-blit:dill  ^+  +>
-  (se-emit %give %fact `/drum %dill-blit !>(bil))
+  (se-emit %give %fact ~[/drum] %dill-blit !>(bil))
 ::
 ++  se-show                                           ::  show buffer, raw
   |=  lin/(pair @ud stub)

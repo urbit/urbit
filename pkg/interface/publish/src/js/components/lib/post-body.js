@@ -101,7 +101,7 @@ export class PostBody extends Component {
     let page = this.parseContent(this.props.body.c,
       this.props.body.gn,
       this.props.body.ga,
-      null); 
+      null);
     return page;
   }
 }

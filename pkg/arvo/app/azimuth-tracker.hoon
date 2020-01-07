@@ -57,16 +57,16 @@
     `[who id %rift num]
   ?:  =(changed-keys i.topics.event-log)
     =/  who=@  (decode-topics t.topics.event-log ~[%uint])
-    =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
+    =/  [enc=octs aut=octs sut=@ud rev=@ud]
         %+  decode-results  data.event-log
         ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
     `[who id %keys rev sut (pass-from-eth:azimuth enc aut sut)]
   ?:  =(lost-sponsor i.topics.event-log)
-    =+  ^-  [who=@ pos=@]
+    =/  [who=@ pos=@]
         (decode-topics t.topics.event-log ~[%uint %uint])
     `[who id %spon ~]
   ?:  =(escape-accepted i.topics.event-log)
-    =+  ^-  [who=@ wer=@]
+    =/  [who=@ wer=@]
         (decode-topics t.topics.event-log ~[%uint %uint])
     `[who id %spon `wer]
   ~&  [%bad-topic event-log]
@@ -78,8 +78,8 @@
   ?~  udiffs
     ~
   =/  =path  /(scot %p ship.i.udiffs)
-  :*  [%give %fact `/ %azimuth-udiff !>(i.udiffs)]
-      [%give %fact `path %azimuth-udiff !>(i.udiffs)]
+  :*  [%give %fact ~[/] %azimuth-udiff !>(i.udiffs)]
+      [%give %fact ~[path] %azimuth-udiff !>(i.udiffs)]
       $(udiffs t.udiffs)
   ==
 ::
@@ -88,7 +88,8 @@
   ^-  card:agent:gall
   =/  args=vase  !>
     :*  %watch  /[dap]
-        url.state  ~m5  launch:contracts:azimuth
+        url.state  =(%czar (clan:title our))  ~m5
+        launch:contracts:azimuth
         ~[azimuth:contracts:azimuth]
         (topics whos.state)
     ==

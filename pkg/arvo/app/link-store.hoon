@@ -169,7 +169,7 @@
   :_  state
   :_  cards
   :+  %give  %fact
-  :+  `[%local-pages path]
+  :+  [%local-pages path]~
     %link-update
   !>([%local-pages path [page]~])
 ::  +note-note: save a note for a url
@@ -196,8 +196,8 @@
   =/  fact
     :-  %link-update
     !>([%annotations path url [note]~])
-  :*  [%give %fact `[%annotations (snoc path url)] fact]
-      [%give %fact `[%annotations path] fact]
+  :*  [%give %fact [%annotations (snoc path url)]~ fact]
+      [%give %fact [%annotations path]~ fact]
       cards
   ==
 ::  +hear-submission: record page someone else saved
@@ -220,7 +220,7 @@
   :_  state
   :_  ~
   :+  %give  %fact
-  :+  `[%submissions path]
+  :+  [%submissions path]~
     %link-update
   !>([%submissions path [submission]~])
 ::  +read-comment: record a comment someone else made
@@ -242,8 +242,8 @@
   =/  fact
     :-  %link-update
     !>([%discussions path url [comment]~])
-  :~  [%give %fact `[%discussions (snoc path url)] fact]
-      [%give %fact `[%discussions path] fact]
+  :~  [%give %fact [%discussions (snoc path url)]~ fact]
+      [%give %fact [%discussions path]~ fact]
   ==
 ::
 ::  reading

@@ -7,6 +7,7 @@
 +$  state
   $:  logs=(list az-log)  ::  oldest logs first
       lives=(map ship [lyfe=life rut=rift])
+      tym=@da
   ==
 ::
 +$  azimuth-command
@@ -22,19 +23,34 @@
   |=  args=vase
   =/  m  (strand ,vase)
   ^-  form:m
-  ;<  ~  bind:m  (watch-our:strandio /effect/request %aqua /effect/request)
+  ;<  ~        bind:m  (watch-our:strandio /effect/request %aqua /effect/request)
   ::  need blits for raw-ship to check booted
   ::
-  ;<  ~  bind:m  (watch-our:strandio /effect/blit %aqua /effect/blit)
-  ;<  ~  bind:m
-    %-  (main-loop:strandio ,state)
+  ;<  ~        bind:m  (watch-our:strandio /effect/blit %aqua /effect/blit)
+  ::  start timer to advance 10 blocks every 20 seconds
+  ;<  now=@da  bind:m  get-time:strandio
+  =/  a-state=state  [~ ~ (add now ~s40)]
+  ;<  ~        bind:m  (send-wait:strandio tym.a-state)
+  ;<  ~        bind:m
+    %-  (main-loop:strandio ,_a-state)
     :~  |=(=state ~(handle-unix-effect core state))
         |=(=state ~(handle-poke core state))
+        |=(=state ~(handle-wake core state))
         pure:(strand ,state)
     ==
   (pure:m *vase)
 ::
 |_  =state
+++  handle-wake
+  =/  m  (strand ,_state)
+  ^-  form:m
+  ;<  ~        bind:m  ((handle:strandio ,~) (take-wake:strandio `tym.state))
+  ~&  >>  'spamming logs'
+  ;<  now=@da  bind:m  get-time:strandio
+  =.  tym.state  (add now ~s40)
+  ;<  ~        bind:m  (send-wait:strandio tym.state)
+  (spam-logs 10)
+::
 ++  handle-unix-effect
   =/  m  (strand ,_state)
   ^-  form:m
@@ -353,7 +369,7 @@
             1
         ==
     ==
-  (spam-logs 30)
+  (spam-logs 10)
 ::
 ++  cycle-keys
   |=  who=@p
@@ -386,7 +402,7 @@
   =.  logs.state
     %+  weld  logs.state
     [(broke-continuity:lo who rut) ~]
-  (spam-logs 30)
+  (spam-logs 10)
 ::
 ++  spam-logs
   |=  n=@

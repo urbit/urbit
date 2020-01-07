@@ -4,7 +4,7 @@
 ++  grab
   |%
   ++  noun  permission-action
-  ++  json  
+  ++  json
     |=  jon=^json
     =<  (parse-permission-action jon)
     |%

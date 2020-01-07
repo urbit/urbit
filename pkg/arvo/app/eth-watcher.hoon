@@ -8,7 +8,7 @@
 =>  |%
     +$  card  card:agent:gall
     +$  app-state
-      $:  %2
+      $:  %3
           dogs=(map path watchdog)
       ==
     ::
@@ -92,17 +92,52 @@
     %-  (slog leaf+"upgrading eth-watcher from %1" ~)
     :_  old-state(- %2)
     %+  turn  ~(tap by dogs.old-state)
-    |=  [=path dog=watchdog]
+    |=  [=path dog=watchdog-1]
     (wait-shortcut path now.bowl)
   ::
-  [cards-1 this(state ?>(?=(%2 -.old-state) old-state))]
+  =?  old-state  ?=(%2 -.old-state)
+    %-  (slog leaf+"upgrading eth-watcher from %2" ~)
+    ^-  app-state
+    %=    old-state
+        -  %3
+        dogs
+      %-  ~(run by dogs.old-state)
+      |=  dog=watchdog-1
+      %=  dog
+        ->  [| ->.dog]
+      ==
+    ==
+  ::
+  [cards-1 this(state ?>(?=(%3 -.old-state) old-state))]
   ::
   +$  app-states
-    $%(app-state-0 app-state-1 app-state)
+    $%(app-state-0 app-state-1 app-state-2 app-state)
+  ::
+  +$  app-state-2
+    $:  %2
+        dogs=(map path watchdog-1)
+    ==
   ::
   +$  app-state-1
     $:  %1
-        dogs=(map path watchdog)
+        dogs=(map path watchdog-1)
+    ==
+  ::
+  +$  watchdog-1
+    $:  config-1
+        running=(unit =tid:spider)
+        =number:block
+        =pending-logs
+        =history
+        blocks=(list block)
+    ==
+  ::
+  +$  config-1
+    $:  url=@ta
+        refresh-rate=@dr
+        from=number:block
+        contracts=(list address:ethereum)
+        =topics
     ==
   ::
   +$  app-state-0
@@ -149,12 +184,12 @@
     =/  already  (~(has by dogs.state) path.poke)
     ~?  &(already restart)
       [dap.bowl 'overwriting existing watchdog on' path.poke]
-    =/  wait-cards
+    =/  wait-cards=(list card)
       ?:  already
         ~
       [(wait-shortcut path.poke now.bowl) ~]
     ::
-    =/  restart-cards
+    =/  restart-cards=(list card)
       =/  dog  (~(get by dogs.state) path.poke)
       ?.  ?&  restart
               ?=(^ dog)
@@ -162,7 +197,8 @@
           ==
         ~
       =/  =cage  [%spider-stop !>([u.running.u.dog &])]
-      [%pass [%starting path] %agent [our.bowl %spider] %poke cage]
+      :_  ~
+      `card`[%pass [%starting path.poke] %agent [our.bowl %spider] %poke cage]
     =/  new-dog
       =/  dog=watchdog
         ?:  restart  *watchdog
@@ -172,7 +208,7 @@
         number  from.config.poke
       ==
     =.  dogs.state  (~(put by dogs.state) path.poke new-dog)
-    [wait-cards this]
+    [(weld wait-cards restart-cards) this]
   ::
       %clear
     =.  dogs.state  (~(del by dogs.state) path.poke)
@@ -217,6 +253,9 @@
   ::
       [%x %dogs ~]
     ``noun+!>(~(key by dogs.state))
+  ::
+      [%x %dogs %configs ~]
+    ``noun+!>((~(run by dogs.state) |=(=watchdog -.watchdog)))
   ==
 ::
 ++  on-agent
@@ -298,7 +337,7 @@
     :_  dog(history actual-history)
     %+  turn  actual-vows
     |=  =id:block
-    [%give %fact `[%logs path] %eth-watcher-diff !>([%disavow id])]
+    [%give %fact [%logs path]~ %eth-watcher-diff !>([%disavow id])]
   ::
   ++  release-logs
     |=  [=path dog=watchdog]
@@ -323,7 +362,7 @@
       %+  turn  loglist
       |=  =event-log:rpc:ethereum
       ^-  card
-      [%give %fact `[%logs path] %eth-watcher-diff !>([%log event-log])]
+      [%give %fact [%logs path]~ %eth-watcher-diff !>([%log event-log])]
     =^  cards-2  dog  $(numbers t.numbers)
     [(weld cards-1 cards-2) dog]
   --

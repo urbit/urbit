@@ -1,55 +1,89 @@
 ::    Ames extends Arvo's %pass/%give move semantics across the network.
 ::
-::    A "forward flow" message, which is like a request, is passed to
-::    Ames from a local vane.  Ames transmits the message to the peer's
-::    Ames, which passes the message to the destination vane.
+::    Ames receives packets as Arvo events and emits packets as Arvo
+::    effects.  The runtime is responsible for transferring the bytes in
+::    an Ames packet across a physical network to another ship.
 ::
-::    Once the peer has processed the "forward flow" message, it sends a
-::    message acknowledgment over the wire back to the local Ames.  This
-::    ack can either be positive or negative, in which case we call it a
-::    "nack".  (Don't confuse Ames nacks with TCP nacks, which are a
-::    different concept).
+::    The runtime tells Ames which physical address a packet came from,
+::    represented as an opaque atom.  Ames can emit a packet effect to
+::    one of those opaque atoms or to the Urbit address of a galaxy
+::    (root node), which the runtime is responsible for translating to a
+::    physical address.  One runtime implementation sends UDP packets
+::    using IPv4 addresses for ships and DNS lookups for galaxies, but
+::    other implementations may overlay over other kinds of networks.
 ::
-::    When the local Ames receives either a positive message ack or a
-::    combination of a nack and nack-trace (explained in more detail
+::    A local vane can pass Ames a %plea request message.  Ames
+::    transmits the message over the wire to the peer ship's Ames, which
+::    passes the message to the destination vane.
+::
+::    Once the peer has processed the %plea message, it sends a
+::    message-acknowledgment packet over the wire back to the local
+::    Ames.  This ack can either be positive to indicate the request was
+::    processed, or negative to indicate the request failed, in which
+::    case it's called a "nack".  (Don't confuse Ames nacks with TCP
+::    nacks, which are a different concept).
+::
+::    When the local Ames receives either a positive message-ack or a
+::    combination of a nack and naxplanation (explained in more detail
 ::    below), it gives an %done move to the local vane that had
-::    requested the original "forward flow" message be sent.
+::    requested the original %plea message be sent.
 ::
-::    A "backward flow" message, which is similar to a response or a
-::    subscription update, is given to Ames from a local vane.  Ames
-::    transmits the message to the peer's Ames, which gives the message
-::    to the destination vane.
+::    A local vane can give Ames zero or more %boon response messages in
+::    response to a %plea, on the same duct that Ames used to pass the
+::    %plea to the vane.  Ames transmits a %boon over the wire to the
+::    peer's Ames, which gives it to the destination vane on the same
+::    duct the vane had used to pass the original %plea to Ames.
 ::
-::    Ames will give a %memo to a vane upon hearing the message from a
-::    remote. This message is a "backward flow" message, forming one of
-::    potentially many responses to a "forward flow" message that a
-::    local vane had passed to our local Ames, and which local Ames had
-::    relayed to the remote.  Ames gives the %memo on the same duct the
-::    local vane had originally used to pass Ames the "forward flow"
-::    message.
+::    %boon messages are acked automatically by the receiver Ames.  They
+::    cannot be nacked, and Ames only uses the ack internally, without
+::    notifying the client vane that gave Ames the %boon.
 ::
-::    Backward flow messages are acked automatically by the receiver.
-::    They cannot be nacked, and Ames only uses the ack internally,
-::    without notifying the client vane.
+::    If the Arvo event that completed receipt of a %boon message
+::    crashes, Ames instead sends the client vane a %lost message
+::    indicating the %boon was missed.
 ::
-::    Forward flow messages can be nacked, in which case the peer will
-::    send both a message-nack packet and a nack-trace message, which is
-::    sent on a special diagnostic flow so as not to interfere with
-::    normal operation.  The nack-trace is sent as a full Ames message,
-::    instead of just a packet, because the contained error information
-::    can be arbitrarily large.
+::    %plea messages can be nacked, in which case the peer will send
+::    both a message-nack packet and a naxplanation message, which is
+::    sent in a way that does not interfere with normal operation.  The
+::    naxplanation is sent as a full Ames message, instead of just a
+::    packet, because the contained error information can be arbitrarily
+::    large.  A naxplanation can only give rise to a positive ack --
+::    never ack an ack, and never nack a naxplanation.
 ::
-::    Once the local Ames has received the nack-trace, it knows the peer
-::    has received the full message and failed to process it.  This
-::    means if we later hear an ack packet on the failed message, we can
-::    ignore it.
+::    Ames guarantees a total ordering of messages within a "flow",
+::    identified in other vanes by a duct and over the wire by a "bone":
+::    an opaque number.  Each flow has a FIFO queue of %plea requests
+::    from the requesting ship to the responding ship and a FIFO queue
+::    of %boon's in the other direction.
 ::
-::    Also, due to Ames's exactly-once delivery semantics, we know that
-::    when we receive a nack-trace for message n, we know the peer has
-::    positively acked all messages m+1 through n-1, where m is the last
-::    message for which we heard a nack-trace.  If we haven't heard acks
-::    on all those messages, we apply positive acks when we hear the
-::    nack-trace.
+::    Message order across flows is not specified and may vary based on
+::    network conditions.
+::
+::    Ames guarantees that a message will only be delivered once to the
+::    destination vane.
+::
+::    Ames encrypts every message using symmetric-key encryption by
+::    performing an elliptic curve Diffie-Hellman using our private key
+::    and the public key of the peer.  For ships in the Jael PKI
+::    (public-key infrastructure), Ames looks up the peer's public key
+::    from Jael.  Comets (128-bit ephemeral addresses) are not
+::    cryptographic assets and must self-attest over Ames by sending a
+::    single self-signed packet containing their public key.
+::
+::    When a peer suffers a continuity breach, Ames removes all
+::    messaging state related to it.  Ames does not guarantee that all
+::    messages will be fully delivered to the now-stale peer.  From
+::    Ames's perspective, the newly restarted peer is a new ship.
+::    Ames's guarantees are not maintained across a breach.
+::
+::    A vane can pass Ames a %heed $task to request Ames track a peer's
+::    responsiveness.  If our %boon's to it start backing up locally,
+::    Ames will give a %clog back to the requesting vane containing the
+::    unresponsive peer's urbit address.  This interaction does not use
+::    ducts as unique keys.  Stop tracking a peer by sending Ames a
+::    %jilt $task.
+::
+::    Debug output can be adjusted using %sift and %spew $task's.
 ::
 ::  protocol-version: current version of the ames wire protocol
 ::
@@ -530,7 +564,15 @@
 ::    The first bone is 0. They increment by 4, since each flow includes
 ::    a bit for each message determining forward vs. backward and a
 ::    second bit for whether the message is on the normal flow or the
-::    associated diagnostic flow (for nack-traces).
+::    associated diagnostic flow (for naxplanations).
+::
+::    The least significant bit of a $bone is:
+::    1 if "forward", i.e. we send %plea's on this flow, or
+::    0 if "backward", i.e. we receive %plea's on this flow.
+::
+::    The second-least significant bit is 1 if the bone is a
+::    naxplanation bone, and 0 otherwise.  Only naxplanation
+::    messages can be sent on a naxplanation bone, as %boon's.
 ::
 +$  ossuary
   $:  =next=bone
@@ -542,43 +584,40 @@
 ::    Messages queue up in |message-pump's .unsent-messages until they
 ::    can be packetized and fed into |packet-pump for sending.  When we
 ::    pop a message off .unsent-messages, we push as many fragments as
-::    we can into |packet-pump, then place the remaining in
-::    .unsent-fragments.
+::    we can into |packet-pump, which sends every packet it eats.
+::    Packets rejected by |packet-pump are placed in .unsent-fragments.
 ::
-::    When we hear a packet ack, we send it to |packet-pump.  If we
-::    haven't seen it before, |packet-pump reports the fresh ack.
+::    When we hear a packet ack, we send it to |packet-pump to be
+::    removed from its queue of unacked packets.
 ::
 ::    When we hear a message ack (positive or negative), we treat that
 ::    as though all fragments have been acked.  If this message is not
-::    .current, then it's a future message and .current has not yet been
-::    acked, so we place the ack in .queued-message-acks.
+::    .current, then this ack is for a future message and .current has
+::    not yet been acked, so we place the ack in .queued-message-acks.
 ::
-::    If we hear a message ack before we've sent all the
-::    fragments for that message, clear .unsent-fragments. If the
-::    message ack was positive, print it out because it indicates the
-::    peer is not behaving properly.
+::    If we hear a message ack before we've sent all the fragments for
+::    that message, clear .unsent-fragments and have |packet-pump delete
+::    all sent fragments from the message. If this early message ack was
+::    positive, print it out because it indicates the peer is not
+::    behaving properly.
 ::
-::    If the ack is for the current message, emit the message ack,
-::    increment .current, and check if this next message is in
-::    .queued-message-acks.  If it is, emit the message (n)ack,
-::    increment .current, and check the next message.  Repeat until
-::    .current is not fully acked.
-::
-::    When we hear a message nack, we send it to |packet-pump, which
-::    deletes all packets from that message.  If .current gets nacked,
-::    clear .unsent-fragments and go into the same flow as when we hear
-::    the last packet ack on a message.
+::    If the ack is for the current message, have |packet-pump delete
+::    all packets from the message, give the message ack back
+::    to the client vane, increment .current, and check if this next
+::    message is in .queued-message-acks.  If it is, emit the message
+::    (n)ack, increment .current, and check the next message.  Repeat
+::    until .current is not fully acked.
 ::
 ::    The following equation is always true:
 ::    .next - .current == number of messages in flight
 ::
 ::    At the end of a task, |message-pump sends a %halt task to
 ::    |packet-pump, which can trigger a timer to be set or cleared based
-::    on congestion control calculations. When it fires, the timer will
-::    generally cause one or more packets to be resent.
+::    on congestion control calculations. When the timer fires, it will
+::    generally cause a packet to be re-sent.
 ::
-::    Message sequence numbers start at 1 so the first message will be
-::    greater than .last-acked.message-sink-state on the receiver.
+::    Message sequence numbers start at 1 so that the first message will
+::    be greater than .last-acked.message-sink-state on the receiver.
 ::
 ::    current: sequence number of earliest message sent or being sent
 ::    next: sequence number of next message to send
@@ -618,7 +657,14 @@
 ::    algorithm.  The information signals and their responses are
 ::    identical to those of the "NewReno" variant of Reno; the
 ::    implementation differs because Ames acknowledgments differ from
-::    TCP's and because we're using functional data structures.
+::    TCP's, because this code uses functional data structures, and
+::    because TCP's sequence numbers reset when a peer becomes
+::    unresponsive, whereas Ames sequence numbers only change when a
+::    ship breaches.
+::
+::    A deviation from Reno is +fast-resend-after-ack, which re-sends
+::    timed-out packets when a peer starts responding again after a
+::    period of unresponsiveness.
 ::
 ::    If .skips reaches 3, we perform a fast retransmit and fast
 ::    recovery.  This corresponds to Reno's handling of "three duplicate
@@ -697,8 +743,6 @@
   ==
 ::  $note: request to other vane
 ::
-::    TODO: specialize gall interface for subscription management
-::
 ::    Ames passes a %plea note to another vane when it receives a
 ::    message on a "forward flow" from a peer, originally passed from
 ::    one of the peer's vanes to the peer's Ames.
@@ -728,13 +772,6 @@
       $%  [%plea =ship =plea]
   ==  ==  ==
 ::  $sign: response from other vane
-::
-::    A vane gives a %boon sign to Ames on a duct on which it had
-::    previously received a message on a "forward flow".  Ames will
-::    transmit the message to the peer that had originally sent the
-::    message on the forward flow.  The peer's Ames will then give the
-::    message to the remote vane from which the forward flow message
-::    originated.
 ::
 +$  sign
   $~  [%b %wake ~]
@@ -1512,6 +1549,7 @@
     ::
     ::    Abandon all pretense of continuity and delete all messaging state
     ::    associated with .ship, including sent and unsent messages.
+    ::    Also cancel all timers related to .ship.
     ::
     ++  on-publ-breach
       |=  =ship
@@ -2053,7 +2091,11 @@
     ++  send-shut-packet
       |=  =shut-packet
       ^+  peer-core
-      ::  swizzle bone just before sending; TODO document
+      ::  swizzle last bone bit before sending
+      ::
+      ::    The peer has the opposite perspective from ours about what
+      ::    kind of flow this is (forward/backward), so flip the bit
+      ::    here.
       ::
       =.  bone.shut-packet  (mix 1 bone.shut-packet)
       ::
@@ -2201,7 +2243,7 @@
       ::  +on-sink-boon: handle response message received by |message-sink
       ::
       ::    .bone must be mapped in .ossuary.peer-state, or we crash.
-      ::    This means a malformed message will kill a channel.  We
+      ::    This means a malformed message will kill a flow.  We
       ::    could change this to a no-op if we had some sort of security
       ::    reporting.
       ::
@@ -2217,17 +2259,29 @@
         ^+  peer-core
         ::  send ack unconditionally
         ::
+        =.  peer-core  (emit (got-duct bone) %give %boon message)
         =.  peer-core  (run-message-sink bone %done ok=%.y)
         ::
         ?.  ?=([%hear * * ok=%.n] task)
           ::  fresh boon; give message to client vane
           ::
-          %-  (trace msg.veb |.("boon {<her.channel^bone>}"))
-          (emit (got-duct bone) %give %boon message)
+          %-  (trace msg.veb |.("boon {<her.channel^bone -.task>}"))
+          peer-core
         ::  we previously crashed on this message; notify client vane
         ::
-        %-  (trace msg.veb |.("crashed on boon {<her.channel^bone>}"))
-        (emit (got-duct bone) %give %lost ~)
+        %-  (trace msg.veb |.("crashed on boon {<her.channel^bone -.task>}"))
+        boon-to-lost
+      ::  +boon-to-lost: convert all boons to losts
+      ::
+      ++  boon-to-lost
+        ^+  peer-core
+        =.  moves
+          %+  turn  moves
+          |=  =move
+          ?.  ?=([* %give %boon *] move)
+            move
+          [duct.move %give %lost ~]
+        peer-core
       ::  +on-sink-nack-trace: handle nack-trace received by |message-sink
       ::
       ++  on-sink-nack-trace
@@ -2642,7 +2696,7 @@
   ::  +on-hear: handle ack on a live packet
   ::
   ::    If the packet was in our queue, delete it and update our
-  ::    metrics.  Otherwise, no-op.
+  ::    metrics, possibly re-sending skipped packets.  Otherwise, no-op.
   ::
   ++  on-hear
     |=  [=message-num =fragment-num]
@@ -3009,7 +3063,9 @@
     ::
     ?:  already-heard-fragment
       ?:  is-last-fragment
-        %-  (trace rcv.veb |.("hear last dupe {<her.channel^seq>}"))
+        %-  %+  trace  rcv.veb  |.
+            =/  data  [her.channel seq last-heard.state last-acked.state]
+            "hear last dupe {<data>}"
         message-sink
       %-  (trace rcv.veb |.("send dupe ack {<her.channel^seq^fragment-num>}"))
       (give %send seq %& fragment-num)

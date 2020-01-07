@@ -102,7 +102,7 @@
     ^-  (quip card _this)
     =^  cards  all-state
       ?+  mark        (on-poke:def mark vase)
-        %noun         (poke-noun:tc mark !<(* vase))
+        %noun         (poke-noun:tc !<(* vase))
         %sole-action  (poke-sole-action:tc !<(sole-action:sole-sur vase))
       ==
     [cards this]
@@ -122,7 +122,7 @@
       ?-    -.sign
           %poke-ack   [- all-state]:(on-agent:def wire sign)
           %watch-ack  [- all-state]:(on-agent:def wire sign)
-          %kick       ~&  %chat-cli-kicked  `all-state
+          %kick       [?:(?=([%chat-store ~] wire) ~[connect:tc] ~) all-state]
           %fact
         ?+  p.cage.sign  ~|([%chat-cli-bad-sub-mark wire p.cage.sign] !!)
           %chat-update  (diff-chat-update:tc wire !<(chat-update q.cage.sign))
@@ -141,7 +141,10 @@
   |=  old=(unit state)
   ^-  (quip card state)
   ?^  old
-    [~ u.old]
+    :_  u.old
+    ?:  (~(has by wex.bowl) [/chat-store our-self %chat-store])
+      ~
+    ~[connect]
   =^  cards  all-state
     %_  catch-up
       audience  [[our-self /] ~ ~]
@@ -1041,7 +1044,7 @@
     |=  fec=sole-effect:sole-sur
     ^-  card
     ::TODO  don't hard-code session id 'drum' here
-    [%give %fact `/sole/drum %sole-effect !>(fec)]
+    [%give %fact ~[/sole/drum] %sole-effect !>(fec)]
   ::  +tab: print tab-complete list
   ::
   ++  tab
@@ -1352,6 +1355,7 @@
         ~(glyph tr source)
       =/  lis=(list tape)
         %+  simple-wrap
+          ~|  [%weird-text `@`+.letter]
           `tape``(list @)`(tuba (trip +.letter))
         (sub wyd (min (div wyd 2) (lent pef)))
       =+  lef=(lent pef)
@@ -1383,7 +1387,7 @@
   |=  [txt=tape wid=@ud]
   ^-  (list tape)
   ?~  txt  ~
-  =+  ^-  [end=@ud nex=?]
+  =/  [end=@ud nex=?]
     ?:  (lte (lent txt) wid)  [(lent txt) &]
     =+  ace=(find " " (flop (scag +(wid) `tape`txt)))
     ?~  ace  [wid |]

@@ -51,8 +51,8 @@ export class MemberScreen extends Component {
 
     let writeListMembers = writeGroup.map((mem) => {
       return (
-        <MemberElement 
-          key={mem} 
+        <MemberElement
+          key={mem}
           owner={deSig(props.match.params.ship)}
           ship={mem}
           path={`/chat${state.station}/write`}
@@ -63,8 +63,8 @@ export class MemberScreen extends Component {
 
     let readListMembers = readGroup.map((mem) => {
       return (
-        <MemberElement 
-          key={mem} 
+        <MemberElement
+          key={mem}
           owner={deSig(props.match.params.ship)}
           ship={mem}
           path={`/chat${state.station}/read`}

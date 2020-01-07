@@ -1,53 +1,57 @@
-/+  *test
-|%
 ::NOTE  tests lightly modified from the examples here:
 ::      https://github.com/ethereum/wiki/wiki/RLP
 ::
-++  test-encoding-string
-  %+  expect-eq
-    !>  %-  encode:rlp:ethereum
-        b+3^0xaa.bbcc
-    !>  0x83aa.bbcc
+/+  *test
+=,  rlp:ethereum
 ::
-++  test-encoding-list
-  %+  expect-eq
-    !>  %-  encode:rlp:ethereum
-        l+~[b+3^0xaa.bbcc b+3^0xdd.eeff]
-    !>  0xc8.83aa.bbcc.83dd.eeff
+=/  vectors=(list [nom=tape dat=@ rlp=item])
+  :~  :+  "string"
+        0x83aa.bbcc
+      b+3^0xaa.bbcc
+    ::
+      :+  "list"
+        0xc8.83aa.bbcc.83dd.eeff
+      l+~[b+3^0xaa.bbcc b+3^0xdd.eeff]
+    ::
+      :+  "empty list"
+        0xc0
+      l+~
+    ::
+      :+  "zero byte"
+        0x0
+      b+1^0x0
+    ::
+      :+  "empty zero"
+        0x80
+      b+0^0x0
+    ::
+      :+  "value 15"
+        0xf
+      b+1^0xf
+    ::
+      :+  "value 1024"
+        0x82.0400
+      b+2^0x400
+    ::
+      :+  "set of three"
+        0xc7c0.c1c0.c3c0.c1c0
+      l+[l+~ l+[l+~ ~] l+[l+~ l+[l+~ ~] ~] ~]
+  ==
 ::
-++  test-encoding-empty-list
+|%
+++  test-all-vectors
+  |-  ^-  tang
+  ?~  vectors  ~
+  %+  weld  $(vectors t.vectors)
+  =,  i.vectors
+  %+  category  nom
+  %+  weld
+    %+  category  "encode"
+    %+  expect-eq
+      !>  dat
+      !>  (encode rlp)
+  %+  category  "decode"
   %+  expect-eq
-    !>  %-  encode:rlp:ethereum
-        l+~
-    !>  0xc0
-::
-++  test-encoding-zero-byte
-  %+  expect-eq
-    !>  %-  encode:rlp:ethereum
-        b+1^0x0
-    !>  0x0
-::
-++  test-encoding-empty-zero
-  %+  expect-eq
-    !>  %-  encode:rlp:ethereum
-        b+0^0x0
-    !>  0x80
-::
-++  test-encoding-15
-  %+  expect-eq
-    !>  %-  encode:rlp:ethereum
-        b+1^15
-    !>  0xf
-::
-++  test-encoding-1024
-  %+  expect-eq
-    !>  %-  encode:rlp:ethereum
-        b+2^1.024
-    !>  0x82.0400
-::
-++  test-encoding-set-of-three
-  %+  expect-eq
-    !>  %-  encode:rlp:ethereum
-        l+[l+~ l+[l+~ ~] l+[l+~ l+[l+~ ~] ~] ~]
-    !>  0xc7c0.c1c0.c3c0.c1c0
+    !>  rlp
+    !>  (decode dat)
 --

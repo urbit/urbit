@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { sigil, reactRenderer } from 'urbit-sigil-js';
 
-    
+
 export class Sigil extends Component {
   render() {
     const { props } = this;

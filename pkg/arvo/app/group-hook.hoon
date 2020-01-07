@@ -126,7 +126,7 @@
       :_  state(synced (~(del by synced.state) path.act))
       %+  snoc
         (pull-wire group-wire path.act)
-      [%give %kick `[%group path.act] ~]
+      [%give %kick [%group path.act]~ ~]
     ?:  |(=(u.ship src.bol) (team:title our.bol src.bol))
       ::  delete a foreign ship's path
       =/  group-wire  [(scot %p u.ship) %group path.act]
@@ -150,7 +150,7 @@
     :_  state(synced (~(del by synced.state) pax.diff))
     %+  snoc
       (update-subscribers [%group pax.diff] diff)
-    [%give %kick `[%group pax.diff] ~]
+    [%give %kick [%group pax.diff]~ ~]
   ==
 ::
 ++  handle-foreign
@@ -212,7 +212,7 @@
 ++  update-subscribers
   |=  [pax=path diff=group-update]
   ^-  (list card)
-  [%give %fact `pax %group-update !>(diff)]~
+  [%give %fact ~[pax] %group-update !>(diff)]~
 ::
 ++  pull-wire
   |=  [wir=wire pax=path]

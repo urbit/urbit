@@ -10,7 +10,7 @@ export class BlogNotes extends Component {
 
   render() {
     if (!this.props.posts ||
-        ((this.props.posts.length === 0) && 
+        ((this.props.posts.length === 0) &&
          (this.props.ship === window.ship))) {
       let link = {
         pathname: "/~publish/new-post",

@@ -637,7 +637,7 @@
       this.outstandingSubscriptions.set(
         id,
         {
-          err: connectionErrFunc, 
+          err: connectionErrFunc,
           event: eventFunc,
           quit: quitFunc
         }
@@ -1590,8 +1590,8 @@
       =/  channel=(unit channel)
         (~(get by session.channel-state.state) channel-id)
       ?~  channel
-        ~&  [%received-event-for-nonexistent-channel channel-id]
-        [~ state]
+        :_  state  :_  ~
+        [duct %pass /flog %d %flog %crud %eyre-no-channel >id=channel-id< ~]
       ::
       =/  event-id  next-id.u.channel
       ::

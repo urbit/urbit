@@ -1,3 +1,5 @@
+::  This tests breaches of both parent and child in succession.
+::
 /-  spider
 /+  *ph-io
 =,  strand=strand:spider

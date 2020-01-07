@@ -28,7 +28,7 @@ export class NewScreen extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
 
-    if (prevProps !== props) { 
+    if (prevProps !== props) {
       let station = `/~${window.ship}/${state.idName}`;
       if (station in props.inbox) {
         props.history.push('/~chat/room' + station);
@@ -77,7 +77,15 @@ export class NewScreen extends Component {
 
   onClickCreate() {
     const { props, state } = this;
-    if (!state.idName) {
+
+    let invalidChara = new RegExp(/[^a-z0-9/-]/);
+
+    let invalid = (
+      (!state.idName) || (state.idName.startsWith("/")) ||
+      (state.idName.includes("//")) || (invalidChara.test(state.idName))
+    );
+
+    if (invalid) {
       this.setState({
         idError: true,
         inviteError: false
@@ -124,7 +132,7 @@ export class NewScreen extends Component {
 
     // TODO: don't do this, it's shitty
     let writeAud;
-    let readAud; 
+    let readAud;
 
     if (state.security === 'village') {
       aud.push(`~${window.ship}`);
@@ -192,9 +200,9 @@ export class NewScreen extends Component {
         <div className="w-100">
           <p className="f8 mt3 lh-copy db">Chat Name</p>
           <p className="f9 gray2 db mb4">
-          Alphanumeric characters, dashes, and slashes only
+          Lowercase alphanumeric characters, dashes, and slashes only
           </p>
-          <textarea 
+          <textarea
             className="f7 ba b--gray3 pa3 db w-100"
             placeholder="secret-chat"
             rows={1}

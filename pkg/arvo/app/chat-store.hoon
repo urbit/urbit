@@ -245,7 +245,7 @@
 ++  update-subscribers
   |=  [pax=path update=chat-update]
   ^-  (list card)
-  [%give %fact `pax %chat-update !>(update)]~
+  [%give %fact ~[pax] %chat-update !>(update)]~
 ::
 ++  send-diff
   |=  [pax=path upd=chat-update]

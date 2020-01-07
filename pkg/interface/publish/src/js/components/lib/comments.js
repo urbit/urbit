@@ -12,7 +12,7 @@ export class Comments extends Component {
       commentBody: '',
       awaiting: false,
     }
-    
+
     this.toggleDisplay = this.toggleDisplay.bind(this);
     this.commentChange = this.commentChange.bind(this);
     this.postComment   = this.postComment.bind(this);

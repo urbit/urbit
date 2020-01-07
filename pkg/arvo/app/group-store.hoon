@@ -1,4 +1,4 @@
-::  group-store: data store for groups of ships 
+::  group-store: data store for groups of ships
 ::
 /-  *group-store
 /+  default-agent
@@ -27,7 +27,7 @@
   |_  =bowl:gall
   +*  this        .
       group-core  +>
-      gc          ~(. group-core bowl)   
+      gc          ~(. group-core bowl)
       def         ~(. (default-agent this %|) bowl)
   ::
   ++  on-init            on-init:def
@@ -75,9 +75,9 @@
       [%x *]  ``noun+!>((~(get by groups) t.path))
     ==
   ::
-  ++  on-agent  on-agent:def 
-  ++  on-arvo   on-arvo:def 
-  ++  on-fail   on-fail:def 
+  ++  on-agent  on-agent:def
+  ++  on-arvo   on-arvo:def
+  ++  on-fail   on-fail:def
   --
 ::
 |_  bol=bowl:gall
@@ -148,7 +148,7 @@
 ++  update-subscribers
   |=  [pax=path act=group-action]
   ^-  (list card)
-  [%give %fact `pax %group-update !>(act)]~
+  [%give %fact ~[pax] %group-update !>(act)]~
 ::
 ++  send-diff
   |=  [pax=path act=group-action]
