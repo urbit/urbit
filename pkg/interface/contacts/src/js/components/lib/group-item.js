@@ -2,12 +2,15 @@ import React, { Component } from 'react'
 
 import { Route, Link } from 'react-router-dom'; 
 
-export class GroupsItem extends Component {
+export class GroupItem extends Component {
   render() {
     const { props } = this;
 
     let selectedClass = (props.selected) ? "bg-gray4" : "";
-    let memberCount = Object.keys(props.contacts).length;
+    let memberCount = Math.max(
+      props.group.size,
+      Object.keys(props.contacts).length
+    );
 
     return (
       <Link to={"/~contacts" + props.link}>

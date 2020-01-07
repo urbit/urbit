@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { Route, Link } from 'react-router-dom';
-import { GroupsItem } from '/components/lib/groups-item';
+import { GroupItem } from '/components/lib/group-item';
 import { Sigil } from '/components/lib/icons/sigil';
 import { uxToHex } from '/lib/util';
 
@@ -42,7 +42,10 @@ export class GroupSidebar extends Component {
     let groupItems =
       Object.keys(props.contacts)
       .filter((path) => {
-        return (!path.startsWith("/~/") || path === "/~/default")
+        return (
+          (!path.startsWith("/~/") || path === "/~/default") && 
+          (path in props.groups)
+        );
       })
       .map((path) => {
         let name = path.substr(1);
@@ -53,11 +56,12 @@ export class GroupSidebar extends Component {
                                                    // if unwanted, remove this
           let selected = (this.props.selected === path);
         return (
-          <GroupsItem
+          <GroupItem
             key={path}
             link={path}
             selected={selected}
             name={name}
+            group={props.groups[path]}
             contacts={props.contacts[path]} />
         )
       });
