@@ -71,6 +71,13 @@
           note+s+note.del
           comment+s+(scot %da comment.del)
       ==
+    ::
+        %read
+      %-  pairs:enjs:format
+      :~  host+s+(scot %p who.del)
+          book+s+book.del
+          note+s+note.del
+      ==
     ==
   --
 --

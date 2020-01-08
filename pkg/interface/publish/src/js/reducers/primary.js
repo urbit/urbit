@@ -31,6 +31,9 @@ export class PrimaryReducer {
       case "del-comment":
         this.delComment(json["del-comment"], state);
         break;
+      case "read":
+        this.read(json["read"], state);
+        break;
       default:
         break;
     }
@@ -208,6 +211,19 @@ export class PrimaryReducer {
           state.notebooks[host][book].notes[note].comments.splice(index, 1);
         }
       }
+    }
+  }
+
+  read(json, state){
+    let host   = json.host;
+    let book   = json.book;
+    let noteId = json.note
+    if (state.notebooks[host] &&
+        state.notebooks[host][book] &&
+        state.notebooks[host][book].notes &&
+        state.notebooks[host][book].notes[noteId])
+    {
+      state.notebooks[host][book].notes[noteId]["read"] = true;
     }
   }
 }

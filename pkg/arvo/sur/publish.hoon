@@ -21,6 +21,8 @@
   ::
       [%subscribe who=@p book=@tas]
       [%unsubscribe who=@p book=@tas]
+  ::
+      [%read who=@p book=@tas note=@tas]
   ==
 ::
 +$  comment
@@ -77,5 +79,6 @@
 ::
 +$  primary-delta
   $%  notebook-delta
+      [%read who=@p book=@tas note=@tas]
   ==
 --

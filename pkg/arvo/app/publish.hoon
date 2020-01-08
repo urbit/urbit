@@ -96,7 +96,7 @@
       %+  require-authorization:app  req
       handle-http-request:main
     ::
-        %publish-action2
+        %publish-action
       =^  cards  state
         (poke-publish-action:main !<(action vas))
       [cards this]
@@ -109,14 +109,9 @@
         [%http-response *]  [~ this]
     ::
         [%notebook @ ~]
-      =/  book-name  i.t.pax
-      ?.  (allowed src.bol %read book-name)
-        ~|("not permitted" !!)
-      =/  book  (~(got by books) book-name)
-      =/  delta=notebook-delta
-        [%add-book our.bol book-name book]
-      :_  this
-      [%give %fact ~ %publish-notebook-delta !>(delta)]~
+      =^  cards  state
+        (watch-notebook:main pax)
+      [cards this]
     ::
         [%primary ~]  [~ this]
     ::
@@ -535,6 +530,18 @@
       (weld /notebook path.upd)
   ==
 ::
+++  watch-notebook
+  |=  pax=path
+  ?>  ?=([%notebook @ ~] pax)
+  =/  book-name  i.t.pax
+  ?.  (allowed src.bol %read book-name)
+    ~|("not permitted" !!)
+  =/  book  (~(got by books) book-name)
+  =/  delta=notebook-delta
+    [%add-book our.bol book-name book]
+  :_  state
+  [%give %fact ~ %publish-notebook-delta !>(delta)]~
+::
 ++  our-beak  /(scot %p our.bol)/[q.byk.bol]/(scot %da now.bol)
 ::
 ++  allowed
@@ -546,7 +553,7 @@
     ?:  =(%read mod)
       subscribers.book
     writers.book
-  =/  full-pax  :(weld scry-bek /permitted/(scot %p who) scry-pax)
+  =/  full-pax  :(weld scry-bek /permitted/(scot %p who) scry-pax /noun)
   .^(? %gx full-pax)
 ::
 ++  write-file
@@ -691,7 +698,7 @@
       %new-note
     ?:  &(=(src.bol our.bol) !=(our.bol who.act))
       :_  state
-      [%pass /forward %agent [who.act %publish] %poke %publish-action2 !>(act)]~
+      [%pass /forward %agent [who.act %publish] %poke %publish-action !>(act)]~
     =/  book=(unit notebook)  (~(get by books) book.act)
     ?~  book
       ~|("nonexistent notebook {<book.act>}" !!)
@@ -715,7 +722,7 @@
       %new-comment
     ?:  &(=(src.bol our.bol) !=(our.bol who.act))
       :_  state
-      [%pass /forward %agent [who.act %publish] %poke %publish-action2 !>(act)]~
+      [%pass /forward %agent [who.act %publish] %poke %publish-action !>(act)]~
     =/  book=(unit notebook)  (~(get by books) book.act)
     ?~  book
       ~|("nonexistent notebook {<book.act>}" !!)
@@ -762,7 +769,7 @@
       %edit-note
     ?:  &(=(src.bol our.bol) !=(our.bol who.act))
       :_  state
-      [%pass /forward %agent [who.act %publish] %poke %publish-action2 !>(act)]~
+      [%pass /forward %agent [who.act %publish] %poke %publish-action !>(act)]~
     =/  book=(unit notebook)  (~(get by books) book.act)
     ?~  book
       ~|("nonexistent notebook {<book.act>}" !!)
@@ -789,7 +796,7 @@
       %edit-comment
     ?:  &(=(src.bol our.bol) !=(our.bol who.act))
       :_  state
-      [%pass /forward %agent [who.act %publish] %poke %publish-action2 !>(act)]~
+      [%pass /forward %agent [who.act %publish] %poke %publish-action !>(act)]~
     =/  book=(unit notebook)  (~(get by books) book.act)
     ?~  book
       ~|("nonexistent notebook {<book.act>}" !!)
@@ -826,7 +833,7 @@
       %del-note
     ?:  &(=(src.bol our.bol) !=(our.bol who.act))
       :_  state
-      [%pass /forward %agent [who.act %publish] %poke %publish-action2 !>(act)]~
+      [%pass /forward %agent [who.act %publish] %poke %publish-action !>(act)]~
     =/  book=(unit notebook)  (~(get by books) book.act)
     ?~  book
       ~|("nonexistent notebook {<book.act>}" !!)
@@ -846,7 +853,7 @@
       %del-comment
     ?:  &(=(src.bol our.bol) !=(our.bol who.act))
       :_  state
-      [%pass /forward %agent [who.act %publish] %poke %publish-action2 !>(act)]~
+      [%pass /forward %agent [who.act %publish] %poke %publish-action !>(act)]~
     =/  book=(unit notebook)  (~(get by books) book.act)
     ?~  book
       ~|("nonexistent notebook {<book.act>}" !!)
@@ -883,6 +890,26 @@
     :~  [%pass wir %agent [who.act %publish] %leave ~]
         [%give %fact `/primary %publish-primary-delta !>(del)]
     ==
+  ::
+      %read
+    ?>  (team:title our.bol src.bol)
+    =/  book=(unit notebook)
+      ?:  =(our.bol who.act)
+        (~(get by books) book.act)
+      (~(get by subs) who.act book.act)
+    ?~  book
+      ~|("nonexistent notebook: {<book.act>}" !!)
+    =/  not=(unit note)  (~(get by notes.u.book) note.act) 
+    ?~  not
+      ~|("nonexistent note: {<note.act>}" !!)
+    =.  read.u.not  %.y
+    =.  notes.u.book  (~(put by notes.u.book) note.act u.not)
+    =?  books  =(our.bol who.act)
+      (~(put by books) book.act u.book)
+    =?  subs   !=(our.bol who.act)
+      (~(put by subs) [who.act book.act] u.book)
+    :_  state
+    [%give %fact `/primary %publish-primary-delta !>(act)]~
   ==
 ::
 ++  get-notebook
