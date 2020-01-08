@@ -189,8 +189,7 @@
       [[[~ %json] [%'~link' %submissions ^]] *]
     %-  json-response:gen
     %-  json-to-octs  ::TODO  include in +json-response:gen
-    :-  %a
-    %+  turn
+    %+  page-to-json
       (get-submissions t.t.site.request-line p)
     submission:en-json
   ::  local links by recency as json
@@ -198,8 +197,7 @@
       [[[~ %json] [%'~link' %local-pages ^]] *]
     %-  json-response:gen
     %-  json-to-octs  ::TODO  include in +json-response:gen
-    :-  %a
-    %+  turn
+    %+  page-to-json
       (get-local-pages t.t.site.request-line p)
     page:en-json
   ::  comments by recency as json
@@ -207,8 +205,7 @@
       [[[~ %json] [%'~link' %discussions @ ^]] *]
     %-  json-response:gen
     %-  json-to-octs  ::TODO  include in +json-response:gen
-    :-  %a
-    %+  turn
+    %+  page-to-json
       (get-discussions t.t.site.request-line p)
     comment:en-json
   ==
@@ -238,14 +235,25 @@
 ++  page-size  25
 ++  get-paginated
   |*  [l=(list) p=(unit @ud)]
+  ^-  [pages=@ud page=_l]
+  :-  +((div (lent l) page-size))
   ?~  p  l
   %+  scag  page-size
   %+  slag  (mul u.p page-size)
   l
 ::
+++  page-to-json
+  =,  enjs:format
+  |*  [[total-pages=@ud page=(list)] item-to-json=$-(* json)]
+  ^-  json
+  %-  pairs
+  :~  'total-pages'^(numb total-pages)
+      'page'^a+(turn page item-to-json)
+  ==
+::
 ++  get-submissions
   |=  [=path p=(unit @ud)]
-  ^-  submissions
+  ^-  [@ud submissions]
   =-  (get-paginated - p)
   .^  submissions
     %gx
@@ -258,7 +266,7 @@
 ::
 ++  get-local-pages
   |=  [=path p=(unit @ud)]
-  ^-  pages
+  ^-  [@ud pages]
   =-  (get-paginated - p)
   .^  pages
     %gx
@@ -271,7 +279,7 @@
 ::
 ++  get-discussions
   |=  [=path p=(unit @ud)]
-  ^-  comments
+  ^-  [@ud comments]
   =-  (get-paginated - p)
   .^  comments
     %gx
