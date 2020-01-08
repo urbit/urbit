@@ -1,5 +1,10 @@
 ::
-/-  *publish, *group-store, *permission-hook, *permission-group-hook
+/-  *publish,
+    *group-store,
+    *permission-hook,
+    *permission-group-hook,
+    *permission-store,
+    *invite-store
 /+  *server, *publish, cram, default-agent
 ::
 /=  index
@@ -105,6 +110,8 @@
     ::
         [%notebook @ ~]
       =/  book-name  i.t.pax
+      ?.  (allowed src.bol %read book-name)
+        ~|("not permitted" !!)
       =/  book  (~(got by books) book-name)
       =/  delta=notebook-delta
         [%add-book our.bol book-name book]
@@ -117,11 +124,7 @@
     ==
   ::
   ++  on-leave  on-leave:def
-  ::
-  ++  on-peek
-    |=  =path
-    ~|  "unexpected scry into {<dap.bol>} on path {<path>}"
-    !!
+  ++  on-peek   on-peek:def
   ::
   ++  on-agent
     |=  [wir=wire sin=sign:agent:gall]
@@ -143,9 +146,15 @@
           (handle-notebook-delta:main !<(notebook-delta q.cage.sin))
         [cards this]
       ::
-          [%permissions ~]  !!
+          [%permissions ~]
+        =^  cards  state
+          (handle-permission-update:main !<(permission-update q.cage.sin))
+        [cards this]
       ::
-          [%invites ~]  !!
+          [%invites ~]
+        =^  cards  state
+          (handle-invite-update:main !<(invite-update q.cage.sin))
+        [cards this]
       ==
     ==
   ::
@@ -338,29 +347,6 @@
     (handle-notebook-delta delta)
   ==
 ::
-++  make-groups
-  |=  [book-name=@tas group=group-info]
-  ^-  [(list card) path path]
-  ?-  -.group
-      %old  [~ writers.group subscribers.group]
-      %new
-    =/  writers-path      /~/publish/[book-name]/writers
-    =/  subscribers-path  /~/publish/[book-name]/subscribers
-    ^-  [(list card) path path]
-    :_  [writers-path subscribers-path]
-    ;:  weld
-      :~  (group-poke [%bundle writers-path])
-          (group-poke [%bundle subscribers-path])
-          (group-poke [%add writers.group writers-path])
-          (group-poke [%add subscribers.group subscribers-path])
-      ==
-      (create-security writers-path subscribers-path sec.group)
-      :~  (perm-hook-poke [%add-owned writers-path writers-path])
-          (perm-hook-poke [%add-owned subscribers-path subscribers-path])
-      ==
-    ==
-  ==
-::
 ++  add-paths
   |=  paths=(list path)
   ^-  (quip card _state)
@@ -513,33 +499,55 @@
       ~
   ==
 ::
+++  handle-permission-update
+  |=  upd=permission-update
+  ^-  (quip card _state)
+  ?.  ?=(?(%add %remove) -.upd)
+    [~ state]
+  =/  book=@tas
+    %-  need
+    %+  roll  ~(tap by books)
+    |=  [[nom=@tas book=notebook] out=(unit @tas)]
+    ?:  =(path.upd subscribers.book)
+      `nom
+    out
+  :_  state
+  %-  zing
+  %+  turn  ~(tap in who.upd)
+  |=  who=@p
+  ?:  (allowed who %read book)
+    ~
+  [%give %kick `/notebook/[book] `who]~
+::
+++  handle-invite-update
+  |=  upd=invite-update
+  ^-  (quip card _state)
+  ?.  ?=(%accepted -.upd)
+    [~ state]
+  =/  wir=wire  (weld /subscribe/(scot %p ship.invite.upd) path.upd)
+  :_  state
+  :_  ~
+  :*  %pass
+      wir
+      %agent
+      [ship.invite.upd %publish]
+      %watch
+      (weld /notebook path.upd)
+  ==
+::
 ++  our-beak  /(scot %p our.bol)/[q.byk.bol]/(scot %da now.bol)
 ::
 ++  allowed
-  |=  [who=@p mod=?(%read %write) pax=path]
+  |=  [who=@p mod=?(%read %write) book=@tas]
   ^-  ?
-  =.  pax  (weld our-beak pax)
-  =/  pem=[dict:clay dict:clay]  .^([dict:clay dict:clay] %cp pax)
-  ?-  mod
-    %read   (allowed-by who -.pem)
-    %write  (allowed-by who +.pem)
-  ==
-::
-++  allowed-by
-  |=  [who=@p dic=dict:clay]
-  ^-  ?
-  ?:  =(who our.bol)  &
-  =/  in-list=?
-    ?|  (~(has in p.who.rul.dic) who)
-      ::
-        %-  ~(rep by q.who.rul.dic)
-        |=  [[@ta cru=crew:clay] out=_|]
-        ?:  out  &
-        (~(has in cru) who)
-    ==
-  ?:  =(%black mod.rul.dic)
-    !in-list
-  in-list
+  =/  scry-bek  /(scot %p our.bol)/permission-store/(scot %da now.bol)
+  =/  book=notebook  (~(got by books) book)
+  =/  scry-pax
+    ?:  =(%read mod)
+      subscribers.book
+    writers.book
+  =/  full-pax  :(weld scry-bek /permitted/(scot %p who) scry-pax)
+  .^(? %gx full-pax)
 ::
 ++  write-file
   |=  [pax=path cay=cage]
@@ -622,26 +630,51 @@
   ==
 ::
 ++  create-security
-  |=  [par=path sub=path sec=rw-security]
+  |=  [read=path write=path sec=rw-security]
   ^-  (list card)
-  =+  ^-  [par-type=?(%black %white) sub-type=?(%black %white)]
+  =+  ^-  [read-type=?(%black %white) write-type=?(%black %white)]
     ?-  sec
       %channel  [%black %black]
       %village  [%white %white]
       %journal  [%black %white]
       %mailbox  [%white %black]
     ==
-  :~  (perm-group-hook-poke [%associate par [[par par-type] ~ ~]])
-      (perm-group-hook-poke [%associate sub [[sub sub-type] ~ ~]])
+  :~  (perm-group-hook-poke [%associate read [[read read-type] ~ ~]])
+      (perm-group-hook-poke [%associate write [[write write-type] ~ ~]])
   ==
 ::
+++  make-groups
+  |=  [book-name=@tas group=group-info]
+  ^-  [(list card) path path]
+  ?-  -.group
+      %old  [~ writers.group subscribers.group]
+      %new
+    =/  writers-path      /~/publish/[book-name]/writers
+    =/  subscribers-path  /~/publish/[book-name]/subscribers
+    ^-  [(list card) path path]
+    :_  [writers-path subscribers-path]
+    ;:  weld
+      :~  (group-poke [%bundle writers-path])
+          (group-poke [%bundle subscribers-path])
+          (group-poke [%add writers.group writers-path])
+          (group-poke [%add subscribers.group subscribers-path])
+      ==
+      (create-security subscribers-path writers-path sec.group)
+      :~  (perm-hook-poke [%add-owned writers-path writers-path])
+          (perm-hook-poke [%add-owned subscribers-path subscribers-path])
+      ==
+    ==
+  ==
 ::
 ++  poke-publish-action
   |=  act=action
   ^-  (quip card _state)
   ?-    -.act
       %new-book
-    ?>  (team:title our.bol src.bol)
+    ?.  (team:title our.bol src.bol)
+      ~|("action not permitted" !!)
+    ?:  (~(has by books) book.act)
+      ~|("notebook already exists: {<book.act>}" !!)
     =+  ^-  [cards=(list card) writers-path=path subscribers-path=path]
       (make-groups book.act group.act)
     =/  new-book=notebook-info
@@ -659,6 +692,15 @@
     ?:  &(=(src.bol our.bol) !=(our.bol who.act))
       :_  state
       [%pass /forward %agent [who.act %publish] %poke %publish-action2 !>(act)]~
+    =/  book=(unit notebook)  (~(get by books) book.act)
+    ?~  book
+      ~|("nonexistent notebook {<book.act>}" !!)
+    ?:  (~(has by notes.u.book) note.act)
+      ~|("note already exists: {<note.act>}" !!)
+    ?.  ?|  (team:title our.bol src.bol)
+            (allowed src.bol %write book.act)
+        ==
+      ~|("action not permitted" !!)
     =/  pax=path  /app/publish/notebooks/[book.act]/[note.act]/udon
     =/  front=(map knot cord)
       %-  my
@@ -674,6 +716,17 @@
     ?:  &(=(src.bol our.bol) !=(our.bol who.act))
       :_  state
       [%pass /forward %agent [who.act %publish] %poke %publish-action2 !>(act)]~
+    =/  book=(unit notebook)  (~(get by books) book.act)
+    ?~  book
+      ~|("nonexistent notebook {<book.act>}" !!)
+    ?.  (~(has by notes.u.book) note.act)
+      ~|("nonexistent note {<note.act>}" !!)
+    ?.  ?&  ?|  (team:title our.bol src.bol)
+                (allowed src.bol %read book.act)
+            ==
+            comments.u.book
+        ==
+      ~|("action not permitted" !!)
     =/  pax=path
       %+  weld  /app/publish/notebooks
       /[book.act]/[note.act]/(scot %da now.bol)/publish-comment
@@ -686,10 +739,11 @@
     [(write-file pax %publish-comment !>(new-comment))]~
   ::
       %edit-book
-    ?>  (team:title our.bol src.bol)
+    ?.  (team:title our.bol src.bol)
+      ~|("action not permitted" !!)
     =/  book  (~(get by books) book.act)
     ?~  book
-      [~ state]
+      ~|("nonexistent notebook" !!)
     =+  ^-  [cards=(list card) writers-path=path subscribers-path=path]
       ?~  group.act
         [~ writers.u.book subscribers.u.book]
@@ -709,6 +763,18 @@
     ?:  &(=(src.bol our.bol) !=(our.bol who.act))
       :_  state
       [%pass /forward %agent [who.act %publish] %poke %publish-action2 !>(act)]~
+    =/  book=(unit notebook)  (~(get by books) book.act)
+    ?~  book
+      ~|("nonexistent notebook {<book.act>}" !!)
+    =/  note=(unit note)  (~(get by notes.u.book) note.act)
+    ?~  note
+      ~|("nonexistent note: {<note.act>}" !!)
+    ?.  ?|  (team:title our.bol src.bol)
+            ?&  =(author.u.note src.bol)
+                (allowed src.bol %write book.act)
+            ==
+        ==
+      ~|("action not permitted" !!)
     =/  pax=path  /app/publish/notebooks/[book.act]/[note.act]/udon
     =/  front=(map knot cord)
       %-  my
@@ -724,6 +790,22 @@
     ?:  &(=(src.bol our.bol) !=(our.bol who.act))
       :_  state
       [%pass /forward %agent [who.act %publish] %poke %publish-action2 !>(act)]~
+    =/  book=(unit notebook)  (~(get by books) book.act)
+    ?~  book
+      ~|("nonexistent notebook {<book.act>}" !!)
+    =/  not=(unit note)  (~(get by notes.u.book) note.act)
+    ?~  not
+      ~|("nonexistent note {<note.act>}" !!)
+    =/  com=(unit comment)
+      (~(get by comments.u.not) (slav %da comment.act))
+    ?~  com
+      ~|("nonexistent comment {<comment.act>}" !!)
+    ?.  ?|  (team:title our.bol src.bol)
+            ?&  =(author.u.com src.bol)
+                (allowed src.bol %read book.act)
+            ==
+        ==
+      ~|("action not permitted" !!)
     =/  pax=path
       %+  weld  /app/publish/notebooks
       /[book.act]/[note.act]/[comment.act]/publish-comment
@@ -733,7 +815,10 @@
     [(write-file pax %publish-comment !>(new-comment))]~
   ::
       %del-book
-    ?>  (team:title our.bol src.bol)
+    ?.  (team:title our.bol src.bol)
+      ~|("action not permitted" !!)
+    ?.  (~(has by books) book.act)
+      ~|("nonexistent notebook {<book.act>}" !!)
     =/  pax=path  /app/publish/notebooks/[book.act]
     :_  state(books (~(del by books) book.act))
     [(delete-dir pax)]~
@@ -742,6 +827,18 @@
     ?:  &(=(src.bol our.bol) !=(our.bol who.act))
       :_  state
       [%pass /forward %agent [who.act %publish] %poke %publish-action2 !>(act)]~
+    =/  book=(unit notebook)  (~(get by books) book.act)
+    ?~  book
+      ~|("nonexistent notebook {<book.act>}" !!)
+    =/  note=(unit note)  (~(get by notes.u.book) note.act)
+    ?~  note
+      ~|("nonexistent note: {<note.act>}" !!)
+    ?.  ?|  (team:title our.bol src.bol)
+            ?&  =(author.u.note src.bol)
+                (allowed src.bol %write book.act)
+            ==
+        ==
+      ~|("action not permitted" !!)
     =/  pax=path  /app/publish/notebooks/[book.act]/[note.act]/udon
     :_  state
     [(delete-file pax)]~
@@ -750,6 +847,22 @@
     ?:  &(=(src.bol our.bol) !=(our.bol who.act))
       :_  state
       [%pass /forward %agent [who.act %publish] %poke %publish-action2 !>(act)]~
+    =/  book=(unit notebook)  (~(get by books) book.act)
+    ?~  book
+      ~|("nonexistent notebook {<book.act>}" !!)
+    =/  note=(unit note)  (~(get by notes.u.book) note.act)
+    ?~  note
+      ~|("nonexistent note {<note.act>}" !!)
+    =/  comment=(unit comment)
+      (~(get by comments.u.note) (slav %da comment.act))
+    ?~  comment
+      ~|("nonexistent comment {<comment.act>}" !!)
+    ?.  ?|  (team:title our.bol src.bol)
+            ?&  =(author.u.comment src.bol)
+                (allowed src.bol %read book.act)
+            ==
+        ==
+      ~|("action not permitted" !!)
     =/  pax=path
       %+  weld  /app/publish/notebooks
       /[book.act]/[note.act]/[comment.act]/publish-comment

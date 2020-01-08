@@ -6,6 +6,11 @@ class Store {
   constructor() {
     this.state = {
       notebooks: {},
+      groups: {},
+      permissions: {},
+      invites: {},
+      spinner: false,
+      sidebarShown: false,
     }
 
     this.initialReducer  = new InitialReducer();
