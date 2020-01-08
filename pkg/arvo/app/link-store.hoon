@@ -14,8 +14,8 @@
 ::    /local-pages/[some-group]        all pages we saved by recency
 ::    /submissions/[some-group]        all submissions by recency
 ::      comments
-::    /annotations/[some-group]/[url]  all our comments on url by recency
-::    /discussions/[some-group]/[url]  all known comments on url by recency
+::    /annotations/[some-group]/[b64(url)]  all our comments on url by recency
+::    /discussions/[some-group]/[b64(url)]  all known comments on url by recency
 ::
 /+  *link, default-agent, verb
 ::
@@ -271,7 +271,8 @@
 ++  get-discussion
   |=  =path
   ^-  discussion
-  =+  (split-discussion-path path)  ::TODO  =/  [=path =url]
+  =/  [=^path =url]
+    (split-discussion-path path)
   =-  (~(gut by -) url *discussion)
   %+  ~(gut by discussions)  path
   *(map ^url discussion)

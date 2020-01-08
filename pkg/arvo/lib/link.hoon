@@ -28,7 +28,8 @@
   ~|  [%path-too-short path]
   ?>  (gth (lent path) 1)  ::TODO  ?= would TMI
   =/  end=@ud  (dec (lent path))
-  [(scag end path) (snag end path)]
+  :-  (scag end path)
+  (de-base64:mimes:html (snag end path))
 ::
 ++  en-json
   =,  enjs:format
