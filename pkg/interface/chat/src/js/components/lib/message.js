@@ -89,7 +89,7 @@ export class Message extends Component {
   render() {
     const { props } = this;
     let pending = !!props.msg.pending ? ' o-40' : '';
-    let datestamp = "~" + moment.unix(props.msg.when / 1000).format('YYYY.MM.D');
+    let datestamp = "~" + moment.unix(props.msg.when / 1000).format('YYYY.M.D');
 
     let paddingTop = props.paddingTop ? {'paddingTop': '6px'} : '';
 
