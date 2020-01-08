@@ -4,6 +4,7 @@
     lsp-parser=language-server-parser,
     easy-print=language-server-easy-print,
     rune-snippet=language-server-rune-snippet,
+    build=language-server-build,
     default-agent
 |%
 +$  card  card:agent:gall
@@ -30,10 +31,14 @@
 +$  position
   [row=@ud col=@ud]
 ::
-+$  all-state  bufs=(map uri=@t buf=wall)
++$  state-zero  [%0 bufs=(map uri=@t buf=wall) builds=(map uri=@t =vase) errs=(map uri=@t (list tang)) proc-id=@]
++$  versioned-state
+  $%
+    state-zero
+  ==
 --
 ^-  agent:gall
-=|  all-state
+=|  state-zero
 =*  state  -
 =<
   |_  =bowl:gall
@@ -58,18 +63,16 @@
     |=  old-state=vase
     ^-  (quip card _this)
     ~&  >  %lsp-upgrade
-    [~ this(state !<(all-state old-state))]
+    [~ this(state *state-zero)]
   ::
   ++  on-poke
     ^+  on-poke:*agent:gall
     |=  [=mark =vase]
     ^-  (quip card _this)
-    ~&  'poked with mark'
-    ~&  mark
     =^  cards  state
       ?+    mark  (on-poke:def mark vase)
-          %handle-http-request
-        (handle-http-request:lsp !<([eyre-id=@ta inbound-request:eyre] vase))
+          ::  %handle-http-request
+        ::  (handle-http-request:lsp !<([eyre-id=@ta inbound-request:eyre] vase))
           %language-server-rpc-request
         (handle-json-rpc:lsp !<(request-message:lsp-sur vase))
       ==
@@ -79,7 +82,9 @@
     |=  =path
     ~&  'subscribe on path'
     ?:  ?=([%primary ~] path)
-      `this
+      :_  this
+      ~
+      ::  (give-rpc-notification:lsp demo-diagnostic:lsp)
     ?.  ?=([%http-response @ ~] path)
       (on-watch:def path)
     `this
@@ -91,8 +96,9 @@
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
     =^  cards  state
-      ?+  wire  (on-arvo:def wire sign-arvo)
-        [%connect ~]  ?>(?=(%bound +<.sign-arvo) `state)
+      ?+  sign-arvo  (on-arvo:def wire sign-arvo)
+        [%e %bound *]  `state
+        [%f *]  (handle-build:lsp wire +.sign-arvo)
       ==
     [cards this]
   ::
@@ -145,16 +151,14 @@
   ^-  (list card)
   (give-simple-payload:app eyre-id (json-response:gen (json-to-octs jon)))
 ::
-++  give-new-diagnostics
-  |=  [diagnostics=(list diagnostic) uri=@t]
+++  give-rpc-notification
+  |=  res=all:response:lsp-sur
   ^-  (list card)
   :_  ~
-  [%fact `/primary %language-server-rpc-response !>(['textDocument/publishDiagnostics' uri diagnostics])]
-
+  [%give %fact `/primary %language-server-rpc-response !>([~ res])]
 ::
 ++  handle-json-rpc
   |=  req=request-message:lsp-sur
-  ~&  'got json-rpc message'
   ^-  (quip card _state)
   =^  cards  state
     ?+  +<.req  [~ state]
@@ -162,8 +166,53 @@
       (handle-did-open +>.req)
         %text-document--did-change
       (handle-did-change +>.req)
+        %text-document--did-save
+      (handle-did-save +>.req)
+        %text-document--did-close
+      (handle-did-close +>.req)
+        %exit
+      handle-exit
     ==
   [cards state]
+::
+++  handle-exit
+  ^-  (quip card _state)
+  ~&  >  %lsp-shutdown
+  :_  *state-zero
+  %+  turn
+    ~(tap in ~(key by builds))
+  |=  uri=@t
+  [%pass /ford/[uri] %arvo %f %kill ~]
+::
+++  handle-did-close
+  |=  [uri=@t version=@]
+  ^-  (quip card _state)
+  =.  bufs
+    (~(del by bufs) uri)
+  =.  errs
+    (~(del by errs) uri)
+  =.  builds
+    (~(del by builds) uri)
+  :_  state
+  [%pass /ford/[uri] %arvo %f %kill ~]~
+::
+++  handle-did-save
+  |=  [uri=@t version=@]
+  ^-  (quip card _state)
+  ~&  "Committing"
+  :_  state
+  :_  (give-rpc-notification (get-parser-diagnostics uri))
+  :*
+    %pass
+    /commit
+    %agent
+    [our.bow %hood]
+    %poke
+    %kiln-commit
+    !>([q.byk.bow |])
+  ==
+
+
 ::
 ++  handle-did-change
   |=  [document=versioned-doc-id:lsp-sur changes=(list change:lsp-sur)]
@@ -174,103 +223,136 @@
     (~(put by bufs) uri.document updated)
   `state
 ::
+++  handle-build
+  |=  [=path =gift:able:ford]
+  ^-  (quip card _state)
+  ~&  'Built'
+  ?.  ?=([%made *] gift)
+    [~ state]
+  ?.  ?=([%complete *] result.gift)
+    [~ state]
+  =/  uri=@t
+    (snag 1 path)
+  =/  =build-result:ford
+    build-result.result.gift
+  ?+  build-result  [~ state]
+        ::
+      [%success %core *]
+    =.  builds
+      (~(put by builds) uri vase.build-result)
+    =.  errs
+      (~(del by errs) uri)
+    [~ state]
+        ::
+      [%error *]
+    ~&  message.build-result
+    =/  error-range=range
+      (snag 0 (get-error-from-tang:build message.build-result))
+    :_  state
+    (give-rpc-notification (get-ford-diagnostics error-range uri))
+  ==
+::
+++  get-ford-diagnostics
+  |=  [=range uri=@t]
+  ^-  text-document--publish-diagnostics:response:lsp-sur
+  :+  %text-document--publish-diagnostics
+    uri
+  [[range 1 'Build Error'] ~]
+::
 ++  handle-did-open
   |=  item=text-document-item:lsp-sur
   ^-  (quip card _state)
   =.  bufs
     (~(put by bufs) uri.item (to-wall (trip text.item)))
-  [~ state]
+  =/  =path
+    (uri-to-path:build uri.item)
+  =/  =schematic:ford
+    [%core [our.bow %home] (flop path)]
+  :_  state
+  ^-  (list card)
+  :_  (give-rpc-notification (get-parser-diagnostics uri.item))
+  ^-  card
+  [%pass /ford/[uri.item] %arvo %f %build live=%.y schematic]
 ::
 ::  +handle-http-request: received on a new connection established
 ::
-++  handle-http-request
-  |=  [eyre-id=@ta =inbound-request:eyre]
-  ^-  (quip card _state)
-  ?>  ?=(^ body.request.inbound-request)
-  =/  =lsp-req
-    %-  parser
-    (need (de-json:html q.u.body.request.inbound-request))
-  =/  buf  (~(gut by bufs) uri.lsp-req *wall)
-  =^  cards  buf
-    ?-  +<.lsp-req
-      %sync        (handle-sync buf eyre-id +>.lsp-req)
-      %completion  (handle-completion buf eyre-id +>.lsp-req)
-      %commit      (handle-commit buf eyre-id uri.lsp-req)
-      %hover       (handle-hover buf eyre-id +>.lsp-req)
-    ==
-  =.  bufs
-    (~(put by bufs) uri.lsp-req buf)
-  [cards state]
-::
-++  regen-diagnostics
-  |=  buf=wall
-  ^-  json
+::  ++  handle-http-request
+::    |=  [eyre-id=@ta =inbound-request:eyre]
+::    ^-  (quip card _state)
+::    ?>  ?=(^ body.request.inbound-request)
+::    =/  =lsp-req
+::      %-  parser
+::      (need (de-json:html q.u.body.request.inbound-request))
+::    =/  buf  (~(gut by bufs) uri.lsp-req *wall)
+::    =^  cards  buf
+::      ?+  +<.lsp-req  !!
+::        %sync        (handle-sync buf eyre-id +>.lsp-req)
+::        ::  %completion  (handle-completion buf eyre-id +>.lsp-req)
+::        ::  %commit      (handle-commit buf eyre-id uri.lsp-req)
+::        ::  %hover       (handle-hover buf eyre-id +>.lsp-req)
+::      ==
+::    =.  bufs
+::      (~(put by bufs) uri.lsp-req buf)
+::    [cards state]
+::  ::
+++  get-parser-diagnostics
+  |=  uri=@t
+  ^-  text-document--publish-diagnostics:response:lsp-sur
   =/  t=tape
-    (zing (join "\0a" buf))
+    (zing (join "\0a" `wall`(~(got by bufs) uri)))
+  ::  ~&  t
   =/  parse
     (lily:auto t (lsp-parser *beam))
-  ?:  ?=(%| -.parse)
-    (format-diagnostic p.parse)
-  =,  enjs:format
-  %-  pairs
-  :~  good+b+&
-  ==
+  ::  ~&  parse
+  :+  %text-document--publish-diagnostics
+    uri
+  ?.  ?=(%| -.parse)
+    ~
+  =/  loc=position:lsp-sur
+    [(dec -.p.parse) +.p.parse]
+  :_  ~
+  [[loc loc] 1 'Syntax Error']
 ::
-++  format-diagnostic
-  |=  [row=@ col=@]
-  ^-  json
-  =,  enjs:format
-  %-  pairs
-  :~  good+b+|
-      :+  %diagnostics  %a  :_  ~
-      =/  loc  (pairs line+(numb (dec row)) character+(numb col) ~)
-      %-  pairs
-      :~  range+(pairs start+loc end+loc ~)
-          severity+n+'1'
-          message+s+'syntax error'
-      ==
-  ==
-::
-++  handle-commit
-  |=  [buf=wall eyre-id=@ta uri=@t]
-  ^-  [(list card) wall]
-  :_  buf
-  =/  jon
-    (regen-diagnostics buf)
-  :_  (json-response eyre-id jon)
-  :*
-    %pass
-    /commit
-    %agent
-    [our.bow %hood]
-    %poke
-    %kiln-commit
-    !>([q.byk.bow |])
-  ==
-::
-++  handle-hover
-  |=  [buf=wall eyre-id=@ta row=@ud col=@ud]
-  ^-  [(list card) wall]
-  =/  txt
-    (zing (join "\0a" buf))
-  =+  (get-id:auto (get-pos buf row col) txt)
-  ?~  id
-    [(json-response eyre-id *json) buf]
-  =/  match=(unit (option:auto type))
-    (search-exact:auto u.id (get-identifiers:auto -:!>(..zuse)))
-  ?~  match
-    [(json-response eyre-id *json) buf]
-  =/  contents
-    %-  crip
-    ;:  weld
-      "`"
-      ~(ram re ~(duck easy-print detail.u.match))
-      "`"
-    ==
-  :_  buf
-  %+  json-response  eyre-id
-  %-  pairs:enjs:format
-  [contents+s+contents ~]
+::  ++  handle-commit
+::    |=  [buf=wall eyre-id=@ta uri=@t]
+::    ^-  [(list card) wall]
+::    :_  buf
+::    =/  jon
+::      (regen-diagnostics buf)
+::    :_  (json-response eyre-id jon)
+::    :*
+::      %pass
+::      /commit
+::      %agent
+::      [our.bow %hood]
+::      %poke
+::      %kiln-commit
+::      !>([q.byk.bow |])
+::    ==
+::  ::
+::  ++  handle-hover
+::    |=  [buf=wall eyre-id=@ta row=@ud col=@ud]
+::    ^-  [(list card) wall]
+::    =/  txt
+::      (zing (join "\0a" buf))
+::    =+  (get-id:auto (get-pos buf row col) txt)
+::    ?~  id
+::      [(json-response eyre-id *json) buf]
+::    =/  match=(unit (option:auto type))
+::      (search-exact:auto u.id (get-identifiers:auto -:!>(..zuse)))
+::    ?~  match
+::      [(json-response eyre-id *json) buf]
+::    =/  contents
+::      %-  crip
+::      ;:  weld
+::        "`"
+::        ~(ram re ~(duck easy-print detail.u.match))
+::        "`"
+::      ==
+::    :_  buf
+::    %+  json-response  eyre-id
+::    %-  pairs:enjs:format
+::    [contents+s+contents ~]
 ::
 ++  sync-buf
   |=  [buf=wall changes=(list change:lsp-sur)]
@@ -293,10 +375,10 @@
   =.  buf  (to-wall tape)
   $(changes t.changes)
 ::
-++  handle-sync
-  |=  [buf=wall eyre-id=@ta changes=(list change)]
-  :-  (json-response eyre-id *json)
-  (sync-buf buf changes)
+::  ++  handle-sync
+::    |=  [buf=wall eyre-id=@ta changes=(list change)]
+::    :-  (json-response eyre-id *json)
+::    (sync-buf buf changes)
 
 ::
 ++  to-wall
@@ -326,48 +408,54 @@
     0
   (sub a b)
 ::
-++  handle-completion
-  |=  [buf=wall eyre-id=@ta row=@ud col=@ud]
-  ^-  [(list card) wall]
-  =/  =tape  (zing (join "\0a" buf))
-  =/  pos  (get-pos buf row col)
-  :_  buf
-  ::  Check if we're on a rune
-  ::
-  =/  rune  (swag [(safe-sub pos 2) 2] tape)
-  ?:  (~(has by runes:rune-snippet) rune)
-    (json-response eyre-id (rune-snippet rune))
-  ::  Don't run on large files because it's slow
-  ::
-  ?:  (gth (lent buf) 1.000)
-    =,  enjs:format
-    (json-response eyre-id (pairs good+b+& result+~ ~))
-  ::
-  =/  tl
-    (tab-list-tape:auto -:!>(..zuse) pos tape)
-  =,  enjs:format
-  %+  json-response  eyre-id
-  ?:  ?=(%| -.tl)
-    (format-diagnostic p.tl)
-  ?~  p.tl
-    *json
-  %-  pairs
-  :~  good+b+&
-  ::
-      :-  %result
-      %-  pairs
-      :~  'isIncomplete'^b+&
-      ::
-          :-  %items
-          :-  %a
-          =/  lots  (gth (lent u.p.tl) 10)
-          %-  flop
-          %+  turn  (scag 50 u.p.tl)
-          |=  [=term =type]
-          ?:  lots
-            (frond label+s+term)
-          =/  detail  (crip ~(ram re ~(duck easy-print type)))
-          (pairs label+s+term detail+s+detail ~)
-      ==
+::  ++  handle-completion
+::    |=  [buf=wall eyre-id=@ta row=@ud col=@ud]
+::    ^-  [(list card) wall]
+::    =/  =tape  (zing (join "\0a" buf))
+::    =/  pos  (get-pos buf row col)
+::    :_  buf
+::    ::  Check if we're on a rune
+::    ::
+::    =/  rune  (swag [(safe-sub pos 2) 2] tape)
+::    ?:  (~(has by runes:rune-snippet) rune)
+::      (json-response eyre-id (rune-snippet rune))
+::    ::  Don't run on large files because it's slow
+::    ::
+::    ?:  (gth (lent buf) 1.000)
+::      =,  enjs:format
+::      (json-response eyre-id (pairs good+b+& result+~ ~))
+::    ::
+::    =/  tl
+::      (tab-list-tape:auto -:!>(..zuse) pos tape)
+::    =,  enjs:format
+::    %+  json-response  eyre-id
+::    ?:  ?=(%| -.tl)
+::      (format-diagnostic p.tl)
+::    ?~  p.tl
+::      *json
+::    %-  pairs
+::    :~  good+b+&
+::    ::
+::        :-  %result
+::        %-  pairs
+::        :~  'isIncomplete'^b+&
+::        ::
+::            :-  %items
+::            :-  %a
+::            =/  lots  (gth (lent u.p.tl) 10)
+::            %-  flop
+::            %+  turn  (scag 50 u.p.tl)
+::            |=  [=term =type]
+::            ?:  lots
+::              (frond label+s+term)
+::            =/  detail  (crip ~(ram re ~(duck easy-print type)))
+::            (pairs label+s+term detail+s+detail ~)
+::        ==
+::    ==
+++  demo-diagnostic
+  :+  %text-document--publish-diagnostics
+    'file:///Users/liamfitzgerald/dev/urbit/urbit-src/pkg/arvo/gen/code.hoon'
+  :~
+    [[[1 1] [2 2]] 1 'Syntax error']
   ==
 --

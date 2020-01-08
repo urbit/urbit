@@ -98,6 +98,12 @@
 ++  downcase
   |=  a=@
   (add a 32)
+::
+:: TODO: fix
+++  unparse-method
+  |=  =cord
+  'textDocument/publishDiagnostics'
+
 ++  parse-method
   |=  =tape
   ::  TODO: gross
@@ -123,8 +129,6 @@
 ++  parse-request
   =,  dejs-soft:format
   |=  jon=json
-  ~&  jon
-  ~&  "request parsing"
   ?>  ?=([%o *] jon)
   =/  method=cord
     =+  `json`(~(got by p.jon) 'method')
@@ -142,7 +146,31 @@
     (parse-text-document--did-change params)
       %text-document--did-open
     (parse-text-document--did-open params)
+      %text-document--did-save
+    (parse-text-document--did-save params)
+      %text-document--did-close
+    (parse-text-document--did-save params)
   ==
+::
+++  parse-text-document--did-save
+  |=  jon=json
+  ^-  text-document--did-save:request:lsp
+  ?>  ?=([%o *] jon)
+  =/  doc-id
+    (~(got by p.jon) 'textDocument')
+  :-  %text-document--did-save
+  (parse-text-document-id doc-id)
+
+::
+++  parse-text-document--did-close
+  |=  jon=json
+  ^-  text-document--did-close:request:lsp
+  ?>  ?=([%o *] jon)
+  =/  doc-id
+    (~(got by p.jon) 'textDocument')
+  :-  %text-document--did-close
+  (parse-text-document-id doc-id)
+
 ::
 ++  parse-text-document-item
   |=  jon=json
@@ -211,19 +239,33 @@
   =,  enjs:format
   |%
   ++  response
-    |=  =response:lsp
+    |=  response=response-message:lsp
     ^-  json
-    ?+  -.lsp  !!
-        %'textDocument/publishDiagnostics'
-      ()
+    =/  params=json
+      ?-  +<.response
+          %text-document--publish-diagnostics
+        (publish-diagnostics +.response)
+      ==
+    %:  pairs
+     [%method %s (unparse-method +<.response)]
+      params+params
+      ~
+    ==
+  ::
+  ++  res
+    |=  res=*
+    ^-  json
+    ~
+
   ++  position
     |=  =position:lsp
     ^-  json
     %:  pairs
-      row+(numb row.position)
-      col+(numb row.position)
+      line+(numb row.position)
+      character+(numb row.position)
       ~
     ==
+  ::
   ++  range
     |=  =range:lsp
     ^-  json
@@ -242,8 +284,14 @@
       message+s+message.diag
       ~
     ==
+  ::
   ++  publish-diagnostics
-    |=  pub=publish-diagnostics
-
-
+    |=  pub=text-document--publish-diagnostics:response:lsp
+    ^-  json
+    %:  pairs
+      uri+s+uri.pub
+      diagnostics+a+(turn diagnostics.pub diagnostic)
+      ~
+    ==
+  --
 --

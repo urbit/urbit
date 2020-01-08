@@ -21,17 +21,14 @@
   ::
   +$  all
     $%
-      publish-diagnostics
-      unknown
+      text-document--publish-diagnostics
     ==
   ::
-  +$  unknown
-    [%unknown ~]
   ::
-  +$  publish-diagnostics
-    [%'textDocument/publishDiagnostics' uri=@t diagnostics=(list diagnostic)]
+  +$  text-document--publish-diagnostics
+    [%text-document--publish-diagnostics uri=@t diagnostics=(list diagnostic)]
   ::
-
+  --
 ::
 ::  ++  notification
 ::    |*  kind=response-kind
@@ -51,12 +48,21 @@
     $%
       text-document--did-change
       text-document--did-open
+      text-document--did-save
+      text-document--did-close
+      exit
       unknown
     ==
   +$  text-document--did-change
     [%text-document--did-change versioned-doc-id changes=(list change)]
   +$  text-document--did-open
     [%text-document--did-open text-document-item]
+  +$  text-document--did-save
+    [%text-document--did-save versioned-doc-id]
+  +$  text-document--did-close
+    [%text-document--did-close versioned-doc-id]
+  +$  exit
+    [%exit ~]
   +$  unknown
     [%unknown ~]
   --
