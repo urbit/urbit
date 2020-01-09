@@ -30,6 +30,9 @@ export class Root extends Component {
     const { props, state } = this;
 
     let contacts = !!state.contacts ? state.contacts : {};
+    let defaultContacts =
+      (!!state.contacts && '/~/default' in state.contacts) ?
+      state.contacts['/~/default'] : {};
     let groups = !!state.groups ? state.groups : {};
 
     return (
@@ -72,8 +75,9 @@ export class Root extends Component {
                   groups={groups}
                   activeDrawer="contacts"
                   selected={groupPath}>
-                    <ContactSidebar 
+                    <ContactSidebar
                       contacts={groupContacts}
+                      defaultContacts={defaultContacts}
                       group={group}
                       activeDrawer="contacts"
                       path={groupPath} />
@@ -98,6 +102,7 @@ export class Root extends Component {
                   selected={groupPath}>
                   <ContactSidebar
                     contacts={groupContacts}
+                    defaultContacts={defaultContacts}
                     group={group}
                     activeDrawer="rightPanel"
                     path={groupPath} />
@@ -108,17 +113,17 @@ export class Root extends Component {
                 </Skeleton>
               );
             }} />
-          <Route exact path="/~contacts/:ship/:group/:contact"
-            render={ (props) => {
+          <Route exact path="/~contacts/share/:ship/:group"
+            render={(props) => {
               let groupPath =
                 `/${props.match.params.ship}/${props.match.params.group}`;
-              let shipPath = 
-                `${groupPath}/${props.match.params.contact}`;
+              let shipPath = `${groupPath}/${window.ship}`;
+              let rootIdentity = defaultContacts[window.ship] || {};
 
               let groupContacts = contacts[groupPath] || {};
               let contact =
-                (props.match.params.contact in groupContacts) ?
-                groupContacts[props.match.params.contact] : {};
+                (window.ship in groupContacts) ?
+                groupContacts[window.ship] : {};
               let group = groups[groupPath] || new Set([]);
 
               return (
@@ -131,41 +136,8 @@ export class Root extends Component {
                   <ContactSidebar
                     activeDrawer="rightPanel"
                     contacts={groupContacts}
+                    defaultContacts={defaultContacts}
                     group={group}
-                    path={groupPath}
-                    selectedContact={shipPath} />
-                  <ContactCard
-                    contact={contact}
-                    path={groupPath}
-                    ship={props.match.params.contact} />
-                </Skeleton>
-              );
-            }} />
-          <Route exact path="/~contacts/share/:ship/:group"
-            render={(props) => {
-              let groupPath =
-                `/${props.match.params.ship}/${props.match.params.group}`;
-              let shipPath = `${groupPath}/${window.ship}`;
-
-              let defaultContacts = contacts["/~/default"] || {};
-              let rootIdentity = defaultContacts[window.ship] || {};
-
-              let groupContacts = contacts[groupPath] || {};
-              let contact =
-                (window.ship in groupContacts) ?
-                groupContacts[window.ship] : {};
-
-              return (
-                <Skeleton
-                  spinner={state.spinner}
-                  contacts={contacts}
-                  groups={groups}
-                  activeDrawer="rightPanel"
-                  selected={groupPath}>
-                  <ContactSidebar
-                    activeDrawer="rightPanel"
-                    contacts={groupContacts}
-                    groups={groups}
                     path={groupPath}
                     selectedContact={shipPath} />
                   <ContactCard
@@ -177,9 +149,48 @@ export class Root extends Component {
                 </Skeleton>
               );
             }} />
+          <Route exact path="/~contacts/view/:ship/:group/:contact"
+            render={ (props) => {
+              let groupPath =
+                `/${props.match.params.ship}/${props.match.params.group}`;
+              let shipPath = 
+                `${groupPath}/${props.match.params.contact}`;
+
+              let groupContacts = contacts[groupPath] || {};
+              let contact =
+                (props.match.params.contact in groupContacts) ?
+                groupContacts[props.match.params.contact] : {};
+              let group = groups[groupPath] || new Set([]);
+
+              let rootIdentity = 
+                props.match.params.contact === window.ship ?
+                defaultContacts[window.ship] : null;
+
+              return (
+                <Skeleton
+                  spinner={state.spinner}
+                  contacts={contacts}
+                  groups={groups}
+                  activeDrawer="rightPanel"
+                  selected={groupPath}>
+                  <ContactSidebar
+                    activeDrawer="rightPanel"
+                    contacts={groupContacts}
+                    defaultContacts={defaultContacts}
+                    group={group}
+                    path={groupPath}
+                    selectedContact={shipPath} />
+                  <ContactCard
+                    contact={contact}
+                    path={groupPath}
+                    ship={props.match.params.contact}
+                    rootIdentity={rootIdentity}
+                  />
+                </Skeleton>
+              );
+            }} />
           <Route exact path="/~contacts/me"
             render={ (props) => {
-              let defaultContacts = contacts["/~/default"] || {};
               let me = defaultContacts[window.ship] || {};
 
               return (

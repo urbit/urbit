@@ -9,7 +9,7 @@ export class ContactCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      edit: false,
+      edit: props.share,
       colorToSet: "",
       nickNameToSet: "",
       emailToSet: "",
@@ -200,34 +200,30 @@ export class ContactCard extends Component {
   renderEditCard() {
     const { props } = this;
     // if this is our first edit in a new group, propagate from root identity
-    let defaultValue = {
-      nickname: (props.share) 
-      ? props.rootIdentity.nickname
-      : props.contact.nickname,
-      email: (props.share)
-      ? props.rootIdentity.email
-      : props.contact.email,
-      phone: (props.share)
-      ? props.rootIdentity.phone
-      : props.contact.phone,
-      website: (props.share)
-      ? props.rootIdentity.website
-      : props.contact.website,
-      notes: (props.share)
-      ? props.rootIdentity.notes
-      : props.contact.notes
-    }
+    let defaultValue = props.share ? {
+      nickname: props.rootIdentity.nickname,
+      email: props.rootIdentity.email,
+      phone: props.rootIdentity.phone,
+      website: props.rootIdentity.website,
+      notes: props.rootIdentity.notes,
+      color: props.rootIdentity.color
+    } : {
+      nickname: props.contact.nickname,
+      email: props.contact.email,
+      phone: props.contact.phone,
+      website: props.contact.website,
+      notes: props.contact.notes,
+      color: props.contact.color
+    };
 
     let shipType = this.shipParser(props.ship);
 
-    let currentColor = (props.contact.color) 
-    ? props.contact.color 
-    : "0x0";
-
+    let currentColor = !!defaultValue.color ? defaultValue.color : "0x0";
     let hexColor = uxToHex(currentColor);
 
     let sigilColor = "";
-    let hasAvatar = (props.contact.avatar !== "TODO");
+    let hasAvatar = 
+      'avatar' in props.contact && props.contact.avatar !== "TODO";
 
 
     if (!hasAvatar) { 
@@ -239,6 +235,7 @@ export class ContactCard extends Component {
            className="b--gray4 black f7 ba db pl2"
            onChange={this.sigilColorSet}
            defaultValue={"#" + hexColor}
+           key={hexColor}
            style={{
              resize: "none",
              height: 40,
@@ -257,12 +254,12 @@ export class ContactCard extends Component {
     if (hasAvatar) {
       removeImage = (
         <div>
-          <button class="f9 black pointer db"
+          <button className="f9 black pointer db"
             onClick={() => this.setField("removeAvatar")}>
             Remove photo
-            </button>
+          </button>
         </div>
-      )
+      );
     }
 
     return (
@@ -272,15 +269,12 @@ export class ContactCard extends Component {
           {sigilColor}
           <button className="f9 b--black ba pa2">Upload an Image</button>
           {removeImage}
-
           <div className="w-100 pt8 lh-copy tl">
             <p className="f9 gray2">Ship Name</p>
             <p className="f8 mono">~{props.ship}</p>
             <p className="f9 gray2 mt3">Ship Type</p>
             <p className="f8">{shipType}</p>
-
             <hr className="mv8 gray4 b--gray4 bb-0 b--solid" />
-
             <p className="f9 gray2">Nickname</p>
               <div className="w-100 flex">
                 <textarea
@@ -428,7 +422,7 @@ export class ContactCard extends Component {
     let hexColor = uxToHex(currentColor);
 
     let avatar = 
-      (props.contact.avatar !== "TODO") ?
+      ('avatar' in props.contact && props.contact.avatar !== "TODO") ?
       <img className="dib h-auto" width={128} src={props.contact.avatar} /> :
       <Sigil ship={props.ship} size={128} color={"#" + hexColor} />;
 
@@ -498,6 +492,9 @@ export class ContactCard extends Component {
 
     let editInfoText =
       state.edit ? "Finish Editing" : "Edit Contact Info";
+    if (props.share) {
+      editInfoText = "Share with Group";
+    }
 
     let ourOpt = (props.ship === window.ship) ? "dib" : "dn";
     let localOpt =
@@ -507,7 +504,7 @@ export class ContactCard extends Component {
       (props.path.includes(window.ship) && (props.ship !== window.ship))
       ? "dib" : "dn";
 
-    let card = (state.edit) ? this.renderEditCard() : this.renderCard();
+    let card = state.edit ? this.renderEditCard() : this.renderCard();
 
     //TODO "Share card" if it's /me -> sends to /~/default of recipient
     return (

@@ -12,8 +12,9 @@ export class ContactItem extends Component {
     let hexColor = uxToHex(props.color);
     let name = (props.nickname) ? props.nickname : "~" + props.ship;
 
+    let prefix = props.share ? 'share' : 'view';
     return (
-      <Link to={"/~contacts" + props.path}>
+      <Link to={`/~contacts/${prefix}` + props.path}>
         <div
           className={
             "pl4 pt1 pb1 f9 flex justify-start content-center " +
