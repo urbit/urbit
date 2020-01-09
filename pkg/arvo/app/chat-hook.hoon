@@ -137,7 +137,7 @@
   ?.  =(u.ship our.bol)
     ~
   ::  scry permissions to check if write is permitted
-  ?.  (permitted-scry [(scot %p src.bol) %chat (weld path.act /write)])
+  ?.  (permitted-scry [(scot %p src.bol) (weld path.act /write)])
     ~
   =:  author.envelope.act  src.bol
       when.envelope.act  now.bol
@@ -159,7 +159,7 @@
     :_  state
     %+  weld
       [%pass chat-path %agent [our.bol %chat-store] %watch chat-path]~
-    (create-permission [%chat path.act] security.act)
+    (create-permission path.act security.act)
   ::
       %add-synced
     ?>  (team:title our.bol src.bol)
@@ -202,7 +202,7 @@
   ?>  ?=(^ pax)
   ?>  (~(has by synced) pax)
   ::  scry permissions to check if read is permitted
-  ?>  (permitted-scry [(scot %p src.bol) %chat (weld pax /read)])
+  ?>  (permitted-scry [(scot %p src.bol) (weld pax /read)])
   =/  box  (chat-scry pax)
   ?~  box  !!
   [%give %fact ~ %chat-update !>([%create (slav %p i.pax) pax])]~
@@ -220,7 +220,7 @@
   ?>  ?=([* ^] pas)
   ?>  (~(has by synced) pas)
   ::  scry permissions to check if read is permitted
-  ?>  (permitted-scry [(scot %p src.bol) %chat (weld pas /read)])
+  ?>  (permitted-scry [(scot %p src.bol) (weld pas /read)])
   =/  box  (chat-scry pas)
   ?~  box  !!
   :-  [%give %fact ~ %chat-update !>([%create (slav %p i.pas) pas])]

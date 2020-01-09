@@ -192,14 +192,15 @@
 ::
 ++  poke-chat-view-action
   |=  act=chat-view-action
+  ~&  [%action act]
   ^-  (list card)
   ?.  =(src.bol our.bol)
     ~
   ?-  -.act
       %create
     =/  pax  [(scot %p our.bol) path.act]
-    =/  group-read=path  [%chat (weld pax /read)]
-    =/  group-write=path  [%chat (weld pax /write)]
+    =/  group-read=path  (weld pax /read)
+    =/  group-write=path  (weld pax /write)
     %-  zing
     :~  :~  (group-poke [%bundle group-read])
             (group-poke [%bundle group-write])
@@ -208,15 +209,15 @@
             (chat-poke [%create our.bol path.act])
             (chat-hook-poke [%add-owned pax security.act allow-history.act])
         ==
-        (create-security [%chat pax] security.act)
+        (create-security pax security.act)
         :~  (permission-hook-poke [%add-owned group-read group-read])
             (permission-hook-poke [%add-owned group-write group-read])
         ==
     ==
   ::
       %delete
-    =/  group-read  [%chat (weld path.act /read)]
-    =/  group-write  [%chat (weld path.act /write)]
+    =/  group-read  (weld path.act /read)
+    =/  group-write  (weld path.act /write)
     :~  (chat-hook-poke [%remove path.act])
         (permission-hook-poke [%remove group-read])
         (permission-hook-poke [%remove group-write])
@@ -226,8 +227,8 @@
     ==
   ::
       %join
-    =/  group-read  [%chat (scot %p ship.act) (weld path.act /read)]
-    =/  group-write  [%chat (scot %p ship.act) (weld path.act /write)]
+    =/  group-read  [(scot %p ship.act) (weld path.act /read)]
+    =/  group-write  [(scot %p ship.act) (weld path.act /write)]
     :~  (chat-hook-poke [%add-synced ship.act path.act ask-history.act])
         (permission-hook-poke [%add-synced ship.act group-write])
         (permission-hook-poke [%add-synced ship.act group-read])
