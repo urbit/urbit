@@ -2,7 +2,7 @@
 
 set -ex
 
-cd pkg/interface/chat
+cd pkg/landscape/chat
 npm install
 gulp bundle_prod &
 cd ../launch

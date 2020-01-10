@@ -19,6 +19,5 @@ s/*
 **/*.swp
 **/*.swo
 **/*-min.js
-.stack-work
-pkg/interface/link-webext/web-ext-artifacts
+pkg/landscape/link-webext/web-ext-artifacts
 **/build

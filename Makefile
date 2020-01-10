@@ -26,8 +26,8 @@ pills:
 ropsten-pills:
 	sh/create-ropsten-pills
 
-interface:
-	sh/build-interface
+landscape:
+	sh/build-landscape
 
 clean:
 	rm -rf ./out ./work
