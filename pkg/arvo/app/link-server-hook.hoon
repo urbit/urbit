@@ -174,7 +174,11 @@
   ?+  request-line
   ::  for the default case, try to load file from clay
   ::
-      ?~  ext.request-line  not-found:gen
+      ?~  ext.request-line
+        ::  for extension-less requests, always just serve the index.html.
+        ::  that way the js can load and figure out how to deal with that route.
+        ::
+        $(request-line [[`%html ~[%'~link' 'index']] args.request-line])
       =/  file=(unit octs)
         ?.  ?=([%'~link' *] site.request-line)  ~
         (get-file-at /app/link [t.site u.ext]:request-line)
