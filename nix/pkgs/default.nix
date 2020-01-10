@@ -5,9 +5,9 @@ let
   deps = import ../deps { inherit pkgs; };
 
   ent          = import ./ent          { inherit pkgs; };
-  arvo         = import ./arvo         { inherit pkgs; };
-  arvo-ropsten = import ./arvo-ropsten { inherit pkgs; };
   landscape    = import ./landscape    { inherit pkgs; };
+  arvo         = import ./arvo         { inherit pkgs landscape; };
+  arvo-ropsten = import ./arvo-ropsten { inherit pkgs landscape; };
   herb         = import ../../pkg/herb { inherit pkgs; };
 
   ge-additions = import ./ge-additions {

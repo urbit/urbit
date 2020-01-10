@@ -1,8 +1,10 @@
-{ pkgs }:
+{ pkgs, landscape }:
 
 pkgs.stdenv.mkDerivation {
+  inherit landscape;
+
   name = "arvo-ropsten";
   buildInputs = [ pkgs.bc ];
   builder = ./builder.sh;
-  src = pkgs.buildRustCrateHelpers.exclude [ ".git" ] ../../../pkg/arvo;
+  src = ../../../pkg/arvo;
 }
