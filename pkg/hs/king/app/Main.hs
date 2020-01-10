@@ -76,6 +76,7 @@ import Data.Default         (def)
 import King.App             (runApp, runAppLogFile, runPierApp)
 import King.App             (HasConfigDir(..))
 import RIO                  (logSticky, logStickyDone)
+import System.Process       (system)
 import Text.Show.Pretty     (pPrint)
 import Urbit.Time           (Wen)
 import Vere.LockFile        (lockFile)
@@ -122,7 +123,7 @@ toSerfFlags CLI.Opts{..} = catMaybes m
         , from oHashless Serf.Hashless
         , from oQuiet Serf.Quiet
         , from oVerbose Serf.Verbose
-        , from oDryRun Serf.DryRun
+        , from (oDryRun || isJust oDryFrom) Serf.DryRun
         ]
     from True flag = Just flag
     from False _   = Nothing
@@ -131,12 +132,12 @@ toSerfFlags CLI.Opts{..} = catMaybes m
 toPierConfig :: FilePath -> CLI.Opts -> PierConfig
 toPierConfig pierPath CLI.Opts{..} = PierConfig
     { _pcPierPath = pierPath
-    , _pcDryRun   = oDryRun
+    , _pcDryRun   = (oDryRun || isJust oDryFrom)
     }
 
 toNetworkConfig :: CLI.Opts -> NetworkConfig
 toNetworkConfig CLI.Opts{..} = NetworkConfig
-    { ncNetworking = if oDryRun then NetworkNone
+    { ncNetworking = if (oDryRun || isJust oDryFrom) then NetworkNone
                      else if oOffline then NetworkNone
                      else if oLocalhost then NetworkLocalhost
                      else NetworkNormal
@@ -182,8 +183,8 @@ runOrExitImmediately getPier oExit =
 tryPlayShip :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
                , HasConfigDir e
                )
-            => Bool -> Bool -> Serf.Flags -> RIO e ()
-tryPlayShip exitImmediately fullReplay flags = do
+            => Bool -> Bool -> Maybe Word64 -> Serf.Flags -> RIO e ()
+tryPlayShip exitImmediately fullReplay playFrom flags = do
     when fullReplay wipeSnapshot
     runOrExitImmediately resumeShip exitImmediately
   where
@@ -201,7 +202,7 @@ tryPlayShip exitImmediately fullReplay flags = do
     resumeShip = do
         view pierPathL >>= lockFile
         rio $ logTrace "RESUMING SHIP"
-        sls <- Pier.resumed flags
+        sls <- Pier.resumed playFrom flags
         rio $ logTrace "SHIP RESUMED"
         pure sls
 
@@ -280,6 +281,42 @@ collectAllFx top = do
 
     serfFlags :: Serf.Flags
     serfFlags = [Serf.Hashless, Serf.DryRun]
+
+--------------------------------------------------------------------------------
+
+replayPartEvs :: ∀e. HasLogFunc e => FilePath -> Word64 -> RIO e ()
+replayPartEvs top last = do
+    logTrace $ display $ pack @Text top
+    fetchSnapshot
+    rwith replayedEvs $ \() ->
+        logTrace "Done replaying events!"
+  where
+    fetchSnapshot :: RIO e ()
+    fetchSnapshot = do
+      snap <- Pier.getSnapshot top last
+      case snap of
+        Nothing -> pure ()
+        Just sn -> do
+          let start = top <> "/.partial-replay/"
+          liftIO $ system $ "cp -r \"" <> sn <> "\" \"" <> tmpDir <> "\""
+          pure ()
+
+    tmpDir :: FilePath
+    tmpDir = top <> "/.partial-replay/" <> show last
+
+    replayedEvs :: RAcquire e ()
+    replayedEvs = do
+        lockFile top
+        log  <- Log.existing (top <> "/.urb/log")
+        serf <- Serf.run (Serf.Config tmpDir serfFlags)
+        rio $ do
+          ss <- Serf.replay serf log $ Just last
+          Serf.snapshot serf ss
+          io $ threadDelay 500000 -- Copied from runOrExitImmediately
+          pure ()
+
+    serfFlags :: Serf.Flags
+    serfFlags = [Serf.Hashless]
 
 --------------------------------------------------------------------------------
 
@@ -444,7 +481,8 @@ runShip (CLI.Run pierPath) opts = do
     let pierConfig = toPierConfig pierPath opts
     let networkConfig = toNetworkConfig opts
     runPierApp pierConfig networkConfig $
-      tryPlayShip (CLI.oExit opts) (CLI.oFullReplay opts) (toSerfFlags opts)
+      tryPlayShip (CLI.oExit opts) (CLI.oFullReplay opts) (CLI.oDryFrom opts)
+        (toSerfFlags opts)
 
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
@@ -517,6 +555,7 @@ main = do
         CLI.CmdBug (CLI.ValidatePill pax pil s) -> runApp $ testPill pax pil s
         CLI.CmdBug (CLI.ValidateEvents pax f l) -> runApp $ checkEvs pax f l
         CLI.CmdBug (CLI.ValidateFX pax f l)     -> runApp $ checkFx  pax f l
+        CLI.CmdBug (CLI.ReplayEvents pax l)     -> runApp $ replayPartEvs pax l
         CLI.CmdBug (CLI.CheckDawn pax)          -> runApp $ checkDawn pax
         CLI.CmdBug CLI.CheckComet               -> runApp $ checkComet
         CLI.CmdCon pier                         -> runAppLogFile $ connTerm pier

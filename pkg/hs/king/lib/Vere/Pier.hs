@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wwarn #-}
 
 module Vere.Pier
-  ( booted, resumed, pier, runPersist, runCompute, generateBootSeq
+  ( booted, resumed, getSnapshot, pier, runPersist, runCompute, generateBootSeq
   ) where
 
 import UrbitPrelude
@@ -11,6 +11,7 @@ import Config
 import System.Random
 import Vere.Pier.Types
 
+import Data.List          (uncons)
 import Data.Text          (append)
 import King.App           (HasConfigDir(..))
 import System.Posix.Files (ownerModes, setFileMode)
@@ -124,17 +125,35 @@ booted pill lite flags ship boot = do
 -- Resume an existing ship. ----------------------------------------------------
 
 resumed :: (HasPierConfig e, HasLogFunc e)
-        => Serf.Flags
+        => Maybe Word64 -> Serf.Flags
         -> RAcquire e (Serf e, EventLog, SerfState)
-resumed flags = do
+resumed event flags = do
     top    <- view pierPathL
+    tap    <- case event of
+                Nothing -> pure top
+                Just ev -> rio $ do
+                  snap <- getSnapshot top ev
+                  case snap of
+                    Nothing -> pure top
+                    Just sn -> pure sn
+    rio $ logTrace $ displayShow tap
     log    <- Log.existing (top <> "/.urb/log")
-    serf   <- Serf.run (Serf.Config top flags)
-    serfSt <- rio $ Serf.replay serf log
+    serf   <- Serf.run (Serf.Config tap flags)
+    serfSt <- rio $ Serf.replay serf log event
 
     rio $ Serf.snapshot serf serfSt
 
     pure (serf, log, serfSt)
+
+getSnapshot :: String -> Word64 -> RIO e (Maybe String)
+getSnapshot top last = do
+  createDirectoryIfMissing True $ top <> "/.partial-replay/"
+  snapshots <- listDirectory $ top <> "/.partial-replay/"
+  let nums = UrbitPrelude.mapMaybe readMay snapshots :: [Int]
+  let snaps = sort $ UrbitPrelude.filter (\n -> n <= (fromIntegral last)) nums
+  case (Data.List.uncons $ reverse snaps) of
+    Nothing      -> pure Nothing
+    Just (sn, _) -> pure $ Just $ top <> "/.partial-replay/" <> (show sn)
 
 
 -- Run Pier --------------------------------------------------------------------
