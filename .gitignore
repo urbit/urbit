@@ -21,3 +21,4 @@ s/*
 **/*-min.js
 .stack-work
 pkg/interface/link-webext/web-ext-artifacts
+**/build
