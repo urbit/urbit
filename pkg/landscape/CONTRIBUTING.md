@@ -1,9 +1,9 @@
 ## Introduction
 
-Thanks for your interest in contributing to the Urbit interface. This section
-specifically focuses on Landscape development. Landscape lets you integrate your
-ship with front-end web applications accessed through the browser. It has a core
-set of applications that accept contributions.
+Thanks for your interest in contributing to Landscape. This section
+specifically focuses on Landscape development. Landscape lets you integrate
+your ship with front-end web applications accessed through the browser. It has
+a core set of applications that accept contributions.
 
 Related to Landscape is [Gall][gall], the Arvo vane that controls userspace
 applications. Landscape applications will usually make good use of Gall, but
@@ -18,23 +18,21 @@ when you want to make a change to it, `|commit %home`.
 ## Contributing to Landscape applications
 
 If you'd like to contribute to the core set of Landscape applications in this
-repository, clone this repository and start by creating an `urbitrc` file in
-this folder, [pkg/interface][interface]. You can find an `urbitrc-sample` here
-for reference. Then `cd` into the application's folder and `npm install` the
-dependencies, then `gulp watch` to watch for changes.
+repository, clone this repository and then run `make landscape`.  You can then
+`cd` into an application's folder (chat, clock, etc.) and then `gulp watch` to
+watch for changes.
 
-On your development ship, ensure you `|commit %home` to apply your changes.
-Once you're done and ready to make a pull request, running `gulp bundle-prod`
-will make the production files and deposit them in [pkg/arvo][arvo]. Create a
-pull request with both the production files, and the source code you were
-working on in the interface directory.
+Whenever you make changes, you can run `sh/load-arvo $PIER` in order to copy
+them into your running develppment ship (where `$PIER` is the location of your
+pier).  Once you're done, create a pull request for your source code changes in
+the landscape directory.
 
 Please also ensure your pull request fits our standards for
 [Git hygiene][contributing].
 
 [contributing]: /CONTRIBUTING.md#git-practice
 [arvo]: /pkg/arvo
-[interface]:/pkg/interface
+[landscape]:/pkg/landscape
 
 ### Gall
 
