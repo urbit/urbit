@@ -7,6 +7,7 @@ let
   ent          = import ./ent          { inherit pkgs; };
   arvo         = import ./arvo         { inherit pkgs; };
   arvo-ropsten = import ./arvo-ropsten { inherit pkgs; };
+  landscape    = import ./landscape    { inherit pkgs; };
   herb         = import ../../pkg/herb { inherit pkgs; };
 
   ge-additions = import ./ge-additions {
@@ -26,4 +27,4 @@ let
 
 in
 
-{ inherit ent ge-additions arvo arvo-ropsten herb urbit urbit-debug; }
+{ inherit ent ge-additions arvo arvo-ropsten landscape herb urbit urbit-debug; }
