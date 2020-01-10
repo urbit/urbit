@@ -1,220 +1,167 @@
-var gulp = require('gulp');
-var cssimport = require('gulp-cssimport');
-var rollup = require('gulp-better-rollup');
-var cssnano = require('cssnano');
-var postcss = require('gulp-postcss')
-var sucrase = require('@sucrase/gulp-plugin');
-var minify = require('gulp-minify');
-var rename = require('gulp-rename');
-var del = require('del');
+const { parallel, series, src, dest, watch } = require('gulp');
+const cssimport = require('gulp-cssimport');
+const rollup = require('gulp-better-rollup');
+const cssnano = require('cssnano');
+const postcss = require('gulp-postcss')
+const sucrase = require('@sucrase/gulp-plugin');
+const minify = require('gulp-minify');
+const rename = require('gulp-rename');
+const del = require('del');
+const resolve = require('rollup-plugin-node-resolve');
+const commonjs = require('rollup-plugin-commonjs');
+const rootImport = require('rollup-plugin-root-import');
+const globals = require('rollup-plugin-node-globals');
+const replace = require('@rollup/plugin-replace');
 
-var resolve = require('rollup-plugin-node-resolve');
-var commonjs = require('rollup-plugin-commonjs');
-var rootImport = require('rollup-plugin-root-import');
-var globals = require('rollup-plugin-node-globals');
-
-
-/***
-  Main config options
-***/
-
-var urbitrc = require('../urbitrc');
-
-/***
-  End main config options
-***/
-
-gulp.task('css-bundle', function() {
-  let plugins = [
-    cssnano()
-  ];
-  return gulp
-    .src('src/index.css')
+function css_bundle() {
+  return src('src/index.css')
     .pipe(cssimport())
-    .pipe(postcss(plugins))
-    .pipe(gulp.dest('../../arvo/app/publish/css'));
-});
+    .pipe(postcss([
+      cssnano()
+    ]))
+    .pipe(dest('dist/'));
+}
 
-gulp.task('jsx-transform', function(cb) {
-  return gulp.src('src/**/*.js')
+function transform(input) {
+  return src(input)
     .pipe(sucrase({
-      transforms: ['jsx']
+      transforms: [ 'jsx' ]
     }))
-    .pipe(gulp.dest('dist'));
-});
+    .pipe(dest('build/'));
+}
 
-gulp.task('tile-jsx-transform', function(cb) {
-  return gulp.src('tile/**/*.js')
-    .pipe(sucrase({
-      transforms: ['jsx']
-    }))
-    .pipe(gulp.dest('dist'));
-});
+function jsx_transform() {
+  return transform('src/**/*.js');
+}
 
-gulp.task('js-imports', function(cb) {
-  return gulp.src('dist/index.js')
-    .pipe(rollup({
-      plugins: [
-        commonjs({
-          namedExports: {
-            'node_modules/react/index.js': ['Component', 'cloneElement',
-            'createContext', 'createElement', 'useState', 'useRef',
-            'useLayoutEffect', 'useMemo', 'useEffect', 'forwardRef', 'useContext', 'Children' ],
-            'node_modules/react-is/index.js': [ 'isValidElementType', 'isElement', 'ForwardRef' ],
-            'node_modules/react-dom/index.js': [ 'createPortal' ]
-          }
-        }),
-        rootImport({
-          root: `${__dirname}/dist/js`,
-          useEntry: 'prepend',
-          extensions: '.js'
-        }),
-        globals(),
-        resolve()
-      ]
-    }, 'umd'))
-    .on('error', function(e){
-      console.log(e);
-      cb();
-    })
-    .pipe(gulp.dest('../../arvo/app/publish/js/'))
-    .on('end', cb);
-});
+function tile_jsx_transform() {
+  return transform('tile/**/*.js');
+}
 
-gulp.task('tile-js-imports', function(cb) {
-  return gulp.src('dist/tile.js')
-    .pipe(rollup({
-      plugins: [
-        commonjs({
-          namedExports: {
-            'node_modules/react/index.js': [ 'Component' ],
-          }
-        }),
-        rootImport({
-          root: `${__dirname}/dist/js`,
-          useEntry: 'prepend',
-          extensions: '.js'
-        }),
-        globals(),
-        resolve()
-      ]
-    }, 'umd'))
-    .on('error', function(e){
-      console.log(e);
-      cb();
-    })
-    .pipe(gulp.dest('../../arvo/app/publish/js/'))
-    .on('end', cb);
-});
+const namedExportsTile = {
+  'node_modules/react/index.js': [
+    'Component'
+  ],
+};
 
-gulp.task('js-imports-prod', function(cb) {
-  return gulp.src('dist/index.js')
-    .pipe(rollup({
-      plugins: [
-        rollupReplace({'process.env.NODE_ENV': JSON.stringify('production')}),
-        commonjs({
-          namedExports: {
-            'node_modules/react/index.js': ['Component', 'cloneElement',
-            'createContext', 'createElement', 'useState', 'useRef',
-            'useLayoutEffect', 'useMemo', 'useEffect', 'forwardRef', 'useContext', 'Children' ],
-            'node_modules/react-is/index.js': [ 'isValidElementType', 'isElement', 'ForwardRef' ],
-            'node_modules/react-dom/index.js': [ 'createPortal' ]
-          }
-        }),
-        rootImport({
-          root: `${__dirname}/dist/js`,
-          useEntry: 'prepend',
-          extensions: '.js'
-        }),
-        globals(),
-        resolve()
-      ]
-    }, 'umd'))
-    .on('error', function(e){
-      console.log(e);
-      cb();
-    })
-    .pipe(gulp.dest('../../arvo/app/publish/js/'))
-    .on('end', cb);
-});
+const namedExportsIndex = {
+  'node_modules/react/index.js': [
+    'Component',
+    'cloneElement',
+    'createContext',
+    'createElement',
+    'useState',
+    'useRef',
+    'useLayoutEffect',
+    'useMemo',
+    'useEffect',
+    'forwardRef',
+    'useContext',
+    'Children'
+  ],
+  'node_modules/react-is/index.js': [
+    'isValidElementType',
+    'isElement',
+    'ForwardRef'
+  ],
+  'node_modules/react-dom/index.js': [
+    'createPortal'
+  ]
+};
 
+const prodPlugins = [
+  replace({ 'process.env.NODE_ENV': 'production' })
+];
 
-gulp.task('js-minify', function () {
-  return gulp.src('../../arvo/app/publish/js/index.js')
-    .pipe(minify())
-    .pipe(gulp.dest('../../arvo/app/publish/js/'));
-});
+function importPlugins(exps) {
+  return [
+    commonjs({ namedExports: exps }),
+    rootImport({
+      root: `${__dirname}/build/js`,
+      useEntry: 'prepend',
+      extensions: '.js'
+    }),
+    globals(),
+    resolve()
+  ];
+}
 
-gulp.task('tile-js-minify', function () {
-  return gulp.src('../../arvo/app/publish/js/tile.js')
-    .pipe(minify())
-    .pipe(gulp.dest('../../arvo/app/publish/js/'));
-});
+function importPluginsProd(exps) {
+  return prodPlugins.concat(importPlugins(exps));
+}
 
-gulp.task('rename-index-min', function() {
-  return gulp.src('../../arvo/app/publish/js/index-min.js')
-    .pipe(rename('index.js'))
-    .pipe(gulp.dest('../../arvo/app/publish/js/'));
-});
+function importer(input, plugins) {
+  return function(cb) {
+    src(input)
+      .pipe(rollup({ plugins }, 'umd'))
+      .on('error', function(e){
+        console.log(e);
+        cb();
+      })
+      .pipe(dest('dist/'))
+      .on('end', cb);
+  }
+}
 
-gulp.task('rename-tile-min', function() {
-  return gulp.src('../../arvo/app/publish/js/tile-min.js')
-    .pipe(rename('tile.js'))
-    .pipe(gulp.dest('../../arvo/app/publish/js/'));
-});
+// FIXME make sure this works
+function js_imports(cb) {
+  importer('build/index.js', importPlugins(namedExportsIndex))(cb);
+}
 
-gulp.task('clean-min', function() {
-  return del(['../../arvo/app/publish/js/index-min.js', '../../arvo/app/publish/js/tile-min.js'], {force: true})
-});
+function js_imports_prod(cb) {
+  importer('build/index.js', importPluginsProd(namedExportsIndex))(cb);
+}
 
-gulp.task('urbit-copy', function () {
-  let ret = gulp.src('../../arvo/**/*');
+function tile_js_imports(cb) {
+  importer('build/tile.js', importPlugins(namedExportsTile))(cb);
+}
 
-  urbitrc.URBIT_PIERS.forEach(function(pier) {
-    ret = ret.pipe(gulp.dest(pier));
-  });
+function minifier(input) {
+  return function(cb) {
+    src(input)
+      .pipe(minify())
+      .pipe(dest('dist/'));
+    cb();
+  }
+}
 
-  return ret;
-});
+function js_minify(cb) {
+  return minifier('dist/index.js')(cb);
+}
 
-gulp.task('js-bundle-dev', gulp.series('jsx-transform', 'js-imports'));
-gulp.task('tile-js-bundle-dev', gulp.series('tile-jsx-transform', 'tile-js-imports'));
-gulp.task('js-bundle-prod', gulp.series('jsx-transform', 'js-imports-prod', 'js-minify'))
-gulp.task('tile-js-bundle-prod',
-  gulp.series('tile-jsx-transform', 'tile-js-imports', 'tile-js-minify'));
+function tile_js_minify(cb) {
+  return minifier('dist/tile.js')(cb);
+}
 
-gulp.task('bundle-dev',
-  gulp.series(
-    gulp.parallel(
-      'css-bundle',
-      'js-bundle-dev',
-      'tile-js-bundle-dev'
-    ),
-    'urbit-copy'
-  )
+function clean(cb) {
+  del([ 'dist', 'build' ]);
+  cb();
+}
+
+exports.bundle_dev = parallel(
+  css_bundle,
+  series(jsx_transform, js_imports),
+  series(tile_jsx_transform, tile_js_imports)
+);
+}
+
+exports.bundle_prod = parallel(
+  css_bundle,
+  series(jsx_transform, js_imports_prod, js_minify),
+  series(tile_jsx_transform, tile_js_imports, tile_js_minify)
 );
 
-gulp.task('bundle-prod',
-  gulp.series(
-    gulp.parallel(
-      'css-bundle',
-      'js-bundle-prod',
-      'tile-js-bundle-prod',
-    ),
-    'rename-index-min',
-    'rename-tile-min',
-    'clean-min',
-    'urbit-copy'
-  )
+exports.bundle_prod = parallel(
+  css_bundle,
+  series(jsx_transform, js_imports_prod, js_minify),
+  series(tile_jsx_transform, tile_js_imports, tile_js_minify)
 );
 
-gulp.task('default', gulp.series('bundle-dev'));
+exports.clean = clean;
 
-gulp.task('watch', gulp.series('default', function() {
-  gulp.watch('tile/**/*.js', gulp.parallel('tile-js-bundle-dev'));
+exports.default = function() {
+  watch('src/**/*.css', css_bundle);
+  watch('tile/**/*.js', exports.bundle_dev);
+  watch('src/**/*.js', exports.bundle_dev);
+}
 
-  gulp.watch('src/**/*.js', gulp.parallel('js-bundle-dev'));
-  gulp.watch('src/**/*.css', gulp.parallel('css-bundle'));
-
-  gulp.watch('../../arvo/**/*', gulp.parallel('urbit-copy'));
-}));

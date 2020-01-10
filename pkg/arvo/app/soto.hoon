@@ -14,14 +14,14 @@
 /=  tile-js
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/soto/js/tile
+  /:  /===/app/soto/js/tile-min
   /|  /js/
       /~  ~
   ==
 /=  script
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/soto/js/index
+  /:  /===/app/soto/js/index-min
   /|  /js/
       /~  ~
   ==

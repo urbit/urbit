@@ -1,129 +1,122 @@
-var gulp = require('gulp');
-var cssimport = require('gulp-cssimport');
-var rollup = require('gulp-better-rollup');
-var cssnano = require('cssnano');
-var postcss = require('gulp-postcss')
-var sucrase = require('@sucrase/gulp-plugin');
-var minify = require('gulp-minify');
-var rename = require('gulp-rename');
-var del = require('del');
+const { series, parallel, src, dest, watch } = require('gulp');
+const cssimport = require('gulp-cssimport');
+const rollup = require('gulp-better-rollup');
+const cssnano = require('cssnano');
+const postcss = require('gulp-postcss')
+const sucrase = require('@sucrase/gulp-plugin');
+const minify = require('gulp-minify');
+const rename = require('gulp-rename');
+const del = require('del');
+const resolve = require('rollup-plugin-node-resolve');
+const commonjs = require('rollup-plugin-commonjs');
+const rootImport = require('rollup-plugin-root-import');
+const globals = require('rollup-plugin-node-globals');
+const replace = require('@rollup/plugin-replace');
 
-var resolve = require('rollup-plugin-node-resolve');
-var commonjs = require('rollup-plugin-commonjs');
-var rootImport = require('rollup-plugin-root-import');
-var globals = require('rollup-plugin-node-globals');
-
-/***
-  Main config options
-***/
-
-var urbitrc = require('../urbitrc');
-
-/***
-  End main config options
-***/
-
-gulp.task('css-bundle', function() {
-  let plugins = [
-    cssnano()
-  ];
-  return gulp
-    .src('src/index.css')
+function css_bundle() {
+  return src('src/index.css')
     .pipe(cssimport())
-    .pipe(postcss(plugins))
-    .pipe(gulp.dest('../../arvo/app/launch/css'));
-});
+    .pipe(postcss([
+      cssnano()
+    ]))
+    .pipe(dest('dist/'));
+}
 
-gulp.task('jsx-transform', function(cb) {
-  return gulp.src('src/**/*.js')
+function transform(input) {
+  return src(input)
     .pipe(sucrase({
-      transforms: ['jsx']
+      transforms: [ 'jsx' ]
     }))
-    .pipe(gulp.dest('dist'));
-});
+    .pipe(dest('build/'));
+}
 
-gulp.task('js-imports', function(cb) {
-  return gulp.src('dist/index.js')
-    .pipe(rollup({
-      plugins: [
-        commonjs({
-          namedExports: {
-            'node_modules/react/index.js': [ 'Component' ],
-            'node_modules/react-is/index.js': [ 'isValidElementType' ],
-          }
-        }),
-        rootImport({
-          root: `${__dirname}/dist/js`,
-          useEntry: 'prepend',
-          extensions: '.js'
-        }),
-        globals(),
-        resolve()
-      ]
-    }, 'umd'))
-    .on('error', function(e){
-      console.log(e);
-      cb();
-    })
-    .pipe(gulp.dest('../../arvo/app/launch/js/'))
-    .on('end', cb);
-});
+function jsx_transform() {
+  return transform('src/**/*.js');
+}
 
-gulp.task('js-minify', function () {
-  return gulp.src('../../arvo/app/launch/js/index.js')
-    .pipe(minify())
-    .pipe(gulp.dest('../../arvo/app/launch/js/'));
-});
+const namedExports = {
+  'node_modules/react/index.js': [
+    'Component'
+  ],
+  'node_modules/react-is/index.js': [
+    'isValidElementType'
+  ],
+};
 
-gulp.task('rename-index-min', function() {
-  return gulp.src('../../arvo/app/launch/js/index-min.js')
-    .pipe(rename('index.js'))
-    .pipe(gulp.dest('../../arvo/app/launch/js/'));
-});
+const prodPlugins = [
+  replace({ 'process.env.NODE_ENV': 'production' })
+];
 
-gulp.task('clean-min', function() {
-  return del('../../arvo/app/launch/js/index-min.js', {force: true})
-});
+function importPlugins(exps) {
+  return [
+    commonjs({ namedExports: exps }),
+    rootImport({
+      root: `${__dirname}/build/js`,
+      useEntry: 'prepend',
+      extensions: '.js'
+    }),
+    globals(),
+    resolve()
+  ];
+}
 
-gulp.task('urbit-copy', function () {
-  let ret = gulp.src('../../arvo/**/*');
+function importPluginsProd(exps) {
+  return prodPlugins.concat(importPlugins(exps));
+}
 
-  urbitrc.URBIT_PIERS.forEach(function(pier) {
-    ret = ret.pipe(gulp.dest(pier));
-  });
+function importer(input, plugins) {
+  return function(cb) {
+    src(input)
+      .pipe(rollup({ plugins }, 'umd'))
+      .on('error', function(e){
+        console.log(e);
+        cb();
+      })
+      .pipe(dest('dist/'))
+      .on('end', cb);
+  }
+}
 
-  return ret;
-});
+function js_imports(cb) {
+  importer('build/index.js', importPlugins(namedExports))(cb);
+}
 
-gulp.task('js-bundle-dev', gulp.series('jsx-transform', 'js-imports'));
-gulp.task('js-bundle-prod', gulp.series('jsx-transform', 'js-imports', 'js-minify'))
+function js_imports_prod(cb) {
+  importer('build/index.js', importPluginsProd(namedExports))(cb);
+}
 
-gulp.task('bundle-dev',
-  gulp.series(
-    gulp.parallel(
-      'css-bundle',
-      'js-bundle-dev'
-    ),
-    'urbit-copy'
-  )
+function minifier(input) {
+  return function(cb) {
+    src(input)
+      .pipe(minify())
+      .pipe(dest('dist/'));
+    cb();
+  }
+}
+
+function js_minify(cb) {
+  return minifier('dist/index.js')(cb);
+}
+
+function clean(cb) {
+  del([ 'dist', 'build' ]);
+  cb();
+}
+
+exports.bundle_dev = parallel(
+  css_bundle,
+  series(jsx_transform, js_imports),
 );
 
-gulp.task('bundle-prod',
-  gulp.series(
-    gulp.parallel(
-      'css-bundle',
-      'js-bundle-prod'
-    ),
-    'rename-index-min',
-    'clean-min',
-    'urbit-copy'
-  )
+exports.bundle_prod = parallel(
+  css_bundle,
+  series(jsx_transform, js_imports_prod, js_minify),
 );
 
-gulp.task('default', gulp.series('bundle-dev'));
-gulp.task('watch', gulp.series('default', function() {
-  gulp.watch('src/**/*.js', gulp.parallel('js-bundle-dev'));
-  gulp.watch('src/**/*.css', gulp.parallel('css-bundle'));
+exports.clean = clean;
 
-  gulp.watch('../../arvo/**/*', gulp.parallel('urbit-copy'));
-}));
+exports.default = function() {
+  watch('src/**/*.css', css_bundle);
+  watch('src/**/*.js', exports.bundle_dev);
+}
+

@@ -1,17 +1,18 @@
 {
-  "name": "urbit-apps",
-  "version": "1.0.0",
-  "description": "",
+  "name": "landscape-weather",
+  "version": "0.1.0",
+  "description": "A weather application for Landscape",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Tlon Corporation",
+  "license": "MIT",
   "devDependencies": {
     "@joseph184/rollup-plugin-node-builtins": "^2.1.4",
     "@sucrase/gulp-plugin": "^2.0.0",
     "autoprefixer": "^9.6.1",
+    "del": "^5.1.0",
     "cssnano": "^4.1.10",
     "gulp": "^4.0.0",
     "gulp-better-rollup": "^4.0.1",
@@ -30,7 +31,6 @@
   },
   "dependencies": {
     "classnames": "^2.2.6",
-    "del": "^5.1.0",
     "lodash": "^4.17.11",
     "moment": "^2.20.1",
     "mousetrap": "^1.6.1",

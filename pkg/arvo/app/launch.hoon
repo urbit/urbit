@@ -7,7 +7,7 @@
 /=  script
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/launch/js/index
+  /:  /===/app/launch/js/index-min
   /|  /js/
       /~  ~
   ==

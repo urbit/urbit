@@ -1,13 +1,13 @@
 {
-  "name": "urbit-apps",
-  "version": "1.0.0",
-  "description": "",
+  "name": "landscape-clock",
+  "version": "0.1.0",
+  "description": "A clock application for Landscape",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Tlon Corporation",
+  "license": "MIT",
   "devDependencies": {
     "@joseph184/rollup-plugin-node-builtins": "^2.1.4",
     "@sucrase/gulp-plugin": "^2.0.0",

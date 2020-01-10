@@ -2,7 +2,7 @@
 /=  tile-js
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/clock/js/tile
+  /:  /===/app/clock/js/tile-min
   /|  /js/
       /~  ~
   ==
