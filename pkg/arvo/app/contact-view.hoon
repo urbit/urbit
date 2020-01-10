@@ -136,11 +136,6 @@
         (contact-poke [%delete path.act])
     ==
   ::
-      %add
-    :~  (group-poke [%add [ship.act ~ ~] path.act])
-        (contact-poke [%add path.act ship.act contact.act])
-    ==
-  ::
       %remove
     :~  (group-poke [%remove [ship.act ~ ~] path.act])
         (contact-poke [%remove path.act ship.act])

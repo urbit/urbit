@@ -9,6 +9,10 @@ class UrbitApi {
   setAuthTokens(authTokens) {
     this.authTokens = authTokens;
     this.bindPaths = [];
+
+    this.groups = {
+      add: this.groupAdd.bind(this)
+    };
     
     this.contacts = {
       edit: this.contactEdit.bind(this)
@@ -17,7 +21,6 @@ class UrbitApi {
     this.contactView = {
       create: this.contactCreate.bind(this),
       delete: this.contactDelete.bind(this),
-      add: this.contactAdd.bind(this),
       remove: this.contactRemove.bind(this),
     };
     
@@ -77,18 +80,11 @@ class UrbitApi {
     this.contactViewAction({ delete: { path }});
   }
 
-  contactAdd(path, ship, contact = {
-    nickname: '',
-    email: '',
-    phone: '',
-    website: '',
-    notes: '',
-    color: '0',
-    avatar: null
-  }) {
-    this.contactViewAction({
+  groupAdd(path, members) {
+    this.action("group-store", "group-action", {
       add: {
-        path, ship, contact
+        members: members,
+        path: path
       }
     });
   }

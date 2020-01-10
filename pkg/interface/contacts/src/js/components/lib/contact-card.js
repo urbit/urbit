@@ -492,7 +492,7 @@ export class ContactCard extends Component {
 
     let editInfoText =
       state.edit ? "Finish Editing" : "Edit Contact Info";
-    if (props.share) {
+    if (props.share && state.edit) {
       editInfoText = "Share with Group";
     }
 

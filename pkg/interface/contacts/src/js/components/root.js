@@ -107,8 +107,10 @@ export class Root extends Component {
                     activeDrawer="rightPanel"
                     path={groupPath} />
                   <AddScreen 
+                    api={api}
                     path={groupPath}
-                    contacts={groupContacts}
+                    setSpinner={this.setSpinner}
+                    history={props.history}
                   />
                 </Skeleton>
               );

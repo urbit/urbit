@@ -81,7 +81,6 @@ export class NewScreen extends Component {
       invites: ''
     }, () => {
       props.setSpinner(true);
-      //TODO add YOU to the group, but without invites
       props.api.contactCreate(group, aud);
     });
   }
