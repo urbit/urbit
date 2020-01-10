@@ -16,6 +16,8 @@ herb $ship -p hood -d "+hood/mount %"
 
 rm -r $ship/home
 
-cp -r pkg/arvo $ship/home
+arvo=$(nix-build nix/pkgs -A arvo --no-out-link)
+
+cp -r $arvo $ship/home
 
 herb $ship -p hood -d "+hood/commit %home"
