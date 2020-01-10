@@ -188,14 +188,18 @@
         %js    (js-response:gen u.file)
         %css   (css-response:gen u.file)
       ==
-  ::  submissions by recency as json
+  ::  submissions by recency as json, including comment counts
   ::
       [[[~ %json] [%'~link' %submissions ^]] *]
     %-  json-response:gen
     %-  json-to-octs  ::TODO  include in +json-response:gen
     %+  page-to-json
       (get-submissions t.t.site.request-line p)
-    submission:en-json
+    |=  [=submission comments=@ud]
+    ^-  json
+    =+  s=(submission:en-json submission)
+    ?>  ?=([%o *] s)
+    o+(~(put by p.s) 'commentCount' (numb:enjs:format comments))
   ::  local links by recency as json
   ::
       [[[~ %json] [%'~link' %local-pages ^]] *]
@@ -261,15 +265,30 @@
 ::
 ++  get-submissions
   |=  [=path p=(unit @ud)]
-  ^-  [@ud @ud submissions]
+  ^-  [@ud @ud (list [submission comments=@ud])]
   =-  (get-paginated - p)
-  .^  submissions
+  %+  turn
+    .^  submissions
+      %gx
+      (scot %p our.bowl)
+      %link-store
+      (scot %da now.bowl)
+      %submissions
+      (snoc path %noun)
+    ==
+  |=  =submission
+  :-  submission
+  ::TODO  ++  scry-for  |*  [=mold =path]
+  %-  lent
+  .^  comments
     %gx
     (scot %p our.bowl)
     %link-store
     (scot %da now.bowl)
-    %submissions
-    (snoc path %noun)
+    %discussions
+  ::
+    %+  weld  path
+    ~[(crip (en-base64:mimes:html url.submission)) %noun]
   ==
 ::
 ++  get-local-pages
