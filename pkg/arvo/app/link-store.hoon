@@ -11,12 +11,11 @@
 ::  scry and subscription paths:
 ::
 ::      urls
-::    /local-pages/[some-group]        all pages we saved by recency
-::    /submissions/[some-group]        all submissions by recency
+::    /local-pages/(some-group)             all pages we saved by recency
+::    /submissions/(some-group)             all submissions by recency
 ::      comments
-::    /allotations/[some-group]             TMP all our comments in group
-::    /annotations/[some-group]/[b64(url)]  all our comments on url by recency
-::    /discussions/[some-group]/[b64(url)]  all known comments on url by recency
+::    /annotations/(b64(url))/(some-group)  all our comments on url by recency
+::    /discussions/(b64(url))/(some-group)  all known comments on url by recency
 ::
 ::TODO  continue work from m/uplink-broad branch!
 ::
@@ -81,25 +80,27 @@
     ?+  path  (on-peek:def path)
         [%y ?(%local-pages %submissions) ~]
       ``noun+!>(~(key by by-group))
-      ::
-        [%x %local-pages ^]
+    ::
+        [%x %local-pages *]
       ``noun+!>((get-local-pages:do t.t.path))
-      ::
-        [%x %submissions ^]
+    ::
+        [%x %submissions *]
       ``noun+!>((get-submissions:do t.t.path))
-      ::
+    ::
         [%y ?(%annotations %discussions) ~]
+      ::TODO  want urls instead?
       ``noun+!>(~(key by discussions))
-      ::
+    ::
         [%y ?(%annotations %discussions) ^]
+      ::TODO  not really correct?
       =/  urls  (~(get by discussions) t.t.path)
       ?~  urls  ~
       ``noun+!>(~(key by u.urls))
-      ::
-        [%x %annotations @ ^]
+    ::
+        [%x %annotations *]
       ``noun+!>((get-annotations:do t.t.path))
-      ::
-        [%x %discussions @ ^]
+    ::
+        [%x %discussions *]
       ``noun+!>((get-discussions:do t.t.path))
     ==
   ::
@@ -109,27 +110,19 @@
     ?>  (team:title [our src]:bowl)  ::TODO  /lib/store
     :_  this
     |^  ?+  path  (on-watch:def path)
-            [%local-pages ^]
+            [%local-pages *]
           %+  give  %link-update
           [%local-pages t.path (get-local-pages:do t.path)]
         ::
-            [%submissions ^]
+            [%submissions *]
           %+  give  %link-update
           [%submissions t.path (get-submissions:do t.path)]
         ::
-            [%allotations ^]
-          %+  turn
-            %~  tap  by
-            (~(gut by discussions) t.path *(map url discussion))
-          |=  [=url =discussion]
-          %+  give-single  %link-update
-          [%annotations t.path url ours.discussion]
-        ::
-            [%annotations @ ^]
+            [%annotations *]
           %+  give  %link-update
           [%annotations t.path (get-annotations:do t.path)]
         ::
-            [%discussions @ ^]
+            [%discussions *]
           %+  give  %link-update
           [%discussions t.path (get-discussions:do t.path)]
         ==
@@ -268,28 +261,97 @@
 ++  get-local-pages
   |=  =path
   ^-  pages
-  ours:(~(gut by by-group) path *links)
+  ?^  path
+    ::  specific path
+    ::
+    ours:(~(gut by by-group) path *links)
+  ::  all paths
+  ::
+  %+  roll
+    %+  turn  ~(tap by by-group)
+    |=([* links] ours)
+  pages:merge
 ::
 ++  get-submissions
   |=  =path
   ^-  submissions
-  submissions:(~(gut by by-group) path *links)
+  ?^  path
+    ::  specific path
+    ::
+    submissions:(~(gut by by-group) path *links)
+  ::  all paths
+  ::
+  %+  roll
+    %+  turn  ~(tap by by-group)
+    |=([* links] submissions)
+  submissions:merge
 ::
 ++  get-annotations
   |=  =path
   ^-  notes
-  ours:(get-discussion path)
+  ?~  path
+    ::  all urls (and all paths)
+    ::
+    %+  roll
+      ^-  (list notes)
+      %-  zing
+      %+  turn  ~(tap by discussions)
+      |=  [* d=(map url discussion)]
+      %+  turn  ~(tap by d)
+      |=([* discussion] ours)
+    notes:merge
+  ::  specific url
+  ::
+  =/  [=^path =url]
+    (break-discussion-path path)
+  ?^  path
+    ::  specific path
+    ::
+    ours:(get-discussion path url)
+  ::  all paths
+  ::
+  %+  roll
+    ^-  (list notes)
+    %+  turn  ~(tap by discussions)
+    |=  [* d=(map ^url discussion)]
+    ours:(~(gut by d) url *discussion)
+  notes:merge
 ::
 ++  get-discussions
   |=  =path
   ^-  comments
-  comments:(get-discussion path)
+  ?~  path
+    ::  all urls (and all paths)
+    ::
+    %+  roll
+      ^-  (list comments)
+      %-  zing
+      %+  turn  ~(tap by discussions)
+      |=  [* d=(map url discussion)]
+      %+  turn  ~(tap by d)
+      |=([* discussion] comments)
+    comments:merge
+  ::  specific url
+  ::
+  =/  [=^path =url]
+    (break-discussion-path path)
+  ?^  path
+    ::  specific path
+    ::
+    comments:(get-discussion path url)
+  ::  all paths
+  ::
+  %+  roll
+    ^-  (list comments)
+    %+  turn  ~(tap by discussions)
+    |=  [* d=(map ^url discussion)]
+    comments:(~(gut by d) url *discussion)
+  comments:merge
 ::
 ++  get-discussion
-  |=  =path
+  |=  [=path =url]
   ^-  discussion
-  =/  [=^path =url]
-    (split-discussion-path path)
+  ?<  ?=(~ path)
   =-  (~(gut by -) url *discussion)
   %+  ~(gut by discussions)  path
   *(map ^url discussion)

@@ -22,14 +22,66 @@
     %|  (rsh 3 1 (scot %if p.host))
   ==
 ::
-++  split-discussion-path
+++  build-discussion-path
+  |=  [=path =url]
+  ^+  path
+  :_  path
+  (crip (en-base64:mimes:html url))
+::
+++  break-discussion-path
   |=  =path
   ^-  [=^path =url]
-  ~|  [%path-too-short path]
-  ?>  (gth (lent path) 1)  ::TODO  ?= would TMI
-  =/  end=@ud  (dec (lent path))
-  :-  (scag end path)
-  (de-base64:mimes:html (snag end path))
+  ?~  path  [/ '']
+  :-  t.path
+  ?:  =(~ i.path)  ''
+  (de-base64:mimes:html i.path)
+::
+::  zip sorted a into sorted b, maintaining sort order
+::TODO  stdlib
+++  merge-sorted
+  |*  [sort=$-([* *] ?) a=(list) b=(list)]
+  |-  ^-  ?(_a _b)
+  ?~  a  b
+  ?~  b  a
+  ?:  (sort i.a i.b)
+    [i.a $(a t.a)]
+  [i.b $(b t.b)]
+::
+++  merge
+  |%
+  ++  pages
+    ::TODO  we would just use +cury here but it don't work
+    |=  [a=^pages b=^pages]
+    ^+  a
+    %+  merge-sorted
+      |=  [a=page b=page]
+      (gth time.a time.b)
+    [a b]
+  ::
+  ++  submissions
+    |=  [a=^submissions b=^submissions]
+    ^+  a
+    %+  merge-sorted
+      |=  [a=submission b=submission]
+      (gth time.a time.b)
+    [a b]
+  ::
+  ++  notes
+    |=  [a=^notes b=^notes]
+    ^+  a
+    %+  merge-sorted
+      |=  [a=note b=note]
+      (gth time.a time.b)
+    [a b]
+  ::
+  ++  comments
+    |=  [a=^comments b=^comments]
+    ^+  a
+    %+  merge-sorted
+      |=  [a=comment b=comment]
+      (gth time.a time.b)
+    [a b]
+  --
 ::
 ++  en-json
   =,  enjs:format

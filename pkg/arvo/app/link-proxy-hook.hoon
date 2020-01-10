@@ -99,10 +99,14 @@
 ++  permitted
   |=  [who=ship =path]
   ^-  ?
-  ::  we only expose /local-pages and /annotations,
+  ::  we only expose group-specific /local-pages and /annotations,
   ::  and only to ships in the relevant group
   ::
-  ?.  ?=([?(%local-pages %annotations %allotations) ^] path)  |
+  ?.  ?|  ?=([%local-pages ^] path)
+          ?=([%annotations @ ^] path)
+      ==
+    |
+  ?>  ?=(^ path)  ::NOTE  type system *should* know this already, but doesn't
   =;  group
     ?&  ?=(^ group)
         (~(has in u.group) who)
@@ -211,7 +215,7 @@
     [%local-pages path .^(pages %gx path)]
   ::
       [%annotations @ ^]
-    =+  (split-discussion-path t.path)
+    =+  (break-discussion-path t.path)
     [%annotations path url .^(notes %gx path)]
   ==
 ::
