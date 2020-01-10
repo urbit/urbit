@@ -47,6 +47,7 @@
   $:  our-paths=(list path)
       books=(map @tas notebook)
       subs=(map [@p @tas] notebook)
+      tile-num=@ud
   ==
 --
 ::
@@ -68,6 +69,7 @@
         [%pass /tile %agent [our.bol %launch] %poke %launch-action !>(lac)]
         [%pass /read/paths %arvo %c %warp our.bol q.byk.bol `rav]
         [%pass /permissions %agent [our.bol %permission-store] %watch /updates]
+        (invite-poke:main [%create /publish])
         :*  %pass  /invites  %agent  [our.bol %invite-store]  %watch
             /invitatory/publish
         ==
@@ -115,7 +117,11 @@
     ::
         [%primary ~]  [~ this]
     ::
-        [%tile ~]  !!
+        [%publishtile ~]
+      =/  jon=json
+        (frond:enjs:format %notifications (numb:enjs:format tile-num))
+      :_  this
+      [%give %fact ~ %json !>(jon)]~
     ==
   ::
   ++  on-leave  on-leave:def
@@ -497,7 +503,7 @@
 ++  handle-permission-update
   |=  upd=permission-update
   ^-  (quip card _state)
-  ?.  ?=(?(%add %remove) -.upd)
+  ?.  ?=(%remove -.upd)
     [~ state]
   =/  book=@tas
     %-  need
@@ -512,22 +518,47 @@
   |=  who=@p
   ?:  (allowed who %read book)
     ~
-  [%give %kick `/notebook/[book] `who]~
+  [%give %kick [/notebook/[book]]~ `who]~
 ::
 ++  handle-invite-update
   |=  upd=invite-update
   ^-  (quip card _state)
-  ?.  ?=(%accepted -.upd)
+  ?+    -.upd
     [~ state]
-  =/  wir=wire  (weld /subscribe/(scot %p ship.invite.upd) path.upd)
-  :_  state
-  :_  ~
-  :*  %pass
-      wir
-      %agent
-      [ship.invite.upd %publish]
-      %watch
-      (weld /notebook path.upd)
+  ::
+      %delete
+    =/  scry-pax
+      /(scot %p our.bol)/invite-store/(scot %da now.bol)/invitatory/publish/noun
+    =/  inv=(unit invitatory)  .^((unit invitatory) %gx scry-pax)
+    ?~  inv
+      [~ state]
+    =.  tile-num  (sub tile-num ~(wyt by u.inv))
+    =/  jon=json  (frond:enjs:format %notifications (numb:enjs:format tile-num))
+    :_  state
+    [%give %fact [/publishtile]~ %json !>(jon)]~
+  ::
+      %invite
+    =.  tile-num  +(tile-num)
+    =/  jon=json  (frond:enjs:format %notifications (numb:enjs:format tile-num))
+    :_  state
+    [%give %fact [/publishtile]~ %json !>(jon)]~
+  ::
+      %decline
+    =.  tile-num  (dec tile-num)
+    =/  jon=json  (frond:enjs:format %notifications (numb:enjs:format tile-num))
+    :_  state
+    [%give %fact [/publishtile]~ %json !>(jon)]~
+  ::
+      %accepted
+    ?>  ?=([%notebook @ ~] path.invite.upd)
+    =/  book  i.t.path.invite.upd
+    =/  wir=wire  /subscribe/(scot %p ship.invite.upd)/[book]
+    =.  tile-num  (dec tile-num)
+    =/  jon=json  (frond:enjs:format %notifications (numb:enjs:format tile-num))
+    :_  state
+    :~  [%pass wir %agent [ship.invite.upd %publish] %watch path.invite.upd]
+        [%give %fact [/publishtile]~ %json !>(jon)]
+    ==
   ==
 ::
 ++  watch-notebook
@@ -623,6 +654,11 @@
       %permission-hook-action
       !>(act)
   ==
+::
+++  invite-poke
+  |=  act=invite-action
+  ^-  card
+  [%pass / %agent [our.bol %invite-store] %poke %invite-action !>(act)]
 ::
 ++  perm-group-hook-poke
   |=  act=permission-group-hook-action
@@ -827,7 +863,7 @@
     ?.  (~(has by books) book.act)
       ~|("nonexistent notebook {<book.act>}" !!)
     =/  pax=path  /app/publish/notebooks/[book.act]
-    :_  state(books (~(del by books) book.act))
+    :_  state
     [(delete-dir pax)]~
   ::
       %del-note
@@ -887,8 +923,8 @@
     =/  wir=wire  /subscribe/(scot %p who.act)/[book.act]
     =/  del=primary-delta  [%del-book who.act book.act]
     :_  state(subs (~(del by subs) who.act book.act))
-    :~  [%pass wir %agent [who.act %publish] %leave ~]
-        [%give %fact `/primary %publish-primary-delta !>(del)]
+    :~  `card`[%pass wir %agent [who.act %publish] %leave ~]
+        `card`[%give %fact [/primary]~ %publish-primary-delta !>(del)]
     ==
   ::
       %read
@@ -902,14 +938,20 @@
     =/  not=(unit note)  (~(get by notes.u.book) note.act) 
     ?~  not
       ~|("nonexistent note: {<note.act>}" !!)
+    =?  tile-num  !read.u.not
+      (dec tile-num)
     =.  read.u.not  %.y
     =.  notes.u.book  (~(put by notes.u.book) note.act u.not)
     =?  books  =(our.bol who.act)
       (~(put by books) book.act u.book)
     =?  subs   !=(our.bol who.act)
       (~(put by subs) [who.act book.act] u.book)
+    =/  jon=json
+      (frond:enjs:format %notifications (numb:enjs:format tile-num))
     :_  state
-    [%give %fact `/primary %publish-primary-delta !>(act)]~
+    :~  [%give %fact [/primary]~ %publish-primary-delta !>(act)]
+        [%give %fact [/publishtile]~ %json !>(jon)]
+    ==
   ==
 ::
 ++  get-notebook
@@ -919,22 +961,36 @@
     (~(get by books) book-name)
   (~(get by subs) host book-name)
 ::
+++  get-unread
+  |=  book=notebook
+  ^-  @ud
+  %+  roll  ~(tap by notes.book)
+  |=  [[nom=@tas not=note] out=@ud]
+  ?:  read.not
+    out
+  +(out)
+::
 ++  emit-updates-and-state
   |=  [host=@p book-name=@tas book=notebook del=notebook-delta]
   ^-  (quip card _state)
   ?:  =(our.bol host)
     :_  state(books (~(put by books) book-name book))
-    :~  [%give %fact `/notebook/[book-name] %publish-notebook-delta !>(del)]
-        [%give %fact `/primary %publish-primary-delta !>(del)]
+    :~  [%give %fact [/notebook/[book-name]]~ %publish-notebook-delta !>(del)]
+        [%give %fact [/primary]~ %publish-primary-delta !>(del)]
     ==
+  =/  jon=json
+    (frond:enjs:format %notifications (numb:enjs:format tile-num))
   :_  state(subs (~(put by subs) [host book-name] book))
-  [%give %fact `/primary %publish-primary-delta !>(del)]~
+  :~  [%give %fact [/primary]~ %publish-primary-delta !>(del)]
+      [%give %fact [/publishtile]~ %json !>(jon)]
+  ==
 ::
 ++  handle-notebook-delta
   |=  del=notebook-delta
   ^-  (quip card _state)
   ?-    -.del
       %add-book
+    =.  tile-num  (add tile-num (get-unread data.del))
     (emit-updates-and-state host.del book.del data.del del)
   ::
       %add-note
@@ -943,6 +999,8 @@
     ?~  book
       [~ state]
     =.  read.data.del  =(our.bol author.data.del)
+    =?  tile-num  !read.data.del
+      +(tile-num)
     =.  notes.u.book  (~(put by notes.u.book) note.del data.del)
     (emit-updates-and-state host.del book.del u.book del)
   ::
@@ -1001,19 +1059,29 @@
     (emit-updates-and-state host.del book.del u.book del)
   ::
       %del-book
+    =.  tile-num
+      %+  sub  tile-num
+      (get-unread (~(got by books) book.del))
     ?:  =(our.bol host.del)
       :_  state(books (~(del by books) book.del))
-      :~  [%give %fact `/notebook/[book.del] %publish-notebook-delta !>(del)]
-          [%give %fact `/primary %publish-primary-delta !>(del)]
+      :~  [%give %fact [/notebook/[book.del]]~ %publish-notebook-delta !>(del)]
+          [%give %fact [/primary]~ %publish-primary-delta !>(del)]
       ==
+    =/  jon=json
+      (frond:enjs:format %notifications (numb:enjs:format tile-num))
     :_  state(subs (~(del by subs) host.del book.del))
-    [%give %fact `/primary %publish-primary-delta !>(del)]~
+    :~  [%give %fact [/primary]~ %publish-primary-delta !>(del)]
+        [%give %fact [/publishtile]~ %json !>(jon)]
+    ==
   ::
       %del-note
     =/  book=(unit notebook)
       (get-notebook host.del book.del)
     ?~  book
       [~ state]
+    =/  not=note  (~(got by notes.u.book) note.del)
+    =?  tile-num  !read.not
+      (dec tile-num)
     =.  notes.u.book  (~(del by notes.u.book) note.del)
     (emit-updates-and-state host.del book.del u.book del)
   ::
