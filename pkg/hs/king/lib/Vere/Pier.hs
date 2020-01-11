@@ -144,8 +144,9 @@ acquireWorker act = mkRAcquire (async act) cancel
 
 pier :: ∀e. (HasConfigDir e, HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
      => (Serf e, EventLog, SerfState)
+     -> MVar ()
      -> RAcquire e ()
-pier (serf, log, ss) = do
+pier (serf, log, ss) mStart = do
     computeQ  <- newTQueueIO
     persistQ  <- newTQueueIO
     executeQ  <- newTQueueIO
@@ -212,6 +213,8 @@ pier (serf, log, ss) = do
                (writeTQueue persistQ)
 
     tSaveSignal <- saveSignalThread saveM
+
+    putMVar mStart ()
 
     -- Wait for something to die.
 

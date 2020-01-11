@@ -367,7 +367,7 @@ updateProgressBar count startMsg = \case
       -- We only construct the progress bar on the first time that we
       -- process an event so that we don't display an empty progress
       -- bar when the snapshot is caught up to the log.
-      putStrLn startMsg
+      logTrace $ display startMsg
       let style = defStyle { stylePostfix = exact }
       pb <- newProgressBar style 10 (Progress 0 count ())
       pure (Just pb)

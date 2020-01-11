@@ -3,6 +3,7 @@ module King.App
     , runApp
     , runAppLogFile
     , runAppLogHandle
+    , runAppNoLog
     , runPierApp
     , HasConfigDir(..)
     ) where
@@ -42,16 +43,20 @@ runApp = runAppLogHandle stdout
 
 runAppLogFile :: RIO App a -> IO a
 runAppLogFile inner = withLogFileHandle (\h -> runAppLogHandle h inner)
-  where
-    withLogFileHandle :: (Handle -> IO a) -> IO a
-    withLogFileHandle act = do
-        home <- getHomeDirectory
-        let logDir = home </> ".urbit"
-        createDirectoryIfMissing True logDir
-        withFile (logDir </> "king.log") AppendMode $ \handle -> do
-            hSetBuffering handle LineBuffering
-            act handle
 
+withLogFileHandle :: (Handle -> IO a) -> IO a
+withLogFileHandle act = do
+    home <- getHomeDirectory
+    let logDir = home </> ".urbit"
+    createDirectoryIfMissing True logDir
+    withFile (logDir </> "king.log") AppendMode $ \handle -> do
+        hSetBuffering handle LineBuffering
+        act handle
+
+runAppNoLog :: RIO App a -> IO a
+runAppNoLog act =
+    withFile "/dev/null" AppendMode $ \handle ->
+        runAppLogHandle handle act
 
 --------------------------------------------------------------------------------
 
@@ -76,16 +81,20 @@ instance HasNetworkConfig PierApp where
 instance HasConfigDir PierApp where
     configDirL = pierAppPierConfig . pcPierPath
 
-runPierApp :: PierConfig -> NetworkConfig -> RIO PierApp a -> IO a
-runPierApp pierConfig networkConfig inner = do
-    logOptions <- logOptionsHandle stdout True
-        <&> setLogUseTime True
-        <&> setLogUseLoc False
-
-    withLogFunc logOptions $ \logFunc ->
-        go $ PierApp { _pierAppLogFunc = logFunc
-                     , _pierAppPierConfig = pierConfig
-                     , _pierAppNetworkConfig = networkConfig
-                     }
+runPierApp :: PierConfig -> NetworkConfig -> Bool -> RIO PierApp a -> IO a
+runPierApp pierConfig networkConfig daemon inner =
+    if daemon
+    then exec stderr
+    else withLogFileHandle exec
   where
+    exec logHandle = do
+        logOptions <- logOptionsHandle logHandle True
+            <&> setLogUseTime True
+            <&> setLogUseLoc False
+
+        withLogFunc logOptions $ \logFunc ->
+            go $ PierApp { _pierAppLogFunc = logFunc
+                         , _pierAppPierConfig = pierConfig
+                         , _pierAppNetworkConfig = networkConfig
+                         }
     go app = runRIO app inner
