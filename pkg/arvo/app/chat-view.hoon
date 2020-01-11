@@ -199,8 +199,6 @@
   ?-  -.act
       %create
     =/  pax  [(scot %p our.bol) path.act]
-    =/  group-read=path  (weld pax /read)
-    =/  group-write=path  (weld pax /write)
     %-  zing
     :~  :~  (group-poke [%bundle group-read])
             (group-poke [%bundle group-write])
@@ -210,28 +208,22 @@
             (chat-hook-poke [%add-owned pax security.act allow-history.act])
         ==
         (create-security pax security.act)
-        :~  (permission-hook-poke [%add-owned group-read group-read])
-            (permission-hook-poke [%add-owned group-write group-read])
+        :~  (permission-hook-poke [%add-owned pax pax])
+            :: (permission-hook-poke [%add-owned group-write group-read])
         ==
     ==
   ::
       %delete
-    =/  group-read  (weld path.act /read)
-    =/  group-write  (weld path.act /write)
     :~  (chat-hook-poke [%remove path.act])
-        (permission-hook-poke [%remove group-read])
-        (permission-hook-poke [%remove group-write])
-        (group-poke [%unbundle group-read])
-        (group-poke [%unbundle group-write])
+        (permission-hook-poke [%remove path.act])
+        (group-poke [%unbundle path.act])
         (chat-poke [%delete path.act])
     ==
   ::
       %join
-    =/  group-read  [(scot %p ship.act) (weld path.act /read)]
-    =/  group-write  [(scot %p ship.act) (weld path.act /write)]
+    =/  foreign-pax  [(scot %p ship.act) path.act]
     :~  (chat-hook-poke [%add-synced ship.act path.act ask-history.act])
-        (permission-hook-poke [%add-synced ship.act group-write])
-        (permission-hook-poke [%add-synced ship.act group-read])
+        (permission-hook-poke [%add-synced ship.act foreign-pax])
     ==
   ==
 ::
@@ -288,27 +280,19 @@
 ++  create-security
   |=  [pax=path sec=rw-security]
   ^-  (list card)
-  =/  read   (weld pax /read)
-  =/  write  (weld pax /write)
   ?-  sec
       %channel
-    :~  (perm-group-hook-poke [%associate read [[read %black] ~ ~]])
-        (perm-group-hook-poke [%associate write [[write %black] ~ ~]])
+    :~  (perm-group-hook-poke [%associate pax [[pax %black] ~ ~]])
     ==
   ::
       %village
-    :~  (perm-group-hook-poke [%associate read [[read %white] ~ ~]])
-        (perm-group-hook-poke [%associate write [[write %white] ~ ~]])
+    :~  (perm-group-hook-poke [%associate pax [[pax %white] ~ ~]])
     ==
   ::
       %journal
-    :~  (perm-group-hook-poke [%associate read [[read %black] ~ ~]])
-        (perm-group-hook-poke [%associate write [[write %white] ~ ~]])
-    ==
+    ~
   ::
       %mailbox
-    :~  (perm-group-hook-poke [%associate read [[read %white] ~ ~]])
-        (perm-group-hook-poke [%associate write [[write %black] ~ ~]])
-    ==
+    ~
   ==
 --

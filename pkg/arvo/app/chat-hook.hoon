@@ -137,7 +137,7 @@
   ?.  =(u.ship our.bol)
     ~
   ::  scry permissions to check if write is permitted
-  ?.  (permitted-scry [(scot %p src.bol) (weld path.act /write)])
+  ?.  (permitted-scry [(scot %p src.bol) path.act])
     ~
   =:  author.envelope.act  src.bol
       when.envelope.act  now.bol
@@ -202,7 +202,7 @@
   ?>  ?=(^ pax)
   ?>  (~(has by synced) pax)
   ::  scry permissions to check if read is permitted
-  ?>  (permitted-scry [(scot %p src.bol) (weld pax /read)])
+  ?>  (permitted-scry [(scot %p src.bol) pax])
   =/  box  (chat-scry pax)
   ?~  box  !!
   [%give %fact ~ %chat-update !>([%create (slav %p i.pax) pax])]~
@@ -220,7 +220,7 @@
   ?>  ?=([* ^] pas)
   ?>  (~(has by synced) pas)
   ::  scry permissions to check if read is permitted
-  ?>  (permitted-scry [(scot %p src.bol) (weld pas /read)])
+  ?>  (permitted-scry [(scot %p src.bol) pas])
   =/  box  (chat-scry pas)
   ?~  box  !!
   :-  [%give %fact ~ %chat-update !>([%create (slav %p i.pas) pas])]
@@ -290,10 +290,6 @@
   |=  [kind=?(%add %remove) pax=path who=(set ship)]
   ^-  (list card)
   ?>  ?=([* *] pax)
-  ?.  =(%chat i.pax)  ~
-  ::  check path to see if this is a %read permission
-  ?.  =(%read (snag (dec (lent pax)) `(list @t)`pax))
-    ~
   %-  zing
   %+  turn  ~(tap in who)
   |=  =ship
@@ -451,37 +447,26 @@
 ++  create-permission
   |=  [pax=path sec=rw-security]
   ^-  (list card)
-  =/  read-perm   (weld pax /read)
-  =/  write-perm  (weld pax /write)
   ?-  sec
       %channel
-    :~  (permission-poke (sec-to-perm read-perm %black))
-        (permission-poke (sec-to-perm write-perm %black))
+    :~  (permission-poke (sec-to-perm pax %black))
     ==
   ::
       %village
-    :~  (permission-poke (sec-to-perm read-perm %white))
-        (permission-poke (sec-to-perm write-perm %white))
+    :~  (permission-poke (sec-to-perm pax %white))
     ==
   ::
       %journal
-    :~  (permission-poke (sec-to-perm read-perm %black))
-        (permission-poke (sec-to-perm write-perm %white))
-    ==
+    ~
   ::
       %mailbox
-    :~  (permission-poke (sec-to-perm read-perm %white))
-        (permission-poke (sec-to-perm write-perm %black))
-    ==
+    ~
   ==
 ::
 ++  delete-permission
   |=  pax=path
   ^-  (list card)
-  =/  read-perm   (weld pax /read)
-  =/  write-perm  (weld pax /write)
-  :~  (permission-poke [%delete read-perm])
-      (permission-poke [%delete write-perm])
+  :~  (permission-poke [%delete pax])
   ==
 ::
 ++  sec-to-perm
