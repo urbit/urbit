@@ -200,10 +200,15 @@
       %create
     =/  pax  [(scot %p our.bol) path.act]
     %-  zing
-    :~  :~  (group-poke [%bundle group-read])
-            (group-poke [%bundle group-write])
-            (group-poke [%add read.act group-read])
-            (group-poke [%add write.act group-write])
+    :~  
+        ::  if group doesn't exist, create it
+        ?~  (group-scry pax)
+          :~  (group-poke [%bundle pax])
+              (group-poke [%add read.act pax])
+          ==
+        ~
+        :~  
+            :: if no group, create group
             (chat-poke [%create our.bol path.act])
             (chat-hook-poke [%add-owned pax security.act allow-history.act])
         ==
@@ -277,8 +282,14 @@
   ^-  chat-configs
   .^(chat-configs %gx /=chat-store/(scot %da now.bol)/configs/noun)
 ::
+++  group-scry
+  |=  pax=path
+  ^-  (unit group)
+  .^((unit group) %gx ;:(weld /=group-store/(scot %da now.bol) pax /noun))
+::
 ++  create-security
   |=  [pax=path sec=rw-security]
+  ~&  [%security sec]
   ^-  (list card)
   ?-  sec
       %channel
