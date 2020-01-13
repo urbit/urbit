@@ -1,7 +1,7 @@
 |%
 ::
 +$  versioned-doc-id
-  [uri=@t version=@]
+  [uri=@t version=(unit @)]
 ::
 ::  ++  request
 ::    |%
@@ -10,25 +10,29 @@
   ::  $%
   ::    text-document--did-change:request
   ::  ==
-+$  response-message
-  [id=(unit cord) all:response]
-::
-+$  request-message
-  [id=(unit cord) all:request]
-::
-++  response
+++  request
   |%
-  ::
   +$  all
     $%
-      text-document--publish-diagnostics
+      text-document--hover
+      unknown
     ==
-  ::
-  ::
-  +$  text-document--publish-diagnostics
-    [%text-document--publish-diagnostics uri=@t diagnostics=(list diagnostic)]
-  ::
+  +$  text-document--hover
+    [%text-document--hover id=cord position versioned-doc-id]
+  +$  unknown
+    [%unknown json]
   --
+++  response
+  |%
+  +$  all
+    $%
+      text-document--hover
+    ==
+  +$  text-document--hover
+    [%text-document--hover id=cord contents=(unit @t)]
+  --
+::
+
 ::
 ::  ++  notification
 ::    |*  kind=response-kind
@@ -40,11 +44,11 @@
   [row=@ud col=@ud]
 ::
 +$  text-document-item
-  [uri=@t version=@ text=@t]
+  [uri=@t version=(unit @) text=@t]
 ::
-++  request
+++  notification
   |%
-  +$  all
+  +$  in
     $%
       text-document--did-change
       text-document--did-open
@@ -52,6 +56,15 @@
       text-document--did-close
       exit
       unknown
+    ==
+  +$  out
+    $%
+      text-document--publish-diagnostics
+    ==
+  +$  all
+    $%
+      out
+      in
     ==
   +$  text-document--did-change
     [%text-document--did-change versioned-doc-id changes=(list change)]
@@ -64,7 +77,10 @@
   +$  exit
     [%exit ~]
   +$  unknown
-    [%unknown ~]
+    [%unknown =json]
+  +$  text-document--publish-diagnostics
+    [%text-document--publish-diagnostics uri=@t diagnostics=(list diagnostic)]
+  ::
   --
 ::
 +$  change
