@@ -8,6 +8,7 @@ const minify = require('gulp-minify');
 const del = require('del');
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
+const builtins = require('@joseph184/rollup-plugin-node-builtins');
 const rootImport = require('rollup-plugin-root-import');
 const globals = require('rollup-plugin-node-globals');
 const replace = require('@rollup/plugin-replace');
@@ -81,6 +82,7 @@ function importPlugins(exps) {
       extensions: '.js'
     }),
     globals(),
+    builtins(),
     resolve()
   ];
 }
