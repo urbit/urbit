@@ -4,6 +4,269 @@
 ::    |*  type=mold
 ::    $>(type requester:lsp)
 ::
+++  util
+  |%
+  ++  get-json-string
+    |=  [jon=(map @t json) key=@t]
+    ^-  (unit cord)
+    =/  cord-jon=(unit json)
+      (~(get by jon) key)
+    ?~  cord-jon
+      ~
+    ?>  ?=([%s *] u.cord-jon)
+    `p.u.cord-jon
+  --
+::
+::
+++  dejs
+  =,  dejs:format
+  |%
+  ++  request
+    |=  jon=json
+    ?>  ?=([%o *] jon)
+    =/  method=cord
+      %-  method
+      (trip (need (get-json-string:util p.jon 'method')))
+    =/  id=cord
+      (need (get-json-string:util p.jon 'id'))
+    =/  params=json
+      (~(got by p.jon) 'params')
+    ^-  all:request:lsp
+    |^
+      ?+  method  [%unknown jon]
+          %text-document--hover
+        (text-document--hover params id)
+      ==
+      ::
+      ++  text-document--hover
+        |=  [params=json id=cord]
+        ^-  text-document--hover:request:lsp
+        :+  %text-document--hover
+          id
+        %.  params
+        %:  ot
+          position+position
+          'textDocument'^text-document-id
+          ~
+        ==
+      ::
+      --
+  ++  notification
+    |=  jon=json
+    ?>  ?=([%o *] jon)
+    =/  method=cord
+      %-  method
+      (trip (need (get-json-string:util p.jon 'method')))
+    =/  params=json
+      (~(got by p.jon) 'params')
+    ^-  all:notification:lsp
+    |^
+      ?+  method  [%unknown jon]
+          %text-document--did-change
+        (text-document--did-change params)
+          %text-document--did-open
+        (text-document--did-open params)
+          %text-document--did-save
+        (text-document--did-save params)
+          %text-document--did-close
+        (text-document--did-close params)
+      ==
+      ::
+      ++  text-document--did-save
+        |=  jon=json
+        ^-  text-document--did-save:notification:lsp
+        ?>  ?=([%o *] jon)
+        =/  doc-id
+          (~(got by p.jon) 'textDocument')
+        :-  %text-document--did-save
+        (text-document-id doc-id)
+      ::
+      ++  text-document--did-close
+        |=  jon=json
+        ^-  text-document--did-close:notification:lsp
+        ?>  ?=([%o *] jon)
+        =/  doc-id
+          (~(got by p.jon) 'textDocument')
+        :-  %text-document--did-close
+        (text-document-id doc-id)
+      ::
+
+      ++  text-document--did-change
+        |=  jon=json
+        ^-  text-document--did-change:notification:lsp ::%text-document--did-change)
+        :-  %text-document--did-change
+        =,  dejs:format
+        %.  jon
+        %:  ot
+          'textDocument'^text-document-id
+          'contentChanges'^text-document-changes
+          ~
+          ::  'contentChanges'
+        ==
+      ::
+      ++  text-document--did-open
+        |=  jon=json
+        ^-  text-document--did-open:notification:lsp
+        =,  dejs:format
+        ?>  ?=([%o *] jon)
+        :-  %text-document--did-open
+        (text-document-item (~(got by p.jon) 'textDocument'))
+      --
+    ::  Utilities
+  ++  text-document-item
+    |=  jon=json
+    ^-  text-document-item:lsp
+    %.  jon
+    =,  dejs:format
+    %:  ot
+      uri+so
+      version+(mu ni)
+      text+so
+      ~
+    ==
+  ++  text-document-id
+    %:  ou
+      uri+(un so)
+      version+(uf ~ (pe ~ ni))
+      ~
+    ==
+  ++  text-document-changes
+    =,  dejs:format
+    %-  ar
+    %:  ou
+        range+(uf ~ (pe ~ range))
+        'rangeLength'^(uf ~ (pe ~ ni))
+        text+(un so)
+        ~
+    ==
+  ++  method
+    |=  =tape
+    ::  TODO: gross
+    ^-  cord
+    %-  crip
+    %-  zing
+    %+  join  "--"
+    ^-  (list ^tape)
+    %+  turn
+      ^-  (list (list ^tape))
+      %+  scan
+        tape
+      %+  more
+        fas
+      ;~  plug
+        (star low)
+        (star ;~(plug (cook downcase hig) (star low)))
+      ==
+    |=  words=(list ^tape)
+    ^-  ^tape
+    (zing (join "-" words))
+ ++  range
+   %:  ot
+    start+position
+    end+position
+    ~
+  ==
+  ::
+  ++  position
+  =,  dejs:format
+  %:  ot
+      line+ni
+      character+ni
+      ~
+  ==
+ 
+  --
+::
+++  downcase
+  |=  a=@
+  (add a 32)
+::
+:: TODO: fix
+++  unparse-method
+  |=  =cord
+  'textDocument/publishDiagnostics' 
+::
+++  enjs
+  =,  enjs:format
+  |%
+  ++  text-document--publish-diagnostics
+    |=  pub=text-document--publish-diagnostics:notification:lsp
+    ^-  json
+    %:  pairs
+      uri+s+uri.pub
+      diagnostics+a+(turn diagnostics.pub diagnostic)
+      ~
+    ==
+  ++  notification
+    |=  notification=all:notification:lsp
+    ^-  json
+    =/  params=json
+      ?+  -.notification  !!
+            %text-document--publish-diagnostics
+          (text-document--publish-diagnostics notification)
+        ==
+    %:  pairs
+     [%method %s (unparse-method -.notification)]
+      params+params
+      ~
+    ==
+  ::
+  ++  response
+    |=  res=all:response:lsp
+    ^-  json
+    |^
+      ?-  -.res
+          %text-document--hover
+        (text-document--hover res)
+      ==
+      ::
+      ++  wrap-in-id
+        |=  [id=cord res=json]
+        %:  pairs
+          id+s+id
+          result+res
+          ~
+        ==
+      ++  text-document--hover
+        |=  hov=text-document--hover:response:lsp
+        %+  wrap-in-id  id.hov
+        %+  frond  'contents'
+        ?~  contents.hov
+          ~
+        s+u.contents.hov
+      --
+
+  ++  position
+    |=  =position:lsp
+    ^-  json
+    %:  pairs
+      line+(numb row.position)
+      character+(numb col.position)
+      ~
+    ==
+  ::
+  ++  range
+    |=  =range:lsp
+    ^-  json
+    %:  pairs
+      start+(position start.range)
+      end+(position end.range)
+      ~
+    ==
+  ::
+  ++  diagnostic
+    |=  diag=diagnostic:lsp
+    ^-  json
+    %:  pairs
+      range+(range range.diag)
+      severity+(numb severity.diag)
+      message+s+message.diag
+      ~
+    ==
+  ::
+
+  --
+::  examples
 ++  pos-jon
   ^-  json
   :-  %o
@@ -94,204 +357,4 @@
     ['version' `json`[%n '1']]
     ~
   ==
-::
-++  downcase
-  |=  a=@
-  (add a 32)
-::
-:: TODO: fix
-++  unparse-method
-  |=  =cord
-  'textDocument/publishDiagnostics'
-
-++  parse-method
-  |=  =tape
-  ::  TODO: gross
-  ^-  cord
-  %-  crip
-  %-  zing
-  %+  join  "--"
-  ^-  (list ^tape)
-  %+  turn
-    ^-  (list (list ^tape))
-    %+  scan
-      tape
-    %+  more
-      fas
-    ;~  plug
-      (star low)
-      (star ;~(plug (cook downcase hig) (star low)))
-    ==
-  |=  words=(list ^tape)
-  ^-  ^tape
-  (zing (join "-" words))
-::    ::
-++  parse-request
-  =,  dejs-soft:format
-  |=  jon=json
-  ?>  ?=([%o *] jon)
-  =/  method=cord
-    =+  `json`(~(got by p.jon) 'method')
-    ?>  ?=([%s *] -)  (parse-method (trip p:-))
-  =/  id=(unit cord)
-    %-  (lift |=(j=json ?>(?=([%s *] j) p.j)))
-    `(unit json)`(~(get by p.jon) 'id')
-  =/  params=json
-    (~(got by p.jon) 'params')
-  ::  ^-  request:lsp
-  ^-  request-message:lsp
-  :-  id
-  ?+  method  [%unknown ~]
-      %text-document--did-change
-    (parse-text-document--did-change params)
-      %text-document--did-open
-    (parse-text-document--did-open params)
-      %text-document--did-save
-    (parse-text-document--did-save params)
-      %text-document--did-close
-    (parse-text-document--did-save params)
-  ==
-::
-++  parse-text-document--did-save
-  |=  jon=json
-  ^-  text-document--did-save:request:lsp
-  ?>  ?=([%o *] jon)
-  =/  doc-id
-    (~(got by p.jon) 'textDocument')
-  :-  %text-document--did-save
-  (parse-text-document-id doc-id)
-
-::
-++  parse-text-document--did-close
-  |=  jon=json
-  ^-  text-document--did-close:request:lsp
-  ?>  ?=([%o *] jon)
-  =/  doc-id
-    (~(got by p.jon) 'textDocument')
-  :-  %text-document--did-close
-  (parse-text-document-id doc-id)
-
-::
-++  parse-text-document-item
-  |=  jon=json
-  ^-  text-document-item:lsp
-  %.  jon
-  =,  dejs:format
-  %:  ot
-    uri+so
-    version+ni
-    text+so
-    ~
-  ==
-::
-++  parse-text-document--did-change
-  |=  jon=json
-  ^-  text-document--did-change:request:lsp ::%text-document--did-change)
-  :-  %text-document--did-change
-  =,  dejs:format
-  %.  jon
-  %:  ot
-    'textDocument'^parse-text-document-id
-    'contentChanges'^parse-text-document-changes
-    ~
-    ::  'contentChanges'
-  ==
-++  parse-text-document--did-open
-  |=  jon=json
-  ^-  text-document--did-open:request:lsp
-  =,  dejs:format
-  ?>  ?=([%o *] jon)
-  :-  %text-document--did-open
-  (parse-text-document-item (~(got by p.jon) 'textDocument'))
-::
-++  parse-text-document-id
-  =,  dejs:format
-  %:  ot
-    uri+so
-    version+ni
-    ~
-  ==
-++  parse-text-document-changes
-  =,  dejs:format
-  %-  ar
-  %:  ou
-      range+(uf ~ (pe ~ range))
-      'rangeLength'^(uf ~ (pe ~ ni))
-      text+(un so)
-      ~
-  ==
-++  range
- =,  dejs:format
-%:  ot
-    start+position
-    end+position
-    ~
-==
-::
-++  position
- =,  dejs:format
-%:  ot
-    line+ni
-    character+ni
-    ~
-==
-++  enjs
-  =,  enjs:format
-  |%
-  ++  response
-    |=  response=response-message:lsp
-    ^-  json
-    =/  params=json
-      ?-  +<.response
-          %text-document--publish-diagnostics
-        (publish-diagnostics +.response)
-      ==
-    %:  pairs
-     [%method %s (unparse-method +<.response)]
-      params+params
-      ~
-    ==
-  ::
-  ++  res
-    |=  res=*
-    ^-  json
-    ~
-
-  ++  position
-    |=  =position:lsp
-    ^-  json
-    %:  pairs
-      line+(numb row.position)
-      character+(numb row.position)
-      ~
-    ==
-  ::
-  ++  range
-    |=  =range:lsp
-    ^-  json
-    %:  pairs
-      start+(position start.range)
-      end+(position end.range)
-      ~
-    ==
-  ::
-  ++  diagnostic
-    |=  diag=diagnostic:lsp
-    ^-  json
-    %:  pairs
-      range+(range range.diag)
-      severity+(numb severity.diag)
-      message+s+message.diag
-      ~
-    ==
-  ::
-  ++  publish-diagnostics
-    |=  pub=text-document--publish-diagnostics:response:lsp
-    ^-  json
-    %:  pairs
-      uri+s+uri.pub
-      diagnostics+a+(turn diagnostics.pub diagnostic)
-      ~
-    ==
-  --
 --

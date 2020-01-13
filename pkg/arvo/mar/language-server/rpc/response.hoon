@@ -1,6 +1,6 @@
 /-  *language-server
 /+  lsp=language-server-json
-|_  res=response-message
+|_  res=all:response
 ::
 ++  grow
   |%
@@ -9,7 +9,7 @@
 ::
 ++  grab
   |%
-  ++  noun  response-message
+  ++  noun  all:response
   --
 ::
 --
