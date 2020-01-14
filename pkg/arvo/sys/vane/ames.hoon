@@ -1163,11 +1163,70 @@
   --
 ::  +scry: dereference namespace
 ::
+::    The ones producing vases are expected to be used like this:
+::
+::    &tang [(sell .^(vase %a /=peer=/~zod)) ~]
+::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
   ^-  (unit (unit cage))
+  ?.  =(lot [%$ %da now])  ~
+  ?.  =(%$ ren)  [~ ~]
+  ?.  =([%& our] why)
+    [~ ~]
+  ?+    syd  ~
+      %peer
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who  [~ ~]
+    =/  per  (~(get by peers.ames-state) u.who)
+    =/  res
+      ?-  per
+        ~             %unknown
+        [~ %alien *]  %alien
+        [~ %known *]
+        =,  u.per
+        :*  %known
+            symkeymug=(mug symmetric-key)
+            life=life
+            pubkey=public-key
+            sponsor=sponsor
+            route=route
+            qos=qos
+            ossuary=ossuary
+            snd=~(key by snd)
+            rcv=~(key by rcv)
+            nax=nax
+            heeds=heeds
+        ==
+      ==
+    ``noun+!>(!>(res))
   ::
-  [~ ~]
+      %bones
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who  [~ ~]
+    =/  per  (~(get by peers.ames-state) u.who)
+    ?.  ?=([~ %known *] per)  [~ ~]
+    =/  res
+      =,  u.per
+      [snd=~(key by snd) rcv=~(key by rcv)]
+    ``noun+!>(res)
+  ::
+      %snd-bone
+    ?.  ?=([@ @ ~] tyl)  [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who  [~ ~]
+    =/  ost  (slaw %ud i.t.tyl)
+    ?~  ost  [~ ~]
+    =/  per  (~(get by peers.ames-state) u.who)
+    ?.  ?=([~ %known *] per)  [~ ~]
+    =/  mps  (~(get by snd.u.per) u.ost)
+    ?~  mps  [~ ~]
+    =/  res
+      u.mps
+    ``noun+!>(!>(res))
+  ==
 --
 ::  helpers
 ::
@@ -2533,7 +2592,7 @@
     ^+  message-pump
     =/  top-live
       (peek:packet-queue:*make-packet-pump live.packet-pump-state.state)
-    ?.  |(?=(~ top-live) (gte current.state message-num.key.u.top-live))
+    ?.  |(?=(~ top-live) (lte current.state message-num.key.u.top-live))
       ~|  [%strange-current current=current.state key.u.top-live]
       !!
     message-pump
