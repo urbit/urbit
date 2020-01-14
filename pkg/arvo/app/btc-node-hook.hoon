@@ -32,12 +32,9 @@
       ^-  (quip card _this)
       :-  ~
       %_  this
-        endpoint  'http://127.0.0.1:8332'
-        headers
-          :~  ['Accept' 'application/json']
-              ['Content-Type' 'text/plain']
-              ['Authorization' 'Basic dXJiaXRjb2luZXI6dXJiaXRjb2luZXI']
-      ==  ==
+        endpoint  ''
+        headers   ~
+      ==
     ::
     ++  on-save   !>(state)
     ++  on-load
@@ -50,6 +47,9 @@
       |^  ?+    mark    (on-poke:def mark vase)
               %btc-node-hook-action
             (hook-action !<(btc-node-hook-action vase))
+          ::
+              %btc-node-hook-command
+            (hook-command !<(btc-node-hook-command vase))
           ==
       ::
       ++  hook-action
@@ -69,6 +69,15 @@
         =/  out  *outbound-config:iris
         :_  this
         [%pass /[(scot %da now.bowl)] %arvo %i %request req out]~
+      ::
+      ++  hook-command
+        |=  comm=btc-node-hook-command
+        ^-  (quip card _this)
+        ?+    -.comm  ~|  [%unsupported-hook-command -.comm]  !!
+            %credentials
+          :_  this(endpoint url.comm, headers heads.comm)
+          [%pass / %arvo %d %flog [%text "credentials updated..."]]~
+        ==
       --
     ::
     ++  on-watch  on-watch:def
@@ -356,8 +365,5 @@
   ::
   ?:  (lte n-wallets 1)
     endpoint
-  %-  crip  %+  weld
-    "{(trip endpoint)}/wallet/"
-  ?:  =('' default-wallet)  ~
-  "{(trip default-wallet)}"
+  :((cury cat 3) endpoint 'wallet/' default-wallet)
 --
