@@ -38,6 +38,7 @@ export class Message extends Component {
       if (imgMatch) {
         contents = (
           <img
+            className="o-60-d"
             src={letter.url}
             style={{
               width: "50%",
@@ -115,15 +116,15 @@ export class Message extends Component {
             />
           </div>
           <div
-            className="fr clamp-message"
+            className="fr clamp-message white-d"
             style={{ flexGrow: 1, marginTop: -8 }}>
             <div className="hide-child" style={paddingTop}>
-              <p className="v-mid mono f9 gray dib mr3">
+              <p className="v-mid mono f9 gray2 dib mr3">
                 {props.msg.author.slice(0, 1) === "~" ? "" : "~"}
                 {props.msg.author}
               </p>
-              <p className="v-mid mono f9 gray dib">{timestamp}</p>
-              <p className="v-mid mono f9 ml2 gray dib child dn-s">{datestamp}</p>
+              <p className="v-mid mono f9 gray2 dib">{timestamp}</p>
+              <p className="v-mid mono f9 ml2 gray2 dib child dn-s">{datestamp}</p>
             </div>
             {this.renderContent()}
           </div>
@@ -138,8 +139,8 @@ export class Message extends Component {
           style={{
             minHeight: "min-content"
           }}>
-          <p className="child pt2 pl2 pr1 mono f9 gray dib">{timestamp}</p>
-          <div className="fr f7 clamp-message" style={{ flexGrow: 1 }}>
+          <p className="child pt2 pl2 pr1 mono f9 gray2 dib">{timestamp}</p>
+          <div className="fr f7 clamp-message white-d" style={{ flexGrow: 1 }}>
             {this.renderContent()}
           </div>
         </div>

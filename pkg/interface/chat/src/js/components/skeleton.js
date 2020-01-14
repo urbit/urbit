@@ -19,7 +19,7 @@ export class Skeleton extends Component {
     : "";
 
     return (
-      <div className="h-100 w-100 absolute">
+      <div className="h-100 w-100 absolute bg-black-d">
         <HeaderBar spinner={this.props.spinner} popout={this.props.popout} />
         <div className={`cf w-100 absolute flex  ` +
           ((this.props.chatHideonMobile)
@@ -29,7 +29,7 @@ export class Skeleton extends Component {
             ? "h-100"
             : "h-100-minus-48-m h-100-minus-48-l h-100-minus-48-xl")}>
           <div className={
-              `fl h-100 br b--gray4 overflow-x-hidden
+              `fl h-100 br b--gray4 b--gray2-d overflow-x-hidden
               flex-basis-full-s flex-basis-300-m flex-basis-300-l
               flex-basis-300-xl ` +
               sidebarHide + " " +
@@ -43,7 +43,7 @@ export class Skeleton extends Component {
               <a className="pl3 pb6" href="/">
                 {"⟵ Landscape"}
               </a>
-              <div className="bb b--gray4 inter f8 pl3 pt6 pb3">All Chats</div>
+              <div className="bb b--gray4 white-d inter f8 pl3 pt6 pb3">All Chats</div>
             </div>
             {this.props.sidebar}
           </div>

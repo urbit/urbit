@@ -168,9 +168,9 @@ export class NewScreen extends Component {
   }
 
   render() {
-    let createClasses = "pointer db f9 green2 ba pa2 b--green2";
+    let createClasses = "pointer db f9 green2 bg-gray0-d ba pa2 b--green2";
     if (!this.state.idName) {
-      createClasses = 'pointer db f9 gray2 ba pa2 b--gray3';
+      createClasses = 'pointer db f9 gray2 ba bg-gray0-d pa2 b--gray3';
     }
 
     let idErrElem = (<span />);
@@ -192,7 +192,8 @@ export class NewScreen extends Component {
     }
 
     return (
-      <div className="h-100 w-100 w-50-l w-50-xl pa3 pt2 overflow-x-hidden flex flex-column">
+      <div className={`h-100 w-100 w-50-l w-50-xl pa3 pt2 overflow-x-hidden
+      bg-black-d white-d flex flex-column`}>
         <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
           <Link to="/~chat/">{"⟵ All Chats"}</Link>
         </div>
@@ -203,7 +204,7 @@ export class NewScreen extends Component {
           Lowercase alphanumeric characters, dashes, and slashes only
           </p>
           <textarea
-            className="f7 ba b--gray3 pa3 db w-100"
+            className="f7 ba b--gray3 b--gray2-d bg-black-d white-d pa3 db w-100"
             placeholder="secret-chat"
             rows={1}
             style={{
@@ -216,7 +217,7 @@ export class NewScreen extends Component {
           <div className="dropdown relative">
             <select
               style={{WebkitAppearance: "none"}}
-              className="pa3 f8 bg-white br0 w-100 inter"
+              className="pa3 f8 bg-white bg-black-d white-d br0 w-100 inter"
               value={this.state.securityValue}
               onChange={this.securityChange}>
               <option value="village">Village</option>
@@ -232,7 +233,7 @@ export class NewScreen extends Component {
           </p>
           <textarea
             ref={e => { this.textarea = e; }}
-            className="f7 mono ba b--gray3 pa3 mb4 db w-100"
+            className="f7 mono ba b--gray3 b--gray2-d bg-black-d white-d pa3 mb4 db w-100"
             placeholder="~zod, ~bus"
             spellCheck="false"
             style={{

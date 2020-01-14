@@ -16,7 +16,7 @@ export class SidebarSwitcher extends Component {
             api.sidebarToggle();
           }}>
           <img
-            className={`pr3 dn ` + popoutSwitcher}
+            className={`pr3 dn invert-d ` + popoutSwitcher}
             src={
               this.props.sidebarShown
                 ? "/~chat/img/ChatSwitcherLink.png"
