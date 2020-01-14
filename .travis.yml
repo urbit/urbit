@@ -5,7 +5,6 @@ install:
   - nix-env -iA cachix -f https://cachix.org/api/v1/install
 
 before_install:
-  - ./sh/test-whitespace
   - git lfs pull
 
 script:
