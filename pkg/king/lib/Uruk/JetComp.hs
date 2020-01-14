@@ -4,9 +4,9 @@ import ClassyPrelude hiding (try)
 
 import Numeric.Natural  (Natural)
 import Numeric.Positive (Positive)
-import Uruk.Lazy     (Ur, UrPoly((:@)))
+import Uruk.JetDemo     (Ur, UrPoly((:@)))
 
-import qualified Uruk.Lazy as Ur
+import qualified Uruk.JetDemo as Ur
 
 
 -- Types -----------------------------------------------------------------------
@@ -21,6 +21,16 @@ data Deb = Zero | Succ Deb | DPrim Ur | Abs Deb | App Deb Deb
 infixl 5 :#
 
 data Com = Com :# Com | P Ur | I | K | S | Sn Pos | C | Cn Pos | B | Bn Pos
+
+instance Show Exp where
+  show = \case
+    Lam exp → "\\" <> show exp
+    Var n   → show n
+    Prim p  → show p
+    Go x y  → "(" <> intercalate " " (show <$> apps x [y]) <> ")"
+      where
+        apps (Go f x) xs = apps f (x:xs)
+        apps exp      xs = exp : xs
 
 instance Show Com where
     show = \case
@@ -48,8 +58,11 @@ pak = Prim Ur.Pak
 
 nat n = Prim (Ur.Nat n)
 
-try ∷ Exp → Ur
-try = ur . snd . ski . expDeb
+moon ∷ Exp → Ur
+moon = ur . snd . ski . expDeb
+
+moonStrict ∷ Exp → Ur
+moonStrict = moon . strict
 
 expDeb ∷ Exp → Deb
 expDeb = go
@@ -107,3 +120,46 @@ ur = \case
     I           -> Ur.I
     K           -> Ur.K
     P p         -> p
+
+
+-- Strict ----------------------------------------------------------------------
+
+{-
+    Uses `seq` to prevent overly-eager evaluation.
+
+    Without this, `\x -> exensive 9` would compile to `K (expensive
+    9)` which normalizes to `K result`. We want to delay the evaluation
+    until the argument is supplied, so we instead produce:
+
+        \x → (seq x expensive) 9
+
+    This transformation is especially important in recursive code,
+    which will not terminate unless the recursion is delayed.
+
+    TODO Optimize using function arity.
+        `(kk)` doesn't need to become `Q0kk` since the head (`k`)
+        is undersaturated.
+-}
+strict ∷ Exp → Exp
+strict = \case
+    Lam b  → Lam (strict b)
+    Var n  → Var n
+    Prim p → Prim p
+    Go f x → case (strict f, strict x) of
+        (fv, xv) | dep fv || dep xv → Go fv xv
+        (fv, xv)                    → Go (addDep fv) xv
+
+addDep ∷ Exp → Exp
+addDep = \case
+    Go f x → Go (addDep f) x
+    exp    → Prim Ur.Seq `Go` Var 0 `Go` exp
+
+dep ∷ Exp → Bool
+dep = go 0
+  where
+    go v = \case
+        Lam b        → go (succ v) b
+        Var n | v==n → True
+        Var n        → False
+        Prim p       → False
+        Go f x       → go v f || go v x
