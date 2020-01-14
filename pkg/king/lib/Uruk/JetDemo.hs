@@ -303,7 +303,7 @@ dash = mkDash
     , predikEnt j_nat
     , predikEnt j_bol
     , predikEnt j_cn
-    , predikEnt j_sn
+    , predikEnt (manyJet mjSn)
     , predikEnt j_bn
     , predikEnt j_wait
     ]
@@ -438,7 +438,7 @@ unMatch = go
         JBol b     → boolJet b
         JPak       → sjExp sjPak
         Wait n     → waitJet n
-        Sn n       → snJet n
+        Sn n       → mjBody mjSn (Sn n)
         Bn n       → bnJet n
         Cn n       → cnJet n
 
@@ -511,28 +511,31 @@ runSingJet SingJet{..} xs =
     fallback = Fast 0 (Slow sjArgs (valUr sjName) (valUr sjBody)) xs
 
 
--- Jets with Varied Bodies and Arities -----------------------------------------
+-- Jets with Variable Bodies and Arities ---------------------------------------
 
--- data ManyJet = ManyJet
-    -- { mjName ∷ Val
-    -- , mjArgs ∷ Jet → Positive
-    -- , mjBody ∷ Jet → Ur
-    -- , mjRead ∷ Val → Maybe Jet
-    -- , mjExec ∷ Jet → [Ur] → Maybe Ur
-    -- }
+data ManyJet = ManyJet
+    { mjDbug ∷ String
+    , mjName ∷ Val
+    , mjArgs ∷ Jet → Positive
+    , mjBody ∷ Jet → Ur
+    , mjRead ∷ Positive → Val → Maybe Jet
+    , mjExec ∷ Jet → [Ur] → Maybe Ur
+    }
 
--- manyJet ∷ ManyJet → Match
--- manyJet ManyJet{..} = MkMatch mjFast mjArgs mjName mjBody
+manyJet ∷ ManyJet → Check
+manyJet ManyJet{..} = Named mjDbug chk
+  where
+    chk n t b | t /= mjName = Nothing
+    chk n t b               = mjRead n b
 
--- mjExp ∷ ManyJet → Ur
--- mjExp (ManyJet _ n t b _) = J n :@ valUr t :@ valUr b
+mjExp ∷ ManyJet → Jet → Ur
+mjExp ManyJet{..} jet = J (mjArgs jet) :@ valUr mjName :@ mjBody jet
 
--- runManyJet ∷ ManyJet → [Ur] → Ur
--- runManyJet ManyJet{..} xs =
-    -- fromMaybe fallback (mjExec xs)
-  -- where
-    -- fallback = Fast 0 (Slow mjArgs (valUr mjName) (valUr mjBody)) xs
-
+runManyJet ∷ ManyJet → Jet → [Ur] → Ur
+runManyJet ManyJet{..} jet xs =
+    fromMaybe fallback (mjExec jet xs)
+  where
+    fallback = Fast 0 (Slow (mjArgs jet) (valUr mjName) (mjBody jet)) xs
 
 
 -- Identity  -------------------------------------------------------------------
@@ -555,20 +558,27 @@ sjI = SingJet{..}
 
 -- Bulk S Combinator -----------------------------------------------------------
 
-sn ∷ Positive → Ur
-sn n = iterate ((B:@(B:@S):@B):@) S !! (fromIntegral n - 1)
-
-snJet ∷ Positive → Ur
-snJet n = J (n+2) :@ K :@ sn n
-
-j_sn ∷ Check
-j_sn = Named "sn" chk
+mjSn ∷ ManyJet
+mjSn = ManyJet{..}
   where
-    chk n (MkVal K) (MkVal b)                          = Sn <$> go n b
-    chk n _         k                                  = Nothing
-    go 3 S                                             = Just 1
-    go n (Fast 1 Bee [s, Fast 2 Bee [go(n-1)→Just r]]) = Just (r+1)
-    go n _                                             = Nothing
+    mjDbug = "Sn"
+    mjName = MkVal K
+
+    mjArgs (Sn n) = n+2
+    mjArgs _      = error "mjSn"
+
+    mjBody (Sn n) = iterate ((B:@(B:@S):@B):@) S !! (fromIntegral n - 1)
+    mjBody _      = error "mjSn"
+
+    mjRead n (MkVal b) = Sn <$> go n b
+      where
+        go 3 S                                             = Just 1
+        go n (Fast 1 Bee [s, Fast 2 Bee [go(n-1)→Just r]]) = Just (r+1)
+        go n _                                             = Nothing
+
+    mjExec ∷ Jet → [Ur] → Maybe Ur
+    mjExec (Sn _) (f:g:xs) = Just (foldl' (:@) f xs :@ foldl' (:@) g xs)
+    mjExec _      _        = Nothing
 
 
 -- Flip ------------------------------------------------------------------------
