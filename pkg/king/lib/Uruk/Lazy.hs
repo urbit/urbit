@@ -104,7 +104,6 @@ data Jet
     | JBol !Bool
     | JIff
     | JPak
-    | JFol
     | JZer
     | JEql
     | JAdd
@@ -173,7 +172,6 @@ instance Show Jet where
         JBol True  → "Y"
         JBol False → "N"
         JIff       → "?"
-        JFol       → ","
         JAdd       → "+"
         JEql       → "="
         JZer       → "{=0}"
@@ -284,7 +282,6 @@ dash = mkDash
     , simpleEnt (singJet sjC)
     , simpleEnt (singJet sjSeq)
     , simpleEnt (singJet sjFix)
-    , simpleEnt (singJet sjFol)
     , simpleEnt (singJet sjInc)
     , simpleEnt (singJet sjAdd)
     , simpleEnt (singJet sjMul)
@@ -405,7 +402,6 @@ runJet = curry \case
     (JIff, xs) → runSingJet sjIff xs
     (JSeq, xs) → runSingJet sjSeq xs
     (JFix, xs) → runSingJet sjFix xs
-    (JFol, xs) → runSingJet sjFol xs
     (JDec, xs) → runSingJet sjDec xs
     (JFec, xs) → runSingJet sjFec xs
     (JSub, xs) → runSingJet sjSub xs
@@ -423,11 +419,14 @@ runJet = curry \case
     ( Bn _,        f:g:xs  ) → f :@ go g xs
     ( Cn _,        f:g:xs  ) → go f xs :@ g
     ( Sn _,        f:g:xs  ) → go f xs :@ go g xs
-    ( JNat n,      [x,y]   ) → church n :@ x :@ y
+    ( JNat n,      [x,y]   ) → applyNat n x y
     ( JBol c,      [x,y]   ) → if c then x else y
 
     ( j,           xs      ) → error ("bad jet arity: " <> show (j, length xs))
   where
+
+    applyNat 0 i z = z
+    applyNat n i z = i :@ (applyNat (pred n) i z)
 
     go ∷ Ur → [Ur] → Ur
     go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
@@ -450,7 +449,6 @@ jetArity = \case
     JIff       → sjArgs sjIff
     JFix       → sjArgs sjFix
     JPak       → sjArgs sjPak
-    JFol       → sjArgs sjFol
     JAdd       → sjArgs sjAdd
     JZer       → sjArgs sjZer
     JEql       → sjArgs sjEql
@@ -477,12 +475,12 @@ jetExp (MkMatch _ n t b) = J (fromIntegral n) :@ valUr t :@ valUr b
 --
 --  Produces a jetted, church-encoded natural number.
 --
-church ∷ Natural → Ur
-church 0 = S :@ K
-church n = S :@ (S :@ (K :@ S) :@ K) :@ church (pred n)
-
 churchJet ∷ Natural → Ur
 churchJet n = J 2 :@ K :@ church n
+  where
+    church ∷ Natural → Ur
+    church 0 = S :@ K
+    church n = S :@ (S :@ (K :@ S) :@ K) :@ church (pred n)
 
 
 fast ∷ Jet → Ur
@@ -502,7 +500,6 @@ unMatch = go
         JInc       → sjExp sjInc
         JZer       → sjExp sjZer
         JEql       → sjExp sjEql
-        JFol       → sjExp sjFol
         JDec       → sjExp sjDec
         JFec       → sjExp sjFec
         JMul       → sjExp sjMul
@@ -888,28 +885,6 @@ sjFix = SingJet{..}
             , (S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ I))))
                 :@ ((S :@ Fast 3 (Wait 2) []) :@ I)
             ]
-
-
--- Nat to Church Natural -------------------------------------------------------
-
-pattern Fol = Fast 1 JFol []
-
-{-
-    fol = \n -> n inc zer
--}
-sjFol ∷ SingJet
-sjFol = SingJet{..}
-  where
-    sjFast = JFol
-    sjArgs = 1
-    sjName = MkVal (Nat 2)
-    sjExec [weak→Just x] = Just $ Fast 0 sjFast [x]
-    sjExec [Nat x]       = Just (church x)
-    sjExec [_]           = Nothing
-    sjExec _             = error "bad-fol"
-    sjBody = MkVal $
-        S :@ (S :@ I :@ (K :@ (S :@ (S :@ (K :@ S) :@ K))))
-          :@ (K :@ (S :@ K))
 
 
 -- Increment -------------------------------------------------------------------
