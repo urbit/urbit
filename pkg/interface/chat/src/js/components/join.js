@@ -95,7 +95,7 @@ export class JoinScreen extends Component {
     }
 
     return (
-      <div className={`h-100 w-100 pa3 pt2 overflow-x-hidden flex flex-column 
+      <div className={`h-100 w-100 pa3 pt2 overflow-x-hidden flex flex-column
       bg-black-d white-d`}>
         <div
           className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
