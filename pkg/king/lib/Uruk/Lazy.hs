@@ -97,6 +97,7 @@ data Jet
     | Sn !Positive
     | Bn !Positive
     | Cn !Positive
+    | JSeq
     | Wait !Natural
     | JFix
     | JNat !Natural
@@ -168,6 +169,7 @@ instance Show Jet where
         Bn n       → "b" <> show n
         Cn n       → "c" <> show n
         Sn n       → "s" <> show n
+        JSeq       → "Q"
         JBol True  → "Y"
         JBol False → "N"
         JIff       → "?"
@@ -280,6 +282,7 @@ dash = mkDash
     [ simpleEnt (singJet sjI)
     , simpleEnt (singJet sjB)
     , simpleEnt (singJet sjC)
+    , simpleEnt (singJet sjSeq)
     , simpleEnt (singJet sjFix)
     , simpleEnt (singJet sjFol)
     , simpleEnt (singJet sjInc)
@@ -400,6 +403,7 @@ runJet = curry \case
     (Bee,  xs) → runSingJet sjB   xs
     (Sea,  xs) → runSingJet sjC   xs
     (JIff, xs) → runSingJet sjIff xs
+    (JSeq, xs) → runSingJet sjSeq xs
     (JFix, xs) → runSingJet sjFix xs
     (JFol, xs) → runSingJet sjFol xs
     (JDec, xs) → runSingJet sjDec xs
@@ -442,6 +446,7 @@ jetArity = \case
     Eye        → sjArgs sjI
     Bee        → sjArgs sjB
     Sea        → sjArgs sjC
+    JSeq       → sjArgs sjSeq
     JIff       → sjArgs sjIff
     JFix       → sjArgs sjFix
     JPak       → sjArgs sjPak
@@ -491,6 +496,7 @@ unMatch = go
         Eye        → sjExp sjI
         Bee        → sjExp sjB
         Sea        → sjExp sjC
+        JSeq       → sjExp sjSeq
         JFix       → sjExp sjFix
         JIff       → sjExp sjIff
         JInc       → sjExp sjInc
@@ -709,6 +715,22 @@ j_bn = Named "bn" chk
     go 3 B                                  = Just 1
     go n (Fast 1 Bee [B, go(n-1) → Just r]) = Just (r+1)
     go n e                                  = Nothing
+
+
+-- Seq -------------------------------------------------------------------------
+
+pattern Seq = Fast 2 JSeq []
+
+sjSeq ∷ SingJet
+sjSeq = SingJet{..}
+  where
+    sjFast = JSeq
+    sjArgs = 2
+    sjName = MkVal (Nat 17)
+    sjExec = \case [x,y] → Nothing -- Just y
+                   _     → error "bad-seq"
+    sjBody = MkVal (S :@ K)
+
 
 
 -- Crash -----------------------------------------------------------------------
@@ -1225,8 +1247,6 @@ sjMul = SingJet{..}
           (iff (zer m) (inc n)
             (iff (zer n) (l (fec m) 1)
               (l (fec m) (l m (fec n)))))))
-
-    ack = (fix (\l m n -> (iff (zer m) (inc n) (iff (zer n) (l (fec m) 1) (l (fec m) (l m (fec n)))))))
 -}
 
 ack ∷ Ur

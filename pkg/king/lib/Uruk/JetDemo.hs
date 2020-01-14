@@ -3,21 +3,41 @@
     DONE Stop storing `Fast` arguments in reverse order.
     DONE Store arity (not arity - 1) in Fast.
 
+    DONE Simplify Nat jets
+
+      - Write a `pak` function that converts a church encoded natural
+        into a jetted church encoded natural. In jets that operate on
+        nats, don't bother keeping everything in the right shape. Simply
+        do the operation and then call the nat jet. The nat jet should
+        execute the natural number against l_zero and l_succ, and jet
+        the result.
+
+    DONE Jet equality for naturals.
+
+    DONE Implement Atom Multiplication
+
+    DONE Implement Bool Jets: True, False, If
+
+    DONE Implement Fast Decrement
+
+        ```
+        fastDec 0 = 0
+        fastDec n = n-1
+        ```
+
+    DONE Compile Ackermann to Uruk and run it.
+
+
+    -- Flesh out Jets ----------------------------------------------------------
+
     TODO Cleanup jet refactor.
 
       - Rearrange things so that jet matching, arity, and reduction are
         defined together. The current approach is easy to fuck up and hard
         to test.
 
-    TODO Jet equality for naturals.
-    TODO Simplify Nat jets
 
-      - Write a `nat` function that converts a church encoded natural
-        into a jetted church encoded natural. In jets that operate on
-        nats, don't bother keeping everything in the right shape. Simply
-        do the operation and then call the nat jet. The nat jet should
-        execute the natural number against l_zero and l_succ, and jet
-        the result.
+    -- Testing -----------------------------------------------------------------
 
     TODO Normalization without jets (all jets implemented with their code)
 
@@ -33,14 +53,21 @@
         - unmatch jets, normalize with jets
         - unmatch jets, normalize without jets, match jets
 
-    TODO Use cords for jet names.
-    TODO Make the `Lazy` jet take variable number of arguments.
 
-    TODO Update printer to print cords.
+    -- Front End ---------------------------------------------------------------
+
+    TODO Use cords for jet names.
+
+        - Implement Text -> Atom
+        - Update nat printer to print strings where possible.
 
     TODO Hook up front-end to JetComp
     TODO Implement REPL.
     TODO Implement script-runner.
+
+
+    -- High-Level Jet Definition -----------------------------------------------
+
     TODO Define jets in front-end language using template haskell.
 
       - Right now, jets are just defined as a big pile of S and K.
@@ -62,35 +89,39 @@ import Numeric.Positive (Positive)
 
 infixl 5 :@;
 
-pattern Nat n = Fast 2 (JNat n) []
-
 data Jet
-    = Slow Positive Ur Ur -- unmatched jet: arity, tag, body
+    = Slow !Positive !Ur !Ur -- unmatched jet: arity, tag, body
     | Eye
     | Bee
     | Sea
-    | Sn Positive
-    | Bn Positive
-    | Cn Positive
-    | Wait Positive
+    | Sn !Positive
+    | Bn !Positive
+    | Cn !Positive
+    | JSeq
+    | Wait !Natural
     | JFix
-    | JNat Natural
+    | JNat !Natural
+    | JBol !Bool
+    | JIff
+    | JPak
     | JFol
+    | JZer
+    | JEql
     | JAdd
     | JInc
     | JDec
-    | Mul
+    | JFec
+    | JMul
     | JSub
     | JDed
-    | JLaz
     | JUni
     | JLef
     | JRit
-    | Cas
+    | JCas
     | JCon
     | JCar
     | JCdr
-  deriving (Eq, Ord)
+  deriving (Eq, Ord) -- , Show)
 
 data UrPoly j
     = UrPoly j :@ UrPoly j
@@ -98,9 +129,8 @@ data UrPoly j
     | K
     | S
     | D
-    | Lazy (UrPoly j)
     | Fast !Natural j [UrPoly j]
-  deriving (Eq, Ord)
+  deriving (Eq, Ord) -- , Show)
 
 type Ur = UrPoly Jet
 
@@ -119,7 +149,6 @@ instance Show a => Show (UrPoly a) where
         K            → "k"
         S            → "s"
         D            → "d"
-        Lazy x       → "{" <> show x <> "}"
         Fast _ j []  → show j
         Fast _ j us  → fast j us
       where
@@ -132,28 +161,35 @@ instance Show Jet where
     show = \case
         Slow n t b → show (J n :@ t :@ b)
         JNat n     → "#" <> show n
-        JFix        → "!"
+        JPak       → "p"
+        JFix       → "!"
         Eye        → "i"
         Bee        → "b"
         Sea        → "c"
         Bn n       → "b" <> show n
         Cn n       → "c" <> show n
         Sn n       → "s" <> show n
-        JFol        → ","
-        JAdd        → "+"
-        JInc        → "^"
-        JDec        → "_"
-        Mul        → "*"
-        JSub        → "-"
-        JLef        → "L"
-        JRit        → "R"
-        Cas        → "%"
-        JCon        → "&"
-        JCar        → "<"
-        JCdr        → ">"
-        JDed        → "u"
-        JLaz        → "|"
-        JUni        → "~"
+        JSeq       → "Q"
+        JBol True  → "Y"
+        JBol False → "N"
+        JIff       → "?"
+        JFol       → ","
+        JAdd       → "+"
+        JEql       → "="
+        JZer       → "{=0}"
+        JInc       → "^"
+        JDec       → "_"
+        JFec       → "__"
+        JMul       → "*"
+        JSub       → "-"
+        JLef       → "L"
+        JRit       → "R"
+        JCas       → "%"
+        JCon       → "&"
+        JCar       → "<"
+        JCdr       → ">"
+        JDed       → "u"
+        JUni       → "~"
         Wait n     → "w" <> show n
 
 
@@ -241,69 +277,19 @@ pattern J4 = J 4 :@ K
 
 pattern W2 = Fast 3 (Wait 2) []
 
--- Z = \f -> (\x -> f (\v -> wait2 x x v)) (\x -> f (\v -> wait2 x x v))
-pattern Z = S :@ (S:@(S:@(K:@S):@K):@(K:@(S:@W2:@I)))
-              :@ (S:@(S:@(K:@S):@K):@(K:@(S:@W2:@I)))
-
-{-
-    TODO:
-
-    Jet registration becomes an infinite loop because jet bodies are
-    normalized, but jet matching in the bodies depends on the jet
-    dashboard, which depends on the normalized jet body.
-
-    Giving each jet a unique name would solve this, but maybe it's still
-    posible to run into this problem by accident? Whatever.
-
-    For now, I'm hacking around this by using a unjetted version of
-    `fol` in jet bodies.
--}
-
-ch_succ = S :@ (S :@ (K :@ S) :@ K)
-ch_zero = S :@ K
-
---  zer = \i z -> z
---  suc = \n -> \i z -> i (n i z)
---  one = inc zer
---  fol = \n -> n inc zer
---  mul =
---  cas = \b l r -> b l r
-
-cas = fast Cas
-wait n = fast (Wait n)
-
-l_zer = S :@ K
-l_one = S :@ (S:@(K:@S):@K) :@ (S:@K)
-l_mul = D :@ D :@ D -- TODO
-l_cas = I
-
-e_zer = jetExp j_zer
-e_one = jetExp j_one
-e_mul = jetExp j_mul
-e_cas = jetExp j_cas
-
-j_zer = match (JNat 0) 2 emp l_zer
-j_one = match (JNat 1) 2 emp l_one
-
-j_wait ∷ Check
-j_wait = Named "wait" chk
-  where chk ∷ Positive → JetTag → Val → Maybe Jet
-        chk n (MkVal I) (MkVal I) = Just $ Wait $ fromIntegral n
-        chk _ _         _         = Nothing
-
-j_mul = match Mul 2 emp l_mul
-j_cas = match Cas 3 emp l_cas
-
 dash ∷ Dash
 dash = mkDash
     [ simpleEnt (singJet sjI)
     , simpleEnt (singJet sjB)
     , simpleEnt (singJet sjC)
+    , simpleEnt (singJet sjSeq)
     , simpleEnt (singJet sjFix)
     , simpleEnt (singJet sjFol)
     , simpleEnt (singJet sjInc)
     , simpleEnt (singJet sjAdd)
+    , simpleEnt (singJet sjMul)
     , simpleEnt (singJet sjDec)
+    , simpleEnt (singJet sjFec)
     , simpleEnt (singJet sjSub)
     , simpleEnt (singJet sjUni)
     , simpleEnt (singJet sjLef)
@@ -311,7 +297,12 @@ dash = mkDash
     , simpleEnt (singJet sjCon)
     , simpleEnt (singJet sjCar)
     , simpleEnt (singJet sjCdr)
+    , simpleEnt (singJet sjZer)
+    , simpleEnt (singJet sjEql)
+    , simpleEnt (singJet sjCas)
+    , simpleEnt (singJet sjPak)
     , predikEnt j_nat
+    , predikEnt j_bol
     , predikEnt j_cn
     , predikEnt j_sn
     , predikEnt j_bn
@@ -348,7 +339,6 @@ reduce = \case
     K :@ x :@ y             → Just $ x
     (reduce → Just xv) :@ y → Just $ xv :@ y
     x :@ (reduce → Just yv) → Just $ x :@ yv
-    Lazy x :@ y             → Just $ x :@ y
     S :@ x :@ y :@ z        → Just $ x :@ z :@ (y :@ z)
     D :@ x                  → Just $ jam x
     J n :@ J 1              → Just $ J (succ n)
@@ -358,22 +348,32 @@ reduce = \case
     _                       → Nothing
   where
     match ∷ Positive → Ur → Ur → Jet
+    -- ch n t b = Slow n t b
     -- ch n t b = fromMaybe (Slow n t b) $ dashLookup n t b
     match n t b = fromMaybe (error $ show (n,t,b)) $ dashLookup n t b
 
+
 runJet ∷ Jet → [Ur] → Ur
 runJet = curry \case
+    (JPak, xs) → runSingJet sjPak xs
     (JAdd, xs) → runSingJet sjAdd xs
+    (JMul, xs) → runSingJet sjMul xs
     (JInc, xs) → runSingJet sjInc xs
+    (JEql, xs) → runSingJet sjEql xs
+    (JZer, xs) → runSingJet sjZer xs
+    (Eye,  xs) → runSingJet sjI   xs
     (Bee,  xs) → runSingJet sjB   xs
     (Sea,  xs) → runSingJet sjC   xs
+    (JIff, xs) → runSingJet sjIff xs
+    (JSeq, xs) → runSingJet sjSeq xs
     (JFix, xs) → runSingJet sjFix xs
     (JFol, xs) → runSingJet sjFol xs
     (JDec, xs) → runSingJet sjDec xs
+    (JFec, xs) → runSingJet sjFec xs
     (JSub, xs) → runSingJet sjSub xs
     (JDed, xs) → runSingJet sjDed xs
-    (JLaz, xs) → runSingJet sjLaz xs
     (JUni, xs) → runSingJet sjUni xs
+    (JCas, xs) → runSingJet sjCas xs
     (JLef, xs) → runSingJet sjLef xs
     (JRit, xs) → runSingJet sjRit xs
     (JCon, xs) → runSingJet sjCon xs
@@ -382,16 +382,11 @@ runJet = curry \case
 
     ( Slow n t b,  us      ) → go b us
     ( Wait _,      u:us    ) → go u us
-    ( Eye,         [x]     ) → x
     ( Bn _,        f:g:xs  ) → f :@ go g xs
     ( Cn _,        f:g:xs  ) → go f xs :@ g
     ( Sn _,        f:g:xs  ) → go f xs :@ go g xs
     ( JNat n,      [x,y]   ) → church n :@ x :@ y
-
-    ( Cas,         [s,l,r] ) → s & \case
-        Fast _ JLef [x] → l :@ x
-        Fast _ JRit [x] → r :@ x
-        _              → l_cas :@ l :@ r
+    ( JBol c,      [x,y]   ) → if c then x else y
 
     ( j,           xs      ) → error ("bad jet arity: " <> show (j, length xs))
   where
@@ -402,27 +397,35 @@ runJet = curry \case
 jetArity ∷ Jet → Positive
 jetArity = \case
     Slow n _ _ → n
-    Eye        → sjArgs sjI
-    Bee        → sjArgs sjB
-    Sea        → sjArgs sjC
+
     Sn n       → n+2
     Bn n       → n+2
     Cn n       → n+2
-    Wait n     → n+1
-    JFix       → sjArgs sjFix
+    Wait n     → waitArity n
     JNat _     → 2
+    JBol _     → 2
+
+    Eye        → sjArgs sjI
+    Bee        → sjArgs sjB
+    Sea        → sjArgs sjC
+    JSeq       → sjArgs sjSeq
+    JIff       → sjArgs sjIff
+    JFix       → sjArgs sjFix
+    JPak       → sjArgs sjPak
     JFol       → sjArgs sjFol
     JAdd       → sjArgs sjAdd
+    JZer       → sjArgs sjZer
+    JEql       → sjArgs sjEql
     JInc       → sjArgs sjInc
     JDec       → sjArgs sjDec
-    Mul        → 2
+    JFec       → sjArgs sjFec
+    JMul       → sjArgs sjMul
     JSub       → sjArgs sjSub
     JDed       → sjArgs sjDed
-    JLaz       → sjArgs sjLaz
     JUni       → sjArgs sjUni
     JLef       → sjArgs sjLef
     JRit       → sjArgs sjRit
-    Cas        → 3
+    JCas       → sjArgs sjCas
     JCon       → sjArgs sjCon
     JCar       → sjArgs sjCar
     JCdr       → sjArgs sjCdr
@@ -438,58 +441,11 @@ jetExp (MkMatch _ n t b) = J (fromIntegral n) :@ valUr t :@ valUr b
 --
 church ∷ Natural → Ur
 church 0 = S :@ K
-church n = S :@ (S:@(K:@S):@K) :@ church (pred n)
+church n = S :@ (S :@ (K :@ S) :@ K) :@ church (pred n)
 
 churchJet ∷ Natural → Ur
 churchJet n = J 2 :@ K :@ church n
 
-waitJet ∷ Positive → Ur
-waitJet n = J (n+1) :@ I :@ I
-
-int ∷ Integral a => a -> Int
-int = fromIntegral
-
-
--- Bulk Variants of B, C, and S ------------------------------------------------
-
-bn, cn, sn ∷ Positive → Ur
-
-bn n = iterate ((B:@        B):@) B !! (int n - 1)
-cn n = iterate ((B:@(B:@C):@B):@) C !! (int n - 1)
-sn n = iterate ((B:@(B:@S):@B):@) S !! (int n - 1)
-
-bnJet, cnJet, snJet ∷ Positive → Ur
-
-bnJet n = J (n+2) :@ K :@ bn n
-cnJet n = J (n+2) :@ K :@ cn n
-snJet n = J (n+2) :@ K :@ sn n
-
-j_bn ∷ Check
-j_bn = Named "bn" chk
-  where
-    chk n (MkVal K) (MkVal b)               = Bn <$> go n b
-    chk n _         k                       = Nothing
-    go 3 B                                  = Just 1
-    go n (Fast 1 Bee [B, go(n-1) → Just r]) = Just (r+1)
-    go n e                                  = Nothing
-
-j_cn ∷ Check
-j_cn = Named "cn" chk
-  where
-    chk n (MkVal K) (MkVal b)                          = Cn <$> go n b
-    chk n _         k                                  = Nothing
-    go 3 C                                             = Just 1
-    go n (Fast 1 Bee [C, Fast 2 Bee [go(n-1)→Just r]]) = Just (r+1)
-    go n _                                             = Nothing
-
-j_sn ∷ Check
-j_sn = Named "sn" chk
-  where
-    chk n (MkVal K) (MkVal b)                          = Sn <$> go n b
-    chk n _         k                                  = Nothing
-    go 3 S                                             = Just 1
-    go n (Fast 1 Bee [s, Fast 2 Bee [go(n-1)→Just r]]) = Just (r+1)
-    go n _                                             = Nothing
 
 fast ∷ Jet → Ur
 fast j = Fast (fromIntegral $ jetArity j) j []
@@ -502,27 +458,35 @@ unMatch = go
         Eye        → sjExp sjI
         Bee        → sjExp sjB
         Sea        → sjExp sjC
+        JSeq       → sjExp sjSeq
+        JFix       → sjExp sjFix
+        JIff       → sjExp sjIff
+        JInc       → sjExp sjInc
+        JZer       → sjExp sjZer
+        JEql       → sjExp sjEql
+        JFol       → sjExp sjFol
+        JDec       → sjExp sjDec
+        JFec       → sjExp sjFec
+        JMul       → sjExp sjMul
+        JSub       → sjExp sjSub
+        JAdd       → sjExp sjAdd
+        JDed       → sjExp sjDed
+        JUni       → sjExp sjUni
+        JLef       → sjExp sjLef
+        JRit       → sjExp sjRit
+        JCas       → sjExp sjCas
+        JCon       → sjExp sjCon
+        JCar       → sjExp sjCar
+        JCdr       → sjExp sjCdr
+
+        JNat n     → churchJet n
+        JBol b     → boolJet b
+        JPak       → sjExp sjPak
+        Wait n     → waitJet n
         Sn n       → snJet n
         Bn n       → bnJet n
         Cn n       → cnJet n
-        JFix       → sjExp sjFix
-        JInc       → sjExp sjInc
-        JFol       → sjExp sjFol
-        JDec        → sjExp sjDec
-        Mul        → jetExp j_mul
-        JSub        → sjExp sjSub
-        JAdd       → sjExp sjAdd
-        JDed       → sjExp sjDed
-        JLaz       → sjExp sjLaz
-        JUni       → sjExp sjUni
-        JLef        → sjExp sjLef
-        JRit        → sjExp sjRit
-        Cas        → jetExp j_cas
-        JCon        → sjExp sjCon
-        JCar        → sjExp sjCar
-        JCdr        → sjExp sjCdr
-        JNat n     → churchJet n
-        Wait n     → waitJet n
+
         Slow n t b → J n :@ t :@ b
 
 withoutJets ∷ Ur → Ur
@@ -530,7 +494,6 @@ withoutJets = allowJets . unJet
 
 allowJets ∷ UrPoly Void → UrPoly Jet
 allowJets (Fast _ j _) = absurd j
-allowJets (Lazy x)     = allowJets x
 allowJets (x :@ y)     = allowJets x :@ allowJets y
 allowJets (J n)        = J n
 allowJets K            = K
@@ -539,7 +502,6 @@ allowJets D            = D
 
 unJet ∷ UrPoly Jet → UrPoly Void
 unJet (Fast _ j xs) = unJet (foldl' (:@) (unMatch j) xs)
-unJet (Lazy x)      = Lazy (unJet x)
 unJet (x :@ y)      = unJet x :@ unJet y
 unJet (J n)         = J n
 unJet K             = K
@@ -559,7 +521,6 @@ jam = Nat . snd . go
         S           → (3, 4)
         D           → (3, 6)
         J n         → go (jetExpand n)
-        Lazy x      → go x
         Fast _ j xs → go (foldl' (:@) (unMatch j) xs)
         x :@ y      → (rBits, rNum)
           where (xBits, xNum) = go x
@@ -594,13 +555,13 @@ runSingJet SingJet{..} xs =
 
 -- Jets with Varied Bodies and Arities -----------------------------------------
 
-data ManyJet = ManyJet
-  { mjName ∷ Val
-  , mjArgs ∷ Jet → Positive
-  , mjBody ∷ Jet → Ur
-  , mjRead ∷ Val → Maybe Jet
-  , mjExec ∷ Jet → [Ur] → Maybe Ur
-  }
+-- data ManyJet = ManyJet
+    -- { mjName ∷ Val
+    -- , mjArgs ∷ Jet → Positive
+    -- , mjBody ∷ Jet → Ur
+    -- , mjRead ∷ Val → Maybe Jet
+    -- , mjExec ∷ Jet → [Ur] → Maybe Ur
+    -- }
 
 -- manyJet ∷ ManyJet → Match
 -- manyJet ManyJet{..} = MkMatch mjFast mjArgs mjName mjBody
@@ -634,6 +595,24 @@ sjI = SingJet{..}
     sjBody = MkVal (S :@ K :@ K)
 
 
+-- Bulk S Combinator -----------------------------------------------------------
+
+sn ∷ Positive → Ur
+sn n = iterate ((B:@(B:@S):@B):@) S !! (fromIntegral n - 1)
+
+snJet ∷ Positive → Ur
+snJet n = J (n+2) :@ K :@ sn n
+
+j_sn ∷ Check
+j_sn = Named "sn" chk
+  where
+    chk n (MkVal K) (MkVal b)                          = Sn <$> go n b
+    chk n _         k                                  = Nothing
+    go 3 S                                             = Just 1
+    go n (Fast 1 Bee [s, Fast 2 Bee [go(n-1)→Just r]]) = Just (r+1)
+    go n _                                             = Nothing
+
+
 -- Flip ------------------------------------------------------------------------
 
 pattern C = Fast 3 Sea []
@@ -647,6 +626,24 @@ sjC = SingJet{..}
     sjExec = \case [f,g,x] → Just (f :@ x :@ g)
                    _       → error "bad-C"
     sjBody = MkVal (S :@ (K :@ (S :@ (K :@ (S :@ S :@ (K :@ K))) :@ K)) :@ S)
+
+
+-- Bulk Flip -------------------------------------------------------------------
+
+cn ∷ Positive → Ur
+cn n = iterate ((B:@(B:@C):@B):@) C !! (fromIntegral n - 1)
+
+cnJet ∷ Positive → Ur
+cnJet n = J (n+2) :@ K :@ cn n
+
+j_cn ∷ Check
+j_cn = Named "cn" chk
+  where
+    chk n (MkVal K) (MkVal b)                          = Cn <$> go n b
+    chk n _         k                                  = Nothing
+    go 3 C                                             = Just 1
+    go n (Fast 1 Bee [C, Fast 2 Bee [go(n-1)→Just r]]) = Just (r+1)
+    go n _                                             = Nothing
 
 
 -- Function Composition --------------------------------------------------------
@@ -664,6 +661,40 @@ sjB = SingJet{..}
     sjBody = MkVal (S :@ (K :@ S) :@ K)
 
 
+-- Bulk Composition ------------------------------------------------------------
+
+bnJet ∷ Positive → Ur
+bnJet n = J (n+2) :@ K :@ bn n
+
+bn ∷ Positive → Ur
+bn n = iterate ((B:@B):@) B !! (fromIntegral n - 1)
+
+j_bn ∷ Check
+j_bn = Named "bn" chk
+  where
+    chk n (MkVal K) (MkVal b)               = Bn <$> go n b
+    chk n _         k                       = Nothing
+    go 3 B                                  = Just 1
+    go n (Fast 1 Bee [B, go(n-1) → Just r]) = Just (r+1)
+    go n e                                  = Nothing
+
+
+-- Seq -------------------------------------------------------------------------
+
+pattern Seq = Fast 2 JSeq []
+
+sjSeq ∷ SingJet
+sjSeq = SingJet{..}
+  where
+    sjFast = JSeq
+    sjArgs = 2
+    sjName = MkVal (Nat 17)
+    sjExec = \case [x,y] → Nothing -- Just y
+                   _     → error "bad-seq"
+    sjBody = MkVal (S :@ K)
+
+
+
 -- Crash -----------------------------------------------------------------------
 
 pattern Ded = Fast 1 JDed []
@@ -676,22 +707,6 @@ sjDed = SingJet{..}
     sjName = MkVal K
     sjExec _ = error "ded"
     sjBody = MkVal (Fast 1 JFix [I])
-
-
--- Lazy Application ------------------------------------------------------------
-
-pattern Laz = Fast 2 JLaz []
-
-sjLaz ∷ SingJet
-sjLaz = SingJet{..}
-  where
-    sjFast = JLaz
-    sjArgs = 2
-    sjName = MkVal (Nat 15)
-    sjExec [x,y] = Just $ Lazy (x :@ y)
-    sjExec _     = error "bad-laz"
-    sjBody = MkVal I
-
 
 
 -- Unit ------------------------------------------------------------------------
@@ -707,6 +722,68 @@ sjUni = SingJet{..}
     sjExec [x,_] = Just x
     sjExec _     = error "bad-uni"
     sjBody = MkVal K
+
+
+-- Boolean ---------------------------------------------------------------------
+
+pattern Bol n = Fast 2 (JBol n) []
+pattern No = Bol False
+pattern Ya = Bol True
+
+j_bol ∷ Check
+j_bol = Named "bol" chk
+  where chk ∷ Positive → JetTag → Val → Maybe Jet
+        chk 2 (MkVal S) (MkVal K)        = Just (JBol True)
+        chk 2 (MkVal S) (MkVal (S :@ K)) = Just (JBol False)
+        chk n t         b                = Nothing
+
+encBool ∷ Bool → Ur
+encBool True  = K
+encBool False = S :@ K
+
+boolJet ∷ Bool → Ur
+boolJet b = J 2 :@ S :@ encBool b
+
+
+-- If --------------------------------------------------------------------------
+
+pattern Iff = Fast 3 JIff []
+
+{-
+    cas = \b l r -> b l r
+-}
+sjIff ∷ SingJet
+sjIff = SingJet{..}
+  where
+    sjFast = JIff
+    sjArgs = 3
+    sjName = MkVal (Nat 16)
+    sjExec [Bol c,t,f]       = Just (if c then t else f)
+    sjExec [_,_,_]           = Nothing
+    sjExec _                 = error "bad-iff"
+    sjBody = MkVal I
+
+
+-- Case ------------------------------------------------------------------------
+
+pattern Cas = Fast 3 JCas []
+
+{-
+    cas = \b l r -> b l r
+-}
+sjCas ∷ SingJet
+sjCas = SingJet{..}
+  where
+    sjFast = JCas
+    sjArgs = 3
+    sjName = MkVal (Nat 15)
+    sjExec [s,l,r] = run s l r
+    sjExec _       = error "bad-lef"
+    sjBody = MkVal I
+
+    run (Fast _ JLef [x]) l r = Just (l :@ x)
+    run (Fast _ JRit [x]) l r = Just (r :@ x)
+    run _                 l r = Nothing
 
 
 -- Left ------------------------------------------------------------------------
@@ -744,6 +821,10 @@ sjRit = SingJet{..}
 
 -- Recursion -------------------------------------------------------------------
 
+-- Z = \f -> (\x -> f (\v -> W2 x x v)) (\x -> f (\v -> W2 x x v))
+pattern Z = S :@ (S:@(S:@(K:@S):@K):@(K:@(S:@W2:@I)))
+              :@ (S:@(S:@(K:@S):@K):@(K:@(S:@W2:@I)))
+
 pattern Fix = Fast 2 JFix []
 
 {-
@@ -755,20 +836,18 @@ sjFix = SingJet{..}
   where
     sjFast = JFix
     sjArgs = 2
-    sjName = MkVal (Nat 2)
+    sjName = MkVal K
+    -- xec [f,x] = Nothing
     sjExec [f,x] = Just (f :@ (Fix :@ f) :@ x)
     sjExec _     = error "bad-fix"
     sjBody = MkVal $
-        ( (S :@ I)
-          :@
-          ((W2 :@
-            ((S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ I))))
-             :@
-             ((S :@ W2) :@ I)))
-           :@
-           ((S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ I))))
-            :@
-            ((S :@ W2) :@ I))))
+        S :@ I
+          :@ Fast 1 (Wait 2)
+            [ (S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ I))))
+                :@ ((S :@ Fast 3 (Wait 2) []) :@ I)
+            , (S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ I))))
+                :@ ((S :@ Fast 3 (Wait 2) []) :@ I)
+            ]
 
 
 -- Nat to Church Natural -------------------------------------------------------
@@ -784,10 +863,9 @@ sjFol = SingJet{..}
     sjFast = JFol
     sjArgs = 1
     sjName = MkVal (Nat 2)
-    sjExec [Lazy x] = Just (Fol :@ x)
-    sjExec [Nat x]  = Just (church x)
-    sjExec [_]      = Nothing
-    sjExec _        = error "bad-fol"
+    sjExec [Nat x]       = Just (church x)
+    sjExec [_]           = Nothing
+    sjExec _             = error "bad-fol"
     sjBody = MkVal $
         S :@ (S :@ I :@ (K :@ (S :@ (S :@ (K :@ S) :@ K))))
           :@ (K :@ (S :@ K))
@@ -798,7 +876,7 @@ sjFol = SingJet{..}
 pattern Inc = Fast 1 JInc []
 
 {-
-    inc = \n -> J2 (\i z -> i (fol n i z))
+    inc = \n -> Pak (\i z -> i (n i z))
 -}
 sjInc ∷ SingJet
 sjInc = SingJet{..}
@@ -806,14 +884,11 @@ sjInc = SingJet{..}
     sjFast = JInc
     sjArgs = 1
     sjName = MkVal (Nat 1)
-    sjExec [Lazy x] = Just (Inc :@ x)
-    sjExec [Nat x]  = Just $ Nat $ succ x
-    sjExec [_]      = Nothing
-    sjExec _        = error "bad-inc"
+    sjExec [Nat x]       = Just $ Nat $ succ x
+    sjExec [_]           = Nothing
+    sjExec _             = error "bad-inc"
     sjBody = MkVal $
-        S :@ (K :@ J2)
-          :@ (S :@ (K :@ (S :@ (S :@ (K :@ S) :@ K)))
-                :@ Fol)
+        S :@ (K :@ Pak) :@ (S :@ (S :@ (K :@ S) :@ K))
 
 
 -- Decrement -------------------------------------------------------------------
@@ -821,9 +896,8 @@ sjInc = SingJet{..}
 pattern Dec = Fast 1 JDec []
 
 {-
-    dec = \n -> C (n (\x -> C x (\y -> R zer) (\y -> R (inc y))) (L uni))
-                  (\g -> L uni)
-                  (\g -> R (J2 (fol g)))
+    dec = \n -> n (\x -> C x (\y -> Rit 0) (\y -> Rit (Inc y)))
+                  (Lef Uni)
 -}
 sjDec ∷ SingJet
 sjDec = SingJet{..}
@@ -832,21 +906,41 @@ sjDec = SingJet{..}
     sjArgs = 1
     sjName = MkVal (Nat 3)
 
-    sjExec [Lazy x] = Just (Dec :@ x)
-    sjExec [Nat 0]  = Just (Lef :@ Uni)
-    sjExec [Nat x]  = Just (Rit :@ Nat (pred x))
-    sjExec [_]      = Nothing
-    sjExec _        = error "bad-dec"
+    sjExec [Nat 0]       = Just (Lef :@ Uni)
+    sjExec [Nat x]       = Just (Rit :@ Nat (pred x))
+    sjExec [_]           = Nothing
+    sjExec _             = error "bad-dec"
 
     sjBody = MkVal $
-        S :@ (S :@ (S :@ (K :@ cas)
-                      :@ (S :@ (S :@ I
-                                  :@ (K :@ (S :@ (S :@ cas
-                                                    :@ (K:@(K:@(Rit:@ch_zero))))
-                                              :@ (K:@(S:@(K:@Rit):@ch_succ)))))
-                            :@ (K :@ (Lef :@ Uni))))
-                :@ (K :@ (K :@ (Lef :@ Uni))))
-          :@ (K:@(S:@(K:@Rit):@(S:@(K:@J2):@Fol)))
+        S :@ (S :@ I
+                :@ (K :@ (S :@ (S :@ Cas :@ (K :@ (K :@ Fast 2 JRit [Nat 0])))
+                            :@ (K :@ (S :@ (K :@ Rit) :@ Inc)))))
+          :@ (K :@ (Fast 2 JLef [Uni]))
+
+
+-- Fast Decrement --------------------------------------------------------------
+
+pattern Fec = Fast 1 JFec []
+
+{-
+    fec = \n -> Cas (dec n) (k 0) i
+-}
+sjFec ∷ SingJet
+sjFec = SingJet{..}
+  where
+    sjFast = JFec
+    sjArgs = 1
+    sjName = MkVal (Nat 3)
+
+    sjExec [Nat 0]       = Just (Nat 0)
+    sjExec [Nat x]       = Just (Nat (pred x))
+    sjExec [_]           = Nothing
+    sjExec _             = error "bad-dec"
+
+    sjBody = MkVal $
+        S :@ (S :@ (S :@ (K :@ Cas) :@ Dec)
+                :@ (K :@ (K :@ Nat 0)))
+          :@ (K :@ I)
 
 
 -- Add -------------------------------------------------------------------------
@@ -854,7 +948,7 @@ sjDec = SingJet{..}
 pattern Add = Fast 2 JAdd []
 
 {-
-    add = \x y -> J2 (fol (\i z -> (fol x) i (fol y)))
+    add = \x y -> Pak (\i z -> x i (y i z))
 -}
 sjAdd ∷ SingJet
 sjAdd = SingJet{..}
@@ -862,18 +956,13 @@ sjAdd = SingJet{..}
     sjFast = JAdd
     sjArgs = 2
     sjName = MkVal K
-    sjExec [Lazy x, y     ] = Just $ (Add :@ x :@ y)
-    sjExec [x,      Lazy y] = Just $ (Add :@ x :@ y)
-    sjExec [Nat  x, Nat y ] = Just $ Nat (x+y)
-    sjExec _              = Nothing
+    sjExec [Nat x, Nat y]   = Just $ Nat (x+y)
+    sjExec _                = Nothing
     sjBody = MkVal $
-        S :@ (K :@ (S :@ (K :@ J2)))
-          :@ (S :@ (K :@ (S :@ (K :@ Fol)))
-                :@ (S :@ (K :@ (S :@ (K :@ (S :@ (K :@ K)))))
-                      :@ (S :@ (S :@ (K :@ (S :@ (K :@ (S :@ (K :@ S) :@ K))
-                                              :@ S))
-                                  :@ Fol)
-                            :@ (K :@ (S :@ (K :@ K) :@ Fol)))))
+        S :@ (K :@ (S :@ (K :@ Pak)))
+          :@ (S :@ (K :@ S)
+                :@ (S :@ (K :@ (S :@ (K :@ S) :@ K))))
+
 
 
 -- Subtract --------------------------------------------------------------------
@@ -889,13 +978,11 @@ sjSub = SingJet{..}
     sjFast = JSub
     sjArgs = 2
     sjName = MkVal (Nat 4)
-    sjExec [Lazy x, y     ] = Just $ Sub :@ x :@ y
-    sjExec [x,      Lazy y] = Just $ Sub :@ x :@ y
-    sjExec [Nat x,  Nat y ] = Just $ sub x y
-    sjExec [_,      _     ] = Nothing
+    sjExec [Nat x, Nat y]   = Just $ sub x y
+    sjExec [_, _]           = Nothing
     sjExec _                = error "bad-sub"
     sjBody = MkVal $
-        S :@ (K :@ (S:@(S:@I:@(K:@(S:@(S:@cas:@(K:@Lef)):@(K:@Dec))))))
+        S :@ (K :@ (S:@(S:@I:@(K:@(S:@(S:@Cas:@(K:@Lef)):@(K:@Dec))))))
           :@ (S :@ (K :@ K) :@ Rit)
 
     sub ∷ Natural → Natural → Ur
@@ -936,7 +1023,6 @@ sjCar = SingJet{..}
     sjFast = JCar
     sjArgs = 1
     sjName = MkVal (Nat 13)
-    sjExec [Lazy x]            = Just (Car :@ x)
     sjExec [Fast _ JCon [x,_]] = Just x
     sjExec [_]                 = Nothing
     sjExec _                   = error "bad-car"
@@ -957,7 +1043,6 @@ sjCdr = SingJet{..}
     sjFast = JCdr
     sjArgs = 1
     sjName = MkVal (Nat 14)
-    sjExec [Lazy x]            = Just (Cdr :@ x)
     sjExec [Fast _ JCon [_,y]] = Just y
     sjExec [_]                 = Nothing
     sjExec _                   = error "bad-cdr"
@@ -967,8 +1052,155 @@ sjCdr = SingJet{..}
 
 -- Natural Numbers -------------------------------------------------------------
 
+pattern Nat n = Fast 2 (JNat n) []
+
 j_nat ∷ Check
 j_nat = Named "nat" chk
   where chk ∷ Positive → JetTag → Val → Maybe Jet
         chk 2 (MkVal K) u = JNat <$> unChurch (valUr u)
         chk n t         b = Nothing
+
+
+-- Church To Natural -----------------------------------------------------------
+
+pattern Pak = Fast 1 JPak []
+
+{-
+    pak = \n -> J2 (n inc zero)
+-}
+sjPak ∷ SingJet
+sjPak = SingJet{..}
+  where
+    sjFast = JPak
+    sjArgs = 1
+    sjName = MkVal (Nat 16)
+    sjExec [Nat n]       = Just $ Nat n
+    sjExec [_]           = Nothing
+    sjExec _             = error "bad-pak"
+    sjBody = MkVal $
+        S :@ (K :@ J2)
+          :@ (S :@ (S :@ I :@ (K :@ succ))
+                :@ (K :@ zero))
+
+    succ = S :@ (S :@ (K :@ S) :@ K)
+    zero = S :@ K
+
+
+-- Delayed Evaluation ----------------------------------------------------------
+
+waitJet ∷ Natural → Ur
+waitJet n = J (fromIntegral $ n+1) :@ I :@ I
+
+waitArity ∷ Natural → Positive
+waitArity n = fromIntegral (n+1)
+
+waitExec ∷ Natural → [Ur] → Maybe Ur
+waitExec _ []     = Nothing
+waitExec _ (u:us) = Just (go u us)
+  where
+    go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
+
+j_wait ∷ Check
+j_wait = Named "wait" chk
+  where chk ∷ Positive → JetTag → Val → Maybe Jet
+        chk n (MkVal I) (MkVal I) = Just $ Wait (fromIntegral n - 1)
+        chk _ _         _         = Nothing
+
+
+-- Natural Is Zero Test --------------------------------------------------------
+
+pattern Zer = Fast 1 JZer []
+
+{-
+    isZero = \n -> n (K No) Ya
+-}
+sjZer ∷ SingJet
+sjZer = SingJet{..}
+  where
+    sjFast = JZer
+    sjArgs = 1
+    sjName = MkVal K
+    sjExec [Nat x]       = Just $ if x==0 then Ya else No
+    sjExec [_]           = Nothing
+    sjExec _             = error "bad-zer"
+
+    sjBody = MkVal $
+        S :@ (S :@ I :@ (K :@ (K :@ No))) :@ (K :@ Ya)
+
+
+
+-- Natural Equality ------------------------------------------------------------
+
+pattern Eql = Fast 2 JEql []
+
+{-
+    equals = \x y -> Cas (sub x y) (K No) IsZero
+-}
+sjEql ∷ SingJet
+sjEql = SingJet{..}
+  where
+    sjFast = JEql
+    sjArgs = 2
+    sjName = MkVal K
+
+    sjExec [Nat x, Nat y]   = Just $ if x==y then Ya else No
+    sjExec [_,_]            = Nothing
+    sjExec _                = error "bad-eql"
+
+    sjBody = MkVal $
+        S :@ (S :@ (K :@ S)
+                :@ (S :@ (S :@ (K :@ S)
+                            :@ (S :@ (K :@ (S :@ (K :@ Cas))) :@ Sub))
+                      :@ (K :@ (K :@ (K :@ No)))))
+          :@ (K :@ (K :@ Zer))
+
+
+-- Atom Multiplication ---------------------------------------------------------
+
+pattern Mul = Fast 2 JMul []
+
+{-
+    mul = \x y -> Pak (\i z -> x (y i) z)
+-}
+sjMul ∷ SingJet
+sjMul = SingJet{..}
+  where
+    sjFast = JMul
+    sjArgs = 2
+    sjName = MkVal K
+    sjExec [Nat x, Nat y]   = Just $ Nat (x*y)
+    sjExec _                = Nothing
+    sjBody = MkVal $
+        S :@ (K :@ (S :@ (K :@ Pak)))
+          :@ (S :@ (K :@ S) :@ K)
+
+
+-- Ackermann Function ----------------------------------------------------------
+
+{-
+    ++  ack
+      ..  go/<@ @ @>
+      |=  (m/@ n/@)
+      ?:  =(m 0)  (inc n)
+      ?:  =(n 0)  (go (fast-dec m) 1)
+      (go (fast-dec m) (go m (fast-dec n)))
+
+    ack =
+      (fix
+        (\l m n ->
+          (iff (zer m) (inc n)
+            (iff (zer n) (l (fec m) 1)
+              (l (fec m) (l m (fec n)))))))
+-}
+
+ack ∷ Ur
+ack =
+    Fix :@
+      (fast (Wait 3) :@
+        (S :@ (K :@ (S :@ (S :@ (K :@ S)
+                             :@ (S :@ (S :@ (K :@ (S :@ (K :@ S) :@ K))
+                                         :@ (S :@ (K :@ Iff) :@ Zer))
+                                   :@ (K :@ Inc)))))
+           :@ (S :@ (S:@(K:@(S:@(K:@S):@(S:@(K:@S)))):@(S :@ (K:@(S:@(K:@(S:@(S:@(K:@Iff):@Zer)))))
+                                                          :@ (S:@(K:@(S:@(K:@K))):@(S:@(S:@(K:@S):@(S:@(S:@(K:@S):@K):@(K:@Fec))):@(K:@(K:@Nat 1))))))
+                 :@ (S:@(S:@(K:@(S:@(K:@S):@(S:@(K:@(S:@(K:@S):@K))))):@(S:@(S:@(K:@S):@K):@(K:@Fec))):@(S:@(S:@(K:@S):@(S:@(K:@(S:@(K:@S):@K)))):@(K:@(K:@Fec)))))))
