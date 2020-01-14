@@ -315,6 +315,17 @@ dash = mkDash
 --
 --  Repeatedly perform reductions until the input is fully normalized.
 --
+normalizeI ∷ Ur → IO Ur
+normalizeI ur = do
+    putStrLn (">>  " <> tshow ur)
+    void getLine
+    reduce ur & \case
+        Nothing -> pure ur
+        Just ru -> normalizeI ru
+
+--
+--  Repeatedly perform reductions until the input is fully normalized.
+--
 normalize ∷ Ur → IO Ur
 normalize ur = do
     putStrLn (">>  " <> tshow ur)
@@ -689,7 +700,7 @@ sjSeq = SingJet{..}
     sjFast = JSeq
     sjArgs = 2
     sjName = MkVal (Nat 17)
-    sjExec = \case [x,y] → Nothing -- Just y
+    sjExec = \case [x,y] → Just y
                    _     → error "bad-seq"
     sjBody = MkVal (S :@ K)
 

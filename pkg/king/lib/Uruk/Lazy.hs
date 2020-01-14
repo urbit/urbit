@@ -727,7 +727,7 @@ sjSeq = SingJet{..}
     sjFast = JSeq
     sjArgs = 2
     sjName = MkVal (Nat 17)
-    sjExec = \case [x,y] → Nothing -- Just y
+    sjExec = \case [x,y] → Just y
                    _     → error "bad-seq"
     sjBody = MkVal (S :@ K)
 

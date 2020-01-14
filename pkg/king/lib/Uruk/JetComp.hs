@@ -25,7 +25,7 @@ data Com = Com :# Com | P Ur | I | K | S | Sn Pos | C | Cn Pos | B | Bn Pos
 instance Show Exp where
   show = \case
     Lam exp → "\\" <> show exp
-    Var n   → show n
+    Var n   → "$" <> show n
     Prim p  → show p
     Go x y  → "(" <> intercalate " " (show <$> apps x [y]) <> ")"
       where
@@ -141,13 +141,21 @@ ur = \case
         is undersaturated.
 -}
 strict ∷ Exp → Exp
-strict = \case
-    Lam b  → Lam (strict b)
-    Var n  → Var n
-    Prim p → Prim p
-    Go f x → case (strict f, strict x) of
-        (fv, xv) | dep fv || dep xv → Go fv xv
-        (fv, xv)                    → Go (addDep fv) xv
+strict = top
+  where
+    top = \case
+      Lam b  → Lam (go b)
+      Var n  → Var n
+      Prim p → Prim p
+      Go f x → Go (top f) (top x)
+
+    go = \case
+      Lam b  → Lam (go b)
+      Var n  → Var n
+      Prim p → Prim p
+      Go f x → case (go f, go x) of
+          (fv, xv) | dep fv || dep xv → Go fv xv
+          (fv, xv)                    → Go (addDep fv) xv
 
 addDep ∷ Exp → Exp
 addDep = \case
@@ -163,3 +171,63 @@ dep = go 0
         Var n        → False
         Prim p       → False
         Go f x       → go v f || go v x
+
+{-
+    ~/  %ack  2
+    %-  fix
+    |=  (ack m n)
+    ?:  (zer m)  (inc n)
+    ?:  (zer n)  (ack (fec m) 1)
+    (ack (fec m) (ack m (fec n)))
+-}
+
+infixl 5 %
+
+(%) = Go
+
+iff ∷ Exp → Exp → Exp → Exp
+iff c t e =
+    (Prim Ur.Iff % c % t' % e') % Prim Ur.Uni
+  where
+    (t',e') = (abstract t, abstract e)
+
+    abstract ∷ Exp → Exp
+    abstract = Lam . go 0
+      where
+        go d = \case
+          Prim p        → Prim p
+          Go x y        → Go (go d x) (go d y)
+          Var n | n < d → Var n
+          Var n         → Var (succ n)
+          Lam b         → Lam (go (succ d) b)
+
+acker ∷ Exp
+acker =
+    let fec = \x → Prim Ur.Fec % x
+        zer = \x → Prim Ur.Zer % x
+        inc = \x → Prim Ur.Inc % x
+        fix = Prim Ur.Fix
+        go  = Var 2
+        m   = Var 1
+        n   = Var 0
+    --  err = Prim Ur.Ded % Prim Ur.K
+    in
+        fix % (
+            Lam $ Lam $ Lam $
+            iff (zer m) (inc n) $
+            iff (zer n) (go % fec m % nat 1) $
+            go % fec m % (go % m % fec n)
+        )
+
+toZero ∷ Exp
+toZero =
+    let fec = \x → Prim Ur.Fec % x
+        zer = \x → Prim Ur.Zer % x
+        fix = Prim Ur.Fix
+        go  = Var 1
+        x   = Var 0
+    in
+        fix % (
+            Lam $ Lam $
+            iff (zer x) x (go % fec x)
+        )
