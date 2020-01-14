@@ -98,10 +98,15 @@
   ^-  card
   [%pass / %agent [our.bowl %link-store] %poke %link-action !>(action)]
 ::
-++  do-add
+++  do-save
   |=  [=path title=@t =url]
   ^-  card
   (do-action %save path title url)
+::
+++  do-note
+  |=  [=path =url udon=@t]
+  ^-  card
+  (do-action %note path url udon)
 ::
 ++  handle-http-request
   |=  [eyre-id=@ta =inbound-request:eyre]
@@ -145,16 +150,28 @@
     ::      actually fail right now, so it's fine.
     [[?:(success 200 400) ~] `*octs]
   ?~  body  [| ~]
+  =/  jon=(unit json)  (de-json:html q.u.body)
+  ?~  jon  [| ~]
   ?+  request-line  [| ~]
-      [[~ [%'~link' %add ^]] ~]
+      [[~ [%'~link' %save ~]] ~]
     ^-  [? (list card)]
-    =/  jon=(unit json)  (de-json:html q.u.body)
-    ?~  jon  [| ~]
-    =/  page=(unit [title=@t =url])
+    =/  page=(unit [=path title=@t =url])
       %.  u.jon
-      (ot title+so url+so ~):dejs-soft:format
+      =,  dejs-soft:format
+      =+  (su ;~(pfix net (more net urs:ab)))
+      (ot path+- title+so url+so ~)
     ?~  page  [| ~]
-    [& [(do-add t.t.site.request-line [title url]:u.page) ~]]
+    [& [(do-save u.page) ~]]
+  ::
+      [[~ [%'~link' %note ~]] ~]
+    ^-  [? (list card)]
+    =/  note=(unit [=path =url udon=@t])
+      %.  u.jon
+      =,  dejs-soft:format
+      =+  (su ;~(pfix net (more net urs:ab)))
+      (ot path+- url+so udon+so ~)
+    ?~  note  [| ~]
+    [& [(do-note u.note) ~]]
   ==
 ::
 ++  handle-get
