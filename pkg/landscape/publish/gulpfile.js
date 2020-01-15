@@ -69,10 +69,6 @@ const namedExportsIndex = {
   ]
 };
 
-const prodPlugins = [
-  replace({ 'process.env.NODE_ENV': 'production' })
-];
-
 function importPlugins(exps) {
   return [
     commonjs({ namedExports: exps }),
@@ -85,6 +81,10 @@ function importPlugins(exps) {
     resolve()
   ];
 }
+
+const prodPlugins = [
+  replace({ 'process.env.NODE_ENV': JSON.stringify('production') })
+];
 
 function importPluginsProd(exps) {
   return prodPlugins.concat(importPlugins(exps));
@@ -103,7 +103,6 @@ function importer(input, plugins) {
   }
 }
 
-// FIXME make sure this works
 function js_imports(cb) {
   importer('build/index.js', importPlugins(namedExportsIndex))(cb);
 }

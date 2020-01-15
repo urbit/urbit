@@ -43,10 +43,6 @@ const namedExports = {
   ],
 };
 
-const prodPlugins = [
-  replace({ 'process.env.NODE_ENV': 'production' })
-];
-
 function importPlugins(exps) {
   return [
     commonjs({ namedExports: exps }),
@@ -58,10 +54,6 @@ function importPlugins(exps) {
     globals(),
     resolve()
   ];
-}
-
-function importPluginsProd(exps) {
-  return prodPlugins.concat(importPlugins(exps));
 }
 
 function importer(input, plugins) {
@@ -82,7 +74,7 @@ function js_imports(cb) {
 }
 
 function js_imports_prod(cb) {
-  importer('build/index.js', importPluginsProd(namedExports))(cb);
+  importer('build/index.js', importPlugins(namedExports))(cb);
 }
 
 function minifier(input) {

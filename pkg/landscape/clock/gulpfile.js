@@ -31,10 +31,6 @@ const namedExportsTile = {
   ],
 };
 
-const prodPlugins = [
-  replace({ 'process.env.NODE_ENV': 'production' })
-];
-
 function importPlugins(exps) {
   return [
     commonjs({ namedExports: exps }),
@@ -48,10 +44,6 @@ function importPlugins(exps) {
     builtins(),
     resolve()
   ];
-}
-
-function importPluginsProd(exps) {
-  return prodPlugins.concat(importPlugins(exps));
 }
 
 function importer(input, plugins) {
