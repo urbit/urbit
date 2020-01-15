@@ -23,10 +23,16 @@
   ==
 ::
 ++  build-discussion-path
-  |=  [=path =url]
-  ^+  path
-  :_  path
-  (crip (en-base64:mimes:html url))
+  |=  args=$@(url [=path =url])
+  |^  ^-  path
+      ?@  args  ~[(encode-url-for-path args)]
+      :_  path.args
+      (encode-url-for-path url.args)
+  ::
+  ++  encode-url-for-path
+    |=  =url
+    (crip (en-base64:mimes:html url))
+  --
 ::
 ++  break-discussion-path
   |=  =path
