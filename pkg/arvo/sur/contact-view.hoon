@@ -3,7 +3,10 @@
 +$  contact-view-action
   $%  ::  create in both groups and contacts
       ::
-      [%create =path members=(set ship)]
+      [%create =path ships=(set ship)]
+      ::  add to both groups and contacts
+      ::
+      [%add =path ships=(set ship)]
       ::  remove from both groups and contacts
       ::
       [%remove =path =ship]

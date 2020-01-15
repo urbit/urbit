@@ -81,7 +81,7 @@ export class NewScreen extends Component {
       invites: ''
     }, () => {
       props.setSpinner(true);
-      props.api.contactCreate(group, aud);
+      props.api.contactView.create(group, aud);
     });
   }
   

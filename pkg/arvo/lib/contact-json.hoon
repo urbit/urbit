@@ -101,16 +101,23 @@
     %-  of
     :~  [%create create]
         [%delete delete]
+        [%add add]
         [%remove remove]
     ==
   ::
   ++  create
     %-  ot
     :~  [%path pa]
-        [%members (as (su ;~(pfix sig fed:ag)))]
+        [%ships (as (su ;~(pfix sig fed:ag)))]
     ==
   ::
   ++  delete  (ot [%path pa]~)
+  ::
+  ++  add
+     %-  ot
+     :~  [%path pa]
+         [%ships (as (su ;~(pfix sig fed:ag)))]
+     ==
   ::
   ++  remove
     %-  ot

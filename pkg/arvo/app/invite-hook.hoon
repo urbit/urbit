@@ -49,12 +49,10 @@
         %invite-action
       =/  act=invite-action  !<(invite-action vase)
       ?.  ?=(%invite -.act)  ~
-      ::  if the sender is us,
-      ::
       ?:  (team:title our.bowl src.bowl)
         ::  outgoing. we must be inviting another ship. send them the invite.
         ::
-        ?>  !(team:title our.bowl recipient.invite.act)
+        ?<  (team:title our.bowl recipient.invite.act)
         [(invite-hook-poke:do recipient.invite.act act)]~
       ::  else incoming. ensure invitatory exists and invite is not a duplicate.
       ::

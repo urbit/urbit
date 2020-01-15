@@ -1,6 +1,6 @@
 ::  contact-hook:
 ::
-/-  *group-store, *contact-hook, *invite-store
+/-  *group-store, *group-hook, *contact-hook, *invite-store
 /+  *contact-json, default-agent
 |%
 +$  card  card:agent:gall
@@ -135,10 +135,10 @@
   ::
       %add-synced
     ?>  (team:title our.bol src.bol)
-    ?:  (~(has by synced) [(scot %p ship.act) path.act])
+    ?:  (~(has by synced) path.act)
       [~ state]
-    =.  synced  (~(put by synced) [(scot %p ship.act) path.act] ship.act)
-    =/  contact-path  [%contacts (scot %p ship.act) path.act]
+    =.  synced  (~(put by synced) path.act ship.act)
+    =/  contact-path  [%contacts path.act]
     :_  state
     [%pass contact-path %agent [ship.act %contact-hook] %watch contact-path]~
   ::
@@ -308,8 +308,19 @@
   ^-  (quip card _state)
   ?+  -.fact  [~ state]
       %accepted
-    (poke-hook-action [%add-synced ship.invite.fact path.invite.fact])
+    =/  changes
+      (poke-hook-action [%add-synced ship.invite.fact path.invite.fact])
+    :-  
+    %+  welp
+      [(group-hook-poke [%add ship.invite.fact path.invite.fact])]~
+    -.changes
+    +.changes
   ==
+::
+++  group-hook-poke
+  |=  act=group-hook-action
+  ^-  card
+  [%pass / %agent [our.bol %group-hook] %poke %group-hook-action !>(act)]
 ::
 ++  invite-poke
   |=  act=invite-action
@@ -319,6 +330,7 @@
 ++  contact-poke
   |=  act=contact-action
   ^-  card
+  ~&  contact+act
   [%pass / %agent [our.bol %contact-store] %poke %contact-action !>(act)]
 ::
 ++  contacts-scry

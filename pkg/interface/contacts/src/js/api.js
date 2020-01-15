@@ -10,10 +10,6 @@ class UrbitApi {
     this.authTokens = authTokens;
     this.bindPaths = [];
 
-    this.groups = {
-      add: this.groupAdd.bind(this)
-    };
-    
     this.contacts = {
       edit: this.contactEdit.bind(this)
     };
@@ -21,13 +17,13 @@ class UrbitApi {
     this.contactView = {
       create: this.contactCreate.bind(this),
       delete: this.contactDelete.bind(this),
-      remove: this.contactRemove.bind(this),
+      add: this.contactAdd.bind(this),
+      remove: this.contactRemove.bind(this)
     };
     
     this.invite = {
       accept: this.inviteAccept.bind(this),
-      decline: this.inviteDecline.bind(this),
-      invite: this.inviteInvite.bind(this)
+      decline: this.inviteDecline.bind(this)
     };
   }
 
@@ -72,21 +68,16 @@ class UrbitApi {
     this.action("contact-store", "contact-action", data);
   }
 
-  contactCreate(path, members = []) {
-    this.contactViewAction({ create: { path, members }});
+  contactCreate(path, ships = []) {
+    this.contactViewAction({ create: { path, ships }});
+  }
+
+  contactAdd(path, ships = []) {
+    this.contactViewAction({ add: { path, ships }});
   }
 
   contactDelete(path) {
     this.contactViewAction({ delete: { path }});
-  }
-
-  groupAdd(path, members) {
-    this.action("group-store", "group-action", {
-      add: {
-        members: members,
-        path: path
-      }
-    });
   }
 
   contactRemove(path, ship) {
@@ -119,28 +110,10 @@ class UrbitApi {
     this.action("invite-store", "json", data);
   }
   
-  inviteInvite(path, ship) {
-    this.action("invite-hook", "json", 
-      {
-        invite: {
-          path: '/chat',
-          invite: {
-            path,
-            ship: `~${window.ship}`,
-            recipient: ship,
-            app: 'chat-hook',
-            text: `You have been invited to /${window.ship}${path}`,
-          },
-          uid: uuid()
-        }
-      }
-    );
-  }
-
   inviteAccept(uid) {
     this.inviteAction({
       accept: {
-        path: '/chat',
+        path: '/contacts',
         uid
       }
     });
@@ -149,7 +122,7 @@ class UrbitApi {
   inviteDecline(uid) {
     this.inviteAction({
       decline: {
-        path: '/chat',
+        path: '/contacts',
         uid
       }
     });

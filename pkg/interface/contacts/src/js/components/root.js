@@ -35,6 +35,10 @@ export class Root extends Component {
       state.contacts['/~/default'] : {};
     let groups = !!state.groups ? state.groups : {};
 
+    let invites =
+      (!!state.invites && '/contacts' in state.invites) ?
+      state.invites['/contacts'] : {};
+
     return (
       <BrowserRouter>
         <div className="h-100 w-100">
@@ -43,8 +47,10 @@ export class Root extends Component {
             return (
               <Skeleton
                 activeDrawer="groups"
+                api={api}
                 contacts={contacts}
-                groups={groups}>
+                groups={groups}
+                invites={invites}>
                 <div className="h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"></div>
               </Skeleton>
             );
@@ -54,8 +60,10 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={state.spinner}
+                  api={api}
                   contacts={contacts}
                   groups={groups}
+                  invites={invites}
                   activeDrawer="rightPanel">
                   <NewScreen setSpinner={this.setSpinner} api={api} />
                 </Skeleton>
@@ -71,7 +79,9 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={state.spinner}
+                  api={api}
                   contacts={contacts}
+                  invites={invites}
                   groups={groups}
                   activeDrawer="contacts"
                   selected={groupPath}>
@@ -96,8 +106,10 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={state.spinner}
+                  api={api}
                   contacts={contacts}
                   groups={groups}
+                  invites={invites}
                   activeDrawer="rightPanel"
                   selected={groupPath}>
                   <ContactSidebar
@@ -131,8 +143,10 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={state.spinner}
+                  api={api}
                   contacts={contacts}
                   groups={groups}
+                  invites={invites}
                   activeDrawer="rightPanel"
                   selected={groupPath}>
                   <ContactSidebar
@@ -171,8 +185,10 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={state.spinner}
+                  api={api}
                   contacts={contacts}
                   groups={groups}
+                  invites={invites}
                   activeDrawer="rightPanel"
                   selected={groupPath}>
                   <ContactSidebar
@@ -198,8 +214,10 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={state.spinner}
+                  api={api}
                   contacts={contacts}
                   groups={groups}
+                  invites={invites}
                   activeDrawer="rightPanel"
                   selected="me">
                   <ContactCard

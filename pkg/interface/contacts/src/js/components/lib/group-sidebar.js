@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
 import { GroupItem } from '/components/lib/group-item';
 import { Sigil } from '/components/lib/icons/sigil';
+import { SidebarInvite } from '/components/lib/sidebar-invite';
 import { uxToHex } from '/lib/util';
 
 export class GroupSidebar extends Component {
@@ -36,6 +37,15 @@ export class GroupSidebar extends Component {
               </p>
             </div>
           </Link>
+        );
+      });
+
+    let inviteItems =
+      Object.keys(props.invites)
+      .map((uid) => {
+        let invite = props.invites[uid];
+        return (
+          <SidebarInvite key={uid} api={api} invite={invite} uid={uid} />
         );
       });
 
@@ -77,6 +87,7 @@ export class GroupSidebar extends Component {
         <div className="overflow-y-scroll h-100">
           <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Your Root Identity</h2>
           {rootIdentity}
+          {inviteItems}
           <h2 className="f9 pt3 pr4 pb2 pl4 gray2 c-default">Your Groups</h2>
           {groupItems}
         </div>

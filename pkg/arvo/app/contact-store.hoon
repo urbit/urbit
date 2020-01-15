@@ -75,7 +75,7 @@
         ~
       ``noun+!>((~(get by rolodex) t.t.path))
     ::
-        [%x %contacts *]
+        [%x %contact *]
       ::  /:path/:ship
       =/  pax  `^path`(flop t.t.path)
       ?~  pax  ~
@@ -124,7 +124,7 @@
 ++  handle-delete
   |=  =path
   ^-  (quip card _state)
-  ?>  (~(has by rolodex) path)
+  ?.  (~(has by rolodex) path)  [~ state]
   :-  (send-diff path [%delete path])
   state(rolodex (~(del by rolodex) path))
 ::

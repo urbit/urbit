@@ -1,7 +1,7 @@
 ::  contact-view: sets up contact JS client and combines commands
 ::  into semantic actions for the UI
 ::
-/-  *group-store, *invite-store
+/-  *group-store, *group-hook, *invite-store, *contact-hook
 /+  *server, *contact-json, default-agent
 /=  index
   /^  octs
@@ -122,19 +122,28 @@
   ^-  (list card)
   ?-  -.act
       %create
+    ?>  ?=([@ *] path.act)
     %+  welp
       :~  (group-poke [%bundle path.act])
           (contact-poke [%create path.act])
-          (group-poke [%add (~(put in members.act) our.bol) path.act])
+          (contact-hook-poke [%add-owned path.act])
+          (group-hook-poke [%add our.bol path.act])
+          (group-poke [%add (~(put in ships.act) our.bol) path.act])
       ==
-    %+  turn  ~(tap in (~(del in members.act) our.bol))
+    %+  turn  ~(tap in (~(del in ships.act) our.bol))
     |=  =ship
     (send-invite-poke path.act ship)
   ::
       %delete
     :~  (group-poke [%unbundle path.act])
         (contact-poke [%delete path.act])
+        (contact-hook-poke [%remove path.act])
     ==
+  ::
+       %add
+     %+  welp  [(group-poke [%add ships.act path.act])]~
+     %+  turn  ~(tap in (~(del in ships.act) our.bol))
+     |=(=ship (send-invite-poke path.act ship))
   ::
       %remove
     :~  (group-poke [%remove [ship.act ~ ~] path.act])
@@ -167,6 +176,11 @@
   ^-  card
    [%pass / %agent [our.bol %contact-store] %poke %contact-action !>(act)]
 ::
+++  contact-hook-poke
+  |=  act=contact-hook-action
+  ^-  card
+  [%pass / %agent [our.bol %contact-hook] %poke %contact-hook-action !>(act)]
+::
 ++  launch-poke
   |=  act=[@tas path @t]
   ^-  card
@@ -176,6 +190,11 @@
   |=  act=group-action
   ^-  card
   [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
+::
+++  group-hook-poke
+  |=  act=group-hook-action
+  ^-  card
+  [%pass / %agent [our.bol %group-hook] %poke %group-hook-action !>(act)]
 ::
 ++  send-invite-poke
   |=  [=path =ship]
