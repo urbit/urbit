@@ -17,14 +17,14 @@
 /=  tile-js
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/chat/js/tile-min
+  /:  /===/app/chat/js/tile
   /|  /js/
       /~  ~
   ==
 /=  script
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/chat/js/index-min
+  /:  /===/app/chat/js/index
   /|  /js/
       /~  ~
   ==

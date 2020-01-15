@@ -11,7 +11,7 @@
 /=  js
   /^  octs
   /;  as-octs:mimes:html
-  /|  /:  /===/app/publish/js/index-min  /js/
+  /|  /:  /===/app/publish/js/index  /js/
       /~  ~
   ==
 ::
@@ -25,7 +25,7 @@
 /=  tile-js
   /^  octs
   /;  as-octs:mimes:html
-  /|  /:  /===/app/publish/js/tile-min  /js/
+  /|  /:  /===/app/publish/js/tile  /js/
       /~  ~
   ==
 ::
