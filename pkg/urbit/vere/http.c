@@ -1764,14 +1764,15 @@ u3_http_io_talk(void)
 void
 u3_http_io_exit(void)
 {
-  // Note: nothing in this codepath can print to uH!
-  // it will seriously mess up your terminal
+  //  dispose of configuration to avoid restarts
+  //
+  _http_form_free();
 
-  // u3_http* htp_u;
-
-  // for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
-  //   _http_serv_close_hard(htp_u);
-  // }
+  //  close all servers
+  //
+  for ( u3_http* htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
+    _http_serv_close(htp_u);
+  }
 
   // XX close u3_Host.fig_u.cli_u and con_u
 
