@@ -33,7 +33,10 @@ let
     # See https://github.com/NixOS/nixpkgs/issues/18995
     hardeningDisable = if debug then [ "all" ] else [];
 
-    CFLAGS           = "-O3 -g -Werror";
+    # CFLAGS           = "-O3 -g -Werror";
+    CFLAGS           = "-g -fsanitize=address -fno-omit-frame-pointer";
+    LDFLAGS          = "-fsanitize=address -fno-omit-frame-pointer";
+
     MEMORY_DEBUG     = debug;
     CPU_DEBUG        = debug;
     EVENT_TIME_DEBUG = false;
