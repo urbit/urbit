@@ -79,6 +79,22 @@
       ::
       `@ux`(rash - hex)
     ::
+    ++  ip-port-to-cord
+      |=  [ip=@if port=@ud]
+      %-  crip
+      :(weld (slag 1 (scow %if ip)) ":" ((d-co:co 1) port))
+    ::
+    ++  to-wall
+      |=  =tape
+      ^-  wall
+      %+  roll  (flop tape)
+      |=  [char=@tD =wall]
+      ?~  wall
+        [[char ~] ~]
+      ?:  =('\0a' char)
+        [~ wall]
+      [[char i.wall] t.wall]
+    ::
     ++  json-parser
       |%
       ::  %vin:json-parser
@@ -286,6 +302,33 @@
     :^  -.req  (method -.req)  %list
     ^-  (list json)
     ?+    -.req  ~|([%unsupported-request -.req] !!)
+    ::  Control
+    ::
+        %get-memory-info
+      ~
+    ::
+        %get-rpc-info
+      ~
+    ::
+        %help
+      ?~  command.req  ~
+      [%s u.command.req]~
+    ::
+        %logging
+      :~  ?+  include.req  [%a (turn include.req |=(s=logging-category [%s s]))]
+            %all   [%a [%s 'all']~]
+            %none  [%a [%s 'none']~]
+          ==
+          ?+  exclude.req  [%a (turn exclude.req |=(s=logging-category [%s s]))]
+              %all   [%a [%s 'all']~]
+              %none  [%a [%s 'none']~]
+      ==  ==
+    ::
+        %stop
+      ~
+    ::
+        %uptime
+      ~
     ::  Generating
     ::
         %generate
@@ -293,6 +336,118 @@
       ?~  max-tries.req
         ~
       [(numb u.max-tries.req) ~]
+    ::
+        %generate-to-address
+      :-  (numb n-blocks.req)
+      :-  [%s ?^(address.req +.address.req (base58-to-cord address.req))]
+      ?~  max-tries.req
+        ~
+      [(numb u.max-tries.req) ~]
+    ::  Mining
+    ::
+        %get-block-template
+      :_  ~
+      :-  %o
+      %-  molt
+      ^-  (list (pair @t json))
+      :-  ['rules' [%a (turn rules.req |=(s=rule [%s s]))]]
+      :-  ['capabilities' [%a (turn capabilities.req |=(s=capability [%s s]))]]
+      ?~  mode.req  ~
+      ?+  u.mode.req  :-  ['mode' %s mode.u.mode.req]  ~
+        [%proposal *]
+        ?~  workid.u.mode.req
+          :+  ['mode' %s mode.u.mode.req]
+              ['data' %s (hex-to-cord data.u.mode.req)]  ~
+        :^  ['mode' %s mode.u.mode.req]
+            ['data' %s (hex-to-cord data.u.mode.req)]
+            ['workid' %s u.workid.u.mode.req]  ~
+      ==
+    ::
+        %get-mining-info
+      ~
+    ::
+        %get-network-hash-ps
+      :~  ?~  n-blocks.req  ~
+        (numb u.n-blocks.req)
+        ?~  height.req  ~
+        (numb u.height.req)
+      ==
+    ::
+        %prioritise-transaction
+      :~  [%s (hex-to-cord txid.req)]
+          :: dummy null argument, could be omitted by using named
+          :: instead of positional json rpc arguments
+          :: see https://bitcoincore.org/en/doc/0.18.0/rpc/mining/prioritisetransaction/
+          ~
+          (numb fee-delta.req)
+      ==
+    ::
+        %submit-block
+      [%s (hex-to-cord hex-data.req)]~
+    ::
+        %submit-header
+      [%s (hex-to-cord hex-data.req)]~
+    ::  Network
+    ::
+        %add-node
+      :-  [%s (ip-port-to-cord node.req port.req)]
+      :-  [%s command.req]
+      ~
+    ::
+        %clear-banned
+      ~
+    ::
+        %disconnect-node
+      ?@  node.req
+        :_  ~
+        [%n node-id.node.req]
+      :_  ~
+      [%s (ip-port-to-cord address.node.req port.node.req)]
+    ::
+        %get-added-node-info
+      ?~  node.req  ~
+      :_  ~
+      =/  ip=cord
+        =/  a  (scow %if u.node.req)
+        ?~  a  ''
+        (crip t.a)
+      [%s ip]
+    ::
+        %get-connection-count
+      ~
+    ::
+        %get-net-totals
+      ~
+    ::
+        %get-network-info
+      ~
+    ::
+        %get-node-addresses
+      ?~  count.req  ~
+      :_  ~
+      (numb u.count.req)
+    ::
+        %get-peer-info
+      ~
+    ::
+        %list-banned
+      ~
+    ::
+        %ping
+      ~
+    ::
+        %set-ban
+      :-  [%s subnet.req]
+      :-  [%s command.req]
+      ?~  ban-time.req  ~
+      ?-  -.u.ban-time.req
+        %dr  [(numb (div +.u.ban-time.req ~s1)) ~]
+        %da  [(numb (unt:chrono:userlib +.u.ban-time.req)) [%b %.y] ~]
+      ==
+    ::
+        %set-network-active
+      :_  ~
+      [%b state.req]
     ::  Raw Transactions
     ::
         %analyze-psbt
@@ -1101,12 +1256,284 @@
     ::
     ?>  ?=(%result -.res)
     ?+    id.res  ~|  [%unsupported-response id.res]   !!
+    ::  Control
+    ::
+        %get-memory-info
+      :-  id.res
+      %.  res.res
+      %-  ot
+      :_  ~
+      :-  'locked'
+      %-  ot
+        :~  ['used' ni]
+            ['free' ni]
+            ['total' ni]
+            ['locked' ni]
+            ['chunks_free' ni]
+            ['chunks_used' ni]
+        ==
+    ::
+        %get-rpc-info
+      :-  id.res
+      %.  res.res
+      %-  ot
+      :_  ~
+      :-  'active_commands'
+      %-  ar
+      %-  ot
+        :~  ['method' so]
+            :-  'duration'
+            %+  cu
+              |=  a/@u
+              (mul (div ~s1 1.000) a)
+            ni
+        ==
+    ::
+        %help
+      :-  id.res
+      %.  res.res
+      (cu to-wall sa)
+    ::
+        %logging
+      :-  id.res
+      %.  res.res
+      (om bo)
+    ::
+        %stop
+      :-  id.res
+      (so res.res)
+    ::
+        %uptime
+      :-  id.res
+      %+  mul  ~s1
+      (ni res.res)
     ::  Generating
     ::
         %generate
       :-  id.res
       %.  res.res
       (ar (cu to-hex so))
+    ::
+        %generate-to-address
+      :-  id.res
+      %.  res.res
+      (ar (su hex))
+    ::  Mining
+    ::
+        %get-block-template
+      :-  id.res
+      %.  res.res
+      %-  ot
+        :~  ['version' ni]
+            ['rules' (ar (cu ^rule so))]
+            ['vbavailable' (om ni)]
+            ['vbrequired' ni]
+            ['previousblockhash' (su hex)]
+            :-  'transactions'
+              %-  ar
+              %-  ot
+                :~  ['data' (su hex)]
+                    ['txid' (su hex)]
+                    ['hash' (su hex)]
+                    ['depends' (ar ni)]
+                    ['fee' ni]
+                    ['sigops' ni]
+                    ['weight' ni]
+                ==
+            ['coinbaseaux' (ot ~[flags+so])]
+            ['coinbasevalue' ni]
+            ['target' (su hex)]
+            ['mintime' (cu from-unix:chrono:userlib ni)]
+            ['mutable' (ar (cu mutable so))]
+            ['noncerange' so]
+            ['sigoplimit' ni]
+            ['sizelimit' ni]
+            ['weightlimit' ni]
+            ['curtime' (cu from-unix:chrono:userlib ni)]
+            ['bits' (su hex)]
+            ['height' ni]
+            ['default_witness_commitment' (su hex)]
+        ==
+    ::
+        %get-mining-info
+      :-  id.res
+      %.  res.res
+      %-  ot
+        :~  ['blocks' ni]
+            ['currentblockweight' ni]
+            ['currentblocktx' ni]
+            ['difficulty' ne]
+            ['networkhashps' ne]
+            ['pooledtx' ni]
+            ['chain' (cu network-name so)]
+            ['warnings' so]
+        ==
+    ::
+        %get-network-hash-ps
+      :-  id.res
+      (ne res.res)
+    ::
+        %prioritise-transaction
+      :-  id.res
+      (bo res.res)
+    ::
+        %submit-block
+      :-  id.res
+      (so res.res)
+    ::
+        %submit-header
+      :-  id.res
+      (so res.res)
+    ::  Network
+    ::
+        %add-node
+      :-  id.res
+      (ul res.res)
+    ::
+        %clear-banned
+      :-  id.res
+      (ul res.res)
+    ::
+        %disconnect-node
+      :-  id.res
+      (ul res.res)
+    ::
+        %get-added-node-info
+      :-  id.res
+      %.  res.res
+      %-  ar
+      %-  ot
+        :~  ['addednode' so]
+            ['connected' bo]
+            :-  'addresses'
+              %-  ar
+              %-  ot
+              :~  ['address' so]
+                  ['connected' (cu ?(%inbound %outbound) so)]
+        ==    ==
+    ::
+        %get-connection-count
+      :-  id.res
+      (ni res.res)
+    ::
+        %get-net-totals
+      :-  id.res
+      %.  res.res
+      %-  ot
+        :~  ['totalbytesrecv' ni]
+            ['totalbytessent' ni]
+            ['timemillis' (cu |=(a=@u (from-unix:chrono:userlib (div a 1.000))) ni)]
+            :-  'uploadtarget'
+            %-  ot
+              :~  ['timeframe' (cu |=(a=@u (mul a ~s1)) ni)]
+                  ['target' ni]
+                  ['target_reached' bo]
+                  ['serve_historical_blocks' bo]
+                  ['bytes_left_in_cycle' ni]
+                  ['time_left_in_cycle' (cu |=(a=@u (mul a ~s1)) ni)]
+        ==    ==
+    ::
+        %get-network-info
+      :-  id.res
+      %.  res.res
+      %-  ot
+        :~  ['version' ni]
+            ['subversion' so]
+            ['protocolversion' ni]
+            ['localservices' so]
+            ['localrelay' bo]
+            ['timeoffset' ni]
+            ['connections' ni]
+            ['networkactive' bo]
+            :-  'networks'
+              %-  ar
+              %-  ot
+                :~  ['name' (cu ?(%ipv4 %ipv6 %onion) so)]
+                    ['limited' bo]
+                    ['reachable' bo]
+                    ['proxy' so]
+                    ['proxy_randomize_credentials' bo]
+                ==
+            ['relayfee' ne]
+            ['incrementalfee' ne]
+            :-  'localaddresses'
+              %-  ar
+              %-  ot
+                :~  ['address' so]
+                    ['port' ni]
+                    ['score' ni]
+                ==
+          ['warnings' so]
+        ==
+    ::
+        %get-node-addresses
+      :-  id.res
+      %.  res.res
+      %-  ar
+      %-  ot
+        :~  ['time' (cu from-unix:chrono:userlib ni)]
+            ['services' ni]
+            ['address' so]
+            ['port' ni]
+        ==
+    ::
+        %get-peer-info
+      :-  id.res
+      %.  res.res
+      %-  ar
+      %-  ou
+        :~  ['id' (un ni)]
+            ['addr' (un so)]
+            ['addrbind' (un so)]
+            ['addrlocal' (uf ~ (mu so))]
+            ['services' (un so)]
+            ['relaytxes' (un bo)]
+            ['lastsend' (un (cu from-unix:chrono:userlib ni))]
+            ['lastrecv' (un (cu from-unix:chrono:userlib ni))]
+            ['bytessent' (un ni)]
+            ['bytesrecv' (un ni)]
+            ['conntime' (un (cu from-unix:chrono:userlib ni))]
+            ['timeoffset' (un ni)]
+            ['pingtime' (un ne)]
+            ['minping' (un ne)]
+            ['pingwait' (uf ~ (mu ni))]
+            ['version' (un ni)]
+            ['subver' (un so)]
+            ['inbound' (un bo)]
+            ['addnode' (un bo)]
+            ['startingheight' (un ni)]
+            ['banscore' (un ni)]
+            ['synced_headers' (un ni)]
+            ['synced_blocks' (un ni)]
+            ['inflight' (un (ar ni))]
+            ['whitelisted' (un bo)]
+            ['minfeefilter' (un ne)]
+            ['bytessent_per_msg' (un (om ni))]
+            ['bytesrecv_per_msg' (un (om ni))]
+        ==
+    ::
+        %list-banned
+      :-  id.res
+      %.  res.res
+      %-  ar
+      %-  ot
+        :~  ['address' so]
+            ['banned_until' (cu from-unix:chrono:userlib ni)]
+            ['ban_created' (cu from-unix:chrono:userlib ni)]
+            ['ban_reason' so]
+        ==
+    ::
+        %ping
+      :-  id.res
+      (ul res.res)
+    ::
+        %set-ban
+      :-  id.res
+      (ul res.res)
+    ::
+        %set-network-active
+      :-  id.res
+      (bo res.res)
     ::  Raw Transactions
     ::
         %analyze-psbt

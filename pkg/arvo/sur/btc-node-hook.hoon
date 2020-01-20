@@ -26,6 +26,179 @@
     ::      - %list-transactions
     ::
     +$  category  ?(%send %receive %generate %immature %orphan)
+    ::  $rule:
+    ::
+    ::   Used in:
+    ::      - %get-block-template
+    ::
+    ::
+    +$  rule  %segwit
+    ::  $capability:
+    ::
+    ::  Used in:
+    ::      - %get-block-template
+    ::
+    +$  capability
+      $?  %longpoll
+          %coinbasetxn
+          %coinbasevalue
+          %proposal
+          %serverlist
+          %workid
+      ==
+    ::  $block-template-mode:
+    ::
+    ::  Used in:
+    ::      - %get-block-template
+    ::
+    +$  block-template-mode
+      $?  mode=%template
+          [mode=%proposal data=@ux workid=(unit @t)]
+      ==
+    ::  $logging-category:
+    ::
+    ::   Used in:
+    ::      - %logging
+    ::
+    +$  logging-category
+      $?  %net
+          %tor
+          %mempool
+          %http
+          %bench
+          %zmq
+          %db
+          %rpc
+          %estimatefee
+          %addrman
+          %selectcoins
+          %reindex
+          %cmpctblock
+          %rand
+          %prune
+          %proxy
+          %mempoolrej
+          %libevent
+          %coindb
+          %qt
+          %leveldb
+      ==
+    ::  $rpc-command:
+    ::
+    ::   Used in:
+    ::      - %get-rpc-info
+    ::
+    +$  rpc-command  [method=@t duration=@dr]
+    ::  $transaction:
+    ::
+    ::  Used in:
+    ::      - %get-block-template
+    ::
+    +$  transaction
+      $:  data=@ux
+          txid=@ux
+          hash=@ux
+          depends=(list @ud)
+          fee=@ud
+          sigops=@ud
+          weight=@ud
+      ==
+    ::  $mutable:
+    ::
+    ::  Used in:
+    ::      - %get-block-template
+    ::
+    +$  mutable  ?(%value %time %transactions %prevblock)
+    ::  $node-address:
+    ::
+    ::  Used in:
+    ::      - $node-info
+    ::
+    +$  node-address  [address=@t connected=?(%inbound %outbound)]
+    ::  $node-info:
+    ::
+    ::  Used in:
+    ::      - %get-added-node-info
+    ::
+    +$  node-info  [added-node=@t connected=? addresses=(list node-address)]
+    ::  $upload-target:
+    ::
+    ::  Used in:
+    ::      - %get-net-totals
+    ::
+    +$  upload-target
+      $:  timeframe=@dr
+          target=@ud
+          target-reached=?
+          serve-historical-blocks=?
+          bytes-left-in-cycle=@ud
+          time-left-in-cycle=@dr
+      ==
+    ::  $network-info:
+    ::
+    ::  Used in:
+    ::      - %get-network-info
+    ::
+    +$  network-info
+      $:  name=?(%ipv4 %ipv6 %onion)
+          limited=?
+          reachable=?
+          proxy=@t
+          proxy-randomize-credentials=?
+      ==
+    ::  $local-address:
+    ::
+    ::  Used in:
+    ::      - %get-network-info
+    ::
+    +$  local-address  [address=@t port=@ud score=@ud]
+    ::  $node-address-info:
+    ::
+    ::  Used in:
+    ::      - %get-node-addresses
+    ::
+    +$  node-address-info  [time=@da services=@ud address=@t port=@ud]
+    ::  $peer-info:
+    ::
+    ::  Used in:
+    ::      - %get-peer-info
+    ::
+    +$  peer-info
+      $:  id=@ud
+          addr=@t
+          addr-bind=@t
+          addr-local=(unit @t)
+          services=@t
+          relay-txes=?
+          last-send=@da
+          last-recv=@da
+          bytes-sent=@ud
+          bytes-recv=@ud
+          conn-time=@da
+          time-offset=@ud
+          ping-time=@rd
+          min-ping=@rd
+          ping-wait=(unit @ud)
+          version=@ud
+          subver=@t
+          inbound=?
+          addnode=?
+          starting-height=@ud
+          ban-score=@ud
+          synced-headers=@ud
+          synced-blocks=@ud
+          inflight=(list @ud)
+          whitelisted=?
+          min-fee-filter=@rd
+          bytes-sent-per-msg=(map @t @ud)
+          bytes-recv-per-msg=(map @t @ud)
+      ==
+    ::  $banned:
+    ::
+    ::    Used in:
+    ::      - %list-banned
+    ::
+    +$  banned  [address=@t banned-until=@da ban-created=@da ban-reason=@t]
     ::  $chain-status:
     ::
     ::    Used in:
@@ -387,10 +560,120 @@
     $%
     ::  Control
     ::
+        :: %getmemoryinfo: Returns an object containing information about memory
+        :: usage.
+        ::
+        [%get-memory-info ~]
+        :: %getrpcinfo: Returns details of the RPC server.
+        ::
+        [%get-rpc-info ~]
+        :: %help: List all commands, or get help for a specified command.
+        ::
         [%help command=(unit @t)]
+        :: %logging: Gets and sets the logging configuration.
+        ::
+        $:  %logging
+            include=?(%all %none (list logging-category))
+            exclude=?(%all %none (list logging-category))
+        ==
+        :: %stop: Stop Bitcoin server.
+        ::
+        [%stop ~]
+        :: %uptime: Returns the total uptime of the server.
+        ::
+        [%uptime ~]
     ::  Generating
     ::
         [%generate blocks=@ud max-tries=(unit @ud)]
+        ::  %generatetoaddress: Mine blocks immediately to a specified address
+        ::  (before the RPC call returns)
+        ::
+        [%generate-to-address n-blocks=@ud =address max-tries=(unit @ud)]
+    ::  Mining
+    ::
+        ::  %getblocktemplate: It returns data needed to construct a block
+        ::  to work on.
+        ::
+        $:  %get-block-template
+            rules=(list rule)
+            capabilities=(list capability)
+            mode=(unit block-template-mode)
+        ==
+        ::  %getmininginfo: Returns a json object containing mining-related
+        ::  information.
+        ::
+        [%get-mining-info ~]
+        ::  %getnetworkhashps: Returns the estimated network hashes per second
+        ::  based on the last n blocks.
+        ::
+        [%get-network-hash-ps n-blocks=(unit @ud) height=(unit @ud)]
+        ::  %prioritisetransaction: Accepts the transaction into mined blocks
+        ::  at a higher (or lower) priority
+        ::
+        [%prioritise-transaction txid=@ux fee-delta=@ud]
+        ::  %submitblock: Attempts to submit new block to network.
+        ::
+        [%submit-block hex-data=@ux]
+        ::  %submitheader: Decode the given hexdata as a header and submit it
+        ::  as a candidate chain tip if valid. Throws when the header is
+        ::  invalid.
+        ::
+        [%submit-header hex-data=@ux]
+    ::  Mining
+    ::
+        ::  %addnode: Attempts to add or remove a node from the addnode list.
+        ::  Or try a connection to a node once.
+        ::
+        [%add-node node=@if port=@ud command=?(%add %remove %onetry)]
+        ::  %clearbanned: Clear all banned IPs.
+        ::
+        [%clear-banned ~]
+        ::  %disconnectnode: Immediately disconnects from the specified peer node.
+        ::
+        [%disconnect-node node=?(node-id=@t [address=@if port=@ud])]
+        ::  %getaddednodeinfo: Returns information about the given added node,
+        ::  or all added nodes (note that onetry addnodes are not listed here)
+        ::
+        [%get-added-node-info node=(unit @if)]
+        ::  %getconnectioncount: Returns the number of connections to other
+        ::  nodes.
+        ::
+        [%get-connection-count ~]
+        ::  %getnettotals: Returns information about network traffic,
+        ::  including bytes in, bytes out, and current time.
+        ::
+        [%get-net-totals ~]
+        ::  %getnetworkinfo: Returns an object containing various state info
+        ::  regarding P2P networking.
+        ::
+        [%get-network-info ~]
+        ::  %getnodeaddresses: Return known addresses which can potentially be
+        :: used to find new nodes in the network
+        [%get-node-addresses count=(unit @ud)]
+        ::  %getpeerinfo: Returns data about each connected network node as a
+        ::  json array of objects.
+        ::
+        [%get-peer-info ~]
+        ::  %listbanned: List all banned IPs/Subnets.
+        ::
+        [%list-banned ~]
+        ::  %ping: Requests that a ping be sent to all other nodes, to measure
+        ::  ping time. Results provided in getpeerinfo, pingtime and pingwait
+        ::  fields are decimal seconds. Ping command is handled in queue with all
+        ::  other commands, so it measures processing backlog, not just network
+        ::  ping.
+        ::
+        [%ping ~]
+        ::  %setban: Attempts to add or remove an IP/Subnet from the banned list.
+        ::
+        $:  %set-ban
+            subnet=@t
+            command=?(%add %remove)
+            ban-time=(unit ?([%dr @dr] [%da @da]))
+        ==
+        ::  %setnetworkactive: Disable/enable all p2p network activity.
+        ::
+        [%set-network-active state=?]
     ::  Raw Transactions
     ::
         ::  %analyze-psbt: Analyzes and provides information about
@@ -862,10 +1145,101 @@
   +$  response
     $%
     ::  Control
-        [%help ~]
+    ::
+        $:  %get-memory-info
+            used=@ud
+            free=@ud
+            total=@ud
+            locked=@ud
+            chunks-free=@ud
+            chunks-used=@ud
+        ==
+      ::
+        [%get-rpc-info active-commands=(list rpc-command)]
+        [%help help=wall]
+        [%logging logging-config=(map @t ?)]
+        [%stop res=@t]
+        [%uptime uptime=@dr]
     ::  Generating
     ::
         [%generate blocks=(list blockhash)]
+        [%generate-to-address blockhashes=(list blockhash)]
+    ::  Mining
+    ::
+        $:  %get-block-template
+            version=@ud
+            rules=(list rule)
+            vb-available=(map @t @ud)
+            vb-required=@ud
+            previous-blockhash=blockhash
+            transactions=(list transaction)
+            coinbase-aux=@t
+            coinbase-value=@ud
+            target=blockhash
+            min-time=@da
+            mutable=(list mutable)
+            nonce-range=@t
+            sigop-limit=@ud
+            size-limit=@ud
+            weight-limit=@ud
+            cur-time=@da
+            bits=@ux
+            height=@ud
+            default-witness-commitment=blockhash
+        ==
+      ::
+        $:  %get-mining-info
+            blocks=@ud
+            current-block-weight=@ud
+            current-block-tx=@ud
+            difficulty=@rd
+            network-hash-ps=@rd
+            pooled-tx=@ud
+            chain=network-name
+            warnings=@t
+        ==
+      ::
+        [%get-network-hash-ps hash-ps=@rd]
+        [%prioritise-transaction res=?]
+        [%submit-block res=@t]
+        [%submit-header res=@t]
+    ::  Network
+    ::
+        [%add-node res=null]
+        [%clear-banned res=null]
+        [%disconnect-node res=null]
+        [%get-added-node-info node-info=(list node-info)]
+        [%get-connection-count connection-count=@ud]
+      ::
+        $:  %get-net-totals
+            total-bytes-recv=@ud
+            total-bytes-sent=@ud
+            time-millis=@da
+            =upload-target
+        ==
+      ::
+        $:  %get-network-info
+            version=@ud
+            subversion=@t
+            protocol-version=@ud
+            local-services=@t
+            local-relay=?
+            time-offset=@ud
+            connections=@ud
+            network-active=?
+            networks=(list network-info)
+            relay-fee=@rd
+            incremental-fee=@rd
+            local-addresses=(list local-address)
+            warnings=@t
+        ==
+      ::
+        [%get-node-addresses (list node-address-info)]
+        [%get-peer-info (list peer-info)]
+        [%list-banned (list banned)]
+        [%ping res=null]
+        [%set-ban res=null]
+        [%set-network-active res=?]
     ::  Raw Transactions
     ::
         $:  %analyze-psbt
