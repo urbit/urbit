@@ -3,13 +3,6 @@
 +$  versioned-doc-id
   [uri=@t version=(unit @)]
 ::
-::  ++  request
-::    |%
-::    +$  text-document--did-change
-::    --
-  ::  $%
-  ::    text-document--did-change:request
-  ::  ==
 ++  request
   |%
   +$  all
@@ -32,11 +25,6 @@
     [%text-document--hover id=cord contents=(unit @t)]
   --
 ::
-
-::
-::  ++  notification
-::    |*  kind=response-kind
-::    kind
 +$  diagnostic
   [=range severity=@ud message=@t]
 ::
@@ -48,6 +36,7 @@
 ::
 ++  notification
   |%
+  ::
   +$  in
     $%
       text-document--did-change
@@ -57,27 +46,36 @@
       exit
       unknown
     ==
+  ::
   +$  out
     $%
       text-document--publish-diagnostics
     ==
+  ::
   +$  all
     $%
       out
       in
     ==
+  ::
   +$  text-document--did-change
     [%text-document--did-change versioned-doc-id changes=(list change)]
+  ::
   +$  text-document--did-open
     [%text-document--did-open text-document-item]
+  ::
   +$  text-document--did-save
     [%text-document--did-save versioned-doc-id]
+  ::
   +$  text-document--did-close
     [%text-document--did-close versioned-doc-id]
+  ::
   +$  exit
     [%exit ~]
+  ::
   +$  unknown
     [%unknown =json]
+  ::
   +$  text-document--publish-diagnostics
     [%text-document--publish-diagnostics uri=@t diagnostics=(list diagnostic)]
   ::

@@ -48,7 +48,7 @@
   ?:  (~(has in pier-root) i.path)
     `^path`path
   $(path t.path)
-
+::
 ++  parse-uri
   |=  uri=@t
   =-  (fall - /fail)
@@ -58,6 +58,5 @@
   %+  cook
     crip
   (star ;~(pose col hep alf))
-::
 ::
 --

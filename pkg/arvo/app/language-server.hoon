@@ -86,7 +86,6 @@
   ::
   ++  on-watch
     |=  =path
-    ~&  'subscribe on path'
     ?:  ?=([%primary ~] path)
       :_  this
       ~
@@ -94,12 +93,7 @@
       (on-watch:def path)
     `this
   ++  on-leave  on-leave:def
-  ++  on-peek
-    |=  =path
-    ^-  (unit (unit cage))
-    ?+  path  (on-peek:def path)
-      [%x %builds ~]  ``noun+!>(~(key by builds))
-    ==
+  ++  on-peek  on-peek:def
   ++  on-agent  on-agent:def
   ++  on-arvo
     ^+  on-arvo:*agent:gall
@@ -210,7 +204,6 @@
 ++  handle-build
   |=  [=path =gift:able:ford]
   ^-  (quip card _state)
-  ~&  'Built'
   ?.  ?=([%made *] gift)
     [~ state]
   ?.  ?=([%complete *] result.gift)

@@ -1,8 +1,5 @@
 /-  lsp=language-server
 |%
-::  ++  request-by-type
-::    |*  type=mold
-::    $>(type requester:lsp)
 ::
 ++  util
   |%
@@ -51,6 +48,7 @@
         ==
       ::
       --
+  ::
   ++  notification
     |=  jon=json
     ?>  ?=([%o *] jon)
@@ -90,10 +88,9 @@
         :-  %text-document--did-close
         (text-document-id doc-id)
       ::
-
       ++  text-document--did-change
         |=  jon=json
-        ^-  text-document--did-change:notification:lsp ::%text-document--did-change)
+        ^-  text-document--did-change:notification:lsp
         :-  %text-document--did-change
         =,  dejs:format
         %.  jon
@@ -101,7 +98,6 @@
           'textDocument'^text-document-id
           'contentChanges'^text-document-changes
           ~
-          ::  'contentChanges'
         ==
       ::
       ++  text-document--did-open
@@ -113,6 +109,7 @@
         (text-document-item (~(got by p.jon) 'textDocument'))
       --
     ::  Utilities
+    ::
   ++  text-document-item
     |=  jon=json
     ^-  text-document-item:lsp
@@ -124,12 +121,14 @@
       text+so
       ~
     ==
+  ::
   ++  text-document-id
     %:  ou
       uri+(un so)
       version+(uf ~ (pe ~ ni))
       ~
     ==
+  ::
   ++  text-document-changes
     =,  dejs:format
     %-  ar
@@ -139,12 +138,11 @@
         text+(un so)
         ~
     ==
+  ::
   ++  method
     |=  =tape
-    ::  TODO: gross
     ^-  cord
-    %-  crip
-    %-  zing
+    %-  crip  %-  zing
     %+  join  "--"
     ^-  (list ^tape)
     %+  turn
@@ -155,36 +153,29 @@
         fas
       ;~  plug
         (star low)
-        (star ;~(plug (cook downcase hig) (star low)))
+        (star ;~(plug (cook |=(a=@ (add a 32)) hig) (star low)))
       ==
     |=  words=(list ^tape)
     ^-  ^tape
     (zing (join "-" words))
- ++  range
-   %:  ot
-    start+position
-    end+position
-    ~
-  ==
+  ::
+  ++  range
+    %:  ot
+      start+position
+      end+position
+      ~
+    ==
   ::
   ++  position
-  =,  dejs:format
-  %:  ot
-      line+ni
-      character+ni
-      ~
-  ==
- 
+    %:  ot
+        line+ni
+        character+ni
+        ~
+    ==
   --
 ::
-++  downcase
-  |=  a=@
-  (add a 32)
-::
 :: TODO: fix
-++  unparse-method
-  |=  =cord
-  'textDocument/publishDiagnostics' 
+
 ::
 ++  enjs
   =,  enjs:format
@@ -205,8 +196,11 @@
             %text-document--publish-diagnostics
           (text-document--publish-diagnostics notification)
         ==
+    ~!  -.notification
+    =/  method=cord  (crip (unparse-method -.notification))
+    ~&  method
     %:  pairs
-     [%method %s (unparse-method -.notification)]
+      method+s+method
       params+params
       ~
     ==
@@ -235,7 +229,27 @@
           ~
         s+u.contents.hov
       --
-
+  ++  unparse-method
+    |=  =cord
+    ^-  ^tape
+    %+  rash  cord
+    %+  cook  |=(l=(list ^tape) (zing (join "/" l)))
+    %+  more  (jest '--')
+    %+  cook
+      |=  tapes=(list ^tape)
+      ^-  ^tape
+      ?~  tapes  ~
+      %-  zing
+      :-  i.tapes
+      %+  turn  t.tapes
+      |=  t=^tape
+      ^-  ^tape
+      ?~  t  ~
+      [`@tD`(sub i.t 32) t.t]
+    %+  more
+      ;~(less (jest '--') hep)
+    (star alf)
+  ::
   ++  position
     |=  =position:lsp
     ^-  json
