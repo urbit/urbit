@@ -4067,11 +4067,7 @@
       ==
   ^-  [(list move) _..^$]
   ::
-  =/  req=task:able
-    ?.  ?=(%soft -.wrapped-task)
-      wrapped-task
-    ;;(task:able p.wrapped-task)
-  ::
+  =/  req=task:able  ((harden task:able) wrapped-task)
   ::  only one of these should be going at once, so queue
   ::
   ?:  ?=(?(%info %merg %mont) -.req)

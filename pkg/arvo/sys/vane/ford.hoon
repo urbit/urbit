@@ -6128,12 +6128,8 @@
 ++  call
   |=  [=duct type=* wrapped-task=(hobo task:able)]
   ^-  [(list move) _ford-gate]
-  ::  unwrap :task from :wrapped-task
   ::
-  =/  task=task:able
-    ?.  ?=(%soft -.wrapped-task)
-      wrapped-task
-    ;;(task:able p.wrapped-task)
+  =/  task=task:able  ((harden task:able) wrapped-task)
   ::  we wrap +per-event with a call that binds our event args
   ::
   =*  this-event  (per-event [our duct now scry-gate] state.ax)

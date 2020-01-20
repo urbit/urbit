@@ -918,11 +918,7 @@
     ++  call
       |=  [=duct type=* wrapped-task=(hobo task)]
       ::
-      =/  =task
-        ?.  ?=(%soft -.wrapped-task)
-          wrapped-task
-        ~|  our^%ames-fail-soft
-        ;;(task p.wrapped-task)
+      =/  =task  ((harden task) wrapped-task)
       ::  %born: set .unix-duct and start draining .queued-events
       ::
       ?:  ?=(%born -.task)
@@ -1056,11 +1052,7 @@
   |=  [=duct type=* wrapped-task=(hobo task)]
   ^-  [(list move) _ames-gate]
   ::
-  =/  =task
-    ?.  ?=(%soft -.wrapped-task)
-      wrapped-task
-    ~|  %ames-bad-task^p.wrapped-task
-    ;;(task p.wrapped-task)
+  =/  =task  ((harden task) wrapped-task)
   ::
   =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
   ::

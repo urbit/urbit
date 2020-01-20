@@ -1476,12 +1476,7 @@
   ^-  [(list move) _gall-payload]
   ::
   ~|  [%gall-call-failed duct q.hic]
-  ::  make sure our task is hard
-  ::
-  =/  =task:able
-    ?.  ?=(%soft -.q.hic)
-      q.hic
-    ;;  task:able  p.q.hic
+  =/  =task:able  ((harden task:able) q.hic)
   ::
   =/  initialised  (mo-abed:mo duct)
   ?-    -.task
