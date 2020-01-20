@@ -968,10 +968,7 @@
           hic/(hypo (hobo task:able))
       ==
   ^-  [(list move) _..^$]
-  =/  =task:able
-    ?.  ?=($soft -.q.hic)
-      q.hic
-    (task:able p.q.hic)
+  =/  =task:able  ((harden task:able) q.hic)
   =^  did  lex
     abet:(~(call of [our now eny] lex) hen task)
   [did ..^$]

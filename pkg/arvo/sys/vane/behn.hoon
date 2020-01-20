@@ -251,10 +251,7 @@
       ==
   ^-  [(list move) _behn-gate]
   ::
-  =/  =task:able
-    ?.  ?=(%soft -.wrapped-task)
-      wrapped-task
-    ;;(task:able p.wrapped-task)
+  =/  =task:able  ((harden task:able) wrapped-task)
   ::
   =/  event-core  (per-event [our now hen] state)
   ::
