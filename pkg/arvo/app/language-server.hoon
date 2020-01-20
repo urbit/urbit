@@ -35,7 +35,6 @@
   $:  %0
       bufs=(map uri=@t buf=wall)
       builds=(map uri=@t =vase)
-      proc-id=@
       ford-diagnostics=(map uri=@t (list diagnostic:lsp-sur))
   ==
 +$  versioned-state
@@ -69,7 +68,7 @@
     |=  old-state=vase
     ^-  (quip card _this)
     ~&  >  %lsp-upgrade
-    [~ this(state !<(state-zero old-state))]
+    [~ this(state *state-zero)]
   ::
   ++  on-poke
     ^+  on-poke:*agent:gall
