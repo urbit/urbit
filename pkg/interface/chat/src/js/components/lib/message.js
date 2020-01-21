@@ -18,13 +18,13 @@ export class Message extends Component {
         (!!letter.code.output &&
          letter.code.output.length && letter.code.output.length > 0) ?
         (
-          <pre className="clamp-attachment pa1 mt0 mb0">
+          <pre className="f7 clamp-attachment pa1 mt0 mb0">
             {letter.code.output[0].join('\n')}
           </pre>
         ) : null;
       return (
         <span>
-          <pre className="clamp-attachment pa1 mt0 mb0 bg-light-gray">
+          <pre className="f7 clamp-attachment pa1 mt0 mb0 bg-light-gray">
             {letter.code.expression}
           </pre>
           {outputElement}
