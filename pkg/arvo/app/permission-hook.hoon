@@ -5,7 +5,7 @@
 ::    configured for them as `access-control`.
 ::
 /-  *permission-hook
-/+  *permission-json, default-agent
+/+  *permission-json, default-agent, verb, dbug
 ::
 |%
 +$  state
@@ -26,6 +26,8 @@
 =|  state-0
 =*  state  -
 ::
+%-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 =<
   |_  =bowl:gall
