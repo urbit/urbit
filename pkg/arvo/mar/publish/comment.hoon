@@ -1,5 +1,5 @@
-/-  publish
-|_  com=comment:publish
+/-  *publish
+|_  com=comment
 ::
 ::
 ++  grow
@@ -19,32 +19,36 @@
   |%
   ++  mime
     |=  [mite:eyre p=octs:eyre]
-    (txt (to-wain:format q.p))
-  ++  txt
-    |=  txs=(pole @t)
-    ^-  comment:publish
-    ::  TODO: putting ~ instead of * breaks this but shouldn't
-    ::
-    ?>  ?=  $:  author=@t
-                date-created=@t
-                line=@t
-                body=*
-             ==
-           txs
-    ?>  =(line.txs '-----')
-    ::
-    :*  %+  rash  author.txs
-        ;~(pfix (jest 'author: ~') fed:ag)
-    ::
-        %+  rash  date-created.txs
-        ;~  pfix
-          (jest 'date-created: ~')
-          (cook year when:so)
-        ==
-    ::
-        (of-wain:format (wain body.txs))
-    ==
-  ++  noun  comment:publish
+    |^  (rash q.p both-parser)
+    ++  key-val
+      |*  [key=rule val=rule]
+      ;~(sfix ;~(pfix key val) gaq)
+    ++  old-parser
+      ;~  plug
+        (key-val (jest 'creator: ~') fed:ag)
+        (key-val (jest 'collection: ') sym)
+        (key-val (jest 'post: ') sym)
+        (key-val (jest 'date-created: ~') (cook year when:so))
+        (key-val (jest 'last-modified: ~') (cook year when:so))
+        ;~(pfix (jest (cat 3 '-----' 10)) (cook crip (star next)))
+      ==
+    ++  new-parser
+      ;~  plug
+        (key-val (jest 'author: ~') fed:ag)
+        (key-val (jest 'date-created: ~') (cook year when:so))
+        ;~(pfix (jest (cat 3 '-----' 10)) (cook crip (star next)))
+      ==
+    ++  both-parser
+      ;~  pose
+        new-parser
+        %+  cook
+          |=  [author=@ @ @ date-created=@da @ content=@t]
+          ^-  comment
+          [author date-created content]
+        old-parser
+      ==
+    --
+  ++  noun  comment
   --
 ++  grad  %mime
 --
