@@ -1,7 +1,7 @@
 ::  permission-store: track black- and whitelists of ships
 ::
 /-  *permission-store
-/+  default-agent
+/+  default-agent, verb, dbug
 ::
 |%
 +$  card  card:agent:gall
@@ -17,6 +17,9 @@
 --
 =|  state-zero
 =*  state  -
+::
+%-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 =<
   |_  =bowl:gall

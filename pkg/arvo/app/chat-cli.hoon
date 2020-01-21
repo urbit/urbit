@@ -12,7 +12,7 @@
 /-  *chat-store, *chat-view, *chat-hook,
     *permission-store, *group-store, *invite-store,
     sole-sur=sole
-/+  sole-lib=sole, chat-eval, default-agent, verb,
+/+  sole-lib=sole, chat-eval, default-agent, verb, dbug,
     auto=language-server-complete
 ::
 |%
@@ -70,9 +70,11 @@
 --
 =|  state
 =*  all-state  -
+::
+%-  agent:dbug
+%+  verb  |
+^-  agent:gall
 =<
-  %+  verb  |
-  ^-  agent:gall
   |_  =bowl:gall
   +*  this       .
       talk-core  +>
