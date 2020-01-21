@@ -92,6 +92,39 @@
 ++  en-json
   =,  enjs:format
   |%
+  ++  update
+    |=  upd=^update
+    ^-  json
+    %-  frond
+    :-  -.upd
+    ?-  -.upd
+        %local-pages
+      %-  pairs
+      :~  'path'^(path path.upd)
+          'pages'^a+(turn pages.upd page)
+      ==
+    ::
+        %submissions
+      %-  pairs
+      :~  'path'^(path path.upd)
+          'pages'^a+(turn submissions.upd submission)
+      ==
+    ::
+        %annotations
+      %-  pairs
+      :~  'path'^(path path.upd)
+          'url'^s+url.upd
+          'notes'^a+(turn notes.upd note)
+      ==
+    ::
+        %discussions
+      %-  pairs
+      :~  'path'^(path path.upd)
+          'url'^s+url.upd
+          'comments'^a+(turn comments.upd comment)
+      ==
+    ==
+  ::
   ++  submission
     |=  sub=^submission
     ^-  json
@@ -111,10 +144,16 @@
   ++  comment
     |=  =^comment
     ^-  json
+    =+  n=(note +.comment)
+    ?>  ?=([%o *] n)
+    o+(~(put by p.n) 'ship' (ship ship.comment))
+  ::
+  ++  note
+    |=  =^note
+    ^-  json
     %-  pairs
-    :~  'ship'^(ship ship.comment)
-        'time'^(time time.comment)
-        'udon'^s+udon.comment  ::TODO  convert?
+    :~  'time'^(time time.note)
+        'udon'^s+udon.note  ::TODO  convert?
     ==
   --
 ::
