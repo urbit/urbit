@@ -30,7 +30,6 @@
     (parse-error p.tank)
   ?~  error
     ~
-  ~&  path.u.error
   ?:  =(path path.u.error)
     `range.u.error
   ~
