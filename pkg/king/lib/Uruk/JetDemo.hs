@@ -714,7 +714,7 @@ boolJet b = J 2 :@ S :@ encBool b
 pattern Iff = Fast 3 JIff []
 
 {-
-    cas = \b l r -> b l r
+    iff = \c t e -> c t e Uni
 -}
 sjIff ∷ SingJet
 sjIff = SingJet{..}
@@ -722,10 +722,12 @@ sjIff = SingJet{..}
     sjFast = JIff
     sjArgs = 3
     sjName = MkVal (Nat 16)
-    sjExec [Bol c,t,f]       = Just (if c then t else f)
+    sjExec [Bol c,t,f]       = Just (if c then t else f :@ Uni)
     sjExec [_,_,_]           = Nothing
     sjExec _                 = error "bad-iff"
-    sjBody = MkVal I
+    sjBody = MkVal $
+        S :@ (S :@ (K :@ S) :@ (S :@ (K :@ S)))
+          :@ (K :@ (K :@ (K :@ Uni)))
 
 
 -- Case ------------------------------------------------------------------------

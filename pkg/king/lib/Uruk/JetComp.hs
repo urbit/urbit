@@ -104,16 +104,18 @@ expDeb = go
                        `App` DPrim (Ur.Nat t)
                        `App` go b
 
-    go (Loop x) = DPrim Ur.Fix `App` (Abs (go x))
+    go (Loop x) = DPrim Ur.Fix
+                    `App` (Abs $ go x)
 
-    go (Case x l r) = DPrim Ur.Cas `App` go x
-                                   `App` go l
-                                   `App` go r
+    go (Case x l r) = DPrim Ur.Cas
+                        `App` go x
+                        `App` go l
+                        `App` go r
 
-    go (If c t e) = App (DPrim Ur.Iff `App` go c
-                                      `App` go (wrapLam t)
-                                      `App` go (wrapLam e))
-                        (DPrim Ur.Uni)
+    go (If c t e) = DPrim Ur.Iff
+                      `App` go c
+                      `App` go (wrapLam t)
+                      `App` go (wrapLam e)
 
     peano 0 = Zero
     peano n = Succ (peano (pred n))
@@ -235,7 +237,7 @@ infixl 5 %
 
 iff ∷ Exp → Exp → Exp → Exp
 iff c t e =
-    (Prim Ur.Iff % c % t' % e') % Prim Ur.Uni
+    Prim Ur.Iff % c % t' % e'
   where
     (t',e') = (wrapLam t, wrapLam e)
 
@@ -330,9 +332,9 @@ step = \case
         Just (Loop (abstract exp `Go` Var 0))
 
     --  Recognize if expressions
-    (Prim Ur.Iff `Go` c `Go` t `Go` e) `Go` Prim Ur.Uni →
-        Just (If c (t `Go` Prim Ur.Uni)
-                   (e `Go` Prim Ur.Uni))
+    Prim Ur.Iff `Go` c `Go` t `Go` e →
+        Just $ If c (t `Go` Prim Ur.Uni)
+                    (e `Go` Prim Ur.Uni)
 
     --  Prim to Lambda
     Prim Ur.Seq                   → Just (L (L 0))
