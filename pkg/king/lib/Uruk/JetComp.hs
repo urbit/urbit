@@ -44,12 +44,12 @@ instance Show Exp where
   show = \case
     Lam exp    → "<" <> show exp <> ">"
     Var n      → "$" <> show n
-    Prim p     → "\"" <> filter (\x → x/='{' && x/='}' && x/='#') (show p) <> "\""
+    Prim p     → filter (\x → x/='{' && x/='}' && x/='#') (show p)
     Loop x     → "..(" <> show x <> ")"
     If c t e   → "?:(" <> show c <> " " <> show t <> " " <> show e <> ")"
     Case x l r → "?-(" <> show x <> "; " <> show l <> " " <> show r <> ")"
     Jet n t b  → "~/(" <> show n <> " " <> show t <> " " <> show b <> ")"
-    Go x y     → "(" <> intercalate ", " (show <$> apps x [y]) <> ")"
+    Go x y     → "(" <> intercalate " " (show <$> apps x [y]) <> ")"
       where
         apps (Go f x) xs = apps f (x:xs)
         apps exp      xs = exp : xs
