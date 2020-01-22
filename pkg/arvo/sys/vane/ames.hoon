@@ -1477,10 +1477,15 @@
     ?>  =(rcvr-life.shut-packet our-life.channel)
     ::  non-galaxy: update route with heard lane or forwarded lane
     ::
-    =?  route.peer-state
-        ?&  !=(%czar (clan:title her.channel))
-            !=([~ %& *] route.peer-state)
-        ==
+    =?    route.peer-state
+        ?:  =(%czar (clan:title her.channel))
+          %.n
+        =/  is-old-direct=?  ?=([~ %& *] route.peer-state)
+        =/  is-new-direct=?  ?=(~ origin.packet)
+        ::  old direct takes precedence over new indirect
+        ::
+        |(is-new-direct !is-old-direct)
+      ::
       ?~  origin.packet
         `[direct=%.y lane]
       `[direct=%.n u.origin.packet]
