@@ -1,17 +1,20 @@
 /-  *contact-store
 |%
 +$  contact-view-action
-  $%  ::  create in both groups and contacts
+  $%  ::  %create: create in both groups and contacts
       ::
       [%create =path ships=(set ship)]
-      ::  add to both groups and contacts
+      ::  %add: add to groups and send invites
       ::
       [%add =path ships=(set ship)]
-      ::  remove from both groups and contacts
+      ::  %remove: remove from both groups and contacts
       ::
       [%remove =path =ship]
-      ::  delete in both groups and contacts
+      ::  %delete: delete in both groups and contacts
       ::
-      [%delete =path] 
+      [%delete =path]
+      ::  %share: send %add contact-action to to recipient's contact-hook
+      ::
+      [%share recipient=ship =path =ship =contact]
   ==
 --

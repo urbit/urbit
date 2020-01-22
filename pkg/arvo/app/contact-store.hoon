@@ -36,6 +36,7 @@
     |=  [=mark =vase]
     ^-  (quip card _this)
     ?>  (team:title our.bowl src.bowl)
+    ~&  %store-poke
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
         ::%json            (poke-json:cc !<(json vase))
@@ -106,6 +107,7 @@
   |=  action=contact-action
   ^-  (quip card _state)
   ?>  (team:title our.bol src.bol)
+  ~&  store+action
   ?-  -.action
       %create   (handle-create +.action)
       %delete   (handle-delete +.action)

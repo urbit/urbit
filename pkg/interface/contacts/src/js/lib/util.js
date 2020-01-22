@@ -63,6 +63,11 @@ export function deSig(ship) {
 }
 
 export function uxToHex(ux) {
-  let value = ux.substr(2).replace('.', '').padStart(6, '0');
+  if (ux.length > 2 && ux.substr(0,2) === '0x') {
+    let value = ux.substr(2).replace('.', '').padStart(6, '0');
+    return value;
+  }
+  
+  let value = ux.replace('.', '').padStart(6, '0');
   return value;
 }

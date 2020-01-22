@@ -149,6 +149,12 @@
     :~  (group-poke [%remove [ship.act ~ ~] path.act])
         (contact-poke [%remove path.act ship.act])
     ==
+  ::
+      %share
+    ::  determine whether to send to our contact-hook or foreign
+    ::  send contact-action to contact-hook with %add action
+    ~&  share+act
+    [(share-poke recipient.act [%add path.act ship.act contact.act])]~
   ==
 ++  poke-handle-http-request
   |=  =inbound-request:eyre
@@ -180,6 +186,11 @@
   |=  act=contact-hook-action
   ^-  card
   [%pass / %agent [our.bol %contact-hook] %poke %contact-hook-action !>(act)]
+::
+++  share-poke
+  |=  [=ship act=contact-action]
+  ^-  card
+  [%pass / %agent [ship %contact-hook] %poke %contact-action !>(act)]
 ::
 ++  launch-poke
   |=  act=[@tas path @t]

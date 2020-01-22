@@ -103,6 +103,7 @@
         [%delete delete]
         [%add add]
         [%remove remove]
+        [%share share]
     ==
   ::
   ++  create
@@ -123,6 +124,14 @@
     %-  ot
     :~  [%path pa]
         [%ship (su ;~(pfix sig fed:ag))]
+    ==
+  ::
+  ++  share
+    %-  ot
+    :~  [%recipient (su ;~(pfix sig fed:ag))]
+        [%path pa]
+        [%ship (su ;~(pfix sig fed:ag))]
+        [%contact cont]
     ==
   --
 ::

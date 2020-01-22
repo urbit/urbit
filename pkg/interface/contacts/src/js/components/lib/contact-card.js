@@ -1,22 +1,23 @@
 import React, { Component } from 'react';
 import { Sigil } from './icons/sigil';
-import { uxToHex } from '/lib/util';
 
 import { api } from '/api';
 import { Route, Link } from 'react-router-dom';
+import { EditElement } from '/components/lib/edit-element';
+import { uxToHex } from '/lib/util';
 
 export class ContactCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
       edit: props.share,
-      colorToSet: "",
-      nickNameToSet: "",
-      emailToSet: "",
-      phoneToSet: "",
-      websiteToSet: "",
-      notesToSet: ""
-    }
+      colorToSet: null,
+      nickNameToSet: null,
+      emailToSet: null,
+      phoneToSet: null,
+      websiteToSet: null,
+      notesToSet: null
+    };
     this.editToggle = this.editToggle.bind(this);
     this.sigilColorSet = this.sigilColorSet.bind(this);
     this.nickNameToSet = this.nickNameToSet.bind(this);
@@ -25,51 +26,52 @@ export class ContactCard extends Component {
     this.websiteToSet = this.websiteToSet.bind(this);
     this.notesToSet = this.notesToSet.bind(this);
     this.setField = this.setField.bind(this);
+    this.shareWithGroup = this.shareWithGroup.bind(this);
   }
 
   componentDidUpdate() {
     const { props } = this;
     // sigil color updates are done by keystroke parsing on update
     // other field edits are exclusively handled by setField()
-    let currentColor = (props.contact.color) ? props.contact.color : "0x0";
-    let currentHex = uxToHex(currentColor);
-    let hexExp = /#?([0-9A-Fa-f]{6})/
+    let currentColor = (props.contact.color) ? props.contact.color : "000000";
+    currentColor = uxToHex(currentColor);
+    let hexExp = /([0-9A-Fa-f]{6})/
     let hexTest = hexExp.exec(this.state.colorToSet);
 
-    if ((hexTest) && (hexTest[1] !== currentHex)) {
-      let ship = "~" + props.ship;
-      api.contactEdit(props.path, ship, {color: hexTest[1]});
+    if (hexTest && (hexTest[1] !== currentColor) && !props.share) {
+      api.contactEdit(props.path, `~${props.ship}`, {color: hexTest[1]});
     }
   }
 
   editToggle() {
+    const { props } = this;
     let editSwitch = this.state.edit;
     editSwitch = !editSwitch;
     this.setState({edit: editSwitch});
   }
 
-  emailToSet(event) {
-    this.setState({ emailToSet: event.target.value });
+  emailToSet(value) {
+    this.setState({ emailToSet: value });
   }
 
-  nickNameToSet(event) {
-    this.setState({ nickNameToSet: event.target.value });
+  nickNameToSet(value) {
+    this.setState({ nickNameToSet: value });
   }
 
-  notesToSet(event) {
-    this.setState({ notesToSet: event.target.value });
+  notesToSet(value) {
+    this.setState({ notesToSet: value });
   }
 
-  phoneToSet(event) {
-    this.setState({ phoneToSet: event.target.value });
+  phoneToSet(value) {
+    this.setState({ phoneToSet: value });
   }
 
-  sigilColorSet(event) {
-    this.setState({ colorToSet: event.target.value });
+  sigilColorSet(value) {
+    this.setState({ colorToSet: value });
   }
 
-  websiteToSet(event) {
-    this.setState({ websiteToSet: event.target.value });
+  websiteToSet(value) {
+    this.setState({ websiteToSet: value });
   }
 
   shipParser(ship) {
@@ -197,8 +199,49 @@ export class ContactCard extends Component {
     }
   }
 
+  pickFunction(val, def) {
+    if (val !== null) {
+      return val;
+    }
+    return def;
+  }
+
+  shareWithGroup() {
+    const { props, state } = this;
+    let defaultVal = props.share ? {
+      nickname: props.rootIdentity.nickname,
+      email: props.rootIdentity.email,
+      phone: props.rootIdentity.phone,
+      website: props.rootIdentity.website,
+      notes: props.rootIdentity.notes,
+      color: props.rootIdentity.color
+    } : {
+      nickname: props.contact.nickname,
+      email: props.contact.email,
+      phone: props.contact.phone,
+      website: props.contact.website,
+      notes: props.contact.notes,
+      color: props.contact.color
+    };
+
+    let contact = {
+      nickname: this.pickFunction(state.nickNameToSet, defaultVal.nickname),
+      email: this.pickFunction(state.emailToSet, defaultVal.email),
+      phone: this.pickFunction(state.phoneToSet, defaultVal.phone),
+      website: this.pickFunction(state.websiteToSet, defaultVal.website),
+      notes: this.pickFunction(state.notesToSet, defaultVal.notes),
+      color: this.pickFunction(state.colorToSet, defaultVal.color),
+      avatar: null
+    };
+
+    api.contactView.share(
+      `~${props.ship}`, props.path, `~${window.ship}`, contact
+    );
+    this.editToggle();
+  }
+
   renderEditCard() {
-    const { props } = this;
+    const { props, state } = this;
     // if this is our first edit in a new group, propagate from root identity
     let defaultValue = props.share ? {
       nickname: props.rootIdentity.nickname,
@@ -218,49 +261,52 @@ export class ContactCard extends Component {
 
     let shipType = this.shipParser(props.ship);
 
-    let currentColor = !!defaultValue.color ? defaultValue.color : "0x0";
-    let hexColor = uxToHex(currentColor);
+    let defaultColor = !!defaultValue.color ? defaultValue.color : "000000";
+    defaultColor = uxToHex(defaultColor);
+    let currentColor = !!state.colorToSet ? state.colorToSet : defaultColor;
+    currentColor = uxToHex(currentColor);
 
     let sigilColor = "";
     let hasAvatar = 
       'avatar' in props.contact && props.contact.avatar !== "TODO";
 
-
     if (!hasAvatar) { 
       sigilColor = (
         <div className="tl mt4 mb4 w-auto ml-auto mr-auto"
-        style={{ width: "fit-content" }}>
-        <p className="f9 gray2 lh-copy">Sigil Color</p>
+          style={{ width: "fit-content" }}>
+          <p className="f9 gray2 lh-copy">Sigil Color</p>
           <textarea
-           className="b--gray4 black f7 ba db pl2"
-           onChange={this.sigilColorSet}
-           defaultValue={"#" + hexColor}
-           key={hexColor}
-           style={{
-             resize: "none",
-             height: 40,
-             paddingTop: 10,
+            className="b--gray4 black f7 ba db pl2"
+            onChange={this.sigilColorSet}
+            defaultValue={defaultColor}
+            key={"default" + defaultColor}
+            style={{
+              resize: "none",
+              height: 40,
+              paddingTop: 10,
               width: 114
-            }}></textarea>
+            }}>
+          </textarea>
         </div>
-      )
+      );
     }
 
-    let removeImage = "";
-    let avatar = (hasAvatar) 
-      ? <img className="dib h-auto" width={128} src={props.contact.avatar} /> 
-      : <Sigil ship={props.ship} size={128} color={"#" + hexColor} />;
-
-    if (hasAvatar) {
-      removeImage = (
+    let removeImage = hasAvatar ? (
         <div>
           <button className="f9 black pointer db"
             onClick={() => this.setField("removeAvatar")}>
             Remove photo
           </button>
         </div>
-      );
-    }
+      ) : "";
+
+    let avatar = (hasAvatar) 
+      ? <img className="dib h-auto" width={128} src={props.contact.avatar} /> 
+      : <Sigil
+          ship={props.ship}
+          size={128}
+          color={currentColor}
+          key={"avatar" + currentColor} />;
 
     return (
       <div className="w-100 mt8 flex justify-center pa4 pt8 pt0-l pa0-xl pt4-xl">
@@ -275,144 +321,45 @@ export class ContactCard extends Component {
             <p className="f9 gray2 mt3">Ship Type</p>
             <p className="f8">{shipType}</p>
             <hr className="mv8 gray4 b--gray4 bb-0 b--solid" />
-            <p className="f9 gray2">Nickname</p>
-              <div className="w-100 flex">
-                <textarea
-                 ref="nickname"
-                 className="w-100 ba pl3 b--gray4"
-                 style={{ resize: "none",
-                          height: 40,
-                          paddingTop: 10 }}
-                 onChange={this.nickNameToSet}
-                defaultValue={defaultValue.nickname}/>
-                <button
-                  className={"f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
-                    ((props.contact.nickname === "") ? "dn" : "dib")
-                  }
-                onClick={() => this.setField("removeNickname")}>
-                Delete
-                </button>
-              </div>
-              <button
-                className={"pointer db mv2 f9 ba pa2 pl3 pr3 " +
-                  ((
-                    (props.contact.nickname === this.state.nickNameToSet)
-                    || (this.state.nickNameToSet === "")
-                  ) ? "b--gray4 gray4" : "b--black")
-                }
-                onClick={() => this.setField("nickname")}>
-                Save
-              </button>
-            <p className="f9 gray2">Email</p>
-            <div className="w-100 flex">
-              <textarea
-                ref="email"
-                className="w-100 ba pl3 b--gray4"
-                style={{
-                  resize: "none",
-                  height: 40,
-                  paddingTop: 10
-                }}
-                onChange={this.emailToSet}
-                defaultValue={defaultValue.email} />
-              <button className={"f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
-                ((props.contact.email === "") ? "dn" : "dib")}
-                onClick={() => this.setField("removeEmail")}>
-                Delete
-              </button>
-            </div>
-            <button className={"pointer db mv2 f9 ba pa2 pl3 pr3 " +
-              (((props.contact.email === this.state.emailToSet)
-              || (this.state.emailToSet === ""))
-                ? "b--gray4 gray4"
-                : "b--black")}
-              onClick={() => this.setField("email")}>
-              Save
-            </button>
-            <p className="f9 gray2">Phone</p>
-            <div className="w-100 flex">
-              <textarea
-                ref="phone"
-                className="w-100 ba pl3 b--gray4"
-                style={{
-                  resize: "none",
-                  height: 40,
-                  paddingTop: 10
-                }}
-                onChange={this.phoneToSet}
-                defaultValue={defaultValue.phone} />
-              <button className={"f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
-                ((props.contact.phone === "") ? "dn" : "dib")}
-                onClick={() => this.setField("removePhone")}>
-                Delete
-                </button>
-            </div>
-            <button className={"pointer db mv2 f9 ba pa2 pl3 pr3 " +
-              (((props.contact.phone === this.state.phoneToSet)
-              || (this.state.phoneToSet === ""))
-                ? "b--gray4 gray4"
-                : "b--black")}
-              onClick={() => this.setField("phone")}>
-              Save
-            </button>
-            <p className="f9 gray2">Website</p>
-            <div className="w-100 flex">
-              <textarea
-                ref="website"
-                className="w-100 ba pl3 b--gray4"
-                style={{
-                  resize: "none",
-                  height: 40,
-                  paddingTop: 10
-                }}
-                onChange={this.websiteToSet}
-                defaultValue={defaultValue.website} />
-              <button className={"f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
-                ((props.contact.website === "") ? "dn" : "dib")}
-                onClick={() => this.setField("removeWebsite")}>
-                Delete
-                </button>
-            </div>
-            <button className={"pointer db mv2 f9 ba pa2 pl3 pr3 " +
-              (((props.contact.website === this.state.websiteToSet)
-                || (this.state.websitetoSet === ""))
-                ? "b--gray4 gray4"
-                : "b--black")}
-              onClick={() => this.setField("website")}>
-              Save
-              </button>
-
-            <p className="f9 gray2">Notes</p>
-            <div className="w-100 flex">
-              <textarea
-                ref="notes"
-                className="w-100 ba pl3 b--gray4"
-                style={{
-                  resize: "none",
-                  height: 40,
-                  paddingTop: 10
-                }}
-                onChange={this.notesToSet}
-                defaultValue={defaultValue.notes} />
-              <button className={"f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
-                ((props.contact.notes === "") ? "dn" : "dib")}
-                onClick={() => this.setField("removeNotes")}>
-                Delete
-                </button>
-            </div>
-            <button className={"pointer db mv2 f9 ba pa2 pl3 pr3 " +
-              (((props.contact.notes === this.state.notesToSet)
-                || (this.state.notesToSet === ""))
-                ? "b--gray4 gray4"
-                : "b--black")}
-              onClick={() => this.setField("notes")}>
-              Save
-              </button>
-
+            <EditElement
+              title="Nickname"
+              defaultValue={defaultValue.nickname}
+              onChange={this.nickNameToSet}
+              onDeleteClick={() => this.setField("removeNickname")}
+              onSaveClick={() => this.setField("nickname")}
+              showButtons={!props.share} />
+            <EditElement
+              title="Email"
+              defaultValue={defaultValue.email}
+              onChange={this.emailToSet}
+              onDeleteClick={() => this.setField("removeEmail")}
+              onSaveClick={() => this.setField("email")}
+              showButtons={!props.share} />
+            <EditElement
+              title="Phone"
+              defaultValue={defaultValue.phone}
+              onChange={this.phoneToSet}
+              onDeleteClick={() => this.setField("removePhone")}
+              onSaveClick={() => this.setField("phone")}
+              showButtons={!props.share} />
+            <EditElement
+              title="Website"
+              defaultValue={defaultValue.website}
+              onChange={this.websiteToSet}
+              onDeleteClick={() => this.setField("removeWebsite")}
+              onSaveClick={() => this.setField("website")}
+              showButtons={!props.share} />
+            <EditElement
+              title="Notes"
+              defaultValue={defaultValue.notes}
+              onChange={this.notesToSet}
+              onDeleteClick={() => this.setField("removeNotes")}
+              onSaveClick={() => this.setField("notes")}
+              showButtons={!props.share} />
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   renderCard() {
@@ -424,7 +371,11 @@ export class ContactCard extends Component {
     let avatar = 
       ('avatar' in props.contact && props.contact.avatar !== "TODO") ?
       <img className="dib h-auto" width={128} src={props.contact.avatar} /> :
-      <Sigil ship={props.ship} size={128} color={"#" + hexColor} />;
+      <Sigil
+        ship={props.ship}
+        size={128}
+        color={hexColor}
+        key={hexColor} />;
 
     let websiteHref =
       (props.contact.website && props.contact.website.includes("://")) ?
@@ -514,7 +465,13 @@ export class ContactCard extends Component {
             <Link to="/~contacts/">{"⟵"}</Link>
           </div>
           <button 
-            onClick={this.editToggle}
+            onClick={() => {
+              if (props.share) {
+                this.shareWithGroup();
+              } else {
+                this.editToggle();
+              }
+            }}
             className={`ml3 mt2 mb2 f9 pa1 ba br2 pointer b--black ` + ourOpt}>
             {editInfoText}
           </button>

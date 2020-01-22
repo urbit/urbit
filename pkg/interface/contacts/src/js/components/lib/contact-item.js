@@ -13,8 +13,9 @@ export class ContactItem extends Component {
     let name = (props.nickname) ? props.nickname : "~" + props.ship;
 
     let prefix = props.share ? 'share' : 'view';
+    let suffix = !props.share ? `/${props.ship}` : '';
     return (
-      <Link to={`/~contacts/${prefix}` + props.path}>
+      <Link to={`/~contacts/${prefix}` + props.path + suffix}>
         <div className=
           {"pl4 pt1 pb1 f9 flex justify-start content-center " + selectedClass}
         >

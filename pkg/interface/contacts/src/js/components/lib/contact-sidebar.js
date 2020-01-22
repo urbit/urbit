@@ -41,7 +41,7 @@ export class ContactSidebar extends Component {
             color={obj.color}
             path={props.path}
             selected={path === props.selectedContact}
-            share={true}
+            share={false}
           />
         );
       });
