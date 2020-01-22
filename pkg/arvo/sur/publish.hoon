@@ -63,6 +63,25 @@
       subscribers=path
   ==
 ::
++$  old-info
+  $:  owner=@p
+      title=@t
+      filename=@tas
+      comments=?(%open %closed %none)
+      allow-edit=?(%post %comment %all %none)
+      date-created=@da
+      last-modified=@da
+  ==
++$  old-comment
+  $:  $:  creator=@p
+          collection=@tas
+          post=@tas
+          date-created=@da
+          last-modified=@da
+      ==
+      content=@t
+  ==
+::
 +$  notebook-delta
   $%  [%add-book host=@p book=@tas data=notebook]
       [%add-note host=@p book=@tas note=@tas data=note]

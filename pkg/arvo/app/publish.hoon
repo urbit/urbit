@@ -121,9 +121,9 @@
     =+  ^-  [kick-cards=(list card) old-subs=(jug @tas @p)]  kick-subs
     :_  this(state [%1 *state-one])
     ;:  weld
+      kill-builds
       leave-subs
       kick-cards
-      kill-builds
       init-cards
       (move-files old-subs)
     ==
@@ -146,6 +146,8 @@
         =/  book-name  i.t.pax
         :-  [pax paths]
         (~(put ju subs) book-name who)
+      ?~  paths
+        [~ subs]
       [[%give %kick paths ~]~ subs]
     ::
     ++  kill-builds
@@ -180,7 +182,7 @@
       |=  old-subs=(jug @tas @p)
       ^-  (list card)
       =+  ^-  [cards=(list card) sob=soba:clay]
-        %+  roll  .^((list path) %ct (weld our-beak /web/publish))
+        %+  roll  .^((list path) %ct (weld our-beak:main /web/publish))
         |=  [pax=path car=(list card) sob=soba:clay]
         ^-  [(list card) soba:clay]
         ?+    pax
@@ -188,7 +190,8 @@
         ::
             [%web %publish @ %publish-info ~]
           =/  book-name  i.t.t.pax
-          =/  book=notebook-info  .^(notebook-info %cx (welp our-beak pax))
+          =/  old=old-info  .^(old-info %cx (welp our-beak:main pax))
+          =/  book=notebook-info  [title.old '' =(%open comments.old) / /]
           =+  ^-  [grp-car=(list card) writers-path=path subscribers-path=path]
             (make-groups book-name [%new ~ ~ %journal])
           =.  writers.book  writers-path
@@ -207,17 +210,20 @@
           :-  car
           :+  [pax %del ~]
             :-  /app/publish/notebooks/[book]/[note]/udon
-            [%ins %udon !>(.^(@t %cx (welp our-beak pax)))]
+            [%ins %udon !>(.^(@t %cx (welp our-beak:main pax)))]
           sob
         ::
             [%web %publish @ @ @ %publish-comment ~]
           =/  book  i.t.t.pax
           =/  note  i.t.t.t.pax
           =/  comm  i.t.t.t.t.pax
+          =/  old=old-comment  .^(old-comment %cx (welp our-beak:main pax))
+          =/  new=comment  [creator.old date-created.old content.old]
           :-  car
+
           :+  [pax %del ~]
             :-  /app/publish/notebooks/[book]/[note]/[comm]/publish-comment
-            [%ins %publish-comment !>(.^(comment %cx (welp our-beak pax)))]
+            [%ins %publish-comment !>(new)]
           sob
         ==
       [[%pass /move-files %arvo %c %info q.byk.bol %& sob] cards]
