@@ -128,7 +128,6 @@ data UrPoly j
     | K
     | S
     | D
-    | Free !Natural
     | Fast !Natural j [UrPoly j]
   deriving (Eq, Ord) -- , Show)
 
@@ -149,7 +148,6 @@ instance Show a => Show (UrPoly a) where
         K            → "k"
         S            → "s"
         D            → "d"
-        Free n       → "{" <> show n <> "}"
         Fast _ j []  → show j
         Fast _ j us  → fast j us
       where
@@ -162,35 +160,36 @@ instance Show Jet where
     show = \case
         Slow n t b → show (J n :@ t :@ b)
         JNat n     → "#" <> show n
-        JPak       → "p"
-        JFix       → "!"
+        JPak       → "{pak}"
+        JFix       → "{fix}"
         Eye        → "i"
-        Bee        → "b"
-        Sea        → "c"
-        Bn n       → "b" <> show n
-        Cn n       → "c" <> show n
+        Bee        → "{dot}"
+        Sea        → "{flip}"
+        Bn n       → "{dot" <> show n <> "}"
+        Cn n       → "{flip" <> show n <> "}"
         Sn n       → "s" <> show n
-        JSeq       → "Q"
+        JSeq       → "{seq}"
         JBol True  → "Y"
         JBol False → "N"
-        JIff       → "?"
-        JAdd       → "+"
-        JEql       → "="
-        JZer       → "{=0}"
-        JInc       → "^"
-        JDec       → "_"
-        JFec       → "__"
-        JMul       → "*"
-        JSub       → "-"
+        JIff       → "{if}"
+        JAdd       → "{add}"
+        JEql       → "{eql}"
+        JZer       → "{is-zero}"
+        JInc       → "{inc}"
+        JDec       → "{dec}"
+        JFec       → "{fec}"
+        JMul       → "{mul}"
+        JSub       → "{sub}"
         JLef       → "L"
         JRit       → "R"
         JCas       → "%"
         JCon       → "&"
         JCar       → "<"
         JCdr       → ">"
-        JDed       → "u"
+        JDed       → "{error}"
         JUni       → "~"
-        Wait n     → "w" <> show n
+        Wait n     → "{wait" <> show n <> "}"
+
 
 
 -- Normalized Values -----------------------------------------------------------
@@ -199,10 +198,11 @@ newtype Val = MkVal { valUr ∷ Ur }
   deriving newtype (Eq, Ord, Show)
 
 urVal ∷ Ur → Val
-urVal ur =
-    reduce ur & \case
-        Nothing → MkVal ur
-        Just ru → urVal ru
+urVal ur = MkVal (simp ur)
+
+simp ∷ Ur → Ur
+simp (reduce -> Just x) = simp x
+simp x                  = x
 
 
 -- Named Functions -------------------------------------------------------------
@@ -359,8 +359,8 @@ reduce = \case
   where
     match ∷ Positive → Ur → Ur → Jet
     -- ch n t b = Slow n t b
-    -- ch n t b = fromMaybe (Slow n t b) $ dashLookup n t b
-    match n t b = fromMaybe (error $ show (n,t,b)) $ dashLookup n t b
+    match n t b = fromMaybe (Slow n t b) $ dashLookup n t b
+    -- ch n t b = fromMaybe (error $ show (n,t,b)) $ dashLookup n t b
 
 
 runJet ∷ Jet → [Ur] → Ur
@@ -449,7 +449,6 @@ withoutJets = allowJets . unJet
 
 allowJets ∷ UrPoly Void → UrPoly Jet
 allowJets (Fast _ j _) = absurd j
-allowJets (Free n)     = Free n
 allowJets (x :@ y)     = allowJets x :@ allowJets y
 allowJets (J n)        = J n
 allowJets K            = K
@@ -458,7 +457,6 @@ allowJets D            = D
 
 unJet ∷ UrPoly Jet → UrPoly Void
 unJet (Fast _ j xs) = unJet (foldl' (:@) (unMatch j) xs)
-unJet (Free n)      = Free n
 unJet (x :@ y)      = unJet x :@ unJet y
 unJet (J n)         = J n
 unJet K             = K
@@ -478,7 +476,6 @@ jam = Nat . snd . go
         S           → (3, 4)
         D           → (3, 6)
         J n         → go (jetExpand n)
-        Free _      → error "expression contains free variable"
         Fast _ j xs → go (foldl' (:@) (unMatch j) xs)
         x :@ y      → (rBits, rNum)
           where (xBits, xNum) = go x

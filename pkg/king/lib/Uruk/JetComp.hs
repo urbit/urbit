@@ -5,6 +5,7 @@ import ClassyPrelude hiding (try)
 import Numeric.Natural  (Natural)
 import Numeric.Positive (Positive)
 import Uruk.JetDemo     (Ur, UrPoly((:@), Fast))
+import Control.Arrow ((>>>))
 
 import qualified Uruk.JetDemo as Ur
 
@@ -22,8 +23,18 @@ data Exp
     | Loop Exp
     | If Exp Exp Exp
     | Case Exp Exp Exp
+    | Jet Pos Nat Exp
+
+instance Num Exp where
+    negate      = error "hack"
+    (+)         = error "hack"
+    (*)         = error "hack"
+    fromInteger = Var . fromIntegral
+    abs         = error "hack"
+    signum      = error "hack"
 
 data Deb = Zero | Succ Deb | DPrim Ur | Abs Deb | App Deb Deb
+  deriving Eq
 
 infixl 5 :#
 
@@ -31,10 +42,14 @@ data Com = Com :# Com | P Ur | I | K | S | Sn Pos | C | Cn Pos | B | Bn Pos
 
 instance Show Exp where
   show = \case
-    Lam exp → "\\" <> show exp
-    Var n   → "$" <> show n
-    Prim p  → show p
-    Go x y  → "(" <> intercalate " " (show <$> apps x [y]) <> ")"
+    Lam exp    → "<" <> show exp <> ">"
+    Var n      → "$" <> show n
+    Prim p     → "\"" <> filter (\x → x/='{' && x/='}' && x/='#') (show p) <> "\""
+    Loop x     → "..(" <> show x <> ")"
+    If c t e   → "?:(" <> show c <> " " <> show t <> " " <> show e <> ")"
+    Case x l r → "?-(" <> show x <> "; " <> show l <> " " <> show r <> ")"
+    Jet n t b  → "~/(" <> show n <> " " <> show t <> " " <> show b <> ")"
+    Go x y     → "(" <> intercalate ", " (show <$> apps x [y]) <> ")"
       where
         apps (Go f x) xs = apps f (x:xs)
         apps exp      xs = exp : xs
@@ -75,7 +90,7 @@ moon ∷ Exp → Ur
 moon = ur . snd . ski . expDeb
 
 moonStrict ∷ Exp → Ur
-moonStrict = moon . strict
+moonStrict = ur . snd . ski . strict . expDeb
 
 expDeb ∷ Exp → Deb
 expDeb = go
@@ -84,6 +99,22 @@ expDeb = go
     go (Var x)  = peano x
     go (Go x y) = App (go x) (go y)
     go (Prim p) = DPrim p
+
+    go (Jet n t b) = DPrim (Ur.J n)
+                       `App` DPrim (Ur.Nat t)
+                       `App` go b
+
+    go (Loop x) = DPrim Ur.Fix `App` (Abs (go x))
+
+    go (Case x l r) = DPrim Ur.Cas `App` go x
+                                   `App` go l
+                                   `App` go r
+
+    go (If c t e) = App (DPrim Ur.Iff `App` go c
+                                      `App` go (wrapLam t)
+                                      `App` go (wrapLam e))
+                        (DPrim Ur.Uni)
+
     peano 0 = Zero
     peano n = Succ (peano (pred n))
 
@@ -116,8 +147,7 @@ ski deb = case deb of
   p = fromIntegral
 
 {-
-  Compile Oleg's combinators to jetted Ur combinators.
--}
+  Compile Oleg's combinators to jetted Ur combinators.  -}
 ur :: Com -> Ur
 ur = \case
     Bn 1        -> Ur.B
@@ -153,40 +183,42 @@ ur = \case
         `(kk)` doesn't need to become `Q0kk` since the head (`k`)
         is undersaturated.
 -}
-strict ∷ Exp → Exp
+strict ∷ Deb → Deb
 strict = top
   where
     top = \case
-      Lam b  → Lam (go b)
-      Var n  → Var n
-      Prim p → Prim p
-      Go f x → Go (top f) (top x)
+        Abs b   → Abs (go b)
+        Zero    → Zero
+        Succ n  → Succ n
+        DPrim p → DPrim p
+        App f x → App (top f) (top x)
 
+    go ∷ Deb → Deb
     go = \case
-      Lam b  → Lam (go b)
-      Var n  → Var n
-      Prim p → Prim p
-      Go f x → case (go f, go x) of
-          (fv, xv) | dep fv || dep xv → Go fv xv
-          (fv, xv)                    → Go (addDep fv) xv
+        Abs b   → Abs (go b)
+        Zero    → Zero
+        Succ n  → Succ n
+        DPrim p → DPrim p
+        App f x → case (go f, go x) of
+            (fv, xv) | dep fv || dep xv → App fv xv
+            (fv, xv)                    → App (addDep fv) xv
 
-addDep ∷ Exp → Exp
+addDep ∷ Deb → Deb
 addDep = \case
-    Go f x → Go (addDep f) x
-    exp    → Prim Ur.Seq `Go` Var 0 `Go` exp
+    App f x → App (addDep f) x
+    exp     → DPrim Ur.Seq `App` Zero `App` exp
 
-dep ∷ Exp → Bool
-dep = go 0
+dep ∷ Deb → Bool
+dep = go Zero
   where
     go v = \case
-        Lam b        → go (succ v) b
-        Var n | v==n → True
-        Var n        → False
-        Prim p       → False
-        Go f x       → go v f || go v x
-        If c t e     → undefined
-        Case s l r   → undefined
-        Loop x       → undefined
+        Abs b             → go (Succ v) b
+        x@(Zero)   | x==v → True
+        x@(Succ _) | v==v → True
+        Zero              → False
+        Succ _            → False
+        DPrim p           → False
+        App f x           → go v f || go v x
 
 {-
     ~/  %ack  2
@@ -205,23 +237,27 @@ iff ∷ Exp → Exp → Exp → Exp
 iff c t e =
     (Prim Ur.Iff % c % t' % e') % Prim Ur.Uni
   where
-    (t',e') = (abstract t, abstract e)
+    (t',e') = (wrapLam t, wrapLam e)
 
-    abstract ∷ Exp → Exp
-    abstract = Lam . go 0
-      where
-        go d = \case
-          Prim p        → Prim p
-          Go x y        → Go (go d x) (go d y)
-          Var n | n < d → Var n
-          Var n         → Var (succ n)
-          Lam b         → Lam (go (succ d) b)
-          Case c l r    → undefined
-          Loop x        → undefined
-          If c t e      → undefined
+wrapLam ∷ Exp → Exp
+wrapLam = Lam . abstract
 
-ackerBody ∷ Exp
-ackerBody =
+abstract ∷ Exp → Exp
+abstract = go 0
+  where
+    go d = \case
+      Prim p        → Prim p
+      Go x y        → Go (go d x) (go d y)
+      Var n | n < d → Var n
+      Var n         → Var (succ n)
+      Lam b         → Lam (go (succ d) b)
+      Jet n t b     → Jet n t (go d b)
+      Case c l r    → Case (go d c) (go (succ d) l) (go (succ d) r)
+      Loop x        → Loop (go (succ d) x)
+      If c t e      → If (go d c) (go d t) (go d e)
+
+acker ∷ Exp
+acker =
     let fec = \x → Prim Ur.Fec % x
         zer = \x → Prim Ur.Zer % x
         inc = \x → Prim Ur.Inc % x
@@ -231,9 +267,9 @@ ackerBody =
     --  err = Prim Ur.Ded % Prim Ur.K
     in
         (
-            Lam $ Lam $ Lam $
-            iff (zer m) (inc n) $
-            iff (zer n) (go % fec m % nat 1) $
+            Jet 2 99 $ Loop $ Lam $ Lam $
+            If (zer m) (inc n) $
+            If (zer n) (go % fec m % nat 1) $
             go % fec m % (go % m % fec n)
         )
 
@@ -243,23 +279,118 @@ ackerBody =
     (cas x l r) α => cas x (Lam(l $0 α)) (Lam(r $0 α))
 -}
 
-acker ∷ Exp
-acker = fix % ackerBody
-  where
-    fix = Prim Ur.Fix
-
 toZero ∷ Exp
 toZero =
     let fec = \x → Prim Ur.Fec % x
         zer = \x → Prim Ur.Zer % x
-        fix = Prim Ur.Fix
         go  = Var 1
         x   = Var 0
     in
-        fix % (
-            Lam $ Lam $
-            iff (zer x) x (go % fec x)
-        )
+        Jet 1 99 $ Loop $ Lam $
+          If (zer x) x (go % fec x)
+
+toBody ∷ Exp
+toBody =
+    let fec = \x → Prim Ur.Fec % x
+        zer = \x → Prim Ur.Zer % x
+        go  = Var 1
+        x   = Var 0
+    in
+        Jet 1 99 $ Lam $ Lam $
+          If (zer x) x (go % fec x)
+
+pattern L x = Lam x
+pattern V n = Var n
+
+sLam 1 =                 L $ L $ L ((2%0) % (1%0))
+sLam 2 =             L $ L $ L $ L ((3%1%0) % (2%1%0))
+sLam 3 =         L $ L $ L $ L $ L ((4%2%1%0) % (3%2%1%0))
+sLam 4 =     L $ L $ L $ L $ L $ L ((5%3%2%1%0) % (4%3%2%1%0))
+sLam 5 = L $ L $ L $ L $ L $ L $ L ((6%4%3%2%1%0) % (5%4%3%2%1%0))
+sLam n = error ("TODO: Sn " <> show n)
+
+bLam 1 =             L $ L $ L (2 % (1%0))
+bLam 2 =         L $ L $ L $ L (3 % (2%1%0))
+bLam 3 =     L $ L $ L $ L $ L (4 % (3%2%1%0))
+bLam 4 = L $ L $ L $ L $ L $ L (5 % (4%3%2%1%0))
+bLam n = error ("TODO: Bn " <> show n)
+
+cLam 1 =                 L $ L $ L ((2%0) % 1)
+cLam 2 =             L $ L $ L $ L ((3%1%0) % 2)
+cLam 3 =         L $ L $ L $ L $ L ((4%2%1%0) % 3)
+cLam 4 =     L $ L $ L $ L $ L $ L ((5%3%2%1%0) % 4)
+cLam 5 = L $ L $ L $ L $ L $ L $ L ((6%4%3%2%1%0) % 5)
+cLam n = error ("TODO: Cn " <> show n)
+
+step ∷ Exp → Maybe Exp
+step = \case
+
+    --  Recognize loops
+    Prim Ur.Fix `Go` exp →
+        Just (Loop (abstract exp `Go` Var 0))
+
+    --  Recognize if expressions
+    (Prim Ur.Iff `Go` c `Go` t `Go` e) `Go` Prim Ur.Uni →
+        Just (If c (t `Go` Prim Ur.Uni)
+                   (e `Go` Prim Ur.Uni))
+
+    --  Prim to Lambda
+    Prim Ur.Seq                   → Just (L (L 0))
+    Prim Ur.K                     → Just (L (L 1))
+    Prim Ur.S                     → Just (sLam 1)
+    Prim Ur.I                     → Just (L 0)
+    Prim Ur.B                     → Just (bLam 1)
+    Prim Ur.C                     → Just (cLam 1)
+    Prim (Ur.Fast _ (Ur.Sn n) []) → Just (sLam n)
+    Prim (Ur.Fast _ (Ur.Bn n) []) → Just (bLam n)
+    Prim (Ur.Fast _ (Ur.Cn n) []) → Just (cLam n)
+
+    --  Traversal
+    Lam x                  → Lam <$> step x
+    Var n                  → Nothing
+    Prim p                 → Nothing
+    Loop e                 → Loop <$> step e
+    If (step→Just c) t e   → Just $ If c t e
+    If c (step→Just t) e   → Just $ If c t e
+    If c t (step→Just e)   → Just $ If c t e
+    If _ _ _               → Nothing
+    Case (step→Just x) l r → Just $ Case x l r
+    Case x (step→Just l) r → Just $ Case x l r
+    Case x l (step→Just r) → Just $ Case x l r
+    Case _ _ _             → Nothing
+    Jet n t b              → Jet n t <$> step b
+
+    --  Reduction
+    Go (step→Just f) x            → Just (Go f x)
+    Go f (step→Just x)            → Just (Go f x)
+    Lam f `Go` x                  → Just (subst f x)
+    Go f x                        → Nothing
+
+subst ∷ Exp → Exp → Exp
+subst =
+    \e v → go 0 v e
+  where
+    abs = abstract
+
+    go d v = \case
+        Lam e        → Lam (go (d+1) (abs v) e)
+        Var n | n==d → v
+        Var n | n>d  → Var (pred n)
+        Var n        → Var n
+        Go x y       → Go (go d v x) (go d v y)
+        Prim p       → Prim p
+        Loop e       → Loop (go (d+1) (abs v) e)
+        If c t e     → If (go d v c) (go (d+1) (abs v) t) (go (d+1) (abs v) e)
+        Case x l r   → Case (go d v x) (go (d+1) (abs v) l) (go (d+1) (abs v) r)
+        Jet n t b    → Jet n t (go d v b)
+
+
+eval ∷ Exp → IO Exp
+eval x = do
+    -- print x
+    case step x of
+        Nothing → pure x
+        Just x' → eval x'
 
 stuff ∷ Exp
 stuff =
@@ -271,6 +402,7 @@ stuff =
 
 -- Decompilation ---------------------------------------------------------------
 
+{-
 step ∷ Ur → Maybe Ur
 step = \case
     Ur.K :@ x :@ y        → Just $ x
@@ -281,12 +413,14 @@ step = \case
     Fast 0 u us :@ x      → (Fast 0 u us :@) <$> step x
     Fast n u us :@ x      → Just $ Fast (pred n) u (us <> [x])
     _                     → Nothing
+-}
 
+{-
 deCompile ∷ Nat → Ur → Exp
-deCompile n = abs n . exp . go . free n
+deCompile n = abs n . match . exp . go . free n . Ur.simp
   where
-    free 0 x = x
-    free n x = free (n-1) (x :@ Ur.Free (n-1))
+    free 0 x = undefined -- x
+    free n x = undefined -- free (n-1) (x :@ Ur.Free (n-1))
 
     go (step → Just x) = go x
     go x               = x
@@ -300,15 +434,50 @@ deCompile n = abs n . exp . go . free n
 
     int = fromIntegral
 
-    exp ∷ Ur → Exp
-    exp = \case
-      Ur.Free n   → Var n
-      (x :@ y)    → exp x % exp y
-      Fast n u us → app (Prim $ Fast (n+int(length us)) u []) (exp <$> us)
-      Ur.J n      → Prim (Ur.J n)
-      Ur.K        → Prim Ur.K
-      Ur.S        → Prim Ur.S
-      Ur.D        → Prim Ur.D
+    match ∷ Exp → Exp
+    match = traceShowId >>> \case
+        Prim Ur.Fix `Go` x → Loop (toLambda x)
+        x `Go` y           → match x `Go` match y
+        Lam body           → Lam (match body)
+        Prim p             → Prim p
+        Var v              → Var v
+        Loop x             → Loop (match x)
+        If c t e           → If (match c) (match t) (match e)
+        Case x l r         → If (match x) (match l) (match r)
+-}
+
+deCompile ∷ Ur → Exp
+deCompile = Ur.simp >>> \case
+    Ur.Fast _ (Ur.Slow n (Ur.Nat t) b) [] → Jet n t (toLambda (int n) (toExp b))
+    ur                                    → toExp ur
+  where
+    int = fromIntegral
+
+toLambda ∷ Nat → Exp → Exp
+toLambda args = lam args . kal 0 . abs args
+  where
+    lam 0 e = e
+    lam n e = lam (n-1) (Lam e)
+
+    abs 0 e = e
+    abs n e = abs (n-1) (abstract e)
+
+    kal n e | n==args = e
+    kal n e           = kal (succ n) (e % Var n)
+
+int = fromIntegral
+
+toExp ∷ Ur → Exp
+toExp = go
+  where
+    go = \case
+        (x :@ y)       → go x % go y
+        Fast n u us    → foldl' (%) (Prim $ Fast (n + int(length us)) u [])
+                                    (go <$> us)
+        Ur.J n         → Prim (Ur.J n)
+        Ur.K           → Prim Ur.K
+        Ur.S           → Prim Ur.S
+        Ur.D           → Prim Ur.D
 
 runJet ∷ Ur.Jet → [Ur] → Maybe Ur
 runJet = curry \case
