@@ -92,7 +92,6 @@
         |=  jon=json
         ^-  text-document--did-change:notification:lsp
         :-  %text-document--did-change
-        =,  dejs:format
         %.  jon
         %:  ot
           'textDocument'^text-document-id
@@ -103,7 +102,6 @@
       ++  text-document--did-open
         |=  jon=json
         ^-  text-document--did-open:notification:lsp
-        =,  dejs:format
         ?>  ?=([%o *] jon)
         :-  %text-document--did-open
         (text-document-item (~(got by p.jon) 'textDocument'))
@@ -114,7 +112,6 @@
     |=  jon=json
     ^-  text-document-item:lsp
     %.  jon
-    =,  dejs:format
     %:  ot
       uri+so
       version+(mu ni)
@@ -130,7 +127,6 @@
     ==
   ::
   ++  text-document-changes
-    =,  dejs:format
     %-  ar
     %:  ou
         range+(uf ~ (pe ~ range))
@@ -198,7 +194,6 @@
         ==
     ~!  -.notification
     =/  method=cord  (crip (unparse-method -.notification))
-    ~&  method
     %:  pairs
       method+s+method
       params+params
@@ -278,97 +273,5 @@
       ~
     ==
   ::
-
   --
-::  examples
-++  pos-jon
-  ^-  json
-  :-  %o
-  %:  malt
-    ['character' %n '3']
-    ['line' %n '5']
-    ~
-  ==
-::
-++  range-jon
-  ^-  json
-  :-  %o
-  %:  malt
-    ['start' pos-jon]
-    ['end' pos-jon]
-    ~
-  ==
-::
-++  change-jon
-  ^-  json
-  :-  %o
-  %:  malt
-    ['text' `json`[%s `@t`'text']]
-    ['rangeLength' [%n '3']]
-    ['range' range-jon]
-    ~
-  ==
-::
-++  changes-jon
-  ^-  json
-  :-  %a
-  ^-  (list json)
-  [change-jon ~]
-::
-++  text-document-jon
-  ^-  json
-  :-  %o
-  %:  malt
-    ['uri' `json`[%s 'file://']]
-    ['version' `json`[%n '1']]
-    ~
-  ==
-::
-++  did-change-jon
-  ^-  json
-  :-  %o
-  %:  malt
-    ['contentChanges' changes-jon]
-    ['textDocument' text-document-jon]
-    ~
-  ==
-::
-++  did-c-event-jon
-  ^-  json
-  :-  %o
-  %:  malt
-    ['id' `json`[%s '1']]
-    ['method' `json`[%s `@t`'textDocument/didChange']]
-    ['params' did-change-jon]
-    ~
-  ==
-::
-++  did-open-jon
-  ^-  json
-  :-  %o
-  %:  malt
-    ['textDocument' text-document-item-jon]
-    ~
-  ==
-::
-++  did-open-event-jon
-  ^-  json
-  :-  %o
-  ^-  (map cord json)
-  %:  malt
-    ['id' `json`[%s '3']]
-    ['method' `json`[%s 'textDocument/didOpen']]
-    ['params' did-open-jon]
-    ~
-  ==
-++  text-document-item-jon
-  ^-  json
-  :-  %o
-  ^-  (map cord json)
-  %:  malt
-    ['text' `json`[%s 'text']]
-    ['uri' `json`[%s 'file://uri']]
-    ['version' `json`[%n '1']]
-    ~
-  ==
 --

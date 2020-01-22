@@ -178,7 +178,6 @@
 ++  handle-did-save
   |=  [uri=@t version=(unit @)]
   ^-  (quip card _state)
-  ~&  "Committing"
   :_  state
   :_  (give-rpc-notification (get-diagnostics uri))
   :*
@@ -206,7 +205,6 @@
   ?.  ?=([%made *] gift)
     [~ state]
   ?.  ?=([%complete *] result.gift)
-    ~&  tang.result.gift
     [~ state]
   =/  uri=@t
     (snag 1 path)
@@ -225,7 +223,6 @@
       [%error *]
     =/  error-ranges=(list =range:lsp-sur)
       (get-errors-from-tang:build uri message.build-result)
-    ~&  message.build-result
     ?~  error-ranges
       [~ state]
     =.  ford-diagnostics
@@ -265,10 +262,8 @@
   ^-  (list diagnostic:lsp-sur)
   =/  t=tape
     (zing (join "\0a" `wall`(~(got by bufs) uri)))
-  ::  ~&  t
   =/  parse
     (lily:auto t (lsp-parser *beam))
-  ::  ~&  parse
   ?.  ?=(%| -.parse)
     ~
   =/  loc=position:lsp-sur
