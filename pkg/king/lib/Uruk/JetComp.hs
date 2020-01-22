@@ -281,6 +281,13 @@ acker =
     (cas x l r) α => cas x (Lam(l $0 α)) (Lam(r $0 α))
 -}
 
+justIf ∷ Exp
+justIf =
+    let fec = \x → Prim Ur.Fec % x
+        zer = \x → Prim Ur.Zer % x
+    in
+        Jet 2 99 $ Lam $ Lam $ If (zer 0) 1 (Prim Ur.Inc % 0)
+
 toZero ∷ Exp
 toZero =
     let fec = \x → Prim Ur.Fec % x
@@ -298,7 +305,7 @@ toBody =
         go  = Var 1
         x   = Var 0
     in
-        Jet 1 99 $ Lam $ Lam $
+        Jet 2 99 $ Lam $ Lam $
           If (zer x) x (go % fec x)
 
 pattern L x = Lam x
@@ -382,14 +389,14 @@ subst =
         Go x y       → Go (go d v x) (go d v y)
         Prim p       → Prim p
         Loop e       → Loop (go (d+1) (abs v) e)
-        If c t e     → If (go d v c) (go (d+1) (abs v) t) (go (d+1) (abs v) e)
+        If c t e     → If (go d v c) (go d v t) (go d v e)
         Case x l r   → Case (go d v x) (go (d+1) (abs v) l) (go (d+1) (abs v) r)
         Jet n t b    → Jet n t (go d v b)
 
 
 eval ∷ Exp → IO Exp
 eval x = do
-    -- print x
+    print x
     case step x of
         Nothing → pure x
         Just x' → eval x'
@@ -503,11 +510,3 @@ runJet = curry \case
 
     go ∷ Ur → [Ur] → Ur
     go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
-
-
-{-
-    (K α β)  ⇒  α
-    (inc α)  ⇒  (inc α)  --  why is this different?
-
-    Only things produced by the compiler should be reduced.
--}

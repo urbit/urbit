@@ -120,7 +120,8 @@ data Jet
     | JCon
     | JCar
     | JCdr
-  deriving (Eq, Ord) -- , Show)
+  deriving (Eq, Ord, Generic) -- , Show)
+  deriving anyclass NFData
 
 data UrPoly j
     = UrPoly j :@ UrPoly j
@@ -129,7 +130,11 @@ data UrPoly j
     | S
     | D
     | Fast !Natural j [UrPoly j]
-  deriving (Eq, Ord) -- , Show)
+  deriving (Eq, Ord, Generic) -- , Show)
+  deriving anyclass NFData
+
+instance NFData Positive where
+  rnf !x = ()
 
 type Ur = UrPoly Jet
 
@@ -145,9 +150,9 @@ instance Show a => Show (UrPoly a) where
     show = \case
         x :@ y      → "(" <> intercalate "" (show <$> flatten x [y]) <> ")"
         J n          → replicate (fromIntegral n) 'j'
-        K            → "k"
-        S            → "s"
-        D            → "d"
+        K            → "K"
+        S            → "S"
+        D            → "D"
         Fast _ j []  → show j
         Fast _ j us  → fast j us
       where
@@ -159,36 +164,36 @@ instance Show a => Show (UrPoly a) where
 instance Show Jet where
     show = \case
         Slow n t b → show (J n :@ t :@ b)
-        JNat n     → "#" <> show n
-        JPak       → "{pak}"
-        JFix       → "{fix}"
-        Eye        → "i"
-        Bee        → "{dot}"
-        Sea        → "{flip}"
-        Bn n       → "{dot" <> show n <> "}"
-        Cn n       → "{flip" <> show n <> "}"
-        Sn n       → "s" <> show n
-        JSeq       → "{seq}"
+        JNat n     → show n
+        JPak       → "Pak"
+        JFix       → "Fix"
+        Eye        → "I"
+        Bee        → "Dot"
+        Sea        → "Flip"
+        Bn n       → "Dot" <> show n
+        Cn n       → "Flip" <> show n
+        Sn n       → "S" <> show n
+        JSeq       → "Seq"
         JBol True  → "Y"
         JBol False → "N"
-        JIff       → "{if}"
-        JAdd       → "{add}"
-        JEql       → "{eql}"
-        JZer       → "{is-zero}"
-        JInc       → "{inc}"
-        JDec       → "{dec}"
-        JFec       → "{fec}"
-        JMul       → "{mul}"
-        JSub       → "{sub}"
+        JIff       → "If"
+        JAdd       → "Add"
+        JEql       → "Eql"
+        JZer       → "IsZero"
+        JInc       → "Inc"
+        JDec       → "Dec"
+        JFec       → "Fec"
+        JMul       → "Mul"
+        JSub       → "Sub"
         JLef       → "L"
         JRit       → "R"
-        JCas       → "%"
-        JCon       → "&"
-        JCar       → "<"
-        JCdr       → ">"
-        JDed       → "{error}"
-        JUni       → "~"
-        Wait n     → "{wait" <> show n <> "}"
+        JCas       → "Cas"
+        JCon       → "Con"
+        JCar       → "Car"
+        JCdr       → "Cdr"
+        JDed       → "Error"
+        JUni       → "Uni"
+        Wait n     → "Wait" <> show n
 
 
 
