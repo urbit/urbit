@@ -109,6 +109,10 @@
       %chat-view
       %chat-cli
       %soto
+      %link-store
+      %link-proxy-hook
+      %link-listen-hook
+      %link-server-hook
   ==
 ::
 ++  deft-fish                                           ::  default connects
