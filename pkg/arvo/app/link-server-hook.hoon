@@ -39,8 +39,8 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    :_  this
-    [start-serving:do]~
+    :-  [start-serving:do launch-tile:do ~]
+    this
   ::
   ++  on-save  !>(state)
   ++  on-load
@@ -52,6 +52,8 @@
     |=  =path
     ^-  (quip card _this)
     ?:  ?=([%http-response *] path)
+      [~ this]
+    ?:  =(/primary path)
       [~ this]
     (on-watch:def path)
   ::
@@ -92,6 +94,16 @@
 ++  start-serving
   ^-  card
   [%pass / %arvo %e %connect [~ /'~link'] dap.bowl]
+::
+++  launch-tile
+  ^-  card
+  (launch-poke [%link-server-hook /primary '/~link/js/tile.js'])
+::
+::
+++  launch-poke
+  |=  act=[@tas path @t]
+  ^-  card
+  [%pass / %agent [our.bowl %launch] %poke %launch-action !>(act)]
 ::
 ++  do-action
   |=  =action
@@ -176,6 +188,10 @@
 ::
 ++  handle-get
   |=  [request-headers=header-list:http =request-line]
+  ::  if we request base path, return index.html
+  ::
+  ?:  ?=([[~ [%'~link' ~]] *] request-line)
+    $(request-line request-line(ext `%html, site [%'~link' /index]))
   %+  include-cors-headers
     request-headers
   ^-  simple-payload:http
@@ -204,6 +220,7 @@
         %html  (html-response:gen u.file)
         %js    (js-response:gen u.file)
         %css   (css-response:gen u.file)
+        %png   (png-response:gen u.file)
       ==
   ::  submissions by recency as json, including comment counts
   ::
@@ -315,7 +332,7 @@
   ^-  (unit octs)
   ::  only expose html, css and js files for now
   ::
-  ?.  ?=(?(%html %css %js) ext)
+  ?.  ?=(?(%html %css %js %png) ext)
     ~
   =/  =path
     :*  (scot %p our.bowl)
