@@ -1,9 +1,9 @@
 module JamTests (tests) where
 
 import Arvo.Event
-import Noun.Conversions
-import Noun.Cue
-import Noun.Jam
+import Ur.Noun.Conversions
+import Ur.Noun.Cue
+import Ur.Noun.Jam
 import UrbitPrelude
 
 import GHC.Natural            (Natural(..))

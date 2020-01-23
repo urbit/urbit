@@ -1,14 +1,14 @@
-module Noun
-    ( module Noun.Atom
+module Ur.Noun
+    ( module Ur.Noun.Atom
     , module Data.Word
-    , module Noun.Conversions
-    , module Noun.Convert
-    , module Noun.Core
-    , module Noun.Cue
-    , module Noun.Jam
-    , module Noun.Tank
-    , module Noun.TH
-    , module Noun.Tree
+    , module Ur.Noun.Conversions
+    , module Ur.Noun.Convert
+    , module Ur.Noun.Core
+    , module Ur.Noun.Cue
+    , module Ur.Noun.Jam
+    , module Ur.Noun.Tank
+    , module Ur.Noun.TH
+    , module Ur.Noun.Tree
     , _Cue
     , LoadErr(..)
     , loadFile
@@ -18,15 +18,15 @@ import ClassyPrelude
 import Control.Lens
 
 import Data.Word
-import Noun.Atom
-import Noun.Tree
-import Noun.Conversions
-import Noun.Convert
-import Noun.Core
-import Noun.Cue
-import Noun.Jam
-import Noun.Tank
-import Noun.TH
+import Ur.Noun.Atom
+import Ur.Noun.Tree
+import Ur.Noun.Conversions
+import Ur.Noun.Convert
+import Ur.Noun.Core
+import Ur.Noun.Cue
+import Ur.Noun.Jam
+import Ur.Noun.Tank
+import Ur.Noun.TH
 
 --------------------------------------------------------------------------------
 

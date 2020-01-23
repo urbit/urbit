@@ -1,11 +1,11 @@
 {-# OPTIONS_GHC -O2 #-}
 
-module Noun.Jam (jam, jamBS) where
+module Ur.Noun.Jam (jam, jamBS) where
 
 import ClassyPrelude hiding (hash)
 
-import Noun.Atom
-import Noun.Core
+import Ur.Noun.Atom
+import Ur.Noun.Core
 
 import Control.Lens              (from, view)
 import Data.Bits                 (clearBit, setBit, shiftL, shiftR, (.|.))

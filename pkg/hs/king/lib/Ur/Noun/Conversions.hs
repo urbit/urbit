@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wwarn #-}
 
-module Noun.Conversions
+module Ur.Noun.Conversions
   ( Nullable(..), Jammed(..), AtomCell(..)
   , Word128, Word256, Word512
   , Bytes(..), Octs(..), File(..)
@@ -14,29 +14,29 @@ module Noun.Conversions
 
 import ClassyPrelude hiding (hash)
 
-import Control.Lens hiding (Index, Each, (<.>))
+import Control.Lens         hiding (Each, Index, (<.>))
 import Data.Void
 import Data.Word
-import Noun.Atom
-import Noun.Convert
-import Noun.Core
-import Noun.TH
 import Text.Regex.TDFA
 import Text.Regex.TDFA.Text ()
+import Ur.Noun.Atom
+import Ur.Noun.Convert
+import Ur.Noun.Core
+import Ur.Noun.TH
 
 import Data.LargeWord   (LargeKey, Word128, Word256)
 import GHC.Exts         (chr#, isTrue#, leWord#, word2Int#)
 import GHC.Natural      (Natural)
 import GHC.Types        (Char(C#))
 import GHC.Word         (Word32(W32#))
-import Noun.Cue         (cue)
-import Noun.Jam         (jam)
 import Prelude          ((!!))
 import RIO              (decodeUtf8Lenient)
+import RIO.FilePath     (joinPath, splitDirectories, takeBaseName,
+                         takeDirectory, takeExtension, (<.>), (</>))
 import System.IO.Unsafe (unsafePerformIO)
 import Text.Show.Pretty (ppShow)
-import RIO.FilePath  ((</>), (<.>), joinPath, splitDirectories,
-                         takeBaseName, takeDirectory, takeExtension)
+import Ur.Noun.Cue      (cue)
+import Ur.Noun.Jam      (jam)
 
 import qualified Data.Char                as C
 import qualified Data.Text.Encoding       as T

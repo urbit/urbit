@@ -5,7 +5,7 @@
 
 {-# OPTIONS_GHC -Werror #-}
 
-module Noun.Atom
+module Ur.Noun.Atom
     ( Atom(..)
     , atomBitWidth#, wordBitWidth#, wordBitWidth
     , takeBitsWord, bitWidth

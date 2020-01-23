@@ -1,4 +1,4 @@
-module Noun.Convert
+module Ur.Noun.Convert
   ( ToNoun(toNoun)
   , FromNoun(parseNoun), fromNoun, fromNounErr, fromNounExn
   , Parser(..)
@@ -8,7 +8,8 @@ module Noun.Convert
   ) where
 
 import ClassyPrelude hiding (hash)
-import Noun.Core
+
+import Ur.Noun.Core
 
 import qualified Control.Monad.Fail as Fail
 

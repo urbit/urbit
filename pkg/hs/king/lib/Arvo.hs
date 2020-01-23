@@ -8,6 +8,6 @@ module Arvo
 import Arvo.Common
 import Arvo.Effect
 import Arvo.Event
-import Noun.Conversions (Lenient)
+import Ur.Noun.Conversions (Lenient)
 
 type FX = [Lenient Ef]

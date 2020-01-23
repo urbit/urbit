@@ -2,7 +2,7 @@ module TryJamPill where
 
 import ClassyPrelude
 import Control.Lens
-import Noun
+import Ur.Noun
 
 --------------------------------------------------------------------------------
 

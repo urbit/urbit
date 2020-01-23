@@ -14,7 +14,7 @@ import Network.Ethereum.Api.Types    hiding (blockNumber)
 import Network.Ethereum.Web3
 import Network.HTTP.Client.TLS
 
-import qualified Azimuth.Azimuth       as AZ
+import qualified Ur.Azimuth            as AZ
 import qualified Crypto.Hash.SHA256    as SHA256
 import qualified Crypto.Hash.SHA512    as SHA512
 import qualified Crypto.Sign.Ed25519   as Ed

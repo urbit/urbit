@@ -5,7 +5,7 @@ import Data.Acquire
 import Data.Conduit
 import Data.Conduit.List     hiding (take)
 import Data.Ord.Unicode
-import Noun
+import Ur.Noun
 import Test.QuickCheck       hiding ((.&.))
 import Test.Tasty
 import Test.Tasty.QuickCheck

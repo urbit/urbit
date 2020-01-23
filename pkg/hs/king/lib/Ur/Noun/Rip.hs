@@ -1,10 +1,12 @@
-module Noun.Rip where
+module Ur.Noun.Rip where
 
 import ClassyPrelude
-import Noun.Atom
 import Data.Bits
-import Control.Lens (view, (&), from)
-import qualified Data.Vector.Primitive    as VP
+import Ur.Noun.Atom
+
+import Control.Lens (from, view, (&))
+
+import qualified Data.Vector.Primitive as VP
 
 --------------------------------------------------------------------------------
 

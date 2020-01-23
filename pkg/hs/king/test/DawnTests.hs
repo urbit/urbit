@@ -1,7 +1,7 @@
 module DawnTests (tests) where
 
 import Arvo.Event
-import Noun.Conversions
+import Ur.Noun.Conversions
 import UrbitPrelude
 
 import Test.Tasty

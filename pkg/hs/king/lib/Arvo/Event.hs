@@ -1,6 +1,6 @@
 module Arvo.Event where
 
-import Noun.Tree    (HoonMap, HoonSet)
+import Ur.Noun.Tree (HoonMap, HoonSet)
 import UrbitPrelude hiding (Term)
 
 import Arvo.Common (KingId(..), ServId(..))

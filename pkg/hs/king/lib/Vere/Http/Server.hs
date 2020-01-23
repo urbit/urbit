@@ -29,7 +29,7 @@ module Vere.Http.Server where
 import Arvo            hiding (ServerId, reqBody, reqUrl, secure)
 import Config
 import Data.Conduit
-import Noun
+import Ur.Noun
 import UrbitPrelude    hiding (Builder)
 import Vere.Pier.Types
 

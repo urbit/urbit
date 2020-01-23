@@ -3,7 +3,7 @@
 module Vere.Http where
 
 import ClassyPrelude
-import Noun
+import Ur.Noun
 import Arvo
 
 import qualified Data.CaseInsensitive as CI

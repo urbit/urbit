@@ -2,7 +2,7 @@
 {-# LANGUAGE Strict     #-}
 {-# LANGUAGE StrictData #-}
 
-module Noun.Core
+module Ur.Noun.Core
   ( Noun, nounSize
   , pattern Cell, pattern Atom
   , pattern C, pattern A
@@ -11,7 +11,7 @@ module Noun.Core
 
 import ClassyPrelude hiding (hash)
 
-import Noun.Atom
+import Ur.Noun.Atom
 
 import Control.Lens              (view, from, (&), (^.))
 import Data.Bits                 (xor)

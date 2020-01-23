@@ -1,6 +1,6 @@
 module ClayTests (tests) where
 
-import Noun.Conversions
+import Ur.Noun.Conversions
 import UrbitPrelude
 
 import Test.QuickCheck       hiding ((.&.))

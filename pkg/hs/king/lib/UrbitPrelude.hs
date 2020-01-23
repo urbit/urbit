@@ -5,7 +5,7 @@ module UrbitPrelude
     , module Data.Acquire
     , module Data.RAcquire
     , module Data.Void
-    , module Noun
+    , module Ur.Noun
     , module Text.Show.Pretty
     , module Text.Printf
     , module RIO
@@ -14,7 +14,7 @@ module UrbitPrelude
     ) where
 
 import ClassyPrelude
-import Noun
+import Ur.Noun
 
 import Control.Lens hiding (Index, cons, index, snoc, uncons, unsnoc, (<.>),
                      (<|), Each)

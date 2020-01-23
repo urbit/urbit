@@ -1,11 +1,11 @@
 {-# OPTIONS_GHC -O2 #-}
 
-module Noun.Cue (cue, cueExn, cueBS, cueBSExn, DecodeErr) where
+module Ur.Noun.Cue (cue, cueExn, cueBS, cueBSExn, DecodeErr) where
 
 import ClassyPrelude
 
-import Noun.Atom
-import Noun.Core
+import Ur.Noun.Atom
+import Ur.Noun.Core
 
 import Control.Lens     (from, view, (&), (^.))
 import Data.Bits        (shiftL, shiftR, (.&.), (.|.))

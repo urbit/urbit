@@ -60,14 +60,14 @@ import Data.Conduit
 import Data.Conduit.List       hiding (catMaybes, map, replicate, take)
 import Data.RAcquire
 import Network.HTTP.Client.TLS
-import Noun                    hiding (Parser)
-import Noun.Atom
-import Noun.Conversions        (cordToUW)
 import RIO.Directory
+import Ur.Noun                 hiding (Parser)
+import Ur.Noun.Atom
+import Ur.Noun.Conversions     (cordToUW)
+import Vere.Dawn
 import Vere.Pier
 import Vere.Pier.Types
 import Vere.Serf
-import Vere.Dawn
 
 import Control.Concurrent   (myThreadId, runInBoundThread)
 import Control.Exception    (AsyncException(UserInterrupt))

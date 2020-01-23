@@ -117,7 +117,7 @@ serveTerminal env api word =
                          $ NounServ.wsConn "NOUNSERV (wsServ) " inp out wsc
 
                 -- If `wai` kills this thread for any reason, the TBMChans
-                -- *need* to be closed. If they are not closed, the
+                -- need to be closed. If they are not closed, the
                 -- terminal will not know that they disconnected.
                 finally doit $ atomically $ do
                     closeTBMChan inp

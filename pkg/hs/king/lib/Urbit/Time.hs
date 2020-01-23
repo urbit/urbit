@@ -10,7 +10,7 @@ import Data.Time.Clock        (DiffTime, UTCTime)
 import Data.Time.Clock        (diffTimeToPicoseconds, picosecondsToDiffTime)
 import Data.Time.Clock.System (SystemTime(..), getSystemTime)
 import Data.Time.Clock.System (systemToUTCTime, utcToSystemTime)
-import Noun                   (FromNoun, ToNoun)
+import Ur.Noun                (FromNoun, ToNoun)
 
 
 -- Types -----------------------------------------------------------------------

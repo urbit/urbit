@@ -2,14 +2,14 @@
     Generate FromNoun and ToNoun instances.
 -}
 
-module Noun.TH (deriveNoun, deriveToNoun, deriveFromNoun) where
+module Ur.Noun.TH (deriveNoun, deriveToNoun, deriveFromNoun) where
 
 import ClassyPrelude              hiding (fromList)
 import Language.Haskell.TH
 import Language.Haskell.TH.Syntax
-import Noun.Convert
+import Ur.Noun.Convert
 
-import Noun.Core (textToUtf8Atom)
+import Ur.Noun.Core (textToUtf8Atom)
 
 import qualified Data.Char as C
 

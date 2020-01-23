@@ -1,6 +1,6 @@
 {-# LANGUAGE DuplicateRecordFields, DisambiguateRecordFields #-}
 
-module Noun.Tree
+module Ur.Noun.Tree
     ( HoonSet, setToHoonSet, setFromHoonSet
     , HoonMap, mapToHoonMap, mapFromHoonMap
     , mug
@@ -9,11 +9,11 @@ module Noun.Tree
 import ClassyPrelude
 import Control.Lens  hiding (non)
 
-import Noun.Atom
-import Noun.Conversions ()
-import Noun.Convert
-import Noun.Core
-import Noun.TH
+import Ur.Noun.Atom
+import Ur.Noun.Conversions ()
+import Ur.Noun.Convert
+import Ur.Noun.Core
+import Ur.Noun.TH
 
 import Data.Bits        (shiftR, xor)
 import Data.Hash.Murmur (murmur3)

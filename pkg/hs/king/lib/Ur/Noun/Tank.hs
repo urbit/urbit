@@ -1,8 +1,8 @@
-module Noun.Tank where
+module Ur.Noun.Tank where
 
 import ClassyPrelude
-import Noun.Conversions
-import Noun.TH
+import Ur.Noun.Conversions
+import Ur.Noun.TH
 
 --------------------------------------------------------------------------------
 
