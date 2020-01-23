@@ -3,7 +3,7 @@ module SimpleNoun where
 import ClassyPrelude
 import Numeric.Natural
 
-import qualified Noun as N
+import qualified Ur.Noun as N
 
 type Atom = Natural
 

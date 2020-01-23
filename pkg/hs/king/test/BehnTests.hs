@@ -1,29 +1,29 @@
 module BehnTests (tests) where
 
-import Arvo
 import Data.Acquire
 import Data.Conduit
 import Data.Conduit.List     hiding (take)
 import Data.Ord.Unicode
-import Noun
 import Test.QuickCheck       hiding ((.&.))
 import Test.Tasty
 import Test.Tasty.QuickCheck
 import Test.Tasty.TH
-import Urbit.Time
-import UrbitPrelude
-import Vere.Behn
-import Vere.Log
-import Vere.Pier.Types
+import Ur.Arvo
+import Ur.Noun
+import Ur.Prelude
+import Ur.Time
+import Ur.Vere.Behn
+import Ur.Vere.Log
+import Ur.Vere.Pier.Types
 
 import Control.Concurrent (runInBoundThread, threadDelay)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
-import King.App           (runApp)
 import Network.Socket     (tupleToHostAddress)
+import Ur.King.App        (runApp)
 
-import qualified Urbit.Time as Time
-import qualified Vere.Log   as Log
+import qualified Ur.Time     as Time
+import qualified Ur.Vere.Log as Log
 
 
 --------------------------------------------------------------------------------
