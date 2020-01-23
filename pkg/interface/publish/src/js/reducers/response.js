@@ -19,6 +19,8 @@ export class ResponseReducer {
       case "comments-page":
         this.handleCommentsPage(json, state);
         break;
+      case "local":
+        this.sidebarToggle(json, state);
       default:
         break;
     }
@@ -161,6 +163,13 @@ export class ResponseReducer {
       }
     } else {
       throw Error("tried to fetch paginated comments, but we don't have the note");
+    }
+  }
+  
+  sidebarToggle(json, state) {
+    let data = _.has(json, 'sidebarToggle', false);
+    if (data) {
+        state.sidebarShown = json.type.local.sidebarToggle;
     }
   }
 
