@@ -18,7 +18,8 @@
     |=  jon=^json
     =,  dejs:format
     ;;  action
-    |^  %-  of
+    |^  %.  jon
+        %-  of
         :~  new-book+new-book
             new-note+new-note
             new-comment+new-comment
