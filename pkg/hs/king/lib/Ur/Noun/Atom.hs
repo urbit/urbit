@@ -1,9 +1,12 @@
-{-
-  TODO Support 32-bit archetectures.
-  TODO Support Big Endian.
--}
-
 {-# OPTIONS_GHC -Werror #-}
+
+{-|
+    Atom implementation with fast conversions between bytestrings
+    and atoms.
+
+    TODO Support 32-bit archetectures.
+    TODO Support Big Endian.
+-}
 
 module Ur.Noun.Atom
     ( Atom(..)
@@ -16,7 +19,7 @@ import ClassyPrelude
 import Control.Lens  hiding (Index)
 
 import Data.Bits                 (shiftL, shiftR, (.&.), (.|.))
-import GHC.Exts                  (sizeofByteArray#, Ptr(Ptr))
+import GHC.Exts                  (Ptr(Ptr), sizeofByteArray#)
 import GHC.Int                   (Int(..))
 import GHC.Integer.GMP.Internals (BigNat(..), bigNatToWord, sizeofBigNat#)
 import GHC.Integer.GMP.Internals (indexBigNat#)

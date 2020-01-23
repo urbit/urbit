@@ -1,14 +1,14 @@
 module DawnTests (tests) where
 
-import Arvo.Event
+import Ur.Arvo.Event
 import Ur.Noun.Conversions
-import UrbitPrelude
+import Ur.Prelude
 
 import Test.Tasty
 import Test.Tasty.HUnit
 
-import qualified Urbit.Ob  as Ob
-import qualified Vere.Dawn as Dawn
+import qualified Ur.Vere.Dawn as Dawn
+import qualified Urbit.Ob     as Ob
 
 --------------------------------------------------------------------------------
 

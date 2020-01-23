@@ -1,7 +1,7 @@
 module ClayTests (tests) where
 
 import Ur.Noun.Conversions
-import UrbitPrelude
+import Ur.Prelude
 
 import Test.QuickCheck       hiding ((.&.))
 import Test.Tasty

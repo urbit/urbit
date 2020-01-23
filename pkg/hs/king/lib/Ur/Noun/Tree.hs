@@ -1,5 +1,9 @@
-{-# LANGUAGE DuplicateRecordFields, DisambiguateRecordFields #-}
+{-# LANGUAGE DisambiguateRecordFields #-}
+{-# LANGUAGE DuplicateRecordFields    #-}
 
+{-|
+    Hoon's `map` and `set` types and conversions to/from Nouns.
+-}
 module Ur.Noun.Tree
     ( HoonSet, setToHoonSet, setFromHoonSet
     , HoonMap, mapToHoonMap, mapFromHoonMap

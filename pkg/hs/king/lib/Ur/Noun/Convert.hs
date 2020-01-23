@@ -1,11 +1,14 @@
+{-|
+    Framework for writing conversions between types and nouns.
+-}
 module Ur.Noun.Convert
-  ( ToNoun(toNoun)
-  , FromNoun(parseNoun), fromNoun, fromNounErr, fromNounExn
-  , Parser(..)
-  , ParseStack
-  , parseNounUtf8Atom
-  , named
-  ) where
+    ( ToNoun(toNoun)
+    , FromNoun(parseNoun), fromNoun, fromNounErr, fromNounExn
+    , Parser(..)
+    , ParseStack
+    , parseNounUtf8Atom
+    , named
+    ) where
 
 import ClassyPrelude hiding (hash)
 

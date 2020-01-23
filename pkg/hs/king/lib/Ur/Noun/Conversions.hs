@@ -1,5 +1,9 @@
 {-# OPTIONS_GHC -Wwarn #-}
 
+{-|
+    Large Library of conversion between various types and Nouns.
+-}
+
 module Ur.Noun.Conversions
   ( Nullable(..), Jammed(..), AtomCell(..)
   , Word128, Word256, Word512

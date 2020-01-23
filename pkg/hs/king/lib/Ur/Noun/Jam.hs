@@ -1,5 +1,10 @@
 {-# OPTIONS_GHC -O2 #-}
 
+{-|
+    Fast implementation of Jam (Noun → Atom).
+
+    This is based on the implementation of `flat`.
+-}
 module Ur.Noun.Jam (jam, jamBS) where
 
 import ClassyPrelude hiding (hash)
@@ -68,7 +73,7 @@ newtype Put a = Put
 getRef :: Put (Maybe Word)
 getRef = Put $ \tbl s -> PutResult s <$> H.lookup tbl (pos s)
 
-{-
+{-|
   1. Write the register to the output, and increment the output pointer.
 -}
 {-# INLINE flush #-}
@@ -97,7 +102,7 @@ getS = Put $ \tbl s -> pure (PutResult s s)
 putS :: S -> Put ()
 putS s = Put $ \tbl _ -> pure (PutResult s ())
 
-{-
+{-|
     To write a bit:
 
     | reg  |= 1 << off
@@ -118,7 +123,7 @@ writeBit b = Put $ \tbl s@S{..} -> do
     then runPut (flush >> setRegOff 0 0) tbl s'
     else pure $ PutResult s' ()
 
-{-
+{-|
     To write a 64bit word:
 
     | reg |= w << off
@@ -135,7 +140,7 @@ writeWord wor = do
                      , reg = shiftR wor (64 - off)
                      }
 
-{-
+{-|
     To write some bits (< 64) from a word:
 
     | wor = takeBits(wid, wor)
@@ -163,8 +168,9 @@ writeBitsFromWord wid wor = do
     when (wid + off oldSt >= 64) $ do
         flush
         setReg (shiftR wor (wid - off newSt))
-{-
-  Write all of the the signficant bits of a direct atom.
+
+{-|
+    Write all of the the signficant bits of a direct atom.
 -}
 {-# INLINE writeAtomWord# #-}
 writeAtomWord# :: Word# -> Put ()
@@ -175,7 +181,7 @@ writeAtomWord# w = do
 writeAtomWord :: Word -> Put ()
 writeAtomWord (W# w) = writeAtomWord# w
 
-{-
+{-|
   Write all of the the signficant bits of an indirect atom.
 
   TODO Use memcpy when the bit-offset of the output is divisible by 8.
@@ -252,7 +258,7 @@ doPut !tbl !sz m =
 
 --------------------------------------------------------------------------------
 
-{-
+{-|
     TODO Handle back references
 -}
 writeNoun :: Noun -> Put ()

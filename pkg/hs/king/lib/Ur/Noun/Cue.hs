@@ -1,5 +1,10 @@
 {-# OPTIONS_GHC -O2 #-}
 
+{-|
+    Fast implementation of `cue :: Atom -> Maybe Noun`.
+
+    Implementation is based on the approach used in `flat`.
+-}
 module Ur.Noun.Cue (cue, cueExn, cueBS, cueBSExn, DecodeErr) where
 
 import ClassyPrelude
@@ -319,7 +324,7 @@ dWordBits !n = do
 
 -- Fast Cue --------------------------------------------------------------------
 
-{-
+{-|
     Get the exponent-prefix of an atom:
 
     - Peek at the next word.

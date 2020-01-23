@@ -1,7 +1,6 @@
-{-
-    Generate FromNoun and ToNoun instances.
+{-|
+    Template Haskell Code to Generate FromNoun and ToNoun Instances
 -}
-
 module Ur.Noun.TH (deriveNoun, deriveToNoun, deriveFromNoun) where
 
 import ClassyPrelude              hiding (fromList)
@@ -41,9 +40,9 @@ typeShape tyName = do
           conInf : cs -> splitFn (l, tagConInfo prefix conInf:r) cs
 
     pure $ (vars,) $ case cs of
-        []            -> Vod
-        [c]           -> Tup c
-        cs            -> uncurry Sum splits
+        []  -> Vod
+        [c] -> Tup c
+        cs  -> uncurry Sum splits
 
   where
     badSynonym = "deriveFunctor: tyCon may not be a type synonym."

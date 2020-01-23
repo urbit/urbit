@@ -1,3 +1,7 @@
+{-|
+    Pretty Printer Types
+-}
+
 module Ur.Noun.Tank where
 
 import ClassyPrelude

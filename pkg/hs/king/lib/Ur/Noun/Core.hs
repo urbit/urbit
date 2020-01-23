@@ -2,6 +2,13 @@
 {-# LANGUAGE Strict     #-}
 {-# LANGUAGE StrictData #-}
 
+{-|
+    Core Noun Implementation
+
+    Each cell has a pre-calculated hash and a `size` field. The size is
+    the total number of nodes under the tree of the cell. This is used
+    as a heuristic to choose a hash-table size for `jam` and `cue`.
+-}
 module Ur.Noun.Core
   ( Noun, nounSize
   , pattern Cell, pattern Atom
@@ -13,7 +20,7 @@ import ClassyPrelude hiding (hash)
 
 import Ur.Noun.Atom
 
-import Control.Lens              (view, from, (&), (^.))
+import Control.Lens              (from, view, (&), (^.))
 import Data.Bits                 (xor)
 import Data.Hashable             (hash)
 import GHC.Natural               (Natural)

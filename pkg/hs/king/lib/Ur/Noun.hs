@@ -1,3 +1,8 @@
+{-|
+    Noun Library
+
+    This module just re-exports things from submodules.
+-}
 module Ur.Noun
     ( module Ur.Noun.Atom
     , module Data.Word
@@ -19,7 +24,6 @@ import Control.Lens
 
 import Data.Word
 import Ur.Noun.Atom
-import Ur.Noun.Tree
 import Ur.Noun.Conversions
 import Ur.Noun.Convert
 import Ur.Noun.Core
@@ -27,6 +31,7 @@ import Ur.Noun.Cue
 import Ur.Noun.Jam
 import Ur.Noun.Tank
 import Ur.Noun.TH
+import Ur.Noun.Tree
 
 --------------------------------------------------------------------------------
 
