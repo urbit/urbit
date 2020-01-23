@@ -44,12 +44,13 @@
 ::
 ::  Type of request.
 ::
-::  %d produces a set of desks, %p gets file permissions, %u checks for
-::  existence, %v produces a ++dome of all desk data, %w gets @ud and @da
-::  variants for the given case, %x gets file contents, %y gets a directory
-::  listing, and %z gets a recursive hash of the file contents and children.
+::  %d produces a set of desks, %p gets file permissions, %t gets all paths
+::  with the specified prefix, %u checks for existence, %v produces a ++dome
+::  of all desk data, %w gets @ud and @da variants for the given case, %x
+::  gets file contents, %y gets a directory listing, and %z gets a recursive
+::  hash of the file contents and children.
 ::
-:: ++  care  ?($d $p $u $v $w $x $y $z)
+:: ++  care  ?($d $p $t $u $v $w $x $y $z)
 ::
 ::  Keeps track of subscribers.
 ::
