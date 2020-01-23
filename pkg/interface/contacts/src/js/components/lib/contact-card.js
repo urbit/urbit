@@ -29,8 +29,20 @@ export class ContactCard extends Component {
     this.shareWithGroup = this.shareWithGroup.bind(this);
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     const { props } = this;
+    if (props.ship !== prevProps.ship) {
+      this.setState({
+        edit: props.share,
+        colorToSet: null,
+        nickNameToSet: null,
+        emailToSet: null,
+        phoneToSet: null,
+        websiteToSet: null,
+        notesToSet: null
+      });
+      return;
+    }
     // sigil color updates are done by keystroke parsing on update
     // other field edits are exclusively handled by setField()
     let currentColor = (props.contact.color) ? props.contact.color : "000000";
@@ -66,12 +78,12 @@ export class ContactCard extends Component {
     this.setState({ phoneToSet: value });
   }
 
-  sigilColorSet(value) {
-    this.setState({ colorToSet: value });
-  }
-
   websiteToSet(value) {
     this.setState({ websiteToSet: value });
+  }
+
+  sigilColorSet(event) {
+    this.setState({ colorToSet: event.target.value });
   }
 
   shipParser(ship) {

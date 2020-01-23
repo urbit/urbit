@@ -28,7 +28,7 @@ export class EditElement extends Component {
               className="w-100 ba pl3 b--gray4"
               style={{ resize: "none", height: 40, paddingTop: 10 }}
               onChange={(e) => {
-                let val = e.target.value;
+                let val = (' ' + e.target.value).slice(1);
                 this.setState({
                   currentValue: val
                 }, () => {

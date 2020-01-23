@@ -14,7 +14,6 @@ export class SidebarInvite extends Component {
 
   render() {
     const { props } = this;
-    console.log(props.invite);
 
     return (
       <div className='pa3'>

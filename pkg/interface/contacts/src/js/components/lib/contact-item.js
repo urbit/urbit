@@ -19,7 +19,11 @@ export class ContactItem extends Component {
         <div className=
           {"pl4 pt1 pb1 f9 flex justify-start content-center " + selectedClass}
         >
-          <Sigil ship={props.ship} color={"#" + hexColor} size={32} />
+          <Sigil
+            ship={props.ship}
+            color={hexColor}
+            size={32}
+            key={`${props.ship}.sidebar.${hexColor}`} />
           <p 
             className={
               "f9 w-70 dib v-mid ml2 nowrap " +

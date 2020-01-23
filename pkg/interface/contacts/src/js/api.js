@@ -10,7 +10,7 @@ class UrbitApi {
     this.authTokens = authTokens;
     this.bindPaths = [];
 
-    this.contacts = {
+    this.contactHook = {
       edit: this.contactEdit.bind(this)
     };
 
@@ -65,10 +65,6 @@ class UrbitApi {
     this.action("contact-view", "json", data);
   }
 
-  contactAction(data) {
-    this.action("contact-store", "contact-action", data);
-  }
-
   contactCreate(path, ships = []) {
     this.contactViewAction({ create: { path, ships }});
   }
@@ -78,7 +74,6 @@ class UrbitApi {
   }
 
   contactShare(recipient, path, ship, contact) {
-    console.log(recipient, path, ship, contact);
     this.contactViewAction({
       share: {
         recipient, path, ship, contact
@@ -109,7 +104,7 @@ class UrbitApi {
     {avatar: null}
     {avatar: {p: length, q: bytestream}}
     */
-    this.contactAction({
+    this.action("contact-hook", "contact-action", {
       edit: {
         path, ship, 'edit-field': editField
       }
