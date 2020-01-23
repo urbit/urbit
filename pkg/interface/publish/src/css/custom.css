@@ -3,6 +3,7 @@ html, body {
   width: 100%;
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
+  font-family: "Inter", sans-serif;
 }
 
 p, h1, h2, h3, h4, h5, h6, a, input, textarea, button {
@@ -62,5 +63,8 @@ a {
   }
   .h-100-m-40-ns {
     height: calc(100% - 40px);
+  }
+  .mw-300-ns {
+    max-width: 300px;
   }
 }

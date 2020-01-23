@@ -3,13 +3,14 @@ import { Sidebar } from './lib/sidebar';
 
 export class Skeleton extends Component {
   render() {
+    const { props, state } = this;
 
-    let rightPanelHide = this.props.rightPanelHide
+    let rightPanelHide = props.rightPanelHide
     ? "dn-s"
     : "";
 
-    let popout = !!this.props.popout 
-    ? this.props.popout 
+    let popout = !!props.popout 
+    ? props.popout 
     : false;
 
     let popoutWindow = (popout)
@@ -25,13 +26,14 @@ export class Skeleton extends Component {
         <div className={`cf w-100 h-100 flex ` + popoutBorder}>
           <Sidebar
             popout={popout}
-            sidebarShown={this.props.sidebarShown}
-            active={this.props.active}
+            sidebarShown={props.sidebarShown}
+            active={props.active}
+            notebooks={props.notebooks}
             />
           <div className={"h-100 w-100 " + rightPanelHide} style={{
             flexGrow: 1,
           }}>
-            {this.props.children}
+            {props.children}
           </div>
         </div>
       </div>
