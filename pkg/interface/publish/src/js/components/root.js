@@ -7,7 +7,7 @@ import { JoinScreen } from '/components/lib/join';
 import { Notebook } from '/components/lib/notebook';
 import { Note } from '/components/lib/note';
 
-
+//TODO add new note route
 export class Root extends Component {
   constructor(props) {
     super(props);
