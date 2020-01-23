@@ -262,11 +262,7 @@ recvBytes serf =
 recvAtom :: HasLogFunc e => Serf e -> RIO e Atom
 recvAtom w = do
     len <- recvLen w
-    bs <- recvBytes w len
-    pure (packAtom bs)
-  where
-    packAtom :: ByteString -> Atom
-    packAtom = view (from atomBytes)
+    bytesAtom <$> recvBytes w len
 
 cordText :: Cord -> Text
 cordText = T.strip . unCord

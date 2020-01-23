@@ -13,7 +13,7 @@ module Ur.Noun.Tree
 import ClassyPrelude
 import Control.Lens  hiding (non)
 
-import Ur.Noun.Atom
+import Urbit.Atom
 import Ur.Noun.Conversions ()
 import Ur.Noun.Convert
 import Ur.Noun.Core
@@ -100,7 +100,7 @@ mix = xor
 -- Murmur3
 muk ∷ Nat → Nat → Nat → Nat
 muk seed len =
-    fromIntegral . murmur3 (word32 seed) . resize . view atomBytes
+    fromIntegral . murmur3 (word32 seed) . resize . atomBytes
   where
     resize ∷ ByteString → ByteString
     resize buf =

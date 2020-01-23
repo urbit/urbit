@@ -4,7 +4,7 @@
     This module just re-exports things from submodules.
 -}
 module Ur.Noun
-    ( module Ur.Noun.Atom
+    ( module Urbit.Atom
     , module Data.Word
     , module Ur.Noun.Conversions
     , module Ur.Noun.Convert
@@ -23,7 +23,7 @@ import ClassyPrelude
 import Control.Lens
 
 import Data.Word
-import Ur.Noun.Atom
+import Urbit.Atom
 import Ur.Noun.Conversions
 import Ur.Noun.Convert
 import Ur.Noun.Core

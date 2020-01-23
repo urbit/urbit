@@ -56,7 +56,7 @@ setupPierDirectory shipPath = do
 -- Load pill into boot sequence. -----------------------------------------------
 
 genEntropy :: RIO e Word512
-genEntropy = fromIntegral . view (from atomBytes) <$> io (Ent.getEntropy 64)
+genEntropy = fromIntegral . bytesAtom <$> io (Ent.getEntropy 64)
 
 generateBootSeq :: Ship -> Pill -> Bool -> LegacyBootEvent -> RIO e BootSeq
 generateBootSeq ship Pill{..} lite boot = do

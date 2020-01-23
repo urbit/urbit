@@ -16,7 +16,7 @@ import qualified Urbit.Ob     as Ob
 -- +shas, +shaf, etc. were actually calculated correctly.
 
 cordToAtomBytes :: Text -> ByteString
-cordToAtomBytes t = cordToAtom t ^. atomBytes
+cordToAtomBytes = atomBytes . cordToAtom
 
 cordToAtom :: Text -> Atom
 cordToAtom t = case cordToUW (Cord t) of

@@ -563,7 +563,7 @@ term (tsize, Client{..}) shutdownSTM king enqueueEv =
 
     handleFsWrite :: Blit -> RIO e ()
     handleFsWrite (Sag path noun) = performPut path (jamBS noun)
-    handleFsWrite (Sav path atom) = performPut path (atom ^. atomBytes)
+    handleFsWrite (Sav path atom) = performPut path (atomBytes atom)
     handleFsWrite _               = pure ()
 
     performPut :: Path -> ByteString -> RIO e ()

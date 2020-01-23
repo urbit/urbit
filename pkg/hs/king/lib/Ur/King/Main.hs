@@ -66,7 +66,6 @@ import RIO.Directory
 import Ur.Arvo
 import Ur.King.Config
 import Ur.Noun                 hiding (Parser)
-import Ur.Noun.Atom
 import Ur.Noun.Conversions     (cordToUW)
 import Ur.Vere.Dawn
 import Ur.Vere.Pier
