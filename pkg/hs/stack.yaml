@@ -1,4 +1,4 @@
-resolver: lts-14.4
+resolver: lts-14.21
 
 packages:
   - king
@@ -11,9 +11,8 @@ extra-deps:
   - flat-0.3.4@sha256:002a0e0ae656ea8cc02a772d0bcb6ea7dbd7f2e79070959cc748ad1e7138eb38
   - base58-bytestring-0.1.0@sha256:a1da72ee89d5450bac1c792d9fcbe95ed7154ab7246f2172b57bd4fd9b5eab79
   - lock-file-0.7.0.0@sha256:3ad84b5e454145e1d928063b56abb96db24a99a21b493989520e58fa0ab37b00
-  - urbit-hob-0.3.0@sha256:4871bd8ad01171ae5d4e50a344f4b8757e9eee80f62ab40a80f5311cd443b115
+  - urbit-hob-0.3.1@sha256:afbdc7ad071eefc6ca85f5b598b6c62ed49079d15d1840dac27438a3b3150303
   - para-1.1@sha256:a90eebb063ad70271e6e2a7f00a93e8e8f8b77273f100f39852fbf8301926f81
-  - websockets-0.12.6.1@sha256:3816e841d8102877817d24ef5c96288e79f1323434268b866aa40732cc86763f
 
 nix:
   packages:
