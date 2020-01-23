@@ -23,7 +23,7 @@ import Data.Void
 import Data.Word
 import Text.Regex.TDFA
 import Text.Regex.TDFA.Text ()
-import Ur.Noun.Atom
+import Urbit.Atom
 import Ur.Noun.Convert
 import Ur.Noun.Core
 import Ur.Noun.TH
@@ -479,10 +479,10 @@ newtype Bytes = MkBytes { unBytes :: ByteString }
   deriving newtype (Eq, Ord, Show)
 
 instance ToNoun Bytes where
-    toNoun = Atom . view (from atomBytes) . unBytes
+    toNoun = Atom . bytesAtom . unBytes
 
 instance FromNoun Bytes where
-    parseNoun = named "Bytes" . fmap (MkBytes . view atomBytes) . parseNoun
+    parseNoun = named "Bytes" . fmap (MkBytes . atomBytes) . parseNoun
 
 
 -- Octs ------------------------------------------------------------------------
@@ -492,7 +492,7 @@ newtype Octs = Octs { unOcts :: ByteString }
 
 instance ToNoun Octs where
   toNoun (Octs bs) =
-      toNoun (int2Word (length bs), bs ^. from atomBytes)
+      toNoun (int2Word (length bs), bytesAtom bs)
     where
       int2Word :: Int -> Word
       int2Word = fromIntegral
@@ -500,7 +500,7 @@ instance ToNoun Octs where
 instance FromNoun Octs where
     parseNoun x = named "Octs" $ do
         (word2Int -> len, atom) <- parseNoun x
-        let bs = atom ^. atomBytes
+        let bs = atomBytes atom
         pure $ Octs $ case compare (length bs) len of
           EQ -> bs
           LT -> bs <> replicate (len - length bs) 0

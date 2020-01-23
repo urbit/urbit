@@ -9,11 +9,11 @@ module Ur.Noun.Cue (cue, cueExn, cueBS, cueBSExn, DecodeErr) where
 
 import ClassyPrelude
 
-import Ur.Noun.Atom
+import Urbit.Atom
 import Ur.Noun.Core
 
-import Control.Lens     (from, view, (&), (^.))
 import Data.Bits        (shiftL, shiftR, (.&.), (.|.))
+import Data.Function    ((&))
 import Foreign.Ptr      (Ptr, castPtr, plusPtr, ptrToWordPtr)
 import Foreign.Storable (peek)
 import GHC.Prim         (ctz#)
@@ -38,10 +38,10 @@ cueBSExn bs =
     Right x -> pure x
 
 cue :: Atom -> Either DecodeErr Noun
-cue = cueBS . view atomBytes
+cue = cueBS . atomBytes
 
 cueExn :: MonadIO m => Atom -> m Noun
-cueExn atm = cueBSExn (atm ^. atomBytes)
+cueExn = cueBSExn . atomBytes
 
 
 -- Debugging -------------------------------------------------------------------
@@ -256,7 +256,7 @@ dWord = do
 dAtomBits :: Word -> Get Atom
 dAtomBits !(fromIntegral -> bits) = do
     debugMId ("dAtomBits(" <> show bits <> ")") $ do
-      fmap (view $ from atomWords) $
+      fmap wordsAtom $
         VP.generateM bufSize $ \i -> do
           debugM (show i)
           if (i == lastIdx && numExtraBits /= 0)

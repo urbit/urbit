@@ -18,18 +18,17 @@ module Ur.Noun.Core
 
 import ClassyPrelude hiding (hash)
 
-import Ur.Noun.Atom
+import Urbit.Atom
 
-import Control.Lens              (from, view, (&), (^.))
 import Data.Bits                 (xor)
+import Data.Function             ((&))
 import Data.Hashable             (hash)
 import GHC.Natural               (Natural)
 import GHC.Prim                  (reallyUnsafePtrEquality#)
 import Test.QuickCheck.Arbitrary (Arbitrary(arbitrary))
 import Test.QuickCheck.Gen       (Gen, getSize, resize, scale)
 
-import qualified Data.Char          as C
-import qualified Data.Text.Encoding as T
+import qualified Data.Char as C
 
 
 -- Types -----------------------------------------------------------------------
@@ -59,12 +58,12 @@ instance Hashable Noun where
   {-# INLINE hashWithSalt #-}
 
 textToUtf8Atom :: Text -> Noun
-textToUtf8Atom = Atom . view (from atomBytes) . encodeUtf8
+textToUtf8Atom = Atom . utf8Atom
 
 utf8AtomToText :: Noun -> Either Text Text
 utf8AtomToText = \case
     Cell _ _ -> Left "Expected @t, but got ^"
-    Atom atm -> T.decodeUtf8' (atm ^. atomBytes) & \case
+    Atom atm -> atomUtf8 atm & \case
         Left err -> Left (tshow err)
         Right tx -> pure tx
 

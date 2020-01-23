@@ -1,4 +1,4 @@
-module Ur.Azimuth where
+module Urbit.Azimuth where
 
 import Network.Ethereum.Contract.TH
 

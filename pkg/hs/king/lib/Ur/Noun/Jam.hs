@@ -9,10 +9,10 @@ module Ur.Noun.Jam (jam, jamBS) where
 
 import ClassyPrelude hiding (hash)
 
-import Ur.Noun.Atom
+import Urbit.Atom
+import Urbit.Atom.Internal
 import Ur.Noun.Core
 
-import Control.Lens              (from, view)
 import Data.Bits                 (clearBit, setBit, shiftL, shiftR, (.|.))
 import Data.Vector.Primitive     ((!))
 import Foreign.Marshal.Alloc     (callocBytes, free)
@@ -38,7 +38,7 @@ jamBS n = doPut bt sz (writeNoun n)
     (sz, bt) = unsafePerformIO (compress n)
 
 jam :: Noun -> Atom
-jam = view (from atomBytes) . jamBS
+jam = bytesAtom . jamBS
 
 
 -- Types -----------------------------------------------------------------------
@@ -188,7 +188,7 @@ writeAtomWord (W# w) = writeAtomWord# w
 -}
 {-# INLINE writeAtomBigNat #-}
 writeAtomBigNat :: BigNat -> Put ()
-writeAtomBigNat !(view bigNatWords -> words) = do
+writeAtomBigNat !(bigNatWords -> words) = do
   let lastIdx = VP.length words - 1
   for_ [0..(lastIdx-1)] $ \i ->
       writeWord (words ! i)

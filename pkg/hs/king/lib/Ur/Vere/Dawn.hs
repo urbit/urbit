@@ -27,7 +27,7 @@ import qualified Data.ByteString       as BS
 import qualified Data.ByteString.Char8 as C
 import qualified Network.Ethereum.Ens  as Ens
 import qualified Network.HTTP.Client   as C
-import qualified Ur.Azimuth            as AZ
+import qualified Urbit.Azimuth         as AZ
 import qualified Urbit.Ob              as Ob
 
 -- During boot, use the infura provider

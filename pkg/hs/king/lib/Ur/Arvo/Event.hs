@@ -55,7 +55,7 @@ passToBS Pass{..} = C.singleton 'b' <>
                     (Ed.unPublicKey passCrypt)
 
 instance ToNoun Pass where
-  toNoun p = Atom $ (passToBS p) ^. from atomBytes
+  toNoun = Atom . bytesAtom . passToBS
 
 instance FromNoun Pass where
   parseNoun n = named "Pass" $ do
@@ -82,9 +82,7 @@ data Ring = Ring { ringSign :: BS.ByteString, ringCrypt :: BS.ByteString }
 
 instance ToNoun Ring where
   toNoun Ring{..} =
-    Atom $ bs ^. from atomBytes
-    where
-      bs = C.singleton 'B' <> ringSign <> ringCrypt
+    Atom $ bytesAtom (C.singleton 'B' <> ringSign <> ringCrypt)
 
 instance FromNoun Ring where
   parseNoun n = named "Ring" $ do
