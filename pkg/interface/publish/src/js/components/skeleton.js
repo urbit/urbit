@@ -26,6 +26,7 @@ export class Skeleton extends Component {
           <Sidebar
             popout={popout}
             sidebarShown={this.props.sidebarShown}
+            active={this.props.active}
             />
           <div className={"h-100 w-100 " + rightPanelHide} style={{
             flexGrow: 1,

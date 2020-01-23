@@ -48948,11 +48948,12 @@
                     , react.createElement('div', { className: `cf w-100 h-100 flex ` + popoutBorder, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 25}}
                       , react.createElement(Sidebar, {
                         popout: popout,
-                        sidebarShown: this.props.sidebarShown, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 26}}
+                        sidebarShown: this.props.sidebarShown,
+                        active: this.props.active, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 26}}
                         )
                       , react.createElement('div', { className: "h-100 w-100 " + rightPanelHide, style: {
                         flexGrow: 1,
-                      }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 30}}
+                      }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 31}}
                         , this.props.children
                       )
                     )
