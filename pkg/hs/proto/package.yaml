@@ -9,7 +9,6 @@ dependencies:
   - classy-prelude
   - containers
   - deriving-compat
-  - king
   - lens
   - megaparsec
   - mtl
@@ -20,6 +19,7 @@ dependencies:
   - transformers
   - transformers-compat
   - unordered-containers
+  - king
 
 default-extensions:
   - ApplicativeDo

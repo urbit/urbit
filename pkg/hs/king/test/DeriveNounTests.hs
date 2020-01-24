@@ -1,21 +1,21 @@
 module DeriveNounTests (tests) where
 
 import Data.Acquire
+import Data.Conduit
+import Data.Conduit.List
 import Test.QuickCheck       hiding ((.&.))
 import Test.Tasty
 import Test.Tasty.QuickCheck
 import Test.Tasty.TH
-import UrbitPrelude
-import Vere.Log
-import Vere.Pier.Types
-import Data.Conduit
-import Data.Conduit.List
+import Ur.Prelude
+import Ur.Vere.Log
+import Ur.Vere.Pier.Types
 
-import Control.Concurrent (threadDelay, runInBoundThread)
+import Control.Concurrent (runInBoundThread, threadDelay)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
 
-import qualified Vere.Log as Log
+import qualified Ur.Vere.Log as Log
 
 
 -- Sum Types -------------------------------------------------------------------

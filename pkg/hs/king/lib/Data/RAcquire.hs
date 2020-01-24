@@ -1,3 +1,6 @@
+{-|
+    RAcquire = ReaderT e Acquire a
+-}
 module Data.RAcquire where
 {-
     ( RAcquire (..)
@@ -18,8 +21,8 @@ import qualified Data.Acquire.Internal as Act
 import Control.Applicative     (Applicative(..))
 import Control.Monad           (ap, liftM)
 import Control.Monad.IO.Unlift (MonadIO(..), MonadUnliftIO, withRunInIO)
-import Data.Typeable           (Typeable)
 import Control.Monad.Reader
+import Data.Typeable           (Typeable)
 
 import RIO (RIO, runRIO)
 

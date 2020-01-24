@@ -1,14 +1,14 @@
 module DawnTests (tests) where
 
-import Arvo.Event
-import Noun.Conversions
-import UrbitPrelude
+import Ur.Arvo.Event
+import Ur.Noun.Conversions
+import Ur.Prelude
 
 import Test.Tasty
 import Test.Tasty.HUnit
 
-import qualified Urbit.Ob  as Ob
-import qualified Vere.Dawn as Dawn
+import qualified Ur.Vere.Dawn as Dawn
+import qualified Urbit.Ob     as Ob
 
 --------------------------------------------------------------------------------
 
@@ -16,7 +16,7 @@ import qualified Vere.Dawn as Dawn
 -- +shas, +shaf, etc. were actually calculated correctly.
 
 cordToAtomBytes :: Text -> ByteString
-cordToAtomBytes t = cordToAtom t ^. atomBytes
+cordToAtomBytes = atomBytes . cordToAtom
 
 cordToAtom :: Text -> Atom
 cordToAtom t = case cordToUW (Cord t) of

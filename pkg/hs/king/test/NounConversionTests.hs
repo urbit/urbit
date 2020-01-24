@@ -1,8 +1,8 @@
 module NounConversionTests (tests) where
 
-import Arvo.Event
-import Noun.Conversions
-import UrbitPrelude
+import Ur.Arvo.Event
+import Ur.Noun.Conversions
+import Ur.Prelude
 
 import Data.Maybe
 import Test.QuickCheck        hiding ((.&.))

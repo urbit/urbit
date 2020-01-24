@@ -102,6 +102,8 @@ dependencies:
   - unliftio
   - unliftio-core
   - unordered-containers
+  - urbit-atom
+  - urbit-azimuth
   - urbit-hob
   - utf8-string
   - vector
