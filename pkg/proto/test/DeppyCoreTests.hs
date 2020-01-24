@@ -41,7 +41,7 @@ case_free_vars_don't_nest = assertLeft $ nest @Text emp "x" "y"
 
 -- cases and cores
 
-coreT, caseT :: [(Tag, Typ Text)] -> Typ Text
+coreT, caseT :: [(Nat, Typ Text)] -> Typ Text
 
 coreT as =
   fun "$private_var_name"
@@ -123,9 +123,9 @@ pattern SIG = 0
 pattern NIL = 917
 pattern CONS = 3095
 
-nilT t = cel_ (Tag NIL) (Tag SIG)
+nilT t = cel_ (Nat NIL) (Nat SIG)
 
-consT t self = cel_ (Tag CONS) $ cel_ t self
+consT t self = cel_ (Nat CONS) $ cel_ t self
 
 listCellT = undefined
 
@@ -134,7 +134,7 @@ listCellT = undefined
 case_cas_rule_doesn't_screw_us =
   check @Text
     (env [("x", wut [0, 1])])
-    (cas "x" [(0, Tag 111), (1, Tag 222)])
+    (cas "x" [(0, Nat 111), (1, Nat 222)])
     (wut [111, 222])
   @?= pure ()
 

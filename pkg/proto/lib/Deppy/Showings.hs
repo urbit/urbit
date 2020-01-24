@@ -27,9 +27,10 @@ instance Display CST where
       Wut (setToList -> [x]) -> displayTag "$" "$" x
       Wut (setToList -> xs) ->
         "?(" <> intercalate " " (displayTag "" "" <$> xs) <> ")"
+      Pat -> "@"
       Lam bs x -> "<" <> displayBound bs x <> ">"
       Cns xs -> "[" <> displayGroup xs <> "]"
-      Tag a -> displayTag "%" "" a
+      Nat a -> displayTag "%" "" a
       App xs -> "(" <> displayGroup xs <> ")"
       Hed x -> "-." <> display x
       Tal x -> "+." <> display x

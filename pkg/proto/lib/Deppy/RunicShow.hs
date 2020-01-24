@@ -2,8 +2,6 @@ module Deppy.RunicShow where
 
 import ClassyPrelude
 
-import Bound
-import Bound.Name
 import Data.Function ((&))
 
 import qualified Data.Text  as T
@@ -38,6 +36,7 @@ instance RunicShow D.TypeError where
     D.NotTyp t -> "[not-hax]\n" <> runic (D.unvar <$> t)
     D.NotFun t -> "[not-hax]\n" <> runic (D.unvar <$> t)
     D.NotCel t -> "[not-hax]\n" <> runic (D.unvar <$> t)
+    D.NotAtm t -> "[not-atm]\n" <> runic (D.unvar <$> t)
     D.NotWut t -> "[not-hax]\n" <> runic (D.unvar <$> t)
     D.NotHaxBuc t -> "[not-$%]\n" <> runic (D.unvar <$> t)
     D.Other s ->
@@ -156,8 +155,9 @@ toRunic = go
   where
     go = \case
         C.Hax          -> Leaf "#"
+        C.Pat          -> Leaf "@"
         C.Var t        -> Leaf t
-        C.Tag a        -> tagLit a
+        C.Nat a        -> tagLit a
         C.Col a x      -> appTag a x
         C.Hed x        -> hed x
         C.DotGal x     -> hed x

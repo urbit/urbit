@@ -25,7 +25,7 @@ demo prog = parseCst prog & \case
     putStrLn ("CORE:\n" <> runic e)
     let t = infer env e
     case t of
-      Right t -> putStrLn ("TYPE:\n" <> runic (H.resugar' t))
+      Right t -> putStrLn ("TYPE:\n" <> runic t)
       Left er -> putStrLn ("<type error>: " <> runic er)
     let w = whnf e
     putStrLn ("WHNF:\n" <> runic (H.resugar' w))
@@ -45,7 +45,7 @@ demo' prog = parseCst prog & \case
     putStrLn ("core: " <> display e)
     let t = infer env e
     case t of
-      Right t -> putStrLn ("type: " <> display (H.resugar' t))
+      Right t -> putStrLn ("type: " <> display t)
       Left er -> putStrLn ("<type error>: " <> show er)
     let n = copy $ toUntyped e
     putStrLn ("nock: " <> show n)

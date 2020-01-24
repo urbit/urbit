@@ -24,10 +24,11 @@ data Hoon a
   | Fun (Hoon a) (Scope (Name Text ()) Hoon a)
   | Cel (Hoon a) (Scope (Name Text ()) Hoon a)
   | Wut (Set Atom)
+  | Pat
   --
   | Lam (Hoon a) (Scope (Name Text ()) Hoon a)
   | Cns (Hoon a) (Hoon a)
-  | Tag Atom
+  | Nat Atom
   --
   | App (Hoon a) (Hoon a)
   | Hed (Hoon a)
@@ -83,10 +84,11 @@ instance Monad Hoon where
   Fun t b >>= f = Fun (t >>= f) (b >>>= f)
   Cel t b >>= f = Cel (t >>= f) (b >>>= f)
   Wut ls  >>= _ = Wut ls
+  Pat     >>= _ = Pat
   --
   Lam t b >>= f = Lam (t >>= f) (b >>>= f)
   Cns x y >>= f = Cns (x >>= f) (y >>= f) 
-  Tag l   >>= _ = Tag l
+  Nat l   >>= _ = Nat l
   --
   App x y >>= f = App (x >>= f) (y >>= f)
   Hed x   >>= f = Hed (x >>= f)
@@ -118,24 +120,6 @@ instance Monad Hoon where
   WutCen x cs >>= f = WutCen (x >>= f) (cs <&> (>>= f))
   WutHax x bs >>= f = WutHax (x >>= f) (bs <&> (>>>= f))
 
-{-
-  | BarCen (Map Atom (Hoon a))
-  | BarTis (Hoon a) (Scope (Name Text ()) Hoon a)
-  | CenDot (Hoon a) (Hoon a)
-  | CenHep (Hoon a) (Hoon a)
-  | ColHep (Hoon a) (Hoon a)
-  | ColTar [Hoon a]
-  | TisFas (Hoon a) (Scope (Name Text ()) Hoon a)
-  | DotDot (Hoon a) (Scope (Name Text ()) Hoon a)
-  | DotGal (Hoon a)
-  | DotGar (Hoon a)
-  | KetFas (Hoon a) (Hoon a)
-  | KetHep (Hoon a) (Hoon a)
-  | WutCen (Hoon a) (Map Atom (Hoon a))
-  | WutHax (Hoon a) (Map Atom (Scope (Name Text ()) Hoon a))-}
-
-
-
 instance (Data a) => Plated (Hoon a) where
   plate = uniplate
 
@@ -149,12 +133,13 @@ desugar = go
       Hax     -> C.Typ
       Fun t b -> C.Fun $ C.Abs (go t) (hoist go b)
       Cel t b -> C.Cel $ C.Abs (go t) (hoist go b)
-      Wut a   -> C.Wut a
+      Wut as  -> C.Atm (C.Wut as)
+      Pat     -> C.Atm C.Pat
       --
       Lam t b -> C.Lam $ C.Abs (go t) (hoist go b)
       Cns h j -> C.Cns (go h) (go j) Nothing
       --
-      Tag t   -> C.Tag t
+      Nat t   -> C.Nat t
       App h j -> C.App (go h) (go j)
       Hed h   -> C.Hed (go h)
       Tal h   -> C.Tal (go h)
@@ -171,7 +156,7 @@ desugar = go
       Fas hv ht -> go $ The ht hv
       Obj cs    -> go $ BarCen cs
       Cls tcs   -> go $ HaxCen tcs
-      Col a h   -> go $ App h (Tag a)
+      Col a h   -> go $ App h (Nat a)
       --
       HaxBuc tcs   -> C.Cel (mkCasAbs tcs)
       HaxCen tcs   -> C.Fun (mkCasAbs tcs)
@@ -199,7 +184,7 @@ free = pure . F
 mkCasAbs :: Map Atom (Hoon a) -> C.Abs a
 mkCasAbs cs = C.Abs ty body
   where
-    ty = C.Wut (keysSet cs)
+    ty = C.Atm (C.Wut (keysSet cs))
     body = Scope $ C.Cas (C.Var $ B (Name "α" ())) (fmap (free . desugar) cs)
 
 the :: C.Exp a -> C.Exp a -> C.Exp a
@@ -215,12 +200,13 @@ resugar = go
       C.Typ             -> Hax
       C.Fun (C.Abs t b) -> Fun (go t) (hoist go b)
       C.Cel (C.Abs t b) -> Cel (go t) (hoist go b)
-      C.Wut as          -> Wut as
+      C.Atm (C.Wut as)  -> Wut as
+      C.Atm C.Pat       -> Pat
       --
       C.Lam (C.Abs t b)  -> Lam (go t) (hoist go b)
       C.Cns e f (Just t) -> The (go t) (Cns (go e) (go f))
       C.Cns e f Nothing  -> Cns (go e) (go f)
-      C.Tag a            -> Tag a
+      C.Nat a            -> Nat a
       --
       C.App e f  -> App (go e) (go f)
       C.Hed e    -> Hed (go e)
@@ -231,6 +217,7 @@ resugar = go
       C.Let e b         -> TisFas (go e) (hoist go b)
       C.Rec (C.Abs t b) -> DotDot (go t) (hoist go b)
 
+-- FIXME it doesn't work inside scopes :/
 resugar' :: Data a => C.Exp a -> Hoon a
 resugar' = tr . resugar
   where

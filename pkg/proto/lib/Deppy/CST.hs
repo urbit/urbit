@@ -22,10 +22,11 @@ data CST
   | Fun [Binder] CST
   | Cel [Binder] CST
   | Wut (Set Atom)
+  | Pat
   --
   | Lam [Binder] CST
   | Cns [CST]
-  | Tag Atom
+  | Nat Atom
   --
   | App [CST]
   | Hed CST
@@ -73,10 +74,11 @@ abstractify = go
       Fun bs c -> bindMany H.Fun bs (go c)
       Cel bs c -> bindMany H.Cel bs (go c)
       Wut s -> H.Wut s
+      Pat -> H.Pat
       --
       Lam bs c -> bindMany H.Lam bs (go c)
       Cns cs -> foldr1 H.Cns $ go <$> cs
-      Tag a -> H.Tag a
+      Nat a -> H.Nat a
       App cs -> foldl1 H.App $ go <$> cs
       Hed c -> H.Hed (go c)
       Tal c -> H.Tal (go c)
@@ -120,11 +122,12 @@ concretize = dissociate . go
       H.Fun t b -> unbindPoly Fun t b
       H.Cel t b -> unbindPoly Cel t b
       H.Wut s -> Wut s
+      H.Pat -> Pat
       --
       H.Lam t b -> unbindPoly Lam t b
       H.Cns h j -> Cns [go h, go j]
 
-      H.Tag a -> Tag a
+      H.Nat a -> Nat a
       H.App h j -> App [go h, go j]
       H.Hed c -> Hed (go c)
       H.Tal c -> Tal (go c)

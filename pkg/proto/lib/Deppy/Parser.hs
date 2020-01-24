@@ -115,8 +115,8 @@ irregular =
     , Wut . setFromList <$> grouped "?(" " " ")" (atom <|> textToAtom <$> sym)
     , notAllow Lam <$> grouped "<" " " ">" binder
     , Cns <$> grouped "[" " " "]" cst
-    , Tag . textToAtom <$> tag
-    , Tag <$> atom
+    , Nat . textToAtom <$> tag
+    , Nat <$> atom
     , App <$> grouped "(" " " ")" cst
     , Hed <$> (string "-." *> cst)
     , Tal <$> (string "+." *> cst)
@@ -126,8 +126,9 @@ irregular =
     , Obj . mapFromList <$> grouped "{" ", " "}" entry
     , Hax <$ char '#'
     , Var <$> sym
-    , Tag 0 <$ char '~'
+    , Nat 0 <$ char '~'
     , Wut (singleton 0) <$ string "$~"
+    , Pat <$ char '@'
     ]
   where
     tagTy = char '$' *> (atom <|> textToAtom <$> sym)

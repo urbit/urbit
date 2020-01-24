@@ -16,10 +16,10 @@ toUntyped = \case
   Typ           -> U.Atm 777
   Fun{}         -> U.Atm 788
   Cel{}         -> U.Atm 799
-  Wut{}         -> U.Atm 810
+  Atm{}         -> U.Atm 810
   Lam (Abs _ b) -> U.Lam (hoist toUntyped $ forget b)
   Cns e f _     -> U.Cel (toUntyped e) (toUntyped f)
-  Tag a         -> U.Atm a
+  Nat a         -> U.Atm a
   App e f       -> U.App (toUntyped e) (toUntyped f)
   Hed e         -> U.Axs 2 (toUntyped e)
   Tal e         -> U.Axs 3 (toUntyped e)

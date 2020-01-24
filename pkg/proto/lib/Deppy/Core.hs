@@ -25,23 +25,37 @@ data Exp a
   | Typ                                  -- #
   | Fun (Abs a)                          -- #<v/t t>  #-  v/t  t
   | Cel (Abs a)                          -- #[v/t t]  #:  v/t  t
-  | Wut (Set Tag)                        -- #foo, ?(#foo #bar)
+  | Atm Atm                              -- @, #foo, ?(#foo #bar)
   -- introduction forms
   | Lam (Abs a)                          -- <v/t e>  |=  v/t  e
   | Cns (Exp a) (Exp a) (Maybe (Exp a))  -- [e f]    :-  e f
-  | Tag Tag                              -- %foo
+  | Nat Nat                              -- %foo
   -- elimination forms
   | App (Exp a) (Exp a)                  -- (e f)
   | Hed (Exp a)                          -- e.-
   | Tal (Exp a)                          -- e.+
-  | Cas (Exp a) (Map Tag (Exp a))        -- ?%  e  $foo  f  $bar  g  ==
-  | Mat (Exp a) (Map Tag (Bnd a))        -- ?#  e  [$foo v]  f  [$bar v]  g  ==
+  | Cas (Exp a) (Map Nat (Exp a))        -- ?%  e  $foo  f  $bar  g  ==
+  | Mat (Exp a) (Map Nat (Bnd a))        -- ?#  e  [$foo v]  f  [$bar v]  g  ==
   -- recursion, flow control
   | Let (Exp a) (Bnd a)                  -- =/  v  e
   | Rec (Abs a)                          -- ..  v/t  e
   deriving (Functor, Foldable, Traversable)
 
-type Tag = Natural
+data Atm
+  = Wut (Set Nat)
+  | Pat
+  deriving (Eq, Ord, Read, Show)
+
+instance Semigroup Atm where
+  Wut s <> Wut t = Wut (s <> t)
+  Wut _ <> Pat   = Pat
+  Pat   <> Wut _ = Pat
+  Pat   <> Pat   = Pat
+  
+instance Monoid Atm where
+  mempty = Wut mempty
+
+type Nat = Natural
 
 data Abs a = Abs
   { spec :: Typ a
@@ -77,21 +91,21 @@ instance Applicative Exp where
 
 instance Monad Exp where
   return = Var
-  Var a >>= f = f a
-  Typ   >>= _ = Typ
-  Fun a >>= f = Fun (bindAbs a f)
-  Cel a >>= f = Cel (bindAbs a f)
-  Wut ls >>= _ = Wut ls
-  Lam a >>= f = Lam (bindAbs a f)
+  Var a     >>= f = f a
+  Typ       >>= _ = Typ
+  Fun a     >>= f = Fun (bindAbs a f)
+  Cel a     >>= f = Cel (bindAbs a f)
+  Atm a     >>= _ = Atm a
+  Lam a     >>= f = Lam (bindAbs a f)
   Cns x y m >>= f = Cns (x >>= f) (y >>= f) ((>>= f) <$> m)
-  Tag l >>= _ = Tag l
-  App x y >>= f = App (x >>= f) (y >>= f)
-  Hed x >>= f = Hed (x >>= f)
-  Tal x >>= f = Tal (x >>= f)
-  Cas x cs >>= f = Cas (x >>= f) (cs <&> (>>= f))
-  Mat x cs >>= f = Mat (x >>= f) (cs <&> (>>>= f))
-  Let a b >>= f = Let (a >>= f) (b >>>= f)
-  Rec a >>= f = Rec (bindAbs a f)
+  Nat l     >>= _ = Nat l
+  App x y   >>= f = App (x >>= f) (y >>= f)
+  Hed x     >>= f = Hed (x >>= f)
+  Tal x     >>= f = Tal (x >>= f)
+  Cas x cs  >>= f = Cas (x >>= f) (cs <&> (>>= f))
+  Mat x cs  >>= f = Mat (x >>= f) (cs <&> (>>>= f))
+  Let a b   >>= f = Let (a >>= f) (b >>>= f)
+  Rec a     >>= f = Rec (bindAbs a f)
 
 bindAbs :: Abs a -> (a -> Exp b) -> Abs b
 bindAbs (Abs s b) f = Abs (s >>= f) (b >>>= f)
@@ -117,7 +131,9 @@ rec v t e = Rec (Abs t (abstract1Name v e))
 ledt :: Text -> Exp Text -> Exp Text -> Exp Text
 ledt v e e' = Let e (abstract1Name v e')
 
-wut = Wut . setFromList
+wut = Atm . Wut . setFromList
+
+pat = Atm Pat
 
 cas e cs = Cas e (mapFromList cs)
 
@@ -143,6 +159,7 @@ data TypeError where
   -- | expected a type isomorphic to a function (pi) type
   NotFun   :: forall a. IsVar a => Typ a -> TypeError
   NotCel   :: forall a. IsVar a => Typ a -> TypeError
+  NotAtm   :: forall a. IsVar a => Typ a -> TypeError
   NotWut   :: forall a. IsVar a => Typ a -> TypeError
   NotHaxBuc:: forall a. IsVar a => Typ a -> TypeError
   Other    :: String -> TypeError
@@ -222,9 +239,16 @@ expectCel = whnf >>> \case
     pure (Abs (Cas e specMap) body)
   e -> Left (NotCel e)
 
-expectWut :: IsVar a => Typ a -> Typing (Set Tag)
+expectAtm :: IsVar a => Typ a -> Typing Atm
+expectAtm = whnf >>> \case
+  Atm a -> pure a
+  -- the union of all the wuts
+  Cas _ cs -> fold <$> traverse expectAtm cs
+  e -> Left (NotAtm e)
+
+expectWut :: IsVar a => Typ a -> Typing (Set Nat)
 expectWut = whnf >>> \case
-  Wut s -> pure s
+  Atm (Wut s) -> pure s
   -- the union of all the wuts
   Cas _ cs -> fold <$> traverse expectWut cs
   e -> Left (NotWut e)
@@ -248,12 +272,18 @@ retractAsm = foldMap wither
       F v -> pure v
       B _ -> Nothing
 
-tracePpShowId a = trace (ppShow a) a
+-- tracePpShowId a = trace (ppShow a) a
 
-traceAwesome s a b = trace (s <>":\n" <> ppShow a <> "\n" <> s <> " val:\n" <> ppShow b) b
+-- traceAwesome s a b = trace (s <>":\n" <> ppShow a <> "\n" <> s <> " val:\n" <> ppShow b) b
 
 fromNScope :: Monad f => Scope (Name n b) f a -> f (Var b a)
 fromNScope = fromScope . mapBound (\(Name _ b) -> b)
+
+nestAtm :: Atm -> Atm -> Bool
+nestAtm (Wut s) (Wut t) = s `isSubsetOf` t
+nestAtm (Wut _) Pat     = True
+nestAtm Pat     (Wut _) = False
+nestAtm Pat     Pat     = True
 
 -- TODO
 --   - better errors
@@ -280,15 +310,14 @@ nest env = fmap void . go env mempty
               asm' <- go env asm a a'
               retractAsm <$>
                 go (extend1 a env) (extendAsm asm') (fromNScope b) (fromNScope b')
-            (Wut ls, Wut ls') -> do
-              -- guard (ls `isSubsetOf` ls')
-              when (not (ls `isSubsetOf` ls')) $
+            (Atm a, Atm a') -> do
+              when (not $ nestAtm a a') $
                 Left (NestFail t0 u0)
               pure asm
             -- Special rule for the Cas eliminator to enable sums and products
             -- TODO nf
             (Cas e cs, Cas e' cs') | whnf e == whnf e' -> do
-                Wut s <- infer env e
+                s <- expectWut =<< infer env e
                 -- TODO I should thread changing asm through the traversal
                 -- but I can't be bothered right now. Perf regression.
                 asm <$ traverse_ chk (setToList s)
@@ -301,21 +330,22 @@ nest env = fmap void . go env mempty
             -- (t, Cas e cs) -> go env asm (Cas e (mk t)) (Cas e cs)
             -- where mk = <map representing (const u)>
             (Cas e cs, u) -> do
-              Wut (setToList -> s) <- infer env e
+              s <- expectWut =<< infer env e
               -- TODO thread asms
               -- all of the cases nest in u
               asm <$ traverse_
                 (\tag -> go env asm (fromJust $ lookup tag cs) u)
-                s
+                (setToList s)
             (t, Cas e cs) -> do
-              Wut (setToList -> s) <- infer env e
+              s <- expectWut =<< infer env e
               -- TODO thread asms
               -- u nests in all of the cases
               asm <$ traverse_
                 (\tag -> go env asm t (fromJust $ lookup tag cs))
-                s
+                (setToList s)
             (t@(Rec (Abs _ b)), u) -> go env asm (instantiate1 t b) u
             (t, u@(Rec (Abs _ b))) -> go env asm t (instantiate1 u b)
+            -- TODO don't use _
             _ -> Left (NestFail t0 u0)
 
 -- Type Checking and Inference -------------------------------------------------
@@ -337,7 +367,7 @@ infer env = \case
     expectTyp =<< infer env t
     expectTyp =<< infer (extend1 t env) (fromNScope b)
     pure Typ
-  Wut _ -> pure Typ
+  Atm _ -> pure Typ
   Lam (Abs t b) -> do
     expectTyp =<< infer env t
     -- TODO hoist?
@@ -353,7 +383,7 @@ infer env = \case
     l <- infer env x
     r <- infer env y
     pure $ Cel (Abs l (free r))
-  Tag t -> pure $ Wut (singleton t)
+  Nat t -> pure $ wut [t]
   App x y -> do
     (Abs t b) <- expectFun =<< infer env x
     check env y t
@@ -377,7 +407,7 @@ infer env = \case
     case whnf (fromScope b) of
       Cas (Var v@(B _)) tcs -> do
         resultTys <- for (mapToList tcs) \(tag, talTy) -> do
-          let talTy' = whnf $ instantiate1 (Tag tag) (toScope talTy)
+          let talTy' = whnf $ instantiate1 (Nat tag) (toScope talTy)
           rhsTy <- infer (extend1 talTy' env) (fromNScope $ fromJust $ lookup tag cs)
           pure (tag, rhsTy)
         let namedResultTys = (mapFromList resultTys) <&> fmap \case
@@ -408,17 +438,17 @@ whnf = \case
   Typ     -> Typ
   e@Fun{} -> e
   e@Cel{} -> e
-  e@Wut{} -> e
+  e@Atm{} -> e
   --
   e@Lam{} -> e
   e@Cns{} -> e  -- TODO do we want to eval inside?
-  e@Tag{} -> e
+  e@Nat{} -> e
   --
   App (whnf -> Lam (Abs _ b)) x  -> whnf $ instantiate1 x b
   Hed (whnf -> Cns x _ _)        -> whnf x
   Tal (whnf -> Cns _ y _)        -> whnf y
-  Cas (whnf -> Tag t)         cs -> whnf $ fromJust $ lookup t cs
-  Mat (whnf -> Cns (whnf -> Tag t) r _) cs ->
+  Cas (whnf -> Nat t)         cs -> whnf $ fromJust $ lookup t cs
+  Mat (whnf -> Cns (whnf -> Nat t) r _) cs ->
     whnf $ instantiate1 r $ fromJust $ lookup t cs
   e@App{} -> e
   e@Hed{} -> e
