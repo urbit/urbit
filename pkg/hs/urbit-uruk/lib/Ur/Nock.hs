@@ -51,6 +51,7 @@
 
 module Ur.Nock where
 
+{-
 import Ur.Common hiding (undefined)
 
 import Control.Lens ((&))
@@ -236,3 +237,4 @@ d4 = \case
     CON x y -> C (d4 x) (d4 y)
     DIE     -> C (A 1) (A 0)
     _       -> undefined
+-}

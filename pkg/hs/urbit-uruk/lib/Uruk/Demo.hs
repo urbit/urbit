@@ -23,7 +23,7 @@ import Data.Bits
 
 import Data.Function ((&))
 import GHC.Natural   (Natural)
-import Ur.Noun.Core  (textToUtf8Atom, pattern Atom)
+import Urbit.Atom    (utf8Atom)
 
 
 -- Types -----------------------------------------------------------------------
@@ -122,9 +122,7 @@ jet 0 _  b = b
 jet n nm b = Jn n :@ cord nm :@ b
 
 cord ∷ Text → Ur
-cord = church . x . textToUtf8Atom
-  where x (Atom a) = a
-        x _        = error "this will never happen"
+cord = church . utf8Atom
 
 --
 --  Serialize and Uruk expression and church-encode it.

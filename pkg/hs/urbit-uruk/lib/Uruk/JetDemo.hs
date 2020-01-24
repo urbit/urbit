@@ -120,7 +120,8 @@ data Jet
     | JCon
     | JCar
     | JCdr
-  deriving (Eq, Ord) -- , Show)
+  deriving (Eq, Ord, Generic) -- , Show)
+  deriving anyclass NFData
 
 data UrPoly j
     = UrPoly j :@ UrPoly j
@@ -128,9 +129,12 @@ data UrPoly j
     | K
     | S
     | D
-    | Free !Natural
     | Fast !Natural j [UrPoly j]
-  deriving (Eq, Ord) -- , Show)
+  deriving (Eq, Ord, Generic) -- , Show)
+  deriving anyclass NFData
+
+instance NFData Positive where
+  rnf !x = ()
 
 type Ur = UrPoly Jet
 
@@ -146,10 +150,9 @@ instance Show a => Show (UrPoly a) where
     show = \case
         x :@ y      → "(" <> intercalate "" (show <$> flatten x [y]) <> ")"
         J n          → replicate (fromIntegral n) 'j'
-        K            → "k"
-        S            → "s"
-        D            → "d"
-        Free n       → "{" <> show n <> "}"
+        K            → "K"
+        S            → "S"
+        D            → "D"
         Fast _ j []  → show j
         Fast _ j us  → fast j us
       where
@@ -161,36 +164,37 @@ instance Show a => Show (UrPoly a) where
 instance Show Jet where
     show = \case
         Slow n t b → show (J n :@ t :@ b)
-        JNat n     → "#" <> show n
-        JPak       → "p"
-        JFix       → "!"
-        Eye        → "i"
-        Bee        → "b"
-        Sea        → "c"
-        Bn n       → "b" <> show n
-        Cn n       → "c" <> show n
-        Sn n       → "s" <> show n
-        JSeq       → "Q"
+        JNat n     → show n
+        JPak       → "Pak"
+        JFix       → "Fix"
+        Eye        → "I"
+        Bee        → "Dot"
+        Sea        → "Flip"
+        Bn n       → "Dot" <> show n
+        Cn n       → "Flip" <> show n
+        Sn n       → "S" <> show n
+        JSeq       → "Seq"
         JBol True  → "Y"
         JBol False → "N"
-        JIff       → "?"
-        JAdd       → "+"
-        JEql       → "="
-        JZer       → "{=0}"
-        JInc       → "^"
-        JDec       → "_"
-        JFec       → "__"
-        JMul       → "*"
-        JSub       → "-"
+        JIff       → "If"
+        JAdd       → "Add"
+        JEql       → "Eql"
+        JZer       → "IsZero"
+        JInc       → "Inc"
+        JDec       → "Dec"
+        JFec       → "Fec"
+        JMul       → "Mul"
+        JSub       → "Sub"
         JLef       → "L"
         JRit       → "R"
-        JCas       → "%"
-        JCon       → "&"
-        JCar       → "<"
-        JCdr       → ">"
-        JDed       → "u"
-        JUni       → "~"
-        Wait n     → "w" <> show n
+        JCas       → "Cas"
+        JCon       → "Con"
+        JCar       → "Car"
+        JCdr       → "Cdr"
+        JDed       → "Error"
+        JUni       → "Uni"
+        Wait n     → "Wait" <> show n
+
 
 
 -- Normalized Values -----------------------------------------------------------
@@ -199,10 +203,11 @@ newtype Val = MkVal { valUr ∷ Ur }
   deriving newtype (Eq, Ord, Show)
 
 urVal ∷ Ur → Val
-urVal ur =
-    reduce ur & \case
-        Nothing → MkVal ur
-        Just ru → urVal ru
+urVal ur = MkVal (simp ur)
+
+simp ∷ Ur → Ur
+simp (reduce -> Just x) = simp x
+simp x                  = x
 
 
 -- Named Functions -------------------------------------------------------------
@@ -359,8 +364,8 @@ reduce = \case
   where
     match ∷ Positive → Ur → Ur → Jet
     -- ch n t b = Slow n t b
-    -- ch n t b = fromMaybe (Slow n t b) $ dashLookup n t b
-    match n t b = fromMaybe (error $ show (n,t,b)) $ dashLookup n t b
+    match n t b = fromMaybe (Slow n t b) $ dashLookup n t b
+    -- ch n t b = fromMaybe (error $ show (n,t,b)) $ dashLookup n t b
 
 
 runJet ∷ Jet → [Ur] → Ur
@@ -449,7 +454,6 @@ withoutJets = allowJets . unJet
 
 allowJets ∷ UrPoly Void → UrPoly Jet
 allowJets (Fast _ j _) = absurd j
-allowJets (Free n)     = Free n
 allowJets (x :@ y)     = allowJets x :@ allowJets y
 allowJets (J n)        = J n
 allowJets K            = K
@@ -458,7 +462,6 @@ allowJets D            = D
 
 unJet ∷ UrPoly Jet → UrPoly Void
 unJet (Fast _ j xs) = unJet (foldl' (:@) (unMatch j) xs)
-unJet (Free n)      = Free n
 unJet (x :@ y)      = unJet x :@ unJet y
 unJet (J n)         = J n
 unJet K             = K
@@ -478,7 +481,6 @@ jam = Nat . snd . go
         S           → (3, 4)
         D           → (3, 6)
         J n         → go (jetExpand n)
-        Free _      → error "expression contains free variable"
         Fast _ j xs → go (foldl' (:@) (unMatch j) xs)
         x :@ y      → (rBits, rNum)
           where (xBits, xNum) = go x
@@ -717,7 +719,7 @@ boolJet b = J 2 :@ S :@ encBool b
 pattern Iff = Fast 3 JIff []
 
 {-
-    cas = \b l r -> b l r
+    iff = \c t e -> c t e Uni
 -}
 sjIff ∷ SingJet
 sjIff = SingJet{..}
@@ -725,10 +727,12 @@ sjIff = SingJet{..}
     sjFast = JIff
     sjArgs = 3
     sjName = MkVal (Nat 16)
-    sjExec [Bol c,t,f]       = Just (if c then t else f)
+    sjExec [Bol c,t,f]       = Just (if c then t else f :@ Uni)
     sjExec [_,_,_]           = Nothing
     sjExec _                 = error "bad-iff"
-    sjBody = MkVal I
+    sjBody = MkVal $
+        S :@ (S :@ (K :@ S) :@ (S :@ (K :@ S)))
+          :@ (K :@ (K :@ (K :@ Uni)))
 
 
 -- Case ------------------------------------------------------------------------

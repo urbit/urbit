@@ -49,7 +49,7 @@ import Ur.Common  hiding (A, C, L, R, flat)
 import Control.Lens (from, view)
 import Data.Flat    (flat, Flat)
 import GHC.Natural  (Natural)
-import Ur.Noun      (bytesAtom)
+import Urbit.Atom   (bytesAtom)
 
 
 -- Switch to List-Based Representation -----------------------------------------

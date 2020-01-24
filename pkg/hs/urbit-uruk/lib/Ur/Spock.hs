@@ -1,3 +1,7 @@
+module Ur.Spock where
+
+{-
+
 module Ur.Spock
     ( Vl, Sp(..), sp
     ) where
@@ -85,3 +89,4 @@ sp eval = go
         go (_:_)  (A _)   = error "bad-set"
         go (L:ds) (C l r) = C (go ds l) r
         go (R:ds) (C l r) = C l (go ds r)
+-}

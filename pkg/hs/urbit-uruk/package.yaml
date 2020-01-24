@@ -10,7 +10,6 @@ dependencies:
   - base
   - classy-prelude
   - flat
-  - king
   - lens
   - text
   - urbit-atom

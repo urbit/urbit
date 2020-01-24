@@ -50,7 +50,7 @@ import Control.Concurrent (threadDelay)
 import Control.Lens       (from, view)
 import Data.Flat          (flat)
 import GHC.Natural        (Natural)
-import Ur.Noun            (atomBytes, bytesAtom)
+import Urbit.Atom         (atomBytes, bytesAtom)
 import System.IO.Unsafe   (unsafePerformIO)
 
 

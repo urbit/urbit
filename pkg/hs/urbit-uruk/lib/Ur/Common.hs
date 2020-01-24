@@ -1,6 +1,6 @@
 module Ur.Common
     ( module ClassyPrelude
-    , module Ur.Noun
+    , module Urbit.Atom
     , module Control.Arrow
     , module Control.Lens
     , module Prelude
@@ -8,7 +8,7 @@ module Ur.Common
     ) where
 
 import ClassyPrelude
-import Ur.Noun
+import Urbit.Atom
 
 import Control.Arrow ((<<<), (>>>))
 import Control.Lens  ((&))
