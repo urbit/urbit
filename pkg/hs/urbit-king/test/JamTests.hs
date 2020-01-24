@@ -1,10 +1,10 @@
 module JamTests (tests) where
 
-import Ur.Arvo.Event
-import Ur.Noun.Conversions
-import Ur.Noun.Cue
-import Ur.Noun.Jam
-import Ur.Prelude
+import Urbit.Arvo.Event
+import Urbit.Noun.Conversions
+import Urbit.Noun.Cue
+import Urbit.Noun.Jam
+import Urbit.Prelude
 
 import GHC.Natural            (Natural(..))
 import Test.QuickCheck        hiding ((.&.))

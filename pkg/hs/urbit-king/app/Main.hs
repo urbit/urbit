@@ -1,2 +1,2 @@
-module Main (module Ur.King.Main) where
-import Ur.King.Main
+module Main (module Urbit.King.Main) where
+import Urbit.King.Main

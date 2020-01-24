@@ -1,7 +1,7 @@
 module HoonMapSetTests (tests) where
 
 import RIO.Directory
-import Ur.Prelude    hiding (encodeUtf8)
+import Urbit.Prelude hiding (encodeUtf8)
 
 import Data.Text.Lazy.Encoding (encodeUtf8)
 import Numeric.Natural         (Natural)
