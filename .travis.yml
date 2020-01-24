@@ -10,7 +10,7 @@ jobs:
 
     install:
       - nix-env -iA cachix -f https://cachix.org/api/v1/install
-      - stack --no-terminal --install-ghc build king --only-dependencies
+      - stack --no-terminal --install-ghc build urbit-king --only-dependencies
 
     script:
       - cachix use urbit2
@@ -29,7 +29,7 @@ jobs:
       - sh/travis-install-stack
 
     install:
-      - stack --no-terminal --install-ghc build king --only-dependencies
+      - stack --no-terminal --install-ghc build urbit-king --only-dependencies
 
     script:
       - sh/release-king-darwin-dynamic

@@ -18,12 +18,12 @@ mkdir -p release
 
 stack clean # Make sure we optimize
 
-stack install king                   \
+stack install urbit-king             \
     --local-bin-path "`pwd`/release" \
     --test --no-run-tests
 
 out="release/king-darwin-dynamic-$ver"
 
-mv release/king "$out"
+mv release/urbit-king "$out"
 
 otool -L "$out"
