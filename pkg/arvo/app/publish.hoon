@@ -295,7 +295,7 @@
         =/  book-name  i.t.t.wir
         ?>  ?=(%publish-notebook-delta p.cage.sin)
         =^  cards  state
-          (handle-notebook-delta:main !<(notebook-delta q.cage.sin))
+          (handle-notebook-delta:main !<(notebook-delta q.cage.sin) state)
         [cards this]
       ::
           [%permissions ~]
@@ -392,7 +392,7 @@
   =/  delta=notebook-delta
     [%edit-book our.bol book-name new-book]
   =^  cards  state
-    (handle-notebook-delta delta)
+    (handle-notebook-delta delta state)
   :_  state
   :*  [%pass (welp /read/info pax) %arvo %c %warp our.bol rif]
       cards
@@ -418,7 +418,7 @@
   =/  delta=notebook-delta
     [%edit-note our.bol book-name note-name new-note]
   =^  cards  state
-    (handle-notebook-delta delta)
+    (handle-notebook-delta delta state)
   :_  state
   :*  [%pass (welp /read/note pax) %arvo %c %warp our.bol rif]
       cards
@@ -440,7 +440,7 @@
   =/  delta=notebook-delta
     [%edit-comment our.bol book-name note-name u.comment-date new-comment]
   =^  cards  state
-    (handle-notebook-delta delta)
+    (handle-notebook-delta delta state)
   :_  state
   :*  [%pass (welp /read/comment pax) %arvo %c %warp our.bol rif]
       cards
@@ -476,7 +476,7 @@
       [%app %publish %notebooks @ %publish-info ~]
     =/  book-name  i.t.t.t.pax
     =/  delta=notebook-delta  [%del-book our.bol book-name]
-    (handle-notebook-delta delta)
+    (handle-notebook-delta delta sty)
   ::
       [%app %publish %notebooks @ @ %udon ~]
     =/  book-name  i.t.t.t.pax
@@ -486,7 +486,7 @@
       [~ sty]
     =.  notes.u.book  (~(del by notes.u.book) note-name)
     =/  delta=notebook-delta  [%del-note our.bol book-name note-name]
-    (handle-notebook-delta delta)
+    (handle-notebook-delta delta sty)
   ::
       [%app %publish %notebooks @ @ @ %publish-comment ~]
     =/  book-name  i.t.t.t.pax
@@ -496,7 +496,7 @@
       [~ sty]
     =/  delta=notebook-delta
       [%del-comment our.bol book-name note-name u.comment-date]
-    (handle-notebook-delta delta)
+    (handle-notebook-delta delta sty)
   ==
 ::
 ++  add-paths
@@ -524,7 +524,7 @@
     =/  delta=notebook-delta  [%add-book our.bol book-name new-book]
     ::
     =/  rif=riff:clay  [q.byk.bol `[%next %x [%da now.bol] pax]]
-    =^  update-cards  sty  (handle-notebook-delta delta)
+    =^  update-cards  sty  (handle-notebook-delta delta sty)
     :_  sty
     ;:  weld
       [%pass (welp /read/info pax) %arvo %c %warp our.bol rif]~
@@ -542,7 +542,7 @@
     =/  rif=riff:clay  [q.byk.bol `[%next %x [%da now.bol] pax]]
     =/  delta=notebook-delta
       [%add-note our.bol book-name note-name new-note]
-    =^  update-cards  sty  (handle-notebook-delta delta)
+    =^  update-cards  sty  (handle-notebook-delta delta sty)
     :_  sty
     ;:  weld
       [%pass (welp /read/note pax) %arvo %c %warp our.bol rif]~
@@ -561,7 +561,7 @@
     ::
     =/  delta=notebook-delta
       [%add-comment our.bol book-name note-name u.comment-name new-com]
-    =^  update-cards  sty  (handle-notebook-delta delta)
+    =^  update-cards  sty  (handle-notebook-delta delta sty)
     :_  sty
     ;:  weld
       [%pass (welp /read/comment pax) %arvo %c %warp our.bol rif]~
@@ -1106,11 +1106,11 @@
   ==
 ::
 ++  get-notebook
-  |=  [host=@p book-name=@tas]
+  |=  [host=@p book-name=@tas sty=_state]
   ^-  (unit notebook)
   ?:  =(our.bol host)
-    (~(get by books) book-name)
-  (~(get by subs) host book-name)
+    (~(get by books.sty) book-name)
+  (~(get by subs.sty) host book-name)
 ::
 ++  get-unread
   |=  book=notebook
@@ -1122,72 +1122,72 @@
   +(out)
 ::
 ++  emit-updates-and-state
-  |=  [host=@p book-name=@tas book=notebook del=notebook-delta]
+  |=  [host=@p book-name=@tas book=notebook del=notebook-delta sty=_state]
   ^-  (quip card _state)
   ?:  =(our.bol host)
-    :_  state(books (~(put by books) book-name book))
+    :_  sty(books (~(put by books.sty) book-name book))
     :~  [%give %fact [/notebook/[book-name]]~ %publish-notebook-delta !>(del)]
         [%give %fact [/primary]~ %publish-primary-delta !>(del)]
     ==
   =/  jon=json
     (frond:enjs:format %notifications (numb:enjs:format tile-num))
-  :_  state(subs (~(put by subs) [host book-name] book))
+  :_  sty(subs (~(put by subs.sty) [host book-name] book))
   :~  [%give %fact [/primary]~ %publish-primary-delta !>(del)]
       [%give %fact [/publishtile]~ %json !>(jon)]
   ==
 ::
 ++  handle-notebook-delta
-  |=  del=notebook-delta
+  |=  [del=notebook-delta sty=_state]
   ^-  (quip card _state)
   ?-    -.del
       %add-book
     =.  tile-num  (add tile-num (get-unread data.del))
-    (emit-updates-and-state host.del book.del data.del del)
+    (emit-updates-and-state host.del book.del data.del del sty)
   ::
       %add-note
     =/  book=(unit notebook)
-      (get-notebook host.del book.del)
+      (get-notebook host.del book.del sty)
     ?~  book
-      [~ state]
+      [~ sty]
     =.  read.data.del  =(our.bol author.data.del)
-    =?  tile-num  !read.data.del
-      +(tile-num)
+    =?  tile-num.sty  !read.data.del
+      +(tile-num.sty)
     =.  notes.u.book  (~(put by notes.u.book) note.del data.del)
-    (emit-updates-and-state host.del book.del u.book del)
+    (emit-updates-and-state host.del book.del u.book del sty)
   ::
       %add-comment
     =/  book=(unit notebook)
-      (get-notebook host.del book.del)
+      (get-notebook host.del book.del sty)
     ?~  book
-      [~ state]
+      [~ sty]
     =/  note  (~(get by notes.u.book) note.del)
     ?~  note
-      [~ state]
+      [~ sty]
     =.  comments.u.note  (~(put by comments.u.note) comment-date.del data.del)
     =.  notes.u.book  (~(put by notes.u.book) note.del u.note)
-    (emit-updates-and-state host.del book.del u.book del)
+    (emit-updates-and-state host.del book.del u.book del sty)
   ::
       %edit-book
     =/  old-book=(unit notebook)
-      (get-notebook host.del book.del)
+      (get-notebook host.del book.del sty)
     ?~  old-book
-      [~ state]
+      [~ sty]
     =/  new-book=notebook
       %=  data.del
         date-created  date-created.u.old-book
         notes         notes.u.old-book
         order         order.u.old-book
       ==
-    (emit-updates-and-state host.del book.del new-book del)
+    (emit-updates-and-state host.del book.del new-book del sty)
   ::
       %edit-note
     =/  book=(unit notebook)
-      (get-notebook host.del book.del)
+      (get-notebook host.del book.del sty)
     ?~  book
-      [~ state]
+      [~ sty]
     =/  old-note  (~(get by notes.u.book) note.del)
     ?~  old-note
-      [~ state]
+      [~ sty]
     =/  new-note=note
       %=  data.del
         date-created  date-created.u.old-note
@@ -1195,58 +1195,58 @@
         read          read.u.old-note
       ==
     =.  notes.u.book  (~(put by notes.u.book) note.del new-note)
-    (emit-updates-and-state host.del book.del u.book del)
+    (emit-updates-and-state host.del book.del u.book del sty)
   ::
       %edit-comment
     =/  book=(unit notebook)
-      (get-notebook host.del book.del)
+      (get-notebook host.del book.del sty)
     ?~  book
-      [~ state]
+      [~ sty]
     =/  note  (~(get by notes.u.book) note.del)
     ?~  note
-      [~ state]
+      [~ sty]
     =.  comments.u.note  (~(put by comments.u.note) comment-date.del data.del)
     =.  notes.u.book  (~(put by notes.u.book) note.del u.note)
-    (emit-updates-and-state host.del book.del u.book del)
+    (emit-updates-and-state host.del book.del u.book del sty)
   ::
       %del-book
     =.  tile-num
       %+  sub  tile-num
       (get-unread (~(got by books) book.del))
     ?:  =(our.bol host.del)
-      :_  state(books (~(del by books) book.del))
+      :_  sty(books (~(del by books.sty) book.del))
       :~  [%give %fact [/notebook/[book.del]]~ %publish-notebook-delta !>(del)]
           [%give %fact [/primary]~ %publish-primary-delta !>(del)]
       ==
     =/  jon=json
-      (frond:enjs:format %notifications (numb:enjs:format tile-num))
-    :_  state(subs (~(del by subs) host.del book.del))
+      (frond:enjs:format %notifications (numb:enjs:format tile-num.sty))
+    :_  sty(subs (~(del by subs.sty) host.del book.del))
     :~  [%give %fact [/primary]~ %publish-primary-delta !>(del)]
         [%give %fact [/publishtile]~ %json !>(jon)]
     ==
   ::
       %del-note
     =/  book=(unit notebook)
-      (get-notebook host.del book.del)
+      (get-notebook host.del book.del sty)
     ?~  book
-      [~ state]
+      [~ sty]
     =/  not=note  (~(got by notes.u.book) note.del)
     =?  tile-num  !read.not
       (dec tile-num)
     =.  notes.u.book  (~(del by notes.u.book) note.del)
-    (emit-updates-and-state host.del book.del u.book del)
+    (emit-updates-and-state host.del book.del u.book del sty)
   ::
       %del-comment
     =/  book=(unit notebook)
-      (get-notebook host.del book.del)
+      (get-notebook host.del book.del sty)
     ?~  book
-      [~ state]
+      [~ sty]
     =/  note  (~(get by notes.u.book) note.del)
     ?~  note
-      [~ state]
+      [~ sty]
     =.  comments.u.note  (~(del by comments.u.note) comment.del)
     =.  notes.u.book     (~(put by notes.u.book) note.del u.note)
-    (emit-updates-and-state host.del book.del u.book del)
+    (emit-updates-and-state host.del book.del u.book del sty)
   ==
 ::
 ++  get-subscribers-json
