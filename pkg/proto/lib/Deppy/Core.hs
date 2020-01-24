@@ -34,6 +34,8 @@ data Exp a
   | App (Exp a) (Exp a)                  -- (e f)
   | Hed (Exp a)                          -- e.-
   | Tal (Exp a)                          -- e.+
+  | Suc (Exp a)                          -- +(a)     .+  a
+  | Eqa (Exp a) (Exp a)                  -- =(a b)   .=  a  b    atoms only
   | Cas (Exp a) (Map Nat (Exp a))        -- ?%  e  $foo  f  $bar  g  ==
   | Mat (Exp a) (Map Nat (Bnd a))        -- ?#  e  [$foo v]  f  [$bar v]  g  ==
   -- recursion, flow control
@@ -91,19 +93,26 @@ instance Applicative Exp where
 
 instance Monad Exp where
   return = Var
+  --
   Var a     >>= f = f a
+  --
   Typ       >>= _ = Typ
   Fun a     >>= f = Fun (bindAbs a f)
   Cel a     >>= f = Cel (bindAbs a f)
   Atm a     >>= _ = Atm a
+  --
   Lam a     >>= f = Lam (bindAbs a f)
   Cns x y m >>= f = Cns (x >>= f) (y >>= f) ((>>= f) <$> m)
   Nat l     >>= _ = Nat l
+  --
   App x y   >>= f = App (x >>= f) (y >>= f)
   Hed x     >>= f = Hed (x >>= f)
   Tal x     >>= f = Tal (x >>= f)
+  Suc x     >>= f = Suc (x >>= f)
+  Eqa x y   >>= f = Eqa (x >>= f) (y >>= f)
   Cas x cs  >>= f = Cas (x >>= f) (cs <&> (>>= f))
   Mat x cs  >>= f = Mat (x >>= f) (cs <&> (>>>= f))
+  --
   Let a b   >>= f = Let (a >>= f) (b >>>= f)
   Rec a     >>= f = Rec (bindAbs a f)
 
@@ -350,6 +359,11 @@ nest env = fmap void . go env mempty
 
 -- Type Checking and Inference -------------------------------------------------
 
+sucAtm :: Atm -> Atm
+sucAtm = \case
+  Wut s -> Wut $ Set.map (+ 1) s
+  Pat   -> Pat
+
 check :: IsVar a => Env a -> Exp a -> Typ a -> Typing ()
 check env e t = do
   t' <- infer env e
@@ -358,6 +372,7 @@ check env e t = do
 infer :: forall a. IsVar a => Env a -> Exp a -> Typing (Typ a)
 infer env = \case
   Var v -> pure $ env v
+  --
   Typ -> pure Typ
   Fun (Abs t b) -> do
     expectTyp =<< infer env t
@@ -368,6 +383,7 @@ infer env = \case
     expectTyp =<< infer (extend1 t env) (fromNScope b)
     pure Typ
   Atm _ -> pure Typ
+  --
   Lam (Abs t b) -> do
     expectTyp =<< infer env t
     -- TODO hoist?
@@ -384,6 +400,7 @@ infer env = \case
     r <- infer env y
     pure $ Cel (Abs l (free r))
   Nat t -> pure $ wut [t]
+  --
   App x y -> do
     (Abs t b) <- expectFun =<< infer env x
     check env y t
@@ -394,6 +411,11 @@ infer env = \case
   Tal x -> do
     (Abs _ u) <- expectCel =<< infer env x
     pure $ instantiate1 (whnf $ Hed $ x) u
+  Suc x -> Atm . sucAtm <$> (expectAtm =<< infer env x)
+  Eqa x y -> do
+    expectAtm =<< infer env x
+    expectAtm =<< infer env y
+    pure $ wut [0, 1]
   Cas x cs -> do
     s <- expectWut =<< infer env x
     guard (s `isSubsetOf` keysSet cs)
@@ -420,6 +442,7 @@ infer env = \case
         let applicableCases' = instantiate1 (Tal x) <$> applicableCases
         rhsTys <- traverse (infer env) applicableCases'
         pure $ Cas (whnf $ Hed x) rhsTys
+  --
   Let e b -> do
     _ <- infer env e  -- RHS must typecheck even if unused lol
     infer env (instantiate1 e b)  -- TODO efficiency?
@@ -444,10 +467,12 @@ whnf = \case
   e@Cns{} -> e  -- TODO do we want to eval inside?
   e@Nat{} -> e
   --
-  App (whnf -> Lam (Abs _ b)) x  -> whnf $ instantiate1 x b
-  Hed (whnf -> Cns x _ _)        -> whnf x
-  Tal (whnf -> Cns _ y _)        -> whnf y
-  Cas (whnf -> Nat t)         cs -> whnf $ fromJust $ lookup t cs
+  App (whnf -> Lam (Abs _ b)) x               -> whnf $ instantiate1 x b
+  Hed (whnf -> Cns x _ _)                     -> whnf x
+  Tal (whnf -> Cns _ y _)                     -> whnf y
+  Suc (whnf -> Nat t)                         -> Nat (t + 1)
+  Eqa (whnf -> Nat a)         (whnf -> Nat b) -> if a == b then Nat 0 else Nat 1
+  Cas (whnf -> Nat t)         cs              -> whnf $ fromJust $ lookup t cs
   Mat (whnf -> Cns (whnf -> Nat t) r _) cs ->
     whnf $ instantiate1 r $ fromJust $ lookup t cs
   e@App{} -> e

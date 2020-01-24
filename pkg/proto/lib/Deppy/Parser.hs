@@ -120,6 +120,8 @@ irregular =
     , App <$> grouped "(" " " ")" cst
     , Hed <$> (string "-." *> cst)
     , Tal <$> (string "+." *> cst)
+    , Lus <$> (string "+(" *> cst <* char ')')
+    , Tis <$> (string "=(" *> cst) <*> (ace *> cst <* char ')')
     , The <$> (char '`' *> cst <* char '`') <*> cst
     -- , Fas TODO
     , Cls . mapFromList <$> grouped "{|" ", " "|}" entry
@@ -154,9 +156,12 @@ rune = runeSwitch
   , ("..", rune2 DotDot binder cst)
   , (".<", rune1 DotGal cst)
   , (".>", rune1 DotGar cst)
+  , (".+", rune1 DotLus cst)
+  , (".=", rune2 DotTis cst cst)
   , ("^/", rune2 KetFas cst cst)
   , ("^-", rune2 KetHep cst cst)
   , ("?%", runeJogging1 wutCen cst tagPat cst)
+  , ("?:", rune3 WutCol cst cst cst)
   , ("?#", runeJogging1 wutHax cst celPat cst)
   ]
   where

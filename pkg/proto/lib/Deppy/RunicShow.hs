@@ -188,7 +188,15 @@ toRunic = go
         C.TisFas t x y -> let_ t x y
         C.DotDot x y   -> fix x y
         C.WutCen x cs  -> switch x cs
+        C.WutCol x y z -> RunC "?:" [go x, go y, go z]
         C.WutHax x cs  -> switch' x cs
+        C.Lus x        -> lus x
+        C.DotLus x     -> lus x
+        C.Tis x y      -> tis x y
+        C.DotTis x y   -> tis x y
+
+    lus = undefined
+    tis = undefined
 
     tagLit a = tag "%" "" a
 

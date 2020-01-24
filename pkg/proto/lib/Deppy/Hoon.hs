@@ -33,6 +33,8 @@ data Hoon a
   | App (Hoon a) (Hoon a)
   | Hed (Hoon a)
   | Tal (Hoon a)
+  | Lus (Hoon a)
+  | Tis (Hoon a) (Hoon a)
   --
   | The (Hoon a) (Hoon a)
   | Fas (Hoon a) (Hoon a)
@@ -55,9 +57,12 @@ data Hoon a
   | DotDot (Hoon a) (Scope (Name Text ()) Hoon a)
   | DotGal (Hoon a)
   | DotGar (Hoon a)
+  | DotLus (Hoon a)
+  | DotTis (Hoon a) (Hoon a)
   | KetFas (Hoon a) (Hoon a)
   | KetHep (Hoon a) (Hoon a)
   | WutCen (Hoon a) (Map Atom (Hoon a))
+  | WutCol (Hoon a) (Hoon a) (Hoon a)
   | WutHax (Hoon a) (Map Atom (Scope (Name Text ()) Hoon a))
   deriving (Functor, Foldable, Traversable, Data, Typeable)
 
@@ -93,6 +98,8 @@ instance Monad Hoon where
   App x y >>= f = App (x >>= f) (y >>= f)
   Hed x   >>= f = Hed (x >>= f)
   Tal x   >>= f = Tal (x >>= f)
+  Lus x   >>= f = Lus (x >>= f)
+  Tis x y >>= f = Tis (x >>= f) (y >>= f)
   --
   The x y >>= f = The (x >>= f) (y >>= f)
   Fas x y >>= f = Fas (x >>= f) (y >>= f)
@@ -105,20 +112,23 @@ instance Monad Hoon where
   HaxCol x b >>= f = HaxCol (x >>= f) (b >>>= f)
   HaxHep x b >>= f = HaxHep (x >>= f) (b >>>= f)
   --
-  BarCen cs   >>= f = BarCen (cs <&> (>>= f))
-  BarTis x b  >>= f = BarTis (x >>= f) (b >>>= f)
-  CenDot x y  >>= f = CenDot (x >>= f) (y >>= f)
-  CenHep x y  >>= f = CenHep (x >>= f) (y >>= f)
-  ColHep x y  >>= f = ColHep (x >>= f) (y >>= f)
-  ColTar xs   >>= f = ColTar (xs <&> (>>= f))
-  TisFas a b  >>= f = TisFas (a >>= f) (b >>>= f)
-  DotDot t b  >>= f = DotDot (t >>= f) (b >>>= f)
-  DotGal x    >>= f = DotGal (x >>= f)
-  DotGar x    >>= f = DotGar (x >>= f)
-  KetFas x y  >>= f = KetFas (x >>= f) (y >>= f)
-  KetHep x y  >>= f = KetHep (x >>= f) (y >>= f)
-  WutCen x cs >>= f = WutCen (x >>= f) (cs <&> (>>= f))
-  WutHax x bs >>= f = WutHax (x >>= f) (bs <&> (>>>= f))
+  BarCen cs    >>= f = BarCen (cs <&> (>>= f))
+  BarTis x b   >>= f = BarTis (x >>= f) (b >>>= f)
+  CenDot x y   >>= f = CenDot (x >>= f) (y >>= f)
+  CenHep x y   >>= f = CenHep (x >>= f) (y >>= f)
+  ColHep x y   >>= f = ColHep (x >>= f) (y >>= f)
+  ColTar xs    >>= f = ColTar (xs <&> (>>= f))
+  TisFas a b   >>= f = TisFas (a >>= f) (b >>>= f)
+  DotDot t b   >>= f = DotDot (t >>= f) (b >>>= f)
+  DotGal x     >>= f = DotGal (x >>= f)
+  DotGar x     >>= f = DotGar (x >>= f)
+  DotLus x     >>= f = DotLus (x >>= f)
+  DotTis x y   >>= f = DotTis (x >>= f) (y >>= f)
+  KetFas x y   >>= f = KetFas (x >>= f) (y >>= f)
+  KetHep x y   >>= f = KetHep (x >>= f) (y >>= f)
+  WutCen x cs  >>= f = WutCen (x >>= f) (cs <&> (>>= f))
+  WutCol x y z >>= f = WutCol (x >>= f) (y >>= f) (z >>= f)
+  WutHax x bs  >>= f = WutHax (x >>= f) (bs <&> (>>>= f))
 
 instance (Data a) => Plated (Hoon a) where
   plate = uniplate
@@ -143,6 +153,8 @@ desugar = go
       App h j -> C.App (go h) (go j)
       Hed h   -> C.Hed (go h)
       Tal h   -> C.Tal (go h)
+      Lus h   -> C.Suc (go h)
+      Tis h j -> C.Eqa (go h) (go j)
       --
       The ht c | cellular c -> C.Cns e f (Just $ go ht)
         where
@@ -173,9 +185,12 @@ desugar = go
       DotDot h b   -> C.Rec $ C.Abs (go h) (hoist desugar b)
       DotGal h     -> C.Hed (go h)
       DotGar h     -> C.Tal (go h)
+      DotLus h     -> C.Suc (go h)
+      DotTis h j   -> C.Eqa (go h) (go j)
       KetFas hv ht -> go $ The ht hv
       KetHep ht hv -> go $ The ht hv
       WutCen h cs  -> C.Cas (go h) (go <$> cs)
+      WutCol h j k -> C.Cas (go h) (mapFromList [(0, go j), (1, go k)])
       WutHax h bs  -> C.Mat (go h) (hoist go <$> bs)
 
 free :: Applicative f => f a -> f (Var b (f a))
@@ -211,6 +226,8 @@ resugar = go
       C.App e f  -> App (go e) (go f)
       C.Hed e    -> Hed (go e)
       C.Tal e    -> Tal (go e)
+      C.Suc e    -> Lus (go e)
+      C.Eqa e f  -> Tis (go e) (go f)
       C.Cas e cs -> WutCen (go e) (go <$> cs)
       C.Mat e bs -> WutHax (go e) (hoist go <$> bs)
       --
@@ -234,6 +251,7 @@ resugar' = tr . resugar
       Lam (Wut s) b@(Scope (WutCen (Var (B _)) cs))
         | [x] <- bindings b
         -> Obj $ (instantiate (const $ error "Do not want!") . Scope) <$> cs
+      -- TODO cas with 0 1 -> ?:
       h -> h
     -- too bad biplate/template seem broken
     dive :: (Data a) => Hoon a -> Hoon a

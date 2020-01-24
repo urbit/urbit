@@ -31,6 +31,8 @@ data CST
   | App [CST]
   | Hed CST
   | Tal CST
+  | Lus CST
+  | Tis CST CST
   --
   | The CST CST
   | Fas CST CST
@@ -53,9 +55,12 @@ data CST
   | DotDot Binder CST
   | DotGal CST
   | DotGar CST
+  | DotLus CST
+  | DotTis CST CST
   | KetFas CST CST
   | KetHep CST CST
   | WutCen CST (Map Atom CST)
+  | WutCol CST CST CST
   | WutHax CST (Map Atom (Text, CST))
   deriving (Eq, Ord, Read, Show, Data, Typeable)
 
@@ -79,9 +84,12 @@ abstractify = go
       Lam bs c -> bindMany H.Lam bs (go c)
       Cns cs -> foldr1 H.Cns $ go <$> cs
       Nat a -> H.Nat a
+      --
       App cs -> foldl1 H.App $ go <$> cs
       Hed c -> H.Hed (go c)
       Tal c -> H.Tal (go c)
+      Lus c -> H.Lus (go c)
+      Tis c d -> H.Tis (go c) (go d)
       --
       The c d -> H.The (go c) (go d)
       Fas c d -> H.Fas (go c) (go d)
@@ -104,9 +112,12 @@ abstractify = go
       DotDot b c -> bind H.DotDot b (go c)
       DotGal c -> H.DotGal (go c)
       DotGar c -> H.DotGar (go c)
+      DotLus c -> H.DotLus (go c)
+      DotTis c d -> H.DotTis (go c) (go d)
       KetFas c d -> H.KetFas (go c) (go d)
       KetHep c d -> H.KetHep (go c) (go d)
       WutCen c cs -> H.WutCen (go c) (go <$> cs)
+      WutCol c d e -> H.WutCol (go c) (go d) (go e)
       WutHax c cs -> H.WutHax (go c) (cs <&> \(v, d) -> abstract1Name v $ go d)
     bind ctor (Just v,  c) h = ctor (go c) (abstract1Name v h)
     bind ctor (Nothing, c) h = ctor (go c) (abstract (const Nothing) h)
@@ -126,19 +137,21 @@ concretize = dissociate . go
       --
       H.Lam t b -> unbindPoly Lam t b
       H.Cns h j -> Cns [go h, go j]
-
       H.Nat a -> Nat a
+      --
       H.App h j -> App [go h, go j]
       H.Hed c -> Hed (go c)
       H.Tal c -> Tal (go c)
-
+      H.Lus c -> Lus (go c)
+      H.Tis c d -> Tis (go c) (go d)
+      --
       H.The c d -> The (go c) (go d)
       H.Fas c d -> Fas (go c) (go d)
       H.Obj cs  -> Obj (go <$> cs)
-
+      --
       H.Cls tcs -> Cls (go <$> tcs)
       H.Col a c -> Col a (go c)
-
+      --
       H.HaxBuc tcs -> HaxBuc (go <$> tcs)
       H.HaxCen tcs -> HaxCen (go <$> tcs)
 
@@ -160,9 +173,12 @@ concretize = dissociate . go
           (bnd, c) = unbind t b
       H.DotGal c -> DotGal (go c)
       H.DotGar c -> DotGar (go c)
+      H.DotLus c -> DotLus (go c)
+      H.DotTis c d -> DotTis (go c) (go d)
       H.KetFas c d -> KetFas (go c) (go d)
       H.KetHep c d -> KetHep (go c) (go d)
       H.WutCen c cs -> WutCen (go c) (go <$> cs)
+      H.WutCol c d e -> WutCol (go c) (go d) (go e)
       H.WutHax c cs -> WutHax (go c) (yo <$> cs)
         where
           yo b = (fromMaybe "_" bnd, d)
