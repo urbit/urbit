@@ -168,7 +168,7 @@
       :_  state(synced (~(del by synced) path.act))
       %-  zing
       :~  (pull-wire [%contacts path.act])
-          [%give %kick `[%contacts path.act] ~]~
+          [%give %kick ~[[%contacts path.act]] ~]~
       ==
     ?.  |(=(u.ship src.bol) (team:title our.bol src.bol))
       ::  if neither ship = source or source = us, do nothing
@@ -245,7 +245,7 @@
     ::
         %remove
       :_  state
-      :-  [%give %kick `[%contacts path.fact] `ship.fact]
+      :-  [%give %kick ~[[%contacts path.fact]] `ship.fact]
       (give-fact path.fact [%remove path.fact ship.fact])
     ::
         %edit
@@ -255,8 +255,7 @@
   ++  give-fact
     |=  [=path update=contact-update]
     ^-  (list card)
-    ~&  'give-fact'
-    [%give %fact `[%contacts path] %contact-update !>(update)]~
+    [%give %fact ~[[%contacts path]] %contact-update !>(update)]~
   ::
   ++  foreign
     |=  fact=contact-update
@@ -318,7 +317,7 @@
     %-  zing
     %+  turn  ~(tap in members)
     |=  =ship
-    :~  [%give %kick `[%contacts path] `ship]
+    :~  [%give %kick ~[[%contacts path]] `ship]
         (contact-poke [%remove path ship])
     ==
   --

@@ -2,7 +2,7 @@
 ::  into semantic actions for the UI
 ::
 /-  *group-store, *group-hook, *invite-store, *contact-hook
-/+  *server, *contact-json, default-agent
+/+  *server, *contact-json, base64, default-agent
 /=  index
   /^  octs
   /;  as-octs:mimes:html
@@ -94,7 +94,7 @@
       ?+  p.cage.sign  (on-agent:def wire sign)
           %contact-update
         =/  update=json  (update-to-json !<(contact-update q.cage.sign))
-        [[%give %fact `/primary %json !>(update)]~ this]
+        [[%give %fact ~[/primary] %json !>(update)]~ this]
       ==
     ==
   ::
@@ -172,6 +172,24 @@
       [%'~contacts' %img *]
     (png-response:gen (as-octs:mimes:html (~(got by contact-png) `@ta`name)))
   ::
+  ::  avatar images
+  ::
+      [%'~contacts' %avatar @ *]
+    =/  pax=path  `path`t.t.site.url 
+    ?~  pax  not-found:gen
+    =/  pas  `path`(flop pax)
+    ?~  pas  not-found:gen
+    =/  pav  `path`(flop t.pas)
+    ~&  pav+pav
+    ~&  name+name
+    =/  contact  (contact-scry `path`(weld pav [name]~))
+    ?~  contact  not-found:gen
+    ?~  avatar.u.contact  not-found:gen
+    =*  avatar  u.avatar.u.contact
+    =/  decoded  (de:base64 q.octs.avatar)
+    ?~  decoded  not-found:gen
+    [[200 ['content-type' content-type.avatar]~] `u.decoded]
+  ::
       [%'~contacts' *]  (html-response:gen index)
   ==
 ::
@@ -220,4 +238,10 @@
 ++  all-scry
   ^-  rolodex
   .^(rolodex %gx /=contact-store/(scot %da now.bol)/all/noun)
+::
+++  contact-scry
+  |=  pax=path
+  ^-  (unit contact)
+  =.  pax  ;:(weld /=contact-store/(scot %da now.bol)/contact pax /noun)
+  .^((unit contact) %gx pax)
 --
