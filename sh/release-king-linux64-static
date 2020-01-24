@@ -20,6 +20,6 @@ popd
 
 out="release/king-linux64-static-$ver"
 
-cp "$king"/bin/king "$out"
+cp "$king"/bin/urbit-king "$out"
 
 ldd "$out"
