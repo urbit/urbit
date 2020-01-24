@@ -195,8 +195,8 @@ toRunic = go
         C.Tis x y      -> tis x y
         C.DotTis x y   -> tis x y
 
-    lus = undefined
-    tis = undefined
+    lus x = Leaf "LUS"
+    tis x y = Leaf "TIS"
 
     tagLit a = tag "%" "" a
 

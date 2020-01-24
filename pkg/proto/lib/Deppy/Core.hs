@@ -478,6 +478,8 @@ whnf = \case
   e@App{} -> e
   e@Hed{} -> e
   e@Tal{} -> e
+  e@Suc{} -> e
+  e@Eqa{} -> e
   e@Cas{} -> e
   e@Mat{} -> e
   --
