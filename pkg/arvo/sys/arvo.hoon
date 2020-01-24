@@ -156,95 +156,139 @@
       ==
     ~>(%slog.[0 leaf+"arvo: scry-dark"] ~)
   [~ ~ +.q.u.u.bop]
-::                                                      ::  ++me
-++  me                                                  ::  dynamic analysis
-  ::  sac: compiler cache
+::
+::  |me: dynamic analysis
+::
+++  me
+  =*  ball  arvo
+  =*  card  curd
+  ~/  %me
+  |_  ::  sac: compiler cache
+      ::  pyt: type of type
+      ::
+      [sac=worm pyt=type]
+  ::  +refine-moves: move list from vase (was +said)
   ::
-  |_  sac/worm
-  ::                                                    ::  ++refine-moves:me
-  ++  refine-moves                                      ::  move list from vase
-    |=  vax/vase
-    ^-  {(list move:live) worm}
+  ++  refine-moves
+    |=  vax=vase
+    ^-  (pair (list move) worm)
     ?:  =(~ q.vax)  [~ sac]
     =^  hed  sac  (~(slot wa sac) 2 vax)
     =^  tal  sac  (~(slot wa sac) 3 vax)
     =^  mov  sac  (refine-move hed)
     =^  moz  sac  $(vax tal)
     [[mov moz] sac]
-  ::                                                    ::  ++refine-move:me
-  ++  refine-move                                       ::  move from vase
-    |=  vax/vase
-    ^-  {move:live worm}
-    ::
-    ::  den: ++duct vase
-    ::  yat: card vase
-    ::
+  ::  +refine-move: move from vase (was in +sump)
+  ::
+  ++  refine-move
+    |=  vax=vase
+    ^-  (pair move worm)
+    ~>  %mean.'bad-move'
     =^  hip  sac  (~(nell wa sac) p.vax)
-    ?>  hip
-    =^  den  sac  (~(slot wa sac) 2 vax)
-    =^  yat  sac  (~(slot wa sac) 3 vax)
-    =.  sac  (~(neat wa sac) -:!>(*duct) %& den)
-    ?>  hip
-    =^  del  sac  (refine-ball yat)
-    [[(duct q.den) del] sac]
-  ::                                                    ::  ++refine-ball:me
-  ++  refine-ball                                       ::  ball from vase
-    |=  vax/vase
-    ^-  {ball:live worm}
-    ::
-    ::  specialize span to actual card stem
-    ::
-    =^  hex  sac  (~(sped wa sac) vax)
-    ?+    -.q.hex  ~|(%bad-move !!)
-        $give
-      =.  sac  (~(neat wa sac) -:!>([%give *card]) %& hex)
+    ?.  hip
+      ~>(%mean.'not a cell' !!)
+    =/  duc
+      ~>  %mean.'bad-duct'
+      ::  XX used to be a nest-check and clam, seemed excessive
       ::
+      ;;(duct -.q.vax)
+    ::
+    ::  yat: specialized ball vase
+    ::
+    =^  yat  sac  (~(spot wa sac) 3 vax)
+    =^  del  sac  (refine-ball yat)
+    [[duc del] sac]
+  ::  +refine-ball: ball from vase (was in +sump)
+  ::
+  ++  refine-ball
+    |=  vax=vase
+    ^-  (pair ball worm)
+    ?+    q.vax
+        ~>  %mean.'bad-ball'
+        ~_  (sell vax)
+        !!
+    ::
+        [%give card]
       ::  yed: vase containing card
       ::  hil: card as mill
       ::
-      =^  yed  sac  (~(slot wa sac) 3 hex)
+      =^  yed  sac  (~(spot wa sac) 3 vax)
       =^  hil  sac  (refine-card yed)
       [[%give hil] sac]
     ::
-        $pass
-      =.  sac  (~(neat wa sac) -:!>([%pass *path *term *card]) %& hex)
+        [%pass wire=* vane=term card]
+      =/  =wire
+        ~>  %mean.'bad-wire'
+        ::  XX used to be a nest-check and clam, seemed excessive
+        ::
+        ;;(wire wire.q.vax)
+      =/  vane
+        ~>  %mean.'bad-vane-label'
+        ?>  ((sane %tas) vane.q.vax)
+        vane.q.vax
       ::
       ::  yed: vase containing card
       ::  hil: card as mill
       ::
-      =^  yed  sac  (~(slot wa sac) 15 hex)
+      =^  xav  sac  (~(spot wa sac) 7 vax)
+      =^  yed  sac  (~(spot wa sac) 3 xav)
       =^  hil  sac  (refine-card yed)
-      [[%pass (path +6:p.hex) (term +14:p.hex) hil] sac]
+      [[%pass wire vane hil] sac]
+    ::
+        [%slip vane=term card]
+      ::  XX remove
+      ::
+      =/  vane
+        ~>  %mean.'bad-vane-label'
+        ?>  ((sane %tas) vane.q.vax)
+        vane.q.vax
+      ::
+      ::  yed: vase containing card
+      ::  hil: card as mill
+      ::
+      =^  xav  sac  (~(spot wa sac) 3 vax)
+      =^  yed  sac  (~(spot wa sac) 3 xav)
+      =^  hil  sac  (refine-card yed)
+      [[%slip vane hil] sac]
     ==
-  ::                                                    ::  ++refine-card:me
-  ++  refine-card                                       ::  card from vase
-    |=  vax/vase
+  ::  +refine-card: card from vase (was +song)
+  ::
+  ++  refine-card
+    |=  vax=vase
     ^-  (pair mill worm)
-    ::
-    ::  specialize span to actual card data
-    ::
-    =^  hex  sac  (~(sped wa sac) vax)
-    =^  hip  sac  (~(nell wa sac) p.hex)
+    ~>  %mean.'bad-card'
+    =^  hip  sac  (~(nell wa sac) p.vax)
     ?>  hip
-    ?.  ?=($meta -.q.hex)
+    ?.  ?=(%meta -.q.vax)
       ::
       ::  for an non-meta card, the mill is the vase
       ::
-      [[%& hex] sac]
+      [[%& vax] sac]
+    ~>  %mean.'bad-meta'
     ::
     ::  tiv: vase of vase of card
     ::  typ: vase of span
     ::
-    =^  tiv  sac  (~(slot wa sac) 3 hex)
+    =^  tiv  sac  (~(slot wa sac) 3 vax)
     =^  hip  sac  (~(nell wa sac) p.tiv)
     ?>  hip
     =^  typ  sac  (~(slot wa sac) 2 tiv)
-    =.  sac  (~(neat wa sac) -:!>(*type) %& hex)
+    =.  sac  (~(neat wa sac) pyt [%& typ])
     ::
     ::  support for meta-meta-cards has been removed
     ::
-    [[%| (^ q.tiv)] sac]
-  -- :: me
+    ?>  ?=(milt q.tiv)
+    [[%| q.tiv] sac]
+    ::
+    :: =/  mut
+    ::   ?>(?=(milt q.tiv) q.tiv)
+    :: |-  ^-  (pair [%| milt] worm)
+    :: ?.  ?=([%meta *] mut)
+    ::   [[%| mut] sac]
+    :: =^  dip  sac  (~(nets wa sac) -:!>([%meta *vase]) p.mut)
+    :: ?>  dip
+    :: $(q.tiv +.q.mut)
+  --
 ::
 ++  symp                                                ::  symbol or empty
   |=  a=*  ^-  @tas
@@ -504,7 +548,8 @@
       =^  pro  worm.vane  (need pru)
       =^  moz  worm.vane  (~(slot wa worm.vane) 2 pro)
       =^  vem  worm.vane  (~(slot wa worm.vane) 3 pro)
-      =^  sad  worm.vane  (said moz)
+      :: =^  sad  worm.vane  (said moz)
+      =^  sad  worm.vane  (~(refine-moves me worm.vane typ.vil) moz)
       [sad [(soar vem) worm.vane]]
     --
   --
