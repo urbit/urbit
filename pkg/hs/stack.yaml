@@ -1,12 +1,12 @@
 resolver: lts-14.21
 
 packages:
-  - king
   - lmdb-static
   - proto
   - terminal-progress-bar
   - urbit-atom
   - urbit-azimuth
+  - urbit-king
   - urbit-uruk
 
 extra-deps:
@@ -17,19 +17,12 @@ extra-deps:
   - para-1.1@sha256:a90eebb063ad70271e6e2a7f00a93e8e8f8b77273f100f39852fbf8301926f81
   - positive-0.4.1@sha256:c280a62556dac7f0de151da8c4e72cdb785803f1fe98dae9e9d1e1a39cd163a7
 
+# This allows building on NixOS.
 nix:
   packages:
     - pkgconfig
     - zlib
 
-flags:
-  king:
-    Release: false
-
+# TODO: Why is this here?
 ghc-options:
-  king: '-optP-Wno-nonportable-include-path'
-
-# build:
-#   executable-profiling: true
-#   executable-stripping: false
-#   library-profiling: true
+  urbit-king: '-optP-Wno-nonportable-include-path'
