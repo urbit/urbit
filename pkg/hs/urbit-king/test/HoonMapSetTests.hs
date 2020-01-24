@@ -73,7 +73,7 @@ goldenFile :: String -> String -> (FilePath -> IO L.ByteString) -> TestTree
 goldenFile testName testFileName action =
     goldenVsString testName gold (action pill)
   where
-    root = "pkg/hs/king/test/gold" </> testFileName
+    root = "pkg/hs/urbit-king/test/gold" </> testFileName
     gold = root <.> "gold"
     pill = root <.> "pill"
 

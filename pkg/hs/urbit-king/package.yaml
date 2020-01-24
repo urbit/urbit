@@ -1,4 +1,4 @@
-name: king
+name: urbit-king
 version: 0.10.1
 license: MIT
 license-file: LICENSE
@@ -19,10 +19,10 @@ library:
     - -O2
 
 tests:
-  king-tests:
+  urbit-king-tests:
     source-dirs: test
     main: Main.hs
-    dependencies: king
+    dependencies: urbit-king
     ghc-options:
       - -threaded
       - -rtsopts
@@ -160,10 +160,11 @@ default-extensions:
   - ViewPatterns
 
 executables:
-  king:
+  urbit-king:
     main: Main.hs
     source-dirs: app
-    dependencies: ["king"]
+    dependencies:
+      - urbit-king
     when:
       - condition: flag(Release)
         then:

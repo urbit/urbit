@@ -96,7 +96,7 @@ headNote :: String -> Doc
 headNote _version = string $ intercalate "\n"
   [ "Urbit: a personal server operating function"
   , "https://urbit.org"
-  , "Version " <> VERSION_king
+  , "Version " <> VERSION_urbit_king
   ]
 
 -- | TODO This needs to be updated.
@@ -138,7 +138,7 @@ parseArgs = do
 defaultPillURL :: String
 defaultPillURL = "https://bootstrap.urbit.org/urbit-v" <> ver <> ".pill"
   where
-    ver = VERSION_king
+    ver = VERSION_urbit_king
 
 --------------------------------------------------------------------------------
 
