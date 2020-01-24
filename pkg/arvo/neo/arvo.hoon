@@ -1,4 +1,3 @@
-::BROKEN needs span/twig renaming at least
 !:                                                      ::  /sys/arvo
 ::                                                      ::  %reference/2
 ::  %arvo: arvo microkernel.
@@ -6,7 +5,7 @@
 =<  ::  this lifecycle wrapper makes the arvo door
     ::  (multi-armed core) look like a gate (function
     ::  or single-armed core), to fit urbit's formal
-    ::  lifecycle function.  a practical interpreter 
+    ::  lifecycle function.  a practical interpreter
     ::  can ignore it.
     ::
     |=  {now/@da ovo/ovum}
@@ -23,12 +22,15 @@
       eny/@uvJ                                          ::  entropy
       sky/roof                                          ::  namespace
   ==                                                    ::
+++  beam  {{p/ship q/desk r/case} s/path}               ::  global name
+++  beak  {p/ship q/desk r/case}                        ::  garnish with beak
 ++  card  {p/@tas q/*}                                  ::  tagged event
 ++  case                                                ::  version
   $%  {$da p/@da}                                       ::  date
       {$tas p/@tas}                                     ::  label
       {$ud p/@ud}                                       ::  sequence
   ==                                                    ::
+++  cask  |*(a/mold (pair mark a))                      ::  global data
 ++  cave  (cask maze)                                   ::  marked untyped vase
 ++  chip                                                ::  standard identity
   $?  $giv                                              ::  given name
@@ -40,7 +42,10 @@
 ++  desk  @tas                                          ::  ship desk case spur
 ++  dope  (pair @tas @t)                                ::  term/unicode pair
 ++  duct  (list wire)                                   ::  causal history
+++  mark  @tas                                          ::  content type
 ++  maze  {p/* q/*}                                     ::  untyped vase
+++  mill  (each vase milt)                              ::  vase+metavase
+++  milt  {p/* q/*}                                     ::  metavase
 ++  ovum  (pair wire card)                              ::  input or output
 ++  plum  (pair term noun)                              ::  deep file
 ++  ruby  @pG                                           ::  64-bit passcode
@@ -94,9 +99,9 @@
 ::                                                      ::  ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (2) state molds
 ::                                                      ::  ::
-|% 
+|%
 ++  evil                                                ::  evolvable state
-  |*  {span/_span twig/_twig vase/_vase}                ::  injected molds
+  |*  {type/_type hoon/_hoon vase/_vase}                ::  injected molds
   |%                                                    ::
   ++  ball                                              ::  arvo vane move
     $%  {$give p/mill}                                  ::  vane "return"
@@ -109,7 +114,7 @@
     $:  $=  gut                                         ::  abdomen
         $:  run/(list move)                             ::  worklist
             out/(list ovum)                             ::  unix output
-            but/(unit seed)                             ::  reboot 
+            but/(unit seed)                             ::  reboot
         ==                                              ::
         $=  hax                                         ::  thorax
         $:  sac/worm                                    ::  compiler cache
@@ -136,14 +141,14 @@
   ++  move  (pair duct ball)                            ::  vane move
   ++  worm                                              ::  compiler cache
     $:  nes/(set ^)                                     ::  ++nest
-        pay/(map (pair span twig) span)                 ::  ++play
-        mit/(map (pair span twig) (pair span nock))     ::  ++mint
+        pay/(map (pair type hoon) type)                 ::  ++play
+        mit/(map (pair type hoon) (pair type nock))     ::  ++mint
     ==                                                  ::
   --                                                    ::
 ++  hoof  @t                                            ::  hoon source file
 ++  live  (evil)                                        ::  modern molds
 ++  seed  (pair (unit hoof) hoof)                       ::  hoon/arvo boot src
-++  vile  (evil typo twit vise)                         ::  old molds
+++  vile  (evil typo hoon vise)                         ::  old molds
 ++  wasp                                                ::  arvo effect
   $%  {$wack p/@uvJ}                                    ::  add entropy
       {$what p/(list (pair path (pair term noun)))}     ::  reset reptile files
@@ -159,7 +164,7 @@
 ::                                                      ::  ++le
 ++  le                                                  ::  deep engine
   =+  [now=*@da *mall:live]
-  =*  ::  
+  =*  ::
       ::  sys: system state
       ::
       sys  ->
@@ -263,7 +268,7 @@
   ::                                                    ::  ++emit:le
   ++  emit                                              ::  emit move
     |=  mov/move:live
-    +>(run.gut [mov run.gut]) 
+    +>(run.gut [mov run.gut])
   ::                                                    ::  ++grow:le
   ++  grow                                              ::  hardcoded prefixes
     |=  lay/term
@@ -332,14 +337,14 @@
       ::
       ::  the caller was boot logic
       ::
-      (warp nex ((hard wasp) (wile p.q.mov)))
+      (warp nex ;;(wasp (wile p.q.mov)))
     ::
     ::  %pass: forward move
     ::
         $pass
       ::  tea: proximate cause of action
       ::  hen: ultimate cause of action
-      ::  way: target 
+      ::  way: target
       ::  hil: event data
       ::
       =*  tea  p.q.mov
@@ -440,7 +445,7 @@
         $wake  (pike %behn now ovo)
     ::
         ?($wack $what $whom $whim $wise)
-      =/  wap  ((hard wasp) q.ovo)
+      =/  wap  ;;(wasp q.ovo)
       =*  tea  `wire`[%$ %arvo ~]
       =*  hen  `duct`[tea [p.ovo ~]]
       =*  mov  `move:live`[hen %give %& !>(wap)]
@@ -466,7 +471,7 @@
   ++  va                                                ::  vane engine
     |_  $:  ::  way: vane name, eg `%ames`
             ::  vax: vane, or vane builder if `off.mal`
-            ::  
+            ::
             way/term
             vax/vase
         ==
@@ -508,9 +513,9 @@
       =*  kys  `vase`[-:!>(*roof) sky]
       =*  sam  (slop !>(now) (slop !>(eny) kys))
       =^  wok  sac.hax  (~(open wa sac.hax) vax %plow %& sam)
-      |%  
+      |%
       ::                                                ::  ++doze:va-plow:va:le
-      ++  doze                                          ::  next wakeup 
+      ++  doze                                          ::  next wakeup
         ^-  (unit @da)
         =^  pro  sac.hax  (~(slap wa sac.hax) wok [%limb %doze])
         =.  sac.hax  (~(neat wa sac.hax) -:!>(*(unit @da)) %& pro)
@@ -549,7 +554,7 @@
         ::
         ::  fox: spinning vase
         ::
-        =*  sam  !>([hen *(list move)])
+        =*  sam  !>([hen *(list move:live)])
         =^  fox  sac.hax  (~(open wa sac.hax) vax %spin %& sam)
         |%
         ::                                              ::  ++abet:spin:va-plow:
@@ -590,7 +595,7 @@
           |=  $:  ::  tea: return address
                   ::  hil: logical result
                   ::
-                  tea/wire 
+                  tea/wire
                   hil/mill
               ==
           ^+  ..va
@@ -600,14 +605,14 @@
           =/  yet  !>(tea)
           =/  sam  ^-  mill
             ?-  -.hil
-              $&  [%& (slop yet p.hil)]
-              $|  [%| [[%cell p.yet p.p.hil] [q.yet q.p.hil]]]
+              %&  [%& (slop yet p.hil)]
+              %|  [%| [[%cell p.yet p.p.hil] [q.yet q.p.hil]]]
             ==
           =^  nex  sac.hax  (~(call wa sac.hax) fox %take sam)
           abet(fox nex)
         --
       --
-    ::                                                  ::  ++va-create:va:le 
+    ::                                                  ::  ++va-create:va:le
     ++  va-create                                       ::  compile new vase
       |=  src/hoof
       ^+  +>
@@ -650,7 +655,7 @@
     |=  {hen/duct wap/wasp}
     ^+  +>
     ~&  [%warp -.wap]
-    ?-  -.wap 
+    ?-  -.wap
       $wack  +>(eny.mal (mix (shaz (mix now eny.mal)) (shaz p.wap)))
       $what  (what hen p.wap)
       $whim  +>(nym.rep p.wap)
@@ -662,7 +667,7 @@
     |=  {hen/duct our/@p}
     ^+  +>
     ::  initialization only happens once
-    ::  
+    ::
     ?>  =(& off.mal)
     ::
     ::  continue working after initialization
@@ -678,12 +683,12 @@
     ::  activate all vanes
     ::
     =.  van.mal
-      %-  ~(run by van.mal) 
+      %-  ~(run by van.mal)
       |=(vase (slam +< !>(our)))
     ::
     ::  send vanes `[%boot ~]` card, in alphabetical order
     ::
-    =/  fal  (sort (turn (~(tap by van.mal)) |=({term *} +<-)) aor)
+    =/  fal  (sort (turn ~(tap by van.mal) |=({term *} +<-)) aor)
     |-  ^+  +>.^$
     ?~  fal  +>.^$
     =.  +>.^$  $(fal t.fal)
@@ -694,8 +699,8 @@
     ^-  card
     =.  sac.hax  (~(neat wa sac.hax) -:!>(*card) hil)
     ?-  -.hil
-      $|  ((hard card) q.p.hil)
-      $&  ((hard card) q.p.hil)
+      %|  ;;(card q.p.hil)
+      %&  ;;(card q.p.hil)
     ==
   ::                                                    ::  ++wilt:le
   ++  wilt                                              ::  deep file as source
@@ -725,7 +730,7 @@
           ==
       |-  ^+  dev
       ?~  fal  dev
-      ::  
+      ::
       ::  pax: path of this file
       ::  pet: value of this file
       ::
@@ -745,18 +750,18 @@
       ?.  ?=({$neo *} pax)
         $(use.dev (~(put by use.dev) pax pet))
       =?    new.dev
-          =(~ old)  
+          =(~ old)
         (~(put in new.dev) pax)
       $(del.dev (~(put by del.dev) pax pet))
     ::
     ::  print new entries
     ::
-    ~?  !=(~ use.dev) 
-      [%what-old (turn (~(tap by use.dev) ~) |=({path *} +<-))]
-    ~?  !=(~ new.dev) 
-      [%what-new (~(tap in new.dev) ~)]
-    ~?  !=(~ use.dev) 
-      [%what-del (turn (~(tap by del.dev) ~) |=({path *} +<-))]
+    ~?  !=(~ use.dev)
+      [%what-old (turn ~(tap by use.dev) |=({path *} +<-))]
+    ~?  !=(~ new.dev)
+      [%what-new ~(tap in new.dev)]
+    ~?  !=(~ use.dev)
+      [%what-del (turn ~(tap by del.dev) |=({path *} +<-))]
     ::
     ::  just adopt user changes, which have no systems impact
     ::
@@ -767,7 +772,7 @@
     =/  but
       ^-  (unit seed)
       ::
-      ::  when we get new hoon and arvo system files, 
+      ::  when we get new hoon and arvo system files,
       ::  we assume they match what's running now
       ::
       =/  hun  ?:  (~(has in new.dev) /neo/hoon)  ~
@@ -799,7 +804,7 @@
         ::  can use the new kernel
         ::
         run.gut  :_  run.gut
-                 `move:live`[hen %give %& !>([%what (~(tap by del.dev))])]
+                 `move:live`[hen %give %& !>([%what ~(tap by del.dev)])]
         ::
         ::  delete kernel source file from deep
         ::  storage, so that install causes vane upgrade,
@@ -813,14 +818,14 @@
     ::
     =<  loop
     ::
-    ::  job: plan for upgrading 
+    ::  job: plan for upgrading
     ::
     =/  job
       ^-  $:  lul/(unit hoof)
               zus/(unit hoof)
               vat/(list (pair term hoof))
           ==
-      =<  [lul zus (~(tap by van))]
+      =<  [lul zus ~(tap by van)]
       ::
       ::  lul: shared structures
       ::  zus: shared library
@@ -839,14 +844,14 @@
         ::  zyr: all system file replacements
         ::  van: accumulated upgrades
         ::
-        =/  zyr  (~(tap by del.dev))
+        =/  zyr  ~(tap by del.dev)
         =|  van/(map @tas hoof)
         |-  ^+  van
         ?^  zyr
           ::  mor: process rest of `zyr`
           ::
           =/  mor  $(zyr t.zyr)
-          ?.  ?=({$neo $van @tas $~} p.i.zyr) 
+          ?.  ?=({$neo $van @tas $~} p.i.zyr)
             ::
             ::  ignore anything that isn't a vane
             ::
@@ -857,22 +862,22 @@
           ~&  [%new-vane nam `path`p.i.zyr `@p`(mug q.i.zyr)]
           (~(put in mor) nam (wilt q.i.zyr))
         ::
-        ::  if this is a new install after a heavy reboot, 
+        ::  if this is a new install after a heavy reboot,
         ::  or if we've adjusted %zuse or %lull, reboot all
         ::  running vanes
         ::
         ?.  |((~(has in new.dev) /neo/hoon) ?=(^ zus))  van
         ::
-        ::  all running vanes 
+        ::  all running vanes
         ::
         %-  ~(gas by van)
-        %+  skip  
+        %+  skip
           ^-  (list (pair term hoof))
-          %+  turn  (~(tap by van.mal))
+          %+  turn  ~(tap by van.mal)
           |=  {way/term vax/vase}
           [way (wilt (~(got by fat.rep) [%neo %van way ~]))]
         |=  {way/term src/hoof}
-        (~(has in van) way)
+        (~(has by van) way)
       .
     ::  upgrade %lull, vane shared structures
     ::
@@ -933,16 +938,16 @@
     ::
     ::  specialize span to actual card stem
     ::
-    =^  hex  sac  (~(spec wa sac) vax)
+    =^  hex  sac  (~(sped wa sac) vax)
     ?+    -.q.hex  ~|(%bad-move !!)
         $give
       =.  sac  (~(neat wa sac) -:!>([%give *card]) %& hex)
       ::
       ::  yed: vase containing card
       ::  hil: card as mill
-      ::  
+      ::
       =^  yed  sac  (~(slot wa sac) 3 hex)
-      =^  hil  sac  (refine-card yed) 
+      =^  hil  sac  (refine-card yed)
       [[%give hil] sac]
     ::
         $pass
@@ -950,11 +955,11 @@
       ::
       ::  yed: vase containing card
       ::  hil: card as mill
-      ::  
+      ::
       =^  yed  sac  (~(slot wa sac) 15 hex)
-      =^  hil  sac  (refine-card yed) 
+      =^  hil  sac  (refine-card yed)
       [[%pass (path +6:p.hex) (term +14:p.hex) hil] sac]
-    == 
+    ==
   ::                                                    ::  ++refine-card:me
   ++  refine-card                                       ::  card from vase
     |=  vax/vase
@@ -962,10 +967,10 @@
     ::
     ::  specialize span to actual card data
     ::
-    =^  hex  sac  (~(spec wa sac) vax)
+    =^  hex  sac  (~(sped wa sac) vax)
     =^  hip  sac  (~(nell wa sac) p.hex)
     ?>  hip
-    ?.  ?=($meta -.q.hex)  
+    ?.  ?=($meta -.q.hex)
       ::
       ::  for an non-meta card, the mill is the vase
       ::
@@ -978,13 +983,13 @@
     =^  hip  sac  (~(nell wa sac) p.tiv)
     ?>  hip
     =^  typ  sac  (~(slot wa sac) 2 tiv)
-    =.  sac  (~(neat wa sac) -:!>(*span) %& hex)
+    =.  sac  (~(neat wa sac) -:!>(*type) %& hex)
     ::
     ::  support for meta-meta-cards has been removed
     ::
     [[%| (^ q.tiv)] sac]
-  --
---  
+  -- :: me
+--
 ::                                                      ::  ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (4) interface
 ::                                                      ::  ::
@@ -1040,8 +1045,8 @@
   =/  bec  ^-  beak
     :+  (slav %p i.t.pax)
       (slav %tas i.t.t.pax)
-    ((hard case) (slay i.t.t.t.pax))
-  =*  tyl  t.t.t.t.pax     
+    ;;(case (slay i.t.t.t.pax))
+  =*  tyl  t.t.t.t.pax
   =/  nut  (~(peek le now sys) lyc cyr bec tyl)
   ?~  nut  ~
   ?~  u.nut  ~
@@ -1058,9 +1063,9 @@
   ::
   =.  eny.mal.sys  (mix (shaz now) eny.mal.sys)
   ::
-  ::  produce a new state, and either output or a reboot 
+  ::  produce a new state, and either output or a reboot
   ::
-  =^  new  sys  
+  =^  new  sys
     =<  abet
     ::
     ::  as a hack for reboots, an empty ovum is a no-op
@@ -1072,11 +1077,11 @@
     ::
     ::  no reboot; produce output and current core
     ::
-    $&  [`(list ovum)`p.new +>.$]
+    %&  [`(list ovum)`p.new +>.$]
     ::
     ::  reboot; produce loop result from new kernel
     ::
-    $|  ~(boot le now sys)
+    %|  ~(boot le now sys)
   ==
 ::                                                      ::  ++wish
 ++  wish                                                ::  compute, 20
