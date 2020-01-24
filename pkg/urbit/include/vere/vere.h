@@ -248,9 +248,16 @@
         c3_c*            dns_c;             //  galaxy fqdn (optional)
       } u3_pact;
 
+    /* u3_lane: ames lane (IP address and port)
+    */
+      typedef struct _u3_lane {
+        c3_w             pip_w;             //  target IPv4 address
+        c3_s             por_s;             //  target port
+      } u3_lane;
+
     /* u3_poke: poke callback function.
     */
-      typedef void (*u3_poke)(void*, u3_noun);
+      typedef void (*u3_poke)(void*, u3_atom);
 
     /* u3_bail: bailout callback function.
     */
@@ -330,7 +337,6 @@
           uv_udp_t    wax_u;
           uv_handle_t had_u;
         };
-        uv_timer_t    tim_u;                //  XX temporary timer
         c3_o          liv;                  //  listener on
         c3_o          alm;                  //  alarm on
         c3_s          por_s;                //  public IPv4 port
@@ -472,6 +478,13 @@
     /* u2_utfo: unix terminfo strings.
     */
       typedef struct {
+        struct {
+          const c3_y* kcuu1_y;              //  key_up
+          const c3_y* kcud1_y;              //  key_down
+          const c3_y* kcub1_y;              //  key_back
+          const c3_y* kcuf1_y;              //  key_forward
+          c3_w        max_w;                //  maximum input sequence length
+        } inn;
         struct {
           const c3_y* clear_y;              //  clear_screen
           const c3_y* el_y;                 //  clr_bol clear to beginning
@@ -972,6 +985,15 @@
         void
         u3_ames_io_exit(u3_pier* pir_u);
 
+      /* u3_ames_decode_lane(): destructure lane from noun
+      */
+        u3_lane
+        u3_ames_decode_lane(u3_noun);
+
+      /* u3_ames_encode_lane(): encode lane as noun
+      */
+        u3_noun
+        u3_ames_encode_lane(u3_lane);
 
     /**  Autosave.
     **/
@@ -1150,6 +1172,16 @@
 
     /**  Stream messages.
     **/
+      /* u3_newt_encode(): encode an atom to a length-prefixed byte buffer
+      */
+        c3_y*
+        u3_newt_encode(u3_atom mat, c3_w* len_w);
+
+      /* u3_newt_decode(): decode a (partial) length-prefixed byte buffer
+      */
+        void
+        u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_w len_w);
+
       /* u3_newt_write(): write atom to stream; free atom.
       */
         void

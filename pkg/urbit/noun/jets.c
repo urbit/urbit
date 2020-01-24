@@ -126,7 +126,7 @@ _cj_bash(u3_noun bat)
       c3_y*   fat_y;
       c3_y    dig_y[32];
 
-      wor_w = u3qe_jam_buf(bat, &bit_w);
+      wor_w = u3s_jam_fib(bat, &bit_w);
       met_w = bit_w >> 3;
       if ( bit_w != met_w << 3 ) {
         ++met_w;
@@ -414,7 +414,7 @@ _cj_chum(u3_noun chu)
       memset(buf, 0, 33);
       snprintf(buf, 32, "%s%d", h_chu_c, t_chu);
 
-      free(h_chu_c);
+      c3_free(h_chu_c);
       return strdup(buf);
     }
   }
@@ -440,7 +440,7 @@ _cj_je_fsck(u3_noun clu)
     q_clu = u3t(u3t(q_clu));
   }
   if ( !_(u3du(q_clu)) ) {
-    u3z(clu); free(nam_c); return u3_none;
+    u3z(clu); c3_free(nam_c); return u3_none;
   }
 
   if ( (1 == u3h(q_clu)) && (0 == u3t(q_clu)) ) {
@@ -448,7 +448,7 @@ _cj_je_fsck(u3_noun clu)
   }
   else {
     if ( (0 != u3h(q_clu)) || !_(u3a_is_cat(axe_l = u3t(q_clu))) ) {
-      u3z(clu); free(nam_c); return u3_none;
+      u3z(clu); c3_free(nam_c); return u3_none;
     }
   }
 
@@ -462,7 +462,7 @@ _cj_je_fsck(u3_noun clu)
            (c3n == u3r_cell(ir_clu, &pir_clu, &qir_clu)) ||
            (c3n == u3ud(pir_clu)) )
       {
-        u3z(huk); u3z(clu); free(nam_c); return u3_none;
+        u3z(huk); u3z(clu); c3_free(nam_c); return u3_none;
       }
       huk = u3kdb_put(huk, u3k(pir_clu), u3k(qir_clu));
       r_clu = tr_clu;
@@ -472,7 +472,7 @@ _cj_je_fsck(u3_noun clu)
 
   {
     u3_noun pro = u3nt(u3i_string(nam_c), axe_l, huk);
-    free(nam_c);
+    c3_free(nam_c);
     return pro;
   }
 }
@@ -825,7 +825,7 @@ u3j_boot(c3_o nuu_o)
   u3D.len_l =_cj_count(0, u3D.dev_u);
   u3D.all_l = (2 * u3D.len_l) + 1024;     //  horrid heuristic
 
-  u3D.ray_u = (u3j_core*) malloc(u3D.all_l * sizeof(u3j_core));
+  u3D.ray_u = c3_malloc(u3D.all_l * sizeof(u3j_core));
   memset(u3D.ray_u, 0, (u3D.all_l * sizeof(u3j_core)));
 
   if ( c3n == nuu_o ) {
@@ -2189,6 +2189,33 @@ u3j_ream(void)
   u3z(rel);
 
   u3h_walk(u3R->jed.han_p, _cj_ream_hank);
+}
+
+/* u3j_stay(): extract cold state
+*/
+u3_noun
+u3j_stay(void)
+{
+  u3_noun rel = u3_nul;
+  c3_assert(u3R == &(u3H->rod_u));
+  u3h_walk_with(u3R->jed.cod_p, _cj_warm_tap, &rel);
+  return rel;
+}
+
+/* u3j_load(): inject cold state
+*/
+void
+u3j_load(u3_noun rel)
+{
+  u3_noun ler = rel;
+  u3_noun lor;
+
+  while ( u3_nul != ler ) {
+    u3x_cell(ler, &lor, &ler);
+    u3h_put(u3R->jed.cod_p, u3h(lor), u3k(u3t(lor)));
+  }
+
+  u3z(rel);
 }
 
 /* _cj_fink_mark(): mark a u3j_fink for gc.

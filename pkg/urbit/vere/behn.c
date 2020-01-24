@@ -42,6 +42,21 @@ _behn_time_cb(uv_timer_t* tim_u)
   u3_behn* teh_u = pir_u->teh_u;
   teh_u->alm = c3n;
 
+  //  start another timer for 10 minutes
+  //
+  //  This is a backstop to deal with the case where a %doze is not
+  //  properly sent, for example after a crash.  If the timer continues
+  //  to fail, we can't proceed with the timers, but if it was a
+  //  transient error, this will get us past it.
+  //
+  {
+    c3_d gap_d = 10 * 60 * 1000;
+    teh_u->alm = c3y;
+    uv_timer_start(&teh_u->tim_u, _behn_time_cb, gap_d, 0);
+  }
+
+  // send timer event
+  //
   {
     u3_pier_work
       (pir_u,

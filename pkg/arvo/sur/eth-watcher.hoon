@@ -1,39 +1,50 @@
-::  watcher: ethereum event log collector
+::  eth-watcher: ethereum event log collector
 ::
+=,  able:jael
 |%
-++  name  @tas
-::
-++  config
-  $:  node=purl:eyre
-      from-block=@ud
-      to-block=(unit @ud)
++$  config
+  $:  url=@ta
+      eager=?
+      refresh-rate=@dr
+      from=number:block
       contracts=(list address:ethereum)
-      topics=(list $@(@ux (list @ux)))
+      =topics
   ==
 ::
-++  action
-  $%  [%watch =name =config]
-      ::TODO  support modifying existing config for future polling
-      [%clear =name]
++$  loglist  (list event-log:rpc:ethereum)
++$  topics   (list ?(@ux (list @ux)))
++$  watchpup
+  $:  config
+      =number:block
+      =pending-logs
+      blocks=(list block)
   ==
 ::
-++  update
-  $%  ::  %snap: all known-good logs, sent on-subscribe and on-reorg
-      ::TODO  there's probably a way to be more nuanced about what we forgot
-      ::      to cope with a reorg
+::  disavows: newest block first
++$  disavows      (list id:block)
++$  pending-logs  (map number:block loglist)
+::
++$  poke
+  $%  ::  %watch: configure a watchdog and fetch initial logs
       ::
-      [%snap =snapshot]
-      ::  %vent: newly added logs
+      [%watch =path =config]
+      ::  %clear: remove a watchdog
       ::
-      [%logs =loglist]
+      [%clear =path]
   ==
 ::
-++  snapshot
-  $:  last-heard-block=@ud
-      heard=(set event-id:ethereum)
-      logs=loglist
++$  diff
+  $%  ::  %history: full event log history, oldest first
+      ::
+      [%history =loglist]
+      ::  %log: newly added log
+      ::
+      [%log =event-log:rpc:ethereum]
+      ::  %disavow: forget logs
+      ::
+      ::    this is sent when a reorg happens that invalidates
+      ::    previously-sent logs
+      ::
+      [%disavow =id:block]
   ==
-::
-++  loglist
-  (list event-log:rpc:ethereum)  ::  newest first
 --

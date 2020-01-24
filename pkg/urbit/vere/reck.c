@@ -67,7 +67,7 @@ _reck_orchid(u3_noun fot, u3_noun txt, c3_l* tid_l)
 {
   c3_c* str = u3r_string(txt);
   c3_d ato_d = strtol(str, NULL, 10);
-  free(str);
+  c3_free(str);
 
   if ( ato_d >= 0x80000000ULL ) {
     return c3n;
@@ -90,10 +90,26 @@ _reck_kick_term(u3_pier* pir_u, u3_noun pox, c3_l tid_l, u3_noun fav)
   }
   else switch ( u3h(fav) ) {
     default: u3z(pox); u3z(fav); return c3n;
+    case c3__bbye:
+    {
+      u3z(pox); u3z(fav); return c3y;
+    } break;
+
     case c3__blit: p_fav = u3t(fav);
     {
       u3_term_ef_blit(tid_l, u3k(p_fav));
 
+      u3z(pox); u3z(fav); return c3y;
+    } break;
+
+    // this can return through dill due to our fscked up boot sequence
+    //
+    case c3__send: {
+      u3_noun lan = u3k(u3h(u3t(fav)));
+      u3_noun pac = u3k(u3t(u3t(fav)));
+
+      u3l_log("kick: strange send\r\n");
+      u3_ames_ef_send(pir_u, lan, pac);
       u3z(pox); u3z(fav); return c3y;
     } break;
 
@@ -113,13 +129,21 @@ _reck_kick_term(u3_pier* pir_u, u3_noun pox, c3_l tid_l, u3_noun fav)
       u3z(pox); u3z(fav); return c3y;
     } break;
 
-    case c3__mass: p_fav = u3t(fav);
+    case c3__mass:
     {
       u3z(pox); u3z(fav);
 
       //  gc the daemon area
       //
       uv_timer_start(&u3K.tim_u, (uv_timer_cb)u3_daemon_grab, 0, 0);
+      return c3y;
+    } break;
+
+    //  ignore pack (processed in worker)
+    //
+    case c3__pack:
+    {
+      u3z(pox); u3z(fav);
       return c3y;
     } break;
   }

@@ -1,55 +1,42 @@
-{ pkgs, urbit, pill }:
+{ pkgs
+, herb
+, urbit
+, solid ? null
+, brass ? null
+, ivory ? null
+}:
 
 let
+  link = pill: path:
+    if pill == null then ""
+                    else "${pkgs.coreutils}/bin/ln -sf ${pill} ${path}";
 
-  name  = urbit.meta.name;
-  debug = urbit.meta.debug;
-  exe   = ''${urbit.meta.exe} "$@"'';
-
-  coredump = ''
-    ulimit -c unlimited
-
-    ${exe} || \
-      ${pkgs.gdb}/bin/gdb -ex "thread apply all bt" -ex "set pagination 0" -batch \
-      ${urbit.meta.bin} \
-      /tmp/cores/core*
-  '';
-
-  entrypoint = pkgs.writeScript "entrypoint.sh" ''
-    #!${pkgs.stdenv.shell}
-
-    set -euo pipefail
-
-    ${pkgs.coreutils}/bin/ln -sf ${pill} /data/urbit.pill
-
-    ${if debug then coredump else exe}
-  '';
-
-in
-
-pkgs.dockerTools.buildImage {
-  inherit name;
+in pkgs.dockerTools.buildImage {
+  name = urbit.meta.name;
 
   runAsRoot = ''
     #!${pkgs.stdenv.shell}
 
     set -euo pipefail
 
-    export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
-
     ${pkgs.dockerTools.shadowSetup}
 
-    mkdir -p /data /tmp/cores
+    mkdir -p /share /data /tmp
+
+    ${link solid "/share/solid.pill"}
+    ${link brass "/share/brass.pill"}
+    ${link ivory "/share/ivory.pill"}
   '';
 
+  contents = [ urbit herb ];
+
   config = {
-    Entrypoint = entrypoint;
+    Entrypoint = [ urbit.meta.name ];
 
     WorkingDir = "/data";
 
     Volumes = {
       "/data" = {};
-      "/tmp" = {};
     };
 
     ExposedPorts = {

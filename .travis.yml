@@ -1,20 +1,45 @@
-language: nix
-nix: 2.1.3
+jobs:
+  include:
+  - os: linux
+    language: nix
+    nix: 2.1.3
+    env: STACK_YAML=pkg/hs/stack.yaml
+    before_install:
+      - git lfs pull
+      - sh/travis-install-stack
 
-install:
-  - nix-env -iA cachix -f https://cachix.org/api/v1/install
+    install:
+      - nix-env -iA cachix -f https://cachix.org/api/v1/install
+      - stack --no-terminal --install-ghc build king --only-dependencies
 
-before_install:
-  - git lfs pull
+    script:
+      - cachix use urbit2
+      - ./sh/cachix
+      - make build
+      - make release
+      - sh/release-king-linux64-dynamic
+      - sh/ci-tests
 
-script:
-  - cachix use urbit2
-  - ./sh/cachix || true
+  - os: osx
+    language: generic
+    sudo: required
+    env: STACK_YAML=pkg/hs/stack.yaml
 
-  - make
-  - make release
+    before_install:
+      - sh/travis-install-stack
 
-  - sh/ci-tests
+    install:
+      - stack --no-terminal --install-ghc build king --only-dependencies
+
+    script:
+      - sh/release-king-darwin-dynamic
+
+cache:
+  directories:
+  - $HOME/.ghc
+  - $HOME/.cabal
+  - $HOME/.stack
+  - $TRAVIS_BUILD_DIR/.stack-work
 
 deploy:
   - skip_cleanup: true

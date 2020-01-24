@@ -145,7 +145,7 @@ _cv_nock_poke(u3_noun ovo)
     c3_c*   tox_c = u3r_string(tox);
 
     u3l_log("poke: %%%s (%x) on %s\r\n", ovi_c, u3r_mug(ovo), tox_c);
-    free(tox_c); free(ovi_c); u3z(tox);
+    c3_free(tox_c); c3_free(ovi_c); u3z(tox);
   }
 #endif
 
@@ -162,7 +162,7 @@ _cv_nock_poke(u3_noun ovo)
     } else {
       u3l_log("  happy: %s: %d\r\n", ovi_c, u3kb_lent(u3k(u3h(pro))));
     }
-    free(ovi_c);
+    c3_free(ovi_c);
   }
 #endif
 
@@ -362,8 +362,6 @@ u3v_mark(FILE* fil_u)
   tot_w += u3a_maid(fil_u, "  date", u3a_mark_noun(arv_u->now));
   tot_w += u3a_maid(fil_u, "  formatted date", u3a_mark_noun(arv_u->wen));
   tot_w += u3a_maid(fil_u, "  instance string", u3a_mark_noun(arv_u->sen));
-  tot_w += u3a_maid(fil_u, "  identity", u3a_mark_noun(arv_u->our));
-  tot_w += u3a_maid(fil_u, "  fake", u3a_mark_noun(arv_u->fak));
   tot_w += u3a_maid(fil_u, "  wish cache", u3a_mark_noun(arv_u->yot));
   return   u3a_maid(fil_u, "total arvo stuff", tot_w);
 }

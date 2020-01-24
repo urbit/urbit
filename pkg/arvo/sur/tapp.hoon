@@ -20,6 +20,7 @@
       [%sources wire ~]
       [%new-event wire =ship =udiff:point:able:jael]
       [%listen wire whos=(set ship) =source:jael]
+      [%flog wire flog:dill]
   ==
 ::
 ::  Possible async responses

@@ -12,7 +12,6 @@ release/
 .stack-work
 \#*\#
 s/*
-=======
 **/.DS_Store
 **/dist
 **/node_modules
@@ -20,3 +19,5 @@ s/*
 **/*.swp
 **/*.swo
 **/*-min.js
+.stack-work
+pkg/interface/link-webext/web-ext-artifacts

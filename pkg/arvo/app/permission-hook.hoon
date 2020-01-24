@@ -1,281 +1,329 @@
-::  permission-hook: allows mirroring permissions between local and foreign
-::  ships. access control to an owned permission path is specified by the
-::  access-control path.
+::  permission-hook: mirror remote permissions
+::
+::    allows mirroring permissions between local and foreign ships.
+::    local permission path are exposed according to the permssion paths
+::    configured for them as `access-control`.
 ::
 /-  *permission-hook
-/+  *permission-json
+/+  *permission-json, default-agent
+::
 |%
-+$  move  [bone card]
-::
-+$  card
-  $%  [%diff [%permission-update permission-update]]
-      [%quit ~]
-      [%poke wire dock [%permission-action permission-action]]
-      [%pull wire dock ~]
-      [%peer wire dock path]
-  ==
-::
 +$  state
-  $%  [%0 state-zero]
+  $%  [%0 state-0]
   ==
 ::
 +$  owner-access  [ship=ship access-control=path]
 ::
-+$  state-zero
++$  state-0
   $:  synced=(map path owner-access)
       access-control=(map path (set path))
       boned=(map wire (list bone))
   ==
 ::
++$  card  card:agent:gall
 --
 ::
-|_  [bol=bowl:gall state]
+=|  state-0
+=*  state  -
 ::
-++  this  .
+^-  agent:gall
+=<
+  |_  =bowl:gall
+  +*  this  .
+      do    ~(. +> bowl)
+      def   ~(. (default-agent this %|) bowl)
+  ::
+  ++  on-init  on-init:def
+  ++  on-save  !>(state)
+  ++  on-load
+    |=  old=vase
+    ^-  (quip card _this)
+    [~ this(state !<(state-0 old))]
+  ::
+  ++  on-poke
+    |=  [=mark =vase]
+    ^-  (quip card _this)
+    ?+  mark  (on-poke:def mark vase)
+        %permission-hook-action
+      =^  cards  state
+        (handle-permission-hook-action:do !<(permission-hook-action vase))
+      [cards this]
+    ==
+  ::
+  ++  on-watch
+    |=  =path
+    ^-  (quip card _this)
+    ?.  ?=([%permission ^] path)  (on-watch:def path)
+    =^  cards  state
+      (handle-watch-permission:do t.path)
+    [cards this]
+  ::
+  ++  on-agent
+    |=  [=wire =sign:agent:gall]
+    ^-  (quip card _this)
+    ?-  -.sign
+      %poke-ack  (on-agent:def wire sign)
+    ::
+        %fact
+      ?.  ?=(%permission-update p.cage.sign)
+        (on-agent:def wire sign)
+      =^  cards  state
+        (handle-permission-update:do wire !<(permission-update q.cage.sign))
+      [cards this]
+    ::
+        %watch-ack
+      ?~  p.sign  [~ this]
+      ?>  ?=(^ wire)
+      :_  this(synced (~(del by synced) t.wire))
+      ::NOTE  we could've gotten rejected for permission reasons, so we don't
+      ::      try to resubscribe automatically.
+      %.  ~
+      %-  slog
+      :*  leaf+"permission-hook failed subscribe on {(spud t.wire)}"
+          leaf+"stack trace:"
+          u.p.sign
+      ==
+    ::
+        %kick
+      ?>  ?=([* ^] wire)
+      ::  if we're not actively using it, we can safely ignore the %kick.
+      ::
+      ?.  (~(has by synced) t.wire)
+        [~ this]
+      ::  otherwise, resubscribe.
+      ::
+      =/  =owner-access  (~(got by synced) t.wire)
+      :_  this
+      [%pass wire %agent [ship.owner-access %permission-hook] %watch wire]~
+    ==
+  ::
+  ++  on-leave  on-leave:def
+  ++  on-peek   on-peek:def
+  ++  on-arvo   on-arvo:def
+  ++  on-fail   on-fail:def
+  --
 ::
-++  prep
-  |=  old=(unit state)
-  ^-  (quip move _this)
-  [~ ?~(old this this(+<+ u.old))]
-::
-++  poke-permission-hook-action
+|_  =bowl:gall
+++  handle-permission-hook-action
   |=  act=permission-hook-action
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?-  -.act
       %add-owned
-    ?>  (team:title our.bol src.bol)
+    ?>  (team:title our.bowl src.bowl)
     ?:  (~(has by synced) owned.act)
-      [~ this]
-    =.  synced  (~(put by synced) owned.act [our.bol access.act])
-    =/  access-paths
-      ?.  (~(has by access-control) access.act)
-        [owned.act ~ ~]
-      (~(put in (~(got by access-control) access.act)) owned.act)
+      [~ state]
+    =.  synced  (~(put by synced) owned.act [our.bowl access.act])
     =.  access-control
-      (~(put by access-control) access.act access-paths)
+      (~(put ju access-control) access.act owned.act)
     =/  perm-path  [%permission owned.act]
-    :_  (track-bone perm-path)
-    [ost.bol %peer perm-path [our.bol %permission-store] perm-path]~
+    :_  state
+    [%pass perm-path %agent [our.bowl %permission-store] %watch perm-path]~
   ::
       %add-synced
-    ?>  (team:title our.bol src.bol)
+    ?>  (team:title our.bowl src.bowl)
     ?:  (~(has by synced) path.act)
-      [~ this]
+      [~ state]
     =.  synced  (~(put by synced) path.act [ship.act ~])
     =/  perm-path  [%permission path.act]
-    :_  (track-bone perm-path)
-    [ost.bol %peer perm-path [ship.act %permission-hook] perm-path]~
+    :_  state
+    [%pass perm-path %agent [ship.act %permission-hook] %watch perm-path]~
   ::
       %remove
-    =/  owner-access=(unit owner-access)  (~(get by synced) path.act)
+    =/  owner-access=(unit owner-access)
+      (~(get by synced) path.act)
     ?~  owner-access
-      [~ this]
-    ?:  &(=(ship.u.owner-access our.bol) (team:title our.bol src.bol))
-      ::  delete one of our.bol own paths
-      :_  %_  this
-              synced  (~(del by synced) path.act)
-              boned  (~(del by boned) [%permission path.act])
-          ::
-              access-control
-            (~(del by access-control) access-control.u.owner-access)
-          ==
-      %-  zing
-      :~  (pull-wire [%permission path.act])
-          ^-  (list move)
-          %+  turn  (prey:pubsub:userlib [%permission path.act] bol)
-          |=  [=bone *]
-          [bone %quit ~]
-      ==
-    ?.  |(=(ship.u.owner-access src.bol) (team:title our.bol src.bol))
-      :: if neither ship = source or source = us, do nothing
-      [~ this]
-    ::  delete a foreign ship's path
-    :_  %_  this
-            synced  (~(del by synced) path.act)
-            boned  (~(del by boned) [%permission path.act])
+      [~ state]
+    ::  if we own it, and it's us asking,
+    ::
+    ?:  ?&  =(ship.u.owner-access our.bowl)
+            (team:title our.bowl src.bowl)
         ==
-    (pull-wire [%permission path.act])
+      ::  delete the permission path and its subscriptions from this hook.
+      ::
+      :-  :-  [%give %kick `[%permission path.act] ~]
+          (leave-permission path.act)
+      %_  state
+        synced  (~(del by synced) path.act)
+      ::
+          access-control
+        (~(del by access-control) access-control.u.owner-access)
+      ==
+    ::  else, if either source = ship or source = us,
+    ::
+    ?:  |(=(ship.u.owner-access src.bowl) (team:title our.bowl src.bowl))
+      ::  delete a foreign ship's path.
+      ::
+      :-  (leave-permission path.act)
+      %_  state
+        synced  (~(del by synced) path.act)
+        boned  (~(del by boned) [%permission path.act])
+      ==
+    ::  else, ignore action entirely.
+    ::
+    [~ state]
   ==
 ::
-++  peer-permission
-  |=  pax=path
-  ^-  (quip move _this)
-  ?>  ?=([* ^] pax)
-  =/  =owner-access  (~(got by synced) pax)
-  ?>  =(our.bol ship.owner-access)
+++  handle-watch-permission
+  |=  =path
+  ^-  (quip card _state)
+  =/  =owner-access  (~(got by synced) path)
+  ?>  =(our.bowl ship.owner-access)
   ::  scry permissions to check if subscriber is allowed
-  ?>  (permitted-scry (scot %p src.bol) access-control.owner-access)
-  =/  pem  (permission-scry pax)
-  :_  this
-  [ost.bol %diff %permission-update [%create pax pem]]~
+  ::
+  ?>  (permitted src.bowl access-control.owner-access)
+  =/  pem  (permission-scry path)
+  :_  state
+  [%give %fact ~ %permission-update !>([%create path pem])]~
 ::
-++  diff-permission-update
-  |=  [wir=wire diff=permission-update]
-  ^-  (quip move _this)
-  ?:  (team:title our.bol src.bol)
+++  handle-permission-update
+  |=  [=wire diff=permission-update]
+  ^-  (quip card _state)
+  ?:  (team:title our.bowl src.bowl)
     (handle-local diff)
   (handle-foreign diff)
 ::
 ++  handle-local
   |=  diff=permission-update
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?-  -.diff
-      %create  [~ this]
-      %add     (change-local-permission [%add path.diff who.diff]) 
-      %remove  (change-local-permission [%remove path.diff who.diff])
+      %create  [~ state]
+      %add     (change-local-permission %add [path who]:diff)
+      %remove  (change-local-permission %remove [path who]:diff)
     ::
       %delete
     ?.  (~(has by synced) path.diff)
-      [~ this]
-    :_  this(synced (~(del by synced) path.diff))
-    [ost.bol %pull [%permission path.diff] [our.bol %permission-store] ~]~
+      [~ state]
+    :_  state(synced (~(del by synced) path.diff))
+    :_  ~
+    :*  %pass
+        [%permission path.diff]
+        %agent
+        [our.bowl %permission-store]
+        [%leave ~]
+    ==
   ==
 ::
 ++  change-local-permission
   |=  [kind=?(%add %remove) pax=path who=(set ship)]
-  ^-  (quip move _this)
-  :_  this
-  %+  weld
-    ?-  kind
-      %add     (update-subscribers [%permission pax] [%add pax who])
-      %remove  (update-subscribers [%permission pax] [%remove pax who])
-    ==
+  ^-  (quip card _state)
+  :_  state
+  :-  ?-  kind
+        %add     (update-subscribers [%permission pax] [%add pax who])
+        %remove  (update-subscribers [%permission pax] [%remove pax who])
+      ==
   =/  access-paths=(unit (set path))  (~(get by access-control) pax)
   ::  check if this path changes the access permissions for other paths
-  ?~  access-paths
-    ~
+  ?~  access-paths  ~
   (quit-subscriptions kind pax who u.access-paths)
 ::
 ++  handle-foreign
   |=  diff=permission-update
-  ^-  (quip move _this)
+  ^-  (quip card _state)
   ?-  -.diff
-      %create  (change-foreign-permission path.diff diff)
-      %add     (change-foreign-permission path.diff diff)
-      %remove  (change-foreign-permission path.diff diff)
+      ?(%create %add %remove)
+    (change-foreign-permission path.diff diff)
   ::
       %delete
     ?>  ?=([* ^] path.diff)
-    =/  owner-access=(unit owner-access)  (~(get by synced) path.diff)
+    =/  owner-access=(unit owner-access)
+      (~(get by synced) path.diff)
     ?~  owner-access
-      [~ this]
-    ?.  =(ship.u.owner-access src.bol)
-      [~ this]
-    :_  this(synced (~(del by synced) path.diff))
+      [~ state]
+    ?.  =(ship.u.owner-access src.bowl)
+      [~ state]
+    :_  state(synced (~(del by synced) path.diff))
     :~  (permission-poke diff)
-        [ost.bol %pull [%permission path.diff] [src.bol %permission-hook] ~]
+      ::
+        :*  %pass
+            [%permission path.diff]
+            %agent
+            [src.bowl %permission-hook]
+            [%leave ~]
+        ==
     ==
   ==
 ::
 ++  change-foreign-permission
-  |=  [pax=path diff=permission-update]
-  ^-  (quip move _this)
-  ?>  ?=([* ^] pax)
-  =/  owner-access=(unit owner-access)  (~(get by synced) pax)
-  :_  this
+  |=  [=path diff=permission-update]
+  ^-  (quip card _state)
+  ?>  ?=([* ^] path)
+  =/  owner-access=(unit owner-access)
+    (~(get by synced) path)
+  :_  state
   ?~  owner-access  ~
-  ?.  =(src.bol ship.u.owner-access)  ~
+  ?.  =(src.bowl ship.u.owner-access)  ~
   [(permission-poke diff)]~
 ::
 ++  quit-subscriptions
-  |=  [kind=?(%add %remove) pax=path who=(set ship) access-paths=(set path)]
-  ^-  (list move)
-  =/  perm  (permission-scry pax)
-  ?.  ?|
-        ?&(=(kind.perm %black) =(kind %add))
-        ?&(=(kind.perm %white) =(kind %remove))
+  |=  $:  kind=?(%add %remove)
+          perm-path=path
+          who=(set ship)
+          access-paths=(set path)
       ==
-    ::  if allow, do nothing
-    ~    
-  =/  sup
-    %-  ~(gas by *(map [ship path] bone))
-    %+  turn  ~(tap by sup.bol)
-    |=([=bone anchor=[ship path]] [anchor bone])
-  ::  if ban, iterate through
-  ::  all ships that have been banned
-  ::  and all affected paths that have had their permissions changed
-  ::  then quit their subscriptions
+  ^-  (list card)
+  =/  perm  (permission-scry perm-path)
+  ::  if the change resolves to "allow",
+  ::
+  ?.  ?|  ?&(=(%black kind.perm) =(%add kind))
+          ?&(=(%white kind.perm) =(%remove kind))
+      ==
+    ::  do nothing.
+    ~
+  ::  else, it resolves to "deny"/"ban".
+  ::  kick subscriptions for all ships, at all affected paths.
   ::
   %-  zing
   %+  turn  ~(tap in who)
   |=  check-ship=ship
-  ^-  (list move)
-  %+  murn  ~(tap in access-paths)
+  ^-  (list card)
+  %+  turn  ~(tap in access-paths)
   |=  access-path=path
-  ^-  (unit move)
-  =/  bne  (~(get by sup) [check-ship [%permission access-path]])
-  ?~(bne ~ `[u.bne %quit ~])
-::
-++  quit
-  |=  wir=wire
-  ^-  (quip move _this)
-  ~&  permission-hook-quit+wir
-  ?>  ?=([* ^] wir)
-  ?.  (~(has by synced) t.wir)
-    ::  no-op
-    [~ this]
-  =/  =owner-access  (~(got by synced) t.wir)
-  ~&  %permission-hook-resubscribe
-  :_  (track-bone wir)
-  [ost.bol %peer wir [ship.owner-access %permission-hook] wir]~
-::
-++  reap
-  |=  [wir=wire saw=(unit tang)]
-  ^-  (quip move _this)
-  ?~  saw
-    [~ this]
-  ?>  ?=(^ wir)
-  :_  this(synced (~(del by synced) t.wir))
-  %.  ~
-  %-  slog
-  :*  leaf+"permission-hook failed subscribe on {(spud t.wir)}"
-      leaf+"stack trace:"
-      u.saw
-  ==
+  [%give %kick `[%permission access-path] `check-ship]
 ::
 ++  permission-scry
   |=  pax=path
   ^-  permission
-  =.  pax  ;:(weld /=permission-store/(scot %da now.bol)/permission pax /noun)
+  =.  pax  ;:(weld /=permission-store/(scot %da now.bowl)/permission pax /noun)
   (need .^((unit permission) %gx pax))
 ::
-++  permitted-scry
-  |=  pax=path
-  ^-  ?
-  .^(? %gx ;:(weld /=permission-store/(scot %da now.bol)/permitted pax /noun))
+++  permitted
+  |=  [who=ship =path]
+  .^  ?
+    %gx
+    (scot %p our.bowl)
+    %permission-store
+    (scot %da now.bowl)
+    %permitted
+    (scot %p src.bowl)
+    (snoc path %noun)
+  ==
 ::
 ++  permission-poke
   |=  act=permission-action
-  ^-  move
-  [ost.bol %poke / [our.bol %permission-store] [%permission-action act]]
+  ^-  card
+  :*  %pass
+      /permission-action
+      %agent
+      [our.bowl %permission-store]
+      %poke
+      %permission-action
+      !>(act)
+  ==
 ::
 ++  update-subscribers
-  |=  [pax=path upd=permission-update]
-  ^-  (list move)
-  %+  turn  (prey:pubsub:userlib pax bol)
-  |=  [=bone *]
-  [bone %diff %permission-update upd]
+  |=  [=path upd=permission-update]
+  ^-  card
+  [%give %fact `path %permission-update !>(upd)]
 ::
-++  track-bone
-  |=  wir=wire
-  ^+  this
-  =/  bnd  (~(get by boned) wir)
-  ?^  bnd
-    this(boned (~(put by boned) wir (snoc u.bnd ost.bol)))
-  this(boned (~(put by boned) wir [ost.bol]~))
-::
-++  pull-wire
-  |=  pax=path
-  ^-  (list move)
-  ?>  ?=([* ^] pax)
-  =/  bnd  (~(get by boned) pax)
-  ?~  bnd  ~
-  =/  owner-access=(unit owner-access)  (~(get by synced) t.pax)
+++  leave-permission
+  |=  =path
+  ^-  (list card)
+  =/  owner-access=(unit owner-access)
+    (~(get by synced) path)
   ?~  owner-access  ~
-  %+  turn  u.bnd
-  |=  =bone
-  ?:  =(ship.u.owner-access our.bol)
-    [bone %pull pax [our.bol %permission-store] ~]
-  [bone %pull pax [ship.u.owner-access %permission-hook] ~]
-::
+  :_  ~
+  =/  perm-path  [%permission path]
+  ?:  =(ship.u.owner-access our.bowl)
+    [%pass perm-path %agent [our.bowl %permission-store] %leave ~]
+  [%pass perm-path %agent [ship.u.owner-access %permission-hook] %leave ~]
 --

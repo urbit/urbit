@@ -1,14 +1,14 @@
 ::  Utility functions for constructing tests
 ::
-/+  ph
-=,  ph
+/-  aquarium
+=,  aquarium
 |%
 ::
 ::  Turn [ship (list unix-event)] into (list ph-event)
 ::
 ++  send-events-to
   |=  [who=ship what=(list unix-event)]
-  ^-  (list ph-event)
+  ^-  (list aqua-event)
   %+  turn  what
   |=  ue=unix-event
   [%event who ue]
@@ -17,14 +17,14 @@
 ::
 ++  init
   |=  [who=ship keys=(unit dawn-event:able:jael)]
-  ^-  (list ph-event)
+  ^-  (list aqua-event)
   [%init-ship who keys]~
 ::
 ::  Send dojo command
 ::
 ++  dojo
   |=  [who=ship what=tape]
-  ^-  (list ph-event)
+  ^-  (list aqua-event)
   %+  send-events-to  who
   ^-  (list unix-event)
   :~
@@ -47,7 +47,7 @@
 ::
 ++  insert-file
   |=  [who=ship des=desk pax=path txt=@t]
-  ^-  (list ph-event)
+  ^-  (list aqua-event)
   ?>  ?=([@ @ @ *] pax)
   =/  file  [/text/plain (as-octs:mimes:html txt)]
   %+  send-events-to  who

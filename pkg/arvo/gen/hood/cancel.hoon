@@ -7,8 +7,5 @@
 ::::
   ::
 :-  %say
-|=  $:  {now/@da eny/@uvJ bec/beak}
-        {{syd/@tas ~} ~}
-    ==
-:-  %kiln-cancel
-syd
+|=  *
+[%kiln-cancel ~]

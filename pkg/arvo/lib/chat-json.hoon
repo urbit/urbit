@@ -125,28 +125,31 @@
   %+  frond  %chat-update
   %-  pairs
   :~
-    ?:  =(%message -.upd)
-      ?>  ?=(%message -.upd)
+    ?:  ?=(%message -.upd)
       :-  %message
       %-  pairs
       :~  [%path (path path.upd)]
           [%envelope (enve envelope.upd)]
       ==
-    ?:  =(%read -.upd)
-      ?>  ?=(%read -.upd)
+    ?:  ?=(%messages -.upd)
+      :-  %messages
+      %-  pairs
+      :~  [%path (path path.upd)]
+          [%start (numb start.upd)]
+          [%end (numb end.upd)]
+          [%envelopes [%a (turn envelopes.upd enve)]]
+      ==
+    ?:  ?=(%read -.upd)
       [%read (pairs [%path (path path.upd)]~)]
-    ?:  =(%create -.upd)
-      ?>  ?=(%create -.upd)
+    ?:  ?=(%create -.upd)
       :-  %create
       %-  pairs
       :~  [%ship (ship ship.upd)]
           [%path (path path.upd)]
       ==
-    ?:  =(%delete -.upd)
-      ?>  ?=(%delete -.upd)
+    ?:  ?=(%delete -.upd)
       [%delete (pairs [%path (path path.upd)]~)]
-    ?:  =(%config -.upd)
-      ?>  ?=(%config -.upd)
+    ?:  ?=(%config -.upd)
       :-  %config
       %-  pairs
       :~  [%path (path path.upd)]
@@ -166,6 +169,7 @@
     :~  [%create create]
         [%delete delete]
         [%message message]
+        [%messages messages]
         [%read read]
     ==
   ::
@@ -182,6 +186,12 @@
     %-  ot
     :~  [%path pa]
         [%envelope envelope]
+    ==
+  ::
+  ++  messages
+    %-  ot
+    :~  [%path pa]
+        [%envelopes (ar envelope)]
     ==
   ::
   ++  read
@@ -225,6 +235,7 @@
         [%security sec]
         [%read (as (su ;~(pfix sig fed:ag)))]
         [%write (as (su ;~(pfix sig fed:ag)))]
+        [%allow-history bo]
     ==
   ::
   ++  delete
@@ -234,12 +245,12 @@
     %-  ot
     :~  [%ship (su ;~(pfix sig fed:ag))]
         [%path pa]
+        [%ask-history bo]
     ==
   ::
   ++  sec
     =,  dejs:format
-    ^-  $-(json chat-security)
+    ^-  $-(json rw-security)
     (su (perk %channel %village %journal %mailbox ~))
   --
 --
-

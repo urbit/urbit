@@ -50,7 +50,7 @@ _main_readw(const c3_c* str_c, c3_w max_w, c3_w* out_w)
 c3_c*
 _main_presig(c3_c* txt_c)
 {
-  c3_c* new_c = malloc(2 + strlen(txt_c));
+  c3_c* new_c = c3_malloc(2 + strlen(txt_c));
 
   if ( '~' == *txt_c ) {
     strcpy(new_c, txt_c);
@@ -298,7 +298,7 @@ _main_getopt(c3_i argc, c3_c** argv)
            && u3_Host.ops_u.url_c == 0
            && u3_Host.ops_u.git == c3n ) {
     u3_Host.ops_u.url_c =
-      "https://bootstrap.urbit.org/urbit-" URBIT_VERSION ".pill";
+      "https://bootstrap.urbit.org/urbit-v" URBIT_VERSION ".pill";
   }
   else if ( u3_Host.ops_u.nuu == c3y
            && u3_Host.ops_u.url_c == 0
@@ -400,7 +400,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "Simple Usage: \n",
     "   %s -c <my-comet> to create a comet (anonymous urbit)\n",
     "   %s -w <my-planet> -k <my-key-file> if you own a planet\n",
-    "   %s <myplanet or mycomet> to restart an existing urbit\n",
+    "   %s <my-planet or my-comet> to restart an existing urbit\n",
     0
   };
 
@@ -663,15 +663,15 @@ main(c3_i   argc,
     // allocates more memory as needed if the path is too large
     //
     while ( abs_c != getcwd(abs_c, mprint_i) ) {
-      free(abs_c);
+      c3_free(abs_c);
       mprint_i *= 2;
       abs_c = c3_malloc(mprint_i);
     }
     printf("boot: home is %s/%s\n", abs_c, u3_Host.dir_c);
-    free(abs_c);
+    c3_free(abs_c);
   } else {
     printf("boot: home is %s\n", abs_c);
-    free(abs_c);
+    c3_free(abs_c);
   }
   // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 

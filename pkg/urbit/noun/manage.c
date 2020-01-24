@@ -417,12 +417,12 @@ u3m_file(c3_c* pas_c)
   close(fid_i);
 
   if ( fln_w != red_w ) {
-    free(pad_y);
+    c3_free(pad_y);
     return u3m_bail(c3__fail);
   }
   else {
     u3_noun pad = u3i_bytes(fln_w, (c3_y *)pad_y);
-    free(pad_y);
+    c3_free(pad_y);
 
     return pad;
   }
@@ -1354,7 +1354,7 @@ _cm_in_pretty(u3_noun som, c3_o sel_o, c3_c* str_c)
       }
       else {
         c3_w len_w = u3r_met(3, som);
-        c3_c *buf_c = malloc(2 + (2 * len_w) + 1);
+        c3_c *buf_c = c3_malloc(2 + (2 * len_w) + 1);
         c3_w i_w = 0;
         c3_w a_w = 0;
 
@@ -1376,7 +1376,7 @@ _cm_in_pretty(u3_noun som, c3_o sel_o, c3_c* str_c)
 
         if ( str_c ) { strcpy(str_c, buf_c); str_c += len_w; }
 
-        free(buf_c);
+        c3_free(buf_c);
         return len_w;
       }
     }
@@ -1389,7 +1389,7 @@ c3_c*
 u3m_pretty(u3_noun som)
 {
   c3_w len_w = _cm_in_pretty(som, c3y, 0);
-  c3_c* pre_c = malloc(len_w + 1);
+  c3_c* pre_c = c3_malloc(len_w + 1);
 
   _cm_in_pretty(som, c3y, pre_c);
   pre_c[len_w] = 0;
@@ -1439,7 +1439,7 @@ c3_c*
 u3m_pretty_path(u3_noun som)
 {
   c3_w len_w = _cm_in_pretty_path(som, NULL);
-  c3_c* pre_c = malloc(len_w + 1);
+  c3_c* pre_c = c3_malloc(len_w + 1);
 
   _cm_in_pretty_path(som, pre_c);
   pre_c[len_w] = 0;
@@ -1454,7 +1454,7 @@ u3m_p(const c3_c* cap_c, u3_noun som)
   c3_c* pre_c = u3m_pretty(som);
 
   u3l_log("%s: %s\r\n", cap_c, pre_c);
-  free(pre_c);
+  c3_free(pre_c);
 }
 
 /* u3m_tape(): dump a tape to stdout.
@@ -1501,42 +1501,48 @@ static void
 _cm_limits(void)
 {
   struct rlimit rlm;
-  c3_i          ret_i;
 
-  /* Moar stack.
-  */
+  //  Moar stack.
+  //
   {
-    ret_i = getrlimit(RLIMIT_STACK, &rlm);
-    c3_assert(0 == ret_i);
-    rlm.rlim_cur = (rlm.rlim_max > (65536 << 10))
-                          ? (65536 << 10)
-                          : rlm.rlim_max;
+    c3_assert( 0 == getrlimit(RLIMIT_STACK, &rlm) );
+
+    rlm.rlim_cur = c3_min(rlm.rlim_max, (65536 << 10));
+
     if ( 0 != setrlimit(RLIMIT_STACK, &rlm) ) {
       u3l_log("boot: stack size: %s\r\n", strerror(errno));
       exit(1);
     }
   }
 
-  /* Moar filez.
-  */
+  //  Moar filez.
+  //
   {
-    ret_i = getrlimit(RLIMIT_NOFILE, &rlm);
-    c3_assert(0 == ret_i);
-    rlm.rlim_cur = 10240; // default OSX max, not in rlim_max irritatingly
+    getrlimit(RLIMIT_NOFILE, &rlm);
+
+  #ifdef U3_OS_osx
+    rlm.rlim_cur = c3_min(OPEN_MAX, rlm.rlim_max);
+  #else
+    rlm.rlim_cur = rlm.rlim_max;
+  #endif
+
+    //  no exit, not a critical limit
+    //
     if ( 0 != setrlimit(RLIMIT_NOFILE, &rlm) ) {
       u3l_log("boot: open file limit: %s\r\n", strerror(errno));
-      //  no exit, not a critical limit
     }
   }
 
-  /* Moar core.
-  */
+  // Moar core.
+  //
   {
     getrlimit(RLIMIT_CORE, &rlm);
     rlm.rlim_cur = RLIM_INFINITY;
+
+    //  no exit, not a critical limit
+    //
     if ( 0 != setrlimit(RLIMIT_CORE, &rlm) ) {
       u3l_log("boot: core limit: %s\r\n", strerror(errno));
-      //  no exit, not a critical limit
     }
   }
 }
@@ -1601,8 +1607,8 @@ u3m_init(void)
                          -1, 0);
 
       u3l_log("boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
-      u3l_log("see urbit.org/docs/getting-started/installing-urbit/#swap"
-              "for adding swap space\r\n");
+      u3l_log("see urbit.org/using/install/#about-swap-space"
+              " for adding swap space\r\n");
       if ( -1 != (c3_ps)map_v ) {
         u3l_log("if porting to a new platform, try U3_OS_LoomBase %p\r\n",
                 dyn_v);
@@ -1659,8 +1665,6 @@ u3m_boot(c3_c* dir_c)
   /* Basic initialization.
   */
     memset(u3A, 0, sizeof(*u3A));
-    u3A->our = u3_none;
-
     return 0;
   }
 }
@@ -1692,9 +1696,122 @@ u3m_boot_lite(void)
   /* Basic initialization.
   */
   memset(u3A, 0, sizeof(*u3A));
-  u3A->our = u3_none;
-
   return 0;
+}
+
+/* u3m_rock_stay(): jam state into [dir_c] at [evt_d]
+*/
+c3_o
+u3m_rock_stay(c3_c* dir_c, c3_d evt_d)
+{
+  c3_c nam_c[8193];
+
+  snprintf(nam_c, 8192, "%s", dir_c);
+  mkdir(nam_c, 0700);
+
+  snprintf(nam_c, 8192, "%s/.urb", dir_c);
+  mkdir(nam_c, 0700);
+
+  snprintf(nam_c, 8192, "%s/.urb/roc", dir_c);
+  mkdir(nam_c, 0700);
+
+  snprintf(nam_c, 8192, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, evt_d);
+
+  {
+    u3_noun dat = u3nt(c3__fast, u3k(u3A->roc), u3j_stay());
+    c3_o  ret_o = u3s_jam_file(dat, nam_c);
+    u3z(dat);
+    return ret_o;
+  }
+}
+
+/* u3m_rock_load(): load state from [dir_c] at [evt_d]
+*/
+c3_o
+u3m_rock_load(c3_c* dir_c, c3_d evt_d)
+{
+  c3_c nam_c[8193];
+  snprintf(nam_c, 8192, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, evt_d);
+
+  {
+    u3_noun dat;
+
+    {
+      //  XX u3m_file bails, but we'd prefer to return errors
+      //
+      u3_noun fil = u3m_file(nam_c);
+      u3a_print_memory(stderr, "rock: load", u3r_met(3, fil));
+
+      u3_noun pro = u3m_soft(0, u3ke_cue, fil);
+
+      if ( u3_blip != u3h(pro) ) {
+        fprintf(stderr, "rock: unable to cue %s\r\n", nam_c);
+        u3z(pro);
+        return c3n;
+      }
+      else {
+        dat = u3k(u3t(pro));
+        u3z(pro);
+      }
+    }
+
+    {
+      u3_noun roc, rel;
+
+      if ( u3r_pq(dat, c3__fast, &roc, &rel) ) {
+        u3z(dat);
+        return c3n;
+      }
+
+      u3A->roc = u3k(roc);
+      u3j_load(u3k(rel));
+    }
+
+    u3z(dat);
+  }
+
+  u3A->ent_d = evt_d;
+  u3j_ream();
+  u3n_ream();
+
+  return c3y;
+}
+
+/* u3m_rock_drop(): delete saved state from [dir_c] at [evt_d]
+*/
+c3_o
+u3m_rock_drop(c3_c* dir_c, c3_d evt_d)
+{
+  c3_c nam_c[8193];
+  snprintf(nam_c, 8192, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, evt_d);
+
+  if ( 0 != unlink(nam_c) ) {
+    u3l_log("rock: drop %s failed: %s\r\n", nam_c, strerror(errno));
+    return c3n;
+  }
+
+  return c3y;
+}
+
+/* u3m_wipe(): purge and reinitialize loom, with checkpointing
+*/
+void
+u3m_wipe(void)
+{
+  //  clear page flags
+  //
+  memset((void*)u3P.dit_w, 0, u3a_pages >> 3);
+  //  reinitialize checkpoint system
+  //
+  //    NB: callers must first u3e_hold() or u3e_wipe()
+  //
+  u3e_live(c3n, u3P.dir_c);
+  //  reinitialize loom
+  //
+  u3m_pave(c3y, c3n);
+  //  reinitialize jets
+  //
+  u3j_boot(c3y);
 }
 
 /* u3m_reclaim: clear persistent caches to reclaim memory

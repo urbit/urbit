@@ -6,6 +6,7 @@
 ::
 =/  test-pit=vase  !>(..zuse)
 =/  http-server-gate  (http-server-raw test-pit)
+=/  eyre-id  '~.eyre_0v4.elsnk.20412.0h04v.50lom.5lq0o'
 ::
 |%
 ++  test-init
@@ -259,53 +260,60 @@
         |=  moves=(list move:http-server-gate)
         ^-  tang
         ::
-        ?.  ?=([* ~] moves)
+        ?.  ?=([* * ~] moves)
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         ::
-        =/  move=move:http-server-gate                              i.moves
-        =/  =duct                                             duct.move
-        =/  card=(wind note:http-server-gate gift:able:http-server-gate)  card.move
+        =/  move-1=move:http-server-gate  i.moves
+        =/  move-2=move:http-server-gate  i.t.moves
         ::
         %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct))
+          (expect-eq !>(~[/http-blah]) !>(duct.move-1))
+        %+  weld
+          (expect-eq !>(~[/http-blah]) !>(duct.move-2))
+        ::
+        %+  weld
+          %+  expect-gall-deal
+            :+  /watch-response/[eyre-id]
+              [~nul ~nul]
+            :*  %app1  %watch
+                /http-response/[eyre-id]
+            ==
+          card.move-1
         ::
         %+  expect-gall-deal
-          :+  /run-app-request/app1  [~nul ~nul]
-              ^-  internal-task:gall
+          :+  /run-app-request/[eyre-id]  [~nul ~nul]
               :*  %app1  %poke  %handle-http-request
-                  !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
+                  !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
-          card
+          card.move-2
     ==
-  ::  theoretical outside response
-  ::
-  =^  results4  http-server-gate
-    %-  http-server-take  :*
-      http-server-gate
-      now=~1111.1.4
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/run-app-request/app1  duct=~[/http-blah]
-            ^-  (hypo sign:http-server-gate)
-            :-  *type
-            :*  %g  %unto  %http-response
-                %start
-                [200 ['content-type' 'text/html']~]
-                [~ (as-octs:mimes:html 'Hiya!')]
-                %.y
-            ==
-         ==
-      ^=  expected-move
-        :~  :*  duct=~[/http-blah]  %give  %response
-                [%start [200 ['content-type' 'text/html']~] `[5 'Hiya!'] %.y]
-    ==  ==  ==
-  ::
+    ::  theoretical outside response
+    ::
+    =^  results4  http-server-gate
+      %-  http-server-take  :*
+        http-server-gate
+        now=~1111.1.4
+        scry=scry-provides-code
+        ^=  take-args
+          :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
+              ^-  (hypo sign:http-server-gate)
+              :-  *type
+              :*  %g  %unto  %fact
+                  %http-response-header
+                  !>([200 ['content-type' 'text/html']~])
+              ==
+           ==
+        ^=  expected-move
+          :~  :*  duct=~[/http-blah]  %give  %response
+                  [%start [200 ['content-type' 'text/html']~] ~ %.n]
+      ==  ==  ==
+  
   ;:  weld
     results1
     results2
     results3
-    results4
+  ::  results4
   ==
 ::
 ++  test-app-error
@@ -346,24 +354,34 @@
         |=  moves=(list move:http-server-gate)
         ^-  tang
         ::
-        ?.  ?=([* ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ?.  ?=([* * ~] moves)
+          [[%leaf "wrong number of moves: {<(lent moves)>}"] >moves< ~]
         ::
         ::
-        =/  move=move:http-server-gate                              i.moves
-        =/  =duct                                             duct.move
-        =/  card=(wind note:http-server-gate gift:able:http-server-gate)  card.move
+        =/  move-1=move:http-server-gate  i.moves
+        =/  move-2=move:http-server-gate  i.t.moves
         ::
         %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct))
+          (expect-eq !>(~[/http-blah]) !>(duct.move-1))
+        %+  weld
+          (expect-eq !>(~[/http-blah]) !>(duct.move-2))
+        ::
+        %+  weld
+          %+  expect-gall-deal
+            :+  /watch-response/[eyre-id]
+              [~nul ~nul]
+            :*  %app1  %watch
+                /http-response/[eyre-id]
+            ==
+          card.move-1
         ::
         %+  expect-gall-deal
-          :+  /run-app-request/app1  [~nul ~nul]
-              ^-  internal-task:gall
-              :*  %app1  %poke  %handle-http-request
-                  !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
-              ==
-          card
+          :+  /run-app-request/[eyre-id]
+            [~nul ~nul]
+          :*  %app1  %poke  %handle-http-request
+              !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
+          ==
+        card.move-2
     ==
   ::  the poke fails. we should relay this to the client
   ::
@@ -376,12 +394,17 @@
         :*  wire=/run-app-request/app1  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            :*  %g  %unto  %coup  ~
+            :*  %g  %unto  %poke-ack  ~
                 :~  [%leaf "/~zod/...../app1:<[1 1].[1 20]>"]
             ==  ==
          ==
       ^=  expected-move
-        :~  :*  duct=~[/http-blah]  %give  %response
+        :~  :*  duct=~[/http-blah]  %pass
+                /watch-response/[eyre-id]
+                %g  %deal  [~nul ~nul]  %app1  %leave  ~
+            ==
+          ::
+            :*  duct=~[/http-blah]  %give  %response
                 %start
               ::
                 %+  complete-http-start-event
@@ -435,24 +458,33 @@
         |=  moves=(list move:http-server-gate)
         ^-  tang
         ::
-        ?.  ?=([* ~] moves)
+        ?.  ?=([* * ~] moves)
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         ::
-        =/  move=move:http-server-gate                              i.moves
-        =/  =duct                                             duct.move
-        =/  card=(wind note:http-server-gate gift:able:http-server-gate)  card.move
+        =/  move-1=move:http-server-gate  i.moves
+        =/  move-2=move:http-server-gate  i.t.moves
         ::
         %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct))
+          (expect-eq !>(~[/http-blah]) !>(duct.move-1))
+        %+  weld
+          (expect-eq !>(~[/http-blah]) !>(duct.move-2))
+        ::
+        %+  weld
+          %+  expect-gall-deal
+            :+  /watch-response/[eyre-id]
+              [~nul ~nul]
+            :*  %app1  %watch
+                /http-response/[eyre-id]
+            ==
+          card.move-1
         ::
         %+  expect-gall-deal
-          :+  /run-app-request/app1  [~nul ~nul]
-              ^-  internal-task:gall
+          :+  /run-app-request/[eyre-id]  [~nul ~nul]
               :*  %app1  %poke  %handle-http-request
-                  !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
+                  !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
-          card
+          card.move-2
     ==
   ::  theoretical outside response
   ::
@@ -462,18 +494,16 @@
       now=~1111.1.4
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/run-app-request/app1  duct=~[/http-blah]
+        :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)  :-  *type
-            :*  %g  %unto  %http-response
-                %start
-                [200 ['content-type' 'text/html']~]
-                [~ (as-octs:mimes:html 'Hi')]
-                %.n
+            :*  %g  %unto  %fact
+                %http-response-header
+                !>([200 ['content-type' 'text/html']~])
             ==
          ==
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %give  %response
-                [%start [200 ['content-type' 'text/html']~] `[2 'Hi'] %.n]
+                [%start [200 ['content-type' 'text/html']~] ~ %.n]
     ==  ==  ==
   ::  theoretical outside response
   ::
@@ -483,15 +513,16 @@
       now=~1111.1.4
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/run-app-request/app1  duct=~[/http-blah]
+        :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)  :-  *type
-            :*  %g  %unto  %http-response
-                [%continue [~ (as-octs:mimes:html 'ya!')] %.y]
+            :*  %g  %unto  %fact
+                %http-response-data
+                !>(`(as-octs:mimes:html 'ya!'))
             ==
          ==
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %give  %response
-                [%continue `[3 'ya!'] %.y]
+                [%continue `[3 'ya!'] %.n]
     ==  ==  ==
   ::
   ;:  weld
@@ -542,24 +573,33 @@
         |=  moves=(list move:http-server-gate)
         ^-  tang
         ::
-        ?.  ?=([* ~] moves)
+        ?.  ?=([* * ~] moves)
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         ::
-        =/  move=move:http-server-gate                              i.moves
-        =/  =duct                                             duct.move
-        =/  card=(wind note:http-server-gate gift:able:http-server-gate)  card.move
+        =/  move-1=move:http-server-gate  i.moves
+        =/  move-2=move:http-server-gate  i.t.moves
         ::
         %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct))
+          (expect-eq !>(~[/http-blah]) !>(duct.move-1))
+        %+  weld
+          (expect-eq !>(~[/http-blah]) !>(duct.move-2))
+        ::
+        %+  weld
+          %+  expect-gall-deal
+            :+  /watch-response/[eyre-id]
+              [~nul ~nul]
+            :*  %app1  %watch
+                /http-response/[eyre-id]
+            ==
+          card.move-1
         ::
         %+  expect-gall-deal
-          :+  /run-app-request/app1  [~nul ~nul]
-              ^-  internal-task:gall
+          :+  /run-app-request/[eyre-id]  [~nul ~nul]
               :*  %app1  %poke  %handle-http-request
-                  !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/~landscape/inner-path' ~ ~]])
+                  !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/~landscape/inner-path' ~ ~]])
               ==
-          card
+          card.move-2
     ==
   ::  app then gives a redirect to Eyre
   ::
@@ -569,15 +609,16 @@
       now=~1111.1.4
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/run-app-request/app1  duct=~[/http-blah]
+        :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)  :-  *type
-            :*  %g  %unto  %http-response
-                [%start [307 ['location' '/~/login?redirect=/~landscape/inner-path']~] ~ %.y]
+            :*  %g  %unto  %fact
+                %http-response-header
+                !>([307 ['location' '/~/login?redirect=/~landscape/inner-path']~])
             ==
          ==
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %give  %response
-                [%start [307 ['location' '/~/login?redirect=/~landscape/inner-path']~] ~ %.y]
+                [%start [307 ['location' '/~/login?redirect=/~landscape/inner-path']~] ~ %.n]
     ==  ==  ==
   ::  the browser then fetches the login page
   ::
@@ -609,23 +650,34 @@
         |=  moves=(list move:http-server-gate)
         ^-  tang
         ::
-        ?.  ?=([* ~] moves)
+        ?.  ?=([* * ~] moves)
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         ::
-        =/  move=move:http-server-gate                              i.moves
-        =/  =duct                                             duct.move
-        =/  card=(wind note:http-server-gate gift:able:http-server-gate)  card.move
+        =/  move-1=move:http-server-gate  i.moves
+        =/  move-2=move:http-server-gate  i.t.moves
         ::
         %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct))
+          (expect-eq !>(~[/http-blah]) !>(duct.move-1))
+        %+  weld
+          (expect-eq !>(~[/http-blah]) !>(duct.move-2))
+        ::
+        %+  weld
+          %+  expect-gall-deal
+            :+  /watch-response/[eyre-id]
+              [~nul ~nul]
+            :*  %app1  %watch
+                /http-response/[eyre-id]
+            ==
+          card.move-1
+        ::
         ::  expect authenticated=%.y in the handle below
         ::
         %+  expect-gall-deal
-          :+  /run-app-request/app1  [~nul ~nul]
-              ^-  internal-task:gall
+          :+  /run-app-request/[eyre-id]  [~nul ~nul]
               :*  %app1  %poke  %handle-http-request
                   !>  :*
+                    eyre-id
                     %.y
                     %.n
                     [%ipv4 .192.168.1.1]
@@ -635,7 +687,7 @@
                         ~
                   ==  ==
               ==
-          card
+          card.move-2
     ==
   ::
   ;:  weld
@@ -910,7 +962,7 @@
         ::
         %+  expect-gall-deal
           :*  /channel/subscription/'0123456789abcdef'/1
-              [~nul ~nul]  %two  %pull  ~
+              [~nul ~nul]  %two  %leave  ~
           ==
           card.i.moves
     ==
@@ -935,7 +987,7 @@
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%g %unto %coup ~]
+            [%g %unto %poke-ack ~]
          ==
       moves=~
     ==
@@ -950,7 +1002,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%g %unto %reap ~]
+            [%g %unto %watch-ack ~]
          ==
       moves=~
     ==
@@ -965,7 +1017,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%g %unto %diff %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+            [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
          ==
       moves=~
     ==
@@ -1107,7 +1159,7 @@
           %+  expect-gall-deal
             :*  /channel/poke/'0123456789abcdef'/'2'
                 [~nul ~nul]  %eight
-                %punk  %a  %json  !>([%n '9'])
+                %poke-as  %a  %json  !>([%n '9'])
             ==
             card.i.moves
         ::
@@ -1150,7 +1202,7 @@
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%g %unto %coup ~]
+            [%g %unto %poke-ack ~]
          ==
       moves=~
     ==
@@ -1165,7 +1217,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%g %unto %reap ~]
+            [%g %unto %watch-ack ~]
          ==
       moves=~
     ==
@@ -1206,7 +1258,7 @@
           ::
           %+  expect-gall-deal
             :*  /channel/subscription/'0123456789abcdef'/'1'
-                [~nul ~nul]  %two  %pull  ~
+                [~nul ~nul]  %two  %leave  ~
             ==
             card.i.moves
         ::
@@ -1251,7 +1303,7 @@
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%g %unto %coup ~]
+            [%g %unto %poke-ack ~]
          ==
       moves=~
     ==
@@ -1266,7 +1318,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%g %unto %reap ~]
+            [%g %unto %watch-ack ~]
          ==
       moves=~
     ==
@@ -1308,7 +1360,7 @@
           %+  expect-gall-deal
             :*  /channel/subscription/'0123456789abcdef'/'2'
                 [~nul ~nul]  %two
-                %peel  %json  /one/two/three
+                %watch-as  %json  /one/two/three
             ==
             card.i.moves
         ::
@@ -1341,7 +1393,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%g %unto %diff %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+            [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
          ==
       moves=~
     ==
@@ -1356,7 +1408,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'2'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%g %unto %diff %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+            [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
          ==
       moves=~
     ==
@@ -1455,7 +1507,7 @@
         ;:  weld
           %+  expect-gall-deal
             :*  /channel/subscription/'0123456789abcdef'/'1'
-                [~nul ~nul]  %two  %pull  ~
+                [~nul ~nul]  %two  %leave  ~
             ==
             card.i.moves
         ::
@@ -1477,7 +1529,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'2'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%g %unto %diff %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+            [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
          ==
       ^=  comparator
         |=  moves=(list move:http-server-gate)
@@ -1538,7 +1590,7 @@
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%g %unto %coup ~]
+            [%g %unto %poke-ack ~]
          ==
       moves=~
     ==
@@ -1553,7 +1605,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%g %unto %reap ~]
+            [%g %unto %watch-ack ~]
          ==
       moves=~
     ==
@@ -1565,6 +1617,7 @@
       now=(add ~1111.1.2 ~m3)
       scry=scry-provides-code
       ^=  call-args
+      ^-  [duct * (hobo task:able:http-server-gate)]
         :*  duct=~[/http-get-open]  ~
             %request
             %.n
@@ -1622,7 +1675,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%g %unto %diff %json !>(`json`[%a [%n '1'] ~])]
+            [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
          ==
       ^=  moves
         ^-  (list move:http-server-gate)
@@ -1710,7 +1763,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
             :-  *type
-            [%g %unto %diff %json !>(`json`[%a [%n '2'] ~])]
+            [%g %unto %fact %json !>(`json`[%a [%n '2'] ~])]
          ==
       moves=~
     ==
@@ -1826,24 +1879,32 @@
         |=  moves=(list move:http-server-gate)
         ^-  tang
         ::
-        ?.  ?=([* ~] moves)
+        ?.  ?=([* * ~] moves)
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
-        ::
-        =/  move=move:http-server-gate                              i.moves
-        =/  =duct                                             duct.move
-        =/  card=(wind note:http-server-gate gift:able:http-server-gate)  card.move
+        =/  move-1=move:http-server-gate  i.moves
+        =/  move-2=move:http-server-gate  i.t.moves
         ::
         %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct))
+          (expect-eq !>(~[/http-blah]) !>(duct.move-1))
+        %+  weld
+          (expect-eq !>(~[/http-blah]) !>(duct.move-2))
+        ::
+        %+  weld
+          %+  expect-gall-deal
+            :+  /watch-response/[eyre-id]
+              [~nul ~nul]
+            :*  %app1  %watch
+                /http-response/[eyre-id]
+            ==
+          card.move-1
         ::
         %+  expect-gall-deal
-          :+  /run-app-request/app1  [~nul ~nul]
-              ^-  internal-task:gall
+          :+  /run-app-request/[eyre-id]  [~nul ~nul]
               :*  %app1  %poke  %handle-http-request
-                  !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
+                  !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
-          card
+          card.move-2
     ==
   ::  but app1 doesn't respond before our urbit gets shut down. ensure we send
   ::  cancels on open connections.
@@ -1872,30 +1933,9 @@
           (expect-eq !>(~[/http-blah]) !>(duct))
         ::
         %+  expect-gall-deal
-          :+  /run-app-cancel/app1  [~nul ~nul]
-              ^-  internal-task:gall
-              :*  %app1  %poke  %handle-http-cancel
-                  !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
-              ==
+          :+  /watch-response/[eyre-id]  [~nul ~nul]
+            [%app1 %leave ~]
           card
-    ==
-  ::  app1 doesn't have a %handle-http-cancel arm, but that's fine and doesn't
-  ::  crash eyre when it sends its error coup back because we take no action on
-  ::  the response to handle-http-cancel.
-  ::
-  =^  results5  http-server-gate
-    %-  http-server-take  :*
-      http-server-gate
-      now=~1111.1.4
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/run-app-cancel/app1  duct=~[/http-blah]
-            ^-  (hypo sign:http-server-gate)  :-  *type
-            :*  %g  %unto  %coup
-                `[[%leaf "error! error! error!"] ~]
-            ==
-         ==
-      expected-move=~
     ==
   ::
   ;:  weld
@@ -1903,7 +1943,6 @@
     results2
     results3
     results4
-    results5
   ==
 ::
 ++  http-server-call
@@ -1981,7 +2020,7 @@
   [output http-server-gate]
 ::
 ++  expect-gall-deal
-  |=  $:  expected=[wire=path id=sock data=internal-task:gall]
+  |=  $:  expected=[wire=path id=sock app=term =deal:gall]
           actual=(wind note:http-server-gate gift:able:http-server-gate)
       ==
   ^-  tang
@@ -1997,50 +2036,57 @@
     [%leaf "bad move, not a %deal: {<actual>}"]~
   ::
   %+  weld
-    (expect-eq !>(id.expected) !>(id.note))
+    (expect-eq !>(id.expected) !>(p.note))
   ::
   %+  weld
-    (expect-eq !>(p.data.expected) !>(p.data.note))
+    (expect-eq !>(app.expected) !>(q.note))
   ::
-  ?:  ?=([%poke *] q.data.expected)
-    ?.  ?=([%poke *] q.data.note)
-      [%leaf "expected %poke, actual {<q.data.note>}"]~
+  ?:  ?=([%poke *] deal.expected)
+    ?.  ?=([%poke *] r.note)
+      [%leaf "expected %poke, actual {<r.note>}"]~
     ::
     %+  weld
-      (expect-eq !>(p.p.q.data.expected) !>(p.p.q.data.note))
+      (expect-eq !>(p.cage.deal.expected) !>(p.cage.r.note))
     ::  compare the payload vases
     ::
-    (expect-eq q.p.q.data.expected q.p.q.data.note)
+    (expect-eq q.cage.deal.expected q.cage.r.note)
   ::
-  ?:  ?=([%punk *] q.data.expected)
-    ?.  ?=([%punk *] q.data.note)
-      [%leaf "expected %punk, actual {<q.data.note>}"]~
+  ?:  ?=([%poke-as *] deal.expected)
+    ?.  ?=([%poke-as *] r.note)
+      [%leaf "expected %poke-as, actual {<r.note>}"]~
     ::  compare the mark type
     ::
     %+  weld
-      (expect-eq !>(p.q.data.expected) !>(p.q.data.note))
+      (expect-eq !>(mark.deal.expected) !>(mark.r.note))
     ::  compare the cage mark
     ::
     %+  weld
-      (expect-eq !>(p.q.q.data.expected) !>(p.q.q.data.note))
+      (expect-eq !>(p.cage.deal.expected) !>(p.cage.r.note))
     ::  compare the payload vases
     ::
-    (expect-eq q.q.q.data.expected q.q.q.data.note)
+    (expect-eq q.cage.deal.expected q.cage.r.note)
   ::
-  ?:  ?=([%peel *] q.data.expected)
-    ?.  ?=([%peel *] q.data.note)
-      [%leaf "expected %peel, actual {<q.data.note>}"]~
+  ?:  ?=([%watch *] deal.expected)
+    ?.  ?=([%watch *] r.note)
+      [%leaf "expected %watch-as, actual {<r.note>}"]~
+    ::  compare the path
+    ::
+    (expect-eq !>(path.deal.expected) !>(path.r.note))
+  ::
+  ?:  ?=([%watch-as *] deal.expected)
+    ?.  ?=([%watch-as *] r.note)
+      [%leaf "expected %watch-as, actual {<r.note>}"]~
     ::  compare the result mark
     ::
     %+  weld
-      (expect-eq !>(p.q.data.expected) !>(p.q.data.note))
+      (expect-eq !>(mark.deal.expected) !>(mark.r.note))
     ::  compare the path
     ::
-    (expect-eq !>(q.q.data.expected) !>(q.q.data.note))
+    (expect-eq !>(path.deal.expected) !>(path.r.note))
   ::
-  ?:  ?=([%pull *] q.data.expected)
-    ?.  ?=([%pull *] q.data.note)
-      [%leaf "expected %pull, actual {<q.data.note>}"]~
+  ?:  ?=([%leave *] deal.expected)
+    ?.  ?=([%leave *] r.note)
+      [%leaf "expected %leave, actual {<r.note>}"]~
     ::
     ~
   ::  todo: handle other deals
@@ -2186,14 +2232,14 @@
           %+  expect-gall-deal
             :*  /channel/poke/'0123456789abcdef'/'0'
                 [~nul ~nul]  %one
-                %punk  %a  %json  !>([%n '5'])
+                %poke-as  %a  %json  !>([%n '5'])
             ==
             card.i.moves
         ::
           %+  expect-gall-deal
             :*  /channel/subscription/'0123456789abcdef'/'1'
                 [~nul ~nul]  %two
-                %peel  %json  /one/two/three
+                %watch-as  %json  /one/two/three
             ==
             card.i.t.moves
         ::

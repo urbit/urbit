@@ -1,0 +1,39 @@
+{
+  "manifest_version": 2,
+  "name": "link",
+  "description": "Urbit Link",
+  "version": "0.0.0",
+  "icons": {
+    "64": "icons/icon.png"
+  },
+  "browser_action": {
+    "default_icon": {
+      "64": "icons/icon.png"
+    },
+    "todo__default_popup": "browserAction/index.html",
+    "default_title": "link"
+  },
+  "background": {
+    "scripts": [
+      "background.js",
+      "storage.js"
+    ]
+  },
+  "options_ui": {
+    "page": "options/index.html"
+  },
+  "web_accessible_resources": [
+    "src/options/options.html"
+  ],
+
+  "permissions": [
+    "storage", // storing config
+    "activeTab" // viewing current page url & title
+  ],
+
+  "applications": {
+    "gecko": {
+      "id": "link-webext@tlon.io"
+    }
+  }
+}

@@ -119,17 +119,23 @@ _box_detach(u3a_box* box_u)
   _box_count(-(box_u->siz_w));
 
   if ( nex_p ) {
-    c3_assert(u3to(u3a_fbox, nex_p)->pre_p == fre_p);
+    if ( u3to(u3a_fbox, nex_p)->pre_p != fre_p ) {
+      c3_assert(!"loom: corrupt");
+    }
     u3to(u3a_fbox, nex_p)->pre_p = pre_p;
   }
   if ( pre_p ) {
-    c3_assert(u3to(u3a_fbox, pre_p)->nex_p == fre_p);
+    if( u3to(u3a_fbox, pre_p)->nex_p != fre_p ) {
+      c3_assert(!"loom: corrupt");
+    }
     u3to(u3a_fbox, pre_p)->nex_p = nex_p;
   }
   else {
     c3_w sel_w = _box_slot(box_u->siz_w);
 
-    c3_assert(fre_p == u3R->all.fre_p[sel_w]);
+    if ( fre_p != u3R->all.fre_p[sel_w] ) {
+      c3_assert(!"loom: corrupt");
+    }
     u3R->all.fre_p[sel_w] = nex_p;
   }
 }
@@ -468,14 +474,18 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
           siz_w += pad_w;
           _box_count(-(box_u->siz_w));
           {
+            if ( (0 != u3to(u3a_fbox, *pfr_p)->pre_p) &&
+                 (u3to(u3a_fbox, u3to(u3a_fbox, *pfr_p)->pre_p)->nex_p
+                    != (*pfr_p)) )
             {
-              c3_assert((0 == u3to(u3a_fbox, *pfr_p)->pre_p) ||
-                  (u3to(u3a_fbox, u3to(u3a_fbox, *pfr_p)->pre_p)->nex_p
-                        == (*pfr_p)));
+              c3_assert(!"loom: corrupt");
+            }
 
-              c3_assert((0 == u3to(u3a_fbox, *pfr_p)->nex_p) ||
-                  (u3to(u3a_fbox, u3to(u3a_fbox, *pfr_p)->nex_p)->pre_p
-                        == (*pfr_p)));
+            if( (0 != u3to(u3a_fbox, *pfr_p)->nex_p) &&
+                (u3to(u3a_fbox, u3to(u3a_fbox, *pfr_p)->nex_p)->pre_p
+                   != (*pfr_p)) )
+            {
+              c3_assert(!"loom: corrupt");
             }
 
             if ( 0 != u3to(u3a_fbox, *pfr_p)->nex_p ) {
@@ -1560,7 +1570,7 @@ void
 u3a_luse(u3_noun som)
 {
   if ( 0 == u3a_use(som) ) {
-    u3l_log("luse: insane %d 0x%x\r\n", som, som);
+    fprintf(stderr, "loom: insane %d 0x%x\r\n", som, som);
     abort();
   }
   if ( _(u3du(som)) ) {
@@ -1608,7 +1618,7 @@ u3a_mark_ptr(void* ptr_v)
     c3_ws use_ws = (c3_ws)box_u->use_w;
 
     if ( use_ws == 0 ) {
-      u3l_log("%p is bogus\r\n", ptr_v);
+      fprintf(stderr, "%p is bogus\r\n", ptr_v);
       siz_w = 0;
     }
     else {
@@ -1642,7 +1652,6 @@ u3a_mark_mptr(void* ptr_v)
   c3_w  pad_w = ptr_w[-1];
   c3_w* org_w = ptr_w - (pad_w + 1);
 
-  // u3l_log("free %p %p\r\n", org_w, ptr_w);
   return u3a_mark_ptr(org_w);
 }
 
@@ -1806,7 +1815,7 @@ _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_w eus_w, c3_w use_w)
   if ( box_u->cod_w ) {
     c3_c* cod_c = u3m_pretty(box_u->cod_w);
     fprintf(stderr, "code: %s\r\n", cod_c);
-    free(cod_c);
+    c3_free(cod_c);
   }
 
   u3a_print_memory(stderr, "    size", box_u->siz_w);
@@ -1814,7 +1823,7 @@ _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_w eus_w, c3_w use_w)
   {
     c3_c* dat_c = _ca_print_box(box_u);
     fprintf(stderr, "    data: %s\r\n", dat_c);
-    free(dat_c);
+    c3_free(dat_c);
   }
 }
 
@@ -1834,7 +1843,7 @@ _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_ws use_ws)
   {
     c3_c* dat_c = _ca_print_box(box_u);
     fprintf(stderr, "    data: %s\r\n", dat_c);
-    free(dat_c);
+    c3_free(dat_c);
   }
 }
 
@@ -1877,8 +1886,8 @@ u3a_sweep(void)
 
 #ifdef U3_CPU_DEBUG
     if ( fre_w != u3R->all.fre_w ) {
-      u3l_log("fre discrepancy (%x): %x, %x, %x\r\n", u3R->par_p,
-              fre_w, u3R->all.fre_w, (u3R->all.fre_w - fre_w));
+      fprintf(stderr, "fre discrepancy (%x): %x, %x, %x\r\n", u3R->par_p,
+                      fre_w, u3R->all.fre_w, (u3R->all.fre_w - fre_w));
     }
 #endif
     neg_w = (end_w - fre_w);
@@ -2184,3 +2193,130 @@ u3a_lop(c3_w lab_w)
 {
 }
 #endif
+
+/* u3a_walk_fore(): preorder traversal, visits ever limb of a noun.
+**
+**   cells are visited *before* their heads and tails
+**   and can shortcircuit traversal by returning [c3n]
+*/
+void
+u3a_walk_fore(u3_noun    a,
+              void*      ptr_v,
+              void     (*pat_f)(u3_atom, void*),
+              c3_o     (*cel_f)(u3_noun, void*))
+{
+  //  initialize signed stack offsets (relative to N or S road)
+  //
+  c3_o nor_o = u3a_is_north(u3R);
+  c3_ys mov_ys, off_ys;
+  {
+    c3_y wis_y = c3_wiseof(u3_noun);
+    mov_ys = ( c3y == nor_o ? -wis_y : wis_y );
+    off_ys = ( c3y == nor_o ? 0 : -wis_y );
+  }
+
+  //  set stack root, push argument
+  //
+  u3_noun *top, *don;
+  {
+    don         = u3to(u3_noun, u3R->cap_p + off_ys);
+    u3R->cap_p += mov_ys;
+    top         = u3to(u3_noun, u3R->cap_p + off_ys);
+    *top        = a;
+  }
+
+  while ( top != don ) {
+    //  visit an atom, then pop the stack
+    //
+    if ( c3y == u3a_is_atom(a) ) {
+      pat_f(a, ptr_v);
+      u3R->cap_p -= mov_ys;
+      top         = u3to(u3_noun, u3R->cap_p + off_ys);
+    }
+    //  vist a cell, if c3n, pop the stack
+    //
+    else if ( c3n == cel_f(a, ptr_v) ) {
+      u3R->cap_p -= mov_ys;
+      top         = u3to(u3_noun, u3R->cap_p + off_ys);
+
+    }
+    //  otherwise, push the tail and continue into the head
+    //
+    else {
+      *top        = u3t(a);
+      u3R->cap_p += mov_ys;
+
+      if ( c3y == nor_o ) {
+        if( !(u3R->cap_p > u3R->hat_p) ) {
+          u3m_bail(c3__meme);
+        }
+      }
+      else {
+        if( !(u3R->cap_p < u3R->hat_p) ) {
+          u3m_bail(c3__meme);
+        }
+      }
+
+      top  = u3to(u3_noun, u3R->cap_p + off_ys);
+      *top = u3h(a);
+    }
+
+    a = *top;
+  }
+}
+
+/* u3a_walk_fore_unsafe(): u3a_walk_fore(), without overflow checks
+*/
+void
+u3a_walk_fore_unsafe(u3_noun    a,
+                     void*      ptr_v,
+                     void     (*pat_f)(u3_atom, void*),
+                     c3_o     (*cel_f)(u3_noun, void*))
+{
+  //  initialize signed stack offsets (relative to N or S road)
+  //
+  c3_ys mov_ys, off_ys;
+  {
+    c3_y wis_y = c3_wiseof(u3_noun);
+    c3_o nor_o = u3a_is_north(u3R);
+    mov_ys = ( c3y == nor_o ? -wis_y : wis_y );
+    off_ys = ( c3y == nor_o ? 0 : -wis_y );
+  }
+
+  //  set stack root, push argument
+  //
+  u3_noun *top, *don;
+  {
+    don         = u3to(u3_noun, u3R->cap_p + off_ys);
+    u3R->cap_p += mov_ys;
+    top         = u3to(u3_noun, u3R->cap_p + off_ys);
+    *top        = a;
+  }
+
+  while ( top != don ) {
+    //  visit an atom, then pop the stack
+    //
+    if ( c3y == u3a_is_atom(a) ) {
+      pat_f(a, ptr_v);
+      u3R->cap_p -= mov_ys;
+      top         = u3to(u3_noun, u3R->cap_p + off_ys);
+    }
+    //  vist a cell, if c3n, pop the stack
+    //
+    else if ( c3n == cel_f(a, ptr_v) ) {
+      u3R->cap_p -= mov_ys;
+      top         = u3to(u3_noun, u3R->cap_p + off_ys);
+
+    }
+    //  otherwise, push the tail and continue into the head
+    //
+    else {
+      *top        = u3t(a);
+      u3R->cap_p += mov_ys;
+      top         = u3to(u3_noun, u3R->cap_p + off_ys);
+      *top        = u3h(a);
+    }
+
+    a = *top;
+  }
+}

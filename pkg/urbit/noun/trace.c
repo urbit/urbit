@@ -397,7 +397,7 @@ u3t_nock_trace_pop()
             start_time,
             duration);
 
-    free(name);
+    c3_free(name);
     u3_Host.tra_u.con_w++;
   }
 

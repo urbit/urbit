@@ -81,9 +81,12 @@ aqua, ph" -- but note that this may be a warning that too many changes are
 being packed into a single commit.  The 'component' and 'short description'
 combined should be no more than 50 characters.
 
-A lengthier description is encouraged, where useful, but is not required.
+A lengthier description is encouraged, where useful, but is not always strictly
+required.  You should use the longer description to give any useful background
+on or motivation for the commit, provide a summary of what it does, link to
+relevant issues, proposals, or other commits, and so on.
 
-Here's an example of our commit format, applied to a hypothetical commit:
+Here is an example of our commit format, taken from a commit in the history:
 
 >  zuse: remove superfluous 'scup' and 'culm' types.
 >
@@ -94,6 +97,23 @@ Here's an example of our commit format, applied to a hypothetical commit:
 >
 >  This commit deletes 'scup' and 'culm' and refactors what little code
 >  made use of them.
+
+Note that the short description is prefixed by `zuse:`, which is what the
+commit touches.  Otherwise it just includes a summary of the change.
+
+Here's another example:
+
+>  build: give arvo a high priority
+>
+>  0bdced981e4 introduced the 'arvo-ropsten' derivation.  Attempting to
+>  install both 'arvo' and 'arvo-ropsten' via nix-env will result in a
+>  priority error; this assigns a higher priority to 'arvo' to resolve the
+>  conflict.
+>
+>  Fixes #1912.
+
+Note that it cites a previous relevant commit, `0bdced981e4`, in its summary,
+and also points at the issue that it resolves.
 
 If you're in doubt about how to format your commit descriptions, take a look at
 the recent history and try to mimic the style that you can see others broadly
@@ -128,9 +148,13 @@ via:
 sh/update-solid-pill
 ```
 
-and include it along with your contribution.  You can either include it in the
-same commit as your change, or, if you prefer, in a standalone commit (you will
-see plenty of "pills: update solid" commits if you look through the history).
+and include it along with your contribution.
+
+Historically, we've sometimes included these updated pills in separate,
+standalone commits (you will see plenty of "pills: update solid" and similar
+commits if you look through the history), but this practice is considered to be
+deprecated -- you should usually just include the updated pill in the same
+commit that updates the source.
 
 ## Releases
 
@@ -257,6 +281,6 @@ Questions or other communications about contributing to Urbit can go to
 [mail]: mailto:support@urbit.org
 [list]: https://groups.google.com/a/urbit.org/forum/#!forum/dev
 [repo]: https://github.com/urbit/urbit
-[reba]: https://www.atlassian.com/git/tutorials/merging-vs-rebasing
+[reba]: https://git-rebase.io/
 [issu]: https://github.com/urbit/urbit/issues
 [hoon]: https://urbit.org/docs/learn/hoon/style/

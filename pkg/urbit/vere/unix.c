@@ -195,7 +195,7 @@ _unix_write_file_hard(c3_c* pax_c, u3_noun mim)
   }
 
   close(fid_i);
-  free(dat_y);
+  c3_free(dat_y);
 
   return mug_w;
 }
@@ -242,7 +242,7 @@ _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
       u3l_log("wrong # of bytes read in file %s: %d %d\r\n",
               fil_u->pax_c, len_ws, red_ws);
     }
-    free(old_y);
+    c3_free(old_y);
     u3z(mim);
     return;
   }
@@ -251,12 +251,12 @@ _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
 
   if ( old_w != fil_u->gum_w ) {
     fil_u->gum_w = u3r_mug(u3t(u3t(mim))); // XXX this might fail with
-    free(old_y);                           //     trailing zeros
+    c3_free(old_y);                           //     trailing zeros
     u3z(mim);
     return;
   }
 
-  free(old_y);
+  c3_free(old_y);
 
 _unix_write_file_soft_go:
   fil_u->gum_w = _unix_write_file_hard(fil_u->pax_c, mim);
@@ -301,7 +301,7 @@ _unix_get_mount_point(u3_pier *pir_u, u3_noun mon)
 
   }
   else {
-    free(nam_c);
+    c3_free(nam_c);
   }
 
   u3z(mon);
@@ -351,12 +351,12 @@ _unix_scan_mount_point(u3_pier *pir_u, u3_umon* mon_u)
       if ( 0 != stat(pax_c, &buf_u) ) {
         u3l_log("can't stat pier directory %s: %s\r\n",
                 mon_u->dir_u.pax_c, strerror(errno));
-        free(pax_c);
+        c3_free(pax_c);
         continue;
       }
       if ( S_ISDIR(buf_u.st_mode) ) {
         if ( out_u->d_name[len_w] != '\0' ) {
-          free(pax_c);
+          c3_free(pax_c);
           continue;
         }
         else {
@@ -371,7 +371,7 @@ _unix_scan_mount_point(u3_pier *pir_u, u3_umon* mon_u)
              || ('#' == out_u->d_name[0] &&
                  '#' == out_u->d_name[strlen(out_u->d_name) - 1])
 	     ) {
-          free(pax_c);
+          c3_free(pax_c);
           continue;
         }
         else {
@@ -380,7 +380,7 @@ _unix_scan_mount_point(u3_pier *pir_u, u3_umon* mon_u)
         }
       }
 
-      free(pax_c);
+      c3_free(pax_c);
     }
   }
 }
@@ -397,8 +397,8 @@ _unix_free_file(u3_ufil *fil_u)
     c3_assert(0);
   }
 
-  free(fil_u->pax_c);
-  free(fil_u);
+  c3_free(fil_u->pax_c);
+  c3_free(fil_u);
 }
 
 /* _unix_free_dir(): free directory, deleting everything within
@@ -414,8 +414,8 @@ _unix_free_dir(u3_udir *dir_u)
   else {
     // fprintf(stderr, "i'm a lone, lonely loner %s\r\n", dir_u->pax_c);
   }
-  free(dir_u->pax_c);
-  free(dir_u); // XXX this might be too early, how do we
+  c3_free(dir_u->pax_c);
+  c3_free(dir_u); // XXX this might be too early, how do we
                //     know we've freed all the children?
                //     i suspect we should do this only if
                //     our kid list is empty
@@ -483,9 +483,9 @@ _unix_free_mount_point(u3_pier *pir_u, u3_umon* mon_u)
     nod_u = nex_u;
   }
 
-  free(mon_u->dir_u.pax_c);
-  free(mon_u->nam_c);
-  free(mon_u);
+  c3_free(mon_u->dir_u.pax_c);
+  c3_free(mon_u->nam_c);
+  c3_free(mon_u);
 }
 
 /* _unix_delete_mount_point(): remove mount point from list and free
@@ -530,7 +530,7 @@ _unix_delete_mount_point(u3_pier *pir_u, u3_noun mon)
   _unix_free_mount_point(pir_u, tem_u);
 
 _delete_mount_point_out:
-  free(nam_c);
+  c3_free(nam_c);
   u3z(mon);
 }
 
@@ -603,7 +603,7 @@ _unix_create_dir(u3_udir* dir_u, u3_udir* par_u, u3_noun nam)
   strncpy(pax_c + pax_w + 1, nam_c, nam_w);
   pax_c[pax_w + 1 + nam_w] = '\0';
 
-  free(nam_c);
+  c3_free(nam_c);
   u3z(nam);
 
   _unix_mkdir(pax_c);
@@ -666,18 +666,18 @@ _unix_update_file(u3_pier *pir_u, u3_ufil* fil_u)
       u3l_log("wrong # of bytes read in file %s: %d %d\r\n",
               fil_u->pax_c, len_ws, red_ws);
     }
-    free(dat_y);
+    c3_free(dat_y);
     return u3_nul;
   }
   else {
     c3_w mug_w = u3r_mug_bytes(dat_y, len_ws);
     if ( mug_w == fil_u->mug_w ) {
-      free(dat_y);
+      c3_free(dat_y);
       return u3_nul;
     }
     else if ( mug_w == fil_u->gum_w ) {
       fil_u->mug_w = mug_w;
-      free(dat_y);
+      c3_free(dat_y);
       return u3_nul;
     }
     else {
@@ -687,7 +687,7 @@ _unix_update_file(u3_pier *pir_u, u3_ufil* fil_u)
       u3_noun mim = u3nt(c3__text, u3i_string("plain"), u3_nul);
       u3_noun dat = u3nt(mim, len_ws, u3i_bytes(len_ws, dat_y));
 
-      free(dat_y);
+      c3_free(dat_y);
       return u3nc(u3nt(pax, u3_nul, dat), u3_nul);
     }
   }
@@ -793,7 +793,7 @@ _unix_update_dir(u3_pier *pir_u, u3_udir* dir_u)
 
       if ( 0 != stat(pax_c, &buf_u) ) {
         u3l_log("can't stat %s: %s\r\n", pax_c, strerror(errno));
-        free(pax_c);
+        c3_free(pax_c);
         continue;
       }
       else {
@@ -823,7 +823,7 @@ _unix_update_dir(u3_pier *pir_u, u3_udir* dir_u)
                  || ('#' == out_u->d_name[0] &&
                      '#' == out_u->d_name[strlen(out_u->d_name) - 1])
                ) {
-              free(pax_c);
+              c3_free(pax_c);
               continue;
             }
 
@@ -838,7 +838,7 @@ _unix_update_dir(u3_pier *pir_u, u3_udir* dir_u)
         }
       }
 
-      free(pax_c);
+      c3_free(pax_c);
     }
   }
 
@@ -932,7 +932,7 @@ _unix_initial_update_file(c3_c* pax_c, c3_c* bas_c)
       u3l_log("wrong # of bytes read in initial file %s: %d %d\r\n",
               pax_c, len_ws, red_ws);
     }
-    free(dat_y);
+    c3_free(dat_y);
     return u3_nul;
   }
   else {
@@ -942,7 +942,7 @@ _unix_initial_update_file(c3_c* pax_c, c3_c* bas_c)
     u3_noun mim = u3nt(c3__text, u3i_string("plain"), u3_nul);
     u3_noun dat = u3nt(mim, len_ws, u3i_bytes(len_ws, dat_y));
 
-    free(dat_y);
+    c3_free(dat_y);
     return u3nc(u3nt(pax, u3_nul, dat), u3_nul);
   }
 }
@@ -987,7 +987,7 @@ _unix_initial_update_dir(c3_c* pax_c, c3_c* bas_c)
       if ( 0 != stat(pox_c, &buf_u) ) {
         u3l_log("initial can't stat %s: %s\r\n",
                 pox_c, strerror(errno));
-        free(pox_c);
+        c3_free(pox_c);
         continue;
       }
       else {
@@ -997,7 +997,7 @@ _unix_initial_update_dir(c3_c* pax_c, c3_c* bas_c)
         else {
           can = u3kb_weld(_unix_initial_update_file(pox_c, bas_c), can);
         }
-        free(pox_c);
+        c3_free(pox_c);
       }
     }
   }
@@ -1045,7 +1045,7 @@ _unix_sync_file(u3_pier *pir_u, u3_udir* par_u, u3_noun nam, u3_noun ext, u3_nou
   strncpy(pax_c + par_w + 1 + nam_w + 1, ext_c, ext_w);
   pax_c[par_w + 1 + nam_w + 1 + ext_w] = '\0';
 
-  free(nam_c); free(ext_c);
+  c3_free(nam_c); c3_free(ext_c);
   u3z(nam); u3z(ext);
 
   // check whether we already know about this file
@@ -1079,7 +1079,7 @@ _unix_sync_file(u3_pier *pir_u, u3_udir* par_u, u3_noun nam, u3_noun ext, u3_nou
     }
   }
 
-  free(pax_c);
+  c3_free(pax_c);
 
 _unix_sync_file_out:
   u3z(mim);
@@ -1261,7 +1261,7 @@ u3_unix_acquire(c3_c* pax_c)
   }
 
   fclose(loq_u);
-  free(paf_c);
+  c3_free(paf_c);
 }
 
 /* u3_unix_release(): release a lockfile.
@@ -1272,7 +1272,7 @@ u3_unix_release(c3_c* pax_c)
   c3_c* paf_c = _unix_down(pax_c, ".vere.lock");
 
   unlink(paf_c);
-  free(paf_c);
+  c3_free(paf_c);
 }
 
 /* u3_unix_ef_bake(): initial effects for new process.

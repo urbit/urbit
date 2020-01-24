@@ -1,0 +1,65 @@
+name: urbit-uruk
+version: 0.1.0
+license: MIT
+license-file: LICENSE
+
+library:
+  source-dirs: lib
+
+dependencies:
+  - base
+  - classy-prelude
+  - flat
+  - king
+  - lens
+  - text
+  - urbit-atom
+  - multimap
+  - para
+  - megaparsec
+  - mtl
+  - positive
+
+default-extensions:
+  - ApplicativeDo
+  - BangPatterns
+  - BlockArguments
+  - DataKinds
+  - DefaultSignatures
+  - DeriveAnyClass
+  - DeriveDataTypeable
+  - DeriveFoldable
+  - DeriveGeneric
+  - DeriveTraversable
+  - DerivingStrategies
+  - EmptyCase
+  - EmptyDataDecls
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GADTs
+  - GeneralizedNewtypeDeriving
+  - LambdaCase
+  - MagicHash
+  - MultiParamTypeClasses
+  - NamedFieldPuns
+  - NoImplicitPrelude
+  - NumericUnderscores
+  - OverloadedStrings
+  - PackageImports
+  - PartialTypeSignatures
+  - PatternSynonyms
+  - QuasiQuotes
+  - Rank2Types
+  - RankNTypes
+  - RecordWildCards
+  - ScopedTypeVariables
+  - StandaloneDeriving
+  - TemplateHaskell
+  - TupleSections
+  - TypeApplications
+  - TypeFamilies
+  - TypeOperators
+  - UnboxedTuples
+  - UnicodeSyntax
+  - ViewPatterns

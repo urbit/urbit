@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import { Route, Link } from 'react-router-dom';
 import urbitOb from 'urbit-ob';
 
 
@@ -14,6 +15,24 @@ export class JoinScreen extends Component {
     };
 
     this.stationChange = this.stationChange.bind(this);
+  }
+
+  componentDidMount() {
+    if (this.props.autoJoin !== "undefined/undefined") {
+      let station = this.props.autoJoin.split('/');
+      let ship = station[0];
+      station.splice(0, 1);
+      station = '/' + station.join('/');
+
+      if (station.length < 2 || !urbitOb.isValidPatp(ship)) {
+        this.setState({
+          error: true,
+        });
+        return;
+      }
+      this.props.api.chatView.join(ship, station, true);
+      this.props.history.push('/~chat');
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -47,7 +66,8 @@ export class JoinScreen extends Component {
       return;
     }
 
-    props.api.chatView.join(ship, station);
+    // TODO: askHistory setting
+    props.api.chatView.join(ship, station, true);
     this.props.history.push('/~chat');
   }
 
@@ -60,15 +80,15 @@ export class JoinScreen extends Component {
   render() {
     const { props } = this;
 
-    let joinClasses = "db label-regular mt4 btn-font pointer underline bn";
-    if (!this.state.station) {
-      joinClasses = joinClasses + ' gray';
+    let joinClasses = "db f9 green2 ba pa2 b--green2 pointer";
+    if ((!this.state.station) || (this.state.station === "/")) {
+      joinClasses = 'db f9 gray2 ba pa2 b--gray3 pointer';
     }
 
     let errElem = (<span />);
     if (this.state.error) {
       errElem = (
-        <span className="body-small inter nice-red db">
+        <span className="f9 inter red2 db">
           Chat must have a valid name.
         </span>
       );
@@ -76,19 +96,25 @@ export class JoinScreen extends Component {
 
     return (
       <div className="h-100 w-100 pa3 pt2 overflow-x-hidden flex flex-column">
-        <h2 className="mb3">Join</h2>
-        <div className="w-50">
-          <p className="body-medium mt3 db">Chatroom</p>
-          <p className="body-small db mt2 mb3">
-              Join an existing chatroom.
-              Chatrooms follow the format ~shipname/chat-name.
-          </p>
+        <div
+          className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
+          <Link to="/~chat/">{"⟵ All Chats"}</Link>
+        </div>
+        <h2 className="mb3 f8">Join Existing Chat</h2>
+        <div className="w-100">
+          <p className="f8 lh-copy mt3 db">Enter a <span className="mono">~ship/chat-name</span></p>
+          <p className="f9 gray2 mb4">Chat names use lowercase, hyphens, and slashes.</p>
           <textarea
             ref={ e => { this.textarea = e; } }
-            className="body-regular mono fw-normal ba pa2 mb2 db w-100"
+            className="f7 mono ba b--gray3 pa3 mb2 db"
             placeholder="~zod/chatroom"
             spellCheck="false"
             rows={1}
+            onKeyPress={e => {
+              if (e.key === "Enter") {
+                this.onClickJoin();
+              }
+            }}
             style={{
               resize: 'none',
             }}
@@ -98,8 +124,7 @@ export class JoinScreen extends Component {
           <button
             onClick={this.onClickJoin.bind(this)}
             className={joinClasses}
-            style={{ fontSize: '18px' }}
-          >-> Join</button>
+          >Join Chat</button>
         </div>
       </div>
     );

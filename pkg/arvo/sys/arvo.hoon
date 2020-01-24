@@ -256,14 +256,9 @@
     ++  slur-e  ~/(%slur-e |=({gat/vase hil/mill} =+(%e (slur gat hil))))
     ++  slur-f  ~/(%slur-f |=({gat/vase hil/mill} =+(%f (slur gat hil))))
     ++  slur-g  ~/(%slur-g |=({gat/vase hil/mill} =+(%g (slur gat hil))))
+    ++  slur-i  ~/(%slur-i |=({gat/vase hil/mill} =+(%i (slur gat hil))))
     ++  slur-j  ~/(%slur-j |=({gat/vase hil/mill} =+(%j (slur gat hil))))
     ++  slur-z  ~/(%slur-z |=({gat/vase hil/mill} =+(%z (slur gat hil))))
-    ++  slur-r
-      ~/  %slur-r
-      |=({gat/vase hil/mill} =+(%r (slur gat hil)))
-    ++  slur-l
-      ~/  %slur-l
-      |=({gat/vase hil/mill} =+(%l (slur gat hil)))
     ::
     ++  slur-pro                                        ::  profiling slur
       ~/  %slur-pro
@@ -276,10 +271,8 @@
         $e  (slur-e gat hil)
         $f  (slur-f gat hil)
         $g  (slur-g gat hil)
+        $i  (slur-i gat hil)
         $j  (slur-j gat hil)
-      ::
-        %l  (slur-l gat hil)
-        %r  (slur-r gat hil)
       ==
     ::
     ++  song                                            ::  reduce metacard
@@ -326,7 +319,8 @@
           ?.  ((sane %tas) lal)  ~
           %+  biff  ((soft path) p.q.caq)
           |=  pax/path
-          =^  yav  worm.vane  (~(spot wa worm.vane) 15 caq)
+          =^  xav  worm.vane  (~(spot wa worm.vane) 7 caq)
+          =^  yav  worm.vane  (~(spot wa worm.vane) 3 xav)
           %+  bind  (song yav)
           |=  {hil/mill vel/worm}
           [%& [%pass pax lal hil] vel]
@@ -343,7 +337,8 @@
           %+  biff  ((soft @) p.q.caq)
           |=  lal/@tas
           ?.  ((sane %tas) lal)  ~
-          =^  yav  worm.vane  (~(spot wa worm.vane) 7 caq)
+          =^  xav  worm.vane  (~(spot wa worm.vane) 3 caq)
+          =^  yav  worm.vane  (~(spot wa worm.vane) 3 xav)
           %+  bind  (song yav)
           |=  {hil/mill vel/worm}
           [%& [%slip lal hil] vel]
@@ -488,7 +483,7 @@
   ::
   ++  hurl                                              ::  start loop
     |=  {lac/? ovo/ovum}
-    ~?  &(!lac !=(%belt -.q.ovo))  ["" %unix -.q.ovo p.ovo now]
+    ~?  !lac  ["" %unix -.q.ovo p.ovo now]
     ::  ^-  {p/(list ovum) q/(pair worm (list {p/@tas q/vase}))}
     ^-  {p/(list ovum) q=(list [label=@tas =vane])}
     ?>  ?=(^ p.ovo)
@@ -543,6 +538,10 @@
       ~?  &(!lac !=(%$ p.gum))
         :-  (runt [s.gum '|'] "")
         :^  %pass  [p.gum p.q.r.gum]
+          ?:  ?=(?(%deal %deal-gall) +>-.q.q.r.gum)
+            :-  :-  +>-.q.q.r.gum
+                (,[[ship ship] term term] [+>+< +>+>- +>+>+<]:q.q.r.gum)
+            p.r.gum
           [(symp +>-.q.q.r.gum) p.r.gum]
         q.gum
       [p.q.r.gum ~ [[p.gum p.r.gum] q.gum] q.q.r.gum]
@@ -554,7 +553,11 @@
         !!
       ~?  &(!lac |(!=(%blit +>-.p.r.gum) !=(%d p.gum)))
         :-  (runt [s.gum '|'] "")
-        [%give p.gum (symp +>-.p.r.gum) `duct`q.gum]
+        :^  %give  p.gum
+          ?:  ?=(%unto +>-.p.r.gum)
+            [+>-.p.r.gum (term +>+<.p.r.gum)]
+          (symp +>-.p.r.gum)
+        `duct`q.gum
       [i.i.q.gum [~ t.i.q.gum] t.q.gum p.r.gum]
     ::
         $slip
@@ -691,10 +694,13 @@
               =^  rey  +>+  (^load +<)
               [rey +>.$]
     ::
-    ++  peek  |=(* (^peek ;;([@da path] +<)))      ::  46
+    ++  peek  |=  *                                     ::  46
+              =/  rob  (^peek ;;([@da path] +<))
+              ?~  rob  ~
+              ?~  u.rob  ~
+              [~ u.u.rob]
     ::
     ++  poke  |=  *                                     ::  47
-              ^-  [(list ovum) *]
               =>  .(+< ;;([now=@da ovo=ovum] +<))
               =^  ova  +>+.$  (^poke now ovo)
               =|  out=(list ovum)
@@ -758,12 +764,9 @@
 ::
 ++  peek                                                ::  external inspect
   |=  {now/@da hap/path}
-  ^-  (unit)
-  ?~  hap  [~ hoon-version]
-  =+  rob=((sloy ~(beck (is our vil eny bud vanes) now)) [151 %noun] hap)
-  ?~  rob  ~
-  ?~  u.rob  ~
-  [~ u.u.rob]
+  ^-  (unit (unit))
+  ?~  hap  [~ ~ hoon-version]
+  ((sloy ~(beck (is our vil eny bud vanes) now)) [151 %noun] hap)
 ::
 ++  poke                                                ::  external apply
   |=  [now=@da ovo=ovum]

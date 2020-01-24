@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+set -ex
+
+if [ -n "${TRAVIS_TAG-}" ]
+then
+  ver="$TRAVIS_TAG"
+elif [ -n "${TRAVIS_COMMIT-}" ]
+then
+  ver="$TRAVIS_COMMIT"
+else
+  ver="$(git rev-parse HEAD)"
+fi
+
+export STACK_YAML="`pwd`/pkg/hs/stack.yaml"
+
+mkdir -p release
+
+stack clean # Make sure we optimize
+
+stack install king                   \
+    --local-bin-path "`pwd`/release" \
+    --test --no-run-tests
+
+out="release/king-darwin-dynamic-$ver"
+
+mv release/king "$out"
+
+otool -L "$out"

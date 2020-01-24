@@ -58,6 +58,40 @@ _term_alloc(uv_handle_t* had_u,
   *buf = uv_buf_init(ptr_v, 123);
 }
 
+
+//  XX unused, but %hook is in %zuse.
+//  implement or remove
+//
+#if 0
+/* _term_close_cb(): free terminal.
+*/
+static void
+_term_close_cb(uv_handle_t* han_t)
+{
+  u3_utty* tty_u = (void*) han_t;
+  if ( u3_Host.uty_u == tty_u ) {
+    u3_Host.uty_u = tty_u->nex_u;
+  }
+  else {
+    u3_utty* uty_u;
+    for (uty_u = u3_Host.uty_u; uty_u; uty_u = uty_u->nex_u ) {
+      if ( uty_u->nex_u == tty_u ) {
+        uty_u->nex_u = tty_u->nex_u;
+        break;
+      }
+    }
+  }
+
+  {
+    u3_noun tid = u3dc("scot", c3__ud, tty_u->tid_l);
+    u3_noun pax = u3nq(u3_blip, c3__term, tid, u3_nul);
+    u3_pier_plan(u3k(pax), u3nc(c3__hook, u3_nul));
+    u3z(pax);
+  }
+  c3_free(tty_u);
+}
+#endif
+
 /* u3_term_io_init(): initialize terminal.
 */
 void
@@ -101,6 +135,13 @@ u3_term_io_init()
         c3_assert(uty_u->ufo_u.way.nam##_y); \
       }
 
+      uty_u->ufo_u.inn.max_w = 0;
+
+      _utfo(inn, kcuu1);
+      _utfo(inn, kcud1);
+      _utfo(inn, kcub1);
+      _utfo(inn, kcuf1);
+
       _utfo(out, clear);
       _utfo(out, el);
       // _utfo(out, el1);
@@ -112,6 +153,38 @@ u3_term_io_init()
       _utfo(out, cud1);
       // _utfo(out, cub);
       // _utfo(out, cuf);
+
+      //  Terminfo chronically reports the wrong sequence for arrow
+      //  keys on xterms.  Drastic fix for ridiculous unacceptable bug.
+      //  Yes, we could fix this with smkx/rmkx, but this is retarded as well.
+      {
+        uty_u->ufo_u.inn.kcuu1_y = (const c3_y*)"\033[A";
+        uty_u->ufo_u.inn.kcud1_y = (const c3_y*)"\033[B";
+        uty_u->ufo_u.inn.kcuf1_y = (const c3_y*)"\033[C";
+        uty_u->ufo_u.inn.kcub1_y = (const c3_y*)"\033[D";
+      }
+
+      uty_u->ufo_u.inn.max_w = 0;
+      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcuu1_y)) >
+            uty_u->ufo_u.inn.max_w )
+      {
+        uty_u->ufo_u.inn.max_w = len_w;
+      }
+      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcud1_y)) >
+            uty_u->ufo_u.inn.max_w )
+      {
+        uty_u->ufo_u.inn.max_w = len_w;
+      }
+      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcub1_y)) >
+            uty_u->ufo_u.inn.max_w )
+      {
+        uty_u->ufo_u.inn.max_w = len_w;
+      }
+      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcuf1_y)) >
+            uty_u->ufo_u.inn.max_w )
+      {
+        uty_u->ufo_u.inn.max_w = len_w;
+      }
     }
 
     //  Load old terminal state to restore.
@@ -252,8 +325,8 @@ _term_write_cb(uv_write_t* wri_u, c3_i sas_i)
     u3l_log("term: write: %s\n", uv_strerror(sas_i));
   }
 
-  free(wri_u->data);
-  free(wri_u);
+  c3_free(wri_u->data);
+  c3_free(wri_u);
 }
 
 /* _term_it_write_buf(): write buffer uv style.
@@ -290,7 +363,7 @@ _term_it_write_old(u3_utty* uty_u,
     memcpy(buf_y, old_u->hun_y, old_u->len_w);
     buf_u = uv_buf_init((c3_c*)buf_y, old_u->len_w);
 
-    free(old_u);
+    c3_free(old_u);
   }
   _term_it_write_buf(uty_u, buf_u);
 }
@@ -333,7 +406,7 @@ _term_it_show_wide(u3_utty* uty_u, c3_w len_w, c3_w* txt_w)
   c3_c*   txt_c = u3r_string(txt);
 
   _term_it_write_str(uty_u, txt_c);
-  free(txt_c);
+  c3_free(txt_c);
   u3z(txt);
 
   uty_u->tat_u.mir.cus_w += len_w;
@@ -392,7 +465,7 @@ _term_it_show_line(u3_utty* uty_u, c3_w* lin_w, c3_w len_w)
 
   if ( lin_w != uty_u->tat_u.mir.lin_w ) {
     if ( uty_u->tat_u.mir.lin_w ) {
-      free(uty_u->tat_u.mir.lin_w);
+      c3_free(uty_u->tat_u.mir.lin_w);
     }
     uty_u->tat_u.mir.lin_w = lin_w;
   }
@@ -496,8 +569,8 @@ _term_it_save(u3_noun pax, u3_noun pad)
 
   u3_walk_save(pax_c, 0, pad, bas_c, xap);
 
-  free(pax_c);
-  free(bas_c);
+  c3_free(pax_c);
+  c3_free(bas_c);
 }
 
 /* _term_io_belt(): send belt.
@@ -505,8 +578,6 @@ _term_it_save(u3_noun pax, u3_noun pad)
 static void
 _term_io_belt(u3_utty* uty_u, u3_noun  blb)
 {
-  // Here, we use scot just to build out the plan.
-  //
   u3_noun tid = u3dc("scot", c3__ud, uty_u->tid_l);
   u3_noun pax = u3nq(u3_blip, c3__term, tid, u3_nul);
 
@@ -660,7 +731,7 @@ _term_read_cb(uv_stream_t* tcp_u,
 {
   u3_utty* uty_u = (u3_utty*)(void*)tcp_u;
   _term_suck(uty_u, (const c3_y*)buf_u->base, siz_i);
-  free(buf_u->base);
+  c3_free(buf_u->base);
 }
 
 /* _term_spin_write_str(): write null-terminated string
@@ -764,7 +835,7 @@ u3_term_start_spinner(c3_c* why_c, c3_o now_o)
     u3_utty* uty_u = _term_main();
     u3_utat* tat_u = &uty_u->tat_u;
 
-    free(tat_u->  sun_u.why_c);
+    c3_free(tat_u->  sun_u.why_c);
     tat_u->sun_u.why_c = why_c;
 
     tat_u->sun_u.eve_d = 0;
@@ -848,7 +919,7 @@ u3_term_get_blew(c3_l tid_l)
   c3_l           col_l, row_l;
 
   struct winsize siz_u;
-  if ( (c3y == u3_Host.ops_u.tem) &&
+  if ( (c3n == u3_Host.ops_u.tem) &&
        uty_u && (0 == ioctl(uty_u->fid_i, TIOCGWINSZ, &siz_u)) )
   {
     col_l = siz_u.ws_col;
@@ -987,7 +1058,7 @@ _term_ef_blit(u3_utty* uty_u,
 
         _term_it_show_clear(uty_u);
         _term_it_write_str(uty_u, txt_c);
-        free(txt_c);
+        c3_free(txt_c);
 
         _term_it_show_more(uty_u);
         _term_it_refresh_line(uty_u);
