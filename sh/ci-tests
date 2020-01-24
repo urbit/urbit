@@ -4,7 +4,7 @@ set -ex
 
 export STACK_YAML="`pwd`/pkg/hs/stack.yaml"
 
-stack test king
+stack test urbit-king
 
 if [ "$TRAVIS_PULL_REQUEST" = false ]
 then
