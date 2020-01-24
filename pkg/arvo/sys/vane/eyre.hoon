@@ -1,7 +1,7 @@
 !:
 ::  lighter than eyre
 ::
-|=  pit=vase
+|=  our=ship
 =,  eyre
 ::  internal data structures
 ::
@@ -820,7 +820,7 @@
 ++  per-server-event
   ::  gate that produces the +per-server-event core from event information
   ::
-  |=  [[our=@p eny=@ =duct now=@da scry=sley] state=server-state]
+  |=  [[eny=@ =duct now=@da scry=sley] state=server-state]
   =/  eyre-id  (scot %ta (cat 3 'eyre_' (scot %uv (sham duct))))
   |%
   ::  +request-local: bypass authentication for local lens connections
@@ -2008,7 +2008,7 @@
   ::    XX cancel active too if =(0 trim-priority) ?
   ::
   ?:  ?=(%trim -.task)
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now scry-gate] server-state.ax]
     =*  by-channel  by-channel:(per-server-event event-args)
     =*  channel-state  channel-state.server-state.ax
     ::
@@ -2062,7 +2062,7 @@
         [closed-connections server-state.ax]
       ::
       =/  event-args
-        [[our eny duct.i.connections now scry-gate] server-state.ax]
+        [[eny duct.i.connections now scry-gate] server-state.ax]
       =/  cancel-request  cancel-request:(per-server-event event-args)
       =^  moves  server-state.ax  cancel-request
       ::
@@ -2081,7 +2081,7 @@
     ==
   ::  all other commands operate on a per-server-event
   ::
-  =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+  =/  event-args  [[eny duct now scry-gate] server-state.ax]
   =/  server  (per-server-event event-args)
   ::
   ?-    -.task
@@ -2207,7 +2207,7 @@
       [~ http-server-gate]
     ::  we have an error; propagate it to the client
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now scry-gate] server-state.ax]
     =/  handle-gall-error
       handle-gall-error:(per-server-event event-args)
     =^  moves  server-state.ax
@@ -2216,7 +2216,7 @@
   ::
   ++  watch-response
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now scry-gate] server-state.ax]
     ::
     ?>  ?=([@ *] t.wire)
     ?:  ?=([%g %unto %watch-ack *] sign)
@@ -2263,14 +2263,14 @@
     ::
     ?>  ?=([%f %made *] sign)
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now scry-gate] server-state.ax]
     =/  handle-ford-response  handle-ford-response:(per-server-event event-args)
     =^  moves  server-state.ax  (handle-ford-response result.sign)
     [moves http-server-gate]
   ::
   ++  channel
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now scry-gate] server-state.ax]
     ::  channel callback wires are triples.
     ::
     ?>  ?=([@ @ @t *] wire)

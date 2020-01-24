@@ -1,7 +1,7 @@
 !:
 ::  dill (4d), terminal handling
 ::
-|=  pit/vase
+|=  our=ship
 =,  dill
 =>  |%                                                  ::  interface tiles
 ++  gill  (pair ship term)                              ::  general contact
@@ -144,7 +144,7 @@
 ::::::::                                                ::  dill tiles
 --
 =|  all/axle
-|=  [our=ship now=@da eny=@uvJ ski=sley]                ::  current invocation
+|=  [now=@da eny=@uvJ ski=sley]                         ::  current invocation
 =>  |%
     ++  as                                              ::  per cause
       =|  moz/(list move)

@@ -1,8 +1,7 @@
 !:  ::  %gall, agent execution
 !?  163
-!:
 ::::
-|=  pit=vase
+|=  our=ship
 =,  gall
 =>  =~
 |%
@@ -145,10 +144,7 @@
 --
 .  ==
 =|  =state
-|=  $:  :: identity
-        ::
-        our=ship
-        :: urban time
+|=  $:  :: urban time
         ::
         now=@da
         :: entropy

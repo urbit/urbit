@@ -903,13 +903,13 @@
 --
 ::  external vane interface
 ::
-|=  pit=vase
+|=  our=ship
 ::  larval ames, before %born sets .unix-duct; wraps adult ames core
 ::
 =<  =*  adult-gate  .
     =|  queued-events=(qeu queued-event)
     ::
-    |=  [our=ship now=@da eny=@ scry-gate=sley]
+    |=  [now=@da eny=@ scry-gate=sley]
     =*  larval-gate  .
     =*  adult-core   (adult-gate +<)
     |%
@@ -1042,7 +1042,7 @@
 ::
 =<
 =|  =ames-state
-|=  [our=ship now=@da eny=@ scry-gate=sley]
+|=  [now=@da eny=@ scry-gate=sley]
 =*  ames-gate  .
 =*  veb  veb.bug.ames-state
 |%
@@ -1054,7 +1054,7 @@
   ::
   =/  =task  ((harden task) wrapped-task)
   ::
-  =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
+  =/  event-core  (per-event [now eny scry-gate] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
@@ -1080,7 +1080,7 @@
   |=  [=wire =duct type=* =sign]
   ^-  [(list move) _ames-gate]
   ::
-  =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
+  =/  event-core  (per-event [now eny scry-gate] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
@@ -1166,7 +1166,7 @@
 |%
 ++  per-event
   =|  moves=(list move)
-  |=  [[our=ship now=@da eny=@ scry-gate=sley] =duct =ames-state]
+  |=  [[now=@da eny=@ scry-gate=sley] =duct =ames-state]
   =*  veb  veb.bug.ames-state
   |%
   ++  event-core  .

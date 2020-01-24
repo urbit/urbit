@@ -9,7 +9,7 @@
 ::  worth noting that many of the clay-related structures are defined in zuse.
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-|=  pit/vase
+|=  our=ship
 =,  clay
 =>  |%
 +$  aeon  @ud                                           ::  version number
@@ -4057,7 +4057,7 @@
     $:  ver=%2                                        ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
-|=  [our=ship now=@da eny=@uvJ ski=sley]              ::  current invocation
+|=  [now=@da eny=@uvJ ski=sley]                       ::  current invocation
 ^?                                                    ::  opaque core
 |%                                                    ::
 ++  call                                              ::  handle request

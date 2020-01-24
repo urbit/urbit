@@ -15,7 +15,6 @@
 ::      - scry namespace
 ::      - task for converting invites to tickets
 ::
-|=  pit/vase
 =,  pki:jael
 =,  able:jael
 =,  crypto
@@ -24,6 +23,7 @@
 =,  rpc
 =,  azimuth
 =,  point=point:able:jael
+|=  our=ship
 ::                                                      ::::
 ::::                    # models                        ::  data structures
   ::                                                    ::::
@@ -167,11 +167,9 @@
   ::  vane interface when that gets cleaned up a bit.
   ::
   =|  moz/(list move)
-  =|  $:  $:  ::  our: identity
-              ::  now: current time
+  =|  $:  $:  ::  now: current time
               ::  eny: unique entropy
               ::
-              our=ship
               now=@da
               eny=@uvJ
           ==
@@ -304,7 +302,7 @@
         (~(gas by points) spon-points)
       =.  +>.$
         %-  curd  =<  abet
-        (public-keys:~(feel su hen our now pki etn) %full points)
+        (public-keys:~(feel su hen now pki etn) %full points)
       ::
       ::  start subscriptions
       ::
@@ -315,21 +313,21 @@
         ::
         ?:  &
           %-  curd  =<  abet
-          (sources:~(feel su hen our now pki etn) ~ [%| %azimuth-tracker])
+          (sources:~(feel su hen now pki etn) ~ [%| %azimuth-tracker])
         ::
         ?-    (clan:title our)
             %czar
           %-  curd  =<  abet
-          (sources:~(feel su hen our now pki etn) ~ [%| %azimuth-tracker])
+          (sources:~(feel su hen now pki etn) ~ [%| %azimuth-tracker])
         ::
             *
           =.  +>.$
             %-  curd  =<  abet
-            %+  sources:~(feel su hen our now pki etn)
+            %+  sources:~(feel su hen now pki etn)
               (silt (turn spon-points head))
             [%| %azimuth-tracker]
           %-  curd  =<  abet
-          (sources:~(feel su hen our now pki etn) ~ [%& (need spon-ship)])
+          (sources:~(feel su hen now pki etn) ~ [%& (need spon-ship)])
         ==
       ::
       =.  moz
@@ -398,7 +396,7 @@
         %listen
       ~&  [%jael-listen whos source]:tac
       %-  curd  =<  abet
-      (sources:~(feel su hen our now pki etn) [whos source]:tac)
+      (sources:~(feel su hen now pki etn) [whos source]:tac)
     ::
     ::  cancel all trackers from duct
     ::    {$nuke whos=(set ship)}
@@ -430,7 +428,7 @@
     ::
         %rekey
       %-  curd  =<  abet
-      (private-keys:~(feel su hen our now pki etn) life.tac ring.tac)
+      (private-keys:~(feel su hen now pki etn) life.tac ring.tac)
     ::
     ::  update private keys
     ::
@@ -442,14 +440,14 @@
         ~&  [%not-our-moon ship.tac]
         +>.$
       %-  curd  =<  abet
-      (~(new-event su hen our now pki etn) [ship udiff]:tac)
+      (~(new-event su hen now pki etn) [ship udiff]:tac)
     ::
     ::  watch public keys
     ::    [%public-keys ships=(set ship)]
     ::
         %public-keys
       %-  curd  =<  abet
-      (~(public-keys ~(feed su hen our now pki etn) hen) ships.tac)
+      (~(public-keys ~(feed su hen now pki etn) hen) ships.tac)
     ::
     ::  seen after breach
     ::    [%meet our=ship who=ship]
@@ -485,7 +483,7 @@
     ::    {$private-keys $~}
     ::
         %private-keys
-      (curd abet:~(private-keys ~(feed su hen our now pki etn) hen))
+      (curd abet:~(private-keys ~(feed su hen now pki etn) hen))
     ::
         %wegh
       %_    +>
@@ -539,7 +537,7 @@
         [%a %boon *]
       =+  ;;  [%public-keys-result =public-keys-result]  payload.hin
       %-  curd  =<  abet
-      (public-keys:~(feel su hen our now pki etn) public-keys-result)
+      (public-keys:~(feel su hen now pki etn) public-keys-result)
     ::
         [%a %lost *]
       ::  TODO: better error handling
@@ -558,7 +556,7 @@
       =/  =source  (~(got by sources.etn) source-id)
       =/  ships  (~(get ju ship-sources-reverse.etn) source-id)
       %-  curd  =<  abet
-      (sources:~(feel su hen our now pki etn) ships source)
+      (sources:~(feel su hen now pki etn) ships source)
     ::
         [%g %onto *]
       ~&  [%jael-onto tea hin]
@@ -584,7 +582,7 @@
         =*  app  i.tea
         =/  =peer-sign  ;;(peer-sign q.q.cage.p.+>.hin)
         %-  curd  =<  abet
-        (~(new-event su hen our now pki etn) peer-sign)
+        (~(new-event su hen now pki etn) peer-sign)
       ==
     ==
   ::                                                    ::  ++curd:of
@@ -609,7 +607,6 @@
       ::
   =|  moz=(list move)
   =|  $:  hen=duct
-          our=ship
           now=@da
           state-pki
           state-eth-node
@@ -617,8 +614,8 @@
   ::  moz: moves in reverse order
   ::  pki: relative urbit state
   ::
-  =*  pki  ->+>-
-  =*  etn  ->+>+
+  =*  pki  ->+<
+  =*  etn  ->+>
   |%
   ++  this-su  .
   ::                                                    ::  ++abet:su
@@ -946,17 +943,11 @@
 ::  lex: all durable %jael state
 ::
 =|  lex/state
-|=  $:  ::
-        ::  our: identity
-        ::  now: current time
-        ::  eny: unique entropy
-        ::  ski: namespace resolver
-        ::
-        our=ship
-        now=@da
-        eny=@uvJ
-        ski=sley
-    ==
+|=  ::  now: current time
+    ::  eny: unique entropy
+    ::  ski: namespace resolver
+    ::
+    [now=@da eny=@uvJ ski=sley]
 ^?
 |%
 ::                                                      ::  ++call
@@ -970,7 +961,7 @@
   ^-  [(list move) _..^$]
   =/  =task:able  ((harden task:able) q.hic)
   =^  did  lex
-    abet:(~(call of [our now eny] lex) hen task)
+    abet:(~(call of [now eny] lex) hen task)
   [did ..^$]
 ::                                                      ::  ++load
 ++  load                                                ::  upgrade
@@ -1155,7 +1146,7 @@
     ?~  who  [~ ~]
     :^  ~  ~  %atom
     !>  ^-  ship
-    (~(sein of [our now eny] lex) u.who)
+    (~(sein of [now eny] lex) u.who)
   ::
       %saxo
     ?.  ?=([@ ~] tyl)  [~ ~]
@@ -1165,7 +1156,7 @@
     ?~  who  [~ ~]
     :^  ~  ~  %noun
     !>  ^-  (list ship)
-    (~(saxo of [our now eny] lex) u.who)
+    (~(saxo of [now eny] lex) u.who)
   ::
       %subscriptions
     ?.  ?=([@ ~] tyl)  [~ ~]
@@ -1197,6 +1188,6 @@
           hin/(hypo sign)
       ==
   ^-  [(list move) _..^$]
-  =^  did  lex  abet:(~(take of [our now eny] lex) tea hen q.hin)
+  =^  did  lex  abet:(~(take of [now eny] lex) tea hen q.hin)
   [did ..^$]
 --

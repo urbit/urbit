@@ -1,8 +1,8 @@
-::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-~>  %slog.[0 leaf+"%arvo-assembly"]
-=-  ~>  %slog.[0 leaf+"%arvo-assembled"]
+~>  %slog.[0 leaf+"%arvo: assembly"]
+=-  ~>  %slog.[0 leaf+"%arvo: assembled"]
     -
 =<  ::
     ::  Arvo formal interface
@@ -58,7 +58,8 @@
 +$  scry-sample
   [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
 +$  vane-sample
-  [our=ship now=@da eny=@uvJ ski=slyd]
+  $~  [~2000.1.1 *@uvJ =>(~ |~(* ~))]
+  [now=@da eny=@uvJ ski=slyd]
 ++  ship  @p                                            ::  network identity
 ++  sink  (trel bone ship path)                         ::  subscription
 ++  sley  $-  {* (unit (set monk)) term beam}           ::  namespace function
@@ -86,6 +87,25 @@
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, Arvo core                ::
+::
+::  +vale: compile zuse or vane from source or produce error
+::
+::    sut: compilation subject
+::    lal: vane label, or %$ for zuse
+::    pax: source filepath
+::    txt: hoon source
+::
+++  vale
+  |=  [sut=vase lal=@tas pax=path txt=@t]
+  ^-  (each vase tang)
+  %-  mule  |.
+  =/  label  ?+(lal "vane: %{(trip lal)}" %$ "zuse:")
+  ~>  %slog.0^leaf/"{label} {(spud pax)} {(scow %p (mug txt))}"
+  =/  gen  (rain pax txt)
+  ~>  %slog.0^leaf/"{label} parsed {(scow %p (mug gen))}"
+  =/  vax  (slap sut gen)
+  ~>  %slog.0^leaf/"{label} compiled {(scow %p (mug vax))}"
+  vax
 ::
 ++  sloy
   ::  +sloy: adapter from old style scrys to new style scrys
@@ -172,12 +192,19 @@
     ^=  res  %-  mule  |.
     ::  XX should use real entropy and the real date
     ::
-    =/  arg=vane-sample
-      [who ~2000.1.1 *@uvJ =>(~ |~(* ~))]
-    =+  rig=(slym vase.vane arg)
-    =+  gen=(rain pax txt)
-    =+  rev=(slym (slap bud gen) bud)
-    =+  syg=(slym rev arg)
+    =/  eve=vase  !>(*vane-sample)
+    =/  old=vase
+      ~>  %slog.0^(sell vase.vane)
+      ~|  [%failed-ruck-old lal]
+      -:(~(slam wa worm.vane) vase.vane eve)
+    ::
+    =/  res  (vale bud lal pax txt)
+    ?:  ?=(%| -.res)
+      ((slog >[%failed-ruck-new lal]< p.res) +>.^$)
+    =/  rev=vase  (slam p.res !>(who))
+    ~>  %slog.0^(sell rev)
+    =/  new=vase  (slam rev eve)
+    ~>  %slog.0^(sell new)
     ::  update the vane itself
     ::
     ::    We don't cache the n+slap/+slam types because they're only used once
@@ -185,7 +212,7 @@
     ::
     =.  vase.vane
       ~|  %load-lost
-      (slam (slap syg [%limb %load]) (slap rig [%limb %stay]))
+      (slam (slap new [%limb %load]) (slap old [%limb %stay]))
     ::  prime the new compiler cache
     ::
     prime
@@ -204,7 +231,7 @@
       ::  reset cache and add in vane activation entry
       ::
       =^  rig  worm.vane
-        (~(slym wa *worm) vase.vane *vane-sample)
+        (~(slam wa *worm) vase.vane !>(*vane-sample))
       ::  cache the access of the %scry arm
       ::
       +:(~(slap wa worm.vane) rig [%limb %scry])
@@ -212,9 +239,11 @@
   ::
   ++  wink                                              ::  deploy
     |=  {now/@da eny/@ ski/slyd}
+    ::  activate vane
+    ::
     =^  rig  worm.vane
       ~|  [%failed-vane-activation-for lal]
-      (~(slym wa worm.vane) vase.vane `vane-sample`[who +<])  ::  activate vane
+      (~(slam wa worm.vane) vase.vane !>(`vane-sample`+<))
     ~%  %wink  +>+>  ~
     |%
     ++  slid
@@ -371,10 +400,9 @@
             `coin`[%$ r.bed]
             (flop s.bed)
         ==
-      ^-  (unit (unit (cask milt)))
       =+  fun=-:(~(slap wa worm.vane) rig [%limb %scry])
       ::
-      %-  (unit (unit (cask milt)))
+      ;;  (unit (unit (cask milt)))
       (slum q.fun old)
     ::
     ++  soar                                            ::  scrub vane
@@ -428,14 +456,13 @@
           pax=path
           txt=@ta
       ==
+  =/  vex  (vale bud lal pax txt)
+  ?:  ?=(%| -.vex)
+    ((slog p.vex) ~)
   =-  ?:(?=(%| -.res) ((slog p.res) ~) (some p.res))
   ^=  res  %-  mule  |.
-  ~|  [%failed-vint lal]
-  =+  gen=(rain pax txt)
-  ~&  [%vane-parsed `@p`(mug gen)]
-  =+  pro=(vent who lal vil bud [(slym (slap bud gen) bud) *worm])
-  ~&  [%vane-compiled `@p`(mug pro)]
-  prime:pro
+  =/  vax  (slam p.vex !>(who))
+  prime:(vent who lal vil bud [vax *worm])
 ::
 ++  viol                                                ::  vane tools
   |=  but/type
@@ -601,16 +628,18 @@
     ::    the larval stage directly into the actual kernel.
     ::
     ::    For convenience, this larval stage also supports hoon compilation
-    ::    with +wish and vane installation with the %veer event.
+    ::    with +wish and vane compilation with the %veer event.
     ::
     =/  pit=vase  !>(..is)
     =|  $:  ::  who: our identity once we know it
             ::  eny: entropy once we learn it
             ::  bod: %zuse once we receive it
+            ::  von: compiled, uninitialized vanes, keyed by label
             ::
             who=(unit ship)
             eny=(unit @)
             bod=(unit vase)
+            von=(map @tas vase)
         ==
     ::  larval Arvo structural interface
     ::
@@ -623,45 +652,59 @@
               ^-  [(list ovum) *]
               =>  .(+< ;;([now=@da ovo=ovum] +<))
               ^-  [(list ovum) *]
-              =.  +>.$
+              =*  larva  ..poke
+              ::  apply poke to larva
+              ::
+              =.  larva
                 ?+  -.q.ovo
                   ::  ignore unrecognized
                   ::
                   ~&  [%larval-ignore p.ovo -.q.ovo]
-                  +>.$
-                ::  install %zuse or vane
+                  larva
+                ::  (re)install %zuse or vane
                 ::
                     %veer
-                  ^+  +>.$
-                  ::  use the maximum comet if we don't know who we are yet
-                  ::
-                  =/  our
-                    ?^  who
-                      u.who
-                    =/  fip=ship  (dec (bex 128))
-                    ~>(%slog.[0 leaf+"arvo: larval identity {(scow %p fip)}"] fip)
-                  =.  ..veer  (veer our now q.ovo)
-                  +>.$(bod ?^(bod bod `bud.^poke))
+                  ^+  larva
+                  =+  ;;([lal=@tas pax=path txt=@t] +.q.ovo)
+                  ?:  =(%$ lal)
+                    =/  zus  (vale pit lal pax txt)
+                    ?:  ?=(%| -.zus)
+                      ((slog p.zus) larva)
+                    larva(bod `p.zus)
+                  ?>  ?=(^ bod)
+                  =/  van  (vale u.bod lal pax txt)
+                  ?:  ?=(%| -.van)
+                    ((slog p.van) larva)
+                  ~&  %veer^lal
+                  ~>  %slog.0^(sell p.van)
+                  larva(von (~(put by von) lal p.van))
                 ::  add entropy
                 ::
                     %wack
-                  ^+  +>.$
+                  ^+  larva
                   ?>  ?=(@ q.q.ovo)
-                  +>.$(eny `q.q.ovo)
+                  larva(eny `q.q.ovo)
                 ::  become who you were born to be
                 ::
                     %whom
-                  ^+  +>.$
+                  ^+  larva
                   ?>  ?=(@ q.q.ovo)
-                  +>.$(who `q.q.ovo)
+                  larva(who `q.q.ovo)
                 ==
-              ::  upgrade once we've accumulated identity, entropy, and %zuse
+              ::  metamorphose once we have identity, entropy, and %zuse
               ::
               ?.  &(?=(^ who) ?=(^ eny) ?=(^ bod))
-                [~ +>.$]
-              ~>  %slog.[0 leaf+"arvo: metamorphosis"]
-              =/  nyf
-                (turn vanes.^poke |=([label=@tas =vane] [label vase.vane]))
+                [~ larva]
+              ::  initialize vanes with identity
+              ::
+              ~>  %slog.0^leaf/"arvo: adsorption"
+              =/  nyf=pane
+                %~  tap  by
+                %-  ~(run by von)
+                |=(vax=vase (slam vax !>(u.who)))
+              ::  install vanes, metamorphosing to adult
+              ::
+              ~>  %slog.0^leaf/"arvo: metamorphosis"
               (load u.who now u.eny ova=~ u.bod nyf)
     ::
     ++  wish  |=  txt=*                                 ::  22
@@ -816,7 +859,7 @@
   ::  install %zuse or vane
   ::
       %veer
-    [~ (veer our now q.ovo)]
+    [~ (veer now q.ovo)]
   ::  add data to memory profile
   ::
       %mass
@@ -884,7 +927,7 @@
   ::  compile the hoon.hoon source with the current compiler
   ::
   =/  raw
-    ~&  [%hoon-compile `@p`(mug hun)]
+    ~>  %slog.0^leaf/"arvo: hoon-compile {(scow %p (mug hun))}"
     (ride %noun hun)
   ::  activate the new compiler gate, producing +ride
   ::
@@ -900,7 +943,7 @@
   ::
   =>  ?:  =(nex hoon-version)
         [hot=`*`raw .]
-      ~&  [%hoon-compile-upgrade nex]
+      ~>  %slog.0^leaf/"arvo: hoon-compile-upgrade {(scow %p (mug hun))}"
       =/  hot  (slum cop [%noun hun])
       .(cop .*(0 +.hot))
   ::  extract the hoon core from the outer gate (+ride)
@@ -912,7 +955,9 @@
   ::  compile arvo
   ::
   =/  rav
-    ~&  [%arvo-compile `@p`(mug hyp) `@p`(mug van)]
+    =/  hyp-mug  (scow %p (mug hyp))
+    =/  van-mug  (scow %p (mug van))
+    ~>  %slog.0^leaf/"arvo: arvo-compile {hyp-mug} {van-mug}"
     (slum cop [hyp van])
   ::  activate arvo, and extract the arvo core from the outer gate
   ::
@@ -950,35 +995,34 @@
   [((list ovum) -.out) +.out]
 ::  +veer: install %zuse or a vane
 ::
-::    Identity is in the sample so the larval stage
-::    can use this as well.
-::
 ++  veer
-  |=  [who=ship now=@da fav=curd]
-  =>  .(fav ;;({$veer lal/@ta pax/path txt/@t} fav))
+  |=  [now=@da fav=curd]
+  =+  ;;([%veer lal=@ta pax=path txt=@t] fav)
+  ?:  =(%$ lal)
+    =/  res  (vale pit lal pax txt)
+    ?:  ?=(%| -.res)
+      ((slog p.res) +>.$)
+    +>.$(bud p.res)
   =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
   ^=  res  %-  mule  |.
-  ?:  =(%$ lal.fav)
-    ~&  [%tang pax.fav `@p`(mug txt.fav)]
-    =+  gen=(rain pax.fav txt.fav)
-    =+  vax=(slap pit gen)
-    +>.^$(bud vax)
+  =/  mug-txt  (scow %p (mug txt))
   %_    +>.^$
       vanes
     |-  ^+  vanes
     ?~  vanes
-      ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
-      =+  vin=(vint who lal.fav vil bud pax.fav txt.fav)
+      ~>  %slog.0^leaf/"vane: %{(trip lal)} {(spud pax)} {mug-txt}"
+      =+  vin=(vint our lal vil bud pax txt)
       ?~  vin
         vanes
-      [[lal.fav vane:u.vin] vanes]
-    ?.  =(lal.fav label.i.vanes)
+      [[lal vane:u.vin] vanes]
+    ?.  =(lal label.i.vanes)
       [i.vanes $(vanes t.vanes)]
-    ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
+    ~>  %slog.0^leaf/"vane: %{(trip lal)} {(spud pax)} {mug-txt}"
     :_  t.vanes
     :-  label.i.vanes
-    ~|  [%failed-vane-activation now lal.fav]
-    vane:(ruck:(vent who lal.fav vil bud [vase.vane.i.vanes *worm]) pax.fav txt.fav)
+    ~|  [%failed-vane-activation now lal]
+    =/  ven  (vent our lal vil bud [vase.vane.i.vanes *worm])
+    vane:(ruck:ven pax txt)
   ==
 ::
 ++  wish                                                ::  external compute

@@ -1,7 +1,7 @@
 !:
 ::  http-client
 ::
-|=  pit=vase
+|=  our=ship
 =,  iris
 ::
 ::
@@ -102,7 +102,7 @@
 ::  +per-client-event: per-event client core
 ::
 ++  per-client-event
-  |=  [[our=@p eny=@ =duct now=@da scry=sley] =state]
+  |=  [[eny=@ =duct now=@da scry=sley] =state]
   |%
   ::  +request: makes an external web request
   ::
@@ -297,7 +297,7 @@
 =|  ax=axle
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
-|=  [our=ship now=@da eny=@uvJ scry-gate=sley]
+|=  [now=@da eny=@uvJ scry-gate=sley]
 ::  allow jets to be registered within this core
 ::
 ~%  %http-client  ..is  ~
@@ -322,7 +322,7 @@
   ?:  ?=(%vega -.task)
     [~ light-gate]
   ::
-  =/  event-args  [[our eny duct now scry-gate] state.ax]
+  =/  event-args  [[eny duct now scry-gate] state.ax]
   =/  client  (per-client-event event-args)
   ?-    -.task
   ::

@@ -3,7 +3,7 @@
 !?  164
 ::
 =,  behn
-|=  pit=vase
+|=  our=ship
 =>  |%
     +$  move  [p=duct q=(wind note gift:able)]
     +$  note                                            ::  out request $->
@@ -37,7 +37,7 @@
 =>  |%
 ++  per-event
   =|  moves=(list move)
-  |=  [[our=ship now=@da =duct] state=behn-state]
+  |=  [[now=@da =duct] state=behn-state]
   ::
   |%
   ::  %entry-points
@@ -238,7 +238,7 @@
 ::
 =|  behn-state
 =*  state  -
-|=  [our=ship now=@da eny=@uvJ ski=sley]
+|=  [now=@da eny=@uvJ ski=sley]
 =*  behn-gate  .
 ^?
 |%
@@ -253,7 +253,7 @@
   ::
   =/  =task:able  ((harden task:able) wrapped-task)
   ::
-  =/  event-core  (per-event [our now hen] state)
+  =/  event-core  (per-event [now hen] state)
   ::
   =^  moves  state
     ?-  -.task
@@ -294,7 +294,7 @@
   |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [(list move) _behn-gate]
   ?>  ?=([%drip @ ~] tea)
-  =/  event-core  (per-event [our now hen] state)
+  =/  event-core  (per-event [now hen] state)
   =^  moves  state
     (take-drip:event-core (slav %ud i.t.tea) error.q.hin)
   [moves behn-gate]

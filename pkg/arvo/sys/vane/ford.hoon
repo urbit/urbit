@@ -123,10 +123,10 @@
 ::
 ::  pit: a +vase of the hoon+zuse kernel, which is a deeply nested core
 ::
-|=  pit=vase
-::
 =,  contain
 =,  ford
+|=  our=ship
+=/  pit=vase  !>(..zuse)
 ::  ford internal data structures
 ::
 =>  =~
@@ -1106,7 +1106,7 @@
   ::    Produces a core containing Ford's main build engine.
   ::
   ~%  %f  ..is  ~
-  |=  [[our=@p =duct now=@da scry=sley] state=ford-state]
+  |=  [[=duct now=@da scry=sley] state=ford-state]
   ::
   ~%  %per-event  +  ~
   |%
@@ -6107,7 +6107,7 @@
 ::  a vane is activated with identity, the current date, entropy,
 ::  and a namespace function
 ::
-|=  [our=ship now=@da eny=@uvJ scry-gate=sley]
+|=  [now=@da eny=@uvJ scry-gate=sley]
 =*  ford-gate  .
 ::  allow jets to be registered within this core
 ::
@@ -6132,7 +6132,7 @@
   =/  task=task:able  ((harden task:able) wrapped-task)
   ::  we wrap +per-event with a call that binds our event args
   ::
-  =*  this-event  (per-event [our duct now scry-gate] state.ax)
+  =*  this-event  (per-event [duct now scry-gate] state.ax)
   ::
   ?-    -.task
       ::  %build: request to perform a build
@@ -6284,7 +6284,7 @@
       |-  ^+  [moves state.ax]
       ?~  ducts  [moves state.ax]
       ::
-      =*  event-args  [[our i.ducts now scry-gate] state.ax]
+      =*  event-args  [[i.ducts now scry-gate] state.ax]
       =*  rebuild  rebuild:(per-event event-args)
       =^  duct-moves  state.ax
         (rebuild subscription p.case-sign disc care-paths-sign)
@@ -6319,7 +6319,7 @@
       |-  ^+  [moves state.ax]
       ?~  ducts  [moves state.ax]
       ::
-      =*  event-args  [[our i.ducts now scry-gate] state.ax]
+      =*  event-args  [[i.ducts now scry-gate] state.ax]
       ::  unblock the builds that had blocked on :resource
       ::
       =*  unblock  unblock:(per-event event-args)
