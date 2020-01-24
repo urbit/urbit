@@ -22,23 +22,52 @@
   $:  =ship
       page
   ==
+::  +note: a comment on some url
++$  note
+  $:  =time
+      udon=@t
+  ==
+::  +comment: a comment by a ship on some url
+::
++$  comment
+  $:  =ship
+      note
+  ==
 ::  lists, reverse chronological / newest first
 ::
 +$  pages        (list page)
 +$  submissions  (list submission)
++$  notes        (list note)
++$  comments     (list comment)
 ::
 ::  +action: local actions
 ::
 +$  action
-  $%  [%add =path title=@t =url]
-      [%hear =path from=ship =page]  ::TODO  just =submission?
+  $%  ::    user actions
+      ::
+      ::  %save: save page to path on our ship
+      ::
+      [%save =path title=@t =url]
+      ::  %note: save a note for a url
+      ::
+      [%note =path =url udon=@t]
+      ::    hook actions
+      ::
+      ::  %hear: hear about page at path on other ship
+      ::
+      [%hear =path submission]
+      ::  %read: hear about note on url from ship
+      ::
+      [%read =path =url comment]
   ==
 ::  +update: local updates
 ::
-::NOTE  we include paths explicitly to support the "subscribed to all" case
+::NOTE  we include paths/urls to support the "subscribed to all" case
 ::
 +$  update
   $%  [%local-pages =path =pages]
       [%submissions =path =submissions]
+      [%annotations =path =url =notes]
+      [%discussions =path =url =comments]
   ==
 --

@@ -7,4 +7,4 @@
     ==
 :-  %link-action
 ^-  action
-[%add path title url]
+[%save path title url]

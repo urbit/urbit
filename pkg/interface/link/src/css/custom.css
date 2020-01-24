@@ -1,0 +1,146 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+p, h1, h2, h3, h4, h5, h6, a, input, textarea, button {
+  margin-block-end: unset;
+  margin-block-start: unset;
+  -webkit-margin-before: unset;
+  -webkit-margin-after: unset;
+  font-family: Inter, sans-serif;
+  padding: 0;
+}
+
+textarea, input, button {
+  outline: none;
+  -webkit-appearance: none;
+  border: none;
+  background-color: #fff;
+}
+
+h2 {
+  font-weight: 400;
+}
+
+a {
+  color: #000;
+  text-decoration: none;
+}
+
+.inter {
+  font-family: Inter, sans-serif;
+}
+
+.clamp-3 {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.clamp-message {
+  max-width: calc(100% - 36px - 1.5rem);
+}
+
+.clamp-attachment {
+  overflow: scroll;
+  max-height: 10em;
+  max-width: 100%;
+}
+
+.lh-16 {
+  line-height: 16px;
+}
+
+.mono {
+  font-family: "Source Code Pro", monospace;
+}
+
+.c-default {
+  cursor: default;
+}
+
+.m0a {
+  margin: 0 auto;
+}
+
+/* responsive */
+@media all and (max-width: 34.375em) {
+  .dn-s {
+    display: none;
+  }
+  .flex-basis-100-s, .flex-basis-full-s {
+    flex-basis: 100%;
+  }
+  .h-100-m-40-s {
+    height: calc(100% - 40px);
+  }
+  .black-s {
+    color: #000;
+  }
+}
+
+@media all and (min-width: 34.375em) {
+  .db-ns {
+    display: block;
+  }
+  .flex-basis-30-ns {
+    flex-basis: 30vw;
+  }
+  .h-100-m-40-ns {
+    height: calc(100% - 40px);
+  }
+}
+
+@media all and (prefers-color-scheme: dark) {
+  body {
+    background-color: #333;
+  }
+  .bg-black-d {
+    background-color: black;
+  }
+  .white-d {
+    color: white;
+  }
+  .gray1-d {
+    color: #4d4d4d;
+  }
+  .gray2-d {
+    color: #7f7f7f;
+  }
+  .gray3-d {
+    color: #b1b2b3;
+  }
+  .gray4-d {
+    color: #e6e6e6;
+  }
+  .bg-gray0-d {
+    background-color: #333;
+  }
+  .bg-gray1-d {
+    background-color: #4d4d4d;
+  }
+  .b--gray0-d {
+    border-color: #333;
+  }
+  .b--gray2-d {
+    border-color: #7f7f7f;
+  }
+  .bb-d {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+  }
+  .invert-d {
+    filter: invert(1);
+  }
+  .o-60-d {
+    opacity: .6;
+  }
+  a {
+    color: #fff;
+  }
+}

@@ -112,6 +112,10 @@
       %contact-store
       %contact-hook
       %contact-view
+      %link-store
+      %link-proxy-hook
+      %link-listen-hook
+      %link-server-hook
   ==
 ::
 ++  deft-fish                                           ::  default connects

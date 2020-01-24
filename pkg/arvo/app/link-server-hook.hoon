@@ -39,8 +39,8 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    :_  this
-    [start-serving:do]~
+    :-  [start-serving:do launch-tile:do ~]
+    this
   ::
   ++  on-save  !>(state)
   ++  on-load
@@ -52,6 +52,8 @@
     |=  =path
     ^-  (quip card _this)
     ?:  ?=([%http-response *] path)
+      [~ this]
+    ?:  =(/primary path)
       [~ this]
     (on-watch:def path)
   ::
@@ -93,15 +95,30 @@
   ^-  card
   [%pass / %arvo %e %connect [~ /'~link'] dap.bowl]
 ::
+++  launch-tile
+  ^-  card
+  (launch-poke [%link-server-hook /primary '/~link/js/tile.js'])
+::
+::
+++  launch-poke
+  |=  act=[@tas path @t]
+  ^-  card
+  [%pass / %agent [our.bowl %launch] %poke %launch-action !>(act)]
+::
 ++  do-action
   |=  =action
   ^-  card
   [%pass / %agent [our.bowl %link-store] %poke %link-action !>(action)]
 ::
-++  do-add
+++  do-save
   |=  [=path title=@t =url]
   ^-  card
-  (do-action %add path title url)
+  (do-action %save path title url)
+::
+++  do-note
+  |=  [=path =url udon=@t]
+  ^-  card
+  (do-action %note path url udon)
 ::
 ++  handle-http-request
   |=  [eyre-id=@ta =inbound-request:eyre]
@@ -112,8 +129,7 @@
   ?.  ?&  authenticated.inbound-request
           =(src.bowl our.bowl)
       ==
-    ::TODO  `*octs -> ~ everywhere once no-data bug is fixed
-    (give-simple-payload:app eyre-id [[403 ~] `*octs])
+    (give-simple-payload:app eyre-id [[403 ~] ~])
   ::  request-line: parsed url + params
   ::
   =/  =request-line
@@ -125,7 +141,7 @@
     (give-simple-payload:app eyre-id simple-payload)
   ?+  method.request.inbound-request  [~ not-found:gen]
       %'OPTIONS'
-    [~ (include-cors-headers req-head [[200 ~] `*octs])]
+    [~ (include-cors-headers req-head [[200 ~] ~])]
   ::
       %'GET'
     [~ (handle-get req-head request-line)]
@@ -146,20 +162,36 @@
     ::      actually fail right now, so it's fine.
     [[?:(success 200 400) ~] `*octs]
   ?~  body  [| ~]
+  =/  jon=(unit json)  (de-json:html q.u.body)
+  ?~  jon  [| ~]
   ?+  request-line  [| ~]
-      [[~ [%'~link' %add ^]] ~]
+      [[~ [%'~link' %save ~]] ~]
     ^-  [? (list card)]
-    =/  jon=(unit json)  (de-json:html q.u.body)
-    ?~  jon  [| ~]
-    =/  page=(unit [title=@t =url])
+    =/  page=(unit [=path title=@t =url])
       %.  u.jon
-      (ot title+so url+so ~):dejs-soft:format
+      =,  dejs-soft:format
+      =+  (su ;~(pfix net (more net urs:ab)))
+      (ot path+- title+so url+so ~)
     ?~  page  [| ~]
-    [& [(do-add t.t.site.request-line [title url]:u.page) ~]]
+    [& [(do-save u.page) ~]]
+  ::
+      [[~ [%'~link' %note ~]] ~]
+    ^-  [? (list card)]
+    =/  note=(unit [=path =url udon=@t])
+      %.  u.jon
+      =,  dejs-soft:format
+      =+  (su ;~(pfix net (more net urs:ab)))
+      (ot path+- url+so udon+so ~)
+    ?~  note  [| ~]
+    [& [(do-note u.note) ~]]
   ==
 ::
 ++  handle-get
   |=  [request-headers=header-list:http =request-line]
+  ::  if we request base path, return index.html
+  ::
+  ?:  ?=([[~ [%'~link' ~]] *] request-line)
+    $(request-line request-line(ext `%html, site [%'~link' /index]))
   %+  include-cors-headers
     request-headers
   ^-  simple-payload:http
@@ -172,18 +204,52 @@
   =/  p=(unit @ud)
     %+  biff  (~(get by args) 'p')
     (curr rush dim:ag)
-  ?+  request-line  not-found:gen
-  ::TODO  expose submissions, other data
+  ?+  request-line
+  ::  for the default case, try to load file from clay
+  ::
+      ?~  ext.request-line
+        ::  for extension-less requests, always just serve the index.html.
+        ::  that way the js can load and figure out how to deal with that route.
+        ::
+        $(request-line [[`%html ~[%'~link' 'index']] args.request-line])
+      =/  file=(unit octs)
+        ?.  ?=([%'~link' *] site.request-line)  ~
+        (get-file-at /app/link [t.site u.ext]:request-line)
+      ?~  file  not-found:gen
+      ?+  u.ext.request-line  not-found:gen
+        %html  (html-response:gen u.file)
+        %js    (js-response:gen u.file)
+        %css   (css-response:gen u.file)
+        %png   (png-response:gen u.file)
+      ==
+  ::  submissions by recency as json, including comment counts
+  ::
+      [[[~ %json] [%'~link' %submissions ^]] *]
+    %-  json-response:gen
+    %-  json-to-octs  ::TODO  include in +json-response:gen
+    %+  page-to-json
+      (get-submissions t.t.site.request-line p)
+    |=  [=submission comments=@ud]
+    ^-  json
+    =+  s=(submission:en-json submission)
+    ?>  ?=([%o *] s)
+    o+(~(put by p.s) 'commentCount' (numb:enjs:format comments))
   ::  local links by recency as json
   ::
       [[[~ %json] [%'~link' %local-pages ^]] *]
     %-  json-response:gen
     %-  json-to-octs  ::TODO  include in +json-response:gen
-    ^-  json
-    :-  %a
-    %+  turn
-      `pages`(get-pages t.t.site.request-line p)
-    `$-(page json)`page:en-json
+    %+  page-to-json
+      (get-local-pages t.t.site.request-line p)
+    page:en-json
+  ::  comments by recency as json
+  ::
+      [[[~ %json] [%'~link' %discussions @ ^]] *]
+    %-  json-response:gen
+    %-  json-to-octs  ::TODO  include in +json-response:gen
+    %+  page-to-json
+      (get-discussions t.t.site.request-line p)
+    comment:en-json
   ==
 ::
 ++  include-cors-headers
@@ -209,20 +275,84 @@
   ==
 ::
 ++  page-size  25
-++  get-pages
+++  get-paginated
+  |*  [l=(list) p=(unit @ud)]
+  ^-  [total=@ud pages=@ud page=_l]
+  :+  (lent l)
+    +((div (lent l) page-size))
+  ?~  p  l
+  %+  scag  page-size
+  %+  slag  (mul u.p page-size)
+  l
+::
+++  page-to-json
+  =,  enjs:format
+  |*  $:  [total-items=@ud total-pages=@ud page=(list)]
+          item-to-json=$-(* json)
+      ==
+  ^-  json
+  %-  pairs
+  :~  'total-items'^(numb total-items)
+      'total-pages'^(numb total-pages)
+      'page'^a+(turn page item-to-json)
+  ==
+::
+++  get-submissions
   |=  [=path p=(unit @ud)]
-  ^-  pages
-  =;  =pages
-    ?~  p  pages
-    %+  scag  page-size
-    %+  slag  (mul u.p page-size)
-    pages
-  .^  pages
+  ^-  [@ud @ud (list [submission comments=@ud])]
+  =-  (get-paginated - p)
+  %+  turn
+    %+  scry-for  submissions
+    [%submissions path]
+  |=  =submission
+  :-  submission
+  %-  lent
+  %+  scry-for  comments
+  :-  %discussions
+  %+  snoc  path
+  %-  crip
+  (en-base64:mimes:html url.submission)
+::
+++  get-local-pages
+  |=  [=path p=(unit @ud)]
+  ^-  [@ud @ud pages]
+  =-  (get-paginated - p)
+  %+  scry-for  pages
+  [%local-pages path]
+::
+++  get-discussions
+  |=  [=path p=(unit @ud)]
+  ^-  [@ud @ud comments]
+  =-  (get-paginated - p)
+  %+  scry-for  comments
+  [%discussions path]
+::
+++  get-file-at
+  |=  [base=path file=path ext=@ta]
+  ^-  (unit octs)
+  ::  only expose html, css and js files for now
+  ::
+  ?.  ?=(?(%html %css %js %png) ext)
+    ~
+  =/  =path
+    :*  (scot %p our.bowl)
+        q.byk.bowl
+        (scot %da now.bowl)
+        (snoc (weld base file) ext)
+    ==
+  ?.  .^(? %cu path)
+    ~
+  %-  some
+  %-  as-octs:mimes:html
+  .^(@ %cx path)
+::
+++  scry-for
+  |*  [=mold =path]
+  .^  mold
     %gx
     (scot %p our.bowl)
     %link-store
     (scot %da now.bowl)
-    %local-pages
-    (snoc path %noun)
+    (snoc `^path`path %noun)
   ==
 --
