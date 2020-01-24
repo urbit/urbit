@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wwarn #-}
-
 {-|
     Top-Level Pier Management
 

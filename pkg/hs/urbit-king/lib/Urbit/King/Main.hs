@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wwarn #-}
-
 {-|
     King Haskell Entry Point
 
@@ -57,49 +55,40 @@ module Urbit.King.Main (main) where
 
 import Urbit.Prelude
 
-import Data.Acquire
 import Data.Conduit
-import Data.Conduit.List       hiding (catMaybes, map, replicate, take)
-import Data.RAcquire
 import Network.HTTP.Client.TLS
 import RIO.Directory
 import Urbit.Arvo
 import Urbit.King.Config
-import Urbit.Noun              hiding (Parser)
-import Urbit.Noun.Conversions  (cordToUW)
 import Urbit.Vere.Dawn
 import Urbit.Vere.Pier
 import Urbit.Vere.Pier.Types
 import Urbit.Vere.Serf
 
-import Control.Concurrent  (myThreadId, runInBoundThread)
-import Control.Exception   (AsyncException(UserInterrupt))
-import Control.Lens        ((&))
-import Data.Default        (def)
-import RIO                 (logSticky, logStickyDone)
-import Text.Show.Pretty    (pPrint)
-import Urbit.King.App      (runApp, runAppLogFile, runPierApp)
-import Urbit.King.App      (HasConfigDir(..))
-import Urbit.Time          (Wen)
-import Urbit.Vere.LockFile (lockFile)
+import Control.Concurrent     (myThreadId)
+import Control.Exception      (AsyncException(UserInterrupt))
+import Control.Lens           ((&))
+import Text.Show.Pretty       (pPrint)
+import Urbit.King.App         (runApp, runAppLogFile, runPierApp)
+import Urbit.King.App         (HasConfigDir(..))
+import Urbit.Noun.Conversions (cordToUW)
+import Urbit.Time             (Wen)
+import Urbit.Vere.LockFile    (lockFile)
 
-import qualified Data.Set                     as Set
-import qualified Data.Text                    as T
-import qualified Network.HTTP.Client          as C
-import qualified System.Console.Terminal.Size as TSize
-import qualified System.Environment           as Sys
-import qualified System.Exit                  as Sys
-import qualified System.IO.LockFile.Internal  as Lock
-import qualified System.Posix.Signals         as Sys
-import qualified System.ProgressBar           as PB
-import qualified System.Random                as Sys
-import qualified Urbit.King.CLI               as CLI
-import qualified Urbit.King.EventBrowser      as EventBrowser
-import qualified Urbit.Ob                     as Ob
-import qualified Urbit.Vere.Log               as Log
-import qualified Urbit.Vere.Pier              as Pier
-import qualified Urbit.Vere.Serf              as Serf
-import qualified Urbit.Vere.Term              as Term
+import qualified Data.Set                as Set
+import qualified Data.Text               as T
+import qualified Network.HTTP.Client     as C
+import qualified System.Environment      as Sys
+import qualified System.Posix.Signals    as Sys
+import qualified System.ProgressBar      as PB
+import qualified System.Random           as Sys
+import qualified Urbit.King.CLI          as CLI
+import qualified Urbit.King.EventBrowser as EventBrowser
+import qualified Urbit.Ob                as Ob
+import qualified Urbit.Vere.Log          as Log
+import qualified Urbit.Vere.Pier         as Pier
+import qualified Urbit.Vere.Serf         as Serf
+import qualified Urbit.Vere.Term         as Term
 
 --------------------------------------------------------------------------------
 
@@ -207,10 +196,6 @@ tryPlayShip exitImmediately fullReplay flags = do
         sls <- Pier.resumed flags
         rio $ logTrace "SHIP RESUMED"
         pure sls
-
-runAcquire :: (MonadUnliftIO m,  MonadIO m)
-           => Acquire a -> m a
-runAcquire act = with act pure
 
 runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
             => RAcquire e a -> m e a
