@@ -117,7 +117,9 @@
       num-notes+(numb ~(wyt by notes.book))
       num-unread+(numb (count-unread notes.book))
       notes-by-date+(notes-by-date notes.book)
-  ::  XX settings stuff, subscribers
+      comments+b+comments.book
+      writers-group-path+s+(spat writers.book)
+      subscribers-group-path+s+(spat subscribers.book)
   ==
 ::
 ++  note-presentation-json

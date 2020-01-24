@@ -234,7 +234,12 @@
     ^-  (quip card _this)
     ?+  mar  (on-poke:def mar vas)
         %noun
-      ~&  state
+      ?:  =(%print-state q.vas)
+        ~&  state
+        [~ this]
+      ?:  =(%print-bowl q.vas)
+        ~&  bol
+        [~ this]
       [~ this]
     ::
         %handle-http-request
@@ -1244,6 +1249,68 @@
     (emit-updates-and-state host.del book.del u.book del)
   ==
 ::
+++  get-subscribers-json
+  |=  book=@tas
+  ^-  json
+  :-  %a
+  %+  roll  ~(val by sup.bol)
+  |=  [[who=@p pax=path] out=(list json)]
+  ^-  (list json)
+  ?.  ?=([%notebook @ ~] pax)  out
+  ?.  =(book i.t.pax)  out
+  [[%s (scot %p who)] out]
+::
+++  get-notebook-json
+  |=  [host=@p book-name=@tas]
+  ^-  (unit json)
+  =,  enjs:format
+  =/  book=(unit notebook)
+    ?:  =(our.bol host)
+      (~(get by books) book-name)
+    (~(get by subs) host book-name)
+  ?~  book
+    ~
+  =/  notebook-json  (notebook-full-json host book-name u.book)
+  ?>  ?=(%o -.notebook-json)
+  =.  p.notebook-json
+    (~(uni by p.notebook-json) (notes-page notes.u.book 0 50))
+  =.  p.notebook-json
+    (~(put by p.notebook-json) %subscribers (get-subscribers-json book-name))
+  =/  notebooks-json  (notebooks-map-json our.bol books subs)
+  ?>  ?=(%o -.notebooks-json)
+  =/  host-books-json  (~(got by p.notebooks-json) (scot %p host))
+  ?>  ?=(%o -.host-books-json)
+  =.  p.host-books-json  (~(put by p.host-books-json) book-name notebook-json)
+  =.  p.notebooks-json
+    (~(put by p.notebooks-json) (scot %p host) host-books-json)
+  `(pairs notebooks+notebooks-json ~)
+::
+++  get-note-json
+  |=  [host=@p book-name=@tas note-name=@tas]
+  ^-  (unit json)
+  =,  enjs:format
+  =/  book=(unit notebook)
+    ?:  =(our.bol host)
+      (~(get by books) book-name)
+    (~(get by subs) host book-name)
+  ?~  book
+    ~
+  =/  note=(unit note)  (~(get by notes.u.book) note-name)
+  ?~  note
+    ~
+  =/  notebook-json  (notebook-full-json host book-name u.book)
+  ?>  ?=(%o -.notebook-json)
+  =/  note-json  (note-presentation-json u.book note-name u.note)
+  =.  p.notebook-json  (~(uni by p.notebook-json) note-json)
+  =/  notebooks-json  (notebooks-map-json our.bol books subs)
+  ?>  ?=(%o -.notebooks-json)
+  =/  host-books-json  (~(got by p.notebooks-json) (scot %p host))
+  ?>  ?=(%o -.host-books-json)
+  =.  p.host-books-json  (~(put by p.host-books-json) book-name notebook-json)
+  =.  p.notebooks-json
+    (~(put by p.notebooks-json) (scot %p host) host-books-json)
+  `(pairs notebooks+notebooks-json ~)
+::
 ++  handle-http-request
   |=  req=inbound-request:eyre
   ^-  simple-payload:http
@@ -1341,6 +1408,8 @@
     ?>  ?=(%o -.notebook-json)
     =.  p.notebook-json
       (~(uni by p.notebook-json) (notes-page notes.u.book 0 50))
+    =.  p.notebook-json
+      (~(put by p.notebook-json) %subscribers (get-subscribers-json book-name))
     =/  jon=json  (pairs notebook+notebook-json ~)
     (json-response:gen (json-to-octs jon))
   ::
@@ -1367,68 +1436,56 @@
   ::  presentation endpoints
   ::
   ::  all notebooks, short form, wrapped in html
-      [[~ [%'~publish' ~]] ~]
+      [[~ [%'~publish' ?(~ [%join ~] [%new ~])]] ~]
     =,  enjs:format
     =/  jon=json  (pairs notebooks+(notebooks-map-json our.bol books subs) ~)
     (manx-response:gen (index jon))
   ::
   ::  single notebook, with initial 50 notes in short form, wrapped in html
-      [[~ [%'~publish' @ @ ~]] ~]
-    =,  enjs:format
-    =/  host=(unit @p)  (slaw %p i.t.site.url)
+      [[~ [%'~publish' %notebook @ @ *]] ~]
+    =/  host=(unit @p)  (slaw %p i.t.t.site.url)
     ?~  host
       not-found:gen
-    =/  book-name  i.t.t.site.url
-    =/  book=(unit notebook)
-      ?:  =(our.bol u.host)
-        (~(get by books) book-name)
-      (~(get by subs) u.host book-name)
-    ?~  book
+    =/  book-name  i.t.t.t.site.url
+    =/  book-json=(unit json)  (get-notebook-json u.host book-name)
+    ?~  book-json
       not-found:gen
-    =/  notebook-json  (notebook-full-json u.host book-name u.book)
-    ?>  ?=(%o -.notebook-json)
-    =.  p.notebook-json
-      (~(uni by p.notebook-json) (notes-page notes.u.book 0 50))
-    =/  notebooks-json  (notebooks-map-json our.bol books subs)
-    ?>  ?=(%o -.notebooks-json)
-    =/  host-books-json  (~(got by p.notebooks-json) (scot %p u.host))
-    ?>  ?=(%o -.host-books-json)
-    =.  p.host-books-json  (~(put by p.host-books-json) book-name notebook-json)
-    =.  p.notebooks-json
-      (~(put by p.notebooks-json) (scot %p u.host) host-books-json)
-    =/  jon=json  (pairs notebooks+notebooks-json ~)
-    (manx-response:gen (index jon))
+    (manx-response:gen (index u.book-json))
+  ::
+  ::  single notebook, with initial 50 notes in short form, wrapped in html
+      [[~ [%'~publish' %popout %notebook @ @ *]] ~]
+    =/  host=(unit @p)  (slaw %p i.t.t.t.site.url)
+    ?~  host
+      not-found:gen
+    =/  book-name  i.t.t.t.t.site.url
+    =/  book-json=(unit json)  (get-notebook-json u.host book-name)
+    ?~  book-json
+      not-found:gen
+    (manx-response:gen (index u.book-json))
   ::
   ::  single note, with initial 50 comments, wrapped in html
-      [[~ [%'~publish' @ @ @ ~]] ~]
-    =,  enjs:format
-    =/  host=(unit @p)  (slaw %p i.t.site.url)
+      [[~ [%'~publish' %note @ @ @ ~]] ~]
+    =/  host=(unit @p)  (slaw %p i.t.t.site.url)
     ?~  host
       not-found:gen
-    =/  book-name  i.t.t.site.url
-    =/  book=(unit notebook)
-      ?:  =(our.bol u.host)
-        (~(get by books) book-name)
-      (~(get by subs) u.host book-name)
-    ?~  book
+    =/  book-name  i.t.t.t.site.url
+    =/  note-name  i.t.t.t.t.site.url
+    =/  note-json=(unit json)  (get-note-json u.host book-name note-name)
+    ?~  note-json
       not-found:gen
-    =/  note-name  i.t.t.t.site.url
-    =/  note=(unit note)  (~(get by notes.u.book) note-name)
-    ?~  note
+    (manx-response:gen (index u.note-json))
+  ::
+  ::  single note, with initial 50 comments, wrapped in html
+      [[~ [%'~publish' %popout %note @ @ @ ~]] ~]
+    =/  host=(unit @p)  (slaw %p i.t.t.t.site.url)
+    ?~  host
       not-found:gen
-    =/  notebook-json  (notebook-full-json u.host book-name u.book)
-    ?>  ?=(%o -.notebook-json)
-    =/  note-json  (note-presentation-json u.book note-name u.note)
-    =.  p.notebook-json  (~(uni by p.notebook-json) note-json)
-    =/  notebooks-json  (notebooks-map-json our.bol books subs)
-    ?>  ?=(%o -.notebooks-json)
-    =/  host-books-json  (~(got by p.notebooks-json) (scot %p u.host))
-    ?>  ?=(%o -.host-books-json)
-    =.  p.host-books-json  (~(put by p.host-books-json) book-name notebook-json)
-    =.  p.notebooks-json
-      (~(put by p.notebooks-json) (scot %p u.host) host-books-json)
-    =/  jon=json  (pairs notebooks+notebooks-json ~)
-    (manx-response:gen (index jon))
+    =/  book-name  i.t.t.t.t.site.url
+    =/  note-name  i.t.t.t.t.t.site.url
+    =/  note-json=(unit json)  (get-note-json u.host book-name note-name)
+    ?~  note-json
+      not-found:gen
+    (manx-response:gen (index u.note-json))
   ==
 ::
 --
