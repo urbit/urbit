@@ -5476,12 +5476,13 @@
     ~%  %lore  ..is  ~
     |=  lub/@
     =|  tez/(list @t)
+    =+  len=(met 3 lub)
     |-  ^+  tez
     =+  ^=  wor
       =+  [meg=0 i=0]
       |-  ^-  {meg/@ i/@ end/@f}
       =+  gam=(cut 3 [i 1] lub)
-      ?:  =(0 gam)
+      ?:  =(len i)
         [meg i %.y]
       ?:  =(10 gam)
         [meg i %.n]
