@@ -5817,6 +5817,11 @@
       ?:  verified.build-relation
         ~
       `sub
+    ::  dequeue orphans in case we were about to run them
+    ::
+    =/  orphan-set        (~(gas in *(set ^build)) orphans)
+    =.  next-builds       (~(dif in next-builds) orphan-set)
+    =.  candidate-builds  (~(dif in candidate-builds) orphan-set)
     ::  remove links to orphans in :build's +build-status
     ::
     =^  build-status  builds.state
