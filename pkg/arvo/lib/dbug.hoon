@@ -5,6 +5,7 @@
 |%
 +$  what
   $?  %bowl
+      %state
       %incoming
       %outgoing
   ==
@@ -31,12 +32,14 @@
       [cards this]
     =/  dbug
       !<([=what =about] vase)
-    =;  out
-      ((slog >out< ~) [~ this])
+    =;  out=^vase
+      ((slog (sell out) ~) [~ this])
     ?-  what.dbug
-      %bowl  bowl
+      %bowl   !>(bowl)
+      %state  on-save:ag
     ::
         %incoming
+      !>
       %+  murn  ~(tap by sup.bowl)
       |=  sub=[=duct [=ship =path]]
       ^-  (unit _sub)
@@ -51,6 +54,7 @@
       ==
     ::
         %outgoing
+      !>
       %+  murn  ~(tap by wex.bowl)
       |=  sub=[[=wire =ship =term] [acked=? =path]]
       ^-  (unit _sub)

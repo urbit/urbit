@@ -19,11 +19,14 @@
         *
         ::  inline arguments
         ::
-        args=?(~ [=what =about ~])
+        args=?(~ [what=?(%bowl %state) ~] [=what =about ~])
         ::  named arguments
         ::
         ~
     ==
 :-  %dbug
-?~  args  [%bowl *about]
-[what.args about.args]
+?-  args
+  ~        [%bowl *about]
+  [@ ~]    [what.args *about]
+  [@ * ~]  [what about]:args
+==
