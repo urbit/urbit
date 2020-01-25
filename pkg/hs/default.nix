@@ -5,7 +5,7 @@
   stack2nix-output-path ? "custom-stack2nix-output.nix",
 }:
 let
-  cabalPackageName = "king";
+  cabalPackageName = "urbit-king";
   compiler = "ghc865"; # matching stack.yaml
 
   # Pin static-haskell-nix version.

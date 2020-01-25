@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wwarn #-}
-
 {-|
     Top-Level Pier Management
 
@@ -19,7 +17,6 @@ import Urbit.King.Config
 import Urbit.Vere.Pier.Types
 import Control.Monad.Trans.Maybe
 
-import Data.List              (uncons)
 import Data.Text              (append)
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.King.App         (HasConfigDir(..))

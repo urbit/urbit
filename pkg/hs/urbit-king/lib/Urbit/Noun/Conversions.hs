@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wwarn #-}
-
 {-|
     Large Library of conversion between various types and Nouns.
 -}
@@ -34,17 +32,13 @@ import GHC.Natural      (Natural)
 import GHC.Types        (Char(C#))
 import GHC.Word         (Word32(W32#))
 import Prelude          ((!!))
-import RIO              (decodeUtf8Lenient)
 import RIO.FilePath     (joinPath, splitDirectories, takeBaseName,
-                         takeDirectory, takeExtension, (<.>), (</>))
-import System.IO.Unsafe (unsafePerformIO)
-import Text.Show.Pretty (ppShow)
+                         takeDirectory, takeExtension, (<.>))
 import Urbit.Noun.Cue   (cue)
 import Urbit.Noun.Jam   (jam)
 
 import qualified Data.Char                as C
 import qualified Data.Text.Encoding       as T
-import qualified Data.Text.Encoding.Error as T
 
 
 -- Noun ------------------------------------------------------------------------
@@ -366,13 +360,12 @@ instance FromNoun a => FromNoun (Lenient a) where
         fromNounErr n & \case
           Right x  -> pure (GoodParse x)
           Left err -> do
-            traceM ("LENIENT.FromNoun: " <> show err)
-            traceM (ppShow n)
+            -- traceM ("LENIENT.FromNoun: " <> show err)
+            -- traceM (ppShow n)
             pure (FailParse n)
 
 instance ToNoun a => ToNoun (Lenient a) where
-  toNoun (FailParse n) = trace ("LENIENT.ToNoun: " <> show n)
-                           n
+  toNoun (FailParse n) = n -- trace ("LENIENT.ToNoun: " <> show n)
   toNoun (GoodParse x) = toNoun x
 
 
@@ -388,9 +381,8 @@ instance FromNoun a => FromNoun (Todo a) where
   parseNoun n = do
       fromNounErr n & \case
         Right x -> pure (Todo x)
-        Left er -> do
-          traceM ("[TODO]: " <> show er <> "\n" <> ppShow n <> "\n")
-          fail (show er)
+        Left er -> fail (show er)
+          -- traceM ("[TODO]: " <> show er <> "\n" <> ppShow n <> "\n")
 
 
 -- Nullable --------------------------------------------------------------------
