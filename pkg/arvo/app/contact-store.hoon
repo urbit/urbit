@@ -171,17 +171,12 @@
       %avatar    con(avatar avatar.edit)
   ==
 ::
-++  update-subscribers
-  |=  [pax=path update=contact-update]
-  ^-  (list card)
-  [%give %fact `pax %contact-update !>(update)]~
-::
 ++  send-diff
   |=  [pax=path upd=contact-update]
   ^-  (list card)
-  %-  zing
-  :~  (update-subscribers /all upd)
-      (update-subscribers /updates upd)
-      (update-subscribers [%contacts pax] upd)
-  ==
+  :~  :*  
+    %give  %fact
+    ~[/all /updates [%contacts pax]]
+    %contact-update  !>(upd)
+  ==  ==
 --
