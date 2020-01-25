@@ -446,9 +446,7 @@ replay serf log last = do
                    Nothing -> ssNextEv ss
                    Just la -> la - (ssNextEv ss) + 1
 
-    lastEv <- case last of
-                Nothing -> Log.lastEv log
-                Just la -> pure la
+    lastEv <- last & maybe (Log.lastEv log) pure
 
     runConduit $  Log.streamEvents log (ssNextEv ss)
                .| CC.take (fromIntegral numEvs)

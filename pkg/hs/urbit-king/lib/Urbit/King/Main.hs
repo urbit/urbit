@@ -280,7 +280,7 @@ collectAllFx top = do
         logTrace "Done collecting effects!"
   where
     tmpDir :: FilePath
-    tmpDir = top <> "/.tmpdir"
+    tmpDir = top </> ".tmpdir"
 
     collectedFX :: RAcquire e ()
     collectedFX = do
@@ -312,7 +312,7 @@ replayPartEvs top last = do
           pure ()
 
     tmpDir :: FilePath
-    tmpDir = top <> "/.partial-replay/" <> show last
+    tmpDir = top </> ".partial-replay" </> show last
 
     replayedEvs :: RAcquire e ()
     replayedEvs = do
