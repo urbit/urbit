@@ -1538,7 +1538,7 @@
     ::
     |-  ^+  state
     ::
-    =/  client-status=build-status  (~(got by builds.state) build)
+    =/  client-status=build-status  (got-build build)
     =/  subs=(list ^build)  ~(tap in ~(key by subs.client-status))
     ::
     |-  ^+  state
@@ -1586,14 +1586,14 @@
     |=  [=build =anchor]
     ^+  builds.state
     ::
-    =/  =build-status  (~(got by builds.state) build)
+    =/  =build-status  (got-build build)
     =/  subs=(list ^build)  ~(tap in ~(key by subs.build-status))
     =/  client=^build  build
     ::
     |-  ^+  builds.state
     ?~  subs  builds.state
     ::
-    =/  sub-status=^build-status  (~(got by builds.state) i.subs)
+    =/  sub-status=^build-status  (got-build i.subs)
     ::
     =.  clients.sub-status
       (~(del ju clients.sub-status) anchor client)
@@ -1612,7 +1612,7 @@
     |=  =build
     ^+  state
     ::
-    =/  =build-status  (~(got by builds.state) build)
+    =/  =build-status  (got-build build)
     =/  new-anchors
       ~(tap in (~(put in ~(key by clients.build-status)) [%duct duct]))
     =/  subs  ~(tap in ~(key by subs.build-status))
@@ -1642,14 +1642,14 @@
     |=  [=anchor =build]
     ^+  builds.state
     ::
-    =/  =build-status  (~(got by builds.state) build)
+    =/  =build-status  (got-build build)
     =/  subs=(list ^build)  ~(tap in ~(key by subs.build-status))
     =/  client=^build  build
     ::
     |-  ^+  builds.state
     ?~  subs  builds.state
     ::
-    =/  sub-status=^build-status  (~(got by builds.state) i.subs)
+    =/  sub-status=^build-status  (got-build i.subs)
     ::
     =/  already-had-anchor=?  (~(has by clients.sub-status) anchor)
     ::
@@ -1687,9 +1687,7 @@
     ++  copy-node
       ^+  state
       ::
-      =/  old-build-status=build-status
-        ~|  old-client=(build-to-tape old-client)
-        (~(got by builds.state) old-client)
+      =/  old-build-status=build-status  (got-build old-client)
       ::
       =/  old-subs=(list build)  ~(tap in ~(key by subs.old-build-status))
       =/  new-subs=(list build)  (turn old-subs |=(a=build a(date new-date)))
@@ -1837,7 +1835,7 @@
       =.  state  (add-build build)
       ::  ignore blocked builds
       ::
-      =/  =build-status  (~(got by builds.state) build)
+      =/  =build-status  (got-build build)
       ?:  ?=(%blocked -.state.build-status)
         =.  state  (add-anchors-to-build-subs build)
         ::
@@ -1887,10 +1885,7 @@
       ?~  old-build
         (add-build-to-next build)
       ::
-      =/  old-build-status=^build-status
-        ~|  [%missing-old-build (build-to-tape u.old-build)]
-        ~|  [%build-state (turn ~(tap in ~(key by builds.state)) build-to-tape)]
-        (~(got by builds.state) u.old-build)
+      =/  old-build-status=^build-status  (got-build u.old-build)
       ::  selectively promote scry builds
       ::
       ::    We can only promote a scry if it's not forced and we ran the same
@@ -1918,7 +1913,7 @@
       ?.  ?=([~ %value *] old-build-record)
         (add-build-to-next build)
       ::
-      =.  old-build-status  (~(got by builds.state) u.old-build)
+      =.  old-build-status  (got-build u.old-build)
       ::
       =/  old-subs=(list ^build)  ~(tap in ~(key by subs.old-build-status))
       =/  new-subs=(list ^build)
@@ -5264,6 +5259,14 @@
     ::
     ::+|  utilities
     ::
+    ::  +got-build : lookup :build in state, asserting presence
+    ::
+    ++  got-build 
+      |=  =build
+      ^-  build-status
+      ~|  [%ford-missing-build build=(build-to-tape build) duct=duct]
+      (~(got by builds.state) build)
+    ::
     ::  +perform-schematics: helper function that performs a list of builds
     ::
     ::    We often need to run a list of builds. This helper method will
@@ -5554,9 +5557,7 @@
     |=  [=build update-func=$-(build-status build-status)]
     ^-  [build-status builds=_builds.state]
     ::
-    =/  original=build-status
-      ~|  [%update-build (build-to-tape build)]
-      (~(got by builds.state) build)
+    =/  original=build-status  (got-build build)
     =/  mutant=build-status  (update-func original)
     ::
     [mutant (~(put by builds.state) build mutant)]
@@ -5615,9 +5616,7 @@
     |=  =build
     ^+  [unblocked builds.state]
     ::
-    =/  =build-status
-      ~|  [%unblocking (build-to-tape build)]
-      (~(got by builds.state) build)
+    =/  =build-status  (got-build build)
     ::
     =/  clients=(list ^build)  ~(tap in (~(get ju clients.build-status) [%duct duct]))
     ::
@@ -5661,7 +5660,7 @@
     ::
     =/  duct-status  (~(got by ducts.state) duct)
     ::
-    =/  =build-status  (~(got by builds.state) build)
+    =/  =build-status  (got-build build)
     ?:  (~(has in requesters.build-status) [%duct duct])
       (on-root-build-complete build)
     ::
@@ -5698,7 +5697,7 @@
         ::
         res
     ::
-    =/  =build-status  (~(got by builds.state) build)
+    =/  =build-status  (got-build build)
     =/  =duct-status  (~(got by ducts.state) duct)
     ::  make sure we have something to send
     ::
@@ -5807,7 +5806,7 @@
     |=  =build
     ^+  ..execute
     ::
-    =/  =build-status  (~(got by builds.state) build)
+    =/  =build-status  (got-build build)
     ::
     =/  orphans=(list ^build)
       %+  murn  ~(tap by subs.build-status)
@@ -5919,9 +5918,7 @@
     ?:  ?=(%pin -.schematic.build)
       ~
     ::
-    =/  subs
-      ~|  [%collect-live-resource (build-to-tape build)]
-      ~(tap in ~(key by subs:(~(got by builds.state) build)))
+    =/  subs  ~(tap in ~(key by subs:(got-build build)))
     =|  resources=(jug disc resource)
     |-
     ?~  subs
@@ -5947,7 +5944,7 @@
     ::  only recurse on blocked sub-builds
     ::
     =/  subs=(list ^build)
-      %+  murn  ~(tap by subs:(~(got by builds.state) build))
+      %+  murn  ~(tap by subs:(got-build build))
       |=  [sub=^build =build-relation]
       ^-  (unit ^build)
       ::
