@@ -54,7 +54,7 @@
 ++  state
   $:  :: state version
       ::
-      %2
+      %3
       :: agents by ship
       ::
       =agents
@@ -904,7 +904,7 @@
           %give
         =/  =gift:agent  p.card
         ?:  ?=(%kick -.gift)
-          =/  ducts=(list duct)  (ap-ducts-from-path path.gift ship.gift)
+          =/  ducts=(list duct)  (ap-ducts-from-paths paths.gift ship.gift)
           %+  turn  ducts
           |=  =duct
           ~?  &(=(duct system-duct.agents.state) !=(agent-name %hood))
@@ -914,7 +914,7 @@
         ?.  ?=(%fact -.gift)
           [agent-duct %give %unto gift]~
         ::
-        =/  ducts=(list duct)  (ap-ducts-from-path path.gift ~)
+        =/  ducts=(list duct)  (ap-ducts-from-paths paths.gift ~)
         =/  =cage  cage.gift
         %+  turn  ducts
         |=  =duct
@@ -1010,6 +1010,17 @@
     ::
     ++  ap-agent-core
       ~(. agent.current-agent ap-construct-bowl)
+    ::  +ap-ducts-from-paths: get ducts subscribed to paths
+    ::
+    ++  ap-ducts-from-paths
+      |=  [target-paths=(list path) target-ship=(unit ship)]
+      ^-  (list duct)
+      ?:  &(?=(~ target-paths) ?=(~ target-ship))
+        ~[agent-duct]
+      %-  zing
+      %+  turn  target-paths
+      |=  =path
+      (ap-ducts-from-path `path target-ship)
     ::  +ap-ducts-from-path: get ducts subscribed to path
     ::
     ++  ap-ducts-from-path
@@ -1567,16 +1578,177 @@
   =?  all-state  ?=(%1 -.all-state)
     (state-1-to-2 all-state)
   ::
-  ?>  ?=(%2 -.all-state)
+  =?  all-state  ?=(%2 -.all-state)
+    (state-2-to-3 all-state)
+  ::
+  ?>  ?=(%3 -.all-state)
   gall-payload(state all-state)
   ::
   ::  +all-state: upgrade path
   ::
-  ++  all-state  $%(state-0 state-1 ^state)
+  ++  all-state  $%(state-0 state-1 state-2 ^state)
+  ::
+  ++  state-2-to-3
+    |=  =state-2
+    ^-  ^state
+    %=    state-2
+        -  %3
+        running.agents-2
+      %-  ~(run by running.agents-2.state-2)
+      |=  =running-agent-2
+      ^-  running-agent
+      %=  running-agent-2
+        agent-2  (agent-2-to-3 agent-2.running-agent-2)
+      ==
+    ==
+  ::
+  ++  agent-2-to-3
+    |=  =agent-2
+    ^-  agent
+    =>  |%
+        ++  cards-2-to-3
+          |=  cards=(list card:^agent-2)
+          ^-  (list card:agent)
+          %+  turn  cards
+          |=  =card:^agent-2
+          ^-  card:agent
+          ?.  ?=([%give ?(%fact %kick) *] card)  card
+          %=(card path.p (drop path.p.card))
+        --
+    |_  =bowl:gall
+    +*  this  .
+        pass  ~(. agent-2 bowl)
+    ++  on-init
+      =^  cards  agent-2  on-init:pass
+      [(cards-2-to-3 cards) this]
+    ::
+    ++  on-save
+      on-save:pass
+    ::
+    ++  on-load
+      |=  old-state=vase
+      =^  cards  agent-2  (on-load:pass old-state)
+      [(cards-2-to-3 cards) this]
+    ::
+    ++  on-poke
+      |=  [=mark =vase]
+      =^  cards  agent-2  (on-poke:pass mark vase)
+      [(cards-2-to-3 cards) this]
+    ::
+    ++  on-watch
+      |=  =path
+      =^  cards  agent-2  (on-watch:pass path)
+      [(cards-2-to-3 cards) this]
+    ::
+    ++  on-leave
+      |=  =path
+      =^  cards  agent-2  (on-leave:pass path)
+      [(cards-2-to-3 cards) this]
+    ::
+    ++  on-peek
+      |=  =path
+      (on-peek:pass path)
+    ::
+    ++  on-agent
+      |=  [=wire =sign:agent:gall]
+      =^  cards  agent-2  (on-agent:pass wire sign)
+      [(cards-2-to-3 cards) this]
+    ::
+    ++  on-arvo
+      |=  [=wire =sign-arvo]
+      =^  cards  agent-2  (on-arvo:pass wire sign-arvo)
+      [(cards-2-to-3 cards) this]
+    ::
+    ++  on-fail
+      |=  [=term =tang]
+      =^  cards  agent-2  (on-fail:pass term tang)
+      [(cards-2-to-3 cards) this]
+    --
+  ::
+  ++  state-2
+    $:  %2
+        =agents-2
+    ==
+  ::
+  ++  agents-2
+    $:  system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request))
+        contacts=(set ship)
+        running=(map term running-agent-2)
+        blocked=(map term blocked)
+    ==
+  ::
+  ++  running-agent-2
+    $:  cache=worm
+        control-duct=duct
+        live=?
+        =stats
+        =subscribers
+        =agent-2
+        =beak
+        marks=(map duct mark)
+    ==
+  ::
+  ++  agent-2
+    =<  form
+    |%
+    +$  step  (quip card form)
+    +$  card  (wind note gift)
+    +$  note  note:agent
+    +$  task  task:agent
+    +$  sign  sign:agent
+    +$  gift
+      $%  [%fact path=(unit path) =cage]
+          [%kick path=(unit path) ship=(unit ship)]
+          [%watch-ack p=(unit tang)]
+          [%poke-ack p=(unit tang)]
+      ==
+    ++  form
+      $_  ^|
+      |_  bowl
+      ++  on-init
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-save
+        *vase
+      ::
+      ++  on-load
+        |~  old-state=vase
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-poke
+        |~  [mark vase]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-watch
+        |~  path
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-leave
+        |~  path
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-peek
+        |~  path
+        *(unit (unit cage))
+      ::
+      ++  on-agent
+        |~  [wire sign]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-arvo
+        |~  [wire sign-arvo]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-fail
+        |~  [term tang]
+        *(quip card _^|(..on-init))
+      --
+    --
   ::
   ++  state-1-to-2
     |=  =state-1
-    ^-  ^state
+    ^-  state-2
     %=    state-1
         -           %2
         +.agents-1  [~ +.agents-1.state-1]
@@ -1590,7 +1762,7 @@
   ++  agents-1
     $:  system-duct=duct
         contacts=(set ship)
-        running=(map term running-agent)
+        running=(map term running-agent-2)
         blocked=(map term blocked)
     ==
   ::
@@ -1602,7 +1774,7 @@
         running.agents-0
       %-  ~(run by running.agents-0.state-0)
       |=  =running-agent-0
-      ^-  running-agent
+      ^-  running-agent-2
       %=  running-agent-0
         agent-0  (agent-0-to-1 agent-0.running-agent-0)
       ==
@@ -1610,7 +1782,7 @@
   ::
   ++  agent-0-to-1
     |=  =agent-0
-    ^-  agent
+    ^-  agent-2
     |_  =bowl:gall
     +*  this  .
         pass  ~(. agent-0 bowl)
@@ -1692,7 +1864,7 @@
     +$  card  (wind note gift)
     +$  note  note:agent
     +$  task  task:agent
-    +$  gift  gift:agent
+    +$  gift  gift:agent-2
     +$  sign  sign:agent
     ++  form
       $_  ^|

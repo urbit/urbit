@@ -5,7 +5,7 @@ import _ from 'lodash';
 const ReactSVGComponents = {
   svg: p => {
     return (
-      <svg key={Math.random()} 
+      <svg key={Math.random()}
         version={'1.1'}
         xmlns={'http://www.w3.org/2000/svg'}
         {...p.attr}>
@@ -15,7 +15,7 @@ const ReactSVGComponents = {
   },
   circle: p => {
     return (
-      <circle 
+      <circle
         key={Math.random()} {...p.attr}>
       { _.map(_.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) }
       </circle>
@@ -23,8 +23,8 @@ const ReactSVGComponents = {
   },
   rect: p => {
     return (
-      <rect 
-        key={Math.random()} 
+      <rect
+        key={Math.random()}
         {...p.attr}>
       { _.map(_.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) }
       </rect>
@@ -33,7 +33,7 @@ const ReactSVGComponents = {
   path: p => {
     return (
       <path
-        key={Math.random()} 
+        key={Math.random()}
         {...p.attr}>
       { _.map(_.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) }
       </path>
@@ -42,7 +42,7 @@ const ReactSVGComponents = {
   g: p => {
     return (
       <g
-        key={Math.random()} 
+        key={Math.random()}
         {...p.attr}>
         { _.map(_.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) }
       </g>
@@ -51,7 +51,7 @@ const ReactSVGComponents = {
   polygon: p => {
     return (
       <polygon
-        key={Math.random()} 
+        key={Math.random()}
         {...p.attr}>
       { _.map(_.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) }
       </polygon>
@@ -60,7 +60,7 @@ const ReactSVGComponents = {
   line: p => {
     return (
       <line
-        key={Math.random()} 
+        key={Math.random()}
         {...p.attr}>
       { _.map(_.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) }
       </line>
@@ -69,7 +69,7 @@ const ReactSVGComponents = {
   polyline: p => {
     return (
       <polyline
-        key={Math.random()} 
+        key={Math.random()}
         {...p.attr}>
       { _.map(_.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) }
       </polyline>

@@ -18,7 +18,7 @@ export default class VolumeIcon extends Component {
       this.toggleSound()}}>
         <img src=
         {
-          on 
+          on
           ?
           "~timer/img/volume-high.png"
           :

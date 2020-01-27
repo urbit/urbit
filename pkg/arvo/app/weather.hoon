@@ -101,7 +101,7 @@
   =/  lismov  [%pass /[(scot %da now.bol)] %arvo %i %request req out]~
   ?~  timer
     :-  [[%pass /timer %arvo %b %wait (add now.bol ~h3)] lismov]
-    %=  state 
+    %=  state
       location  str
       timer    `(add now.bol ~h3)
     ==
@@ -135,7 +135,7 @@
     currently+(~(got by p.u.ujon) 'currently')
     daily+(~(got by p.u.ujon) 'daily')
   ==
-  :-  [%give %fact `/weathertile %json !>(jon)]~
+  :-  [%give %fact ~[/weathertile] %json !>(jon)]~
   %=  state
     data  jon
     time  now.bol

@@ -80,9 +80,9 @@ export class JoinScreen extends Component {
   render() {
     const { props } = this;
 
-    let joinClasses = "db f9 green2 ba pa2 b--green2 pointer";
+    let joinClasses = "db f9 green2 ba pa2 b--green2 bg-gray0-d pointer";
     if ((!this.state.station) || (this.state.station === "/")) {
-      joinClasses = 'db f9 gray2 ba pa2 b--gray3 pointer';
+      joinClasses = 'db f9 gray2 ba pa2 b--gray3 bg-gray0-d pointer';
     }
 
     let errElem = (<span />);
@@ -95,7 +95,8 @@ export class JoinScreen extends Component {
     }
 
     return (
-      <div className="h-100 w-100 pa3 pt2 overflow-x-hidden flex flex-column">
+      <div className={`h-100 w-100 pa3 pt2 overflow-x-hidden flex flex-column
+      bg-black-d white-d`}>
         <div
           className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
           <Link to="/~chat/">{"⟵ All Chats"}</Link>
@@ -106,7 +107,7 @@ export class JoinScreen extends Component {
           <p className="f9 gray2 mb4">Chat names use lowercase, hyphens, and slashes.</p>
           <textarea
             ref={ e => { this.textarea = e; } }
-            className="f7 mono ba b--gray3 pa3 mb2 db"
+            className="f7 mono ba b--gray3 b--gray2-d bg-black-d white-d pa3 mb2 db"
             placeholder="~zod/chatroom"
             spellCheck="false"
             rows={1}

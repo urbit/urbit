@@ -329,6 +329,7 @@ _mutate_cat(u3_noun big, c3_l axe_l, u3_noun som)
         *tar = _edit_or_mutate_cat(*tar, u3x_mas(axe_l), som);
       }
     }
+    cel_u->mug_w = 0;
   }
 }
 
@@ -348,6 +349,7 @@ _mutate(u3_noun big, u3_noun axe, u3_noun som)
                  ? &(cel_u->hed)
                  : &(cel_u->tel);
     *tar = _edit_or_mutate(*tar, mor, som);
+    cel_u->mug_w = 0;
     u3z(mor);
   }
 }
@@ -470,7 +472,6 @@ u3i_list(u3_weak one, ...);
     return cut_t ? cut_w : i_w;
   }
 
-  __attribute__((no_sanitize_address))
   static u3_noun                            //  transfer
   _molt_apply(u3_noun            som,       //  retain
               c3_w               len_w,
@@ -496,7 +497,6 @@ u3i_list(u3_weak one, ...);
     }
   }
 
-__attribute__((no_sanitize_address))
 u3_noun
 u3i_molt(u3_noun som, ...)
 {

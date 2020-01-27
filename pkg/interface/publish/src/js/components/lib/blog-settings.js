@@ -79,7 +79,7 @@ export class BlogSettings extends Component {
 
   render() {
     let back = '<- Back to notes'
-    let enableSave = ((this.state.title !== '') && 
+    let enableSave = ((this.state.title !== '') &&
       (this.state.title !== this.props.title) &&
       !this.state.awaitingTitleChange);
     return (
@@ -93,7 +93,7 @@ export class BlogSettings extends Component {
         </p>
         <div className="flex">
           <div className="flex-col w-100">
-            <p className="body-regular-400">Delete Notebook</p> 
+            <p className="body-regular-400">Delete Notebook</p>
             <p className="gray-50 label-small-2" style={{marginTop:12, marginBottom:8}}>
               Permanently delete this notebook
             </p>
@@ -102,7 +102,7 @@ export class BlogSettings extends Component {
             </button>
           </div>
           <div className="flex-col w-100">
-            <p className="body-regular-400">Rename</p> 
+            <p className="body-regular-400">Rename</p>
             <p className="gray-50 label-small-2" style={{marginTop:12, marginBottom:23}}>
               Change the name of this notebook
             </p>

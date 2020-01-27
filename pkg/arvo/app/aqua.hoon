@@ -256,8 +256,8 @@
     %-  zing
     %+  turn  ufs
     |=  uf=unix-effect
-    :~  [%give %fact `/effect %aqua-effect !>(`aqua-effect`[ship uf])]
-        [%give %fact `/effect/[-.q.uf] %aqua-effect !>(`aqua-effect`[ship uf])]
+    :~  [%give %fact ~[/effect] %aqua-effect !>(`aqua-effect`[ship uf])]
+        [%give %fact ~[/effect/[-.q.uf]] %aqua-effect !>(`aqua-effect`[ship uf])]
     ==
   ::
   =.  this
@@ -265,7 +265,7 @@
     %-  emit-cards
     %+  turn  ~(tap by unix-effects)
     |=  [=ship ufs=(list unix-effect)]
-    [%give %fact `path %aqua-effects !>(`aqua-effects`[ship (flop ufs)])]
+    [%give %fact ~[path] %aqua-effects !>(`aqua-effects`[ship (flop ufs)])]
   ::
   =.  this
     %-  emit-cards
@@ -275,28 +275,28 @@
     =/  =path  /effect/(scot %p ship)
     %+  turn  ufs
     |=  uf=unix-effect
-    [%give %fact `path %aqua-effect !>(`aqua-effect`[ship uf])]
+    [%give %fact ~[path] %aqua-effect !>(`aqua-effect`[ship uf])]
   ::
   =.  this
     %-  emit-cards
     %+  turn  ~(tap by unix-effects)
     |=  [=ship ufs=(list unix-effect)]
     =/  =path  /effects/(scot %p ship)
-    [%give %fact `path %aqua-effects !>(`aqua-effects`[ship (flop ufs)])]
+    [%give %fact ~[path] %aqua-effects !>(`aqua-effects`[ship (flop ufs)])]
   ::
   =.  this
     %-  emit-cards
     %+  turn  ~(tap by unix-events)
     |=  [=ship ve=(list unix-timed-event)]
     =/  =path  /events/(scot %p ship)
-    [%give %fact `path %aqua-events !>(`aqua-events`[ship (flop ve)])]
+    [%give %fact ~[path] %aqua-events !>(`aqua-events`[ship (flop ve)])]
   ::
   =.  this
     %-  emit-cards
     %+  turn  ~(tap by unix-boths)
     |=  [=ship bo=(list unix-both)]
     =/  =path  /boths/(scot %p ship)
-    [%give %fact `path %aqua-boths !>(`aqua-boths`[ship (flop bo)])]
+    [%give %fact ~[path] %aqua-boths !>(`aqua-boths`[ship (flop bo)])]
   ::
   [(flop cards) all-state]
 ::

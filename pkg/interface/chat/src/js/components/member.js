@@ -51,8 +51,8 @@ export class MemberScreen extends Component {
 
     let writeListMembers = writeGroup.map((mem) => {
       return (
-        <MemberElement 
-          key={mem} 
+        <MemberElement
+          key={mem}
           owner={deSig(props.match.params.ship)}
           ship={mem}
           path={`/chat${state.station}/write`}
@@ -63,8 +63,8 @@ export class MemberScreen extends Component {
 
     let readListMembers = readGroup.map((mem) => {
       return (
-        <MemberElement 
-          key={mem} 
+        <MemberElement
+          key={mem}
           owner={deSig(props.match.params.ship)}
           ship={mem}
           path={`/chat${state.station}/read`}
@@ -76,21 +76,21 @@ export class MemberScreen extends Component {
       let isinPopout = this.props.popout ? "popout/" : "";
 
     return (
-      <div className="h-100 w-100 overflow-x-hidden flex flex-column">
+      <div className="h-100 w-100 overflow-x-hidden flex flex-column white-d">
         <div
           className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
           style={{ height: "1rem" }}>
           <Link to="/~chat/">{"⟵ All Chats"}</Link>
         </div>
         <div
-          className="pl3 pt2 bb b--gray4 flex relative overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"
+          className="pl3 pt2 bb b--gray4 b--gray2-d bg-black-d flex relative overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"
           style={{ height: 48 }}>
           <SidebarSwitcher
             sidebarShown={this.props.sidebarShown}
             popout={this.props.popout}
           />
           <Link to={`/~chat/` + isinPopout + `room` + state.station}
-          className="pt2">
+          className="pt2 white-d">
             <h2
               className="mono dib f8 fw4 v-top"
               style={{ width: "max-content" }}>

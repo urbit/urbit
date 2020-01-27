@@ -7,7 +7,7 @@ export class SidebarSwitcher extends Component {
     let popoutSwitcher = this.props.popout
       ? "dn-m dn-l dn-xl"
       : "dib-m dib-l dib-xl";
-    
+
     return (
       <div className="pt2">
         <a
@@ -16,7 +16,7 @@ export class SidebarSwitcher extends Component {
             api.sidebarToggle();
           }}>
           <img
-            className={`pr3 dn ` + popoutSwitcher}
+            className={`pr3 dn invert-d ` + popoutSwitcher}
             src={
               this.props.sidebarShown
                 ? "/~chat/img/ChatSwitcherLink.png"

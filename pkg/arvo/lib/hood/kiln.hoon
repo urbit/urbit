@@ -312,11 +312,11 @@
 ++  take-agent
   |=  [=wire =sign:agent:gall]
   ?+  wire  ~|([%kiln-bad-take-agent wire -.sign] !!)
-    [%kiln %fancy *]   ?>  ?=(%poke-ack -.sign) 
+    [%kiln %fancy *]   ?>  ?=(%poke-ack -.sign)
                        (take-coup-fancy t.t.wire p.sign)
     [%kiln %reload *]  ?>  ?=(%poke-ack -.sign)
                        (take-coup-reload t.t.wire p.sign)
-    [%kiln %spam *]    ?>  ?=(%poke-ack -.sign) 
+    [%kiln %spam *]    ?>  ?=(%poke-ack -.sign)
                        (take-coup-spam t.t.wire p.sign)
   ==
 ::
