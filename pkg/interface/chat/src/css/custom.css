@@ -104,6 +104,7 @@ h2 {
   position: relative;
   height: 0;
   overflow: hidden;
+  padding-bottom: 28.125%;
 }
 
 .embed-container iframe, .embed-container object, .embed-container embed {
@@ -165,9 +166,6 @@ h2 {
   .h-100-minus-48-xl {
     height: calc(100% - 48px);
   }
-  .embed-container {
-    padding-bottom: 28.125%;
-  }
 }
 
 /* dark */
@@ -212,5 +210,8 @@ h2 {
   }
   a {
     color: #fff;
+  }
+  .b--white-d {
+    border-color: #fff;
   }
 }
