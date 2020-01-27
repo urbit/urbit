@@ -2,71 +2,6 @@
 /+  elem-to-react-json
 |%
 ::
-++  front-to-post-info
-  |=  fro=(map knot cord)
-  ^-  post-info
-  =/  got  ~(got by fro)
-  ~|  %invalid-frontmatter
-  :*  (slav %p (got %creator))
-      (got %title)
-      (got %collection)
-      (got %filename)
-      (comment-config (got %comments))
-      (slav %da (got %date-created))
-      (slav %da (got %last-modified))
-      (rash (got %pinned) (fuss %true %false))
-  ==
-::
-++  front-to-comment-info
-  |=  fro=(map knot cord)
-  ^-  comment-info
-  =/  got  ~(got by fro)
-  ~|  %invalid-frontmatter
-  :*  (slav %p (got %creator))
-      (got %collection)
-      (got %post)
-      (slav %da (got %date-created))
-      (slav %da (got %last-modified))
-  ==
-::
-++  collection-info-to-json
-  |=  con=collection-info
-  ^-  json
-  %-  pairs:enjs:format
-  :~  :-  %owner          [%s (scot %p owner.con)]
-      :-  %title          [%s title.con]
-      :-  %comments       [%s comments.con]
-      :-  %allow-edit     [%s allow-edit.con]
-      :-  %date-created   (time:enjs:format date-created.con)
-      :-  %last-modified  (time:enjs:format last-modified.con)
-      :-  %filename       [%s filename.con]
-  ==
-::
-++  post-info-to-json
-  |=  info=post-info
-  ^-  json
-  %-  pairs:enjs:format
-  :~  :-  %creator        [%s (scot %p creator.info)]
-      :-  %title          [%s title.info]
-      :-  %comments       [%s comments.info]
-      :-  %date-created   (time:enjs:format date-created.info)
-      :-  %last-modified  (time:enjs:format last-modified.info)
-      :-  %pinned         [%b pinned.info]
-      :-  %filename       [%s filename.info]
-      :-  %collection     [%s collection.info]
-  ==
-::
-++  comment-info-to-json
-  |=  info=comment-info
-  ^-  json
-  %-  pairs:enjs:format
-  :~  :-  %creator        [%s (scot %p creator.info)]
-      :-  %date-created   (time:enjs:format date-created.info)
-      :-  %last-modified  (time:enjs:format last-modified.info)
-      :-  %post       [%s post.info]
-      :-  %collection     [%s collection.info]
-  ==
-::
 ++  tang-to-json
   |=  tan=tang
   %-  wall:enjs:format
@@ -89,81 +24,222 @@
     (add 32 a)
   '-'
 ::
-++  collection-build-to-json
-  |=  bud=(each collection-info tang)
+++  note-build-to-json
+  |=  build=(each manx tang)
   ^-  json
-  ?:  ?=(%.y -.bud)
-    (collection-info-to-json +.bud)
-  (tang-to-json +.bud)
-::
-++  post-build-to-json
-  |=  bud=(each [post-info manx @t] tang)
-  ^-  json
-  ?:  ?=(%.y -.bud)
+  ?:  ?=(%.y -.build)
     %-  pairs:enjs:format
-    :~  info+(post-info-to-json +<.bud)
-        body+(elem-to-react-json +>-.bud)
-        raw+[%s +>+.bud]
+    :~  success+b+%.y
+        result+(elem-to-react-json p.build)
     ==
-  (tang-to-json +.bud)
-::
-++  comment-build-to-json
-  |=  bud=(each (list [comment-info @t]) tang)
-  ^-  json
-  ?:  ?=(%.y -.bud)
-    :-  %a
-    %+  turn  p.bud
-    |=  [com=comment-info bod=@t]
-    ^-  json
-    %-  pairs:enjs:format
-    :~  info+(comment-info-to-json com)
-        body+s+bod
-    ==
-  (tang-to-json +.bud)
-::
-++  total-build-to-json
-  |=  col=collection
-  ^-  json
   %-  pairs:enjs:format
-  :~  info+(collection-build-to-json col.col)
-  ::
-    :+  %posts
-      %o
-    %+  roll  ~(tap in ~(key by pos.col))
-    |=  [post=@tas out=(map @t json)]
-    =/  post-build  (~(got by pos.col) post)
-    =/  comm-build  (~(got by com.col) post)
-
-    %+  ~(put by out)
-      post
-    %-  pairs:enjs:format
-    :~  post+(post-build-to-json post-build)
-        comments+(comment-build-to-json comm-build)
-    ==
-  ::
-    :-  %order
-    %-  pairs:enjs:format
-    :~  pin+a+(turn pin.order.col |=(s=@tas [%s s]))
-        unpin+a+(turn unpin.order.col |=(s=@tas [%s s]))
-    ==
-  ::
-    :-  %contributors
-    %-  pairs:enjs:format
-    :~  mod+s+mod.contributors.col
-        :+  %who
-          %a
-        %+  turn  ~(tap in who.contributors.col)
-        |=  who=@p
-        (ship:enjs:format who)
-    ==
-  ::
-    :+  %subscribers
-      %a
-    %+  turn  ~(tap in subscribers.col)
-    |=  who=@p
+  :~  success+b+%.n
+      result+(tang-to-json p.build)
+  ==
+::
+++  count-unread
+  |=  notes=(map @tas note)
+  ^-  @ud
+  %-  ~(rep by notes)
+  |=  [[key=@tas val=note] count=@ud]
+  ?:  read.val
+    count
+  +(count)
+::
+++  notebooks-list-json
+  |=  [our=@p books=(map @tas notebook) subs=(map [@p @tas] notebook)]
+  ^-  json
+  =,  enjs:format
+  :-  %a
+  %+  weld
+    %+  turn  ~(tap by books)
+    |=  [name=@tas book=notebook]
+    (notebook-short-json book)
+  %+  turn  ~(tap by subs)
+  |=  [[host=@p name=@tas] book=notebook]
+  (notebook-short-json book)
+::
+++  notebooks-map-json
+  |=  [our=@p books=(map @tas notebook) subs=(map [@p @tas] notebook)]
+  ^-  json
+  =,  enjs:format
+  =/  subs-notebooks-map=json 
+    %-  ~(rep by subs)
+    |=  [[[host=@p book-name=@tas] book=notebook] out=json]
     ^-  json
-    (ship:enjs:format who)
-  ::
-    [%last-update (time:enjs:format last-update.col)]
+    =/  host-ta  (scot %p host)
+    ?~  out
+      (frond host-ta (frond book-name (notebook-short-json book)))
+    ?>  ?=(%o -.out)
+    =/  books  (~(get by p.out) host-ta)
+    ?~  books
+      :-  %o
+      (~(put by p.out) host-ta (frond book-name (notebook-short-json book)))
+    ?>  ?=(%o -.u.books)
+    =.  p.u.books  (~(put by p.u.books) book-name (notebook-short-json book))
+    :-  %o
+    (~(put by p.out) host-ta u.books)
+  =?  subs-notebooks-map  ?=(~ subs-notebooks-map)
+    [%o ~]
+  =/  our-notebooks-map=json
+    %-  ~(rep by books)
+    |=  [[book-name=@tas book=notebook] out=json]
+    ^-  json
+    ?~  out
+      (frond book-name (notebook-short-json book))
+    ?>  ?=(%o -.out)
+    :-  %o
+    (~(put by p.out) book-name (notebook-short-json book))
+  ?~  our-notebooks-map
+    subs-notebooks-map
+  ?>  ?=(%o -.subs-notebooks-map)
+  :-  %o
+  (~(put by p.subs-notebooks-map) (scot %p our) our-notebooks-map)
+::
+++  notebook-short-json
+  |=  book=notebook
+  ^-  json
+  =,  enjs:format
+  %-  pairs
+  :~  title+s+title.book
+      date-created+(time date-created.book)
+      num-notes+(numb ~(wyt by notes.book))
+      num-unread+(numb (count-unread notes.book))
+  ==
+::
+++  notebook-full-json
+  |=  [host=@p book-name=@tas book=notebook]
+  ^-  json
+  =,  enjs:format
+  %-  pairs
+  :~  title+s+title.book
+      date-created+(time date-created.book)
+      num-notes+(numb ~(wyt by notes.book))
+      num-unread+(numb (count-unread notes.book))
+      notes-by-date+(notes-by-date notes.book)
+      comments+b+comments.book
+      writers-group-path+s+(spat writers.book)
+      subscribers-group-path+s+(spat subscribers.book)
+  ==
+::
+++  note-presentation-json
+  |=  [book=notebook note-name=@tas not=note]
+  ^-  (map @t json)
+  =,  enjs:format
+  =/  notes-list=(list [@tas note])
+    %+  sort  ~(tap by notes.book)
+    |=  [[@tas n1=note] [@tas n2=note]]
+    (gte date-created.n1 date-created.n2)
+  =/  idx=@  (need (find [note-name not]~ notes-list))
+  =/  next=(unit [name=@tas not=note])
+    ?:  =(idx 0)  ~
+    `(snag (dec idx) notes-list)
+  =/  prev=(unit [name=@tas not=note])
+    ?:  =(+(idx) (lent notes-list))  ~
+    `(snag +(idx) notes-list)
+  =/  current=json  (note-full-json note-name not)
+  ?>  ?=(%o -.current)
+  =.  p.current  (~(put by p.current) %prev-note ?~(prev ~ s+name.u.prev))
+  =.  p.current  (~(put by p.current) %next-note ?~(next ~ s+name.u.next))
+  =/  notes=(list [@t json])  [note-name current]~
+  =?  notes  ?=(^ prev)
+    [[name.u.prev (note-short-json name.u.prev not.u.prev)] notes]
+  =?  notes  ?=(^ next)
+    [[name.u.next (note-short-json name.u.next not.u.next)] notes]
+  %-  my
+  :~  notes+(pairs notes)
+      notes-by-date+a+(turn notes-list |=([name=@tas *] s+name))
+  ==
+::
+++  note-full-json
+  |=  [note-name=@tas =note]
+  ^-  json
+  =,  enjs:format
+  %-  pairs
+  :~  note-id+s+note-name
+      author+s+(scot %p author.note)
+      title+s+title.note
+      date-created+(time date-created.note)
+      build+(note-build-to-json build.note)
+      file+s+file.note
+      num-comments+(numb ~(wyt by comments.note))
+      comments+(comments-page comments.note 0 50)
+      read+b+read.note
+  ==
+::
+++  notes-by-date
+  |=  notes=(map @tas note)
+  ^-  json
+  =/  notes-list=(list [@tas note])
+    %+  sort  ~(tap by notes)
+    |=  [[@tas n1=note] [@tas n2=note]]
+    (gte date-created.n1 date-created.n2)
+  :-  %a
+  %+  turn  notes-list
+  |=  [name=@tas note]
+  ^-  json
+  [%s name]
+::
+++  note-short-json
+  |=  [note-name=@tas =note]
+  ^-  json
+  =,  enjs:format
+  %-  pairs
+  :~  note-id+s+note-name
+      author+s+(scot %p author.note)
+      title+s+title.note
+      date-created+(time date-created.note)
+      num-comments+(numb ~(wyt by comments.note))
+      read+b+read.note
+  ::  XX snippet
+  ==
+::
+++  notes-page
+  |=  [notes=(map @tas note) start=@ud length=@ud]
+  ^-  (map @t json)
+  =/  notes-list=(list [@tas note])
+    %+  sort  ~(tap by notes)
+    |=  [[@tas n1=note] [@tas n2=note]]
+    (gte date-created.n1 date-created.n2)
+  %-  my
+  :~  notes-by-date+a+(turn notes-list |=([name=@tas *] s+name))
+      notes+o+(notes-list-json (scag length (slag start notes-list)))
+  ==
+::
+++  notes-list-json
+  |=  notes=(list [@tas note])
+  ^-  (map @t json)
+  %+  roll  notes
+  |=  [[name=@tas not=note] out-map=(map @t json)]
+  ^-  (map @t json)
+  (~(put by out-map) name (note-short-json name not))
+::
+++  comments-page
+  |=  [comments=(map @da comment) start=@ud end=@ud]
+  ^-  json
+  =/  coms=(list [@da comment])
+    %+  sort  ~(tap by comments)
+    |=  [[d1=@da comment] [d2=@da comment]]
+    (gte d1 d2)
+  %-  comments-list-json
+  (scag end (slag start coms))
+::
+++  comments-list-json
+  |=  comments=(list [@da comment])
+  ^-  json
+  =,  enjs:format
+  :-  %a
+  (turn comments comment-json)
+::
+++  comment-json
+  |=  [date=@da com=comment]
+  ^-  json
+  =,  enjs:format
+  %+  frond:enjs:format
+    (scot %da date)
+  %-  pairs
+  :~  author+s+(scot %p author.com)
+      date-created+(time date-created.com)
+      content+s+content.com
   ==
 --

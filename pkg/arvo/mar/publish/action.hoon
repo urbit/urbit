@@ -1,11 +1,10 @@
 ::
 ::::  /hoon/action/publish/mar
   ::
-/?  309
-/-  publish
+/-  *publish
 =,  format
 ::
-|_  act=action:publish
+|_  act=action
 ::
 ++  grow
   |%
@@ -14,179 +13,113 @@
 ::
 ++  grab
   |%
-  ++  noun  action:publish
+  ++  noun  action
   ++  json
     |=  jon=^json
-    %-  action:publish
-    =<  (action jon)
-    |%
-    ++  action
-      %-  of:dejs
-      :~  new-collection+new-collection
-          new-post+new-post
-          new-comment+new-comment
-      ::
-          delete-collection+delete-collection
-          delete-post+delete-post
-          delete-comment+delete-comment
-      ::
-          edit-collection+edit-collection
-          edit-post+edit-post
-      ::
-          invite+invite
-          reject-invite+reject-invite
-      ::
-          serve+serve
-          unserve+unserve
-      ::
-          subscribe+subscribe
-          unsubscribe+unsubscribe
-      ::
-          read+read
+    =,  dejs:format
+    ;;  action
+    |^  %.  jon
+        %-  of
+        :~  new-book+new-book
+            new-note+new-note
+            new-comment+new-comment
+            edit-book+edit-book
+            edit-note+edit-note
+            edit-comment+edit-comment
+            del-book+del-book
+            del-note+del-note
+            del-comment+del-comment
+            subscribe+subscribe
+            unsubscribe+unsubscribe
+            read+read
+        ==
+    ::
+    ++  new-book
+      %-  ot
+      :~  book+so
+          title+so
+          about+so
+          coms+bo
+          group+group-info
       ==
     ::
-    ++  new-collection
-      %-  ot:dejs
-      :~  name+so:dejs
-          title+so:dejs
-          comments+comment-config
-          allow-edit+edit-config
-          perm+perm-config
-      ==
-    ::
-    ++  new-post
-      %-  ot:dejs
-      :~  who+(su:dejs fed:ag)
-          coll+so:dejs
-          name+so:dejs
-          title+so:dejs
-          comments+comment-config
-          perm+perm-config
-          content+so:dejs
+    ++  new-note
+      %-  ot
+      :~  who+(su fed:ag)
+          book+so
+          note+so
+          title+so
+          body+so
       ==
     ::
     ++  new-comment
-      %-  ot:dejs
-      :~  who+(su:dejs fed:ag)
-          coll+so:dejs
-          name+(su:dejs sym)
-          content+so:dejs
+      %-  ot
+      :~  who+(su fed:ag)
+          book+so
+          note+so
+          body+so
       ==
     ::
-    ++  delete-collection
-      %-  ot:dejs
-      :~  coll+so:dejs
+    ++  edit-book
+      %-  ot
+      :~  book+so
+          title+so
+          about+so
+          coms+bo
+          group+(mu group-info)
       ==
     ::
-    ++  delete-post
-      %-  ot:dejs
-      :~  coll+so:dejs
-          post+so:dejs
-      ==
-    ::
-    ++  delete-comment
-      %-  ot:dejs
-      :~  coll+so:dejs
-          post+so:dejs
-          comment+so:dejs
-      ==
-    ::
-    ++  edit-collection
-      %-  ot:dejs
-      :~  name+so:dejs
-          title+so:dejs
-      ==
-    ::
-    ++  edit-post
-      %-  ot:dejs
-      :~  who+(su:dejs fed:ag)
-          coll+so:dejs
-          name+so:dejs
-          title+so:dejs
-          comments+comment-config
-          perm+perm-config
-          content+so:dejs
+    ++  edit-note
+      %-  ot
+      :~  who+(su fed:ag)
+          book+so
+          note+so
+          title+so
+          body+so
       ==
     ::
     ++  edit-comment
-      %-  ot:dejs
-      :~  coll+so:dejs
-          name+so:dejs
-          id+so:dejs
-          content+so:dejs
+      %-  ot
+      :~  who+(su fed:ag)
+          book+so
+          note+so
+          comment+(su ;~(pfix sig (cook year when:^so)))
+          body+so
       ==
     ::
-    ++  comment-config
-      %-  su:dejs
-      ;~(pose (jest %open) (jest %closed) (jest %none))
+    ++  del-book  (ot book+so ~)
     ::
-    ++  edit-config
-      %-  su:dejs
-      ;~(pose (jest %post) (jest %comment) (jest %all) (jest %none))
+    ++  del-note  (ot who+(su fed:ag) book+so note+so ~)
     ::
-    ++  perm-config
-        %-  ot:dejs
-        :~  :-  %read
-            %-  ot:dejs
-            :~  mod+(su:dejs ;~(pose (jest %black) (jest %white)))
-                who+whoms
-            ==
-            :-  %write
-            %-  ot:dejs
-            :~  mod+(su:dejs ;~(pose (jest %black) (jest %white)))
-                who+whoms
-        ==  ==
-    ::
-    ++  whoms
-      |=  jon=^json
-      ^-  (set whom:clay)
-      =/  x  ((ar:dejs (su:dejs fed:ag)) jon)
-      %-  (set whom:clay)
-      %-  ~(run in (sy x))
-      |=(w=@ [& w])
-    ::
-    ++  invite
-      %-  ot:dejs
-      :~  coll+so:dejs
-          title+so:dejs
-          who+(ar:dejs (su:dejs fed:ag))
+    ++  del-comment
+      %-  ot
+      :~  who+(su fed:ag)
+          book+so
+          note+so
+          comment+(su ;~(pfix sig (cook year when:^so)))
       ==
-    ::
-    ++  reject-invite
-      %-  ot:dejs
-      :~  who+(su:dejs fed:ag)
-          coll+so:dejs
-      ==
-    ::
-    ++  serve
-      %-  ot:dejs
-      :~  coll+so:dejs
-      ==
-    ::
-    ++  unserve
-      %-  ot:dejs
-      :~  coll+so:dejs
-      ==
-    ::
     ++  subscribe
-      %-  ot:dejs
-      :~  who+(su:dejs fed:ag)
-          coll+so:dejs
+      %-  ot
+      :~  who+(su fed:ag)
+          book+so
       ==
-    ::
     ++  unsubscribe
-      %-  ot:dejs
-      :~  who+(su:dejs fed:ag)
-          coll+so:dejs
+      %-  ot
+      :~  who+(su fed:ag)
+          book+so
       ==
-    ::
     ++  read
-      %-  ot:dejs
-      :~  who+(su:dejs fed:ag)
-          coll+so:dejs
-          post+so:dejs
+      %-  ot
+      :~  who+(su fed:ag)
+          book+so
+          note+so
       ==
-    ::
+    ++  group-info
+      %-  of
+      :~  old+(ot writers+pa subscribers+pa ~)
+          new+(ot writers+set-ship subscribers+set-ship sec+so ~)
+      ==
+    ++  set-ship  (ar (su fed:ag))
     --
   --
 --
