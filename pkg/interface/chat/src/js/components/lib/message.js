@@ -49,8 +49,6 @@ export class Message extends Component {
       let imgMatch =
         /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|GIF|webp|WEBP|webm|WEBM)$/
         .exec(letter.url);
-      // this is jank
-      // TODO do we know ID lenght?
       let youTubeRegex = new RegExp(''
       + /(?:https?:\/\/(?:[a-z]+.)?)/.source // protocol
       + /(?:youtu\.?be(?:\.com)?\/)(?:embed\/)?/.source // short and long-links
@@ -96,7 +94,7 @@ export class Message extends Component {
         return (
           <div>
           <a href={letter.url}
-          className="f7 lh-copy v-top bb word-break-all"
+          className="f7 lh-copy v-top bb b--white-d word-break-all"
           href={letter.url}
           target="_blank"
           rel="noopener noreferrer">
@@ -111,7 +109,7 @@ export class Message extends Component {
         )
       } else {
         return (
-          <a className="f7 lh-copy v-top bb b--black word-break-all"
+          <a className="f7 lh-copy v-top bb b--black b--white-d word-break-all"
             href={letter.url}
             target="_blank"
             rel="noopener noreferrer">
@@ -183,7 +181,7 @@ export class Message extends Component {
             className="fr clamp-message white-d"
             style={{ flexGrow: 1, marginTop: -8 }}>
             <div className="hide-child" style={paddingTop}>
-              <p className="v-mid mono f9 gray2 dib mr3">
+              <p className="v-mid mono f9 black white-d dib mr3">
                 {props.msg.author.slice(0, 1) === "~" ? "" : "~"}
                 {props.msg.author}
               </p>
