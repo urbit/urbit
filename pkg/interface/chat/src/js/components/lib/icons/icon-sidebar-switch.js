@@ -24,6 +24,9 @@ export class SidebarSwitcher extends Component {
             }
             height="16"
             width="16"
+            style={{
+              maxWidth: 16
+            }}
           />
         </a>
       </div>
