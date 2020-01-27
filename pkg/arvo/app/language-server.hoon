@@ -125,11 +125,11 @@
   ^-  (quip card _state)
   =^  cards  state
     ?+  -.not  [~ state]
-        %text-document--did-open  (handle-did-open +.not)
+        %text-document--did-open    (handle-did-open +.not)
         %text-document--did-change  (handle-did-change +.not)
-        %text-document--did-save  (handle-did-save +.not)
-        %text-document--did-close  (handle-did-close +.not)
-        %exit  handle-exit
+        %text-document--did-save    (handle-did-save +.not)
+        %text-document--did-close   (handle-did-close +.not)
+        %exit                       handle-exit
     ==
   [cards state]
 ++  on-request
