@@ -86,8 +86,7 @@
   ++  on-watch
     |=  =path
     ?:  ?=([%primary ~] path)
-      :_  this
-      ~
+      `this
     ?.  ?=([%http-response @ ~] path)
       (on-watch:def path)
     `this
@@ -119,23 +118,18 @@
   |=  res=out:notification:lsp-sur
   ^-  (list card)
   :_  ~
-  [%give %fact `/primary %language-server-rpc-notification !>(res)]
+  [%give %fact ~[/primary] %language-server-rpc-notification !>(res)]
 ::
 ++  on-notification
   |=  not=all:notification:lsp-sur
   ^-  (quip card _state)
   =^  cards  state
     ?+  -.not  [~ state]
-        %text-document--did-open
-      (handle-did-open +.not)
-        %text-document--did-change
-      (handle-did-change +.not)
-        %text-document--did-save
-      (handle-did-save +.not)
-        %text-document--did-close
-      (handle-did-close +.not)
-        %exit
-      handle-exit
+        %text-document--did-open  (handle-did-open +.not)
+        %text-document--did-change  (handle-did-change +.not)
+        %text-document--did-save  (handle-did-save +.not)
+        %text-document--did-close  (handle-did-close +.not)
+        %exit  handle-exit
     ==
   [cards state]
 ++  on-request
@@ -152,7 +146,7 @@
   |=  res=all:response:lsp-sur
   ^-  (list card)
   :_  ~
-  [%give %fact `/primary %language-server-rpc-response !>(res)]
+  [%give %fact ~[/primary] %language-server-rpc-response !>(res)]
 ::
 ++  handle-exit
   ^-  (quip card _state)
