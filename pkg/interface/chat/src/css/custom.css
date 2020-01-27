@@ -104,6 +104,7 @@ h2 {
   position: relative;
   height: 0;
   overflow: hidden;
+  padding-bottom: 28.125%;
 }
 
 .embed-container iframe, .embed-container object, .embed-container embed {
@@ -209,5 +210,8 @@ h2 {
   }
   a {
     color: #fff;
+  }
+  .b--white-d {
+    border-color: #fff;
   }
 }
