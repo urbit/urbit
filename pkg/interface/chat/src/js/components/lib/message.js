@@ -94,13 +94,13 @@ export class Message extends Component {
         return (
           <div>
           <a href={letter.url}
-          className="f7 lh-copy v-top bb b--white-d word-break-all"
+          className="f7 lh-copy v-top bb b--white-d word-break-all mr2"
           href={letter.url}
           target="_blank"
           rel="noopener noreferrer">
             {letter.url}
         </a>
-        <a className="f7 pointer pl2 lh-copy v-top word-break-all"
+        <a className="f7 pointer lh-copy v-top"
         onClick={e => this.unFoldEmbed()}>
           [embed]
           </a>
