@@ -476,7 +476,8 @@
       [%app %publish %notebooks @ %publish-info ~]
     =/  book-name  i.t.t.t.pax
     =/  delta=notebook-delta  [%del-book our.bol book-name]
-    (handle-notebook-delta delta sty)
+    =^  cards  sty  (handle-notebook-delta delta sty)
+    [(weld cards cad) sty]
   ::
       [%app %publish %notebooks @ @ %udon ~]
     =/  book-name  i.t.t.t.pax
@@ -486,7 +487,8 @@
       [~ sty]
     =.  notes.u.book  (~(del by notes.u.book) note-name)
     =/  delta=notebook-delta  [%del-note our.bol book-name note-name]
-    (handle-notebook-delta delta sty)
+    =^  cards  sty  (handle-notebook-delta delta sty)
+    [(weld cards cad) sty]
   ::
       [%app %publish %notebooks @ @ @ %publish-comment ~]
     =/  book-name  i.t.t.t.pax
@@ -496,7 +498,8 @@
       [~ sty]
     =/  delta=notebook-delta
       [%del-comment our.bol book-name note-name u.comment-date]
-    (handle-notebook-delta delta sty)
+    =^  cards  sty  (handle-notebook-delta delta sty)
+    [(weld cards cad) sty]
   ==
 ::
 ++  add-paths
@@ -518,6 +521,10 @@
           now.bol
           ~  ~  ~
       ==
+    =+  ^-  [grp-car=(list card) writers-path=path subscribers-path=path]
+      (make-groups book-name [%new ~ ~ %journal])
+    =.  writers.new-book  writers-path
+    =.  subscribers.new-book  subscribers-path
     =+  ^-  [read-cards=(list card) notes=(map @tas note)]
       (watch-notes /app/publish/notebooks/[book-name])
     =.  notes.new-book  notes
@@ -527,9 +534,11 @@
     =^  update-cards  sty  (handle-notebook-delta delta sty)
     :_  sty
     ;:  weld
+      grp-car
       [%pass (welp /read/info pax) %arvo %c %warp our.bol rif]~
       read-cards
       update-cards
+      cad
     ==
   ::
       [%app %publish %notebooks @ @ %udon ~]
@@ -548,6 +557,7 @@
       [%pass (welp /read/note pax) %arvo %c %warp our.bol rif]~
       read-cards
       update-cards
+      cad
     ==
   ::
       [%app %publish %notebooks @ @ @ %publish-comment ~]
@@ -566,6 +576,7 @@
     ;:  weld
       [%pass (welp /read/comment pax) %arvo %c %warp our.bol rif]~
       update-cards
+      cad
     ==
   ==
 ::
