@@ -69,11 +69,14 @@ export class Root extends Component {
                   </Skeleton>
                 )
               }}/>
-      <Route exact path="/~publish/(popout)?/:ship/:notebook/:view?"
+      <Route exact path="/~publish/(popout)?/notebook/:ship/:notebook/:view?"
         render={ (props) => {
           let view = (props.match.params.view)
           ? props.match.params.view
           : "posts";
+
+          let ship = props.match.params.ship || "";
+          let notebook = props.match.params.notebook || "";
 
           return (
             <Skeleton
@@ -84,13 +87,18 @@ export class Root extends Component {
             notebooks={state.notebooks}>
               <Notebook
               notebooks={state.notebooks}
-              view={view}/>
+              view={view}
+              ship={ship}
+              book={notebook}/>
             </Skeleton>
           )
         }}/>
-      <Route exact path="/~publish/(popout)?/:ship/:notebook/:note"
+      <Route exact path="/~publish/(popout)?/note/:ship/:notebook/:note"
         render={ (props) => {
-          
+          let ship = props.match.params.ship || "";
+          let notebook = props.match.params.notebook || "";
+          let note = props.match.params.note || "";
+
           return (
             <Skeleton
             popout={false}
@@ -99,7 +107,10 @@ export class Root extends Component {
             sidebarShown={true}
             notebooks={state.notebooks}>
               <Note
-              notebooks={state.notebooks}/>
+              notebooks={state.notebooks}
+              book={notebook}
+              ship={ship}
+              note={note}/>
             </Skeleton>
           )
         }}/>

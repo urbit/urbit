@@ -49065,7 +49065,7 @@
             }
 
             const _jsxFileName$a = "/Users/matilde/git/tlon/urbit/pkg/interface/publish/src/js/components/root.js";
-
+            //TODO add new note route
             class Root extends react_1 {
               constructor(props) {
                 super(props);
@@ -49127,11 +49127,14 @@
                               )
                             )
                           }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 59}})
-                  , react.createElement(Route, { exact: true, path: "/~publish/(popout)?/:ship/:notebook/:view?",
+                  , react.createElement(Route, { exact: true, path: "/~publish/(popout)?/notebook/:ship/:notebook/:view?",
                     render:  (props) => {
                       let view = (props.match.params.view)
                       ? props.match.params.view
                       : "posts";
+
+                      let ship = props.match.params.ship || "";
+                      let notebook = props.match.params.notebook || "";
 
                       return (
                         react.createElement(Skeleton, {
@@ -49139,28 +49142,36 @@
                         active: "rightPanel",
                         rightPanelHide: false,
                         sidebarShown: true,
-                        notebooks: state.notebooks, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 79}}
+                        notebooks: state.notebooks, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 82}}
                           , react.createElement(Notebook, {
                           notebooks: state.notebooks,
-                          view: view, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 85}})
+                          view: view,
+                          ship: ship,
+                          book: notebook, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 88}})
                         )
                       )
                     }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 72}})
-                  , react.createElement(Route, { exact: true, path: "/~publish/(popout)?/:ship/:notebook/:note",
+                  , react.createElement(Route, { exact: true, path: "/~publish/(popout)?/note/:ship/:notebook/:note",
                     render:  (props) => {
-                      
+                      let ship = props.match.params.ship || "";
+                      let notebook = props.match.params.notebook || "";
+                      let note = props.match.params.note || "";
+
                       return (
                         react.createElement(Skeleton, {
                         popout: false,
                         active: "rightPanel",
                         rightPanelHide: false,
                         sidebarShown: true,
-                        notebooks: state.notebooks, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 95}}
+                        notebooks: state.notebooks, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 103}}
                           , react.createElement(Note, {
-                          notebooks: state.notebooks, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 101}})
+                          notebooks: state.notebooks,
+                          book: notebook,
+                          ship: ship,
+                          note: note, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 109}})
                         )
                       )
-                    }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 91}})
+                    }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 96}})
                   )
                 )
               }
