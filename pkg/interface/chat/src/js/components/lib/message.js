@@ -60,7 +60,7 @@ export class Message extends Component {
       if (imgMatch) {
         contents = (
           <img
-            className="o-60-d"
+            className="o-80-d"
             src={letter.url}
             style={{
               width: "50%",
