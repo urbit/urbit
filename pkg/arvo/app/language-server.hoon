@@ -137,10 +137,42 @@
   ^-  (quip card _state)
   =^  cards  state
     ?+  -.req  [~ state]
-        %text-document--hover
-      (handle-hover req)
+      %text-document--hover       (handle-hover req)
+      %text-document--completion  (handle-completion req)
     ==
   [cards state]
+::
+++  handle-completion
+  |=  com=text-document--completion:request:lsp-sur
+  ^-  (quip card _state)
+  :_  state
+  %^  give-rpc-response  %text-document--completion  id.com
+  =/  buf=wall
+    (~(got by bufs) uri.com)
+  =/  txt=tape
+    (zing (join "\0a" buf))
+  =/  pos
+    (get-pos buf row.com col.com)
+  =/  rune  (rune-snippet (swag [(safe-sub pos 2) 2] txt))
+  ?^  rune  rune
+  =+  (get-id:auto pos txt)
+  ?~  id  ~
+  =/  matches=(list (option:auto type))
+    (search-prefix:auto u.id (get-identifiers:auto -:!>(..zuse)))
+  ?~  matches  ~
+  (turn matches make-completion-item)
+::
+++  make-completion-item
+  |=  [name=term =type]
+  ^-  completion-item:lsp-sur
+  =/  doc
+    %-  crip
+    ;:  weld
+      "`"
+      ~(ram re ~(duck easy-print type))
+      "`"
+    ==
+  [name 1 doc '' name 1]
 ::
 ++  give-rpc-response
   |=  res=all:response:lsp-sur
