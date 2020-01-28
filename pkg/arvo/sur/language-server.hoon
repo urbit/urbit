@@ -8,10 +8,13 @@
   +$  all
     $%
       text-document--hover
+      text-document--completion
       unknown
     ==
   +$  text-document--hover
     [%text-document--hover id=cord position versioned-doc-id]
+  +$  text-document--completion
+    [%text-document--completion id=cord position versioned-doc-id]
   +$  unknown
     [%unknown json]
   --
@@ -20,10 +23,26 @@
   +$  all
     $%
       text-document--hover
+      text-document--completion
     ==
   +$  text-document--hover
     [%text-document--hover id=cord contents=(unit @t)]
+  +$  text-document--completion
+    [%text-document--completion id=cord completion=(list completion-item)]
   --
+::
++$  completion-item
+  $:
+    label=cord
+    kind=@ud
+    detail=cord
+    doc=cord
+    insert-text=cord
+    insert-text-format=@ud
+  ==
+
+
+
 ::
 +$  diagnostic
   [=range severity=@ud message=@t]

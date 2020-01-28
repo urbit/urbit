@@ -31,8 +31,8 @@
     ^-  all:request:lsp
     |^
       ?+  method  [%unknown jon]
-          %text-document--hover
-        (text-document--hover params id)
+        %text-document--hover       (text-document--hover params id)
+        %text-document--completion  (text-document--completion params id)
       ==
       ::
       ++  text-document--hover
@@ -47,6 +47,15 @@
           ~
         ==
       ::
+      ++  text-document--completion
+        |=  [params=json id=cord]
+        :+  %text-document--completion  id
+        %.  params
+        %:  ot
+          position+position
+          'textDocument'^text-document-id
+          ~
+        ==
       --
   ::
   ++  notification
@@ -170,9 +179,6 @@
     ==
   --
 ::
-:: TODO: fix
-
-::
 ++  enjs
   =,  enjs:format
   |%
@@ -205,8 +211,8 @@
     ^-  json
     |^
       ?-  -.res
-          %text-document--hover
-        (text-document--hover res)
+        %text-document--hover       (text-document--hover res)
+        %text-document--completion  (text-document--completion res)
       ==
       ::
       ++  wrap-in-id
@@ -223,6 +229,11 @@
         ?~  contents.hov
           ~
         s+u.contents.hov
+      ::
+      ++  text-document--completion
+        |=  com=text-document--completion:response:lsp
+        %+  wrap-in-id   id.com
+        [%a (turn completion.com completion-item)]
       --
   ++  unparse-method
     |=  =cord
@@ -244,6 +255,19 @@
     %+  more
       ;~(less (jest '--') hep)
     (star alf)
+  ::
+  ++  completion-item
+    |=  com=completion-item:lsp
+    ^-  json
+    %:  pairs
+      label+s+label.com
+      detail+s+detail.com
+      kind+(numb kind.com)
+      'documentation'^s+doc.com
+      'insertText'^s+insert-text.com
+      'insertTextFormat'^(numb insert-text-format.com)
+      ~
+    ==
   ::
   ++  position
     |=  =position:lsp

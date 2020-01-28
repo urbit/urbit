@@ -83,6 +83,22 @@
     ~
   ==
 ::
+++  completion-item
+  ^-  completion-item:lsp-sur
+  ['label' 1 'detail' 'doc' 'snippet' 1]
+::
+++  completion-item-jon
+  ^-  json
+  %:  pairs
+    label+s+'label'
+    detail+s+'detail'
+    kind+n+'1'
+    documentation+s+'doc'
+    'insertText'^s+'snippet'
+    'insertTextFormat'^n+'1'
+    ~
+  ==
+::
 ++  make-notification-jon
   |=  [method=@t params=json]
   ^-  json
@@ -174,6 +190,19 @@
     ['textDocument' text-document-id-jon]
     ~
   ==
+++  test-parse-completion
+  %+  expect-eq
+    !>  ^-  all:request:lsp-sur
+    [%text-document--completion '3' position text-document-id]
+  !>  %-  request:dejs
+  ^-  json
+  %^  make-request-jon  '3'  'textDocument/completion'
+  :-  %o
+  %:  malt
+    ['position' position-jon]
+    ['textDocument' text-document-id-jon]
+    ~
+  ==
 ::  to JSON
 ::
 ::  notifications
@@ -199,4 +228,12 @@
   %+  make-response-jon  '1'
   %+  frond  'contents'
   s+'text'
+::
+++  test-enjs-completion
+  %+  expect-eq
+    !>  %-  response:enjs
+    [%text-document--completion '1' ~[completion-item]]
+  !>  ^-  json
+  %+  make-response-jon  '1'
+  [%a ~[completion-item-jon]]
 --
