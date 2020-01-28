@@ -27,14 +27,14 @@ import Foreign.Ptr            (castPtr)
 import Foreign.Storable       (peek, poke)
 import System.Exit            (ExitCode)
 
-import qualified Urbit.Ob as Ob
-
-import qualified Data.ByteString.Unsafe as BS
-import qualified Data.Text              as T
-import qualified System.IO              as IO
-import qualified System.IO.Error        as IO
-import qualified Urbit.Time             as Time
-import qualified Urbit.Vere.Log         as Log
+import qualified Data.ByteString.Unsafe   as BS
+import qualified Data.Conduit.Combinators as CC
+import qualified Data.Text                as T
+import qualified System.IO                as IO
+import qualified System.IO.Error          as IO
+import qualified Urbit.Ob                 as Ob
+import qualified Urbit.Time               as Time
+import qualified Urbit.Vere.Log           as Log
 
 
 -- Serf Config -----------------------------------------------------------------
@@ -435,12 +435,19 @@ replayJobs serf lastEv = go Nothing
       updateProgressBar start msg
 
 
-replay :: HasLogFunc e => Serf e -> Log.EventLog -> RIO e SerfState
-replay serf log = do
+replay :: HasLogFunc e
+          => Serf e -> Log.EventLog -> Maybe Word64 -> RIO e SerfState
+replay serf log last = do
     ss <- handshake serf (Log.identity log)
 
-    lastEv <- Log.lastEv log
+    let numEvs = case last of
+                   Nothing -> ssNextEv ss
+                   Just la -> la - (ssNextEv ss) + 1
+
+    lastEv <- last & maybe (Log.lastEv log) pure
+
     runConduit $  Log.streamEvents log (ssNextEv ss)
+               .| CC.take (fromIntegral numEvs)
                .| toJobs (Log.identity log) (ssNextEv ss)
                .| replayJobs serf (fromIntegral lastEv) ss
 

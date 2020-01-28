@@ -268,7 +268,6 @@ streamEvents :: HasLogFunc e
              => EventLog -> Word64
              -> ConduitT () ByteString (RIO e) ()
 streamEvents log first = do
-    last  <- lift $ lastEv log
     batch <- lift $ readBatch log first
     unless (null batch) $ do
         for_ batch yield

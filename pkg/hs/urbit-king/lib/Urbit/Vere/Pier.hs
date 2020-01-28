@@ -5,15 +5,17 @@
     communication between the serf, the log, and the IO drivers.
 -}
 module Urbit.Vere.Pier
-  ( booted, resumed, pier, runPersist, runCompute, generateBootSeq
+  ( booted, resumed, getSnapshot, pier, runPersist, runCompute, generateBootSeq
   ) where
 
 import Urbit.Prelude
 
+import RIO.Directory
 import System.Random
 import Urbit.Arvo
 import Urbit.King.Config
 import Urbit.Vere.Pier.Types
+import Control.Monad.Trans.Maybe
 
 import Data.Text              (append)
 import System.Posix.Files     (ownerModes, setFileMode)
@@ -25,8 +27,6 @@ import Urbit.Vere.Http.Client (client)
 import Urbit.Vere.Http.Server (serv)
 import Urbit.Vere.Log         (EventLog)
 import Urbit.Vere.Serf        (Serf, SerfState(..), doJob, sStderr)
-
-import RIO.Directory
 
 import qualified System.Console.Terminal.Size as TSize
 import qualified System.Entropy               as Ent
@@ -128,17 +128,35 @@ booted pill lite flags ship boot = do
 -- Resume an existing ship. ----------------------------------------------------
 
 resumed :: (HasPierConfig e, HasLogFunc e)
-        => Serf.Flags
+        => Maybe Word64 -> Serf.Flags
         -> RAcquire e (Serf e, EventLog, SerfState)
-resumed flags = do
+resumed event flags = do
     top    <- view pierPathL
+    tap    <- fmap (fromMaybe top) $ rio $ runMaybeT $ do
+                ev <- MaybeT (pure event)
+                MaybeT (getSnapshot top ev)
+    rio $ logTrace $ displayShow tap
     log    <- Log.existing (top <> "/.urb/log")
-    serf   <- Serf.run (Serf.Config top flags)
-    serfSt <- rio $ Serf.replay serf log
+    serf   <- Serf.run (Serf.Config tap flags)
+    serfSt <- rio $ Serf.replay serf log event
 
     rio $ Serf.snapshot serf serfSt
 
     pure (serf, log, serfSt)
+
+getSnapshot :: forall e. FilePath -> Word64 -> RIO e (Maybe FilePath)
+getSnapshot top last = do
+    lastSnapshot <- lastMay <$> listReplays
+    pure (replayToPath <$> lastSnapshot)
+  where
+    replayDir        = top </> ".partial-replay"
+    replayToPath eId = replayDir </> show eId
+
+    listReplays :: RIO e [Word64]
+    listReplays = do
+        createDirectoryIfMissing True replayDir
+        snapshotNums <- mapMaybe readMay <$> listDirectory replayDir
+        pure $ sort (filter (<= fromIntegral last) snapshotNums)
 
 
 -- Run Pier --------------------------------------------------------------------
