@@ -69,7 +69,7 @@ export class Message extends Component {
           ></img>
         );
         return (
-          <a className="f7 lh-copy v-top bb word-break-all"
+          <a className="f7 lh-copy v-top word-break-all"
             href={letter.url}
             target="_blank"
             rel="noopener noreferrer">
