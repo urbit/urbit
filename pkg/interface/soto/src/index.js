@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { HeaderBar } from '/components/lib/header-bar';
 import { Root } from '/components/root';
 import { api } from '/api';
 import { subscription } from "/subscription";
@@ -10,6 +11,8 @@ api.setAuthTokens({
 });
 
 subscription.start();
+
+ReactDOM.render(<HeaderBar />, document.getElementById("header"));
 
 ReactDOM.render((
   <Root />
