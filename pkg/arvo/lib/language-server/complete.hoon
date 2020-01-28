@@ -4,7 +4,7 @@
 =/  debug  |
 |%
 +*  option  [item]
-  [=term detail=item]
+  [term=cord detail=item]
 ::
 ::  Like +rose except also produces line number
 ::
@@ -73,7 +73,7 @@
   |*  [sid=term options=(list (option))]
   =/  match
     %+  skim  options
-    |=  [id=term *]
+    |=  [id=cord *]
     =(sid id)
   ?~  match
     ~
@@ -82,17 +82,18 @@
 ::  Get all the identifiers that start with sid.
 ::
 ++  search-prefix
-  |*  [sid=term ids=(list (option))]
+  |*  [sid=cord ids=(list (option))]
   ^+  ids
   %+  skim  ids
-  |=  [id=term *]
+  |=  [id=cord *]
+  ^-  ?(%.y %.n)
   =(sid (end 3 (met 3 sid) id))
 ::
 ::  Get the longest prefix of a list of identifiers.
 ::
 ++  longest-match
   |=  matches=(list (option))
-  ^-  term
+  ^-  cord
   ?~  matches
     ''
   =/  n  1
