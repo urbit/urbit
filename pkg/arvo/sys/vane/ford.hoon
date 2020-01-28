@@ -838,7 +838,9 @@
   |*  [tracker=(request-tracker) request=*]
   ^-  (list duct)
   ::
-  ~(tap in waiting:(~(got by tracker) request))
+  ?~  val=(~(get by tracker) request)
+    ~
+  ~(tap in waiting.u.val)
 ::  +put-request: associates a +duct with a request
 ::
 ++  put-request
@@ -6268,22 +6270,29 @@
     ++  take-rebuilds
       ^-  [(list move) ford-state]
       ::
+      ~|  [%ford-take-rebuilds wire=wire duct=duct]
       ?>  ?=([@tas %wris *] sign)
       =*  case-sign  p.sign
       =*  care-paths-sign  q.sign
       =+  [ship desk date]=(raid:wired t.wire ~[%p %tas %da])
       =/  disc  [ship desk]
+      ::  ignore spurious clay updates
+      ::
+      ::    Due to asynchronicity of Clay notifications, we might get a
+      ::    subscription update on an already-canceled duct.  This is
+      ::    normal; no-op.
+      ::
+      ?~  duct-status=(~(get by ducts.state.ax) duct)
+        [~ state.ax]
       ::
       =/  =subscription
-        ~|  [%ford-take-bad-clay-sub wire=wire duct=duct]
-        =/  =duct-status  (~(got by ducts.state.ax) duct)
-        ?>  ?=(%live -.live.duct-status)
-        ?>  ?=(^ last-sent.live.duct-status)
-        ?>  ?=(^ subscription.u.last-sent.live.duct-status)
-        u.subscription.u.last-sent.live.duct-status
+        ?>  ?=(%live -.live.u.duct-status)
+        (need subscription:(need last-sent.live.u.duct-status))
       ::
       =/  ducts=(list ^duct)
-        ~|  [%ford-take-missing-subscription subscription]
+        ::  sanity check; there must be at least one duct per subscription
+        ::
+        =-  ?<  =(~ -)  -
         (get-request-ducts pending-subscriptions.state.ax subscription)
       ::
       =|  moves=(list move)
@@ -6301,13 +6310,12 @@
     ++  take-unblocks
       ^-  [(list move) ford-state]
       ::
+      ~|  [%ford-take-unblocks wire=wire duct=duct]
       ?>  ?=([@tas %writ *] sign)
       =*  riot-sign  p.sign
       ::  scry-request: the +scry-request we had previously blocked on
       ::
-      =/  =scry-request
-        ~|  [%ford-take-bad-scry-request wire=wire duct=duct]
-        (need (path-to-scry-request t.wire))
+      =/  =scry-request  (need (path-to-scry-request t.wire))
       ::  scry-result: parse a (unit cage) from :sign
       ::
       ::    If the result is `~`, the requested resource was not available.
@@ -6316,9 +6324,9 @@
         ?~  riot-sign
           ~
         `r.u.riot-sign
+      ::  if spurious Clay response, :ducts will be empty, causing no-op
       ::
       =/  ducts=(list ^duct)
-        ~|  [%ford-take-missing-scry-request scry-request]
         (get-request-ducts pending-scrys.state.ax scry-request)
       ::
       =|  moves=(list move)
