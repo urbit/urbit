@@ -204,7 +204,7 @@ export class NewScreen extends Component {
           Lowercase alphanumeric characters, dashes, and slashes only
           </p>
           <textarea
-            className="f7 ba b--gray3 b--gray2-d bg-black-d white-d pa3 db w-100"
+            className="f7 ba b--gray3 b--gray0-d bg-black-d white-d pa3 db w-100"
             placeholder="secret-chat"
             rows={1}
             style={{
