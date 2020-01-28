@@ -175,7 +175,7 @@ export class ChatInput extends Component {
     this.bindShortcuts();
     
     return (
-      <div className="pa3 cf flex black white-d bt b--gray4 b--gray2-d bg-black-d" style={{ flexGrow: 1 }}>
+      <div className="pa3 cf flex black white-d bt b--gray4 b--gray0-d bg-black-d" style={{ flexGrow: 1 }}>
         <div
           className="fl"
           style={{

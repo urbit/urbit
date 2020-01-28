@@ -230,7 +230,7 @@ export class ChatScreen extends Component {
          <Link to="/~chat/">{"⟵ All Chats"}</Link>
        </div>
        <div
-         className={`pl3 pt2 bb b--gray4 b--gray2-d bg-black-d flex relative overflow-x-scroll
+         className={`pl3 pt2 bb b--gray4 b--gray0-d bg-black-d flex relative overflow-x-scroll
          overflow-x-auto-l overflow-x-auto-xl flex-shrink-0`}
          style={{ height: 48 }}>
          <SidebarSwitcher

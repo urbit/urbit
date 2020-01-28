@@ -28,7 +28,7 @@ export class NewScreen extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
 
-    if (prevProps !== props) { 
+    if (prevProps !== props) {
       let station = `/~${window.ship}/${state.idName}`;
       if (station in props.inbox) {
         props.history.push('/~chat/room' + station);
@@ -81,7 +81,7 @@ export class NewScreen extends Component {
     let invalidChara = new RegExp(/[^a-z0-9/-]/);
 
     let invalid = (
-      (!state.idName) || (state.idName.startsWith("/")) || 
+      (!state.idName) || (state.idName.startsWith("/")) ||
       (state.idName.includes("//")) || (invalidChara.test(state.idName))
     );
 
@@ -132,7 +132,7 @@ export class NewScreen extends Component {
 
     // TODO: don't do this, it's shitty
     let writeAud;
-    let readAud; 
+    let readAud;
 
     if (state.security === 'village') {
       aud.push(`~${window.ship}`);
@@ -192,7 +192,7 @@ export class NewScreen extends Component {
     }
 
     return (
-      <div className={`h-100 w-100 w-50-l w-50-xl pa3 pt2 overflow-x-hidden 
+      <div className={`h-100 w-100 w-50-l w-50-xl pa3 pt2 overflow-x-hidden
       bg-black-d white-d flex flex-column`}>
         <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
           <Link to="/~chat/">{"⟵ All Chats"}</Link>
@@ -203,8 +203,8 @@ export class NewScreen extends Component {
           <p className="f9 gray2 db mb4">
           Lowercase alphanumeric characters, dashes, and slashes only
           </p>
-          <textarea 
-            className="f7 ba b--gray3 b--gray2-d bg-black-d white-d pa3 db w-100"
+          <textarea
+            className="f7 ba b--gray3 b--gray0-d bg-black-d white-d pa3 db w-100"
             placeholder="secret-chat"
             rows={1}
             style={{

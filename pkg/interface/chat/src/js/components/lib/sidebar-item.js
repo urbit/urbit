@@ -37,7 +37,7 @@ export class SidebarItem extends Component {
 
   getLetter(lett) {
     if ('text' in lett) {
-      return lett.text; 
+      return lett.text;
     } else if ('url' in lett) {
       return lett.url;
     } else if ('code' in lett) {
@@ -50,19 +50,19 @@ export class SidebarItem extends Component {
   render() {
     const { props, state } = this;
 
-    let unreadElem = !!props.unread 
-                     ? "fw7 green2" 
+    let unreadElem = !!props.unread
+                     ? "fw7 green2"
                      : "";
 
     let title = props.title.substr(1);
 
     let description = this.getLetter(props.description);
 
-    let selectedCss = !!props.selected ? 'bg-gray5 bg-gray0-d gray3-d' : 'bg-white bg-black-d gray3-d pointer';
-    
+    let selectedCss = !!props.selected ? 'bg-gray5 bg-gray0-d gray3-d bn-d' : 'bg-white bg-black-d gray3-d b--gray0-d pointer';
+
     return (
       <div
-        className={"z1 pa3 pt4 pb4 bb b--gray4 b--gray2-d " + selectedCss}
+        className={"z1 pa3 pt4 pb4 bb b--gray4 " + selectedCss}
         onClick={this.onClick.bind(this)}>
         <div className="w-100 v-mid">
           <p className={"dib mono f8 " + unreadElem }>

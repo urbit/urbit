@@ -107,7 +107,7 @@ export class JoinScreen extends Component {
           <p className="f9 gray2 mb4">Chat names use lowercase, hyphens, and slashes.</p>
           <textarea
             ref={ e => { this.textarea = e; } }
-            className="f7 mono ba b--gray3 b--gray2-d bg-black-d white-d pa3 mb2 db"
+            className="f7 mono ba b--gray3 b--gray0-d bg-black-d white-d pa3 mb2 db"
             placeholder="~zod/chatroom"
             spellCheck="false"
             rows={1}
