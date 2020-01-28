@@ -286,7 +286,7 @@ justIf =
     let fec = \x → Prim Ur.Fec % x
         zer = \x → Prim Ur.Zer % x
     in
-        Jet 2 99 $ Lam $ Lam $ If (zer 0) 1 (Prim Ur.Inc % 0)
+        Jet 2 99 $ Lam $ Lam $ If (Prim (Ur.Bol True)) 1 (Prim Ur.Inc % 0)
 
 toZero ∷ Exp
 toZero =

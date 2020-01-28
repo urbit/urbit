@@ -169,14 +169,14 @@ instance Show Jet where
         JFix       → "Fix"
         Eye        → "I"
         Bee        → "Dot"
-        Sea        → "Flip"
+        Sea        → "Fip"
         Bn n       → "Dot" <> show n
-        Cn n       → "Flip" <> show n
+        Cn n       → "Fip" <> show n
         Sn n       → "S" <> show n
         JSeq       → "Seq"
-        JBol True  → "Y"
-        JBol False → "N"
-        JIff       → "If"
+        JBol True  → "Yep"
+        JBol False → "Nop"
+        JIff       → "Iff"
         JAdd       → "Add"
         JEql       → "Eql"
         JZer       → "IsZero"
@@ -185,13 +185,13 @@ instance Show Jet where
         JFec       → "Fec"
         JMul       → "Mul"
         JSub       → "Sub"
-        JLef       → "L"
-        JRit       → "R"
+        JLef       → "Lef"
+        JRit       → "Rit"
         JCas       → "Cas"
         JCon       → "Con"
         JCar       → "Car"
         JCdr       → "Cdr"
-        JDed       → "Error"
+        JDed       → "Err"
         JUni       → "Uni"
         Wait n     → "Wait" <> show n
 
