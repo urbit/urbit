@@ -1,9 +1,13 @@
 ::  link-listen-hook: get your friends' bookmarks
 ::
-::    on-init, subscribes to all groups on this ship.
-::    for every ship in a group, we subscribe to their link's local-pages
+::    on-init, subscribes to all groups on this ship. for every ship in a group,
+::    we subscribe to their link's local-pages and annotations
 ::    at the group path (through link-proxy-hook),
-::    and forwards all entries into our link as submissions.
+::    and forwards all entries into our link as submissions and comments.
+::
+::    if a subscription to a group member fails, we assume it's because their
+::    group definition hasn't been updated to include us yet.
+::    we retry with exponential backoff, maxing out at one hour timeouts.
 ::
 /-  *link, group-store
 /+  default-agent, verb, dbug
@@ -11,12 +15,7 @@
 |%
 +$  state-0
   $:  %0
-      ~
-      ::NOTE  this means we could get away with just producing cards everywhere,
-      ::      never producing new state outside of the agent interface core.
-      ::      we opt to keep ^-(quip card _state) in place for most logic arms
-      ::      because it doesn't cost much, results in unsurprising code, and
-      ::      makes adding any state in the future easier.
+      retry-timers=(map target @dr)
   ==
 ::
 ::TODO  revert to annotations with new link-store subscription model
@@ -83,12 +82,22 @@
   ++  on-arvo
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
-    ?.  ?=([%g %done *] sign-arvo)
-      (on-arvo:def wire sign-arvo)
-    ?~  error.sign-arvo  [~ this]
-    =/  =tank  leaf+"{(trip dap.bowl)}'s message went wrong!"
-    %-  (slog tank tang.u.error.sign-arvo)
-    [~ this]
+    ?+  sign-arvo  (on-arvo:def wire sign-arvo)
+        [%g %done *]
+      ?~  error.sign-arvo  [~ this]
+      =/  =tank  leaf+"{(trip dap.bowl)}'s message went wrong!"
+      %-  (slog tank tang.u.error.sign-arvo)
+      [~ this]
+    ::
+        [%b %wake *]
+      ?>  ?=([%retry @ @ ^] wire)
+      ?^  error.sign-arvo
+        =/  =tank  leaf+"wake on {(spud wire)} went wrong!"
+        %-  (slog tank u.error.sign-arvo)
+        [~ this]
+      :_  this
+      (take-retry:do (wire-to-target t.wire))
+    ==
   ::
   ++  on-poke   on-poke:def
   ++  on-peek   on-peek:def
@@ -124,7 +133,6 @@
       %fact
     =*  mark  p.cage.sign
     =*  vase  q.cage.sign
-    ~&  [dap.bowl %fact mark]
     ?+  mark  ~|([dap.bowl %unexpected-mark mark] !!)
       %group-initial  (handle-group-initial !<(groups:group-store vase))
       %group-update   (handle-group-update !<(group-update:group-store vase))
@@ -203,14 +211,14 @@
     %kick       [[(start-link-subscription target)]~ state]
   ::
       %watch-ack
-    ?~  p.sign  [~ state]
-    ::  our subscription request got rejected for whatever reason,
-    ::  (most likely difference in group membership,)
-    ::  so we don't try again.
-    ::TODO  but now the only way to retry is to remove from group and re-add...
-    ::      this is a problem because our and their group may not update
-    ::      simultaneously...
-    [~ state]
+    ?~  p.sign
+      =.  retry-timers  (~(del by retry-timers) target)
+      [~ state]
+    ::  our subscription request got rejected,
+    ::  most likely because our group definition is out of sync with theirs.
+    ::  set timer for retry.
+    ::
+    (start-retry target)
   ::
       %fact
     =*  mark  p.cage.sign
@@ -220,6 +228,44 @@
       %-  handle-link-update
       [who.target where.target !<(update vase)]
     ==
+  ==
+::
+++  start-retry
+  |=  =target
+  ^-  (quip card _state)
+  =/  timer=@dr
+    %+  min  ~h1
+    %+  mul  2
+    (~(gut by retry-timers) target ~s15)
+  =.  retry-timers
+    (~(put by retry-timers) target timer)
+  :_  state
+  :_  ~
+  :*  %pass
+      [%retry (target-to-wire target)]
+      [%arvo %b %wait (add now.bowl timer)]
+  ==
+::
+++  take-retry
+  |=  =target
+  ^-  (list card)
+  ::  relevant: whether :who is still in group :where
+  ::
+  =;  relevant=?
+    ?.  relevant  ~
+    [(start-link-subscription target)]~
+  ?:  %-  ~(has by wex.bowl)
+      [[%links (target-to-wire target)] who.target %group-store]
+    |
+  %.  who.target
+  %~  has  in
+  =-  (fall - *group:group-store)
+  .^  (unit group:group-store)
+    %gx
+    (scot %p our.bowl)
+    %group-store
+    (scot %da now.bowl)
+    (snoc where.target %noun)
   ==
 ::
 ++  handle-link-update
