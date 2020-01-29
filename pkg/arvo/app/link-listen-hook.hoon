@@ -19,6 +19,21 @@
       ::      makes adding any state in the future easier.
   ==
 ::
++$  target
+  $:  what=%local-pages  ::TODO  %annotations
+      who=ship
+      where=path
+  ==
+++  wire-to-target
+  |=  =wire
+  ^-  target
+  ?>  ?=([%local-pages @ ^] wire)  ::TODO  %annotations
+  [i.wire (slav %p i.t.wire) t.t.wire]
+++  target-to-wire
+  |=  target
+  ^-  wire
+  [what (scot %p who) where]
+::
 +$  card  card:agent:gall
 --
 ::
@@ -52,9 +67,9 @@
       =^  cards  state
         (take-groups-sign:do sign)
       [cards this]
-    ?:  ?=([%links @ ^] wire)
+    ?:  ?=([%links @ @ ^] wire)
       =^  cards  state
-        (take-links-sign:do (slav %p i.t.wire) t.t.wire sign)
+        (take-links-sign:do (wire-to-target t.wire) sign)
       [cards this]
     ?:  ?=([%forward ^] wire)
       =^  cards  state
@@ -141,7 +156,7 @@
     ?:  =(our.bowl i.whos)
       $(whos t.whos)
     :_  $(whos t.whos)
-    %.  [i.whos pax.upd]
+    %.  [%local-pages i.whos pax.upd]  ::TODO  %annotations
     ?:  ?=(%remove -.upd)
       end-link-subscription
     start-link-subscription
@@ -150,33 +165,33 @@
 ::  link subscriptions
 ::
 ++  start-link-subscription
-  |=  [who=ship where=path]
+  |=  =target
   ^-  card
   :*  %pass
-      [%links (scot %p who) where]
+      [%links (target-to-wire target)]
       %agent
-      [who %link-proxy-hook]
+      [who.target %link-proxy-hook]
       %watch
-      [%local-pages where]
+      [what where]:target
   ==
 ::
 ++  end-link-subscription
-  |=  [who=ship where=path]
+  |=  =target
   ^-  card
   :*  %pass
-      [%links (scot %p who) where]
+      [%links (target-to-wire target)]
       %agent
-      [who %link-proxy-hook]
+      [who.target %link-proxy-hook]
       %leave
       ~
   ==
 ::
 ++  take-links-sign
-  |=  [who=ship where=path =sign:agent:gall]
+  |=  [=target =sign:agent:gall]
   ^-  (quip card _state)
   ?-  -.sign
-    %poke-ack   ~|([dap.bowl %unexpected-poke-ack /links who where] !!)
-    %kick       [[(start-link-subscription who where)]~ state]
+    %poke-ack   ~|([dap.bowl %unexpected-poke-ack /links target] !!)
+    %kick       [[(start-link-subscription target)]~ state]
   ::
       %watch-ack
     ?~  p.sign  [~ state]
@@ -192,21 +207,23 @@
     =*  mark  p.cage.sign
     =*  vase  q.cage.sign
     ?+  mark  ~|([dap.bowl %unexpected-mark mark] !!)
-      %link-update  (handle-link-update who where !<(update vase))
+        %link-update
+      %-  handle-link-update
+      [who.target where.target !<(update vase)]
     ==
   ==
 ::
 ++  handle-link-update
   |=  [who=ship where=path =update]
   ^-  (quip card _state)
-  ?>  ?=(%local-pages -.update)
+  ?>  ?=(%local-pages -.update)  ::TODO  %annotations
   ?>  =(src.bowl who)
   :_  state
   %+  turn  pages.update
   |=  =page
   ^-  card
   :*  %pass
-      [%forward (scot %p who) where]
+      [%forward -.update (scot %p who) where]
       %agent
       [our.bowl %link-store]
       %poke
