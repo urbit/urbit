@@ -6,8 +6,8 @@ import { NewScreen } from '/components/lib/new';
 import { JoinScreen } from '/components/lib/join';
 import { Notebook } from '/components/lib/notebook';
 import { Note } from '/components/lib/note';
+import { NewPost } from '/components/lib/new-post';
 
-//TODO add new note route
 export class Root extends Component {
   constructor(props) {
     super(props);
@@ -78,20 +78,39 @@ export class Root extends Component {
           let ship = props.match.params.ship || "";
           let notebook = props.match.params.notebook || "";
 
-          return (
-            <Skeleton
-            popout={false}
-            active={"rightPanel"}
-            rightPanelHide={false}
-            sidebarShown={true}
-            notebooks={state.notebooks}>
-              <Notebook
-              notebooks={state.notebooks}
-              view={view}
-              ship={ship}
-              book={notebook}/>
-            </Skeleton>
-          )
+          if (view === "new") {
+            return (
+              <Skeleton
+              popout={false}
+              active={"rightPanel"}
+              rightPanelHide={false}
+              sidebarShown={true}
+              notebooks={state.notebooks}>
+                <NewPost
+                  notebook={state.notebooks[ship][notebook]}
+                  host={ship}
+                  notebookName={notebook}
+                  {...props}
+                />
+              </Skeleton>
+            )
+          }
+          else {
+            return (
+              <Skeleton
+              popout={false}
+              active={"rightPanel"}
+              rightPanelHide={false}
+              sidebarShown={true}
+              notebooks={state.notebooks}>
+                <Notebook
+                notebooks={state.notebooks}
+                view={view}
+                ship={ship}
+                book={notebook}/>
+              </Skeleton>
+            )
+          }
         }}/>
       <Route exact path="/~publish/(popout)?/note/:ship/:notebook/:note"
         render={ (props) => {
