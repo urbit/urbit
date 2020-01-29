@@ -145,8 +145,7 @@
   ::
       %add-synced
     ?>  (team:title our.bol src.bol)
-    ?:  (~(has by synced) path.act)
-      [~ state]
+    ?:  (~(has by synced) path.act)  [~ state]
     =.  synced  (~(put by synced) path.act ship.act)
     =/  contact-path  [%contacts path.act]
     :_  state
@@ -154,8 +153,7 @@
   ::
       %remove
     =/  ship  (~(get by synced) path.act)
-    ?~  ship
-      [~ state]
+    ?~  ship  [~ state]
     ?:  &(=(u.ship our.bol) (team:title our.bol src.bol))
       ::  delete one of our.bol own paths
       :_  state(synced (~(del by synced) path.act))
@@ -223,9 +221,9 @@
   |=  [wir=wire fact=contact-update]
   ^-  (quip card _state)
   |^
-  :_  state
   ?:  (team:title our.bol src.bol)
     (local fact)
+  :_  state
   (foreign fact)
   ::
   ++  give-fact
@@ -235,18 +233,24 @@
   ::
   ++  local
     |=  fact=contact-update
-    ^-  (list card)
-    ?+  -.fact  ~
+    ^-  (quip card _state)
+    ?+  -.fact  [~ state]
         %add
+      :_  state
       (give-fact path.fact [%add path.fact ship.fact contact.fact])
     ::
         %edit
+      :_  state
       (give-fact path.fact [%edit path.fact ship.fact edit-field.fact])
     ::
         %remove
-      %+  welp
-        (give-fact path.fact [%remove path.fact ship.fact])
-      [%give %kick ~[[%contacts path.fact]] `ship.fact]~
+      :_  state
+      ~[(group-poke [%remove [ship.fact ~ ~] path.fact])]
+    ::
+        %delete
+      =.  synced  (~(del by synced) path.fact)
+      :_  state
+      [(group-poke [%unbundle path.fact])]~
     ==
   ::
   ++  foreign
@@ -301,18 +305,27 @@
     ?.  (~(has by synced) path)
       [~ state]
     :_  state(synced (~(del by synced) path))
-    [%pass [%contacts path] %agent [our.bol %contact-store] %leave ~]~
+    :~  [%pass [%contacts path] %agent [our.bol %contact-store] %leave ~]
+        [(contact-poke [%delete path])]
+    ==
   ::
   ++  remove
     |=  [members=group =path]
     ^-  (quip card _state)
     ::  if pax is synced, remove member from contacts and kick their sub
+    =/  owner=(unit ship)  (~(get by synced) path)
+    ?~  owner
+      :_  state
+      %+  turn  ~(tap in members)
+      |=  =ship
+      (contact-poke [%remove path ship])
     :_  state
-    ?.  (~(has by synced) path)  ~
     %-  zing
     %+  turn  ~(tap in members)
     |=  =ship
     :~  [%give %kick ~[[%contacts path]] `ship]
+        ?:  =(ship our.bol)
+          (contact-poke [%delete path])
         (contact-poke [%remove path ship])
     ==
   --

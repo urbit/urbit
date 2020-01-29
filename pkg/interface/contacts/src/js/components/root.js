@@ -80,6 +80,9 @@ export class Root extends Component {
                 `/${props.match.params.ship}/${props.match.params.group}`;
               let groupContacts = contacts[groupPath] || {};
               let group = groups[groupPath] || new Set([]);
+              if (!(groupPath in groups)) {
+                props.history.push('/~contacts');
+              }
 
               return (
                 <Skeleton
