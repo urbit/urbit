@@ -142,6 +142,20 @@
     ==
   [cards state]
 ::
+++  get-subject
+  |=  uri=@t
+  ^-  type
+  =/  =path
+    (parse-uri:build uri)
+  ?:  ?=([%app *] path)
+    (get-app-subject uri)
+  -:(~(gut by builds) uri !>(..zuse))
+::
+++  get-app-subject
+  |=  uri=@t
+  ^-  type
+  -:!>(..zuse)
+::
 ++  handle-completion
   |=  com=text-document--completion:request:lsp-sur
   ^-  (quip card _state)
@@ -158,7 +172,7 @@
   =+  (get-id:auto pos txt)
   ?~  id  ~
   =/  matches=(list (option:auto type))
-    (search-prefix:auto u.id (get-identifiers:auto -:!>(..zuse)))
+    (search-prefix:auto u.id (get-identifiers:auto (get-subject uri.com)))
   ?~  matches  ~
   (turn matches make-completion-item)
 ::
@@ -308,7 +322,7 @@
   ?~  id
     [(give-rpc-response [%text-document--hover id.hov ~]) state]
   =/  match=(unit (option:auto type))
-    (search-exact:auto u.id (get-identifiers:auto -:!>(..zuse)))
+    (search-exact:auto u.id (get-identifiers:auto (get-subject uri.hov)))
   ?~  match
     [(give-rpc-response [%text-document--hover id.hov ~]) state]
   =/  contents
