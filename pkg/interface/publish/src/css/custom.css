@@ -1,3 +1,10 @@
+:root {
+  --dark-gray: #555555;
+  --gray: #7F7F7F;
+  --medium-gray: #CCCCCC;
+  --light-gray: rgba(0,0,0,0.08);
+}
+
 html, body {
   height: 100%;
   width: 100%;
@@ -67,4 +74,82 @@ a {
   .mw-300-ns {
     max-width: 300px;
   }
+}
+
+.NewPost {
+  width: 100%;
+  height: calc(100% - 103px);
+  display: flex;
+  padding-top: 8px;
+}
+
+.react-codemirror2 {
+  width: 100%;
+}
+
+
+.CodeMirror {
+  padding: 12px;
+  height: 100% !important;
+  max-width: 700px;
+  width: 100% !important;
+  cursor: text;
+  font-size: 12px;
+  line-height: 20px;
+  * {
+    font-family: 'Source Code Pro';
+  }
+}
+
+.CodeMirror-selected { background:#BAE3FE !important; }
+
+.cm-s-tlon span { font-family: "Source Code Pro"}
+.cm-s-tlon span.cm-meta { color: var(--gray); }
+.cm-s-tlon span.cm-number { color: var(--gray); }
+.cm-s-tlon span.cm-keyword { line-height: 1em; font-weight: bold; color: var(--gray); }
+.cm-s-tlon span.cm-atom { font-weight: bold; color: var(--gray); }
+.cm-s-tlon span.cm-def { color: black; }
+.cm-s-tlon span.cm-variable { color: black; }
+.cm-s-tlon span.cm-variable-2 { color: black; }
+.cm-s-tlon span.cm-variable-3, .cm-s-tlon span.cm-type { color: black; }
+.cm-s-tlon span.cm-property { color: black; }
+.cm-s-tlon span.cm-operator { color: black; }
+.cm-s-tlon span.cm-comment { color: black; background-color: var(--light-gray); padding:2px; border-radius: 2px;}
+.cm-s-tlon span.cm-string { color: var(--dark-gray); }
+.cm-s-tlon span.cm-string-2 { color: var(--gray); }
+.cm-s-tlon span.cm-qualifier { color: #555; }
+.cm-s-tlon span.cm-error { color: #FF0000; }
+.cm-s-tlon span.cm-attribute { color: var(--gray); }
+.cm-s-tlon span.cm-tag { color: var(--gray); }
+.cm-s-tlon span.cm-link { color: var(--dark-gray); text-decoration: none;}
+.cm-s-tlon .CodeMirror-activeline-background { background: var(--gray); }
+.cm-s-tlon .CodeMirror-cursor {
+  border-left: 2px solid #3687FF;
+}
+
+.cm-s-tlon span.cm-builtin { color: var(--gray); }
+.cm-s-tlon span.cm-bracket { color: var(--gray); }
+/* .cm-s-tlon  { font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;} */
+
+
+.cm-s-tlon .CodeMirror-matchingbracket { outline:1px solid grey; color:black !important; }
+
+.CodeMirror-hints.tlon {
+  /* font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; */
+  color: #616569;
+  background-color: #ebf3fd !important;
+}
+
+.CodeMirror-hints.tlon .CodeMirror-hint-active {
+  background-color: #a2b8c9 !important;
+  color: #5c6065 !important;
+}
+
+.title-input[placeholder]:empty:before {
+  content: attr(placeholder);
+  color: #7F7F7F;
+}
+
+[contenteditable]:focus {
+  outline: 0px solid transparent;
 }

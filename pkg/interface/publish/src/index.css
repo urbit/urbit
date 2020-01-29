@@ -3,3 +3,5 @@
 @import 'css/custom.css';
 @import 'css/spinner.css';
 
+@import '../node_modules/codemirror/lib/codemirror.css';
+@import '../node_modules/codemirror/theme/material.css';
