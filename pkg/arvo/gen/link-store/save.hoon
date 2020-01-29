@@ -1,4 +1,4 @@
-::  link-store|add: save a link to a path
+::  link-store|save: save a link to a path
 ::
 /-  *link
 :-  %say
