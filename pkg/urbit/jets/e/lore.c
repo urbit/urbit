@@ -13,21 +13,25 @@
 
     while ( 1 ) {
       c3_w meg_w = 0;
-      c3_o end_y;
+      c3_y end_y;
 
       c3_y byt_y;
       while ( 1 ) {
-        if ( (pos_w + meg_w) >= len_w ) {
+        if ( pos_w >= len_w ) {
           byt_y = 0;
           end_y = c3y;
           break;
         }
         byt_y = u3r_byte(pos_w + meg_w, lub);
 
-        if ( 10 == byt_y ) {
-          end_y = c3n;
+        if ( (10 == byt_y) || (0 == byt_y) ) {
+          end_y = __(byt_y == 0);
           break;
         } else meg_w++;
+      }
+
+      if ((byt_y == 0) && ((pos_w + meg_w + 1) < len_w)) {
+        return u3m_bail(c3__exit);
       }
 
       {
