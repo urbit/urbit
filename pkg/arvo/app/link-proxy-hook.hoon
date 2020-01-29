@@ -102,7 +102,7 @@
   ::  we only expose /local-pages and /annotations,
   ::  and only to ships in the relevant group
   ::
-  ?.  ?=([?(%local-pages %annotations %allotations) ^] path)
+  ?.  ?=([?(%local-pages %annotations %allotations) ^] path)  |
   =;  group
     ?&  ?=(^ group)
         (~(has in u.group) who)

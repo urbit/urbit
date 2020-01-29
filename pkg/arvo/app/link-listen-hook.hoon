@@ -19,15 +19,17 @@
       ::      makes adding any state in the future easier.
   ==
 ::
+::TODO  revert to annotations with new link-store subscription model
++$  what-target  ?(%local-pages %allotations)
 +$  target
-  $:  what=%local-pages  ::TODO  %annotations
+  $:  what=what-target
       who=ship
       where=path
   ==
 ++  wire-to-target
   |=  =wire
   ^-  target
-  ?>  ?=([%local-pages @ ^] wire)  ::TODO  %annotations
+  ?>  ?=([what-target @ ^] wire)
   [i.wire (slav %p i.t.wire) t.t.wire]
 ++  target-to-wire
   |=  target
@@ -155,11 +157,13 @@
     ::
     ?:  =(our.bowl i.whos)
       $(whos t.whos)
-    :_  $(whos t.whos)
-    %.  [%local-pages i.whos pax.upd]  ::TODO  %annotations
     ?:  ?=(%remove -.upd)
-      end-link-subscription
-    start-link-subscription
+      %+  weld
+        $(whos t.whos)
+      (end-link-subscriptions i.whos pax.upd)
+    :+  (start-link-subscription %local-pages i.whos pax.upd)
+      (start-link-subscription %allotations i.whos pax.upd)
+    $(whos t.whos)
   ==
 ::
 ::  link subscriptions
@@ -175,16 +179,21 @@
       [what where]:target
   ==
 ::
-++  end-link-subscription
-  |=  =target
-  ^-  card
-  :*  %pass
-      [%links (target-to-wire target)]
-      %agent
-      [who.target %link-proxy-hook]
-      %leave
-      ~
-  ==
+++  end-link-subscriptions
+  |=  [who=ship where=path]
+  ^-  (list card)
+  |^  ~[(end %local-pages) (end %allotations)]
+  ::
+  ++  end
+    |=  what=what-target
+    :*  %pass
+        [%links (target-to-wire what who where)]
+        %agent
+        [who %link-proxy-hook]
+        %leave
+        ~
+    ==
+  --
 ::
 ++  take-links-sign
   |=  [=target =sign:agent:gall]
@@ -216,19 +225,34 @@
 ++  handle-link-update
   |=  [who=ship where=path =update]
   ^-  (quip card _state)
-  ?>  ?=(%local-pages -.update)  ::TODO  %annotations
   ?>  =(src.bowl who)
   :_  state
-  %+  turn  pages.update
-  |=  =page
-  ^-  card
-  :*  %pass
-      [%forward -.update (scot %p who) where]
-      %agent
-      [our.bowl %link-store]
-      %poke
-      %link-action
-      !>([%hear where src.bowl page])
+  ?+  -.update  ~|([dap.bowl %unexpected-update -.update] !!)
+      %local-pages
+    %+  turn  pages.update
+    |=  =page
+    ^-  card
+    :*  %pass
+        [%forward -.update (scot %p who) where]
+        %agent
+        [our.bowl %link-store]
+        %poke
+        %link-action
+        !>([%hear where src.bowl page])
+    ==
+  ::
+      %annotations
+    %+  turn  notes.update
+    |=  =note
+    ^-  card
+    :*  %pass
+        [%forward -.update (scot %p who) where]
+        %agent
+        [our.bowl %link-store]
+        %poke
+        %link-action
+        !>([%read where url.update src.bowl note])
+    ==
   ==
 ::
 ++  take-forward-sign
