@@ -14,8 +14,11 @@
 ::    /local-pages/[some-group]        all pages we saved by recency
 ::    /submissions/[some-group]        all submissions by recency
 ::      comments
+::    /allotations/[some-group]             TMP all our comments in group
 ::    /annotations/[some-group]/[b64(url)]  all our comments on url by recency
 ::    /discussions/[some-group]/[b64(url)]  all known comments on url by recency
+::
+::TODO  continue work from m/uplink-broad branch!
 ::
 /+  *link, default-agent, verb, dbug
 ::
@@ -114,6 +117,14 @@
           %+  give  %link-update
           [%submissions t.path (get-submissions:do t.path)]
         ::
+            [%allotations ^]
+          %+  turn
+            %~  tap  by
+            (~(gut by discussions) t.path *(map url discussion))
+          |=  [=url =discussion]
+          %+  give-single  %link-update
+          [%annotations t.path url ours.discussion]
+        ::
             [%annotations @ ^]
           %+  give  %link-update
           [%annotations t.path (get-annotations:do t.path)]
@@ -127,6 +138,11 @@
       |*  [=mark =noun]
       ^-  (list card)
       [%give %fact ~ mark !>(noun)]~
+    ::
+    ++  give-single
+      |*  [=mark =noun]
+      ^-  card
+      [%give %fact ~ mark !>(noun)]
     --
   ::
   ++  on-leave  on-leave:def
@@ -198,7 +214,7 @@
     :-  %link-update
     !>([%annotations path url [note]~])
   :*  [%give %fact [%annotations (snoc path url)]~ fact]
-      [%give %fact [%annotations path]~ fact]
+      [%give %fact [%allotations path]~ fact]
       cards
   ==
 ::  +hear-submission: record page someone else saved
