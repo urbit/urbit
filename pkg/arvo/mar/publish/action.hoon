@@ -69,7 +69,7 @@
       %-  ot:dejs
       :~  who+(su:dejs fed:ag)
           coll+so:dejs
-          name+(su:dejs sym)
+          name+so:dejs
           content+so:dejs
       ==
     ::
