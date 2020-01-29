@@ -225,9 +225,7 @@
   |^
   :_  state
   ?:  (team:title our.bol src.bol)
-    ~&  update-local+fact
     (local fact)
-  ~&  update-foreign+fact
   (foreign fact)
   ::
   ++  give-fact
