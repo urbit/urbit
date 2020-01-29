@@ -5,7 +5,9 @@ import _ from 'lodash';
 export class SidebarInvite extends Component {
 
   onAccept() {
-    this.props.api.invite.accept(this.props.uid);
+    const { props } = this;
+    props.api.invite.accept(props.uid);
+    props.history.push(`/~contacts${props.invite.path}`);
   }
 
   onDecline() {

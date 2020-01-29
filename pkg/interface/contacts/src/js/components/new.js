@@ -18,7 +18,6 @@ export class NewScreen extends Component {
     
     this.groupNameChange = this.groupNameChange.bind(this);
     this.invChange = this.invChange.bind(this);
-    // this.colorChange = this.colorChange.bind(this);
   }
   
   groupNameChange(event) {
@@ -32,12 +31,6 @@ export class NewScreen extends Component {
       invites: event.target.value
     });
   }
-  
-  // colorChange(event) {
-  //   this.setState({
-  //     color: event.target.value
-  //   });
-  // }
   
   onClickCreate() {
     const { props, state } = this;
@@ -82,11 +75,11 @@ export class NewScreen extends Component {
     }, () => {
       props.setSpinner(true);
       props.api.contactView.create(group, aud);
+      props.history.push(`/~contacts${group}`);
     });
   }
   
   render() {
-    
     let groupNameErrElem = (<span />);
     if (this.state.groupNameError) {
       groupNameErrElem = (
@@ -105,23 +98,6 @@ export class NewScreen extends Component {
       );
     }
 
-    /*
-     {<h2 className="f8 pl3 pt6">Group Avatar</h2>
-        <p className="f9 pl3 gray2 lh-copy">
-        Select a color to represent your group
-        </p>
-        <textarea
-        className="f7 ba b--gray3 w-50 w-25-xl pa3 ml3 mt2"
-        rows={1}
-        placeholder="#000000"
-        style={{
-          resize: "none",
-          height: 48,
-          paddingTop: 14
-        }}
-      />}
-    */
-      
     return (
       <div className="h-100 w-100 flex flex-column overflow-y-scroll">
         <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 pl3 pt3 f8">

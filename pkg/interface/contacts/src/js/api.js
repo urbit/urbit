@@ -11,14 +11,14 @@ class UrbitApi {
     this.bindPaths = [];
 
     this.contactHook = {
-      edit: this.contactEdit.bind(this)
+      edit: this.contactEdit.bind(this),
+      remove: this.contactRemove.bind(this)
     };
 
     this.contactView = {
       create: this.contactCreate.bind(this),
       delete: this.contactDelete.bind(this),
       add: this.contactAdd.bind(this),
-      remove: this.contactRemove.bind(this),
       share: this.contactShare.bind(this)
     };
     
@@ -85,8 +85,12 @@ class UrbitApi {
     this.contactViewAction({ delete: { path }});
   }
 
+  contactHookAction(data) {
+    this.action("contact-hook", "contact-action", data);
+  }
+
   contactRemove(path, ship) {
-    this.contactViewAction({
+    this.contactHookAction({
       remove: {
         path, ship
       }
@@ -104,7 +108,7 @@ class UrbitApi {
     {avatar: null}
     {avatar: {p: length, q: bytestream}}
     */
-    this.action("contact-hook", "contact-action", {
+    this.contactHookAction({
       edit: {
         path, ship, 'edit-field': editField
       }

@@ -105,34 +105,27 @@
 ++  poke-contact-action
   |=  act=contact-action
   ^-  (quip card _state)
-  ~&  src+src.bol
-  ~&  act+act
   |^  
+  :_  state
   ?+  -.act  !!
-    %edit  (process-action path.act ship.act act)
-    %add   (process-action path.act ship.act act)
+    %edit    (handle-contact-action path.act ship.act act)
+    %add     (handle-contact-action path.act ship.act act)
+    %remove  (handle-contact-action path.act ship.act act)
   ==
   ::
-  ++  process-action
+  ++  handle-contact-action
     |=  [=path =ship act=contact-action]
-    ^-  (quip card _state)
+    ^-  (list card)
     ::  local
-    :_  state
     ?:  (team:title our.bol src.bol)
-      ~&  'local'
-      =/  shp  (~(got by synced) path)
+      =/  shp  ?:(=(path /~/default) our.bol (~(got by synced) path))
       =/  appl  ?:(=(shp our.bol) %contact-store %contact-hook)
-      ~&  shp+shp
-      ~&  appl+appl
       [%pass / %agent [shp appl] %poke %contact-action !>(act)]~
-    ~&  'foreign'
     ::  foreign
     =/  shp  (~(got by synced) path)
-    ~&  shp+shp
     ?.  |(=(shp our.bol) =(src.bol ship))  ~
     ::  scry group to check if ship is a member
     =/  =group  (need (group-scry path))
-    ~&  group+group
     ?.  (~(has in group) shp)  ~
     [%pass / %agent [our.bol %contact-store] %poke %contact-action !>(act)]~
   --
@@ -230,41 +223,41 @@
   |=  [wir=wire fact=contact-update]
   ^-  (quip card _state)
   |^
+  :_  state
   ?:  (team:title our.bol src.bol)
     ~&  update-local+fact
     (local fact)
   ~&  update-foreign+fact
   (foreign fact)
   ::
-  ++  local
-    |=  fact=contact-update
-    ^-  (quip card _state)
-    ?+  -.fact  [~ state]
-        %add
-      [(give-fact path.fact [%add path.fact ship.fact contact.fact]) state]
-    ::
-        %remove
-      :_  state
-      :-  [%give %kick ~[[%contacts path.fact]] `ship.fact]
-      (give-fact path.fact [%remove path.fact ship.fact])
-    ::
-        %edit
-      [(give-fact path.fact [%edit path.fact ship.fact edit-field.fact]) state]
-    ==
-  ::
   ++  give-fact
     |=  [=path update=contact-update]
     ^-  (list card)
     [%give %fact ~[[%contacts path]] %contact-update !>(update)]~
   ::
+  ++  local
+    |=  fact=contact-update
+    ^-  (list card)
+    ?+  -.fact  ~
+        %add
+      (give-fact path.fact [%add path.fact ship.fact contact.fact])
+    ::
+        %edit
+      (give-fact path.fact [%edit path.fact ship.fact edit-field.fact])
+    ::
+        %remove
+      %+  welp
+        (give-fact path.fact [%remove path.fact ship.fact])
+      [%give %kick ~[[%contacts path.fact]] `ship.fact]~
+    ==
+  ::
   ++  foreign
     |=  fact=contact-update
-    ^-  (quip card _state)
-    ?+  -.fact  [~ state]
+    ^-  (list card)
+    ?+  -.fact  ~
         %contacts
       =/  owner  (~(got by synced) path.fact)
       ?>  =(owner src.bol)
-      :_  state
       %+  weld
       :~  (contact-poke [%delete path.fact])
           (contact-poke [%create path.fact])
@@ -276,17 +269,22 @@
         %add
       =/  owner  (~(got by synced) path.fact)
       ?>  |(=(owner src.bol) =(src.bol ship.fact))
-      [~[(contact-poke [%add path.fact ship.fact contact.fact])] state]
+      ~[(contact-poke [%add path.fact ship.fact contact.fact])]
     ::
         %remove
       =/  owner  (~(got by synced) path.fact)
       ?>  |(=(owner src.bol) =(src.bol ship.fact))
-      [~[(contact-poke [%remove path.fact ship.fact])] state]
+      %+  welp
+        :~  (group-poke [%remove [ship.fact ~ ~] path.fact])
+            (contact-poke [%remove path.fact ship.fact])
+        ==
+      ?.  =(ship.fact our.bol)  ~
+      ~[(group-poke [%unbundle path.fact])]
     ::
         %edit
       =/  owner  (~(got by synced) path.fact)
       ?>  |(=(owner src.bol) =(src.bol ship.fact))
-      [~[(contact-poke [%edit path.fact ship.fact edit-field.fact])] state]
+      ~[(contact-poke [%edit path.fact ship.fact edit-field.fact])]
     ==
   --
 ::
@@ -311,9 +309,8 @@
     |=  [members=group =path]
     ^-  (quip card _state)
     ::  if pax is synced, remove member from contacts and kick their sub
-    ?.  (~(has by synced) path)
-      [~ state]
     :_  state
+    ?.  (~(has by synced) path)  ~
     %-  zing
     %+  turn  ~(tap in members)
     |=  =ship
@@ -350,6 +347,11 @@
   |=  act=contact-action
   ^-  card
   [%pass / %agent [our.bol %contact-store] %poke %contact-action !>(act)]
+::
+++  group-poke
+  |=  act=group-action
+  ^-  card
+  [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
 ::
 ++  contacts-scry
   |=  pax=path

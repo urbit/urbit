@@ -27,6 +27,7 @@ export class ContactCard extends Component {
     this.notesToSet = this.notesToSet.bind(this);
     this.setField = this.setField.bind(this);
     this.shareWithGroup = this.shareWithGroup.bind(this);
+    this.removeFromGroup = this.removeFromGroup.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -181,31 +182,26 @@ export class ContactCard extends Component {
       case "removeEmail": {
         this.setState({ emailToSet: "" });
         api.contactEdit(props.path, ship, { email: "" });
-        this.refs.email.value = "";
         break;
       }
       case "removeNickname": {
         this.setState({ nicknameToSet: "" });
         api.contactEdit(props.path, ship, { nickname: "" });
-        this.refs.nickname.value = "";
         break;
       }
       case "removePhone": {
         this.setState({ phoneToSet: "" });
         api.contactEdit(props.path, ship, { phone: "" });
-        this.refs.phone.value = "";
         break;
       }
       case "removeWebsite": {
         this.setState({ websiteToSet: "" });
         api.contactEdit(props.path, ship, { website: "" });
-        this.refs.website.value = "";
         break;
       }
       case "removeNotes": {
         this.setState({ notesToSet: "" });
         api.contactEdit(props.path, ship, { notes: "" });
-        this.refs.notes.value = "";
         break;
       }
     }
@@ -226,7 +222,7 @@ export class ContactCard extends Component {
       phone: props.rootIdentity.phone,
       website: props.rootIdentity.website,
       notes: props.rootIdentity.notes,
-      color: props.rootIdentity.color
+      color: uxToHex(props.rootIdentity.color)
     } : {
       nickname: props.contact.nickname,
       email: props.contact.email,
@@ -250,6 +246,12 @@ export class ContactCard extends Component {
       `~${props.ship}`, props.path, `~${window.ship}`, contact
     );
     this.editToggle();
+  }
+
+  removeFromGroup() {
+    const { props } = this;
+    api.contactHook.remove(props.path, `~${props.ship}`);
+    props.history.push(`/~contacts${props.path}`);
   }
 
   renderEditCard() {
@@ -464,7 +466,7 @@ export class ContactCard extends Component {
       ((props.ship === window.ship) && (props.path === "/~/default"))
       ? "dib" : "dn";
     let adminOpt =
-      (props.path.includes(window.ship) && (props.ship !== window.ship))
+      (props.path.includes(window.ship) || (props.ship === window.ship))
       ? "dib" : "dn";
 
     let card = state.edit ? this.renderEditCard() : this.renderCard();
@@ -492,8 +494,8 @@ export class ContactCard extends Component {
             Share Contact Info
           </button>
           <button
-            className={`ml3 mt2 mb2 f9 pa1 ba red2 br2 b--red2 ` + adminOpt}
-            onClick={this.removeContact}>
+            className={`ml3 mt2 mb2 f9 pa1 ba red2 br2 b--red2 pointer ` + adminOpt}
+            onClick={this.removeFromGroup}>
             Remove from Group
           </button>
         </div>

@@ -45,7 +45,12 @@ export class GroupSidebar extends Component {
       .map((uid) => {
         let invite = props.invites[uid];
         return (
-          <SidebarInvite key={uid} api={api} invite={invite} uid={uid} />
+          <SidebarInvite
+            key={uid}
+            api={api}
+            invite={invite}
+            uid={uid}
+            history={props.history} />
         );
       });
 

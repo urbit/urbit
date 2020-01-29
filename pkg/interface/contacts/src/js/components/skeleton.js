@@ -20,6 +20,7 @@ export class Skeleton extends Component {
             invites={props.invites}
             activeDrawer={props.activeDrawer}
             selected={props.selected}
+            history={props.history}
             api={api}
           />
           <div

@@ -47,6 +47,7 @@ export class Root extends Component {
             return (
               <Skeleton
                 activeDrawer="groups"
+                history={props.history}
                 api={api}
                 contacts={contacts}
                 groups={groups}
@@ -60,12 +61,16 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={state.spinner}
+                  history={props.history}
                   api={api}
                   contacts={contacts}
                   groups={groups}
                   invites={invites}
                   activeDrawer="rightPanel">
-                  <NewScreen setSpinner={this.setSpinner} api={api} />
+                  <NewScreen
+                    history={props.history}
+                    setSpinner={this.setSpinner}
+                    api={api} />
                 </Skeleton>
               );
           }} />
@@ -79,6 +84,7 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={state.spinner}
+                  history={props.history}
                   api={api}
                   contacts={contacts}
                   invites={invites}
@@ -106,6 +112,7 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={state.spinner}
+                  history={props.history}
                   api={api}
                   contacts={contacts}
                   groups={groups}
@@ -138,11 +145,15 @@ export class Root extends Component {
               let contact =
                 (window.ship in groupContacts) ?
                 groupContacts[window.ship] : {};
+              if (window.ship in groupContacts) {
+                props.history.push(`/~contacts/view${groupPath}/${window.ship}`);
+              }
               let group = groups[groupPath] || new Set([]);
 
               return (
                 <Skeleton
                   spinner={state.spinner}
+                  history={props.history}
                   api={api}
                   contacts={contacts}
                   groups={groups}
@@ -157,6 +168,7 @@ export class Root extends Component {
                     path={groupPath}
                     selectedContact={shipPath} />
                   <ContactCard
+                    history={props.history}
                     contact={contact}
                     path={groupPath}
                     ship={window.ship}
@@ -185,6 +197,7 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={state.spinner}
+                  history={props.history}
                   api={api}
                   contacts={contacts}
                   groups={groups}
@@ -199,6 +212,7 @@ export class Root extends Component {
                     path={groupPath}
                     selectedContact={shipPath} />
                   <ContactCard
+                    history={props.history}
                     contact={contact}
                     path={groupPath}
                     ship={props.match.params.contact}
@@ -214,13 +228,15 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={state.spinner}
+                  history={props.history}
                   api={api}
                   contacts={contacts}
                   groups={groups}
                   invites={invites}
                   activeDrawer="rightPanel"
                   selected="me">
-                  <ContactCard
+                <ContactCard
+                    history={props.history}
                     path="/~/default"
                     contact={me}
                     ship={window.ship} />
