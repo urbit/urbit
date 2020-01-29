@@ -75,7 +75,7 @@ export class Root extends Component {
                   sidebarShown={state.sidebarShown}
                   sidebar={renderChannelSidebar(props)}
                 >
-                  <div className="h-100 w-100 overflow-x-hidden flex flex-column bg-gray0">
+                  <div className="h-100 w-100 overflow-x-hidden flex flex-column bg-white bg-gray0-d">
                     <div className="pl3 pr3 pt2 dt pb3 w-100 h-100">
                       <p className="f8 pt3 gray2 w-100 h-100 dtc v-mid tc">
                         Select, create, or join a chat to begin.

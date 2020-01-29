@@ -175,7 +175,7 @@ export class ChatInput extends Component {
     this.bindShortcuts();
 
     return (
-      <div className="pa3 cf flex black white-d bt b--gray4 b--gray2-d bg-black-d" style={{ flexGrow: 1 }}>
+      <div className="pa3 cf flex black white-d bt b--gray4 b--gray1-d bg-gray0-d" style={{ flexGrow: 1 }}>
         <div
           className="fl"
           style={{
@@ -185,9 +185,9 @@ export class ChatInput extends Component {
           }}>
           <Sigil ship={window.ship} size={24} color="#4330FC" />
         </div>
-        <div className="fr h-100 flex bg-black-d" style={{ flexGrow: 1 }}>
+        <div className="fr h-100 flex bg-gray0-d" style={{ flexGrow: 1 }}>
           <textarea
-            className={"pl3 bn bg-black-d white-d"}
+            className={"pl3 bn bg-gray0-d white-d"}
             style={{ flexGrow: 1, height: 28, paddingTop: 6, resize: "none" }}
             autoCapitalize="none"
             autoFocus={(

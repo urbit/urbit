@@ -62,7 +62,7 @@ export class Message extends Component {
       if (imgMatch) {
         contents = (
           <img
-            className="o-60-d"
+            className="o-80-d"
             src={letter.url}
             style={{
               width: "50%",
@@ -96,7 +96,7 @@ export class Message extends Component {
         return (
           <div>
           <a href={letter.url}
-          className="f7 lh-copy v-top bb word-break-all"
+          className="f7 lh-copy v-top bb b--white-d word-break-all"
           href={letter.url}
           target="_blank"
           rel="noopener noreferrer">
@@ -111,7 +111,7 @@ export class Message extends Component {
         )
       } else {
         return (
-          <a className="f7 lh-copy v-top bb b--black word-break-all"
+          <a className="f7 lh-copy v-top bb b--white-d b--black word-break-all"
             href={letter.url}
             target="_blank"
             rel="noopener noreferrer">

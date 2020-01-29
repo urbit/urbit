@@ -1,9 +1,15 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 export class IconHome extends Component {
   render() {
     return (
-      <img src="/~launch/img/Home.png" width={32} height={32} />
+      //TODO relocate to ~launch when OS1 is ported
+      <img
+        className="invert-d"
+        src="/~chat/img/Home.png"
+        width={16}
+        height={16}
+      />
     );
   }
 }
