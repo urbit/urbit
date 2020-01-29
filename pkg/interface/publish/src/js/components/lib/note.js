@@ -8,9 +8,7 @@ import { Comments } from './comments';
 export class Note extends Component {
   render() {
     return (
-
-
-      <div className="flex justify-center overflow-y-scroll mt4 ph4 pb4">
+      <div className="flex justify-center mt4 ph4 pb4">
         <div className="w-100 mw6">
           <div className="flex flex-column">
             <h7 className="f9 mb1">Title</h7>
@@ -41,7 +39,7 @@ export class Note extends Component {
             <div>
               <textarea id="comment" name="comment" placeHolder="Leave a comment here" class="f9 db border-box hover-black w-100 ba b--gray3 pt3 ph3 pb8 br1 mb2" aria-describedby="comment-desc"></textarea>
             </div>
-            <button className="f9 pa2 bg-white ba b--gray2 gray2">
+            <button className="f9 pa2 bg-white br1 ba b--gray2 gray2">
               Add comment
             </button>
           </form>
