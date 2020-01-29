@@ -6,7 +6,7 @@
 ::    and forwards all entries into our link as submissions.
 ::
 /-  *link, group-store
-/+  default-agent, verb
+/+  default-agent, verb, dbug
 ::
 |%
 +$  state-0
@@ -25,6 +25,7 @@
 =|  state-0
 =*  state  -
 ::
+%-  agent:dbug
 %+  verb  |
 ^-  agent:gall
 =<

@@ -17,7 +17,7 @@
 ::    /annotations/[some-group]/[b64(url)]  all our comments on url by recency
 ::    /discussions/[some-group]/[b64(url)]  all known comments on url by recency
 ::
-/+  *link, default-agent, verb
+/+  *link, default-agent, verb, dbug
 ::
 |%
 +$  state-0
@@ -44,6 +44,7 @@
 =|  state-0
 =*  state  -
 ::
+%-  agent:dbug
 %+  verb  |
 ^-  agent:gall
 =<
