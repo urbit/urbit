@@ -21,7 +21,7 @@
 ::    to touch are +permitted, +initial-response, & maybe +handle-group-update.
 ::
 /-  group-store
-/+  *link, default-agent, verb
+/+  *link, default-agent, verb, dbug
 |%
 +$  state-0
   $:  %0
@@ -36,6 +36,7 @@
 =|  state-0
 =*  state  -
 ::
+%-  agent:dbug
 %+  verb  |
 ^-  agent:gall
 =<
@@ -101,7 +102,7 @@
   ::  we only expose /local-pages and /annotations,
   ::  and only to ships in the relevant group
   ::
-  ?.  ?=([?(%local-pages %annotations) ^] path)  |
+  ?.  ?=([?(%local-pages %annotations %allotations) ^] path)  |
   =;  group
     ?&  ?=(^ group)
         (~(has in u.group) who)
