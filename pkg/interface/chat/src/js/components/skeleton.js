@@ -7,16 +7,13 @@ export class Skeleton extends Component {
 
     // sidebar and chat panel conditional classes
     let sidebarHide = (!this.props.sidebarShown || this.props.popout)
-    ? "dn"
-    : "";
+      ? "dn" : "";
 
     let sidebarHideOnMobile = this.props.sidebarHideOnMobile
-    ? "dn-s"
-    : "";
+      ? "dn-s" : "";
 
     let chatHideOnMobile = this.props.chatHideonMobile
-    ? "dn-s"
-    : "";
+      ? "dn-s" : "";
 
     // mobile-specific navigation classes
     let mobileNavClasses = classnames({
@@ -27,12 +24,10 @@ export class Skeleton extends Component {
 
     // popout switches out window chrome and borders
     let popoutWindow = this.props.popout
-    ? ""
-    : "ph4-m ph4-l ph4-xl pb4-m pb4-l pb4-xl";
+      ? "" : "ph4-m ph4-l ph4-xl pb4-m pb4-l pb4-xl";
 
-    let popoutBorder = this.props.popout 
-    ? "" 
-    : "ba-m ba-l ba-xl b--gray2 br1 ";
+    let popoutBorder = this.props.popout
+      ? "" : "ba-m ba-l ba-xl b--gray2 br1 ";
 
     return (
       // app outer skeleton

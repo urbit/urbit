@@ -82,8 +82,7 @@ export class Message extends Component {
         contents = (
           <div className={'embed-container mb2 w-100 w-75-l w-50-xl ' +
           ((this.state.unfold === true)
-          ? "db"
-          : "dn")}>
+            ? "db" : "dn")}>
           <iframe
             ref="iframe"
             width="560"
@@ -175,8 +174,7 @@ export class Message extends Component {
               size={24}
               color={((props.msg.author === window.ship)
               || (props.msg.author.substr(1) === window.ship))
-              ? "#4330FC"
-              : "#000000"}
+              ? "#4330FC" : "#000000"}
             />
           </div>
           <div

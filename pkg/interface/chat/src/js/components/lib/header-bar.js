@@ -14,8 +14,7 @@ export class HeaderBar extends Component {
     //   :  null;
 
     let popout = window.location.href.includes("popout/")
-      ? "dn"
-      : "dn db-m db-l db-xl";
+      ? "dn" : "dn db-m db-l db-xl";
 
     let title = document.title === "Home" ? "" : document.title;
 

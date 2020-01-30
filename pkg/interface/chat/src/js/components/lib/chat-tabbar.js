@@ -23,14 +23,11 @@ export class ChatTabBar extends Component {
       setColor = 'gray3';
     }
 
-    (props.location.pathname.includes('/popout'))
-    ? popout = "popout/"
-    : popout = "";
+    popout = props.location.pathname.includes("/popout")
+      ? "popout/" :  "";
 
     let hidePopoutIcon = (this.props.popout)
-    ? "dn-m dn-l dn-xl"
-    : "dib-m dib-l dib-xl";
-
+      ? "dn-m dn-l dn-xl" : "dib-m dib-l dib-xl";
 
     return (
       <div className="dib pt2 flex-shrink-0 flex-grow-1">
