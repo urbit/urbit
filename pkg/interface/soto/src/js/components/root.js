@@ -41,11 +41,8 @@ export class Root extends Component {
                       ⟵ Landscape
                     </a>
                   </div>
-                  <div
-                    className={
-                      `pa3 bg-gray0 mono white w-100
-                    h-100-m40-s b--gray0 br2 f8 relative ` + popoutClasses
-                    }
+                  <div className={"pa3 bg-gray0 white mono w-100 f8 relative" +
+                  " h-100-m40-s b--gray0 br2 " + popoutClasses}
                     style={{
                       lineHeight: "1.4",
                       cursor: "text"
