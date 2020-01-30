@@ -51,6 +51,8 @@ export class Root extends Component {
     let invites = '/chat' in state.invites ?
       state.invites['/chat'] : {};
 
+    let contacts = !!state.contacts ? state.contacts : {};
+
     const renderChannelSidebar = (props) => (
       <Sidebar
         inbox={state.inbox}
@@ -139,6 +141,11 @@ export class Root extends Component {
                 envelopes: []
               };
 
+              /*let defaultContacts = ('/~/default' in contacts)
+                ? contacts['/~/default'] : {};*/
+              let roomContacts = (station in contacts)
+                ? contacts[station] : {};
+
               let write = state.groups[`/chat${station}/write`] || new Set([]);
 
               let popout = props.match.url.includes("/popout/");
@@ -158,6 +165,7 @@ export class Root extends Component {
                     envelopes={mailbox.envelopes}
                     inbox={state.inbox}
                     group={write}
+                    contacts={roomContacts}
                     permissions={state.permissions}
                     pendingMessages={state.pendingMessages}
                     popout={popout}
@@ -183,6 +191,9 @@ export class Root extends Component {
               };
               let popout = props.match.url.includes("/popout/");
 
+              let roomContacts = (station in contacts)
+                ? contacts[station] : {};
+
               return (
                 <Skeleton
                   sidebarHideOnMobile={true}
@@ -195,6 +206,7 @@ export class Root extends Component {
                     api={api}
                     read={read}
                     write={write}
+                    contacts={roomContacts}
                     permissions={state.permissions}
                     popout={popout}
                     sidebarShown={state.sidebarShown}

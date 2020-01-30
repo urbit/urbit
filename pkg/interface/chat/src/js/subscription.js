@@ -30,6 +30,10 @@ export class Subscription {
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this));
+    api.bind('/primary', 'PUT', api.authTokens.ship, 'contact-view',
+      this.handleEvent.bind(this),
+      this.handleError.bind(this),
+      this.handleQuitAndResubscribe.bind(this));
   }
 
   handleEvent(diff) {

@@ -6,7 +6,7 @@ import classnames from 'classnames';
 
 import { Sigil } from '/components/lib/icons/sigil';
 
-import { uuid } from '/lib/util';
+import { uuid, uxToHex } from '/lib/util';
 
 
 export class ChatInput extends Component {
@@ -153,6 +153,10 @@ export class ChatInput extends Component {
   }
 
   readOnlyRender() {
+    const { props } = this;
+    let color = !!props.ownerContact
+      ? uxToHex(props.ownerContact.color) : '#000000';
+
     return (
       <div className="pa3 cf flex black bt b--gray4 o-50">
         <div className="fl" style={{
@@ -160,7 +164,7 @@ export class ChatInput extends Component {
           flexBasis: 24,
           height: 24
         }}>
-          <Sigil ship={window.ship} size={24} color="#4330FC" />
+          <Sigil ship={window.ship} size={24} color={`#${color}`} />
         </div>
         <div className="fr h-100 flex" style={{ flexGrow: 1, height: 28, paddingTop: 6, resize: "none" }}>
           <p className="pl3">This chat is read only and you cannot post.</p>
@@ -172,6 +176,8 @@ export class ChatInput extends Component {
   writeAccessRender() {
     const { props, state } = this;
 
+    let color = !!props.ownerContact
+      ? uxToHex(props.ownerContact.color) : '#000000';
     this.bindShortcuts();
 
     return (
@@ -183,7 +189,7 @@ export class ChatInput extends Component {
             flexBasis: 24,
             height: 24
           }}>
-          <Sigil ship={window.ship} size={24} color="#4330FC" />
+          <Sigil ship={window.ship} size={24} color={`#${color}`} />
         </div>
         <div className="fr h-100 flex bg-gray0-d" style={{ flexGrow: 1 }}>
           <textarea
