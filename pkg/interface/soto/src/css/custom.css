@@ -1,3 +1,9 @@
+html, body {
+  -webkit-font-smoothing: antialiased;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
 p, input {
   margin-block-end: unset;
   margin-block-start: unset;
@@ -29,6 +35,10 @@ textarea, select, input, button {
   line-height: 24px;
 }
 
+a {
+  text-decoration: none;
+}
+
 .label-small-mono {
   font-size: 12px;
   line-height: 24px;
@@ -39,7 +49,28 @@ textarea, select, input, button {
   font-family: "Source Code Pro", monospace;
 }
 
+.inter {
+  font-family: "Inter", sans-serif;
+}
+
 input {
   background-color: inherit;
   color: inherit;
+}
+
+.invert {
+  filter: invert(1);
+}
+
+/* responsive */
+@media all and (max-width: 34.375em) {
+  .h-100-m40-s {
+    height: calc(100% - 40px);
+  }
+}
+
+@media all and (min-width: 34.375em) {
+  .h-100-m40-p1-ns {
+    height: calc(100% - (40px + 1rem));
+  }
 }
