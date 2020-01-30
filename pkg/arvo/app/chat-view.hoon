@@ -198,22 +198,24 @@
     ~
   ?-  -.act
       %create
-    =/  pax  [(scot %p our.bol) path.act]
+    ::  we used to append /chat/(scot %p our) to paths 
+    ::  we're moving this logic into front end
+    ::  to accomodate "slash paths" (chat circles not associated with groups)
     %-  zing
     :~  
         ::  if group doesn't exist, create it
-        ?~  (group-scry pax)
-          :~  (group-poke [%bundle pax])
-              (group-poke [%add read.act pax])
+        ?~  (group-scry path.act)
+          :~  (group-poke [%bundle path.act])
+              (group-poke [%add read.act path.act])
           ==
         ~
         :~  
             :: if no group, create group
             (chat-poke [%create our.bol path.act])
-            (chat-hook-poke [%add-owned pax security.act allow-history.act])
+            (chat-hook-poke [%add-owned path.act security.act allow-history.act])
         ==
-        (create-security pax security.act)
-        :~  (permission-hook-poke [%add-owned pax pax])
+        (create-security path.act security.act)
+        :~  (permission-hook-poke [%add-owned path.act path.act])
             :: (permission-hook-poke [%add-owned group-write group-read])
         ==
     ==
@@ -226,9 +228,9 @@
     ==
   ::
       %join
-    =/  foreign-pax  [(scot %p ship.act) path.act]
+    :: same as above, assume that the entire path is being passed
     :~  (chat-hook-poke [%add-synced ship.act path.act ask-history.act])
-        (permission-hook-poke [%add-synced ship.act foreign-pax])
+        (permission-hook-poke [%add-synced ship.act path.act])
     ==
   ==
 ::
