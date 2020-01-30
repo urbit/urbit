@@ -96,7 +96,7 @@ export class InviteElement extends Component {
       <div>
         <textarea
           ref={ e => { this.textarea = e; } }
-          className="f7 mono ba b--gray3 bg-black-d white-d pa3 mb4 db w-100"
+          className="f7 mono ba b--gray3 bg-gray0-d white-d pa3 mb4 db w-100"
           style={{
             resize: 'none',
             height: 50

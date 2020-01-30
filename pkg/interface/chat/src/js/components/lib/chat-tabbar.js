@@ -23,14 +23,11 @@ export class ChatTabBar extends Component {
       setColor = 'gray3';
     }
 
-    (props.location.pathname.includes('/popout'))
-    ? popout = "popout/"
-    : popout = "";
+    popout = props.location.pathname.includes("/popout")
+      ? "popout/" :  "";
 
     let hidePopoutIcon = (this.props.popout)
-    ? "dn-m dn-l dn-xl"
-    : "dib-m dib-l dib-xl";
-
+      ? "dn-m dn-l dn-xl" : "dib-m dib-l dib-xl";
 
     return (
       <div className="dib pt2 flex-shrink-0 flex-grow-1">
@@ -55,7 +52,7 @@ export class ChatTabBar extends Component {
         <a href={`/~chat/popout/room` + props.station} target="_blank"
         className="dib fr">
           <img
-            className={`flex-shrink-0 pr2 dn invert-d ` + hidePopoutIcon}
+            className={`flex-shrink-0 pr3 dn ` + hidePopoutIcon}
             src="/~chat/img/popout.png"
             height="16"
             width="16"/>
