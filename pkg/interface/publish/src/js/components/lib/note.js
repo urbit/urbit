@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Comments } from './comments';
+import { NoteNavigation } from './note-navigation';
 import moment from 'moment';
 import ReactMarkdown from 'react-markdown'
 // import test from 'test.json';
@@ -41,6 +42,23 @@ export class Note extends Component {
     let date = moment(this.props.notebook.notes[this.props.note]["date-created"]).fromNow();
 
     let newfile = file.slice(file.indexOf(';>')+2);
+    let prevId = this.props.notebook.notes[this.props.note]["prev-note"];
+    let nextId = this.props.notebook.notes[this.props.note]["next-note"];
+
+    let prev = (prevId === null)
+      ?  null
+      :  {
+        id: prevId,
+        title: this.props.notebook.notes[prevId].title,
+        date: moment(this.props.notebook.notes[prevId]["date-created"]).fromNow()
+      }
+      let next = (nextId === null)
+        ?  null
+        :  {
+          id: nextId,
+          title: this.props.notebook.notes[nextId].title,
+          date: moment(this.props.notebook.notes[nextId]["date-created"]).fromNow()
+        }
 
 
     return (
@@ -56,19 +74,11 @@ export class Note extends Component {
             </div>
 
             <ReactMarkdown source={newfile} />
-
-            <div className="flex mt4">
-              <a href="" className="di flex-column w-50 pv6 bt br bb b--gray3">
-                <div className="f9 gray2 mb2">Previous</div>
-                <div className="f9 mb1">%loud</div>
-                <div className="f9 gray2">14d ago</div>
-              </span>
-              <a href="" className="di flex-column tr w-50 pv6 bt bb b--gray3">
-              <div className="f9 gray2 mb2">Next</div>
-              <div className="f9 mb1">+advent of %code ~2019.12</div>
-              <div className="f9 gray2">6d ago</div>
-              </div>
-            </div>
+            <NoteNavigation
+              prev={prev}
+              next={next}
+              ship={this.props.ship}
+              book={this.props.book}/>
             <Comments ship={this.props.ship} book={this.props.book} note={this.props.note} comments={comments}/>
 
           </div>
