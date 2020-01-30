@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { NoteList } from './note-list';
 import { About } from './about';
 import { Subscribers } from './subscribers';
 import { Settings } from './settings';
+
 
 //TODO subcomponents for posts, subscribers, settings
 //
@@ -39,7 +41,7 @@ export class Notebook extends Component {
              style={{marginTop: 56, marginBottom: 32}}>
           <div className="flex-col">
             <div className="mb1">{this.props.notebook.title}</div>
-            <span><span className="gray3">by </span>
+            <span><span className="gray3 mr1">by</span>
               <span className="mono">
                 {this.props.ship}
               </span>
@@ -49,14 +51,14 @@ export class Notebook extends Component {
             New Post
           </button>
         </div>
-      
+
         <div className="flex" style={{marginBottom:24}}>
           <div className={tabStyles.posts}>
             All Posts
           </div>
-          <div className={tabStyles.about}>
+          <Link to="/about" className={tabStyles.about}>
             About
-          </div>
+          </Link>
           <div className={tabStyles.subscribers}>
             Subscribers
           </div>
@@ -67,8 +69,16 @@ export class Notebook extends Component {
           </div>
         </div>
 
-        <div style={{height:"calc(100% - 170px)"}}>
-          No posts yet
+        <div style={{height:"calc(100% - 170px)"}} className="f9 lh-solid">
+          <div className="mv6">
+            <div className="mb1">Title</div>
+            <p className="mb1">I dreamt of urbit hardware - stars and galaxies and planets had differing...</p>
+            <div className="flex">
+              <div className="mono gray3 mr3">~fabled-faster</div>
+              <div className="gray3 mr3">1m ago</div>
+              <div className="gray3">No Comments</div>
+            </div>
+          </div>
         </div>
       </div>
     )
