@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Switch, Route } from 'react-router-dom';
 import { NoteList } from './note-list';
 import { About } from './about';
 import { Subscribers } from './subscribers';
@@ -30,7 +30,7 @@ export class Notebook extends Component {
       posts: "bb b--gray4 gray2 NotebookTab",
       about: "bb b--gray4 gray2 NotebookTab",
       subscribers: "bb b--gray4 gray2 NotebookTab",
-      settings: "bb b--gray4 gray2 NotebookTab",
+      settings: "bb b--gray4 pr2 gray2 NotebookTab",
     }
     tabStyles[this.props.view] = "bb b--black black NotebookTab";
 
@@ -56,18 +56,18 @@ export class Notebook extends Component {
           <div className={tabStyles.posts}>
             All Posts
           </div>
-          <Link to="/about" className={tabStyles.about}>
-            About
-          </Link>
-          <div className={tabStyles.subscribers}>
-            Subscribers
+            <div className={tabStyles.about}>
+              About
+            </div>
+            <div className={tabStyles.subscribers}>
+              Subscribers
+            </div>
+            <div className={tabStyles.settings}>
+              Settings
+            </div>
+            <div className="bb b--gray4 gray2 NotebookTab" style={{flexGrow:1}}>
+            </div>
           </div>
-          <div className={tabStyles.settings}>
-            Settings
-          </div>
-          <div className="bb b--gray4 gray2 NotebookTab" style={{flexGrow:1}}>
-          </div>
-        </div>
 
         <div style={{height:"calc(100% - 170px)"}} className="f9 lh-solid">
           <div className="mv6">
@@ -77,6 +77,47 @@ export class Notebook extends Component {
               <div className="mono gray3 mr3">~fabled-faster</div>
               <div className="gray3 mr3">1m ago</div>
               <div className="gray3">No Comments</div>
+            </div>
+            <div className="flex flex-column">
+              <div className="f9 gray2 mt6">Host</div>
+              <div className="flex justify-between mt3">
+                <div className="flex">
+                  <div className="f9 mono mr2">~fabled-faster</div>
+                  <div className="f9 gray2">Last active</div>
+                </div>
+                <div className="f9">Options ⌃</div>
+              </div>
+            </div>
+            <div className="flex flex-column">
+              <div className="f9 gray2 mt6">Participants (read and write access)</div>
+              <div className="f9 mt3">There are no paticipants in this notebook.</div>
+              <div className="flex justify-between mt3">
+                <div className="flex">
+                  <div className="f9 mono mr2">~fabled-faster</div>
+                  <div className="f9 gray2">Last active</div>
+                </div>
+                <div className="f9">Options ⌃</div>
+              </div>
+            </div>
+            <div className="flex flex-column">
+              <div className="f9 gray2 mt6 mb3">Subscribers (read access only)</div>
+              <div className="flex justify-between">
+                <div className="flex">
+                  <div className="f9 mono mr2">~fabled-faster</div>
+                  <div className="f9 gray2">Last active</div>
+                </div>
+                <div className="f9">Options ⌃</div>
+              </div>
+            </div>
+            <div className="flex flex-column">
+              <div className="f9 gray2 mt6 mb3">Banned</div>
+              <div className="flex justify-between">
+                <div className="flex">
+                  <div className="f9 mono mr2">~fabled-faster</div>
+                  <div className="f9 gray2">Last active</div>
+                </div>
+                <div className="f9">Options ⌃</div>
+              </div>
             </div>
           </div>
         </div>

@@ -7,7 +7,7 @@ export class Subscribers extends Component {
   render() {
     return (
       <div>
-        
+        test
       </div>
     )
   }
