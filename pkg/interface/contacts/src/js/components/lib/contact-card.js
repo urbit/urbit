@@ -250,6 +250,22 @@ export class ContactCard extends Component {
 
   removeFromGroup() {
     const { props } = this;
+    // share empty contact so that we can remove ourselves from group
+    // if we haven't shared yet
+    let contact = {
+      nickname: "",
+      email: "",
+      phone: "",
+      website: "",
+      notes: "",
+      color: "000000",
+      avatar: null
+    };
+
+    api.contactView.share(
+      `~${props.ship}`, props.path, `~${window.ship}`, contact
+    );
+
     api.contactHook.remove(props.path, `~${props.ship}`);
     props.history.push(`/~contacts${props.path}`);
   }
