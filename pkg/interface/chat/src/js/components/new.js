@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import { InviteSearch } from './lib/invite-search';
 import { Route, Link } from 'react-router-dom';
 import { uuid, isPatTa, deSig } from '/lib/util';
 import urbitOb from 'urbit-ob';
@@ -11,18 +12,20 @@ export class NewScreen extends Component {
 
     this.state = {
       idName: '',
-      invites: '',
-      security: 'village',
-      securityDescription: 'Invite-only chat. Default membership administration.',
+      invites: {
+        groups: [],
+        ships: []
+      },
+      security: 'channel',
       idError: false,
       inviteError: false,
       allowHistory: true
     };
 
     this.idChange = this.idChange.bind(this);
-    this.invChange = this.invChange.bind(this);
     this.securityChange = this.securityChange.bind(this);
     this.allowHistoryChange = this.allowHistoryChange.bind(this);
+    this.setInvite = this.setInvite.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -34,27 +37,6 @@ export class NewScreen extends Component {
         props.history.push('/~chat/room' + station);
       }
     }
-
-    if (prevState.security !== this.state.security) {
-
-      let securityText = '';
-
-      switch (this.state.security) {
-        case 'village':
-          securityText = 'Invite-only chat. Default membership administration.';
-          break;
-        case 'channel':
-          securityText = 'Completely public chat. Default membership administration.';
-          break;
-        case 'journal':
-          securityText = 'Similar to a blog. Publicly readable/subscribable, invited members can write to journal.'
-          break;
-        // case 'mailbox':
-        //   securityText = 'Similar to email. Anyone can write to the mailbox, invited members can read messages.'
-        //   break;
-      }
-      this.setState({ securityDescription: securityText });
-    }
   }
 
   idChange(event) {
@@ -63,12 +45,16 @@ export class NewScreen extends Component {
     });
   }
 
-  invChange(event) {
-    this.setState({invites: event.target.value});
+  setInvite(value) {
+    this.setState({invites: value});
   }
 
   securityChange(event) {
-    this.setState({security: event.target.value});
+    if (event.target.checked) {
+      this.setState({security: "village"});
+    } else if (!event.target.checked) {
+      this.setState({security: "channel"});
+    }
   }
 
   allowHistoryChange(event) {
@@ -106,10 +92,13 @@ export class NewScreen extends Component {
 
     let aud = [];
     let isValid = true;
-    if (state.invites.length > 2) {
-      aud = state.invites.split(',')
-        .map((mem) => `~${deSig(mem.trim())}`);
-
+    if ((state.invites.groups.length > 0) || (state.invites.ships.length > 0)) {
+      if (state.invites.groups.length > 0) {
+        aud = props.groups[state.invites.groups].values();
+      }
+      else {
+        aud = state.invites.ships.map(mem => `~${deSig(mem.trim())}`);
+      }
       aud.forEach((mem) => {
         if (!urbitOb.isValidPatp(mem)) {
           isValid = false;
@@ -141,19 +130,14 @@ export class NewScreen extends Component {
     } else if (state.security === 'channel') {
       readAud = []; // black list
       writeAud = []; // black list
-    } else if (state.security === 'journal') {
-      aud.push(`~${window.ship}`);
-      readAud = []; // black list
-      writeAud = aud.slice(); // white list
-    } else if (state.security === 'mailbox') {
-      aud.push(`~${window.ship}`);
-      readAud = aud.slice(); // white list
-      writeAud = []; // black list
     }
     this.setState({
       error: false,
       success: true,
-      invites: ''
+      invites: {
+        groups: [],
+        ships: []
+      }
     }, () => {
       props.setSpinner(true);
       props.api.chatView.create(
@@ -168,87 +152,82 @@ export class NewScreen extends Component {
   }
 
   render() {
-    let createClasses = "pointer db f9 green2 bg-gray0-d ba pa2 b--green2";
+    let inviteSwitchClasses =
+      "relative bg-gray4 bg-gray1-d br3 h1 security v-mid z-0";
+    if (this.state.security === "village") {
+      inviteSwitchClasses = "relative checked bg-green2 br3 h1 security v-mid z-0";
+    }
+
+    let createClasses = "pointer db f9 green2 bg-gray0-d ba pv3 ph4 b--green2";
     if (!this.state.idName) {
-      createClasses = 'pointer db f9 gray2 ba bg-gray0-d pa2 b--gray3';
+      createClasses = 'pointer db f9 gray2 ba bg-gray0-d pa2 pv3 ph4 b--gray3';
     }
 
     let idErrElem = (<span />);
     if (this.state.idError) {
       idErrElem = (
-        <span className="f9 inter red2 db">
+        <span className="f9 inter red2 db pt2">
           Chat must have a valid name.
         </span>
       );
     }
 
-    let invErrElem = (<span />);
-    if (this.state.inviteError) {
-      invErrElem = (
-        <span className="f9 inter red2 db">
-          Invites must be validly formatted ship names.
-        </span>
-      );
-    }
-
     return (
-      <div className={`h-100 w-100 w-50-l w-50-xl pa3 pt2 overflow-x-hidden
-      bg-gray0-d white-d flex flex-column`}>
+      <div
+        className={
+          "h-100 w-100 mw6 pa3 pt4 overflow-x-hidden " +
+          "bg-gray0-d white-d flex flex-column"
+        }>
         <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
           <Link to="/~chat/">{"⟵ All Chats"}</Link>
         </div>
-        <h2 className="mb3 f8">Create New Chat</h2>
+        <h2 className="mb3 f8">New Chat</h2>
         <div className="w-100">
-          <p className="f8 mt3 lh-copy db">Chat Name</p>
-          <p className="f9 gray2 db mb4">
-          Lowercase alphanumeric characters, dashes, and slashes only
+          <p className="f8 mt3 lh-copy db">Name</p>
+          <p className="f9 gray2 db mb2 pt1">
+            Lowercase alphanumeric characters, dashes, and slashes only
           </p>
           <textarea
             className="f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100"
             placeholder="secret-chat"
             rows={1}
             style={{
-              resize: 'none',
+              resize: "none"
             }}
-            onChange={this.idChange} />
+            onChange={this.idChange}
+          />
           {idErrElem}
-          <p className="f8 mt6 lh-copy db">Chat Type</p>
-          <p className="f9 gray2 db mb4">Change the chat's visibility and type</p>
-          <div className="dropdown relative">
-            <select
-              style={{WebkitAppearance: "none"}}
-              className="pa3 f8 bg-white bg-gray0-d white-d br0 w-100 inter"
-              value={this.state.securityValue}
-              onChange={this.securityChange}>
-              <option value="village">Village</option>
-              <option value="channel">Channel</option>
-              <option value="journal">Journal</option>
-              {/* <option value="mailbox">Mailbox</option> */}
-            </select>
-          </div>
-          <p className="f9 gray2 db lh-copy pt2 mb4">{this.state.securityDescription}</p>
-          <p className="f8 mt4 lh-copy db">Invites</p>
-          <p className="f9 gray2 db mb4">
-            Invite participants to this chat
+          <p className="f8 mt4 lh-copy db">
+            Invite
+            <span className="gray3"> (Optional)</span>
           </p>
-          <textarea
-            ref={e => { this.textarea = e; }}
-            className="f7 mono ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 mb4 db w-100"
-            placeholder="~zod, ~bus"
-            spellCheck="false"
-            style={{
-              resize: 'none',
-              height: 150
-            }}
-            onChange={this.invChange} />
-          {invErrElem}
+          <p className="f9 gray2 db mb2 pt1">
+            Selected entities will be able to post to chat
+          </p>
+          <InviteSearch
+            groups={this.props.groups}
+            invites={this.state.invites}
+            setInvite={this.setInvite}
+          />
+          <div className="pv7">
+            <input
+              type="checkbox"
+              style={{ WebkitAppearance: "none", width: 28 }}
+              className={inviteSwitchClasses}
+              onChange={this.securityChange}
+            />
+            <span className="dib f9 white-d inter ml3">Invite Only Chat</span>
+            <p className="f9 gray2 pt1" style={{ paddingLeft: 40 }}>
+              Chat participants must be invited to see chat content
+            </p>
+          </div>
           <button
             onClick={this.onClickCreate.bind(this)}
-            className={createClasses}
-          >Start Chat</button>
+            className={createClasses}>
+            Start Chat
+          </button>
         </div>
       </div>
     );
   }
 }
-

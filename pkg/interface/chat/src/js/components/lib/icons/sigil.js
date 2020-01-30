@@ -6,6 +6,8 @@ export class Sigil extends Component {
   render() {
     const { props } = this;
 
+    let classes = props.classes || "";
+
     if (props.ship.length > 14) {
       return (
         <div className="bg-black dib" style={{width: props.size, height: props.size}}>
@@ -13,7 +15,7 @@ export class Sigil extends Component {
       );
     } else {
       return (
-        <div className="dib" style={{ flexBasis: 32, backgroundColor: props.color }}>
+        <div className={"dib " + classes} style={{ flexBasis: 32, backgroundColor: props.color }}>
           {sigil({
             patp: props.ship,
             renderer: reactRenderer,

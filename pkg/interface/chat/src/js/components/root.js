@@ -101,6 +101,7 @@ export class Root extends Component {
                     setSpinner={this.setSpinner}
                     api={api}
                     inbox={state.inbox || {}}
+                    groups={state.groups || {}}
                     {...props}
                   />
                 </Skeleton>
