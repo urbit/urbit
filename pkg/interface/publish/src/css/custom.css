@@ -76,6 +76,20 @@ a {
   }
 }
 
+.bg-light-green {
+  background: rgba(42, 167, 121, 0.1);
+}
+
+.NotebookButton {
+  padding: 8px 12px;
+  border-radius:2px;
+  cursor: pointer;
+}
+
+.NotebookTab {
+  padding: 16px 8px;
+}
+
 .NewPost {
   width: 100%;
   height: calc(100% - 103px);
@@ -86,7 +100,6 @@ a {
 .react-codemirror2 {
   width: 100%;
 }
-
 
 .CodeMirror {
   padding: 12px;

@@ -104,10 +104,10 @@ export class Root extends Component {
               sidebarShown={true}
               notebooks={state.notebooks}>
                 <Notebook
-                notebooks={state.notebooks}
-                view={view}
-                ship={ship}
-                book={notebook}/>
+                  notebook={state.notebooks[ship][notebook]}
+                  view={view}
+                  ship={ship}
+                  notebookName={notebook}/>
               </Skeleton>
             )
           }
