@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link, Switch, Route } from 'react-router-dom';
 import { NoteList } from './note-list';
+import { All } from './all';
 import { About } from './about';
 import { Subscribers } from './subscribers';
 import { Settings } from './settings';
@@ -35,90 +36,44 @@ export class Notebook extends Component {
     tabStyles[this.props.view] = "bb b--black black NotebookTab";
 
     return (
-      <div className="center mw7 f9 h-100"
+      <div className="center mw6 f9 h-100"
            style={{paddingLeft:16, paddingRight:16}}>
-        <div className="flex justify-between"
-             style={{marginTop: 56, marginBottom: 32}}>
-          <div className="flex-col">
-            <div className="mb1">{this.props.notebook.title}</div>
-            <span><span className="gray3 mr1">by</span>
-              <span className="mono">
-                {this.props.ship}
+        <div className="h-100 overflow-container">
+          <div className="flex justify-between"
+               style={{marginTop: 56, marginBottom: 32}}>
+            <div className="flex-col">
+              <div className="mb1">{this.props.notebook.title}</div>
+              <span><span className="gray3 mr1">by</span>
+                <span className="mono">
+                  {this.props.ship}
+                </span>
               </span>
-            </span>
-          </div>
-          <button className="NotebookButton bg-light-green green2">
-            New Post
-          </button>
-        </div>
-
-        <div className="flex" style={{marginBottom:24}}>
-          <div className={tabStyles.posts}>
-            All Posts
-          </div>
-            <div className={tabStyles.about}>
-              About
             </div>
-            <div className={tabStyles.subscribers}>
-              Subscribers
-            </div>
-            <div className={tabStyles.settings}>
-              Settings
-            </div>
-            <div className="bb b--gray4 gray2 NotebookTab" style={{flexGrow:1}}>
-            </div>
+            <button className="NotebookButton bg-light-green green2">
+              New Post
+            </button>
           </div>
 
-        <div style={{height:"calc(100% - 170px)"}} className="f9 lh-solid">
-          <div className="mv6">
-            <div className="mb1">Title</div>
-            <p className="mb1">I dreamt of urbit hardware - stars and galaxies and planets had differing...</p>
-            <div className="flex">
-              <div className="mono gray3 mr3">~fabled-faster</div>
-              <div className="gray3 mr3">1m ago</div>
-              <div className="gray3">No Comments</div>
+          <div className="flex" style={{marginBottom:24}}>
+            <div className={tabStyles.posts}>
+              All Posts
             </div>
-            <div className="flex flex-column">
-              <div className="f9 gray2 mt6">Host</div>
-              <div className="flex justify-between mt3">
-                <div className="flex">
-                  <div className="f9 mono mr2">~fabled-faster</div>
-                  <div className="f9 gray2">Last active</div>
-                </div>
-                <div className="f9">Options ⌃</div>
+              <div className={tabStyles.about}>
+                About
+              </div>
+              <div className={tabStyles.subscribers}>
+                Subscribers
+              </div>
+              <div className={tabStyles.settings}>
+                Settings
+              </div>
+              <div className="bb b--gray4 gray2 NotebookTab" style={{flexGrow:1}}>
               </div>
             </div>
-            <div className="flex flex-column">
-              <div className="f9 gray2 mt6">Participants (read and write access)</div>
-              <div className="f9 mt3">There are no paticipants in this notebook.</div>
-              <div className="flex justify-between mt3">
-                <div className="flex">
-                  <div className="f9 mono mr2">~fabled-faster</div>
-                  <div className="f9 gray2">Last active</div>
-                </div>
-                <div className="f9">Options ⌃</div>
-              </div>
-            </div>
-            <div className="flex flex-column">
-              <div className="f9 gray2 mt6 mb3">Subscribers (read access only)</div>
-              <div className="flex justify-between">
-                <div className="flex">
-                  <div className="f9 mono mr2">~fabled-faster</div>
-                  <div className="f9 gray2">Last active</div>
-                </div>
-                <div className="f9">Options ⌃</div>
-              </div>
-            </div>
-            <div className="flex flex-column">
-              <div className="f9 gray2 mt6 mb3">Banned</div>
-              <div className="flex justify-between">
-                <div className="flex">
-                  <div className="f9 mono mr2">~fabled-faster</div>
-                  <div className="f9 gray2">Last active</div>
-                </div>
-                <div className="f9">Options ⌃</div>
-              </div>
-            </div>
+
+          <div style={{height:"calc(100% - 170px)"}} className="f9 lh-solid">
+            <Settings />
+
           </div>
         </div>
       </div>
