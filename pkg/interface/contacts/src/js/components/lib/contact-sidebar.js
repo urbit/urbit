@@ -14,8 +14,8 @@ export class ContactSidebar extends Component {
 
     let me = (window.ship in props.defaultContacts) ?
       props.defaultContacts[window.ship] : { color: '0x0', nickname: null};
-    
-    let shareSheet = 
+
+    let shareSheet =
       !(window.ship in props.contacts) ?
       ( <ShareSheet
           ship={window.ship}
@@ -27,7 +27,7 @@ export class ContactSidebar extends Component {
       ) : (<div></div>);
     group.delete(window.ship);
 
-    let contactItems = 
+    let contactItems =
       Object.keys(props.contacts)
       .map((contact) => {
         group.delete(contact);
@@ -60,8 +60,8 @@ export class ContactSidebar extends Component {
       });
 
     return (
-      <div className={`bn br-m br-l br-xl b--black lh-copy h-100 flex-shrink-0 
-      flex-basis-100-s flex-basis-30-ns mw5-m mw5-l mw5-xl relative 
+      <div className={`bn br-m br-l br-xl b--gray3 lh-copy h-100 flex-shrink-0
+      flex-basis-100-s flex-basis-30-ns mw5-m mw5-l mw5-xl relative
       overflow-hidden ` + responsiveClasses}>
         <div className="pt3 pb6 pl3 f8 db dn-m dn-l dn-xl">
           <Link to="/~contacts/">{"⟵ All Groups"}</Link>

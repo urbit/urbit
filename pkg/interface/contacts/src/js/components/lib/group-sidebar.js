@@ -22,7 +22,7 @@ export class GroupSidebar extends Component {
         let color = uxToHex(ourCard.color);
         let selectedClass = (this.props.selected === "me") ? "bg-gray4" : "";
         return (
-          <Link 
+          <Link
             key={1}
             to={"/~contacts/me"}>
             <div
@@ -58,7 +58,7 @@ export class GroupSidebar extends Component {
       Object.keys(props.contacts)
       .filter((path) => {
         return (
-          (!path.startsWith("/~/") || path === "/~/default") && 
+          (!path.startsWith("/~/") || path === "/~/default") &&
           (path in props.groups)
         );
       })
@@ -84,9 +84,9 @@ export class GroupSidebar extends Component {
     let activeClasses = (this.props.activeDrawer === "groups") ? "" : "dn-s";
 
     return (
-      <div className={`bn br-m br-l br-xl b--black lh-copy h-100 flex-basis-100-s
+      <div className={`bn br-m br-l br-xl b--gray3 lh-copy h-100 flex-basis-100-s
        flex-basis-30-ns flex-shrink-0 mw5-m mw5-l mw5-xl pt3 pt0-m pt0-l pt0-xl
-        relative ` + activeClasses}>
+        relative overflow-hidden ` + activeClasses}>
         {/*TODO Add invite items */}
         <a className="db dn-m dn-l dn-xl f8 pb6 pl3" href="/">⟵ Landscape</a>
         <div className="overflow-y-scroll h-100">
