@@ -24,6 +24,13 @@ let
   urbit       = mkUrbit { debug = false; };
   urbit-debug = mkUrbit { debug = true; };
 
+  urbit-large-log = pkgs.stdenv.lib.overrideDerivation urbit (_: {
+    patches = [ ./urbit/patches/large-log-limit.patch ];
+    patchFlags = "-p3";
+  });
+
 in
 
-{ inherit ent ge-additions arvo arvo-ropsten herb urbit urbit-debug; }
+{ inherit ent ge-additions arvo arvo-ropsten herb;
+  inherit urbit urbit-debug urbit-large-log;
+}
