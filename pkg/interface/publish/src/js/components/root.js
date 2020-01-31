@@ -126,7 +126,7 @@ export class Root extends Component {
             sidebarShown={true}
             notebooks={state.notebooks}>
               <Note
-              notebooks={state.notebooks}
+              notebook={state.notebooks[ship][notebook]}
               book={notebook}
               ship={ship}
               note={note}/>
