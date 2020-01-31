@@ -161,12 +161,14 @@
     (get-pos buf row.com col.com)
   =/  rune  (rune-snippet (swag [(safe-sub pos 2) 2] txt))
   ?^  rune  rune
-  =+  (get-id:auto pos txt)
-  ?~  id  ~
-  =/  matches=(list (option:auto type))
-    (search-prefix:auto u.id (get-identifiers:auto (get-subject uri.com)))
-  ?~  matches  ~
-  (turn matches make-completion-item)
+  =/  tab-list
+    %^  tab-list-tape:auto
+      (~(gut by preludes) uri.com -:!>(..zuse))
+    pos  txt
+  ?:  ?=(%| -.tab-list)  ~
+  ?~  p.tab-list  ~
+  ?~  u.p.tab-list  ~
+  (turn u.p.tab-list make-completion-item)
 ::
 ++  make-completion-item
   |=  [name=term =type]
@@ -339,26 +341,27 @@
 ++  handle-hover
   |=  hov=text-document--hover:request:lsp-sur
   ^-  (quip card _state)
+  :_  state
+  %^  give-rpc-response  %text-document--hover  id.hov
   =/  buf=wall
     (~(got by bufs) uri.hov)
   =/  txt
     (zing (join "\0a" buf))
-  =+  (get-id:auto (get-pos buf row.hov col.hov) txt)
-  ?~  id
-    [(give-rpc-response [%text-document--hover id.hov ~]) state]
-  =/  match=(unit (option:auto type))
-    (search-exact:auto u.id (get-identifiers:auto (get-subject uri.hov)))
-  ?~  match
-    [(give-rpc-response [%text-document--hover id.hov ~]) state]
-  =/  contents
-    %-  crip
-    ;:  weld
-      "`"
-      ~(ram re ~(duck easy-print detail.u.match))
-      "`"
-    ==
-  :_  state
-  (give-rpc-response [%text-document--hover id.hov `contents])
+  =/  tab-list
+    %^  tab-list-tape:auto
+        (~(gut by preludes) uri.hov -:!>(..zuse))
+      (get-pos buf row.hov col.hov)
+    txt
+  ?:  ?=(%| -.tab-list)  ~
+  ?~  p.tab-list  ~
+  ?~  u.p.tab-list  ~
+  :-  ~
+  %-  crip
+  ;:  weld
+    "`"
+    ~(ram re ~(duck easy-print detail.i.u.p.tab-list))
+    "`"
+  ==
 ::
 ++  sync-buf
   |=  [buf=wall changes=(list change:lsp-sur)]
