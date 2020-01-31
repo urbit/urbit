@@ -100,8 +100,8 @@ export class ContactCard extends Component {
   setField(field) {
     const { props, state } = this;
     let ship = "~" + props.ship;
-    let emailTest = new RegExp('' 
-      + /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*/.source 
+    let emailTest = new RegExp(''
+      + /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*/.source
       + /@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.source
     );
 
@@ -297,10 +297,10 @@ export class ContactCard extends Component {
     currentColor = uxToHex(currentColor);
 
     let sigilColor = "";
-    let hasAvatar = 
+    let hasAvatar =
       'avatar' in props.contact && props.contact.avatar !== "TODO";
 
-    if (!hasAvatar) { 
+    if (!hasAvatar) {
       sigilColor = (
         <div className="tl mt4 mb4 w-auto ml-auto mr-auto"
           style={{ width: "fit-content" }}>
@@ -330,8 +330,8 @@ export class ContactCard extends Component {
         </div>
       ) : "";
 
-    let avatar = (hasAvatar) 
-      ? <img className="dib h-auto" width={128} src={props.contact.avatar} /> 
+    let avatar = (hasAvatar)
+      ? <img className="dib h-auto" width={128} src={props.contact.avatar} />
       : <Sigil
           ship={props.ship}
           size={128}
@@ -339,7 +339,7 @@ export class ContactCard extends Component {
           key={"avatar" + currentColor} />;
 
     return (
-      <div className="w-100 mt8 flex justify-center pa4 pt8 pt0-l pa0-xl pt4-xl">
+      <div className="w-100 mt8 flex justify-center pa4 pt8 pt0-l pa0-xl pt4-xl pb8">
         <div className="w-100 mw6 tc">
           {avatar}
           {sigilColor}
@@ -398,7 +398,7 @@ export class ContactCard extends Component {
     let currentColor = props.contact.color ? props.contact.color : "0x0";
     let hexColor = uxToHex(currentColor);
 
-    let avatar = 
+    let avatar =
       ('avatar' in props.contact && props.contact.avatar !== "TODO") ?
       <img className="dib h-auto" width={128} src={props.contact.avatar} /> :
       <Sigil
@@ -447,7 +447,7 @@ export class ContactCard extends Component {
                   <div>
                     <p className="f9 mt6 gray2">website</p>
                     <a target="_blank"
-                       className="bb b--black f8" 
+                       className="bb b--black f8"
                        href={websiteHref}>
                       {props.contact.website}
                     </a>
@@ -489,12 +489,12 @@ export class ContactCard extends Component {
 
     //TODO "Share card" if it's /me -> sends to /~/default of recipient
     return (
-      <div className="h-100 w-100 overflow-x-hidden">
-        <div className="w-100 bg-white fixed bb b--gray4">
+      <div className="w-100 h-100 overflow-hidden">
+        <div className="w-100 bg-white bb b--gray4">
           <div className="w-100 h2 dn-m dn-l dn-xl inter pb6 pl3 pt3 f8">
             <Link to="/~contacts/">{"⟵"}</Link>
           </div>
-          <button 
+          <button
             onClick={() => {
               if (props.share) {
                 this.shareWithGroup();
@@ -505,17 +505,18 @@ export class ContactCard extends Component {
             className={`ml3 mt2 mb2 f9 pa1 ba br2 pointer b--black ` + ourOpt}>
             {editInfoText}
           </button>
-          <button
-            className={`ml3 mt2 mb2 f9 pa1 ba br2 b--black ` + localOpt}>
+          <button className={`ml3 mt2 mb2 f9 pa1 ba br2 b--black ` + localOpt}>
             Share Contact Info
           </button>
           <button
-            className={`ml3 mt2 mb2 f9 pa1 ba red2 br2 b--red2 pointer ` + adminOpt}
+            className={
+              `ml3 mt2 mb2 f9 pa1 ba red2 br2 b--red2 pointer ` + adminOpt
+            }
             onClick={this.removeFromGroup}>
             Remove from Group
           </button>
         </div>
-        {card}
+        <div className="h-100 w-100 overflow-x-hidden pb8">{card}</div>
       </div>
     );
   }
