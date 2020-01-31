@@ -36,6 +36,7 @@
       bufs=(map uri=@t buf=wall)
       builds=(map uri=@t =vase)
       ford-diagnostics=(map uri=@t (list diagnostic:lsp-sur))
+      preludes=(map uri=@t type)
   ==
 +$  versioned-state
   $%
@@ -145,16 +146,7 @@
 ++  get-subject
   |=  uri=@t
   ^-  type
-  =/  =path
-    (parse-uri:build uri)
-  ?:  ?=([%app *] path)
-    (get-app-subject uri)
-  -:(~(gut by builds) uri !>(..zuse))
-::
-++  get-app-subject
-  |=  uri=@t
-  ^-  type
-  -:!>(..zuse)
+  (~(gut by preludes) uri -:!>(..zuse))
 ::
 ++  handle-completion
   |=  com=text-document--completion:request:lsp-sur
@@ -198,10 +190,13 @@
   ^-  (quip card _state)
   ~&  >  %lsp-shutdown
   :_  *state-zero
+  %-  zing
   %+  turn
     ~(tap in ~(key by builds))
   |=  uri=@t
-  [%pass /ford/[uri] %arvo %f %kill ~]
+  :+  [%pass /ford/[uri] %arvo %f %kill ~]
+  [%pass /ford/[uri]/deps %arvo %f %kill ~]
+  ~
 ::
 ++  handle-did-close
   |=  [uri=@t version=(unit @)]
@@ -213,7 +208,10 @@
   =.  builds
     (~(del by builds) uri)
   :_  state
-  [%pass /ford/[uri] %arvo %f %kill ~]~
+  :~
+    [%pass /ford/[uri] %arvo %f %kill ~]
+    [%pass /ford/[uri]/deps %arvo %f %kill ~]
+  ==
 ::
 ++  handle-did-save
   |=  [uri=@t version=(unit @)]
@@ -252,6 +250,11 @@
     build-result.result.gift
   ?+  build-result  [~ state]
         ::
+      [%success %plan *]
+    =.  preludes
+      (~(put by preludes) uri -:vase.build-result)
+    [~ state]
+        ::
       [%success %core *]
     =.  builds
       (~(put by builds) uri vase.build-result)
@@ -282,20 +285,42 @@
     (~(gut by ford-diagnostics) uri ~)
   (get-parser-diagnostics uri)
 ::
+++  get-build-deps
+  |=  [=path buf=wall]
+  ^-  schematic:ford
+  =/  parse=(like scaffold:ford)
+    %+  (lsp-parser [byk.bow path])  [1 1]
+    (zing (join "\0a" buf))
+  =/  =scaffold:ford
+    ?~  q.parse  *scaffold:ford
+    p.u.q.parse
+  :*  %plan
+    [[our.bow %home] (flop path)]
+    *coin
+    scaffold(sources `(list hoon)`~[[%cnts ~[[%& 1]] ~]])
+  ==
+::
 ++  handle-did-open
   |=  item=text-document-item:lsp-sur
   ^-  (quip card _state)
+  =/  buf=wall
+    (to-wall (trip text.item))
   =.  bufs
-    (~(put by bufs) uri.item (to-wall (trip text.item)))
+    (~(put by bufs) uri.item buf)
   =/  =path
     (uri-to-path:build uri.item)
   =/  =schematic:ford
     [%core [our.bow %home] (flop path)]
+  =/  dep-schematic=schematic:ford
+    (get-build-deps path buf)
   :_  state
+  %+  weld
+    (give-rpc-notification (get-diagnostics uri.item))
   ^-  (list card)
-  :_  (give-rpc-notification (get-diagnostics uri.item))
-  ^-  card
-  [%pass /ford/[uri.item] %arvo %f %build live=%.y schematic]
+  :~
+    [%pass /ford/[uri.item] %arvo %f %build live=%.y schematic]
+    [%pass /ford/[uri.item]/deps %arvo %f %build live=%.y dep-schematic]
+  ==
 ::
 ++  get-parser-diagnostics
   |=  uri=@t
