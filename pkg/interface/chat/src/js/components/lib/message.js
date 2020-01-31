@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Sigil } from '/components/lib/icons/sigil';
 import classnames from 'classnames';
 import { Route, Link } from 'react-router-dom'
+import { uxToHex } from '/lib/util';
 import urbitOb from 'urbit-ob';
 import moment from 'moment';
 import _ from 'lodash';
@@ -160,6 +161,15 @@ export class Message extends Component {
     if (props.renderSigil) {
       let timestamp = moment.unix(props.msg.when / 1000).format('hh:mm a');
 
+      let contact = !!(props.msg.author in props.contacts)
+        ? props.contacts[props.msg.author] : false;
+      let name = props.msg.author;
+      let color = "#000000";
+      if (contact) {
+        name = contact.nickname;
+        color = `#${uxToHex(contact.color)}`;
+      } 
+
       return (
         <div
           className={
@@ -172,19 +182,13 @@ export class Message extends Component {
             <Sigil
               ship={props.msg.author}
               size={24}
-              color={((props.msg.author === window.ship)
-              || (props.msg.author.substr(1) === window.ship))
-              ? "#4330FC" : "#000000"}
-            />
+              color={color} />
           </div>
           <div
             className="fr clamp-message white-d"
             style={{ flexGrow: 1, marginTop: -8 }}>
             <div className="hide-child" style={paddingTop}>
-              <p className="v-mid mono f9 gray2 dib mr3">
-                {props.msg.author.slice(0, 1) === "~" ? "" : "~"}
-                {props.msg.author}
-              </p>
+              <p className="v-mid mono f9 gray2 dib mr3">{name}</p>
               <p className="v-mid mono f9 gray2 dib">{timestamp}</p>
               <p className="v-mid mono f9 ml2 gray2 dib child dn-s">{datestamp}</p>
             </div>

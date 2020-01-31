@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { Sigil } from '/components/lib/icons/sigil';
+import { uxToHex } from '/lib/util';
 
 
 export class MemberElement extends Component {
@@ -33,15 +34,16 @@ export class MemberElement extends Component {
       );
     }
 
+    let name = !!props.contact
+      ? `${props.contact.nickname} (~${props.ship})` : `~${props.ship}`;
+    let color = !!props.contact ? uxToHex(props.contact.color) : '000000';
+
     return (
       <div className="flex mb2">
-        <Sigil ship={props.ship} size={32} />
-        <p
-          className={
+        <Sigil ship={props.ship} size={32} color={`#${color}`} />
+        <p className={
             "w-70 mono list-ship dib v-mid black white-d ml2 nowrap f8"
-          }>
-          ~{props.ship}
-        </p>
+           }>{name}</p>
         {actionElem}
       </div>
     );

@@ -29,6 +29,11 @@ export class InitialReducer {
     if (data) {
       state.invites = data;
     }
+
+    data = _.get(json, 'contact-initial', false);
+    if (data) {
+      state.contacts = data;
+    }
   }
 }
 
