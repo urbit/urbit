@@ -103,6 +103,7 @@
   %-  pairs
   :~  title+s+title.book
       date-created+(time date-created.book)
+      about+s+description.book
       num-notes+(numb ~(wyt by notes.book))
       num-unread+(numb (count-unread notes.book))
   ==
@@ -113,6 +114,7 @@
   =,  enjs:format
   %-  pairs
   :~  title+s+title.book
+      about+s+description.book
       date-created+(time date-created.book)
       num-notes+(numb ~(wyt by notes.book))
       num-unread+(numb (count-unread notes.book))
@@ -160,10 +162,10 @@
       author+s+(scot %p author.note)
       title+s+title.note
       date-created+(time date-created.note)
-      build+(note-build-to-json build.note)
+      snippet+s+snippet.note
       file+s+file.note
       num-comments+(numb ~(wyt by comments.note))
-      comments+(comments-page comments.note 0 50)
+      comments+(comments-page comments.note 0 10)
       read+b+read.note
   ==
 ::
@@ -191,7 +193,7 @@
       date-created+(time date-created.note)
       num-comments+(numb ~(wyt by comments.note))
       read+b+read.note
-  ::  XX snippet
+      snippet+s+snippet.note
   ==
 ::
 ++  notes-page

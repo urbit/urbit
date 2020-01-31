@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 export class ResponseReducer {
   reduce(json, state) {
-    console.log("responseReducer", json);
     switch(json.type) {
       case "notebooks":
         this.handleNotebooks(json, state);

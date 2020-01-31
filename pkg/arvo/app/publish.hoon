@@ -628,10 +628,12 @@
 ++  form-note
   |=  [note-name=@tas udon=@t]
   ^-  note
-  =/  build=(each manx tang)
-    %-  mule  |.
-    ^-  manx
-    elm:(static:cram (ream udon))
+  =/  body=tape   (slag (add 3 (need (find ";>" (trip udon)))) (trip udon))
+  =/  snippet=@t  (of-wain:format (scag 1 (to-wain:format (crip body))))
+::  =/  build=(each manx tang)
+::    %-  mule  |.
+::    ^-  manx
+::    elm:(static:cram (ream udon))
   ::
   =/  meta=(each (map term knot) tang)
     %-  mule  |.
@@ -658,7 +660,7 @@
       now.bol
       %.n
       udon
-      build
+      snippet
       ~
   ==
 ::
@@ -1284,7 +1286,7 @@
   =/  notebook-json  (notebook-full-json host book-name u.book)
   ?>  ?=(%o -.notebook-json)
   =.  p.notebook-json
-    (~(uni by p.notebook-json) (notes-page notes.u.book 0 50))
+    (~(uni by p.notebook-json) (notes-page notes.u.book 0 10))
   =.  p.notebook-json
     (~(put by p.notebook-json) %subscribers (get-subscribers-json book-name))
   =/  notebooks-json  (notebooks-map-json our.bol books subs)
@@ -1418,7 +1420,7 @@
     =/  notebook-json  (notebook-full-json u.host book-name u.book)
     ?>  ?=(%o -.notebook-json)
     =.  p.notebook-json
-      (~(uni by p.notebook-json) (notes-page notes.u.book 0 50))
+      (~(uni by p.notebook-json) (notes-page notes.u.book 0 10))
     =.  p.notebook-json
       (~(put by p.notebook-json) %subscribers (get-subscribers-json book-name))
     =/  jon=json  (pairs notebook+notebook-json ~)

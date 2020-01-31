@@ -8,7 +8,7 @@ export class NewPost extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      body: "# Hello",
+      body: '',
       title: '',
       submit: false,
       awaiting: null,
@@ -81,7 +81,7 @@ export class NewPost extends Component {
             </button>
           </div>
 
-          <input type="text"
+          <input autoFocus type="text"
             style={{paddingBottom: 8, paddingTop: 24}}
             className="w-100"
             onChange={this.titleChange}
