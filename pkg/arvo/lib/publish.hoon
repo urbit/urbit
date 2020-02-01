@@ -165,7 +165,7 @@
       snippet+s+snippet.note
       file+s+file.note
       num-comments+(numb ~(wyt by comments.note))
-      comments+(comments-page comments.note 0 10)
+      comments+(comments-page comments.note 0 50)
       read+b+read.note
   ==
 ::

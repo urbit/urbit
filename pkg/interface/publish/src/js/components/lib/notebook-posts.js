@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown'
 
 export class NotebookPosts extends Component {
   constructor(props){

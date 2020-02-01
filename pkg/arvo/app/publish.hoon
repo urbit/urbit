@@ -1286,7 +1286,7 @@
   =/  notebook-json  (notebook-full-json host book-name u.book)
   ?>  ?=(%o -.notebook-json)
   =.  p.notebook-json
-    (~(uni by p.notebook-json) (notes-page notes.u.book 0 10))
+    (~(uni by p.notebook-json) (notes-page notes.u.book 0 50))
   =.  p.notebook-json
     (~(put by p.notebook-json) %subscribers (get-subscribers-json book-name))
   =/  notebooks-json  (notebooks-map-json our.bol books subs)
@@ -1420,7 +1420,7 @@
     =/  notebook-json  (notebook-full-json u.host book-name u.book)
     ?>  ?=(%o -.notebook-json)
     =.  p.notebook-json
-      (~(uni by p.notebook-json) (notes-page notes.u.book 0 10))
+      (~(uni by p.notebook-json) (notes-page notes.u.book 0 50))
     =.  p.notebook-json
       (~(put by p.notebook-json) %subscribers (get-subscribers-json book-name))
     =/  jon=json  (pairs notebook+notebook-json ~)

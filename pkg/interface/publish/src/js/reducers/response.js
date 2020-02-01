@@ -154,8 +154,30 @@ export class ResponseReducer {
         state.notebooks[json.host][json.notebook].notes[json.note])
     {
       if (state.notebooks[json.host][json.notebook].notes[json.note].comments) {
-        state.notebooks[json.host][json.notebook].notes[json.note].comments
-        .concat(json.data);
+        json.data.forEach((val, i) => {
+          let newKey = Object.keys(val)[0];
+          let newDate = val[newKey]["date-created"]
+          let oldComments = state.notebooks[json.host][json.notebook].notes[json.note].comments;
+          let insertIdx = -1;
+
+          for (var j=0; j<oldComments.length; j++) {
+            let oldKey = Object.keys(oldComments[j])[0];
+            let oldDate = oldComments[j][oldKey]["date-created"];
+
+            if (oldDate === newDate) {
+              break;
+            } else if (oldDate < newDate) {
+              insertIdx = j;
+            } else if ((oldDate > newDate) &&
+                      (j === oldComments.length-1)){
+              insertIdx = j+1;
+            }
+          }
+          if (insertIdx !== -1) {
+            state.notebooks[json.host][json.notebook].notes[json.note].comments
+            .splice(insertIdx, 0, val);
+          }
+        });
       } else {
         state.notebooks[json.host][json.notebook].notes[json.note].comments =
           json.data;

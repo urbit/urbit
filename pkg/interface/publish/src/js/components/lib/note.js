@@ -11,7 +11,6 @@ import ReactMarkdown from 'react-markdown'
 export class Note extends Component {
   constructor(props){
     super(props);
-    console.log(this.props);
     moment.updateLocale('en', {
       relativeTime: {
         past: function(input) {
@@ -33,36 +32,99 @@ export class Note extends Component {
         yy : '%d years',
       }
     });
+    this.scrollElement = React.createRef();
+    this.onScroll = this.onScroll.bind(this);
   }
+
+  componentWillMount() {
+    window.api.fetchNote(this.props.ship, this.props.book, this.props.note);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!(this.props.notebooks[this.props.ship]) ||
+        !(this.props.notebooks[this.props.ship][this.props.book]) ||
+        !(this.props.notebooks[this.props.ship][this.props.book].notes[this.props.note]) ||
+        !(this.props.notebooks[this.props.ship][this.props.book].notes[this.props.note].file))
+    {
+      window.api.fetchNote(this.props.ship, this.props.book, this.props.note);
+    }
+  }
+
+  onScroll() {
+    let notebook = this.props.notebooks[this.props.ship][this.props.book];
+    let note = notebook.notes[this.props.note];
+
+    if (!note.comments) {
+      return;
+    }
+
+    let scrollTop = this.scrollElement.scrollTop;
+    let clientHeight = this.scrollElement.clientHeight;
+    let scrollHeight = this.scrollElement.scrollHeight;
+
+    let atBottom = false;
+    if (scrollHeight - scrollTop - clientHeight < 40) {
+      atBottom = true;
+    }
+
+    let loadedComments = note.comments.length;
+    let allComments = note["num-comments"];
+
+    let fullyLoaded = (loadedComments === allComments);
+
+    if (atBottom && !fullyLoaded) {
+      window.api.fetchCommentsPage(this.props.ship,
+        this.props.book, this.props.note, loadedComments, 30);
+    }
+  }
+
+  componentDidMount() {
+    if (!(this.props.notebooks[this.props.ship]) ||
+        !(this.props.notebooks[this.props.ship][this.props.book]) ||
+        !(this.props.notebooks[this.props.ship][this.props.book].notes[this.props.note]) ||
+        !(this.props.notebooks[this.props.ship][this.props.book].notes[this.props.note].file))
+    {
+      window.api.fetchNote(this.props.ship, this.props.book, this.props.note);
+    }
+    this.onScroll();
+  }
+
   render() {
-    let comments = this.props.notebook.notes[this.props.note].comments;
-    let title = this.props.notebook.notes[this.props.note].title;
-    let author = this.props.notebook.notes[this.props.note].author;
-    let file = this.props.notebook.notes[this.props.note].file;
-    let date = moment(this.props.notebook.notes[this.props.note]["date-created"]).fromNow();
+    let notebook = this.props.notebooks[this.props.ship][this.props.book];
+    let comments = notebook.notes[this.props.note].comments;
+    let title = notebook.notes[this.props.note].title;
+    let author = notebook.notes[this.props.note].author;
+    let file = notebook.notes[this.props.note].file;
+    let date = moment(notebook.notes[this.props.note]["date-created"]).fromNow();
+
+    if (!file) {
+      return null;
+    }
 
     let newfile = file.slice(file.indexOf(';>')+2);
-    let prevId = this.props.notebook.notes[this.props.note]["prev-note"];
-    let nextId = this.props.notebook.notes[this.props.note]["next-note"];
+    let prevId = notebook.notes[this.props.note]["prev-note"];
+    let nextId = notebook.notes[this.props.note]["next-note"];
 
     let prev = (prevId === null)
       ?  null
       :  {
         id: prevId,
-        title: this.props.notebook.notes[prevId].title,
-        date: moment(this.props.notebook.notes[prevId]["date-created"]).fromNow()
+        title: notebook.notes[prevId].title,
+        date: moment(notebook.notes[prevId]["date-created"]).fromNow()
       }
       let next = (nextId === null)
         ?  null
         :  {
           id: nextId,
-          title: this.props.notebook.notes[nextId].title,
-          date: moment(this.props.notebook.notes[nextId]["date-created"]).fromNow()
+          title: notebook.notes[nextId].title,
+          date: moment(notebook.notes[nextId]["date-created"]).fromNow()
         }
 
 
     return (
-      <div className="h-100 overflow-container">
+      <div className="h-100 overflow-container no-scrollbar"
+           onScroll={this.onScroll}
+           ref={(el) => {this.scrollElement = el}}>
         <div className="flex justify-center mt4 ph4 pb4">
           <div className="w-100 mw6">
             <div className="flex flex-column">
@@ -79,8 +141,10 @@ export class Note extends Component {
               next={next}
               ship={this.props.ship}
               book={this.props.book}/>
-            <Comments ship={this.props.ship} book={this.props.book} note={this.props.note} comments={comments}/>
-
+            <Comments ship={this.props.ship}
+              book={this.props.book}
+              note={this.props.note}
+              comments={comments}/>
           </div>
         </div>
       </div>

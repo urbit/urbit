@@ -23,7 +23,7 @@ export class NewPost extends Component {
     let newNote = {
       "new-note": {
         who: this.props.host.slice(1),
-        book: this.props.notebookName,
+        book: this.props.book,
         note: stringToSymbol(this.state.title),
         title: this.state.title,
         body: this.state.body,
@@ -37,10 +37,15 @@ export class NewPost extends Component {
     });
   }
 
+  componentWillMount() {
+    window.api.fetchNotebook(this.props.ship, this.props.book);
+  }
+
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.notebook.notes[this.state.awaiting]) {
+    let notebook = this.props.notebooks[this.props.ship][this.props.book];
+    if (notebook.notes[this.state.awaiting]) {
       let redirect =
-     `/~publish/note/${this.props.host}/${this.props.notebookName}/${this.state.awaiting}`;
+     `/~publish/note/${this.props.host}/${this.props.book}/${this.state.awaiting}`;
       this.props.history.push(redirect);
     }
   }
@@ -56,6 +61,8 @@ export class NewPost extends Component {
   }
  
   render() {
+    let notebook = this.props.notebooks[this.props.ship][this.props.book];
+
     const options = {
       mode: 'markdown',
       theme: 'tlon',
@@ -77,7 +84,7 @@ export class NewPost extends Component {
           <div className="w-100 tl">
             <button disabled={!this.state.submit} style={submitStyle}
                 onClick={this.postSubmit}>
-              Publish To {this.props.notebook.title}
+              Publish To {notebook.title}
             </button>
           </div>
 

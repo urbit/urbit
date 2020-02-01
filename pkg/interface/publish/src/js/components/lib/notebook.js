@@ -6,58 +6,59 @@ import { About } from './about';
 import { Subscribers } from './subscribers';
 import { Settings } from './settings';
 
-
-//TODO subcomponents for posts, subscribers, settings
-//
-//TODO props.view switch for which component to render
-//pass props.notebook, contacts to each component
-
-//TODO ask for notebook if we don't have it
-//
-//TODO initialise notebook obj if no props.notebook
-
-//TODO component bar above the rendered component
-//don't render settings if it's ours
-//current component is black, others gray2 (see Chat's tab bar for an example)
+//TODO subcomponent logic for subscribers, settings
 
 export class Notebook extends Component {
   constructor(props){
     super(props);
-    this.state = {
-      ours: (window.ship === this.props.ship.slice(1)),
-      numNotes: 10,
-    };
 
     this.onScroll = this.onScroll.bind(this);
-
+    this.unsubscribe = this.unsubscribe.bind(this);
   }
 
-  onScroll(e) {
+  onScroll() {
+    let notebook = this.props.notebooks[this.props.ship][this.props.book];
     let scrollTop = this.scrollElement.scrollTop;
-    let clientHeight = e.target.clientHeight;
-    let scrollHeight = e.target.scrollHeight;
+    let clientHeight = this.scrollElement.clientHeight;
+    let scrollHeight = this.scrollElement.scrollHeight;
     
     let atBottom = false;
     if (scrollHeight - scrollTop - clientHeight < 40) {
       atBottom = true;
     }
-    let loadedNotes = Object.keys(this.props.notebook.notes).length;
-    let allNotes = this.props.notebook["notes-by-date"].length;
+    let loadedNotes = Object.keys(notebook.notes).length;
+    let allNotes = notebook["notes-by-date"].length;
 
     let fullyLoaded = (loadedNotes === allNotes);
 
     if (atBottom && !fullyLoaded) {
-      window.api.fetchNotesPage(this.props.ship, this.props.notebookName, loadedNotes, 5);
+      window.api.fetchNotesPage(this.props.ship, this.props.book, loadedNotes, 30);
     }
   }
 
   componentWillMount(){
-    if (!this.props.notebook.notes) {
-      window.api.fetchNotebook(this.props.ship, this.props.notebookName);
+    window.api.fetchNotebook(this.props.ship, this.props.book);
+  }
+
+  componentDidMount() {
+    if (this.props.notebooks[this.props.ship][this.props.book].notes) {
+      this.onScroll();
     }
   }
 
+  unsubscribe() {
+    let action = {
+      unsubscribe: {
+        who: this.props.ship.slice(1),
+        book: this.props.book,
+      }
+    }
+    window.api.action("publish", "publish-action", action);
+    this.props.history.push("/~publish");
+  }
+
   render() {
+    let notebook = this.props.notebooks[this.props.ship][this.props.book];
     let tabStyles = {
       posts: "bb b--gray4 gray2 NotebookTab",
       about: "bb b--gray4 gray2 NotebookTab",
@@ -69,15 +70,15 @@ export class Notebook extends Component {
     let inner = null;
     switch (this.props.view) {
       case "posts":
-        let notesList = this.props.notebook["notes-by-date"] || [];
-        let notes = this.props.notebook.notes || null;
+        let notesList = notebook["notes-by-date"] || [];
+        let notes = notebook.notes || null;
         inner = <NotebookPosts notes={notes}
                   list={notesList}
                   host={this.props.ship}
-                  notebookName={this.props.notebookName}/>
+                  notebookName={this.props.book}/>
         break;
       case "about":
-        inner = <p className="f8 lh-solid">{this.props.notebook.about}</p>
+        inner = <p className="f8 lh-solid">{notebook.about}</p>
         break;
 //      case "subscribers":
 //        inner = <Subscribers/>
@@ -89,11 +90,25 @@ export class Notebook extends Component {
         break;
     }
 
-    let base = `/~publish/notebook/${this.props.ship}/${this.props.notebookName}`;
+    let base = `/~publish/notebook/${this.props.ship}/${this.props.book}`;
     let about = base + '/about';
     let subs = base + '/subscribers';
     let settings = base + '/settings';
     let newUrl = base + '/new';
+
+    let newPost = !(window.ship === this.props.ship.slice(1))
+      // XX TODO check based on authorized writers instead
+      ?  null
+      :  <Link to={newUrl} className="NotebookButton bg-light-green green2">
+           New Post
+         </Link>
+
+    let unsub = (window.ship === this.props.ship.slice(1))
+      ? null
+      :  <button onClick={this.unsubscribe}
+             className="NotebookButton bg-white black ba b--black ml3">
+           Unsubscribe
+         </button>
 
     return (
       <div className="center mw6 f9 h-100"
@@ -104,16 +119,17 @@ export class Notebook extends Component {
           <div className="flex justify-between"
                style={{marginTop: 56, marginBottom: 32}}>
             <div className="flex-col">
-              <div className="mb1">{this.props.notebook.title}</div>
+              <div className="mb1">{notebook.title}</div>
               <span><span className="gray3 mr1">by</span>
                 <span className="mono">
                   {this.props.ship}
                 </span>
               </span>
             </div>
-            <Link to={newUrl} className="NotebookButton bg-light-green green2">
-              New Post
-            </Link>
+            <div className="flex">
+              {newPost}
+              {unsub}
+            </div>
           </div>
 
           <div className="flex" style={{marginBottom:24}}>

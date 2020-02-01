@@ -41,9 +41,9 @@ export class Sidebar extends Component {
         <a className="db dn-m dn-l dn-xl f8 pb3 pl3" href="/">⟵ Landscape</a>
         <div className="w-100 pa4">
           <Link
-          to="/~publish/notebook/~zod/foo"
+          to="/~publish/new"
           className="green2 mr4 f9">
-          zod/foo
+          New
           </Link>
           <Link
           to="/~publish/join"
