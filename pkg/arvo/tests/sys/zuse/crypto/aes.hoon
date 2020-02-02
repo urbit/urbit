@@ -81,4 +81,88 @@
       0x11.2233.4455.6677.8899.aabb.ccdd.eeff
     0x8ea2.b7ca.5167.45bf.eafc.4990.4b49.6089
   ==
+::
++$  vector-cbc  [key=@ux iv=@ux in=@ux out=@ux]
+::
+++  do-test-vectors-cbc
+  |*  [cbcx=_cbca ves=(list vector-cbc)]
+  ^-  tang
+  |^  %+  weld
+        %+  category  "encrypting"
+        (zing (turn ves enc))
+      %+  category  "decrypting"
+      (zing (turn ves dec))
+  ::
+  ++  enc
+    |=  vector-cbc
+    %+  expect-eq
+      !>  out
+      !>  `@ux`(~(en cbcx key iv) in)
+  ::
+  ++  dec
+    |=  vector-cbc
+    %+  expect-eq
+      !>  in
+      !>  `@ux`(~(de cbcx key iv) out)
+  --
+::
+++  test-aes-cbca
+  %+  do-test-vectors-cbc  cbca
+  :~
+    :^    0x0
+        0x1
+      0x2
+    0xf795.aaab.494b.5923.f7fd.89ff.948b.c1e0
+  ::
+    :^    0x2b7e.1516.28ae.d2a6.abf7.1588.09cf.4f3c
+        0x1.0203.0405.0607.0809.0a0b.0c0d.0e0f
+      0x6bc1.bee2.2e40.9f96.e93d.7e11.7393.172a.
+        ae2d.8a57.1e03.ac9c.9eb7.6fac.45af.8e51.
+        30c8.1c46.a35c.e411.e5fb.c119.1a0a.52ef.
+        f69f.2445.df4f.9b17.ad2b.417b.e66c.3710
+    0x7649.abac.8119.b246.cee9.8e9b.12e9.197d.
+      5086.cb9b.5072.19ee.95db.113a.9176.78b2.
+      73be.d6b8.e3c1.743b.7116.e69e.2222.9516.
+      3ff1.caa1.681f.ac09.120e.ca30.7586.e1a7
+  ==
+++  test-aes-cbcb
+  %+  do-test-vectors-cbc  cbcb
+  :~
+    :^    0x0
+        0x1
+      0x2
+    0x2a34.93e6.6235.ee67.deec.cd2f.3b39.3bd8
+  ::
+    :^    0x8e73.b0f7.da0e.6452.c810.f32b.8090.79e5.
+            62f8.ead2.522c.6b7b
+        0x1.0203.0405.0607.0809.0a0b.0c0d.0e0f
+      0x6bc1.bee2.2e40.9f96.e93d.7e11.7393.172a.
+        ae2d.8a57.1e03.ac9c.9eb7.6fac.45af.8e51.
+        30c8.1c46.a35c.e411.e5fb.c119.1a0a.52ef.
+        f69f.2445.df4f.9b17.ad2b.417b.e66c.3710
+    0x4f02.1db2.43bc.633d.7178.183a.9fa0.71e8.
+      b4d9.ada9.ad7d.edf4.e5e7.3876.3f69.145a.
+      571b.2420.12fb.7ae0.7fa9.baac.3df1.02e0.
+      08b0.e279.8859.8881.d920.a9e6.4f56.15cd
+  ==
+++  test-aes-cbcc
+  %+  do-test-vectors-cbc  cbcc
+  :~
+    :^    0x0
+        0x1
+      0x2
+    0x7260.03ca.37a6.2a74.d1a2.f58e.7506.358e
+  ::
+    :^    0x603d.eb10.15ca.71be.2b73.aef0.857d.7781.
+            1f35.2c07.3b61.08d7.2d98.10a3.0914.dff4
+        0x1.0203.0405.0607.0809.0a0b.0c0d.0e0f
+      0x6bc1.bee2.2e40.9f96.e93d.7e11.7393.172a.
+        ae2d.8a57.1e03.ac9c.9eb7.6fac.45af.8e51.
+        30c8.1c46.a35c.e411.e5fb.c119.1a0a.52ef.
+        f69f.2445.df4f.9b17.ad2b.417b.e66c.3710
+    0xf58c.4c04.d6e5.f1ba.779e.abfb.5f7b.fbd6.
+      9cfc.4e96.7edb.808d.679f.777b.c670.2c7d.
+      39f2.3369.a9d9.bacf.a530.e263.0423.1461.
+      b2eb.05e2.c39b.e9fc.da6c.1907.8c6a.9d1b
+  ==
 --
