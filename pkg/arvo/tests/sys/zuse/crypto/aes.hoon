@@ -1,12 +1,12 @@
 ::  tests for the aes block cipher
 ::
-::  test vectors from Appendix C of:
-::  https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf
-::
 /+  *test
 =,  aes:crypto
 ::
 |%
+::
+::  ECB mode. Test vectors from Appendix C of FIPS-197:
+::  https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf
 ::
 +$  vector-ecb  [key=@ux in=@ux out=@ux]
 ::
@@ -81,6 +81,9 @@
       0x11.2233.4455.6677.8899.aabb.ccdd.eeff
     0x8ea2.b7ca.5167.45bf.eafc.4990.4b49.6089
   ==
+::
+::  CBC mode. Test vectors from Appendix F of NIST SP 800-38A:
+::  https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38a.pdf
 ::
 +$  vector-cbc  [key=@ux iv=@ux in=@ux out=@ux]
 ::
@@ -164,5 +167,92 @@
       9cfc.4e96.7edb.808d.679f.777b.c670.2c7d.
       39f2.3369.a9d9.bacf.a530.e263.0423.1461.
       b2eb.05e2.c39b.e9fc.da6c.1907.8c6a.9d1b
+  ==
+::
+::  CTR mode. Test vectors from Appendix F of NIST SP 800-38A:
+::  https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38a.pdf
+::
++$  vector-ctr  [key=@ux iv=@ux in=@ux out=@ux]
+::
+++  do-test-vectors-ctr
+  |*  [ctrx=_ctra ves=(list vector-ctr)]
+  ^-  tang
+  |^  %+  weld
+        %+  category  "encrypting"
+        (zing (turn ves enc))
+      %+  category  "decrypting"
+      (zing (turn ves dec))
+  ::
+  ++  enc
+    |=  vector-ctr
+    %+  expect-eq
+      !>  out
+      !>  `@ux`(~(en ctrx key 7 (met 3 out) iv) in)
+  ::
+  ++  dec
+    |=  vector-ctr
+    %+  expect-eq
+      !>  in
+      !>  `@ux`(~(de ctrx key 7 (met 3 out) iv) out)
+  --
+::
+++  test-aes-ctra
+  %+  do-test-vectors-ctr  ctra
+  :~
+    :^    0x0
+        0x1
+      0x2
+    0x58e2.fcce.fa7e.3061.367f.1d57.a4e7.4558
+  ::
+    :^    0x2b7e.1516.28ae.d2a6.abf7.1588.09cf.4f3c
+        0xf0f1.f2f3.f4f5.f6f7.f8f9.fafb.fcfd.feff
+      0x6bc1.bee2.2e40.9f96.e93d.7e11.7393.172a.
+        ae2d.8a57.1e03.ac9c.9eb7.6fac.45af.8e51.
+        30c8.1c46.a35c.e411.e5fb.c119.1a0a.52ef.
+        f69f.2445.df4f.9b17.ad2b.417b.e66c.3710
+    0x874d.6191.b620.e326.1bef.6864.990d.b6ce.
+      9806.f66b.7970.fdff.8617.187b.b9ff.fdff.
+      5ae4.df3e.dbd5.d35e.5b4f.0902.0db0.3eab.
+      1e03.1dda.2fbe.03d1.7921.70a0.f300.9cee
+  ==
+++  test-aes-ctrb
+  %+  do-test-vectors-ctr  ctrb
+  :~
+    :^    0x0
+        0x1
+      0x2
+    0xcd33.b28a.c773.f74b.a00e.d1f3.1257.2437
+  ::
+    :^    0x8e73.b0f7.da0e.6452.c810.f32b.8090.79e5.
+            62f8.ead2.522c.6b7b
+        0xf0f1.f2f3.f4f5.f6f7.f8f9.fafb.fcfd.feff
+      0x6bc1.bee2.2e40.9f96.e93d.7e11.7393.172a.
+        ae2d.8a57.1e03.ac9c.9eb7.6fac.45af.8e51.
+        30c8.1c46.a35c.e411.e5fb.c119.1a0a.52ef.
+        f69f.2445.df4f.9b17.ad2b.417b.e66c.3710
+    0x1abc.9324.1752.1ca2.4f2b.0459.fe7e.6e0b.
+      0903.39ec.0aa6.faef.d5cc.c2c6.f4ce.8e94.
+      1e36.b26b.d1eb.c670.d1bd.1d66.5620.abf7.
+      4f78.a7f6.d298.0958.5a97.daec.58c6.b050
+  ==
+++  test-aes-ctrc
+  %+  do-test-vectors-ctr  ctrc
+  :~
+    :^    0x0
+        0x1
+      0x2
+    0x530f.8afb.c745.36b9.a963.b4f1.c4cb.7389
+  ::
+    :^    0x603d.eb10.15ca.71be.2b73.aef0.857d.7781.
+            1f35.2c07.3b61.08d7.2d98.10a3.0914.dff4
+        0xf0f1.f2f3.f4f5.f6f7.f8f9.fafb.fcfd.feff
+      0x6bc1.bee2.2e40.9f96.e93d.7e11.7393.172a.
+        ae2d.8a57.1e03.ac9c.9eb7.6fac.45af.8e51.
+        30c8.1c46.a35c.e411.e5fb.c119.1a0a.52ef.
+        f69f.2445.df4f.9b17.ad2b.417b.e66c.3710
+    0x601e.c313.7757.89a5.b7a7.f504.bbf3.d228.
+      f443.e3ca.4d62.b59a.ca84.e990.caca.f5c5.
+      2b09.30da.a23d.e94c.e870.17ba.2d84.988d.
+      dfc9.c58d.b67a.ada6.13c2.dd08.4579.41a6
   ==
 --
