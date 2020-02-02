@@ -36,6 +36,7 @@
       bufs=(map uri=@t buf=wall)
       builds=(map uri=@t =vase)
       ford-diagnostics=(map uri=@t (list diagnostic:lsp-sur))
+      preludes=(map uri=@t type)
   ==
 +$  versioned-state
   $%
@@ -137,10 +138,49 @@
   ^-  (quip card _state)
   =^  cards  state
     ?+  -.req  [~ state]
-        %text-document--hover
-      (handle-hover req)
+      %text-document--hover       (handle-hover req)
+      %text-document--completion  (handle-completion req)
     ==
   [cards state]
+::
+++  get-subject
+  |=  uri=@t
+  ^-  type
+  (~(gut by preludes) uri -:!>(..zuse))
+::
+++  handle-completion
+  |=  com=text-document--completion:request:lsp-sur
+  ^-  (quip card _state)
+  :_  state
+  %^  give-rpc-response  %text-document--completion  id.com
+  =/  buf=wall
+    (~(got by bufs) uri.com)
+  =/  txt=tape
+    (zing (join "\0a" buf))
+  =/  pos
+    (get-pos buf row.com col.com)
+  =/  rune  (rune-snippet (swag [(safe-sub pos 2) 2] txt))
+  ?^  rune  rune
+  =/  tab-list
+    %^  tab-list-tape:auto
+      (~(gut by preludes) uri.com -:!>(..zuse))
+    pos  txt
+  ?:  ?=(%| -.tab-list)  ~
+  ?~  p.tab-list  ~
+  ?~  u.p.tab-list  ~
+  (turn u.p.tab-list make-completion-item)
+::
+++  make-completion-item
+  |=  [name=term =type]
+  ^-  completion-item:lsp-sur
+  =/  doc
+    %-  crip
+    ;:  weld
+      "`"
+      ~(ram re ~(duck easy-print type))
+      "`"
+    ==
+  [name 1 doc '' name 1]
 ::
 ++  give-rpc-response
   |=  res=all:response:lsp-sur
@@ -152,10 +192,13 @@
   ^-  (quip card _state)
   ~&  >  %lsp-shutdown
   :_  *state-zero
+  %-  zing
   %+  turn
     ~(tap in ~(key by builds))
   |=  uri=@t
-  [%pass /ford/[uri] %arvo %f %kill ~]
+  :+  [%pass /ford/[uri] %arvo %f %kill ~]
+  [%pass /ford/[uri]/deps %arvo %f %kill ~]
+  ~
 ::
 ++  handle-did-close
   |=  [uri=@t version=(unit @)]
@@ -167,7 +210,10 @@
   =.  builds
     (~(del by builds) uri)
   :_  state
-  [%pass /ford/[uri] %arvo %f %kill ~]~
+  :~
+    [%pass /ford/[uri] %arvo %f %kill ~]
+    [%pass /ford/[uri]/deps %arvo %f %kill ~]
+  ==
 ::
 ++  handle-did-save
   |=  [uri=@t version=(unit @)]
@@ -206,6 +252,11 @@
     build-result.result.gift
   ?+  build-result  [~ state]
         ::
+      [%success %plan *]
+    =.  preludes
+      (~(put by preludes) uri -:vase.build-result)
+    [~ state]
+        ::
       [%success %core *]
     =.  builds
       (~(put by builds) uri vase.build-result)
@@ -236,20 +287,42 @@
     (~(gut by ford-diagnostics) uri ~)
   (get-parser-diagnostics uri)
 ::
+++  get-build-deps
+  |=  [=path buf=wall]
+  ^-  schematic:ford
+  =/  parse=(like scaffold:ford)
+    %+  (lsp-parser [byk.bow path])  [1 1]
+    (zing (join "\0a" buf))
+  =/  =scaffold:ford
+    ?~  q.parse  *scaffold:ford
+    p.u.q.parse
+  :*  %plan
+    [[our.bow %home] (flop path)]
+    *coin
+    scaffold(sources `(list hoon)`~[[%cnts ~[[%& 1]] ~]])
+  ==
+::
 ++  handle-did-open
   |=  item=text-document-item:lsp-sur
   ^-  (quip card _state)
+  =/  buf=wall
+    (to-wall (trip text.item))
   =.  bufs
-    (~(put by bufs) uri.item (to-wall (trip text.item)))
+    (~(put by bufs) uri.item buf)
   =/  =path
     (uri-to-path:build uri.item)
   =/  =schematic:ford
     [%core [our.bow %home] (flop path)]
+  =/  dep-schematic=schematic:ford
+    (get-build-deps path buf)
   :_  state
+  %+  weld
+    (give-rpc-notification (get-diagnostics uri.item))
   ^-  (list card)
-  :_  (give-rpc-notification (get-diagnostics uri.item))
-  ^-  card
-  [%pass /ford/[uri.item] %arvo %f %build live=%.y schematic]
+  :~
+    [%pass /ford/[uri.item] %arvo %f %build live=%.y schematic]
+    [%pass /ford/[uri.item]/deps %arvo %f %build live=%.y dep-schematic]
+  ==
 ::
 ++  get-parser-diagnostics
   |=  uri=@t
@@ -268,26 +341,27 @@
 ++  handle-hover
   |=  hov=text-document--hover:request:lsp-sur
   ^-  (quip card _state)
+  :_  state
+  %^  give-rpc-response  %text-document--hover  id.hov
   =/  buf=wall
     (~(got by bufs) uri.hov)
   =/  txt
     (zing (join "\0a" buf))
-  =+  (get-id:auto (get-pos buf row.hov col.hov) txt)
-  ?~  id
-    [(give-rpc-response [%text-document--hover id.hov ~]) state]
-  =/  match=(unit (option:auto type))
-    (search-exact:auto u.id (get-identifiers:auto -:!>(..zuse)))
-  ?~  match
-    [(give-rpc-response [%text-document--hover id.hov ~]) state]
-  =/  contents
-    %-  crip
-    ;:  weld
-      "`"
-      ~(ram re ~(duck easy-print detail.u.match))
-      "`"
-    ==
-  :_  state
-  (give-rpc-response [%text-document--hover id.hov `contents])
+  =/  tab-list
+    %^  tab-list-tape:auto
+        (~(gut by preludes) uri.hov -:!>(..zuse))
+      (get-pos buf row.hov col.hov)
+    txt
+  ?:  ?=(%| -.tab-list)  ~
+  ?~  p.tab-list  ~
+  ?~  u.p.tab-list  ~
+  :-  ~
+  %-  crip
+  ;:  weld
+    "`"
+    ~(ram re ~(duck easy-print detail.i.u.p.tab-list))
+    "`"
+  ==
 ::
 ++  sync-buf
   |=  [buf=wall changes=(list change:lsp-sur)]
