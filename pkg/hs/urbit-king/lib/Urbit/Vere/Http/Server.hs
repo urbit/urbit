@@ -22,8 +22,6 @@
                             "hosed";
 -}
 
-{-# OPTIONS_GHC -Wwarn #-}
-
 module Urbit.Vere.Http.Server where
 
 import Data.Conduit
@@ -416,8 +414,11 @@ openPort isFake = go
 
     bindListenPort ∷ W.Port → Net.Socket → IO Net.PortNumber
     bindListenPort por sok = do
-        bindAddr <- Net.inet_addr bindTo
-        Net.bind sok (Net.SockAddrInet (fromIntegral por) bindAddr)
+        bindAddr <- Net.getAddrInfo Nothing (Just bindTo) Nothing >>= \case
+                        []  -> error "this should never happen."
+                        x:_ -> pure (Net.addrAddress x)
+
+        Net.bind sok bindAddr
         Net.listen sok 1
         Net.socketPort sok
 
