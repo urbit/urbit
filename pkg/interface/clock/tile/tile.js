@@ -7,12 +7,12 @@ const outerSize = 234; //tile size
 const innerSize = 218; //clock size
 
 //polar to cartesian
-var ptc = function(r, theta) {
-  return {
-    x: r * Math.cos(theta),
-    y: r * Math.sin(theta)
-  }
-}
+// var ptc = function(r, theta) {
+//   return {
+//     x: r * Math.cos(theta),
+//     y: r * Math.sin(theta)
+//   }
+// }
 
 const toRelativeTime = (date, referenceTime, unit) => moment(date)
   .diff(referenceTime, unit)
@@ -29,22 +29,6 @@ const anticlockwise = (deg, delta) => deg - delta
 const splitArc = (start, end) => end + ((start - end) * 0.5)
 
 const isOdd = n => Math.abs(n % 2) == 1;
-
-
-// const toDayRadians = (mins) => {
-//   const totalMinsInDay = 1440
-//   const percPerRad = 0.062831853071796
-//         const offset = 1.6605563436923663
-//   return ((mins / 1400) * percPerRad * 100) - offset
-// }
-
-// console.log(toDayRadians(1440/2))
-
-// const convert = (date, referenceTime) => {
-//   return toDayRadians(toRelMinutes(date, referenceTime))
-// }
-
-
 
 const radToDeg = (rad) => rad * (180 / Math.PI);
 
@@ -94,11 +78,7 @@ class Clock extends Component {
   constructor(props) {
     super(props);
     this.animate = this.animate.bind(this);
-    // this.hourHand = this.hourHand.bind(this);
-    // this.minuteHand = this.minuteHand.bind(this);
-    // this.secondHand = this.secondHand.bind(this);
     this.canvasRef = React.createRef();
-    this.dodecagonImg = null;
     this.canvas = null;
     this.angle = 0;
     this.referenceTime = moment().startOf('day').subtract(6, 'hours')
@@ -152,15 +132,13 @@ class Clock extends Component {
         nauticalDusk: convert(suncalc.nauticalDusk, this.referenceTime),
       }
 
-      console.log(convertedSunCalc)
-
       this.setState({
         lat,
         lon,
         ...convertedSunCalc,
         geolocationSuccess: true,
       }, (err) => {
-        console.log(err);
+        if (err) console.log(err);
       }, { maximumAge: Infinity, timeout: 10000 });
     });
     this.animate()
@@ -171,16 +149,14 @@ class Clock extends Component {
     window.setTimeout(() => window.requestAnimationFrame(this.animate), 1000)
 
     const { state } = this
-    var time = new Date();
-    //continuously animate
-    var c = this.canvas
-    var ctx = c.getContext("2d");
+    const time = new Date();
+    const ctx = this.canvas.getContext("2d");
     ctx.clearRect(0, 0, c.width, c.height);
     ctx.save();
 
     const ctr = innerSize / 2
 
-    // Sun
+    // Sun+moon calculations
     const dd = 4
     var cx = ctr
     var cy = ctr
@@ -188,7 +164,7 @@ class Clock extends Component {
     var newX = cx + (ctr - 24) * Math.cos(this.angle);
     var newY = cy + (ctr - 24) * Math.sin(this.angle);
 
-
+    // Initial background
     circle(
       ctx,
       ctr,
@@ -199,6 +175,7 @@ class Clock extends Component {
       '#FFFFFF'
     )
 
+    // Day
     degArc(
       ctx,
       ctr,
@@ -208,8 +185,6 @@ class Clock extends Component {
       state.sunset,
       '#6792FF'
     );
-
-
 
     // Sunrise
     degArc(
@@ -292,7 +267,7 @@ class Clock extends Component {
         2 * Math.PI,
         '#FFFFFF'
       )
-
+      // Moon circle outline
       circleOutline(
         ctx,
         newX-1/2,
@@ -365,8 +340,6 @@ class Clock extends Component {
     ctx.fillText(dateText, ctr, ctr + 6 + 12)
 
     ctx.restore();
-
-
   }
 
   render() {
@@ -380,7 +353,6 @@ class Clock extends Component {
 }
 
 export default class ClockTile extends Component {
-
   constructor(props) {
     super(props);
   }
