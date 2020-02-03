@@ -55,9 +55,10 @@ export class LinkUpdateReducer {
         'time': time,
         'udon': udon
       }
-      let tempArray = state.links[path][page][index].comments.page;
+
+      let tempArray = state.links[path][page][index].comments["page0"];
       tempArray.unshift(tempObj);
-      state.links[path][page][index].comments.page = tempArray;
+      state.links[path][page][index].comments["page0"] = tempArray;
     }
   }
 

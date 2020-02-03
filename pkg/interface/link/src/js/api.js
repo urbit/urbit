@@ -10,7 +10,7 @@ class UrbitApi {
   setAuthTokens(authTokens) {
     this.authTokens = authTokens;
     this.bindPaths = [];
-    
+
     this.invite = {
       accept: this.inviteAccept.bind(this),
       decline: this.inviteDecline.bind(this),
@@ -21,7 +21,7 @@ class UrbitApi {
   bind(path, method, ship = this.authTokens.ship, app, success, fail, quit) {
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
-    window.subscriptionId = window.urb.subscribe(ship, app, path, 
+    window.subscriptionId = window.urb.subscribe(ship, app, path,
       (err) => {
         fail(err);
       },
@@ -44,7 +44,7 @@ class UrbitApi {
       window.urb.poke(ship, appl, mark, data,
         (json) => {
           resolve(json);
-        }, 
+        },
         (err) => {
           reject(err);
         });
@@ -54,9 +54,9 @@ class UrbitApi {
   inviteAction(data) {
     this.action("invite-store", "json", data);
   }
-  
+
   inviteInvite(path, ship) {
-    this.action("invite-hook", "json", 
+    this.action("invite-hook", "json",
       {
         invite: {
           path: '/chat',
@@ -81,7 +81,7 @@ class UrbitApi {
       }
     });
   }
-  
+
   inviteDecline(uid) {
     this.inviteAction({
       decline: {
@@ -95,12 +95,15 @@ class UrbitApi {
     let endpoint = "/~link/discussions" + path + "/" + window.btoa(url) + ".json?p=0";
     let promise = await fetch(endpoint);
     if (promise.ok) {
-      let comments = {};
-      comments["link-update"] = {};
-      comments["link-update"].comments = {};
-      comments["link-update"].comments.path = path;
-      comments["link-update"].comments.page = page;
-      comments["link-update"].comments.index = index;
+      let comments = {
+        "link-update": {
+          comments: {
+            path: path,
+            page: page,
+            index: index
+          }
+        }
+      };
       comments["link-update"].comments.data = await promise.json();
       store.handleEvent(comments);
     }
@@ -110,16 +113,18 @@ class UrbitApi {
     let endpoint = "/~link/discussions" + path + "/" + window.btoa(url) + ".json?p=" + commentPage;
     let promise = await fetch(endpoint);
     if (promise.ok) {
-      let comPage = "page" + commentPage;
       let responseData = await promise.json();
-      let update = {};
-      update["link-update"] = {};
-      update["link-update"].commentPage = {};
-      update["link-update"].commentPage.path = path;
-      update["link-update"].commentPage.linkPage = page;
-      update["link-update"].commentPage.index = index;
-      update["link-update"].commentPage.comPageNo = commentPage;
-      update["link-update"].commentPage.data = responseData.page;
+      let update = {
+        "link-update": {
+          commentPage: {
+            path: path,
+            linkPage: page,
+            index: index,
+            comPageNo: commentPage,
+            data: responseData.page
+          }
+        }
+      };
       store.handleEvent(update);
     }
   }
@@ -129,23 +134,26 @@ class UrbitApi {
     let promise = await fetch(endpoint);
     if (promise.ok) {
       let resolvedPage = await promise.json();
-      let update = {};
-      update["link-update"] = {};
-      update["link-update"].page = {};
-      update["link-update"].page[path] = {
-        "page": page
+      let update = {
+        "link-update": {
+          page: {
+            [path]: {
+              page: page,
+              links: resolvedPage.page
+            }
+          }
+        }
       };
-      update["link-update"].page[path].links = resolvedPage.page;
       store.handleEvent(update);
     }
   }
 
   async postLink(path, url, title) {
-    let json = 
-    { 'path': path,
+    let json =
+    {'path': path,
     'title': title,
     'url': url
-  };
+    };
     let endpoint = "/~link/save";
     let post = await fetch(endpoint, {
       method: "POST",
@@ -157,17 +165,19 @@ class UrbitApi {
     });
 
     if (post.ok) {
-      let update = {};
-      update["link-update"] = {};
-      update["link-update"].add = {};
-      update["link-update"].add[path] = {};
-      update["link-update"].add[path] = {
-        "title": title, 
-        "url": url, 
-        "timestamp": moment.now(), 
-        "ship": window.ship,
-        "commentCount": 0
-      }
+      let update = {
+        "link-update": {
+          add: {
+            [path]: {
+              title: title,
+              url: url,
+              timestamp: moment.now(),
+              ship: window.ship,
+              commentCount: 0
+            }
+          }
+        }
+      };
       store.handleEvent(update);
       return true;
     } else {
@@ -177,9 +187,9 @@ class UrbitApi {
 
   async postComment(path, url, comment, page, index) {
     let json = {
-      'path': path,
-      'url': url,
-      'udon': comment
+      path: path,
+      url: url,
+      udon: comment
     }
 
     let endpoint = "/~link/note";
@@ -193,17 +203,18 @@ class UrbitApi {
     });
 
     if (post.ok) {
-      let update = {};
-      update["link-update"] = {};
-      update["link-update"].commentAdd = {};
-      update["link-update"].commentAdd = {
-        "path": path,
-        "url": url,
-        "udon": comment,
-        "page": page,
-        "index": index,
-        "time": moment.now()
-      }
+      let update = {
+        "link-update": {
+          commentAdd: {
+            path: path,
+            url: url,
+            udon: comment,
+            page: page,
+            index: index,
+            time: moment.now()
+          }
+        }
+      };
       store.handleEvent(update);
       return true;
     } else {
