@@ -67,49 +67,69 @@ export class InviteSearch extends Component {
         searchResults: { groups: groupMatches, ships: shipMatches }
       });
     }
-
-    if (event.target.value.includes(",")) {
-      let isValid = true;
-      let addedShip = searchTerm.replace(",", "").trim();
-      if (!urbitOb.isValidPatp("~" + addedShip)) {
-        isValid = false;
-      }
-      if (!isValid) {
-        this.setState({ inviteError: true, searchValue: "" });
-      } else if (isValid) {
-        this.setInvite("addShip", addedShip);
-        this.setState({searchValue: ""});
-      }
-    }
   }
 
-  setInvite(type, value) {
-    let { groups, ships } = this.props.invites;
-
+  deleteGroup() {
+    let { ships } = this.props.invites;
     this.setState(
-      {searchValue: "",
-       searchResults: {groups: [], ships: []}}
-      );
+      {
+        searchValue: "",
+        searchResults: { groups: [], ships: [] }
+      }
+    );
+    this.props.setInvite({ groups: [], ships: ships });
+  }
 
-    switch(type) {
-      case "deleteGroup":
-        this.props.setInvite({groups: [], ships: ships});
-        break;
-      case "deleteShip":
-        ships = ships.filter(e => {
-          return e !== value;
-        });
-        this.props.setInvite({groups: groups, ships: ships});
-        break;
-      case "addGroup":
-        this.props.setInvite({groups: [value], ships: []});
-        break;
-      case "addShip":
-        ships.push(value);
-        if (groups.length > 0) {
-          return false;
-        }
-        this.props.setInvite({groups: groups, ships: ships});
+  deleteShip(ship) {
+    let { groups, ships } = this.props.invites;
+    this.setState(
+      {
+        searchValue: "",
+        searchResults: { groups: [], ships: [] }
+      }
+    );
+    ships = ships.filter(e => {
+      return e !== ship;
+    });
+    this.props.setInvite({ groups: groups, ships: ships });
+  }
+
+  addGroup(group) {
+    this.setState(
+      {
+        searchValue: "",
+        searchResults: { groups: [], ships: [] }
+      }
+    );
+    this.props.setInvite({ groups: [group], ships: [] });
+  }
+
+  addShip(ship) {
+    let { groups, ships } = this.props.invites;
+    this.setState(
+      {
+        searchValue: "",
+        searchResults: { groups: [], ships: [] }
+      }
+    );
+    ships.push(ship);
+    if (groups.length > 0) {
+      return false;
+    }
+    this.props.setInvite({ groups: groups, ships: ships });
+  }
+
+  submitShipToAdd(ship) {
+    let searchTerm = ship.toLowerCase().replace("~", "").trim();
+    let isValid = true;
+    if (!urbitOb.isValidPatp("~" + searchTerm)) {
+      isValid = false;
+    }
+    if (!isValid) {
+      this.setState({ inviteError: true, searchValue: "" });
+    } else if (isValid) {
+      this.addShip(searchTerm);
+      this.setState({ searchValue: "" });
     }
   }
 
@@ -150,7 +170,7 @@ export class InviteSearch extends Component {
             className={
               "list mono white-d f8 pv2 ph3 pointer" +
               " hover-bg-gray4 hover-black-d"}
-            onClick={e => this.setInvite("addGroup", group)}>
+            onClick={e => this.addGroup(group)}>
             {group}
           </li>
         );
@@ -164,7 +184,7 @@ export class InviteSearch extends Component {
               "list mono white-d f8 pv1 ph3 pointer" +
               " hover-bg-gray4 hover-black-d"
             }
-            onClick={e => this.setInvite("addShip", ship)}>
+            onClick={e => this.addShip(ship)}>
             <Sigil
               ship={"~" + ship}
               size={24}
@@ -196,10 +216,10 @@ export class InviteSearch extends Component {
             key={group}
             className={
               "f9 mono black pa2 bg-gray5 bg-gray1-d" +
-              " ba b--gray4 b--gray2-d white-d dib mr2 mt2"}>
+              " ba b--gray4 b--gray2-d white-d dib mr2 mt2 c-default"}>
             {group}
             <span className="white-d ml3 mono pointer"
-              onClick={e => this.setInvite("deleteGroup", group)}>
+              onClick={e => this.deleteGroup(group)}>
               x
             </span>
           </span>
@@ -211,10 +231,10 @@ export class InviteSearch extends Component {
           <span
           key={ship}
           className={"f9 mono black pa2 bg-gray5 bg-gray1-d" +
-          " ba b--gray4 b--gray2-d white-d dib mr2 mt2"}>
+          " ba b--gray4 b--gray2-d white-d dib mr2 mt2 c-default"}>
             {"~" + ship}
             <span className="white-d ml3 mono pointer"
-            onClick={e => this.setInvite("deleteShip", ship)}>x</span>
+            onClick={e => this.deleteShip(ship)}>x</span>
           </span>
         );
       });
@@ -248,7 +268,7 @@ export class InviteSearch extends Component {
             this.textarea = e;
           }}
           className={"f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 w-100"
-          + " db focus-b--black focus-b--white-d"}
+          + " db focus-b--black focus-b--white-d mono placeholder-inter"}
           placeholder="Search for ships or existing groups"
           disabled={searchDisabled}
           rows={1}
@@ -258,8 +278,10 @@ export class InviteSearch extends Component {
             paddingLeft: 36
           }}
           onKeyPress={e => {
-            if (e.key === "Enter")
-            e.preventDefault()}}
+            if (e.key === "Enter" || e.key === ",") {
+            e.preventDefault();
+            this.submitShipToAdd(this.state.searchValue);
+          }}}
           onChange={this.search}
           value={state.searchValue}
         />

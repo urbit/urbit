@@ -104,6 +104,10 @@ h2 {
   mix-blend-mode: difference;
 }
 
+.placeholder-inter::placeholder {
+  font-family: "Inter", sans-serif;
+}
+
 /* embeds */
 .embed-container {
   position: relative;
