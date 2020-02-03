@@ -255,4 +255,102 @@
       2b09.30da.a23d.e94c.e870.17ba.2d84.988d.
       dfc9.c58d.b67a.ada6.13c2.dd08.4579.41a6
   ==
+::
+::  AES-CMAC. Test vectors from Section D of NIST SP 800-38B:
+::  https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38b.pdf
+::
++$  vector-mac  [key=@ux in=@ux out=@ux]
+::
+++  do-test-vectors-mac
+  |*  [macx=_maca ves=(list vector-mac)]
+  ^-  tang
+  |^  (zing (turn ves case))
+  ::
+  ++  case
+    |=  vector-mac
+    %+  expect-eq
+      !>  out
+      !>  `@ux`(macx key ~ in)
+  --
+::
+++  test-aes-maca
+  %+  do-test-vectors-mac  maca
+  :~
+    :+  0x2b7e.1516.28ae.d2a6.abf7.1588.09cf.4f3c
+      0x0
+    0xbb1d.6929.e959.3728.7fa3.7d12.9b75.6746
+  ::
+    :+  0x2b7e.1516.28ae.d2a6.abf7.1588.09cf.4f3c
+      0x6bc1.bee2.2e40.9f96.e93d.7e11.7393.172a
+    0x70a.16b4.6b4d.4144.f79b.dd9d.d04a.287c
+  ::
+    :+  0x2b7e.1516.28ae.d2a6.abf7.1588.09cf.4f3c
+      0x6bc1.bee2.2e40.9f96.e93d.7e11.7393.172a.
+        ae2d.8a57.1e03.ac9c.9eb7.6fac.45af.8e51.
+        30c8.1c46.a35c.e411
+    0xdfa6.6747.de9a.e630.30ca.3261.1497.c827
+  ::
+    :+  0x2b7e.1516.28ae.d2a6.abf7.1588.09cf.4f3c
+      0x6bc1.bee2.2e40.9f96.e93d.7e11.7393.172a.
+        ae2d.8a57.1e03.ac9c.9eb7.6fac.45af.8e51.
+        30c8.1c46.a35c.e411.e5fb.c119.1a0a.52ef.
+        f69f.2445.df4f.9b17.ad2b.417b.e66c.3710
+    0x51f0.bebf.7e3b.9d92.fc49.7417.7936.3cfe
+  ==
+++  test-aes-macb
+  %+  do-test-vectors-mac  macb
+  :~
+    :+  0x8e73.b0f7.da0e.6452.c810.f32b.8090.79e5.
+          62f8.ead2.522c.6b7b
+      0x0
+    0xd17d.df46.adaa.cde5.31ca.c483.de7a.9367
+  ::
+    :+  0x8e73.b0f7.da0e.6452.c810.f32b.8090.79e5.
+          62f8.ead2.522c.6b7b
+      0x6bc1.bee2.2e40.9f96.e93d.7e11.7393.172a
+    0x9e99.a7bf.31e7.1090.0662.f65e.617c.5184
+  ::
+    :+  0x8e73.b0f7.da0e.6452.c810.f32b.8090.79e5.
+          62f8.ead2.522c.6b7b
+      0x6bc1.bee2.2e40.9f96.e93d.7e11.7393.172a.
+        ae2d.8a57.1e03.ac9c.9eb7.6fac.45af.8e51.
+        30c8.1c46.a35c.e411
+    0x8a1d.e5be.2eb3.1aad.089a.82e6.ee90.8b0e
+  ::
+    :+  0x8e73.b0f7.da0e.6452.c810.f32b.8090.79e5.
+          62f8.ead2.522c.6b7b
+      0x6bc1.bee2.2e40.9f96.e93d.7e11.7393.172a.
+        ae2d.8a57.1e03.ac9c.9eb7.6fac.45af.8e51.
+        30c8.1c46.a35c.e411.e5fb.c119.1a0a.52ef.
+        f69f.2445.df4f.9b17.ad2b.417b.e66c.3710
+    0xa1d5.df0e.ed79.0f79.4d77.5896.59f3.9a11
+  ==
+++  test-aes-macc
+  %+  do-test-vectors-mac  macc
+  :~
+    :+  0x603d.eb10.15ca.71be.2b73.aef0.857d.7781.
+          1f35.2c07.3b61.08d7.2d98.10a3.0914.dff4
+      0x0
+    0x289.62f6.1b7b.f89e.fc6b.551f.4667.d983
+  ::
+    :+  0x603d.eb10.15ca.71be.2b73.aef0.857d.7781.
+          1f35.2c07.3b61.08d7.2d98.10a3.0914.dff4
+      0x6bc1.bee2.2e40.9f96.e93d.7e11.7393.172a
+    0x28a7.023f.452e.8f82.bd4b.f28d.8c37.c35c
+  ::
+    :+  0x603d.eb10.15ca.71be.2b73.aef0.857d.7781.
+          1f35.2c07.3b61.08d7.2d98.10a3.0914.dff4
+      0x6bc1.bee2.2e40.9f96.e93d.7e11.7393.172a.
+        ae2d.8a57.1e03.ac9c.9eb7.6fac.45af.8e51.
+        30c8.1c46.a35c.e411
+    0xaaf3.d8f1.de56.40c2.32f5.b169.b9c9.11e6
+  ::
+    :+  0x603d.eb10.15ca.71be.2b73.aef0.857d.7781.
+          1f35.2c07.3b61.08d7.2d98.10a3.0914.dff4
+      0x6bc1.bee2.2e40.9f96.e93d.7e11.7393.172a.
+        ae2d.8a57.1e03.ac9c.9eb7.6fac.45af.8e51.
+        30c8.1c46.a35c.e411.e5fb.c119.1a0a.52ef.
+        f69f.2445.df4f.9b17.ad2b.417b.e66c.3710
+    0xe199.2190.549f.6ed5.696a.2c05.6c31.5410
+  ==
 --
