@@ -628,10 +628,12 @@
 ++  form-note
   |=  [note-name=@tas udon=@t]
   ^-  note
-  =/  build=(each manx tang)
-    %-  mule  |.
-    ^-  manx
-    elm:(static:cram (ream udon))
+  =/  body=tape   (slag (add 3 (need (find ";>" (trip udon)))) (trip udon))
+  =/  snippet=@t  (of-wain:format (scag 1 (to-wain:format (crip body))))
+::  =/  build=(each manx tang)
+::    %-  mule  |.
+::    ^-  manx
+::    elm:(static:cram (ream udon))
   ::
   =/  meta=(each (map term knot) tang)
     %-  mule  |.
@@ -658,7 +660,7 @@
       now.bol
       %.n
       udon
-      build
+      snippet
       ~
   ==
 ::

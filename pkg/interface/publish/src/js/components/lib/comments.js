@@ -12,7 +12,6 @@ export class Comments extends Component {
     this.commentChange = this.commentChange.bind(this);
   }
  commentSubmit(evt){
-   console.log ("this works")
    let comment = {
      "new-comment": {
        who: this.props.ship.slice(1),

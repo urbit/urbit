@@ -40,7 +40,8 @@
       last-edit=@da
       read=?
       file=@t
-      build=(each manx tang)
+      snippet=@t
+::      build=(each manx tang)
       comments=(map @da comment)
   ==
 ::
