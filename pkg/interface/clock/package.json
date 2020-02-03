@@ -32,12 +32,13 @@
     "classnames": "^2.2.6",
     "del": "^5.1.0",
     "lodash": "^4.17.11",
-    "moment": "^2.20.1",
+    "moment": "^2.24.0",
     "mousetrap": "^1.6.1",
     "react": "^16.5.2",
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.8.6",
-    "react-router-dom": "^5.0.0"
+    "react-router-dom": "^5.0.0",
+    "suncalc": "^1.8.0"
   },
   "resolutions": {
     "natives": "1.1.3"
