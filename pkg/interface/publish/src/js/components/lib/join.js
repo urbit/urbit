@@ -113,6 +113,7 @@ export class JoinScreen extends Component {
             rows={1}
             onKeyPress={e => {
               if (e.key === "Enter") {
+                e.preventDefault();
                 this.onClickJoin();
               }
             }}
