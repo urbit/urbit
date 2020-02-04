@@ -90,7 +90,7 @@ data Bug
 
 data Cmd
     = CmdNew New Opts
-    | CmdRun Run Opts
+    | CmdRun Run Opts Bool
     | CmdBug Bug
     | CmdCon FilePath
   deriving (Show)
@@ -235,7 +235,7 @@ opts = do
 
     oExit      <- switch $ short 'x'
                         <> long "exit"
-                        <> help "Exit immediatly"
+                        <> help "Exit immediately"
                         <> hidden
 
     oDryRun    <- switch $ long "dry-run"
@@ -281,7 +281,11 @@ runShip :: Parser Cmd
 runShip = do
     rPierPath <- pierPath
     o         <- opts
-    pure (CmdRun (Run{..}) o)
+    daemon    <- switch $ short 'd'
+                         <> long "daemon"
+                         <> help "Daemon mode"
+                         <> hidden
+    pure (CmdRun (Run{..}) o daemon)
 
 valPill :: Parser Bug
 valPill = do

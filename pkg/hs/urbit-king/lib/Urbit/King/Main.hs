@@ -70,8 +70,8 @@ import Control.Exception      (AsyncException(UserInterrupt))
 import Control.Lens           ((&))
 import System.Process         (system)
 import Text.Show.Pretty       (pPrint)
-import Urbit.King.App         (runApp, runAppLogFile, runPierApp)
-import Urbit.King.App         (HasConfigDir(..))
+import Urbit.King.App         (runApp, runAppLogFile, runAppNoLog, runPierApp)
+import Urbit.King.App         (HasConfigDir(..), HasStderrLogFunc(..))
 import Urbit.Noun.Conversions (cordToUW)
 import Urbit.Time             (Wen)
 import Urbit.Vere.LockFile    (lockFile)
@@ -137,13 +137,14 @@ toNetworkConfig CLI.Opts{..} = NetworkConfig
     }
 
 tryBootFromPill :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
-                   , HasConfigDir e
+                   , HasConfigDir e, HasStderrLogFunc e
                    )
                 => Bool -> Pill -> Bool -> Serf.Flags -> Ship
                 -> LegacyBootEvent
                 -> RIO e ()
-tryBootFromPill oExit pill lite flags ship boot =
-    runOrExitImmediately bootedPier oExit
+tryBootFromPill oExit pill lite flags ship boot = do
+    mStart <- newEmptyMVar
+    runOrExitImmediately bootedPier oExit mStart
   where
     bootedPier = do
         view pierPathL >>= lockFile
@@ -157,8 +158,9 @@ runOrExitImmediately :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
                         )
                      => RAcquire e (Serf e, Log.EventLog, SerfState)
                      -> Bool
+                     -> MVar ()
                      -> RIO e ()
-runOrExitImmediately getPier oExit =
+runOrExitImmediately getPier oExit mStart =
     rwith getPier $ if oExit then shutdownImmediately else runPier
   where
     shutdownImmediately (serf, log, ss) = do
@@ -173,15 +175,15 @@ runOrExitImmediately getPier oExit =
         logTrace "Shutdown!"
 
     runPier sls = do
-        runRAcquire $ Pier.pier sls
+        runRAcquire $ Pier.pier sls mStart
 
-tryPlayShip :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
-               , HasConfigDir e
+tryPlayShip :: ( HasStderrLogFunc e, HasLogFunc e, HasNetworkConfig e
+               , HasPierConfig e, HasConfigDir e
                )
-            => Bool -> Bool -> Maybe Word64 -> Serf.Flags -> RIO e ()
-tryPlayShip exitImmediately fullReplay playFrom flags = do
+            => Bool -> Bool -> Maybe Word64 -> Serf.Flags -> MVar () -> RIO e ()
+tryPlayShip exitImmediately fullReplay playFrom flags mStart = do
     when fullReplay wipeSnapshot
-    runOrExitImmediately resumeShip exitImmediately
+    runOrExitImmediately resumeShip exitImmediately mStart
   where
     wipeSnapshot = do
         shipPath <- view pierPathL
@@ -275,7 +277,8 @@ collectAllFx top = do
 
 --------------------------------------------------------------------------------
 
-replayPartEvs :: ∀e. HasLogFunc e => FilePath -> Word64 -> RIO e ()
+replayPartEvs :: ∀e. (HasStderrLogFunc e, HasLogFunc e)
+              => FilePath -> Word64 -> RIO e ()
 replayPartEvs top last = do
     logTrace $ display $ pack @Text top
     fetchSnapshot
@@ -461,21 +464,34 @@ newShip CLI.New{..} opts
     runTryBootFromPill pill name ship bootEvent = do
       let pierConfig = toPierConfig (pierPath name) opts
       let networkConfig = toNetworkConfig opts
-      io $ runPierApp pierConfig networkConfig $
+      io $ runPierApp pierConfig networkConfig True $
         tryBootFromPill True pill nLite flags ship bootEvent
 ------  tryBootFromPill (CLI.oExit opts) pill nLite flags ship bootEvent
 
 
-runShip :: CLI.Run -> CLI.Opts -> IO ()
-runShip (CLI.Run pierPath) opts = do
-    let pierConfig = toPierConfig pierPath opts
-    let networkConfig = toNetworkConfig opts
-    runPierApp pierConfig networkConfig $
-      tryPlayShip
-        (CLI.oExit opts)
-        (CLI.oFullReplay opts)
-        (CLI.oDryFrom opts)
-        (toSerfFlags opts)
+runShip :: CLI.Run -> CLI.Opts -> Bool -> IO ()
+runShip (CLI.Run pierPath) opts daemon = do
+    tid <- myThreadId
+    let onTermExit = throwTo tid UserInterrupt
+    mStart <- newEmptyMVar
+    if daemon
+    then runPier mStart
+    else do
+      connectionThread <- async $ do
+        readMVar mStart
+        finally (runAppNoLog $ connTerm pierPath) onTermExit
+      finally (runPier mStart) (cancel connectionThread)
+  where
+    runPier mStart =
+          runPierApp pierConfig networkConfig daemon $
+            tryPlayShip
+              (CLI.oExit opts)
+              (CLI.oFullReplay opts)
+              (CLI.oDryFrom opts)
+              (toSerfFlags opts)
+              mStart
+    pierConfig = toPierConfig pierPath opts
+    networkConfig = toNetworkConfig opts
 
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
@@ -541,7 +557,7 @@ main = do
     terminfoHack
 
     CLI.parseArgs >>= \case
-        CLI.CmdRun r o                          -> runShip r o
+        CLI.CmdRun r o d                        -> runShip r o d
         CLI.CmdNew n o                          -> runApp $ newShip n o
         CLI.CmdBug (CLI.CollectAllFX pax)       -> runApp $ collectAllFx pax
         CLI.CmdBug (CLI.EventBrowser pax)       -> runApp $ startBrowser pax

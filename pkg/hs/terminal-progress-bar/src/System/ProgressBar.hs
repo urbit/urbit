@@ -220,9 +220,10 @@ killProgressBar _ = pure ()
 
 hPutProgressBar :: HasLogFunc e => Style s -> Progress s -> Timing -> RIO e ()
 hPutProgressBar style progress timing = do
-    logSticky (display (renderProgressBar style progress timing))
+    let barStr = (display (renderProgressBar style progress timing))
+    logSticky barStr
     when (progressFinished progress) $ do
-        logStickyDone ""
+        logStickyDone barStr
 
 -- | Renders a progress bar.
 --

@@ -26,6 +26,7 @@ import Foreign.Marshal.Alloc  (alloca)
 import Foreign.Ptr            (castPtr)
 import Foreign.Storable       (peek, poke)
 import System.Exit            (ExitCode)
+import Urbit.King.App         (HasStderrLogFunc(..))
 
 import qualified Data.ByteString.Unsafe   as BS
 import qualified Data.Conduit.Combinators as CC
@@ -365,8 +366,7 @@ updateProgressBar count startMsg = \case
       -- We only construct the progress bar on the first time that we
       -- process an event so that we don't display an empty progress
       -- bar when the snapshot is caught up to the log.
-      putStrLn startMsg
-      let style = defStyle { stylePostfix = exact }
+      let style = defStyle { stylePrefix = msg (fromStrict startMsg) }
       pb <- newProgressBar style 10 (Progress 0 count ())
       pure (Just pb)
     Just pb -> do
@@ -381,7 +381,13 @@ data BootExn = ShipAlreadyBooted
   deriving stock    (Eq, Ord, Show)
   deriving anyclass (Exception)
 
-bootFromSeq :: ∀e. HasLogFunc e => Serf e -> BootSeq -> RIO e ([Job], SerfState)
+logStderr :: HasStderrLogFunc e => RIO LogFunc a -> RIO e a
+logStderr action = do
+  logFunc <- view stderrLogFuncL
+  runRIO logFunc action
+
+bootFromSeq :: ∀e. (HasStderrLogFunc e, HasLogFunc e)
+            => Serf e -> BootSeq -> RIO e ([Job], SerfState)
 bootFromSeq serf (BootSeq ident nocks ovums) = do
     handshake serf ident >>= \case
         ss@(SerfState 1 (Mug 0)) -> loop [] ss Nothing bootSeqFns
@@ -392,12 +398,12 @@ bootFromSeq serf (BootSeq ident nocks ovums) = do
          -> RIO e ([Job], SerfState)
     loop acc ss pb = \case
         []   -> do
-          pb        <- updateProgressBar 0 bootMsg pb
+          pb        <- logStderr (updateProgressBar 0 bootMsg pb)
           pure (reverse acc, ss)
         x:xs -> do
           wen       <- io Time.now
           job       <- pure $ x (ssNextEv ss) (ssLastMug ss) wen
-          pb        <- updateProgressBar (1 + length xs) bootMsg pb
+          pb        <- logStderr (updateProgressBar (1 + length xs) bootMsg pb)
           (job, ss) <- bootJob serf job
           loop (job:acc) ss pb xs
 
@@ -416,7 +422,7 @@ bootFromSeq serf (BootSeq ident nocks ovums) = do
     The ship is booted, but it is behind. shove events to the worker
     until it is caught up.
 -}
-replayJobs :: HasLogFunc e
+replayJobs :: (HasStderrLogFunc e, HasLogFunc e)
            => Serf e -> Int -> SerfState -> ConduitT Job Void (RIO e) SerfState
 replayJobs serf lastEv = go Nothing
   where
@@ -424,7 +430,7 @@ replayJobs serf lastEv = go Nothing
       await >>= \case
         Nothing -> pure ss
         Just job -> do
-          pb <- lift $ updatePb ss pb
+          pb <- lift $ logStderr (updatePb ss pb)
           played <- lift $ replayJob serf job
           go pb played
 
@@ -435,7 +441,7 @@ replayJobs serf lastEv = go Nothing
       updateProgressBar start msg
 
 
-replay :: HasLogFunc e
+replay :: (HasStderrLogFunc e, HasLogFunc e)
           => Serf e -> Log.EventLog -> Maybe Word64 -> RIO e SerfState
 replay serf log last = do
     ss <- handshake serf (Log.identity log)
