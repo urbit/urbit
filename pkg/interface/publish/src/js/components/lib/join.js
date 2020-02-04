@@ -16,24 +16,33 @@ export class JoinScreen extends Component {
     this.bookChange = this.bookChange.bind(this);
   }
 
-  componentDidUpdate(prevProps, prevState) {
-      const { props, state } = this;
-      if (state.book in props.notebooks) {
-        props.history.push('/~publish');
-      }
-   }
+  notebooksInclude(text, notebookObj) {
+    let verdict = false;
+    let keyPair = [];
+    // validate that it's a worthwhile thing to check
+    // certainly a unit would be nice here
+    if (text.indexOf('/') === -1) {
+      return verdict;
+    } else {
+      keyPair = text.split('/');
+    };
+    // check both levels of object
+    if (keyPair[0] in notebookObj) {
+      if (keyPair[1] in notebookObj[keyPair[0]]) {
+        verdict = true;
+      } 
+    }
+    return verdict;
+  }
 
   onClickJoin() {
     const { props, state } = this;
 
     let text = state.book;
     // an error condition to prevent double joins?
-    if (text in props.notebooks ||
+    if (this.notebooksInclude(state.book,props.notebooks) ||
         text.length === 0) {
-      this.setState({
-        error: true,
-      });
-      return;
+      props.history.push('/~publish');
     }
 
     let book = text.split('/');
