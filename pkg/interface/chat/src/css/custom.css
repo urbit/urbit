@@ -24,14 +24,6 @@ textarea, input, button {
   background-color: #fff;
 }
 
-.dropdown::after {
-  content: "⌃";
-  transform: rotate(180deg);
-  position: absolute;
-  right: 12px;
-  top: 8px;
-}
-
 a {
   color: #000;
   font-weight: 400;
@@ -104,6 +96,18 @@ h2 {
   word-break: break-all;
 }
 
+.focus-b--black:focus {
+  border-color: #000;
+}
+
+.mix-blend-diff {
+  mix-blend-mode: difference;
+}
+
+.placeholder-inter::placeholder {
+  font-family: "Inter", sans-serif;
+}
+
 /* embeds */
 .embed-container {
   position: relative;
@@ -117,6 +121,33 @@ h2 {
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+.mh-16 {
+  max-height: 16rem;
+}
+
+/* security checkbox */
+.security::after {
+  content: "";
+  height: 12px;
+  width: 12px;
+  background: white;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  border-radius: 100%;
+}
+
+.security.checked::after {
+  content: "";
+  height: 12px;
+  width: 12px;
+  background: white;
+  position: absolute;
+  top: 2px;
+  left: 14px;
+  border-radius: 100%;
 }
 
 /* responsive */
@@ -227,7 +258,13 @@ h2 {
   .o-80-d {
     opacity: .8;
   }
+  .focus-b--white-d:focus {
+    border-color: #fff;
+  }
   a {
     color: #fff;
+  }
+  .hover-black-d:hover {
+    color: #000;
   }
 }
