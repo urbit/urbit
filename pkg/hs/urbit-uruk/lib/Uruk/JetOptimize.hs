@@ -1,5 +1,6 @@
 {-
     TODO Implement pattern matching.
+    TODO Handle jets nested within jets.
 
     ### What should `(add 3 4 5)` compile to?
 
@@ -108,7 +109,7 @@ type Pos = Positive
 
 data Node
     = VSeq
-    | VWait
+    | VYet
     | VS
     | VK
     | VB
@@ -124,18 +125,18 @@ data Node
 
 instance Show Node where
     show = \case
-        VSeq   → "Q"
-        VWait  → "W"
-        VS     → "S"
-        VK     → "K"
-        VB     → "B"
-        VC     → "C"
-        VI     → "I"
-        VIff   → "Iff"
-        VCas   → "Cas"
-        VSn    → "Sn"
-        VBn    → "Bn"
-        VCn    → "Cn"
+        VSeq  → "Q"
+        VS    → "S"
+        VK    → "K"
+        VB    → "B"
+        VC    → "C"
+        VI    → "I"
+        VSn   → "Sn"
+        VBn   → "Bn"
+        VCn   → "Cn"
+        VYet  → "Yet"
+        VIff  → "Iff"
+        VCas  → "Cas"
 
 data Code = Code Pos Val
   deriving stock (Eq, Ord, Generic)
@@ -150,10 +151,13 @@ instance Show Code where
     show c@(Code n v) =
         header (fromIntegral n) <> prettyVal v
       where
+        arity ∷ Int
+        arity = fromIntegral n
+
         header ∷ Int → String
         header 0 | recursive c = "..  $\n"
         header 0               = ""
-        header n               = header (n-1) <> "|=  " <> sym (n-1) <> "\n"
+        header n               = header (n-1) <> "|=  " <> sym (arity - n) <> "\n"
 
 {-
     There are three kinds of things
@@ -273,20 +277,20 @@ infixl 5 %;
 
 simplify ∷ Node → [Exp] → Exp
 simplify = curry $ \case
-    ( VSeq,  [x,y]   ) → y
-    ( VWait, f:xs    ) → go f xs
-    ( VS,    [x,y,z] ) → (x % z) % (y % z)
-    ( VK,    [x,y]   ) → x
-    ( VB,    [f,g,x] ) → f % (g % x)
-    ( VC,    [f,g,x] ) → (f % x) % g
-    ( VI,    [x]     ) → x
-    ( VIff,  [c,t,e] ) → Iff c (t % unit) (e % unit) []
-    ( VCas,  [x,l,r] ) → Cas x (abst l%ref 0) (abst r%ref 0) []
-    ( VSn,   f:g:xs  ) → go f xs % go g xs
-    ( VBn,   f:g:xs  ) → f % go g xs
-    ( VCn,   f:g:xs  ) → go f xs % g
+    ( VSeq, [x,y]   ) → y
+    ( VYet, f:xs    ) → go f xs
+    ( VS,   [x,y,z] ) → (x % z) % (y % z)
+    ( VK,   [x,y]   ) → x
+    ( VB,   [f,g,x] ) → f % (g % x)
+    ( VC,   [f,g,x] ) → (f % x) % g
+    ( VI,   [x]     ) → x
+    ( VIff, [c,t,e] ) → Iff c (t % unit) (e % unit) []
+    ( VCas, [x,l,r] ) → Cas x (abst l%ref 0) (abst r%ref 0) []
+    ( VSn,  f:g:xs  ) → go f xs % go g xs
+    ( VBn,  f:g:xs  ) → f % go g xs
+    ( VCn,  f:g:xs  ) → go f xs % g
 
-    ( _,     _       ) → error "simplify: bad arity"
+    ( _,    _       ) → error "simplify: bad arity"
   where
     go acc = \case { [] → acc; x:xs → go (acc % x) xs }
 
@@ -432,6 +436,11 @@ ackerExp = Comp.acker
 ackerUr  = Comp.moonStrict ackerExp
 acker    = compile ackerUr
 
+ickerExp = Comp.icker
+ickerOth = Comp.eval $ Comp.deCompile ickerUr
+ickerUr  = Comp.moonStrict ickerExp
+icker    = compile ickerUr
+
 compile ∷ Ur → IO Code
 compile = Ur.simp >>> \case
     Fast _ (Ur.Slow n t b) [] → jetCode n b
@@ -459,7 +468,7 @@ urExp = go
         Ur.Bn n       → Clo arity VBn []
         Ur.Cn n       → Clo arity VCn []
         Ur.JSeq       → Clo arity VSeq []
-        Ur.Wait n     → Clo arity VWait []
+        Ur.Yet n      → Clo arity VYet []
 --      Ur.JIff       → Kal (Fast arity jet []) []
         Ur.JIff       → Clo arity VIff []
         Ur.JCas       → Clo arity VCas []

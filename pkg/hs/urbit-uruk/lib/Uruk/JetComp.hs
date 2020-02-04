@@ -275,6 +275,9 @@ acker =
             go % fec m % (go % m % fec n)
         )
 
+icker ∷ Exp
+icker = Jet 2 99 $ Lam $ Lam $ Prim Ur.Add % (acker % 1 % 0)
+
 {-
     (if c t e) α  => if c (Lam(t $0 α)) (Lam(e $0 α))
     fix f α       => fix (Lam(f $0 α))
@@ -492,7 +495,7 @@ runJet ∷ Ur.Jet → [Ur] → Maybe Ur
 runJet = curry \case
     ( Ur.JSeq,        [x,y]   ) → Just y
     ( Ur.Slow n t b,  us      ) → Just $ go b us
-    ( Ur.Wait _,      u:us    ) → Just $ go u us
+    ( Ur.Yet _,       u:us    ) → Just $ go u us
     ( Ur.Eye,         [x]     ) → Just x
     ( Ur.Bee,         [f,g,x] ) → Just (f :@ (g :@ x))
     ( Ur.Sea,         [f,g,x] ) → Just (f :@ x :@ g)

@@ -18,6 +18,7 @@ dependencies:
   - megaparsec
   - mtl
   - positive
+  - pretty-show
 
 default-extensions:
   - ApplicativeDo

@@ -98,7 +98,7 @@ data Jet
     | Bn !Positive
     | Cn !Positive
     | JSeq
-    | Wait !Natural
+    | Yet !Natural
     | JFix
     | JNat !Natural
     | JBol !Bool
@@ -148,7 +148,7 @@ unSlow u = go u . reverse
 
 instance Show a => Show (UrPoly a) where
     show = \case
-        x :@ y      → "(" <> intercalate "" (show <$> flatten x [y]) <> ")"
+        x :@ y      → "(" <> intercalate " " (show <$> flatten x [y]) <> ")"
         J n          → replicate (fromIntegral n) 'j'
         K            → "K"
         S            → "S"
@@ -165,35 +165,35 @@ instance Show Jet where
     show = \case
         Slow n t b → show (J n :@ t :@ b)
         JNat n     → show n
-        JPak       → "Pak"
-        JFix       → "Fix"
+        JPak       → "pak"
+        JFix       → "fix"
         Eye        → "I"
-        Bee        → "Dot"
-        Sea        → "Fip"
-        Bn n       → "Dot" <> show n
-        Cn n       → "Fip" <> show n
+        Bee        → "B"
+        Sea        → "C"
+        Bn n       → "B" <> show n
+        Cn n       → "C" <> show n
         Sn n       → "S" <> show n
-        JSeq       → "Seq"
-        JBol True  → "Yep"
-        JBol False → "Nop"
-        JIff       → "Iff"
-        JAdd       → "Add"
-        JEql       → "Eql"
-        JZer       → "IsZero"
-        JInc       → "Inc"
-        JDec       → "Dec"
-        JFec       → "Fec"
-        JMul       → "Mul"
-        JSub       → "Sub"
-        JLef       → "Lef"
-        JRit       → "Rit"
-        JCas       → "Cas"
-        JCon       → "Con"
-        JCar       → "Car"
-        JCdr       → "Cdr"
-        JDed       → "Err"
-        JUni       → "Uni"
-        Wait n     → "Wait" <> show n
+        JSeq       → "Q"
+        JBol True  → "yes"
+        JBol False → "nop"
+        JIff       → "iff"
+        JAdd       → "add"
+        JEql       → "eql"
+        JZer       → "iszero"
+        JInc       → "inc"
+        JDec       → "dec"
+        JFec       → "fec"
+        JMul       → "mul"
+        JSub       → "sub"
+        JLef       → "lef"
+        JRit       → "rit"
+        JCas       → "cas"
+        JCon       → "con"
+        JCar       → "car"
+        JCdr       → "cdr"
+        JDed       → "err"
+        JUni       → "uni"
+        Yet n      → "yet" <> show n
 
 
 
@@ -280,7 +280,7 @@ pattern J2 = J 2 :@ K
 pattern J3 = J 3 :@ K
 pattern J4 = J 4 :@ K
 
-pattern W2 = Fast 3 (Wait 2) []
+pattern W2 = Fast 3 (Yet 2) []
 
 dash ∷ Dash
 dash = mkDash
@@ -395,7 +395,7 @@ runJet = curry \case
     (JCdr, xs) → runSingJet sjCdr xs
 
     ( Slow n t b,  us      ) → go b us
-    ( Wait _,      u:us    ) → go u us
+    ( Yet _,       u:us    ) → go u us
     ( Bn _,        f:g:xs  ) → f :@ go g xs
     ( Cn _,        f:g:xs  ) → go f xs :@ g
     ( Sn _,        f:g:xs  ) → go f xs :@ go g xs
@@ -442,7 +442,7 @@ unMatch = go
         JNat n     → natJet n
         JBol b     → boolJet b
         JPak       → sjExp sjPak
-        Wait n     → waitJet n
+        Yet n      → waitJet n
         Sn n       → mjBody mjSn (Sn n)
         Bn n       → bnJet n
         Cn n       → cnJet n
@@ -813,11 +813,11 @@ sjFix = SingJet{..}
     sjExec _     = error "bad-fix"
     sjBody = MkVal $
         S :@ I
-          :@ Fast 1 (Wait 2)
+          :@ Fast 1 (Yet 2)
             [ (S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ I))))
-                :@ ((S :@ Fast 3 (Wait 2) []) :@ I)
+                :@ ((S :@ Fast 3 (Yet 2) []) :@ I)
             , (S :@ (K :@ ((S :@ (K :@ (J 2 :@ K))) :@ (S :@ I))))
-                :@ ((S :@ Fast 3 (Wait 2) []) :@ I)
+                :@ ((S :@ Fast 3 (Yet 2) []) :@ I)
             ]
 
 
@@ -1060,7 +1060,7 @@ waitExec _ (u:us) = Just (go u us)
 j_wait ∷ Check
 j_wait = Named "wait" chk
   where chk ∷ Positive → JetTag → Val → Maybe Jet
-        chk n (MkVal I) (MkVal I) = Just $ Wait (fromIntegral n - 1)
+        chk n (MkVal I) (MkVal I) = Just $ Yet (fromIntegral n - 1)
         chk _ _         _         = Nothing
 
 
