@@ -65,7 +65,7 @@ export class Root extends Component {
                   rightPanelHide={false}
                   sidebarShown={true}
                   notebooks={state.notebooks}>
-                    <JoinScreen/>
+                    <JoinScreen notebooks={state.notebooks} {...props} />
                   </Skeleton>
                 )
               }}/>
