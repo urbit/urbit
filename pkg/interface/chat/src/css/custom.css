@@ -127,8 +127,8 @@ h2 {
   max-height: 16rem;
 }
 
-/* security checkbox */
-.security::after {
+/* toggler checkbox */
+.toggle::after {
   content: "";
   height: 12px;
   width: 12px;
@@ -139,7 +139,7 @@ h2 {
   border-radius: 100%;
 }
 
-.security.checked::after {
+.toggle.checked::after {
   content: "";
   height: 12px;
   width: 12px;
