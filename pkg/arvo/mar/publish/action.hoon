@@ -116,8 +116,13 @@
       ==
     ++  group-info
       %-  of
-      :~  old+(ot writers+pa subscribers+pa ~)
-          new+(ot writers+set-ship subscribers+set-ship sec+so ~)
+      :~  old+(ot write-pax+pa read-pax+pa ~)
+          :-  %new
+          %-  ot
+          :~  write-grp+set-ship  write-pax+pa
+              read-grp+set-ship   read-pax+pa
+              sec+so
+          ==
       ==
     ++  set-ship  (ar (su fed:ag))
     --

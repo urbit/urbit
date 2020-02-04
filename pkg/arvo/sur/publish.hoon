@@ -2,8 +2,12 @@
 |%
 ::
 +$  group-info
-  $%  [%old writers=path subscribers=path]
-      [%new writers=(set ship) subscribers=(set ship) sec=rw-security]
+  $%  [%old write-pax=path read-pax=path]
+      $:  %new
+          write-grp=(set ship)  write-pax=path
+          read-grp=(set ship)   read-pax=path
+          sec=rw-security
+      ==
   ==
 ::
 ::
