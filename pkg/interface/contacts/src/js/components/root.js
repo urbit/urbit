@@ -52,11 +52,11 @@ export class Root extends Component {
                 contacts={contacts}
                 groups={groups}
                 invites={invites}>
-                <div className="h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"></div>
+                <div className="h-100 w-100 overflow-x-hidden bg-white dn db-ns"></div>
               </Skeleton>
             );
           }} />
-          <Route exact path="/~contacts/new" 
+          <Route exact path="/~contacts/new"
             render={ (props) => {
               return (
                 <Skeleton
@@ -100,7 +100,7 @@ export class Root extends Component {
                       group={group}
                       activeDrawer="contacts"
                       path={groupPath} />
-                    <div className="h-100 w-100 overflow-x-hidden bg-gray0 dn db-ns"></div>
+                    <div className="h-100 w-100 overflow-x-hidden bg-white dn db-ns"></div>
                   </Skeleton>
               );
             }}
@@ -128,7 +128,7 @@ export class Root extends Component {
                     group={group}
                     activeDrawer="rightPanel"
                     path={groupPath} />
-                  <AddScreen 
+                  <AddScreen
                     api={api}
                     path={groupPath}
                     setSpinner={this.setSpinner}
@@ -184,7 +184,7 @@ export class Root extends Component {
             render={ (props) => {
               let groupPath =
                 `/${props.match.params.ship}/${props.match.params.group}`;
-              let shipPath = 
+              let shipPath =
                 `${groupPath}/${props.match.params.contact}`;
 
               let groupContacts = contacts[groupPath] || {};
@@ -193,7 +193,7 @@ export class Root extends Component {
                 groupContacts[props.match.params.contact] : {};
               let group = groups[groupPath] || new Set([]);
 
-              let rootIdentity = 
+              let rootIdentity =
                 props.match.params.contact === window.ship ?
                 defaultContacts[window.ship] : null;
 

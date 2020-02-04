@@ -207,6 +207,7 @@ export class ChatScreen extends Component {
        <Message
          key={msg.uid}
          msg={msg}
+         contacts={props.contacts}
          renderSigil={renderSigil}
          paddingTop={paddingTop}
          paddingBot={paddingBot}
@@ -218,7 +219,9 @@ export class ChatScreen extends Component {
    let group = Array.from(props.group.values());
 
    let isinPopout = this.props.popout ? "popout/" : "";
-
+  
+   let ownerContact = (window.ship in props.contacts)
+     ? props.contacts[window.ship] : false;
 
    return (
      <div
@@ -268,6 +271,7 @@ export class ChatScreen extends Component {
          numMsgs={lastMsgNum}
          station={state.station}
          owner={deSig(props.match.params.ship)}
+         ownerContact={ownerContact}
          permissions={props.permissions}
          placeholder="Message..."
        />

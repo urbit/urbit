@@ -50,10 +50,14 @@ export class MemberScreen extends Component {
     }
 
     let writeListMembers = writeGroup.map((mem) => {
+      let contact = (mem in props.contacts)
+        ? props.contacts[mem] : false;
+
       return (
         <MemberElement
           key={mem}
           owner={deSig(props.match.params.ship)}
+          contact={contact}
           ship={mem}
           path={`/chat${state.station}/write`}
           kind={props.write.kind}
@@ -62,10 +66,14 @@ export class MemberScreen extends Component {
     });
 
     let readListMembers = readGroup.map((mem) => {
+      let contact = (mem in props.contacts)
+        ? props.contacts[mem] : false;
+
       return (
         <MemberElement
           key={mem}
           owner={deSig(props.match.params.ship)}
+          contact={contact}
           ship={mem}
           path={`/chat${state.station}/read`}
           kind={props.read.kind}
@@ -73,7 +81,7 @@ export class MemberScreen extends Component {
       );
     });
 
-      let isinPopout = this.props.popout ? "popout/" : "";
+    let isinPopout = this.props.popout ? "popout/" : "";
 
     return (
       <div className="h-100 w-100 overflow-x-hidden flex flex-column white-d">

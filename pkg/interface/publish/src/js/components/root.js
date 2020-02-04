@@ -87,9 +87,9 @@ export class Root extends Component {
               sidebarShown={true}
               notebooks={state.notebooks}>
                 <NewPost
-                  notebook={state.notebooks[ship][notebook]}
+                  notebooks={state.notebooks}
                   host={ship}
-                  notebookName={notebook}
+                  book={notebook}
                   {...props}
                 />
               </Skeleton>
@@ -104,10 +104,11 @@ export class Root extends Component {
               sidebarShown={true}
               notebooks={state.notebooks}>
                 <Notebook
-                notebooks={state.notebooks}
-                view={view}
-                ship={ship}
-                book={notebook}/>
+                  notebooks={state.notebooks}
+                  view={view}
+                  ship={ship}
+                  book={notebook}
+                  {...props}/>
               </Skeleton>
             )
           }
@@ -126,10 +127,10 @@ export class Root extends Component {
             sidebarShown={true}
             notebooks={state.notebooks}>
               <Note
-              notebooks={state.notebooks}
-              book={notebook}
-              ship={ship}
-              note={note}/>
+                notebooks={state.notebooks}
+                book={notebook}
+                ship={ship}
+                note={note}/>
             </Skeleton>
           )
         }}/>

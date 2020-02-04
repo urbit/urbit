@@ -9,8 +9,8 @@ export class Skeleton extends Component {
     ? "dn-s"
     : "";
 
-    let popout = !!props.popout 
-    ? props.popout 
+    let popout = !!props.popout
+    ? props.popout
     : false;
 
     let popoutWindow = (popout)
@@ -30,7 +30,7 @@ export class Skeleton extends Component {
             active={props.active}
             notebooks={props.notebooks}
             />
-          <div className={"h-100 w-100 " + rightPanelHide} style={{
+          <div className={"h-100 w-100 overflow-container " + rightPanelHide} style={{
             flexGrow: 1,
           }}>
             {props.children}

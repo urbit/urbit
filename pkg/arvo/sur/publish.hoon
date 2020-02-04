@@ -6,6 +6,7 @@
       [%new writers=(set ship) subscribers=(set ship) sec=rw-security]
   ==
 ::
+::
 +$  action
   $%  [%new-book book=@tas title=@t about=@t coms=? group=group-info]
       [%new-note who=@p book=@tas note=@tas title=@t body=@t]
@@ -39,7 +40,8 @@
       last-edit=@da
       read=?
       file=@t
-      build=(each manx tang)
+      snippet=@t
+::      build=(each manx tang)
       comments=(map @da comment)
   ==
 ::

@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 export class PrimaryReducer {
   reduce(json, state){
-    console.log("primaryReducer", json);
     switch(Object.keys(json)[0]){
       case "add-book":
         this.addBook(json["add-book"], state);
