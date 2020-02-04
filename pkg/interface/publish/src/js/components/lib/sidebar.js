@@ -43,12 +43,12 @@ export class Sidebar extends Component {
           <Link
           to="/~publish/new"
           className="green2 mr4 f9">
-          New
+          New Notebook
           </Link>
           <Link
           to="/~publish/join"
           className="f9 gray2">
-          Join
+          Join Notebook
           </Link>
         </div>
         <div className="overflow-y-scroll h-100">
