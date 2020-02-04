@@ -142,11 +142,7 @@
     ?:  ?=(%read -.upd)
       [%read (pairs [%path (path path.upd)]~)]
     ?:  ?=(%create -.upd)
-      :-  %create
-      %-  pairs
-      :~  [%ship (ship ship.upd)]
-          [%path (path path.upd)]
-      ==
+      [%create (pairs [%path (path path.upd)]~)]
     ?:  ?=(%delete -.upd)
       [%delete (pairs [%path (path path.upd)]~)]
     ?:  ?=(%config -.upd)
@@ -174,10 +170,7 @@
     ==
   ::
   ++  create
-    %-  ot
-    :~  [%ship (su ;~(pfix sig fed:ag))]
-        [%path pa]
-    ==
+    (ot [%path pa]~)
   ::
   ++  delete
     (ot [%path pa]~)
@@ -233,8 +226,7 @@
     %-  ot
     :~  [%path pa]
         [%security sec]
-        [%read (as (su ;~(pfix sig fed:ag)))]
-        [%write (as (su ;~(pfix sig fed:ag)))]
+        [%members (as (su ;~(pfix sig fed:ag)))]
         [%allow-history bo]
     ==
   ::

@@ -129,10 +129,10 @@ class UrbitApi {
     this.action("chat-view", "json", data);
   }
 
-  chatViewCreate(path, security, read, write, allowHistory) {
+  chatViewCreate(path, security, members, allowHistory) {
     this.chatViewAction({
       create: {
-        path, security, read, write,
+        path, security, members,
         'allow-history': allowHistory
       }
     });

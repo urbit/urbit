@@ -124,18 +124,6 @@ export class NewScreen extends Component {
       this.textarea.value = '';
     }
 
-    // TODO: don't do this, it's shitty
-    let writeAud;
-    let readAud;
-
-    if (state.security === 'village') {
-      aud.push(`~${window.ship}`);
-      readAud = aud.slice(); // white list
-      writeAud = aud.slice(); // white list
-    } else if (state.security === 'channel') {
-      readAud = []; // black list
-      writeAud = []; // black list
-    }
     this.setState({
       error: false,
       success: true,
@@ -150,7 +138,7 @@ export class NewScreen extends Component {
       // if not (DMs) we do /~/~zod/free-chat
       // this latter should toggle off of a UI affordance that is not here at present
       props.api.chatView.create(
-        `/~${window.ship}${station}`, state.security, readAud, writeAud, state.allowHistory
+        `/~${window.ship}${station}`, state.security, aud, state.allowHistory
       );
       // this should also be slightly altered to accomodate sending invites to a pre-existing group
       // perhaps better just to do this on back end

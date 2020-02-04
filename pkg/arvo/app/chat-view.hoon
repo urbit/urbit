@@ -194,6 +194,7 @@
   |=  act=chat-view-action
   ~&  [%action act]
   ^-  (list card)
+  |^
   ?.  =(src.bol our.bol)
     ~
   ?-  -.act
@@ -202,22 +203,14 @@
     ::  we're moving this logic into front end
     ::  to accomodate "slash paths" (chat circles not associated with groups)
     %-  zing
-    :~  
-        ::  if group doesn't exist, create it
-        ?~  (group-scry path.act)
-          :~  (group-poke [%bundle path.act])
-              (group-poke [%add read.act path.act])
-          ==
-        ~
-        :~  
-            :: if no group, create group
-            (chat-poke [%create our.bol path.act])
-            (chat-hook-poke [%add-owned path.act security.act allow-history.act])
+    :~  ::  if group doesn't exist, create it
+        ?^  (group-scry path.act)  ~
+        :~  (group-poke [%bundle path.act])
+            (group-poke [%add members.act path.act])
         ==
+        (create-chat path.act security.act allow-history.act)
         (create-security path.act security.act)
-        :~  (permission-hook-poke [%add-owned path.act path.act])
-            :: (permission-hook-poke [%add-owned group-write group-read])
-        ==
+        ~[(permission-hook-poke [%add-owned path.act path.act])]
     ==
   ::
       %delete
@@ -233,6 +226,25 @@
         (permission-hook-poke [%add-synced ship.act path.act])
     ==
   ==
+  ::
+  ++  create-chat
+    |=  [=path security=rw-security history=?]
+    ^-  (list card)
+    :~  [(chat-poke [%create path])]
+        [(chat-hook-poke [%add-owned path security history])]
+    ==
+  ::
+  ++  create-security
+    |=  [pax=path sec=rw-security]
+    ^-  (list card)
+    ?+  sec       ~
+        %channel
+      ~[(perm-group-hook-poke [%associate pax [[pax %black] ~ ~]])]
+    ::
+        %village
+      ~[(perm-group-hook-poke [%associate pax [[pax %white] ~ ~]])]
+    ==
+  --
 ::
 ++  diff-chat-update
   |=  upd=chat-update
@@ -289,23 +301,4 @@
   ^-  (unit group)
   .^((unit group) %gx ;:(weld /=group-store/(scot %da now.bol) pax /noun))
 ::
-++  create-security
-  |=  [pax=path sec=rw-security]
-  ~&  [%security sec]
-  ^-  (list card)
-  ?-  sec
-      %channel
-    :~  (perm-group-hook-poke [%associate pax [[pax %black] ~ ~]])
-    ==
-  ::
-      %village
-    :~  (perm-group-hook-poke [%associate pax [[pax %white] ~ ~]])
-    ==
-  ::
-      %journal
-    ~
-  ::
-      %mailbox
-    ~
-  ==
 --

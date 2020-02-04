@@ -59,8 +59,7 @@
           [%updates ~]  ~
           [%mailbox @ *]
         ?>  (~(has by inbox) t.path)
-        =/  =ship  (slav %p i.t.path)
-        (give %chat-update !>([%create ship t.t.path]))
+        (give %chat-update !>([%create t.path]))
       ==
     [cards this]
     ::
