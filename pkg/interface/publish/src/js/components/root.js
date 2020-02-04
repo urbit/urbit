@@ -88,7 +88,7 @@ export class Root extends Component {
               notebooks={state.notebooks}>
                 <NewPost
                   notebooks={state.notebooks}
-                  host={ship}
+                  ship={ship}
                   book={notebook}
                   {...props}
                 />

@@ -22,7 +22,7 @@ export class NewPost extends Component {
   postSubmit() {
     let newNote = {
       "new-note": {
-        who: this.props.host.slice(1),
+        who: this.props.ship.slice(1),
         book: this.props.book,
         note: stringToSymbol(this.state.title),
         title: this.state.title,
@@ -45,7 +45,7 @@ export class NewPost extends Component {
     let notebook = this.props.notebooks[this.props.ship][this.props.book];
     if (notebook.notes[this.state.awaiting]) {
       let redirect =
-     `/~publish/note/${this.props.host}/${this.props.book}/${this.state.awaiting}`;
+     `/~publish/note/${this.props.ship}/${this.props.book}/${this.state.awaiting}`;
       this.props.history.push(redirect);
     }
   }
