@@ -235,7 +235,7 @@ opts = do
 
     oExit      <- switch $ short 'x'
                         <> long "exit"
-                        <> help "Exit immediatly"
+                        <> help "Exit immediately"
                         <> hidden
 
     oDryRun    <- switch $ long "dry-run"

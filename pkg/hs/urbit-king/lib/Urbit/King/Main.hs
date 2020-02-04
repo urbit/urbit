@@ -71,25 +71,25 @@ import Control.Lens           ((&))
 import System.Process         (system)
 import Text.Show.Pretty       (pPrint)
 import Urbit.King.App         (runApp, runAppLogFile, runAppNoLog, runPierApp)
-import Urbit.King.App         (HasConfigDir(..))
+import Urbit.King.App         (HasConfigDir(..), HasStderrLogFunc(..))
 import Urbit.Noun.Conversions (cordToUW)
 import Urbit.Time             (Wen)
 import Urbit.Vere.LockFile    (lockFile)
 
-import qualified Data.Set                     as Set
-import qualified Data.Text                    as T
-import qualified Network.HTTP.Client          as C
-import qualified System.Environment           as Sys
-import qualified System.Posix.Signals         as Sys
-import qualified System.ProgressBar           as PB
-import qualified System.Random                as Sys
-import qualified Urbit.King.CLI               as CLI
-import qualified Urbit.King.EventBrowser      as EventBrowser
-import qualified Urbit.Ob                     as Ob
-import qualified Urbit.Vere.Log               as Log
-import qualified Urbit.Vere.Pier              as Pier
-import qualified Urbit.Vere.Serf              as Serf
-import qualified Urbit.Vere.Term              as Term
+import qualified Data.Set                as Set
+import qualified Data.Text               as T
+import qualified Network.HTTP.Client     as C
+import qualified System.Environment      as Sys
+import qualified System.Posix.Signals    as Sys
+import qualified System.ProgressBar      as PB
+import qualified System.Random           as Sys
+import qualified Urbit.King.CLI          as CLI
+import qualified Urbit.King.EventBrowser as EventBrowser
+import qualified Urbit.Ob                as Ob
+import qualified Urbit.Vere.Log          as Log
+import qualified Urbit.Vere.Pier         as Pier
+import qualified Urbit.Vere.Serf         as Serf
+import qualified Urbit.Vere.Term         as Term
 
 --------------------------------------------------------------------------------
 
@@ -137,7 +137,7 @@ toNetworkConfig CLI.Opts{..} = NetworkConfig
     }
 
 tryBootFromPill :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
-                   , HasConfigDir e
+                   , HasConfigDir e, HasStderrLogFunc e
                    )
                 => Bool -> Pill -> Bool -> Serf.Flags -> Ship
                 -> LegacyBootEvent
@@ -177,8 +177,8 @@ runOrExitImmediately getPier oExit mStart =
     runPier sls = do
         runRAcquire $ Pier.pier sls mStart
 
-tryPlayShip :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
-               , HasConfigDir e
+tryPlayShip :: ( HasStderrLogFunc e, HasLogFunc e, HasNetworkConfig e
+               , HasPierConfig e, HasConfigDir e
                )
             => Bool -> Bool -> Maybe Word64 -> Serf.Flags -> MVar () -> RIO e ()
 tryPlayShip exitImmediately fullReplay playFrom flags mStart = do
@@ -277,7 +277,8 @@ collectAllFx top = do
 
 --------------------------------------------------------------------------------
 
-replayPartEvs :: ∀e. HasLogFunc e => FilePath -> Word64 -> RIO e ()
+replayPartEvs :: ∀e. (HasStderrLogFunc e, HasLogFunc e)
+              => FilePath -> Word64 -> RIO e ()
 replayPartEvs top last = do
     logTrace $ display $ pack @Text top
     fetchSnapshot
