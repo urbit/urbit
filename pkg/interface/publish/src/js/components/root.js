@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route, Link } from "react-router-dom";
 import { store } from '/store';
+import { api } from '/api';
 import { Skeleton } from '/components/skeleton';
 import { NewScreen } from '/components/lib/new';
 import { JoinScreen } from '/components/lib/join';
 import { Notebook } from '/components/lib/notebook';
 import { Note } from '/components/lib/note';
 import { NewPost } from '/components/lib/new-post';
+
 
 export class Root extends Component {
   constructor(props) {
@@ -52,7 +54,9 @@ export class Root extends Component {
             sidebarShown={true}
             notebooks={state.notebooks}>
               <NewScreen
-              groups={state.groups}/>
+              groups={state.groups}
+              api={api}
+              />
             </Skeleton>
           )
         }}/>
