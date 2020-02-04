@@ -343,7 +343,6 @@ export class ContactCard extends Component {
         <div className="w-100 mw6 tc">
           {avatar}
           {sigilColor}
-          <button className="f9 b--black ba pa2">Upload an Image</button>
           {removeImage}
           <div className="w-100 pt8 lh-copy tl">
             <p className="f9 gray2">Ship Name</p>
