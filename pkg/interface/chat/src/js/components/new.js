@@ -133,21 +133,12 @@ export class NewScreen extends Component {
       }
     }, () => {
       props.setSpinner(true);
-      // we append the ship name here instead of on the back end
-      // if we want a group-channel, we do /~zod/cool-group
-      // if not (DMs) we do /~/~zod/free-chat
-      // this latter should toggle off of a UI affordance that is not here at present
+      // if we want a "proper group" that can be managed from the contacts UI,
+      // we make a path of the form /~zod/cool-group
+      // if not, we make a path of the form /~/~zod/free-chat
       props.api.chatView.create(
         `/~${window.ship}${station}`, state.security, aud, state.allowHistory
       );
-      // this should also be slightly altered to accomodate sending invites to a pre-existing group
-      // perhaps better just to do this on back end
-      // this latter should toggle off of a UI affordance that is not here at present (in designs, though)
-      aud.forEach((ship) => {
-        if (ship !== `~${window.ship}`) {
-          props.api.invite.invite(station, ship);
-        }
-      });
     });
   }
 

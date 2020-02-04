@@ -163,15 +163,14 @@
   ::
       %add-synced
     ?>  (team:title our.bol src.bol)
-    ?:  (~(has by synced) [(scot %p ship.act) path.act])
-      [~ state]
-    =.  synced  (~(put by synced) [(scot %p ship.act) path.act] ship.act)
+    ?:  (~(has by synced) path.act)  [~ state]
+    =.  synced  (~(put by synced) path.act ship.act)
     ?.  ask-history.act
-      =/  chat-path  [%mailbox (scot %p ship.act) path.act]
+      =/  chat-path  [%mailbox path.act]
       :_  state
       [%pass chat-path %agent [ship.act %chat-hook] %watch chat-path]~
     ::  TODO: only ask for backlog from previous point
-    =/  chat-history  [%backlog (scot %p ship.act) (weld path.act /0)]
+    =/  chat-history  [%backlog (weld path.act /0)]
     :_  state
     [%pass chat-history %agent [ship.act %chat-hook] %watch chat-history]~
   ::
@@ -221,15 +220,11 @@
   ?>  (~(has by synced) pas)
   ::  scry permissions to check if read is permitted
   ?>  (permitted-scry [(scot %p src.bol) pas])
-  =/  box  (chat-scry pas)
-  ?~  box  !!
-  :-  [%give %fact ~ %chat-update !>([%create pas])]
   %-  zing
-  :~
-    ?:  ?&(?=(^ backlog-start) (~(got by allow-history) pas))
-      (paginate-messages pas u.box u.backlog-start)
-    ~
-    [%give %kick [%backlog pax]~ `src.bol]~
+  :~  [%give %fact ~ %chat-update !>([%create pas])]~
+      ?.  ?&(?=(^ backlog-start) (~(has by allow-history) pas))  ~
+      (paginate-messages pas (need (chat-scry pas)) u.backlog-start)
+      [%give %kick [%backlog pax]~ `src.bol]~
   ==
 ::
 ++  paginate-messages
@@ -267,10 +262,7 @@
     [~ state]
   ::
       %accepted
-    =/  ask-history
-      ?~  (chat-scry [(scot %p ship.invite.fact) path.invite.fact])
-        %.y
-      %.n
+    =/  ask-history  ?~((chat-scry path.invite.fact) %.y %.n)
     :_  state
     [(chat-view-poke [%join ship.invite.fact path.invite.fact ask-history])]~
   ==

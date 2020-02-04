@@ -4,6 +4,7 @@
 /-  *permission-store,
     *permission-hook,
     *group-store,
+    *invite-store,
     *permission-group-hook,
     *chat-hook
 /+  *server, *chat-json, default-agent
@@ -186,42 +187,36 @@
 ++  poke-json
   |=  jon=json
   ^-  (list card)
-  ?.  =(src.bol our.bol)
-    ~
+  ?>  (team:title our.bol src.bol)
   (poke-chat-view-action (json-to-view-action jon))
 ::
 ++  poke-chat-view-action
   |=  act=chat-view-action
-  ~&  [%action act]
   ^-  (list card)
   |^
-  ?.  =(src.bol our.bol)
-    ~
+  ?>  (team:title our.bol src.bol)
   ?-  -.act
       %create
-    ::  we used to append /chat/(scot %p our) to paths 
-    ::  we're moving this logic into front end
-    ::  to accomodate "slash paths" (chat circles not associated with groups)
+    ?^  (chat-scry path.act)
+      ~&  %chat-already-exists
+      ~
     %-  zing
-    :~  ::  if group doesn't exist, create it
-        ?^  (group-scry path.act)  ~
-        :~  (group-poke [%bundle path.act])
-            (group-poke [%add members.act path.act])
-        ==
-        (create-chat path.act security.act allow-history.act)
+    :~  (create-chat path.act security.act allow-history.act)
+        (create-managed-group path.act security.act members.act)
         (create-security path.act security.act)
         ~[(permission-hook-poke [%add-owned path.act path.act])]
+        %+  turn  ~(tap in members.act)
+        |=  =ship
+        (send-invite-poke path.act ship)
     ==
   ::
       %delete
     :~  (chat-hook-poke [%remove path.act])
         (permission-hook-poke [%remove path.act])
-        (group-poke [%unbundle path.act])
         (chat-poke [%delete path.act])
     ==
   ::
       %join
-    :: same as above, assume that the entire path is being passed
     :~  (chat-hook-poke [%add-synced ship.act path.act ask-history.act])
         (permission-hook-poke [%add-synced ship.act path.act])
     ==
@@ -234,6 +229,21 @@
         [(chat-hook-poke [%add-owned path security history])]
     ==
   ::
+  ++  create-managed-group
+    |=  [=path security=rw-security ships=(set ship)]
+    ^-  (list card)
+    ~&  [path security ships]
+    ?.  =(security %village)
+      ::  if blacklist, do nothing but create the group if it isn't there
+      ::
+      ?~((group-scry path) ~[(group-poke [%bundle path])] ~)
+    ::  if whitelist, check if group exists already. if yes, do nothing
+    ::
+    ?^  (group-scry path)  ~
+    ::  if group does not exist, send contact-view %create
+    ::
+    ~[(contact-view-poke [%create path ships])]
+  ::
   ++  create-security
     |=  [pax=path sec=rw-security]
     ^-  (list card)
@@ -244,6 +254,27 @@
         %village
       ~[(perm-group-hook-poke [%associate pax [[pax %white] ~ ~]])]
     ==
+  ::
+  ++  contact-view-poke
+    |=  act=[%create =path ships=(set ship)]
+    ^-  card
+    [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
+  ::
+  ++  send-invite-poke
+    |=  [=path =ship]
+    ^-  card
+    =/  =invite
+      :*  our.bol  %chat-hook
+          path  ship  ''
+      ==
+    =/  act=invite-action  [%invite /chat (shaf %msg-uid eny.bol) invite]
+    [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
+  ::
+  ++  chat-scry
+    |=  pax=path
+    ^-  (unit mailbox)
+    =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
+    .^((unit mailbox) %gx pax)
   --
 ::
 ++  diff-chat-update
