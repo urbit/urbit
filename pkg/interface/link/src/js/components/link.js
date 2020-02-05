@@ -18,7 +18,7 @@ export class LinkDetail extends Component {
 
     this.setComment = this.setComment.bind(this);
   }
-  
+
   componentDidMount() {
     // if we have no preloaded data, and we aren't expecting it, get it
     if (this.props.page != 0 && (!this.props.data || !this.props.data.url)) {
@@ -37,7 +37,7 @@ export class LinkDetail extends Component {
       this.setState({timeSinceLinkPost: this.getTimeSinceLinkPost()});
     }, 60000);
   }
-  
+
   componentDidUpdate(prevProps) {
     // if we came to this page *directly*,
     // load the comments -- DidMount will fail
@@ -72,10 +72,10 @@ export class LinkDetail extends Component {
     let url = this.props.data.url || "";
 
     let request = api.postComment(
-      this.props.path, 
-      url, 
-      this.state.comment, 
-      this.props.page, 
+      this.props.path,
+      url,
+      this.state.comment,
+      this.props.page,
       this.props.link
       );
 
@@ -87,7 +87,7 @@ export class LinkDetail extends Component {
   setComment(event) {
     this.setState({comment: event.target.value});
   }
-  
+
   render() {
     let props = this.props;
     let popout = (props.popout) ? "/popout" : "";
@@ -108,7 +108,7 @@ export class LinkDetail extends Component {
     let commentCount = props.data.commentCount || 0;
 
     let comments = commentCount + " comment" + ((commentCount === 1) ? "" : "s");
-    
+
     let nickname = !!props.members[props.data.ship]
     ? props.members[props.data.ship].nickname
     : "";
@@ -122,18 +122,18 @@ export class LinkDetail extends Component {
     let activeClasses = (this.state.comment)
     ? "black b--black pointer"
     : "gray2 b--gray2";
-    
+
     return (
       <div className="h-100 w-100 overflow-hidden flex flex-column">
       <div
-      className={`pl3 pt2 flex relative overflow-x-scroll 
+      className={`pl3 pt2 flex relative overflow-x-scroll
       overflow-x-auto-l overflow-x-auto-xl flex-shrink-0
       bb bn-m bn-l bn-xl b--gray4`}
       style={{ height: 48 }}>
         <SidebarSwitcher
         sidebarShown={props.sidebarShown}
         popout={props.popout}/>
-        <Link 
+        <Link
         className="dib f8 fw4 v-top pt2 gray2"
         to={"/~link" + popout + props.path + "/" + props.page}>
         {"<- Collection index"}
@@ -160,8 +160,8 @@ export class LinkDetail extends Component {
               </p>
               </a>
               <div className="w-100 pt1">
-                <span className={"f9 pr2 white-d v-mid " + nameClass}>{(nickname) 
-                  ? nickname 
+                <span className={"f9 pr2 white-d v-mid " + nameClass}>{(nickname)
+                  ? nickname
                   : "~" + ship}
                   </span>
                   <span className="f9 inter gray2 pr3 v-mid">
@@ -186,7 +186,7 @@ export class LinkDetail extends Component {
               onChange={this.setComment}
               value={this.state.comment}
               />
-              <button className={"f8 bg-gray0-d white-d ml2 absolute " 
+              <button className={"f8 bg-gray0-d white-d ml2 absolute "
               + activeClasses}
               disabled={!this.state.comment}
               onClick={this.onClickPost.bind(this)}
@@ -197,11 +197,11 @@ export class LinkDetail extends Component {
               Post
               </button>
               </div>
-            <Comments 
-            path={props.path} 
+            <Comments
+            path={props.path}
             key={props.path + props.commentPage}
-            comments={props.data.comments} 
-            commentPage={props.commentPage} 
+            comments={props.comments}
+            commentPage={props.commentPage}
             members={props.members}
             popout={props.popout}
             url={props.data.url}
@@ -214,6 +214,5 @@ export class LinkDetail extends Component {
       )
     }
   }
-  
+
   export default LinkDetail;
-  

@@ -39,8 +39,8 @@ export class Root extends Component {
         <Route exact path="/~link"
           render={ (props) => {
             return (
-              <Skeleton 
-                active="channels" 
+              <Skeleton
+                active="channels"
                 paths={paths}
                 rightPanelHide={true}
                 sidebarShown={true}
@@ -59,7 +59,7 @@ export class Root extends Component {
             render={ (props) => {
               // groups/contacts and link channels are the same thing in ver 1
 
-              let groupPath = 
+              let groupPath =
               `/${props.match.params.ship}/${props.match.params.channel}`;
               let groupMembers = paths[groupPath] || {};
 
@@ -67,8 +67,8 @@ export class Root extends Component {
 
               let popout = props.match.url.includes("/popout/");
 
-              let channelLinks = !!links[groupPath] 
-              ? links[groupPath] 
+              let channelLinks = !!links[groupPath]
+              ? links[groupPath]
               : {};
 
               return (
@@ -96,7 +96,7 @@ export class Root extends Component {
           />
           <Route exact path="/~link/(popout)?/:ship/:channel/:page/:index/(comments)?/:commentpage?"
             render={ (props) => {
-              let groupPath = 
+              let groupPath =
               `/${props.match.params.ship}/${props.match.params.channel}`;
 
               let popout = props.match.url.includes("/popout/");

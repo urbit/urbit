@@ -56,7 +56,7 @@ export class LinkSubmit extends Component {
     let activeClasses = (this.state.linkValid)
     ? "green2 pointer"
     : "gray2";
-    
+
     return (
       <div className="relative ba b--gray4 b--gray2-d br1 w-100 mb6">
         <textarea

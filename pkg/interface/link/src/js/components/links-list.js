@@ -92,7 +92,7 @@ export class Links extends Component {
          <Link to="/~link/">{"⟵ All Channels"}</Link>
        </div>
        <div
-         className={`pl3 pt2 flex relative overflow-x-scroll 
+         className={`pl3 pt2 flex relative overflow-x-scroll
          overflow-x-auto-l overflow-x-auto-xl flex-shrink-0
          bb bn-m bn-l bn-xl b--gray4`}
          style={{ height: 48 }}>
@@ -101,7 +101,7 @@ export class Links extends Component {
            popout={props.popout}/>
          <Link to={`/~link` + popout + props.path} className="pt2">
            <h2
-             className={`dib f8 fw4 v-top ` + 
+             className={`dib f8 fw4 v-top ` +
              (props.path.includes("/~/")
              ? ""
              : "mono")}>

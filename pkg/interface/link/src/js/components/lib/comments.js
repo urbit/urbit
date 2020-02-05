@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { CommentItem } from './comment-item';
 import { CommentsPagination } from './comments-pagination';
 
-import { uxToHex } from '../../lib/util'; 
+import { uxToHex } from '../../lib/util';
 import { api } from '../../api';
 
 export class Comments extends Component {
@@ -37,7 +37,7 @@ export class Comments extends Component {
 
   render() {
     let props = this.props;
-    
+
     let page = "page" + props.commentPage;
 
     let commentsObj = !!props.comments
@@ -58,7 +58,7 @@ export class Comments extends Component {
       let commentObj = commentsPage[entry]
       let { ship, time, udon } = commentObj;
 
-      let members = !!props.members 
+      let members = !!props.members
       ? props.members
       : {};
 
