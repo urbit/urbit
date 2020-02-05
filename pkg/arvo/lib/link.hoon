@@ -139,7 +139,7 @@
     %-  pairs
     :~  'title'^s+title.page
         'url'^s+url.page
-        'timestamp'^(time time.page)
+        'time'^(time time.page)
     ==
   ::
   ++  comment
