@@ -30,7 +30,7 @@ export class HeaderMenu extends Component {
           <div className="fl bb b-gray-30 w-16" >
           </div>
 
-          <NavLink exact 
+          <NavLink exact
             className="header-menu-item"
             to="/~publish/recent"
             activeStyle={{
@@ -44,7 +44,7 @@ export class HeaderMenu extends Component {
           <div className="fl bb b-gray-30 w-16" >
           </div>
 
-          <NavLink exact 
+          <NavLink exact
             className="header-menu-item"
             to="/~publish/subs"
             activeStyle={{
@@ -58,7 +58,7 @@ export class HeaderMenu extends Component {
           <div className="fl bb b-gray-30 w-16" >
           </div>
 
-          <NavLink exact 
+          <NavLink exact
             className="header-menu-item"
             to="/~publish/pubs"
             activeStyle={{

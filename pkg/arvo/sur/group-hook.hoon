@@ -5,7 +5,7 @@
                                      :: if ship is foreign, delete any local
                                      :: group at that path and mirror the
                                      :: foreign group at our local path
-                                     :: 
+                                     ::
       [%remove =path]                :: remove the path.
   ==
 --

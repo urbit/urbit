@@ -306,11 +306,7 @@
   |=  [=duct type=* wrapped-task=(hobo task:able)]
   ^-  [(list move) _light-gate]
   ::
-  =/  task=task:able
-    ?.  ?=(%soft -.wrapped-task)
-      wrapped-task
-    ~|  [%p-wrapped-task p.wrapped-task]
-    ;;(task:able p.wrapped-task)
+  =/  task=task:able  ((harden task:able) wrapped-task)
   ::  %crud: notifies us of an event failure
   ::
   ?:  ?=(%crud -.task)

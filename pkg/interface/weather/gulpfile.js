@@ -145,7 +145,7 @@ gulp.task('tile-js-bundle-dev', gulp.series('tile-jsx-transform', 'tile-js-impor
 gulp.task('tile-js-bundle-prod',
   gulp.series('tile-jsx-transform', 'tile-js-imports', 'tile-js-minify'));
 
-gulp.task('bundle-prod', 
+gulp.task('bundle-prod',
   gulp.series('tile-js-bundle-prod', 'rename-tile-min', 'clean-min', 'urbit-copy'));
 
 gulp.task('default', gulp.series('tile-js-bundle-dev', 'urbit-copy'));

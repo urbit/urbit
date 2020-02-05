@@ -14,21 +14,21 @@ export class ChatTabBar extends Component {
 
     if (props.location.pathname.includes('/settings')) {
       memColor =  'gray3';
-      setColor = 'black';
+      setColor = 'black white-d';
     } else if (props.location.pathname.includes('/members')) {
-      memColor =  'black';
+      memColor =  'black white-d';
       setColor = 'gray3';
     } else {
       memColor =  'gray3';
       setColor = 'gray3';
     }
 
-    (props.location.pathname.includes('/popout')) 
+    (props.location.pathname.includes('/popout'))
     ? popout = "popout/"
     : popout = "";
 
-    let hidePopoutIcon = (this.props.popout) 
-    ? "dn-m dn-l dn-xl" 
+    let hidePopoutIcon = (this.props.popout)
+    ? "dn-m dn-l dn-xl"
     : "dib-m dib-l dib-xl";
 
 
@@ -55,7 +55,7 @@ export class ChatTabBar extends Component {
         <a href={`/~chat/popout/room` + props.station} target="_blank"
         className="dib fr">
           <img
-            className={`flex-shrink-0 pr2 dn ` + hidePopoutIcon}
+            className={`flex-shrink-0 pr2 dn invert-d ` + hidePopoutIcon}
             src="/~chat/img/popout.png"
             height="16"
             width="16"/>

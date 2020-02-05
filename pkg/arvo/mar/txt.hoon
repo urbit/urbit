@@ -119,7 +119,7 @@
           [i.bob $(ali t.ali, bob t.bob)]
         ?:  (gth p.i.ali (lent p.i.bob))
           [i.bob $(p.i.ali (sub p.i.ali (lent p.i.bob)), bob t.bob)]
-        =+  ^-  {fic/(unce cord) ali/(urge cord) bob/(urge cord)}
+        =/  {fic/(unce cord) ali/(urge cord) bob/(urge cord)}
             (resolve ali bob)
         [fic $(ali ali, bob bob)]
         ::  ~   ::  here, alice is good for a while, but not for the whole
@@ -128,7 +128,7 @@
         %|
       ?-  -.i.bob
           %|
-        =+  ^-  {fic/(unce cord) ali/(urge cord) bob/(urge cord)}
+        =/  {fic/(unce cord) ali/(urge cord) bob/(urge cord)}
             (resolve ali bob)
         [fic $(ali ali, bob bob)]
       ::
@@ -137,7 +137,7 @@
           [i.ali $(ali t.ali, bob t.bob)]
         ?:  (gth p.i.bob (lent p.i.ali))
           [i.ali $(ali t.ali, p.i.bob (sub p.i.bob (lent p.i.ali)))]
-        =+  ^-  {fic/(unce cord) ali/(urge cord) bob/(urge cord)}
+        =/  {fic/(unce cord) ali/(urge cord) bob/(urge cord)}
             (resolve ali bob)
         [fic $(ali ali, bob bob)]
       ==

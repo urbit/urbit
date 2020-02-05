@@ -44,12 +44,13 @@
 ::
 ::  Type of request.
 ::
-::  %d produces a set of desks, %p gets file permissions, %u checks for
-::  existence, %v produces a ++dome of all desk data, %w gets @ud and @da
-::  variants for the given case, %x gets file contents, %y gets a directory
-::  listing, and %z gets a recursive hash of the file contents and children.
+::  %d produces a set of desks, %p gets file permissions, %t gets all paths
+::  with the specified prefix, %u checks for existence, %v produces a ++dome
+::  of all desk data, %w gets @ud and @da variants for the given case, %x
+::  gets file contents, %y gets a directory listing, and %z gets a recursive
+::  hash of the file contents and children.
 ::
-:: ++  care  ?($d $p $u $v $w $x $y $z)
+:: ++  care  ?($d $p $t $u $v $w $x $y $z)
 ::
 ::  Keeps track of subscribers.
 ::
@@ -879,7 +880,7 @@
       ;<  res=made-result:ford    bind:m  expect-ford
       ;<  hashes=(map path lobe)  bind:m
         |=  clad-input
-        =+  ^-  cat/(list (pair path cage))
+        =/  cat=(list (pair path cage))
             %+  turn  (made-result-to-cages:util res)
             |=  {pax/cage cay/cage}
             ?.  ?=($path p.pax)
@@ -924,7 +925,7 @@
       |=  [wen=@da =dork]
       =/  m  (clad ,[=suba _this-cor])
       ^-  form:m
-      =+  ^-  sim=(list (pair path misu))
+      =/  sim=(list (pair path misu))
           ;:  weld
             ^-  (list (pair path misu))
             (turn del.dork |=(pax/path [pax %del ~]))
@@ -972,7 +973,7 @@
         =/  message  (made-result-as-error:ford res)
         (clad-fail %checkout-fail leaf+"clay patch failed" message)
       ::
-      =+  ^-  cat/(list (trel path lobe cage))
+      =/  cat/(list (trel path lobe cage))
           %+  turn  (made-result-to-cages:util res)
           |=  {pax/cage cay/cage}
           ?.  ?=($path-hash p.pax)
@@ -992,7 +993,7 @@
       =+  must=(must-ergo:util our syd mon (turn suba head))
       ?:  =(~ must)
         (pure:m mim)
-      =+  ^-  all-paths/(set path)
+      =/  all-paths/(set path)
           %+  roll
             (turn ~(tap by must) (corl tail tail))
           |=  {pak/(set path) acc/(set path)}
@@ -2295,7 +2296,7 @@
       |=  [local=? disc=disc:ford pax=path lob=lobe]
       ^-  schematic:ford
       ::
-      =+  ^-  hat/(map path lobe)
+      =/  hat/(map path lobe)
           ?:  =(let.dom 0)
             ~
           q:(aeon-to-yaki let.dom)
@@ -2631,7 +2632,7 @@
   ::
   =*  ruf  |4.+6.^$
   ::
-  =+  ^-  [mow=(list move) hun=(unit duct) rede]
+  =/  [mow=(list move) hun=(unit duct) rede]
       ?.  =(our her)
         ::  no duct, foreign +rede or default
         ::
@@ -2993,7 +2994,7 @@
   ++  start-request
     |=  [for=(unit ship) rav=rave]
     ^+  ..start-request
-    =+  ^-  [new-sub=(unit rove) sub-results=(list sub-result)]
+    =/  [new-sub=(unit rove) sub-results=(list sub-result)]
         (try-fill-sub for (rave-to-rove rav))
     =.  ..start-request  (send-sub-results sub-results [hen ~ ~])
     ?~  new-sub
@@ -3392,7 +3393,7 @@
       ::  drop forgotten roves
       ::
       $(old-subs t.old-subs)
-    =+  ^-  [new-sub=(unit rove) sub-results=(list sub-result)]
+    =/  [new-sub=(unit rove) sub-results=(list sub-result)]
         (try-fill-sub wove.i.old-subs)
     =.  ..wake  (send-sub-results sub-results ducts.i.old-subs)
     =.  new-subs
@@ -3752,7 +3753,7 @@
       |=  {a/(unit tako) b/tako}
       ^-  {(set yaki) (set plop)}
       =+  old=?~(a ~ (reachable-takos:util u.a))
-      =+  ^-  yal/(set tako)
+      =/  yal/(set tako)
           %-  silt
           %+  skip
             ~(tap in (reachable-takos:util b))
@@ -3890,12 +3891,18 @@
     ::  at any of its children.
     ::
     ++  read-u
-      |=  {yon/aeon pax/path}
-      ^-  (unit (unit (each {$null (hypo ~)} lobe)))
-      =+  tak=(~(get by hit.dom) yon)
-      ?~  tak
+      |=  [yon=aeon pax=path]
+      ^-  (unit (unit (each [%flag (hypo ?)] lobe)))
+      ::  if asked for a future version, we don't have an answer
+      ::
+      ?~  tak=(~(get by hit.dom) yon)
         ~
-      ``[%& %null [%atom %n ~] ~]
+      ::  look up the yaki snapshot based on the version
+      ::
+      =/  yak=yaki  (tako-to-yaki u.tak)
+      ::  produce the result based on whether or not there's a file at :pax
+      ::
+      ``[%& %flag -:!>(*?) (~(has by q.yak) pax)]
     ::
     ::  Gets the dome (desk state) at a particular aeon.
     ::
@@ -3977,7 +3984,7 @@
       =+  yak=(tako-to-yaki u.tak)
       =+  len=(lent pax)
       :: ~&  read-z+[yon=yon qyt=~(wyt by q.yak) pax=pax]
-      =+  ^-  descendants/(list (pair path lobe))
+      =/  descendants/(list (pair path lobe))
           ::  ~&  %turning
           ::  =-  ~&  %turned  -
           %+  turn
@@ -4061,11 +4068,7 @@
       ==
   ^-  [(list move) _..^$]
   ::
-  =/  req=task:able
-    ?.  ?=(%soft -.wrapped-task)
-      wrapped-task
-    ;;(task:able p.wrapped-task)
-  ::
+  =/  req=task:able  ((harden task:able) wrapped-task)
   ::  only one of these should be going at once, so queue
   ::
   ?:  ?=(?(%info %merg %mont) -.req)
@@ -4199,7 +4202,7 @@
     =+  bem=(~(get by mon.ruf) des.req)
     ?:  &(?=(~ bem) !=(%$ des.req))
       ~|([%bad-mount-point-from-unix des.req] !!)
-    =+  ^-  bem/beam
+    =/  bem/beam
         ?^  bem
           u.bem
         [[our %base %ud 1] ~]
@@ -4208,7 +4211,7 @@
       !!  ::  fire next in queue
     ?:  =(0 let.dom.u.dos)
       =+  cos=(mode-to-soba ~ s.bem all.req fis.req)
-      =+  ^-  [one=soba two=soba]
+      =/  [one=soba two=soba]
           %+  skid  cos
           |=  [a=path b=miso]
           ?&  ?=(%ins -.b)
@@ -4601,7 +4604,7 @@
       ~
     =+  mad=(malt mod)
     =+  len=(lent pax)
-    =+  ^-  descendants/(list path)
+    =/  descendants/(list path)
         %+  turn
           %+  skim  ~(tap by hat)
           |=  {paf/path lob/lobe}

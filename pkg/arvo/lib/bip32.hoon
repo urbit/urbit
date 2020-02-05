@@ -114,7 +114,7 @@
     ~|  %know-no-private-key
     !!
   ::  derive child at i
-  =+  ^-  [left=@ right=@]  ::TODO  =/ w/o face
+  =/  [left=@ right=@]
     =-  [(cut 3 [32 32] -) (cut 3 [0 32] -)]
     %+  hmac-sha512l  [32 cad]
     :-  37
@@ -143,7 +143,7 @@
     ~|  %cant-derive-hardened-public-key
     !!
   ::  derive child at i
-  =+  ^-  [left=@ right=@]  ::TODO  =/  w/o face
+  =/  [left=@ right=@]
     =-  [(cut 3 [32 32] -) (cut 3 [0 32] -)]
     %+  hmac-sha512l  [32 cad]
     37^(can 3 ~[4^i 33^(ser-p pub)])

@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+usage() {
+    local error="$1"
+
+    cat >&2 <<EOF
+Usage:
+  $0 PROJECT REV
+
+Synopsis:
+  Call git-archive(1) to create a release archive of the desired project at the
+  desired revision.
+
+  Outputs a gzipped tarball to the release/ directory.
+
+Example:
+  $0 urbit v0.10.3
+
+Error:
+  -> $error
+EOF
+
+    exit 1
+}
+
+args="$@"
+
+if [[ -z "$args" ]]; then
+    usage "No arguments specified."
+fi
+
+PROJECT=$1
+REV=$2
+
+mkdir -p release
+
+git archive --prefix="$REV/" \
+  -o release/$REV.tar.gz \
+  $REV:pkg/$PROJECT
+

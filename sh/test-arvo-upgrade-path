@@ -45,7 +45,6 @@ boot_ship() {
   rev=$2
 
   git checkout $rev
-  make install
   urbit -d -F $ship -B bin/brass.pill
 }
 

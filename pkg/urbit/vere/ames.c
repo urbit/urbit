@@ -576,7 +576,6 @@ u3_ames_io_exit(u3_pier* pir_u)
   u3_ames* sam_u = pir_u->sam_u;
 
   if ( c3y == sam_u->liv ) {
-    // XX remove had_u/wax_u union, cast and close wax_u
     uv_close(&sam_u->had_u, 0);
   }
 }

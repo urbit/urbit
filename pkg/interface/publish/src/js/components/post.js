@@ -107,7 +107,7 @@ export class Post extends Component {
   editPost() {
     this.setState({mode: 'edit'});
   }
-  
+
   savePost() {
     if (this.state.title == this.state.titleOriginal &&
         this.state.body == this.state.bodyOriginal) {
@@ -126,7 +126,7 @@ export class Post extends Component {
         who: [],
       }
     };
-    
+
     let data = {
       "edit-post": {
         who: this.state.ship,
@@ -157,7 +157,7 @@ export class Post extends Component {
     let postId = this.props.postId;
 
     if (ship !== window.ship) {
-      
+
       let blog = _.get(this.props, `subs["${ship}"]["${blogId}"]`, false);
 
       if (blog) {
@@ -455,7 +455,7 @@ export class Post extends Component {
               <div className="mb4">
                 <p className="fl label-small gray-50">{authorDate}</p>
                 <Admin
-                  enabled={adminEnabled} 
+                  enabled={adminEnabled}
                   mode="view"
                   editPost={this.editPost}
                   deletePost={this.deletePost}
@@ -464,14 +464,14 @@ export class Post extends Component {
 
               <div className="cb">
                 <PostBody
-                  body={this.state.post.body} 
+                  body={this.state.post.body}
                 />
               </div>
 
               <hr className="gray-50 w-680 mt4"/>
               <NextPrev blog={this.state.blog} postId={this.props.postId} />
-            
-              <Comments comments={this.state.comments} 
+
+              <Comments comments={this.state.comments}
                 api={this.props.api}
                 ship={this.props.ship}
                 blogId={this.props.blogId}
@@ -511,7 +511,7 @@ export class Post extends Component {
               <div className="mb4">
                 <p className="fl label-small gray-50">{authorDate}</p>
                 <Admin
-                  enabled={adminEnabled} 
+                  enabled={adminEnabled}
                   mode="edit"
                   savePost={this.savePost}
                   deletePost={this.deletePost}
@@ -528,8 +528,8 @@ export class Post extends Component {
 
               <hr className="gray-50 w-680 mt4"/>
               <NextPrev blog={this.state.blog} postId={this.props.postId} />
-            
-              <Comments comments={this.state.comments} 
+
+              <Comments comments={this.state.comments}
                 api={this.props.api}
                 ship={this.props.ship}
                 blogId={this.props.blogId}

@@ -83,7 +83,7 @@
     %+  give-simple-payload:app  eyre-id.u.job.state
     [[200 ~] `(as-octt:mimes:html "\"Imported data\"")]
   ::
-      [%export ~] 
+      [%export ~]
     ?+    -.sign  (on-agent:def wire sign)
         %watch-ack
       ?~  p.sign
@@ -94,7 +94,8 @@
     ::
         %fact
       =^  cards  this  (take-export !<(* q.cage.sign))
-      :_  this  :_  cards
+      :_  this(job.state ~)
+      :_  cards
       ?>  ?=(^ job.state)
       ?>  ?=(%export -.source.com.u.job.state)
       [%pass /export %agent [our.bowl app.source.com.u.job.state] %leave ~]
@@ -135,7 +136,7 @@
       =/  enc  (en:base64 octs)
       (pairs:enjs:format file+s+output data+s+enc ~)
     ::
-    :_  this(job.state ~)
+    :_  this
     %+  give-simple-payload:app  eyre-id.u.job.state
     (json-response:gen (json-to-octs jon))
   ::

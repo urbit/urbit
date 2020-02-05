@@ -19,7 +19,7 @@
     ++  add-owned
       %-  ot
       :~  [%path pa]
-          [%security sec] 
+          [%security sec]
           [%allow-history bo]
       ==
     ::

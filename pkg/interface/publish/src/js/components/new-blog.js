@@ -81,7 +81,7 @@ export class NewBlog extends Component {
     this.setState({
       awaiting: blogId
     });
-  
+
     this.props.setSpinner(true);
 
     this.props.api.action("publish", "publish-action", makeBlog);
@@ -92,7 +92,7 @@ export class NewBlog extends Component {
     if (this.state.awaiting) {
       if (this.props.pubs[this.state.awaiting]) {
         this.props.setSpinner(false);
-        
+
         if (this.state.redirect === 'new-post') {
           this.props.history.push("/~publish/new-post",
             {
@@ -125,7 +125,7 @@ export class NewBlog extends Component {
       .split(/[\s,]+/)
       .map(t => t.trim());
 
-    let valid = tokens.reduce((valid, s) => 
+    let valid = tokens.reduce((valid, s) =>
       valid && (((s !== '~') && urbitOb.isValidPatp(s) && s.includes('~')) ||
         (s === '')), true);
 
@@ -167,7 +167,7 @@ export class NewBlog extends Component {
                   className="header-2 b--none w-100"
                   style={{resize:"none", height: this.titleHeight}}
                   rows={1}
-                  type="text" 
+                  type="text"
                   name="blogName"
                   placeholder="Add a Title"
                   onChange={this.titleChange}>
@@ -217,7 +217,7 @@ export class NewBlog extends Component {
                   className="header-2 b--none w-100"
                   style={{resize:"none", height: this.titleHeight}}
                   rows={1}
-                  type="text" 
+                  type="text"
                   name="blogName"
                   placeholder="Add a Title"
                   onChange={this.titleChange}>

@@ -2238,7 +2238,7 @@
   ::
 ::
 ++  fl                                                  ::  arb. precision fp
-  =+  ^-  {{p/@u v/@s w/@u} r/$?($n $u $d $z $a) d/$?($d $f $i)}
+  =/  {{p/@u v/@s w/@u} r/$?($n $u $d $z $a) d/$?($d $f $i)}
     [[113 -16.494 32.765] %n %d]
   ::  p=precision:     number of bits in arithmetic form; must be at least 2
   ::  v=min exponent:  minimum value of e
@@ -4108,7 +4108,7 @@
 ::
 ++  fa                                                  ::  base58check
   =+  key='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
-  =+  ^-  yek/@ux  ~+
+  =/  yek/@ux  ~+
       =-  yek:(roll (rip 3 key) -)
       =+  [a=*char b=*@ yek=`@ux`(fil 3 256 0xff)]
       |.
@@ -7897,7 +7897,7 @@
     ::
     |=  gen/hoon
     ^-  hoon
-    =+  ^-  wing
+    =/  ,wing
         ?:  =(1 dom)
           hay
         (weld hay `wing`[[%& dom] ~])
@@ -9869,7 +9869,7 @@
                 ?~  fid  ~
                 ?:  ?=({%| %& *} fid)
                   $(q.zot t.q.zot, p.heg p.p.fid)
-                =+  ^-  vat/(pair type nock)
+                =/  vat/(pair type nock)
                     ?-    -.fid
                       %&  (fine %& p.fid)
                       %|  (fine %| p.p.fid)
@@ -14254,6 +14254,7 @@
           [%name term %spec spec %base %noun]
         wyde
       ==
+    ::
       %+  cook
         |=  [=term =(unit spec)]
         ^-  skin
@@ -14265,6 +14266,12 @@
         ::
         (punt ;~(pfix ;~(pose net tis) wyde))
       ==
+    ::
+      %+  cook
+        |=  =spec
+        ^-  skin
+        [%spec spec %base %noun]
+      wyde
     ==
   ++  tall                                              ::  full tall form
     %+  knee  *hoon
