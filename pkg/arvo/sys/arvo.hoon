@@ -156,138 +156,498 @@
       ==
     ~>(%slog.[0 leaf+"arvo: scry-dark"] ~)
   [~ ~ +.q.u.u.bop]
+::  |part: arvo structures and engines
 ::
-::  |me: dynamic analysis
-::
-++  me
-  =*  ball  arvo
-  =*  card  curd
-  ~/  %me
-  |_  ::  sac: compiler cache
-      ::  pyt: type of type
-      ::
-      [sac=worm pyt=type]
-  ::  +refine-moves: move list from vase (was +said)
+++  part
+  =>  |%
+  ::  $wind: kernel action
   ::
-  ++  refine-moves
-    |=  vax=vase
-    ^-  (pair (list move) worm)
-    ?:  =(~ q.vax)  [~ sac]
-    =^  hed  sac  (~(slot wa sac) 2 vax)
-    =^  tal  sac  (~(slot wa sac) 3 vax)
-    =^  mov  sac  (refine-move hed)
-    =^  moz  sac  $(vax tal)
-    [[mov moz] sac]
-  ::  +refine-move: move from vase (was in +sump)
+  ::    note: a routed $task
+  ::    gift: a reverse action
   ::
-  ++  refine-move
-    |=  vax=vase
-    ^-  (pair move worm)
-    ~>  %mean.'bad-move'
-    =^  hip  sac  (~(nell wa sac) p.vax)
-    ?.  hip
-      ~>(%mean.'not a cell' !!)
-    =/  duc
-      ~>  %mean.'bad-duct'
-      ::  XX used to be a nest-check and clam, seemed excessive
-      ::
-      ;;(duct -.q.vax)
-    ::
-    ::  yat: specialized ball vase
-    ::
-    =^  yat  sac  (~(spot wa sac) 3 vax)
-    =^  del  sac  (refine-ball yat)
-    [[duc del] sac]
-  ::  +refine-ball: ball from vase (was in +sump)
+  ::    NB:
+  ::      task: a forward action
+  ::      sign: a sourced $gift
   ::
-  ++  refine-ball
-    |=  vax=vase
-    ^-  (pair ball worm)
-    ?+    q.vax
-        ~>  %mean.'bad-ball'
-        ~_  (sell vax)
-        !!
+  ++  wind
+    |$  [note gift]                                       ::  forward+reverse
+    $%  [%pass =wire =note]                               ::  advance
+        [%slip =note]                                     ::  lateral
+        [%give =gift]                                     ::  retreat
+    ==
+  ::
+  +$  ball  (wind [vane=term task=mill] mill)
+  +$  card  (cask)
+  ::
+  +$  germ  [vane=term depth=@ud]
+  +$  maze  (pair)                                        ::  metavase
+  +$  mill  (each vase maze)                              ::  vase or metavase
+  +$  ovum  [=wire =card]
+  +$  plan  (pair germ (list move))
+  ::
+  +$  move  [=duct =ball]
+  +$  vane  [=vase =worm]
+  --
+  ::
+  ~%  %part  +>  ~
+  |%
+  ::
+  +|  %utilities
+  ::  XX replace +slam:wa ?
+  ::
+  ++  slur
+    |=  [sac=worm gat=vase sam=mill]
+    ^-  [vase worm]
+    =^  cur  sac  (~(slot wa sac) 6 gat)
+    =^  hig  sac
+      ?-  -.sam
+        %&  (~(nest wa sac) p.cur p.p.sam)
+        %|  (~(nets wa sac) p.cur p.p.sam)
+      ==
+    ?>  hig
+    (~(slym wa sac) gat q.p.sam)
+  ::  +slid: cons a vase onto a mill XX where
+  ::
+  ++  slid
+    |=  [hed=vase tal=mill]
+    ^-  mill
+    ?-  -.tal
+      %&  [%& (slop hed p.tal)]
+      %|  [%| [%cell p.hed p.p.tal] [q.hed q.p.tal]]
+    ==
+  ::  +slix: en-hypo XX remove
+  ::
+  ++  slix
+    |=  hil=mill
+    ^-  mill
+    =/  typ  -:!>(*type)
+    ?-  -.hil
+      %&  [%& (slop [typ p.p.hil] p.hil)]
+      %|  [%| [%cell typ p.p.hil] p.hil]
+    ==
+  ::
+  +|  %engines
+  ::
+  ::  |me: dynamic analysis
+  ::
+  ++  me
+    ~/  %me
+    |_  ::  sac: compiler cache
+        ::  pyt: type of type
+        ::
+        [sac=worm pyt=type]
+    ::  +refine-moves: move list from vase (was +said)
     ::
-        [%give card]
-      ::  yed: vase containing card
-      ::  hil: card as mill
-      ::
-      =^  yed  sac  (~(spot wa sac) 3 vax)
-      =^  hil  sac  (refine-card yed)
-      [[%give hil] sac]
+    ++  refine-moves
+      |=  vax=vase
+      ^-  (pair (list move) worm)
+      ?:  =(~ q.vax)  [~ sac]
+      =^  hed  sac  (~(slot wa sac) 2 vax)
+      =^  tal  sac  (~(slot wa sac) 3 vax)
+      =^  mov  sac  (refine-move hed)
+      =^  moz  sac  $(vax tal)
+      [[mov moz] sac]
+    ::  +refine-move: move from vase (was in +sump)
     ::
-        [%pass wire=* vane=term card]
-      =/  =wire
-        ~>  %mean.'bad-wire'
+    ++  refine-move
+      |=  vax=vase
+      ^-  (pair move worm)
+      ~>  %mean.'bad-move'
+      =^  hip  sac  (~(nell wa sac) p.vax)
+      ?.  hip
+        ~>(%mean.'not a cell' !!)
+      =/  duc
+        ~>  %mean.'bad-duct'
         ::  XX used to be a nest-check and clam, seemed excessive
         ::
-        ;;(wire wire.q.vax)
-      =/  vane
-        ~>  %mean.'bad-vane-label'
-        ?>  ((sane %tas) vane.q.vax)
-        vane.q.vax
+        ;;(duct -.q.vax)
       ::
-      ::  yed: vase containing card
-      ::  hil: card as mill
+      ::  yat: specialized ball vase
       ::
-      =^  xav  sac  (~(spot wa sac) 7 vax)
-      =^  yed  sac  (~(spot wa sac) 3 xav)
-      =^  hil  sac  (refine-card yed)
-      [[%pass wire vane hil] sac]
+      =^  yat  sac  (~(spot wa sac) 3 vax)
+      =^  del  sac  (refine-ball yat)
+      [[duc del] sac]
+    ::  +refine-ball: ball from vase (was in +sump)
     ::
-        [%slip vane=term card]
-      ::  XX remove
+    ++  refine-ball
+      |=  vax=vase
+      ^-  (pair ball worm)
+      ?+    q.vax
+          ~>  %mean.'bad-ball'
+          ~_  (sell vax)
+          !!
       ::
-      =/  vane
-        ~>  %mean.'bad-vane-label'
-        ?>  ((sane %tas) vane.q.vax)
-        vane.q.vax
+          [%give card]
+        ::  yed: vase containing card
+        ::  hil: card as mill
+        ::
+        =^  yed  sac  (~(spot wa sac) 3 vax)
+        =^  hil  sac  (refine-card yed)
+        [[%give hil] sac]
       ::
-      ::  yed: vase containing card
-      ::  hil: card as mill
+          [%pass wire=* vane=term card]
+        =/  =wire
+          ~>  %mean.'bad-wire'
+          ::  XX used to be a nest-check and clam, seemed excessive
+          ::
+          ;;(wire wire.q.vax)
+        =/  vane
+          ~>  %mean.'bad-vane-label'
+          ?>  ((sane %tas) vane.q.vax)
+          vane.q.vax
+        ::
+        ::  yed: vase containing card
+        ::  hil: card as mill
+        ::
+        =^  xav  sac  (~(spot wa sac) 7 vax)
+        =^  yed  sac  (~(spot wa sac) 3 xav)
+        =^  hil  sac  (refine-card yed)
+        [[%pass wire vane hil] sac]
       ::
-      =^  xav  sac  (~(spot wa sac) 3 vax)
-      =^  yed  sac  (~(spot wa sac) 3 xav)
-      =^  hil  sac  (refine-card yed)
-      [[%slip vane hil] sac]
-    ==
-  ::  +refine-card: card from vase (was +song)
+          [%slip vane=term card]
+        ::  XX remove
+        ::
+        =/  vane
+          ~>  %mean.'bad-vane-label'
+          ?>  ((sane %tas) vane.q.vax)
+          vane.q.vax
+        ::
+        ::  yed: vase containing card
+        ::  hil: card as mill
+        ::
+        =^  xav  sac  (~(spot wa sac) 3 vax)
+        =^  yed  sac  (~(spot wa sac) 3 xav)
+        =^  hil  sac  (refine-card yed)
+        [[%slip vane hil] sac]
+      ==
+    ::  +refine-card: card from vase (was +song)
+    ::
+    ++  refine-card
+      |=  vax=vase
+      ^-  (pair mill worm)
+      ~>  %mean.'bad-card'
+      =^  hip  sac  (~(nell wa sac) p.vax)
+      ?>  hip
+      ?.  ?=(%meta -.q.vax)
+        ::
+        ::  for an non-meta card, the mill is the vase
+        ::
+        [[%& vax] sac]
+      ~>  %mean.'bad-meta'
+      ::
+      ::  tiv: vase of vase of card
+      ::  typ: vase of span
+      ::
+      =^  tiv  sac  (~(slot wa sac) 3 vax)
+      =^  hip  sac  (~(nell wa sac) p.tiv)
+      ?>  hip
+      =^  typ  sac  (~(slot wa sac) 2 tiv)
+      =.  sac  (~(neat wa sac) pyt [%& typ])
+      ::
+      ::  support for meta-meta-cards has been removed
+      ::
+      ?>  ?=(milt q.tiv)
+      [[%| q.tiv] sac]
+      ::
+      :: =/  mut
+      ::   ?>(?=(milt q.tiv) q.tiv)
+      :: |-  ^-  (pair [%| milt] worm)
+      :: ?.  ?=([%meta *] mut)
+      ::   [[%| mut] sac]
+      :: =^  dip  sac  (~(nets wa sac) -:!>([%meta *vase]) p.mut)
+      :: ?>  dip
+      :: $(q.tiv +.q.mut)
+    --
   ::
-  ++  refine-card
-    |=  vax=vase
-    ^-  (pair mill worm)
-    ~>  %mean.'bad-card'
-    =^  hip  sac  (~(nell wa sac) p.vax)
-    ?>  hip
-    ?.  ?=(%meta -.q.vax)
+  ::  |va: vane engine
+  ::
+  ++  va
+    ~/  %va
+    |_  [our=ship vane=term vax=vase sac=worm]
+    ::
+    ::  |plow:va: operate in time and space
+    ::
+    ++  plow
+      |=  [now=@da sky=slyd]
+      |%
+      ::  +peek:plow:va: read from a local namespace
       ::
-      ::  for an non-meta card, the mill is the vase
+      ++  peek
+        |=  [fur=(unit (set monk)) ren=@t bed=beam]
+        ^-  (unit (unit (cask maze)))
+        =^  rig  sac
+          ~|  [%peek %failed-vane-activation vane]
+          (~(slym wa sac) vax `vane-sample`[our now *@uvJ sky])
+        =^  gat  sac
+          (~(slap wa sac) rig [%limb %scry])
+        ::
+        ;;  (unit (unit (cask maze)))
+        %+  slum  q.gat
+        ^-  scry-sample
+        :*  fur
+            ren
+            [%& p.bed]
+            q.bed
+            `coin`[%$ r.bed]
+            (flop s.bed)
+        ==
       ::
-      [[%& vax] sac]
-    ~>  %mean.'bad-meta'
+      ::  |spin:plow:va: move statefully
+      ::
+      ++  spin
+        |=  [hen=duct eny=@uvJ]
+        =/  duc  !>(hen)
+        =^  rig  sac
+          ~|  [%spin %failed-vane-activation vane]
+          (~(slym wa sac) vax `vane-sample`[our now eny sky])
+        ::
+        |%
+        ::  +peel:spin:plow:va: extract typed products
+        ::
+        ++  peel
+          |=  pro=vase
+          ^-  [(list move) term vase worm]
+          =^  moz  sac  (~(slot wa sac) 2 pro)
+          =^  vem  sac  (~(slot wa sac) 3 pro)
+          =^  sad  sac  (~(refine-moves me sac -:!>(*type)) moz)
+          =.  +<.q.vem
+            =|  sam=vane-sample
+            sam(ski =>(~ |~(* ~)))                      ::  clear to stop leak
+          [sad vane vem sac]
+        ::  +call:spin:plow:va: advance statefully
+        ::
+        ++  call
+          |=  task=mill
+          ^-  [(list move) term vase worm]
+          =^  gat  sac
+            (~(slap wa sac) rig [%limb %call])
+          ::
+          ::  sample is [duct (hypo (hobo task))]
+          ::
+          =/  sam=mill
+            (slid duc (slix task))
+          =^  pro  sac  (slur sac gat sam)
+          (peel pro)
+        ::  +take:spin:plow:va: retreat statefully
+        ::
+        ++  take
+          |=  [=wire from=term gift=mill]
+          ^-  [(list move) term vase worm]
+          =^  gat  sac
+            (~(slap wa sac) rig [%limb %take])
+          =/  src=vase
+            [[%atom %tas `from] from]
+          ::
+          ::  sample is [wire duct (hypo sign=[term gift])]
+          ::
+          =/  sam=mill
+            (slid !>(wire) (slid duc (slix (slid src gift))))
+          =^  pro  sac  (slur sac gat sam)
+          (peel pro)
+        --
+      --
+    --
+  ::
+  ::  |le: arvo event-loop engine
+  ::
+  ++  le
+    ~%  %le  +>+  ~
+    =|  $:  ::  run: list of worklists
+            ::  out: pending output
+            ::  gem: worklist metadata
+            ::
+            run=(list plan)
+            out=(list ovum)
+            gem=germ
+        ==
     ::
-    ::  tiv: vase of vase of card
-    ::  typ: vase of span
+    |_  $:  our=ship
+            now=@da
+            eny=@uvJ
+            lac=?
+            van=(map term vane)
+        ==
+    +*  this  .
+    ::  +abet: finalize loop
     ::
-    =^  tiv  sac  (~(slot wa sac) 3 vax)
-    =^  hip  sac  (~(nell wa sac) p.tiv)
-    ?>  hip
-    =^  typ  sac  (~(slot wa sac) 2 tiv)
-    =.  sac  (~(neat wa sac) pyt [%& typ])
+    ++  abet
+      ^-  (pair (list ovum) (list (pair term vane)))
+      :-  (flop out)
+      %+  sort
+        ~(tap by van)
+      |=([[a=@tas *] [b=@tas *]] (aor a b))
+    ::  +emit: enqueue a worklist with source
     ::
-    ::  support for meta-meta-cards has been removed
+    ++  emit
+      |=  [src=term moz=(list move)]
+      =/  =plan  [[src +(depth.gem)] moz]
+      this(run [plan run])
+    ::  +poke: prepare a worklist-of-one from outside
     ::
-    ?>  ?=(milt q.tiv)
-    [[%| q.tiv] sac]
+    ++  poke
+      |=  [vane=term =ovum]
+      ^+  this
+      ~?  !lac  ["" %unix p.card.ovum wire.ovum now]
+      =/  =mill
+        =/  =type  [%cell [%atom %tas `%soft] %noun]
+        [%& type [%soft card.ovum]]
+      =/  =move
+        [duct=~ %pass wire.ovum vane mill]
+      (emit %$ move ~)
+    ::  +spam: prepare a worklist for all targets
     ::
-    :: =/  mut
-    ::   ?>(?=(milt q.tiv) q.tiv)
-    :: |-  ^-  (pair [%| milt] worm)
-    :: ?.  ?=([%meta *] mut)
-    ::   [[%| mut] sac]
-    :: =^  dip  sac  (~(nets wa sac) -:!>([%meta *vase]) p.mut)
-    :: ?>  dip
-    :: $(q.tiv +.q.mut)
+    ++  spam
+      |=  =ovum
+      ^+  this
+      =/  ord=(list (pair term *))
+        %+  sort
+          ~(tap by van)
+        |=([[a=@ *] [b=@ *]] (aor b a))
+      |-  ^+  this
+      ?~  ord
+        this
+      =.  this  (poke p.i.ord ovum)
+      $(ord t.ord)
+    ::  +loop: until done
+    ::
+    ++  loop
+      ^+  this
+      ?~  run
+        this
+      ?:  =(~ q.i.run)
+        loop(run t.run)
+      =.  gem  p.i.run
+      =^  mov  q.i.run  q.i.run
+      loop:(step mov)
+    ::  +step: advance the loop one step by routing a move
+    ::
+    ++  step
+      |=  =move
+      ^+  this
+      ?-  -.ball.move
+      ::
+      ::  %pass: forward move
+      ::
+          %pass
+        =*  wire  wire.ball.move
+        =*  duct  duct.move
+        =*  vane  vane.note.ball.move
+        =*  task  task.note.ball.move
+        ::
+        ~?  &(!lac !=(%$ vane.gem))
+          :-  (runt [(dec depth.gem) '|'] "")
+          :^  %pass  [vane.gem vane]
+            ?:  ?=(?(%deal %deal-gall) +>-.task)
+              :-  :-  +>-.task
+                  ;;([[ship ship] term term] [+>+< +>+>- +>+>+<]:task)
+              wire
+            [(symp +>-.task) wire]
+          duct
+        ::
+        (call [wire duct] vane task)
+      ::
+      ::  %slip: lateral move
+      ::
+          %slip
+        =*  duct  duct.move
+        =*  vane  vane.note.ball.move
+        =*  task  task.note.ball.move
+        ::
+        ~?  !lac
+          :-  (runt [(dec depth.gem) '|'] "")
+          [%slip vane.gem (symp +>-.task) duct]
+        ::
+        (call duct vane task)
+      ::
+      ::  %give: return move
+      ::
+          %give
+        ?.  ?=(^ duct.move)
+          ~>(%mean.'give-no-duct' !!)
+        ::
+        =/  wire  i.duct.move
+        =/  duct  t.duct.move
+        =*  gift  gift.ball.move
+        ::
+        ::  the caller was Outside
+        ::
+        ?~  duct
+          ?>  ?=([%$ *] wire)
+          (xeno wire gift)
+        ::
+        ::  the caller was a vane
+        ::
+        =^  vane=term  wire
+          ?>(?=(^ wire) wire)
+        ::
+        ~?  &(!lac |(!=(%blit +>-.gift) !=(%d vane.gem)))
+          :-  (runt [(dec depth.gem) '|'] "")
+          :^  %give  vane.gem
+            ?:  ?=(%unto +>-.gift)
+              [+>-.gift (symp +>+<.gift)]
+            (symp +>-.gift)
+          duct
+        ::
+        (take duct wire vane vane.gem gift)
+      ==
+    ::  +peek: read from the entire namespace
+    ::
+    ++  peek
+      ^-  slyd
+      |=  [typ=* fur=(unit (set monk)) ron=term bed=beam]
+      ^-  (unit (unit (cask maze)))
+      ::
+      ::  XX identity is defaulted to ship from beam
+      ::
+      =>  .(fur ?^(fur fur `[[%& p.bed] ~ ~]))
+      ::
+      ::  XX vane and care are concatenated
+      ::
+      =/  lal  (end 3 1 ron)
+      =/  ren  ;;(@t (rsh 3 1 ron))
+      ?.  (~(has by van) lal)
+        ~
+      (peek:(plow lal) fur ren bed)
+    ::  +xeno: stash pending output
+    ::
+    ++  xeno
+      |=  [=wire gift=mill]
+      ^+  this
+      this(out [[wire ;;(card q.p.gift)] out])
+    ::  +call: advance to target
+    ::
+    ++  call
+      |=  [=duct vane=term task=mill]
+      ^+  this
+      %-  push
+      (call:(spin:(plow vane) duct eny) task)
+    ::  +take: retreat along call-stack
+    ::
+    ++  take
+      |=  [=duct =wire vane=term from=term gift=mill]
+      ^+  this
+      %-  push
+      (take:(spin:(plow vane) duct eny) wire from gift)
+    ::  +push: finalize an individual step
+    ::
+    ++  push
+      |=  [moz=(list move) vane=term vax=vase sac=worm]
+      ^+  this
+      =.  van  (~(put by van) vane [vax sac])
+      %+  emit  vane
+      ^-  (list move)
+      %+  turn  moz
+      |=  =move
+      ?.  ?=(%pass -.ball.move)
+        move
+      move(wire.ball [vane wire.ball.move])
+    ::  +plow: operate on a vane, in time and space
+    ::
+    ++  plow
+      |=  vane=term
+      ~|  [%plow %vane-activation-failed vane]
+      (~(plow va [our vane (~(got by van) vane)]) now peek)
+    --
   --
 ::
 ++  symp                                                ::  symbol or empty
@@ -549,7 +909,7 @@
       =^  moz  worm.vane  (~(slot wa worm.vane) 2 pro)
       =^  vem  worm.vane  (~(slot wa worm.vane) 3 pro)
       :: =^  sad  worm.vane  (said moz)
-      =^  sad  worm.vane  (~(refine-moves me worm.vane typ.vil) moz)
+      =^  sad  worm.vane  (~(refine-moves me:part worm.vane typ.vil) moz)
       [sad [(soar vem) worm.vane]]
     --
   --
