@@ -1248,8 +1248,13 @@
   ::    at the end of :ova.
   ::
   ?:  ?=(%vega -.q.i.ova)
-    =^  zef  vanes
-      (~(spam (is our vil eny bud vanes) now) lac i.ova)
+    =^  zef=(list ovum)  vanes
+      :: (~(spam (is our vil eny bud vanes) now) lac i.ova)
+      =<  abet:loop
+      %.  i.ova
+      %~  spam  le:part
+      [our now eny lac (~(gas by *(map term vane)) vanes)]
+    ::
     $(out [i.ova out], ova (weld t.ova zef))
   ::
   =^  vov  +>.^$  (feck now i.ova)
@@ -1260,7 +1265,11 @@
   |=  {now/@da hap/path}
   ^-  (unit (unit))
   ?~  hap  [~ ~ hoon-version]
-  ((sloy ~(beck (is our vil eny bud vanes) now)) [151 %noun] hap)
+  :: ((sloy ~(beck (is our vil eny bud vanes) now)) [151 %noun] hap)
+  %.  [[151 %noun] hap]
+  %-  sloy
+  %~  peek  le:part
+  [our now eny lac (~(gas by *(map term vane)) vanes)]
 ::
 ++  poke                                                ::  external apply
   |=  [now=@da ovo=ovum]
@@ -1281,7 +1290,12 @@
   ?:  ?=(%trim -.q.ovo)
     =>  .(ovo ;;((pair wire [%trim p=@ud]) ovo))
     =^  zef  vanes
-      (~(spam (is our vil eny bud vanes) now) lac ovo)
+      :: (~(spam (is our vil eny bud vanes) now) lac ovo)
+      ^-  (pair (list ovum) (list (pair term vane)))
+      =<  abet:loop
+      %.  ovo
+      %~  spam  le:part
+      [our now eny lac (~(gas by *(map term vane)) vanes)]
     ::  clear compiler caches if high-priority
     ::
     =?  vanes  =(0 p.q.ovo)
@@ -1292,7 +1306,12 @@
   ::  Normal events are routed to a single vane
   ::
   =^  zef  vanes
-    (~(hurl (is our vil eny bud vanes) now) lac ovo)
+    :: (~(hurl (is our vil eny bud vanes) now) lac ovo)
+    =<  abet:loop
+    %.  [(dint:$:is p.ovo) ovo]
+    %~  poke  le:part
+    [our now eny lac (~(gas by *(map term vane)) vanes)]
+  ::
   [zef +>.$]
 ::  +feck: handle an arvo effect
 ::
