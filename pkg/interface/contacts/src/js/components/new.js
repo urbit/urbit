@@ -34,13 +34,20 @@ export class NewScreen extends Component {
   
   onClickCreate() {
     const { props, state } = this;
-    if (!state.groupName) {
+
+    let invalidChara = new RegExp(/[^a-z0-9/-]/);
+
+    if (
+      (!state.groupName) || (state.groupName.startsWith("/")) ||
+      (state.groupName.includes("//")) || (invalidChara.test(state.groupName))
+    ) {
       this.setState({
         groupNameError: true,
         inviteError: false
       });
       return;
     }
+
     let group = `/~${window.ship}` + `/${state.groupName}`;
     
     let aud = [];
@@ -56,7 +63,7 @@ export class NewScreen extends Component {
         }
       });
     }
-    
+
     if (!isValid) {
       this.setState({
         inviteError: true,
