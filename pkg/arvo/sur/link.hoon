@@ -23,6 +23,7 @@
       page
   ==
 ::  +note: a comment on some url
+::
 +$  note
   $:  =time
       udon=@t
@@ -39,6 +40,12 @@
 +$  submissions  (list submission)
 +$  notes        (list note)
 +$  comments     (list comment)
+::
+::  state builder
+::
+++  per-path-url
+  |$  [value]
+  (map path (map url value))
 ::
 ::  +action: local actions
 ::
@@ -59,6 +66,15 @@
       ::  %read: hear about note on url from ship
       ::
       [%read =path =url comment]
+  ==
+::
+::  +initial: local result
+::
++$  initial
+  $%  [%local-pages pages=(map path pages)]
+      [%submissions submissions=(map path submissions)]
+      [%annotations notes=(per-path-url notes)]
+      [%discussions comments=(per-path-url comments)]
   ==
 ::  +update: local updates
 ::

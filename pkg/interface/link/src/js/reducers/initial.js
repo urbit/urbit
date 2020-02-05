@@ -14,7 +14,7 @@ export class InitialReducer {
         state.groups[group] = new Set(data[group]);
       }
     }
-  
+
   data = _.get(json, 'link', false);
   if (data) {
     let name = Object.keys(data)[0];

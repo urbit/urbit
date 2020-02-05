@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { CommentItem } from './comment-item';
 import { CommentsPagination } from './comments-pagination';
 
-import { uxToHex } from '../../lib/util'; 
+import { uxToHex } from '../../lib/util';
 import { api } from '../../api';
 
 export class Comments extends Component {
@@ -10,12 +10,13 @@ export class Comments extends Component {
   componentDidMount() {
     let page = "page" + this.props.commentPage;
     let comments = !!this.props.comments;
-    if ((!comments[page]) && (page !== "page0")) {
+    if ((page !== "page0") &&
+        (!comments || !this.props.comments[page]) &&
+        (this.props.path && this.props.url)
+    ) {
       api.getCommentsPage(
-        this.props.path, 
-        this.props.url, 
-        this.props.linkPage, 
-        this.props.linkIndex, 
+        this.props.path,
+        this.props.url,
         this.props.commentPage);
     }
   }
@@ -24,12 +25,10 @@ export class Comments extends Component {
     let page = "page" + this.props.commentPage;
     if (prevProps !== this.props) {
       if (!!this.props.comments) {
-        if ((page !== "page0") && (!this.props.comments[page])) {
+        if ((page !== "page0") && !this.props.comments[page] && this.props.url) {
           api.getCommentsPage(
-            this.props.path, 
-            this.props.url, 
-            this.props.linkPage, 
-            this.props.linkIndex, 
+            this.props.path,
+            this.props.url,
             this.props.commentPage);
         }
       }
@@ -38,7 +37,7 @@ export class Comments extends Component {
 
   render() {
     let props = this.props;
-    
+
     let page = "page" + props.commentPage;
 
     let commentsObj = !!props.comments
@@ -50,7 +49,7 @@ export class Comments extends Component {
     : {};
 
     let total = !!props.comments
-    ? props.comments["total-pages"]
+    ? props.comments.totalPages
     : {};
 
     let commentsList = Object.keys(commentsPage)
@@ -59,7 +58,7 @@ export class Comments extends Component {
       let commentObj = commentsPage[entry]
       let { ship, time, udon } = commentObj;
 
-      let members = !!props.members 
+      let members = !!props.members
       ? props.members
       : {};
 

@@ -19,11 +19,9 @@ export class LinkSubmit extends Component {
     let title = (this.state.linkTitle)
     ? this.state.linkTitle
     : this.state.linkValue;
-    let request = api.postLink(this.props.path, link, title);
-
-    if (request) {
-      this.setState({linkValue: "", linkTitle: ""})
-    }
+    api.postLink(this.props.path, link, title).then((r) => {
+      this.setState({linkValue: "", linkTitle: ""});
+    });
   }
 
   setLinkValid(link) {
@@ -58,7 +56,7 @@ export class LinkSubmit extends Component {
     let activeClasses = (this.state.linkValid)
     ? "green2 pointer"
     : "gray2";
-    
+
     return (
       <div className="relative ba b--gray4 b--gray2-d br1 w-100 mb6">
         <textarea

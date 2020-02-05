@@ -5,20 +5,33 @@
 ::    links, arbitrary paths are probably fair game, but could trip up
 ::    primitive ui implementations.
 ::
+::    urls in paths are expected to be encoded using +wood, for @ta sanity.
+::    use /lib/link's +build-discussion-path.
+::
 ::    see link-listen-hook to see what's synced in, and similarly
 ::    see link-proxy-hook to see what's exposed.
 ::
 ::  scry and subscription paths:
 ::
-::      urls
-::    /local-pages/[some-group]        all pages we saved by recency
-::    /submissions/[some-group]        all submissions by recency
-::      comments
-::    /allotations/[some-group]             TMP all our comments in group
-::    /annotations/[some-group]/[b64(url)]  all our comments on url by recency
-::    /discussions/[some-group]/[b64(url)]  all known comments on url by recency
+::      (map path pages)
+::    /local-pages                          our saved pages
+::    /local-pages/some-path                our saved pages on path
 ::
-::TODO  continue work from m/uplink-broad branch!
+::      (map path submissions)
+::    /submissions                          all submissions we've seen
+::    /submissions/some-path                all submissions we've seen on path
+::
+::      (map path (map url notes))
+::    /annotations                          our comments
+::    /annotations/wood-url                 our comments on url
+::    /annotations/wood-url/some-path       our comments on url on path
+::    /annotations//some-path               our comments on path
+::
+::      (map path (map url comments))
+::    /discussions                          all comments
+::    /discussions/wood-url                 all comments on url
+::    /discussions/wood-url/some-path       all comments on url on path
+::    /discussions//some-path               all comments on path
 ::
 /+  *link, default-agent, verb, dbug
 ::
@@ -27,7 +40,7 @@
   $:  %0
       by-group=(map path links)
       by-site=(map site (list [path submission]))
-      discussions=(map path (map url discussion))
+      discussions=(per-path-url discussion)
   ==
 ::
 +$  links
@@ -81,25 +94,48 @@
     ?+  path  (on-peek:def path)
         [%y ?(%local-pages %submissions) ~]
       ``noun+!>(~(key by by-group))
-      ::
-        [%x %local-pages ^]
+    ::
+        [%x %local-pages *]
       ``noun+!>((get-local-pages:do t.t.path))
-      ::
-        [%x %submissions ^]
+    ::
+        [%x %submissions *]
       ``noun+!>((get-submissions:do t.t.path))
+    ::
+        [%y ?(%annotations %discussions) *]
+      =/  [spath=^path surl=url]
+        (break-discussion-path t.t.path)
+      =-  ``noun+!>(-)
       ::
-        [%y ?(%annotations %discussions) ~]
-      ``noun+!>(~(key by discussions))
+      ?:  =(~ surl)
+        ::  no url, provide urls that have comments
+        ::
+        ^-  (set url)
+        ?~  spath
+          ::  no path, find urls accross all paths
+          ::
+          %-  ~(rep by discussions)
+          |=  [[* discussions=(map url discussion)] urls=(set url)]
+          %-  ~(uni in urls)
+          ~(key by discussions)
+        ::  specified path, find urls for that specific path
+        ::
+        %~  key  by
+        (~(gut by discussions) spath *(map url *))
+      ::  specified url and path, nothing to list here
       ::
-        [%y ?(%annotations %discussions) ^]
-      =/  urls  (~(get by discussions) t.t.path)
-      ?~  urls  ~
-      ``noun+!>(~(key by u.urls))
+      ?^  spath  !!
+      ::  no path, find paths with comments for this url
       ::
-        [%x %annotations @ ^]
+      ^-  (set ^path)
+      %-  ~(rep by discussions)
+      |=  [[=^path urls=(map url discussion)] paths=(set ^path)]
+      ?.  (~(has by urls) surl)  paths
+      (~(put in paths) path)
+    ::
+        [%x %annotations *]
       ``noun+!>((get-annotations:do t.t.path))
-      ::
-        [%x %discussions @ ^]
+    ::
+        [%x %discussions *]
       ``noun+!>((get-discussions:do t.t.path))
     ==
   ::
@@ -109,29 +145,25 @@
     ?>  (team:title [our src]:bowl)  ::TODO  /lib/store
     :_  this
     |^  ?+  path  (on-watch:def path)
-            [%local-pages ^]
-          %+  give  %link-update
-          [%local-pages t.path (get-local-pages:do t.path)]
+            [%local-pages *]
+          %+  give  %link-initial
+          ^-  initial
+          [%local-pages (get-local-pages:do t.path)]
         ::
-            [%submissions ^]
-          %+  give  %link-update
-          [%submissions t.path (get-submissions:do t.path)]
+            [%submissions *]
+          %+  give  %link-initial
+          ^-  initial
+          [%submissions (get-submissions:do t.path)]
         ::
-            [%allotations ^]
-          %+  turn
-            %~  tap  by
-            (~(gut by discussions) t.path *(map url discussion))
-          |=  [=url =discussion]
-          %+  give-single  %link-update
-          [%annotations t.path url ours.discussion]
+            [%annotations *]
+          %+  give  %link-initial
+          ^-  initial
+          [%annotations (get-annotations:do t.path)]
         ::
-            [%annotations @ ^]
-          %+  give  %link-update
-          [%annotations t.path (get-annotations:do t.path)]
-        ::
-            [%discussions @ ^]
-          %+  give  %link-update
-          [%discussions t.path (get-discussions:do t.path)]
+            [%discussions *]
+          %+  give  %link-initial
+          ^-  initial
+          [%discussions (get-discussions:do t.path)]
         ==
     ::
     ++  give
@@ -186,7 +218,9 @@
   :_  state
   :_  cards
   :+  %give  %fact
-  :+  [%local-pages path]~
+  :+  :~  /local-pages
+          [%local-pages path]
+      ==
     %link-update
   !>([%local-pages path [page]~])
 ::  +note-note: save a note for a url
@@ -210,13 +244,15 @@
   ::
   :_  state
   ^-  (list card)
-  =/  fact
-    :-  %link-update
-    !>([%annotations path url [note]~])
-  :*  [%give %fact [%annotations (snoc path url)]~ fact]
-      [%give %fact [%allotations path]~ fact]
-      cards
-  ==
+  :_  cards
+  :+  %give  %fact
+  :+  :~  /annotations
+          [%annotations %$ path]
+          [%annotations (build-discussion-path url)]
+          [%annotations (build-discussion-path path url)]
+      ==
+    %link-update
+  !>([%annotations path url [note]~])
 ::  +hear-submission: record page someone else saved
 ::
 ++  hear-submission
@@ -237,7 +273,9 @@
   :_  state
   :_  ~
   :+  %give  %fact
-  :+  [%submissions path]~
+  :+  :~  /submissions
+          [%submissions path]
+      ==
     %link-update
   !>([%submissions path [submission]~])
 ::  +read-comment: record a comment someone else made
@@ -255,42 +293,102 @@
   ::  send updates to subscribers
   ::
   :_  state
-  ^-  (list card)
-  =/  fact
-    :-  %link-update
-    !>([%discussions path url [comment]~])
-  :~  [%give %fact [%discussions (snoc path url)]~ fact]
-      [%give %fact [%discussions path]~ fact]
-  ==
+  :_  ~
+  :+  %give  %fact
+  :+  :~  /discussions
+          [%discussions '' path]
+          [%discussions (build-discussion-path url)]
+          [%discussions (build-discussion-path path url)]
+      ==
+    %link-update
+  !>([%discussions path url [comment]~])
 ::
 ::  reading
 ::
 ++  get-local-pages
   |=  =path
-  ^-  pages
+  ^-  (map ^path pages)
+  ?~  path
+    ::  all paths
+    ::
+    %-  ~(run by by-group)
+    |=(links ours)
+  ::  specific path
+  ::
+  %+  ~(put by *(map ^path pages))  path
   ours:(~(gut by by-group) path *links)
 ::
 ++  get-submissions
   |=  =path
-  ^-  submissions
+  ^-  (map ^path submissions)
+  ?~  path
+    ::  all paths
+    ::
+    %-  ~(run by by-group)
+    |=(links submissions)
+  ::  specific path
+  ::
+  %+  ~(put by *(map ^path submissions))  path
   submissions:(~(gut by by-group) path *links)
+::
 ::
 ++  get-annotations
   |=  =path
-  ^-  notes
-  ours:(get-discussion path)
+  ^-  (per-path-url notes)
+  =/  args=[=^path =url]
+    (break-discussion-path path)
+  |^  ?~  path
+        ::  all paths
+        ::
+        (~(run by discussions) get-ours)
+      ::  specific path
+      ::
+      %+  ~(put by *(per-path-url notes))  path.args
+      %-  get-ours
+      %+  ~(gut by discussions)  path.args
+      *(map url discussion)
+  ::
+  ++  get-ours
+    |=  m=(map url discussion)
+    ^-  (map url notes)
+    ?:  =(~ url.args)
+      ::  all urls
+      ::
+      %-  ~(run by m)
+      |=(discussion ours)
+    ::  specific url
+    ::
+    %+  ~(put by *(map url notes))  url.args
+    ours:(~(gut by m) url.args *discussion)
+  --
 ::
 ++  get-discussions
   |=  =path
-  ^-  comments
-  comments:(get-discussion path)
-::
-++  get-discussion
-  |=  =path
-  ^-  discussion
-  =/  [=^path =url]
-    (split-discussion-path path)
-  =-  (~(gut by -) url *discussion)
-  %+  ~(gut by discussions)  path
-  *(map ^url discussion)
+  ^-  (per-path-url comments)
+  =/  args=[=^path =url]
+    (break-discussion-path path)
+  |^  ?~  path
+        ::  all paths
+        ::
+        (~(run by discussions) get-comments)
+      ::  specific path
+      ::
+      %+  ~(put by *(per-path-url comments))  path.args
+      %-  get-comments
+      %+  ~(gut by discussions)  path.args
+      *(map url discussion)
+  ::
+  ++  get-comments
+    |=  m=(map url discussion)
+    ^-  (map url comments)
+    ?:  =(~ url.args)
+      ::  all urls
+      ::
+      %-  ~(run by m)
+      |=(discussion comments)
+    ::  specific url
+    ::
+    %+  ~(put by *(map url comments))  url.args
+    comments:(~(gut by m) url.args *discussion)
+  --
 --

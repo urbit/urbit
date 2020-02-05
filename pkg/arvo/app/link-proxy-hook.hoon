@@ -99,10 +99,17 @@
 ++  permitted
   |=  [who=ship =path]
   ^-  ?
-  ::  we only expose /local-pages and /annotations,
-  ::  and only to ships in the relevant group
+  ::  we only expose group-specific /local-pages and /annotations,
+  ::  and only to ships in the relevant group.
+  ::  (no url-specific annotations subscriptions, either.)
   ::
-  ?.  ?=([?(%local-pages %annotations %allotations) ^] path)  |
+  =/  target=(unit ^path)
+    ?:  ?=([%local-pages ^] path)
+      `t.path
+    ?:  ?=([%annotations ~ ^] path)
+      `t.t.path
+    ~
+  ?~  target  |
   =;  group
     ?&  ?=(^ group)
         (~(has in u.group) who)
@@ -112,7 +119,7 @@
       (scot %p our.bowl)
       %group-store
       (scot %da now.bowl)
-      (snoc t.path %noun)
+      (snoc u.target %noun)
   ==
 ::
 ::  groups subscription
@@ -158,21 +165,22 @@
   ::
   ?:  =(our.bowl i.whos)
     $(whos t.whos)
-  %+  weld  $(whos t.whos)
+  :_  $(whos t.whos)
   ::NOTE  this depends kind of unfortunately on the fact that we only accept
-  ::      subscriptions to /local-pages/* paths. it'd be more correct if we
+  ::      subscriptions to /local-pages//* paths. it'd be more correct if we
   ::      "just" looked at all paths in the map, and found the matching ones.
   ::TODO  what exactly did i mean by this?
-  :~  (kick-proxy i.whos [%local-pages pax.upd])
-      (kick-proxy i.whos [%annotations pax.upd])
+  %+  kick-proxies  i.whos
+  :~  [%local-pages pax.upd]
+      [%annotations '' pax.upd]
   ==
 ::
 ::  proxy subscriptions
 ::
-++  kick-proxy
-  |=  [who=ship =path]
+++  kick-proxies
+  |=  [who=ship paths=(list path)]
   ^-  card
-  [%give %kick ~[path] `who]
+  [%give %kick paths `who]
 ::
 ++  handle-proxy-sign
   |=  [=wire =sign:agent:gall]
@@ -204,15 +212,14 @@
 ++  initial-response
   |=  =path
   ^-  card
-  =;  initial=update
-    [%give %fact ~ %link-update !>(initial)]
+  =;  =initial
+    [%give %fact ~ %link-initial !>(initial)]
   ?+  path  !!
       [%local-pages ^]
-    [%local-pages path .^(pages %gx path)]
+    [%local-pages .^((map ^path pages) %gx path)]
   ::
-      [%annotations @ ^]
-    =+  (split-discussion-path t.path)
-    [%annotations path url .^(notes %gx path)]
+      [%annotations ~ ^]
+    [%annotations .^((per-path-url notes) %gx '' t.t.path)]
   ==
 ::
 ++  start-proxy

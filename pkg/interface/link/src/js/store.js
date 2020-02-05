@@ -11,6 +11,7 @@ class Store {
       contacts: {},
       groups: {},
       links: {},
+      comments: {},
       permissions: {},
       sidebarShown: true,
       spinner: false
@@ -21,24 +22,6 @@ class Store {
     this.localReducer = new LocalReducer();
     this.linkUpdateReducer = new LinkUpdateReducer();
     this.setState = () => {};
-  }
-
-  async loadLinks(json) {
-    // if initial contacts, queue up getting these paths from link-store
-    let data = _.get(json, 'group-initial', false);
-    if (data) {
-      for (let each of Object.keys(data)) {
-        let linkUrl = "/~link/submissions" + each + ".json?p=0";
-        let promise = await fetch(linkUrl);
-        if (promise.ok) {
-          let resolvedData = {}
-          resolvedData.link = {};
-          resolvedData.link[each] = {};
-          resolvedData.link[each] = await promise.json();
-          this.handleEvent(resolvedData);
-        }
-      }
-    }
   }
 
   setStateHandler(setState) {
@@ -53,8 +36,7 @@ class Store {
       json = data;
     }
 
-    console.log(json);
-    this.loadLinks(json);
+    console.log('event', json);
     this.initialReducer.reduce(json, this.state);
     this.permissionUpdateReducer.reduce(json, this.state);
     this.localReducer.reduce(json, this.state);

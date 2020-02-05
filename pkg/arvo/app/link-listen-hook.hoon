@@ -18,8 +18,7 @@
       retry-timers=(map target @dr)
   ==
 ::
-::TODO  revert to annotations with new link-store subscription model
-+$  what-target  ?(%local-pages %allotations)
++$  what-target  ?(%local-pages %annotations)
 +$  target
   $:  what=what-target
       who=ship
@@ -68,9 +67,9 @@
       =^  cards  state
         (take-groups-sign:do sign)
       [cards this]
-    ?:  ?=([%links @ @ ^] wire)
+    ?:  ?=([%links ?(%local-pages %annotations) @ ^] wire)
       =^  cards  state
-        (take-links-sign:do (wire-to-target t.wire) sign)
+        (take-link-sign:do (wire-to-target t.wire) sign)
       [cards this]
     ?:  ?=([%forward ^] wire)
       =^  cards  state
@@ -170,7 +169,7 @@
         $(whos t.whos)
       (end-link-subscriptions i.whos pax.upd)
     :+  (start-link-subscription %local-pages i.whos pax.upd)
-      (start-link-subscription %allotations i.whos pax.upd)
+      (start-link-subscription %annotations i.whos pax.upd)
     $(whos t.whos)
   ==
 ::
@@ -184,13 +183,16 @@
       %agent
       [who.target %link-proxy-hook]
       %watch
-      [what where]:target
+      ?-  what.target
+        %local-pages  [what where]:target
+        %annotations  [what %$ where]:target
+      ==
   ==
 ::
 ++  end-link-subscriptions
   |=  [who=ship where=path]
   ^-  (list card)
-  |^  ~[(end %local-pages) (end %allotations)]
+  |^  ~[(end %local-pages) (end %annotations)]
   ::
   ++  end
     |=  what=what-target
@@ -203,7 +205,7 @@
     ==
   --
 ::
-++  take-links-sign
+++  take-link-sign
   |=  [=target =sign:agent:gall]
   ^-  (quip card _state)
   ?-  -.sign
@@ -224,6 +226,10 @@
     =*  mark  p.cage.sign
     =*  vase  q.cage.sign
     ?+  mark  ~|([dap.bowl %unexpected-mark mark] !!)
+        %link-initial
+      %-  handle-link-initial
+      [who.target where.target !<(initial vase)]
+    ::
         %link-update
       %-  handle-link-update
       [who.target where.target !<(update vase)]
@@ -268,6 +274,40 @@
     (snoc where.target %noun)
   ==
 ::
+++  do-link-action
+  |=  [=wire =action]
+  ^-  card
+  :*  %pass
+      wire
+      %agent
+      [our.bowl %link-store]
+      %poke
+      %link-action
+      !>(action)
+  ==
+::
+++  handle-link-initial
+  |=  [who=ship where=path =initial]
+  ^-  (quip card _state)
+  ?>  =(src.bowl who)
+  ?+  -.initial  ~|([dap.bowl %unexpected-initial -.initial] !!)
+      %local-pages
+    =/  =pages  (~(got by pages.initial) where)
+    (handle-link-update who where [%local-pages where pages])
+  ::
+      %annotations
+    =/  urls=(list [=url =notes])
+      ~(tap by (~(got by notes.initial) where))
+    =|  cards=(list card)
+    |-  ^-  (quip card _state)
+    ?~  urls  [cards state]
+    =^  caz  state
+      ^-  (quip card _state)
+      =,  i.urls
+      (handle-link-update who where [%annotations where url notes])
+    $(urls t.urls, cards (weld cards caz))
+  ==
+::
 ++  handle-link-update
   |=  [who=ship where=path =update]
   ^-  (quip card _state)
@@ -277,28 +317,17 @@
       %local-pages
     %+  turn  pages.update
     |=  =page
-    ^-  card
-    :*  %pass
-        [%forward -.update (scot %p who) where]
-        %agent
-        [our.bowl %link-store]
-        %poke
-        %link-action
-        !>([%hear where src.bowl page])
-    ==
+    %+  do-link-action
+      [%forward %local-page (scot %p who) where]
+    [%hear where who page]
   ::
       %annotations
     %+  turn  notes.update
     |=  =note
     ^-  card
-    :*  %pass
-        [%forward -.update (scot %p who) where]
-        %agent
-        [our.bowl %link-store]
-        %poke
-        %link-action
-        !>([%read where url.update src.bowl note])
-    ==
+    %+  do-link-action
+      [%forward %annotation (scot %p who) where]
+    [%read where url.update who note]
   ==
 ::
 ++  take-forward-sign

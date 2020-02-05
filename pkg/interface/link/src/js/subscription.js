@@ -1,9 +1,6 @@
 import { api } from '/api';
 import { store } from '/store';
 
-import urbitOb from 'urbit-ob';
-
-
 export class Subscription {
   start() {
     if (api.authTokens) {
@@ -24,6 +21,9 @@ export class Subscription {
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this));
+
+    // open a subscription for all submissions
+    api.getPage('', 0);
   }
 
   handleEvent(diff) {
