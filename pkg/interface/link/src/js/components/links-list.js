@@ -13,15 +13,12 @@ import { uxToHex } from '../lib/util';
 export class Links extends Component {
 
   componentDidMount() {
-    let linkPage = "page" + this.props.page;
-    if ((this.props.page !== 0) && (!this.props.links[linkPage])) {
-      api.getPage(this.props.path, this.props.page);
-    }
+    this.componentDidUpdate();
   }
 
   componentDidUpdate() {
     let linkPage = "page" + this.props.page;
-    if ((this.props.page !== 0) && (!this.props.links[linkPage])) {
+    if ((this.props.page != 0) && (!this.props.links[linkPage])) {
       api.getPage(this.props.path, this.props.page);
     }
   }
@@ -41,7 +38,7 @@ export class Links extends Component {
     : 0;
 
     let totalPages = !!props.links
-    ? Number(props.links["total-pages"])
+    ? Number(props.links.totalPages)
     : 1;
 
     let LinkList = Object.keys(links)

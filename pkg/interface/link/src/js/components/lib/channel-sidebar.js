@@ -17,7 +17,7 @@ export class ChannelsSidebar extends Component {
       .map((path) => {
         let name = "Private"
         let selected = (props.selected === path);
-        let linkCount = !!props.links[path] ? props.links[path]['total-items'] : 0;
+        let linkCount = !!props.links[path] ? props.links[path].totalItems : 0;
         return (
           <ChannelsItem
             key={path}
@@ -40,8 +40,8 @@ export class ChannelsSidebar extends Component {
         name = name.substr(nameSeparator + 1);
 
         let selected = (props.selected === path);
-        let linkCount = !!props.links[path] ? props.links[path]['total-items'] : 0;
-        
+        let linkCount = !!props.links[path] ? props.links[path].totalItems : 0;
+
         return (
           <ChannelsItem
             key={path}

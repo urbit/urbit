@@ -10,12 +10,13 @@ export class Comments extends Component {
   componentDidMount() {
     let page = "page" + this.props.commentPage;
     let comments = !!this.props.comments;
-    if ((!comments[page]) && (page !== "page0")) {
+    if ((page !== "page0") &&
+        (!comments || !this.props.comments[page]) &&
+        (this.props.path && this.props.url)
+    ) {
       api.getCommentsPage(
-        this.props.path, 
-        this.props.url, 
-        this.props.linkPage, 
-        this.props.linkIndex, 
+        this.props.path,
+        this.props.url,
         this.props.commentPage);
     }
   }
@@ -24,12 +25,10 @@ export class Comments extends Component {
     let page = "page" + this.props.commentPage;
     if (prevProps !== this.props) {
       if (!!this.props.comments) {
-        if ((page !== "page0") && (!this.props.comments[page])) {
+        if ((page !== "page0") && !this.props.comments[page] && this.props.url) {
           api.getCommentsPage(
-            this.props.path, 
-            this.props.url, 
-            this.props.linkPage, 
-            this.props.linkIndex, 
+            this.props.path,
+            this.props.url,
             this.props.commentPage);
         }
       }
@@ -50,7 +49,7 @@ export class Comments extends Component {
     : {};
 
     let total = !!props.comments
-    ? props.comments["total-pages"]
+    ? props.comments.totalPages
     : {};
 
     let commentsList = Object.keys(commentsPage)

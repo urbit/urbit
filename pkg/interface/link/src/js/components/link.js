@@ -20,15 +20,17 @@ export class LinkDetail extends Component {
   }
   
   componentDidMount() {
-    // if we have preloaded our data,
-    // but no comments, grab the comments
-    if (!!this.props.data.url) {
-      let props = this.props;
-      let comments = !!props.data.comments;
-      
-      if (!comments) {
-        api.getComments(props.path, props.data.url, props.page, props.link);
+    // if we have no preloaded data, and we aren't expecting it, get it
+    if (this.props.page != 0 && (!this.props.data || !this.props.data.url)) {
+      api.getPage(this.props.path, this.props.page);
+    } else {
+
+      // if we have preloaded our data,
+      // but no comments, grab the comments
+      if (!!this.props.comments) {
+        api.getCommentsPage(this.props.path, this.props.data.url, this.props.commentPage);
       }
+
     }
 
     this.updateTimeSinceNewestMessageInterval = setInterval( () => {
@@ -41,10 +43,10 @@ export class LinkDetail extends Component {
     // load the comments -- DidMount will fail
     if (this.props.data.url !== prevProps.data.url) {
       let props = this.props;
-      let comments = !!this.props.data.comments;
-      
+      let comments = !!this.props.comments;
+
       if (!comments && this.props.data.url) {
-        api.getComments(props.path, props.data.url, props.page, props.link);
+        api.getCommentsPage(props.path, props.data.url, props.commentPage);
       }
     }
 

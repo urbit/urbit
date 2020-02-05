@@ -32,7 +32,8 @@ export class Root extends Component {
     let paths = !!state.contacts ? state.contacts : {};
 
     let links = !!state.links ? state.links : {};
-    
+    let comments = !!state.comments ? state.comments : {};
+
     return (
       <BrowserRouter>
         <Route exact path="/~link"
@@ -106,8 +107,13 @@ export class Root extends Component {
               let page = props.match.params.page || 0;
 
               let data = !!links[groupPath]
-              ? links[groupPath]["page" + page][index] 
-              : {};
+                ? !!links[groupPath]["page" + page]
+                  ? links[groupPath]["page" + page][index]
+                  : {}
+                : {};
+              let coms = !comments[groupPath]
+                ? {}
+                : comments[groupPath][data.url];
 
               let commentPage = props.match.params.commentpage || 0;
 
@@ -130,6 +136,7 @@ export class Root extends Component {
                   popout={popout}
                   sidebarShown={state.sidebarShown}
                   data={data}
+                  comments={coms}
                   commentPage={commentPage}
                   />
                 </Skeleton>

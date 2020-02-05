@@ -19,11 +19,9 @@ export class LinkSubmit extends Component {
     let title = (this.state.linkTitle)
     ? this.state.linkTitle
     : this.state.linkValue;
-    let request = api.postLink(this.props.path, link, title);
-
-    if (request) {
-      this.setState({linkValue: "", linkTitle: ""})
-    }
+    api.postLink(this.props.path, link, title).then((r) => {
+      this.setState({linkValue: "", linkTitle: ""});
+    });
   }
 
   setLinkValid(link) {
