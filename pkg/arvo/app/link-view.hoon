@@ -175,6 +175,7 @@
     %html  (html-response:gen u.file)
     %js    (js-response:gen u.file)
     %css   (css-response:gen u.file)
+    %png   (png-response:gen u.file)
   ==
 ::
 ++  get-file-at
@@ -182,7 +183,7 @@
   ^-  (unit octs)
   ::  only expose html, css and js files for now
   ::
-  ?.  ?=(?(%html %css %js) ext)
+  ?.  ?=(?(%html %css %js %png) ext)
     ~
   =/  =path
     :*  (scot %p our.bowl)
