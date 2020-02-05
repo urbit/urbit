@@ -1,92 +1,141 @@
 import _ from 'lodash';
 
+const PAGE_SIZE = 25;
+
 export class LinkUpdateReducer {
   reduce(json, state) {
-    let data = _.get(json, 'link-update', false);
-    if (data) {
-      this.add(data, state);
-      this.comments(data, state);
-      this.commentAdd(data, state);
-      this.commentPage(data, state);
-      this.page(data, state);
-    }
+    this.submissionsPage(json, state);
+    this.submissionsUpdate(json, state);
+    this.discussionsPage(json, state);
+    this.discussionsUpdate(json, state);
   }
 
-  add(json, state) {
-    // pin ok'd link POSTs to top of page0
-    let data = _.get(json, 'add', false);
+  submissionsPage(json, state) {
+    let data = _.get(json, 'initial-submissions', false);
     if (data) {
-    let path = Object.keys(data)[0];
-    let tempArray = state.links[path].page0;
-    tempArray.unshift(data[path]);
-    state.links[path].page0 = tempArray;
-    }
-  }
+      //  { "initial-submissions": {
+      //    "/~ship/group": {
+      //      page: [{ship, timestamp, title, url}]
+      //      page-number: 0
+      //      total-items: 1
+      //      total-pages: 1
+      //    }
+      //  } }
 
-  comments(json, state) {
-    let data = _.get(json, 'comments', false);
-    if (data) {
-      let path = data.path;
-      let page = "page" + data.page;
-      let index = data.index;
-      let storage = state.links[path][page][index];
+      for (var path of Object.keys(data)) {
+        const here = data[path];
+        const page = "page" + here.pageNumber;
 
-      storage.comments = {};
-      storage.comments["page0"] = data.data.page;
-      storage.comments["total-items"] = data.data["total-items"];
-      storage.comments["total-pages"] = data.data["total-pages"];
+        // if we didn't have any state for this path yet, initialize.
+        if (!state.links[path]) {
+          state.links[path] = {};
+        }
 
-      state.links[path][page][index] = storage;
-    }
-  }
-
-  commentAdd(json, state) {
-    let data = _.get(json, 'commentAdd', false);
-    if (data) {
-      let path = data.path;
-      let page = "page" + data.page;
-      let index = data.index;
-
-      let ship = window.ship;
-      let time = data.time;
-      let udon = data.udon;
-      let tempObj = {
-        'ship': ship,
-        'time': time,
-        'udon': udon
+        // since data contains an up-to-date full version of the page,
+        // we can safely overwrite the one in state.
+        state.links[path][page] = here.page;
+        state.links[path].totalPages = here.totalPages;
+        state.links[path].totalItems = here.totalItems;
       }
-
-      let tempArray = state.links[path][page][index].comments["page0"];
-      tempArray.unshift(tempObj);
-      state.links[path][page][index].comments["page0"] = tempArray;
     }
   }
 
-  commentPage(json, state) {
-    let data = _.get(json, 'commentPage', false);
+  submissionsUpdate(json, state) {
+    let data = _.get(json, 'submissions', false);
     if (data) {
-      let path = data.path;
-      let linkPage = "page" + data.linkPage;
-      let linkIndex = data.index;
-      let commentPage = "page" + data.comPageNo;
+      //  { "submissions": {
+      //    path: /~ship/group
+      //    pages: [{ship, timestamp, title, url}]
+      //  } }
 
-      if (!state.links[path]) {
-        return false;
-      }
+      const path = data.path;
 
-      state.links[path][linkPage][linkIndex].comments[commentPage] = data.data;
+      // stub in a comment count, which is more or less guaranteed to be 0
+      data.pages = data.pages.map(submission => {
+        submission.commentCount = 0;
+        return submission;
+      });
+
+      // add the new submissions to state, update totals
+      state.links[path] = this._addNewItems(
+        data.pages, state.links[path]
+      );
     }
   }
 
-  page(json, state) {
-    let data = _.get(json, 'page', false);
+  discussionsPage(json, state) {
+    let data = _.get(json, 'initial-discussions', false);
     if (data) {
-      let path = Object.keys(data)[0];
-      let page = "page" + data[path].page;
-      if (!state.links[path]) {
-        state.links[path] = {};
+      //  { "initial-discussions": {
+      //    path: "/~ship/group"
+      //    url: https://urbit.org/
+      //    page: [{ship, timestamp, title, url}]
+      //    page-number: 0
+      //    total-items: 1
+      //    total-pages: 1
+      //  } }
+
+      const path = data.path;
+      const url = data.url;
+      const page = "page" + data.pageNumber;
+
+      // if we didn't have any state for this path yet, initialize.
+      if (!state.comments[path]) {
+        state.comments[path] = {};
       }
-      state.links[path][page] = data[path].links;
+      if (!state.comments[path][url]) {
+        state.comments[path][url] = {};
+      }
+      let here = state.comments[path][url];
+
+      // since data contains an up-to-date full version of the page,
+      // we can safely overwrite the one in state.
+      here[page] = data.page;
+      here.totalPages = data.totalPages;
+      here.totalItems = data.totalItems;
     }
   }
+
+  discussionsUpdate(json, state) {
+    let data = _.get(json, 'discussions', false);
+    if (data) {
+      //  { "discussions": {
+      //    path: /~ship/path
+      //    url: 'https://urbit.org'
+      //    comments: [{ship, timestamp, udon}]
+      //  } }
+
+      const path = data.path;
+      const url = data.url;
+
+      // add new comments to state, update totals
+      state.comments[path][url] = this._addNewItems(
+        data.comments, state.comments[path][url]
+      );
+    }
+  }
+
+//
+
+  _addNewItems(items, pages = {}, page = 0) {
+    //TODO  kinda want to refactor this, have it just be number indexes
+    const i = "page" + page;
+    //TODO  but if there's more on the page than just the things we're
+    //      pushing onto it, we won't load that in. should do an
+    //      additional check (+ maybe load) on page-nav, right?
+    if (!pages[i]) {
+      pages[i] = [];
+    }
+    pages[i] = items.concat(pages[i]);
+    if (pages[i].length <= PAGE_SIZE) {
+      pages.totalPages = page + 1;
+      pages.totalItems = (page * PAGE_SIZE) + pages[i].length;
+      return pages;
+    }
+    // overflow into next page
+    const tail = pages[i].slice(PAGE_SIZE);
+    pages[i].length = PAGE_SIZE;
+    return this._addNewItems(tail, pages, page+1);
+  }
+
 }
