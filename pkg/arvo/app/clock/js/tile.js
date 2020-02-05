@@ -7198,9 +7198,17 @@
             }());
             });
 
-            const _jsxFileName = "/Users/gavinatkinson/Documents/Apps/urbit/pkg/interface/clock/tile/tile.js";
-            const outerSize = 234; //tile size
-            const innerSize = 218; //clock size
+            const _jsxFileName = "/Users/matilde/git/urbit/pkg/interface/clock/tile/tile.js";
+            const outerSize = 126; //tile size
+            const innerSize = 110; //clock size
+
+            //polar to cartesian
+            // var ptc = function(r, theta) {
+            //   return {
+            //     x: r * Math.cos(theta),
+            //     y: r * Math.sin(theta)
+            //   }
+            // }
 
             const toRelativeTime = (date, referenceTime, unit) => moment(date)
               .diff(referenceTime, unit);
@@ -7213,22 +7221,6 @@
             const splitArc = (start, end) => end + ((start - end) * 0.5);
 
             const isOdd = n => Math.abs(n % 2) == 1;
-
-
-            // const toDayRadians = (mins) => {
-            //   const totalMinsInDay = 1440
-            //   const percPerRad = 0.062831853071796
-            //         const offset = 1.6605563436923663
-            //   return ((mins / 1400) * percPerRad * 100) - offset
-            // }
-
-            // console.log(toDayRadians(1440/2))
-
-            // const convert = (date, referenceTime) => {
-            //   return toDayRadians(toRelMinutes(date, referenceTime))
-            // }
-
-
 
             const radToDeg = (rad) => rad * (180 / Math.PI);
 
@@ -7269,11 +7261,7 @@
               constructor(props) {
                 super(props);
                 this.animate = this.animate.bind(this);
-                // this.hourHand = this.hourHand.bind(this);
-                // this.minuteHand = this.minuteHand.bind(this);
-                // this.secondHand = this.secondHand.bind(this);
                 this.canvasRef = react.createRef();
-                this.dodecagonImg = null;
                 this.canvas = null;
                 this.angle = 0;
                 this.referenceTime = moment().startOf('day').subtract(6, 'hours');
@@ -7327,15 +7315,13 @@
                     nauticalDusk: convert(suncalc$1.nauticalDusk, this.referenceTime),
                   };
 
-                  console.log(convertedSunCalc);
-
                   this.setState({
                     lat,
                     lon,
                     ...convertedSunCalc,
                     geolocationSuccess: true,
                   }, (err) => {
-                    console.log(err);
+                    if (err) console.log(err);
                   }, { maximumAge: Infinity, timeout: 10000 });
                 });
                 this.animate();
@@ -7346,11 +7332,9 @@
                 window.setTimeout(() => window.requestAnimationFrame(this.animate), 1000);
 
                 const { state } = this;
-                var time = new Date();
-                //continuously animate
-                var c = this.canvas;
-                var ctx = c.getContext("2d");
-                ctx.clearRect(0, 0, c.width, c.height);
+                const time = new Date();
+                const ctx = this.canvas.getContext("2d");
+                ctx.clearRect(0, 0, ctx.width, ctx.height);
                 ctx.save();
 
                 const ctr = innerSize / 2;
@@ -7360,7 +7344,7 @@
                 var newX = cx + (ctr - 24) * Math.cos(this.angle);
                 var newY = cy + (ctr - 24) * Math.sin(this.angle);
 
-
+                // Initial background
                 circle(
                   ctx,
                   ctr,
@@ -7371,6 +7355,7 @@
                   '#FFFFFF'
                 );
 
+                // Day
                 degArc(
                   ctx,
                   ctr,
@@ -7380,8 +7365,6 @@
                   state.sunset,
                   '#6792FF'
                 );
-
-
 
                 // Sunrise
                 degArc(
@@ -7436,7 +7419,7 @@
                     ctx,
                     newX-1/2,
                     newY-1/2,
-                    16,
+                    8,
                     0,
                     2 * Math.PI,
                     '#FCC440'
@@ -7447,7 +7430,7 @@
                     ctx,
                     newX-1/2,
                     newY-1/2,
-                    16,
+                    8,
                     0,
                     2 * Math.PI,
                     '#6792FF',
@@ -7459,17 +7442,17 @@
                     ctx,
                     newX-1/2,
                     newY-1/2,
-                    16,
+                    8,
                     0,
                     2 * Math.PI,
                     '#FFFFFF'
                   );
-
+                  // Moon circle outline
                   circleOutline(
                     ctx,
                     newX-1/2,
                     newY-1/2,
-                    16,
+                    8,
                     0,
                     2 * Math.PI,
                     '#000000',
@@ -7530,29 +7513,26 @@
                 const dateText = moment().format('MMM Do');
                 ctx.textAlign = 'center';
                 ctx.fillStyle = '#FFFFFF';
-                ctx.font = '16px Inter';
+                ctx.font = '12px Inter';
                 ctx.fillText(timeText, ctr, ctr + 6 - 12);
                 ctx.fillStyle = '#B1B1B1';
-                ctx.font = '16px Inter';
+                ctx.font = '12px Inter';
                 ctx.fillText(dateText, ctr, ctr + 6 + 12);
 
                 ctx.restore();
-
-
               }
 
               render() {
-                return react.createElement('div', { style: {position:'relative'}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 373}}
+                return react.createElement('div', { style: {position:'relative'}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 346}}
                   , react.createElement('canvas', {
                   style: {position:'absolute'},
                   ref:  canvasRef => this.canvasRef = canvasRef ,
-                  id: "clock-canvas", __self: this, __source: {fileName: _jsxFileName, lineNumber: 374}})
+                  id: "clock-canvas", __self: this, __source: {fileName: _jsxFileName, lineNumber: 347}})
                 )
               }
             }
 
             class ClockTile extends react_1 {
-
               constructor(props) {
                 super(props);
               }
@@ -7562,8 +7542,8 @@
                   react.createElement('div', { className: "pa2", style: {
                     width: outerSize,
                     height: outerSize,
-                    background: 'rgba(0,0,0,1)'
-                  }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 390}}
+                    background: '#fff'
+                  }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 362}}
                     , child
                   )
                 );
@@ -7573,7 +7553,7 @@
                 let data = !!this.props.data ? this.props.data : {};
 
                 return this.renderWrapper((
-                  react.createElement(Clock, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 404}})
+                  react.createElement(Clock, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 376}})
                 ));
 
               }

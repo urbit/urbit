@@ -2123,7 +2123,7 @@
             }());
             });
 
-            const _jsxFileName = "/Users/jimmy/tlon/urbit/pkg/interface/publish/tile/tile.js";
+            const _jsxFileName = "/Users/matilde/git/urbit/pkg/interface/publish/tile/tile.js";
 
             class PublishTile extends react_1 {
               constructor(props){
@@ -2134,21 +2134,21 @@
 
               render(){
                 return (
-                  react.createElement('div', { className: "w-100 h-100 relative"  , style: {background: "#1a1a1a"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 14}}
+                  react.createElement('div', { className: "w-100 h-100 relative bg-white ba b--black"     , __self: this, __source: {fileName: _jsxFileName, lineNumber: 14}}
                     , react.createElement('a', { className: "w-100 h-100 db no-underline"   , href: "/~publish", __self: this, __source: {fileName: _jsxFileName, lineNumber: 15}}
-                      , react.createElement('p', { className: "gray label-regular b absolute"   ,
-                        style: {left: 8, top: 4}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 16}}, "Publish"
+                      , react.createElement('p', { className: "black f9 absolute"  ,
+                        style: {left: 8, top: 8}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 16}}, "Publishing"
 
                       )
                       , react.createElement('img', {
                         className: "absolute",
-                        style: {left: 60, top: 66},
+                        style: {left: 39, top: 39},
                         src: "/~publish/tile.png",
-                        width: 113,
-                        height: 102, __self: this, __source: {fileName: _jsxFileName, lineNumber: 20}} )
-                      , react.createElement('div', { className: "absolute w-100 flex-col body-regular white"    ,
+                        width: 48,
+                        height: 48, __self: this, __source: {fileName: _jsxFileName, lineNumber: 20}} )
+                      , react.createElement('div', { className: "absolute w-100 flex-col f9"   ,
                         style: {verticalAlign: "bottom", bottom: 8, left: 8}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 26}}
-                        , react.createElement('span', { className: "green-medium", __self: this, __source: {fileName: _jsxFileName, lineNumber: 28}}, this.props.data.notifications)
+                        , react.createElement('span', { className: "green2", __self: this, __source: {fileName: _jsxFileName, lineNumber: 28}}, this.props.data.notifications)
                       )
                     )
                   )

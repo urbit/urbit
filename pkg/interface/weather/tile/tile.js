@@ -8,12 +8,7 @@ class IconWithData extends Component {
 
     return (
       <div className='mt2'>
-        <img
-          src={'/~weather/img/' + props.icon + '.png'}
-          width={20}
-          height={20}
-          className="dib mr2" />
-        <p className="label-small dib white">{props.text}</p>
+        <p className="f9 white">{props.text}</p>
       </div>
     );
   }
@@ -73,11 +68,12 @@ export default class WeatherTile extends Component {
 
   renderWrapper(child) {
     return (
-      <div className="pa2 relative" style={{
-        width: 234,
-        height: 234,
-        background: '#1a1a1a'
-      }}>
+      <div
+        className="pa2 relative bg-white b--black ba"
+        style={{
+          width: 126,
+          height: 126,
+        }}>
         {child}
       </div>
     );
@@ -88,53 +84,65 @@ export default class WeatherTile extends Component {
     let error;
     if (this.state.error === true) {
       error = <p
-          className="label-small red pt1">
+          className="f9 red2 pt1">
           Incorrect latitude/longitude formatting. Please try again. <br/>
           (eg. "29.558107, -95.089023")
         </p>
     }
     if (location.protocol === "https:") {
       secureCheck = <a
-        className="label-regular b gray absolute pointer"
-        style={{right: 8, top: 4}}
-        onClick={() => this.locationSubmit()}>Detect location -></a>
+        className="black f9 absolute pointer"
+        style={{right: 8, top: 8}}
+        onClick={() => this.locationSubmit()}>Detect -></a>
     }
-    return this.renderWrapper((
+    return this.renderWrapper(
       <div>
-        <a style={{"color": "white", "cursor": "pointer"}}
-        onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>
-        &lt;&#45;
+        <a
+          className="f9 black pointer"
+          onClick={() =>
+            this.setState({ manualEntry: !this.state.manualEntry })
+          }>
+          &lt;&#45;
         </a>
         {secureCheck}
-        <p className="label-regular white pt2">
-        Please enter your <a className="white" href="https://latitudeandlongitude.org/" target="_blank">latitude and longitude</a>.</p>
+        <p className="f9 black pt2">
+          Please enter your{" "}
+          <a
+            className="white"
+            href="https://latitudeandlongitude.org/"
+            target="_blank">
+            latitude and longitude
+          </a>
+          .
+        </p>
         {error}
-        <form className="flex absolute" style={{"bottom": 0, "left": 8}}>
-          <input id="gps"
-            className="white pa1 bg-transparent outline-0 bn bb-ns b--white"
-            style={{width: "86%"}}
-            type="text"
-            placeholder="29.558107, -95.089023"
-            onKeyDown={this.keyPress.bind(this)}>
-          </input>
-          <input className="bg-transparent inter white w-20 outliner-0 bn pointer"
-            type="submit"
-            onClick={() => this.manualLocationSubmit()}
-            value="->">
-          </input>
-        </form>
+        <div className="flex">
+          <form className="flex absolute" style={{ bottom: 0, left: 8 }}>
+            <input
+              id="gps"
+              className="w-100 black pa1 bg-transparent outline-0 bn bb-ns b--black f9"
+              type="text"
+              placeholder="29.558107, -95.089023"
+              onKeyDown={this.keyPress.bind(this)}></input>
+            <input
+              className="bg-transparent black outliner-0 bn pointer f9 flex-shrink-0"
+              type="submit"
+              onClick={() => this.manualLocationSubmit()}
+              value="->"></input>
+          </form>
+        </div>
       </div>
-    ))
+    );
   }
 
   renderNoData() {
     return this.renderWrapper((
       <div onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>
-          <p className="gray label-regular b absolute"
-            style={{left: 8, top: 4}}>
+          <p className="black f9 absolute"
+            style={{left: 8, top: 8}}>
             Weather
           </p>
-        <p className="absolute w-100 flex-col body-regular white" style={{verticalAlign: "bottom", bottom: 8, left: 8, cursor: "pointer"}}>-> Set location</p>
+        <p className="absolute w-100 flex-col f9 black" style={{verticalAlign: "bottom", bottom: 8, left: 8, cursor: "pointer"}}>-> Set location</p>
       </div>
     ));
   }
@@ -145,58 +153,26 @@ export default class WeatherTile extends Component {
 
     let da = moment.unix(d.sunsetTime).format('h:mm a') || '';
 
-    return this.renderWrapper((
+    return this.renderWrapper(
       <div>
-          <p className="gray label-regular b absolute"
-            style={{left: 8, top: 4}}>
-            Weather
-          </p>
-          <a className="label-regular b gray absolute pointer"
-            style={{right: 8, top: 4}}
-            onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>Update location -></a>
-        <div className="w-100 mb2 mt2 absolute"
-            style={{left: 18, top: 28}}>
-          <img
-            src={'/~weather/img/' + c.icon + '.png'}
-            width={64}
-            height={64}
-            className="dib" />
-          <h2
-            className="dib ml2 white"
-            style={{
-              fontSize: 72,
-              lineHeight: '64px',
-              fontWeight: 400
-            }}>
-            {Math.round(c.temperature)}°</h2>
-        </div>
-        <div className="w-100 cf absolute"
-        style={{ left: 18, top: 118 }}>
-          <div className="fl w-50">
-            <IconWithData
-              icon='winddirection'
-              text={c.windBearing + '°'} />
-            <IconWithData
-              icon='chancerain'
-              text={(c.precipProbability * 100) + '%'} />
-            <IconWithData
-              icon='windspeed'
-              text={Math.round(c.windSpeed) + ' mph'} />
-          </div>
-          <div className="fr w-50">
-            <IconWithData
-              icon='sunset'
-              text={da} />
-            <IconWithData
-              icon='low'
-              text={Math.round(d.temperatureLow) + '°'} />
-            <IconWithData
-              icon='high'
-              text={Math.round(d.temperatureHigh) + '°'} />
-          </div>
+        <p className="black f9 absolute" style={{ left: 8, top: 8 }}>
+          Weather
+        </p>
+        <a
+          className="black f9 absolute pointer"
+          style={{ right: 8, top: 8 }}
+          onClick={() =>
+            this.setState({ manualEntry: !this.state.manualEntry })
+          }>
+          ->
+        </a>
+        <div className="w-100 absolute" style={{ left: 8, bottom: 8 }}>
+          <p className="f9 black">{c.summary}</p>
+          <p className="f9 pt1 black">{Math.round(c.temperature)}°</p>
+          <p className="f9 pt1 black">Sunset at {da}</p>
         </div>
       </div>
-    ));
+    );
   }
 
   render() {

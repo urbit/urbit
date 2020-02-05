@@ -19384,19 +19384,19 @@
               render() {
 
                 return (
-                  react.createElement('div', { className: "w-100 h-100 relative ba b--black"    , style: { background: "#FFFFFF" }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 12}}
-                    , react.createElement('a', { className: "w-100 h-100 db pa2 no-underline"    , href: "/~link", __self: this, __source: {fileName: _jsxFileName, lineNumber: 13}}
+                  react.createElement('div', { className: "w-100 h-100 relative ba b--black bg-white"     , __self: this, __source: {fileName: _jsxFileName, lineNumber: 12}}
+                    , react.createElement('a', { className: "w-100 h-100 db pa2 bn"    , href: "/~link", __self: this, __source: {fileName: _jsxFileName, lineNumber: 13}}
                       , react.createElement('p', {
-                        className: "label-regular b absolute"  ,
-                        style: { left: 8, top: 4 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 14}}, "Links"
+                        className: "f9 black absolute"  ,
+                        style: { left: 8, top: 8 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 14}}, "Links"
 
                       )
                       , react.createElement('img', {
                         className: "absolute",
-                        style: { left: 69, top: 69 },
+                        style: { left: 39, top: 39 },
                         src: "/~link/img/Tile.png",
-                        width: 96,
-                        height: 96, __self: this, __source: {fileName: _jsxFileName, lineNumber: 19}}
+                        width: 48,
+                        height: 48, __self: this, __source: {fileName: _jsxFileName, lineNumber: 19}}
                       )
                     )
                   )

@@ -3,8 +3,8 @@ import classnames from 'classnames';
 import moment from 'moment'
 import SunCalc from 'suncalc'
 
-const outerSize = 234; //tile size
-const innerSize = 218; //clock size
+const outerSize = 126; //tile size
+const innerSize = 110; //clock size
 
 //polar to cartesian
 // var ptc = function(r, theta) {
@@ -151,7 +151,7 @@ class Clock extends Component {
     const { state } = this
     const time = new Date();
     const ctx = this.canvas.getContext("2d");
-    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.clearRect(0, 0, ctx.width, ctx.height);
     ctx.save();
 
     const ctr = innerSize / 2
@@ -239,7 +239,7 @@ class Clock extends Component {
         ctx,
         newX-1/2,
         newY-1/2,
-        16,
+        8,
         0,
         2 * Math.PI,
         '#FCC440'
@@ -250,7 +250,7 @@ class Clock extends Component {
         ctx,
         newX-1/2,
         newY-1/2,
-        16,
+        8,
         0,
         2 * Math.PI,
         '#6792FF',
@@ -262,7 +262,7 @@ class Clock extends Component {
         ctx,
         newX-1/2,
         newY-1/2,
-        16,
+        8,
         0,
         2 * Math.PI,
         '#FFFFFF'
@@ -272,7 +272,7 @@ class Clock extends Component {
         ctx,
         newX-1/2,
         newY-1/2,
-        16,
+        8,
         0,
         2 * Math.PI,
         '#000000',
@@ -333,10 +333,10 @@ class Clock extends Component {
     const dateText = moment().format('MMM Do')
     ctx.textAlign = 'center'
     ctx.fillStyle = '#FFFFFF'
-    ctx.font = '16px Inter'
+    ctx.font = '12px Inter'
     ctx.fillText(timeText, ctr, ctr + 6 - 12)
     ctx.fillStyle = '#B1B1B1'
-    ctx.font = '16px Inter'
+    ctx.font = '12px Inter'
     ctx.fillText(dateText, ctr, ctr + 6 + 12)
 
     ctx.restore();
@@ -362,7 +362,7 @@ export default class ClockTile extends Component {
       <div className="pa2" style={{
         width: outerSize,
         height: outerSize,
-        background: 'rgba(0,0,0,1)'
+        background: '#fff'
       }}>
         {child}
       </div>

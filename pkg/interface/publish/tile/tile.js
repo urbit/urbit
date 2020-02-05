@@ -11,21 +11,21 @@ export default class PublishTile extends Component {
 
   render(){
     return (
-      <div className="w-100 h-100 relative" style={{background: "#1a1a1a"}}>
+      <div className="w-100 h-100 relative bg-white ba b--black">
         <a className="w-100 h-100 db no-underline" href="/~publish">
-          <p className="gray label-regular b absolute"
-            style={{left: 8, top: 4}}>
-            Publish
+          <p className="black f9 absolute"
+            style={{left: 8, top: 8}}>
+            Publishing
           </p>
           <img
             className="absolute"
-            style={{left: 60, top: 66}}
+            style={{left: 39, top: 39}}
             src="/~publish/tile.png"
-            width={113}
-            height={102} />
-          <div className="absolute w-100 flex-col body-regular white"
+            width={48}
+            height={48} />
+          <div className="absolute w-100 flex-col f9"
             style={{verticalAlign: "bottom", bottom: 8, left: 8}}>
-            <span className="green-medium">{this.props.data.notifications}</span>
+            <span className="green2">{this.props.data.notifications}</span>
           </div>
         </a>
       </div>
