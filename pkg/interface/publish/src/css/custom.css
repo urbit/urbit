@@ -167,7 +167,14 @@ a {
   outline: 0px solid transparent;
 }
 
-
+.dropdown::after {
+  content: "⌃";
+  transform: rotate(180deg);
+  position: absolute;
+  right: 8px;
+  top: 16px;
+  color: #7f7f7f;
+}
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
