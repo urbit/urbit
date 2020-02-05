@@ -100,9 +100,17 @@
       ==
     ==
   ::
+  ++  on-arvo
+    |=  [=wire =sign-arvo]
+    ^-  (quip card _this)
+    ?.  ?=([%e %bound *] sign-arvo)
+      (on-arvo:def wire sign-arvo)
+    ~?  !accepted.sign-arvo
+      [dap.bowl "bind rejected!" binding.sign-arvo]
+    [~ this]
+  ::
   ++  on-peek   on-peek:def
   ++  on-leave  on-leave:def
-  ++  on-arvo   on-arvo:def
   ++  on-fail   on-fail:def
   --
 ::
