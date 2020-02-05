@@ -124,18 +124,6 @@ export class NewScreen extends Component {
       this.textarea.value = '';
     }
 
-    // TODO: don't do this, it's shitty
-    let writeAud;
-    let readAud;
-
-    if (state.security === 'village') {
-      aud.push(`~${window.ship}`);
-      readAud = aud.slice(); // white list
-      writeAud = aud.slice(); // white list
-    } else if (state.security === 'channel') {
-      readAud = []; // black list
-      writeAud = []; // black list
-    }
     this.setState({
       error: false,
       success: true,
@@ -145,14 +133,12 @@ export class NewScreen extends Component {
       }
     }, () => {
       props.setSpinner(true);
+      // if we want a "proper group" that can be managed from the contacts UI,
+      // we make a path of the form /~zod/cool-group
+      // if not, we make a path of the form /~/~zod/free-chat
       props.api.chatView.create(
-        station, state.security, readAud, writeAud, state.allowHistory
+        `/~${window.ship}${station}`, state.security, aud, state.allowHistory
       );
-      aud.forEach((ship) => {
-        if (ship !== `~${window.ship}`) {
-          props.api.invite.invite(station, ship);
-        }
-      });
     });
   }
 

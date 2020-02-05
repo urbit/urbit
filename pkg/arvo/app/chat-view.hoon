@@ -4,6 +4,7 @@
 /-  *permission-store,
     *permission-hook,
     *group-store,
+    *invite-store,
     *permission-group-hook,
     *chat-hook
 /+  *server, *chat-json, default-agent
@@ -186,53 +187,95 @@
 ++  poke-json
   |=  jon=json
   ^-  (list card)
-  ?.  =(src.bol our.bol)
-    ~
+  ?>  (team:title our.bol src.bol)
   (poke-chat-view-action (json-to-view-action jon))
 ::
 ++  poke-chat-view-action
   |=  act=chat-view-action
   ^-  (list card)
-  ?.  =(src.bol our.bol)
-    ~
+  |^
+  ?>  (team:title our.bol src.bol)
   ?-  -.act
       %create
-    =/  pax  [(scot %p our.bol) path.act]
-    =/  group-read=path  [%chat (weld pax /read)]
-    =/  group-write=path  [%chat (weld pax /write)]
+    ?^  (chat-scry path.act)
+      ~&  %chat-already-exists
+      ~
     %-  zing
-    :~  :~  (group-poke [%bundle group-read])
-            (group-poke [%bundle group-write])
-            (group-poke [%add read.act group-read])
-            (group-poke [%add write.act group-write])
-            (chat-poke [%create our.bol path.act])
-            (chat-hook-poke [%add-owned pax security.act allow-history.act])
-        ==
-        (create-security [%chat pax] security.act)
-        :~  (permission-hook-poke [%add-owned group-read group-read])
-            (permission-hook-poke [%add-owned group-write group-read])
-        ==
+    :~  (create-chat path.act security.act allow-history.act)
+        (create-managed-group path.act security.act members.act)
+        (create-security path.act security.act)
+        ~[(permission-hook-poke [%add-owned path.act path.act])]
+        %+  turn  ~(tap in members.act)
+        |=  =ship
+        (send-invite-poke path.act ship)
     ==
   ::
       %delete
-    =/  group-read  [%chat (weld path.act /read)]
-    =/  group-write  [%chat (weld path.act /write)]
     :~  (chat-hook-poke [%remove path.act])
-        (permission-hook-poke [%remove group-read])
-        (permission-hook-poke [%remove group-write])
-        (group-poke [%unbundle group-read])
-        (group-poke [%unbundle group-write])
+        (permission-hook-poke [%remove path.act])
         (chat-poke [%delete path.act])
     ==
   ::
       %join
-    =/  group-read  [%chat (scot %p ship.act) (weld path.act /read)]
-    =/  group-write  [%chat (scot %p ship.act) (weld path.act /write)]
     :~  (chat-hook-poke [%add-synced ship.act path.act ask-history.act])
-        (permission-hook-poke [%add-synced ship.act group-write])
-        (permission-hook-poke [%add-synced ship.act group-read])
+        (permission-hook-poke [%add-synced ship.act path.act])
     ==
   ==
+  ::
+  ++  create-chat
+    |=  [=path security=rw-security history=?]
+    ^-  (list card)
+    :~  [(chat-poke [%create path])]
+        [(chat-hook-poke [%add-owned path security history])]
+    ==
+  ::
+  ++  create-managed-group
+    |=  [=path security=rw-security ships=(set ship)]
+    ^-  (list card)
+    ~&  [path security ships]
+    ?.  =(security %village)
+      ::  if blacklist, do nothing but create the group if it isn't there
+      ::
+      ?~((group-scry path) ~[(group-poke [%bundle path])] ~)
+    ::  if whitelist, check if group exists already. if yes, do nothing
+    ::
+    ?^  (group-scry path)  ~
+    ::  if group does not exist, send contact-view %create
+    ::
+    ~[(contact-view-poke [%create path ships])]
+  ::
+  ++  create-security
+    |=  [pax=path sec=rw-security]
+    ^-  (list card)
+    ?+  sec       ~
+        %channel
+      ~[(perm-group-hook-poke [%associate pax [[pax %black] ~ ~]])]
+    ::
+        %village
+      ~[(perm-group-hook-poke [%associate pax [[pax %white] ~ ~]])]
+    ==
+  ::
+  ++  contact-view-poke
+    |=  act=[%create =path ships=(set ship)]
+    ^-  card
+    [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
+  ::
+  ++  send-invite-poke
+    |=  [=path =ship]
+    ^-  card
+    =/  =invite
+      :*  our.bol  %chat-hook
+          path  ship  ''
+      ==
+    =/  act=invite-action  [%invite /chat (shaf %msg-uid eny.bol) invite]
+    [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
+  ::
+  ++  chat-scry
+    |=  pax=path
+    ^-  (unit mailbox)
+    =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
+    .^((unit mailbox) %gx pax)
+  --
 ::
 ++  diff-chat-update
   |=  upd=chat-update
@@ -284,30 +327,9 @@
   ^-  chat-configs
   .^(chat-configs %gx /=chat-store/(scot %da now.bol)/configs/noun)
 ::
-++  create-security
-  |=  [pax=path sec=rw-security]
-  ^-  (list card)
-  =/  read   (weld pax /read)
-  =/  write  (weld pax /write)
-  ?-  sec
-      %channel
-    :~  (perm-group-hook-poke [%associate read [[read %black] ~ ~]])
-        (perm-group-hook-poke [%associate write [[write %black] ~ ~]])
-    ==
-  ::
-      %village
-    :~  (perm-group-hook-poke [%associate read [[read %white] ~ ~]])
-        (perm-group-hook-poke [%associate write [[write %white] ~ ~]])
-    ==
-  ::
-      %journal
-    :~  (perm-group-hook-poke [%associate read [[read %black] ~ ~]])
-        (perm-group-hook-poke [%associate write [[write %white] ~ ~]])
-    ==
-  ::
-      %mailbox
-    :~  (perm-group-hook-poke [%associate read [[read %white] ~ ~]])
-        (perm-group-hook-poke [%associate write [[write %black] ~ ~]])
-    ==
-  ==
+++  group-scry
+  |=  pax=path
+  ^-  (unit group)
+  .^((unit group) %gx ;:(weld /=group-store/(scot %da now.bol) pax /noun))
+::
 --

@@ -19,7 +19,7 @@ export class SidebarInvite extends Component {
       <div className='pa3'>
         <div className='w-100 v-mid'>
           <p className="dib f8 mono gray4-d">
-            {props.invite.text}
+            {props.invite.path}
           </p>
         </div>
         <a

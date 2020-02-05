@@ -137,7 +137,7 @@
   ?.  =(u.ship our.bol)
     ~
   ::  scry permissions to check if write is permitted
-  ?.  (permitted-scry [(scot %p src.bol) %chat (weld path.act /write)])
+  ?.  (permitted-scry [(scot %p src.bol) path.act])
     ~
   =:  author.envelope.act  src.bol
       when.envelope.act  now.bol
@@ -159,19 +159,18 @@
     :_  state
     %+  weld
       [%pass chat-path %agent [our.bol %chat-store] %watch chat-path]~
-    (create-permission [%chat path.act] security.act)
+    (create-permission path.act security.act)
   ::
       %add-synced
     ?>  (team:title our.bol src.bol)
-    ?:  (~(has by synced) [(scot %p ship.act) path.act])
-      [~ state]
-    =.  synced  (~(put by synced) [(scot %p ship.act) path.act] ship.act)
+    ?:  (~(has by synced) path.act)  [~ state]
+    =.  synced  (~(put by synced) path.act ship.act)
     ?.  ask-history.act
-      =/  chat-path  [%mailbox (scot %p ship.act) path.act]
+      =/  chat-path  [%mailbox path.act]
       :_  state
       [%pass chat-path %agent [ship.act %chat-hook] %watch chat-path]~
     ::  TODO: only ask for backlog from previous point
-    =/  chat-history  [%backlog (scot %p ship.act) (weld path.act /0)]
+    =/  chat-history  [%backlog (weld path.act /0)]
     :_  state
     [%pass chat-history %agent [ship.act %chat-hook] %watch chat-history]~
   ::
@@ -185,7 +184,7 @@
       %-  zing
       :~  (pull-wire [%backlog (weld path.act /0)])
           (pull-wire [%mailbox path.act])
-          (delete-permission [%chat path.act])
+          ~[(permission-poke [%delete [%chat path.act]])]
           [%give %kick [%mailbox path.act]~ ~]~
       ==
     ?.  |(=(u.ship src.bol) (team:title our.bol src.bol))
@@ -202,10 +201,10 @@
   ?>  ?=(^ pax)
   ?>  (~(has by synced) pax)
   ::  scry permissions to check if read is permitted
-  ?>  (permitted-scry [(scot %p src.bol) %chat (weld pax /read)])
+  ?>  (permitted-scry [(scot %p src.bol) pax])
   =/  box  (chat-scry pax)
   ?~  box  !!
-  [%give %fact ~ %chat-update !>([%create (slav %p i.pax) pax])]~
+  [%give %fact ~ %chat-update !>([%create pax])]~
 ::
 ++  watch-backlog
   |=  pax=path
@@ -220,16 +219,12 @@
   ?>  ?=([* ^] pas)
   ?>  (~(has by synced) pas)
   ::  scry permissions to check if read is permitted
-  ?>  (permitted-scry [(scot %p src.bol) %chat (weld pas /read)])
-  =/  box  (chat-scry pas)
-  ?~  box  !!
-  :-  [%give %fact ~ %chat-update !>([%create (slav %p i.pas) pas])]
+  ?>  (permitted-scry [(scot %p src.bol) pas])
   %-  zing
-  :~
-    ?:  ?&(?=(^ backlog-start) (~(got by allow-history) pas))
-      (paginate-messages pas u.box u.backlog-start)
-    ~
-    [%give %kick [%backlog pax]~ `src.bol]~
+  :~  [%give %fact ~ %chat-update !>([%create pas])]~
+      ?.  ?&(?=(^ backlog-start) (~(has by allow-history) pas))  ~
+      (paginate-messages pas (need (chat-scry pas)) u.backlog-start)
+      [%give %kick [%backlog pax]~ `src.bol]~
   ==
 ::
 ++  paginate-messages
@@ -267,10 +262,7 @@
     [~ state]
   ::
       %accepted
-    =/  ask-history
-      ?~  (chat-scry [(scot %p ship.invite.fact) path.invite.fact])
-        %.y
-      %.n
+    =/  ask-history  ?~((chat-scry path.invite.fact) %.y %.n)
     :_  state
     [(chat-view-poke [%join ship.invite.fact path.invite.fact ask-history])]~
   ==
@@ -279,9 +271,7 @@
   |=  [wir=wire fact=permission-update]
   ^-  (quip card _state)
   :_  state
-  ?-  -.fact
-      %create  ~
-      %delete  ~
+  ?+  -.fact   ~
       %add     (handle-permissions [%add path.fact who.fact])
       %remove  (handle-permissions [%remove path.fact who.fact])
   ==
@@ -290,10 +280,6 @@
   |=  [kind=?(%add %remove) pax=path who=(set ship)]
   ^-  (list card)
   ?>  ?=([* *] pax)
-  ?.  =(%chat i.pax)  ~
-  ::  check path to see if this is a %read permission
-  ?.  =(%read (snag (dec (lent pax)) `(list @t)`pax))
-    ~
   %-  zing
   %+  turn  ~(tap in who)
   |=  =ship
@@ -314,11 +300,7 @@
 ++  handle-local
   |=  fact=chat-update
   ^-  (quip card _state)
-  ?-  -.fact
-      %keys      [~ state]
-      %read      [~ state]
-      %config    [~ state]
-      %create    [~ state]
+  ?+  -.fact     [~ state]
       %delete
     ?.  (~(has by synced) path.fact)
       [~ state]
@@ -337,17 +319,14 @@
 ++  handle-foreign
   |=  fact=chat-update
   ^-  (quip card _state)
-  ?-  -.fact
-      %keys    [~ state]
-      %read    [~ state]
-      %config  [~ state]
+  ?+  -.fact   [~ state]
       %create
     :_  state
     ?>  ?=([* ^] path.fact)
     =/  shp  (~(get by synced) path.fact)
     ?~  shp  ~
     ?.  =(src.bol u.shp)  ~
-    [(chat-poke [%create ship.fact t.path.fact])]~
+    [(chat-poke [%create path.fact])]~
   ::
       %delete
     ?>  ?=([* ^] path.fact)
@@ -394,20 +373,17 @@
     =/  mailbox=(unit mailbox)  (chat-scry t.wir)
     =/  chat-history
       %+  welp  backlog+t.wir
-      ?~  mailbox
-        /0
-      /(scot %ud (lent envelopes.u.mailbox))
+      ?~(mailbox /0 /(scot %ud (lent envelopes.u.mailbox)))
     :_  state
     [%pass chat-history %agent [ship %chat-hook] %watch chat-history]~
   ::
-  ?:  ?=([%backlog @ *] wir)
-    =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
-    ?.  (~(has by synced) pax)  [~ state]
-    =/  mailbox=(unit mailbox)  (chat-scry pax)
-    =.  pax  ?~(mailbox wir [%mailbox pax])
-    :_  state
-    [%pass pax %agent [(slav %p i.t.wir) %chat-hook] %watch pax]~
-  !!
+  ?.  ?=([%backlog @ *] wir)  !!
+  =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
+  ?.  (~(has by synced) pax)  [~ state]
+  =/  mailbox=(unit mailbox)  (chat-scry pax)
+  =.  pax  ?~(mailbox wir [%mailbox pax])
+  :_  state
+  [%pass pax %agent [(slav %p i.t.wir) %chat-hook] %watch pax]~
 ::
 ++  watch-ack
   |=  [wir=wire saw=(unit tang)]
@@ -451,37 +427,9 @@
 ++  create-permission
   |=  [pax=path sec=rw-security]
   ^-  (list card)
-  =/  read-perm   (weld pax /read)
-  =/  write-perm  (weld pax /write)
-  ?-  sec
-      %channel
-    :~  (permission-poke (sec-to-perm read-perm %black))
-        (permission-poke (sec-to-perm write-perm %black))
-    ==
-  ::
-      %village
-    :~  (permission-poke (sec-to-perm read-perm %white))
-        (permission-poke (sec-to-perm write-perm %white))
-    ==
-  ::
-      %journal
-    :~  (permission-poke (sec-to-perm read-perm %black))
-        (permission-poke (sec-to-perm write-perm %white))
-    ==
-  ::
-      %mailbox
-    :~  (permission-poke (sec-to-perm read-perm %white))
-        (permission-poke (sec-to-perm write-perm %black))
-    ==
-  ==
-::
-++  delete-permission
-  |=  pax=path
-  ^-  (list card)
-  =/  read-perm   (weld pax /read)
-  =/  write-perm  (weld pax /write)
-  :~  (permission-poke [%delete read-perm])
-      (permission-poke [%delete write-perm])
+  ?+  sec       ~
+      %channel  ~[(permission-poke (sec-to-perm pax %black))]
+      %village  ~[(permission-poke (sec-to-perm pax %white))]
   ==
 ::
 ++  sec-to-perm

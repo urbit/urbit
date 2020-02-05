@@ -54,7 +54,6 @@ export class Sidebar extends Component {
       })
       .map((obj) => {
         let unread = props.unreads[obj.box];
-
         return (
           <SidebarItem
             key={obj.box + '/' + obj.when}

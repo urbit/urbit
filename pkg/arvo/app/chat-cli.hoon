@@ -235,7 +235,7 @@
   |=  [=wire upd=chat-update]
   ^-  (quip card state)
   ?+  -.upd  [~ all-state]
-    %create    (notice-create +.upd)
+    %create    (notice-create (path-to-target path.upd))
     %delete    [[(show-delete:sh-out (path-to-target path.upd)) ~] all-state]
     %message   (read-envelope (path-to-target path.upd) envelope.upd)
     %messages  (read-envelopes (path-to-target path.upd) envelopes.upd)
