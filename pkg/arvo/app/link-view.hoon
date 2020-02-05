@@ -33,9 +33,12 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this
-    :~  [%pass / %arvo %e %connect [~ /'~link'] dap.bowl]
+    :~  [%pass /connect %arvo %e %connect [~ /'~link'] dap.bowl]
         [%pass /submissions %agent [our.bowl %link-store] %watch /submissions]
         [%pass /discussions %agent [our.bowl %link-store] %watch /discussions]
+      ::
+        =+  [%link-server-hook /tile '/~link/js/tile.js']
+        [%pass /launch %agent [our.bowl %launch] %poke %launch-action !>(-)]
     ==
   ::
   ++  on-save  !>(state)
@@ -70,6 +73,9 @@
       (on-watch:def path)
     =/  p=@ud  (slav %ud i.t.path)
     ?+  t.t.path  (on-watch:def path)
+        [%tile ~]
+      [~ this]
+    ::
         [%submissions ~]
       :_  this
       (give-initial-submissions:do p ~)
