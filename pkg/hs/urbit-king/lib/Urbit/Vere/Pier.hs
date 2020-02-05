@@ -131,13 +131,19 @@ resumed :: (HasStderrLogFunc e, HasPierConfig e, HasLogFunc e)
         => Maybe Word64 -> Serf.Flags
         -> RAcquire e (Serf e, EventLog, SerfState)
 resumed event flags = do
+    rio $ logTrace "Resuming ship"
     top    <- view pierPathL
     tap    <- fmap (fromMaybe top) $ rio $ runMaybeT $ do
                 ev <- MaybeT (pure event)
                 MaybeT (getSnapshot top ev)
-    rio $ logTrace $ displayShow tap
+
+    rio $ logTrace $ display @Text ("pier: " <> pack top)
+    rio $ logTrace $ display @Text ("running serf in: " <> pack tap)
+
     log    <- Log.existing (top <> "/.urb/log")
+
     serf   <- Serf.run (Serf.Config tap flags)
+
     serfSt <- rio $ Serf.replay serf log event
 
     rio $ Serf.snapshot serf serfSt
