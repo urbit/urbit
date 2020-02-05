@@ -112,7 +112,7 @@ export class Root extends Component {
                   : {}
                 : {};
               let coms = !comments[groupPath]
-                ? {}
+                ? undefined
                 : comments[groupPath][data.url];
 
               let commentPage = props.match.params.commentpage || 0;
