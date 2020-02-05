@@ -5,6 +5,9 @@
 ::    links, arbitrary paths are probably fair game, but could trip up
 ::    primitive ui implementations.
 ::
+::    urls in paths are expected to be encoded using +wood, for @ta sanity.
+::    use /lib/link's +build-discussion-path.
+::
 ::    see link-listen-hook to see what's synced in, and similarly
 ::    see link-proxy-hook to see what's exposed.
 ::
@@ -20,17 +23,15 @@
 ::
 ::      (map path (map url notes))
 ::    /annotations                          our comments
-::    /annotations/base64-url               our comments on url
-::    /annotations/base64-url/some-path     our comments on url on path
+::    /annotations/wood-url                 our comments on url
+::    /annotations/wood-url/some-path       our comments on url on path
 ::    /annotations//some-path               our comments on path
 ::
 ::      (map path (map url comments))
 ::    /discussions                          all comments
-::    /discussions/base64-url               all comments on url
-::    /discussions/base64-url/some-path     all comments on url on path
+::    /discussions/wood-url                 all comments on url
+::    /discussions/wood-url/some-path       all comments on url on path
 ::    /discussions//some-path               all comments on path
-::
-::TODO  continue work from m/uplink-broad branch!
 ::
 /+  *link, default-agent, verb, dbug
 ::

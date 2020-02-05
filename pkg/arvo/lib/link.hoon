@@ -31,7 +31,7 @@
   ::
   ++  encode-url-for-path
     |=  =url
-    (crip (en-base64:mimes:html url))
+    (scot %ta (wood url))
   --
 ::
 ++  break-discussion-path
@@ -40,7 +40,8 @@
   ?~  path  [/ '']
   :-  t.path
   ?:  =(~ i.path)  ''
-  (de-base64:mimes:html i.path)
+  ~|  path
+  (woad (slav %ta i.path))
 ::
 ::  zip sorted a into sorted b, maintaining sort order
 ::TODO  stdlib

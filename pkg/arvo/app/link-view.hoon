@@ -2,10 +2,11 @@
 ::
 ::  endpoints, mapping onto link-store's paths. p is for page as in pagination.
 ::  updates only work for page 0.
+::  as with link-store, urls are expected to use +wood encoding.
 ::
 ::    /json/[p]/submissions                           pages for all groups
 ::    /json/[p]/submissions/[some-group]              page for one group
-::    /json/[p]/discussions/[b64(url)]/[some-group]   page for url in group
+::    /json/[p]/discussions/[wood-url]/[some-group]   page for url in group
 ::
 /+  *link, *server, default-agent, verb
 ::
