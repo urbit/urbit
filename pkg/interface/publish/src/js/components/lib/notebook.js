@@ -21,7 +21,7 @@ export class Notebook extends Component {
     let scrollTop = this.scrollElement.scrollTop;
     let clientHeight = this.scrollElement.clientHeight;
     let scrollHeight = this.scrollElement.scrollHeight;
-    
+
     let atBottom = false;
     if (scrollHeight - scrollTop - clientHeight < 40) {
       atBottom = true;
@@ -60,12 +60,12 @@ export class Notebook extends Component {
   render() {
     let notebook = this.props.notebooks[this.props.ship][this.props.book];
     let tabStyles = {
-      posts: "bb b--gray4 gray2 NotebookTab",
-      about: "bb b--gray4 gray2 NotebookTab",
-//      subscribers: "bb b--gray4 gray2 NotebookTab",
-//      settings: "bb b--gray4 pr2 gray2 NotebookTab",
-    }
-    tabStyles[this.props.view] = "bb b--black black NotebookTab";
+      posts: "bb b--gray4 gray2 pv4 ph2",
+      about: "bb b--gray4 gray2 pv4 ph2"
+      //      subscribers: "bb b--gray4 gray2 pv4 ph2",
+      //      settings: "bb b--gray4 pr2 gray2 pv4 ph2",
+    };
+    tabStyles[this.props.view] = "bb b--black black pv4 ph2";
 
     let inner = null;
     switch (this.props.view) {
@@ -111,19 +111,23 @@ export class Notebook extends Component {
          </button>
 
     return (
-      <div className="center mw6 f9 h-100"
-           style={{paddingLeft:16, paddingRight:16}}>
-        <div className="h-100 overflow-container no-scrollbar"
-             onScroll={this.onScroll}
-             ref={(el) => {this.scrollElement = el}}>
-          <div className="flex justify-between"
-               style={{marginTop: 56, marginBottom: 32}}>
+      <div
+        className="center mw6 f9 h-100"
+        style={{ paddingLeft: 16, paddingRight: 16 }}>
+        <div
+          className="h-100 overflow-container no-scrollbar"
+          onScroll={this.onScroll}
+          ref={el => {
+            this.scrollElement = el;
+          }}>
+          <div
+            className="flex justify-between"
+            style={{ marginTop: 56, marginBottom: 32 }}>
             <div className="flex-col">
               <div className="mb1">{notebook.title}</div>
-              <span><span className="gray3 mr1">by</span>
-                <span className="mono">
-                  {this.props.ship}
-                </span>
+              <span>
+                <span className="gray3 mr1">by</span>
+                <span className="mono">{this.props.ship}</span>
               </span>
             </div>
             <div className="flex">
@@ -132,23 +136,24 @@ export class Notebook extends Component {
             </div>
           </div>
 
-          <div className="flex" style={{marginBottom:24}}>
+          <div className="flex" style={{ marginBottom: 24 }}>
             <Link to={base} className={tabStyles.posts}>
               All Posts
             </Link>
             <Link to={about} className={tabStyles.about}>
               About
             </Link>
-            <div className="bb b--gray4 gray2 NotebookTab" style={{flexGrow:1}}>
-            </div>
+            <div
+              className="bb b--gray4 gray2 pv4 ph2"
+              style={{ flexGrow: 1 }}></div>
           </div>
 
-          <div style={{height:"calc(100% - 188px)"}} className="f9 lh-solid">
+          <div style={{ height: "calc(100% - 188px)" }} className="f9 lh-solid">
             {inner}
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 

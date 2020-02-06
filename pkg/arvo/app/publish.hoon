@@ -173,7 +173,7 @@
       =/  uid  (sham %publish who book eny.bol)
       =/  inv=invite
         :*  our.bol  %publish  /notebook/[book]  who
-            'invite for notebook {<who>}/{<book>}'
+            (crip "invite for notebook {<who>}/{<book>}")
         ==
       =/  act=invite-action  [%invite /publish uid inv]
       [%pass /invite %agent [who %invite-hook] %poke %invite-action !>(act)]
@@ -191,12 +191,13 @@
             [%web %publish @ %publish-info ~]
           =/  book-name  i.t.t.pax
           =/  old=old-info  .^(old-info %cx (welp our-beak:main pax))
-          =/  write-pax  /~/publish/(scot %p our.bol)/[book-name]/write
-          =/  read-pax  /~/publish/(scot %p our.bol)/[book-name]/read
+          =/  group-pax  /~/publish/(scot %p our.bol)/[book-name]
           =/  book=notebook-info
-            [title.old '' =(%open comments.old) write-pax read-pax]
-          =/  grp-car=(list card)
-            (make-groups ~ writers.book ~ subscribers.book %journal)
+            [title.old '' =(%open comments.old) / /]
+          =+  ^-  [grp-car=(list card) write-pax=path read-pax=path]
+            (make-groups book-name group-pax ~ %.n %.n)
+          =.  writers.book      write-pax
+          =.  subscribers.book  read-pax
           =/  inv-car  (send-invites book-name (~(get ju old-subs) book-name))
           :-  :(weld car grp-car inv-car)
           ^-  soba:clay
@@ -522,12 +523,14 @@
           now.bol
           ~  ~  ~
       ==
-    =?  writers.new-book  =(writers.new-book /)
-      /~/publish/(scot %p our.bol)/[book-name]/write
-    =?  subscribers.new-book  =(writers.new-book /)
-      /~/publish/(scot %p our.bol)/[book-name]/read
-    =/  grp-car=(list card)
-      (make-groups ~ writers.new-book ~ subscribers.new-book %journal)
+    =/  group-path=path
+      ?:  =(writers.new-book /)
+        /~/publish/(scot %p our.bol)/[book-name]
+      writers.new-book
+    =+  ^-  [grp-car=(list card) write-pax=path read-pax=path]
+      (make-groups book-name group-path ~ %.n %.n)
+    =.  writers.new-book      write-pax
+    =.  subscribers.new-book  read-pax
     =+  ^-  [read-cards=(list card) notes=(map @tas note)]
       (watch-notes /app/publish/notebooks/[book-name])
     =.  notes.new-book  notes
@@ -810,6 +813,11 @@
   ^-  card
   [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
 ::
+++  contact-view-create
+  |=  act=[%create path (set ship)]
+  ^-  card
+  [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
+::
 ++  perm-hook-poke
   |=  act=permission-hook-action
   ^-  card
@@ -853,22 +861,80 @@
       (perm-group-hook-poke [%associate write [[write write-type] ~ ~]])
   ==
 ::
-++  make-groups
-  |=  $:  write-grp=(set ship)  write-pax=path
-          read-grp=(set ship)   read-pax=path
-          sec=rw-security
-      ==
+++  create-managed-group
+  |=  [pax=path security=rw-security ships=(set ship)]
   ^-  (list card)
-  ;:  weld
-    :~  (group-poke [%bundle write-pax])
-        (group-poke [%bundle read-pax])
-        (group-poke [%add write-grp write-pax])
-        (group-poke [%add read-grp read-pax])
+  =/  grp
+    .^((unit group) %gx ;:(weld /=group-store/(scot %da now.bol) pax /noun))
+  ?^  grp
+    ~
+  ?>  ?=(^ pax)
+  ?:  |(=('~' i.pax) !=(%village security))
+    [(group-poke [%bundle pax])]~
+  [(contact-view-create [%create pax ships])]~
+::
+++  generate-invites
+  |=  [book=@tas invitees=(set ship)]
+  ^-  (list card)
+  %+  turn  ~(tap in invitees)
+  |=  who=ship
+  =/  uid  (sham %publish who book eny.bol)
+  =/  inv=invite
+    :*  our.bol  %publish  /notebook/[book]  who
+        (crip "invite for notebook {<who>}/{<book>}")
     ==
-    (create-security read-pax write-pax sec)
-    :~  (perm-hook-poke [%add-owned write-pax write-pax])
-        (perm-hook-poke [%add-owned read-pax read-pax])
+  =/  act=invite-action  [%invite /publish uid inv]
+  [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
+::
+++  make-groups
+  |=  [book=@tas group=group-info]
+  ^-  [(list card) write=path read=path]
+  ?>  ?=(^ group-path.group)
+  ?:  use-preexisting.group
+    =/  scry-path
+      ;:(weld /=group-store/(scot %da now.bol) group-path.group /noun)
+    =/  grp  .^((unit ^group) %gx scry-path)
+    ?~  grp  !!
+    ?>  ?=(^ group-path.group)
+    ?<  =('~' i.group-path.group)
+    :_  [group-path.group group-path.group]
+    %-  zing
+    :~  (create-security group-path.group group-path.group %channel)
+        [(perm-hook-poke [%add-owned group-path.group group-path.group])]~
+        (generate-invites book (~(del in u.grp) our.bol))
     ==
+  ::
+  ?:  make-managed.group
+    =/  scry-path
+      ;:(weld /=group-store/(scot %da now.bol) group-path.group /noun)
+    =/  grp  .^((unit ^group) %gx scry-path)
+    ?^  grp  [~ group-path.group group-path.group]
+    ?>  ?=(^ group-path.group)
+    ?<  =('~' i.group-path.group)
+    :_  [group-path.group group-path.group]
+    %-  zing
+    :~  [(contact-view-create [%create group-path.group invitees.group])]~
+        (create-security group-path.group group-path.group %channel)
+        [(perm-hook-poke [%add-owned group-path.group group-path.group])]~
+        (generate-invites book (~(del in invitees.group) our.bol))
+    ==
+  ::  make unmanaged group
+  ?>  ?=(^ group-path.group)
+  ?>  =('~' i.group-path.group)
+  =*  write-path  group-path.group
+  =/  read-path   (weld write-path /read)
+  =/  scry-path=path
+    ;:(weld /=group-store/(scot %da now.bol) group-path.group /noun)
+  =/  grp  .^((unit ^group) %gx scry-path)
+  ?^  grp  [~ write-path read-path]
+  :_  [write-path read-path]
+  %-  zing
+  :~  [(group-poke [%bundle write-path])]~
+      [(group-poke [%bundle read-path])]~
+      (create-security read-path write-path %journal)
+      [(perm-hook-poke [%add-owned write-path write-path])]~
+      [(perm-hook-poke [%add-owned read-path read-path])]~
+      (generate-invites book (~(del in invitees.group) our.bol))
   ==
 ::
 ++  poke-publish-action
@@ -881,14 +947,7 @@
     ?:  (~(has by books) book.act)
       ~|("notebook already exists: {<book.act>}" !!)
     =+  ^-  [cards=(list card) write-pax=path read-pax=path]
-      ?.  ?=(%new -.group.act)
-        [~ write-pax.group.act read-pax.group.act]
-      :_  [write-pax.group.act read-pax.group.act]
-      %-  make-groups
-      :*  write-grp.group.act  write-pax.group.act
-          read-grp.group.act   read-pax.group.act
-          sec.group.act
-      ==
+      (make-groups book.act group.act)
     =/  new-book=notebook-info
       :*  title.act
           about.act
@@ -959,14 +1018,7 @@
     =+  ^-  [cards=(list card) write-pax=path read-pax=path]
       ?~  group.act
         [~ writers.u.book subscribers.u.book]
-      ?.  ?=(%new -.u.group.act)
-        [~ write-pax.u.group.act read-pax.u.group.act]
-      :_  [write-pax.u.group.act read-pax.u.group.act]
-      %-  make-groups
-      :*  write-grp.u.group.act  write-pax.u.group.act
-          read-grp.u.group.act   read-pax.u.group.act
-          sec.u.group.act
-      ==
+      (make-groups book.act u.group.act)
     =/  new-info=notebook-info
       :*  title.act
           about.act

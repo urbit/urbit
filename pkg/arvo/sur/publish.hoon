@@ -2,14 +2,11 @@
 |%
 ::
 +$  group-info
-  $%  [%old write-pax=path read-pax=path]
-      $:  %new
-          write-grp=(set ship)  write-pax=path
-          read-grp=(set ship)   read-pax=path
-          sec=rw-security
-      ==
+  $:  group-path=path
+      invitees=(set ship)
+      use-preexisting=?
+      make-managed=?
   ==
-::
 ::
 +$  action
   $%  [%new-book book=@tas title=@t about=@t coms=? group=group-info]
