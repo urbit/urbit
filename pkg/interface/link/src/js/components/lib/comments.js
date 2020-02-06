@@ -13,7 +13,10 @@ export class Comments extends Component {
 
   componentDidMount() {
     let page = "page" + this.props.commentPage;
-    if (!this.props.comments || !this.props.comments[page]) {
+    if (!this.props.comments ||
+        !this.props.comments[page] ||
+        this.props.comments.local[page]
+    ) {
       this.setState({requested: this.props.commentPage});
       api.getCommentsPage(
         this.props.path,

@@ -69,7 +69,7 @@ export class Root extends Component {
 
               let channelLinks = !!links[groupPath]
               ? links[groupPath]
-              : {};
+              : {local: {}};
 
               let channelComments = !!comments[groupPath]
                 ? comments[groupPath]

@@ -17,8 +17,11 @@ export class Links extends Component {
   }
 
   componentDidUpdate() {
-    let linkPage = "page" + this.props.page;
-    if ((this.props.page != 0) && (!this.props.links[linkPage])) {
+    const linkPage = "page" + this.props.page;
+    if ( (this.props.page != 0) &&
+         (!this.props.links[linkPage] ||
+          this.props.links.local[linkPage])
+    ) {
       api.getPage(this.props.path, this.props.page);
     }
   }

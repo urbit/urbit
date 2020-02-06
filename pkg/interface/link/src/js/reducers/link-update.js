@@ -1,5 +1,8 @@
 import _ from 'lodash';
 
+// page size as expected from link-view.
+// must change in parallel with the +page-size in /app/link-view to
+// ensure sane behavior.
 const PAGE_SIZE = 25;
 
 export class LinkUpdateReducer {
@@ -28,12 +31,13 @@ export class LinkUpdateReducer {
 
         // if we didn't have any state for this path yet, initialize.
         if (!state.links[path]) {
-          state.links[path] = {};
+          state.links[path] = {local: {}};
         }
 
         // since data contains an up-to-date full version of the page,
         // we can safely overwrite the one in state.
         state.links[path][page] = here.page;
+        state.links[path].local[page] = false;
         state.links[path].totalPages = here.totalPages;
         state.links[path].totalItems = here.totalItems;
       }
@@ -84,13 +88,14 @@ export class LinkUpdateReducer {
         state.comments[path] = {};
       }
       if (!state.comments[path][url]) {
-        state.comments[path][url] = {};
+        state.comments[path][url] = {local: {}};
       }
       let here = state.comments[path][url];
 
       // since data contains an up-to-date full version of the page,
       // we can safely overwrite the one in state.
       here[page] = data.page;
+      here.local[page] = false;
       here.totalPages = data.totalPages;
       here.totalItems = data.totalItems;
     }
@@ -117,14 +122,15 @@ export class LinkUpdateReducer {
 
 //
 
-  _addNewItems(items, pages = {}, page = 0) {
+  _addNewItems(items, pages = {local: {}}, page = 0) {
     //TODO  kinda want to refactor this, have it just be number indexes
     const i = "page" + page;
-    //TODO  but if there's more on the page than just the things we're
-    //      pushing onto it, we won't load that in. should do an
-    //      additional check (+ maybe load) on page-nav, right?
     if (!pages[i]) {
       pages[i] = [];
+      // if we know this page exists in the backend, flag it as "local",
+      // so that we know to initiate a "fetch the rest" request when we want
+      // to display the page.
+      pages.local[i] = (page < pages.totalPages);
     }
     pages[i] = items.concat(pages[i]);
     pages.totalItems = pages.totalItems + items.length;
