@@ -16,6 +16,9 @@ class UrbitApi {
       decline: this.inviteDecline.bind(this),
       invite: this.inviteInvite.bind(this)
     };
+
+    this.bind = this.bind.bind(this);
+    this.bindLinkView = this.bindLinkView.bind(this);
   }
 
   bind(path, method, ship = this.authTokens.ship, app, success, fail, quit) {
@@ -37,6 +40,13 @@ class UrbitApi {
       (qui) => {
         quit(qui);
       });
+  }
+
+  bindLinkView(path, result, fail, quit) {
+    this.bind.bind(this)(
+      path, 'PUT', this.authTokens.ship, 'link-view',
+      result, fail, quit
+    );
   }
 
   action(appl, mark, data) {
@@ -91,14 +101,10 @@ class UrbitApi {
     });
   }
 
-  getComments(path, url) {
-    return this.getCommentsPage.bind(this)(path, url, 0);
-  }
-
   getCommentsPage(path, url, page) {
     const strictUrl = this.encodeUrl(url);
     const endpoint = '/json/' + page + '/discussions/' + strictUrl + path;
-    this.bind.bind(this)(endpoint, 'PUT', this.authTokens.ship, 'link-view',
+    this.bindLinkView(endpoint,
       (res) => {
         if (res.data['initial-discussions']) {
           // these aren't returned with the response,
@@ -115,7 +121,7 @@ class UrbitApi {
 
   getPage(path, page) {
     const endpoint = '/json/' + page + '/submissions' + path;
-    this.bind.bind(this)(endpoint, 'PUT', this.authTokens.ship, 'link-view',
+    this.bindLinkView(endpoint,
       (dat)=>{store.handleEvent(dat)},
       console.error,
       ()=>{} // no-op on quit
@@ -125,7 +131,7 @@ class UrbitApi {
   getSubmission(path, url, callback) {
     const strictUrl = this.encodeUrl(url);
     const endpoint = '/json/0/submission/' + strictUrl + path;
-    this.bind.bind(this)(endpoint, 'PUT', this.authTokens.ship, 'link-view',
+    this.bindLinkView(endpoint,
       (res) => {
         if (res.data.submission) {
           callback(res.data.submission)
