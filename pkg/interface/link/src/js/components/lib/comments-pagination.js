@@ -16,6 +16,7 @@ export class CommentsPagination extends Component {
     ? "dib"
     : "dn";
 
+    let encodedUrl = window.btoa(props.url);
     let popout = (props.popout) ? "/popout" : "";
 
     return (
@@ -27,6 +28,7 @@ export class CommentsPagination extends Component {
         + props.path
         + "/" + props.linkPage
         + "/" + props.linkIndex
+        + "/" + encodedUrl
         + "/comments" + prevPage}>
           &#60;- Previous Page
         </Link>
@@ -37,6 +39,7 @@ export class CommentsPagination extends Component {
         + props.path 
         + "/" + props.linkPage 
         + "/" + props.linkIndex 
+        + "/" + encodedUrl
         + "/comments" + nextPage}>
           Next Page ->
         </Link>

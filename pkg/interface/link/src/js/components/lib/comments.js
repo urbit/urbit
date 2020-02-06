@@ -9,11 +9,8 @@ export class Comments extends Component {
 
   componentDidMount() {
     let page = "page" + this.props.commentPage;
-    let comments = !!this.props.comments;
-    if ((page !== "page0") &&
-        (!comments || !this.props.comments[page]) &&
-        (this.props.path && this.props.url)
-    ) {
+    if (!this.props.comments || !this.props.comments[page]) {
+      this.setState({requested: this.props.commentPage});
       api.getCommentsPage(
         this.props.path,
         this.props.url,
@@ -22,15 +19,16 @@ export class Comments extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    let page = "page" + this.props.commentPage;
     if (prevProps !== this.props) {
-      if (!!this.props.comments) {
-        if ((page !== "page0") && !this.props.comments[page] && this.props.url) {
-          api.getCommentsPage(
-            this.props.path,
-            this.props.url,
-            this.props.commentPage);
-        }
+      let page = "page" + this.props.commentPage;
+      if ( (!this.props.comments || !this.props.comments[page]) &&
+           (this.state.requested !== this.props.commentPage)) {
+        this.setState({requested: this.props.commentPage});
+        api.getCommentsPage(
+          this.props.path,
+          this.props.url,
+          this.props.commentPage
+        );
       }
     }
   }
@@ -93,6 +91,7 @@ export class Comments extends Component {
         popout={props.popout}
         linkPage={props.linkPage}
         linkIndex={props.linkIndex}
+        url={props.url}
         commentPage={props.commentPage}
         total={total}/>
       </div>

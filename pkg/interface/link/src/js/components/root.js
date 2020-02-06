@@ -94,7 +94,7 @@ export class Root extends Component {
               )
             }}
           />
-          <Route exact path="/~link/(popout)?/:ship/:channel/:page/:index/(comments)?/:commentpage?"
+          <Route exact path="/~link/(popout)?/:ship/:channel/:page/:index/:encodedUrl/(comments)?/:commentpage?"
             render={ (props) => {
               let groupPath =
               `/${props.match.params.ship}/${props.match.params.channel}`;
@@ -105,6 +105,7 @@ export class Root extends Component {
 
               let index = props.match.params.index || 0;
               let page = props.match.params.page || 0;
+              let url = window.atob(props.match.params.encodedUrl);
 
               let data = !!links[groupPath]
                 ? !!links[groupPath]["page" + page]
@@ -113,7 +114,7 @@ export class Root extends Component {
                 : {};
               let coms = !comments[groupPath]
                 ? undefined
-                : comments[groupPath][data.url];
+                : comments[groupPath][url];
 
               let commentPage = props.match.params.commentpage || 0;
 
@@ -130,6 +131,7 @@ export class Root extends Component {
                   <LinkDetail
                   {...props}
                   page={page}
+                  url={url}
                   link={index}
                   members={groupMembers}
                   path={groupPath}
