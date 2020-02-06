@@ -36,40 +36,52 @@ export class Sidebar extends Component {
       case "oldest":
         notebooks = new Map(
           [...notebooks.entries()].sort(
-            (a, b) => a[1]["date-created"] - b[1]["date-created"]
+            (a, b) => {
+              if ((a[1]) && (b[1])) {
+              return a[1]["date-created"] - b[1]["date-created"]
+              }
+            }
           )
         );
         break;
       case "newest":
         notebooks = new Map(
           [...notebooks.entries()].sort(
-            (a, b) => b[1]["date-created"] - a[1]["date-created"]
+            (a, b) => {
+              if ((a[1]) && (b[1])) {
+              return b[1]["date-created"] - a[1]["date-created"]
+              }
+            }
           )
         );
         break;
       case "alphabetical":
         notebooks = new Map(
           [...notebooks.entries()].sort((a, b) => {
-            if (a[1]["title"].toLowerCase() < b[1]["title"].toLowerCase()) {
-              return -1;
+            if ((a[1]) && (b[1])) {
+              if (a[1]["title"].toLowerCase() < b[1]["title"].toLowerCase()) {
+                return -1;
+              }
+              if (a[1]["title"].toLowerCase() > b[1]["title"].toLowerCase()) {
+                return 1;
+              }
+              return 0;
             }
-            if (a[1]["title"].toLowerCase() > b[1]["title"].toLowerCase()) {
-              return 1;
-            }
-            return 0;
           })
         );
         break;
       case "reverseAlphabetical":
         notebooks = new Map(
           [...notebooks.entries()].sort((a, b) => {
-            if (a[1]["title"].toLowerCase() > b[1]["title"].toLowerCase()) {
-              return -1;
+            if ((a[1]) && (b[1])) {
+              if (a[1]["title"].toLowerCase() > b[1]["title"].toLowerCase()) {
+                return -1;
+              }
+              if (a[1]["title"].toLowerCase() < b[1]["title"].toLowerCase()) {
+                return 1;
+              }
+              return 0;
             }
-            if (a[1]["title"].toLowerCase() < b[1]["title"].toLowerCase()) {
-              return 1;
-            }
-            return 0;
           })
         );
         break;

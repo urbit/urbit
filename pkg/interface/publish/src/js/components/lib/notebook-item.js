@@ -17,14 +17,15 @@ export class NotebookItem extends Component {
       <Link
       to={"/~publish/notebook/" + props.path}>
         <div className={"w-100 v-mid f9 pl4 bb " + selectedClass}>
-        <p className="f9 pt1">{props.title}</p>
-        <p className="f9 mono gray2">by {props.author}</p>
-        <p className="f9 pb1">
-        {postCount}
-        <span className="green2 ml3">
-          {unread}
-        </span>
-        </p></div>
+          <p className="f9 pt1">{props.title}</p>
+          <p className="f9 mono gray2">by {props.author}</p>
+          <p className="f9 pb1">
+          {postCount}
+            <span className="green2 ml3">
+              {unread}
+            </span>
+          </p>
+        </div>
       </Link>
     );
   }
