@@ -36,7 +36,7 @@ export class LinkDetail extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.data.timestamp !== prevProps.data.timestamp) {
+    if (this.props.data.time !== prevProps.data.time) {
       this.setState({timeSinceLinkPost: this.getTimeSinceLinkPost()})
     }
 
@@ -53,8 +53,8 @@ export class LinkDetail extends Component {
   }
 
   getTimeSinceLinkPost() {
-    return !!this.props.data.timestamp ?
-      moment.unix(this.props.data.timestamp / 1000).from(moment.utc())
+    return !!this.props.data.time ?
+      moment.unix(this.props.data.time / 1000).from(moment.utc())
       : '';
   }
 

@@ -44,7 +44,7 @@ export class Links extends Component {
     let LinkList = Object.keys(links)
     .map((link) => {
       let linksObj = props.links[linkPage];
-      let { title, url, timestamp, ship } = linksObj[link];
+      let { title, url, time, ship } = linksObj[link];
       let members = {};
 
       const commentCount = props.comments[url]
@@ -71,12 +71,12 @@ export class Links extends Component {
 
       return (
         <LinkItem
-        key={timestamp}
+        key={time}
         title={title}
         page={props.page}
         index={link}
         url={url}
-        timestamp={timestamp}
+        timestamp={time}
         nickname={nickname}
         ship={ship}
         color={color}
