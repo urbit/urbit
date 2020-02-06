@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Route, Link } from 'react-router-dom';
 import { NotebookItem } from './notebook-item';
+import { SidebarInvite } from './sidebar-invite';
 
 export class Sidebar extends Component {
   constructor(props) {
@@ -105,6 +106,18 @@ export class Sidebar extends Component {
       hiddenClasses = props.sidebarShown;
     };
 
+    let sidebarInvites =  !(props.invites && props.invites['/publish'])
+      ? null
+      : Object.keys(props.invites['/publish'])
+          .map((uid, i) => {
+            return (
+              <SidebarInvite
+                uid={uid}
+                invite={props.invites['/publish'][uid]}
+                key={i} />
+            )
+        });
+
     let notebookItems = [...state.sortedBooks].map(([path, book]) => {
       let selected = (props.path === path);
       let author = path.split("/")[0];
@@ -159,7 +172,10 @@ export class Sidebar extends Component {
             </select>
           </div>
         </div>
-        <div className="overflow-y-scroll h-100">{notebooks}</div>
+        <div className="overflow-y-scroll h-100">
+          {sidebarInvites}
+          {notebookItems}
+        </div>
       </div>
     );
   }
