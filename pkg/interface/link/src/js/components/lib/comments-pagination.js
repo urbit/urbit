@@ -12,7 +12,7 @@ export class CommentsPagination extends Component {
     ? "dib"
     : "dn";
 
-    let nextDisplay = (Number(props.commentPage + 1) < Number(props.total))
+    let nextDisplay = ((Number(props.commentPage) + 1) < Number(props.total))
     ? "dib"
     : "dn";
 

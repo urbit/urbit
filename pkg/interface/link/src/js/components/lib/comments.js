@@ -48,7 +48,7 @@ export class Comments extends Component {
 
     let total = !!props.comments
     ? props.comments.totalPages
-    : {};
+    : 1;
 
     let commentsList = Object.keys(commentsPage)
     .map((entry) => {
