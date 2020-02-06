@@ -30,6 +30,7 @@ export class Skeleton extends Component {
             active={props.active}
             notebooks={props.notebooks}
             path={props.path}
+            invites={props.invites}
             />
           <div className={"h-100 w-100 overflow-container " + rightPanelHide} style={{
             flexGrow: 1,

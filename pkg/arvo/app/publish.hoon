@@ -173,7 +173,7 @@
       =/  uid  (sham %publish who book eny.bol)
       =/  inv=invite
         :*  our.bol  %publish  /notebook/[book]  who
-            (crip "invite for notebook {<who>}/{<book>}")
+            (crip "invite for notebook {<our.bol>}/{(trip book)}")
         ==
       =/  act=invite-action  [%invite /publish uid inv]
       [%pass /invite %agent [who %invite-hook] %poke %invite-action !>(act)]
@@ -523,12 +523,11 @@
           now.bol
           ~  ~  ~
       ==
-    =/  group-path=path
-      ?:  =(writers.new-book /)
-        /~/publish/(scot %p our.bol)/[book-name]
-      writers.new-book
     =+  ^-  [grp-car=(list card) write-pax=path read-pax=path]
-      (make-groups book-name group-path ~ %.n %.n)
+      ?:  =(writers.new-book /)
+        =/  group-path  /~/publish/(scot %p our.bol)/[book-name]
+        (make-groups book-name group-path ~ %.n %.n)
+      [~ writers.info subscribers.info]
     =.  writers.new-book      write-pax
     =.  subscribers.new-book  read-pax
     =+  ^-  [read-cards=(list card) notes=(map @tas note)]
@@ -881,7 +880,7 @@
   =/  uid  (sham %publish who book eny.bol)
   =/  inv=invite
     :*  our.bol  %publish  /notebook/[book]  who
-        (crip "invite for notebook {<who>}/{<book>}")
+        (crip "invite for notebook {<our.bol>}/{(trip book)}")
     ==
   =/  act=invite-action  [%invite /publish uid inv]
   [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
@@ -899,7 +898,7 @@
     ?<  =('~' i.group-path.group)
     :_  [group-path.group group-path.group]
     %-  zing
-    :~  (create-security group-path.group group-path.group %channel)
+    :~  (create-security group-path.group group-path.group %village)
         [(perm-hook-poke [%add-owned group-path.group group-path.group])]~
         (generate-invites book (~(del in u.grp) our.bol))
     ==
@@ -914,19 +913,19 @@
     :_  [group-path.group group-path.group]
     %-  zing
     :~  [(contact-view-create [%create group-path.group invitees.group])]~
-        (create-security group-path.group group-path.group %channel)
+        (create-security group-path.group group-path.group %village)
         [(perm-hook-poke [%add-owned group-path.group group-path.group])]~
         (generate-invites book (~(del in invitees.group) our.bol))
     ==
   ::  make unmanaged group
-  ?>  ?=(^ group-path.group)
-  ?>  =('~' i.group-path.group)
   =*  write-path  group-path.group
   =/  read-path   (weld write-path /read)
   =/  scry-path=path
     ;:(weld /=group-store/(scot %da now.bol) group-path.group /noun)
   =/  grp  .^((unit ^group) %gx scry-path)
   ?^  grp  [~ write-path read-path]
+  ?>  ?=(^ group-path.group)
+  ?>  =('~' i.group-path.group)
   :_  [write-path read-path]
   %-  zing
   :~  [(group-poke [%bundle write-path])]~

@@ -31,6 +31,7 @@ export class Root extends Component {
               active={"sidebar"}
               rightPanelHide={true}
               sidebarShown={true}
+              invites={state.invites}
               notebooks={state.notebooks}>
                 <div className={`h-100 w-100 overflow-x-hidden flex flex-column
                  bg-white bg-gray0-d dn db-ns`}>
@@ -52,6 +53,7 @@ export class Root extends Component {
             active={"rightPanel"}
             rightPanelHide={false}
             sidebarShown={true}
+            invites={state.invites}
             notebooks={state.notebooks}>
               <NewScreen
                 notebooks={state.notebooks}
@@ -70,6 +72,7 @@ export class Root extends Component {
                   active={"rightPanel"}
                   rightPanelHide={false}
                   sidebarShown={true}
+                  invites={state.invites}
                   notebooks={state.notebooks}>
                     <JoinScreen notebooks={state.notebooks} {...props} />
                   </Skeleton>
@@ -93,6 +96,7 @@ export class Root extends Component {
                 active={"rightPanel"}
                 rightPanelHide={false}
                 sidebarShown={true}
+                invites={state.invites}
                 notebooks={state.notebooks}
                 path={path}>
                 <NewPost
@@ -111,6 +115,7 @@ export class Root extends Component {
                 active={"rightPanel"}
                 rightPanelHide={false}
                 sidebarShown={true}
+                invites={state.invites}
                 notebooks={state.notebooks}
                 path={path}>
                 <Notebook
@@ -137,6 +142,7 @@ export class Root extends Component {
               active={"rightPanel"}
               rightPanelHide={false}
               sidebarShown={true}
+              invites={state.invites}
               notebooks={state.notebooks}
               path={path}>
               <Note
