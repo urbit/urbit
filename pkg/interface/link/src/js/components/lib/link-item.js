@@ -3,6 +3,7 @@ import moment from 'moment';
 
 import { Sigil } from '/components/lib/icons/sigil';
 import { Route, Link } from 'react-router-dom';
+import { base64urlEncode } from '../../lib/util';
 
 export class LinkItem extends Component {
   constructor(props) {
@@ -45,7 +46,7 @@ export class LinkItem extends Component {
       hostname = hostname[4];
     }
 
-    let encodedUrl = window.btoa(props.url);
+    let encodedUrl = base64urlEncode(props.url);
 
     let comments = props.comments + " comment" + ((props.comments === 1) ? "" : "s");
 

@@ -9,6 +9,7 @@ import { store } from '/store';
 import { Skeleton } from '/components/skeleton';
 import { Links } from '/components/links-list';
 import { LinkDetail } from '/components/link';
+import { base64urlDecode } from '../lib/util';
 
 
 export class Root extends Component {
@@ -110,7 +111,7 @@ export class Root extends Component {
 
               let index = props.match.params.index || 0;
               let page = props.match.params.page || 0;
-              let url = window.atob(props.match.params.encodedUrl);
+              let url = base64urlDecode(props.match.params.encodedUrl);
 
               let data = !!links[groupPath]
                 ? !!links[groupPath][page]

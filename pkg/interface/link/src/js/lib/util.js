@@ -14,6 +14,24 @@ export function uuid() {
   return str.slice(0,-1);
 }
 
+// encodes string into base64url,
+// by encoding into base64 and replacing non-url-safe characters.
+//
+export function base64urlEncode(string) {
+  return window.btoa(string)
+    .split('+').join('-')
+    .split('/').join('_');
+}
+
+// decode base64url. inverse of base64urlEncode above.
+//
+export function base64urlDecode(string) {
+  return window.atob(
+    string.split('_').join('/')
+          .split('-').join('+')
+  );
+}
+
 export function isPatTa(str) {
   const r = /^[a-z,0-9,\-,\.,_,~]+$/.exec(str)
   return !!r;

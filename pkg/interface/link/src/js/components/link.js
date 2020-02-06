@@ -7,6 +7,7 @@ import { Sigil } from '/components/lib/icons/sigil';
 import { Comments } from './lib/comments';
 import { uxToHex } from '../lib/util';
 import moment from 'moment'
+import { base64urlEncode } from '../lib/util';
 
 export class LinkDetail extends Component {
   constructor(props) {
@@ -81,7 +82,7 @@ export class LinkDetail extends Component {
   render() {
     let props = this.props;
     let popout = (props.popout) ? "/popout" : "";
-    let routePath = props.path + "/" + props.page + "/" + props.linkIndex + "/" + window.btoa(props.url);
+    let routePath = props.path + "/" + props.page + "/" + props.linkIndex + "/" + base64urlEncode(props.url);
 
     const data = this.state.data || props.data;
     let ship = data.ship || "zod";
@@ -160,7 +161,7 @@ export class LinkDetail extends Component {
                   <span className="f9 inter gray2 pr3 v-mid">
                   {this.state.timeSinceLinkPost}
                   </span>
-                  <Link to={"/~link" + props.path + "/" + props.page + "/" + props.linkIndex + "/" + window.btoa(props.url)} className="v-top">
+                  <Link to={"/~link" + props.path + "/" + props.page + "/" + props.linkIndex + "/" + base64urlEncode(props.url)} className="v-top">
                   <span className="f9 inter gray2">
                   {comments}
                   </span>

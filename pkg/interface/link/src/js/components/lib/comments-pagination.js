@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
+import { base64urlEncode } from '../../lib/util';
 
 export class CommentsPagination extends Component {
   render() {
@@ -16,7 +17,7 @@ export class CommentsPagination extends Component {
     ? "dib"
     : "dn";
 
-    let encodedUrl = window.btoa(props.url);
+    let encodedUrl = base64urlEncode(props.url);
     let popout = (props.popout) ? "/popout" : "";
 
     return (
