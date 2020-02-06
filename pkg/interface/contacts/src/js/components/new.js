@@ -35,11 +35,10 @@ export class NewScreen extends Component {
   onClickCreate() {
     const { props, state } = this;
 
-    let invalidChara = new RegExp(/[^a-z0-9/-]/);
+    let validChar = new RegExp(/^[a-z0-9~_.-]*$/);
 
     if (
-      (!state.groupName) || (state.groupName.startsWith("/")) ||
-      (state.groupName.includes("//")) || (invalidChara.test(state.groupName))
+      (!state.groupName) || (!validChar.test(state.groupName))
     ) {
       this.setState({
         groupNameError: true,
