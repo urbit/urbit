@@ -16,8 +16,13 @@ export default class Header extends Component {
           Home
         </span>
         <div className="absolute right-1 lh-copy" style={{ top: 12 }}>
-          <Sigil ship={"~" + window.ship} size={16} color={"#000000"} classes="mix-blend-diff v-mid" />
-          <span className="mono white-d f9 ml2">{"~" + window.ship}</span>
+          <Sigil
+            ship={"~" + window.ship}
+            size={16} color={"#000000"}
+            classes="mix-blend-diff v-mid" />
+          <span className="mono white-d f9 ml2">
+            {"~" + window.ship}
+          </span>
         </div>
       </header>
     );
