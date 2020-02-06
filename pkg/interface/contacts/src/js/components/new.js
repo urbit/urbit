@@ -35,7 +35,7 @@ export class NewScreen extends Component {
   onClickCreate() {
     const { props, state } = this;
 
-    let validChar = new RegExp(/^[a-z0-9~_.-]*$/);
+    let validChar = /^[a-z0-9~_.-]*$/;
 
     if (
       (!state.groupName) || (!validChar.test(state.groupName))
