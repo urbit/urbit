@@ -27,7 +27,7 @@ export class LinkUpdateReducer {
 
       for (var path of Object.keys(data)) {
         const here = data[path];
-        const page = "page" + here.pageNumber;
+        const page = here.pageNumber;
 
         // if we didn't have any state for this path yet, initialize.
         if (!state.links[path]) {
@@ -81,7 +81,7 @@ export class LinkUpdateReducer {
 
       const path = data.path;
       const url = data.url;
-      const page = "page" + data.pageNumber;
+      const page = data.pageNumber;
 
       // if we didn't have any state for this path yet, initialize.
       if (!state.comments[path]) {
@@ -123,8 +123,7 @@ export class LinkUpdateReducer {
 //
 
   _addNewItems(items, pages = {local: {}}, page = 0) {
-    //TODO  kinda want to refactor this, have it just be number indexes
-    const i = "page" + page;
+    const i = page;
     if (!pages[i]) {
       pages[i] = [];
       // if we know this page exists in the backend, flag it as "local",

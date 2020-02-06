@@ -113,8 +113,8 @@ export class Root extends Component {
               let url = window.atob(props.match.params.encodedUrl);
 
               let data = !!links[groupPath]
-                ? !!links[groupPath]["page" + page]
-                  ? links[groupPath]["page" + page][index]
+                ? !!links[groupPath][page]
+                  ? links[groupPath][page][index]
                   : {}
                 : {};
               let coms = !comments[groupPath]

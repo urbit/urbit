@@ -17,7 +17,7 @@ export class Links extends Component {
   }
 
   componentDidUpdate() {
-    const linkPage = "page" + this.props.page;
+    const linkPage = this.props.page;
     if ( (this.props.page != 0) &&
          (!this.props.links[linkPage] ||
           this.props.links.local[linkPage])
@@ -30,7 +30,7 @@ export class Links extends Component {
     let props = this.props;
     let popout = (props.popout) ? "/popout" : "";
     let channel = props.path.substr(1);
-    let linkPage = "page" + props.page;
+    let linkPage = props.page;
 
     let links = !!props.links[linkPage]
     ? props.links[linkPage]

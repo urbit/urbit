@@ -12,7 +12,7 @@ export class Comments extends Component {
   }
 
   componentDidMount() {
-    let page = "page" + this.props.commentPage;
+    let page = this.props.commentPage;
     if (!this.props.comments ||
         !this.props.comments[page] ||
         this.props.comments.local[page]
@@ -28,7 +28,7 @@ export class Comments extends Component {
   render() {
     let props = this.props;
 
-    let page = "page" + props.commentPage;
+    let page = props.commentPage;
 
     let commentsObj = !!props.comments
     ? props.comments
