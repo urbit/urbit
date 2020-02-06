@@ -22,21 +22,6 @@ export class Comments extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps !== this.props) {
-      let page = "page" + this.props.commentPage;
-      if ( (!this.props.comments || !this.props.comments[page]) &&
-           (this.state.requested !== this.props.commentPage)) {
-        this.setState({requested: this.props.commentPage});
-        api.getCommentsPage(
-          this.props.path,
-          this.props.url,
-          this.props.commentPage
-        );
-      }
-    }
-  }
-
   render() {
     let props = this.props;
 
