@@ -499,7 +499,9 @@
         =/  =type  [%cell [%atom %tas `%soft] %noun]
         [%& type [%soft card.ovum]]
       =/  =move
-        [duct=~ %pass wire.ovum vane mill]
+        ~|  [%poke %bad-wire wire.ovum]
+        ?>  ?=([%$ *] wire.ovum)
+        [duct=~ %pass t.wire.ovum vane mill]
       (emit %$ move ~)
     ::  +spam: prepare a worklist for all targets
     ::
@@ -578,15 +580,18 @@
         =/  duct  t.duct.move
         =*  gift  gift.ball.move
         ::
-        ::  the caller was Outside
-        ::
         ?~  duct
+          ::
+          ::  the caller was Outside
+          ::
+          ~|  [%xeno wire (symp -.q.p.gift)]
           ?>  ?=([%$ *] wire)
           (xeno wire gift)
         ::
         ::  the caller was a vane
         ::
         =^  vane=term  wire
+          ~|  [%give duct.move (symp -.q.p.gift)]
           ?>(?=(^ wire) wire)
         ::
         ~?  &(!lac |(!=(%blit +>-.gift) !=(%d vane.gem)))
@@ -655,7 +660,7 @@
       |=  way=term
       ~|  [%plow-failed way]
       =/  =vane
-        ~|  [%unknown-vane way]
+        ~|  [%missing-vane way]
         (~(got by van) way)
       (~(plow va [our vane]) now peek)
     --
