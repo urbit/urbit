@@ -12,7 +12,7 @@ export class LinkDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      timeSinceLinkPost: this.getTimeSinceLinkPost(),
+      timeSinceLinkPost: this.getTimeSinceLinkPost(props.data),
       comment: "",
       data: props.data
     };
@@ -21,7 +21,10 @@ export class LinkDetail extends Component {
   }
 
   updateData(submission) {
-    this.setState({data: submission});
+    this.setState({
+      data: submission,
+      timeSinceLinkPost: this.getTimeSinceLinkPost(submission)
+    });
   }
 
   componentDidMount() {
@@ -32,18 +35,15 @@ export class LinkDetail extends Component {
       );
     }
 
+    // start the time-since update timer
     this.updateTimeSinceNewestMessageInterval = setInterval( () => {
-      this.setState({timeSinceLinkPost: this.getTimeSinceLinkPost()});
+      this.setState({timeSinceLinkPost: this.getTimeSinceLinkPost(this.state.data)});
     }, 60000);
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.data.time !== prevProps.data.time) {
-      this.setState({timeSinceLinkPost: this.getTimeSinceLinkPost()})
-    }
-
     if (this.props.url !== prevProps.url) {
-      this.setState({data: this.props.data});
+      this.updateData(this.props.data);
     }
   }
 
@@ -54,9 +54,9 @@ export class LinkDetail extends Component {
     }
   }
 
-  getTimeSinceLinkPost() {
-    return !!this.props.data.time ?
-      moment.unix(this.props.data.time / 1000).from(moment.utc())
+  getTimeSinceLinkPost(data) {
+    return !!data.time ?
+      moment.unix(data.time / 1000).from(moment.utc())
       : '';
   }
 
