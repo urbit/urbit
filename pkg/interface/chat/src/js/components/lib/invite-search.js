@@ -36,7 +36,9 @@ export class InviteSearch extends Component {
     let peers = [],
     peerSet = new Set();
     Object.keys(this.props.groups).map(group => {
-      peerSet.add(...this.props.groups[group]);
+      if (this.props.groups[group].size > 0) {
+        peerSet.add(...this.props.groups[group]);
+      }
     });
     peers = Array.from(peerSet);
 
