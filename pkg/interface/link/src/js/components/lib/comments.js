@@ -6,6 +6,10 @@ import { uxToHex } from '../../lib/util';
 import { api } from '../../api';
 
 export class Comments extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
 
   componentDidMount() {
     let page = "page" + this.props.commentPage;
