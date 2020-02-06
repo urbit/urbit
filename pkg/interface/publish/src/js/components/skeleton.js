@@ -29,6 +29,7 @@ export class Skeleton extends Component {
             sidebarShown={props.sidebarShown}
             active={props.active}
             notebooks={props.notebooks}
+            path={props.path}
             />
           <div className={"h-100 w-100 overflow-container " + rightPanelHide} style={{
             flexGrow: 1,

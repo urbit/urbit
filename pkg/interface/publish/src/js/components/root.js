@@ -78,14 +78,17 @@ export class Root extends Component {
           let ship = props.match.params.ship || "";
           let notebook = props.match.params.notebook || "";
 
+          let path = `${ship}/${notebook}`;
+
           if (view === "new") {
             return (
               <Skeleton
-              popout={false}
-              active={"rightPanel"}
-              rightPanelHide={false}
-              sidebarShown={true}
-              notebooks={state.notebooks}>
+                popout={false}
+                active={"rightPanel"}
+                rightPanelHide={false}
+                sidebarShown={true}
+                notebooks={state.notebooks}
+                path={path}>
                 <NewPost
                   notebooks={state.notebooks}
                   ship={ship}
@@ -93,46 +96,51 @@ export class Root extends Component {
                   {...props}
                 />
               </Skeleton>
-            )
+            );
           }
           else {
             return (
               <Skeleton
-              popout={false}
-              active={"rightPanel"}
-              rightPanelHide={false}
-              sidebarShown={true}
-              notebooks={state.notebooks}>
+                popout={false}
+                active={"rightPanel"}
+                rightPanelHide={false}
+                sidebarShown={true}
+                notebooks={state.notebooks}
+                path={path}>
                 <Notebook
                   notebooks={state.notebooks}
                   view={view}
                   ship={ship}
                   book={notebook}
-                  {...props}/>
+                  {...props}
+                />
               </Skeleton>
-            )
+            );
           }
         }}/>
       <Route exact path="/~publish/(popout)?/note/:ship/:notebook/:note"
         render={ (props) => {
           let ship = props.match.params.ship || "";
           let notebook = props.match.params.notebook || "";
+          let path = `${ship}/${notebook}`
           let note = props.match.params.note || "";
 
           return (
             <Skeleton
-            popout={false}
-            active={"rightPanel"}
-            rightPanelHide={false}
-            sidebarShown={true}
-            notebooks={state.notebooks}>
+              popout={false}
+              active={"rightPanel"}
+              rightPanelHide={false}
+              sidebarShown={true}
+              notebooks={state.notebooks}
+              path={path}>
               <Note
                 notebooks={state.notebooks}
                 book={notebook}
                 ship={ship}
-                note={note}/>
+                note={note}
+              />
             </Skeleton>
-          )
+          );
         }}/>
       </BrowserRouter>
     )
