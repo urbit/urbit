@@ -45,7 +45,7 @@ export class Comments extends Component {
 
             </textarea>
           </div>
-          <button onClick={this.commentSubmit} className="f9 pa2 bg-white br1 ba b--gray2 gray2">
+          <button onClick={this.commentSubmit} className="f9 pa2 bg-white br1 ba b--gray2 gray2 pointer">
             Add comment
           </button>
         </div>
