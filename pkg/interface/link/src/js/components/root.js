@@ -71,6 +71,10 @@ export class Root extends Component {
               ? links[groupPath]
               : {};
 
+              let channelComments = !!comments[groupPath]
+                ? comments[groupPath]
+                : {};
+
               return (
                 <Skeleton
                   spinner={state.spinner}
@@ -85,6 +89,7 @@ export class Root extends Component {
                   {...props}
                   members={groupMembers}
                   links={channelLinks}
+                  comments={channelComments}
                   page={page}
                   path={groupPath}
                   popout={popout}

@@ -94,7 +94,9 @@ export class LinkDetail extends Component {
       hostname = hostname[4];
     }
 
-    let commentCount = data.commentCount || 0;
+    const commentCount = props.comments
+      ? props.comments.totalItems
+      : data.commentCount || 0;
 
     let comments = commentCount + " comment" + ((commentCount === 1) ? "" : "s");
 
