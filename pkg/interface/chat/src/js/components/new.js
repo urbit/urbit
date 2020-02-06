@@ -72,7 +72,7 @@ export class NewScreen extends Component {
     let validChar = /^[a-z0-9~_.-]*$/;
 
     let invalid = (
-      (!state.idName) || (!validChara.test(state.idName))
+      (!state.idName) || (!validChar.test(state.idName))
     );
 
     if (invalid) {
