@@ -11,14 +11,16 @@ dependencies:
   - classy-prelude
   - flat
   - lens
-  - text
-  - urbit-atom
-  - multimap
-  - para
   - megaparsec
   - mtl
+  - multimap
+  - para
   - positive
   - pretty-show
+  - primitive
+  - text
+  - urbit-atom
+  - vector
 
 default-extensions:
   - ApplicativeDo
