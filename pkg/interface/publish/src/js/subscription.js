@@ -21,6 +21,9 @@ export class Subscription {
     api.bind('/primary', 'PUT', api.authTokens.ship, 'contact-view',
       this.handleEvent.bind(this),
       this.handleError.bind(this));
+    api.bind('/primary', 'PUT', api.authTokens.ship, 'invite-view',
+      this.handleEvent.bind(this),
+      this.handleError.bind(this));
   }
 
   handleEvent(diff) {

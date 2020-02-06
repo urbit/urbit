@@ -64,8 +64,6 @@ export class JoinScreen extends Component {
       }
     }
 
-    console.log('actionData', actionData);
-
     // TODO: askHistory setting
     window.api.action("publish","publish-action", actionData);
 

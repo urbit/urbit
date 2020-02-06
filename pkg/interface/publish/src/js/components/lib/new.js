@@ -26,14 +26,11 @@ export class NewScreen extends Component {
 
   componentDidUpdate(prevProps) {
     const { props, state } = this;
-
-    if (prevProps !== props) {
-      if (props.notebooks && (("~" + window.ship) in props.notebooks)) {
-        let notebookId = stringToSymbol(state.idName)
-        if (notebookId in props.notebooks["~" + window.ship]) {
-          let notebook = `/~${window.ship}/${notebookId}`;
-          props.history.push("/~publish/notebook" + notebook);
-        }
+    if (props.notebooks && (("~" + window.ship) in props.notebooks)) {
+      let notebookId = stringToSymbol(state.idName)
+      if (notebookId in props.notebooks["~" + window.ship]) {
+        let notebook = `/~${window.ship}/${notebookId}`;
+        props.history.push("/~publish/notebook" + notebook);
       }
     }
   }
@@ -60,41 +57,33 @@ export class NewScreen extends Component {
 
   onClickCreate() {
     const { props, state } = this;
+    let bookId = stringToSymbol(state.idName);
+    let groupInfo = (state.invites.groups.length > 0)
+      ? {
+          "group-path": state.invites.groups[0],
+          "invitees": [],
+          "use-preexisting": true,
+          "make-managed": false,
+        }
+      : {
+          //  TODO remove /~ and set make-managed on toggle
+          "group-path": `/~/publish/~${window.ship}/${bookId}`,
+          "invitees": state.invites.ships,
+          "use-preexisting": false,
+          "make-managed": false,
+        };
 
-    this.setState({idName: "", description: ""});
+    let action = {
+      "new-book": {
+        book: bookId,
+        title: state.idName,
+        about: state.description,
+        coms: true,
+        group: groupInfo
+      }
+    }
 
-    // if (state.invites.groups.length > 0) {
-    //   props.api.action("publish", "publish-action", {
-    //     "new-book": {
-    //       book: stringToSymbol(state.idName),
-    //       title: state.idName,
-    //       about: state.description,
-    //       coms: true,
-    //       group: {
-    //         old: {
-    //           writers: state.invites.groups[0],
-    //           subscribers: state.invites.groups[0]
-    //         }
-    //       }
-    //     }
-    //   })
-    // } else {
-    //   props.api.action("publish", "publish-action", {
-    //     "new-book": {
-    //       book: stringToSymbol(state.idName),
-    //       title: state.idName,
-    //       about: state.description,
-    //       coms: true,
-    //       group: {
-    //         new: {
-    //           writers: [window.ship],
-    //           subscribers: state.invites.ships,
-    //           sec: "journal"
-    //         }
-    //       }
-    //     }
-    //   })
-    // }
+    props.api.action("publish", "publish-action", action);
   }
 
   render() {

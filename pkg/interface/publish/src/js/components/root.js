@@ -54,8 +54,10 @@ export class Root extends Component {
             sidebarShown={true}
             notebooks={state.notebooks}>
               <NewScreen
-              groups={state.groups}
-              api={api}
+                notebooks={state.notebooks}
+                groups={state.groups}
+                api={api}
+                {...props}
               />
             </Skeleton>
           )
