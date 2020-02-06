@@ -63,7 +63,8 @@
 ++  sink  (trel bone ship path)                         ::  subscription
 ++  sley  $-  {* (unit (set monk)) term beam}           ::  namespace function
           (unit (unit cage))                            ::
-++  slyd  $-  {* (unit (set monk)) term beam}           ::  super advanced
+++  slyd  $~  =>(~ |~(* ~))                             ::  super advanced
+          $-  {* (unit (set monk)) term beam}           ::
           (unit (unit (cask milt)))                     ::
 ++  slyt  $-({* *} (unit (unit)))                       ::  old namespace
 +$  vane  [=vase =worm]
@@ -363,7 +364,7 @@
   ::
   ++  va
     ~/  %va
-    |_  [our=ship vane=term vax=vase sac=worm]
+    |_  [our=ship vax=vase sac=worm]
     ::
     ::  |plow:va: operate in time and space
     ::
@@ -375,10 +376,14 @@
       ++  peek
         |=  [fur=(unit (set monk)) ren=@t bed=beam]
         ^-  (unit (unit (cask maze)))
+        ::  namespace reads receive no entropy
+        ::
+        =/  sam=vane-sample  [our now *@uvJ sky]
         =^  rig  sac
-          ~|  [%peek %failed-vane-activation vane]
-          (~(slym wa sac) vax `vane-sample`[our now *@uvJ sky])
+          ~>  %mean.'peek: activation failed'
+          (~(slym wa sac) vax sam)
         =^  gat  sac
+          ~>  %mean.'peek: call failed'
           (~(slap wa sac) rig [%limb %scry])
         ::
         ;;  (unit (unit (cask maze)))
@@ -397,28 +402,29 @@
       ++  spin
         |=  [hen=duct eny=@uvJ]
         =/  duc  !>(hen)
+        =/  sam=vane-sample  [our now eny sky]
         =^  rig  sac
-          ~|  [%spin %failed-vane-activation vane]
-          (~(slym wa sac) vax `vane-sample`[our now eny sky])
+          ~>  %mean.'spin: activation failed'
+          (~(slym wa sac) vax sam)
         ::
         |%
-        ::  +peel:spin:plow:va: extract typed products
+        ::  +peel:spin:plow:va: extract products, finalize vane
         ::
         ++  peel
           |=  pro=vase
-          ^-  [(list move) term vase worm]
+          ^-  (pair [vase vase] worm)
           =^  moz  sac  (~(slot wa sac) 2 pro)
           =^  vem  sac  (~(slot wa sac) 3 pro)
-          =^  sad  sac  (~(refine-moves me sac -:!>(*type)) moz)
-          =.  +<.q.vem
-            =|  sam=vane-sample
-            sam(ski =>(~ |~(* ~)))                      ::  clear to stop leak
-          [sad vane vem sac]
+          ::  replace vane sample with default to plug leak
+          ::
+          =.  +<.q.vem  *vane-sample
+          [[moz vem] sac]
         ::  +call:spin:plow:va: advance statefully
         ::
         ++  call
           |=  task=mill
-          ^-  [(list move) term vase worm]
+          ^-  (pair [vase vase] worm)
+          ~>  %mean.'call: failed'
           =^  gat  sac
             (~(slap wa sac) rig [%limb %call])
           ::
@@ -432,7 +438,8 @@
         ::
         ++  take
           |=  [=wire from=term gift=mill]
-          ^-  [(list move) term vase worm]
+          ^-  (pair [vase vase] worm)
+          ~>  %mean.'take: failed'
           =^  gat  sac
             (~(slap wa sac) rig [%limb %take])
           =/  src=vase
@@ -514,7 +521,7 @@
       ^+  this
       ?~  run
         this
-      ?:  =(~ q.i.run)
+      ?:  =(~ q.i.run)    :: XX TMI
         loop(run t.run)
       =.  gem  p.i.run
       =^  mov  q.i.run  q.i.run
@@ -544,7 +551,9 @@
             [(symp +>-.task) wire]
           duct
         ::
-        (call [wire duct] vane task)
+        ::  cons source onto wire, and wire onto duct
+        ::
+        (call [[vane.gem wire] duct] vane task)
       ::
       ::  %slip: lateral move
       ::
@@ -588,7 +597,7 @@
             (symp +>-.gift)
           duct
         ::
-        (take duct wire vane vane.gem gift)
+        (take duct wire vane gift)
       ==
     ::  +peek: read from the entire namespace
     ::
@@ -617,36 +626,38 @@
     ::  +call: advance to target
     ::
     ++  call
-      |=  [=duct vane=term task=mill]
+      |=  [=duct way=term task=mill]
       ^+  this
-      %-  push
-      (call:(spin:(plow vane) duct eny) task)
+      %+  push  way
+      (call:(spin:(plow way) duct eny) task)
     ::  +take: retreat along call-stack
     ::
     ++  take
-      |=  [=duct =wire vane=term from=term gift=mill]
+      |=  [=duct =wire way=term gift=mill]
       ^+  this
-      %-  push
-      (take:(spin:(plow vane) duct eny) wire from gift)
+      %+  push  way
+      ::
+      ::  cons source onto .gift to make a $sign
+      ::
+      (take:(spin:(plow way) duct eny) wire [vane.gem gift])
     ::  +push: finalize an individual step
     ::
     ++  push
-      |=  [moz=(list move) vane=term vax=vase sac=worm]
+      |=  [way=term [zom=vase vax=vase] sac=worm]
       ^+  this
-      =.  van  (~(put by van) vane [vax sac])
-      %+  emit  vane
-      ^-  (list move)
-      %+  turn  moz
-      |=  =move
-      ?.  ?=(%pass -.ball.move)
-        move
-      move(wire.ball [vane wire.ball.move])
+      =^  moz  sac
+        (~(refine-moves me sac -:!>(*type)) zom)
+      =.  van  (~(put by van) way [vax sac])
+      (emit way moz)
     ::  +plow: operate on a vane, in time and space
     ::
     ++  plow
-      |=  vane=term
-      ~|  [%plow %vane-activation-failed vane]
-      (~(plow va [our vane (~(got by van) vane)]) now peek)
+      |=  way=term
+      ~|  [%plow-failed way]
+      =/  =vane
+        ~|  [%unknown-vane way]
+        (~(got by van) way)
+      (~(plow va [our vane]) now peek)
     --
   --
 ::
