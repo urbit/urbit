@@ -17,8 +17,11 @@ export class Links extends Component {
   }
 
   componentDidUpdate() {
-    let linkPage = "page" + this.props.page;
-    if ((this.props.page != 0) && (!this.props.links[linkPage])) {
+    const linkPage = this.props.page;
+    if ( (this.props.page != 0) &&
+         (!this.props.links[linkPage] ||
+          this.props.links.local[linkPage])
+    ) {
       api.getPage(this.props.path, this.props.page);
     }
   }
@@ -27,7 +30,7 @@ export class Links extends Component {
     let props = this.props;
     let popout = (props.popout) ? "/popout" : "";
     let channel = props.path.substr(1);
-    let linkPage = "page" + props.page;
+    let linkPage = props.page;
 
     let links = !!props.links[linkPage]
     ? props.links[linkPage]
@@ -42,10 +45,14 @@ export class Links extends Component {
     : 1;
 
     let LinkList = Object.keys(links)
-    .map((link) => {
+    .map((linkIndex) => {
       let linksObj = props.links[linkPage];
-      let { title, url, timestamp, ship, commentCount } = linksObj[link];
+      let { title, url, time, ship } = linksObj[linkIndex];
       let members = {};
+
+      const commentCount = props.comments[url]
+        ? props.comments[url].totalItems
+        : linksObj[linkIndex].commentCount || 0;
 
       if (!props.members[ship]) {
         members[ship] = {'nickname': '', 'avatar': 'TODO', 'color': '0x0'};
@@ -67,12 +74,12 @@ export class Links extends Component {
 
       return (
         <LinkItem
-        key={timestamp}
+        key={time}
         title={title}
         page={props.page}
-        index={link}
+        linkIndex={linkIndex}
         url={url}
-        timestamp={timestamp}
+        timestamp={time}
         nickname={nickname}
         ship={ship}
         color={color}
@@ -113,7 +120,7 @@ export class Links extends Component {
           <LinksTabBar
           {...props}
           popout={popout}
-          path={props.path}/>
+          path={props.path + "/" + props.page}/>
         </div>
         <div className="w-100 mt2 flex justify-center overflow-y-scroll ph4 pb4">
           <div className="w-100 mw7">

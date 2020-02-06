@@ -7,6 +7,7 @@
 ::    /json/[p]/submissions                           pages for all groups
 ::    /json/[p]/submissions/[some-group]              page for one group
 ::    /json/[p]/discussions/[wood-url]/[some-group]   page for url in group
+::    /json/[n]/submission/[wood-url]/[some-group]    nth matching submission
 ::
 /+  *link, *server, default-agent, verb
 ::
@@ -83,6 +84,10 @@
         [%submissions ^]
       :_  this
       (give-initial-submissions:do p t.t.t.path)
+    ::
+        [%submission @ ^]
+      :_  this
+      (give-specific-submission:do p (break-discussion-path t.t.t.path))
     ::
         [%discussions @ ^]
       :_  this
@@ -257,6 +262,28 @@
   %+  scry-for  (per-path-url comments)
   :-  %discussions
   (build-discussion-path path url.submission)
+::
+++  give-specific-submission
+  |=  [n=@ud =path =url]
+  :_  [%give %kick ~ ~]~
+  =;  =json
+    [%give %fact ~ %json !>(json)]
+  %+  frond:enjs:format  'submission'
+  ^-  json
+  =;  sub=(unit submission)
+    ?~  sub  ~
+    (submission:en-json u.sub)
+  =/  =submissions
+    =-  (~(got by -) path)
+    %+  scry-for  (map ^path submissions)
+    [%submissions path]
+  |-
+  ?~  submissions  ~
+  =*  sub  i.submissions
+  ?.  =(url.sub url)
+    $(submissions t.submissions)
+  ?:  =(0 n)  `sub
+  $(n (dec n), submissions t.submissions)
 ::
 ++  give-initial-discussions
   |=  [p=@ud =path =url]

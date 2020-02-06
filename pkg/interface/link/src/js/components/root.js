@@ -69,7 +69,11 @@ export class Root extends Component {
 
               let channelLinks = !!links[groupPath]
               ? links[groupPath]
-              : {};
+              : {local: {}};
+
+              let channelComments = !!comments[groupPath]
+                ? comments[groupPath]
+                : {};
 
               return (
                 <Skeleton
@@ -85,6 +89,7 @@ export class Root extends Component {
                   {...props}
                   members={groupMembers}
                   links={channelLinks}
+                  comments={channelComments}
                   page={page}
                   path={groupPath}
                   popout={popout}
@@ -94,7 +99,7 @@ export class Root extends Component {
               )
             }}
           />
-          <Route exact path="/~link/(popout)?/:ship/:channel/:page/:index/(comments)?/:commentpage?"
+          <Route exact path="/~link/(popout)?/:ship/:channel/:page/:index/:encodedUrl/(comments)?/:commentpage?"
             render={ (props) => {
               let groupPath =
               `/${props.match.params.ship}/${props.match.params.channel}`;
@@ -105,15 +110,16 @@ export class Root extends Component {
 
               let index = props.match.params.index || 0;
               let page = props.match.params.page || 0;
+              let url = window.atob(props.match.params.encodedUrl);
 
               let data = !!links[groupPath]
-                ? !!links[groupPath]["page" + page]
-                  ? links[groupPath]["page" + page][index]
+                ? !!links[groupPath][page]
+                  ? links[groupPath][page][index]
                   : {}
                 : {};
               let coms = !comments[groupPath]
                 ? undefined
-                : comments[groupPath][data.url];
+                : comments[groupPath][url];
 
               let commentPage = props.match.params.commentpage || 0;
 
@@ -130,7 +136,8 @@ export class Root extends Component {
                   <LinkDetail
                   {...props}
                   page={page}
-                  link={index}
+                  url={url}
+                  linkIndex={index}
                   members={groupMembers}
                   path={groupPath}
                   popout={popout}

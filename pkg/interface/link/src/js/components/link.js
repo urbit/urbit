@@ -12,40 +12,38 @@ export class LinkDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      timeSinceLinkPost: this.getTimeSinceLinkPost(),
-      comment: ""
+      timeSinceLinkPost: this.getTimeSinceLinkPost(props.data),
+      comment: "",
+      data: props.data
     };
 
     this.setComment = this.setComment.bind(this);
   }
 
+  updateData(submission) {
+    this.setState({
+      data: submission,
+      timeSinceLinkPost: this.getTimeSinceLinkPost(submission)
+    });
+  }
+
   componentDidMount() {
     // if we have no preloaded data, and we aren't expecting it, get it
-    if (this.props.page != 0 && (!this.props.data || !this.props.data.url)) {
-      api.getPage(this.props.path, this.props.page);
-
-    // if we have preloaded our data,
-    // but no comments, grab the comments
-    } else if (!this.props.comments && this.props.data.url) {
-      api.getCommentsPage(this.props.path, this.props.data.url, this.props.commentPage);
+    if (!this.state.data.title) {
+      api.getSubmission(
+        this.props.path, this.props.url, this.updateData.bind(this)
+      );
     }
 
+    // start the time-since update timer
     this.updateTimeSinceNewestMessageInterval = setInterval( () => {
-      this.setState({timeSinceLinkPost: this.getTimeSinceLinkPost()});
+      this.setState({timeSinceLinkPost: this.getTimeSinceLinkPost(this.state.data)});
     }, 60000);
   }
 
   componentDidUpdate(prevProps) {
-    // if we came to this page *directly*,
-    // load the comments -- DidMount will fail
-    if ( (this.props.data.url !== prevProps.data.url) &&
-         (!this.props.comments && this.props.data.url)
-    ) {
-        api.getCommentsPage(this.props.path, this.props.data.url, this.props.commentPage);
-    }
-
-    if (this.props.data.timestamp !== prevProps.data.timestamp) {
-      this.setState({timeSinceLinkPost: this.getTimeSinceLinkPost()})
+    if (this.props.url !== prevProps.url) {
+      this.updateData(this.props.data);
     }
   }
 
@@ -56,22 +54,20 @@ export class LinkDetail extends Component {
     }
   }
 
-  getTimeSinceLinkPost() {
-    return !!this.props.data.timestamp ?
-      moment.unix(this.props.data.timestamp / 1000).from(moment.utc())
+  getTimeSinceLinkPost(data) {
+    return !!data.time ?
+      moment.unix(data.time / 1000).from(moment.utc())
       : '';
   }
 
   onClickPost() {
-    let url = this.props.data.url || "";
+    let url = this.props.url || "";
 
     let request = api.postComment(
       this.props.path,
       url,
-      this.state.comment,
-      this.props.page,
-      this.props.link
-      );
+      this.state.comment
+    );
 
     if (request) {
       this.setState({comment: ""})
@@ -85,11 +81,12 @@ export class LinkDetail extends Component {
   render() {
     let props = this.props;
     let popout = (props.popout) ? "/popout" : "";
-    let path = props.path + "/" + props.page + "/" + props.link;
+    let routePath = props.path + "/" + props.page + "/" + props.linkIndex + "/" + window.btoa(props.url);
 
-    let ship = props.data.ship || "zod";
-    let title = props.data.title || "";
-    let url = props.data.url || "";
+    const data = this.state.data || props.data;
+    let ship = data.ship || "zod";
+    let title = data.title || "";
+    let url = data.url || "";
 
     let URLparser = new RegExp(/((?:([\w\d\.-]+)\:\/\/?){1}(?:(www)\.?){0,1}(((?:[\w\d-]+\.)*)([\w\d-]+\.[\w\d]+))){1}(?:\:(\d+)){0,1}((\/(?:(?:[^\/\s\?]+\/)*))(?:([^\?\/\s#]+?(?:.[^\?\s]+){0,1}){0,1}(?:\?([^\s#]+)){0,1})){0,1}(?:#([^#\s]+)){0,1}/);
 
@@ -99,18 +96,20 @@ export class LinkDetail extends Component {
       hostname = hostname[4];
     }
 
-    let commentCount = props.data.commentCount || 0;
+    const commentCount = props.comments
+      ? props.comments.totalItems
+      : data.commentCount || 0;
 
     let comments = commentCount + " comment" + ((commentCount === 1) ? "" : "s");
 
-    let nickname = !!props.members[props.data.ship]
-    ? props.members[props.data.ship].nickname
+    let nickname = !!props.members[ship]
+    ? props.members[ship].nickname
     : "";
 
     let nameClass = nickname ? "inter" : "mono";
 
-    let color = !!props.members[props.data.ship]
-    ? uxToHex(props.members[props.data.ship].color)
+    let color = !!props.members[ship]
+    ? uxToHex(props.members[ship].color)
     : "000000";
 
     let activeClasses = (this.state.comment)
@@ -135,7 +134,7 @@ export class LinkDetail extends Component {
         <LinksTabBar
         {...props}
         popout={popout}
-        path={path}/>
+        path={routePath}/>
       </div>
       <div className="w-100 mt2 flex justify-center overflow-y-scroll ph4 pb4">
         <div className="w-100 mw7">
@@ -161,7 +160,7 @@ export class LinkDetail extends Component {
                   <span className="f9 inter gray2 pr3 v-mid">
                   {this.state.timeSinceLinkPost}
                   </span>
-                  <Link to={"/~link" + props.path + "/" + props.page + "/" + props.link} className="v-top">
+                  <Link to={"/~link" + props.path + "/" + props.page + "/" + props.linkIndex + "/" + window.btoa(props.url)} className="v-top">
                   <span className="f9 inter gray2">
                   {comments}
                   </span>
@@ -198,9 +197,9 @@ export class LinkDetail extends Component {
             commentPage={props.commentPage}
             members={props.members}
             popout={props.popout}
-            url={props.data.url}
+            url={props.url}
             linkPage={props.page}
-            linkIndex={props.link}
+            linkIndex={props.linkIndex}
             />
             </div>
           </div>

@@ -16,6 +16,9 @@ class UrbitApi {
       decline: this.inviteDecline.bind(this),
       invite: this.inviteInvite.bind(this)
     };
+
+    this.bind = this.bind.bind(this);
+    this.bindLinkView = this.bindLinkView.bind(this);
   }
 
   bind(path, method, ship = this.authTokens.ship, app, success, fail, quit) {
@@ -37,6 +40,13 @@ class UrbitApi {
       (qui) => {
         quit(qui);
       });
+  }
+
+  bindLinkView(path, result, fail, quit) {
+    this.bind.bind(this)(
+      path, 'PUT', this.authTokens.ship, 'link-view',
+      result, fail, quit
+    );
   }
 
   action(appl, mark, data) {
@@ -91,13 +101,82 @@ class UrbitApi {
     });
   }
 
-  getComments(path, url) {
-    return this.getCommentsPage.bind(this)(path, url, 0);
+  getCommentsPage(path, url, page) {
+    const strictUrl = this.encodeUrl(url);
+    const endpoint = '/json/' + page + '/discussions/' + strictUrl + path;
+    this.bindLinkView(endpoint,
+      (res) => {
+        if (res.data['initial-discussions']) {
+          // these aren't returned with the response,
+          // so this ensures the reducers know them.
+          res.data['initial-discussions'].path = path;
+          res.data['initial-discussions'].url = url;
+        }
+        store.handleEvent(res);
+      },
+      console.error,
+      ()=>{} // no-op on quit
+    );
   }
 
-  getCommentsPage(path, url, page) {
-    //TODO factor out
-    // encode the url into @ta-safe format, using logic from +wood
+  getPage(path, page) {
+    const endpoint = '/json/' + page + '/submissions' + path;
+    this.bindLinkView(endpoint,
+      (dat)=>{store.handleEvent(dat)},
+      console.error,
+      ()=>{} // no-op on quit
+    );
+  }
+
+  getSubmission(path, url, callback) {
+    const strictUrl = this.encodeUrl(url);
+    const endpoint = '/json/0/submission/' + strictUrl + path;
+    this.bindLinkView(endpoint,
+      (res) => {
+        if (res.data.submission) {
+          callback(res.data.submission)
+        } else {
+          console.error('unexpected submission response', res);
+        }
+      },
+      console.error,
+      ()=>{} // no-op on quit
+    );
+  }
+
+  linkAction(data) {
+    return this.action("link-store", "link-action", data);
+  }
+
+  postLink(path, url, title) {
+    return this.linkAction({
+      'save': { path, url, title }
+    });
+  }
+
+  postComment(path, url, comment) {
+    return this.linkAction({
+      'note': { path, url, udon: comment }
+    });
+  }
+
+  sidebarToggle() {
+    let sidebarBoolean = true;
+    if (store.state.sidebarShown === true) {
+      sidebarBoolean = false;
+    }
+    store.handleEvent({
+      data: {
+        local: {
+          'sidebarToggle': sidebarBoolean
+        }
+      }
+    });
+  }
+
+  //TODO into lib?
+  // encode the url into @ta-safe format, using logic from +wood
+  encodeUrl(url) {
     let strictUrl = '';
     for (let i = 0; i < url.length; i++) {
       const char = url[i];
@@ -128,61 +207,7 @@ class UrbitApi {
       }
       strictUrl = strictUrl + add;
     }
-    strictUrl = '~.' + strictUrl;
-
-    const endpoint = '/json/' + page + '/discussions/' + strictUrl + path;
-    this.bind.bind(this)(endpoint, 'PUT', this.authTokens.ship, 'link-view',
-      (res) => {
-        if (res.data['initial-discussions']) {
-          // these aren't returned with the response,
-          // so this ensures the reducers know them.
-          res.data['initial-discussions'].path = path;
-          res.data['initial-discussions'].url = url;
-        }
-        store.handleEvent(res);
-      },
-      console.error,
-      ()=>{} // no-op on quit
-    );
-  }
-
-  getPage(path, page) {
-    const endpoint = '/json/' + page + '/submissions' + path;
-    this.bind.bind(this)(endpoint, 'PUT', this.authTokens.ship, 'link-view',
-      (dat)=>{store.handleEvent(dat)},
-      console.error,
-      ()=>{} // no-op on quit
-    );
-  }
-
-  linkAction(data) {
-    return this.action("link-store", "link-action", data);
-  }
-
-  postLink(path, url, title) {
-    return this.linkAction({
-      'save': { path, url, title }
-    });
-  }
-
-  postComment(path, url, comment, page, index) {
-    return this.linkAction({
-      'note': { path, url, udon: comment }
-    });
-  }
-
-  sidebarToggle() {
-    let sidebarBoolean = true;
-    if (store.state.sidebarShown === true) {
-      sidebarBoolean = false;
-    }
-    store.handleEvent({
-      data: {
-        local: {
-          'sidebarToggle': sidebarBoolean
-        }
-      }
-    });
+    return '~.' + strictUrl;
   }
 
 }
