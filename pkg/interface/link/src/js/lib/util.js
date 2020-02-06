@@ -19,6 +19,43 @@ export function isPatTa(str) {
   return !!r;
 }
 
+// encode the string into @ta-safe format, using logic from +wood.
+// for example, 'some Chars!' becomes '~.some.~43.hars~21.'
+//
+export function stringToTa(string) {
+  let out = '';
+  for (let i = 0; i < string.length; i++) {
+    const char = string[i];
+    let add = '';
+    switch (char) {
+      case ' ':
+        add = '.';
+        break;
+      case '.':
+        add = '~.';
+        break;
+      case '~':
+        add = '~~';
+        break;
+      default:
+        const charCode = string.charCodeAt(i);
+        if (
+          (charCode >= 97 && charCode <= 122) || // a-z
+          (charCode >= 48 && charCode <= 57)  || // 0-9
+          char === '-'
+        ) {
+          add = char;
+        } else {
+          //TODO behavior for unicode doesn't match +wood's,
+          //     but we can probably get away with that for now.
+          add = '~' + charCode.toString(16) + '.';
+        }
+    }
+    out = out + add;
+  }
+  return '~.' + out;
+}
+
 /*
   Goes from:
     ~2018.7.17..23.15.09..5be5    // urbit @da
