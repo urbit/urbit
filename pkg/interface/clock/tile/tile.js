@@ -3,8 +3,8 @@ import classnames from 'classnames';
 import moment from 'moment'
 import SunCalc from 'suncalc'
 
-const outerSize = 126; //tile size
-const innerSize = 110; //clock size
+const outerSize = 124; //tile size
+const innerSize = 124; //clock size
 
 //polar to cartesian
 // var ptc = function(r, theta) {
@@ -105,17 +105,12 @@ class Clock extends Component {
 
   }
 
-  componentDidMount() {
-    this.canvas = initCanvas(
-      this.canvasRef,
-      { x: innerSize, y: innerSize },
-      4
-    );
-
-    navigator.geolocation.getCurrentPosition((res) => {
-
-      const lat = res.coords.latitude
-      const lon = res.coords.longitude
+  initGeolocation() {
+    if (typeof this.props.data === 'string') {
+      // console.log(typeof this.props.data)
+      const latlon = this.props.data.split(',')
+      const lat = latlon[0]
+      const lon = latlon[1]
 
       const suncalc = SunCalc.getTimes(new Date(), lat, lon)
 
@@ -137,10 +132,25 @@ class Clock extends Component {
         lon,
         ...convertedSunCalc,
         geolocationSuccess: true,
-      }, (err) => {
-        if (err) console.log(err);
-      }, { maximumAge: Infinity, timeout: 10000 });
-    });
+      })
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      this.initGeolocation()
+    }
+  }
+
+
+  componentDidMount() {
+    this.canvas = initCanvas(
+      this.canvasRef,
+      { x: innerSize, y: innerSize },
+      4
+    );
+
+    this.initGeolocation()
     this.animate()
   }
 
@@ -161,8 +171,8 @@ class Clock extends Component {
     var cx = ctr
     var cy = ctr
     this.angle = degToRad(convert(time, this.referenceTime))
-    var newX = cx + (ctr - 24) * Math.cos(this.angle);
-    var newY = cy + (ctr - 24) * Math.sin(this.angle);
+    var newX = cx + (ctr - 15) * Math.cos(this.angle);
+    var newY = cy + (ctr - 15) * Math.sin(this.angle);
 
     // Initial background
     circle(
@@ -296,10 +306,22 @@ class Clock extends Component {
       ctx,
       ctr,
       ctr,
-      ctr,
+      ctr-1,
       -1,
       2 * Math.PI,
       '#000000',
+      1
+    );
+
+    // Outer borders
+    circleOutline(
+      ctx,
+      ctr,
+      ctr,
+      ctr,
+      -1,
+      2 * Math.PI,
+      '#FFFFFF',
       1
     );
 
@@ -311,7 +333,7 @@ class Clock extends Component {
       ctr/1.85,
       -1,
       2 * Math.PI,
-      '#000000'
+      '#FFFFFF'
     )
 
     // Center white circle border
@@ -322,7 +344,7 @@ class Clock extends Component {
       ctr/1.85,
       -1,
       2 * Math.PI,
-      'rgb(26, 26, 26)',
+      '#000000',
       1
     );
 
@@ -332,12 +354,12 @@ class Clock extends Component {
       : moment().format('h:mm A')
     const dateText = moment().format('MMM Do')
     ctx.textAlign = 'center'
-    ctx.fillStyle = '#FFFFFF'
+    ctx.fillStyle = '#000000'
     ctx.font = '12px Inter'
-    ctx.fillText(timeText, ctr, ctr + 6 - 12)
+    ctx.fillText(timeText, ctr, ctr + 6 - 7)
     ctx.fillStyle = '#B1B1B1'
     ctx.font = '12px Inter'
-    ctx.fillText(dateText, ctr, ctr + 6 + 12)
+    ctx.fillText(dateText, ctr, ctr + 6 + 7)
 
     ctx.restore();
   }
@@ -359,7 +381,7 @@ export default class ClockTile extends Component {
 
   renderWrapper(child) {
     return (
-      <div className="pa2" style={{
+      <div className="" style={{
         width: outerSize,
         height: outerSize,
         background: '#fff'
@@ -371,9 +393,8 @@ export default class ClockTile extends Component {
 
   render() {
     let data = !!this.props.data ? this.props.data : {};
-
     return this.renderWrapper((
-      <Clock/>
+      <Clock data={data}/>
     ));
 
   }

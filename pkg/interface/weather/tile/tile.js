@@ -31,13 +31,13 @@ export default class WeatherTile extends Component {
 
   locationSubmit() {
     navigator.geolocation.getCurrentPosition((res) => {
-      console.log(res);
       let latlng = `${res.coords.latitude},${res.coords.longitude}`;
       this.setState({
         latlng
       }, (err) => {
         console.log(err);
       }, { maximumAge: Infinity, timeout: 10000 });
+      api.action("clock", "json", latlng);
       api.action('weather', 'json', latlng);
     });
   }
@@ -50,6 +50,7 @@ export default class WeatherTile extends Component {
     if (latlngParse.test(latlngNoSpace)) {
       let latlng = latlngNoSpace;
       this.setState({latlng}, (err) => {console.log(err)}, {maximumAge: Infinity, timeout: 10000});
+      api.action("clock", "json", latlng);
       api.action('weather', 'json', latlng);
       this.setState({manualEntry: !this.state.manualEntry});
     }

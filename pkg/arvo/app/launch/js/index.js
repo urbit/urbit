@@ -41025,6 +41025,7 @@
               }
 
               handleEvent(diff) {
+                console.log(diff);
                 store.handleEvent(diff);
               }
 
@@ -48634,7 +48635,7 @@
             var dist_3 = dist.sigil;
             var dist_4 = dist.stringRenderer;
 
-            const _jsxFileName = "/Users/matilde/git/urbit/pkg/interface/launch/src/js/components/sigil.js";
+            const _jsxFileName = "/Users/gavinatkinson/Documents/Apps/urbit/pkg/interface/launch/src/js/components/sigil.js";
             class Sigil extends react_1 {
               render() {
                 const { props } = this;
@@ -48664,7 +48665,7 @@
               }
             }
 
-            const _jsxFileName$1 = "/Users/matilde/git/urbit/pkg/interface/launch/src/js/components/header.js";
+            const _jsxFileName$1 = "/Users/gavinatkinson/Documents/Apps/urbit/pkg/interface/launch/src/js/components/header.js";
             class Header extends react_1 {
               render() {
                 return (
@@ -48689,7 +48690,7 @@
 
             }
 
-            const _jsxFileName$2 = "/Users/matilde/git/urbit/pkg/interface/launch/src/js/components/tile.js";
+            const _jsxFileName$2 = "/Users/gavinatkinson/Documents/Apps/urbit/pkg/interface/launch/src/js/components/tile.js";
             class Tile extends react_1 {
 
               constructor(props) {
@@ -48712,7 +48713,7 @@
 
             }
 
-            const _jsxFileName$3 = "/Users/matilde/git/urbit/pkg/interface/launch/src/js/components/home.js";
+            const _jsxFileName$3 = "/Users/gavinatkinson/Documents/Apps/urbit/pkg/interface/launch/src/js/components/home.js";
 
             class Home extends react_1 {
 
@@ -48742,7 +48743,7 @@
 
             }
 
-            const _jsxFileName$4 = "/Users/matilde/git/urbit/pkg/interface/launch/src/js/app.js";
+            const _jsxFileName$4 = "/Users/gavinatkinson/Documents/Apps/urbit/pkg/interface/launch/src/js/app.js";
             class App extends react_1 {
 
               constructor() {
@@ -48776,7 +48777,7 @@
 
             window.app = App;
 
-            const _jsxFileName$5 = "/Users/matilde/git/urbit/pkg/interface/launch/src/index.js";
+            const _jsxFileName$5 = "/Users/gavinatkinson/Documents/Apps/urbit/pkg/interface/launch/src/index.js";
 
             subscription.setAuthTokens({
               ship: window.ship
