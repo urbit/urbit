@@ -26,7 +26,7 @@ export class LinkDetail extends Component {
 
   componentDidMount() {
     // if we have no preloaded data, and we aren't expecting it, get it
-    if (!this.props.data.url || !this.props.url) {
+    if (!this.state.data.title) {
       api.getSubmission(
         this.props.path, this.props.url, this.updateData.bind(this)
       );
