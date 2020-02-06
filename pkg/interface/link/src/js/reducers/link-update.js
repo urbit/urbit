@@ -127,14 +127,15 @@ export class LinkUpdateReducer {
       pages[i] = [];
     }
     pages[i] = items.concat(pages[i]);
+    pages.totalItems = pages.totalItems + items.length;
     if (pages[i].length <= PAGE_SIZE) {
-      pages.totalPages = page + 1;
-      pages.totalItems = (page * PAGE_SIZE) + pages[i].length;
+      pages.totalPages = Math.ceil(pages.totalItems / PAGE_SIZE);
       return pages;
     }
     // overflow into next page
     const tail = pages[i].slice(PAGE_SIZE);
     pages[i].length = PAGE_SIZE;
+    pages.totalItems = pages.totalItems - tail.length;
     return this._addNewItems(tail, pages, page+1);
   }
 
