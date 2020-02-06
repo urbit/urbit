@@ -120,7 +120,7 @@ export class Links extends Component {
           <LinksTabBar
           {...props}
           popout={popout}
-          path={props.path}/>
+          path={props.path + "/" + props.page}/>
         </div>
         <div className="w-100 mt2 flex justify-center overflow-y-scroll ph4 pb4">
           <div className="w-100 mw7">

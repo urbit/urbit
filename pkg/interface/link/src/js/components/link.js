@@ -81,7 +81,7 @@ export class LinkDetail extends Component {
   render() {
     let props = this.props;
     let popout = (props.popout) ? "/popout" : "";
-    let path = props.path + "/" + props.page + "/" + props.link;
+    let routePath = props.path + "/" + props.page + "/" + props.linkIndex + "/" + window.btoa(props.url);
 
     const data = this.state.data || props.data;
     let ship = data.ship || "zod";
@@ -134,7 +134,7 @@ export class LinkDetail extends Component {
         <LinksTabBar
         {...props}
         popout={popout}
-        path={path}/>
+        path={routePath}/>
       </div>
       <div className="w-100 mt2 flex justify-center overflow-y-scroll ph4 pb4">
         <div className="w-100 mw7">
@@ -160,7 +160,7 @@ export class LinkDetail extends Component {
                   <span className="f9 inter gray2 pr3 v-mid">
                   {this.state.timeSinceLinkPost}
                   </span>
-                  <Link to={"/~link" + props.path + "/" + props.page + "/" + props.link} className="v-top">
+                  <Link to={"/~link" + props.path + "/" + props.page + "/" + props.linkIndex + "/" + window.btoa(props.url)} className="v-top">
                   <span className="f9 inter gray2">
                   {comments}
                   </span>
