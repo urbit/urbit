@@ -70,7 +70,7 @@ export class LinkItem extends Component {
             : "~" + props.ship}</span>
           <span className="f9 inter gray2 pr3 v-mid">{this.state.timeSinceLinkPost}</span>
           <Link to=
-          {"/~link" + props.popout + "/" + props.channel + "/" + props.page + "/" + props.index + "/" + encodedUrl}
+          {"/~link" + props.popout + "/" + props.channel + "/" + props.page + "/" + props.linkIndex + "/" + encodedUrl}
           className="v-top">
             <span className="f9 inter gray2">
                 {comments}

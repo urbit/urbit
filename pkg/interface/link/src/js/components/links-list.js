@@ -45,14 +45,14 @@ export class Links extends Component {
     : 1;
 
     let LinkList = Object.keys(links)
-    .map((link) => {
+    .map((linkIndex) => {
       let linksObj = props.links[linkPage];
-      let { title, url, time, ship } = linksObj[link];
+      let { title, url, time, ship } = linksObj[linkIndex];
       let members = {};
 
       const commentCount = props.comments[url]
         ? props.comments[url].totalItems
-        : linksObj[link].commentCount || 0;
+        : linksObj[linkIndex].commentCount || 0;
 
       if (!props.members[ship]) {
         members[ship] = {'nickname': '', 'avatar': 'TODO', 'color': '0x0'};
@@ -77,7 +77,7 @@ export class Links extends Component {
         key={time}
         title={title}
         page={props.page}
-        index={link}
+        linkIndex={linkIndex}
         url={url}
         timestamp={time}
         nickname={nickname}

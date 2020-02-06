@@ -199,7 +199,7 @@ export class LinkDetail extends Component {
             popout={props.popout}
             url={props.url}
             linkPage={props.page}
-            linkIndex={props.link}
+            linkIndex={props.linkIndex}
             />
             </div>
           </div>

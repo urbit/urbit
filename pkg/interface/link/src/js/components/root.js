@@ -137,7 +137,7 @@ export class Root extends Component {
                   {...props}
                   page={page}
                   url={url}
-                  link={index}
+                  linkIndex={index}
                   members={groupMembers}
                   path={groupPath}
                   popout={popout}
