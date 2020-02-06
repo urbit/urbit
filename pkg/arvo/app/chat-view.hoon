@@ -232,16 +232,12 @@
   ++  create-managed-group
     |=  [=path security=rw-security ships=(set ship)]
     ^-  (list card)
-    ~&  [path security ships]
-    ?.  =(security %village)
-      ::  if blacklist, do nothing but create the group if it isn't there
-      ::
-      ?~((group-scry path) ~[(group-poke [%bundle path])] ~)
-    ::  if whitelist, check if group exists already. if yes, do nothing
-    ::
+    ?>  ?=(^ path)
     ?^  (group-scry path)  ~
-    ::  if group does not exist, send contact-view %create
+    ::  do not create a managed group if this is a sig path or a blacklist
     ::
+    ?:  |(=(i.path '~') ?!(=(security %village)))
+      ~[(group-poke [%bundle path])]
     ~[(contact-view-poke [%create path ships])]
   ::
   ++  create-security
