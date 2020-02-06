@@ -69,11 +69,10 @@ export class NewScreen extends Component {
   onClickCreate() {
     const { props, state } = this;
 
-    let invalidChara = new RegExp(/[^a-z0-9/-]/);
+    let validChar = /^[a-z0-9~_.-]*$/;
 
     let invalid = (
-      (!state.idName) || (state.idName.startsWith("/")) ||
-      (state.idName.includes("//")) || (invalidChara.test(state.idName))
+      (!state.idName) || (!validChara.test(state.idName))
     );
 
     if (invalid) {
