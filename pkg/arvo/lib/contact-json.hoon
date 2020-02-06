@@ -101,7 +101,6 @@
     %-  of
     :~  [%create create]
         [%delete delete]
-        [%add add]
         [%remove remove]
         [%share share]
     ==
@@ -113,12 +112,6 @@
     ==
   ::
   ++  delete  (ot [%path pa]~)
-  ::
-  ++  add
-     %-  ot
-     :~  [%path pa]
-         [%ships (as (su ;~(pfix sig fed:ag)))]
-     ==
   ::
   ++  remove
     %-  ot

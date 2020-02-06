@@ -126,27 +126,18 @@
   ?-  -.act
       %create
     ?>  ?=([@ *] path.act)
-    %+  welp
-      :~  (group-poke [%bundle path.act])
-          (contact-poke [%create path.act])
-          (contact-hook-poke [%add-owned path.act])
-          (group-hook-poke [%add our.bol path.act])
-          (group-poke [%add (~(put in ships.act) our.bol) path.act])
-      ==
-    %+  turn  ~(tap in (~(del in ships.act) our.bol))
-    |=  =ship
-    (send-invite-poke path.act ship)
+    :~  (group-poke [%bundle path.act])
+        (contact-poke [%create path.act])
+        (contact-hook-poke [%add-owned path.act])
+        (group-hook-poke [%add our.bol path.act])
+        (group-poke [%add (~(put in ships.act) our.bol) path.act])
+    ==
   ::
       %delete
     :~  (group-poke [%unbundle path.act])
         (contact-poke [%delete path.act])
         (contact-hook-poke [%remove path.act])
     ==
-  ::
-       %add
-     %+  welp  [(group-poke [%add ships.act path.act])]~
-     %+  turn  ~(tap in (~(del in ships.act) our.bol))
-     |=(=ship (send-invite-poke path.act ship))
   ::
       %remove
     :~  (group-poke [%remove [ship.act ~ ~] path.act])
@@ -226,16 +217,6 @@
   |=  act=group-hook-action
   ^-  card
   [%pass / %agent [our.bol %group-hook] %poke %group-hook-action !>(act)]
-::
-++  send-invite-poke
-  |=  [=path =ship]
-  ^-  card
-  =/  =invite
-    :*  our.bol  %contact-hook
-        path  ship  ''
-    ==
-  =/  act=invite-action  [%invite /contacts (shaf %msg-uid eny.bol) invite]
-  [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
 ::
 ++  all-scry
   ^-  rolodex

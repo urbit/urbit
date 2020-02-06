@@ -55,7 +55,7 @@ export class AddScreen extends Component {
       invites: ''
     }, () => {
       props.setSpinner(true);
-      props.api.contactView.add(props.path, aud)
+      props.api.group.add(props.path, aud)
       props.history.push('/~contacts' + props.path);
     });
   }

@@ -16,11 +16,11 @@ export class NewScreen extends Component {
         groups: [],
         ships: []
       },
-      security: 'channel',
+      security: 'village',
       idError: false,
       inviteError: false,
       allowHistory: true,
-      createGroup: false
+      createGroup: true
     };
 
     this.idChange = this.idChange.bind(this);
@@ -58,8 +58,18 @@ export class NewScreen extends Component {
       this.setState({security: "channel"});
     }
   }
+
   createGroupChange(event) {
-    this.setState({createGroup: !!event.target.checked});
+    if (event.target.checked) {
+      this.setState({
+        createGroup: !!event.target.checked,
+        security: 'village'
+      });
+    } else {
+      this.setState({
+        createGroup: !!event.target.checked,
+      });
+    }
   }
 
   allowHistoryChange(event) {
@@ -72,7 +82,7 @@ export class NewScreen extends Component {
     let validChar = /^[a-z0-9~_.-]*$/;
 
     let invalid = (
-      (!state.idName) || (!validChara.test(state.idName))
+      (!state.idName) || (!validChar.test(state.idName))
     );
 
     if (invalid) {
@@ -135,27 +145,28 @@ export class NewScreen extends Component {
       // if we want a "proper group" that can be managed from the contacts UI,
       // we make a path of the form /~zod/cool-group
       // if not, we make a path of the form /~/~zod/free-chat
+      let chatPath = `/~${window.ship}${station}`;
+      if (!state.createGroup || state.invites.groups.length > 0) {
+        chatPath = '/~' + chatPath;
+      }
       props.api.chatView.create(
-        `/~${window.ship}${station}`, state.security, aud, state.allowHistory
+        chatPath, state.security, aud, state.allowHistory
       );
     });
   }
 
   render() {
-    let inviteSwitchClasses =
-      "relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0";
-    if (this.state.security === "village") {
-      inviteSwitchClasses = "relative checked bg-green2 br3 h1 toggle v-mid z-0";
-    }
+    let inviteSwitchClasses = (this.state.security === "village")
+      ? "relative checked bg-green2 br3 h1 toggle v-mid z-0"
+      : "relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0";
 
     let createGroupClasses = this.state.createGroup
       ? "relative checked bg-green2 br3 h1 toggle v-mid z-0"
       : "relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0";
 
-    let createClasses = "pointer db f9 green2 bg-gray0-d ba pv3 ph4 b--green2";
-    if (!this.state.idName) {
-      createClasses = 'pointer db f9 gray2 ba bg-gray0-d pa2 pv3 ph4 b--gray3';
-    }
+    let createClasses = !!this.state.idName
+      ? "pointer db f9 green2 bg-gray0-d ba pv3 ph4 b--green2"
+      : "pointer db f9 gray2 ba bg-gray0-d pa2 pv3 ph4 b--gray3";
 
     let idErrElem = (<span />);
     if (this.state.idError) {
@@ -167,7 +178,7 @@ export class NewScreen extends Component {
     }
 
     let createGroupToggle = <div/>
-    if ((this.state.invites.ships.length > 0) && (this.state.invites.groups.length === 0)) {
+    if (this.state.invites.groups.length === 0) {
       createGroupToggle = (
         <div className="mv7">
           <input

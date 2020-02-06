@@ -54,7 +54,7 @@ export class InviteElement extends Component {
       props.api.groups.add(aud, props.path);
       if (props.permissions.kind === 'white') {
         aud.forEach((ship) => {
-          props.api.invite.invite(props.station, ship);
+          props.api.invite.invite(props.path, ship);
         });
       }
     });
