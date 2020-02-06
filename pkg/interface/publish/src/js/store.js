@@ -1,12 +1,15 @@
 import { InitialReducer }  from '/reducers/initial';
 import { PrimaryReducer }  from '/reducers/primary';
 import { ResponseReducer } from '/reducers/response';
+import { GroupReducer }    from '/reducers/group';
+import { InviteReducer }   from '/reducers/invite';
 
 class Store {
   constructor() {
     this.state = {
       notebooks: {},
       groups: {},
+      contacts: {},
       permissions: {},
       invites: {},
       spinner: false,
@@ -16,6 +19,8 @@ class Store {
     this.initialReducer  = new InitialReducer();
     this.primaryReducer  = new PrimaryReducer();
     this.responseReducer = new ResponseReducer();
+    this.groupReducer    = new GroupReducer();
+    this.inviteReducer   = new InviteReducer();
     this.setState = () => {};
 
     this.initialReducer.reduce(window.injectedState, this.state);
@@ -26,8 +31,12 @@ class Store {
   }
 
   handleEvent(evt) {
-    if (evt.from && evt.from.path === '/primary'){
+    if (evt.from && evt.from.path === '/all') {
+      this.groupReducer.reduce(evt.data, this.state);
+    }
+    else if (evt.from && evt.from.path === '/primary'){
       this.primaryReducer.reduce(evt.data, this.state);
+      this.inviteReducer.reduce(evt.data, this.state);
     } else if (evt.type) {
       this.responseReducer.reduce(evt, this.state);
     }

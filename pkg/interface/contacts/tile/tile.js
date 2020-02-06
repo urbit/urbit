@@ -9,19 +9,19 @@ export default class ContactTile extends Component {
     const { props } = this;
 
     return (
-      <div className="w-100 h-100 relative" style={{ background: "#286E55" }}>
-        <a className="w-100 h-100 db pa2 no-underline" href="/~contacts">
+      <div className="w-100 h-100 relative bg-white b--black ba">
+        <a className="w-100 h-100 db pa2 bn" href="/~contacts">
           <p
-            className="white label-regular b absolute"
-            style={{ left: 8, top: 4 }}>
+            className="black absolute f9"
+            style={{ left: 8, top: 8 }}>
             Contacts
           </p>
           <img
             className="absolute"
-            style={{ left: 69, top: 69 }}
+            style={{ left: 39, top: 39 }}
             src="/~contacts/img/Tile.png"
-            width={96}
-            height={96}
+            width={48}
+            height={48}
           />
         </a>
       </div>

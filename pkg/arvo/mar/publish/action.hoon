@@ -115,16 +115,13 @@
           note+so
       ==
     ++  group-info
-      %-  of
-      :~  old+(ot write-pax+pa read-pax+pa ~)
-          :-  %new
-          %-  ot
-          :~  write-grp+set-ship  write-pax+pa
-              read-grp+set-ship   read-pax+pa
-              sec+so
-          ==
+      %-  ot
+      :~  group-path+pa
+          invitees+set-ship
+          use-preexisting+bo
+          make-managed+bo
       ==
-    ++  set-ship  (ar (su fed:ag))
+    ++  set-ship  (as (su fed:ag))
     --
   --
 --

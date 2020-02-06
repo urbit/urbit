@@ -3,6 +3,7 @@ import _ from 'lodash';
 export class PrimaryReducer {
   reduce(json, state){
     switch(Object.keys(json)[0]){
+      //publish actions
       case "add-book":
         this.addBook(json["add-book"], state);
         break;
@@ -33,6 +34,12 @@ export class PrimaryReducer {
       case "read":
         this.read(json["read"], state);
         break;
+      // contacts actions
+      case "contact-initial":
+        this.contactInitial(json["contact-initial"], state);
+        break;
+      case "contact-update":
+        this.contactUpdate(json["contact-update"], state);
       default:
         break;
     }
@@ -58,7 +65,7 @@ export class PrimaryReducer {
       } else {
         state.notebooks[host][book]["notes-by-date"] = [noteId];
       }
-      
+
       if (state.notebooks[host][book].notes) {
         state.notebooks[host][book].notes[noteId] = json[host][book];
       } else {
@@ -223,6 +230,66 @@ export class PrimaryReducer {
         state.notebooks[host][book].notes[noteId])
     {
       state.notebooks[host][book].notes[noteId]["read"] = true;
+    }
+  }
+
+  contactInitial(json, state) {
+    state.contacts = json;
+  }
+
+  contactUpdate(json, state) {
+    this.createContact(json, state);
+    this.deleteContact(json, state);
+    this.addContact(json, state);
+    this.removeContact(json, state);
+    this.editContact(json, state);
+  }
+
+  createContact(json, state) {
+    let data = _.get(json, "create", false);
+    if (data) {
+      state.contacts[data.path] = {};
+    }
+  }
+
+  deleteContact(json, state) {
+    let data = _.get(json, "delete", false);
+    if (data) {
+      delete state.contacts[data.path];
+    }
+  }
+
+  addContact(json, state) {
+    let data = _.get(json, "add", false);
+    if (data && data.path in state.contacts) {
+      state.contacts[data.path][data.ship] = data.contact;
+    }
+  }
+
+  removeContact(json, state) {
+    let data = _.get(json, "remove", false);
+    if (
+      data &&
+      data.path in state.contacts &&
+      data.ship in state.contacts[data.path]
+    ) {
+      delete state.contacts[data.path][data.ship];
+    }
+  }
+
+  editContact(json, state) {
+    let data = _.get(json, "edit", false);
+    if (
+      data &&
+      data.path in state.contacts &&
+      data.ship in state.contacts[data.path]
+    ) {
+      let edit = Object.keys(data["edit-field"]);
+      if (edit.length !== 1) {
+        return;
+      }
+      state.contacts[data.path][data.ship][edit[0]] =
+        data["edit-field"][edit[0]];
     }
   }
 }

@@ -8,7 +8,17 @@
   ==
 =,  format
 ::
+|%
+::
++$  card  card:agent:gall
++$  versioned-state
+  $%  state-zero
+  ==
++$  state-zero  [%0 data=json]
+--
 %+  verb  |
+=|  state-zero
+=*  state  -
 ^-  agent:gall
 |_  =bowl:gall
 +*  this  .
@@ -17,7 +27,7 @@
 ++  on-init
   ^-  (quip card:agent:gall _this)
   =/  launcha
-    [%launch-action !>([%clock /tile '/~clock/js/tile.js'])]
+    [%launch-action !>([%clock /clocktile '/~clock/js/tile.js'])]
   :_  this
   :~  [%pass / %arvo %e %connect [~ /'~clock'] %clock]
       [%pass /clock %agent [our.bowl %launch] %poke launcha]
@@ -39,6 +49,9 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:agent:gall _this)
+  |^
+  ?:  ?=(%json mark)
+    (poke-json !<(json vase))
   ?.  ?=(%handle-http-request mark)
     (on-poke:def mark vase)
   =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
@@ -59,15 +72,23 @@
   ?:  =(name 'tile')
     (js-response:gen tile-js)
   not-found:gen
+  ::
+  ++  poke-json
+    |=  jon=json
+    ^-  (quip card:agent:gall _this)
+    =.  data.state  jon
+    :_  this
+    [%give %fact ~[/clocktile] %json !>(jon)]~
+  --
 ::
 ++  on-watch
   |=  =path
   ^-  (quip card:agent:gall _this)
   ?:  ?=([%http-response *] path)
     `this
-  ?.  =(/tile path)
+  ?.  =(/clocktile path)
     (on-watch:def path)
-  [[%give %fact ~ %json !>(*json)]~ this]
+  [[%give %fact ~ %json !>(data.state)]~ this]
 ::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def

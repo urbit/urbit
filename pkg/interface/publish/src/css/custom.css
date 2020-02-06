@@ -80,14 +80,18 @@ a {
   background: rgba(42, 167, 121, 0.1);
 }
 
+.focus-b--black:focus {
+  border-color: #000;
+}
+
+.mix-blend-diff {
+  mix-blend-mode: difference;
+}
+
 .NotebookButton {
   padding: 8px 12px;
   border-radius:2px;
   cursor: pointer;
-}
-
-.NotebookTab {
-  padding: 16px 8px;
 }
 
 .NewPost {
@@ -95,6 +99,33 @@ a {
   height: calc(100% - 103px);
   display: flex;
   padding-top: 8px;
+}
+
+.placeholder-inter::placeholder {
+  font-family: "Inter", sans-serif;
+}
+
+/* toggler checkbox */
+.toggle::after {
+  content: "";
+  height: 12px;
+  width: 12px;
+  background: white;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  border-radius: 100%;
+}
+
+.toggle.checked::after {
+  content: "";
+  height: 12px;
+  width: 12px;
+  background: white;
+  position: absolute;
+  top: 2px;
+  left: 14px;
+  border-radius: 100%;
 }
 
 .react-codemirror2 {
@@ -109,9 +140,10 @@ a {
   cursor: text;
   font-size: 12px;
   line-height: 20px;
-  * {
+}
+
+.CodeMirror * {
     font-family: 'Source Code Pro';
-  }
 }
 
 .CodeMirror-selected { background:#BAE3FE !important; }
@@ -167,6 +199,14 @@ a {
   outline: 0px solid transparent;
 }
 
+.dropdown::after {
+  content: "⌃";
+  transform: rotate(180deg);
+  position: absolute;
+  right: 8px;
+  top: 16px;
+  color: #7f7f7f;
+}
 
 .no-scrollbar {
   -ms-overflow-style: none;
@@ -175,4 +215,39 @@ a {
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+.md h1, .md h2, .md h3, .md h4, .md h5, .md p, .md a, .md ul, .md blockquote,.md code,.md pre {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.md h2, .md h3, .md h4, .md h5, .md p, .md a, .md ul {
+  font-weight: 400;
+}
+
+.md h1 {
+  font-weight: 600;
+}
+
+.md h2, .md h3, .md h4, .md h5 {
+  color:var(--gray);
+}
+
+.md p {
+  line-height: 1.5;
+}
+.md code, .md pre {
+  font-family: "Source Code Pro", mono;
+}
+.md ul>li {
+  line-height: 1.5;
+}
+.md a {
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+
+md img {
+  margin-bottom: 8px;
 }

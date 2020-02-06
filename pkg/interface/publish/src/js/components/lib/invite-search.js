@@ -40,6 +40,7 @@ export class InviteSearch extends Component {
         peerSet.add(...this.props.groups[group]);
       }
     });
+
     peers = Array.from(peerSet);
 
     this.setState({ groups: groups, peers: peers });
@@ -256,7 +257,7 @@ export class InviteSearch extends Component {
     return (
       <div className="relative">
         <img
-          src="/~chat/img/search.png"
+          src="/~publish/search.png"
           className="absolute invert-d"
           style={{
             height: 16,

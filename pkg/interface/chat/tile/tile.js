@@ -20,62 +20,35 @@ export default class ChatTile extends Component {
       });
     }
 
-    let invSuffix = (inviteNum === 1) ? (
-      <span>Invite</span>
-    ) : (
-      <span>Invites</span>
-    );
-    let numInvElem = (inviteNum > 0) ? (
-      <p className="absolute white"
-         style={{
-           top: 180,
-           fontWeight: 600,
-           fontSize: 16,
-           lineHeight: '20px'
-         }}>
-         <span style={{
-          color: '#2AA779'
-         }}>{inviteNum} </span>
-         {invSuffix}
-      </p>
-    ) : (
-      <div />
-    );
+    let notificationsNum = inviteNum + msgNum;
 
-    let msgSuffix = (msgNum === 1) ? (
-      <span>New Message</span>
-    ) : (
-      <span>New Messages</span>
-    );
-    let numMsgElem = (msgNum > 0) ? (
-      <p className="absolute white"
-         style={{
-           top: 207,
-           fontWeight: 600,
-           fontSize: 16,
-           lineHeight: '20px'
-         }}>
-         <span style={{
-          color: '#2AA779'
-         }}>{msgNum} </span>
-         {msgSuffix}
-      </p>
-    ) : (
-      <div />
-    );
+    let numNotificationsElem =
+      notificationsNum > 0 ? (
+        <p
+          className="absolute green2"
+          style={{
+            bottom: 6,
+            fontWeight: 400,
+            fontSize: 12,
+            lineHeight: "20px"
+          }}>
+          {notificationsNum > 99 ? "99+" : notificationsNum}
+        </p>
+      ) : (
+        <div />
+      );
 
     return (
-      <div className="w-100 h-100 relative" style={{ background: '#1a1a1a' }}>
+      <div className="w-100 h-100 relative bg-white ba b--black">
         <a className="w-100 h-100 db pa2 no-underline" href="/~chat">
-          <p className="gray label-regular b absolute" style={{left: 8, top: 4}}>Chat</p>
+          <p className="black gray absolute f9" style={{left: 8, top: 8}}>Messaging</p>
            <img
              className="absolute"
-             style={{ left: 68, top: 65 }}
+             style={{ left: 39, top: 39 }}
              src="/~chat/img/Tile.png"
-             width={106}
-             height={98} />
-           {numInvElem}
-           {numMsgElem}
+             width={48}
+             height={48} />
+           {numNotificationsElem}
         </a>
       </div>
     );
