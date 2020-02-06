@@ -4,8 +4,7 @@
   $%  $:  %create
           =path
           security=rw-security
-          read=(set ship)
-          write=(set ship)
+          members=(set ship)
           allow-history=?
       ==
       [%delete =path]

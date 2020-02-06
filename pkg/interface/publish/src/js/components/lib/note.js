@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { Comments } from './comments';
 import { NoteNavigation } from './note-navigation';
 import moment from 'moment';
-import ReactMarkdown from 'react-markdown'
-// import test from 'test.json';
+import ReactMarkdown from 'react-markdown';
 //TODO ask for note if we don't have it
 //TODO initialise note if no state
 
@@ -129,13 +128,14 @@ export class Note extends Component {
           <div className="w-100 mw6">
             <div className="flex flex-column">
               <div className="f9 mb1">{title}</div>
-              <div className="flex">
-              <div className="di f9 mono gray2 mr2">{author}</div>
-              <div className="di f9 gray2">{date}</div>
+              <div className="flex mb6">
+                <div className="di f9 mono gray2 mr2">{author}</div>
+                <div className="di f9 gray2">{date}</div>
               </div>
             </div>
-
-            <ReactMarkdown source={newfile} />
+            <div className="md">
+              <ReactMarkdown source={newfile} />
+            </div>
             <NoteNavigation
               prev={prev}
               next={next}

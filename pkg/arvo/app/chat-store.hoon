@@ -59,8 +59,7 @@
           [%updates ~]  ~
           [%mailbox @ *]
         ?>  (~(has by inbox) t.path)
-        =/  =ship  (slav %p i.t.path)
-        (give %chat-update !>([%create ship t.t.path]))
+        (give %chat-update !>([%create t.path]))
       ==
     [cards this]
     ::
@@ -159,11 +158,10 @@
   |=  act=chat-action
   ^-  (quip card _state)
   ?>  ?=(%create -.act)
-  =/  pax  [(scot %p ship.act) path.act]
-  ?:  (~(has by inbox) pax)
+  ?:  (~(has by inbox) path.act)
     [~ state]
-  :-  (send-diff pax act)
-  state(inbox (~(put by inbox) pax *mailbox))
+  :-  (send-diff path.act act)
+  state(inbox (~(put by inbox) path.act *mailbox))
 ::
 ++  handle-delete
   |=  act=chat-action

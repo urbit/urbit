@@ -44,7 +44,7 @@ export class ChatUpdateReducer {
   create(json, state) {
     let data = _.get(json, 'create', false);
     if (data) {
-      state.inbox[`/~${data.ship}${data.path}`] = {
+      state.inbox[data.path] = {
         envelopes: [],
         config: {
           read: 0,

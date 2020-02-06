@@ -67,6 +67,9 @@
     ?>  (team:title our.bowl src.bowl)
     ?+  mark  (on-poke:def mark vase)
         %json                 [(poke-json:cc !<(json vase)) this]
+        %contact-view-action
+      [(poke-contact-view-action:cc !<(contact-view-action vase)) this]
+    ::
         %handle-http-request
       =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
       :_  this

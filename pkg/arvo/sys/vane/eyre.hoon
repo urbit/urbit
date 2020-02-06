@@ -1549,7 +1549,6 @@
         (emit-event channel-id [(en-json:html json)]~)
       ::
           %kick
-        ~&  [%recieved-quit-from-gall channel-id]
         =/  =json
           =,  enjs:format
           %-  pairs  :~

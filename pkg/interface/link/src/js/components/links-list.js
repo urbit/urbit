@@ -13,15 +13,12 @@ import { uxToHex } from '../lib/util';
 export class Links extends Component {
 
   componentDidMount() {
-    let linkPage = "page" + this.props.page;
-    if ((this.props.page !== 0) && (!this.props.links[linkPage])) {
-      api.getPage(this.props.path, this.props.page);
-    }
+    this.componentDidUpdate();
   }
 
   componentDidUpdate() {
     let linkPage = "page" + this.props.page;
-    if ((this.props.page !== 0) && (!this.props.links[linkPage])) {
+    if ((this.props.page != 0) && (!this.props.links[linkPage])) {
       api.getPage(this.props.path, this.props.page);
     }
   }
@@ -41,7 +38,7 @@ export class Links extends Component {
     : 0;
 
     let totalPages = !!props.links
-    ? Number(props.links["total-pages"])
+    ? Number(props.links.totalPages)
     : 1;
 
     let LinkList = Object.keys(links)
@@ -95,7 +92,7 @@ export class Links extends Component {
          <Link to="/~link/">{"⟵ All Channels"}</Link>
        </div>
        <div
-         className={`pl3 pt2 flex relative overflow-x-scroll 
+         className={`pl3 pt2 flex relative overflow-x-scroll
          overflow-x-auto-l overflow-x-auto-xl flex-shrink-0
          bb bn-m bn-l bn-xl b--gray4`}
          style={{ height: 48 }}>
@@ -104,7 +101,7 @@ export class Links extends Component {
            popout={props.popout}/>
          <Link to={`/~link` + popout + props.path} className="pt2">
            <h2
-             className={`dib f8 fw4 v-top ` + 
+             className={`dib f8 fw4 v-top ` +
              (props.path.includes("/~/")
              ? ""
              : "mono")}>

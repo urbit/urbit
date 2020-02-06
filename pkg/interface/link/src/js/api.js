@@ -91,135 +91,84 @@ class UrbitApi {
     });
   }
 
-  async getComments(path, url, page, index) {
-    let endpoint = "/~link/discussions" + path + "/" + window.btoa(url) + ".json?p=0";
-    let promise = await fetch(endpoint);
-    if (promise.ok) {
-      let comments = {
-        "link-update": {
-          comments: {
-            path: path,
-            page: page,
-            index: index
-          }
-        }
-      };
-      comments["link-update"].comments.data = await promise.json();
-      store.handleEvent(comments);
-    }
+  getComments(path, url) {
+    return this.getCommentsPage.bind(this)(path, url, 0);
   }
 
-  async getCommentsPage(path, url, page, index, commentPage) {
-    let endpoint = "/~link/discussions" + path + "/" + window.btoa(url) + ".json?p=" + commentPage;
-    let promise = await fetch(endpoint);
-    if (promise.ok) {
-      let responseData = await promise.json();
-      let update = {
-        "link-update": {
-          commentPage: {
-            path: path,
-            linkPage: page,
-            index: index,
-            comPageNo: commentPage,
-            data: responseData.page
+  getCommentsPage(path, url, page) {
+    //TODO factor out
+    // encode the url into @ta-safe format, using logic from +wood
+    let strictUrl = '';
+    for (let i = 0; i < url.length; i++) {
+      const char = url[i];
+      let add = '';
+      switch (char) {
+        case ' ':
+          add = '.';
+          break;
+        case '.':
+          add = '~.';
+          break;
+        case '~':
+          add = '~~';
+          break;
+        default:
+          const charCode = url.charCodeAt(i);
+          if (
+            (charCode >= 97 && charCode <= 122) || // a-z
+            (charCode >= 48 && charCode <= 57)  || // 0-9
+            char === '-'
+          ) {
+            add = char;
+          } else {
+            //TODO behavior for unicode doesn't match +wood's,
+            //     but we can probably get away with that for now.
+            add = '~' + charCode.toString(16) + '.';
           }
-        }
-      };
-      store.handleEvent(update);
+      }
+      strictUrl = strictUrl + add;
     }
-  }
+    strictUrl = '~.' + strictUrl;
 
-  async getPage(path, page) {
-    let endpoint = "/~link/submissions" + path + ".json?p=" + page;
-    let promise = await fetch(endpoint);
-    if (promise.ok) {
-      let resolvedPage = await promise.json();
-      let update = {
-        "link-update": {
-          page: {
-            [path]: {
-              page: page,
-              links: resolvedPage.page
-            }
-          }
+    const endpoint = '/json/' + page + '/discussions/' + strictUrl + path;
+    this.bind.bind(this)(endpoint, 'PUT', this.authTokens.ship, 'link-view',
+      (res) => {
+        if (res.data['initial-discussions']) {
+          // these aren't returned with the response,
+          // so this ensures the reducers know them.
+          res.data['initial-discussions'].path = path;
+          res.data['initial-discussions'].url = url;
         }
-      };
-      store.handleEvent(update);
-    }
-  }
-
-  async postLink(path, url, title) {
-    let json =
-    {'path': path,
-    'title': title,
-    'url': url
-    };
-    let endpoint = "/~link/save";
-    let post = await fetch(endpoint, {
-      method: "POST",
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
+        store.handleEvent(res);
       },
-      body: JSON.stringify(json)
-    });
-
-    if (post.ok) {
-      let update = {
-        "link-update": {
-          add: {
-            [path]: {
-              title: title,
-              url: url,
-              timestamp: moment.now(),
-              ship: window.ship,
-              commentCount: 0
-            }
-          }
-        }
-      };
-      store.handleEvent(update);
-      return true;
-    } else {
-      return false;
-    }
+      console.error,
+      ()=>{} // no-op on quit
+    );
   }
 
-  async postComment(path, url, comment, page, index) {
-    let json = {
-      path: path,
-      url: url,
-      udon: comment
-    }
+  getPage(path, page) {
+    const endpoint = '/json/' + page + '/submissions' + path;
+    this.bind.bind(this)(endpoint, 'PUT', this.authTokens.ship, 'link-view',
+      (dat)=>{store.handleEvent(dat)},
+      console.error,
+      ()=>{} // no-op on quit
+    );
+  }
 
-    let endpoint = "/~link/note";
-    let post = await fetch(endpoint, {
-      method: "POST",
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(json)
+  linkAction(data) {
+    return this.action("link-store", "link-action", data);
+  }
+
+  postLink(path, url, title) {
+    return this.linkAction({
+      'save': { path, url, title }
     });
+  }
 
-    if (post.ok) {
-      let update = {
-        "link-update": {
-          commentAdd: {
-            path: path,
-            url: url,
-            udon: comment,
-            page: page,
-            index: index,
-            time: moment.now()
-          }
-        }
-      };
-      store.handleEvent(update);
-      return true;
-    } else {
-      return false;
-    }
+  postComment(path, url, comment, page, index) {
+    return this.linkAction({
+      'note': { path, url, udon: comment }
+    });
   }
 
   sidebarToggle() {
