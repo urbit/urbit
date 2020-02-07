@@ -284,16 +284,6 @@
       %&  [%& (slop hed p.tal)]
       %|  [%| [%cell p.hed p.p.tal] [q.hed q.p.tal]]
     ==
-  ::  +slix: en-hypo XX remove
-  ::
-  ++  slix
-    |=  hil=mill
-    ^-  mill
-    =/  typ  -:!>(*type)
-    ?-  -.hil
-      %&  [%& (slop [typ p.p.hil] p.hil)]
-      %|  [%| [%cell typ p.p.hil] p.hil]
-    ==
   ::
   +|  %engines
   ::
@@ -302,9 +292,9 @@
   ++  me
     ~/  %me
     |_  ::  sac: compiler cache
-        ::  pyt: type of type
+        ::  pyt: cached types
         ::
-        [sac=worm pyt=type]
+        [sac=worm vil=vile]
     ::  +refine-moves: move list from vase (was +said)
     ::
     ++  refine-moves
@@ -411,7 +401,7 @@
       =^  hip  sac  (~(nell wa sac) p.tiv)
       ?>  hip
       =^  typ  sac  (~(slot wa sac) 2 tiv)
-      =.  sac  (~(neat wa sac) pyt [%& typ])
+      =.  sac  (~(neat wa sac) typ.vil [%& typ])
       ::
       ::  support for meta-meta-cards has been removed
       ::
@@ -423,7 +413,7 @@
       :: |-  ^-  (pair [%| meta] worm)
       :: ?.  ?=([%meta *] mut)
       ::   [[%| mut] sac]
-      :: =^  dip  sac  (~(nets wa sac) -:!>([%meta *vase]) p.mut)
+      :: =^  dip  sac  (~(nets wa sac) mev.vil p.mut)
       :: ?>  dip
       :: $(q.tiv +.q.mut)
     --
@@ -432,7 +422,7 @@
   ::
   ++  va
     ~/  %va
-    |_  [our=ship vax=vase sac=worm]
+    |_  [our=ship vil=vile vax=vase sac=worm]
     ::
     ::  |plow:va: operate in time and space
     ::
@@ -469,13 +459,23 @@
       ::
       ++  spin
         |=  [hen=duct eny=@uvJ]
-        =/  duc  !>(hen)
+        :: =/  duc  !>(hen)
+        =*  duc  [duc.vil hen]
         =/  sam=vane-sample  [our now eny sky]
         =^  rig  sac
           ~>  %mean.'spin: activation failed'
           (~(slym wa sac) vax sam)
         ::
         |%
+        ::  +slix: en-hypo XX remove
+        ::
+        ++  slix
+          |=  hil=mill
+          ^-  mill
+          ?-  -.hil
+            %&  [%& (slop [typ.vil p.p.hil] p.hil)]
+            %|  [%| [%cell typ.vil p.p.hil] p.hil]
+          ==
         ::  +peel:spin:plow:va: extract products, finalize vane
         ::
         ++  peel
@@ -516,7 +516,9 @@
           ::  sample is [wire duct (hypo sign=[term gift])]
           ::
           =/  sam=mill
-            (slid !>(wire) (slid duc (slix (slid src gift))))
+            :: =/  tea  !>(wire)
+            =*  tea  [pah.vil wire]
+            (slid tea (slid duc (slix (slid src gift))))
           =^  pro  sac  (slur sac gat sam)
           (peel pro)
         --
@@ -548,6 +550,7 @@
             now=@da
             eny=@uvJ
             lac=?
+            vil=vile
             van=(map term vane)
         ==
     +*  this  .
@@ -727,7 +730,7 @@
       |=  [way=term [zom=vase vax=vase] sac=worm]
       ^+  this
       =^  moz  sac
-        (~(refine-moves me sac -:!>(*type)) zom)
+        (~(refine-moves me sac vil) zom)
       =.  van  (~(put by van) way [vax sac])
       (emit way moz)
     ::  +plow: operate on a vane, in time and space
@@ -738,7 +741,7 @@
       =/  =vane
         ~|  [%missing-vane way]
         (~(got by van) way)
-      (~(plow va [our vane]) now peek)
+      (~(plow va [our vil vane]) now peek)
     --
   --
 ::
@@ -1009,7 +1012,7 @@
       =<  abet:loop
       %.  i.ova
       %~  spam  le:part
-      [our now eny lac (~(gas by *(map term vane)) vanes)]
+      [our now eny lac vil (~(gas by *(map term vane)) vanes)]
     ::
     $(out [i.ova out], ova (weld t.ova zef))
   ::
@@ -1025,7 +1028,7 @@
   %.  [[151 %noun] hap]
   %-  sloy
   %~  peek  le:part
-  [our now eny lac (~(gas by *(map term vane)) vanes)]
+  [our now eny lac vil (~(gas by *(map term vane)) vanes)]
 ::
 ++  poke                                                ::  external apply
   |=  [now=@da ovo=ovum]
@@ -1051,7 +1054,7 @@
       =<  abet:loop
       %.  ovo
       %~  spam  le:part
-      [our now eny lac (~(gas by *(map term vane)) vanes)]
+      [our now eny lac vil (~(gas by *(map term vane)) vanes)]
     ::  clear compiler caches if high-priority
     ::
     =?  vanes  =(0 p.q.ovo)
@@ -1066,7 +1069,7 @@
     =<  abet:loop
     %.  [(dint:$:is p.ovo) ovo]
     %~  poke  le:part
-    [our now eny lac (~(gas by *(map term vane)) vanes)]
+    [our now eny lac vil (~(gas by *(map term vane)) vanes)]
   ::
   [zef +>.$]
 ::  +feck: handle an arvo effect
