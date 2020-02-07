@@ -270,25 +270,35 @@
 ++  fact-permission-update
   |=  [wir=wire fact=permission-update]
   ^-  (quip card _state)
+  |^
   :_  state
   ?+  -.fact   ~
       %add     (handle-permissions [%add path.fact who.fact])
       %remove  (handle-permissions [%remove path.fact who.fact])
   ==
-::
-++  handle-permissions
-  |=  [kind=?(%add %remove) pax=path who=(set ship)]
-  ^-  (list card)
-  ?>  ?=([* *] pax)
-  %-  zing
-  %+  turn  ~(tap in who)
-  |=  =ship
-  ?:  (permitted-scry [(scot %p ship) pax])
-    ~
-  ::  if ship is not permitted, kick their subscription
-  =/  mail-path
-    (oust [(dec (lent t.pax)) (lent t.pax)] `(list @t)`t.pax)
-  [%give %kick [%mailbox mail-path]~ `ship]~
+  ::
+  ++  handle-permissions
+    |=  [kind=?(%add %remove) pax=path who=(set ship)]
+    ^-  (list card)
+    ?>  ?=([* *] pax)
+    %-  zing
+    %+  turn  ~(tap in who)
+    |=  =ship
+    ?:  (permitted-scry [(scot %p ship) pax])
+      ?:  ?|(=(kind %remove) =(ship our.bol))  ~
+      ::  if ship has just been added to the permitted group,
+      ::  send them an invite
+      ~[(send-invite pax ship)]
+    ::  if ship is not permitted, kick their subscription
+    [%give %kick [%mailbox pax]~ `ship]~
+  ::
+  ++  send-invite
+    |=  [=path =ship]
+    ^-  card
+    =/  =invite  [our.bol %chat-hook path ship '']
+    =/  act=invite-action  [%invite /chat (shaf %msg-uid eny.bol) invite]
+    [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
+  --
 ::
 ++  fact-chat-update
   |=  [wir=wire fact=chat-update]

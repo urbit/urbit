@@ -52,11 +52,6 @@ export class InviteElement extends Component {
       members: ''
     }, () => {
       props.api.groups.add(aud, props.path);
-      if (props.permissions.kind === 'white') {
-        aud.forEach((ship) => {
-          props.api.invite.invite(props.path, ship);
-        });
-      }
     });
   }
 

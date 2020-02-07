@@ -206,9 +206,6 @@
         (create-managed-group path.act security.act members.act)
         (create-security path.act security.act)
         ~[(permission-hook-poke [%add-owned path.act path.act])]
-        %+  turn  ~(tap in members.act)
-        |=  =ship
-        (send-invite-poke path.act ship)
     ==
   ::
       %delete
