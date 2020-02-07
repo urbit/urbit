@@ -17,7 +17,8 @@ class Store {
       invites: {},
       spinner: false,
       sidebarShown: true,
-      pendingMessages: new Map([])
+      pendingMessages: new Map([]),
+      chatInitialized: false
     };
 
     this.initialReducer = new InitialReducer();

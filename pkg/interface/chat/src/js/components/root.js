@@ -171,6 +171,7 @@ export class Root extends Component {
                     pendingMessages={state.pendingMessages}
                     popout={popout}
                     sidebarShown={state.sidebarShown}
+                    chatInitialized={state.chatInitialized}
                     {...props}
                   />
                 </Skeleton>
