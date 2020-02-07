@@ -285,10 +285,41 @@
     ^-  (quip card _this)
     ?-    -.sin
         %poke-ack   (on-agent:def wir sin)
+    ::  If our subscribe failed, delete notebook associated with subscription if
+    ::  it exists
     ::
-        %watch-ack  (on-agent:def wir sin)
+        %watch-ack
+      ?.  ?=([%subscribe @ @ ~] wir)
+        (on-agent:def wir sin)
+      ?~  p.sin
+        [~ this]
+      =/  who=@p     (slav %p i.t.wir)
+      =/  book=@tas  i.t.t.wir
+      [~ this(subs (~(del by subs) who book))]
+    ::  Resubscribe to any subscription we get kicked from. The case of actually
+    ::  getting banned from a notebook is handled by %watch-ack
     ::
-        %kick       (on-agent:def wir sin)
+        %kick
+      ?+  wir
+        [~ this]
+      ::
+          [%subscribe @ @ ~]
+        =/  who=@p     (slav %p i.t.wir)
+        =/  book=@tas  i.t.t.wir
+        :_  this
+        [%pass wir %agent [who %publish] %watch /notebook/[book]]~
+      ::
+          [%permissions ~]
+        :_  this
+        [%pass /permissions %agent [our.bol %permission-store] %watch /updates]~
+      ::
+          [%invites ~]
+        :_  this
+        :_  ~
+        :*  %pass  /invites  %agent  [our.bol %invite-store]  %watch
+            /invitatory/publish
+        ==
+      ==
     ::
         %fact
       ?+  wir  (on-agent:def wir sin)
@@ -672,22 +703,49 @@
 ++  handle-permission-update
   |=  upd=permission-update
   ^-  (quip card _state)
-  ?.  ?=(%remove -.upd)
+  ?+  -.upd
     [~ state]
-  =/  book=@tas
-    %-  need
-    %+  roll  ~(tap by books)
-    |=  [[nom=@tas book=notebook] out=(unit @tas)]
-    ?:  =(path.upd subscribers.book)
-      `nom
-    out
-  :_  state
-  %-  zing
-  %+  turn  ~(tap in who.upd)
-  |=  who=@p
-  ?:  (allowed who %read book)
-    ~
-  [%give %kick [/notebook/[book]]~ `who]~
+  ::
+      %remove
+    =/  book=(unit @tas)
+      %+  roll  ~(tap by books)
+      |=  [[nom=@tas book=notebook] out=(unit @tas)]
+      ?:  =(path.upd subscribers.book)
+        `nom
+      out
+    ?~  book
+      [~ state]
+    :_  state
+    %-  zing
+    %+  turn  ~(tap in who.upd)
+    |=  who=@p
+    ?:  (allowed who %read u.book)
+      ~
+    [%give %kick [/notebook/[u.book]]~ `who]~
+  ::
+      %add
+    =/  book=(unit @tas)
+      %+  roll  ~(tap by books)
+      |=  [[nom=@tas book=notebook] out=(unit @tas)]
+      ?:  =(path.upd subscribers.book)
+        `nom
+      out
+    ?~  book
+      [~ state]
+    :_  state
+    %-  zing
+    %+  turn  ~(tap in who.upd)
+    |=  who=@p
+    ?.  (allowed who %read u.book)
+      ~
+    =/  uid  (sham %publish who u.book eny.bol)
+    =/  inv=invite
+      :*  our.bol  %publish  /notebook/[u.book]  who
+          (crip "invite for notebook {<our.bol>}/{(trip u.book)}")
+      ==
+    =/  act=invite-action  [%invite /publish uid inv]
+    [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]~
+  ==
 ::
 ++  handle-invite-update
   |=  upd=invite-update
