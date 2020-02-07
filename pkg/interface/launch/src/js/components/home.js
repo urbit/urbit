@@ -23,7 +23,7 @@ export default class Home extends Component {
     });
 
     return (
-      <div className="fl w-100 vh-100 bg-black center">
+      <div className="fl w-100 min-vh-100 bg-black center">
         <Header />
         <div className="v-mid pa2 dtc">
           {tileElems}
