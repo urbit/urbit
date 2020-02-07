@@ -11,6 +11,10 @@ import { uxToHex } from '../lib/util';
 
 //TODO Avatar support once it's in
 export class Links extends Component {
+  constructor(props) {
+    super(props);
+    this.markAllAsSeen = this.markAllAsSeen.bind(this);
+  }
 
   componentDidMount() {
     this.componentDidUpdate();
@@ -24,6 +28,10 @@ export class Links extends Component {
     ) {
       api.getPage(this.props.groupPath, this.props.page);
     }
+  }
+
+  markAllAsSeen() {
+    api.seenLink(this.props.groupPath);
   }
 
   render() {
@@ -47,6 +55,7 @@ export class Links extends Component {
     .map((linkIndex) => {
       let linksObj = props.links[linkPage];
       let { title, url, time, ship } = linksObj[linkIndex];
+      const seen = props.seen[url];
       let members = {};
 
       const commentCount = props.comments[url]
@@ -79,6 +88,7 @@ export class Links extends Component {
         linkIndex={linkIndex}
         url={url}
         timestamp={time}
+        seen={seen}
         nickname={nickname}
         ship={ship}
         color={color}
@@ -127,6 +137,11 @@ export class Links extends Component {
               <LinkSubmit groupPath={props.groupPath}/>
             </div>
             <div className="pb4">
+            <span
+              className="f9 inter gray2 ba b--gray2 br2 dib pa1 pointer"
+              onClick={this.markAllAsSeen}>
+              mark all as seen
+            </span>
             {LinkList}
             <Pagination
             {...props}

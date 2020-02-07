@@ -34,6 +34,7 @@ export class Root extends Component {
 
     let links = !!state.links ? state.links : {};
     let comments = !!state.comments ? state.comments : {};
+    const seen = !!state.seen ? state.seen : {};
 
     return (
       <BrowserRouter>
@@ -76,6 +77,10 @@ export class Root extends Component {
                 ? comments[groupPath]
                 : {};
 
+              const channelSeen = !!seen[groupPath]
+                ? seen[groupPath]
+                : {};
+
               return (
                 <Skeleton
                   spinner={state.spinner}
@@ -91,6 +96,7 @@ export class Root extends Component {
                   members={groupMembers}
                   links={channelLinks}
                   comments={channelComments}
+                  seen={channelSeen}
                   page={page}
                   groupPath={groupPath}
                   popout={popout}

@@ -160,6 +160,13 @@ class UrbitApi {
     });
   }
 
+  // leave url as null to mark all under path as read
+  seenLink(path, url = null) {
+    return this.linkAction({
+      'seen': { path, url }
+    });
+  }
+
   sidebarToggle() {
     let sidebarBoolean = true;
     if (store.state.sidebarShown === true) {

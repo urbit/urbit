@@ -11,6 +11,7 @@ export class LinkUpdateReducer {
     this.submissionsUpdate(json, state);
     this.discussionsPage(json, state);
     this.discussionsUpdate(json, state);
+    this.observationUpdate(json, state);
   }
 
   submissionsPage(json, state) {
@@ -40,6 +41,15 @@ export class LinkUpdateReducer {
         state.links[path].local[page] = false;
         state.links[path].totalPages = here.totalPages;
         state.links[path].totalItems = here.totalItems;
+
+        // write seen status to a separate structure,
+        // for easier modification later.
+        if (!state.seen[path]) {
+          state.seen[path] = {};
+        }
+        here.page.map(submission => {
+          state.seen[path][submission.url] = submission.seen;
+        });
       }
     }
   }
@@ -117,6 +127,27 @@ export class LinkUpdateReducer {
       state.comments[path][url] = this._addNewItems(
         data.comments, state.comments[path][url]
       );
+    }
+  }
+
+  observationUpdate(json, state) {
+    const data = _.get(json, 'observation', false);
+    if (data) {
+      //  { "observation": {
+      //    path: /~ship/path
+      //    urls: ['https://urbit.org']
+      //  } }
+
+      const path = data.path;
+      if (!state.seen[path]) {
+        state.seen[path] = {};
+      }
+      let seen = state.seen[path];
+
+      // mark urls as seen
+      data.urls.map(url => {
+        seen[url] = true;
+      });
     }
   }
 
