@@ -58,6 +58,9 @@
       ::  %note: save a note for a url
       ::
       [%note =path =url udon=@t]
+      ::  %seen: mark item as read (~ for all in path)
+      ::
+      [%seen =path url=(unit url)]
       ::    hook actions
       ::
       ::  %hear: hear about page at path on other ship
@@ -85,5 +88,6 @@
       [%submissions =path =submissions]
       [%annotations =path =url =notes]
       [%discussions =path =url =comments]
+      [%observation =path urls=(set url)]
   ==
 --

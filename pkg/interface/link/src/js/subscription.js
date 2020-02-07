@@ -24,6 +24,13 @@ export class Subscription {
 
     // open a subscription for all submissions
     api.getPage('', 0);
+
+    // open a subscription for seen notifications
+    api.bindLinkView('/json/seen',
+      this.handleEvent.bind(this),
+      this.handleError.bind(this),
+      this.handleQuitAndResubscribe.bind(this)
+    );
   }
 
   handleEvent(diff) {

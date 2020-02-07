@@ -8,6 +8,7 @@
 ::    /json/[p]/submissions/[some-group]              page for one group
 ::    /json/[p]/discussions/[wood-url]/[some-group]   page for url in group
 ::    /json/[n]/submission/[wood-url]/[some-group]    nth matching submission
+::    /json/seen                                      mark-as-read updates
 ::
 /+  *link, *server, default-agent, verb
 ::
@@ -37,6 +38,7 @@
     :~  [%pass /connect %arvo %e %connect [~ /'~link'] dap.bowl]
         [%pass /submissions %agent [our.bowl %link-store] %watch /submissions]
         [%pass /discussions %agent [our.bowl %link-store] %watch /discussions]
+        [%pass /seen %agent [our.bowl %link-store] %watch /seen]
       ::
         =+  [%link-server-hook /tile '/~link/js/tile.js']
         [%pass /launch %agent [our.bowl %launch] %poke %launch-action !>(-)]
@@ -68,7 +70,9 @@
   ++  on-watch
     |=  =path
     ^-  (quip card _this)
-    ?:  ?=([%http-response *] path)
+    ?:  ?|  ?=([%http-response *] path)
+            ?=([%json %seen ~] path)
+        ==
       [~ this]
     ?.  ?=([%json @ @ *] path)
       (on-watch:def path)
@@ -251,10 +255,19 @@
   ^-  json
   =/  =json  (submission:en-json submission)
   ?>  ?=([%o *] json)
-  =;  comment-count=@ud
-    o+(~(put by p.json) 'commentCount' (numb:enjs:format comment-count))
-  ::  get comment count
+  ::  add in seen status
   ::
+  =.  p.json
+    %+  ~(put by p.json)  'seen'
+    :-  %b
+    %+  scry-for  ?
+    [%seen (build-discussion-path path url.submission)]
+  ::  add in comment count
+  ::
+  =;  comment-count=@ud
+    :-  %o
+    %+  ~(put by p.json)  'commentCount'
+    (numb:enjs:format comment-count)
   %-  lent
   ~|  [path url.submission]
   ^-  comments
@@ -317,6 +330,11 @@
     :_  ~
     %+  weld  /json/0/discussions
     (build-discussion-path [path url]:update)
+  ::
+      %observation
+    %+  give-json
+      (update:en-json update)
+    ~[/json/seen]
   ==
 ::
 ++  give-json

@@ -13,6 +13,7 @@ class Store {
       groups: {},
       links: {},
       comments: {},
+      seen: {},
       permissions: {},
       sidebarShown: true,
       spinner: false

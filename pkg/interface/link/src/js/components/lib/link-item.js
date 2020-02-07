@@ -11,6 +11,7 @@ export class LinkItem extends Component {
     this.state = {
       timeSinceLinkPost: this.getTimeSinceLinkPost()
     };
+    this.markPostAsSeen = this.markPostAsSeen.bind(this);
   }
 
   componentDidMount() {
@@ -32,6 +33,10 @@ export class LinkItem extends Component {
       : '';
   }
 
+  markPostAsSeen() {
+    api.seenLink(this.props.groupPath, this.props.url);
+  }
+
   render() {
 
     let props = this.props;
@@ -41,6 +46,13 @@ export class LinkItem extends Component {
     let URLparser = new RegExp(/((?:([\w\d\.-]+)\:\/\/?){1}(?:(www)\.?){0,1}(((?:[\w\d-]+\.)*)([\w\d-]+\.[\w\d]+))){1}(?:\:(\d+)){0,1}((\/(?:(?:[^\/\s\?]+\/)*))(?:([^\?\/\s#]+?(?:.[^\?\s]+){0,1}){0,1}(?:\?([^\s#]+)){0,1})){0,1}(?:#([^#\s]+)){0,1}/);
 
     let hostname = URLparser.exec(props.url);
+
+    const seenState = props.seen
+      ? "grey2"
+      : "green2 pointer";
+    const seenAction = props.seen
+      ? ()=>{}
+      : this.markPostAsSeen
 
     if (hostname) {
       hostname = hostname[4];
@@ -60,7 +72,8 @@ export class LinkItem extends Component {
         <div className="flex flex-column ml2">
           <a href={props.url}
           className="w-100 flex"
-          target="_blank">
+          target="_blank"
+          onClick={this.markPostAsSeen}>
             <p className="f8 truncate">{props.title}
               <span className="gray2 dib truncate-m mw4-m v-btm ml2">{hostname} ↗</span>
             </p>
@@ -69,10 +82,15 @@ export class LinkItem extends Component {
             <span className={"f9 pr2 v-mid " + mono}>{(props.nickname)
             ? props.nickname
             : "~" + props.ship}</span>
-          <span className="f9 inter gray2 pr3 v-mid">{this.state.timeSinceLinkPost}</span>
+          <span
+            className={seenState + " f9 inter pr3 v-mid"}
+            onClick={this.markPostAsSeen}>
+            {this.state.timeSinceLinkPost}
+          </span>
           <Link to=
           {"/~link" + props.popout + props.groupPath + "/" + props.page + "/" + props.linkIndex + "/" + encodedUrl}
-          className="v-top">
+          className="v-top"
+          onClick={this.markPostAsSeen}>
             <span className="f9 inter gray2">
                 {comments}
               </span>

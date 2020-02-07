@@ -6,32 +6,42 @@
 ::    primitive ui implementations.
 ::
 ::    urls in paths are expected to be encoded using +wood, for @ta sanity.
-::    use /lib/link's +build-discussion-path.
+::    generally, use /lib/link's +build-discussion-path.
 ::
 ::    see link-listen-hook to see what's synced in, and similarly
 ::    see link-proxy-hook to see what's exposed.
 ::
 ::  scry and subscription paths:
 ::
-::      (map path pages)
+::      (map path pages)                      %local-pages
 ::    /local-pages                          our saved pages
 ::    /local-pages/some-path                our saved pages on path
 ::
-::      (map path submissions)
+::      (map path submissions)                %submissions
 ::    /submissions                          all submissions we've seen
 ::    /submissions/some-path                all submissions we've seen on path
 ::
-::      (map path (map url notes))
+::      (map path (map url notes))            %annotations
 ::    /annotations                          our comments
 ::    /annotations/wood-url                 our comments on url
 ::    /annotations/wood-url/some-path       our comments on url on path
 ::    /annotations//some-path               our comments on path
 ::
-::      (map path (map url comments))
+::      (map path (map url comments))         %discussions
 ::    /discussions                          all comments
 ::    /discussions/wood-url                 all comments on url
 ::    /discussions/wood-url/some-path       all comments on url on path
 ::    /discussions//some-path               all comments on path
+::
+::  subscription-only paths:
+::
+::      [path url]                            %observation
+::    /seen                                 updates whenever an item is seen
+::
+::  scry-only paths:
+::
+::      ?
+::    /seen/wood-url/some-path              have we seen this here (scry only)
 ::
 /+  *link, default-agent, verb, dbug
 ::
@@ -47,6 +57,7 @@
   $:  ::NOTE  all lists by recency
       =submissions
       ours=pages
+      seen=(set url)
   ==
 ::
 +$  discussion
@@ -137,6 +148,9 @@
     ::
         [%x %discussions *]
       ``noun+!>((get-discussions:do t.t.path))
+    ::
+        [%x %seen @ ^]
+      ``noun+!>((is-seen t.t.path))
     ==
   ::
   ++  on-watch
@@ -164,6 +178,9 @@
           %+  give  %link-initial
           ^-  initial
           [%discussions (get-discussions:do t.path)]
+        ::
+            [%seen ~]
+          ~
         ==
     ::
     ++  give
@@ -193,6 +210,7 @@
   ?-  -.action
     %save  (save-page +.action)
     %note  (note-note +.action)
+    %seen  (seen-submission +.action)
   ::
     %hear  (hear-submission +.action)
     %read  (read-comment +.action)
@@ -202,7 +220,7 @@
 ++  save-page
   |=  [=path title=@t =url]
   ^-  (quip card _state)
-  ?<  =(~ path)
+  ?<  |(=(~ path) =(~ title) =(~ url))
   ::  add page to group ours
   ::
   =/  =links  (~(gut by by-group) path *links)
@@ -228,6 +246,7 @@
 ++  note-note
   |=  [=path =url udon=@t]
   ^-  (quip card _state)
+  ?<  |(=(~ path) =(~ url) =(~ udon))
   ::  add note to discussion ours
   ::
   =/  urls  (~(gut by discussions) path *(map ^url discussion))
@@ -253,6 +272,28 @@
       ==
     %link-update
   !>([%annotations path url [note]~])
+::  +seen-submission: mark url as seen/read
+::
+::    if no url specified, all under path are marked as read
+::
+++  seen-submission
+  |=  [=path murl=(unit url)]
+  ^-  (quip card _state)
+  =/  =links  (~(gut by by-group) path *links)
+  ::  new: urls we want to, but haven't yet, marked as seen
+  ::
+  =/  new=(set url)
+    %.  seen.links
+    %~  dif  in
+    ^-  (set url)
+    ?^  murl  (sy ~[u.murl])
+    %-  ~(gas in *(set url))
+    %+  turn  submissions.links
+    |=(submission url)
+  ?:  =(~ new)  [~ state]
+  =.  seen.links  (~(uni in seen.links) new)
+  :_  state(by-group (~(put by by-group) path links))
+  [%give %fact ~[/seen] %link-update !>([%observation path new])]~
 ::  +hear-submission: record page someone else saved
 ::
 ++  hear-submission
@@ -330,6 +371,15 @@
   ::
   %+  ~(put by *(map ^path submissions))  path
   submissions:(~(gut by by-group) path *links)
+::
+++  is-seen
+  |=  =path
+  ^-  ?
+  =/  [=^path =url]
+    (break-discussion-path path)
+  %.  url
+  %~  has  in
+  seen:(~(gut by by-group) path *links)
 ::
 ::
 ++  get-annotations
