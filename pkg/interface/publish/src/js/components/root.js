@@ -123,6 +123,7 @@ export class Root extends Component {
                   view={view}
                   ship={ship}
                   book={notebook}
+                  groups={state.groups}
                   {...props}
                 />
               </Skeleton>
