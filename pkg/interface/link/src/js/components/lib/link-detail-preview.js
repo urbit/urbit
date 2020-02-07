@@ -7,7 +7,7 @@ export class LinkPreview extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      timeSinceLinkPost: this.getTimeSinceLinkPost(this.props.data)
+      timeSinceLinkPost: this.getTimeSinceLinkPost()
     };
   }
 
@@ -15,7 +15,7 @@ export class LinkPreview extends Component {
     if (prevProps !== this.props) {
       if (this.state.timeSinceLinkPost === "") {
         this.setState({
-          timeSinceLinkPost: this.getTimeSinceLinkPost(this.props.data)
+          timeSinceLinkPost: this.getTimeSinceLinkPost()
         });
       }
     }
@@ -24,7 +24,7 @@ export class LinkPreview extends Component {
   componentDidMount() {
     this.updateTimeSinceNewestMessageInterval = setInterval(() => {
       this.setState({
-        timeSinceLinkPost: this.getTimeSinceLinkPost(this.props.data)
+        timeSinceLinkPost: this.getTimeSinceLinkPost()
       });
     }, 60000);
   }
@@ -36,9 +36,10 @@ export class LinkPreview extends Component {
     }
   }
 
-  getTimeSinceLinkPost(data) {
-    return !!data.time
-      ? moment.unix(data.time / 1000).from(moment.utc())
+  getTimeSinceLinkPost() {
+    const time = this.props.time;
+    return !!time
+      ? moment.unix(time / 1000).from(moment.utc())
       : "";
   }
 

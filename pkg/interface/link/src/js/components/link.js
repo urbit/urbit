@@ -106,7 +106,7 @@ export class LinkDetail extends Component {
               groupPath={props.groupPath}
               page={props.page}
               linkIndex={props.linkIndex}
-              data={props.data}
+              time={this.state.data.time}
             />
             <div className="relative ba br1 b--gray4 b--gray2-d mt6 mb6">
               <textarea
