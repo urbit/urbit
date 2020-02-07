@@ -202,7 +202,7 @@
 ++  save-page
   |=  [=path title=@t =url]
   ^-  (quip card _state)
-  ?<  =(~ path)
+  ?<  |(=(~ path) =(~ title) =(~ url))
   ::  add page to group ours
   ::
   =/  =links  (~(gut by by-group) path *links)
@@ -228,6 +228,7 @@
 ++  note-note
   |=  [=path =url udon=@t]
   ^-  (quip card _state)
+  ?<  |(=(~ path) =(~ url) =(~ udon))
   ::  add note to discussion ours
   ::
   =/  urls  (~(gut by discussions) path *(map ^url discussion))
