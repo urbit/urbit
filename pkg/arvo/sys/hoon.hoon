@@ -6811,6 +6811,7 @@
           $%  {$help p/help}                            ::  documentation
               {$know p/stud}                            ::  global standard
               {$made p/term q/(unit (list wing))}       ::  structure
+              {$spot p/spot}
           ==                                            ::
 +$  type  $~  %noun                                     ::
           $@  $?  $noun                                 ::  any nouns
@@ -10445,7 +10446,8 @@
         {$dbug *}
       ~_  (show %o p.gen)
       =+  hum=$(gen q.gen)
-      [p.hum [%11 [%spot %1 p.gen] q.hum]]
+      :-  (hint [p.hum %spot p.gen] p.hum)
+      [%11 [%spot %1 p.gen] q.hum]
     ::
         {$zpcm *}   [(nice (play p.gen)) [%1 q.gen]]    ::  XX validate!
         {$lost *}

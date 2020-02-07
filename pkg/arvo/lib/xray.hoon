@@ -348,6 +348,7 @@
     |=  [st=xtable [subject-of-note=type =note] x=xray]
     ^-  [xray xtable]
     ?-  -.note
+      %spot  [x st]
       %help  :_  st  x(helps (~(put in helps.x) p.note))
       %know  :_  st  x(studs (~(put in studs.x) p.note))
       %made  =^  recipe  st
