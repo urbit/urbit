@@ -18,8 +18,11 @@ class UrbitApi {
     this.contactView = {
       create: this.contactCreate.bind(this),
       delete: this.contactDelete.bind(this),
-      add: this.contactAdd.bind(this),
       share: this.contactShare.bind(this)
+    };
+
+    this.group = {
+      add: this.groupAdd.bind(this)
     };
     
     this.invite = {
@@ -69,8 +72,10 @@ class UrbitApi {
     this.contactViewAction({ create: { path, ships }});
   }
 
-  contactAdd(path, ships = []) {
-    this.contactViewAction({ add: { path, ships }});
+  groupAdd(path, ships = []) {
+    this.action("group-store", "group-action", {
+      add: { members: ships, path }
+    });
   }
 
   contactShare(recipient, path, ship, contact) {

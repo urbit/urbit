@@ -363,7 +363,8 @@
     :_  state
     [%pass /permissions %agent [our.bol %permission-store] %watch /updates]~
   ::
-  ?:  ?=([%mailbox @ *] wir)
+  ?+  wir  !!
+      [%mailbox @ *]
     ~&  mailbox-kick+wir
     ?.  (~(has by synced) t.wir)
       ::  no-op
@@ -377,13 +378,17 @@
     :_  state
     [%pass chat-history %agent [ship %chat-hook] %watch chat-history]~
   ::
-  ?.  ?=([%backlog @ *] wir)  !!
-  =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
-  ?.  (~(has by synced) pax)  [~ state]
-  =/  mailbox=(unit mailbox)  (chat-scry pax)
-  =.  pax  ?~(mailbox wir [%mailbox pax])
-  :_  state
-  [%pass pax %agent [(slav %p i.t.wir) %chat-hook] %watch pax]~
+      [%backlog @ @ *]
+    =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
+    ?.  (~(has by synced) pax)  [~ state]
+    =/  =ship
+      ?:  =('~' i.t.wir)
+        (slav %p i.t.t.wir)
+      (slav %p i.t.wir)
+    =.  pax  ?~((chat-scry pax) wir [%mailbox pax])
+    :_  state
+    [%pass pax %agent [ship %chat-hook] %watch pax]~
+  ==
 ::
 ++  watch-ack
   |=  [wir=wire saw=(unit tang)]

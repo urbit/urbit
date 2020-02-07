@@ -17,7 +17,6 @@ export class ChatScreen extends Component {
    super(props);
 
    this.state = {
-     station: `/${props.match.params.ship}/${props.match.params.station}`,
      numPages: 1,
      scrollLocked: false
    };
@@ -80,7 +79,7 @@ export class ChatScreen extends Component {
  updateReadNumber() {
    const { props, state } = this;
    if (props.read < props.length) {
-     props.api.chat.read(state.station);
+     props.api.chat.read(props.station);
    }
  }
 
@@ -105,7 +104,7 @@ export class ChatScreen extends Component {
 
        this.hasAskedForMessages = true;
 
-       props.subscription.fetchMessages(start, end - 1, state.station);
+       props.subscription.fetchMessages(start, end - 1, props.station);
      }
    }
  }
@@ -181,8 +180,8 @@ export class ChatScreen extends Component {
      );
    }
 
-   let pendingMessages = props.pendingMessages.has(state.station)
-     ? props.pendingMessages.get(state.station)
+   let pendingMessages = props.pendingMessages.has(props.station)
+     ? props.pendingMessages.get(props.station)
      : [];
 
    pendingMessages.map(function(value) {
@@ -225,7 +224,7 @@ export class ChatScreen extends Component {
 
    return (
      <div
-       key={state.station}
+       key={props.station}
        className="h-100 w-100 overflow-hidden flex flex-column">
        <div
          className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
@@ -240,17 +239,17 @@ export class ChatScreen extends Component {
            sidebarShown={this.props.sidebarShown}
            popout={this.props.popout}
          />
-         <Link to={`/~chat/` + isinPopout + `room` + state.station}
+         <Link to={`/~chat/` + isinPopout + `room` + props.station}
          className="pt2 white-d">
            <h2
              className="mono dib f8 fw4 v-top"
              style={{ width: "max-content" }}>
-             {state.station.substr(1)}
+             {props.station.substr(1)}
            </h2>
          </Link>
          <ChatTabBar
            {...props}
-           station={state.station}
+           station={props.station}
            numPeers={group.length}
            isOwner={deSig(props.match.params.ship) === window.ship}
            popout={this.props.popout}
@@ -269,7 +268,7 @@ export class ChatScreen extends Component {
        <ChatInput
          api={props.api}
          numMsgs={lastMsgNum}
-         station={state.station}
+         station={props.station}
          owner={deSig(props.match.params.ship)}
          ownerContact={ownerContact}
          permissions={props.permissions}

@@ -295,9 +295,19 @@
   ^-  (quip card _state)
   |^
   ?+  -.fact     [~ state]
+      %add       (add +.fact)
       %remove    (remove +.fact)
       %unbundle  (unbundle +.fact)
   ==
+  ++  add
+    |=  [ships=(set ship) =path]
+    ^-  (quip card _state)
+    ?.  (~(has by synced) path)
+      [~ state]
+    :_  state
+    %+  turn  ~(tap in (~(del in ships) our.bol))
+    |=  =ship
+    (send-invite-poke path ship)
   ::
   ++  unbundle
     |=  =path
@@ -328,6 +338,16 @@
           (contact-poke [%delete path])
         (contact-poke [%remove path ship])
     ==
+  ::
+  ++  send-invite-poke
+    |=  [=path =ship]
+    ^-  card
+    =/  =invite
+      :*  our.bol  %contact-hook
+          path  ship  ''
+      ==
+    =/  act=invite-action  [%invite /contacts (shaf %msg-uid eny.bol) invite]
+    [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
   --
 ::
 ++  fact-invite-update

@@ -197,6 +197,7 @@
   ?>  (team:title our.bol src.bol)
   ?-  -.act
       %create
+    ?>  ?=(^ path.act)
     ?^  (chat-scry path.act)
       ~&  %chat-already-exists
       ~
@@ -211,9 +212,14 @@
     ==
   ::
       %delete
-    :~  (chat-hook-poke [%remove path.act])
-        (permission-hook-poke [%remove path.act])
-        (chat-poke [%delete path.act])
+    ?>  ?=(^ path.act)
+    %-  zing
+    :~  :~  (chat-hook-poke [%remove path.act])
+            (permission-hook-poke [%remove path.act])
+            (chat-poke [%delete path.act])
+        ==
+        ?.  =(i.path.act '~')  ~
+        ~[(group-poke [%unbundle path.act])]
     ==
   ::
       %join
@@ -232,16 +238,16 @@
   ++  create-managed-group
     |=  [=path security=rw-security ships=(set ship)]
     ^-  (list card)
-    ~&  [path security ships]
-    ?.  =(security %village)
-      ::  if blacklist, do nothing but create the group if it isn't there
-      ::
-      ?~((group-scry path) ~[(group-poke [%bundle path])] ~)
-    ::  if whitelist, check if group exists already. if yes, do nothing
-    ::
+    ?>  ?=(^ path)
     ?^  (group-scry path)  ~
-    ::  if group does not exist, send contact-view %create
+    ::  do not create a managed group if this is a sig path or a blacklist
     ::
+    ?:  =(security %channel)
+      ~[(group-poke [%bundle path])]
+    ?:  =(i.path '~')
+      :~  (group-poke [%bundle path])
+          (group-poke [%add ships path])
+      ==
     ~[(contact-view-poke [%create path ships])]
   ::
   ++  create-security

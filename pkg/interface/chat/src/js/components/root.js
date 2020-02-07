@@ -112,7 +112,7 @@ export class Root extends Component {
           />
           <Route
             exact
-            path="/~chat/join/:ship?/:station?"
+            path="/~chat/join/(~)?/:ship?/:station?"
             render={props => {
               let station =
                 props.match.params.ship
@@ -131,9 +131,13 @@ export class Root extends Component {
           />
           <Route
             exact
-            path="/~chat/(popout)?/room/:ship/:station+"
+            path="/~chat/(popout)?/room/(~)?/:ship/:station+"
             render={props => {
               let station = `/${props.match.params.ship}/${props.match.params.station}`;
+              let sig = props.match.url.includes("/~/");
+              if (sig) {
+                station = '/~' + station;
+              } 
               let mailbox = state.inbox[station] || {
                 config: {
                   read: 0,
@@ -142,13 +146,10 @@ export class Root extends Component {
                 envelopes: []
               };
 
-              /*let defaultContacts = ('/~/default' in contacts)
-                ? contacts['/~/default'] : {};*/
               let roomContacts = (station in contacts)
                 ? contacts[station] : {};
 
-              let write = state.groups[`/chat${station}/write`] || new Set([]);
-
+              let group = state.groups[station] || new Set([]);
               let popout = props.match.url.includes("/popout/");
 
               return (
@@ -159,13 +160,14 @@ export class Root extends Component {
                   sidebar={renderChannelSidebar(props)}
                 >
                   <ChatScreen
+                    station={station}
                     api={api}
                     subscription={subscription}
                     read={mailbox.config.read}
                     length={mailbox.config.length}
                     envelopes={mailbox.envelopes}
                     inbox={state.inbox}
-                    group={write}
+                    group={group}
                     contacts={roomContacts}
                     permissions={state.permissions}
                     pendingMessages={state.pendingMessages}
@@ -179,14 +181,15 @@ export class Root extends Component {
           />
           <Route
             exact
-            path="/~chat/(popout)?/members/:ship/:station+"
+            path="/~chat/(popout)?/members/(~)?/:ship/:station+"
             render={props => {
               let station = `/${props.match.params.ship}/${props.match.params.station}`;
-              let read = state.permissions[`/chat${station}/read`] || {
-                kind: "",
-                who: new Set([])
-              };
-              let write = state.permissions[`/chat${station}/write`] || {
+              let sig = props.match.url.includes("/~/");
+              if (sig) {
+                station = '/~' + station;
+              } 
+
+              let permission = state.permissions[station] || {
                 kind: "",
                 who: new Set([])
               };
@@ -205,8 +208,8 @@ export class Root extends Component {
                   <MemberScreen
                     {...props}
                     api={api}
-                    read={read}
-                    write={write}
+                    station={station}
+                    permission={permission}
                     contacts={roomContacts}
                     permissions={state.permissions}
                     popout={popout}
@@ -218,10 +221,15 @@ export class Root extends Component {
           />
           <Route
             exact
-            path="/~chat/(popout)?/settings/:ship/:station+"
+            path="/~chat/(popout)?/settings/(~)?/:ship/:station+"
             render={props => {
-              let station = `/${props.match.params.ship}/${props.match.params.station}`;
-              let write = state.groups[`/chat${station}/write`] || new Set([]);
+              let station =
+                `/${props.match.params.ship}/${props.match.params.station}`;
+              let sig = props.match.url.includes("/~/");
+              if (sig) {
+                station = '/~' + station;
+              } 
+              let group = state.groups[station] || new Set([]);
 
               let popout = props.match.url.includes("/popout/");
 
@@ -235,9 +243,11 @@ export class Root extends Component {
                 >
                   <SettingsScreen
                     {...props}
+                    station={station}
                     setSpinner={this.setSpinner}
                     api={api}
-                    group={write}
+                    station={station}
+                    group={group}
                     inbox={state.inbox}
                     popout={popout}
                     sidebarShown={state.sidebarShown}
