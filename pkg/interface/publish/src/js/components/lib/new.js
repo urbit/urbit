@@ -58,20 +58,29 @@ export class NewScreen extends Component {
   onClickCreate() {
     const { props, state } = this;
     let bookId = stringToSymbol(state.idName);
-    let groupInfo = (state.invites.groups.length > 0)
-      ? {
-          "group-path": state.invites.groups[0],
-          "invitees": [],
-          "use-preexisting": true,
-          "make-managed": false,
-        }
-      : {
-          //  TODO remove /~ and set make-managed on toggle
-          "group-path": `/~/publish/~${window.ship}/${bookId}`,
-          "invitees": state.invites.ships,
-          "use-preexisting": false,
-          "make-managed": false,
-        };
+    let groupInfo = null;
+    if (state.invites.groups.length > 0) {
+      groupInfo = {
+        "group-path": state.invites.groups[0],
+        "invitees": [],
+        "use-preexisting": true,
+        "make-managed": false,
+      };
+    } else if  (this.state.createGroup) {
+      groupInfo = {
+        "group-path": `/~${window.ship}/${bookId}`,
+        "invitees": state.invites.ships,
+        "use-preexisting": false,
+        "make-managed": true,
+      };
+    } else {
+      groupInfo = {
+        "group-path": `/~/publish/~${window.ship}/${bookId}`,
+        "invitees": state.invites.ships,
+        "use-preexisting": false,
+        "make-managed": false,
+      };
+    }
 
     let action = {
       "new-book": {
@@ -87,32 +96,30 @@ export class NewScreen extends Component {
   }
 
   render() {
-    // let createGroupClasses = this.state.createGroup
-    //   ? "relative checked bg-green2 br3 h1 toggle v-mid z-0"
-    //   : "relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0";
+     let createGroupClasses = this.state.createGroup
+       ? "relative checked bg-green2 br3 h1 toggle v-mid z-0"
+       : "relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0";
 
     let createClasses = "pointer db f9 green2 bg-gray0-d ba pv3 ph4 mv7 b--green2";
     if (!this.state.idName) {
       createClasses = "pointer db f9 gray2 ba bg-gray0-d pa2 pv3 ph4 mv7 b--gray3";
     }
 
-    // let createGroupToggle = <div/>
-    // if ((this.state.invites.ships.length > 0) && (this.state.invites.groups.length === 0)) {
-    //   createGroupToggle = (
-    //     <div className="mv7">
-    //       <input
-    //         type="checkbox"
-    //         style={{ WebkitAppearance: "none", width: 28 }}
-    //         className={createGroupClasses}
-    //         onChange={this.createGroupChange}
-    //       />
-    //       <span className="dib f9 white-d inter ml3">Create Group</span>
-    //       <p className="f9 gray2 pt1" style={{ paddingLeft: 40 }}>
-    //         Participants will share this group across applications
-    //       </p>
-    //     </div>
-    //   );
-    // }
+    let createGroupToggle =
+      !((this.state.invites.ships.length > 0) && (this.state.invites.groups.length === 0))
+    ?  null
+    :  <div className="mv7">
+         <input
+           type="checkbox"
+           style={{ WebkitAppearance: "none", width: 28 }}
+           className={createGroupClasses}
+           onChange={this.createGroupChange}
+         />
+         <span className="dib f9 white-d inter ml3">Create Group</span>
+         <p className="f9 gray2 pt1" style={{ paddingLeft: 40 }}>
+           Participants will share this group across applications
+         </p>
+       </div>;
 
 
     let idErrElem = <span />;
@@ -176,7 +183,7 @@ export class NewScreen extends Component {
             invites={this.state.invites}
             setInvite={this.setInvite}
           />
-          {/* {createGroupToggle} */}
+          {createGroupToggle}
           <button
           onClick={this.onClickCreate.bind(this)}
           className={createClasses}>
