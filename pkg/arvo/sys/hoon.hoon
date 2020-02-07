@@ -11793,6 +11793,7 @@
       xdat=(unit xdat)
       xrole=(unit xrole)
       pats=(unit xpat)
+      spot=(unit spot)
       studs=(set stud)
       recipes=(set recipe)
       helps=(set help)
