@@ -21,63 +21,133 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =>
 |%
-++  arch  {fil/(unit @uvI) dir/(map @ta $~)}            ::  fundamental node
-++  beam  {{p/ship q/desk r/case} s/path}               ::  global name
-++  beak  {p/ship q/desk r/case}                        ::  garnish with beak
-++  bone  @ud                                           ::  opaque duct
-++  case                                                ::  version
-          $%  {$da p/@da}                               ::  date
-              {$tas p/@tas}                             ::  label
-              {$ud p/@ud}                               ::  sequence
-          ==                                            ::
-++  desk  @tas                                          ::  ship desk case spur
-++  dock  (pair @p term)                                ::  message target
-++  cage  (cask vase)                                   ::  global metadata
-++  cask  |*(a/mold (pair mark a))                      ::  global data
-++  curd  {p/@tas q/*}                                  ::  typeless card
-++  duct  (list wire)                                   ::  causal history
-++  hypo  |*(a/mold (pair type a))                      ::  type associated
-++  hobo  |*  a/mold                                    ::  kiss wrapper
-          $?  $%  {$soft p/*}                           ::
-              ==                                        ::
-              a                                         ::
-          ==                                            ::
-++  mark  @tas                                          ::  content type
-++  mash  |=(* (mass +<))                               ::  producing mass
-++  mass  $~  [%$ [%& ~]]                               ::  memory usage
-          (pair cord (each noun (list mash)))           ::
-++  mill  (each vase milt)                              ::  vase+metavase
-++  milt  {p/* q/*}                                     ::  metavase
-++  monk  (each ship {p/@tas q/@ta})                    ::  general identity
-++  ovum  {p/wire q/curd}                               ::  typeless ovum
-++  pane  (list {p/@tas q/vase})                        ::  kernel modules
-++  pone  (list {p/@tas q/vise})                        ::  kernel modules old
+::
++|  %global
+::
+::  $arch: fundamental node
+::  $beak: global context
+::  $beam: global name
+::  $bone: opaque duct handle
+::  $case: global version
+::  $cage: global metadata
+::  +cask: global data builder
+::  $desk: local workspace
+::  $dock: message target
+::  $mark: symbolic content type
+::  $ship: network identity
+::  $sink: subscription
+::
++$  arch  [fil=(unit @uvI) dir=(map @ta ~)]
++$  beam  [beak s=path]
++$  beak  (trel ship desk case)
++$  bone  @ud
++$  case
+  $%  ::  %da:  date
+      ::  %tas: label
+      ::  %ud:  sequence
+      ::
+      [%da p=@da]
+      [%tas p=@tas]
+      [%ud p=@ud]
+  ==
++$  cage  (cask vase)
+++  cask  |$  [a]  (pair mark a)
++$  desk  @tas
++$  dock  (pair @p term)
++$  mark  @tas
++$  ship  @p
+++  sink  (trel bone ship path)
+::
++|  %meta
+::
+::  +hypo: type-associated builder
+::  $meta: meta-vase
+::  $maze: vase, or meta-vase
+::
+++  hypo
+  |$  [a]
+  (pair type a)
++$  meta  (pair)
++$  maze  (each vase meta)
++$  mill  maze
++$  milt  meta
+::
++|  %interface
+::
+::  $curd: tagged, untyped event
+::  $duct: causal history
+::  +hobo: %soft task builder
+::  $monk: general identity
+::  $ovum: card with cause
+::  $scry-sample: vane +scry argument
+::  $vane-sample: vane wrapper-gate aargument
+::  $sley: namespace function
+::  $slyd: super advanced
+::  $slyt: old namespace
+::  +wind: kernel action builder
+::  $wire: event pretext
+::
++$  curd  (cask)
++$  duct  (list wire)
+++  hobo
+  |$  [a]
+  $?  $%  [%soft p=*]
+      ==
+      a
+  ==
++$  monk  (each ship (pair @tas @ta))
++$  ovum  (pair wire curd)
+::
 +$  scry-sample
   [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
 +$  vane-sample
   [our=ship now=@da eny=@uvJ ski=slyd]
-++  ship  @p                                            ::  network identity
-++  sink  (trel bone ship path)                         ::  subscription
-++  sley  $-  {* (unit (set monk)) term beam}           ::  namespace function
-          (unit (unit cage))                            ::
-++  slyd  $~  =>(~ |~(* ~))                             ::  super advanced
-          $-  {* (unit (set monk)) term beam}           ::
-          (unit (unit (cask milt)))                     ::
-++  slyt  $-({* *} (unit (unit)))                       ::  old namespace
+::
++$  sley
+  $-  [* (unit (set monk)) term beam]
+  (unit (unit cage))
++$  slyd
+  $~  =>(~ |~(* ~))
+  $-  [* (unit (set monk)) term beam]
+  (unit (unit (cask meta)))
++$  slyt  $-(^ (unit (unit)))
+::
+++  wind
+  |$  ::  a: forward
+      ::  b: reverse
+      ::
+      [a b]
+  $%  ::  %pass: advance
+      ::  %slip: lateral
+      ::  %give: retreat
+      ::
+      [%pass p=path q=a]
+      [%slip p=a]
+      [%give p=b]
+  ==
++$  wire  path
+::
++|  %implementation
+::
+::  +mash: producing mass
+::  $mass: memory usage
+::  $pane: kernel modules
+::  $pone: kernel modules old
+::  $vane: kernel module
+::  $vile: reflexive constants
+::
+++  mash  |=(* (mass +<))
++$  mass  $~  [%$ [%& ~]]
+          (pair cord (each noun (list mash)))
++$  pane  (list (pair @tas vase))
++$  pone  (list (pair @tas vise))
 +$  vane  [=vase =worm]
-++  vile                                                ::  reflexive constants
-          $:  typ/type                                  ::  -:!>(*type)
-              duc/type                                  ::  -:!>(*duct)
-              pah/type                                  ::  -:!>(*path)
-              mev/type                                  ::  -:!>([%meta *vase])
-          ==                                            ::
-++  wind                                                ::  new kernel action
-          |*  {a/mold b/mold}                           ::  forward+reverse
-          $%  {$pass p/path q/a}                        ::  advance
-              {$slip p/a}                               ::  lateral
-              {$give p/b}                               ::  retreat
-          ==                                            ::
-++  wire  path                                          ::  event pretext
++$  vile
+  $:  typ=type    ::  -:!>(*type)
+      duc=type    ::  -:!>(*duct)
+      pah=type    ::  -:!>(*path)
+      mev=type    ::  -:!>([%meta *vase])
+  ==
 --
 =>
 ~%  %hex  +>  ~
@@ -112,7 +182,7 @@
   =/  ron=@tas  u.hyr
   =/  bed=beam
     [[u.fal u.dyc (case p.u.ved)] (flop tyl)]
-  =/  bop=(unit (unit (cask milt)))
+  =/  bop=(unit (unit (cask meta)))
     (sod ref ~ ron bed)
   ?~  bop  ~
   ?~  u.bop  [~ ~]
@@ -143,7 +213,7 @@
   ::
   =/  bed=beam
     [[fal dyc ved] tyl]
-  =/  bop=(unit (unit (cask milt)))
+  =/  bop=(unit (unit (cask meta)))
     (sod ref ~ ron bed)
   ?~  bop  ~
   ?~  u.bop  [~ ~]
@@ -158,34 +228,35 @@
 ::
 ++  part
   =>  |%
-  ::  $wind: kernel action
-  ::
-  ::    note: a routed $task
-  ::    gift: a reverse action
-  ::
-  ::    NB:
-  ::      task: a forward action
-  ::      sign: a sourced $gift
-  ::
-  ++  wind
-    |$  [note gift]                                       ::  forward+reverse
-    $%  [%pass =wire =note]                               ::  advance
-        [%slip =note]                                     ::  lateral
-        [%give =gift]                                     ::  retreat
-    ==
-  ::
-  +$  ball  (wind [vane=term task=mill] mill)
-  +$  card  (cask)
-  ::
-  +$  germ  [vane=term depth=@ud]
-  +$  maze  (pair)                                        ::  metavase
-  +$  mill  (each vase maze)                              ::  vase or metavase
-  +$  ovum  [=wire =card]
-  +$  plan  (pair germ (list move))
-  ::
-  +$  move  [=duct =ball]
-  +$  vane  [=vase =worm]
-  --
+      ::  $ball: dynamic kernel action
+      ::  $card: tagged, untyped event
+      ::  $move: cause and action
+      ::  $ovum: card with cause
+      ::  +wind: kernel action builder
+      ::
+      ::    XX replace top-level structures
+      ::
+      +$  ball  (wind [vane=term task=maze] maze)
+      +$  card  (cask)
+      +$  move  [=duct =ball]
+      +$  ovum  [=wire =card]
+      ++  wind
+        |$  ::  note: a routed $task
+            ::  gift: a reverse action
+            ::
+            ::    NB:  task: a forward action
+            ::         sign: a sourced $gift
+            ::
+            [note gift]
+        $%  ::  %pass: advance
+            ::  %slip: lateral
+            ::  %give: retreat
+            ::
+            [%pass =wire =note]
+            [%slip =note]
+            [%give =gift]
+        ==
+      --
   ::
   ~%  %part  +>  ~
   |%
@@ -344,12 +415,12 @@
       ::
       ::  support for meta-meta-cards has been removed
       ::
-      ?>  ?=(milt q.tiv)
+      ?>  ?=(meta q.tiv)
       [[%| q.tiv] sac]
       ::
       :: =/  mut
-      ::   ?>(?=(milt q.tiv) q.tiv)
-      :: |-  ^-  (pair [%| milt] worm)
+      ::   ?>(?=(meta q.tiv) q.tiv)
+      :: |-  ^-  (pair [%| meta] worm)
       :: ?.  ?=([%meta *] mut)
       ::   [[%| mut] sac]
       :: =^  dip  sac  (~(nets wa sac) -:!>([%meta *vase]) p.mut)
@@ -372,7 +443,7 @@
       ::
       ++  peek
         |=  [fur=(unit (set monk)) ren=@t bed=beam]
-        ^-  (unit (unit (cask maze)))
+        ^-  (unit (unit (cask meta)))
         ::  namespace reads receive no entropy
         ::
         =/  sam=vane-sample  [our now *@uvJ sky]
@@ -383,7 +454,7 @@
           ~>  %mean.'peek: call failed'
           (~(slap wa sac) rig [%limb %scry])
         ::
-        ;;  (unit (unit (cask maze)))
+        ;;  (unit (unit (cask meta)))
         %+  slum  q.gat
         ^-  scry-sample
         :*  fur
@@ -455,7 +526,15 @@
   ::  |le: arvo event-loop engine
   ::
   ++  le
-    ~%  %le  +>+  ~
+    =>  |%
+        ::  $germ: worklist source and stack depth
+        ::  $plan: worklist
+        ::
+        +$  germ  [vane=term depth=@ud]
+        +$  plan  (pair germ (list move))
+        --
+    ::
+    ~%  %le  +>+>  ~
     =|  $:  ::  run: list of worklists
             ::  out: pending output
             ::  gem: worklist metadata
@@ -606,7 +685,7 @@
     ++  peek
       ^-  slyd
       |=  [typ=* fur=(unit (set monk)) ron=term bed=beam]
-      ^-  (unit (unit (cask maze)))
+      ^-  (unit (unit (cask meta)))
       ::
       ::  XX identity is defaulted to ship from beam
       ::
