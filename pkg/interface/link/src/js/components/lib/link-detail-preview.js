@@ -72,9 +72,9 @@ export class LinkPreview extends Component {
     let embed = "";
 
     if (imgMatch) {
-      embed = <img className="db w-50"
+      embed = <img className="db"
                    src={props.url}
-                   style={{maxHeight: "100%", maxWidth: "500px", margin: "0 auto"}}/>
+                   style={{maxHeight: "500px", maxWidth: "500px", margin: "0 auto"}}/>
     }
 
     if (ytMatch) {
@@ -94,8 +94,7 @@ export class LinkPreview extends Component {
     return (
       <div className="pb6 w-100">
         <div
-          className={"w-100 " + (ytMatch ? "embed-container" : "")}
-          style={{ maxHeight: "500px" }}>
+          className={"w-100 " + (ytMatch ? "embed-container" : "")}>
           {embed}
         </div>
         <div className="flex flex-column ml2 pt6">
