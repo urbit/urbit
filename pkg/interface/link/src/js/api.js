@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
-import { uuid } from '/lib/util';
+import { uuid, stringToTa } from '/lib/util';
 import { store } from '/store';
 import moment from 'moment';
 
@@ -102,7 +102,7 @@ class UrbitApi {
   }
 
   getCommentsPage(path, url, page) {
-    const strictUrl = this.encodeUrl(url);
+    const strictUrl = stringToTa(url);
     const endpoint = '/json/' + page + '/discussions/' + strictUrl + path;
     this.bindLinkView(endpoint,
       (res) => {
@@ -129,7 +129,7 @@ class UrbitApi {
   }
 
   getSubmission(path, url, callback) {
-    const strictUrl = this.encodeUrl(url);
+    const strictUrl = stringToTa(url);
     const endpoint = '/json/0/submission/' + strictUrl + path;
     this.bindLinkView(endpoint,
       (res) => {
@@ -172,42 +172,6 @@ class UrbitApi {
         }
       }
     });
-  }
-
-  //TODO into lib?
-  // encode the url into @ta-safe format, using logic from +wood
-  encodeUrl(url) {
-    let strictUrl = '';
-    for (let i = 0; i < url.length; i++) {
-      const char = url[i];
-      let add = '';
-      switch (char) {
-        case ' ':
-          add = '.';
-          break;
-        case '.':
-          add = '~.';
-          break;
-        case '~':
-          add = '~~';
-          break;
-        default:
-          const charCode = url.charCodeAt(i);
-          if (
-            (charCode >= 97 && charCode <= 122) || // a-z
-            (charCode >= 48 && charCode <= 57)  || // 0-9
-            char === '-'
-          ) {
-            add = char;
-          } else {
-            //TODO behavior for unicode doesn't match +wood's,
-            //     but we can probably get away with that for now.
-            add = '~' + charCode.toString(16) + '.';
-          }
-      }
-      strictUrl = strictUrl + add;
-    }
-    return '~.' + strictUrl;
   }
 
 }

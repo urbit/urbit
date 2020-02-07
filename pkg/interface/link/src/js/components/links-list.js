@@ -22,14 +22,13 @@ export class Links extends Component {
          (!this.props.links[linkPage] ||
           this.props.links.local[linkPage])
     ) {
-      api.getPage(this.props.path, this.props.page);
+      api.getPage(this.props.groupPath, this.props.page);
     }
   }
 
   render() {
     let props = this.props;
     let popout = (props.popout) ? "/popout" : "";
-    let channel = props.path.substr(1);
     let linkPage = props.page;
 
     let links = !!props.links[linkPage]
@@ -84,7 +83,7 @@ export class Links extends Component {
         ship={ship}
         color={color}
         comments={commentCount}
-        channel={channel}
+        groupPath={props.groupPath}
         popout={popout}
         />
       )
@@ -106,34 +105,34 @@ export class Links extends Component {
           <SidebarSwitcher
            sidebarShown={props.sidebarShown}
            popout={props.popout}/>
-         <Link to={`/~link` + popout + props.path} className="pt2">
+         <Link to={`/~link` + popout + props.groupPath} className="pt2">
            <h2
              className={`dib f8 fw4 v-top ` +
-             (props.path.includes("/~/")
+             (props.groupPath.includes("/~/")
              ? ""
              : "mono")}>
-              {(props.path.includes("/~/"))
+              {(props.groupPath.includes("/~/"))
               ? "Private"
-              : channel}
+              : props.groupPath.substr(1)}
            </h2>
          </Link>
           <LinksTabBar
           {...props}
           popout={popout}
-          path={props.path + "/" + props.page}/>
+          groupPath={props.groupPath + "/" + props.page}/>
         </div>
         <div className="w-100 mt2 flex justify-center overflow-y-scroll ph4 pb4">
           <div className="w-100 mw7">
             <div className="flex">
-              <LinkSubmit path={props.path}/>
+              <LinkSubmit groupPath={props.groupPath}/>
             </div>
             <div className="pb4">
             {LinkList}
             <Pagination
             {...props}
-            key={props.path + props.page}
+            key={props.groupPath + props.page}
             popout={popout}
-            path={props.path}
+            groupPath={props.groupPath}
             currentPage={currentPage}
             totalPages={totalPages}
             />

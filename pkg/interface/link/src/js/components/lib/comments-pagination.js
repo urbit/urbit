@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
+import { base64urlEncode } from '../../lib/util';
 
 export class CommentsPagination extends Component {
   render() {
@@ -16,7 +17,7 @@ export class CommentsPagination extends Component {
     ? "dib"
     : "dn";
 
-    let encodedUrl = window.btoa(props.url);
+    let encodedUrl = base64urlEncode(props.url);
     let popout = (props.popout) ? "/popout" : "";
 
     return (
@@ -25,7 +26,7 @@ export class CommentsPagination extends Component {
         className={"pb6 absolute inter f8 left-0 " + prevDisplay}
         to={"/~link"
         + popout
-        + props.path
+        + props.groupPath
         + "/" + props.linkPage
         + "/" + props.linkIndex
         + "/" + encodedUrl
@@ -36,7 +37,7 @@ export class CommentsPagination extends Component {
         className={"pb6 absolute inter f8 right-0 " + nextDisplay}
         to={"/~link" 
         + popout
-        + props.path 
+        + props.groupPath
         + "/" + props.linkPage 
         + "/" + props.linkIndex 
         + "/" + encodedUrl

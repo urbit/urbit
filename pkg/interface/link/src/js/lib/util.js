@@ -14,9 +14,64 @@ export function uuid() {
   return str.slice(0,-1);
 }
 
+// encodes string into base64url,
+// by encoding into base64 and replacing non-url-safe characters.
+//
+export function base64urlEncode(string) {
+  return window.btoa(string)
+    .split('+').join('-')
+    .split('/').join('_');
+}
+
+// decode base64url. inverse of base64urlEncode above.
+//
+export function base64urlDecode(string) {
+  return window.atob(
+    string.split('_').join('/')
+          .split('-').join('+')
+  );
+}
+
 export function isPatTa(str) {
   const r = /^[a-z,0-9,\-,\.,_,~]+$/.exec(str)
   return !!r;
+}
+
+// encode the string into @ta-safe format, using logic from +wood.
+// for example, 'some Chars!' becomes '~.some.~43.hars~21.'
+//
+export function stringToTa(string) {
+  let out = '';
+  for (let i = 0; i < string.length; i++) {
+    const char = string[i];
+    let add = '';
+    switch (char) {
+      case ' ':
+        add = '.';
+        break;
+      case '.':
+        add = '~.';
+        break;
+      case '~':
+        add = '~~';
+        break;
+      default:
+        const charCode = string.charCodeAt(i);
+        if (
+          (charCode >= 97 && charCode <= 122) || // a-z
+          (charCode >= 48 && charCode <= 57)  || // 0-9
+          char === '-'
+        ) {
+          add = char;
+        } else {
+          //TODO behavior for unicode doesn't match +wood's,
+          //     but we can probably get away with that for now.
+          add = '~' + charCode.toString(16) + '.';
+        }
+    }
+    out = out + add;
+  }
+  return '~.' + out;
 }
 
 /*
