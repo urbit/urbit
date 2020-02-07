@@ -28,14 +28,14 @@ export class LinksTabBar extends Component {
           <div className={"dib f8 pl6"}>
             <Link
               className={"no-underline " + memColor}
-              to={`/~link/` + popout + `members` + props.path}>
+              to={`/~link/` + popout + `members` + props.groupPath}>
               Members
             </Link>
           </div>
         ) : (
           <div className="dib" style={{ width: 0 }}></div>
         )}
-        <a href={`/~link/popout` + props.path} target="_blank"
+        <a href={`/~link/popout` + props.groupPath} target="_blank"
         className="dib fr">
           <img
             className={`flex-shrink-0 pr4 dn invert-d ` + hidePopoutIcon}

@@ -19,12 +19,12 @@ export class Pagination extends Component {
     return (
       <div className="w-100 inter relative pv6">
         <div className={prevDisplay + " inter f8"}>
-          <Link to={"/~link" + props.popout + props.path + prevPage}>
+          <Link to={"/~link" + props.popout + props.groupPath + prevPage}>
             &#60;- Previous Page
           </Link>
         </div>
         <div className={nextDisplay + " inter f8"}>
-          <Link to={"/~link" + props.popout + props.path + nextPage}>
+          <Link to={"/~link" + props.popout + props.groupPath + nextPage}>
             Next Page ->
           </Link>
         </div>

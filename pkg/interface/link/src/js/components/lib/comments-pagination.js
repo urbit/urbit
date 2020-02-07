@@ -26,7 +26,7 @@ export class CommentsPagination extends Component {
         className={"pb6 absolute inter f8 left-0 " + prevDisplay}
         to={"/~link"
         + popout
-        + props.path
+        + props.groupPath
         + "/" + props.linkPage
         + "/" + props.linkIndex
         + "/" + encodedUrl
@@ -37,7 +37,7 @@ export class CommentsPagination extends Component {
         className={"pb6 absolute inter f8 right-0 " + nextDisplay}
         to={"/~link" 
         + popout
-        + props.path 
+        + props.groupPath
         + "/" + props.linkPage 
         + "/" + props.linkIndex 
         + "/" + encodedUrl

@@ -32,7 +32,7 @@ export class LinkDetail extends Component {
     // if we have no preloaded data, and we aren't expecting it, get it
     if (!this.state.data.title) {
       api.getSubmission(
-        this.props.path, this.props.url, this.updateData.bind(this)
+        this.props.groupPath, this.props.url, this.updateData.bind(this)
       );
     }
 
@@ -65,7 +65,7 @@ export class LinkDetail extends Component {
     let url = this.props.url || "";
 
     let request = api.postComment(
-      this.props.path,
+      this.props.groupPath,
       url,
       this.state.comment
     );
@@ -82,7 +82,6 @@ export class LinkDetail extends Component {
   render() {
     let props = this.props;
     let popout = (props.popout) ? "/popout" : "";
-    let routePath = props.path + "/" + props.page + "/" + props.linkIndex + "/" + base64urlEncode(props.url);
 
     const data = this.state.data || props.data;
     let ship = data.ship || "zod";
@@ -129,13 +128,13 @@ export class LinkDetail extends Component {
         popout={props.popout}/>
         <Link
         className="dib f8 fw4 v-top pt2 gray2"
-        to={"/~link" + popout + props.path + "/" + props.page}>
+        to={"/~link" + popout + props.groupPath + "/" + props.page}>
         {"<- Collection index"}
         </Link>
         <LinksTabBar
         {...props}
         popout={popout}
-        path={routePath}/>
+        groupPath={props.groupPath}/>
       </div>
       <div className="w-100 mt2 flex justify-center overflow-y-scroll ph4 pb4">
         <div className="w-100 mw7">
@@ -192,8 +191,8 @@ export class LinkDetail extends Component {
               </button>
               </div>
             <Comments
-            path={props.path}
-            key={props.path + props.commentPage}
+            groupPath={props.groupPath}
+            key={props.groupPath + props.commentPage}
             comments={props.comments}
             commentPage={props.commentPage}
             members={props.members}

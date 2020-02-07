@@ -92,7 +92,7 @@ export class Root extends Component {
                   links={channelLinks}
                   comments={channelComments}
                   page={page}
-                  path={groupPath}
+                  groupPath={groupPath}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
                   />
@@ -140,7 +140,7 @@ export class Root extends Component {
                   url={url}
                   linkIndex={index}
                   members={groupMembers}
-                  path={groupPath}
+                  groupPath={groupPath}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
                   data={data}
