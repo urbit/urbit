@@ -33,6 +33,16 @@
 ::    /discussions/wood-url/some-path       all comments on url on path
 ::    /discussions//some-path               all comments on path
 ::
+::  subscription-only paths:
+::
+::      [path url]                            %observation
+::    /seen                                 updates whenever an item is seen
+::
+::  scry-only paths:
+::
+::      ?
+::    /seen/wood-url/some-path              have we seen this here (scry only)
+::
 /+  *link, default-agent, verb, dbug
 ::
 |%
@@ -47,6 +57,7 @@
   $:  ::NOTE  all lists by recency
       =submissions
       ours=pages
+      seen=(set url)
   ==
 ::
 +$  discussion
@@ -137,6 +148,9 @@
     ::
         [%x %discussions *]
       ``noun+!>((get-discussions:do t.t.path))
+    ::
+        [%x %seen @ ^]
+      ``noun+!>((is-seen t.t.path))
     ==
   ::
   ++  on-watch
@@ -164,6 +178,9 @@
           %+  give  %link-initial
           ^-  initial
           [%discussions (get-discussions:do t.path)]
+        ::
+            [%seen ~]
+          ~
         ==
     ::
     ++  give
@@ -193,6 +210,7 @@
   ?-  -.action
     %save  (save-page +.action)
     %note  (note-note +.action)
+    %seen  (seen-submission +.action)
   ::
     %hear  (hear-submission +.action)
     %read  (read-comment +.action)
@@ -254,6 +272,28 @@
       ==
     %link-update
   !>([%annotations path url [note]~])
+::  +seen-submission: mark url as seen/read
+::
+::    if no url specified, all under path are marked as read
+::
+++  seen-submission
+  |=  [=path murl=(unit url)]
+  ^-  (quip card _state)
+  =/  =links  (~(gut by by-group) path *links)
+  ::  new: urls we want to, but haven't yet, marked as seen
+  ::
+  =/  new=(set url)
+    %.  seen.links
+    %~  dif  in
+    ^-  (set url)
+    ?^  murl  (sy ~[u.murl])
+    %-  ~(gas in *(set url))
+    %+  turn  submissions.links
+    |=(submission url)
+  ?:  =(~ new)  [~ state]
+  =.  seen.links  (~(uni in seen.links) new)
+  :_  state(by-group (~(put by by-group) path links))
+  [%give %fact ~[/seen] %link-update !>([%observation path new])]~
 ::  +hear-submission: record page someone else saved
 ::
 ++  hear-submission
@@ -331,6 +371,15 @@
   ::
   %+  ~(put by *(map ^path submissions))  path
   submissions:(~(gut by by-group) path *links)
+::
+++  is-seen
+  |=  =path
+  ^-  ?
+  =/  [=^path =url]
+    (break-discussion-path path)
+  %.  url
+  %~  has  in
+  seen:(~(gut by by-group) path *links)
 ::
 ::
 ++  get-annotations

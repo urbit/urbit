@@ -124,6 +124,12 @@
           'url'^s+url.upd
           'comments'^a+(turn comments.upd comment)
       ==
+    ::
+        %observation
+      %-  pairs
+      :~  'path'^(path path.upd)
+          'urls'^a+(turn ~(tap in urls.upd) |=(=url s+url))
+      ==
     ==
   ::
   ++  submission
@@ -181,6 +187,11 @@
       :-  %note
       %.  q.n.p.json
       (ot 'path'^pa 'url'^so 'udon'^so ~)
+    ::
+        [%o [%seen *] ~ ~]
+      :-  %seen
+      %.  q.n.p.json
+      (ot 'path'^pa 'url'^(mu so) ~)
     ==
   --
 --
