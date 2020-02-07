@@ -68,6 +68,21 @@ a {
   margin: 0 auto;
 }
 
+.embed-container {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 56.25%;
+}
+
+.embed-container iframe, .embed-container object, .embed-container embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
 /* responsive */
 @media all and (max-width: 34.375em) {
   .dn-s {
