@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { CommentItem } from './comment-item';
 
-//TODO map comments into comment-items;
 export class Comments extends Component {
   constructor(props){
     super(props);
@@ -20,6 +19,8 @@ export class Comments extends Component {
        body: this.state.commentBody
      }
    };
+
+   this.textArea.value = '';
    window.api.action("publish", "publish-action", comment);
 
  }
@@ -37,15 +38,28 @@ export class Comments extends Component {
       );
     })
 
+    let disableComment = this.state.commentBody === '';
+    let commentClass = (disableComment)
+      ?  "f9 pa2 bg-white br1 ba b--gray2 gray2"
+      :  "f9 pa2 bg-white br1 ba b--gray2 black pointer";
+
     return (
       <div>
         <div className="mt8">
           <div>
-            <textarea style={{resize:'vertical'}} id="comment" name="comment" placeholder="Leave a comment here" className="f9 db border-box w-100 ba b--gray3 pt3 ph3 pb8 br1 mb2" aria-describedby="comment-desc" onChange={this.commentChange}>
-
+            <textarea style={{resize:'vertical'}}
+              ref={(el) => {this.textArea = el}}
+              id="comment"
+              name="comment"
+              placeholder="Leave a comment here"
+              className="f9 db border-box w-100 ba b--gray3 pt3 ph3 pb8 br1 mb2"
+              aria-describedby="comment-desc"
+              onChange={this.commentChange}>
             </textarea>
           </div>
-          <button onClick={this.commentSubmit} className="f9 pa2 bg-white br1 ba b--gray2 gray2 pointer">
+          <button disabled={disableComment}
+            onClick={this.commentSubmit}
+            className={commentClass}>
             Add comment
           </button>
         </div>

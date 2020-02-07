@@ -59,6 +59,7 @@ export class Notebook extends Component {
 
   render() {
     let notebook = this.props.notebooks[this.props.ship][this.props.book];
+
     let tabStyles = {
       posts: "bb b--gray4 gray2 pv4 ph2",
       about: "bb b--gray4 gray2 pv4 ph2"
@@ -96,15 +97,19 @@ export class Notebook extends Component {
     let settings = base + '/settings';
     let newUrl = base + '/new';
 
-    let newPost = !(window.ship === this.props.ship.slice(1))
-      // XX TODO check based on authorized writers instead
-      ?  null
-      :  <Link to={newUrl} className="NotebookButton bg-light-green green2">
+    let newPost = null;
+    if (notebook["writers-group-path"] in this.props.groups){
+      let writers = notebook["writers-group-path"];
+      if (this.props.groups[writers].has(window.ship)) {
+        newPost =
+         <Link to={newUrl} className="NotebookButton bg-light-green green2">
            New Post
          </Link>
+      }
+    }
 
     let unsub = (window.ship === this.props.ship.slice(1))
-      ? null
+      ?  null
       :  <button onClick={this.unsubscribe}
              className="NotebookButton bg-white black ba b--black ml3">
            Unsubscribe
