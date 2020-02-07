@@ -72,9 +72,12 @@ export class LinkPreview extends Component {
     let embed = "";
 
     if (imgMatch) {
-      embed = <img className="db"
-                   src={props.url}
-                   style={{maxHeight: "500px", maxWidth: "500px", margin: "0 auto"}}/>
+      embed = <a href={props.url}
+                target="_blank"
+                className="db m0a"
+                style={{width: "max-content"}}>
+        <img src={props.url} style={{maxHeight: "500px", maxWidth: "500px"}}/>
+      </a>
     }
 
     if (ytMatch) {
