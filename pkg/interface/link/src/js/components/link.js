@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { LinksTabBar } from './lib/links-tabbar';
+import { LinkPreview } from './lib/link-detail-preview';
 import { SidebarSwitcher } from '/components/lib/icons/icon-sidebar-switch.js';
 import { api } from '../api';
 import { Route, Link } from 'react-router-dom';
 import { Comments } from './lib/comments';
-import { base64urlEncode } from '../lib/util';
 
 export class LinkDetail extends Component {
   constructor(props) {
@@ -80,9 +80,9 @@ export class LinkDetail extends Component {
     return (
       <div className="h-100 w-100 overflow-hidden flex flex-column">
         <div
-          className={`pl3 pt2 flex relative overflow-x-scroll
-      overflow-x-auto-l overflow-x-auto-xl flex-shrink-0
-      bb bn-m bn-l bn-xl b--gray4`}
+          className={"pl3 pt2 flex relative overflow-x-scroll " +
+      "overflow-x-auto-l overflow-x-auto-xl flex-shrink-0 " +
+      "bb bn-m bn-l bn-xl b--gray4"}
           style={{ height: 48 }}>
           <SidebarSwitcher
             sidebarShown={props.sidebarShown}
@@ -103,7 +103,7 @@ export class LinkDetail extends Component {
               comments={comments}
               nickname={nickname}
               ship={ship}
-              path={props.groupPath}
+              groupPath={props.groupPath}
               page={props.page}
               linkIndex={props.linkIndex}
               data={props.data}
