@@ -52,6 +52,9 @@ export class NewScreen extends Component {
   }
 
   securityChange(event) {
+    if (this.state.createGroup) {
+      return;
+    }
     if (event.target.checked) {
       this.setState({security: "village"});
     } else if (!event.target.checked) {
@@ -159,6 +162,9 @@ export class NewScreen extends Component {
     let inviteSwitchClasses = (this.state.security === "village")
       ? "relative checked bg-green2 br3 h1 toggle v-mid z-0"
       : "relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0";
+    if (this.state.createGroup) {
+      inviteSwitchClasses = inviteSwitchClasses + " o-50";
+    }
 
     let createGroupClasses = this.state.createGroup
       ? "relative checked bg-green2 br3 h1 toggle v-mid z-0"
