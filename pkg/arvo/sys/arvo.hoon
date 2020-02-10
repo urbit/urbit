@@ -230,6 +230,7 @@
   =>  |%
       ::  $ball: dynamic kernel action
       ::  $card: tagged, untyped event
+      ::  $goof: crash label and trace XX fail/ruin/crud/flaw/lack/miss
       ::  $move: cause and action
       ::  $ovum: card with cause
       ::  +wind: kernel action builder
@@ -238,6 +239,7 @@
       ::
       +$  ball  (wind [vane=term task=maze] maze)
       +$  card  (cask)
+      +$  goof  [mote=term =tang]
       +$  move  [=duct =ball]
       +$  ovum  [=wire =card]
       ++  wind
@@ -249,12 +251,16 @@
             ::
             [note gift]
         $%  ::  %pass: advance
+            ::  %hurl: advance failed
             ::  %slip: lateral
             ::  %give: retreat
+            ::  %gave: retreat failed
             ::
             [%pass =wire =note]
+            [%hurl =goof =wire =note]
             [%slip =note]
             [%give =gift]
+            [%gave =goof =gift]
         ==
       --
   ::
@@ -458,7 +464,7 @@
       ::  |spin:plow:va: move statefully
       ::
       ++  spin
-        |=  [hen=duct eny=@uvJ]
+        |=  [hen=duct eny=@uvJ dud=(unit goof)]
         :: =/  duc  !>(hen)
         =*  duc  [duc.vil hen]
         =/  sam=vane-sample  [our now eny sky]
@@ -540,10 +546,12 @@
     =|  $:  ::  run: list of worklists
             ::  out: pending output
             ::  gem: worklist metadata
+            ::  dud: propagate error
             ::
             run=(list plan)
             out=(list ovum)
             gem=germ
+            dud=(unit goof)
         ==
     ::
     |_  $:  our=ship
@@ -612,6 +620,9 @@
     ++  step
       |=  =move
       ^+  this
+      ::
+      ~?  &(!lac ?=(^ dud))  %goof
+      ::
       ?-  -.ball.move
       ::
       ::  %pass: forward move
@@ -682,6 +693,22 @@
           duct
         ::
         (take duct wire vane gift)
+      ::
+      ::  %hurl: pass with error
+      ::
+          %hurl
+        %=  $
+          dud        `goof.ball.move
+          ball.move  [%pass wire note]:ball.move
+        ==
+      ::
+      ::  %gave: give with error
+      ::
+          %gave
+        %=  $
+          dud        `goof.ball.move
+          ball.move  [%give gift.ball.move]
+        ==
       ==
     ::  +peek: read from the entire namespace
     ::
@@ -713,7 +740,8 @@
       |=  [=duct way=term task=mill]
       ^+  this
       %+  push  way
-      (call:(spin:(plow way) duct eny) task)
+      %.  task
+      call:(spin:(plow way) duct eny dud)
     ::  +take: retreat along call-stack
     ::
     ++  take
@@ -723,7 +751,8 @@
       ::
       ::  cons source onto .gift to make a $sign
       ::
-      (take:(spin:(plow way) duct eny) wire [vane.gem gift])
+      %.  [wire [vane.gem gift]]
+      take:(spin:(plow way) duct eny dud)
     ::  +push: finalize an individual step
     ::
     ++  push
