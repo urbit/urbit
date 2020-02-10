@@ -968,9 +968,10 @@
     ?^  grp  [~ group-path.group group-path.group]
     ?>  ?=(^ group-path.group)
     ?<  =('~' i.group-path.group)
+    =/  whole-grp  (~(put in invitees.group) our.bol)
     :_  [group-path.group group-path.group]
     %-  zing
-    :~  [(contact-view-create [%create group-path.group invitees.group])]~
+    :~  [(contact-view-create [%create group-path.group whole-grp])]~
         (create-security group-path.group group-path.group %village)
         [(perm-hook-poke [%add-owned group-path.group group-path.group])]~
         (generate-invites book (~(del in invitees.group) our.bol))
@@ -988,6 +989,8 @@
   %-  zing
   :~  [(group-poke [%bundle write-path])]~
       [(group-poke [%bundle read-path])]~
+      [(group-poke [%add (sy our.bol ~) write-path])]~
+      [(group-poke [%add (sy our.bol ~) read-path])]~
       (create-security read-path write-path %journal)
       [(perm-hook-poke [%add-owned write-path write-path])]~
       [(perm-hook-poke [%add-owned read-path read-path])]~
