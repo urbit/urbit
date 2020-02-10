@@ -74,10 +74,13 @@
 ::
 +|  %interface
 ::
+::  $ball: dynamic kernel action
 ::  $curd: tagged, untyped event
 ::  $duct: causal history
 ::  +hobo: %soft task builder
+::  $goof: crash label and trace XX fail/ruin/crud/flaw/lack/miss
 ::  $monk: general identity
+::  $move: cause and action
 ::  $ovum: card with cause
 ::  $scry-sample: vane +scry argument
 ::  $vane-sample: vane wrapper-gate aargument
@@ -86,7 +89,9 @@
 ::  $slyt: old namespace
 ::  +wind: kernel action builder
 ::  $wire: event pretext
+::  +wite: kernel action/error builder
 ::
++$  ball  (wite [vane=term task=maze] maze)
 +$  curd  (cask)
 +$  duct  (list wire)
 ++  hobo
@@ -95,7 +100,9 @@
       ==
       a
   ==
++$  goof  [mote=term =tang]
 +$  monk  (each ship (pair @tas @ta))
++$  move  [=duct =ball]
 +$  ovum  (pair wire curd)
 ::
 +$  scry-sample
@@ -126,6 +133,26 @@
       [%give p=b]
   ==
 +$  wire  path
+++  wite
+  |$  ::  note: a routed $task
+      ::  gift: a reverse action
+      ::
+      ::    NB:  task: a forward action
+      ::         sign: a sourced $gift
+      ::
+      [note gift]
+  $%  ::  %pass: advance
+      ::  %hurl: advance failed
+      ::  %slip: lateral
+      ::  %give: retreat
+      ::  %gave: retreat failed
+      ::
+      [%pass =wire =note]
+      [%hurl =goof =wire =note]
+      [%slip =note]
+      [%give =gift]
+      [%gave =goof =gift]
+  ==
 ::
 +|  %implementation
 ::
@@ -228,40 +255,13 @@
 ::
 ++  part
   =>  |%
-      ::  $ball: dynamic kernel action
       ::  $card: tagged, untyped event
-      ::  $goof: crash label and trace XX fail/ruin/crud/flaw/lack/miss
-      ::  $move: cause and action
       ::  $ovum: card with cause
-      ::  +wind: kernel action builder
       ::
       ::    XX replace top-level structures
       ::
-      +$  ball  (wind [vane=term task=maze] maze)
       +$  card  (cask)
-      +$  goof  [mote=term =tang]
-      +$  move  [=duct =ball]
       +$  ovum  [=wire =card]
-      ++  wind
-        |$  ::  note: a routed $task
-            ::  gift: a reverse action
-            ::
-            ::    NB:  task: a forward action
-            ::         sign: a sourced $gift
-            ::
-            [note gift]
-        $%  ::  %pass: advance
-            ::  %hurl: advance failed
-            ::  %slip: lateral
-            ::  %give: retreat
-            ::  %gave: retreat failed
-            ::
-            [%pass =wire =note]
-            [%hurl =goof =wire =note]
-            [%slip =note]
-            [%give =gift]
-            [%gave =goof =gift]
-        ==
       --
   ::
   ~%  %part  +>  ~
