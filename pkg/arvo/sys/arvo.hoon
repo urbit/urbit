@@ -384,6 +384,47 @@
         =^  yed  sac  (~(spot wa sac) 3 xav)
         =^  hil  sac  (refine-card yed)
         [[%slip vane hil] sac]
+      ::
+          [%gave goof=^ card]
+        =/  =goof
+          =/  mote  -.goof.q.vax
+          ?>  ?&  ?=(@ mote)
+                  ((sane %tas) mote)
+              ==
+          [mote ;;(tang +.goof.q.vax)]
+        ::
+        ::  yed: vase containing card
+        ::  hil: card as mill
+        ::
+        =^  xav  sac  (~(spot wa sac) 3 vax)
+        =^  yed  sac  (~(spot wa sac) 3 xav)
+        =^  hil  sac  (refine-card yed)
+        [[%gave goof hil] sac]
+      ::
+          [%hurl goof=^ wire=* vane=term card]
+        =/  =goof
+          =/  mote  -.goof.q.vax
+          ?>  ?&  ?=(@ mote)
+                  ((sane %tas) mote)
+              ==
+          [mote ;;(tang +.goof.q.vax)]
+        =/  =wire
+          ~>  %mean.'bad-wire'
+          ::  XX used to be a nest-check and clam, seemed excessive
+          ::
+          ;;(wire wire.q.vax)
+        =/  vane
+          ~>  %mean.'bad-vane-label'
+          ?>  ((sane %tas) vane.q.vax)
+          vane.q.vax
+        ::
+        ::  yed: vase containing card
+        ::  hil: card as mill
+        ::
+        =^  xav  sac  (~(spot wa sac) 15 vax)
+        =^  yed  sac  (~(spot wa sac) 3 xav)
+        =^  hil  sac  (refine-card yed)
+        [[%hurl goof wire vane hil] sac]
       ==
     ::  +refine-card: card from vase (was +song)
     ::
