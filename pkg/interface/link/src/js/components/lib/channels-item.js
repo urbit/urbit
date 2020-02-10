@@ -11,6 +11,9 @@ export class ChannelsItem extends Component {
     : "b--transparent";
     
     let memberCount = Object.keys(props.members).length;
+    const unseenCount = props.unseenCount > 0
+      ? <span className="green2">{" " + props.unseenCount + " unread"}</span>
+      : null;
 
     return (
       <Link to={"/~link" + props.link}>
@@ -21,6 +24,7 @@ export class ChannelsItem extends Component {
           </p>
           <p className="f9 pb1">
             {props.linkCount + " link" + ((props.linkCount === 1) ? "" : "s")}
+            {unseenCount}
           </p>
         </div>
       </Link>

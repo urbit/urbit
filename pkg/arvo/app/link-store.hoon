@@ -40,8 +40,11 @@
 ::
 ::  scry-only paths:
 ::
+::      (set url)
+::    /seen//some-path                      the ones we've seen here
+::
 ::      ?
-::    /seen/wood-url/some-path              have we seen this here (scry only)
+::    /seen/wood-url/some-path              have we seen this here
 ::
 /+  *link, default-agent, verb, dbug
 ::
@@ -151,6 +154,9 @@
     ::
         [%x %seen @ ^]
       ``noun+!>((is-seen t.t.path))
+    ::
+        [%x %unseen *]
+      ``noun+!>((get-unseen t.t.path))
     ==
   ::
   ++  on-watch
@@ -371,6 +377,17 @@
   ::
   %+  ~(put by *(map ^path submissions))  path
   submissions:(~(gut by by-group) path *links)
+::
+++  get-unseen
+  |=  =path
+  ^-  (set url)
+  =/  =links
+    (~(gut by by-group) path *links)
+  %-  ~(gas in *(set url))
+  %+  murn  submissions.links
+  |=  submission
+  ?:  (~(has in seen.links) url)  ~
+  (some url)
 ::
 ++  is-seen
   |=  =path

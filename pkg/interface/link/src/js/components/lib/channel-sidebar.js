@@ -18,6 +18,9 @@ export class ChannelsSidebar extends Component {
         let name = "Private"
         let selected = (props.selected === path);
         let linkCount = !!props.links[path] ? props.links[path].totalItems : 0;
+        const unseenCount = !!props.links[path]
+          ? props.links[path].unseenCount
+          : linkCount
         return (
           <ChannelsItem
             key={path}
@@ -25,6 +28,7 @@ export class ChannelsSidebar extends Component {
             members={props.paths[path]}
             selected={selected}
             linkCount={linkCount}
+            unseenCount={unseenCount}
             name={name}/>
         )
       })

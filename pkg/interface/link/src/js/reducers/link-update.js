@@ -41,6 +41,7 @@ export class LinkUpdateReducer {
         state.links[path].local[page] = false;
         state.links[path].totalPages = here.totalPages;
         state.links[path].totalItems = here.totalItems;
+        state.links[path].unseenCount = here.unseenCount;
 
         // write seen status to a separate structure,
         // for easier modification later.
@@ -74,6 +75,8 @@ export class LinkUpdateReducer {
       state.links[path] = this._addNewItems(
         data.pages, state.links[path]
       );
+      state.links[path].unseenCount =
+        state.links[path].unseenCount + data.pages.length;
     }
   }
 
@@ -148,6 +151,10 @@ export class LinkUpdateReducer {
       data.urls.map(url => {
         seen[url] = true;
       });
+      if (state.links[path]) {
+        state.links[path].unseenCount =
+          state.links[path].unseenCount - data.urls.length;
+      }
     }
   }
 
