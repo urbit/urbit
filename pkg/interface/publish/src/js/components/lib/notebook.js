@@ -11,6 +11,9 @@ import { Settings } from './settings';
 export class Notebook extends Component {
   constructor(props){
     super(props);
+    this.state = {
+      canWrite: false
+    };
 
     this.onScroll = this.onScroll.bind(this);
     this.unsubscribe = this.unsubscribe.bind(this);
@@ -41,10 +44,30 @@ export class Notebook extends Component {
   }
 
   componentDidMount() {
+    this.canWriteCheck();
     if (this.props.notebooks[this.props.ship][this.props.book].notes) {
       this.onScroll();
     }
   }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      this.canWriteCheck();
+    }
+  }
+
+  canWriteCheck() {
+      let notebook = this.props.notebooks[this.props.ship][this.props.book];
+      if (this.props.ship === `~${window.ship}`) {
+        this.setState({canWrite: true});
+      }
+      if (notebook["writers-group-path"] in this.props.groups) {
+        let writers = notebook["writers-group-path"];
+        if (this.props.groups[writers].has(window.ship)) {
+          this.setState({canWrite: true});
+        }
+      }
+    }
 
   unsubscribe() {
     let action = {
@@ -98,14 +121,13 @@ export class Notebook extends Component {
     let newUrl = base + '/new';
 
     let newPost = null;
-    if (notebook["writers-group-path"] in this.props.groups){
-      let writers = notebook["writers-group-path"];
-      if (this.props.groups[writers].has(window.ship)) {
-        newPost =
-         <Link to={newUrl} className="NotebookButton bg-light-green green2">
-           New Post
-         </Link>
-      }
+
+    if (this.state.canWrite === true) {
+        newPost = (
+          <Link to={newUrl} className="NotebookButton bg-light-green green2">
+            New Post
+          </Link>
+        );
     }
 
     let unsub = (window.ship === this.props.ship.slice(1))
