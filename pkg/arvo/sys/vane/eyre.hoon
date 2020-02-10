@@ -1982,8 +1982,9 @@
 ~%  %http-server  ..is  ~
 |%
 ++  call
-  |=  [=duct type=* wrapped-task=(hobo task:able)]
+  |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task:able)]
   ^-  [(list move) _http-server-gate]
+  ?<  ?=(^ dud)
   ::
   =/  task=task:able  ((harden task:able) wrapped-task)
   ::  %crud: notifies us of an event failure
@@ -2166,8 +2167,9 @@
   ==
 ::
 ++  take
-  |=  [=wire =duct wrapped-sign=(hypo sign)]
+  |=  [=wire =duct dud=(unit goof) wrapped-sign=(hypo sign)]
   ^-  [(list move) _http-server-gate]
+  ?<  ?=(^ dud)
   ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
   ::
   =/  =sign  q.wrapped-sign

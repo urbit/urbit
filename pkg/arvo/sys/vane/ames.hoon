@@ -916,7 +916,8 @@
     ::  +call: handle request $task
     ::
     ++  call
-      |=  [=duct type=* wrapped-task=(hobo task)]
+      |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task)]
+      ?<  ?=(^ dud)
       ::
       =/  =task  ((harden task) wrapped-task)
       ::  %born: set .unix-duct and start draining .queued-events
@@ -924,7 +925,7 @@
       ?:  ?=(%born -.task)
         ::  process %born using wrapped adult ames
         ::
-        =^  moves  adult-gate  (call:adult-core duct type task)
+        =^  moves  adult-gate  (call:adult-core duct dud type task)
         ::  if no events were queued up, metamorphose
         ::
         ?~  queued-events
@@ -936,13 +937,18 @@
         [moves larval-gate]
       ::  any other event: enqueue it until we have a .unix-duct
       ::
+      ::    XX what to do with errors?
+      ::
       =.  queued-events  (~(put to queued-events) %call duct type task)
       [~ larval-gate]
     ::  +take: handle response $sign
     ::
     ++  take
-      |=  [=wire =duct type=* =sign]
+      |=  [=wire =duct dud=(unit goof) type=* =sign]
+      ?<  ?=(^ dud)
       ::  enqueue event if not a larval drainage timer
+      ::
+      ::    XX what to do with errors?
       ::
       ?.  =(/larva wire)
         =.  queued-events  (~(put to queued-events) %take wire duct type sign)
@@ -982,8 +988,8 @@
       =^  first-event  queued-events  ~(get to queued-events)
       =^  moves  adult-gate
         ?-  -.first-event
-          %call  (call:adult-core +.first-event)
-          %take  (take:adult-core +.first-event)
+          %call  (call:adult-core [duct ~ type wrapped-task]:+.first-event)
+          %take  (take:adult-core [wire duct ~ type sign]:+.first-event)
         ==
       ::  .queued-events has been cleared; metamorphose
       ::
@@ -1049,8 +1055,9 @@
 ::  +call: handle request $task
 ::
 ++  call
-  |=  [=duct type=* wrapped-task=(hobo task)]
+  |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task)]
   ^-  [(list move) _ames-gate]
+  ?<  ?=(^ dud)
   ::
   =/  =task  ((harden task) wrapped-task)
   ::
@@ -1077,8 +1084,9 @@
 ::  +take: handle response $sign
 ::
 ++  take
-  |=  [=wire =duct type=* =sign]
+  |=  [=wire =duct dud=(unit goof) type=* =sign]
   ^-  [(list move) _ames-gate]
+  ?<  ?=(^ dud)
   ::
   =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
   ::

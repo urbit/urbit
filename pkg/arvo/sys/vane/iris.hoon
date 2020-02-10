@@ -303,8 +303,9 @@
 ~%  %http-client  ..is  ~
 |%
 ++  call
-  |=  [=duct type=* wrapped-task=(hobo task:able)]
+  |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task:able)]
   ^-  [(list move) _light-gate]
+  ?<  ?=(^ dud)
   ::
   =/  task=task:able  ((harden task:able) wrapped-task)
   ::  %crud: notifies us of an event failure
@@ -376,8 +377,9 @@
 ::  http-client issues no requests to other vanes
 ::
 ++  take
-  |=  [=wire =duct wrapped-sign=*]
+  |=  [=wire =duct dud=(unit goof) wrapped-sign=*]
   ^-  [(list move) _light-gate]
+  ?<  ?=(^ dud)
   !!
 ::
 ++  light-gate  ..$

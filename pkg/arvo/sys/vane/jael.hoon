@@ -965,9 +965,11 @@
           ::  hic: event data
           ::
           hen/duct
+          dud=(unit goof)
           hic/(hypo (hobo task:able))
       ==
   ^-  [(list move) _..^$]
+  ?<  ?=(^ dud)
   =/  =task:able  ((harden task:able) q.hic)
   =^  did  lex
     abet:(~(call of [our now eny] lex) hen task)
@@ -1194,9 +1196,11 @@
           ::
           tea/wire
           hen/duct
+          dud=(unit goof)
           hin/(hypo sign)
       ==
   ^-  [(list move) _..^$]
+  ?<  ?=(^ dud)
   =^  did  lex  abet:(~(take of [our now eny] lex) tea hen q.hin)
   [did ..^$]
 --

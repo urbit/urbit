@@ -512,10 +512,12 @@
 |%                                                      ::  poke+peek pattern
 ++  call                                                ::  handle request
   |=  $:  hen=duct
+          dud=(unit goof)
           type=*
           wrapped-task=(hobo task:able)
       ==
   ^+  [*(list move) ..^$]
+  ?<  ?=(^ dud)
   =/  task=task:able  ((harden task:able) wrapped-task)
   ::  the boot event passes thru %dill for initial duct distribution
   ::
@@ -620,8 +622,9 @@
 ++  stay  all
 ::
 ++  take                                                ::  process move
-  |=  {tea/wire hen/duct hin/(hypo sign)}
+  |=  {tea/wire hen/duct dud/(unit goof) hin/(hypo sign)}
   ^+  [*(list move) ..^$]
+  ?<  ?=(^ dud)
   =/  nus  (ax hen)
   ?~  nus
     ::  :hen is an unrecognized duct

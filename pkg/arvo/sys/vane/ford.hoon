@@ -6129,8 +6129,9 @@
 ::    the +per-event core, which is Ford's main build engine.
 ::
 ++  call
-  |=  [=duct type=* wrapped-task=(hobo task:able)]
+  |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task:able)]
   ^-  [(list move) _ford-gate]
+  ?<  ?=(^ dud)
   ::
   =/  task=task:able  ((harden task:able) wrapped-task)
   ::  we wrap +per-event with a call that binds our event args
@@ -6242,8 +6243,9 @@
 ::    the +per-event core, which is Ford's main build engine.
 ::
 ++  take
-  |=  [=wire =duct wrapped-sign=(hypo sign)]
+  |=  [=wire =duct dud=(unit goof) wrapped-sign=(hypo sign)]
   ^-  [(list move) _ford-gate]
+  ?<  ?=(^ dud)
   ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
   ::
   =/  =sign  q.wrapped-sign
@@ -6346,7 +6348,7 @@
   ^+  ford-gate
   ::
   =.  ax  old
-  =.  ford-gate  +:(call ~[/ford-load-self] *type %trim 0)
+  =.  ford-gate  +:(call ~[/ford-load-self] ~ *type %trim 0)
   ford-gate
 ::  +stay: produce current state
 ::

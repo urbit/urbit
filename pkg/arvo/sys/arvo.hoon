@@ -543,10 +543,11 @@
           =^  gat  sac
             (~(slap wa sac) rig [%limb %call])
           ::
-          ::  sample is [duct (hypo (hobo task))]
+          ::  sample is [duct (unit goof) (hypo (hobo task))]
           ::
           =/  sam=mill
-            (slid duc (slix task))
+            =*  err  !>(dud)
+            (slid duc (slid err (slix task)))
           =^  pro  sac  (slur sac gat sam)
           (peel pro)
         ::  +take:spin:plow:va: retreat statefully
@@ -560,12 +561,13 @@
           =/  src=vase
             [[%atom %tas `from] from]
           ::
-          ::  sample is [wire duct (hypo sign=[term gift])]
+          ::  sample is [wire duct (unit goof) (hypo sign=[term gift])]
           ::
           =/  sam=mill
             :: =/  tea  !>(wire)
             =*  tea  [pah.vil wire]
-            (slid tea (slid duc (slix (slid src gift))))
+            =*  err  !>(dud)
+            (slid tea (slid duc (slid err (slix (slid src gift)))))
           =^  pro  sac  (slur sac gat sam)
           (peel pro)
         --

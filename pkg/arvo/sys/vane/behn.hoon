@@ -246,10 +246,12 @@
 ::
 ++  call
   |=  $:  hen=duct
+          dud=(unit goof)
           type=*
           wrapped-task=(hobo task:able)
       ==
   ^-  [(list move) _behn-gate]
+  ?<  ?=(^ dud)
   ::
   =/  =task:able  ((harden task:able) wrapped-task)
   ::
@@ -291,8 +293,9 @@
 ::
 ++  stay  state
 ++  take
-  |=  [tea=wire hen=duct hin=(hypo sign)]
+  |=  [tea=wire hen=duct dud=(unit goof) hin=(hypo sign)]
   ^-  [(list move) _behn-gate]
+  ?<  ?=(^ dud)
   ?>  ?=([%drip @ ~] tea)
   =/  event-core  (per-event [our now hen] state)
   =^  moves  state

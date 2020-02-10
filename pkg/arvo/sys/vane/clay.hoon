@@ -4063,10 +4063,12 @@
 |%                                                    ::
 ++  call                                              ::  handle request
   |=  $:  hen=duct
+          dud=(unit goof)
           type=*
           wrapped-task=(hobo task:able)
       ==
   ^-  [(list move) _..^$]
+  ?<  ?=(^ dud)
   ::
   =/  req=task:able  ((harden task:able) wrapped-task)
   ::  only one of these should be going at once, so queue
@@ -4398,8 +4400,9 @@
 ::
 ++  stay  [ver ruf]
 ++  take                                              ::  accept response
-  |=  [tea=wire hen=duct hin=(hypo sign)]
+  |=  [tea=wire hen=duct dud=(unit goof) hin=(hypo sign)]
   ^+  [*(list move) ..^$]
+  ?<  ?=(^ dud)
   ?:  ?=([%commit @ *] tea)
     =*  syd  i.t.tea
     =^  mos  ruf
