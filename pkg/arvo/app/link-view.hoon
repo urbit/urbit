@@ -248,6 +248,16 @@
   |=  [=^path =submissions]
   ^-  [@t json]
   :-  (spat path)
+  =;  =json
+    ::  add unseen count
+    ::
+    ?>  ?=(%o -.json)
+    :-  %o
+    %+  ~(put by p.json)  'unseenCount'
+    %-  numb:enjs:format
+    %~  wyt  in
+    %+  scry-for  (set url)
+    [%unseen path]
   %^  page-to-json  p
     %+  get-paginated  `p
     submissions
