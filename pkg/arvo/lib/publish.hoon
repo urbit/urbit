@@ -63,7 +63,7 @@
   |=  [our=@p books=(map @tas notebook) subs=(map [@p @tas] notebook)]
   ^-  json
   =,  enjs:format
-  =/  subs-notebooks-map=json 
+  =/  subs-notebooks-map=json
     %-  ~(rep by subs)
     |=  [[[host=@p book-name=@tas] book=notebook] out=json]
     ^-  json
@@ -106,6 +106,9 @@
       about+s+description.book
       num-notes+(numb ~(wyt by notes.book))
       num-unread+(numb (count-unread notes.book))
+      comments+b+comments.book
+      writers-group-path+s+(spat writers.book)
+      subscribers-group-path+s+(spat subscribers.book)
   ==
 ::
 ++  notebook-full-json

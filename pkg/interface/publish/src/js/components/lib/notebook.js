@@ -26,6 +26,11 @@ export class Notebook extends Component {
     if (scrollHeight - scrollTop - clientHeight < 40) {
       atBottom = true;
     }
+    if (!notebook.notes) {
+      window.api.fetchNotebook(this.props.ship, this.props.book);
+      return;
+    }
+
     let loadedNotes = Object.keys(notebook.notes).length;
     let allNotes = notebook["notes-by-date"].length;
 
@@ -38,6 +43,12 @@ export class Notebook extends Component {
 
   componentWillMount(){
     window.api.fetchNotebook(this.props.ship, this.props.book);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!this.props.notebooks[this.props.ship][this.props.book].notes) {
+      window.api.fetchNotebook(this.props.ship, this.props.book);
+    }
   }
 
   componentDidMount() {
