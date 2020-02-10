@@ -302,8 +302,9 @@
   ++  add
     |=  [ships=(set ship) =path]
     ^-  (quip card _state)
-    ?.  (~(has by synced) path)
-      [~ state]
+    =/  owner  (~(get by synced) path)
+    ?~  owner  [~ state]
+    ?.  =(u.owner our.bol)  [~ state]
     :_  state
     %+  turn  ~(tap in (~(del in ships) our.bol))
     |=  =ship
