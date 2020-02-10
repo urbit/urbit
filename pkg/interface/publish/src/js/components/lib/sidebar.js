@@ -141,7 +141,7 @@ export class Sidebar extends Component {
         className={
           "bn br-m br-l br-xl b--gray4 b--gray2-d lh-copy h-100 " +
           "flex-shrink-0 mw-300-ns pt3 pt0-m pt0-l pt0-xl relative " +
-          activeClasses +
+          "overflow-y-hidden " + activeClasses +
           (hiddenClasses ? "flex-basis-100-s flex-basis-30-ns" : "dn")
         }>
         <a className="db dn-m dn-l dn-xl f8 pb3 pl3" href="/">
