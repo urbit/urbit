@@ -3,7 +3,7 @@
 ::  allow sending chat messages to foreign paths based on write perms
 ::
 /-  *permission-store, *chat-hook, *invite-store
-/+  *chat-json, default-agent, verb
+/+  *chat-json, *chat-eval, default-agent, verb
 |%
 +$  card  card:agent:gall
 ::
@@ -127,6 +127,10 @@
   ?:  (team:title our.bol src.bol)
     ?.  (~(has by synced) path.act)
       ~
+    =*  letter  letter.envelope.act
+    =?  letter  &(?=(%code -.letter) ?=(~ output.letter))
+      =/  =hoon  (ream expression.letter)
+      letter(output (eval bol hoon))
     =/  ship  (~(got by synced) path.act)
     =/  appl  ?:(=(ship our.bol) %chat-store %chat-hook)
     [%pass / %agent [ship appl] %poke %chat-action !>(act)]~
