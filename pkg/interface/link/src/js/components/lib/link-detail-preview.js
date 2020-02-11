@@ -74,9 +74,8 @@ export class LinkPreview extends Component {
     if (imgMatch) {
       embed = <a href={props.url}
                 target="_blank"
-                className="db m0a"
                 style={{width: "max-content"}}>
-        <img src={props.url} style={{maxHeight: "500px", maxWidth: "500px"}}/>
+        <img src={props.url} style={{maxHeight: "500px", maxWidth: "100%"}}/>
       </a>
     }
 
@@ -97,7 +96,7 @@ export class LinkPreview extends Component {
     return (
       <div className="pb6 w-100">
         <div
-          className={"w-100 " + (ytMatch ? "embed-container" : "")}>
+          className={"w-100 tc " + (ytMatch ? "embed-container" : "")}>
           {embed}
         </div>
         <div className="flex flex-column ml2 pt6">
