@@ -169,7 +169,6 @@ export class Message extends Component {
         name = (contact.nickname.length > 0)
           ? contact.nickname : "~" + props.msg.author;
         color = `#${uxToHex(contact.color)}`;
-        console.log(name);
       }
       return (
         <div
