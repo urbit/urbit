@@ -76,7 +76,7 @@ export class LinkUpdateReducer {
         data.pages, state.links[path]
       );
       state.links[path].unseenCount =
-        state.links[path].unseenCount + data.pages.length;
+        (state.links[path].unseenCount || 0) + data.pages.length;
     }
   }
 
@@ -160,7 +160,14 @@ export class LinkUpdateReducer {
 
 //
 
-  _addNewItems(items, pages = {local: {}}, page = 0) {
+  _addNewItems(items, pages, page = 0) {
+    if (!pages) {
+      pages = {
+        local: {},
+        totalPages: 0,
+        totalItems: 0
+      };
+    }
     const i = page;
     if (!pages[i]) {
       pages[i] = [];
