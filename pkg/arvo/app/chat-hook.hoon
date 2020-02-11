@@ -285,6 +285,9 @@
     |=  [kind=?(%add %remove) pax=path who=(set ship)]
     ^-  (list card)
     ?>  ?=([* *] pax)
+    =/  owner  (~(get by synced) pax)
+    ?~  owner  ~
+    ?.  =(u.owner our.bol)  ~
     %-  zing
     %+  turn  ~(tap in who)
     |=  =ship
