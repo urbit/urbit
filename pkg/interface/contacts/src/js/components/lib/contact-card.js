@@ -479,7 +479,7 @@ export class ContactCard extends Component {
     const { props, state } = this;
 
     let editInfoText =
-      state.edit ? "Finish Editing" : "Edit Contact Info";
+      state.edit ? "Finish" : "Edit";
     if (props.share && state.edit) {
       editInfoText = "Share with Group";
     }
@@ -499,33 +499,32 @@ export class ContactCard extends Component {
     //TODO "Share card" if it's /me -> sends to /~/default of recipient
     return (
       <div className="w-100 h-100 overflow-hidden">
-        <div className="w-100 bg-white bb b--gray4">
+        <div className="flex justify-between w-100 bg-white bb b--gray4 ">
           <div className="w-100 h2 dn-m dn-l dn-xl inter pb6 pl3 pt3 f8">
             <Link to="/~contacts/">{"⟵"}</Link>
           </div>
-          <button
-            onClick={() => {
-              if (props.share) {
-                this.shareWithGroup();
-              } else {
-                this.editToggle();
-              }
-            }}
-            className={`pl4 mt4 mb4 f9 pointer b--black ` + ourOpt}>
-            {editInfoText}
-          </button>
-          <button className={`pl4 mt4 mb4 f9 b--black ` + localOpt}>
-            Share Contact Info
-          </button>
+          <div className="flex">
+            <button
+              onClick={() => {
+                if (props.share) {
+                  this.shareWithGroup();
+                } else {
+                  this.editToggle();
+                }
+              }}
+              className={`ml3 mt2 mb2 f9 pa1 ba br2 pointer b--black ` + ourOpt}>
+              {editInfoText}
+            </button>
+            <button className={`ml3 mt2 mb2 f9 pa1 ba br2 b--black ` + localOpt}>
+              Share
+            </button>
+          </div>
           <button
             className={
-              `pl4 mt4 mb4 f9 red2 b--red2 pointer ` + adminOpt
+              `mh3 mt2 mb2 f9 pa1 ba red2 br2 b--red2 pointer ` + adminOpt
             }
             onClick={this.removeFromGroup}>
-            {(
-              props.ship === window.ship && props.path.includes(window.ship)
-                ? "Delete Group" : "Remove from Group"
-            )}
+            Remove
           </button>
         </div>
         <div className="h-100 w-100 overflow-x-hidden pb8">{card}</div>
@@ -533,4 +532,3 @@ export class ContactCard extends Component {
     );
   }
 }
-
