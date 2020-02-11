@@ -501,7 +501,7 @@
                 ; Bridge ↗
               ==
               ;a
-                =href  "https://urbit.live"
+                =href  "https://urbit.org/using/install/#id"
                 =style  "margin-left: 8px; color: #2aa779;"
                 =target  "_blank"
                 ; Purchase
