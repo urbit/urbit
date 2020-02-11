@@ -633,6 +633,20 @@
         ?>  ?=([%$ *] wire.ovum)
         [duct=~ %pass t.wire.ovum vane mill]
       (emit %$ move ~)
+    ::  +crud: prepare a worklist-of-one with error report from outside
+    ::
+    ++  crud
+      |=  [vane=term =goof =ovum]
+      ^+  this
+      ~?  !lac  ["" %unix %crud p.card.ovum wire.ovum now]
+      =/  =mill
+        =/  =type  [%cell [%atom %tas `%soft] %noun]
+        [%& type [%soft card.ovum]]
+      =/  =move
+        ~|  [%crud %bad-wire wire.ovum]
+        ?>  ?=([%$ *] wire.ovum)
+        [duct=~ %hurl goof t.wire.ovum vane mill]
+      (emit %$ move ~)
     ::  +spam: prepare a worklist for all targets
     ::
     ++  spam
@@ -1134,6 +1148,30 @@
       (turn vanes |=([a=@tas =vane] [a vase.vane *worm]))
     [zef +>.$]
   ::
+  ::  Error notifications are unwrapped and routed as usual
+  ::
+  ?:  ?=(%crud p.q.ovo)
+    ?.  ?=(^ q.q.ovo)
+      ~|([%unknown-crud q.ovo] !!)
+    ::
+    =^  zef  vanes
+      =*  el
+        ~(. le:part [our now eny lac vil (~(gas by *(map term vane)) vanes)])
+      ::
+      =<  abet:loop
+      ?@  -.q.q.ovo
+        ::
+        ::  legacy %crud, directly routed
+        ::
+        (poke:el (dint:$:is p.ovo) ovo)
+      ::
+      ::  modern %crud, unwrapped and routed w/ $goof
+      ::
+      =/  =goof  ;;(goof -.q.q.ovo)
+      =/  =curd  ;;(curd +.q.q.ovo)
+      (crud:el (dint:$:is p.ovo) goof p.ovo curd)
+    ::
+    [zef +>.$]
   ::  Normal events are routed to a single vane
   ::
   =^  zef  vanes
