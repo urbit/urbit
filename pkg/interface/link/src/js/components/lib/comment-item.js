@@ -41,7 +41,7 @@ export class CommentItem extends Component {
           />
           <p className="gray2 f9 flex items-center ml2">
             <span className={"black white-d " + props.nameClass}>
-            {((props.nickname) ? props.nickname : props.ship)}
+            {props.nickname ? props.nickname : '~'+props.ship}
             </span>
             <span className="ml2">
               {this.state.timeSinceComment}
