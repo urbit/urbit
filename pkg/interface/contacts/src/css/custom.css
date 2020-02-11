@@ -90,8 +90,8 @@ a {
 }
 
 /* dark */
-@media all and (prefers-color-scheme: dark) {
+/* @media all and (prefers-color-scheme: dark) {
   .invert-d {
     filter: invert(1);
   }
-}
+} */
