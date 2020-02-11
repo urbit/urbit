@@ -85,9 +85,7 @@ export default class WeatherTile extends Component {
     let error;
     if (this.state.error === true) {
       error = <p
-          className="f9 red2 pt1">
-          Incorrect latitude/longitude formatting. Please try again. <br/>
-          (eg. "29.558107, -95.089023")
+          className="f9 red2 pt1">Please try again.
         </p>
     }
     if (location.protocol === "https:") {
@@ -117,16 +115,16 @@ export default class WeatherTile extends Component {
           .
         </p>
         {error}
-        <div className="flex">
-          <form className="flex absolute" style={{ bottom: 0, left: 8 }}>
+        <div className="absolute" style={{left: 8, bottom: 8}}>
+          <form className="flex" style={{marginBlockEnd: 0 }}>
             <input
               id="gps"
-              className="w-100 black pa1 bg-transparent outline-0 bn bb-ns b--black f9"
+              className="w-100 black bg-transparent bn f9"
               type="text"
               placeholder="29.558107, -95.089023"
               onKeyDown={this.keyPress.bind(this)}></input>
             <input
-              className="bg-transparent black outliner-0 bn pointer f9 flex-shrink-0"
+              className="bg-transparent black bn pointer f9 flex-shrink-0"
               type="submit"
               onClick={() => this.manualLocationSubmit()}
               value="->"></input>
