@@ -9,8 +9,10 @@ export class ChannelsItem extends Component {
     let selectedClass = (props.selected) 
     ? "bg-gray5 bg-gray1-d b--gray4 b--gray2-d" 
     : "b--transparent";
-    
-    let memberCount = Object.keys(props.members).length;
+
+    let memberCount = props.memberList
+      ? props.memberList.size
+      : 0;
     const unseenCount = props.unseenCount > 0
       ? <span className="green2">{" " + props.unseenCount + " unread"}</span>
       : null;

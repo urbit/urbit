@@ -14,6 +14,17 @@ export function uuid() {
   return str.slice(0,-1);
 }
 
+export function getContactDetails(contact) {
+  contact = contact || {
+    'nickname': '',
+    'avatar': 'TODO',
+    'color': '0x0'
+  };
+  const nickname = contact.nickname || '';
+  const color = uxToHex(contact.color || '0x0');
+  return {nickname, color};
+}
+
 // encodes string into base64url,
 // by encoding into base64 and replacing non-url-safe characters.
 //
@@ -117,6 +128,8 @@ export function deSig(ship) {
   return ship.replace('~', '');
 }
 
+//TODO look at uxToHex wonky functionality
+//TODO what does "wonky functionality" refer to?
 export function uxToHex(ux) {
   let value = ux.substr(2).replace('.', '').padStart(6, '0');
   return value;

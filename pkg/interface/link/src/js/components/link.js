@@ -5,6 +5,7 @@ import { SidebarSwitcher } from '/components/lib/icons/icon-sidebar-switch.js';
 import { api } from '../api';
 import { Route, Link } from 'react-router-dom';
 import { Comments } from './lib/comments';
+import { getContactDetails } from '../lib/util';
 
 export class LinkDetail extends Component {
   constructor(props) {
@@ -71,7 +72,7 @@ export class LinkDetail extends Component {
 
     let comments = commentCount + " comment" + (commentCount === 1 ? "" : "s");
 
-    let nickname = !!props.members[ship] ? props.members[ship].nickname : "";
+    const { nickname } = getContactDetails(props.contacts[ship]);
 
     let activeClasses = this.state.comment
       ? "black b--black pointer"
@@ -137,7 +138,7 @@ export class LinkDetail extends Component {
               key={props.groupPath + props.commentPage}
               comments={props.comments}
               commentPage={props.commentPage}
-              members={props.members}
+              contacts={props.contacts}
               popout={props.popout}
               url={props.url}
               linkPage={props.page}

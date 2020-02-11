@@ -6,8 +6,7 @@ import { LinkItem } from '/components/lib/link-item.js';
 import { LinkSubmit } from '/components/lib/link-submit.js';
 import { Pagination } from '/components/lib/pagination.js';
 
-//TODO look at uxToHex wonky functionality
-import { uxToHex } from '../lib/util';
+import { getContactDetails } from '../lib/util';
 
 //TODO Avatar support once it's in
 export class Links extends Component {
@@ -62,23 +61,7 @@ export class Links extends Component {
         ? props.comments[url].totalItems
         : linksObj[linkIndex].commentCount || 0;
 
-      if (!props.members[ship]) {
-        members[ship] = {'nickname': '', 'avatar': 'TODO', 'color': '0x0'};
-      } else {
-        members = props.members;
-      }
-
-      let color = uxToHex('0x0');
-      let nickname = "";
-
-      // restore this to props.members
-      if (members[ship].nickname) {
-        nickname = members[ship].nickname;
-      }
-
-      if (members[ship].color !== "") {
-        color = uxToHex(members[ship].color);
-      }
+      const {nickname, color} = getContactDetails(props.contacts[ship]);
 
       return (
         <LinkItem
