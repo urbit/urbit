@@ -27,7 +27,7 @@ export class Skeleton extends Component {
         <div className={`cf w-100 h-100 flex ` + popoutBorder}>
         <ChannelsSidebar
             popout={popout}
-            paths={this.props.paths} 
+            groups={this.props.groups}
             active={this.props.active}
             selected={this.props.selected}
             sidebarShown={this.props.sidebarShown}

@@ -31,6 +31,7 @@ export class Root extends Component {
     const { props, state } = this;
 
     let paths = !!state.contacts ? state.contacts : {};
+    const groups = !!state.groups ? state.groups : {};
 
     let links = !!state.links ? state.links : {};
     let comments = !!state.comments ? state.comments : {};
@@ -43,7 +44,7 @@ export class Root extends Component {
             return (
               <Skeleton
                 active="channels"
-                paths={paths}
+                groups={groups}
                 rightPanelHide={true}
                 sidebarShown={true}
                 links={links}>
@@ -84,7 +85,7 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={state.spinner}
-                  paths={paths}
+                  groups={groups}
                   active="links"
                   selected={groupPath}
                   sidebarShown={state.sidebarShown}
@@ -133,7 +134,7 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={state.spinner}
-                  paths={paths}
+                  groups={groups}
                   active="links"
                   selected={groupPath}
                   sidebarShown={state.sidebarShown}

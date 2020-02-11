@@ -10,7 +10,7 @@ export class ChannelsSidebar extends Component {
     const { props, state } = this;
 
     let privateChannel =
-      Object.keys(props.paths)
+      Object.keys(props.groups)
       .filter((path) => {
         return (path === "/~/default")
       })
@@ -25,7 +25,7 @@ export class ChannelsSidebar extends Component {
           <ChannelsItem
             key={path}
             link={path}
-            members={props.paths[path]}
+            memberList={props.groups[path]}
             selected={selected}
             linkCount={linkCount}
             unseenCount={unseenCount}
@@ -34,7 +34,7 @@ export class ChannelsSidebar extends Component {
       })
 
     let channelItems =
-      Object.keys(props.paths)
+      Object.keys(props.groups)
       .filter((path) => {
         return (!path.startsWith("/~/"))
       })
@@ -53,7 +53,7 @@ export class ChannelsSidebar extends Component {
           <ChannelsItem
             key={path}
             link={path}
-            members={props.paths[path]}
+            memberList={props.groups[path]}
             selected={selected}
             linkCount={linkCount}
             unseenCount={unseenCount}
