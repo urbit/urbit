@@ -669,6 +669,7 @@
         this
       ?:  =(~ q.i.run)    :: XX TMI
         loop(run t.run)
+      =.  dud  ~
       =.  gem  p.i.run
       =^  mov  q.i.run  q.i.run
       loop:(step mov)
