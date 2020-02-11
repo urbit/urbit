@@ -12,10 +12,8 @@ export class NewScreen extends Component {
 
     this.state = {
       idName: '',
-      invites: {
-        groups: [],
-        ships: []
-      },
+      groups: [],
+      ships: [],
       security: 'village',
       idError: false,
       inviteError: false,
@@ -23,6 +21,7 @@ export class NewScreen extends Component {
       createGroup: true
     };
 
+    this.idName = React.createRef();
     this.idChange = this.idChange.bind(this);
     this.securityChange = this.securityChange.bind(this);
     this.allowHistoryChange = this.allowHistoryChange.bind(this);
@@ -48,7 +47,20 @@ export class NewScreen extends Component {
   }
 
   setInvite(value) {
-    this.setState({invites: value});
+    if (value.groups.length > 0) {
+      let idName = value.groups[0].split('/')[2];
+      this.idName.current.value = idName;
+      this.setState({
+        idName,
+        groups: value.groups,
+        ships: value.ships
+      });
+    } else {
+      this.setState({
+        groups: value.groups,
+        ships: value.ships
+      });
+    }
   }
 
   securityChange(event) {
@@ -107,21 +119,13 @@ export class NewScreen extends Component {
       return;
     }
 
-    let aud = [];
     let isValid = true;
-    if ((state.invites.groups.length > 0) || (state.invites.ships.length > 0)) {
-      if (state.invites.groups.length > 0) {
-        aud = props.groups[state.invites.groups].values();
+    let aud = state.ships.map(mem => `~${deSig(mem.trim())}`);
+    aud.forEach((mem) => {
+      if (!urbitOb.isValidPatp(mem)) {
+        isValid = false;
       }
-      else {
-        aud = state.invites.ships.map(mem => `~${deSig(mem.trim())}`);
-      }
-      aud.forEach((mem) => {
-        if (!urbitOb.isValidPatp(mem)) {
-          isValid = false;
-        }
-      });
-    }
+    });
 
     if (!isValid) {
       this.setState({
@@ -139,17 +143,15 @@ export class NewScreen extends Component {
     this.setState({
       error: false,
       success: true,
-      invites: {
-        groups: [],
-        ships: []
-      }
+      group: [],
+      ships: []
     }, () => {
       props.setSpinner(true);
       // if we want a "proper group" that can be managed from the contacts UI,
       // we make a path of the form /~zod/cool-group
       // if not, we make a path of the form /~/~zod/free-chat
       let chatPath = `/~${window.ship}${station}`;
-      if (!state.createGroup || state.invites.groups.length > 0) {
+      if (!state.createGroup || state.groups.length === 0) {
         chatPath = '/~' + chatPath;
       }
       props.api.chatView.create(
@@ -159,23 +161,30 @@ export class NewScreen extends Component {
   }
 
   render() {
-    let inviteSwitchClasses = (this.state.security === "village")
+    const { props, state } = this;
+    let inviteSwitchClasses = (state.security === "village")
       ? "relative checked bg-green2 br3 h1 toggle v-mid z-0"
       : "relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0";
-    if (this.state.createGroup) {
+    if (state.createGroup) {
       inviteSwitchClasses = inviteSwitchClasses + " o-50";
     }
 
-    let createGroupClasses = this.state.createGroup
+    let createGroupClasses = state.createGroup
       ? "relative checked bg-green2 br3 h1 toggle v-mid z-0"
       : "relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0";
 
-    let createClasses = !!this.state.idName
+    let createClasses = !!state.idName
       ? "pointer db f9 green2 bg-gray0-d ba pv3 ph4 b--green2"
       : "pointer db f9 gray2 ba bg-gray0-d pa2 pv3 ph4 b--gray3";
 
+    let idClasses =
+      "f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 ";
+    if (state.groups.length > 0) {
+      idClasses = idClasses + " o-40";
+    }
+
     let idErrElem = (<span />);
-    if (this.state.idError) {
+    if (state.idError) {
       idErrElem = (
         <span className="f9 inter red2 db pt2">
           Chat must have a valid name.
@@ -184,7 +193,7 @@ export class NewScreen extends Component {
     }
 
     let createGroupToggle = <div/>
-    if (this.state.invites.groups.length === 0) {
+    if (state.groups.length === 0) {
       createGroupToggle = (
         <div className="mv7">
           <input
@@ -217,13 +226,15 @@ export class NewScreen extends Component {
             Lowercase alphanumeric characters, dashes, and slashes only
           </p>
           <textarea
-            className="f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100"
+            className={idClasses}
             placeholder="secret-chat"
             rows={1}
             style={{
               resize: "none"
             }}
             onChange={this.idChange}
+            ref={this.idName}
+            disabled={(state.groups.length > 0) ? "disabled" : false}
           />
           {idErrElem}
           <p className="f8 mt4 lh-copy db">
@@ -234,8 +245,11 @@ export class NewScreen extends Component {
             Selected entities will be able to post to chat
           </p>
           <InviteSearch
-            groups={this.props.groups}
-            invites={this.state.invites}
+            groups={props.groups}
+            invites={{
+              groups: state.groups,
+              ships: state.ships
+            }}
             setInvite={this.setInvite}
           />
           {createGroupToggle}
