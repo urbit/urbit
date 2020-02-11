@@ -115,16 +115,24 @@ export class Root extends Component {
             path="/~chat/join/(~)?/:ship?/:station?"
             render={props => {
               let station =
-                props.match.params.ship
-                + "/" +
-                props.match.params.station;
+                `/${props.match.params.ship}/${props.match.params.station}`;
+              let sig = props.match.url.includes("/~/");
+              if (sig) {
+                station = '/~' + station;
+              }
+
+
               return (
                 <Skeleton
                   sidebarHideOnMobile={true}
                   sidebar={renderChannelSidebar(props)}
                   sidebarShown={state.sidebarShown}
                 >
-                  <JoinScreen api={api} inbox={state.inbox} autoJoin={station} {...props} />
+                  <JoinScreen
+                    api={api}
+                    inbox={state.inbox}
+                    autoJoin={station}
+                    {...props} />
                 </Skeleton>
               );
             }}
@@ -133,7 +141,8 @@ export class Root extends Component {
             exact
             path="/~chat/(popout)?/room/(~)?/:ship/:station+"
             render={props => {
-              let station = `/${props.match.params.ship}/${props.match.params.station}`;
+              let station =
+                `/${props.match.params.ship}/${props.match.params.station}`;
               let sig = props.match.url.includes("/~/");
               if (sig) {
                 station = '/~' + station;
