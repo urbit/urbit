@@ -517,8 +517,16 @@
           wrapped-task=(hobo task:able)
       ==
   ^+  [*(list move) ..^$]
-  ?<  ?=(^ dud)
+  ~|  wrapped-task
   =/  task=task:able  ((harden task:able) wrapped-task)
+  ::
+  ::  error notifications "downcast" to %crud
+  ::
+  =?  task  ?=(^ dud)
+    ~|  %crud-in-crud
+    ?<  ?=(%crud -.task)
+    [%crud -.task tang.u.dud]
+  ::
   ::  the boot event passes thru %dill for initial duct distribution
   ::
   ?:  ?=(%boot -.task)
