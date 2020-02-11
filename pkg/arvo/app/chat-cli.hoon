@@ -37,6 +37,9 @@
 +$  glyph  char
 ++  glyphs  "!@#$%^&()-=_+[]\{};'\\:\",.<>?"
 ::
+::NOTE  only the "simple" modes from rw-security
++$  nu-security  ?(%channel %village)
+::
 +$  command
   $%  [%target (set target)]                        ::  set messaging target
       [%say letter]                                 ::  send message
@@ -44,7 +47,7 @@
     ::
       ::
       ::  create chat
-      [%create rw-security path (unit glyph) (unit ?)]
+      [%create nu-security path (unit glyph) (unit ?)]
       [%delete path]                                ::  delete chat
       [%invite ?(%r %w %rw) path (set ship)]        ::  allow
       [%banish ?(%r %w %rw) path (set ship)]        ::  disallow
@@ -581,7 +584,7 @@
     ::  +security: security mode
     ::
     ++  security
-      (perk %channel %village %journal %mailbox ~)
+      (perk %channel %village ~)
     ::  +rw: read, write, or read-write
     ::
     ++  rw
@@ -750,7 +753,7 @@
     ::  +create: new local mailbox
     ::
     ++  create
-      |=  [security=rw-security =path gyf=(unit char) allow-history=(unit ?)]
+      |=  [security=nu-security =path gyf=(unit char) allow-history=(unit ?)]
       ^-  (quip card state)
       ::TODO  check if already exists
       =/  =target  [our-self path]
@@ -761,21 +764,15 @@
       =-  [[- moz] all-state]
       %^  act  %do-create  %chat-view
       :-  %chat-view-action
-      !>
+      !>  ^-  chat-view-action
       :*  %create
           path
           security
           ::  ensure we can read from/write to our own chats
           ::
-          ::  read
           ?-  security
-            ?(%channel %journal)  ~
-            ?(%village %mailbox)  [our-self ~ ~]
-          ==
-          ::  write
-          ?-  security
-            ?(%channel %mailbox)  ~
-            ?(%village %journal)  [our-self ~ ~]
+            %channel  ~
+            %village  [our-self ~ ~]
           ==
           (fall allow-history %.y)
       ==
@@ -787,7 +784,7 @@
       =-  [[- ~] all-state]
       %^  act  %do-delete  %chat-view
       :-  %chat-view-action
-      !>
+      !>  ^-  chat-view-action
       [%delete (target-to-path our-self path)]
     ::  +change-permission: modify permissions on a local chat
     ::
@@ -851,7 +848,7 @@
       ::      gives ugly %chat-hook-reap
       %^  act  %do-join  %chat-view
       :-  %chat-view-action
-      !>
+      !>  ^-  chat-view-action
       [%join ship.target path.target (fall ask-history %.y)]
     ::  +leave: unsync & destroy mailbox
     ::
@@ -864,7 +861,7 @@
         "can't ;leave local chats, maybe use ;delete instead"
       %^  act  %do-leave  %chat-hook
       :-  %chat-hook-action
-      !>
+      !>  ^-  chat-hook-action
       [%remove (target-to-path target)]
     ::  +say: send messages
     ::
@@ -879,7 +876,7 @@
       |=  =target
       %^  act  %out-message  %chat-hook
       :-  %chat-action
-      !>
+      !>  ^-  chat-action
       :+  %message  (target-to-path target)
       [serial *@ our-self now.bowl letter]
     ::  +eval: run hoon, send code and result as message
