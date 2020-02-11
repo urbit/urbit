@@ -30,7 +30,7 @@ export class Root extends Component {
   render() {
     const { props, state } = this;
 
-    let paths = !!state.contacts ? state.contacts : {};
+    let contacts = !!state.contacts ? state.contacts : {};
     const groups = !!state.groups ? state.groups : {};
 
     let links = !!state.links ? state.links : {};
@@ -64,7 +64,7 @@ export class Root extends Component {
 
               let groupPath =
               `/${props.match.params.ship}/${props.match.params.channel}`;
-              let groupMembers = paths[groupPath] || {};
+              let contactDetails = contacts[groupPath] || {};
 
               let page = props.match.params.page || 0;
 
@@ -94,7 +94,7 @@ export class Root extends Component {
                   links={links}>
                   <Links
                   {...props}
-                  members={groupMembers}
+                  contacts={contactDetails}
                   links={channelLinks}
                   comments={channelComments}
                   seen={channelSeen}
@@ -114,7 +114,7 @@ export class Root extends Component {
 
               let popout = props.match.url.includes("/popout/");
 
-              let groupMembers = paths[groupPath] || {};
+              let contactDetails = contacts[groupPath] || {};
 
               let index = props.match.params.index || 0;
               let page = props.match.params.page || 0;
@@ -146,7 +146,7 @@ export class Root extends Component {
                   page={page}
                   url={url}
                   linkIndex={index}
-                  members={groupMembers}
+                  contacts={contactDetails}
                   groupPath={groupPath}
                   popout={popout}
                   sidebarShown={state.sidebarShown}

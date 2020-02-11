@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { CommentItem } from './comment-item';
 import { CommentsPagination } from './comments-pagination';
 
-import { uxToHex } from '../../lib/util';
+import { getContactDetails } from '../../lib/util';
 import { api } from '../../api';
 
 export class Comments extends Component {
@@ -48,19 +48,13 @@ export class Comments extends Component {
       let commentObj = commentsPage[entry]
       let { ship, time, udon } = commentObj;
 
-      let members = !!props.members
-      ? props.members
-      : {};
+      let contacts = !!props.contacts
+        ? props.contacts
+        : {};
 
-      let nickname = !!members[ship]
-      ? members[ship].nickname
-      : "";
+      const {nickname, color} = getContactDetails(contacts[ship]);
 
       let nameClass = nickname ? "inter" : "mono";
-
-      let color = !!members[ship]
-      ? uxToHex(members[ship].color)
-      : "000000";
 
       return(
         <CommentItem
