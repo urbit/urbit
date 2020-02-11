@@ -167,10 +167,10 @@ export class Message extends Component {
       let color = "#000000";
       if (contact) {
         name = (contact.nickname.length > 0)
-          ? contact.nickname : props.msg.author;
+          ? contact.nickname : "~" + props.msg.author;
         color = `#${uxToHex(contact.color)}`;
-      } 
-
+        console.log(name);
+      }
       return (
         <div
           className={
@@ -189,7 +189,9 @@ export class Message extends Component {
             className="fr clamp-message white-d"
             style={{ flexGrow: 1, marginTop: -8 }}>
             <div className="hide-child" style={paddingTop}>
-              <p className="v-mid mono f9 gray2 dib mr3">{name}</p>
+              <p className="v-mid f9 gray2 dib mr3">
+              <div className={contact.nickname ? null : "mono"}>{name}</div>
+              </p>
               <p className="v-mid mono f9 gray2 dib">{timestamp}</p>
               <p className="v-mid mono f9 ml2 gray2 dib child dn-s">{datestamp}</p>
             </div>
