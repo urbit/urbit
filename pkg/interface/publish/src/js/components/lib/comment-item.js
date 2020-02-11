@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import moment from 'moment';
+import { Sigil } from './icons/sigil';
+import { uxToHex } from '../../lib/util';
 
-//TODO take props and render div
 export class CommentItem extends Component {
   constructor(props){
     super(props);
@@ -36,12 +37,31 @@ export class CommentItem extends Component {
     });
     let date = moment(commentData["date-created"]).fromNow();
 
+    let contact = !!(commentData.author.substr(1) in this.props.contacts)
+      ? this.props.contacts[commentData.author.substr(1)] : false;
+
+    let name = commentData.author;
+    let color = "#000000";
+    if (contact) {
+      name = (contact.nickname.length > 0)
+        ? contact.nickname : commentData.author;
+      color = `#${uxToHex(contact.color)}`;
+    }
+
 
     return (
       <div>
         <div className="flex mv3">
-          <div className="f9 mono mr2">{commentData.author}</div>
-          <div className="f9 gray3">{date}</div>
+        <Sigil
+          ship={commentData.author}
+          size={24}
+          color={color}
+        />
+          <div className={"f9 mh2 pt1" +
+          ((name === commentData.author) ? " mono" : "")}>
+            {name}
+          </div>
+          <div className="f9 gray3 pt1">{date}</div>
         </div>
         <div className="f8 lh-solid mb8 mb2">
           {content}

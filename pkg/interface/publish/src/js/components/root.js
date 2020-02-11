@@ -21,6 +21,8 @@ export class Root extends Component {
   render() {
     const { props, state } = this;
 
+    let contacts = !!state.contacts ? state.contacts : {};
+
     return (
       <BrowserRouter>
         <Route exact path="/~publish"
@@ -32,7 +34,8 @@ export class Root extends Component {
               rightPanelHide={true}
               sidebarShown={true}
               invites={state.invites}
-              notebooks={state.notebooks}>
+              notebooks={state.notebooks}
+              contacts={contacts}>
                 <div className={`h-100 w-100 overflow-x-hidden flex flex-column
                  bg-white bg-gray0-d dn db-ns`}>
                   <div className="pl3 pr3 pt2 dt pb3 w-100 h-100">
@@ -54,7 +57,8 @@ export class Root extends Component {
             rightPanelHide={false}
             sidebarShown={true}
             invites={state.invites}
-            notebooks={state.notebooks}>
+            notebooks={state.notebooks}
+            contacts={contacts}>
               <NewScreen
                 notebooks={state.notebooks}
                 groups={state.groups}
@@ -73,7 +77,8 @@ export class Root extends Component {
                   rightPanelHide={false}
                   sidebarShown={true}
                   invites={state.invites}
-                  notebooks={state.notebooks}>
+                  notebooks={state.notebooks}
+                  contacts={contacts}>
                     <JoinScreen notebooks={state.notebooks} {...props} />
                   </Skeleton>
                 )
@@ -89,6 +94,11 @@ export class Root extends Component {
 
           let path = `${ship}/${notebook}`;
 
+          let bookGroupPath =
+          state.notebooks[ship][notebook]["subscribers-group-path"];
+          let notebookContacts = (bookGroupPath in contacts)
+            ? contacts[bookGroupPath] : {};
+
           if (view === "new") {
             return (
               <Skeleton
@@ -98,6 +108,7 @@ export class Root extends Component {
                 sidebarShown={true}
                 invites={state.invites}
                 notebooks={state.notebooks}
+                contacts={contacts}
                 path={path}>
                 <NewPost
                   notebooks={state.notebooks}
@@ -117,6 +128,7 @@ export class Root extends Component {
                 sidebarShown={true}
                 invites={state.invites}
                 notebooks={state.notebooks}
+                contacts={contacts}
                 path={path}>
                 <Notebook
                   notebooks={state.notebooks}
@@ -124,6 +136,7 @@ export class Root extends Component {
                   ship={ship}
                   book={notebook}
                   groups={state.groups}
+                  contacts={notebookContacts}
                   {...props}
                 />
               </Skeleton>
@@ -137,6 +150,11 @@ export class Root extends Component {
           let path = `${ship}/${notebook}`
           let note = props.match.params.note || "";
 
+          let bookGroupPath =
+            state.notebooks[ship][notebook]["subscribers-group-path"];
+          let notebookContacts = (bookGroupPath in state.contacts)
+            ? contacts[bookGroupPath] : {};
+
           return (
             <Skeleton
               popout={false}
@@ -145,10 +163,12 @@ export class Root extends Component {
               sidebarShown={true}
               invites={state.invites}
               notebooks={state.notebooks}
+              contacts={contacts}
               path={path}>
               <Note
                 notebooks={state.notebooks}
                 book={notebook}
+                contacts={notebookContacts}
                 ship={ship}
                 note={note}
               />

@@ -34,7 +34,11 @@ export class Comments extends Component {
   render() {
     let commentArray = this.props.comments.map((com, i) => {
       return (
-        <CommentItem comment={com} key={i}/>
+        <CommentItem
+          comment={com}
+          key={i}
+          contacts={this.props.contacts}
+          />
       );
     })
 

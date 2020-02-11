@@ -30,13 +30,23 @@ export class NotebookPosts extends Component {
   }
 
   render() {
+    const { props } = this;
     let notes = [];
 
-    for (var i=0; i<this.props.list.length; i++) {
-      let noteId = this.props.list[i];
-      let note = this.props.notes[noteId];
+    for (var i=0; i<props.list.length; i++) {
+      let noteId = props.list[i];
+      let note = props.notes[noteId];
       if (!note) {
         break;
+      }
+
+      let contact = !!(note.author.substr(1) in props.contacts)
+        ? props.contacts[note.author.substr(1)] : false;
+
+      let name = note.author;
+      if (contact) {
+        name = (contact.nickname.length > 0)
+          ? contact.nickname : note.author;
       }
       let comment = "No Comments";
       if (note["num-comments"] == 1) {
@@ -45,7 +55,7 @@ export class NotebookPosts extends Component {
         comment = `${note["num-comments"]} Comments`;
       }
       let date = moment(note["date-created"]).fromNow();
-      let url = `/~publish/note/${this.props.host}/${this.props.notebookName}/${noteId}`
+      let url = `/~publish/note/${props.host}/${props.notebookName}/${noteId}`
 
       notes.push(
         <Link key={i} to={url}>
@@ -53,7 +63,8 @@ export class NotebookPosts extends Component {
             <div className="mb1">{note.title}</div>
             <p className="mb1">{note.snippet}</p>
             <div className="flex">
-              <div className="mono gray2 mr3">{note.author}</div>
+              <div className={((note.author === name) ? "mono" : "") +
+               " gray2 mr3"}>{name}</div>
               <div className="gray2 mr3">{date}</div>
               <div className="gray2">{comment}</div>
             </div>

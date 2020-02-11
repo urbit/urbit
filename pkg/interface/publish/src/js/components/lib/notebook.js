@@ -69,7 +69,9 @@ export class Notebook extends Component {
   }
 
   render() {
-    let notebook = this.props.notebooks[this.props.ship][this.props.book];
+    const { props } = this;
+
+    let notebook = props.notebooks[props.ship][props.book];
 
     let tabStyles = {
       posts: "bb b--gray4 gray2 pv4 ph2",
@@ -77,17 +79,19 @@ export class Notebook extends Component {
       //      subscribers: "bb b--gray4 gray2 pv4 ph2",
       //      settings: "bb b--gray4 pr2 gray2 pv4 ph2",
     };
-    tabStyles[this.props.view] = "bb b--black black pv4 ph2";
+    tabStyles[props.view] = "bb b--black black pv4 ph2";
 
     let inner = null;
-    switch (this.props.view) {
+    switch (props.view) {
       case "posts":
         let notesList = notebook["notes-by-date"] || [];
         let notes = notebook.notes || null;
         inner = <NotebookPosts notes={notes}
                   list={notesList}
-                  host={this.props.ship}
-                  notebookName={this.props.book}/>
+                  host={props.ship}
+                  notebookName={props.book}
+                  contacts={props.contacts}
+                  />
         break;
       case "about":
         inner = <p className="f8 lh-solid">{notebook.about}</p>
@@ -102,16 +106,24 @@ export class Notebook extends Component {
         break;
     }
 
-    let base = `/~publish/notebook/${this.props.ship}/${this.props.book}`;
+    let contact = !!(props.ship.substr(1) in props.contacts)
+      ? props.contacts[props.ship.substr(1)] : false;
+    let name = props.ship;
+    if (contact) {
+      name = (contact.nickname.length > 0)
+        ? contact.nickname : props.ship;
+    }
+
+    let base = `/~publish/notebook/${props.ship}/${props.book}`;
     let about = base + '/about';
     let subs = base + '/subscribers';
     let settings = base + '/settings';
     let newUrl = base + '/new';
 
     let newPost = null;
-    if (notebook["writers-group-path"] in this.props.groups){
+    if (notebook["writers-group-path"] in props.groups){
       let writers = notebook["writers-group-path"];
-      if (this.props.groups[writers].has(window.ship)) {
+      if (props.groups[writers].has(window.ship)) {
         newPost =
          <Link to={newUrl} className="NotebookButton bg-light-green green2">
            New Post
@@ -119,7 +131,7 @@ export class Notebook extends Component {
       }
     }
 
-    let unsub = (window.ship === this.props.ship.slice(1))
+    let unsub = (window.ship === props.ship.slice(1))
       ?  null
       :  <button onClick={this.unsubscribe}
              className="NotebookButton bg-white black ba b--black ml3">
@@ -143,7 +155,9 @@ export class Notebook extends Component {
               <div className="mb1">{notebook.title}</div>
               <span>
                 <span className="gray3 mr1">by</span>
-                <span className="mono">{this.props.ship}</span>
+                <span className={(props.ship === name) ? "mono" : ""}>
+                  {name}
+                </span>
               </span>
             </div>
             <div className="flex">
