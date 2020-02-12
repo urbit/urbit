@@ -480,9 +480,11 @@ export class ContactCard extends Component {
     let localOpt =
       ((props.ship === window.ship) && (props.path === "/~/default"))
       ? "dib" : "dn";
+
     let adminOpt =
-      (props.path.includes(window.ship) || (props.ship === window.ship))
-      ? "dib" : "dn";
+      ( (props.path.includes(window.ship) || (props.ship === window.ship)) &&
+        !(props.path.includes('/~/default'))
+      ) ? "dib" : "dn";
 
     let card = state.edit ? this.renderEditCard() : this.renderCard();
 
