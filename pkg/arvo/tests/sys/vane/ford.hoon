@@ -7264,7 +7264,7 @@
   =/  ford  (ford-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  ford-gate
-    %-  call:ford  call-args
+    %-  call:ford  [duct ~ type wrapped-task]:call-args
   ::
   =/  output=tang
     %+  expect-eq
@@ -7285,7 +7285,7 @@
   =/  ford  (ford-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  ford-gate
-    %-  take:ford  take-args
+    %-  take:ford  [wire duct ~ wrapped-sign]:take-args
   ::
   =/  output=tang
     %+  expect-eq
@@ -7310,7 +7310,7 @@
   =/  ford  (ford-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  ford-gate
-    %-  call:ford  call-args
+    %-  call:ford  [duct ~ type wrapped-task]:call-args
   ::
   =/  output=tang  (move-comparator moves)
   ::
@@ -7329,7 +7329,7 @@
   =/  ford  (ford-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  ford-gate
-    %-  take:ford  take-args
+    %-  take:ford  [wire duct ~ wrapped-sign]:take-args
   ::
   =/  output=tang  (move-comparator moves)
   ::
