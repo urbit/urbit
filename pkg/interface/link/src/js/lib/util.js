@@ -128,9 +128,10 @@ export function deSig(ship) {
   return ship.replace('~', '');
 }
 
-//TODO look at uxToHex wonky functionality
-//TODO what does "wonky functionality" refer to?
 export function uxToHex(ux) {
-  let value = ux.substr(2).replace('.', '').padStart(6, '0');
-  return value;
+  if (ux.length > 2 && ux.substr(0,2) === '0x') {
+    return ux.substr(2).replace('.', '').padStart(6, '0');
+  } else {
+    return ux.replace('.', '').padStart(6, '0');
+  }
 }
