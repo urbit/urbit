@@ -49,8 +49,8 @@
       ::  create chat
       [%create nu-security path (unit glyph) (unit ?)]
       [%delete path]                                ::  delete chat
-      [%invite ?(%r %w %rw) path (set ship)]        ::  allow
-      [%banish ?(%r %w %rw) path (set ship)]        ::  disallow
+      [%invite path (set ship)]                     ::  allow
+      [%banish path (set ship)]                     ::  disallow
     ::
       [%join target (unit glyph) (unit ?)]          ::  join target
       [%leave target]                               ::  nuke target
@@ -368,8 +368,8 @@
       ::
       [%create leaf+";create [type] /chat-name (glyph)"]
       [%delete leaf+";delete /chat-name"]
-      [%invite leaf+";invite [rw | r | w] /chat-name ~ships"]
-      [%banish leaf+";banish [rw | r | w] /chat-name ~ships"]
+      [%invite leaf+";invite /chat-name ~ships"]
+      [%banish leaf+";banish /chat-name ~ships"]
     ::
       [%bind leaf+";bind [glyph] ~ship/chat-name"]
       [%unbind leaf+";unbind [glyph]"]
@@ -485,8 +485,8 @@
           ==
         ==
         ;~((glue ace) (tag %delete) path)
-        ;~((glue ace) (tag %invite) rw path ships)
-        ;~((glue ace) (tag %banish) rw path ships)
+        ;~((glue ace) (tag %invite) path ships)
+        ;~((glue ace) (tag %banish) path ships)
       ::
         ;~  (glue ace)
           (tag %join)
@@ -585,10 +585,6 @@
     ::
     ++  security
       (perk %channel %village ~)
-    ::  +rw: read, write, or read-write
-    ::
-    ++  rw
-      (perk %rw %r %w ~)
     ::
     ::  +glyph: shorthand character
     ::
@@ -789,25 +785,15 @@
     ::  +change-permission: modify permissions on a local chat
     ::
     ++  change-permission
-      |=  [allow=? rw=?(%r %w %rw) =path ships=(set ship)]
+      |=  [allow=? =path ships=(set ship)]
       ^-  (quip card state)
       :_  all-state
-      =;  cards=(list card)
-        ?.  allow  cards
-        %+  weld  cards
+      =;  card=(unit card)
+        %+  weld  (drop card)
+        ?.  allow  ~
         %+  turn  ~(tap in ships)
         (cury invite-card path)
-      %+  murn
-        ^-  (list term)
-        ?-  rw
-          %r   [%read ~]
-          %w   [%write ~]
-          %rw  [%read %write ~]
-        ==
-      |=  =term
-      ^-  (unit card)
       =.  path
-        =-  (snoc `^path`- term)
         [%chat (target-to-path our-self path)]
       ::  whitelist: empty if no matching permission, else true if whitelist
       ::
@@ -829,7 +815,7 @@
       %-  some
       %^  act  %do-permission  %group-store
       :-  %group-action
-      !>
+      !>  ^-  group-action
       ?:  =(u.whitelist allow)
         [%add ships path]
       [%remove ships path]
