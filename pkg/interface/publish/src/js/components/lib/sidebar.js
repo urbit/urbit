@@ -126,6 +126,8 @@ export class Sidebar extends Component {
           key={book.title}
           title={book.title}
           author={author}
+          contacts={props.contacts}
+          contactsPath={book["subscribers-group-path"]}
           path={path}
           total={book["num-notes"]}
           unreadCount={book["num-unread"]}

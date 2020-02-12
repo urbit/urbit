@@ -29,6 +29,7 @@ export class Skeleton extends Component {
             sidebarShown={props.sidebarShown}
             active={props.active}
             notebooks={props.notebooks}
+            contacts={props.contacts}
             path={props.path}
             invites={props.invites}
             />
