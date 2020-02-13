@@ -189,13 +189,7 @@
   ?~  saw
     [~ state]
   ?>  ?=(^ wir)
-  :_  state(synced (~(del by synced) t.wir))
-  %.  ~
-  %-  slog
-  :*  leaf+"contact-hook failed subscribe on {(spud t.wir)}"
-      leaf+"stack trace:"
-      u.saw
-  ==
+  [~ state(synced (~(del by synced) t.wir))]
 ::
 ++  kick
   |=  wir=wire
@@ -208,9 +202,7 @@
     [%pass /group %agent [our.bol %group-store] %watch /updates]~
   ::
       [%contacts @ *]
-    ~&  contacts-kick+wir
     ?.  (~(has by synced) t.wir)  ~
-    ~&  %contact-hook-resubscribe
     =/  =ship  (~(got by synced) t.wir)
     ?:  =(ship our.bol)
       [%pass wir %agent [our.bol %contact-store] %watch wir]~

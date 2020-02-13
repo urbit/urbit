@@ -480,9 +480,11 @@ export class ContactCard extends Component {
     let localOpt =
       ((props.ship === window.ship) && (props.path === "/~/default"))
       ? "dib" : "dn";
+
     let adminOpt =
-      (props.path.includes(window.ship) || (props.ship === window.ship))
-      ? "dib" : "dn";
+      ( (props.path.includes(window.ship) || (props.ship === window.ship)) &&
+        !(props.path.includes('/~/default'))
+      ) ? "dib" : "dn";
 
     let card = state.edit ? this.renderEditCard() : this.renderCard();
 
@@ -512,7 +514,10 @@ export class ContactCard extends Component {
               `ml3 mt2 mb2 f9 pa1 ba red2 br2 b--red2 pointer ` + adminOpt
             }
             onClick={this.removeFromGroup}>
-            Remove from Group
+            {(
+              props.ship === window.ship && props.path.includes(window.ship)
+                ? "Delete Group" : "Remove from Group"
+            )}
           </button>
         </div>
         <div className="h-100 w-100 overflow-x-hidden pb8">{card}</div>
