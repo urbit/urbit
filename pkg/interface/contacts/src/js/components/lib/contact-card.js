@@ -384,6 +384,7 @@ export class ContactCard extends Component {
               onChange={this.notesToSet}
               onDeleteClick={() => this.setField("removeNotes")}
               onSaveClick={() => this.setField("notes")}
+              resizable={true}
               showButtons={!props.share} />
           </div>
         </div>
