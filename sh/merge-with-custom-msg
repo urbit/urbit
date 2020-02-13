@@ -45,5 +45,18 @@ TARGET=$(echo $REV | sed s_origin/__)
 
 MERGE_MSG="Merge branch '$TARGET' (#$PR)"
 
-git merge --no-ff --signoff --log -m "$MERGE_MSG" $REV
+KERNEL_CHANGED=`git diff --name-status $TARGET -- pkg/arvo/sys`
+PILLS_CHANGED=`git diff --name-status $TARGET -- bin`
+
+[[ ! -z $KERNEL_CHANGED && -z $PILLS_CHANGED ]] &&  \
+  echo "WARNING: kernel has changed, but pills have not"
+  echo $KERNEL_CHANGED
+  echo
+
+read -p "Proceed with merge? (y/n)" -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  git merge --no-ff --signoff --log -m "$MERGE_MSG" $REV
+fi
 
