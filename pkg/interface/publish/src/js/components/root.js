@@ -143,6 +143,7 @@ export class Root extends Component {
                   contacts={notebookContacts}
                   sidebarShown={state.sidebarShown}
                   popout={popout}
+                  permissions={state.permissions}
                   {...props}
                 />
               </Skeleton>

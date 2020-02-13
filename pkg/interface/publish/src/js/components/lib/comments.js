@@ -32,6 +32,9 @@ export class Comments extends Component {
   }
 
   render() {
+    if (!this.props.enabled) {
+      return null;
+    }
     let commentArray = this.props.comments.map((com, i) => {
       return (
         <CommentItem

@@ -15,7 +15,8 @@ export class NewScreen extends Component {
         groups: [],
         ships: []
       },
-      createGroup: false
+      createGroup: false,
+      awaiting: false,
     };
 
     this.idChange = this.idChange.bind(this);
@@ -27,9 +28,8 @@ export class NewScreen extends Component {
   componentDidUpdate(prevProps) {
     const { props, state } = this;
     if (props.notebooks && (("~" + window.ship) in props.notebooks)) {
-      let notebookId = stringToSymbol(state.idName)
-      if (notebookId in props.notebooks["~" + window.ship]) {
-        let notebook = `/~${window.ship}/${notebookId}`;
+      if (state.awaiting in props.notebooks["~" + window.ship]) {
+        let notebook = `/~${window.ship}/${state.awaiting}`;
         props.history.push("/~publish/notebook" + notebook);
       }
     }
@@ -92,7 +92,9 @@ export class NewScreen extends Component {
       }
     }
 
-    props.api.action("publish", "publish-action", action);
+    this.setState({awaiting: bookId}, () => {
+      props.api.action("publish", "publish-action", action);
+    });
   }
 
   render() {

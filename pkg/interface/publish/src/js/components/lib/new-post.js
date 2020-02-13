@@ -89,6 +89,8 @@ export class NewPost extends Component {
 
     let hiddenOnPopout = (props.popout)
       ? "" : "dib-m dib-l dib-xl";
+    let submitButtonPadding = (props.sidebarShown && !props.popout)
+      ? " pl8" : " pl4";
 
     return (
       <div className="f9 h-100 relative">
@@ -98,7 +100,7 @@ export class NewPost extends Component {
             popout={props.popout}
           />
           <button
-            className="v-mid w-100 mw7 tl pl4 h1"
+            className={"v-mid w-100 mw7 tl h1"+submitButtonPadding}
             disabled={!state.submit}
             style={submitStyle}
             onClick={this.postSubmit}>

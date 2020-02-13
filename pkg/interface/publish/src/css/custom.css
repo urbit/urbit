@@ -195,6 +195,15 @@ a {
   color: #7F7F7F;
 }
 
+.options::after {
+  content: "⌃";
+  transform: rotate(180deg);
+  position: absolute;
+  right: 4px;
+  top: 6px;
+  color: #7f7f7f;
+}
+
 [contenteditable]:focus {
   outline: 0px solid transparent;
 }
