@@ -55,7 +55,8 @@ export class NotebookPosts extends Component {
         comment = `${note["num-comments"]} Comments`;
       }
       let date = moment(note["date-created"]).fromNow();
-      let url = `/~publish/note/${props.host}/${props.notebookName}/${noteId}`
+      let popout = (props.popout) ? "popout/" : "";
+      let url = `/~publish/${popout}note/${props.host}/${props.notebookName}/${noteId}`
 
       notes.push(
         <Link key={i} to={url}>

@@ -46,8 +46,9 @@ export class NewPost extends Component {
   componentDidUpdate(prevProps, prevState) {
     let notebook = this.props.notebooks[this.props.ship][this.props.book];
     if (notebook.notes[this.state.awaiting]) {
+      let popout = (this.props.popout) ? "popout/" : "";
       let redirect =
-     `/~publish/note/${this.props.ship}/${this.props.book}/${this.state.awaiting}`;
+     `/~publish/${popout}note/${this.props.ship}/${this.props.book}/${this.state.awaiting}`;
       this.props.history.push(redirect);
     }
   }
@@ -82,13 +83,12 @@ export class NewPost extends Component {
       ? { color: '#2AA779', cursor: "pointer" }
       : { color: '#B1B2B3', cursor: "auto" };
 
-    let publishHrefIndex = props.location.pathname.indexOf("/notebook/");
-    let publishsubStr = props.location.pathname.substr(publishHrefIndex)
+    let hrefIndex = props.location.pathname.indexOf("/notebook/");
+    let publishsubStr = props.location.pathname.substr(hrefIndex)
     let popoutHref = `/~publish/popout${publishsubStr}`;
 
     let hiddenOnPopout = (props.popout)
-      ? ""
-      : "dib-m dib-l dib-xl"
+      ? "" : "dib-m dib-l dib-xl";
 
     return (
       <div className="f9 h-100 relative">

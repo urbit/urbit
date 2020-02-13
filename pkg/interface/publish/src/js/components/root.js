@@ -126,7 +126,7 @@ export class Root extends Component {
           else {
             return (
               <Skeleton
-                popout={false}
+                popout={popout}
                 active={"rightPanel"}
                 rightPanelHide={false}
                 sidebarShown={state.sidebarShown}
