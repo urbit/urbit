@@ -156,6 +156,9 @@ export class Notebook extends Component {
           popout={props.popout}
           sidebarShown={props.sidebarShown}
         />
+        <div className="w-100 dn-m dn-l dn-xl inter pt4 pb6 f9">
+          <Link to="/~publish">{"<- All Notebooks"}</Link>
+        </div>
         <Link
         className={"dn absolute right-1 top-1 " + hiddenOnPopout}
         to={popoutHref}
@@ -167,14 +170,14 @@ export class Notebook extends Component {
           />
         </Link>
         <div
-          className="h-100 overflow-container no-scrollbar"
+          className="h-100 pt0 pt8-m pt8-l pt8-xl overflow-container no-scrollbar"
           onScroll={this.onScroll}
           ref={el => {
             this.scrollElement = el;
           }}>
           <div
             className="flex justify-between"
-            style={{ marginTop: 56, marginBottom: 32 }}>
+            style={{ marginBottom: 32 }}>
             <div className="flex-col">
               <div className="mb1">{notebook.title}</div>
               <span>
