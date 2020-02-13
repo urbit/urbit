@@ -610,12 +610,13 @@
         [%a %done *]
       =^  remote-request  outstanding.agents.state
         ?~  t.t.t.wire
+          =/  full-wire  sys+wire
           =/  stand
-            %+  ~(gut by outstanding.agents.state)  [sys+wire hen]
+            %+  ~(gut by outstanding.agents.state)  [full-wire hen]
             *(qeu remote-request)
-          ~|  [sys+wire=wire hen=hen stand=stand outs=outstanding.agents.state]
+          ~|  [full-wire=full-wire hen=hen stand=stand outs=outstanding.agents.state]
           =^  rr  stand  ~(get to stand)
-          [rr (~(put by outstanding.agents.state) [wire hen] stand)]
+          [rr (~(put by outstanding.agents.state) [full-wire hen] stand)]
         ::  non-null case of wire is old, remove on next breach after
         ::  2019/12
         ::
