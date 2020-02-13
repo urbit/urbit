@@ -9,7 +9,6 @@ export class NewScreen extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
       idName: '',
       groups: [],
@@ -151,7 +150,7 @@ export class NewScreen extends Component {
       // we make a path of the form /~zod/cool-group
       // if not, we make a path of the form /~/~zod/free-chat
       let chatPath = `/~${window.ship}${station}`;
-      if (!state.createGroup || state.groups.length > 0) {
+      if (!state.createGroup || state.groups.length === 0) {
         chatPath = `/~${chatPath}`;
       }
       props.api.chatView.create(
