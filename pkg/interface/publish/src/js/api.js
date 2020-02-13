@@ -1,7 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
 import _ from 'lodash';
-import { uuid } from '/lib/util';
+import { store } from './store'
 
 class UrbitApi {
   setAuthTokens(authTokens) {
@@ -125,10 +123,9 @@ class UrbitApi {
       sidebarBoolean = false;
     }
     store.handleEvent({
-      type: {
-        local: {
-          'sidebarToggle': sidebarBoolean
-        }
+      type: "local",
+      data: {
+        'sidebarToggle': sidebarBoolean
       }
     });
   }

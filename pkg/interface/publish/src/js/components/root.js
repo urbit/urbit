@@ -55,7 +55,7 @@ export class Root extends Component {
             popout={false}
             active={"rightPanel"}
             rightPanelHide={false}
-            sidebarShown={true}
+            sidebarShown={state.sidebarShown}
             invites={state.invites}
             notebooks={state.notebooks}
             contacts={contacts}>
@@ -75,7 +75,7 @@ export class Root extends Component {
                   popout={false}
                   active={"rightPanel"}
                   rightPanelHide={false}
-                  sidebarShown={true}
+                  sidebarShown={state.sidebarShown}
                   invites={state.invites}
                   notebooks={state.notebooks}
                   contacts={contacts}>
@@ -83,11 +83,13 @@ export class Root extends Component {
                   </Skeleton>
                 )
               }}/>
-      <Route exact path="/~publish/(popout)?/notebook/:ship/:notebook/:view?"
+      <Route exact path="/~publish/:popout?/notebook/:ship/:notebook/:view?"
         render={ (props) => {
           let view = (props.match.params.view)
           ? props.match.params.view
           : "posts";
+
+          let popout = !!props.match.params.popout || false;
 
           let ship = props.match.params.ship || "";
           let notebook = props.match.params.notebook || "";
@@ -105,7 +107,7 @@ export class Root extends Component {
                 popout={false}
                 active={"rightPanel"}
                 rightPanelHide={false}
-                sidebarShown={true}
+                sidebarShown={state.sidebarShown}
                 invites={state.invites}
                 notebooks={state.notebooks}
                 contacts={contacts}
@@ -114,6 +116,8 @@ export class Root extends Component {
                   notebooks={state.notebooks}
                   ship={ship}
                   book={notebook}
+                  sidebarShown={state.sidebarShown}
+                  popout={popout}
                   {...props}
                 />
               </Skeleton>
@@ -125,7 +129,7 @@ export class Root extends Component {
                 popout={false}
                 active={"rightPanel"}
                 rightPanelHide={false}
-                sidebarShown={true}
+                sidebarShown={state.sidebarShown}
                 invites={state.invites}
                 notebooks={state.notebooks}
                 contacts={contacts}
@@ -137,18 +141,22 @@ export class Root extends Component {
                   book={notebook}
                   groups={state.groups}
                   contacts={notebookContacts}
+                  sidebarShown={state.sidebarShown}
+                  popout={popout}
                   {...props}
                 />
               </Skeleton>
             );
           }
         }}/>
-      <Route exact path="/~publish/(popout)?/note/:ship/:notebook/:note"
+      <Route exact path="/~publish/:popout?/note/:ship/:notebook/:note"
         render={ (props) => {
           let ship = props.match.params.ship || "";
           let notebook = props.match.params.notebook || "";
           let path = `${ship}/${notebook}`
           let note = props.match.params.note || "";
+
+          let popout = !!props.match.params.popout || false;
 
           let bookGroupPath =
             state.notebooks[ship][notebook]["subscribers-group-path"];
@@ -160,7 +168,7 @@ export class Root extends Component {
               popout={false}
               active={"rightPanel"}
               rightPanelHide={false}
-              sidebarShown={true}
+              sidebarShown={state.sidebarShown}
               invites={state.invites}
               notebooks={state.notebooks}
               contacts={contacts}
@@ -171,6 +179,8 @@ export class Root extends Component {
                 contacts={notebookContacts}
                 ship={ship}
                 note={note}
+                sidebarShown={state.sidebarShown}
+                popout={popout}
               />
             </Skeleton>
           );
