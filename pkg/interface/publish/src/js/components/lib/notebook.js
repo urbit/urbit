@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Link, Switch, Route } from 'react-router-dom';
-import { NoteList } from './note-list';
+import { SidebarSwitcher } from './icons/icon-sidebar-switch';
 import { NotebookPosts } from './notebook-posts';
-import { About } from './about';
 import { Subscribers } from './subscribers';
 import { Settings } from './settings';
+import Sidebar from './sidebar';
 
 //TODO subcomponent logic for subscribers, settings
 
@@ -71,6 +71,13 @@ export class Notebook extends Component {
   render() {
     const { props } = this;
 
+    // popout logic
+    let hrefIndex = props.location.pathname.indexOf("/notebook/");
+    let publishsubStr = props.location.pathname.substr(hrefIndex);
+    let popoutHref = `/~publish/popout${publishsubStr}`;
+
+    let hiddenOnPopout = props.popout ? "" : "dib-m dib-l dib-xl";
+
     let notebook = props.notebooks[props.ship][props.book];
 
     let tabStyles = {
@@ -87,6 +94,7 @@ export class Notebook extends Component {
         let notesList = notebook["notes-by-date"] || [];
         let notes = notebook.notes || null;
         inner = <NotebookPosts notes={notes}
+                  popout={props.popout}
                   list={notesList}
                   host={props.ship}
                   notebookName={props.book}
@@ -106,6 +114,7 @@ export class Notebook extends Component {
         break;
     }
 
+    // displaying nicknames, sigil colors for contacts
     let contact = !!(props.ship.substr(1) in props.contacts)
       ? props.contacts[props.ship.substr(1)] : false;
     let name = props.ship;
@@ -114,7 +123,8 @@ export class Notebook extends Component {
         ? contact.nickname : props.ship;
     }
 
-    let base = `/~publish/notebook/${props.ship}/${props.book}`;
+    let popout = (props.popout) ? "popout/" : "";
+    let base = `/~publish/${popout}notebook/${props.ship}/${props.book}`;
     let about = base + '/about';
     let subs = base + '/subscribers';
     let settings = base + '/settings';
@@ -142,20 +152,37 @@ export class Notebook extends Component {
       <div
         className="center mw6 f9 h-100"
         style={{ paddingLeft: 16, paddingRight: 16 }}>
+        <SidebarSwitcher
+          popout={props.popout}
+          sidebarShown={props.sidebarShown}
+        />
+        <div className="w-100 dn-m dn-l dn-xl inter pt4 pb6 f9">
+          <Link to="/~publish">{"<- All Notebooks"}</Link>
+        </div>
+        <Link
+        className={"dn absolute right-1 top-1 " + hiddenOnPopout}
+        to={popoutHref}
+        target="_blank"
+        >
+          <img src="/~publish/popout.png"
+            height={16}
+            width={16}
+          />
+        </Link>
         <div
-          className="h-100 overflow-container no-scrollbar"
+          className="h-100 pt0 pt8-m pt8-l pt8-xl overflow-container no-scrollbar"
           onScroll={this.onScroll}
           ref={el => {
             this.scrollElement = el;
           }}>
           <div
             className="flex justify-between"
-            style={{ marginTop: 56, marginBottom: 32 }}>
+            style={{ marginBottom: 32 }}>
             <div className="flex-col">
               <div className="mb1">{notebook.title}</div>
               <span>
                 <span className="gray3 mr1">by</span>
-                <span className={(props.ship === name) ? "mono" : ""}>
+                <span className={props.ship === name ? "mono" : ""}>
                   {name}
                 </span>
               </span>

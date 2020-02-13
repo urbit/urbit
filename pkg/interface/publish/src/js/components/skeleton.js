@@ -33,7 +33,7 @@ export class Skeleton extends Component {
             path={props.path}
             invites={props.invites}
             />
-          <div className={"h-100 w-100 overflow-container " + rightPanelHide} style={{
+          <div className={"h-100 w-100 relative " + rightPanelHide} style={{
             flexGrow: 1,
           }}>
             {props.children}

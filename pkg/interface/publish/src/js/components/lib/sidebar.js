@@ -146,7 +146,7 @@ export class Sidebar extends Component {
           "overflow-y-hidden " + activeClasses +
           (hiddenClasses ? "flex-basis-100-s flex-basis-30-ns" : "dn")
         }>
-        <a className="db dn-m dn-l dn-xl f8 pb3 pl3" href="/">
+        <a className="db dn-m dn-l dn-xl f9 pb3 pl3" href="/">
           ⟵ Landscape
         </a>
         <div className="w-100">
@@ -156,11 +156,6 @@ export class Sidebar extends Component {
           <Link to="/~publish/join" className="f9 gray2">
             Join Notebook
           </Link>
-          <h2
-            className={`f8 pt3 pr4 pb3 pl3 black c-default bb b--gray4 mb2
-             dn-m dn-l dn-xl`}>
-            Your Notebooks
-          </h2>
           <div className="dropdown relative bb b--gray4">
             <select
               style={{ WebkitAppearance: "none" }}

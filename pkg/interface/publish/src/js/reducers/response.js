@@ -68,7 +68,7 @@ export class ResponseReducer {
           for (var key in json.data.notebook.notes) {
             let oldNote = state.notebooks[json.host][json.notebook].notes[key];
             if (!(oldNote)) {
-              state.notebooks[json.host][json.notebook].notes[key] = 
+              state.notebooks[json.host][json.notebook].notes[key] =
                 json.data.notebook.notes[key];
             } else if (!(oldNote.build)) {
               state.notebooks[json.host][json.notebook].notes[key]["author"] =
@@ -124,7 +124,7 @@ export class ResponseReducer {
         for (var key in json.data.notes) {
           let oldNote = state.notebooks[json.host][json.notebook].notes[key];
           if (!(oldNote)) {
-            state.notebooks[json.host][json.notebook].notes[key] = 
+            state.notebooks[json.host][json.notebook].notes[key] =
               json.data.notes[key];
           } else if (!(oldNote.build)) {
             state.notebooks[json.host][json.notebook].notes[key]["author"] =
@@ -149,7 +149,7 @@ export class ResponseReducer {
   }
 
   handleCommentsPage(json, state) {
-    if (state.notebooks[json.host] && 
+    if (state.notebooks[json.host] &&
         state.notebooks[json.host][json.notebook] &&
         state.notebooks[json.host][json.notebook].notes[json.note])
     {
@@ -186,11 +186,11 @@ export class ResponseReducer {
       throw Error("tried to fetch paginated comments, but we don't have the note");
     }
   }
-  
+
   sidebarToggle(json, state) {
-    let data = _.has(json, 'sidebarToggle', false);
+    let data = _.has(json.data, 'sidebarToggle', false);
     if (data) {
-        state.sidebarShown = json.type.local.sidebarToggle;
+        state.sidebarShown = json.data.sidebarToggle;
     }
   }
 

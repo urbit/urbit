@@ -9,7 +9,7 @@ export class SidebarSwitcher extends Component {
       : "dib-m dib-l dib-xl";
 
     return (
-      <div className="pt2">
+      <div className={"absolute left-1 top-1 " + popoutSwitcher}>
         <a
           className="pointer flex-shrink-0"
           onClick={() => {

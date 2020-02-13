@@ -13,7 +13,7 @@ class Store {
       permissions: {},
       invites: {},
       spinner: false,
-      sidebarShown: false,
+      sidebarShown: true
     }
 
     this.initialReducer  = new InitialReducer();
