@@ -1,23 +1,10 @@
 ::  metadata-store: data store for application metadata and mappings 
 ::  between groups and application data (chatrooms, publish notebooks, etc)
 ::
+/-  *metadata-store
 /+  default-agent
 |%
 +$  card  card:agent:gall
-+$  group-path  path
-+$  app-name  @tas
-+$  app-path  path
-+$  metadata
-  $:  title=@t
-      description=@t
-      color=@ux
-  ==
-::
-+$  metadata-action
-  $%  [%add =group-path =app-name =app-path =metadata]
-      [%remove =group-path =app-name =app-path]
-  ==
-+$  metadata-update  metadata-action
 ::
 +$  versioned-state
   $%  state-zero
@@ -37,10 +24,10 @@
 ^-  agent:gall
 =<
   |_  =bowl:gall
-  +*  this        .
+  +*  this           .
       metadata-core  +>
-      mc          ~(. metadata-core bowl)
-      def         ~(. (default-agent this %|) bowl)
+      mc             ~(. metadata-core bowl)
+      def            ~(. (default-agent this %|) bowl)
   ::
   ++  on-init            on-init:def
   ++  on-save   !>(state)
@@ -65,7 +52,8 @@
     |^
     =/  cards=(list card)
       ?+  path  (on-watch:def path)
-          [%all ~]  (give %metadata-initial !>(associated))
+          [%all ~]      (give %metadata-initial !>(associated))
+          [%updates ~]  ~
       ==
     [cards this]
     ::
