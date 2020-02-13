@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Route, Link } from 'react-router-dom';
+import { SidebarSwitcher } from './icons/icon-sidebar-switch';
 import { Comments } from './comments';
 import { NoteNavigation } from './note-navigation';
 import moment from 'moment';
@@ -129,18 +131,49 @@ export class Note extends Component {
           date: moment(notebook.notes[nextId]["date-created"]).fromNow()
         }
 
+    let popout = (props.popout) ? "popout/" : "";
 
+    let hrefIndex = props.location.pathname.indexOf("/note/");
+    let publishsubStr = props.location.pathname.substr(hrefIndex);
+    let popoutHref = `/~publish/popout${publishsubStr}`;
+
+    let hiddenOnPopout = props.popout ? "" : "dib-m dib-l dib-xl";
+
+    let baseUrl = `/~publish/${popout}notebook/${props.ship}/${props.book}`;
     return (
-      <div className="h-100 overflow-container no-scrollbar"
-           onScroll={this.onScroll}
-           ref={(el) => {this.scrollElement = el}}>
-        <div className="flex justify-center mt4 ph4 pb4">
-          <div className="w-100 mw6">
+      <div
+        className="h-100 no-scrollbar"
+        onScroll={this.onScroll}
+        ref={el => {
+          this.scrollElement = el;
+        }}>
+        <div className="h-100 flex flex-column items-center mt4 ph4 pb4">
+          <div className="w-100 flex justify-center pb6">
+            <SidebarSwitcher
+              popout={props.popout}
+              sidebarShown={props.sidebarShown}
+            />
+            <Link className="f9 w-100 mw6 tl" to={baseUrl}>
+              {"<- Notebook index"}
+            </Link>
+            <Link
+            to={popoutHref}
+            className={"dn absolute right-1 top-1 " + hiddenOnPopout}
+            target="_blank">
+              <img src="/~publish/popout.png"
+                height={16}
+                width={16}
+              />
+            </Link>
+          </div>
+          <div className="w-100 mw6 overflow-container">
             <div className="flex flex-column">
               <div className="f9 mb1">{title}</div>
               <div className="flex mb6">
-                <div className={"di f9 gray2 mr2 " +
-                ((name === author) ? "mono" : "")}>
+                <div
+                  className={
+                    "di f9 gray2 mr2 " + (name === author ? "mono" : "")
+                  }>
                   {name}
                 </div>
                 <div className="di f9 gray2">{date}</div>
@@ -150,20 +183,23 @@ export class Note extends Component {
               <ReactMarkdown source={newfile} />
             </div>
             <NoteNavigation
+              popout={props.popout}
               prev={prev}
               next={next}
               ship={props.ship}
-              book={props.book}/>
-            <Comments ship={props.ship}
+              book={props.book}
+            />
+            <Comments
+              ship={props.ship}
               book={props.book}
               note={props.note}
               comments={comments}
               contacts={props.contacts}
-              />
+            />
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 

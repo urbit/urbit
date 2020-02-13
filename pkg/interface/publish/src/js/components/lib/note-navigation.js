@@ -14,9 +14,11 @@ export class NoteNavigation extends Component {
     let nextUrl = ''
     let prevUrl = ''
 
+    let popout = (this.props.popout) ? "popout/" : "";
+
     if (this.props.next && this.props.prev) {
-      nextUrl = `/~publish/note/${this.props.ship}/${this.props.book}/${this.props.next.id}`;
-      prevUrl = `/~publish/note/${this.props.ship}/${this.props.book}/${this.props.prev.id}`;
+      nextUrl = `/~publish/${popout}note/${this.props.ship}/${this.props.book}/${this.props.next.id}`;
+      prevUrl = `/~publish/${popout}note/${this.props.ship}/${this.props.book}/${this.props.prev.id}`;
       nextComponent =
       <Link to={nextUrl} className="di flex-column tr w-100 pv6 bt bb b--gray3">
         <div className="f9 gray2 mb2">Next</div>
@@ -32,7 +34,7 @@ export class NoteNavigation extends Component {
       </Link>
 
     } else if (this.props.prev) {
-      prevUrl = `/~publish/note/${this.props.ship}/${this.props.book}/${this.props.prev.id}`;
+      prevUrl = `/~publish/${popout}note/${this.props.ship}/${this.props.book}/${this.props.prev.id}`;
       prevComponent =
       <Link to={prevUrl} className="di flex-column w-100 pv6 bt bb b--gray3">
         <div className="f9 gray2 mb2">Previous</div>
@@ -40,7 +42,7 @@ export class NoteNavigation extends Component {
         <div className="f9 gray2">{this.props.prev.date}</div>
       </Link>
     } else if (this.props.next) {
-      nextUrl = `/~publish/note/${this.props.ship}/${this.props.book}/${this.props.next.id}`;
+      nextUrl = `/~publish/${popout}note/${this.props.ship}/${this.props.book}/${this.props.next.id}`;
       nextComponent =
       <Link to={nextUrl} className="di flex-column tr w-100 pv6 bt bb b--gray3">
         <div className="f9 gray2 mb2">Next</div>

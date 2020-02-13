@@ -181,6 +181,7 @@ export class Root extends Component {
                 note={note}
                 sidebarShown={state.sidebarShown}
                 popout={popout}
+                {...props}
               />
             </Skeleton>
           );
