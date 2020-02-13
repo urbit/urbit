@@ -104,7 +104,7 @@ export class Root extends Component {
           if (view === "new") {
             return (
               <Skeleton
-                popout={false}
+                popout={popout}
                 active={"rightPanel"}
                 rightPanelHide={false}
                 sidebarShown={state.sidebarShown}
@@ -165,7 +165,7 @@ export class Root extends Component {
 
           return (
             <Skeleton
-              popout={false}
+              popout={popout}
               active={"rightPanel"}
               rightPanelHide={false}
               sidebarShown={state.sidebarShown}
