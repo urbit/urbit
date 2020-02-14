@@ -44,6 +44,8 @@ export class ChatScreen extends Component {
  componentDidUpdate(prevProps, prevState) {
    const { props, state } = this;
 
+   const station = `/${props.match.params.ship}/${props.match.params.station}`
+
    if (
      prevProps.match.params.station !== props.match.params.station ||
      prevProps.match.params.ship !== props.match.params.ship
@@ -54,7 +56,7 @@ export class ChatScreen extends Component {
 
      this.setState(
        {
-         station: `/${props.match.params.ship}/${props.match.params.station}`,
+         station: station,
          scrollLocked: false
        },
        () => {
@@ -66,7 +68,7 @@ export class ChatScreen extends Component {
          this.updateReadNumber();
        }
      );
-   } else if (Object.keys(props.inbox).length === 0) {
+   } else if (props.chatInitialized && !(station in props.inbox)) {
      props.history.push("/~chat");
    } else if (
      props.envelopes.length - prevProps.envelopes.length >=
