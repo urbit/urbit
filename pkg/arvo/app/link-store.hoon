@@ -40,8 +40,12 @@
 ::
 ::  scry-only paths:
 ::
+::
+::      (map path (set url))
+::    /unseen                               the ones we haven't seen yet
+::
 ::      (set url)
-::    /seen//some-path                      the ones we've seen here
+::    /unseen/some-path                     the ones we haven't seen here yet
 ::
 ::      ?
 ::    /seen/wood-url/some-path              have we seen this here
@@ -153,10 +157,13 @@
       ``noun+!>((get-discussions:do t.t.path))
     ::
         [%x %seen @ ^]
-      ``noun+!>((is-seen t.t.path))
+      ``noun+!>((is-seen:do t.t.path))
     ::
-        [%x %unseen *]
-      ``noun+!>((get-unseen t.t.path))
+        [%x %unseen ~]
+      ``noun+!>(get-all-unseen:do)
+    ::
+        [%x %unseen ^]
+      ``noun+!>((get-unseen:do t.t.path))
     ==
   ::
   ++  on-watch
@@ -235,12 +242,16 @@
   =.  by-group  (~(put by by-group) path links)
   ::  do generic submission logic
   ::
-  =^  cards  state
+  =^  submission-cards  state
     (hear-submission path [our.bowl page])
+  ::  mark page as seen (because we submitted it ourselves)
+  ::
+  =^  seen-cards  state
+    (seen-submission path `url)
   ::  send updates to subscribers
   ::
   :_  state
-  :_  cards
+  :_  (weld submission-cards seen-cards)
   :+  %give  %fact
   :+  :~  /local-pages
           [%local-pages path]
@@ -377,6 +388,12 @@
   ::
   %+  ~(put by *(map ^path submissions))  path
   submissions:(~(gut by by-group) path *links)
+::
+++  get-all-unseen
+  ^-  (jug path url)
+  %-  ~(rut by by-group)
+  |=  [=path *]
+  (get-unseen path)
 ::
 ++  get-unseen
   |=  =path
