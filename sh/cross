@@ -5,8 +5,7 @@ set -e
 err () { echo "$@" >&2; exit 1; }
 
 [ $# = 2 ] || {
-  sh/cross urbit linux64
-  sh/cross urbit darwin
+  sh/cross urbit linux-arm64
   exit 0
 }
 

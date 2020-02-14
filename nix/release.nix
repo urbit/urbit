@@ -10,8 +10,7 @@ let
       deps = crossdeps env;
     };
 
-  linux64 = release "linux64" nixcrpkgs.linux64;
-  darwin  = release "darwin"  nixcrpkgs.mac;
+  linux-arm64 = release "linux-arm64" nixcrpkgs.linux-arm64;
 
   ent = env:
     import ./pkgs/ent/cross.nix env;
@@ -37,13 +36,8 @@ let
       urbit-debug  = urbit { env = plat; debug = true;  };
     };
 
-  darwin_extra = {
-    inherit (darwin.env) ranlib ld sdk ar toolchain tapi strip;
-  };
-
 in
 
 {
-  linux64 = builds-for-platform linux64;
-  darwin  = darwin_extra // builds-for-platform darwin;
+  linux-arm64 = builds-for-platform linux-arm64;
 }

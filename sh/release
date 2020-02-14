@@ -18,7 +18,7 @@ traced () {
 
 mkdir -p release
 
-for plat in linux64 darwin
+for plat in linux-arm64
 do
   sh/cross urbit "$plat"
 
