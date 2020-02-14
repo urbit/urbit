@@ -40,7 +40,7 @@
         [%pass /discussions %agent [our.bowl %link-store] %watch /discussions]
         [%pass /seen %agent [our.bowl %link-store] %watch /seen]
       ::
-        =+  [%link-server-hook /tile '/~link/js/tile.js']
+        =+  [dap.bowl /tile '/~link/js/tile.js']
         [%pass /launch %agent [our.bowl %launch] %poke %launch-action !>(-)]
     ==
   ::
@@ -74,13 +74,13 @@
             ?=([%json %seen ~] path)
         ==
       [~ this]
+    ?:  ?=([%tile ~] path)
+      :_  this
+      ~[give-tile-data:do]
     ?.  ?=([%json @ @ *] path)
       (on-watch:def path)
     =/  p=@ud  (slav %ud i.t.path)
     ?+  t.t.path  (on-watch:def path)
-        [%tile ~]
-      [~ this]
-    ::
         [%submissions ~]
       :_  this
       (give-initial-submissions:do p ~)
@@ -111,7 +111,12 @@
       =*  vase  q.cage.sign
       ?+  mark  (on-agent:def wire sign)
         %link-initial  [~ this]
-        %link-update   [~[(send-update:do !<(update vase))] this]
+      ::
+          %link-update
+        :_  this
+        :-  (send-update:do !<(update vase))
+        ?:  =(/discussions wire)  ~
+        ~[give-tile-data:do]
       ==
     ==
   ::
@@ -216,6 +221,23 @@
   |=  =action
   ^-  card
   [%pass /action %agent [our.bowl %link-store] %poke %link-action !>(action)]
+::  +give-tile-data: total unread count as json object
+::
+::NOTE  the full recalc of totals here probably isn't the end of the world.
+::      but in case it is, well, here it is.
+::
+++  give-tile-data
+  ^-  card
+  =;  =json
+    [%give %fact ~[/tile] %json !>(json)]
+  %+  frond:enjs:format  'unseen'
+  %-  numb:enjs:format
+  %-  %~  rep  in
+      (scry-for (jug path url) /unseen)
+  |=  [[=path unseen=(set url)] total=@ud]
+  %+  add  total
+  ~(wyt in unseen)
+::
 ::  +give-initial-submissions: page of submissions on path
 ::
 ::    for the / path, give page for every path
