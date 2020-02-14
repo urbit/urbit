@@ -114,13 +114,8 @@
     ?&  ?=(^ group)
         (~(has in u.group) who)
     ==
-  .^  (unit group:group-store)
-      %gx
-      (scot %p our.bowl)
-      %group-store
-      (scot %da now.bowl)
-      (snoc u.target %noun)
-  ==
+  %+  scry-for  (unit group:group-store)
+  [%group-store u.target]
 ::
 ::  groups subscription
 ::TODO  largely copied from link-listen-hook. maybe make a store-listener lib?
@@ -216,10 +211,14 @@
     [%give %fact ~ %link-initial !>(initial)]
   ?+  path  !!
       [%local-pages ^]
-    [%local-pages .^((map ^path pages) %gx path)]
+    :-  %local-pages
+    %+  scry-for  (map ^path pages)
+    [%link-store path]
   ::
-      [%annotations ~ ^]
-    [%annotations .^((per-path-url notes) %gx '' t.t.path)]
+      [%annotations %$ ^]
+    :-  %annotations
+    %+  scry-for  (per-path-url notes)
+    [%link-store path]
   ==
 ::
 ++  start-proxy
@@ -249,4 +248,14 @@
   ::  else, close the local subscription.
   ::
   [(proxy-pass-link-store path %leave ~)]~
+::
+++  scry-for
+  |*  [=mold app=term =path]
+  .^  mold
+    %gx
+    (scot %p our.bowl)
+    app
+    (scot %da now.bowl)
+    (snoc `^path`path %noun)
+  ==
 --
