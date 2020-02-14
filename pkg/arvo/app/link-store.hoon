@@ -235,12 +235,16 @@
   =.  by-group  (~(put by by-group) path links)
   ::  do generic submission logic
   ::
-  =^  cards  state
+  =^  submission-cards  state
     (hear-submission path [our.bowl page])
+  ::  mark page as seen (because we submitted it ourselves)
+  ::
+  =^  seen-cards  state
+    (seen-submission path `url)
   ::  send updates to subscribers
   ::
   :_  state
-  :_  cards
+  :_  (weld submission-cards seen-cards)
   :+  %give  %fact
   :+  :~  /local-pages
           [%local-pages path]
