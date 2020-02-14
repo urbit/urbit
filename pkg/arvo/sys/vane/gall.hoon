@@ -38,6 +38,7 @@
       %watch-as
       %poke
       %leave
+      %missing
   ==
 --
 |%
@@ -54,7 +55,7 @@
 ++  state
   $:  :: state version
       ::
-      %3
+      %4
       :: agents by ship
       ::
       =agents
@@ -610,12 +611,16 @@
         [%a %done *]
       =^  remote-request  outstanding.agents.state
         ?~  t.t.t.wire
+          =/  full-wire  sys+wire
           =/  stand
-            %+  ~(gut by outstanding.agents.state)  [sys+wire hen]
-            *(qeu remote-request)
-          ~|  [sys+wire=wire hen=hen stand=stand outs=outstanding.agents.state]
+            %+  ~(gut by outstanding.agents.state)  [full-wire hen]
+            ::  default is do nothing; should only hit if cleared queue
+            ::  in +load 3-to-4
+            ::
+            (~(put to *(qeu remote-request)) %missing)
+          ~|  [full-wire=full-wire hen=hen stand=stand outs=outstanding.agents.state]
           =^  rr  stand  ~(get to stand)
-          [rr (~(put by outstanding.agents.state) [wire hen] stand)]
+          [rr (~(put by outstanding.agents.state) [full-wire hen] stand)]
         ::  non-null case of wire is old, remove on next breach after
         ::  2019/12
         ::
@@ -631,6 +636,7 @@
         %watch     (mo-give %unto %watch-ack err)
         %poke      (mo-give %unto %poke-ack err)
         %leave     mo-core
+        %missing   (mo-give:(mo-give %unto %watch-ack err) %unto %poke-ack err)
       ==
     ::
         [%a %boon *]
@@ -1576,16 +1582,32 @@
   =?  all-state  ?=(%2 -.all-state)
     (state-2-to-3 all-state)
   ::
-  ?>  ?=(%3 -.all-state)
+  =?  all-state  ?=(%3 -.all-state)
+    (state-3-to-4 all-state)
+  ::
+  ?>  ?=(%4 -.all-state)
   gall-payload(state all-state)
   ::
   ::  +all-state: upgrade path
   ::
-  ++  all-state  $%(state-0 state-1 state-2 ^state)
+  ++  all-state  $%(state-0 state-1 state-2 state-3 ^state)
+  ::
+  ++  state-3-to-4
+    |=  =state-3
+    ^-  ^state
+    %=    state-3
+        -  %4
+        outstanding.agents  ~
+    ==
+  ::
+  ++  state-3
+    $:  %3
+        =agents
+    ==
   ::
   ++  state-2-to-3
     |=  =state-2
-    ^-  ^state
+    ^-  state-3
     %=    state-2
         -  %3
         running.agents-2
