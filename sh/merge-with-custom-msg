@@ -41,17 +41,18 @@ fi
 REV=$1
 PR=$2
 
-TARGET=$(echo $REV | sed s_origin/__)
+KERNEL_CHANGED=`git diff --name-status $REV -- pkg/arvo/sys`
+PILLS_CHANGED=`git diff --name-status $REV -- bin`
 
-MERGE_MSG="Merge branch '$TARGET' (#$PR)"
-
-KERNEL_CHANGED=`git diff --name-status $TARGET -- pkg/arvo/sys`
-PILLS_CHANGED=`git diff --name-status $TARGET -- bin`
-
-[[ ! -z $KERNEL_CHANGED && -z $PILLS_CHANGED ]] &&  \
+if [[ ! -z $KERNEL_CHANGED && -z $PILLS_CHANGED ]]
+then
   echo "WARNING: kernel has changed, but pills have not"
   echo $KERNEL_CHANGED
   echo
+fi
+
+TARGET_MSG=$(echo $REV | sed s_origin/__)
+MERGE_MSG="Merge branch '$TARGET_MSG' (#$PR)"
 
 read -p "Proceed with merge? (y/n)" -n 1 -r
 echo
