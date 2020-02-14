@@ -40,6 +40,10 @@
 ::
 ::  scry-only paths:
 ::
+::
+::      (map path (set url))
+::    /unseen                               the ones we haven't seen yet
+::
 ::      (set url)
 ::    /unseen/some-path                     the ones we haven't seen here yet
 ::
@@ -154,6 +158,9 @@
     ::
         [%x %seen @ ^]
       ``noun+!>((is-seen:do t.t.path))
+    ::
+        [%x %unseen ~]
+      ``noun+!>(get-all-unseen:do)
     ::
         [%x %unseen ^]
       ``noun+!>((get-unseen:do t.t.path))
@@ -381,6 +388,12 @@
   ::
   %+  ~(put by *(map ^path submissions))  path
   submissions:(~(gut by by-group) path *links)
+::
+++  get-all-unseen
+  ^-  (jug path url)
+  %-  ~(rut by by-group)
+  |=  [=path *]
+  (get-unseen path)
 ::
 ++  get-unseen
   |=  =path
