@@ -1,23 +1,26 @@
 |%
-+$  group-path  path
-+$  app-name  @tas
-+$  app-path  path
-+$  associated  (map [group-path app-name app-path] metadata)
++$  group-path    path
++$  app-name      @tas
++$  app-path      path
++$  resource      [=app-name =app-path]
++$  associations  (map [group-path resource] metadata)
 ::
 +$  metadata
   $:  title=@t
       description=@t
       color=@ux
+      date-created=@da
+      creator=@p
   ==
 ::
 +$  metadata-action
-  $%  [%add =group-path =app-name =app-path =metadata]
-      [%remove =group-path =app-name =app-path]
+  $%  [%add =group-path =resource =metadata]
+      [%remove =group-path =resource]
   ==
 ::
 +$  metadata-update
   $%  metadata-action
-      [%app-indices app-indices=associated]
-      [%update-metadata =group-path =app-name =app-path =metadata]
+      [%associations =associations]
+      [%update-metadata =group-path =resource =metadata]
   ==
 --

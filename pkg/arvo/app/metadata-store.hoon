@@ -1,5 +1,21 @@
 ::  metadata-store: data store for application metadata and mappings 
-::  between groups and application data (chatrooms, publish notebooks, etc)
+::  between groups and resources within applications
+::
+::  group-paths are expected to be an existing group path
+::  resources are expected to correspond to existing app paths
+::
+::  +watch paths:
+::  /all                                  assocations + updates
+::  /updates                              just updates
+::  /app-name/%app-name                   specific app's associations + updates
+::
+::  +peek paths:
+::  /associations                                          all associations
+::  /group-indices                                         all group indices
+::  /app-indices                                           all app indices
+::  /resource-indices                                      all resource indices
+::  /metadata/(spat group-path)/%app-name/(spat app-path)  specific metadatum
+::  /app-name/%app-name                                    associations for app
 ::
 /-  *metadata-store
 /+  default-agent
@@ -12,10 +28,10 @@
 ::
 +$  state-zero
   $:  %0
-      =associated
-      group-indices=(jug group-path [app-name app-path])
-      app-name-indices=(jug app-name [group-path app-path])
-      app-path-indices=(map [app-name app-path] group-path)
+      =associations
+      group-indices=(jug group-path resource)
+      app-indices=(jug app-name [group-path app-path])
+      resource-indices=(jug resource group-path)
   ==
 --
 ::
@@ -52,12 +68,12 @@
     |^
     =/  cards=(list card)
       ?+  path  (on-watch:def path)
-          [%all ~]      (give %metadata-initial !>(associated))
+          [%all ~]      (give %metadata-update !>([%associatons associations]))
           [%updates ~]  ~
           [%app-name @ ~]
         =/  =app-name  i.t.path
         =/  app-indices  (metadata-for-app:mc app-name)
-        (give %metadata-update !>([%app-indices app-indices]))
+        (give %metadata-update !>([%associations app-indices]))
       ==
     [cards this]
     ::
@@ -73,15 +89,14 @@
     |=  =path
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
-        [%x %all ~]               ``noun+!>(associated)
-        [%x %group-indices ~]     ``noun+!>(group-indices)
-        [%x %app-name-indices ~]  ``noun+!>(app-name-indices)
-        [%x %app-path-indices ~]  ``noun+!>(app-path-indices)
+        [%y %associations ~]      ``noun+!>(associations)
+        [%y %group-indices ~]     ``noun+!>(group-indices)
+        [%y %app-indices ~]       ``noun+!>(app-indices)
+        [%y %resource-indices ~]  ``noun+!>(resource-indices)
         [%x %metadata @ @ @ ~]
       =/  =group-path  (stab i.t.t.path)
-      =/  =app-name    `@tas`i.t.t.t.path
-      =/  =app-path    (stab i.t.t.t.t.path)
-      ``noun+!>((~(got by associated) [group-path app-name app-path]))
+      =/  =resource    [`@tas`i.t.t.t.path (stab i.t.t.t.t.path)]
+      ``noun+!>((~(got by associations) [group-path resource]))
     ::
         [%x %app-name @ ~]
       =/  =app-name  i.t.t.path
@@ -101,58 +116,59 @@
   ?>  (team:title our.bowl src.bowl)
   ?-  -.act
       %add
-    (handle-add group-path.act app-name.act app-path.act metadata.act)
+    (handle-add group-path.act resource.act metadata.act)
   ::
       %remove
-    (handle-remove group-path.act app-name.act app-path.act)
+    (handle-remove group-path.act resource.act)
   ==
 ::
 ++  handle-add
-  |=  [=group-path =app-name =app-path =metadata]
+  |=  [=group-path =resource =metadata]
   ^-  (quip card _state)
-  :-  %+  send-diff  app-name
-      ?.  (~(has by app-path-indices) [app-name app-path])
-        [%add group-path app-name app-path metadata]
-      [%update-metadata group-path app-name app-path metadata]
+  :-  %+  send-diff  app-name.resource
+      ?.  (~(has by resource-indices) resource)
+        [%add group-path resource metadata]
+      [%update-metadata group-path resource metadata]
+
   %=  state
-      associated
-    (~(put by associated) [group-path app-name app-path] metadata)
+      associations
+    (~(put by associations) [group-path resource] metadata)
   ::
       group-indices
-    (~(put ju group-indices) group-path [app-name app-path])
+    (~(put ju group-indices) group-path resource)
   ::
-      app-name-indices
-    (~(put ju app-name-indices) app-name [group-path app-path])
+      app-indices
+    (~(put ju app-indices) app-name.resource [group-path app-path.resource])
   ::
-      app-path-indices
-    (~(put by app-path-indices) [app-name app-path] group-path)
+      resource-indices
+    (~(put ju resource-indices) resource group-path)
   ==
 ::
 ++  handle-remove
-  |=  [=group-path =app-name =app-path]
+  |=  [=group-path =resource]
   ^-  (quip card _state)
-  :-  (send-diff app-name [%remove group-path app-name app-path])
+  :-  (send-diff app-name.resource [%remove group-path resource])
   %=  state
-      associated
-    (~(del by associated) [group-path app-name app-path])
+      associations
+    (~(del by associations) [group-path resource])
   ::
       group-indices
-    (~(del ju group-indices) group-path [app-name app-path])
+    (~(del ju group-indices) group-path resource)
   ::
-      app-name-indices
-    (~(del ju app-name-indices) app-name [group-path app-path])
+      app-indices
+    (~(del ju app-indices) app-name.resource [group-path app-path.resource])
   ::
-      app-path-indices
-    (~(del by app-path-indices) [app-name app-path])
+      resource-indices
+    (~(del ju resource-indices) resource group-path)
   ==
 ::
 ++  metadata-for-app
   |=  =app-name
-  %-  ~(gas by *(map [group-path ^app-name app-path] metadata))
-  %+  turn  ~(tap in (~(got by app-name-indices) app-name))
+  %-  ~(gas by *(map [group-path resource] metadata))
+  %+  turn  ~(tap in (~(got by app-indices) app-name))
   |=  [=group-path =app-path]
-  :-  [group-path app-name app-path]
-  (~(got by associated) [group-path app-name app-path])
+  :-  [group-path [app-name app-path]]
+  (~(got by associations) [group-path [app-name app-path]])
 ::
 ++  send-diff
   |=  [=app-name upd=metadata-update]
