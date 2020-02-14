@@ -23,6 +23,7 @@ export class ChatScreen extends Component {
 
    this.hasAskedForMessages = false;
    this.onScroll = this.onScroll.bind(this);
+   this.messages = this.messagesWithPending.bind(this);
 
    this.updateReadInterval = setInterval(
      this.updateReadNumber.bind(this),
@@ -49,6 +50,7 @@ export class ChatScreen extends Component {
      `/${props.match.params.ship}/${props.match.params.station}` :
      `/${props.match.params[1]}/${props.match.params.ship}/${props.match.params.station}`;
 
+   // Switched chats
    if (
      prevProps.match.params.station !== props.match.params.station ||
      prevProps.match.params.ship !== props.match.params.ship
@@ -63,7 +65,7 @@ export class ChatScreen extends Component {
          scrollLocked: false
        },
        () => {
-         this.scrollToBottom();
+         this.scrollToBottom("auto");
          this.updateReadInterval = setInterval(
            this.updateReadNumber.bind(this),
            1000
@@ -71,13 +73,18 @@ export class ChatScreen extends Component {
          this.updateReadNumber();
        }
      );
+   // Switched to chat
    } else if (props.chatInitialized && !(station in props.inbox)) {
      props.history.push("/~chat");
-   } else if (
+   // A new message came in, other cases
+   } else {
+    this.scrollToBottom("auto");
+    if (
      props.envelopes.length - prevProps.envelopes.length >=
      200
-   ) {
+    ) {
      this.hasAskedForMessages = false;
+    }
    }
  }
 
@@ -114,9 +121,9 @@ export class ChatScreen extends Component {
    }
  }
 
- scrollToBottom() {
+ scrollToBottom(behavior = 'smooth') {
    if (!this.state.scrollLocked && this.scrollElement) {
-     this.scrollElement.scrollIntoView({ behavior: "smooth" });
+     this.scrollElement.scrollIntoView({ behavior });
    }
  }
 
@@ -171,12 +178,9 @@ export class ChatScreen extends Component {
    }
  }
 
- render() {
+ messagesWithPending() {
    const { props, state } = this;
-
    let messages = props.envelopes.slice(0);
-
-   let lastMsgNum = messages.length > 0 ? messages.length : 0;
 
    if (messages.length > 100 * state.numPages) {
      messages = messages.slice(
@@ -193,18 +197,24 @@ export class ChatScreen extends Component {
      return (value.pending = true);
    });
 
-   let reversedMessages = messages.concat(pendingMessages);
-   reversedMessages = reversedMessages.reverse();
+   return messages.concat(pendingMessages);
+ }
 
-   reversedMessages = reversedMessages.map((msg, i) => {
+ render() {
+   const { props } = this;
+
+   const lastMsgNum = props.envelopes.slice(0) > 0 ? props.envelopes.slice(0) : 0
+   const messages = this.messagesWithPending();
+
+   const messagesFragment = messages.map((msg, i) => {
      // Render sigil if previous message is not by the same sender
      let aut = ["author"];
      let renderSigil =
-       _.get(reversedMessages[i + 1], aut) !==
+       _.get(messages[i - 1], aut) !==
        _.get(msg, aut, msg.author);
      let paddingTop = renderSigil;
      let paddingBot =
-       _.get(reversedMessages[i - 1], aut) !==
+       _.get(messages[i - 1], aut) !==
        _.get(msg, aut, msg.author);
 
      return (
@@ -220,10 +230,10 @@ export class ChatScreen extends Component {
      );
    });
 
-   let group = Array.from(props.group.values());
+   const group = Array.from(props.group.values());
 
-   let isinPopout = this.props.popout ? "popout/" : "";
-
+   const isinPopout = this.props.popout ? "popout/" : "";
+  
    let ownerContact = (window.ship in props.contacts)
      ? props.contacts[window.ship] : false;
 
@@ -261,14 +271,14 @@ export class ChatScreen extends Component {
          />
        </div>
        <div
-         className="overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex flex-column-reverse"
+         className="overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex flex-column"
          style={{ height: "100%", resize: "vertical" }}
          onScroll={this.onScroll}>
+         {messagesFragment}
          <div
            ref={el => {
              this.scrollElement = el;
            }}></div>
-         {reversedMessages}
        </div>
        <ChatInput
          api={props.api}
