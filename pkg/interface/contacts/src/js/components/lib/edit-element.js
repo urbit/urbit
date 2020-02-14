@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Route, Link } from 'react-router-dom'; 
+import { Route, Link } from 'react-router-dom';
 
 export class EditElement extends Component {
 
@@ -19,14 +19,18 @@ export class EditElement extends Component {
       state.currentValue !== ""
     );
 
+    let inputStyles = (props.resizable)
+      ? { resize: "vertical", height: 40, paddingTop: 10 }
+      : { resize: "none", height: 40, paddingTop: 10 }
+
     return (
-      <div>
+      <div className="pb4">
         <p className="f9 gray2">{props.title}</p>
           <div className="w-100 flex">
             <textarea
               ref={props.title}
               className="w-100 ba pl3 b--gray4"
-              style={{ resize: "none", height: 40, paddingTop: 10 }}
+              style={ inputStyles }
               onChange={(e) => {
                 let val = (' ' + e.target.value).slice(1);
                 this.setState({

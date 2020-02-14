@@ -344,7 +344,7 @@ export class ContactCard extends Component {
           {avatar}
           {sigilColor}
           {removeImage}
-          <div className="w-100 pt8 lh-copy tl">
+          <div className="w-100 pt8 pb8 lh-copy tl">
             <p className="f9 gray2">Ship Name</p>
             <p className="f8 mono">~{props.ship}</p>
             <p className="f9 gray2 mt3">Ship Type</p>
@@ -384,6 +384,7 @@ export class ContactCard extends Component {
               onChange={this.notesToSet}
               onDeleteClick={() => this.setField("removeNotes")}
               onSaveClick={() => this.setField("notes")}
+              resizable={true}
               showButtons={!props.share} />
           </div>
         </div>
@@ -503,15 +504,15 @@ export class ContactCard extends Component {
                 this.editToggle();
               }
             }}
-            className={`ml3 mt2 mb2 f9 pa1 ba br2 pointer b--black ` + ourOpt}>
+            className={`pl4 mt4 mb4 f9 pointer b--black ` + ourOpt}>
             {editInfoText}
           </button>
-          <button className={`ml3 mt2 mb2 f9 pa1 ba br2 b--black ` + localOpt}>
+          <button className={`pl4 mt4 mb4 f9 b--black ` + localOpt}>
             Share Contact Info
           </button>
           <button
             className={
-              `ml3 mt2 mb2 f9 pa1 ba red2 br2 b--red2 pointer ` + adminOpt
+              `pl4 mt4 mb4 f9 red2 b--red2 pointer ` + adminOpt
             }
             onClick={this.removeFromGroup}>
             {(

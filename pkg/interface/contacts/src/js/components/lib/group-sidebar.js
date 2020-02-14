@@ -89,19 +89,15 @@ export class GroupSidebar extends Component {
         relative overflow-hidden ` + activeClasses}>
         {/*TODO Add invite items */}
         <a className="db dn-m dn-l dn-xl f8 pb6 pl3" href="/">⟵ Landscape</a>
-        <div className="overflow-y-scroll h-100">
-          <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Your Root Identity</h2>
+        <div className="overflow-auto pb8 h-100">
+          <Link to="/~contacts/new" className="dib">
+            <p className="f9 pt4 pl4 green2 bn">Create Group</p>
+          </Link>
+          <h2 className="f9 pt6 pr4 pb2 pl4 gray2 c-default">Root Identity</h2>
           {rootIdentity}
           {inviteItems}
-          <h2 className="f9 pt3 pr4 pb2 pl4 gray2 c-default">Your Groups</h2>
+          <h2 className="f9 pt3 pr4 pb2 pl4 gray2 c-default">Groups</h2>
           {groupItems}
-        </div>
-        <div
-          className="bg-white z2 dt bt b--gray4 absolute w-100"
-          style={{ bottom: 0, height: 48 }}>
-          <Link to="/~contacts/new" className="dtc v-mid">
-            <p className="f9 pl4 black bn">Create New Group</p>
-          </Link>
         </div>
       </div>
     );
