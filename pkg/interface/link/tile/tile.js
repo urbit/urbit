@@ -6,7 +6,20 @@ import _ from 'lodash';
 export default class LinkTile extends Component {
 
   render() {
-    const { props } = this;
+    const unseenCount = this.props.data.unseen || 0;
+
+    let displayUnseen = unseenCount <= 0
+      ? null
+      : <p
+          className="absolute green2"
+          style={{
+            bottom: 6,
+            fontWeight: 400,
+            fontSize: 12,
+            lineHeight: "20px"
+          }}>
+          {unseenCount > 99 ? "99+" : unseenCount}
+        </p>;
 
     return (
       <div className="w-100 h-100 relative ba b--black bg-white">
@@ -23,6 +36,7 @@ export default class LinkTile extends Component {
             width={48}
             height={48}
           />
+          {displayUnseen}
         </a>
       </div>
     );
@@ -30,4 +44,4 @@ export default class LinkTile extends Component {
 
 }
 
-window['link-server-hookTile'] = LinkTile;
+window['link-viewTile'] = LinkTile;
