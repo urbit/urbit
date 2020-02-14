@@ -38,6 +38,7 @@
       %watch-as
       %poke
       %leave
+      %missing
   ==
 --
 |%
@@ -616,7 +617,7 @@
             ::  default is do nothing; should only hit if cleared queue
             ::  in +load 3-to-4
             ::
-            (~(put to *(qeu remote-request)) %leave)
+            (~(put to *(qeu remote-request)) %missing)
           ~|  [full-wire=full-wire hen=hen stand=stand outs=outstanding.agents.state]
           =^  rr  stand  ~(get to stand)
           [rr (~(put by outstanding.agents.state) [full-wire hen] stand)]
@@ -635,6 +636,7 @@
         %watch     (mo-give %unto %watch-ack err)
         %poke      (mo-give %unto %poke-ack err)
         %leave     mo-core
+        %missing   (mo-give:(mo-give %unto %watch-ack err) %unto %poke-ack err)
       ==
     ::
         [%a %boon *]
