@@ -22,7 +22,7 @@ export class Settings extends Component {
         <div className="flex-column">
           <p className="f9 mt3 lh-copy db">Delete Notebook</p>
           <p className="f9 gray2 db mb4">
-            Permenantly delete this notebook. (All current members will no longer see this notebook)
+            Permanently delete this notebook. (All current members will no longer see this notebook)
           </p>
           <button className="b--red2 red2 pointer dib f9 ba pa2"
             onClick={this.deleteNotebook}>

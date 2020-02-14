@@ -722,6 +722,8 @@
   |=  who=@p
   ?.  (allowed who %read u.book)
     [%give %kick [/notebook/[u.book]]~ `who]~
+  ?:  ?=(%remove -.upd)
+    ~
   =/  uid  (sham %publish who u.book eny.bol)
   =/  inv=invite
     :*  our.bol  %publish  /notebook/[u.book]  who

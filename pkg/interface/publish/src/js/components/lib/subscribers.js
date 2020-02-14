@@ -1,9 +1,36 @@
 import React, { Component } from 'react';
-import { SubscriberItem } from './subscriber-item';
+import { Dropdown } from './dropdown';
 
 export class Subscribers extends Component {
   constructor(props){
     super(props);
+    this.redirect = this.redirect.bind(this);
+    this.addUser = this.addUser.bind(this);
+    this.removeUser = this.removeUser.bind(this);
+  }
+
+  addUser(who, path) {
+    let action = {
+      add: {
+        members: [who],
+        path: path,
+      }
+    }
+    window.api.action("group-store", "group-action", action);
+  }
+
+  removeUser(who, path) {
+    let action = {
+      remove: {
+        members: [who],
+        path: path,
+      }
+    }
+    window.api.action("group-store", "group-action", action);
+  }
+
+  redirect(url) {
+    window.location.href = url;
   }
 
   render() {
@@ -21,15 +48,33 @@ export class Subscribers extends Component {
       let withoutUs = new Set(writePerms.who)
       withoutUs.delete(window.ship);
       writers = Array.from(withoutUs).map((who, i) => {
+        let width = 0;
+        let options = [];
+        if (readPath === writePath) {
+          width = 258;
+          let url = `/~contacts${writePath}`;
+          options = [{
+            cls: "tl pointer",
+            txt: "Manage this group in the contacts view",
+            action: () => {this.redirect(url)}
+          }];
+        } else {
+          width = 157;
+          options = [{
+            cls: "tl pointer",
+            txt: "Demote to subscriber",
+            action: () => {this.removeUser(`~${who}`, writePath)}
+          }];
+        }
         return (
-          <SubscriberItem key={i}
-            readPath={readPath}
-            writePath={writePath}
-            who={`~${who}`}
-            readPerms={readPerms}
-            writePerms={writePerms}
-            section='participants'
-          />
+          <div className="flex justify-between" key={i}>
+            <div className="f9 mono mr2">{`~${who}`}</div>
+            <Dropdown
+              options={options}
+              width={width}
+              buttonText={"Options"}
+            />
+          </div>
         )
       });
     }
@@ -43,32 +88,28 @@ export class Subscribers extends Component {
 
     let subscribers = null;
     if (readPath !== writePath) {
-      if (readPerms && readPerms.kind === 'white') {
-        let withoutUs = new Set(readPerms.who)
-        withoutUs.delete(window.ship);
-        subscribers = Array.from(withoutUs).map((who, i) => {
-          return (
-            <SubscriberItem key={i}
-              readPath={readPath}
-              writePath={writePath}
-              who={`~${who}`}
-              readPerms={readPerms}
-              writePerms={writePerms}
-              section='subscribers'
-            />
-          )
-        });
-      } else if (this.props.notebook.subscribers){
+      if (this.props.notebook.subscribers){
+        let width = 162;
         subscribers = this.props.notebook.subscribers.map((who, i) => {
+          let options = [
+            { cls: "tl mb2 pointer",
+              txt: "Promote to participant",
+              action: () => {this.addUser(who, writePath)}
+            },
+            { cls: "tl red2 pointer",
+              txt: "Ban",
+              action: () => {this.addUser(who, readPath)}
+            },
+          ];
           return (
-            <SubscriberItem key={i}
-              readPath={readPath}
-              writePath={writePath}
-              who={who}
-              readPerms={readPerms}
-              writePerms={writePerms}
-              section='subscribers'
-            />
+            <div className="flex justify-between" key={i}>
+              <div className="f9 mono mr2">{who}</div>
+              <Dropdown
+                options={options}
+                width={width}
+                buttonText={"Options"}
+              />
+            </div>
           )
         });
       }
@@ -90,16 +131,22 @@ export class Subscribers extends Component {
 
     let bannedContainer = null;
     if (readPerms && readPerms.kind === 'black') {
+      let width = 72;
       let banned = Array.from(readPerms.who).map((who, i) => {
+        let options = [{
+          cls: "tl red2 pointer",
+          txt: "Unban",
+          action: () => {this.removeUser(`~${who}`, readPath)}
+        }];
         return (
-          <SubscriberItem key={i}
-            readPath={readPath}
-            writePath={writePath}
-            who={`~${who}`}
-            readPerms={readPerms}
-            writePerms={writePerms}
-            section='banned'
-          />
+          <div className="flex justify-between" key={i}>
+            <div className="f9 mono mr2">{`~${who}`}</div>
+            <Dropdown
+              options={options}
+              width={width}
+              buttonText={"Options"}
+            />
+          </div>
         )
       });
       if (banned.length === 0) {
