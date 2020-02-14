@@ -41,7 +41,7 @@
 ::  scry-only paths:
 ::
 ::      (set url)
-::    /seen//some-path                      the ones we've seen here
+::    /unseen/some-path                     the ones we haven't seen here yet
 ::
 ::      ?
 ::    /seen/wood-url/some-path              have we seen this here
@@ -153,10 +153,10 @@
       ``noun+!>((get-discussions:do t.t.path))
     ::
         [%x %seen @ ^]
-      ``noun+!>((is-seen t.t.path))
+      ``noun+!>((is-seen:do t.t.path))
     ::
-        [%x %unseen *]
-      ``noun+!>((get-unseen t.t.path))
+        [%x %unseen ^]
+      ``noun+!>((get-unseen:do t.t.path))
     ==
   ::
   ++  on-watch
