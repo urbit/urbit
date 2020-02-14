@@ -1,41 +1,39 @@
 import React, { Component } from 'react';
 
-//TODO Settings for owned notebooks
 export class Settings extends Component {
-  render() {
-    return (
-      <div>
-        <div className="flex flex-column mb8">
-          <label for="name" className="f9">Share</label>
-          <small id="name-desc" className="f9 mb2 gray3">Share a link to this notebook</small>
-          <div className="flex">
-            <input style={{flex: "1"}} id="name" placeholder="dopzod.arvo.network/4f5hsS" className="input-reset bt bl bb pa3 gray4" type="text" aria-describedby="name-desc"/>
-            <button className="bt br bb pa3 b--gray4">Copy</button>
-          </div>
-        </div>
+  constructor(props){
+    super(props)
+    this.deleteNotebook = this.deleteNotebook.bind(this);
+  }
 
-        <div className="flex flex-column mb8">
-          <label for="name" className="f9">Rename</label>
-          <small id="name-desc" className="f9 mb2 gray3">Change the name of this notebook</small>
-          <div className="flex">
-            <input style={{flex: "1"}} id="name" placeholder="Notebook Name" className="input-reset ba pa3 gray4" type="text" aria-describedby="name-desc"/>
-          </div>
-        </div>
-        <div className="flex flex-column">
-          <label for="name" className="f9">Export</label>
-          <small id="name-desc" className="f9 mb2 gray3">Change the name of this notebook</small>
-          <button className="bg-black white pa3">
-            <div className="flex justify-between">
-              <div>Export Notebook</div>
-              <div>↓</div>
-            </div>
+  deleteNotebook(){
+    let action = {
+      "del-book": {
+        book: this.props.book
+      }
+    }
+    window.api.action("publish", "publish-action", action);
+    this.props.history.push('/~publish');
+  }
+
+  render() {
+    if (this.props.host.slice(1) === window.ship) {
+      return (
+        <div className="flex-column">
+          <p className="f9 mt3 lh-copy db">Delete Notebook</p>
+          <p className="f9 gray2 db mb4">
+            Permanently delete this notebook. (All current members will no longer see this notebook)
+          </p>
+          <button className="b--red2 red2 pointer dib f9 ba pa2"
+            onClick={this.deleteNotebook}>
+            Delete this notebook
           </button>
         </div>
 
-
-      </div>
-
-    )
+      )
+    } else {
+      return null;
+    }
   }
 }
 

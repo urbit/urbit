@@ -5,10 +5,7 @@ import { Comments } from './comments';
 import { NoteNavigation } from './note-navigation';
 import moment from 'moment';
 import ReactMarkdown from 'react-markdown';
-//TODO ask for note if we don't have it
-//TODO initialise note if no state
 
-//TODO if comments are disabled on the notebook, don't render comments
 export class Note extends Component {
   constructor(props){
     super(props);
@@ -38,6 +35,14 @@ export class Note extends Component {
   }
 
   componentWillMount() {
+    let readAction = {
+      read: {
+        who: this.props.ship.slice(1),
+        book: this.props.book,
+        note: this.props.note,
+      }
+    }
+    window.api.action("publish", "publish-action", readAction);
     window.api.fetchNote(this.props.ship, this.props.book, this.props.note);
   }
 
@@ -189,7 +194,7 @@ export class Note extends Component {
               ship={props.ship}
               book={props.book}
             />
-            <Comments
+            <Comments enabled={notebook.comments}
               ship={props.ship}
               book={props.book}
               note={props.note}

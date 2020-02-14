@@ -6,8 +6,6 @@ import { Subscribers } from './subscribers';
 import { Settings } from './settings';
 import Sidebar from './sidebar';
 
-//TODO subcomponent logic for subscribers, settings
-
 export class Notebook extends Component {
   constructor(props){
     super(props);
@@ -46,13 +44,15 @@ export class Notebook extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (!this.props.notebooks[this.props.ship][this.props.book].notes) {
+    let notebook = this.props.notebooks[this.props.ship][this.props.book];
+    if (!notebook.subscribers) {
       window.api.fetchNotebook(this.props.ship, this.props.book);
     }
   }
 
   componentDidMount() {
-    if (this.props.notebooks[this.props.ship][this.props.book].notes) {
+    let notebook = this.props.notebooks[this.props.ship][this.props.book];
+    if (notebook.notes) {
       this.onScroll();
     }
   }
@@ -82,9 +82,9 @@ export class Notebook extends Component {
 
     let tabStyles = {
       posts: "bb b--gray4 gray2 pv4 ph2",
-      about: "bb b--gray4 gray2 pv4 ph2"
-      //      subscribers: "bb b--gray4 gray2 pv4 ph2",
-      //      settings: "bb b--gray4 pr2 gray2 pv4 ph2",
+      about: "bb b--gray4 gray2 pv4 ph2",
+      subscribers: "bb b--gray4 gray2 pv4 ph2",
+      settings: "bb b--gray4 pr2 gray2 pv4 ph2",
     };
     tabStyles[props.view] = "bb b--black black pv4 ph2";
 
@@ -104,12 +104,22 @@ export class Notebook extends Component {
       case "about":
         inner = <p className="f8 lh-solid">{notebook.about}</p>
         break;
-//      case "subscribers":
-//        inner = <Subscribers/>
-//        break;
-//      case "settings":
-//        inner = <Settings/>
-//        break;
+      case "subscribers":
+        inner = <Subscribers
+                  host={this.props.ship}
+                  book={this.props.book}
+                  notebook={notebook}
+                  permissions={this.props.permissions}
+                  groups={this.props.groups}/>
+        break;
+      case "settings":
+        inner = <Settings
+                  host={this.props.ship}
+                  book={this.props.book}
+                  notebook={notebook}
+                  groups={this.props.groups}
+                  history={this.props.history}/>
+        break;
       default:
         break;
     }
@@ -147,6 +157,18 @@ export class Notebook extends Component {
              className="NotebookButton bg-white black ba b--black ml3">
            Unsubscribe
          </button>
+
+    let subsComponent = (this.props.ship.slice(1) !== window.ship)
+      ? null
+      : <Link to={subs} className={tabStyles.subscribers}>
+          Subscribers
+        </Link>;
+
+    let settingsComponent = (this.props.ship.slice(1) !== window.ship)
+      ? null
+      : <Link to={settings} className={tabStyles.settings}>
+          Settings
+        </Link>;
 
     return (
       <div
@@ -200,8 +222,9 @@ export class Notebook extends Component {
             <Link to={about} className={tabStyles.about}>
               About
             </Link>
-            <div
-              className="bb b--gray4 gray2 pv4 ph2"
+            {subsComponent}
+            {settingsComponent}
+            <div className="bb b--gray4 gray2 pv4 ph2"
               style={{ flexGrow: 1 }}></div>
           </div>
 

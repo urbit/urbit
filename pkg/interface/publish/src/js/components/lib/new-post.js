@@ -98,7 +98,7 @@ export class NewPost extends Component {
             popout={props.popout}
           />
           <button
-            className="v-mid w-100 mw7 tl pl4 h1"
+            className={"v-mid w-100 mw7 tl h1 pl4"}
             disabled={!state.submit}
             style={submitStyle}
             onClick={this.postSubmit}>

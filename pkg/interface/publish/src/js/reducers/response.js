@@ -64,6 +64,14 @@ export class ResponseReducer {
       if (state.notebooks[json.host][json.notebook]) {
         state.notebooks[json.host][json.notebook]["notes-by-date"] =
           json.data.notebook["notes-by-date"];
+        state.notebooks[json.host][json.notebook].subscribers =
+          json.data.notebook.subscribers;
+        state.notebooks[json.host][json.notebook].comments =
+          json.data.notebook.comments;
+        state.notebooks[json.host][json.notebook]["subscribers-group-path"] =
+          json.data.notebook["subscribers-group-path"];
+        state.notebooks[json.host][json.notebook]["writers-group-path"] =
+          json.data.notebook["writers-group-path"];
         if (state.notebooks[json.host][json.notebook].notes) {
           for (var key in json.data.notebook.notes) {
             let oldNote = state.notebooks[json.host][json.notebook].notes[key];

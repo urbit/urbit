@@ -1,6 +1,7 @@
 ::
 /-  *publish,
     *group-store,
+    *group-hook,
     *permission-hook,
     *permission-group-hook,
     *permission-store,
@@ -295,7 +296,9 @@
         [~ this]
       =/  who=@p     (slav %p i.t.wir)
       =/  book=@tas  i.t.t.wir
-      [~ this(subs (~(del by subs) who book))]
+      =/  del  [%del-book who book]
+      :_  this(subs (~(del by subs) who book))
+      [%give %fact [/primary]~ %publish-primary-delta !>(del)]~
     ::  Resubscribe to any subscription we get kicked from. The case of actually
     ::  getting banned from a notebook is handled by %watch-ack
     ::
@@ -703,49 +706,31 @@
 ++  handle-permission-update
   |=  upd=permission-update
   ^-  (quip card _state)
-  ?+  -.upd
+  ?.  ?=(?(%remove %add) -.upd)
     [~ state]
-  ::
-      %remove
-    =/  book=(unit @tas)
-      %+  roll  ~(tap by books)
-      |=  [[nom=@tas book=notebook] out=(unit @tas)]
-      ?:  =(path.upd subscribers.book)
-        `nom
-      out
-    ?~  book
-      [~ state]
-    :_  state
-    %-  zing
-    %+  turn  ~(tap in who.upd)
-    |=  who=@p
-    ?:  (allowed who %read u.book)
-      ~
+  =/  book=(unit @tas)
+    %+  roll  ~(tap by books)
+    |=  [[nom=@tas book=notebook] out=(unit @tas)]
+    ?:  =(path.upd subscribers.book)
+      `nom
+    out
+  ?~  book
+    [~ state]
+  :_  state
+  %-  zing
+  %+  turn  ~(tap in who.upd)
+  |=  who=@p
+  ?.  (allowed who %read u.book)
     [%give %kick [/notebook/[u.book]]~ `who]~
-  ::
-      %add
-    =/  book=(unit @tas)
-      %+  roll  ~(tap by books)
-      |=  [[nom=@tas book=notebook] out=(unit @tas)]
-      ?:  =(path.upd subscribers.book)
-        `nom
-      out
-    ?~  book
-      [~ state]
-    :_  state
-    %-  zing
-    %+  turn  ~(tap in who.upd)
-    |=  who=@p
-    ?.  (allowed who %read u.book)
-      ~
-    =/  uid  (sham %publish who u.book eny.bol)
-    =/  inv=invite
-      :*  our.bol  %publish  /notebook/[u.book]  who
-          (crip "invite for notebook {<our.bol>}/{(trip u.book)}")
-      ==
-    =/  act=invite-action  [%invite /publish uid inv]
-    [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]~
-  ==
+  ?:  ?=(%remove -.upd)
+    ~
+  =/  uid  (sham %publish who u.book eny.bol)
+  =/  inv=invite
+    :*  our.bol  %publish  /notebook/[u.book]  who
+        (crip "invite for notebook {<our.bol>}/{(trip u.book)}")
+    ==
+  =/  act=invite-action  [%invite /publish uid inv]
+  [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]~
 ::
 ++  handle-invite-update
   |=  upd=invite-update
@@ -870,6 +855,11 @@
   ^-  card
   [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
 ::
+++  group-hook-poke
+  |=  act=group-hook-action
+  ^-  card
+  [%pass / %agent [our.bol %group-hook] %poke %group-hook-action !>(act)]
+::
 ++  contact-view-create
   |=  act=[%create path (set ship)]
   ^-  card
@@ -989,8 +979,9 @@
   %-  zing
   :~  [(group-poke [%bundle write-path])]~
       [(group-poke [%bundle read-path])]~
+      [(group-hook-poke [%add our.bol write-path])]~
+      [(group-hook-poke [%add our.bol read-path])]~
       [(group-poke [%add (sy our.bol ~) write-path])]~
-      [(group-poke [%add (sy our.bol ~) read-path])]~
       (create-security read-path write-path %journal)
       [(perm-hook-poke [%add-owned write-path write-path])]~
       [(perm-hook-poke [%add-owned read-path read-path])]~
@@ -1148,11 +1139,22 @@
       %del-book
     ?.  (team:title our.bol src.bol)
       ~|("action not permitted" !!)
-    ?.  (~(has by books) book.act)
+    =/  book=(unit notebook)  (~(get by books) book.act)
+    ?~  book
       ~|("nonexistent notebook {<book.act>}" !!)
     =/  pax=path  /app/publish/notebooks/[book.act]
-    :_  state
-    [(delete-dir pax)]~
+    ?>  ?=(^ writers.u.book)
+    ?>  ?=(^ subscribers.u.book)
+    =/  cards=(list card)
+      :~  (delete-dir pax)
+          (perm-hook-poke [%remove writers.u.book])
+          (perm-hook-poke [%remove subscribers.u.book])
+      ==
+    =?  cards  =('~' i.writers.u.book)
+      [(group-poke [%unbundle writers.u.book]) cards]
+    =?  cards  =('~' i.subscribers.u.book)
+      [(group-poke [%unbundle subscribers.u.book]) cards]
+    [cards state]
   ::
       %del-note
     ?:  &(=(src.bol our.bol) !=(our.bol who.act))
@@ -1279,7 +1281,17 @@
   ?-    -.del
       %add-book
     =.  tile-num  (add tile-num (get-unread data.del))
-    (emit-updates-and-state host.del book.del data.del del sty)
+    ?:  =(our.bol host.del)
+      (emit-updates-and-state host.del book.del data.del del sty)
+    =/  write-pax  writers.data.del
+    =/  read-pax   subscribers.data.del
+    =^  cards  state
+      (emit-updates-and-state host.del book.del data.del del sty)
+    :_  state
+    :*  (group-hook-poke [%add host.del write-pax])
+        (group-hook-poke [%add host.del read-pax])
+        cards
+    ==
   ::
       %add-note
     =/  book=(unit notebook)
@@ -1347,14 +1359,14 @@
     (emit-updates-and-state host.del book.del u.book del sty)
   ::
       %del-book
-    =.  tile-num
-      %+  sub  tile-num
-      (get-unread (~(got by books) book.del))
     ?:  =(our.bol host.del)
       :_  sty(books (~(del by books.sty) book.del))
       :~  [%give %fact [/notebook/[book.del]]~ %publish-notebook-delta !>(del)]
           [%give %fact [/primary]~ %publish-primary-delta !>(del)]
       ==
+    =.  tile-num
+      %+  sub  tile-num
+      (get-unread (~(got by subs) host.del book.del))
     =/  jon=json
       (frond:enjs:format %notifications (numb:enjs:format tile-num.sty))
     :_  sty(subs (~(del by subs.sty) host.del book.del))
