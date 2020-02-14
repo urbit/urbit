@@ -13,7 +13,7 @@ export class ShareSheet extends Component {
 
     return (
       <div>
-        <p className="pt4 pb2 pl3 pr3 f8 gray2 f9">Share Your Profile</p>
+        <p className="pt4 pb2 pl4 pr4 f8 gray2 f9">Share Your Profile</p>
         <ContactItem
           key={props.ship}
           ship={props.ship}
@@ -22,11 +22,11 @@ export class ShareSheet extends Component {
           path={props.path}
           selected={props.selected}
           share={true} />
-        <p className="pt2 pb3 pl3 pr3 f9">
+        <p className="pt2 pb3 pl4 pr4 f9">
            Your personal information is hidden to others in this group
            by default.
         </p>
-        <p className="pl3 pr3 f9">
+        <p className="pl4 pr4 f9">
           Share whenever you are ready, or edit its contents for this group.
         </p>
       </div>

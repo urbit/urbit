@@ -24,7 +24,7 @@ export class EditElement extends Component {
       : { resize: "none", height: 40, paddingTop: 10 }
 
     return (
-      <div>
+      <div className="pb4">
         <p className="f9 gray2">{props.title}</p>
           <div className="w-100 flex">
             <textarea

@@ -52,7 +52,13 @@ export class Root extends Component {
                 contacts={contacts}
                 groups={groups}
                 invites={invites}>
-                <div className="h-100 w-100 overflow-x-hidden bg-white dn db-ns"></div>
+                <div className="h-100 w-100 overflow-x-hidden bg-white dn db-ns">
+                  <div className="pl3 pr3 pt2 dt pb3 w-100 h-100">
+                    <p className="f9 pt3 gray2 w-100 h-100 dtc v-mid tc">
+                      Select a group to begin.
+                    </p>
+                  </div>
+                </div>
               </Skeleton>
             );
           }} />

@@ -66,23 +66,20 @@ export class ContactSidebar extends Component {
         <div className="pt3 pb6 pl3 f8 db dn-m dn-l dn-xl">
           <Link to="/~contacts/">{"⟵ All Groups"}</Link>
         </div>
-        <div className="overflow-y-scroll h-100">
+        <div className="overflow-auto h-100">
+          <Link
+            to={"/~contacts/add" + props.path}
+            className={((this.props.path.includes(window.ship))
+              ? "dib"
+              : "dn")}>
+            <p className="f9 pl4 pt4 gray2 bn">Invite</p>
+          </Link>
           {shareSheet}
           <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Members</h2>
           {contactItems}
           {groupItems}
         </div>
-        <div
-          className={"bg-white z2 bt b--gray4 absolute w-100 " +
-          ((this.props.path.includes(window.ship))
-            ? "dt"
-            : "dn")}
-          style={{ bottom: 0, height: 48 }}>
-          <Link to={"/~contacts/add" + props.path} className="dtc v-mid">
-            <p className="f9 pl4 black bn">Add New Member to Group</p>
-          </Link>
         </div>
-      </div>
     );
   }
 }
