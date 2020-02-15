@@ -48,7 +48,7 @@ export class LinkItem extends Component {
     let hostname = URLparser.exec(props.url);
 
     const seenState = props.seen
-      ? "grey2"
+      ? "gray2"
       : "green2 pointer";
     const seenAction = props.seen
       ? ()=>{}
