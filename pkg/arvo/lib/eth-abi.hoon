@@ -38,41 +38,73 @@
       entries=(list entry-raw)
   ==
 +$  entry-raw
-  $%  [%function =function]
-      [%event =event]
+  $%  [%function p=function-raw]
+      [%event p=event-raw]
   ==
 +$  function-raw
   $:  name=@t
-      inputs=(list field)
-      pay=?
+      inputs=(list @tas)
+      outputs=(list @tas)
       mut=?
-      outputs=(list field)
+      pay=?
   ==
 +$  event-raw
   $:  name=@t
       inputs=(list event-input)
   ==
-+$  event-input  [=field indexed=?]
-+$  field  [name=@t type=@t]
++$  event-input  [type=@t indexed=?]
 ::
-++  separate-indexed-inputs
-  |=  pts=(list value-type)
-  ^-  (pair (list value-type) (list value-type))
-  (skid pts |=(value-type indexed))
-::
-++  parse-event-types
-  |=  entries=(list entry)
-  ^-  events
-  %-  molt
-  |-  ^-  (list (pair @ux event-type))
-  ?~  entries  ~
-  =/  [dxt=(list value-type) nxt=(list value-type)]
-    (separate-indexed-inputs inputs.i.entries)
-  :-  :-  %+  get-hash  name.i.entries
-      %+  turn  inputs.i.entries  |=(=value-type type.value-type)
-      [name.i.entries dxt nxt]
-  $(entries t.entries)
-::
+++  parse-abi
+  |=  jon=json
+    =,  dejs:format
+    ^-  (list entry-raw)
+    %.  jon  %-  ar
+    |=  jan=json
+    ?>  ?=([$o *] jan)
+    =/  typ  (so (~(got by p.jan) 'type'))
+    %.  jan
+    ?+  typ  !!
+      %function
+    |=  jun=json
+    :-  %function
+    ^-  function-raw
+    %.  jun
+    %-  ot
+    :~
+      :-  %name  so
+      :-  %inputs
+        %-  ar
+        |=  jyn=json
+        ?>  ?=([$o *] jyn)
+        ^-  @tas
+        (so (~(got by p.jyn) 'type'))
+      :-  %outputs
+        %-  ar
+        |=  jyn=json
+        ?>  ?=([$o *] jyn)
+        ^-  @tas
+        (so:dejs (~(got by p.jyn) 'type'))
+      :-  %constant  |=  jen=json  !(bo jen)
+      :-  %payable  bo
+    ==
+      %event
+    |=  jun=json
+    :-  %event
+    ^-  event-raw
+    %.  jun
+    %-  ot
+    :~
+      :-  %name  so
+      :-  %inputs
+        %-  ar
+        %-  ot
+        :~
+          [%type so]
+          [%indexed bo]
+        ==
+    ==
+    ==
+
 ++  get-sig
   |=  [name=@t inputs=(list @t)]
   ^-  cord
@@ -89,58 +121,12 @@
   =/  sig  (get-sig name inputs)
   (keccak-256:keccak:crypto (lent (trip sig)) sig)
 ::
-++  cord-to-entype
+++  parse-contract
   |=  jon=json
-  ^-  entry-type
-  =,  dejs:format
-  =/  typ  (so jon)
-  ?+  (crip (scag 3 (trip typ)))  ~&  [%unknown-abi-type typ]  !!
-    %fun  %function
-    %eve  %event
-  ==
-::
-++  to-value-type
-  =,  dejs:format
-  ^-  $-(json value-type)
-  %-  ou
-  :~
-    :-  %name  (un so)
-    :-  %type  (un so)
-    :-  %indexed  %+  uf  %|  bo
-  ==
-::
-++  parse-abi
-  |=  jon=json
-  ^-  contract
-  ::
+  ^-  contract-raw
   =,  dejs:format
   %.  jon  %-  ot
-  :~  :-  %contractName  so
-      :-  %abi  parse-entries
+  :~  :-  'contractName'  so
+      :-  %abi  parse-abi
   ==
-::
-++  parse-entries
-  |=  jon=json
-  ^-  (list entry)
-  =,  dejs:format
-  %.  jon  %-  ar
-  %-  ou
-  :~
-    :-  %name  (un so)
-    :-  %type  %-  un  cord-to-entype
-    :-  %inputs  %-  un  %-  ar  to-value-type
-    :-  %outputs  %+  uf  ~  %-  ar  to-value-type
-  ==
-::
-++  separate-abi
-  |=  entries=(list entry)
-  ^-  (pair (list entry) (list entry))
-  %+  skid  entries
-  |=  =entry
-  ^-  ?
-  ?.  =(type.entry %function)
-  ?.  =(type.entry %event)
-  ~&  [%unexpected-entry-type type.entry]  !!
-  %|
-  %&
 --
