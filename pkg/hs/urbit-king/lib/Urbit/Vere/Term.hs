@@ -29,12 +29,11 @@ import Urbit.King.API      (readPortsFile)
 import Urbit.King.App      (HasConfigDir(..))
 import Urbit.Vere.Term.API (Client(Client))
 
-import qualified Data.ByteString.Internal     as BS
-import qualified Data.ByteString.UTF8         as BS
-import qualified System.Console.Terminal.Size as TSize
-import qualified System.Console.Terminfo.Base as T
-import qualified Urbit.Vere.NounServ          as Serv
-import qualified Urbit.Vere.Term.API          as Term
+import qualified Data.ByteString.Internal as BS
+import qualified Data.ByteString.UTF8     as BS
+import qualified Urbit.Vere.NounServ      as Serv
+import qualified Urbit.Vere.Term.API      as Term
+import qualified Urbit.Vere.Term.Render   as T
 
 
 -- Types -----------------------------------------------------------------------
@@ -169,10 +168,10 @@ runTerminalClient pier = runRAcquire $ do
 -}
 localClient :: ∀e. HasLogFunc e
             => STM ()
-            -> RAcquire e (TSize.Window Word, Client)
+            -> RAcquire e (T.TSize, Client)
 localClient doneSignal = fst <$> mkRAcquire start stop
   where
-    start :: HasLogFunc e => RIO e ((TSize.Window Word, Client), Private)
+    start :: HasLogFunc e => RIO e ((T.TSize, Client), Private)
     start = do
       pTerminal     <- io $ T.setupTermFromEnv
       tsWriteQueue  <- newTQueueIO
@@ -199,12 +198,12 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                           , give = writeTQueue tsWriteQueue
                           }
 
-      tsize <- io $ TSize.size <&> fromMaybe (TSize.Window 80 24)
+      tsize <- io $ T.tsize
 
       pure ((tsize, client), Private{..})
 
     stop :: HasLogFunc e
-         => ((TSize.Window Word, Client), Private) -> RIO e ()
+         => ((T.TSize, Client), Private) -> RIO e ()
     stop ((_, Client{..}), Private{..}) = do
       -- Note that we don't `cancel pReaderThread` here. This is a deliberate
       -- decision because fdRead calls into a native function which the runtime
@@ -521,7 +520,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
     Terminal Driver
 -}
 term :: forall e. (HasPierConfig e, HasLogFunc e)
-     => (TSize.Window Word, Client)
+     => (T.TSize, Client)
      -> (STM ())
      -> KingId
      -> QueueEv
@@ -529,7 +528,7 @@ term :: forall e. (HasPierConfig e, HasLogFunc e)
 term (tsize, Client{..}) shutdownSTM king enqueueEv =
     (initialEvents, runTerm)
   where
-    TSize.Window wi hi = tsize
+    T.TSize wi hi = tsize
 
     initialEvents = [(initialBlew wi hi), initialHail]
 
