@@ -5,25 +5,39 @@
   $:  =incoming
       =outgoing
   ==
-+$  incoming  (map deal-id incoming-deal-state)
-+$  outgoing  (map path (map ship outgoing-deal-state))
-+$  incoming-deal-state
-  $:  =ship
++$  incoming
+  $:  receptive=?
+      price-rate=@ud  ::  wei per byte per month
+      pending=(map ship [date=@da =deal])
+      storing=(map ship deal-state)
+  ==
++$  outgoing
+  $:  pending=(map ship [date=@da =deal])
+      storing=(map path (map ship deal-state))
+  ==
++$  deal-state
+  $:  =deal-id
       =deal
+      start-date=@da
+      end-date=@da
       =contract-state
   ==
 +$  contract-state
   $%  [%proposed ~]
-      [%ongoing file-data=octs]
+      [%live file-data=octs]
       [%complete ~]
   ==
-+$  outgoing-deal-state
-  %-  list
-  $:  challenge=@ux
-      response=@ux
-  ==
 +$  poke
-  $%  [%propose-deal =deal]
+  $%  [%web =web-poke]
+      [%peer =agent-poke]
+  ==
++$  web-poke
+  $%  [%propose-deal =ship =web-pre-deal]
+      [%accept-deal =deal-id]
+      [%reject-deal =deal-id]
+  ==
++$  peer-poke
+  $%  [%propose-deal =ship =deal]
       [%accept-deal =deal-id]
       [%reject-deal =deal-id]
   ==
@@ -34,11 +48,33 @@
       wei-per-week=@ud
       wei-insurance=@ud
   ==
++$  web-pre-deal
+  $:  =path
+      weeks=@ud
+      wei-per-week=@ud
+      wei-insurance=@ud
+  ==
 +$  deal-id  @uw
 +$  fact
-  $%  [%challenge-submitted nonce=@ux]
-      [%response-submitted hash=@ux]
-      [%challenge-failed ~]
+  $%  [%contract =contract-fact]
+      [%peer =agent-fact]
+      [%web =web-fact]
+  ==
++$  contract-fact
+  $:  eth-address=@ux
+      =deal-id
+      $%  [%contract-started =deal-id eth-address=@ux]  ::  TODO other data?
+          [%hash-posted =deal-id hash=@u]
+          [%contract-expired =deal-id eth-address=@ux]
+  ==  ==
++$  peer-fact
+  $%  [%download =deal-id data-hash=@uw =octs]
+  ==
++$  web-fact
+  $%  [%incoming-live deals=(map ship deal-state)]
+      [%incoming-pending pending=(map ship [date=@da =deal])]
+      [%outgoing-live deals=(map path (map ship deal-state))]
+      [%outgoing-pending pending=(map ship [date=@da =deal])]
   ==
 --
 %-  agent:dbug
@@ -57,6 +93,9 @@
       %handle-http-request
     ?>  (team:title our.bol src.bol)
     =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
+    !!
+  ::
+      %request-deal
     !!
   ==
 ++  on-watch
