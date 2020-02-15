@@ -56,14 +56,14 @@
 ::
 ++  parse-abi
   |=  jon=json
-    =,  dejs:format
-    ^-  (list entry-raw)
-    %.  jon  %-  ar
-    |=  jan=json
-    ?>  ?=([$o *] jan)
-    =/  typ  (so (~(got by p.jan) 'type'))
-    %.  jan
-    ?+  typ  !!
+  =,  dejs:format
+  ^-  (list entry-raw)
+  %.  jon  %-  ar
+  |=  jan=json
+  ?>  ?=([$o *] jan)
+  =/  typ  (so (~(got by p.jan) 'type'))
+  %.  jan
+  ?+    typ  !!
       %function
     |=  jun=json
     :-  %function
@@ -71,39 +71,38 @@
     %.  jun
     %-  ot
     :~
-      :-  %name  so
+      [%name so]
       :-  %inputs
-        %-  ar
-        |=  jyn=json
-        ?>  ?=([$o *] jyn)
-        ^-  @tas
-        (so (~(got by p.jyn) 'type'))
+      %-  ar
+      |=  jyn=json
+      ?>  ?=([$o *] jyn)
+      ^-  @tas
+      (so (~(got by p.jyn) 'type'))
       :-  %outputs
-        %-  ar
-        |=  jyn=json
-        ?>  ?=([$o *] jyn)
-        ^-  @tas
-        (so:dejs (~(got by p.jyn) 'type'))
-      :-  %constant  |=  jen=json  !(bo jen)
-      :-  %payable  bo
+      %-  ar
+      |=  jyn=json
+      ?>  ?=([$o *] jyn)
+      ^-  @tas
+      (so:dejs (~(got by p.jyn) 'type'))
+      [%constant  |=(jen=json !(bo jen))]
+      [%payable  bo]
     ==
+  ::
       %event
     |=  jun=json
     :-  %event
     ^-  event-raw
     %.  jun
     %-  ot
-    :~
-      :-  %name  so
-      :-  %inputs
+    :~  [%name so]
+        :-  %inputs
         %-  ar
         %-  ot
-        :~
-          [%type so]
-          [%indexed bo]
+        :~  [%type so]
+            [%indexed bo]
         ==
     ==
-    ==
+  ==
 
 ++  get-sig
   |=  [name=@t inputs=(list @t)]
