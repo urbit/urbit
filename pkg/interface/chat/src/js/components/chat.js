@@ -44,7 +44,10 @@ export class ChatScreen extends Component {
  componentDidUpdate(prevProps, prevState) {
    const { props, state } = this;
 
-   const station = `/${props.match.params.ship}/${props.match.params.station}`
+   const station =
+     props.match.params[1] === undefined ?
+     `/${props.match.params.ship}/${props.match.params.station}` :
+     `/${props.match.params[1]}/${props.match.params.ship}/${props.match.params.station}`;
 
    if (
      prevProps.match.params.station !== props.match.params.station ||
