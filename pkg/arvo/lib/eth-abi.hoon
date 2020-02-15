@@ -70,22 +70,24 @@
     ^-  function-raw
     %.  jun
     %-  ot
-    :~
-      [%name so]
-      :-  %inputs
-      %-  ar
-      |=  jyn=json
-      ?>  ?=([$o *] jyn)
-      ^-  @tas
-      (so (~(got by p.jyn) 'type'))
-      :-  %outputs
-      %-  ar
-      |=  jyn=json
-      ?>  ?=([$o *] jyn)
-      ^-  @tas
-      (so:dejs (~(got by p.jyn) 'type'))
-      [%constant  |=(jen=json !(bo jen))]
-      [%payable  bo]
+    :~  [%name so]
+    ::
+        :-  %inputs
+        %-  ar
+        |=  jyn=json
+        ?>  ?=([$o *] jyn)
+        ^-  @tas
+        (so (~(got by p.jyn) 'type'))
+    ::
+        :-  %outputs
+        %-  ar
+        |=  jyn=json
+        ?>  ?=([$o *] jyn)
+        ^-  @tas
+        (so:dejs (~(got by p.jyn) 'type'))
+    ::
+        [%constant |=(jen=json !(bo jen))]
+        [%payable bo]
     ==
   ::
       %event
@@ -95,6 +97,7 @@
     %.  jun
     %-  ot
     :~  [%name so]
+    ::
         :-  %inputs
         %-  ar
         %-  ot
