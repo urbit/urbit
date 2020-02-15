@@ -4,18 +4,21 @@
 ::  group-paths are expected to be an existing group path
 ::  resources are expected to correspond to existing app paths
 ::
+::  note: when scrying for metadata, to make the arguments safe in paths,
+::  encode group-path and app-path using (scot %t (spat group-path))
+::
 ::  +watch paths:
 ::  /all                                  assocations + updates
 ::  /updates                              just updates
 ::  /app-name/%app-name                   specific app's associations + updates
 ::
 ::  +peek paths:
-::  /associations                                          all associations
-::  /group-indices                                         all group indices
-::  /app-indices                                           all app indices
-::  /resource-indices                                      all resource indices
-::  /metadata/(spat group-path)/%app-name/(spat app-path)  specific metadatum
-::  /app-name/%app-name                                    associations for app
+::  /associations                                  all associations
+::  /group-indices                                 all group indices
+::  /app-indices                                   all app indices
+::  /resource-indices                              all resource indices
+::  /metadata/%group-path/%app-name/%app-path      specific metadatum
+::  /app-name/%app-name                            associations for app
 ::
 /-  *metadata-store
 /+  default-agent
@@ -89,18 +92,18 @@
     |=  =path
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
-        [%y %associations ~]      ``noun+!>(associations)
         [%y %group-indices ~]     ``noun+!>(group-indices)
         [%y %app-indices ~]       ``noun+!>(app-indices)
         [%y %resource-indices ~]  ``noun+!>(resource-indices)
-        [%x %metadata @ @ @ ~]
-      =/  =group-path  (stab i.t.t.path)
-      =/  =resource    [`@tas`i.t.t.t.path (stab i.t.t.t.t.path)]
-      ``noun+!>((~(got by associations) [group-path resource]))
-    ::
+        [%x %associations ~]      ``noun+!>(associations)
         [%x %app-name @ ~]
       =/  =app-name  i.t.t.path
       ``noun+!>((metadata-for-app:mc app-name))
+    ::
+        [%x %metadata @ @ @ ~]
+      =/  =group-path  (stab (slav %t i.t.t.path))
+      =/  =resource    [`@tas`i.t.t.t.path (stab (slav %t i.t.t.t.t.path))]
+      ``noun+!>((~(got by associations) [group-path resource]))
     ==
   ::
   ++  on-agent  on-agent:def
@@ -109,7 +112,6 @@
   --
 ::
 |_  =bowl:gall
-::
 ++  poke-metadata-action
   |=  act=metadata-action
   ^-  (quip card _state)
@@ -129,7 +131,6 @@
       ?.  (~(has by resource-indices) resource)
         [%add group-path resource metadata]
       [%update-metadata group-path resource metadata]
-
   %=  state
       associations
     (~(put by associations) [group-path resource] metadata)
