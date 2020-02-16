@@ -22,6 +22,15 @@
   ==
 +$  event-input  [type=@t indexed=?]
 ::
+++  parse-contract
+  |=  jon=json
+  ^-  contract-raw
+  =,  dejs:format
+  %.  jon  %-  ot
+  :~  ['contractName' so]
+      [%abi parse-abi]
+  ==
+::
 ++  parse-abi
   |=  jon=json
   =,  dejs:format
@@ -78,13 +87,4 @@
   ^-  @ux
   =/  sig  (get-selector name inputs)
   (keccak-256:keccak:crypto (met 3 sig) sig)
-::
-++  parse-contract
-  |=  jon=json
-  ^-  contract-raw
-  =,  dejs:format
-  %.  jon  %-  ot
-  :~  ['contractName' so]
-      [%abi parse-abi]
-  ==
 --
