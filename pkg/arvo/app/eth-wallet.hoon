@@ -33,6 +33,7 @@
 ::
 =*  card  card:agent:gall
 =*  eth  ethereum-types
+=*  eth-rpc  rpc:ethereum
 =>
 |%
 +$  state-0
@@ -48,9 +49,10 @@
       [%add-erc20 =contract-id =address:eth]
       [%set-key key-path=path]
   ==
+::  TODO: fill in
 ::
-+$  txn  _!!
-+$  txn-raw  @ux
++$  txn  ~
++$  txn-raw  ~
 +$  contract-id  @t
 --
 ::
@@ -93,11 +95,13 @@
         %send-erc20
       =/  [=address:eth balance=@ud]  (~(got by balances) contract-id.poke)
       ?>  (gte balance amount.poke)
-      ::  TODO: switch to spider?
+      ::  TODO: switch to spider
       ::  TODO: use real transaction types
       ::
-      =|  =txn
-      =|  =txn-raw
+      =/  txn  ~
+      =/  txn-raw  ~
+      =/  command  [node-url step-size=1 ~[txn-raw]]
+      ::
       =.  pending  (~(put by pending) contract-id.poke [txn txn-raw]^~^~)
       :_  this
       =/  =cage  [%noun !>([%send txn-raw])]
@@ -134,5 +138,19 @@
 ::
 |_  bol=bowl:gall
 ++  read-key
-  !!
+  ^-  [private-key=@ public-key=@ =address:eth]
+  ::  construct a cache-able subject
+  ::
+  =/  bek=beak  byk.bol(q %home)
+  =.  bol  *bowl:gall
+  ~+
+  =/  private-key  .^(@ %cx bek key-path)
+  :+  private-key
+    (pub-from-prv:key:ethereum private-key)
+  (address-from-prv:key:ethereum private-key)
+::
+++  sign-txn
+  |=  txn=transaction:eth-rpc
+  =/  pk  private-key:read-key
+  (crip '0' 'x' ((x-co:co 0) (sign-transaction:key:ethereum txn pk)))
 --
