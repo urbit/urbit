@@ -76,8 +76,9 @@
 ++  on-init
   ^-  (quip card _this)
   :_  this
-  :-  [pass / %arvo %e %connect [~ /'~eth-wallet'] %eth-wallet]
-  (launch-poke:do [%eth-wallet /primary '/~eth-wallet/js/tile.js'])
+  :~  [pass / %arvo %e %connect [~ /'~eth-wallet'] %eth-wallet]
+      (launch-poke:do [%eth-wallet /primary '/~eth-wallet/js/tile.js'])
+  ==
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -99,7 +100,6 @@
       [%'~eth-wallet' %js %index ~]   (js-response:gen script)
       [%'~eth-wallet' *]  (html-response:gen index)
     ==
-    !!
   ::
       %noun
     ~|  vase
@@ -282,4 +282,9 @@
   |=  =path
   ^-  card
   [%pass path %agent [our.bol %spider] %leave ~]
+::
+++  launch-poke
+  |=  act=[@tas path @t]
+  ^-  card
+   [%pass / %agent [our.bol %launch] %poke %launch-action !>(act)]
 --
