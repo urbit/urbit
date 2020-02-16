@@ -31,6 +31,7 @@
 ::      /~  ~
 ::  ==
 ::
+!:
 =*  card  card:agent:gall
 =*  eth  ethereum-types
 =*  eth-rpc  rpc:ethereum
@@ -92,6 +93,7 @@
     !!
   ::
       %noun
+    ~|  vase
     =+  !<(=poke vase)
     ?-    -.poke
         %send-erc20
@@ -112,7 +114,8 @@
         %add-erc20
       =/  =wire  /bal/[contract-id.poke]/(scot %ud next.pending)
       =.  next.pending  +(next.pending)
-      =.  bals.pending  (~(put by bals.balances) [contract-id address]:poke)
+      =.  bals.pending
+        (~(put by bals.pending) wire [contract-id address]:poke)
       :_  this
       (start-read-balance wire address.poke)
     ::
@@ -129,8 +132,6 @@
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
-  ?.  ?=([%xfer *] wire)
-    (on-agent:def wire sign)
   ?-  -.sign
       %poke-ack
     ?~  p.sign
@@ -167,7 +168,7 @@
     ::
         %thread-done
       ?>  ?=(^ wire)
-      ?+    i.wire  !!
+      ?+    i.wire  (on-agent:def wire sign)
           %xfer
         ?>  ?=(^ t.wire)
         =/  =contract-id  i.t.wire
@@ -240,19 +241,21 @@
     `func-name
     address
     ^-  dat=call-data:rpc:ethereum
-    [(get-selector:eth-abi name input-sol.func) args]
+    [(get-selector:eth-abi func-name input-sol.func) args]
   ==
 ::
 ++  start-read-balance
   |=  [=wire contract-address=address:eth]
   ^-  (list card)
-  %:  read-from-contract
-    wire
-    contract-address
-    erc20-abi
-    'balanceOf'
-    [%address (address-from-prv:eth-key fetch-key)]~
-  ==
+  ::
+  =/  args
+    :*  wire
+        contract-address
+        erc20-abi
+        'balanceOf'
+        [%address (address-from-prv:eth-key fetch-key)]~
+    ==
+  (read-from-contract args)
 ::
 ++  fetch-key  .^(@ %cx byk.bol(q %home) key-path)
 ::
