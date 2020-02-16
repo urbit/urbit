@@ -1,6 +1,25 @@
 =,  able:jael
 =,  ethereum-types
 |%
+
++$  contract
+  $:  name=@t
+      write-functions=(map @tas function)
+      read-functions=(map @tas function)
+      events=(map @ux event)
+  ==
++$  function
+  $:
+      input-sol=(list @tas)
+      input-hoon=(list @tas)
+      outputs=(list @tas)
+  ==
++$  event
+  $:
+      input-sol=(list event-input)
+      input-hoon=(list @tas)
+  ==
++$  event-input  [type=@t indexed=?]
 +$  contract-raw
   $:  name=@t
       entries=(list entry-raw)
@@ -20,16 +39,21 @@
   $:  name=@t
       inputs=(list event-input)
   ==
-+$  event-input  [type=@t indexed=?]
 ::
 ++  parse-contract
   |=  jon=json
-  ^-  contract-raw
-  =,  dejs:format
-  %.  jon  %-  ot
-  :~  ['contractName' so]
-      [%abi parse-abi]
-  ==
+  =/  =contract-raw
+    =,  dejs:format
+    %.  jon  %-  ot
+    :~  ['contractName' so]
+        [%abi parse-abi]
+    ==
+  ^-  contract
+  :^
+    name.contract-raw
+    (write-functions entries.contract-raw)
+    (read-functions entries.contract-raw)
+    (get-events entries.contract-raw)
 ::
 ++  parse-abi
   |=  jon=json
@@ -67,13 +91,89 @@
     %-  ot
     :~  [%name so]
     ::
-        :-  %inputs
-        %-  ar
-        %-  ot
-        :~  [%type so]
-            [%indexed bo]
-        ==
+      :-  %inputs
+      %-  ar
+      %-  ot
+      :~  [%type so]
+          [%indexed bo]
+      ==
     ==
+  ==
+::
+++  get-raw-functions
+  |=  abi=(list entry-raw)
+  ^-  (list function-raw)
+  %+  roll  abi
+  |=  [e=entry-raw fs=(list function-raw)]
+    ?.  ?=([$function *] e)  fs
+    [p.e fs]
+::
+++  get-raw-events
+  |=  abi=(list entry-raw)
+  ^-  (list event-raw)
+  %+  roll  abi
+  |=  [e=entry-raw fs=(list event-raw)]
+    ?.  ?=([$event *] e)  fs
+    [p.e fs]
+::
+++  get-events
+|=  abi=(list entry-raw)
+  ^-  (map @ux event)
+  %+  roll  (get-raw-events abi)
+  |=  [e=event-raw es=(map @ux event)]
+  %+  ~(put by es)
+    (get-hash name.e (turn inputs.e |=(e=event-input type.e)))
+  :-  inputs.e
+  %+  turn  inputs.e
+  |=  inpt=event-input
+  ?+  (crip (scag 3 (trip type.inpt)))
+  ~&  'unimplmented/unexpected solidity type'  !!
+    %add  %address
+    %boo  %bool
+    %int  %int
+    %uin  %uint
+    %byt  %bytes
+    %str  %string
+  ==
+::
+++  write-functions
+|=  abi=(list entry-raw)
+  ^-  (map @tas function)
+  %+  roll  (get-raw-functions abi)
+  |=  [f=function-raw fs=(map @tas function)]
+  ?.  mut.f  fs
+  %+  ~(put by fs)  name.f
+  :-  inputs.f  :_  outputs.f
+  %+  turn  inputs.f
+  |=  typ=@tas
+  ?+  (crip (scag 3 (trip typ)))
+    ~&  'unimplmented/unexpected solidity type'  !!
+    %add  %address
+    %boo  %bool
+    %int  %int
+    %uin  %uint
+    %byt  %bytes
+    %str  %string
+  ==
+::
+++  read-functions
+|=  abi=(list entry-raw)
+  ^-  (map @tas function)
+  %+  roll  (get-raw-functions abi)
+  |=  [f=function-raw fs=(map @tas function)]
+  ?.  !mut.f  fs
+  %+  ~(put by fs)  name.f
+  :-  inputs.f  :_  outputs.f
+  %+  turn  inputs.f
+  |=  typ=@tas
+  ?+  (crip (scag 3 (trip typ)))
+  ~&  'unimplmented/unexpected solidity type'  !!
+    %add  %address
+    %boo  %bool
+    %int  %int
+    %uin  %uint
+    %byt  %bytes
+    %str  %string
   ==
 ::
 ++  get-selector
