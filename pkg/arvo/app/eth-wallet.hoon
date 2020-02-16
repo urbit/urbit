@@ -24,7 +24,7 @@
 --
 ::
 =|  state-0
-=-  state  -
+=*  state  -
 =<
 %+  verb  |
 ^-  agent:gall
