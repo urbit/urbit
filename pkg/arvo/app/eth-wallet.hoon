@@ -76,7 +76,7 @@
 ++  on-init
   ^-  (quip card _this)
   :_  this
-  :~  [pass / %arvo %e %connect [~ /'~eth-wallet'] %eth-wallet]
+  :~  [%pass / %arvo %e %connect [~ /'~eth-wallet'] %eth-wallet]
       (launch-poke:do [%eth-wallet /primary '/~eth-wallet/js/tile.js'])
   ==
 ::
@@ -205,8 +205,21 @@
 ::
 ++  on-save   !>(state)
 ++  on-load   on-load:def
-++  on-watch  on-watch:def
-++  on-arvo   on-arvo:def
+++  on-watch
+  |=  =path
+  ^-  (quip card _this)
+  ?>  (team:title our.bol src.bol)
+  ?:  ?=([%http-response *] path)  [~ this]
+  ?.  =(/primary path)  (on-watch:def path)
+  [~ this]
+::
+++  on-arvo
+  |=  [=wire =sign-arvo]
+  ^-  (quip card _this)
+  ?.  ?=(%bound +<.sign-arvo)
+    (on-arvo:def wire sign-arvo)
+  [~ this]
+::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ++  on-fail   on-fail:def
