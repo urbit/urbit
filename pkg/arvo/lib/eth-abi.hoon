@@ -44,8 +44,8 @@
       ^-  @tas
       (so (~(got by p.jyn) 'type'))
     :~  [%name so]
-        [%inputs %-(ar extract-func-field)]
-        [%outputs %-(ar extract-func-field)]
+        [%inputs (ar extract-func-field)]
+        [%outputs (ar extract-func-field)]
         [%constant |=(jen=json !(bo jen))]
         [%payable bo]
     ==
@@ -84,7 +84,7 @@
   ^-  contract-raw
   =,  dejs:format
   %.  jon  %-  ot
-  :~  ['contractName'  so]
-      [ %abi  parse-abi]
+  :~  ['contractName' so]
+      [%abi parse-abi]
   ==
 --
