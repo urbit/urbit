@@ -84,7 +84,13 @@
 +*  this  .
     def   ~(. (default-agent this %|) bol)
 ::
-++  on-init  on-init:def
+++  on-init
+  ^-  (quip card _this)
+  :_  this
+  :~  [%pass /connect %arvo %e %connect `/'-store4d' dap.bol]
+      =+  [dap.bowl /tile '/-store4d/js/tile.js']
+      [%pass /launch %agnet [our.bowl %launch] %poke %launch-action !>(-)]
+  ==
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
@@ -93,6 +99,11 @@
       %handle-http-request
     ?>  (team:title our.bol src.bol)
     =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
+    :_  this  ::  TODO mutate state
+    %+  give-simple-payload:app  eyre-id
+    %+  require-authorization:app  inbound-request
+    |=  =inbound-request:eyre
+    ^-  simple-payload:http
     !!
   ::
       %request-deal
