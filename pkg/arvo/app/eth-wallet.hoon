@@ -6,30 +6,34 @@
 ::
 ::  TODO: uncomment for web interface
 ::
-::/=  index
-::  /^  $-(json manx)
-::  /:  /===/app/eth-wallet/index  /!noun/
-::::
-::/=  script
-::  /^  octs
-::  /;  as-octs:mimes:html
-::  /|  /:  /===/app/eth-wallet/js/index  /js/
-::      /~  ~
-::  ==
-::::
-::/=  style
-::  /^  octs
-::  /;  as-octs:mimes:html
-::  /|  /:  /===/app/eth-wallet/css/index  /css/
-::      /~  ~
-::  ==
-::::
-::/=  tile-js
-::  /^  octs
-::  /;  as-octs:mimes:html
-::  /|  /:  /===/app/eth-wallet/js/tile  /js/
-::      /~  ~
-::  ==
+/=  index
+  /^  octs
+  /;  as-octs:mimes:html
+  /:  /===/app/eth-wallet/index
+  /|  /html/
+      /~  ~
+  ==
+::
+/=  script
+  /^  octs
+  /;  as-octs:mimes:html
+  /|  /:  /===/app/eth-wallet/js/index  /js/
+      /~  ~
+  ==
+::
+/=  style
+  /^  octs
+  /;  as-octs:mimes:html
+  /|  /:  /===/app/eth-wallet/css/index  /css/
+      /~  ~
+  ==
+::
+/=  tile-js
+  /^  octs
+  /;  as-octs:mimes:html
+  /|  /:  /===/app/eth-wallet/js/tile  /js/
+      /~  ~
+  ==
 ::
 !:
 =*  card  card:agent:gall
@@ -69,7 +73,12 @@
     do    ~(. +> bol)
     def   ~(. (default-agent this %|) bol)
 ::
-++  on-init  on-init:def
+++  on-init
+  ^-  (quip card _this)
+  :_  this
+  :-  [pass / %arvo %e %connect [~ /'~eth-wallet'] %eth-wallet]
+  (launch-poke:do [%eth-wallet /primary '/~eth-wallet/js/tile.js'])
+::
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
@@ -84,12 +93,12 @@
     |=  =inbound-request:eyre
     ^-  simple-payload:http
     =+  url=(parse-request-line url.request.inbound-request)
-    ::?+  site.url  not-found:gen
-    ::  [%'~eth-wallet' %css %index ~]  (css-response:gen style)
-    ::  [%'~eth-wallet' %js %tile ~]    (js-response:gen tile-js)
-    ::  [%'~eth-wallet' %js %index ~]   (js-response:gen script)
-    ::  [%'~eth-wallet' *]  (html-response:gen index)
-    ::==
+    ?+  site.url  not-found:gen
+      [%'~eth-wallet' %css %index ~]  (css-response:gen style)
+      [%'~eth-wallet' %js %tile ~]    (js-response:gen tile-js)
+      [%'~eth-wallet' %js %index ~]   (js-response:gen script)
+      [%'~eth-wallet' *]  (html-response:gen index)
+    ==
     !!
   ::
       %noun

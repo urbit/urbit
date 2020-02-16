@@ -1,0 +1,38 @@
+.spinner-pending {
+  position: relative;
+  content: "";
+  border-radius: 100%;
+  height: 16px;
+  width: 16px;
+
+  background-color: rgba(255,255,255,1);
+}
+
+.spinner-pending::after {
+  content: "";
+  background-color: rgba(128,128,128,1);
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  border-radius: 100%;
+  clip: rect(0, 16px, 16px, 8px);
+
+  animation: spin 1s cubic-bezier(0.745, 0.045, 0.355, 1.000) infinite;
+}
+
+@keyframes spin {
+  0%    {transform:rotate(0deg)}
+  25%   {transform:rotate(90deg)}
+  50%   {transform:rotate(180deg)}
+  75%   {transform:rotate(270deg)}
+  100%  {transform:rotate(360deg)}
+ }
+
+.spinner-nostart {
+  width: 8px;
+  height: 8px;
+  border-radius: 100%;
+  content:'';
+  background-color: black;
+}
+
