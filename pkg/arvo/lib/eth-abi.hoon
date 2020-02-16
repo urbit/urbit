@@ -78,18 +78,14 @@
 ++  get-sig
   |=  [name=@t inputs=(list @t)]
   ^-  cord
-  %-  crip
-  :-  name  :-  '('  ?~  inputs  :-  ')'  ~
-  :-  i.inputs
-  |-  ^-  tape
-  ?~  t.inputs  :-  ')'  ~
-  :-  ','  :-  i.t.inputs  $(inputs t.inputs)
+  =-  (crip "{(trip name)}({-})")
+  (zing (join "," (turn inputs trip)))
 ::
 ++  get-hash
   |=  [name=@t inputs=(list @t)]
   ^-  @ux
   =/  sig  (get-sig name inputs)
-  (keccak-256:keccak:crypto (lent (trip sig)) sig)
+  (keccak-256:keccak:crypto (met 3 sig) sig)
 ::
 ++  parse-contract
   |=  jon=json
