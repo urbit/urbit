@@ -93,19 +93,13 @@
     =+  !<(=poke vase)
     ?-    -.poke
         %send-erc20
-      =/  [=address:eth balance=@ud]  (~(got by balances) contract-id.poke)
+      =/  [contract=address:eth balance=@ud]
+        (~(got by balances) contract-id.poke)
       ?>  (gte balance amount.poke)
-      ::  TODO: switch to spider
-      ::  TODO: use real transaction types
+      ::  TODO figure out key and value for .pending
       ::
-      =/  txn  ~
-      =/  txn-raw  ~
-      =/  command  [node-url step-size=1 ~[txn-raw]]
-      ::
-      =.  pending  (~(put by pending) contract-id.poke [txn txn-raw]^~^~)
       :_  this
-      =/  =cage  [%noun !>([%send txn-raw])]
-      [%pass /send %agent [our.bol %eth-sender] %poke cage]~
+      (start-txn-send:do contract [contract-id to amount]:poke)
     ::
         %add-erc20
       !!
@@ -116,41 +110,83 @@
       `this(key-path key-path.poke)
     ==
   ==
-++  on-watch
-  |=  =path
-  ^-  (quip card _this)
-  !!
+::  +on-agent: handle response from another agent
+::
+::    Spider logic mostly duplicated with :eth-sender.
+::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
-  !!
-++  on-arvo
-  |=  [=wire =sign-arvo]
-  ^-  (quip card _this)
-  !!
+  ?.  ?=([%xfer *] wire)
+    (on-agent:def wire sign)
+  ?-  -.sign
+      %poke-ack
+    ?~  p.sign
+      [~ this]
+    %-  (slog leaf+"{(trip dap.bol)} couldn't start thread" u.p.sign)
+    :_  this
+    [(leave-spider:do wire)]~
+  ::
+      %watch-ack
+    ?~  p.sign
+      [~ this]
+    =/  =tank  leaf+"{(trip dap.bol)} couldn't start listen to thread"
+    %-  (slog tank u.p.sign)
+    [~ this]
+  ::
+      %kick
+    [~ this]
+  ::
+      %fact
+    ?+  p.cage.sign  (on-agent:def wire sign)
+        %thread-fail
+      =+  !<([=term =tang] q.cage.sign)
+      %-  (slog leaf+"{(trip dap.bol)} failed" leaf+<term> tang)
+      [~ this]
+    ::
+        %thread-done
+      ::  TODO: update state with successful txn; needs id
+      ::
+      ~&  ['transaction submitted to' t.wire]
+      [~ this]
+    ==
+  ==
 ::
 ++  on-save   !>(state)
 ++  on-load   on-load:def
+++  on-watch  on-watch:def
+++  on-arvo   on-arvo:def
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ++  on-fail   on-fail:def
 --
 ::
 |_  bol=bowl:gall
-++  read-key
-  ^-  [private-key=@ public-key=@ =address:eth]
-  ::  construct a cache-able subject
-  ::
-  =/  bek=beak  byk.bol(q %home)
-  =.  bol  *bowl:gall
-  ~+
-  =/  private-key  .^(@ %cx bek key-path)
-  :+  private-key
-    (pub-from-prv:key:ethereum private-key)
-  (address-from-prv:key:ethereum private-key)
+++  start-txn-send
+  |=  [contract=address:eth contract-id=@t to=address:eth amount=@ud]
+  ^-  (list card)
+  =/  tid=@ta
+    :((cury cat 3) dap.bol '--' contract-id '--' (scot %uv eny.bol))
+  =/  private-key  .^(@ %cx byk.bol(q %home) key-path)
+  =/  args
+    :^  ~  `tid  %eth-erc20-transfer
+    !>([node-url contract-id contract to amount private-key])
+  :~  (watch-spider /xfer/[tid] /thread-result/[tid])
+      (poke-spider /xfer/[tid] %spider-start !>(args))
+  ==
 ::
-++  sign-txn
-  |=  txn=transaction:eth-rpc
-  =/  pk  private-key:read-key
-  (crip '0' 'x' ((x-co:co 0) (sign-transaction:key:ethereum txn pk)))
+++  poke-spider
+  |=  [=path =cage]
+  ^-  card
+  [%pass path %agent [our.bol %spider] %poke cage]
+::
+++  watch-spider
+  |=  [=path =sub=path]
+  ^-  card
+  [%pass path %agent [our.bol %spider] %watch sub-path]
+::
+++  leave-spider
+  |=  =path
+  ^-  card
+  [%pass path %agent [our.bol %spider] %leave ~]
 --
