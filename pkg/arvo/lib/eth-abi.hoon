@@ -38,22 +38,14 @@
     ^-  function-raw
     %.  jun
     %-  ot
+    =/  extract-func-field
+      |=  jyn=json
+      ?>  ?=([$o *] jyn)
+      ^-  @tas
+      (so (~(got by p.jyn) 'type'))
     :~  [%name so]
-    ::
-        :-  %inputs
-        %-  ar
-        |=  jyn=json
-        ?>  ?=([$o *] jyn)
-        ^-  @tas
-        (so (~(got by p.jyn) 'type'))
-    ::
-        :-  %outputs
-        %-  ar
-        |=  jyn=json
-        ?>  ?=([$o *] jyn)
-        ^-  @tas
-        (so:dejs (~(got by p.jyn) 'type'))
-    ::
+        [%inputs %-(ar extract-func-field)]
+        [%outputs %-(ar extract-func-field)]
         [%constant |=(jen=json !(bo jen))]
         [%payable bo]
     ==
@@ -74,8 +66,8 @@
         ==
     ==
   ==
-
-++  get-sig
+::
+++  get-selector
   |=  [name=@t inputs=(list @t)]
   ^-  cord
   =-  (crip "{(trip name)}({-})")
@@ -84,7 +76,7 @@
 ++  get-hash
   |=  [name=@t inputs=(list @t)]
   ^-  @ux
-  =/  sig  (get-sig name inputs)
+  =/  sig  (get-selector name inputs)
   (keccak-256:keccak:crypto (met 3 sig) sig)
 ::
 ++  parse-contract
@@ -92,7 +84,7 @@
   ^-  contract-raw
   =,  dejs:format
   %.  jon  %-  ot
-  :~  :-  'contractName'  so
-      :-  %abi  parse-abi
+  :~  ['contractName'  so]
+      [ %abi  parse-abi]
   ==
 --
