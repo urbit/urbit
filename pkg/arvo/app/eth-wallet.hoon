@@ -34,6 +34,7 @@
 =*  card  card:agent:gall
 =*  eth  ethereum-types
 =*  eth-rpc  rpc:ethereum
+=*  eth-key  key:ethereum
 =>
 |%
 +$  state-0
@@ -41,7 +42,11 @@
       key-path=path
       node-url=_'http://eth-mainnet.urbit.org:8545'
       balances=(map contract-id [=address:eth balance=@ud])
-      pending=[next=@ud txns=(map wire txn)]
+      $=  pending  $:
+        next=@ud
+        txns=(map wire txn)
+        bals=(map wire [=contract-id =address:eth])
+      ==
   ==
 ::
 +$  poke
@@ -97,15 +102,19 @@
       ::
       ?>  (gte balance amount.poke)
       ::
-      =/  =wire  /xfer/(scot %ud next.pending)/[contract-id.poke]
-      =.  txns.pending  (~(put by txns.pending) wire txn)
+      =/  =wire  /xfer/[contract-id.poke]/(scot %ud next.pending)
       =.  next.pending  +(next.pending)
+      =.  txns.pending  (~(put by txns.pending) wire txn)
       ::
       :_  this
       (start-txn-send:do wire contract txn)
     ::
         %add-erc20
-      !!
+      =/  =wire  /bal/[contract-id.poke]/(scot %ud next.pending)
+      =.  next.pending  +(next.pending)
+      =.  bals.pending  (~(put by bals.balances) [contract-id address]:poke)
+      :_  this
+      (start-read-balance wire address.poke)
     ::
         %set-key
       =/  =path  (en-beam:format byk.bol(q %home) `path`key-path.poke)
@@ -144,7 +153,7 @@
     [~ this]
   ::
       %fact
-    ?+  p.cage.sign  (on-agent:def wire sign)
+    ?+    p.cage.sign  (on-agent:def wire sign)
         %thread-fail
       =/  =txn  (~(got by txns.pending) wire)
       =.  txns.pending  (~(del by txns.pending) wire)
@@ -157,16 +166,30 @@
       [~ this]
     ::
         %thread-done
-      ?>  ?=([%xfer @ @ ~] wire)
-      =/  =contract-id  i.t.t.wire
-      =/  =txn  (~(got by txns.pending) wire)
-      =.  txns.pending  (~(del by txns.pending) wire)
-      =.  balances
-        %+  ~(jab by balances)  contract-id
-        |=  [=address:eth balance=@ud]
-        [address (sub balance amount.txn)]
-      ~&  ['transaction submitted to' t.wire]
-      [~ this]
+      ?>  ?=(^ wire)
+      ?+    i.wire  !!
+          %xfer
+        ?>  ?=(^ t.wire)
+        =/  =contract-id  i.t.wire
+        =/  =txn  (~(got by txns.pending) wire)
+        =.  txns.pending  (~(del by txns.pending) wire)
+        =.  balances
+          %+  ~(jab by balances)  contract-id
+          |=  [=address:eth balance=@ud]
+          [address (sub balance amount.txn)]
+        ~&  ['transaction submitted to' t.wire]
+        [~ this]
+      ::
+          %bal
+        ?>  ?=(^ t.wire)
+        =/  [=contract-id =address:eth]  (~(got by bals.pending) wire)
+        =.  bals.pending  (~(del by bals.pending) wire)
+        =/  thread-result  !<(@t q.cage.sign)
+        =/  balance=@ud  (decode-results:eth-rpc thread-result ~[%uint])
+        =.  balances  (~(put by balances) contract-id [address balance])
+        ~&  ['contract added, balance is ' balance]
+        [~ this]
+      ==
     ==
   ==
 ::
@@ -185,13 +208,53 @@
   ^-  (list card)
   =/  tid=@ta
     :((cury cat 3) dap.bol '--' contract-id '--' (scot %uw (mug wire)))
-  =/  private-key  .^(@ %cx byk.bol(q %home) key-path)
+  =/  private-key  fetch-key
   =/  args
     :^  ~  `tid  %eth-erc20-transfer
     !>([node-url contract-id contract to amount private-key])
   :~  (watch-spider wire /thread-result/[tid])
       (poke-spider wire %spider-start !>(args))
   ==
+::
+++  start-contract-read
+  |=  [=wire req=proto-read-request:rpc:ethereum]
+  ^-  (list card)
+  =/  tid=@ta  :((cury cat 3) dap.bol '--' to.req '--' (scot %uw (mug wire)))
+  =/  args
+    [~ `tid %eth-read-contract !>([node-url.state req])]
+  :~  (watch-spider wire /thread-result/[tid])
+      (poke-spider wire %spider-start !>(args))
+  ==
+::
+++  read-from-contract
+  |=  $:  =wire
+          =address:eth
+          abi=contract:eth-abi
+          func-name=@t
+          args=(list data:abi:ethereum)
+      ==
+  ^-  (list card)
+  =/  func  (~(got by write-functions.abi) func-name)
+  %:  start-contract-read
+    wire
+    `func-name
+    address
+    ^-  dat=call-data:rpc:ethereum
+    [(get-selector:eth-abi name input-sol.func) args]
+  ==
+::
+++  start-read-balance
+  |=  [=wire contract-address=address:eth]
+  ^-  (list card)
+  %:  read-from-contract
+    wire
+    contract-address
+    erc20-abi
+    'balanceOf'
+    [%address (address-from-prv:eth-key fetch-key)]~
+  ==
+::
+++  fetch-key  .^(@ %cx byk.bol(q %home) key-path)
 ::
 ++  poke-spider
   |=  [=path =cage]
