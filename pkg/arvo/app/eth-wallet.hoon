@@ -1,23 +1,29 @@
-/+  default-agent, verb, eth-abi
+/+  default-agent, verb, eth-abi, *server
+::
+/=  erc20-abi
+  /;  parse-contract:eth-abi
+  /:  /===/app/eth-wallet/erc20  /json/
+::
 =*  card  card:agent:gall
 =*  eth  ethereum-types
 =>
 |%
 +$  state-0
   $:  %0
-      =key=path
+      key-path=path
       balances=(map contract-id [=address:eth balance=@ud])
       pending=(map contract-id transaction)
   ==
+::
 +$  transaction
   $:  amount=@ud
-      
+      ~  ::  TODO
   ==
 ::
-+$  poke
++$  command
   $%  [%send-erc20 =contract-id to=address:eth amount=@ud]
       [%add-erc20 =contract-id =address:eth]
-      [%set-key =key=path]
+      [%set-key key-path=path]
   ==
 ::
 +$  contract-id  @t
@@ -30,7 +36,7 @@
 ^-  agent:gall
 |_  bol=bowl:gall
 +*  this  .
-    do    ~(. +>  bol)
+    do    ~(. +> bol)
     def   ~(. (default-agent this %|) bol)
 ::
 ++  on-init  on-init:def
@@ -50,15 +56,17 @@
     !!
   ::
       %noun
-    =+  !<(command vase)
+    =+  !<(=command vase)
     ?-    -.command
         %send-erc20
+      !!
     ::
         %add-erc20
       !!
     ::
         %set-key
-      ?>  ?=(^ fil:.^(arch %cy (en-beam byk.bol(r %home) key-path)))
+      =/  =path  (en-beam:format byk.bol(q %home) `path`key-path.command)
+      ?>  ?=(^ =<(fil .^(arch %cy path)))
       `this(key-path key-path.command)
     ==
   ==
@@ -83,5 +91,6 @@
 --
 ::
 |_  bol=bowl:gall
-++  
+++  read-key
+  !!
 --
