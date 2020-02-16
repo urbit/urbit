@@ -41,18 +41,15 @@
       key-path=path
       node-url=_'http://eth-mainnet.urbit.org:8545'
       balances=(map contract-id [=address:eth balance=@ud])
-      pending=(map contract-id (map txn txn-raw))
+      pending=[next=@ud txns=(map wire txn)]
   ==
 ::
 +$  poke
-  $%  [%send-erc20 =contract-id to=address:eth amount=@ud]
+  $%  [%send-erc20 txn]
       [%add-erc20 =contract-id =address:eth]
       [%set-key key-path=path]
   ==
-::  TODO: fill in
-::
-+$  txn  ~
-+$  txn-raw  ~
++$  txn  [=contract-id to=address:eth amount=@ud]
 +$  contract-id  @t
 --
 ::
@@ -93,13 +90,19 @@
     =+  !<(=poke vase)
     ?-    -.poke
         %send-erc20
+      =/  =txn  +.poke
       =/  [contract=address:eth balance=@ud]
         (~(got by balances) contract-id.poke)
+      ::  TODO: also assert balance after subtracting pending
+      ::
       ?>  (gte balance amount.poke)
-      ::  TODO figure out key and value for .pending
+      ::
+      =/  =wire  /xfer/(scot %ud next.pending)/[contract-id.poke]
+      =.  txns.pending  (~(put by txns.pending) wire txn)
+      =.  next.pending  +(next.pending)
       ::
       :_  this
-      (start-txn-send:do contract [contract-id to amount]:poke)
+      (start-txn-send:do wire contract txn)
     ::
         %add-erc20
       !!
@@ -124,12 +127,15 @@
     ?~  p.sign
       [~ this]
     %-  (slog leaf+"{(trip dap.bol)} couldn't start thread" u.p.sign)
+    =.  txns.pending  (~(del by txns.pending) wire)
     :_  this
     [(leave-spider:do wire)]~
   ::
       %watch-ack
     ?~  p.sign
       [~ this]
+    ::  TODO: this should probably retry the listen poke
+    ::
     =/  =tank  leaf+"{(trip dap.bol)} couldn't start listen to thread"
     %-  (slog tank u.p.sign)
     [~ this]
@@ -140,13 +146,25 @@
       %fact
     ?+  p.cage.sign  (on-agent:def wire sign)
         %thread-fail
+      =/  =txn  (~(got by txns.pending) wire)
+      =.  txns.pending  (~(del by txns.pending) wire)
       =+  !<([=term =tang] q.cage.sign)
-      %-  (slog leaf+"{(trip dap.bol)} failed" leaf+<term> tang)
+      %-  =-  (slog (welp - tang))
+          :~  leaf+"eth-wallet: transaction failed"
+              leaf+<txn>
+              leaf+<term>
+          ==
       [~ this]
     ::
         %thread-done
-      ::  TODO: update state with successful txn; needs id
-      ::
+      ?>  ?=([%xfer @ @ ~] wire)
+      =/  =contract-id  i.t.t.wire
+      =/  =txn  (~(got by txns.pending) wire)
+      =.  txns.pending  (~(del by txns.pending) wire)
+      =.  balances
+        %+  ~(jab by balances)  contract-id
+        |=  [=address:eth balance=@ud]
+        [address (sub balance amount.txn)]
       ~&  ['transaction submitted to' t.wire]
       [~ this]
     ==
@@ -163,16 +181,16 @@
 ::
 |_  bol=bowl:gall
 ++  start-txn-send
-  |=  [contract=address:eth contract-id=@t to=address:eth amount=@ud]
+  |=  [=wire contract=address:eth txn]
   ^-  (list card)
   =/  tid=@ta
-    :((cury cat 3) dap.bol '--' contract-id '--' (scot %uv eny.bol))
+    :((cury cat 3) dap.bol '--' contract-id '--' (scot %uw (mug wire)))
   =/  private-key  .^(@ %cx byk.bol(q %home) key-path)
   =/  args
     :^  ~  `tid  %eth-erc20-transfer
     !>([node-url contract-id contract to amount private-key])
-  :~  (watch-spider /xfer/[tid] /thread-result/[tid])
-      (poke-spider /xfer/[tid] %spider-start !>(args))
+  :~  (watch-spider wire /thread-result/[tid])
+      (poke-spider wire %spider-start !>(args))
   ==
 ::
 ++  poke-spider
