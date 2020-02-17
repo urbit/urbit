@@ -18,6 +18,7 @@ class Store {
       spinner: false,
       sidebarShown: true,
       pendingMessages: new Map([]),
+      myReadReceiptsPending: new Map([]),
       chatInitialized: false
     };
 

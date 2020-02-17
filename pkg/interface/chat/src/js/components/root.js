@@ -35,7 +35,9 @@ export class Root extends Component {
 
     let messagePreviews = {};
     let unreads = {};
+
     Object.keys(state.inbox).forEach((stat) => {
+
       let envelopes = state.inbox[stat].envelopes;
 
       if (envelopes.length === 0) {
@@ -45,7 +47,8 @@ export class Root extends Component {
       }
 
       unreads[stat] =
-        state.inbox[stat].config.length > state.inbox[stat].config.read;
+        state.inbox[stat].config.length > state.inbox[stat].config.read &&
+        !state.myReadReceiptsPending.get(stat);
     });
 
     let invites = '/chat' in state.invites ?

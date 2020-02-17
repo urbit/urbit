@@ -77,6 +77,16 @@ class UrbitApi {
     });
   }
 
+  addReadReceiptPending(station) {
+    const m = store.state.myReadReceiptsPending.set(station, true);
+    store.setState({myReadReceiptsPending: m})
+  }
+
+  removeReadReceiptPending(station) {
+    const m = store.state.myReadReceiptsPending.set(station, false);
+    store.setState({myReadReceiptsPending: m})
+  }
+
   groupsAction(data) {
     this.action("group-store", "group-action", data);
   }
@@ -98,7 +108,7 @@ class UrbitApi {
   }
 
   chatAction(data) {
-    this.action("chat-store", "json", data);
+    return this.action("chat-store", "json", data);
   }
 
   chatMessage(path, author, when, letter) {
@@ -121,7 +131,7 @@ class UrbitApi {
   }
 
   chatRead(path, read) {
-    this.chatAction({ read: { path } });
+    return this.chatAction({ read: { path } });
   }
 
   chatViewAction(data) {

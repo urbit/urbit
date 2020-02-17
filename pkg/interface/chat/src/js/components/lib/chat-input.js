@@ -147,6 +147,12 @@ export class ChatInput extends Component {
     );
     // perf: setTimeout(this.closure, 2000);
 
+    props.api.addReadReceiptPending(props.station)
+
+    props.api.chat.read(props.station).then(res => {
+      props.api.removeReadReceiptPending(props.station);
+    });
+
     this.setState({
       message: '',
     });
