@@ -76,8 +76,8 @@
 ++  on-init
   ^-  (quip card _this)
   :_  this
-  :~  [%pass / %arvo %e %connect [~ /'~eth-wallet'] %eth-wallet]
-      (launch-poke:do [%eth-wallet /primary '/~eth-wallet/js/tile.js'])
+  :~  [%pass / %arvo %e %connect [~ /'~eth-wallet'] dap.bol]
+      (launch-poke:do [dap.bol /primary '/~eth-wallet/js/tile.js'])
   ==
 ::
 ++  on-poke
