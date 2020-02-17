@@ -23,9 +23,12 @@ export class Skeleton extends Component {
     return (
       <div className={"h-100 w-100 " + popoutWindow}>
         <div className={`cf w-100 h-100 flex ` + popoutBorder}>
-          <div className={"h-100 w-100 " + rightPanelHide} style={{
+          <div className={"flex h-100 w-100 " + rightPanelHide} style={{
             flexGrow: 1,
           }}>
+          <div className="w-50 h-100 dt br b--gray2">
+            <div className="dtc h-100 v-mid f5 inter tc">1 ETH</div>
+          </div>
             {this.props.children}
           </div>
         </div>
