@@ -27,6 +27,9 @@
   /|  /:  /===/app/eth-wallet/css/index  /css/
       /~  ~
   ==
+/=  tile-png
+  /^  (map knot @)
+  /:  /===/app/eth-wallet/img  /_  /png/
 ::
 /=  tile-js
   /^  octs
