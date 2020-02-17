@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { ChannelsSidebar } from './lib/channel-sidebar';
-
 
 export class Skeleton extends Component {
   render() {
@@ -10,8 +8,8 @@ export class Skeleton extends Component {
     ? "dn-s"
     : "";
 
-    let popout = !!this.props.popout 
-    ? this.props.popout 
+    let popout = !!this.props.popout
+    ? this.props.popout
     : false;
 
     let popoutWindow = (popout)
@@ -25,13 +23,6 @@ export class Skeleton extends Component {
     return (
       <div className={"h-100 w-100 " + popoutWindow}>
         <div className={`cf w-100 h-100 flex ` + popoutBorder}>
-        <ChannelsSidebar
-            popout={popout}
-            groups={this.props.groups}
-            active={this.props.active}
-            selected={this.props.selected}
-            sidebarShown={this.props.sidebarShown}
-            links={this.props.links}/>
           <div className={"h-100 w-100 " + rightPanelHide} style={{
             flexGrow: 1,
           }}>
