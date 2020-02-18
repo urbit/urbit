@@ -75,8 +75,24 @@
       =^  cards  state
         (take-forward-sign:do t.wire sign)
       [cards this]
+    ?:  ?=([%prod *] wire)
+      ~|  [%weird-sign -.sign]
+      ?>  ?=(%poke-ack -.sign)
+      ?~  p.sign  [~ this]
+      %-  (slog [leaf+"failed to prod" u.p.sign])
+      [~ this]
     ~|  [dap.bowl %weird-wire wire]
     !!
+  ::
+  ++  on-poke
+    |=  [=mark =vase]
+    ?.  ?=(%link-listen-poke mark)
+      (on-poke:def mark vase)
+    =/  =path  !<(path vase)
+    :_  this
+    %+  weld
+      (take-retry:do %local-pages src.bowl path)
+    (take-retry:do %annotations src.bowl path)
   ::
   ++  on-arvo
     |=  [=wire =sign-arvo]
@@ -98,7 +114,6 @@
       (take-retry:do (wire-to-target t.wire))
     ==
   ::
-  ++  on-poke   on-poke:def
   ++  on-peek   on-peek:def
   ++  on-watch  on-watch:def
   ++  on-leave  on-leave:def
@@ -168,8 +183,9 @@
       %+  weld
         $(whos t.whos)
       (end-link-subscriptions i.whos pax.upd)
-    :+  (start-link-subscription %local-pages i.whos pax.upd)
-      (start-link-subscription %annotations i.whos pax.upd)
+    :^    (start-link-subscription %local-pages i.whos pax.upd)
+        (start-link-subscription %annotations i.whos pax.upd)
+      (prod-other-listener i.whos pax.upd)
     $(whos t.whos)
   ==
 ::
@@ -204,6 +220,18 @@
         ~
     ==
   --
+::
+++  prod-other-listener
+  |=  [who=ship where=path]
+  ^-  card
+  :*  %pass
+      [%prod (scot %p who) where]
+      %agent
+      [who %link-listen-hook]
+      %poke
+      %link-listen-poke
+      !>(where)
+  ==
 ::
 ++  take-link-sign
   |=  [=target =sign:agent:gall]
@@ -261,7 +289,7 @@
     ?.  relevant  ~
     [(start-link-subscription target)]~
   ?:  %-  ~(has by wex.bowl)
-      [[%links (target-to-wire target)] who.target %group-store]
+      [[%links (target-to-wire target)] who.target %link-proxy-hook]
     |
   %.  who.target
   %~  has  in
