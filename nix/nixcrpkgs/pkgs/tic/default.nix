@@ -3,11 +3,11 @@
 crossenv.make_derivation rec {
   name = "tic-${version}";
 
-  version = "e1693cd";  # 1.5.0ish
+  version = "1.7.0";
 
   src = crossenv.nixpkgs.fetchurl {
     url = "https://github.com/pololu/pololu-tic-software/archive/${version}.tar.gz";
-    sha256 = "07m75w0walr61yqki7h1ipzbfz7x417g7qnx0p1l6qdz89fyc7i8";
+    sha256 = "1k091i6sz5j204xrq12x97ixj56bjwbb593lp7j3qf94msj7sff9";
   };
 
   builder = ./builder.sh;

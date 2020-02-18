@@ -9,14 +9,13 @@ let
 
   mingw-w64_info = rec {
     name = "mingw-w64-${version}";
-    version = "2017-08-03";
+    version = "2018-10-18";
     src = nixpkgs.fetchgit {
       url = "git://git.code.sf.net/p/mingw-w64/mingw-w64";
-      rev = "6de0055f99ed447ec63c1a650a3830f266a808bd";
-      sha256 = "1830rcd0vsbvpr5m1lrabcqh12qrw1flq333b8xrs5b3n542xy2i";
+      rev = "c69c7a706d767c5ca3c7d1c70887fcd8e1f940b3";
+      sha256 = "028g8wpy56m3nlna6dnzsz66355kn6gqmwmkm9raas9s1ayzv5il";
     };
     patches = [
-      ./usb.patch
       ./guid-selectany.patch
     ];
     configure_flags = "--enable-secure-api --enable-idl";
@@ -63,42 +62,38 @@ let
 
   global_license_set = { _global = license; };
 
-  cmake_toolchain = import ../cmake_toolchain {
-    cmake_system_name = "Windows";
-    inherit nixpkgs host;
-  };
-
-  os = "windows";
-
-  compiler = "gcc";
-
-  exe_suffix = ".exe";
-
-  crossenv = {
+  crossenv = rec {
     is_cross = true;
 
-    default_native_inputs = native.default_native_inputs
-      ++ [ gcc binutils native.pkgconf native.wrappers ];
+    # Target info.
+    inherit host arch;
+    os = "windows";
+    compiler = "gcc";
+    exe_suffix = ".exe";
+    cmake_system = "Windows";
+    meson_system = "windows";
+    meson_cpu_family =
+      if arch == "i686" then "x86"
+      else if arch == "x86_64" then "x86_64"
+      else throw "not sure what meson_cpu_family code to use";
+    meson_cpu = arch;
 
-    # Target info variables.
-    inherit host arch os compiler exe_suffix;
+    # Build tools.
+    inherit nixpkgs native;
+    wrappers = import ../wrappers crossenv;
 
-    # CMake toolchain file.
-    inherit cmake_toolchain;
-
-    # A wide variety of programs and build tools.
-    inherit nixpkgs;
-
-    # Some native build tools made by nixcrpkgs.
-    inherit native;
-
-    # License information that should be shipped with any software compiled by
-    # this environment.
+    # License information that should be shipped with any software
+    # compiled by this environment.
     inherit global_license_set;
 
-    # Make it easy to build or refer to the build tools.
-    inherit gcc binutils mingw-w64_full mingw-w64_info mingw-w64_headers gcc_stage_1;
+    # Handy shortcuts.
+    inherit gcc binutils;
+    inherit mingw-w64_full mingw-w64_info mingw-w64_headers gcc_stage_1;
     mingw-w64 = mingw-w64_full;
+
+    # Build tools available on the PATH for every derivation.
+    default_native_inputs = native.default_native_inputs
+      ++ [ gcc binutils wrappers ];
 
     make_derivation = import ../make_derivation.nix crossenv;
   };

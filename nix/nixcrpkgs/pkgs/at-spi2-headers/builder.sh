@@ -8,5 +8,6 @@ cat > $out/lib/pkgconfig/atspi-2.pc <<EOF
 prefix=$out
 includedir=\${prefix}/include
 Name: atspi
+Version: 2
 Cflags: -I\${includedir}
 EOF

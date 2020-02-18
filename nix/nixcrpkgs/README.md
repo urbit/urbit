@@ -17,9 +17,11 @@ Packages collection (Nixpkgs)][nixpkgs].
 ## Features
 
 - Supported target platforms:
-  - Windows (32-bit or 64-bit) using [mingw-w64](https://mingw-w64.org/) and [GCC](https://gcc.gnu.org/) 6.3.0
-  - Linux (32-bit, 64-bit, and ARM) using [musl](https://www.musl-libc.org/) and [GCC](https://gcc.gnu.org/) 6.3.0
-  - macOS using [Clang](https://clang.llvm.org/) 5.0.0
+  - Windows (32-bit or 64-bit) using [mingw-w64](https://mingw-w64.org/)
+    and [GCC](https://gcc.gnu.org/) 8.2.0
+  - Linux (32-bit, 64-bit, and ARM) using [musl](https://www.musl-libc.org/)
+    and [GCC](https://gcc.gnu.org/) 8.2.0
+  - macOS using [Clang](https://clang.llvm.org/) 7.0.1
 - Supported languages for cross-compiling:
   - C
   - C++
@@ -33,7 +35,7 @@ Packages collection (Nixpkgs)][nixpkgs].
   - [GNU Bash](https://www.gnu.org/software/bash/)
   - [Ruby](https://www.ruby-lang.org/)
 - Notable supported libraries:
-  - [Qt](https://www.qt.io/) 5.9.6
+  - [Qt](https://www.qt.io/) 5.12.1
   - [libusb](https://libusb.info/)
   - [libusbp](https://github.com/pololu/libusbp)
   - [Windows API](https://en.wikipedia.org/wiki/Windows_API) (thanks to mingw-w64)
@@ -46,10 +48,10 @@ instructions on the [Nix website][nix].
 
 Next, run `df -h` to make sure you have enough disk space.
 
-- The filesystem that holds `/nix` should have several gigabytes of free
-space.  Each GCC cross-compiler takes about 300 MB while each Qt installation
-takes about 800 MB.
-- The filesystem that holds `/tmp` should have at least 4 gigabytes of free
+- The filesystem that holds `/nix` should have many gigabytes of free
+space.  Each cross-compiler can take about 1 GB while each Qt installation
+takes about 500 MB.
+- The filesystem that holds `/tmp` should have at least 4 GB of free
 space, which will be needed while building cross-compilers.  If that is not the
 case on your system, you can set the `TMPDIR` environment variable to tell
 `nix-build` to perform its builds in a different directory on a filesystem with
@@ -138,14 +140,41 @@ Each build recipe in nixcrpkgs specifies a version number for the software that 
 6) Once things are working, consider publishing your work on Github so others can benefit from what you figured out.
 
 
-## Maintaining the nixcrpkgs system
+## Freeing disk space
 
 You should occasionally run `nix-collect-garbage` to remove items that are no
 longer needed and reclaim your disk space.  However, note that Nix will
 typically remove all of your cross compilers and libraries when you run this
-command, so be prepared to do a lengthy mass rebuild.  The Nix manual has more
+command, which could require you to do a length mass rebuild the next time you
+want to build your software.
+
+There is a method you can use to prevent Nix from garbage collecting the most
+important items used by nixcrpkgs.  First of all, edit or create your [nix.conf]
+file and add this line to it:
+
+    keep-outputs = true
+
+Now run this command from the nixcrpkgs directory (you'll need Ruby installed):
+
+    ./manage gcroots
+
+This makes a symbolic link in the nixcrpkgs directory called `gcroots.drv`,
+which points to a derivation (a compiled recipe for building some software) in
+the Nix store which depends on all the derivations that are most
+important for nixcrpkgs.  As long as `gcroots.drv` remains in place, those
+derivations and their outputs cannot be garbage collected.
+
+In the future, if you update nixcrpkgs and then run the command to update
+`gcroots.drv`, then items used by the old version of nixcrpkgs that are no
+longer needed can be garbage collected.  You can also simply delete
+`gcroots.drv` if you want to garbage collect everything needed by nixcrpkgs.
+
+The Nix manual has more
 information about [Nix garbage
 collection](http://nixos.org/nix/manual/#sec-garbage-collection).
+
+
+## Updating recipes
 
 You should occasionally run `nix-channel --update` to update to the latest
 version of Nixpkgs.  However, when doing this, be aware that the new version of
@@ -173,3 +202,4 @@ to use your forked versions.
 [osxcross]: https://github.com/tpoechtrager/osxcross
 [musl-cross-make]: https://github.com/richfelker/musl-cross-make
 [musl_nix_arm]: https://github.com/filleduchaos/musl_nix_arm
+[nix.conf]: https://nixos.org/nix/manual/#sec-conf-file

@@ -1,18 +1,19 @@
 { crossenv }:
 
 let
-  version = "1.19.1";
+  version = "1.19.2";
 
   name = "xorg-macros-${version}";
 
   src = crossenv.nixpkgs.fetchurl {
-    url = "https://www.x.org/releases/individual/util/util-macros-1.19.1.tar.gz";
-    sha256 = "1f27cmbxq0kdyvqsplxpsi9pxm5qy45lcagxr9gby2hy3pjd0aj7";
+    url = "https://www.x.org/releases/individual/util/util-macros-${version}.tar.gz";
+    sha256 = "1dvmkb0c12p94dn280kg9fm2nmpk6ramm9br36bsy3z67mfc89cj";
   };
 
   lib = crossenv.native.make_derivation {
     inherit version name src;
     builder = ./builder.sh;
+    pkgconfig = crossenv.nixpkgs.pkgconfig;
   };
 
   license = crossenv.native.make_derivation {

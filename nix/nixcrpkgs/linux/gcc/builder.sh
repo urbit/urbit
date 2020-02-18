@@ -1,9 +1,9 @@
 source $setup
 
-tar -xf $gcc_src
+tar -xf $src
 mv gcc-* gcc
 cd gcc
-for patch in $gcc_patches; do
+for patch in $patches; do
   echo applying patch $patch
   patch -p1 -i $patch
 done

@@ -1,13 +1,13 @@
 { crossenv, xcb-proto, libxau }:
 
 let
-  version = "1.12";
+  version = "1.13.1";
 
   name = "libxcb-${version}";
 
   src = crossenv.nixpkgs.fetchurl {
     url = "https://xcb.freedesktop.org/dist/libxcb-${version}.tar.bz2";
-    sha256 = "0nvv0la91cf8p5qqlb3r5xnmg1jn2wphn4fb5jfbr6byqsvv3psa";
+    sha256 = "1i27lvrcsygims1pddpl5c4qqs6z715lm12ax0n3vx0igapvg7x8";
   };
 
   lib = crossenv.make_derivation rec {

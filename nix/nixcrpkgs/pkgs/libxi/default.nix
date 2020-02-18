@@ -1,4 +1,4 @@
-{ crossenv, xproto, xextproto, inputproto, libx11, libxext, libxfixes }:
+{ crossenv, xorgproto, libx11, libxext, libxfixes }:
 
 let
   version = "1.7.9";
@@ -21,9 +21,9 @@ let
       "--enable-static " +
       "--disable-shared";
 
-    cross_inputs = [ xproto xextproto inputproto libx11 libxext libxfixes ];
+    cross_inputs = [ xorgproto libx11 libxext libxfixes ];
 
-    inherit inputproto libx11 libxext libxfixes;
+    inherit xorgproto libx11 libxext libxfixes;
   };
 
   license = crossenv.native.make_derivation {
@@ -33,9 +33,7 @@ let
   };
 
   license_set =
-    xproto.license_set //
-    xextproto.license_set //
-    inputproto.license_set //
+    xorgproto.license_set //
     libx11.license_set //
     libxext.license_set //
     libxfixes.license_set //
