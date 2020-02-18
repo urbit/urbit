@@ -10,26 +10,23 @@ for patch in $patches; do
 done
 cd ..
 
-$host-g++ -x c++ -c $size_flags - -o test.o <<EOF
-#include <type_traits>
+$host-g++ -x c -c $size_flags - -o test.o <<EOF
+#include <assert.h>
 #include <sys/types.h>
 #include <sys/resource.h>
-static_assert(sizeof(pid_t) == SIZEOF_PID_T);
-static_assert(sizeof(uid_t) == SIZEOF_UID_T);
-static_assert(sizeof(gid_t) == SIZEOF_GID_T);
-static_assert(sizeof(time_t) == SIZEOF_TIME_T);
-static_assert(sizeof(rlim_t) == SIZEOF_RLIM_T);
-static_assert(sizeof(dev_t) == SIZEOF_DEV_T);
-static_assert(sizeof(ino_t) == SIZEOF_INO_T);
+static_assert(sizeof(pid_t) == SIZEOF_PID_T, "pid_t");
+static_assert(sizeof(uid_t) == SIZEOF_UID_T, "uid_t");
+static_assert(sizeof(gid_t) == SIZEOF_GID_T, "gid_t");
+static_assert(sizeof(time_t) == SIZEOF_TIME_T, "time_t");
+static_assert(sizeof(rlim_t) == SIZEOF_RLIM_T, "rlim_t");
+static_assert(sizeof(dev_t) == SIZEOF_DEV_T, "dev_t");
+static_assert(sizeof(ino_t) == SIZEOF_INO_T, "ino_t");
 EOF
 
 rm test.o
 
 mkdir build
 cd build
-
-# -DHAVE_SECURE_GETENV: We don't have secure_getenv but we want to avoid a header error,
-# and hopefully secure_getenv isn't actually needed by libudev.
 
 $host-gcc -c -Werror -I$fill $fill/*.c
 $host-gcc -c $CFLAGS \

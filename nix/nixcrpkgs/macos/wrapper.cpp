@@ -48,7 +48,7 @@ int compiler_main(int argc, char ** argv,
   args.push_back("--sysroot");
   args.push_back(WRAPPER_SDK_PATH);
 
-  // Causes clang to pass -demangle,  -lto_library, -no_deduplicate, and other
+  // Causes clang to pass -demangle, -no_deduplicate, and other
   // options that could be useful.  Version 274.2 is the version number used here:
   // https://github.com/tpoechtrager/osxcross/blob/474f359/build.sh#L140
   if (WRAPPER_LINKER_VERSION[0])
@@ -60,7 +60,7 @@ int compiler_main(int argc, char ** argv,
   {
     args.push_back("-stdlib=libc++");
     args.push_back("-cxx-isystem");
-    args.push_back(WRAPPER_SDK_PATH "/usr/include/c++/v1");
+    args.push_back(WRAPPER_SDK_PATH "/usr/include/c++");
   }
 
   for (int i = 1; i < argc; ++i)
@@ -120,6 +120,13 @@ int main(int argc, char ** argv)
   if (result)
   {
     std::cerr << "wrapper failed to set PATH" << std::endl;
+    return 1;
+  }
+
+  result = setenv("COMPILER_RT_PATH", WRAPPER_COMPILER_RT_PATH, 1);
+  if (result)
+  {
+    std::cerr << "wrapper failed to set COMPILER_RT_PATH" << std::endl;
     return 1;
   }
 

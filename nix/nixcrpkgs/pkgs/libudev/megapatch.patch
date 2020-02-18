@@ -1,6 +1,17 @@
+diff -ur systemd-234-orig/src/basic/fileio.c systemd-234/src/basic/fileio.c
+--- systemd-234-orig/src/basic/fileio.c	2018-11-04 21:39:40.344176543 -0800
++++ systemd-234/src/basic/fileio.c	2018-11-04 21:51:43.707619173 -0800
+@@ -24,6 +24,7 @@
+ #include <stdint.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <sys/mman.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ #include <unistd.h>
 diff -ur systemd-234-orig/src/basic/glob-util.c systemd-234/src/basic/glob-util.c
---- systemd-234-orig/src/basic/glob-util.c	2017-07-17 19:46:03.031674662 -0700
-+++ systemd-234/src/basic/glob-util.c	2017-07-22 20:11:56.931514364 -0700
+--- systemd-234-orig/src/basic/glob-util.c	2018-11-04 21:39:40.344176543 -0800
++++ systemd-234/src/basic/glob-util.c	2018-11-04 21:40:15.341171709 -0800
 @@ -31,22 +31,8 @@
  int safe_glob(const char *path, int flags, glob_t *pglob) {
          int k;
@@ -43,9 +54,10 @@ diff -ur systemd-234-orig/src/basic/glob-util.c systemd-234/src/basic/glob-util.
          if (k < 0)
                  return k;
  
+Only in systemd-234/src/basic: glob-util.c.rej
 diff -ur systemd-234-orig/src/basic/missing.h systemd-234/src/basic/missing.h
---- systemd-234-orig/src/basic/missing.h	2017-07-17 19:46:03.031674662 -0700
-+++ systemd-234/src/basic/missing.h	2017-07-21 08:02:12.349505168 -0700
+--- systemd-234-orig/src/basic/missing.h	2018-11-04 21:39:40.344176543 -0800
++++ systemd-234/src/basic/missing.h	2018-11-04 21:40:15.341171709 -0800
 @@ -40,6 +40,22 @@
  #include <uchar.h>
  #include <unistd.h>
@@ -79,8 +91,8 @@ diff -ur systemd-234-orig/src/basic/missing.h systemd-234/src/basic/missing.h
  #endif
  
 diff -ur systemd-234-orig/src/basic/mkdir.c systemd-234/src/basic/mkdir.c
---- systemd-234-orig/src/basic/mkdir.c	2017-07-17 19:46:03.031674662 -0700
-+++ systemd-234/src/basic/mkdir.c	2017-07-22 21:09:51.065274838 -0700
+--- systemd-234-orig/src/basic/mkdir.c	2018-11-04 21:39:40.347509908 -0800
++++ systemd-234/src/basic/mkdir.c	2018-11-04 21:40:15.341171709 -0800
 @@ -28,6 +28,7 @@
  #include "path-util.h"
  #include "stat-util.h"
@@ -90,8 +102,8 @@ diff -ur systemd-234-orig/src/basic/mkdir.c systemd-234/src/basic/mkdir.c
  int mkdir_safe_internal(const char *path, mode_t mode, uid_t uid, gid_t gid, mkdir_func_t _mkdir) {
          struct stat st;
 diff -ur systemd-234-orig/src/basic/parse-util.c systemd-234/src/basic/parse-util.c
---- systemd-234-orig/src/basic/parse-util.c	2017-07-17 19:46:03.031674662 -0700
-+++ systemd-234/src/basic/parse-util.c	2017-07-21 07:59:05.337491775 -0700
+--- systemd-234-orig/src/basic/parse-util.c	2018-11-04 21:39:40.347509908 -0800
++++ systemd-234/src/basic/parse-util.c	2018-11-04 21:40:15.344505074 -0800
 @@ -30,6 +30,7 @@
  #include "parse-util.h"
  #include "process-util.h"

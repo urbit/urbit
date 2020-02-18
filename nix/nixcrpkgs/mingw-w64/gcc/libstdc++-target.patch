@@ -1,7 +1,4 @@
 Patch to make the target libraries 'configure' scripts find the proper CPP.
-I noticed that building the mingw32 cross compiler.
-Looking at the build script for mingw in archlinux, I think that only nixos
-needs this patch. I don't know why.
 diff --git a/Makefile.in b/Makefile.in
 index 93f66b6..d691917 100644
 --- a/Makefile.in

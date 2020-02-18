@@ -13,4 +13,4 @@ make
 
 make install
 
-ln -s $xproto/lib/pkgconfig/xproto.pc $out/lib/pkgconfig/
+ln -s $xorgproto/lib/pkgconfig/xproto.pc $out/lib/pkgconfig/
