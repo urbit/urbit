@@ -762,7 +762,12 @@
       :-  %chat-view-action
       !>  ^-  chat-view-action
       :*  %create
+        ::
+          %+  weld
+            ?:  ?=(%village security)  ~
+            [~.~]~
           [(scot %p our-self) path]
+        ::
           security
           ::  ensure we can read from/write to our own chats
           ::
