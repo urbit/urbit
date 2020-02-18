@@ -5,19 +5,32 @@ set -ex
 cd pkg/interface/chat
 npm install
 gulp bundle-prod &
+
 cd ../launch
 npm install
 gulp bundle-prod &
+
 cd ../clock
 npm install
 gulp bundle-prod &
+
 cd ../publish
 npm install
 gulp bundle-prod &
+
 cd ../soto
 npm install
 gulp bundle-prod &
+
 cd ../weather
+npm install
+gulp bundle-prod
+
+cd ../contacts
+npm install
+gulp bundle-prod
+
+cd ../link
 npm install
 gulp bundle-prod
 
