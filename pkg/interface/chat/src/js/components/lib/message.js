@@ -142,13 +142,14 @@ export class Message extends Component {
           );
         }
       else {
+        let text = letter.text.split ('\n').map ((item, i) => <p className='f7 lh-copy v-top' key={i}>{item}</p>);
         return (
-          <p className='f7 lh-copy v-top'>
-            {letter.text}
-          </p>
+          <section>
+            {text}
+          </section>
         );
       }
-  }
+    }
   }
 
   render() {
