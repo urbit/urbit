@@ -402,8 +402,8 @@ localClient doneSignal = fst <$> mkRAcquire start stop
     -- Redraw the current LineState, maintaining the current curpos
     termRefreshLine :: T.Terminal -> LineState -> RIO e LineState
     termRefreshLine t ls = do
-      let line = (lsLine ls)
-          curPos = (lsCurPos ls)
+      let line   = lsLine ls
+          curPos = lsCurPos ls
       ls <- termShowClear t ls
       ls <- termShowLine t ls line
       termShowCursor t ls curPos
@@ -558,7 +558,6 @@ term (tsize, Client{..}) shutdownSTM king enqueueEv =
             let (termBlits, fsWrites) = partition isTerminalBlit blits
             atomically $ give [Term.Blits termBlits]
             for_ fsWrites handleFsWrite
-
 
     handleFsWrite :: Blit -> RIO e ()
     handleFsWrite (Sag path noun) = performPut path (jamBS noun)

@@ -30,6 +30,7 @@ tests:
 
 dependencies:
   - aeson
+  - ansi-terminal
   - async
   - base
   - base-unicode-symbols

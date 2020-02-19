@@ -12,12 +12,18 @@ module Urbit.Vere.Term.Render
     , setupTermFromEnv
     , getCapability
     , tiGetOutput1
+    , clearScreen
+    , clearLine
+    , cursorRight
+    , cursorLeft
+    , soundBell
     ) where
 
 import ClassyPrelude
 
 import qualified System.Console.Terminal.Size as TSize
 import qualified System.Console.Terminfo.Base as TInfo
+import qualified System.Console.ANSI          as ANSI
 
 
 --------------------------------------------------------------------------------
@@ -51,6 +57,8 @@ termText = TInfo.termText
 runTermOutput ∷ Terminal -> TermOutput -> IO ()
 runTermOutput = TInfo.runTermOutput
 
+-- Deprecated ------------------------------------------------------------------
+
 setupTermFromEnv ∷ IO Terminal
 setupTermFromEnv = TInfo.setupTermFromEnv
 
@@ -59,3 +67,20 @@ getCapability = TInfo.getCapability
 
 tiGetOutput1 ∷ TInfo.OutputCap f => String -> Capability f
 tiGetOutput1 = TInfo.tiGetOutput1
+
+--------------------------------------------------------------------------------
+
+clearScreen ∷ IO ()
+clearScreen = ANSI.clearScreen
+
+clearLine ∷ IO ()
+clearLine = ANSI.clearLine
+
+soundBell ∷ IO ()
+soundBell = putStr "\BEL"
+
+cursorLeft ∷ IO ()
+cursorLeft = ANSI.cursorBackward 1
+
+cursorRight ∷ IO ()
+cursorRight = ANSI.cursorForward 1
