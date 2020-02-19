@@ -22,9 +22,9 @@ cd build
 
 cmake ../llvm -GNinja -DDEFAULT_SYSROOT=$out -DCMAKE_INSTALL_PREFIX=$out $cmake_flags
 
-# We use -j1 below so we can avoid running out of RAM on
-# systems with several cores and little RAM.
+ninja
 
-ninja -j1
+ninja install
 
-ninja -j1 install
+# clang-tblgen is supposed to be an internal tool, but tapi needs it
+cp bin/clang-tblgen $out/bin
