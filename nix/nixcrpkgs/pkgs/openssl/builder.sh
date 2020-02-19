@@ -35,6 +35,8 @@ esac
 #
 # [2]: https://github.com/rust-embedded/cross/pull/218/files
 
+sed -i "1s|usr|$coreutils|" ../openssl-$version/Configure
+
 ../openssl-$version/Configure   \
   --prefix=$out                 \
   --cross-compile-prefix=$host- \
