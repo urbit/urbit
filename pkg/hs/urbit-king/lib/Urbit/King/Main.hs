@@ -533,6 +533,8 @@ main :: IO ()
 main = do
     mainTid <- myThreadId
 
+    hSetBuffering stdout NoBuffering
+
     let onTermSig = throwTo mainTid UserInterrupt
 
     Sys.installHandler Sys.sigTERM (Sys.Catch onTermSig) Nothing
