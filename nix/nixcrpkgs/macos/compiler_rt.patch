@@ -1,0 +1,80 @@
+diff -ur compiler-rt-7.0.1.src-orig/cmake/base-config-ix.cmake compiler-rt-7.0.1.src/cmake/base-config-ix.cmake
+--- compiler-rt-7.0.1.src-orig/cmake/base-config-ix.cmake	2019-01-04 20:17:52.685000000 -0800
++++ compiler-rt-7.0.1.src/cmake/base-config-ix.cmake	2019-01-04 20:32:57.785000000 -0800
+@@ -89,16 +89,6 @@
+ endif()
+ 
+ if(APPLE)
+-  # On Darwin if /usr/include doesn't exist, the user probably has Xcode but not
+-  # the command line tools. If this is the case, we need to find the OS X
+-  # sysroot to pass to clang.
+-  if(NOT EXISTS /usr/include)
+-    execute_process(COMMAND xcodebuild -version -sdk macosx Path
+-       OUTPUT_VARIABLE OSX_SYSROOT
+-       ERROR_QUIET
+-       OUTPUT_STRIP_TRAILING_WHITESPACE)
+-    set(OSX_SYSROOT_FLAG "-isysroot${OSX_SYSROOT}")
+-  endif()
+ 
+   option(COMPILER_RT_ENABLE_IOS "Enable building for iOS" On)
+   option(COMPILER_RT_ENABLE_WATCHOS "Enable building for watchOS - Experimental" Off)
+diff -ur compiler-rt-7.0.1.src-orig/cmake/builtin-config-ix.cmake compiler-rt-7.0.1.src/cmake/builtin-config-ix.cmake
+--- compiler-rt-7.0.1.src-orig/cmake/builtin-config-ix.cmake	2019-01-04 20:17:52.685000000 -0800
++++ compiler-rt-7.0.1.src/cmake/builtin-config-ix.cmake	2019-01-04 21:35:18.881427998 -0800
+@@ -103,20 +103,6 @@
+     set(CAN_TARGET_${arch} 1)
+   endforeach()
+ 
+-  # Need to build a 10.4 compatible libclang_rt
+-  set(DARWIN_10.4_SYSROOT ${DARWIN_osx_SYSROOT})
+-  set(DARWIN_10.4_BUILTIN_MIN_VER 10.4)
+-  set(DARWIN_10.4_BUILTIN_MIN_VER_FLAG
+-      -mmacosx-version-min=${DARWIN_10.4_BUILTIN_MIN_VER})
+-  set(DARWIN_10.4_SKIP_CC_KEXT On)
+-  darwin_test_archs(10.4 DARWIN_10.4_ARCHS i386 x86_64)
+-  message(STATUS "OSX 10.4 supported builtin arches: ${DARWIN_10.4_ARCHS}")
+-  if(DARWIN_10.4_ARCHS)
+-    # don't include the Haswell slice in the 10.4 compatibility library
+-    list(REMOVE_ITEM DARWIN_10.4_ARCHS x86_64h)
+-    list(APPEND BUILTIN_SUPPORTED_OS 10.4)
+-  endif()
+-
+   foreach(platform ${DARWIN_EMBEDDED_PLATFORMS})
+     if(DARWIN_${platform}sim_SYSROOT)
+       set(DARWIN_${platform}sim_BUILTIN_MIN_VER
+diff -ur compiler-rt-7.0.1.src-orig/cmake/Modules/AddCompilerRT.cmake compiler-rt-7.0.1.src/cmake/Modules/AddCompilerRT.cmake
+--- compiler-rt-7.0.1.src-orig/cmake/Modules/AddCompilerRT.cmake	2019-01-04 20:17:52.685000000 -0800
++++ compiler-rt-7.0.1.src/cmake/Modules/AddCompilerRT.cmake	2019-01-06 21:53:52.696998594 -0800
+@@ -291,12 +291,6 @@
+         set_target_properties(${libname} PROPERTIES IMPORT_SUFFIX ".lib")
+       endif()
+       if(APPLE)
+-        # Ad-hoc sign the dylibs
+-        add_custom_command(TARGET ${libname}
+-          POST_BUILD  
+-          COMMAND codesign --sign - $<TARGET_FILE:${libname}>
+-          WORKING_DIRECTORY ${COMPILER_RT_LIBRARY_OUTPUT_DIR}
+-        )
+       endif()
+     endif()
+     install(TARGETS ${libname}
+diff -ur compiler-rt-7.0.1.src-orig/CMakeLists.txt compiler-rt-7.0.1.src/CMakeLists.txt
+--- compiler-rt-7.0.1.src-orig/CMakeLists.txt	2019-01-04 20:17:52.589000000 -0800
++++ compiler-rt-7.0.1.src/CMakeLists.txt	2019-01-04 20:57:57.233000000 -0800
+@@ -375,16 +375,6 @@
+ 
+ add_subdirectory(include)
+ 
+-foreach(path IN ITEMS ${LLVM_MAIN_SRC_DIR}/projects/libcxx
+-                      ${LLVM_MAIN_SRC_DIR}/runtimes/libcxx
+-                      ${LLVM_MAIN_SRC_DIR}/../libcxx
+-                      ${LLVM_EXTERNAL_LIBCXX_SOURCE_DIR})
+-  if(IS_DIRECTORY ${path})
+-    set(COMPILER_RT_LIBCXX_PATH ${path})
+-    break()
+-  endif()
+-endforeach()
+-
+ set(COMPILER_RT_LLD_PATH ${LLVM_MAIN_SRC_DIR}/tools/lld)
+ if(EXISTS ${COMPILER_RT_LLD_PATH}/ AND LLVM_TOOL_LLD_BUILD)
+   set(COMPILER_RT_HAS_LLD TRUE)

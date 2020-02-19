@@ -1,0 +1,21 @@
+--- a/libpkgconf/path.c
++++ b/libpkgconf/path.c
+@@ -90,18 +90,6 @@ pkgconf_path_add(const char *text, pkgconf_list_t *dirlist, bool filter)
+ 	{
+ 		if (lstat(path, &st) == -1)
+ 			return;
+-		if (S_ISLNK(st.st_mode))
+-		{
+-			char linkdest[PKGCONF_ITEM_SIZE];
+-			ssize_t len;
+-
+-			memset(linkdest, '\0', sizeof linkdest);
+-			len = readlink(path, linkdest, sizeof linkdest);
+-
+-			if (len != -1 && (size_t)len < sizeof(linkdest) &&
+-				stat(linkdest, &st) == -1)
+-				return;
+-		}
+ 		if (path_list_contains_entry(path, dirlist, &st))
+ 			return;
+ 	}
