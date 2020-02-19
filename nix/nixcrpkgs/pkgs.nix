@@ -20,6 +20,14 @@ rec {
     inherit crossenv;
   };
 
+  lmdb = import ./pkgs/lmdb {
+    inherit crossenv;
+  };
+
+  ncurses = import ./pkgs/ncurses {
+    inherit crossenv;
+  };
+
   pdcurses = import ./pkgs/pdcurses {
     inherit crossenv;
   };
@@ -34,6 +42,22 @@ rec {
   };
 
   zlib = import ./pkgs/zlib {
+    inherit crossenv;
+  };
+
+  libgmp = import ./pkgs/libgmp {
+    inherit crossenv;
+  };
+
+  libsigsegv = import ./pkgs/libsigsegv {
+    inherit crossenv;
+  };
+
+  curl = import ./pkgs/curl {
+    inherit crossenv openssl zlib;
+  };
+
+  openssl = import ./pkgs/openssl {
     inherit crossenv;
   };
 
@@ -64,6 +88,10 @@ rec {
 
   openocd = import ./pkgs/openocd {
     inherit crossenv libusb;
+  };
+
+  angle = import ./pkgs/angle {
+    inherit crossenv gdb;
   };
 
   xcb-proto = import ./pkgs/xcb-proto {
@@ -144,6 +172,10 @@ rec {
   };
 
   dejavu-fonts = import ./pkgs/dejavu-fonts {
+    inherit crossenv;
+  };
+
+  ion = import ./pkgs/ion {	
     inherit crossenv;
   };
 
