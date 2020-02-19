@@ -54,14 +54,14 @@ export class Subscribers extends Component {
           width = 258;
           let url = `/~contacts${writePath}`;
           options = [{
-            cls: "tl pointer",
+            cls: "tl pointer w-100 db hover-bg-gray4 ph2 pv3",
             txt: "Manage this group in the contacts view",
             action: () => {this.redirect(url)}
           }];
         } else {
           width = 157;
           options = [{
-            cls: "tl pointer",
+            cls: "tl pointer w-100 db hover-bg-gray4 ph2 pv3",
             txt: "Demote to subscriber",
             action: () => {this.removeUser(`~${who}`, writePath)}
           }];
@@ -92,11 +92,11 @@ export class Subscribers extends Component {
         let width = 162;
         subscribers = this.props.notebook.subscribers.map((who, i) => {
           let options = [
-            { cls: "tl mb2 pointer",
+            { cls: "tl pointer w-100 db hover-bg-gray4 ph2 pv3",
               txt: "Promote to participant",
               action: () => {this.addUser(who, writePath)}
             },
-            { cls: "tl red2 pointer",
+            { cls: "tl red2 pointer w-100 db hover-bg-gray4 ph2 pv3",
               txt: "Ban",
               action: () => {this.addUser(who, readPath)}
             },

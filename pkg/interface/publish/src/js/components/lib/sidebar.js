@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Route, Link } from 'react-router-dom';
+import { Dropdown } from './dropdown';
 import { NotebookItem } from './notebook-item';
 import { SidebarInvite } from './sidebar-invite';
 
@@ -149,24 +150,41 @@ export class Sidebar extends Component {
         <a className="db dn-m dn-l dn-xl f9 pb3 pl3" href="/">
           ⟵ Landscape
         </a>
-        <div className="w-100">
+        <div className="w-100 f9">
           <Link to="/~publish/new" className="green2 mr4 f9 pl4 pt4 dib">
             New Notebook
           </Link>
           <Link to="/~publish/join" className="f9 gray2">
             Join Notebook
           </Link>
-          <div className="dropdown relative bb b--gray4">
-            <select
-              style={{ WebkitAppearance: "none" }}
-              className="pl4 pv6 f9 bg-white bg-black-d white-d bn w-100 inter"
-              value={this.state.sort}
-              onChange={this.sortChange}>
-              <option value="oldest">Oldest Notebooks First</option>
-              <option value="newest">Newest Notebooks First</option>
-              <option value="alphabetical">Alphabetical A -> Z</option>
-              <option value="reverseAlphabetical">Alphabetical Z -> A</option>
-            </select>
+          <div className="pl2 pv2 bb b--gray4">
+          <Dropdown
+            width="16rem"
+            align="left"
+            options={[
+              {
+              cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
+              txt: "Oldest Notebooks First",
+              action: () => {this.setState({sort: "oldest"})}
+              },
+              {
+              cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
+              txt: "Newest Notebooks First",
+              action: () => {this.setState({sort: "newest"})}
+              },
+              {
+              cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
+              txt: "Alphabetical A -> Z",
+              action: () => {this.setState({sort: "alphabetical"})}
+              },
+              {
+              cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
+              txt: "Alphabetical Z -> A",
+              action: () => {this.setState({sort: "reverseAlphabetical"})}
+              }
+            ]}
+            buttonText="Sort Notebooks"
+          />
           </div>
         </div>
         <div className="overflow-y-scroll h-100">
