@@ -3,12 +3,6 @@ version: 0.10.1
 license: MIT
 license-file: LICENSE
 
-flags:
-  Release:
-    description: "Produce statically-linked executables"
-    default: false
-    manual: true
-
 library:
   source-dirs: lib
   ghc-options:
@@ -94,7 +88,6 @@ dependencies:
   - template-haskell
   - terminal-progress-bar
   - terminal-size
-  - terminfo
   - text
   - these
   - time
@@ -166,12 +159,6 @@ executables:
     source-dirs: app
     dependencies:
       - urbit-king
-    when:
-      - condition: flag(Release)
-        then:
-          cc-options: -static
-          ld-options: -static -pthread
-        else: {}
     ghc-options:
       - -threaded
       - -rtsopts

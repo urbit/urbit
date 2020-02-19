@@ -4,14 +4,6 @@
 module Urbit.Vere.Term.Render
     ( TSize(..)
     , tsize
-    , Terminal
-    , Capability
-    , TermOutput
-    , termText
-    , runTermOutput
-    , setupTermFromEnv
-    , getCapability
-    , tiGetOutput1
     , clearScreen
     , clearLine
     , cursorRight
@@ -22,17 +14,10 @@ module Urbit.Vere.Term.Render
 import ClassyPrelude
 
 import qualified System.Console.Terminal.Size as TSize
-import qualified System.Console.Terminfo.Base as TInfo
 import qualified System.Console.ANSI          as ANSI
 
 
---------------------------------------------------------------------------------
-
-type Terminal = TInfo.Terminal
-
-type Capability f = TInfo.Capability f
-
-type TermOutput = TInfo.TermOutput
+-- Types -----------------------------------------------------------------------
 
 data TSize = TSize
     { tsWide ∷ Word
@@ -51,36 +36,17 @@ tsize = do
     TSize.Window wi hi <- TSize.size <&> fromMaybe (TSize.Window 80 24)
     pure $ TSize { tsWide = wi, tsTall = hi }
 
-termText ∷ String -> TermOutput
-termText = TInfo.termText
+clearScreen ∷ MonadIO m ⇒ m ()
+clearScreen = liftIO $ ANSI.clearScreen
 
-runTermOutput ∷ Terminal -> TermOutput -> IO ()
-runTermOutput = TInfo.runTermOutput
+clearLine ∷ MonadIO m ⇒ m ()
+clearLine = liftIO $ ANSI.clearLine
 
--- Deprecated ------------------------------------------------------------------
+soundBell ∷ MonadIO m ⇒ m ()
+soundBell = liftIO $ putStr "\a"
 
-setupTermFromEnv ∷ IO Terminal
-setupTermFromEnv = TInfo.setupTermFromEnv
+cursorLeft ∷ MonadIO m ⇒ Int → m ()
+cursorLeft = liftIO . ANSI.cursorBackward
 
-getCapability ∷ Terminal -> Capability a -> Maybe a
-getCapability = TInfo.getCapability
-
-tiGetOutput1 ∷ TInfo.OutputCap f => String -> Capability f
-tiGetOutput1 = TInfo.tiGetOutput1
-
---------------------------------------------------------------------------------
-
-clearScreen ∷ IO ()
-clearScreen = ANSI.clearScreen
-
-clearLine ∷ IO ()
-clearLine = ANSI.clearLine
-
-soundBell ∷ IO ()
-soundBell = putStr "\BEL"
-
-cursorLeft ∷ IO ()
-cursorLeft = ANSI.cursorBackward 1
-
-cursorRight ∷ IO ()
-cursorRight = ANSI.cursorForward 1
+cursorRight ∷ MonadIO m ⇒ Int → m ()
+cursorRight = liftIO . ANSI.cursorForward
