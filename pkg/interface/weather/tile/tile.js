@@ -149,7 +149,7 @@ export default class WeatherTile extends Component {
 
     return this.renderWrapper(
       <div className="w-100 h-100"
-      style={{backdropFilter: "blur(35px)"}}>
+      style={{backdropFilter: "blur(80px)"}}>
         <p className="f9 absolute" style={{ left: 8, top: 8 }}>
           Weather
         </p>
