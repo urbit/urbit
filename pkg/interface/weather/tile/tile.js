@@ -12,7 +12,7 @@ export default class WeatherTile extends Component {
     };
     let api = window.api;
   }
-
+  // geolocation and manual input functions
   locationSubmit() {
     navigator.geolocation.getCurrentPosition((res) => {
       let latlng = `${res.coords.latitude},${res.coords.longitude}`;
@@ -43,19 +43,79 @@ export default class WeatherTile extends Component {
       return false;
     }
   }
+  // set appearance based on weather
+  setColors(data) {
+    let weatherStyle = {
+      gradient1: "",
+      gradient2: "",
+      text: ""
+    };
 
-  keyPress(e) {
-    if (e.keyCode === 13) {
-
+    switch (data.daily.icon) {
+      case "clear-day":
+        weatherStyle = {
+          gradient1: "#A5CEF0", gradient2: "#FEF4E0", text: "black"
+        }
+        break;
+      case "clear-night":
+        weatherStyle = {
+          gradient1: "#56668e", gradient2: "#000080", text: "white"
+        }
+        break;
+      case "rain":
+        weatherStyle = {
+          gradient1: "#b1b2b3", gradient2: "#b0c7ff", text: "black"
+        };
+        break;
+      case "snow":
+        weatherStyle = {
+          gradient1: "#eee", gradient2: "#f9f9f9", text: "black"
+        };
+        break;
+      case "sleet":
+        weatherStyle = {
+          gradient1: "#eee", gradient2: "#f9f9f9", text: "black"
+        };
+        break;
+      case "wind":
+        weatherStyle = {
+          gradient1: "#eee", gradient2: "#fff", text: "black"
+        };
+        break;
+      case "fog":
+        weatherStyle = {
+          gradient1: "#eee", gradient2: "#fff", text: "black"
+        };
+        break;
+      case "cloudy":
+        weatherStyle = {
+          gradient1: "#eee", gradient2: "#b1b2b3", text: "black"
+        };
+        break;
+      case "partly-cloudy-day":
+        weatherStyle = {
+          gradient1: "#fcc440", gradient2: "#b1b2b3", text: "black"
+        };
+        break;
+      case "partly-cloudy-night":
+        weatherStyle = {
+          gradient1: "#7f7f7f", gradient2: "#56668e", text: "white"
+        };
+        break;
+      default:
+        weatherStyle = {
+          gradient1: "white", gradient2: "white", text: "black"
+        };
     }
+    return weatherStyle;
   }
-
+  // all tile views
   renderWrapper(child,
     weatherStyle = { gradient1: "white", gradient2: "white", text: "black" }
     ) {
     return (
       <div
-        className={"relative b--black ba " + weatherStyle.text}
+        className={"relative " + weatherStyle.text}
         style={{
           width: 126,
           height: 126,
@@ -130,7 +190,7 @@ export default class WeatherTile extends Component {
   renderNoData() {
     return this.renderWrapper((
       <div
-      className="pa2 bg-white black"
+        className="pa2 w-100 h-100 b--black ba bg-white black"
       onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>
           <p className="f9 absolute"
             style={{left: 8, top: 8}}>
@@ -141,14 +201,14 @@ export default class WeatherTile extends Component {
     ));
   }
 
-  renderWithData(data, weatherClasses) {
+  renderWithData(data, weatherStyle) {
     let c = data.currently;
     let d = data.daily.data[0];
 
     let da = moment.unix(d.sunsetTime).format('h:mm a') || '';
 
     return this.renderWrapper(
-      <div className="w-100 h-100"
+      <div className="w-100 h-100 b--black ba"
       style={{backdropFilter: "blur(80px)"}}>
         <p className="f9 absolute" style={{ left: 8, top: 8 }}>
           Weather
@@ -167,7 +227,7 @@ export default class WeatherTile extends Component {
           <p className="f9 pt1">Sunset at {da}</p>
         </div>
       </div>
-    , weatherClasses);
+    , weatherStyle);
   }
 
   render() {
@@ -178,90 +238,7 @@ export default class WeatherTile extends Component {
     }
 
     if ('currently' in data && 'daily' in data) {
-      let weatherStyle = {
-        gradient1: "",
-        gradient2: "",
-        text: ""
-      };
-
-      switch(data.daily.icon) {
-        case "clear-day":
-          weatherStyle = {
-            gradient1: "#A5CEF0",
-            gradient2: "#FEF4E0",
-            text: "black"
-          }
-          break;
-        case "clear-night":
-          weatherStyle = {
-            gradient1: "#56668e",
-            gradient2: "#000080",
-            text: "white"
-          }
-          break;
-        case "rain":
-          weatherStyle = {
-            gradient1: "#b1b2b3",
-            gradient2: "#b0c7ff",
-            text: "black"
-          };
-          break;
-        case "snow":
-          weatherStyle = {
-            gradient1: "#eee",
-            gradient2: "#f9f9f9",
-            text: "black"
-          };
-          break;
-        case "sleet":
-          weatherStyle = {
-            gradient1: "#eee",
-            gradient2: "#f9f9f9",
-            text: "black"
-          };
-          break;
-        case "wind":
-          weatherStyle = {
-            gradient1: "#eee",
-            gradient2: "#fff",
-            text: "black"
-          };
-          break;
-        case "fog":
-          weatherStyle = {
-            gradient1: "#eee",
-            gradient2: "#fff",
-            text: "black"
-          };
-          break;
-        case "cloudy":
-          weatherStyle = {
-            gradient1: "#eee",
-            gradient2: "#b1b2b3",
-            text: "black"
-          };
-          break;
-        case "partly-cloudy-day":
-          weatherStyle = {
-            gradient1: "#fcc440",
-            gradient2: "#b1b2b3",
-            text: "black"
-          };
-          break;
-        case "partly-cloudy-night":
-          weatherStyle = {
-            gradient1: "#7f7f7f",
-            gradient2: "#56668e",
-            text: "white"
-          };
-          break;
-        default:
-          weatherStyle = {
-            gradient1: "white",
-            gradient2: "white",
-            text: "black"
-          };
-      }
+      let weatherStyle = this.setColors(data);
       return this.renderWithData(data, weatherStyle);
     }
 
