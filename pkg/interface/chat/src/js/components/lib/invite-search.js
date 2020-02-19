@@ -68,6 +68,18 @@ export class InviteSearch extends Component {
       this.setState({
         searchResults: { groups: groupMatches, ships: shipMatches }
       });
+
+      let isValid = true;
+      if (!urbitOb.isValidPatp("~" + searchTerm)) {
+        isValid = false;
+      }
+
+      if ((shipMatches.length === 0) && (isValid)) {
+        shipMatches.push(searchTerm);
+        this.setState({
+          searchResults: { groups: groupMatches, ships: shipMatches }
+        })
+      }
     }
   }
 
