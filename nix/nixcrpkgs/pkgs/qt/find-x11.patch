@@ -1,0 +1,48 @@
+diff -ur qtbase-everywhere-src-5.12.1-orig/src/gui/configure.json qtbase-everywhere-src-5.12.1/src/gui/configure.json
+--- qtbase-everywhere-src-5.12.1-orig/src/gui/configure.json	2019-01-28 09:11:52.000000000 -0800
++++ qtbase-everywhere-src-5.12.1/src/gui/configure.json	2019-02-05 09:51:36.758000000 -0800
+@@ -572,6 +572,13 @@
+                 { "type": "pkgConfig", "args": "sm ice" }
+             ]
+         },
++        "x11": {
++            "label": "libx11",
++            "headers": "X11/cursorfont.h",
++            "sources": [
++                { "type": "pkgConfig", "args": "x11" }
++            ]
++        },
+         "xcb": {
+             "label": "XCB >= 1.9",
+             "test": {
+@@ -1066,7 +1073,8 @@
+                     "xcb/xfixes.h",
+                     "xcb/xinerama.h",
+                     "xcb/xcb_icccm.h",
+-                    "xcb/xcb_renderutil.h"
++                    "xcb/xcb_renderutil.h",
++                    "X11/cursorfont.h"
+                 ],
+                 "main": [
+                     "int primaryScreen = 0;",
+@@ -1083,7 +1091,7 @@
+                     "xcb_render_util_find_standard_format(nullptr, XCB_PICT_STANDARD_ARGB_32);"
+                 ]
+             },
+-            "use": "xcb_icccm xcb_image xcb_keysyms xcb_randr xcb_render xcb_renderutil xcb_shape xcb_shm xcb_sync xcb_xfixes xcb_xinerama xcb"
++            "use": "xcb_icccm xcb_image xcb_keysyms xcb_randr xcb_render xcb_renderutil xcb_shape xcb_shm xcb_sync xcb_xfixes xcb_xinerama xcb x11"
+         },
+         "x11prefix": {
+             "label": "X11 prefix",
+diff -ur qtbase-everywhere-src-5.12.1-orig/src/plugins/platforms/xcb/xcb_qpa_lib.pro qtbase-everywhere-src-5.12.1/src/plugins/platforms/xcb/xcb_qpa_lib.pro
+--- qtbase-everywhere-src-5.12.1-orig/src/plugins/platforms/xcb/xcb_qpa_lib.pro	2019-01-28 09:11:52.000000000 -0800
++++ qtbase-everywhere-src-5.12.1/src/plugins/platforms/xcb/xcb_qpa_lib.pro	2019-02-05 09:54:14.474000000 -0800
+@@ -67,6 +67,8 @@
+ 
+ DEFINES += QT_BUILD_XCB_PLUGIN
+ 
++QMAKE_USE += x11
++
+ qtConfig(xcb-xlib) {
+     QMAKE_USE += xcb_xlib
+ }
