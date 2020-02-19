@@ -16,10 +16,10 @@ native.make_derivation rec {
     sha256 = "10007smilswiiv2ymazr3b6x2i933c0ycxrr529zh4r6p823qv0r";
   };
 
-  musl_version = "1.1.20";
+  musl_version = "1.1.24";
   musl_src = nixpkgs.fetchurl {
     url = "https://www.musl-libc.org/releases/musl-${musl_version}.tar.gz";
-    sha256 = "0q8dsjxl41dccscv9a0r78bs7jap57mn4mni5pwbbip6s1qqggj4";
+    sha256 = "18r2a00k82hz0mqdvgm7crzc7305l36109c0j9yjmkxj2alcjw0k";
   };
 
   inherit host headers;
