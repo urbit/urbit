@@ -79,7 +79,6 @@ import Urbit.Vere.LockFile    (lockFile)
 import qualified Data.Set                as Set
 import qualified Data.Text               as T
 import qualified Network.HTTP.Client     as C
-import qualified System.Environment      as Sys
 import qualified System.Posix.Signals    as Sys
 import qualified System.ProgressBar      as PB
 import qualified System.Random           as Sys
@@ -530,22 +529,6 @@ checkComet = do
   let s = mineComet (Set.fromList starList) eny
   print s
 
-{-|
-    The release executable links against a terminfo library that tries
-    to find the terminfo database in `/nix/store/...`. Hack around this
-    by setting `TERMINFO_DIRS` to the standard locations, but don't
-    overwrite it if it's already been set by the user.
--}
-terminfoHack ∷ IO ()
-terminfoHack =
-    Sys.lookupEnv var >>= maybe (Sys.setEnv var dirs) (const $ pure ())
-  where
-    var = "TERMINFO_DIRS"
-    dirs = intercalate ":"
-      [ "/usr/share/terminfo"
-      , "/lib/terminfo"
-      ]
-
 main :: IO ()
 main = do
     mainTid <- myThreadId
@@ -553,8 +536,6 @@ main = do
     let onTermSig = throwTo mainTid UserInterrupt
 
     Sys.installHandler Sys.sigTERM (Sys.Catch onTermSig) Nothing
-
-    terminfoHack
 
     CLI.parseArgs >>= \case
         CLI.CmdRun r o d                        -> runShip r o d
