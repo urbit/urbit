@@ -6,6 +6,8 @@ crossenv.make_derivation rec {
 
     native_inputs = [ crossenv.nixpkgs.perl ];
 
+    coreutils = crossenv.nixpkgs.coreutils;
+
     src = crossenv.nixpkgs.fetchurl {
       url = "https://www.openssl.org/source/${name}.tar.gz";
       sha256 = "0gbab2fjgms1kx5xjvqx8bxhr98k4r8l2fa8vw7kvh491xd8fdi8";
