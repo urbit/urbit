@@ -143,7 +143,7 @@ export default class WeatherTile extends Component {
         onClick={() => this.locationSubmit()}>Detect -></a>
     }
     return this.renderWrapper(
-      <div className="pa2 w-100 h-100 bg-white black">
+      <div className="pa2 w-100 h-100 bg-white black b--black ba">
         <a
           className="f9 black pointer"
           onClick={() =>
