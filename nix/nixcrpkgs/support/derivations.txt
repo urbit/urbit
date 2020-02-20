@@ -1,26 +1,21 @@
-define all = win32,win64,linux32,linux64,linux-rpi,mac
+define all = win32,win64,linux32,linux64,linux-aarch64,linux-rpi,mac
 define windows = win32,win64
-define linux = linux32,linux64,linux-rpi
+define linux = linux32,linux64,linux-aarch64,linux-rpi
 
 # Cross-compiler toolchains
 {$windows,$linux}.gcc slow=1
 mac.toolchain slow=1
 
 # Packages
-{$windows}.angle{,.examples} slow=1
-{$windows}.angle.examples
 omni.at-spi2-headers
 {$all}.avrdude
 omni.dejavu-fonts
 {$windows}.devcon
 {$all}.expat
-omni.fixesproto
+omni.xorgproto
 {$windows}.gdb
 {$all}.hello
 {$all}.hello_cpp
-omni.inputproto
-{$all}.ion
-omni.kbproto
 {$linux}.libudev
 {$all}.libusb
 {$all}.libusbp{,.examples}
@@ -31,6 +26,7 @@ omni.kbproto
 {$linux}.libxext
 {$linux}.libxfixes
 {$linux}.libxi
+{$linux}.libxkbcommon
 {$all}.openocd
 {$all}.pavr2
 {$windows}.pdcurses{,.examples}
@@ -46,9 +42,7 @@ omni.xcb-proto
 {$all}.xcb-util-keysyms
 {$all}.xcb-util-renderutil
 {$all}.xcb-util-wm
-omni.xextproto
 omni.xorg-macros
-{$all}.xproto
 omni.xtrans
 {$all}.zlib
 

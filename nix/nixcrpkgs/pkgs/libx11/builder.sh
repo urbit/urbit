@@ -15,10 +15,10 @@ make install
 
 # Make static linking work.
 sed -i 's/Requires.private/Requires/' $out/lib/pkgconfig/*.pc
+sed -i 's/Libs.private/Libs/' $out/lib/pkgconfig/*.pc
 
 ln -s x11-xcb.pc $out/lib/pkgconfig/X11-xcb.pc
 ln -s x11.pc $out/lib/pkgconfig/X11.pc
 
-ln -sf $xproto/lib/pkgconfig/*.pc $out/lib/pkgconfig/
-ln -sf $kbproto/lib/pkgconfig/*.pc $out/lib/pkgconfig/
+ln -sf $xorgproto/lib/pkgconfig/*.pc $out/lib/pkgconfig/
 ln -sf $libxcb/lib/pkgconfig/*.pc $out/lib/pkgconfig/

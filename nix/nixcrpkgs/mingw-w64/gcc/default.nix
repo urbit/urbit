@@ -2,7 +2,7 @@
 
 let
   nixpkgs = native.nixpkgs;
-  isl = nixpkgs.isl_0_14;
+  isl = nixpkgs.isl;
   inherit (nixpkgs) stdenv lib fetchurl;
   inherit (nixpkgs) gettext gmp libmpc libelf mpfr texinfo which zlib;
 
@@ -15,33 +15,43 @@ native.make_derivation rec {
 
   target = "${arch}-w64-mingw32";
 
-  version = "6.3.0";
+  version = "8.2.0";
 
   src = fetchurl {
-    url = "mirror://gnu/gcc/gcc-${version}/gcc-${version}.tar.bz2";
-    sha256 = "17xjz30jb65hcf714vn9gcxvrrji8j20xm7n33qg1ywhyzryfsph";
+    url = "mirror://gnu/gcc/gcc-${version}/gcc-${version}.tar.xz";
+    sha256 = "10007smilswiiv2ymazr3b6x2i933c0ycxrr529zh4r6p823qv0r";
   };
 
   builder = ./builder.sh;
 
   patches = [
-    # TODO: combine three of these patches into one called search-dirs.patch
+    # Make it so GCC does not force us to have a "mingw" symlink.
     ./mingw-search-paths.patch
-    ./use-source-date-epoch.patch
-    ./libstdc++-target.patch
-    ./no-sys-dirs.patch
+
+    # Make --with-sysroot and --with-native-system-header-dir work
+    # as described in the GCC documentation.
     ./cppdefault.patch
 
-    # Fix a compiler error in GCC's ubsan.c: ISO C++ forbids comparison
-    # between pointer and integer.
-    ./ubsan.patch
+    # Remove hardcoded absolute paths.
+    ./no-sys-dirs.patch
+
+    # Fix a bug in GCC that causes an internal compiler error when
+    # compiling Qt's qrandom.cpp:
+    # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58372#c14
+    # Patch is from comment #42 by Uros Bizjak.
+    # https://gcc.gnu.org/viewcvs/gcc/branches/gcc-8-branch/gcc/cfgexpand.c?view=patch&r1=264557&r2=266014&pathrev=266014
+    ./stack-alignment-58372.patch
+
+    # This patch is from nixpkgs.
+    ./libstdc++-target.patch
+
+    # Fix compilation errors about missing ISL function declarations.
+    # https://gcc.gnu.org/git/?p=gcc.git;a=patch;h=05103aed1d34b5ca07c9a70c95a7cb1d47e22c47
+    ./isl-headers.patch
   ];
 
-  # TODO: can probably remove libelf here, and might as well remove
-  # the libraries that are given to GCC as configure flags
-  # TODO: just let GCC use its own gettext (intl)
   native_inputs = [
-    binutils gettext libelf texinfo which zlib
+    binutils texinfo gettext which
   ];
 
   configure_flags =
@@ -82,8 +92,7 @@ native.make_derivation rec {
     "--disable-multilib " +
     "--disable-libssp " +
     "--disable-win32-registry " +
-    "--disable-bootstrap";  # TODO: not needed, --disable-bootstrap
-                            # only applies to native builds
+    "--disable-bootstrap";
 
   make_flags =
     if stage == 1 then

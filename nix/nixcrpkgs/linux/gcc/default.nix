@@ -2,42 +2,41 @@
 
 let
   nixpkgs = native.nixpkgs;
-  isl = nixpkgs.isl_0_14;
+  isl = nixpkgs.isl;
   inherit (nixpkgs) stdenv lib fetchurl;
   inherit (nixpkgs) gmp libmpc libelf mpfr zlib;
 in
 
 native.make_derivation rec {
-  name = "gcc-${gcc_version}-${host}";
+  name = "gcc-${version}-${host}";
 
-  gcc_version = "6.3.0";
-  gcc_src = fetchurl {
-    url = "mirror://gnu/gcc/gcc-${gcc_version}/gcc-${gcc_version}.tar.bz2";
-    sha256 = "17xjz30jb65hcf714vn9gcxvrrji8j20xm7n33qg1ywhyzryfsph";
+  version = "8.2.0";
+  src = fetchurl {
+    url = "mirror://gnu/gcc/gcc-${version}/gcc-${version}.tar.xz";
+    sha256 = "10007smilswiiv2ymazr3b6x2i933c0ycxrr529zh4r6p823qv0r";
   };
 
-  musl_version = "1.1.16";
+  musl_version = "1.1.24";
   musl_src = nixpkgs.fetchurl {
     url = "https://www.musl-libc.org/releases/musl-${musl_version}.tar.gz";
-    sha256 = "048h0w4yjyza4h05bkc6dpwg3hq6l03na46g0q1ha8fpwnjqawck";
+    sha256 = "18r2a00k82hz0mqdvgm7crzc7305l36109c0j9yjmkxj2alcjw0k";
   };
 
   inherit host headers;
 
   builder = ./builder.sh;
 
-  gcc_patches = [
-    # These patches are from nixpkgs.
-    ./use-source-date-epoch.patch
+  patches = [
+    # This patch is from nixpkgs.
     ./libstdc++-target.patch
 
     # Without this, we cannot build a simple hello world program for ARM.
     # See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=31798
     ./link_gcc_c_sequence_spec.patch
 
-    # Fix a compiler error in GCC's ubsan.c: ISO C++ forbids comparison
-    # between pointer and integer.
-    ./ubsan.patch
+    # Fix compilation errors about missing ISL function declarations.
+    # https://gcc.gnu.org/git/?p=gcc.git;a=patch;h=05103aed1d34b5ca07c9a70c95a7cb1d47e22c47
+    ./isl-headers.patch
   ];
 
   native_inputs = [ binutils ];

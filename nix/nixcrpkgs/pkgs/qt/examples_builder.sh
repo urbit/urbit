@@ -9,11 +9,17 @@ mkdir bin moc obj
 cat > obj/plugins.cpp <<EOF
 #include <QtPlugin>
 #ifdef _WIN32
-Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
+Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+Q_IMPORT_PLUGIN(QWindowsVistaStylePlugin)
+#endif
 #endif
 #ifdef __linux__
-Q_IMPORT_PLUGIN (QLinuxFbIntegrationPlugin);
-Q_IMPORT_PLUGIN (QXcbIntegrationPlugin);
+Q_IMPORT_PLUGIN(QLinuxFbIntegrationPlugin)
+Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)
+#endif
+#ifdef __APPLE__
+Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
 #endif
 EOF
 
@@ -69,17 +75,15 @@ if [ $os != "linux" ]; then
     $examples/gui/openglwindow/openglwindow.cpp \
     moc/openglwindow.cpp \
     obj/plugins.o \
-  $LIBS -o bin/openglwindow$exe_suffix
+   $LIBS -o bin/openglwindow$exe_suffix
 fi
-
-# TODO: try to compile some stuff with $qtbase/bin/qmake too, make sure that works
 
 mkdir -p $out/bin
 
 for prog in analogclock dynamiclayouts openglwindow rasterwindow; do
-  if [ -f bin/$prog ]; then
-    $host-strip bin/$prog
-    cp bin/$prog $out/bin/
+  if [ -f bin/$prog$exe_suffix ]; then
+    $host-strip bin/$prog$exe_suffix
+    cp bin/$prog$exe_suffix $out/bin/
   fi
 done
 

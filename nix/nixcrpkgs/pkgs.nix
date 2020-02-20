@@ -31,7 +31,6 @@ rec {
   pdcurses = import ./pkgs/pdcurses {
     inherit crossenv;
   };
-  pdcurses_examples = pdcurses.examples;
 
   readline = import ./pkgs/readline {
     inherit crossenv;
@@ -103,18 +102,17 @@ rec {
     inherit crossenv;
   };
 
-  xproto = import ./pkgs/xproto {
+  xorgproto = import ./pkgs/xorgproto {
     inherit crossenv xorg-macros;
   };
 
   libxau = import ./pkgs/libxau {
-    inherit crossenv xorg-macros xproto;
+    inherit crossenv xorg-macros xorgproto;
   };
 
   libxcb = import ./pkgs/libxcb {
     inherit crossenv xcb-proto libxau;
   };
-  libxcb_examples = libxcb.examples;
 
   xcb-util = import ./pkgs/xcb-util {
     inherit crossenv libxcb;
@@ -140,47 +138,32 @@ rec {
     inherit crossenv;
   };
 
-  xextproto = import ./pkgs/xextproto {
-    inherit crossenv;
-  };
-
-  inputproto = import ./pkgs/inputproto {
-    inherit crossenv;
-  };
-
-  kbproto = import ./pkgs/kbproto {
-    inherit crossenv;
-  };
-
-  fixesproto = import ./pkgs/fixesproto {
-    inherit crossenv xorg-macros xextproto;
-  };
-
   libx11 = import ./pkgs/libx11 {
-    inherit crossenv xorg-macros xproto libxcb xtrans;
-    inherit xextproto inputproto kbproto;
+    inherit crossenv xorg-macros xorgproto xtrans libxcb;
   };
 
   libxext = import ./pkgs/libxext {
-    inherit crossenv xproto xextproto libx11;
+    inherit crossenv xorgproto libx11;
   };
 
   libxfixes = import ./pkgs/libxfixes {
-    inherit crossenv xproto xextproto fixesproto libx11;
+    inherit crossenv xorgproto libx11;
   };
 
   libxi = import ./pkgs/libxi {
-    inherit crossenv xproto xextproto inputproto;
-    inherit libx11 libxext libxfixes;
+    inherit crossenv xorgproto libx11 libxext libxfixes;
+  };
+
+  libxkbcommon = import ./pkgs/libxkbcommon {
+     inherit crossenv libxcb;
   };
 
   libxall = import ./pkgs/libxall {
     inherit crossenv;
     libs = [
-      xcb-proto xorg-macros xproto libxau libxcb
+      xcb-proto xorg-macros xorgproto libxau libxcb
       xcb-util xcb-util-image xcb-util-keysyms xcb-util-renderutil xcb-util-wm
-      xtrans xextproto inputproto kbproto fixesproto
-      libx11 libxext libxfixes libxi
+      xtrans libx11 libxext libxfixes libxi libxkbcommon
     ];
   };
 
@@ -192,7 +175,7 @@ rec {
     inherit crossenv;
   };
 
-  ion = import ./pkgs/ion {
+  ion = import ./pkgs/ion {	
     inherit crossenv;
   };
 

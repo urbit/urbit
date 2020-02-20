@@ -32,6 +32,15 @@ rec {
   aarch64-linux-musl = pkgFun crossenvs.aarch64-linux-musl;
   macos = pkgFun crossenvs.macos;
 
+  envs = [
+    i686-w64-mingw32
+    x86_64-w64-mingw32
+    i686-linux-musl
+    x86_64-linux-musl
+    armv6-linux-musl
+    macos
+  ];
+
   # omni is convenient name for packages that are used for cross-compiling but
   # are actually the same on all platforms.  You can just refer to it by
   # 'omni.package_name' instead of 'some_platform.package_name'.
@@ -72,5 +81,18 @@ rec {
     builder = ./bundle_builder.sh;
     names = builtins.attrNames drvs;
     dirs = builtins.attrValues drvs;
+  };
+
+  # gcroots is a derivation that builds a list of the items that we usually do
+  # not want to garbage collect.
+  gcroots_func = env: env.default_native_inputs ++ [env.qt];
+  gcroots = native.make_derivation rec {
+    name = "gcroots.txt";
+    builder = ./file_builder.sh;
+    contents = builtins.concatStringsSep "\n" (
+      builtins.foldl' (a: b: a ++ b) [] (
+        builtins.map gcroots_func envs
+      )
+    );
   };
 }
