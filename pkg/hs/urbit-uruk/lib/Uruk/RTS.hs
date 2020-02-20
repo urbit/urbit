@@ -2,6 +2,133 @@
     On 64 bit machines, GHC will always use pointer tagging as long as
     there are less than 8 constructors. So, anything that is frequently
     pattern matched on should have at most 7 branches.
+
+    So, the calling convention this is falling into is:
+
+        - Caller pushes correct number of arguments to stack.
+        - If extra arguments, caller calls result with remaining arguments.
+
+    Maybe that should be swapped, a. la zinc (callee decides if it has
+    enough arguments).
+
+    But, regardless:
+
+    There are many cases where we invoke a known function with exactly
+    the right number of arguments, and it should be possible to determine
+    this statically.
+
+    The opposite case is something like: `($0 $1)`. We don't know the
+    arity of `$0`.
+
+    However, if I see `(add 9 $2)`, it doesn't make much sense to use
+    the argument stack at all.
+
+    And really, in the evaluation of `Exp`s, there are only three cases:
+
+        1. Calls to functions of unknown arity -- use previous approach.
+        2. Undersaturated calls to functions of known arity.
+        3. Fully saturated calls to functions of known arity.
+
+    There is no such thing as oversaturated calls to functions of known
+    arity, since that is simply a fully saturated call followed by another call.
+
+    Let's look at the `acker` example:
+
+        ?:  (iszero $0)
+          (inc $1)
+        ?:  (iszero $1)
+          (RECUR (dec $0) 1)
+        (RECUR (dec $0) (RECUR $0 (dec $1)))
+
+    It seems to me that this can be interpreted much more efficiently
+    than the approach that's evolving here. Let's work this out by hand
+    and see what concepts fall out.
+
+        IF (ISZERO ($0))
+        THEN
+            INC $0
+        ELSE
+            IF (ISZERO $1)
+            THEN
+                (RECUR (DEC $0) 1)
+            ELSE
+                (RECUR (DEC $0) (RECUR $0 (DEC $1)))
+
+    Notes:
+
+    - IF/ISZERO/etc throw exceptions if not given expected type.
+    - In this example, every call is fully saturated. There is no need
+      for stack manipulation at all.
+    - Except in the recursion case. How should that work?
+
+      - Recursive call is not a primop. Jet will expect to be passed
+        arguments.
+
+      - Well, we know that this jet takes two arguments. Can we just
+        pass them on the Haskell stack?
+
+        - `runJet2 :: Jet -> Val -> Val -> IO Val`
+
+    That would become:
+
+        IF (ISZERO $0)
+        THEN
+            INC $0
+        ELSE
+            IF (ISZERO $1)
+            THEN
+                (JET2 $self (DEC $0) (VAL 1))
+            ELSE
+                (JET2 $self (DEC $0) (JET2 $self $0 (DEC $1)))
+
+    This would be pretty fast!
+
+    This example really shows off the idea behind Uruk: That it allows
+    the interpreter to work with much higher level concepts.
+
+    What about pattern matching?
+
+    I've been presuming that the result of pattern matching would get
+    pushed to the stack. How does this end up working?
+
+    Here's a dumb example:
+
+        |=  n
+        ?-  (Dec n)
+          (Lef _)  0
+          (Rit x)  (Add x n)
+        ==
+
+    Right now, it would decompile to something like this:
+
+        CASE (DEC $0)
+        LEFT
+            (VAL 0)
+        RIGT
+            (ADD $1 (VAL $0))
+
+    We could keep a per-jet stack (probably just a list?)
+
+    - References to jet parameters would resolve to Haskell arguments
+    - Arguments to values intoduced through pattern matching would go
+      into a stack.
+
+    We could pre-determine the size of the stack to use a pre-allocated
+    mutable array.
+
+        MKFRAME 1
+        CASE@0 (DEC $0)
+        LEFT
+            (VAL 0)
+        RIGT
+            (ADD $0 (VAL @0))
+
+    I think this is basically register allocation?
+
+    Yes, this will work.
+
+    I don't know how well this will work in general, but let's hack out
+    the specific case first.
 -}
 
 module Uruk.RTS where
@@ -37,13 +164,6 @@ data Exp
     | ECas !Exp !Exp !Exp
   deriving (Eq, Ord, Show)
 
--- | Rare data. Performance less important.
-data Wak
-    = WakNat !Nat !Val
-    | WakBol !Bol !Val
-    | WakUni
-  deriving (Eq, Ord, Show)
-
 data Clo
     = CJet !Jet
     | CFun !Fun
@@ -53,12 +173,12 @@ data Clo
   deriving (Eq, Ord, Show)
 
 data Val
-    = VBol !Bol
-    | VNat !Nat
+    = VUni
     | VTup !Val !Val
     | VSum !Bool !Val
+    | VBol !Bol
+    | VNat !Nat
     | VClo !Clo !Int
-    | VWak !Wak
   deriving (Eq, Ord, Show)
 
 data Fun = Fun
@@ -80,9 +200,6 @@ data Jet
 
 jam ∷ Val → Val
 jam = error "TODO"
-
-unit ∷ Val
-unit = VWak WakUni
 
 execJet ∷ Stack → Jet → Val
 execJet !env = undefined {-
@@ -126,7 +243,7 @@ execJet !env = undefined {-
             VNat n → VNat (n+1)
             _      → fallback
         Dec → v 0 & \case
-            VNat 0 → VSum False unit
+            VNat 0 → VSum False VUni
             VNat n → VNat (n-1)
             _      → fallback
         Fec → v 0 & \case
@@ -161,7 +278,7 @@ data Stack = Stack
 
 newStack ∷ Int → IO Stack
 newStack sz = do
-    sBuf <- newArray sz unit
+    sBuf <- newArray sz VUni
     let sUse = 0
     let sRem = sz
     pure (Stack{..})
@@ -170,7 +287,7 @@ growStack ∷ Stack → IO Stack
 growStack s@Stack{..} = do
     let !oldSz = sizeofMutableArray sBuf
         !newSz = oldSz * 2
-    newBf <- newArray newSz unit
+    newBf <- newArray newSz VUni
     copyMutableArray newBf 0 sBuf 0 sUse
     pure (Stack newBf sUse (sRem + (newSz - oldSz)))
 
@@ -242,50 +359,70 @@ callClo2 e k 1 x y = runClo e (CTwo k x y)
 callClo2 e k 2 x y = do (e,acc) <- runClo e (COne k x); call1 e acc y
 callClo2 e k n x y = pure (e, VClo (CTwo k x y) (n-2))
 
+valClo ∷ Val → (Clo, Int)
+valClo = \case
+    VClo k rem → (k, rem)
+    VNat n     → undefined
+    VTup x y   → undefined
+    VSum t v   → undefined
+    VUni       → undefined
+
 callCloVec ∷ Stack → Clo → Int → Array Val → IO (Stack, Val)
-callCloVec e k n xs = undefined
-            {-
-            compare args rem & \case
-                EQ → runClo env (CVec clo xs)
-                LT → pure (env, VClo (CVec clo xs) (rem - args))
-                GT → undefined -- call with some args, call result with rest.
-            -}
+callCloVec e k n xs = do
+    let !args = sizeofArray xs
+    compare n args & \case
+        EQ → runClo e (CVec k xs)
+        LT → pure (e, VClo (CVec k xs) (n-args))
+        GT → (args-n) & \case
+            1 → undefined
+            2 → undefined
+            n → undefined
+
+
+-- Call Values -----------------------------------------------------------------
 
 call1 ∷ Stack → Val → Val → IO (Stack, Val)
-call1 env f x = case f of
-    VClo clo rem → callClo1 env clo rem x
-    _            → error "TODO"
+call1 e f x = case f of
+    VClo k rem → callClo1 e k rem x
+    _          → callClo1 e k rem x where (k, rem) = valClo f
 
 call2 ∷ Stack → Val → Val → Val → IO (Stack, Val)
-call2 env f x y = case f of
-    VClo clo rem → callClo2 env clo rem x y
-    _            → error "TODO"
+call2 e f x y = case f of
+    VClo k rem → callClo2 e k rem x y
+    _          → callClo2 e k rem x y where (k, rem) = valClo f
 
 callVec ∷ Stack → Val → Array Val → IO (Stack, Val)
-callVec env f xs = do
+callVec e f xs = do
     case f of
-        VClo clo rem → callCloVec env clo rem xs
-        _            → error "TODO"
+        VClo k rem → callCloVec e k rem xs
+        _          → callCloVec e k rem xs where (k, rem) = valClo f
+
+
+-- Execute function against populated stack. -----------------------------------
 
 execFun ∷ Fun → Stack → IO (Stack, Val)
 execFun !self !initialEnv = go initialEnv (funExpr self)
   where
     evalArgs ∷ Stack → Array Exp → IO (Stack, Array Val)
-    evalArgs env xs = undefined
+    evalArgs !env !xs = undefined
 
     go ∷ Stack → Exp → IO (Stack, Val)
     go !env = \case
-        EVal v     → pure (env, v)
-        EApp f xs  → do (env, f)  <- go env f
-                        (env, xs) <- evalArgs env xs
-                        callVec env f xs
-        ERec       → pure (env, VClo (CFun self) (funArgs self))
-        ERef ix    → (env,) <$> ref env ix
+        EVal v → do
+            pure (env, v)
+        EApp f xs  → do
+            (env, f)  <- go env f
+            (env, xs) <- evalArgs env xs
+            callVec env f xs
+        ERec → do
+            pure (env, VClo (CFun self) (funArgs self))
+        ERef ix → do
+            (env,) <$> ref env ix
         EIff c t e → go env c >>= \case
-                        ( env, VBol True  ) → go env t
-                        ( env, VBol False ) → go env t
-                        ( _,   _          ) → error "TODO"
+            ( env, VBol True  ) → go env t
+            ( env, VBol False ) → go env t
+            ( _,   _          ) → error "TODO"
         ECas x l r → go env x >>= \case
-                         ( env, VSum False x ) → do env←push1 env x; go env l
-                         ( env, VSum True x  ) → do env←push1 env x; go env r
-                         ( _,   _            ) → error "TODO"
+            ( env, VSum False x ) → do env←push1 env x; go env l
+            ( env, VSum True x  ) → do env←push1 env x; go env r
+            ( _,   _            ) → error "TODO"
