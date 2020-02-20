@@ -1095,7 +1095,6 @@
   ::
   ?:  ?=(%vega -.q.i.ova)
     =^  zef=(list ovum)  vanes
-      :: (~(spam (is our vil eny bud vanes) now) lac i.ova)
       =<  abet:loop
       %.  i.ova
       %~  spam  le:part
@@ -1111,7 +1110,6 @@
   |=  {now/@da hap/path}
   ^-  (unit (unit))
   ?~  hap  [~ ~ hoon-version]
-  :: ((sloy ~(beck (is our vil eny bud vanes) now)) [151 %noun] hap)
   %.  [[151 %noun] hap]
   %-  sloy
   %~  peek  le:part
@@ -1136,7 +1134,6 @@
   ?:  ?=(%trim -.q.ovo)
     =>  .(ovo ;;((pair wire [%trim p=@ud]) ovo))
     =^  zef  vanes
-      :: (~(spam (is our vil eny bud vanes) now) lac ovo)
       ^-  (pair (list ovum) (list (pair term vane)))
       =<  abet:loop
       %.  ovo
@@ -1176,7 +1173,6 @@
   ::  Normal events are routed to a single vane
   ::
   =^  zef  vanes
-    :: (~(hurl (is our vil eny bud vanes) now) lac ovo)
     =<  abet:loop
     %.  [(dint:$:is p.ovo) ovo]
     %~  poke  le:part
