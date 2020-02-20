@@ -26,7 +26,7 @@ export class SettingsScreen extends Component {
       this.setState({
         isLoading: false
       }, () => {
-        props.setSpinner(false);
+        props.api.setSpinner(false);
         props.history.push('/~chat');
       });
     }
@@ -36,7 +36,7 @@ export class SettingsScreen extends Component {
     const { props, state } = this;
 
     props.api.chatView.delete(props.station);
-    props.setSpinner(true);
+    props.api.setSpinner(true);
 
     this.setState({
       isLoading: true
