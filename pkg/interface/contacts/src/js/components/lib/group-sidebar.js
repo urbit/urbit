@@ -12,24 +12,20 @@ export class GroupSidebar extends Component {
   render() {
     const { props, state } = this;
 
-    let rootIdentity =
-      Object.keys(props.contacts)
-      .filter((path) => {
-        return (path === "/~/default")
-      })
-      .map((path) => {
-        let ourCard = props.contacts[path][window.ship];
-        let color = uxToHex(ourCard.color);
-        let selectedClass = (this.props.selected === "me") ? "bg-gray4" : "";
-        return (
-          <Link
+    let selectedClass = (props.selected === "me") ? "bg-gray4" : "bg-white";
+
+    let rootIdentity = <Link
             key={1}
             to={"/~contacts/me"}>
             <div
               className={
                 "w-100 pl4 pt1 pb1 f9 mb5 flex justify-start content-center " +
                 selectedClass}>
-              <Sigil ship={window.ship} color={"#" + color} size={32}/>
+              <Sigil
+              ship={window.ship}
+              color="#000000"
+              classes="mix-blend-diff"
+              size={32}/>
               <p
                 className="f9 w-70 dib v-mid ml2 nowrap mono"
                 style={{paddingTop: 6}}>
@@ -37,8 +33,6 @@ export class GroupSidebar extends Component {
               </p>
             </div>
           </Link>
-        );
-      });
 
     let inviteItems =
       Object.keys(props.invites)
