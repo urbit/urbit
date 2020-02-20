@@ -4,7 +4,7 @@
 /+  default-agent
 |%
 +$  card  card:agent:gall
-++  versioned-state
++$  versioned-state
   $%  state-zero
   ==
 ::
@@ -107,8 +107,27 @@
 ++  watch-group
   |=  =path
   ^-  (list card)
+  |^
   ?>  (~(has by synced) path)
-  ~
+  ?>  (is-permitted [(scot %p src.bowl) path])
+  %+  turn  ~(tap by (metadata-scry path))
+  |=  [[=group-path =resource] =metadata]
+  ^-  card
+  [%give %fact ~ %metadata-update !>([%add group-path resource metadata])]
+  ::
+  ++  is-permitted
+    |=  pax=^path
+    ^-  ?
+    =.  pax
+      ;:(weld /=permission-store/(scot %da now.bowl)/permitted pax /noun)
+    .^(? %gx pax)
+  ::
+  ++  metadata-scry
+    |=  pax=^path
+    ^-  associations
+    =.  pax  ;:(weld /=metadata-store/(scot %da now.bowl)/group pax /noun)
+    (need .^((unit associations) %gx pax))
+  --
 ::
 ++  fact-metadata-update
   |=  [wir=wire fact=metadata-update]
@@ -160,12 +179,22 @@
 ++  kick
   |=  wir=wire
   ^-  (quip card _state)
-  [~ state]
+  :_  state
+  ?+  wir  !!
+      [%updates ~]
+    [%pass /updates %agent [our.bowl %metadata-store] %watch /updates]~
+  ::
+      [%group @ *]
+    ?.  (~(has by synced) t.wir)  ~
+    =/  =ship  (~(got by synced) t.wir)
+    ?:  =(ship our.bowl)
+      [%pass wir %agent [our.bowl %metadata-store] %watch wir]~
+    [%pass wir %agent [ship %metadata-hook] %watch wir]~
+  ==
 ::
 ++  watch-ack
   |=  [wir=wire saw=(unit tang)]
   ^-  (quip card _state)
-  ?~  saw  [~ state]
   ?>  ?=(^ wir)
-  [~ state(synced (~(del by synced) t.wir))]
+  [~ ?~(saw state state(synced (~(del by synced) t.wir)))]
 --

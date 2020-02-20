@@ -19,6 +19,7 @@
 ::  /resource-indices                              all resource indices
 ::  /metadata/%group-path/%app-name/%app-path      specific metadatum
 ::  /app-name/%app-name                            associations for app
+::  /group/%group-path                             associations for group
 ::
 /-  *metadata-store
 /+  default-agent
@@ -100,6 +101,10 @@
       =/  =app-name  i.t.t.path
       ``noun+!>((metadata-for-app:mc app-name))
     ::
+        [%x %group *]
+      =/  =group-path  t.t.path
+      ``noun+!>((metadata-for-group:mc group-path))
+    ::
         [%x %metadata @ @ @ ~]
       =/  =group-path  (stab (slav %t i.t.t.path))
       =/  =resource    [`@tas`i.t.t.t.path (stab (slav %t i.t.t.t.t.path))]
@@ -170,6 +175,14 @@
   |=  [=group-path =app-path]
   :-  [group-path [app-name app-path]]
   (~(got by associations) [group-path [app-name app-path]])
+::
+++  metadata-for-group
+  |=  =group-path
+  %-  ~(gas by *(map [^group-path resource] metadata))
+  %+  turn  ~(tap in (~(got by group-indices) group-path))
+  |=  =resource
+  :-  [group-path resource]
+  (~(got by associations) [group-path resource])
 ::
 ++  send-diff
   |=  [=app-name upd=metadata-update]
