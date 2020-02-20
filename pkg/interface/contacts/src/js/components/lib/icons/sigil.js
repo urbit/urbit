@@ -1,25 +1,28 @@
-import React, { Component } from 'react';
-import { sigil, reactRenderer } from 'urbit-sigil-js';
+import React, { Component } from "react";
+import { sigil, reactRenderer } from "urbit-sigil-js";
 
-    
 export class Sigil extends Component {
   render() {
     const { props } = this;
 
-    let color = "#" + props.color;
+    let classes = props.classes || "";
+
     if (props.ship.length > 14) {
       return (
-        <div className="bg-black" style={{width: props.size, height: props.size}}>
-        </div>
+        <div
+          className="bg-black dib"
+          style={{ width: props.size, height: props.size }}></div>
       );
     } else {
       return (
-        <div className="dib" style={{ flexBasis: 32, backgroundColor: color }}>
+        <div
+          className={"dib " + classes}
+          style={{ flexBasis: 32, backgroundColor: props.color }}>
           {sigil({
             patp: props.ship,
             renderer: reactRenderer,
             size: props.size,
-            colors: [color, "white"]
+            colors: [props.color, "white"]
           })}
         </div>
       );

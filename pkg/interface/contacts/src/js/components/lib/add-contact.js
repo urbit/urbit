@@ -7,45 +7,45 @@ import urbitOb from 'urbit-ob';
 export class AddScreen extends Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
       invites: '',
       inviteError: false
     };
-    
+
     this.invChange = this.invChange.bind(this);
   }
-  
+
   invChange(event) {
     this.setState({
       invites: event.target.value
     });
   }
-  
+
   onClickAdd() {
     const { props, state } = this;
-    
+
     let aud = [];
     let isValid = true;
-    
+
     if (state.invites.length > 2) {
       aud = state.invites.split(',')
       .map((mem) => `~${deSig(mem.trim())}`);
-      
+
       aud.forEach((mem) => {
         if (!urbitOb.isValidPatp(mem)) {
           isValid = false;
         }
       });
     }
-    
+
     if (!isValid) {
       this.setState({
         inviteError: true
       });
       return;
     }
-    
+
     if (this.textarea) {
       this.textarea.value = '';
     }
@@ -54,14 +54,17 @@ export class AddScreen extends Component {
       success: true,
       invites: ''
     }, () => {
-      props.setSpinner(true);
-      props.api.group.add(props.path, aud)
-      props.history.push('/~contacts' + props.path);
+      props.api.setSpinner(true);
+      let submit = props.api.group.add(props.path, aud);
+      submit.then(() => {
+        props.api.setSpinner(false);
+        props.history.push("/~contacts" + props.path);
+      })
     });
   }
-  
+
   render() {
-    const { props } = this; 
+    const { props } = this;
     let invErrElem = (<span />);
     if (this.state.inviteError) {
       invErrElem = (
@@ -92,7 +95,7 @@ export class AddScreen extends Component {
             onChange={this.invChange}/>
             {invErrElem}
           </div>
-          <button 
+          <button
             onClick={this.onClickAdd.bind(this)}
             className="ml3 f8 ba pa2 b--green2 green2 pointer">
             Add Members

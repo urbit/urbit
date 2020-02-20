@@ -7,7 +7,7 @@ import urbitOb from 'urbit-ob';
 export class NewScreen extends Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
       groupName: '',
       invites: '',
@@ -15,23 +15,23 @@ export class NewScreen extends Component {
       groupNameError: false,
       inviteError: false
     };
-    
+
     this.groupNameChange = this.groupNameChange.bind(this);
     this.invChange = this.invChange.bind(this);
   }
-  
+
   groupNameChange(event) {
     this.setState({
       groupName: event.target.value
     });
   }
-  
+
   invChange(event) {
     this.setState({
       invites: event.target.value
     });
   }
-  
+
   onClickCreate() {
     const { props, state } = this;
 
@@ -48,14 +48,14 @@ export class NewScreen extends Component {
     }
 
     let group = `/~${window.ship}` + `/${state.groupName}`;
-    
+
     let aud = [];
     let isValid = true;
-    
+
     if (state.invites.length > 2) {
       aud = state.invites.split(',')
       .map((mem) => `~${deSig(mem.trim())}`);
-      
+
       aud.forEach((mem) => {
         if (!urbitOb.isValidPatp(mem)) {
           isValid = false;
@@ -70,7 +70,7 @@ export class NewScreen extends Component {
       });
       return;
     }
-    
+
     if (this.textarea) {
       this.textarea.value = '';
     }
@@ -79,12 +79,15 @@ export class NewScreen extends Component {
       success: true,
       invites: ''
     }, () => {
-      props.setSpinner(true);
-      props.api.contactView.create(group, aud);
-      props.history.push(`/~contacts${group}`);
+      props.api.setSpinner(true);
+      let submit = props.api.contactView.create(group, aud);
+      submit.then(() => {
+        props.api.setSpinner(false);
+        props.history.push(`/~contacts${group}`);
+      })
     });
   }
-  
+
   render() {
     let groupNameErrElem = (<span />);
     if (this.state.groupNameError) {
@@ -94,7 +97,7 @@ export class NewScreen extends Component {
         </span>
         );
     }
-    
+
     let invErrElem = (<span />);
     if (this.state.inviteError) {
     invErrElem = (
@@ -139,7 +142,7 @@ export class NewScreen extends Component {
           onChange={this.invChange}/>
           {invErrElem}
         </div>
-        <button 
+        <button
           onClick={this.onClickCreate.bind(this)}
           className="ml3 f8 ba pa2 b--green2 green2 pointer">
           Start Group

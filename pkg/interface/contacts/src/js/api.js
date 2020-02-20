@@ -24,7 +24,7 @@ class UrbitApi {
     this.group = {
       add: this.groupAdd.bind(this)
     };
-    
+
     this.invite = {
       accept: this.inviteAccept.bind(this),
       decline: this.inviteDecline.bind(this)
@@ -34,7 +34,7 @@ class UrbitApi {
   bind(path, method, ship = this.authTokens.ship, app, success, fail, quit) {
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
-    window.subscriptionId = window.urb.subscribe(ship, app, path, 
+    window.subscriptionId = window.urb.subscribe(ship, app, path,
       (err) => {
         fail(err);
       },
@@ -57,7 +57,7 @@ class UrbitApi {
       window.urb.poke(ship, appl, mark, data,
         (json) => {
           resolve(json);
-        }, 
+        },
         (err) => {
           reject(err);
         });
@@ -65,21 +65,21 @@ class UrbitApi {
   }
 
   contactViewAction(data) {
-    this.action("contact-view", "json", data);
+    return this.action("contact-view", "json", data);
   }
 
   contactCreate(path, ships = []) {
-    this.contactViewAction({ create: { path, ships }});
+    return this.contactViewAction({ create: { path, ships }});
   }
 
   groupAdd(path, ships = []) {
-    this.action("group-store", "group-action", {
+    return this.action("group-store", "group-action", {
       add: { members: ships, path }
     });
   }
 
   contactShare(recipient, path, ship, contact) {
-    this.contactViewAction({
+    return this.contactViewAction({
       share: {
         recipient, path, ship, contact
       }
@@ -87,15 +87,15 @@ class UrbitApi {
   }
 
   contactDelete(path) {
-    this.contactViewAction({ delete: { path }});
+    return this.contactViewAction({ delete: { path }});
   }
 
   contactHookAction(data) {
-    this.action("contact-hook", "contact-action", data);
+    return this.action("contact-hook", "contact-action", data);
   }
 
   contactRemove(path, ship) {
-    this.contactHookAction({
+    return this.contactHookAction({
       remove: {
         path, ship
       }
@@ -113,7 +113,7 @@ class UrbitApi {
     {avatar: null}
     {avatar: {p: length, q: bytestream}}
     */
-    this.contactHookAction({
+    return this.contactHookAction({
       edit: {
         path, ship, 'edit-field': editField
       }
@@ -121,25 +121,35 @@ class UrbitApi {
   }
 
   inviteAction(data) {
-    this.action("invite-store", "json", data);
+    return this.action("invite-store", "json", data);
   }
-  
+
   inviteAccept(uid) {
-    this.inviteAction({
+    return this.inviteAction({
       accept: {
         path: '/contacts',
         uid
       }
     });
   }
-  
+
   inviteDecline(uid) {
-    this.inviteAction({
+    return this.inviteAction({
       decline: {
         path: '/contacts',
         uid
       }
     });
+  }
+
+  setSpinner(boolean) {
+    store.handleEvent({
+      data: {
+        local: {
+          spinner: boolean
+        }
+      }
+    })
   }
 
 }

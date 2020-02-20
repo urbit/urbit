@@ -19,11 +19,6 @@ export class Root extends Component {
 
     this.state = store.state;
     store.setStateHandler(this.setState.bind(this));
-    this.setSpinner = this.setSpinner.bind(this);
-  }
-
-  setSpinner(spinner) {
-    this.setState({ spinner });
   }
 
   render() {
@@ -47,6 +42,7 @@ export class Root extends Component {
             return (
               <Skeleton
                 activeDrawer="groups"
+                spinner={state.spinner}
                 history={props.history}
                 api={api}
                 contacts={contacts}
@@ -75,7 +71,6 @@ export class Root extends Component {
                   activeDrawer="rightPanel">
                   <NewScreen
                     history={props.history}
-                    setSpinner={this.setSpinner}
                     api={api} />
                 </Skeleton>
               );
@@ -86,9 +81,7 @@ export class Root extends Component {
                 `/${props.match.params.ship}/${props.match.params.group}`;
               let groupContacts = contacts[groupPath] || {};
               let group = groups[groupPath] || new Set([]);
-              if (!(groupPath in groups)) {
-                props.history.push('/~contacts');
-              }
+
 
               return (
                 <Skeleton
@@ -137,7 +130,6 @@ export class Root extends Component {
                   <AddScreen
                     api={api}
                     path={groupPath}
-                    setSpinner={this.setSpinner}
                     history={props.history}
                   />
                 </Skeleton>
