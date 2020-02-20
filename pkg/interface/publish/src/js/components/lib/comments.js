@@ -5,7 +5,8 @@ export class Comments extends Component {
   constructor(props){
     super(props);
     this.state = {
-      commentBody: ''
+      commentBody: '',
+      disabled: false
     }
     this.commentSubmit = this.commentSubmit.bind(this);
     this.commentChange = this.commentChange.bind(this);
@@ -21,9 +22,14 @@ export class Comments extends Component {
    };
 
    this.textArea.value = '';
-   window.api.action("publish", "publish-action", comment);
-
- }
+   window.api.setSpinner(true);
+   this.setState({disabled: true});
+   let submit = window.api.action("publish", "publish-action", comment);
+   submit.then(() => {
+     window.api.setSpinner(false);
+     this.setState({ disabled: false, commentBody: "" });
+    })
+   }
 
   commentChange(evt){
     this.setState({
@@ -45,7 +51,7 @@ export class Comments extends Component {
       );
     })
 
-    let disableComment = this.state.commentBody === '';
+    let disableComment = ((this.state.commentBody === '') || (this.state.disabled === true));
     let commentClass = (disableComment)
       ?  "f9 pa2 bg-white br1 ba b--gray2 gray2"
       :  "f9 pa2 bg-white br1 ba b--gray2 black pointer";
