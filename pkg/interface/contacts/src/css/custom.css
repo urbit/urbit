@@ -67,6 +67,10 @@ a {
   margin: 0 auto;
 }
 
+.placeholder-inter::placeholder {
+  font-family: "Inter", sans-serif;
+}
+
 .spin-active {
   animation: spin 2s infinite;
 }

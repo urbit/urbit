@@ -71,6 +71,7 @@ export class Root extends Component {
                   activeDrawer="rightPanel">
                   <NewScreen
                     history={props.history}
+                    groups={groups}
                     api={api} />
                 </Skeleton>
               );
