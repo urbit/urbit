@@ -137,8 +137,6 @@ export class Sidebar extends Component {
       );
     })
 
-    let notebooks = <div>{notebookItems}</div>
-
     return (
       <div
         className={
@@ -163,31 +161,32 @@ export class Sidebar extends Component {
             align="left"
             options={[
               {
-              cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
-              txt: "Oldest Notebooks First",
-              action: () => {this.setState({sort: "oldest"})}
+                cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
+                txt: "Oldest Notebooks First",
+                action: () => {this.setState({sort: "oldest"})}
               },
               {
-              cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
-              txt: "Newest Notebooks First",
-              action: () => {this.setState({sort: "newest"})}
+                cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
+                txt: "Newest Notebooks First",
+                action: () => {this.setState({sort: "newest"})}
               },
               {
-              cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
-              txt: "Alphabetical A -> Z",
-              action: () => {this.setState({sort: "alphabetical"})}
+                cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
+                txt: "Alphabetical A -> Z",
+                action: () => {this.setState({sort: "alphabetical"})}
               },
               {
-              cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
-              txt: "Alphabetical Z -> A",
-              action: () => {this.setState({sort: "reverseAlphabetical"})}
+                cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
+                txt: "Alphabetical Z -> A",
+                action: () => {this.setState({sort: "reverseAlphabetical"})}
               }
             ]}
             buttonText="Sort Notebooks"
           />
           </div>
         </div>
-        <div className="overflow-y-scroll h-100">
+        <div className="overflow-y-auto pb1"
+        style={{height: "calc(100% - 82px)"}}>
           {sidebarInvites}
           {notebookItems}
         </div>
