@@ -237,8 +237,8 @@ export class ChatScreen extends Component {
          <Link to="/~chat/">{"⟵ All Chats"}</Link>
        </div>
        <div
-         className={`pl3 pt2 bb b--gray4 b--gray1-d bg-gray0-d flex relative overflow-x-scroll
-         overflow-x-auto-l overflow-x-auto-xl flex-shrink-0`}
+         className={"pl3 pt2 bb b--gray4 b--gray1-d bg-gray0-d flex relative " +
+         "overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"}
          style={{ height: 48 }}>
          <SidebarSwitcher
            sidebarShown={this.props.sidebarShown}
@@ -261,7 +261,7 @@ export class ChatScreen extends Component {
          />
        </div>
        <div
-         className="overflow-y-scroll bg-gray0-d pt3 pb2 flex flex-column-reverse"
+         className="overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex flex-column-reverse"
          style={{ height: "100%", resize: "vertical" }}
          onScroll={this.onScroll}>
          <div

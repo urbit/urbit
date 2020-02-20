@@ -172,6 +172,9 @@ export class ChatInput extends Component {
     let color = !!props.ownerContact
       ? uxToHex(props.ownerContact.color) : '#000000';
 
+    let sigilClass = !!props.ownerContact
+      ? "" : "mix-blend-diff";
+
     return (
       <div className="pa3 cf flex black bt b--gray4 o-50">
         <div className="fl" style={{
@@ -179,7 +182,12 @@ export class ChatInput extends Component {
           flexBasis: 24,
           height: 24
         }}>
-          <Sigil ship={window.ship} size={24} color={`#${color}`} />
+          <Sigil
+            ship={window.ship}
+            size={24}
+            color={`#${color}`}
+            classes={sigilClass}
+          />
         </div>
         <div className="fr h-100 flex" style={{ flexGrow: 1, height: 28, paddingTop: 6, resize: "none" }}>
           <p className="pl3">This chat is read only and you cannot post.</p>
@@ -193,10 +201,15 @@ export class ChatInput extends Component {
 
     let color = !!props.ownerContact
       ? uxToHex(props.ownerContact.color) : '#000000';
+
+    let sigilClass = !!props.ownerContact
+      ? "" : "mix-blend-diff";
+
     this.bindShortcuts();
 
     return (
-      <div className="pa3 cf flex black white-d bt b--gray4 b--gray1-d bg-gray0-d" style={{ flexGrow: 1 }}>
+      <div className="pa3 cf flex black white-d bt b--gray4 b--gray1-d bg-white bg-gray0-d"
+      style={{ flexGrow: 1 }}>
         <div
           className="fl"
           style={{
@@ -204,7 +217,12 @@ export class ChatInput extends Component {
             flexBasis: 24,
             height: 24
           }}>
-          <Sigil ship={window.ship} size={24} color={`#${color}`} />
+          <Sigil
+            ship={window.ship}
+            size={24}
+            color={`#${color}`}
+            classes={sigilClass}
+            />
         </div>
         <div className="fr h-100 flex bg-gray0-d" style={{ flexGrow: 1 }}>
           <textarea
