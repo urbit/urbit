@@ -4,7 +4,6 @@
 /+  default-agent
 |%
 +$  card  card:agent:gall
-::
 ++  versioned-state
   $%  state-zero
   ==
@@ -20,12 +19,11 @@
 =<
   |_  =bowl:gall
   +*  this        .
-      hook-core  +>
-      hc          ~(. hook-core bowl)
+      hc          ~(. +> bowl)
       def         ~(. (default-agent this %|) bowl)
   ::
   ++  on-init
-    [[%pass /updates %agent [our.bol %metadata-store] %watch /updates]~ this]
+    [[%pass /updates %agent [our.bowl %metadata-store] %watch /updates]~ this]
   ::
   ++  on-save   !>(state)
   ++  on-load   |=(=vase `this(state !<(state-zero vase)))
@@ -33,7 +31,6 @@
   ++  on-peek   on-peek:def
   ++  on-arvo   on-arvo:def
   ++  on-fail   on-fail:def
-  ::
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
@@ -48,23 +45,15 @@
     |=  =path
     ^-  (quip card _this)
     ?+  path        (on-watch:def path)
-        [%group *]  [(watch-group:cc t.path) this]
+        [%group *]  [(watch-group:hc t.path) this]
     ==
   ::
   ++  on-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
     ?+  -.sign  (on-agent:def wire sign)
-        %kick
-      =^  cards  state
-        (kick:hc wire)
-      [cards this]
-    ::
-        %watch-ack
-      =^  cards  state
-        (watch-ack:hc wire p.sign) 
-      [cards this]
-    ::
+        %kick       =^(cards state (kick:hc wire) [cards this])
+        %watch-ack  =^(cards state (watch-ack:hc wire p.sign) [cards this])
         %fact
       ?+  p.cage.sign  (on-agent:def wire sign)
           %metadata-update
@@ -75,20 +64,20 @@
     ==
   --
 ::
-|_  bol=bowl:gall
+|_  =bowl:gall
 ++  poke-hook-action
   |=  act=metadata-hook-action
   ^-  (quip card _state)
   |^
   ?-  -.act
       %add-owned
-    ?>  (team:title our.bol src.bol)
+    ?>  (team:title our.bowl src.bowl)
     :-  ~
     ?:  (~(has by synced) path.act)  state
-    state(synced (~(put by synced) path.act our.bol))
+    state(synced (~(put by synced) path.act our.bowl))
   ::
       %add-synced
-    ?>  (team:title our.bol src.bol)
+    ?>  (team:title our.bowl src.bowl)
     =/  =path  [%group path.act]
     ?:  (~(has by synced) path.act)  [~ state]
     :_  state(synced (~(put by synced) path.act ship.act))
@@ -97,25 +86,22 @@
       %remove
     =/  ship  (~(get by synced) path.act)
     ?~  ship  [~ state]
-    ?:  &(!(u.ship our.bol) !(team.title our.bol src.bol))
+    ?:  &(?!(=(u.ship our.bowl)) ?!((team:title our.bowl src.bowl)))
       [~ state]
     :_  state(synced (~(del by synced) path.act))
     %-  zing
-    :~  (unsubscribe [%group path.act])
-        ?.  &(=(u.ship our.bol) (team:title our.bol src.bol))  ~
+    :~  (unsubscribe [%group path.act] u.ship)
+        ?.  &(=(u.ship our.bowl) (team:title our.bowl src.bowl))  ~
         [%give %kick ~[[%group path.act]] ~]~
     ==
   ==
   ::
   ++  unsubscribe
-    |=  pax=path
+    |=  [=path =ship]
     ^-  (list card)
-    ?>  ?=(^ pax)
-    =/  shp  (~(get by synced) t.pax)
-    ?~  shp  ~
-    ?:  =(u.shp our.bol)
-      [%pass pax %agent [our.bol %chat-store] %leave ~]~
-    [%pass pax %agent [u.shp %chat-hook] %leave ~]~
+    ?:  =(ship our.bowl)
+      [%pass path %agent [our.bowl %metadata-store] %leave ~]~
+    [%pass path %agent [ship %metadata-hook] %leave ~]~
   --
 ::
 ++  watch-group
@@ -128,31 +114,47 @@
   |=  [wir=wire fact=metadata-update]
   ^-  (quip card _state)
   |^
-  [?:((team:title our.bol src.bol) handle-local handle-foreign) state]
+  [?:((team:title our.bowl src.bowl) handle-local handle-foreign) state]
   ::
   ++  handle-local
     ?+  -.fact  ~
         %add
-      ~
+      ?.  (~(has by synced) group-path.fact)  ~
+      (give group-path.fact fact)
     ::
         %update-metadata
-      ~
+      ?.  (~(has by synced) group-path.fact)  ~
+      (give group-path.fact fact)
     ::
         %remove
-      ~
+      ?.  (~(has by synced) group-path.fact)  ~
+      (give group-path.fact fact)
     ==
   ::
   ++  handle-foreign
     ?+  -.fact  ~
         %add
-      ~
+      ?.  =(src.bowl (~(got by synced) group-path.fact))  ~
+      (poke fact)
     ::
         %update-metadata
-      ~
+      ?.  =(src.bowl (~(got by synced) group-path.fact))  ~
+      (poke [%add +.fact])
     ::
         %remove
-      ~
+      ?.  =(src.bowl (~(got by synced) group-path.fact))  ~
+      (poke fact)
     ==
+  ::
+  ++  give
+    |=  [=path upd=metadata-update]
+    ^-  (list card)
+    [%give %fact ~[[%group path]] %metadata-update !>(upd)]~
+  ::
+  ++  poke
+    |=  act=metadata-action
+    ^-  (list card)
+    [%pass / %agent [our.bowl %metadata-store] %poke %metadata-action !>(act)]~
   --
 ::
 ++  kick
