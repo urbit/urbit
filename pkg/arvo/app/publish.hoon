@@ -196,7 +196,7 @@
           =/  book=notebook-info
             [title.old '' =(%open comments.old) / /]
           =+  ^-  [grp-car=(list card) write-pax=path read-pax=path]
-            (make-groups book-name group-pax ~ %.n %.n)
+            (make-groups:main book-name group-pax ~ %.n %.n)
           =.  writers.book      write-pax
           =.  subscribers.book  read-pax
           =/  inv-car  (send-invites book-name (~(get ju old-subs) book-name))
