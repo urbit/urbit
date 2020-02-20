@@ -200,7 +200,7 @@ a {
   transform: rotate(180deg);
   position: absolute;
   right: 4px;
-  top: 6px;
+  top: 4px;
   color: #7f7f7f;
 }
 
@@ -259,4 +259,20 @@ a {
 
 md img {
   margin-bottom: 8px;
+}
+
+.spin-active {
+  animation: spin 2s infinite;
+}
+
+@keyframes spin {
+  0% {transform: rotate(0deg);}
+  25% {transform: rotate(90deg);}
+  50% {transform: rotate(180deg);}
+  75% {transform: rotate(270deg);}
+  100% {transform: rotate(360deg);}
+}
+
+.mix-blend-diff {
+  mix-blend-mode: difference;
 }

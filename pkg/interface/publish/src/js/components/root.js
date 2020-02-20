@@ -33,6 +33,7 @@ export class Root extends Component {
               active={"sidebar"}
               rightPanelHide={true}
               sidebarShown={true}
+              spinner={state.spinner}
               invites={state.invites}
               notebooks={state.notebooks}
               contacts={contacts}>
@@ -56,6 +57,7 @@ export class Root extends Component {
             active={"rightPanel"}
             rightPanelHide={false}
             sidebarShown={state.sidebarShown}
+            spinner={state.spinner}
             invites={state.invites}
             notebooks={state.notebooks}
             contacts={contacts}>
@@ -76,6 +78,7 @@ export class Root extends Component {
                   active={"rightPanel"}
                   rightPanelHide={false}
                   sidebarShown={state.sidebarShown}
+                  spinner={state.spinner}
                   invites={state.invites}
                   notebooks={state.notebooks}
                   contacts={contacts}>
@@ -108,6 +111,7 @@ export class Root extends Component {
                 active={"rightPanel"}
                 rightPanelHide={false}
                 sidebarShown={state.sidebarShown}
+                spinner={state.spinner}
                 invites={state.invites}
                 notebooks={state.notebooks}
                 contacts={contacts}
@@ -130,6 +134,7 @@ export class Root extends Component {
                 active={"rightPanel"}
                 rightPanelHide={false}
                 sidebarShown={state.sidebarShown}
+                spinner={state.spinner}
                 invites={state.invites}
                 notebooks={state.notebooks}
                 contacts={contacts}
@@ -170,6 +175,7 @@ export class Root extends Component {
               active={"rightPanel"}
               rightPanelHide={false}
               sidebarShown={state.sidebarShown}
+              spinner={state.spinner}
               invites={state.invites}
               notebooks={state.notebooks}
               contacts={contacts}

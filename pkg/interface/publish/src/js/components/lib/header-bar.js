@@ -3,9 +3,12 @@ import { IconHome } from '/components/lib/icons/icon-home';
 import { Sigil } from '/components/lib/icons/sigil';
 
 export class HeaderBar extends Component {
-  render() {
+  constructor(props) {
+    super(props);
+  }
 
-    let popout = (window.location.href.includes("popout/")) 
+  render() {
+    let popout = (window.location.href.includes("popout/"))
     ? "dn"
     : "dn db-m db-l db-xl";
 
@@ -13,14 +16,23 @@ export class HeaderBar extends Component {
     ? ""
     : document.title;
 
+    let spinner = !!this.props.spinner
+      ? this.props.spinner : false;
+
+    let spinnerClasses = "";
+
+    if (spinner === true) {
+      spinnerClasses = "spin-active";
+    }
+
     return (
       <div className={"bg-white w-100 justify-between relative tc pt3 "
         + popout}
         style={{ height: 40 }}>
-        <a className="dib gray2 f9 inter absolute left-1"
+        <a className="dib gray2 f9 inter absolute left-0"
           href='/'
           style={{top: 14}}>
-          <IconHome/>
+          <IconHome classes={spinnerClasses}/>
           <span className="ml2 v-top lh-title"
           style={{paddingTop: 3}}>
           Home
@@ -33,14 +45,15 @@ export class HeaderBar extends Component {
         }}>
           {title}
         </span>
-        <div className="absolute right-1 lh-copy"
+        <div className="absolute right-0 lh-copy"
         style={{top: 12}}>
         <Sigil
           ship={"~" + window.ship}
+          classes="mix-blend-diff v-mid"
           size={16}
           color={"#000000"}
         />
-          <span className="mono f9 ml2 v-top">{"~" + window.ship}</span>
+          <span className="mono f9 ml2">{"~" + window.ship}</span>
         </div>
       </div>
     );

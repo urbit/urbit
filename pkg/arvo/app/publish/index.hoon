@@ -16,7 +16,6 @@
   ==
 ::
   ;body
-    ;div#header.w-100;
     ;div#root.w-100.h-100;
     ;script@"/~publish/index.js";
   ==
