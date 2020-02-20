@@ -184,6 +184,7 @@ export class NewScreen extends Component {
           </p>
           <p className="f9 gray2 db mb2 pt1">Select an initial read-only audience for your notebook</p>
           <InviteSearch
+            groupResults={true}
             groups={this.props.groups}
             invites={this.state.invites}
             setInvite={this.setInvite}
