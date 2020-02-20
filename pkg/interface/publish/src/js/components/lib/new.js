@@ -15,6 +15,7 @@ export class NewScreen extends Component {
         groups: [],
         ships: []
       },
+      disabled: false,
       createGroup: false,
       awaiting: false,
     };
@@ -29,6 +30,7 @@ export class NewScreen extends Component {
     const { props, state } = this;
     if (props.notebooks && (("~" + window.ship) in props.notebooks)) {
       if (state.awaiting in props.notebooks["~" + window.ship]) {
+        props.api.setSpinner(false);
         let notebook = `/~${window.ship}/${state.awaiting}`;
         props.history.push("/~publish/notebook" + notebook);
       }
@@ -92,7 +94,8 @@ export class NewScreen extends Component {
       }
     }
 
-    this.setState({awaiting: bookId}, () => {
+    this.setState({awaiting: bookId, disabled: true}, () => {
+      props.api.setSpinner(true);
       props.api.action("publish", "publish-action", action);
     });
   }
@@ -103,7 +106,7 @@ export class NewScreen extends Component {
        : "relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0";
 
     let createClasses = "pointer db f9 green2 bg-gray0-d ba pv3 ph4 mv7 b--green2";
-    if (!this.state.idName) {
+    if (!this.state.idName || this.state.disabled) {
       createClasses = "pointer db f9 gray2 ba bg-gray0-d pa2 pv3 ph4 mv7 b--gray3";
     }
 
@@ -187,6 +190,7 @@ export class NewScreen extends Component {
           />
           {createGroupToggle}
           <button
+          disabled={this.state.disabled}
           onClick={this.onClickCreate.bind(this)}
           className={createClasses}>
           Create Notebook
