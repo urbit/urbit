@@ -130,6 +130,16 @@ class UrbitApi {
     });
   }
 
+  setSpinner(boolean) {
+    console.log("setspinner " + boolean)
+    store.handleEvent({
+      type: "local",
+      data: {
+        'spinner': boolean
+      }
+    });
+  }
+
 }
 
 export let api = new UrbitApi();

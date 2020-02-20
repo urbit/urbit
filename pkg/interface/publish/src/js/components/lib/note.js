@@ -158,7 +158,7 @@ export class Note extends Component {
               popout={props.popout}
               sidebarShown={props.sidebarShown}
             />
-            <Link className="f9 w-100 mw6 tl" to={baseUrl}>
+            <Link className="f9 w-100 w-90-m w-90-l mw6 tl" to={baseUrl}>
               {"<- Notebook index"}
             </Link>
             <Link

@@ -35,6 +35,7 @@ export class NewPost extends Component {
     this.setState({
       awaiting: newNote["new-note"].note
     }, () => {
+      window.api.setSpinner(true);
       window.api.action("publish", "publish-action", newNote);
     });
   }
@@ -46,6 +47,7 @@ export class NewPost extends Component {
   componentDidUpdate(prevProps, prevState) {
     let notebook = this.props.notebooks[this.props.ship][this.props.book];
     if (notebook.notes[this.state.awaiting]) {
+      window.api.setSpinner(false);
       let popout = (this.props.popout) ? "popout/" : "";
       let redirect =
      `/~publish/${popout}note/${this.props.ship}/${this.props.book}/${this.state.awaiting}`;
@@ -98,7 +100,7 @@ export class NewPost extends Component {
             popout={props.popout}
           />
           <button
-            className={"v-mid w-100 mw7 tl h1 pl4"}
+            className={"v-mid w-100 mw6 tl h1 pl4"}
             disabled={!state.submit}
             style={submitStyle}
             onClick={this.postSubmit}>
@@ -114,7 +116,7 @@ export class NewPost extends Component {
             />
           </Link>
         </div>
-        <div className="overflow-container mw7 center">
+        <div className="overflow-container mw6 center">
           <div style={{ padding: 16 }}>
             <input
               autoFocus

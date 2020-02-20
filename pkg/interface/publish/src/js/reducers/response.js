@@ -20,6 +20,8 @@ export class ResponseReducer {
         break;
       case "local":
         this.sidebarToggle(json, state);
+        this.setSpinner(json, state);
+        break;
       default:
         break;
     }
@@ -199,6 +201,13 @@ export class ResponseReducer {
     let data = _.has(json.data, 'sidebarToggle', false);
     if (data) {
         state.sidebarShown = json.data.sidebarToggle;
+    }
+  }
+
+  setSpinner(json, state) {
+    let data = _.has(json.data, 'spinner', false);
+    if (data) {
+      state.spinner = json.data.spinner;
     }
   }
 
