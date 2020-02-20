@@ -1,7 +1,7 @@
 ::  group-hook: allow syncing group data from foreign paths to local paths
 ::
 /-  *group-store, *group-hook
-/+  default-agent
+/+  default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
 ::
@@ -19,6 +19,9 @@
 ::
 =|  state-zero
 =*  state  -
+::
+%-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 =<
   |_  =bowl:gall

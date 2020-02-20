@@ -1,6 +1,6 @@
 :: chat-store: data store that holds linear sequences of chat messages
 ::
-/+  *chat-json, *chat-eval, default-agent
+/+  *chat-json, *chat-eval, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -21,6 +21,9 @@
 ::
 =|  state-zero
 =*  state  -
+::
+%-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 =<
   |_  =bowl:gall

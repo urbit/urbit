@@ -34,13 +34,13 @@ export class Message extends Component {
         (!!letter.code.output &&
          letter.code.output.length && letter.code.output.length > 0) ?
         (
-          <pre className="clamp-attachment pa1 mt0 mb0">
+          <pre className="f7 clamp-attachment pa1 mt0 mb0">
             {letter.code.output[0].join('\n')}
           </pre>
         ) : null;
       return (
         <span>
-          <pre className="clamp-attachment pa1 mt0 mb0 bg-light-gray">
+          <pre className="f7 clamp-attachment pa1 mt0 mb0 bg-light-gray">
             {letter.code.expression}
           </pre>
           {outputElement}
@@ -50,8 +50,6 @@ export class Message extends Component {
       let imgMatch =
         /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|GIF|webp|WEBP|webm|WEBM)$/
         .exec(letter.url);
-      // this is jank
-      // TODO do we know ID lenght?
       let youTubeRegex = new RegExp(''
       + /(?:https?:\/\/(?:[a-z]+.)?)/.source // protocol
       + /(?:youtu\.?be(?:\.com)?\/)(?:embed\/)?/.source // short and long-links
@@ -72,7 +70,7 @@ export class Message extends Component {
           ></img>
         );
         return (
-          <a className="f7 lh-copy v-top bb word-break-all"
+          <a className="f7 lh-copy v-top word-break-all"
             href={letter.url}
             target="_blank"
             rel="noopener noreferrer">
@@ -102,7 +100,7 @@ export class Message extends Component {
           rel="noopener noreferrer">
             {letter.url}
         </a>
-        <a className="f7 pointer pl2 lh-copy v-top word-break-all"
+        <a className="f7 pointer lh-copy v-top"
         onClick={e => this.unFoldEmbed()}>
           [embed]
           </a>

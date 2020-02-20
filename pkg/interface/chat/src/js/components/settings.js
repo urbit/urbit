@@ -57,7 +57,7 @@ export class SettingsScreen extends Component {
         <p className="f8 mt3 lh-copy db">Leave Chat</p>
         <p className="f9 gray2 db mb4">Remove this chat from your chat list. You will need to request for access again.</p>
         <a onClick={(!chatOwner) ? this.deleteChat.bind(this) : null}
-           className={"dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray2-d " + leaveButtonClasses}>Leave this chat</a>
+           className={"dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray0-d " + leaveButtonClasses}>Leave this chat</a>
       </div>
         <div className={"w-100 fl mt3 " + ((!chatOwner) ? 'o-30' : '')}>
         <p className="f8 mt3 lh-copy db">Delete Chat</p>

@@ -7,7 +7,7 @@
     *invite-store,
     *permission-group-hook,
     *chat-hook
-/+  *server, *chat-json, default-agent
+/+  *server, *chat-json, default-agent, verb, dbug
 /=  index
   /^  octs
   /;  as-octs:mimes:html
@@ -52,6 +52,8 @@
       [%permission-group-hook-action permission-group-hook-action]
   ==
 --
+%-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 =<
   |_  bol=bowl:gall

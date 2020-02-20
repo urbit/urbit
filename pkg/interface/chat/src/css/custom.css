@@ -113,6 +113,7 @@ h2 {
   position: relative;
   height: 0;
   overflow: hidden;
+  padding-bottom: 28.125%;
 }
 
 .embed-container iframe, .embed-container object, .embed-container embed {
@@ -200,9 +201,6 @@ h2 {
   }
   .h-100-minus-40-xl {
     height: calc(100% - 40px);
-  }
-  .embed-container {
-    padding-bottom: 28.125%;
   }
 }
 

@@ -838,7 +838,9 @@
   |*  [tracker=(request-tracker) request=*]
   ^-  (list duct)
   ::
-  ~(tap in waiting:(~(got by tracker) request))
+  ?~  val=(~(get by tracker) request)
+    ~
+  ~(tap in waiting.u.val)
 ::  +put-request: associates a +duct with a request
 ::
 ++  put-request
@@ -1538,7 +1540,7 @@
     ::
     |-  ^+  state
     ::
-    =/  client-status=build-status  (~(got by builds.state) build)
+    =/  client-status=build-status  (got-build build)
     =/  subs=(list ^build)  ~(tap in ~(key by subs.client-status))
     ::
     |-  ^+  state
@@ -1586,14 +1588,14 @@
     |=  [=build =anchor]
     ^+  builds.state
     ::
-    =/  =build-status  (~(got by builds.state) build)
+    =/  =build-status  (got-build build)
     =/  subs=(list ^build)  ~(tap in ~(key by subs.build-status))
     =/  client=^build  build
     ::
     |-  ^+  builds.state
     ?~  subs  builds.state
     ::
-    =/  sub-status=^build-status  (~(got by builds.state) i.subs)
+    =/  sub-status=^build-status  (got-build i.subs)
     ::
     =.  clients.sub-status
       (~(del ju clients.sub-status) anchor client)
@@ -1612,7 +1614,7 @@
     |=  =build
     ^+  state
     ::
-    =/  =build-status  (~(got by builds.state) build)
+    =/  =build-status  (got-build build)
     =/  new-anchors
       ~(tap in (~(put in ~(key by clients.build-status)) [%duct duct]))
     =/  subs  ~(tap in ~(key by subs.build-status))
@@ -1642,14 +1644,14 @@
     |=  [=anchor =build]
     ^+  builds.state
     ::
-    =/  =build-status  (~(got by builds.state) build)
+    =/  =build-status  (got-build build)
     =/  subs=(list ^build)  ~(tap in ~(key by subs.build-status))
     =/  client=^build  build
     ::
     |-  ^+  builds.state
     ?~  subs  builds.state
     ::
-    =/  sub-status=^build-status  (~(got by builds.state) i.subs)
+    =/  sub-status=^build-status  (got-build i.subs)
     ::
     =/  already-had-anchor=?  (~(has by clients.sub-status) anchor)
     ::
@@ -1687,9 +1689,7 @@
     ++  copy-node
       ^+  state
       ::
-      =/  old-build-status=build-status
-        ~|  old-client=(build-to-tape old-client)
-        (~(got by builds.state) old-client)
+      =/  old-build-status=build-status  (got-build old-client)
       ::
       =/  old-subs=(list build)  ~(tap in ~(key by subs.old-build-status))
       =/  new-subs=(list build)  (turn old-subs |=(a=build a(date new-date)))
@@ -1837,7 +1837,7 @@
       =.  state  (add-build build)
       ::  ignore blocked builds
       ::
-      =/  =build-status  (~(got by builds.state) build)
+      =/  =build-status  (got-build build)
       ?:  ?=(%blocked -.state.build-status)
         =.  state  (add-anchors-to-build-subs build)
         ::
@@ -1887,10 +1887,7 @@
       ?~  old-build
         (add-build-to-next build)
       ::
-      =/  old-build-status=^build-status
-        ~|  [%missing-old-build (build-to-tape u.old-build)]
-        ~|  [%build-state (turn ~(tap in ~(key by builds.state)) build-to-tape)]
-        (~(got by builds.state) u.old-build)
+      =/  old-build-status=^build-status  (got-build u.old-build)
       ::  selectively promote scry builds
       ::
       ::    We can only promote a scry if it's not forced and we ran the same
@@ -1918,7 +1915,7 @@
       ?.  ?=([~ %value *] old-build-record)
         (add-build-to-next build)
       ::
-      =.  old-build-status  (~(got by builds.state) u.old-build)
+      =.  old-build-status  (got-build u.old-build)
       ::
       =/  old-subs=(list ^build)  ~(tap in ~(key by subs.old-build-status))
       =/  new-subs=(list ^build)
@@ -5482,6 +5479,13 @@
   ::
   ::+|  utilities
   ::
+  ::  +got-build: lookup :build in state, asserting presence
+  ::
+  ++  got-build
+    |=  =build
+    ^-  build-status
+    ~|  [%ford-missing-build build=(build-to-tape build) duct=duct]
+    (~(got by builds.state) build)
   ::  +add-build: store a fresh, unstarted build in the state
   ::
   ++  add-build
@@ -5554,9 +5558,7 @@
     |=  [=build update-func=$-(build-status build-status)]
     ^-  [build-status builds=_builds.state]
     ::
-    =/  original=build-status
-      ~|  [%update-build (build-to-tape build)]
-      (~(got by builds.state) build)
+    =/  original=build-status  (got-build build)
     =/  mutant=build-status  (update-func original)
     ::
     [mutant (~(put by builds.state) build mutant)]
@@ -5615,9 +5617,7 @@
     |=  =build
     ^+  [unblocked builds.state]
     ::
-    =/  =build-status
-      ~|  [%unblocking (build-to-tape build)]
-      (~(got by builds.state) build)
+    =/  =build-status  (got-build build)
     ::
     =/  clients=(list ^build)  ~(tap in (~(get ju clients.build-status) [%duct duct]))
     ::
@@ -5661,7 +5661,7 @@
     ::
     =/  duct-status  (~(got by ducts.state) duct)
     ::
-    =/  =build-status  (~(got by builds.state) build)
+    =/  =build-status  (got-build build)
     ?:  (~(has in requesters.build-status) [%duct duct])
       (on-root-build-complete build)
     ::
@@ -5698,7 +5698,7 @@
         ::
         res
     ::
-    =/  =build-status  (~(got by builds.state) build)
+    =/  =build-status  (got-build build)
     =/  =duct-status  (~(got by ducts.state) duct)
     ::  make sure we have something to send
     ::
@@ -5807,7 +5807,7 @@
     |=  =build
     ^+  ..execute
     ::
-    =/  =build-status  (~(got by builds.state) build)
+    =/  =build-status  (got-build build)
     ::
     =/  orphans=(list ^build)
       %+  murn  ~(tap by subs.build-status)
@@ -5817,6 +5817,11 @@
       ?:  verified.build-relation
         ~
       `sub
+    ::  dequeue orphans in case we were about to run them
+    ::
+    =/  orphan-set        (~(gas in *(set ^build)) orphans)
+    =.  next-builds       (~(dif in next-builds) orphan-set)
+    =.  candidate-builds  (~(dif in candidate-builds) orphan-set)
     ::  remove links to orphans in :build's +build-status
     ::
     =^  build-status  builds.state
@@ -5914,9 +5919,7 @@
     ?:  ?=(%pin -.schematic.build)
       ~
     ::
-    =/  subs
-      ~|  [%collect-live-resource (build-to-tape build)]
-      ~(tap in ~(key by subs:(~(got by builds.state) build)))
+    =/  subs  ~(tap in ~(key by subs:(got-build build)))
     =|  resources=(jug disc resource)
     |-
     ?~  subs
@@ -5942,7 +5945,7 @@
     ::  only recurse on blocked sub-builds
     ::
     =/  subs=(list ^build)
-      %+  murn  ~(tap by subs:(~(got by builds.state) build))
+      %+  murn  ~(tap by subs:(got-build build))
       |=  [sub=^build =build-relation]
       ^-  (unit ^build)
       ::
@@ -6128,12 +6131,8 @@
 ++  call
   |=  [=duct type=* wrapped-task=(hobo task:able)]
   ^-  [(list move) _ford-gate]
-  ::  unwrap :task from :wrapped-task
   ::
-  =/  task=task:able
-    ?.  ?=(%soft -.wrapped-task)
-      wrapped-task
-    ;;(task:able p.wrapped-task)
+  =/  task=task:able  ((harden task:able) wrapped-task)
   ::  we wrap +per-event with a call that binds our event args
   ::
   =*  this-event  (per-event [our duct now scry-gate] state.ax)
@@ -6266,22 +6265,29 @@
     ++  take-rebuilds
       ^-  [(list move) ford-state]
       ::
+      ~|  [%ford-take-rebuilds wire=wire duct=duct]
       ?>  ?=([@tas %wris *] sign)
       =*  case-sign  p.sign
       =*  care-paths-sign  q.sign
       =+  [ship desk date]=(raid:wired t.wire ~[%p %tas %da])
       =/  disc  [ship desk]
+      ::  ignore spurious clay updates
+      ::
+      ::    Due to asynchronicity of Clay notifications, we might get a
+      ::    subscription update on an already-canceled duct.  This is
+      ::    normal; no-op.
+      ::
+      ?~  duct-status=(~(get by ducts.state.ax) duct)
+        [~ state.ax]
       ::
       =/  =subscription
-        ~|  [%ford-take-bad-clay-sub wire=wire duct=duct]
-        =/  =duct-status  (~(got by ducts.state.ax) duct)
-        ?>  ?=(%live -.live.duct-status)
-        ?>  ?=(^ last-sent.live.duct-status)
-        ?>  ?=(^ subscription.u.last-sent.live.duct-status)
-        u.subscription.u.last-sent.live.duct-status
+        ?>  ?=(%live -.live.u.duct-status)
+        (need subscription:(need last-sent.live.u.duct-status))
       ::
       =/  ducts=(list ^duct)
-        ~|  [%ford-take-missing-subscription subscription]
+        ::  sanity check; there must be at least one duct per subscription
+        ::
+        =-  ?<(=(~ -) -)
         (get-request-ducts pending-subscriptions.state.ax subscription)
       ::
       =|  moves=(list move)
@@ -6299,13 +6305,12 @@
     ++  take-unblocks
       ^-  [(list move) ford-state]
       ::
+      ~|  [%ford-take-unblocks wire=wire duct=duct]
       ?>  ?=([@tas %writ *] sign)
       =*  riot-sign  p.sign
       ::  scry-request: the +scry-request we had previously blocked on
       ::
-      =/  =scry-request
-        ~|  [%ford-take-bad-scry-request wire=wire duct=duct]
-        (need (path-to-scry-request t.wire))
+      =/  =scry-request  (need (path-to-scry-request t.wire))
       ::  scry-result: parse a (unit cage) from :sign
       ::
       ::    If the result is `~`, the requested resource was not available.
@@ -6314,9 +6319,9 @@
         ?~  riot-sign
           ~
         `r.u.riot-sign
+      ::  if spurious Clay response, :ducts will be empty, causing no-op
       ::
       =/  ducts=(list ^duct)
-        ~|  [%ford-take-missing-scry-request scry-request]
         (get-request-ducts pending-scrys.state.ax scry-request)
       ::
       =|  moves=(list move)

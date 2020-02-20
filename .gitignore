@@ -9,6 +9,9 @@ tags
 TAGS
 cross/
 release/
+.stack-work
+\#*\#
+s/*
 **/.DS_Store
 **/dist
 **/node_modules
@@ -16,4 +19,5 @@ release/
 **/*.swp
 **/*.swo
 **/*-min.js
+.stack-work
 pkg/interface/link-webext/web-ext-artifacts

@@ -223,7 +223,7 @@ export class ChatScreen extends Component {
    let group = Array.from(props.group.values());
 
    let isinPopout = this.props.popout ? "popout/" : "";
-  
+
    let ownerContact = (window.ship in props.contacts)
      ? props.contacts[window.ship] : false;
 
