@@ -464,19 +464,31 @@
 ++  chat-scry
   |=  pax=path
   ^-  (unit mailbox)
-  =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
-  .^((unit mailbox) %gx pax)
+  %^  scry  (unit mailbox)
+    %chat-store
+  [%mailbox pax]
 ::
 ++  invite-scry
   |=  uid=serial
   ^-  (unit invite)
-  =/  pax  /=invite-store/(scot %da now.bol)/invite/chat/(scot %uv uid)/noun
-  .^((unit invite) %gx pax)
+  %^  scry  (unit invite)
+    %invite-store
+  /invite/chat/(scot %uv uid)
 ::
 ++  permitted-scry
   |=  pax=path
   ^-  ?
   .^(? %gx ;:(weld /=permission-store/(scot %da now.bol)/permitted pax /noun))
+::
+++  scry
+  |*  [=mold app=term =path]
+  .^  mold
+    %gx
+    (scot %p our.bol)
+    app
+    (scot %da now.bol)
+    (snoc `^path`path %noun)
+  ==
 ::
 ++  pull-wire
   |=  pax=path
