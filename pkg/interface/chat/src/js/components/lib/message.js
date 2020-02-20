@@ -162,12 +162,14 @@ export class Message extends Component {
 
       let contact = !!(props.msg.author in props.contacts)
         ? props.contacts[props.msg.author] : false;
-      let name = props.msg.author;
+      let name = `~${props.msg.author}`;
       let color = "#000000";
+      let sigilClass = "mix-blend-diff"
       if (contact) {
         name = (contact.nickname.length > 0)
           ? contact.nickname : `~${props.msg.author}`;
         color = `#${uxToHex(contact.color)}`;
+        sigilClass = "";
       }
       return (
         <div
@@ -181,7 +183,9 @@ export class Message extends Component {
             <Sigil
               ship={props.msg.author}
               size={24}
-              color={color} />
+              color={color}
+              classes={sigilClass}
+              />
           </div>
           <div
             className="fr clamp-message white-d"
