@@ -9,12 +9,14 @@
 +$  card  card:agent:gall
 ::
 +$  versioned-state
-  $%  state-zero
+  $%  state-0
+      state-1
   ==
 ::
-+$  state-zero
-  $:  %0
-      synced=(map path ship)
++$  state-1  [%1 state-base]
++$  state-0  [%0 state-base]
++$  state-base
+  $:  synced=(map path ship)
       invite-created=_|
       allow-history=(map path ?)
   ==
@@ -30,11 +32,11 @@
   $%  [%chat-update chat-update]
   ==
 --
-=|  state-zero
+=|  state-1
 =*  state  -
 ::
-%-  agent:dbug
 %+  verb  |
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  bol=bowl:gall
@@ -52,8 +54,120 @@
     ==
   ++  on-save   !>(state)
   ++  on-load
-    |=  old=vase
-    `this(state !<(state-zero old))
+    |=  =old=vase
+    =/  old  !<(versioned-state old-vase)
+    ?:  ?=(%1 -.old)
+      [~ this(state old)]
+    ::  path structure ugprade logic
+    ::
+    :_  this(state [%1 +.old])
+    %-  zing
+    ^-  (list (list card))
+    %+  turn
+      %~  tap  in
+      %^  scry:cc  (set path)
+        %chat-store
+      /keys
+    |^  |=  chat=path
+        ^-  (list card)
+        =/  newp=permission  (unify-permissions chat)
+        =/  old-group=path  [%chat chat]
+        =/  new-group=path  [%'~' chat]
+        ;:  weld
+          :~  (delete-group (snoc old-group %read))
+              (delete-group (snoc old-group %write))
+          ==
+        ::
+          (create-group new-group who.newp)
+        ::
+          :~  (record-group new-group chat)
+              (hookup-group new-group kind.newp)
+          ==
+        ==
+    ::
+    ++  unify-permissions
+      |=  chat=path
+      ^-  permission
+      =/  read=(unit permission)   (get-permission chat %read)
+      =/  write=(unit permission)  (get-permission chat %write)
+      ?.  &(?=(^ read) ?=(^ write))
+        ~&  [%missing-permission chat read=?=(~ read) write=?=(~ write)]
+        [%white [(slav %p (snag 0 chat)) ~ ~]]
+      ::  village: exclusive to writers
+      ::
+      ?:  &(?=(%white kind.u.read) ?=(%white kind.u.write))
+        [%white who.u.write]
+      ::  channel: merge blacklists
+      ::
+      ?:  &(?=(%black kind.u.read) ?=(%black kind.u.write))
+        [%black (~(uni in who.u.read) who.u.write)]
+      ::  journal: exclusive to writers
+      ::
+      ?:  &(?=(%black kind.u.read) ?=(%white kind.u.write))
+        [%white who.u.write]
+      ::  mailbox: exclusive to readers
+      ::
+      ?:  &(?=(%white kind.u.read) ?=(%black kind.u.write))
+        [%white who.u.read]
+      ~|  [%weird-kinds kind.u.read kind.u.write]
+      !!
+    ::
+    ++  get-permission
+      |=  [chat=path what=?(%read %write)]
+      %^  scry:cc  (unit permission)
+        %permission-store
+      [%permission %chat (snoc chat what)]
+    ::
+    ++  make-poke
+      |=  [app=term =mark =vase]
+      ^-  card
+      [%pass /on-load/[app]/[mark] %agent [our.bol app] %poke mark vase]
+    ::
+    ++  delete-group
+      |=  group=path
+      ^-  card
+      %^  make-poke  %group-store
+        %group-action
+      !>  ^-  group-action
+      [%unbundle group]
+    ::
+    ++  create-group
+      |=  [group=path who=(set ship)]
+      ^-  (list card)
+      :~  %^  make-poke  %group-store
+            %group-action
+          !>  ^-  group-action
+          [%bundle group]
+        ::
+          %^  make-poke  %group-store
+            %group-action
+          !>  ^-  group-action
+          [%add who group]
+      ==
+    ::
+    ++  hookup-group
+      |=  [group=path =kind]
+      ^-  card
+      %^  make-poke  %permission-group-hook
+        %permission-group-hook-action
+      !>  ^-  permission-group-hook-action
+      [%associate group [group^kind ~ ~]]
+    ::
+    ++  record-group
+      |=  [group=path chat=path]
+      ^-  card
+      =/  =metadata
+        ~|  [%weird-chat-path chat]
+        %*  .  *metadata
+          title         (snag 1 chat)
+          date-created  now.bol
+          creator       (slav %p (snag 0 chat))
+        ==
+      %^  make-poke  %metadata-store
+        %metadata-action
+      !>  ^-  metadata-action
+      [%add group [%chat chat] metadata]
+    --
   ::
   ++  on-poke
     |=  [=mark =vase]
