@@ -308,7 +308,7 @@
           :~  :*  duct=~[/http-blah]  %give  %response
                   [%start [200 ['content-type' 'text/html']~] ~ %.n]
       ==  ==  ==
-  
+
   ;:  weld
     results1
     results2

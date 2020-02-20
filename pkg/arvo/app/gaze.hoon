@@ -357,11 +357,11 @@
         0x4763.8e3c.ddee.2204.81e4.c3f9.183d.639c.
           0efe.a7f0.5fcd.2df4.1888.5572.9f71.5419
       ~
-    =+  ^-  [of=@ pool=@]  ::TODO  =/
+    =/  [of=@ pool=@]
       ~|  t.topics.log
       %+  decode-topics:abi:ethereum  t.topics.log
       ~[%uint %uint]
-    =+  ^-  [by=@ gift=@ to=@]  ::TODO  =/
+    =/  [by=@ gift=@ to=@]
       ~|  data.log
       %+  decode-topics:abi:ethereum
         %+  rash  data.log

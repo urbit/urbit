@@ -26,15 +26,16 @@ import Foreign.Marshal.Alloc  (alloca)
 import Foreign.Ptr            (castPtr)
 import Foreign.Storable       (peek, poke)
 import System.Exit            (ExitCode)
+import Urbit.King.App         (HasStderrLogFunc(..))
 
-import qualified Urbit.Ob as Ob
-
-import qualified Data.ByteString.Unsafe as BS
-import qualified Data.Text              as T
-import qualified System.IO              as IO
-import qualified System.IO.Error        as IO
-import qualified Urbit.Time             as Time
-import qualified Urbit.Vere.Log         as Log
+import qualified Data.ByteString.Unsafe   as BS
+import qualified Data.Conduit.Combinators as CC
+import qualified Data.Text                as T
+import qualified System.IO                as IO
+import qualified System.IO.Error          as IO
+import qualified Urbit.Ob                 as Ob
+import qualified Urbit.Time               as Time
+import qualified Urbit.Vere.Log           as Log
 
 
 -- Serf Config -----------------------------------------------------------------
@@ -269,7 +270,9 @@ cordText = T.strip . unCord
 --------------------------------------------------------------------------------
 
 snapshot :: HasLogFunc e => Serf e -> SerfState -> RIO e ()
-snapshot serf ss = sendOrder serf $ OSave $ ssLastEv ss
+snapshot serf ss = do
+    logTrace $ display ("Taking snapshot at event " <> tshow (ssLastEv ss))
+    sendOrder serf $ OSave $ ssLastEv ss
 
 shutdown :: HasLogFunc e => Serf e -> Word8 -> RIO e ()
 shutdown serf code = sendOrder serf (OExit code)
@@ -297,12 +300,20 @@ recvPlea w = do
 -}
 handshake :: HasLogFunc e => Serf e -> LogIdentity -> RIO e SerfState
 handshake serf ident = do
+    logTrace "Serf Handshake"
+
     ss@SerfState{..} <- recvPlea serf >>= \case
       PPlay e m -> pure $ SerfState e m
       x         -> throwIO (InvalidInitialPlea x)
 
+    logTrace $ display ("Handshake result: " <> tshow ss)
+
     when (ssNextEv == 1) $ do
-        sendOrder serf (OBoot (lifecycleLen ident))
+        let ev = OBoot (lifecycleLen ident)
+        logTrace $ display ("No snapshot. Sending boot event: " <> tshow ev)
+        sendOrder serf ev
+
+    logTrace "Finished handshake"
 
     pure ss
 
@@ -365,8 +376,7 @@ updateProgressBar count startMsg = \case
       -- We only construct the progress bar on the first time that we
       -- process an event so that we don't display an empty progress
       -- bar when the snapshot is caught up to the log.
-      putStrLn startMsg
-      let style = defStyle { stylePostfix = exact }
+      let style = defStyle { stylePrefix = msg (fromStrict startMsg) }
       pb <- newProgressBar style 10 (Progress 0 count ())
       pure (Just pb)
     Just pb -> do
@@ -381,7 +391,13 @@ data BootExn = ShipAlreadyBooted
   deriving stock    (Eq, Ord, Show)
   deriving anyclass (Exception)
 
-bootFromSeq :: ∀e. HasLogFunc e => Serf e -> BootSeq -> RIO e ([Job], SerfState)
+logStderr :: HasStderrLogFunc e => RIO LogFunc a -> RIO e a
+logStderr action = do
+  logFunc <- view stderrLogFuncL
+  runRIO logFunc action
+
+bootFromSeq :: ∀e. (HasStderrLogFunc e, HasLogFunc e)
+            => Serf e -> BootSeq -> RIO e ([Job], SerfState)
 bootFromSeq serf (BootSeq ident nocks ovums) = do
     handshake serf ident >>= \case
         ss@(SerfState 1 (Mug 0)) -> loop [] ss Nothing bootSeqFns
@@ -392,12 +408,12 @@ bootFromSeq serf (BootSeq ident nocks ovums) = do
          -> RIO e ([Job], SerfState)
     loop acc ss pb = \case
         []   -> do
-          pb        <- updateProgressBar 0 bootMsg pb
+          pb        <- logStderr (updateProgressBar 0 bootMsg pb)
           pure (reverse acc, ss)
         x:xs -> do
           wen       <- io Time.now
           job       <- pure $ x (ssNextEv ss) (ssLastMug ss) wen
-          pb        <- updateProgressBar (1 + length xs) bootMsg pb
+          pb        <- logStderr (updateProgressBar (1 + length xs) bootMsg pb)
           (job, ss) <- bootJob serf job
           loop (job:acc) ss pb xs
 
@@ -416,33 +432,56 @@ bootFromSeq serf (BootSeq ident nocks ovums) = do
     The ship is booted, but it is behind. shove events to the worker
     until it is caught up.
 -}
-replayJobs :: HasLogFunc e
+replayJobs :: (HasStderrLogFunc e, HasLogFunc e)
            => Serf e -> Int -> SerfState -> ConduitT Job Void (RIO e) SerfState
 replayJobs serf lastEv = go Nothing
   where
     go pb ss = do
-      await >>= \case
-        Nothing -> pure ss
-        Just job -> do
-          pb <- lift $ updatePb ss pb
-          played <- lift $ replayJob serf job
-          go pb played
+        await >>= \case
+            Nothing  -> pure ss
+            Just job -> do
+                pb     <- lift $ logStderr (updatePb ss pb)
+                played <- lift $ replayJob serf job
+                go pb played
 
     updatePb ss = do
-      let start = lastEv - (fromIntegral (ssNextEv ss))
-      let msg = pack ("Replaying events #" ++ (show (ssNextEv ss)) ++
-                      " to #" ++ (show lastEv))
-      updateProgressBar start msg
+        let start = lastEv - fromIntegral (ssNextEv ss)
+        let msg   = pack ( "Replaying events #" ++ (show (ssNextEv ss))
+                        <> " to #" ++ (show lastEv)
+                         )
+        updateProgressBar start msg
 
 
-replay :: HasLogFunc e => Serf e -> Log.EventLog -> RIO e SerfState
-replay serf log = do
+replay :: (HasStderrLogFunc e, HasLogFunc e)
+          => Serf e -> Log.EventLog -> Maybe Word64 -> RIO e SerfState
+replay serf log last = do
+    logTrace "Beginning event log replay"
+
+    last & \case
+        Nothing -> pure ()
+        Just lt -> logTrace $ display $
+                     "User requested to replay up to event #" <> tshow lt
+
     ss <- handshake serf (Log.identity log)
 
-    lastEv <- Log.lastEv log
-    runConduit $  Log.streamEvents log (ssNextEv ss)
-               .| toJobs (Log.identity log) (ssNextEv ss)
-               .| replayJobs serf (fromIntegral lastEv) ss
+    logLastEv :: Word64 <- fromIntegral <$> Log.lastEv log
+
+    let serfNextEv = ssNextEv ss
+        lastEventInSnap = serfNextEv - 1
+
+    logTrace $ display $ "Last event in event log is #" <> tshow logLastEv
+
+    let replayUpTo = fromMaybe logLastEv last
+
+    let numEvs :: Int = fromIntegral replayUpTo - fromIntegral lastEventInSnap
+
+    logTrace $ display $ "Replaying up to event #" <> tshow replayUpTo
+    logTrace $ display $ "Will replay " <> tshow numEvs <> " in total."
+
+    runConduit $ Log.streamEvents log serfNextEv
+              .| CC.take (fromIntegral numEvs)
+              .| toJobs (Log.identity log) serfNextEv
+              .| replayJobs serf (fromIntegral replayUpTo) ss
 
 toJobs :: HasLogFunc e
        => LogIdentity -> EventId -> ConduitT ByteString Job (RIO e) ()

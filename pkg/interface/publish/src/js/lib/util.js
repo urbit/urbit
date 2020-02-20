@@ -6,7 +6,7 @@ export function stringToSymbol(str) {
         ( (n >= 48) && (n <= 57) ))
     {
       result += str[i];
-    } else if ( (n >= 65) &&  (n <= 90) ) 
+    } else if ( (n >= 65) &&  (n <= 90) )
     {
       result += String.fromCharCode(n + 32);
     } else {

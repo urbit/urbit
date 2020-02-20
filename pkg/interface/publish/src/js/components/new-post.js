@@ -63,7 +63,7 @@ class Error extends Component {
     }
   }
 }
- 
+
 export class NewPost extends Component {
   constructor(props){
     super(props);
@@ -235,7 +235,7 @@ export class NewPost extends Component {
           post: this.state.posted.postId,
         }
       };
-      
+
       this.props.api.action("publish", "publish-action", del);
     }
 

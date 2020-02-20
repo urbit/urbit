@@ -1,5 +1,3 @@
-::  Thread manager
-::
 /-  spider
 /+  libstrand=strand, default-agent, verb
 =,  strand=strand:libstrand
@@ -127,9 +125,6 @@
     |-  ^-  (quip card _this)
     ?~  yarns
       `this
-    ?.  ?=([@ ~] i.yarns)
-      $(yarns t.yarns)
-    ~|  killing=i.yarns
     =^  cards-1  state
       (handle-stop-thread:sc (yarn-to-tid i.yarns) |)
     =^  cards-2  this
@@ -139,8 +134,6 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
-    ?:  ?=(%spider-kill mark)
-      (on-load on-save)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
         %spider-input  (on-poke-input:sc !<(input vase))
@@ -357,15 +350,12 @@
     ^-  ^card
     ?+  card  card
         [%pass * *]  [%pass [%thread tid p.card] q.card]
-        [%give %fact *]
-      ?~  path.p.card
-        card
-      card(path.p `[%thread tid u.path.p.card])
-    ::
-        [%give %kick *]
-      ?~  path.p.card
-        card
-      card(path.p `[%thread tid u.path.p.card])
+        [%give ?(%fact %kick) *]
+      =-  card(paths.p -)
+      %+  turn  paths.p.card
+      |=  =path
+      ^-  ^path
+      [%thread tid path]
     ==
   =.  cards  (weld cards cards.r)
   =^  final-cards=(list card)  state
@@ -391,13 +381,14 @@
 ++  thread-say-fail
   |=  [=tid =term =tang]
   ^-  (list card)
-  :~  [%give %fact `/thread-result/[tid] %thread-fail !>([term tang])]
-      [%give %kick `/thread-result/[tid] ~]
+  :~  [%give %fact ~[/thread-result/[tid]] %thread-fail !>([term tang])]
+      [%give %kick ~[/thread-result/[tid]] ~]
   ==
 ::
 ++  thread-fail
   |=  [=yarn =term =tang]
   ^-  (quip card ^state)
+  %-  (slog leaf+"strand {<yarn>} failed" leaf+<term> tang)
   =/  =tid  (yarn-to-tid yarn)
   =/  fail-cards  (thread-say-fail tid term tang)
   =^  cards  state  (thread-clean yarn)
@@ -409,8 +400,8 @@
   ::  %-  (slog leaf+"strand {<yarn>} finished" (sell vase) ~)
   =/  =tid  (yarn-to-tid yarn)
   =/  done-cards=(list card)
-    :~  [%give %fact `/thread-result/[tid] %thread-done vase]
-        [%give %kick `/thread-result/[tid] ~]
+    :~  [%give %fact ~[/thread-result/[tid]] %thread-done vase]
+        [%give %kick ~[/thread-result/[tid]] ~]
     ==
   =^  cards  state  (thread-clean yarn)
   [(weld done-cards cards) state]

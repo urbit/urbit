@@ -17,16 +17,27 @@
   **/
     /* Assert.  Good to capture.
     */
-#     define c3_assert(x)                       \
-        do {                                    \
-          if (!(x)) {                           \
-            fprintf(stderr, "\rAssertion '%s' " \
-                    "failed in %s:%d\n",        \
-                    #x, __FILE__, __LINE__);    \
-            c3_cooked();                        \
-            assert(x);                          \
-          }                                     \
-        } while(0)
+
+#     if defined(ASAN_ENABLED) && defined(__clang__)
+#       define c3_assert(x)                       \
+          do {                                    \
+            if (!(x)) {                           \
+              c3_cooked();                        \
+              assert(x);                          \
+            }                                     \
+          } while(0)
+#     else
+#       define c3_assert(x)                       \
+          do {                                    \
+            if (!(x)) {                           \
+              fprintf(stderr, "\rAssertion '%s' " \
+                      "failed in %s:%d\n",        \
+                      #x, __FILE__, __LINE__);    \
+              c3_cooked();                        \
+              assert(x);                          \
+            }                                     \
+          } while(0)
+#endif
 
     /* Stub.
     */

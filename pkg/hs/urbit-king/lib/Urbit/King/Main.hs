@@ -68,9 +68,10 @@ import Urbit.Vere.Serf
 import Control.Concurrent     (myThreadId)
 import Control.Exception      (AsyncException(UserInterrupt))
 import Control.Lens           ((&))
+import System.Process         (system)
 import Text.Show.Pretty       (pPrint)
-import Urbit.King.App         (runApp, runAppLogFile, runPierApp)
-import Urbit.King.App         (HasConfigDir(..))
+import Urbit.King.App         (runApp, runAppLogFile, runAppNoLog, runPierApp)
+import Urbit.King.App         (HasConfigDir(..), HasStderrLogFunc(..))
 import Urbit.Noun.Conversions (cordToUW)
 import Urbit.Time             (Wen)
 import Urbit.Vere.LockFile    (lockFile)
@@ -78,7 +79,6 @@ import Urbit.Vere.LockFile    (lockFile)
 import qualified Data.Set                as Set
 import qualified Data.Text               as T
 import qualified Network.HTTP.Client     as C
-import qualified System.Environment      as Sys
 import qualified System.Posix.Signals    as Sys
 import qualified System.ProgressBar      as PB
 import qualified System.Random           as Sys
@@ -114,7 +114,7 @@ toSerfFlags CLI.Opts{..} = catMaybes m
         , from oHashless Serf.Hashless
         , from oQuiet Serf.Quiet
         , from oVerbose Serf.Verbose
-        , from oDryRun Serf.DryRun
+        , from (oDryRun || isJust oDryFrom) Serf.DryRun
         ]
     from True flag = Just flag
     from False _   = Nothing
@@ -123,12 +123,12 @@ toSerfFlags CLI.Opts{..} = catMaybes m
 toPierConfig :: FilePath -> CLI.Opts -> PierConfig
 toPierConfig pierPath CLI.Opts{..} = PierConfig
     { _pcPierPath = pierPath
-    , _pcDryRun   = oDryRun
+    , _pcDryRun   = (oDryRun || isJust oDryFrom)
     }
 
 toNetworkConfig :: CLI.Opts -> NetworkConfig
 toNetworkConfig CLI.Opts{..} = NetworkConfig
-    { ncNetworking = if oDryRun then NetworkNone
+    { ncNetworking = if (oDryRun || isJust oDryFrom) then NetworkNone
                      else if oOffline then NetworkNone
                      else if oLocalhost then NetworkLocalhost
                      else NetworkNormal
@@ -136,13 +136,14 @@ toNetworkConfig CLI.Opts{..} = NetworkConfig
     }
 
 tryBootFromPill :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
-                   , HasConfigDir e
+                   , HasConfigDir e, HasStderrLogFunc e
                    )
                 => Bool -> Pill -> Bool -> Serf.Flags -> Ship
                 -> LegacyBootEvent
                 -> RIO e ()
-tryBootFromPill oExit pill lite flags ship boot =
-    runOrExitImmediately bootedPier oExit
+tryBootFromPill oExit pill lite flags ship boot = do
+    mStart <- newEmptyMVar
+    runOrExitImmediately bootedPier oExit mStart
   where
     bootedPier = do
         view pierPathL >>= lockFile
@@ -156,28 +157,32 @@ runOrExitImmediately :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
                         )
                      => RAcquire e (Serf e, Log.EventLog, SerfState)
                      -> Bool
+                     -> MVar ()
                      -> RIO e ()
-runOrExitImmediately getPier oExit =
+runOrExitImmediately getPier oExit mStart =
     rwith getPier $ if oExit then shutdownImmediately else runPier
   where
     shutdownImmediately (serf, log, ss) = do
         logTrace "Sending shutdown signal"
         logTrace $ displayShow ss
-        io $ threadDelay 500000 -- Why is this here? Do I need to force a snapshot to happen?
+
+        -- Why is this here? Do I need to force a snapshot to happen?
+        io $ threadDelay 500000
+
         ss <- shutdown serf 0
         logTrace $ displayShow ss
         logTrace "Shutdown!"
 
     runPier sls = do
-        runRAcquire $ Pier.pier sls
+        runRAcquire $ Pier.pier sls mStart
 
-tryPlayShip :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
-               , HasConfigDir e
+tryPlayShip :: ( HasStderrLogFunc e, HasLogFunc e, HasNetworkConfig e
+               , HasPierConfig e, HasConfigDir e
                )
-            => Bool -> Bool -> Serf.Flags -> RIO e ()
-tryPlayShip exitImmediately fullReplay flags = do
+            => Bool -> Bool -> Maybe Word64 -> Serf.Flags -> MVar () -> RIO e ()
+tryPlayShip exitImmediately fullReplay playFrom flags mStart = do
     when fullReplay wipeSnapshot
-    runOrExitImmediately resumeShip exitImmediately
+    runOrExitImmediately resumeShip exitImmediately mStart
   where
     wipeSnapshot = do
         shipPath <- view pierPathL
@@ -193,7 +198,7 @@ tryPlayShip exitImmediately fullReplay flags = do
     resumeShip = do
         view pierPathL >>= lockFile
         rio $ logTrace "RESUMING SHIP"
-        sls <- Pier.resumed flags
+        sls <- Pier.resumed playFrom flags
         rio $ logTrace "SHIP RESUMED"
         pure sls
 
@@ -257,7 +262,7 @@ collectAllFx top = do
         logTrace "Done collecting effects!"
   where
     tmpDir :: FilePath
-    tmpDir = top <> "/.tmpdir"
+    tmpDir = top </> ".tmpdir"
 
     collectedFX :: RAcquire e ()
     collectedFX = do
@@ -268,6 +273,42 @@ collectAllFx top = do
 
     serfFlags :: Serf.Flags
     serfFlags = [Serf.Hashless, Serf.DryRun]
+
+--------------------------------------------------------------------------------
+
+replayPartEvs :: ∀e. (HasStderrLogFunc e, HasLogFunc e)
+              => FilePath -> Word64 -> RIO e ()
+replayPartEvs top last = do
+    logTrace $ display $ pack @Text top
+    fetchSnapshot
+    rwith replayedEvs $ \() ->
+        logTrace "Done replaying events!"
+  where
+    fetchSnapshot :: RIO e ()
+    fetchSnapshot = do
+      snap <- Pier.getSnapshot top last
+      case snap of
+        Nothing -> pure ()
+        Just sn -> do
+          liftIO $ system $ "cp -r \"" <> sn <> "\" \"" <> tmpDir <> "\""
+          pure ()
+
+    tmpDir :: FilePath
+    tmpDir = top </> ".partial-replay" </> show last
+
+    replayedEvs :: RAcquire e ()
+    replayedEvs = do
+        lockFile top
+        log  <- Log.existing (top <> "/.urb/log")
+        serf <- Serf.run (Serf.Config tmpDir serfFlags)
+        rio $ do
+          ss <- Serf.replay serf log $ Just last
+          Serf.snapshot serf ss
+          io $ threadDelay 500000 -- Copied from runOrExitImmediately
+          pure ()
+
+    serfFlags :: Serf.Flags
+    serfFlags = [Serf.Hashless]
 
 --------------------------------------------------------------------------------
 
@@ -422,17 +463,34 @@ newShip CLI.New{..} opts
     runTryBootFromPill pill name ship bootEvent = do
       let pierConfig = toPierConfig (pierPath name) opts
       let networkConfig = toNetworkConfig opts
-      io $ runPierApp pierConfig networkConfig $
+      io $ runPierApp pierConfig networkConfig True $
         tryBootFromPill True pill nLite flags ship bootEvent
 ------  tryBootFromPill (CLI.oExit opts) pill nLite flags ship bootEvent
 
 
-runShip :: CLI.Run -> CLI.Opts -> IO ()
-runShip (CLI.Run pierPath) opts = do
-    let pierConfig = toPierConfig pierPath opts
-    let networkConfig = toNetworkConfig opts
-    runPierApp pierConfig networkConfig $
-      tryPlayShip (CLI.oExit opts) (CLI.oFullReplay opts) (toSerfFlags opts)
+runShip :: CLI.Run -> CLI.Opts -> Bool -> IO ()
+runShip (CLI.Run pierPath) opts daemon = do
+    tid <- myThreadId
+    let onTermExit = throwTo tid UserInterrupt
+    mStart <- newEmptyMVar
+    if daemon
+    then runPier mStart
+    else do
+      connectionThread <- async $ do
+        readMVar mStart
+        finally (runAppNoLog $ connTerm pierPath) onTermExit
+      finally (runPier mStart) (cancel connectionThread)
+  where
+    runPier mStart =
+          runPierApp pierConfig networkConfig daemon $
+            tryPlayShip
+              (CLI.oExit opts)
+              (CLI.oFullReplay opts)
+              (CLI.oDryFrom opts)
+              (toSerfFlags opts)
+              mStart
+    pierConfig = toPierConfig pierPath opts
+    networkConfig = toNetworkConfig opts
 
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
@@ -471,40 +529,25 @@ checkComet = do
   let s = mineComet (Set.fromList starList) eny
   print s
 
-{-|
-    The release executable links against a terminfo library that tries
-    to find the terminfo database in `/nix/store/...`. Hack around this
-    by setting `TERMINFO_DIRS` to the standard locations, but don't
-    overwrite it if it's already been set by the user.
--}
-terminfoHack ∷ IO ()
-terminfoHack =
-    Sys.lookupEnv var >>= maybe (Sys.setEnv var dirs) (const $ pure ())
-  where
-    var = "TERMINFO_DIRS"
-    dirs = intercalate ":"
-      [ "/usr/share/terminfo"
-      , "/lib/terminfo"
-      ]
-
 main :: IO ()
 main = do
     mainTid <- myThreadId
+
+    hSetBuffering stdout NoBuffering
 
     let onTermSig = throwTo mainTid UserInterrupt
 
     Sys.installHandler Sys.sigTERM (Sys.Catch onTermSig) Nothing
 
-    terminfoHack
-
     CLI.parseArgs >>= \case
-        CLI.CmdRun r o                          -> runShip r o
+        CLI.CmdRun r o d                        -> runShip r o d
         CLI.CmdNew n o                          -> runApp $ newShip n o
         CLI.CmdBug (CLI.CollectAllFX pax)       -> runApp $ collectAllFx pax
         CLI.CmdBug (CLI.EventBrowser pax)       -> runApp $ startBrowser pax
         CLI.CmdBug (CLI.ValidatePill pax pil s) -> runApp $ testPill pax pil s
         CLI.CmdBug (CLI.ValidateEvents pax f l) -> runApp $ checkEvs pax f l
         CLI.CmdBug (CLI.ValidateFX pax f l)     -> runApp $ checkFx  pax f l
+        CLI.CmdBug (CLI.ReplayEvents pax l)     -> runApp $ replayPartEvs pax l
         CLI.CmdBug (CLI.CheckDawn pax)          -> runApp $ checkDawn pax
         CLI.CmdBug CLI.CheckComet               -> runApp $ checkComet
         CLI.CmdCon pier                         -> runAppLogFile $ connTerm pier

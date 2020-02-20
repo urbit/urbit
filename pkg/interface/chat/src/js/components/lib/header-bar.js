@@ -17,7 +17,7 @@ export class HeaderBar extends Component {
         : "dn db-m db-l db-xl";
 
     return (
-      <div className={`bg-black w-100 justify-between ` + popoutHide}
+      <div className={`bg-black bb-d b--gray2-d w-100 justify-between ` + popoutHide}
         style={{ height: 48, padding: 8}}>
         <a className="db"
           style={{ background: '#1A1A1A',

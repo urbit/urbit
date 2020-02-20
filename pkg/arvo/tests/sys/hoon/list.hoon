@@ -141,8 +141,8 @@
 ++  test-list-murn
   %+  expect-eq
     !>  ~[6 10]
-    !>  %+  murn  `(list @)`~[2 3 4 5] 
-          |=  [x=@] 
+    !>  %+  murn  `(list @)`~[2 3 4 5]
+          |=  [x=@]
           ^-  (unit)
           ?:  =((mod x 2) 0)  ~
           (some (mul x 2))

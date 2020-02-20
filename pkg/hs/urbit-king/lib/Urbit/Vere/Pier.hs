@@ -5,19 +5,21 @@
     communication between the serf, the log, and the IO drivers.
 -}
 module Urbit.Vere.Pier
-  ( booted, resumed, pier, runPersist, runCompute, generateBootSeq
+  ( booted, resumed, getSnapshot, pier, runPersist, runCompute, generateBootSeq
   ) where
 
 import Urbit.Prelude
 
+import RIO.Directory
 import System.Random
 import Urbit.Arvo
 import Urbit.King.Config
 import Urbit.Vere.Pier.Types
+import Control.Monad.Trans.Maybe
 
 import Data.Text              (append)
 import System.Posix.Files     (ownerModes, setFileMode)
-import Urbit.King.App         (HasConfigDir(..))
+import Urbit.King.App         (HasConfigDir(..), HasStderrLogFunc(..))
 import Urbit.Vere.Ames        (ames)
 import Urbit.Vere.Behn        (behn)
 import Urbit.Vere.Clay        (clay)
@@ -26,17 +28,15 @@ import Urbit.Vere.Http.Server (serv)
 import Urbit.Vere.Log         (EventLog)
 import Urbit.Vere.Serf        (Serf, SerfState(..), doJob, sStderr)
 
-import RIO.Directory
-
-import qualified System.Console.Terminal.Size as TSize
-import qualified System.Entropy               as Ent
-import qualified Urbit.King.API               as King
-import qualified Urbit.Time                   as Time
-import qualified Urbit.Vere.Log               as Log
-import qualified Urbit.Vere.Serf              as Serf
-import qualified Urbit.Vere.Term              as Term
-import qualified Urbit.Vere.Term.API          as Term
-import qualified Urbit.Vere.Term.Demux        as Term
+import qualified System.Entropy         as Ent
+import qualified Urbit.King.API         as King
+import qualified Urbit.Time             as Time
+import qualified Urbit.Vere.Log         as Log
+import qualified Urbit.Vere.Serf        as Serf
+import qualified Urbit.Vere.Term        as Term
+import qualified Urbit.Vere.Term.API    as Term
+import qualified Urbit.Vere.Term.Demux  as Term
+import qualified Urbit.Vere.Term.Render as Term
 
 
 --------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ writeJobs log !jobs = do
 
 -- Boot a new ship. ------------------------------------------------------------
 
-booted :: (HasPierConfig e, HasLogFunc e)
+booted :: (HasPierConfig e, HasStderrLogFunc e, HasLogFunc e)
        => Pill -> Bool -> Serf.Flags -> Ship -> LegacyBootEvent
        -> RAcquire e (Serf e, EventLog, SerfState)
 booted pill lite flags ship boot = do
@@ -127,18 +127,42 @@ booted pill lite flags ship boot = do
 
 -- Resume an existing ship. ----------------------------------------------------
 
-resumed :: (HasPierConfig e, HasLogFunc e)
-        => Serf.Flags
+resumed :: (HasStderrLogFunc e, HasPierConfig e, HasLogFunc e)
+        => Maybe Word64 -> Serf.Flags
         -> RAcquire e (Serf e, EventLog, SerfState)
-resumed flags = do
+resumed event flags = do
+    rio $ logTrace "Resuming ship"
     top    <- view pierPathL
+    tap    <- fmap (fromMaybe top) $ rio $ runMaybeT $ do
+                ev <- MaybeT (pure event)
+                MaybeT (getSnapshot top ev)
+
+    rio $ logTrace $ display @Text ("pier: " <> pack top)
+    rio $ logTrace $ display @Text ("running serf in: " <> pack tap)
+
     log    <- Log.existing (top <> "/.urb/log")
-    serf   <- Serf.run (Serf.Config top flags)
-    serfSt <- rio $ Serf.replay serf log
+
+    serf   <- Serf.run (Serf.Config tap flags)
+
+    serfSt <- rio $ Serf.replay serf log event
 
     rio $ Serf.snapshot serf serfSt
 
     pure (serf, log, serfSt)
+
+getSnapshot :: forall e. FilePath -> Word64 -> RIO e (Maybe FilePath)
+getSnapshot top last = do
+    lastSnapshot <- lastMay <$> listReplays
+    pure (replayToPath <$> lastSnapshot)
+  where
+    replayDir        = top </> ".partial-replay"
+    replayToPath eId = replayDir </> show eId
+
+    listReplays :: RIO e [Word64]
+    listReplays = do
+        createDirectoryIfMissing True replayDir
+        snapshotNums <- mapMaybe readMay <$> listDirectory replayDir
+        pure $ sort (filter (<= fromIntegral last) snapshotNums)
 
 
 -- Run Pier --------------------------------------------------------------------
@@ -148,8 +172,9 @@ acquireWorker act = mkRAcquire (async act) cancel
 
 pier :: ∀e. (HasConfigDir e, HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
      => (Serf e, EventLog, SerfState)
+     -> MVar ()
      -> RAcquire e ()
-pier (serf, log, ss) = do
+pier (serf, log, ss) mStart = do
     computeQ  <- newTQueueIO
     persistQ  <- newTQueueIO
     executeQ  <- newTQueueIO
@@ -200,7 +225,7 @@ pier (serf, log, ss) = do
             drivers inst ship (isFake logId)
                 (writeTQueue computeQ)
                 shutdownEvent
-                (TSize.Window 80 24, muxed)
+                (Term.TSize{tsWide=80, tsTall=24}, muxed)
                 showErr
 
     io $ atomically $ for_ bootEvents (writeTQueue computeQ)
@@ -216,6 +241,8 @@ pier (serf, log, ss) = do
                (writeTQueue persistQ)
 
     tSaveSignal <- saveSignalThread saveM
+
+    putMVar mStart ()
 
     -- Wait for something to die.
 
@@ -259,7 +286,7 @@ data Drivers e = Drivers
 drivers :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
         => KingId -> Ship -> Bool -> (Ev -> STM ())
         -> STM()
-        -> (TSize.Window Word, Term.Client)
+        -> (Term.TSize, Term.Client)
         -> (Text -> RIO e ())
         -> ([Ev], RAcquire e (Drivers e))
 drivers inst who isFake plan shutdownSTM termSys stderr =

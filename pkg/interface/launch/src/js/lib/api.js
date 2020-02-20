@@ -1,7 +1,7 @@
 
 class Api {
   bind(app, path, success, fail, ship) {
-    window.urb.subscribe(ship, app, path, 
+    window.urb.subscribe(ship, app, path,
       (err) => {
         fail(err, app, path, ship);
       },
@@ -25,7 +25,7 @@ class Api {
       window.urb.poke(ship, appl, mark, data,
         (json) => {
           resolve(json);
-        }, 
+        },
         (err) => {
           reject(err);
         });

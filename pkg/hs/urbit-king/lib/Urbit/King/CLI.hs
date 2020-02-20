@@ -20,6 +20,7 @@ data Opts = Opts
     , oHashless   :: Bool
     , oExit       :: Bool
     , oDryRun     :: Bool
+    , oDryFrom    :: Maybe Word64
     , oVerbose    :: Bool
     , oAmesPort   :: Maybe Word16
     , oTrace      :: Bool
@@ -77,6 +78,10 @@ data Bug
         , bFirstEvt :: Word64
         , bFinalEvt :: Word64
         }
+    | ReplayEvents
+        { bPierPath :: FilePath
+        , bFinalEvt :: Word64
+        }
     | CheckDawn
         { bKeyfilePath :: FilePath
         }
@@ -85,7 +90,7 @@ data Bug
 
 data Cmd
     = CmdNew New Opts
-    | CmdRun Run Opts
+    | CmdRun Run Opts Bool
     | CmdBug Bug
     | CmdCon FilePath
   deriving (Show)
@@ -204,11 +209,10 @@ new = do
 
 opts :: Parser Opts
 opts = do
-    oAmesPort  <- option auto $ metavar "PORT"
+    oAmesPort  <- optional $ option auto $ metavar "PORT"
                              <> short 'p'
                              <> long "ames"
                              <> help "Ames port number"
-                             <> value Nothing
                              <> hidden
 
     -- Always disable hashboard. Right now, urbit is almost unusable with this
@@ -231,17 +235,22 @@ opts = do
 
     oExit      <- switch $ short 'x'
                         <> long "exit"
-                        <> help "Exit immediatly"
+                        <> help "Exit immediately"
                         <> hidden
 
     oDryRun    <- switch $ long "dry-run"
                         <> help "Persist no events and turn off Ames networking"
                         <> hidden
 
-    oTrace      <- switch $ short 't'
-                         <> long "trace"
-                         <> help "Enable tracing"
-                         <> hidden
+    oDryFrom   <- optional $ option auto $ metavar "EVENT"
+                             <> long "dry-from"
+                             <> help "Dry run from event number"
+                             <> hidden
+
+    oTrace     <- switch $ short 't'
+                        <> long "trace"
+                        <> help "Enable tracing"
+                        <> hidden
 
     oLocalhost <- switch $ short 'L'
                         <> long "local"
@@ -272,7 +281,11 @@ runShip :: Parser Cmd
 runShip = do
     rPierPath <- pierPath
     o         <- opts
-    pure (CmdRun (Run{..}) o)
+    daemon    <- switch $ short 'd'
+                         <> long "daemon"
+                         <> help "Daemon mode"
+                         <> hidden
+    pure (CmdRun (Run{..}) o daemon)
 
 valPill :: Parser Bug
 valPill = do
@@ -298,7 +311,7 @@ firstEv = option auto $ long "first"
 lastEv :: Parser Word64
 lastEv = option auto $ long "last"
                     <> metavar "LAS"
-                    <> help "anding with event LAS"
+                    <> help "ending with event LAS"
                     <> value maxBound
 
 checkEvs :: Parser Bug
@@ -306,6 +319,9 @@ checkEvs = ValidateEvents <$> pierPath <*> firstEv <*> lastEv
 
 checkFx :: Parser Bug
 checkFx = ValidateFX <$> pierPath <*> firstEv <*> lastEv
+
+replayEvs :: Parser Bug
+replayEvs = ReplayEvents <$> pierPath <*> lastEv
 
 browseEvs :: Parser Bug
 browseEvs = EventBrowser <$> pierPath
@@ -335,6 +351,10 @@ bugCmd = fmap CmdBug
        <> command "validate-effects"
             ( info (checkFx <**> helper)
             $ progDesc "Parse all data in event log"
+            )
+       <> command "partial-replay"
+            ( info (replayEvs <**> helper)
+            $ progDesc "Replay up to N events"
             )
        <> command "dawn"
             ( info (checkDawn <**> helper)

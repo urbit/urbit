@@ -1,6 +1,6 @@
 :: chat-store: data store that holds linear sequences of chat messages
 ::
-/+  *chat-json, *chat-eval, default-agent
+/+  *chat-json, *chat-eval, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -21,6 +21,9 @@
 ::
 =|  state-zero
 =*  state  -
+::
+%-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -245,7 +248,7 @@
 ++  update-subscribers
   |=  [pax=path update=chat-update]
   ^-  (list card)
-  [%give %fact `pax %chat-update !>(update)]~
+  [%give %fact ~[pax] %chat-update !>(update)]~
 ::
 ++  send-diff
   |=  [pax=path upd=chat-update]
