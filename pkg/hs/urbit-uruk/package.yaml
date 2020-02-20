@@ -5,6 +5,10 @@ license-file: LICENSE
 
 library:
   source-dirs: lib
+  ghc-options:
+    - -static
+    - -O2
+    - -fwarn-incomplete-patterns
 
 dependencies:
   - base
@@ -65,3 +69,17 @@ default-extensions:
   - UnboxedTuples
   - UnicodeSyntax
   - ViewPatterns
+
+executables:
+  urbit-acker:
+    main: Main.hs
+    source-dirs: app
+    dependencies:
+      - urbit-uruk
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -static
+      - -O2
+      - "-with-rtsopts=-N"
+      - -fwarn-incomplete-patterns
