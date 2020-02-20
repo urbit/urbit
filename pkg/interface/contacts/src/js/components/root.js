@@ -130,6 +130,7 @@ export class Root extends Component {
                     path={groupPath} />
                   <AddScreen
                     api={api}
+                    groups={groups}
                     path={groupPath}
                     history={props.history}
                   />
