@@ -125,11 +125,11 @@ class UrbitApi {
   }
 
   chatViewAction(data) {
-    this.action("chat-view", "json", data);
+    return this.action("chat-view", "json", data);
   }
 
   chatViewCreate(path, security, members, allowHistory) {
-    this.chatViewAction({
+   return this.chatViewAction({
       create: {
         path, security, members,
         'allow-history': allowHistory
@@ -184,6 +184,16 @@ class UrbitApi {
         }
       }
     });
+  }
+
+  setSpinner(boolean) {
+    store.handleEvent({
+      data: {
+        local: {
+          spinner: boolean
+        }
+      }
+    })
   }
 }
 

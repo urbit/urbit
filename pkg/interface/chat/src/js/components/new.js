@@ -145,7 +145,7 @@ export class NewScreen extends Component {
       group: [],
       ships: []
     }, () => {
-      props.setSpinner(true);
+      props.api.setSpinner(true);
       // if we want a "proper group" that can be managed from the contacts UI,
       // we make a path of the form /~zod/cool-group
       // if not, we make a path of the form /~/~zod/free-chat
@@ -153,10 +153,13 @@ export class NewScreen extends Component {
       if (!state.createGroup && state.groups.length === 0) {
         chatPath = `/~${chatPath}`;
       }
-      props.api.chatView.create(
-        chatPath, state.security, aud, state.allowHistory
-      );
-      props.history.push(`/~chat/room${chatPath}`);
+      let submit = props.api.chatView.create(
+          chatPath, state.security, aud, state.allowHistory
+        );
+        submit.then(() => {
+          props.api.setSpinner(false);
+          props.history.push(`/~chat/room${chatPath}`);
+        })
     });
   }
 

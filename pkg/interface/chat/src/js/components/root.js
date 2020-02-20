@@ -21,13 +21,6 @@ export class Root extends Component {
 
     this.state = store.state;
     store.setStateHandler(this.setState.bind(this));
-    this.setSpinner = this.setSpinner.bind(this);
-  }
-
-  setSpinner(spinner) {
-    this.setState({
-      spinner
-    });
   }
 
   render() {
@@ -95,12 +88,11 @@ export class Root extends Component {
               return (
                 <Skeleton
                   sidebarHideOnMobile={true}
-                  spinner={this.state.spinner}
+                  spinner={state.spinner}
                   sidebar={renderChannelSidebar(props)}
                   sidebarShown={state.sidebarShown}
                 >
                   <NewScreen
-                    setSpinner={this.setSpinner}
                     api={api}
                     inbox={state.inbox || {}}
                     groups={state.groups || {}}
@@ -124,6 +116,7 @@ export class Root extends Component {
 
               return (
                 <Skeleton
+                  spinner={state.spinner}
                   sidebarHideOnMobile={true}
                   sidebar={renderChannelSidebar(props)}
                   sidebarShown={state.sidebarShown}
@@ -146,7 +139,7 @@ export class Root extends Component {
               let sig = props.match.url.includes("/~/");
               if (sig) {
                 station = '/~' + station;
-              } 
+              }
               let mailbox = state.inbox[station] || {
                 config: {
                   read: 0,
@@ -164,6 +157,7 @@ export class Root extends Component {
               return (
                 <Skeleton
                   sidebarHideOnMobile={true}
+                  spinner={state.spinner}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
                   sidebar={renderChannelSidebar(props)}
@@ -197,7 +191,7 @@ export class Root extends Component {
               let sig = props.match.url.includes("/~/");
               if (sig) {
                 station = '/~' + station;
-              } 
+              }
 
               let permission = state.permissions[station] || {
                 kind: "",
@@ -211,6 +205,7 @@ export class Root extends Component {
               return (
                 <Skeleton
                   sidebarHideOnMobile={true}
+                  spinner={state.spinner}
                   sidebarShown={state.sidebarShown}
                   popout={popout}
                   sidebar={renderChannelSidebar(props)}
@@ -238,7 +233,7 @@ export class Root extends Component {
               let sig = props.match.url.includes("/~/");
               if (sig) {
                 station = '/~' + station;
-              } 
+              }
               let group = state.groups[station] || new Set([]);
 
               let popout = props.match.url.includes("/popout/");
@@ -246,7 +241,7 @@ export class Root extends Component {
               return (
                 <Skeleton
                   sidebarHideOnMobile={true}
-                  spinner={this.state.spinner}
+                  spinner={state.spinner}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
                   sidebar={renderChannelSidebar(props)}
@@ -254,7 +249,6 @@ export class Root extends Component {
                   <SettingsScreen
                     {...props}
                     station={station}
-                    setSpinner={this.setSpinner}
                     api={api}
                     station={station}
                     group={group}
