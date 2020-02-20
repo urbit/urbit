@@ -2,7 +2,8 @@
 ::  mirror chat data from foreign to local based on read permissions
 ::  allow sending chat messages to foreign paths based on write perms
 ::
-/-  *permission-store, *chat-hook, *invite-store
+/-  *permission-store, *chat-hook, *invite-store,
+    *metadata-store, *permission-group-hook, *group-store
 /+  *chat-json, *chat-eval, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
@@ -142,8 +143,8 @@
     ~
   ?.  =(u.ship our.bol)
     ~
-  ::  scry permissions to check if write is permitted
-  ?.  (permitted-scry [(scot %p src.bol) path.act])
+  ::  check if write is permitted
+  ?.  (is-permitted src.bol path.act)
     ~
   =:  author.envelope.act  src.bol
       when.envelope.act  now.bol
@@ -206,8 +207,8 @@
   ^-  (list card)
   ?>  ?=(^ pax)
   ?>  (~(has by synced) pax)
-  ::  scry permissions to check if read is permitted
-  ?>  (permitted-scry [(scot %p src.bol) pax])
+  ::  check if read is permitted
+  ?>  (is-permitted src.bol pax)
   =/  box  (chat-scry pax)
   ?~  box  !!
   [%give %fact ~ %chat-update !>([%create pax])]~
@@ -224,8 +225,8 @@
   =/  pas  `path`(oust [last 1] `(list @ta)`pax)
   ?>  ?=([* ^] pas)
   ?>  (~(has by synced) pas)
-  ::  scry permissions to check if read is permitted
-  ?>  (permitted-scry [(scot %p src.bol) pas])
+  ::  check if read is permitted
+  ?>  (is-permitted src.bol pas)
   %-  zing
   :~  [%give %fact ~ %chat-update !>([%create pas])]~
       ?.  ?&(?=(^ backlog-start) (~(has by allow-history) pas))  ~
@@ -286,20 +287,25 @@
   ++  handle-permissions
     |=  [kind=?(%add %remove) pax=path who=(set ship)]
     ^-  (list card)
-    ?>  ?=([* *] pax)
-    =/  owner  (~(get by synced) pax)
+    %-  zing
+    ^-  (list (list card))
+    %+  turn
+      (chats-of-group pax)
+    |=  chat=path
+    ^-  (list card)
+    =/  owner  (~(get by synced) chat)
     ?~  owner  ~
     ?.  =(u.owner our.bol)  ~
     %-  zing
     %+  turn  ~(tap in who)
     |=  =ship
-    ?:  (permitted-scry [(scot %p ship) pax])
+    ?:  (is-permitted ship chat)
       ?:  ?|(=(kind %remove) =(ship our.bol))  ~
       ::  if ship has just been added to the permitted group,
       ::  send them an invite
-      ~[(send-invite pax ship)]
+      ~[(send-invite chat ship)]
     ::  if ship is not permitted, kick their subscription
-    [%give %kick [%mailbox pax]~ `ship]~
+    [%give %kick [%mailbox chat]~ `ship]~
   ::
   ++  send-invite
     |=  [=path =ship]
@@ -475,10 +481,45 @@
     %invite-store
   /invite/chat/(scot %uv uid)
 ::
-++  permitted-scry
-  |=  pax=path
+++  chats-of-group
+  |=  =group-path
+  ^-  (list path)
+  %+  murn
+    ^-  (list resource)
+    =-  ~(tap in (~(gut by -) group-path ~))
+    .^  (jug path resource)
+      %gy
+      (scot %p our.bol)
+      %metadata-store
+      (scot %da now.bol)
+      /group-indices
+    ==
+  |=  resource
+  ^-  (unit path)
+  ?.  =(%chat app-name)  ~
+  `app-path
+::
+++  groups-of-chat
+  |=  chat=path
+  ^-  (list group-path)
+  =-  ~(tap in (~(gut by -) [%chat chat] ~))
+  .^  (jug resource group-path)
+    %gy
+    (scot %p our.bol)
+    %metadata-store
+    (scot %da now.bol)
+    /resource-indices
+  ==
+::
+::NOTE  this assumes permission paths match group paths
+++  is-permitted
+  |=  [who=ship chat=path]
   ^-  ?
-  .^(? %gx ;:(weld /=permission-store/(scot %da now.bol)/permitted pax /noun))
+  %+  lien  (groups-of-chat chat)
+  |=  =group-path
+  %^  scry  ?
+    %permission-store
+  [%permitted (scot %p who) group-path]
 ::
 ++  scry
   |*  [=mold app=term =path]
