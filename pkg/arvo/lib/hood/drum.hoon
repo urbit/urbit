@@ -227,6 +227,7 @@
       %1
     =<  se-abet  =<  se-view
     =<  (se-born %home %goad)
+    =<  (se-born %home %metadata-store)
     =<  (se-born %home %contact-store)
     =<  (se-born %home %contact-hook)
     =<  (se-born %home %contact-view)
@@ -237,6 +238,7 @@
   ::
       %2
     =<  se-abet  =<  se-view
+    =<  (se-born %home %metadata-store)
     =<  (se-born %home %contact-store)
     =<  (se-born %home %contact-hook)
     =<  (se-born %home %contact-view)
