@@ -152,9 +152,14 @@
   ?-  -.action
       %create    (handle-create action)
       %delete    (handle-delete action)
-      %message   (handle-message action)
-      %messages  (handle-messages action)
       %read      (handle-read action)
+      %messages  (handle-messages action)
+      %message
+        ?.  =(our.bol author.envelope.action)
+          (handle-message action)
+        =^  message-moves  state  (handle-message action)
+        =^  read-moves  state  (handle-read [%read path.action])
+        [(weld message-moves read-moves) state]
   ==
 ::
 ++  handle-create
