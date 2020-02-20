@@ -35,6 +35,7 @@ export class NewPost extends Component {
     this.setState({
       awaiting: newNote["new-note"].note
     }, () => {
+      window.api.setSpinner(true);
       window.api.action("publish", "publish-action", newNote);
     });
   }
@@ -46,6 +47,7 @@ export class NewPost extends Component {
   componentDidUpdate(prevProps, prevState) {
     let notebook = this.props.notebooks[this.props.ship][this.props.book];
     if (notebook.notes[this.state.awaiting]) {
+      window.api.setSpinner(false);
       let popout = (this.props.popout) ? "popout/" : "";
       let redirect =
      `/~publish/${popout}note/${this.props.ship}/${this.props.book}/${this.state.awaiting}`;
