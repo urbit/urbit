@@ -30,7 +30,7 @@ export class Skeleton extends Component {
             selected={this.props.selected}
             sidebarShown={this.props.sidebarShown}
             links={this.props.links}/>
-          <div className={"h-100 w-100 " + rightPanelHide} style={{
+          <div className={"h-100 w-100 flex-auto" + rightPanelHide} style={{
             flexGrow: 1,
           }}>
             {this.props.children}

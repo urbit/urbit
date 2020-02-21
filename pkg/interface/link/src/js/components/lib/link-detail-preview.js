@@ -99,12 +99,12 @@ export class LinkPreview extends Component {
           className={"w-100 tc " + (ytMatch ? "embed-container" : "")}>
           {embed}
         </div>
-        <div className="flex flex-column ml2 pt6">
+        <div className="flex flex-column ml2 pt6 flex-auto">
           <a href={props.url} className="w-100 flex" target="_blank">
-            <p className="f8 truncate" style={{overflow: "visible"}}>
+            <p className="f8 truncate flex-auto">
               {props.title}
-              <span className="gray2 ml2 flex-shrink-0">{hostname} ↗</span>
             </p>
+            <span className="gray2 ml2 f8 dib v-btm flex-shrink-0">{hostname} ↗</span>
           </a>
           <div className="w-100 pt1">
             <span className={"f9 pr2 white-d v-mid " + nameClass}>

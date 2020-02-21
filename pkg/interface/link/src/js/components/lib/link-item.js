@@ -69,14 +69,14 @@ export class LinkItem extends Component {
           size={36}
           color={"#" + props.color}
             />
-        <div className="flex flex-column ml2">
+        <div className="flex flex-column ml2 flex-auto">
           <a href={props.url}
           className="w-100 flex"
           target="_blank"
           onClick={this.markPostAsSeen}>
-            <p className="f8 truncate">{props.title}
-              <span className="gray2 dib truncate-m mw4-m v-btm ml2">{hostname} ↗</span>
+            <p className="f8 truncate flex-auto">{props.title}
             </p>
+            <span className="gray2 dib v-btm ml2 f8 flex-shrink-0">{hostname} ↗</span>
           </a>
           <div className="w-100 pt1">
             <span className={"f9 pr2 v-mid " + mono}>{(props.nickname)
