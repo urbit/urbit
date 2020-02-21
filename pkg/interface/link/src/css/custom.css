@@ -68,6 +68,10 @@ a {
   margin: 0 auto;
 }
 
+.mix-blend-diff {
+  mix-blend-mode: difference;
+}
+
 .embed-container {
   position: relative;
   height: 0;
@@ -81,6 +85,20 @@ a {
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+/* spinner */
+
+.spin-active {
+  animation: spin 2s infinite;
+}
+
+@keyframes spin {
+  0% {transform: rotate(0deg);}
+  25% {transform: rotate(90deg);}
+  50% {transform: rotate(180deg);}
+  75% {transform: rotate(270deg);}
+  100% {transform: rotate(360deg);}
 }
 
 /* responsive */

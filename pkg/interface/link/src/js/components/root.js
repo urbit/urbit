@@ -18,17 +18,10 @@ export class Root extends Component {
 
     this.state = store.state;
     store.setStateHandler(this.setState.bind(this));
-    this.setSpinner = this.setSpinner.bind(this);
-  }
-
-  setSpinner(spinner) {
-    this.setState({
-      spinner
-    });
   }
 
   render() {
-    const { props, state } = this;
+    const { state } = this;
 
     let contacts = !!state.contacts ? state.contacts : {};
     const groups = !!state.groups ? state.groups : {};
@@ -44,6 +37,7 @@ export class Root extends Component {
             return (
               <Skeleton
                 active="channels"
+                spinner={state.spinner}
                 groups={groups}
                 rightPanelHide={true}
                 sidebarShown={true}
