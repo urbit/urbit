@@ -207,37 +207,37 @@ data Jet = Jet
   deriving (Eq, Ord, Show)
 
 data Exp
-    = VAL !Val              --  Constant Value
-    | REF !Int              --  Stack Referene
-    | REC !(Array Exp)      --  Recursive Call
-    | REC2 !Exp !Exp      --  Recursive Call
-    | SLF                  --  Self Reference
-    | IFF !Exp !Exp !Exp      --  If-Then-Else
+    = VAL !Val                 --  Constant Value
+    | REF !Int                 --  Stack Referene
+    | REC2 !Exp !Exp           --  Recursive Call (two args)
+    | RECN !(Array Exp)        --  Recursive Call (arbitrary args)
+    | SLF                      --  Self Reference
+    | IFF !Exp !Exp !Exp       --  If-Then-Else
     | CAS !Int !Exp !Exp !Exp  --  Pattern Match
 
-    | SEQ !Exp !Exp          --  Evaluate head, return tail
-    | DED !Exp              --  Evaluate argument, then crash.
+    | SEQ !Exp !Exp            --  Evaluate head, return tail
+    | DED !Exp                 --  Evaluate argument, then crash.
 
-    | INC !Exp              --  Increment
-    | DEC !Exp              --  Decrement
-    | FEC !Exp              --  Fast decrement
-    | ADD !Exp !Exp          --  Multiply
-    | MUL !Exp !Exp          --  Multiply
-    | SUB !Exp !Exp          --  Subtract
-    | ZER !Exp              --  Is Zero?
-    | EQL !Exp !Exp          --  Atom equality.
+    | INC !Exp                 --  Increment
+    | DEC !Exp                 --  Decrement
+    | FEC !Exp                 --  Fast decrement
+    | ADD !Exp !Exp            --  Add
+    | MUL !Exp !Exp            --  Multiply
+    | SUB !Exp !Exp            --  Subtract
+    | ZER !Exp                 --  Is Zero?
+    | EQL !Exp !Exp            --  Atom equality.
 
-    | UNI                  --  Unit
-    | CON !Exp !Exp          --  Cons
-    | CAR !Exp              --  Head
-    | CDR !Exp              --  Tail
-    | LEF !Exp              --  Left Constructor
-    | RIT !Exp              --  Right Constructor
+    | UNI                      --  Unit
+    | CON !Exp !Exp            --  Cons
+    | CAR !Exp                 --  Head
+    | CDR !Exp                 --  Tail
+    | LEF !Exp                 --  Left Constructor
+    | RIT !Exp                 --  Right Constructor
 
-    | JET !Jet !(Array Exp)  --  Fully saturated call
-    | JET2 !Jet !Exp !Exp   --  Fully saturated call
-    | CLO !Fun !(Array Exp)  --  Undersaturated call
-    | CAL !Exp !(Array Exp)  --  Call of unknown saturation
+    | JETN !Jet !(Array Exp)   --  Fully saturated call
+    | JET2 !Jet !Exp !Exp      --  Fully saturated call
+    | CLO !Fun !(Array Exp)    --  Undersaturated call
+    | CAL !Exp !(Array Exp)    --  Call of unknown saturation
   deriving (Eq, Ord, Show)
 
 
@@ -360,6 +360,65 @@ execJet2 !j !x !y = do
         execFunFull $ FClo 0 (valFun $ jBody j) (fromList [x,y])
 
 
+--------------------------------------------------------------------------------
+
+jetN :: (Exp -> IO Val) -> Jet -> Array Exp -> IO Val
+{-# INLINE jetN #-}
+jetN go j xs = do
+  xs <- traverse go xs
+  execJet j xs
+
+jet2 :: (Exp -> IO Val) -> Jet -> Exp -> Exp -> IO Val
+{-# INLINE jet2 #-}
+jet2 go j x y = do
+  x <- go x
+  y <- go y
+  execJet2 j x y
+
+iff :: (Exp -> IO Val) -> Exp -> Exp -> Exp -> IO Val
+{-# INLINE iff #-}
+iff go c t e = go c >>= \case
+  VBol True  -> go t
+  VBol False -> go e
+  _          -> throwIO (TypeError "iff-not-bol")
+
+cas
+  :: (Exp -> IO Val)
+  -> (Int -> Val -> IO ())
+  -> Int
+  -> Exp
+  -> Exp
+  -> Exp
+  -> IO Val
+{-# INLINE cas #-}
+cas go setReg i x l r = go x >>= \case
+  VLef lv -> setReg i lv >> go l
+  VRit rv -> setReg i rv >> go r
+  _       -> throwIO (TypeError "cas-no-sum")
+
+inc ∷ (Exp -> IO Val) -> Exp -> IO Val
+{-# INLINE inc #-}
+inc go x = go x >>= \case
+    VNat x → pure $ VNat (x+1)
+    _      → throwIO (TypeError "inc-not-nat")
+
+dec ∷ (Exp -> IO Val) -> Exp -> IO Val
+{-# INLINE dec #-}
+dec go x = go x >>= \case
+    VNat 0 → pure $ VLef VUni
+    VNat n → pure $ VRit (VNat (n-1))
+    _      → throwIO (TypeError "dec-not-nat")
+
+fec ∷ (Exp -> IO Val) -> Exp -> IO Val
+{-# INLINE fec #-}
+fec go x = go x >>= \case
+    VNat 0 → pure $ VNat 0
+    VNat n → pure $ VNat (n-1)
+    _      → throwIO (TypeError "fec-not-nat")
+
+--------------------------------------------------------------------------------
+
+
 execJetBody ∷ Jet → Array Val → IOArray Val → IO Val
 {-# INLINE execJetBody #-}
 execJetBody !j !xs !regs = go (jFast j)
@@ -368,47 +427,24 @@ execJetBody !j !xs !regs = go (jFast j)
     setReg i x = writeArray regs i x
 
     go ∷ Exp → IO Val
-    go exp = do
-        -- print exp
-        result <- go' exp
-        -- putStrLn ("\t"   <> tshow exp)
-        -- putStrLn ("\t\t" <> tshow result)
-        pure result
-
-    go' ∷ Exp → IO Val
-    go' = \case
-        VAL v    → pure v
-        REF i    → pure $ indexArray xs i
-        REC xs   → join (execJet j <$> traverse go xs)
-        REC2 x y → join (execJet2 j <$> go x <*> go y)
-        SLF      → pure (jetVal j)
-
-        IFF c t e → go c >>= \case
-            VBol True  → go t
-            VBol False → go e
-            _          → throwIO (TypeError "iff-not-bool")
-
-        CAS i x l r → go x >>= \case
-            VLef lv → setReg i lv >> go l
-            VRit rv → setReg i rv >> go r
-            _       → throwIO (TypeError "cas-no-sum")
-
-        SEQ x y → go x >> go y
-        DED x   → throwIO . Crash =<< go x
-
-        INC x → go x >>= \case
-            VNat x → pure $ VNat (x+1)
-            _      → throwIO (TypeError "inc-not-nat")
-
-        DEC x → go x >>= \case
-            VNat 0 → pure $ VLef VUni
-            VNat n → pure $ VRit (VNat (n-1))
-            _      → throwIO (TypeError "dec-not-nat")
-
-        FEC x → go x >>= \case
-            VNat 0 → pure $ VNat 0
-            VNat n → pure $ VNat (n-1)
-            _      → throwIO (TypeError "fec-not-nat")
+    go = \case
+        VAL v       → pure v
+        REF i       → pure $ indexArray xs i
+        REC2 x y    → join (execJet2 j <$> go x <*> go y)
+        RECN xs     → join (execJet j <$> traverse go xs)
+        SLF         → pure (jetVal j)
+        IFF c t e   → iff go c t e
+        CAS i x l r → cas go setReg i x l r
+        SEQ x y     → go x >> go y
+        DED x       → throwIO . Crash =<< go x
+        INC x       → inc go x
+        DEC x       → dec go x
+        FEC x       → fec go x
+        LEF x       → VLef <$> go x
+        RIT x       → VRit <$> go x
+        JET2 j x y  → jet2 go j x y
+        JETN j xs   → jetN go j xs
+        UNI         → pure VUni
 
         ADD x y → (,) <$> go x <*> go y >>= \case
             (VNat x, VNat y) → pure (VNat (x+y))
@@ -432,8 +468,6 @@ execJetBody !j !xs !regs = go (jFast j)
             (VNat x, VNat y) → pure (VBol (x == y))
             (_,      _     ) → throwIO (TypeError "eql-not-nat")
 
-        UNI → pure VUni
-
         CON x y → VCon <$> go x <*> go y
 
         CAR x → go x >>= \case
@@ -443,18 +477,6 @@ execJetBody !j !xs !regs = go (jFast j)
         CDR x → go x >>= \case
             VCon _ y → pure y
             _        → throwIO (TypeError "cdr-not-con")
-
-        LEF x → VLef <$> go x
-        RIT x → VRit <$> go x
-
-        JET2 j x y → do
-            x <- go x
-            y <- go y
-            execJet2 j x y
-
-        JET j xs → do
-            xs <- traverse go xs
-            execJet j xs
 
         CLO f xs → do
             let args    = funArgs f
@@ -472,8 +494,6 @@ execJetBody !j !xs !regs = go (jFast j)
 
 --------------------------------------------------------------------------------
 
--- rec ∷ Jet →
-
 jetVal ∷ Jet → Val
 jetVal j = VFun $ FJet (jArgs j) j
 
@@ -483,40 +503,23 @@ execJetBody2 !j !x !y = go (jFast j)
   where
     go ∷ Exp → IO Val
     go = \case
-        VAL v    → pure v
-        REF 0    → pure x
-        REF 1    → pure y
-        REF n    → throwIO (BadRef j n)
-        REC xs   → join (execJet j <$> traverse go xs)
-        REC2 x y → join (execJet2 j <$> go x <*> go y)
-        SLF      → pure (jetVal j)
-
-        IFF c t e → go c >>= \case
-            VBol True  → go t
-            VBol False → go e
-            _          → throwIO (TypeError "iff-not-bool")
-
-        CAS i x l r → go x >>= \case
-            VLef lv → error "TODO"
-            VRit rv → error "TODO"
-            _       → throwIO (TypeError "cas-no-sum")
-
-        SEQ x y → go x >> go y
-        DED x   → throwIO . Crash =<< go x
-
-        INC x → go x >>= \case
-            VNat x → pure $ VNat (x+1)
-            _      → throwIO (TypeError "inc-not-nat")
-
-        DEC x → go x >>= \case
-            VNat 0 → pure $ VLef VUni
-            VNat n → pure $ VRit (VNat (n-1))
-            _      → throwIO (TypeError "dec-not-nat")
-
-        FEC x → go x >>= \case
-            VNat 0 → pure $ VNat 0
-            VNat n → pure $ VNat (n-1)
-            _      → throwIO (TypeError "fec-not-nat")
+        VAL v       → pure v
+        REF 0       → pure x
+        REF 1       → pure y
+        REF n       → throwIO (BadRef j n)
+        REC2 x y    → join (execJet2 j <$> go x <*> go y)
+        RECN xs     → join (execJet j <$> traverse go xs)
+        SLF         → pure (jetVal j)
+        IFF c t e   → iff go c t e
+        CAS i x l r → cas go (error "TODO") i x l r
+        SEQ x y     → go x >> go y
+        DED x       → throwIO . Crash =<< go x
+        INC x       → inc go x
+        DEC x       → dec go x
+        FEC x       → fec go x
+        JETN j xs   → jetN go j xs
+        JET2 j x y  → jet2 go j x y
+        UNI         → pure VUni
 
         ADD x y → (,) <$> go x <*> go y >>= \case
             (VNat x, VNat y) → pure (VNat (x+y))
@@ -540,7 +543,6 @@ execJetBody2 !j !x !y = go (jFast j)
             (VNat x, VNat y) → pure (VBol (x == y))
             (_,      _     ) → throwIO (TypeError "eql-not-nat")
 
-        UNI → pure VUni
 
         CON x y → VCon <$> go x <*> go y
 
@@ -554,15 +556,6 @@ execJetBody2 !j !x !y = go (jFast j)
 
         LEF x → VLef <$> go x
         RIT x → VRit <$> go x
-
-        JET j xs → do
-            xs <- traverse go xs
-            execJet j xs
-
-        JET2 j x y → do
-            x <- go x
-            y <- go y
-            execJet2 j x y
 
         CLO f xs → do
             let args    = funArgs f
