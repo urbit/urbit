@@ -10,21 +10,14 @@ data Exp
     | Var Text
     | App Exp Exp
 
+    | Let Text Exp Exp
+
     | Sig
-
     | Con Exp Exp
-    | Car Exp
-    | Cdr Exp
-
-    | Lef Exp
-    | Rit Exp
     | Cas Exp (Text, Exp) (Text, Exp)
-
-    | Yea
-    | Nah
     | Iff Exp Exp Exp
-
     | Lit Nat
+    | Str Text
   deriving (Eq, Ord)
 
 instance IsString Exp where
@@ -41,18 +34,20 @@ instance Num Exp where
 
 instance Show Exp where
     show = \case
-        Lam v b → "|=(" <> show v <> " " <> show b <> ")"
+        Lam v b → "|=(" <> unpack v <> " " <> show b <> ")"
         Var t   → unpack t
         App f x → "(" <> show f <> " " <> show x <> ")"
 
         Sig → "~"
 
         Con h t → "[" <> show h <> " " <> show t <> "]"
-        Car x   → "-" <> show x
-        Cdr x   → "+" <> show x
+        -- Car x   → "-" <> show x
+        -- Cdr x   → "+" <> show x
 
-        Lef x → "L" <> show x
-        Rit x → "R" <> show x
+        -- Lef x → "L" <> show x
+        -- Rit x → "R" <> show x
+
+        Let t x b → "/=(" <> unpack t <> " " <> show x <> " " <> show b <> ")"
 
         Cas c (ln, l) (rn, r) → mconcat
             [ "?-("
@@ -64,7 +59,8 @@ instance Show Exp where
             ]
 
         Lit n → show n
+        Str n → "'" <> unpack n <> "'"
 
-        Yea       → "%.y"
-        Nah       → "%.n"
+        -- Yea       → "%.y"
+        -- Nah       → "%.n"
         Iff c t e → "?:(" <> show c <> " " <> show t <> " " <> show e <> ")"
