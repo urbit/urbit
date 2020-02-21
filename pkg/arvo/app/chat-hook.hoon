@@ -598,6 +598,17 @@
 ++  chats-of-group
   |=  =group-path
   ^-  (list path)
+  ::  if metadata-store isn't running yet, we're still in the upgrade ota phase.
+  ::  we can't get chats from the metadata-store, but can make assumptions
+  ::  about group path shape, and the chat that would match it.
+  ::TODO  remove me at some point.
+  ::
+  ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)
+    ?:  ?=([%'~' @ ^] group-path)
+      ~&  [%assuming-ported-legacy-group group-path]
+      [t.group-path]~
+    ~&  [%weird-group group-path]
+    ~
   %+  murn
     ^-  (list resource)
     =-  ~(tap in (~(gut by -) group-path ~))
@@ -616,6 +627,17 @@
 ++  groups-of-chat
   |=  chat=path
   ^-  (list group-path)
+  ::  if metadata-store isn't running yet, we're still in the upgrade ota phase.
+  ::  we can't get groups from the metadata-store, but can make assumptions
+  ::  about chat path shape, and the chat that would match it.
+  ::TODO  remove me at some point.
+  ::
+  ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)
+    ?:  ?=([@ ^] chat)
+      ~&  [%assuming-ported-legacy-chat chat]
+      [%'~' chat]~
+    ~&  [%weird-chat chat]
+    ~
   =-  ~(tap in (~(gut by -) [%chat chat] ~))
   .^  (jug resource group-path)
     %gy
