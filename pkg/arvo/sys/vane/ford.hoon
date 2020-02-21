@@ -6336,10 +6336,12 @@
       ::
       $(ducts t.ducts, moves (weld moves duct-moves))
   --
-::  +load: migrate old state to new state (called on vane reload)
+::  +load: flush old state (called on vane reload)
 ::
-::    Trim builds completely in case a change to our code invalidated an
-::    old build result.
+::    This is a temporary measure for the OS1 %publish update. We can flush all
+::    build state like this because only gall and %publish use ford live builds
+::    currently. :goad will handle remaking builds for gall, and the new
+::    %publish does not use ford.
 ::
 ++  load
   |=  old=axle
