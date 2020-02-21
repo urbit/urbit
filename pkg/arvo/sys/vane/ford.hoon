@@ -6344,9 +6344,6 @@
 ++  load
   |=  old=axle
   ^+  ford-gate
-  ::
-  =.  ax  old
-  =.  ford-gate  +:(call ~[/ford-load-self] *type %trim 0)
   ford-gate
 ::  +stay: produce current state
 ::
