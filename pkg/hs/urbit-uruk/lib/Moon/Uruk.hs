@@ -3,26 +3,40 @@ module Moon.Uruk where
 import ClassyPrelude
 import GHC.Natural
 import Moon.AST
+import Bound
 
 import qualified Urbit.Atom   as Atom
 import qualified Uruk.JetComp as Uruk
 import qualified Uruk.JetDemo as Uruk
+import qualified Moon.Parser  as Parser
 
 --------------------------------------------------------------------------------
 
 toUruk ∷ Exp a → Uruk.Ur
 toUruk = Uruk.moonStrict . toLC
 
-toLC ∷ Exp a → Uruk.Exp
-toLC = go
+gogogo ∷ Text → Uruk.Ur
+gogogo text = Uruk.moonStrict lam
  where
-  go = \case
-    Var a     → error "TODO"
-    Lam b     → error "TODO"
-    App x y   → Uruk.Go (go x) (go y)
+  Right ast = traceShowId (Parser.parseAST text)
+  exp       = bind ast
+  lam       = traceShowId (toLC exp)
+
+toLC ∷ Exp a → Uruk.Exp
+toLC = go (error "free variable")
+ where
+  go ∷ (a → Nat) → Exp a → Uruk.Exp
+  go f = \case
+    Var a     → Uruk.Var (f a)
+    Lam b     → Uruk.Lam (go env' $ fromScope b)
+                  where env' = \case { B () -> 0; F x -> succ (f x) }
+
+    App x y   → Uruk.Go (go f x) (go f y)
     Sig       → Uruk.Prim Uruk.Uni
-    Con x y   → Uruk.cons `Uruk.Go` go x `Uruk.Go` go y
-    Cas x l r → Uruk.Case (go x) (error "TODO") (error "TODO")
-    Iff c t e → Uruk.If (go c) (go t) (go e)
+    Con x y   → Uruk.cons `Uruk.Go` go f x `Uruk.Go` go f y
+    Cas x l r → Uruk.Case (go f x) (go env' $ fromScope l)
+                                   (go env' $ fromScope r)
+                  where env' = \case { B () -> 0; F x -> succ (f x) }
+    Iff c t e → Uruk.If (go f c) (go f t) (go f e)
     Lit n     → Uruk.Prim $ Uruk.Nat n
     Str n     → Uruk.Prim $ Uruk.Nat $ Atom.utf8Atom n
