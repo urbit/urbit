@@ -208,7 +208,7 @@ data Jet = Jet
 
 data Exp
     = VAL !Val                 --  Constant Value
-    | REF !Int                 --  Stack Referene
+    | REF !Int                 --  Stack Reference
     | REC2 !Exp !Exp           --  Recursive Call (two args)
     | RECN !(Array Exp)        --  Recursive Call (arbitrary args)
     | SLF                      --  Self Reference

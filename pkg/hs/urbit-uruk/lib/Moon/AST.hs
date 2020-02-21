@@ -14,18 +14,21 @@ data Exp a
     = Lam (Scope () Exp a)
     | Var a
     | App (Exp a) (Exp a)
+    | Jet Nat Text (Exp a)
     | Sig
     | Con (Exp a) (Exp a)
     | Cas (Exp a) (Scope () Exp a) (Scope () Exp a)
     | Iff (Exp a) (Exp a) (Exp a)
     | Lit Nat
     | Str Text
+    | Fix (Scope () Exp a)
   deriving (Functor, Foldable, Traversable)
 
 data AST
     = ALam Text AST
     | AVar Text
     | AApp AST AST
+    | AJet Nat Text AST
     | ALet Text AST AST
     | ASig
     | ACon AST AST
@@ -33,6 +36,7 @@ data AST
     | AIff AST AST AST
     | ALit Nat
     | AStr Text
+    | AFix Text AST
   deriving (Eq, Ord)
 
 
@@ -52,6 +56,8 @@ instance Monad Exp where
   Var a     >>= f = f a
   Lam b     >>= f = Lam (b >>>= f)
   App x y   >>= f = App (x >>= f) (y >>= f)
+  Jet n t b >>= f = Jet n t (b >>= f)
+  Fix b     >>= f = Fix (b >>>= f)
   Con x y   >>= f = Con (x >>= f) (y >>= f)
   Iff c t e >>= f = Iff (c >>= f) (t >>= f) (e >>= f)
   Cas x l r >>= f = Cas (x >>= f) (l >>>= f) (r >>>= f)
@@ -73,13 +79,15 @@ instance Num AST where
 
 instance Show AST where
   show = \case
-    AVar t   -> unpack t
-    AApp f x -> "(" <> show f <> " " <> show x <> ")"
-    ASig     -> "~"
-    ALit n   -> show n
-    AStr n   -> "'" <> unpack n <> "'"
-    ACon h t -> "[" <> show h <> " " <> show t <> "]"
-    ALam v b -> mconcat ["|=(", unpack v <> " ", show b <> ")"]
+    AVar t     -> unpack t
+    AApp f x   -> "(" <> show f <> " " <> show x <> ")"
+    ASig       -> "~"
+    ALit n     -> show n
+    AStr n     -> "'" <> unpack n <> "'"
+    ACon h t   -> "[" <> show h <> " " <> show t <> "]"
+    ALam v b   -> mconcat ["|=(", unpack v <> " ", show b <> ")"]
+    AJet r n b -> "~/(" <> show r <> " '" <> unpack n <> "' " <> show b <> ")"
+    AFix n b   -> "..(" <> unpack n <> " " <> show b <> ")"
     ALet t x b ->
       mconcat ["/=(", unpack t <> " ", show x <> " ", show b <> ")"]
 
@@ -96,17 +104,21 @@ instance Show AST where
 
 --------------------------------------------------------------------------------
 
-bind ∷ AST → Exp Text
+bind :: AST -> Exp Text
 bind = go
  where
   go = \case
-    ALam v b → Lam (abstract1 v (go b))
-    AVar v → Var v
-    AApp x y → App (go x) (go y)
-    ALet n x b → go (ALam n b `AApp` x)
-    ASig → Sig
-    ACon x y → Con (go x) (go y)
-    ACas x (ln, l) (rn, r) → Cas (go x) (abstract1 ln (go l)) (abstract1 rn (go r))
-    AIff c t e → Iff (go c) (go t) (go e)
-    ALit n → Lit n
-    AStr s → Str s
+    ALam v b               -> Lam (abstract1 v (go b))
+    AVar v                 -> Var v
+    AApp x y               -> App (go x) (go y)
+    ALet n x b             -> go (ALam n b `AApp` x)
+    ASig                   -> Sig
+    ACon x y               -> Con (go x) (go y)
+    AJet r n b             -> Jet r n (go b)
+    AFix n b               -> Fix (abstract1 n (go b))
+    ACas x (ln, l) (rn, r) -> cas x ln l rn r
+    AIff c t       e       -> Iff (go c) (go t) (go e)
+    ALit n                 -> Lit n
+    AStr s                 -> Str s
+
+  cas x ln l rn r = Cas (go x) (abstract1 ln (go l)) (abstract1 rn (go r))

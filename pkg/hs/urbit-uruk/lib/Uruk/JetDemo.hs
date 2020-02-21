@@ -159,7 +159,7 @@ instance Show a => Show (UrPoly a) where
         flatten (x :@ y) acc = flatten x (y : acc)
         flatten x        acc = (x : acc)
 
-        fast j us = "[" <> intercalate "" (show j : fmap show us) <> "]"
+        fast j us = "[" <> intercalate " " (show j : fmap show us) <> "]"
 
 instance Show Jet where
     show = \case
@@ -194,7 +194,6 @@ instance Show Jet where
         JDed       → "err"
         JUni       → "uni"
         Yet n      → "yet" <> show n
-
 
 
 -- Normalized Values -----------------------------------------------------------
@@ -727,7 +726,7 @@ sjIff = SingJet{..}
     sjFast = JIff
     sjArgs = 3
     sjName = MkVal (Nat 16)
-    sjExec [Bol c,t,f]       = Just (if c then t else f :@ Uni)
+    sjExec [Bol c,t,f]       = Just ((if c then t else f) :@ Uni)
     sjExec [_,_,_]           = Nothing
     sjExec _                 = error "bad-iff"
     sjBody = MkVal $
@@ -1071,18 +1070,17 @@ pattern Zer = Fast 1 JZer []
 {-
     isZero = \n -> n (K No) Ya
 -}
-sjZer ∷ SingJet
-sjZer = SingJet{..}
-  where
-    sjFast = JZer
-    sjArgs = 1
-    sjName = MkVal K
-    sjExec [Nat x]       = Just $ if x==0 then Ya else No
-    sjExec [_]           = Nothing
-    sjExec _             = error "bad-zer"
+sjZer :: SingJet
+sjZer = SingJet { .. }
+ where
+  sjFast = JZer
+  sjArgs = 1
+  sjName = MkVal K
+  sjExec [Nat x] = Just $ if x == 0 then Ya else No
+  sjExec [_    ] = Nothing
+  sjExec _       = error "bad-zer"
 
-    sjBody = MkVal $
-        S :@ (S :@ I :@ (K :@ (K :@ No))) :@ (K :@ Ya)
+  sjBody = MkVal $ S :@ (S :@ I :@ (K :@ (K :@ No))) :@ (K :@ Ya)
 
 
 

@@ -88,7 +88,7 @@ tag = try (char '%' >> sym)
 -- Grammar ---------------------------------------------------------------------
 
 exp :: Parser AST
-exp = irregular <|> rune
+exp = try rune <|> irregular
 
 cns ∷ [AST] → AST
 cns []     = ASig
@@ -123,6 +123,7 @@ irregular =
     [ lam
     , cns <$> grouped "[" " " "]" exp
     , ALit <$> atom
+    , AStr <$> cord
     , app <$> grouped "(" " " ")" exp
     , AVar <$> sym
     , ASig <$ char '~'
@@ -135,28 +136,25 @@ irregular =
       c <- exp
       pure (tag, c)
 
-rune ∷ Parser AST
+rune :: Parser AST
 rune = runeSwitch
-  [ ("|=", rune2 lambdify lamArgs exp)
+  [ ("~/", rune3 AJet nat sym exp)
+  , ("|=", rune2 lambdify lamArgs exp)
+  , ("=/", rune3 ALet sym exp exp)
+  , ("..", rune2 AFix sym exp)
+  , (":-", rune2 ACon exp exp)
+  , (":*", runeN cns exp)
+  , ("%-", rune2 AApp exp exp)
+  , ("%.", rune2 (flip AApp) exp exp)
+  , ("?:", rune3 AIff exp exp exp)
   ]
-  where
-    lamArgs = grouped "(" " " ")" sym
-           <|> (: []) <$> sym
+  where lamArgs = grouped "(" " " ")" sym <|> (: []) <$> sym
 
 {-
   [ ("$:", runeN (notAllow HaxCol) binder)
-  , ("%-", rune2 CenHep exp exp)
-  , ("%.", rune2 CenDot exp exp)
-  , (":-", rune2 ColHep exp exp)
-  , (":*", runeN ColTar exp)
-  , ("=/", rune3 TisFas sym exp exp)
-  , ("..", rune2 DotDot binder exp)
-  , (".<", rune1 DotGal exp)
-  , (".>", rune1 DotGar exp)
   , (".+", rune1 DotLus exp)
   , (".=", rune2 DotTis exp exp)
 --, ("?-", runeJogging1 wutHep exp tagPat exp)
-  , ("?:", rune3 WutCol exp exp exp)
   ]
     tagPat = Atom.utf8Atom <$> tag <|> atom
 --    wutHep c cs = Cas c (mapFromList cs)

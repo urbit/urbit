@@ -96,7 +96,6 @@ import Numeric.Positive (Positive)
 import Prelude          ((!!))
 import Uruk.JetDemo     (Ur, UrPoly(Fast))
 
-
 import qualified Uruk.JetDemo as Ur
 import qualified Uruk.JetComp as Comp
 

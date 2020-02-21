@@ -5,15 +5,20 @@ import ClassyPrelude
 import GHC.Natural
 import Moon.AST
 
-import qualified Moon.Parser  as Parser
-import qualified Urbit.Atom   as Atom
-import qualified Uruk.JetComp as Uruk
-import qualified Uruk.JetDemo as Ur
+import Control.Arrow    ((>>>))
+import Data.Function    ((&))
+import System.IO.Unsafe (unsafePerformIO)
+
+import qualified Moon.Parser      as Parser
+import qualified Urbit.Atom       as Atom
+import qualified Uruk.JetComp     as Uruk
+import qualified Uruk.JetDemo     as Ur
+import qualified Uruk.JetOptimize as Opt
 
 --------------------------------------------------------------------------------
 
-getGlobal :: Text -> Uruk.Exp
-getGlobal = Uruk.Prim . \case
+getGlobal :: Text -> Ur.Ur
+getGlobal = \case
   "s"    -> Ur.S
   "k"    -> Ur.K
   "j"    -> Ur.J 1
@@ -56,36 +61,90 @@ getGlobal = Uruk.Prim . \case
 toUruk :: Exp Text -> Ur.Ur
 toUruk = Uruk.moonStrict . toLC getGlobal
 
-gogogo :: Text -> Ur.Ur
-gogogo text = Ur.simp (Uruk.moonStrict lam)
- where
-  Right ast = traceShowId (Parser.parseAST text)
-  exp       = bind ast
-  lam       = traceShowId (toLC getGlobal exp)
+forceParse :: Text -> AST
+forceParse = Parser.parseAST >>> \case
+  Left  err -> error (show err)
+  Right ex  -> ex
 
-toLC :: (Text -> Uruk.Exp) -> Exp Text -> Uruk.Exp
+forceParseExp ∷ Text → Exp Text
+forceParseExp = bind . forceParse
+
+gogogo :: Text -> Ur.Ur
+gogogo text = Ur.simp complex
+ where
+  ast     = traceShowId (forceParse text)
+  exp     = bind ast
+  lam     = traceShowId (toLC getGlobal exp)
+  complex = traceShowId (Uruk.moonStrict lam)
+
+toLC :: (Text -> Ur.Ur) -> Exp Text -> Uruk.Exp
 toLC getGlobal = go (Left . getGlobal)
  where
-  go :: (a -> Either Uruk.Exp Nat) -> Exp a -> Uruk.Exp
+  go :: (a -> Either Ur.Ur Nat) -> Exp a -> Uruk.Exp
   go f = \case
-    Var a -> case f a of
-      Left  e -> e
-      Right v -> Uruk.Var v
-
-    Lam b     -> Uruk.Lam (go env' $ fromScope b) where env' = wrap f
-
+    Var a     -> var f a
+    Lam b     -> lam f b
     App x y   -> Uruk.Go (go f x) (go f y)
+    Jet r n b -> Uruk.Jet (fromIntegral r) (Atom.utf8Atom n) (go f b)
+    Fix b     -> Uruk.Loop (enter f b)
     Sig       -> Uruk.Prim Ur.Uni
-    Con x y   -> Uruk.cons `Uruk.Go` go f x `Uruk.Go` go f y
-    Cas x l r -> Uruk.Case (go f x)
-                           (go env' $ fromScope l)
-                           (go env' $ fromScope r)
-      where env' = wrap f
-
+    Con x y   -> con f x y
+    Cas x l r -> cas f x l r
     Iff c t e -> Uruk.If (go f c) (go f t) (go f e)
     Lit n     -> Uruk.Prim $ Ur.Nat n
     Str n     -> Uruk.Prim $ Ur.Nat $ Atom.utf8Atom n
 
+  enter f b = go f' (fromScope b) where f' = wrap f
+
+  lam f b = Uruk.Lam (enter f b)
+
+  var f a = f a & \case
+    Left  e -> Uruk.Prim e
+    Right v -> Uruk.Var v
+
+  cas f x l r = Uruk.Case (go f x) (enter f l) (enter f r)
+
+  con f x y = Uruk.cons `Uruk.Go` go f x `Uruk.Go` go f y
+
   wrap f = \case
     B () -> Right 0
     F x  -> succ <$> f x
+
+ackerSrc ∷ Text
+ackerSrc = unlines
+    [  "~/  2  acker"
+    ,  "..  recur"
+    ,  "|=  (x y)"
+    ,  "?:  (zer x)"
+    ,  "  (inc y)"
+    ,  "?:  (zer y)"
+    ,  "  (recur (fec x) 1)"
+    ,  "(recur (fec x) (recur x (fec y)))"
+    ]
+
+tryAckerSrc ∷ Nat → Nat → Text
+tryAckerSrc x y = unlines
+  [ "=/  acker"
+  , indent ackerSrc
+  , "(acker " <> tshow x <> " " <> tshow y <> ")"
+  ]
+ where
+  indent = unlines . fmap ("  " <>) . lines
+
+tryAcker ∷ Nat → Nat → Ur.Ur
+tryAcker x y = gogogo (tryAckerSrc x y)
+
+ackerUr ∷ Ur.Ur
+ackerUr = gogogo ackerSrc
+
+fastAcker :: Opt.Code
+fastAcker =
+  unsafePerformIO
+    $ Opt.compile
+    $ traceShowId
+    $ Uruk.moonStrict
+    $ traceShowId
+    $ toLC getGlobal
+    $ bind
+    $ traceShowId
+    $ forceParse ackerSrc
