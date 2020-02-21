@@ -49,8 +49,15 @@ export class ContactSidebar extends Component {
     let groupItems =
       Array.from(group).map((member) => {
         return (
-          <div className="pl4 pt1 pb1 f9 flex justify-start content-center">
-            <Sigil ship={member} color="#aaaaaa" size={32} />
+          <div
+          key={member}
+          className="pl4 pt1 pb1 f9 flex justify-start content-center bg-white">
+            <Sigil
+              ship={member}
+              color="#000000"
+              size={32}
+              classes="mix-blend-diff"
+              />
             <p className="f9 w-70 dib v-mid ml2 nowrap mono"
               style={{ paddingTop: 6, color: '#aaaaaa' }}>
               ~{member}

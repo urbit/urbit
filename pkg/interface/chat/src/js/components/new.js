@@ -249,6 +249,7 @@ export class NewScreen extends Component {
           </p>
           <InviteSearch
             groups={props.groups}
+            groupResults={true}
             invites={{
               groups: state.groups,
               ships: state.ships
