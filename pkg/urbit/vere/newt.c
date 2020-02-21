@@ -312,8 +312,8 @@ _newt_write_cb(uv_write_t* wri_u, c3_i sas_i)
   void*       vod_p = req_u->vod_p;
   u3_mojo*    moj_u = req_u->moj_u;
 
-  free(req_u->buf_y);
-  free(req_u);
+  c3_free(req_u->buf_y);
+  c3_free(req_u);
 
   if ( 0 != sas_i ) {
     u3l_log("newt: bad write %d\r\n", sas_i);

@@ -24,7 +24,7 @@ export class NotFound extends Component {
         <div className="absolute w-100" style={{top:124}}>
           <div className="mw-688 center w-100">
             {back}
-            <h2>Page Not Found</h2> 
+            <h2>Page Not Found</h2>
           </div>
         </div>
       </div>

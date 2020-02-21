@@ -57,12 +57,12 @@ u3_walk_safe(c3_c* pas_c)
   close(fid_i);
 
   if ( fln_w != red_w ) {
-    free(pad_y);
+    c3_free(pad_y);
     return 0;
   }
   else {
     u3_noun pad = u3i_bytes(fln_w, (c3_y *)pad_y);
-    free(pad_y);
+    c3_free(pad_y);
 
     return pad;
   }
@@ -89,12 +89,12 @@ u3_walk_load(c3_c* pas_c)
   close(fid_i);
 
   if ( fln_w != red_w ) {
-    free(pad_y);
+    c3_free(pad_y);
     return u3m_bail(c3__fail);
   }
   else {
     u3_noun pad = u3i_bytes(fln_w, (c3_y *)pad_y);
-    free(pad_y);
+    c3_free(pad_y);
 
     return pad;
   }
@@ -130,7 +130,7 @@ _walk_mkdirp(c3_c* bas_c, u3_noun pax)
   }
 
   _walk_mkdirp(pax_c, u3t(pax));
-  free(pax_c);
+  c3_free(pax_c);
 }
 
 /* u3_walk_save(): save file or bail.
@@ -160,7 +160,7 @@ u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad, c3_c* bas_c, u3_noun pax)
 
   rit_w = write(fid_i, pad_y, fln_w);
   close(fid_i);
-  free(pad_y);
+  c3_free(pad_y);
 
   if ( rit_w != fln_w ) {
     u3l_log("%s: %s\n", pas_c, strerror(errno));
@@ -218,7 +218,7 @@ _walk_in(const c3_c* dir_c, c3_w len_w)
       pat_c[lef_w] = '\0';
 
       if ( 0 != stat(pat_c, &buf_b) ) {
-        free(pat_c);
+        c3_free(pat_c);
       } else {
         u3_noun tim = c3_stat_mtime(&buf_b);
 
@@ -244,8 +244,8 @@ _walk_in(const c3_c* dir_c, c3_w len_w)
             get = u3kdb_put(get, ext, u3nt(c3y, hax, dat));
             map = u3kdb_put(map, nam, u3nc(c3n, get));
           }
-          free(nam_c);
-          free(ext_c);
+          c3_free(nam_c);
+          c3_free(ext_c);
         }
         else {
           u3_noun dir = _walk_in(pat_c, lef_w);
@@ -256,7 +256,7 @@ _walk_in(const c3_c* dir_c, c3_w len_w)
           }
           else u3z(tim);
         }
-        free(pat_c);
+        c3_free(pat_c);
       }
     }
   }

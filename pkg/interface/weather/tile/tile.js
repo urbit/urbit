@@ -8,14 +8,14 @@ class IconWithData extends Component {
 
     return (
       <div className='mt2'>
-        <img 
-          src={'/~weather/img/' + props.icon + '.png'} 
-          width={20} 
+        <img
+          src={'/~weather/img/' + props.icon + '.png'}
+          width={20}
           height={20}
           className="dib mr2" />
         <p className="label-small dib white">{props.text}</p>
       </div>
-    ); 
+    );
   }
 }
 
@@ -87,7 +87,7 @@ export default class WeatherTile extends Component {
     let secureCheck;
     let error;
     if (this.state.error === true) {
-      error = <p 
+      error = <p
           className="label-small red pt1">
           Incorrect latitude/longitude formatting. Please try again. <br/>
           (eg. "29.558107, -95.089023")
@@ -101,7 +101,7 @@ export default class WeatherTile extends Component {
     }
     return this.renderWrapper((
       <div>
-        <a style={{"color": "white", "cursor": "pointer"}} 
+        <a style={{"color": "white", "cursor": "pointer"}}
         onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>
         &lt;&#45;
         </a>
@@ -110,16 +110,16 @@ export default class WeatherTile extends Component {
         Please enter your <a className="white" href="https://latitudeandlongitude.org/" target="_blank">latitude and longitude</a>.</p>
         {error}
         <form className="flex absolute" style={{"bottom": 0, "left": 8}}>
-          <input id="gps" 
-            className="white pa1 bg-transparent outline-0 bn bb-ns b--white" 
+          <input id="gps"
+            className="white pa1 bg-transparent outline-0 bn bb-ns b--white"
             style={{width: "86%"}}
-            type="text" 
-            placeholder="29.558107, -95.089023" 
+            type="text"
+            placeholder="29.558107, -95.089023"
             onKeyDown={this.keyPress.bind(this)}>
-          </input> 
-          <input className="bg-transparent inter white w-20 outliner-0 bn pointer" 
-            type="submit" 
-            onClick={() => this.manualLocationSubmit()} 
+          </input>
+          <input className="bg-transparent inter white w-20 outliner-0 bn pointer"
+            type="submit"
+            onClick={() => this.manualLocationSubmit()}
             value="->">
           </input>
         </form>
@@ -156,12 +156,12 @@ export default class WeatherTile extends Component {
             onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>Update location -></a>
         <div className="w-100 mb2 mt2 absolute"
             style={{left: 18, top: 28}}>
-          <img 
-            src={'/~weather/img/' + c.icon + '.png'} 
-            width={64} 
+          <img
+            src={'/~weather/img/' + c.icon + '.png'}
+            width={64}
             height={64}
             className="dib" />
-          <h2 
+          <h2
             className="dib ml2 white"
             style={{
               fontSize: 72,
@@ -173,24 +173,24 @@ export default class WeatherTile extends Component {
         <div className="w-100 cf absolute"
         style={{ left: 18, top: 118 }}>
           <div className="fl w-50">
-            <IconWithData 
+            <IconWithData
               icon='winddirection'
               text={c.windBearing + '°'} />
-            <IconWithData 
+            <IconWithData
               icon='chancerain'
               text={(c.precipProbability * 100) + '%'} />
-            <IconWithData 
+            <IconWithData
               icon='windspeed'
               text={Math.round(c.windSpeed) + ' mph'} />
           </div>
           <div className="fr w-50">
-            <IconWithData 
+            <IconWithData
               icon='sunset'
               text={da} />
-            <IconWithData 
+            <IconWithData
               icon='low'
               text={Math.round(d.temperatureLow) + '°'} />
-            <IconWithData 
+            <IconWithData
               icon='high'
               text={Math.round(d.temperatureHigh) + '°'} />
           </div>

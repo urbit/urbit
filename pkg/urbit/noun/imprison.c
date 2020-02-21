@@ -65,7 +65,7 @@ u3i_chubs(c3_w        a_w,
     b_w[(2 * i_w) + 1] = b_d[i_w] >> 32ULL;
   }
   p = u3i_words((a_w * 2), b_w);
-  free(b_w);
+  c3_free(b_w);
   return p;
 }
 
@@ -470,7 +470,6 @@ u3i_list(u3_weak one, ...);
     return cut_t ? cut_w : i_w;
   }
 
-  __attribute__((no_sanitize_address))
   static u3_noun                            //  transfer
   _molt_apply(u3_noun            som,       //  retain
               c3_w               len_w,
@@ -496,7 +495,6 @@ u3i_list(u3_weak one, ...);
     }
   }
 
-__attribute__((no_sanitize_address))
 u3_noun
 u3i_molt(u3_noun som, ...)
 {

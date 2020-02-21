@@ -13,6 +13,9 @@
 #include <termios.h>
 #include <ncurses/term.h>
 #include <dirent.h>
+#include <openssl/conf.h>
+#include <openssl/engine.h>
+#include <openssl/err.h>
 #include <openssl/ssl.h>
 #include <h2o.h>
 #include <curl/curl.h>
@@ -50,7 +53,7 @@ _main_readw(const c3_c* str_c, c3_w max_w, c3_w* out_w)
 c3_c*
 _main_presig(c3_c* txt_c)
 {
-  c3_c* new_c = malloc(2 + strlen(txt_c));
+  c3_c* new_c = c3_malloc(2 + strlen(txt_c));
 
   if ( '~' == *txt_c ) {
     strcpy(new_c, txt_c);
@@ -663,15 +666,15 @@ main(c3_i   argc,
     // allocates more memory as needed if the path is too large
     //
     while ( abs_c != getcwd(abs_c, mprint_i) ) {
-      free(abs_c);
+      c3_free(abs_c);
       mprint_i *= 2;
       abs_c = c3_malloc(mprint_i);
     }
     printf("boot: home is %s/%s\n", abs_c, u3_Host.dir_c);
-    free(abs_c);
+    c3_free(abs_c);
   } else {
     printf("boot: home is %s\n", abs_c);
-    free(abs_c);
+    c3_free(abs_c);
   }
   // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
@@ -744,12 +747,38 @@ main(c3_i   argc,
       }
     }
 
-    /*  Initialize OpenSSL for client and server
-    */
-    SSL_library_init();
-    SSL_load_error_strings();
+    //  Initialize OpenSSL for client and server
+    //
+    {
+      SSL_library_init();
+      SSL_load_error_strings();
+    }
+
+    //  initialize curl
+    //
+    if ( 0 != curl_global_init(CURL_GLOBAL_DEFAULT) ) {
+      u3l_log("boot: curl initialization failed\r\n");
+      exit(1);
+    }
 
     u3_daemon_commence();
+
+    //  uninitialize curl
+    //
+    curl_global_cleanup();
+
+    //  uninitialize OpenSSL
+    //
+    //    see https://wiki.openssl.org/index.php/Library_Initialization
+    //
+    {
+      ENGINE_cleanup();
+      CONF_modules_unload(1);
+      EVP_cleanup();
+      CRYPTO_cleanup_all_ex_data();
+      SSL_COMP_free_compression_methods();
+      ERR_free_strings();
+    }
   }
 
   return 0;

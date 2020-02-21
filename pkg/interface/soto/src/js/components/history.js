@@ -4,7 +4,7 @@ export class History extends Component {
   constructor(props) {
     super(props);
   }
-  
+
   render() {
     return (
       <div className="flex flex-column-reverse overflow-container"
@@ -18,5 +18,5 @@ export class History extends Component {
       )
     }
   }
-  
+
 export default History;

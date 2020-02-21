@@ -6,7 +6,7 @@
 =,  able:jael
 ::
 |=  args=vase
-=+  ^-  [url=@t =command]
+=/  [url=@t =command]
   !<([@t command] args)
 =/  m  (strand:strandio ,vase)
 ^-  form:m

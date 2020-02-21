@@ -1,7 +1,7 @@
 ::  group-hook: allow syncing group data from foreign paths to local paths
 ::
 /-  *group-store, *group-hook
-/+  default-agent
+/+  default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
 ::
@@ -19,6 +19,9 @@
 ::
 =|  state-zero
 =*  state  -
+::
+%-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -126,7 +129,7 @@
       :_  state(synced (~(del by synced.state) path.act))
       %+  snoc
         (pull-wire group-wire path.act)
-      [%give %kick `[%group path.act] ~]
+      [%give %kick [%group path.act]~ ~]
     ?:  |(=(u.ship src.bol) (team:title our.bol src.bol))
       ::  delete a foreign ship's path
       =/  group-wire  [(scot %p u.ship) %group path.act]
@@ -150,7 +153,7 @@
     :_  state(synced (~(del by synced.state) pax.diff))
     %+  snoc
       (update-subscribers [%group pax.diff] diff)
-    [%give %kick `[%group pax.diff] ~]
+    [%give %kick [%group pax.diff]~ ~]
   ==
 ::
 ++  handle-foreign
@@ -212,7 +215,7 @@
 ++  update-subscribers
   |=  [pax=path diff=group-update]
   ^-  (list card)
-  [%give %fact `pax %group-update !>(diff)]~
+  [%give %fact ~[pax] %group-update !>(diff)]~
 ::
 ++  pull-wire
   |=  [wir=wire pax=path]

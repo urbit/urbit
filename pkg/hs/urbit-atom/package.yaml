@@ -1,0 +1,66 @@
+name: urbit-atom
+version: 0.10.1
+license: MIT
+license-file: LICENSE
+
+library:
+  source-dirs: lib
+  ghc-options:
+    - -fwarn-incomplete-patterns
+    - -fwarn-unused-binds
+    - -fwarn-unused-imports
+    - -Werror
+    - -O2
+
+dependencies:
+  - base
+  - bytestring
+  - ghc-prim
+  - integer-gmp
+  - primitive
+  - text
+  - vector
+
+default-extensions:
+  - ApplicativeDo
+  - BangPatterns
+  - BlockArguments
+  - DataKinds
+  - DefaultSignatures
+  - DeriveAnyClass
+  - DeriveDataTypeable
+  - DeriveFoldable
+  - DeriveGeneric
+  - DeriveTraversable
+  - DerivingStrategies
+  - EmptyCase
+  - EmptyDataDecls
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GADTs
+  - GeneralizedNewtypeDeriving
+  - LambdaCase
+  - MagicHash
+  - MultiParamTypeClasses
+  - NamedFieldPuns
+  - NoImplicitPrelude
+  - NumericUnderscores
+  - OverloadedStrings
+  - PackageImports
+  - PartialTypeSignatures
+  - PatternSynonyms
+  - QuasiQuotes
+  - Rank2Types
+  - RankNTypes
+  - RecordWildCards
+  - ScopedTypeVariables
+  - StandaloneDeriving
+  - TemplateHaskell
+  - TupleSections
+  - TypeApplications
+  - TypeFamilies
+  - TypeOperators
+  - UnboxedTuples
+  - UnicodeSyntax
+  - ViewPatterns

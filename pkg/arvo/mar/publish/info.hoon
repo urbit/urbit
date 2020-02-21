@@ -46,10 +46,10 @@
     :*  %+  rash  owner.txs
         ;~(pfix (jest 'owner: ~') fed:ag)
     ::
-        %+  rash  title.txs 
+        %+  rash  title.txs
         ;~(pfix (jest 'title: ') (cook crip (star next)))
     ::
-        %+  rash  filename.txs 
+        %+  rash  filename.txs
         ;~(pfix (jest 'filename: ') (cook crip (star next)))
     ::
       %+  rash  comments.txs

@@ -268,6 +268,7 @@ _test_cells()
       printf("*** _test_imprison: fail-4\n");
     }
 
+    c3_free(output_y);
     c3_free(rand_a);
     c3_free(rand_b);
   }
@@ -721,6 +722,7 @@ _test_imprison_complex()
       printf("*** u3r_string: in '%s'; out '%s'\n", in_c, out_c);
     }
 
+    c3_free(out_c);
     in_c = "ab";
     noun = u3i_string(in_c);
     out_c = u3r_string(noun);
@@ -729,6 +731,7 @@ _test_imprison_complex()
       printf("*** u3r_string: in '%s'; out '%s'\n", in_c, out_c);
     }
 
+    c3_free(out_c);
     in_c = "abcd";
     noun = u3i_string(in_c);
     out_c = u3r_string(noun);
@@ -737,6 +740,7 @@ _test_imprison_complex()
       printf("*** u3r_string: in '%s'; out '%s'\n", in_c, out_c);
     }
 
+    c3_free(out_c);
     in_c = "this is a test";
     noun = u3i_string(in_c);
     out_c = u3r_string(noun);
@@ -744,6 +748,8 @@ _test_imprison_complex()
     if (0 != strcmp(in_c, out_c)){
       printf("*** u3r_string: in '%s'; out '%s'\n", in_c, out_c);
     }
+
+    c3_free(out_c);
   }
 
   // tape
@@ -756,6 +762,8 @@ _test_imprison_complex()
     if (0 != memcmp(in_c, out_y, strlen(in_c))){
       printf("*** u3r_tape 1\n");
     }
+
+    c3_free(out_y);
 
     // tape stores each byte in the string as one atom in the tree
     u3_noun lent = u3qb_lent(noun);

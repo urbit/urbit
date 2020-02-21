@@ -281,6 +281,6 @@ Questions or other communications about contributing to Urbit can go to
 [mail]: mailto:support@urbit.org
 [list]: https://groups.google.com/a/urbit.org/forum/#!forum/dev
 [repo]: https://github.com/urbit/urbit
-[reba]: https://www.atlassian.com/git/tutorials/merging-vs-rebasing
+[reba]: https://git-rebase.io/
 [issu]: https://github.com/urbit/urbit/issues
 [hoon]: https://urbit.org/docs/learn/hoon/style/

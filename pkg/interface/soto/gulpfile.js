@@ -146,7 +146,7 @@ gulp.task('urbit-copy', function () {
 gulp.task('js-bundle-dev', gulp.series('jsx-transform', 'js-imports'));
 gulp.task('tile-js-bundle-dev', gulp.series('tile-jsx-transform', 'tile-js-imports'));
 gulp.task('js-bundle-prod', gulp.series('jsx-transform', 'js-imports', 'js-minify'))
-gulp.task('tile-js-bundle-prod', 
+gulp.task('tile-js-bundle-prod',
   gulp.series('tile-jsx-transform', 'tile-js-imports', 'tile-js-minify'));
 
 gulp.task('bundle-dev',

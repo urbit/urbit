@@ -28,7 +28,7 @@ export class NewScreen extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
 
-    if (prevProps !== props) { 
+    if (prevProps !== props) {
       let station = `/~${window.ship}/${state.idName}`;
       if (station in props.inbox) {
         props.history.push('/~chat/room' + station);
@@ -77,7 +77,15 @@ export class NewScreen extends Component {
 
   onClickCreate() {
     const { props, state } = this;
-    if (!state.idName) {
+
+    let invalidChara = new RegExp(/[^a-z0-9/-]/);
+
+    let invalid = (
+      (!state.idName) || (state.idName.startsWith("/")) ||
+      (state.idName.includes("//")) || (invalidChara.test(state.idName))
+    );
+
+    if (invalid) {
       this.setState({
         idError: true,
         inviteError: false
@@ -124,7 +132,7 @@ export class NewScreen extends Component {
 
     // TODO: don't do this, it's shitty
     let writeAud;
-    let readAud; 
+    let readAud;
 
     if (state.security === 'village') {
       aud.push(`~${window.ship}`);
@@ -160,9 +168,9 @@ export class NewScreen extends Component {
   }
 
   render() {
-    let createClasses = "pointer db f9 green2 ba pa2 b--green2";
+    let createClasses = "pointer db f9 green2 bg-gray0-d ba pa2 b--green2";
     if (!this.state.idName) {
-      createClasses = 'pointer db f9 gray2 ba pa2 b--gray3';
+      createClasses = 'pointer db f9 gray2 ba bg-gray0-d pa2 b--gray3';
     }
 
     let idErrElem = (<span />);
@@ -184,7 +192,8 @@ export class NewScreen extends Component {
     }
 
     return (
-      <div className="h-100 w-100 w-50-l w-50-xl pa3 pt2 overflow-x-hidden flex flex-column">
+      <div className={`h-100 w-100 w-50-l w-50-xl pa3 pt2 overflow-x-hidden
+      bg-black-d white-d flex flex-column`}>
         <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
           <Link to="/~chat/">{"⟵ All Chats"}</Link>
         </div>
@@ -192,10 +201,10 @@ export class NewScreen extends Component {
         <div className="w-100">
           <p className="f8 mt3 lh-copy db">Chat Name</p>
           <p className="f9 gray2 db mb4">
-          Alphanumeric characters, dashes, and slashes only
+          Lowercase alphanumeric characters, dashes, and slashes only
           </p>
-          <textarea 
-            className="f7 ba b--gray3 pa3 db w-100"
+          <textarea
+            className="f7 ba b--gray3 b--gray0-d bg-black-d white-d pa3 db w-100"
             placeholder="secret-chat"
             rows={1}
             style={{
@@ -208,7 +217,7 @@ export class NewScreen extends Component {
           <div className="dropdown relative">
             <select
               style={{WebkitAppearance: "none"}}
-              className="pa3 f8 bg-white br0 w-100 inter"
+              className="pa3 f8 bg-white bg-black-d white-d br0 w-100 inter"
               value={this.state.securityValue}
               onChange={this.securityChange}>
               <option value="village">Village</option>
@@ -224,7 +233,7 @@ export class NewScreen extends Component {
           </p>
           <textarea
             ref={e => { this.textarea = e; }}
-            className="f7 mono ba b--gray3 pa3 mb4 db w-100"
+            className="f7 mono ba b--gray3 b--gray2-d bg-black-d white-d pa3 mb4 db w-100"
             placeholder="~zod, ~bus"
             spellCheck="false"
             style={{

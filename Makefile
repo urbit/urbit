@@ -2,11 +2,6 @@
 
 build:
 	nix-build -A urbit -A herb --no-out-link
-	stack build king
-
-build-fast:
-	nix-build -A urbit -A herb --no-out-link
-	stack build king --fast
 
 build-all:
 	nix-build --no-out-link

@@ -1,3 +1,7 @@
+::  This is useful to test that we properly hear about breaches outside
+::  our sponsorship tree.  We usually hear about these via ship-to-ship
+::  communication.
+::
 /-  spider
 /+  *ph-io
 =,  strand=strand:spider

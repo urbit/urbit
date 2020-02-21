@@ -643,11 +643,11 @@ static void
 _pier_work_spin_start(u3_writ* wit_u)
 {
   u3_pier* pir_u = wit_u->pir_u;
-  c3_o now_o = c3n;
-  c3_c* why_c = 0;
+  c3_o     now_o = c3n;
+  u3_noun    say = u3_blip;
 
   if ( wit_u->evt_d <= pir_u->lif_d ) {
-    why_c = strdup("nock");
+    say = c3__nock;
   }
   else {
     u3_noun why;
@@ -661,7 +661,7 @@ _pier_work_spin_start(u3_writ* wit_u)
 
 
       if ( c3__term != why ) {
-        why_c = u3r_string(why);
+        say = why;
       }
       else if (  ( u3_none != (cad = u3r_at(7, wit_u->job)) ) &&
                  ( u3_none != (tag = u3r_at(2, cad)) ) &&
@@ -674,7 +674,7 @@ _pier_work_spin_start(u3_writ* wit_u)
     }
   }
 
-  u3_term_start_spinner(why_c, now_o);
+  u3_term_start_spinner(say, now_o);
 }
 
 /* _pier_work_spin_stop(): deactivate spinner.
@@ -803,7 +803,7 @@ _pier_work_stdr(u3_writ* wit_u, u3_noun cord)
 {
   c3_c* str = u3r_string(cord);
   u3C.stderr_log_f(str);
-  free(str);
+  c3_free(str);
 }
 
 /* _pier_work_slog(): print directly.
@@ -1041,13 +1041,10 @@ _pier_work_create(u3_pier* pir_u)
   {
     c3_c* arg_c[5];
     c3_c* bin_c = u3_Host.wrk_c;
-    c3_c* pax_c;
+    c3_c* pax_c = pir_u->pax_c;
     c3_c  key_c[256];
     c3_c  wag_c[11];
     c3_i  err_i;
-
-    pax_c = c3_malloc(1 + strlen(pir_u->pax_c));
-    strcpy(pax_c, pir_u->pax_c);
 
     sprintf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64 "",
                    pir_u->key_d[0],
@@ -1264,16 +1261,16 @@ _pier_loop_exit(u3_pier* pir_u)
   //  XX legacy handlers, not yet scoped to a pier
   //
   {
-    cod_l = u3a_lush(c3__term);
-    u3_term_io_exit();
-    u3a_lop(cod_l);
-
     cod_l = u3a_lush(c3__http);
     u3_http_io_exit();
     u3a_lop(cod_l);
 
     cod_l = u3a_lush(c3__cttp);
     u3_cttp_io_exit();
+    u3a_lop(cod_l);
+
+    cod_l = u3a_lush(c3__term);
+    u3_term_io_exit();
     u3a_lop(cod_l);
   }
 }
@@ -1341,7 +1338,7 @@ _pier_boot_dispose(u3_boot* bot_u)
 
   u3z(bot_u->pil);
   u3z(bot_u->ven);
-  free(bot_u);
+  c3_free(bot_u);
   pir_u->bot_u = 0;
 }
 

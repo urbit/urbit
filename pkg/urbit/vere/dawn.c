@@ -154,6 +154,8 @@ _dawn_get_jam(c3_c* url_c)
   u3_noun jammed = u3k(u3t(octs));
   u3z(octs);
 
+  c3_free(buf_u.base);
+
   return u3ke_cue(jammed);
 }
 
@@ -162,7 +164,12 @@ _dawn_get_jam(c3_c* url_c)
 static u3_noun
 _dawn_eth_rpc(c3_c* url_c, u3_noun oct)
 {
-  return _dawn_buf_to_oct(_dawn_post_json(url_c, _dawn_oct_to_buf(oct)));
+  uv_buf_t buf_u = _dawn_post_json(url_c, _dawn_oct_to_buf(oct));
+  u3_noun    pro = _dawn_buf_to_oct(buf_u);
+
+  c3_free(buf_u.base);
+
+  return pro;
 }
 
 /* _dawn_fail(): pre-boot validation failed
@@ -205,7 +212,7 @@ _dawn_fail(u3_noun who, u3_noun rac, u3_noun sas)
   u3m_p("pre-boot error", u3t(sas));
 
   u3z(how);
-  free(how_c);
+  c3_free(how_c);
   exit(1);
 }
 
@@ -440,7 +447,7 @@ u3_dawn_vent(u3_noun seed)
       c3_c* who_c = u3r_string(who);
       u3l_log("boot: retrieving keys for sponsor %s\r\n", who_c);
       u3z(who);
-      free(who_c);
+      c3_free(who_c);
     }
 
     //  retrieve +point:azimuth of pos (sponsor of ship)
@@ -519,12 +526,12 @@ _dawn_come(u3_noun stars)
         fclose(fil_u);
       }
 
-      free(key_c);
+      c3_free(key_c);
       u3z(key);
     }
 #endif
 
-    free(who_c);
+    c3_free(who_c);
     u3z(who);
   }
 

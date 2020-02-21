@@ -1887,8 +1887,8 @@
           [%poke-as =mark =cage]
       ==
     +$  gift
-      $%  [%fact path=(unit path) =cage]
-          [%kick path=(unit path) ship=(unit ship)]
+      $%  [%fact paths=(list path) =cage]
+          [%kick paths=(list path) ship=(unit ship)]
           [%watch-ack p=(unit tang)]
           [%poke-ack p=(unit tang)]
       ==
@@ -2185,13 +2185,17 @@
             %disavow  ~|(%udiff-to-diff-disavow !!)
             %spon     `[%spon sponsor.a-point sponsor.a-udiff]
             %rift
-          ?:  (gth rift.a-udiff rift.a-point)
-            ~?  !=(rift.a-udiff +(rift.a-point))
-              [%udiff-to-diff-skipped a-udiff a-point]
-            `[%rift rift.a-point rift.a-udiff]
-          ~
+          ?.  (gth rift.a-udiff rift.a-point)
+            ~
+          ~?  !=(rift.a-udiff +(rift.a-point))
+            [%udiff-to-diff-skipped-rift a-udiff a-point]
+          `[%rift rift.a-point rift.a-udiff]
         ::
             %keys
+          ?.  (gth life.a-udiff life.a-point)
+            ~
+          ~?  !=(life.a-udiff +(life.a-point))
+            [%udiff-to-diff-skipped-life a-udiff a-point]
           :^  ~  %keys
             [life.a-point (~(gut by keys.a-point) life.a-point *[@ud pass])]
           [life crypto-suite pass]:a-udiff
@@ -4942,7 +4946,7 @@
         $(rob (put-word rob col -), sin +(sin))
       ::
       ::  c1, c2: prns for picking reference block
-      =+  ^-  [c1=@ c2=@]  ::TODO  =/ w/o face
+      =/  [c1=@ c2=@]
         ?:  do-i  (snag sin rands)
         =+  =-  (snag - rob)
             ?:  =(0 col)  (dec columns)
@@ -6628,7 +6632,7 @@
         [~ ~]
       ?^  t.rax
         [p.pok [ire q.pok]]:[pok=$(rax t.rax) ire=i.rax]
-      =+  ^-  raf/(like term)
+      =/  raf/(like term)
           =>  |=(a/@ ((sand %tas) (crip (flop (trip a)))))
           (;~(sfix (sear . sym) dot) [1^1 (flop (trip i.rax))])
       ?~  q.raf
@@ -7810,7 +7814,7 @@
     ~?  ?=(~ mined.log)  %processing-unmined-event
     ::
     ?:  =(i.topics.log owner-changed)
-      =+  ^-  [who=@ wer=address]
+      =/  [who=@ wer=address]
           (decode-topics t.topics.log ~[%uint %address])
       `[who %owner wer]
     ::
@@ -7820,12 +7824,12 @@
       `[who %activated who]
     ::
     ?:  =(i.topics.log spawned)
-      =+  ^-  [pre=@ who=@]
+      =/  [pre=@ who=@]
           (decode-topics t.topics.log ~[%uint %uint])
       `[pre %spawned who]
     ::
     ?:  =(i.topics.log escape-requested)
-      =+  ^-  [who=@ wer=@]
+      =/  [who=@ wer=@]
           (decode-topics t.topics.log ~[%uint %uint])
       `[who %escape `wer]
     ::
@@ -7834,18 +7838,18 @@
       `[who %escape ~]
     ::
     ?:  =(i.topics.log escape-accepted)
-      =+  ^-  [who=@ wer=@]
+      =/  [who=@ wer=@]
           (decode-topics t.topics.log ~[%uint %uint])
       `[who %sponsor & wer]
     ::
     ?:  =(i.topics.log lost-sponsor)
-      =+  ^-  [who=@ pos=@]
+      =/  [who=@ pos=@]
           (decode-topics t.topics.log ~[%uint %uint])
       `[who %sponsor | pos]
     ::
     ?:  =(i.topics.log changed-keys)
       =/  who=@  (decode-topics t.topics.log ~[%uint])
-      =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
+      =/  [enc=octs aut=octs sut=@ud rev=@ud]
           %+  decode-results  data.log
           ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
       `[who %keys rev (pass-from-eth enc aut sut)]
@@ -7856,22 +7860,22 @@
       `[who %continuity num]
     ::
     ?:  =(i.topics.log changed-management-proxy)
-      =+  ^-  [who=@ sox=address]
+      =/  [who=@ sox=address]
           (decode-topics t.topics.log ~[%uint %address])
       `[who %management-proxy sox]
     ::
     ?:  =(i.topics.log changed-voting-proxy)
-      =+  ^-  [who=@ tox=address]
+      =/  [who=@ tox=address]
           (decode-topics t.topics.log ~[%uint %address])
       `[who %voting-proxy tox]
     ::
     ?:  =(i.topics.log changed-spawn-proxy)
-      =+  ^-  [who=@ sox=address]
+      =/  [who=@ sox=address]
           (decode-topics t.topics.log ~[%uint %address])
       `[who %spawn-proxy sox]
     ::
     ?:  =(i.topics.log changed-transfer-proxy)
-      =+  ^-  [who=@ tox=address]
+      =/  [who=@ tox=address]
           (decode-topics t.topics.log ~[%uint %address])
       `[who %transfer-proxy tox]
     ::
@@ -8040,42 +8044,124 @@
       $%  [%l l=(list item)]
           [%b b=byts]
       ==
+    ::  +encode-atoms: encode list of atoms as a %l of %b items
     ::
-    ::  treat atoms as list of items
     ++  encode-atoms
       |=  l=(list @)
+      ^-  @
       %+  encode  %l
       %+  turn  l
       |=(a=@ b+[(met 3 a) a])
     ::
     ++  encode
       |=  in=item
-      ^-  @
-      ?-  -.in
-          %b
-        ?:  &(=(1 wid.b.in) (lth dat.b.in 0x80))
-          dat.b.in
-        %^  cat  3  dat.b.in
-        ::TODO  unsure if this should pass wid or (met 3 dat)...
-        (encode-length wid.b.in 0x80)
+      |^  ^-  @
+          ?-  -.in
+              %b
+            ?:  &(=(1 wid.b.in) (lte dat.b.in 0x7f))
+              dat.b.in
+            =-  (can 3 ~[b.in [(met 3 -) -]])
+            (encode-length wid.b.in 0x80)
+          ::
+              %l
+            =/  out=@
+              %+  roll  l.in
+              |=  [ni=item en=@]
+              (cat 3 (encode ni) en)
+            %^  cat  3  out
+            (encode-length (met 3 out) 0xc0)
+          ==
       ::
-          %l
-        =/  out=@
-          %+  roll  l.in
-          |=  [ni=item en=@]
-          (cat 3 (encode ni) en)
-        %^  cat  3  out
-        (encode-length (met 3 out) 0xc0)
-      ==
+      ++  encode-length
+        |=  [len=@ off=@]
+        ?:  (lth len 56)  (add len off)
+        =-  (cat 3 len -)
+        :(add (met 3 len) off 55)
+      --
+    ::  +decode-atoms: decode expecting a %l of %b items, producing atoms within
     ::
-    ++  encode-length
-      |=  [len=@ off=@]
-      ?:  (lth len 56)  (add len off)
-      =-  (cat 3 len -)
-      :(add (met 3 len) off 55)
+    ++  decode-atoms
+      |=  dat=@
+      ^-  (list @)
+      =/  i=item  (decode dat)
+      ~|  [%unexpected-data i]
+      ?>  ?=(%l -.i)
+      %+  turn  l.i
+      |=  i=item
+      ~|  [%unexpected-list i]
+      ?>  ?=(%b -.i)
+      dat.b.i
     ::
-    ::TODO  decode
-    ::
+    ++  decode
+      |=  dat=@
+      ^-  item
+      =/  bytes=(list @)  (flop (rip 3 dat))
+      =?  bytes  ?=(~ bytes)  ~[0]
+      |^  item:decode-head
+      ::
+      ++  decode-head
+        ^-  [done=@ud =item]
+        ?~  bytes
+          ~|  %rlp-unexpected-end
+          !!
+        =*  byt  i.bytes
+        ::  byte in 0x00-0x79 range encodes itself
+        ::
+        ?:  (lte byt 0x79)
+          :-  1
+          [%b 1^byt]
+        ::  byte in 0x80-0xb7 range encodes string length
+        ::
+        ?:  (lte byt 0xb7)
+          =+  len=(sub byt 0x80)
+          :-  +(len)
+          :-  %b
+          len^(get-value 1 len)
+        ::  byte in 0xb8-0xbf range encodes string length length
+        ::
+        ?:  (lte byt 0xbf)
+          =+  led=(sub byt 0xb7)
+          =+  len=(get-value 1 led)
+          :-  (add +(led) len)
+          :-  %b
+          len^(get-value +(led) len)
+        ::  byte in 0xc0-f7 range encodes list length
+        ::
+        ?:  (lte byt 0xf7)
+          =+  len=(sub byt 0xc0)
+          :-  +(len)
+          :-  %l
+          %.  len
+          decode-list(bytes (slag 1 `(list @)`bytes))
+        ::  byte in 0xf8-ff range encodes list length length
+        ::
+        ?:  (lte byt 0xff)
+          =+  led=(sub byt 0xf7)
+          =+  len=(get-value 1 led)
+          :-  (add +(led) len)
+          :-  %l
+          %.  len
+          decode-list(bytes (slag +(led) `(list @)`bytes))
+        ~|  [%rip-not-bloq-3 `@ux`byt]
+        !!
+      ::
+      ++  decode-list
+        |=  rem=@ud
+        ^-  (list item)
+        ?:  =(0 rem)  ~
+        =+  ^-  [don=@ud =item]  ::TODO  =/
+          decode-head
+        :-  item
+        %=  $
+          rem    (sub rem don)
+          bytes  (slag don bytes)
+        ==
+      ::
+      ++  get-value
+        |=  [at=@ud to=@ud]
+        ^-  @
+        (rep 3 (flop (swag [at to] bytes)))
+      --
     --
   ::
   ::  abi en/decoding
