@@ -148,9 +148,6 @@ export class Root extends Component {
               let contact =
                 (window.ship in groupContacts) ?
                 groupContacts[window.ship] : {};
-              if (window.ship in groupContacts) {
-                props.history.push(`/~contacts/view${groupPath}/${window.ship}`);
-              }
               let group = groups[groupPath] || new Set([]);
 
               return (

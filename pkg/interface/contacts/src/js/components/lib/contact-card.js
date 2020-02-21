@@ -241,11 +241,13 @@ export class ContactCard extends Component {
       color: this.pickFunction(state.colorToSet, defaultVal.color),
       avatar: null
     };
-
+    api.setSpinner(true);
     api.contactView.share(
       `~${props.ship}`, props.path, `~${window.ship}`, contact
-    );
-    this.editToggle();
+    ).then(() => {
+      api.setSpinner(false);
+      props.history.push(`/~contacts/view${props.path}/${window.ship}`)
+    });
   }
 
   removeFromGroup() {
@@ -266,8 +268,13 @@ export class ContactCard extends Component {
       `~${props.ship}`, props.path, `~${window.ship}`, contact
     );
 
-    api.contactHook.remove(props.path, `~${props.ship}`);
-    props.history.push(`/~contacts${props.path}`);
+    api.setSpinner(true);
+    api.contactHook.remove(props.path, `~${props.ship}`).then(() => {
+      api.setSpinner(false);
+      let destination = (props.ship === window.ship)
+        ? "" : props.path;
+      props.history.push(`/~contacts${destination}`);
+    });
   }
 
   renderEditCard() {
@@ -335,7 +342,7 @@ export class ContactCard extends Component {
       : <Sigil
           ship={props.ship}
           size={128}
-          color={currentColor}
+          color={"#" + currentColor}
           key={"avatar" + currentColor} />;
 
     return (
@@ -404,7 +411,7 @@ export class ContactCard extends Component {
       <Sigil
         ship={props.ship}
         size={128}
-        color={hexColor}
+        color={"#" + hexColor}
         key={hexColor} />;
 
     let websiteHref =
