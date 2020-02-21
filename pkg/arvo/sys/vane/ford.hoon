@@ -173,15 +173,11 @@
   ==  ==
 --
 |%
-::  +axle: overall ford state
+::  +axle: overall ford state, tagged by version
 ::
 +=  axle
-  $:  ::  date: date at which ford's state was updated to this data structure
-      ::
-      date=%~2018.12.13
-      ::  state: all persistent state
-      ::
-      state=ford-state
+  $%  [%~2018.12.13 state=ford-state]
+      [%~2020.2.21 state=ford-state]
   ==
 ::  +ford-state: all state that ford maintains
 ::
@@ -6336,16 +6332,24 @@
       ::
       $(ducts t.ducts, moves (weld moves duct-moves))
   --
-::  +load: migrate old state to new state (called on vane reload)
+::  +load: either flush or migrate old state (called on vane reload)
 ::
-::    Trim builds completely in case a change to our code invalidated an
-::    old build result.
+::    If it has the old state version, flush the ford state. Otherwise trim
+::    build results in case a change to our code invalidated an old build
+::    result.
+::
+::    Flushing state of the old version is a temporary measure for the OS1
+::    %publish update. We can flush all build state like this because only gall
+::    and %publish use ford live builds currently. :goad will handle remaking
+::    builds for gall, and the new %publish does not use ford.
 ::
 ++  load
   |=  old=axle
   ^+  ford-gate
-  ::
-  =.  ax  old
+  ?:  =(%~2018.12.13 -.old)
+    =.  -.ax  %~2020.2.21
+    ford-gate
+  =.  ax  [%~2020.2.21 state.old]
   =.  ford-gate  +:(call ~[/ford-load-self] *type %trim 0)
   ford-gate
 ::  +stay: produce current state
