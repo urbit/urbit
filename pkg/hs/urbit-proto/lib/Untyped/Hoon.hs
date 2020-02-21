@@ -3,7 +3,6 @@ module Untyped.Hoon where
 import ClassyPrelude
 
 import Bound
-import Bound.Name
 
 import SimpleNoun
 import Untyped.Core
@@ -61,7 +60,7 @@ desugar = go
       SigFas a h     -> Jet a (go h)
       WutBar h j     -> Ift (go h) (Atm 0) (go j)
       WutCol h j k   -> Ift (go h) (go j) (go k)
-      -- or branch go (go h) cs
+      -- or branch go (go h) cs; TODO make this happen when h is Var
       WutHep h cs    -> Let (go h) $ Scope $ branch (Var . F . go) (Var (B ())) cs
       WutKet h j k   -> Ift (IsC (go h)) (go j) (go k)
       WutPam h j     -> Ift (go h) (go j) (Atm 1)

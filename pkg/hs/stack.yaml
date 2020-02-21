@@ -2,11 +2,11 @@ resolver: lts-14.21
 
 packages:
   - lmdb-static
-  - proto
   - terminal-progress-bar
   - urbit-atom
   - urbit-azimuth
   - urbit-king
+  - urbit-proto
   - urbit-uruk
 
 extra-deps:
