@@ -2,8 +2,8 @@
 ::  mirror chat data from foreign to local based on read permissions
 ::  allow sending chat messages to foreign paths based on write perms
 ::
-/-  *permission-store, *chat-hook, *invite-store,
-    *metadata-store, *permission-group-hook, *group-store
+/-  *permission-store, *chat-hook, *invite-store, *metadata-store,
+    *permission-hook, *group-store, *permission-group-hook  ::TMP  for upgrade
 /+  *chat-json, *chat-eval, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
@@ -79,10 +79,8 @@
           ==
         ::
           (create-group new-group who.newp)
-        ::
-          :~  (record-group new-group chat)
-              (hookup-group new-group kind.newp)
-          ==
+          (hookup-group new-group kind.newp)
+          [(record-group new-group chat)]~
         ==
     ::
     ++  unify-permissions
@@ -147,11 +145,20 @@
     ::
     ++  hookup-group
       |=  [group=path =kind]
-      ^-  card
-      %^  make-poke  %permission-group-hook
-        %permission-group-hook-action
-      !>  ^-  permission-group-hook-action
-      [%associate group [group^kind ~ ~]]
+      ^-  (list card)
+      :*  %^  make-poke  %permission-group-hook
+            %permission-group-hook-action
+          !>  ^-  permission-group-hook-action
+          [%associate group [group^kind ~ ~]]
+        ::
+          =/  =ship  (slav %p (snag 1 group))
+          ?.  =(our.bol ship)  ~
+          :_  ~
+          %^  make-poke  %permission-hook
+            %permission-hook-action
+          !>  ^-  permission-hook-action
+          [%add-owned group group]
+      ==
     ::
     ++  record-group
       |=  [group=path chat=path]
