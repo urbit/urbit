@@ -7,6 +7,8 @@ import Uruk.Fast (acker)
 main ∷ IO ()
 main = do
     getArgs >>= \case
-        [x,y] -> do
-            res <- acker (read $ unpack x) (read $ unpack y)
+        [readMay → Just x,readMay → Just y] -> do
+            res <- acker x y
             print res
+        _ → do
+            putStrLn "usage: urbit-acker x y"

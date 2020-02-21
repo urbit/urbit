@@ -261,6 +261,9 @@ data TypeError = TypeError Text
 data Crash = Crash Val
   deriving (Eq, Ord, Show, Exception)
 
+data BadRef = BadRef Jet Int
+  deriving (Eq, Ord, Show, Exception)
+
 type IOArray = MutableArray RealWorld
 
 emptyRegisterSet ∷ IOArray Val
@@ -374,11 +377,11 @@ execJetBody !j !xs !regs = go (jFast j)
 
     go' ∷ Exp → IO Val
     go' = \case
-        VAL v  → pure v
-        REF i  → pure $ indexArray xs i
-        REC xs → execJet j =<< traverse go xs
-        REC2 x y → do x←go x; y←go y; execJet2 j x y
-        SLF    → pure $ VFun $ FJet (jArgs j) j
+        VAL v    → pure v
+        REF i    → pure $ indexArray xs i
+        REC xs   → join (execJet j <$> traverse go xs)
+        REC2 x y → join (execJet2 j <$> go x <*> go y)
+        SLF      → pure (jetVal j)
 
         IFF c t e → go c >>= \case
             VBol True  → go t
@@ -466,7 +469,13 @@ execJetBody !j !xs !regs = go (jFast j)
             let remArgs = args - sizeofArray xs
             execFun $ FClo remArgs (valFun fv) xs
 
+
 --------------------------------------------------------------------------------
+
+-- rec ∷ Jet →
+
+jetVal ∷ Jet → Val
+jetVal j = VFun $ FJet (jArgs j) j
 
 execJetBody2 ∷ Jet → Val → Val → IO Val
 {-# INLINE execJetBody2 #-}
@@ -474,13 +483,13 @@ execJetBody2 !j !x !y = go (jFast j)
   where
     go ∷ Exp → IO Val
     go = \case
-        VAL v  → pure v
-        REF 0  → pure x
-        REF 1  → pure y
-        REF n  → error "TODO"
-        REC xs → execJet j =<< traverse go xs
-        REC2 x y → do x←go x; y←go y; execJet2 j x y
-        SLF    → pure $ VFun $ FJet (jArgs j) j
+        VAL v    → pure v
+        REF 0    → pure x
+        REF 1    → pure y
+        REF n    → throwIO (BadRef j n)
+        REC xs   → join (execJet j <$> traverse go xs)
+        REC2 x y → join (execJet2 j <$> go x <*> go y)
+        SLF      → pure (jetVal j)
 
         IFF c t e → go c >>= \case
             VBol True  → go t
@@ -569,10 +578,10 @@ execJetBody2 !j !x !y = go (jFast j)
             execFun $ FClo remArgs (valFun fv) xs
 
 
---------------------------------------------------------------------------------
+-- Trivial Example -------------------------------------------------------------
 
-example ∷ Jet
-example = Jet
+exampleJet ∷ Jet
+exampleJet = Jet
     { jArgs = 2
     , jName = error "HACK"
     , jBody = error "HACK"
@@ -582,10 +591,11 @@ example = Jet
   where
     exp = ADD (REF 0) (ADD (REF 1) (REF 1))
 
-runExample ∷ IO Val
-runExample = execJet example (fromList [VNat 3, VNat 4])
+example ∷ IO Val
+example = execJet exampleJet (fromList [VNat 3, VNat 4])
 
---------------------------------------------------------------------------------
+
+-- Ackermann -------------------------------------------------------------------
 
 {-
     ..  $
