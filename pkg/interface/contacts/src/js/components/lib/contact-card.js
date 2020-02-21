@@ -342,7 +342,7 @@ export class ContactCard extends Component {
       : <Sigil
           ship={props.ship}
           size={128}
-          color={currentColor}
+          color={"#" + currentColor}
           key={"avatar" + currentColor} />;
 
     return (
@@ -411,7 +411,7 @@ export class ContactCard extends Component {
       <Sigil
         ship={props.ship}
         size={128}
-        color={hexColor}
+        color={"#" + hexColor}
         key={hexColor} />;
 
     let websiteHref =
