@@ -12,7 +12,9 @@ library:
 
 dependencies:
   - base
+  - bound
   - classy-prelude
+  - deriving-compat
   - flat
   - lens
   - megaparsec

@@ -1,6 +1,7 @@
 module Moon.Parser where
 
 import ClassyPrelude hiding (many, last, init, try, exp, some)
+import Bound
 import Control.Lens
 import Control.Monad.State.Lazy
 import Moon.AST
@@ -86,23 +87,23 @@ tag = try (char '%' >> sym)
 
 -- Grammar ---------------------------------------------------------------------
 
-exp :: Parser Exp
+exp :: Parser AST
 exp = irregular <|> rune
 
-cns ∷ [Exp] → Exp
-cns []     = Sig
+cns ∷ [AST] → AST
+cns []     = ASig
 cns [x]    = x
-cns (x:xs) = Con x (cns xs)
+cns (x:xs) = ACon x (cns xs)
 
-app ∷ [Exp] → Exp
-app []     = Sig
+app ∷ [AST] → AST
+app []     = ASig
 app [x]    = x
 app (x:xs) = go x xs
  where
   go acc []     = acc
-  go acc (x:xs) = go (App acc x) xs
+  go acc (x:xs) = go (AApp acc x) xs
 
-lam ∷ Parser Exp
+lam ∷ Parser AST
 lam = do
   char '<'
   binds ← some (try (sym <* char ' '))
@@ -110,21 +111,21 @@ lam = do
   char '>'
   pure (lambdify binds body)
 
-lambdify ∷ [Text] → Exp → Exp
+lambdify ∷ [Text] → AST → AST
 lambdify binds body = go body binds
  where
   go acc []     = acc
-  go acc (b:bs) = Lam b (go acc bs)
+  go acc (b:bs) = ALam b (go acc bs)
 
-irregular :: Parser Exp
+irregular :: Parser AST
 irregular =
   inWideMode $ choice
     [ lam
     , cns <$> grouped "[" " " "]" exp
-    , Lit <$> atom
+    , ALit <$> atom
     , app <$> grouped "(" " " ")" exp
-    , Var <$> sym
-    , Sig <$ char '~'
+    , AVar <$> sym
+    , ASig <$ char '~'
     ]
   where
     tagTy = char '$' *> (atom <|> utf8Atom <$> sym)
@@ -134,7 +135,7 @@ irregular =
       c <- exp
       pure (tag, c)
 
-rune ∷ Parser Exp
+rune ∷ Parser AST
 rune = runeSwitch
   [ ("|=", rune2 lambdify lamArgs exp)
   ]
@@ -288,8 +289,8 @@ hoonFile = do
   eof
   pure h
 
-parseExp ∷ Text → Either Text Exp
-parseExp txt =
+parseAST ∷ Text → Either Text AST
+parseAST txt =
   runParser (evalStateT hoonFile Tall) "stdin" txt & \case
     Left  e → Left (pack $ errorBundlePretty e)
     Right x → pure x
