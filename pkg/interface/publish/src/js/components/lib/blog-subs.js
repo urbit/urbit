@@ -51,7 +51,7 @@ export class BlogSubs extends Component {
       .split(/[\s,]+/)
       .map(t => t.trim());
 
-    let valid = tokens.reduce((valid, s) => 
+    let valid = tokens.reduce((valid, s) =>
       valid && ((s !== '~') && urbitOb.isValidPatp(s) && s.includes('~')), true);
 
     if (valid) {
@@ -86,7 +86,7 @@ export class BlogSubs extends Component {
 
   render() {
     let back = '<- Back to notes'
-    
+
     let subscribers = this.props.subs.map((sub, i) => {
       return (
         <div className="flex w-100" key={i+1}>
@@ -113,7 +113,7 @@ export class BlogSubs extends Component {
         </p>
         <div className="flex">
           <div className="flex-col w-100">
-            <p className="body-regular-400">Members</p> 
+            <p className="body-regular-400">Members</p>
             <p className="gray-50 label-small-2"
               style={{marginTop:12, marginBottom: 23}}>
               Everyone subscribed to this notebook
@@ -121,7 +121,7 @@ export class BlogSubs extends Component {
             {subscribers}
           </div>
           <div className="flex-col w-100">
-            <p className="body-regular-400">Invite</p> 
+            <p className="body-regular-400">Invite</p>
             <p className="gray-50 label-small-2"
               style={{marginTop:12, marginBottom: 23}}>
               Invite people to subscribe to this notebook

@@ -5,7 +5,7 @@
 ::    configured for them as `access-control`.
 ::
 /-  *permission-hook
-/+  *permission-json, default-agent
+/+  *permission-json, default-agent, verb, dbug
 ::
 |%
 +$  state
@@ -26,6 +26,8 @@
 =|  state-0
 =*  state  -
 ::
+%-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -140,7 +142,7 @@
         ==
       ::  delete the permission path and its subscriptions from this hook.
       ::
-      :-  :-  [%give %kick `[%permission path.act] ~]
+      :-  :-  [%give %kick [%permission path.act]~ ~]
           (leave-permission path.act)
       %_  state
         synced  (~(del by synced) path.act)
@@ -278,7 +280,7 @@
   ^-  (list card)
   %+  turn  ~(tap in access-paths)
   |=  access-path=path
-  [%give %kick `[%permission access-path] `check-ship]
+  [%give %kick [%permission access-path]~ `check-ship]
 ::
 ++  permission-scry
   |=  pax=path
@@ -313,7 +315,7 @@
 ++  update-subscribers
   |=  [=path upd=permission-update]
   ^-  card
-  [%give %fact `path %permission-update !>(upd)]
+  [%give %fact ~[path] %permission-update !>(upd)]
 ::
 ++  leave-permission
   |=  =path

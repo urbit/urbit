@@ -33,7 +33,12 @@ CFLAGS := $(CFLAGS)
 all: $(all_exes)
 
 test: $(test_exes)
-	for x in $^; do echo "\n$$x" && ./$$x; done
+	@FAIL=0;                                         \
+	for x in $^;                                     \
+	do echo "\n$$x" && ./$$x;                        \
+	if [ $$? != 0 ]; then FAIL=1; fi;                \
+	done;                                            \
+	if [ $$FAIL != 0 ]; then echo "\n" && exit 1; fi;
 
 clean:
 	rm -f ./tags $(all_objs) $(all_exes)

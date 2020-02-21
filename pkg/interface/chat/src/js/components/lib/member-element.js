@@ -16,14 +16,14 @@ export class MemberElement extends Component {
     let actionElem;
     if (props.ship === props.owner) {
       actionElem = (
-        <p className="w-20 dib list-ship black f8 c-default">
+        <p className="w-20 dib list-ship black white-d f8 c-default">
           Host
         </p>
       );
     } else if (window.ship !== props.ship && window.ship === props.owner) {
       actionElem = (
         <a onClick={this.onRemove.bind(this)}
-           className="w-20 dib list-ship black f8 pointer">
+           className="w-20 dib list-ship black white-d f8 pointer">
            Ban
         </a>
       );
@@ -38,7 +38,7 @@ export class MemberElement extends Component {
         <Sigil ship={props.ship} size={32} />
         <p
           className={
-            "w-70 mono list-ship dib v-mid black ml2 nowrap f8"
+            "w-70 mono list-ship dib v-mid black white-d ml2 nowrap f8"
           }>
           ~{props.ship}
         </p>

@@ -77,7 +77,7 @@ export class Pubs extends Component {
 
     let invites = (this.props.invites.length > 0);
     let unread = (this.props.unread.length > 0);
-    
+
     return (
       <div>
         <HM invites={invites} unread={unread}/>

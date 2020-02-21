@@ -145,7 +145,7 @@ _cv_nock_poke(u3_noun ovo)
     c3_c*   tox_c = u3r_string(tox);
 
     u3l_log("poke: %%%s (%x) on %s\r\n", ovi_c, u3r_mug(ovo), tox_c);
-    free(tox_c); free(ovi_c); u3z(tox);
+    c3_free(tox_c); c3_free(ovi_c); u3z(tox);
   }
 #endif
 
@@ -162,7 +162,7 @@ _cv_nock_poke(u3_noun ovo)
     } else {
       u3l_log("  happy: %s: %d\r\n", ovi_c, u3kb_lent(u3k(u3h(pro))));
     }
-    free(ovi_c);
+    c3_free(ovi_c);
   }
 #endif
 

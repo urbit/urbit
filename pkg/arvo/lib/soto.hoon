@@ -83,7 +83,7 @@
   ++  wush
     |=  [wid=@u tan=tang]
     ^-  tape
-    %-  of-wall:format 
+    %-  of-wall:format
     %+  turn  (flop tan)
     |=  =tank
     ~!  wid

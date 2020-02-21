@@ -12,7 +12,7 @@ export default class Header extends Component {
     super(props);
     this.interval = null;
     this.timeout = null;
-    
+
     this.state = {
       moment: moment()
     };
@@ -20,7 +20,7 @@ export default class Header extends Component {
 
   componentDidMount() {
     let sec = parseInt(moment().format("s"), 10);
-    
+
     this.timeout = setTimeout(() => {
       this.setState({
         moment: moment()
@@ -32,7 +32,7 @@ export default class Header extends Component {
       }, 60000);
     }, (60 - sec) * 1000);
   }
-  
+
   componentWillUnmount() {
     clearTimeout(this.timeout);
     clearInterval(this.interval);

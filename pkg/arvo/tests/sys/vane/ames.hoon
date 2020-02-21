@@ -205,7 +205,7 @@
   ::
     %+  expect-eq
       !>  [~[/g/talk] %give %boon [%post 'first1!!']]
-      !>  (snag 1 `(list move:ames)`moves6)
+      !>  (snag 0 `(list move:ames)`moves6)
   ==
 ::
 ++  test-nack  ^-  tang

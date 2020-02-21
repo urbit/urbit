@@ -169,7 +169,7 @@
 ++  update-subscribers
   |=  [pax=path upd=invite-update]
   ^-  card
-  [%give %fact `pax %invite-update !>(upd)]
+  [%give %fact ~[pax] %invite-update !>(upd)]
 ::
 ++  send-diff
   |=  [pax=path upd=invite-update]

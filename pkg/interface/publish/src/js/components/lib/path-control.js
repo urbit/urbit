@@ -32,7 +32,7 @@ export class PathControl extends Component {
           (last.lastMatch === '/~publish/:ship/:blog')){
         blog = (last.lastParams.ship.slice(1) == window.ship)
           ?  _.get(this.props, `pubs["${last.lastParams.blog}"]`, false)
-          :  _.get(this.props, 
+          :  _.get(this.props,
             `subs["${last.lastParams.ship.slice(1)}"]["${last.lastParams.blog}"]`, false);
       }
     }

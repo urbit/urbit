@@ -12,7 +12,7 @@ class UrbitApi {
   bind(path, method, ship = this.authTokens.ship, appl = "publish", success, fail) {
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
-    window.urb.subscribe(ship, appl, path, 
+    window.urb.subscribe(ship, appl, path,
       (err) => {
         fail(err);
       },

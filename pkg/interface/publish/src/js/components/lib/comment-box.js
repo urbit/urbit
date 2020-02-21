@@ -52,7 +52,7 @@ export class CommentBox extends Component {
       ?  "body-regular-400 w-100"
       :  "body-regular-400 w-100 gray-30";
     return (
-      <div className="cb w-100 flex" 
+      <div className="cb w-100 flex"
         style={{paddingBottom: 8, marginTop: 32}}>
         <div className="fl" style={{marginRight: 10}}>
           <Sigil ship={this.props.our} size={36}/>
@@ -67,10 +67,10 @@ export class CommentBox extends Component {
             onChange={this.commentChange}
             disabled={(!this.props.enabled)}>
           </textarea>
-          <PostButton 
-            post={this.props.post} 
+          <PostButton
+            post={this.props.post}
             enabled={(Boolean(this.props.content) && this.props.enabled)}
-          /> 
+          />
         </div>
       </div>
     );

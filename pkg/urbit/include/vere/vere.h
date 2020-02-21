@@ -231,7 +231,8 @@
     */
       typedef struct _u3_cttp {
         u3_creq*         ceq_u;             //  request list
-        h2o_http1client_ctx_t*              //
+        h2o_timeout_t    tim_u;             //  request timeout
+        h2o_http1client_ctx_t               //
                          ctx_u;             //  h2o client ctx
         void*            tls_u;             //  client SSL_CTX*
       } u3_cttp;
@@ -394,7 +395,7 @@
           c3_o       diz_o;                 //  spinner activated
           c3_d       eve_d;                 //  spin count
           c3_d       end_d;                 //  spinner end tick (ms)
-          c3_c*      why_c;                 //  spinner label
+          c3_c       why_c[5];              //  spinner label
         } sun_u;
       } u3_utat;
 
@@ -478,6 +479,13 @@
     /* u2_utfo: unix terminfo strings.
     */
       typedef struct {
+        struct {
+          const c3_y* kcuu1_y;              //  key_up
+          const c3_y* kcud1_y;              //  key_down
+          const c3_y* kcub1_y;              //  key_back
+          const c3_y* kcuf1_y;              //  key_forward
+          c3_w        max_w;                //  maximum input sequence length
+        } inn;
         struct {
           const c3_y* clear_y;              //  clear_screen
           const c3_y* el_y;                 //  clr_bol clear to beginning
@@ -864,7 +872,7 @@
       /* u3_term_start_spinner(): prepare spinner state. RETAIN.
       */
         void
-        u3_term_start_spinner(c3_c* why_c, c3_o now_o);
+        u3_term_start_spinner(u3_noun say, c3_o now_o);
 
       /* u3_term_stop_spinner(): reset spinner state and restore input line.
       */

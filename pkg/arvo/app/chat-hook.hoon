@@ -3,7 +3,7 @@
 ::  allow sending chat messages to foreign paths based on write perms
 ::
 /-  *permission-store, *chat-hook, *invite-store
-/+  *chat-json, default-agent, verb
+/+  *chat-json, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
 ::
@@ -31,6 +31,8 @@
 --
 =|  state-zero
 =*  state  -
+::
+%-  agent:dbug
 %+  verb  |
 ^-  agent:gall
 =<
@@ -77,7 +79,7 @@
     ?+  -.sign  (on-agent:def wire sign)
         %watch-ack
       =^  cards  state
-        (watch-ack:cc wire p.sign) 
+        (watch-ack:cc wire p.sign)
       [cards this]
     ::
         %kick
@@ -186,7 +188,7 @@
       :~  (pull-wire [%backlog (weld path.act /0)])
           (pull-wire [%mailbox path.act])
           (delete-permission [%chat path.act])
-          [%give %kick `[%mailbox path.act] ~]~
+          [%give %kick [%mailbox path.act]~ ~]~
       ==
     ?.  |(=(u.ship src.bol) (team:title our.bol src.bol))
       ::  if neither ship = source or source = us, do nothing
@@ -229,7 +231,7 @@
     ?:  ?&(?=(^ backlog-start) (~(got by allow-history) pas))
       (paginate-messages pas u.box u.backlog-start)
     ~
-    [%give %kick `[%backlog pax] `src.bol]~
+    [%give %kick [%backlog pax]~ `src.bol]~
   ==
 ::
 ++  paginate-messages
@@ -302,7 +304,7 @@
   ::  if ship is not permitted, kick their subscription
   =/  mail-path
     (oust [(dec (lent t.pax)) (lent t.pax)] `(list @t)`t.pax)
-  [%give %kick `[%mailbox mail-path] `ship]~
+  [%give %kick [%mailbox mail-path]~ `ship]~
 ::
 ++  fact-chat-update
   |=  [wir=wire fact=chat-update]
@@ -327,11 +329,11 @@
   ::
       %message
     :_  state
-    [%give %fact `[%mailbox path.fact] %chat-update !>(fact)]~
+    [%give %fact [%mailbox path.fact]~ %chat-update !>(fact)]~
   ::
       %messages
     :_  state
-    [%give %fact `[%mailbox path.fact] %chat-update !>(fact)]~
+    [%give %fact [%mailbox path.fact]~ %chat-update !>(fact)]~
   ==
 ::
 ++  handle-foreign

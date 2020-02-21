@@ -121,7 +121,7 @@ export class Subs extends Component {
             <p className="fl body-regular-400" style={{flexBasis:336}}>
               {data.lastUpdated}
             </p>
-            <p className="fl body-regular-400 pointer" 
+            <p className="fl body-regular-400 pointer"
               style={{flexBasis:336}}
               onClick={this.unsubscribe.bind(this, data.host, data.blogId)}>
               Unsubscribe
@@ -148,12 +148,12 @@ export class Subs extends Component {
             <p className="fl body-regular-400" style={{flexBasis:336}}>
             </p>
             <p className="fl body-regular-400" style={{flexBasis:336}}>
-              <span className="green underline pointer" 
+              <span className="green underline pointer"
                 onClick={this.accept.bind(this, data.host, data.blogId)}>
                 Accept
               </span>
               <span>   </span>
-              <span className="red underline pointer" 
+              <span className="red underline pointer"
                 onClick={this.reject.bind(this, data.host, data.blogId)}>
                 Reject
               </span>

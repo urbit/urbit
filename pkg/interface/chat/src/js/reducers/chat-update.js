@@ -26,9 +26,9 @@ export class ChatUpdateReducer {
   messages(json, state) {
     let data = _.get(json, 'messages', false);
     if (data) {
-      state.inbox[data.path].envelopes = 
+      state.inbox[data.path].envelopes =
         data.envelopes.concat(state.inbox[data.path].envelopes);
-      state.inbox[data.path].config.length = 
+      state.inbox[data.path].config.length =
         state.inbox[data.path].config.length + data.envelopes.length;
     }
   }
@@ -60,7 +60,7 @@ export class ChatUpdateReducer {
       delete state.inbox[data.path];
     }
   }
-  
+
   pending(json, state) {
     let msg = _.get(json, 'message', false);
     if (!msg || !state.pendingMessages.has(msg.path)) {
@@ -76,6 +76,6 @@ export class ChatUpdateReducer {
       }
     }
   }
-  
+
 }
 

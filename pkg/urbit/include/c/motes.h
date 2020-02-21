@@ -45,6 +45,7 @@
 #   define c3__basp   c3_s4('b','a','s','p')
 #   define c3__bee    c3_s3('b','e','e')
 #   define c3__bel    c3_s3('b','e','l')
+#   define c3__bbye   c3_s4('b','b','y','e')
 #   define c3__bcbn   c3_s4('b','c','b','n')
 #   define c3__bcbr   c3_s4('b','c','b','r')
 #   define c3__bccb   c3_s4('b','c','c','b')

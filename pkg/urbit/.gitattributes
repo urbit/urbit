@@ -1,0 +1,4 @@
+.gitattributes export-ignore
+tests export-ignore
+hashtable_tests export-ignore
+shell.nix export-ignore

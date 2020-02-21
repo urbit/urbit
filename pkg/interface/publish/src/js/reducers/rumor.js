@@ -21,7 +21,7 @@ export class RumorReducer {
     if (json.who === window.ship) {
       if (json.post) {
         this.removePost(json, state);
-        delete state.pubs[json.coll].posts[json.post]; 
+        delete state.pubs[json.coll].posts[json.post];
       } else {
 
         let postIds = Object.keys(state.pubs[json.coll].posts);
@@ -38,7 +38,7 @@ export class RumorReducer {
     } else {
       if (json.post) {
         this.removePost(json, state);
-        delete state.subs[json.who][json.coll].posts[json.post]; 
+        delete state.subs[json.who][json.coll].posts[json.post];
       } else {
         let postIds = Object.keys(state.subs[json.who][json.coll].posts);
         postIds.forEach((postId) => {
@@ -74,7 +74,7 @@ export class RumorReducer {
       if (state.pubs[json.coll]) {
         let pinIdx   = state.pubs[json.coll].order.pin.indexOf(json.post);
         let unpinIdx = state.pubs[json.coll].order.unpin.indexOf(json.post);
-        
+
         if (pinIdx != -1) {
           _.pullAt(state.pubs[json.coll].order.pin, [pinIdx]);
         }
@@ -84,11 +84,11 @@ export class RumorReducer {
       }
     } else {
       if (state.subs[json.who][json.coll]) {
-        let pinIdx   = 
+        let pinIdx   =
           state.subs[json.who][json.coll].order.pin.indexOf(json.post);
-        let unpinIdx = 
+        let unpinIdx =
           state.subs[json.who][json.coll].order.unpin.indexOf(json.post);
-        
+
         if (pinIdx != -1) {
           _.pullAt(state.subs[json.who][json.coll].order.pin, [pinIdx]);
         }
@@ -167,7 +167,7 @@ export class RumorReducer {
       return;
     }
 
-    this.insertLatest(json, state); 
+    this.insertLatest(json, state);
     this.insertUnread(json, state);
     this.insertOrder(json, state);
   }
