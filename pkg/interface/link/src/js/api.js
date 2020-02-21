@@ -181,6 +181,16 @@ class UrbitApi {
     });
   }
 
+  setSpinner(boolean) {
+    store.handleEvent({
+      data: {
+        local: {
+          spinner: boolean
+        }
+      }
+    })
+  }
+
 }
 
 export let api = new UrbitApi();

@@ -42,15 +42,17 @@ export class LinkDetail extends Component {
   onClickPost() {
     let url = this.props.url || "";
 
-    let request = api.postComment(
+    api.setSpinner(true);
+
+    api.postComment(
       this.props.groupPath,
       url,
       this.state.comment
-    );
-
-    if (request) {
+    ).then(() => {
+      api.setSpinner(false);
       this.setState({ comment: "" });
-    }
+    });
+
   }
 
   setComment(event) {
@@ -75,7 +77,7 @@ export class LinkDetail extends Component {
     const { nickname } = getContactDetails(props.contacts[ship]);
 
     let activeClasses = this.state.comment
-      ? "black b--black pointer"
+      ? "black white-d pointer"
       : "gray2 b--gray2";
 
     return (
@@ -122,7 +124,7 @@ export class LinkDetail extends Component {
               />
               <button
                 className={
-                  "f8 bg-gray0-d white-d ml2 absolute " + activeClasses
+                  "f8 bg-gray0-d ml2 absolute " + activeClasses
                 }
                 disabled={!this.state.comment}
                 onClick={this.onClickPost.bind(this)}
