@@ -72,6 +72,10 @@ a {
   mix-blend-mode: difference;
 }
 
+.focus-b--black:focus {
+  border-color: #000;
+}
+
 .embed-container {
   position: relative;
   height: 0;
@@ -162,6 +166,9 @@ a {
   }
   .b--gray2-d {
     border-color: #7f7f7f;
+  }
+  .b--white-d {
+    border-color: #fff;
   }
   .bb-d {
     border-bottom-width: 1px;

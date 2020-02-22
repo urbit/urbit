@@ -71,6 +71,10 @@ a {
   font-family: "Inter", sans-serif;
 }
 
+.focus-b--black:focus {
+  border-color: #000;
+}
+
 .spin-active {
   animation: spin 2s infinite;
 }

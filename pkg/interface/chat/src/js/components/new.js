@@ -181,7 +181,8 @@ export class NewScreen extends Component {
       : "pointer db f9 gray2 ba bg-gray0-d pa2 pv3 ph4 b--gray3";
 
     let idClasses =
-      "f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 ";
+      "f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 " +
+      "focus-b--black focus-b--white-d ";
     if (state.groups.length > 0) {
       idClasses = idClasses + " o-40";
     }

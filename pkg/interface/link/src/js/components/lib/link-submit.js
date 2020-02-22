@@ -7,7 +7,8 @@ export class LinkSubmit extends Component {
     this.state = {
       linkValue: "",
       linkTitle: "",
-      linkValid: false
+      linkValid: false,
+      submitFocus: false
     };
     this.setLinkValue = this.setLinkValue.bind(this);
     this.setLinkTitle = this.setLinkTitle.bind(this);
@@ -57,8 +58,12 @@ export class LinkSubmit extends Component {
   render() {
     let activeClasses = this.state.linkValid ? "green2 pointer" : "gray2";
 
+    let focus = (this.state.submitFocus)
+      ? "b--black b--white-d"
+      : "b--gray4 b--gray2-d"
+
     return (
-      <div className="relative ba b--gray4 b--gray2-d br1 w-100 mb6">
+      <div className={"relative ba br1 w-100 mb6 " + focus}>
         <textarea
           className="pl2 bg-gray0-d white-d w-100 f8"
           style={{
@@ -68,6 +73,8 @@ export class LinkSubmit extends Component {
           }}
           placeholder="Paste link here"
           onChange={this.setLinkValue}
+          onBlur={() => this.setState({submitFocus: false})}
+          onFocus={() => this.setState({submitFocus: true})}
           spellCheck="false"
           rows={1}
           onKeyPress={e => {
@@ -87,6 +94,8 @@ export class LinkSubmit extends Component {
           }}
           placeholder="Enter title"
           onChange={this.setLinkTitle}
+          onBlur={() => this.setState({ submitFocus: false })}
+          onFocus={() => this.setState({ submitFocus: true })}
           spellCheck="false"
           rows={1}
           onKeyPress={e => {

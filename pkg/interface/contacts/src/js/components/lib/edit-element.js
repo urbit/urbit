@@ -29,7 +29,7 @@ export class EditElement extends Component {
           <div className="w-100 flex">
             <textarea
               ref={props.title}
-              className="w-100 ba pl3 b--gray4"
+              className="w-100 ba pl3 b--gray4 focus-b--black"
               style={ inputStyles }
               onChange={(e) => {
                 let val = (' ' + e.target.value).slice(1);

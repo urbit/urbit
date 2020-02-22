@@ -12,7 +12,8 @@ export class LinkDetail extends Component {
     super(props);
     this.state = {
       comment: "",
-      data: props.data
+      data: props.data,
+      commentFocus: false
     };
 
     this.setComment = this.setComment.bind(this);
@@ -80,6 +81,10 @@ export class LinkDetail extends Component {
       ? "black white-d pointer"
       : "gray2 b--gray2";
 
+    let focus = (this.state.commentFocus)
+      ? "b--black b--white-d"
+      : "b--gray4 b--gray2-d"
+
     return (
       <div className="h-100 w-100 overflow-hidden flex flex-column">
         <div
@@ -111,7 +116,7 @@ export class LinkDetail extends Component {
               linkIndex={props.linkIndex}
               time={this.state.data.time}
             />
-            <div className="relative ba br1 b--gray4 b--gray2-d mt6 mb6">
+            <div className={"relative ba br1 mt6 mb6 " + focus}>
               <textarea
                 className="w-100 bg-gray0-d white-d f8 pa2 pr8"
                 style={{
@@ -120,6 +125,8 @@ export class LinkDetail extends Component {
                 }}
                 placeholder="Leave a comment on this link"
                 onChange={this.setComment}
+                onFocus={() => this.setState({commentFocus: true})}
+                onBlur={() => this.setState({commentFocus: false})}
                 value={this.state.comment}
               />
               <button

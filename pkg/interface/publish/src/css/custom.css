@@ -258,6 +258,10 @@ md img {
   margin-bottom: 8px;
 }
 
+.focus-b--black:focus {
+  border-color: #000;
+}
+
 .spin-active {
   animation: spin 2s infinite;
 }
