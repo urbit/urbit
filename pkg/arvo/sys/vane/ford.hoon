@@ -5,10 +5,10 @@
 ::    A Ford build is a function of the Urbit namespace and a date that
 ::    produces marked, typed data or an error.
 ::
-::    The function in the definition of a build is called a "schematic,"
+::    The function in the definition of a build is called a "plan,"
 ::    and it's represented by a Hoon data structure with twenty-five sub-types.
-::    A schematic is a (possibly trivial) DAG of sub-builds to be performed.
-::    The different schematic sub-types transform the results of their
+::    A plan is a (possibly trivial) DAG of sub-builds to be performed.
+::    The different plan sub-types transform the results of their
 ::    sub-builds in different ways.
 ::
 ::    We call the date in the definition of a build the "formal date" to
@@ -21,11 +21,11 @@
 ::    We can now say Ford is a functional build system, since each build is a
 ::    function. We have not yet explained how it's a functional reactive build
 ::    system. With Ford, you can subscribe to results of a build. Ford tracks
-::    the result of a "live" build consisting of a static schematic and the
+::    the result of a "live" build consisting of a static plan and the
 ::    ever-changing current date. Whenever this live build's result changes,
 ::    Ford sends you the new result and the formal date of the build (the date
 ::    which would cause the same result if you asked Ford to build that
-::    schematic again). This is a push-based FRP paradigm.
+::    plan again). This is a push-based FRP paradigm.
 ::
 ::    The implementation is event-driven, like the rest of Urbit. While
 ::    performing a build, Ford registers each namespace access as a dependency
@@ -43,18 +43,18 @@
 ::    on any of the changed files and send its subscribers the new results.
 ::
 ::    This matches the semantics of live builds defined above. If someone had
-::    asked for a build of the schematic with a formal date d2 just before the
+::    asked for a build of the plan with a formal date d2 just before the
 ::    changed Clay files, Ford would respond with the result of the previous
 ::    build with formal date d1, which would still be an accurate
-::    representation of the schematic's result at d2, since Ford knows none of
+::    representation of the plan's result at d2, since Ford knows none of
 ::    its dependencies changed between d1 and d2.
 ::
 ::    Note that Ford can only calculate dependencies after running a build,
 ::    not before. This is because Ford can be thought of as an interpreter for
-::    schematics, rather than a compiler, in the sense that it can't have a
+::    plans, rather than a compiler, in the sense that it can't have a
 ::    dependency-gathering step followed by a build step. The dependencies of
-::    some schematics must be calculated based on results, e.g. the %alts
-::    schematic, which tries a sequence of sub-builds until one succeeds. If
+::    some plans must be calculated based on results, e.g. the %alts
+::    plan, which tries a sequence of sub-builds until one succeeds. If
 ::    the first sub-build succeeds, the build depends only on that first
 ::    sub-build, but if the first fails and the second succeeds, the build
 ::    depends on both.
@@ -96,9 +96,9 @@
 ::
 ::    %keep: resize caches
 ::
-::      Ford maintains two caches: a :compiler-cache that stores
+::      Ford maintains two caches: a .hoon-cache that stores
 ::      content-addressed compiler operations, such as parsing, compiling,
-::      and type inference; and a :build-cache that stores previously
+::      and type inference; and a .build-cache that stores previously
 ::      completed build trees along with their results and dependency tracking.
 ::
 ::      The %keep command resets the maximum sizes of these caches, deleting
@@ -131,358 +131,132 @@
 ::
 =>  =~
 |%
-::  +move: arvo moves that ford can emit
+::  $move: arvo moves that ford can emit
 ::
-+=  move
-  ::
-  $:  ::  duct: request identifier
-      ::
-      =duct
-      ::  card: move contents; either a +note or a +gift:able
-      ::
-      card=(wind note gift:able)
-  ==
-::  +note: private request from ford to another vane
++$  move  [=duct card=(wind note gift:able)]
+::  $note: private request from ford to another vane
 ::
 +$  note
   $~  [%c %warp *@p *riff:clay]
-  $%  ::  %c: to clay
-      ::
-      $:  %c
-          ::  %warp: internal (intra-ship) file request
-          ::
-          $>(%warp task:able:clay)
-  ==  ==
-::  +sign: private response from another vane to ford
+  $%  [%c $>(%warp task:able:clay)]
+  ==
+::  $sign: private response from another vane to ford
 ::
 +$  sign
   $~  [%c %writ *riot:clay]
-  $?  ::  %c: from clay
-      ::
-      ::    XX also from behn due to %slip asynchronicity
-      ::
-      $:  ?(%b %c)
-          $>  $?  ::  %writ: internal (intra-ship) file response
-                  ::
-                  %writ
-                  ::  %wris: response to %mult; many changed files
-                  ::
-                  %wris
-              ==
-          gift:able:clay
-  ==  ==
+  [?(%b %c) $>($?(%writ %wris) gift:able:clay)]
 --
 |%
-::  +axle: overall ford state
+::  $axle: versioned ford state
 ::
-+=  axle
-  $:  ::  date: date at which ford's state was updated to this data structure
-      ::
-      date=%~2018.12.13
-      ::  state: all persistent state
-      ::
-      state=ford-state
-  ==
-::  +ford-state: all state that ford maintains
++$  axle  [%0 state=ford-state]
+::  $ford-state: all state that ford maintains
 ::
-+=  ford-state
-  $:  ::  builds: per-build state machine for all builds
-      ::
-      ::    Ford holds onto all in-progress builds that were either directly
-      ::    requested by a duct (root builds) or that are dependencies
-      ::    (sub-builds) of a directly requested build.
-      ::
-      ::    It also stores the last completed version of each live build tree
-      ::    (root build and sub-builds), and any cached builds.
-      ::
-      builds=(map build build-status)
-      ::  ducts: per-duct state machine for all incoming ducts (build requests)
-      ::
-      ::    Ford tracks every duct that has requested a build until it has
-      ::    finished dealing with that request.
-      ::
-      ::    For live ducts, we store the duct while we repeatedly run new
-      ::    versions of the live build it requested until it is explicitly
-      ::    canceled by the requester.
-      ::
-      ::    A once (non-live) duct, on the other hand, will be removed
-      ::    as soon as the requested build has been completed.
-      ::
-      ducts=(map duct duct-status)
-      ::  builds-by-schematic: all attempted builds, sorted by time
-      ::
-      ::    For each schematic we've attempted to build at any time,
-      ::    list the formal dates of all build attempts, sorted newest first.
-      ::
-      builds-by-schematic=(map schematic (list @da))
-      ::  pending-scrys: outgoing requests for static resources
-      ::
+::    Ford tracks every duct that has requested a build until it has
+::    finished dealing with that request.
+::
+::    For live ducts, we store the duct while we repeatedly run new
+::    versions of the live build it requested until it is explicitly
+::    canceled by the requester.
+::
+::    A once (non-live) duct, on the other hand, will be removed
+::    as soon as the requested build has been completed.
+::
+::    ducts: per-duct state machine for all incoming ducts (build requests)
+::    pending-scrys: outgoing requests for static resources
+::    pending-subscriptions: outgoing subscriptions on live resources
+::    hoon-cache: cache of compiler operations and results
+::
++$  ford-state
+  $:  ducts=(map duct duct-status)
       pending-scrys=(request-tracker scry-request)
-      ::  pending-subscriptions: outgoing subscriptions on live resources
-      ::
       pending-subscriptions=(request-tracker subscription)
-      ::  build-cache: fifo queue of completed root builds
-      ::
-      $=  build-cache
-      $:  ::  next-anchor-id: incrementing identifier for cache anchors
-          ::
-          next-anchor-id=@ud
-          ::  queue: fifo queue of root builds identified by anchor id
-          ::
-          queue=(capped-queue build-cache-key)
-      ==
-      ::  compiler-cache: clock based cache of build results
-      ::
-      compiler-cache=(clock compiler-cache-key build-result)
+      =hoon-cache
   ==
-::  +anchor: something which holds on to builds
+::  $duct-status: information relating a build to a duct
 ::
-::    An anchor is a reference which keeps builds. This is either a %duct, in
-::    which case the build is live because a duct is waiting for a response, or
-::    a %cache, in which case the anchor is a cached build.
+::    live: whether this duct is being run live
+::    date: date of most recent build request
+::    plan: root plan for build request
+::    cur: state of scrys related to this build
+::    pre: scry requests and results from previous build, if any
 ::
-::    When a duct would be removed from a build, the %duct anchor is replaced
-::    with a %cache anchor. This %cache anchor refers to a FIFO queue of cached
-::    builds.
-::
-+=  anchor
-  $%  ::  %duct: this is anchored on a duct
-      ::
-      [%duct =duct]
-      ::  %cache: this is anchored to a cache entry
-      ::
-      [%cache id=@ud]
-  ==
-::  +build-status: current data for a build, including construction status
-::
-::    +build-status stores the construction status of a build as a finite state
-::    machine (:state). It stores links to dependent sub-builds in :subs, and
-::    per-duct client builds in :clients.
-::
-+=  build-status
-  $:  ::  requesters: ducts for whom this build is the root build
-      ::
-      requesters=(set anchor)
-      ::  clients: per duct information for this build
-      ::
-      clients=(jug anchor build)
-      ::  subs: sub-builds of this build, for whom this build is a client
-      ::
-      subs=(map build build-relation)
-      ::  state: a state machine for tracking the build's progress
-      ::
-      $=  state
-      $%  $:  ::  %untried: build has not been started yet
-              ::
-              %untried  ~
-          ==
-          $:  ::  %blocked: build blocked on either sub-builds or resource
-              ::
-              ::    If we're in this state and there are no blocks in :subs,
-              ::    then we're blocked on a resource.
-              ::
-              %blocked  ~
-          ==
-          $:  ::  %unblocked: we were blocked but now we aren't
-              ::
-              %unblocked  ~
-          ==
-          $:  ::  %complete: build has finished running and has a result
-              ::
-              %complete
-              ::  build-record: the product of the build, possibly tombstoned
-              ::
-              =build-record
-  ==  ==  ==
-::  +duct-status: information relating a build to a duct
-::
-+=  duct-status
-  $:  ::  live: whether this duct is being run live
-      ::
-      $=  live
-      $%  [%once in-progress=@da]
-          $:  %live
-              ::
-              ::
-              in-progress=(unit @da)
-              ::  the last subscription we made
-              ::
-              ::    This can possibly have an empty set of resources, in which
-              ::    we never sent a move.
-              ::
-              ::    NOTE: This implies that a single live build can only depend
-              ::    on live resources from a single disc. We don't have a
-              ::    working plan for fixing this and will need to think very
-              ::    hard about the future.
-              ::
-              last-sent=(unit [date=@da subscription=(unit subscription)])
-      ==  ==
-      ::  root-schematic: the requested build for this duct
-      ::
-      root-schematic=schematic
-  ==
-::  +build-relation: how do two builds relate to each other?
-::
-::    A +build-relation can be either :verified or not, and :blocked or not.
-::    It is a symmetric relation between two builds, in the sense that both
-::    the client and the sub will store the same relation, just pointing to
-::    the other build.
-::
-::    If it's not :verified, then the relation is a guess based on previous
-::    builds. These guesses are used to ensure that we hold onto builds we
-::    expect to be used in future builds. Each time we run +make on a build,
-::    it might produce new :verified sub-builds, which may have been unverified
-::    until then. Once a build completes, any unverified sub-builds must be
-::    cleaned up, since it turned out they weren't used by the build after all.
-::
-::    :blocked is used to note that a build can't be completed until that
-::    sub-build has been completed. A relation can be :blocked but not :verified
-::    if we're trying to promote a build, but we haven't run all its sub-builds
-::    yet. In that case, we'll try to promote or run the sub-build in order to
-::    determine whether we can promote the client. Until the sub-build has been
-::    completed, the client is provisionally blocked on the sub-build.
-::
-+=  build-relation
-  $:  ::  verified: do we know this relation is real, or is it only a guess?
-      ::
-      verified=?
-      ::  is this build blocked on this other build?
-      ::
-      blocked=?
-  ==
-::  +build-record: information associated with the result of a completed +build
-::
-+=  build-record
-  $%  $:  ::  %tombstone: the build's result has been wiped
-          ::
-          %tombstone  ~
-      ==
-      $:  ::  %value: we have the +build-result
-          ::
-          %value
-          ::  last-accessed: last time we looked at the result
-          ::
-          ::    This is used for LRU cache reclamation.
-          ::
-          last-accessed=@da
-          ::  build-result: the stored value of the build's product
-          ::
-          =build-result
-  ==  ==
-::  +build: a referentially transparent request for a build
-::
-::    Each unique +build will always produce the same +build-result
-::    when run (if it completes). A live build consists of a sequence of
-::    instances of +build with the same :schematic and increasing :date.
-::
-+=  build
-  $:  ::  date: the formal date of this build; unrelated to time of execution
-      ::
++$  duct-status
+  $:  live=?
       date=@da
-      ::  schematic: the schematic that determines how to run this build
-      ::
-      =schematic
+      =plan
+      cur=scry-results
+      pre=(unit subscription)
   ==
+::  $build: a referentially transparent request for a build
+::
+::    Each unique $build will always produce the same $build-result
+::    when run (if it completes). A live build consists of a sequence of
+::    instances of $build with the same .plan and increasing .date.
+::
+::    date: formal date of this build; unrelated to time of execution
+::    plan: the plan for how to run this build
+::
++$  build  [date=@da =plan]
 ::  +request-tracker: generic tracker and multiplexer for pending requests
 ::
-++  request-tracker
-  |*  request-type=mold
-  %+  map  request-type
-  $:  ::  waiting: ducts blocked on this request
-      ::
-      waiting=(set duct)
-      ::  originator: the duct that kicked off the request
-      ::
-      originator=duct
-  ==
+::    waiting: ducts blocked on a request
+::    originator: the duct that kicked off the request
+::
++$  request-tracker
+  |$  request-type=mold
+  (map request-type [waiting=(set duct) originator=duct])
+::
++$  scry-results  (map scry-request (unit (unit cage)))
 ::  +subscription: a single subscription to changes on a set of resources
 ::
-+=  subscription
-  $:  ::  date: date this was made
-      ::
-      date=@da
-      ::  disc: ship and desk for all :resources
-      ::
-      =disc
-      ::  resources: we will be notified if any of these resources change
-      ::
-      resources=(set resource)
-  ==
+::    date: subscription formal start date
+::    disc: ship and desk for all .resources
+::    resources: we will be notified if any of these resources change
+::
++$  subscription  [date=@da =disc resources=(set resource)]
 ::  +scry-request: parsed arguments to a scry operation
 ::
-+=  scry-request
-  $:  ::  vane: the vane from which to make the request
-      ::
-      ::    If we add other vanes in the future, this will become a fork type.
-      ::    For now, though, Ford only knows how to make asynchronous scry
-      ::    requests to Clay.
-      ::
-      vane=%c
-      ::  care: type of request
-      ::
-      care=care:clay
-      ::  beam: request path
-      ::
-      =beam
-  ==
-::  +compiler-cache-key: content addressable build definitions
+::    If we add other vanes in the future, this will become a fork type.
+::    For now, though, Ford only knows how to make asynchronous scry
+::    requests to Clay.
 ::
-+=  compiler-cache-key
+::    vane: the vane from which to make the request
+::    care: type of request
+::    beam: request path
+::
++$  scry-request  [vane=%c =care:clay =beam]
+::  $product: result of running a $build
+::
+::    ~         block; no referentially transparent answer     
+::    `&+cage:  success
+::    `|+tang:  failure, with $tang error message
+::
++$  product  (unit (each cage tang))
+::  $progress: state of an in-progress $build
+::
++$  progress
+  $:  blocks=(set scry-request)
+      live-resources=(set resource)
+      =hoon-cache
+  ==
+::  $hoon-cache: cache for compiler operations
+::
++$  hoon-cache  (clock hoon-cache-key (each cage tang))
+::  +hoon-cache-key: cache key for a compiler operation
+::
+::    %call: +slam (vase of) gate on (vase of) sample
+::    %hood: parse file into $scaffold
+::    %ride: +slap $hoon against $vase
+::    %slim: infer +slap product type
+::    %slit: infer +slam product type
+::
++$  hoon-cache-key
   $%  [%call gate=vase sample=vase]
       [%hood =beam txt=@t]
       [%ride formula=hoon subject=vase]
       [%slim subject-type=type formula=hoon]
       [%slit gate=type sample=type]
-  ==
-::  +build-cache-key: key for the fifo cache of completed build trees
-::
-+=  build-cache-key
-  $:  ::  id: incrementing identifier for an +anchor
-      ::
-      id=@ud
-      ::  root-build: the root build associated with this anchor
-      ::
-      root-build=build
-  ==
-::  +build-receipt: result of running +make
-::
-::    A +build-receipt contains all information necessary to perform the
-::    effects and state mutations indicated by a call to +make. If :build
-::    succeeded, :result will be %build-result; otherwise, it will be %blocks.
-::
-::    After +make runs on a batch of builds, the resulting +build-receipt's are
-::    applied one at a time.
-::
-+=  build-receipt
-  $:  ::  build: the build we worked on
-      ::
-      =build
-      ::  result: the outcome of this build
-      ::
-      $=  result
-      $%  ::  %build-result: the build produced a result
-          ::
-          $:  %build-result
-              =build-result
-          ==
-          ::  %blocks: the build blocked on the following builds or resource
-          ::
-          $:  %blocks
-              ::  builds: builds that :build blocked on
-              ::
-              builds=(list build)
-          ==
-      ==
-      ::  sub-builds: subbuilds of :build
-      ::
-      ::    While running +make on :build, we need to keep track of any
-      ::    sub-builds that we try to access so we can keep track of
-      ::    component linkages and cache access times.
-      ::
-      sub-builds=(list build)
-      ::  cache-access: if not ~, cache this result as :compiler-cache-key.
-      ::
-      cache-access=(unit [=compiler-cache-key new=?])
   ==
 --
 =,  format
@@ -503,9 +277,9 @@
   =/  sym-no-heps  (cook crip ;~(plug low (star ;~(pose low nud))))
   ::
   (fall (rush a (most hep sym-no-heps)) /[a])
-::  +segments: compute all paths from :path-part, replacing some `/`s with `-`s
+::  +segments: compute all paths from .path-part, replacing some `/`s with `-`s
 ::
-::    For example, when passed a :path-part of 'foo-bar-baz',
+::    For example, when passed a .path-part of 'foo-bar-baz',
 ::    the product will contain:
 ::    ```
 ::    dojo> (segments 'foo-bar-baz')
@@ -534,10 +308,10 @@
   ::
   ?>  ?=(^ s)
   ~[[i.torn s] [(join i.torn i.s) t.s]]
-::  +build-to-tape: convert :build to a printable format
+::  +build-to-tape: convert .build to a printable format
 ::
 ::    Builds often contain the standard library and large types, so
-::    this function should always be called when trying to print a +build.
+::    this function should always be called when trying to print a $build.
 ::
 ++  build-to-tape
   |=  =build
@@ -546,62 +320,62 @@
   ::
   =/  enclose  |=(tape "[{+<}]")
   =/  date=@da  date.build
-  =/  =schematic  schematic.build
+  =/  =plan  plan.build
   ::
   %-  enclose
   %+  welp  (trip (scot %da date))
   %+  welp  " "
   ::
-  ?+      -.schematic
-        :(welp "[" (trip -.schematic) " {<`@uvI`(mug schematic)>}]")
+  ?+      -.plan
+        :(welp "[" (trip -.plan) " {<`@uvI`(mug plan)>}]")
       ::
       %$
     "literal"
   ::
       ^
     %-  enclose
-    ;:(welp $(build [date head.schematic]) " " $(build [date tail.schematic]))
+    ;:(welp $(build [date head.plan]) " " $(build [date tail.plan]))
   ::
       %alts
     ;:  welp
-      %+  roll  choices.schematic
-      |=  [choice=^schematic txt=_"[alts"]
-      :(welp txt " " ^$(schematic.build choice))
+      %+  roll  choices.plan
+      |=  [choice=^plan txt=_"[alts"]
+      :(welp txt " " ^$(plan.build choice))
     ::
       "]"
     ==
   ::
       %core
-    :(welp "[core " (spud (en-beam (rail-to-beam source-path.schematic))) "]")
+    :(welp "[core " (spud (en-beam (rail-to-beam source-path.plan))) "]")
   ::
       %hood
-    :(welp "[hood " (spud (en-beam (rail-to-beam source-path.schematic))) "]")
+    :(welp "[hood " (spud (en-beam (rail-to-beam source-path.plan))) "]")
   ::
       %plan
     ;:  welp
       "[plan "
-      (spud (en-beam (rail-to-beam path-to-render.schematic)))
+      (spud (en-beam (rail-to-beam path-to-render.plan)))
       "]"
     ==
   ::
       %scry
-    (spud (en-beam (extract-beam resource.schematic ~)))
+    (spud (en-beam (extract-beam resource.plan ~)))
   ::
     ::    %slim
-    ::  "slim {<subject-type.schematic>} {<formula.schematic>}"
+    ::  "slim {<subject-type.plan>} {<formula.plan>}"
   ::
       %vale
     ;:  welp
       "[vale ["
-      (trip (scot %p ship.disc.schematic))
+      (trip (scot %p ship.disc.plan))
       " "
-      (trip desk.disc.schematic)
+      (trip desk.disc.plan)
       "] "
-      (trip mark.schematic)
+      (trip mark.plan)
       "]"
     ==
   ==
-::  +rail-to-beam: convert :rail to a +beam, filling in the case with `[%ud 0]`
+::  +rail-to-beam: convert .rail to a +beam, filling in the case with `[%ud 0]`
 ::
 ++  rail-to-beam
   |=  =rail
@@ -671,7 +445,7 @@
   ^-  path
   =/  =term  (cat 3 [vane care]:scry-request)
   [term (en-beam beam.scry-request)]
-::  +path-to-scry-request: parse :path's components into :vane, :care, and :rail
+::  +path-to-scry-request: parse .path's components into .vane, .care, and .rail
 ::
 ++  path-to-scry-request
   |=  =path
@@ -701,8 +475,8 @@
   [p.r.beam [%scry [vane care `rail`[[p q] s]:beam]]]
 ::  +extract-beam: obtain a +beam from a +resource
 ::
-::    Fills case with [%ud 0] for live resources if :date is `~`.
-::    For once resources, ignore :date.
+::    Fills case with [%ud 0] for live resources if .date is `~`.
+::    For once resources, ignore .date.
 ::
 ++  extract-beam
   |=  [=resource date=(unit @da)]  ^-  beam
@@ -716,34 +490,34 @@
 ++  extract-disc
   |=  =resource  ^-  disc
   disc.rail.resource
-::  +get-sub-schematics: find any schematics contained within :schematic
+::  +get-sub-plans: find any plans contained within .plan
 ::
-++  get-sub-schematics
-  |=  =schematic
-  ^-  (list ^schematic)
-  ?-    -.schematic
-      ^      ~[head.schematic tail.schematic]
+++  get-sub-plans
+  |=  =plan
+  ^-  (list ^plan)
+  ?-    -.plan
+      ^      ~[head.plan tail.plan]
       %$     ~
-      %pin   ~[schematic.schematic]
-      %alts  choices.schematic
+      %pin   ~[plan.plan]
+      %alts  choices.plan
       %bake  ~
       %bunt  ~
-      %call  ~[gate.schematic sample.schematic]
-      %cast  ~[input.schematic]
+      %call  ~[gate.plan sample.plan]
+      %cast  ~[input.plan]
       %core  ~
-      %diff  ~[start.schematic end.schematic]
-      %dude  ~[attempt.schematic]
+      %diff  ~[start.plan end.plan]
+      %dude  ~[attempt.plan]
       %hood  ~
-      %join  ~[first.schematic second.schematic]
-      %list  schematics.schematic
-      %mash  ~[schematic.first.schematic schematic.second.schematic]
-      %mute  [subject.schematic (turn mutations.schematic tail)]
-      %pact  ~[start.schematic diff.schematic]
+      %join  ~[first.plan second.plan]
+      %list  plans.plan
+      %mash  ~[plan.first.plan plan.second.plan]
+      %mute  [subject.plan (turn mutations.plan tail)]
+      %pact  ~[start.plan diff.plan]
       %path  ~
       %plan  ~
       %reef  ~
-      %ride  ~[subject.schematic]
-      %same  ~[schematic.schematic]
+      %ride  ~[subject.plan]
+      %same  ~[plan.plan]
       %scry  ~
       %slim  ~
       %slit  ~
@@ -751,87 +525,6 @@
       %volt  ~
       %walk  ~
   ==
-::  +by-schematic: door for manipulating :by-schematic.builds.ford-state
-::
-::    The :dates list for each key in :builds is sorted in reverse
-::    chronological order. These operations access and mutate keys and values
-::    of :builds and maintain that sort order.
-::
-++  by-schematic
-  |_  builds=(map schematic (list @da))
-  ::  +put: add a +build to :builds
-  ::
-  ::    If :build already exists in :builds, this is a no-op.
-  ::    Otherwise, replace the value at the key :schematic.build
-  ::    with a new :dates list that contains :date.build.
-  ::
-  ++  put
-    |=  =build
-    ^+  builds
-    %+  ~(put by builds)  schematic.build
-    ::
-    =/  dates  (~(gut by builds) schematic.build ~)
-    |-
-    ^+  dates
-    ?~  dates
-      [date.build ~]
-    ?:  =(i.dates date.build)
-      dates
-    ?:  (gth date.build i.dates)
-      [date.build dates]
-    [i.dates $(dates t.dates)]
-  ::  +del: remove a +build from :builds
-  ::
-  ::    Removes :build from :builds by replacing the value at
-  ::    the key :schematic.build with a new :dates list with
-  ::    :date.build omitted. If the resulting :dates list is
-  ::    empty, then remove the key-value pair from :builds.
-  ::
-  ++  del
-    |=  =build
-    ^+  builds
-    =.  builds
-      %+  ~(jab by builds)  schematic.build
-      |=  dates=(list @da)
-      ~|  build+build
-      =/  date-index  (need (find [date.build]~ dates))
-      (oust [date-index 1] dates)
-    ::  if :builds has an empty entry for :build, delete it
-    ::
-    =?    builds
-        =(~ (~(got by builds) schematic.build))
-      (~(del by builds) schematic.build)
-    ::
-    builds
-  ::  +find-previous: find the most recent older build with :schematic.build
-  ::
-  ++  find-previous
-    |=  =build
-    ^-  (unit ^build)
-    ::
-    =/  dates=(list @da)  (~(gut by builds) schematic.build ~)
-    ::
-    |-  ^-  (unit ^build)
-    ?~  dates  ~
-    ::
-    ?:  (lth i.dates date.build)
-      `[i.dates schematic.build]
-    $(dates t.dates)
-  ::  +find-next: find the earliest build of :schematic.build later than :build
-  ::
-  ++  find-next
-    |=  =build
-    ^-  (unit ^build)
-    ::
-    =/  dates=(list @da)  (flop (~(gut by builds) schematic.build ~))
-    ::
-    |-  ^-  (unit ^build)
-    ?~  dates  ~
-    ::
-    ?:  (gth i.dates date.build)
-      `[i.dates schematic.build]
-    $(dates t.dates)
-  --
 ::  +get-request-ducts: all ducts waiting on this request
 ::
 ++  get-request-ducts
@@ -855,11 +548,11 @@
 ++  del-request
   |*  [tracker=(request-tracker) request=* =duct]
   ^-  [(unit ^duct) _tracker]
-  ::  remove :duct from the existing :record of this :request
+  ::  remove .duct from the existing .record of this .request
   ::
   =/  record  (~(got by tracker) request)
   =.  waiting.record  (~(del in waiting.record) duct)
-  ::  if no more ducts wait on :request, delete it
+  ::  if no more ducts wait on .request, delete it
   ::
   ?^  waiting.record
     [~ (~(put by tracker) request record)]
@@ -980,7 +673,7 @@
           ::  `/!mark/ evaluate as hoon, then pass through mark
           ::
           (stag %fszp ;~(pfix zap ;~(sfix sym net)))
-          ::  `/mark/` passes current path through :mark
+          ::  `/mark/` passes current path through .mark
           ::
           (stag %fszy ;~(sfix sym net))
         ==
@@ -1041,7 +734,7 @@
       %+  wide-or-tall
         apex(allow-tall-form |)
       ;~(pfix gap apex)
-    ::  +wide-or-tall: parses tall form hoon if :allow-tall-form is %.y
+    ::  +wide-or-tall: parses tall form hoon if .allow-tall-form is %.y
     ::
     ++  wide-or-tall
       |*  [wide=rule tall=rule]
@@ -1084,37 +777,24 @@
 ::      +wipe         wipe the build storage to free memory
 ::      +keep         resize caches, deleting entries if necessary
 ::
-::    The main internal arm is +execute-loop, which is called from +start-build,
-::    +rebuild, and +unblock. +execute defines Ford's build loop.
+::    The main internal arm is +run-root-build, which is called from
+::    +start-build, +rebuild, and +unblock. +run-root-build defines
+::    Ford's build loop.
+::
+::    TODO: extend with |build-core
 ::
 ++  per-event
   ::  moves: the moves to be sent out at the end of this event, reversed
   ::
   =|  moves=(list move)
-  ::  scry-results: responses to scry's to handle in this event
-  ::
-  ::    If a value is `~`, the requested resource is not available.
-  ::    Otherwise, the value will contain a +cage.
-  ::
-  =|  scry-results=(map scry-request (unit cage))
-  ::  next-builds: builds to perform in the next iteration
-  ::
-  =|  next-builds=(set build)
-  ::  candidate-builds: builds which might go into next-builds
-  ::
-  =|  candidate-builds=(set build)
   ::  gate that produces the +per-event core from event information
-  ::
-  ::    Produces a core containing Ford's main build engine.
   ::
   ~%  %f  ..is  ~
   |=  [[our=@p =duct now=@da scry=sley] state=ford-state]
-  ::
   ~%  %per-event  +  ~
   |%
+  +*  event-core  .
   ::  +finalize: extract moves and state from the +per-event core
-  ::
-  ::    Run once at the end of processing an event.
   ::
   ++  finalize
     ^-  [(list move) ford-state]
@@ -1123,58 +803,24 @@
   ::
   ::+|  entry-points
   ::
-  ::  +start-build: perform a fresh +build, either live or once
-  ::
-  ::    This might complete the build, or the build might block on one or more
-  ::    requests for resources. Calls +execute-loop.
+  ::  +start-build: perform a fresh $build, either live or once
   ::
   ++  start-build
     ~/  %start-build
     |=  [=build live=?]
     ^-  [(list move) ford-state]
-    ::
     =<  finalize
-    ::  associate :duct with :build in :ducts.state
+    ::  associate .duct with .build in .ducts.state
     ::
     =.  ducts.state
-      %+  ~(put by ducts.state)  duct
-      :_  schematic.build
+      %+  ~(jab by ducts.state)  duct
+      :_  plan.build
       ?:  live
         [%live in-progress=`date.build last-sent=~]
       [%once in-progress=date.build]
-    ::  register a state machine for :build in :builds.state
     ::
-    =.  state  (add-build build)
-    ::  :anchor: the reason we hold onto the root of this build tree
-    ::
-    =/  =anchor  [%duct duct]
-    ::  register :duct as an anchor in :requesters.build-status
-    ::
-    ::    This establishes :build as the root build for :duct.
-    ::
-    =.  builds.state
-      %+  ~(jab by builds.state)  build
-      |=  =build-status
-      build-status(requesters (~(put in requesters.build-status) anchor))
-    ::  copy :anchor into any preexisting descendants
-    ::
-    ::    Sub-builds will reference :build in their :clients.build-status,
-    ::    using `[%duct duct]` as the key. Some sub-builds might already
-    ::    exist if we've already started running :build, so make sure they
-    ::    know who their daddy is.
-    ::
-    =.  builds.state  (add-anchor-to-subs anchor build)
-    ::  run +execute on :build in a loop until it completes or blocks
-    ::
-    (execute-loop (sy [build ~]))
-  ::  +rebuild: rebuild a live build based on +resource updates
-  ::
-  ::    For every changed resource, run the %scry build for that
-  ::    for that resource. Then rebuild upward using the main +execute-loop
-  ::    until all relevant builds either complete or block on external
-  ::    resources. Use dependency tracking information from the previous
-  ::    run of this live build to inform the dependency tracking for this
-  ::    new rebuild.
+    (run-root-build build live)
+  ::  +rebuild: rebuild a live build based on $resource updates
   ::
   ++  rebuild
     ~/  %rebuild
@@ -1184,260 +830,83 @@
             care-paths=(set [care=care:clay =path])
         ==
     ^-  [(list move) ford-state]
-    ::
-    ~|  [%rebuilding new-date disc]
-    ::
+    ~|  [%rebuilding new-date duct]
     =<  finalize
     ::  mark this subscription as complete now that we've heard a response
     ::
     =.  pending-subscriptions.state
       +:(del-request pending-subscriptions.state subscription duct)
-    ::  for every changed resource, create a %scry build
-    ::
-    =/  builds=(list build)
-      %+  turn  ~(tap in care-paths)
-      |=  [care=care:clay =path]
-      ^-  build
-      ::
-      [new-date [%scry [%c care rail=[disc spur=(flop path)]]]]
-    ::  sanity check; only rebuild live builds, not once builds
-    ::
-    =/  duct-status  (~(got by ducts.state) duct)
-    ?>  ?=(%live -.live.duct-status)
-    ::  sanity check; only rebuild once we've completed the previous one
-    ::
-    ?>  ?=(~ in-progress.live.duct-status)
-    ?>  ?=(^ last-sent.live.duct-status)
-    ::  set the in-progress date for this new build
+    ::  update build date; asserts .live, not in progress, and new date
     ::
     =.  ducts.state
-      %+  ~(put by ducts.state)  duct
-      duct-status(in-progress.live `new-date)
-    ::  copy the previous build's tree as provisional sub-builds
+      %+  ~(jab by ducts.state)  duct
+      |=  =duct-status
+      ?>  =([& ~] [live cur]:duct-status)
+      ?<  =(new-date date.duct-status)
+      duct-status(date new-date)
     ::
-    ::    This provides an upward rebuild path from leaves to root,
-    ::    so that once the %scry builds complete, we'll know to rebuild
-    ::    their clients. This process will continue up through rebuilding
-    ::    the root build.
-    ::
-    ::    If the build at this new date ends up with a different set of
-    ::    dependencies from its previous incarnation, provisional sub-builds
-    ::    that weren't actually used will be removed in
-    ::    +cleanup-orphaned-provisional-builds.
-    ::
-    =/  old-root=build
-      [date.u.last-sent.live.duct-status root-schematic.duct-status]
-    ::
-    =.  state
-      ::
-      ~|  [%duct-doesnt-refer-to-real-build live.duct-status]
-      ~|  [%missing-build (build-to-tape old-root)]
-      ~|  [%dates (~(get by builds-by-schematic.state) root-schematic.duct-status)]
-      ?>  (~(has by builds.state) old-root)
-      ::
-      (copy-build-tree-as-provisional old-root new-date=new-date)
-    ::  gather all the :builds, forcing reruns
-    ::
-    ::    The normal +gather logic would promote the previous results
-    ::    for these %scry builds, since we have subscriptions on them.
-    ::    We pass `force=%.y` to ensure the builds get enqueued instead
-    ::    of promoted.
-    ::
-    =.  ..execute  (gather (sy builds) force=%.y)
-    ::  rebuild resource builds at the new date
-    ::
-    ::    This kicks off the main build loop, which will first build
-    ::    :builds, then rebuild upward toward the root. If the whole
-    ::    build tree completes synchronously, then this will produce
-    ::    %made moves at the end of this event. Otherwise, it will
-    ::    block on resources and complete during a later event.
-    ::
-    (execute-loop ~)
-  ::  +unblock: continue builds that had blocked on :resource
+    (run-root-build new-root-build live=&)
+  ::  +unblock: continue builds that had blocked on .resource
   ::
   ::    A build can be stymied temporarily if it depends on a resource
   ::    that must be fetched asynchronously. +unblock is called when
   ::    we receive a response to a resource request that blocked a build.
   ::
-  ::    We pick up the build from where we left off, starting with the
-  ::    %scry build that blocked on this resource last time we tried it.
+  ::    We rebuild the root build from the beginning, leaning on the
+  ::    cache so that parts that have already been build don't take as
+  ::    long the second time.
   ::
   ++  unblock
     ~/  %unblock
     |=  [=scry-request scry-result=(unit cage)]
     ^-  [(list move) ford-state]
-    ::
     =<  finalize
-    ::  place :scry-result in :scry-results.per-event
-    ::
-    ::    We don't want to call the actual +scry function again,
-    ::    because we already tried that in a previous event and it
-    ::    had no synchronous answer. This +unblock call is a result
-    ::    of the response to the asynchronous request we made to
-    ::    retrieve that resource from another vane.
-    ::
-    ::    Instead, we'll intercept any calls to +scry by looking up
-    ::    the arguments in :scry-results.per-event. This is ok because
-    ::    in this function we attempt to run every +build that had
-    ::    blocked on the resource, so the information is guaranteed
-    ::    to be used during this event before it goes out of scope.
-    ::
-    =.  scry-results  (~(put by scry-results) scry-request scry-result)
-    ::  mark this +scry-request as complete now that we have a response
+    ::  mark this $scry-request as complete now that we have a response
     ::
     =.  pending-scrys.state
       +:(del-request pending-scrys.state scry-request duct)
-    ::  update :unblocked-build's state machine to reflect its new status
+    ::  place .scry-result in cur.duct-status so repeated scry will complete
     ::
-    =/  unblocked-build=build  (scry-request-to-build scry-request)
-    =.  builds.state
-      %+  ~(jab by builds.state)  unblocked-build
-      |=  =build-status
-      build-status(state [%unblocked ~])
-    ::  jump into the main build loop, starting with :unblocked-build
+    =/  =duct-status  (got-duct-status duct)
+    =.  cur.duct-status  (~(put by cur.duct-status) scry-request scry-result)
+    =.  ducts.state  (~(put by ducts.state) duct duct-status)
     ::
-    (execute-loop (sy unblocked-build ~))
-  ::  +wipe: forcibly decimate build results from the state
+    (run-root-build [[date plan] live]:duct-status)
+  ::  +wipe: decimate .hoon-cache.state
   ::
-  ::    +wipe decimates both the :compiler-cache and the results in
-  ::    :builds.state. It removes the specified percentage of build results
-  ::    from the state. For simplicity, it considers the weight of each
-  ::    compiler cache line to be equal to the weight of a build result.
-  ::
-  ::    It deletes cache entries before dipping into :builds.state; it only
-  ::    converts entries in :builds.state to %tombstone's if there aren't
-  ::    enough entries in the compiler cache to sate the request's bloodlust.
-  ::
-  ::    When deleting results from :builds.state, it first sorts them by
-  ::    their :last-accessed date so that the stalest builds are deleted first.
-  ::    We do not touch the :build-cache directly, but because the results
-  ::    of the builds in :build-cache live in :builds.state, the results of
-  ::    both FIFO-cached builds and active builds are all sorted and trimmed.
+  ::    Repeated calls will eventually clear the whole cache.
   ::
   ++  wipe
     ~/  %wipe
     |=  percent-to-remove=@ud
     ^+  state
-    ::  removing 0% is the same as doing nothing, so do nothing
-    ::
     ?:  =(0 percent-to-remove)
-      ~&  %wipe-no-op
+      ~&  %ford-wipe-no-op
       state
     ::
-    ~|  [%wipe percent-to-remove=percent-to-remove]
-    ?>  (lte percent-to-remove 100)
-    ::  find all completed builds, sorted by :last-accessed date
+    =/  num-to-remove=@ud
+      ~|  [%wipe percent-to-remove=percent-to-remove]
+      ?>  (lte percent-to-remove 100)
+      =/  num-total=@ud        size.hoon-cache.state
+      =/  percent-to-keep=@ud  (sub 100 percent-to-remove)
+      =/  num-to-keep=@ud      (div (mul percent-to-keep num-total) 100)
+      (sub num-completed-builds num-to-keep)
     ::
-    =/  completed-builds=(list build)
-      =-  (turn - head)
-      %+  sort
-        ::  filter for builds with a stored +build-result
-        ::
-        %+  skim  ~(tap by builds.state)
-        |=  [=build =build-status]
-        ^-  ?
-        ::
-        ?=([%complete %value *] state.build-status)
-      ::  sort by :last-accessed date
-      ::
-      |=  [[* a=build-status] [* b=build-status]]
-      ^-  ?
-      ::
-      ?>  ?=([%complete %value *] state.a)
-      ?>  ?=([%complete %value *] state.b)
-      ::
-      %+  lte
-        last-accessed.build-record.state.a
-      last-accessed.build-record.state.b
-    ::  determine how many builds should remain after decimation
-    ::
-    ::    This formula has the property that repeated applications
-    ::    of +wipe with anything other than 100% retention rate will
-    ::    always eventually remove every build.
-    ::
-    =/  num-completed-builds=@ud
-      (add (lent completed-builds) size.compiler-cache.state)
-    =/  percent-to-keep=@ud  (sub 100 percent-to-remove)
-    =/  num-to-keep=@ud  (div (mul percent-to-keep num-completed-builds) 100)
-    =/  num-to-remove=@ud  (sub num-completed-builds num-to-keep)
-    ::
-    |^  ^+  state
-        ::
-        =+  cache-size=size.compiler-cache.state
-        ?:  (lte num-to-remove cache-size)
-          (remove-from-cache num-to-remove)
-        =.  compiler-cache.state
-          %~  purge
-            (by-clock compiler-cache-key build-result)
-          compiler-cache.state
-        (tombstone-builds (sub num-to-remove cache-size))
-    ::
-    ++  remove-from-cache
-      |=  count=@ud
-      %_    state
-          compiler-cache
-        %-  %~  trim
-                (by-clock compiler-cache-key build-result)
-                compiler-cache.state
-        count
-      ==
-    ::
-    ++  tombstone-builds
-      |=  num-to-remove=@ud
-      ::
-      ~|  [%wipe num-to-remove=num-to-remove]
-      ::  the oldest :num-to-remove builds are considered stale
-      ::
-      =/  stale-builds  (scag num-to-remove completed-builds)
-      ::  iterate over :stale-builds, replacing with %tombstone's
-      ::
-      |-  ^+  state
-      ?~  stale-builds  state
-      ::  replace the build's entry in :builds.state with a %tombstone
-      ::
-      =.  builds.state
-        =<  builds
-        %+  update-build-status  i.stale-builds
-        |=  =build-status
-        build-status(state [%complete %tombstone ~])
-      ::
-      $(stale-builds t.stale-builds)
-    --
+    =/  clock  (by-clock hoon-cache-key build-result)
+    =.  hoon-cache.state
+      ?:  (lte num-to-remove size.hoon-cache.state)
+        (~(trim clock hoon-cache.state) count)
+      ~(purge clock hoon-cache.state)
+    state
   ::  +keep: resize caches
-  ::
-  ::    Ford maintains two caches: a :build-cache for caching previously
-  ::    completed build trees, and a :compiler-cache for caching various
-  ::    compiler operations that tend to be shared among multiple builds.
-  ::
-  ::    To handle this command, we reset the maximum sizes of both of
-  ::    these caches, removing entries from the caches if necessary.
   ::
   ++  keep
     ~/  %keep
-    |=  [compiler-cache-size=@ud build-cache-size=@ud]
+    |=  hoon-cache-size=@ud
     ^+  state
-    ::  pop old builds out of :build-cache and remove their cache anchors
-    ::
-    =^  pops  queue.build-cache.state
-      %.  build-cache-size
-      ~(resize (to-capped-queue build-cache-key) queue.build-cache.state)
-    ::
-    =.  state
-      |-  ^+  state
-      ?~  pops  state
-      ::
-      =.  state  (remove-anchor-from-root root-build.i.pops [%cache id.i.pops])
-      ::
-      $(pops t.pops)
-    ::  resize the :compiler-cache
-    ::
-    %_    state
-        compiler-cache
-      %-  %~  resize
-              (by-clock compiler-cache-key build-result)
-              compiler-cache.state
-      compiler-cache-size
-    ==
+    =-  state(hoon-cache -)
+    %.  hoon-cache-size
+    ~(resize (by-clock hoon-cache-key build-result) hoon-cache.state)
   ::  +cancel: cancel a build
   ::
   ::    When called on a live build, removes all tracking related to the live
@@ -1446,7 +915,7 @@
   ::    When called on a once build, removes all tracking related to the once
   ::    build, and that build will never be completed or have a %made sent.
   ::
-  ::    When called on a build that isn't registered in :state, such as a
+  ::    When called on a build that isn't registered in .state, such as a
   ::    completed once build, or a build that has already been canceled,
   ::    prints and no-ops.
   ::
@@ -1456,790 +925,145 @@
     ::
     ?~  duct-status=(~(get by ducts.state) duct)
       ~&  [%no-build-for-duct duct]
-      ..execute
-    ::  :duct is being canceled, so remove it unconditionally
+      event-core
+    ::  .duct is being canceled, so remove it unconditionally
     ::
     =.  ducts.state  (~(del by ducts.state) duct)
     ::  if the duct was not live, cancel any in-progress builds
     ::
     ?:  ?=(%once -.live.u.duct-status)
       ::
-      =/  root-build=build  [in-progress.live root-schematic]:u.duct-status
+      =/  root-build=build  [in-progress.live root-plan]:u.duct-status
       ::
-      =.  ..execute  (cancel-scrys root-build)
+      =.  event-core  (cancel-scrys root-build)
       =.  state  (remove-anchor-from-root root-build [%duct duct])
-      ..execute
+      event-core
     ::  if the duct was live and has an unfinished build, cancel it
     ::
-    =?  ..execute  ?=(^ in-progress.live.u.duct-status)
+    =?  event-core  ?=(^ in-progress.live.u.duct-status)
       ::
-      =/  root-build=build  [u.in-progress.live root-schematic]:u.duct-status
+      =/  root-build=build  [u.in-progress.live root-plan]:u.duct-status
       ::
-      =.  ..execute  (cancel-scrys root-build)
+      =.  event-core  (cancel-scrys root-build)
       =.  state  (remove-anchor-from-root root-build [%duct duct])
-      ..execute
+      event-core
     ::  if there is no completed build for the live duct, we're done
     ::
     ?~  last-sent=last-sent.live.u.duct-status
-      ..execute
+      event-core
     ::  there is a completed build for the live duct, so delete it
     ::
-    =/  root-build=build  [date.u.last-sent root-schematic.u.duct-status]
+    =/  root-build=build  [date.u.last-sent root-plan.u.duct-status]
     ::
     =.  state  (remove-anchor-from-root root-build [%duct duct])
     ::
     ?~  subscription.u.last-sent
-      ..execute
+      event-core
     (cancel-clay-subscription u.subscription.u.last-sent)
-  ::  +cancel-scrys: cancel all blocked %scry sub-builds of :root-builds
+  ::  +cancel-scrys: cancel all blocked %scry sub-builds of .root-builds
   ::
   ++  cancel-scrys
     |=  root-build=build
-    ^+  ..execute
+    ^+  event-core
     ::
     =/  blocked-sub-scrys  ~(tap in (collect-blocked-sub-scrys root-build))
     ::
-    |-  ^+  ..execute
-    ?~  blocked-sub-scrys  ..execute
+    |-  ^+  event-core
+    ?~  blocked-sub-scrys  event-core
     ::
-    =.  ..execute  (cancel-scry-request i.blocked-sub-scrys)
+    =.  event-core  (cancel-scry-request i.blocked-sub-scrys)
     ::
     $(blocked-sub-scrys t.blocked-sub-scrys)
-  ::  +move-root-to-cache: replace :duct with a %cache anchor in :build's tree
-  ::
-  ++  move-root-to-cache
-    ~/  %move-root-to-cache
-    |=  =build
-    ^+  state
-    ::  obtain the new cache id and increment the :next-anchor-id in the state
-    ::
-    =^  new-id  next-anchor-id.build-cache.state
-      =/  id=@ud  next-anchor-id.build-cache.state
-      [id +(id)]
-    ::  replace the requester in the root build
-    ::
-    =.  builds.state
-      %+  ~(jab by builds.state)  build
-      |=  =build-status
-      %_    build-status
-          requesters
-        =-  (~(del in -) [%duct duct])
-        =-  (~(put in -) [%cache new-id])
-        requesters.build-status
-      ==
-    ::  enqueue :build into cache, possibly popping and deleting a stale build
-    ::
-    =^  oldest  queue.build-cache.state
-      %.  [new-id build]
-      ~(put (to-capped-queue build-cache-key) queue.build-cache.state)
-    ::
-    =?    state
-        ?=(^ oldest)
-      (remove-anchor-from-root root-build.u.oldest [%cache id.u.oldest])
-    ::  recursively replace :clients in :build and descendants
-    ::
-    |-  ^+  state
-    ::
-    =/  client-status=build-status  (got-build build)
-    =/  subs=(list ^build)  ~(tap in ~(key by subs.client-status))
-    ::
-    |-  ^+  state
-    ?~  subs  state
-    ::
-    =.  builds.state
-      %+  ~(jab by builds.state)  i.subs
-      |=  =build-status
-      %_    build-status
-          clients
-        ::  if we've already encountered :i.subs, don't overwrite
-        ::
-        ?:  (~(has by clients.build-status) [%cache new-id])
-          clients.build-status
-        ::
-        =/  old-clients-on-duct  (~(get ju clients.build-status) [%duct duct])
-        ::
-        =-  (~(del by -) [%duct duct])
-        =-  (~(put by -) [%cache new-id] old-clients-on-duct)
-        clients.build-status
-      ==
-    ::
-    =.  state  ^$(build i.subs)
-    ::
-    $(subs t.subs)
-  ::  +remove-anchor-from-root: remove :anchor from :build's tree
-  ::
-  ++  remove-anchor-from-root
-    ~/  %remove-anchor-from-root
-    |=  [=build =anchor]
-    ^+  state
-    ::
-    =.  builds.state
-      %+  ~(jab by builds.state)  build
-      |=  =build-status
-      build-status(requesters (~(del in requesters.build-status) anchor))
-    ::
-    =.  builds.state  (remove-anchor-from-subs build anchor)
-    ::
-    (cleanup build)
-  ::  +remove-anchor-from-subs: recursively remove :anchor from sub-builds
-  ::
-  ++  remove-anchor-from-subs
-    ~/  %remove-anchor-from-subs
-    |=  [=build =anchor]
-    ^+  builds.state
-    ::
-    =/  =build-status  (got-build build)
-    =/  subs=(list ^build)  ~(tap in ~(key by subs.build-status))
-    =/  client=^build  build
-    ::
-    |-  ^+  builds.state
-    ?~  subs  builds.state
-    ::
-    =/  sub-status=^build-status  (got-build i.subs)
-    ::
-    =.  clients.sub-status
-      (~(del ju clients.sub-status) anchor client)
-    ::
-    =.  builds.state  (~(put by builds.state) i.subs sub-status)
-    ::
-    =?  builds.state  !(~(has by clients.sub-status) anchor)
-      ::
-      ^$(build i.subs)
-    ::
-    $(subs t.subs)
-  ::  +add-anchors-to-build-subs: for each sub, add all of :build's anchors
-  ::
-  ++  add-anchors-to-build-subs
-    ~/  %add-anchors-to-build-subs
-    |=  =build
-    ^+  state
-    ::
-    =/  =build-status  (got-build build)
-    =/  new-anchors
-      ~(tap in (~(put in ~(key by clients.build-status)) [%duct duct]))
-    =/  subs  ~(tap in ~(key by subs.build-status))
-    ::
-    =.  state
-      |-
-      ^+  state
-      ?~  subs  state
-      ::
-      =.  state  (add-build i.subs)
-      ::
-      $(subs t.subs)
-    ::
-    =.  builds.state
-      |-  ^+  builds.state
-      ?~  new-anchors  builds.state
-      ::
-      =.  builds.state  (add-anchor-to-subs i.new-anchors build)
-      ::
-      $(new-anchors t.new-anchors)
-    ::
-    state
-  ::  +add-anchor-to-subs: attach :duct to :build's descendants
-  ::
-  ++  add-anchor-to-subs
-    ~/  %add-anchor-to-subs
-    |=  [=anchor =build]
-    ^+  builds.state
-    ::
-    =/  =build-status  (got-build build)
-    =/  subs=(list ^build)  ~(tap in ~(key by subs.build-status))
-    =/  client=^build  build
-    ::
-    |-  ^+  builds.state
-    ?~  subs  builds.state
-    ::
-    =/  sub-status=^build-status  (got-build i.subs)
-    ::
-    =/  already-had-anchor=?  (~(has by clients.sub-status) anchor)
-    ::
-    =.  clients.sub-status
-      (~(put ju clients.sub-status) anchor client)
-    ::
-    =.  builds.state  (~(put by builds.state) i.subs sub-status)
-    ::
-    =?  builds.state  !already-had-anchor  ^$(build i.subs)
-    ::
-    $(subs t.subs)
-  ::  +copy-build-tree-as-provisional: prepopulate new live build
-  ::
-  ::    Make a provisional copy of the completed old root build tree at the
-  ::    :new time.
-  ::
-  ++  copy-build-tree-as-provisional
-    ~/  %copy-build-tree-as-provisional
-    |=  [old-root=build new-date=@da]
-    ^+  state
-    ~|  [old-root=(build-to-tape old-root) new-date=new-date]
-    ::
-    =/  old-client=build  old-root
-    =/  new-client=build  old-client(date new-date)
-    =.  state  (add-build new-client)
-    ::
-    =.  builds.state
-      %+  ~(jab by builds.state)  new-client
-      |=  =build-status
-      build-status(requesters (~(put in requesters.build-status) [%duct duct]))
-    ::
-    =<  copy-node
-    ::
-    |%
-    ++  copy-node
-      ^+  state
-      ::
-      =/  old-build-status=build-status  (got-build old-client)
-      ::
-      =/  old-subs=(list build)  ~(tap in ~(key by subs.old-build-status))
-      =/  new-subs=(list build)  (turn old-subs |=(a=build a(date new-date)))
-      ::
-      =.  builds.state
-        (add-subs-to-client new-client new-subs [verified=%.n blocked=%.y])
-      ::
-      |-
-      ^+  state
-      ?~  old-subs
-        state
-      ::
-      =.  state  (add-client-to-sub i.old-subs)
-      =.  state
-        copy-node(old-client i.old-subs, new-client i.old-subs(date new-date))
-      ::
-      $(old-subs t.old-subs)
-    ::
-    ++  add-client-to-sub
-      |=  old-sub=build
-      ^+  state
-      ::
-      =/  new-sub  old-sub(date new-date)
-      =.  state  (add-build new-sub)
-      ::
-      =.  builds.state
-        %+  ~(jab by builds.state)  new-sub
-        |=  =build-status
-        %_  build-status
-          clients  (~(put ju clients.build-status) [%duct duct] new-client)
-        ==
-      ::
-      state
-    --
-  ::  +add-subs-to-client: register :new-subs as subs of :new-client
-  ::
-  ++  add-subs-to-client
-    ~/  %add-subs-to-client
-    |=  [new-client=build new-subs=(list build) =build-relation]
-    ^+  builds.state
-    ::
-    %+  ~(jab by builds.state)  new-client
-    |=  =build-status
-    %_    build-status
-        subs
-      %-  ~(gas by subs.build-status)
-      %+  murn  new-subs
-      |=  sub=build
-      ^-  (unit (pair build ^build-relation))
-      ::
-      ?^  (~(get by subs.build-status) sub)
-        ~
-      `[sub build-relation]
-    ==
   ::  |construction: arms for performing builds
   ::
   ::+|  construction
   ::
-  ::  +execute-loop: +execute repeatedly until there's no more work to do
+  ++  run-root-build
+    |=  [=build live=?]
+    ^+  event-core
+    ::
+    =/  [=product =progress]  (make build live)
+    =.  hoon-cache.state  hoon-cache.progress
+    ?~  product
+      (on-build-blocked build live-resources.progress)
+    ?:  live
+      (on-live-build-done build u.product live-resources.progress)
+    (on-once-build-done build u.product)
   ::
-  ::    Keep running +execute until all relevant builds either complete or
-  ::    block on external resource requests. See +execute for details of each
-  ::    loop execution.
+  ++  on-build-blocked
+    |=  [=build =blocks]
+    ^+  event-core
+    ::
+    %+  roll  (tap in blocks)
+    |=  [=scry-request core=_event-core]
+    (start-scry-request:core scry-request duct)
   ::
-  ::    This implementation is for simplicity. In the longer term, we'd
-  ::    like to just perform a single run through +execute and set a Behn timer
-  ::    to wake us up immediately. This has the advantage that Ford stops hard
-  ::    blocking the main Urbit event loop, letting other work be done.
+  ++  on-once-build-done
+    |=  [=build result=(each cage tang)]
+    ^+  event-core
+    ::
+    =.  ducts.state  (~(del by ducts.state) duct)
+    (send-complete date.build result)
   ::
-  ++  execute-loop  !.
-    ~/  %execute-loop
-    |=  builds=(set build)
-    ^+  ..execute
+  ++  on-live-build-done
+    |=  [=build result=(each cage tang) live-resouces=(set resource)]
+    ^+  event-core
+    ::  group .live-resources by $disc
     ::
-    =.  ..execute  (execute builds)
+    =.  resources-by-disc=(jug disc resource)
+      %+  roll  ~(tap in live-resources)
+      |=  [=resource acc=(jug disc resource)]
+      (~(put ju acc) disc.rail.resource resource)
+    ::  if :build depends on multiple discs, send an %incomplete and cancel
     ::
-    ?:  ?&  ?=(~ next-builds)
-            ?=(~ candidate-builds)
-        ==
-      ..execute
-    ::
-    $(builds ~)
-  ::  +execute: main recursive construction algorithm
-  ::
-  ::    Performs the three step build process: First, figure out which builds
-  ::    we're going to run this loop through the ford algorithm. Second, run
-  ::    the gathered builds, possibly in parallel. Third, apply the
-  ::    +build-receipt algorithms to the ford state.
-  ::
-  ++  execute
-    ~/  %execute
-    |=  builds=(set build)
-    ^+  ..execute
-    ::
-    =.  ..execute  (gather builds force=%.n)
-    ::
-    =^  build-receipts  ..execute  run-builds
-    ::
-    (reduce build-receipts)
-  ::  +gather: collect builds to be run in a batch
-  ::
-  ::    The +gather phase is the first of the three parts of +execute. In
-  ::    +gather, we look through each item in :candidate-builds.  If we
-  ::    should run the candidate build this cycle through the +execute loop, we
-  ::    place it in :next-builds. +gather runs until it has no more candidates.
-  ::
-  ++  gather  !.
-    ~/  %gather
-    |=  [builds=(set build) force=?]
-    ^+  ..execute
-    ::  add builds that were triggered by incoming event to the candidate list
-    ::
-    =.  candidate-builds  (~(uni in candidate-builds) builds)
-    ::
-    |^  ^+  ..execute
-        ::
-        ?:  =(~ candidate-builds)
-          ..execute
-        ::
-        =/  next=build
-          ?<  ?=(~ candidate-builds)
-          n.candidate-builds
-        =.  candidate-builds  (~(del in candidate-builds) next)
-        ::
-        $(..execute (gather-build next))
-    ::  +gather-build: looks at a single candidate build
-    ::
-    ::    This gate inspects a single build. It might move it to :next-builds,
-    ::    or promote it using an old build. It also might add this build's
-    ::    sub-builds to :candidate-builds.
-    ::
-    ++  gather-build
-      |=  =build
-      ^+  ..execute
-      ~|  [%duct duct]
-      =/  duct-status  (~(got by ducts.state) duct)
-      ::  if we already have a result for this build, don't rerun the build
-      ::
-      =^  current-result  builds.state  (access-build-record build)
-      ::
-      ?:  ?=([~ %value *] current-result)
-        (on-build-complete build)
-      ::  place :build in :builds.state if it isn't already there
-      ::
-      =.  state  (add-build build)
-      ::  ignore blocked builds
-      ::
-      =/  =build-status  (got-build build)
-      ?:  ?=(%blocked -.state.build-status)
-        =.  state  (add-anchors-to-build-subs build)
-        ::
-        =/  sub-scrys=(list scry-request)
-          ~(tap in (collect-blocked-sub-scrys build))
-        ::
-        =.  pending-scrys.state
-          |-  ^+  pending-scrys.state
-          ?~  sub-scrys  pending-scrys.state
-          ::
-          =.  pending-scrys.state
-            (put-request pending-scrys.state i.sub-scrys duct)
-          ::
-          $(sub-scrys t.sub-scrys)
-        ::
-        ..execute
-      ::  old-build: most recent previous build with :schematic.build
-      ::
-      =/  old-build=(unit ^build)
-        ?:  ?&  ?=(%live -.live.duct-status)
-                ?=(^ last-sent.live.duct-status)
-            ==
-          ::  check whether :build was run as part of the last live build tree
-          ::
-          ::    If we had build this schematic as part of the build tree
-          ::    during the last run of this live build, then we can compare
-          ::    our result to that build. It might not be the most recent,
-          ::    but if our sub-builds have the same results as they did then,
-          ::    we can promote them. This is especially helpful for a %scry
-          ::    build, because we don't have to make a new request for the
-          ::    resource if the last live build subscribed to it.
-          ::
-          ::    Otherwise, default to looking up the most recent build of this
-          ::    schematic in :builds-by-schematic.state. We'll have to rerun
-          ::    any %scry sub-builds, but other than that, we should still be
-          ::    able to promote its result if its sub-builds have the same
-          ::    results as ours.
-          ::
-          =/  possible-build=^build
-            [date.u.last-sent.live.duct-status schematic.build]
-          ?:  (~(has by builds.state) possible-build)
-            `possible-build
-          (~(find-previous by-schematic builds-by-schematic.state) build)
-        (~(find-previous by-schematic builds-by-schematic.state) build)
-      ::  if no previous builds exist, we need to run :build
-      ::
-      ?~  old-build
-        (add-build-to-next build)
-      ::
-      =/  old-build-status=^build-status  (got-build u.old-build)
-      ::  selectively promote scry builds
-      ::
-      ::    We can only promote a scry if it's not forced and we ran the same
-      ::    scry schematic as a descendant of the root build schematic at the
-      ::    last sent time for this duct.
-      ::
-      ?:  ?&  ?=(%scry -.schematic.build)
-              ?|  force
-                  ?!
-                  ?&  ?=(%live -.live.duct-status)
-                      ?=(^ last-sent.live.duct-status)
-                  ::
-                      =/  subscription=(unit subscription)
-                        subscription.u.last-sent.live.duct-status
-                      ::
-                      ?~  subscription
-                        %.n
-                      %-  ~(has in resources.u.subscription)
-                      resource.schematic.build
-          ==  ==  ==
-        (add-build-to-next build)
-      ::  if we don't have :u.old-build's result cached, we need to run :build
-      ::
-      =^  old-build-record  builds.state  (access-build-record u.old-build)
-      ?.  ?=([~ %value *] old-build-record)
-        (add-build-to-next build)
-      ::
-      =.  old-build-status  (got-build u.old-build)
-      ::
-      =/  old-subs=(list ^build)  ~(tap in ~(key by subs.old-build-status))
-      =/  new-subs=(list ^build)
-        (turn old-subs |=(^build +<(date date.build)))
-      ::  link sub-builds provisionally, blocking on incomplete
-      ::
-      ::    We don't know that :build will end up depending on :new-subs,
-      ::    so they're not :verified.
-      ::
-      =/  split-new-subs
-        %+  skid  new-subs
-        |=  sub=^build
-        ^-  ?
-        ::
-        ?~  maybe-build-status=(~(get by builds.state) sub)
-          %.n
-        ::
-        ?&  ?=(%complete -.state.u.maybe-build-status)
-            ?=(%value -.build-record.state.u.maybe-build-status)
-        ==
-      ::
-      =/  stored-new-subs=(list ^build)     -.split-new-subs
-      =/  un-stored-new-subs=(list ^build)  +.split-new-subs
-      ::
-      =.  builds.state
-        (add-subs-to-client build stored-new-subs [verified=%.n blocked=%.n])
-      =.  builds.state
-        (add-subs-to-client build un-stored-new-subs [verified=%.n blocked=%.y])
-      ::
-      =.  state  (add-anchors-to-build-subs build)
-      ::
-      ?^  un-stored-new-subs
-        ::  enqueue incomplete sub-builds to be promoted or run
-        ::
-        ::    When not all our sub builds have results, we can't add :build to
-        ::    :next-builds.state. Instead, put all the remaining uncached new
-        ::    subs into :candidate-builds.
-        ::
-        ::    If all of our sub-builds finish immediately (i.e. promoted) when
-        ::    they pass through +gather-internal, they will add :build back to
-        ::    :candidate-builds and we will run again before +execute runs
-        ::    +make.
-        ::
-        %_    ..execute
-            candidate-builds
-          (~(gas in candidate-builds) un-stored-new-subs)
-        ==
-      ::
-      =^  promotable  builds.state  (are-subs-unchanged old-subs new-subs)
-      ?.  promotable
-        (add-build-to-next build)
-      ::
-      ?>  =(schematic.build schematic.u.old-build)
-      ?>  (~(has by builds.state) build)
-      (promote-build u.old-build date.build new-subs)
-    ::  +are-subs-unchanged: checks sub-build equivalence, updating access time
-    ::
-    ++  are-subs-unchanged
-      |=  [old-subs=(list build) new-subs=(list build)]
-      ^-  [? _builds.state]
-      ::
-      ?~  old-subs
-        [%.y builds.state]
-      ?>  ?=(^ new-subs)
-      ::
-      =^  old-build-record  builds.state  (access-build-record i.old-subs)
-      ?.  ?=([~ %value *] old-build-record)
-        [%.n builds.state]
-      ::
-      =^  new-build-record  builds.state  (access-build-record i.new-subs)
-      ?.  ?=([~ %value *] new-build-record)
-        [%.n builds.state]
-      ::
-      ?.  =(build-result.u.old-build-record build-result.u.new-build-record)
-        [%.n builds.state]
-      $(new-subs t.new-subs, old-subs t.old-subs)
-    ::  +add-build-to-next: run this build during the +make phase
-    ::
-    ++  add-build-to-next
-      |=  =build
-      ..execute(next-builds (~(put in next-builds) build))
-    ::  +promote-build: promote result of :build to newer :date
-    ::
-    ::    Also performs relevant accounting, and possibly sends %made moves.
-    ::
-    ++  promote-build
-      |=  [old-build=build new-date=@da new-subs=(list build)]
-      ^+  ..execute
-      ::  grab the previous result, freshening the cache
-      ::
-      =^  old-build-record  builds.state  (access-build-record old-build)
-      ::  we can only promote a cached result, not missing or a %tombstone
-      ::
-      ?>  ?=([~ %value *] old-build-record)
-      =/  =build-result  build-result.u.old-build-record
-      ::  :new-build is :old-build at :date; promotion destination
-      ::
-      =/  new-build=build  old-build(date new-date)
-      ::
-      =.  builds.state
-        %+  ~(jab by builds.state)  new-build
-        |=  =build-status
-        ^+  build-status
-        ::
-        %_    build-status
-        ::  verify linkages between :new-build and subs
-        ::
-            subs
-          ::
-          ^-  (map build build-relation)
-          %-  my
-          ^-  (list (pair build build-relation))
-          %+  turn  new-subs
-          |=  sub=build
-          ::
-          [sub [verified=& blocked=|]]
-        ::  copy the old result to :new-build
-        ::
-            state
-          [%complete [%value last-accessed=now build-result=build-result]]
-        ==
-      ::
-      (on-build-complete new-build)
-    --
-  ::  +run-builds: run the builds and produce +build-receipts
-  ::
-  ::    Runs the builds and cleans up the build lists afterwards.
-  ::
-  ::    When the vere interpreter has a parallel variant of +turn, use
-  ::    that as each build might take a while and there are no data
-  ::    dependencies between builds here. For now, though, run them serially.
-  ::
-  ++  run-builds
-    =<  $
-    ~%  %run-builds  +  ~
-    |.
-    ^-  [(list build-receipt) _..execute]
-    ::
-    =/  build-receipts=(list build-receipt)
-      (turn ~(tap in next-builds) make)
-    ::
-    =.  next-builds  ~
-    [build-receipts ..execute]
-  ::  reduce: apply +build-receipts produce from the +make phase.
-  ::
-  ::    +gather produces builds to run make on. +make produces
-  ::    +build-receipts. It is in +reduce where we take these +build-receipts
-  ::    and apply them to ..execute.
-  ::
-  ++  reduce  !.
-    ~/  %reduce
-    |=  build-receipts=(list build-receipt)
-    ^+  ..execute
-    ::  sort :build-receipts so blocks are processed before completions
-    ::
-    ::    It's possible for a build to block on a sub-build that was run
-    ::    in the same batch. If that's the case, make sure we register
-    ::    that the build blocked on the sub-build before registering the
-    ::    completion of the sub-build. This way, when we do register the
-    ::    completion of the sub-build, we will know which builds are blocked
-    ::    on the sub-build, so we can enqueue those blocked clients to be
-    ::    rerun.
-    ::
-    =.  build-receipts
-      %+  sort  build-receipts
-      |=  [a=build-receipt b=build-receipt]
-      ^-  ?
-      ?=(%blocks -.result.a)
-    ::
-    |^  ^+  ..execute
-        ?~  build-receipts  ..execute
-        ::
-        =.  ..execute  (apply-build-receipt i.build-receipts)
-        $(build-receipts t.build-receipts)
-    ::  +apply-build-receipt: applies a single state diff to ..execute
-    ::
-    ++  apply-build-receipt
-      |=  made=build-receipt
-      ^+  ..execute
-      ::  process :sub-builds.made
-      ::
-      =.  state  (track-sub-builds build.made sub-builds.made)
-      ::
-      ?-    -.result.made
-          %build-result
-        (apply-build-result [build build-result.result cache-access]:made)
-      ::
-          %blocks
-        (apply-blocks [build builds.result]:made)
+    ?:  (lth 1 ~(wyt by resources-by-disc))
+      =.  ducts.state  (~(del by ducts.state) duct)
+      =/  reason=tang  :~
+        [%leaf "root build"]
+        ::  TODO: [%leaf (build-to-tape build)]
+        [%leaf "on duct:"]
+        [%leaf "{<duct>}"]
+        [%leaf "tried to subscribe to multiple discs:"]
+        [%leaf "{<resources-by-disc>}"]
       ==
-    ::  +track-sub-builds:
+      (send-incomplete date.build reason)
     ::
-    ::    For every sub-build discovered while running :build, we have to make
-    ::    sure that we track that sub-build and that it is associated with the
-    ::    right ducts.
+    =.  event-core  (send-complete date.build result duct)
     ::
-    ++  track-sub-builds
-      |=  [client=build sub-builds=(list build)]
-      ^+  state
-      ::  mark :sub-builds as :subs in :build's +build-status
-      ::
-      =^  build-status  builds.state
-        %+  update-build-status  client
-        |=  =build-status
-        %_    build-status
-            subs
-          %-  ~(gas by subs.build-status)
-          %+  turn  sub-builds
-          |=  sub=build
-          ::
-          =/  blocked=?
-            ?~  sub-status=(~(get by builds.state) sub)
-              %.y
-            !?=([%complete %value *] state.u.sub-status)
-          ::
-          [sub [verified=& blocked]]
-        ==
-      ::
-      =.  state  (add-anchors-to-build-subs client)
-      ::
-      |-  ^+  state
-      ?~  sub-builds  state
-      ::
-      =.  builds.state
-        %+  ~(jab by builds.state)  i.sub-builds
-        |=  build-status=^build-status
-        %_    build-status
-        ::  freshen :last-accessed date
-        ::
-            state
-          ::
-          ?.  ?=([%complete %value *] state.build-status)
-            state.build-status
-          state.build-status(last-accessed.build-record now)
-        ==
-      ::
-      $(sub-builds t.sub-builds)
-    ::  +apply-build-result: apply a %build-result +build-receipt to ..execute
+    =/  sub=subscription
+      [date.build ?~(resources-by-disc ~ q.n.resources.by-disc)]
     ::
-    ::    Our build produced an actual result.
+    =?  event-core  ?=(^ resources.sub)  (start-clay-subscription sub)
     ::
-    ++  apply-build-result
-      |=  [=build =build-result cache-access=(unit [=compiler-cache-key new=?])]
-      ^+  ..execute
-      ::
-      =?  compiler-cache.state  ?=(^ cache-access)
-        =+  by-clock=(by-clock compiler-cache-key ^build-result)
-        ?.  new.u.cache-access
-          =^  ignored  compiler-cache.state
-            (~(get by-clock compiler-cache.state) compiler-cache-key.u.cache-access)
-          compiler-cache.state
-        ::
-        %+  ~(put by-clock compiler-cache.state)
-          compiler-cache-key.u.cache-access
-        build-result
-      ::
-      =.  builds.state
-        %+  ~(jab by builds.state)  build
-        |=  =build-status
-        build-status(state [%complete [%value last-accessed=now build-result]])
-      ::
-      (on-build-complete build)
-    ::  +apply-blocks: apply a %blocks +build-receipt to ..execute
+    =.  ducts.state
+      %+  ~(jab by ducts.state)  duct
+      |=  =duct-status
+      ?>  live.duct-status
+      duct-status(cur ~, pre `sub)
     ::
-    ::    :build blocked. Record information about what builds it blocked on
-    ::    and try those blocked builds as candidates in the next pass.
-    ::
-    ++  apply-blocks
-      |=  [=build blocks=(list build)]
-      ^+  ..execute
-      ::  if a %scry blocked, register it and maybe send an async request
-      ::
-      =?    ..execute
-          ?=(~ blocks)
-        ?>  ?=(%scry -.schematic.build)
-        =,  resource.schematic.build
-        %-  start-scry-request
-        [vane care [[ship.disc.rail desk.disc.rail [%da date.build]] spur.rail]]
-      ::  we must run +apply-build-receipt on :build.made before :block
-      ::
-      ?<  %+  lien  blocks
-          |=  block=^build
-          ?~  maybe-build-status=(~(get by builds.state) block)
-            %.n
-          ?=(%complete -.state.u.maybe-build-status)
-      ::  transition :build's state machine to the %blocked state
-      ::
-      =.  builds.state
-        %+  ~(jab by builds.state)  build
-        |=  =build-status
-        build-status(state [%blocked ~])
-      ::  enqueue :blocks to be run next
-      ::
-      =.  candidate-builds  (~(gas in candidate-builds) blocks)
-      ::
-      ..execute
-    --
-  ::  +make: attempt to perform :build, non-recursively
-  ::
-  ::    Registers component linkages between :build and its sub-builds.
-  ::    Attempts to perform +scry if necessary. Does not directly enqueue
-  ::    any moves.
+    event-core
+  ::  +make: attempt to perform .build
+  ::  TODO: reinstate jet hint
+  ::  TODO: redo for ford-pinto
   ::
   ++  make
-    ~/  %make
+    =/  =progress  [blocks=~ live-resources=~ hoon-cache.state]
     |=  =build
     ^-  build-receipt
-    ::  out: receipt to return to caller
-    ::
-    =|  out=build-receipt
     ::  ~&  [%turbo-make (build-to-tape build)]
-    ::  dispatch based on the kind of +schematic in :build
+    ::  dispatch based on the kind of +plan in .build
     ::
-    |^  =,  schematic.build
+    |^  =,  plan.build
         ::
         =.  build.out  build
         ::
-        ?-    -.schematic.build
+        ?-    -.plan.build
         ::
             ^  (make-autocons [head tail])
         ::
             %$  (make-literal literal)
         ::
-            %pin   (make-pin date schematic)
+            %pin   (make-pin date plan)
             %alts  (make-alts choices ~)
             %bake  (make-bake renderer query-string path-to-render)
             %bunt  (make-bunt disc mark)
@@ -2250,15 +1074,15 @@
             %dude  (make-dude error attempt)
             %hood  (make-hood source-path)
             %join  (make-join disc mark first second)
-            %list  (make-list schematics)
+            %list  (make-list plans)
             %mash  (make-mash disc mark first second)
             %mute  (make-mute subject mutations)
             %pact  (make-pact disc start diff)
             %path  (make-path disc prefix raw-path)
-            %plan  (make-plan path-to-render query-string scaffold)
+            %dais  (make-dais path-to-render query-string scaffold)
             %reef  (make-reef disc)
             %ride  (make-ride formula subject)
-            %same  (make-same schematic)
+            %same  (make-same plan)
             %scry  (make-scry resource)
             %slim  (make-slim subject-type formula)
             %slit  (make-slit gate sample)
@@ -2266,15 +1090,15 @@
             %volt  (make-volt disc mark input)
             %walk  (make-walk disc source target)
         ==
-    ::  |schematic-handlers:make: implementation of the schematics
+    ::  |plan-handlers:make: implementation of the plans
     ::
     ::    All of these produce a value of the same type as +make itself.
     ::
-    ::  +|  schematic-handlers
+    ::  +|  plan-handlers
     ::
     ++  make-autocons
       ~%  %make-autocons  ..^^$  ~
-      |=  [head=schematic tail=schematic]
+      |=  [head=plan tail=plan]
       ^-  build-receipt
       ::
       =/  head-build=^build  [date.build head]
@@ -2288,12 +1112,9 @@
       ::  if either build blocked, we're not done
       ::
       ?^  blocks
-        ::
         (return-blocks blocks)
-      ::
       ?<  ?=(~ head-result)
       ?<  ?=(~ tail-result)
-      ::
       (return-result %success u.head-result u.tail-result)
     ::
     ++  make-literal
@@ -2304,11 +1125,11 @@
     ::
     ++  make-pin
       ~%  %make-pin  ..^^$  ~
-      |=  [date=@da =schematic]
+      |=  [date=@da =plan]
       ^-  build-receipt
       ::  pinned-sub: sub-build with the %pin date as formal date
       ::
-      =/  pinned-sub=^build  [date schematic]
+      =/  pinned-sub=^build  [date plan]
       ::
       =^  result  out  (depend-on pinned-sub)
       ::
@@ -2319,7 +1140,7 @@
     ::
     ++  make-alts
       ~%  %make-alts  ..^^$  ~
-      |=  [choices=(list schematic) errors=(list tank)]
+      |=  [choices=(list plan) errors=(list tank)]
       ^-  build-receipt
       ::
       ?~  choices
@@ -2356,10 +1177,10 @@
         (return-blocks [path-build]~)
       ::
       |^  ^-  build-receipt
-          ::  if there's a renderer called :renderer, use it on :path-to-render
+          ::  if there's a renderer called .renderer, use it on .path-to-render
           ::
-          ::    Otherwise, fall back to running the contents of :path-to-render
-          ::    through a mark that has the same name as :renderer.
+          ::    Otherwise, fall back to running the contents of .path-to-render
+          ::    through a mark that has the same name as .renderer.
           ::
           ?:  ?=([~ %success %path *] path-result)
             (try-renderer-then-mark rail.u.path-result)
@@ -2381,7 +1202,7 @@
         ?:  ?=([~ %error *] hood-result)
           (try-mark message.u.hood-result)
         ?>  ?=([~ %success %hood *] hood-result)
-        ::  link the renderer, passing through :path-to-render and :query-string
+        ::  link the renderer, passing through .path-to-render and .query-string
         ::
         =/  plan-build=^build
           :-  date.build
@@ -2403,22 +1224,22 @@
         (return-result [%success %bake renderer vase.u.plan-result])
       ::   +try-mark: try to cast a file's contents through a mark
       ::
-      ::     :errors contains any error messages from our previous attempt to
+      ::     .errors contains any error messages from our previous attempt to
       ::     run a renderer, if we made one. This way if both the renderer and
       ::     mark fail, the requester will see the errors of both attempts.
       ::
       ++  try-mark
         |=  errors=(list tank)
         ^-  build-receipt
-        ::  no renderer, try mark; retrieve directory listing of :path-to-render
+        ::  no renderer, try mark; retrieve directory listing of .path-to-render
         ::
         ::    There might be multiple files of different marks stored at
-        ::    :path-to-render. Retrieve the directory listing for
-        ::    :path-to-render, then check which of the path segments in
+        ::    .path-to-render. Retrieve the directory listing for
+        ::    .path-to-render, then check which of the path segments in
         ::    that directory are files (not just folders), then for each
         ::    file try to %cast its mark to the desired mark (:renderer).
         ::
-        ::    Start by retrieving the directory listing, using :toplevel-build.
+        ::    Start by retrieving the directory listing, using .toplevel-build.
         ::
         =/  toplevel-build=^build
           [date.build [%scry %c %y path-to-render]]
@@ -2446,7 +1267,7 @@
         ?>  ?=([~ %success %scry *] toplevel-result)
         ::
         =/  toplevel-arch=arch  ;;(arch q.q.cage.u.toplevel-result)
-        ::  find the :sub-path-segments that could be files
+        ::  find the .sub-path-segments that could be files
         ::
         ::    Filter out path segments that aren't a +term,
         ::    since those aren't valid marks and therefore can't
@@ -2455,28 +1276,28 @@
         =/  sub-path-segments=(list @ta)
           (skim (turn ~(tap by dir.toplevel-arch) head) (sane %tas))
         ::
-        =/  sub-schematics=(list [sub-path=@ta =schematic])
+        =/  sub-plans=(list [sub-path=@ta =plan])
           %+  turn  sub-path-segments
           |=  sub=@ta
           :-  sub
           [%scry %c %y path-to-render(spur [sub spur.path-to-render])]
         ::
-        =^  maybe-schematic-results  out
-          %-  perform-schematics  :*
+        =^  maybe-plan-results  out
+          %-  perform-plans  :*
             ;:  weld
               "ford: %bake "  (trip renderer)  " on "
               (spud (rail-to-path path-to-render))  " contained failures:"
             ==
-            sub-schematics
+            sub-plans
             %fail-on-errors
             *@ta
           ==
-        ?~  maybe-schematic-results
+        ?~  maybe-plan-results
           out
-        ::  marks: list of the marks of the files at :path-to-render
+        ::  marks: list of the marks of the files at .path-to-render
         ::
         =/  marks=(list @tas)
-          %+  murn  u.maybe-schematic-results
+          %+  murn  u.maybe-plan-results
           |=  [sub-path=@ta result=build-result]
           ^-  (unit @tas)
           ::
@@ -2496,11 +1317,11 @@
         =/  alts-build=^build
           ::
           :+  date.build  %alts
-          ^=  choices  ^-  (list schematic)
+          ^=  choices  ^-  (list plan)
           ::
           %+  turn  marks
           |=  mark=term
-          ^-  schematic
+          ^-  plan
           ::
           =/  file=rail  path-to-render(spur [mark spur.path-to-render])
           ::
@@ -2582,7 +1403,7 @@
     ::
     ++  make-call
       ~%  %make-call  ..^^$  ~
-      |=  [gate=schematic sample=schematic]
+      |=  [gate=plan sample=plan]
       ^-  build-receipt
       ::
       =/  gate-build=^build  [date.build gate]
@@ -2613,11 +1434,11 @@
       =/  sample-vase=vase  q:(result-to-cage u.sample-result)
       ::  run %slit to get the resulting type of calculating the gate
       ::
-      =/  slit-schematic=schematic  [%slit gate-vase sample-vase]
-      =/  slit-build=^build  [date.build slit-schematic]
+      =/  slit-plan=plan  [%slit gate-vase sample-vase]
+      =/  slit-build=^build  [date.build slit-plan]
       =^  slit-result  out  (depend-on slit-build)
       ?~  slit-result
-        (return-blocks [date.build slit-schematic]~)
+        (return-blocks [date.build slit-plan]~)
       ::
       ?:  ?=([~ %error *] slit-result)
         %-  return-error
@@ -2626,8 +1447,8 @@
       ::
       ?>  ?=([~ %success %slit *] slit-result)
       ::
-      =/  =compiler-cache-key  [%call gate-vase sample-vase]
-      =^  cached-result  out  (access-cache compiler-cache-key)
+      =/  =hoon-cache-key  [%call gate-vase sample-vase]
+      =^  cached-result  out  (access-cache hoon-cache-key)
       ?^  cached-result
         (return-result u.cached-result)
       ::
@@ -2649,7 +1470,7 @@
     ::
     ++  make-cast
       ~%  %make-cast  ..^^$  ~
-      |=  [=disc mark=term input=schematic]
+      |=  [=disc mark=term input=plan]
       ^-  build-receipt
       ::
       =/  input-build=^build  [date.build input]
@@ -2718,7 +1539,7 @@
             (return-error [leaf+"ford: failed to %cast" tang.action-result])
         ==
       ::
-      +=  action-result
+      +$  action-result
         $%  ::  translation was successful and here's a cage for you
             [%success =cage]
             ::  it was an error. sorry.
@@ -2791,7 +1612,7 @@
             :(weld "ford: %cast failed to ride " (spud path) " during +grab:")
             grab-mark-result
           ==
-        ::  slam the +mark-name:grab gate on the result of running :input
+        ::  slam the +mark-name:grab gate on the result of running .input
         ::
         =/  call-build=^build
           :-  date.build
@@ -2845,12 +1666,12 @@
           :+  %ride
             formula=`hoon`[%tsld [%wing ~[target-mark]] [%wing ~[%grow]]]
           ^=  subject
-          ^-  schematic
+          ^-  plan
           :*  %mute
-              ^-  schematic
+              ^-  plan
               [%core rail.u.starting-mark-path-result]
               ^=  mutations
-              ^-  (list [wing schematic])
+              ^-  (list [wing plan])
               [[%& 6]~ [%$ input-cage]]~
           ==
         ::
@@ -2922,7 +1743,7 @@
       ~%  %make-core  ..^^$  ~
       |=  source-path=rail
       ^-  build-receipt
-      ::  convert file at :source-path to a +scaffold
+      ::  convert file at .source-path to a +scaffold
       ::
       =/  hood-build=^build  [date.build [%hood source-path]]
       ::
@@ -2955,9 +1776,9 @@
     ::
     ++  make-diff
       ~%  %make-diff  ..^^$  ~
-      |=  [=disc start=schematic end=schematic]
+      |=  [=disc start=plan end=plan]
       ^-  build-receipt
-      ::  run both input schematics as an autocons build
+      ::  run both input plans as an autocons build
       ::
       =/  sub-build=^build  [date.build [start end]]
       ::
@@ -3079,13 +1900,13 @@
           ^=  subject
           :+  %mute
             ::
-            subject=`schematic`[%$ %noun vase.u.mark-result]
+            subject=`plan`[%$ %noun vase.u.mark-result]
           ::
           ^=  mutations
-          ^-  (list [wing schematic])
+          ^-  (list [wing plan])
           [[%& 6]~ [%$ start-cage]]~
         ::
-        sample=`schematic`[%$ end-cage]
+        sample=`plan`[%$ end-cage]
       ::
       =^  diff-result  out  (depend-on diff-build)
       ?~  diff-result
@@ -3116,7 +1937,7 @@
     ::
     ++  make-dude
       ~%  %make-dude  ..^^$  ~
-      |=  [error=tank attempt=schematic]
+      |=  [error=tank attempt=plan]
       ^-  build-receipt
       ::
       =/  attempt-build=^build  [date.build attempt]
@@ -3158,8 +1979,8 @@
       ::
       =/  src-beam=beam  [[ship.disc desk.disc [%ud 0]] spur]:source-rail
       ::
-      =/  =compiler-cache-key  [%hood src-beam q.q.as-cage]
-      =^  cached-result  out  (access-cache compiler-cache-key)
+      =/  =hoon-cache-key  [%hood src-beam q.q.as-cage]
+      =^  cached-result  out  (access-cache hoon-cache-key)
       ?^  cached-result
         (return-result u.cached-result)
       ::
@@ -3178,7 +1999,7 @@
     ::
     ++  make-join
       ~%  %make-join  ..^^$  ~
-      |=  [disc=disc mark=term first=schematic second=schematic]
+      |=  [disc=disc mark=term first=plan second=plan]
       ^-  build-receipt
       ::
       =/  initial-build=^build
@@ -3331,16 +2152,16 @@
     ::
     ++  make-list
       ~%  %make-list  ..^^$  ~
-      |=  schematics=(list schematic)
+      |=  plans=(list plan)
       ^-  build-receipt
       ::
-      =/  key-and-schematics
-        (turn schematics |=(=schematic [~ schematic]))
-      ::  depend on builds of each schematic
+      =/  key-and-plans
+        (turn plans |=(=plan [~ plan]))
+      ::  depend on builds of each plan
       ::
-      =^  maybe-schematic-results  out
-        (perform-schematics "" key-and-schematics %ignore-errors *~)
-      ?~  maybe-schematic-results
+      =^  maybe-plan-results  out
+        (perform-plans "" key-and-plans %ignore-errors *~)
+      ?~  maybe-plan-results
         out
       ::  return all builds
       ::
@@ -3348,20 +2169,20 @@
         :+  %success  %list
         ::  the roll above implicitly flopped the results
         ::
-        (flop (turn u.maybe-schematic-results tail))
+        (flop (turn u.maybe-plan-results tail))
       (return-result build-result)
     ::
     ++  make-mash
       ~%  %make-mash  ..^^$  ~
       |=  $:  disc=disc
               mark=term
-              first=[disc=disc mark=term =schematic]
-              second=[disc=disc mark=term =schematic]
+              first=[disc=disc mark=term =plan]
+              second=[disc=disc mark=term =plan]
           ==
       ^-  build-receipt
       ::
       =/  initial-build=^build
-        [date.build [schematic.first schematic.second] [%path disc %mar mark]]
+        [date.build [plan.first plan.second] [%path disc %mar mark]]
       ::
       =^  initial-result  out  (depend-on initial-build)
       ?~  initial-result
@@ -3502,7 +2323,7 @@
     ::
     ++  make-mute
       ~%  %make-mute  ..^^$  ~
-      |=  [subject=schematic mutations=(list [=wing =schematic])]
+      |=  [subject=plan mutations=(list [=wing =plan])]
       ^-  build-receipt
       ::  run the subject build to produce the noun to be mutated
       ::
@@ -3518,26 +2339,26 @@
       ::
       =/  subject-vase=vase  q.subject-cage
       ::
-      =^  maybe-schematic-results  out
-        %-  perform-schematics  :*
+      =^  maybe-plan-results  out
+        %-  perform-plans  :*
           "ford: %mute contained failures:"
           mutations
           %fail-on-errors
           *wing
         ==
-      ?~  maybe-schematic-results
+      ?~  maybe-plan-results
         out
       ::  all builds succeeded; retrieve vases from results
       ::
       =/  successes=(list [=wing =vase])
-        %+  turn  u.maybe-schematic-results
+        %+  turn  u.maybe-plan-results
         |=  [=wing result=build-result]
         ^-  [^wing vase]
         ::
         ?>  ?=([%success *] result)
         ::
         [wing q:(result-to-cage result)]
-      ::  create and run a +build to apply all mutations in order
+      ::  create and run a $build to apply all mutations in order
       ::
       =/  ride-build=^build
         :-  date.build
@@ -3563,7 +2384,7 @@
           ::
           :-  [wing.i.successes [%$ (peg axis 2)]]
           $(successes t.successes, axis (peg axis 3))
-        ::  subject: list of :subject-vase and mutations, as literal schematic
+        ::  subject: list of .subject-vase and mutations, as literal plan
         ::
         ::    The subject ends up as a vase of something like this:
         ::    ```
@@ -3574,7 +2395,7 @@
         ::    ==
         ::    ```
         ::
-        ^=  subject  ^-  schematic
+        ^=  subject  ^-  plan
         :+  %$  %noun
         ^-  vase
         %+  slop  subject-vase
@@ -3597,7 +2418,7 @@
     ::
     ++  make-pact
       ~%  %make-pact  ..^^$  ~
-      |=  [disc=disc start=schematic diff=schematic]
+      |=  [disc=disc start=plan diff=plan]
       ^-  build-receipt
       ::  first, build the inputs
       ::
@@ -3668,11 +2489,11 @@
       ::    In this way, a mark can delegate its patching machinery to
       ::    another mark.
       ::
-      ::    First we cast :start-cage to the +grad mark, then we run
+      ::    First we cast .start-cage to the +grad mark, then we run
       ::    a new %pact build on the result of that, which will use the
       ::    +grad mark's +grad arm. Finally we cast the %pact result back to
-      ::    :start-mark, since we're trying to produce a patched version of
-      ::    the initial marked value (:start-cage).
+      ::    .start-mark, since we're trying to produce a patched version of
+      ::    the initial marked value (.start-cage).
       ::
       ?@  q.grad-vase
         ::  if +grad produced a term, make sure it's a valid mark
@@ -3681,7 +2502,7 @@
         ?~  grad-mark
           %-  return-error  :_  ~  :-  %leaf
           "ford: %pact failed: %{<start-mark>} mark invalid +grad"
-        ::  cast :start-cage to :grad-mark, %pact that, then cast back to start
+        ::  cast .start-cage to .grad-mark, %pact that, then cast back to start
         ::
         =/  cast-build=^build
           :-  date.build
@@ -3709,7 +2530,7 @@
       ::    to verify that the diff is of the correct mark.
       ::
       ::    +pact:grad produces a gate that gets slammed with the diff
-      ::    as its sample and produces a mutant version of :start-cage
+      ::    as its sample and produces a mutant version of .start-cage
       ::    by applying the diff.
       ::
       ?.  (slab %form p.grad-vase)
@@ -3747,16 +2568,16 @@
       =/  pact-build=^build
         :-  date.build
         :+  %call
-          ^-  schematic
+          ^-  plan
           :+  %ride
             [%tsld [%limb %pact] [%limb %grad]]
-          ^-  schematic
+          ^-  plan
           :+  %mute
-            ^-  schematic
+            ^-  plan
             [%$ %noun mark-vase]
-          ^-  (list [wing schematic])
+          ^-  (list [wing plan])
           [[%& 6]~ [%$ start-cage]]~
-        ^-  schematic
+        ^-  plan
         [%$ diff-cage]
       ::
       =^  pact-result  out  (depend-on pact-build)
@@ -3775,38 +2596,38 @@
       ~%  %make-path  ..^^$  ~
       |=  [disc=disc prefix=@tas raw-path=@tas]
       ^-  build-receipt
-      ::  possible-spurs: flopped paths to which :raw-path could resolve
+      ::  possible-spurs: flopped paths to which .raw-path could resolve
       ::
       =/  possible-spurs=(list spur)  (turn (segments raw-path) flop)
-      ::  rails-and-schematics: scrys to check each path in :possible-paths
+      ::  rails-and-plans: scrys to check each path in .possible-paths
       ::
-      =/  rails-and-schematics=(list [=rail =schematic])
+      =/  rails-and-plans=(list [=rail =plan])
         %+  turn  possible-spurs
         |=  possible-spur=spur
-        ^-  [rail schematic]
-        ::  full-spur: wrap :possible-spur with :prefix and /hoon suffix
+        ^-  [rail plan]
+        ::  full-spur: wrap .possible-spur with .prefix and /hoon suffix
         ::
         =/  full-spur=spur  :(welp /hoon possible-spur /[prefix])
         ::
         :-  [disc full-spur]
         [%scry %c %x `rail`[disc full-spur]]
-      ::  depend on builds of each schematic
+      ::  depend on builds of each plan
       ::
-      =^  maybe-schematic-results  out
-        %-  perform-schematics  :*
+      =^  maybe-plan-results  out
+        %-  perform-plans  :*
           ;:  weld
             "ford: %path resolution of "  (trip raw-path)  "at prefix "
             (trip prefix)  " contained failures:"
           ==
-          rails-and-schematics
+          rails-and-plans
           %filter-errors
           *rail
         ==
-      ?~  maybe-schematic-results
+      ?~  maybe-plan-results
         out
       ::  matches: builds that completed with a successful result
       ::
-      =/  matches  u.maybe-schematic-results
+      =/  matches  u.maybe-plan-results
       ::  if no matches, error out
       ::
       ?~  matches
@@ -3826,19 +2647,19 @@
       %-  return-error
       ::
       :-  [%leaf "multiple matches for %path: "]
-      ::  tmi; cast :matches back to +list
+      ::  tmi; cast .matches back to +list
       ::
-      %+  roll  `_u.maybe-schematic-results`matches
+      %+  roll  `_u.maybe-plan-results`matches
       |=  [[key=rail result=build-result] message=tang]
       ^-  tang
-      ::  beam: reconstruct request from :kid's schematic and date
+      ::  beam: reconstruct request from .kid's plan and date
       ::
       =/  =beam  [[ship.disc desk.disc [%da date.build]] spur.key]
       ::
       [[%leaf (spud (en-beam beam))] message]
     ::
-    ++  make-plan
-      ~%  %make-plan  ..^^$  ~
+    ++  make-dais
+      ~%  %make-dais  ..^^$  ~
       |=  [path-to-render=rail query-string=coin =scaffold]
       ^-  build-receipt
       ::  blocks: accumulator for blocked sub-builds
@@ -3905,7 +2726,7 @@
           ::  combined-hoon: source hoons condensed into a single +hoon
           ::
           =/  combined-hoon=hoon  [%tssg sources.scaffold]
-          ::  compile :combined-hoon against :subject
+          ::  compile .combined-hoon against .subject
           ::
           =/  compile=^build
             [date.build [%ride combined-hoon [%$ subject.crane-result]]]
@@ -3924,14 +2745,14 @@
           (return-result %success %plan vase.u.compiled)
       ::  +compose-result: the result of a single composition
       ::
-      +=  compose-result
+      +$  compose-result
         $%  [%subject subject=cage]
             [%block builds=(list ^build)]
             [%error message=tang]
         ==
       ::  +compose-cranes: runs each crane and composes the results
       ::
-      ::    For each crane in :cranes, runs it and composes its result into a
+      ::    For each crane in .cranes, runs it and composes its result into a
       ::    new subject, which is returned if there are no errors or blocks.
       ::
       ++  compose-cranes
@@ -3949,7 +2770,7 @@
             %subject
           $(cranes t.cranes, subject [%noun (slop q.subject.result q.subject)])
         ==
-      ::  +run-crane: runs an individual :crane against :subject
+      ::  +run-crane: runs an individual .crane against .subject
       ::
       ++  run-crane
         |=  [subject=cage =crane]
@@ -4071,7 +2892,7 @@
           =/  cast-build=^build
             :-  date.build
             |-
-            ^-  schematic
+            ^-  plan
             ?~  marks
               ::  TODO: If we were keeping track of the mark across runes, this
               ::  wouldn't have %noun here. This is a case where it might matter.
@@ -4111,7 +2932,7 @@
           ::
           =/  sub-paths=(list @ta)
             (turn ~(tap by dir.toplevel-arch) head)
-          ::  for each directory in :toplevel-arch, issue a sub-build
+          ::  for each directory in .toplevel-arch, issue a sub-build
           ::
           =/  sub-builds=(list ^build)
             %+  turn  sub-paths
@@ -4123,7 +2944,7 @@
           ::
           =|  $=  results
               (list [kid=^build sub-path=@ta results=(unit build-result)])
-          ::  resolve all the :sub-builds
+          ::  resolve all the .sub-builds
           ::
           =/  subs-results
             |-  ^+  [results out]
@@ -4142,7 +2963,7 @@
           =:  results  -.subs-results
               out      +.subs-results
           ==
-          ::  split :results into completed :mades and incomplete :blocks
+          ::  split .results into completed .mades and incomplete .blocks
           ::
           =+  ^=  split-results
               (skid results |=([* * r=(unit build-result)] ?=(^ r)))
@@ -4164,8 +2985,8 @@
             [[%error message.u.results.i.errors] ..run-crane]
           ::  get a list of valid sub-paths
           ::
-          ::    :results is now a list of the :build-result of %cy on each path
-          ::    in :toplevel-arch. What we want is to now filter this list so
+          ::    .results is now a list of the .build-result of %cy on each path
+          ::    in .toplevel-arch. What we want is to now filter this list so
           ::    that we filter files out.
           ::
           =/  sub-paths=(list [=rail sub-path=@ta])
@@ -4179,11 +3000,11 @@
             ::
             ?~  dir.arch
               ~
-            `[rail.resource.schematic.build sub-path]
+            `[rail.resource.plan.build sub-path]
           ::  keep track of the original value so we can reset it
           ::
           =/  old-path-to-render  path-to-render
-          ::  apply each of the filtered :sub-paths to the :sub-crane.
+          ::  apply each of the filtered .sub-paths to the .sub-crane.
           ::
           =^  crane-results  ..run-crane
             %+  roll  sub-paths
@@ -4195,7 +3016,7 @@
             =.  path-to-render  rail
             =^  result  ..run-crane  (run-crane subject sub-crane)
             [[[sub-path result] -.accumulator] ..run-crane]
-          ::  set :path-to-render back
+          ::  set .path-to-render back
           ::
           =.  path-to-render  old-path-to-render
           ::  if any sub-cranes error, return the first error
@@ -4392,7 +3213,7 @@
           =/  file-list=(list path)  ;;((list path) q.q.cage.u.tree-result)
           ::  trim file extensions off the file paths
           ::
-          ::    This is pretty ugly, but Ford expects :path-to-render not to
+          ::    This is pretty ugly, but Ford expects .path-to-render not to
           ::    have a file extension, so we need to trim it off each path.
           ::
           =.  file-list
@@ -4405,7 +3226,7 @@
             (scag (sub (lent path) 1) path)
           ::
           =/  old-path-to-render  path-to-render
-          ::  apply each of the paths in :file-list to the :sub-crane
+          ::  apply each of the paths in .file-list to the .sub-crane
           ::
           =^  crane-results  ..run-crane
             %+  roll  file-list
@@ -4492,10 +3313,10 @@
           ?:  ?=([~ %error *] plan-result)
             [[%error [leaf+"/! failed: " message.u.plan-result]] ..run-crane]
           ?>  ?=([~ %success %plan *] plan-result)
-          ::  if :mark is %noun, don't perform mark translation; just return
+          ::  if .mark is %noun, don't perform mark translation; just return
           ::
           ::    If we were to verify the product type with %noun, this would
-          ::    cast to *, which would overwrite :vase.u.plan-result's actual
+          ::    cast to *, which would overwrite .vase.u.plan-result's actual
           ::    product type
           ::
           ?:  =(%noun mark)
@@ -4543,9 +3364,9 @@
         [date.build [%path disc.source-rail.scaffold prefix file-path.cable]]
       ::  +resolve-builds: run a list of builds and collect results
       ::
-      ::    If a build blocks, put its +tang in :error-message and stop.
-      ::    All builds that block get put in :blocks. Results of
-      ::    successful builds are produced in :results.
+      ::    If a build blocks, put its +tang in .error-message and stop.
+      ::    All builds that block get put in .blocks. Results of
+      ::    successful builds are produced in .results.
       ::
       ++  resolve-builds
         =|  results=(list build-result)
@@ -4658,14 +3479,14 @@
       ::
       ?.  ?=([~ %success %scry *] zuse-scry-result)
         (wrap-error zuse-scry-result)
-      ::  short-circuit to :pit if asked for current %home desk
+      ::  short-circuit to .pit if asked for current %home desk
       ::
       ::    This avoids needing to recompile the kernel if we're asked
       ::    for the kernel we're already running. Note that this fails
       ::    referential transparency if |autoload is turned off.
       ::
       ?:  ?&  |(=(disc [our %home]) =(disc [our %base]))
-              ::  is :date.build the latest commit on the %home desk?
+              ::  is .date.build the latest commit on the %home desk?
               ::
               ?|  =(now date.build)
                   ::
@@ -4705,7 +3526,7 @@
       =/  zuse-build=^build
         :*  date.build
             %ride  p.zuse-hoon
-            ::  hoon for `..is` to grab the :pit out of the arvo core
+            ::  hoon for `..is` to grab the .pit out of the arvo core
             ::
             %ride  [%cnts ~[[%& 1] %is] ~]
             %ride  p.arvo-hoon
@@ -4725,18 +3546,18 @@
     ::
     ++  make-ride
       ~%  %make-ride  ..^^$  ~
-      |=  [formula=hoon =schematic]
+      |=  [formula=hoon =plan]
       ^-  build-receipt
       ::
-      =^  result  out  (depend-on [date.build schematic])
+      =^  result  out  (depend-on [date.build plan])
       ?~  result
-        (return-blocks [date.build schematic]~)
+        (return-blocks [date.build plan]~)
       ::
       =*  subject-vase  q:(result-to-cage u.result)
-      =/  slim-schematic=^schematic  [%slim p.subject-vase formula]
-      =^  slim-result  out  (depend-on [date.build slim-schematic])
+      =/  slim-plan=^plan  [%slim p.subject-vase formula]
+      =^  slim-result  out  (depend-on [date.build slim-plan])
       ?~  slim-result
-        (return-blocks [date.build slim-schematic]~)
+        (return-blocks [date.build slim-plan]~)
       ::
       ?:  ?=([~ %error *] slim-result)
         %-  return-error
@@ -4746,8 +3567,8 @@
       ::
       ?>  ?=([~ %success %slim *] slim-result)
       ::
-      =/  =compiler-cache-key  [%ride formula subject-vase]
-      =^  cached-result  out  (access-cache compiler-cache-key)
+      =/  =hoon-cache-key  [%ride formula subject-vase]
+      =^  cached-result  out  (access-cache hoon-cache-key)
       ?^  cached-result
         (return-result u.cached-result)
       ::
@@ -4770,13 +3591,13 @@
     ::
     ++  make-same
       ~%  %make-same  ..^^$  ~
-      |=  =schematic
+      |=  =plan
       ^-  build-receipt
       ::
-      =^  result  out  (depend-on [date.build schematic])
+      =^  result  out  (depend-on [date.build plan])
       ::
       ?~  result
-        (return-blocks [date.build schematic]~)
+        (return-blocks [date.build plan]~)
       (return-result u.result)
     ::
     ++  make-scry
@@ -4789,7 +3610,7 @@
       =/  =scry-request  [vane.resource care.resource beam]
       ::  perform scry operation if we don't already know the result
       ::
-      ::    Look up :scry-request in :scry-results.per-event to avoid
+      ::    Look up .scry-request in .scry-results.per-event to avoid
       ::    rerunning a previously blocked +scry.
       ::
       =/  scry-response
@@ -4816,8 +3637,8 @@
       |=  [subject-type=type formula=hoon]
       ^-  build-receipt
       ::
-      =/  =compiler-cache-key  [%slim subject-type formula]
-      =^  cached-result  out  (access-cache compiler-cache-key)
+      =/  =hoon-cache-key  [%slim subject-type formula]
+      =^  cached-result  out  (access-cache hoon-cache-key)
       ?^  cached-result
         (return-result u.cached-result)
       ::
@@ -4838,8 +3659,8 @@
       |=  [gate=vase sample=vase]
       ^-  build-receipt
       ::
-      =/  =compiler-cache-key  [%slit p.gate p.sample]
-      =^  cached-result  out  (access-cache compiler-cache-key)
+      =/  =hoon-cache-key  [%slit p.gate p.sample]
+      =^  cached-result  out  (access-cache hoon-cache-key)
       ?^  cached-result
         (return-result u.cached-result)
       ::
@@ -4927,7 +3748,7 @@
           :*  %ride
               ::  (ream 'noun:grab')
               formula=`hoon`[%tsld [%wing ~[%noun]] [%wing ~[%grab]]]
-              subject=`schematic`[%core rail.u.path-result]
+              subject=`plan`[%core rail.u.path-result]
           ==
         sample=[%$ %noun %noun input]
       ::
@@ -4969,13 +3790,13 @@
       =>  |%
           ::  +load-node: a queued arm to run from a mark core
           ::
-          +=  load-node  [type=?(%grab %grow) mark=term]
-          ::  edge-jug: directed graph from :source mark to :target marks
+          +$  load-node  [type=?(%grab %grow) mark=term]
+          ::  edge-jug: directed graph from .source mark to .target marks
           ::
-          ::    :source can be converted to :target either by running
+          ::    .source can be converted to .target either by running
           ::    its own +grow arm, or by running the target's +grab arm.
           ::
-          +=  edge-jug  (jug source=term [target=term arm=?(%grow %grab)])
+          +$  edge-jug  (jug source=term [target=term arm=?(%grow %grab)])
           ::  mark-path: a path through the mark graph
           ::
           ::    +mark-path represents a series of mark translation
@@ -4985,7 +3806,7 @@
           ::    from a source mark to a target mark, and it specifies
           ::    whether it will use +grow or +grab.
           ::
-          +=  mark-path  (list mark-action)
+          +$  mark-path  (list mark-action)
           --
       ::
       |^  ^-  build-receipt
@@ -5000,7 +3821,7 @@
           ::  find a path through the graph
           ::
           ::    Make a list of individual mark translation actions which will
-          ::    take us from :source to :term.
+          ::    take us from .source to .term.
           ::
           =/  path  (find-path-through u.-.marks-result)
           ::  if there is no path between these marks, give an error message
@@ -5060,10 +3881,10 @@
         ?:  =(~ queued-nodes)
           [[`edge-jug compile-failures] out]
         ::
-        =/  nodes-and-schematics
+        =/  nodes-and-plans
           %+  turn  queued-nodes
           |=  =load-node
-          ^-  [^load-node schematic]
+          ^-  [^load-node plan]
           :-  load-node
           [%path disc %mar mark.load-node]
         ::  get the path for each mark name
@@ -5071,12 +3892,12 @@
         ::    For %path builds, any ambiguous path is just filtered out.
         ::
         =^  maybe-path-results  out
-          %-  perform-schematics  :*
+          %-  perform-plans  :*
             ;:  weld
               "ford: %walk from "  (trip source)  " to "  (trip target)
               " contained failures:"
             ==
-            nodes-and-schematics
+            nodes-and-plans
             %filter-errors
             *load-node
           ==
@@ -5086,7 +3907,7 @@
         =/  nodes-and-cores
           %+  turn  u.maybe-path-results
           |=  [=load-node =build-result]
-          ^-  [^load-node schematic]
+          ^-  [^load-node plan]
           ::
           ?>  ?=([%success %path *] build-result)
           ::
@@ -5094,7 +3915,7 @@
           [%core rail.build-result]
         ::
         =^  maybe-core-results  out
-          %-  perform-schematics  :*
+          %-  perform-plans  :*
             ;:  weld
               "ford: %walk from "  (trip source)  " to "  (trip target)
               " contained failures:"
@@ -5240,7 +4061,7 @@
         ::
         ?-    arm.i.links
             %grab
-          ::  if :results has a %grow entry, remove it before adding our %grab
+          ::  if .results has a %grow entry, remove it before adding our %grab
           =/  grow-entry=mark-action  [%grow source target.i.links]
           =?  results  (~(has in results) grow-entry)
             (~(del in results) grow-entry)
@@ -5249,7 +4070,7 @@
           $(links t.links)
         ::
             %grow
-          ::  if :results has a %grab entry, don't add a %grow entry
+          ::  if .results has a %grab entry, don't add a %grow entry
           ?:  (~(has in results) [%grab source target.i.links])
             $(links t.links)
           ::
@@ -5261,18 +4082,18 @@
     ::
     ::+|  utilities
     ::
-    ::  +perform-schematics: helper function that performs a list of builds
+    ::  +perform-plans: helper function that performs a list of builds
     ::
     ::    We often need to run a list of builds. This helper method will
-    ::    depend on all :builds, will return a +build-receipt of either the
+    ::    depend on all .builds, will return a $build-receipt of either the
     ::    blocks or the first error, or a list of all completed results.
     ::
     ::    This is a wet gate so individual callers can associate their own
-    ::    key types with schematics.
+    ::    key types with plans.
     ::
-    ++  perform-schematics
+    ++  perform-plans
       |*  $:  failure=tape
-              builds=(list [key=* =schematic])
+              builds=(list [key=* =plan])
               on-error=?(%fail-on-errors %filter-errors %ignore-errors)
               key-bunt=*
           ==
@@ -5288,7 +4109,7 @@
             ?~  builds
               [results out]
             ::
-            =/  sub-build=^build  [date.build schematic.i.builds]
+            =/  sub-build=^build  [date.build plan.i.builds]
             =^  result  out  (depend-on sub-build)
             =.  results  [[key.i.builds sub-build result] results]
             ::
@@ -5357,7 +4178,7 @@
       ::
       ?>  ?=([~ %error *] result)
       =/  message=tang
-        [[%leaf "ford: {<-.schematic.build>} failed: "] message.u.result]
+        [[%leaf "ford: {<-.plan.build>} failed: "] message.u.result]
       ::
       (return-error message)
     ::  +return-blocks: exit +make as a blocked build
@@ -5380,13 +4201,13 @@
       out(result [%build-result build-result])
     ::
     ++  access-cache
-      |=  =compiler-cache-key
+      |=  =hoon-cache-key
       ^-  [(unit build-result) _out]
       ::
-      ?~  entry=(~(get by lookup.compiler-cache.state) compiler-cache-key)
-        [~ out(cache-access `[compiler-cache-key new=%.y])]
+      ?~  entry=(~(get by lookup.hoon-cache.state) hoon-cache-key)
+        [~ out(cache-access `[hoon-cache-key new=%.y])]
       ::
-      [`val.u.entry out(cache-access `[compiler-cache-key new=%.n])]
+      [`val.u.entry out(cache-access `[hoon-cache-key new=%.n])]
     ::
     ++  depend-on
       |=  kid=^build
@@ -5397,7 +4218,7 @@
         !!
       ::
       =.  sub-builds.out  [kid sub-builds.out]
-      ::  +access-build-record will mutate :results.state
+      ::  +access-build-record will mutate .results.state
       ::
       ::    It's okay to ignore this because the accessed-builds get gathered
       ::    and merged during the +reduce step.
@@ -5413,8 +4234,8 @@
       [`build-result.build-record out]
     ::  +blocked-paths-to-receipt: handle the %2 case for mock
     ::
-    ::    Multiple schematics handle +toon instances. This handles the %2 case
-    ::    for a +toon and transforms it into a +build-receipt so we depend on
+    ::    Multiple plans handle +toon instances. This handles the %2 case
+    ::    for a +toon and transforms it into a $build-receipt so we depend on
     ::    the blocked paths correctly.
     ::
     ++  blocked-paths-to-receipt
@@ -5441,9 +4262,9 @@
           :-  %|
           [%leaf "ford: {<name>}: invalid resource in scry path: {<path>}"]
         ::
-        =/  sub-schematic=schematic  [%pin date %scry u.resource]
+        =/  sub-plan=plan  [%pin date %scry u.resource]
         ::
-        [%& `^build`[date sub-schematic]]
+        [%& `^build`[date sub-plan]]
       ::
       =/  failed=tang
         %+  murn  blocks-or-failures
@@ -5471,7 +4292,7 @@
         %+  roll  blocks
         |=  [block=^build accumulator=_out]
         =.  out  accumulator
-        +:(depend-on [date.block schematic.block])
+        +:(depend-on [date.block plan.block])
       ::
       (return-blocks blocks)
     --
@@ -5479,94 +4300,22 @@
   ::
   ::+|  utilities
   ::
-  ::  +got-build: lookup :build in state, asserting presence
+  ::  +got-duct-status: retrieve a +duct-status from the state
   ::
-  ++  got-build
-    |=  =build
-    ^-  build-status
-    ~|  [%ford-missing-build build=(build-to-tape build) duct=duct]
-    (~(got by builds.state) build)
-  ::  +add-build: store a fresh, unstarted build in the state
+  ++  got-duct-status
+    |=  duct=^duct
+    ^-  duct-status
+    ::
+    ~|  [%missing-duct duct]
+    (~(got by ducts.state) duct)
   ::
-  ++  add-build
-    ~/  %add-build
-    |=  =build
-    ^+  state
-    ::  don't overwrite an existing entry
-    ::
-    ?:  (~(has by builds.state) build)
-      state
-    ::
-    %_    state
-        builds-by-schematic
-      (~(put by-schematic builds-by-schematic.state) build)
-    ::
-        builds
-      %+  ~(put by builds.state)  build
-      =|  =build-status
-      build-status(state [%untried ~])
-    ==
-  ::  +remove-builds: remove builds and their sub-builds
-  ::
-  ++  remove-builds
-    ~/  %remove-builds
-    |=  builds=(list build)
-    ::
-    |^  ^+  state
-        ::
-        ?~  builds
-          state
-        ::
-        ?~  maybe-build-status=(~(get by builds.state) i.builds)
-          $(builds t.builds)
-        =/  subs  ~(tap in ~(key by subs.u.maybe-build-status))
-        ::
-        =^  removed  state  (remove-single-build i.builds u.maybe-build-status)
-        ?.  removed
-          $(builds t.builds)
-        ::
-        $(builds (welp t.builds subs))
-    ::  +remove-build: stop storing :build in the state
-    ::
-    ::    Removes all linkages to and from sub-builds
-    ::
-    ++  remove-single-build
-      |=  [=build =build-status]
-      ^+  [removed=| state]
-      ::  never delete a build that something depends on
-      ::
-      ?^  clients.build-status
-        [removed=| state]
-      ?^  requesters.build-status
-        [removed=| state]
-      ::  nothing depends on :build, so we'll remove it
-      ::
-      :-  removed=&
-      ::
-      %_    state
-          builds-by-schematic
-        (~(del by-schematic builds-by-schematic.state) build)
-      ::
-          builds
-        (~(del by builds.state) build)
-      ==
-    --
-  ::  +update-build-status: replace :build's +build-status by running a function
-  ::
-  ++  update-build-status
-    ~/  %update-build-status
-    |=  [=build update-func=$-(build-status build-status)]
-    ^-  [build-status builds=_builds.state]
-    ::
-    =/  original=build-status  (got-build build)
-    =/  mutant=build-status  (update-func original)
-    ::
-    [mutant (~(put by builds.state) build mutant)]
   ::  +intercepted-scry: augment real scry with local %scry build results
   ::
   ::    Try to deduplicate requests for possibly remote resources by looking up
   ::    the result in local state if the real scry has no synchronous
   ::    answer (it produced `~`).
+  ::
+  ::    TODO: convert to ford-pinto
   ::
   ++  intercepted-scry
     %-  sloy  ^-  slyd
@@ -5592,8 +4341,8 @@
     =/  =build     [date=p.r.beam %scry resource]
     ::  look up the scry result from our permanent state
     ::
-    ::    Note: we can't freshen :build's :last-accessed date because
-    ::    we can't mutate :state from this gate. %scry results might get
+    ::    Note: we can't freshen .build's .last-accessed date because
+    ::    we can't mutate .state from this gate. %scry results might get
     ::    deleted during %wipe more quickly than they should because of this.
     ::
     =/  local-result  -:(access-build-record build)
@@ -5603,308 +4352,26 @@
       ~
     ::
     =/  local-cage=cage  (result-to-cage build-result.u.local-result)
-    ::  if :local-result does not nest in :type, produce an error
+    ::  if .local-result does not nest in .type, produce an error
     ::
     ?.  -:(nets:wa +.ref `type`p.q.local-cage)
       [~ ~]
     ::
     [~ ~ local-cage]
-  ::  +unblock-clients-on-duct: unblock and produce clients blocked on :build
-  ::
-  ++  unblock-clients-on-duct
-    =|  unblocked=(list build)
-    ~%  %unblock-clients-on-duct  +>+  ~
-    |=  =build
-    ^+  [unblocked builds.state]
-    ::
-    =/  =build-status  (got-build build)
-    ::
-    =/  clients=(list ^build)  ~(tap in (~(get ju clients.build-status) [%duct duct]))
-    ::
-    |-
-    ^+  [unblocked builds.state]
-    ?~  clients
-      [unblocked builds.state]
-    ::
-    =^  client-status  builds.state
-      %+  update-build-status  i.clients
-      |=  client-status=^build-status
-      ::
-      =.  subs.client-status
-        %+  ~(jab by subs.client-status)  build
-        |=  original=build-relation
-        original(blocked |)
-      ::
-      =?    state.client-status
-          ?&  ?=(%blocked -.state.client-status)
-          ::
-              ?!
-              %-  ~(any by subs.client-status)
-              |=(build-relation &(blocked verified))
-          ==
-        ::
-        [%unblocked ~]
-      client-status
-    ::
-    =?  unblocked  !?=(%blocked -.state.client-status)
-      [i.clients unblocked]
-    ::
-    $(clients t.clients)
-  ::  +on-build-complete: handles completion of any build
-  ::
-  ++  on-build-complete
-    ~/  %on-build-complete
-    |=  =build
-    ^+  ..execute
-    ::
-    =.  ..execute  (cleanup-orphaned-provisional-builds build)
-    ::
-    =/  duct-status  (~(got by ducts.state) duct)
-    ::
-    =/  =build-status  (got-build build)
-    ?:  (~(has in requesters.build-status) [%duct duct])
-      (on-root-build-complete build)
-    ::
-    =^  unblocked-clients  builds.state  (unblock-clients-on-duct build)
-    =.  candidate-builds  (~(gas in candidate-builds) unblocked-clients)
-    ::
-    ..execute
-  ::  +on-root-build-complete: handle completion or promotion of a root build
-  ::
-  ::    When a build completes for a duct, we might have to send a %made move
-  ::    on the requesting duct and also do duct and build book-keeping.
-  ::
-  ++  on-root-build-complete
-    ~/  %on-root-build-complete
-    |=  =build
-    ^+  ..execute
-    ::
-    =;  res=_..execute
-        =/  duct-status=(unit duct-status)
-          (~(get by ducts.state.res) duct)
-        ?~  duct-status  res
-        ::  debugging assertions to try to track down failure in
-        ::  +copy-build-tree-as-provisional
-        ::
-        ~|  [%failed-to-preserve-live-build (build-to-tape build)]
-        ?>  ?=(%live -.live.u.duct-status)
-        ~|  %failed-2
-        ?>  ?=(^ last-sent.live.u.duct-status)
-        ~|  %failed-3
-        ?>  .=  build
-            [date.u.last-sent.live.u.duct-status root-schematic.u.duct-status]
-        ~|  %failed-4
-        ?>  (~(has by builds.state.res) build)
-        ::
-        res
-    ::
-    =/  =build-status  (got-build build)
-    =/  =duct-status  (~(got by ducts.state) duct)
-    ::  make sure we have something to send
-    ::
-    ?>  ?=([%complete %value *] state.build-status)
-    ::  send a %made move unless it's an unchanged live build
-    ::
-    =?    moves
-        ?!
-        ?&  ?=(%live -.live.duct-status)
-            ?=(^ last-sent.live.duct-status)
-            ::
-            =/  last-build-status
-              %-  ~(got by builds.state)
-              [date.u.last-sent.live.duct-status schematic.build]
-            ::
-            ?>  ?=(%complete -.state.last-build-status)
-            ?&  ?=(%value -.build-record.state.last-build-status)
-            ::
-                .=  build-result.build-record.state.last-build-status
-                    build-result.build-record.state.build-status
-        ==  ==
-      :_  moves
-      ^-  move
-      ::
-      :*  duct  %give  %made  date.build  %complete
-          build-result.build-record.state.build-status
-      ==
-    ::
-    ?-    -.live.duct-status
-        %once
-      =.  ducts.state  (~(del by ducts.state) duct)
-      =.  state  (move-root-to-cache build)
-      ::
-      ..execute
-    ::
-        %live
-      ::  clean up previous build
-      ::
-      =?  state  ?=(^ last-sent.live.duct-status)
-        =/  old-build=^build  build(date date.u.last-sent.live.duct-status)
-        ~?  =(date.build date.old-build)
-          :+  "old and new builds have same date, will probably crash!"
-            (build-to-tape build)
-          (build-to-tape old-build)
-        ::
-        (remove-anchor-from-root old-build [%duct duct])
-      ::
-      =/  resource-list=(list [=disc resources=(set resource)])
-        ~(tap by (collect-live-resources build))
-      ::  we can only handle a single subscription
-      ::
-      ::    In the long term, we need Clay's interface to change so we can
-      ::    subscribe to multiple desks at the same time.
-      ::
-      ?:  (lth 1 (lent resource-list))
-        =.  ..execute
-          %+  send-incomplete  build  :~
-            [%leaf "root build {(build-to-tape build)}"]
-            [%leaf "on duct:"]
-            [%leaf "{<duct>}"]
-            [%leaf "tried to subscribe to multiple discs:"]
-            [%leaf "{<resource-list>}"]
-          ==
-        ::  delete this instead of caching it, since it wasn't right
-        ::
-        =.  ducts.state  (~(del by ducts.state) duct)
-        =.  state  (remove-anchor-from-root build [%duct duct])
-        ..execute
-      ::
-      =/  subscription=(unit subscription)
-        ?~  resource-list
-          ~
-        `[date.build disc.i.resource-list resources.i.resource-list]
-      ::
-      =?  ..execute  ?=(^ subscription)
-        (start-clay-subscription u.subscription)
-      ::
-      =.  ducts.state
-        %+  ~(put by ducts.state)  duct
-        %_    duct-status
-            live
-          [%live in-progress=~ last-sent=`[date.build subscription]]
-        ==
-      ::
-      ..execute
-    ==
-  ::  +send-incomplete: emit a move indicating we can't complete :build
+  ::  +send-incomplete: emit a move indicating we can't complete .build
   ::
   ++  send-incomplete
-    |=  [=build message=tang]
-    ^+  ..execute
-    ::
-    =.  moves
-      :_  moves
-      `move`[duct %give %made date.build %incomplete message]
-    ::
-    ..execute
-  ::  +cleanup-orphaned-provisional-builds: delete extraneous sub-builds
+    |=  [date=@da message=tang]
+    ^+  event-core
+    =.  moves  :_(moves [duct %give %made date %incomplete message])
+    event-core
+  ::  +send-complete: send a move to respond with a completed build
   ::
-  ::    Remove unverified linkages to sub builds. If a sub-build has no other
-  ::    clients on this duct, then it is orphaned and we remove the duct from
-  ::    its subs and call +cleanup on it.
-  ::
-  ++  cleanup-orphaned-provisional-builds
-    ~/  %cleanup-orphaned-provisional-builds
-    |=  =build
-    ^+  ..execute
-    ::
-    =/  =build-status  (got-build build)
-    ::
-    =/  orphans=(list ^build)
-      %+  murn  ~(tap by subs.build-status)
-      |=  [sub=^build =build-relation]
-      ^-  (unit ^build)
-      ::
-      ?:  verified.build-relation
-        ~
-      `sub
-    ::  dequeue orphans in case we were about to run them
-    ::
-    =/  orphan-set        (~(gas in *(set ^build)) orphans)
-    =.  next-builds       (~(dif in next-builds) orphan-set)
-    =.  candidate-builds  (~(dif in candidate-builds) orphan-set)
-    ::  remove links to orphans in :build's +build-status
-    ::
-    =^  build-status  builds.state
-      %+  update-build-status  build
-      |=  build-status=^build-status
-      %_    build-status
-          subs
-        ::
-        |-  ^+  subs.build-status
-        ?~  orphans  subs.build-status
-        ::
-        =.  subs.build-status  (~(del by subs.build-status) i.orphans)
-        ::
-        $(orphans t.orphans)
-      ==
-    ::
-    =/  =anchor  [%duct duct]
-    ::
-    |-  ^+  ..execute
-    ?~  orphans  ..execute
-    ::  remove link to :build in :i.orphan's +build-status
-    ::
-    =^  orphan-status  builds.state
-      %+  update-build-status  i.orphans
-      |=  orphan-status=_build-status
-      %_  orphan-status
-        clients  (~(del ju clients.orphan-status) anchor build)
-      ==
-    ::
-    ?:  (~(has by clients.orphan-status) anchor)
-      $(orphans t.orphans)
-    ::  :build was the last client on this duct so remove it
-    ::
-    =.  builds.state  (remove-anchor-from-subs i.orphans anchor)
-    =.  state  (cleanup i.orphans)
-    $(orphans t.orphans)
-  ::  +access-build-record: access a +build-record, updating :last-accessed
-  ::
-  ::    Usage:
-  ::    ```
-  ::    =^  maybe-build-record  builds.state  (access-build-record build)
-  ::    ```
-  ::
-  ++  access-build-record
-    ~/  %access-build-record
-    |=  =build
-    ^-  [(unit build-record) _builds.state]
-    ::
-    ?~  maybe-build-status=(~(get by builds.state) build)
-      [~ builds.state]
-    ::
-    =/  =build-status  u.maybe-build-status
-    ::
-    ?.  ?=(%complete -.state.build-status)
-      [~ builds.state]
-    ::
-    ?:  ?=(%tombstone -.build-record.state.build-status)
-      [`build-record.state.build-status builds.state]
-    ::
-    =.  last-accessed.build-record.state.build-status  now
-    ::
-    :-  `build-record.state.build-status
-    (~(put by builds.state) build build-status)
-  ::  +cleanup: try to clean up a build and its sub-builds
-  ::
-  ++  cleanup
-    ~/  %cleanup
-    |=  =build
-    ^+  state
-    ::   does this build even exist?!
-    ::
-    ?~  maybe-build-status=(~(get by builds.state) build)
-      state
-    ::
-    =/  =build-status  u.maybe-build-status
-    ::  never delete a build that something depends on
-    ::
-    ?^  clients.build-status
-      state
-    ?^  requesters.build-status
-      state
-    ::
-    (remove-builds ~[build])
+  ++  send-complete
+    |=  [date=@da result=(each cage tang)]
+    ^+  event-core
+    =.  moves  :_(moves [duct %give %made date %complete result])
+    event-core
   ::  +collect-live-resources: produces all live resources from sub-scrys
   ::
   ++  collect-live-resources
@@ -5912,11 +4379,11 @@
     |=  =build
     ^-  (jug disc resource)
     ::
-    ?:  ?=(%scry -.schematic.build)
-      =*  resource  resource.schematic.build
+    ?:  ?=(%scry -.plan.build)
+      =*  resource  resource.plan.build
       (my [(extract-disc resource) (sy [resource]~)]~)
     ::
-    ?:  ?=(%pin -.schematic.build)
+    ?:  ?=(%pin -.plan.build)
       ~
     ::
     =/  subs  ~(tap in ~(key by subs:(got-build build)))
@@ -5928,45 +4395,12 @@
     =/  sub-resources=(jug disc resource)  ^$(build i.subs)
     =.  resources  (unify-jugs resources sub-resources)
     $(subs t.subs)
-  ::  +collect-blocked-resources: produces all blocked resources from sub-scrys
-  ::
-  ++  collect-blocked-sub-scrys
-    ~/  %collect-blocked-sub-scrys
-    |=  =build
-    ^-  (set scry-request)
-    ::
-    ?:  ?=(%scry -.schematic.build)
-      =,  resource.schematic.build
-      =/  =scry-request
-        :+  vane  care
-        ^-  beam
-        [[ship.disc.rail desk.disc.rail [%da date.build]] spur.rail]
-      (sy [scry-request ~])
-    ::  only recurse on blocked sub-builds
-    ::
-    =/  subs=(list ^build)
-      %+  murn  ~(tap by subs:(got-build build))
-      |=  [sub=^build =build-relation]
-      ^-  (unit ^build)
-      ::
-      ?.  blocked.build-relation
-        ~
-      `sub
-    ::
-    =|  scrys=(set scry-request)
-    |-
-    ^+  scrys
-    ?~  subs
-      scrys
-    ::
-    =.  scrys  (~(uni in scrys) ^$(build i.subs))
-    $(subs t.subs)
   ::  +start-clay-subscription: listen for changes in the filesystem
   ::
   ++  start-clay-subscription
     ~/  %start-clay-subscription
     |=  =subscription
-    ^+  ..execute
+    ^+  event-core
     ::
     =/  already-subscribed=?
       (~(has by pending-subscriptions.state) subscription)
@@ -5976,7 +4410,7 @@
     ::  don't send a duplicate move if we're already subscribed
     ::
     ?:  already-subscribed
-      ..execute
+      event-core
     ::
     =/  =wire  (clay-subscription-wire [date disc]:subscription)
     ::
@@ -5989,7 +4423,7 @@
         |=  =resource  ^-  (unit [care:clay path])
         ::
         `[care.resource (flop spur.rail.resource)]
-      ::  if :request-contents is `~`, this code is incorrect
+      ::  if .request-contents is `~`, this code is incorrect
       ::
       ?<  ?=(~ request-contents)
       ::  their: requestee +ship
@@ -6002,20 +4436,20 @@
     ::
     =.  moves  [`move`[duct [%pass wire note]] moves]
     ::
-    ..execute
-  ::  +cancel-clay-subscription: remove a subscription on :duct
+    event-core
+  ::  +cancel-clay-subscription: remove a subscription on .duct
   ::
   ++  cancel-clay-subscription
     ~/  %cancel-clay-subscription
     |=  =subscription
-    ^+  ..execute
+    ^+  event-core
     ::
     =^  originator  pending-subscriptions.state
       (del-request pending-subscriptions.state subscription duct)
     ::  if there are still other ducts on this subscription, don't send a move
     ::
     ?~  originator
-      ..execute
+      event-core
     ::
     =/  =wire  (clay-subscription-wire [date disc]:subscription)
     ::
@@ -6025,7 +4459,7 @@
     ::
     =.  moves  [`move`[u.originator [%pass wire note]] moves]
     ::
-    ..execute
+    event-core
   ::  +clay-sub-wire: the wire to use for a clay subscription
   ::
   ::    While it is possible for two different root builds to make
@@ -6043,7 +4477,7 @@
   ::
   ++  start-scry-request
     |=  =scry-request
-    ^+  ..execute
+    ^+  event-core
     ::  if we are the first block depending on this scry, send a move
     ::
     =/  already-started=?  (~(has by pending-scrys.state) scry-request)
@@ -6053,7 +4487,7 @@
     ::  don't send a duplicate move if we've already sent one
     ::
     ?:  already-started
-      ..execute
+      event-core
     ::
     =/  =wire  (scry-request-wire scry-request)
     ::
@@ -6066,19 +4500,19 @@
     ::
     =.  moves  [`move`[duct [%pass wire note]] moves]
     ::
-    ..execute
+    event-core
   ::  +cancel-scry-request: cancel a pending asynchronous scry request
   ::
   ++  cancel-scry-request
     |=  =scry-request
-    ^+  ..execute
+    ^+  event-core
     ::
     =^  originator  pending-scrys.state
       (del-request pending-scrys.state scry-request duct)
     ::  if there are still other ducts on this subscription, don't send a move
     ::
     ?~  originator
-      ..execute
+      event-core
     ::
     =/  =wire  (scry-request-wire scry-request)
     ::
@@ -6088,7 +4522,7 @@
     ::
     =.  moves  [`move`[u.originator [%pass wire note]] moves]
     ::
-    ..execute
+    event-core
   ::  +scry-request-wire
   ::
   ++  scry-request-wire
@@ -6141,23 +4575,23 @@
       ::  %build: request to perform a build
       ::
       %build
-    ::  perform the build indicated by :task
+    ::  perform the build indicated by .task
     ::
-    ::    We call :start-build on :this-event, which is the |per-event core
-    ::    with the our event-args already bound. :start-build performs the
-    ::    build and produces a pair of :moves and a mutant :state.
-    ::    We update our :state and produce it along with :moves.
+    ::    We call .start-build on .this-event, which is the |per-event core
+    ::    with the our event-args already bound. .start-build performs the
+    ::    build and produces a pair of .moves and a mutant .state.
+    ::    We update our .state and produce it along with .moves.
     ::
-    =/  =build  [now schematic.task]
+    =/  =build  [now plan.task]
     =^  moves  state.ax  (start-build:this-event build live.task)
     ::
     [moves ford-gate]
   ::
-      ::  %keep: keep :count cache entries
+      ::  %keep: keep .count cache entries
       ::
       %keep
     ::
-    =.  state.ax  (keep:this-event [compiler-cache build-cache]:task)
+    =.  state.ax  (keep:this-event [hoon-cache build-cache]:task)
     ::
     [~ ford-gate]
   ::
@@ -6189,7 +4623,7 @@
     ::
     ~>  %slog.[0 leaf+"ford: trim: clearing caches"]
     =/  b-max  max-size.queue.build-cache.state.ax
-    =/  c-max  max-size.compiler-cache.state.ax
+    =/  c-max  max-size.hoon-cache.state.ax
     =.  state.ax  (keep:this-event 0 0)
     =.  state.ax  (keep:this-event c-max b-max)
     [~ ford-gate]
@@ -6202,7 +4636,7 @@
     ::
     [~ ford-gate]
   ::
-      ::  %wipe: wipe stored builds, clearing :percent-to-remove of the entries
+      ::  %wipe: wipe stored builds, clearing .percent-to-remove of the entries
       ::
       %wipe
     ::
@@ -6217,7 +4651,7 @@
     ^-  mass
     :+  %ford  %|
     :~  builds+&+builds.state.ax
-        compiler-cache+&+compiler-cache.state.ax
+        hoon-cache+&+hoon-cache.state.ax
         dot+&+ax
     ==
   ==
@@ -6244,10 +4678,10 @@
 ++  take
   |=  [=wire =duct wrapped-sign=(hypo sign)]
   ^-  [(list move) _ford-gate]
-  ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
+  ::  unwrap .sign, ignoring unneeded +type in .p.wrapped-sign
   ::
   =/  =sign  q.wrapped-sign
-  ::  :wire must at least contain a tag for dispatching
+  ::  .wire must at least contain a tag for dispatching
   ::
   ?>  ?=([@ *] wire)
   ::
@@ -6311,7 +4745,7 @@
       ::  scry-request: the +scry-request we had previously blocked on
       ::
       =/  =scry-request  (need (path-to-scry-request t.wire))
-      ::  scry-result: parse a (unit cage) from :sign
+      ::  scry-result: parse a (unit cage) from .sign
       ::
       ::    If the result is `~`, the requested resource was not available.
       ::
@@ -6319,7 +4753,7 @@
         ?~  riot-sign
           ~
         `r.u.riot-sign
-      ::  if spurious Clay response, :ducts will be empty, causing no-op
+      ::  if spurious Clay response, .ducts will be empty, causing no-op
       ::
       =/  ducts=(list ^duct)
         (get-request-ducts pending-scrys.state.ax scry-request)
@@ -6329,7 +4763,7 @@
       ?~  ducts  [moves state.ax]
       ::
       =*  event-args  [[our i.ducts now scry-gate] state.ax]
-      ::  unblock the builds that had blocked on :resource
+      ::  unblock the builds that had blocked on .resource
       ::
       =*  unblock  unblock:(per-event event-args)
       =^  duct-moves  state.ax  (unblock scry-request scry-result)

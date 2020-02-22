@@ -1118,9 +1118,9 @@
               ::    build around.
               ::
               live=?
-              ::  plan: the schematic to build
+              ::  plan: the plan to build
               ::
-              =schematic
+              =plan
           ==
           ::  %keep: reset cache sizes
           ::
@@ -1197,13 +1197,13 @@
   ::
   ::    A +build produces either an error or a result. A result is a tagged
   ::    union of the various kinds of datatypes a build can produce. The tag
-  ::    represents the sub-type of +schematic that produced the result.
+  ::    represents the sub-type of +plan that produced the result.
   ::
   +=  build-result
     $%  ::  %error: the build produced an error whose description is :message
         ::
         [%error message=tang]
-        ::  %success: result of successful +build, tagged by +schematic sub-type
+        ::  %success: result of successful +build, tagged by +plan sub-type
         ::
         $:  %success
             $^  [head=build-result tail=build-result]
@@ -1241,14 +1241,14 @@
   ::
   +=  mark-action  [type=?(%grow %grab) source=term target=term]
   ::
-  ::  +schematic: plan for building
+  ::  +plan: plan for building
   ::
-  ++  schematic
-    ::    If the head of the +schematic is a pair, it's an auto-cons
-    ::    schematic. Its result will be the pair of results of its
-    ::    sub-schematics.
+  ++  plan
+    ::    If the head of the +plan is a pair, it's an auto-cons
+    ::    plan. Its result will be the pair of results of its
+    ::    sub-plans.
     ::
-    $^  [head=schematic tail=schematic]
+    $^  [head=plan tail=plan]
     ::
     $%  ::  %$: literal value. Produces its input unchanged.
         ::
@@ -1257,17 +1257,17 @@
             ::
             literal=cage
         ==
-        ::  %pin: pins a sub-schematic to a date
+        ::  %pin: pins a sub-plan to a date
         ::
         ::    There is a difference between live builds and once builds. In
         ::    live builds, we produce results over and over again and aren't
         ::    pinned to a specifc time. In once builds, we want to specify a
-        ::    specific date, which we apply recursively to any sub-schematics
-        ::    contained within :schematic.
+        ::    specific date, which we apply recursively to any sub-plans
+        ::    contained within :plan.
         ::
         ::    If a build has a %pin at the top level, we consider it to be a
         ::    once build. Otherwise, we consider it to be a live build. We do
-        ::    this so schematics which depend on the result of a once build can
+        ::    this so plans which depend on the result of a once build can
         ::    be cached, giving the client explicit control over the caching
         ::    behaviour.
         ::
@@ -1275,20 +1275,20 @@
             ::  date: time at which to perform the build
             ::
             date=@da
-            ::  schematic: wrapped schematic of pinned time
+            ::  plan: wrapped plan of pinned time
             ::
-            =schematic
+            =plan
         ==
         ::  %alts: alternative build choices
         ::
         ::    Try each choice in :choices, in order; accept the first one that
         ::    succeeds. Note that the result inherits the dependencies of all
-        ::    failed schematics, as well as the successful one.
+        ::    failed plans, as well as the successful one.
         ::
         $:  %alts
             ::  choices: list of build options to try
             ::
-            choices=(list schematic)
+            choices=(list plan)
         ==
         ::  %bake: run a file through a renderer
         ::
@@ -1316,14 +1316,14 @@
         ::  %call: call a gate on a sample
         ::
         $:  %call
-            ::  gate: schematic whose result is a gate
+            ::  gate: plan whose result is a gate
             ::
-            gate=schematic
-            ::  sample:  schematic whose result will be the gate's sample
+            gate=plan
+            ::  sample:  plan whose result will be the gate's sample
             ::
-            sample=schematic
+            sample=plan
         ==
-        ::  %cast: cast the result of a schematic through a mark
+        ::  %cast: cast the result of a plan through a mark
         ::
         $:  %cast
             ::  disc where in clay to load the mark from
@@ -1332,9 +1332,9 @@
             ::  mark: name of mark; also its file path in ren/
             ::
             mark=term
-            ::  input: schematic whose result will be run through the mark
+            ::  input: plan whose result will be run through the mark
             ::
-            input=schematic
+            input=plan
         ==
         ::  %core: build a hoon program from a source file
         ::
@@ -1349,12 +1349,12 @@
             ::  disc where in clay to load the mark from
             ::
             =disc
-            ::  old: schematic producing data to be used as diff starting point
+            ::  old: plan producing data to be used as diff starting point
             ::
-            start=schematic
-            ::  new: schematic producing data to be used as diff ending point
+            start=plan
+            ::  new: plan producing data to be used as diff ending point
             ::
-            end=schematic
+            end=plan
         ==
         ::  %dude: wrap a failure's error message with an extra message
         ::
@@ -1362,9 +1362,9 @@
             ::  error: a trap producing an error message to wrap the original
             ::
             error=tank
-            ::  attempt: the schematic to try, whose error we wrap, if any
+            ::  attempt: the plan to try, whose error we wrap, if any
             ::
-            attempt=schematic
+            attempt=plan
         ==
         ::  %hood: create a +hood from a hoon source file
         ::
@@ -1382,19 +1382,19 @@
             ::  mark: name of the mark to use for diffs; also file path in mar/
             ::
             mark=term
-            ::  first: schematic producing first diff
+            ::  first: plan producing first diff
             ::
-            first=schematic
-            ::  second: schematic producing second diff
+            first=plan
+            ::  second: plan producing second diff
             ::
-            second=schematic
+            second=plan
         ==
-        ::  %list: performs a list of schematics, returns a list of +builds-results
+        ::  %list: performs a list of plans, returns a list of +builds-results
         ::
         $:  %list
-            ::  schematics: list of builds to perform
+            ::  plans: list of builds to perform
             ::
-            schematics=(list schematic)
+            plans=(list plan)
         ==
         ::  %mash: force a merge, annotating any conflicts
         ::
@@ -1405,22 +1405,22 @@
             ::  mark: name of mark used in diffs; also file path in mar/
             ::
             mark=term
-            ::  first: marked schematic producing first diff
+            ::  first: marked plan producing first diff
             ::
-            first=[=disc mark=term =schematic]
-            ::  second: marked schematic producing second diff
+            first=[=disc mark=term =plan]
+            ::  second: marked plan producing second diff
             ::
-            second=[=disc mark=term =schematic]
+            second=[=disc mark=term =plan]
         ==
         ::  %mute: mutate a noun by replacing its wings with new values
         ::
         $:  %mute
-            ::  subject: schematic producing the noun to mutate
+            ::  subject: plan producing the noun to mutate
             ::
-            subject=schematic
-            ::  mutations: axes and schematics to produce their new contents
+            subject=plan
+            ::  mutations: axes and plans to produce their new contents
             ::
-            mutations=(list (pair wing schematic))
+            mutations=(list (pair wing plan))
         ==
         ::  %pact: patch a marked noun by applying a diff
         ::
@@ -1428,12 +1428,12 @@
             ::  disc where in clay to load marks from
             ::
             =disc
-            ::  start: schematic producing a noun to be patched
+            ::  start: plan producing a noun to be patched
             ::
-            start=schematic
-            ::  diff: schematic producing the diff to apply to :start
+            start=plan
+            ::  diff: plan producing the diff to apply to :start
             ::
-            diff=schematic
+            diff=plan
         ==
         ::  %path: resolve a path with `-`s to a path with `/`s
         ::
@@ -1453,9 +1453,9 @@
             ::
             raw-path=@tas
         ==
-        ::  %plan: build a hoon program from a preprocessed source file
+        ::  %dais: build a hoon program from a preprocessed source file
         ::
-        $:  %plan
+        $:  %dais
             ::  path-to-render: the clay path of a file being rendered
             ::
             ::    TODO: Once we've really implemented this, write the
@@ -1478,28 +1478,28 @@
             ::
             =disc
         ==
-        ::  %ride: eval hoon as formula with result of a schematic as subject
+        ::  %ride: eval hoon as formula with result of a plan as subject
         ::
         $:  %ride
             ::  formula: a hoon to be evaluated against a subject
             ::
             formula=hoon
-            ::  subject: a schematic whose result will be used as subject
+            ::  subject: a plan whose result will be used as subject
             ::
-            subject=schematic
+            subject=plan
         ==
         ::  %same: the identity function
         ::
         ::    Functionally used to "unpin" a build for caching reasons. If you
         ::    run a %pin build, it is treated as a once build and is therefore
-        ::    not cached. Wrapping the %pin schematic in a %same schematic
+        ::    not cached. Wrapping the %pin plan in a %same plan
         ::    converts it to a live build, which will be cached due to live
         ::    build subscription semantics.
         ::
         $:  %same
-            ::  schematic that we evaluate to
+            ::  plan that we evaluate to
             ::
-            =schematic
+            =plan
         ==
         ::  %scry: lookup a value from the urbit namespace
         ::
