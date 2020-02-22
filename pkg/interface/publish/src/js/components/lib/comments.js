@@ -65,7 +65,8 @@ export class Comments extends Component {
               id="comment"
               name="comment"
               placeholder="Leave a comment here"
-              className="f9 db border-box w-100 ba b--gray3 pt3 ph3 pb8 br1 mb2"
+              className={"f9 db border-box w-100 ba b--gray3 pt3 ph3 pb8 br1 " +
+              "mb2 focus-b--black"}
               aria-describedby="comment-desc"
               onChange={this.commentChange}>
             </textarea>

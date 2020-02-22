@@ -30,7 +30,7 @@ export class JoinScreen extends Component {
     if (keyPair[0] in notebookObj) {
       if (keyPair[1] in notebookObj[keyPair[0]]) {
         verdict = true;
-      } 
+      }
     }
     return verdict;
   }
@@ -93,8 +93,8 @@ export class JoinScreen extends Component {
     }
 
     return (
-      <div className={`h-100 w-100 pa3 pt2 overflow-x-hidden flex flex-column
-      bg-gray0-d white-d`}>
+      <div className={"h-100 w-100 pt2 overflow-x-hidden flex flex-column " +
+      "bg-gray0-d white-d pa3"}>
         <div
           className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
           <Link to="/~chat/">{"⟵ All Notebooks"}</Link>
@@ -105,7 +105,8 @@ export class JoinScreen extends Component {
           <p className="f9 gray2 mb4">Notebook names use lowercase, hyphens, and slashes.</p>
           <textarea
             ref={ e => { this.textarea = e; } }
-            className="f7 mono ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 mb2 db"
+            className={"f7 mono ba bg-gray0-d white-d pa3 mb2 db " +
+            "focus-b--black b--gray3 b--gray2-d "}
             placeholder="~zod/dream-journal"
             spellCheck="false"
             rows={1}

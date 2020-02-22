@@ -151,7 +151,8 @@ export class NewScreen extends Component {
             Provide a name for your notebook
           </p>
           <textarea
-            className="f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100"
+            className={"f7 ba bg-gray0-d white-d pa3 db w-100 " +
+            "focus-b--black b--gray3 b--gray2-d"}
             placeholder="eg. My Journal"
             rows={1}
             style={{
@@ -167,7 +168,8 @@ export class NewScreen extends Component {
           </p>
           <p className="f9 gray2 db mb2 pt1">What's your notebook about?</p>
           <textarea
-            className="f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100"
+            className={"f7 ba bg-gray0-d white-d pa3 db w-100 " +
+            "focus-b--black b--gray3 b--gray2-d"}
             placeholder="Notebook description"
             rows={1}
             style={{
