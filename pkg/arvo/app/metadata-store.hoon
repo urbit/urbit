@@ -170,7 +170,7 @@
 ::
 ++  metadata-for-app
   |=  =app-name
-  %-  ~(gas by *(map [group-path resource] metadata))
+  %-  ~(gas by *^associations)
   %+  turn  ~(tap in (~(got by app-indices) app-name))
   |=  [=group-path =app-path]
   :-  [group-path [app-name app-path]]
@@ -178,7 +178,7 @@
 ::
 ++  metadata-for-group
   |=  =group-path
-  %-  ~(gas by *(map [^group-path resource] metadata))
+  %-  ~(gas by *^associations)
   %+  turn  ~(tap in (~(got by group-indices) group-path))
   |=  =resource
   :-  [group-path resource]

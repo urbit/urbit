@@ -1,5 +1,8 @@
 ::  metadata-hook: allow syncing foreign metadata
 ::
+::  watch paths:
+::  /group/%group-path                      all updates related to this group
+::
 /-  *metadata-store, *metadata-hook
 /+  default-agent
 |%
@@ -86,12 +89,11 @@
       %remove
     =/  ship  (~(get by synced) path.act)
     ?~  ship  [~ state]
-    ?:  &(?!(=(u.ship our.bowl)) ?!((team:title our.bowl src.bowl)))
+    ?:  &(!=(u.ship src.bowl) ?!((team:title our.bowl src.bowl)))
       [~ state]
     :_  state(synced (~(del by synced) path.act))
     %-  zing
     :~  (unsubscribe [%group path.act] u.ship)
-        ?.  &(=(u.ship our.bowl) (team:title our.bowl src.bowl))  ~
         [%give %kick ~[[%group path.act]] ~]~
     ==
   ==
@@ -108,18 +110,22 @@
   |=  =path
   ^-  (list card)
   |^
-  ?>  (~(has by synced) path)
-  ?>  (is-permitted [(scot %p src.bowl) path])
+  ?>  =(our.bowl (~(got by synced) path))
+  ?>  (is-permitted src.bowl path)
   %+  turn  ~(tap by (metadata-scry path))
   |=  [[=group-path =resource] =metadata]
   ^-  card
   [%give %fact ~ %metadata-update !>([%add group-path resource metadata])]
   ::
   ++  is-permitted
-    |=  pax=^path
+    |=  [=ship pax=^path]
     ^-  ?
     =.  pax
-      ;:(weld /=permission-store/(scot %da now.bowl)/permitted pax /noun)
+      ;:  weld
+          /=permission-store/(scot %da now.bowl)/permitted
+          [(scot %p ship) pax]
+          /noun
+      ==
     .^(? %gx pax)
   ::
   ++  metadata-scry
