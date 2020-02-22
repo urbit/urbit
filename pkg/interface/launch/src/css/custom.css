@@ -26,3 +26,22 @@ textarea, select, input, button { outline: none; }
 .mix-blend-diff {
   mix-blend-mode: difference;
 }
+
+/* dark */
+@media all and (prefers-color-scheme: dark) {
+  body {
+    background-color: #333;
+  }
+  .bg-gray0-d {
+    background-color: #333;
+  }
+  .b--gray1-d {
+    border-color: #4d4d4d;
+  }
+  .white-d {
+    color: #fff;
+  }
+  .invert-d {
+    filter: invert(1);
+  }
+}
