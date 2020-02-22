@@ -25,7 +25,7 @@ export default class ChatTile extends Component {
     let numNotificationsElem =
       notificationsNum > 0 ? (
         <p
-          className="absolute green2"
+          className="absolute green2 white-d"
           style={{
             bottom: 6,
             fontWeight: 400,
@@ -39,11 +39,12 @@ export default class ChatTile extends Component {
       );
 
     return (
-      <div className="w-100 h-100 relative bg-white ba b--black">
+      <div className={"w-100 h-100 relative bg-white bg-gray0-d ba " +
+      "b--black b--gray1-d"}>
         <a className="w-100 h-100 db pa2 no-underline" href="/~chat">
-          <p className="black gray absolute f9" style={{left: 8, top: 8}}>Messaging</p>
+          <p className="black white-d absolute f9" style={{left: 8, top: 8}}>Messaging</p>
            <img
-             className="absolute"
+             className="absolute invert-d"
              style={{ left: 39, top: 39 }}
              src="/~chat/img/Tile.png"
              width={48}
