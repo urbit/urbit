@@ -173,7 +173,8 @@ export class Note extends Component {
           </div>
           <div className="w-100 mw6 overflow-container">
             <div className="flex flex-column">
-              <div className="f9 mb1">{title}</div>
+              <div className="f9 mb1"
+              style={{overflowWrap: "break-word"}}>{title}</div>
               <div className="flex mb6">
                 <div
                   className={
@@ -184,7 +185,8 @@ export class Note extends Component {
                 <div className="di f9 gray2">{date}</div>
               </div>
             </div>
-            <div className="md">
+            <div className="md"
+            style={{overflowWrap: "break-word"}}>
               <ReactMarkdown source={newfile} />
             </div>
             <NoteNavigation
