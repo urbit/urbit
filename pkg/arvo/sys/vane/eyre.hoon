@@ -454,6 +454,23 @@
                left: 50%;
                transform: translate(-50%, -50%);
              }
+             @media all and (prefers-color-scheme: dark) {
+               html, body {
+                 background-color: #333;
+                 color: #fff;
+               }
+               a, a:visited {
+                 color: #fff;
+               }
+               input {
+                 background: #333;
+                 color: #fff;
+                 border: 1px solid #7f7f7f;
+               }
+               input:focus {
+                 border: 1px solid #fff;
+               }
+             }
              @media all and (min-width: 34.375rem) {
                .tc-ns {
                  text-align: center;

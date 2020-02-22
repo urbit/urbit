@@ -23,7 +23,7 @@ export default class Home extends Component {
     });
 
     return (
-      <div className="fl w-100 h-100 bg-white center">
+      <div className="fl w-100 h-100 bg-white bg-gray0-d center">
         <Header />
         <div className={"v-mid pa2 dtc-m dtc-l dtc-xl " +
         "flex justify-between flex-wrap"}
