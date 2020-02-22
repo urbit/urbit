@@ -62,6 +62,20 @@ input {
   color: inherit;
 }
 
+/* spinner */
+
+.spin-active {
+  animation: spin 2s infinite;
+}
+
+@keyframes spin {
+  0% {transform: rotate(0deg);}
+  25% {transform: rotate(90deg);}
+  50% {transform: rotate(180deg);}
+  75% {transform: rotate(270deg);}
+  100% {transform: rotate(360deg);}
+}
+
 /* responsive */
 @media all and (max-width: 34.375em) {
   .h-100-m40-s {

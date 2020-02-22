@@ -14,6 +14,15 @@ export class HeaderBar extends Component {
       ? ""
       : document.title;
 
+    let spinner = !!this.props.spinner
+      ? this.props.spinner : false;
+
+    let spinnerClasses = "";
+
+    if (spinner === true) {
+      spinnerClasses = "spin-active";
+    }
+
     return (
       <div className={"bg-white bg-gray1-d w-100 justify-between relative tc pt3 "
         + popout}
@@ -21,7 +30,7 @@ export class HeaderBar extends Component {
         <a className="dib black white-d f9 inter absolute left-1"
           href='/'
           style={{ top: 14 }}>
-          <IconHome />
+          <IconHome classes={spinnerClasses} />
           <span className="ml2 black white-d v-top lh-title"
             style={{ paddingTop: 3 }}>
             Home
