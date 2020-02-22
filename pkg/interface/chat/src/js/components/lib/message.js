@@ -192,7 +192,7 @@ export class Message extends Component {
             style={{ flexGrow: 1, marginTop: -8 }}>
             <div className="hide-child" style={paddingTop}>
               <p className="v-mid f9 gray2 dib mr3">
-              <div className={contact.nickname ? null : "mono"}>{name}</div>
+                <span className={contact.nickname ? null : "mono"}>{name}</span>
               </p>
               <p className="v-mid mono f9 gray2 dib">{timestamp}</p>
               <p className="v-mid mono f9 ml2 gray2 dib child dn-s">{datestamp}</p>
