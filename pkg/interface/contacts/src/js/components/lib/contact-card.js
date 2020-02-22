@@ -313,7 +313,7 @@ export class ContactCard extends Component {
           style={{ width: "fit-content" }}>
           <p className="f9 gray2 lh-copy">Sigil Color</p>
           <textarea
-            className="b--gray4 black f7 ba db pl2"
+            className="b--gray4 black f7 ba db pl2 focus-b--black"
             onChange={this.sigilColorSet}
             defaultValue={defaultColor}
             key={"default" + defaultColor}

@@ -102,7 +102,7 @@ export class NewScreen extends Component {
             Alphanumeric characters and hyphens only
           </p>
           <textarea
-            className="f7 ba b--gray3 w-100 pa3 ml3 mt2"
+            className="f7 ba b--gray3 w-100 pa3 ml3 mt2 focus-b--black"
             rows={1}
             placeholder="example-group-name"
             style={{
