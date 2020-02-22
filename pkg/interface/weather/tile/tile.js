@@ -138,14 +138,15 @@ export default class WeatherTile extends Component {
     }
     if (location.protocol === "https:") {
       secureCheck = <a
-        className="black f9 absolute pointer"
+        className="black white-d f9 absolute pointer"
         style={{right: 8, top: 8}}
         onClick={() => this.locationSubmit()}>Detect -></a>
     }
     return this.renderWrapper(
-      <div className="pa2 w-100 h-100 bg-white black b--black ba">
+      <div className={"pa2 w-100 h-100 bg-white bg-gray0-d black white-d " +
+      "b--black b--gray1-d ba"}>
         <a
-          className="f9 black pointer"
+          className="f9 black white-d pointer"
           onClick={() =>
             this.setState({ manualEntry: !this.state.manualEntry })
           }>
@@ -155,7 +156,7 @@ export default class WeatherTile extends Component {
         <p className="f9 pt2">
           Please enter your{" "}
           <a
-            className="black"
+            className="black white-d"
             href="https://latitudeandlongitude.org/"
             target="_blank">
             latitude and longitude
@@ -167,7 +168,7 @@ export default class WeatherTile extends Component {
           <form className="flex" style={{marginBlockEnd: 0 }}>
             <input
               id="gps"
-              className="w-100 black bg-transparent bn f9"
+              className="w-100 black white-d bg-transparent bn f9"
               type="text"
               placeholder="29.558107, -95.089023"
               onKeyDown={(e) => {
@@ -177,7 +178,8 @@ export default class WeatherTile extends Component {
                 }}
               }/>
             <input
-              className="bg-transparent black bn pointer f9 flex-shrink-0"
+              className={"bg-transparent black white-d bn pointer " +
+              "f9 flex-shrink-0"}
               type="submit"
               onClick={() => this.manualLocationSubmit()}
               value="->"/>
@@ -190,13 +192,17 @@ export default class WeatherTile extends Component {
   renderNoData() {
     return this.renderWrapper((
       <div
-        className="pa2 w-100 h-100 b--black ba bg-white black"
+        className={"pa2 w-100 h-100 b--black b--gray1-d ba " +
+        "bg-white bg-gray0-d black white-d"}
       onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>
           <p className="f9 absolute"
             style={{left: 8, top: 8}}>
             Weather
           </p>
-        <p className="absolute w-100 flex-col f9" style={{verticalAlign: "bottom", bottom: 8, left: 8, cursor: "pointer"}}>-> Set location</p>
+        <p className="absolute w-100 flex-col f9"
+        style={{verticalAlign: "bottom", bottom: 8, left: 8, cursor: "pointer"}}>
+        -> Set location
+        </p>
       </div>
     ));
   }
@@ -208,7 +214,7 @@ export default class WeatherTile extends Component {
     let da = moment.unix(d.sunsetTime).format('h:mm a') || '';
 
     return this.renderWrapper(
-      <div className="w-100 h-100 b--black ba"
+      <div className="w-100 h-100 b--black b--gray1-d ba"
       style={{backdropFilter: "blur(80px)"}}>
         <p className="f9 absolute" style={{ left: 8, top: 8 }}>
           Weather
