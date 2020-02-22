@@ -117,6 +117,7 @@
       %link-listen-hook
       %link-view
       %metadata-store
+      %metadata-hook
   ==
 ::
 ++  deft-fish                                           ::  default connects
