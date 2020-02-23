@@ -1,4 +1,4 @@
-module Moon.Uruk where
+module Moon.MoonToUruk where
 
 import Bound
 import ClassyPrelude

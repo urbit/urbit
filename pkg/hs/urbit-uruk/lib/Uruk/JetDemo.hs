@@ -148,7 +148,7 @@ unSlow u = go u . reverse
 
 instance Show a => Show (UrPoly a) where
     show = \case
-        x :@ y      → "(" <> intercalate " " (show <$> flatten x [y]) <> ")"
+        x :@ y       → "(" <> intercalate " " (show <$> flatten x [y]) <> ")"
         J n          → replicate (fromIntegral n) 'j'
         K            → "K"
         S            → "S"
@@ -280,6 +280,9 @@ pattern J3 = J 3 :@ K
 pattern J4 = J 4 :@ K
 
 pattern W2 = Fast 3 (Yet 2) []
+
+yet :: Natural -> Ur
+yet n = Fast (n + 1) (Yet n) []
 
 dash ∷ Dash
 dash = mkDash

@@ -236,8 +236,8 @@ data Exp
 
     | JETN !Jet !(Array Exp)   --  Fully saturated call
     | JET2 !Jet !Exp !Exp      --  Fully saturated call
-    | CLO !Fun !(Array Exp)    --  Undersaturated call
-    | CAL !Exp !(Array Exp)    --  Call of unknown saturation
+    | CLON !Fun !(Array Exp)    --  Undersaturated call
+    | CALN !Exp !(Array Exp)    --  Call of unknown saturation
   deriving (Eq, Ord, Show)
 
 
@@ -478,13 +478,13 @@ execJetBody !j !xs !regs = go (jFast j)
             VCon _ y → pure y
             _        → throwIO (TypeError "cdr-not-con")
 
-        CLO f xs → do
+        CLON f xs → do
             let args    = funArgs f
             let remArgs = args - sizeofArray xs
             clo <- FClo remArgs f <$> traverse go xs
             pure (VFun clo)
 
-        CAL f xs → do
+        CALN f xs → do
             fv <- go f
             xs <- traverse go xs
             let args    = valArity fv
@@ -557,13 +557,13 @@ execJetBody2 !j !x !y = go (jFast j)
         LEF x → VLef <$> go x
         RIT x → VRit <$> go x
 
-        CLO f xs → do
+        CLON f xs → do
             let args    = funArgs f
             let remArgs = args - sizeofArray xs
             clo <- FClo remArgs f <$> traverse go xs
             pure (VFun clo)
 
-        CAL f xs → do
+        CALN f xs → do
             fv <- go f
             xs <- traverse go xs
             let args    = valArity fv

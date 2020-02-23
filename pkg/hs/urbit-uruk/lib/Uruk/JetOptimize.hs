@@ -96,7 +96,7 @@ import Numeric.Positive (Positive)
 import Prelude          ((!!))
 import Uruk.JetDemo     (Ur, UrPoly(Fast))
 
-import qualified Uruk.JetDemo as Ur
+import qualified Uruk.JetDemo as U
 import qualified Uruk.JetComp as Comp
 
 --------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ type Pos = Positive
 
 data Node
     = VSeq
-    | VYet
+    | VYet Nat
     | VS
     | VK
     | VB
@@ -116,30 +116,34 @@ data Node
     | VI
     | VIff
     | VCas
-    | VSn
-    | VBn
-    | VCn
+    | VSn Pos
+    | VBn Pos
+    | VCn Pos
   deriving stock (Eq, Ord, Generic)
   deriving anyclass NFData
 
 instance Show Node where
-    show = \case
-        VSeq  → "Q"
-        VS    → "S"
-        VK    → "K"
-        VB    → "B"
-        VC    → "C"
-        VI    → "I"
-        VSn   → "Sn"
-        VBn   → "Bn"
-        VCn   → "Cn"
-        VYet  → "Yet"
-        VIff  → "Iff"
-        VCas  → "Cas"
+  show = \case
+    VSeq   -> "Q"
+    VS     -> "S"
+    VK     -> "K"
+    VB     -> "B"
+    VC     -> "C"
+    VI     -> "I"
+    VSn  _ -> "Sn"
+    VBn  _ -> "Bn"
+    VCn  _ -> "Cn"
+    VYet _ -> "Yet"
+    VIff   -> "Iff"
+    VCas   -> "Cas"
 
-data Code = Code Pos Val
+data Code = Code
+    { cArgs :: Pos
+    , cName :: U.Val
+    , cBody :: U.Val
+    , cFast :: Val
+    }
   deriving stock (Eq, Ord, Generic)
-  deriving anyclass NFData
 
 syms = singleton <$> "xyzpqrstuvwxyzabcdefghijklmnop"
 
@@ -147,18 +151,20 @@ sym i | i >= length syms = "v" <> show i
 sym i                    = syms !! i
 
 instance Show Code where
-    show c@(Code n v) =
-        header (fromIntegral n) <> prettyVal v
+    show c@(Code n nm _ v) =
+        regr <> header (fromIntegral n) <> prettyVal v
       where
         arity ∷ Int
         arity = fromIntegral n
+
+        regr = "~/  " <> show n <> "  " <> show nm <> "\n"
 
         header ∷ Int → String
         header 0 | recursive c = "..  $\n"
         header 0               = ""
         header n               = header (n-1) <> "|=  " <> sym (arity - n) <> "\n"
 
-{-
+{- |
     There are three kinds of things
 
     - Functions that we know how to reduce.
@@ -188,9 +194,19 @@ data Exp
   deriving stock (Eq, Ord, Generic)
   deriving anyclass NFData
 
+{- |
+    A `Val` is the same as an expression except that it contains no
+    `App` nodes (and no `Clo` nodes).
+
+    - Everything has been evaluated as far as possible, and everything
+      is in closure-form.
+
+    - `Clo` nodes are eliminated because the distinction between `Kal`
+      and `Clo` is only relevant during the reduction that happens in
+      this module.
+-}
 data Val
-    = ValClo Nat Node [Val]
-    | ValKal Ur [Val]
+    = ValKal Ur [Val]
     | ValRec [Val]
     | ValRef Nat [Val]
     | ValIff Val Val Val [Val]
@@ -233,10 +249,10 @@ prettyExp = go
 
 prettyVal = prettyExp . valExp
 
+valExp :: Val -> Exp
 valExp = go
   where
     go = \case
-        ValClo r n xs   → Clo r n (go <$> xs)
         ValKal u xs     → Kal u (go <$> xs)
         ValRec xs       → Rec (go <$> xs)
         ValRef n xs     → Ref n (go <$> xs)
@@ -245,7 +261,6 @@ valExp = go
 
 instance Show Val where
     show = \case
-        ValClo r n xs   → sexp "{" "}" [show n] xs
         ValKal u xs     → sexp "[" "]" [show u] xs
         ValRec xs       → sexp "(" ")" ["Rec"] xs
         ValRef n xs     → sexp "(" ")" ["V" <> show n] xs
@@ -259,11 +274,10 @@ instance Show Val where
 --------------------------------------------------------------------------------
 
 recursive ∷ Code → Bool
-recursive (Code _ v) = go v
+recursive (Code _ _ _ v) = go v
   where
     go = \case
         ValRec _        → True
-        ValClo _ _ vs   → any go vs
         ValRef _ vs     → any go vs
         ValKal _ vs     → any go vs
         ValIff c t e xs → any go ([c,t,e] <> xs)
@@ -274,24 +288,25 @@ infixl 5 %;
 (%) ∷ Exp → Exp → Exp
 (%) = App
 
-simplify ∷ Node → [Exp] → Exp
+simplify :: Node -> [Exp] -> Exp
 simplify = curry $ \case
-    ( VSeq, [x,y]   ) → y
-    ( VYet, f:xs    ) → go f xs
-    ( VS,   [x,y,z] ) → (x % z) % (y % z)
-    ( VK,   [x,y]   ) → x
-    ( VB,   [f,g,x] ) → f % (g % x)
-    ( VC,   [f,g,x] ) → (f % x) % g
-    ( VI,   [x]     ) → x
-    ( VIff, [c,t,e] ) → Iff c (t % unit) (e % unit) []
-    ( VCas, [x,l,r] ) → Cas x (abst l%ref 0) (abst r%ref 0) []
-    ( VSn,  f:g:xs  ) → go f xs % go g xs
-    ( VBn,  f:g:xs  ) → f % go g xs
-    ( VCn,  f:g:xs  ) → go f xs % g
-
-    ( _,    _       ) → error "simplify: bad arity"
-  where
-    go acc = \case { [] → acc; x:xs → go (acc % x) xs }
+  (VSeq  , [x, y]    ) -> y
+  (VYet _, f : xs    ) -> go f xs
+  (VS    , [x, y, z] ) -> (x % z) % (y % z)
+  (VK    , [x, y]    ) -> x
+  (VB    , [f, g, x] ) -> f % (g % x)
+  (VC    , [f, g, x] ) -> (f % x) % g
+  (VI    , [x]       ) -> x
+  (VIff  , [c, t, e] ) -> Iff c (t % unit) (e % unit) []
+  (VCas  , [x, l, r] ) -> Cas x (abst l % ref 0) (abst r % ref 0) []
+  (VSn _ , f : g : xs) -> go f xs % go g xs
+  (VBn _ , f : g : xs) -> f % go g xs
+  (VCn _ , f : g : xs) -> go f xs % g
+  (_     , _         ) -> error "simplify: bad arity"
+ where
+  go acc = \case
+    []     -> acc
+    x : xs -> go (acc % x) xs
 
 ref ∷ Nat → Exp
 ref n = Ref n []
@@ -309,7 +324,7 @@ abst = g 0
         Cas x l r xs    → Cas (g d x) (g (d+1) l) (g (d+1) r) (g d <$> xs)
 
 unit ∷ Exp
-unit = Kal Ur.Uni []
+unit = Kal U.Uni []
 
 nat ∷ Integral i => i → Nat
 nat = fromIntegral
@@ -384,12 +399,27 @@ eval exp = do
         Nothing → pure exp
         Just e' → eval e'
 
+nodeUr ∷ Nat → Node → Ur
+nodeUr arity = \case
+  VSeq → U.Seq
+  VYet n → U.yet n
+  VS → U.S
+  VK → U.K
+  VB → U.B
+  VC → U.C
+  VI → U.I
+  VIff → U.Iff
+  VCas → U.Cas
+  VSn n → Fast (fromIntegral $ n+2) (U.Sn n) []
+  VBn n → Fast (fromIntegral $ n+2) (U.Bn n) []
+  VCn n → Fast (fromIntegral $ n+2) (U.Cn n) []
+
 evaluate ∷ Exp → IO Val
 evaluate = fmap go . eval
   where
     go = \case
-        Clo n f xs   → ValClo n f (go <$> xs)
-        Kal f xs     → ValKal f (go <$> xs)
+        Clo r n xs   → ValKal (nodeUr r n) (go <$> xs)
+        Kal u xs     → ValKal u (go <$> xs)
         Rec xs       → ValRec (go <$> xs)
         Ref n xs     → ValRef n (go <$> xs)
         Iff c t e xs → ValIff (go c) (go t) (go e) (go <$> xs)
@@ -403,20 +433,26 @@ evaluate = fmap go . eval
     For example: `jetCode 2 "(fix body)"`
       becomes: `(body Rec $1 $0)`
 -}
-jetCode ∷ Pos → Ur → IO Code
-jetCode arity = fmap (Code arity) . evaluate . addArgs (nat arity) . addRecur
-  where
-    addArgs ∷ Nat → Exp → Exp
-    addArgs 0 x = x
-    addArgs n x = addArgs (n-1) (x % ref (n-1))
+jetCode :: Pos -> Ur -> Ur -> IO Code
+jetCode arity nm bod =
+  (fmap (Code arity nmV bodV) . evaluate . addArgs (nat arity) . addRecur) bod
+ where
+  bodV = U.urVal bod
+  nmV = U.urVal nm
 
-    addRecur ∷ Ur → Exp
-    addRecur = \case
-        Ur.Fast 1 Ur.JFix [body] → urExp body % Rec []
-        body                     → urExp body
+  addArgs :: Nat -> Exp -> Exp
+  addArgs 0 x = x
+  addArgs n x = addArgs (n - 1) (x % ref (n - 1))
+
+  addRecur :: Ur -> Exp
+  addRecur = \case
+    U.Fast 1 U.JFix [body] -> urExp body % Rec []
+    body                   -> urExp body
 
 funCode ∷ Ur → IO Code
-funCode body = Code 1 <$> evaluate (urExp body % ref 0)
+funCode body = Code 1 fak fak <$> evaluate (urExp body % ref 0)
+ where
+  fak = error "TODO"
 
 justIfExp = Comp.justIf
 justIfUr  = Comp.moonStrict justIfExp
@@ -441,56 +477,56 @@ ickerUr  = Comp.moonStrict ickerExp
 icker    = compile ickerUr
 
 compile ∷ Ur → IO Code
-compile = Ur.simp >>> \case
-    Fast _ (Ur.Slow n t b) [] → jetCode n b
+compile = U.simp >>> \case
+    Fast _ (U.Slow n t b) [] → jetCode n t b
     body                      → funCode body
 
 urExp ∷ Ur → Exp
 urExp = go
   where
     go = \case
-        x Ur.:@ y      → urExp x % urExp y
-        Ur.S           → Clo 3 VS []
-        Ur.K           → Clo 2 VK []
-        Ur.J n         → Kal (Ur.J n) []
-        Ur.D           → Kal Ur.D []
-        Ur.Fast n j xs → foldl' (%) (fast arity j) (urExp <$> xs)
+        x U.:@ y      → urExp x % urExp y
+        U.S           → Clo 3 VS []
+        U.K           → Clo 2 VK []
+        U.J n         → Kal (U.J n) []
+        U.D           → Kal U.D []
+        U.Fast n j xs → foldl' (%) (fast arity j) (urExp <$> xs)
           where arity = n + nat (length xs)
 
     --  BKIx →
-    fast ∷ Nat → Ur.Jet → Exp
+    fast ∷ Nat → U.Jet → Exp
     fast arity jet = jet & \case
-        Ur.Eye        → Clo arity VI []
-        Ur.Bee        → Clo arity VB []
-        Ur.Sea        → Clo arity VC []
-        Ur.Sn n       → Clo arity VSn []
-        Ur.Bn n       → Clo arity VBn []
-        Ur.Cn n       → Clo arity VCn []
-        Ur.JSeq       → Clo arity VSeq []
-        Ur.Yet n      → Clo arity VYet []
---      Ur.JIff       → Kal (Fast arity jet []) []
-        Ur.JIff       → Clo arity VIff []
-        Ur.JCas       → Clo arity VCas []
-        Ur.Slow _ _ _ → Kal (Fast arity jet []) []
-        Ur.JFix       → Kal (Fast arity jet []) []
-        Ur.JNat n     → Kal (Fast arity jet []) []
-        Ur.JBol n     → Kal (Fast arity jet []) []
-        Ur.JPak       → Kal (Fast arity jet []) []
-        Ur.JZer       → Kal (Fast arity jet []) []
-        Ur.JEql       → Kal (Fast arity jet []) []
-        Ur.JAdd       → Kal (Fast arity jet []) []
-        Ur.JInc       → Kal (Fast arity jet []) []
-        Ur.JDec       → Kal (Fast arity jet []) []
-        Ur.JFec       → Kal (Fast arity jet []) []
-        Ur.JMul       → Kal (Fast arity jet []) []
-        Ur.JSub       → Kal (Fast arity jet []) []
-        Ur.JDed       → Kal (Fast arity jet []) []
-        Ur.JUni       → Kal (Fast arity jet []) []
-        Ur.JLef       → Kal (Fast arity jet []) []
-        Ur.JRit       → Kal (Fast arity jet []) []
-        Ur.JCon       → Kal (Fast arity jet []) []
-        Ur.JCar       → Kal (Fast arity jet []) []
-        Ur.JCdr       → Kal (Fast arity jet []) []
+        U.Eye        → Clo arity VI []
+        U.Bee        → Clo arity VB []
+        U.Sea        → Clo arity VC []
+        U.Sn n       → Clo arity (VSn n) []
+        U.Bn n       → Clo arity (VBn n) []
+        U.Cn n       → Clo arity (VCn n) []
+        U.JSeq       → Clo arity VSeq []
+        U.Yet n      → Clo arity (VYet n) []
+--      U.JIff       → Kal (Fast arity jet []) []
+        U.JIff       → Clo arity VIff []
+        U.JCas       → Clo arity VCas []
+        U.Slow _ _ _ → Kal (Fast arity jet []) []
+        U.JFix       → Kal (Fast arity jet []) []
+        U.JNat n     → Kal (Fast arity jet []) []
+        U.JBol n     → Kal (Fast arity jet []) []
+        U.JPak       → Kal (Fast arity jet []) []
+        U.JZer       → Kal (Fast arity jet []) []
+        U.JEql       → Kal (Fast arity jet []) []
+        U.JAdd       → Kal (Fast arity jet []) []
+        U.JInc       → Kal (Fast arity jet []) []
+        U.JDec       → Kal (Fast arity jet []) []
+        U.JFec       → Kal (Fast arity jet []) []
+        U.JMul       → Kal (Fast arity jet []) []
+        U.JSub       → Kal (Fast arity jet []) []
+        U.JDed       → Kal (Fast arity jet []) []
+        U.JUni       → Kal (Fast arity jet []) []
+        U.JLef       → Kal (Fast arity jet []) []
+        U.JRit       → Kal (Fast arity jet []) []
+        U.JCon       → Kal (Fast arity jet []) []
+        U.JCar       → Kal (Fast arity jet []) []
+        U.JCdr       → Kal (Fast arity jet []) []
 
 {-
     = VSeq
