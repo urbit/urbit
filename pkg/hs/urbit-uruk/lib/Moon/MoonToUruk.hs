@@ -8,12 +8,14 @@ import Moon.AST
 import Control.Arrow    ((>>>))
 import Data.Function    ((&))
 import System.IO.Unsafe (unsafePerformIO)
+import Uruk.OptToFast   (optToFast)
 
 import qualified Moon.Parser      as Parser
 import qualified Urbit.Atom       as Atom
 import qualified Uruk.JetComp     as Uruk
 import qualified Uruk.JetDemo     as Ur
 import qualified Uruk.JetOptimize as Opt
+import qualified Uruk.Fast        as F
 
 --------------------------------------------------------------------------------
 
@@ -148,3 +150,9 @@ fastAcker =
     $ bind
     $ traceShowId
     $ forceParse ackerSrc
+
+ackerJet :: F.Jet
+ackerJet = optToFast fastAcker
+
+runFastAcker :: Nat -> Nat -> IO F.Val
+runFastAcker x y = F.execJet2 ackerJet (F.VNat x) (F.VNat y)

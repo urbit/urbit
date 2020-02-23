@@ -227,7 +227,6 @@ data Exp
     | ZER !Exp                 --  Is Zero?
     | EQL !Exp !Exp            --  Atom equality.
 
-    | UNI                      --  Unit
     | CON !Exp !Exp            --  Cons
     | CAR !Exp                 --  Head
     | CDR !Exp                 --  Tail
@@ -444,7 +443,6 @@ execJetBody !j !xs !regs = go (jFast j)
         RIT x       → VRit <$> go x
         JET2 j x y  → jet2 go j x y
         JETN j xs   → jetN go j xs
-        UNI         → pure VUni
 
         ADD x y → (,) <$> go x <*> go y >>= \case
             (VNat x, VNat y) → pure (VNat (x+y))
@@ -519,7 +517,6 @@ execJetBody2 !j !x !y = go (jFast j)
         FEC x       → fec go x
         JETN j xs   → jetN go j xs
         JET2 j x y  → jet2 go j x y
-        UNI         → pure VUni
 
         ADD x y → (,) <$> go x <*> go y >>= \case
             (VNat x, VNat y) → pure (VNat (x+y))

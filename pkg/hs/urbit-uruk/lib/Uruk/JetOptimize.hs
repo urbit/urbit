@@ -184,8 +184,8 @@ instance Show Code where
     `Cas` and `Iff` are understood control flow.
 -}
 data Exp
-    = Clo Nat Node [Exp]
-    | Kal Ur [Exp]
+    = Clo Int Node [Exp]
+    | Kal RawNode [Exp]
     | Rec [Exp]
     | Ref Nat [Exp]
     | Iff Exp Exp Exp [Exp]
@@ -206,12 +206,50 @@ data Exp
       this module.
 -}
 data Val
-    = ValKal Ur [Val]
+    = ValKal RawNode [Val]
     | ValRec [Val]
     | ValRef Nat [Val]
     | ValIff Val Val Val [Val]
     | ValCas Val Val Val [Val]
   deriving stock (Eq, Ord, Generic)
+  deriving anyclass NFData
+
+data RawNode
+    = RJay Positive
+    | RKay
+    | REss
+    | RDee
+    | RJet Positive Val Val
+    | REye
+    | RBee
+    | RSea
+    | RSen Positive
+    | RBen Positive
+    | RCen Positive
+    | RSeq
+    | RYet Natural
+    | RFix
+    | RNat Natural
+    | RBol Bool
+    | RIff
+    | RPak
+    | RZer
+    | REql
+    | RAdd
+    | RInc
+    | RDec
+    | RFec
+    | RMul
+    | RSub
+    | RDed
+    | RUni
+    | RLef
+    | RRit
+    | RCas
+    | RCon
+    | RCar
+    | RCdr
+  deriving stock (Eq, Ord, Show, Generic)
   deriving anyclass NFData
 
 instance Show Exp where
@@ -248,16 +286,6 @@ prettyExp = go
         sexp a z hs  xs = a <> intercalate " " (hs <> xs) <> z
 
 prettyVal = prettyExp . valExp
-
-valExp :: Val -> Exp
-valExp = go
-  where
-    go = \case
-        ValKal u xs     → Kal u (go <$> xs)
-        ValRec xs       → Rec (go <$> xs)
-        ValRef n xs     → Ref n (go <$> xs)
-        ValIff c t e xs → Iff (go c) (go t) (go e) (go <$> xs)
-        ValCas x l r xs → Cas (go x) (go l) (go r) (go <$> xs)
 
 instance Show Val where
     show = \case
@@ -302,7 +330,7 @@ simplify = curry $ \case
   (VSn _ , f : g : xs) -> go f xs % go g xs
   (VBn _ , f : g : xs) -> f % go g xs
   (VCn _ , f : g : xs) -> go f xs % g
-  (_     , _         ) -> error "simplify: bad arity"
+  (n     , xs        ) -> error ("simplify: bad arity (" <> show n <> " " <> show xs <> ")")
  where
   go acc = \case
     []     -> acc
@@ -322,9 +350,10 @@ abst = g 0
         Ref n xs        → Ref n (g d <$> xs)
         Iff c t e xs    → Iff (g d c) (g d t) (g d e) (g d <$> xs)
         Cas x l r xs    → Cas (g d x) (g (d+1) l) (g (d+1) r) (g d <$> xs)
+        App x y         → error "TODO"
 
 unit ∷ Exp
-unit = Kal U.Uni []
+unit = Kal RUni []
 
 nat ∷ Integral i => i → Nat
 nat = fromIntegral
@@ -391,6 +420,7 @@ call f x = f & \case
     Ref n xs     → Ref n (snoc xs x)
     Iff c t e xs → Iff c t e (snoc xs x)
     Cas x l r xs → Cas x l r (snoc xs x)
+    App x y      → error "TODO"
 
 eval ∷ Exp → IO Exp
 eval exp = do
@@ -399,26 +429,26 @@ eval exp = do
         Nothing → pure exp
         Just e' → eval e'
 
-nodeUr ∷ Nat → Node → Ur
-nodeUr arity = \case
-  VSeq → U.Seq
-  VYet n → U.yet n
-  VS → U.S
-  VK → U.K
-  VB → U.B
-  VC → U.C
-  VI → U.I
-  VIff → U.Iff
-  VCas → U.Cas
-  VSn n → Fast (fromIntegral $ n+2) (U.Sn n) []
-  VBn n → Fast (fromIntegral $ n+2) (U.Bn n) []
-  VCn n → Fast (fromIntegral $ n+2) (U.Cn n) []
+nodeRaw ∷ Nat → Node → RawNode
+nodeRaw arity = \case
+  VSeq → RSeq
+  VYet n → RYet n
+  VS → REss
+  VK → RKay
+  VB → RBee
+  VC → RSea
+  VI → REye
+  VIff → RIff
+  VCas → RCas
+  VSn n → RSen n
+  VBn n → RBen n
+  VCn n → RCen n
 
 evaluate ∷ Exp → IO Val
 evaluate = fmap go . eval
   where
     go = \case
-        Clo r n xs   → ValKal (nodeUr r n) (go <$> xs)
+        Clo r n xs   → ValKal (nodeRaw (fromIntegral r) n) (go <$> xs)
         Kal u xs     → ValKal u (go <$> xs)
         Rec xs       → ValRec (go <$> xs)
         Ref n xs     → ValRef n (go <$> xs)
@@ -446,11 +476,11 @@ jetCode arity nm bod =
 
   addRecur :: Ur -> Exp
   addRecur = \case
-    U.Fast 1 U.JFix [body] -> urExp body % Rec []
-    body                   -> urExp body
+    U.Fast 1 U.JFix [body] -> urExp (U.MkVal body) % Rec []
+    body                   -> urExp (U.MkVal body)
 
 funCode ∷ Ur → IO Code
-funCode body = Code 1 fak fak <$> evaluate (urExp body % ref 0)
+funCode body = Code 1 fak fak <$> evaluate (urExp (U.MkVal body) % ref 0)
  where
   fak = error "TODO"
 
@@ -481,70 +511,91 @@ compile = U.simp >>> \case
     Fast _ (U.Slow n t b) [] → jetCode n t b
     body                      → funCode body
 
-urExp ∷ Ur → Exp
-urExp = go
-  where
-    go = \case
-        x U.:@ y      → urExp x % urExp y
-        U.S           → Clo 3 VS []
-        U.K           → Clo 2 VK []
-        U.J n         → Kal (U.J n) []
-        U.D           → Kal U.D []
-        U.Fast n j xs → foldl' (%) (fast arity j) (urExp <$> xs)
-          where arity = n + nat (length xs)
+urVal :: U.Val -> Val
+urVal = go . U.valUr
+ where
+  go = goAcc []
 
-    --  BKIx →
-    fast ∷ Nat → U.Jet → Exp
-    fast arity jet = jet & \case
-        U.Eye        → Clo arity VI []
-        U.Bee        → Clo arity VB []
-        U.Sea        → Clo arity VC []
-        U.Sn n       → Clo arity (VSn n) []
-        U.Bn n       → Clo arity (VBn n) []
-        U.Cn n       → Clo arity (VCn n) []
-        U.JSeq       → Clo arity VSeq []
-        U.Yet n      → Clo arity (VYet n) []
---      U.JIff       → Kal (Fast arity jet []) []
-        U.JIff       → Clo arity VIff []
-        U.JCas       → Clo arity VCas []
-        U.Slow _ _ _ → Kal (Fast arity jet []) []
-        U.JFix       → Kal (Fast arity jet []) []
-        U.JNat n     → Kal (Fast arity jet []) []
-        U.JBol n     → Kal (Fast arity jet []) []
-        U.JPak       → Kal (Fast arity jet []) []
-        U.JZer       → Kal (Fast arity jet []) []
-        U.JEql       → Kal (Fast arity jet []) []
-        U.JAdd       → Kal (Fast arity jet []) []
-        U.JInc       → Kal (Fast arity jet []) []
-        U.JDec       → Kal (Fast arity jet []) []
-        U.JFec       → Kal (Fast arity jet []) []
-        U.JMul       → Kal (Fast arity jet []) []
-        U.JSub       → Kal (Fast arity jet []) []
-        U.JDed       → Kal (Fast arity jet []) []
-        U.JUni       → Kal (Fast arity jet []) []
-        U.JLef       → Kal (Fast arity jet []) []
-        U.JRit       → Kal (Fast arity jet []) []
-        U.JCon       → Kal (Fast arity jet []) []
-        U.JCar       → Kal (Fast arity jet []) []
-        U.JCdr       → Kal (Fast arity jet []) []
+  goAcc :: [Val] -> Ur -> Val
+  goAcc acc = \case
+    x U.:@ y      -> goAcc (go y : acc) x
+    U.S           -> ValKal REss acc
+    U.K           -> ValKal RKay acc
+    U.J n         -> ValKal (RJay 2) acc
+    U.D           -> ValKal RDee acc
+    U.Fast _ j xs -> ValKal (jRaw j) (fmap go xs <> acc)
 
-{-
-    = VSeq
-    | VB
-    | VC
-    | VI
-    | VIff
-    | VCas
-    | VSn Pos
-    | VBn Pos
-    | VCn Pos
+  jRaw :: U.Jet -> RawNode
+  jRaw = \case
+    U.Slow r n b -> RJet r (go n) (go b)
+    U.Eye        -> REye
+    U.Bee        -> RBee
+    U.Sea        -> RSea
+    U.Sn n       -> RSen n
+    U.Bn n       -> RBen n
+    U.Cn n       -> RCen n
+    U.JSeq       -> RSeq
+    U.Yet n      -> RYet n
+    U.JFix       -> RFix
+    U.JNat n     -> RNat n
+    U.JBol b     -> RBol b
+    U.JIff       -> RIff
+    U.JPak       -> RPak
+    U.JZer       -> RZer
+    U.JEql       -> REql
+    U.JAdd       -> RAdd
+    U.JInc       -> RInc
+    U.JDec       -> RDec
+    U.JFec       -> RFec
+    U.JMul       -> RMul
+    U.JSub       -> RSub
+    U.JDed       -> RDed
+    U.JUni       -> RUni
+    U.JLef       -> RLef
+    U.JRit       -> RRit
+    U.JCas       -> RCas
+    U.JCon       -> RCon
+    U.JCar       -> RCar
+    U.JCdr       -> RCdr
 
-data Exp
-    = Clo Pos Node [Exp]
-    | Kal Ur [Exp]
-    | Rec [Exp]
-    | Ref Nat [Exp]
-    | Iff Exp Exp Exp [Exp]
-    | Cas Exp Exp Exp [Exp]
-    | App Exp Exp
--}
+valExp :: Val -> Exp
+valExp = go
+ where
+  go :: Val -> Exp
+  go = \case
+    ValKal rn xs    -> rawExp rn (go <$> xs)
+    ValRec xs       -> Rec (go <$> xs)
+    ValRef n xs     -> Ref n (go <$> xs)
+    ValIff c t e xs -> Iff (go c) (go t) (go e) (go <$> xs)
+    ValCas x l r xs -> Cas (go x) (go l) (go r) (go <$> xs)
+
+  rawExp :: RawNode -> [Exp] -> Exp
+  rawExp rn xs = rn & \case
+    RKay   -> clo 2 VK
+    REss   -> clo 3 VS
+    REye   -> clo 1 VI
+    RBee   -> clo 3 VB
+    RSea   -> clo 3 VC
+    RSen n -> clo (int n + 2) (VSn n)
+    RBen n -> clo (int n + 2) (VBn n)
+    RCen n -> clo (int n + 2) (VCn n)
+    RSeq   -> clo 2 VSeq
+    RYet n -> clo (int n + 1) (VYet n)
+    RIff   -> clo 3 VIff
+    RCas   -> clo 3 VCas
+    other  -> kal other
+   where
+    kal :: RawNode -> Exp
+    kal n = Kal n xs
+
+    clo :: Int -> Node -> Exp
+    clo r n = Clo (r - args) n xs
+
+    args :: Int
+    args = length xs
+
+    int :: Integral i => i -> Int
+    int = fromIntegral
+
+urExp :: U.Val -> Exp
+urExp = valExp . urVal
