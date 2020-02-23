@@ -1,9 +1,9 @@
 {-# OPTIONS_GHC -funbox-strict-fields #-}
 
 {-
-  TODO Fill out execNodeFull.
-  TODO K should not evaluate tail.
-  TODO Implement pattern-match registers.
+    TODO Fill out execNodeFull.
+    TODO K should not evaluate tail.
+    TODO Implement pattern-match registers.
 -}
 
 {-
@@ -173,9 +173,13 @@ import Numeric.Natural  (Natural)
 import Numeric.Positive (Positive)
 import Prelude          ((!!))
 import Uruk.JetDemo     (Ur, UrPoly(Fast))
+import Data.Flat
 
+import qualified Urbit.Atom   as Atom
 import qualified Uruk.JetComp as Comp
 import qualified Uruk.JetDemo as Ur
+
+import qualified GHC.Exts
 
 --------------------------------------------------------------------------------
 
@@ -186,58 +190,47 @@ type Pos = Positive
 
 -- Raw Uruk --------------------------------------------------------------------
 
-infixl 5 :@;
+data Pri = J | K | S | D
+  deriving stock    (Eq, Ord, Show, Generic)
+  deriving anyclass (Flat, NFData)
 
-data Raw = Raw :@ Raw | S | K | J | D
+data Raw = Raw !Pri ![Raw]
+  deriving stock    (Eq, Ord, Show, Generic)
+  deriving anyclass (Flat, NFData)
 
---
---  Serialize an Uruk expression.
---
 jamRaw :: Raw -> Val
-{-# INLINE jamRaw #-}
-jamRaw = VNat . snd . go
- where
-  go :: Raw -> (Int, Natural)
-  go = \case
-    J      -> (3, 0)
-    K      -> (3, 2)
-    S      -> (3, 4)
-    D      -> (3, 6)
-    x :@ y -> (rBits, rNum)
-     where
-      (xBits, xNum) = go x
-      (yBits, yNum) = go y
-      rBits         = 1 + xBits + yBits
-      rNum          = 1 .|. shiftL xNum 1 .|. shiftL yNum (1 + xBits)
+jamRaw = VNat . Atom.bytesAtom . flat
 
 toRaw :: Val -> Raw
 toRaw = valFun >>> \case
-  Fun _ f xs -> app (nodeRaw f) (toRaw <$> toList xs)
+  Fun _ f xs -> app (nodeRaw f) (GHC.Exts.toList $ toRaw <$> xs)
  where
-  app f []       = f
-  app f (x : xs) = app (f :@ x) xs
+  --  Doesn't need to be simplified because input is already fully
+  --  evaluated.
+  app :: Raw -> [Raw] -> Raw
+  app (Raw f xs) mor = Raw f (xs <> mor)
 
 nodeRaw :: Node -> Raw
 nodeRaw = \case
-  Jay 1 -> J
-  Kay   -> K
-  Ess   -> S
-  Dee   -> D
+  Jay 1 -> Raw J []
+  Kay   -> Raw K []
+  Ess   -> Raw S []
+  Dee   -> Raw D []
   _     -> error "TODO"
 
-evalRaw :: Raw -> IO Val
-{-# INLINE evalRaw #-}
-evalRaw = go []
+priFun :: Pri -> (Int, Node)
+priFun = \case
+  S -> (3, Seq)
+  K -> (2, Kay)
+  J -> (1, Jay 1)
+  D -> (1, Dee)
+
+rawVal :: Raw -> Val
+{-# INLINE rawVal #-}
+rawVal (Raw p xs) = VFun $ Fun (args - sizeofArray vals) node vals
  where
-  go :: [Val] -> Raw -> IO Val
-  go acc = \case
-    S      -> execFun $ Fun 3 Sea $ fromList acc
-    K      -> execFun $ Fun 2 Kay $ fromList acc
-    J      -> execFun $ Fun 2 (Jay 1) $ fromList acc
-    D      -> execFun $ Fun 1 Dee $ fromList acc
-    x :@ y -> do
-      yv <- evalRaw y
-      go (yv : acc) x
+  (args, node) = priFun p
+  vals         = rawVal <$> fromList xs
 
 jam :: Val -> Val
 {-# INLINE jam #-}
