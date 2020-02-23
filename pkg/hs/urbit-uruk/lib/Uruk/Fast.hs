@@ -1,8 +1,9 @@
 {-# OPTIONS_GHC -funbox-strict-fields #-}
 
 {-
-  TODO K should not evaluate tail.
   TODO Fill out execNodeFull.
+  TODO K should not evaluate tail.
+  TODO Implement pattern-match registers.
 -}
 
 {-
@@ -232,7 +233,7 @@ data Node
 data Fun = Fun
     { fNeed ∷ !Int
     , fHead ∷ !Node
-    , fArgs ∷ Array Val
+    , fArgs ∷ Array Val -- Lazy on purpose.
     }
   deriving stock (Eq, Ord, Show)
 
@@ -304,12 +305,23 @@ emptyRegisterSet = unsafePerformIO (newArray 0 VUni)
 
 --------------------------------------------------------------------------------
 
+{- |
+    If a function is oversaturated, call it (with too many arguments,
+    it's fine), and then call the result with the remaining arguments.
+-}
 execFun :: Fun -> IO Val
 {-# INLINE execFun #-}
-execFun f@Fun{..} = compare fNeed 0 & \case
+execFun f@Fun {..} = compare fNeed 0 & \case
   GT -> pure (VFun f)
   EQ -> execNodeFull fHead fArgs
-  LT -> error "TODO"
+  LT -> do
+    f         <- execNodeFull fHead fArgs
+    extraArgs <- arrayDrop (sizeofArray fArgs) (negate fNeed) fArgs
+    call f extraArgs
+
+arrayDrop :: Int -> Int -> Array Val -> IO (Array Val)
+{-# INLINE arrayDrop #-}
+arrayDrop i l xs = thawArray xs i l >>= unsafeFreezeArray
 
 jam :: Val -> Val
 {-# INLINE jam #-}
