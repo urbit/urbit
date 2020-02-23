@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -funbox-strict-fields #-}
 
 {-
-    TODO Fill out execNodeFull.
+    TODO Fill out callNodeFull.
     TODO K should not evaluate tail.
     TODO Implement pattern-match registers.
 -}
@@ -338,11 +338,6 @@ data Exp
 
 --------------------------------------------------------------------------------
 
-valArity :: Val -> Int
-valArity = error "TODO"
-
---------------------------------------------------------------------------------
-
 data TypeError = TypeError Text
   deriving (Eq, Ord, Show, Exception)
 
@@ -368,9 +363,9 @@ execFun :: Fun -> IO Val
 {-# INLINE execFun #-}
 execFun f@Fun {..} = compare fNeed 0 & \case
   GT -> pure (VFun f)
-  EQ -> execNodeFull fHead fArgs
+  EQ -> callNodeFull fHead fArgs
   LT -> do
-    f         <- execNodeFull fHead fArgs
+    f         <- callNodeFull fHead fArgs
     extraArgs <- arrayDrop (sizeofArray fArgs) (negate fNeed) fArgs
     callVal f extraArgs
 
@@ -378,17 +373,29 @@ arrayDrop :: Int -> Int -> Array Val -> IO (Array Val)
 {-# INLINE arrayDrop #-}
 arrayDrop i l xs = thawArray xs i l >>= unsafeFreezeArray
 
-execNodeFull :: Node -> Array Val -> IO Val
-{-# INLINE execNodeFull #-}
-execNodeFull !no !xs = no & \case
-  Kay -> pure (v 0)
-  Dee -> pure $ jam $ v 0
-  _   -> error "TODO"
-  where v = indexArray xs
+callNodeFull :: Node -> Array Val -> IO Val
+{-# INLINE callNodeFull #-}
+callNodeFull !no !xs = no & \case
+  Kay   -> pure (v 0)
+  Dee   -> pure $ jam $ v 0
+  Ess   -> join (c2 x z <$> c1 y z)
+  Jay _ -> error "TODO"
+  _     -> error "TODO"
+  where
+   x = v 0
+   y = v 1
+   z = v 2
+   v = indexArray xs
 
-execFunFull :: Fun -> Array Val -> IO Val
-{-# INLINE execFunFull #-}
-execFunFull Fun {..} xs = execNodeFull fHead (fArgs <> xs)
+c1 = callVal1
+c2 = callVal2
+
+callVal1 f x   = callVal f (fromList [x])
+callVal2 f x y = callVal f (fromList [x,y])
+
+callFunFull :: Fun -> Array Val -> IO Val
+{-# INLINE callFunFull #-}
+callFunFull Fun {..} xs = callNodeFull fHead (fArgs <> xs)
 
 valFun :: Val -> Fun
 {-# INLINE valFun #-}
@@ -413,7 +420,7 @@ execJet !j !xs = do
  where
   runSlow why = do
     putStrLn ("FALLBACK: " <> why)
-    execFunFull (valFun $ jBody j) xs
+    callFunFull (valFun $ jBody j) xs
 
 execJet2 :: Jet -> Val -> Val -> IO Val
 {-# INLINE execJet2 #-}
@@ -422,7 +429,7 @@ execJet2 !j !x !y = do
  where
   runSlow why = do
     putStrLn ("FALLBACK: " <> why)
-    execFunFull (valFun $ jBody j) (fromList [x, y])
+    callFunFull (valFun $ jBody j) (fromList [x, y])
 
 
 --------------------------------------------------------------------------------
