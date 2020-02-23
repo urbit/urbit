@@ -167,6 +167,7 @@ import Data.Primitive.Array
 import System.IO.Unsafe
 
 import Control.Arrow    ((>>>))
+import Data.Bits        (shiftL, (.|.))
 import Data.Function    ((&))
 import Numeric.Natural  (Natural)
 import Numeric.Positive (Positive)
@@ -181,6 +182,68 @@ import qualified Uruk.JetDemo as Ur
 type Nat = Natural
 type Bol = Bool
 type Pos = Positive
+
+
+-- Raw Uruk --------------------------------------------------------------------
+
+infixl 5 :@;
+
+data Raw = Raw :@ Raw | S | K | J | D
+
+--
+--  Serialize an Uruk expression.
+--
+jamRaw ∷ Raw → Val
+{-# INLINE jamRaw #-}
+jamRaw = VNat . snd . go
+  where
+    go ∷ Raw → (Int, Natural)
+    go = \case
+        J           → (3, 0)
+        K           → (3, 2)
+        S           → (3, 4)
+        D           → (3, 6)
+        x :@ y      → (rBits, rNum)
+          where (xBits, xNum) = go x
+                (yBits, yNum) = go y
+                rBits = 1 + xBits + yBits
+                rNum  = 1 .|. shiftL xNum 1
+                          .|. shiftL yNum (1+xBits)
+
+toRaw ∷ Val → Raw
+toRaw = valFun >>> \case
+  Fun _ f xs ->
+    app (nodeRaw f) (toRaw <$> toList xs)
+ where
+  app f []     = f
+  app f (x:xs) = app (f :@ x) xs
+
+nodeRaw :: Node -> Raw
+nodeRaw = \case
+  Jay 1 -> J
+  Kay   -> K
+  Ess   -> S
+  Dee   -> D
+  _     -> error "TODO"
+
+evalRaw :: Raw -> IO Val
+{-# INLINE evalRaw #-}
+evalRaw = go []
+ where
+  go :: [Val] -> Raw -> IO Val
+  go acc = \case
+    S      -> execFun $ Fun 3 Sea $ fromList acc
+    K      -> execFun $ Fun 2 Kay $ fromList acc
+    J      -> execFun $ Fun 2 (Jay 1) $ fromList acc
+    D      -> execFun $ Fun 1 Dee $ fromList acc
+    x :@ y -> do
+      yv <- evalRaw y
+      go (yv : acc) x
+
+jam ∷ Val → Val
+{-# INLINE jam #-}
+jam = jamRaw . toRaw
+
 
 --------------------------------------------------------------------------------
 
@@ -317,15 +380,11 @@ execFun f@Fun {..} = compare fNeed 0 & \case
   LT -> do
     f         <- execNodeFull fHead fArgs
     extraArgs <- arrayDrop (sizeofArray fArgs) (negate fNeed) fArgs
-    call f extraArgs
+    callVal f extraArgs
 
 arrayDrop :: Int -> Int -> Array Val -> IO (Array Val)
 {-# INLINE arrayDrop #-}
 arrayDrop i l xs = thawArray xs i l >>= unsafeFreezeArray
-
-jam :: Val -> Val
-{-# INLINE jam #-}
-jam = error "TODO"
 
 execNodeFull :: Node -> Array Val -> IO Val
 {-# INLINE execNodeFull #-}
@@ -499,10 +558,10 @@ execJetBody !j !xs !regs = go (jFast j)
     CALN f xs -> do
       fv <- go f
       xs <- traverse go xs
-      call fv xs
+      callVal fv xs
 
-call ∷ Val → Array Val → IO Val
-call f xs =
+callVal ∷ Val → Array Val → IO Val
+callVal f xs =
   let Fun{..} = valFun f
   in execFun (Fun (fNeed - sizeofArray xs) fHead (fArgs <> xs))
 
@@ -578,7 +637,7 @@ execJetBody2 !j !x !y = go (jFast j)
     CALN f xs -> do
       fv <- go f
       xs <- traverse go xs
-      call fv xs
+      callVal fv xs
 
 
 -- Trivial Example -------------------------------------------------------------
