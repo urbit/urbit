@@ -193,30 +193,29 @@ data Raw = Raw :@ Raw | S | K | J | D
 --
 --  Serialize an Uruk expression.
 --
-jamRaw ∷ Raw → Val
+jamRaw :: Raw -> Val
 {-# INLINE jamRaw #-}
 jamRaw = VNat . snd . go
-  where
-    go ∷ Raw → (Int, Natural)
-    go = \case
-        J           → (3, 0)
-        K           → (3, 2)
-        S           → (3, 4)
-        D           → (3, 6)
-        x :@ y      → (rBits, rNum)
-          where (xBits, xNum) = go x
-                (yBits, yNum) = go y
-                rBits = 1 + xBits + yBits
-                rNum  = 1 .|. shiftL xNum 1
-                          .|. shiftL yNum (1+xBits)
-
-toRaw ∷ Val → Raw
-toRaw = valFun >>> \case
-  Fun _ f xs ->
-    app (nodeRaw f) (toRaw <$> toList xs)
  where
-  app f []     = f
-  app f (x:xs) = app (f :@ x) xs
+  go :: Raw -> (Int, Natural)
+  go = \case
+    J      -> (3, 0)
+    K      -> (3, 2)
+    S      -> (3, 4)
+    D      -> (3, 6)
+    x :@ y -> (rBits, rNum)
+     where
+      (xBits, xNum) = go x
+      (yBits, yNum) = go y
+      rBits         = 1 + xBits + yBits
+      rNum          = 1 .|. shiftL xNum 1 .|. shiftL yNum (1 + xBits)
+
+toRaw :: Val -> Raw
+toRaw = valFun >>> \case
+  Fun _ f xs -> app (nodeRaw f) (toRaw <$> toList xs)
+ where
+  app f []       = f
+  app f (x : xs) = app (f :@ x) xs
 
 nodeRaw :: Node -> Raw
 nodeRaw = \case
@@ -240,7 +239,7 @@ evalRaw = go []
       yv <- evalRaw y
       go (yv : acc) x
 
-jam ∷ Val → Val
+jam :: Val -> Val
 {-# INLINE jam #-}
 jam = jamRaw . toRaw
 
@@ -389,14 +388,14 @@ arrayDrop i l xs = thawArray xs i l >>= unsafeFreezeArray
 execNodeFull :: Node -> Array Val -> IO Val
 {-# INLINE execNodeFull #-}
 execNodeFull !no !xs = no & \case
-  Kay   -> pure (v 0)
-  Dee   -> pure $ jam $ v 0
-  _     -> error "TODO"
- where v = indexArray xs
+  Kay -> pure (v 0)
+  Dee -> pure $ jam $ v 0
+  _   -> error "TODO"
+  where v = indexArray xs
 
 execFunFull :: Fun -> Array Val -> IO Val
 {-# INLINE execFunFull #-}
-execFunFull Fun{..} xs = execNodeFull fHead (fArgs <> xs)
+execFunFull Fun {..} xs = execNodeFull fHead (fArgs <> xs)
 
 valFun :: Val -> Fun
 {-# INLINE valFun #-}
@@ -550,7 +549,7 @@ execJetBody !j !xs !regs = go (jFast j)
       VCon _ y -> pure y
       _        -> throwIO (TypeError "cdr-not-con")
 
-    CLON Fun{..} xs -> do
+    CLON Fun {..} xs -> do
       xs <- traverse go xs
       let rem :: Int = fNeed - sizeofArray xs
       pure $ VFun $ Fun rem fHead (fArgs <> xs)
@@ -560,10 +559,10 @@ execJetBody !j !xs !regs = go (jFast j)
       xs <- traverse go xs
       callVal fv xs
 
-callVal ∷ Val → Array Val → IO Val
+callVal :: Val -> Array Val -> IO Val
 callVal f xs =
-  let Fun{..} = valFun f
-  in execFun (Fun (fNeed - sizeofArray xs) fHead (fArgs <> xs))
+  let Fun {..} = valFun f
+  in  execFun (Fun (fNeed - sizeofArray xs) fHead (fArgs <> xs))
 
 
 --------------------------------------------------------------------------------
@@ -627,10 +626,10 @@ execJetBody2 !j !x !y = go (jFast j)
       VCon _ y -> pure y
       _        -> throwIO (TypeError "cdr-not-con")
 
-    LEF x     -> VLef <$> go x
-    RIT x     -> VRit <$> go x
+    LEF x            -> VLef <$> go x
+    RIT x            -> VRit <$> go x
 
-    CLON Fun{..} xs -> do
+    CLON Fun {..} xs -> do
       xs <- traverse go xs
       pure $ VFun $ Fun (fNeed - sizeofArray xs) fHead (fArgs <> xs)
 
