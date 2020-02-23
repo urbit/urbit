@@ -1,6 +1,11 @@
 {-# OPTIONS_GHC -funbox-strict-fields #-}
 
-{-|
+{-
+  TODO K should not evaluate tail.
+  TODO Fill out execNodeFull.
+-}
+
+{-
     On 64 bit machines, GHC will always use pointer tagging as long as
     there are less than 8 constructors. So, anything that is frequently
     pattern matched on should have at most 7 branches.
@@ -178,14 +183,58 @@ type Pos = Positive
 
 --------------------------------------------------------------------------------
 
-data Pri = S | K | J | D
+data Jet = Jet
+    { jArgs ∷ !Int
+    , jName ∷ Val
+    , jBody ∷ Val
+    , jFast ∷ !Exp
+    , jRegs ∷ !Int -- Number of registers needed.
+    }
   deriving (Eq, Ord, Show)
 
-data Fun
-    = FClo !Int !Fun !(Array Val)
-    | FJet !Int !Jet
-    | FPri !Int !Pri
-  deriving (Eq, Ord, Show)
+data Node
+    = Jay Pos
+    | Kay
+    | Ess
+    | Dee
+    | Jut Jet
+    | Eye
+    | Bee
+    | Sea
+    | Sen Pos
+    | Ben Pos
+    | Cen Pos
+    | Seq
+    | Yet Nat
+    | Fix
+    | Nat Nat
+    | Bol Bool
+    | Iff
+    | Pak
+    | Zer
+    | Eql
+    | Add
+    | Inc
+    | Dec
+    | Fec
+    | Mul
+    | Sub
+    | Ded
+    | Uni
+    | Lef
+    | Rit
+    | Cas
+    | Con
+    | Car
+    | Cdr
+  deriving stock (Eq, Ord, Show)
+
+data Fun = Fun
+    { fNeed ∷ !Int
+    , fHead ∷ !Node
+    , fArgs ∷ Array Val
+    }
+  deriving stock (Eq, Ord, Show)
 
 data Val
     = VUni
@@ -195,15 +244,6 @@ data Val
     | VNat !Nat
     | VBol !Bool
     | VFun !Fun
-  deriving (Eq, Ord, Show)
-
-data Jet = Jet
-    { jArgs ∷ !Int
-    , jName ∷ Val
-    , jBody ∷ Val
-    , jFast ∷ !Exp
-    , jRegs ∷ !Int -- Number of registers needed.
-    }
   deriving (Eq, Ord, Show)
 
 data Exp
@@ -235,8 +275,8 @@ data Exp
 
     | JETN !Jet !(Array Exp)   --  Fully saturated call
     | JET2 !Jet !Exp !Exp      --  Fully saturated call
-    | CLON !Fun !(Array Exp)    --  Undersaturated call
-    | CALN !Exp !(Array Exp)    --  Call of unknown saturation
+    | CLON !Fun !(Array Exp)   --  Undersaturated call
+    | CALN !Exp !(Array Exp)   --  Call of unknown saturation
   deriving (Eq, Ord, Show)
 
 
@@ -244,13 +284,6 @@ data Exp
 
 valArity :: Val -> Int
 valArity = error "TODO"
-
-funArgs :: Fun -> Int
-{-# INLINE funArgs #-}
-funArgs = \case
-  FClo i _ _ -> i
-  FJet i _   -> i
-  FPri i _   -> i
 
 --------------------------------------------------------------------------------
 
@@ -273,61 +306,37 @@ emptyRegisterSet = unsafePerformIO (newArray 0 VUni)
 
 execFun :: Fun -> IO Val
 {-# INLINE execFun #-}
-execFun !f = compare (funArgs f) 0 & \case
+execFun f@Fun{..} = compare fNeed 0 & \case
   GT -> pure (VFun f)
-  EQ -> execFunFull f
+  EQ -> execNodeFull fHead fArgs
   LT -> error "TODO"
 
-uniJet :: Jet
-uniJet = error "TODO"
+jam :: Val -> Val
+{-# INLINE jam #-}
+jam = error "TODO"
 
-conJet :: Val -> Val -> Jet
-conJet = error "TODO"
+execNodeFull :: Node -> Array Val -> IO Val
+{-# INLINE execNodeFull #-}
+execNodeFull !no !xs = no & \case
+  Kay   -> pure (v 0)
+  Dee   -> pure $ jam $ v 0
+  _     -> error "TODO"
+ where v = indexArray xs
 
-lefJet :: Val -> Jet
-lefJet = error "TODO"
-
-ritJet :: Val -> Jet
-ritJet = error "TODO"
-
-natJet :: Nat -> Jet
-natJet = error "TODO"
-
-bolJet :: Bol -> Jet
-bolJet = error "TODO"
+execFunFull :: Fun -> Array Val -> IO Val
+{-# INLINE execFunFull #-}
+execFunFull Fun{..} xs = execNodeFull fHead (fArgs <> xs)
 
 valFun :: Val -> Fun
 {-# INLINE valFun #-}
 valFun = \case
-  VUni     -> FJet 1 uniJet
-  VCon h t -> FJet 2 (conJet h t)
-  VLef l   -> FJet 1 (lefJet l)
-  VRit r   -> FJet 1 (ritJet r)
-  VNat n   -> FJet 2 (natJet n)
-  VBol b   -> FJet 2 (bolJet b)
+  VUni     -> Fun 1 Uni mempty
+  VCon h t -> Fun 1 Con (fromList [h, t])
+  VLef l   -> Fun 2 Lef (fromList [l])
+  VRit r   -> Fun 2 Lef (fromList [r])
+  VNat n   -> Fun 2 (Nat n) mempty
+  VBol b   -> Fun 2 (Bol b) mempty
   VFun f   -> f
-
-jam :: Val -> Val
-jam = error "TODO"
-
-execPrim :: Pri -> Array Val -> IO Val
-{-# INLINE execPrim #-}
-execPrim !p !xs = p & \case
-  S -> error "TODO"
-  K -> pure (v 0)
-  D -> pure $ jam $ v 0
-  J -> error "TODO"
-  where v = indexArray xs
-
-execFunFull :: Fun -> IO Val
-{-# INLINE execFunFull #-}
-execFunFull = go []
- where
-  go :: [Array Val] -> Fun -> IO Val
-  go !acc = \case
-    FPri _ p    -> execPrim p (mconcat acc)
-    FClo _ f xs -> go (xs : acc) f
-    FJet _ j    -> execJet j (mconcat acc)
 
 execJet :: Jet -> Array Val -> IO Val
 {-# INLINE execJet #-}
@@ -341,7 +350,7 @@ execJet !j !xs = do
  where
   runSlow why = do
     putStrLn ("FALLBACK: " <> why)
-    execFunFull $ FClo 0 (valFun $ jBody j) xs
+    execFunFull (valFun $ jBody j) xs
 
 execJet2 :: Jet -> Val -> Val -> IO Val
 {-# INLINE execJet2 #-}
@@ -350,7 +359,7 @@ execJet2 !j !x !y = do
  where
   runSlow why = do
     putStrLn ("FALLBACK: " <> why)
-    execFunFull $ FClo 0 (valFun $ jBody j) (fromList [x, y])
+    execFunFull (valFun $ jBody j) (fromList [x, y])
 
 
 --------------------------------------------------------------------------------
@@ -470,24 +479,26 @@ execJetBody !j !xs !regs = go (jFast j)
       VCon _ y -> pure y
       _        -> throwIO (TypeError "cdr-not-con")
 
-    CLON f xs -> do
-      let args    = funArgs f
-      let remArgs = args - sizeofArray xs
-      clo <- FClo remArgs f <$> traverse go xs
-      pure (VFun clo)
+    CLON Fun{..} xs -> do
+      xs <- traverse go xs
+      let rem :: Int = fNeed - sizeofArray xs
+      pure $ VFun $ Fun rem fHead (fArgs <> xs)
 
     CALN f xs -> do
       fv <- go f
       xs <- traverse go xs
-      let args    = valArity fv
-      let remArgs = args - sizeofArray xs
-      execFun $ FClo remArgs (valFun fv) xs
+      call fv xs
+
+call ∷ Val → Array Val → IO Val
+call f xs =
+  let Fun{..} = valFun f
+  in execFun (Fun (fNeed - sizeofArray xs) fHead (fArgs <> xs))
 
 
 --------------------------------------------------------------------------------
 
 jetVal :: Jet -> Val
-jetVal j = VFun $ FJet (jArgs j) j
+jetVal j = VFun $ Fun (jArgs j) (Jut j) mempty
 
 execJetBody2 :: Jet -> Val -> Val -> IO Val
 {-# INLINE execJetBody2 #-}
@@ -548,18 +559,14 @@ execJetBody2 !j !x !y = go (jFast j)
     LEF x     -> VLef <$> go x
     RIT x     -> VRit <$> go x
 
-    CLON f xs -> do
-      let args    = funArgs f
-      let remArgs = args - sizeofArray xs
-      clo <- FClo remArgs f <$> traverse go xs
-      pure (VFun clo)
+    CLON Fun{..} xs -> do
+      xs <- traverse go xs
+      pure $ VFun $ Fun (fNeed - sizeofArray xs) fHead (fArgs <> xs)
 
     CALN f xs -> do
       fv <- go f
       xs <- traverse go xs
-      let args    = valArity fv
-      let remArgs = args - sizeofArray xs
-      execFun $ FClo remArgs (valFun fv) xs
+      call fv xs
 
 
 -- Trivial Example -------------------------------------------------------------
