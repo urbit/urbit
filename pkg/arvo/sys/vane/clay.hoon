@@ -4068,9 +4068,16 @@
           wrapped-task=(hobo task:able)
       ==
   ^-  [(list move) _..^$]
-  ?<  ?=(^ dud)
   ::
   =/  req=task:able  ((harden task:able) wrapped-task)
+  ::
+  ::  error notifications "downcast" to %crud
+  ::
+  =?  req  ?=(^ dud)
+    ~|  %crud-in-crud
+    ?<  ?=(%crud -.req)
+    [%crud -.req tang.u.dud]
+  ::
   ::  only one of these should be going at once, so queue
   ::
   ?:  ?=(?(%info %merg %mont) -.req)

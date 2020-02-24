@@ -305,9 +305,16 @@
 ++  call
   |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task:able)]
   ^-  [(list move) _light-gate]
-  ?<  ?=(^ dud)
   ::
   =/  task=task:able  ((harden task:able) wrapped-task)
+  ::
+  ::  error notifications "downcast" to %crud
+  ::
+  =?  task  ?=(^ dud)
+    ~|  %crud-in-crud
+    ?<  ?=(%crud -.task)
+    [%crud -.task tang.u.dud]
+  ::
   ::  %crud: notifies us of an event failure
   ::
   ?:  ?=(%crud -.task)

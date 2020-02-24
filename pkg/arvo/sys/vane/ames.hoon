@@ -917,9 +917,16 @@
     ::
     ++  call
       |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task)]
-      ?<  ?=(^ dud)
       ::
       =/  =task  ((harden task) wrapped-task)
+      ::
+      ::  error notifications "downcast" to %crud
+      ::
+      =?  task  ?=(^ dud)
+        ~|  %crud-in-crud
+        ?<  ?=(%crud -.task)
+        [%crud -.task tang.u.dud]
+      ::
       ::  %born: set .unix-duct and start draining .queued-events
       ::
       ?:  ?=(%born -.task)
@@ -1057,9 +1064,15 @@
 ++  call
   |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task)]
   ^-  [(list move) _ames-gate]
-  ?<  ?=(^ dud)
   ::
   =/  =task  ((harden task) wrapped-task)
+  ::
+  ::  error notifications "downcast" to %crud
+  ::
+  =?  task  ?=(^ dud)
+    ~|  %crud-in-crud
+    ?<  ?=(%crud -.task)
+    [%crud -.task tang.u.dud]
   ::
   =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
   ::

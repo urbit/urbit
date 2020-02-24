@@ -251,9 +251,15 @@
           wrapped-task=(hobo task:able)
       ==
   ^-  [(list move) _behn-gate]
-  ?<  ?=(^ dud)
   ::
   =/  =task:able  ((harden task:able) wrapped-task)
+  ::
+  ::  error notifications "downcast" to %crud
+  ::
+  =?  task  ?=(^ dud)
+    ~|  %crud-in-crud
+    ?<  ?=(%crud -.task)
+    [%crud -.task tang.u.dud]
   ::
   =/  event-core  (per-event [our now hen] state)
   ::
