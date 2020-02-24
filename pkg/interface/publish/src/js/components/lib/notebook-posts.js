@@ -61,8 +61,14 @@ export class NotebookPosts extends Component {
       notes.push(
         <Link key={i} to={url}>
           <div className="mv6">
-            <div className="mb1">{note.title}</div>
-            <p className="mb1">{note.snippet}</p>
+            <div className="mb1"
+            style={{overflowWrap: "break-word"}}>
+              {note.title}
+            </div>
+            <p className="mb1"
+            style={{overflowWrap: "break-word"}}>
+              {note.snippet}
+            </p>
             <div className="flex">
               <div className={((note.author === name) ? "mono" : "") +
                " gray2 mr3"}>{name}</div>
