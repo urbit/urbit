@@ -29,6 +29,10 @@ let
     src     = ../../../pkg/urbit;
     nativeBuildInputs = deps ++ vendor;
 
+    configurePhase = ''
+      bash ./configure
+    '';
+
     installPhase = ''
       make all -j8
       make test
