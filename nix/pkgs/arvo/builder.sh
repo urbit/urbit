@@ -4,8 +4,8 @@ cp -r $src/ $out
 
 chmod -R u+w $out
 
-rm $out/.gitignore
-rm $out/.travis.yml
+rm -f $out/.gitignore
+rm -f $out/.travis.yml
 rm -rf $out/.travis
 
 mkdir -p $out/app/chat/css
