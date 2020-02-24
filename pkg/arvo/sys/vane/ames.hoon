@@ -920,12 +920,14 @@
       ::
       =/  =task  ((harden task) wrapped-task)
       ::
-      ::  error notifications "downcast" to %crud
+      ::  error notifications "downcast" to %crud or %hole
       ::
       =?  task  ?=(^ dud)
-        ~|  %crud-in-crud
-        ?<  ?=(%crud -.task)
-        [%crud -.task tang.u.dud]
+        ?-  -.task
+          %crud  ~|(%crud-in-crud !!)
+          %hear  [%hole [lane blob]:task]
+          *      [%crud -.task tang.u.dud]
+        ==
       ::
       ::  %born: set .unix-duct and start draining .queued-events
       ::
@@ -1067,12 +1069,14 @@
   ::
   =/  =task  ((harden task) wrapped-task)
   ::
-  ::  error notifications "downcast" to %crud
+  ::  error notifications "downcast" to %crud or %hole
   ::
   =?  task  ?=(^ dud)
-    ~|  %crud-in-crud
-    ?<  ?=(%crud -.task)
-    [%crud -.task tang.u.dud]
+    ?-  -.task
+      %crud  ~|(%crud-in-crud !!)
+      %hear  [%hole [lane blob]:task]
+      *      [%crud -.task tang.u.dud]
+    ==
   ::
   =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
   ::
