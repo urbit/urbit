@@ -1,267 +1,362 @@
 /+  *test
+::
+/=  ford-vane   /:  /===/sys/vane/ford  /!noun/
+::
+/=  hoon-scry   /:  /===/sys/hoon       /hoon/
+/=  arvo-scry   /:  /===/sys/arvo       /hoon/
+/=  zuse-scry   /:  /===/sys/zuse       /hoon/
+/=  txt-scry    /:  /===/mar/txt        /hoon/
+/=  diff-scry   /:  /===/mar/txt-diff   /hoon/
+::
+!:
 =,  ford
+=,  format
+::
+=/  test-pit=vase  !>(..zuse)
+=/  ford-gate  (ford-vane test-pit)
+::  load %reef into .ford-gate so we don't have to rerun it on each test
+::
+=<  ~&  %test-reef-loading
+    =.  ford-gate
+      =-  ?>(?=(~ -<) ->)
+      %:  ford-call-with-comparator
+        ford-gate
+        ~1234.5.6
+        scry=(scry-with-results (with-reef ~1234.5.6 ~))
+        call-args=[*duct *type %build %.n %reef ~nul %home]
+        ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
+        =/  result  result.p.card.i.moves
+        ?>  ?=([%success %reef *] build-result.result)
+        ~
+      ==
+    ~&  %test-reef-loaded
+    ~!  +6.ford-gate
+    .
 |%
-::  +expect-schematic: assert a +schematic:ford is what we expect
-::
-::    Since Ford requests contain types, we can't do simple
-::    equality checking. This function handles all the different
-::    kinds of +schematic:ford, dealing with types as necessary.
-::
-++  expect-schematic
-  |=  [expected=schematic actual=schematic]
+++  verify-post-made
+  |=  $:  move=move:ford-gate
+          =duct
+          =type
+          date=@da
+          title=@tas
+          contents=tape
+      ==
   ^-  tang
   ::
-  ?^    -.expected
-    ?.  ?=(^ -.actual)
-      [%leaf "expected autocons, but got {<-.actual>}"]~
-    ::
-    %+  weld
-      $(expected head.expected, actual head.actual)
-    $(expected tail.expected, actual tail.actual)
+  ?>  ?=([* %give %made @da %complete %success ^ *] move)
+  =/  result  build-result.result.p.card.move
+  ?>  ?=([%success %scry %noun type-a=* @tas *] head.result)
+  ?>  ?=([%success ^ *] tail.result)
+  ?>  ?=([%success %ride type-title-a=* %post-a] head.tail.result)
+  ?>  ?=([%success %ride type-title-b=* %post-b] tail.tail.result)
   ::
-  ?-    -.expected
-      %$
-    ?.  ?=(%$ -.actual)
-      [%leaf "expected %$, but got {<-.actual>}"]~
-    ::
-    %+  weld
-      (expect-eq !>(p.literal.expected) !>(p.literal.actual))
-    (expect-eq q.literal.expected q.literal.actual)
-  ::
-      %pin
-    ::
-    ?.  ?=(%pin -.actual)
-      [%leaf "expected %pin, but got {<-.actual>}"]~
-    ::
-    %+  weld
-      (expect-eq !>(date.expected) !>(date.actual))
-    $(expected schematic.expected, actual schematic.actual)
-  ::
-      %alts
-    ::
-    ?.  ?=(%alts -.actual)
-      [%leaf "expected %alts, but got {<-.actual>}"]~
-    ::
-    |-  ^-  tang
-    ?~  choices.expected
-      ::  make sure there aren't any extra :choices in :actual
-      ::
-      ?~  choices.actual
-        ~
-      [%leaf "actual had more choices than expected"]~
-    ::  :expected isn't empty yet; make sure :actual isn't either
-    ::
-    ?~  choices.actual
-      [%leaf "expected had more choices than actual"]~
-    ::  recurse on the first sub-schematic
-    ::
-    %+  weld
-      ^$(expected i.choices.expected, actual i.choices.actual)
-    $(choices.expected t.choices.expected, choices.actual t.choices.actual)
-  ::
-      %bake
-    (expect-eq [schematic-type expected] [schematic-type actual])
-  ::
-      %bunt
-    (expect-eq [schematic-type expected] [schematic-type actual])
-  ::
-      %call
-    ::
-    ?.  ?=(%call -.actual)
-      [%leaf "expected %call, but got {<-.actual>}"]~
-    ::
-    %+  weld
-      $(expected gate.expected, actual gate.actual)
-    $(expected sample.expected, actual sample.actual)
-  ::
-      %cast
-    ::
-    ?.  ?=(%cast -.actual)
-      [%leaf "expected %cast, but got {<-.actual>}"]~
-    ::
-    ;:  weld
-      (expect-eq !>(disc.expected) !>(disc.actual))
-      (expect-eq !>(mark.expected) !>(mark.actual))
-      $(expected input.expected, actual input.actual)
-    ==
-  ::
-      %core
-    (expect-eq [schematic-type expected] [schematic-type actual])
-  ::
-      %diff
-    ::
-    ?.  ?=(%diff -.actual)
-      [%leaf "expected %diff, but got {<-.actual>}"]~
-    ::
-    ;:  weld
-      (expect-eq !>(disc.expected) !>(disc.actual))
-      $(expected start.expected, actual start.actual)
-      $(expected end.expected, actual end.actual)
-    ==
-  ::
-      %dude
-    ::
-    ?.  ?=(%dude -.actual)
-      [%leaf "expected %dude, but got {<-.actual>}"]~
-    ::
-    %+  weld
-      (expect-eq !>(error.expected) !>(error.actual))
-    $(expected attempt.expected, actual attempt.actual)
-  ::
-      %hood
-    (expect-eq [schematic-type expected] [schematic-type actual])
-  ::
-      %join
-    ::
-    ?.  ?=(%join -.actual)
-      [%leaf "expected %join, but got {<-.actual>}"]~
-    ::
-    ;:  weld
-      (expect-eq !>(disc.expected) !>(disc.actual))
-      (expect-eq !>(mark.expected) !>(mark.actual))
-      $(expected first.expected, actual first.actual)
-      $(expected second.expected, actual second.actual)
-    ==
-  ::
-      %list
-    ::
-    ?.  ?=(%list -.actual)
-      [%leaf "expected %list, but got {<-.actual>}"]~
-    ::
-    |-  ^-  tang
-    ?~  schematics.expected
-      ::  make sure there aren't any extra :schematics in :actual
-      ::
-      ?~  schematics.actual
-        ~
-      [%leaf "actual had more schematics than expected"]~
-    ::  :expected isn't empty yet; make sure :actual isn't either
-    ::
-    ?~  schematics.actual
-      [%leaf "expected had more schematics than actual"]~
-    ::
-    %+  weld
-      ^$(expected i.schematics.expected, actual i.schematics.actual)
-    ::
-    %_  $
-      schematics.expected  t.schematics.expected
-      schematics.actual    t.schematics.actual
-    ==
-  ::
-      %mash
-    ::
-    ?.  ?=(%mash -.actual)
-      [%leaf "expected %mash, but got {<-.actual>}"]~
-    ::
-    ;:  weld
-      (expect-eq !>(disc.expected) !>(disc.actual))
-      (expect-eq !>(mark.expected) !>(mark.actual))
-      (expect-eq !>(disc.first.expected) !>(disc.first.actual))
-      (expect-eq !>(mark.first.expected) !>(mark.first.actual))
-      (expect-eq !>(disc.second.expected) !>(disc.second.actual))
-      (expect-eq !>(mark.second.expected) !>(mark.second.actual))
-      $(expected schematic.first.expected, actual schematic.first.actual)
-      $(expected schematic.second.expected, actual schematic.second.actual)
-    ==
-  ::
-      %mute
-    ::
-    ?.  ?=(%mute -.actual)
-      [%leaf "expected %mute, but got {<-.actual>}"]~
-    ::
-    %+  weld  $(expected subject.expected, actual subject.actual)
-    ::
-    |-  ^-  tang
-    ?~  mutations.expected
-      ::  make sure there aren't any extra :mutations in :actual
-      ::
-      ?~  mutations.actual
-        ~
-      [%leaf "actual had more mutations than expected"]~
-    ::  :expected isn't empty yet; make sure :actual isn't either
-    ::
-    ?~  mutations.actual
-      [%leaf "expected had more mutations than actual"]~
-    ::
-    ;:  weld
-      (expect-eq !>(p.i.mutations.expected) !>(p.i.mutations.actual))
-      ^$(expected q.i.mutations.expected, actual q.i.mutations.actual)
-      %_  $
-        mutations.expected  t.mutations.expected
-        mutations.actual    t.mutations.actual
-      ==
-    ==
-  ::
-      %pact
-    ::
-    ?.  ?=(%pact -.actual)
-      [%leaf "expected %pact, but got {<-.actual>}"]~
-    ::
-    ;:  weld
-      (expect-eq !>(disc.expected) !>(disc.actual))
-      $(expected start.expected, actual start.actual)
-      $(expected diff.expected, actual diff.actual)
-    ==
-  ::
-      %path
-    (expect-eq [schematic-type expected] [schematic-type actual])
-  ::
-      %plan
-    (expect-eq [schematic-type expected] [schematic-type actual])
-  ::
-      %reef
-    (expect-eq [schematic-type expected] [schematic-type actual])
-  ::
-      %ride
-    ::
-    ?.  ?=(%ride -.actual)
-      [%leaf "expected %ride, but got {<-.actual>}"]~
-    ::
-    %+  weld
-      (expect-eq !>(formula.expected) !>(formula.actual))
-    $(expected subject.expected, actual subject.actual)
-  ::
-      %same
-    ::
-    ?.  ?=(%same -.actual)
-      [%leaf "expected %same, but got {<-.actual>}"]~
-    ::
-    $(expected schematic.expected, actual schematic.actual)
-  ::
-      %scry
-    (expect-eq [schematic-type expected] [schematic-type actual])
-  ::
-      %slim
-    ::
-    ?.  ?=(%slim -.actual)
-      [%leaf "expected %slim, but got {<-.actual>}"]~
-    ::
-    %+  weld
-      (expect-eq !>(formula.expected) !>(formula.actual))
-    ::
+  ;:  welp
     %+  expect-eq
-      !>(`?`%.y)
-    ^-  vase
-    :-  -:!>(*?)
-    ^-  ?
-    (~(nest ut subject-type.expected) | subject-type.actual)
+      !>  duct
+      !>  duct.move
   ::
-      %slit
-    ::
-    ?.  ?=(%slit -.actual)
-      [%leaf "expected %slit, but got {<-.actual>}"]~
-    ::
-    %+  weld
-      (expect-eq gate.expected gate.actual)
-    (expect-eq sample.expected sample.actual)
+    %+  expect-eq
+      !>  date
+      !>  date.p.card.move
   ::
-      ?(%vale %volt)
-    (expect-eq [schematic-type expected] [schematic-type actual])
+    %+  expect-eq
+      !>  [%success %scry %noun *^type [title=title contents=contents]]
+      !>  head.result(p.q.cage *^type)
   ::
-      %walk
-    (expect-eq [schematic-type expected] [schematic-type actual])
+    %+  expect-eq
+      !>  &
+      !>  (~(nest ut p.q.cage.head.result) | type)
+  ::
+    %+  expect-eq
+      !>  'post-a'
+      vase.head.tail.result
+  ::
+    %+  expect-eq
+      !>  'post-b'
+      vase.tail.tail.result
   ==
-::  +schematic-type: the +type for +schematic:ford
+++  scry-with-results
+  |=  results=(map [=term =beam] cage)
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  =/  date=@da  ?>(?=(%da -.r.beam) p.r.beam)
+  ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
+  ::
+  ~|  scry-with-results+[term=term beam=beam]
+  ::
+  [~ ~ (~(got by results) [term beam])]
+::  +scry-with-results-and-failures
 ::
-++  schematic-type  ^~  `type`-:!>(*schematic:ford)
+++  scry-with-results-and-failures
+  |=  results=(map [=term =beam] (unit cage))
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  =/  date=@da  ?>(?=(%da -.r.beam) p.r.beam)
+  ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
+  ::
+  ~|  scry-with-results+[term=term beam=beam]
+  ::
+  [~ (~(got by results) [term beam])]
+::  +scry-succeed: produces a scry function with a known request and answer
+::
+++  scry-succeed
+  |=  [date=@da result=cage]  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
+  ::
+  ~|  scry-succeed+[beam+beam term+term]
+  ?>  =(term %cx)
+  ?>  =(beam [[~nul %desk %da date] /bar/foo])
+  ::
+  [~ ~ result]
+::  +scry-fail: produces a scry function with a known request and failed answer
+::
+++  scry-fail
+  |=  date=@da  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
+  ::
+  ~|  scry-fail+[beam+beam term+term]
+  ?>  =(term %cx)
+  ?>  =(beam [[~nul %desk %da date] /bar/foo])
+  ::
+  [~ ~]
+::  +scry-block: produces a scry function with known request and blocked answer
+::
+++  scry-block
+  |=  date=@da  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
+  ::
+  ~|  scry-block+[beam+beam term+term]
+  ?>  =(term %cx)
+  ?>  =(beam [[~nul %desk %da date] /bar/foo])
+  ::
+  ~
+::  +scry-blocks: block on a file at multiple dates; does not include %reef
+::
+++  scry-blocks
+  |=  dates=(set @da)  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  ~|  scry-block+[beam+beam term+term]
+  ?>  =(term %cx)
+  ?>  ?=([%da @da] r.beam)
+  ?>  (~(has in dates) p.r.beam)
+  ::
+  ~
+::  +scry-is-forbidden: makes sure ford does not attempt to scry
+::
+++  scry-is-forbidden  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  =/  date=@da  ?>(?=(%da -.r.beam) p.r.beam)
+  ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
+  ::
+  ~|  scry-is-forbidden+[beam+beam term+term]
+  !!
+::
+++  scry-reef
+  |=  date=@da  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  =-  ?~  res=(~(get by -) [term beam])
+        ~
+      `res
+  ::
+  (with-reef date ~)
+::
+++  with-reef
+  |=  [date=@da scry-results=(map [term beam] cage)]
+  ^+  scry-results
+  %-  ~(gas by scry-results)
+  :~  :-  [%cx [[~nul %home %da date] /hoon/hoon/sys]]
+      [%hoon !>(hoon-scry)]
+      :-  [%cx [[~nul %home %da date] /hoon/arvo/sys]]
+      [%hoon !>(arvo-scry)]
+      :-  [%cx [[~nul %home %da date] /hoon/zuse/sys]]
+      [%hoon !>(zuse-scry)]
+  ::
+      :-  [%cw [[~nul %home %da date] /hoon/hoon/sys]]
+      [%cass !>([ud=0 da=date])]
+  ==
+::
+++  with-reef-unit
+  |=  [date=@da scry-results=(map [term beam] (unit cage))]
+  ^+  scry-results
+  %-  ~(gas by scry-results)
+  :~  :-  [%cx [[~nul %home %da date] /hoon/hoon/sys]]
+      `[%noun !>(~)]
+      :-  [%cx [[~nul %home %da date] /hoon/arvo/sys]]
+      `[%noun !>(~)]
+      :-  [%cx [[~nul %home %da date] /hoon/zuse/sys]]
+      `[%noun !>(~)]
+  ::
+      :-  [%cw [[~nul %home %da date] /hoon/hoon/sys]]
+      `[%cass !>([ud=0 da=date])]
+  ==
+::
+++  ford-call
+  |=  $:  ford-gate=_ford-gate
+          now=@da
+          scry=sley
+          call-args=[=duct type=* wrapped-task=(hobo task:able:ford-gate)]
+          expected-moves=(list move:ford-gate)
+      ==
+  ^-  [tang _ford-gate]
+  ::
+  =/  ford  (ford-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
+  ::
+  =^  moves  ford-gate
+    %-  call:ford  call-args
+  ::
+  =/  output=tang
+    %+  expect-eq
+      !>  expected-moves
+      !>  moves
+  ::
+  [output ford-gate]
+::
+++  ford-take
+  |=  $:  ford-gate=_ford-gate
+          now=@da
+          scry=sley
+          take-args=[=wire =duct wrapped-sign=(hypo sign:ford-gate)]
+          expected-moves=(list move:ford-gate)
+      ==
+  ^-  [tang _ford-gate]
+  ::
+  =/  ford  (ford-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
+  ::
+  =^  moves  ford-gate
+    %-  take:ford  take-args
+  ::
+  =/  output=tang
+    %+  expect-eq
+      !>  expected-moves
+      !>  moves
+  ::
+  [output ford-gate]
+::  +ford-call-with-comparator
+::
+::    Sometimes we can't just do simple comparisons between the moves statements
+::    and must instead specify a gate that performs the comparisons.
+::
+++  ford-call-with-comparator
+  |=  $:  ford-gate=_ford-gate
+          now=@da
+          scry=sley
+          call-args=[=duct type=* wrapped-task=(hobo task:able:ford-gate)]
+          move-comparator=$-((list move:ford-gate) tang)
+      ==
+  ^-  [tang _ford-gate]
+  ::
+  =/  ford  (ford-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
+  ::
+  =^  moves  ford-gate
+    %-  call:ford  call-args
+  ::
+  =/  output=tang  (move-comparator moves)
+  ::
+  [output ford-gate]
+::  +ford-take-with-comparator
+::
+++  ford-take-with-comparator
+  |=  $:  ford-gate=_ford-gate
+          now=@da
+          scry=sley
+          take-args=[=wire =duct wrapped-sign=(hypo sign:ford-gate)]
+          move-comparator=$-((list move:ford-gate) tang)
+      ==
+  ^-  [tang _ford-gate]
+  ::
+  =/  ford  (ford-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
+  ::
+  =^  moves  ford-gate
+    %-  take:ford  take-args
+  ::
+  =/  output=tang  (move-comparator moves)
+  ::
+  [output ford-gate]
+::  +expect-cage: assert that the actual cage has the right mark and vase
+::
+++  expect-cage
+  |=  [mark=term expected=vase actual=cage]
+  %+  weld
+    %+  expect-eq
+      !>  mark
+      !>  p.actual
+  ::
+  (expect-eq expected q.actual)
+::  +expect-ford-empty: assert that ford's state is one empty ship
+::
+::    At the end of every test, we want to assert that we have cleaned up all
+::    state.
+::
+++  expect-ford-empty
+  |=  [ford-gate=_ford-gate ship=@p]
+  ^-  tang
+  ::
+  =^  results1  ford-gate
+    %-  ford-call  :*
+      ford-gate
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      call-args=[duct=~[/empty] type=~ [%keep 0 0]]
+      expected-moves=~
+    ==
+  ::
+  =/  ford  *ford-gate
+  =/  state  state.ax.+>+<.ford
+  ::
+  =/  default-state  *ford-state:ford
+  ::
+  =.  max-size.compiler-cache.state     max-size.compiler-cache.default-state
+  =.  max-size.queue.build-cache.state  max-size.queue.build-cache.default-state
+  =.  next-anchor-id.build-cache.state  0
+  ::
+  %+  welp  results1
+  ::
+  ?:  =(default-state state)
+    ~
+  ::
+  =/  build-state=(list tank)
+    %-  zing
+    %+  turn  ~(tap by builds.state)
+    |=  [build=build:ford build-status=build-status:ford]
+    :~  [%leaf (build-to-tape:ford build)]
+        [%leaf "requesters: {<requesters.build-status>}"]
+        [%leaf "clients: {<~(tap in ~(key by clients.build-status))>}"]
+    ==
+  ::
+  =/  braces  [[' ' ' ' ~] ['{' ~] ['}' ~]]
+  ::
+  :~  [%leaf "failed to cleanup"]
+      [%leaf "builds.state:"]
+      [%rose braces build-state]
+  ==
 --
