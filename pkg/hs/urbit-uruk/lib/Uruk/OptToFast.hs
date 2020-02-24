@@ -55,6 +55,7 @@ compile arity = go
   rec xs =
     let len = length xs
     in  case (compare len arity, xs) of
+          (EQ, [x])    -> F.REC1 (go x)
           (EQ, [x, y]) -> F.REC2 (go x) (go y)
           (EQ, xs    ) -> F.RECN (goArgs xs)
           (LT, xs    ) -> F.CALN F.SLF (goArgs xs) -- TODO
