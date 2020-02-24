@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { BrowserRouter, Route } from "react-router-dom";
 import classnames from 'classnames';
 import _ from 'lodash';
+import { HeaderBar } from './lib/header-bar';
 import { Popout } from './lib/icons/popout';
 import { History } from './history';
 import { Input } from './input';
@@ -18,7 +19,8 @@ export class Root extends Component {
   render() {
     return (
       <BrowserRouter>
-        <div className="w-100 h-100 bg-gray1">
+        <div className="w-100 h-100 bg-white bg-gray1-d">
+        <HeaderBar spinner={this.state.spinner}/>
           <Route
             exact path="/~dojo/:popout?"
             render={(props) => {
@@ -35,14 +37,14 @@ export class Root extends Component {
               return (
                 <div className="w-100 h-100 flex-m flex-l flex-xl">
                   <div
-                    className="db dn-m dn-l dn-xl inter bg-gray0 dt w-100"
+                    className="db dn-m dn-l dn-xl inter bg-white bg-gray0-d dt w-100"
                     style={{ height: 40 }}>
-                    <a className="f8 pl3 white dtc h-100 v-mid" href="/">
+                    <a className="f8 pl3 black white-d dtc h-100 v-mid" href="/">
                       ⟵ Landscape
                     </a>
                   </div>
-                  <div className={"pa3 bg-gray0 white mono w-100 f8 relative" +
-                  " h-100-m40-s b--gray0 br2 " + popoutClasses}
+                  <div className={"pa3 bg-white bg-gray0-d black white-d mono w-100 f8 relative" +
+                  " h-100-m40-s b--gray0 br2 flex-auto " + popoutClasses}
                     style={{
                       lineHeight: "1.4",
                       cursor: "text"
