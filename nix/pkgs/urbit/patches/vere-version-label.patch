@@ -1,12 +1,13 @@
 diff --git a/pkg/urbit/configure b/pkg/urbit/configure
-index f2fddfdd6..ece9cdb7f 100755
+index f2fddfdd6..07be9d589 100755
 --- a/pkg/urbit/configure
 +++ b/pkg/urbit/configure
-@@ -3,6 +3,7 @@
- set -e
+@@ -19,6 +19,8 @@ defmacro () {
+   echo "#define $1 $2" >>include/config.h
+ }
  
- URBIT_VERSION="0.10.3"
-+URBIT_VERSION="${URBIT_VERSION}-llog"
++URBIT_VERSION="$URBIT_VERSION-llog"
++
+ defmacro URBIT_VERSION "\"$URBIT_VERSION\""
  
- deps="                                                                    \
-   curl gmp sigsegv argon2 ed25519 ent h2o scrypt sni uv murmur3 secp256k1 \
+ [ -n "$MEMORY_DEBUG" ]     && defmacro U3_MEMORY_DEBUG 1
