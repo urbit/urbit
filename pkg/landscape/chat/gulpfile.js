@@ -143,13 +143,6 @@ exports.bundle_dev = parallel(
   series(jsx_transform, js_imports),
   series(tile_jsx_transform, tile_js_imports)
 );
-}
-
-exports.bundle_prod = parallel(
-  css_bundle,
-  series(jsx_transform, js_imports_prod, js_minify),
-  series(tile_jsx_transform, tile_js_imports, tile_js_minify)
-);
 
 exports.bundle_prod = parallel(
   css_bundle,
