@@ -969,7 +969,9 @@
           hic/(hypo (hobo task:able))
       ==
   ^-  [(list move) _..^$]
-  ?<  ?=(^ dud)
+  ?^  dud
+    ~|(%jael-call-dud (mean tang.u.dud))
+  ::
   =/  =task:able  ((harden task:able) q.hic)
   =^  did  lex
     abet:(~(call of [our now eny] lex) hen task)
@@ -1200,7 +1202,9 @@
           hin/(hypo sign)
       ==
   ^-  [(list move) _..^$]
-  ?<  ?=(^ dud)
+  ?^  dud
+    ~|(%jael-take-dud (mean tang.u.dud))
+  ::
   =^  did  lex  abet:(~(take of [our now eny] lex) tea hen q.hin)
   [did ..^$]
 --

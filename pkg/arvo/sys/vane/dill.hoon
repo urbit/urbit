@@ -632,7 +632,9 @@
 ++  take                                                ::  process move
   |=  {tea/wire hen/duct dud/(unit goof) hin/(hypo sign)}
   ^+  [*(list move) ..^$]
-  ?<  ?=(^ dud)
+  ?^  dud
+    ~|(%dill-take-dud (mean tang.u.dud))
+  ::
   =/  nus  (ax hen)
   ?~  nus
     ::  :hen is an unrecognized duct

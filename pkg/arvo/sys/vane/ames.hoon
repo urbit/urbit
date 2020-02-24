@@ -954,7 +954,8 @@
     ::
     ++  take
       |=  [=wire =duct dud=(unit goof) type=* =sign]
-      ?<  ?=(^ dud)
+      ?^  dud
+        ~|(%ames-larval-take-dud (mean tang.u.dud))
       ::  enqueue event if not a larval drainage timer
       ::
       ::    XX what to do with errors?
@@ -1103,7 +1104,9 @@
 ++  take
   |=  [=wire =duct dud=(unit goof) type=* =sign]
   ^-  [(list move) _ames-gate]
-  ?<  ?=(^ dud)
+  ?^  dud
+    ~|(%ames-take-dud (mean tang.u.dud))
+  ::
   ::
   =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
   ::

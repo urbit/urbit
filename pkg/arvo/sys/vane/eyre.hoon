@@ -2176,7 +2176,8 @@
 ++  take
   |=  [=wire =duct dud=(unit goof) wrapped-sign=(hypo sign)]
   ^-  [(list move) _http-server-gate]
-  ?<  ?=(^ dud)
+  ?^  dud
+    ~|(%eyre-take-dud (mean tang.u.dud))
   ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
   ::
   =/  =sign  q.wrapped-sign

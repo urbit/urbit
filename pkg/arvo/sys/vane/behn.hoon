@@ -298,7 +298,9 @@
 ++  take
   |=  [tea=wire hen=duct dud=(unit goof) hin=(hypo sign)]
   ^-  [(list move) _behn-gate]
-  ?<  ?=(^ dud)
+  ?^  dud
+    ~|(%behn-take-dud (mean tang.u.dud))
+  ::
   ?>  ?=([%drip @ ~] tea)
   =/  event-core  (per-event [our now hen] state)
   =^  moves  state

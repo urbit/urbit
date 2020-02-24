@@ -4409,7 +4409,9 @@
 ++  take                                              ::  accept response
   |=  [tea=wire hen=duct dud=(unit goof) hin=(hypo sign)]
   ^+  [*(list move) ..^$]
-  ?<  ?=(^ dud)
+  ?^  dud
+    ~|(%clay-take-dud (mean tang.u.dud))
+  ::
   ?:  ?=([%commit @ *] tea)
     =*  syd  i.t.tea
     =^  mos  ruf
