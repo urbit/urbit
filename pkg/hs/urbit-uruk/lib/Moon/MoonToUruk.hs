@@ -112,6 +112,8 @@ toLC getGlobal = go (Left . getGlobal)
     B () -> Right 0
     F x  -> succ <$> f x
 
+-- Ackermann -------------------------------------------------------------------
+
 ackerSrc ∷ Text
 ackerSrc = unlines
     [  "~/  2  acker"
@@ -127,11 +129,9 @@ ackerSrc = unlines
 tryAckerSrc ∷ Nat → Nat → Text
 tryAckerSrc x y = unlines
   [ "=/  acker"
-  , indent ackerSrc
+  , indentBlock ackerSrc
   , "(acker " <> tshow x <> " " <> tshow y <> ")"
   ]
- where
-  indent = unlines . fmap ("  " <>) . lines
 
 tryAcker ∷ Nat → Nat → Ur.Ur
 tryAcker x y = gogogo (tryAckerSrc x y)
@@ -139,8 +139,8 @@ tryAcker x y = gogogo (tryAckerSrc x y)
 ackerUr ∷ Ur.Ur
 ackerUr = gogogo ackerSrc
 
-fastAcker :: Opt.Code
-fastAcker =
+ackerOpt :: Opt.Code
+ackerOpt =
   unsafePerformIO
     $ Opt.compile
     $ traceShowId
@@ -152,7 +152,55 @@ fastAcker =
     $ forceParse ackerSrc
 
 ackerJet :: F.Jet
-ackerJet = optToFast fastAcker
+ackerJet = optToFast ackerOpt
 
 runFastAcker :: Nat -> Nat -> IO F.Val
 runFastAcker x y = F.execJet2 ackerJet (F.VNat x) (F.VNat y)
+
+
+-- Fib -------------------------------------------------------------------------
+
+fibSrc ∷ Text
+fibSrc = unlines
+    [  "~/  1  fib"
+    ,  "..  fib"
+    ,  "|=  x"
+    ,  "?:  (zer x)"
+    ,  "  1"
+    ,  "?:  (eql x 1)"
+    ,  "  1"
+    ,  "(add (fib (fec x)) (fib (fec (fec x))))"
+    ]
+
+tryFibSrc ∷ Nat → Text
+tryFibSrc x = unlines
+  [ "=/  fib"
+  , indentBlock fibSrc
+  , "(fib " <> tshow x <> ")"
+  ]
+
+indentBlock = unlines . fmap ("  " <>) . lines
+
+tryFib ∷ Nat → Ur.Ur
+tryFib = gogogo . tryFibSrc
+
+fibUr ∷ Ur.Ur
+fibUr = gogogo fibSrc
+
+fibOpt :: Opt.Code
+fibOpt =
+  unsafePerformIO
+    $ Opt.compile
+    $ traceShowId
+    $ Uruk.moonStrict
+    $ traceShowId
+    $ toLC getGlobal
+    $ bind
+    $ traceShowId
+    $ forceParse fibSrc
+
+fibJet :: F.Jet
+fibJet = optToFast fibOpt
+
+runFastFib :: Nat -> IO F.Val
+runFastFib x = F.execJet1 fibJet (F.VNat x)

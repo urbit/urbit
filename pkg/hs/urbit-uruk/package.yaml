@@ -73,7 +73,7 @@ default-extensions:
   - ViewPatterns
 
 executables:
-  urbit-acker:
+  urbit-uruk:
     main: Main.hs
     source-dirs: app
     dependencies:
