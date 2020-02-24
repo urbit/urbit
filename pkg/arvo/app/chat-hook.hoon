@@ -70,12 +70,13 @@
       /keys
     |^  |=  chat=path
         ^-  (list card)
+        =/  host=ship  (slav %p (snag 0 chat))
         =/  newp=permission  (unify-permissions chat)
         =/  old-group=path  [%chat chat]
         =/  new-group=path  [%'~' chat]
         ;:  weld
-          :~  (delete-group (snoc old-group %read))
-              (delete-group (snoc old-group %write))
+          :~  (delete-group host (snoc old-group %read))
+              (delete-group host (snoc old-group %write))
           ==
         ::
           (create-group new-group who.newp)
@@ -122,12 +123,21 @@
       [%pass /on-load/[app]/[mark] %agent [our.bol app] %poke mark vase]
     ::
     ++  delete-group
-      |=  group=path
+      |=  [host=ship group=path]
       ^-  card
-      %^  make-poke  %group-store
-        %group-action
-      !>  ^-  group-action
-      [%unbundle group]
+      ::  if we host the group, delete it directly
+      ::
+      ?:  =(our.bol host)
+        %^  make-poke  %group-store
+          %group-action
+        !>  ^-  group-action
+        [%unbundle group]
+      ::  else, just delete the sync in the hook
+      ::
+      %^  make-poke  %permission-hook
+        %permission-hook-action
+      !>  ^-  permission-hook-action
+      [%remove group]
     ::
     ++  create-group
       |=  [group=path who=(set ship)]
