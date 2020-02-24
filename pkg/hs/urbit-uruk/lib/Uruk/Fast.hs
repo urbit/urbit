@@ -376,8 +376,8 @@ arrayDrop i l xs = thawArray xs i l >>= unsafeFreezeArray
 callNodeFull :: Node -> Array Val -> IO Val
 {-# INLINE callNodeFull #-}
 callNodeFull !no !xs = no & \case
-  Kay   -> pure (v 0)
-  Dee   -> pure $ jam $ v 0
+  Kay   -> pure x
+  Dee   -> pure $ jam x
   Ess   -> join (c2 x z <$> c1 y z)
   Jay _ -> error "TODO"
   _     -> error "TODO"

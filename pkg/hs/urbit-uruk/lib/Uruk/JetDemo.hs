@@ -146,6 +146,24 @@ unSlow ∷ Ur → [Ur] → Ur
 unSlow u = go u . reverse
   where go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
 
+unClose ∷ Ur → Ur
+unClose = go
+ where
+  go = \case
+    x :@ y      -> go x :@ go y
+    J n         -> J n
+    K           -> K
+    S           -> S
+    D           -> D
+    Fast n j xs -> app (Fast n (goJet j) []) (go <$> xs)
+
+  goJet = \case
+    Slow n x y -> Slow n (go x) (go y)
+    x          -> x
+
+  app r []     = r
+  app r (x:xs) = app (r :@ x) xs
+
 instance Show a => Show (UrPoly a) where
     show = \case
         x :@ y       → "(" <> intercalate " " (show <$> flatten x [y]) <> ")"
