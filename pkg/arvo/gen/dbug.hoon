@@ -26,7 +26,7 @@
     ==
 :-  %dbug
 ?-  args
-  ~        [%bowl *about]
+  ~        [%state *about]
   [@ ~]    [what.args *about]
   [@ * ~]  [what about]:args
 ==
