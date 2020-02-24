@@ -155,11 +155,11 @@ mor a b = if c == d then dor a b else c < d
 -}
 dor ∷ Noun → Noun → Bool
 dor a       b       | a == b = True
-dor (A a)   (C _ _)          = True
-dor (C x y) (A b)            = False
-dor (A a)   (A b)            = a < b
+dor (A a)   (C _ _) = True
+dor (C x y) (A b)   = False
+dor (A a)   (A b)   = a < b
 dor (C x y) (C p q) | x == p = dor y q
-dor (C x y) (C p q)          = dor x p
+dor (C x y) (C p q) = dor x p
 
 {-
     Orders in ascending +mug hash order.

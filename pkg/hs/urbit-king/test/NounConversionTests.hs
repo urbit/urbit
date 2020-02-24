@@ -1,4 +1,7 @@
-module NounConversionTests (tests) where
+module NounConversionTests
+  ( tests
+  )
+where
 
 import Urbit.Arvo.Event
 import Urbit.Noun.Conversions
@@ -46,25 +49,23 @@ instance Arbitrary KeyPair where
 
 passRoundTrip :: KeyPair -> KeyPair -> Bool
 passRoundTrip (KeyPair (signPubkey, _)) (KeyPair (cryptPubkey, _)) =
-    (Just p) == (fromNoun $ toNoun p)
-  where
-    p = Pass signPubkey cryptPubkey
+  (Just p) == (fromNoun $ toNoun p)
+  where p = Pass signPubkey cryptPubkey
 
 
 ringRoundTrip :: ThirtyTwoByteString -> ThirtyTwoByteString -> Bool
 ringRoundTrip (ThirtyTwoByteString signSeed) (ThirtyTwoByteString cryptSeed) =
-    (Just r) == (fromNoun $ toNoun r)
-  where
-    r = Ring signSeed cryptSeed
+  (Just r) == (fromNoun $ toNoun r)
+  where r = Ring signSeed cryptSeed
 
 
 --------------------------------------------------------------------------------
 
 tests :: TestTree
-tests =
-  testGroup "Noun"
-    [ testProperty "0v0 printing/parsing round trip" $ vRoundTrip
-    , testProperty "0w0 printing/parsing round trip" $ wRoundTrip
-    , testProperty "Pass round trip" $ passRoundTrip
-    , testProperty "Ring round trip" $ ringRoundTrip
-    ]
+tests = testGroup
+  "Noun"
+  [ testProperty "0v0 printing/parsing round trip" $ vRoundTrip
+  , testProperty "0w0 printing/parsing round trip" $ wRoundTrip
+  , testProperty "Pass round trip" $ passRoundTrip
+  , testProperty "Ring round trip" $ ringRoundTrip
+  ]

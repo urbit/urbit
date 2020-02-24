@@ -2,14 +2,15 @@
     Code for setting up the RIO environment.
 -}
 module Urbit.King.App
-    ( App
-    , runApp
-    , runAppLogFile
-    , runAppNoLog
-    , runPierApp
-    , HasConfigDir(..)
-    , HasStderrLogFunc(..)
-    ) where
+  ( App
+  , runApp
+  , runAppLogFile
+  , runAppNoLog
+  , runPierApp
+  , HasConfigDir(..)
+  , HasStderrLogFunc(..)
+  )
+where
 
 import Urbit.King.Config
 import Urbit.Prelude
@@ -34,49 +35,41 @@ data App = App
 makeLenses ''App
 
 instance HasLogFunc App where
-    logFuncL = appLogFunc
+  logFuncL = appLogFunc
 
 instance HasStderrLogFunc App where
-    stderrLogFuncL = appStderrLogFunc
+  stderrLogFuncL = appStderrLogFunc
 
 runApp :: RIO App a -> IO a
 runApp inner = do
-    logOptions <- logOptionsHandle stderr True
-        <&> setLogUseTime True
-        <&> setLogUseLoc False
+  logOptions <-
+    logOptionsHandle stderr True <&> setLogUseTime True <&> setLogUseLoc False
 
-    withLogFunc logOptions $ \logFunc ->
-        runRIO (App logFunc logFunc) inner
+  withLogFunc logOptions $ \logFunc -> runRIO (App logFunc logFunc) inner
 
 runAppLogFile :: RIO App a -> IO a
-runAppLogFile inner =
-    withLogFileHandle $ \h -> do
-      logOptions <- logOptionsHandle h True
-          <&> setLogUseTime True
-          <&> setLogUseLoc False
-      stderrLogOptions <- logOptionsHandle stderr True
-          <&> setLogUseTime False
-          <&> setLogUseLoc False
+runAppLogFile inner = withLogFileHandle $ \h -> do
+  logOptions <-
+    logOptionsHandle h True <&> setLogUseTime True <&> setLogUseLoc False
+  stderrLogOptions <-
+    logOptionsHandle stderr True <&> setLogUseTime False <&> setLogUseLoc False
 
-      withLogFunc stderrLogOptions $ \stderrLogFunc ->
-        withLogFunc logOptions $ \logFunc ->
-          runRIO (App logFunc stderrLogFunc) inner
+  withLogFunc stderrLogOptions $ \stderrLogFunc -> withLogFunc logOptions
+    $ \logFunc -> runRIO (App logFunc stderrLogFunc) inner
 
 withLogFileHandle :: (Handle -> IO a) -> IO a
 withLogFileHandle act = do
-    home <- getHomeDirectory
-    let logDir = home </> ".urbit"
-    createDirectoryIfMissing True logDir
-    withFile (logDir </> "king.log") AppendMode $ \handle -> do
-        hSetBuffering handle LineBuffering
-        act handle
+  home <- getHomeDirectory
+  let logDir = home </> ".urbit"
+  createDirectoryIfMissing True logDir
+  withFile (logDir </> "king.log") AppendMode $ \handle -> do
+    hSetBuffering handle LineBuffering
+    act handle
 
 runAppNoLog :: RIO App a -> IO a
-runAppNoLog act =
-    withFile "/dev/null" AppendMode $ \handle -> do
-      logOptions <- logOptionsHandle handle True
-      withLogFunc logOptions $ \logFunc ->
-        runRIO (App logFunc logFunc) act
+runAppNoLog act = withFile "/dev/null" AppendMode $ \handle -> do
+  logOptions <- logOptionsHandle handle True
+  withLogFunc logOptions $ \logFunc -> runRIO (App logFunc logFunc) act
 
 --------------------------------------------------------------------------------
 
@@ -91,50 +84,50 @@ data PierApp = PierApp
 makeLenses ''PierApp
 
 instance HasStderrLogFunc PierApp where
-    stderrLogFuncL = pierAppStderrLogFunc
+  stderrLogFuncL = pierAppStderrLogFunc
 
 instance HasLogFunc PierApp where
-    logFuncL = pierAppLogFunc
+  logFuncL = pierAppLogFunc
 
 instance HasPierConfig PierApp where
-    pierConfigL = pierAppPierConfig
+  pierConfigL = pierAppPierConfig
 
 instance HasNetworkConfig PierApp where
-    networkConfigL = pierAppNetworkConfig
+  networkConfigL = pierAppNetworkConfig
 
 instance HasConfigDir PierApp where
-    configDirL = pierAppPierConfig . pcPierPath
+  configDirL = pierAppPierConfig . pcPierPath
 
 runPierApp :: PierConfig -> NetworkConfig -> Bool -> RIO PierApp a -> IO a
-runPierApp pierConfig networkConfig daemon inner =
-    if daemon
-    then execStderr
-    else withLogFileHandle execFile
-  where
-    execStderr = do
-        logOptions <- logOptionsHandle stderr True
-            <&> setLogUseTime True
-            <&> setLogUseLoc False
+runPierApp pierConfig networkConfig daemon inner = if daemon
+  then execStderr
+  else withLogFileHandle execFile
+ where
+  execStderr = do
+    logOptions <-
+      logOptionsHandle stderr True <&> setLogUseTime True <&> setLogUseLoc False
 
-        withLogFunc logOptions $ \logFunc ->
-            go $ PierApp { _pierAppLogFunc = logFunc
-                         , _pierAppStderrLogFunc = logFunc
-                         , _pierAppPierConfig = pierConfig
-                         , _pierAppNetworkConfig = networkConfig
-                         }
+    withLogFunc logOptions $ \logFunc -> go $ PierApp
+      { _pierAppLogFunc       = logFunc
+      , _pierAppStderrLogFunc = logFunc
+      , _pierAppPierConfig    = pierConfig
+      , _pierAppNetworkConfig = networkConfig
+      }
 
-    execFile logHandle = do
-        logOptions <- logOptionsHandle logHandle True
-            <&> setLogUseTime True
-            <&> setLogUseLoc False
-        logStderrOptions <- logOptionsHandle stderr True
-            <&> setLogUseTime False
-            <&> setLogUseLoc False
-        withLogFunc logStderrOptions $ \logStderr ->
-          withLogFunc logOptions $ \logFunc ->
-              go $ PierApp { _pierAppLogFunc = logFunc
-                           , _pierAppStderrLogFunc = logStderr
-                           , _pierAppPierConfig = pierConfig
-                           , _pierAppNetworkConfig = networkConfig
-                           }
-    go app = runRIO app inner
+  execFile logHandle = do
+    logOptions <-
+      logOptionsHandle logHandle True
+      <&> setLogUseTime True
+      <&> setLogUseLoc False
+    logStderrOptions <-
+      logOptionsHandle stderr True
+      <&> setLogUseTime False
+      <&> setLogUseLoc False
+    withLogFunc logStderrOptions $ \logStderr ->
+      withLogFunc logOptions $ \logFunc -> go $ PierApp
+        { _pierAppLogFunc       = logFunc
+        , _pierAppStderrLogFunc = logStderr
+        , _pierAppPierConfig    = pierConfig
+        , _pierAppNetworkConfig = networkConfig
+        }
+  go app = runRIO app inner

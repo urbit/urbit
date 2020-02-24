@@ -1,7 +1,14 @@
 {-|
     Interface Terminal API.
 -}
-module Urbit.Vere.Term.API (Ev(..), Client(..), trace, spin, stopSpin) where
+module Urbit.Vere.Term.API
+  ( Ev(..)
+  , Client(..)
+  , trace
+  , spin
+  , stopSpin
+  )
+where
 
 import Urbit.Prelude hiding (trace)
 

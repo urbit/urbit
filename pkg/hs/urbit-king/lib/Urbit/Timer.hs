@@ -1,6 +1,12 @@
-module Urbit.Timer ( Timer(..), init, stop, start
-                   , Sys.getSystemTime, sysTimeGapMicroSecs
-                   ) where
+module Urbit.Timer
+  ( Timer(..)
+  , init
+  , stop
+  , start
+  , Sys.getSystemTime
+  , sysTimeGapMicroSecs
+  )
+where
 
 import Data.IORef
 import Prelude    hiding (init)
@@ -24,8 +30,8 @@ init = do
 
 sysTimeGapMicroSecs :: Sys.SystemTime -> Sys.SystemTime -> Int
 sysTimeGapMicroSecs (Sys.MkSystemTime xSec xNs) (Sys.MkSystemTime ySec yNs) =
-    (+) (1_000_000 * fromIntegral (ySec - xSec))
-        ((fromIntegral yNs - fromIntegral xNs) `quot` 1000)
+  (+) (1_000_000 * fromIntegral (ySec - xSec))
+      ((fromIntegral yNs - fromIntegral xNs) `quot` 1000)
 
 start :: Timer -> Sys.SystemTime -> IO () -> IO ()
 start timer@(Timer vSt man) time cb = do
@@ -34,12 +40,13 @@ start timer@(Timer vSt man) time cb = do
   now <- Sys.getSystemTime
   let sleep = sysTimeGapMicroSecs now time
   -- print (now, time, "->", sleep)
-  if (sleep <= 0) then fire else do
-    key <- Ev.registerTimeout man sleep fire
-    atomicWriteIORef vSt $! Just key
+  if (sleep <= 0)
+    then fire
+    else do
+      key <- Ev.registerTimeout man sleep fire
+      atomicWriteIORef vSt $! Just key
 
 stop :: Timer -> IO ()
-stop (Timer vSt man) =
-  atomicModifyIORef' vSt (Nothing,) >>= \case
-    Just key -> Ev.unregisterTimeout man key
-    Nothing  -> pure ()
+stop (Timer vSt man) = atomicModifyIORef' vSt (Nothing, ) >>= \case
+  Just key -> Ev.unregisterTimeout man key
+  Nothing  -> pure ()

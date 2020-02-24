@@ -1,4 +1,7 @@
-module HoonMapSetTests (tests) where
+module HoonMapSetTests
+  ( tests
+  )
+where
 
 import RIO.Directory
 import Urbit.Prelude hiding (encodeUtf8)
@@ -20,12 +23,12 @@ newtype SmallNoun = SN Noun
 
 instance Arbitrary SmallNoun where
   arbitrary = SN <$> oneof [a, c, ac, ca, cc]
-    where
-      a  = A . fromIntegral <$> arbitrary @Word8
-      c  = C <$> a <*> a
-      ac = C <$> a <*> c
-      ca = C <$> c <*> a
-      cc = C <$> c <*> c
+   where
+    a  = A . fromIntegral <$> arbitrary @Word8
+    c  = C <$> a <*> a
+    ac = C <$> a <*> c
+    ca = C <$> c <*> a
+    cc = C <$> c <*> c
 
 data TreeTest
     = TTMap (HoonMap Noun Noun)
@@ -38,7 +41,7 @@ type TreeTests = [TreeTest]
 
 -- Utils -----------------------------------------------------------------------
 
-roundTrip :: ∀a. Eq a => (a -> a) -> a -> Bool
+roundTrip :: forall a . Eq a => (a -> a) -> a -> Bool
 roundTrip f x = f x == x
 
 
@@ -55,35 +58,36 @@ setRoundtrip = roundTrip (setFromHoonSet . setToHoonSet)
 
 treeTestsIdentity :: TreeTests -> TreeTests
 treeTestsIdentity = fmap go
-  where
-    go = \case
-        TTSet s -> (TTSet . setToHoonSet . setFromHoonSet) s
-        TTMap m -> (TTMap . mapToHoonMap . mapFromHoonMap) m
+ where
+  go = \case
+    TTSet s -> (TTSet . setToHoonSet . setFromHoonSet) s
+    TTMap m -> (TTMap . mapToHoonMap . mapFromHoonMap) m
 
 treeRTMug :: FilePath -> IO L.ByteString
 treeRTMug inp = do
-    byt <- readFile inp
-    non <- cueBSExn byt
-    tee <- fromNounExn non
-    mug <- evaluate $ mug $ toNoun $ treeTestsIdentity tee
-    pure $ encodeUtf8 $ tlshow (mug :: Natural)
+  byt <- readFile inp
+  non <- cueBSExn byt
+  tee <- fromNounExn non
+  mug <- evaluate $ mug $ toNoun $ treeTestsIdentity tee
+  pure $ encodeUtf8 $ tlshow (mug :: Natural)
 
 
 goldenFile :: String -> String -> (FilePath -> IO L.ByteString) -> TestTree
-goldenFile testName testFileName action =
-    goldenVsString testName gold (action pill)
-  where
-    root = "pkg/hs/urbit-king/test/gold" </> testFileName
-    gold = root <.> "gold"
-    pill = root <.> "pill"
+goldenFile testName testFileName action = goldenVsString testName
+                                                         gold
+                                                         (action pill)
+ where
+  root = "pkg/hs/urbit-king/test/gold" </> testFileName
+  gold = root <.> "gold"
+  pill = root <.> "pill"
 
 
 -- Test Tree -------------------------------------------------------------------
 
 tests :: TestTree
-tests =
-  testGroup "Map/Set Conversions"
-    [ goldenFile "Golden Map Roundtrip" "hoontree" treeRTMug
-    , testProperty "Map Rountrip" mapRoundtrip
-    , testProperty "Set Rountrip" setRoundtrip
-    ]
+tests = testGroup
+  "Map/Set Conversions"
+  [ goldenFile "Golden Map Roundtrip" "hoontree" treeRTMug
+  , testProperty "Map Rountrip" mapRoundtrip
+  , testProperty "Set Rountrip" setRoundtrip
+  ]

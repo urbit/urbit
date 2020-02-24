@@ -1,4 +1,7 @@
-module Main (main) where
+module Main
+  ( main
+  )
+where
 
 import ClassyPrelude
 
@@ -24,17 +27,18 @@ import qualified NounConversionTests
 
 main :: IO ()
 main = do
-    makeAbsolute "../../.." >>= setCurrentDirectory
-    setEnv "TASTY_NUM_THREADS" "1"
-    runInBoundThread $ defaultMain $ testGroup "Urbit"
-        [ AmesTests.tests
-        , ArvoTests.tests
-        , BehnTests.tests
-        , ClayTests.tests
-        , DawnTests.tests
-        , DeriveNounTests.tests
-        , HoonMapSetTests.tests
-        , JamTests.tests
-        , LogTests.tests
-        , NounConversionTests.tests
-        ]
+  makeAbsolute "../../.." >>= setCurrentDirectory
+  setEnv "TASTY_NUM_THREADS" "1"
+  runInBoundThread $ defaultMain $ testGroup
+    "Urbit"
+    [ AmesTests.tests
+    , ArvoTests.tests
+    , BehnTests.tests
+    , ClayTests.tests
+    , DawnTests.tests
+    , DeriveNounTests.tests
+    , HoonMapSetTests.tests
+    , JamTests.tests
+    , LogTests.tests
+    , NounConversionTests.tests
+    ]

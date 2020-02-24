@@ -2,7 +2,10 @@
     Acquire and release the vere lockfile.
 -}
 
-module Urbit.Vere.LockFile (lockFile) where
+module Urbit.Vere.LockFile
+  ( lockFile
+  )
+where
 
 import Urbit.Prelude
 
@@ -15,16 +18,16 @@ import System.IO.LockFile.Internal (LockingParameters(..), RetryStrategy(..),
 
 lockFile :: HasLogFunc e => FilePath -> RAcquire e ()
 lockFile pax = void $ mkRAcquire start stop
-  where
-    fil = pax <> "/.vere.lock"
+ where
+  fil = pax <> "/.vere.lock"
 
-    stop handle = do
-        logInfo $ display @Text $ ("Releasing lock file: " <> pack fil)
-        io $ unlock fil handle
+  stop handle = do
+    logInfo $ display @Text $ ("Releasing lock file: " <> pack fil)
+    io $ unlock fil handle
 
-    params = def { retryToAcquireLock = No }
+  params = def { retryToAcquireLock = No }
 
-    start = do
-        createDirectoryIfMissing True pax
-        logInfo $ display @Text $ ("Taking lock file: " <> pack fil)
-        io (lock params fil)
+  start  = do
+    createDirectoryIfMissing True pax
+    logInfo $ display @Text $ ("Taking lock file: " <> pack fil)
+    io (lock params fil)

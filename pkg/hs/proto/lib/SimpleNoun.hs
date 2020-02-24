@@ -21,14 +21,14 @@ data Fern a
 
 toFern :: Tree a -> Fern a
 toFern = \case
-  A a -> FernA a
+  A a   -> FernA a
   C h t -> case toFern t of
     a@FernA{} -> FernF [toFern h, a]
-    FernF fs -> FernF (toFern h : fs)
+    FernF fs  -> FernF (toFern h : fs)
 
 instance Show a => Show (Fern a) where
   show = \case
-    FernA a -> show a
+    FernA a  -> show a
     FernF xs -> "[" <> intercalate " " (map show xs) <> "]"
 
 instance Show a => Show (Tree a) where
@@ -36,7 +36,7 @@ instance Show a => Show (Tree a) where
 
 yes, no :: Noun
 yes = A 0
-no  = A 1
+no = A 1
 
 loob :: Bool -> Noun
 loob = \case
@@ -82,8 +82,7 @@ capMas = \case
   3 -> (R, 1)
   a | a <= 1    -> error "capMas: bad axis"
     | otherwise -> (d, (mod a 2) + 2 * r)
-    where
-      (d, r) = capMas (div a 2)
+    where (d, r) = capMas (div a 2)
 
 peg :: Axis -> Axis -> Axis
 peg a = \case
@@ -93,14 +92,14 @@ peg a = \case
   b -> (mod b 2) + 2 * peg a (div b 2)
 
 axis :: Axis -> Tree a -> Tree a
-axis 1 n = n
+axis 1                  n       = n
 axis (capMas -> (d, r)) (C n m) = case d of
   L -> axis r n
   R -> axis r m
 axis a _ = error ("bad axis: " ++ show a)
 
 edit :: Axis -> Tree a -> Tree a -> Tree a
-edit 1 v n = v
+edit 1                  v n       = v
 edit (capMas -> (d, r)) v (C n m) = case d of
   L -> C (edit r v n) m
   R -> C n (edit r v m)
@@ -111,12 +110,12 @@ edit a _ _ = error ("bad edit: " ++ show a)
 -- 0 becomes L and 1 becomes R. So 5 becomes [L,R]
 toPath :: Axis -> Path
 toPath = \case
-  1 -> []
+  1                  -> []
   (capMas -> (d, r)) -> d : toPath r
 
 toAxis :: Path -> Axis
 toAxis = foldl' step 1
-  where
-    step r = \case
-      L -> 2 * r
-      R -> 2 * r + 1
+ where
+  step r = \case
+    L -> 2 * r
+    R -> 2 * r + 1

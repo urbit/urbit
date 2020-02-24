@@ -19,7 +19,7 @@ makeLenses ''PierConfig
 class HasPierConfig env where
     pierConfigL :: Lens' env PierConfig
 
-pierPathL ∷ HasPierConfig a => Lens' a FilePath
+pierPathL :: HasPierConfig a => Lens' a FilePath
 pierPathL = pierConfigL . pcPierPath
 
 dryRunL :: HasPierConfig a => Lens' a Bool
@@ -41,13 +41,13 @@ data NetworkConfig = NetworkConfig
 class HasNetworkConfig env where
     networkConfigL :: Lens' env NetworkConfig
 
-getNetworkingType :: (MonadReader env m, HasNetworkConfig env)
-                  => m NetworkingType
+getNetworkingType
+  :: (MonadReader env m, HasNetworkConfig env) => m NetworkingType
 getNetworkingType = do
-  NetworkConfig{..} <- view networkConfigL
+  NetworkConfig {..} <- view networkConfigL
   pure ncNetworking
 
 getAmesPort :: (MonadReader env m, HasNetworkConfig env) => m (Maybe Word16)
 getAmesPort = do
-  NetworkConfig{..} <- view networkConfigL
+  NetworkConfig {..} <- view networkConfigL
   pure ncAmesPort

@@ -2,7 +2,10 @@
     Behn: Timer Driver
 -}
 
-module Urbit.Vere.Behn (behn) where
+module Urbit.Vere.Behn
+  ( behn
+  )
+where
 
 import Urbit.Arvo            hiding (Behn)
 import Urbit.Prelude
@@ -26,23 +29,22 @@ wakeEv = EvBlip $ BlipEvBehn $ BehnEvWake () ()
 sysTime = view Time.systemTime
 
 behn :: KingId -> QueueEv -> ([Ev], Acquire (EffCb e BehnEf))
-behn king enqueueEv =
-    (initialEvents, runBehn)
-  where
-    initialEvents = [bornEv king]
+behn king enqueueEv = (initialEvents, runBehn)
+ where
+  initialEvents = [bornEv king]
 
-    runBehn :: Acquire (EffCb e BehnEf)
-    runBehn = do
-        tim <- mkAcquire Timer.init Timer.stop
-        pure (handleEf tim)
+  runBehn :: Acquire (EffCb e BehnEf)
+  runBehn = do
+    tim <- mkAcquire Timer.init Timer.stop
+    pure (handleEf tim)
 
-    handleEf :: Timer -> BehnEf -> RIO e ()
-    handleEf b = io . \case
-        BehnEfVoid v            -> absurd v
-        BehnEfDoze (i, ()) mWen -> do
-            when (i == king) (doze b mWen)
+  handleEf :: Timer -> BehnEf -> RIO e ()
+  handleEf b = io . \case
+    BehnEfVoid v            -> absurd v
+    BehnEfDoze (i, ()) mWen -> do
+      when (i == king) (doze b mWen)
 
-    doze :: Timer -> Maybe Wen -> IO ()
-    doze tim = \case
-        Nothing -> Timer.stop tim
-        Just t  -> Timer.start tim (sysTime t) $ atomically (enqueueEv wakeEv)
+  doze :: Timer -> Maybe Wen -> IO ()
+  doze tim = \case
+    Nothing -> Timer.stop tim
+    Just t  -> Timer.start tim (sysTime t) $ atomically (enqueueEv wakeEv)

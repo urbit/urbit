@@ -66,11 +66,11 @@ data Job
 
 jobId :: Job -> EventId
 jobId (RunNok (LifeCyc eId _ _)) = eId
-jobId (DoWork (Work eId _ _ _))  = eId
+jobId (DoWork (Work eId _ _ _ )) = eId
 
 jobMug :: Job -> Mug
 jobMug (RunNok (LifeCyc _ mug _)) = mug
-jobMug (DoWork (Work _ mug _ _))  = mug
+jobMug (DoWork (Work _ mug _ _ )) = mug
 
 
 --------------------------------------------------------------------------------
@@ -102,17 +102,17 @@ instance ToNoun Work where
   toNoun (Work eid m d o) = toNoun (eid, Jammed (m, d, o))
 
 instance FromNoun Work where
-    parseNoun n = named "Work" $ do
-        (eid, Jammed (m, d, o)) <- parseNoun n
-        pure (Work eid m d o)
+  parseNoun n = named "Work" $ do
+    (eid, Jammed (m, d, o)) <- parseNoun n
+    pure (Work eid m d o)
 
 instance ToNoun LifeCyc where
   toNoun (LifeCyc eid m n) = toNoun (eid, Jammed (m, n))
 
 instance FromNoun LifeCyc where
   parseNoun n = named "LifeCyc" $ do
-      (eid, Jammed (m, n)) <- parseNoun n
-      pure (LifeCyc eid m n)
+    (eid, Jammed (m, n)) <- parseNoun n
+    pure (LifeCyc eid m n)
 
 -- | No FromNoun instance, because it depends on context (lifecycle length)
 instance ToNoun Job where

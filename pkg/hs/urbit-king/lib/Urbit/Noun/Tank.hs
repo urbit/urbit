@@ -62,14 +62,14 @@ flat = Tape . tshow
 
 ram :: Tank -> Tape
 ram = \case
-    Leaf tape           -> tape
-    Plum plum           -> flat plum
-    Palm (p,q,r,s) kids -> ram (Rose (p, q<>r, s) kids)
-    Rose (p,q,r) kids   -> q <> loop kids
-      where
-        loop []     = r
-        loop [x]    = ram x <> r
-        loop (x:xs) = ram x <> p <> loop xs
+  Leaf tape              -> tape
+  Plum plum              -> flat plum
+  Palm (p, q, r, s) kids -> ram (Rose (p, q <> r, s) kids)
+  Rose (p, q, r)    kids -> q <> loop kids
+   where
+    loop []       = r
+    loop [x     ] = ram x <> r
+    loop (x : xs) = ram x <> p <> loop xs
 
 {-
   ++  win

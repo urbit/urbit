@@ -44,34 +44,34 @@ data Pat
 
 desugar :: Eq a => Hoon a -> Exp a
 desugar = go
-  where
-    go = \case
-      HVar v         -> Var v
-      HAtom a        -> Atm a
-      HCons h j      -> Cel (go h) (go j)
-      BarCen cs      -> Lam $ Scope $ branch (Var . F . go) (Var (B ())) cs
-      BarHep r s i h -> go $ CenDot i $ DotDot r $ BarTis s $ h
-      BarTis v h     -> lam v (go h)
-      CenDot h j     -> App (go j) (go h)
-      CenHep h j     -> App (go h) (go j)
-      TisFas v h j   -> ledt v (go h) (go j)
-      DotDot v h     -> fix v (go h)
-      DotLus h       -> Suc (go h)
-      DotTis h j     -> Eql (go h) (go j)
-      SigFas a h     -> Jet a (go h)
-      WutBar h j     -> Ift (go h) (Atm 0) (go j)
-      WutCol h j k   -> Ift (go h) (go j) (go k)
-      -- or branch go (go h) cs
-      WutHep h cs    -> Let (go h) $ Scope $ branch (Var . F . go) (Var (B ())) cs
-      WutKet h j k   -> Ift (IsC (go h)) (go j) (go k)
-      WutPam h j     -> Ift (go h) (go j) (Atm 1)
-      WutPat h j k   -> go $ WutKet h k j
-      ZapZap         -> Zap
+ where
+  go = \case
+    HVar  v        -> Var v
+    HAtom a        -> Atm a
+    HCons h j      -> Cel (go h) (go j)
+    BarCen cs      -> Lam $ Scope $ branch (Var . F . go) (Var (B ())) cs
+    BarHep r s i h -> go $ CenDot i $ DotDot r $ BarTis s $ h
+    BarTis v h     -> lam v (go h)
+    CenDot h j     -> App (go j) (go h)
+    CenHep h j     -> App (go h) (go j)
+    TisFas v h j   -> ledt v (go h) (go j)
+    DotDot v h     -> fix v (go h)
+    DotLus h       -> Suc (go h)
+    DotTis h j     -> Eql (go h) (go j)
+    SigFas a h     -> Jet a (go h)
+    WutBar h j     -> Ift (go h) (Atm 0) (go j)
+    WutCol h j k   -> Ift (go h) (go j) (go k)
+    -- or branch go (go h) cs
+    WutHep h cs    -> Let (go h) $ Scope $ branch (Var . F . go) (Var (B ())) cs
+    WutKet h j k   -> Ift (IsC (go h)) (go j) (go k)
+    WutPam h j     -> Ift (go h) (go j) (Atm 1)
+    WutPat h j k   -> go $ WutKet h k j
+    ZapZap         -> Zap
 
 branch :: (Hoon b -> Exp a) -> Exp a -> Cases b -> Exp a
 branch go e = foldr f Zap
-  where
-   f c acc = case c of
-     (Exact n, h) -> Ift (Eql e (con n)) (go h) acc
-     (Wild,    h) -> go h
+ where
+  f c acc = case c of
+    (Exact n, h) -> Ift (Eql e (con n)) (go h) acc
+    (Wild   , h) -> go h
 

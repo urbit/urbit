@@ -4,13 +4,13 @@ import ClassyPrelude
 
 import Control.Lens ((&))
 
-import Untyped.Parser hiding (main)
-import Untyped.CST
-import Untyped.Hoon
-import Untyped.Core
+import Dashboard
 import Nock
 import SimpleNoun
-import Dashboard
+import Untyped.Core
+import Untyped.CST
+import Untyped.Hoon
+import Untyped.Parser hiding (main)
 
 import Text.Show.Pretty (pPrint)
 
@@ -23,19 +23,19 @@ main = (P.head <$> getArgs) >>= compileHoonTest
 
 compileHoonTest :: Text -> IO ()
 compileHoonTest ln = do
-    cst <- parse ln & \case
-              Left x  -> error (unpack x)
-              Right x -> pure x
-    -- pPrint cst
-    hon <- pure $ hone cst
-    pPrint hon
-    exp <- pure $ desugar hon
-    pPrint exp
-    nok <- pure $ copy exp
-    putStrLn "==== input  ===="
-    putStrLn ln
-    putStrLn "==== nock   ===="
-    pPrint nok
-    putStrLn "==== output ===="
-    res <- runCare $ nock (A 140) nok
-    pPrint res
+  cst <- parse ln & \case
+    Left  x -> error (unpack x)
+    Right x -> pure x
+  -- pPrint cst
+  hon <- pure $ hone cst
+  pPrint hon
+  exp <- pure $ desugar hon
+  pPrint exp
+  nok <- pure $ copy exp
+  putStrLn "==== input  ===="
+  putStrLn ln
+  putStrLn "==== nock   ===="
+  pPrint nok
+  putStrLn "==== output ===="
+  res <- runCare $ nock (A 140) nok
+  pPrint res

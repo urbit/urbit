@@ -1,4 +1,7 @@
-module BehnTests (tests) where
+module BehnTests
+  ( tests
+  )
+where
 
 import Data.Acquire
 import Data.Conduit
@@ -34,22 +37,22 @@ king = KingId 0
 -- TODO Timers always fire immediatly. Something is wrong!
 timerFires :: Property
 timerFires = forAll arbitrary (ioProperty . runApp . runTest)
-  where
-    runTest :: () -> RIO e Bool
-    runTest () = do
-      q <- newTQueueIO
-      rwith (liftAcquire $ snd $ behn king (writeTQueue q)) $ \cb -> do
-        cb (BehnEfDoze (king, ()) (Just (2^20)))
-        t <- atomically $ readTQueue q
-        pure True
+ where
+  runTest :: () -> RIO e Bool
+  runTest () = do
+    q <- newTQueueIO
+    rwith (liftAcquire $ snd $ behn king (writeTQueue q)) $ \cb -> do
+      cb (BehnEfDoze (king, ()) (Just (2 ^ 20)))
+      t <- atomically $ readTQueue q
+      pure True
 
 
 -- Utils -----------------------------------------------------------------------
 
 tests :: TestTree
-tests =
-  testGroup "Behn"
-    [ localOption (QuickCheckTests 10) $
-          testProperty "Behn Timers Fire" $
-              timerFires
-    ]
+tests = testGroup
+  "Behn"
+  [ localOption (QuickCheckTests 10)
+    $ testProperty "Behn Timers Fire"
+    $ timerFires
+  ]

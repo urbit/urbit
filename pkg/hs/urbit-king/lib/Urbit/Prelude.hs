@@ -3,19 +3,21 @@
 -}
 
 module Urbit.Prelude
-    ( module ClassyPrelude
-    , module Control.Arrow
-    , module Control.Lens
-    , module Data.Acquire
-    , module Data.RAcquire
-    , module Data.Void
-    , module Urbit.Noun
-    , module Text.Show.Pretty
-    , module Text.Printf
-    , module RIO
-    , io, rio
-    , logTrace
-    ) where
+  ( module ClassyPrelude
+  , module Control.Arrow
+  , module Control.Lens
+  , module Data.Acquire
+  , module Data.RAcquire
+  , module Data.Void
+  , module Urbit.Noun
+  , module Text.Show.Pretty
+  , module Text.Printf
+  , module RIO
+  , io
+  , rio
+  , logTrace
+  )
+where
 
 import ClassyPrelude
 import Urbit.Noun

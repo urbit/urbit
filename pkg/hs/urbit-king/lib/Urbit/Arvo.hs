@@ -3,7 +3,8 @@ module Urbit.Arvo
   , module Urbit.Arvo.Effect
   , module Urbit.Arvo.Event
   , FX
-  ) where
+  )
+where
 
 import Urbit.Arvo.Common
 import Urbit.Arvo.Effect

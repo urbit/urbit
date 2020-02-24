@@ -41,7 +41,7 @@ deriveNoun ''PUrl
 
 padByteString :: BS.ByteString -> Int -> BS.ByteString
 padByteString bs length | remaining > 0 = bs <> (BS.replicate remaining 0)
-                        | otherwise = bs
+                        | otherwise     = bs
   where remaining = (length - (BS.length bs))
 
 -- A Pass is the Atom concatenation of 'b', the public encryption key, and the
@@ -50,9 +50,8 @@ data Pass = Pass { passSign :: Ed.PublicKey, passCrypt :: Ed.PublicKey }
   deriving (Eq, Ord, Show)
 
 passToBS :: Pass -> BS.ByteString
-passToBS Pass{..} = C.singleton 'b' <>
-                    (Ed.unPublicKey passSign) <>
-                    (Ed.unPublicKey passCrypt)
+passToBS Pass {..} =
+  C.singleton 'b' <> (Ed.unPublicKey passSign) <> (Ed.unPublicKey passCrypt)
 
 instance ToNoun Pass where
   toNoun = Atom . bytesAtom . passToBS
@@ -64,13 +63,13 @@ instance FromNoun Pass where
     when ((C.head bs) /= 'b') $ do
       fail "Expecting 'b' prefix in public key structure"
     let removedPrefix = C.tail bs
-    let passSign = Ed.PublicKey (take 32 removedPrefix)
-    let passCrypt = Ed.PublicKey (drop 32 removedPrefix)
-    unless ((length $ Ed.unPublicKey passSign) == 32) $
-      error "Sign pubkey not 32 bytes"
-    unless ((length $ Ed.unPublicKey passCrypt) == 32) $
-      error "Crypt pubkey not 32 bytes"
-    pure $ Pass{..}
+    let passSign      = Ed.PublicKey (take 32 removedPrefix)
+    let passCrypt     = Ed.PublicKey (drop 32 removedPrefix)
+    unless ((length $ Ed.unPublicKey passSign) == 32)
+      $ error "Sign pubkey not 32 bytes"
+    unless ((length $ Ed.unPublicKey passCrypt) == 32)
+      $ error "Crypt pubkey not 32 bytes"
+    pure $ Pass { .. }
 
 -- A Ring isn't the secret keys: it's the ByteString input which generates both
 -- the public key and the secret key. A Ring is the concatenation of 'B', the
@@ -81,23 +80,21 @@ data Ring = Ring { ringSign :: BS.ByteString, ringCrypt :: BS.ByteString }
   deriving (Eq)
 
 instance ToNoun Ring where
-  toNoun Ring{..} =
+  toNoun Ring {..} =
     Atom $ bytesAtom (C.singleton 'B' <> ringSign <> ringCrypt)
 
 instance FromNoun Ring where
   parseNoun n = named "Ring" $ do
-      MkBytes unpadded <- parseNoun n
-      let bs = padByteString unpadded 65
-      when ((C.head bs) /= 'B') $ do
-        fail "Expecting 'B' prefix in public key structure"
-      let removedPrefix = C.tail bs
-      let ringSign = (take 32 removedPrefix)
-      let ringCrypt = (drop 32 removedPrefix)
-      unless ((length ringSign) == 32) $
-        error "Sign seed not 32 bytes"
-      unless ((length ringCrypt) == 32) $
-        error "Crypt seed not 32 bytes"
-      pure $ Ring ringSign ringCrypt
+    MkBytes unpadded <- parseNoun n
+    let bs = padByteString unpadded 65
+    when ((C.head bs) /= 'B') $ do
+      fail "Expecting 'B' prefix in public key structure"
+    let removedPrefix = C.tail bs
+    let ringSign      = (take 32 removedPrefix)
+    let ringCrypt     = (drop 32 removedPrefix)
+    unless ((length ringSign) == 32) $ error "Sign seed not 32 bytes"
+    unless ((length ringCrypt) == 32) $ error "Crypt seed not 32 bytes"
+    pure $ Ring ringSign ringCrypt
 
 instance Show Ring where
   show r = "(Ring <<seed>> <<seed>>)"
@@ -340,13 +337,13 @@ data Ev
 
 instance ToNoun Ev where
   toNoun = \case
-    EvBlip v -> toNoun $ reorgThroughNoun (Cord "",     v)
+    EvBlip v -> toNoun $ reorgThroughNoun (Cord "", v)
     EvVane v -> toNoun $ reorgThroughNoun (Cord "vane", v)
 
 instance FromNoun Ev where
   parseNoun = parseNoun >=> \case
-    ReOrg ""     s t p v -> fmap EvBlip $ parseNoun $ toNoun (s,t,p,v)
-    ReOrg "vane" s t p v -> fmap EvVane $ parseNoun $ toNoun (s,t,p,v)
+    ReOrg ""     s t p v -> fmap EvBlip $ parseNoun $ toNoun (s, t, p, v)
+    ReOrg "vane" s t p v -> fmap EvVane $ parseNoun $ toNoun (s, t, p, v)
     ReOrg _      _ _ _ _ -> fail "First path-elem must be ?($ %vane)"
 
 -- Short Event Names -----------------------------------------------------------
@@ -358,18 +355,18 @@ instance FromNoun Ev where
 -}
 getSpinnerNameForEvent :: Ev -> Maybe Text
 getSpinnerNameForEvent = \case
-    EvVane _ -> Nothing
-    EvBlip b -> case b of
-        BlipEvAmes _           -> Just "ames"
-        BlipEvArvo _           -> Just "arvo"
-        BlipEvBehn _           -> Just "behn"
-        BlipEvBoat _           -> Just "boat"
-        BlipEvHttpClient _     -> Just "iris"
-        BlipEvHttpServer _     -> Just "eyre"
-        BlipEvNewt _           -> Just "newt"
-        BlipEvSync _           -> Just "clay"
-        BlipEvTerm t | isRet t -> Nothing
-        BlipEvTerm t           -> Just "term"
-  where
-    isRet (TermEvBelt _ (Ret ())) = True
-    isRet _                       = False
+  EvVane _ -> Nothing
+  EvBlip b -> case b of
+    BlipEvAmes       _     -> Just "ames"
+    BlipEvArvo       _     -> Just "arvo"
+    BlipEvBehn       _     -> Just "behn"
+    BlipEvBoat       _     -> Just "boat"
+    BlipEvHttpClient _     -> Just "iris"
+    BlipEvHttpServer _     -> Just "eyre"
+    BlipEvNewt       _     -> Just "newt"
+    BlipEvSync       _     -> Just "clay"
+    BlipEvTerm t | isRet t -> Nothing
+    BlipEvTerm t           -> Just "term"
+ where
+  isRet (TermEvBelt _ (Ret ())) = True
+  isRet _                       = False

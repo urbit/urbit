@@ -2,15 +2,32 @@
     Types used in both Events and Effects.
 -}
 module Urbit.Arvo.Common
-  ( KingId(..), ServId(..)
-  , Json, JsonNode(..)
-  , Desk(..), Mime(..)
-  , Port(..), Turf(..)
-  , HttpServerConf(..), PEM(..), Key, Cert
-  , HttpEvent(..), Method, Header(..), ResponseHeader(..)
-  , ReOrg(..), reorgThroughNoun
-  , AmesDest(..), Ipv4(..), Ipv6(..), Patp(..), Galaxy, AmesAddress(..)
-  ) where
+  ( KingId(..)
+  , ServId(..)
+  , Json
+  , JsonNode(..)
+  , Desk(..)
+  , Mime(..)
+  , Port(..)
+  , Turf(..)
+  , HttpServerConf(..)
+  , PEM(..)
+  , Key
+  , Cert
+  , HttpEvent(..)
+  , Method
+  , Header(..)
+  , ResponseHeader(..)
+  , ReOrg(..)
+  , reorgThroughNoun
+  , AmesDest(..)
+  , Ipv4(..)
+  , Ipv6(..)
+  , Patp(..)
+  , Galaxy
+  , AmesAddress(..)
+  )
+where
 
 import Urbit.Prelude hiding (Term)
 
@@ -71,8 +88,8 @@ instance FromNoun H.StdMethod where
   parseNoun n = named "StdMethod" $ do
     MkBytes bs <- parseNoun n
     case H.parseMethod bs of
-      Left md -> fail ("Unexpected method: " <> unpack (decodeUtf8 md))
-      Right m -> pure m
+      Left  md -> fail ("Unexpected method: " <> unpack (decodeUtf8 md))
+      Right m  -> pure m
 
 
 
@@ -81,7 +98,7 @@ instance FromNoun H.StdMethod where
 newtype PEM = PEM { unPEM :: Cord }
   deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
-type Key  = PEM
+type Key = PEM
 type Cert = PEM
 
 data HttpServerConf = HttpServerConf
@@ -199,23 +216,21 @@ data ReOrg = ReOrg Cord Cord Cord EvilPath Noun
 
 instance FromNoun ReOrg where
   parseNoun = named "ReOrg" . \case
-      A _                     -> expected "got atom"
-      C (A _)         _       -> expected "empty route"
-      C h             (A a)   -> parseNoun (C h (C (A a) (A 0)))
-      C (C _ (A _))   (C _ _) -> expected "route is too short"
-      C (C f (C s p)) (C t v) -> do
-        fst :: Cord     <- named "first-route"   $ parseNoun f
-        snd :: Cord     <- named "second-route"  $ parseNoun s
-        pax :: EvilPath <- named "rest-of-route" $ parseNoun p
-        tag :: Cord     <- named "tag"           $ parseNoun t
-        val :: Noun     <- pure v
-        pure (ReOrg fst snd tag pax val)
-    where
-      expected got = fail ("expected route+tagged; " <> got)
+    A _                     -> expected "got atom"
+    C (A _)         _       -> expected "empty route"
+    C h             (A a  ) -> parseNoun (C h (C (A a) (A 0)))
+    C (C _ (A _  )) (C _ _) -> expected "route is too short"
+    C (C f (C s p)) (C t v) -> do
+      fst :: Cord     <- named "first-route" $ parseNoun f
+      snd :: Cord     <- named "second-route" $ parseNoun s
+      pax :: EvilPath <- named "rest-of-route" $ parseNoun p
+      tag :: Cord     <- named "tag" $ parseNoun t
+      val :: Noun     <- pure v
+      pure (ReOrg fst snd tag pax val)
+    where expected got = fail ("expected route+tagged; " <> got)
 
 instance ToNoun ReOrg where
-  toNoun (ReOrg fst snd tag pax val) =
-    toNoun ((fst, snd, pax), (tag, val))
+  toNoun (ReOrg fst snd tag pax val) = toNoun ((fst, snd, pax), (tag, val))
 
 {-|
     Given something parsed from a ReOrg Noun, convert that back to
@@ -225,12 +240,10 @@ instance ToNoun ReOrg where
     the effects are incorrect.
 -}
 reorgThroughNoun :: ToNoun x => (Cord, x) -> ReOrg
-reorgThroughNoun =
-    fromNounCrash . toNoun >>> \case
-        (f, s, t, p, v) -> ReOrg f s t p v
-  where
-    fromNounCrash :: FromNoun a => Noun -> a
-    fromNounCrash =
-      fromNounErr >>> \case
-        Left err -> error (show err)
-        Right vl -> vl
+reorgThroughNoun = fromNounCrash . toNoun >>> \case
+  (f, s, t, p, v) -> ReOrg f s t p v
+ where
+  fromNounCrash :: FromNoun a => Noun -> a
+  fromNounCrash = fromNounErr >>> \case
+    Left  err -> error (show err)
+    Right vl  -> vl

@@ -1,4 +1,7 @@
-module LogTests (tests) where
+module LogTests
+  ( tests
+  )
+where
 
 import Data.Acquire
 import Data.Conduit
@@ -31,7 +34,7 @@ instance Exception NotEqual where
 
 assertEqual :: MonadIO m => (Show a, Eq a) => a -> a -> m ()
 assertEqual x y = do
-    unless (x == y) $ io $ throwIO $ NotEqual (show x) (show y)
+  unless (x == y) $ io $ throwIO $ NotEqual (show x) (show y)
 
 
 -- Database Operations ---------------------------------------------------------
@@ -44,121 +47,114 @@ addEvents (Db id evs efs) new = Db id (evs <> new) efs
 
 readDb :: EventLog -> RIO App Db
 readDb log = do
-    events  <- runConduit (streamEvents log 1 .| consume)
-    effects <- runConduit (streamEffectsRows log 0 .| consume)
-    pure $ Db (Log.identity log) events (mapFromList effects)
+  events  <- runConduit (streamEvents log 1 .| consume)
+  effects <- runConduit (streamEffectsRows log 0 .| consume)
+  pure $ Db (Log.identity log) events (mapFromList effects)
 
 withDb :: FilePath -> Db -> (EventLog -> RIO App a) -> RIO App a
 withDb dir (Db dId dEvs dFx) act = do
-    rwith (Log.new dir dId) $ \log -> do
-        Log.appendEvents log (fromList dEvs)
-        for_ (mapToList dFx) $ \(k,v) ->
-            Log.writeEffectsRow log k v
-        act log
+  rwith (Log.new dir dId) $ \log -> do
+    Log.appendEvents log (fromList dEvs)
+    for_ (mapToList dFx) $ \(k, v) -> Log.writeEffectsRow log k v
+    act log
 
 --------------------------------------------------------------------------------
 
 tryReadIdentity :: Property
 tryReadIdentity = forAll arbitrary (ioProperty . runApp . runTest)
-  where
-    runTest :: LogIdentity -> RIO App Bool
-    runTest ident = do
-        env <- ask
-        io $ runInBoundThread $ runRIO env $
-            withTestDir $ \dir -> do
-                rwith (Log.new dir ident) $ \log ->
-                    assertEqual ident (Log.identity log)
-                rwith (Log.existing dir) $ \log ->
-                    assertEqual ident (Log.identity log)
-                rwith (Log.existing dir) $ \log ->
-                    assertEqual ident (Log.identity log)
-        pure True
+ where
+  runTest :: LogIdentity -> RIO App Bool
+  runTest ident = do
+    env <- ask
+    io $ runInBoundThread $ runRIO env $ withTestDir $ \dir -> do
+      rwith (Log.new dir ident) $ \log -> assertEqual ident (Log.identity log)
+      rwith (Log.existing dir) $ \log -> assertEqual ident (Log.identity log)
+      rwith (Log.existing dir) $ \log -> assertEqual ident (Log.identity log)
+    pure True
 
 tryReadDatabase :: Property
 tryReadDatabase = forAll arbitrary (ioProperty . runApp . runTest)
-  where
-    runTest :: Db -> RIO App Bool
-    runTest db = do
-        env <- ask
-        io $ runInBoundThread $ runRIO env $
-            withTestDir $ \dir -> do
-                withDb dir db $ \log -> do
-                    readDb log >>= assertEqual db
-        pure True
+ where
+  runTest :: Db -> RIO App Bool
+  runTest db = do
+    env <- ask
+    io $ runInBoundThread $ runRIO env $ withTestDir $ \dir -> do
+      withDb dir db $ \log -> do
+        readDb log >>= assertEqual db
+    pure True
 
 tryReadDatabaseFuzz :: Property
 tryReadDatabaseFuzz = forAll arbitrary (ioProperty . runApp . runTest)
-  where
-    runTest :: Db -> RIO App Bool
-    runTest db = do
-        env <- ask
-        io $ runInBoundThread $ runRIO env $
-            withTestDir $ \dir -> do
-                withDb dir db $ \log -> do
-                    readDb log >>= assertEqual db
-                rwith (Log.existing dir) $ \log -> do
-                    readDb log >>= assertEqual db
-                rwith (Log.existing dir) $ \log -> do
-                    readDb log >>= assertEqual db
-                    readDb log >>= assertEqual db
-        pure True
+ where
+  runTest :: Db -> RIO App Bool
+  runTest db = do
+    env <- ask
+    io $ runInBoundThread $ runRIO env $ withTestDir $ \dir -> do
+      withDb dir db $ \log -> do
+        readDb log >>= assertEqual db
+      rwith (Log.existing dir) $ \log -> do
+        readDb log >>= assertEqual db
+      rwith (Log.existing dir) $ \log -> do
+        readDb log >>= assertEqual db
+        readDb log >>= assertEqual db
+    pure True
 
 tryAppend :: Property
 tryAppend = forAll arbitrary (ioProperty . runApp . runTest)
-  where
-    runTest :: ([ByteString], Db) -> RIO App Bool
-    runTest (extra, db) = do
-        env <- ask
-        io $ runInBoundThread $ runRIO env $
-            withTestDir $ \dir -> do
-                db' <- pure (addEvents db extra)
-                withDb dir db $ \log -> do
-                    readDb log >>= assertEqual db
-                    Log.appendEvents log (fromList extra)
-                    readDb log >>= assertEqual db'
-                rwith (Log.existing dir) $ \log -> do
-                    readDb log >>= assertEqual db'
-        pure True
+ where
+  runTest :: ([ByteString], Db) -> RIO App Bool
+  runTest (extra, db) = do
+    env <- ask
+    io $ runInBoundThread $ runRIO env $ withTestDir $ \dir -> do
+      db' <- pure (addEvents db extra)
+      withDb dir db $ \log -> do
+        readDb log >>= assertEqual db
+        Log.appendEvents log (fromList extra)
+        readDb log >>= assertEqual db'
+      rwith (Log.existing dir) $ \log -> do
+        readDb log >>= assertEqual db'
+    pure True
 
 tryAppendHuge :: Property
 tryAppendHuge = forAll arbitrary (ioProperty . runApp . runTest)
-  where
-    runTest :: ([ByteString], Db) -> RIO App Bool
-    runTest (extra, db) = do
-        env <- ask
-        io $ runInBoundThread $ runRIO env $ do
-            extra <- do b <- readFile "./bin/brass.pill"
-                        pure (extra <> [b] <> extra)
-            withTestDir $ \dir -> do
-                db' <- pure (addEvents db extra)
-                withDb dir db $ \log -> do
-                    readDb log >>= assertEqual db
-                    Log.appendEvents log (fromList extra)
-                    readDb log >>= assertEqual db'
-                rwith (Log.existing dir) $ \log -> do
-                    readDb log >>= assertEqual db'
-        pure True
+ where
+  runTest :: ([ByteString], Db) -> RIO App Bool
+  runTest (extra, db) = do
+    env <- ask
+    io $ runInBoundThread $ runRIO env $ do
+      extra <- do
+        b <- readFile "./bin/brass.pill"
+        pure (extra <> [b] <> extra)
+      withTestDir $ \dir -> do
+        db' <- pure (addEvents db extra)
+        withDb dir db $ \log -> do
+          readDb log >>= assertEqual db
+          Log.appendEvents log (fromList extra)
+          readDb log >>= assertEqual db'
+        rwith (Log.existing dir) $ \log -> do
+          readDb log >>= assertEqual db'
+    pure True
 
 
 tests :: TestTree
-tests =
-  testGroup "Log"
-    [ localOption (QuickCheckTests 10) $
-          testProperty "Read/Write Log Identity" $
-              tryReadIdentity
-    , localOption (QuickCheckTests 15) $
-          testProperty "Read/Write Database" $
-              tryReadDatabase
-    , localOption (QuickCheckTests 5) $
-          testProperty "Read/Write Database Multiple Times" $
-              tryReadDatabaseFuzz
-    , localOption (QuickCheckTests 10) $
-          testProperty "Append Random Events" $
-              tryAppend
-    , localOption (QuickCheckTests 1) $
-          testProperty "Append Huge Events" $
-              tryAppendHuge
-    ]
+tests = testGroup
+  "Log"
+  [ localOption (QuickCheckTests 10)
+  $ testProperty "Read/Write Log Identity"
+  $ tryReadIdentity
+  , localOption (QuickCheckTests 15)
+  $ testProperty "Read/Write Database"
+  $ tryReadDatabase
+  , localOption (QuickCheckTests 5)
+  $ testProperty "Read/Write Database Multiple Times"
+  $ tryReadDatabaseFuzz
+  , localOption (QuickCheckTests 10)
+  $ testProperty "Append Random Events"
+  $ tryAppend
+  , localOption (QuickCheckTests 1)
+  $ testProperty "Append Huge Events"
+  $ tryAppendHuge
+  ]
 
 
 -- Generate Arbitrary Values ---------------------------------------------------
@@ -177,8 +173,9 @@ instance Arbitrary Ship where
 
 arbEffects :: [ByteString] -> Gen (Map Word64 ByteString)
 arbEffects evs = do
-  hax <- for (zip [1..] evs) $ \(i, bs) -> do keep :: Bool <- arbitrary
-                                              pure (keep, (i, bs))
+  hax <- for (zip [1 ..] evs) $ \(i, bs) -> do
+    keep :: Bool <- arbitrary
+    pure (keep, (i, bs))
   pure $ mapFromList $ snd <$> filter fst hax
 
 instance Arbitrary Db where

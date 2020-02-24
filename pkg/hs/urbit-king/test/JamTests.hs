@@ -1,4 +1,7 @@
-module JamTests (tests) where
+module JamTests
+  ( tests
+  )
+where
 
 import Urbit.Arvo.Event
 import Urbit.Noun.Conversions
