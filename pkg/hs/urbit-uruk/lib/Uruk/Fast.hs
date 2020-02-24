@@ -168,12 +168,12 @@ import System.IO.Unsafe
 
 import Control.Arrow    ((>>>))
 import Data.Bits        (shiftL, (.|.))
+import Data.Flat
 import Data.Function    ((&))
 import Numeric.Natural  (Natural)
 import Numeric.Positive (Positive)
 import Prelude          ((!!))
 import Uruk.JetDemo     (Ur, UrPoly(Fast))
-import Data.Flat
 
 import qualified Urbit.Atom   as Atom
 import qualified Uruk.JetComp as Comp
@@ -240,11 +240,11 @@ jam = jamRaw . toRaw
 --------------------------------------------------------------------------------
 
 data Jet = Jet
-    { jArgs ∷ !Int
-    , jName ∷ Val
-    , jBody ∷ Val
-    , jFast ∷ !Exp
-    , jRegs ∷ !Int -- Number of registers needed.
+    { jArgs :: !Int
+    , jName :: Val
+    , jBody :: Val
+    , jFast :: !Exp
+    , jRegs :: !Int -- Number of registers needed.
     }
   deriving (Eq, Ord, Show)
 
@@ -286,9 +286,9 @@ data Node
   deriving stock (Eq, Ord, Show)
 
 data Fun = Fun
-    { fNeed ∷ !Int
-    , fHead ∷ !Node
-    , fArgs ∷ Array Val -- Lazy on purpose.
+    { fNeed :: !Int
+    , fHead :: !Node
+    , fArgs :: Array Val -- Lazy on purpose.
     }
   deriving stock (Eq, Ord, Show)
 
@@ -384,17 +384,17 @@ callNodeFull !no !xs = no & \case
   Ess   -> join (c2 x z <$> c1 y z)
   Jay _ -> error "TODO"
   _     -> error "TODO"
-  where
-   x = v 0
-   y = v 1
-   z = v 2
-   v = indexArray xs
+ where
+  x = v 0
+  y = v 1
+  z = v 2
+  v = indexArray xs
 
 c1 = callVal1
 c2 = callVal2
 
-callVal1 f x   = callVal f (fromList [x])
-callVal2 f x y = callVal f (fromList [x,y])
+callVal1 f x = callVal f (fromList [x])
+callVal2 f x y = callVal f (fromList [x, y])
 
 callFunFull :: Fun -> Array Val -> IO Val
 {-# INLINE callFunFull #-}
@@ -512,8 +512,8 @@ execJetBody !j !xs !regs = go (jFast j)
 
   go :: Exp -> IO Val
   go = \case
-    VAL v       -> pure v
-    REF i       -> pure $ indexArray xs i
+    VAL  v      -> pure v
+    REF  i      -> pure $ indexArray xs i
     REC1 x      -> join (execJet1 j <$> go x)
     REC2 x y    -> join (execJet2 j <$> go x <*> go y)
     RECN xs     -> join (execJet j <$> traverse go xs)
@@ -589,10 +589,10 @@ execJetBody2 !j !x !y = go (jFast j)
  where
   go :: Exp -> IO Val
   go = \case
-    VAL v       -> pure v
-    REF 0       -> pure x
-    REF 1       -> pure y
-    REF n       -> throwIO (BadRef j n)
+    VAL  v      -> pure v
+    REF  0      -> pure x
+    REF  1      -> pure y
+    REF  n      -> throwIO (BadRef j n)
     REC1 x      -> join (execJet1 j <$> go x)
     REC2 x y    -> join (execJet2 j <$> go x <*> go y)
     RECN xs     -> join (execJet j <$> traverse go xs)
@@ -659,9 +659,9 @@ execJetBody1 !j !x = go (jFast j)
  where
   go :: Exp -> IO Val
   go = \case
-    VAL v       -> pure v
-    REF 0       -> pure x
-    REF n       -> throwIO (BadRef j n)
+    VAL  v      -> pure v
+    REF  0      -> pure x
+    REF  n      -> throwIO (BadRef j n)
     REC1 x      -> join (execJet1 j <$> go x)
     REC2 x y    -> join (execJet2 j <$> go x <*> go y)
     RECN xs     -> join (execJet j <$> traverse go xs)
