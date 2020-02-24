@@ -303,38 +303,40 @@ data Val
   deriving (Eq, Ord, Show)
 
 data Exp
-    = VAL !Val                 --  Constant Value
-    | REF !Int                 --  Stack Reference
-    | REC1 !Exp                --  Recursive Call (one args)
-    | REC2 !Exp !Exp           --  Recursive Call (two args)
-    | RECN !(Array Exp)        --  Recursive Call (arbitrary args)
-    | SLF                      --  Self Reference
-    | IFF !Exp !Exp !Exp       --  If-Then-Else
-    | CAS !Int !Exp !Exp !Exp  --  Pattern Match
+  = VAL !Val                 --  Constant Value
+  | REF !Int                 --  Stack Reference
+  | REC1 !Exp                --  Recursive Call (one args)
+  | REC2 !Exp !Exp           --  Recursive Call (two args)
+  | RECN !(Array Exp)        --  Recursive Call (arbitrary args)
+  | SLF                      --  Self Reference
+  | IFF !Exp !Exp !Exp       --  If-Then-Else
+  | CAS !Int !Exp !Exp !Exp  --  Pattern Match
 
-    | SEQ !Exp !Exp            --  Evaluate head, return tail
-    | DED !Exp                 --  Evaluate argument, then crash.
+  | SEQ !Exp !Exp            --  Evaluate head, return tail
+  | DED !Exp                 --  Evaluate argument, then crash.
 
-    | INC !Exp                 --  Increment
-    | DEC !Exp                 --  Decrement
-    | FEC !Exp                 --  Fast decrement
-    | ADD !Exp !Exp            --  Add
-    | MUL !Exp !Exp            --  Multiply
-    | SUB !Exp !Exp            --  Subtract
-    | ZER !Exp                 --  Is Zero?
-    | EQL !Exp !Exp            --  Atom equality.
+  | INC !Exp                 --  Increment
+  | DEC !Exp                 --  Decrement
+  | FEC !Exp                 --  Fast decrement
+  | ADD !Exp !Exp            --  Add
+  | MUL !Exp !Exp            --  Multiply
+  | SUB !Exp !Exp            --  Subtract
+  | ZER !Exp                 --  Is Zero?
+  | EQL !Exp !Exp            --  Atom equality.
 
-    | CON !Exp !Exp            --  Cons
-    | CAR !Exp                 --  Head
-    | CDR !Exp                 --  Tail
-    | LEF !Exp                 --  Left Constructor
-    | RIT !Exp                 --  Right Constructor
+  | CON !Exp !Exp            --  Cons
+  | CAR !Exp                 --  Head
+  | CDR !Exp                 --  Tail
+  | LEF !Exp                 --  Left Constructor
+  | RIT !Exp                 --  Right Constructor
 
-    | JETN !Jet !(Array Exp)   --  Fully saturated call
-    | JET2 !Jet !Exp !Exp      --  Fully saturated call
-    | CLON !Fun !(Array Exp)   --  Undersaturated call
-    | CALN !Exp !(Array Exp)   --  Call of unknown saturation
-  deriving (Eq, Ord, Show)
+  | JETN !Jet !(Array Exp)   --  Fully saturated call
+  | JET2 !Jet !Exp !Exp      --  Fully saturated call
+
+  | CLON !Fun !(Array Exp)   --  Undersaturated call
+
+  | CALN !Exp !(Array Exp)   --  Call of unknown saturation
+ deriving (Eq, Ord, Show)
 
 
 --------------------------------------------------------------------------------

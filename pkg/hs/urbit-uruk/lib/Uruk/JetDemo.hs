@@ -167,7 +167,7 @@ unClose = go
 instance Show a => Show (UrPoly a) where
     show = \case
         x :@ y       → "(" <> intercalate " " (show <$> flatten x [y]) <> ")"
-        J n          → replicate (fromIntegral n) 'j'
+        J n          → replicate (fromIntegral n) 'J'
         K            → "K"
         S            → "S"
         D            → "D"
