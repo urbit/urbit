@@ -120,7 +120,13 @@
           [%give %fact [/publishtile]~ %json !>(tile-json)]
       ==
     =+  ^-  [kick-cards=(list card) old-subs=(jug @tas @p)]  kick-subs
-    :_  this(state [%1 *state-one])
+    =/  inv-scry-pax
+      /(scot %p our.bol)/invite-store/(scot %da now.bol)/invitatory/publish/noun
+    =/  inv=(unit invitatory)  .^((unit invitatory) %gx inv-scry-pax)
+    =|  new-state=state-one
+    =?  tile-num.new-state  ?=(^ inv)
+      ~(wyt by u.inv)
+    :_  this(state [%1 new-state])
     ;:  weld
       kill-builds
       leave-subs
@@ -756,7 +762,8 @@
     [%give %fact [/publishtile]~ %json !>(jon)]~
   ::
       %decline
-    =.  tile-num  (dec tile-num)
+    =?  tile-num  (gth tile-num 0)
+      (dec tile-num)
     =/  jon=json  (frond:enjs:format %notifications (numb:enjs:format tile-num))
     :_  state
     [%give %fact [/publishtile]~ %json !>(jon)]~
@@ -765,7 +772,8 @@
     ?>  ?=([%notebook @ ~] path.invite.upd)
     =/  book  i.t.path.invite.upd
     =/  wir=wire  /subscribe/(scot %p ship.invite.upd)/[book]
-    =.  tile-num  (dec tile-num)
+    =?  tile-num  (gth tile-num 0)
+      (dec tile-num)
     =/  jon=json  (frond:enjs:format %notifications (numb:enjs:format tile-num))
     :_  state
     :~  [%pass wir %agent [ship.invite.upd %publish] %watch path.invite.upd]
@@ -1228,7 +1236,7 @@
     =/  not=(unit note)  (~(get by notes.u.book) note.act)
     ?~  not
       ~|("nonexistent note: {<note.act>}" !!)
-    =?  tile-num  !read.u.not
+    =?  tile-num  &(!read.u.not (gth tile-num 0))
       (dec tile-num)
     =.  read.u.not  %.y
     =.  notes.u.book  (~(put by notes.u.book) note.act u.not)
@@ -1380,7 +1388,7 @@
     ?~  book
       [~ sty]
     =/  not=note  (~(got by notes.u.book) note.del)
-    =?  tile-num  !read.not
+    =?  tile-num  &(!read.not (gth tile-num 0))
       (dec tile-num)
     =.  notes.u.book  (~(del by notes.u.book) note.del)
     (emit-updates-and-state host.del book.del u.book del sty)
