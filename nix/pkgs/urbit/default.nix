@@ -27,8 +27,16 @@ let
     inherit name meta;
     exename = name;
     src     = ../../../pkg/urbit;
-    builder = ./builder.sh;
     nativeBuildInputs = deps ++ vendor;
+
+    installPhase = ''
+      make all -j8
+      make test
+
+      mkdir -p $out/bin
+      cp ./build/urbit $out/bin/$exename
+      cp ./build/urbit-worker $out/bin/$exename-worker
+    '';
 
     # See https://github.com/NixOS/nixpkgs/issues/18995
     hardeningDisable = if debug then [ "all" ] else [];
