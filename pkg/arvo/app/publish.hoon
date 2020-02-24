@@ -105,7 +105,7 @@
     ::      send invites to all previously subscribed ships
     ::
     |^
-    =/  rav  [%sing %t [%da now.bol] /app/publish/notebooks]
+    =/  rav  [%next %t [%da now.bol] /app/publish/notebooks]
     =/  tile-json
       (frond:enjs:format %notifications (numb:enjs:format 0))
     =/  init-cards=(list card)
