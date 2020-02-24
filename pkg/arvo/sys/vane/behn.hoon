@@ -5,7 +5,7 @@
 =,  behn
 |=  pit=vase
 =>  |%
-    +$  move  [p=duct q=(wind note gift:able)]
+    +$  move  [p=duct q=(wite note gift:able)]
     +$  note                                            ::  out request $->
       $~  [%b %wait *@da]                               ::
       $%  $:  %b                                        ::   to self
@@ -52,16 +52,12 @@
     ^+  [moves state]
     ::  behn must get activated before other vanes in a %wake
     ::
-    ::    TODO: uncomment this case after switching %crud tags
+    ?.  =(%wake tag)
+      ~&  %behn-crud-not-wake^tag
+      [[duct %slip %d %flog %crud tag error]~ state]
     ::
-    ::    We don't know how to handle other errors, so relay them to %dill
-    ::    to be printed and don't treat them as timer failures.
-    ::
-    ::  ?.  =(%wake tag)
-    ::    ~&  %behn-crud-not-first-activation^tag
-    ::    [[duct %slip %d %flog %crud tag error]~ state]
-    ::
-    ?:  =(~ timers.state)  ~|  %behn-crud-no-timer^tag^error  !!
+    ?:  =(~ timers.state)
+      ~|(%behn-crud-no-timer^tag^error !!)
     ::
     (wake `error)
   ::  +rest: cancel the timer at :date, then adjust unix wakeup
@@ -97,12 +93,13 @@
     ^+  event-core
     =/  drip  (~(got by movs.drips.state) num)
     =.  movs.drips.state  (~(del by movs.drips.state) num)
-    ?^  error
-      ::  if the receiver errored, drop it
-      ::
-      %.  event-core
-      (slog leaf/"drip failed" (flop u.error))
-    event-core(moves [duct %give %meta drip]~)
+    =/  =move
+      ?~  error
+        [duct %give %meta drip]
+      =/  =tang
+        (weld u.error `tang`[leaf/"drip failed" ~])
+      [duct %gave fail/tang %meta drip]
+    event-core(moves [move moves])
   ::  +trim: in response to memory pressue
   ::
   ++  trim  [moves state]
