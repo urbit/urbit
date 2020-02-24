@@ -25,7 +25,10 @@ let
   urbit-debug = mkUrbit { debug = true; };
 
   urbit-large-log = pkgs.stdenv.lib.overrideDerivation urbit (_: {
-    patches = [ ./urbit/patches/large-log-limit.patch ];
+    patches = [
+      ./urbit/patches/large-log-limit.patch
+      ./urbit/patches/vere-version-label.patch
+    ];
     patchFlags = "-p3";
   });
 
