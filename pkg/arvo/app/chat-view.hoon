@@ -5,8 +5,10 @@
     *permission-hook,
     *group-store,
     *invite-store,
+    *metadata-store,
     *permission-group-hook,
-    *chat-hook
+    *chat-hook,
+    *metadata-hook
 /+  *server, *chat-json, default-agent, verb, dbug
 /=  index
   /^  octs
@@ -52,8 +54,8 @@
       [%permission-group-hook-action permission-group-hook-action]
   ==
 --
-%-  agent:dbug
 %+  verb  |
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  bol=bowl:gall
@@ -199,39 +201,49 @@
   ?>  (team:title our.bol src.bol)
   ?-  -.act
       %create
-    ?>  ?=(^ path.act)
-    ?^  (chat-scry path.act)
+    ?>  ?=(^ app-path.act)
+    ?^  (chat-scry app-path.act)
       ~&  %chat-already-exists
       ~
     %-  zing
-    :~  (create-chat path.act security.act allow-history.act)
-        (create-managed-group path.act security.act members.act)
-        (create-security path.act security.act)
-        ~[(permission-hook-poke [%add-owned path.act path.act])]
+    :~  (create-chat app-path.act security.act allow-history.act)
+        (create-managed-group group-path.act security.act members.act)
+        (create-security group-path.act security.act)
+        (create-metadata group-path.act app-path.act)
+        ~[(permission-hook-poke [%add-owned group-path.act group-path.act])]
     ==
   ::
       %delete
-    ?>  ?=(^ path.act)
+    =/  group-path  (group-from-chat app-path.act)
+    ?>  ?=(^ app-path.act)
     %-  zing
-    :~  :~  (chat-hook-poke [%remove path.act])
-            (permission-hook-poke [%remove path.act])
-            (chat-poke [%delete path.act])
+    :~  :~  (chat-hook-poke [%remove app-path.act])
+            (metadata-store-poke [%remove group-path [%chat app-path.act]])
+            (chat-poke [%delete app-path.act])
         ==
-        ?.  =(i.path.act '~')  ~
-        ~[(group-poke [%unbundle path.act])]
+      ::
+        ?:  (is-managed group-path)  ~
+        :~  (permission-hook-poke [%remove group-path])
+            (group-poke [%unbundle group-path])
+            (metadata-hook-poke [%remove group-path])
+        ==
     ==
   ::
       %join
-    :~  (chat-hook-poke [%add-synced ship.act path.act ask-history.act])
-        (permission-hook-poke [%add-synced ship.act path.act])
+    =/  group-path
+      ?.  (is-managed app-path.act)  app-path.act
+      (group-from-chat app-path.act)
+    :~  (chat-hook-poke [%add-synced ship.act app-path.act ask-history.act])
+        (permission-hook-poke [%add-synced ship.act group-path])
+        (metadata-hook-poke [%add-synced ship.act group-path])
     ==
   ==
   ::
   ++  create-chat
     |=  [=path security=rw-security history=?]
     ^-  (list card)
-    :~  [(chat-poke [%create path])]
-        [(chat-hook-poke [%add-owned path security history])]
+    :~  (chat-poke [%create path])
+        (chat-hook-poke [%add-owned path security history])
     ==
   ::
   ++  create-managed-group
@@ -249,6 +261,21 @@
       ==
     ~[(contact-view-poke [%create path ships])]
   ::
+  ++  create-metadata
+    |=  [group-path=path app-path=path]
+    ^-  (list card)
+    =/  =metadata
+      %*  .  *metadata
+          date-created  now.bol
+          creator
+        %+  slav  %p
+        ?:  (is-managed app-path)  (snag 0 app-path)
+        (snag 1 app-path)
+      ==
+    :~  (metadata-store-poke [%add group-path [%chat app-path] metadata])
+        (metadata-hook-poke [%add-owned group-path])
+    ==
+  ::
   ++  create-security
     |=  [pax=path sec=rw-security]
     ^-  (list card)
@@ -265,6 +292,20 @@
     ^-  card
     [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
   ::
+  ++  metadata-store-poke
+    |=  act=metadata-action
+    ^-  card
+    [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
+  ::
+  ++  metadata-hook-poke
+    |=  act=metadata-hook-action
+    ^-  card
+    :*  %pass  /  %agent
+        [our.bol %metadata-hook]
+        %poke  %metadata-hook-action
+        !>(act)
+    ==
+  ::
   ++  send-invite-poke
     |=  [=path =ship]
     ^-  card
@@ -280,6 +321,32 @@
     ^-  (unit mailbox)
     =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
     .^((unit mailbox) %gx pax)
+  ::
+  ++  group-from-chat
+    |=  app-path=path
+    ^-  path
+    ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)
+      ?:  ?=([@ ^] app-path)
+        ~&  [%assuming-ported-legacy-chat app-path]
+        [%'~' app-path]
+      ~&  [%weird-chat app-path]
+      !!
+    =/  resource-indices
+      .^  (jug resource group-path)
+        %gy
+        (scot %p our.bol)
+        %metadata-store
+        (scot %da now.bol)
+        /resource-indices
+      ==
+    =/  groups=(set path)  (~(got by resource-indices) [%chat app-path])
+    (snag 0 ~(tap in groups))
+  ::
+  ++  is-managed
+    |=  =path
+    ^-  ?
+    ?>  ?=(^ path)
+    !=(path '~')
   --
 ::
 ++  diff-chat-update

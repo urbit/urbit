@@ -224,19 +224,20 @@
   ::
   ++  create
     %-  ot
-    :~  [%path pa]
+    :~  [%app-path pa]
+        [%group-path pa]
         [%security sec]
         [%members (as (su ;~(pfix sig fed:ag)))]
         [%allow-history bo]
     ==
   ::
   ++  delete
-    (ot [%path pa]~)
+    (ot [%app-path pa]~)
   ::
   ++  join
     %-  ot
     :~  [%ship (su ;~(pfix sig fed:ag))]
-        [%path pa]
+        [%app-path pa]
         [%ask-history bo]
     ==
   ::
