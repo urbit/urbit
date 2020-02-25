@@ -340,6 +340,9 @@
         =^  cards  state
           (handle-invite-update:main !<(invite-update q.cage.sin))
         [cards this]
+      ::
+          [%collection *]
+        [~ this]
       ==
     ==
   ::
