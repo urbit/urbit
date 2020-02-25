@@ -6417,22 +6417,26 @@
         [%0 u.mutant]
       ::
           [%11 tag=@ next=*]
-        %-  tone
-        .*  .
-        :+  11  tag.formula
-        !=  $(formula next.formula)
+        =/  next  $(formula next.formula)
+        ?.  ?=(%0 -.next)  next
+        :-  %0
+        .*  subject
+        [11 tag.formula 1 product.next]
       ::
           [%11 [tag=@ clue=*] next=*]
         =/  clue  $(formula clue.formula)
         ?.  ?=(%0 -.clue)  clue
-        %-  tone
-        .*  .
-        :+  11  [tag.formula 1 product.clue]
-        ?.  ?=(?(%hunk %hand %lose %mean %spot) tag.formula)
-          !=  $(formula next.formula)
-        !=  %=  $
+        =;  next
+          ?.  ?=(%0 -.next)  next
+          :-  %0
+          .*  subject
+          [11 [tag.formula 1 product.clue] 1 product.next]
+        %=  $
           formula  next.formula
-          trace   :_  trace
+          trace    ?.  ?=  ?(%hunk %hand %lose %mean %spot)
+                           tag.formula
+                     trace
+                   :_  trace
                    [tag.formula product.clue]
         ==
       ::
