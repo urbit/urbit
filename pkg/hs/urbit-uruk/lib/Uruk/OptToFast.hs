@@ -3,6 +3,7 @@ module Uruk.OptToFast (optToFast) where
 import ClassyPrelude    hiding (evaluate, try, fromList)
 import System.IO.Unsafe
 import Data.Primitive.Array
+import Data.Primitive.SmallArray
 
 import Control.Arrow    ((>>>))
 import Data.Function    ((&))
@@ -33,11 +34,11 @@ numReg = const 0 -- TODO
     TODO VAL (VFun ..)
 
     TODO Detect undersaturated calls
-      CLON !Fun !(Array Exp)    --  Undersaturated call
+      CLON !Fun !(SmallArray Exp)    --  Undersaturated call
     TODO Detect fully saturated calls.
       (No AST node for this yet)
     TODO Detect fully saturated calls to jets.
-      JETN !Jet !(Array Exp)   --  Fully saturated call
+      JETN !Jet !(SmallArray Exp)   --  Fully saturated call
       JET2 !Jet !Exp !Exp      --  Fully saturated call
 -}
 compile :: Int -> O.Val -> F.Exp
@@ -55,8 +56,8 @@ compile arity = go
   rec xs =
     let len = length xs
     in  case (compare len arity, xs) of
-          (EQ, [x]         ) -> F.REC1 (go x)
-          (EQ, [x, y]      ) -> F.REC2 (go x) (go y)
+          (EQ, [x]         ) -> F.REC1R (go x)
+          (EQ, [x, y]      ) -> F.REC2R (go x) (go y)
           (EQ, [x, y, z]   ) -> F.REC3 (go x) (go y) (go z)
           (EQ, [x, y, z, p]) -> F.REC4 (go x) (go y) (go z) (go p)
           (EQ, xs          ) -> F.RECN (goArgs xs)
@@ -98,7 +99,7 @@ compile arity = go
   rit (F.VAL x) = F.VAL (F.VRit x)
   rit x         = F.RIT x
 
-  goArgs :: [O.Val] -> Array F.Exp
+  goArgs :: [O.Val] -> SmallArray F.Exp
   goArgs = fromList . fmap go
 
 rawExp ∷ O.RawNode → F.Exp

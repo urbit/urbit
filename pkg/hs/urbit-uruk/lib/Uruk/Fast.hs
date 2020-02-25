@@ -3,7 +3,6 @@
 {-
     TODO Fill out callNodeFull.
     TODO K should not evaluate tail.
-    TODO Implement pattern-match registers.
 
     Note that On 64 bit machines, GHC will always use pointer tagging
     as long as there are less than 8 constructors. So, anything that is
@@ -15,7 +14,11 @@ module Uruk.Fast where
 import ClassyPrelude        hiding (evaluate, fromList, try)
 import Data.Primitive.Array
 import System.IO.Unsafe
+import GHC.Prim
+import Control.Monad.Primitive
+import Data.Primitive.SmallArray
 
+import Control.Exception (throw)
 import Control.Arrow    ((>>>))
 import Data.Bits        (shiftL, (.|.))
 import Data.Flat
@@ -37,8 +40,6 @@ import qualified GHC.Exts
 type Nat = Natural
 type Bol = Bool
 type Pos = Positive
-
-type IOArray = MutableArray RealWorld
 
 
 -- Raw Uruk (Basically just used for D (jam)) ----------------------------------
@@ -84,7 +85,7 @@ priFun = \case
 
 rawVal :: Raw -> Val
 {-# INLINE rawVal #-}
-rawVal (Raw p xs) = VFun $ Fun (args - sizeofArray vals) node vals
+rawVal (Raw p xs) = VFun $ Fun (args - sizeofSmallArray vals) node vals
  where
   (args, node) = priFun p
   vals         = rawVal <$> fromList xs
@@ -92,6 +93,32 @@ rawVal (Raw p xs) = VFun $ Fun (args - sizeofArray vals) node vals
 jam :: Val -> Val
 {-# INLINE jam #-}
 jam = jamRaw . toRaw
+
+
+-- Arguments -------------------------------------------------------------------
+
+type ArgN = SmallArray Val
+
+getArgN :: ArgN -> Int -> Val
+{-# INLINE getArgN #-}
+getArgN = indexSmallArray
+
+
+-- Registers -------------------------------------------------------------------
+
+type RegN = SmallMutableArray RealWorld Val
+
+newRegN :: Int -> IO RegN
+{-# INLINE newRegN #-}
+newRegN n = newSmallArray n VUni
+
+getRegN :: RegN -> Int -> IO Val
+{-# INLINE getRegN #-}
+getRegN = readSmallArray
+
+setRegN :: RegN -> Int -> Val -> IO ()
+{-# INLINE setRegN #-}
+setRegN = writeSmallArray
 
 
 -- Types -----------------------------------------------------------------------
@@ -145,7 +172,7 @@ data Node
 data Fun = Fun
   { fNeed :: !Int
   , fHead :: !Node
-  , fArgs :: Array Val -- Lazy on purpose.
+  , fArgs :: ArgN -- Lazy on purpose.
   }
  deriving stock (Eq, Ord, Show)
 
@@ -160,18 +187,23 @@ data Val
  deriving (Eq, Ord, Show)
 
 data Exp
-  = VAL !Val                      --  Constant Value
-  | REF !Int                      --  Stack Reference
-  | REG !Int                      --  Register Reference
+  = VAL   !Val                    --  Constant Value
+  | REF   !Int                    --  Stack Reference
+  | REG   !Int                    --  Register Reference
   | SLF                           --  Self Reference
 
-  | IFF !Exp !Exp !Exp            --  If-Then-Else
-  | CAS !Int !Exp !Exp !Exp       --  Pattern Match
-  | REC1 !Exp                     --  Recursive Call
-  | REC2 !Exp !Exp                --  Recursive Call
-  | REC3 !Exp !Exp !Exp           --  Recursive Call
-  | REC4 !Exp !Exp !Exp !Exp      --  Recursive Call
-  | RECN !(Array Exp)             --  Recursive Call
+  | IFF   !Exp !Exp !Exp          --  If-Then-Else
+  | CAS   !Int !Exp !Exp !Exp     --  Pattern Match
+  | REC1  !Exp                    --  Recursive Call
+  | REC1R !Exp                    --  Recursive Call (No Registers)
+  | REC2  !Exp !Exp               --  Recursive Call
+  | REC2R !Exp !Exp               --  Recursive Call (No Registers)
+  | REC3  !Exp !Exp !Exp          --  Recursive Call
+  | REC3R !Exp !Exp !Exp          --  Recursive Call (No Registers)
+  | REC4  !Exp !Exp !Exp !Exp     --  Recursive Call
+  | REC4R !Exp !Exp !Exp !Exp     --  Recursive Call (No Registers)
+  | RECN  !(SmallArray Exp)       --  Recursive Call
+  | RECNR !(SmallArray Exp)       --  Recursive Call (No Registers)
 
   | SEQ !Exp !Exp                 --  Evaluate head, return tail
   | DED !Exp                      --  Evaluate argument, then crash.
@@ -195,10 +227,10 @@ data Exp
   | JET2 !Jet !Exp !Exp           --  Fully saturated jet call.
   | JET3 !Jet !Exp !Exp !Exp      --  Fully saturated jet call.
   | JET4 !Jet !Exp !Exp !Exp !Exp --  Fully saturated jet call.
-  | JETN !Jet !(Array Exp)        --  Fully saturated jet call.
+  | JETN !Jet !(SmallArray Exp)   --  Fully saturated jet call.
 
-  | CLON !Fun !(Array Exp)        --  Undersaturated call
-  | CALN !Exp !(Array Exp)        --  Call of unknown saturation
+  | CLON !Fun !(SmallArray Exp)   --  Undersaturated call
+  | CALN !Exp !(SmallArray Exp)   --  Call of unknown saturation
  deriving (Eq, Ord, Show)
 
 
@@ -227,14 +259,14 @@ execFun f@Fun {..} = compare fNeed 0 & \case
   EQ -> callNodeFull fHead fArgs
   LT -> do
     f         <- callNodeFull fHead fArgs
-    extraArgs <- arrayDrop (sizeofArray fArgs) (negate fNeed) fArgs
+    extraArgs <- arrayDrop (sizeofSmallArray fArgs) (negate fNeed) fArgs
     callVal f extraArgs
 
-arrayDrop :: Int -> Int -> Array Val -> IO (Array Val)
+arrayDrop :: Int -> Int -> ArgN -> IO ArgN
 {-# INLINE arrayDrop #-}
-arrayDrop i l xs = thawArray xs i l >>= unsafeFreezeArray
+arrayDrop i l xs = thawSmallArray xs i l >>= unsafeFreezeSmallArray
 
-callNodeFull :: Node -> Array Val -> IO Val
+callNodeFull :: Node -> ArgN -> IO Val
 {-# INLINE callNodeFull #-}
 callNodeFull !no !xs = no & \case
   Kay   -> pure x
@@ -246,7 +278,7 @@ callNodeFull !no !xs = no & \case
   x = v 0
   y = v 1
   z = v 2
-  v = indexArray xs
+  v = indexSmallArray xs
 
 c1 = callVal1
 c2 = callVal2
@@ -254,7 +286,7 @@ c2 = callVal2
 callVal1 f x = callVal f (fromList [x])
 callVal2 f x y = callVal f (fromList [x, y])
 
-callFunFull :: Fun -> Array Val -> IO Val
+callFunFull :: Fun -> ArgN -> IO Val
 {-# INLINE callFunFull #-}
 callFunFull Fun {..} xs = callNodeFull fHead (fArgs <> xs)
 
@@ -274,17 +306,17 @@ valFun = \case
 
 mkRegs :: Int -> IO (Int -> IO Val, Int -> Val -> IO ())
 {-# INLINE mkRegs #-}
-mkRegs 0 = pure (error "no-registers", error "no-registers")
+mkRegs 0 = pure (pure (error "no-registers"), pure (error "no-registers"))
 mkRegs 1 = do
   reg <- newIORef VUni
-  let read _  = readIORef reg
+  let read _ = readIORef reg
   let write _ = writeIORef reg
   pure (read, write)
 mkRegs n = do
-  regs <- newArray n VUni
-  pure (readArray regs, writeArray regs)
+  regs <- newRegN n
+  pure (getRegN regs, setRegN regs)
 
-withFallback :: Jet -> Array Val -> IO Val -> IO Val
+withFallback :: Jet -> ArgN -> IO Val -> IO Val
 {-# INLINE withFallback #-}
 withFallback j args act = catch act $ \(TypeError why) -> do
   putStrLn ("FALLBACK: " <> why)
@@ -297,7 +329,15 @@ execJet1 !j !x = do
   let refr = \case
         0 -> pure x
         n -> throwIO (BadRef j n)
-  withFallback j args $ execJetBody j refr reg setReg
+  withFallback j args (execJetBody j refr reg setReg)
+
+execJet1R :: Jet -> Val -> IO Val
+execJet1R !j !x = do
+  let args = fromList [x]
+  let refr = \case
+        0 -> pure x
+        n -> throwIO (BadRef j n)
+  withFallback j args (execJetBodyR j refr)
 
 execJet2 :: Jet -> Val -> Val -> IO Val
 execJet2 !j !x !y = do
@@ -307,7 +347,16 @@ execJet2 !j !x !y = do
         0 -> pure x
         1 -> pure y
         n -> throwIO (BadRef j n)
-  withFallback j args $ execJetBody j refr reg setReg
+  withFallback j args (execJetBody j refr reg setReg)
+
+execJet2R :: Jet -> Val -> Val -> IO Val
+execJet2R !j !x !y = do
+  let args = fromList [x, y]
+  let refr = \case
+        0 -> pure x
+        1 -> pure y
+        n -> throwIO (BadRef j n)
+  withFallback j args (execJetBodyR j refr)
 
 execJet3 :: Jet -> Val -> Val -> Val -> IO Val
 execJet3 !j !x !y !z = do
@@ -318,7 +367,17 @@ execJet3 !j !x !y !z = do
         1 -> pure y
         2 -> pure z
         n -> throwIO (BadRef j n)
-  withFallback j args $ execJetBody j refr reg setReg
+  withFallback j args (execJetBody j refr reg setReg)
+
+execJet3R :: Jet -> Val -> Val -> Val -> IO Val
+execJet3R !j !x !y !z = do
+  let args = fromList [x, y, z]
+  let refr = \case
+        0 -> pure x
+        1 -> pure y
+        2 -> pure z
+        n -> throwIO (BadRef j n)
+  withFallback j args (execJetBodyR j refr)
 
 execJet4 :: Jet -> Val -> Val -> Val -> Val -> IO Val
 execJet4 !j !x !y !z !p = do
@@ -330,13 +389,29 @@ execJet4 !j !x !y !z !p = do
         2 -> pure z
         3 -> pure p
         n -> throwIO (BadRef j n)
-  withFallback j args $ execJetBody j refr reg setReg
+  withFallback j args (execJetBody j refr reg setReg)
 
-execJetN :: Jet -> Array Val -> IO Val
+execJet4R :: Jet -> Val -> Val -> Val -> Val -> IO Val
+execJet4R !j !x !y !z !p = do
+  let args = fromList [x, y, z, p]
+  let refr = \case
+        0 -> pure x
+        1 -> pure y
+        2 -> pure z
+        3 -> pure p
+        n -> throwIO (BadRef j n)
+  withFallback j args (execJetBodyR j refr)
+
+execJetN :: Jet -> ArgN -> IO Val
 execJetN !j !xs = do
   (reg, setReg) <- mkRegs (jRegs j)
-  let refr = pure . indexArray xs
-  withFallback j xs $ execJetBody j refr reg setReg
+  let refr = pure . indexSmallArray xs
+  withFallback j xs (execJetBody j refr reg setReg)
+
+execJetNR :: Jet -> ArgN -> IO Val
+execJetNR !j !xs = do
+  let refr = pure . indexSmallArray xs
+  withFallback j xs (execJetBodyR j refr)
 
 
 -- Primitive Implementation ----------------------------------------------------
@@ -397,16 +472,16 @@ cdr _          = throwIO (TypeError "cdr-not-con")
 
 -- Interpreter -----------------------------------------------------------------
 
-cloN :: Fun -> Array Val -> Val
+cloN :: Fun -> ArgN -> Val
 {-# INLINE cloN #-}
 cloN (Fun {..}) xs = VFun $ Fun rem fHead $ fArgs <> xs
-  where rem = fNeed - sizeofArray xs
+  where rem = fNeed - sizeofSmallArray xs
 
-callVal :: Val -> Array Val -> IO Val
+callVal :: Val -> ArgN -> IO Val
 {-# INLINE callVal #-}
 callVal f xs =
   let Fun {..} = valFun f
-  in  execFun (Fun (fNeed - sizeofArray xs) fHead (fArgs <> xs))
+  in  execFun (Fun (fNeed - sizeofSmallArray xs) fHead (fArgs <> xs))
 
 jetVal :: Jet -> Val
 {-# INLINE jetVal #-}
@@ -423,14 +498,19 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
  where
   go :: Exp -> IO Val
   go = \case
-    VAL  v         -> pure v
-    REF  i         -> ref i
-    REG  i         -> reg i
-    REC1 x         -> join (execJet1 j <$> go x)
-    REC2 x y       -> join (execJet2 j <$> go x <*> go y)
-    REC3 x y z     -> join (execJet3 j <$> go x <*> go y <*> go z)
-    REC4 x y z p   -> join (execJet4 j <$> go x <*> go y <*> go z <*> go p)
-    RECN xs        -> join (execJetN j <$> traverse go xs)
+    VAL   v        -> pure v
+    REF   i        -> ref i
+    REG   i        -> reg i
+    REC1  x        -> join (execJet1 j <$> go x)
+    REC1R x        -> join (execJet1R j <$> go x)
+    REC2  x y      -> join (execJet2 j <$> go x <*> go y)
+    REC2R x y      -> join (execJet2R j <$> go x <*> go y)
+    REC3  x y z    -> join (execJet3 j <$> go x <*> go y <*> go z)
+    REC3R x y z    -> join (execJet3R j <$> go x <*> go y <*> go z)
+    REC4  x y z p  -> join (execJet4 j <$> go x <*> go y <*> go z <*> go p)
+    REC4R x y z p  -> join (execJet4R j <$> go x <*> go y <*> go z <*> go p)
+    RECN  xs       -> join (execJetN j <$> traverse go xs)
+    RECNR xs       -> join (execJetNR j <$> traverse go xs)
     SLF            -> pure (jetVal j)
     SEQ x y        -> go x >> go y
     DED x          -> throwIO . Crash =<< go x
@@ -451,17 +531,62 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     CDR x          -> join (cdr <$> go x)
     CLON f xs      -> cloN f <$> traverse go xs
     CALN f xs      -> join (callVal <$> go f <*> traverse go xs)
-
     LEF x          -> VLef <$> go x
     RIT x          -> VRit <$> go x
     CON x y        -> VCon <$> go x <*> go y
-
-    IFF c t e -> go c >>= \case
+    IFF c t e      -> go c >>= \case
       VBol True  -> go t
       VBol False -> go e
       _          -> throwIO (TypeError "iff-not-bol")
-
     CAS i x l r -> go x >>= \case
       VLef lv -> setReg i lv >> go l
       VRit rv -> setReg i rv >> go r
       _       -> throwIO (TypeError "cas-no-sum")
+
+execJetBodyR :: Jet -> (Int -> IO Val) -> IO Val
+{-# INLINE execJetBodyR #-}
+execJetBodyR !j !ref = go (jFast j)
+ where
+  go :: Exp -> IO Val
+  go = \case
+    REG i          -> error "no-reg"
+    CAS i x l r    -> error "no-reg"
+    VAL   v        -> pure v
+    REF   i        -> ref i
+    REC1  x        -> join (execJet1 j <$> go x)
+    REC1R x        -> join (execJet1R j <$> go x)
+    REC2  x y      -> join (execJet2 j <$> go x <*> go y)
+    REC2R x y      -> join (execJet2R j <$> go x <*> go y)
+    REC3  x y z    -> join (execJet3 j <$> go x <*> go y <*> go z)
+    REC3R x y z    -> join (execJet3R j <$> go x <*> go y <*> go z)
+    REC4  x y z p  -> join (execJet4 j <$> go x <*> go y <*> go z <*> go p)
+    REC4R x y z p  -> join (execJet4R j <$> go x <*> go y <*> go z <*> go p)
+    RECN  xs       -> join (execJetN j <$> traverse go xs)
+    RECNR xs       -> join (execJetNR j <$> traverse go xs)
+    SLF            -> pure (jetVal j)
+    SEQ x y        -> go x >> go y
+    DED x          -> throwIO . Crash =<< go x
+    INC x          -> join (inc <$> go x)
+    DEC x          -> join (dec <$> go x)
+    FEC x          -> join (fec <$> go x)
+    JET1 j x       -> join (execJet1 j <$> go x)
+    JET2 j x y     -> join (execJet2 j <$> go x <*> go y)
+    JET3 j x y z   -> join (execJet3 j <$> go x <*> go y <*> go z)
+    JET4 j x y z p -> join (execJet4 j <$> go x <*> go y <*> go z <*> go p)
+    JETN j xs      -> join (execJetN j <$> traverse go xs)
+    ADD  x y       -> join (add <$> go x <*> go y)
+    MUL  x y       -> join (mul <$> go x <*> go y)
+    SUB  x y       -> join (sub <$> go x <*> go y)
+    ZER x          -> join (zer <$> go x)
+    EQL x y        -> join (eql <$> go x <*> go y)
+    CAR x          -> join (car <$> go x)
+    CDR x          -> join (cdr <$> go x)
+    CLON f xs      -> cloN f <$> traverse go xs
+    CALN f xs      -> join (callVal <$> go f <*> traverse go xs)
+    LEF x          -> VLef <$> go x
+    RIT x          -> VRit <$> go x
+    CON x y        -> VCon <$> go x <*> go y
+    IFF c t e      -> go c >>= \case
+      VBol True  -> go t
+      VBol False -> go e
+      _          -> throwIO (TypeError "iff-not-bol")

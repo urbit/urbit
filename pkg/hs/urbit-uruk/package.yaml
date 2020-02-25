@@ -16,6 +16,7 @@ dependencies:
   - classy-prelude
   - deriving-compat
   - flat
+  - ghc-prim
   - lens
   - megaparsec
   - mtl
