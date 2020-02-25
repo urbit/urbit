@@ -1337,7 +1337,7 @@
       a(r c)
     c(l a(r l.c))
   ::
-  ++  rep                                               ::  replace by product
+  ++  rep                                               ::  reduce to product
     |*  b/_=>(~ |=({* *} +<+))
     |-
     ?~  a  +<+.b
@@ -1592,7 +1592,7 @@
       a(r d)
     d(l a(r l.d))
   ::
-  ++  rep                                               ::  replace by product
+  ++  rep                                               ::  reduce to product
     |*  b/_=>(~ |=({* *} +<+))
     |-
     ?~  a  +<+.b

@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+set -ex
+
+
+##
+##  Make sure this is running OSX/Linux in Travis
+##
+
+os="$TRAVIS_OS_NAME"
+
+[ "$os" = osx ] || [ "$os" = linux ]
+
+
+##
+##  Download the stack executable.
+##
+
+mkdir -p ~/.local/bin
+
+stackurl="https://get.haskellstack.org/stable/$os-x86_64.tar.gz"
+
+case $os in
+    osx)
+        curl -L "$stackurl" |
+            tar xz --strip-components=1 --include '*/stack' -C ~/.local/bin
+        ;;
+    linux)
+        mkdir -p tmp
+        curl -L "$stackurl" | tar xz -C tmp
+        mv tmp/stack-*/stack ~/.local/bin
+        ;;
+esac
+
+
+##
+##  Use the more reliable S3 mirror of Hackage.
+##
+
+mkdir -p ~/.cabal
+
+cat > ~/.cabal/config <<EOF
+remote-repo: hackage.haskell.org:http://hackage.fpcomplete.com/
+remote-repo-cache: $HOME/.cabal/packages
+EOF
