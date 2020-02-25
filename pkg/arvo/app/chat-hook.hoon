@@ -62,7 +62,6 @@
     ::
     :_  this(state [%1 +.old])
     %-  zing
-    ^-  (list (list card))
     %+  turn
       %~  tap  in
       %^  scry:cc  (set path)
@@ -92,24 +91,23 @@
       ?.  &(?=(^ read) ?=(^ write))
         ~&  [%missing-permission chat read=?=(~ read) write=?=(~ write)]
         [%white [(slav %p (snag 0 chat)) ~ ~]]
-      ::  village: exclusive to writers
+      ?+  [kind.u.read kind.u.write]  !!
+        ::  village: exclusive to writers
+        ::
+        [%white %white]  [%white who.u.write]
       ::
-      ?:  &(?=(%white kind.u.read) ?=(%white kind.u.write))
-        [%white who.u.write]
-      ::  channel: merge blacklists
+        ::  channel: merge blacklists
+        ::
+        [%black %black]  [%black (~(uni in who.u.read) who.u.write)]
       ::
-      ?:  &(?=(%black kind.u.read) ?=(%black kind.u.write))
-        [%black (~(uni in who.u.read) who.u.write)]
-      ::  journal: exclusive to writers
+        ::  journal: exclusive to writers
+        ::
+        [%black %white]  [%white who.u.write]
       ::
-      ?:  &(?=(%black kind.u.read) ?=(%white kind.u.write))
-        [%white who.u.write]
-      ::  mailbox: exclusive to readers
-      ::
-      ?:  &(?=(%white kind.u.read) ?=(%black kind.u.write))
-        [%white who.u.read]
-      ~|  [%weird-kinds kind.u.read kind.u.write]
-      !!
+        ::  mailbox: exclusive to readers
+        ::
+        [%white %black]  [%white who.u.read]
+      ==
     ::
     ++  get-permission
       |=  [chat=path what=?(%read %write)]
@@ -419,7 +417,6 @@
     |=  [kind=?(%add %remove) pax=path who=(set ship)]
     ^-  (list card)
     %-  zing
-    ^-  (list (list card))
     %+  turn
       (chats-of-group pax)
     |=  chat=path
@@ -628,7 +625,11 @@
     ~
   %+  murn
     ^-  (list resource)
-    =-  ~(tap in (~(gut by -) group-path ~))
+    =;  resources
+      %~  tap  in
+      %+  ~(gut by resources)
+        group-path
+      *(set resource)
     .^  (jug path resource)
       %gy
       (scot %p our.bol)
@@ -655,7 +656,11 @@
       [%'~' chat]~
     ~&  [%weird-chat chat]
     ~
-  =-  ~(tap in (~(gut by -) [%chat chat] ~))
+  =;  resources
+    %~  tap  in
+    %+  ~(gut by resources)
+      [%chat chat]
+    *(set group-path)
   .^  (jug resource group-path)
     %gy
     (scot %p our.bol)
