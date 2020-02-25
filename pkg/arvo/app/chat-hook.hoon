@@ -2,18 +2,21 @@
 ::  mirror chat data from foreign to local based on read permissions
 ::  allow sending chat messages to foreign paths based on write perms
 ::
-/-  *permission-store, *chat-hook, *invite-store
+/-  *permission-store, *chat-hook, *invite-store, *metadata-store,
+    *permission-hook, *group-store, *permission-group-hook  ::TMP  for upgrade
 /+  *chat-json, *chat-eval, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
 ::
 +$  versioned-state
-  $%  state-zero
+  $%  state-0
+      state-1
   ==
 ::
-+$  state-zero
-  $:  %0
-      synced=(map path ship)
++$  state-1  [%1 state-base]
++$  state-0  [%0 state-base]
++$  state-base
+  $:  synced=(map path ship)
       invite-created=_|
       allow-history=(map path ?)
   ==
@@ -29,11 +32,11 @@
   $%  [%chat-update chat-update]
   ==
 --
-=|  state-zero
+=|  state-1
 =*  state  -
 ::
-%-  agent:dbug
 %+  verb  |
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  bol=bowl:gall
@@ -51,8 +54,154 @@
     ==
   ++  on-save   !>(state)
   ++  on-load
-    |=  old=vase
-    `this(state !<(state-zero old))
+    |=  =old=vase
+    =/  old  !<(versioned-state old-vase)
+    ?:  ?=(%1 -.old)
+      [~ this(state old)]
+    ::  path structure ugprade logic
+    ::
+    :_  this(state [%1 +.old])
+    %-  zing
+    %+  turn
+      %~  tap  in
+      %^  scry:cc  (set path)
+        %chat-store
+      /keys
+    |^  |=  chat=path
+        ^-  (list card)
+        =/  host=ship  (slav %p (snag 0 chat))
+        =/  newp=permission  (unify-permissions chat)
+        =/  old-group=path  [%chat chat]
+        =/  new-group=path  [%'~' chat]
+        ;:  weld
+          :~  (delete-group host (snoc old-group %read))
+              (delete-group host (snoc old-group %write))
+          ==
+        ::
+          (create-group new-group who.newp)
+          (hookup-group new-group kind.newp)
+          [(record-group new-group chat)]~
+        ::
+          ?.  &(=(our.bol host) ?=(%white kind.newp))  ~
+          (send-invites chat who.newp)
+        ==
+    ::
+    ++  unify-permissions
+      |=  chat=path
+      ^-  permission
+      =/  read=(unit permission)   (get-permission chat %read)
+      =/  write=(unit permission)  (get-permission chat %write)
+      ?.  &(?=(^ read) ?=(^ write))
+        ~&  [%missing-permission chat read=?=(~ read) write=?=(~ write)]
+        [%white [(slav %p (snag 0 chat)) ~ ~]]
+      ?+  [kind.u.read kind.u.write]  !!
+        ::  village: exclusive to writers
+        ::
+        [%white %white]  [%white who.u.write]
+      ::
+        ::  channel: merge blacklists
+        ::
+        [%black %black]  [%black (~(uni in who.u.read) who.u.write)]
+      ::
+        ::  journal: exclusive to writers
+        ::
+        [%black %white]  [%white who.u.write]
+      ::
+        ::  mailbox: exclusive to readers
+        ::
+        [%white %black]  [%white who.u.read]
+      ==
+    ::
+    ++  get-permission
+      |=  [chat=path what=?(%read %write)]
+      %^  scry:cc  (unit permission)
+        %permission-store
+      [%permission %chat (snoc chat what)]
+    ::
+    ++  make-poke
+      |=  [app=term =mark =vase]
+      ^-  card
+      [%pass /on-load/[app]/[mark] %agent [our.bol app] %poke mark vase]
+    ::
+    ++  delete-group
+      |=  [host=ship group=path]
+      ^-  card
+      ::  if we host the group, delete it directly
+      ::
+      ?:  =(our.bol host)
+        %^  make-poke  %group-store
+          %group-action
+        !>  ^-  group-action
+        [%unbundle group]
+      ::  else, just delete the sync in the hook
+      ::
+      %^  make-poke  %permission-hook
+        %permission-hook-action
+      !>  ^-  permission-hook-action
+      [%remove group]
+    ::
+    ++  create-group
+      |=  [group=path who=(set ship)]
+      ^-  (list card)
+      :~  %^  make-poke  %group-store
+            %group-action
+          !>  ^-  group-action
+          [%bundle group]
+        ::
+          %^  make-poke  %group-store
+            %group-action
+          !>  ^-  group-action
+          [%add who group]
+      ==
+    ::
+    ++  hookup-group
+      |=  [group=path =kind]
+      ^-  (list card)
+      :*  %^  make-poke  %permission-group-hook
+            %permission-group-hook-action
+          !>  ^-  permission-group-hook-action
+          [%associate group [group^kind ~ ~]]
+        ::
+          =/  =ship  (slav %p (snag 1 group))
+          ?.  =(our.bol ship)  ~
+          :_  ~
+          %^  make-poke  %permission-hook
+            %permission-hook-action
+          !>  ^-  permission-hook-action
+          [%add-owned group group]
+      ==
+    ::
+    ++  record-group
+      |=  [group=path chat=path]
+      ^-  card
+      =/  =metadata
+        ~|  [%weird-chat-path chat]
+        %*  .  *metadata
+          title         (snag 1 chat)
+          date-created  now.bol
+          creator       (slav %p (snag 0 chat))
+        ==
+      %^  make-poke  %metadata-store
+        %metadata-action
+      !>  ^-  metadata-action
+      [%add group [%chat chat] metadata]
+    ::
+    ++  send-invites
+      |=  [chat=path who=(set ship)]
+      ^-  (list card)
+      %+  murn  ~(tap in who)
+      |=  =ship
+      ^-  (unit card)
+      ?:  =(our.bol ship)  ~
+      %-  some
+      %^  make-poke  %invite-hook
+        %invite-action
+      !>  ^-  invite-action
+      =/  =invite
+        =+  (crip "upgrade {(spud chat)} (please accept in OS1)")
+        [our.bol %chat-hook chat ship -]
+      [%invite /chat (sham chat ship eny.bol) invite]
+    --
   ::
   ++  on-poke
     |=  [=mark =vase]
@@ -142,8 +291,8 @@
     ~
   ?.  =(u.ship our.bol)
     ~
-  ::  scry permissions to check if write is permitted
-  ?.  (permitted-scry [(scot %p src.bol) path.act])
+  ::  check if write is permitted
+  ?.  (is-permitted src.bol path.act)
     ~
   =:  author.envelope.act  src.bol
       when.envelope.act  now.bol
@@ -206,8 +355,8 @@
   ^-  (list card)
   ?>  ?=(^ pax)
   ?>  (~(has by synced) pax)
-  ::  scry permissions to check if read is permitted
-  ?>  (permitted-scry [(scot %p src.bol) pax])
+  ::  check if read is permitted
+  ?>  (is-permitted src.bol pax)
   =/  box  (chat-scry pax)
   ?~  box  !!
   [%give %fact ~ %chat-update !>([%create pax])]~
@@ -224,8 +373,8 @@
   =/  pas  `path`(oust [last 1] `(list @ta)`pax)
   ?>  ?=([* ^] pas)
   ?>  (~(has by synced) pas)
-  ::  scry permissions to check if read is permitted
-  ?>  (permitted-scry [(scot %p src.bol) pas])
+  ::  check if read is permitted
+  ?>  (is-permitted src.bol pas)
   %-  zing
   :~  [%give %fact ~ %chat-update !>([%create pas])]~
       ?.  ?&(?=(^ backlog-start) (~(has by allow-history) pas))  ~
@@ -286,20 +435,24 @@
   ++  handle-permissions
     |=  [kind=?(%add %remove) pax=path who=(set ship)]
     ^-  (list card)
-    ?>  ?=([* *] pax)
-    =/  owner  (~(get by synced) pax)
+    %-  zing
+    %+  turn
+      (chats-of-group pax)
+    |=  chat=path
+    ^-  (list card)
+    =/  owner  (~(get by synced) chat)
     ?~  owner  ~
     ?.  =(u.owner our.bol)  ~
     %-  zing
     %+  turn  ~(tap in who)
     |=  =ship
-    ?:  (permitted-scry [(scot %p ship) pax])
+    ?:  (is-permitted ship chat)
       ?:  ?|(=(kind %remove) =(ship our.bol))  ~
       ::  if ship has just been added to the permitted group,
       ::  send them an invite
-      ~[(send-invite pax ship)]
+      ~[(send-invite chat ship)]
     ::  if ship is not permitted, kick their subscription
-    [%give %kick [%mailbox pax]~ `ship]~
+    [%give %kick [%mailbox chat]~ `ship]~
   ::
   ++  send-invite
     |=  [=path =ship]
@@ -464,19 +617,96 @@
 ++  chat-scry
   |=  pax=path
   ^-  (unit mailbox)
-  =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
-  .^((unit mailbox) %gx pax)
+  %^  scry  (unit mailbox)
+    %chat-store
+  [%mailbox pax]
 ::
 ++  invite-scry
   |=  uid=serial
   ^-  (unit invite)
-  =/  pax  /=invite-store/(scot %da now.bol)/invite/chat/(scot %uv uid)/noun
-  .^((unit invite) %gx pax)
+  %^  scry  (unit invite)
+    %invite-store
+  /invite/chat/(scot %uv uid)
 ::
-++  permitted-scry
-  |=  pax=path
+++  chats-of-group
+  |=  =group-path
+  ^-  (list path)
+  ::  if metadata-store isn't running yet, we're still in the upgrade ota phase.
+  ::  we can't get chats from the metadata-store, but can make assumptions
+  ::  about group path shape, and the chat that would match it.
+  ::TODO  remove me at some point.
+  ::
+  ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)
+    ?:  ?=([%'~' @ ^] group-path)
+      ~&  [%assuming-ported-legacy-group group-path]
+      [t.group-path]~
+    ~&  [%weird-group group-path]
+    ~
+  %+  murn
+    ^-  (list resource)
+    =;  resources
+      %~  tap  in
+      %+  ~(gut by resources)
+        group-path
+      *(set resource)
+    .^  (jug path resource)
+      %gy
+      (scot %p our.bol)
+      %metadata-store
+      (scot %da now.bol)
+      /group-indices
+    ==
+  |=  resource
+  ^-  (unit path)
+  ?.  =(%chat app-name)  ~
+  `app-path
+::
+++  groups-of-chat
+  |=  chat=path
+  ^-  (list group-path)
+  ::  if metadata-store isn't running yet, we're still in the upgrade ota phase.
+  ::  we can't get groups from the metadata-store, but can make assumptions
+  ::  about chat path shape, and the chat that would match it.
+  ::TODO  remove me at some point.
+  ::
+  ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)
+    ?:  ?=([@ ^] chat)
+      ~&  [%assuming-ported-legacy-chat chat]
+      [%'~' chat]~
+    ~&  [%weird-chat chat]
+    ~
+  =;  resources
+    %~  tap  in
+    %+  ~(gut by resources)
+      [%chat chat]
+    *(set group-path)
+  .^  (jug resource group-path)
+    %gy
+    (scot %p our.bol)
+    %metadata-store
+    (scot %da now.bol)
+    /resource-indices
+  ==
+::
+::NOTE  this assumes permission paths match group paths
+++  is-permitted
+  |=  [who=ship chat=path]
   ^-  ?
-  .^(? %gx ;:(weld /=permission-store/(scot %da now.bol)/permitted pax /noun))
+  %+  lien  (groups-of-chat chat)
+  |=  =group-path
+  %^  scry  ?
+    %permission-store
+  [%permitted (scot %p who) group-path]
+::
+++  scry
+  |*  [=mold app=term =path]
+  .^  mold
+    %gx
+    (scot %p our.bol)
+    app
+    (scot %da now.bol)
+    (snoc `^path`path %noun)
+  ==
 ::
 ++  pull-wire
   |=  pax=path

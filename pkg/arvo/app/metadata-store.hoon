@@ -22,7 +22,7 @@
 ::  /group/%group-path                             associations for group
 ::
 /-  *metadata-store
-/+  default-agent
+/+  default-agent, dbug
 |%
 +$  card  card:agent:gall
 ::
@@ -41,6 +41,7 @@
 ::
 =|  state-zero
 =*  state  -
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  =bowl:gall
