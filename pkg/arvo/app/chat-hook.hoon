@@ -82,7 +82,7 @@
           (hookup-group new-group kind.newp)
           [(record-group new-group chat)]~
         ::
-          ?.  =(our.bol host)  ~
+          ?.  &(=(our.bol host) ?=(%white kind.newp))  ~
           (send-invites chat who.newp)
         ==
     ::
