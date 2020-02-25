@@ -411,53 +411,47 @@ valFun = \case
   VBol b   -> Fun 2 (Bol b) mempty
   VFun f   -> f
 
-execJet :: Jet -> Array Val -> IO Val
-{-# INLINE execJet #-}
-execJet !j !xs = do
-  regs <- case jRegs j of
-    0 -> pure emptyRegisterSet
-    n -> newArray n VUni
 
-  handle (\(TypeError x) -> runSlow x) $ execJetBody j xs regs
+-- Jet Invokation --------------------------------------------------------------
 
- where
-  runSlow why = do
-    putStrLn ("FALLBACK: " <> why)
-    callFunFull (valFun $ jBody j) xs
+mkRegs :: Int -> IO (IOArray Val)
+{-# INLINE mkRegs #-}
+mkRegs 0 = pure emptyRegisterSet
+mkRegs n = newArray n VUni
 
-execJet2 :: Jet -> Val -> Val -> IO Val
-{-# INLINE execJet2 #-}
-execJet2 !j !x !y = do
-  handle (\(TypeError x) -> runSlow x) $ execJetBody2 j x y
- where
-  runSlow why = do
-    putStrLn ("FALLBACK: " <> why)
-    callFunFull (valFun $ jBody j) (fromList [x, y])
+withFallback :: Jet -> Array Val -> IO Val -> IO Val
+{-# INLINE withFallback #-}
+withFallback j args act = catch act $ \(TypeError why) -> do
+  putStrLn ("FALLBACK: " <> why)
+  callFunFull (valFun $ jBody j) args
 
 execJet1 :: Jet -> Val -> IO Val
-{-# INLINE execJet1 #-}
 execJet1 !j !x = do
-  handle (\(TypeError x) -> runSlow x) $ execJetBody1 j x
+  regs <- mkRegs (jRegs j)
+  withFallback j args $ execJetBody j ref (readArray regs) (writeArray regs)
  where
-  runSlow why = do
-    putStrLn ("FALLBACK: " <> why)
-    callFunFull (valFun $ jBody j) (fromList [x])
+  ref 0 = pure x
+  ref n = throwIO (BadRef j n)
+  args = fromList [x]
+
+execJet2 :: Jet -> Val -> Val -> IO Val
+execJet2 !j !x !y = do
+  regs <- mkRegs (jRegs j)
+  withFallback j args $ execJetBody j ref (readArray regs) (writeArray regs)
+ where
+  ref 0 = pure x
+  ref 1 = pure y
+  ref n = throwIO (BadRef j n)
+  args = fromList [x, y]
+
+execJetN :: Jet -> Array Val -> IO Val
+execJetN !j !xs = do
+  regs <- mkRegs (jRegs j)
+  withFallback j xs $ execJetBody j ref (readArray regs) (writeArray regs)
+  where ref i = pure (indexArray xs i)
 
 
 --------------------------------------------------------------------------------
-
-jetN :: (Exp -> IO Val) -> Jet -> Array Exp -> IO Val
-{-# INLINE jetN #-}
-jetN go j xs = do
-  xs <- traverse go xs
-  execJet j xs
-
-jet2 :: (Exp -> IO Val) -> Jet -> Exp -> Exp -> IO Val
-{-# INLINE jet2 #-}
-jet2 go j x y = do
-  x <- go x
-  y <- go y
-  execJet2 j x y
 
 iff :: (Exp -> IO Val) -> Exp -> Exp -> Exp -> IO Val
 {-# INLINE iff #-}
@@ -500,23 +494,63 @@ fec go x = go x >>= \case
   VNat n -> pure $ VNat (n - 1)
   _      -> throwIO (TypeError "fec-not-nat")
 
+add :: (Exp -> IO Val) -> Exp -> Exp -> IO Val
+{-# INLINE add #-}
+add go x y = (,) <$> go x <*> go y >>= \case
+  (VNat x, VNat y) -> pure (VNat (x + y))
+  (_     , _     ) -> throwIO (TypeError "add-not-nat")
+
+mul :: (Exp -> IO Val) -> Exp -> Exp -> IO Val
+{-# INLINE mul #-}
+mul go x y = (,) <$> go x <*> go y >>= \case
+  (VNat x, VNat y) -> pure (VNat (x * y))
+  (_     , _     ) -> throwIO (TypeError "mul-not-nat")
+
+sub :: (Exp -> IO Val) -> Exp -> Exp -> IO Val
+{-# INLINE sub #-}
+sub go x y = (,) <$> go x <*> go y >>= \case
+  (VNat x, VNat y) | y > x -> pure (VLef VUni)
+  (VNat x, VNat y)         -> pure (VRit (VNat (x - y)))
+  (_     , _     )         -> throwIO (TypeError "sub-not-nat")
+
+zer :: (Exp -> IO Val) -> Exp -> IO Val
+{-# INLINE zer #-}
+zer go x = go x >>= \case
+  VNat 0 -> pure (VBol True)
+  VNat n -> pure (VBol False)
+  xv     -> throwIO (TypeError ("zer-not-nat: " <> tshow xv))
+
+eql :: Val -> Val -> IO Val
+{-# INLINE eql #-}
+eql (VNat x) (VNat y) = pure (VBol (x == y))
+eql _        _        = throwIO (TypeError "eql-not-nat")
+
+car :: Val -> IO Val
+car (VCon x _) = pure x
+car _          = throwIO (TypeError "car-not-con")
+
+cdr :: Val -> IO Val
+cdr (VCon _ y) = pure y
+cdr _          = throwIO (TypeError "cdr-not-con")
+
 --------------------------------------------------------------------------------
 
-
-execJetBody :: Jet -> Array Val -> IOArray Val -> IO Val
+execJetBody
+  :: Jet
+  -> (Int -> IO Val)
+  -> (Int -> IO Val)
+  -> (Int -> Val -> IO ())
+  -> IO Val
 {-# INLINE execJetBody #-}
-execJetBody !j !xs !regs = go (jFast j)
+execJetBody !j !ref !reg !setReg = go (jFast j)
  where
-  setReg :: Int -> Val -> IO ()
-  setReg i x = writeArray regs i x
-
   go :: Exp -> IO Val
   go = \case
     VAL  v      -> pure v
-    REF  i      -> pure $ indexArray xs i
+    REF  i      -> ref i
     REC1 x      -> join (execJet1 j <$> go x)
     REC2 x y    -> join (execJet2 j <$> go x <*> go y)
-    RECN xs     -> join (execJet j <$> traverse go xs)
+    RECN xs     -> join (execJetN j <$> traverse go xs)
     SLF         -> pure (jetVal j)
     IFF c t e   -> iff go c t e
     CAS i x l r -> cas go setReg i x l r
@@ -527,52 +561,27 @@ execJetBody !j !xs !regs = go (jFast j)
     FEC x       -> fec go x
     LEF x       -> VLef <$> go x
     RIT x       -> VRit <$> go x
-    JET2 j x y  -> jet2 go j x y
-    JETN j xs   -> jetN go j xs
+    JET2 j x y  -> join (execJet2 j <$> go x <*> go y)
+    JETN j xs   -> join (execJetN j <$> traverse go xs)
+    ADD  x y    -> add go x y
+    MUL  x y    -> mul go x y
+    SUB  x y    -> sub go x y
+    ZER x       -> zer go x
+    EQL x y     -> join (eql <$> go x <*> go y)
+    CON x y     -> VCon <$> go x <*> go y
+    CAR x       -> join (car <$> go x)
+    CDR x       -> join (cdr <$> go x)
+    CLON f xs   -> cloN f <$> traverse go xs
+    CALN f xs   -> join (callVal <$> go f <*> traverse go xs)
 
-    ADD  x y    -> (,) <$> go x <*> go y >>= \case
-      (VNat x, VNat y) -> pure (VNat (x + y))
-      (_     , _     ) -> throwIO (TypeError "add-not-nat")
-
-    MUL x y -> (,) <$> go x <*> go y >>= \case
-      (VNat x, VNat y) -> pure (VNat (x * y))
-      (_     , _     ) -> throwIO (TypeError "mul-not-nat")
-
-    SUB x y -> (,) <$> go x <*> go y >>= \case
-      (VNat x, VNat y) | y > x -> pure (VLef VUni)
-      (VNat x, VNat y)         -> pure (VRit (VNat (x - y)))
-      (_     , _     )         -> throwIO (TypeError "sub-not-nat")
-
-    ZER x -> go x >>= \case
-      VNat 0 -> pure (VBol True)
-      VNat n -> pure (VBol False)
-      xv     -> throwIO (TypeError ("zer-not-nat: " <> tshow xv))
-
-    EQL x y -> (,) <$> go x <*> go y >>= \case
-      (VNat x, VNat y) -> pure (VBol (x == y))
-      (_     , _     ) -> throwIO (TypeError "eql-not-nat")
-
-    CON x y -> VCon <$> go x <*> go y
-
-    CAR x   -> go x >>= \case
-      VCon x _ -> pure x
-      _        -> throwIO (TypeError "car-not-con")
-
-    CDR x -> go x >>= \case
-      VCon _ y -> pure y
-      _        -> throwIO (TypeError "cdr-not-con")
-
-    CLON Fun {..} xs -> do
-      xs <- traverse go xs
-      let rem :: Int = fNeed - sizeofArray xs
-      pure $ VFun $ Fun rem fHead (fArgs <> xs)
-
-    CALN f xs -> do
-      fv <- go f
-      xs <- traverse go xs
-      callVal fv xs
+cloN :: Fun -> Array Val -> Val
+{-# INLINE cloN #-}
+cloN (Fun {..}) xs = VFun $ Fun rem fHead $ fArgs <> xs
+ where
+  rem = fNeed - sizeofArray xs
 
 callVal :: Val -> Array Val -> IO Val
+{-# INLINE callVal #-}
 callVal f xs =
   let Fun {..} = valFun f
   in  execFun (Fun (fNeed - sizeofArray xs) fHead (fArgs <> xs))
@@ -582,144 +591,6 @@ callVal f xs =
 
 jetVal :: Jet -> Val
 jetVal j = VFun $ Fun (jArgs j) (Jut j) mempty
-
-execJetBody2 :: Jet -> Val -> Val -> IO Val
-{-# INLINE execJetBody2 #-}
-execJetBody2 !j !x !y = go (jFast j)
- where
-  go :: Exp -> IO Val
-  go = \case
-    VAL  v      -> pure v
-    REF  0      -> pure x
-    REF  1      -> pure y
-    REF  n      -> throwIO (BadRef j n)
-    REC1 x      -> join (execJet1 j <$> go x)
-    REC2 x y    -> join (execJet2 j <$> go x <*> go y)
-    RECN xs     -> join (execJet j <$> traverse go xs)
-    SLF         -> pure (jetVal j)
-    IFF c t e   -> iff go c t e
-    CAS i x l r -> cas go (error "TODO") i x l r
-    SEQ x y     -> go x >> go y
-    DED x       -> throwIO . Crash =<< go x
-    INC x       -> inc go x
-    DEC x       -> dec go x
-    FEC x       -> fec go x
-    JETN j xs   -> jetN go j xs
-    JET2 j x y  -> jet2 go j x y
-
-    ADD x y     -> (,) <$> go x <*> go y >>= \case
-      (VNat x, VNat y) -> pure (VNat (x + y))
-      (_     , _     ) -> throwIO (TypeError "add-not-nat")
-
-    MUL x y -> (,) <$> go x <*> go y >>= \case
-      (VNat x, VNat y) -> pure (VNat (x * y))
-      (_     , _     ) -> throwIO (TypeError "mul-not-nat")
-
-    SUB x y -> (,) <$> go x <*> go y >>= \case
-      (VNat x, VNat y) | y > x -> pure (VLef VUni)
-      (VNat x, VNat y)         -> pure (VRit (VNat (x - y)))
-      (_     , _     )         -> throwIO (TypeError "sub-not-nat")
-
-    ZER x -> go x >>= \case
-      VNat 0 -> pure (VBol True)
-      VNat n -> pure (VBol False)
-      xv     -> throwIO (TypeError ("zer-not-nat: " <> tshow xv))
-
-    EQL x y -> (,) <$> go x <*> go y >>= \case
-      (VNat x, VNat y) -> pure (VBol (x == y))
-      (_     , _     ) -> throwIO (TypeError "eql-not-nat")
-
-
-    CON x y -> VCon <$> go x <*> go y
-
-    CAR x   -> go x >>= \case
-      VCon x _ -> pure x
-      _        -> throwIO (TypeError "car-not-con")
-
-    CDR x -> go x >>= \case
-      VCon _ y -> pure y
-      _        -> throwIO (TypeError "cdr-not-con")
-
-    LEF x            -> VLef <$> go x
-    RIT x            -> VRit <$> go x
-
-    CLON Fun {..} xs -> do
-      xs <- traverse go xs
-      pure $ VFun $ Fun (fNeed - sizeofArray xs) fHead (fArgs <> xs)
-
-    CALN f xs -> do
-      fv <- go f
-      xs <- traverse go xs
-      callVal fv xs
-
-
-execJetBody1 :: Jet -> Val -> IO Val
-{-# INLINE execJetBody1 #-}
-execJetBody1 !j !x = go (jFast j)
- where
-  go :: Exp -> IO Val
-  go = \case
-    VAL  v      -> pure v
-    REF  0      -> pure x
-    REF  n      -> throwIO (BadRef j n)
-    REC1 x      -> join (execJet1 j <$> go x)
-    REC2 x y    -> join (execJet2 j <$> go x <*> go y)
-    RECN xs     -> join (execJet j <$> traverse go xs)
-    SLF         -> pure (jetVal j)
-    IFF c t e   -> iff go c t e
-    CAS i x l r -> cas go (error "TODO") i x l r
-    SEQ x y     -> go x >> go y
-    DED x       -> throwIO . Crash =<< go x
-    INC x       -> inc go x
-    DEC x       -> dec go x
-    FEC x       -> fec go x
-    JETN j xs   -> jetN go j xs
-    JET2 j x y  -> jet2 go j x y
-
-    ADD x y     -> (,) <$> go x <*> go y >>= \case
-      (VNat x, VNat y) -> pure (VNat (x + y))
-      (_     , _     ) -> throwIO (TypeError "add-not-nat")
-
-    MUL x y -> (,) <$> go x <*> go y >>= \case
-      (VNat x, VNat y) -> pure (VNat (x * y))
-      (_     , _     ) -> throwIO (TypeError "mul-not-nat")
-
-    SUB x y -> (,) <$> go x <*> go y >>= \case
-      (VNat x, VNat y) | y > x -> pure (VLef VUni)
-      (VNat x, VNat y)         -> pure (VRit (VNat (x - y)))
-      (_     , _     )         -> throwIO (TypeError "sub-not-nat")
-
-    ZER x -> go x >>= \case
-      VNat 0 -> pure (VBol True)
-      VNat n -> pure (VBol False)
-      xv     -> throwIO (TypeError ("zer-not-nat: " <> tshow xv))
-
-    EQL x y -> (,) <$> go x <*> go y >>= \case
-      (VNat x, VNat y) -> pure (VBol (x == y))
-      (_     , _     ) -> throwIO (TypeError "eql-not-nat")
-
-
-    CON x y -> VCon <$> go x <*> go y
-
-    CAR x   -> go x >>= \case
-      VCon x _ -> pure x
-      _        -> throwIO (TypeError "car-not-con")
-
-    CDR x -> go x >>= \case
-      VCon _ y -> pure y
-      _        -> throwIO (TypeError "cdr-not-con")
-
-    LEF x            -> VLef <$> go x
-    RIT x            -> VRit <$> go x
-
-    CLON Fun {..} xs -> do
-      xs <- traverse go xs
-      pure $ VFun $ Fun (fNeed - sizeofArray xs) fHead (fArgs <> xs)
-
-    CALN f xs -> do
-      fv <- go f
-      xs <- traverse go xs
-      callVal fv xs
 
 
 -- Trivial Example -------------------------------------------------------------
@@ -734,7 +605,7 @@ exampleJet = Jet { jArgs = 2
   where exp = ADD (REF 0) (ADD (REF 1) (REF 1))
 
 example :: IO Val
-example = execJet exampleJet (fromList [VNat 3, VNat 4])
+example = execJet2 exampleJet (VNat 3) (VNat 4)
 
 
 -- Ackermann -------------------------------------------------------------------

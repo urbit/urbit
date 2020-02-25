@@ -90,9 +90,9 @@ normalize ur = do
 --
 reduce ∷ Ur → Maybe Ur
 reduce = \case
+    K:@x:@y                   → Just x
     (reduce -> Just xv) :@ y  → Just (xv :@ y)
     x :@ (reduce -> Just yv)  → Just (x :@ yv)
-    K:@x:@y                   → Just x
     S:@x:@y:@z                → Just (x:@z:@(y:@z))
     D:@x                      → Just (jam x)
     J:@J                      → Just (Jn 2)
