@@ -512,19 +512,22 @@ export class ContactCard extends Component {
                   this.editToggle();
                 }
               }}
-              className={`ml3 mt2 mb2 f9 pa1 ba br2 pointer b--black ` + ourOpt}>
+              className={`ml3 mt2 mb2 f9 pa1 pointer` + ourOpt}>
               {editInfoText}
             </button>
-            <button className={`ml3 mt2 mb2 f9 pa1 ba br2 b--black ` + localOpt}>
+            <button className={`ml3 mt2 mb2 f9 pa1 pointer` + localOpt}>
               Share
             </button>
           </div>
           <button
             className={
-              `mh3 mt2 mb2 f9 pa1 ba red2 br2 b--red2 pointer ` + adminOpt
+              `pl4 mt4 mb4 f9 red2 pointer ` + adminOpt
             }
             onClick={this.removeFromGroup}>
-            Remove
+            {(
+              props.ship === window.ship && props.path.includes(window.ship)
+                ? "Delete" : "Remove"
+            )}
           </button>
         </div>
         <div className="h-100 w-100 overflow-x-hidden pb8">{card}</div>
