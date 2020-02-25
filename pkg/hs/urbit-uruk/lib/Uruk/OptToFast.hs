@@ -55,37 +55,39 @@ compile arity = go
   rec xs =
     let len = length xs
     in  case (compare len arity, xs) of
-          (EQ, [x])    -> F.REC1 (go x)
-          (EQ, [x, y]) -> F.REC2 (go x) (go y)
-          (EQ, xs    ) -> F.RECN (goArgs xs)
-          (LT, xs    ) -> F.CALN F.SLF (goArgs xs) -- TODO
-          (GT, xs    ) -> F.CALN F.SLF (goArgs xs) -- TODO
+          (EQ, [x]         ) -> F.REC1 (go x)
+          (EQ, [x, y]      ) -> F.REC2 (go x) (go y)
+          (EQ, [x, y, z]   ) -> F.REC3 (go x) (go y) (go z)
+          (EQ, [x, y, z, p]) -> F.REC4 (go x) (go y) (go z) (go p)
+          (EQ, xs          ) -> F.RECN (goArgs xs)
+          (LT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
+          (GT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
 
-  kal O.RSeq [x,y]  = F.SEQ (go x) (go y)
-  kal O.RDed [x]    = F.DED (go x)
+  kal O.RSeq     [x, y] = F.SEQ (go x) (go y)
+  kal O.RDed     [x]    = F.DED (go x)
 
-  kal O.RUni []     = F.VAL F.VUni
+  kal O.RUni     []     = F.VAL F.VUni
 
-  kal O.RCon [x,y]  = con (go x) (go y)
-  kal O.RCar [x]    = F.CAR (go x)
-  kal O.RCdr [x]    = F.CDR (go x)
+  kal O.RCon     [x, y] = con (go x) (go y)
+  kal O.RCar     [x]    = F.CAR (go x)
+  kal O.RCdr     [x]    = F.CDR (go x)
 
-  kal O.RLef [x]    = lef (go x)
-  kal O.RRit [x]    = rit (go x)
+  kal O.RLef     [x]    = lef (go x)
+  kal O.RRit     [x]    = rit (go x)
 
-  kal (O.RNat n) []   = F.VAL (F.VNat n)
-  kal (O.RBol b) []   = F.VAL (F.VBol b)
+  kal (O.RNat n) []     = F.VAL (F.VNat n)
+  kal (O.RBol b) []     = F.VAL (F.VBol b)
 
-  kal O.RInc [x]    = F.INC (go x)
-  kal O.RDec [x]    = F.DEC (go x)
-  kal O.RFec [x]    = F.FEC (go x)
-  kal O.RZer [x]    = F.ZER (go x)
-  kal O.REql [x,y]  = F.EQL (go x) (go y)
-  kal O.RAdd [x, y] = F.ADD (go x) (go y)
-  kal O.RSub [x, y] = F.SUB (go x) (go y)
-  kal O.RMul [x, y] = F.MUL (go x) (go y)
+  kal O.RInc     [x]    = F.INC (go x)
+  kal O.RDec     [x]    = F.DEC (go x)
+  kal O.RFec     [x]    = F.FEC (go x)
+  kal O.RZer     [x]    = F.ZER (go x)
+  kal O.REql     [x, y] = F.EQL (go x) (go y)
+  kal O.RAdd     [x, y] = F.ADD (go x) (go y)
+  kal O.RSub     [x, y] = F.SUB (go x) (go y)
+  kal O.RMul     [x, y] = F.MUL (go x) (go y)
 
-  kal f      xs     = F.CALN (rawExp f) (goArgs xs)
+  kal f          xs     = F.CALN (rawExp f) (goArgs xs)
 
   con (F.VAL x) (F.VAL y) = F.VAL (F.VCon x y)
   con x         y         = F.CON x y
