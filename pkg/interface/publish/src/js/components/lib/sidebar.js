@@ -162,26 +162,26 @@ export class Sidebar extends Component {
             options={[
               {
                 cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
-                txt: "Oldest Notebooks First",
+                txt: "Oldest",
                 action: () => {this.setState({sort: "oldest"})}
               },
               {
                 cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
-                txt: "Newest Notebooks First",
+                txt: "Newest",
                 action: () => {this.setState({sort: "newest"})}
               },
               {
                 cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
-                txt: "Alphabetical A -> Z",
+                txt: "A -> Z",
                 action: () => {this.setState({sort: "alphabetical"})}
               },
               {
                 cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
-                txt: "Alphabetical Z -> A",
+                txt: "Z -> A",
                 action: () => {this.setState({sort: "reverseAlphabetical"})}
               }
             ]}
-            buttonText="Sort Notebooks"
+            buttonText="Sort By"
           />
           </div>
         </div>
