@@ -14,9 +14,24 @@
 ::
 =/  test-pit=vase  !>(..zuse)
 =/  ford-gate  (ford-vane test-pit)
-::  load %reef into .ford-gate so we don't have to rerun it on each test
+::  prime %reef cache in .ford-gate so we don't have to rebuild the kernel
 ::
-=<  ~&  %test-reef-loading
+=<  ~&  %test-reef-priming
+    =/  co  (by-clock:contain compiler-cache-key:ford-gate build-result)
+    ::
+    =.  compiler-cache.state.ax.ford-gate
+      %+  ~(put co compiler-cache.state.ax.ford-gate)
+        [%ride (rain /~nul/home/hoon/hoon/sys hoon-scry) !>(~)]
+      [%success %ride !>(ride)]
+    ::  we'd have to build arvo, so don't bother trying to cache it
+    ::
+    =.  compiler-cache.state.ax.ford-gate
+      %+  ~(put co compiler-cache.state.ax.ford-gate)
+        [%ride (rain /~nul/home/hoon/zuse/sys zuse-scry) !>(..is)]
+      [%success %ride !>(..zuse)]
+    ::  run %reef now that we've cached the hard parts
+    ::
+    ~&  %test-reef-loading
     =.  ford-gate
       =-  ?>(?=(~ -<) ->)
       %:  ford-call-with-comparator
