@@ -6547,13 +6547,6 @@
                  leaf+"<[{(ud p.p)} {(ud q.p)}].[{(ud p.q)} {(ud q.q)}]>"
   ==         ==
 ::
-++  mush                                                ::  sane name to leaf
-  |=  val/*
-  ^-  tank
-  :+  %rose
-    [['/' ~] ['/' ~] ~]
-  (turn ((list @ta) val) |=(a/@ta [%leaf (trip a)]))
-::
 ++  mong
   |=  {{gat/* sam/*} gul/$-({* *} (unit (unit)))}
   ^-  toon
