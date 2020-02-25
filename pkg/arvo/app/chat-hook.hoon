@@ -81,6 +81,9 @@
           (create-group new-group who.newp)
           (hookup-group new-group kind.newp)
           [(record-group new-group chat)]~
+        ::
+          ?.  =(our.bol host)  ~
+          (send-invites chat who.newp)
         ==
     ::
     ++  unify-permissions
@@ -182,6 +185,22 @@
         %metadata-action
       !>  ^-  metadata-action
       [%add group [%chat chat] metadata]
+    ::
+    ++  send-invites
+      |=  [chat=path who=(set ship)]
+      ^-  (list card)
+      %+  murn  ~(tap in who)
+      |=  =ship
+      ^-  (unit card)
+      ?:  =(our.bol ship)  ~
+      %-  some
+      %^  make-poke  %invite-hook
+        %invite-action
+      !>  ^-  invite-action
+      =/  =invite
+        =+  (crip "upgrade {(spud chat)} (please accept in OS1)")
+        [our.bol %chat-hook chat ship -]
+      [%invite /chat (sham chat ship eny.bol) invite]
     --
   ::
   ++  on-poke
