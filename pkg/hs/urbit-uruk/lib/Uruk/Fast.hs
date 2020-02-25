@@ -54,12 +54,16 @@ data Raw = Raw !Pri ![Raw]
 jamRaw :: Raw -> Val
 jamRaw = VNat . Atom.bytesAtom . flat
 
+
+{-
+    Note that it's safe for `app` to simply append arguments without
+    simplification because we take a `Val` as an argument, which is
+    guaranteed to already be in normal form.
+-}
 toRaw :: Val -> Raw
 toRaw = valFun >>> \case
-  Fun _ f xs -> app (nodeRaw f) (GHC.Exts.toList $ toRaw <$> xs)
+  Fun _ f xs -> app (nodeRaw f) $ GHC.Exts.toList $ fmap toRaw xs
  where
-  --  Doesn't need to be simplified because input is already fully
-  --  evaluated.
   app :: Raw -> [Raw] -> Raw
   app (Raw f xs) mor = Raw f (xs <> mor)
 
@@ -158,14 +162,16 @@ data Val
 data Exp
   = VAL !Val                      --  Constant Value
   | REF !Int                      --  Stack Reference
+  | REG !Int                      --  Register Reference
+  | SLF                           --  Self Reference
+
+  | IFF !Exp !Exp !Exp            --  If-Then-Else
+  | CAS !Int !Exp !Exp !Exp       --  Pattern Match
   | REC1 !Exp                     --  Recursive Call
   | REC2 !Exp !Exp                --  Recursive Call
   | REC3 !Exp !Exp !Exp           --  Recursive Call
   | REC4 !Exp !Exp !Exp !Exp      --  Recursive Call
   | RECN !(Array Exp)             --  Recursive Call
-  | SLF                           --  Self Reference
-  | IFF !Exp !Exp !Exp            --  If-Then-Else
-  | CAS !Int !Exp !Exp !Exp       --  Pattern Match
 
   | SEQ !Exp !Exp                 --  Evaluate head, return tail
   | DED !Exp                      --  Evaluate argument, then crash.
@@ -266,13 +272,17 @@ valFun = \case
 
 -- Jet Invokation --------------------------------------------------------------
 
-emptyRegisterSet :: IOArray Val
-emptyRegisterSet = unsafePerformIO (newArray 0 VUni)
-
-mkRegs :: Int -> IO (IOArray Val)
+mkRegs :: Int -> IO (Int -> IO Val, Int -> Val -> IO ())
 {-# INLINE mkRegs #-}
-mkRegs 0 = pure emptyRegisterSet
-mkRegs n = newArray n VUni
+mkRegs 0 = pure (error "no-registers", error "no-registers")
+mkRegs 1 = do
+  reg <- newIORef VUni
+  let read _  = readIORef reg
+  let write _ = writeIORef reg
+  pure (read, write)
+mkRegs n = do
+  regs <- newArray n VUni
+  pure (readArray regs, writeArray regs)
 
 withFallback :: Jet -> Array Val -> IO Val -> IO Val
 {-# INLINE withFallback #-}
@@ -282,51 +292,51 @@ withFallback j args act = catch act $ \(TypeError why) -> do
 
 execJet1 :: Jet -> Val -> IO Val
 execJet1 !j !x = do
-  regs <- mkRegs (jRegs j)
-  withFallback j args $ execJetBody j ref (readArray regs) (writeArray regs)
- where
-  ref 0 = pure x
-  ref n = throwIO (BadRef j n)
-  args = fromList [x]
+  (reg, setReg) <- mkRegs (jRegs j)
+  let args = fromList [x]
+  let refr = \case
+        0 -> pure x
+        n -> throwIO (BadRef j n)
+  withFallback j args $ execJetBody j refr reg setReg
 
 execJet2 :: Jet -> Val -> Val -> IO Val
 execJet2 !j !x !y = do
-  regs <- mkRegs (jRegs j)
-  withFallback j args $ execJetBody j ref (readArray regs) (writeArray regs)
- where
-  ref 0 = pure x
-  ref 1 = pure y
-  ref n = throwIO (BadRef j n)
-  args = fromList [x, y]
+  (reg, setReg) <- mkRegs (jRegs j)
+  let args = fromList [x, y]
+  let refr = \case
+        0 -> pure x
+        1 -> pure y
+        n -> throwIO (BadRef j n)
+  withFallback j args $ execJetBody j refr reg setReg
 
 execJet3 :: Jet -> Val -> Val -> Val -> IO Val
 execJet3 !j !x !y !z = do
-  regs <- mkRegs (jRegs j)
-  withFallback j args $ execJetBody j ref (readArray regs) (writeArray regs)
- where
-  ref 0 = pure x
-  ref 1 = pure y
-  ref 2 = pure z
-  ref n = throwIO (BadRef j n)
-  args = fromList [x, y, z]
+  (reg, setReg) <- mkRegs (jRegs j)
+  let args = fromList [x, y, z]
+      refr = \case
+        0 -> pure x
+        1 -> pure y
+        2 -> pure z
+        n -> throwIO (BadRef j n)
+  withFallback j args $ execJetBody j refr reg setReg
 
 execJet4 :: Jet -> Val -> Val -> Val -> Val -> IO Val
 execJet4 !j !x !y !z !p = do
-  regs <- mkRegs (jRegs j)
-  withFallback j args $ execJetBody j ref (readArray regs) (writeArray regs)
- where
-  ref 0 = pure x
-  ref 1 = pure y
-  ref 2 = pure z
-  ref 3 = pure p
-  ref n = throwIO (BadRef j n)
-  args = fromList [x, y, z, p]
+  (reg, setReg) <- mkRegs (jRegs j)
+  let args = fromList [x, y, z, p]
+  let refr = \case
+        0 -> pure x
+        1 -> pure y
+        2 -> pure z
+        3 -> pure p
+        n -> throwIO (BadRef j n)
+  withFallback j args $ execJetBody j refr reg setReg
 
 execJetN :: Jet -> Array Val -> IO Val
 execJetN !j !xs = do
-  regs <- mkRegs (jRegs j)
-  withFallback j xs $ execJetBody j ref (readArray regs) (writeArray regs)
-  where ref i = pure (indexArray xs i)
+  (reg, setReg) <- mkRegs (jRegs j)
+  let refr = pure . indexArray xs
+  withFallback j xs $ execJetBody j refr reg setReg
 
 
 -- Primitive Implementation ----------------------------------------------------
@@ -415,6 +425,7 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
   go = \case
     VAL  v         -> pure v
     REF  i         -> ref i
+    REG  i         -> reg i
     REC1 x         -> join (execJet1 j <$> go x)
     REC2 x y       -> join (execJet2 j <$> go x <*> go y)
     REC3 x y z     -> join (execJet3 j <$> go x <*> go y <*> go z)
@@ -426,8 +437,6 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     INC x          -> join (inc <$> go x)
     DEC x          -> join (dec <$> go x)
     FEC x          -> join (fec <$> go x)
-    LEF x          -> VLef <$> go x
-    RIT x          -> VRit <$> go x
     JET1 j x       -> join (execJet1 j <$> go x)
     JET2 j x y     -> join (execJet2 j <$> go x <*> go y)
     JET3 j x y z   -> join (execJet3 j <$> go x <*> go y <*> go z)
@@ -438,11 +447,14 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     SUB  x y       -> join (sub <$> go x <*> go y)
     ZER x          -> join (zer <$> go x)
     EQL x y        -> join (eql <$> go x <*> go y)
-    CON x y        -> VCon <$> go x <*> go y
     CAR x          -> join (car <$> go x)
     CDR x          -> join (cdr <$> go x)
     CLON f xs      -> cloN f <$> traverse go xs
     CALN f xs      -> join (callVal <$> go f <*> traverse go xs)
+
+    LEF x          -> VLef <$> go x
+    RIT x          -> VRit <$> go x
+    CON x y        -> VCon <$> go x <*> go y
 
     IFF c t e -> go c >>= \case
       VBol True  -> go t
