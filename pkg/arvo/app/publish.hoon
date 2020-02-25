@@ -94,7 +94,6 @@
     ?:  ?=(%& -.old-state)
       [~ this(state p.old-state)]
     =/  zero  !<(state-zero old)
-    ::  unsubscribe from all foreign notebooks
     ::  kill all ford builds
     ::  flush all state
     ::  detect files in /web/publish
@@ -129,18 +128,10 @@
     :_  this(state [%1 new-state])
     ;:  weld
       kill-builds
-      leave-subs
       kick-cards
       init-cards
       (move-files old-subs)
     ==
-    ::
-    ++  leave-subs
-      ^-  (list card)
-      %+  turn  ~(tap by wex.bol)
-      |=  [[wir=wire who=@p @] ? path]
-      ^-  card
-      [%pass wir %agent [who %publish] %leave ~]
     ::
     ++  kick-subs
       ^-  [(list card) (jug @tas @p)]
