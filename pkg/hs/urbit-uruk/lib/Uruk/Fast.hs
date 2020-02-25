@@ -1,163 +1,13 @@
-{-# OPTIONS_GHC -funbox-strict-fields #-}
+{-# OPTIONS_GHC -funbox-strict-fields -Werror #-}
 
 {-
     TODO Fill out callNodeFull.
     TODO K should not evaluate tail.
     TODO Implement pattern-match registers.
--}
 
-{-
-    On 64 bit machines, GHC will always use pointer tagging as long as
-    there are less than 8 constructors. So, anything that is frequently
-    pattern matched on should have at most 7 branches.
-
-    ----------------------------------------
-
-    So, the calling convention this is falling into is:
-
-        - Caller pushes correct number of arguments to stack.
-        - If extra arguments, caller calls result with remaining arguments.
-
-    Maybe that should be swapped, a. la zinc (callee decides if it has
-    enough arguments).
-
-    But, regardless:
-
-    There are many cases where we invoke a known function with exactly
-    the right number of arguments, and it should be possible to determine
-    this statically.
-
-    The opposite case is something like: `($0 $1)`. We don't know the
-    arity of `$0`.
-
-    However, if I see `(add 9 $2)`, it doesn't make much sense to use
-    the argument stack at all.
-
-    And really, in the evaluation of `Exp`s, there are only three cases:
-
-        1. Calls to functions of unknown arity -- use previous approach.
-        2. Undersaturated calls to functions of known arity.
-        3. Fully saturated calls to functions of known arity.
-
-    There is no such thing as oversaturated calls to functions of known
-    arity, since that is simply a fully saturated call followed by another call.
-
-    Let's look at the `acker` example:
-
-        ?:  (iszero $0)
-          (inc $1)
-        ?:  (iszero $1)
-          (RECUR (dec $0) 1)
-        (RECUR (dec $0) (RECUR $0 (dec $1)))
-
-    It seems to me that this can be interpreted much more efficiently
-    than the approach that's evolving here. Let's work this out by hand
-    and see what concepts fall out.
-
-        IF (ISZERO ($0))
-        THEN
-            INC $0
-        ELSE
-            IF (ISZERO $1)
-            THEN
-                (RECUR (DEC $0) 1)
-            ELSE
-                (RECUR (DEC $0) (RECUR $0 (DEC $1)))
-
-    Notes:
-
-    - IF/ISZERO/etc throw exceptions if not given expected type.
-    - In this example, every call is fully saturated. There is no need
-      for stack manipulation at all.
-    - Except in the recursion case. How should that work?
-
-      - Recursive call is not a primop. Jet will expect to be passed
-        arguments.
-
-      - Well, we know that this jet takes two arguments. Can we just
-        pass them on the Haskell stack?
-
-        - `runJet2 :: Jet -> Val -> Val -> IO Val`
-
-    That would become:
-
-        IF (ISZERO $0)
-        THEN
-            INC $0
-        ELSE
-            IF (ISZERO $1)
-            THEN
-                (JET2 $self (DEC $0) (VAL 1))
-            ELSE
-                (JET2 $self (DEC $0) (JET2 $self $0 (DEC $1)))
-
-    This would be pretty fast!
-
-    This example really shows off the idea behind Uruk: That it allows
-    the interpreter to work with much higher level concepts.
-
-    What about pattern matching?
-
-    I've been presuming that the result of pattern matching would get
-    pushed to the stack. How does this end up working?
-
-    Here's a dumb example:
-
-        |=  n
-        ?-  (Dec n)
-          (Lef _)  0
-          (Rit x)  (Add x n)
-        ==
-
-    Right now, it would decompile to something like this:
-
-        CASE (DEC $0)
-        LEFT
-            (VAL 0)
-        RIGT
-            (ADD $1 (VAL $0))
-
-    We could keep a per-jet stack (probably just a list?)
-
-    - References to jet parameters would resolve to Haskell arguments
-    - Arguments to values intoduced through pattern matching would go
-      into a stack.
-
-    We could pre-determine the size of the stack to use a pre-allocated
-    mutable array.
-
-        MKFRAME 1
-        CASE@0 (DEC $0)
-        LEFT
-            (VAL 0)
-        RIGT
-            (ADD $0 (VAL @0))
-
-    I think this is basically register allocation?
-
-    Yes, this will work.
-
-    I don't know how well this will work in general, but let's hack out
-    the specific case first.
-
-    ----------------------------------------
-
-    Alright, what's left to do here?
-
-    Let's break down this thing:
-
-        IF (ISZERO $0)
-        THEN
-            INC $0
-        ELSE
-            IF (ISZERO $1)
-            THEN
-                (JET2 $self (DEC $0) (VAL 1))
-            ELSE
-                (JET2 $self (DEC $0) (JET2 $self $0 (DEC $1)))
-
-    What are the types of expressions?
-
+    Note that On 64 bit machines, GHC will always use pointer tagging
+    as long as there are less than 8 constructors. So, anything that is
+    frequently pattern matched on should have at most 7 branches.
 -}
 
 module Uruk.Fast where
@@ -181,14 +31,17 @@ import qualified Uruk.JetDemo as Ur
 
 import qualified GHC.Exts
 
---------------------------------------------------------------------------------
+
+-- Useful Types ----------------------------------------------------------------
 
 type Nat = Natural
 type Bol = Bool
 type Pos = Positive
 
+type IOArray = MutableArray RealWorld
 
--- Raw Uruk --------------------------------------------------------------------
+
+-- Raw Uruk (Basically just used for D (jam)) ----------------------------------
 
 data Pri = J | K | S | D
   deriving stock    (Eq, Ord, Show, Generic)
@@ -237,100 +90,100 @@ jam :: Val -> Val
 jam = jamRaw . toRaw
 
 
---------------------------------------------------------------------------------
+-- Types -----------------------------------------------------------------------
 
 data Jet = Jet
-    { jArgs :: !Int
-    , jName :: Val
-    , jBody :: Val
-    , jFast :: !Exp
-    , jRegs :: !Int -- Number of registers needed.
-    }
-  deriving (Eq, Ord, Show)
+  { jArgs :: !Int
+  , jName :: Val
+  , jBody :: Val
+  , jFast :: !Exp
+  , jRegs :: !Int -- Number of registers needed.
+  }
+ deriving (Eq, Ord, Show)
 
 data Node
-    = Jay Pos
-    | Kay
-    | Ess
-    | Dee
-    | Jut Jet
-    | Eye
-    | Bee
-    | Sea
-    | Sen Pos
-    | Ben Pos
-    | Cen Pos
-    | Seq
-    | Yet Nat
-    | Fix
-    | Nat Nat
-    | Bol Bool
-    | Iff
-    | Pak
-    | Zer
-    | Eql
-    | Add
-    | Inc
-    | Dec
-    | Fec
-    | Mul
-    | Sub
-    | Ded
-    | Uni
-    | Lef
-    | Rit
-    | Cas
-    | Con
-    | Car
-    | Cdr
-  deriving stock (Eq, Ord, Show)
+  = Jay Pos
+  | Kay
+  | Ess
+  | Dee
+  | Jut Jet
+  | Eye
+  | Bee
+  | Sea
+  | Sen Pos
+  | Ben Pos
+  | Cen Pos
+  | Seq
+  | Yet Nat
+  | Fix
+  | Nat Nat
+  | Bol Bool
+  | Iff
+  | Pak
+  | Zer
+  | Eql
+  | Add
+  | Inc
+  | Dec
+  | Fec
+  | Mul
+  | Sub
+  | Ded
+  | Uni
+  | Lef
+  | Rit
+  | Cas
+  | Con
+  | Car
+  | Cdr
+ deriving stock (Eq, Ord, Show)
 
 data Fun = Fun
-    { fNeed :: !Int
-    , fHead :: !Node
-    , fArgs :: Array Val -- Lazy on purpose.
-    }
-  deriving stock (Eq, Ord, Show)
+  { fNeed :: !Int
+  , fHead :: !Node
+  , fArgs :: Array Val -- Lazy on purpose.
+  }
+ deriving stock (Eq, Ord, Show)
 
 data Val
-    = VUni
-    | VCon !Val !Val
-    | VLef !Val
-    | VRit !Val
-    | VNat !Nat
-    | VBol !Bool
-    | VFun !Fun
-  deriving (Eq, Ord, Show)
+  = VUni
+  | VCon !Val !Val
+  | VLef !Val
+  | VRit !Val
+  | VNat !Nat
+  | VBol !Bool
+  | VFun !Fun
+ deriving (Eq, Ord, Show)
 
 data Exp
-  = VAL !Val                 --  Constant Value
-  | REF !Int                 --  Stack Reference
-  | REC1 !Exp                --  Recursive Call
-  | REC2 !Exp !Exp           --  Recursive Call
-  | REC3 !Exp !Exp !Exp      --  Recursive Call
-  | REC4 !Exp !Exp !Exp !Exp --  Recursive Call
-  | RECN !(Array Exp)        --  Recursive Call
-  | SLF                      --  Self Reference
-  | IFF !Exp !Exp !Exp       --  If-Then-Else
-  | CAS !Int !Exp !Exp !Exp  --  Pattern Match
+  = VAL !Val                      --  Constant Value
+  | REF !Int                      --  Stack Reference
+  | REC1 !Exp                     --  Recursive Call
+  | REC2 !Exp !Exp                --  Recursive Call
+  | REC3 !Exp !Exp !Exp           --  Recursive Call
+  | REC4 !Exp !Exp !Exp !Exp      --  Recursive Call
+  | RECN !(Array Exp)             --  Recursive Call
+  | SLF                           --  Self Reference
+  | IFF !Exp !Exp !Exp            --  If-Then-Else
+  | CAS !Int !Exp !Exp !Exp       --  Pattern Match
 
-  | SEQ !Exp !Exp            --  Evaluate head, return tail
-  | DED !Exp                 --  Evaluate argument, then crash.
+  | SEQ !Exp !Exp                 --  Evaluate head, return tail
+  | DED !Exp                      --  Evaluate argument, then crash.
 
-  | INC !Exp                 --  Increment
-  | DEC !Exp                 --  Decrement
-  | FEC !Exp                 --  Fast decrement
-  | ADD !Exp !Exp            --  Add
-  | MUL !Exp !Exp            --  Multiply
-  | SUB !Exp !Exp            --  Subtract
-  | ZER !Exp                 --  Is Zero?
-  | EQL !Exp !Exp            --  Atom equality.
+  | INC !Exp                      --  Increment
+  | DEC !Exp                      --  Decrement
+  | FEC !Exp                      --  Fast decrement
+  | ADD !Exp !Exp                 --  Add
+  | MUL !Exp !Exp                 --  Multiply
+  | SUB !Exp !Exp                 --  Subtract
+  | ZER !Exp                      --  Is Zero?
+  | EQL !Exp !Exp                 --  Atom equality.
 
-  | CON !Exp !Exp            --  Cons
-  | CAR !Exp                 --  Head
-  | CDR !Exp                 --  Tail
-  | LEF !Exp                 --  Left Constructor
-  | RIT !Exp                 --  Right Constructor
+  | CON !Exp !Exp                 --  Cons
+  | CAR !Exp                      --  Head
+  | CDR !Exp                      --  Tail
+  | LEF !Exp                      --  Left Constructor
+  | RIT !Exp                      --  Right Constructor
 
   | JET1 !Jet !Exp                --  Fully saturated jet call.
   | JET2 !Jet !Exp !Exp           --  Fully saturated jet call.
@@ -343,21 +196,16 @@ data Exp
  deriving (Eq, Ord, Show)
 
 
---------------------------------------------------------------------------------
+-- Exceptions ------------------------------------------------------------------
 
 data TypeError = TypeError Text
-  deriving (Eq, Ord, Show, Exception)
+ deriving (Eq, Ord, Show, Exception)
 
 data Crash = Crash Val
-  deriving (Eq, Ord, Show, Exception)
+ deriving (Eq, Ord, Show, Exception)
 
 data BadRef = BadRef Jet Int
-  deriving (Eq, Ord, Show, Exception)
-
-type IOArray = MutableArray RealWorld
-
-emptyRegisterSet :: IOArray Val
-emptyRegisterSet = unsafePerformIO (newArray 0 VUni)
+ deriving (Eq, Ord, Show, Exception)
 
 
 --------------------------------------------------------------------------------
@@ -417,6 +265,9 @@ valFun = \case
 
 
 -- Jet Invokation --------------------------------------------------------------
+
+emptyRegisterSet :: IOArray Val
+emptyRegisterSet = unsafePerformIO (newArray 0 VUni)
 
 mkRegs :: Int -> IO (IOArray Val)
 {-# INLINE mkRegs #-}
@@ -478,28 +329,7 @@ execJetN !j !xs = do
   where ref i = pure (indexArray xs i)
 
 
---------------------------------------------------------------------------------
-
-iff :: (Exp -> IO Val) -> Exp -> Exp -> Exp -> IO Val
-{-# INLINE iff #-}
-iff go c t e = go c >>= \case
-  VBol True  -> go t
-  VBol False -> go e
-  _          -> throwIO (TypeError "iff-not-bol")
-
-cas
-  :: (Exp -> IO Val)
-  -> (Int -> Val -> IO ())
-  -> Int
-  -> Exp
-  -> Exp
-  -> Exp
-  -> IO Val
-{-# INLINE cas #-}
-cas go setReg i x l r = go x >>= \case
-  VLef lv -> setReg i lv >> go l
-  VRit rv -> setReg i rv >> go r
-  _       -> throwIO (TypeError "cas-no-sum")
+-- Primitive Implementation ----------------------------------------------------
 
 inc :: Val -> IO Val
 {-# INLINE inc #-}
@@ -546,14 +376,31 @@ eql (VNat x) (VNat y) = pure (VBol (x == y))
 eql _        _        = throwIO (TypeError "eql-not-nat")
 
 car :: Val -> IO Val
+{-# INLINE car #-}
 car (VCon x _) = pure x
 car _          = throwIO (TypeError "car-not-con")
 
 cdr :: Val -> IO Val
+{-# INLINE cdr #-}
 cdr (VCon _ y) = pure y
 cdr _          = throwIO (TypeError "cdr-not-con")
 
---------------------------------------------------------------------------------
+-- Interpreter -----------------------------------------------------------------
+
+cloN :: Fun -> Array Val -> Val
+{-# INLINE cloN #-}
+cloN (Fun {..}) xs = VFun $ Fun rem fHead $ fArgs <> xs
+  where rem = fNeed - sizeofArray xs
+
+callVal :: Val -> Array Val -> IO Val
+{-# INLINE callVal #-}
+callVal f xs =
+  let Fun {..} = valFun f
+  in  execFun (Fun (fNeed - sizeofArray xs) fHead (fArgs <> xs))
+
+jetVal :: Jet -> Val
+{-# INLINE jetVal #-}
+jetVal j = VFun $ Fun (jArgs j) (Jut j) mempty
 
 execJetBody
   :: Jet
@@ -574,8 +421,6 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     REC4 x y z p   -> join (execJet4 j <$> go x <*> go y <*> go z <*> go p)
     RECN xs        -> join (execJetN j <$> traverse go xs)
     SLF            -> pure (jetVal j)
-    IFF c t e      -> iff go c t e
-    CAS i x l r    -> cas go setReg i x l r
     SEQ x y        -> go x >> go y
     DED x          -> throwIO . Crash =<< go x
     INC x          -> join (inc <$> go x)
@@ -599,68 +444,12 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     CLON f xs      -> cloN f <$> traverse go xs
     CALN f xs      -> join (callVal <$> go f <*> traverse go xs)
 
-cloN :: Fun -> Array Val -> Val
-{-# INLINE cloN #-}
-cloN (Fun {..}) xs = VFun $ Fun rem fHead $ fArgs <> xs
-  where rem = fNeed - sizeofArray xs
+    IFF c t e -> go c >>= \case
+      VBol True  -> go t
+      VBol False -> go e
+      _          -> throwIO (TypeError "iff-not-bol")
 
-callVal :: Val -> Array Val -> IO Val
-{-# INLINE callVal #-}
-callVal f xs =
-  let Fun {..} = valFun f
-  in  execFun (Fun (fNeed - sizeofArray xs) fHead (fArgs <> xs))
-
-
---------------------------------------------------------------------------------
-
-jetVal :: Jet -> Val
-jetVal j = VFun $ Fun (jArgs j) (Jut j) mempty
-
-
--- Trivial Example -------------------------------------------------------------
-
-exampleJet :: Jet
-exampleJet = Jet { jArgs = 2
-                 , jName = error "HACK"
-                 , jBody = error "HACK"
-                 , jFast = exp
-                 , jRegs = 0
-                 }
-  where exp = ADD (REF 0) (ADD (REF 1) (REF 1))
-
-example :: IO Val
-example = execJet2 exampleJet (VNat 3) (VNat 4)
-
-
--- Ackermann -------------------------------------------------------------------
-
-{-
-    ..  $
-    |=  x
-    |=  y
-    ?:  (iszero x)
-      (inc y)
-    ?:  (iszero y)
-      ($ (dec x) 1)
-    ($ (dec x) ($ x (dec y)))
--}
-ackerJet :: Jet
-ackerJet = Jet { jArgs = 2
-               , jName = VUni
-               , jBody = error "HACK"
-               , jFast = exp
-               , jRegs = 0
-               }
- where
-  x = REF 0
-  y = REF 1
-  exp =
-    (IFF
-      (ZER x)
-      (INC y)
-      (IFF (ZER y) (REC2 (FEC x) (VAL $ VNat 1)) (REC2 (FEC x) (REC2 x (FEC y)))
-      )
-    )
-
-acker :: Nat -> Nat -> IO Val
-acker x y = execJet2 ackerJet (VNat x) (VNat y)
+    CAS i x l r -> go x >>= \case
+      VLef lv -> setReg i lv >> go l
+      VRit rv -> setReg i rv >> go r
+      _       -> throwIO (TypeError "cas-no-sum")
