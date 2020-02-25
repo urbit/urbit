@@ -80,7 +80,7 @@ function js_imports_prod(cb) {
 function minifier(input) {
   return function(cb) {
     src(input)
-      .pipe(minify())
+      .pipe(minify({ ext: { min: '.js' } }))
       .pipe(dest('dist/'));
     cb();
   }
