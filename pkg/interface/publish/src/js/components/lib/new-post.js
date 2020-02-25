@@ -117,17 +117,16 @@ export class NewPost extends Component {
           </Link>
         </div>
         <div className="overflow-container mw6 center">
-          <div style={{ padding: 16 }}>
+          <div className="pa4">
             <input
               autoFocus
               type="text"
-              style={{ paddingBottom: 8 }}
-              className="w-100"
+              className="w-100 pb2"
               onChange={this.titleChange}
               placeholder="New Post"
             />
 
-            <div style={{ color: "#7F7F7F" }}>{date}</div>
+            <div className="gray2">{date}</div>
           </div>
 
           <div className="NewPost">
