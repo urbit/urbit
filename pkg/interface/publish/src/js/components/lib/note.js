@@ -136,6 +136,16 @@ export class Note extends Component {
           date: moment(notebook.notes[nextId]["date-created"]).fromNow()
         }
 
+    let editPost = null;
+    let editUrl = props.location.pathname + "/edit";
+    if (notebook["writers-group-path"] in props.groups) {
+      let writers = notebook["writers-group-path"];
+      if (props.groups[writers].has(window.ship)) {
+        editPost =
+        <Link className="green2 f9" to={editUrl}>Edit</Link>
+      }
+    }
+
     let popout = (props.popout) ? "popout/" : "";
 
     let hrefIndex = props.location.pathname.indexOf("/note/");
@@ -182,7 +192,8 @@ export class Note extends Component {
                   }>
                   {name}
                 </div>
-                <div className="di f9 gray2">{date}</div>
+                <div className="di">
+                  <span className="f9 gray2">{date}</span><span className="ml2">{editPost}</span></div>
               </div>
             </div>
             <div className="md"

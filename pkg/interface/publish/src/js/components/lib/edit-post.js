@@ -55,7 +55,6 @@ export class EditPost extends Component {
       window.api.setSpinner(false);
       props.history.push(noteHref);
     });
-
   }
 
   bodyChange(editor, data, value) {

@@ -210,6 +210,7 @@ export class Root extends Component {
                 <Note
                   notebooks={state.notebooks}
                   book={notebook}
+                  groups={state.groups}
                   contacts={notebookContacts}
                   ship={ship}
                   note={note}
