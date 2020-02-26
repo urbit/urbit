@@ -3,17 +3,31 @@ import classnames from 'classnames';
 import { Route, Link } from 'react-router-dom';
 import urbitOb from 'urbit-ob';
 
-//TODO textarea + join button to make an api call
 export class JoinScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       book: '/',
-      error: false
+      error: false,
+      awaiting: null
     };
 
     this.bookChange = this.bookChange.bind(this);
+  }
+
+  componentDidUpdate() {
+    if (this.props.notebooks) {
+      if (this.state.awaiting) {
+        let book = this.state.awaiting.split("/");
+        let ship = book[0];
+        let notebook = book[1];
+        if ((ship in this.props.notebooks) &&
+        (notebook in this.props.notebooks[ship])) {
+          this.props.history.push(`/~publish/notebook/${ship}/${notebook}`)
+        }
+      }
+    }
   }
 
   notebooksInclude(text, notebookObj) {
@@ -40,15 +54,16 @@ export class JoinScreen extends Component {
 
     let text = state.book;
     // an error condition to prevent double joins?
-    if (this.notebooksInclude(state.book,props.notebooks) ||
-        text.length === 0) {
-      props.history.push('/~publish');
-    }
 
     let book = text.split('/');
     let ship = book[0];
     book.splice(0, 1);
     book = '/' + book.join('/');
+
+    if (this.notebooksInclude(state.book, props.notebooks)) {
+      let href = `/~publish/notebook/${ship}${book}`
+      return props.history.push(href);
+    }
 
     if (book.length < 2 || !urbitOb.isValidPatp(ship)) {
       this.setState({
@@ -65,7 +80,13 @@ export class JoinScreen extends Component {
     }
 
     // TODO: askHistory setting
-    window.api.action("publish","publish-action", actionData);
+    window.api.setSpinner(true);
+    window.api.action("publish","publish-action", actionData).catch((err) => {
+      console.log(err)
+    }).then(() => {
+      this.setState({awaiting: text})
+      window.api.setSpinner(false);
+    });
 
   }
 
