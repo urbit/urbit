@@ -61,7 +61,7 @@ export class Links extends Component {
         ? props.comments[url].totalItems
         : linksObj[linkIndex].commentCount || 0;
 
-      const {nickname, color} = getContactDetails(props.contacts[ship]);
+      const {nickname, color, member} = getContactDetails(props.contacts[ship]);
 
       return (
         <LinkItem
@@ -75,6 +75,7 @@ export class Links extends Component {
         nickname={nickname}
         ship={ship}
         color={color}
+        member={member}
         comments={commentCount}
         groupPath={props.groupPath}
         popout={popout}

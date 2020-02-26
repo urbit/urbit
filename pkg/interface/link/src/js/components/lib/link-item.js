@@ -62,12 +62,14 @@ export class LinkItem extends Component {
 
     let comments = props.comments + " comment" + ((props.comments === 1) ? "" : "s");
 
+    let member = this.props.member || false;
     return (
-      <div className="w-100 pv3 flex">
+      <div className="w-100 pv3 flex bg-white bg-gray0-d">
         <Sigil
           ship={"~" + props.ship}
           size={36}
           color={"#" + props.color}
+          classes={(member ? "mix-blend-diff" : "")}
             />
         <div className="flex flex-column ml2 flex-auto">
           <a href={props.url}

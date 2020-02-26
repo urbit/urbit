@@ -31,13 +31,17 @@ export class CommentItem extends Component {
 
   render() {
     let props = this.props;
+
+    let member = this.props.member || false;
+
     return (
       <div className="w-100 pv3">
-        <div className="flex">
+        <div className="flex bg-white bg-gray0-d">
           <Sigil
           ship={"~" + props.ship}
           size={36}
           color={"#" + props.color}
+          classes={(member ? "mix-blend-diff" : "")}
           />
           <p className="gray2 f9 flex items-center ml2">
             <span className={"black white-d " + props.nameClass}>

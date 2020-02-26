@@ -52,7 +52,7 @@ export class Comments extends Component {
         ? props.contacts
         : {};
 
-      const {nickname, color} = getContactDetails(contacts[ship]);
+      const {nickname, color, member} = getContactDetails(contacts[ship]);
 
       let nameClass = nickname ? "inter" : "mono";
 
@@ -65,6 +65,7 @@ export class Comments extends Component {
           nickname={nickname}
           nameClass={nameClass}
           color={color}
+          member={member}
         />
       )
     })
