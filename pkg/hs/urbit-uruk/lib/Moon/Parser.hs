@@ -47,13 +47,13 @@ comment :: Parser ()
 comment = void (string "::" >> many (anySingleBut '\n') >> eol)
 
 bulkSpace :: Parser ()
-bulkSpace = void $ many $ void spaceChar <|> comment
+bulkSpace = void $ many (void spaceChar <|> comment)
 
 gap ∷ Parser ()
 gap = choice [ string " \n" >> bulkSpace
              , string "  "  >> bulkSpace
              , char '\n'    >> bulkSpace
-             , comment
+             , comment      >> bulkSpace
              ]
 
 whitespace ∷ Parser ()
