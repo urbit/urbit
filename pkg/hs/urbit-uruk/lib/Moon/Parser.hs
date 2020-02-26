@@ -43,13 +43,21 @@ ace = void (char ' ')
 pal = void (char '(')
 par = void (char ')')
 
+comment :: Parser ()
+comment = void (string "::" >> many (anySingleBut '\n') >> eol)
+
+bulkSpace :: Parser ()
+bulkSpace = void $ many $ void spaceChar <|> comment
+
 gap ∷ Parser ()
-gap = choice [ char ' ' >> void (some spaceChar)
-             , newline  >> void (many spaceChar)
+gap = choice [ string " \n" >> bulkSpace
+             , string "  "  >> bulkSpace
+             , char '\n'    >> bulkSpace
+             , comment
              ]
 
 whitespace ∷ Parser ()
-whitespace = ace <|> gap
+whitespace = gap <|> ace
 
 
 -- Literals --------------------------------------------------------------------
