@@ -16,7 +16,18 @@ export class JoinScreen extends Component {
     this.bookChange = this.bookChange.bind(this);
   }
 
+  componentDidMount() {
+    // direct join from incoming URL
+    if ((this.props.ship) && (this.props.notebook)) {
+      let incomingBook = `${this.props.ship}/${this.props.notebook}`;
+      this.setState({book: incomingBook}, () => {
+        this.onClickJoin();
+      })
+    }
+  }
+
   componentDidUpdate() {
+    // redirect to notebook when we have it
     if (this.props.notebooks) {
       if (this.state.awaiting) {
         let book = this.state.awaiting.split("/");
@@ -53,7 +64,6 @@ export class JoinScreen extends Component {
     const { props, state } = this;
 
     let text = state.book;
-    // an error condition to prevent double joins?
 
     let book = text.split('/');
     let ship = book[0];
