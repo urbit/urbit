@@ -74,7 +74,7 @@ export class LinkItem extends Component {
           className="w-100 flex"
           target="_blank"
           onClick={this.markPostAsSeen}>
-            <p className="f8 truncate flex-auto">{props.title}
+            <p className="f8 truncate">{props.title}
             </p>
             <span className="gray2 dib v-btm ml2 f8 flex-shrink-0">{hostname} ↗</span>
           </a>
