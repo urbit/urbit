@@ -32,12 +32,17 @@ export class NewPost extends Component {
       }
     }
 
-    this.setState({
-      awaiting: newNote["new-note"].note
-    }, () => {
       window.api.setSpinner(true);
-      window.api.action("publish", "publish-action", newNote);
-    });
+      window.api.action("publish", "publish-action", newNote).then(() =>{
+        this.setState({ awaiting: newNote["new-note"].note });
+      }).catch((err) => {
+        if (err.includes("note already exists")) {
+          let timestamp = Math.floor(Date.now() / 1000);
+          newNote["new-note"].note += "-" + timestamp;
+          this.setState({awaiting: newNote["new-note"].note});
+          window.api.action("publish", "publish-action", newNote);
+        }
+      });
   }
 
   componentWillMount() {
