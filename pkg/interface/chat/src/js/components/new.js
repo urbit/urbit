@@ -20,7 +20,6 @@ export class NewScreen extends Component {
       createGroup: true
     };
 
-    this.idName = React.createRef();
     this.idChange = this.idChange.bind(this);
     this.securityChange = this.securityChange.bind(this);
     this.allowHistoryChange = this.allowHistoryChange.bind(this);
@@ -46,20 +45,10 @@ export class NewScreen extends Component {
   }
 
   setInvite(value) {
-    if (value.groups.length > 0) {
-      let idName = value.groups[0].split('/')[2];
-      this.idName.current.value = idName;
-      this.setState({
-        idName,
-        groups: value.groups,
-        ships: value.ships
-      });
-    } else {
-      this.setState({
-        groups: value.groups,
-        ships: value.ships
-      });
-    }
+    this.setState({
+      groups: value.groups,
+      ships: value.ships
+    });
   }
 
   securityChange(event) {
@@ -149,17 +138,25 @@ export class NewScreen extends Component {
       // if we want a "proper group" that can be managed from the contacts UI,
       // we make a path of the form /~zod/cool-group
       // if not, we make a path of the form /~/~zod/free-chat
-      let chatPath = `/~${window.ship}${station}`;
+      let appPath = `/~${window.ship}${station}`;
       if (!state.createGroup && state.groups.length === 0) {
-        chatPath = `/~${chatPath}`;
+        appPath = `/~${appPath}`;
+      }
+      let groupPath = appPath;
+      if (state.groups.length > 0) {
+        groupPath = state.groups[0];
       }
       let submit = props.api.chatView.create(
-          chatPath, state.security, aud, state.allowHistory
-        );
-        submit.then(() => {
-          props.api.setSpinner(false);
-          props.history.push(`/~chat/room${chatPath}`);
-        })
+        appPath,
+        groupPath,
+        state.security,
+        aud,
+        state.allowHistory
+      );
+      submit.then(() => {
+        props.api.setSpinner(false);
+        props.history.push(`/~chat/room${appPath}`);
+      })
     });
   }
 
@@ -183,9 +180,6 @@ export class NewScreen extends Component {
     let idClasses =
       "f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 " +
       "focus-b--black focus-b--white-d ";
-    if (state.groups.length > 0) {
-      idClasses = idClasses + " o-40";
-    }
 
     let idErrElem = (<span />);
     if (state.idError) {
@@ -237,8 +231,6 @@ export class NewScreen extends Component {
               resize: "none"
             }}
             onChange={this.idChange}
-            ref={this.idName}
-            disabled={(state.groups.length > 0) ? "disabled" : false}
           />
           {idErrElem}
           <p className="f8 mt4 lh-copy db">

@@ -413,14 +413,15 @@
 ++  fact-invite-update
   |=  [wir=wire fact=invite-update]
   ^-  (quip card _state)
-  ?+  -.fact
-    [~ state]
+  :_  state
+  ?+  -.fact  ~
   ::
       %accepted
     =/  ask-history  ?~((chat-scry path.invite.fact) %.y %.n)
-    :_  state
-    [(chat-view-poke [%join ship.invite.fact path.invite.fact ask-history])]~
-  ==
+    =*  shp       ship.invite.fact
+    =*  app-path  path.invite.fact
+    ~[(chat-view-poke [%join shp app-path ask-history])]
+==
 ::
 ++  fact-permission-update
   |=  [wir=wire fact=permission-update]

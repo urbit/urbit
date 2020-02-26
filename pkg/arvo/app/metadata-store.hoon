@@ -21,8 +21,7 @@
 ::  /app-name/%app-name                            associations for app
 ::  /group/%group-path                             associations for group
 ::
-/-  *metadata-store
-/+  default-agent, dbug
+/+  *metadata-json, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
 ::
@@ -41,6 +40,7 @@
 ::
 =|  state-zero
 =*  state  -
+%+  verb  |
 %-  agent:dbug
 ^-  agent:gall
 =<
