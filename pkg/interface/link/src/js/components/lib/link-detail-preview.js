@@ -101,7 +101,7 @@ export class LinkPreview extends Component {
         </div>
         <div className="flex flex-column ml2 pt6 flex-auto">
           <a href={props.url} className="w-100 flex" target="_blank">
-            <p className="f8 truncate flex-auto">
+            <p className="f8 truncate">
               {props.title}
             </p>
             <span className="gray2 ml2 f8 dib v-btm flex-shrink-0">{hostname} ↗</span>

@@ -15,6 +15,7 @@ export function uuid() {
 }
 
 export function getContactDetails(contact) {
+  const member = !contact;
   contact = contact || {
     'nickname': '',
     'avatar': 'TODO',
@@ -22,7 +23,7 @@ export function getContactDetails(contact) {
   };
   const nickname = contact.nickname || '';
   const color = uxToHex(contact.color || '0x0');
-  return {nickname, color};
+  return {nickname, color, member};
 }
 
 // encodes string into base64url,
