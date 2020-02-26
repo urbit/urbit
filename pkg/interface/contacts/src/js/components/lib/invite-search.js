@@ -152,7 +152,9 @@ export class InviteSearch extends Component {
       searchValue: "",
       searchResults: { groups: [], ships: [] }
     });
-    ships.push(ship);
+    if (!ships.includes(ship)) {
+      ships.push(ship);
+    }
     if (groups.length > 0) {
       return false;
     }
