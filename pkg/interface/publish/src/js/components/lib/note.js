@@ -138,12 +138,9 @@ export class Note extends Component {
 
     let editPost = null;
     let editUrl = props.location.pathname + "/edit";
-    if (notebook["writers-group-path"] in props.groups) {
-      let writers = notebook["writers-group-path"];
-      if (props.groups[writers].has(window.ship)) {
+    if (`~${window.ship}` === author) {
         editPost =
         <Link className="green2 f9" to={editUrl}>Edit</Link>
-      }
     }
 
     let popout = (props.popout) ? "popout/" : "";
