@@ -8,6 +8,7 @@ import { JoinScreen } from '/components/lib/join';
 import { Notebook } from '/components/lib/notebook';
 import { Note } from '/components/lib/note';
 import { NewPost } from '/components/lib/new-post';
+import { EditPost } from '/components/lib/edit-post';
 
 
 export class Root extends Component {
@@ -161,7 +162,7 @@ export class Root extends Component {
             );
           }
         }}/>
-      <Route exact path="/~publish/:popout?/note/:ship/:notebook/:note"
+      <Route exact path="/~publish/:popout?/note/:ship/:notebook/:note/:edit?"
         render={ (props) => {
           let ship = props.match.params.ship || "";
           let notebook = props.match.params.notebook || "";
@@ -175,8 +176,11 @@ export class Root extends Component {
           let notebookContacts = (bookGroupPath in state.contacts)
             ? contacts[bookGroupPath] : {};
 
-          return (
-            <Skeleton
+          let edit = !!props.match.params.edit || false;
+
+          if (edit) {
+            return (
+              <Skeleton
               popout={popout}
               active={"rightPanel"}
               rightPanelHide={false}
@@ -186,18 +190,43 @@ export class Root extends Component {
               notebooks={state.notebooks}
               contacts={contacts}
               path={path}>
-              <Note
+              <EditPost
                 notebooks={state.notebooks}
                 book={notebook}
-                contacts={notebookContacts}
-                ship={ship}
                 note={note}
+                ship={ship}
                 sidebarShown={state.sidebarShown}
                 popout={popout}
-                {...props}
-              />
-            </Skeleton>
-          );
+                {...props}/>
+              </Skeleton>
+            )
+          }
+          else {
+            return (
+              <Skeleton
+                popout={popout}
+                active={"rightPanel"}
+                rightPanelHide={false}
+                sidebarShown={state.sidebarShown}
+                spinner={state.spinner}
+                invites={state.invites}
+                notebooks={state.notebooks}
+                contacts={contacts}
+                path={path}>
+                <Note
+                  notebooks={state.notebooks}
+                  book={notebook}
+                  groups={state.groups}
+                  contacts={notebookContacts}
+                  ship={ship}
+                  note={note}
+                  sidebarShown={state.sidebarShown}
+                  popout={popout}
+                  {...props}
+                />
+              </Skeleton>
+            );
+          }
         }}/>
       </BrowserRouter>
     )

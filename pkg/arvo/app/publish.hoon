@@ -1613,7 +1613,7 @@
     (manx-response:gen (index u.book-json))
   ::
   ::  single note, with initial 50 comments, wrapped in html
-      [[~ [%'~publish' %note @ @ @ ~]] ~]
+      [[~ [%'~publish' %note @ @ @ *]] ~]
     =/  host=(unit @p)  (slaw %p i.t.t.site.url)
     ?~  host
       not-found:gen
@@ -1625,7 +1625,7 @@
     (manx-response:gen (index u.note-json))
   ::
   ::  single note, with initial 50 comments, wrapped in html
-      [[~ [%'~publish' %popout %note @ @ @ ~]] ~]
+      [[~ [%'~publish' %popout %note @ @ @ *]] ~]
     =/  host=(unit @p)  (slaw %p i.t.t.t.site.url)
     ?~  host
       not-found:gen
