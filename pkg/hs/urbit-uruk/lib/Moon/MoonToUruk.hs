@@ -87,9 +87,13 @@ gogogo' :: Text -> Either Text Ur.Ur
 gogogo' text = do
   ast <- Parser.parseAST text
 
+  traceM (show ast)
+
   let !expr = bind ast
       !lamb = toLC getGlobal expr
       !cplx = Uruk.moonStrict lamb
+
+  traceM (show lamb)
 
   pure (Ur.simp cplx)
 

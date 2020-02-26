@@ -166,17 +166,21 @@ rune = runeSwitch
   , ("%*", runeN appN exp)
   , ("%.", rune2 (flip AApp) exp exp)
   , ("?:", rune3 AIff exp exp exp)
+  , ("?-", join (runeJogging1 wutHep exp sym exp))
   ]
   where lamArgs = grouped "(" " " ")" sym <|> (: []) <$> sym
+
+wutHep :: AST -> [(Sym, AST)] -> Parser AST
+wutHep x = \case
+  [(ln, l), (rn, r)] -> pure (ACas x (ln, l) (rn, r))
+  _                  -> fail "?- must always have two branches"
 
 {-
   [ ("$:", runeN (notAllow HaxCol) binder)
   , (".+", rune1 DotLus exp)
   , (".=", rune2 DotTis exp exp)
---, ("?-", runeJogging1 wutHep exp tagPat exp)
   ]
     tagPat = Atom.utf8Atom <$> tag <|> atom
---    wutHep c cs = Cas c (mapFromList cs)
     celPat = char '[' *> ((,) <$> tagPat <*> (ace *> sym)) <* char ']'
     wutHax c stuff =
       WutHax c (mapFromList $ map (\((a, v), d) -> (a, (v, d))) stuff)
