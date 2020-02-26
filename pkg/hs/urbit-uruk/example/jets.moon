@@ -89,10 +89,34 @@
     ((S (K ((S (K (JJ K))) (S I)))) ((S W2) I))
   ==
 
+::
+::  Sums
+::
+
+=/  lef
+  %-  (JJJ 9)
+  (S (K (S (K (S (K K))) (S I))) K)
+
+=/  rit
+  %-  (JJJ 10)
+  (S (K (S (K K) (S I))) K)
+
+=/  cas
+  %-  (JJJ 15)
+  I
+
 
 ::
 ::  Atom Operations
 ::
+
+=/  dec
+  %-  (J 3)
+  (S (S I (K (S (S cas (K (K (rit 0)))) (K (S (K rit) inc))))) (K (lef ~)))
+
+=/  fec
+  %-  (J 3)
+  (S (S (S (K cas) dec) (K (K 0))) (K I))
 
 =/  add
   %-  (JJ K)
@@ -101,6 +125,17 @@
 =/  mul
   %-  (JJ K)
   (S (K (S (K pak))) (S (K S) K))
+
+=/  sub
+  %-  (JJ 4)
+  %*  S
+    (K (S (S I (K (S (S cas (K lef)) (K dec))))))
+    (S (K K) rit)
+  ==
+
+=/  zer
+  %-  (J K)
+  (S (S I (K (K no))) (K ya))
 
 =/  eql
   %-  (JJ K)
@@ -114,10 +149,11 @@
 =/  oleg     [I B C]
 =/  church   [zero succ]
 =/  natjet   [pak inc]
+=/  sums     [lef rit cas]
 =/  digits   [[[zeo one two] thr for] [[fiv six sev] ate nin]]
 =/  bools    [ya no]
 =/  pairs    [con car cdr]
 =/  control  [seq W1 W2 W3 fix]
-=/  math     [add mul eql]
+=/  math     [dec fec add mul sub zer eql]
 
-[oleg church natjet digits bools pairs control math]
+[oleg church natjet digits bools pairs control math sums]
