@@ -6,4 +6,12 @@
   :: |=  a
   :: %+  a  (mul 2)  1
 
-(bex 1024)
+::(bex 1024)
+
+=/  lsh
+  ~/  2  lsh
+  (S (K mul) bex)
+  :: |=  (exponent num)
+  :: (mul (bex exponent) num)
+
+(lsh 8 1)
