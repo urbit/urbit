@@ -1171,45 +1171,50 @@ pattern Mul = Fast 2 JMul []
 -}
 sjMul ∷ SingJet
 sjMul = SingJet{..}
-  where
-    sjFast = JMul
-    sjArgs = 2
-    sjName = MkVal K
-    sjExec [Nat x, Nat y]   = Just $ Nat (x*y)
-    sjExec _                = Nothing
-    sjBody = MkVal $
-        S :@ (K :@ (S :@ (K :@ Pak)))
-          :@ (S :@ (K :@ S) :@ K)
+ where
+  sjFast = JMul
+  sjArgs = 2
+  sjName = MkVal K
+  sjExec [Nat x, Nat y]   = Just $ Nat (x*y)
+  sjExec _                = Nothing
+  sjBody = MkVal $
+    S :@ (K :@ (S :@ (K :@ Pak)))
+      :@ (S :@ (K :@ S) :@ K)
+
 
 -- Twos Exponent ---------------------------------------------------------------
 
 pattern Bex = Fast 1 JBex []
+
 {-
    bex = \a -> (a (mul 2) 1)
 -}
 sjBex :: SingJet
-sjBex = SingJet{..}
+sjBex = SingJet { .. }
  where
-   sjFast = JBex
-   sjArgs = 1
-   sjName = MkVal $ Nat 7890274
-   sjExec [Nat x] = Just $ Nat (2 ^ x)
-   sjExec _       = Nothing
-   sjBody = MkVal $
-     S :@ (S :@ I :@ (K :@ (Fast 1 JMul [Nat 2]))) :@ (K :@ Nat 1)
+  sjFast = JBex
+  sjArgs = 1
+  sjName = MkVal $ Nat 7890274
+  sjExec [Nat x] = Just $ Nat (2 ^ x)
+  sjExec _       = Nothing
+  sjBody =
+    MkVal $ S :@ (S :@ I :@ (K :@ (Fast 1 JMul [Nat 2]))) :@ (K :@ Nat 1)
+
 
 -- Left Shift ------------------------------------------------------------------
 
 pattern Lsh = Fast 2 JLsh []
+
 {-
   lsh = \exponent num -> (mul (bex exponent) num)
 -}
 sjLsh :: SingJet
-sjLsh = SingJet{..}
+sjLsh = SingJet { .. }
  where
-   sjFast = JLsh
-   sjArgs = 2
-   sjName = MkVal $ Nat 6845292
-   sjExec [Nat exp, Nat num] = Just $ Nat (shiftL num (fromIntegral exp))
-   sjExec _                  = Nothing
-   sjBody = MkVal $ S :@ (K :@ Mul) :@ Bex
+  sjFast = JLsh
+  sjArgs = 2
+  sjName = MkVal $ Nat 6845292
+  sjExec [Nat exp, Nat num] = Just $ Nat (shiftL num (fromIntegral exp))
+  sjExec _                  = Nothing
+  sjBody = MkVal $
+    S :@ (K :@ Mul) :@ Bex
