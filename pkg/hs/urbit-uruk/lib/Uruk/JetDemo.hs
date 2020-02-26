@@ -478,7 +478,7 @@ unMatch = go
         JFec       → sjExp sjFec
         JMul       → sjExp sjMul
         JBex       → sjExp sjBex
-        JLsh       -> sjExp sjLsh
+        JLsh       → sjExp sjLsh
         JSub       → sjExp sjSub
         JAdd       → sjExp sjAdd
         JDed       → sjExp sjDed

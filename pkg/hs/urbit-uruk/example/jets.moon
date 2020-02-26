@@ -89,6 +89,23 @@
     ((S (K ((S (K (JJ K))) (S I)))) ((S W2) I))
   ==
 
+
+::
+::  Errors
+::
+
+=/  ded
+  (J K (fix I))
+
+
+::
+::  Unit
+::
+
+=/  uni
+  (JJ K K)
+
+
 ::
 ::  Sums
 ::
@@ -147,13 +164,18 @@
 ::
 
 =/  oleg     [I B C]
-=/  church   [zero succ]
-=/  natjet   [pak inc]
-=/  sums     [lef rit cas]
+=/  control  [seq W1 W2 W3 fix ded]
+=/  atoms    [pak inc dec fec add mul sub zer eql]
+=/  adts     [uni [lef rit cas] [con car cdr]]
 =/  digits   [[[zeo one two] thr for] [[fiv six sev] ate nin]]
 =/  bools    [ya no]
-=/  pairs    [con car cdr]
-=/  control  [seq W1 W2 W3 fix]
-=/  math     [dec fec add mul sub zer eql]
 
-[oleg church natjet digits bools pairs control math sums]
+:*
+
+  [digits bools]
+
+  [oleg control]
+
+  [adts atoms]
+
+==
