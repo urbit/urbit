@@ -1225,7 +1225,7 @@
       (~(get by subs) who.act book.act)
     ?~  book
       ~|("nonexistent notebook: {<book.act>}" !!)
-    =/  not=(unit note)  (~(get by notes.u.book) note.act) 
+    =/  not=(unit note)  (~(get by notes.u.book) note.act)
     ?~  not
       ~|("nonexistent note: {<note.act>}" !!)
     =?  tile-num  !read.u.not
@@ -1585,7 +1585,7 @@
   ::  presentation endpoints
   ::
   ::  all notebooks, short form, wrapped in html
-      [[~ [%'~publish' ?(~ [%join ~] [%new ~])]] ~]
+      [[~ [%'~publish' ?(~ [%join *] [%new ~])]] ~]
     =,  enjs:format
     =/  jon=json  (pairs notebooks+(notebooks-map-json our.bol books subs) ~)
     (manx-response:gen (index jon))

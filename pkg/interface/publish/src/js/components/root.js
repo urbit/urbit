@@ -70,8 +70,10 @@ export class Root extends Component {
             </Skeleton>
           )
         }}/>
-      <Route exact path="/~publish/join"
+      <Route exact path="/~publish/join/:ship?/:notebook?"
               render={ (props) => {
+                let ship = props.match.params.ship || "";
+                let notebook = props.match.params.notebook || "";
                 return (
                   <Skeleton
                   popout={false}
@@ -82,7 +84,11 @@ export class Root extends Component {
                   invites={state.invites}
                   notebooks={state.notebooks}
                   contacts={contacts}>
-                    <JoinScreen notebooks={state.notebooks} {...props} />
+                    <JoinScreen
+                    notebooks={state.notebooks}
+                    ship={ship}
+                    notebook={notebook}
+                    {...props} />
                   </Skeleton>
                 )
               }}/>

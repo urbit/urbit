@@ -3,17 +3,42 @@ import classnames from 'classnames';
 import { Route, Link } from 'react-router-dom';
 import urbitOb from 'urbit-ob';
 
-//TODO textarea + join button to make an api call
 export class JoinScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       book: '/',
-      error: false
+      error: false,
+      awaiting: null
     };
 
     this.bookChange = this.bookChange.bind(this);
+  }
+
+  componentDidMount() {
+    // direct join from incoming URL
+    if ((this.props.ship) && (this.props.notebook)) {
+      let incomingBook = `${this.props.ship}/${this.props.notebook}`;
+      this.setState({book: incomingBook}, () => {
+        this.onClickJoin();
+      })
+    }
+  }
+
+  componentDidUpdate() {
+    // redirect to notebook when we have it
+    if (this.props.notebooks) {
+      if (this.state.awaiting) {
+        let book = this.state.awaiting.split("/");
+        let ship = book[0];
+        let notebook = book[1];
+        if ((ship in this.props.notebooks) &&
+        (notebook in this.props.notebooks[ship])) {
+          this.props.history.push(`/~publish/notebook/${ship}/${notebook}`)
+        }
+      }
+    }
   }
 
   notebooksInclude(text, notebookObj) {
@@ -39,16 +64,16 @@ export class JoinScreen extends Component {
     const { props, state } = this;
 
     let text = state.book;
-    // an error condition to prevent double joins?
-    if (this.notebooksInclude(state.book,props.notebooks) ||
-        text.length === 0) {
-      props.history.push('/~publish');
-    }
 
     let book = text.split('/');
     let ship = book[0];
     book.splice(0, 1);
     book = '/' + book.join('/');
+
+    if (this.notebooksInclude(state.book, props.notebooks)) {
+      let href = `/~publish/notebook/${ship}${book}`
+      return props.history.push(href);
+    }
 
     if (book.length < 2 || !urbitOb.isValidPatp(ship)) {
       this.setState({
@@ -65,7 +90,13 @@ export class JoinScreen extends Component {
     }
 
     // TODO: askHistory setting
-    window.api.action("publish","publish-action", actionData);
+    window.api.setSpinner(true);
+    window.api.action("publish","publish-action", actionData).catch((err) => {
+      console.log(err)
+    }).then(() => {
+      this.setState({awaiting: text})
+      window.api.setSpinner(false);
+    });
 
   }
 
@@ -76,15 +107,15 @@ export class JoinScreen extends Component {
   }
 
   render() {
-    const { props } = this;
+    const { props, state } = this;
 
     let joinClasses = "db f9 green2 ba pa2 b--green2 bg-gray0-d pointer";
-    if ((!this.state.book) || (this.state.book === "/")) {
-      joinClasses = 'db f9 gray2 ba pa2 b--gray3 bg-gray0-d pointer';
+    if ((!state.book) || (state.book === "/")) {
+      joinClasses = 'db f9 gray2 ba pa2 b--gray3 bg-gray0-d';
     }
 
     let errElem = (<span />);
-    if (this.state.error) {
+    if (state.error) {
       errElem = (
         <span className="f9 inter red2 db">
           Notebook must have a valid name.
@@ -93,11 +124,11 @@ export class JoinScreen extends Component {
     }
 
     return (
-      <div className={"h-100 w-100 pt2 overflow-x-hidden flex flex-column " +
+      <div className={"h-100 w-100 pt4 overflow-x-hidden flex flex-column " +
       "bg-gray0-d white-d pa3"}>
         <div
           className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
-          <Link to="/~chat/">{"⟵ All Notebooks"}</Link>
+          <Link to="/~publish/">{"⟵ All Notebooks"}</Link>
         </div>
         <h2 className="mb3 f8">Subscribe to an Existing Notebook</h2>
         <div className="w-100">
@@ -106,7 +137,7 @@ export class JoinScreen extends Component {
           <textarea
             ref={ e => { this.textarea = e; } }
             className={"f7 mono ba bg-gray0-d white-d pa3 mb2 db " +
-            "focus-b--black b--gray3 b--gray2-d "}
+            "focus-b--black b--gray3 b--gray2-d nowrap "}
             placeholder="~zod/dream-journal"
             spellCheck="false"
             rows={1}
@@ -123,6 +154,7 @@ export class JoinScreen extends Component {
           {errElem}
           <br />
           <button
+            disabled={(!state.book) || (state.book === "/")}
             onClick={this.onClickJoin.bind(this)}
             className={joinClasses}
           >Join Chat</button>
