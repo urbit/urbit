@@ -3,6 +3,7 @@
 {-
     TODO Fill out callNodeFull.
     TODO K should not evaluate tail.
+      TODO Or, find a way to make K not need to short-circuit.
 
     Note that On 64 bit machines, GHC will always use pointer tagging
     as long as there are less than 8 constructors. So, anything that is
@@ -11,28 +12,27 @@
 
 module Uruk.Fast where
 
-import ClassyPrelude        hiding (evaluate, fromList, try)
-import Data.Primitive.Array
-import System.IO.Unsafe
-import GHC.Prim
+import ClassyPrelude             hiding (evaluate, fromList, try)
 import Control.Monad.Primitive
+import Data.Primitive.Array
 import Data.Primitive.SmallArray
+import GHC.Prim
+import System.IO.Unsafe
 
+import Control.Arrow     ((>>>))
 import Control.Exception (throw)
-import Control.Arrow    ((>>>))
-import Data.Bits        (shiftL, (.|.))
+import Data.Bits         (shiftL, (.|.))
 import Data.Flat
-import Data.Function    ((&))
-import Numeric.Natural  (Natural)
-import Numeric.Positive (Positive)
-import Prelude          ((!!))
-import Uruk.JetDemo     (Ur, UrPoly(Fast))
+import Data.Function     ((&))
+import Numeric.Natural   (Natural)
+import Numeric.Positive  (Positive)
+import Prelude           ((!!))
+import Uruk.JetDemo      (Ur, UrPoly(Fast))
 
+import qualified GHC.Exts
 import qualified Urbit.Atom   as Atom
 import qualified Uruk.JetComp as Comp
 import qualified Uruk.JetDemo as Ur
-
-import qualified GHC.Exts
 
 
 -- Useful Types ----------------------------------------------------------------
@@ -54,7 +54,6 @@ data Raw = Raw !Pri ![Raw]
 
 jamRaw :: Raw -> Val
 jamRaw = VNat . Atom.bytesAtom . flat
-
 
 {-
     Note that it's safe for `app` to simply append arguments without

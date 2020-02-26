@@ -60,7 +60,15 @@ alpha = oneOf (['a'..'z'])
 symChar = oneOf (['-'] ++ ['a'..'z'] ++ ['0'..'9'])
 
 sym ∷ Parser Sym
-sym = pack <$> ((:) <$> alpha <*> many symChar)
+sym = (pack <$> ((:) <$> alpha <*> many symChar))
+  <|> string "J"
+  <|> string "K"
+  <|> string "S"
+  <|> string "D"
+  <|> string "I"
+  <|> string "B"
+  <|> string "C"
+  <|> string "$"
 
 atom ∷ Parser Nat
 atom = do

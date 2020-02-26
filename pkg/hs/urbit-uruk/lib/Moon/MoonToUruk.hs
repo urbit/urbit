@@ -21,36 +21,40 @@ import qualified Uruk.Fast        as F
 
 getGlobal :: Text -> Ur.Ur
 getGlobal = \case
-  "s"    -> Ur.S
-  "k"    -> Ur.K
-  "j"    -> Ur.J 1
-  "d"    -> Ur.D
-  "id"   -> Ur.I
-  "dot"  -> Ur.B
-  "flip" -> Ur.C
-  "cas"  -> Ur.Cas
-  "lef"  -> Ur.Lef
-  "rit"  -> Ur.Rit
-  "yea"  -> Ur.Bol True
-  "nah"  -> Ur.Bol False
-  "iff"  -> Ur.Iff
-  "seq"  -> Ur.Seq
-  "pak"  -> Ur.Pak
-  "zer"  -> Ur.Zer
-  "eql"  -> Ur.Eql
-  "inc"  -> Ur.Inc
-  "dec"  -> Ur.Dec
-  "fec"  -> Ur.Fec
-  "add"  -> Ur.Add
-  "sub"  -> Ur.Sub
-  "mul"  -> Ur.Mul
-  "fix"  -> Ur.Fix
-  "ded"  -> Ur.Ded
-  "uni"  -> Ur.Uni
-  "con"  -> Ur.Con
-  "car"  -> Ur.Car
-  "cdr"  -> Ur.Cdr
-  str    -> error ("undefined variable: " <> unpack str)
+  "S"     -> Ur.S
+  "K"     -> Ur.K
+  "const" -> Ur.K
+  "J"     -> Ur.J 1
+  "D"     -> Ur.D
+  "I"     -> Ur.I
+  "id"    -> Ur.I
+  "B"     -> Ur.B
+  "dot"   -> Ur.B
+  "C"     -> Ur.C
+  "flip"  -> Ur.C
+  "cas"   -> Ur.Cas
+  "lef"   -> Ur.Lef
+  "rit"   -> Ur.Rit
+  "yea"   -> Ur.Bol True
+  "nah"   -> Ur.Bol False
+  "iff"   -> Ur.Iff
+  "seq"   -> Ur.Seq
+  "pak"   -> Ur.Pak
+  "zer"   -> Ur.Zer
+  "eql"   -> Ur.Eql
+  "inc"   -> Ur.Inc
+  "dec"   -> Ur.Dec
+  "fec"   -> Ur.Fec
+  "add"   -> Ur.Add
+  "sub"   -> Ur.Sub
+  "mul"   -> Ur.Mul
+  "fix"   -> Ur.Fix
+  "ded"   -> Ur.Ded
+  "uni"   -> Ur.Uni
+  "con"   -> Ur.Con
+  "car"   -> Ur.Car
+  "cdr"   -> Ur.Cdr
+  str     -> error ("undefined variable: " <> unpack str)
   where p = Uruk.Prim
 
 {-
@@ -78,6 +82,18 @@ gogogo text = Ur.simp complex
   exp     = bind ast
   lam     = traceShowId (toLC getGlobal exp)
   complex = traceShowId (Uruk.moonStrict lam)
+
+gogogo' :: Text -> Either Text Ur.Ur
+gogogo' text = do
+  ast <- Parser.parseAST text & \case
+    Left  err -> Left (tshow err)
+    Right ex  -> Right ex
+
+  let !expr = bind ast
+      !lamb = toLC getGlobal expr
+      !cplx = Uruk.moonStrict lamb
+
+  pure (Ur.simp cplx)
 
 toLC :: (Text -> Ur.Ur) -> Exp Text -> Uruk.Exp
 toLC getGlobal = go (Left . getGlobal)
@@ -116,15 +132,15 @@ toLC getGlobal = go (Left . getGlobal)
 
 ackerSrc ∷ Text
 ackerSrc = unlines
-    [  "~/  2  acker"
-    ,  "..  recur"
-    ,  "|=  (x y)"
-    ,  "?:  (zer x)"
-    ,  "  (inc y)"
-    ,  "?:  (zer y)"
-    ,  "  (recur (fec x) 1)"
-    ,  "(recur (fec x) (recur x (fec y)))"
-    ]
+  [  "~/  2  acker"
+  ,  "..  recur"
+  ,  "|=  (x y)"
+  ,  "?:  (zer x)"
+  ,  "  (inc y)"
+  ,  "?:  (zer y)"
+  ,  "  (recur (fec x) 1)"
+  ,  "(recur (fec x) (recur x (fec y)))"
+  ]
 
 tryAckerSrc ∷ Nat → Nat → Text
 tryAckerSrc x y = unlines
