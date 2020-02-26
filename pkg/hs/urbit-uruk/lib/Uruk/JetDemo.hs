@@ -113,6 +113,7 @@ data Jet
     | JDec
     | JFec
     | JMul
+    | JBex
     | JSub
     | JDed
     | JUni
@@ -223,6 +224,7 @@ instance Show Jet where
         JDec       → "Dec"
         JFec       → "Fec"
         JMul       → "Mul"
+        JBex       -> "Bex"
         JSub       → "Sub"
         JLef       → "Lef"
         JRit       → "Rit"
@@ -333,6 +335,7 @@ dash = mkDash
     , simpleEnt (singJet sjInc)
     , simpleEnt (singJet sjAdd)
     , simpleEnt (singJet sjMul)
+    , simpleEnt (singJet sjBex)
     , simpleEnt (singJet sjDec)
     , simpleEnt (singJet sjFec)
     , simpleEnt (singJet sjSub)
@@ -414,6 +417,7 @@ runJet = curry \case
     (JPak, xs) → runSingJet sjPak xs
     (JAdd, xs) → runSingJet sjAdd xs
     (JMul, xs) → runSingJet sjMul xs
+    (JBex, xs) → runSingJet sjBex xs
     (JInc, xs) → runSingJet sjInc xs
     (JEql, xs) → runSingJet sjEql xs
     (JZer, xs) → runSingJet sjZer xs
@@ -469,6 +473,7 @@ unMatch = go
         JDec       → sjExp sjDec
         JFec       → sjExp sjFec
         JMul       → sjExp sjMul
+        JBex       → sjExp sjBex
         JSub       → sjExp sjSub
         JAdd       → sjExp sjAdd
         JDed       → sjExp sjDed
@@ -1170,3 +1175,20 @@ sjMul = SingJet{..}
     sjBody = MkVal $
         S :@ (K :@ (S :@ (K :@ Pak)))
           :@ (S :@ (K :@ S) :@ K)
+
+-- Twos Exponent ---------------------------------------------------------------
+
+pattern Bex = Fast 1 JBex []
+{-
+   bex = \a -> (a (mul 2) 1)
+-}
+sjBex :: SingJet
+sjBex = SingJet{..}
+ where
+   sjFast = JBex
+   sjArgs = 1
+   sjName = MkVal $ Nat 7890274
+   sjExec [Nat x] = Just $ Nat (2 ^ x)
+   sjExec _       = Nothing
+   sjBody = MkVal $
+     S :@ (S :@ I :@ (K :@ (Fast 1 JMul [Nat 2]))) :@ (K :@ Nat 1)
