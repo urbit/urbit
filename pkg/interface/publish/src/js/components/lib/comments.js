@@ -58,7 +58,7 @@ export class Comments extends Component {
 
     return (
       <div>
-        <div className="mt8">
+        <div className="mv8">
           <div>
             <textarea style={{resize:'vertical'}}
               ref={(el) => {this.textArea = el}}
