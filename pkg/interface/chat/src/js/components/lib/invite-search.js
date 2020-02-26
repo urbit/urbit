@@ -93,7 +93,6 @@ export class InviteSearch extends Component {
           return e.toLowerCase().includes(searchTerm);
         });
         if (match.length > 0) {
-          console.log("found")
           if (!(contact in shipMatches)) {
             shipMatches.push(contact);
           }
@@ -249,7 +248,7 @@ export class InviteSearch extends Component {
               classes="mix-blend-diff v-mid"
             />
             <span className="v-mid ml2 mw5 truncate dib">{"~" + ship}</span>
-            <span class="absolute right-1 di truncate mw4 inter f9 pt1">{nicknames}</span>
+            <span className="absolute right-1 di truncate mw4 inter f9 pt1">{nicknames}</span>
           </li>
         );
       });
