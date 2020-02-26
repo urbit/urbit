@@ -264,6 +264,9 @@
   ++  create-metadata
     |=  [group-path=path app-path=path]
     ^-  (list card)
+    ~&  group-path+group-path
+    ~&  app-path+app-path
+    ~&  is-managed+(is-managed app-path)
     =/  =metadata
       %*  .  *metadata
           date-created  now.bol
@@ -346,7 +349,7 @@
     |=  =path
     ^-  ?
     ?>  ?=(^ path)
-    !=(path '~')
+    !=(i.path '~')
   --
 ::
 ++  diff-chat-update
