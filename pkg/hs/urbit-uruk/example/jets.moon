@@ -14,9 +14,19 @@
 
 ::  Jetted Church Encoded Naturals
 =/  pak  (J 16 (S (K (JJ K)) (S (S I (K succ)) (K zero))))
+=/  inc  (J 1 (S (K pak) (S (S (K S) K))))
 =/  zer  (JJ K zero)
 =/  one  (JJ K (succ zero))
-=/  inc  (J 1 (S (K pak) (S (S (K S) K))))
+=/  two  (inc one)
+=/  thr  (inc two)
+=/  for  (inc thr)
+=/  fiv  (inc for)
+=/  six  (inc fiv)
+=/  sev  (inc six)
+=/  ate  (inc sev)
+=/  nin  (inc ate)
+
+=/  digits  [[[zer one two] thr for] [[fiv six sev] ate nin]]
 
 ::  Pairs
 =/  car  (J 13 (S I (K K)))
@@ -46,5 +56,12 @@
     ((S (K ((S (K (JJ K))) (S I)))) ((S W2) I))
   ==
 
+::  Atom Operations
+
+=/  add
+  %-  (JJ K)
+  (S (K (S (K pak))) (S (K S) (S (K (S (K S) K)))))
+
+
 ::  Exports List
-['I' I B C zero succ pak zer one inc car cdr seq W1 W2 W3 fix]
+[[I B C] [zero succ] [pak inc] digits [car cdr] [seq W1 W2 W3 fix] add]
