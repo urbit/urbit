@@ -96,6 +96,7 @@ export class Root extends Component {
                     api={api}
                     inbox={state.inbox || {}}
                     groups={state.groups || {}}
+                    contacts={state.contacts || {}}
                     {...props}
                   />
                 </Skeleton>
