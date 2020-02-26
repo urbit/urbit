@@ -70,11 +70,18 @@
         :*  %pass  /launch/publish  %agent  [our.bol %launch]  %poke
             %launch-action  !>([%publish /publishtile '/~publish/tile.js'])
         ==
+        :*  %pass  /  %agent  [our.bol %invite-store]  %poke  %invite-action
+            !>([%create /publish])
+        ==
     ==
   ++  on-save  !>(state)
   ++  on-load
     |=  old=vase
-    `this(state !<(state-zero old))
+    :_  this(state !<(state-zero old))
+    :_  ~
+    :*  %pass  /  %agent  [our.bol %invite-store]  %poke  %invite-action
+        !>([%create /publish])
+    ==
   ::
   ++  on-poke
     |=  [=mark =vase]
