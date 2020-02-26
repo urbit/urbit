@@ -42,20 +42,23 @@ export class CommentItem extends Component {
 
     let name = commentData.author;
     let color = "#000000";
+    let classes = "mix-blend-diff";
     if (contact) {
       name = (contact.nickname.length > 0)
         ? contact.nickname : commentData.author;
       color = `#${uxToHex(contact.color)}`;
+      classes = "";
     }
 
 
     return (
       <div>
-        <div className="flex mv3">
+        <div className="flex mv3 bg-white">
         <Sigil
           ship={commentData.author}
           size={24}
           color={color}
+          classes={classes}
         />
           <div className={"f9 mh2 pt1" +
           ((name === commentData.author) ? " mono" : "")}>
