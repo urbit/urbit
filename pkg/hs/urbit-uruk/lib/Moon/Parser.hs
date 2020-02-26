@@ -73,6 +73,7 @@ symChar = oneOf (['-'] ++ alphaChar ++ ['0'..'9'])
 
 sym ∷ Parser Sym
 sym = (pack <$> ((:) <$> alpha <*> many symChar))
+  <|> string "$"
 
 atom ∷ Parser Nat
 atom = do

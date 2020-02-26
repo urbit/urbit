@@ -84,6 +84,8 @@ import Data.List        (iterate, (!!))
 import Numeric.Natural  (Natural)
 import Numeric.Positive (Positive)
 
+import qualified Urbit.Atom as Atom
+
 
 -- Types -----------------------------------------------------------------------
 
@@ -179,38 +181,57 @@ instance Show a => Show (UrPoly a) where
 
         fast j us = "[" <> intercalate " " (show j : fmap show us) <> "]"
 
+showNat :: Natural -> String
+showNat n = Atom.atomUtf8 n & \case
+  Right t | validSym (unpack t) -> "\"" <> unpack t <> "\""
+  _                             -> show n
+ where
+  validSym []     = False
+  validSym "$"    = True
+  validSym (x:xs) = headChr x && all bodyChr xs
+
+  headChr :: Char -> Bool
+  headChr = flip elem (lower <> upper)
+
+  bodyChr :: Char -> Bool
+  bodyChr = flip elem (lower <> upper <> digit <> "-")
+
+  lower = ['a'..'z']
+  upper = ['A'..'Z']
+  digit = ['0'..'9']
+
 instance Show Jet where
     show = \case
         Slow n t b → show (J n :@ t :@ b)
-        JNat n     → show n
-        JPak       → "pak"
-        JFix       → "fix"
+        JNat n     → showNat n
+        JPak       → "Pak"
+        JFix       → "Fix"
         Eye        → "I"
         Bee        → "B"
         Sea        → "C"
         Bn n       → "B" <> show n
         Cn n       → "C" <> show n
         Sn n       → "S" <> show n
-        JSeq       → "Q"
-        JBol True  → "yes"
-        JBol False → "nop"
-        JIff       → "iff"
-        JAdd       → "add"
-        JEql       → "eql"
-        JZer       → "iszero"
-        JInc       → "inc"
-        JDec       → "dec"
-        JFec       → "fec"
-        JMul       → "mul"
-        JSub       → "sub"
-        JLef       → "lef"
-        JRit       → "rit"
-        JCas       → "cas"
-        JCon       → "con"
-        JCar       → "car"
-        JCdr       → "cdr"
-        JDed       → "err"
-        JUni       → "uni"
+        JSeq       → "Seq"
+        JBol True  → "Yes"
+        JBol False → "Nop"
+        JIff       → "Iff"
+        JAdd       → "Add"
+        JEql       → "Eql"
+        JZer       → "Zer"
+        JInc       → "Inc"
+        JDec       → "Dec"
+        JFec       → "Fec"
+        JMul       → "Mul"
+        JSub       → "Sub"
+        JLef       → "Lef"
+        JRit       → "Rit"
+        JCas       → "Cas"
+        JCon       → "Con"
+        JCar       → "Car"
+        JCdr       → "Cdr"
+        JDed       → "Err"
+        JUni       → "Uni"
         Yet n      → "W" <> show n
 
 
