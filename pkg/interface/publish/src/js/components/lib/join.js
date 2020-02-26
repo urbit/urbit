@@ -76,15 +76,15 @@ export class JoinScreen extends Component {
   }
 
   render() {
-    const { props } = this;
+    const { props, state } = this;
 
     let joinClasses = "db f9 green2 ba pa2 b--green2 bg-gray0-d pointer";
-    if ((!this.state.book) || (this.state.book === "/")) {
-      joinClasses = 'db f9 gray2 ba pa2 b--gray3 bg-gray0-d pointer';
+    if ((!state.book) || (state.book === "/")) {
+      joinClasses = 'db f9 gray2 ba pa2 b--gray3 bg-gray0-d';
     }
 
     let errElem = (<span />);
-    if (this.state.error) {
+    if (state.error) {
       errElem = (
         <span className="f9 inter red2 db">
           Notebook must have a valid name.
@@ -93,11 +93,11 @@ export class JoinScreen extends Component {
     }
 
     return (
-      <div className={"h-100 w-100 pt2 overflow-x-hidden flex flex-column " +
+      <div className={"h-100 w-100 pt4 overflow-x-hidden flex flex-column " +
       "bg-gray0-d white-d pa3"}>
         <div
           className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
-          <Link to="/~chat/">{"⟵ All Notebooks"}</Link>
+          <Link to="/~publish/">{"⟵ All Notebooks"}</Link>
         </div>
         <h2 className="mb3 f8">Subscribe to an Existing Notebook</h2>
         <div className="w-100">
@@ -106,7 +106,7 @@ export class JoinScreen extends Component {
           <textarea
             ref={ e => { this.textarea = e; } }
             className={"f7 mono ba bg-gray0-d white-d pa3 mb2 db " +
-            "focus-b--black b--gray3 b--gray2-d "}
+            "focus-b--black b--gray3 b--gray2-d nowrap "}
             placeholder="~zod/dream-journal"
             spellCheck="false"
             rows={1}
@@ -123,6 +123,7 @@ export class JoinScreen extends Component {
           {errElem}
           <br />
           <button
+            disabled={(!state.book) || (state.book === "/")}
             onClick={this.onClickJoin.bind(this)}
             className={joinClasses}
           >Join Chat</button>
