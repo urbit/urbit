@@ -211,7 +211,7 @@ instance Show Jet where
         JCdr       → "cdr"
         JDed       → "err"
         JUni       → "uni"
-        Yet n      → "yet" <> show n
+        Yet n      → "W" <> show n
 
 
 -- Normalized Values -----------------------------------------------------------
@@ -330,7 +330,7 @@ dash = mkDash
     , predikEnt j_cn
     , predikEnt (manyJet mjSn)
     , predikEnt j_bn
-    , predikEnt j_wait
+    , predikEnt j_yet
     ]
 
 
@@ -462,7 +462,7 @@ unMatch = go
         JNat n     → natJet n
         JBol b     → boolJet b
         JPak       → sjExp sjPak
-        Yet n      → waitJet n
+        Yet n      → yetJet n
         Sn n       → mjBody mjSn (Sn n)
         Bn n       → bnJet n
         Cn n       → cnJet n
@@ -820,7 +820,7 @@ pattern Fix = Fast 2 JFix []
 
 {-
     fix f x = f (W2 fix f) x
-    fix = Z (\fx -> wait2 Jet2 (\f x -> f (fx f) x))
+    fix = Z (\fx -> yet2 Jet2 (\f x -> f (fx f) x))
 -}
 sjFix ∷ SingJet
 sjFix = SingJet{..}
@@ -1065,20 +1065,20 @@ sjPak = SingJet{..}
 
 -- Delayed Evaluation ----------------------------------------------------------
 
-waitJet ∷ Natural → Ur
-waitJet n = J (fromIntegral $ n+1) :@ I :@ I
+yetJet ∷ Natural → Ur
+yetJet n = J (fromIntegral $ n+1) :@ I :@ I
 
-waitArity ∷ Natural → Positive
-waitArity n = fromIntegral (n+1)
+yetArity ∷ Natural → Positive
+yetArity n = fromIntegral (n+1)
 
-waitExec ∷ Natural → [Ur] → Maybe Ur
-waitExec _ []     = Nothing
-waitExec _ (u:us) = Just (go u us)
+yetExec ∷ Natural → [Ur] → Maybe Ur
+yetExec _ []     = Nothing
+yetExec _ (u:us) = Just (go u us)
   where
     go acc = \case { [] → acc; x:xs → go (acc :@ x) xs }
 
-j_wait ∷ Check
-j_wait = Named "wait" chk
+j_yet ∷ Check
+j_yet = Named "yet" chk
   where chk ∷ Positive → JetTag → Val → Maybe Jet
         chk n (MkVal I) (MkVal I) = Just $ Yet (fromIntegral n - 1)
         chk _ _         _         = Nothing

@@ -55,20 +55,16 @@ whitespace = ace <|> gap
 -- Literals --------------------------------------------------------------------
 
 -- TODO - only in middle, support prime
+alphaChar :: [Char]
+alphaChar = ['a'..'z'] <> ['A'..'Z']
+
 alpha ∷ Parser Char
-alpha = oneOf (['a'..'z'])
-symChar = oneOf (['-'] ++ ['a'..'z'] ++ ['0'..'9'])
+alpha = oneOf alphaChar
+
+symChar = oneOf (['-'] ++ alphaChar ++ ['0'..'9'])
 
 sym ∷ Parser Sym
 sym = (pack <$> ((:) <$> alpha <*> many symChar))
-  <|> string "J"
-  <|> string "K"
-  <|> string "S"
-  <|> string "D"
-  <|> string "I"
-  <|> string "B"
-  <|> string "C"
-  <|> string "$"
 
 atom ∷ Parser Nat
 atom = do
@@ -103,10 +99,10 @@ cns []     = ASig
 cns [x]    = x
 cns (x:xs) = ACon x (cns xs)
 
-app ∷ [AST] → AST
-app []     = ASig
-app [x]    = x
-app (x:xs) = go x xs
+appN ∷ [AST] → AST
+appN []     = ASig
+appN [x]    = x
+appN (x:xs) = go x xs
  where
   go acc []     = acc
   go acc (x:xs) = go (AApp acc x) xs
@@ -132,7 +128,7 @@ irregular =
     , cns <$> grouped "[" " " "]" exp
     , ALit <$> atom
     , AStr <$> cord
-    , app <$> grouped "(" " " ")" exp
+    , appN <$> grouped "(" " " ")" exp
     , AVar <$> sym
     , ASig <$ char '~'
     ]
@@ -144,6 +140,9 @@ irregular =
       c <- exp
       pure (tag, c)
 
+app3 x y z = appN [x, y, z]
+app4 x y z p = appN [x, y, z, p]
+
 rune :: Parser AST
 rune = runeSwitch
   [ ("~/", rune3 AJet nat sym exp)
@@ -153,6 +152,9 @@ rune = runeSwitch
   , (":-", rune2 ACon exp exp)
   , (":*", runeN cns exp)
   , ("%-", rune2 AApp exp exp)
+  , ("%+", rune3 app3 exp exp exp)
+  , ("%^", rune4 app4 exp exp exp exp)
+  , ("%*", runeN appN exp)
   , ("%.", rune2 (flip AApp) exp exp)
   , ("?:", rune3 AIff exp exp exp)
   ]
