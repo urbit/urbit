@@ -8,6 +8,7 @@ export class InviteSearch extends Component {
     this.state = {
       groups: [],
       peers: [],
+      contacts: new Map,
       searchValue: "",
       searchResults: {
         groups: [],
@@ -33,7 +34,8 @@ export class InviteSearch extends Component {
     groups = groups.filter(e => !e.startsWith("/~/"));
 
     let peers = [],
-      peerSet = new Set();
+      peerSet = new Set(),
+      contacts = new Map;
     Object.keys(this.props.groups).map(group => {
       if (this.props.groups[group].size > 0) {
         let groupEntries = this.props.groups[group].values();
@@ -41,10 +43,23 @@ export class InviteSearch extends Component {
           peerSet.add(member);
         }
       }
+      if (this.props.contacts[group]) {
+        let groupEntries = this.props.groups[group].values();
+        for (let member of groupEntries) {
+          if (this.props.contacts[group][member]) {
+            if (contacts.has(member)) {
+              contacts.get(member).push(this.props.contacts[group][member].nickname);
+            }
+            else {
+              contacts.set(member, [this.props.contacts[group][member].nickname]);
+            }
+          }
+        }
+      }
     });
     peers = Array.from(peerSet);
 
-    this.setState({ groups: groups, peers: peers });
+    this.setState({ groups: groups, peers: peers, contacts: contacts });
   }
 
   search(event) {
@@ -71,6 +86,18 @@ export class InviteSearch extends Component {
       let shipMatches = this.state.peers.filter(e => {
         return e.includes(searchTerm) && !this.props.invites.ships.includes(e);
       });
+
+      for (let contact of this.state.contacts.keys()) {
+        let thisContact = this.state.contacts.get(contact);
+        let match = thisContact.filter(e => {
+          return e.toLowerCase().includes(searchTerm);
+        });
+        if (match.length > 0) {
+          if (!(contact in shipMatches)) {
+            shipMatches.push(contact);
+          }
+        }
+      }
 
       this.setState({
         searchResults: { groups: groupMatches, ships: shipMatches }
@@ -125,8 +152,10 @@ export class InviteSearch extends Component {
       searchValue: "",
       searchResults: { groups: [], ships: [] }
     });
-    ships.push(ship);
-    if (groups.length > 0) {
+    if (!ships.includes(ship)) {
+      ships.push(ship);
+    }
+    if ((groups.length > 0)) {
       return false;
     }
     this.props.setInvite({ groups: groups, ships: ships });
@@ -178,15 +207,15 @@ export class InviteSearch extends Component {
         state.searchResults.groups.length > 0 ? (
           <p className="f9 gray2 ph3">Groups</p>
         ) : (
-          ""
-        );
+            ""
+          );
 
       let shipHeader =
         state.searchResults.ships.length > 0 ? (
           <p className="f9 gray2 pv2 ph3">Ships</p>
         ) : (
-          ""
-        );
+            ""
+          );
 
       let groupResults = state.searchResults.groups.map(group => {
         return (
@@ -203,12 +232,15 @@ export class InviteSearch extends Component {
       });
 
       let shipResults = state.searchResults.ships.map(ship => {
+        let nicknames = (this.state.contacts.has(ship))
+          ? this.state.contacts.get(ship).join(", ")
+          : "";
         return (
           <li
             key={ship}
             className={
               "list mono white-d f8 pv1 ph3 pointer" +
-              " hover-bg-gray4 hover-black-d"
+              " hover-bg-gray4 hover-black-d relative"
             }
             onClick={e => this.addShip(ship)}>
             <Sigil
@@ -217,7 +249,8 @@ export class InviteSearch extends Component {
               color="#000000"
               classes="mix-blend-diff v-mid"
             />
-            <span className="v-mid ml2">{"~" + ship}</span>
+            <span className="v-mid ml2 mw5 truncate dib">{"~" + ship}</span>
+            <span className="absolute right-1 di truncate mw4 inter f9 pt1">{nicknames}</span>
           </li>
         );
       });
@@ -306,7 +339,7 @@ export class InviteSearch extends Component {
           }}
           className={
             "f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 w-100" +
-            " db focus-b--black focus-b--white-d mono placeholder-inter"
+            " db focus-b--black focus-b--white-d"
           }
           placeholder="Search for ships or existing groups"
           disabled={searchDisabled}

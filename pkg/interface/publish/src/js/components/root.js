@@ -65,6 +65,7 @@ export class Root extends Component {
               <NewScreen
                 notebooks={state.notebooks}
                 groups={state.groups}
+                contacts={contacts}
                 api={api}
                 {...props}
               />

@@ -71,6 +71,7 @@ export class AddScreen extends Component {
           <div className="relative pl4 mt2 pb6">
           <InviteSearch
             groups={props.groups}
+            contacts={props.contacts}
             groupResults={false}
             invites={this.state.invites}
             setInvite={this.invChange}
