@@ -12,22 +12,11 @@
   ~/  2  turn
   ..  $
   |=  (data fun)
-  %^  cas  data
-    |=  p
-    (cons (fun (car p)) ($ (cdr p) fun))
-  ::
-    |=  nil
-    null
+  ?-  data
+    p  (cons (fun (car p)) ($ (cdr p) fun))
+    y  null
+  ==
 
-:: =/  broken-turn
-::   ~/  2  broken-turn
-::   ..  $
-::   |=  (data fun)
-::   ?-  data
-::     p  (cons (fun (car p)) ($ (cdr p) fun))
-::     y  null
-::   ==
-  
 ::  Takes two lists and returns the two concatendated
 =/  weld
   ~/  2  weld
