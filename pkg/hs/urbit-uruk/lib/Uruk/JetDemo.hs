@@ -1187,7 +1187,9 @@ sjMul = SingJet{..}
 pattern Bex = Fast 1 JBex []
 
 {-
-   bex = \a -> (a (mul 2) 1)
+    ~/  1  bex
+    |=  x
+    (x (mul 2) 1)
 -}
 sjBex :: SingJet
 sjBex = SingJet { .. }
@@ -1197,8 +1199,10 @@ sjBex = SingJet { .. }
   sjName = MkVal $ Nat 7890274
   sjExec [Nat x] = Just $ Nat (2 ^ x)
   sjExec _       = Nothing
-  sjBody =
-    MkVal $ S :@ (S :@ I :@ (K :@ (Fast 1 JMul [Nat 2]))) :@ (K :@ Nat 1)
+  sjBody = MkVal $ Fast
+    1
+    Sea
+    [S :@ I :@ Fast 1 Sea [Fast 1 Sea [Fast 1 Bee [Seq, I], Mul], Nat 2], Nat 1]
 
 
 -- Left Shift ------------------------------------------------------------------
