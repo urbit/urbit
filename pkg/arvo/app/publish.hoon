@@ -635,7 +635,7 @@
   =/  rif=riff:clay  [q.byk.bol `[%next %x [%da now.bol] pax]]
   :_  (~(put by notes) note-name new-note)
   ;:  weld
-    [%pass (welp /read/comment pax) %arvo %c %warp our.bol rif]~
+    [%pass (welp /read/note pax) %arvo %c %warp our.bol rif]~
     comment-cards
     cards
   ==
@@ -667,13 +667,11 @@
 ++  form-note
   |=  [note-name=@tas udon=@t]
   ^-  note
-  =/  body=tape   (slag (add 3 (need (find ";>" (trip udon)))) (trip udon))
-  =/  snippet=@t  (of-wain:format (scag 1 (to-wain:format (crip body))))
-::  =/  build=(each manx tang)
-::    %-  mule  |.
-::    ^-  manx
-::    elm:(static:cram (ream udon))
-  ::
+  =/  front-idx  (add 3 (need (find ";>" (trip udon))))
+  =/  front-matter
+    (cat 3 (end 3 front-idx udon) 'dummy text\0a')
+  =/  body  (cut 3 [front-idx (met 3 udon)] udon)
+  =/  snippet=@t  (of-wain:format (scag 1 (to-wain:format body)))
   =/  meta=(each (map term knot) tang)
     %-  mule  |.
     %-  ~(run by inf:(static:cram (ream udon)))
@@ -692,12 +690,24 @@
   =?  title  ?=(%.y -.meta)
     (fall (~(get by p.meta) %title) note-name)
   ::
+  =/  date-created=@da  now.bol
+  =?  date-created  ?=(%.y -.meta)
+    %+  fall
+      (biff (~(get by p.meta) %date-created) (slat %da))
+    now.bol
+  ::
+  =/  last-modified=@da  now.bol
+  =?  last-modified  ?=(%.y -.meta)
+    %+  fall
+      (biff (~(get by p.meta) %last-modified) (slat %da))
+    now.bol
+  ::
   :*  author
       title
       note-name
-      now.bol
-      now.bol
-      %.n
+      date-created
+      last-modified
+      %.y
       udon
       snippet
       ~
@@ -1030,6 +1040,8 @@
       %-  my
       :~  title+title.act
           author+(scot %p src.bol)
+          date-created+(scot %da now.bol)
+          last-modified+(scot %da now.bol)
       ==
     =.  body.act  (cat 3 body.act '\0a')
     =/  file=@t   (add-front-matter front body.act)
@@ -1104,6 +1116,8 @@
       %-  my
       :~  title+title.act
           author+(scot %p src.bol)
+          date-created+(scot %da date-created.u.note)
+          last-modified+(scot %da now.bol)
       ==
     =.  body.act  (cat 3 body.act '\0a')
     =/  file=@t   (add-front-matter front body.act)
