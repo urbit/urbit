@@ -94,11 +94,12 @@
     =/  drip  (~(got by movs.drips.state) num)
     =.  movs.drips.state  (~(del by movs.drips.state) num)
     =/  =move
+      =/  card  [%give %meta drip]
       ?~  error
-        [duct %give %meta drip]
+        [duct card]
       =/  =tang
         (weld u.error `tang`[leaf/"drip failed" ~])
-      [duct %gave fail/tang %meta drip]
+      [duct %hurl fail/tang card]
     event-core(moves [move moves])
   ::  +trim: in response to memory pressue
   ::
