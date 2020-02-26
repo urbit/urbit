@@ -72,6 +72,7 @@ export class Root extends Component {
                   <NewScreen
                     history={props.history}
                     groups={groups}
+                    contacts={contacts}
                     api={api} />
                 </Skeleton>
               );
@@ -133,6 +134,7 @@ export class Root extends Component {
                     groups={groups}
                     path={groupPath}
                     history={props.history}
+                    contacts={contacts}
                   />
                 </Skeleton>
               );
