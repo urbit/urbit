@@ -1,4 +1,4 @@
-module Moon.Repl (repl, main) where
+module Moon.Repl (repl, runFile, runText, main) where
 
 import Bound
 import ClassyPrelude
@@ -28,20 +28,27 @@ main :: IO ()
 main = do
   getArgs >>= \case
     []   -> repl
+    [fn] -> runFile (unpack fn)
+    _    -> putStrLn "usage: moon [file]"
 
-    [fn] -> do
-      txt <- readFile (unpack fn)
-      _   <- runText mempty (decodeUtf8 txt)
-      pure ()
-
-    _ -> do
-      putStrLn "usage: moon [file]"
+runFile :: FilePath -> IO ()
+runFile fp = do
+  txt <- readFile fp
+  _   <- runText mempty (decodeUtf8 txt)
+  pure ()
 
 runText :: Ctx -> Text -> IO Ctx
 runText ctx txt = do
-  let !res = MU.gogogo txt
-  print res
-  pure ctx
+  MU.gogogo' txt & \case
+    Left err -> do
+      putStrLn err
+      pure ctx
+    Right res -> do
+      putStrLn $ pack $ ppShow (Ur.unClose res)
+      pure ctx
+
+runText_ :: Text -> IO ()
+runText_ = void . runText mempty
 
 repl :: IO ()
 repl = HL.runInputT HL.defaultSettings go
@@ -54,7 +61,7 @@ repl = HL.runInputT HL.defaultSettings go
       Just "!!"  -> return ()
       Just input -> do
         let !resStr = MU.gogogo' (pack input) & \case
-              Left err -> unpack err
+              Left  err -> unpack err
               Right res -> ppShow (Ur.unClose res)
         HL.outputStrLn resStr
         go

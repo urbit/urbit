@@ -85,9 +85,7 @@ gogogo text = Ur.simp complex
 
 gogogo' :: Text -> Either Text Ur.Ur
 gogogo' text = do
-  ast <- Parser.parseAST text & \case
-    Left  err -> Left (tshow err)
-    Right ex  -> Right ex
+  ast <- Parser.parseAST text
 
   let !expr = bind ast
       !lamb = toLC getGlobal expr

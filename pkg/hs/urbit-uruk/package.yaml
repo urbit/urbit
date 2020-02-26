@@ -75,7 +75,7 @@ default-extensions:
   - ViewPatterns
 
 executables:
-  urbit-uruk:
+  moon:
     main: Main.hs
     source-dirs: app
     dependencies:
