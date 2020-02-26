@@ -109,8 +109,8 @@ expDeb = go
 
     go (Case x l r) = DPrim Ur.Cas
                         `App` go x
-                        `App` go l
-                        `App` go r
+                        `App` (Abs $ go l)
+                        `App` (Abs $ go r)
 
     go (If c t e) = DPrim Ur.Iff
                       `App` go c

@@ -8,6 +8,7 @@ import Moon.AST
 import Control.Arrow    ((>>>))
 import Data.Function    ((&))
 import System.IO.Unsafe (unsafePerformIO)
+import Text.Show.Pretty (ppShow)
 import Uruk.OptToFast   (optToFast)
 
 import qualified Moon.Parser      as Parser
@@ -87,13 +88,21 @@ gogogo' :: Text -> Either Text Ur.Ur
 gogogo' text = do
   ast <- Parser.parseAST text
 
+  traceM ""
   traceM (show ast)
+  traceM ""
 
   let !expr = bind ast
       !lamb = toLC getGlobal expr
       !cplx = Uruk.moonStrict lamb
 
+  traceM ""
   traceM (show lamb)
+  traceM ""
+
+  traceM ""
+  traceM (ppShow cplx)
+  traceM ""
 
   pure (Ur.simp cplx)
 
