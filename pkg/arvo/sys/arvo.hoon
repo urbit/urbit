@@ -69,7 +69,6 @@
   (pair type a)
 +$  meta  (pair)
 +$  maze  (each vase meta)
-+$  mill  maze
 +$  milt  meta
 ::
 +|  %interface
@@ -266,10 +265,13 @@
   |%
   ::
   +|  %utilities
-  ::  XX replace +slam:wa ?
+  ::
+  ::    XX move into |wa?
+  ::
+  ::  +slur: slam a vase with a maze
   ::
   ++  slur
-    |=  [sac=worm gat=vase sam=mill]
+    |=  [sac=worm gat=vase sam=maze]
     ^-  [vase worm]
     =^  cur  sac  (~(slot wa sac) 6 gat)
     =^  hig  sac
@@ -279,11 +281,11 @@
       ==
     ?>  hig
     (~(slym wa sac) gat q.p.sam)
-  ::  +slid: cons a vase onto a mill XX where
+  ::  +slid: cons a vase onto a maze
   ::
   ++  slid
-    |=  [hed=vase tal=mill]
-    ^-  mill
+    |=  [hed=vase tal=maze]
+    ^-  maze
     ?-  -.tal
       %&  [%& (slop hed p.tal)]
       %|  [%| [%cell p.hed p.p.tal] [q.hed q.p.tal]]
@@ -342,7 +344,7 @@
       ::
           [%give card]
         ::  yed: vase containing card
-        ::  hil: card as mill
+        ::  hil: card as maze
         ::
         =^  yed  sac  (~(spot wa sac) 3 vax)
         =^  hil  sac  (refine-card yed)
@@ -360,7 +362,7 @@
           vane.q.vax
         ::
         ::  yed: vase containing card
-        ::  hil: card as mill
+        ::  hil: card as maze
         ::
         =^  xav  sac  (~(spot wa sac) 7 vax)
         =^  yed  sac  (~(spot wa sac) 3 xav)
@@ -376,7 +378,7 @@
           vane.q.vax
         ::
         ::  yed: vase containing card
-        ::  hil: card as mill
+        ::  hil: card as maze
         ::
         =^  xav  sac  (~(spot wa sac) 3 vax)
         =^  yed  sac  (~(spot wa sac) 3 xav)
@@ -402,13 +404,13 @@
     ::
     ++  refine-card
       |=  vax=vase
-      ^-  (pair mill worm)
+      ^-  (pair maze worm)
       ~>  %mean.'bad-card'
       =^  hip  sac  (~(nell wa sac) p.vax)
       ?>  hip
       ?.  ?=(%meta -.q.vax)
         ::
-        ::  for an non-meta card, the mill is the vase
+        ::  for a non-meta card, the maze is the vase
         ::
         [[%& vax] sac]
       ~>  %mean.'bad-meta'
@@ -489,8 +491,8 @@
         ::  +slix: en-hypo XX remove
         ::
         ++  slix
-          |=  hil=mill
-          ^-  mill
+          |=  hil=maze
+          ^-  maze
           ?-  -.hil
             %&  [%& (slop [typ.vil p.p.hil] p.hil)]
             %|  [%| [%cell typ.vil p.p.hil] p.hil]
@@ -509,7 +511,7 @@
         ::  +call:spin:plow:va: advance statefully
         ::
         ++  call
-          |=  task=mill
+          |=  task=maze
           ^-  (pair [vase vase] worm)
           ~>  %mean.'call: failed'
           =^  gat  sac
@@ -517,7 +519,7 @@
           ::
           ::  sample is [duct (unit goof) (hypo (hobo task))]
           ::
-          =/  sam=mill
+          =/  sam=maze
             =*  err  !>(dud)
             (slid duc (slid err (slix task)))
           =^  pro  sac  (slur sac gat sam)
@@ -525,7 +527,7 @@
         ::  +take:spin:plow:va: retreat statefully
         ::
         ++  take
-          |=  [=wire from=term gift=mill]
+          |=  [=wire from=term gift=maze]
           ^-  (pair [vase vase] worm)
           ~>  %mean.'take: failed'
           =^  gat  sac
@@ -535,7 +537,7 @@
           ::
           ::  sample is [wire duct (unit goof) (hypo sign=[term gift])]
           ::
-          =/  sam=mill
+          =/  sam=maze
             :: =/  tea  !>(wire)
             =*  tea  [pah.vil wire]
             =*  err  !>(dud)
@@ -597,13 +599,13 @@
       |=  [vane=term =ovum]
       ^+  this
       ~?  !lac  ["" %unix p.card.ovum wire.ovum now]
-      =/  =mill
+      =/  =maze
         =/  =type  [%cell [%atom %tas `%soft] %noun]
         [%& type [%soft card.ovum]]
       =/  =move
         ~|  [%poke %bad-wire wire.ovum]
         ?>  ?=([%$ *] wire.ovum)
-        [duct=~ %pass t.wire.ovum vane mill]
+        [duct=~ %pass t.wire.ovum vane maze]
       (emit %$ move ~)
     ::  +crud: prepare a worklist-of-one with error report from outside
     ::
@@ -611,13 +613,13 @@
       |=  [vane=term =goof =ovum]
       ^+  this
       ~?  !lac  ["" %unix %crud p.card.ovum wire.ovum now]
-      =/  =mill
+      =/  =maze
         =/  =type  [%cell [%atom %tas `%soft] %noun]
         [%& type [%soft card.ovum]]
       =/  =move
         ~|  [%crud %bad-wire wire.ovum]
         ?>  ?=([%$ *] wire.ovum)
-        [duct=~ %hurl goof %pass t.wire.ovum vane mill]
+        [duct=~ %hurl goof %pass t.wire.ovum vane maze]
       (emit %$ move ~)
     ::  +spam: prepare a worklist for all targets
     ::
@@ -753,13 +755,13 @@
     ::  +xeno: stash pending output
     ::
     ++  xeno
-      |=  [=wire gift=mill]
+      |=  [=wire gift=maze]
       ^+  this
       this(out [[wire ;;(card q.p.gift)] out])
     ::  +call: advance to target
     ::
     ++  call
-      |=  [=duct way=term task=mill]
+      |=  [=duct way=term task=maze]
       ^+  this
       %+  push  way
       %.  task
@@ -767,7 +769,7 @@
     ::  +take: retreat along call-stack
     ::
     ++  take
-      |=  [=duct =wire way=term gift=mill]
+      |=  [=duct =wire way=term gift=maze]
       ^+  this
       %+  push  way
       ::
