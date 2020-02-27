@@ -215,6 +215,7 @@
   ::
       %delete
     =/  group-path  (group-from-chat app-path.act)
+    ~&  delete+group-path
     ?>  ?=(^ app-path.act)
     %-  zing
     :~  :~  (chat-hook-poke [%remove app-path.act])
@@ -224,6 +225,7 @@
       ::
         ?:  (is-managed group-path)  ~
         :~  (permission-hook-poke [%remove group-path])
+            (permission-poke [%delete group-path])
             (group-poke [%unbundle group-path])
             (metadata-hook-poke [%remove group-path])
         ==
@@ -264,9 +266,9 @@
   ++  create-metadata
     |=  [group-path=path app-path=path]
     ^-  (list card)
-    ~&  group-path+group-path
-    ~&  app-path+app-path
-    ~&  is-managed+(is-managed app-path)
+    ::~&  group-path+group-path
+    ::~&  app-path+app-path
+    ::~&  is-managed+(is-managed app-path)
     =/  =metadata
       %*  .  *metadata
           date-created  now.bol
@@ -342,6 +344,7 @@
         (scot %da now.bol)
         /resource-indices
       ==
+    ~&  resource-indices
     =/  groups=(set path)  (~(got by resource-indices) [%chat app-path])
     (snag 0 ~(tap in groups))
   ::
@@ -349,6 +352,7 @@
     |=  =path
     ^-  ?
     ?>  ?=(^ path)
+    ~&  is-managed+!=(i.path '~')
     !=(i.path '~')
   --
 ::
@@ -372,6 +376,11 @@
   |=  act=group-action
   ^-  card
   [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
+::
+++  permission-poke
+  |=  act=permission-action
+  ^-  card
+  [%pass / %agent [our.bol %permission-store] %poke %permission-action !>(act)]
 ::
 ++  chat-hook-poke
   |=  act=chat-hook-action

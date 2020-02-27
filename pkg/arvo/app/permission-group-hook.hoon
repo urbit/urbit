@@ -177,7 +177,9 @@
   ::
       %unbundle
     ::  pull subscriptions
+    ~&  %unbundle
     =/  perms  (~(get by relation) pax.diff)
+    ~&  perms
     ?~  perms
       :_  state(relation (~(del by relation) pax.diff))
       [(group-pull pax.diff)]~
