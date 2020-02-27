@@ -29,8 +29,8 @@
 ::  $beam: global name
 ::  $bone: opaque duct handle
 ::  $case: global version
-::  $cage: global metadata
-::  +cask: global data builder
+::  $cage: marked vase
+::  +cask: marked data builder
 ::  $desk: local workspace
 ::  $dock: message target
 ::  $mark: symbolic content type
@@ -56,7 +56,7 @@
 +$  dock  (pair @p term)
 +$  mark  @tas
 +$  ship  @p
-++  sink  (trel bone ship path)
++$  sink  (trel bone ship path)
 ::
 +|  %meta
 ::
@@ -77,6 +77,7 @@
 ::  $duct: causal history
 ::  +hobo: %soft task builder
 ::  $goof: crash label and trace XX fail/ruin/crud/flaw/lack/miss
+::  $mass: memory usage
 ::  $monk: general identity
 ::  $move: cause and action
 ::  $ovum: card with cause
@@ -99,6 +100,8 @@
       a
   ==
 +$  goof  [mote=term =tang]
++$  mass  $~  $+|+~
+          (pair cord (each * (list mass)))
 +$  monk  (each ship (pair @tas @ta))
 +$  move  [=duct =ball]
 +$  ovum  (pair wire curd)
@@ -152,16 +155,11 @@
 ::
 +|  %implementation
 ::
-::  +mash: producing mass
-::  $mass: memory usage
 ::  $pane: kernel modules
 ::  $pone: kernel modules old
 ::  $vane: kernel module
 ::  $vile: reflexive constants
 ::
-++  mash  |=(* (mass +<))
-+$  mass  $~  [%$ [%& ~]]
-          (pair cord (each noun (list mash)))
 +$  pane  (list (pair @tas vase))
 +$  pone  (list (pair @tas vise))
 +$  vane  [=vase =worm]
@@ -322,8 +320,6 @@
         ~>(%mean.'not a cell' !!)
       =/  duc
         ~>  %mean.'bad-duct'
-        ::  XX used to be a nest-check and clam, seemed excessive
-        ::
         ;;(duct -.q.vax)
       ::
       ::  yat: specialized ball vase
@@ -352,8 +348,6 @@
           [%pass wire=* vane=term card]
         =/  =wire
           ~>  %mean.'bad-wire'
-          ::  XX used to be a nest-check and clam, seemed excessive
-          ::
           ;;(wire wire.q.vax)
         =/  vane
           ~>  %mean.'bad-vane-label'
