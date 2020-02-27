@@ -94,7 +94,6 @@
     ?:  ?=(%& -.old-state)
       [~ this(state p.old-state)]
     =/  zero  !<(state-zero old)
-    ::  unsubscribe from all foreign notebooks
     ::  kill all ford builds
     ::  flush all state
     ::  detect files in /web/publish
@@ -105,7 +104,7 @@
     ::      send invites to all previously subscribed ships
     ::
     |^
-    =/  rav  [%sing %t [%da now.bol] /app/publish/notebooks]
+    =/  rav  [%next %t [%da now.bol] /app/publish/notebooks]
     =/  tile-json
       (frond:enjs:format %notifications (numb:enjs:format 0))
     =/  init-cards=(list card)
@@ -120,21 +119,19 @@
           [%give %fact [/publishtile]~ %json !>(tile-json)]
       ==
     =+  ^-  [kick-cards=(list card) old-subs=(jug @tas @p)]  kick-subs
-    :_  this(state [%1 *state-one])
+    =/  inv-scry-pax
+      /(scot %p our.bol)/invite-store/(scot %da now.bol)/invitatory/publish/noun
+    =/  inv=(unit invitatory)  .^((unit invitatory) %gx inv-scry-pax)
+    =|  new-state=state-one
+    =?  tile-num.new-state  ?=(^ inv)
+      ~(wyt by u.inv)
+    :_  this(state [%1 new-state])
     ;:  weld
       kill-builds
-      leave-subs
       kick-cards
       init-cards
       (move-files old-subs)
     ==
-    ::
-    ++  leave-subs
-      ^-  (list card)
-      %+  turn  ~(tap by wex.bol)
-      |=  [[wir=wire who=@p @] ? path]
-      ^-  card
-      [%pass wir %agent [who %publish] %leave ~]
     ::
     ++  kick-subs
       ^-  [(list card) (jug @tas @p)]
@@ -343,6 +340,9 @@
         =^  cards  state
           (handle-invite-update:main !<(invite-update q.cage.sin))
         [cards this]
+      ::
+          [%collection *]
+        [~ this]
       ==
     ==
   ::
@@ -635,7 +635,7 @@
   =/  rif=riff:clay  [q.byk.bol `[%next %x [%da now.bol] pax]]
   :_  (~(put by notes) note-name new-note)
   ;:  weld
-    [%pass (welp /read/comment pax) %arvo %c %warp our.bol rif]~
+    [%pass (welp /read/note pax) %arvo %c %warp our.bol rif]~
     comment-cards
     cards
   ==
@@ -667,13 +667,11 @@
 ++  form-note
   |=  [note-name=@tas udon=@t]
   ^-  note
-  =/  body=tape   (slag (add 3 (need (find ";>" (trip udon)))) (trip udon))
-  =/  snippet=@t  (of-wain:format (scag 1 (to-wain:format (crip body))))
-::  =/  build=(each manx tang)
-::    %-  mule  |.
-::    ^-  manx
-::    elm:(static:cram (ream udon))
-  ::
+  =/  front-idx  (add 3 (need (find ";>" (trip udon))))
+  =/  front-matter
+    (cat 3 (end 3 front-idx udon) 'dummy text\0a')
+  =/  body  (cut 3 [front-idx (met 3 udon)] udon)
+  =/  snippet=@t  (of-wain:format (scag 1 (to-wain:format body)))
   =/  meta=(each (map term knot) tang)
     %-  mule  |.
     %-  ~(run by inf:(static:cram (ream udon)))
@@ -692,12 +690,24 @@
   =?  title  ?=(%.y -.meta)
     (fall (~(get by p.meta) %title) note-name)
   ::
+  =/  date-created=@da  now.bol
+  =?  date-created  ?=(%.y -.meta)
+    %+  fall
+      (biff (~(get by p.meta) %date-created) (slat %da))
+    now.bol
+  ::
+  =/  last-modified=@da  now.bol
+  =?  last-modified  ?=(%.y -.meta)
+    %+  fall
+      (biff (~(get by p.meta) %last-modified) (slat %da))
+    now.bol
+  ::
   :*  author
       title
       note-name
-      now.bol
-      now.bol
-      %.n
+      date-created
+      last-modified
+      %.y
       udon
       snippet
       ~
@@ -756,7 +766,8 @@
     [%give %fact [/publishtile]~ %json !>(jon)]~
   ::
       %decline
-    =.  tile-num  (dec tile-num)
+    =?  tile-num  (gth tile-num 0)
+      (dec tile-num)
     =/  jon=json  (frond:enjs:format %notifications (numb:enjs:format tile-num))
     :_  state
     [%give %fact [/publishtile]~ %json !>(jon)]~
@@ -765,7 +776,8 @@
     ?>  ?=([%notebook @ ~] path.invite.upd)
     =/  book  i.t.path.invite.upd
     =/  wir=wire  /subscribe/(scot %p ship.invite.upd)/[book]
-    =.  tile-num  (dec tile-num)
+    =?  tile-num  (gth tile-num 0)
+      (dec tile-num)
     =/  jon=json  (frond:enjs:format %notifications (numb:enjs:format tile-num))
     :_  state
     :~  [%pass wir %agent [ship.invite.upd %publish] %watch path.invite.upd]
@@ -1028,6 +1040,8 @@
       %-  my
       :~  title+title.act
           author+(scot %p src.bol)
+          date-created+(scot %da now.bol)
+          last-modified+(scot %da now.bol)
       ==
     =.  body.act  (cat 3 body.act '\0a')
     =/  file=@t   (add-front-matter front body.act)
@@ -1102,6 +1116,8 @@
       %-  my
       :~  title+title.act
           author+(scot %p src.bol)
+          date-created+(scot %da date-created.u.note)
+          last-modified+(scot %da now.bol)
       ==
     =.  body.act  (cat 3 body.act '\0a')
     =/  file=@t   (add-front-matter front body.act)
@@ -1228,7 +1244,7 @@
     =/  not=(unit note)  (~(get by notes.u.book) note.act)
     ?~  not
       ~|("nonexistent note: {<note.act>}" !!)
-    =?  tile-num  !read.u.not
+    =?  tile-num  &(!read.u.not (gth tile-num 0))
       (dec tile-num)
     =.  read.u.not  %.y
     =.  notes.u.book  (~(put by notes.u.book) note.act u.not)
@@ -1380,7 +1396,7 @@
     ?~  book
       [~ sty]
     =/  not=note  (~(got by notes.u.book) note.del)
-    =?  tile-num  !read.not
+    =?  tile-num  &(!read.not (gth tile-num 0))
       (dec tile-num)
     =.  notes.u.book  (~(del by notes.u.book) note.del)
     (emit-updates-and-state host.del book.del u.book del sty)
