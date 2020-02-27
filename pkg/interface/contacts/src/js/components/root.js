@@ -103,10 +103,13 @@ export class Root extends Component {
                       defaultContacts={defaultContacts}
                       group={group}
                       activeDrawer={detail ? "detail" : "contacts"}
-                      path={groupPath} />
+                      path={groupPath}
+                      {...props} />
                       <GroupDetail
                         channels={channels}
                         path={groupPath}
+                        activeDrawer={detail ? "detail" : "contacts"}
+                        {...props}
                       />
                   </Skeleton>
               );

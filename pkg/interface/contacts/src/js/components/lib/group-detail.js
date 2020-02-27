@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Route, Link } from 'react-router-dom';
 import { uxToHex } from '/lib/util.js';
 
 export class GroupDetail extends Component {
@@ -6,7 +7,7 @@ export class GroupDetail extends Component {
     const { props } = this;
 
     let responsiveClass =
-      props.activeDrawer === "details" ? "db" : "dn db-ns";
+      props.activeDrawer === "detail" ? "db" : "dn db-ns";
 
     let groupPath = props.path || "";
 
@@ -44,10 +45,16 @@ export class GroupDetail extends Component {
         </li>
       )
     })
+
+    let backLink = props.location.pathname;
+    backLink = backLink.slice(0, props.location.pathname.indexOf("/detail"))
     return (
       <div className={"h-100 w-100 overflow-x-hidden bg-white pa4 "
       + responsiveClass}>
-      <p className="gray2 f9 mb2">Group Channels</p>
+        <div className="pb5 f8 db dn-m dn-l dn-xl">
+          <Link to={backLink}>⟵ Contacts</Link>
+      </div>
+      <p className="gray2 f9 mb2 pt2 pt0-m pt0-l pt0-xl">Group Channels</p>
       {channelList}
       </div>
     )
