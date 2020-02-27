@@ -54,6 +54,12 @@
   ::
   (loop dividend 0)
 
+::  Unsigned modulus
+=/  mod
+  ~/  2  mod
+  |=  (a b)
+  (fub a (mul b (div a b)))
+
 ::  Right Shift
 =/  rsh
   ~/  2  rsh
@@ -79,21 +85,58 @@
     ($ (rsh 1 x) (inc count))
   (loop x 0)
 
-:: Concatenate natural numbers
+::  Rounds up to the nearest :multiple
+::
+=/  round-up
+  ~/  2  dceil
+  |=  (to-round multiple)
+  ::
+  ?:  (zer multiple)
+    to-round
+  ::
+  =/  remainder  (mod to-round multiple)
+  ?:  (zer remainder)
+    to-round
+  ::
+  (fub (add to-round multiple) remainder)
+
+::  Concatenate natural numbers, aligned in blocks of :a bits
 =/  cat
   ~/  2  cat
-  |=  (b c)
-  (add (lsh (met b) c) b)
+  |=  (a b c)
+  (add (lsh (round-up (met b) a) c) b)
 
+::  Assemble a list of natural numbers, aligned to the nearest :a bit blocks
+=/  rap
+  ~/  2  rap
+  ..  $
+  |=  (a b)
+  ?-  b
+    l  (cat a (car l) ($ a (cdr l)))
+    r  0
+  ==
 
-:: TODO list for tape to cord:
+:: Tape to cord
+=/  crip
+  ~/  1  crip
+  (rap 8)
+
+:: Directly stolen from turn.moon for testing
+=/  cons
+  |=  (head tail)
+  (lef [head tail])
+=/  null
+  (rit uni)
+
+:: > `@u`(crip ['a' 'a' 'a' ~])
+:: 6.381.921
 ::
-:: rap
-:: crip
+::
+(crip (cons 97 (cons 97 (cons 97 null))))
 
+:: ::  Exports
+:: :*
+::   :-  bex  (bex 128)
+::   :-  lsh  (lsh 8 1)
+:: ==
 
-::  Exports
-:*
-  :-  bex  (bex 128)
-  :-  lsh  (lsh 8 1)
-==
