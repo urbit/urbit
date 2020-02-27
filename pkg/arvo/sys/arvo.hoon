@@ -300,7 +300,7 @@
         ::  pyt: cached types
         ::
         [sac=worm vil=vile]
-    ::  +refine-moves: move list from vase (was +said)
+    ::  +refine-moves: move list from vase
     ::
     ++  refine-moves
       |=  vax=vase
@@ -311,7 +311,7 @@
       =^  mov  sac  (refine-move hed)
       =^  moz  sac  $(vax tal)
       [[mov moz] sac]
-    ::  +refine-move: move from vase (was in +sump)
+    ::  +refine-move: move from vase
     ::
     ++  refine-move
       |=  vax=vase
@@ -331,7 +331,7 @@
       =^  yat  sac  (~(spot wa sac) 3 vax)
       =^  del  sac  (refine-ball yat)
       [[duc del] sac]
-    ::  +refine-ball: ball from vase (was in +sump)
+    ::  +refine-ball: ball from vase
     ::
     ++  refine-ball
       |=  vax=vase
@@ -369,8 +369,6 @@
         [[%pass wire vane hil] sac]
       ::
           [%slip vane=term card]
-        ::  XX remove
-        ::
         =/  vane
           ~>  %mean.'bad-vane-label'
           ?>  ((sane %tas) vane.q.vax)
@@ -399,7 +397,7 @@
         ?>  ?=(?(%pass %give) -.p.bal)
         [[%hurl goof p.bal] sac]
       ==
-    ::  +refine-card: card from vase (was +song)
+    ::  +refine-card: card from vase
     ::
     ++  refine-card
       |=  vax=vase
@@ -487,7 +485,7 @@
           (~(slym wa sac) vax sam)
         ::
         |%
-        ::  +slix: en-hypo XX remove
+        ::  +slix: en-hypo
         ::
         ++  slix
           |=  hil=maze
