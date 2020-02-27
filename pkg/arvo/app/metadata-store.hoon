@@ -172,7 +172,7 @@
 ++  metadata-for-app
   |=  =app-name
   %-  ~(gas by *^associations)
-  %+  turn  ~(tap in (~(got by app-indices) app-name))
+  %+  turn  ~(tap in (~(gut by app-indices) app-name ~))
   |=  [=group-path =app-path]
   :-  [group-path [app-name app-path]]
   (~(got by associations) [group-path [app-name app-path]])
