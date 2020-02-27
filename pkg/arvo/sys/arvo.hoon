@@ -876,23 +876,20 @@
       mev=(pal '$:{$meta $vase}')
   ==
 ::
-++  is                                                  ::  operate in time
-  |=  [who=ship vil=vile eny=@ bud=vase vanes=(list [label=@tas =vane])]
-  |_  now/@da
-  ::
-  ++  dint                                              ::  input routing
-    |=  hap/path  ^-  @tas
-    ?+  hap  ~|([%bad-dint hap] !!)
-      {@ $ames *}  %a
-      {@ $boat *}  %c
-      {@ $newt *}  %a
-      {@ $sync *}  %c
-      {@ $term *}  %d
-      {@ $http-client *}  %i
-      {@ $http-server *}  %e
-      {@ $behn *}  %b
-    ==
-  --
+++  dint                                              ::  input routing
+  |=  hap/path  ^-  @tas
+  ?+  hap  ~|([%bad-dint hap] !!)
+    {@ $ames *}  %a
+    {@ $boat *}  %c
+    {@ $newt *}  %a
+    {@ $sync *}  %c
+    {@ $term *}  %d
+    {@ $http-client *}  %i
+    {@ $http-server *}  %e
+    {@ $behn *}  %b
+  ==
+::
+++  is  &
 --
 =<  ::  Arvo larval stage
     ::
@@ -1124,20 +1121,20 @@
         ::
         ::  legacy %crud, directly routed
         ::
-        (poke:el (dint:$:is p.ovo) ovo)
+        (poke:el (dint p.ovo) ovo)
       ::
       ::  modern %crud, unwrapped and routed w/ $goof
       ::
       =/  =goof  ;;(goof -.q.q.ovo)
       =/  =curd  ;;(curd +.q.q.ovo)
-      (crud:el (dint:$:is p.ovo) goof p.ovo curd)
+      (crud:el (dint p.ovo) goof p.ovo curd)
     ::
     [zef +>.$]
   ::  Normal events are routed to a single vane
   ::
   =^  zef  vanes
     =<  abet:loop
-    %.  [(dint:$:is p.ovo) ovo]
+    %.  [(dint p.ovo) ovo]
     %~  poke  le:part
     [our now eny lac vil (~(gas by *(map term vane)) vanes)]
   ::
