@@ -69,7 +69,6 @@
   (pair type a)
 +$  meta  (pair)
 +$  maze  (each vase meta)
-+$  milt  meta
 ::
 +|  %interface
 ::

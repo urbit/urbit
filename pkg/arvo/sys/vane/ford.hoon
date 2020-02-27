@@ -5572,7 +5572,7 @@
     %-  sloy  ^-  slyd
     ~/  %intercepted-scry
     |=  [ref=* (unit (set monk)) =term =beam]
-    ^-  (unit (unit (cask milt)))
+    ^-  (unit (unit (cask meta)))
     ::  if the actual scry produces a value, use that value; otherwise use local
     ::
     =/  scry-response  (scry +<.$)
