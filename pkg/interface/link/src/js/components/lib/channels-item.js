@@ -8,7 +8,7 @@ export class ChannelsItem extends Component {
 
     let selectedClass = (props.selected) 
     ? "bg-gray5 bg-gray1-d b--gray4 b--gray2-d" 
-    : "b--transparent";
+    : "b--gray4 b--gray2-d";
 
     let memberCount = props.memberList
       ? props.memberList.size
@@ -19,7 +19,7 @@ export class ChannelsItem extends Component {
 
     return (
       <Link to={"/~link" + props.link}>
-        <div className={"w-100 v-mid f9 pl4 bt bb  " + selectedClass}>
+        <div className={"w-100 v-mid f9 pl4 bb z1 pa3 pt4 pb4 b--gray4 b--gray1-d gray3-d pointer " + selectedClass}>
           <p className="f9 pt1">{props.name}</p>
           <p className="f9 gray2">
             {memberCount + " contributor" + ((memberCount === 1) ? "" : "s")}
