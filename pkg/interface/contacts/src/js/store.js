@@ -3,6 +3,7 @@ import { ContactUpdateReducer } from '/reducers/contact-update';
 import { GroupUpdateReducer } from '/reducers/group-update';
 import { InviteUpdateReducer } from '/reducers/invite-update';
 import { PermissionUpdateReducer } from '/reducers/permission-update';
+import { MetadataReducer } from '/reducers/metadata-update.js';
 import { LocalReducer } from '/reducers/local.js';
 
 
@@ -11,6 +12,7 @@ class Store {
     this.state = {
       contacts: {},
       groups: {},
+      channels: new Map,
       permissions: {},
       invites: {},
       spinner: false
@@ -21,6 +23,7 @@ class Store {
     this.permissionUpdateReducer = new PermissionUpdateReducer();
     this.contactUpdateReducer = new ContactUpdateReducer();
     this.inviteUpdateReducer = new InviteUpdateReducer();
+    this.metadataReducer = new MetadataReducer();
     this.localReducer = new LocalReducer();
     this.setState = () => {};
   }
@@ -38,6 +41,7 @@ class Store {
     this.permissionUpdateReducer.reduce(json, this.state);
     this.contactUpdateReducer.reduce(json, this.state);
     this.inviteUpdateReducer.reduce(json, this.state);
+    this.metadataReducer.reduce(json, this.state);
     this.localReducer.reduce(json, this.state);
 
     this.setState(this.state);
