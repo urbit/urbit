@@ -11,8 +11,10 @@ export class GroupDetail extends Component {
 
     let groupPath = props.path || "";
 
-    let groupChannels = props.channels.get(groupPath) || {};
+    let groupChannels = props.associations.get(groupPath) || {};
 
+    let isEmpty = Object.entries(groupChannels).length === 0 &&
+      groupChannels.constructor === Object;
 
     let channelList = <div/>
 
@@ -47,14 +49,20 @@ export class GroupDetail extends Component {
     })
 
     let backLink = props.location.pathname;
-    backLink = backLink.slice(0, props.location.pathname.indexOf("/detail"))
+    backLink = backLink.slice(0, props.location.pathname.indexOf("/detail"));
+
+    let emptyGroup = <div className={isEmpty ? "dt w-100 h-100" : "dn"}>
+      <p className="gray2 f9 tc v-mid dtc">This group has no channels. To add a channel, invite this group using any application.</p>
+    </div>
+
     return (
       <div className={"h-100 w-100 overflow-x-hidden bg-white pa4 "
       + responsiveClass}>
         <div className="pb5 f8 db dn-m dn-l dn-xl">
           <Link to={backLink}>⟵ Contacts</Link>
       </div>
-      <p className="gray2 f9 mb2 pt2 pt0-m pt0-l pt0-xl">Group Channels</p>
+        <p className={"gray2 f9 mb2 pt2 pt0-m pt0-l pt0-xl " + (isEmpty ? "dn" : "")}>Group Channels</p>
+      {emptyGroup}
       {channelList}
       </div>
     )

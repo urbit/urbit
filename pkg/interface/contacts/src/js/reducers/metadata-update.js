@@ -23,20 +23,21 @@ export class MetadataReducer {
           metadata.set(channelObj["group-path"], {[channel]: channelObj});
         }
       })
-      state.channels = metadata;
+      state.associations = metadata;
     }
   }
 
   add(json, state) {
     let data = _.get(json, 'add', false);
     if (data) {
-      let metadata = state.channels;
+      let metadata = state.associations;
       if (metadata.has(data["group-path"])) {
         let groupMetadata = metadata.get(data["group-path"]);
         groupMetadata[`${data["group-path"]}/${data["app-name"]}${data["app-path"]}`] = data;
       } else {
         metadata.set(data["group-path"], data);
       }
+      state.associations = metadata;
     }
   }
 }

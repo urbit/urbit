@@ -34,7 +34,7 @@ export class Root extends Component {
     let invites =
       (!!state.invites && '/contacts' in state.invites) ?
       state.invites['/contacts'] : {};
-    let channels = !! state.channels ? state.channels : new Map;
+    let associations = !! state.associations ? state.associations : new Map;
 
     return (
       <BrowserRouter>
@@ -106,7 +106,7 @@ export class Root extends Component {
                       path={groupPath}
                       {...props} />
                       <GroupDetail
-                        channels={channels}
+                        associations={associations}
                         path={groupPath}
                         activeDrawer={detail ? "detail" : "contacts"}
                         {...props}
