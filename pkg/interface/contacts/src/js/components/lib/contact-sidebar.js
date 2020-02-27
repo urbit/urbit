@@ -66,6 +66,8 @@ export class ContactSidebar extends Component {
         );
       });
 
+    let detailHref = `/~contacts/detail${props.path}`
+
     return (
       <div className={`bn br-m br-l br-xl b--gray3 lh-copy h-100 flex-shrink-0
       flex-basis-100-s flex-basis-30-ns mw5-m mw5-l mw5-xl relative
@@ -81,7 +83,7 @@ export class ContactSidebar extends Component {
               : "dn")}>
             <p className="f9 pl4 pt0 pt4-m pt4-l pt4-xl gray2 bn">Invite</p>
           </Link>
-          <Link to={props.location.pathname + "/detail"}
+          <Link to={detailHref}
             className="dib dn-m dn-l dn-xl f9 pl4 pt0 pt4-m pt4-l pt4-xl gray2 bn">Channels</Link>
           {shareSheet}
           <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Members</h2>

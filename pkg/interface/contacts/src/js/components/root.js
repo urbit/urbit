@@ -79,13 +79,13 @@ export class Root extends Component {
                 </Skeleton>
               );
           }} />
-          <Route exact path="/~contacts/:ship/:group/:detail?"
+          <Route exact path="/~contacts/(detail)?/:ship/:group/"
             render={ (props) => {
               let groupPath =
                 `/${props.match.params.ship}/${props.match.params.group}`;
               let groupContacts = contacts[groupPath] || {};
               let group = groups[groupPath] || new Set([]);
-              let detail = !!props.match.params.detail || false;
+              let detail = !!props.match.url.includes("/detail");
 
 
               return (
@@ -137,7 +137,8 @@ export class Root extends Component {
                     defaultContacts={defaultContacts}
                     group={group}
                     activeDrawer="rightPanel"
-                    path={groupPath} />
+                    path={groupPath}
+                    {...props} />
                   <AddScreen
                     api={api}
                     groups={groups}
@@ -177,7 +178,8 @@ export class Root extends Component {
                     defaultContacts={defaultContacts}
                     group={group}
                     path={groupPath}
-                    selectedContact={shipPath} />
+                    selectedContact={shipPath}
+                    {...props} />
                   <ContactCard
                     history={props.history}
                     contact={contact}
@@ -221,7 +223,8 @@ export class Root extends Component {
                     defaultContacts={defaultContacts}
                     group={group}
                     path={groupPath}
-                    selectedContact={shipPath} />
+                    selectedContact={shipPath}
+                    {...props} />
                   <ContactCard
                     history={props.history}
                     contact={contact}
