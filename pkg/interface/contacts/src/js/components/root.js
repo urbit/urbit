@@ -11,6 +11,7 @@ import { NewScreen } from '/components/new';
 import { ContactSidebar } from '/components/lib/contact-sidebar';
 import { ContactCard } from '/components/lib/contact-card';
 import { AddScreen } from '/components/lib/add-contact';
+import GroupDetail from './lib/group-detail';
 
 
 export class Root extends Component {
@@ -33,6 +34,7 @@ export class Root extends Component {
     let invites =
       (!!state.invites && '/contacts' in state.invites) ?
       state.invites['/contacts'] : {};
+    let associations = !! state.associations ? state.associations : new Map;
 
     return (
       <BrowserRouter>
@@ -77,12 +79,13 @@ export class Root extends Component {
                 </Skeleton>
               );
           }} />
-          <Route exact path="/~contacts/:ship/:group"
+          <Route exact path="/~contacts/(detail)?/:ship/:group/"
             render={ (props) => {
               let groupPath =
                 `/${props.match.params.ship}/${props.match.params.group}`;
               let groupContacts = contacts[groupPath] || {};
               let group = groups[groupPath] || new Set([]);
+              let detail = !!props.match.url.includes("/detail");
 
 
               return (
@@ -93,15 +96,21 @@ export class Root extends Component {
                   contacts={contacts}
                   invites={invites}
                   groups={groups}
-                  activeDrawer="contacts"
+                  activeDrawer={detail ? "detail" : "contacts"}
                   selected={groupPath}>
                     <ContactSidebar
                       contacts={groupContacts}
                       defaultContacts={defaultContacts}
                       group={group}
-                      activeDrawer="contacts"
-                      path={groupPath} />
-                    <div className="h-100 w-100 overflow-x-hidden bg-white dn db-ns"></div>
+                      activeDrawer={detail ? "detail" : "contacts"}
+                      path={groupPath}
+                      {...props} />
+                      <GroupDetail
+                        associations={associations}
+                        path={groupPath}
+                        activeDrawer={detail ? "detail" : "contacts"}
+                        {...props}
+                      />
                   </Skeleton>
               );
             }}
@@ -128,7 +137,8 @@ export class Root extends Component {
                     defaultContacts={defaultContacts}
                     group={group}
                     activeDrawer="rightPanel"
-                    path={groupPath} />
+                    path={groupPath}
+                    {...props} />
                   <AddScreen
                     api={api}
                     groups={groups}
@@ -168,7 +178,8 @@ export class Root extends Component {
                     defaultContacts={defaultContacts}
                     group={group}
                     path={groupPath}
-                    selectedContact={shipPath} />
+                    selectedContact={shipPath}
+                    {...props} />
                   <ContactCard
                     history={props.history}
                     contact={contact}
@@ -212,7 +223,8 @@ export class Root extends Component {
                     defaultContacts={defaultContacts}
                     group={group}
                     path={groupPath}
-                    selectedContact={shipPath} />
+                    selectedContact={shipPath}
+                    {...props} />
                   <ContactCard
                     history={props.history}
                     contact={contact}

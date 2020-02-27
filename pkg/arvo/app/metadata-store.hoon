@@ -1,4 +1,4 @@
-::  metadata-store: data store for application metadata and mappings 
+::  metadata-store: data store for application metadata and mappings
 ::  between groups and resources within applications
 ::
 ::  group-paths are expected to be an existing group path
@@ -73,7 +73,7 @@
     |^
     =/  cards=(list card)
       ?+  path  (on-watch:def path)
-          [%all ~]      (give %metadata-update !>([%associatons associations]))
+          [%all ~]      (give %metadata-update !>([%associations associations]))
           [%updates ~]  ~
           [%app-name @ ~]
         =/  =app-name  i.t.path
