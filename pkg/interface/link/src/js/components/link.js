@@ -97,7 +97,7 @@ export class LinkDetail extends Component {
             popout={props.popout}
           />
           <Link
-            className="dib f9 fw4 v-top pt2 gray2"
+            className="dib f9 fw4 pt2 gray2 lh-solid"
             to={"/~link" + popout + props.groupPath + "/" + props.page}>
             {"<- Collection index"}
           </Link>

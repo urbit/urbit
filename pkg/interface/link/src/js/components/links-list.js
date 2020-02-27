@@ -101,10 +101,10 @@ export class Links extends Component {
            popout={props.popout}/>
          <Link to={`/~link` + popout + props.groupPath} className="pt2">
            <h2
-             className={`dib f9 fw4 v-top ` +
+             className={`dib f9 fw4 v-top lh-solid` +
              (props.groupPath.includes("/~/")
              ? ""
-             : "mono")}>
+             : " mono")}>
               {(props.groupPath.includes("/~/"))
               ? "Private"
               : props.groupPath.substr(1)}
