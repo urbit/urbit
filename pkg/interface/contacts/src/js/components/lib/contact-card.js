@@ -521,12 +521,12 @@ export class ContactCard extends Component {
           </div>
           <button
             className={
-              `pl4 mt4 mb4 f9 red2 pointer ` + adminOpt
+              `pr4 mt4 mb4 f9 red2 pointer ` + adminOpt
             }
             onClick={this.removeFromGroup}>
             {(
               props.ship === window.ship && props.path.includes(window.ship)
-                ? "Delete" : "Remove"
+                ? "Leave Group" : "Remove from Group"
             )}
           </button>
         </div>

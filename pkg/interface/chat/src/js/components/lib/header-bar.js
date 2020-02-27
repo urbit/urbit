@@ -43,12 +43,12 @@ export class HeaderBar extends Component {
           }}>
           {title}
         </span>
-        <div className="absolute right-0 lh-copy" style={{ top: 9 }}>
+        <div className="absolute right-0 lh-copy" style={{ top: 8 }}>
           <Sigil
             ship={"~" + window.ship}
+            classes="v-mid mix-blend-diff"
             size={16}
             color={"#000000"}
-            classes="v-mid mix-blend-diff"
           />
           <span className="mono white-d f9 ml2">{"~" + window.ship}</span>
         </div>

@@ -92,16 +92,16 @@ export class Links extends Component {
          <Link to="/~link/">{"⟵ All Channels"}</Link>
        </div>
        <div
-         className={`pl3 pt2 flex relative overflow-x-scroll
+         className={`pl4 pt2 flex relative overflow-x-scroll
          overflow-x-auto-l overflow-x-auto-xl flex-shrink-0
-         bb bn-m bn-l bn-xl b--gray4`}
+         bb bn-m bn-l bn-xl b--gray4 b--gray1-d bg-gray0-d`}
          style={{ height: 48 }}>
           <SidebarSwitcher
            sidebarShown={props.sidebarShown}
            popout={props.popout}/>
          <Link to={`/~link` + popout + props.groupPath} className="pt2">
            <h2
-             className={`dib f8 fw4 v-top ` +
+             className={`dib f9 fw4 v-top ` +
              (props.groupPath.includes("/~/")
              ? ""
              : "mono")}>

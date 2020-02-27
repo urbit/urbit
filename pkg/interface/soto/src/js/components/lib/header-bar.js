@@ -31,7 +31,7 @@ export class HeaderBar extends Component {
           href='/'
           style={{ top: 14 }}>
           <IconHome classes={spinnerClasses} />
-          <span className="ml2 black white-d v-top lh-title"
+          <span className="ml2 gray2 white-d v-top lh-title"
             style={{ paddingTop: 3 }}>
             Home
           </span>
