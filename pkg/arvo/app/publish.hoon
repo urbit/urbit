@@ -82,6 +82,9 @@
         :*  %pass  /invites  %agent  [our.bol %invite-store]  %watch
             /invitatory/publish
         ==
+        :*  %pass  /  %agent  [our.bol %invite-store]  %poke  %invite-action
+            !>([%create /publish])
+        ==
     ==
   ::
   ++  on-save  !>(state)
