@@ -521,7 +521,7 @@ export class ContactCard extends Component {
           </div>
           <button
             className={
-              `pl4 mt4 mb4 f9 red2 pointer ` + adminOpt
+              `pl4 mt4 mb4 mh4 f9 red2 pointer ` + adminOpt
             }
             onClick={this.removeFromGroup}>
             {(
