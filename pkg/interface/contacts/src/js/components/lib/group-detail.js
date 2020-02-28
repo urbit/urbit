@@ -56,7 +56,7 @@ export class GroupDetail extends Component {
     </div>
 
     return (
-      <div className={"h-100 w-100 overflow-x-hidden bg-white pa4 "
+      <div className={"h-100 w-100 overflow-x-hidden bg-white bg-gray0-d white-d pa4 "
       + responsiveClass}>
         <div className="pb5 f8 db dn-m dn-l dn-xl">
           <Link to={backLink}>⟵ Contacts</Link>

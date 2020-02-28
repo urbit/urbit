@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 
-import { Route, Link } from 'react-router-dom'; 
+import { Route, Link } from 'react-router-dom';
 
 export class GroupItem extends Component {
   render() {
     const { props } = this;
 
-    let selectedClass = (props.selected) ? "bg-gray4" : "";
+    let selectedClass = (props.selected) ? "bg-gray4 bg-gray1-d" : "";
     let memberCount = Math.max(
       props.group.size,
       Object.keys(props.contacts).length

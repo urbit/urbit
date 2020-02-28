@@ -12,7 +12,7 @@ export class GroupSidebar extends Component {
   render() {
     const { props, state } = this;
 
-    let selectedClass = (props.selected === "me") ? "bg-gray4" : "bg-white";
+    let selectedClass = (props.selected === "me") ? "bg-gray4 bg-gray1-d" : "bg-white bg-gray0-d";
 
     let rootIdentity = <Link
             key={1}
@@ -78,9 +78,9 @@ export class GroupSidebar extends Component {
     let activeClasses = (this.props.activeDrawer === "groups") ? "" : "dn-s";
 
     return (
-      <div className={`bn br-m br-l br-xl b--gray3 lh-copy h-100 flex-basis-100-s
-       flex-basis-30-ns flex-shrink-0 mw5-m mw5-l mw5-xl pt3 pt0-m pt0-l pt0-xl
-        relative overflow-hidden ` + activeClasses}>
+      <div className={"bn br-m br-l br-xl b--gray2 lh-copy h-100 flex-basis-100-s " +
+       "flex-basis-30-ns flex-shrink-0 mw5-m mw5-l mw5-xl pt3 pt0-m pt0-l pt0-xl " +
+        "relative overflow-hidden " + activeClasses}>
         {/*TODO Add invite items */}
         <a className="db dn-m dn-l dn-xl f8 pb6 pl3" href="/">⟵ Landscape</a>
         <div className="overflow-auto pb8 h-100">
