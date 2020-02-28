@@ -117,7 +117,6 @@
     (snoc (recreate-permissions perm-paths associate) (watch-group group))
   ::
   =/  grp  (group-scry group)
-  ~&  associate+grp
   =.  u.perms  (~(uni in u.perms) perm-paths)
   :_  state(relation (~(put by relation) group u.perms))
   %+  weld

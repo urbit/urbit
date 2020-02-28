@@ -208,8 +208,8 @@
     %-  zing
     :~  (create-chat app-path.act security.act allow-history.act)
         (create-managed-group group-path.act security.act members.act)
+        (create-metadata title.act description.act group-path.act app-path.act)
         (create-security group-path.act security.act)
-        (create-metadata group-path.act app-path.act)
         ~[(permission-hook-poke [%add-owned group-path.act group-path.act])]
     ==
   ::
@@ -224,6 +224,7 @@
       ::
         ?:  (is-managed group-path)  ~
         :~  (permission-hook-poke [%remove group-path])
+            (permission-poke [%delete group-path])
             (group-poke [%unbundle group-path])
             (metadata-hook-poke [%remove group-path])
         ==
@@ -249,26 +250,24 @@
   ++  create-managed-group
     |=  [=path security=rw-security ships=(set ship)]
     ^-  (list card)
-    ?>  ?=(^ path)
     ?^  (group-scry path)  ~
     ::  do not create a managed group if this is a sig path or a blacklist
     ::
     ?:  =(security %channel)
       ~[(group-poke [%bundle path])]
-    ?:  =(i.path '~')
-      :~  (group-poke [%bundle path])
-          (group-poke [%add ships path])
-      ==
-    ~[(contact-view-poke [%create path ships])]
+    ?:  (is-managed path)
+      ~[(contact-view-poke [%create path ships])]
+    :~  (group-poke [%bundle path])
+        (group-poke [%add ships path])
+    ==
   ::
   ++  create-metadata
-    |=  [group-path=path app-path=path]
+    |=  [title=@t description=@t group-path=path app-path=path]
     ^-  (list card)
-    ~&  group-path+group-path
-    ~&  app-path+app-path
-    ~&  is-managed+(is-managed app-path)
     =/  =metadata
       %*  .  *metadata
+          title         title
+          description   description
           date-created  now.bol
           creator
         %+  slav  %p
@@ -372,6 +371,11 @@
   |=  act=group-action
   ^-  card
   [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
+::
+++  permission-poke
+  |=  act=permission-action
+  ^-  card
+  [%pass / %agent [our.bol %permission-store] %poke %permission-action !>(act)]
 ::
 ++  chat-hook-poke
   |=  act=chat-hook-action

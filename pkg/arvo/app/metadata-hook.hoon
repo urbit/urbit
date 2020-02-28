@@ -132,7 +132,7 @@
     |=  pax=^path
     ^-  associations
     =.  pax  ;:(weld /=metadata-store/(scot %da now.bowl)/group pax /noun)
-    (need .^((unit associations) %gx pax))
+    .^(associations %gx pax)
   --
 ::
 ++  fact-metadata-update

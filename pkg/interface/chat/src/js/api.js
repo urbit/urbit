@@ -128,9 +128,14 @@ class UrbitApi {
     return this.action("chat-view", "json", data);
   }
 
-  chatViewCreate(appPath, groupPath, security, members, allowHistory) {
-   return this.chatViewAction({
+  chatViewCreate(
+    title, description, appPath, groupPath,
+    security, members, allowHistory
+  ) {
+    return this.chatViewAction({
       create: {
+        title,
+        description,
         'app-path': appPath,
         'group-path': groupPath,
         security,
