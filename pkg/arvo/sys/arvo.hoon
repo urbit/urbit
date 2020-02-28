@@ -167,7 +167,6 @@
   $:  typ=type    ::  -:!>(*type)
       duc=type    ::  -:!>(*duct)
       pah=type    ::  -:!>(*path)
-      mev=type    ::  -:!>([%meta *vase])
   ==
 --
 =>
@@ -419,15 +418,6 @@
       ::
       ?>  ?=(meta q.tiv)
       [[%| q.tiv] sac]
-      ::
-      :: =/  mut
-      ::   ?>(?=(meta q.tiv) q.tiv)
-      :: |-  ^-  (pair [%| meta] worm)
-      :: ?.  ?=([%meta *] mut)
-      ::   [[%| mut] sac]
-      :: =^  dip  sac  (~(nets wa sac) mev.vil p.mut)
-      :: ?>  dip
-      :: $(q.tiv +.q.mut)
     --
   ::
   ::  |va: vane engine
@@ -867,7 +857,6 @@
   :*  typ=(pal '$:type')
       duc=(pal '$:duct')
       pah=(pal '$:path')
-      mev=(pal '$:{$meta $vase}')
   ==
 ::
 ++  dint                                              ::  input routing
