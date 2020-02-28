@@ -42,7 +42,7 @@ export class NewScreen extends Component {
   }
 
   titleChange(event) {
-    let asciiSafe = event.target.value
+    let asciiSafe = event.target.value.toLowerCase()
       .replace(/[^a-z0-9~_.-]/g, "-");
     this.setState({
       idName: asciiSafe,
@@ -249,7 +249,7 @@ export class NewScreen extends Component {
             style={{
               resize: "none"
             }}
-            onChange={this.titleChange}
+            onChange={this.descriptionChange}
           />
           <p className="f8 mt4 lh-copy db">
             Invite

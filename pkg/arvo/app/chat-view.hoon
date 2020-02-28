@@ -208,7 +208,7 @@
     %-  zing
     :~  (create-chat app-path.act security.act allow-history.act)
         (create-managed-group group-path.act security.act members.act)
-        (create-metadata group-path.act app-path.act)
+        (create-metadata title.act description.act group-path.act app-path.act)
         (create-security group-path.act security.act)
         ~[(permission-hook-poke [%add-owned group-path.act group-path.act])]
     ==
@@ -262,10 +262,12 @@
     ==
   ::
   ++  create-metadata
-    |=  [group-path=path app-path=path]
+    |=  [title=@t description=@t group-path=path app-path=path]
     ^-  (list card)
     =/  =metadata
       %*  .  *metadata
+          title         title
+          description   description
           date-created  now.bol
           creator
         %+  slav  %p
