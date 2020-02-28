@@ -223,7 +223,7 @@ export class InviteSearch extends Component {
             key={group}
             className={
               "list mono mix-blend-diff white f8 pv2 ph3 pointer" +
-              " hover-bg-gray4 hover-black-d"
+              " hover-bg-gray4 hover-bg-gray1-d"
             }
             onClick={e => this.addGroup(group)}>
             {group}
@@ -242,7 +242,7 @@ export class InviteSearch extends Component {
             key={ship}
             className={
               "list mono white-d f8 pv1 ph3 pointer" +
-              " hover-bg-gray4 hover-black-d relative"
+              " hover-bg-gray4 hover-bg-gray1-d relative"
             }
             onClick={e => this.addShip(ship)}>
             <Sigil
