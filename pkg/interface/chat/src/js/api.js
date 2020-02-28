@@ -78,11 +78,11 @@ class UrbitApi {
   }
 
   groupsAction(data) {
-    this.action("group-store", "group-action", data);
+    return this.action("group-store", "group-action", data);
   }
 
   groupAdd(members, path) {
-    this.groupsAction({
+    return this.groupsAction({
       add: {
         members, path
       }
@@ -147,7 +147,7 @@ class UrbitApi {
   chatViewJoin(ship, path, askHistory) {
     this.chatViewAction({
       join: {
-        ship, 
+        ship,
         'app-path': path,
         'ask-history': askHistory
       }

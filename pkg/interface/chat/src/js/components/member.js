@@ -29,9 +29,12 @@ export class MemberScreen extends Component {
       modifyText = 'Invite someone to this chat.';
     }
 
+    let contacts = (props.station in props.contacts)
+      ? props.contacts[props.station] : {};
+
     let members = perm.map((mem) => {
-      let contact = (mem in props.contacts)
-        ? props.contacts[mem] : false;
+      let contact = (mem in contacts)
+        ? contacts[mem] : false;
 
       return (
         <MemberElement
@@ -55,7 +58,7 @@ export class MemberScreen extends Component {
           <Link to="/~chat/">{"⟵ All Chats"}</Link>
         </div>
         <div
-          className={`pl4 pt2 bb b--gray4 b--gray1-d bg-gray0-d flex relative 
+          className={`pl4 pt2 bb b--gray4 b--gray1-d bg-gray0-d flex relative
           overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0`}
           style={{ height: 48 }}>
           <SidebarSwitcher
@@ -91,6 +94,7 @@ export class MemberScreen extends Component {
               <InviteElement
                 path={props.station}
                 permissions={props.permission}
+                contacts={props.contacts}
                 api={props.api}
               />
             ) : null}
