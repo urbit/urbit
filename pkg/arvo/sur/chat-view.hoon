@@ -2,6 +2,8 @@
 |%
 +$  chat-view-action
   $%  $:  %create
+          title=@t
+          description=@t
           app-path=path
           group-path=path
           security=rw-security

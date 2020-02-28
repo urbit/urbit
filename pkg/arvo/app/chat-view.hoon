@@ -208,8 +208,8 @@
     %-  zing
     :~  (create-chat app-path.act security.act allow-history.act)
         (create-managed-group group-path.act security.act members.act)
-        (create-security group-path.act security.act)
         (create-metadata group-path.act app-path.act)
+        (create-security group-path.act security.act)
         ~[(permission-hook-poke [%add-owned group-path.act group-path.act])]
     ==
   ::
@@ -251,24 +251,20 @@
   ++  create-managed-group
     |=  [=path security=rw-security ships=(set ship)]
     ^-  (list card)
-    ?>  ?=(^ path)
     ?^  (group-scry path)  ~
     ::  do not create a managed group if this is a sig path or a blacklist
     ::
     ?:  =(security %channel)
       ~[(group-poke [%bundle path])]
-    ?:  =(i.path '~')
-      :~  (group-poke [%bundle path])
-          (group-poke [%add ships path])
-      ==
-    ~[(contact-view-poke [%create path ships])]
+    ?:  (is-managed path)
+      ~[(contact-view-poke [%create path ships])]
+    :~  (group-poke [%bundle path])
+        (group-poke [%add ships path])
+    ==
   ::
   ++  create-metadata
     |=  [group-path=path app-path=path]
     ^-  (list card)
-    ::~&  group-path+group-path
-    ::~&  app-path+app-path
-    ::~&  is-managed+(is-managed app-path)
     =/  =metadata
       %*  .  *metadata
           date-created  now.bol

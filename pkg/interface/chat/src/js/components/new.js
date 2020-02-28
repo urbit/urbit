@@ -10,6 +10,8 @@ export class NewScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      title: '',
+      description: '',
       idName: '',
       groups: [],
       ships: [],
@@ -20,7 +22,8 @@ export class NewScreen extends Component {
       createGroup: true
     };
 
-    this.idChange = this.idChange.bind(this);
+    this.titleChange = this.titleChange.bind(this);
+    this.descriptionChange = this.descriptionChange.bind(this);
     this.securityChange = this.securityChange.bind(this);
     this.allowHistoryChange = this.allowHistoryChange.bind(this);
     this.setInvite = this.setInvite.bind(this);
@@ -38,9 +41,18 @@ export class NewScreen extends Component {
     }
   }
 
-  idChange(event) {
+  titleChange(event) {
+    let asciiSafe = event.target.value
+      .replace(/[^a-z0-9~_.-]/g, "-");
     this.setState({
-      idName: event.target.value
+      idName: asciiSafe,
+      title: event.target.value
+    });
+  }
+
+  descriptionChange(event) {
+    this.setState({
+      description: event.target.value
     });
   }
 
@@ -82,13 +94,7 @@ export class NewScreen extends Component {
   onClickCreate() {
     const { props, state } = this;
 
-    let validChar = /^[a-z0-9~_.-]*$/;
-
-    let invalid = (
-      (!state.idName) || (!validChar.test(state.idName))
-    );
-
-    if (invalid) {
+    if (!state.title) {
       this.setState({
         idError: true,
         inviteError: false
@@ -147,6 +153,8 @@ export class NewScreen extends Component {
         groupPath = state.groups[0];
       }
       let submit = props.api.chatView.create(
+        state.title,
+        state.description,
         appPath,
         groupPath,
         state.security,
@@ -220,19 +228,29 @@ export class NewScreen extends Component {
         <h2 className="mb3 f8">New Chat</h2>
         <div className="w-100">
           <p className="f8 mt3 lh-copy db">Name</p>
-          <p className="f9 gray2 db mb2 pt1">
-            Lowercase alphanumeric characters, dashes, and slashes only
-          </p>
           <textarea
             className={idClasses}
-            placeholder="secret-chat"
+            placeholder="Secret Chat"
             rows={1}
             style={{
               resize: "none"
             }}
-            onChange={this.idChange}
+            onChange={this.titleChange}
           />
-          {idErrElem}
+              {idErrElem}
+          <p className="f8 mt3 lh-copy db">
+            Description
+            <span className="gray3"> (Optional)</span>
+          </p>
+          <textarea
+            className={idClasses}
+            placeholder="The coolest chat"
+            rows={1}
+            style={{
+              resize: "none"
+            }}
+            onChange={this.titleChange}
+          />
           <p className="f8 mt4 lh-copy db">
             Invite
             <span className="gray3"> (Optional)</span>

@@ -224,7 +224,9 @@
   ::
   ++  create
     %-  ot
-    :~  [%app-path pa]
+    :~  [%title so]
+        [%description so]
+        [%app-path pa]
         [%group-path pa]
         [%security sec]
         [%members (as (su ;~(pfix sig fed:ag)))]
