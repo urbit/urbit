@@ -155,28 +155,28 @@ export class Sidebar extends Component {
           <Link to="/~publish/join" className="f9 gray2">
             Join Notebook
           </Link>
-          <div className="pl2 pv2 bb b--gray4">
+          <div className="pl2 pv2 bb b--gray4 b--gray2-d">
           <Dropdown
             width="16rem"
             align="left"
             options={[
               {
-                cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
+                cls: "white-d w-100 tl pointer db ph2 pv3 hover-bg-gray4 hover-bg-gray1-d bg-transparent",
                 txt: "Oldest",
                 action: () => {this.setState({sort: "oldest"})}
               },
               {
-                cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
+                cls: "white-d w-100 tl pointer db ph2 pv3 hover-bg-gray4 hover-bg-gray1-d bg-transparent",
                 txt: "Newest",
                 action: () => {this.setState({sort: "newest"})}
               },
               {
-                cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
+                cls: "white-d w-100 tl pointer db ph2 pv3 hover-bg-gray4 hover-bg-gray1-d bg-transparent",
                 txt: "A -> Z",
                 action: () => {this.setState({sort: "alphabetical"})}
               },
               {
-                cls: "w-100 tl pointer db ph2 pv3 hover-bg-gray4",
+                cls: "white-d w-100 tl pointer db ph2 pv3 hover-bg-gray4 hover-bg-gray1-d bg-transparent",
                 txt: "Z -> A",
                 action: () => {this.setState({sort: "reverseAlphabetical"})}
               }

@@ -53,8 +53,8 @@ export class Comments extends Component {
 
     let disableComment = ((this.state.commentBody === '') || (this.state.disabled === true));
     let commentClass = (disableComment)
-      ?  "f9 pa2 bg-white br1 ba b--gray2 gray2"
-      :  "f9 pa2 bg-white br1 ba b--gray2 black pointer";
+      ?  "bg-transparent f9 pa2 br1 ba b--gray2 gray2"
+      :  "bg-transparent f9 pa2 br1 ba b--gray2 black white-d pointer";
 
     return (
       <div>
@@ -66,7 +66,7 @@ export class Comments extends Component {
               name="comment"
               placeholder="Leave a comment here"
               className={"f9 db border-box w-100 ba b--gray3 pt3 ph3 pb8 br1 " +
-              "mb2 focus-b--black"}
+              "b--gray2-d mb2 focus-b--black focus-b--white-d white-d bg-gray0-d"}
               aria-describedby="comment-desc"
               onChange={this.commentChange}>
             </textarea>

@@ -5,7 +5,7 @@ export class NotebookItem extends Component {
   render() {
     let { props } = this;
 
-    let selectedClass = (props.selected) ? "bg-gray5 b--gray4" : "b--gray4";
+    let selectedClass = (props.selected) ? "bg-gray5 bg-gray1-d b--gray4 b--gray2-d" : "b--gray4 b--gray2-d";
 
     let postCount = (props.total === 1)
       ? `${props.total} post` : `${props.total} posts`;

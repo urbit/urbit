@@ -54,14 +54,14 @@ export class Subscribers extends Component {
           width = 258;
           let url = `/~contacts${writePath}`;
           options = [{
-            cls: "tl pointer w-100 db hover-bg-gray4 ph2 pv3",
+            cls: "bg-transparent white-d tl pointer w-100 db hover-bg-gray4 hover-bg-gray1-d ph2 pv3",
             txt: "Manage this group in the contacts view",
             action: () => {this.redirect(url)}
           }];
         } else {
           width = 157;
           options = [{
-            cls: "tl pointer w-100 db hover-bg-gray4 ph2 pv3",
+            cls: "bg-transparent white-d tl pointer w-100 db hover-bg-gray4 hover-bg-gray1-d ph2 pv3",
             txt: "Demote to subscriber",
             action: () => {this.removeUser(`~${who}`, writePath)}
           }];
