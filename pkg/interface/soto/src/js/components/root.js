@@ -44,7 +44,7 @@ export class Root extends Component {
                     </a>
                   </div>
                   <div className={"pa3 bg-white bg-gray0-d black white-d mono w-100 f8 relative" +
-                  " h-100-m40-s b--gray0 br2 flex-auto " + popoutClasses}
+                  " h-100-m40-s b--gray2 br1 flex-auto " + popoutClasses}
                     style={{
                       lineHeight: "1.4",
                       cursor: "text"

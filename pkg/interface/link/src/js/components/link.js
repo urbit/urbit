@@ -88,7 +88,7 @@ export class LinkDetail extends Component {
     return (
       <div className="h-100 w-100 overflow-hidden flex flex-column">
         <div
-          className={"pl3 pt2 flex relative overflow-x-scroll " +
+          className={"pl4 pt2 flex relative overflow-x-scroll " +
       "overflow-x-auto-l overflow-x-auto-xl flex-shrink-0 " +
       "bb bn-m bn-l bn-xl b--gray4"}
           style={{ height: 48 }}>
@@ -97,7 +97,7 @@ export class LinkDetail extends Component {
             popout={props.popout}
           />
           <Link
-            className="dib f8 fw4 v-top pt2 gray2"
+            className="dib f9 fw4 pt2 gray2 lh-solid"
             to={"/~link" + popout + props.groupPath + "/" + props.page}>
             {"<- Collection index"}
           </Link>

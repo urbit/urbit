@@ -38,7 +38,7 @@ export class LinksTabBar extends Component {
         <a href={`/~link/popout` + props.groupPath} target="_blank"
         className="dib fr">
           <img
-            className={`flex-shrink-0 pr4 dn invert-d ` + hidePopoutIcon}
+            className={`flex-shrink-0 pr4 dn` + hidePopoutIcon}
             src="/~link/img/popout.png"
             height="16"
             width="16"/>

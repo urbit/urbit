@@ -83,10 +83,10 @@ export class ChannelsSidebar extends Component {
         <div className="overflow-y-scroll h-100">
           <h2 className={`f8 f9-m f9-l f9-xl
            pt1 pt4-m pt4-l pt4-xl
-           pr4 pb3 pb2-m pb2-l pb2-xl
+           pr4 pb3 pb3-m pb3-l pb3-xl
            pl3 pl4-m pl4-l pl4-xl
            black-s gray2 white-d c-default
-           bb bn-m bn-l bn-xl b--gray4 mb2 mb0-m mb0-l mb0-xl`}>
+           bb b--gray4 mb2 mb0-m mb0-l mb0-xl`}>
              Your Collections
              </h2>
           {privateChannel}
