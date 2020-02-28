@@ -222,7 +222,7 @@ export class InviteSearch extends Component {
           <li
             key={group}
             className={
-              "list mono white-d f8 pv2 ph3 pointer" +
+              "list mono mix-blend-diff white f8 pv2 ph3 pointer" +
               " hover-bg-gray4 hover-black-d"
             }
             onClick={e => this.addGroup(group)}>
@@ -233,7 +233,9 @@ export class InviteSearch extends Component {
 
       let shipResults = state.searchResults.ships.map(ship => {
         let nicknames = (this.state.contacts.has(ship))
-          ? this.state.contacts.get(ship).join(", ")
+          ? this.state.contacts.get(ship)
+            .filter(e => {return !(e === "")})
+            .join(", ")
           : "";
         return (
           <li
@@ -249,8 +251,8 @@ export class InviteSearch extends Component {
               color="#000000"
               classes="mix-blend-diff v-mid"
             />
-            <span className="v-mid ml2 mw5 truncate dib">{"~" + ship}</span>
-            <span className="absolute right-1 di truncate mw4 inter f9 pt1">{nicknames}</span>
+            <span className="v-mid ml2 mw5 truncate dib mix-blend-diff white">{"~" + ship}</span>
+            <span className="absolute right-1 di truncate mw4 inter f9 pt1 mix-blend-diff white">{nicknames}</span>
           </li>
         );
       });
