@@ -4658,29 +4658,22 @@
       ::
       ?.  ?=([~ %success %scry *] zuse-scry-result)
         (wrap-error zuse-scry-result)
-      ::  omit case from path to prevent cache misses
       ::
-      =/  hoon-path=path
-        /(scot %p ship.disc)/(scot %tas desk.disc)/hoon/hoon/sys
       =/  hoon-hoon=(each hoon tang)
         %-  mule  |.
-        (rain hoon-path ;;(@t q.q.cage.u.hoon-scry-result))
+        (rain /hoon/hoon/sys ;;(@t q.q.cage.u.hoon-scry-result))
       ?:  ?=(%| -.hoon-hoon)
         (return-error leaf+"ford: %reef failed to compile hoon" p.hoon-hoon)
       ::
-      =/  arvo-path=path
-        /(scot %p ship.disc)/(scot %tas desk.disc)/hoon/arvo/sys
       =/  arvo-hoon=(each hoon tang)
         %-  mule  |.
-        (rain arvo-path ;;(@t q.q.cage.u.arvo-scry-result))
+        (rain /hoon/arvo/sys ;;(@t q.q.cage.u.arvo-scry-result))
       ?:  ?=(%| -.arvo-hoon)
         (return-error leaf+"ford: %reef failed to compile arvo" p.arvo-hoon)
       ::
-      =/  zuse-path=path
-        /(scot %p ship.disc)/(scot %tas desk.disc)/hoon/zuse/sys
       =/  zuse-hoon=(each hoon tang)
         %-  mule  |.
-        (rain zuse-path ;;(@t q.q.cage.u.zuse-scry-result))
+        (rain /hoon/zuse/sys ;;(@t q.q.cage.u.zuse-scry-result))
       ?:  ?=(%| -.zuse-hoon)
         (return-error leaf+"ford: %reef failed to compile zuse" p.zuse-hoon)
       ::
