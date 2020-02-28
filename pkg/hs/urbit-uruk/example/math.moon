@@ -25,7 +25,7 @@
   ~/  2  lte
   |=  (a b)
   ?-  (sub a b)
-    x  yea
+    x  %.y
     y  (zer y)
   ==
 
@@ -34,8 +34,8 @@
   ~/  2  lt
   |=  (a b)
   ?-  (sub a b)
-    x  yea
-    y  nah
+    x  %.y
+    y  %.n
   ==
 
 ::  Natural Number Division
@@ -148,12 +148,12 @@
 =/  bool-and
   ~/  2  bool-and
   |=  (a b)
-  (a (b yea nah) nah)
+  (a (b %.y %.n) %.n)
 
 =/  bool-xor
   ~/  2  bool-xor
   |=  (a b)
-  (a (b nah yea) b)
+  (a (b %.n %.y) b)
 
 ::  binary xor on arbitrary natural numbers [WRITE JET]
 =/  mix
@@ -194,6 +194,21 @@
   |=  a
   (add (end 1 a) (rsh 1 a))
 
+
+::
+::  Testing Examples
+::
+
+=/  pos  (new-si %.y)
+=/  neg  (new-si %.n)
+
+=/  si-pair
+  |=  x
+  [(syn-si x) (abs-si x)]
+
+[(si-pair (pos 3)) (si-pair (neg 9))]
+
+
 :: TODO: There's something wrong with these implementations, and I'm not really
 :: sure what. This might implicate some of the other si functions I've written
 :: above.
@@ -215,4 +230,3 @@
 ::   :-  bex  (bex 128)
 ::   :-  lsh  (lsh 8 1)
 :: ==
-

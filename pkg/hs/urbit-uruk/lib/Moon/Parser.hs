@@ -130,10 +130,17 @@ lambdify binds body = go body binds
   go acc []     = acc
   go acc (b:bs) = ALam b (go acc bs)
 
+flag :: Parser Bool
+flag = choice
+  [ True  <$ string "%.y"
+  , False <$ string "%.n"
+  ]
+
 irregular :: Parser AST
 irregular =
   inWideMode $ choice
     [ lam
+    , ABol <$> flag
     , cns <$> grouped "[" " " "]" exp
     , ALit <$> atom
     , AStr <$> cord

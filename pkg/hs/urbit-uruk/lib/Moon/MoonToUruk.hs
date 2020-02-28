@@ -36,8 +36,6 @@ getGlobal = \case
   "cas"   -> Ur.Cas
   "lef"   -> Ur.Lef
   "rit"   -> Ur.Rit
-  "yea"   -> Ur.Bol True
-  "nah"   -> Ur.Bol False
   "iff"   -> Ur.Iff
   "seq"   -> Ur.Seq
   "pak"   -> Ur.Pak
@@ -121,6 +119,7 @@ toLC getGlobal = go (Left . getGlobal)
     Cas x l r -> cas f x l r
     Iff c t e -> Uruk.If (go f c) (go f t) (go f e)
     Lit n     -> Uruk.Prim $ Ur.Nat n
+    Bol b     -> Uruk.Prim $ Ur.Bol b
     Str n     -> Uruk.Prim $ Ur.Nat $ Atom.utf8Atom n
 
   enter f b = go f' (fromScope b) where f' = wrap f

@@ -20,6 +20,7 @@ data Exp a
     | Cas (Exp a) (Scope () Exp a) (Scope () Exp a)
     | Iff (Exp a) (Exp a) (Exp a)
     | Lit Nat
+    | Bol Bool
     | Str Text
     | Fix (Scope () Exp a)
   deriving (Functor, Foldable, Traversable)
@@ -30,10 +31,11 @@ data AST
     | AApp AST AST
     | AJet Nat Text AST
     | ALet Text AST AST
-    | ASig
     | ACon AST AST
     | ACas AST (Text, AST) (Text, AST)
     | AIff AST AST AST
+    | ASig
+    | ABol Bool
     | ALit Nat
     | AStr Text
     | AFix Text AST
@@ -63,6 +65,7 @@ instance Monad Exp where
   Cas x l r >>= f = Cas (x >>= f) (l >>>= f) (r >>>= f)
   Sig       >>= _ = Sig
   Lit n     >>= _ = Lit n
+  Bol b     >>= _ = Bol b
   Str s     >>= _ = Str s
 
 instance IsString AST where
@@ -83,6 +86,8 @@ instance Show AST where
     AApp f x   -> "(" <> show f <> " " <> show x <> ")"
     ASig       -> "~"
     ALit n     -> show n
+    ABol True  -> "%.y"
+    ABol False -> "%.n"
     AStr n     -> "'" <> unpack n <> "'"
     ACon h t   -> "[" <> show h <> " " <> show t <> "]"
     ALam v b   -> mconcat ["|=(", unpack v <> " ", show b <> ")"]
@@ -119,6 +124,7 @@ bind = go
     ACas x (ln, l) (rn, r) -> cas x ln l rn r
     AIff c t       e       -> Iff (go c) (go t) (go e)
     ALit n                 -> Lit n
+    ABol b                 -> Bol b
     AStr s                 -> Str s
 
   cas x ln l rn r = Cas (go x) (abstract1 ln (go l)) (abstract1 rn (go r))
