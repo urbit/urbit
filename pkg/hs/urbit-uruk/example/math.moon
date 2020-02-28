@@ -106,6 +106,13 @@
   |=  (a b c)
   (add (lsh (round-up (met b) a) c) b)
 
+::  Returns the last b bits of c as a new natural number
+=/  end
+  ~/  2  end
+  |=  (b c)
+  (mod c (bex b))
+
+
 ::  Assemble a list of natural numbers, aligned to the nearest :a bit blocks
 =/  rap
   ~/  2  rap
@@ -132,7 +139,76 @@
 :: 6.381.921
 ::
 ::
-(crip (cons 97 (cons 97 (cons 97 null))))
+::(crip (cons 97 (cons 97 (cons 97 null))))
+
+
+:: ---------------------------------------------------------------------------
+
+::  ?&
+=/  bool-and
+  ~/  2  bool-and
+  |=  (a b)
+  (a (b yea nah) nah)
+
+=/  bool-xor
+  ~/  2  bool-xor
+  |=  (a b)
+  (a (b nah yea) b)
+
+::  binary xor on arbitrary natural numbers [WRITE JET]
+=/  mix
+  ~/  2  mix
+  |=  (a b)
+  =/  loop
+    ..  $
+    |=  (a b c d)
+    ?:  (bool-and (zer a) (zer b))
+      d
+    ($ (rsh 1 a) (rsh 1 b) (inc c) (add d (lsh c ((eql (end 1 a) (end 1 b)) 0 1))))
+  (loop a b 0 0)
+
+
+:: ---------------------------------------------------------------------------
+
+:: TODO: sum:si, dif:si, fra:si
+
+::  New signed integer value from a sign bit and a natural number
+=/  new-si
+  ~/  2  new-si
+  |=  (sign value)
+  %+  sign
+    (mul 2 value)
+  ?:  (zer value)
+    0
+  (inc (mul 2 (fec value)))
+
+::  Sign test
+=/  syn-si
+  ~/  1  syn-si
+  |=  a
+  (zer (end 1 a))
+
+::  Absolute value of a signed integer as a natural
+=/  abs-si
+  ~/  1  abs-si
+  |=  a
+  (add (end 1 a) (rsh 1 a))
+
+:: TODO: There's something wrong with these implementations, and I'm not really
+:: sure what. This might implicate some of the other si functions I've written
+:: above.
+::
+:: ::  Signed multiplication
+:: =/  pro-si
+::   ~/  2  pro-si
+::   |=  (a b)
+::   (new-si (bool-xor (syn-si a) (syn-si b)) (mul (abs-si a) (abs-si b)))
+::
+:: ::  Signed division
+:: =/  fra-si
+::   ~/  2  div-si
+::   |=  (a b)
+::   (new-si (bool-xor (syn-si a) (syn-si b)) (div (abs-si a) (abs-si b)))
 
 :: ::  Exports
 :: :*
