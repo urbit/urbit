@@ -1,4 +1,4 @@
-::  metadata-store: data store for application metadata and mappings 
+::  metadata-store: data store for application metadata and mappings
 ::  between groups and resources within applications
 ::
 ::  group-paths are expected to be an existing group path
@@ -21,8 +21,7 @@
 ::  /app-name/%app-name                            associations for app
 ::  /group/%group-path                             associations for group
 ::
-/-  *metadata-store
-/+  default-agent, dbug
+/+  *metadata-json, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
 ::
@@ -41,6 +40,7 @@
 ::
 =|  state-zero
 =*  state  -
+%+  verb  |
 %-  agent:dbug
 ^-  agent:gall
 =<
@@ -73,7 +73,7 @@
     |^
     =/  cards=(list card)
       ?+  path  (on-watch:def path)
-          [%all ~]      (give %metadata-update !>([%associatons associations]))
+          [%all ~]      (give %metadata-update !>([%associations associations]))
           [%updates ~]  ~
           [%app-name @ ~]
         =/  =app-name  i.t.path
@@ -172,7 +172,7 @@
 ++  metadata-for-app
   |=  =app-name
   %-  ~(gas by *^associations)
-  %+  turn  ~(tap in (~(got by app-indices) app-name))
+  %+  turn  ~(tap in (~(gut by app-indices) app-name ~))
   |=  [=group-path =app-path]
   :-  [group-path [app-name app-path]]
   (~(got by associations) [group-path [app-name app-path]])

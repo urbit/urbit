@@ -29,12 +29,11 @@ import Urbit.King.API      (readPortsFile)
 import Urbit.King.App      (HasConfigDir(..))
 import Urbit.Vere.Term.API (Client(Client))
 
-import qualified Data.ByteString.Internal     as BS
-import qualified Data.ByteString.UTF8         as BS
-import qualified System.Console.Terminal.Size as TSize
-import qualified System.Console.Terminfo.Base as T
-import qualified Urbit.Vere.NounServ          as Serv
-import qualified Urbit.Vere.Term.API          as Term
+import qualified Data.ByteString.Internal as BS
+import qualified Data.ByteString.UTF8     as BS
+import qualified Urbit.Vere.NounServ      as Serv
+import qualified Urbit.Vere.Term.API      as Term
+import qualified Urbit.Vere.Term.Render   as T
 
 
 -- Types -----------------------------------------------------------------------
@@ -63,14 +62,10 @@ data ReadData = ReadData
 data Private = Private
   { pReaderThread          :: Async ()
   , pWriterThread          :: Async ()
-  , pTerminal              :: T.Terminal
   , pPreviousConfiguration :: TerminalAttributes
   }
 
 -- Utils -----------------------------------------------------------------------
-
-termText :: Text -> T.TermOutput
-termText = T.termText . unpack
 
 initialBlew w h = EvBlip $ BlipEvTerm $ TermEvBlew (UD 1, ()) w h
 
@@ -94,12 +89,6 @@ _spin_rate_us = 250000
 _spin_idle_us = 500000
 
 --------------------------------------------------------------------------------
-
-runMaybeTermOutput :: T.Terminal -> (T.Terminal -> Maybe T.TermOutput)
-                   -> RIO e ()
-runMaybeTermOutput t getter = case (getter t) of
-  Nothing -> pure ()
-  Just x  -> io $ T.runTermOutput t x
 
 rioAllocaBytes :: (MonadIO m, MonadUnliftIO m)
                => Int -> (Ptr a -> m b) -> m b
@@ -169,16 +158,15 @@ runTerminalClient pier = runRAcquire $ do
 -}
 localClient :: ∀e. HasLogFunc e
             => STM ()
-            -> RAcquire e (TSize.Window Word, Client)
+            -> RAcquire e (T.TSize, Client)
 localClient doneSignal = fst <$> mkRAcquire start stop
   where
-    start :: HasLogFunc e => RIO e ((TSize.Window Word, Client), Private)
+    start :: HasLogFunc e => RIO e ((T.TSize, Client), Private)
     start = do
-      pTerminal     <- io $ T.setupTermFromEnv
       tsWriteQueue  <- newTQueueIO
       spinnerMVar   <- newEmptyTMVarIO
       pWriterThread <-
-          asyncBound (writeTerminal pTerminal tsWriteQueue spinnerMVar)
+          asyncBound (writeTerminal tsWriteQueue spinnerMVar)
 
       pPreviousConfiguration <- io $ getTerminalAttributes stdInput
 
@@ -199,12 +187,12 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                           , give = writeTQueue tsWriteQueue
                           }
 
-      tsize <- io $ TSize.size <&> fromMaybe (TSize.Window 80 24)
+      tsize <- io $ T.tsize
 
       pure ((tsize, client), Private{..})
 
     stop :: HasLogFunc e
-         => ((TSize.Window Word, Client), Private) -> RIO e ()
+         => ((T.TSize, Client), Private) -> RIO e ()
     stop ((_, Client{..}), Private{..}) = do
       -- Note that we don't `cancel pReaderThread` here. This is a deliberate
       -- decision because fdRead calls into a native function which the runtime
@@ -214,7 +202,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
       cancel pWriterThread
 
       -- inject one final newline, as we're usually on the prompt.
-      io $ T.runTermOutput pTerminal $ termText "\r\n"
+      putStr "\r\n"
 
       -- take the terminal out of raw mode
       io $ setTerminalAttributes stdInput pPreviousConfiguration Immediately
@@ -238,15 +226,6 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                     , ProcessOutput
                     ]
 
-    getCap term cap =
-      T.getCapability term (T.tiGetOutput1 cap) :: Maybe T.TermOutput
-
-    vtClearScreen t  = getCap t "clear"
-    vtClearToBegin t = getCap t "el"
-    vtSoundBell t    = getCap t "bel"
-    vtParmLeft t     = getCap t "cub1"
-    vtParmRight t    = getCap t "cuf1"
-
     -- An async which will put into an mvar after a delay. Used to spin the
     -- spinner in writeTerminal.
     spinnerHeartBeat :: Int -> Int -> TMVar () -> RIO e ()
@@ -261,22 +240,22 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
     -- Writes data to the terminal. Both the terminal reading, normal logging,
     -- and effect handling can all emit bytes which go to the terminal.
-    writeTerminal :: T.Terminal -> TQueue [Term.Ev] -> TMVar () -> RIO e ()
-    writeTerminal t q spinner = do
+    writeTerminal :: TQueue [Term.Ev] -> TMVar () -> RIO e ()
+    writeTerminal q spinner = do
         currentTime <- io $ now
         loop (LineState "" 0 Nothing Nothing True 0 currentTime)
       where
         writeBlank :: LineState -> RIO e LineState
         writeBlank ls = do
-            io $ T.runTermOutput t $ termText "\r\n"
+            putStr "\r\n"
             pure ls
 
         writeTrace :: LineState -> Text -> RIO e LineState
         writeTrace ls p = do
-            io $ T.runTermOutput t $ termText "\r"
-            runMaybeTermOutput t vtClearToBegin
-            io $ T.runTermOutput t $ termText p
-            termRefreshLine t ls
+            putStr "\r"
+            T.clearLine
+            putStr p
+            termRefreshLine ls
 
         {-
             Figure out how long to wait to show the spinner. When we
@@ -313,7 +292,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
               -- If we ever actually ran the spinner display callback, we need
               -- to force a redisplay of the command prompt.
               ls <- if not lsSpinFirstRender
-                    then termRefreshLine t ls
+                    then termRefreshLine ls
                     else pure ls
 
               endTime <- io $ now
@@ -321,7 +300,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
         execEv :: LineState -> Term.Ev -> RIO e LineState
         execEv ls = \case
-            Term.Blits bs         -> foldM (writeBlit t) ls bs
+            Term.Blits bs         -> foldM writeBlit ls bs
             Term.Trace p          -> writeTrace ls (unCord p)
             Term.Blank            -> writeBlank ls
             Term.Spinr (Just txt) -> doSpin ls (unCord <$> txt)
@@ -333,8 +312,8 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                   Nothing  -> ""
                   Just str -> leftBracket ++ str ++ rightBracket
 
-            io $ T.runTermOutput t $ termText spinner
-            termSpinnerMoveLeft t (length spinner)
+            putStr spinner
+            termSpinnerMoveLeft (length spinner)
 
             let newFrame = (lsSpinFrame + 1) `mod` (length spinners)
 
@@ -350,64 +329,60 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                 ]
 
     -- Writes an individual blit to the screen
-    writeBlit :: T.Terminal -> LineState -> Blit -> RIO e LineState
-    writeBlit t ls = \case
-      Bel ()        -> do runMaybeTermOutput t vtSoundBell
-                          pure ls
-      Clr ()        -> do runMaybeTermOutput t vtClearScreen
-                          termRefreshLine t ls
-      Hop w         -> termShowCursor t ls (fromIntegral w)
-      Lin c         -> do ls2 <- termShowClear t ls
-                          termShowLine t ls2 (pack c)
-      Mor ()        -> termShowMore t ls
+    writeBlit :: LineState -> Blit -> RIO e LineState
+    writeBlit ls = \case
+      Bel ()        -> T.soundBell $> ls
+      Clr ()        -> do T.clearScreen
+                          termRefreshLine ls
+      Hop w         -> termShowCursor ls (fromIntegral w)
+      Lin c         -> do ls2 <- termShowClear ls
+                          termShowLine ls2 (pack c)
+      Mor ()        -> termShowMore ls
       Sag path noun -> pure ls
       Sav path atom -> pure ls
       Url url       -> pure ls
 
     -- Moves the cursor to the requested position
-    termShowCursor :: T.Terminal -> LineState -> Int -> RIO e LineState
-    termShowCursor t ls@LineState{..} {-line pos)-} newPos = do
+    termShowCursor :: LineState -> Int -> RIO e LineState
+    termShowCursor ls@LineState{..} {-line pos)-} newPos = do
       if newPos < lsCurPos then do
-        replicateM_ (lsCurPos - newPos) (runMaybeTermOutput t vtParmLeft)
+        T.cursorLeft (lsCurPos - newPos)
         pure ls { lsCurPos =  newPos }
       else if newPos > lsCurPos then do
-        replicateM_ (newPos - lsCurPos) (runMaybeTermOutput t vtParmRight)
+        T.cursorRight (newPos - lsCurPos)
         pure ls { lsCurPos =  newPos }
       else
         pure ls
 
     -- Moves the cursor left without any mutation of the LineState. Used only
     -- in cursor spinning.
-    termSpinnerMoveLeft :: T.Terminal -> Int -> RIO e ()
-    termSpinnerMoveLeft t count =
-      replicateM_ count (runMaybeTermOutput t vtParmLeft)
+    termSpinnerMoveLeft :: Int → RIO e ()
+    termSpinnerMoveLeft = T.cursorLeft
 
     -- Displays and sets the current line
-    termShowLine :: T.Terminal -> LineState -> Text -> RIO e LineState
-    termShowLine t ls newStr = do
-      io $ T.runTermOutput t $ termText newStr
+    termShowLine :: LineState -> Text -> RIO e LineState
+    termShowLine ls newStr = do
+      putStr newStr
       pure ls { lsLine = newStr, lsCurPos = (length newStr) }
 
-    termShowClear :: T.Terminal -> LineState -> RIO e LineState
-    termShowClear t ls = do
-      io $ T.runTermOutput t $ termText "\r"
-      runMaybeTermOutput t vtClearToBegin
-      pure ls { lsLine = "", lsCurPos = 0  }
+    termShowClear :: LineState -> RIO e LineState
+    termShowClear ls = do
+        putStr "\r"
+        T.clearLine
+        pure ls { lsLine = "", lsCurPos = 0  }
 
     -- New Current Line
-    termShowMore :: T.Terminal -> LineState -> RIO e LineState
-    termShowMore t ls = do
-      io $ T.runTermOutput t $ termText "\r\n"
+    termShowMore :: LineState -> RIO e LineState
+    termShowMore ls = do
+      putStr "\r\n"
       pure ls { lsLine = "", lsCurPos = 0  }
 
     -- Redraw the current LineState, maintaining the current curpos
-    termRefreshLine :: T.Terminal -> LineState -> RIO e LineState
-    termRefreshLine t ls = do
-      let line = (lsLine ls)
-          curPos = (lsCurPos ls)
-      ls <- termShowClear t ls
-      ls <- termShowLine t ls line
-      termShowCursor t ls curPos
+    termRefreshLine :: LineState -> RIO e LineState
+    termRefreshLine ls@LineState{lsCurPos,lsLine} = do
+      ls <- termShowClear ls
+      ls <- termShowLine ls lsLine
+      termShowCursor ls lsCurPos
 
     -- ring my bell
     bell :: TQueue [Term.Ev] -> RIO e ()
@@ -432,8 +407,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
           -- things like \ESC instead of 27. That makes it broken for our
           -- purposes.
           --
-          t <- io $ try (fdReadBuf stdInput rdBuf 1)
-          case t of
+          io (try $ fdReadBuf stdInput rdBuf 1) >>= \case
             Left (e :: IOException) -> do
               -- Ignore EAGAINs when doing reads
               loop rd
@@ -521,7 +495,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
     Terminal Driver
 -}
 term :: forall e. (HasPierConfig e, HasLogFunc e)
-     => (TSize.Window Word, Client)
+     => (T.TSize, Client)
      -> (STM ())
      -> KingId
      -> QueueEv
@@ -529,7 +503,7 @@ term :: forall e. (HasPierConfig e, HasLogFunc e)
 term (tsize, Client{..}) shutdownSTM king enqueueEv =
     (initialEvents, runTerm)
   where
-    TSize.Window wi hi = tsize
+    T.TSize wi hi = tsize
 
     initialEvents = [(initialBlew wi hi), initialHail]
 
@@ -559,7 +533,6 @@ term (tsize, Client{..}) shutdownSTM king enqueueEv =
             let (termBlits, fsWrites) = partition isTerminalBlit blits
             atomically $ give [Term.Blits termBlits]
             for_ fsWrites handleFsWrite
-
 
     handleFsWrite :: Blit -> RIO e ()
     handleFsWrite (Sag path noun) = performPut path (jamBS noun)

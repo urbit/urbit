@@ -131,7 +131,6 @@ class UrbitApi {
   }
 
   setSpinner(boolean) {
-    console.log("setspinner " + boolean)
     store.handleEvent({
       type: "local",
       data: {

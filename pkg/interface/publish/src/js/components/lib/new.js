@@ -188,6 +188,7 @@ export class NewScreen extends Component {
           <InviteSearch
             groupResults={true}
             groups={this.props.groups}
+            contacts={this.props.contacts}
             invites={this.state.invites}
             setInvite={this.setInvite}
           />

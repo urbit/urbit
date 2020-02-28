@@ -26,6 +26,10 @@ export class Subscription {
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this));
+    api.bind('/all', 'PUT', api.authTokens.ship, 'metadata-store',
+      this.handleEvent.bind(this),
+      this.handleError.bind(this),
+      this.handleQuitAndResubscribe.bind(this));
   }
 
   handleEvent(diff) {

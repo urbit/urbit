@@ -47,7 +47,7 @@
     ::
       ::
       ::  create chat
-      [%create nu-security path (unit glyph) (unit ?)]
+      ::[%create nu-security path (unit glyph) (unit ?)]
       [%delete path]                                ::  delete chat
       [%invite path (set ship)]                     ::  allow
       [%banish path (set ship)]                     ::  disallow
@@ -368,7 +368,7 @@
       [%join leaf+";join ~ship/chat-name (glyph)"]
       [%leave leaf+";leave ~ship/chat-name"]
       ::
-      [%create leaf+";create [type] /chat-name (glyph)"]
+      ::[%create leaf+";create [type] /chat-name (glyph)"]
       [%delete leaf+";delete /chat-name"]
       [%invite leaf+";invite /chat-name ~ships"]
       [%banish leaf+";banish /chat-name ~ships"]
@@ -477,18 +477,18 @@
       ;~  pose
         (stag %target tars)
       ::
-        ;~  (glue ace)
-          (tag %create)
-          security
-          ;~  plug
-            path
-            (punt ;~(pfix ace glyph))
-            (punt ;~(pfix ace (fuss 'y' 'n')))
-          ==
-        ==
-        ;~((glue ace) (tag %delete) path)
-        ;~((glue ace) (tag %invite) path ships)
-        ;~((glue ace) (tag %banish) path ships)
+      ::  ;~  (glue ace)
+      ::    (tag %create)
+      ::    security
+      ::    ;~  plug
+      ::      path
+      ::      (punt ;~(pfix ace glyph))
+      ::      (punt ;~(pfix ace (fuss 'y' 'n')))
+      ::    ==
+      ::  ==
+      ::  ;~((glue ace) (tag %delete) path)
+      ::  ;~((glue ace) (tag %invite) path ships)
+      ::  ;~((glue ace) (tag %banish) path ships)
       ::
         ;~  (glue ace)
           (tag %join)
@@ -683,7 +683,7 @@
           %say       (say +.job)
           %eval      (eval +.job)
         ::
-          %create    (create +.job)
+        ::  %create    (create +.job)
           %delete    (delete +.job)
           %invite    (change-permission & +.job)
           %banish    (change-permission | +.job)
@@ -750,30 +750,30 @@
       [[prompt:sh-out ~] all-state]
     ::  +create: new local mailbox
     ::
-    ++  create
-      |=  [security=nu-security =path gyf=(unit char) allow-history=(unit ?)]
-      ^-  (quip card state)
-      ::TODO  check if already exists
-      =/  =target  [our-self path]
-      =.  audience  [target ~ ~]
-      =^  moz  all-state
-        ?.  ?=(^ gyf)  [~ all-state]
-        (bind-glyph u.gyf target)
-      =-  [[- moz] all-state]
-      %^  act  %do-create  %chat-view
-      :-  %chat-view-action
-      !>  ^-  chat-view-action
-      :*  %create
-          path
-          security
-          ::  ensure we can read from/write to our own chats
-          ::
-          ?-  security
-            %channel  ~
-            %village  [our-self ~ ~]
-          ==
-          (fall allow-history %.y)
-      ==
+    ::++  create
+    ::  |=  [security=nu-security =path gyf=(unit char) allow-history=(unit ?)]
+    ::  ^-  (quip card state)
+    ::  ::TODO  check if already exists
+    ::  =/  =target  [our-self path]
+    ::  =.  audience  [target ~ ~]
+    ::  =^  moz  all-state
+    ::    ?.  ?=(^ gyf)  [~ all-state]
+    ::    (bind-glyph u.gyf target)
+    ::  =-  [[- moz] all-state]
+    ::  %^  act  %do-create  %chat-view
+    ::  :-  %chat-view-action
+    ::  !>  ^-  chat-view-action
+    ::  :*  %create
+    ::      path
+    ::      security
+    ::      ::  ensure we can read from/write to our own chats
+    ::      ::
+    ::      ?-  security
+    ::        %channel  ~
+    ::        %village  [our-self ~ ~]
+    ::      ==
+    ::      (fall allow-history %.y)
+    ::  ==
     ::  +delete: delete local chats
     ::
     ++  delete
