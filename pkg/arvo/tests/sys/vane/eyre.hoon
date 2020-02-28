@@ -1,4 +1,4 @@
-/+  *test, *test-ford
+/+  *test, *test-ford-external
 ::
 /=  http-server-raw  /:  /===/sys/vane/eyre  /!noun/
 ::

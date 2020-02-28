@@ -4658,24 +4658,6 @@
       ::
       ?.  ?=([~ %success %scry *] zuse-scry-result)
         (wrap-error zuse-scry-result)
-      ::  short-circuit to :pit if asked for current %home desk
-      ::
-      ::    This avoids needing to recompile the kernel if we're asked
-      ::    for the kernel we're already running. Note that this fails
-      ::    referential transparency if |autoload is turned off.
-      ::
-      ?:  ?&  |(=(disc [our %home]) =(disc [our %base]))
-              ::  is :date.build the latest commit on the %home desk?
-              ::
-              ?|  =(now date.build)
-                  ::
-                  =/  =beam  [[our %home [%da date.build]] /hoon/hoon/sys]
-                  ::
-                  .=  (scry [%141 %noun] ~ %cw beam)
-                  (scry [%141 %noun] ~ %cw beam(r [%da now]))
-          ==  ==
-        ::
-        (return-result %success %reef pit)
       ::  omit case from path to prevent cache misses
       ::
       =/  hoon-path=path

@@ -1,4 +1,4 @@
-/+  *test, test-ford
+/+  *test, test-ford-external
 ::
 /=  clay-raw  /:  /===/sys/vane/clay  /!noun/
 ::
@@ -69,7 +69,7 @@
           %+  weld
             (expect-eq !>(%.n) !>(live.note))
           ::
-          %-  expect-schematic:test-ford
+          %-  expect-schematic:test-ford-external
           :_  schematic.note
           ^-  schematic:ford
           :+  %pin  ~1111.1.1
@@ -200,7 +200,7 @@
         %+  weld
           (expect-eq !>(%.n) !>(live.note))
         ::
-        %-  expect-schematic:test-ford
+        %-  expect-schematic:test-ford-external
         :_  schematic.note
         ^-  schematic:ford
         [%pin ~1111.1.1 %list ~]
@@ -250,7 +250,7 @@
         %+  weld
           (expect-eq !>(%.n) !>(live.note))
         ::
-        %-  expect-schematic:test-ford
+        %-  expect-schematic:test-ford-external
         :_  schematic.note
         ^-  schematic:ford
         :-  %list
@@ -430,7 +430,7 @@
           %+  weld
             (expect-eq !>(%.n) !>(live.note))
           ::
-          %-  expect-schematic:test-ford
+          %-  expect-schematic:test-ford-external
           :_  schematic.note
           ^-  schematic:ford
           :+  %pin  ~2222.2.2
