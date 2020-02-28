@@ -166,7 +166,8 @@
 +$  vile
   $:  typ=type    ::  -:!>(*type)
       duc=type    ::  -:!>(*duct)
-      pah=type    ::  -:!>(*path)
+      wir=type    ::  -:!>(*wire)
+      dud=type    ::  -:!>(*(unit goof))
   ==
 --
 =>
@@ -461,8 +462,8 @@
       ::
       ++  spin
         |=  [hen=duct eny=@uvJ dud=(unit goof)]
-        :: =/  duc  !>(hen)
         =*  duc  [duc.vil hen]
+        =*  err  [dud.vil dud]
         =/  sam=vane-sample  [our now eny sky]
         =^  rig  sac
           ~>  %mean.'spin: activation failed'
@@ -501,7 +502,6 @@
           ::  sample is [duct (unit goof) (hypo (hobo task))]
           ::
           =/  sam=maze
-            =*  err  !>(dud)
             (slid duc (slid err (slix task)))
           =^  pro  sac  (slur sac gat sam)
           (peel pro)
@@ -519,9 +519,7 @@
           ::  sample is [wire duct (unit goof) (hypo sign=[term gift])]
           ::
           =/  sam=maze
-            :: =/  tea  !>(wire)
-            =*  tea  [pah.vil wire]
-            =*  err  !>(dud)
+            =*  tea  [wir.vil wire]
             (slid tea (slid duc (slid err (slix (slid src gift)))))
           =^  pro  sac  (slur sac gat sam)
           (peel pro)
@@ -856,7 +854,8 @@
   =+  pal=|=(a/@t ^-(type (~(play ut but) (vice a))))
   :*  typ=(pal '$:type')
       duc=(pal '$:duct')
-      pah=(pal '$:path')
+      wir=(pal '$:wire')
+      dud=(pal '=<($ (unit goof))')  ::  XX misparse
   ==
 ::
 ++  dint                                              ::  input routing
