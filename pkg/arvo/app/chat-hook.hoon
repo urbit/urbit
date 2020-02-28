@@ -426,7 +426,6 @@
 ++  fact-permission-update
   |=  [wir=wire fact=permission-update]
   ^-  (quip card _state)
-  ~&  upd+fact
   |^
   :_  state
   ?+  -.fact   ~
@@ -448,7 +447,6 @@
     %-  zing
     %+  turn  ~(tap in who)
     |=  =ship
-    ~&  ship
     ?:  (is-permitted ship chat)
       ?:  ?|(=(kind %remove) =(ship our.bol))  ~
       ::  if ship has just been added to the permitted group,

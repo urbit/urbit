@@ -69,7 +69,6 @@ export class JoinScreen extends Component {
 
     station = station.join('/');
 
-    console.log(sig, station.split('/').length, ship);
     if (
       (!sig && station.split('/').length < 2) ||
       (!!sig && station.split('/').length < 3) ||

@@ -215,7 +215,6 @@
   ::
       %delete
     =/  group-path  (group-from-chat app-path.act)
-    ~&  delete+group-path
     ?>  ?=(^ app-path.act)
     %-  zing
     :~  :~  (chat-hook-poke [%remove app-path.act])
@@ -340,7 +339,6 @@
         (scot %da now.bol)
         /resource-indices
       ==
-    ~&  resource-indices
     =/  groups=(set path)  (~(got by resource-indices) [%chat app-path])
     (snag 0 ~(tap in groups))
   ::
@@ -348,7 +346,6 @@
     |=  =path
     ^-  ?
     ?>  ?=(^ path)
-    ~&  is-managed+!=(i.path '~')
     !=(i.path '~')
   --
 ::
