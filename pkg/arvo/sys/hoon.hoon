@@ -6811,6 +6811,7 @@
           $%  {$help p/help}                            ::  documentation
               {$know p/stud}                            ::  global standard
               {$made p/term q/(unit (list wing))}       ::  structure
+              {$spot p/spot}
           ==                                            ::
 +$  type  $~  %noun                                     ::
           $@  $?  $noun                                 ::  any nouns
@@ -9034,6 +9035,7 @@
           rib=*(set {type type hoon})
           vet=`?`&
           fab=`?`&
+          bug=`?`|
       ==
   =+  sut=`type`%noun
   |%
@@ -10333,6 +10335,10 @@
       ~_  leaf+"core-nice"
       !!
     --
+  ::  enable debug mode
+  ++  mind
+    |=  [gol=type gen=hoon]
+    (mint(bug &) gol gen)
   ::
   ++  mint
     ~/  %mint
@@ -10445,7 +10451,8 @@
         {$dbug *}
       ~_  (show %o p.gen)
       =+  hum=$(gen q.gen)
-      [p.hum [%11 [%spot %1 p.gen] q.hum]]
+      :-  ?:(bug (hint [p.hum %spot p.gen] p.hum) p.hum)
+      [%11 [%spot %1 p.gen] q.hum]
     ::
         {$zpcm *}   [(nice (play p.gen)) [%1 q.gen]]    ::  XX validate!
         {$lost *}
@@ -11791,6 +11798,7 @@
       xdat=(unit xdat)
       xrole=(unit xrole)
       pats=(unit xpat)
+      spot=(unit spot)
       studs=(set stud)
       recipes=(set recipe)
       helps=(set help)
