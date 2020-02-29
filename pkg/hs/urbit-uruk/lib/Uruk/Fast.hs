@@ -1,3 +1,5 @@
+{-# OPTIONs_GHC -Werror #-}
+
 {-
 
     Alright, I need to figure out how to implement short circuiting K.
@@ -74,12 +76,14 @@
 
 module Uruk.Fast where
 
-import ClassyPrelude             hiding (evaluate, fromList, try)
+import ClassyPrelude             hiding (evaluate, fromList, try, seq)
 import Control.Monad.Primitive
 import Data.Primitive.Array
 import Data.Primitive.SmallArray
-import GHC.Prim
+import GHC.Prim                  hiding (seq)
 import System.IO.Unsafe
+import Uruk.Class
+import Uruk.Fast.Types
 
 import Control.Arrow     ((>>>))
 import Control.Exception (throw, try)
@@ -91,8 +95,59 @@ import Prelude           ((!!))
 import Uruk.JetDemo      (Ur, UrPoly(Fast))
 
 import qualified GHC.Exts
-import qualified Urbit.Atom   as Atom
-import qualified Uruk.JetDemo as Ur
+import qualified Urbit.Atom          as Atom
+import qualified Uruk.Fast.OptToFast as Opt
+import qualified Uruk.JetOptimize    as Opt
+import qualified Uruk.JetDemo        as Ur
+
+
+--------------------------------------------------------------------------------
+
+mkNode :: Int -> Node -> Val
+mkNode n c = VFun (Fun n c mempty)
+
+instance Uruk Val where
+  uCas = mkNode 3 Cas
+  uIff = mkNode 3 Iff
+  uFix = mkNode 2 Fix
+  uJay = \n -> mkNode 2 $ Jay $ fromIntegral n
+  uNat = \n -> VNat n
+  uBol = \b -> VBol b
+  uUni = mkNode 1 Uni
+  uCon = mkNode 3 Con
+  uSeq = mkNode 2 Seq
+
+  uBen 1 = mkNode 3 Bee
+  uBen n = mkNode (fromIntegral $ 2 + n) (Ben (fromIntegral n))
+
+  uCen 1 = mkNode 3 Sea
+  uCen n = mkNode (fromIntegral $ 2 + n) (Cen (fromIntegral n))
+
+  uSen 1 = mkNode 3 Ess
+  uSen n = mkNode (fromIntegral $ 2 + n) (Sen (fromIntegral n))
+
+  uApp x y = kVV x y
+
+  uBee = mkNode 3 Bee
+  uSea = mkNode 3 Sea
+  uEss = mkNode 3 Ess
+  uDee = mkNode 1 Dee
+  uEye = mkNode 1 Eye
+  uKay = mkNode 2 Kay
+  uAdd = mkNode 2 Add
+  uLef = mkNode 2 Lef
+  uRit = mkNode 2 Rit
+  uPak = mkNode 1 Pak
+  uZer = mkNode 1 Zer
+  uEql = mkNode 2 Eql
+  uInc = mkNode 1 Inc
+  uDec = mkNode 1 Dec
+  uFec = mkNode 1 Fec
+  uSub = mkNode 2 Sub
+  uMul = mkNode 2 Mul
+  uDed = mkNode 1 Ded
+  uCar = mkNode 1 Car
+  uCdr = mkNode 1 Cdr
 
 
 -- Useful Types ----------------------------------------------------------------
@@ -153,239 +208,6 @@ jam :: Val -> Val
 jam = jamRaw . toRaw
 
 
--- Closure ---------------------------------------------------------------------
-
-type CloN = SmallArray Val
-
-getCloN :: CloN -> Int -> Val
-{-# INLINE getCloN #-}
-getCloN = indexSmallArray
-
-addCloN :: CloN -> Val -> CloN
-{-# INLINE addCloN #-}
-addCloN xs x = xs <> GHC.Exts.fromList [x] -- TODO Slow
-
-clo1 :: Val -> CloN
-clo1 x = GHC.Exts.fromList [x]
-
-
--- Arguments -------------------------------------------------------------------
-
-type ArgN = SmallArray (IO Val)
-
-
--- Registers -------------------------------------------------------------------
-
-type RegN = SmallMutableArray RealWorld Val
-
-newRegN :: Int -> IO RegN
-{-# INLINE newRegN #-}
-newRegN n = newSmallArray n VUni
-
-getRegN :: RegN -> Int -> IO Val
-{-# INLINE getRegN #-}
-getRegN = readSmallArray
-
-setRegN :: RegN -> Int -> Val -> IO ()
-{-# INLINE setRegN #-}
-setRegN = writeSmallArray
-
-instance Hashable a => Hashable (SmallArray a) where
-  hashWithSalt i x = hashWithSalt i (GHC.Exts.toList x)
-
-
--- Types -----------------------------------------------------------------------
-
-data Jet = Jet
-  { jArgs :: !Int
-  , jName :: Val
-  , jBody :: Val
-  , jFast :: !Exp
-  , jRegs :: !Int -- Number of registers needed.
-  }
- deriving (Eq, Ord)
-
-instance Hashable Jet where
-  hashWithSalt i (Jet a n b _ _) =
-    hashWithSalt i (a,n,b)
-
-instance Show Jet where
-  show (Jet{..}) =
-    case jName of
-      VNat (Atom.atomUtf8 -> Right nm) ->
-        show ("[jet." <> show jArgs <> "." <> unpack nm <> "." <> (take 5 $ show $ hash jBody) <> "]")
-      _ ->
-        show ("[jet." <> show jArgs <> "." <> show jName <> "." <> (take 5 $ show $ hash jBody) <> "]")
-
-data Node
-  = Jay Int -- Always >= 1
-  | Kay
-  | Ess
-  | Dee
-  | Jut Jet
-  | Eye
-  | Bee
-  | Sea
-  | Sen Int --  Always >=  1
-  | Ben Int --  Always >=  1
-  | Cen Int --  Always >=  1
-  | Seq
-  | Yet Nat
-  | Fix
-  | Nat Nat
-  | Bol Bool
-  | Iff
-  | Pak
-  | Zer
-  | Eql
-  | Add
-  | Inc
-  | Dec
-  | Fec
-  | Mul
-  | Sub
-  | Ded
-  | Uni
-  | Lef
-  | Rit
-  | Cas
-  | Con
-  | Car
-  | Cdr
- deriving (Eq, Ord, Generic, Hashable)
-
-instance Show Node where
-  show = \case
-    Jay n     -> replicate (fromIntegral n) 'J'
-    Kay       -> "K"
-    Ess       -> "S"
-    Dee       -> "D"
-    Jut j     -> show j
-    Eye       -> "I"
-    Bee       -> "B"
-    Sea       -> "C"
-    Sen n     -> "S" <> show n
-    Ben n     -> "B" <> show n
-    Cen n     -> "C" <> show n
-    Seq       -> "SEQ"
-    Yet n     -> "YET" <> show n
-    Fix       -> "FIX"
-    Nat n     -> show n
-    Bol True  -> "%.y"
-    Bol False -> "%.n"
-    Iff       -> "IFF"
-    Pak       -> "PAK"
-    Zer       -> "ZER"
-    Eql       -> "EQL"
-    Add       -> "ADD"
-    Inc       -> "INC"
-    Dec       -> "DEC"
-    Fec       -> "FEC"
-    Mul       -> "MUL"
-    Sub       -> "SUB"
-    Ded       -> "DED"
-    Uni       -> "UNI"
-    Lef       -> "LEF"
-    Rit       -> "RIT"
-    Cas       -> "CAS"
-    Con       -> "CON"
-    Car       -> "CAR"
-    Cdr       -> "CDR"
-
-data Fun = Fun
-  { fNeed :: !Int
-  , fHead :: !Node
-  , fArgs :: CloN -- Lazy on purpose.
-  }
- deriving (Eq, Ord, Generic, Hashable)
-
-instance Show Fun where
-  show (Fun _ h args) = if sizeofSmallArray args == 0
-    then show h
-    else mconcat
-      ["(", show h <> " ", intercalate " " (show <$> GHC.Exts.toList args), ")"]
-
-data Val
-  = VUni
-  | VCon !Val !Val
-  | VLef !Val
-  | VRit !Val
-  | VNat !Nat
-  | VBol !Bool
-  | VFun !Fun
- deriving (Eq, Ord, Generic, Hashable)
-
-instance Show Val where
-  show = \case
-    VUni       -> "~"
-    VCon x y   -> "[" <> show x <> " " <> show y <> "]"
-    VLef x     -> "L" <> show x
-    VRit x     -> "R" <> show x
-    VNat n     -> show n
-    VBol True  -> "%.y"
-    VBol False -> "%.n"
-    VFun f     -> show f
-
-data Exp
-  = VAL   !Val                    --  Constant Value
-  | REF   !Int                    --  Stack Reference
-  | REG   !Int                    --  Register Reference
-  | SLF                           --  Self Reference
-
-  | IFF   !Exp !Exp !Exp          --  If-Then-Else
-  | CAS   !Int !Exp !Exp !Exp     --  Pattern Match
-  | REC1  !Exp                    --  Recursive Call
-  | REC1R !Exp                    --  Recursive Call (No Registers)
-  | REC2  !Exp !Exp               --  Recursive Call
-  | REC2R !Exp !Exp               --  Recursive Call (No Registers)
-  | REC3  !Exp !Exp !Exp          --  Recursive Call
-  | REC3R !Exp !Exp !Exp          --  Recursive Call (No Registers)
-  | REC4  !Exp !Exp !Exp !Exp     --  Recursive Call
-  | REC4R !Exp !Exp !Exp !Exp     --  Recursive Call (No Registers)
-  | RECN  !(SmallArray Exp)       --  Recursive Call
-  | RECNR !(SmallArray Exp)       --  Recursive Call (No Registers)
-
-  | SEQ !Exp !Exp                 --  Evaluate head, return tail
-  | DED !Exp                      --  Evaluate argument, then crash.
-
-  | INC !Exp                      --  Increment
-  | DEC !Exp                      --  Decrement
-  | FEC !Exp                      --  Fast decrement
-  | ADD !Exp !Exp                 --  Add
-  | MUL !Exp !Exp                 --  Multiply
-  | SUB !Exp !Exp                 --  Subtract
-  | ZER !Exp                      --  Is Zero?
-  | EQL !Exp !Exp                 --  Atom equality.
-
-  | CON !Exp !Exp                 --  Cons
-  | CAR !Exp                      --  Head
-  | CDR !Exp                      --  Tail
-  | LEF !Exp                      --  Left Constructor
-  | RIT !Exp                      --  Right Constructor
-
-  | JET1 !Jet !Exp                --  Fully saturated jet call.
-  | JET2 !Jet !Exp !Exp           --  Fully saturated jet call.
-  | JET3 !Jet !Exp !Exp !Exp      --  Fully saturated jet call.
-  | JET4 !Jet !Exp !Exp !Exp !Exp --  Fully saturated jet call.
-  | JETN !Jet !(SmallArray Exp)   --  Fully saturated jet call.
-
-  | CLON !Fun !(SmallArray Exp)   --  Undersaturated call
-  | CALN !Exp !(SmallArray Exp)   --  Call of unknown saturation
- deriving (Eq, Ord, Show)
-
-
--- Exceptions ------------------------------------------------------------------
-
-data TypeError = TypeError Text
- deriving (Eq, Ord, Show, Exception)
-
-data Crash = Crash Val
- deriving (Eq, Ord, Show, Exception)
-
-data BadRef = BadRef Jet Int
- deriving (Eq, Ord, Show, Exception)
-
-
 --------------------------------------------------------------------------------
 
 arrayDrop :: Int -> Int -> CloN -> IO CloN
@@ -429,7 +251,31 @@ reduce !no !xs = do
     Dee   -> pure $ jam x
 
     Add   -> add x y
-    Fix   -> kVVV x (fixClo x) y
+    Mul   -> mul x y
+    Sub   -> sub x y
+    Inc   -> inc x
+    Dec   -> dec x
+    Fec   -> fec x
+    Seq   -> seq x y
+    Bol True  -> pure x
+    Bol False -> pure y
+    Eql -> eql x y
+    Lef -> pure (VLef x)
+    Rit -> pure (VRit x)
+    Con -> pure (VCon x y)
+    Car -> car x
+    Cdr -> cdr x
+    Cas -> cas x y z
+    Nat n -> error "TODO Nat Jet"
+    Sen n -> error "TODO Sen"
+    Ben n -> error "TODO Ben"
+    Cen n -> error "TODO Cen"
+    Yet n -> error "TODO Yet"
+    Pak   -> pak x
+    Uni   -> pure x
+
+    Ded   -> throwIO (Crash x)
+    Fix   -> fix x y
     Sea   -> kVVV x z y
     Bee   -> kVA x (kVV y z)
 
@@ -439,7 +285,6 @@ reduce !no !xs = do
 
     Eye   -> pure x
     Jut j -> execJetN j xs
-    node  -> error ("TODO: Implement jets in Uruk.Fast: " <> show node)
 
   putStrLn ("  in: " <> funStr)
   putStrLn ("    out: " <> tshow res)
@@ -448,11 +293,6 @@ reduce !no !xs = do
  where
   v       = indexSmallArray xs
   (x,y,z) = (v 0, v 1, v 2)
-
-iff :: Val -> Val -> Val -> IO Val
-iff (VBol True)  t e = kVV t VUni
-iff (VBol False) t e = kVV e VUni
-iff _            _ _ = throwIO (TypeError "iff-not-bol")
 
 kFV :: Fun -> Val -> IO Val
 kFV f x = f & \case
@@ -615,6 +455,30 @@ execJetNR !j !xs = do
 
 
 -- Primitive Implementation ----------------------------------------------------
+
+fix :: Val -> Val -> IO Val
+{-# INLINE fix #-}
+fix x y = kVVV x (fixClo x) y
+
+iff :: Val -> Val -> Val -> IO Val
+{-# INLINE iff #-}
+iff (VBol True)  t e = kVV t VUni
+iff (VBol False) t e = kVV e VUni
+iff _            _ _ = throwIO (TypeError "iff-not-bol")
+
+cas :: Val -> Val -> Val -> IO Val
+{-# INLINE cas #-}
+cas (VLef x) l r = kVV l x
+cas (VRit x) l r = kVV r x
+cas _        _ _ = throwIO (TypeError "cas-not-sum")
+
+seq :: Val -> Val -> IO Val
+{-# INLINE seq #-}
+seq x y = pure y
+
+pak :: Val -> IO Val
+pak (VNat n) = pure (VNat n)
+pak _        = throwIO (TypeError "pak-not-nat") -- TODO Probably actually handle this.
 
 inc :: Val -> IO Val
 {-# INLINE inc #-}

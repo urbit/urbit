@@ -78,6 +78,7 @@ module Uruk.JetDemo where
 import ClassyPrelude
 import Data.Bits
 import Data.Void
+import Uruk.Class
 
 import Data.Function    ((&))
 import Data.List        (iterate, (!!))
@@ -141,6 +142,47 @@ instance NFData Positive where
   rnf !x = ()
 
 type Ur = UrPoly Jet
+
+instance Uruk Ur where
+  uApp x y = pure (x :@ y)
+
+  uCas = Cas
+  uIff = Iff
+  uFix = Fix
+  uJay = J
+  uNat = Nat
+  uBol = Bol
+  uUni = Uni
+  uCon = Con
+  uSeq = Seq
+
+  uKay = K
+  uEss = S
+  uDee = D
+
+  uBee = B
+  uSea = C
+  uEye = I
+
+  uAdd = Add
+
+  uBen n = Fast (fromIntegral $ n+2) (Bn n) []
+  uSen n = Fast (fromIntegral $ n+2) (Sn n) []
+  uCen n = Fast (fromIntegral $ n+2) (Cn n) []
+
+  uLef = Lef
+  uRit = Rit
+  uPak = Pak
+  uZer = Zer
+  uEql = Eql
+  uInc = Inc
+  uDec = Dec
+  uFec = Fec
+  uSub = Sub
+  uMul = Mul
+  uDed = Ded
+  uCar = Car
+  uCdr = Cdr
 
 jetExpand ∷ Positive → Ur
 jetExpand = go

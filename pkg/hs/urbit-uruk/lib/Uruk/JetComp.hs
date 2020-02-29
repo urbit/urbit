@@ -8,9 +8,10 @@ import Control.Arrow    ((>>>))
 import Numeric.Natural  (Natural)
 import Numeric.Positive (Positive)
 import Uruk.JetDemo     (Ur, UrPoly((:@), Fast))
+import Uruk.Class
 
-import qualified Uruk.Fast    as F
-import qualified Uruk.JetDemo as Ur
+import qualified Uruk.Fast.Types as F
+import qualified Uruk.JetDemo    as Ur
 
 
 -- Types -----------------------------------------------------------------------
@@ -97,137 +98,8 @@ moonStrict = toUruk . snd . ski . strict . expDeb
 
 --------------------------------------------------------------------------------
 
-class Uruk p where
-  uApp :: p -> p -> IO p
-
-  uJay :: Pos -> p
-  uKay :: p
-  uEss :: p
-  uDee :: p
-
-  uBee :: p
-  uSea :: p
-  uEye :: p
-
-  uBen :: Positive -> p
-  uSen :: Positive -> p
-  uCen :: Positive -> p
-
-
-  uNat :: Nat -> p
-  uBol :: Bool -> p
-
-  uCas :: p
-  uLef :: p
-  uRit :: p
-  uIff :: p
-  uSeq :: p
-  uPak :: p
-  uZer :: p
-  uEql :: p
-  uInc :: p
-  uDec :: p
-  uFec :: p
-  uAdd :: p
-  uSub :: p
-  uMul :: p
-  uFix :: p
-  uDed :: p
-  uUni :: p
-  uCon :: p
-  uCar :: p
-  uCdr :: p
-
-instance Uruk Ur where
-  uApp x y = pure (x :@ y)
-
-  uCas = Ur.Cas
-  uIff = Ur.Iff
-  uFix = Ur.Fix
-  uJay = Ur.J
-  uNat = Ur.Nat
-  uBol = Ur.Bol
-  uUni = Ur.Uni
-  uCon = Ur.Con
-  uSeq = Ur.Seq
-
-  uKay = Ur.K
-  uEss = Ur.S
-  uDee = Ur.D
-
-  uBee = Ur.B
-  uSea = Ur.C
-  uEye = Ur.I
-
-  uAdd = Ur.Add
-
-  uBen n = Ur.Fast (fromIntegral $ n+2) (Ur.Bn n) []
-  uSen n = Ur.Fast (fromIntegral $ n+2) (Ur.Sn n) []
-  uCen n = Ur.Fast (fromIntegral $ n+2) (Ur.Cn n) []
-
-  uLef = Ur.Lef
-  uRit = Ur.Rit
-  uPak = Ur.Pak
-  uZer = Ur.Zer
-  uEql = Ur.Eql
-  uInc = Ur.Inc
-  uDec = Ur.Dec
-  uFec = Ur.Fec
-  uSub = Ur.Sub
-  uMul = Ur.Mul
-  uDed = Ur.Ded
-  uCar = Ur.Car
-  uCdr = Ur.Cdr
-
-
-fastNode :: Int -> F.Node -> F.Val
-fastNode n c = F.VFun (F.Fun n c mempty)
-
 toInt :: Integral i => i -> Int
 toInt = fromIntegral
-
-instance Uruk F.Val where
-  uCas = fastNode 3 F.Cas
-  uIff = fastNode 3 F.Iff
-  uFix = fastNode 2 F.Fix
-  uJay = \n -> fastNode 2 $ F.Jay $ fromIntegral n
-  uNat = \n -> F.VNat n
-  uBol = \b -> F.VBol b
-  uUni = fastNode 1 F.Uni
-  uCon = fastNode 3 F.Con
-  uSeq = fastNode 2 F.Seq
-
-  uBen 1 = fastNode 3 F.Bee
-  uBen n = fastNode (toInt $ 2 + n) (F.Ben (toInt n))
-
-  uCen 1 = fastNode 3 F.Sea
-  uCen n = fastNode (toInt $ 2 + n) (F.Cen (toInt n))
-
-  uSen 1 = fastNode 3 F.Ess
-  uSen n = fastNode (toInt $ 2 + n) (F.Sen (toInt n))
-
-  uApp x y = F.kVV x y
-
-  uBee = fastNode 3 F.Bee
-  uSea = fastNode 3 F.Sea
-  uEss = fastNode 3 F.Ess
-  uDee = fastNode 1 F.Dee
-  uEye = fastNode 1 F.Eye
-  uKay = fastNode 2 F.Kay
-  uAdd = fastNode 2 F.Add
-  uLef = fastNode 2 F.Lef
-  uRit = fastNode 2 F.Rit
-  uPak = fastNode 1 F.Pak
-  uZer = fastNode 1 F.Zer
-  uEql = fastNode 2 F.Eql
-  uInc = fastNode 1 F.Inc
-  uDec = fastNode 1 F.Dec
-  uFec = fastNode 1 F.Fec
-  uSub = fastNode 2 F.Sub
-  uMul = fastNode 2 F.Mul
-  uDed = fastNode 1 F.Ded
-  uCar = fastNode 1 F.Car
-  uCdr = fastNode 1 F.Cdr
 
 expDeb ∷ forall p. Uruk p => Exp p → Deb p
 expDeb = go

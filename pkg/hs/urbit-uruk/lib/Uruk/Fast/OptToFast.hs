@@ -1,4 +1,4 @@
-module Uruk.OptToFast (optToFast) where
+module Uruk.Fast.OptToFast (optToFast) where
 
 import ClassyPrelude    hiding (evaluate, try, fromList)
 import System.IO.Unsafe
@@ -12,10 +12,12 @@ import Numeric.Positive (Positive)
 import Prelude          ((!!))
 import Uruk.JetDemo     (Ur, UrPoly(Fast))
 
-import qualified Uruk.Fast        as F
+import qualified Uruk.Fast.Types  as F
 import qualified Uruk.JetComp     as C
 import qualified Uruk.JetDemo     as U
 import qualified Uruk.JetOptimize as O
+
+--------------------------------------------------------------------------------
 
 optToFast ∷ O.Code → F.Jet
 optToFast (O.Code args nm bod exp) = F.Jet{..}

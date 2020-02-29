@@ -13,17 +13,18 @@ import Control.Monad.Except
 import GHC.Natural
 import Moon.AST
 
-import Control.Arrow    ((>>>))
-import Data.Function    ((&))
-import System.IO.Unsafe (unsafePerformIO)
-import Text.Show.Pretty (ppShow)
-import Uruk.OptToFast   (optToFast)
+import Control.Arrow       ((>>>))
+import Data.Function       ((&))
+import System.IO.Unsafe    (unsafePerformIO)
+import Text.Show.Pretty    (ppShow)
+import Uruk.Fast.OptToFast (optToFast)
 
 import qualified Moon.MoonToUruk          as MU
 import qualified Moon.Parser              as Parser
 import qualified System.Console.Haskeline as HL
 import qualified Urbit.Atom               as Atom
 import qualified Uruk.Fast                as F
+import qualified Uruk.Fast.Types          as F
 import qualified Uruk.JetComp             as Uruk
 import qualified Uruk.JetDemo             as Ur
 import qualified Uruk.JetOptimize         as Opt
