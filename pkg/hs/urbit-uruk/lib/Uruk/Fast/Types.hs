@@ -99,9 +99,11 @@ instance Show Jet where
   show (Jet{..}) =
     case jName of
       VNat (Atom.atomUtf8 -> Right nm) ->
-        show ("[jet." <> show jArgs <> "." <> unpack nm <> "." <> (take 5 $ show $ hash jBody) <> "]")
+        "J" <> show jArgs <> "_" <> unpack nm <> "_" <> has
       _ ->
-        show ("[jet." <> show jArgs <> "." <> show jName <> "." <> (take 5 $ show $ hash jBody) <> "]")
+        "J" <> show jArgs <> "_" <> show jName <> "_" <> has
+   where
+     has = (take 5 $ show $ abs $ hash jBody)
 
 data Node
   = Jay Int -- Always >= 1
@@ -270,3 +272,17 @@ data Crash = Crash Val
 
 data BadRef = BadRef Jet Int
  deriving (Eq, Ord, Show, Exception)
+
+
+--------------------------------------------------------------------------------
+
+valFun :: Val -> Fun
+{-# INLINE valFun #-}
+valFun = \case
+  VUni     -> Fun 1 Uni mempty
+  VCon h t -> Fun 1 Con (fromList [h, t])
+  VLef l   -> Fun 2 Lef (fromList [l])
+  VRit r   -> Fun 2 Lef (fromList [r])
+  VNat n   -> Fun 2 (Nat n) mempty
+  VBol b   -> Fun 2 (Bol b) mempty
+  VFun f   -> f

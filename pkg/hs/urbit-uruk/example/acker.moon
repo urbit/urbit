@@ -7,4 +7,4 @@
   ?:  (zer y)
     ($ (fec x) 1)
   ($ (fec x) ($ x (fec y)))
-(acker 4 0)
+(acker 3 9)

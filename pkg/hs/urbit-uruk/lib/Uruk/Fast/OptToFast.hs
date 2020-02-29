@@ -10,12 +10,10 @@ import Data.Function    ((&))
 import Numeric.Natural  (Natural)
 import Numeric.Positive (Positive)
 import Prelude          ((!!))
-import Uruk.JetDemo     (Ur, UrPoly(Fast))
 
-import qualified Uruk.Fast.Types  as F
-import qualified Uruk.JetComp     as C
-import qualified Uruk.JetDemo     as U
-import qualified Uruk.JetOptimize as O
+import qualified Uruk.Fast.JetOptimize as O
+import qualified Uruk.Fast.Types       as F
+import qualified Uruk.JetComp          as C
 
 --------------------------------------------------------------------------------
 
@@ -23,8 +21,8 @@ optToFast ∷ O.Code → F.Jet
 optToFast (O.Code args nm bod exp) = F.Jet{..}
  where
   jArgs = fromIntegral args
-  jName = fastVal nm
-  jBody = fastVal bod
+  jName = nm
+  jBody = bod
   jFast = compile jArgs exp
   jRegs = numReg exp
 
@@ -66,29 +64,29 @@ compile arity = go
           (LT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
           (GT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
 
-  kal O.RSeq     [x, y] = F.SEQ (go x) (go y)
-  kal O.RDed     [x]    = F.DED (go x)
+  kal F.Seq     [x, y] = F.SEQ (go x) (go y)
+  kal F.Ded     [x]    = F.DED (go x)
 
-  kal O.RUni     []     = F.VAL F.VUni
+  kal F.Uni     []     = F.VAL F.VUni
 
-  kal O.RCon     [x, y] = con (go x) (go y)
-  kal O.RCar     [x]    = F.CAR (go x)
-  kal O.RCdr     [x]    = F.CDR (go x)
+  kal F.Con     [x, y] = con (go x) (go y)
+  kal F.Car     [x]    = F.CAR (go x)
+  kal F.Cdr     [x]    = F.CDR (go x)
 
-  kal O.RLef     [x]    = lef (go x)
-  kal O.RRit     [x]    = rit (go x)
+  kal F.Lef     [x]    = lef (go x)
+  kal F.Rit     [x]    = rit (go x)
 
-  kal (O.RNat n) []     = F.VAL (F.VNat n)
-  kal (O.RBol b) []     = F.VAL (F.VBol b)
+  kal (F.Nat n) []     = F.VAL (F.VNat n)
+  kal (F.Bol b) []     = F.VAL (F.VBol b)
 
-  kal O.RInc     [x]    = F.INC (go x)
-  kal O.RDec     [x]    = F.DEC (go x)
-  kal O.RFec     [x]    = F.FEC (go x)
-  kal O.RZer     [x]    = F.ZER (go x)
-  kal O.REql     [x, y] = F.EQL (go x) (go y)
-  kal O.RAdd     [x, y] = F.ADD (go x) (go y)
-  kal O.RSub     [x, y] = F.SUB (go x) (go y)
-  kal O.RMul     [x, y] = F.MUL (go x) (go y)
+  kal F.Inc     [x]    = F.INC (go x)
+  kal F.Dec     [x]    = F.DEC (go x)
+  kal F.Fec     [x]    = F.FEC (go x)
+  kal F.Zer     [x]    = F.ZER (go x)
+  kal F.Eql     [x, y] = F.EQL (go x) (go y)
+  kal F.Add     [x, y] = F.ADD (go x) (go y)
+  kal F.Sub     [x, y] = F.SUB (go x) (go y)
+  kal F.Mul     [x, y] = F.MUL (go x) (go y)
 
   kal f          xs     = F.CALN (rawExp f) (goArgs xs)
 
@@ -104,8 +102,5 @@ compile arity = go
   goArgs :: [O.Val] -> SmallArray F.Exp
   goArgs = fromList . fmap go
 
-rawExp ∷ O.RawNode → F.Exp
+rawExp ∷ F.Node → F.Exp
 rawExp = error "TODO"
-
-fastVal :: U.Val -> F.Val
-fastVal = error "TODO"

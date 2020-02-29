@@ -92,13 +92,14 @@ import Data.Flat
 import Data.Function     ((&))
 import Numeric.Natural   (Natural)
 import Prelude           ((!!))
+import Text.Show.Pretty  (ppShow)
 import Uruk.JetDemo      (Ur, UrPoly(Fast))
 
 import qualified GHC.Exts
-import qualified Urbit.Atom          as Atom
-import qualified Uruk.Fast.OptToFast as Opt
-import qualified Uruk.JetOptimize    as Opt
-import qualified Uruk.JetDemo        as Ur
+import qualified Urbit.Atom            as Atom
+import qualified Uruk.Fast.JetOptimize as Opt
+import qualified Uruk.Fast.OptToFast   as Opt
+import qualified Uruk.JetDemo          as Ur
 
 
 --------------------------------------------------------------------------------
@@ -217,18 +218,28 @@ arrayDrop i l xs = thawSmallArray xs i l >>= unsafeFreezeSmallArray
 fixClo :: Val -> Val
 fixClo x = VFun (Fun 1 Fix (GHC.Exts.fromList [x])) -- TODO Slow
 
+indent = unlines . fmap ("    | " <>) . lines
+
 jetRegister :: Int -> Val -> Val -> IO Val
 jetRegister args name body = do
   putStrLn "JET REGISTRATION"
   putStrLn ("  args: " <> tshow args)
   putStrLn ("  name: " <> tshow name)
-  putStrLn ("  body: " <> tshow body)
-  putStrLn ""
-  pure $ VFun $ Fun args (Jut $ Jet args name body noFast 0) mempty
 
- where
-  -- This will always type error and thus fallback to slow evaluation.
-  noFast = INC (VAL VUni)
+  putStrLn ("  body:")
+  putStrLn (indent $ pack $ ppShow body)
+
+  cod <- Opt.compile args name body
+
+  putStrLn "  code:"
+  putStrLn (indent (tshow cod))
+
+  let jet = Opt.optToFast cod
+
+  putStrLn "  fast:"
+  putStrLn (indent (tshow (jFast jet)))
+
+  pure (VFun (Fun args (Jut jet) mempty))
 
 {-
   TODO Need to handle TypeError exceptions here as well.
@@ -236,9 +247,9 @@ jetRegister args name body = do
 reduce :: Node -> CloN -> IO Val
 {-# INLINE reduce #-}
 reduce !no !xs = do
-  let funStr = tshow (Fun 0 no xs)
+  let fun = Fun 0 no xs
 
-  putStrLn funStr
+  print no
 
   res <- no & \case
     Ess   -> kVVA x z (kVV y z)
@@ -286,8 +297,10 @@ reduce !no !xs = do
     Eye   -> pure x
     Jut j -> execJetN j xs
 
-  putStrLn ("  in: " <> funStr)
-  putStrLn ("    out: " <> tshow res)
+  putStrLn ("  in: ")
+  putStrLn (indent (pack (ppShow fun)))
+  putStrLn ("  out:")
+  putStrLn (indent (pack (ppShow res)))
 
   pure res
  where
@@ -329,17 +342,6 @@ callVal2 f x y = kAN f (fromList [x, y])
 callFunFull :: Fun -> CloN -> IO Val
 {-# INLINE callFunFull #-}
 callFunFull Fun {..} xs = reduce fHead (fArgs <> xs)
-
-valFun :: Val -> Fun
-{-# INLINE valFun #-}
-valFun = \case
-  VUni     -> Fun 1 Uni mempty
-  VCon h t -> Fun 1 Con (fromList [h, t])
-  VLef l   -> Fun 2 Lef (fromList [l])
-  VRit r   -> Fun 2 Lef (fromList [r])
-  VNat n   -> Fun 2 (Nat n) mempty
-  VBol b   -> Fun 2 (Bol b) mempty
-  VFun f   -> f
 
 
 -- Jet Invokation --------------------------------------------------------------
