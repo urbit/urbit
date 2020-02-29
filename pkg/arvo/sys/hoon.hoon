@@ -12083,6 +12083,21 @@
   ^-  vase
   [[%cell p.hed p.tal] [q.hed q.tal]]
 ::
+++  side                                                ::  split vase to cell
+  |=  vax=vase
+  ^-  [hed=vase tal=vase]
+  ?@  q.vax  !!
+  =.  p.vax  (~(fuse ut p.vax) [%cell %noun %noun])
+  [(slot 2 vax) (slot 3 vax)]
+::
+++  sill                                                ::  split vase to list
+  |=  vax=vase
+  ^-  (list vase)
+  ?~  q.vax
+    ~
+  =/  [hed=vase tal=vase]  (side vax)
+  [hed $(vax tal)]
+::
 ++  slot                                                ::  got axis in vase
   |=  {axe/@ vax/vase}  ^-  vase
   [(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]

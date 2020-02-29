@@ -34,4 +34,28 @@
       !>  worm1
       !>  worm2
   ==
+::
+++  test-side-ok  ^-  tang
+  =/  vax=vase  !>([%foo 17])
+  %+  expect-eq
+    !>  (side vax)
+    !>  [hed=!>(%foo) tal=!>(17)]
+::
+++  test-side-crash  ^-  tang
+  =/  vax=vase  !>(17)
+  %+  expect-eq
+    !>  ?=([%| *] (mule |.((side vax))))
+    !>  `?`%.y
+::
+++  test-sill-ok  ^-  tang
+  =/  vax=vase  !>(`(list @ud)`~[1 2 3])
+  %+  expect-eq
+    !>  `(list @ud)`(turn (sill vax) |=(vase !<(@ud +<)))
+    !>  `(list @ud)`~[1 2 3]
+::
+++  test-sill-crash  ^-  tang
+  =/  vax=vase  !>([1 2])
+  %+  expect-eq
+    !>  ?=([%| *] (mule |.((sill vax))))
+    !>  `?`%.y
 --
