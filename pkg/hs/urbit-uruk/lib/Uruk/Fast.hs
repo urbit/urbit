@@ -1,6 +1,9 @@
-{-# OPTIONs_GHC -Werror #-}
+{-# OPTIONS_GHC -funbox-strict-fields -Werror #-}
 
 {-
+    Note that On 64 bit machines, GHC will always use pointer tagging
+    as long as there are less than 8 constructors. So, anything that is
+    frequently pattern matched on should have at most 7 branches.
 
     Alright, I need to figure out how to implement short circuiting K.
 
@@ -62,22 +65,11 @@
         `callN :: Val -> Array (IO Val) -> Val`
 -}
 
-{-# OPTIONS_GHC -funbox-strict-fields -Werror #-}
-
-{-
-    TODO Fill out reduce.
-    TODO K should not evaluate tail.
-      TODO Or, find a way to make K not need to short-circuit.
-
-    Note that On 64 bit machines, GHC will always use pointer tagging
-    as long as there are less than 8 constructors. So, anything that is
-    frequently pattern matched on should have at most 7 branches.
--}
-
 module Uruk.Fast where
 
-import ClassyPrelude             hiding (evaluate, fromList, try, seq)
+import ClassyPrelude             hiding (evaluate, fromList, seq, toList, try)
 import Control.Monad.Primitive
+import Data.Flat
 import Data.Primitive.Array
 import Data.Primitive.SmallArray
 import GHC.Prim                  hiding (seq)
@@ -88,14 +80,13 @@ import Uruk.Fast.Types
 import Control.Arrow     ((>>>))
 import Control.Exception (throw, try)
 import Data.Bits         (shiftL, (.|.))
-import Data.Flat
 import Data.Function     ((&))
+import GHC.Exts          (fromList, toList)
 import Numeric.Natural   (Natural)
 import Prelude           ((!!))
 import Text.Show.Pretty  (ppShow)
 import Uruk.JetDemo      (Ur, UrPoly(Fast))
 
-import qualified GHC.Exts
 import qualified Urbit.Atom            as Atom
 import qualified Uruk.Fast.JetOptimize as Opt
 import qualified Uruk.Fast.OptToFast   as Opt
@@ -177,7 +168,7 @@ jamRaw = VNat . Atom.bytesAtom . flat
 -}
 toRaw :: Val -> Raw
 toRaw = valFun >>> \case
-  Fun _ f xs -> app (nodeRaw f) $ GHC.Exts.toList $ fmap toRaw xs
+  Fun _ f xs -> app (nodeRaw f) $ toList $ fmap toRaw xs
  where
   app :: Raw -> [Raw] -> Raw
   app (Raw f xs) mor = Raw f (xs <> mor)
@@ -216,7 +207,7 @@ arrayDrop :: Int -> Int -> CloN -> IO CloN
 arrayDrop i l xs = thawSmallArray xs i l >>= unsafeFreezeSmallArray
 
 fixClo :: Val -> Val
-fixClo x = VFun (Fun 1 Fix (GHC.Exts.fromList [x])) -- TODO Slow
+fixClo x = VFun (Fun 1 Fix (fromList [x])) -- TODO Slow
 
 indent = unlines . fmap ("    | " <>) . lines
 
@@ -241,6 +232,7 @@ jetRegister args name body = do
 
   pure (VFun (Fun args (Jut jet) mempty))
 
+
 {-
   TODO Need to handle TypeError exceptions here as well.
 -}
@@ -255,33 +247,48 @@ reduce !no !xs = do
     Ess   -> kVVA x z (kVV y z)
     Kay   -> pure x
     Jay n -> case x of
-               VFun (Fun 2 (Jay 1) _) ->
-                 pure (VFun (Fun 1 (Jay (n+1)) (clo1 y)))
-               _ ->
-                 jetRegister n x y
-    Dee   -> pure $ jam x
+      VFun (Fun 2 (Jay 1) _) -> pure (VFun (Fun 1 (Jay (n + 1)) (clo1 y)))
+      _                      -> jetRegister n x y
 
-    Add   -> add x y
-    Mul   -> mul x y
-    Sub   -> sub x y
-    Inc   -> inc x
-    Dec   -> dec x
-    Fec   -> fec x
-    Seq   -> seq x y
+    Dee       -> pure $ jam x
+
+    Add       -> add x y
+    Mul       -> mul x y
+    Sub       -> sub x y
+    Inc       -> inc x
+    Dec       -> dec x
+    Fec       -> fec x
+    Seq       -> seq x y
     Bol True  -> pure x
     Bol False -> pure y
-    Eql -> eql x y
-    Lef -> pure (VLef x)
-    Rit -> pure (VRit x)
-    Con -> pure (VCon x y)
-    Car -> car x
-    Cdr -> cdr x
-    Cas -> cas x y z
-    Nat n -> error "TODO Nat Jet"
-    Sen n -> error "TODO Sen"
-    Ben n -> error "TODO Ben"
-    Cen n -> error "TODO Cen"
-    Yet n -> error "TODO Yet"
+    Eql       -> eql x y
+    Lef       -> pure (VLef x)
+    Rit       -> pure (VRit x)
+    Con       -> pure (VCon x y)
+    Car       -> car x
+    Cdr       -> cdr x
+    Cas       -> cas x y z
+    Nat n     -> nat n x y
+
+    Sen n     -> do
+      let args = drop 2 $ toList xs
+      kVA x (kVVn y args)
+
+    Ben n -> do
+      let args = drop 2 $ toList xs
+      xArgs <- kVVn x args
+      kVV xArgs y
+
+    Cen n -> do
+      let args = drop 2 $ toList xs
+      xArgs <- kVVn x args
+      kVA xArgs (kVVn y args)
+
+    Yet _ -> toList xs & \case
+      []     -> error "impossible"
+      [ v ]  -> pure v -- impossible?
+      v : vs -> kVVn v vs
+
     Pak   -> pak x
     Uni   -> pure x
 
@@ -304,40 +311,48 @@ reduce !no !xs = do
 
   pure res
  where
-  v       = indexSmallArray xs
-  (x,y,z) = (v 0, v 1, v 2)
+  v         = indexSmallArray xs
+  (x, y, z) = (v 0, v 1, v 2)
 
 kFV :: Fun -> Val -> IO Val
+{-# INLINE kFV #-}
 kFV f x = f & \case
   Fun 1    node args -> reduce node (addCloN args x)
   Fun need head args -> pure $ VFun $ Fun (need-1) head (addCloN args x)
 
 kVAA :: Val -> IO Val -> IO Val -> IO Val
-kVAA = callVal2
+{-# INLINE kVAA #-}
+kVAA f x y = kVAn f (fromList [x, y])
 
 kVA :: Val -> IO Val -> IO Val
+{-# INLINE kVA #-}
 kVA f x = f & \case
   VFun (Fun 1 Kay xs) -> kVV f VUni  --  second arg always ignored.
   other               -> kVV f =<< x
 
-kAN :: Val -> ArgN -> IO Val
-kAN f xs = foldM kVA f (GHC.Exts.toList xs)
+kVVn :: Val -> [Val] -> IO Val
+{-# INLINE kVVn #-}
+kVVn f xs = foldM kVV f xs
+
+kVAn :: Val -> ArgN -> IO Val
+{-# INLINE kVAn #-}
+kVAn f xs = foldM kVA f (toList xs)
 
 kVV :: Val -> Val -> IO Val
+{-# INLINE kVV #-}
 kVV = kFV . valFun
 
 kVVV :: Val -> Val -> Val -> IO Val
+{-# INLINE kVVV #-}
 kVVV x y z = do
   xy <- kVV x y
   kVV xy z
 
 kVVA :: Val -> Val -> IO Val -> IO Val
+{-# INLINE kVVA #-}
 kVVA x y z = do
   xy <- kVV x y
   kVA xy z
-
-callVal1 f x = kAN f (fromList [x])
-callVal2 f x y = kAN f (fromList [x, y])
 
 callFunFull :: Fun -> CloN -> IO Val
 {-# INLINE callFunFull #-}
@@ -478,7 +493,16 @@ seq :: Val -> Val -> IO Val
 {-# INLINE seq #-}
 seq x y = pure y
 
+nat :: Natural -> Val -> Val -> IO Val
+{-# INLINE nat #-}
+nat n inc zer = go n
+ where
+  go = \case
+    0 -> pure zer
+    n -> kVA inc (go (n-1))
+
 pak :: Val -> IO Val
+{-# INLINE pak #-}
 pak (VNat n) = pure (VNat n)
 pak _        = throwIO (TypeError "pak-not-nat") -- TODO Probably actually handle this.
 
@@ -497,7 +521,7 @@ fec :: Val -> IO Val
 {-# INLINE fec #-}
 fec (VNat 0) = pure (VNat 0)
 fec (VNat n) = pure (VNat (n - 1))
-fec _        = throwIO (TypeError "fec-not-nat")
+fec n        = throwIO (TypeError ("fec-not-nat: " <> tshow n))
 
 add :: Val -> Val -> IO Val
 {-# INLINE add #-}
@@ -590,7 +614,7 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     CAR x          -> join (car <$> go x)
     CDR x          -> join (cdr <$> go x)
     CLON f xs      -> cloN f <$> traverse go xs
-    CALN f xs      -> do { f <- go f; kAN f (go <$> xs) }
+    CALN f xs      -> do { f <- go f; kVAn f (go <$> xs) }
     LEF x          -> VLef <$> go x
     RIT x          -> VRit <$> go x
     CON x y        -> VCon <$> go x <*> go y
@@ -642,7 +666,7 @@ execJetBodyR !j !ref = go (jFast j)
     CAR x          -> join (car <$> go x)
     CDR x          -> join (cdr <$> go x)
     CLON f xs      -> cloN f <$> traverse go xs
-    CALN f xs      -> do { f <- go f; kAN f (go <$> xs) }
+    CALN f xs      -> do { f <- go f; kVAn f (go <$> xs) }
     LEF x          -> VLef <$> go x
     RIT x          -> VRit <$> go x
     CON x y        -> VCon <$> go x <*> go y

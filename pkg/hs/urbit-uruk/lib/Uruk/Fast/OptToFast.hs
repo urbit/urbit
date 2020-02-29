@@ -88,7 +88,7 @@ compile arity = go
   kal F.Sub     [x, y] = F.SUB (go x) (go y)
   kal F.Mul     [x, y] = F.MUL (go x) (go y)
 
-  kal f          xs     = F.CALN (rawExp f) (goArgs xs)
+  kal f          xs    = F.CALN (rawExp f) (goArgs xs)
 
   con (F.VAL x) (F.VAL y) = F.VAL (F.VCon x y)
   con x         y         = F.CON x y
