@@ -83,4 +83,4 @@ runFile :: FilePath -> IO ()
 runFile = runFile' goSlow
 
 runFileFast :: FilePath -> IO ()
-runFileFast = runFile
+runFileFast = runFile' goFast

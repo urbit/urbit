@@ -1,7 +1,69 @@
+{-
+
+    Alright, I need to figure out how to implement short circuiting K.
+
+    If I call a known function (in a jet) nothing changes.
+
+      This will never by K, I think? Otherwise it would have been
+      eliminated by the simplifier.
+
+    If I call an *unknown* function, shit gets weird.
+
+      I need to know: "is this the second argument to K?"
+
+      And that's actually a kinda complicated question. What if I am running:
+
+        =/  foo
+        ~/  1  foo
+        |=  (x y)
+        (x y (inc 3) (inc 4))
+
+        (foo car [K K])
+
+      What's the evaluation order here?
+
+      - First, evaluate `x`.
+
+        - It's `car`.
+
+      - Then, evaluate `y`.
+
+        - It's `[K K]`
+
+      - Then, evaluate `(x y)`.
+
+        - This is an application, so we must first know if the head is
+          partially-saturated K.
+
+          - It isn't, it's `car`
+
+        - `(car [K K])` evaluated to `K`.
+
+      - Then, evaluate (K (inc 3)).
+
+        - Here, we are applying K, but it isn't saturated, so we procede
+          as normal.
+
+        - We get `(K 4)`, which is a special fucking snowflake.
+
+      - Then we evaluate `((K 4) (inc 3))`:
+
+        - Since `(K 4)` is a special fucking snowflake, we must *not
+          evaluate* `(inc 3)`. Instead, we should just return `4`.
+
+      A value is still `val = [node (array val)]`.
+
+      - But a call is now:
+
+        `call1 :: Val -> IO Val -> Val`
+        `call2 :: Val -> IO Val -> IO Val -> Val`
+        `callN :: Val -> Array (IO Val) -> Val`
+-}
+
 {-# OPTIONS_GHC -funbox-strict-fields -Werror #-}
 
 {-
-    TODO Fill out callNodeFull.
+    TODO Fill out reduce.
     TODO K should not evaluate tail.
       TODO Or, find a way to make K not need to short-circuit.
 
@@ -18,7 +80,6 @@ import Data.Primitive.Array
 import Data.Primitive.SmallArray
 import GHC.Prim
 import System.IO.Unsafe
-import Control.Monad.Except
 
 import Control.Arrow     ((>>>))
 import Control.Exception (throw, try)
@@ -94,13 +155,22 @@ jam :: Val -> Val
 jam = jamRaw . toRaw
 
 
+-- Closure ---------------------------------------------------------------------
+
+type CloN = SmallArray Val
+
+getCloN :: CloN -> Int -> Val
+{-# INLINE getCloN #-}
+getCloN = indexSmallArray
+
+addCloN :: CloN -> Val -> CloN
+{-# INLINE addCloN #-}
+addCloN xs x = xs <> GHC.Exts.fromList [x] -- TODO Slow
+
+
 -- Arguments -------------------------------------------------------------------
 
-type ArgN = SmallArray Val
-
-getArgN :: ArgN -> Int -> Val
-{-# INLINE getArgN #-}
-getArgN = indexSmallArray
+type ArgN = SmallArray (IO Val)
 
 
 -- Registers -------------------------------------------------------------------
@@ -209,7 +279,7 @@ instance Show Node where
 data Fun = Fun
   { fNeed :: !Int
   , fHead :: !Node
-  , fArgs :: ArgN -- Lazy on purpose.
+  , fArgs :: CloN -- Lazy on purpose.
   }
  deriving stock (Eq, Ord)
 
@@ -302,48 +372,74 @@ data BadRef = BadRef Jet Int
 
 --------------------------------------------------------------------------------
 
-{- |
-    If a function is oversaturated, call it (with too many arguments,
-    it's fine), and then call the result with the remaining arguments.
--}
-execFun :: Fun -> IO Val
-{-# INLINE execFun #-}
-execFun f@Fun {..} = compare fNeed 0 & \case
-  GT -> pure (VFun f)
-  EQ -> callNodeFull fHead fArgs
-  LT -> do
-    f         <- callNodeFull fHead fArgs
-    extraArgs <- arrayDrop (sizeofSmallArray fArgs) (negate fNeed) fArgs
-    callVal f extraArgs
-
-arrayDrop :: Int -> Int -> ArgN -> IO ArgN
+arrayDrop :: Int -> Int -> CloN -> IO CloN
 {-# INLINE arrayDrop #-}
 arrayDrop i l xs = thawSmallArray xs i l >>= unsafeFreezeSmallArray
 
-callNodeFull :: Node -> ArgN -> IO Val
-{-# INLINE callNodeFull #-}
-callNodeFull !no !xs = no & \case
-  Kay   -> pure x
-  Dee   -> pure $ jam x
-  Ess   -> join (c2 x z <$> c1 y z)
-  Jay _ -> error "TODO"
-  Add   -> add x y
-  _     -> error "TODO: Implement jets in Uruk.Fast"
+fixClo :: Val -> Val
+fixClo x = VFun (Fun 1 Fix (GHC.Exts.fromList [x])) -- TODO Slow
+
+reduce :: Node -> CloN -> IO Val
+{-# INLINE reduce #-}
+reduce !no !xs = do
+  let funStr = tshow (Fun 0 no xs)
+
+  putStrLn funStr
+
+  res <- no & \case
+    Kay   -> pure x
+    Dee   -> pure $ jam x
+    Ess   -> kVVA x z (kVV y z)
+    Jay _ -> error "TODO"
+    Add   -> add x y
+    Fix   -> kVVV x (fixClo x) y
+    node  -> error ("TODO: Implement jets in Uruk.Fast: " <> show node)
+
+  putStrLn ("  in: " <> funStr)
+  putStrLn ("    out: " <> tshow res)
+
+  pure res
  where
   x = v 0
   y = v 1
   z = v 2
   v = indexSmallArray xs
 
-c1 = callVal1
-c2 = callVal2
+kFV :: Fun -> Val -> IO Val
+kFV f x = f & \case
+  Fun 1    node args -> reduce node (addCloN args x)
+  Fun need head args -> pure $ VFun $ Fun (need-1) head (addCloN args x)
 
-callVal1 f x = callVal f (fromList [x])
-callVal2 f x y = callVal f (fromList [x, y])
+kVAA :: Val -> IO Val -> IO Val -> IO Val
+kVAA = callVal2
 
-callFunFull :: Fun -> ArgN -> IO Val
+kVA :: Val -> IO Val -> IO Val
+kVA f x = f & \case
+  VFun (Fun 1 Kay xs) -> kVV f VUni  --  second arg always ignored.
+  other               -> kVV f =<< x
+
+kAN :: Val -> ArgN -> IO Val
+kAN f xs = foldM kVA f (GHC.Exts.toList xs)
+
+kVV :: Val -> Val -> IO Val
+kVV = kFV . valFun
+
+kVVV :: Val -> Val -> Val -> IO Val
+kVVV x y z = do
+  xy <- kVV x y
+  kVV xy z
+
+kVVA :: Val -> Val -> IO Val -> IO Val
+kVVA x y z = do
+  xy <- kVV x y
+  kVA xy z
+
+callVal1 f x = kAN f (fromList [x])
+callVal2 f x y = kAN f (fromList [x, y])
+
+callFunFull :: Fun -> CloN -> IO Val
 {-# INLINE callFunFull #-}
-callFunFull Fun {..} xs = callNodeFull fHead (fArgs <> xs)
+callFunFull Fun {..} xs = reduce fHead (fArgs <> xs)
 
 valFun :: Val -> Fun
 {-# INLINE valFun #-}
@@ -371,7 +467,7 @@ mkRegs n = do
   regs <- newRegN n
   pure (getRegN regs, setRegN regs)
 
-withFallback :: Jet -> ArgN -> IO Val -> IO Val
+withFallback :: Jet -> CloN -> IO Val -> IO Val
 {-# INLINE withFallback #-}
 withFallback j args act = catch act $ \(TypeError why) -> do
   putStrLn ("FALLBACK: " <> why)
@@ -457,13 +553,13 @@ execJet4R !j !x !y !z !p = do
         n -> throwIO (BadRef j n)
   withFallback j args (execJetBodyR j refr)
 
-execJetN :: Jet -> ArgN -> IO Val
+execJetN :: Jet -> CloN -> IO Val
 execJetN !j !xs = do
   (reg, setReg) <- mkRegs (jRegs j)
   let refr = pure . indexSmallArray xs
   withFallback j xs (execJetBody j refr reg setReg)
 
-execJetNR :: Jet -> ArgN -> IO Val
+execJetNR :: Jet -> CloN -> IO Val
 execJetNR !j !xs = do
   let refr = pure . indexSmallArray xs
   withFallback j xs (execJetBodyR j refr)
@@ -527,16 +623,10 @@ cdr _          = throwIO (TypeError "cdr-not-con")
 
 -- Interpreter -----------------------------------------------------------------
 
-cloN :: Fun -> ArgN -> Val
+cloN :: Fun -> CloN -> Val
 {-# INLINE cloN #-}
 cloN (Fun {..}) xs = VFun $ Fun rem fHead $ fArgs <> xs
   where rem = fNeed - sizeofSmallArray xs
-
-callVal :: Val -> ArgN -> IO Val
-{-# INLINE callVal #-}
-callVal f xs =
-  let Fun {..} = valFun f
-  in  execFun (Fun (fNeed - sizeofSmallArray xs) fHead (fArgs <> xs))
 
 jetVal :: Jet -> Val
 {-# INLINE jetVal #-}
@@ -585,7 +675,7 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     CAR x          -> join (car <$> go x)
     CDR x          -> join (cdr <$> go x)
     CLON f xs      -> cloN f <$> traverse go xs
-    CALN f xs      -> join (callVal <$> go f <*> traverse go xs)
+    CALN f xs      -> do { f <- go f; kAN f (go <$> xs) }
     LEF x          -> VLef <$> go x
     RIT x          -> VRit <$> go x
     CON x y        -> VCon <$> go x <*> go y
@@ -637,7 +727,7 @@ execJetBodyR !j !ref = go (jFast j)
     CAR x          -> join (car <$> go x)
     CDR x          -> join (cdr <$> go x)
     CLON f xs      -> cloN f <$> traverse go xs
-    CALN f xs      -> join (callVal <$> go f <*> traverse go xs)
+    CALN f xs      -> do { f <- go f; kAN f (go <$> xs) }
     LEF x          -> VLef <$> go x
     RIT x          -> VRit <$> go x
     CON x y        -> VCon <$> go x <*> go y

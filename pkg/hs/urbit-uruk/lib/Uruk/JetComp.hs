@@ -203,7 +203,9 @@ instance Uruk F.Val where
   uCen n = fastNode (toInt $ 2 + n) (F.Cen n)
   uSen 1 = fastNode 3 F.Ess
   uSen n = fastNode (toInt $ 2 + n) (F.Sen n)
-  uApp x y = F.c1 x y
+
+  uApp x y = F.kVV x y
+
   uBee = fastNode 3 F.Bee
   uSea = fastNode 3 F.Sea
   uEss = fastNode 3 F.Ess
