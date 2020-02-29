@@ -1,7 +1,15 @@
-module Moon.Repl (repl, runFile, runText, main) where
+module Moon.Repl
+  ( repl
+  , replFast
+  , runFile
+  , runFileFast
+  , runText
+  )
+where
 
 import Bound
 import ClassyPrelude
+import Control.Monad.Except
 import GHC.Natural
 import Moon.AST
 
@@ -22,46 +30,57 @@ import qualified Uruk.JetOptimize         as Opt
 
 --------------------------------------------------------------------------------
 
-type Ctx = Map Text F.Val
-
-main :: IO ()
-main = do
-  getArgs >>= \case
-    []   -> repl
-    [fn] -> runFile (unpack fn)
-    _    -> putStrLn "usage: moon [file]"
-
-runFile :: FilePath -> IO ()
-runFile fp = do
+runFile' :: Show a => (Text -> IO (Either Text a)) -> FilePath -> IO ()
+runFile' go fp = do
   txt <- readFile fp
-  _   <- runText mempty (decodeUtf8 txt)
+  _   <- runText' go (decodeUtf8 txt)
   pure ()
 
-runText :: Ctx -> Text -> IO Ctx
-runText ctx txt = do
-  MU.gogogo' txt & \case
-    Left err -> do
-      putStrLn err
-      pure ctx
-    Right res -> do
-      putStrLn $ pack $ ppShow (Ur.unClose res)
-      pure ctx
+runText' :: Show a => (Text -> IO (Either Text a)) -> Text -> IO ()
+runText' go txt = do
+  res <- go txt
+  res & \case
+    Left  err -> putStrLn err
+    Right res -> putStrLn $ pack $ show res
 
-runText_ :: Text -> IO ()
-runText_ = void . runText mempty
-
-repl :: IO ()
-repl = HL.runInputT HL.defaultSettings go
+repl' :: Show a => (Text -> IO (Either Text a)) -> IO ()
+repl' go = HL.runInputT HL.defaultSettings loop
  where
-  go :: HL.InputT IO ()
-  go = do
+  loop :: HL.InputT IO ()
+  loop = do
     minput <- HL.getInputLine "moon> "
     case minput of
       Nothing    -> return ()
       Just "!!"  -> return ()
       Just input -> do
-        let !resStr = MU.gogogo' (pack input) & \case
+        res <- liftIO $ go (pack input)
+        let !resStr = res & \case
               Left  err -> unpack err
-              Right res -> ppShow (Ur.unClose res)
+              Right res -> show res
         HL.outputStrLn resStr
-        go
+        loop
+
+--------------------------------------------------------------------------------
+
+goSlow :: Text -> IO (Either Text Ur.Ur)
+goSlow = fmap (fmap Ur.unClose) . runExceptT . MU.gogogo'
+
+goFast :: Text -> IO (Either Text F.Val)
+goFast = runExceptT . MU.gogogoFast
+
+--------------------------------------------------------------------------------
+
+runText :: Text -> IO ()
+runText = runText' goSlow
+
+replFast :: IO ()
+replFast = repl' goFast
+
+repl :: IO ()
+repl = repl' goSlow
+
+runFile :: FilePath -> IO ()
+runFile = runFile' goSlow
+
+runFileFast :: FilePath -> IO ()
+runFileFast = runFile

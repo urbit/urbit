@@ -486,25 +486,25 @@ funCode body = Code 1 fak fak <$> evaluate (urExp (U.MkVal body) % ref 0)
 
 justIfExp = Comp.justIf
 justIfUr  = Comp.moonStrict justIfExp
-justIfOth = Comp.eval $ Comp.deCompile justIfUr
-justIf    = compile justIfUr
+justIfOth = Comp.eval . Comp.deCompile <$> justIfUr
+justIf    = compile =<< justIfUr
 
 toBodyExp = Comp.toBody
 toBodyUr  = Comp.moonStrict toBodyExp
-toBody    = compile toBodyUr
+toBody    = compile =<< toBodyUr
 
 toZeroExp = Comp.toZero
 toZeroUr  = Comp.moonStrict toZeroExp
-toZero    = compile toZeroUr
+toZero    = compile =<< toZeroUr
 
 ackerExp = Comp.acker
 ackerUr  = Comp.moonStrict ackerExp
-acker    = compile ackerUr
+acker    = compile =<< ackerUr
 
 ickerExp = Comp.icker
-ickerOth = Comp.eval $ Comp.deCompile ickerUr
+ickerOth = Comp.eval . Comp.deCompile <$> ickerUr
 ickerUr  = Comp.moonStrict ickerExp
-icker    = compile ickerUr
+icker    = compile =<< ickerUr
 
 compile ∷ Ur → IO Code
 compile = U.simp >>> \case

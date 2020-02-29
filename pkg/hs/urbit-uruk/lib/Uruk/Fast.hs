@@ -18,9 +18,10 @@ import Data.Primitive.Array
 import Data.Primitive.SmallArray
 import GHC.Prim
 import System.IO.Unsafe
+import Control.Monad.Except
 
 import Control.Arrow     ((>>>))
-import Control.Exception (throw)
+import Control.Exception (throw, try)
 import Data.Bits         (shiftL, (.|.))
 import Data.Flat
 import Data.Function     ((&))
@@ -31,7 +32,6 @@ import Uruk.JetDemo      (Ur, UrPoly(Fast))
 
 import qualified GHC.Exts
 import qualified Urbit.Atom   as Atom
-import qualified Uruk.JetComp as Comp
 import qualified Uruk.JetDemo as Ur
 
 
@@ -166,14 +166,58 @@ data Node
   | Con
   | Car
   | Cdr
- deriving stock (Eq, Ord, Show)
+ deriving stock (Eq, Ord)
+
+instance Show Node where
+  show = \case
+    Jay n     -> replicate (fromIntegral n) 'J'
+    Kay       -> "K"
+    Ess       -> "S"
+    Dee       -> "D"
+    Jut j     -> show j
+    Eye       -> "I"
+    Bee       -> "B"
+    Sea       -> "C"
+    Sen n     -> "S" <> show n
+    Ben n     -> "B" <> show n
+    Cen n     -> "C" <> show n
+    Seq       -> "SEQ"
+    Yet n     -> "YET" <> show n
+    Fix       -> "FIX"
+    Nat n     -> show n
+    Bol True  -> "%.y"
+    Bol False -> "%.n"
+    Iff       -> "IFF"
+    Pak       -> "PAK"
+    Zer       -> "ZER"
+    Eql       -> "EQL"
+    Add       -> "ADD"
+    Inc       -> "INC"
+    Dec       -> "DEC"
+    Fec       -> "FEC"
+    Mul       -> "MUL"
+    Sub       -> "SUB"
+    Ded       -> "DED"
+    Uni       -> "UNI"
+    Lef       -> "LEF"
+    Rit       -> "RIT"
+    Cas       -> "CAS"
+    Con       -> "CON"
+    Car       -> "CAR"
+    Cdr       -> "CDR"
 
 data Fun = Fun
   { fNeed :: !Int
   , fHead :: !Node
   , fArgs :: ArgN -- Lazy on purpose.
   }
- deriving stock (Eq, Ord, Show)
+ deriving stock (Eq, Ord)
+
+instance Show Fun where
+  show (Fun _ h args) = if sizeofSmallArray args == 0
+    then show h
+    else mconcat
+      ["(", show h <> " ", intercalate " " (show <$> GHC.Exts.toList args), ")"]
 
 data Val
   = VUni
@@ -183,7 +227,18 @@ data Val
   | VNat !Nat
   | VBol !Bool
   | VFun !Fun
- deriving (Eq, Ord, Show)
+ deriving (Eq, Ord)
+
+instance Show Val where
+  show = \case
+    VUni       -> "~"
+    VCon x y   -> "[" <> show x <> " " <> show y <> "]"
+    VLef x     -> "L" <> show x
+    VRit x     -> "R" <> show x
+    VNat n     -> show n
+    VBol True  -> "%.y"
+    VBol False -> "%.n"
+    VFun f     -> show f
 
 data Exp
   = VAL   !Val                    --  Constant Value
@@ -272,7 +327,8 @@ callNodeFull !no !xs = no & \case
   Dee   -> pure $ jam x
   Ess   -> join (c2 x z <$> c1 y z)
   Jay _ -> error "TODO"
-  _     -> error "TODO"
+  Add   -> add x y
+  _     -> error "TODO: Implement jets in Uruk.Fast"
  where
   x = v 0
   y = v 1
