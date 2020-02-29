@@ -35,11 +35,13 @@ numReg = const 0 -- TODO
 
     TODO Detect undersaturated calls
       CLON !Fun !(SmallArray Exp)    --  Undersaturated call
+
     TODO Detect fully saturated calls.
       (No AST node for this yet)
+
     TODO Detect fully saturated calls to jets.
       JETN !Jet !(SmallArray Exp)   --  Fully saturated call
-      JET2 !Jet !Exp !Exp      --  Fully saturated call
+      JET2 !Jet !Exp !Exp           --  Fully saturated call
 -}
 compile :: Int -> O.Val -> F.Exp
 compile arity = go
