@@ -46,13 +46,16 @@ export class Root extends Component {
 
     let contacts = !!state.contacts ? state.contacts : {};
 
-    const renderChannelSidebar = (props) => (
+    const renderChannelSidebar = (props, station) => (
       <Sidebar
         inbox={state.inbox}
         messagePreviews={messagePreviews}
+        associations={state.associations || new Map}
+        contacts={contacts}
         invites={invites}
         unreads={unreads}
         api={api}
+        station={station}
         {...props}
       />
     );
@@ -161,7 +164,7 @@ export class Root extends Component {
                   spinner={state.spinner}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
-                  sidebar={renderChannelSidebar(props)}
+                  sidebar={renderChannelSidebar(props, station)}
                 >
                   <ChatScreen
                     station={station}
