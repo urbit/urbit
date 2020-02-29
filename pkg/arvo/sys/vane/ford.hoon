@@ -4658,6 +4658,23 @@
       ::
       ?.  ?=([~ %success %scry *] zuse-scry-result)
         (wrap-error zuse-scry-result)
+      ::
+      ::  short-circuit to .pit during boot
+      ::
+      ::    This avoids needing to recompile the kernel if we're asked
+      ::    to build %hoon one the home desk, at revision 1 or 2.
+      ::
+      ?:  ?&  =(our ship.disc)
+              ?=(?(%base %home) desk.disc)
+          ::
+              =/  =beam
+                [[ship.disc desk.disc [%da date.build]] /hoon/hoon/sys]
+              =/  cass
+                (scry [%141 %noun] [~ %cw beam])
+              ?=([~ ~ %cass * ?(%1 %2) *] cass)
+          ==
+        ::
+        (return-result %success %reef pit)
       ::  omit case from path to prevent cache misses
       ::
       =/  hoon-path=path
