@@ -1,8 +1,11 @@
 module Main (main) where
 
 import ClassyPrelude
-import Prelude (read)
-import Moon.Repl (repl, replFast, runFile, runFileFast, runText)
+
+import Prelude         (read)
+import Urbit.Moon.Repl (repl, replFast, runFile, runFileFast, runText)
+
+--------------------------------------------------------------------------------
 
 main :: IO ()
 main = do
