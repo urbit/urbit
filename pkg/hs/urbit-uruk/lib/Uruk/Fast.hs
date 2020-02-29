@@ -87,7 +87,6 @@ import Data.Bits         (shiftL, (.|.))
 import Data.Flat
 import Data.Function     ((&))
 import Numeric.Natural   (Natural)
-import Numeric.Positive  (Positive)
 import Prelude           ((!!))
 import Uruk.JetDemo      (Ur, UrPoly(Fast))
 
@@ -100,7 +99,6 @@ import qualified Uruk.JetDemo as Ur
 
 type Nat = Natural
 type Bol = Bool
-type Pos = Positive
 
 
 -- Raw Uruk (Basically just used for D (jam)) ----------------------------------
@@ -167,6 +165,9 @@ addCloN :: CloN -> Val -> CloN
 {-# INLINE addCloN #-}
 addCloN xs x = xs <> GHC.Exts.fromList [x] -- TODO Slow
 
+clo1 :: Val -> CloN
+clo1 x = GHC.Exts.fromList [x]
+
 
 -- Arguments -------------------------------------------------------------------
 
@@ -189,6 +190,9 @@ setRegN :: RegN -> Int -> Val -> IO ()
 {-# INLINE setRegN #-}
 setRegN = writeSmallArray
 
+instance Hashable a => Hashable (SmallArray a) where
+  hashWithSalt i x = hashWithSalt i (GHC.Exts.toList x)
+
 
 -- Types -----------------------------------------------------------------------
 
@@ -199,10 +203,22 @@ data Jet = Jet
   , jFast :: !Exp
   , jRegs :: !Int -- Number of registers needed.
   }
- deriving (Eq, Ord, Show)
+ deriving (Eq, Ord)
+
+instance Hashable Jet where
+  hashWithSalt i (Jet a n b _ _) =
+    hashWithSalt i (a,n,b)
+
+instance Show Jet where
+  show (Jet{..}) =
+    case jName of
+      VNat (Atom.atomUtf8 -> Right nm) ->
+        show ("[jet." <> show jArgs <> "." <> unpack nm <> "." <> (take 5 $ show $ hash jBody) <> "]")
+      _ ->
+        show ("[jet." <> show jArgs <> "." <> show jName <> "." <> (take 5 $ show $ hash jBody) <> "]")
 
 data Node
-  = Jay Pos
+  = Jay Int -- Always >= 1
   | Kay
   | Ess
   | Dee
@@ -210,9 +226,9 @@ data Node
   | Eye
   | Bee
   | Sea
-  | Sen Pos
-  | Ben Pos
-  | Cen Pos
+  | Sen Int --  Always >=  1
+  | Ben Int --  Always >=  1
+  | Cen Int --  Always >=  1
   | Seq
   | Yet Nat
   | Fix
@@ -236,7 +252,7 @@ data Node
   | Con
   | Car
   | Cdr
- deriving stock (Eq, Ord)
+ deriving (Eq, Ord, Generic, Hashable)
 
 instance Show Node where
   show = \case
@@ -281,7 +297,7 @@ data Fun = Fun
   , fHead :: !Node
   , fArgs :: CloN -- Lazy on purpose.
   }
- deriving stock (Eq, Ord)
+ deriving (Eq, Ord, Generic, Hashable)
 
 instance Show Fun where
   show (Fun _ h args) = if sizeofSmallArray args == 0
@@ -297,7 +313,7 @@ data Val
   | VNat !Nat
   | VBol !Bool
   | VFun !Fun
- deriving (Eq, Ord)
+ deriving (Eq, Ord, Generic, Hashable)
 
 instance Show Val where
   show = \case
@@ -379,6 +395,22 @@ arrayDrop i l xs = thawSmallArray xs i l >>= unsafeFreezeSmallArray
 fixClo :: Val -> Val
 fixClo x = VFun (Fun 1 Fix (GHC.Exts.fromList [x])) -- TODO Slow
 
+jetRegister :: Int -> Val -> Val -> IO Val
+jetRegister args name body = do
+  putStrLn "JET REGISTRATION"
+  putStrLn ("  args: " <> tshow args)
+  putStrLn ("  name: " <> tshow name)
+  putStrLn ("  body: " <> tshow body)
+  putStrLn ""
+  pure $ VFun $ Fun args (Jut $ Jet args name body noFast 0) mempty
+
+ where
+  -- This will always type error and thus fallback to slow evaluation.
+  noFast = INC (VAL VUni)
+
+{-
+  TODO Need to handle TypeError exceptions here as well.
+-}
 reduce :: Node -> CloN -> IO Val
 {-# INLINE reduce #-}
 reduce !no !xs = do
@@ -387,12 +419,26 @@ reduce !no !xs = do
   putStrLn funStr
 
   res <- no & \case
-    Kay   -> pure x
-    Dee   -> pure $ jam x
     Ess   -> kVVA x z (kVV y z)
-    Jay _ -> error "TODO"
+    Kay   -> pure x
+    Jay n -> case x of
+               VFun (Fun 2 (Jay 1) _) ->
+                 pure (VFun (Fun 1 (Jay (n+1)) (clo1 y)))
+               _ ->
+                 jetRegister n x y
+    Dee   -> pure $ jam x
+
     Add   -> add x y
     Fix   -> kVVV x (fixClo x) y
+    Sea   -> kVVV x z y
+    Bee   -> kVA x (kVV y z)
+
+    Zer   -> zer x
+
+    Iff   -> iff x y z
+
+    Eye   -> pure x
+    Jut j -> execJetN j xs
     node  -> error ("TODO: Implement jets in Uruk.Fast: " <> show node)
 
   putStrLn ("  in: " <> funStr)
@@ -400,10 +446,13 @@ reduce !no !xs = do
 
   pure res
  where
-  x = v 0
-  y = v 1
-  z = v 2
-  v = indexSmallArray xs
+  v       = indexSmallArray xs
+  (x,y,z) = (v 0, v 1, v 2)
+
+iff :: Val -> Val -> Val -> IO Val
+iff (VBol True)  t e = kVV t VUni
+iff (VBol False) t e = kVV e VUni
+iff _            _ _ = throwIO (TypeError "iff-not-bol")
 
 kFV :: Fun -> Val -> IO Val
 kFV f x = f & \case

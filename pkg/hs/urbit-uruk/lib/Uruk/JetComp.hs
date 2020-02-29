@@ -190,19 +190,21 @@ instance Uruk F.Val where
   uCas = fastNode 3 F.Cas
   uIff = fastNode 3 F.Iff
   uFix = fastNode 2 F.Fix
-  uJay n = fastNode 2 (F.Jay n)
-  uNat n = F.VNat n
-  uBol b = F.VBol b
+  uJay = \n -> fastNode 2 $ F.Jay $ fromIntegral n
+  uNat = \n -> F.VNat n
+  uBol = \b -> F.VBol b
   uUni = fastNode 1 F.Uni
   uCon = fastNode 3 F.Con
   uSeq = fastNode 2 F.Seq
 
   uBen 1 = fastNode 3 F.Bee
-  uBen n = fastNode (toInt $ 2 + n) (F.Ben n)
+  uBen n = fastNode (toInt $ 2 + n) (F.Ben (toInt n))
+
   uCen 1 = fastNode 3 F.Sea
-  uCen n = fastNode (toInt $ 2 + n) (F.Cen n)
+  uCen n = fastNode (toInt $ 2 + n) (F.Cen (toInt n))
+
   uSen 1 = fastNode 3 F.Ess
-  uSen n = fastNode (toInt $ 2 + n) (F.Sen n)
+  uSen n = fastNode (toInt $ 2 + n) (F.Sen (toInt n))
 
   uApp x y = F.kVV x y
 
