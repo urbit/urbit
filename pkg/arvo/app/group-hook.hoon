@@ -1,6 +1,6 @@
 ::  group-hook: allow syncing group data from foreign paths to local paths
 ::
-/-  *group-store, *group-hook
+/-  *group-store, *group-hook, *metadata-hook, *permission-group-hook
 /+  default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
@@ -116,8 +116,13 @@
     =.  synced.state  (~(put by synced.state) path.act ship.act)
     :_  state
     ?:  =(ship.act our.bol)
-      [%pass group-wire %agent [ship.act %group-store] %watch group-path]~
-    [%pass group-wire %agent [ship.act %group-hook] %watch group-path]~
+      :~  [%pass group-wire %agent [ship.act %group-store] %watch group-path]
+          (metadata-hook-poke %add-owned path.act)
+          (permission-group-hook-poke %associate path.act [path.act^%white ~ ~])
+      ==
+    :~  [%pass group-wire %agent [ship.act %group-hook] %watch group-path]
+        (metadata-hook-poke %add-synced ship.act path.act)
+    ==
   ::
       %remove
     =/  ship  (~(get by synced.state) path.act)
@@ -127,6 +132,7 @@
       ::  delete one of our own paths
       =/  group-wire  [(scot %p our.bol) %group path.act]
       :_  state(synced (~(del by synced.state) path.act))
+      :-  (metadata-hook-poke %remove path.act)
       %+  snoc
         (pull-wire group-wire path.act)
       [%give %kick [%group path.act]~ ~]
@@ -134,9 +140,34 @@
       ::  delete a foreign ship's path
       =/  group-wire  [(scot %p u.ship) %group path.act]
       :_  state(synced (~(del by synced.state) path.act))
+      :-  (metadata-hook-poke %remove path.act)
       (pull-wire group-wire path.act)
     :: don't allow
     [~ state]
+  ==
+::
+++  metadata-hook-poke
+  |=  act=metadata-hook-action
+  ^-  card
+  :*  %pass
+      /metadata/[-.act]
+      %agent
+      [our.bol %metadata-hook]
+      %poke
+      %metadata-hook-action
+      !>(act)
+  ==
+::
+++  permission-group-hook-poke
+  |=  act=permission-group-hook-action
+  ^-  card
+  :*  %pass
+      /permission-group/[-.act]
+      %agent
+      [our.bol %permission-group-hook]
+      %poke
+      %permission-group-hook-action
+      !>(act)
   ==
 ::
 ++  handle-local
