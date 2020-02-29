@@ -102,5 +102,12 @@ compile arity = go
   goArgs :: [O.Val] -> SmallArray F.Exp
   goArgs = fromList . fmap go
 
-rawExp ∷ F.Node → F.Exp
-rawExp = error "TODO"
+nodeFun :: F.Node -> F.Fun
+nodeFun n = F.Fun (F.nodeArity n) n mempty
+
+rawExp :: F.Node -> F.Exp
+rawExp = \case
+  F.Nat n -> F.VAL (F.VNat n)
+  F.Bol b -> F.VAL (F.VBol b)
+  F.Uni   -> F.VAL F.VUni
+  n       -> F.VAL (F.VFun (nodeFun n))

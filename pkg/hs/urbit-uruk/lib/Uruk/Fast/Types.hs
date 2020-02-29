@@ -286,3 +286,40 @@ valFun = \case
   VNat n   -> Fun 2 (Nat n) mempty
   VBol b   -> Fun 2 (Bol b) mempty
   VFun f   -> f
+
+nodeArity :: Node -> Int
+nodeArity = \case
+  Jay _ -> 2
+  Kay   -> 2
+  Ess   -> 3
+  Dee   -> 1
+  Jut j -> jArgs j
+  Eye   -> 1
+  Bee   -> 3
+  Sea   -> 3
+  Sen n -> 2+n
+  Ben n -> 2+n
+  Cen n -> 2+n
+  Seq   -> 2
+  Yet n -> fromIntegral (1+n)
+  Fix   -> 2
+  Nat n -> 2
+  Bol b -> 2
+  Iff   -> 3
+  Pak   -> 1
+  Zer   -> 1
+  Eql   -> 2
+  Add   -> 2
+  Inc   -> 1
+  Dec   -> 1
+  Fec   -> 1
+  Mul   -> 2
+  Sub   -> 2
+  Ded   -> 1
+  Uni   -> 1
+  Lef   -> 1
+  Rit   -> 1
+  Cas   -> 4
+  Con   -> 3
+  Car   -> 1
+  Cdr   -> 1
