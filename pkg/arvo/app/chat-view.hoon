@@ -207,7 +207,13 @@
       ~
     %-  zing
     :~  (create-chat app-path.act security.act allow-history.act)
-        (create-managed-group group-path.act security.act members.act)
+        %-  create-managed-group
+        :*  group-path.act
+            security.act
+            members.act
+            title.act
+            description.act
+        ==
         (create-metadata title.act description.act group-path.act app-path.act)
         (create-security group-path.act security.act)
         ~[(permission-hook-poke [%add-owned group-path.act group-path.act])]
@@ -248,7 +254,7 @@
     ==
   ::
   ++  create-managed-group
-    |=  [=path security=rw-security ships=(set ship)]
+    |=  [=path security=rw-security ships=(set ship) title=@t desc=@t]
     ^-  (list card)
     ?^  (group-scry path)  ~
     ::  do not create a managed group if this is a sig path or a blacklist
@@ -256,7 +262,7 @@
     ?:  =(security %channel)
       ~[(group-poke [%bundle path])]
     ?:  (is-managed path)
-      ~[(contact-view-poke [%create path ships])]
+      ~[(contact-view-poke [%create path ships title desc])]
     :~  (group-poke [%bundle path])
         (group-poke [%add ships path])
     ==
@@ -290,7 +296,7 @@
     ==
   ::
   ++  contact-view-poke
-    |=  act=[%create =path ships=(set ship)]
+    |=  act=[%create =path ships=(set ship) title=@t description=@t]
     ^-  card
     [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
   ::
