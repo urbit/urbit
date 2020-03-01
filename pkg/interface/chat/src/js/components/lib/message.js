@@ -125,11 +125,11 @@ export class Message extends Component {
       );
     } else {
       let chatroom = letter.text.match(
-        /(~[a-z]{3,6})(-[a-z]{6})?([/])(([a-z])+([/-])?)+/
+        /([~][/])?(~[a-z]{3,6})(-[a-z]{6})?([/])(([a-z])+([/-])?)+/
         );
       if ((chatroom !== null) // matched possible chatroom
-        && (chatroom[1].length > 2) // possible ship?
-        && (urbitOb.isValidPatp(chatroom[1]) // valid patp?
+        && (chatroom[2].length > 2) // possible ship?
+        && (urbitOb.isValidPatp(chatroom[2]) // valid patp?
         && (chatroom[0] === letter.text))) { // entire message is room name?
           return (
             <Link
