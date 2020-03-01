@@ -14,6 +14,7 @@ dependencies:
   - base
   - bound
   - classy-prelude
+  - containers
   - deriving-compat
   - flat
   - ghc-prim
