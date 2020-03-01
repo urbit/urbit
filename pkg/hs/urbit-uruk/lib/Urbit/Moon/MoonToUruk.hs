@@ -7,18 +7,17 @@ import Urbit.Moon.AST
 import Control.Monad.Except
 import Urbit.Uruk.Class
 
-import Control.Arrow       ((>>>))
-import Data.Function       ((&))
-import System.IO.Unsafe    (unsafePerformIO)
-import Text.Show.Pretty    (ppShow)
+import Control.Arrow             ((>>>))
+import Data.Function             ((&))
+import System.IO.Unsafe          (unsafePerformIO)
+import Text.Show.Pretty          (ppShow)
 import Urbit.Uruk.Fast.OptToFast (optToFast)
 
 import qualified Urbit.Atom              as Atom
 import qualified Urbit.Moon.LambdaToUruk as Lamb
 import qualified Urbit.Moon.Parser       as Parser
 import qualified Urbit.Uruk.Fast         as F
-import qualified Urbit.Uruk.JetDemo      as Ur
-import qualified Urbit.Uruk.JetOptimize  as Opt
+import qualified Urbit.Uruk.Refr.Jetted  as Ur
 
 --------------------------------------------------------------------------------
 

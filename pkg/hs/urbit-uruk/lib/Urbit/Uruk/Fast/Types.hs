@@ -19,18 +19,18 @@ import Data.Primitive.SmallArray
 import GHC.Prim                  hiding (seq)
 import System.IO.Unsafe
 
-import Control.Arrow     ((>>>))
-import Control.Exception (throw, try)
-import Data.Bits         (shiftL, (.|.))
+import Control.Arrow          ((>>>))
+import Control.Exception      (throw, try)
+import Data.Bits              (shiftL, (.|.))
 import Data.Flat
-import Data.Function     ((&))
-import Numeric.Natural   (Natural)
-import Prelude           ((!!))
-import Urbit.Uruk.JetDemo      (Ur, UrPoly(Fast))
+import Data.Function          ((&))
+import Numeric.Natural        (Natural)
+import Prelude                ((!!))
+import Urbit.Uruk.Refr.Jetted (Ur, UrPoly(Fast))
 
 import qualified GHC.Exts
-import qualified Urbit.Atom   as Atom
-import qualified Urbit.Uruk.JetDemo as Ur
+import qualified Urbit.Atom             as Atom
+import qualified Urbit.Uruk.Refr.Jetted as Ur
 
 
 -- Useful Types ----------------------------------------------------------------

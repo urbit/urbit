@@ -1,5 +1,5 @@
 {- |
-    This is a reference implementation of the Uruk language.
+    This is an unjetted reference implementation of the Uruk language.
 
     It evaluates Uruk by applying reduction repeatedly rules until
     we reach a normal form, and printing the expression after every
@@ -9,7 +9,7 @@
     tool, since it's clearly correct.
 -}
 
-module Urbit.Uruk.Refr
+module Urbit.Uruk.Refr.Raw
   ( Ur(..)
   , Node(..)
   , Lef(..)

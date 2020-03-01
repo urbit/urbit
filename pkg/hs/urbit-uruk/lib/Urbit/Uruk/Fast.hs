@@ -85,12 +85,10 @@ import GHC.Exts          (fromList, toList)
 import Numeric.Natural   (Natural)
 import Prelude           ((!!))
 import Text.Show.Pretty  (ppShow)
-import Urbit.Uruk.JetDemo      (Ur, UrPoly(Fast))
 
-import qualified Urbit.Atom            as Atom
+import qualified Urbit.Atom                  as Atom
 import qualified Urbit.Uruk.Fast.JetOptimize as Opt
 import qualified Urbit.Uruk.Fast.OptToFast   as Opt
-import qualified Urbit.Uruk.JetDemo          as Ur
 
 
 --------------------------------------------------------------------------------

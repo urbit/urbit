@@ -4,14 +4,14 @@ module Urbit.Moon.LambdaToUruk where
 
 import ClassyPrelude hiding (try)
 
-import Control.Arrow    ((>>>))
-import Numeric.Natural  (Natural)
-import Numeric.Positive (Positive)
-import Urbit.Uruk.JetDemo     (Ur, UrPoly((:@), Fast))
+import Control.Arrow          ((>>>))
+import Numeric.Natural        (Natural)
+import Numeric.Positive       (Positive)
 import Urbit.Uruk.Class
+import Urbit.Uruk.Refr.Jetted (Ur, UrPoly((:@), Fast))
 
-import qualified Urbit.Uruk.Fast.Types as F
-import qualified Urbit.Uruk.JetDemo    as Ur
+import qualified Urbit.Uruk.Fast.Types  as F
+import qualified Urbit.Uruk.Refr.Jetted as Ur
 
 
 -- Types -----------------------------------------------------------------------
