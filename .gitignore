@@ -41,4 +41,6 @@ GTAGS
 .DS_Store
 *.swp
 *.swo
+\#*\#
+s/*
 
