@@ -54,18 +54,6 @@
         - unmatch jets, normalize without jets, match jets
 
 
-    -- Front End ---------------------------------------------------------------
-
-    TODO Use cords for jet names.
-
-        - Implement Text -> Atom
-        - Update nat printer to print strings where possible.
-
-    TODO Hook up front-end to JetComp
-    TODO Implement REPL.
-    TODO Implement script-runner.
-
-
     -- High-Level Jet Definition -----------------------------------------------
 
     TODO Define jets in front-end language using template haskell.

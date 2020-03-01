@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Werror #-}
 
-module Urbit.Uruk.JetComp where
+module Urbit.Moon.LambdaToUruk where
 
 import ClassyPrelude hiding (try)
 

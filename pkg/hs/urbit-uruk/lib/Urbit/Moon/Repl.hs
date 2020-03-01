@@ -25,7 +25,7 @@ import qualified System.Console.Haskeline as HL
 import qualified Urbit.Atom               as Atom
 import qualified Urbit.Uruk.Fast                as F
 import qualified Urbit.Uruk.Fast.Types          as F
-import qualified Urbit.Uruk.JetComp             as Uruk
+import qualified Urbit.Moon.LambdaToUruk        as Lamb
 import qualified Urbit.Uruk.JetDemo             as Ur
 import qualified Urbit.Uruk.JetOptimize         as Opt
 

@@ -13,12 +13,12 @@ import System.IO.Unsafe    (unsafePerformIO)
 import Text.Show.Pretty    (ppShow)
 import Urbit.Uruk.Fast.OptToFast (optToFast)
 
-import qualified Urbit.Moon.Parser      as Parser
-import qualified Urbit.Atom       as Atom
-import qualified Urbit.Uruk.JetComp     as Uruk
-import qualified Urbit.Uruk.JetDemo     as Ur
-import qualified Urbit.Uruk.JetOptimize as Opt
-import qualified Urbit.Uruk.Fast        as F
+import qualified Urbit.Atom              as Atom
+import qualified Urbit.Moon.LambdaToUruk as Lamb
+import qualified Urbit.Moon.Parser       as Parser
+import qualified Urbit.Uruk.Fast         as F
+import qualified Urbit.Uruk.JetDemo      as Ur
+import qualified Urbit.Uruk.JetOptimize  as Opt
 
 --------------------------------------------------------------------------------
 
@@ -56,7 +56,7 @@ getGlobal = \case
   "car"   -> uCar
   "cdr"   -> uCdr
   str     -> error ("undefined variable: " <> unpack str)
-  where p = Uruk.Prim
+  where p = Lamb.Prim
 
 {-
     | Sn !Positive
@@ -66,7 +66,7 @@ getGlobal = \case
 -}
 
 toUruk :: Exp Text -> IO Ur.Ur
-toUruk = Uruk.moonStrict . toLC getGlobal
+toUruk = Lamb.moonStrict . toLC getGlobal
 
 forceParse :: Text -> AST
 forceParse = Parser.parseAST >>> \case
@@ -82,7 +82,7 @@ gogogo text = Ur.simp <$> complex
   ast     = traceShowId (forceParse text)
   exp     = bind ast
   lam     = traceShowId (toLC getGlobal exp)
-  complex = traceShowId <$> Uruk.moonStrict lam
+  complex = traceShowId <$> Lamb.moonStrict lam
 
 gogogo' :: Text -> ExceptT Text IO Ur.Ur
 gogogo' text = do
@@ -95,7 +95,7 @@ gogogo' text = do
   let !expr = bind ast
       !lamb = toLC getGlobal expr
 
-  cplx <- liftIO (Uruk.moonStrict lamb)
+  cplx <- liftIO (Lamb.moonStrict lamb)
 
   traceM ""
   traceM (show lamb)
@@ -114,44 +114,44 @@ gogogoFast text = do
   let expr = bind ast
       lamb = toLC getGlobal expr
 
-  cplx <- liftIO $ Uruk.moonStrict lamb
+  cplx <- liftIO $ Lamb.moonStrict lamb
 
   pure cplx
 
 
-toLC :: forall p. Uruk p => (Text -> p) -> Exp Text -> Uruk.Exp p
+toLC :: forall p. Uruk p => (Text -> p) -> Exp Text -> Lamb.Exp p
 toLC getGlobal = go (Left . getGlobal)
  where
-  go :: (a -> Either p Nat) -> Exp a -> Uruk.Exp p
+  go :: (a -> Either p Nat) -> Exp a -> Lamb.Exp p
   go f = \case
     Var a     -> var f a
     Lam b     -> lam f b
-    App x y   -> Uruk.Go (go f x) (go f y)
-    Jet r n b -> Uruk.Jet (fromIntegral r) (Atom.utf8Atom n) (go f b)
-    Fix b     -> Uruk.Loop (enter f b)
-    Sig       -> Uruk.Prim uUni
+    App x y   -> Lamb.Go (go f x) (go f y)
+    Jet r n b -> Lamb.Jet (fromIntegral r) (Atom.utf8Atom n) (go f b)
+    Fix b     -> Lamb.Loop (enter f b)
+    Sig       -> Lamb.Prim uUni
     Con x y   -> con f x y
     Cas x l r -> cas f x l r
-    Iff c t e -> Uruk.If (go f c) (go f t) (go f e)
-    Lit n     -> Uruk.Prim $ uNat n
-    Bol b     -> Uruk.Prim $ uBol b
-    Str n     -> Uruk.Prim $ uNat $ Atom.utf8Atom n
+    Iff c t e -> Lamb.If (go f c) (go f t) (go f e)
+    Lit n     -> Lamb.Prim $ uNat n
+    Bol b     -> Lamb.Prim $ uBol b
+    Str n     -> Lamb.Prim $ uNat $ Atom.utf8Atom n
 
-  enter :: (a -> Either p Nat) -> Scope () Exp a -> Uruk.Exp p
+  enter :: (a -> Either p Nat) -> Scope () Exp a -> Lamb.Exp p
   enter f b = go f' (fromScope b) where f' = wrap f
 
-  lam :: (a -> Either p Nat) -> Scope () Exp a -> Uruk.Exp p
-  lam f b = Uruk.Lam (enter f b)
+  lam :: (a -> Either p Nat) -> Scope () Exp a -> Lamb.Exp p
+  lam f b = Lamb.Lam (enter f b)
 
   var f a = f a & \case
-    Left  e -> Uruk.Prim e
-    Right v -> Uruk.Var v
+    Left  e -> Lamb.Prim e
+    Right v -> Lamb.Var v
 
-  cas :: (a -> Either p Nat) -> Exp a -> Scope () Exp a -> Scope () Exp a -> Uruk.Exp p
-  cas f x l r = Uruk.Case (go f x) (enter f l) (enter f r)
+  cas :: (a -> Either p Nat) -> Exp a -> Scope () Exp a -> Scope () Exp a -> Lamb.Exp p
+  cas f x l r = Lamb.Case (go f x) (enter f l) (enter f r)
 
-  con :: (a -> Either p Nat) -> Exp a -> Exp a -> Uruk.Exp p
-  con f x y = Uruk.Prim uCon `Uruk.Go` go f x `Uruk.Go` go f y
+  con :: (a -> Either p Nat) -> Exp a -> Exp a -> Lamb.Exp p
+  con f x y = Lamb.Prim uCon `Lamb.Go` go f x `Lamb.Go` go f y
 
   wrap :: (a -> Either p Nat) -> Var () a -> Either p Nat
   wrap f = \case
