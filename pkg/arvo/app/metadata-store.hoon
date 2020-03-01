@@ -182,7 +182,7 @@
   |=  =group-path
   ^-  ^associations
   %-  ~(gas by *^associations)
-  %+  turn  ~(tap in (~(got by group-indices) group-path))
+  %+  turn  ~(tap in (~(gut by group-indices) group-path ~))
   |=  =resource
   :-  [group-path resource]
   (~(got by associations) [group-path resource])
