@@ -313,7 +313,8 @@ export class ContactCard extends Component {
           style={{ width: "fit-content" }}>
           <p className="f9 gray2 lh-copy">Sigil Color</p>
           <textarea
-            className="b--gray4 black f7 ba db pl2 focus-b--black"
+            className={"b--gray4 b--gray2-d black white-d bg-gray0-d f7 ba db pl2 " +
+            "focus-b--black focus-b--white-d"}
             onChange={this.sigilColorSet}
             defaultValue={defaultColor}
             key={"default" + defaultColor}
@@ -499,7 +500,8 @@ export class ContactCard extends Component {
     //TODO "Share card" if it's /me -> sends to /~/default of recipient
     return (
       <div className="w-100 h-100 overflow-hidden">
-        <div className="flex justify-between w-100 bg-white bb b--gray4 ">
+        <div className={"flex justify-between w-100 bg-white bg-gray0-d "  +
+        "bb b--gray4 b--gray2-d "}>
           <div className="w-100 h2 dn-m dn-l dn-xl inter pb6 pl3 pt3 f8">
             <Link to="/~contacts/">{"⟵"}</Link>
           </div>
@@ -512,16 +514,16 @@ export class ContactCard extends Component {
                   this.editToggle();
                 }
               }}
-              className={`ml3 mt2 mb2 f9 pa1 pointer` + ourOpt}>
+              className={`white-d bg-gray0-d ml3 mt2 mb2 f9 pa1 pointer ` + ourOpt}>
               {editInfoText}
             </button>
-            <button className={`ml3 mt2 mb2 f9 pa1 pointer` + localOpt}>
+            <button className={`white-d bg-gray0-d ml3 mt2 mb2 f9 pa1 pointer ` + localOpt}>
               Share
             </button>
           </div>
           <button
             className={
-              `pr4 mt4 mb4 f9 red2 pointer ` + adminOpt
+              `bg-gray0-d pr4 mt4 mb4 f9 red2 pointer ` + adminOpt
             }
             onClick={this.removeFromGroup}>
             {(
@@ -530,7 +532,7 @@ export class ContactCard extends Component {
             )}
           </button>
         </div>
-        <div className="h-100 w-100 overflow-x-hidden pb8">{card}</div>
+        <div className="h-100 w-100 overflow-x-hidden pb8 white-d">{card}</div>
       </div>
     );
   }

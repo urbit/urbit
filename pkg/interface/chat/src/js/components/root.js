@@ -203,8 +203,6 @@ export class Root extends Component {
               };
               let popout = props.match.url.includes("/popout/");
 
-              let roomContacts = (station in contacts)
-                ? contacts[station] : {};
 
               return (
                 <Skeleton
@@ -219,7 +217,7 @@ export class Root extends Component {
                     api={api}
                     station={station}
                     permission={permission}
-                    contacts={roomContacts}
+                    contacts={contacts}
                     permissions={state.permissions}
                     popout={popout}
                     sidebarShown={state.sidebarShown}

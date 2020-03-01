@@ -105,7 +105,7 @@ export class NewPost extends Component {
             popout={props.popout}
           />
           <button
-            className={"v-mid w-100 mw6 tl h1 pl4"}
+            className={"bg-transparent v-mid w-100 mw6 tl h1 pl4"}
             disabled={!state.submit}
             style={submitStyle}
             onClick={this.postSubmit}>
@@ -126,7 +126,7 @@ export class NewPost extends Component {
             <input
               autoFocus
               type="text"
-              className="w-100 pb2"
+              className="bg-transparent white-d w-100 pb2"
               onChange={this.titleChange}
               placeholder="New Post"
             />

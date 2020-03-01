@@ -51,7 +51,8 @@ export class ContactSidebar extends Component {
         return (
           <div
           key={member}
-          className="pl4 pt1 pb1 f9 flex justify-start content-center bg-white">
+          className={"pl4 pt1 pb1 f9 flex justify-start content-center " +
+            "bg-white bg-gray0-d"}>
             <Sigil
               ship={member}
               color="#000000"

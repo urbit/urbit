@@ -29,7 +29,8 @@ export class EditElement extends Component {
           <div className="w-100 flex">
             <textarea
               ref={props.title}
-              className="w-100 ba pl3 b--gray4 focus-b--black"
+              className={"w-100 ba pl3 white-d bg-gray0-d b--gray4 b--gray2-d " +
+              "focus-b--black focus-b--white-d"}
               style={ inputStyles }
               onChange={(e) => {
                 let val = (' ' + e.target.value).slice(1);
@@ -43,7 +44,7 @@ export class EditElement extends Component {
             {!!props.showButtons ? (
               <button
                 className={
-                  "f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
+                  "bg-gray0-d f9 pointer ml3 ba pa2 pl3 pr3 b--red2 red2 " +
                   (showDelete ? "dn" : "dib")
                 }
                 onClick={() => {
@@ -57,8 +58,8 @@ export class EditElement extends Component {
           {!!props.showButtons ? (
             <button
               className={
-                "pointer db mv2 f9 ba pa2 pl3 pr3 " +
-                (allowSave ? "b--black" : "b--gray4 gray4")
+                "bg-gray0-d white-d pointer db mv2 f9 ba pa2 pl3 pr3 " +
+                (allowSave ? "b--black b--white-d" : "b--gray4 gray4 b--gray2-d gray2-d")
               }
               onClick={() => {
                 if (!allowSave) { return; }

@@ -91,7 +91,7 @@ export class NewScreen extends Component {
     }
 
     return (
-      <div className="h-100 w-100 flex flex-column overflow-y-scroll">
+      <div className="h-100 w-100 flex flex-column overflow-y-scroll white-d">
         <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 pl3 pt3 f8">
           <Link to="/~contacts/">{"⟵ All Groups"}</Link>
         </div>
@@ -102,7 +102,8 @@ export class NewScreen extends Component {
             Alphanumeric characters and hyphens only
           </p>
           <textarea
-            className="f7 ba b--gray3 w-100 pa3 ml3 mt2 focus-b--black"
+            className={"f7 bg-gray0-d white-d ba b--gray3 w-100 pa3 ml3 mt2 " +
+            "focus-b--black focus-b--white-d"}
             rows={1}
             placeholder="example-group-name"
             style={{

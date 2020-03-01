@@ -81,12 +81,12 @@ export class Notebook extends Component {
     let notebook = props.notebooks[props.ship][props.book];
 
     let tabStyles = {
-      posts: "bb b--gray4 gray2 pv4 ph2",
-      about: "bb b--gray4 gray2 pv4 ph2",
-      subscribers: "bb b--gray4 gray2 pv4 ph2",
-      settings: "bb b--gray4 pr2 gray2 pv4 ph2",
+      posts: "bb b--gray4 b--gray2-d gray2 pv4 ph2",
+      about: "bb b--gray4 b--gray2-d gray2 pv4 ph2",
+      subscribers: "bb b--gray4 b--gray2-d gray2 pv4 ph2",
+      settings: "bb b--gray4 b--gray2-d pr2 gray2 pv4 ph2",
     };
-    tabStyles[props.view] = "bb b--black black pv4 ph2";
+    tabStyles[props.view] = "bb b--black b--white-d black white-d pv4 ph2";
 
     let inner = null;
     switch (props.view) {
@@ -154,7 +154,7 @@ export class Notebook extends Component {
     let unsub = (window.ship === props.ship.slice(1))
       ?  null
       :  <button onClick={this.unsubscribe}
-             className="NotebookButton bg-white black ba b--black ml3">
+             className="NotebookButton bg-white bg-gray0-d black white-d ba b--black b--gray2-d ml3">
            Unsubscribe
          </button>
 
@@ -224,7 +224,7 @@ export class Notebook extends Component {
             </Link>
             {subsComponent}
             {settingsComponent}
-            <div className="bb b--gray4 gray2 pv4 ph2"
+            <div className="bb b--gray4 b--gray2-d gray2 pv4 ph2"
               style={{ flexGrow: 1 }}></div>
           </div>
 
