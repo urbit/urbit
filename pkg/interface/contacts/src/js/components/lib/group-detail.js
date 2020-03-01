@@ -19,7 +19,6 @@ export class GroupDetail extends Component {
 
     channelList = Object.keys(channelsForGroup).map((key) => {
       let channel = channelsForGroup[key];
-      console.log(key, channel);
       if (!('metadata' in channel)) {
         return (<div />);
       }
