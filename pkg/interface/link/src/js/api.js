@@ -86,7 +86,7 @@ class UrbitApi {
   inviteAccept(uid) {
     this.inviteAction({
       accept: {
-        path: '/chat',
+        path: '/link',
         uid
       }
     });
@@ -95,7 +95,7 @@ class UrbitApi {
   inviteDecline(uid) {
     this.inviteAction({
       decline: {
-        path: '/chat',
+        path: '/link',
         uid
       }
     });
@@ -142,6 +142,13 @@ class UrbitApi {
       console.error,
       ()=>{} // no-op on quit
     );
+  }
+
+  createCollection(path, title, description, members) {
+    // members is either {group:'/group-path'} or {'ships':[~zod]}
+    return this.action("link-view", "link-view-action", {
+      create: {path, title, description, members}
+    })
   }
 
   linkAction(data) {

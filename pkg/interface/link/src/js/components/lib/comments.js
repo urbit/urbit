@@ -19,7 +19,7 @@ export class Comments extends Component {
     ) {
       this.setState({requested: this.props.commentPage});
       api.getCommentsPage(
-        this.props.groupPath,
+        this.props.resourcePath,
         this.props.url,
         this.props.commentPage);
     }
@@ -73,8 +73,8 @@ export class Comments extends Component {
       <div>
         {commentsList}
         <CommentsPagination
-        key={props.groupPath + props.commentPage}
-        groupPath={props.groupPath}
+        key={props.resourcePath + props.commentPage}
+        resourcePath={props.resourcePath}
         popout={props.popout}
         linkPage={props.linkPage}
         linkIndex={props.linkIndex}

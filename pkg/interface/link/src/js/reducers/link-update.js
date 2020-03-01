@@ -3,7 +3,7 @@ import _ from 'lodash';
 // page size as expected from link-view.
 // must change in parallel with the +page-size in /app/link-view to
 // ensure sane behavior.
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 3;
 
 export class LinkUpdateReducer {
   reduce(json, state) {

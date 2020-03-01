@@ -10,7 +10,10 @@
 ::    /json/[n]/submission/[wood-url]/[some-group]    nth matching submission
 ::    /json/seen                                      mark-as-read updates
 ::
-/+  *link, *server, default-agent, verb
+/-  *link-view,
+    metadata-store, *invite-store, group-store,
+    group-hook, permission-hook, metadata-hook
+/+  *link, *server, default-agent, verb, dbug
 ::
 |%
 +$  state-0
@@ -25,6 +28,7 @@
 =*  state  -
 ::
 %+  verb  |
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -42,6 +46,12 @@
       ::
         =+  [dap.bowl /tile '/~link/js/tile.js']
         [%pass /launch %agent [our.bowl %launch] %poke %launch-action !>(-)]
+      ::
+        =+  [%invite-action !>([%create /link])]
+        [%pass /invitatory/create %agent [our.bowl %invite-store] %poke -]
+      ::
+        =+  /invitatory/link
+        [%pass - %agent [our.bowl %invite-store] %watch -]
     ==
   ::
   ++  on-save  !>(state)
@@ -65,6 +75,9 @@
     ::
         %link-action
       [(handle-action:do !<(action vase)) ~]
+    ::
+        %link-view-action
+      (handle-view-action:do !<(view-action vase))
     ==
   ::
   ++  on-watch
@@ -104,13 +117,18 @@
     ?+  -.sign  (on-agent:def wire sign)
         %kick
       :_  this
-      [%pass wire %agent [our.bowl %link-store] %watch wire]~
+      =/  app=term
+        ?:  ?=([%invites *] wire)
+          %invite-store
+        %link-store
+      [%pass wire %agent [our.bowl app] %watch wire]~
     ::
         %fact
       =*  mark  p.cage.sign
       =*  vase  q.cage.sign
       ?+  mark  (on-agent:def wire sign)
-        %link-initial  [~ this]
+        %invite-update  [(handle-invite-update:do !<(invite-update vase)) this]
+        %link-initial   [~ this]
       ::
           %link-update
         :_  this
@@ -217,10 +235,116 @@
   %-  as-octs:mimes:html
   .^(@ %cx path)
 ::
+++  handle-invite-update
+  |=  upd=invite-update
+  ^-  (list card)
+  ?.  ?=(%accepted -.upd)  ~
+  ?.  =(/link path.upd)    ~
+  |^
+  :~  ::  sync the group
+      ::
+      %^  do-poke  %group-hook
+        %group-hook-action
+      !>  ^-  group-hook-action:group-hook
+      [%add ship path]:invite.upd
+    ::
+      ::  sync the metadata
+      ::
+      %^  do-poke  %metadata-hook
+        %metadata-hook-action
+      !>  ^-  metadata-hook-action:metadata-hook
+      [%add-synced ship path]:invite.upd
+  ==
+  ::
+  ++  do-poke
+    |=  [app=term =mark =vase]
+    ^-  card
+    [%pass /create/[app]/[mark] %agent [our.bowl app] %poke mark vase]
+  --
+::
 ++  handle-action
   |=  =action
   ^-  card
   [%pass /action %agent [our.bowl %link-store] %poke %link-action !>(action)]
+::
+++  handle-view-action
+  |=  act=view-action
+  ^-  (list card)
+  ?>  ?=(%create -.act)
+  =/  group-path=path
+    ?-  -.members.act
+      %group  path.members.act
+      %ships  [~.~ (scot %p our.bowl) path.act]
+    ==
+  |^
+  =;  group-setup=(list card)
+    %+  weld  group-setup
+    :~  ::  add collection to metadata-store
+        ::
+        %^  do-poke  %metadata-store
+          %metadata-action
+        !>  ^-  metadata-action:metadata-store
+        :^  %add  group-path
+          [%link path.act]
+        %*  .  *metadata:metadata-store
+          title         title.act
+          description   description.act
+          date-created  now.bowl
+          creator       our.bowl
+        ==
+    ==
+  ?:  ?=(%group -.members.act)  ~
+  :*  ::  create the new group
+      ::
+      %^  do-poke  %group-store
+        %group-action
+      !>  ^-  group-action:group-store
+      [%bundle group-path]
+    ::
+      ::  fill the new group
+      ::
+      %^  do-poke  %group-store
+        %group-action
+      !>  ^-  group-action:group-store
+      [%add (~(put in ships.members.act) our.bowl) group-path]
+    ::
+      ::  make group available
+      ::
+      %^  do-poke  %group-hook
+        %group-hook-action
+      !>  ^-  group-hook-action:group-hook
+      [%add our.bowl group-path]
+    ::
+      ::  make a permission equivalent
+      ::
+      %^  do-poke  %permission-hook
+        %permission-hook-action
+      !>  ^-  permission-hook-action:permission-hook
+      [%add-owned group-path group-path]
+    ::
+      ::  send invites
+      ::
+      %+  turn  ~(tap in ships.members.act)
+      |=  =ship
+      ^-  card
+      %^  do-poke  %invite-hook
+        %invite-action
+      !>  ^-  invite-action
+      :^  %invite  /link
+        (sham group-path eny.bowl)
+      :*  our.bowl
+          %group-hook
+          group-path
+          ship
+          title.act
+      ==
+  ==
+  ::
+  ++  do-poke
+    |=  [app=term =mark =vase]
+    ^-  card
+    [%pass /create/[app]/[mark] %agent [our.bowl app] %poke mark vase]
+  --
 ::  +give-tile-data: total unread count as json object
 ::
 ::NOTE  the full recalc of totals here probably isn't the end of the world.

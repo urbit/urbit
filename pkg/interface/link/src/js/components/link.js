@@ -29,7 +29,7 @@ export class LinkDetail extends Component {
     // if we have no preloaded data, and we aren't expecting it, get it
     if (!this.state.data.title) {
       api.getSubmission(
-        this.props.groupPath, this.props.url, this.updateData.bind(this)
+        this.props.resourcePath, this.props.url, this.updateData.bind(this)
       );
     }
   }
@@ -46,7 +46,7 @@ export class LinkDetail extends Component {
     api.setSpinner(true);
 
     api.postComment(
-      this.props.groupPath,
+      this.props.resourcePath,
       url,
       this.state.comment
     ).then(() => {
@@ -98,10 +98,10 @@ export class LinkDetail extends Component {
           />
           <Link
             className="dib f9 fw4 pt2 gray2 lh-solid"
-            to={"/~link" + popout + props.groupPath + "/" + props.page}>
+            to={"/~link" + popout + "/list/" + props.page + props.resourcePath}>
             {"<- Collection index"}
           </Link>
-          <LinksTabBar {...props} popout={popout} groupPath={props.groupPath} />
+          <LinksTabBar {...props} popout={popout} resourcePath={props.resourcePath} />
         </div>
         <div className="w-100 mt2 flex justify-center overflow-y-scroll ph4 pb4">
           <div className="w-100 mw7">
@@ -111,7 +111,7 @@ export class LinkDetail extends Component {
               comments={comments}
               nickname={nickname}
               ship={ship}
-              groupPath={props.groupPath}
+              resourcePath={props.resourcePath}
               page={props.page}
               linkIndex={props.linkIndex}
               time={this.state.data.time}
@@ -143,8 +143,8 @@ export class LinkDetail extends Component {
               </button>
             </div>
             <Comments
-              groupPath={props.groupPath}
-              key={props.groupPath + props.commentPage}
+              resourcePath={props.resourcePath}
+              key={props.resourcePath + props.commentPage}
               comments={props.comments}
               commentPage={props.commentPage}
               contacts={props.contacts}

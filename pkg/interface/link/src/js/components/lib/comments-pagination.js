@@ -6,8 +6,8 @@ export class CommentsPagination extends Component {
   render() {
     let props = this.props;
 
-    let prevPage = "/" + (Number(props.commentPage) - 1);
-    let nextPage = "/" + (Number(props.commentPage) + 1);
+    let prevPage = (Number(props.commentPage) - 1);
+    let nextPage = (Number(props.commentPage) + 1);
 
     let prevDisplay = ((Number(props.commentPage) > 0))
     ? "dib"
@@ -26,22 +26,24 @@ export class CommentsPagination extends Component {
         className={"pb6 absolute inter f8 left-0 " + prevDisplay}
         to={"/~link"
         + popout
-        + props.groupPath
+        + "/item"
         + "/" + props.linkPage
         + "/" + props.linkIndex
+        + "/" + prevPage
         + "/" + encodedUrl
-        + "/comments" + prevPage}>
+        + props.resourcePath}>
           &#60;- Previous Page
         </Link>
         <Link
         className={"pb6 absolute inter f8 right-0 " + nextDisplay}
-        to={"/~link" 
+        to={"/~link"
         + popout
-        + props.groupPath
-        + "/" + props.linkPage 
-        + "/" + props.linkIndex 
+        + "/item"
+        + "/" + props.linkPage
+        + "/" + props.linkIndex
+        + "/" + nextPage
         + "/" + encodedUrl
-        + "/comments" + nextPage}>
+        + props.resourcePath}>
           Next Page ->
         </Link>
       </div>

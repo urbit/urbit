@@ -7,6 +7,7 @@ import { api } from '/api';
 import { subscription } from '/subscription';
 import { store } from '/store';
 import { Skeleton } from '/components/skeleton';
+import { NewScreen } from '/components/new';
 import { Links } from '/components/links-list';
 import { LinkDetail } from '/components/link';
 import { base64urlDecode } from '../lib/util';
@@ -26,9 +27,15 @@ export class Root extends Component {
     let contacts = !!state.contacts ? state.contacts : {};
     const groups = !!state.groups ? state.groups : {};
 
+    const resources = !!state.resources ? state.resources : {};
     let links = !!state.links ? state.links : {};
     let comments = !!state.comments ? state.comments : {};
     const seen = !!state.seen ? state.seen : {};
+
+    //TODO update /join/resource route in contacts
+    const invites = '/link' in state.invites ?
+      state.invites['/link'] : {};
+    console.log('invites', invites);
 
     return (
       <BrowserRouter>
@@ -38,6 +45,8 @@ export class Root extends Component {
               <Skeleton
                 active="channels"
                 spinner={state.spinner}
+                resources={resources}
+                invites={invites}
                 groups={groups}
                 rightPanelHide={true}
                 sidebarShown={true}
@@ -45,43 +54,63 @@ export class Root extends Component {
                 <div className="h-100 w-100 overflow-x-hidden flex flex-column bg-white bg-gray0-d dn db-ns">
                 <div className="pl3 pr3 pt2 dt pb3 w-100 h-100">
                       <p className="f8 pt3 gray2 w-100 h-100 dtc v-mid tc">
-                        Collections are shared across groups. To create a new collection, <a className="black white-d" href="/~contacts">create a group</a>.
+                        Select or create a collection to begin.
                       </p>
                     </div>
                 </div>
               </Skeleton>
             );
           }} />
-          <Route exact path="/~link/(popout)?/:ship/:channel/:page?"
+        <Route exact path="/~link/new"
+          render={(props) => {
+            return (
+              <Skeleton
+                active="channels"
+                spinner={state.spinner}
+                resources={resources}
+                invites={invites}
+                groups={groups}
+                rightPanelHide={true}
+                sidebarShown={true}
+                links={links}>
+                <NewScreen
+                  resources={resources}
+                  groups={groups}
+                  contacts={contacts}/>
+              </Skeleton>
+            );
+          }}/>
+          <Route exact path="/~link/(popout)?/list/:page/:resource([^#]+)"
             render={ (props) => {
-              // groups/contacts and link channels are the same thing in ver 1
+              const resourcePath = '/' + props.match.params.resource;
+              const resource = resources[resourcePath] || {};
 
-              let groupPath =
-              `/${props.match.params.ship}/${props.match.params.channel}`;
-              let contactDetails = contacts[groupPath] || {};
+              let contactDetails = contacts[resource.group] || {};
 
               let page = props.match.params.page || 0;
 
               let popout = props.match.url.includes("/popout/");
 
-              let channelLinks = !!links[groupPath]
-              ? links[groupPath]
+              let channelLinks = !!links[resourcePath]
+              ? links[resourcePath]
               : {local: {}};
 
-              let channelComments = !!comments[groupPath]
-                ? comments[groupPath]
+              let channelComments = !!comments[resourcePath]
+                ? comments[resourcePath]
                 : {};
 
-              const channelSeen = !!seen[groupPath]
-                ? seen[groupPath]
+              const channelSeen = !!seen[resourcePath]
+                ? seen[resourcePath]
                 : {};
 
               return (
                 <Skeleton
                   spinner={state.spinner}
+                  resources={resources}
+                  invites={invites}
                   groups={groups}
                   active="links"
-                  selected={groupPath}
+                  selected={resourcePath}
                   sidebarShown={state.sidebarShown}
                   sidebarHideMobile={true}
                   popout={popout}
@@ -93,7 +122,8 @@ export class Root extends Component {
                   comments={channelComments}
                   seen={channelSeen}
                   page={page}
-                  groupPath={groupPath}
+                  resourcePath={resourcePath}
+                  resource={resource}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
                   />
@@ -101,36 +131,38 @@ export class Root extends Component {
               )
             }}
           />
-          <Route exact path="/~link/(popout)?/:ship/:channel/:page/:index/:encodedUrl/(comments)?/:commentpage?"
+          <Route exact path="/~link/(popout)?/item/:page/:index/:commentpage/:encodedUrl/:resource([^#]+)"
             render={ (props) => {
-              let groupPath =
-              `/${props.match.params.ship}/${props.match.params.channel}`;
+              const resourcePath = '/' + props.match.params.resource;
+              const resource = resources[resourcePath] || {};
 
               let popout = props.match.url.includes("/popout/");
 
-              let contactDetails = contacts[groupPath] || {};
+              let contactDetails = contacts[resource.group] || {};
 
               let index = props.match.params.index || 0;
               let page = props.match.params.page || 0;
               let url = base64urlDecode(props.match.params.encodedUrl);
 
-              let data = !!links[groupPath]
-                ? !!links[groupPath][page]
-                  ? links[groupPath][page][index]
+              let data = !!links[resourcePath]
+                ? !!links[resourcePath][page]
+                  ? links[resourcePath][page][index]
                   : {}
                 : {};
-              let coms = !comments[groupPath]
+              let coms = !comments[resourcePath]
                 ? undefined
-                : comments[groupPath][url];
+                : comments[resourcePath][url];
 
               let commentPage = props.match.params.commentpage || 0;
 
               return (
                 <Skeleton
                   spinner={state.spinner}
+                  resources={resources}
+                  invites={invites}
                   groups={groups}
                   active="links"
-                  selected={groupPath}
+                  selected={resourcePath}
                   sidebarShown={state.sidebarShown}
                   sidebarHideMobile={true}
                   popout={popout}
@@ -141,7 +173,8 @@ export class Root extends Component {
                   url={url}
                   linkIndex={index}
                   contacts={contactDetails}
-                  groupPath={groupPath}
+                  resourcePath={resourcePath}
+                  groupPath={resource.group}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
                   data={data}

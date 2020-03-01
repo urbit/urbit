@@ -34,7 +34,7 @@ export class LinkItem extends Component {
   }
 
   markPostAsSeen() {
-    api.seenLink(this.props.groupPath, this.props.url);
+    api.seenLink(this.props.resourcePath, this.props.url);
   }
 
   render() {
@@ -90,7 +90,7 @@ export class LinkItem extends Component {
             {this.state.timeSinceLinkPost}
           </span>
           <Link to=
-          {"/~link" + props.popout + props.groupPath + "/" + props.page + "/" + props.linkIndex + "/" + encodedUrl}
+          {"/~link" + props.popout + "/item/" + props.page + "/" + props.linkIndex + "/0/" + encodedUrl + props.resourcePath}
           className="v-top"
           onClick={this.markPostAsSeen}>
             <span className="f9 inter gray2">

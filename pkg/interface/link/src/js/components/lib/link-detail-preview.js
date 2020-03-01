@@ -115,14 +115,13 @@ export class LinkPreview extends Component {
             </span>
             <Link
               to={
-                "/~link" +
-                props.groupPath +
-                "/" +
+                "/~link/item/" +
                 props.page +
                 "/" +
                 props.linkIndex +
-                "/" +
-                base64urlEncode(props.url)
+                "/0/" +
+                base64urlEncode(props.url) +
+                props.resourcePath
               }
               className="v-top">
               <span className="f9 inter gray2">{props.comments}</span>

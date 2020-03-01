@@ -25,16 +25,29 @@ export class Links extends Component {
          (!this.props.links[linkPage] ||
           this.props.links.local[linkPage])
     ) {
-      api.getPage(this.props.groupPath, this.props.page);
+      api.getPage(this.props.resourcePath, this.props.page);
     }
   }
 
   markAllAsSeen() {
-    api.seenLink(this.props.groupPath);
+    api.seenLink(this.props.resourcePath);
   }
 
   render() {
     let props = this.props;
+
+    if (!props.resource.title) {
+      return (
+        <div className="h-100 w-100 overflow-x-hidden flex flex-column bg-white bg-gray0-d dn db-ns">
+          <div className="pl3 pr3 pt2 dt pb3 w-100 h-100">
+            <p className="f8 pt3 gray2 w-100 h-100 dtc v-mid tc">
+              Loading...
+            </p>
+          </div>
+        </div>
+      );
+    }
+
     let popout = (props.popout) ? "/popout" : "";
     let linkPage = props.page;
 
@@ -77,7 +90,7 @@ export class Links extends Component {
         color={color}
         member={member}
         comments={commentCount}
-        groupPath={props.groupPath}
+        resourcePath={props.resourcePath}
         popout={popout}
         />
       )
@@ -99,26 +112,30 @@ export class Links extends Component {
           <SidebarSwitcher
            sidebarShown={props.sidebarShown}
            popout={props.popout}/>
-         <Link to={`/~link` + popout + props.groupPath} className="pt2">
+         <Link to={`/~link${popout}/list/${props.page}${props.resourcePath}`} className="pt2">
            <h2
              className={`dib f9 fw4 v-top lh-solid` +
-             (props.groupPath.includes("/~/")
+             (props.resource.group.includes("/~/")
              ? ""
              : " mono")}>
-              {(props.groupPath.includes("/~/"))
-              ? "Private"
-              : props.groupPath.substr(1)}
+               { props.resource.title +
+                 ( props.resource.description
+                   ? ": " + props.resource.description
+                   : ""
+                 )
+               }
            </h2>
          </Link>
           <LinksTabBar
           {...props}
           popout={popout}
-          groupPath={props.groupPath + "/" + props.page}/>
+          page={props.page}
+          resourcePath={props.resourcePath}/>
         </div>
         <div className="w-100 mt2 flex justify-center overflow-y-scroll ph4 pb4">
           <div className="w-100 mw7">
             <div className="flex">
-              <LinkSubmit groupPath={props.groupPath}/>
+              <LinkSubmit resourcePath={props.resourcePath}/>
             </div>
             <div className="pb4">
             <span
@@ -129,9 +146,9 @@ export class Links extends Component {
             {LinkList}
             <Pagination
             {...props}
-            key={props.groupPath + props.page}
+            key={props.resourcePath + props.page}
             popout={popout}
-            groupPath={props.groupPath}
+            resourcePath={props.resourcePath}
             currentPage={currentPage}
             totalPages={totalPages}
             />
