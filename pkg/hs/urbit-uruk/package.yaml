@@ -17,6 +17,7 @@ dependencies:
   - deriving-compat
   - flat
   - ghc-prim
+  - hashable
   - haskeline
   - lens
   - megaparsec
