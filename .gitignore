@@ -1,23 +1,46 @@
-/out
-/result
-/result-*
-/work
+# nix symlink artifacts
+#
+result
+result-*
+
+# common dev piers
+#
 /zod
 /bus
-/fakezod*
-tags
-TAGS
+/nec
+/fakezod
+
+# package manager caches
+#
+.stack-work
+node_modules
+
+# build and release artifacts
+#
 cross/
 release/
-.stack-work
+dist
+/out
+/work
+
+# landscape dev
+#
+urbitrc
+*-min.js
+pkg/interface/link-webext/web-ext-artifacts
+
+# catchall editor and OS stuff
+#
+.tags
+.etags
+tags
+TAGS
+GPATH
+GRTAGS
+GTAGS
+.DS_Store
+*.swp
+*.swo
 \#*\#
 s/*
-**/.DS_Store
-**/dist
-**/node_modules
-**/urbitrc
-**/*.swp
-**/*.swo
-**/*-min.js
-.stack-work
-pkg/interface/link-webext/web-ext-artifacts
+
