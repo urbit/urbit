@@ -10,14 +10,14 @@ data Ur = J | K | S | D deriving (Eq, Ord, Enum, Show)
 data Exp = N Ur | Exp :@ Exp deriving (Eq, Ord)
 
 tree ∷ Exp → Tree Ur
-tree = go [] where go a = \case { N n → Ur n a; x :@ y → go (tree y:a) x }
+tree = go [] where go a = \case { N n → Node n a; x :@ y → go (tree y:a) x }
 
 unTree ∷ Tree Ur → Exp
-unTree (Ur n xs) = foldl' (:@) (N n) (unTree <$> xs)
+unTree (Node n xs) = foldl' (:@) (N n) (unTree <$> xs)
 
 showTree ∷ Tree Ur -> String
-showTree (Ur n []) = show n
-showTree (Ur n xs) = "(" <> intercalate " " (show n : fmap showTree xs) <> ")"
+showTree (Node n []) = show n
+showTree (Node n xs) = "(" <> intercalate " " (show n : fmap showTree xs) <> ")"
 
 instance Show Exp where show = showTree . tree
 
@@ -42,8 +42,8 @@ jetRule x = do
   Just (unTree b, unTree <$> xs)
 
 jetHead ∷ Tree Ur → Maybe (Natural, [Tree Ur])
-jetHead (Ur n xs) = guard (n == J) $> go 1 xs
- where go n (Ur J [] : xs) = go (succ n) xs
+jetHead (Node n xs) = guard (n == J) $> go 1 xs
+ where go n (Node J [] : xs) = go (succ n) xs
        go n xs             = (n, xs)
 
 jam ∷ Exp → Exp
