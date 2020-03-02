@@ -1,6 +1,13 @@
 =,  contain
 =>
 |%
+::  TODO: move to zuse
+::
++$  plan
+  $^  [hed=plan tal=plan]
+  $%  [%ride sut=plan gen=hoon]
+      [%$ =cage]
+  ==
 ::  $hoon-cache: cache for compiler operations
 ::
 +$  hoon-cache  (clock hoon-cache-key vase)
@@ -15,7 +22,7 @@
 +$  hoon-cache-key
   $%  [%call gate=vase sample=vase]
       [%hood =beam txt=@t]
-      [%ride formula=hoon subject=vase]
+      [%ride subject=vase formula=hoon]
       [%slim subject-type=type formula=hoon]
       [%slit gate=type sample=type]
   ==
@@ -86,21 +93,22 @@
     |*  b=mold
     |=  [m-b=(fume-form-raw b) fun=$-(b form)]
     ^-  form
-    |=  in=fume-input
+    |=  fin=fume-input
     =*  this  .
-    =/  b-res  (m-b in)
+    =/  b-res  (m-b fin)
     ^-  output
     ?-    -.next.b-res
-        %fail  b-res
-        %load  b-res(on-load.next this(m-b on-load.next.b-res))
-        %done  (fun value.next.b-res)
+      %fail  b-res
+      %load  b-res(on-load.next this(m-b on-load.next.b-res))
+      %done  ((fun value.next.b-res) [in.fin s.b-res])
     ==
   ::
   ++  fmap
     |*  b=mold
-    |=  [m-b=(fume-form-raw b) fun=$-(b a)]
+    |=  [fun=$-(b a) m-b=(fume-form-raw b)]
     ^-  form
-    ((bind b) |=(b (pure (fun +<))))
+    ;<  res=b  bind  m-b
+    (pure (fun res))
   ::
   ++  try
     |=  [x=form y=form]
@@ -110,13 +118,13 @@
     =/  x-res  (x in)
     ?-    -.next.x-res
         %done  x-res
-        %load  x-res(self.next this(x self.next.x-res))
+        %load  x-res(on-load.next this(x on-load.next.x-res))
         %fail
       =/  y-res  (y in)
       :-  s.y-res
       ?-  -.next.y-res
         %done  next.y-res
-        %fail  [%fail (welp tang.x-res tang.y-res)]
+        %fail  [%fail (welp tang.next.x-res tang.next.y-res)]
         %load  next.y-res(on-load this(y on-load.next.y-res))
       ==
     ==
@@ -127,10 +135,10 @@
   =/  mv  (fume ,vase)
   |=  run=form:mv
   ^-  form:mc
-  ((fmap:form:mc ,vase) vase-to-cage run)
+  ((fmap:mc ,vase) vase-to-cage run)
 ::
 ++  vase-to-cage  (bake (with-mark %noun) vase)
-++  with-mark  |=(=mark |*(* [mark +<])))
+++  with-mark  |=(=mark |*(* [mark +<]))
 --
 |=  =hoon-cache  ::  TODO: include relevant ford state
 |=  [our=ship syd=desk now=@da scry=sley]
@@ -144,10 +152,10 @@
   ?>  =(=(~ fum.build-state) =(~ in))
   ::  if no attempt has been made already, try to run the build
   ::
-  =^  pro  in
+  =^  pro=output:m  in
     ?^  fum.build-state
-      [[%load `fum.build-state] in]
-    [((make plan.build) in) ~]
+      [[hoon-cache %load u.fum.build-state] in]
+    [((make plan.build) in hoon-cache) ~]
   ::
   |-  ^-  [product ^build-state ^hoon-cache]
   ?-    -.next.pro
@@ -155,11 +163,11 @@
       %fail  [`|+tang.next.pro build-state s.pro]
       %load
     ?^  in
-      $(pro ((make plan.build) in), hoon-cache s.pro, in ~)
+      $(pro ((make plan.build) in s.pro), hoon-cache s.pro, in ~)
     ?^  got=(~(get by cur.build-state) spar.next.pro)
-      $(pro ((make plan.build) got), hoon-cache s.pro)
+      $(pro ((make plan.build) got s.pro), hoon-cache s.pro)
     ?^  res=(scry-for-spar spar.next.pro)
-      $(pro ((make plan.build) res), hoon-cache s.pro)
+      $(pro ((make plan.build) res s.pro), hoon-cache s.pro)
     [~ build-state(fum `[spar on-load]:next.pro) s.pro]
   ==
 ::
@@ -168,9 +176,9 @@
   =/  m  (fume ,cage)
   ^-  form:m
   ?-  -.plan
-    ^      make-cell
-    %reef  make-reef
-    %ride  make-ride
+    ^      (make-cell plan)
+    %$     (pure:m cage.plan)
+    %ride  (make-ride +.plan)
   ==
 ::
 ++  make-cell
@@ -181,7 +189,6 @@
   ;<  [mark tal=vase]  bind:m  (make b)
   (pure:m noun+(slop hed tal))
 ::
-++  make-reef  (lift-vase run-reef)
 ++  run-reef
   =/  m  (fume ,vase)
   ^-  form:m
@@ -197,32 +204,38 @@
   ?>  ?=(%hoon mark)
   =/  tex  !<(@t xet)
   =/  gen  (rain path tex)
-  (run-ride gen sut)
+  (run-ride sut gen)
 ::
-++  make-ride  |=([sut=vase gen=hoon] (lift-vase (run-ride +<)))
+++  make-ride
+  |=  [sut=plan gen=hoon]
+  =/  m  (fume ,cage)
+  ;<  [mark vut=vase]  bind:m  (make sut)
+  %-  lift-vase
+  (run-ride vut gen)
+::
 ++  run-ride
   |=  [sut=vase gen=hoon]
   =/  m  (fume ,vase)
   ^-  form:m
-  %+  with-cache-key  [%ride gen sut]
+  %+  with-cache-key  [%ride sut gen]
   ;<  sim=vase  bind:m
-    %+  with-cache-key  [%slim gen p.sut]
-    %+  on-fail  |.([leaf+"ford: slim-fail"]~)
-    =/  lap  (mule |.((~(mint ut sut) %noun gen)))
+    %+  with-cache-key  [%slim p.sut gen]
+    %+  on-fail:m  |.([leaf+"ford: slim-fail"]~)
+    =/  lap  (mule |.((~(mint ut p.sut) %noun gen)))
     ?-  -.lap
       %&  (pure:m !>(p.lap))
       %|  (fail:m p.lap)
     ==
-  %+  on-fail  |.([leaf+"ford: ride-fail"]~)
   =+  !<([gol=type fol=nock] sim)
-  =/  nap  (mock [q.sut fol] scry)
+  =/  nap  (mock [q.sut fol] (sloy scry))
   ?-  -.nap
-    %&  (pure:m [gol nap])
-    %|  (fail:m p.nap)
+    %0  (pure:m [gol p.nap])
+    %1  (fail:m leaf+"ford: scry-block {<p.nap>}" ~)
+    %2  (fail:m leaf+"ford: ride-fail" p.nap)
   ==
 ::
-++  with-cache
-  =,  m  (fume ,vase)
+++  with-cache-key
+  =/  m  (fume ,vase)
   |=  [key=hoon-cache-key run=form:m]
   ^-  form:m
   |=  in=fume-input
@@ -235,7 +248,7 @@
   ?-  -.next.ran
     %fail  ran
     %done  ran(s (put:ca key value.next.ran))
-    %load  ran(on-load this(run on-load.next.ran))
+    %load  ran(on-load.next this(run on-load.next.ran))
   ==
 ::
 ++  load-spar
@@ -249,5 +262,11 @@
   ?>  ?=(^ in.fin1)
   ?~  u.in.fin1
     [s.fin1 %fail ~[leaf+"ford: load-fail {<spar>}"]]
-  [s.fin1 %done u.in.fin1]
+  [s.fin1 %done u.u.in.fin1]
+::
+++  scry-for-spar
+  |=  =spar
+  ^-  (unit (unit cage))
+  !!
+::
 --
