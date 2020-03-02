@@ -251,9 +251,13 @@ $ git lfs pull
 
 ## Interface development
 
-Designing interfaces within urbit/urbit requires that the above steps for 
-fake `~zod` initialization are followed. Once your fake ship is running and you 
-see
+[nix](https://github.com/NixOS/nix) and `git-lfs` should be installed at
+this point, and have been used to `make build` the project.
+
+Designing interfaces within urbit/urbit additionally requires that the 
+above steps for fake `~zod` initialization have been followed. 
+
+Once your fake ship is running and you see
 ```
 ~zod:dojo>
 ```
