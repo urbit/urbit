@@ -243,11 +243,13 @@
   =/  ca  (by-clock hoon-cache-key vase)
   =^  val  s.in  (get:ca key)
   ?^  val
+    ~&  cache-hit+-.key
     [s.in %done u.val]
+  ~&  cache-miss+-.key
   =/  ran  (run in)
   ?-  -.next.ran
     %fail  ran
-    %done  ran(s (put:ca key value.next.ran))
+    %done  ran(s (~(put ca s.ran) key value.next.ran))
     %load  ran(on-load.next this(run on-load.next.ran))
   ==
 ::
