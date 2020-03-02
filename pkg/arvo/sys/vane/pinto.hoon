@@ -243,9 +243,7 @@
   =/  ca  (by-clock hoon-cache-key vase)
   =^  val  s.in  (get:ca key)
   ?^  val
-    ~&  cache-hit+-.key
     [s.in %done u.val]
-  ~&  cache-miss+-.key
   =/  ran  (run in)
   ?-  -.next.ran
     %fail  ran
