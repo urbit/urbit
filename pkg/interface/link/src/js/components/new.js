@@ -125,12 +125,12 @@ export class NewScreen extends Component {
       ships: []
     }, () => {
       api.setSpinner(true);
-      //TODO account for state.createGroup
       let submit = api.createCollection(
         appPath,
         state.title,
         state.description,
-        target
+        target,
+        state.createGroup
       );
       submit.then(() => {
         api.setSpinner(false);

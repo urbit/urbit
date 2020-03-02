@@ -7,6 +7,7 @@
           title=@t
           description=@t
           members=$%([%group =path] [%ships ships=(set ship)])
+          real-group=?
       ==
   ==
 --

@@ -144,10 +144,11 @@ class UrbitApi {
     );
   }
 
-  createCollection(path, title, description, members) {
-    // members is either {group:'/group-path'} or {'ships':[~zod]}
+  createCollection(path, title, description, members, realGroup) {
+    // members is either {group:'/group-path'} or {'ships':[~zod]},
+    // with realGroup signifying if ships should become a managed group or not.
     return this.action("link-view", "link-view-action", {
-      create: {path, title, description, members}
+      create: {path, title, description, members, realGroup}
     })
   }
 

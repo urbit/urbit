@@ -12,7 +12,7 @@
 ::
 /-  *link-view,
     metadata-store, *invite-store, group-store,
-    group-hook, permission-hook, metadata-hook
+    group-hook, permission-hook, metadata-hook, contact-view
 /+  *link, *server, default-agent, verb, dbug
 ::
 |%
@@ -274,7 +274,9 @@
   =/  group-path=path
     ?-  -.members.act
       %group  path.members.act
-      %ships  [~.~ (scot %p our.bowl) path.act]
+      %ships  %+  weld
+                ?:(real-group.act ~ [~.~]~)
+              [(scot %p our.bowl) path.act]
     ==
   |^
   =;  group-setup=(list card)
@@ -294,6 +296,16 @@
         ==
     ==
   ?:  ?=(%group -.members.act)  ~
+  ::  if the group is "real", make contact-view do the heavy lifting
+  ::
+  ?:  real-group.act
+    :_  ~
+    %^  do-poke  %contact-view
+      %contact-view-action
+    !>  ^-  contact-view-action:contact-view
+    [%create group-path [ships.members title description]:act]
+  ::  for "unmanaged" groups, do it ourselves
+  ::
   :*  ::  create the new group
       ::
       %^  do-poke  %group-store
