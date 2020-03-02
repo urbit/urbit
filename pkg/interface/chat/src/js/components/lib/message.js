@@ -133,7 +133,7 @@ export class Message extends Component {
         && (chatroom[0] === letter.text))) { // entire message is room name?
           return (
             <Link
-            className="bb b--black f7 mono lh-copy v-top"
+            className="bb b--black b--white-d f7 mono lh-copy v-top"
             to={"/~chat/join/" + chatroom.input}>
               {letter.text}
             </Link>
