@@ -1,4 +1,6 @@
 =,  contain
+=*  care  care:clay
+=*  case  case:clay
 =>
 |%
 ::  TODO: move to zuse
@@ -6,6 +8,7 @@
 +$  plan
   $^  [hed=plan tal=plan]
   $%  [%ride sut=plan gen=hoon]
+      [%load =spar]
       [%$ =cage]
   ==
 ::  $hoon-cache: cache for compiler operations
@@ -30,7 +33,7 @@
 +$  build
   $:  live=?
       =desk
-      =case:clay
+      =case
       =plan
   ==
 +$  build-state
@@ -40,7 +43,7 @@
   ==
 ::  $spar: clay scry request on unspecified $beak
 ::
-+$  spar  [=care:clay =path]
++$  spar  [=care =path]
 ::  $fume-input: input to a monadic build operation
 ::
 ::    in: ~ if initial input to kick off computation
@@ -140,8 +143,8 @@
 ++  vase-to-cage  (bake (with-mark %noun) vase)
 ++  with-mark  |=(=mark |*(* [mark +<]))
 --
-|=  =hoon-cache  ::  TODO: include relevant ford state
-|=  [our=ship syd=desk now=@da scry=sley]
+|=  =hoon-cache
+|=  [our=ship =desk now=@da scry=sley]
 |%
 ++  run-root-build
   |=  [=build =build-state in=(unit (unit cage))]
@@ -163,11 +166,13 @@
       %fail  [`|+tang.next.pro build-state s.pro]
       %load
     ?^  in
-      $(pro ((make plan.build) in s.pro), hoon-cache s.pro, in ~)
+      =.  cur.build-state  (~(put by cur.build-state) spar.next.pro u.in)
+      $(pro (on-load.next.pro in s.pro), hoon-cache s.pro, in ~)
     ?^  got=(~(get by cur.build-state) spar.next.pro)
-      $(pro ((make plan.build) got s.pro), hoon-cache s.pro)
+      $(pro (on-load.next.pro got s.pro), hoon-cache s.pro)
     ?^  res=(scry-for-spar spar.next.pro)
-      $(pro ((make plan.build) res s.pro), hoon-cache s.pro)
+      =.  cur.build-state  (~(put by cur.build-state) spar.next.pro u.res)
+      $(pro (on-load.next.pro res s.pro), hoon-cache s.pro)
     [~ build-state(fum `[spar on-load]:next.pro) s.pro]
   ==
 ::
@@ -178,6 +183,7 @@
   ?-  -.plan
     ^      (make-cell plan)
     %$     (pure:m cage.plan)
+    %load  (make-load +.plan)
     %ride  (make-ride +.plan)
   ==
 ::
@@ -188,6 +194,19 @@
   ;<  [mark hed=vase]  bind:m  (make a)
   ;<  [mark tal=vase]  bind:m  (make b)
   (pure:m noun+(slop hed tal))
+::
+++  make-load
+  |=  =spar
+  =/  m  (fume ,cage)
+  ^-  form:m
+  |=  fin0=fume-input
+  :^  s.fin0  %load  spar
+  ^-  form:m
+  |=  fin1=fume-input
+  ?>  ?=(^ in.fin1)
+  ?~  u.in.fin1
+    [s.fin1 %fail ~[leaf+"ford: load-fail {<spar>}"]]
+  [s.fin1 %done u.u.in.fin1]
 ::
 ++  run-reef
   =/  m  (fume ,vase)
@@ -200,7 +219,7 @@
   |=  [=path sut=vase]
   =/  m  (fume ,vase)
   ^-  form:m
-  ;<  [=mark xet=vase]  bind:m  (load-spar %x path)
+  ;<  [=mark xet=vase]  bind:m  (make-load %x path)
   ?>  ?=(%hoon mark)
   =/  tex  !<(@t xet)
   =/  gen  (rain path tex)
@@ -251,22 +270,10 @@
     %load  ran(on-load.next this(run on-load.next.ran))
   ==
 ::
-++  load-spar
-  |=  =spar
-  =/  m  (fume ,cage)
-  ^-  form:m
-  |=  fin0=fume-input
-  :^  s.fin0  %load  spar
-  ^-  form:m
-  |=  fin1=fume-input
-  ?>  ?=(^ in.fin1)
-  ?~  u.in.fin1
-    [s.fin1 %fail ~[leaf+"ford: load-fail {<spar>}"]]
-  [s.fin1 %done u.u.in.fin1]
-::
 ++  scry-for-spar
   |=  =spar
   ^-  (unit (unit cage))
-  !!
-::
+  =/  =term  (cat 3 %c care.spar)
+  =/  =beam  [[our desk da+now] (flop path.spar)]
+  (scry ** ~ term beam)
 --
