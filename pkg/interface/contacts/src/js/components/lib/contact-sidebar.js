@@ -82,7 +82,7 @@ export class ContactSidebar extends Component {
             className={((props.path.includes(window.ship))
               ? "dib"
               : "dn")}>
-            <p className="f9 pl4 pt0 pt4-m pt4-l pt4-xl gray2 bn">Invite</p>
+            <p className="f9 pl4 pt0 pt4-m pt4-l pt4-xl green2 bn">Add to Group</p>
           </Link>
           <Link to={detailHref}
             className="dib dn-m dn-l dn-xl f9 pl4 pt0 pt4-m pt4-l pt4-xl gray2 bn">Channels</Link>

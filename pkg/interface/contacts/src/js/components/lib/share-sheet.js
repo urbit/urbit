@@ -13,7 +13,7 @@ export class ShareSheet extends Component {
 
     return (
       <div>
-        <p className="pt4 pb2 pl4 pr4 f8 gray2 f9">Share Your Profile</p>
+        <p className="pt4 pb2 pl4 pr4 f8 gray2 f9">Group Identity</p>
         <ContactItem
           key={props.ship}
           ship={props.ship}
