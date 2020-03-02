@@ -27,27 +27,21 @@ dryRunL = pierConfigL . pcDryRun
 
 -------------------------------------------------------------------------------
 
-data NetworkingType
-  = NetworkNone
-  | NetworkNormal
-  | NetworkLocalhost
-  deriving (Show)
+data NetMode
+  = NMNone
+  | NMLocalhost
+  | NMNormal
+ deriving (Eq, Ord, Show)
 
 data NetworkConfig = NetworkConfig
-  { ncNetworking :: NetworkingType
-  , ncAmesPort   :: Maybe Word16
+  { _ncNetMode    :: NetMode
+  , _ncAmesPort   :: Maybe Word16
+  , _ncHttpPort   :: Maybe Word16
+  , _ncHttpsPort  :: Maybe Word16
+  , _ncLocalPort  :: Maybe Word16
   } deriving (Show)
+
+makeLenses ''NetworkConfig
 
 class HasNetworkConfig env where
     networkConfigL :: Lens' env NetworkConfig
-
-getNetworkingType :: (MonadReader env m, HasNetworkConfig env)
-                  => m NetworkingType
-getNetworkingType = do
-  NetworkConfig{..} <- view networkConfigL
-  pure ncNetworking
-
-getAmesPort :: (MonadReader env m, HasNetworkConfig env) => m (Maybe Word16)
-getAmesPort = do
-  NetworkConfig{..} <- view networkConfigL
-  pure ncAmesPort

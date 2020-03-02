@@ -16,18 +16,21 @@ import System.Environment (getProgName)
 --------------------------------------------------------------------------------
 
 data Opts = Opts
-    { oQuiet      :: Bool
-    , oHashless   :: Bool
-    , oExit       :: Bool
-    , oDryRun     :: Bool
-    , oDryFrom    :: Maybe Word64
-    , oVerbose    :: Bool
-    , oAmesPort   :: Maybe Word16
-    , oTrace      :: Bool
-    , oCollectFx  :: Bool
-    , oLocalhost  :: Bool
-    , oOffline    :: Bool
-    , oFullReplay :: Bool
+    { oQuiet        :: Bool
+    , oHashless     :: Bool
+    , oExit         :: Bool
+    , oDryRun       :: Bool
+    , oDryFrom      :: Maybe Word64
+    , oVerbose      :: Bool
+    , oAmesPort     :: Maybe Word16
+    , oTrace        :: Bool
+    , oCollectFx    :: Bool
+    , oLocalhost    :: Bool
+    , oOffline      :: Bool
+    , oFullReplay   :: Bool
+    , oHttpPort     :: Maybe Word16
+    , oHttpsPort    :: Maybe Word16
+    , oLoopbackPort :: Maybe Word16
     }
   deriving (Show)
 
@@ -212,8 +215,28 @@ opts = do
     oAmesPort  <- optional $ option auto $ metavar "PORT"
                              <> short 'p'
                              <> long "ames"
-                             <> help "Ames port number"
-                             <> hidden
+                             <> help "Ames port"
+
+    oHttpPort <-
+      optional
+      $  option auto
+      $  metavar "PORT"
+      <> long "http-port"
+      <> help "HTTP Server port"
+
+    oHttpsPort <-
+      optional
+      $  option auto
+      $  metavar "PORT"
+      <> long "https-port"
+      <> help "HTTPS server port"
+
+    oLoopbackPort <-
+      optional
+      $  option auto
+      $  metavar "PORT"
+      <> long "loopback-port"
+      <> help "Localhost-only HTTP server port"
 
     -- Always disable hashboard. Right now, urbit is almost unusable with this
     -- flag enabled and it is disabled in vere.
