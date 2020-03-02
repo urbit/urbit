@@ -14,7 +14,8 @@ export class SettingsScreen extends Component {
     super(props);
 
     this.state = {
-      isLoading: false
+      isLoading: false,
+      title: ""
     };
 
     this.renderDelete = this.renderDelete.bind(this);
@@ -30,6 +31,10 @@ export class SettingsScreen extends Component {
         props.history.push('/~chat');
       });
     }
+  }
+
+  changeTitle() {
+    this.setState({title: event.target.value})
   }
 
   deleteChat() {
@@ -67,6 +72,39 @@ export class SettingsScreen extends Component {
       </div>
       </div>
     );
+  }
+
+  renderMetadataSettings() {
+    const { props, state } = this;
+
+    let chatOwner = (deSig(props.match.params.ship) === window.ship);
+
+    let title = ((props.association) && (props.association.metadata))
+      ? props.association.metadata.title : "";
+
+    return(
+      <div>
+        <div className={"w-100 fl mt3 " + ((chatOwner) ? 'o-30' : '')}
+        style={{maxWidth: "29rem"}}>
+        <p className="f8 mt3 lh-copy">Rename</p>
+        <p className="f9 gray2 db mb4">Change the name of this chat</p>
+          <input
+            className="f8 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 flex-auto mr3"
+            value={title}
+            onChange={this.changeTitle}
+          />
+          <span className="f8 pointer absolute pa3 inter"
+            style={{ right: 12, top: 1 }}
+            ref="rename"
+            onClick={() => {
+              this.refs.rename.innerText = "Saved";
+              props.api. //TODO
+            }}>
+            Save
+              </span>
+        </div>
+      </div>
+    )
   }
 
   render() {
@@ -154,11 +192,11 @@ export class SettingsScreen extends Component {
             <div className="relative w-100 flex"
               style={{ maxWidth: "29rem" }}>
               <input
-                className="f8 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 flex-auto mr3"
+                className="f8 mono ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 flex-auto mr3"
                 disabled={true}
                 value={props.station.substr(1)}
               />
-              <span className="f8 pointer green2 absolute pa3 inter"
+              <span className="f8 pointer absolute pa3 inter"
                 style={{right: 12, top: 1}}
                 ref="copy"
                 onClick={() => {
