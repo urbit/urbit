@@ -209,6 +209,7 @@
     :~  (create-chat app-path.act security.act allow-history.act)
         %-  create-group
         :*  group-path.act
+            app-path.act
             security.act
             members.act
             title.act
@@ -250,21 +251,27 @@
     ==
   ::
   ++  create-group
-    |=  [=path security=rw-security ships=(set ship) title=@t desc=@t]
+    |=  [=path app-path=path sec=rw-security ships=(set ship) title=@t desc=@t]
     ^-  (list card)
-    ?^  (group-scry path)  ~
+    =/  group  (group-scry path)
+    ?^  group
+      %-  zing
+      %+  turn  ~(tap in u.group)
+      |=  =ship
+      ?:  =(ship our.bol)  ~
+      [(send-invite app-path ship)]~
     ::  do not create a managed group if this is a sig path or a blacklist
     ::
-    ?:  =(security %channel)
+    ?:  =(sec %channel)
       :~  (group-poke [%bundle path])
-          (create-security path security)
+          (create-security path sec)
           (permission-hook-poke [%add-owned path path])
       ==
     ?:  (is-managed path)
       ~[(contact-view-poke [%create path ships title desc])]
     :~  (group-poke [%bundle path])
         (group-poke [%add ships path])
-        (create-security path security)
+        (create-security path sec)
         (permission-hook-poke [%add-owned path path])
     ==
   ::
@@ -315,7 +322,7 @@
         !>(act)
     ==
   ::
-  ++  send-invite-poke
+  ++  send-invite
     |=  [=path =ship]
     ^-  card
     =/  =invite
