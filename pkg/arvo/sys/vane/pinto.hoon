@@ -1,5 +1,24 @@
+=,  contain
 =>
 |%
+::  $hoon-cache: cache for compiler operations
+::
++$  hoon-cache  (clock hoon-cache-key vase)
+::  +hoon-cache-key: cache key for a compiler operation
+::
+::    %call: +slam (vase of) gate on (vase of) sample
+::    %hood: parse file into $scaffold; use !<(scaffold val)
+::    %ride: +slap $hoon against $vase
+::    %slim: compile +slap; use !<([type nock] val)
+::    %slit: infer +slam product type; use .p.val
+::
++$  hoon-cache-key
+  $%  [%call gate=vase sample=vase]
+      [%hood =beam txt=@t]
+      [%ride formula=hoon subject=vase]
+      [%slim subject-type=type formula=hoon]
+      [%slit gate=type sample=type]
+  ==
 +$  product  (unit (each cage tang))
 +$  build
   $:  live=?
@@ -19,9 +38,8 @@
 ::
 ::    in: ~ if initial input to kick off computation
 ::
-+$  fume-input  [in=(unit clay-response) s=fume-state]
++$  fume-input  [in=(unit (unit cage)) s=fume-state]
 +$  fume-state  hoon-cache
-+$  clay-response  (unit cage)
 ++  fume-output-raw
   |*  a=mold
   $~  [*fume-state %done *a]
@@ -35,11 +53,6 @@
   |*  a=mold
   $-(fume-input (fume-output-raw a))
 ::
-++  fume-fail
-  |=  =tang
-  |=  fume-input
-  [s %fail err]
-::
 ++  fume
   |*  a=mold
   |%
@@ -51,13 +64,31 @@
     |=  fume-input
     [s %done arg]
   ::
+  ++  fail
+    |=  =tang
+    ^-  form
+    |=  fume-input
+    [s %fail tang]
+  ::
+  ++  on-fail
+    |=  [print=(trap tang) run=form]
+    ^-  form
+    |=  in=fume-input
+    =*  this  .
+    =/  res  (run in)
+    ?-  -.next.res
+      %done  res
+      %fail  res(tang.next (welp (print) tang.next.res))
+      %load  res(on-load.next this(run on-load.next.res))
+    ==
+  ::
   ++  bind
     |*  b=mold
     |=  [m-b=(fume-form-raw b) fun=$-(b form)]
     ^-  form
-    |=  =fume-input
+    |=  in=fume-input
     =*  this  .
-    =/  b-res  (m-b fume-input)
+    =/  b-res  (m-b in)
     ^-  output
     ?-    -.next.b-res
         %fail  b-res
@@ -65,17 +96,23 @@
         %done  (fun value.next.b-res)
     ==
   ::
+  ++  fmap
+    |*  b=mold
+    |=  [m-b=(fume-form-raw b) fun=$-(b a)]
+    ^-  form
+    ((bind b) |=(b (pure (fun +<))))
+  ::
   ++  try
     |=  [x=form y=form]
     ^-  form
-    |=  =fume-input
+    |=  in=fume-input
     =*  this  .
-    =/  x-res  (x fume-input)
+    =/  x-res  (x in)
     ?-    -.next.x-res
         %done  x-res
         %load  x-res(self.next this(x self.next.x-res))
         %fail
-      =/  y-res  (y fume-input)
+      =/  y-res  (y in)
       :-  s.y-res
       ?-  -.next.y-res
         %done  next.y-res
@@ -84,16 +121,122 @@
       ==
     ==
   --
+::
+++  lift-vase
+  =/  mc  (fume ,cage)
+  =/  mv  (fume ,vase)
+  |=  run=form:mv
+  ^-  form:mc
+  ((fmap:form:mc ,vase) vase-to-cage run)
+::
+++  vase-to-cage  (bake (with-mark %noun) vase)
+++  with-mark  |=(=mark |*(* [mark +<])))
 --
 |=  =hoon-cache  ::  TODO: include relevant ford state
-|=  [our=ship syd=desk now=@da hen=duct]
+|=  [our=ship syd=desk now=@da scry=sley]
 |%
-++  get-cached
-  |=  =hoon-cache-key
-  =/  m  (fume ,(unit vase))
+++  run-root-build
+  |=  [=build =build-state in=(unit (unit cage))]
+  ^-  [=product =^build-state =^hoon-cache]
+  =/  m  (fume ,cage)
+  ::  fresh build should have no response; rerun must have one
+  ::
+  ?>  =(=(~ fum.build-state) =(~ in))
+  ::  if no attempt has been made already, try to run the build
+  ::
+  =^  pro  in
+    ?^  fum.build-state
+      [[%load `fum.build-state] in]
+    [((make plan.build) in) ~]
+  ::
+  |-  ^-  [product ^build-state ^hoon-cache]
+  ?-    -.next.pro
+      %done  [`&+value.next.pro build-state s.pro]
+      %fail  [`|+tang.next.pro build-state s.pro]
+      %load
+    ?^  in
+      $(pro ((make plan.build) in), hoon-cache s.pro, in ~)
+    ?^  got=(~(get by cur.build-state) spar.next.pro)
+      $(pro ((make plan.build) got), hoon-cache s.pro)
+    ?^  res=(scry-for-spar spar.next.pro)
+      $(pro ((make plan.build) res), hoon-cache s.pro)
+    [~ build-state(fum `[spar on-load]:next.pro) s.pro]
+  ==
+::
+++  make
+  |=  =plan
+  =/  m  (fume ,cage)
   ^-  form:m
-  |=  s=fume-state
-  !!
+  ?-  -.plan
+    ^      make-cell
+    %reef  make-reef
+    %ride  make-ride
+  ==
+::
+++  make-cell
+  |=  [a=plan b=plan]
+  =/  m  (fume ,cage)
+  ^-  form:m
+  ;<  [mark hed=vase]  bind:m  (make a)
+  ;<  [mark tal=vase]  bind:m  (make b)
+  (pure:m noun+(slop hed tal))
+::
+++  make-reef  (lift-vase run-reef)
+++  run-reef
+  =/  m  (fume ,vase)
+  ^-  form:m
+  ;<  hun=vase  bind:m  (load-hoon-raw /sys/hoon/hoon !>(~))
+  ;<  rav=vase  bind:m  (load-hoon-raw /sys/arvo/hoon (slot 7 hun))
+  (load-hoon-raw /sys/zuse/hoon (slap rav ^~((ream '..is'))))
+::
+++  load-hoon-raw
+  |=  [=path sut=vase]
+  =/  m  (fume ,vase)
+  ^-  form:m
+  ;<  [=mark xet=vase]  bind:m  (load-spar %x path)
+  ?>  ?=(%hoon mark)
+  =/  tex  !<(@t xet)
+  =/  gen  (rain path tex)
+  (run-ride gen sut)
+::
+++  make-ride  |=([sut=vase gen=hoon] (lift-vase (run-ride +<)))
+++  run-ride
+  |=  [sut=vase gen=hoon]
+  =/  m  (fume ,vase)
+  ^-  form:m
+  %+  with-cache-key  [%ride gen sut]
+  ;<  sim=vase  bind:m
+    %+  with-cache-key  [%slim gen p.sut]
+    %+  on-fail  |.([leaf+"ford: slim-fail"]~)
+    =/  lap  (mule |.((~(mint ut sut) %noun gen)))
+    ?-  -.lap
+      %&  (pure:m !>(p.lap))
+      %|  (fail:m p.lap)
+    ==
+  %+  on-fail  |.([leaf+"ford: ride-fail"]~)
+  =+  !<([gol=type fol=nock] sim)
+  =/  nap  (mock [q.sut fol] scry)
+  ?-  -.nap
+    %&  (pure:m [gol nap])
+    %|  (fail:m p.nap)
+  ==
+::
+++  with-cache
+  =,  m  (fume ,vase)
+  |=  [key=hoon-cache-key run=form:m]
+  ^-  form:m
+  |=  in=fume-input
+  =*  this  .
+  =/  ca  (by-clock hoon-cache-key vase)
+  =^  val  s.in  (get:ca key)
+  ?^  val
+    [s.in %done u.val]
+  =/  ran  (run in)
+  ?-  -.next.ran
+    %fail  ran
+    %done  ran(s (put:ca key value.next.ran))
+    %load  ran(on-load this(run on-load.next.ran))
+  ==
 ::
 ++  load-spar
   |=  =spar
@@ -107,70 +250,4 @@
   ?~  u.in.fin1
     [s.fin1 %fail ~[leaf+"ford: load-fail {<spar>}"]]
   [s.fin1 %done u.in.fin1]
-::
-++  load-hoon
-  |=  =spar
-  =/  m  (fume ,vase)
-  ^-  form:m
-  |=  s=fume-state
-  ;<  [=mark vase=vase]  bind:m  (load spar)
-  ?>  ?=(%hoon mark)
-  =/  tex  !<(@t vase)
-  =/  gen  (rain path.spar tex)  ::  TODO: parse (list pike)
-  ;<  sut=vase  bind:m  make-reef
-  ;<  vax  bind:m  (get-cached %ride gen sut)
-  ?^  vax
-    (pure:m vax)
-  ;<  sim  bind:m  (get-cached %slim gen p.sut)
-  ?^  sim
-    (pure:m p.sim .*(q.sut q.sim))
-  (slap sut gen)
-::
-++  cons
-  |=  [a=plan b=plan]
-  =/  m  (fume ,cage)
-  ^-  form:m
-  ;<  [mark hed=vase]  bind:m  (make a)
-  ;<  [mark tal=vase]  bind:m  (make b)
-  (pure:m noun+(slop hed tal))
-::
-++  run-root-build
-  |=  [=build =build-state in=(unit clay-response)]
-  ^-  [=product =^build-state =^hoon-cache]
-  =/  m  (fume ,cage)
-  ::  fresh build should have no response; rerun must have one
-  ::
-  ?>  =(=(~ fum.build-state) =(~ in))
-  ::  if no attempt has been made already, try to run the build
-  ::
-  =^  pro  in
-    ?^  fum.build-state
-      [[%load `fum.build-state] in]
-    [((make build build-state) in) ~]
-  ::
-  |-  ^-  [product ^build-state ^hoon-cache]
-  ?-    -.next.pro
-      %done  [`&+value.next.pro build-state s.pro]
-      %fail  [`|+tang.next.pro build-state s.pro]
-      %load
-    ?^  in
-      $(pro ((make build build-state) in), hoon-cache s.pro, in ~)
-    ?^  got=(~(get by cur.build-state) spar.next.pro)
-      $(pro ((make build build-state) got), hoon-cache s.pro)
-    ?^  res=(scry-for-spar spar.next.pro)
-      $(pro ((make build build-state) res), hoon-cache s.pro)
-    [~ build-state(fum `[spar on-load]:next.pro) s.pro]
-  ==
-::
-++  make
-  |=  [=build =build-state]
-  =/  m  (fume ,cage)
-  ^-  form:m
-  !!
-::
-++  make-reef
-  =,  m  (fume ,vase)
-  ^-  form:m
-  ::
-  !!
 --
