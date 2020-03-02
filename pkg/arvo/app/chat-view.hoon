@@ -207,7 +207,7 @@
       ~
     %-  zing
     :~  (create-chat app-path.act security.act allow-history.act)
-        %-  create-managed-group
+        %-  create-group
         :*  group-path.act
             security.act
             members.act
@@ -215,8 +215,6 @@
             description.act
         ==
         (create-metadata title.act description.act group-path.act app-path.act)
-        (create-security group-path.act security.act)
-        ~[(permission-hook-poke [%add-owned group-path.act group-path.act])]
     ==
   ::
       %delete
@@ -229,9 +227,7 @@
         ==
       ::
         ?:  (is-managed group-path)  ~
-        :~  (permission-hook-poke [%remove group-path])
-            (permission-poke [%delete group-path])
-            (group-poke [%unbundle group-path])
+        :~  (group-poke [%unbundle group-path])
             (metadata-hook-poke [%remove group-path])
         ==
     ==
@@ -253,18 +249,34 @@
         (chat-hook-poke [%add-owned path security history])
     ==
   ::
-  ++  create-managed-group
+  ++  create-group
     |=  [=path security=rw-security ships=(set ship) title=@t desc=@t]
     ^-  (list card)
     ?^  (group-scry path)  ~
     ::  do not create a managed group if this is a sig path or a blacklist
     ::
     ?:  =(security %channel)
-      ~[(group-poke [%bundle path])]
+      :~  (group-poke [%bundle path])
+          (create-security path security)
+          (permission-hook-poke [%add-owned path path])
+      ==
     ?:  (is-managed path)
       ~[(contact-view-poke [%create path ships title desc])]
     :~  (group-poke [%bundle path])
         (group-poke [%add ships path])
+        (create-security path security)
+        (permission-hook-poke [%add-owned path path])
+    ==
+  ::
+  ++  create-security
+    |=  [pax=path sec=rw-security]
+    ^-  card
+    ?+  sec       !!
+        %channel
+      (perm-group-hook-poke [%associate pax [[pax %black] ~ ~]])
+    ::
+        %village
+      (perm-group-hook-poke [%associate pax [[pax %white] ~ ~]])
     ==
   ::
   ++  create-metadata
@@ -282,17 +294,6 @@
       ==
     :~  (metadata-store-poke [%add group-path [%chat app-path] metadata])
         (metadata-hook-poke [%add-owned group-path])
-    ==
-  ::
-  ++  create-security
-    |=  [pax=path sec=rw-security]
-    ^-  (list card)
-    ?+  sec       ~
-        %channel
-      ~[(perm-group-hook-poke [%associate pax [[pax %black] ~ ~]])]
-    ::
-        %village
-      ~[(perm-group-hook-poke [%associate pax [[pax %white] ~ ~]])]
     ==
   ::
   ++  contact-view-poke

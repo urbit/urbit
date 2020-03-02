@@ -6,7 +6,9 @@
     *invite-store,
     *contact-hook,
     *metadata-store,
-    *metadata-hook
+    *metadata-hook,
+    *permission-group-hook,
+    *permission-hook
 /+  *server, *contact-json, base64, default-agent
 /=  index
   /^  octs
@@ -137,6 +139,8 @@
         (contact-hook-poke [%add-owned path.act])
         (group-hook-poke [%add our.bol path.act])
         (group-poke [%add (~(put in ships.act) our.bol) path.act])
+        (perm-group-hook-poke [%associate path.act [[path.act %white] ~ ~]])
+        (permission-hook-poke [%add-owned path.act path.act])
     ==
     (create-metadata path.act title.act description.act)
   ::
@@ -236,6 +240,20 @@
   |=  act=metadata-hook-action
   ^-  card
   [%pass / %agent [our.bol %metadata-hook] %poke %metadata-hook-action !>(act)]
+::
+++  perm-group-hook-poke
+  |=  act=permission-group-hook-action
+  ^-  card
+  :*  %pass  /  %agent  [our.bol %permission-group-hook]
+      %poke  %permission-group-hook-action  !>(act)
+  ==
+::
+++  permission-hook-poke
+  |=  act=permission-hook-action
+  ^-  card
+  :*  %pass  /  %agent  [our.bol %permission-hook]
+      %poke  %permission-hook-action  !>(act)
+  ==
 ::
 ++  create-metadata
   |=  [=path title=@t description=@t]
