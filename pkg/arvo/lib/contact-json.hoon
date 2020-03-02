@@ -109,6 +109,8 @@
     %-  ot
     :~  [%path pa]
         [%ships (as (su ;~(pfix sig fed:ag)))]
+        [%title so]
+        [%description so]
     ==
   ::
   ++  delete  (ot [%path pa]~)

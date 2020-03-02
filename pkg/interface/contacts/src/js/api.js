@@ -69,7 +69,14 @@ class UrbitApi {
   }
 
   contactCreate(path, ships = []) {
-    return this.contactViewAction({ create: { path, ships }});
+    return this.contactViewAction({
+      create: {
+        path,
+        ships,
+        title: '',
+        description: ''
+      }
+    });
   }
 
   groupAdd(path, ships = []) {

@@ -202,15 +202,21 @@
   ?-  -.act
       %create
     ?>  ?=(^ app-path.act)
+    ?>  |(=(group-path.act app-path.act) =(~(tap in members.act) ~))
     ?^  (chat-scry app-path.act)
       ~&  %chat-already-exists
       ~
     %-  zing
     :~  (create-chat app-path.act security.act allow-history.act)
-        (create-managed-group group-path.act security.act members.act)
+        %-  create-group
+        :*  group-path.act
+            app-path.act
+            security.act
+            members.act
+            title.act
+            description.act
+        ==
         (create-metadata title.act description.act group-path.act app-path.act)
-        (create-security group-path.act security.act)
-        ~[(permission-hook-poke [%add-owned group-path.act group-path.act])]
     ==
   ::
       %delete
@@ -223,9 +229,7 @@
         ==
       ::
         ?:  (is-managed group-path)  ~
-        :~  (permission-hook-poke [%remove group-path])
-            (permission-poke [%delete group-path])
-            (group-poke [%unbundle group-path])
+        :~  (group-poke [%unbundle group-path])
             (metadata-hook-poke [%remove group-path])
         ==
     ==
@@ -247,18 +251,40 @@
         (chat-hook-poke [%add-owned path security history])
     ==
   ::
-  ++  create-managed-group
-    |=  [=path security=rw-security ships=(set ship)]
+  ++  create-group
+    |=  [=path app-path=path sec=rw-security ships=(set ship) title=@t desc=@t]
     ^-  (list card)
-    ?^  (group-scry path)  ~
+    =/  group  (group-scry path)
+    ?^  group
+      %-  zing
+      %+  turn  ~(tap in u.group)
+      |=  =ship
+      ?:  =(ship our.bol)  ~
+      [(send-invite app-path ship)]~
     ::  do not create a managed group if this is a sig path or a blacklist
     ::
-    ?:  =(security %channel)
-      ~[(group-poke [%bundle path])]
+    ?:  =(sec %channel)
+      :~  (group-poke [%bundle path])
+          (create-security path sec)
+          (permission-hook-poke [%add-owned path path])
+      ==
     ?:  (is-managed path)
-      ~[(contact-view-poke [%create path ships])]
+      ~[(contact-view-poke [%create path ships title desc])]
     :~  (group-poke [%bundle path])
         (group-poke [%add ships path])
+        (create-security path sec)
+        (permission-hook-poke [%add-owned path path])
+    ==
+  ::
+  ++  create-security
+    |=  [pax=path sec=rw-security]
+    ^-  card
+    ?+  sec       !!
+        %channel
+      (perm-group-hook-poke [%associate pax [[pax %black] ~ ~]])
+    ::
+        %village
+      (perm-group-hook-poke [%associate pax [[pax %white] ~ ~]])
     ==
   ::
   ++  create-metadata
@@ -278,19 +304,8 @@
         (metadata-hook-poke [%add-owned group-path])
     ==
   ::
-  ++  create-security
-    |=  [pax=path sec=rw-security]
-    ^-  (list card)
-    ?+  sec       ~
-        %channel
-      ~[(perm-group-hook-poke [%associate pax [[pax %black] ~ ~]])]
-    ::
-        %village
-      ~[(perm-group-hook-poke [%associate pax [[pax %white] ~ ~]])]
-    ==
-  ::
   ++  contact-view-poke
-    |=  act=[%create =path ships=(set ship)]
+    |=  act=[%create =path ships=(set ship) title=@t description=@t]
     ^-  card
     [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
   ::
@@ -308,7 +323,7 @@
         !>(act)
     ==
   ::
-  ++  send-invite-poke
+  ++  send-invite
     |=  [=path =ship]
     ^-  card
     =/  =invite

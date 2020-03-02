@@ -1,7 +1,14 @@
 ::  contact-view: sets up contact JS client and combines commands
 ::  into semantic actions for the UI
 ::
-/-  *group-store, *group-hook, *invite-store, *contact-hook
+/-  *group-store,
+    *group-hook,
+    *invite-store,
+    *contact-hook,
+    *metadata-store,
+    *metadata-hook,
+    *permission-group-hook,
+    *permission-hook
 /+  *server, *contact-json, base64, default-agent
 /=  index
   /^  octs
@@ -126,18 +133,24 @@
   ?-  -.act
       %create
     ?>  ?=([@ *] path.act)
-    :~  (group-poke [%bundle path.act])
-        (contact-poke [%create path.act])
-        (contact-hook-poke [%add-owned path.act])
-        (group-hook-poke [%add our.bol path.act])
-        (group-poke [%add (~(put in ships.act) our.bol) path.act])
-    ==
+    %+  weld
+      :~  (group-poke [%bundle path.act])
+          (contact-poke [%create path.act])
+          (contact-hook-poke [%add-owned path.act])
+          (group-hook-poke [%add our.bol path.act])
+          (group-poke [%add (~(put in ships.act) our.bol) path.act])
+          (perm-group-hook-poke [%associate path.act [[path.act %white] ~ ~]])
+          (permission-hook-poke [%add-owned path.act path.act])
+      ==
+    (create-metadata path.act title.act description.act)
   ::
       %delete
+    %+  weld
     :~  (group-poke [%unbundle path.act])
         (contact-poke [%delete path.act])
         (contact-hook-poke [%remove path.act])
     ==
+    (delete-metadata path.act)
   ::
       %remove
     :~  (group-poke [%remove [ship.act ~ ~] path.act])
@@ -217,6 +230,51 @@
   |=  act=group-hook-action
   ^-  card
   [%pass / %agent [our.bol %group-hook] %poke %group-hook-action !>(act)]
+::
+++  metadata-poke
+  |=  act=metadata-action
+  ^-  card
+  [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
+::
+++  metadata-hook-poke
+  |=  act=metadata-hook-action
+  ^-  card
+  [%pass / %agent [our.bol %metadata-hook] %poke %metadata-hook-action !>(act)]
+::
+++  perm-group-hook-poke
+  |=  act=permission-group-hook-action
+  ^-  card
+  :*  %pass  /  %agent  [our.bol %permission-group-hook]
+      %poke  %permission-group-hook-action  !>(act)
+  ==
+::
+++  permission-hook-poke
+  |=  act=permission-hook-action
+  ^-  card
+  :*  %pass  /  %agent  [our.bol %permission-hook]
+      %poke  %permission-hook-action  !>(act)
+  ==
+::
+++  create-metadata
+  |=  [=path title=@t description=@t]
+  ^-  (list card)
+  =/  =metadata
+    %*  .  *metadata
+        title         title
+        description   description
+        date-created  now.bol
+        creator       our.bol
+    ==
+  :~  (metadata-poke [%add path [%contacts path] metadata])
+      (metadata-hook-poke [%add-owned path])
+  ==
+::
+++  delete-metadata
+  |=  =path
+  ^-  (list card)
+  :~  (metadata-poke [%remove path [%contacts path]])
+      (metadata-hook-poke [%remove path])
+  ==
 ::
 ++  all-scry
   ^-  rolodex

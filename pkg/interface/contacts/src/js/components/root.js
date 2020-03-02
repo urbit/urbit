@@ -34,7 +34,7 @@ export class Root extends Component {
     let invites =
       (!!state.invites && '/contacts' in state.invites) ?
       state.invites['/contacts'] : {};
-    let associations = !! state.associations ? state.associations : new Map;
+    let associations = !! state.associations ? state.associations : {};
 
     return (
       <BrowserRouter>
