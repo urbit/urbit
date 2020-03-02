@@ -134,14 +134,14 @@
       %create
     ?>  ?=([@ *] path.act)
     %+  weld
-    :~  (group-poke [%bundle path.act])
-        (contact-poke [%create path.act])
-        (contact-hook-poke [%add-owned path.act])
-        (group-hook-poke [%add our.bol path.act])
-        (group-poke [%add (~(put in ships.act) our.bol) path.act])
-        (perm-group-hook-poke [%associate path.act [[path.act %white] ~ ~]])
-        (permission-hook-poke [%add-owned path.act path.act])
-    ==
+      :~  (group-poke [%bundle path.act])
+          (contact-poke [%create path.act])
+          (contact-hook-poke [%add-owned path.act])
+          (group-hook-poke [%add our.bol path.act])
+          (group-poke [%add (~(put in ships.act) our.bol) path.act])
+          (perm-group-hook-poke [%associate path.act [[path.act %white] ~ ~]])
+          (permission-hook-poke [%add-owned path.act path.act])
+      ==
     (create-metadata path.act title.act description.act)
   ::
       %delete
