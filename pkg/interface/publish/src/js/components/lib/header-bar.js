@@ -26,14 +26,14 @@ export class HeaderBar extends Component {
     }
 
     return (
-      <div className={"bg-white w-100 justify-between relative tc pt3 "
+      <div className={"bg-white bg-gray0-d white-d w-100 justify-between relative tc pt3 "
         + popout}
         style={{ height: 40 }}>
         <a className="dib gray2 f9 inter absolute left-0"
           href='/'
           style={{top: 14}}>
           <IconHome classes={spinnerClasses}/>
-          <span className="ml2 v-top lh-title"
+          <span className="ml2 v-top lh-title white-d"
           style={{paddingTop: 3}}>
           Home
           </span>

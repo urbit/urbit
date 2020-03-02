@@ -33,6 +33,7 @@ export class ChatScreen extends Component {
 
  componentDidMount() {
    this.updateReadNumber();
+   this.scrollToBottom("auto");
  }
 
  componentWillUnmount() {

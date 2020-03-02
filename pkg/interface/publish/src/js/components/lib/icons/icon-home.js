@@ -6,7 +6,10 @@ export class IconHome extends Component {
     let classes = !!this.props.classes ? this.props.classes : "";
 
     return (
-      <img className={classes} src="/~publish/Home.png" width={16} height={16} />
+      <img className={"invert-d " + classes}
+      src="/~publish/Home.png"
+      width={16}
+      height={16} />
     );
   }
 }

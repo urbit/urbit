@@ -12,7 +12,7 @@ class Store {
     this.state = {
       contacts: {},
       groups: {},
-      associations: new Map,
+      associations: {},
       permissions: {},
       invites: {},
       spinner: false

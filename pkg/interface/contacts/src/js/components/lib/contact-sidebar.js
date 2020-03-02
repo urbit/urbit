@@ -51,7 +51,8 @@ export class ContactSidebar extends Component {
         return (
           <div
           key={member}
-          className="pl4 pt1 pb1 f9 flex justify-start content-center bg-white">
+          className={"pl4 pt1 pb1 f9 flex justify-start content-center " +
+            "bg-white bg-gray0-d"}>
             <Sigil
               ship={member}
               color="#000000"
@@ -81,7 +82,7 @@ export class ContactSidebar extends Component {
             className={((props.path.includes(window.ship))
               ? "dib"
               : "dn")}>
-            <p className="f9 pl4 pt0 pt4-m pt4-l pt4-xl gray2 bn">Invite</p>
+            <p className="f9 pl4 pt0 pt4-m pt4-l pt4-xl green2 bn">Add to Group</p>
           </Link>
           <Link to={detailHref}
             className="dib dn-m dn-l dn-xl f9 pl4 pt0 pt4-m pt4-l pt4-xl gray2 bn">Channels</Link>

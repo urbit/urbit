@@ -139,7 +139,7 @@ export class NewScreen extends Component {
     return (
       <div
         className={
-          "h-100 w-100 mw6 pa3 pt4 overflow-x-hidden flex flex-column"
+          "h-100 w-100 mw6 pa3 pt4 overflow-x-hidden flex flex-column white-d"
         }>
         <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
           <Link to="/~publish/">{"⟵ All Notebooks"}</Link>
@@ -152,7 +152,7 @@ export class NewScreen extends Component {
           </p>
           <textarea
             className={"f7 ba bg-gray0-d white-d pa3 db w-100 " +
-            "focus-b--black b--gray3 b--gray2-d"}
+            "focus-b--black focus-b--white-d b--gray3 b--gray2-d"}
             placeholder="eg. My Journal"
             rows={1}
             style={{
@@ -169,7 +169,7 @@ export class NewScreen extends Component {
           <p className="f9 gray2 db mb2 pt1">What's your notebook about?</p>
           <textarea
             className={"f7 ba bg-gray0-d white-d pa3 db w-100 " +
-            "focus-b--black b--gray3 b--gray2-d"}
+            "focus-b--black focus-b--white-d b--gray3 b--gray2-d"}
             placeholder="Notebook description"
             rows={1}
             style={{

@@ -12,15 +12,11 @@ export class MetadataReducer {
   associations(json, state) {
     let data = _.get(json, 'associations', false);
     if (data) {
-      let metadata = {};
-      Object.keys(data).forEach((key) => {
-        let val = data[key];
-        let groupPath = val['group-path'];
-        if (!(groupPath in metadata)) {
-          metadata[groupPath] = {};
-        }
-        metadata[groupPath][key] = val;
-      });
+      let metadata = new Map;
+      Object.keys(data).map((channel) => {
+        let channelObj = data[channel];
+        metadata.set(channelObj["app-path"], channelObj);
+      })
       state.associations = metadata;
     }
   }
@@ -29,12 +25,7 @@ export class MetadataReducer {
     let data = _.get(json, 'add', false);
     if (data) {
       let metadata = state.associations;
-      if (!(data['group-path'] in metadata)) {
-        metadata[data['group-path']] = {};
-      }
-      metadata[data['group-path']]
-        [`${data["group-path"]}/${data["app-name"]}${data["app-path"]}`] = data;
- 
+      metadata.set(data["app-path"], data);
       state.associations = metadata;
     }
   }

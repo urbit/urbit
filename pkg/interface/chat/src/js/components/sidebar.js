@@ -19,7 +19,6 @@ export class Sidebar extends Component {
 
   render() {
     const { props, state } = this;
-    let station = `/${props.match.params.ship}/${props.match.params.station}`;
 
     let sidebarInvites = Object.keys(props.invites)
       .map((uid) => {
@@ -39,14 +38,28 @@ export class Sidebar extends Component {
           : {text: 'No messages yet'};
         let author = !!msg ? msg.author : '';
         let when = !!msg ? msg.when : 0;
+
+        let title = box;
+        if ((props.associations.has(box)) && (props.associations.get(box).metadata)) {
+        title = (props.associations.get(box).metadata.title)
+          ? props.associations.get(box).metadata.title : box;
+        }
+
+        let nickname = author;
+        if ((props.contacts[box]) && (author in props.contacts[box])) {
+          nickname = (props.contacts[box][author].nickname)
+            ? props.contacts[box][author].nickname : author;
+        }
+
         return {
           msg,
           when,
           author,
+          nickname,
           letter,
           box,
-          title: box,
-          selected: station === box
+          title: title,
+          selected: props.station === box
         };
       })
       .sort((a, b) => {
@@ -58,10 +71,11 @@ export class Sidebar extends Component {
           <SidebarItem
             key={obj.box + '/' + obj.when}
             title={obj.title}
-            description={obj.letter}
+            latest={obj.letter}
             box={obj.box}
             when={obj.when}
             ship={obj.author}
+            nickname={obj.nickname}
             selected={obj.selected}
             unread={unread}
             history={props.history}

@@ -53,7 +53,7 @@ export class CommentItem extends Component {
 
     return (
       <div>
-        <div className="flex mv3 bg-white">
+        <div className="flex mv3 bg-white bg-gray0-d">
         <Sigil
           ship={commentData.author}
           size={24}

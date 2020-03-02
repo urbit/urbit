@@ -8,7 +8,7 @@ export class ContactItem extends Component {
   render() {
     const { props } = this;
 
-    let selectedClass = (props.selected) ? "bg-gray4" : "";
+    let selectedClass = (props.selected) ? "bg-gray4 bg-gray1-d" : "";
     let hexColor = uxToHex(props.color);
     let name = (props.nickname) ? props.nickname : "~" + props.ship;
 

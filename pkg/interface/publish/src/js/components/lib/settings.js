@@ -24,7 +24,7 @@ export class Settings extends Component {
           <p className="f9 gray2 db mb4">
             Permanently delete this notebook. (All current members will no longer see this notebook)
           </p>
-          <button className="b--red2 red2 pointer dib f9 ba pa2"
+          <button className="bg-transparent b--red2 red2 pointer dib f9 ba pa2"
             onClick={this.deleteNotebook}>
             Delete this notebook
           </button>
