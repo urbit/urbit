@@ -62,7 +62,6 @@ export class NewScreen extends Component {
     if (event.target.checked) {
       this.setState({
         createGroup: !!event.target.checked,
-        security: 'village'
       });
     } else {
       this.setState({
@@ -141,12 +140,6 @@ export class NewScreen extends Component {
 
   render() {
     const { props, state } = this;
-    let inviteSwitchClasses = (state.security === "village")
-      ? "relative checked bg-green2 br3 h1 toggle v-mid z-0"
-      : "relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0";
-    if (state.createGroup) {
-      inviteSwitchClasses = inviteSwitchClasses + " o-50";
-    }
 
     let createGroupClasses = state.createGroup
       ? "relative checked bg-green2 br3 h1 toggle v-mid z-0"
@@ -164,7 +157,7 @@ export class NewScreen extends Component {
     if (state.idError) {
       idErrElem = (
         <span className="f9 inter red2 db pt2">
-          Chat must have a valid name.
+          Collection must have a valid name.
         </span>
       );
     }
@@ -196,7 +189,7 @@ export class NewScreen extends Component {
         <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
           <Link to="/~link/">{"⟵ All Collections"}</Link>
         </div>
-        <h2 className="mb3 f8">New Chat</h2>
+        <h2 className="mb3 f8">New Collection</h2>
         <div className="w-100">
           <p className="f8 mt3 lh-copy db">Name</p>
           <textarea
@@ -227,7 +220,7 @@ export class NewScreen extends Component {
             <span className="gray3"> (Optional)</span>
           </p>
           <p className="f9 gray2 db mb2 pt1">
-            Selected entities will be able to post to chat
+            Selected entities will be able to post to the collection
           </p>
           <InviteSearch
             groups={props.groups}

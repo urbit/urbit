@@ -13,8 +13,7 @@ class UrbitApi {
 
     this.invite = {
       accept: this.inviteAccept.bind(this),
-      decline: this.inviteDecline.bind(this),
-      invite: this.inviteInvite.bind(this)
+      decline: this.inviteDecline.bind(this)
     };
 
     this.bind = this.bind.bind(this);
@@ -63,24 +62,6 @@ class UrbitApi {
 
   inviteAction(data) {
     this.action("invite-store", "json", data);
-  }
-
-  inviteInvite(path, ship) {
-    this.action("invite-hook", "json",
-      {
-        invite: {
-          path: '/chat',
-          invite: {
-            path,
-            ship: `~${window.ship}`,
-            recipient: ship,
-            app: 'chat-hook',
-            text: `You have been invited to /${window.ship}${path}`,
-          },
-          uid: uuid()
-        }
-      }
-    );
   }
 
   inviteAccept(uid) {

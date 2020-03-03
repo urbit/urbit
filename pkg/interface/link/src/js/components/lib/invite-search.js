@@ -324,7 +324,7 @@ export class InviteSearch extends Component {
     return (
       <div className="relative">
         <img
-          src="/~chat/img/search.png"
+          src="/~link/img/search.png"
           className="absolute invert-d"
           style={{
             height: 16,
