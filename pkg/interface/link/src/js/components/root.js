@@ -45,7 +45,6 @@ export class Root extends Component {
           render={ (props) => {
             return (
               <Skeleton
-                active="channels"
                 spinner={state.spinner}
                 resources={resources}
                 invites={invites}
@@ -67,7 +66,6 @@ export class Root extends Component {
           render={(props) => {
             return (
               <Skeleton
-                active="channels"
                 spinner={state.spinner}
                 resources={resources}
                 invites={invites}
@@ -120,7 +118,6 @@ export class Root extends Component {
                   resources={resources}
                   invites={invites}
                   groups={groups}
-                  active="links"
                   selected={resourcePath}
                   sidebarShown={state.sidebarShown}
                   sidebarHideMobile={true}
@@ -172,7 +169,6 @@ export class Root extends Component {
                   resources={resources}
                   invites={invites}
                   groups={groups}
-                  active="links"
                   selected={resourcePath}
                   sidebarShown={state.sidebarShown}
                   sidebarHideMobile={true}

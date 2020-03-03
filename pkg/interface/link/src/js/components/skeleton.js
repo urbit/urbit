@@ -28,7 +28,6 @@ export class Skeleton extends Component {
             resources={this.props.resources}
             invites={this.props.invites}
             groups={this.props.groups}
-            active={this.props.active}
             selected={this.props.selected}
             sidebarShown={this.props.sidebarShown}
             links={this.props.links}/>
