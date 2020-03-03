@@ -182,6 +182,7 @@ class UrbitApi {
   }
 
   metadataAction(data) {
+    console.log(data)
     return this.action("metadata-store", "metadata-action", data);
   }
 
@@ -189,9 +190,11 @@ class UrbitApi {
     let creator = `~${window.ship}`
     return this.metadataAction({
       add: {
-        "app-name": "chat",
-        "app-path": appPath,
         "group-path": groupPath,
+        resource: {
+          "app-path": appPath,
+          "app-name": "chat"
+        },
         metadata: {
           title: title,
           description: description,

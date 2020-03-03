@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { deSig } from '/lib/util';
+import { deSig, uxToHex } from '/lib/util';
 import { Route, Link } from "react-router-dom";
-import { store } from "/store";
 
 
 import { ChatTabBar } from '/components/lib/chat-tabbar';
@@ -19,6 +18,7 @@ export class SettingsScreen extends Component {
     };
 
     this.renderDelete = this.renderDelete.bind(this);
+    this.changeTitle = this.changeTitle.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -30,6 +30,11 @@ export class SettingsScreen extends Component {
         props.api.setSpinner(false);
         props.history.push('/~chat');
       });
+    }
+
+    if ((this.state.title === "") && (prevProps !== this.props)) {
+      if ((props.association) && (props.association.metadata))
+      this.setState({title: props.association.metadata.title});
     }
   }
 
@@ -79,29 +84,42 @@ export class SettingsScreen extends Component {
 
     let chatOwner = (deSig(props.match.params.ship) === window.ship);
 
-    let title = ((props.association) && (props.association.metadata))
-      ? props.association.metadata.title : "";
+    let association = ((props.association) && (props.association.metadata))
+      ? props.association : {};
 
     return(
       <div>
-        <div className={"w-100 fl mt3 " + ((chatOwner) ? 'o-30' : '')}
-        style={{maxWidth: "29rem"}}>
+        <div className={"w-100 fl mt3 " + ((chatOwner) ? '' : 'o-30')}>
         <p className="f8 mt3 lh-copy">Rename</p>
         <p className="f9 gray2 db mb4">Change the name of this chat</p>
+        <div className="relative w-100 flex"
+        style={{maxWidth: "29rem"}}>
           <input
             className="f8 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 flex-auto mr3"
-            value={title}
+            value={this.state.title}
+            disabled={!chatOwner}
             onChange={this.changeTitle}
           />
-          <span className="f8 pointer absolute pa3 inter"
+          <span className={"f8 absolute pa3 inter " +
+          ((chatOwner) ? "pointer" : "")}
             style={{ right: 12, top: 1 }}
             ref="rename"
             onClick={() => {
-              this.refs.rename.innerText = "Saved";
-              props.api. //TODO
+              if (chatOwner) {
+                this.refs.rename.innerText = "Saved";
+                props.api.metadataAdd(
+                  association['app-path'],
+                  association['group-path'],
+                  this.state.title,
+                  association.metadata.description,
+                  association.metadata['date-created'],
+                  uxToHex(association.metadata.color)
+                )
+              }
             }}>
             Save
-              </span>
+            </span>
+          </div>
         </div>
       </div>
     )
@@ -208,6 +226,7 @@ export class SettingsScreen extends Component {
             </div>
           </div>
           {this.renderDelete()}
+          {this.renderMetadataSettings()}
         </div>
       </div>
     );
