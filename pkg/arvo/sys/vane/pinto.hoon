@@ -324,16 +324,18 @@
     %'/+'  (run-fsls sut +.pike)
     %'/~'  (run-fssg sut +.pike)
   ==
-++  run-fshp
-  |=  [sut=vase =taut]
+++  run-fshp  |=([sut=vase =taut] (run-taut %sur sut taut))
+++  run-fsls  |=([sut=vase =taut] (run-taut %lib sut taut))
+++  run-taut
+  |=  [wer=?(%lib %sur) sut=vase =taut]
   =/  m  (fume ,cage)
   ^-  form:m
-  !!
-++  run-fsls
-  |=  [sut=vase =taut]
-  =/  m  (fume ,cage)
-  ^-  form:m
-  !!
+  ;<  [mark xap=vase]  bind:m  (make-load %s /[wer]/[pax.taut])
+  =+  !<(pax=path xap)
+  ;<  sur=vase  bind:m  (run-file pax)
+  =?  p.sur  ?=(^ face.taut)  [%face u.face.taut p.sur]
+  (pure:m noun+(slop sur sut))
+::
 ++  run-fssg
   |=  [sut=vase gen=hoon]
   =/  m  (fume ,cage)
