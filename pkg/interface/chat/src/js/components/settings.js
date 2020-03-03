@@ -114,13 +114,14 @@ export class SettingsScreen extends Component {
 
     return(
       <div>
-        <div className={"w-100 fl mt3 " + ((chatOwner) ? '' : 'o-30')}>
+        <div className={"w-100 pb6 fl mt3 " + ((chatOwner) ? '' : 'o-30')}>
         <p className="f8 mt3 lh-copy">Rename</p>
         <p className="f9 gray2 db mb4">Change the name of this chat</p>
         <div className="relative w-100 flex"
         style={{maxWidth: "29rem"}}>
           <input
-            className="f8 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 flex-auto mr3"
+            className={"f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
+            "focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3"}
             value={this.state.title}
             disabled={!chatOwner}
             onChange={this.changeTitle}
@@ -153,7 +154,8 @@ export class SettingsScreen extends Component {
           <div className="relative w-100 flex"
             style={{ maxWidth: "29rem" }}>
             <input
-              className="f8 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 flex-auto mr3"
+              className={"f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
+                "focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3"}
               value={this.state.description}
               disabled={!chatOwner}
               onChange={this.changeDescription}
@@ -186,7 +188,8 @@ export class SettingsScreen extends Component {
           <div className="relative w-100 flex"
             style={{ maxWidth: "20rem" }}>
             <input
-              className="f8 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 flex-auto mr3"
+              className={"f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
+                "focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3"}
               value={this.state.color}
               disabled={!chatOwner}
               onChange={this.changeColor}
