@@ -224,13 +224,16 @@
     ?>  ?=(^ app-path.act)
     %-  zing
     :~  :~  (chat-hook-poke [%remove app-path.act])
-            (metadata-poke [%remove group-path [%chat app-path.act]])
             (chat-poke [%delete app-path.act])
         ==
+      ::
+        ?.  (is-creator group-path %chat app-path.act)  ~
+        [(metadata-poke [%remove group-path [%chat app-path.act]])]~
       ::
         ?:  (is-managed group-path)  ~
         :~  (group-poke [%unbundle group-path])
             (metadata-hook-poke [%remove group-path])
+            (metadata-store-poke [%remove group-path [%chat app-path.act]])
         ==
     ==
   ::
@@ -314,6 +317,11 @@
     ^-  card
     [%pass / %agent [our.bol %metadata-hook] %poke %metadata-action !>(act)]
   ::
+  ++  metadata-store-poke
+    |=  act=metadata-action
+    ^-  card
+    [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
+  ::
   ++  metadata-hook-poke
     |=  act=metadata-hook-action
     ^-  card
@@ -364,6 +372,23 @@
     ^-  ?
     ?>  ?=(^ path)
     !=(i.path '~')
+  ::
+  ++  is-creator
+    |=  [group-path=path app-name=@ta app-path=path]
+    ^-  ?
+    =/  =metadata
+      .^  metadata
+        %gx
+        (scot %p our.bol)
+        %metadata-store
+        (scot %da now.bol)
+        %metadata
+        (scot %t (spat group-path))
+        app-name
+        (scot %t (spat app-path))
+        /noun
+      ==
+    =(our.bol creator.metadata)
   --
 ::
 ++  diff-chat-update
