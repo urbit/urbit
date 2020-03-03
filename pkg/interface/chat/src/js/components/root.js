@@ -210,7 +210,7 @@ export class Root extends Component {
                   spinner={state.spinner}
                   sidebarShown={state.sidebarShown}
                   popout={popout}
-                  sidebar={renderChannelSidebar(props)}
+                  sidebar={renderChannelSidebar(props, station)}
                 >
                   <MemberScreen
                     {...props}
@@ -240,17 +240,22 @@ export class Root extends Component {
 
               let popout = props.match.url.includes("/popout/");
 
+              let association = ((state.associations) &&
+              (state.associations.has(station)))
+                ? state.associations.get(station) : {};
+
               return (
                 <Skeleton
                   sidebarHideOnMobile={true}
                   spinner={state.spinner}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
-                  sidebar={renderChannelSidebar(props)}
+                  sidebar={renderChannelSidebar(props, station)}
                 >
                   <SettingsScreen
                     {...props}
                     station={station}
+                    association={association}
                     api={api}
                     station={station}
                     group={group}

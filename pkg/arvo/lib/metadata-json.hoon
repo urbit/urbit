@@ -8,7 +8,7 @@
   %+  turn  ~(tap by associations)
   |=  [[=group-path =resource] =metadata]
   ^-  [cord json]
-  :-  
+  :-
   %-  crip
   ;:  weld
       (trip (spat group-path))
@@ -21,6 +21,50 @@
       [%app-path (path app-path.resource)]
       [%metadata (metadata-to-json metadata)]
   ==
+::
+++  json-to-action
+  |=  jon=json
+  ^-  metadata-action
+  =,  dejs:format
+  =<  (parse-json jon)
+  |%
+  ++  parse-json
+    %-  of
+    :~  [%add add]
+        [%remove remove]
+    ==
+  ::
+  ++  add
+    %-  ot
+    :~  [%group-path pa]
+        [%resource resource]
+        [%metadata metadata]
+    ==
+  ++  remove
+    %-  ot
+    :~  [%group-path pa]
+        [%resource resource]
+    ==
+  ::
+  ++  nu
+    |=  jon=json
+    ?>  ?=({$s *} jon)
+    (rash p.jon hex)
+  ::
+  ++  metadata
+    %-  ot
+    :~  [%title so]
+        [%description so]
+        [%color nu]
+        [%date-created (se %da)]
+        [%creator (su ;~(pfix sig fed:ag))]
+    ==
+  ++  resource
+    %-  ot
+    :~  [%app-name so]
+        [%app-path pa]
+    ==
+  --
 ::
 ++  metadata-to-json
   |=  met=metadata

@@ -181,6 +181,30 @@ class UrbitApi {
     });
   }
 
+  metadataAction(data) {
+    return this.action("metadata-hook", "metadata-action", data);
+  }
+
+  metadataAdd(appPath, groupPath, title, description, dateCreated, color) {
+    let creator = `~${window.ship}`
+    return this.metadataAction({
+      add: {
+        "group-path": groupPath,
+        resource: {
+          "app-path": appPath,
+          "app-name": "chat"
+        },
+        metadata: {
+          title,
+          description,
+          color,
+          'date-created': dateCreated,
+          creator
+        }
+      }
+    })
+  }
+
   sidebarToggle() {
     let sidebarBoolean = true;
     if (store.state.sidebarShown === true) {
