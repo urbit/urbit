@@ -10,8 +10,25 @@
   $%  [%ride sut=plan gen=hoon]
       [%call gat=plan sam=plan]
       [%load =spar]
+      [%grok =path]
       [%$ =cage]
   ==
++$  pile  (list pike)
++$  pike
+  $%  [%'/-' =taut]                           ::  surface import
+      [%'/+' =taut]                           ::  library import
+      [%'/=' lal=term =pike]                  ::  wrap face around .pike
+      [%'/~' =hoon]                           ::  hoon against subject
+      [%'/;' gat=hoon =pike]                  ::  call gate on .pike
+      [%'//' marks=(list mark) =pike]         ::  mark conversion sequence
+      [%'/^' typ=hoon =pike]                  ::  cast .pike result
+      [%'/$' ~]                               ::  read renderer arg
+      [%'/!' pax=hoon]                        ::  compile hoon file
+      [%'/@' pax=hoon]                        ::  load file
+      [%'/*' pax=hoon ren=term]               ::  renderer on file tree
+      [%'/%' pax=hoon marks=(list mark)]      ::  file tree through marks
+  ==
++$  taut  [face=(unit term) pax=term]
 ::  $hoon-cache: cache for compiler operations
 ::
 +$  hoon-cache  (clock hoon-cache-key vase)
@@ -143,6 +160,31 @@
 ::
 ++  vase-to-cage  (bake (with-mark %noun) vase)
 ++  with-mark  |=(=mark |*(* [mark +<]))
+::
+++  parse-pile
+  |=  =path
+  =/  hoon-parser  (vang & path)
+  %+  ifix  [gay gay]
+  %+  cook  |=((list pile) (zing +<))
+  %+  most  gap
+  %+  cook  |=(pile +<)
+  ;~  pose
+    %+  ifix  [;~(plug net hep gap) gap]
+    (most ;~(plug com gaw) (stag %'/-' parse-taut))
+  ::
+    %+  ifix  [;~(plug net lus gap) gap]
+    (most ;~(plug com gaw) (stag %'/+' parse-taut))
+  ::
+    %+  cook  |=(pike `pile`~[+<])
+    (stag %'/~' tall:hoon-parser)
+  ==
+++  parse-taut
+  %+  cook  |=(taut +<)
+  ;~  pose
+    (stag ~ ;~(pfix tar sym))
+    (cook |=([face=term tis=@ file=term] [`face file]) ;~(plug sym tis sym))
+    (cook |=(a=term [`a a]) sym)
+  ==
 --
 |=  =hoon-cache
 |=  [our=ship =desk now=@da scry=sley]
@@ -194,6 +236,7 @@
     ^      (make-cell plan)
     %$     (pure:m cage.plan)
     %call  (make-call +.plan)
+    %grok  (make-grok +.plan)
     %load  (make-load +.plan)
     %ride  (make-ride +.plan)
   ==
@@ -206,13 +249,7 @@
   ;<  [mark tal=vase]  bind:m  (make b)
   (pure:m noun+(slop hed tal))
 ::
-++  make-call
-  |=  [gat=plan sam=plan]
-  =/  m  (fume ,cage)
-  ^-  form:m
-  %-  lift-vase
-  (run-call gat sam)
-::
+++  make-call  |=([gat=plan sam=plan] (lift-vase (run-call gat sam)))
 ++  run-call
   |=  [gat=plan sam=plan]
   =/  m  (fume ,vase)
@@ -235,6 +272,23 @@
     %1  (fail:m leaf+"ford: scry-block {<p.vap>}" ~)
     %2  (fail:m leaf+"ford: call-fail" p.vap)
   ==
+::
+++  make-grok
+  |=  =path
+  =/  m  (fume ,cage)
+  ((fmap:m ,pile) |=(p=pile noun+!>(p)) (run-grok path))
+::
+++  run-grok
+  |=  =path
+  =/  m  (fume ,pile)
+  ^-  form:m
+  ;<  [=mark xet=vase]  bind:m  (make-load %x path)
+  ?>  =(%hoon mark)
+  =+  !<(tex=@t xet)
+  =/  par  ((full (parse-pile path)) [1 1] (trip tex))
+  ?~  q.par
+    (fail:m [leaf+"syntax error at TODO"]~)
+  (pure:m p.u.q.par)
 ::
 ++  make-load
   |=  =spar

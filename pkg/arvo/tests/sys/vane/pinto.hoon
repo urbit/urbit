@@ -7,6 +7,9 @@
   %-  ~(gas by *(map [term beam] (unit cage)))
   :~  :-  cx+[[~nul %home da+~1234.5.6] /hoon/foo/lib]
       `hoon+!>('%bar')
+  ::
+      :-  cx+[[~nul %home da+~1234.5.6] /hoon/baz/lib]
+      `hoon+!>('!:  [12 13]  !:  -')
   ==
 =/  ford  ((pinto) ~nul %home ~1234.5.6 scry)
 =/  ca  (by-clock:contain hoon-cache-key:ford vase)
@@ -76,5 +79,46 @@
     %+  expect-eq
       !>  16
       q.value.next.out
+  ==
+++  test-run-root-build-grok  ^-  tang
+  =/  [=product:ford =build-state:ford =^hoon-cache]
+    %:  run-root-build:ford
+      ^-  build:ford
+      :*  live=%.n
+          desk=%home
+          case=da+~1234.5.6
+          plan=[%grok /lib/baz/hoon]
+      ==
+    ::
+      ^-  build-state:ford
+      [fum=~ cur=~ pre=~]
+    ::
+      ^-  (unit (unit cage))
+      ~
+    ==
+  ?>  ?=([~ %& *] product)
+  ::
+  ;:  welp
+    %+  expect-eq
+      !>  %noun
+      !>  p.p.u.product
+  ::
+    %+  expect-eq
+      !>  12
+      =+  !<(=pile:ford q.p.u.product)
+      =/  hoons  (turn pile |=(pike:ford ?>(?=(%'/~' +<-) +<+)))
+      =|  sut=vase
+      |-  ^+  sut
+      ?~  hoons  sut
+      =.  sut  (slap sut i.hoons)
+      $(hoons t.hoons)
+  ::
+    %+  expect-eq
+      !>  `build-state:ford`build-state(cur ~)
+      !>  `build-state:ford`[fum=~ cur=~ pre=~]
+  ::
+    %+  expect-eq
+      !>  `(list spar:ford)`~(tap in ~(key by cur.build-state))
+      !>  `(list spar:ford)`[%x /lib/baz/hoon]~
   ==
 --
