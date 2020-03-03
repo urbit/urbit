@@ -17,6 +17,7 @@
       [%grok =path]
       [%pile =pile]
       [%bunt =mark]
+      [%vale =mark =noun]
       [%$ =cage]
   ==
 +$  pile  (list pike)
@@ -249,6 +250,7 @@
     %load  (make-load +.plan)
     %pile  (make-pile +.plan)
     %ride  (make-ride +.plan)
+    %vale  (make-vale +.plan)
   ==
 ::
 ++  make-bunt  |=(mark (lift-vase (run-bunt +<)))
@@ -256,9 +258,7 @@
   |=  =mark
   =/  m  (fume ,vase)
   ^-  form:m
-  ;<  [^mark xap=vase]  bind:m  (make-load %s /[mark])
-  =+  !<(pax=path xap)
-  ;<  cor=vase  bind:m  (run-file pax)
+  ;<  cor=vase  bind:m  (load-mark mark)
   (pure:m (slap cor ^~((ream '+<'))))
 ::
 ++  make-cell
@@ -276,17 +276,22 @@
   ^-  form:m
   ;<  [mark got=vase]  bind:m  (make gat)
   ;<  [mark som=vase]  bind:m  (make sam)
-  %+  with-cache-key  [%call got som]
+  (do-call got som)
+++  do-call
+  |=  [gat=vase sam=vase]
+  =/  m  (fume ,vase)
+  ^-  form:m
+  %+  with-cache-key  [%call gat sam]
   ;<  sit=vase  bind:m
-    %+  with-cache-key  [%slit p.got p.som]
+    %+  with-cache-key  [%slit p.gat p.sam]
     %+  on-fail:m  |.([leaf+"ford: slit-fail"]~)
-    =/  lap  (mule |.((slit p.got p.som)))
+    =/  lap  (mule |.((slit p.gat p.sam)))
     ?-  -.lap
       %&  (pure:m !>(p.lap))
       %|  (fail:m p.lap)
     ==
   =+  !<(gol=type sit)
-  =/  vap  (mong [q.got q.som] (sloy scry))
+  =/  vap  (mong [q.gat q.sam] (sloy scry))
   ?-  -.vap
     %0  (pure:m [gol p.vap])
     %1  (fail:m leaf+"ford: scry-block {<p.vap>}" ~)
@@ -419,6 +424,24 @@
     %1  (fail:m leaf+"ford: scry-block {<p.nap>}" ~)
     %2  (fail:m leaf+"ford: ride-fail" p.nap)
   ==
+::
+++  make-vale
+  |=  [=mark =noun]
+  =/  m  (fume ,cage)
+  ^-  form:m
+  ;<  cor=vase  bind:m  (load-mark mark)
+  =/  gat=vase  (slap cor ^~((ream 'noun:grab')))
+  =/  sam=vase  !>(noun)
+  ;<  pro=vase  bind:m  (do-call gat sam)
+  (pure:m [mark pro])
+::
+++  load-mark
+  |=  =mark
+  =/  m  (fume ,vase)
+  ^-  form:m
+  ;<  [^mark xap=vase]  bind:m  (make-load %s /[mark])
+  =+  !<(pax=path xap)
+  (run-file pax)
 ::
 ++  with-cache-key
   =/  m  (fume ,vase)
