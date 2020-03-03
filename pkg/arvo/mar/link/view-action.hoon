@@ -18,8 +18,8 @@
     ::
     ++  mems
       %-  of
-      :~  'group'^pa
-          'ships'^(cu sy (ar (su ;~(pfix sig fed:ag))))
+      :~  %group^pa
+          %ships^(cu sy (ar (su ;~(pfix sig fed:ag))))
       ==
     --
   --
