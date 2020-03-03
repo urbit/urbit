@@ -14,43 +14,7 @@
 ::
 =/  test-pit=vase  !>(..zuse)
 =/  ford-gate  (ford-vane test-pit)
-::  prime %reef cache in .ford-gate so we don't have to rebuild the kernel
 ::
-=<  ~&  %test-reef-priming
-    =/  co  (by-clock:contain compiler-cache-key:ford-gate build-result)
-    ::
-    =.  compiler-cache.state.ax.ford-gate
-      %+  ~(put co compiler-cache.state.ax.ford-gate)
-        [%ride (rain /~nul/home/hoon/hoon/sys hoon-scry) !>(~)]
-      [%success %ride !>(ride)]
-    ::  we'd have to build arvo, so don't bother trying to cache it
-    ::
-    =.  compiler-cache.state.ax.ford-gate
-      %+  ~(put co compiler-cache.state.ax.ford-gate)
-        [%ride (rain /~nul/home/hoon/zuse/sys zuse-scry) !>(..is)]
-      [%success %ride !>(..zuse)]
-    ::  run %reef now that we've cached the hard parts
-    ::
-    ~&  %test-reef-loading
-    =.  ford-gate
-      =-  ?>(?=(~ -<) ->)
-      %:  ford-call-with-comparator
-        ford-gate
-        ~1234.5.6
-        scry=(scry-with-results (with-reef ~1234.5.6 ~))
-        call-args=[*duct *type %build %.n %reef ~nul %home]
-        ^=  comparator
-        |=  moves=(list move:ford-gate)
-        ?>  =(1 (lent moves))
-        ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete *] i.moves)
-        =/  result  result.p.card.i.moves
-        ?>  ?=([%success %reef *] build-result.result)
-        ~
-      ==
-    ~&  %test-reef-loaded
-    ~!  +6.ford-gate
-    .
 |%
 ++  verify-post-made
   |=  $:  move=move:ford-gate
@@ -217,7 +181,7 @@
       [%hoon !>(zuse-scry)]
   ::
       :-  [%cw [[~nul %home %da date] /hoon/hoon/sys]]
-      [%cass !>([ud=0 da=date])]
+      [%cass !>([ud=1 da=date])]
   ==
 ::
 ++  with-reef-unit
@@ -232,7 +196,7 @@
       `[%noun !>(~)]
   ::
       :-  [%cw [[~nul %home %da date] /hoon/hoon/sys]]
-      `[%cass !>([ud=0 da=date])]
+      `[%cass !>([ud=1 da=date])]
   ==
 ::
 ++  ford-call
