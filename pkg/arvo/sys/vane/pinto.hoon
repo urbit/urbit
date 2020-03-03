@@ -293,12 +293,12 @@
   ;<  sut=vase  bind:m  run-reef
   =*  loop  $
   ?~  pile  (pure:m sut)
-  ;<  sot=vase  bind:m  (run-pike sut i.pile)
+  ;<  [mark sot=vase]  bind:m  (run-pike sut i.pile)
   loop(sut sot, pile t.pile)
 ::
 ++  run-pike
   |=  [sut=vase =pike]
-  =/  m  (fume ,vase)
+  =/  m  (fume ,cage)
   ^-  form:m
   ?+  -.pike  !!
     %'/-'  (run-fshp sut +.pike)
@@ -307,18 +307,19 @@
   ==
 ++  run-fshp
   |=  [sut=vase =taut]
-  =/  m  (fume ,vase)
+  =/  m  (fume ,cage)
   ^-  form:m
   !!
 ++  run-fsls
   |=  [sut=vase =taut]
-  =/  m  (fume ,vase)
+  =/  m  (fume ,cage)
   ^-  form:m
   !!
 ++  run-fssg
   |=  [sut=vase gen=hoon]
-  =/  m  (fume ,vase)
+  =/  m  (fume ,cage)
   ^-  form:m
+  %-  lift-vase
   (run-ride sut gen)
 ::
 ++  make-grok
