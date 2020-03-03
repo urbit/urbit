@@ -1,8 +1,10 @@
 =,  contain
-=*  care  care:clay
 =*  case  case:clay
 =>
 |%
+::  TODO: use $care:clay
+::
++$  care  ?(%s %t %u %v %w %x %y %z)
 ::  TODO: move to zuse
 ::
 +$  plan
@@ -14,6 +16,7 @@
       [%load =spar]
       [%grok =path]
       [%pile =pile]
+      [%bunt =mark]
       [%$ =cage]
   ==
 +$  pile  (list pike)
@@ -238,6 +241,7 @@
   ?-  -.plan
     ^      (make-cell plan)
     %$     (pure:m cage.plan)
+    %bunt  (make-bunt +.plan)
     %call  (make-call +.plan)
     %dude  (make-dude +.plan)
     %file  (make-file +.plan)
@@ -246,6 +250,16 @@
     %pile  (make-pile +.plan)
     %ride  (make-ride +.plan)
   ==
+::
+++  make-bunt  |=(mark (lift-vase (run-bunt +<)))
+++  run-bunt
+  |=  =mark
+  =/  m  (fume ,vase)
+  ^-  form:m
+  ;<  [^mark xap=vase]  bind:m  (make-load %s /[mark])
+  =+  !<(pax=path xap)
+  ;<  cor=vase  bind:m  (run-file pax)
+  (pure:m (slap cor ^~((ream '+<'))))
 ::
 ++  make-cell
   |=  [a=plan b=plan]
