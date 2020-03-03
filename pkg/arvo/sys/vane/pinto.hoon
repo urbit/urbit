@@ -441,8 +441,8 @@
   |=  [=mark =noun]
   =/  m  (fume ,cage)
   ^-  form:m
-  ;<  cor=vase  bind:m  (load-mark mark)
-  (pure:m [mark cor(+<.q noun)])
+  ;<  bun=vase  bind:m  (run-bunt mark)
+  (pure:m [mark p.bun noun])
 ::
 ++  load-mark
   |=  =mark
