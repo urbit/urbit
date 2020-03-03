@@ -79,7 +79,14 @@ export class Root extends Component {
                 />
               </Skeleton>
             );
-          }}/>
+          }}
+        />
+        <Route exact path="/~link/join/:resource([^#]+)"
+          render={ (props) => {
+            const resourcePath = '/' + props.match.params.resource;
+            props.history.push(`/~link/list/0${resourcePath}`);
+          }}
+        />
           <Route exact path="/~link/(popout)?/list/:page/:resource([^#]+)"
             render={ (props) => {
               const resourcePath = '/' + props.match.params.resource;
