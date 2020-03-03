@@ -317,7 +317,7 @@
       ~>  %mean.'bad-move'
       =^  hip  sac  (~(nell wa sac) p.vax)
       ?.  hip
-        ~>(%mean.'not a cell' !!)
+        ~>(%mean.'not-cell' !!)
       =/  duc
         ~>  %mean.'bad-duct'
         ;;(duct -.q.vax)
@@ -577,12 +577,13 @@
     ++  poke
       |=  [vane=term =ovum]
       ^+  this
+      ~>  %mean.'arvo: poke crashed'
       ~?  !lac  ["" %unix p.card.ovum wire.ovum now]
       =/  =maze
         =/  =type  [%cell [%atom %tas `%soft] %noun]
         [%& type [%soft card.ovum]]
       =/  =move
-        ~|  [%poke %bad-wire wire.ovum]
+        ~|  [%bad-wire wire.ovum]
         ?>  ?=([%$ *] wire.ovum)
         [duct=~ %pass t.wire.ovum vane maze]
       (emit %$ move ~)
@@ -591,12 +592,13 @@
     ++  crud
       |=  [vane=term =goof =ovum]
       ^+  this
+      ~>  %mean.'arvo: crud crashed'
       ~?  !lac  ["" %unix %crud p.card.ovum wire.ovum now]
       =/  =maze
         =/  =type  [%cell [%atom %tas `%soft] %noun]
         [%& type [%soft card.ovum]]
       =/  =move
-        ~|  [%crud %bad-wire wire.ovum]
+        ~|  [%bad-wire wire.ovum]
         ?>  ?=([%$ *] wire.ovum)
         [duct=~ %hurl goof %pass t.wire.ovum vane maze]
       (emit %$ move ~)
@@ -605,6 +607,7 @@
     ++  spam
       |=  =ovum
       ^+  this
+      ~>  %mean.'arvo: spam crashed'
       ::  fix up wire on %vega from previous kernel
       ::
       =?  wire.ovum  =(ovum [/ %vega ~])  //arvo
@@ -621,6 +624,7 @@
     ::
     ++  loop
       ^+  this
+      ~>  %mean.'arvo: loop crashed'
       ?~  run
         this
       ?:  =(~ q.i.run)    :: XX TMI
