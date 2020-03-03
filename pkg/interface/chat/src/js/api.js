@@ -182,7 +182,6 @@ class UrbitApi {
   }
 
   metadataAction(data) {
-    console.log(data)
     return this.action("metadata-hook", "metadata-action", data);
   }
 
