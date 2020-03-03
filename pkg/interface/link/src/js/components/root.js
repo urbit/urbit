@@ -32,10 +32,8 @@ export class Root extends Component {
     let comments = !!state.comments ? state.comments : {};
     const seen = !!state.seen ? state.seen : {};
 
-    //TODO update /join/resource route in contacts
     const invites = '/link' in state.invites ?
       state.invites['/link'] : {};
-    console.log('invites', invites);
 
     return (
       <BrowserRouter>
@@ -76,7 +74,9 @@ export class Root extends Component {
                 <NewScreen
                   resources={resources}
                   groups={groups}
-                  contacts={contacts}/>
+                  contacts={contacts}
+                  {...props}
+                />
               </Skeleton>
             );
           }}/>

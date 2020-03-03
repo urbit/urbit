@@ -29,9 +29,9 @@ export class NewScreen extends Component {
     const { props, state } = this;
 
     if (prevProps !== props) {
-      let station = `/~${window.ship}/${state.idName}`;
-      if (station in props.resources) {
-        console.log('TODO nav', '/~chat/room' + station);
+      let target = `/${state.idName}`;
+      if (target in props.resources) {
+        props.history.push(`/~link/list/0${target}`);
       }
     }
   }
@@ -134,7 +134,7 @@ export class NewScreen extends Component {
       );
       submit.then(() => {
         api.setSpinner(false);
-        console.log('TODO nav', `/~link/list/0${appPath}`);
+        props.history.push(`/~link/list/0${appPath}`);
       })
     });
   }
