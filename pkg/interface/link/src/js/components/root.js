@@ -10,8 +10,12 @@ import { Skeleton } from '/components/skeleton';
 import { NewScreen } from '/components/new';
 import { Links } from '/components/links-list';
 import { LinkDetail } from '/components/link';
-import { base64urlDecode } from '../lib/util';
+import { makeRoutePath, base64urlDecode } from '../lib/util';
 
+//NOTE route paths make the assumption that a resource identifier is always
+//     just a single /path element. technically, backend supports /longer/paths
+//     but no tlon-sanctioned frontend creates those right now, so we're opting
+//     out of supporting them completely for the time being.
 
 export class Root extends Component {
   constructor(props) {
@@ -81,13 +85,13 @@ export class Root extends Component {
             );
           }}
         />
-        <Route exact path="/~link/join/:resource([^#]+)"
+        <Route exact path="/~link/join/:resource"
           render={ (props) => {
             const resourcePath = '/' + props.match.params.resource;
-            props.history.push(`/~link/list/0${resourcePath}`);
+            props.history.push(makeRoutePath(resourcePath));
           }}
         />
-          <Route exact path="/~link/(popout)?/list/:page/:resource([^#]+)"
+          <Route exact path="/~link/(popout)?/:resource/:page?"
             render={ (props) => {
               const resourcePath = '/' + props.match.params.resource;
               const resource = resources[resourcePath] || {};
@@ -138,7 +142,7 @@ export class Root extends Component {
               )
             }}
           />
-          <Route exact path="/~link/(popout)?/item/:page/:index/:commentpage/:encodedUrl/:resource([^#]+)"
+          <Route exact path="/~link/(popout)?/:resource/:page/:index/:encodedUrl/:commentpage?"
             render={ (props) => {
               const resourcePath = '/' + props.match.params.resource;
               const resource = resources[resourcePath] || {};

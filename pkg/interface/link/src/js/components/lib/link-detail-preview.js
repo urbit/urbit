@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Link } from "react-router-dom";
-import { base64urlEncode } from "../../lib/util";
+import { makeRoutePath } from "../../lib/util";
 import moment from "moment";
 
 export class LinkPreview extends Component {
@@ -114,15 +114,7 @@ export class LinkPreview extends Component {
               {this.state.timeSinceLinkPost}
             </span>
             <Link
-              to={
-                "/~link/item/" +
-                props.page +
-                "/" +
-                props.linkIndex +
-                "/0/" +
-                base64urlEncode(props.url) +
-                props.resourcePath
-              }
+              to={makeRoutePath(props.resourcePath, props.popout, props.page, props.url, props.linkIndex)}
               className="v-top">
               <span className="f9 inter gray2">{props.comments}</span>
             </Link>

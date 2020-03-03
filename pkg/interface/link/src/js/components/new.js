@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { InviteSearch } from './lib/invite-search';
 import { Route, Link } from 'react-router-dom';
-import { uuid, isPatTa, deSig } from '/lib/util';
+import { makeRoutePath, isPatTa, deSig } from '/lib/util';
 import urbitOb from 'urbit-ob';
 
 export class NewScreen extends Component {
@@ -31,7 +31,7 @@ export class NewScreen extends Component {
     if (prevProps !== props) {
       let target = `/${state.idName}`;
       if (target in props.resources) {
-        props.history.push(`/~link/list/0${target}`);
+        props.history.push(makeRoutePath(target));
       }
     }
   }
@@ -59,15 +59,9 @@ export class NewScreen extends Component {
   }
 
   createGroupChange(event) {
-    if (event.target.checked) {
-      this.setState({
-        createGroup: !!event.target.checked,
-      });
-    } else {
-      this.setState({
-        createGroup: !!event.target.checked,
-      });
-    }
+    this.setState({
+      createGroup: !!event.target.checked,
+    });
   }
 
   onClickCreate() {
@@ -133,7 +127,7 @@ export class NewScreen extends Component {
       );
       submit.then(() => {
         api.setSpinner(false);
-        props.history.push(`/~link/list/0${appPath}`);
+        props.history.push(makeRoutePath(appPath));
       })
     });
   }
@@ -187,7 +181,7 @@ export class NewScreen extends Component {
           "bg-gray0-d white-d flex flex-column"
         }>
         <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
-          <Link to="/~link/">{"⟵ All Collections"}</Link>
+          <Link to="/~link">{"⟵ All Collections"}</Link>
         </div>
         <h2 className="mb3 f8">New Collection</h2>
         <div className="w-100">

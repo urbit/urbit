@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-
 import { Route, Link } from 'react-router-dom';
+import { makeRoutePath } from '../../lib/util';
 
 export class ChannelsItem extends Component {
   render() {
@@ -18,7 +18,7 @@ export class ChannelsItem extends Component {
       : null;
 
     return (
-      <Link to={"/~link/list/0" + props.link}>
+      <Link to={makeRoutePath(props.link)}>
         <div className={"w-100 v-mid f9 pl4 bb z1 pa3 pt4 pb4 b--gray4 b--gray1-d gray3-d pointer " + selectedClass}>
           <p className="f9 pt1">{props.name}</p>
           <p className="f9 gray2">

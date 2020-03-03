@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
+import { makeRoutePath } from '../../lib/util';
 
 export class LinksTabBar extends Component {
   render() {
     let props = this.props;
 
-    let memColor = '',
-      popout = '';
+    let memColor = '';
 
     if (props.location.pathname.includes('/members')) {
       memColor =  'black';
@@ -13,11 +13,7 @@ export class LinksTabBar extends Component {
       memColor =  'gray3';
     }
 
-    (props.location.pathname.includes('/popout'))
-    ? popout = "popout/"
-    : popout = "";
-
-    let hidePopoutIcon = (this.props.popout)
+    let hidePopoutIcon = (props.popout)
     ? "dn-m dn-l dn-xl"
     : "dib-m dib-l dib-xl";
 
@@ -28,14 +24,14 @@ export class LinksTabBar extends Component {
           <div className={"dib f8 pl6"}>
             <Link
               className={"no-underline " + memColor}
-              to={`/~link/` + popout + `members` + props.resourcePath}>
+              to={makeRoutePath(props.resourcePath, props.popout) + '/members'}>
               Members
             </Link>
           </div>
         ) : (
           <div className="dib" style={{ width: 0 }}></div>
         )}
-        <a href={`/~link/popout/list/${props.page}${props.resourcePath}`} target="_blank"
+        <a href={makeRoutePath(props.resourcePath, true, props.page)} target="_blank"
         className="dib fr">
           <img
             className={`flex-shrink-0 pr4 dn` + hidePopoutIcon}

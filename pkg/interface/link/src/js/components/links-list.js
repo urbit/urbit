@@ -6,7 +6,7 @@ import { LinkItem } from '/components/lib/link-item.js';
 import { LinkSubmit } from '/components/lib/link-submit.js';
 import { Pagination } from '/components/lib/pagination.js';
 
-import { getContactDetails } from '../lib/util';
+import { makeRoutePath, getContactDetails } from '../lib/util';
 
 //TODO Avatar support once it's in
 export class Links extends Component {
@@ -48,7 +48,6 @@ export class Links extends Component {
       );
     }
 
-    let popout = (props.popout) ? "/popout" : "";
     let linkPage = props.page;
 
     let links = !!props.links[linkPage]
@@ -91,7 +90,7 @@ export class Links extends Component {
         member={member}
         comments={commentCount}
         resourcePath={props.resourcePath}
-        popout={popout}
+        popout={props.popout}
         />
       )
     })
@@ -102,7 +101,7 @@ export class Links extends Component {
         <div
           className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
           style={{ height: "1rem" }}>
-         <Link to="/~link/">{"⟵ All Channels"}</Link>
+         <Link to="/~link">{"⟵ All Channels"}</Link>
        </div>
        <div
          className={`pl4 pt2 flex relative overflow-x-scroll
@@ -112,7 +111,7 @@ export class Links extends Component {
           <SidebarSwitcher
            sidebarShown={props.sidebarShown}
            popout={props.popout}/>
-         <Link to={`/~link${popout}/list/${props.page}${props.resourcePath}`} className="pt2">
+         <Link to={makeRoutePath(props.resourcePath, props.popout, props.page)} className="pt2">
            <h2
              className={`dib f9 fw4 v-top lh-solid` +
              (props.resource.group.includes("/~/")
@@ -128,7 +127,7 @@ export class Links extends Component {
          </Link>
           <LinksTabBar
           {...props}
-          popout={popout}
+          popout={props.popout}
           page={props.page}
           resourcePath={props.resourcePath}/>
         </div>
@@ -147,7 +146,7 @@ export class Links extends Component {
             <Pagination
             {...props}
             key={props.resourcePath + props.page}
-            popout={popout}
+            popout={props.popout}
             resourcePath={props.resourcePath}
             currentPage={currentPage}
             totalPages={totalPages}

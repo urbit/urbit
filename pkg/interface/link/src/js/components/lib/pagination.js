@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
+import { makeRoutePath } from '../../lib/util';
 
 export class Pagination extends Component {
   render() {
@@ -19,12 +20,12 @@ export class Pagination extends Component {
     return (
       <div className="w-100 inter relative pv6">
         <div className={prevDisplay + " inter f8"}>
-          <Link to={"/~link" + props.popout + "/list/" + prevPage + props.resourcePath}>
+          <Link to={makeRoutePath(props.resourcePath, props.popout, prevPage)}>
             &#60;- Previous Page
           </Link>
         </div>
         <div className={nextDisplay + " inter f8"}>
-          <Link to={"/~link" + props.popout + "/list/" + nextPage + props.resourcePath}>
+          <Link to={makeRoutePath(props.resourcePath, props.popout, nextPage)}>
             Next Page ->
           </Link>
         </div>

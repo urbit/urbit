@@ -5,7 +5,7 @@ import { SidebarSwitcher } from '/components/lib/icons/icon-sidebar-switch.js';
 import { api } from '../api';
 import { Route, Link } from 'react-router-dom';
 import { Comments } from './lib/comments';
-import { getContactDetails } from '../lib/util';
+import { makeRoutePath, getContactDetails } from '../lib/util';
 
 export class LinkDetail extends Component {
   constructor(props) {
@@ -62,7 +62,6 @@ export class LinkDetail extends Component {
 
   render() {
     let props = this.props;
-    let popout = (props.popout) ? "/popout" : "";
 
     const data = this.state.data || props.data;
     let ship = data.ship || "zod";
@@ -98,10 +97,10 @@ export class LinkDetail extends Component {
           />
           <Link
             className="dib f9 fw4 pt2 gray2 lh-solid"
-            to={"/~link" + popout + "/list/" + props.page + props.resourcePath}>
+            to={makeRoutePath(props.resourcePath, props.popout, props.page)}>
             {"<- Collection index"}
           </Link>
-          <LinksTabBar {...props} popout={popout} resourcePath={props.resourcePath} />
+          <LinksTabBar {...props} popout={props.popout} resourcePath={props.resourcePath} />
         </div>
         <div className="w-100 mt2 flex justify-center overflow-y-scroll ph4 pb4">
           <div className="w-100 mw7">
