@@ -42,6 +42,9 @@
       =^  cards  state
         (poke-hook-action:hc !<(metadata-hook-action vase))
       [cards this]
+    ::
+        %metadata-action
+      [(poke-action:hc !<(metadata-action vase)) this]
     == 
   ::
   ++  on-watch
@@ -106,6 +109,43 @@
     [%pass path %agent [ship %metadata-hook] %leave ~]~
   --
 ::
+++  poke-action
+  |=  act=metadata-action
+  ^-  (list card)
+  |^
+  ?:  (team:title our.bowl src.bowl)
+    ?-  -.act
+        %add     (send group-path.act)
+        %remove  (send group-path.act)
+    ==
+  ?>  (is-permitted src.bowl group-path.act)
+  ?-  -.act
+      %add     (metadata-poke our.bowl %metadata-store)
+      %remove  (metadata-poke our.bowl %metadata-store)
+  ==
+  ::
+  ++  send
+    |=  =group-path
+    ^-  (list card)
+    =/  =ship
+      %+  slav  %p
+      ?:  (is-managed group-path)  (snag 0 group-path)
+      (snag 1 group-path)
+    =/  app  ?:(=(ship our.bowl) %metadata-store %metadata-hook)
+    (metadata-poke ship app)
+  ::
+  ++  metadata-poke
+    |=  [=ship app=@tas]
+    ^-  (list card)
+    [%pass / %agent [ship app] %poke %metadata-action !>(act)]~
+  ::
+  ++  is-managed
+    |=  =path
+    ^-  ?
+    ?>  ?=(^ path)
+    !=(i.path '~')
+  --
+::
 ++  watch-group
   |=  =path
   ^-  (list card)
@@ -116,17 +156,6 @@
   |=  [[=group-path =resource] =metadata]
   ^-  card
   [%give %fact ~ %metadata-update !>([%add group-path resource metadata])]
-  ::
-  ++  is-permitted
-    |=  [=ship pax=^path]
-    ^-  ?
-    =.  pax
-      ;:  weld
-          /=permission-store/(scot %da now.bowl)/permitted
-          [(scot %p ship) pax]
-          /noun
-      ==
-    .^(? %gx pax)
   ::
   ++  metadata-scry
     |=  pax=^path
@@ -203,4 +232,15 @@
   ^-  (quip card _state)
   ?>  ?=(^ wir)
   [~ ?~(saw state state(synced (~(del by synced) t.wir)))]
+::
+++  is-permitted
+  |=  [=ship pax=path]
+  ^-  ?
+  =.  pax
+    ;:  weld
+        /=permission-store/(scot %da now.bowl)/permitted
+        [(scot %p ship) pax]
+        /noun
+    ==
+  .^(? %gx pax)
 --
