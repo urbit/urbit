@@ -119,6 +119,7 @@
   (slog leaf/"ames: {(scow %p ship)}: {(print)}" ~)
 --
 =>
+~%  %ames-generics  ..is  ~
 |%
 +|  %generics
 ::  $mk-item: constructor for +ordered-map item type
@@ -1250,6 +1251,7 @@
 --
 ::  helpers
 ::
+~%  %ames-helpers  +>+  ~
 |%
 ++  per-event
   =|  moves=(list move)

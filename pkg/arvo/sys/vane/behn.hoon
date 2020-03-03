@@ -34,7 +34,9 @@
     +$  timer  [date=@da =duct]
     --
 ::
-=>  |%
+=>
+~%  %behn  ..is  ~
+|%
 ++  per-event
   =|  moves=(list move)
   |=  [[our=ship now=@da =duct] state=behn-state]

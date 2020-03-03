@@ -535,6 +535,7 @@
           $>(%crud vane-task)                           ::  XX strange
   ==  ==                                                ::
 --  =>
+~%  %clay-utilities  ..is  ~
 ::  %utilities
 ::
 |%
@@ -587,6 +588,7 @@
   ~|  [%expected-writ got=+<.sign]
   !!
 --  =>
+~%  %clay  +  ~
 |%
 ::  Printable form of a wove; useful for debugging
 ::
