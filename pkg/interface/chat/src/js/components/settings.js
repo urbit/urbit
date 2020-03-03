@@ -14,11 +14,25 @@ export class SettingsScreen extends Component {
 
     this.state = {
       isLoading: false,
-      title: ""
+      title: "",
+      description: "",
+      color: ""
     };
 
     this.renderDelete = this.renderDelete.bind(this);
     this.changeTitle = this.changeTitle.bind(this);
+    this.changeDescription = this.changeDescription.bind(this);
+    this.changeColor = this.changeColor.bind(this);
+  }
+
+  componentDidMount() {
+    if ((this.props.association) && (this.props.association.metadata)) {
+      this.setState({
+        title: this.props.association.metadata.title,
+        description: this.props.association.metadata.description,
+        color: uxToHex(this.props.association.metadata.color)
+      });
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -34,12 +48,23 @@ export class SettingsScreen extends Component {
 
     if ((this.state.title === "") && (prevProps !== this.props)) {
       if ((props.association) && (props.association.metadata))
-      this.setState({title: props.association.metadata.title});
+      this.setState({
+        title: props.association.metadata.title,
+        description: props.association.metadata.description,
+        color: uxToHex(props.association.metadata.color)});
     }
   }
 
   changeTitle() {
     this.setState({title: event.target.value})
+  }
+
+  changeDescription() {
+    this.setState({description: event.target.value});
+  }
+
+  changeColor() {
+    this.setState({color: event.target.value});
   }
 
   deleteChat() {
@@ -118,6 +143,66 @@ export class SettingsScreen extends Component {
               }
             }}>
             Save
+            </span>
+          </div>
+          <p className="f8 mt3 lh-copy">Change description</p>
+          <p className="f9 gray2 db mb4">Change the description of this chat</p>
+          <div className="relative w-100 flex"
+            style={{ maxWidth: "29rem" }}>
+            <input
+              className="f8 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 flex-auto mr3"
+              value={this.state.description}
+              disabled={!chatOwner}
+              onChange={this.changeDescription}
+            />
+            <span className={"f8 absolute pa3 inter " +
+              ((chatOwner) ? "pointer" : "")}
+              style={{ right: 12, top: 1 }}
+              ref="description"
+              onClick={() => {
+                if (chatOwner) {
+                  this.refs.description.innerText = "Saved";
+                  props.api.metadataAdd(
+                    association['app-path'],
+                    association['group-path'],
+                    association.metadata.title,
+                    this.state.description,
+                    association.metadata['date-created'],
+                    uxToHex(association.metadata.color)
+                  )
+                }
+              }}>
+              Save
+            </span>
+          </div>
+          <p className="f8 mt3 lh-copy">Change color</p>
+          <p className="f9 gray2 db mb4">Give this chat a color when viewing group channels</p>
+          <div className="relative w-100 flex"
+            style={{ maxWidth: "20rem" }}>
+            <input
+              className="f8 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 flex-auto mr3"
+              value={this.state.color}
+              disabled={!chatOwner}
+              onChange={this.changeColor}
+            />
+            <span className={"f8 absolute pa3 inter " +
+              ((chatOwner) ? "pointer" : "")}
+              style={{ right: 12, top: 1 }}
+              ref="color"
+              onClick={() => {
+                if ((chatOwner) && (this.state.color.match(/[0-9A-F]{6}/i))) {
+                  this.refs.color.innerText = "Saved";
+                  props.api.metadataAdd(
+                    association['app-path'],
+                    association['group-path'],
+                    association.metadata.title,
+                    association.metadata.description,
+                    association.metadata['date-created'],
+                    this.state.color
+                  )
+                }
+              }}>
+              Save
             </span>
           </div>
         </div>
