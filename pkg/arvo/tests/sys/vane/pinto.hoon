@@ -10,6 +10,15 @@
   ::
       :-  cx+[[~nul %home da+~1234.5.6] /hoon/baz/lib]
       `hoon+!>('!:  [12 13]  !:  -')
+  ::
+      :-  cx+[[~nul %home da+~1234.5.6] /hoon/hoon/sys]
+      `hoon+!>('=<  |=(* ~)  |%  ++  one  1  --')
+  ::
+      :-  cx+[[~nul %home da+~1234.5.6] /hoon/arvo/sys]
+      `hoon+!>('|%  ++  is  one  --')
+  ::
+      :-  cx+[[~nul %home da+~1234.5.6] /hoon/zuse/sys]
+      `hoon+!>('|%  ++  aint  is  --')
   ==
 =/  ford  ((pinto) ~nul %home ~1234.5.6 scry)
 =/  ca  (by-clock:contain hoon-cache-key:ford vase)
@@ -120,5 +129,43 @@
     %+  expect-eq
       !>  `(list spar:ford)`~(tap in ~(key by cur.build-state))
       !>  `(list spar:ford)`[%x /lib/baz/hoon]~
+  ==
+++  test-run-root-build-file  ^-  tang
+  =/  [=product:ford =build-state:ford =^hoon-cache]
+    %:  run-root-build:ford
+      ^-  build:ford
+      :*  live=%.n
+          desk=%home
+          case=da+~1234.5.6
+          plan=[%file /lib/baz/hoon]
+      ==
+    ::
+      ^-  build-state:ford
+      [fum=~ cur=~ pre=~]
+    ::
+      ^-  (unit (unit cage))
+      ~
+    ==
+  ~|  product
+  ?>  ?=([~ %& *] product)
+  ;:  welp
+    %+  expect-eq
+      !>  %noun
+      !>  p.p.u.product
+  ::
+    %+  expect-eq
+      !>  12
+      q.p.u.product
+  ::
+    %+  expect-eq
+      !>  `build-state:ford`build-state(cur ~)
+      !>  `build-state:ford`[fum=~ cur=~ pre=~]
+  ::
+    %+  expect-eq
+      !>  %-  ~(gas in *(set spar:ford))
+          :~  [%x /sys/arvo/hoon]  [%x /lib/baz/hoon]
+              [%x /sys/hoon/hoon]  [%x /sys/zuse/hoon]
+          ==
+      !>  ~(key by cur.build-state)
   ==
 --

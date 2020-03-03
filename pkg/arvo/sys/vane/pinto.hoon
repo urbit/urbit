@@ -9,6 +9,7 @@
   $^  [hed=plan tal=plan]
   $%  [%ride sut=plan gen=hoon]
       [%call gat=plan sam=plan]
+      [%file =path]
       [%load =spar]
       [%grok =path]
       [%$ =cage]
@@ -236,6 +237,7 @@
     ^      (make-cell plan)
     %$     (pure:m cage.plan)
     %call  (make-call +.plan)
+    %file  (make-file +.plan)
     %grok  (make-grok +.plan)
     %load  (make-load +.plan)
     %ride  (make-ride +.plan)
@@ -249,7 +251,7 @@
   ;<  [mark tal=vase]  bind:m  (make b)
   (pure:m noun+(slop hed tal))
 ::
-++  make-call  |=([gat=plan sam=plan] (lift-vase (run-call gat sam)))
+++  make-call  |=([gat=plan sam=plan] (lift-vase (run-call +<)))
 ++  run-call
   |=  [gat=plan sam=plan]
   =/  m  (fume ,vase)
@@ -272,6 +274,43 @@
     %1  (fail:m leaf+"ford: scry-block {<p.vap>}" ~)
     %2  (fail:m leaf+"ford: call-fail" p.vap)
   ==
+::
+++  make-file  |=(path (lift-vase (run-file +<)))
+++  run-file
+  |=  =path
+  =/  m  (fume ,vase)
+  ^-  form:m
+  ;<  =pile  bind:m  (run-grok path)
+  ;<  sut=vase  bind:m  run-reef
+  =*  loop  $
+  ?~  pile  (pure:m sut)
+  ;<  sot=vase  bind:m  (run-pike sut i.pile)
+  loop(sut sot, pile t.pile)
+::
+++  run-pike
+  |=  [sut=vase =pike]
+  =/  m  (fume ,vase)
+  ^-  form:m
+  ?+  -.pike  !!
+    %'/-'  (run-fshp sut +.pike)
+    %'/+'  (run-fsls sut +.pike)
+    %'/~'  (run-fssg sut +.pike)
+  ==
+++  run-fshp
+  |=  [sut=vase =taut]
+  =/  m  (fume ,vase)
+  ^-  form:m
+  !!
+++  run-fsls
+  |=  [sut=vase =taut]
+  =/  m  (fume ,vase)
+  ^-  form:m
+  !!
+++  run-fssg
+  |=  [sut=vase gen=hoon]
+  =/  m  (fume ,vase)
+  ^-  form:m
+  (run-ride sut gen)
 ::
 ++  make-grok
   |=  =path
