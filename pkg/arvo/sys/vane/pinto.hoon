@@ -13,6 +13,7 @@
       [%file =path]
       [%load =spar]
       [%grok =path]
+      [%pile =pile]
       [%$ =cage]
   ==
 +$  pile  (list pike)
@@ -242,6 +243,7 @@
     %file  (make-file +.plan)
     %grok  (make-grok +.plan)
     %load  (make-load +.plan)
+    %pile  (make-pile +.plan)
     %ride  (make-ride +.plan)
   ==
 ::
@@ -290,11 +292,7 @@
   =/  m  (fume ,vase)
   ^-  form:m
   ;<  =pile  bind:m  (run-grok path)
-  ;<  sut=vase  bind:m  run-reef
-  =*  loop  $
-  ?~  pile  (pure:m sut)
-  ;<  [mark sot=vase]  bind:m  (run-pike sut i.pile)
-  loop(sut sot, pile t.pile)
+  (run-pile pile)
 ::
 ++  run-pike
   |=  [sut=vase =pike]
@@ -351,6 +349,17 @@
   ?~  u.in.fin1
     [s.fin1 %fail ~[leaf+"ford: load-fail {<spar>}"]]
   [s.fin1 %done u.u.in.fin1]
+::
+++  make-pile  |=(pile (lift-vase (run-pile +<)))
+++  run-pile
+  |=  =pile
+  =/  m  (fume ,vase)
+  ^-  form:m
+  ;<  sut=vase  bind:m  run-reef
+  =*  loop  $
+  ?~  pile  (pure:m sut)
+  ;<  [mark sot=vase]  bind:m  (run-pike sut i.pile)
+  loop(sut sot, pile t.pile)
 ::
 ++  run-reef
   =/  m  (fume ,vase)
