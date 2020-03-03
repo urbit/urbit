@@ -605,6 +605,9 @@
     ++  spam
       |=  =ovum
       ^+  this
+      ::  fix up wire on %vega from previous kernel
+      ::
+      =?  wire.ovum  =(ovum [/ %vega ~])  //arvo
       =/  ord=(list (pair term *))
         %+  sort
           ~(tap by van)
@@ -1259,7 +1262,7 @@
         eny
         ::  tack a notification onto the pending effects
         ::
-        (weld ova [`ovum`[/ %vega ~] ~])
+        (weld ova [`ovum`[//arvo %vega ~] ~])
         bud
         (turn vanes |=([label=@tas =vane] [label vase.vane]))
     ==
