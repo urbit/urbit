@@ -17,7 +17,7 @@
   ::
   =/  m  (fume:ford ,cage)
   =/  out=output:m
-    ((make:ford %ride $+noun+!>([%foo 17]) (ream '-')) ~ *^hoon-cache)
+    ((make:ford %ride $+noun+!>([%foo 17]) (ream '-')) ~ hoon-cache)
   ::
   ;:  welp
     %+  expect-eq
@@ -61,5 +61,20 @@
     %+  expect-eq
       !>  `(list spar:ford)`~(tap in ~(key by cur.build-state))
       !>  `(list spar:ford)`[%x /lib/foo/hoon]~
+  ==
+++  test-make-call  ^-  tang
+  =/  m  (fume:ford ,cage)
+  =/  out=output:m
+    ((make:ford %call $+noun+!>(dec) $+noun+!>(17)) ~ hoon-cache)
+  ?>  ?=(%done -.next.out)
+  ::
+  ;:  welp
+    %+  expect-eq
+      !>  %noun
+      !>  p.value.next.out
+  ::
+    %+  expect-eq
+      !>  16
+      q.value.next.out
   ==
 --

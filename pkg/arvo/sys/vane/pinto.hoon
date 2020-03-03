@@ -8,6 +8,7 @@
 +$  plan
   $^  [hed=plan tal=plan]
   $%  [%ride sut=plan gen=hoon]
+      [%call gat=plan sam=plan]
       [%load =spar]
       [%$ =cage]
   ==
@@ -20,7 +21,7 @@
 ::    %hood: parse file into $scaffold; use !<(scaffold val)
 ::    %ride: +slap $hoon against $vase
 ::    %slim: compile +slap; use !<([type nock] val)
-::    %slit: infer +slam product type; use .p.val
+::    %slit: infer +slam product type; use !<(type val)
 ::
 +$  hoon-cache-key
   $%  [%call gate=vase sample=vase]
@@ -147,33 +148,42 @@
 |=  [our=ship =desk now=@da scry=sley]
 |%
 ++  run-root-build
-  |=  [=build =build-state in=(unit (unit cage))]
-  ^-  [=product =^build-state =^hoon-cache]
+  |=  [=build state=build-state in=(unit (unit cage))]
+  ^-  [=product =build-state =^hoon-cache]
   =/  m  (fume ,cage)
   ::  fresh build should have no response; rerun must have one
   ::
-  ?>  =(=(~ fum.build-state) =(~ in))
+  ?>  =(=(~ fum.state) =(~ in))
   ::  if no attempt has been made already, try to run the build
   ::
   =^  pro=output:m  in
-    ?^  fum.build-state
-      [[hoon-cache %load u.fum.build-state] in]
+    ?^  fum.state
+      [[hoon-cache %load u.fum.state] in]
     [((make plan.build) in hoon-cache) ~]
   ::
-  |-  ^-  [product ^build-state ^hoon-cache]
+  |-  ^-  [product build-state ^hoon-cache]
+  =.  hoon-cache  s.pro
   ?-    -.next.pro
-      %done  [`&+value.next.pro build-state s.pro]
-      %fail  [`|+tang.next.pro build-state s.pro]
+      %done  [`&+value.next.pro state hoon-cache]
+      %fail  [`|+tang.next.pro state hoon-cache]
       %load
+    ::  run .on-load on clay response if we have one
+    ::
     ?^  in
-      =.  cur.build-state  (~(put by cur.build-state) spar.next.pro u.in)
-      $(pro (on-load.next.pro in s.pro), hoon-cache s.pro, in ~)
-    ?^  got=(~(get by cur.build-state) spar.next.pro)
-      $(pro (on-load.next.pro got s.pro), hoon-cache s.pro)
+      =.  cur.state  (~(put by cur.state) spar.next.pro u.in)
+      $(pro (on-load.next.pro in hoon-cache), in ~)
+    ::  run .on-load on previously loaded resource if we have one
+    ::
+    ?^  got=(~(get by cur.state) spar.next.pro)
+      $(pro (on-load.next.pro got hoon-cache))
+    ::  run .on-load on result of scry if it completes synchronously
+    ::
     ?^  res=(scry-for-spar spar.next.pro)
-      =.  cur.build-state  (~(put by cur.build-state) spar.next.pro u.res)
-      $(pro (on-load.next.pro res s.pro), hoon-cache s.pro)
-    [~ build-state(fum `[spar on-load]:next.pro) s.pro]
+      =.  cur.state  (~(put by cur.state) spar.next.pro u.res)
+      $(pro (on-load.next.pro res hoon-cache))
+    ::  block, storing .on-load in .fum.state
+    ::
+    [~ state(fum `[spar on-load]:next.pro) hoon-cache]
   ==
 ::
 ++  make
@@ -183,6 +193,7 @@
   ?-  -.plan
     ^      (make-cell plan)
     %$     (pure:m cage.plan)
+    %call  (make-call +.plan)
     %load  (make-load +.plan)
     %ride  (make-ride +.plan)
   ==
@@ -194,6 +205,36 @@
   ;<  [mark hed=vase]  bind:m  (make a)
   ;<  [mark tal=vase]  bind:m  (make b)
   (pure:m noun+(slop hed tal))
+::
+++  make-call
+  |=  [gat=plan sam=plan]
+  =/  m  (fume ,cage)
+  ^-  form:m
+  %-  lift-vase
+  (run-call gat sam)
+::
+++  run-call
+  |=  [gat=plan sam=plan]
+  =/  m  (fume ,vase)
+  ^-  form:m
+  ;<  [mark got=vase]  bind:m  (make gat)
+  ;<  [mark som=vase]  bind:m  (make sam)
+  %+  with-cache-key  [%call got som]
+  ;<  sit=vase  bind:m
+    %+  with-cache-key  [%slit p.got p.som]
+    %+  on-fail:m  |.([leaf+"ford: slit-fail"]~)
+    =/  lap  (mule |.((slit p.got p.som)))
+    ?-  -.lap
+      %&  (pure:m !>(p.lap))
+      %|  (fail:m p.lap)
+    ==
+  =+  !<(gol=type sit)
+  =/  vap  (mong [q.got q.som] (sloy scry))
+  ?-  -.vap
+    %0  (pure:m [gol p.vap])
+    %1  (fail:m leaf+"ford: scry-block {<p.vap>}" ~)
+    %2  (fail:m leaf+"ford: call-fail" p.vap)
+  ==
 ::
 ++  make-load
   |=  =spar
