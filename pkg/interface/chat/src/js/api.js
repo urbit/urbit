@@ -183,7 +183,7 @@ class UrbitApi {
 
   metadataAction(data) {
     console.log(data)
-    return this.action("metadata-store", "metadata-action", data);
+    return this.action("metadata-hook", "metadata-action", data);
   }
 
   metadataAdd(appPath, groupPath, title, description, dateCreated, color) {
@@ -196,11 +196,11 @@ class UrbitApi {
           "app-name": "chat"
         },
         metadata: {
-          title: title,
-          description: description,
-          color: color,
+          title,
+          description,
+          color,
           'date-created': dateCreated,
-          creator: creator
+          creator
         }
       }
     })

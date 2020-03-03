@@ -131,7 +131,7 @@ export class SettingsScreen extends Component {
             ref="rename"
             onClick={() => {
               if (chatOwner) {
-                this.refs.rename.innerText = "Saved";
+                props.api.setSpinner(true);
                 props.api.metadataAdd(
                   association['app-path'],
                   association['group-path'],
@@ -139,7 +139,10 @@ export class SettingsScreen extends Component {
                   association.metadata.description,
                   association.metadata['date-created'],
                   uxToHex(association.metadata.color)
-                )
+                ).then(() => {
+                  this.refs.rename.innerText = "Saved";
+                  props.api.setSpinner(false);
+                })
               }
             }}>
             Save
@@ -161,7 +164,7 @@ export class SettingsScreen extends Component {
               ref="description"
               onClick={() => {
                 if (chatOwner) {
-                  this.refs.description.innerText = "Saved";
+                  props.api.setSpinner(true);
                   props.api.metadataAdd(
                     association['app-path'],
                     association['group-path'],
@@ -169,7 +172,10 @@ export class SettingsScreen extends Component {
                     this.state.description,
                     association.metadata['date-created'],
                     uxToHex(association.metadata.color)
-                  )
+                  ).then(() => {
+                    this.refs.description.innerText = "Saved";
+                    props.api.setSpinner(false);
+                  })
                 }
               }}>
               Save
@@ -191,7 +197,7 @@ export class SettingsScreen extends Component {
               ref="color"
               onClick={() => {
                 if ((chatOwner) && (this.state.color.match(/[0-9A-F]{6}/i))) {
-                  this.refs.color.innerText = "Saved";
+                  props.api.setSpinner(true);
                   props.api.metadataAdd(
                     association['app-path'],
                     association['group-path'],
@@ -199,7 +205,10 @@ export class SettingsScreen extends Component {
                     association.metadata.description,
                     association.metadata['date-created'],
                     this.state.color
-                  )
+                  ).then(() => {
+                    this.refs.color.innerText = "Saved";
+                    props.api.setSpinner(false);
+                  })
                 }
               }}>
               Save
