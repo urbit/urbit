@@ -18,6 +18,7 @@
       [%pile =pile]
       [%bunt =mark]
       [%vale =mark =noun]
+      [%volt =mark =noun]
       [%$ =cage]
   ==
 +$  pile  (list pike)
@@ -251,6 +252,7 @@
     %pile  (make-pile +.plan)
     %ride  (make-ride +.plan)
     %vale  (make-vale +.plan)
+    %volt  (make-volt +.plan)
   ==
 ::
 ++  make-bunt  |=(mark (lift-vase (run-bunt +<)))
@@ -434,6 +436,13 @@
   =/  sam=vase  !>(noun)
   ;<  pro=vase  bind:m  (do-call gat sam)
   (pure:m [mark pro])
+::
+++  make-volt
+  |=  [=mark =noun]
+  =/  m  (fume ,cage)
+  ^-  form:m
+  ;<  cor=vase  bind:m  (load-mark mark)
+  (pure:m [mark cor(+<.q noun)])
 ::
 ++  load-mark
   |=  =mark
