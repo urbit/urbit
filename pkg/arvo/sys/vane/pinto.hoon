@@ -19,6 +19,7 @@
       [%bunt =mark]
       [%vale =mark =noun]
       [%volt =mark =noun]
+      [%cast =mark =plan]
       [%$ =cage]
   ==
 +$  pile  (list pike)
@@ -244,6 +245,7 @@
     ^      (make-cell plan)
     %$     (pure:m cage.plan)
     %bunt  (make-bunt +.plan)
+    %cast  (make-cast +.plan)
     %call  (make-call +.plan)
     %dude  (make-dude +.plan)
     %file  (make-file +.plan)
@@ -300,12 +302,32 @@
     %2  (fail:m leaf+"ford: call-fail" p.vap)
   ==
 ::
+++  make-cast
+  |=  [new=mark =plan]
+  =/  m  (fume ,cage)
+  ^-  form:m
+  ;<  [old=mark arg=vase]  bind:m  (make plan)
+  %+  on-fail:m  |.([leaf+"ford: cast-fail {<old>} -> {<new>}"]~)
+  ;<  cor=vase  bind:m  (load-mark new)
+  =/  rab  (mule |.((slap cor (ream (cat 3 'grab:' old)))))
+  ?:  ?=(%& -.rab)
+    %+  on-fail:m  |.([leaf+"ford: grab-fail {<old>} -> {<new>}"]~)
+    ;<  pro=vase  bind:m  (do-call p.rab arg)
+    (pure:m [new pro])
+  %+  on-fail:m  |.([leaf+"ford: grow-fail {<old>} -> {<new>}"]~)
+  ;<  roc=vase  bind:m  (load-mark old)
+  =/  row  (mule |.((slap roc (ream (cat 3 'grow:' new)))))
+  ?-  -.row
+    %|  (fail:m p.row)
+    %&  ;<  pro=vase  bind:m  (do-call p.row arg)
+        (pure:m [new pro])
+  ==
+::
 ++  make-dude
   |=  [=tank =plan]
   =/  m  (fume ,cage)
   ^-  form:m
-  %+  on-fail:m  |.([tank]~)
-  (make plan)
+  (on-fail:m |.([tank]~) (make plan))
 ::
 ++  make-file  |=(path (lift-vase (run-file +<)))
 ++  run-file
@@ -330,18 +352,11 @@
   |=  [wer=?(%lib %sur) sut=vase =taut]
   =/  m  (fume ,cage)
   ^-  form:m
-  ;<  [mark xap=vase]  bind:m  (make-load %s /[wer]/[pax.taut])
-  =+  !<(pax=path xap)
-  ;<  sur=vase  bind:m  (run-file pax)
-  =?  p.sur  ?=(^ face.taut)  [%face u.face.taut p.sur]
-  (pure:m noun+(slop sur sut))
+  ;<  pin=vase  bind:m  (load-fit /[wer]/[pax.taut])
+  =?  p.pin  ?=(^ face.taut)  [%face u.face.taut p.pin]
+  (pure:m noun+(slop pin sut))
 ::
-++  run-fssg
-  |=  [sut=vase gen=hoon]
-  =/  m  (fume ,cage)
-  ^-  form:m
-  %-  lift-vase
-  (run-ride sut gen)
+++  run-fssg  |=([sut=vase gen=hoon] (lift-vase (run-ride +<)))
 ::
 ++  make-grok
   |=  =path
@@ -395,18 +410,16 @@
   |=  [=path sut=vase]
   =/  m  (fume ,vase)
   ^-  form:m
-  ;<  [=mark xet=vase]  bind:m  (make-load %x path)
+  ;<  [=mark tex=vase]  bind:m  (make-load %x path)
   ?>  ?=(%hoon mark)
-  =/  tex  !<(@t xet)
-  =/  gen  (rain path tex)
+  =/  gen  (rain path !<(@t tex))
   (run-ride sut gen)
 ::
 ++  make-ride
   |=  [sut=plan gen=hoon]
   =/  m  (fume ,cage)
   ;<  [mark vut=vase]  bind:m  (make sut)
-  %-  lift-vase
-  (run-ride vut gen)
+  (lift-vase (run-ride vut gen))
 ::
 ++  run-ride
   |=  [sut=vase gen=hoon]
@@ -450,9 +463,15 @@
   |=  =mark
   =/  m  (fume ,vase)
   ^-  form:m
-  ;<  [^mark xap=vase]  bind:m  (make-load %s /[mark])
-  =+  !<(pax=path xap)
-  (run-file pax)
+  %+  on-fail:m  |.([leaf+"ford: load-mark {(trip mark)}"]~)
+  (load-fit /[mark])
+::
+++  load-fit
+  |=  pax=path
+  =/  m  (fume ,vase)
+  ^-  form:m
+  ;<  [mark pox=vase]  bind:m  (make-load %s pax)
+  (run-file !<(path pox))
 ::
 ++  with-cache-key
   =/  m  (fume ,vase)
