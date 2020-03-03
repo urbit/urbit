@@ -283,7 +283,7 @@
     %+  weld  group-setup
     :~  ::  add collection to metadata-store
         ::
-        %^  do-poke  %metadata-store
+        %^  do-poke  %metadata-hook
           %metadata-action
         !>  ^-  metadata-action:metadata-store
         :^  %add  group-path
