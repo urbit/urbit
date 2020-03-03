@@ -9,6 +9,7 @@
   $^  [hed=plan tal=plan]
   $%  [%ride sut=plan gen=hoon]
       [%call gat=plan sam=plan]
+      [%dude =tank =plan]
       [%file =path]
       [%load =spar]
       [%grok =path]
@@ -237,6 +238,7 @@
     ^      (make-cell plan)
     %$     (pure:m cage.plan)
     %call  (make-call +.plan)
+    %dude  (make-dude +.plan)
     %file  (make-file +.plan)
     %grok  (make-grok +.plan)
     %load  (make-load +.plan)
@@ -274,6 +276,13 @@
     %1  (fail:m leaf+"ford: scry-block {<p.vap>}" ~)
     %2  (fail:m leaf+"ford: call-fail" p.vap)
   ==
+::
+++  make-dude
+  |=  [=tank =plan]
+  =/  m  (fume ,cage)
+  ^-  form:m
+  %+  on-fail:m  |.([tank]~)
+  (make plan)
 ::
 ++  make-file  |=(path (lift-vase (run-file +<)))
 ++  run-file
