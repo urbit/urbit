@@ -294,6 +294,13 @@
           date-created  now.bowl
           creator       our.bowl
         ==
+      ::
+        ::  expose the metadata
+        ::
+        %^  do-poke  %metadata-hook
+          %metadata-hook-action
+        !>  ^-  metadata-hook-action:metadata-hook
+        [%add-owned group-path]
     ==
   ?:  ?=(%group -.members.act)  ~
   ::  if the group is "real", make contact-view do the heavy lifting
@@ -327,7 +334,14 @@
       !>  ^-  group-hook-action:group-hook
       [%add our.bowl group-path]
     ::
-      ::  make a permission equivalent
+      ::  mirror group into a permission
+      ::
+      %^  do-poke  %permission-group-hook
+        %permission-group-hook-action
+      !>  ^-  permission-group-hook-action:permission-group-hook
+      [%associate group-path [group-path^%white ~ ~]]
+    ::
+      ::  expose the permission
       ::
       %^  do-poke  %permission-hook
         %permission-hook-action
