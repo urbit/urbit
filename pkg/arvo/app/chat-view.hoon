@@ -224,13 +224,16 @@
     ?>  ?=(^ app-path.act)
     %-  zing
     :~  :~  (chat-hook-poke [%remove app-path.act])
-            (metadata-store-poke [%remove group-path [%chat app-path.act]])
             (chat-poke [%delete app-path.act])
         ==
+      ::
+        ?.  (is-creator group-path %chat app-path.act)  ~
+        [(metadata-poke [%remove group-path [%chat app-path.act]])]~
       ::
         ?:  (is-managed group-path)  ~
         :~  (group-poke [%unbundle group-path])
             (metadata-hook-poke [%remove group-path])
+            (metadata-store-poke [%remove group-path [%chat app-path.act]])
         ==
     ==
   ::
@@ -300,7 +303,7 @@
         ?:  (is-managed app-path)  (snag 0 app-path)
         (snag 1 app-path)
       ==
-    :~  (metadata-store-poke [%add group-path [%chat app-path] metadata])
+    :~  (metadata-poke [%add group-path [%chat app-path] metadata])
         (metadata-hook-poke [%add-owned group-path])
     ==
   ::
@@ -308,6 +311,11 @@
     |=  act=[%create =path ships=(set ship) title=@t description=@t]
     ^-  card
     [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
+  ::
+  ++  metadata-poke
+    |=  act=metadata-action
+    ^-  card
+    [%pass / %agent [our.bol %metadata-hook] %poke %metadata-action !>(act)]
   ::
   ++  metadata-store-poke
     |=  act=metadata-action
@@ -364,6 +372,23 @@
     ^-  ?
     ?>  ?=(^ path)
     !=(i.path '~')
+  ::
+  ++  is-creator
+    |=  [group-path=path app-name=@ta app-path=path]
+    ^-  ?
+    =/  =metadata
+      .^  metadata
+        %gx
+        (scot %p our.bol)
+        %metadata-store
+        (scot %da now.bol)
+        %metadata
+        (scot %t (spat group-path))
+        app-name
+        (scot %t (spat app-path))
+        /noun
+      ==
+    =(our.bol creator.metadata)
   --
 ::
 ++  diff-chat-update

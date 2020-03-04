@@ -45,12 +45,13 @@ export class Root extends Component {
       state.invites['/chat'] : {};
 
     let contacts = !!state.contacts ? state.contacts : {};
+    let associations = !!state.associations ? state.associations : new Map;
 
     const renderChannelSidebar = (props, station) => (
       <Sidebar
         inbox={state.inbox}
         messagePreviews={messagePreviews}
-        associations={state.associations || new Map}
+        associations={associations}
         contacts={contacts}
         invites={invites}
         unreads={unreads}
@@ -152,8 +153,14 @@ export class Root extends Component {
                 envelopes: []
               };
 
-              let roomContacts = (station in contacts)
-                ? contacts[station] : {};
+              let roomContacts = {};
+              let associatedGroup = ((associations.has(station)) &&
+              (associations.get(station)["group-path"]))
+                ? associations.get(station)["group-path"] : "";
+
+              if ((associations.has(station)) && (associatedGroup in contacts)) {
+                roomContacts = contacts[associatedGroup]
+              }
 
               let group = state.groups[station] || new Set([]);
               let popout = props.match.url.includes("/popout/");
@@ -210,7 +217,7 @@ export class Root extends Component {
                   spinner={state.spinner}
                   sidebarShown={state.sidebarShown}
                   popout={popout}
-                  sidebar={renderChannelSidebar(props)}
+                  sidebar={renderChannelSidebar(props, station)}
                 >
                   <MemberScreen
                     {...props}
@@ -240,17 +247,21 @@ export class Root extends Component {
 
               let popout = props.match.url.includes("/popout/");
 
+              let association = (associations.has(station))
+                ? associations.get(station) : {};
+
               return (
                 <Skeleton
                   sidebarHideOnMobile={true}
                   spinner={state.spinner}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
-                  sidebar={renderChannelSidebar(props)}
+                  sidebar={renderChannelSidebar(props, station)}
                 >
                   <SettingsScreen
                     {...props}
                     station={station}
+                    association={association}
                     api={api}
                     station={station}
                     group={group}

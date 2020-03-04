@@ -6,6 +6,7 @@ export class MetadataReducer {
     if (data) {
       this.associations(data, state);
       this.add(data, state);
+      this.update(data, state);
     }
   }
 
@@ -23,6 +24,15 @@ export class MetadataReducer {
 
   add(json, state) {
     let data = _.get(json, 'add', false);
+    if (data) {
+      let metadata = state.associations;
+      metadata.set(data["app-path"], data);
+      state.associations = metadata;
+    }
+  }
+
+  update(json, state) {
+    let data = _.get(json, 'update-metadata', false);
     if (data) {
       let metadata = state.associations;
       metadata.set(data["app-path"], data);
