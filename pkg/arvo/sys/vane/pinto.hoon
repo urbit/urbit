@@ -21,6 +21,7 @@
       [%volt =mark =noun]
       [%cast =mark =plan]
       [%diff start=plan end=plan]
+      [%join =mark one=plan two=plan]
       [%$ =cage]
   ==
 +$  pile  (list pike)
@@ -252,6 +253,7 @@
     %dude  (make-dude +.plan)
     %file  (make-file +.plan)
     %grok  (make-grok +.plan)
+    %join  (make-join +.plan)
     %load  (make-load +.plan)
     %pile  (make-pile +.plan)
     %ride  (make-ride +.plan)
@@ -344,11 +346,9 @@
   =/  gat  (mule |.((slap sut ^~((ream 'diff:~(grad - +)')))))
   ?:  ?=(%| -.gat)
     (fail:m leaf+"ford: grad-diff {<p.uno>}" p.gat)
-  =/  fom  (mule |.((slap gad ^~((ream '`@tas`form')))))
-  ?:  ?=(%| -.fom)
-    (fail:m leaf+"ford: form-fail {<p.uno>}" p.fom)
+  ;<  fom=mark  bind:m  (run-form gad)
   ;<  dif=vase  bind:m  (do-call p.gat q.dos)
-  (pure:m [!<(@tas p.fom) dif])
+  (pure:m [fom dif])
 ::
 ++  make-dude
   |=  [=tank =plan]
@@ -401,6 +401,30 @@
   ?~  q.par
     (fail:m [leaf+"syntax error at TODO"]~)
   (pure:m p.u.q.par)
+::
+++  make-join
+  |=  [=mark one=plan two=plan]
+  =*  loop  $
+  =/  m  (fume ,cage)
+  ^-  form:m
+  ;<  cor=vase  bind:m  (load-mark mark)
+  ;<  gad=(each @tas vase)  bind:m  (run-grad cor)
+  ?:  ?=(%& -.gad)
+    loop(mark p.gad)
+  ;<  uno=cage  bind:m  (make one)
+  ;<  dos=cage  bind:m  (make two)
+  ;<  fom=@tas  bind:m  (run-form p.gad)
+  ?.  &(=(fom p.uno) =(fom p.dos))
+    (fail:m leaf+"ford: join-mark" ~)
+  ?:  =(q.q.uno q.q.dos)
+    (pure:m uno)
+  =/  gat  (mule |.((slap p.gad ^~((ream 'join')))))
+  ?:  ?=(%| -.gat)
+    (fail:m leaf+"ford: join-gate" p.gat)
+  ;<  dif=vase  bind:m  (do-call p.gat (slop q.uno q.dos))
+  ?~  q.dif
+    (pure:m [%null dif])
+  (pure:m [fom dif])
 ::
 ++  make-load
   |=  =spar
@@ -485,6 +509,28 @@
   ^-  form:m
   ;<  bun=vase  bind:m  (run-bunt mark)
   (pure:m [mark p.bun noun])
+::
+++  run-form
+  |=  gad=vase
+  =/  m  (fume ,mark)
+  ^-  form:m
+  =/  fom  (mule |.((slap gad ^~((ream '`@tas`form')))))
+  ?:  ?=(%| -.fom)
+    (fail:m leaf+"ford: form-fail" p.fom)
+  (pure:m !<(mark p.fom))
+::
+++  run-grad
+  |=  cor=vase
+  =/  m  (fume ,(each mark vase))
+  ^-  form:m
+  =/  gad  (mule |.((slap cor ^~((ream 'grad')))))
+  ?:  ?=(%| -.gad)
+    (fail:m leaf+"ford: no +grad" p.gad)
+  ?^  q.p.gad
+    (pure:m |+p.gad)
+  ?~  deg=((sand %tas) q.p.gad)
+    (fail:m leaf+"ford: grad-type" ~)
+  (pure:m &+u.deg)
 ::
 ++  load-mark
   |=  =mark
