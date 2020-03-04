@@ -496,8 +496,6 @@ export class ContactCard extends Component {
       ) ? "dib" : "dn";
 
     let card = state.edit ? this.renderEditCard() : this.renderCard();
-
-    //TODO "Share card" if it's /me -> sends to /~/default of recipient
     return (
       <div className="w-100 h-100 overflow-hidden">
         <div className={"flex justify-between w-100 bg-white bg-gray0-d "  +
@@ -516,9 +514,6 @@ export class ContactCard extends Component {
               }}
               className={`white-d bg-gray0-d ml3 mt2 mb2 f9 pa1 pointer ` + ourOpt}>
               {editInfoText}
-            </button>
-            <button className={`white-d bg-gray0-d ml3 mt2 mb2 f9 pa1 pointer ` + localOpt}>
-              Share
             </button>
           </div>
           <button
