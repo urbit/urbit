@@ -344,13 +344,11 @@
   =/  gat  (mule |.((slap sut ^~((ream 'diff:~(grad - +)')))))
   ?:  ?=(%| -.gat)
     (fail:m leaf+"ford: grad-diff {<p.uno>}" p.gat)
-  ;<  lac=vase  bind:m  (do-call p.gat q.dos)
-  =/  fom  (mule |.((slap lac ^~((ream 'form')))))
+  =/  fom  (mule |.((slap gad ^~((ream '`@tas`form')))))
   ?:  ?=(%| -.fom)
     (fail:m leaf+"ford: form-fail {<p.uno>}" p.fom)
-  ?~  fam=((soft @tas) q.p.fom)
-    (fail:m leaf+"ford: form-type {<p.uno>}" ~)
-  (pure:m [u.fam lac])
+  ;<  dif=vase  bind:m  (do-call p.gat q.dos)
+  (pure:m [!<(@tas p.fom) dif])
 ::
 ++  make-dude
   |=  [=tank =plan]
