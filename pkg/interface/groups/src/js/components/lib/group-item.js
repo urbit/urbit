@@ -13,7 +13,7 @@ export class GroupItem extends Component {
     );
 
     return (
-      <Link to={"/~contacts" + props.link}>
+      <Link to={"/~groups" + props.link}>
         <div className={"w-100 v-mid f9 pl4 " + selectedClass}>
           <p className="f9 pt1">{props.name}</p>
           <p className="f9 pb1 gray2">

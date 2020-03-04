@@ -246,7 +246,7 @@ export class ContactCard extends Component {
       `~${props.ship}`, props.path, `~${window.ship}`, contact
     ).then(() => {
       api.setSpinner(false);
-      props.history.push(`/~contacts/view${props.path}/${window.ship}`)
+      props.history.push(`/~groups/view${props.path}/${window.ship}`)
     });
   }
 
@@ -273,7 +273,7 @@ export class ContactCard extends Component {
       api.setSpinner(false);
       let destination = (props.ship === window.ship)
         ? "" : props.path;
-      props.history.push(`/~contacts${destination}`);
+      props.history.push(`/~groups${destination}`);
     });
   }
 
@@ -503,7 +503,7 @@ export class ContactCard extends Component {
         <div className={"flex justify-between w-100 bg-white bg-gray0-d "  +
         "bb b--gray4 b--gray2-d "}>
           <div className="w-100 h2 dn-m dn-l dn-xl inter pb6 pl3 pt3 f8">
-            <Link to="/~contacts/">{"⟵"}</Link>
+            <Link to="/~groups/">{"⟵"}</Link>
           </div>
           <div className="flex">
             <button

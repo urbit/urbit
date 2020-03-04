@@ -11,16 +11,16 @@ export default class ContactTile extends Component {
     return (
       <div className={"w-100 h-100 relative bg-white bg-gray0-d " +
       "b--black b--gray1-d ba"}>
-        <a className="w-100 h-100 db pa2 bn" href="/~contacts">
+        <a className="w-100 h-100 db pa2 bn" href="/~groups">
           <p
             className="black white-d absolute f9"
             style={{ left: 8, top: 8 }}>
-            Contacts
+            Groups
           </p>
           <img
             className="absolute invert-d"
             style={{ left: 39, top: 39 }}
-            src="/~contacts/img/Tile.png"
+            src="/~groups/img/Tile.png"
             width={48}
             height={48}
           />

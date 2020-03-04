@@ -66,7 +66,7 @@ export class NewScreen extends Component {
       let submit = props.api.contactView.create(group, aud);
       submit.then(() => {
         props.api.setSpinner(false);
-        props.history.push(`/~contacts${group}`);
+        props.history.push(`/~groups${group}`);
       })
     });
   }
@@ -93,7 +93,7 @@ export class NewScreen extends Component {
     return (
       <div className="h-100 w-100 flex flex-column overflow-y-scroll white-d">
         <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 pl3 pt3 f8">
-          <Link to="/~contacts/">{"⟵ All Groups"}</Link>
+          <Link to="/~groups/">{"⟵ All Groups"}</Link>
         </div>
         <div className="w-100 w-50-l w-50-xl mb4 pr6 pr0-l pr0-xl">
           <h2 className="f8 pl3 pt4">Create New Group</h2>
@@ -130,7 +130,7 @@ export class NewScreen extends Component {
             className="ml3 f8 ba pa2 b--green2 green2 pointer">
             Start Group
           </button>
-          <Link to="/~contacts">
+          <Link to="/~groups">
             <button className="f8 ml3 ba pa2 b--black pointer">Cancel</button>
           </Link>
         </div>

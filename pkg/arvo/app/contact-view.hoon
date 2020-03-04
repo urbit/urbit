@@ -58,8 +58,8 @@
     ^-  (quip card _this)
     :_  this
     :~  [%pass /updates %agent [our.bowl %contact-store] %watch /updates]
-        [%pass / %arvo %e %connect [~ /'~contacts'] %contact-view]
-        (launch-poke:cc [%contact-view /primary '/~contacts/js/tile.js'])
+        [%pass / %arvo %e %connect [~ /'~groups'] %contact-view]
+        (launch-poke:cc [%contact-view /primary '/~groups/js/tile.js'])
         (contact-poke:cc [%create /~/default])
         (group-poke:cc [%bundle /~/default])
         (contact-poke:cc [%add /~/default our.bowl *contact])
@@ -108,7 +108,7 @@
       ==
     ==
   ::
-  ++  on-arvo   
+  ++  on-arvo
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
     ?.  ?=(%bound +<.sign-arvo)
@@ -172,16 +172,16 @@
       ''
     i.back-path
   ?+  site.url  not-found:gen
-      [%'~contacts' %css %index ~]  (css-response:gen style)
-      [%'~contacts' %js %index ~]   (js-response:gen script)
-      [%'~contacts' %js %tile ~]    (js-response:gen tile-js)
-      [%'~contacts' %img *]
+      [%'~groups' %css %index ~]  (css-response:gen style)
+      [%'~groups' %js %index ~]   (js-response:gen script)
+      [%'~groups' %js %tile ~]    (js-response:gen tile-js)
+      [%'~groups' %img *]
     (png-response:gen (as-octs:mimes:html (~(got by contact-png) `@ta`name)))
   ::
   ::  avatar images
   ::
-      [%'~contacts' %avatar @ *]
-    =/  pax=path  `path`t.t.site.url 
+      [%'~groups' %avatar @ *]
+    =/  pax=path  `path`t.t.site.url
     ?~  pax  not-found:gen
     =/  pas  `path`(flop pax)
     ?~  pas  not-found:gen
@@ -196,7 +196,7 @@
     ?~  decoded  not-found:gen
     [[200 ['content-type' content-type.avatar]~] `u.decoded]
   ::
-      [%'~contacts' *]  (html-response:gen index)
+      [%'~groups' *]  (html-response:gen index)
   ==
 ::
 ::  +utilities
