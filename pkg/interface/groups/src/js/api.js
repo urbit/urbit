@@ -68,12 +68,12 @@ class UrbitApi {
     return this.action("contact-view", "json", data);
   }
 
-  contactCreate(path, ships = []) {
+  contactCreate(path, ships = [], title) {
     return this.contactViewAction({
       create: {
         path,
         ships,
-        title: '',
+        title,
         description: ''
       }
     });

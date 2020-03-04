@@ -58,9 +58,17 @@ export class GroupSidebar extends Component {
       })
       .map((path) => {
         let name = path.substr(1);
-        let nameSeparator = name.indexOf("/");
-        name = name.substr(nameSeparator + 1);
-          let selected = (this.props.selected === path);
+        let selected = props.selected === path;
+        let groupChannel = `${path}/contacts${path}`
+        if (
+          props.associations[path] &&
+          props.associations[path][groupChannel].metadata
+        ) {
+          name =
+            props.associations[path][groupChannel].metadata.title !== ""
+              ? props.associations[path][groupChannel].metadata.title
+              : path.substr(1);
+        }
         return (
           <GroupItem
             key={path}

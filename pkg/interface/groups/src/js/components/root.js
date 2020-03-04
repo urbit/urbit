@@ -49,7 +49,8 @@ export class Root extends Component {
                 api={api}
                 contacts={contacts}
                 groups={groups}
-                invites={invites}>
+                invites={invites}
+                associations={associations}>
                 <div className="h-100 w-100 overflow-x-hidden bg-white bg-gray0-d dn db-ns">
                   <div className="pl3 pr3 pt2 dt pb3 w-100 h-100">
                     <p className="f9 pt3 gray2 w-100 h-100 dtc v-mid tc">
@@ -70,12 +71,14 @@ export class Root extends Component {
                   contacts={contacts}
                   groups={groups}
                   invites={invites}
+                  associations={associations}
                   activeDrawer="rightPanel">
                   <NewScreen
                     history={props.history}
                     groups={groups}
                     contacts={contacts}
-                    api={api} />
+                    api={api}
+                  />
                 </Skeleton>
               );
           }} />
@@ -97,21 +100,23 @@ export class Root extends Component {
                   invites={invites}
                   groups={groups}
                   activeDrawer={detail ? "detail" : "contacts"}
-                  selected={groupPath}>
-                    <ContactSidebar
-                      contacts={groupContacts}
-                      defaultContacts={defaultContacts}
-                      group={group}
-                      activeDrawer={detail ? "detail" : "contacts"}
-                      path={groupPath}
-                      {...props} />
-                      <GroupDetail
-                        associations={associations}
-                        path={groupPath}
-                        activeDrawer={detail ? "detail" : "contacts"}
-                        {...props}
-                      />
-                  </Skeleton>
+                  selected={groupPath}
+                  associations={associations}>
+                  <ContactSidebar
+                    contacts={groupContacts}
+                    defaultContacts={defaultContacts}
+                    group={group}
+                    activeDrawer={detail ? "detail" : "contacts"}
+                    path={groupPath}
+                    {...props}
+                  />
+                  <GroupDetail
+                    associations={associations}
+                    path={groupPath}
+                    activeDrawer={detail ? "detail" : "contacts"}
+                    {...props}
+                  />
+                </Skeleton>
               );
             }}
             />
@@ -131,14 +136,16 @@ export class Root extends Component {
                   groups={groups}
                   invites={invites}
                   activeDrawer="rightPanel"
-                  selected={groupPath}>
+                  selected={groupPath}
+                  associations={associations}>
                   <ContactSidebar
                     contacts={groupContacts}
                     defaultContacts={defaultContacts}
                     group={group}
                     activeDrawer="rightPanel"
                     path={groupPath}
-                    {...props} />
+                    {...props}
+                  />
                   <AddScreen
                     api={api}
                     groups={groups}
@@ -171,7 +178,8 @@ export class Root extends Component {
                   groups={groups}
                   invites={invites}
                   activeDrawer="rightPanel"
-                  selected={groupPath}>
+                  selected={groupPath}
+                  associations={associations}>
                   <ContactSidebar
                     activeDrawer="rightPanel"
                     contacts={groupContacts}
@@ -179,14 +187,16 @@ export class Root extends Component {
                     group={group}
                     path={groupPath}
                     selectedContact={shipPath}
-                    {...props} />
+                    {...props}
+                  />
                   <ContactCard
                     history={props.history}
                     contact={contact}
                     path={groupPath}
                     ship={window.ship}
                     share={true}
-                    rootIdentity={rootIdentity} />
+                    rootIdentity={rootIdentity}
+                  />
                 </Skeleton>
               );
             }} />
@@ -216,7 +226,8 @@ export class Root extends Component {
                   groups={groups}
                   invites={invites}
                   activeDrawer="rightPanel"
-                  selected={groupPath}>
+                  selected={groupPath}
+                  associations={associations}>
                   <ContactSidebar
                     activeDrawer="rightPanel"
                     contacts={groupContacts}
@@ -224,7 +235,8 @@ export class Root extends Component {
                     group={group}
                     path={groupPath}
                     selectedContact={shipPath}
-                    {...props} />
+                    {...props}
+                  />
                   <ContactCard
                     history={props.history}
                     contact={contact}
@@ -248,12 +260,14 @@ export class Root extends Component {
                   groups={groups}
                   invites={invites}
                   activeDrawer="rightPanel"
-                  selected="me">
-                <ContactCard
+                  selected="me"
+                  associations={associations}>
+                  <ContactCard
                     history={props.history}
                     path="/~/default"
                     contact={me}
-                    ship={window.ship} />
+                    ship={window.ship}
+                  />
                 </Skeleton>
               );
             }} />
