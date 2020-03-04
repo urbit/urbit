@@ -429,9 +429,6 @@
              .tr {
                text-align: right;
              }
-             .pt1 {
-               padding-top: 0.25rem;
-             }
              .pb2 {
                padding-bottom: 0.5rem;
              }
@@ -490,7 +487,7 @@
           ;p:"Urbit ID"
           ;input(value "{(scow %p our)}", disabled "true", class "mono");
           ;p:"Access Key"
-          ;p.f9.gray2.pt1
+          ;p.f9.gray2
             ; Get key from Bridge, or
             ;span.mono.pr1:"+code"
             ; in dojo
