@@ -62,8 +62,7 @@
           [%updates ~]  ~
           [%mailbox @ *]
         ?>  (~(has by inbox) t.path)
-        =/  =ship  (slav %p i.t.path)
-        (give %chat-update !>([%create ship t.t.path]))
+        (give %chat-update !>([%create t.path]))
       ==
     [cards this]
     ::
@@ -153,20 +152,24 @@
   ?-  -.action
       %create    (handle-create action)
       %delete    (handle-delete action)
-      %message   (handle-message action)
-      %messages  (handle-messages action)
       %read      (handle-read action)
+      %messages  (handle-messages action)
+      %message
+        ?.  =(our.bol author.envelope.action)
+          (handle-message action)
+        =^  message-moves  state  (handle-message action)
+        =^  read-moves  state  (handle-read [%read path.action])
+        [(weld message-moves read-moves) state]
   ==
 ::
 ++  handle-create
   |=  act=chat-action
   ^-  (quip card _state)
   ?>  ?=(%create -.act)
-  =/  pax  [(scot %p ship.act) path.act]
-  ?:  (~(has by inbox) pax)
+  ?:  (~(has by inbox) path.act)
     [~ state]
-  :-  (send-diff pax act)
-  state(inbox (~(put by inbox) pax *mailbox))
+  :-  (send-diff path.act act)
+  state(inbox (~(put by inbox) path.act *mailbox))
 ::
 ++  handle-delete
   |=  act=chat-action

@@ -2,13 +2,15 @@
 |%
 +$  chat-view-action
   $%  $:  %create
-          =path
+          title=@t
+          description=@t
+          app-path=path
+          group-path=path
           security=rw-security
-          read=(set ship)
-          write=(set ship)
+          members=(set ship)
           allow-history=?
       ==
-      [%delete =path]
-      [%join =ship =path ask-history=?]
+      [%delete app-path=path]
+      [%join =ship app-path=path ask-history=?]
   ==
 --

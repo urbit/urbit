@@ -17,8 +17,11 @@
 ::    whatever's returned by the scry at that path, but perhaps that should
 ::    become part of the stores standard anyway.
 ::
-/-  *link, group-store
-/+  default-agent, verb
+::    when adding support for new paths, the only things you'll likely want
+::    to touch are +permitted, +initial-response, & maybe +handle-group-update.
+::
+/-  group-store
+/+  *link, default-agent, verb, dbug
 |%
 +$  state-0
   $:  %0
@@ -33,6 +36,7 @@
 =|  state-0
 =*  state  -
 ::
+%-  agent:dbug
 %+  verb  |
 ^-  agent:gall
 =<
@@ -95,20 +99,23 @@
 ++  permitted
   |=  [who=ship =path]
   ^-  ?
-  ::  we only expose /local-pages, and only to ships in the relevant group
+  ::  we only expose group-specific /local-pages and /annotations,
+  ::  and only to ships in the relevant group.
+  ::  (no url-specific annotations subscriptions, either.)
   ::
-  ?.  ?=([%local-pages ^] path)  |
+  =/  target=(unit ^path)
+    ?:  ?=([%local-pages ^] path)
+      `t.path
+    ?:  ?=([%annotations ~ ^] path)
+      `t.t.path
+    ~
+  ?~  target  |
   =;  group
     ?&  ?=(^ group)
         (~(has in u.group) who)
     ==
-  .^  (unit group:group-store)
-      %gx
-      (scot %p our.bowl)
-      %group-store
-      (scot %da now.bowl)
-      (snoc t.path %noun)
-  ==
+  %+  scry-for  (unit group:group-store)
+  [%group-store u.target]
 ::
 ::  groups subscription
 ::TODO  largely copied from link-listen-hook. maybe make a store-listener lib?
@@ -135,7 +142,6 @@
       %fact
     =*  mark  p.cage.sign
     =*  vase  q.cage.sign
-    ~&  [dap.bowl %fact mark]
     ?+  mark  ~|([dap.bowl %unexpected-mark mark] !!)
       %group-initial  [~ state]
       %group-update   (handle-group-update !<(group-update:group-store vase))
@@ -156,24 +162,28 @@
     $(whos t.whos)
   :_  $(whos t.whos)
   ::NOTE  this depends kind of unfortunately on the fact that we only accept
-  ::      subscriptions to /local-pages/* paths. it'd be more correct if we
+  ::      subscriptions to /local-pages//* paths. it'd be more correct if we
   ::      "just" looked at all paths in the map, and found the matching ones.
-  (kick-proxy i.whos [%local-pages pax.upd])
+  ::TODO  what exactly did i mean by this?
+  %+  kick-proxies  i.whos
+  :~  [%local-pages pax.upd]
+      [%annotations '' pax.upd]
+  ==
 ::
 ::  proxy subscriptions
 ::
-++  kick-proxy
-  |=  [who=ship =path]
+++  kick-proxies
+  |=  [who=ship paths=(list path)]
   ^-  card
-  [%give %kick ~[path] `who]
+  [%give %kick paths `who]
 ::
 ++  handle-proxy-sign
-  |=  [=path =sign:agent:gall]
+  |=  [=wire =sign:agent:gall]
   ^-  (quip card _state)
   ?-  -.sign
-    %poke-ack     ~|([dap.bowl %unexpected-poke-ack path] !!)
-    %fact         [[%give %fact ~[path] cage.sign]~ state]
-    %kick         [[(proxy-pass-link-store path %watch path)]~ state]
+    %poke-ack     ~|([dap.bowl %unexpected-poke-ack wire] !!)
+    %fact         [[%give %fact ~[wire] cage.sign]~ state]
+    %kick         [[(proxy-pass-link-store wire %watch wire)]~ state]
   ::
       %watch-ack
     ?~  p.sign  [~ state]
@@ -197,9 +207,19 @@
 ++  initial-response
   |=  =path
   ^-  card
-  =/  initial=update
-    [%local-pages path .^(pages %gx path)]
-  [%give %fact ~ %link-update !>(initial)]
+  =;  =initial
+    [%give %fact ~ %link-initial !>(initial)]
+  ?+  path  !!
+      [%local-pages ^]
+    :-  %local-pages
+    %+  scry-for  (map ^path pages)
+    [%link-store path]
+  ::
+      [%annotations %$ ^]
+    :-  %annotations
+    %+  scry-for  (per-path-url notes)
+    [%link-store path]
+  ==
 ::
 ++  start-proxy
   |=  [who=ship =path]
@@ -228,4 +248,14 @@
   ::  else, close the local subscription.
   ::
   [(proxy-pass-link-store path %leave ~)]~
+::
+++  scry-for
+  |*  [=mold app=term =path]
+  .^  mold
+    %gx
+    (scot %p our.bowl)
+    app
+    (scot %da now.bowl)
+    (snoc `^path`path %noun)
+  ==
 --

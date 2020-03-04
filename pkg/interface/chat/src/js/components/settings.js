@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { deSig } from '/lib/util';
+import { deSig, uxToHex } from '/lib/util';
 import { Route, Link } from "react-router-dom";
-import { store } from "/store";
 
 
 import { ChatTabBar } from '/components/lib/chat-tabbar';
@@ -14,30 +13,65 @@ export class SettingsScreen extends Component {
     super(props);
 
     this.state = {
-      station: `/${props.match.params.ship}/${props.match.params.station}`,
-      isLoading: false
+      isLoading: false,
+      title: "",
+      description: "",
+      color: ""
     };
 
     this.renderDelete = this.renderDelete.bind(this);
+    this.changeTitle = this.changeTitle.bind(this);
+    this.changeDescription = this.changeDescription.bind(this);
+    this.changeColor = this.changeColor.bind(this);
+  }
+
+  componentDidMount() {
+    if ((this.props.association) && (this.props.association.metadata)) {
+      this.setState({
+        title: this.props.association.metadata.title,
+        description: this.props.association.metadata.description,
+        color: uxToHex(this.props.association.metadata.color)
+      });
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
-    if (!!state.isLoading && !(state.station in props.inbox)) {
+    if (!!state.isLoading && !(props.station in props.inbox)) {
       this.setState({
         isLoading: false
       }, () => {
-        props.setSpinner(false);
+        props.api.setSpinner(false);
         props.history.push('/~chat');
       });
     }
+
+    if ((this.state.title === "") && (prevProps !== this.props)) {
+      if ((props.association) && (props.association.metadata))
+      this.setState({
+        title: props.association.metadata.title,
+        description: props.association.metadata.description,
+        color: uxToHex(props.association.metadata.color)});
+    }
+  }
+
+  changeTitle() {
+    this.setState({title: event.target.value})
+  }
+
+  changeDescription() {
+    this.setState({description: event.target.value});
+  }
+
+  changeColor() {
+    this.setState({color: event.target.value});
   }
 
   deleteChat() {
     const { props, state } = this;
 
-    props.api.chatView.delete(state.station);
-    props.setSpinner(true);
+    props.api.chatView.delete(props.station);
+    props.api.setSpinner(true);
 
     this.setState({
       isLoading: true
@@ -62,12 +96,130 @@ export class SettingsScreen extends Component {
       </div>
         <div className={"w-100 fl mt3 " + ((!chatOwner) ? 'o-30' : '')}>
         <p className="f8 mt3 lh-copy db">Delete Chat</p>
-        <p className="f9 gray2 db mb4">Permenantly delete this chat. (All current members will no longer see this chat)</p>
+          <p className="f9 gray2 db mb4">Permanently delete this chat. All current members will no longer see this chat.</p>
           <a onClick={(chatOwner) ? this.deleteChat.bind(this) : null}
            className={"dib f9 ba pa2 " + deleteButtonClasses}>Delete this chat</a>
       </div>
       </div>
     );
+  }
+
+  renderMetadataSettings() {
+    const { props, state } = this;
+
+    let chatOwner = (deSig(props.match.params.ship) === window.ship);
+
+    let association = ((props.association) && (props.association.metadata))
+      ? props.association : {};
+
+    return(
+      <div>
+        <div className={"w-100 pb6 fl mt3 " + ((chatOwner) ? '' : 'o-30')}>
+        <p className="f8 mt3 lh-copy">Rename</p>
+        <p className="f9 gray2 db mb4">Change the name of this chat</p>
+        <div className="relative w-100 flex"
+        style={{maxWidth: "29rem"}}>
+          <input
+            className={"f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
+            "focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3"}
+            value={this.state.title}
+            disabled={!chatOwner}
+            onChange={this.changeTitle}
+          />
+          <span className={"f8 absolute pa3 inter " +
+          ((chatOwner) ? "pointer" : "")}
+            style={{ right: 12, top: 1 }}
+            ref="rename"
+            onClick={() => {
+              if (chatOwner) {
+                props.api.setSpinner(true);
+                props.api.metadataAdd(
+                  association['app-path'],
+                  association['group-path'],
+                  this.state.title,
+                  association.metadata.description,
+                  association.metadata['date-created'],
+                  uxToHex(association.metadata.color)
+                ).then(() => {
+                  this.refs.rename.innerText = "Saved";
+                  props.api.setSpinner(false);
+                })
+              }
+            }}>
+            Save
+            </span>
+          </div>
+          <p className="f8 mt3 lh-copy">Change description</p>
+          <p className="f9 gray2 db mb4">Change the description of this chat</p>
+          <div className="relative w-100 flex"
+            style={{ maxWidth: "29rem" }}>
+            <input
+              className={"f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
+                "focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3"}
+              value={this.state.description}
+              disabled={!chatOwner}
+              onChange={this.changeDescription}
+            />
+            <span className={"f8 absolute pa3 inter " +
+              ((chatOwner) ? "pointer" : "")}
+              style={{ right: 12, top: 1 }}
+              ref="description"
+              onClick={() => {
+                if (chatOwner) {
+                  props.api.setSpinner(true);
+                  props.api.metadataAdd(
+                    association['app-path'],
+                    association['group-path'],
+                    association.metadata.title,
+                    this.state.description,
+                    association.metadata['date-created'],
+                    uxToHex(association.metadata.color)
+                  ).then(() => {
+                    this.refs.description.innerText = "Saved";
+                    props.api.setSpinner(false);
+                  })
+                }
+              }}>
+              Save
+            </span>
+          </div>
+          <p className="f8 mt3 lh-copy">Change color</p>
+          <p className="f9 gray2 db mb4">Give this chat a color when viewing group channels</p>
+          <div className="relative w-100 flex"
+            style={{ maxWidth: "20rem" }}>
+            <input
+              className={"f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
+                "focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3"}
+              value={this.state.color}
+              disabled={!chatOwner}
+              onChange={this.changeColor}
+            />
+            <span className={"f8 absolute pa3 inter " +
+              ((chatOwner) ? "pointer" : "")}
+              style={{ right: 12, top: 1 }}
+              ref="color"
+              onClick={() => {
+                if ((chatOwner) && (this.state.color.match(/[0-9A-F]{6}/i))) {
+                  props.api.setSpinner(true);
+                  props.api.metadataAdd(
+                    association['app-path'],
+                    association['group-path'],
+                    association.metadata.title,
+                    association.metadata.description,
+                    association.metadata['date-created'],
+                    this.state.color
+                  ).then(() => {
+                    this.refs.color.innerText = "Saved";
+                    props.api.setSpinner(false);
+                  })
+                }
+              }}>
+              Save
+            </span>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   render() {
@@ -90,23 +242,23 @@ export class SettingsScreen extends Component {
             <Link to="/~chat/">{"⟵ All Chats"}</Link>
           </div>
           <div
-            className="pl3 pt2 bb b--gray4 b--gray0-d bg-black-d flex relative overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"
+            className="pl4 pt2 bb b--gray4 b--gray2-d bg-gray0-d flex relative overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"
             style={{ height: 48 }}>
             <SidebarSwitcher
               sidebarShown={this.props.sidebarShown}
               popout={this.props.popout}
             />
-            <Link to={`/~chat/` + isinPopout + `room` + state.station}
+            <Link to={`/~chat/` + isinPopout + `room` + props.station}
             className="pt2 white-d">
               <h2
-                className="mono dib f8 fw4 v-top"
+                className="mono dib f9 fw4 v-top"
                 style={{ width: "max-content" }}>
-                {state.station.substr(1)}
+                {props.station.substr(1)}
               </h2>
             </Link>
             <ChatTabBar
               {...props}
-              station={state.station}
+              station={props.station}
               numPeers={writeGroup.length}
             />
           </div>
@@ -125,23 +277,23 @@ export class SettingsScreen extends Component {
           <Link to="/~chat/">{"⟵ All Chats"}</Link>
         </div>
         <div
-          className="pl3 pt2 bb b--gray4 flex relative overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"
+          className="pl4 pt2 bb b--gray4 b--gray1-d flex relative overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"
           style={{ height: 48 }}>
           <SidebarSwitcher
             sidebarShown={this.props.sidebarShown}
             popout={this.props.popout}
           />
-          <Link to={`/~chat/` + isinPopout + `room` + state.station}
+          <Link to={`/~chat/` + isinPopout + `room` + props.station}
           className="pt2">
             <h2
-              className="mono dib f8 fw4 v-top"
+              className="mono dib f9 fw4 v-top"
               style={{ width: "max-content" }}>
-              {state.station.substr(1)}
+              {props.station.substr(1)}
             </h2>
           </Link>
           <ChatTabBar
             {...props}
-            station={state.station}
+            station={props.station}
             numPeers={writeGroup.length}
             isOwner={deSig(props.match.params.ship) === window.ship}
             popout={this.props.popout}
@@ -149,7 +301,29 @@ export class SettingsScreen extends Component {
         </div>
         <div className="w-100 pl3 mt4 cf">
           <h2 className="f8 pb2">Chat Settings</h2>
+          <div className="w-100 mt3">
+            <p className="f8 mt3 lh-copy">Share</p>
+            <p className="f9 gray2 mb4">Share a shortcode to join this chat</p>
+            <div className="relative w-100 flex"
+              style={{ maxWidth: "29rem" }}>
+              <input
+                className="f8 mono ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 flex-auto mr3"
+                disabled={true}
+                value={props.station.substr(1)}
+              />
+              <span className="f8 pointer absolute pa3 inter"
+                style={{right: 12, top: 1}}
+                ref="copy"
+                onClick={() => {
+                  navigator.clipboard.writeText(props.station.substr(1));
+                  this.refs.copy.innerText = "Copied";
+                }}>
+                Copy
+              </span>
+            </div>
+          </div>
           {this.renderDelete()}
+          {this.renderMetadataSettings()}
         </div>
       </div>
     );
