@@ -22,6 +22,7 @@
       [%cast =mark =plan]
       [%diff start=plan end=plan]
       [%join =mark one=plan two=plan]
+      [%pact sut=plan dif=plan]
       [%$ =cage]
   ==
 +$  pile  (list pike)
@@ -255,6 +256,7 @@
     %grok  (make-grok +.plan)
     %join  (make-join +.plan)
     %load  (make-load +.plan)
+    %pact  (make-pact +.plan)
     %pile  (make-pile +.plan)
     %ride  (make-ride +.plan)
     %vale  (make-vale +.plan)
@@ -436,6 +438,27 @@
   ?~  u.in.fin1
     [s.fin1 %fail ~[leaf+"ford: load-fail {<spar>}"]]
   [s.fin1 %done u.u.in.fin1]
+::
+++  make-pact
+  |=  [sut=plan dif=plan]
+  =*  loop  $
+  =/  m  (fume ,cage)
+  ^-  form:m
+  ;<  sot=cage  bind:m  (make sut)
+  ;<  cor=vase  bind:m  (load-mark p.sot)
+  ;<  gad=(each mark vase)  bind:m  (run-grad cor)
+  ?:  ?=(%& -.gad)
+    (make %cast p.sot %pact [%cast p.gad $+sot] dif)
+  ;<  fom=mark  bind:m  (run-form p.gad)
+  ;<  fid=cage  bind:m  (make dif)
+  ?.  =(fom p.fid)
+    (fail:m leaf+"ford: pact-mark" ~)
+  =/  sit=vase  (slop cor q.sot)
+  =/  gat  (mule |.((slap sit ^~((ream 'pact:~(grad - +)')))))
+  ?:  ?=(%| -.gat)
+    (fail:m leaf+"ford: grad-pact {<p.sot>}" p.gat)
+  ;<  pac=vase  bind:m  (do-call p.gat q.fid)
+  (pure:m [p.sot pac])
 ::
 ++  make-pile  |=(pile (lift-vase (run-pile +<)))
 ++  run-pile
