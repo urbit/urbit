@@ -11,9 +11,10 @@
 ::    /json/seen                                      mark-as-read updates
 ::
 /-  *link-view,
-    metadata-store, *invite-store, group-store,
-    group-hook, permission-hook, metadata-hook, contact-view
-/+  *link, *server, default-agent, verb, dbug
+    *invite-store, group-store,
+    group-hook, permission-hook, permission-group-hook,
+    metadata-hook, contact-view
+/+  *link, metadata, *server, default-agent, verb, dbug
 ::
 |%
 +$  state-0
@@ -153,6 +154,8 @@
   --
 ::
 |_  =bowl:gall
++*  md  ~(. metadata bowl)
+::
 ++  page-size  25
 ++  get-paginated
   |*  [p=(unit @ud) l=(list)]
@@ -235,12 +238,16 @@
   %-  as-octs:mimes:html
   .^(@ %cx path)
 ::
+++  do-poke
+  |=  [app=term =mark =vase]
+  ^-  card
+  [%pass /create/[app]/[mark] %agent [our.bowl app] %poke mark vase]
+::
 ++  handle-invite-update
   |=  upd=invite-update
   ^-  (list card)
   ?.  ?=(%accepted -.upd)  ~
   ?.  =(/link path.upd)    ~
-  |^
   :~  ::  sync the group
       ::
       %^  do-poke  %group-hook
@@ -255,12 +262,6 @@
       !>  ^-  metadata-hook-action:metadata-hook
       [%add-synced ship path]:invite.upd
   ==
-  ::
-  ++  do-poke
-    |=  [app=term =mark =vase]
-    ^-  card
-    [%pass /create/[app]/[mark] %agent [our.bowl app] %poke mark vase]
-  --
 ::
 ++  handle-action
   |=  =action
@@ -270,27 +271,36 @@
 ++  handle-view-action
   |=  act=view-action
   ^-  (list card)
-  ?>  ?=(%create -.act)
-  =/  group-path=path
-    ?-  -.members.act
-      %group  path.members.act
-      %ships  %+  weld
-                ?:(real-group.act ~ [~.~]~)
-              [(scot %p our.bowl) path.act]
+  ?-  -.act
+    %create  (handle-create +.act)
+    %delete  (handle-delete +.act)
+    %invite  (handle-invite +.act)
+  ==
+::
+++  handle-create
+  |=  [=path title=@t description=@t members=create-members real-group=?]
+  ^-  (list card)
+  =/  group-path=^path
+    ?-  -.members
+      %group  path.members
+    ::
+        %ships
+      %+  weld
+        ?:(real-group ~ [~.~]~)
+      [(scot %p our.bowl) path]
     ==
-  |^
   =;  group-setup=(list card)
     %+  weld  group-setup
     :~  ::  add collection to metadata-store
         ::
         %^  do-poke  %metadata-hook
           %metadata-action
-        !>  ^-  metadata-action:metadata-store
+        !>  ^-  metadata-action:md
         :^  %add  group-path
-          [%link path.act]
-        %*  .  *metadata:metadata-store
-          title         title.act
-          description   description.act
+          [%link path]
+        %*  .  *metadata:md
+          title         title
+          description   description
           date-created  now.bowl
           creator       our.bowl
         ==
@@ -302,15 +312,15 @@
         !>  ^-  metadata-hook-action:metadata-hook
         [%add-owned group-path]
     ==
-  ?:  ?=(%group -.members.act)  ~
+  ?:  ?=(%group -.members)  ~
   ::  if the group is "real", make contact-view do the heavy lifting
   ::
-  ?:  real-group.act
+  ?:  real-group
     :_  ~
     %^  do-poke  %contact-view
       %contact-view-action
     !>  ^-  contact-view-action:contact-view
-    [%create group-path [ships.members title description]:act]
+    [%create group-path ships.members title description]
   ::  for "unmanaged" groups, do it ourselves
   ::
   :*  ::  create the new group
@@ -325,7 +335,7 @@
       %^  do-poke  %group-store
         %group-action
       !>  ^-  group-action:group-store
-      [%add (~(put in ships.members.act) our.bowl) group-path]
+      [%add (~(put in ships.members) our.bowl) group-path]
     ::
       ::  make group available
       ::
@@ -350,7 +360,7 @@
     ::
       ::  send invites
       ::
-      %+  turn  ~(tap in ships.members.act)
+      %+  turn  ~(tap in ships.members)
       |=  =ship
       ^-  card
       %^  do-poke  %invite-hook
@@ -362,15 +372,80 @@
           %group-hook
           group-path
           ship
-          title.act
+          title
       ==
   ==
+::
+++  handle-delete
+  |=  =path
+  ^-  (list card)
+  =/  groups=(list ^path)
+    (groups-from-resource:md [%link path])
+  %-  zing
+  %+  turn  groups
+  |=  =group=^path
+  %+  snoc
+    ^-  (list card)
+    ::  if it's a real group, we can't/shouldn't unsync it. this leaves us with
+    ::  no way to stop propagation of collection deletion.
+    ::
+    ?.  ?=([%'~' ^] group-path)  ~
+    ::  if it's an unmanaged group, we just stop syncing the group & metadata,
+    ::  and clean up the group (after un-hooking it, to not push deletion).
+    ::
+    :~  %^  do-poke  %group-hook
+          %group-hook-action
+        !>  ^-  group-hook-action:group-hook
+        [%remove group-path]
+      ::
+        %^  do-poke  %metadata-hook
+          %metadata-hook-action
+        !>  ^-  metadata-hook-action:metadata-hook
+        [%remove group-path]
+      ::
+        %^  do-poke  %group-store
+          %group-action
+        !>  ^-  group-action:group-store
+        [%unbundle group-path]
+    ==
+  ::  remove collection from metadata-store
   ::
-  ++  do-poke
-    |=  [app=term =mark =vase]
-    ^-  card
-    [%pass /create/[app]/[mark] %agent [our.bowl app] %poke mark vase]
-  --
+  %^  do-poke  %metadata-store
+    %metadata-action
+  !>  ^-  metadata-action:md
+  [%remove group-path [%link path]]
+::
+++  handle-invite
+  |=  [=path ships=(set ship)]
+  ^-  (list card)
+  %-  zing
+  %+  turn  (groups-from-resource:md %link path)
+  |=  =group=^path
+  ^-  (list card)
+  :-  %^  do-poke  %group-store
+        %group-action
+      !>  ^-  group-action:group-store
+      [%add ships group-path]
+  ::  for managed groups, rely purely on group logic for invites
+  ::
+  ?.  ?=([%'~' ^] group-path)
+    ~
+  ::  for unmanaged groups, send invites manually
+  ::
+  %+  turn  ~(tap in ships)
+  |=  =ship
+  ^-  card
+  %^  do-poke  %invite-hook
+    %invite-action
+  !>  ^-  invite-action
+  :^  %invite  /link
+    (sham group-path eny.bowl)
+  :*  our.bowl
+      %group-hook
+      group-path
+      ship
+      (rsh 3 1 (spat path))
+  ==
 ::  +give-tile-data: total unread count as json object
 ::
 ::NOTE  the full recalc of totals here probably isn't the end of the world.

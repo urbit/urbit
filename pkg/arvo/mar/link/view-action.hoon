@@ -5,7 +5,11 @@
   |%
   ++  noun  view-action
   ++  json
-    |^  (of %create^create ~)
+    |^  %-  of
+        :~  %create^create
+            %delete^delete
+            %invite^invite
+        ==
     ::
     ++  create
       %-  ot
@@ -17,10 +21,17 @@
       ==
     ::
     ++  mems
-      %-  of
-      :~  %group^pa
-          %ships^(cu sy (ar (su ;~(pfix sig fed:ag))))
-      ==
+      (of %group^pa %ships^ships ~)
+    ::
+    ++  delete
+      (ot 'path'^pa ~)
+    ::
+    ++  invite
+      (ot 'path'^pa 'ships'^ships ~)
+    ::
+    ::TODO  stdlib
+    ++  ships
+      (cu sy (ar (su ;~(pfix sig fed:ag))))
     --
   --
 ::
