@@ -96,7 +96,7 @@ export class SettingsScreen extends Component {
       </div>
         <div className={"w-100 fl mt3 " + ((!chatOwner) ? 'o-30' : '')}>
         <p className="f8 mt3 lh-copy db">Delete Chat</p>
-        <p className="f9 gray2 db mb4">Permenantly delete this chat. (All current members will no longer see this chat)</p>
+          <p className="f9 gray2 db mb4">Permanently delete this chat. All current members will no longer see this chat.</p>
           <a onClick={(chatOwner) ? this.deleteChat.bind(this) : null}
            className={"dib f9 ba pa2 " + deleteButtonClasses}>Delete this chat</a>
       </div>
