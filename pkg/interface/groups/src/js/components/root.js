@@ -39,7 +39,7 @@ export class Root extends Component {
     return (
       <BrowserRouter>
         <div className="h-100 w-100">
-        <Route exact path="/~contacts"
+        <Route exact path="/~groups"
           render={ (props) => {
             return (
               <Skeleton
@@ -60,7 +60,7 @@ export class Root extends Component {
               </Skeleton>
             );
           }} />
-          <Route exact path="/~contacts/new"
+          <Route exact path="/~groups/new"
             render={ (props) => {
               return (
                 <Skeleton
@@ -79,7 +79,7 @@ export class Root extends Component {
                 </Skeleton>
               );
           }} />
-          <Route exact path="/~contacts/(detail)?/:ship/:group/"
+          <Route exact path="/~groups/(detail)?/:ship/:group/"
             render={ (props) => {
               let groupPath =
                 `/${props.match.params.ship}/${props.match.params.group}`;
@@ -115,7 +115,7 @@ export class Root extends Component {
               );
             }}
             />
-          <Route exact path="/~contacts/add/:ship/:group"
+          <Route exact path="/~groups/add/:ship/:group"
             render={(props) => {
               let groupPath =
                 `/${props.match.params.ship}/${props.match.params.group}`;
@@ -149,7 +149,7 @@ export class Root extends Component {
                 </Skeleton>
               );
             }} />
-          <Route exact path="/~contacts/share/:ship/:group"
+          <Route exact path="/~groups/share/:ship/:group"
             render={(props) => {
               let groupPath =
                 `/${props.match.params.ship}/${props.match.params.group}`;
@@ -190,7 +190,7 @@ export class Root extends Component {
                 </Skeleton>
               );
             }} />
-          <Route exact path="/~contacts/view/:ship/:group/:contact"
+          <Route exact path="/~groups/view/:ship/:group/:contact"
             render={ (props) => {
               let groupPath =
                 `/${props.match.params.ship}/${props.match.params.group}`;
@@ -235,7 +235,7 @@ export class Root extends Component {
                 </Skeleton>
               );
             }} />
-          <Route exact path="/~contacts/me"
+          <Route exact path="/~groups/me"
             render={ (props) => {
               let me = defaultContacts[window.ship] || {};
 

@@ -7,7 +7,7 @@ export class SidebarInvite extends Component {
   onAccept() {
     const { props } = this;
     props.api.invite.accept(props.uid);
-    props.history.push(`/~contacts${props.invite.path}`);
+    props.history.push(`/~groups${props.invite.path}`);
   }
 
   onDecline() {
