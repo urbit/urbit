@@ -16,7 +16,7 @@ export class GroupSidebar extends Component {
 
     let rootIdentity = <Link
             key={1}
-            to={"/~contacts/me"}>
+            to={"/~groups/me"}>
             <div
               className={
                 "w-100 pl4 pt1 pb1 f9 mb5 flex justify-start content-center " +
@@ -52,17 +52,14 @@ export class GroupSidebar extends Component {
       Object.keys(props.contacts)
       .filter((path) => {
         return (
-          (!path.startsWith("/~/") || path === "/~/default") &&
+          (!path.startsWith("/~/")) &&
           (path in props.groups)
         );
       })
       .map((path) => {
         let name = path.substr(1);
         let nameSeparator = name.indexOf("/");
-        (name === "/~/default")
-          ? name = name.substr(2)
-          : name = name.substr(nameSeparator + 1); // hides owner of list from UI
-                                                   // if unwanted, remove this
+        name = name.substr(nameSeparator + 1);
           let selected = (this.props.selected === path);
         return (
           <GroupItem
@@ -84,10 +81,10 @@ export class GroupSidebar extends Component {
         {/*TODO Add invite items */}
         <a className="db dn-m dn-l dn-xl f8 pb6 pl3" href="/">⟵ Landscape</a>
         <div className="overflow-auto pb8 h-100">
-          <Link to="/~contacts/new" className="dib">
+          <Link to="/~groups/new" className="dib">
             <p className="f9 pt4 pl4 green2 bn">Create Group</p>
           </Link>
-          <h2 className="f9 pt6 pr4 pb2 pl4 gray2 c-default">Root Identity</h2>
+          <h2 className="f9 pt6 pr4 pb2 pl4 gray2 c-default">Your Identity</h2>
           {rootIdentity}
           {inviteItems}
           <h2 className="f9 pt3 pr4 pb2 pl4 gray2 c-default">Groups</h2>

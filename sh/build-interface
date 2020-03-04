@@ -26,7 +26,7 @@ cd ../weather
 npm install
 gulp bundle-prod
 
-cd ../contacts
+cd ../groups
 npm install
 gulp bundle-prod
 

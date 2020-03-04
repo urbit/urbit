@@ -44,7 +44,7 @@ export class AddScreen extends Component {
       let submit = props.api.group.add(props.path, aud);
       submit.then(() => {
         props.api.setSpinner(false);
-        props.history.push("/~contacts" + props.path);
+        props.history.push("/~groups" + props.path);
       })
     });
   }
@@ -63,7 +63,7 @@ export class AddScreen extends Component {
     return (
       <div className="h-100 w-100 flex flex-column overflow-y-scroll">
         <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 pl3 pt3 f8">
-          <Link to={"/~contacts" + props.path}>{"⟵ All Contacts"}</Link>
+          <Link to={"/~groups" + props.path}>{"⟵ All Contacts"}</Link>
         </div>
         <div className="w-100 w-70-l w-70-xl mb4 pr6 pr0-l pr0-xl">
           <h2 className="f8 pl4 pt4">Add Group Members</h2>
@@ -82,7 +82,7 @@ export class AddScreen extends Component {
             className="ml4 f8 ba pa2 b--green2 green2 pointer">
             Add Members
           </button>
-          <Link to="/~contacts">
+          <Link to="/~groups">
             <button className="f8 ml4 ba pa2 b--black pointer">Cancel</button>
           </Link>
         </div>
