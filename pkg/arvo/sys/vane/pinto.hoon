@@ -20,6 +20,7 @@
       [%vale =mark =noun]
       [%volt =mark =noun]
       [%cast =mark =plan]
+      [%diff start=plan end=plan]
       [%$ =cage]
   ==
 +$  pile  (list pike)
@@ -245,8 +246,9 @@
     ^      (make-cell plan)
     %$     (pure:m cage.plan)
     %bunt  (make-bunt +.plan)
-    %cast  (make-cast +.plan)
     %call  (make-call +.plan)
+    %cast  (make-cast +.plan)
+    %diff  (make-diff +.plan)
     %dude  (make-dude +.plan)
     %file  (make-file +.plan)
     %grok  (make-grok +.plan)
@@ -322,6 +324,33 @@
     %&  ;<  pro=vase  bind:m  (do-call p.row arg)
         (pure:m [new pro])
   ==
+::
+++  make-diff
+  |=  [start=plan end=plan]
+  =*  loop  $
+  =/  m  (fume ,cage)
+  ^-  form:m
+  ;<  uno=cage  bind:m  (make start)
+  ;<  dos=cage  bind:m  (make end)
+  ?:  =([p q.q]:uno [p q.q]:dos)
+    (pure:m [%null !>(~)])
+  ;<  cor=vase  bind:m  (load-mark p.uno)
+  =/  gad=vase  (slap cor ^~((ream 'grad')))
+  ?@  q.gad
+    ?~  deg=((sand %tas) q.gad)
+      (fail:m leaf+"ford: grad-type {<p.uno>}" ~)
+    loop(start [%cast u.deg $+uno], end [%cast u.deg $+dos])
+  =/  sut=vase  (slop gad q.uno)
+  =/  gat  (mule |.((slap sut ^~((ream 'diff:~(grad - +)')))))
+  ?:  ?=(%| -.gat)
+    (fail:m leaf+"ford: grad-diff {<p.uno>}" p.gat)
+  ;<  lac=vase  bind:m  (do-call p.gat q.dos)
+  =/  fom  (mule |.((slap lac ^~((ream 'form')))))
+  ?:  ?=(%| -.fom)
+    (fail:m leaf+"ford: form-fail {<p.uno>}" p.fom)
+  ?~  fam=((soft @tas) q.p.fom)
+    (fail:m leaf+"ford: form-type {<p.uno>}" ~)
+  (pure:m [u.fam lac])
 ::
 ++  make-dude
   |=  [=tank =plan]
