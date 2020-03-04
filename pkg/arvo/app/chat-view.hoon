@@ -4,8 +4,11 @@
 /-  *permission-store,
     *permission-hook,
     *group-store,
+    *invite-store,
+    *metadata-store,
     *permission-group-hook,
-    *chat-hook
+    *chat-hook,
+    *metadata-hook
 /+  *server, *chat-json, default-agent, verb, dbug
 /=  index
   /^  octs
@@ -51,8 +54,8 @@
       [%permission-group-hook-action permission-group-hook-action]
   ==
 --
-%-  agent:dbug
 %+  verb  |
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  bol=bowl:gall
@@ -188,53 +191,205 @@
 ++  poke-json
   |=  jon=json
   ^-  (list card)
-  ?.  =(src.bol our.bol)
-    ~
+  ?>  (team:title our.bol src.bol)
   (poke-chat-view-action (json-to-view-action jon))
 ::
 ++  poke-chat-view-action
   |=  act=chat-view-action
   ^-  (list card)
-  ?.  =(src.bol our.bol)
-    ~
+  |^
+  ?>  (team:title our.bol src.bol)
   ?-  -.act
       %create
-    =/  pax  [(scot %p our.bol) path.act]
-    =/  group-read=path  [%chat (weld pax /read)]
-    =/  group-write=path  [%chat (weld pax /write)]
+    ?>  ?=(^ app-path.act)
+    ?>  |(=(group-path.act app-path.act) =(~(tap in members.act) ~))
+    ?^  (chat-scry app-path.act)
+      ~&  %chat-already-exists
+      ~
     %-  zing
-    :~  :~  (group-poke [%bundle group-read])
-            (group-poke [%bundle group-write])
-            (group-poke [%add read.act group-read])
-            (group-poke [%add write.act group-write])
-            (chat-poke [%create our.bol path.act])
-            (chat-hook-poke [%add-owned pax security.act allow-history.act])
+    :~  (create-chat app-path.act security.act allow-history.act)
+        %-  create-group
+        :*  group-path.act
+            app-path.act
+            security.act
+            members.act
+            title.act
+            description.act
         ==
-        (create-security [%chat pax] security.act)
-        :~  (permission-hook-poke [%add-owned group-read group-read])
-            (permission-hook-poke [%add-owned group-write group-read])
-        ==
+        (create-metadata title.act description.act group-path.act app-path.act)
     ==
   ::
       %delete
-    =/  group-read  [%chat (weld path.act /read)]
-    =/  group-write  [%chat (weld path.act /write)]
-    :~  (chat-hook-poke [%remove path.act])
-        (permission-hook-poke [%remove group-read])
-        (permission-hook-poke [%remove group-write])
-        (group-poke [%unbundle group-read])
-        (group-poke [%unbundle group-write])
-        (chat-poke [%delete path.act])
+    =/  group-path  (group-from-chat app-path.act)
+    ?>  ?=(^ app-path.act)
+    %-  zing
+    :~  :~  (chat-hook-poke [%remove app-path.act])
+            (chat-poke [%delete app-path.act])
+        ==
+      ::
+        ?.  (is-creator group-path %chat app-path.act)  ~
+        [(metadata-poke [%remove group-path [%chat app-path.act]])]~
+      ::
+        ?:  (is-managed group-path)  ~
+        :~  (group-poke [%unbundle group-path])
+            (metadata-hook-poke [%remove group-path])
+            (metadata-store-poke [%remove group-path [%chat app-path.act]])
+        ==
     ==
   ::
       %join
-    =/  group-read  [%chat (scot %p ship.act) (weld path.act /read)]
-    =/  group-write  [%chat (scot %p ship.act) (weld path.act /write)]
-    :~  (chat-hook-poke [%add-synced ship.act path.act ask-history.act])
-        (permission-hook-poke [%add-synced ship.act group-write])
-        (permission-hook-poke [%add-synced ship.act group-read])
+    =/  group-path
+      ?.  (is-managed app-path.act)  app-path.act
+      (group-from-chat app-path.act)
+    :~  (chat-hook-poke [%add-synced ship.act app-path.act ask-history.act])
+        (permission-hook-poke [%add-synced ship.act group-path])
+        (metadata-hook-poke [%add-synced ship.act group-path])
     ==
   ==
+  ::
+  ++  create-chat
+    |=  [=path security=rw-security history=?]
+    ^-  (list card)
+    :~  (chat-poke [%create path])
+        (chat-hook-poke [%add-owned path security history])
+    ==
+  ::
+  ++  create-group
+    |=  [=path app-path=path sec=rw-security ships=(set ship) title=@t desc=@t]
+    ^-  (list card)
+    =/  group  (group-scry path)
+    ?^  group
+      %-  zing
+      %+  turn  ~(tap in u.group)
+      |=  =ship
+      ?:  =(ship our.bol)  ~
+      [(send-invite app-path ship)]~
+    ::  do not create a managed group if this is a sig path or a blacklist
+    ::
+    ?:  =(sec %channel)
+      :~  (group-poke [%bundle path])
+          (create-security path sec)
+          (permission-hook-poke [%add-owned path path])
+      ==
+    ?:  (is-managed path)
+      ~[(contact-view-poke [%create path ships title desc])]
+    :~  (group-poke [%bundle path])
+        (group-poke [%add ships path])
+        (create-security path sec)
+        (permission-hook-poke [%add-owned path path])
+    ==
+  ::
+  ++  create-security
+    |=  [pax=path sec=rw-security]
+    ^-  card
+    ?+  sec       !!
+        %channel
+      (perm-group-hook-poke [%associate pax [[pax %black] ~ ~]])
+    ::
+        %village
+      (perm-group-hook-poke [%associate pax [[pax %white] ~ ~]])
+    ==
+  ::
+  ++  create-metadata
+    |=  [title=@t description=@t group-path=path app-path=path]
+    ^-  (list card)
+    =/  =metadata
+      %*  .  *metadata
+          title         title
+          description   description
+          date-created  now.bol
+          creator
+        %+  slav  %p
+        ?:  (is-managed app-path)  (snag 0 app-path)
+        (snag 1 app-path)
+      ==
+    :~  (metadata-poke [%add group-path [%chat app-path] metadata])
+        (metadata-hook-poke [%add-owned group-path])
+    ==
+  ::
+  ++  contact-view-poke
+    |=  act=[%create =path ships=(set ship) title=@t description=@t]
+    ^-  card
+    [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
+  ::
+  ++  metadata-poke
+    |=  act=metadata-action
+    ^-  card
+    [%pass / %agent [our.bol %metadata-hook] %poke %metadata-action !>(act)]
+  ::
+  ++  metadata-store-poke
+    |=  act=metadata-action
+    ^-  card
+    [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
+  ::
+  ++  metadata-hook-poke
+    |=  act=metadata-hook-action
+    ^-  card
+    :*  %pass  /  %agent
+        [our.bol %metadata-hook]
+        %poke  %metadata-hook-action
+        !>(act)
+    ==
+  ::
+  ++  send-invite
+    |=  [=path =ship]
+    ^-  card
+    =/  =invite
+      :*  our.bol  %chat-hook
+          path  ship  ''
+      ==
+    =/  act=invite-action  [%invite /chat (shaf %msg-uid eny.bol) invite]
+    [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
+  ::
+  ++  chat-scry
+    |=  pax=path
+    ^-  (unit mailbox)
+    =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
+    .^((unit mailbox) %gx pax)
+  ::
+  ++  group-from-chat
+    |=  app-path=path
+    ^-  path
+    ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)
+      ?:  ?=([@ ^] app-path)
+        ~&  [%assuming-ported-legacy-chat app-path]
+        [%'~' app-path]
+      ~&  [%weird-chat app-path]
+      !!
+    =/  resource-indices
+      .^  (jug resource group-path)
+        %gy
+        (scot %p our.bol)
+        %metadata-store
+        (scot %da now.bol)
+        /resource-indices
+      ==
+    =/  groups=(set path)  (~(got by resource-indices) [%chat app-path])
+    (snag 0 ~(tap in groups))
+  ::
+  ++  is-managed
+    |=  =path
+    ^-  ?
+    ?>  ?=(^ path)
+    !=(i.path '~')
+  ::
+  ++  is-creator
+    |=  [group-path=path app-name=@ta app-path=path]
+    ^-  ?
+    =/  =metadata
+      .^  metadata
+        %gx
+        (scot %p our.bol)
+        %metadata-store
+        (scot %da now.bol)
+        %metadata
+        (scot %t (spat group-path))
+        app-name
+        (scot %t (spat app-path))
+        /noun
+      ==
+    =(our.bol creator.metadata)
+  --
 ::
 ++  diff-chat-update
   |=  upd=chat-update
@@ -256,6 +411,11 @@
   |=  act=group-action
   ^-  card
   [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
+::
+++  permission-poke
+  |=  act=permission-action
+  ^-  card
+  [%pass / %agent [our.bol %permission-store] %poke %permission-action !>(act)]
 ::
 ++  chat-hook-poke
   |=  act=chat-hook-action
@@ -286,30 +446,9 @@
   ^-  chat-configs
   .^(chat-configs %gx /=chat-store/(scot %da now.bol)/configs/noun)
 ::
-++  create-security
-  |=  [pax=path sec=rw-security]
-  ^-  (list card)
-  =/  read   (weld pax /read)
-  =/  write  (weld pax /write)
-  ?-  sec
-      %channel
-    :~  (perm-group-hook-poke [%associate read [[read %black] ~ ~]])
-        (perm-group-hook-poke [%associate write [[write %black] ~ ~]])
-    ==
-  ::
-      %village
-    :~  (perm-group-hook-poke [%associate read [[read %white] ~ ~]])
-        (perm-group-hook-poke [%associate write [[write %white] ~ ~]])
-    ==
-  ::
-      %journal
-    :~  (perm-group-hook-poke [%associate read [[read %black] ~ ~]])
-        (perm-group-hook-poke [%associate write [[write %white] ~ ~]])
-    ==
-  ::
-      %mailbox
-    :~  (perm-group-hook-poke [%associate read [[read %white] ~ ~]])
-        (perm-group-hook-poke [%associate write [[write %black] ~ ~]])
-    ==
-  ==
+++  group-scry
+  |=  pax=path
+  ^-  (unit group)
+  .^((unit group) %gx ;:(weld /=group-store/(scot %da now.bol) pax /noun))
+::
 --

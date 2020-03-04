@@ -42,6 +42,8 @@ export class SidebarItem extends Component {
       return lett.url;
     } else if ('code' in lett) {
       return lett.code.expression;
+    } else if ('me' in lett) {
+      return lett.me;
     } else {
       return '';
     }
@@ -51,35 +53,41 @@ export class SidebarItem extends Component {
     const { props, state } = this;
 
     let unreadElem = !!props.unread
-                     ? "fw7 green2"
+                     ? "green2"
                      : "";
 
-    let title = props.title.substr(1);
+    let title = props.title;
 
-    let description = this.getLetter(props.description);
+    let box = props.box.substr(1);
 
-    let selectedCss = !!props.selected ? 'bg-gray5 bg-gray0-d gray3-d bn-d' : 'bg-white bg-black-d gray3-d b--gray0-d pointer';
+    let latest = this.getLetter(props.latest);
+
+    let selectedCss = !!props.selected ? 'bg-gray5 bg-gray1-d gray3-d' : 'bg-white bg-gray0-d gray3-d pointer';
+
+    let authorCss = (props.nickname === props.ship)
+      ? "mono" : "";
+
+    let author = (props.nickname === props.ship)
+      ? `~${props.ship}` : props.nickname;
 
     return (
       <div
-        className={"z1 pa3 pt4 pb4 bb b--gray4 " + selectedCss}
+        className={"z1 pa3 pt2 pb2 bb b--gray4 b--gray1-d " + selectedCss}
         onClick={this.onClick.bind(this)}>
         <div className="w-100 v-mid">
-          <p className={"dib mono f8 " + unreadElem }>
-            <span className={(unreadElem === "") ? "gray3 gray2-d" : ""}>
-              {title.substr(0, title.indexOf("/"))}/
-            </span>
-            {title.substr(title.indexOf("/") + 1)}
+          <p className="dib f8">
+              {title}
           </p>
+          <p className="f8 db mono gray3 gray2-d pt1">{box}</p>
         </div>
-        <div className="w-100 pt1">
-          <p className="dib mono f9 mr3">
-            {props.ship === "" ? "" : "~"}
-            {props.ship}
+        <div className="w-100 pt3">
+          <p className={((unreadElem === "") ? "black white-d" : "") +
+          unreadElem + " dib f9 mr3 mw4 truncate v-mid " + authorCss}>
+            {(author === "~") ? "" : author}
           </p>
-          <p className="dib mono f9 gray3">{state.timeSinceNewestMessage}</p>
+          <p className="dib mono f9 gray3 v-mid">{state.timeSinceNewestMessage}</p>
         </div>
-        <p className="f8 clamp-3 pt2">{description}</p>
+        <p className="f8 clamp-3 pt1">{latest}</p>
       </div>
     );
   }

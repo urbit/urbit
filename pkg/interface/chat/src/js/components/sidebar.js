@@ -19,7 +19,6 @@ export class Sidebar extends Component {
 
   render() {
     const { props, state } = this;
-    let station = `/${props.match.params.ship}/${props.match.params.station}`;
 
     let sidebarInvites = Object.keys(props.invites)
       .map((uid) => {
@@ -39,14 +38,28 @@ export class Sidebar extends Component {
           : {text: 'No messages yet'};
         let author = !!msg ? msg.author : '';
         let when = !!msg ? msg.when : 0;
+
+        let title = box;
+        if ((props.associations.has(box)) && (props.associations.get(box).metadata)) {
+        title = (props.associations.get(box).metadata.title)
+          ? props.associations.get(box).metadata.title : box;
+        }
+
+        let nickname = author;
+        if ((props.contacts[box]) && (author in props.contacts[box])) {
+          nickname = (props.contacts[box][author].nickname)
+            ? props.contacts[box][author].nickname : author;
+        }
+
         return {
           msg,
           when,
           author,
+          nickname,
           letter,
           box,
-          title: box,
-          selected: station === box
+          title: title,
+          selected: props.station === box
         };
       })
       .sort((a, b) => {
@@ -54,15 +67,15 @@ export class Sidebar extends Component {
       })
       .map((obj) => {
         let unread = props.unreads[obj.box];
-
         return (
           <SidebarItem
             key={obj.box + '/' + obj.when}
             title={obj.title}
-            description={obj.letter}
+            latest={obj.letter}
             box={obj.box}
             when={obj.when}
             ship={obj.author}
+            nickname={obj.nickname}
             selected={obj.selected}
             unread={unread}
             history={props.history}
@@ -71,21 +84,25 @@ export class Sidebar extends Component {
       });
 
     return (
-      <div className="h-100-minus-96-s h-100 w-100 overflow-x-hidden flex flex-column relative z1">
-        <div className="overflow-y-auto pb9 h-100">
+      <div
+        className={`h-100-minus-96-s h-100 w-100 overflow-x-hidden flex
+      bg-gray0-d flex-column relative z1`}>
+        <div className="w-100 bg-transparent pa4 bb b--gray4 b--gray1-d"
+        style={{paddingBottom: 13}}>
+          <a
+            className="dib f9 pointer green2 gray4-d mr4"
+            onClick={this.onClickNew.bind(this)}>
+            New Chat
+          </a>
+          <a
+            className="dib f9 pointer gray4-d"
+            onClick={this.onClickJoin.bind(this)}>
+            Join Chat
+          </a>
+        </div>
+        <div className="overflow-y-auto h-100">
           {sidebarInvites}
           {sidebarItems}
-        </div>
-        <div className="absolute z2 tc w-100 bg-transparent"
-          style={{ bottom: 10 }}>
-          <a className="dib f9 pa3 bt bb bl br tc pointer bg-white bg-gray0-d gray4-d b--gray2-d"
-            onClick={this.onClickNew.bind(this)}>
-            Create New Chat
-          </a>
-          <a className="dib f9 pa3 bt bb br tl pointer bg-white bg-gray0-d gray4-d b--gray2-d"
-            onClick={this.onClickJoin.bind(this)}>
-            Join Existing Chat
-          </a>
         </div>
       </div>
     );

@@ -23,19 +23,16 @@ export class ChatTabBar extends Component {
       setColor = 'gray3';
     }
 
-    (props.location.pathname.includes('/popout')) 
-    ? popout = "popout/"
-    : popout = "";
+    popout = props.location.pathname.includes("/popout")
+      ? "popout/" :  "";
 
-    let hidePopoutIcon = (this.props.popout) 
-    ? "dn-m dn-l dn-xl" 
-    : "dib-m dib-l dib-xl";
-
+    let hidePopoutIcon = (this.props.popout)
+      ? "dn-m dn-l dn-xl" : "dib-m dib-l dib-xl";
 
     return (
-      <div className="dib pt2 flex-shrink-0 flex-grow-1">
+      <div className="dib flex-shrink-0 flex-grow-1">
         {!!props.isOwner ? (
-          <div className={"dib f8 pl6"}>
+          <div className={"dib pt2 f9 pl6 lh-solid"}>
             <Link
               className={"no-underline " + memColor}
               to={`/~chat/` + popout + `members` + props.station}>
@@ -45,7 +42,7 @@ export class ChatTabBar extends Component {
         ) : (
           <div className="dib" style={{ width: 0 }}></div>
         )}
-        <div className={"dib f8 pl6 pr6"}>
+        <div className={"dib pt2 f9 pl6 pr6 lh-solid"}>
           <Link
             className={"no-underline " + setColor}
             to={`/~chat/` + popout + `settings` + props.station}>
@@ -53,9 +50,9 @@ export class ChatTabBar extends Component {
           </Link>
         </div>
         <a href={`/~chat/popout/room` + props.station} target="_blank"
-        className="dib fr">
+        className="dib fr pt2 pr1">
           <img
-            className={`flex-shrink-0 pr2 dn invert-d ` + hidePopoutIcon}
+            className={`flex-shrink-0 pr3 dn ` + hidePopoutIcon}
             src="/~chat/img/popout.png"
             height="16"
             width="16"/>

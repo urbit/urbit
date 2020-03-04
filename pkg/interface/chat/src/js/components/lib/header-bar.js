@@ -1,36 +1,58 @@
-import React, { Component } from 'react';
-import classnames from 'classnames';
-import { IconHome } from '/components/lib/icons/icon-home';
-import { IconSpinner } from '/components/lib/icons/icon-spinner';
+import React, { Component } from "react";
+import classnames from "classnames";
+import { IconHome } from "/components/lib/icons/icon-home";
+import { Sigil } from "/components/lib/icons/sigil";
 
 export class HeaderBar extends Component {
   render() {
-    let spin = (this.props.spinner)
-      ?  <div className="absolute"
-           style={{width: 16, height: 16, top: 16, left: 55}}>
-           <IconSpinner/>
-         </div>
-      :  null;
+    let popout = window.location.href.includes("popout/")
+      ? "dn" : "dn db-m db-l db-xl";
 
-      let popoutHide = (this.props.popout)
-        ? "dn dn-m dn-l dn-xl"
-        : "dn db-m db-l db-xl";
+    let title = document.title === "Home" ? "" : document.title;
 
+    let spinner = !!this.props.spinner
+      ? this.props.spinner : false;
+
+    let spinnerClasses = "";
+
+    if (spinner === true) {
+      spinnerClasses = "spin-active";
+    }
     return (
-      <div className={`bg-black bb-d b--gray2-d w-100 justify-between ` + popoutHide}
-        style={{ height: 48, padding: 8}}>
-        <a className="db"
-          style={{ background: '#1A1A1A',
-            borderRadius: 16,
-            width: 32,
-            height: 32,
-            top: 8 }}
-          href='/'>
-          <IconHome />
+      <div
+        className={
+          "bg-white bg-gray0-d w-100 justify-between relative tc pt3 " + popout
+        }
+        style={{ height: 40 }}>
+        <a
+          className="dib gray2 f9 inter absolute left-0"
+          href="/"
+          style={{ top: 14 }}>
+          <IconHome classes={spinnerClasses} />
+          <span
+            className="ml2 white-d v-top lh-title"
+            style={{ paddingTop: 3 }}>
+            Home
+          </span>
         </a>
-        {spin}
+        <span
+          className="f9 white-d inter dib"
+          style={{
+            verticalAlign: "text-top",
+            paddingTop: 3
+          }}>
+          {title}
+        </span>
+        <div className="absolute right-0 lh-copy" style={{ top: 8 }}>
+          <Sigil
+            ship={"~" + window.ship}
+            classes="v-mid mix-blend-diff"
+            size={16}
+            color={"#000000"}
+          />
+          <span className="mono white-d f9 ml2">{"~" + window.ship}</span>
+        </div>
       </div>
     );
   }
 }
-

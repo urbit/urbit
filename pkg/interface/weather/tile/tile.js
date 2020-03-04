@@ -2,47 +2,26 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import moment from 'moment';
 
-class IconWithData extends Component {
-  render() {
-    const { props } = this;
-
-    return (
-      <div className='mt2'>
-        <img 
-          src={'/~weather/img/' + props.icon + '.png'} 
-          width={20} 
-          height={20}
-          className="dib mr2" />
-        <p className="label-small dib white">{props.text}</p>
-      </div>
-    ); 
-  }
-}
-
 export default class WeatherTile extends Component {
-
   constructor(props) {
     super(props);
-
-    let ship = window.ship;
-    let api = window.api;
-
     this.state = {
       latlng: '',
       manualEntry: false,
       error: false
     };
+    let api = window.api;
   }
-
+  // geolocation and manual input functions
   locationSubmit() {
     navigator.geolocation.getCurrentPosition((res) => {
-      console.log(res);
       let latlng = `${res.coords.latitude},${res.coords.longitude}`;
       this.setState({
         latlng
       }, (err) => {
         console.log(err);
       }, { maximumAge: Infinity, timeout: 10000 });
+      api.action("clock", "json", latlng);
       api.action('weather', 'json', latlng);
     });
   }
@@ -55,6 +34,7 @@ export default class WeatherTile extends Component {
     if (latlngParse.test(latlngNoSpace)) {
       let latlng = latlngNoSpace;
       this.setState({latlng}, (err) => {console.log(err)}, {maximumAge: Infinity, timeout: 10000});
+      api.action("clock", "json", latlng);
       api.action('weather', 'json', latlng);
       this.setState({manualEntry: !this.state.manualEntry});
     }
@@ -63,21 +43,86 @@ export default class WeatherTile extends Component {
       return false;
     }
   }
+  // set appearance based on weather
+  setColors(data) {
+    let weatherStyle = {
+      gradient1: "",
+      gradient2: "",
+      text: ""
+    };
 
-  keyPress(e) {
-    if (e.keyCode === 13) {
-      e.preventDefault();
-      this.manualLocationSubmit(e.target.value);
+    switch (data.daily.icon) {
+      case "clear-day":
+        weatherStyle = {
+          gradient1: "#A5CEF0", gradient2: "#FEF4E0", text: "black"
+        }
+        break;
+      case "clear-night":
+        weatherStyle = {
+          gradient1: "#56668e", gradient2: "#000080", text: "white"
+        }
+        break;
+      case "rain":
+        weatherStyle = {
+          gradient1: "#b1b2b3", gradient2: "#b0c7ff", text: "black"
+        };
+        break;
+      case "snow":
+        weatherStyle = {
+          gradient1: "#eee", gradient2: "#f9f9f9", text: "black"
+        };
+        break;
+      case "sleet":
+        weatherStyle = {
+          gradient1: "#eee", gradient2: "#f9f9f9", text: "black"
+        };
+        break;
+      case "wind":
+        weatherStyle = {
+          gradient1: "#eee", gradient2: "#fff", text: "black"
+        };
+        break;
+      case "fog":
+        weatherStyle = {
+          gradient1: "#eee", gradient2: "#fff", text: "black"
+        };
+        break;
+      case "cloudy":
+        weatherStyle = {
+          gradient1: "#eee", gradient2: "#b1b2b3", text: "black"
+        };
+        break;
+      case "partly-cloudy-day":
+        weatherStyle = {
+          gradient1: "#fcc440", gradient2: "#b1b2b3", text: "black"
+        };
+        break;
+      case "partly-cloudy-night":
+        weatherStyle = {
+          gradient1: "#7f7f7f", gradient2: "#56668e", text: "white"
+        };
+        break;
+      default:
+        weatherStyle = {
+          gradient1: "white", gradient2: "white", text: "black"
+        };
     }
+    return weatherStyle;
   }
-
-  renderWrapper(child) {
+  // all tile views
+  renderWrapper(child,
+    weatherStyle = { gradient1: "white", gradient2: "white", text: "black" }
+    ) {
     return (
-      <div className="pa2 relative" style={{
-        width: 234,
-        height: 234,
-        background: '#1a1a1a'
-      }}>
+      <div
+        className={"relative " + weatherStyle.text}
+        style={{
+          width: 126,
+          height: 126,
+          background: `linear-gradient(135deg, ${weatherStyle.gradient1} 0%,` +
+          `${weatherStyle.gradient2} 45%, ${weatherStyle.gradient2} 65%,` +
+          `${weatherStyle.gradient1} 100%)`
+        }}>
         {child}
       </div>
     );
@@ -87,116 +132,108 @@ export default class WeatherTile extends Component {
     let secureCheck;
     let error;
     if (this.state.error === true) {
-      error = <p 
-          className="label-small red pt1">
-          Incorrect latitude/longitude formatting. Please try again. <br/>
-          (eg. "29.558107, -95.089023")
+      error = <p
+          className="f9 red2 pt1">Please try again.
         </p>
     }
     if (location.protocol === "https:") {
       secureCheck = <a
-        className="label-regular b gray absolute pointer"
-        style={{right: 8, top: 4}}
-        onClick={() => this.locationSubmit()}>Detect location -></a>
+        className="black white-d f9 absolute pointer"
+        style={{right: 8, top: 8}}
+        onClick={() => this.locationSubmit()}>Detect -></a>
     }
-    return this.renderWrapper((
-      <div>
-        <a style={{"color": "white", "cursor": "pointer"}} 
-        onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>
-        &lt;&#45;
+    return this.renderWrapper(
+      <div className={"pa2 w-100 h-100 bg-white bg-gray0-d black white-d " +
+      "b--black b--gray1-d ba"}>
+        <a
+          className="f9 black white-d pointer"
+          onClick={() =>
+            this.setState({ manualEntry: !this.state.manualEntry })
+          }>
+          &lt;&#45;
         </a>
         {secureCheck}
-        <p className="label-regular white pt2">
-        Please enter your <a className="white" href="https://latitudeandlongitude.org/" target="_blank">latitude and longitude</a>.</p>
+        <p className="f9 pt2">
+          Please enter your{" "}
+          <a
+            className="black white-d"
+            href="https://latitudeandlongitude.org/"
+            target="_blank">
+            latitude and longitude
+          </a>
+          .
+        </p>
         {error}
-        <form className="flex absolute" style={{"bottom": 0, "left": 8}}>
-          <input id="gps" 
-            className="white pa1 bg-transparent outline-0 bn bb-ns b--white" 
-            style={{width: "86%"}}
-            type="text" 
-            placeholder="29.558107, -95.089023" 
-            onKeyDown={this.keyPress.bind(this)}>
-          </input> 
-          <input className="bg-transparent inter white w-20 outliner-0 bn pointer" 
-            type="submit" 
-            onClick={() => this.manualLocationSubmit()} 
-            value="->">
-          </input>
-        </form>
+        <div className="absolute" style={{left: 8, bottom: 8}}>
+          <form className="flex" style={{marginBlockEnd: 0 }}>
+            <input
+              id="gps"
+              className="w-100 black white-d bg-transparent bn f9"
+              type="text"
+              placeholder="29.558107, -95.089023"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  this.manualLocationSubmit(e.target.value);
+                }}
+              }/>
+            <input
+              className={"bg-transparent black white-d bn pointer " +
+              "f9 flex-shrink-0"}
+              type="submit"
+              onClick={() => this.manualLocationSubmit()}
+              value="->"/>
+          </form>
+        </div>
       </div>
-    ))
+    );
   }
 
   renderNoData() {
     return this.renderWrapper((
-      <div onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>
-          <p className="gray label-regular b absolute"
-            style={{left: 8, top: 4}}>
+      <div
+        className={"pa2 w-100 h-100 b--black b--gray1-d ba " +
+        "bg-white bg-gray0-d black white-d"}
+      onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>
+          <p className="f9 absolute"
+            style={{left: 8, top: 8}}>
             Weather
           </p>
-        <p className="absolute w-100 flex-col body-regular white" style={{verticalAlign: "bottom", bottom: 8, left: 8, cursor: "pointer"}}>-> Set location</p>
+        <p className="absolute w-100 flex-col f9"
+        style={{verticalAlign: "bottom", bottom: 8, left: 8, cursor: "pointer"}}>
+        -> Set location
+        </p>
       </div>
     ));
   }
 
-  renderWithData(data) {
+  renderWithData(data, weatherStyle) {
     let c = data.currently;
     let d = data.daily.data[0];
 
     let da = moment.unix(d.sunsetTime).format('h:mm a') || '';
 
-    return this.renderWrapper((
-      <div>
-          <p className="gray label-regular b absolute"
-            style={{left: 8, top: 4}}>
-            Weather
-          </p>
-          <a className="label-regular b gray absolute pointer"
-            style={{right: 8, top: 4}}
-            onClick={() => this.setState({manualEntry: !this.state.manualEntry})}>Update location -></a>
-        <div className="w-100 mb2 mt2 absolute"
-            style={{left: 18, top: 28}}>
-          <img 
-            src={'/~weather/img/' + c.icon + '.png'} 
-            width={64} 
-            height={64}
-            className="dib" />
-          <h2 
-            className="dib ml2 white"
-            style={{
-              fontSize: 72,
-              lineHeight: '64px',
-              fontWeight: 400
-            }}>
-            {Math.round(c.temperature)}°</h2>
-        </div>
-        <div className="w-100 cf absolute"
-        style={{ left: 18, top: 118 }}>
-          <div className="fl w-50">
-            <IconWithData 
-              icon='winddirection'
-              text={c.windBearing + '°'} />
-            <IconWithData 
-              icon='chancerain'
-              text={(c.precipProbability * 100) + '%'} />
-            <IconWithData 
-              icon='windspeed'
-              text={Math.round(c.windSpeed) + ' mph'} />
-          </div>
-          <div className="fr w-50">
-            <IconWithData 
-              icon='sunset'
-              text={da} />
-            <IconWithData 
-              icon='low'
-              text={Math.round(d.temperatureLow) + '°'} />
-            <IconWithData 
-              icon='high'
-              text={Math.round(d.temperatureHigh) + '°'} />
-          </div>
+    return this.renderWrapper(
+      <div className="w-100 h-100 b--black b--gray1-d ba"
+      style={{backdropFilter: "blur(80px)"}}>
+        <p className="f9 absolute" style={{ left: 8, top: 8 }}>
+          Weather
+        </p>
+        <a
+          className="f9 absolute pointer"
+          style={{ right: 8, top: 8 }}
+          onClick={() =>
+            this.setState({ manualEntry: !this.state.manualEntry })
+          }>
+          ->
+        </a>
+        <div className="w-100 absolute" style={{ left: 8, bottom: 8 }}>
+          <p className="f9">{c.summary}</p>
+          <p className="f9 pt1">{Math.round(c.temperature)}°</p>
+          <p className="f9 pt1">Sunset at {da}</p>
         </div>
       </div>
-    ));
+    , weatherStyle);
   }
 
   render() {
@@ -207,7 +244,8 @@ export default class WeatherTile extends Component {
     }
 
     if ('currently' in data && 'daily' in data) {
-      return this.renderWithData(data);
+      let weatherStyle = this.setColors(data);
+      return this.renderWithData(data, weatherStyle);
     }
 
     return this.renderNoData();

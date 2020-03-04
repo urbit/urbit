@@ -57,6 +57,7 @@
     =/  cards=(list card)
       ?+    path  (on-watch:def path)
           [%all ~]   (give %group-initial !>(groups))
+          [%updates ~]  ~
           [%keys ~]  (give %group-update !>([%keys ~(key by groups)]))
           [%group *]
         (give %group-update !>([%path (~(got by groups) t.path) t.path]))
@@ -158,6 +159,7 @@
   ^-  (list card)
   %-  zing
   :~  (update-subscribers /all act)
+      (update-subscribers /updates act)
       (update-subscribers [%group pax] act)
       ?.  |(=(%bundle -.act) =(%unbundle -.act))
         ~

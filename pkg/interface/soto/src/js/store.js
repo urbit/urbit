@@ -9,7 +9,8 @@ export class Store {
             txt: [],
             prompt: '',
             cursor: 0,
-            input: ""
+            input: "",
+            spinner: false
         }
         this.sync = this.sync.bind(this);
         this.print = this.print.bind(this);
@@ -19,9 +20,19 @@ export class Store {
         // recursive handler
         if (data.data) {
             var dojoReply = data.data;
-        } else {
+        }
+        else if (data.local) {
+          if (data.local.spinner) {
+            return this.setState({spinner: data.local.spinner})
+          }
+        }
+        else {
             var dojoReply = data;
         }
+
+        // on response, disable spinner
+        this.setState({spinner: false});
+
         // %mor sole-effects are nested, so throw back to handler
         if (dojoReply.map) { 
             return dojoReply.map(reply => this.handleEvent(reply));
@@ -74,6 +85,14 @@ export class Store {
     
     setStateHandler(setState) {
         this.setState = setState;
+    }
+
+    setSpinner(boolean) {
+      store.handleEvent({
+        local: {
+          spinner: boolean
+        }
+      })
     }
 }
 

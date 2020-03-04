@@ -1,112 +1,86 @@
-import React, { Component } from 'react';
-import classnames from 'classnames';
-import { Comment } from '/components/lib/comment';
-import { CommentBox } from '/components/lib/comment-box';
+import React, { Component } from 'react'
+import { CommentItem } from './comment-item';
 
 export class Comments extends Component {
   constructor(props){
     super(props);
-
     this.state = {
-      show: false,
       commentBody: '',
-      awaiting: false,
+      disabled: false
     }
-    
-    this.toggleDisplay = this.toggleDisplay.bind(this);
+    this.commentSubmit = this.commentSubmit.bind(this);
     this.commentChange = this.commentChange.bind(this);
-    this.postComment   = this.postComment.bind(this);
   }
+ commentSubmit(evt){
+   let comment = {
+     "new-comment": {
+       who: this.props.ship.slice(1),
+       book: this.props.book,
+       note: this.props.note,
+       body: this.state.commentBody
+     }
+   };
 
-  commentChange(evt) {
-    this.setState({commentBody: evt.target.value});
-  }
+   this.textArea.value = '';
+   window.api.setSpinner(true);
+   this.setState({disabled: true});
+   let submit = window.api.action("publish", "publish-action", comment);
+   submit.then(() => {
+     window.api.setSpinner(false);
+     this.setState({ disabled: false, commentBody: "" });
+    })
+   }
 
-  toggleDisplay() {
-    this.setState({show: !this.state.show});
-  }
-
-  postComment() {
-    this.props.setSpinner(true);
-    let comment = {
-      "new-comment": {
-        who: this.props.ship,
-        coll: this.props.blogId,
-        name: this.props.postId,
-        content: this.state.commentBody,
-      }
-    };
-
+  commentChange(evt){
     this.setState({
-      awaiting: {
-        ship: this.props.ship,
-        blogId: this.props.blogId,
-        postId: this.props.postId,
-      }
-    }, () => {
-      this.props.api.action("publish", "publish-action", comment)
-    });
-
+      commentBody: evt.target.value,
+    })
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.awaiting) {
-      if (prevProps.comments != this.props.comments) {
-        this.props.setSpinner(false);
-        this.setState({awaiting: false, commentBody: ''});
-      }
+  render() {
+    if (!this.props.enabled) {
+      return null;
     }
-  }
-
-  render(){
-    if (this.state.show) {
-      let our = `~${window.ship}`;
-      let comments = this.props.comments.map((comment, i) => {
-        let commentProps = {
-          ship: comment.info.creator,
-          date: comment.info["date-created"],
-          body: comment.body,
-        };
-        return (<Comment {...commentProps} key={i} />);
-      });
+    let commentArray = this.props.comments.map((com, i) => {
       return (
-        <div className="cb mt3 mb4">
-          <p className="gray-50 body-large b">
-            <span>{this.props.comments.length} </span>
-            <span className="black">
-              Comments
-            </span>
-          </p>
-          <p className="cl body-regular pointer" onClick={this.toggleDisplay}>
-            - Hide Comments
-          </p>
+        <CommentItem
+          comment={com}
+          key={i}
+          contacts={this.props.contacts}
+          />
+      );
+    })
 
-          <CommentBox our={our}
-            action={this.commentChange}
-            enabled={!(Boolean(this.state.awaiting))}
-            content={this.state.commentBody}
-            post={this.postComment}/>
+    let disableComment = ((this.state.commentBody === '') || (this.state.disabled === true));
+    let commentClass = (disableComment)
+      ?  "bg-transparent f9 pa2 br1 ba b--gray2 gray2"
+      :  "bg-transparent f9 pa2 br1 ba b--gray2 black white-d pointer";
 
-
-          <div className="flex-col" style={{marginTop: 32}}>
-            {comments}
+    return (
+      <div>
+        <div className="mv8">
+          <div>
+            <textarea style={{resize:'vertical'}}
+              ref={(el) => {this.textArea = el}}
+              id="comment"
+              name="comment"
+              placeholder="Leave a comment here"
+              className={"f9 db border-box w-100 ba b--gray3 pt3 ph3 pb8 br1 " +
+              "b--gray2-d mb2 focus-b--black focus-b--white-d white-d bg-gray0-d"}
+              aria-describedby="comment-desc"
+              onChange={this.commentChange}>
+            </textarea>
           </div>
+          <button disabled={disableComment}
+            onClick={this.commentSubmit}
+            className={commentClass}>
+            Add comment
+          </button>
         </div>
-      );
-    } else {
-      return (
-        <div className="cb mt3 mb4">
-          <p className="gray-50 body-large b">
-            <span>{this.props.comments.length} </span>
-            <span className="black">
-              Comments
-            </span>
-          </p>
-          <p className="cl body-regular pointer" onClick={this.toggleDisplay}>
-            + Show Comments
-          </p>
-        </div>
-      );
-    }
+        {commentArray}
+      </div>
+    )
   }
 }
+
+export default Comments

@@ -1,51 +1,28 @@
 import React, { Component } from 'react';
-import { subscription } from '/subscription';
-import { api } from '/lib/api';
-import classnames from 'classnames';
-import moment from 'moment';
-
-import Dropdown from '/components/dropdown';
+import { Sigil } from './sigil';
 
 export default class Header extends Component {
-
-  constructor(props) {
-    super(props);
-    this.interval = null;
-    this.timeout = null;
-    
-    this.state = {
-      moment: moment()
-    };
-  }
-
-  componentDidMount() {
-    let sec = parseInt(moment().format("s"), 10);
-    
-    this.timeout = setTimeout(() => {
-      this.setState({
-        moment: moment()
-      });
-      this.interval = setInterval(() => {
-        this.setState({
-          moment: moment()
-        });
-      }, 60000);
-    }, (60 - sec) * 1000);
-  }
-  
-  componentWillUnmount() {
-    clearTimeout(this.timeout);
-    clearInterval(this.interval);
-  }
-
   render() {
     return (
-      <header className="w-100 h2 cf">
-        <div className="fl h2 bg-black">
-        </div>
-        <div className="fr h2 bg-black">
-          <p className="white v-mid h2 sans-serif dtc pr2">{this.state.moment.format("MMM DD")}</p>
-          <p className="white v-mid h2 sans-serif dtc pr2">{this.state.moment.format("hh:mm a")}</p>
+      <header
+        className="bg-white bg-gray0-d w-100 justify-between relative tc pt3"
+        style={{ height: 40 }}>
+        <span
+          className="f9 white-d inter dib"
+          style={{
+            verticalAlign: "text-top",
+            paddingTop: 3
+          }}>
+          Home
+        </span>
+        <div className="absolute right-1 lh-copy" style={{ top: 12 }}>
+          <Sigil
+            ship={"~" + window.ship}
+            size={16} color={"#000000"}
+            classes="mix-blend-diff v-mid" />
+          <span className="mono white-d f9 ml2">
+            {"~" + window.ship}
+          </span>
         </div>
       </header>
     );

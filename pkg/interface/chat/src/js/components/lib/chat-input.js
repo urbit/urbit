@@ -6,8 +6,9 @@ import classnames from 'classnames';
 
 import { Sigil } from '/components/lib/icons/sigil';
 
-import { uuid } from '/lib/util';
+import { uuid, uxToHex } from '/lib/util';
 
+const DEFAULT_INPUT_HEIGHT = 28;
 
 export class ChatInput extends Component {
 
@@ -16,12 +17,15 @@ export class ChatInput extends Component {
 
     this.state = {
       message: '',
+      textareaHeight: DEFAULT_INPUT_HEIGHT
     };
 
     this.textareaRef = React.createRef();
 
     this.messageSubmit = this.messageSubmit.bind(this);
     this.messageChange = this.messageChange.bind(this);
+                         // Call once per frame @ 60hz
+    this.textareaInput = _.debounce(this.textareaInput.bind(this), 16);
 
     // perf testing:
     /*let closure = () => {
@@ -77,6 +81,16 @@ export class ChatInput extends Component {
   messageChange(event) {
     this.setState({
       message: event.target.value
+    });
+  }
+
+  textareaInput() {
+    const newHeight = this.textareaRef.current.scrollHeight < DEFAULT_INPUT_HEIGHT * 8
+      ? `${this.textareaRef.current.scrollHeight}px`
+      : `${DEFAULT_INPUT_HEIGHT * 8}px`
+
+    this.setState({
+      textareaHeight: newHeight
     });
   }
 
@@ -149,10 +163,18 @@ export class ChatInput extends Component {
 
     this.setState({
       message: '',
+      textareaHeight: DEFAULT_INPUT_HEIGHT
     });
   }
 
   readOnlyRender() {
+    const { props } = this;
+    let color = !!props.ownerContact
+      ? uxToHex(props.ownerContact.color) : '#000000';
+
+    let sigilClass = !!props.ownerContact
+      ? "" : "mix-blend-diff";
+
     return (
       <div className="pa3 cf flex black bt b--gray4 o-50">
         <div className="fl" style={{
@@ -160,7 +182,12 @@ export class ChatInput extends Component {
           flexBasis: 24,
           height: 24
         }}>
-          <Sigil ship={window.ship} size={24} color="#4330FC" />
+          <Sigil
+            ship={window.ship}
+            size={24}
+            color={`#${color}`}
+            classes={sigilClass}
+          />
         </div>
         <div className="fr h-100 flex" style={{ flexGrow: 1, height: 28, paddingTop: 6, resize: "none" }}>
           <p className="pl3">This chat is read only and you cannot post.</p>
@@ -172,10 +199,17 @@ export class ChatInput extends Component {
   writeAccessRender() {
     const { props, state } = this;
 
+    let color = !!props.ownerContact
+      ? uxToHex(props.ownerContact.color) : '#000000';
+
+    let sigilClass = !!props.ownerContact
+      ? "" : "mix-blend-diff";
+
     this.bindShortcuts();
     
     return (
-      <div className="pa3 cf flex black white-d bt b--gray4 b--gray0-d bg-black-d" style={{ flexGrow: 1 }}>
+      <div className="pa3 cf flex black white-d bt b--gray4 b--gray1-d bg-white bg-gray0-d"
+      style={{ flexGrow: 1 }}>
         <div
           className="fl"
           style={{
@@ -183,12 +217,17 @@ export class ChatInput extends Component {
             flexBasis: 24,
             height: 24
           }}>
-          <Sigil ship={window.ship} size={24} color="#4330FC" />
+          <Sigil
+            ship={window.ship}
+            size={24}
+            color={`#${color}`}
+            classes={sigilClass}
+            />
         </div>
-        <div className="fr h-100 flex bg-black-d" style={{ flexGrow: 1 }}>
+        <div className="fr h-100 flex bg-gray0-d" style={{ flexGrow: 1 }}>
           <textarea
-            className={"pl3 bn bg-black-d white-d"}
-            style={{ flexGrow: 1, height: 28, paddingTop: 6, resize: "none" }}
+            className={"pl3 bn bg-gray0-d white-d"}
+            style={{ flexGrow: 1, height: state.textareaHeight, paddingTop: 6, resize: "none" }}
             autoCapitalize="none"
             autoFocus={(
               /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(
@@ -198,6 +237,7 @@ export class ChatInput extends Component {
             placeholder={props.placeholder}
             value={state.message}
             onChange={this.messageChange}
+            onInput={this.textareaInput}
           />
         </div>
       </div>

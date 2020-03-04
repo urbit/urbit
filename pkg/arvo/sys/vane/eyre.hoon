@@ -350,104 +350,179 @@
   ;html
     ;head
       ;meta(charset "utf-8");
-      ;title:"Sign in"
+      ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
+      ;title:"OS1"
       ;style:'''
              @import url("https://rsms.me/inter/inter.css");
              @font-face {
                  font-family: "Source Code Pro";
-                 src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-medium.woff");
-                 font-weight: 500
+                 src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-regular.woff");
+                 font-weight: 400;
              }
              html, body {
                font-family: Inter, sans-serif;
                height: 100%;
                margin: 0 !important;
                width: 100%;
-               background: #000;
-               color: #fff;
-               display: table;
+               background: #fff;
+               color: #000;
+               -webkit-font-smoothing: antialiased;
+               line-height: 1.5;
+               font-size: 12pt;
              }
-             form {
-               margin: 0 !important;
-               display: flex;
-               flex-direction: column;
-               flex: 2;
+             a, a:visited {
+               color: #000;
+               text-decoration: none;
+               font-size: 0.875rem;
              }
-             #topborder {
-               border-top: 3px #fff solid;
-             }
-             #ship-name {
-               font-family: 'Source Code Pro', monospace, sans-serif;
-             }
-             h1 {
-               line-height: 77px;
-               font-size: 64px;
-               -webkit-margin-before: 0;
-               -webkit-margin-after: 0;
-               -webkit-margin-start: 0;
-               -webkit-margin-end: 0;
-               font-weight: 500;
-               flex: 1;
-               padding-top: 22px;
-               margin-bottom: 66px;
-             }
-             h2 {
-               line-height: 38px;
-               font-size: 32px;
-               -webkit-margin-before: 0;
-               -webkit-margin-after: 0;
-               -webkit-margin-start: 0;
-               -webkit-margin-end: 0;
-               font-weight: 500;
-               flex: 1;
-               padding-top: 22px;
-               margin-bottom: 66px;
-             }
-             #main {
-               vertical-align: middle;
-               display: table-cell;
+             p {
+               margin-block-start: 0;
+               margin-block-end: 0;
+               font-size: 0.875rem;
              }
              input {
-               display: block;
                width: 100%;
-               font-size: 64px;
-               line-height: 77px;
-               color: #fff;
-               background: #000;
-               border: none;
-               flex: 1;
-               margin-bottom: 66px;
-               font-weight: 500;
-               font-family: 'Source Code Pro', monospace, sans-serif;
+               padding: 0.75rem;
+               border: 1px solid #e6e6e6;
+               margin-top: 0.25rem;
+               margin-bottom: 1rem;
+               font-size: 0.875rem;
+             }
+             input:focus {
+               outline: 0;
+               border: 1px solid #000;
              }
              button {
-               background: #000;
-               border: none;
-               color: #fff;
-               line-height: 77px;
-               font-size: 64px;
-               text-align: left;
-               flex: 1;
-               font-weight: 500;
+               -webkit-appearance: none;
+               padding: 0.75rem;
+               background-color: #eee;
+               border: 1px solid #d1d2d3;
+               color: #666;
+               font-size: 0.875rem;
+               border-radius: 0;
+             }
+             footer {
+               position: absolute;
+               bottom: 0;
+             }
+             footer span {
+               font-size: 0.875rem;
+             }
+             .mono {
+               font-family: "Source Code Pro", monospace;
+             }
+             .gray2 {
+               color: #7f7f7f;
+             }
+             .f9 {
+               font-size: 0.75rem;
+             }
+             .relative {
+               position: relative;
+             }
+             .absolute {
+               position: absolute;
+             }
+             .w-100 {
+               width: 100%;
+             }
+             .tr {
+               text-align: right;
+             }
+             .pb2 {
+               padding-bottom: 0.5rem;
+             }
+             .pr1 {
+               padding-right: 0.25rem;
+             }
+             .pr2 {
+               padding-right: .5rem;
+             }
+             .dn {
+               display: none;
+             }
+             #main {
+               width: 100%;
+               height: 100%;
              }
              #inner {
-               width: 75%;
-               margin: 0 auto;
-               display: flex;
-               flex-direction: column;
+               position: fixed;
+               top: 50%;
+               left: 50%;
+               transform: translate(-50%, -50%);
+             }
+             @media all and (prefers-color-scheme: dark) {
+               html, body {
+                 background-color: #333;
+                 color: #fff;
+               }
+               a, a:visited {
+                 color: #fff;
+               }
+               input {
+                 background: #333;
+                 color: #fff;
+                 border: 1px solid #7f7f7f;
+               }
+               input:focus {
+                 border: 1px solid #fff;
+               }
+             }
+             @media all and (min-width: 34.375rem) {
+               .tc-ns {
+                 text-align: center;
+               }
+               .pr0-ns {
+                 padding-right: 0;
+               }
+               .dib-ns {
+                 display: inline-block;
+               }
              }
              '''
     ==
     ;body
       ;div#main
         ;div#inner
-          ;h1#topborder:"Welcome"
-          ;h1#ship-name:"{(scow %p our)}"
-          ;h2:"Get passcode by entering +code at the dojo or from Bridge"
+          ;p:"Urbit ID"
+          ;input(value "{(scow %p our)}", disabled "true", class "mono");
+          ;p:"Access Key"
+          ;p.f9.gray2
+            ; Get key from Bridge, or
+            ;span.mono.pr1:"+code"
+            ; in dojo
+          ==
           ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
-            ;input(type "password", name "password", placeholder "passcode", autofocus "true");
+            ;input
+              =type  "password"
+              =name  "password"
+              =placeholder  "~sampel-ticlyt-migfun-falmel"
+              =class  "mono"
+              =autofocus  "true";
             ;input(type "hidden", name "redirect", value redirect-str);
-            ;button(type "submit"):"→ Authenticate"
+            ;button(type "submit"):"Continue"
+          ==
+        ==
+        ;footer.absolute.w-100
+          ;div.relative.w-100.tr.tc-ns
+            ;span(class "absolute", style "left: 8px; bottom: 8px;")
+            ; OS 1
+            ;span(class "gray2", style "margin-left: 4px;"): v0.0.1
+            ==
+            ;p.pr2.pr0-ns.pb2
+              ;a(href "https://bridge.urbit.org", target "_blank")
+                ;span.dn.dib-ns.pr1:"Open"
+                ; Bridge ↗
+              ==
+              ;a
+                =href  "https://urbit.org/using/install/#id"
+                =style  "margin-left: 8px; color: #2aa779;"
+                =target  "_blank"
+                ; Purchase
+                ;span.dn.dib-ns.pr1:"an Urbit ID"
+                ; ↗
+              ==
+            ==
           ==
         ==
       ==
@@ -1549,7 +1624,6 @@
         (emit-event channel-id [(en-json:html json)]~)
       ::
           %kick
-        ~&  [%recieved-quit-from-gall channel-id]
         =/  =json
           =,  enjs:format
           %-  pairs  :~

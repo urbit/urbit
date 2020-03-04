@@ -86,6 +86,17 @@
   =/  recur  ~s1
   =.  commit-timer
     [/kiln/autocommit (add now recur) recur mon]
+    (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
+::
+++  poke-autocommit
+  |=  [mon/kiln-commit auto=?]
+  =<  abet
+  =.  +>.$  (emit %pass /commit %arvo %c [%dirk mon])
+  ?.  auto
+    +>.$
+  =/  recur  ~s1
+  =.  commit-timer
+    [/kiln/autocommit (add now recur) recur mon]
   (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
 ::
 ++  poke-cancel-autocommit
@@ -185,6 +196,7 @@
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-kiln-bad-mark mark] !!)
     %kiln-commit             =;(f (f !<(_+<.f vase)) poke-commit)
+    %kiln-autocommit         =;(f (f !<(_+<.f vase)) poke-autocommit)
     %kiln-info               =;(f (f !<(_+<.f vase)) poke-info)
     %kiln-label              =;(f (f !<(_+<.f vase)) poke-label)
     %kiln-cancel             =;(f (f !<(_+<.f vase)) poke-cancel)

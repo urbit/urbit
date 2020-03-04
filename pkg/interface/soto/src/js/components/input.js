@@ -25,6 +25,7 @@ export class Input extends Component {
 
   // submit on enter
   if (e.key === "Enter") {
+    store.setSpinner(true);
     api.soto("ret");
   }
 
@@ -51,6 +52,7 @@ export class Input extends Component {
   
   // tab completion
   else if (e.key === "Tab") {
+    store.setSpinner(true);
     api.soto({tab: this.props.cursor});
   }
 
