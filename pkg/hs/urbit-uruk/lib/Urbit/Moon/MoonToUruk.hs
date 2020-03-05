@@ -21,51 +21,43 @@ import qualified Urbit.Uruk.Refr.Jetted  as Ur
 
 --------------------------------------------------------------------------------
 
-getGlobal :: Uruk p => Text -> p
+getGlobal :: Uruk p => Text -> Either Text p
 getGlobal = \case
-  "S"     -> uEss
-  "K"     -> uKay
-  "J"     -> uJay 1
-  "const" -> uKay
-  "D"     -> uDee
-  "I"     -> uEye
-  "id"    -> uEye
-  "B"     -> uBee
-  "dot"   -> uBee
-  "C"     -> uSea
-  "flip"  -> uSea
-  "cas"   -> uCas
-  "lef"   -> uLef
-  "rit"   -> uRit
-  "iff"   -> uIff
-  "seq"   -> uSeq
-  "pak"   -> uPak
-  "zer"   -> uZer
-  "eql"   -> uEql
-  "inc"   -> uInc
-  "dec"   -> uDec
-  "fec"   -> uFec
-  "add"   -> uAdd
-  "sub"   -> uSub
-  "mul"   -> uMul
-  "fix"   -> uFix
-  "ded"   -> uDed
-  "uni"   -> uUni
-  "con"   -> uCon
-  "car"   -> uCar
-  "cdr"   -> uCdr
-  str     -> error ("undefined variable: " <> unpack str)
-  where p = Lamb.Prim
+  "S"     -> Right uEss
+  "K"     -> Right uKay
+  "J"     -> Right (uJay 1)
+  "const" -> Right uKay
+  "D"     -> Right uDee
+  "I"     -> Right uEye
+  "id"    -> Right uEye
+  "B"     -> Right uBee
+  "dot"   -> Right uBee
+  "C"     -> Right uSea
+  "flip"  -> Right uSea
+  "cas"   -> Right uCas
+  "lef"   -> Right uLef
+  "rit"   -> Right uRit
+  "iff"   -> Right uIff
+  "seq"   -> Right uSeq
+  "pak"   -> Right uPak
+  "zer"   -> Right uZer
+  "eql"   -> Right uEql
+  "inc"   -> Right uInc
+  "dec"   -> Right uDec
+  "fec"   -> Right uFec
+  "add"   -> Right uAdd
+  "sub"   -> Right uSub
+  "mul"   -> Right uMul
+  "fix"   -> Right uFix
+  "ded"   -> Right uDed
+  "uni"   -> Right uUni
+  "con"   -> Right uCon
+  "car"   -> Right uCar
+  "cdr"   -> Right uCdr
+  str     -> Left ("Error: undefined variable:\n\n  " <> str <> "\n")
 
-{-
-    | Sn !Positive
-    | Bn !Positive
-    | Cn !Positive
-    | Yet !Natural
--}
-
-toUruk :: Exp Text -> IO Ur.Ur
-toUruk = Lamb.moonStrict . toLC getGlobal
+toUruk :: Exp Text -> IO (Either Text Ur.Ur)
+toUruk = sequence . fmap Lamb.moonStrict . bindLC . toLC
 
 forceParse :: Text -> AST
 forceParse = Parser.parseAST >>> \case
@@ -74,14 +66,6 @@ forceParse = Parser.parseAST >>> \case
 
 forceParseExp ∷ Text → Exp Text
 forceParseExp = bind . forceParse
-
-gogogo :: Text -> IO Ur.Ur
-gogogo text = Ur.simp <$> complex
- where
-  ast     = traceShowId (forceParse text)
-  exp     = bind ast
-  lam     = traceShowId (toLC getGlobal exp)
-  complex = traceShowId <$> Lamb.moonStrict lam
 
 gogogo' :: Text -> ExceptT Text IO Ur.Ur
 gogogo' text = do
@@ -92,9 +76,11 @@ gogogo' text = do
   traceM ""
 
   let !expr = bind ast
-      !lamb = toLC getGlobal expr
+      !lamb = toLC expr
 
-  cplx <- liftIO (Lamb.moonStrict lamb)
+  bound <- ExceptT $ pure (bindLC lamb)
+
+  cplx <- liftIO (Lamb.moonStrict bound)
 
   traceM ""
   traceM (show lamb)
@@ -111,48 +97,51 @@ gogogoFast text = do
   ast <- ExceptT $ pure $ Parser.parseAST text
 
   let expr = bind ast
-      lamb = toLC getGlobal expr
+      lamb = toLC expr
 
-  cplx <- liftIO $ Lamb.moonStrict lamb
+  bound <- ExceptT $ pure (bindLC lamb)
+  cplx  <- liftIO $ Lamb.moonStrict bound
 
   pure cplx
 
+bindLC :: Uruk p => Lamb.Exp (Either Text p) -> Either Text (Lamb.Exp p)
+bindLC = traverse (either getGlobal Right)
 
-toLC :: forall p. Uruk p => (Text -> p) -> Exp Text -> Lamb.Exp p
-toLC getGlobal = go (Left . getGlobal)
+toLC :: forall p. Uruk p => Exp Text -> Lamb.Exp (Either Text p)
+toLC = go Left
  where
-  go :: (a -> Either p Nat) -> Exp a -> Lamb.Exp p
+  go :: (a -> Either Text Nat) -> Exp a -> Lamb.Exp (Either Text p)
   go f = \case
     Var a     -> var f a
     Lam b     -> lam f b
     App x y   -> Lamb.Go (go f x) (go f y)
     Jet r n b -> Lamb.Jet (fromIntegral r) (Atom.utf8Atom n) (go f b)
     Fix b     -> Lamb.Loop (enter f b)
-    Sig       -> Lamb.Prim uUni
+    Sig       -> Lamb.Prim (Right uUni)
     Con x y   -> con f x y
     Cas x l r -> cas f x l r
     Iff c t e -> Lamb.If (go f c) (go f t) (go f e)
-    Lit n     -> Lamb.Prim $ uNat n
-    Bol b     -> Lamb.Prim $ uBol b
-    Str n     -> Lamb.Prim $ uNat $ Atom.utf8Atom n
+    Lit n     -> Lamb.Prim $ Right $ uNat n
+    Bol b     -> Lamb.Prim $ Right $ uBol b
+    Str n     -> Lamb.Prim $ Right $ uNat $ Atom.utf8Atom n
 
-  enter :: (a -> Either p Nat) -> Scope () Exp a -> Lamb.Exp p
+  enter :: (a -> Either Text Nat) -> Scope () Exp a -> Lamb.Exp (Either Text p)
   enter f b = go f' (fromScope b) where f' = wrap f
 
-  lam :: (a -> Either p Nat) -> Scope () Exp a -> Lamb.Exp p
+  lam :: (a -> Either Text Nat) -> Scope () Exp a -> Lamb.Exp (Either Text p)
   lam f b = Lamb.Lam (enter f b)
 
   var f a = f a & \case
-    Left  e -> Lamb.Prim e
+    Left  e -> Lamb.Prim (Left e)
     Right v -> Lamb.Var v
 
-  cas :: (a -> Either p Nat) -> Exp a -> Scope () Exp a -> Scope () Exp a -> Lamb.Exp p
+  cas :: (a -> Either Text Nat) -> Exp a -> Scope () Exp a -> Scope () Exp a -> Lamb.Exp (Either Text p)
   cas f x l r = Lamb.Case (go f x) (enter f l) (enter f r)
 
-  con :: (a -> Either p Nat) -> Exp a -> Exp a -> Lamb.Exp p
-  con f x y = Lamb.Prim uCon `Lamb.Go` go f x `Lamb.Go` go f y
+  con :: (a -> Either Text Nat) -> Exp a -> Exp a -> Lamb.Exp (Either Text p)
+  con f x y = Lamb.Prim (Right uCon) `Lamb.Go` go f x `Lamb.Go` go f y
 
-  wrap :: (a -> Either p Nat) -> Var () a -> Either p Nat
+  wrap :: (a -> Either Text Nat) -> Var () a -> Either Text Nat
   wrap f = \case
     B () -> Right 0
     F x  -> succ <$> f x

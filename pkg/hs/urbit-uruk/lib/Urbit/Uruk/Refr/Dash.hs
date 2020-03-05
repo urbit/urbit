@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Werror #-}
 
-module Urbit.Uruk.Refr.Jets where
+module Urbit.Uruk.Refr.Dash where
 
 import ClassyPrelude
 

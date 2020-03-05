@@ -20,14 +20,15 @@ type Nat = Natural
 type Pos = Positive
 
 data Exp p
-    = Lam (Exp p)
-    | Var Nat
-    | Go (Exp p) (Exp p)
-    | Prim p
-    | Loop (Exp p)
-    | If (Exp p) (Exp p) (Exp p)
-    | Case (Exp p) (Exp p) (Exp p)
-    | Jet Pos Nat (Exp p)
+  = Lam (Exp p)
+  | Var Nat
+  | Go (Exp p) (Exp p)
+  | Prim p
+  | Loop (Exp p)
+  | If (Exp p) (Exp p) (Exp p)
+  | Case (Exp p) (Exp p) (Exp p)
+  | Jet Pos Nat (Exp p)
+ deriving (Eq, Ord, Functor, Foldable, Traversable)
 
 instance Num (Exp p) where
     negate      = error "hack"
