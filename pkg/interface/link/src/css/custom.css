@@ -60,6 +60,10 @@ a {
   font-family: "Source Code Pro", monospace;
 }
 
+.list-ship {
+  line-height: 2.2;
+}
+
 .c-default {
   cursor: default;
 }
@@ -103,6 +107,23 @@ a {
   50% {transform: rotate(180deg);}
   75% {transform: rotate(270deg);}
   100% {transform: rotate(360deg);}
+}
+
+/* toggler checkbox */
+
+.toggle::after {
+  content: "";
+  height: 12px;
+  width: 12px;
+  background: white;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  border-radius: 100%;
+}
+
+.toggle.checked::after {
+  left: 14px;
 }
 
 /* responsive */
@@ -164,6 +185,9 @@ a {
   .b--gray0-d {
     border-color: #333;
   }
+  .b--gray1-d {
+    border-color: #4d4d4d;
+  }
   .b--gray2-d {
     border-color: #7f7f7f;
   }
@@ -179,6 +203,9 @@ a {
   }
   .o-60-d {
     opacity: .6;
+  }
+  .focus-b--white-d:focus {
+    border-color: #fff;
   }
   a {
     color: #fff;

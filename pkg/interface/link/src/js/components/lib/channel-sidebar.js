@@ -41,7 +41,7 @@ export class ChannelsSidebar extends Component {
         );
       });
 
-    let activeClasses = (this.props.active === "channels") ? " " : "dn-s ";
+    let activeClasses = (this.props.active === "collections") ? " " : "dn-s ";
 
     let hiddenClasses = true;
 
@@ -62,7 +62,7 @@ export class ChannelsSidebar extends Component {
         <a className="db dn-m dn-l dn-xl f8 pb3 pl3" href="/">⟵ Landscape</a>
         <div className="overflow-y-scroll h-100">
           <div className="w-100 bg-transparent pa4 bb b--gray4 b--gray1-d"
-            style={{paddingBottom: 13}}>
+            style={{paddingBottom: 10, paddingTop: 10}}>
             <Link
               className="dib f9 pointer green2 gray4-d mr4"
               to={"/~link/new"}>

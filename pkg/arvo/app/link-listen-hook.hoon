@@ -1,8 +1,8 @@
 ::  link-listen-hook: get your friends' bookmarks
 ::
 ::    subscribes to all %link resources in the metadata-store.
-::    for all all ships in groups associated with those resources, we subscribe
-::    to their link's local-pages and annotations at the resource path (through
+::    for all ships in groups associated with those resources, we subscribe to
+::    their link's local-pages and annotations at the resource path (through
 ::    link-proxy-hook), and forward all entries into our link-store as
 ::    submissions and comments.
 ::

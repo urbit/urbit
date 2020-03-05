@@ -56,7 +56,7 @@ export class MemberScreen extends Component {
           <Link to={makeRoutePath(props.resourcePath, props.popout)}
           className="pt2 white-d">
             <h2
-              className="mono dib f9 fw4 v-top"
+              className="dib f9 fw4 v-top"
               style={{ width: "max-content" }}>
               {props.resource.title}
             </h2>

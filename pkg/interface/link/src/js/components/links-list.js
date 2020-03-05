@@ -99,14 +99,14 @@ export class Links extends Component {
        <div
          className={`pl4 pt2 flex relative overflow-x-scroll
          overflow-x-auto-l overflow-x-auto-xl flex-shrink-0
-         bb bn-m bn-l bn-xl b--gray4 b--gray1-d bg-gray0-d`}
+         bb b--gray4 b--gray1-d bg-gray0-d`}
          style={{ height: 48 }}>
           <SidebarSwitcher
            sidebarShown={props.sidebarShown}
            popout={props.popout}/>
          <Link to={makeRoutePath(props.resourcePath, props.popout, props.page)} className="pt2">
-           <h2 className={`dib f9 fw4 v-top lh-solid mono`}>
-               {props.resource.title}
+           <h2 className={`dib f9 fw4 v-top`}>
+             {props.resource.title}
            </h2>
          </Link>
           <LinksTabBar

@@ -91,11 +91,9 @@ export class SettingsScreen extends Component {
     let deleteText = 'Remove this collection from your collection list.';
     let deleteAction = 'Remove';
     if (props.amOwner && isManaged) {
-      deleteText = 'Delete this collection from the group. This deletes it for everyone!';
+      deleteText = 'Delete this collection. (All group members will no longer see this chat.)';
       deleteAction = 'Delete';
       deleteClasses = 'dib f9 ba pa2 b--red2 red2 pointer bg-gray0-d';
-    } else if (!isManaged) {
-      deleteText = deleteText + " You won't be able to manage access to this collection anymore!"
     }
 
     return (
@@ -252,7 +250,7 @@ export class SettingsScreen extends Component {
             <Link to={makeRoutePath(props.resourcePath, props.popout)}
             className="pt2 white-d">
               <h2
-                className="mono dib f9 fw4 v-top"
+                className="dib f9 fw4 v-top"
                 style={{ width: "max-content" }}>
                 {props.resource.title}
               </h2>
@@ -271,7 +269,7 @@ export class SettingsScreen extends Component {
         <div
           className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
           style={{ height: "1rem" }}>
-          <Link to="/~chat/">{"⟵ All Chats"}</Link>
+          <Link to="/~link">{"⟵ All Collections"}</Link>
         </div>
         <div
           className="pl4 pt2 bb b--gray4 b--gray1-d flex relative overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"
@@ -283,7 +281,7 @@ export class SettingsScreen extends Component {
           <Link to={makeRoutePath(props.resourcePath, props.popout)}
           className="pt2">
             <h2
-              className="mono dib f9 fw4 v-top"
+              className="dib f9 fw4 v-top"
               style={{ width: "max-content" }}>
               {props.resource.title}
             </h2>

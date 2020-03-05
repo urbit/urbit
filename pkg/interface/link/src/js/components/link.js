@@ -5,6 +5,7 @@ import { SidebarSwitcher } from '/components/lib/icons/icon-sidebar-switch.js';
 import { api } from '../api';
 import { Route, Link } from 'react-router-dom';
 import { Comments } from './lib/comments';
+import { LoadingScreen } from './loading';
 import { makeRoutePath, getContactDetails } from '../lib/util';
 
 export class LinkDetail extends Component {
@@ -64,6 +65,11 @@ export class LinkDetail extends Component {
     let props = this.props;
 
     const data = this.state.data || props.data;
+
+    if (!data.ship) {
+      return <LoadingScreen/>;
+    }
+
     let ship = data.ship || "zod";
     let title = data.title || "";
     let url = data.url || "";
@@ -98,7 +104,7 @@ export class LinkDetail extends Component {
           <Link
             className="dib f9 fw4 pt2 gray2 lh-solid"
             to={makeRoutePath(props.resourcePath, props.popout, props.page)}>
-            {"<- Collection index"}
+            {`<- ${props.resource.title} index`}
           </Link>
           <LinksTabBar {...props} popout={props.popout} resourcePath={props.resourcePath} />
         </div>

@@ -47,6 +47,7 @@ export class Root extends Component {
           render={ (props) => {
             return (
               <Skeleton
+                active="collections"
                 spinner={state.spinner}
                 resources={resources}
                 invites={invites}
@@ -112,6 +113,7 @@ export class Root extends Component {
                 sidebarShown={state.sidebarShown}
                 links={links}>
                 <MemberScreen
+                  sidebarShown={state.sidebarShown}
                   resource={resource}
                   contacts={contacts}
                   contactDetails={contactDetails}
@@ -254,6 +256,7 @@ export class Root extends Component {
                   links={links}>
                   <LinkDetail
                   {...props}
+                  resource={resource}
                   page={page}
                   url={url}
                   linkIndex={index}
