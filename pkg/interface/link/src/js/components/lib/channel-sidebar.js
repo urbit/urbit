@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import { Route, Link } from 'react-router-dom';
 import { ChannelsItem } from '/components/lib/channels-item';
+import { SidebarInvite } from '/components/lib/sidebar-invite';
 
 export class ChannelsSidebar extends Component {
   // drawer to the left
@@ -9,59 +10,38 @@ export class ChannelsSidebar extends Component {
   render() {
     const { props, state } = this;
 
-    let privateChannel =
-      Object.keys(props.groups)
-      .filter((path) => {
-        return (path === "/~/default")
-      })
-      .map((path) => {
-        let name = "Private"
-        let selected = (props.selected === path);
-        let linkCount = !!props.links[path] ? props.links[path].totalItems : 0;
-        const unseenCount = !!props.links[path]
-          ? props.links[path].unseenCount
-          : linkCount
+    let sidebarInvites = Object.keys(props.invites)
+      .map((uid) => {
         return (
-          <ChannelsItem
-            key={path}
-            link={path}
-            memberList={props.groups[path]}
-            selected={selected}
-            linkCount={linkCount}
-            unseenCount={unseenCount}
-            name={name}/>
-        )
-      })
-
-    let channelItems =
-      Object.keys(props.groups)
-      .filter((path) => {
-        return (!path.startsWith("/~/"))
-      })
-      .map((path) => {
-        let name = path.substr(1);
-        let nameSeparator = name.indexOf("/");
-        name = name.substr(nameSeparator + 1);
-
-        let selected = (props.selected === path);
-        let linkCount = !!props.links[path] ? props.links[path].totalItems : 0;
-        const unseenCount = !!props.links[path]
-          ? props.links[path].unseenCount
-          : linkCount
-
-        return (
-          <ChannelsItem
-            key={path}
-            link={path}
-            memberList={props.groups[path]}
-            selected={selected}
-            linkCount={linkCount}
-            unseenCount={unseenCount}
-            name={name}/>
-        )
+          <SidebarInvite
+            uid={uid}
+            invite={props.invites[uid]}
+            api={props.api} />
+        );
       });
 
-    let activeClasses = (this.props.active === "channels") ? " " : "dn-s ";
+    const channelItems =
+      Object.keys(props.resources).map((path) => {
+        const meta = props.resources[path];
+        const selected = (props.selected === path);
+        const linkCount = !!props.links[path] ? props.links[path].totalItems : 0;
+        const unseenCount = !!props.links[path]
+          ? props.links[path].unseenCount
+          : linkCount
+
+        return (
+          <ChannelsItem
+            key={path}
+            link={path}
+            memberList={props.groups[meta.group]}
+            selected={selected}
+            linkCount={linkCount}
+            unseenCount={unseenCount}
+            name={meta.title}/>
+        );
+      });
+
+    let activeClasses = (this.props.active === "collections") ? " " : "dn-s ";
 
     let hiddenClasses = true;
 
@@ -70,7 +50,7 @@ export class ChannelsSidebar extends Component {
     if (this.props.popout) {
       hiddenClasses = false;
     } else {
-    hiddenClasses = this.props.sidebarShown;
+      hiddenClasses = this.props.sidebarShown;
     }
 
     return (
@@ -81,15 +61,15 @@ export class ChannelsSidebar extends Component {
         : "dn")}>
         <a className="db dn-m dn-l dn-xl f8 pb3 pl3" href="/">⟵ Landscape</a>
         <div className="overflow-y-scroll h-100">
-          <h2 className={"f8 f9-m f9-l f9-xl " +
-           "pt1 pt4-m pt4-l pt4-xl " +
-           "pr4 pb3 pb3-m pb3-l pb3-xl " +
-           "pl3 pl4-m pl4-l pl4-xl " +
-           "black-s gray2 white-d c-default " +
-           "bb b--gray4 b--gray2-d mb2 mb0-m mb0-l mb0-xl"}>
-             Your Collections
-             </h2>
-          {privateChannel}
+          <div className="w-100 bg-transparent pa4 bb b--gray4 b--gray1-d"
+            style={{paddingBottom: 10, paddingTop: 10}}>
+            <Link
+              className="dib f9 pointer green2 gray4-d mr4"
+              to={"/~link/new"}>
+              New Collection
+            </Link>
+          </div>
+          {sidebarInvites}
           {channelItems}
         </div>
       </div>

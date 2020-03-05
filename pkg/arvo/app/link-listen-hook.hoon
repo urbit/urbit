@@ -1,21 +1,33 @@
 ::  link-listen-hook: get your friends' bookmarks
 ::
-::    on-init, subscribes to all groups on this ship. for every ship in a group,
-::    we subscribe to their link's local-pages and annotations
-::    at the group path (through link-proxy-hook),
-::    and forwards all entries into our link as submissions and comments.
+::    subscribes to all %link resources in the metadata-store.
+::    for all ships in groups associated with those resources, we subscribe to
+::    their link's local-pages and annotations at the resource path (through
+::    link-proxy-hook), and forward all entries into our link-store as
+::    submissions and comments.
 ::
-::    if a subscription to a group member fails, we assume it's because their
-::    group definition hasn't been updated to include us yet.
+::    if a subscription to a target fails, we assume it's because their
+::    metadata+groups definition hasn't been updated to include us yet.
 ::    we retry with exponential backoff, maxing out at one hour timeouts.
+::    to expede this process, we prod other potential listeners when we add
+::    them to our metadata+groups definition.
 ::
-/-  *link, group-store
-/+  default-agent, verb, dbug
+/-  *metadata-store, *link, group-store
+/+  metadata, default-agent, verb, dbug
 ::
 |%
 +$  state-0
   $:  %0
       retry-timers=(map target @dr)
+      ::  reasoning: the resources we're subscribed to,
+      ::             and the groups that cause that.
+      ::
+      ::    we don't strictly need to track this in state, but doing so heavily
+      ::    simplifies logic and reduces the amount of big scries we do.
+      ::    this also gives us the option to check & restore subscriptions,
+      ::    should we ever need that.
+      ::
+      reasoning=(jug [ship app-path] group-path)
   ==
 ::
 +$  what-target  ?(%local-pages %annotations)
@@ -52,7 +64,7 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this
-    [watch-groups:do]~
+    ~[watch-metadata:do watch-groups:do]
   ::
   ++  on-save  !>(state)
   ++  on-load
@@ -63,26 +75,27 @@
   ++  on-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
-    ?:  ?=([%groups ~] wire)
-      =^  cards  state
+    =^  cards  state
+      ?+  wire  ~|([dap.bowl %weird-agent-wire wire] !!)
+          [%metadata ~]
+        (take-metadata-sign:do sign)
+      ::
+          [%groups ~]
         (take-groups-sign:do sign)
-      [cards this]
-    ?:  ?=([%links ?(%local-pages %annotations) @ ^] wire)
-      =^  cards  state
+      ::
+          [%links ?(%local-pages %annotations) @ ^]
         (take-link-sign:do (wire-to-target t.wire) sign)
-      [cards this]
-    ?:  ?=([%forward ^] wire)
-      =^  cards  state
+      ::
+          [%forward ^]
         (take-forward-sign:do t.wire sign)
-      [cards this]
-    ?:  ?=([%prod *] wire)
-      ~|  [%weird-sign -.sign]
-      ?>  ?=(%poke-ack -.sign)
-      ?~  p.sign  [~ this]
-      %-  (slog [leaf+"failed to prod" u.p.sign])
-      [~ this]
-    ~|  [dap.bowl %weird-wire wire]
-    !!
+      ::
+          [%prod *]
+        ?>  ?=(%poke-ack -.sign)
+        ?~  p.sign  [~ state]
+        %-  (slog leaf+"prod failed" u.p.sign)
+        [~ state]
+      ==
+    [cards this]
   ::
   ++  on-poke
     |=  [=mark =vase]
@@ -122,8 +135,65 @@
 ::
 ::
 |_  =bowl:gall
++*  md  ~(. metadata bowl)
 ::
-::  groups subscription
+::  metadata subscription
+::
+++  watch-metadata
+  ^-  card
+  [%pass /metadata %agent [our.bowl %metadata-store] %watch /app-name/link]
+::
+++  take-metadata-sign
+  |=  =sign:agent:gall
+  ^-  (quip card _state)
+  ?-  -.sign
+    %poke-ack     ~|([dap.bowl %unexpected-poke-ack /metadata] !!)
+    %kick         [[watch-metadata]~ state]
+  ::
+      %watch-ack
+    ?~  p.sign  [~ state]
+    =/  =tank
+      :-  %leaf
+      "{(trip dap.bowl)} failed subscribe to metadata store. very wrong!"
+    %-  (slog tank u.p.sign)
+    [~ state]
+  ::
+      %fact
+    =*  mark  p.cage.sign
+    =*  vase  q.cage.sign
+    ?.  ?=(%metadata-update mark)
+      ~|  [dap.bowl %unexpected-mark mark]
+      !!
+    %-  handle-metadata-update
+    !<(metadata-update vase)
+  ==
+::
+++  handle-metadata-update
+  |=  upd=metadata-update
+  ^-  (quip card _state)
+  ?+  -.upd  [~ state]
+      %associations
+    =/  socs=(list [=group-path resource])
+      ~(tap in ~(key by associations.upd))
+    =|  cards=(list card)
+    |-  ::TODO  try for +roll maybe?
+    ?~  socs  [cards state]
+    =^  caz  state
+      =,  i.socs
+      ?.  =(%link app-name)  [~ state]
+      (listen-to-group app-path group-path)
+    $(socs t.socs, cards (weld cards caz))
+  ::
+      %add
+    ?>  =(%link app-name.resource.upd)
+    (listen-to-group app-path.resource.upd group-path.upd)
+  ::
+      %remove
+    ?>  =(%link app-name.resource.upd)
+    (leave-from-group app-path.resource.upd group-path.upd)
+  ==
+::
+::  groups subscriptions
 ::
 ++  watch-groups
   ^-  card
@@ -148,48 +218,97 @@
     =*  mark  p.cage.sign
     =*  vase  q.cage.sign
     ?+  mark  ~|([dap.bowl %unexpected-mark mark] !!)
-      %group-initial  (handle-group-initial !<(groups:group-store vase))
+      %group-initial  [~ state]  ::NOTE  initial handled using metadata
       %group-update   (handle-group-update !<(group-update:group-store vase))
     ==
   ==
 ::
-++  handle-group-initial
-  |=  =groups:group-store
-  ^-  (quip card _state)
-  =|  cards=(list card)
-  =/  groups=(list [=path =group:group-store])
-    ~(tap by groups)
-  |-
-  ?~  groups  [cards state]
-  =^  caz  state
-    %-  handle-group-update
-    [%add [group path]:i.groups]
-  $(cards (weld cards caz), groups t.groups)
-::
 ++  handle-group-update
   |=  upd=group-update:group-store
   ^-  (quip card _state)
-  :_  state
-  ?+  -.upd  ~
-      ?(%path %add %remove)
-    =/  whos=(list ship)  ~(tap in members.upd)
-    |-  ^-  (list card)
-    ?~  whos  ~
-    ::  no need to subscribe to ourselves
-    ::
-    ?:  =(our.bowl i.whos)
-      $(whos t.whos)
+  ?.  ?=(?(%path %add %remove) -.upd)
+    [~ state]
+  =/  socs=(list app-path)
+    (app-paths-from-group:md %link pax.upd)
+  =/  whos=(list ship)
+    ~(tap in members.upd)
+  =|  cards=(list card)
+  |-
+  =*  loop-socs  $
+  ?~  socs  [cards state]
+  |-
+  =*  loop-whos  $
+  ?~  whos  loop-socs(socs t.socs)
+  =^  caz  state
     ?:  ?=(%remove -.upd)
-      %+  weld
-        $(whos t.whos)
-      (end-link-subscriptions i.whos pax.upd)
-    :^    (start-link-subscription %local-pages i.whos pax.upd)
-        (start-link-subscription %annotations i.whos pax.upd)
-      (prod-other-listener i.whos pax.upd)
-    $(whos t.whos)
-  ==
+      (leave-from-peer i.socs pax.upd i.whos)
+    (listen-to-peer i.socs pax.upd i.whos)
+  loop-whos(whos t.whos, cards (weld cards caz))
 ::
 ::  link subscriptions
+::
+++  listen-to-group
+  |=  [=app-path =group-path]
+  ^-  (quip card _state)
+  =/  peers=(list ship)
+    ~|  group-path
+    %~  tap  in
+    =-  (fall - *group:group-store)
+    %^  scry-for  (unit group:group-store)
+      %group-store
+    group-path
+  =|  cards=(list card)
+  |-
+  ?~  peers  [cards state]
+  =^  caz  state
+    (listen-to-peer app-path group-path i.peers)
+  $(peers t.peers, cards (weld cards caz))
+::
+++  leave-from-group
+  |=  [=app-path =group-path]
+  ^-  (quip card _state)
+  =/  peers=(list ship)
+    %~  tap  in
+    =-  (fall - *group:group-store)
+    %^  scry-for  (unit group:group-store)
+      %group-store
+    group-path
+  =|  cards=(list card)
+  |-
+  ?~  peers  [cards state]
+  =^  caz  state
+    (leave-from-peer app-path group-path i.peers)
+  $(peers t.peers, cards (weld cards caz))
+::
+++  listen-to-peer
+  |=  [=app-path =group-path who=ship]
+  ^-  (quip card _state)
+  ?:  =(our.bowl who)
+    [~ state]
+  :_  =-  state(reasoning -)
+      (~(put ju reasoning) [who app-path] group-path)
+  :-  (prod-other-listener who app-path)
+  ?^  (~(get ju reasoning) [who app-path])
+    ~
+  (start-link-subscriptions who app-path)
+::
+++  leave-from-peer
+  |=  [=app-path =group-path who=ship]
+  ^-  (quip card _state)
+  ?:  =(our.bowl who)
+    [~ state]
+  :_  =-  state(reasoning -)
+      (~(del ju reasoning) [who app-path] group-path)
+  ?.  (~(has ju reasoning) [who app-path] group-path)
+    ~
+  (end-link-subscriptions who app-path)
+::
+++  start-link-subscriptions
+  |=  [=ship =app-path]
+  ^-  (list card)
+  :~  (start-link-subscription %local-pages ship app-path)
+      (start-link-subscription %annotations ship app-path)
+  ==
 ::
 ++  start-link-subscription
   |=  =target
@@ -283,7 +402,7 @@
 ++  take-retry
   |=  =target
   ^-  (list card)
-  ::  relevant: whether :who is still in group :where
+  ::  relevant: whether :who is still associated with resource :where
   ::
   =;  relevant=?
     ?.  relevant  ~
@@ -291,16 +410,13 @@
   ?:  %-  ~(has by wex.bowl)
       [[%links (target-to-wire target)] who.target %link-proxy-hook]
     |
-  %.  who.target
-  %~  has  in
-  =-  (fall - *group:group-store)
-  .^  (unit group:group-store)
-    %gx
-    (scot %p our.bowl)
+  %+  lien  (groups-from-resource:md %link where.target)
+  |=  =group-path
+  ^-  ?
+  =-  (~(has in (fall - *group:group-store)) who.target)
+  %^  scry-for  (unit group:group-store)
     %group-store
-    (scot %da now.bowl)
-    (snoc where.target %noun)
-  ==
+  group-path
 ::
 ++  do-link-action
   |=  [=wire =action]
@@ -373,4 +489,14 @@
     ==
   %-  (slog tank u.p.sign)
   [~ state]
+::
+++  scry-for
+  |*  [=mold =app-name =path]
+  .^  mold
+    %gx
+    (scot %p our.bowl)
+    app-name
+    (scot %da now.bowl)
+    (snoc `^path`path %noun)
+  ==
 --

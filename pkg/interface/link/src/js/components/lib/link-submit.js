@@ -20,7 +20,7 @@ export class LinkSubmit extends Component {
       ? this.state.linkTitle
       : this.state.linkValue;
       api.setSpinner(true);
-    api.postLink(this.props.groupPath, link, title).then(r => {
+    api.postLink(this.props.resourcePath, link, title).then(r => {
       api.setSpinner(false);
       this.setState({ linkValue: "", linkTitle: "" });
     });

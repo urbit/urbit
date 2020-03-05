@@ -43,13 +43,15 @@
   ~|  path
   (woad (slav %ta i.path))
 ::
-::  zip sorted a into sorted b, maintaining sort order
-::TODO  stdlib
-++  merge-sorted
+::  zip sorted a into sorted b, maintaining sort order, avoiding duplicates
+::
+++  merge-sorted-unique
   |*  [sort=$-([* *] ?) a=(list) b=(list)]
   |-  ^-  ?(_a _b)
   ?~  a  b
   ?~  b  a
+  ?:  =(i.a i.b)
+    [i.a $(a t.a, b t.b)]
   ?:  (sort i.a i.b)
     [i.a $(a t.a)]
   [i.b $(b t.b)]
@@ -60,7 +62,7 @@
     ::TODO  we would just use +cury here but it don't work
     |=  [a=^pages b=^pages]
     ^+  a
-    %+  merge-sorted
+    %+  merge-sorted-unique
       |=  [a=page b=page]
       (gth time.a time.b)
     [a b]
@@ -68,7 +70,7 @@
   ++  submissions
     |=  [a=^submissions b=^submissions]
     ^+  a
-    %+  merge-sorted
+    %+  merge-sorted-unique
       |=  [a=submission b=submission]
       (gth time.a time.b)
     [a b]
@@ -76,7 +78,7 @@
   ++  notes
     |=  [a=^notes b=^notes]
     ^+  a
-    %+  merge-sorted
+    %+  merge-sorted-unique
       |=  [a=note b=note]
       (gth time.a time.b)
     [a b]
@@ -84,7 +86,7 @@
   ++  comments
     |=  [a=^comments b=^comments]
     ^+  a
-    %+  merge-sorted
+    %+  merge-sorted-unique
       |=  [a=comment b=comment]
       (gth time.a time.b)
     [a b]

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { LoadingScreen } from './loading';
 import { LinksTabBar } from './lib/links-tabbar';
 import { SidebarSwitcher } from '/components/lib/icons/icon-sidebar-switch.js';
 import { Route, Link } from "react-router-dom";
@@ -6,7 +7,7 @@ import { LinkItem } from '/components/lib/link-item.js';
 import { LinkSubmit } from '/components/lib/link-submit.js';
 import { Pagination } from '/components/lib/pagination.js';
 
-import { getContactDetails } from '../lib/util';
+import { makeRoutePath, getContactDetails } from '../lib/util';
 
 //TODO Avatar support once it's in
 export class Links extends Component {
@@ -25,17 +26,21 @@ export class Links extends Component {
          (!this.props.links[linkPage] ||
           this.props.links.local[linkPage])
     ) {
-      api.getPage(this.props.groupPath, this.props.page);
+      api.getPage(this.props.resourcePath, this.props.page);
     }
   }
 
   markAllAsSeen() {
-    api.seenLink(this.props.groupPath);
+    api.seenLink(this.props.resourcePath);
   }
 
   render() {
     let props = this.props;
-    let popout = (props.popout) ? "/popout" : "";
+
+    if (!props.resource.title) {
+      return <LoadingScreen/>;
+    }
+
     let linkPage = props.page;
 
     let links = !!props.links[linkPage]
@@ -77,8 +82,8 @@ export class Links extends Component {
         color={color}
         member={member}
         comments={commentCount}
-        groupPath={props.groupPath}
-        popout={popout}
+        resourcePath={props.resourcePath}
+        popout={props.popout}
         />
       )
     })
@@ -89,36 +94,31 @@ export class Links extends Component {
         <div
           className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
           style={{ height: "1rem" }}>
-         <Link to="/~link/">{"⟵ All Channels"}</Link>
+         <Link to="/~link">{"⟵ All Channels"}</Link>
        </div>
        <div
          className={`pl4 pt2 flex relative overflow-x-scroll
          overflow-x-auto-l overflow-x-auto-xl flex-shrink-0
-         bb bn-m bn-l bn-xl b--gray4 b--gray1-d bg-gray0-d`}
+         bb b--gray4 b--gray1-d bg-gray0-d`}
          style={{ height: 48 }}>
           <SidebarSwitcher
            sidebarShown={props.sidebarShown}
            popout={props.popout}/>
-         <Link to={`/~link` + popout + props.groupPath} className="pt2">
-           <h2
-             className={`dib f9 fw4 v-top lh-solid` +
-             (props.groupPath.includes("/~/")
-             ? ""
-             : " mono")}>
-              {(props.groupPath.includes("/~/"))
-              ? "Private"
-              : props.groupPath.substr(1)}
+         <Link to={makeRoutePath(props.resourcePath, props.popout, props.page)} className="pt2">
+           <h2 className={`dib f9 fw4 v-top`}>
+             {props.resource.title}
            </h2>
          </Link>
           <LinksTabBar
           {...props}
-          popout={popout}
-          groupPath={props.groupPath + "/" + props.page}/>
+          popout={props.popout}
+          page={props.page}
+          resourcePath={props.resourcePath}/>
         </div>
         <div className="w-100 mt2 flex justify-center overflow-y-scroll ph4 pb4">
           <div className="w-100 mw7">
             <div className="flex">
-              <LinkSubmit groupPath={props.groupPath}/>
+              <LinkSubmit resourcePath={props.resourcePath}/>
             </div>
             <div className="pb4">
             <span
@@ -129,9 +129,9 @@ export class Links extends Component {
             {LinkList}
             <Pagination
             {...props}
-            key={props.groupPath + props.page}
-            popout={popout}
-            groupPath={props.groupPath}
+            key={props.resourcePath + props.page}
+            popout={props.popout}
+            resourcePath={props.resourcePath}
             currentPage={currentPage}
             totalPages={totalPages}
             />

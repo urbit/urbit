@@ -11,16 +11,25 @@ export class Subscription {
   }
 
   initializeLinks() {
-    // add invite, permissions flows once link stores are more than
-    // group-specific
     api.bind('/all', 'PUT', api.authTokens.ship, 'group-store',
-    this.handleEvent.bind(this),
-    this.handleError.bind(this),
-    this.handleQuitAndResubscribe.bind(this));
+      this.handleEvent.bind(this),
+      this.handleError.bind(this),
+      this.handleQuitAndResubscribe.bind(this)
+    );
     api.bind('/primary', 'PUT', api.authTokens.ship, 'contact-view',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
+      this.handleQuitAndResubscribe.bind(this)
+    );
+    api.bind('/primary', 'PUT', api.authTokens.ship, 'invite-view',
+      this.handleEvent.bind(this),
+      this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this));
+    api.bind('/app-name/link', 'PUT', api.authTokens.ship, 'metadata-store',
+      this.handleEvent.bind(this),
+      this.handleError.bind(this),
+      this.handleQuitAndResubscribe.bind(this)
+    );
 
     // open a subscription for all submissions
     api.getPage('', 0);
