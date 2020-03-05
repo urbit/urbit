@@ -254,7 +254,7 @@ export class SettingsScreen extends Component {
               <h2
                 className="mono dib f9 fw4 v-top"
                 style={{ width: "max-content" }}>
-                {props.resourcePath.substr(1)}
+                {props.resource.title}
               </h2>
             </Link>
             <LinksTabBar {...props}/>

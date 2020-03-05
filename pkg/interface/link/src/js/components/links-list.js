@@ -105,17 +105,8 @@ export class Links extends Component {
            sidebarShown={props.sidebarShown}
            popout={props.popout}/>
          <Link to={makeRoutePath(props.resourcePath, props.popout, props.page)} className="pt2">
-           <h2
-             className={`dib f9 fw4 v-top lh-solid` +
-             (props.resource.group.includes("/~/")
-             ? ""
-             : " mono")}>
-               { props.resource.title +
-                 ( props.resource.description
-                   ? ": " + props.resource.description
-                   : ""
-                 )
-               }
+           <h2 className={`dib f9 fw4 v-top lh-solid mono`}>
+               {props.resource.title}
            </h2>
          </Link>
           <LinksTabBar

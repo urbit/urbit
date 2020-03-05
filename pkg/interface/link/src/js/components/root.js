@@ -52,7 +52,7 @@ export class Root extends Component {
                 invites={invites}
                 groups={groups}
                 rightPanelHide={true}
-                sidebarShown={true}
+                sidebarShown={state.sidebarShown}
                 links={links}>
                 <div className="h-100 w-100 overflow-x-hidden flex flex-column bg-white bg-gray0-d dn db-ns">
                 <div className="pl3 pr3 pt2 dt pb3 w-100 h-100">
@@ -73,7 +73,7 @@ export class Root extends Component {
                 invites={invites}
                 groups={groups}
                 rightPanelHide={true}
-                sidebarShown={true}
+                sidebarShown={state.sidebarShown}
                 links={links}>
                 <NewScreen
                   resources={resources}
