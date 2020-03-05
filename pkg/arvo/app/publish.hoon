@@ -209,7 +209,7 @@
           =/  book=notebook-info
             [title.old '' =(%open comments.old) / /]
           =+  ^-  [grp-car=(list card) write-pax=path read-pax=path]
-            (make-groups:main book-name [group-pax ~ %.n %.n] '' '')
+            (make-groups:main book-name [group-pax ~ %.n %.n] title.old '')
           =.  writers.book      write-pax
           =.  subscribers.book  read-pax
           =/  inv-car  (send-invites book-name (~(get ju old-subs) book-name))
@@ -564,9 +564,11 @@
       [%app %publish %notebooks @ %publish-info ~]
     =/  book-name  i.t.t.t.pax
     =/  info=notebook-info  .^(notebook-info %cx (welp our-beak pax))
+    =*  title  title.info
+    =*  description  description.info
     =/  new-book=notebook
-      :*  title.info
-          description.info
+      :*  title
+          description
           comments.info
           writers.info
           subscribers.info
@@ -576,7 +578,7 @@
     =+  ^-  [grp-car=(list card) write-pax=path read-pax=path]
       ?:  =(writers.new-book /)
         =/  group-path  /~/(scot %p our.bol)/[book-name]
-        (make-groups book-name [group-path ~ %.n %.n] '' '')
+        (make-groups book-name [group-path ~ %.n %.n] title description)
       [~ writers.info subscribers.info]
     =.  writers.new-book      write-pax
     =.  subscribers.new-book  read-pax
@@ -1337,7 +1339,7 @@
       ?:  ?=([@ ^] app-path)
         ~&  [%assuming-ported-legacy-publish app-path]
         [%'~' app-path]
-      ~&  [%weird-publish app-path]
+      ~|  [%weird-publish app-path]
       !!
     =/  resource-indices
       .^  (jug resource group-path)
