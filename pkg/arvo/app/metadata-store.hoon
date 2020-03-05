@@ -109,7 +109,7 @@
         [%x %metadata @ @ @ ~]
       =/  =group-path  (stab (slav %t i.t.t.path))
       =/  =resource    [`@tas`i.t.t.t.path (stab (slav %t i.t.t.t.t.path))]
-      ``noun+!>((~(got by associations) [group-path resource]))
+      ``noun+!>((~(get by associations) [group-path resource]))
     ==
   ::
   ++  on-agent  on-agent:def

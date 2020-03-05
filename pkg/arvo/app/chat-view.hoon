@@ -376,8 +376,8 @@
   ++  is-creator
     |=  [group-path=path app-name=@ta app-path=path]
     ^-  ?
-    =/  =metadata
-      .^  metadata
+    =/  meta=(unit metadata)
+      .^  (unit metadata)
         %gx
         (scot %p our.bol)
         %metadata-store
@@ -388,7 +388,8 @@
         (scot %t (spat app-path))
         /noun
       ==
-    =(our.bol creator.metadata)
+    ?~  meta  !!
+    =(our.bol creator.u.meta)
   --
 ::
 ++  diff-chat-update
