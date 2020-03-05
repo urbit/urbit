@@ -1,4 +1,5 @@
 import { InitialReducer } from '/reducers/initial';
+import { GroupUpdateReducer } from '/reducers/group-update';
 import { ContactUpdateReducer } from '/reducers/contact-update.js';
 import { PermissionUpdateReducer } from '/reducers/permission-update';
 import { MetadataReducer } from '/reducers/metadata-update.js';
@@ -24,6 +25,7 @@ class Store {
     };
 
     this.initialReducer = new InitialReducer();
+    this.groupUpdateReducer = new GroupUpdateReducer();
     this.contactUpdateReducer = new ContactUpdateReducer();
     this.permissionUpdateReducer = new PermissionUpdateReducer();
     this.metadataReducer = new MetadataReducer();
@@ -47,6 +49,7 @@ class Store {
 
     console.log('event', json);
     this.initialReducer.reduce(json, this.state);
+    this.groupUpdateReducer.reduce(json, this.state);
     this.contactUpdateReducer.reduce(json, this.state);
     this.permissionUpdateReducer.reduce(json, this.state);
     this.metadataReducer.reduce(json, this.state);

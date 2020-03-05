@@ -16,6 +16,10 @@ class UrbitApi {
       decline: this.inviteDecline.bind(this)
     };
 
+    this.groups = {
+      remove: this.groupRemove.bind(this)
+    }
+
     this.bind = this.bind.bind(this);
     this.bindLinkView = this.bindLinkView.bind(this);
   }
@@ -57,6 +61,18 @@ class UrbitApi {
         (err) => {
           reject(err);
         });
+    });
+  }
+
+  groupsAction(data) {
+    this.action("group-store", "group-action", data);
+  }
+
+  groupRemove(path, members) {
+    this.groupsAction({
+      remove: {
+        path, members
+      }
     });
   }
 
@@ -125,12 +141,28 @@ class UrbitApi {
     );
   }
 
+  linkViewAction(data) {
+    return this.action("link-view", "link-view-action", data);
+  }
+
   createCollection(path, title, description, members, realGroup) {
     // members is either {group:'/group-path'} or {'ships':[~zod]},
     // with realGroup signifying if ships should become a managed group or not.
-    return this.action("link-view", "link-view-action", {
+    return this.linkViewAction({
       create: {path, title, description, members, realGroup}
-    })
+    });
+  }
+
+  deleteCollection(path) {
+    return this.linkViewAction({
+      'delete': {path}
+    });
+  }
+
+  inviteToCollection(path, ships) {
+    return this.linkViewAction({
+      'invite': {path, ships}
+    });
   }
 
   linkAction(data) {
@@ -153,6 +185,29 @@ class UrbitApi {
   seenLink(path, url = null) {
     return this.linkAction({
       'seen': { path, url }
+    });
+  }
+
+  metadataAction(data) {
+    return this.action("metadata-hook", "metadata-action", data);
+  }
+
+  metadataAdd(appPath, groupPath, title, description, dateCreated, color) {
+    return this.metadataAction({
+      add: {
+        'group-path': groupPath,
+        resource: {
+          'app-path': appPath,
+          'app-name': 'link'
+        },
+        metadata: {
+          title,
+          description,
+          color,
+          'date-created': dateCreated,
+          creator: `~${window.ship}`
+        }
+      }
     });
   }
 

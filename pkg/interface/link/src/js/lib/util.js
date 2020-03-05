@@ -18,6 +18,12 @@ export function makeRoutePath(
   return route;
 }
 
+export function amOwnerOfGroup(groupPath) {
+  if (!groupPath) return false;
+  const groupOwner = /(\/~)?\/~([a-z-]{3,})\/.*/.exec(groupPath)[2];
+  return (window.ship === groupOwner);
+}
+
 export function getContactDetails(contact) {
   const member = !contact;
   contact = contact || {

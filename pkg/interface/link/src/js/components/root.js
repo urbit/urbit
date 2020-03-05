@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Route, Link } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
 import classnames from 'classnames';
 import _ from 'lodash';
 
@@ -8,9 +8,11 @@ import { subscription } from '/subscription';
 import { store } from '/store';
 import { Skeleton } from '/components/skeleton';
 import { NewScreen } from '/components/new';
+import { MemberScreen } from '/components/member';
+import { SettingsScreen } from '/components/settings';
 import { Links } from '/components/links-list';
 import { LinkDetail } from '/components/link';
-import { makeRoutePath, base64urlDecode } from '../lib/util';
+import { makeRoutePath, amOwnerOfGroup, base64urlDecode } from '../lib/util';
 
 //NOTE route paths make the assumption that a resource identifier is always
 //     just a single /path element. technically, backend supports /longer/paths
@@ -40,7 +42,7 @@ export class Root extends Component {
       state.invites['/link'] : {};
 
     return (
-      <BrowserRouter>
+      <BrowserRouter><Switch>
         <Route exact path="/~link"
           render={ (props) => {
             return (
@@ -89,10 +91,83 @@ export class Root extends Component {
             props.history.push(makeRoutePath(resourcePath));
           }}
         />
+        <Route exact path="/~link/(popout)?/:resource/members"
+          render={(props) => {
+            const popout = props.match.url.includes("/popout/");
+            const resourcePath = '/' + props.match.params.resource;
+            const resource = resources[resourcePath] || {};
+
+            const contactDetails = contacts[resource.group] || {};
+            const group = groups[resource.group] || new Set([]);
+            const amOwner = amOwnerOfGroup(resource.group);
+
+            return (
+              <Skeleton
+                spinner={state.spinner}
+                resources={resources}
+                invites={invites}
+                groups={groups}
+                selected={resourcePath}
+                rightPanelHide={true}
+                sidebarShown={state.sidebarShown}
+                links={links}>
+                <MemberScreen
+                  resource={resource}
+                  contacts={contacts}
+                  contactDetails={contactDetails}
+                  groupPath={resource.group}
+                  group={group}
+                  amOwner={amOwner}
+                  resourcePath={resourcePath}
+                  popout={popout}
+                  {...props}
+                />
+              </Skeleton>
+            );
+          }}
+        />
+        <Route exact path="/~link/(popout)?/:resource/settings"
+          render={ (props) => {
+            const popout = props.match.url.includes("/popout/");
+            const resourcePath = '/' + props.match.params.resource;
+            const resource = resources[resourcePath] || false;
+
+            const contactDetails = contacts[resource.group] || {};
+            const group = groups[resource.group] || new Set([]);
+            const amOwner = amOwnerOfGroup(resource.group);
+
+            return (
+              <Skeleton
+                spinner={state.spinner}
+                resources={resources}
+                invites={invites}
+                groups={groups}
+                selected={resourcePath}
+                rightPanelHide={true}
+                sidebarShown={state.sidebarShown}
+                links={links}>
+                <SettingsScreen
+                  sidebarShown={state.sidebarShown}
+                  resource={resource}
+                  contacts={contacts}
+                  contactDetails={contactDetails}
+                  groupPath={resource.group}
+                  group={group}
+                  amOwner={amOwner}
+                  resourcePath={resourcePath}
+                  popout={popout}
+                  {...props}
+                />
+              </Skeleton>
+            );
+          }}
+        />
           <Route exact path="/~link/(popout)?/:resource/:page?"
             render={ (props) => {
               const resourcePath = '/' + props.match.params.resource;
               const resource = resources[resourcePath] || {};
+
+              const amOwner = amOwnerOfGroup(resource.group);
 
               let contactDetails = contacts[resource.group] || {};
 
@@ -132,6 +207,7 @@ export class Root extends Component {
                   page={page}
                   resourcePath={resourcePath}
                   resource={resource}
+                  amOwner={amOwner}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
                   />
@@ -143,6 +219,8 @@ export class Root extends Component {
             render={ (props) => {
               const resourcePath = '/' + props.match.params.resource;
               const resource = resources[resourcePath] || {};
+
+              const amOwner = amOwnerOfGroup(resource.group);
 
               let popout = props.match.url.includes("/popout/");
 
@@ -182,6 +260,7 @@ export class Root extends Component {
                   contacts={contactDetails}
                   resourcePath={resourcePath}
                   groupPath={resource.group}
+                  amOwner={amOwner}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
                   data={data}
@@ -192,7 +271,7 @@ export class Root extends Component {
               )
             }}
           />
-      </BrowserRouter>
+      </Switch></BrowserRouter>
     )
   }
 }

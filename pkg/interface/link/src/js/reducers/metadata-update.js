@@ -6,6 +6,8 @@ export class MetadataReducer {
     if (data) {
       this.associations(data, state);
       this.add(data, state);
+      this.remove(data, state);
+      this.update(data, state);
     }
   }
 
@@ -32,11 +34,31 @@ export class MetadataReducer {
   add(json, state) {
     let data = _.get(json, 'add', false);
     if (data) {
+      if (state.resources[data['app-path']]) {
+        console.error('beware! overwriting previous data', data['app-path']);
+      }
+      this.update({'update-metadata': data}, state);
+    }
+  }
+
+  remove(json, state) {
+    let data = _.get(json, 'remove', false);
+    if (data) {
       if (data['app-name'] !== 'link') {
         return;
       }
-      if (state.resources[data['app-path']]) {
-        console.error('beware! overwriting previous data', data['app-path']);
+      const have = state.resources[data['app-path']];
+      if (have && have.group === data['group-path']) {
+        delete state.resources[data['app-path']];
+      }
+    }
+  }
+
+  update(json, state) {
+    let data = _.get(json, 'update-metadata', false);
+    if (data) {
+      if (data['app-name'] !== 'link') {
+        return;
       }
       state.resources[data['app-path']] = {
         group: data['group-path'],
