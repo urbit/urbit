@@ -77,7 +77,7 @@ export class NewScreen extends Component {
       };
     } else {
       groupInfo = {
-        "group-path": `/~/publish/~${window.ship}/${bookId}`,
+        "group-path": `/~/~${window.ship}/${bookId}`,
         "invitees": state.invites.ships,
         "use-preexisting": false,
         "make-managed": false,
