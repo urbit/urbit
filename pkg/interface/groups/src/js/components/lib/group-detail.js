@@ -12,16 +12,24 @@ export class GroupDetail extends Component {
     let groupPath = props.path || "";
     let channelsForGroup = (groupPath in props.associations) ?
       props.associations[groupPath] : {};
-    
 
-    let isEmpty = Object.keys(channelsForGroup).length === 0;
+
+    let isEmpty = (Object.keys(channelsForGroup).length === 0) ||
+      ((Object.keys(channelsForGroup).length === 1) &&
+      (Object.keys(channelsForGroup)[0].includes("contacts")));
+
     let channelList = (<div />);
 
     channelList = Object.keys(channelsForGroup).map((key) => {
       let channel = channelsForGroup[key];
       if (!('metadata' in channel)) {
-        return (<div />);
+        return <div key={channel} />;
       }
+
+      if (channel["app-name"] === "contacts") {
+        return <div key={channel} />;
+      }
+
       let title = channel.metadata.title || channel["app-path"] || "";
       let color = uxToHex(channel.metadata.color) || "000000";
       let app = channel["app-name"] || "Unknown";
