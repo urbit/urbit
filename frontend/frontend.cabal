@@ -1,0 +1,34 @@
+name: frontend
+version: 0.1
+cabal-version: >= 1.8
+build-type: Simple
+
+library
+  hs-source-dirs: src
+  build-depends: base
+               , common
+               , obelisk-frontend
+               , obelisk-route
+               , jsaddle
+               , reflex-dom
+               , obelisk-executable-config-lookup
+               , obelisk-generated-static
+               , text
+  exposed-modules:
+    Frontend
+  ghc-options: -Wall
+
+executable frontend
+  main-is: main.hs
+  hs-source-dirs: src-bin
+  build-depends: base
+               , common
+               , obelisk-frontend
+               , obelisk-route
+               , reflex-dom
+               , obelisk-generated-static
+               , frontend
+  --TODO: Make these ghc-options optional
+  ghc-options: -threaded
+  if os(darwin)
+     ghc-options: -dynamic
