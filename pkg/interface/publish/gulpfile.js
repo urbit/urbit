@@ -7,6 +7,8 @@ var sucrase = require('@sucrase/gulp-plugin');
 var minify = require('gulp-minify');
 var rename = require('gulp-rename');
 var del = require('del');
+var json = require('rollup-plugin-json');
+
 
 var resolve = require('rollup-plugin-node-resolve');
 var commonjs = require('rollup-plugin-commonjs');
@@ -65,6 +67,7 @@ gulp.task('js-imports', function(cb) {
           useEntry: 'prepend',
           extensions: '.js'
         }),
+        json(),
         globals(),
         resolve()
       ]
@@ -91,6 +94,7 @@ gulp.task('tile-js-imports', function(cb) {
           useEntry: 'prepend',
           extensions: '.js'
         }),
+        json(),
         globals(),
         resolve()
       ]

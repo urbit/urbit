@@ -3357,7 +3357,7 @@
         ~/  %en
         |=  txt/@
         ^-  (trel @uxH @ud @ux)
-        =+  [k1=(rsh 5 3 key) k2=(end 5 3 key)]
+        =+  [k1=(rsh 6 3 key) k2=(end 6 3 key)]
         =+  iv=(s2vb k1 (weld vec (limo ~[txt])))
         =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
         =+  len=(met 3 txt)
@@ -3369,7 +3369,7 @@
         ~/  %de
         |=  {iv/@H len/@ txt/@}
         ^-  (unit @ux)
-        =+  [k1=(rsh 5 3 key) k2=(end 5 3 key)]
+        =+  [k1=(rsh 6 3 key) k2=(end 6 3 key)]
         =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
         =+  ^=  pln
           (~(de ctrb k2 7 len hib) txt)

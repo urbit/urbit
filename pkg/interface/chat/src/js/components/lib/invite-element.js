@@ -1,40 +1,25 @@
 import React, { Component } from 'react';
-import classnames from 'classnames';
-import { Sigil } from '/components/lib/icons/sigil';
-import { deSig } from '/lib/util';
-import urbitOb from 'urbit-ob';
+import { InviteSearch } from './invite-search';
 
 
 export class InviteElement extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
-      members: '',
+      members: [],
       error: false,
       success: false
     };
+    this.setInvite = this.setInvite.bind(this);
   }
 
   modifyMembers() {
     const { props, state } = this;
 
-    let aud = [];
-    let isValid = true;
-    if (state.members.length > 2) {
-      aud = state.members
-        .split(',')
-        .map((mem) => `~${deSig(mem.trim())}`);
+    let aud = state.members.map(mem => `~${mem}`);
 
-      aud.forEach((mem) => {
-        if (!urbitOb.isValidPatp(mem)) {
-          isValid = false;
-        }
-      });
-    }
-
-    if (!isValid || (state.members.length > 0 && state.members.length < 3)) {
+    if (state.members.length === 0) {
       this.setState({
         error: true,
         success: false
@@ -42,45 +27,27 @@ export class InviteElement extends Component {
       return;
     }
 
-    if (this.textarea) {
-      this.textarea.value = '';
-    }
+    props.api.setSpinner(true);
 
     this.setState({
       error: false,
       success: true,
-      members: ''
+      members: []
     }, () => {
-      props.api.groups.add(aud, props.path);
-      if (props.permissions.kind === 'white') {
-        aud.forEach((ship) => {
-          props.api.invite.invite(props.station, ship);
-        });
-      }
+      props.api.groups.add(aud, props.path).then(() => {
+        props.api.setSpinner(false);
+      });
     });
   }
 
-  modifyMembersChange(e) {
-    this.setState({
-      members: e.target.value
-    });
+  setInvite(invite) {
+    this.setState({members: invite.ships});
   }
 
   render() {
-    const { props, state} = this;
-    let errorElem = !!state.error ? (
-      <p className="pt2 red2 f8">Invalid ship name.</p>
-    ) : (
-      <div></div>
-    );
+    const { props, state } = this;
 
-    let successElem = !!state.success ? (
-      <p className="pt2 green2 f8">Success!</p>
-    ) : (
-      <div></div>
-    );
-
-    let modifyButtonClasses = "db f9 ba pa2 white-d bg-gray0-d b--black b--gray2-d pointer";
+    let modifyButtonClasses = "mt4 db f9 ba pa2 white-d bg-gray0-d b--black b--gray2-d pointer";
     if (state.error) {
       modifyButtonClasses = modifyButtonClasses + ' gray3';
     }
@@ -94,23 +61,21 @@ export class InviteElement extends Component {
 
     return (
       <div>
-        <textarea
-          ref={ e => { this.textarea = e; } }
-          className="f7 mono ba b--gray3 bg-black-d white-d pa3 mb4 db w-100"
-          style={{
-            resize: 'none',
-            height: 50
-          }}
-          spellCheck="false"
-          placeholder="~zod, ~bus"
-          onChange={this.modifyMembersChange.bind(this)}></textarea>
+      <InviteSearch
+        groups={{}}
+        contacts={props.contacts}
+        groupResults={false}
+        invites={{
+          groups: [],
+          ships: this.state.members
+        }}
+        setInvite={this.setInvite}
+      />
         <button
           onClick={this.modifyMembers.bind(this)}
           className={modifyButtonClasses}>
           {buttonText}
         </button>
-        {errorElem}
-        {successElem}
       </div>
     );
   }

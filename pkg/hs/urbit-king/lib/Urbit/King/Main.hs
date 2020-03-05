@@ -121,19 +121,28 @@ toSerfFlags CLI.Opts{..} = catMaybes m
 
 
 toPierConfig :: FilePath -> CLI.Opts -> PierConfig
-toPierConfig pierPath CLI.Opts{..} = PierConfig
-    { _pcPierPath = pierPath
-    , _pcDryRun   = (oDryRun || isJust oDryFrom)
-    }
+toPierConfig pierPath CLI.Opts {..} = PierConfig { .. }
+ where
+  _pcPierPath = pierPath
+  _pcDryRun   = oDryRun || isJust oDryFrom
 
 toNetworkConfig :: CLI.Opts -> NetworkConfig
-toNetworkConfig CLI.Opts{..} = NetworkConfig
-    { ncNetworking = if (oDryRun || isJust oDryFrom) then NetworkNone
-                     else if oOffline then NetworkNone
-                     else if oLocalhost then NetworkLocalhost
-                     else NetworkNormal
-    , ncAmesPort = oAmesPort
-    }
+toNetworkConfig CLI.Opts {..} = NetworkConfig { .. }
+ where
+  dryRun     = oDryRun || isJust oDryFrom
+  offline    = dryRun || oOffline
+
+  mode = case (dryRun, offline, oLocalhost) of
+    (True, _   , _   ) -> NMNone
+    (_   , True, _   ) -> NMNone
+    (_   , _   , True) -> NMLocalhost
+    (_   , _   , _   ) -> NMNormal
+
+  _ncNetMode   = mode
+  _ncAmesPort  = oAmesPort
+  _ncHttpPort  = oHttpPort
+  _ncHttpsPort = oHttpsPort
+  _ncLocalPort = oLoopbackPort
 
 tryBootFromPill :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
                    , HasConfigDir e, HasStderrLogFunc e

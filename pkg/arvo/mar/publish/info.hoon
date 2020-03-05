@@ -1,9 +1,9 @@
 ::
 ::::  /hoon/info/publish/mar
   ::
-/-  publish
+/-  *publish
 !:
-|_  con=collection-info:publish
+|_  info=notebook-info
 ::
 ::
 ++  grow
@@ -13,72 +13,59 @@
     (as-octs:mimes:html (of-wain:format txt))
   ++  txt
     ^-  wain
-    :~  (cat 3 'owner: ' (scot %p owner.con))
-        (cat 3 'title: ' title.con)
-        (cat 3 'filename: ' filename.con)
-        (cat 3 'comments: ' comments.con)
-        (cat 3 'allow-edit: ' allow-edit.con)
-        (cat 3 'date-created: ' (scot %da date-created.con))
-        (cat 3 'last-modified: ' (scot %da last-modified.con))
+    :~  (cat 3 'title: ' title.info)
+        (cat 3 'description: ' description.info)
+        (cat 3 'comments: ' ?:(comments.info 'on' 'off'))
+        (cat 3 'writers: ' (spat writers.info))
+        (cat 3 'subscribers: ' (spat subscribers.info))
     ==
   --
 ++  grab
   |%
   ++  mime
     |=  [mite:eyre p=octs:eyre]
-    (txt (to-wain:format q.p))
-  ++  txt
-    |=  txs=(pole @t)
-    ^-  collection-info:publish
-    ::  TODO: putting ~ instead of * breaks this but shouldn't
-    ::
-    ?>  ?=  $:  owner=@t
-                title=@t
-                filename=@t
-                comments=@t
-                allow-edit=@t
-                date-created=@t
-                last-modified=@t
-                *
-             ==
-           txs
-    ::
-    :*  %+  rash  owner.txs
-        ;~(pfix (jest 'owner: ~') fed:ag)
-    ::
-        %+  rash  title.txs
-        ;~(pfix (jest 'title: ') (cook crip (star next)))
-    ::
-        %+  rash  filename.txs
-        ;~(pfix (jest 'filename: ') (cook crip (star next)))
-    ::
-      %+  rash  comments.txs
-      ;~  pfix
-        (jest 'comments: ')
-        %+  cook  comment-config:publish
-        ;~(pose (jest %open) (jest %closed) (jest %none))
+    |^  (rash q.p both-parser)
+    ++  key-val
+      |*  [key=rule val=rule]
+      ;~(sfix ;~(pfix key val) gaq)
+    ++  old-parser
+      ;~  plug
+        (key-val (jest 'owner: ~') fed:ag)
+        (key-val (jest 'title: ') (cook crip (star qit)))
+        (key-val (jest 'filename: ') sym)
+        %+  key-val  (jest 'comments: ')
+          ;~(pose (jest %open) (jest %closed) (jest %none))
+        %+  key-val  (jest 'allow-edit: ')
+          ;~(pose (jest %post) (jest %comment) (jest %all) (jest %none))
+        (key-val (jest 'date-created: ~') (cook year when:so))
+        ;~  pose
+          (key-val (jest 'last-modified: ~') (cook year when:so))
+          ;~(pfix (jest 'last-modified: ~') (cook year when:so))
+        ==
       ==
-    ::
-      %+  rash  allow-edit.txs
-      ;~  pfix
-        (jest 'allow-edit: ')
-        %+  cook  edit-config:publish
-        ;~(pose (jest %post) (jest %comment) (jest %all) (jest %none))
+    ++  new-parser
+      ;~  plug
+        (key-val (jest 'title: ') (cook crip (star qit)))
+        (key-val (jest 'description: ') (cook crip (star qit)))
+        %+  key-val  (jest 'comments: ')
+          (cook |=(a=@ =(%on a)) ;~(pose (jest %on) (jest %off)))
+        (key-val (jest 'writers: ') ;~(pfix net (more net urs:ab)))
+        ;~  pose
+          (key-val (jest 'subscribers: ') ;~(pfix net (more net urs:ab)))
+          ;~(pfix (jest 'subscribers: ') ;~(pfix net (more net urs:ab)))
+        ==
       ==
-    ::
-      %+  rash  date-created.txs
-      ;~  pfix
-        (jest 'date-created: ~')
-        (cook year when:so)
+    ++  both-parser
+      ;~  pose
+        new-parser
+        %+  cook
+          |=  [@ title=@t @ comments=@ *]
+          ^-  notebook-info
+          [title '' =('open' comments) / /]
+        old-parser
       ==
-    ::
-      %+  rash  last-modified.txs
-      ;~  pfix
-        (jest 'last-modified: ~')
-        (cook year when:so)
-      ==
-    ==
-  ++  noun  collection-info:publish
+    --
+  ++  noun  notebook-info
   --
 ++  grad  %mime
 --

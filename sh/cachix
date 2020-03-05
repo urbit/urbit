@@ -2,7 +2,10 @@
 
 fail () {
   echo "$@"
-  exit 1
+  if [ "$TRAVIS_PULL_REQUEST" = false ]
+  then exit 1
+  else exit 0
+  fi
 }
 
 if [ -z "$CACHIX_SIGNING_KEY" ]
