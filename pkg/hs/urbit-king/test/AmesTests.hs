@@ -51,7 +51,7 @@ instance HasNetworkConfig NetworkTestApp where
 runNetworkApp :: RIO NetworkTestApp a -> IO a
 runNetworkApp = runRIO NetworkTestApp
   { _ntaLogFunc = mkLogFunc l
-  , _ntaNetworkConfig = NetworkConfig NetworkNormal Nothing
+  , _ntaNetworkConfig = NetworkConfig NMNormal Nothing Nothing Nothing Nothing
   }
   where
     l _ _ _ _ = pure ()
