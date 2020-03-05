@@ -40,9 +40,9 @@ export class Sidebar extends Component {
         let when = !!msg ? msg.when : 0;
 
         let title = box;
-        if ((props.associations.has(box)) && (props.associations.get(box).metadata)) {
-        title = (props.associations.get(box).metadata.title)
-          ? props.associations.get(box).metadata.title : box;
+        if ((props.associations.chat[box]) && (props.associations.chat[box].metadata)) {
+        title = (props.associations.chat[box].metadata.title)
+          ? props.associations.chat[box].metadata.title : box;
         }
 
         let nickname = author;

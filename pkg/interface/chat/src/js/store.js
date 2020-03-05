@@ -16,7 +16,10 @@ class Store {
       contacts: {},
       permissions: {},
       invites: {},
-      associations: new Map,
+      associations: {
+        chat: {},
+        contacts: {}
+      },
       spinner: false,
       sidebarShown: true,
       pendingMessages: new Map([]),

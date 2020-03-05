@@ -45,7 +45,7 @@ export class Root extends Component {
       state.invites['/chat'] : {};
 
     let contacts = !!state.contacts ? state.contacts : {};
-    let associations = !!state.associations ? state.associations : new Map;
+    let associations = !!state.associations ? state.associations : {chat: {}, contacts: {}};
 
     const renderChannelSidebar = (props, station) => (
       <Sidebar
@@ -154,11 +154,11 @@ export class Root extends Component {
               };
 
               let roomContacts = {};
-              let associatedGroup = ((associations.has(station)) &&
-              (associations.get(station)["group-path"]))
-                ? associations.get(station)["group-path"] : "";
+              let associatedGroup = ((associations.chat[station]) &&
+              (associations.chat[station]["group-path"]))
+                ? associations.chat[station]["group-path"] : "";
 
-              if ((associations.has(station)) && (associatedGroup in contacts)) {
+              if ((associations.chat[station]) && (associatedGroup in contacts)) {
                 roomContacts = contacts[associatedGroup]
               }
 
@@ -247,8 +247,8 @@ export class Root extends Component {
 
               let popout = props.match.url.includes("/popout/");
 
-              let association = (associations.has(station))
-                ? associations.get(station) : {};
+              let association = (associations.chat[station])
+                ? associations.chat[station] : {};
 
               return (
                 <Skeleton
