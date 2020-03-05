@@ -22,6 +22,7 @@ export class Skeleton extends Component {
             selected={props.selected}
             history={props.history}
             api={api}
+            associations={props.associations}
           />
           <div
             className={"h-100 w-100 " + rightPanelClasses}
