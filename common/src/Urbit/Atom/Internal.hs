@@ -205,7 +205,7 @@ vecBytes (Vector off sz buf) =
     unsafePerformIO $ do
         fp <- BS.mallocByteString sz
         let Ptr a = Ptr.unsafeForeignPtrToPtr fp -- Safe b/c returning fp
-        error "Prim.copyByteArrayToAddr" (Prim.Addr a) buf 0 sz
+        Prim.copyByteArrayToAddr (Prim.Addr a) buf 0 sz
         pure (BS.PS fp off sz)
 
 bytesVec ∷ ByteString → Vector Word8

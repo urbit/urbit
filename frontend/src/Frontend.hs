@@ -22,33 +22,35 @@ import Reflex.Dom.Core
 import Common.Api
 import Common.Route
 
-import qualified Urbit.Uruk.Refr.Raw as Ur
-
-import System.IO.Unsafe (unsafePerformIO)
-import Urbit.Moon.Repl  (evalTextFast)
+import System.IO.Unsafe    (unsafePerformIO)
+import Urbit.Moon.Repl     (evalTextFast, evalText)
 
 --------------------------------------------------------------------------------
 
-{-
-  Holy shit this is ugly!
--}
+slow
+  :: (Monad m, MonadSample s m, Reflex s, DomBuilder s m, PostBuild s m) => m ()
+slow = do
+  el "h1" (text "Slow")
 
-evalMoon :: T.Text -> T.Text
-evalMoon = unsafePerformIO . evalTextFast
+  val <-
+    fmap _inputElement_value
+    $  inputElement
+    $  (def & inputElementConfig_initialValue .~ "(K K K)")
 
-replThing :: (Monad m, MonadSample s m, Reflex s, DomBuilder s m, PostBuild s m) => m ()
-replThing = do
-    let k = Ur.N Ur.K
+  el "pre" $ dynText $ unsafePerformIO . evalText <$> val
 
-    el "h3" $ text (T.pack $ show $ Ur.eval (k Ur.:@ k Ur.:@ k))
 
-    inp <- inputElement (def & inputElementConfig_initialValue .~ "(K K K)" )
+fast
+  :: (Monad m, MonadSample s m, Reflex s, DomBuilder s m, PostBuild s m) => m ()
+fast = do
+  el "h1" (text "Fast")
 
-    let val = inp & _inputElement_value
+  val <-
+    fmap _inputElement_value
+    $  inputElement
+    $  (def & inputElementConfig_initialValue .~ "(K K K)")
 
-    el "p" (el "b" (dynText val))
-
-    el "pre" $ dynText (evalMoon <$> val)
+  el "pre" $ dynText $ unsafePerformIO . evalTextFast <$> val
 
 
 -- This runs in a monad that can be run on the client or the server.
@@ -70,28 +72,9 @@ frontend = Frontend
                          blank
   , _frontend_body = do
 
-    el "h1" $ text "Welcome to Obelisk!"
+    fast
 
-    el "h3" $ text (T.pack $ show $ utf8Atom "Welcome to Obelisk!")
-
-    el "p" $ text $ T.pack commonStuff
-
-    replThing
-
-    -- `prerender` and `prerender_` let you choose a widget to run on the server
-    -- during prerendering and a different widget to run on the client with
-    -- JavaScript. The following will generate a `blank` widget on the server and
-    -- print "Holla, World!" on the client.
-    prerender_ blank $ liftJSM $ void $ eval
-      ("console.log('Holla, World! Get fucked nigga.')" :: T.Text)
-
-    elAttr "img" ("src" =: static @"obelisk.jpg") blank
-
-    el "div" $ do
-      exampleConfig <- getConfig "common/example"
-      case exampleConfig of
-        Nothing -> text "No config file found in config/common/example"
-        Just s  -> text $ T.decodeUtf8 s
+    slow
 
     return ()
   }

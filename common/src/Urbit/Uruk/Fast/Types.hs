@@ -98,9 +98,9 @@ instance Show Jet where
   show (Jet{..}) =
     case jName of
       VNat (Atom.atomUtf8 -> Right nm) ->
-        "J" <> show jArgs <> "_" <> unpack nm <> "_" <> has
+        unpack nm <> show jArgs <> "_" <> has
       _ ->
-        "J" <> show jArgs <> "_" <> show jName <> "_" <> has
+        show jName <> show jArgs <> "_" <> has
    where
      has = (take 5 $ show $ abs $ hash jBody)
 
