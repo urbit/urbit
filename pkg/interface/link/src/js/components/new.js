@@ -103,9 +103,9 @@ export class NewScreen extends Component {
       return;
     }
 
-    const target = aud.length === 0
-      ? {group: state.groups[0]}
-      : {ships: aud};
+    const target = state.groups.length === 0
+      ? {ships: aud}
+      : {group: state.groups[0]};
 
     if (this.textarea) {
       this.textarea.value = '';
