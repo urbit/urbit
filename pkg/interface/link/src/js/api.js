@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
-import { uuid, stringToTa } from '/lib/util';
+import { stringToTa } from '/lib/util';
 import { store } from '/store';
 import moment from 'moment';
 
@@ -13,9 +13,12 @@ class UrbitApi {
 
     this.invite = {
       accept: this.inviteAccept.bind(this),
-      decline: this.inviteDecline.bind(this),
-      invite: this.inviteInvite.bind(this)
+      decline: this.inviteDecline.bind(this)
     };
+
+    this.groups = {
+      remove: this.groupRemove.bind(this)
+    }
 
     this.bind = this.bind.bind(this);
     this.bindLinkView = this.bindLinkView.bind(this);
@@ -61,32 +64,26 @@ class UrbitApi {
     });
   }
 
-  inviteAction(data) {
-    this.action("invite-store", "json", data);
+  groupsAction(data) {
+    this.action("group-store", "group-action", data);
   }
 
-  inviteInvite(path, ship) {
-    this.action("invite-hook", "json",
-      {
-        invite: {
-          path: '/chat',
-          invite: {
-            path,
-            ship: `~${window.ship}`,
-            recipient: ship,
-            app: 'chat-hook',
-            text: `You have been invited to /${window.ship}${path}`,
-          },
-          uid: uuid()
-        }
+  groupRemove(path, members) {
+    this.groupsAction({
+      remove: {
+        path, members
       }
-    );
+    });
+  }
+
+  inviteAction(data) {
+    this.action("invite-store", "json", data);
   }
 
   inviteAccept(uid) {
     this.inviteAction({
       accept: {
-        path: '/chat',
+        path: '/link',
         uid
       }
     });
@@ -95,7 +92,7 @@ class UrbitApi {
   inviteDecline(uid) {
     this.inviteAction({
       decline: {
-        path: '/chat',
+        path: '/link',
         uid
       }
     });
@@ -144,6 +141,30 @@ class UrbitApi {
     );
   }
 
+  linkViewAction(data) {
+    return this.action("link-view", "link-view-action", data);
+  }
+
+  createCollection(path, title, description, members, realGroup) {
+    // members is either {group:'/group-path'} or {'ships':[~zod]},
+    // with realGroup signifying if ships should become a managed group or not.
+    return this.linkViewAction({
+      create: {path, title, description, members, realGroup}
+    });
+  }
+
+  deleteCollection(path) {
+    return this.linkViewAction({
+      'delete': {path}
+    });
+  }
+
+  inviteToCollection(path, ships) {
+    return this.linkViewAction({
+      'invite': {path, ships}
+    });
+  }
+
   linkAction(data) {
     return this.action("link-store", "link-action", data);
   }
@@ -164,6 +185,29 @@ class UrbitApi {
   seenLink(path, url = null) {
     return this.linkAction({
       'seen': { path, url }
+    });
+  }
+
+  metadataAction(data) {
+    return this.action("metadata-hook", "metadata-action", data);
+  }
+
+  metadataAdd(appPath, groupPath, title, description, dateCreated, color) {
+    return this.metadataAction({
+      add: {
+        'group-path': groupPath,
+        resource: {
+          'app-path': appPath,
+          'app-name': 'link'
+        },
+        metadata: {
+          title,
+          description,
+          color,
+          'date-created': dateCreated,
+          creator: `~${window.ship}`
+        }
+      }
     });
   }
 

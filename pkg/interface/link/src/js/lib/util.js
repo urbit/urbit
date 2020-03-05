@@ -1,17 +1,27 @@
 import _ from 'lodash';
 import classnames from 'classnames';
 
-
-export function uuid() {
-  let str = "0v"
-  str += Math.ceil(Math.random()*8)+"."
-  for (var i = 0; i < 5; i++) {
-    let _str = Math.ceil(Math.random()*10000000).toString(32);
-    _str = ("00000"+_str).substr(-5,5);
-    str += _str+".";
+export function makeRoutePath(
+  resource, popout = false, page = 0, url = null, index = 0, compage = 0
+) {
+  let route = '/~link' + (popout ? '/popout' : '') + resource;
+  if (!url) {
+    if (page !== 0) {
+      route = route + '/' + page;
+    }
+  } else {
+    route = `${route}/${page}/${index}/${base64urlEncode(url)}`;
+    if (compage !== 0) {
+      route = route + '/' + compage;
+    }
   }
+  return route;
+}
 
-  return str.slice(0,-1);
+export function amOwnerOfGroup(groupPath) {
+  if (!groupPath) return false;
+  const groupOwner = /(\/~)?\/~([a-z-]{3,})\/.*/.exec(groupPath)[2];
+  return (window.ship === groupOwner);
 }
 
 export function getContactDetails(contact) {

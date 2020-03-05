@@ -3,7 +3,7 @@ import moment from 'moment';
 
 import { Sigil } from '/components/lib/icons/sigil';
 import { Route, Link } from 'react-router-dom';
-import { base64urlEncode } from '../../lib/util';
+import { makeRoutePath } from '../../lib/util';
 
 export class LinkItem extends Component {
   constructor(props) {
@@ -34,7 +34,7 @@ export class LinkItem extends Component {
   }
 
   markPostAsSeen() {
-    api.seenLink(this.props.groupPath, this.props.url);
+    api.seenLink(this.props.resourcePath, this.props.url);
   }
 
   render() {
@@ -57,8 +57,6 @@ export class LinkItem extends Component {
     if (hostname) {
       hostname = hostname[4];
     }
-
-    let encodedUrl = base64urlEncode(props.url);
 
     let comments = props.comments + " comment" + ((props.comments === 1) ? "" : "s");
 
@@ -90,7 +88,7 @@ export class LinkItem extends Component {
             {this.state.timeSinceLinkPost}
           </span>
           <Link to=
-          {"/~link" + props.popout + props.groupPath + "/" + props.page + "/" + props.linkIndex + "/" + encodedUrl}
+            {makeRoutePath(props.resourcePath, props.popout, props.page, props.url, props.linkIndex)}
           className="v-top"
           onClick={this.markPostAsSeen}>
             <span className="f9 inter gray2">
