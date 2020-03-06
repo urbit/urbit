@@ -233,10 +233,19 @@ export class ChatScreen extends Component {
 
    const group = Array.from(props.group.values());
 
-   const isinPopout = this.props.popout ? "popout/" : "";
-  
+   const isinPopout = props.popout ? "popout/" : "";
+
    let ownerContact = (window.ship in props.contacts)
      ? props.contacts[window.ship] : false;
+
+   let title = props.station.substr(1);
+
+   if (props.association && "metadata" in props.association) {
+     title =
+       props.association.metadata.title !== ""
+         ? props.association.metadata.title
+         : props.station.substr(1);
+   }
 
    return (
      <div
@@ -258,9 +267,10 @@ export class ChatScreen extends Component {
          <Link to={`/~chat/` + isinPopout + `room` + props.station}
          className="pt2 white-d">
            <h2
-             className="mono dib f9 fw4 v-top"
+             className={"dib f9 fw4 lh-solid v-top " +
+             ((title === props.station.substr(1)) ? "mono" : "")}
              style={{ width: "max-content" }}>
-             {props.station.substr(1)}
+             {title}
            </h2>
          </Link>
          <ChatTabBar

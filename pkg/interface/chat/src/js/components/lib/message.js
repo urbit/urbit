@@ -179,7 +179,7 @@ export class Message extends Component {
           style={{
             minHeight: "min-content"
           }}>
-          <div className="fl mr3 v-top">
+          <div className="fl mr3 v-top bg-white bg-gray0-d">
             <Sigil
               ship={props.msg.author}
               size={24}

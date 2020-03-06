@@ -21,8 +21,8 @@ export class ChannelsSidebar extends Component {
       });
 
     const channelItems =
-      Object.keys(props.resources).map((path) => {
-        const meta = props.resources[path];
+      Object.keys(props.associations).map((path) => {
+        const meta = props.associations[path];
         const selected = (props.selected === path);
         const linkCount = !!props.links[path] ? props.links[path].totalItems : 0;
         const unseenCount = !!props.links[path]
@@ -37,7 +37,7 @@ export class ChannelsSidebar extends Component {
             selected={selected}
             linkCount={linkCount}
             unseenCount={unseenCount}
-            name={meta.title}/>
+            name={meta.metadata.title}/>
         );
       });
 
@@ -61,7 +61,7 @@ export class ChannelsSidebar extends Component {
         : "dn")}>
         <a className="db dn-m dn-l dn-xl f8 pb3 pl3" href="/">⟵ Landscape</a>
         <div className="overflow-y-scroll h-100">
-          <div className="w-100 bg-transparent pa4 bb b--gray4 b--gray1-d"
+          <div className="w-100 bg-transparent pa4 bb b--gray4 b--gray2-d"
             style={{paddingBottom: 10, paddingTop: 10}}>
             <Link
               className="dib f9 pointer green2 gray4-d mr4"

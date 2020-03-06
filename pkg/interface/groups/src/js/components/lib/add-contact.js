@@ -61,7 +61,7 @@ export class AddScreen extends Component {
     }
 
     return (
-      <div className="h-100 w-100 flex flex-column overflow-y-scroll">
+      <div className="h-100 w-100 flex flex-column overflow-y-scroll white-d">
         <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 pl3 pt3 f8">
           <Link to={"/~groups" + props.path}>{"⟵ All Contacts"}</Link>
         </div>
@@ -79,11 +79,11 @@ export class AddScreen extends Component {
           </div>
           <button
             onClick={this.onClickAdd.bind(this)}
-            className="ml4 f8 ba pa2 b--green2 green2 pointer">
+            className="ml4 f8 ba pa2 b--green2 green2 pointer bg-transparent">
             Add Members
           </button>
           <Link to="/~groups">
-            <button className="f8 ml4 ba pa2 b--black pointer">Cancel</button>
+            <button className="f8 ml4 ba pa2 b--black pointer bg-transparent b--white-d white-d">Cancel</button>
           </Link>
         </div>
       </div>

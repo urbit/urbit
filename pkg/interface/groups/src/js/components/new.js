@@ -12,6 +12,7 @@ export class NewScreen extends Component {
     this.state = {
       groupName: '',
       title: '',
+      description: '',
       invites: {
         groups: [],
         ships: []
@@ -21,6 +22,7 @@ export class NewScreen extends Component {
     };
 
     this.groupNameChange = this.groupNameChange.bind(this);
+    this.descriptionChange = this.descriptionChange.bind(this);
     this.invChange = this.invChange.bind(this);
   }
 
@@ -31,6 +33,10 @@ export class NewScreen extends Component {
       groupName: asciiSafe,
       title: event.target.value
     });
+  }
+
+  descriptionChange(event) {
+    this.setState({description: event.target.value});
   }
 
   invChange(value) {
@@ -61,8 +67,12 @@ export class NewScreen extends Component {
       invites: ''
     }, () => {
       props.api.setSpinner(true);
-      let submit = props.api.contactView.create(group, aud, this.state.title);
-      submit.then(() => {
+      props.api.contactView.create(
+        group,
+        aud,
+        this.state.title,
+        this.state.description
+        ).then(() => {
         props.api.setSpinner(false);
         props.history.push(`/~groups${group}`);
       })
@@ -102,6 +112,21 @@ export class NewScreen extends Component {
             onChange={this.groupNameChange}
           />
           {groupNameErrElem}
+          <h2 className="f8 pt6">Description <span className="gray2">(Optional)</span></h2>
+          <textarea
+            className={
+              "f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 mt2 " +
+              "focus-b--black focus-b--white-d"
+            }
+            rows={1}
+            placeholder="Two trumpeteers and a microphone"
+            style={{
+              resize: "none",
+              height: 48,
+              paddingTop: 14
+            }}
+            onChange={this.descriptionChange}
+          />
           <h2 className="f8 pt6">Add Group Members</h2>
           <p className="f9 gray2 lh-copy">Invite ships to your group</p>
           <div className="relative pb6 mt2">
@@ -115,11 +140,11 @@ export class NewScreen extends Component {
           </div>
           <button
             onClick={this.onClickCreate.bind(this)}
-            className="f8 ba pa2 b--green2 green2 pointer">
+            className="f9 ba pa2 b--green2 green2 pointer bg-transparent">
             Start Group
           </button>
           <Link to="/~groups">
-            <button className="f8 ml3 ba pa2 b--black pointer">Cancel</button>
+            <button className="f9 ml3 ba pa2 b--black pointer bg-transparent b--white-d white-d">Cancel</button>
           </Link>
         </div>
       </div>

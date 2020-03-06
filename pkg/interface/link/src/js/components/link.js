@@ -104,7 +104,7 @@ export class LinkDetail extends Component {
           <Link
             className="dib f9 fw4 pt2 gray2 lh-solid"
             to={makeRoutePath(props.resourcePath, props.popout, props.page)}>
-            {`<- ${props.resource.title} index`}
+            {`<- ${props.resource.metadata.title}`}
           </Link>
           <LinksTabBar {...props} popout={props.popout} resourcePath={props.resourcePath} />
         </div>

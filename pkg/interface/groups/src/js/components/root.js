@@ -82,14 +82,18 @@ export class Root extends Component {
                 </Skeleton>
               );
           }} />
-          <Route exact path="/~groups/(detail)?/:ship/:group/"
+          <Route exact path="/~groups/(detail)?/(settings)?/:ship/:group/"
             render={ (props) => {
               let groupPath =
                 `/${props.match.params.ship}/${props.match.params.group}`;
               let groupContacts = contacts[groupPath] || {};
               let group = groups[groupPath] || new Set([]);
-              let detail = !!props.match.url.includes("/detail");
+              let detail = !!(props.match.url.includes("/detail"));
+              let settings = !!(props.match.url.includes("/settings"));
 
+              let association = (associations[groupPath])
+                ? associations[groupPath]
+                : {};
 
               return (
                 <Skeleton
@@ -99,21 +103,24 @@ export class Root extends Component {
                   contacts={contacts}
                   invites={invites}
                   groups={groups}
-                  activeDrawer={detail ? "detail" : "contacts"}
+                  activeDrawer={(detail || settings) ? "detail" : "contacts"}
                   selected={groupPath}
                   associations={associations}>
                   <ContactSidebar
                     contacts={groupContacts}
                     defaultContacts={defaultContacts}
                     group={group}
-                    activeDrawer={detail ? "detail" : "contacts"}
+                    activeDrawer={(detail || settings) ? "detail" : "contacts"}
                     path={groupPath}
                     {...props}
                   />
                   <GroupDetail
-                    associations={associations}
+                    association={association}
                     path={groupPath}
-                    activeDrawer={detail ? "detail" : "contacts"}
+                    group={group}
+                    activeDrawer={(detail || settings) ? "detail" : "contacts"}
+                    settings={settings}
+                    api={api}
                     {...props}
                   />
                 </Skeleton>

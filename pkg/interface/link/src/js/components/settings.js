@@ -29,9 +29,9 @@ export class SettingsScreen extends Component {
   componentDidMount() {
     if (this.props.resource) {
       this.setState({
-        title: this.props.resource.title,
-        description: this.props.resource.description,
-        color: uxToHex(this.props.resource.color || '0x0')
+        title: this.props.resource.metadata.title,
+        description: this.props.resource.metadata.description,
+        color: uxToHex(this.props.resource.metadata.color || '0x0')
       });
     }
   }
@@ -49,9 +49,9 @@ export class SettingsScreen extends Component {
 
     if (props.resource && (prevProps !== props)) {
       this.setState({
-        title: props.resource.title,
-        description: props.resource.description,
-        color: uxToHex(props.resource.color || '0x0')
+        title: props.resource.metadata.title,
+        description: props.resource.metadata.description,
+        color: uxToHex(props.resource.metadata.color || '0x0')
       });
     }
   }
@@ -135,9 +135,9 @@ export class SettingsScreen extends Component {
                   props.resourcePath,
                   props.groupPath,
                   state.title,
-                  props.resource.description,
-                  props.resource['date-created'],
-                  uxToHex(props.resource.color)
+                  props.resource.metadata.description,
+                  props.resource.metadata['date-created'],
+                  uxToHex(props.resource.metadata.color)
                 ).then(() => {
                   api.setSpinner(false);
                   this.refs.rename.innerText = "Saved";
@@ -170,7 +170,7 @@ export class SettingsScreen extends Component {
                   api.metadataAdd(
                     props.resourcePath,
                     props.groupPath,
-                    props.resource.title,
+                    props.resource.metadata.title,
                     state.description,
                     props.resource['date-created'],
                     uxToHex(props.resource.color)
@@ -204,9 +204,9 @@ export class SettingsScreen extends Component {
                   api.metadataAdd(
                     props.resourcePath,
                     props.groupPath,
-                    props.resource.title,
-                    props.resource.description,
-                    props.resource['date-created'],
+                    props.resource.metadata.title,
+                    props.resource.metadata.description,
+                    props.resource.metadata['date-created'],
                     state.color
                   ).then(() => {
                     api.setSpinner(false);
@@ -250,9 +250,9 @@ export class SettingsScreen extends Component {
             <Link to={makeRoutePath(props.resourcePath, props.popout)}
             className="pt2 white-d">
               <h2
-                className="dib f9 fw4 v-top"
+                className="dib f9 fw4 lh-solid v-top"
                 style={{ width: "max-content" }}>
-                {props.resource.title}
+                {props.resource.metadata.title}
               </h2>
             </Link>
             <LinksTabBar {...props}/>
@@ -283,7 +283,7 @@ export class SettingsScreen extends Component {
             <h2
               className="dib f9 fw4 v-top"
               style={{ width: "max-content" }}>
-              {props.resource.title}
+              {props.resource.metadata.title}
             </h2>
           </Link>
           <LinksTabBar {...props}/>

@@ -68,13 +68,13 @@ class UrbitApi {
     return this.action("contact-view", "json", data);
   }
 
-  contactCreate(path, ships = [], title) {
+  contactCreate(path, ships = [], title, description) {
     return this.contactViewAction({
       create: {
         path,
         ships,
         title,
-        description: ''
+        description
       }
     });
   }
@@ -147,6 +147,31 @@ class UrbitApi {
         uid
       }
     });
+  }
+
+  metadataAction(data) {
+    console.log(data);
+    return this.action("metadata-hook", "metadata-action", data);
+  }
+
+  metadataAdd(appPath, groupPath, title, description, dateCreated, color) {
+    let creator = `~${window.ship}`;
+    return this.metadataAction({
+      add: {
+        "group-path": groupPath,
+        resource: {
+          "app-path": appPath,
+          "app-name": "contacts"
+        },
+        metadata: {
+          title,
+          description,
+          color,
+          'date-created': dateCreated,
+          creator
+        }
+      }
+    })
   }
 
   setSpinner(boolean) {
