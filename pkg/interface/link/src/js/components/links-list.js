@@ -105,7 +105,7 @@ export class Links extends Component {
            sidebarShown={props.sidebarShown}
            popout={props.popout}/>
          <Link to={makeRoutePath(props.resourcePath, props.popout, props.page)} className="pt2">
-           <h2 className={`dib f9 fw4 v-top`}>
+           <h2 className={`dib f9 fw4 lh-solid v-top`}>
              {props.resource.metadata.title}
            </h2>
          </Link>
