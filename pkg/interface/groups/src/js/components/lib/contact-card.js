@@ -495,6 +495,9 @@ export class ContactCard extends Component {
         !(props.path.includes('/~/default'))
       ) ? "dib" : "dn";
 
+    let hiddenonMe = (props.path === "/~/default")
+      ? "dn" : "";
+
     let card = state.edit ? this.renderEditCard() : this.renderCard();
     return (
       <div className="w-100 h-100 overflow-hidden">
@@ -504,7 +507,9 @@ export class ContactCard extends Component {
             "bb b--gray4 b--gray2-d "
           }>
           <div className="f9 mv4 mh3 pt1 dib w-100">
-            <Link to={"/~groups/detail" + props.path}>{"⟵ Channels"}</Link>
+            <Link className={hiddenonMe} to={"/~groups/detail" + props.path}>
+              {"⟵ Channels"}
+            </Link>
           </div>
           <div className="flex">
             <button
@@ -524,8 +529,7 @@ export class ContactCard extends Component {
           </div>
           <button
             className={
-              `bg-gray0-d mv4 mh3 pa1 f9 red2 pointer flex-shrink-0 ` +
-              adminOpt
+              `bg-gray0-d mv4 mh3 pa1 f9 red2 pointer flex-shrink-0 ` + adminOpt
             }
             onClick={this.removeFromGroup}>
             {props.ship === window.ship && props.path.includes(window.ship)
