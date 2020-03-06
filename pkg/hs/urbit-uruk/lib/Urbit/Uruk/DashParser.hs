@@ -9,7 +9,13 @@ import Control.Monad.State.Lazy
 import Text.Megaparsec
 import Text.Megaparsec.Char
 
-import Data.Void (Void)
+import Bound            (abstract1)
+import Data.Void        (Void, absurd)
+import Text.Show.Pretty (pPrint)
+import Urbit.Atom       (Atom)
+
+import qualified Urbit.Atom         as Atom
+import qualified Urbit.Uruk.Bracket as B
 
 
 -- Types -----------------------------------------------------------------------
@@ -181,8 +187,57 @@ dashFile = do
   eof
   pure (hed : tel)
 
-parseAST ∷ Text → Either Text [Dec]
+parseAST ∷ Text → Either Text AST
 parseAST txt =
+  runParser (evalStateT exp Tall) "stdin" txt & \case
+    Left  e → Left (pack $ errorBundlePretty e)
+    Right x → pure x
+
+parseDecs ∷ Text → Either Text [Dec]
+parseDecs txt =
   runParser (evalStateT dashFile Tall) "stdin" txt & \case
     Left  e → Left (pack $ errorBundlePretty e)
     Right x → pure x
+
+-- AST to SK -------------------------------------------------------------------
+
+infixl 5 :%;
+
+data SKAG
+  = S
+  | K
+  | A Atom
+  | SKAG :% SKAG
+ deriving (Show)
+
+skag :: B.Exp Void (B.SK Atom) -> SKAG
+skag = \case
+  B.Lam b    _  -> absurd b
+  x     B.:@ y  -> skag x :% skag y
+  B.Var (B.V a) -> A a
+  B.Var B.S     -> S
+  B.Var B.K     -> K
+
+astExp :: AST -> B.Exp () (Either Atom Text)
+astExp = \case
+  Var t   -> B.Var $ Right t
+  Tag t   -> B.Var $ Left $ Atom.utf8Atom t
+  x :@ y  -> astExp x B.:@ astExp y
+  Lam n b -> B.Lam () (abstract1 (Right n) (astExp b))
+
+expErr :: B.Exp b (Either Atom Text) -> Either Text (B.Exp b Atom)
+expErr = traverse $ \case
+  Left atom  -> Right atom
+  Right free -> Left ("Undefined Variable: " <> free)
+
+tryExp ∷ Text → Either Text (SKAG, SKAG)
+tryExp txt = do
+  expr <- parseAST txt
+  resu <- expErr (astExp expr)
+  pure (skag (B.johnTrompBracket resu), skag (B.naiveBracket resu))
+
+tryIt :: Text -> IO ()
+tryIt txt = do
+  tryExp txt & \case
+    Left err -> putStrLn err
+    Right rs -> pPrint rs
