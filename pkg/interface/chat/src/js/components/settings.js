@@ -234,6 +234,13 @@ export class SettingsScreen extends Component {
         text = "Leaving...";
       }
 
+      let title = props.station.substr(1);
+
+      if ((props.association) && (props.association.metadata)) {
+        title = (props.association.metadata.title !== "")
+          ? props.association.metadata.title : props.station.substr(1);
+      }
+
       return (
         <div className="h-100 w-100 overflow-x-hidden flex flex-column white-d">
           <div
@@ -251,9 +258,10 @@ export class SettingsScreen extends Component {
             <Link to={`/~chat/` + isinPopout + `room` + props.station}
             className="pt2 white-d">
               <h2
-                className="mono dib f9 fw4 v-top"
+                className={"dib f9 fw4 lh-solid v-top " +
+                  ((title === props.station.substr(1)) ? "mono" : "")}
                 style={{ width: "max-content" }}>
-                {props.station.substr(1)}
+                {title}
               </h2>
             </Link>
             <ChatTabBar
@@ -267,6 +275,13 @@ export class SettingsScreen extends Component {
           </div>
         </div>
       );
+    }
+
+    let title = props.station.substr(1);
+
+    if ((props.association) && (props.association.metadata)) {
+      title = (props.association.metadata.title !== "")
+        ? props.association.metadata.title : props.station.substr(1);
     }
 
     return (
@@ -286,9 +301,10 @@ export class SettingsScreen extends Component {
           <Link to={`/~chat/` + isinPopout + `room` + props.station}
           className="pt2">
             <h2
-              className="mono dib f9 fw4 v-top"
+              className={"dib f9 fw4 lh-solid v-top " +
+                ((title === props.station.substr(1)) ? "mono" : "")}
               style={{ width: "max-content" }}>
-              {props.station.substr(1)}
+              {title}
             </h2>
           </Link>
           <ChatTabBar

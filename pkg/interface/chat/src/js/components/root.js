@@ -162,6 +162,10 @@ export class Root extends Component {
                 roomContacts = contacts[associatedGroup]
               }
 
+              let association = (associations.chat[station])
+                ? associations.chat[station] : {};
+
+
               let group = state.groups[station] || new Set([]);
               let popout = props.match.url.includes("/popout/");
 
@@ -175,6 +179,7 @@ export class Root extends Component {
                 >
                   <ChatScreen
                     station={station}
+                    association={association}
                     api={api}
                     subscription={subscription}
                     read={mailbox.config.read}
@@ -210,6 +215,8 @@ export class Root extends Component {
               };
               let popout = props.match.url.includes("/popout/");
 
+              let association = (associations.chat[station])
+                ? associations.chat[station] : {};
 
               return (
                 <Skeleton
@@ -223,6 +230,7 @@ export class Root extends Component {
                     {...props}
                     api={api}
                     station={station}
+                    association={association}
                     permission={permission}
                     contacts={contacts}
                     permissions={state.permissions}

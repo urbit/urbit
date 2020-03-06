@@ -39,10 +39,10 @@ export class Sidebar extends Component {
         let author = !!msg ? msg.author : '';
         let when = !!msg ? msg.when : 0;
 
-        let title = box;
+        let title = box.substr(1);
         if ((props.associations.chat[box]) && (props.associations.chat[box].metadata)) {
         title = (props.associations.chat[box].metadata.title)
-          ? props.associations.chat[box].metadata.title : box;
+          ? props.associations.chat[box].metadata.title : box.substr(1);
         }
 
         let nickname = author;
