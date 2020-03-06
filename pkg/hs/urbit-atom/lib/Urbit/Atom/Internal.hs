@@ -10,18 +10,20 @@ module Urbit.Atom.Internal where
 
 import Prelude
 
+import Control.Monad.Primitive   (primitive_)
 import Data.Bits                 (shiftL, shiftR, (.&.), (.|.))
 import Data.ByteString           (ByteString)
 import Data.Vector.Primitive     (Vector(..))
 import Data.Word                 (Word8)
 import GHC.Exts                  (Ptr(Ptr), sizeofByteArray#)
-import GHC.Int                   (Int(..))
 import GHC.Integer.GMP.Internals (BigNat(..), bigNatToWord, sizeofBigNat#)
 import GHC.Integer.GMP.Internals (indexBigNat#)
 import GHC.Integer.GMP.Internals (byteArrayToBigNat#, wordToBigNat, zeroBigNat)
 import GHC.Natural               (Natural(..))
-import GHC.Prim                  (clz#, minusWord#, plusWord#)
+import GHC.Prim                  (clz#, minusWord#, plusWord#, Int#)
+import GHC.Exts                  (Int(..))
 import GHC.Prim                  (Word#, int2Word#, subIntC#, timesWord#)
+import GHC.Prim                  (copyByteArrayToAddr#)
 import GHC.Word                  (Word(..))
 import System.IO.Unsafe          (unsafePerformIO)
 
@@ -29,7 +31,6 @@ import qualified Data.ByteString           as BS
 import qualified Data.ByteString.Unsafe    as BS
 import qualified Data.ByteString.Internal  as BS
 import qualified Data.Primitive.ByteArray  as Prim
-import qualified Data.Primitive.Types      as Prim
 import qualified Data.Vector.Primitive     as VP
 import qualified Foreign.ForeignPtr.Unsafe as Ptr
 
@@ -201,12 +202,19 @@ bsToWords bs =
 --------------------------------------------------------------------------------
 
 vecBytes :: Vector Word8 -> ByteString
-vecBytes (Vector off sz buf) =
-    unsafePerformIO $ do
-        fp <- BS.mallocByteString sz
-        let Ptr a = Ptr.unsafeForeignPtrToPtr fp -- Safe b/c returning fp
-        Prim.copyByteArrayToAddr (Prim.Addr a) buf 0 sz
-        pure (BS.PS fp off sz)
+vecBytes (Vector off sz buf) = unsafePerformIO $ do
+  fp <- BS.mallocByteString sz
+  let Ptr a = Ptr.unsafeForeignPtrToPtr fp -- Safe b/c returning fp
+  copyByteArrayToAddr a buf 0 sz
+  pure (BS.PS fp off sz)
+ where
+  unI# :: Int -> Int#
+  unI# (I# n#) = n#
+
+  --  Hack to get GHCJS build working, since it has an old version of the
+  --  `primitive` library.
+  copyByteArrayToAddr dst# (Prim.ByteArray src#) soff sz =
+    primitive_ (copyByteArrayToAddr# src# (unI# soff) dst# (unI# sz))
 
 bytesVec ∷ ByteString → Vector Word8
 bytesVec bs = VP.generate (BS.length bs) (BS.index bs)
