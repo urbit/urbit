@@ -107,7 +107,7 @@ export class NewScreen extends Component {
 
     let createClasses = "pointer db f9 green2 bg-gray0-d ba pv3 ph4 mv7 b--green2";
     if (!this.state.idName || this.state.disabled) {
-      createClasses = "pointer db f9 gray2 ba bg-gray0-d pa2 pv3 ph4 mv7 b--gray3";
+      createClasses = "db f9 gray2 ba bg-gray0-d pa2 pv3 ph4 mv7 b--gray3";
     }
 
     let createGroupToggle =
