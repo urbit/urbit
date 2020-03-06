@@ -24,9 +24,11 @@ export class Skeleton extends Component {
       <HeaderBar spinner={this.props.spinner} />
         <div className={`cf w-100 h-100 flex ` + popoutBorder}>
         <ChannelsSidebar
-            popout={popout}
-            groups={this.props.groups}
             active={this.props.active}
+            popout={popout}
+            resources={this.props.resources}
+            invites={this.props.invites}
+            groups={this.props.groups}
             selected={this.props.selected}
             sidebarShown={this.props.sidebarShown}
             links={this.props.links}/>
