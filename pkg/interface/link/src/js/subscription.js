@@ -30,6 +30,11 @@ export class Subscription {
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this)
     );
+    api.bind('/app-name/contacts', 'PUT', api.authTokens.ship, 'metadata-store',
+      this.handleEvent.bind(this),
+      this.handleError.bind(this),
+      this.handleQuitAndResubscribe.bind(this)
+    );
 
     // open a subscription for all submissions
     api.getPage('', 0);

@@ -37,7 +37,7 @@ export class Links extends Component {
   render() {
     let props = this.props;
 
-    if (!props.resource.title) {
+    if (!props.resource.metadata.title) {
       return <LoadingScreen/>;
     }
 
@@ -106,7 +106,7 @@ export class Links extends Component {
            popout={props.popout}/>
          <Link to={makeRoutePath(props.resourcePath, props.popout, props.page)} className="pt2">
            <h2 className={`dib f9 fw4 v-top`}>
-             {props.resource.title}
+             {props.resource.metadata.title}
            </h2>
          </Link>
           <LinksTabBar

@@ -58,7 +58,7 @@ export class MemberScreen extends Component {
             <h2
               className="dib f9 fw4 v-top"
               style={{ width: "max-content" }}>
-              {props.resource.title}
+              {props.resource.metadata.title}
             </h2>
           </Link>
           <LinksTabBar

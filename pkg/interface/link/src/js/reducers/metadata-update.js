@@ -6,64 +6,60 @@ export class MetadataReducer {
     if (data) {
       this.associations(data, state);
       this.add(data, state);
-      this.remove(data, state);
       this.update(data, state);
+      this.remove(data, state);
     }
   }
 
   associations(json, state) {
     let data = _.get(json, 'associations', false);
     if (data) {
-      let metadata = new Map;
-      Object.keys(data).map((key) => {
-        let assoc = data[key];
-        if (assoc['app-name'] !== 'link') {
-          return;
+      let metadata = state.associations;
+      Object.keys(data).map((channel) => {
+        let channelObj = data[channel];
+        let app = data[channel]["app-name"];
+        if (!metadata[app]) {
+          metadata[app] = {};
         }
-        if (state.resources[assoc['app-path']]) {
-          console.error('beware! overwriting previous data', data['app-path']);
-        }
-        state.resources[assoc['app-path']] = {
-          group: assoc['group-path'],
-          ...assoc.metadata
-        };
-      });
+        metadata[app][channelObj["app-path"]] = channelObj;
+      })
+      state.associations = metadata;
     }
   }
 
   add(json, state) {
     let data = _.get(json, 'add', false);
     if (data) {
-      if (state.resources[data['app-path']]) {
-        console.error('beware! overwriting previous data', data['app-path']);
+      let metadata = state.associations;
+      let app = data["app-name"];
+      if (!metadata[app]) {
+        metadata[app] = {};
       }
-      this.update({'update-metadata': data}, state);
-    }
-  }
-
-  remove(json, state) {
-    let data = _.get(json, 'remove', false);
-    if (data) {
-      if (data['app-name'] !== 'link') {
-        return;
-      }
-      const have = state.resources[data['app-path']];
-      if (have && have.group === data['group-path']) {
-        delete state.resources[data['app-path']];
-      }
+      metadata[app][data["app-path"]] = data;
+      state.associations = metadata;
     }
   }
 
   update(json, state) {
     let data = _.get(json, 'update-metadata', false);
     if (data) {
-      if (data['app-name'] !== 'link') {
-        return;
+      let metadata = state.associations;
+      let app = data["app-name"];
+      metadata[app][data["app-path"]] = data;
+      state.associations = metadata;
+    }
+  }
+
+  remove(json, state) {
+    let data = _.get(json, 'remove', false);
+    if (data) {
+      let metadata = state.associations;
+      let app = data["app-name"];
+      if (!metadata[app]) {
+        return false;
       }
-      state.resources[data['app-path']] = {
-        group: data['group-path'],
-        ...data.metadata
-      };
+      delete metadata[app][data["app-path"]];
+      state.associations = metadata;
     }
   }
 }

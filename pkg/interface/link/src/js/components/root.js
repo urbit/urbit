@@ -33,7 +33,7 @@ export class Root extends Component {
     let contacts = !!state.contacts ? state.contacts : {};
     const groups = !!state.groups ? state.groups : {};
 
-    const resources = !!state.resources ? state.resources : {};
+    const associations = !!state.associations ? state.associations : {link: {}, contacts: {}};
     let links = !!state.links ? state.links : {};
     let comments = !!state.comments ? state.comments : {};
     const seen = !!state.seen ? state.seen : {};
@@ -49,7 +49,7 @@ export class Root extends Component {
               <Skeleton
                 active="collections"
                 spinner={state.spinner}
-                resources={resources}
+                associations={associations.link}
                 invites={invites}
                 groups={groups}
                 rightPanelHide={true}
@@ -70,14 +70,14 @@ export class Root extends Component {
             return (
               <Skeleton
                 spinner={state.spinner}
-                resources={resources}
+                associations={associations.link}
                 invites={invites}
                 groups={groups}
                 rightPanelHide={true}
                 sidebarShown={state.sidebarShown}
                 links={links}>
                 <NewScreen
-                  resources={resources}
+                  associations={associations}
                   groups={groups}
                   contacts={contacts}
                   {...props}
@@ -96,16 +96,16 @@ export class Root extends Component {
           render={(props) => {
             const popout = props.match.url.includes("/popout/");
             const resourcePath = '/' + props.match.params.resource;
-            const resource = resources[resourcePath] || {};
+            const resource = associations.link[resourcePath] || {metadata: {}};
 
-            const contactDetails = contacts[resource.group] || {};
-            const group = groups[resource.group] || new Set([]);
-            const amOwner = amOwnerOfGroup(resource.group);
+            const contactDetails = contacts[resource["group-path"]] || {};
+            const group = groups[resource["group-path"]] || new Set([]);
+            const amOwner = amOwnerOfGroup(resource["group-path"]);
 
             return (
               <Skeleton
                 spinner={state.spinner}
-                resources={resources}
+                associations={associations.link}
                 invites={invites}
                 groups={groups}
                 selected={resourcePath}
@@ -117,7 +117,7 @@ export class Root extends Component {
                   resource={resource}
                   contacts={contacts}
                   contactDetails={contactDetails}
-                  groupPath={resource.group}
+                  groupPath={resource["group-path"]}
                   group={group}
                   amOwner={amOwner}
                   resourcePath={resourcePath}
@@ -132,16 +132,16 @@ export class Root extends Component {
           render={ (props) => {
             const popout = props.match.url.includes("/popout/");
             const resourcePath = '/' + props.match.params.resource;
-            const resource = resources[resourcePath] || false;
+            const resource = associations.link[resourcePath] || false;
 
-            const contactDetails = contacts[resource.group] || {};
-            const group = groups[resource.group] || new Set([]);
-            const amOwner = amOwnerOfGroup(resource.group);
+            const contactDetails = contacts[resource["group-path"]] || {};
+            const group = groups[resource["group-path"]] || new Set([]);
+            const amOwner = amOwnerOfGroup(resource["group-path"]);
 
             return (
               <Skeleton
                 spinner={state.spinner}
-                resources={resources}
+                associations={associations.link}
                 invites={invites}
                 groups={groups}
                 selected={resourcePath}
@@ -153,7 +153,7 @@ export class Root extends Component {
                   resource={resource}
                   contacts={contacts}
                   contactDetails={contactDetails}
-                  groupPath={resource.group}
+                  groupPath={resource["group-path"]}
                   group={group}
                   amOwner={amOwner}
                   resourcePath={resourcePath}
@@ -167,11 +167,11 @@ export class Root extends Component {
           <Route exact path="/~link/(popout)?/:resource/:page?"
             render={ (props) => {
               const resourcePath = '/' + props.match.params.resource;
-              const resource = resources[resourcePath] || {};
+              const resource = associations.link[resourcePath] || {metadata: {}};
 
-              const amOwner = amOwnerOfGroup(resource.group);
+              const amOwner = amOwnerOfGroup(resource["group-path"]);
 
-              let contactDetails = contacts[resource.group] || {};
+              let contactDetails = contacts[resource["group-path"]] || {};
 
               let page = props.match.params.page || 0;
 
@@ -192,7 +192,7 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={state.spinner}
-                  resources={resources}
+                  associations={associations.link}
                   invites={invites}
                   groups={groups}
                   selected={resourcePath}
@@ -220,13 +220,13 @@ export class Root extends Component {
           <Route exact path="/~link/(popout)?/:resource/:page/:index/:encodedUrl/:commentpage?"
             render={ (props) => {
               const resourcePath = '/' + props.match.params.resource;
-              const resource = resources[resourcePath] || {};
+              const resource = associations.link[resourcePath] || {metadata: {}};
 
-              const amOwner = amOwnerOfGroup(resource.group);
+              const amOwner = amOwnerOfGroup(resource["group-path"]);
 
               let popout = props.match.url.includes("/popout/");
 
-              let contactDetails = contacts[resource.group] || {};
+              let contactDetails = contacts[resource["group-path"]] || {};
 
               let index = props.match.params.index || 0;
               let page = props.match.params.page || 0;
@@ -246,7 +246,7 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={state.spinner}
-                  resources={resources}
+                  associations={associations.link}
                   invites={invites}
                   groups={groups}
                   selected={resourcePath}
@@ -262,7 +262,7 @@ export class Root extends Component {
                   linkIndex={index}
                   contacts={contactDetails}
                   resourcePath={resourcePath}
-                  groupPath={resource.group}
+                  groupPath={resource["group-path"]}
                   amOwner={amOwner}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
