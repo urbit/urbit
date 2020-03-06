@@ -1320,6 +1320,7 @@
   ++  metadata-scry
     |=  [group-path=path app-path=path]
     ^-  (unit metadata)
+    ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)  ~
     .^  (unit metadata)
       %gx
       (scot %p our.bol)
