@@ -7,58 +7,90 @@
 +$  care  ?(%s %t %u %v %w %x %y %z)
 ::  TODO: move to zuse
 ::
+++  able
+  |%
+  ::  $task: build request
+  ::
+  ::    %make: build hoon files
+  ::    %mark: perform a mark operation
+  ::    %drop: cancel build
+  ::
+  +$  task
+    $%  [%make =desk case=(unit case:clay) all=(set path)]
+        [%mark =desk all=(map path plan)]
+        [%drop ~]
+    ==
+  ::  $gift: build result
+  ::
+  ::    %made: %make build results
+  ::    %mark: %mark build results
+  ::
+  +$  gift
+    $%  [%make all=(map path (each vase tang))]
+        [%mark all=(map path (each cage tang))]
+    ==
+  --
+::  $plan: mark-related build plan
+::
+::    %$:    literal $cage
+::    %bunt: default value for mark
+::    %cast: convert .arg from mark .a to .b
+::    %diff: calculate diff from .old to .new
+::    %join: merge two diffs into one
+::    %mash: annotate merge conflicts
+::    %pact: apply a diff
+::    %vale: validate .noun to .mark
+::    %volt: .noun as .mark, unvalidated
+::
 +$  plan
-  $^  [hed=plan tal=plan]
-  $%  [%ride sut=plan gen=hoon]
-      [%call gat=plan sam=plan]
-      [%dude =tank =plan]
-      [%file =path]
-      [%load =spar]
-      [%grok =path]
-      [%pile =pile]
+  $%  [%$ =cage]
       [%bunt =mark]
-      [%vale =mark =noun]
-      [%volt =mark =noun]
       [%cast =mark =plan]
       [%diff start=plan end=plan]
       [%join =mark one=plan two=plan]
+      [%mash =mark a=[=desk =plan] b=[=desk =plan]]
       [%pact sut=plan dif=plan]
-      [%$ =cage]
+      [%vale =mark =noun]
+      [%volt =mark =noun]
   ==
-+$  pile  (list pike)
-+$  pike
-  $%  [%'/-' =taut]                           ::  surface import
-      [%'/+' =taut]                           ::  library import
-      [%'/=' lal=term =pike]                  ::  wrap face around .pike
-      [%'/~' =hoon]                           ::  hoon against subject
-      [%'/;' gat=hoon =pike]                  ::  call gate on .pike
-      [%'//' marks=(list mark) =pike]         ::  mark conversion sequence
-      [%'/^' typ=hoon =pike]                  ::  cast .pike result
-      [%'/$' ~]                               ::  read renderer arg
-      [%'/!' pax=hoon]                        ::  compile hoon file
-      [%'/@' pax=hoon]                        ::  load file
-      [%'/*' pax=hoon ren=term]               ::  renderer on file tree
-      [%'/%' pax=hoon marks=(list mark)]      ::  file tree through marks
+::  $pile: preprocessed hoon source file
+::
++$  pile
+  $:  =mont
+      =hoon
   ==
+::  $mont: imports declaration
+::
+::    /-  imports from /sur
+::    /+  imports from /lib
+::    /=  imports from some other path
+::
++$  mont
+  $:  sur=(list taut)
+      lib=(list taut)
+      raw=(list [face=term =path])
+  ==
+::  $taut: file import from /lib or /sur
+::
 +$  taut  [face=(unit term) pax=term]
 ::  $hoon-cache: cache for compiler operations
 ::
 +$  hoon-cache  (clock hoon-cache-key vase)
-::  +hoon-cache-key: cache key for a compiler operation
+::  $make-cache-key: unique cache key for part of a %make build
 ::
-::    %call: +slam (vase of) gate on (vase of) sample
-::    %hood: parse file into $scaffold; use !<(scaffold val)
-::    %ride: +slap $hoon against $vase
-::    %slim: compile +slap; use !<([type nock] val)
-::    %slit: infer +slam product type; use !<(type val)
+::    %slap: eval (+slap) a hoon against a subject vase
+::    %mint: compile (+mint) a hoon against a subject type
+::    %rain: parse (+rain) hoon source at a filepath
+::
+::    TODO: do we need anything other than %slap and a file build cache?
+::    TODO: use %rain cache
 ::
 +$  hoon-cache-key
-  $%  [%call gate=vase sample=vase]
-      [%hood =beam txt=@t]
-      [%ride subject=vase formula=hoon]
-      [%slim subject-type=type formula=hoon]
-      [%slit gate=type sample=type]
+  $%  [%slap sut=vase gen=hoon]
+      [%mint sut=type gen=hoon]
+      [%rain pax=path =nail]
   ==
+::
 +$  product  (unit (each cage tang))
 +$  build
   $:  live=?
@@ -99,7 +131,7 @@
   ++  output  (fume-output-raw a)
   ++  form    (fume-form-raw a)
   ++  pure
-    |=  [arg=a]
+    |=  arg=a
     ^-  form
     |=  fume-input
     [s %done arg]
@@ -174,31 +206,57 @@
 ++  with-mark  |=(=mark |*(* [mark +<]))
 ::
 ++  parse-pile
-  |=  =path
-  =/  hoon-parser  (vang & path)
+  |=  [=path tex=tape]
+  =/  m  (fume ,pile)
+  ^-  form:m
+  ;<  [=mont =nail]  bind:m  (parse-mont tex)
+  =/  [=hair res=(unit [src=(list hoon) ^nail])]
+    ((most gap tall:(vang & path)) nail)
+  ?^  res
+    (pure:m [mont tssg+src.u.res])
+  (fail:m leaf+"syntax error {<hair>}" ~)
+::
+++  parse-mont
+  |=  tex=tape
+  =/  m  (fume ,[mont nail])
+  ^-  form:m
+  =/  [=hair res=(unit [=mont =nail])]  (mont-parser [1 1] tex)
+  ?^  res
+    (pure:m u.res)
+  (fail:m leaf+"syntax error {<hair>}" ~)
+::
+++  mont-parser
   %+  ifix  [gay gay]
-  %+  cook  |=((list pile) (zing +<))
-  %+  most  gap
-  %+  cook  |=(pile +<)
-  ;~  pose
+  %+  cook  |=(mont +<)
+  ;~  plug
+    %+  cook  |=((list (list taut)) (zing +<))
+    %+  most  gap
     %+  ifix  [;~(plug net hep gap) gap]
-    (most ;~(plug com gaw) (stag %'/-' parse-taut))
+    (most ;~(plug com gaw) taut-parser)
   ::
+    %+  cook  |=((list (list taut)) (zing +<))
+    %+  most  gap
     %+  ifix  [;~(plug net lus gap) gap]
-    (most ;~(plug com gaw) (stag %'/+' parse-taut))
+    (most ;~(plug com gaw) taut-parser)
   ::
-    %+  cook  |=(pike `pile`~[+<])
-    (stag %'/~' tall:hoon-parser)
+    %+  cook  |=((list [face=term =path]) +<)
+    %+  most  gap
+    %+  ifix  [;~(plug net tis gap) gap]
+    %+  cook  |=([term path] +<)
+    ;~(plug sym ;~(pfix ;~(plug gap net) (more net urs:ab)))
   ==
-++  parse-taut
+::
+++  taut-parser
   %+  cook  |=(taut +<)
   ;~  pose
     (stag ~ ;~(pfix tar sym))
-    (cook |=([face=term tis=@ file=term] [`face file]) ;~(plug sym tis sym))
+    ;~(plug (stag ~ sym) ;~(pfix tis sym))
     (cook |=(a=term [`a a]) sym)
   ==
 --
-|=  =hoon-cache
+::  TODO vane interface
+::
+=|  =hoon-cache
 |=  [our=ship =desk now=@da scry=sley]
 |%
 ++  run-root-build
@@ -245,55 +303,32 @@
   =/  m  (fume ,cage)
   ^-  form:m
   ?-  -.plan
-    ^      (make-cell plan)
     %$     (pure:m cage.plan)
     %bunt  (make-bunt +.plan)
-    %call  (make-call +.plan)
     %cast  (make-cast +.plan)
     %diff  (make-diff +.plan)
-    %dude  (make-dude +.plan)
-    %file  (make-file +.plan)
-    %grok  (make-grok +.plan)
     %join  (make-join +.plan)
-    %load  (make-load +.plan)
+    %mash  !!  ::  TODO: write this
     %pact  (make-pact +.plan)
-    %pile  (make-pile +.plan)
-    %ride  (make-ride +.plan)
     %vale  (make-vale +.plan)
     %volt  (make-volt +.plan)
   ==
 ::
-++  make-bunt  |=(mark (lift-vase (run-bunt +<)))
-++  run-bunt
+++  make-bunt
   |=  =mark
-  =/  m  (fume ,vase)
-  ^-  form:m
-  ;<  cor=vase  bind:m  (load-mark mark)
-  (pure:m (slap cor ^~((ream '+<'))))
-::
-++  make-cell
-  |=  [a=plan b=plan]
   =/  m  (fume ,cage)
   ^-  form:m
-  ;<  [mark hed=vase]  bind:m  (make a)
-  ;<  [mark tal=vase]  bind:m  (make b)
-  (pure:m noun+(slop hed tal))
+  ;<  cor=vase  bind:m  (load-mark mark)
+  (pure:m [mark (slap cor ^~((ream '+<')))])
+::  TODO: redo caching, maybe in some other way
 ::
-++  make-call  |=([gat=plan sam=plan] (lift-vase (run-call +<)))
-++  run-call
-  |=  [gat=plan sam=plan]
-  =/  m  (fume ,vase)
-  ^-  form:m
-  ;<  [mark got=vase]  bind:m  (make gat)
-  ;<  [mark som=vase]  bind:m  (make sam)
-  (do-call got som)
-++  do-call
+++  do-slam
   |=  [gat=vase sam=vase]
   =/  m  (fume ,vase)
   ^-  form:m
-  %+  with-cache-key  [%call gat sam]
+  ::%+  with-cache-key  [%slam gat sam]
   ;<  sit=vase  bind:m
-    %+  with-cache-key  [%slit p.gat p.sam]
+    ::%+  with-cache-key  [%slit p.gat p.sam]
     %+  on-fail:m  |.([leaf+"ford: slit-fail"]~)
     =/  lap  (mule |.((slit p.gat p.sam)))
     ?-  -.lap
@@ -318,14 +353,14 @@
   =/  rab  (mule |.((slap cor (ream (cat 3 'grab:' old)))))
   ?:  ?=(%& -.rab)
     %+  on-fail:m  |.([leaf+"ford: grab-fail {<old>} -> {<new>}"]~)
-    ;<  pro=vase  bind:m  (do-call p.rab arg)
+    ;<  pro=vase  bind:m  (do-slam p.rab arg)
     (pure:m [new pro])
   %+  on-fail:m  |.([leaf+"ford: grow-fail {<old>} -> {<new>}"]~)
   ;<  roc=vase  bind:m  (load-mark old)
   =/  row  (mule |.((slap roc (ream (cat 3 'grow:' new)))))
   ?-  -.row
     %|  (fail:m p.row)
-    %&  ;<  pro=vase  bind:m  (do-call p.row arg)
+    %&  ;<  pro=vase  bind:m  (do-slam p.row arg)
         (pure:m [new pro])
   ==
 ::
@@ -347,60 +382,41 @@
   ?:  ?=(%| -.gat)
     (fail:m leaf+"ford: grad-diff {<p.uno>}" p.gat)
   ;<  fom=mark  bind:m  (run-form p.deg)
-  ;<  dif=vase  bind:m  (do-call p.gat q.dos)
+  ;<  dif=vase  bind:m  (do-slam p.gat q.dos)
   (pure:m [fom dif])
 ::
-++  make-dude
-  |=  [=tank =plan]
-  =/  m  (fume ,cage)
-  ^-  form:m
-  (on-fail:m |.([tank]~) (make plan))
-::
-++  make-file  |=(path (lift-vase (run-file +<)))
 ++  run-file
   |=  =path
   =/  m  (fume ,vase)
   ^-  form:m
-  ;<  =pile  bind:m  (run-grok path)
-  (run-pile pile)
+  ;<  [mark xet=vase]  bind:m  (load-spar %x path)
+  =/  tex=tape  (trip !<(@t xet))
+  ;<  =pile  bind:m  (parse-pile path tex)
+  ;<  sut=vase  bind:m  run-reef
+  ;<  sut=vase  bind:m  (run-tauts sut %sur sur.mont.pile)
+  ;<  sut=vase  bind:m  (run-tauts sut %lib lib.mont.pile)
+  ;<  sut=vase  bind:m  (run-raws sut raw.mont.pile)
+  (run-slap sut hoon.pile)
 ::
-++  run-pike
-  |=  [sut=vase =pike]
-  =/  m  (fume ,cage)
+++  run-tauts
+  |=  [sut=vase wer=?(%lib %sur) taz=(list taut)]
+  =/  m  (fume ,vase)
   ^-  form:m
-  ?+  -.pike  !!
-    %'/-'  (run-fshp sut +.pike)
-    %'/+'  (run-fsls sut +.pike)
-    %'/~'  (run-fssg sut +.pike)
-  ==
-++  run-fshp  |=([sut=vase =taut] (run-taut %sur sut taut))
-++  run-fsls  |=([sut=vase =taut] (run-taut %lib sut taut))
-++  run-taut
-  |=  [wer=?(%lib %sur) sut=vase =taut]
-  =/  m  (fume ,cage)
+  =*  loop  $
+  ?~  taz  (pure:m sut)
+  ;<  pin=vase  bind:m  (load-fit /[wer]/[pax.i.taz])
+  =?  p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.pin]
+  loop(sut (slop pin sut), taz t.taz)
+::
+++  run-raws
+  |=  [sut=vase raw=(list [face=term =path])]
+  =/  m  (fume ,vase)
   ^-  form:m
-  ;<  pin=vase  bind:m  (load-fit /[wer]/[pax.taut])
-  =?  p.pin  ?=(^ face.taut)  [%face u.face.taut p.pin]
-  (pure:m noun+(slop pin sut))
-::
-++  run-fssg  |=([sut=vase gen=hoon] (lift-vase (run-ride +<)))
-::
-++  make-grok
-  |=  =path
-  =/  m  (fume ,cage)
-  ((fmap:m ,pile) |=(p=pile noun+!>(p)) (run-grok path))
-::
-++  run-grok
-  |=  =path
-  =/  m  (fume ,pile)
-  ^-  form:m
-  ;<  [=mark xet=vase]  bind:m  (make-load %x path)
-  ?>  =(%hoon mark)
-  =+  !<(tex=@t xet)
-  =/  par  ((full (parse-pile path)) [1 1] (trip tex))
-  ?~  q.par
-    (fail:m [leaf+"syntax error at TODO"]~)
-  (pure:m p.u.q.par)
+  =*  loop  $
+  ?~  raw  (pure:m sut)
+  ;<  pin=vase  bind:m  (run-file path.i.raw)
+  =.  p.pin  [%face face.i.raw p.pin]
+  loop(sut (slop pin sut), raw t.raw)
 ::
 ++  make-join
   |=  [=mark one=plan two=plan]
@@ -421,12 +437,12 @@
   =/  gat  (mule |.((slap p.gad ^~((ream 'join')))))
   ?:  ?=(%| -.gat)
     (fail:m leaf+"ford: join-gate" p.gat)
-  ;<  dif=vase  bind:m  (do-call p.gat (slop q.uno q.dos))
+  ;<  dif=vase  bind:m  (do-slam p.gat (slop q.uno q.dos))
   ?~  q.dif
     (pure:m [%null dif])
   (pure:m [fom dif])
 ::
-++  make-load
+++  load-spar
   |=  =spar
   =/  m  (fume ,cage)
   ^-  form:m
@@ -457,19 +473,8 @@
   =/  gat  (mule |.((slap sit ^~((ream 'pact:~(grad - +)')))))
   ?:  ?=(%| -.gat)
     (fail:m leaf+"ford: grad-pact {<p.sot>}" p.gat)
-  ;<  pac=vase  bind:m  (do-call p.gat q.fid)
+  ;<  pac=vase  bind:m  (do-slam p.gat q.fid)
   (pure:m [p.sot pac])
-::
-++  make-pile  |=(pile (lift-vase (run-pile +<)))
-++  run-pile
-  |=  =pile
-  =/  m  (fume ,vase)
-  ^-  form:m
-  ;<  sut=vase  bind:m  run-reef
-  =*  loop  $
-  ?~  pile  (pure:m sut)
-  ;<  [mark sot=vase]  bind:m  (run-pike sut i.pile)
-  loop(sut sot, pile t.pile)
 ::
 ++  run-reef
   =/  m  (fume ,vase)
@@ -482,25 +487,19 @@
   |=  [=path sut=vase]
   =/  m  (fume ,vase)
   ^-  form:m
-  ;<  [=mark tex=vase]  bind:m  (make-load %x path)
+  ;<  [=mark tex=vase]  bind:m  (load-spar %x path)
   ?>  ?=(%hoon mark)
   =/  gen  (rain path !<(@t tex))
-  (run-ride sut gen)
+  (run-slap sut gen)
 ::
-++  make-ride
-  |=  [sut=plan gen=hoon]
-  =/  m  (fume ,cage)
-  ;<  [mark vut=vase]  bind:m  (make sut)
-  (lift-vase (run-ride vut gen))
-::
-++  run-ride
+++  run-slap
   |=  [sut=vase gen=hoon]
   =/  m  (fume ,vase)
   ^-  form:m
-  %+  with-cache-key  [%ride sut gen]
+  %+  with-cache-key  [%slap sut gen]
   ;<  sim=vase  bind:m
-    %+  with-cache-key  [%slim p.sut gen]
-    %+  on-fail:m  |.([leaf+"ford: slim-fail"]~)
+    %+  with-cache-key  [%mint p.sut gen]
+    %+  on-fail:m  |.([leaf+"ford: mint-fail"]~)
     =/  lap  (mule |.((~(mint ut p.sut) %noun gen)))
     ?-  -.lap
       %&  (pure:m !>(p.lap))
@@ -511,7 +510,7 @@
   ?-  -.nap
     %0  (pure:m [gol p.nap])
     %1  (fail:m leaf+"ford: scry-block {<p.nap>}" ~)
-    %2  (fail:m leaf+"ford: ride-fail" p.nap)
+    %2  (fail:m leaf+"ford: slap-fail" p.nap)
   ==
 ::
 ++  make-vale
@@ -521,15 +520,15 @@
   ;<  cor=vase  bind:m  (load-mark mark)
   =/  gat=vase  (slap cor ^~((ream 'noun:grab')))
   =/  sam=vase  !>(noun)
-  ;<  pro=vase  bind:m  (do-call gat sam)
+  ;<  pro=vase  bind:m  (do-slam gat sam)
   (pure:m [mark pro])
 ::
 ++  make-volt
   |=  [=mark =noun]
   =/  m  (fume ,cage)
   ^-  form:m
-  ;<  bun=vase  bind:m  (run-bunt mark)
-  (pure:m [mark p.bun noun])
+  ;<  cag=cage  bind:m  (make-bunt mark)
+  (pure:m cag(q.q noun))
 ::
 ++  run-form
   |=  gad=vase
@@ -564,7 +563,7 @@
   |=  pax=path
   =/  m  (fume ,vase)
   ^-  form:m
-  ;<  [mark pox=vase]  bind:m  (make-load %s pax)
+  ;<  [mark pox=vase]  bind:m  (load-spar %s pax)
   (run-file !<(path pox))
 ::
 ++  with-cache-key
