@@ -1,8 +1,9 @@
+{-# LANGUAGE CPP #-}
+
 {-|
     Atom implementation with fast conversions between bytestrings
     and atoms.
 
-    TODO Support 32-bit archetectures.
     TODO Support Big Endian.
 -}
 
@@ -35,17 +36,32 @@ import qualified Data.Vector.Primitive     as VP
 import qualified Foreign.ForeignPtr.Unsafe as Ptr
 
 
+-- Setup BIT and BYT macros. ---------------------------------------------------
+
+#include <MachDeps.h>
+
+#if WORD_SIZE_IN_BITS == 64
+#define BIT 64
+#define BYT 8
+#elif WORD_SIZE_IN_BITS == 32
+#define BIT 32
+#define BYT 4
+#else
+#error WORD_SIZE_IN_BITS must be either 32 or 64
+#endif
+
+
 --------------------------------------------------------------------------------
 
 wordBitWidth# :: Word# -> Word#
-wordBitWidth# w = minusWord# 64## (clz# w)
+wordBitWidth# w = minusWord# BIT## (clz# w)
 
 wordBitWidth :: Word -> Word
 wordBitWidth (W# w) = W# (wordBitWidth# w)
 
 bigNatBitWidth# :: BigNat -> Word#
 bigNatBitWidth# nat =
-  lswBits `plusWord#` ((int2Word# lastIdx) `timesWord#` 64##)
+  lswBits `plusWord#` ((int2Word# lastIdx) `timesWord#` BIT##)
  where
   (# lastIdx, _ #) = subIntC# (sizeofBigNat# nat) 1#
   lswBits          = wordBitWidth# (indexBigNat# nat lastIdx)
@@ -102,7 +118,7 @@ bytesPill = Pill . strip
 -}
 bigNatWords :: BigNat -> Vector Word
 bigNatWords (BN# bArr) =
-  Vector 0 (I# (sizeofByteArray# bArr) `div` 8) (Prim.ByteArray bArr)
+  Vector 0 (I# (sizeofByteArray# bArr) `div` BYT) (Prim.ByteArray bArr)
 
 {-|
     Cast a vector to a BigNat. This will not copy.
@@ -161,21 +177,19 @@ bigNatNat bn = case sizeofBigNat# bn of
 
 --------------------------------------------------------------------------------
 
--- | TODO This assumes 64-bit words
 wordBytes :: Word -> ByteString
 wordBytes wor = BS.reverse $ BS.pack $ go 0 []
  where
-  go i acc | i >= 8    = acc
-  go i acc | otherwise = go (i + 1) (fromIntegral (shiftR wor (i * 8)) : acc)
+  go i acc | i >= BYT  = acc
+  go i acc | otherwise = go (i + 1) (fromIntegral (shiftR wor (i * BYT)) : acc)
 
--- | TODO This assumes 64-bit words
 bytesFirstWord :: ByteString -> Word
 bytesFirstWord buf = go 0 0
  where
-  top = min 8 (BS.length buf)
+  top = min BYT (BS.length buf)
   i idx off = shiftL (fromIntegral $ BS.index buf idx) off
   go acc idx =
-    if idx >= top then acc else go (acc .|. i idx (8 * idx)) (idx + 1)
+    if idx >= top then acc else go (acc .|. i idx (BYT * idx)) (idx + 1)
 
 
 --------------------------------------------------------------------------------
@@ -190,11 +204,11 @@ wordsPill = bytesPill . vecBytes . wordsToBytes
 --------------------------------------------------------------------------------
 
 wordsToBytes :: Vector Word -> Vector Word8
-wordsToBytes (Vector off sz buf) = Vector (off * 8) (sz * 8) buf
+wordsToBytes (Vector off sz buf) = Vector (off * BYT) (sz * BYT) buf
 
 bsToWords :: ByteString -> Vector Word
-bsToWords bs = VP.generate (1 + BS.length bs `div` 8)
-  $ \i -> bytesFirstWord (BS.drop (i * 8) bs)
+bsToWords bs = VP.generate (1 + BS.length bs `div` BYT)
+  $ \i -> bytesFirstWord (BS.drop (i * BYT) bs)
 
 
 --------------------------------------------------------------------------------
