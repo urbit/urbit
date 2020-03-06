@@ -523,7 +523,7 @@
   =/  http-client-core
     (http-client-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
-  =^  moves  http-client-gate  (call:http-client-core call-args)
+  =^  moves  http-client-gate  (call:http-client-core [duct ~ type wrapped-task]:call-args)
   ::
   =/  output=tang
     %+  expect-eq

@@ -5567,7 +5567,7 @@
     %-  sloy  ^-  slyd
     ~/  %intercepted-scry
     |=  [ref=* (unit (set monk)) =term =beam]
-    ^-  (unit (unit (cask milt)))
+    ^-  (unit (unit (cask meta)))
     ::  if the actual scry produces a value, use that value; otherwise use local
     ::
     =/  scry-response  (scry +<.$)
@@ -6124,8 +6124,10 @@
 ::    the +per-event core, which is Ford's main build engine.
 ::
 ++  call
-  |=  [=duct type=* wrapped-task=(hobo task:able)]
+  |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task:able)]
   ^-  [(list move) _ford-gate]
+  ?^  dud
+    ~|(%ford-call-dud (mean tang.u.dud))
   ::
   =/  task=task:able  ((harden task:able) wrapped-task)
   ::  we wrap +per-event with a call that binds our event args
@@ -6237,8 +6239,10 @@
 ::    the +per-event core, which is Ford's main build engine.
 ::
 ++  take
-  |=  [=wire =duct wrapped-sign=(hypo sign)]
+  |=  [=wire =duct dud=(unit goof) wrapped-sign=(hypo sign)]
   ^-  [(list move) _ford-gate]
+  ?^  dud
+    ~|(%ford-take-dud (mean tang.u.dud))
   ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
   ::
   =/  =sign  q.wrapped-sign
@@ -6349,7 +6353,7 @@
     =.  -.ax  %~2020.2.21
     ford-gate
   =.  ax  [%~2020.2.21 state.old]
-  =.  ford-gate  +:(call ~[/ford-load-self] *type %trim 0)
+  =.  ford-gate  +:(call ~[/ford-load-self] ~ *type %trim 0)
   ford-gate
 ::  +stay: produce current state
 ::

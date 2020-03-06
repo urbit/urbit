@@ -474,7 +474,7 @@
   ::
   =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
-  =^  moves  clay-gate  (call:clay-core call-args)
+  =^  moves  clay-gate  (call:clay-core [duct ~ type wrapped-task]:call-args)
   ::
   =/  output=tang
     %+  expect-eq
@@ -495,7 +495,7 @@
   ::
   =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
-  =^  moves  clay-gate  (call:clay-core call-args)
+  =^  moves  clay-gate  (call:clay-core [duct ~ type wrapped-task]:call-args)
   ::
   =/  output=tang  (move-comparator moves)
   ::
@@ -513,7 +513,7 @@
   ::
   =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
-  =^  moves  clay-gate  (take:clay-core take-args)
+  =^  moves  clay-gate  (take:clay-core [wire duct ~ wrapped-sign]:take-args)
   ::
   =/  output=tang
     %+  expect-eq
@@ -534,7 +534,7 @@
   ::
   =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
-  =^  moves  clay-gate  (take:clay-core take-args)
+  =^  moves  clay-gate  (take:clay-core [wire duct ~ wrapped-sign]:take-args)
   ::
   =/  output=tang  (move-comparator moves)
   ::
