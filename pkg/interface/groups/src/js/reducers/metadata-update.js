@@ -40,6 +40,7 @@ export class MetadataReducer {
       state.associations = metadata;
     }
   }
+
   update(json, state) {
     let data = _.get(json, 'update-metadata', false);
     if (data) {
