@@ -119,6 +119,7 @@
   (slog leaf/"ames: {(scow %p ship)}: {(print)}" ~)
 --
 =>
+~%  %ames-generics  ..is  ~
 |%
 +|  %generics
 ::  $mk-item: constructor for +ordered-map item type
@@ -916,15 +917,25 @@
     ::  +call: handle request $task
     ::
     ++  call
-      |=  [=duct type=* wrapped-task=(hobo task)]
+      |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task)]
       ::
       =/  =task  ((harden task) wrapped-task)
+      ::
+      ::  error notifications "downcast" to %crud or %hole
+      ::
+      =?  task  ?=(^ dud)
+        ?-  -.task
+          %crud  ~|(%crud-in-crud !!)
+          %hear  [%hole [lane blob]:task]
+          *      [%crud -.task tang.u.dud]
+        ==
+      ::
       ::  %born: set .unix-duct and start draining .queued-events
       ::
       ?:  ?=(%born -.task)
         ::  process %born using wrapped adult ames
         ::
-        =^  moves  adult-gate  (call:adult-core duct type task)
+        =^  moves  adult-gate  (call:adult-core duct dud type task)
         ::  if no events were queued up, metamorphose
         ::
         ?~  queued-events
@@ -936,13 +947,19 @@
         [moves larval-gate]
       ::  any other event: enqueue it until we have a .unix-duct
       ::
+      ::    XX what to do with errors?
+      ::
       =.  queued-events  (~(put to queued-events) %call duct type task)
       [~ larval-gate]
     ::  +take: handle response $sign
     ::
     ++  take
-      |=  [=wire =duct type=* =sign]
+      |=  [=wire =duct dud=(unit goof) type=* =sign]
+      ?^  dud
+        ~|(%ames-larval-take-dud (mean tang.u.dud))
       ::  enqueue event if not a larval drainage timer
+      ::
+      ::    XX what to do with errors?
       ::
       ?.  =(/larva wire)
         =.  queued-events  (~(put to queued-events) %take wire duct type sign)
@@ -982,8 +999,8 @@
       =^  first-event  queued-events  ~(get to queued-events)
       =^  moves  adult-gate
         ?-  -.first-event
-          %call  (call:adult-core +.first-event)
-          %take  (take:adult-core +.first-event)
+          %call  (call:adult-core [duct ~ type wrapped-task]:+.first-event)
+          %take  (take:adult-core [wire duct ~ type sign]:+.first-event)
         ==
       ::  .queued-events has been cleared; metamorphose
       ::
@@ -1049,10 +1066,19 @@
 ::  +call: handle request $task
 ::
 ++  call
-  |=  [=duct type=* wrapped-task=(hobo task)]
+  |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task)]
   ^-  [(list move) _ames-gate]
   ::
   =/  =task  ((harden task) wrapped-task)
+  ::
+  ::  error notifications "downcast" to %crud or %hole
+  ::
+  =?  task  ?=(^ dud)
+    ?-  -.task
+      %crud  ~|(%crud-in-crud !!)
+      %hear  [%hole [lane blob]:task]
+      *      [%crud -.task tang.u.dud]
+    ==
   ::
   =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
   ::
@@ -1077,8 +1103,11 @@
 ::  +take: handle response $sign
 ::
 ++  take
-  |=  [=wire =duct type=* =sign]
+  |=  [=wire =duct dud=(unit goof) type=* =sign]
   ^-  [(list move) _ames-gate]
+  ?^  dud
+    ~|(%ames-take-dud (mean tang.u.dud))
+  ::
   ::
   =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
   ::
@@ -1222,6 +1251,7 @@
 --
 ::  helpers
 ::
+~%  %ames-helpers  +>+  ~
 |%
 ++  per-event
   =|  moves=(list move)
