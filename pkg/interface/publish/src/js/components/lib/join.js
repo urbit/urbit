@@ -10,7 +10,8 @@ export class JoinScreen extends Component {
     this.state = {
       book: '/',
       error: false,
-      awaiting: null
+      awaiting: null,
+      disable: false
     };
 
     this.bookChange = this.bookChange.bind(this);
@@ -91,10 +92,11 @@ export class JoinScreen extends Component {
 
     // TODO: askHistory setting
     window.api.setSpinner(true);
+    this.setState({disable: true});
     window.api.action("publish","publish-action", actionData).catch((err) => {
       console.log(err)
     }).then(() => {
-      this.setState({awaiting: text})
+      this.setState({awaiting: text, disable: false, book: ""})
       window.api.setSpinner(false);
     });
 
@@ -110,7 +112,7 @@ export class JoinScreen extends Component {
     const { props, state } = this;
 
     let joinClasses = "db f9 green2 ba pa2 b--green2 bg-gray0-d pointer";
-    if ((!state.book) || (state.book === "/")) {
+    if ((state.disable) || (!state.book) || (state.book === "/")) {
       joinClasses = 'db f9 gray2 ba pa2 b--gray3 bg-gray0-d';
     }
 
@@ -154,7 +156,7 @@ export class JoinScreen extends Component {
           {errElem}
           <br />
           <button
-            disabled={(!state.book) || (state.book === "/")}
+            disabled={(this.state.disable) || (!state.book) || (state.book === "/")}
             onClick={this.onClickJoin.bind(this)}
             className={joinClasses}
           >Join Chat</button>
