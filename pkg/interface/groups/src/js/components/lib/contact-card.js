@@ -500,8 +500,8 @@ export class ContactCard extends Component {
       <div className="w-100 h-100 overflow-hidden">
         <div className={"flex justify-between w-100 bg-white bg-gray0-d "  +
         "bb b--gray4 b--gray2-d "}>
-          <div className="w-100 h2 dn-m dn-l dn-xl inter pb6 pl3 pt3 f8">
-            <Link to="/~groups/">{"⟵"}</Link>
+          <div className="ml3 f9 pt4 w-100">
+            <Link to={"/~groups/detail" + props.path}>{"⟵ Channels"}</Link>
           </div>
           <div className="flex">
             <button
@@ -512,13 +512,13 @@ export class ContactCard extends Component {
                   this.editToggle();
                 }
               }}
-              className={`white-d bg-gray0-d ml3 mt2 mb2 f9 pa1 pointer ` + ourOpt}>
+              className={`white-d bg-gray0-d ml3 mt2 mb2 f9 pa1 pointer flex-shrink-0 ` + ourOpt}>
               {editInfoText}
             </button>
           </div>
           <button
             className={
-              `bg-gray0-d pr4 mt4 mb4 f9 red2 pointer ` + adminOpt
+              `bg-gray0-d ph4 mt4 mb4 f9 red2 pointer flex-shrink-0 ` + adminOpt
             }
             onClick={this.removeFromGroup}>
             {(

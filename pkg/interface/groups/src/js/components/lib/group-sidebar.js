@@ -19,7 +19,7 @@ export class GroupSidebar extends Component {
             to={"/~groups/me"}>
             <div
               className={
-                "w-100 pl4 pt1 pb1 f9 mb5 flex justify-start content-center " +
+                "w-100 pl4 pt1 pb1 f9 flex justify-start content-center " +
                 selectedClass}>
               <Sigil
               ship={window.ship}
@@ -92,10 +92,10 @@ export class GroupSidebar extends Component {
           <Link to="/~groups/new" className="dib">
             <p className="f9 pt4 pl4 green2 bn">Create Group</p>
           </Link>
-          <h2 className="f9 pt6 pr4 pb2 pl4 gray2 c-default">Your Identity</h2>
+          <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Your Identity</h2>
           {rootIdentity}
           {inviteItems}
-          <h2 className="f9 pt3 pr4 pb2 pl4 gray2 c-default">Groups</h2>
+          <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Groups</h2>
           {groupItems}
         </div>
       </div>

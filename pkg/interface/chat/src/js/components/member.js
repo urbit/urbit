@@ -50,6 +50,15 @@ export class MemberScreen extends Component {
 
     let isinPopout = this.props.popout ? "popout/" : "";
 
+    let title = props.station.substr(1);
+
+    if (props.association && "metadata" in props.association) {
+      title =
+        props.association.metadata.title !== ""
+          ? props.association.metadata.title
+          : props.station.substr(1);
+    }
+
     return (
       <div className="h-100 w-100 overflow-x-hidden flex flex-column white-d">
         <div
@@ -68,9 +77,10 @@ export class MemberScreen extends Component {
           <Link to={`/~chat/` + isinPopout + `room` + props.station}
           className="pt2 white-d">
             <h2
-              className="mono dib f9 fw4 v-top"
+              className={"dib f9 fw4 lh-solid v-top " +
+                ((title === props.station.substr(1)) ? "mono" : "")}
               style={{ width: "max-content" }}>
-              {props.station.substr(1)}
+              {title}
             </h2>
           </Link>
           <ChatTabBar

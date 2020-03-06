@@ -26,7 +26,7 @@ export class Skeleton extends Component {
         <ChannelsSidebar
             active={this.props.active}
             popout={popout}
-            resources={this.props.resources}
+            associations={this.props.associations}
             invites={this.props.invites}
             groups={this.props.groups}
             selected={this.props.selected}

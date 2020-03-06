@@ -14,7 +14,10 @@ class Store {
     this.state = {
       contacts: {},
       groups: {},
-      resources: {},
+      associations: {
+        link: {},
+        contacts: {}
+      },
       invites: {},
       links: {},
       comments: {},

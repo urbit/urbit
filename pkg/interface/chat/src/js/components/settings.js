@@ -26,11 +26,12 @@ export class SettingsScreen extends Component {
   }
 
   componentDidMount() {
-    if ((this.props.association) && (this.props.association.metadata)) {
+    const { props } = this;
+    if (props.association && "metadata" in props.association) {
       this.setState({
-        title: this.props.association.metadata.title,
-        description: this.props.association.metadata.description,
-        color: uxToHex(this.props.association.metadata.color)
+        title: props.association.metadata.title,
+        description: props.association.metadata.description,
+        color: uxToHex(props.association.metadata.color)
       });
     }
   }
@@ -47,11 +48,12 @@ export class SettingsScreen extends Component {
     }
 
     if ((this.state.title === "") && (prevProps !== this.props)) {
-      if ((props.association) && (props.association.metadata))
-      this.setState({
-        title: props.association.metadata.title,
-        description: props.association.metadata.description,
-        color: uxToHex(props.association.metadata.color)});
+      if (props.association && "metadata" in props.association)
+        this.setState({
+          title: props.association.metadata.title,
+          description: props.association.metadata.description,
+          color: uxToHex(props.association.metadata.color)
+        });
     }
   }
 
@@ -109,7 +111,7 @@ export class SettingsScreen extends Component {
 
     let chatOwner = (deSig(props.match.params.ship) === window.ship);
 
-    let association = ((props.association) && (props.association.metadata))
+    let association = (props.association) && ("metadata" in props.association)
       ? props.association : {};
 
     return(
@@ -234,6 +236,13 @@ export class SettingsScreen extends Component {
         text = "Leaving...";
       }
 
+      let title = props.station.substr(1);
+
+      if ((props.association) && ("metadata" in props.association)) {
+        title = (props.association.metadata.title !== "")
+          ? props.association.metadata.title : props.station.substr(1);
+      }
+
       return (
         <div className="h-100 w-100 overflow-x-hidden flex flex-column white-d">
           <div
@@ -251,9 +260,10 @@ export class SettingsScreen extends Component {
             <Link to={`/~chat/` + isinPopout + `room` + props.station}
             className="pt2 white-d">
               <h2
-                className="mono dib f9 fw4 v-top"
+                className={"dib f9 fw4 lh-solid v-top " +
+                  ((title === props.station.substr(1)) ? "mono" : "")}
                 style={{ width: "max-content" }}>
-                {props.station.substr(1)}
+                {title}
               </h2>
             </Link>
             <ChatTabBar
@@ -267,6 +277,13 @@ export class SettingsScreen extends Component {
           </div>
         </div>
       );
+    }
+
+    let title = props.station.substr(1);
+
+    if ((props.association) && ("metadata" in props.association)) {
+      title = (props.association.metadata.title !== "")
+        ? props.association.metadata.title : props.station.substr(1);
     }
 
     return (
@@ -286,9 +303,10 @@ export class SettingsScreen extends Component {
           <Link to={`/~chat/` + isinPopout + `room` + props.station}
           className="pt2">
             <h2
-              className="mono dib f9 fw4 v-top"
+              className={"dib f9 fw4 lh-solid v-top " +
+                ((title === props.station.substr(1)) ? "mono" : "")}
               style={{ width: "max-content" }}>
-              {props.station.substr(1)}
+              {title}
             </h2>
           </Link>
           <ChatTabBar
