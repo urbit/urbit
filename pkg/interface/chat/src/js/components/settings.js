@@ -26,11 +26,12 @@ export class SettingsScreen extends Component {
   }
 
   componentDidMount() {
-    if ((this.props.association) && (this.props.association.metadata)) {
+    const { props } = this;
+    if (props.association && "metadata" in props.association) {
       this.setState({
-        title: this.props.association.metadata.title,
-        description: this.props.association.metadata.description,
-        color: uxToHex(this.props.association.metadata.color)
+        title: props.association.metadata.title,
+        description: props.association.metadata.description,
+        color: uxToHex(props.association.metadata.color)
       });
     }
   }
@@ -47,11 +48,12 @@ export class SettingsScreen extends Component {
     }
 
     if ((this.state.title === "") && (prevProps !== this.props)) {
-      if ((props.association) && (props.association.metadata))
-      this.setState({
-        title: props.association.metadata.title,
-        description: props.association.metadata.description,
-        color: uxToHex(props.association.metadata.color)});
+      if (props.association && "metadata" in props.association)
+        this.setState({
+          title: props.association.metadata.title,
+          description: props.association.metadata.description,
+          color: uxToHex(props.association.metadata.color)
+        });
     }
   }
 
@@ -109,7 +111,7 @@ export class SettingsScreen extends Component {
 
     let chatOwner = (deSig(props.match.params.ship) === window.ship);
 
-    let association = ((props.association) && (props.association.metadata))
+    let association = (props.association) && ("metadata" in props.association)
       ? props.association : {};
 
     return(
@@ -236,7 +238,7 @@ export class SettingsScreen extends Component {
 
       let title = props.station.substr(1);
 
-      if ((props.association) && (props.association.metadata)) {
+      if ((props.association) && ("metadata" in props.association)) {
         title = (props.association.metadata.title !== "")
           ? props.association.metadata.title : props.station.substr(1);
       }
@@ -279,7 +281,7 @@ export class SettingsScreen extends Component {
 
     let title = props.station.substr(1);
 
-    if ((props.association) && (props.association.metadata)) {
+    if ((props.association) && ("metadata" in props.association)) {
       title = (props.association.metadata.title !== "")
         ? props.association.metadata.title : props.station.substr(1);
     }

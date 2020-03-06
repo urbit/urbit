@@ -154,16 +154,18 @@ export class Root extends Component {
               };
 
               let roomContacts = {};
-              let associatedGroup = ((associations.chat[station]) &&
-              (associations.chat[station]["group-path"]))
-                ? associations.chat[station]["group-path"] : "";
+              let associatedGroup =
+                station in associations["chat"] &&
+                "group-path" in associations.chat[station]
+                  ? associations.chat[station]["group-path"]
+                  : "";
 
               if ((associations.chat[station]) && (associatedGroup in contacts)) {
                 roomContacts = contacts[associatedGroup]
               }
 
-              let association = (associations.chat[station])
-                ? associations.chat[station] : {};
+              let association =
+                station in associations["chat"] ? associations.chat[station] : {};
 
 
               let group = state.groups[station] || new Set([]);
@@ -215,8 +217,8 @@ export class Root extends Component {
               };
               let popout = props.match.url.includes("/popout/");
 
-              let association = (associations.chat[station])
-                ? associations.chat[station] : {};
+              let association =
+                station in associations["chat"] ? associations.chat[station] : {};
 
               return (
                 <Skeleton
@@ -255,8 +257,8 @@ export class Root extends Component {
 
               let popout = props.match.url.includes("/popout/");
 
-              let association = (associations.chat[station])
-                ? associations.chat[station] : {};
+              let association =
+                station in associations["chat"] ? associations.chat[station] : {};
 
               return (
                 <Skeleton

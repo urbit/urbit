@@ -52,9 +52,11 @@ export class MemberScreen extends Component {
 
     let title = props.station.substr(1);
 
-    if ((props.association) && (props.association.metadata)) {
-      title = (props.association.metadata.title !== "")
-        ? props.association.metadata.title : props.station.substr(1);
+    if (props.association && "metadata" in props.association) {
+      title =
+        props.association.metadata.title !== ""
+          ? props.association.metadata.title
+          : props.station.substr(1);
     }
 
     return (
