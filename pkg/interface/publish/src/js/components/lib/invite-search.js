@@ -205,7 +205,7 @@ export class InviteSearch extends Component {
     ) {
       let groupHeader =
         state.searchResults.groups.length > 0 ? (
-          <p className="f9 gray2 ph3">Groups</p>
+          <p className="f9 gray2 ph3 pb2">Groups</p>
         ) : (
             ""
           );
@@ -222,11 +222,11 @@ export class InviteSearch extends Component {
           <li
             key={group}
             className={
-              "list mono mix-blend-diff white f8 pv2 ph3 pointer" +
+              "list mono white-d f8 pv2 ph3 pointer" +
               " hover-bg-gray4 hover-bg-gray1-d"
             }
-            onClick={e => this.addGroup(group)}>
-            {group}
+            onClick={() => this.addGroup(group)}>
+            <span className="mix-blend-diff white">{group}</span>
           </li>
         );
       });
