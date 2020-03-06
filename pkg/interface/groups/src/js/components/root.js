@@ -82,7 +82,7 @@ export class Root extends Component {
                 </Skeleton>
               );
           }} />
-          <Route exact path="/~groups/:detail?/:ship/:group/"
+          <Route exact path="/~groups/(detail)?/(settings)?/:ship/:group/"
             render={ (props) => {
               let groupPath =
                 `/${props.match.params.ship}/${props.match.params.group}`;
