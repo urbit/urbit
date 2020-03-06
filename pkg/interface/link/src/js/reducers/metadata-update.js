@@ -18,7 +18,7 @@ export class MetadataReducer {
       Object.keys(data).map((channel) => {
         let channelObj = data[channel];
         let app = data[channel]["app-name"];
-        if (!metadata[app]) {
+        if (!(app in metadata)) {
           metadata[app] = {};
         }
         metadata[app][channelObj["app-path"]] = channelObj;
@@ -32,7 +32,7 @@ export class MetadataReducer {
     if (data) {
       let metadata = state.associations;
       let app = data["app-name"];
-      if (!metadata[app]) {
+      if (!(app in metadata)) {
         metadata[app] = {};
       }
       metadata[app][data["app-path"]] = data;
@@ -55,7 +55,7 @@ export class MetadataReducer {
     if (data) {
       let metadata = state.associations;
       let app = data["app-name"];
-      if (!metadata[app]) {
+      if (!(app in metadata)) {
         return false;
       }
       delete metadata[app][data["app-path"]];
