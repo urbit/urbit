@@ -115,11 +115,11 @@ export class NewScreen extends Component {
           </div>
           <button
             onClick={this.onClickCreate.bind(this)}
-            className="f8 ba pa2 b--green2 green2 pointer">
+            className="f9 ba pa2 b--green2 green2 pointer bg-transparent">
             Start Group
           </button>
           <Link to="/~groups">
-            <button className="f8 ml3 ba pa2 b--black pointer">Cancel</button>
+            <button className="f9 ml3 ba pa2 b--black pointer bg-transparent b--white-d white-d">Cancel</button>
           </Link>
         </div>
       </div>
