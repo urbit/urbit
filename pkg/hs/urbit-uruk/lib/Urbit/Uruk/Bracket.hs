@@ -50,8 +50,24 @@ instance Monad SK where
   S   >>= f = S
   K   >>= f = S
 
+pattern VS = Var S
+pattern VK = Var K
+
 
 -- Naive Bracket Abstraction Approach ------------------------------------------
+
+throughScope
+  :: forall m n v w a b
+   . (Monad m, Monad n)
+  => (n (Var v a) -> m (Var w b))
+  -> Scope v n a
+  -> Scope w m b
+throughScope f = toScope . f . fromScope
+
+strip :: Traversable f => f (Var b a) -> Maybe (f a)
+strip = traverse $ \case
+  B _ -> Nothing
+  F x -> Just x
 
 {-
   Bracket Abstraction -- naive translation from lambdas to combinators.
@@ -61,54 +77,71 @@ instance Monad SK where
 
   - `goLam` takes a lambda expression whose body contains no lambda
     expressions and translates it to combinators.
-
-  - `strip` removes the most recent binding if it is not used.
 -}
-naiveBracket :: Inp a -> Out (SK a)
+naiveBracket :: Exp b a -> Out (SK a)
 naiveBracket = go
  where
-  go :: Inp a -> Out (SK a)
+  go :: Exp b a -> Out (SK a)
   go = \case
     Var x    -> Var (V x)
     x   :@ y -> go x :@ go y
-    Lam n  b -> fmap join $ goLam $ toScope $ fmap sequence $ go $ fromScope b
+    Lam n  b -> toSK $ throughScope (fmap sequence . go) b
 
-  goLam :: Scope () Out a -> Out (SK a)
-  goLam = fromScope >>> \case
-    (strip -> Just b) -> Var K :@ (V <$> b)
-    Var (B ())        -> Var S :@ Var K :@ Var K
-    Var (F x )        -> Var (V x)
-    x   :@ y          -> Var S :@ goLam (toScope x) :@ goLam (toScope y)
+  toSK :: Scope b Out (SK a) -> Out (SK a)
+  toSK = fromScope >>> \case
+    (strip -> Just b) -> VK :@ b
+    Var (B _)         -> VS :@ VK :@ VK
+    Var (F v)         -> Var v
+    x :@ y            -> VS :@ toSK (toScope x) :@ toSK (toScope y)
     Lam b  s          -> absurd b
-
-  strip :: Exp b (Var () a) -> Maybe (Exp b a)
-  strip = traverse $ \case
-    B () -> Nothing
-    F x  -> Just x
-
 
 -- John Tromp's Bracket Abtraction Approach ------------------------------------
 
+pattern VFS = Var (F S)
+pattern VFK = Var (F K)
+
 {-
-    Bracket Abstraction -- john Tromp's translation from lambdas to
-    combinators.
+  Bracket Abstraction -- john Tromp's translation from lambdas to
+  combinators. It adds some optimizations:
 
-    - `go` is the primary loop. It takes an lambda expression and
-      translates it to combinators.
+  ```
+  λx.SK_    -> SK
+  λx.mx     -> m             --  m does not reference x
+  λx.xmx    -> λx.SSKxm
+  λx.m(nb)  -> λx.S(λ_.m)nb  --  m,n are in {S,K}
+  λx.(mn)b  -> λ_.Sm(λx.b)n  --  m,n are in {S,K}
+  λx.mb(nb) -> λX.Smnb       --  m,n are {S,K} and b contains no lambda terms
+  ```
 
-    - `goLam` takes a lambda expression whose body contains no lambda
-      expressions and translates it to combinators.
-
-    - `strip` removes the most recent binding if it is not used.
+  This changes the shape of the computation somewhat, since simplification
+  rules can re-introduce lambda expressions.
 -}
-trompBracket :: Inp a -> Out (SK a)
-trompBracket = error "TODO"
+trompBracket :: Exp b a -> Out (SK a)
+trompBracket = go
+ where
+  go :: Exp b a -> Out (SK a)
+  go = \case
+    Var x    -> Var (V x)
+    x   :@ y -> go x :@ go y
+    Lam n  b -> toSK $ throughScope (fmap sequence . go) b
+
+  toSK :: Scope b Out (SK a) -> Out (SK a)
+  toSK = fromScope >>> \case
+    VFS :@ VFK :@ _   -> VS :@ VK
+    (strip -> Just b) -> VK :@ b
+    Var (B _)         -> VS :@ VK :@ VK
+    Var (F v)         -> Var v
+    x :@ y            -> VS :@ toSK (toScope x) :@ toSK (toScope y)
+    Lam b  s          -> absurd b
+
+  --  Maybe not necessary
+  inp :: Out a -> Exp b a
+  inp = \case
+    Var x    -> Var x
+    (:@) x y -> inp x :@ inp y
+    Lam v _  -> absurd v
 
 {-
-babs env (Lam x e)
-  | Var "s" :@ Var"k" :@ _ <- t = Var "s" :@ Var "k"
-  | x `notElem` fv [] t = Var "k" :@ t
-  | Var y <- t, x == y  = Var "s" :@  Var "k" :@ Var "k"
   | m :@ Var y <- t, x == y, x `notElem` fv [] m = m
   | Var y :@ m :@ Var z <- t, x == y, x == z =
     babs env $ Lam x $ Var "s" :@ Var "s" :@ Var "k" :@ Var x :@ m
@@ -125,9 +158,4 @@ babs env (Var s)
   | otherwise              = Var s
 babs env (m :@ n) = babs env m :@ babs env n
 
-isComb e = null $ fv [] e \\ ["s", "k"]
-
-noLamEq (Var x) (Var y) = x == y
-noLamEq (a :@ b) (c :@ d) = a `noLamEq` c && b `noLamEq` d
-noLamEq _ _ = False
 -}
