@@ -10,8 +10,9 @@ let
       deps = crossdeps env;
     };
 
-  linux64 = release "linux64" nixcrpkgs.linux64;
-  darwin  = release "darwin"  nixcrpkgs.mac;
+  linux64   = release "linux64" nixcrpkgs.linux64;
+  darwin    = release "darwin"  nixcrpkgs.mac;
+  raspberry = release "darwin"  nixcrpkgs.armv6-linux-musl;
 
   ent = env:
     import ./pkgs/ent/cross.nix env;
@@ -44,6 +45,7 @@ let
 in
 
 {
-  linux64 = builds-for-platform linux64;
-  darwin  = darwin_extra // builds-for-platform darwin;
+  linux64   = builds-for-platform linux64;
+  darwin    = darwin_extra // builds-for-platform darwin;
+  raspberry = builds-for-platform raspberry;
 }
