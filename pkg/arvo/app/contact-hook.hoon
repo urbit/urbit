@@ -422,6 +422,6 @@
   =/  shp  (~(get by synced) t.pax)
   ?~  shp  ~
   ?:  =(u.shp our.bol)
-    [%pass pax %agent [our.bol %chat-store] %leave ~]~
-  [%pass pax %agent [u.shp %chat-hook] %leave ~]~
+    [%pass pax %agent [our.bol %contact-store] %leave ~]~
+  [%pass pax %agent [u.shp %contadt-hook] %leave ~]~
 --

@@ -4,7 +4,7 @@
   $%  ::  %add-owned: make a chatroom accessible to foreign ships
       ::  specified by the rw-security model
       ::
-      [%add-owned =path security=rw-security allow-history=?]
+      [%add-owned =path allow-history=?]
       ::  %add-synced: mirror a foreign chatroom to our chat-store
       ::
       [%add-synced =ship =path ask-history=?]
