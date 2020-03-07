@@ -421,7 +421,7 @@
     %cast  (run-cast +.plan)
     %diff  (run-diff +.plan)
     %join  (run-join +.plan)
-    %mash  !!  ::  TODO: write this
+    %mash  (run-mash +.plan)
     %pact  (run-pact +.plan)
     %vale  (run-vale +.plan)
     %volt  (run-volt +.plan)
@@ -499,6 +499,27 @@
   ?~  q.dif
     (pure:m [%null dif])
   (pure:m [fom dif])
+::
+++  run-mash
+  |=  [=mark a=[=^desk =plan] b=[=^desk =plan]]
+  =*  loop  $
+  =/  m  (fume ,cage)
+  ;<  cor=vase  bind:m  (load-mark mark)
+  ;<  gad=(each ^mark vase)  bind:m  (run-grad cor)
+  ?:  ?=(%& -.gad)
+    loop(mark p.gad)
+  ;<  fom=@tas  bind:m  (run-form p.gad)
+  ;<  uno=cage  bind:m  (run-plan plan.a)
+  ;<  dos=cage  bind:m  (run-plan plan.b)
+  ?.  &(=(fom p.uno) =(fom p.dos))
+    (fail:m leaf+"ford: mash-mark {<[mark p.uno p.dos]>}" ~)
+  ?:  =(q.q.uno q.q.dos)
+    (pure:m null+!>(~))
+  %+  pure:m  fom
+  %+  slam  (slap p.gad ^~((ream 'mash')))
+  %+  slop
+    :(slop !>(our) !>(desk.a) q.uno)
+  :(slop !>(our) !>(desk.b) q.dos)
 ::
 ++  run-pact
   |=  [sut=plan dif=plan]
