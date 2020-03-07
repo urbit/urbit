@@ -61,16 +61,25 @@
   ++  on-save   !>(state)
   ++  on-load
     |=  old-vase=vase
+    ^-  (quip card _this)
     |^
     =/  old  !<(versioned-state old-vase)
     ?:  ?=(%1 -.old)
       [~ this(state old)]
     ::  path structure ugprade logic
     ::
-    :_  this(state [%1 +.old ~])
-    %-  zing
-    %+  turn  ~(tap in (scry:cc (set path) %chat-store /keys))
-    generate-cards
+    =/  keys=(set path)  (scry:cc (set path) %chat-store /keys)
+    =/  upgraded-state
+        %*  .  *state-1
+            synced  synced
+            invite-created  invite-created
+            allow-history  allow-history
+            loaded-cards
+          %-  zing
+          ^-  (list (list card))
+          %+  turn  ~(tap in keys)  generate-cards
+        ==
+    [~ this(state upgraded-state)]
     ::
     ++  generate-cards
       |=  old-chat=path

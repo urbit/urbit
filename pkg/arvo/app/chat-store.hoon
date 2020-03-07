@@ -40,7 +40,7 @@
     ?:  ?=(%1 -.old)
       [~ this(state old)]
     :_  this(state [%1 inbox.old])
-    [%pass /lo-chst %agent [our.bowl %chat-hook] %poke %fact !>(%store-load)]~
+    [%pass /lo-chst %agent [our.bowl %chat-hook] %poke %noun !>(%store-load)]~
       ::
   ++  on-poke
     |=  [=mark =vase]
