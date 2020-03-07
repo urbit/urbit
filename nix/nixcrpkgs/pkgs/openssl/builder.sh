@@ -8,6 +8,8 @@ cd build
 err () { echo ERR "$@" >&2; }
 
 case $host in
+    armv6-linux-musleabi)
+        confighost="linux-armv4 -march=armv6";;
     i686-linux-musleabi)
         confighost=linux-x86;;
     x86_64-linux-musleabi)
@@ -33,13 +35,13 @@ esac
 #
 # [2]: https://github.com/rust-embedded/cross/pull/218/files
 
-../openssl-$version/Configure   \
-  --prefix=$out                 \
-  --cross-compile-prefix=$host- \
-  no-shared                     \
-  no-dso                        \
-  no-async                      \
-  $confighost                   \
+perl ../openssl-$version/Configure \
+  --prefix=$out                    \
+  --cross-compile-prefix=$host-    \
+  no-shared                        \
+  no-dso                           \
+  no-async                         \
+  $confighost                      \
   -fPIC
 
 make
