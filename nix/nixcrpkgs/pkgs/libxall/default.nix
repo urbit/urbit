@@ -1,5 +1,5 @@
 # Amalgamates all of our X libraries into one derivation to make it easier to
-# build projects like Qt that expect them all to be installed in one place.
+# build projects that use a lot of them.
 
 { crossenv, libs }:
 

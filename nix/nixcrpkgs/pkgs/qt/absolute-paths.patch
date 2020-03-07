@@ -1,6 +1,6 @@
-diff -ur qtbase-opensource-src-5.9.2-orig/configure qtbase-opensource-src-5.9.2/configure
---- qtbase-opensource-src-5.9.2-orig/configure	2017-10-26 08:10:12.932646805 -0700
-+++ qtbase-opensource-src-5.9.2/configure	2017-11-01 08:48:44.973917507 -0700
+diff -ur qtbase-everywhere-src-5.11.2-orig/configure qtbase-everywhere-src-5.11.2/configure
+--- qtbase-everywhere-src-5.11.2-orig/configure	2018-10-23 21:31:56.778237724 -0700
++++ qtbase-everywhere-src-5.11.2/configure	2018-10-23 21:33:31.412709225 -0700
 @@ -36,9 +36,9 @@
  relconf=`basename $0`
  # the directory of this script is the "source tree"
@@ -35,7 +35,7 @@ diff -ur qtbase-opensource-src-5.9.2-orig/configure qtbase-opensource-src-5.9.2/
  UNAME_SYSTEM=`(uname -s) 2>/dev/null`  || UNAME_SYSTEM=unknown
  
  BUILD_ON_MAC=no
--if [ -d /System/Library/Frameworks/Carbon.framework ]; then
+-if [ -d /System/Library/Frameworks/Cocoa.framework ]; then
 -    BUILD_ON_MAC=yes
 -fi
  if [ "$OSTYPE" = "msys" ]; then

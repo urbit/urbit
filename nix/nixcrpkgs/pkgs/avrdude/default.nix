@@ -16,6 +16,8 @@ crossenv.make_derivation rec {
     sha256 = "15m1w1qad3dj7r8n5ng1qqcaiyx1gyd6hnc3p2apgjllccdp77qg";
   };
 
+  patches = [ ./faster.patch ];
+
   native_inputs = [
     crossenv.nixpkgs.yacc
     crossenv.nixpkgs.flex

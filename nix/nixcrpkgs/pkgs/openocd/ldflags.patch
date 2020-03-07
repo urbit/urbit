@@ -1,0 +1,11 @@
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -12,6 +12,8 @@ bin_PROGRAMS += %D%/openocd
+
+ %C%_openocd_LDADD += $(MINGWLDADD)
+
++%C%_openocd_LDFLAGS = $(LIBUSB1_LIBS)
++
+ if INTERNAL_JIMTCL
+ %C%_openocd_LDADD += $(top_builddir)/jimtcl/libjim.a
+ else

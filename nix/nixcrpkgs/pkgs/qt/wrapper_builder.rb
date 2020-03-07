@@ -40,8 +40,9 @@ end
 # purely transitive.
 def make_dep_graph
   # High-level dependencies.
-  add_dep 'Qt5Widgets.x', 'libQt5Widgets.a'
-  add_dep 'Qt5Widgets.x', 'Qt5Gui.x'
+  add_dep 'Qt5Widgets.x', 'Qt5WidgetsNoPlugins.x'
+  add_dep 'Qt5WidgetsNoPlugins.x', 'libQt5Widgets.a'
+  add_dep 'Qt5WidgetsNoPlugins.x', 'Qt5Gui.x'
   add_dep 'Qt5Gui.x', 'Qt5GuiNoPlugins.x'
   add_dep 'Qt5GuiNoPlugins.x', 'libQt5Gui.a'
   add_dep 'Qt5GuiNoPlugins.x', 'Qt5Core.x'
@@ -50,8 +51,8 @@ def make_dep_graph
   # Include directories.
   add_dep 'Qt5Core.x', '-I' + OutIncDir.to_s
   add_dep 'Qt5Core.x', '-I' + (OutIncDir + 'QtCore').to_s
-  add_dep 'Qt5Gui.x', '-I' + (OutIncDir + 'QtGui').to_s
-  add_dep 'Qt5Widgets.x', '-I' + (OutIncDir + 'QtWidgets').to_s
+  add_dep 'Qt5GuiNoPlugins.x', '-I' + (OutIncDir + 'QtGui').to_s
+  add_dep 'Qt5WidgetsNoPlugins.x', '-I' + (OutIncDir + 'QtWidgets').to_s
 
   # Libraries that Qt depends on.
   add_dep 'libQt5Widgets.a', 'libQt5Gui.a'
@@ -63,25 +64,34 @@ def make_dep_graph
 
   if Os == 'windows'
     add_dep 'Qt5Gui.x', 'qwindows.x'
+
     add_dep 'qwindows.x', 'libqwindows.a'
 
     add_dep 'libqwindows.a', '-ldwmapi'
     add_dep 'libqwindows.a', '-limm32'
     add_dep 'libqwindows.a', '-loleaut32'
+    add_dep 'libqwindows.a', '-lwtsapi32'
     add_dep 'libqwindows.a', 'libQt5Gui.a'
     add_dep 'libqwindows.a', 'libQt5EventDispatcherSupport.a'
     add_dep 'libqwindows.a', 'libQt5FontDatabaseSupport.a'
     add_dep 'libqwindows.a', 'libQt5ThemeSupport.a'
+    add_dep 'libqwindows.a', 'libQt5WindowsUIAutomationSupport.a'
 
+    add_dep 'Qt5Widgets.x', 'qwindowsvistastyle.x'
+    add_dep 'qwindowsvistastyle.x', 'libqwindowsvistastyle.a'
+
+    add_dep 'libqwindowsvistastyle.a', '-luxtheme'
+    add_dep 'libqwindowsvistastyle.a', 'libQt5Widgets.a'
+
+    add_dep 'libQt5Core.a', '-lnetapi32'
     add_dep 'libQt5Core.a', '-lole32'
+    add_dep 'libQt5Core.a', '-luserenv'
     add_dep 'libQt5Core.a', '-luuid'
     add_dep 'libQt5Core.a', '-lversion'
     add_dep 'libQt5Core.a', '-lwinmm'
     add_dep 'libQt5Core.a', '-lws2_32'
 
     add_dep 'libQt5Gui.a', '-lopengl32'
-
-    add_dep 'libQt5Widgets.a', '-luxtheme'
   end
 
   if Os == 'linux'
@@ -104,6 +114,7 @@ def make_dep_graph
     add_dep 'libQt5LinuxAccessibilitySupport.a', 'xcb-aux.pc'
     add_dep 'libQt5ThemeSupport.a', 'libQt5DBus.a'
 
+    add_dep 'libQt5XcbQpa.a', 'libQt5EdidSupport.a'
     add_dep 'libQt5XcbQpa.a', 'libQt5EventDispatcherSupport.a'
     add_dep 'libQt5XcbQpa.a', 'libQt5FontDatabaseSupport.a'
     add_dep 'libQt5XcbQpa.a', 'libQt5Gui.a'
@@ -123,8 +134,11 @@ def make_dep_graph
     add_dep 'libQt5XcbQpa.a', 'xcb-sync.pc'
     add_dep 'libQt5XcbQpa.a', 'xcb-xfixes.pc'
     add_dep 'libQt5XcbQpa.a', 'xcb-xinerama.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-xinput.pc'
     add_dep 'libQt5XcbQpa.a', 'xcb-xkb.pc'
     add_dep 'libQt5XcbQpa.a', 'xi.pc'
+    add_dep 'libQt5XcbQpa.a', 'xkbcommon.pc'
+    add_dep 'libQt5XcbQpa.a', 'xkbcommon-x11.pc'
   end
 
   if Os == 'macos'
@@ -132,20 +146,25 @@ def make_dep_graph
     add_dep 'qcocoa.x', 'libqcocoa.a'
 
     add_dep 'libqcocoa.a', 'libcocoaprintersupport.a'
-    add_dep 'libqcocoa.a', '-lcups'  # Also available: -lcups.2
     add_dep 'libqcocoa.a', 'libQt5AccessibilitySupport.a'
     add_dep 'libqcocoa.a', 'libQt5ClipboardSupport.a'
-    add_dep 'libqcocoa.a', 'libQt5CglSupport.a'
     add_dep 'libqcocoa.a', 'libQt5GraphicsSupport.a'
     add_dep 'libqcocoa.a', 'libQt5FontDatabaseSupport.a'
     add_dep 'libqcocoa.a', 'libQt5ThemeSupport.a'
     add_dep 'libqcocoa.a', 'libQt5PrintSupport.a'
+    add_dep 'libqcocoa.a', '-lcups'  # Also available: -lcups.2
+    add_dep 'libqcocoa.a', '-framework IOKit'
+    add_dep 'libqcocoa.a', '-framework IOSurface'
+    add_dep 'libqcocoa.a', '-framework CoreVideo'
+    add_dep 'libqcocoa.a', '-framework Metal'
+    add_dep 'libqcocoa.a', '-framework QuartzCore'
 
     add_dep 'libqtlibpng.a', '-lz'
 
     add_dep 'libQt5Core.a', '-lobjc'
     add_dep 'libQt5Core.a', '-framework CoreServices'
     add_dep 'libQt5Core.a', '-framework CoreText'
+    add_dep 'libQt5Core.a', '-framework Security'
     add_dep 'libQt5Gui.a', '-framework CoreGraphics'
     add_dep 'libQt5Gui.a', '-framework OpenGL'
     add_dep 'libQt5Widgets.a', '-framework Carbon'
@@ -333,10 +352,13 @@ def create_pc_file(name)
     end
   end
 
+  pkg_name = Pathname(name).sub_ext('').to_s
+
   r = ""
   r << "prefix=#{OutDir}\n"
   r << "libdir=${prefix}/lib\n"
   r << "includedir=${prefix}/include\n"
+  r << "Name: #{pkg_name}\n"
   r << "Version: #{QtVersionString}\n"
   if !libdirs.empty? || !ldflags.empty?
     r << "Libs: #{libdirs.reverse.uniq.join(' ')} #{ldflags.reverse.join(' ')}\n"
@@ -348,8 +370,8 @@ def create_pc_file(name)
     r << "Requires: #{requires.sort.join(' ')}\n"
   end
 
-  path = OutPcDir + Pathname(name).sub_ext(".pc")
-  File.open(path.to_s, 'w') do |f|
+  path = OutPcDir + (pkg_name + ".pc")
+  File.open(path, 'w') do |f|
     f.write r
   end
 end

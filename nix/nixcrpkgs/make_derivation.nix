@@ -51,7 +51,6 @@ let
     NIXCRPKGS = true;
 
     inherit (env) host arch os exe_suffix;
-    inherit (env) cmake_toolchain;
 
     PKG_CONFIG_CROSS_PATH = path_join (
       (if attrs ? PKG_CONFIG_CROSS_PATH then [attrs.PKG_CONFIG_CROSS_PATH] else []) ++

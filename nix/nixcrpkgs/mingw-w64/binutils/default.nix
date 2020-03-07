@@ -3,18 +3,16 @@
 native.make_derivation rec {
   name = "binutils-${version}-${host}";
 
-  version = "2.27";
+  version = "2.31";
 
   src = native.nixpkgs.fetchurl {
-    url = "mirror://gnu/binutils/binutils-${version}.tar.bz2";
-    sha256 = "125clslv17xh1sab74343fg6v31msavpmaa1c1394zsqa773g5rn";
+    url = "mirror://gnu/binutils/binutils-${version}.tar.xz";
+    sha256 = "1gqn887nqfyd5l6gfv08m1pg4wg5fm2iys7hpz6lj87hgvgkc413";
   };
 
   patches = [
     ./deterministic.patch
   ];
-
-  build_inputs = [ native.nixpkgs.bison native.nixpkgs.zlib ];
 
   configure_flags =
     "--target=${host} " +
