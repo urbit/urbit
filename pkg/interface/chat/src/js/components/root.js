@@ -101,6 +101,7 @@ export class Root extends Component {
                     inbox={state.inbox || {}}
                     groups={state.groups || {}}
                     contacts={state.contacts || {}}
+                    associations={associations.contacts}
                     {...props}
                   />
                 </Skeleton>

@@ -261,6 +261,7 @@ export class NewScreen extends Component {
           <InviteSearch
             groups={props.groups}
             contacts={props.contacts}
+            associations={props.associations}
             groupResults={true}
             invites={{
               groups: state.groups,
