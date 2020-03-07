@@ -199,7 +199,7 @@
     ::
     =^  pro=output  fil
       ?~  nex.state
-        [(fun fil cache) ~]
+        [(fun ~ cache) ~]
       [[cache %load u.nex.state] fil]
     ::  loop until %done, %fail, or blocking resource request
     ::
@@ -218,7 +218,7 @@
           ::
           ?^  got=(~(get by sky.state) spar.o.pro)
             $(pro (on-load.o.pro got cache))
-          ::  run .on-load on result of scry if it completes synchronously
+          ::  run .on-load on synchronous scry result
           ::
           ?^  res=(scry-for-spar spar.o.pro)
             =.  sky.state  (~(put by sky.state) spar.o.pro u.res)
@@ -245,6 +245,24 @@
 ::
 ++  vase-to-cage  (bake (with-mark %noun) vase)
 ++  with-mark  |=(=mark |*(* [mark +<]))
+--
+|=  [our=ship =desk scry=sley]
+=>
+::  %make execution routines
+::
+|%
+++  run-file
+  |=  =path
+  =/  m  (fume ,vase)
+  ^-  form:m
+  ;<  [mark xet=vase]  bind:m  (load-spar %x path)
+  =/  tex=tape  (trip !<(@t xet))
+  ;<  =pile  bind:m  (parse-pile path tex)
+  ;<  sut=vase  bind:m  run-reef
+  ;<  sut=vase  bind:m  (run-tauts sut %sur sur.mont.pile)
+  ;<  sut=vase  bind:m  (run-tauts sut %lib lib.mont.pile)
+  ;<  sut=vase  bind:m  (run-raws sut raw.mont.pile)
+  (run-slap sut hoon.pile)
 ::
 ++  parse-pile
   |=  [=path tex=tape]
@@ -261,24 +279,24 @@
   |=  tex=tape
   =/  m  (fume ,[mont nail])
   ^-  form:m
-  =/  [=hair res=(unit [=mont =nail])]  (mont-parser [1 1] tex)
+  =/  [=hair res=(unit [=mont =nail])]  (mont-rule [1 1] tex)
   ?^  res
     (pure:m u.res)
   (fail:m leaf+"syntax error {<hair>}" ~)
 ::
-++  mont-parser
+++  mont-rule
   %+  ifix  [gay gay]
   %+  cook  |=(mont +<)
   ;~  plug
     %+  cook  |=((list (list taut)) (zing +<))
     %+  most  gap
     %+  ifix  [;~(plug net hep gap) gap]
-    (most ;~(plug com gaw) taut-parser)
+    (most ;~(plug com gaw) taut-rule)
   ::
     %+  cook  |=((list (list taut)) (zing +<))
     %+  most  gap
     %+  ifix  [;~(plug net lus gap) gap]
-    (most ;~(plug com gaw) taut-parser)
+    (most ;~(plug com gaw) taut-rule)
   ::
     %+  cook  |=((list [face=term =path]) +<)
     %+  most  gap
@@ -287,118 +305,13 @@
     ;~(plug sym ;~(pfix ;~(plug gap net) (more net urs:ab)))
   ==
 ::
-++  taut-parser
+++  taut-rule
   %+  cook  |=(taut +<)
   ;~  pose
     (stag ~ ;~(pfix tar sym))
     ;~(plug (stag ~ sym) ;~(pfix tis sym))
     (cook |=(a=term [`a a]) sym)
   ==
---
-::  TODO vane interface
-::
-=|  =hoon-cache
-|=  [our=ship =desk now=@da scry=sley]
-|%
-++  run-plan
-  |=  =plan
-  =/  m  (fume ,cage)
-  ^-  form:m
-  ?-  -.plan
-    %$     (pure:m cage.plan)
-    %bunt  (run-bunt +.plan)
-    %cast  (run-cast +.plan)
-    %diff  (run-diff +.plan)
-    %join  (run-join +.plan)
-    %mash  !!  ::  TODO: write this
-    %pact  (run-pact +.plan)
-    %vale  (run-vale +.plan)
-    %volt  (run-volt +.plan)
-  ==
-::
-++  run-bunt
-  |=  =mark
-  =/  m  (fume ,cage)
-  ^-  form:m
-  ;<  cor=vase  bind:m  (load-mark mark)
-  (pure:m [mark (slap cor ^~((ream '+<')))])
-::  TODO: redo caching, maybe in some other way
-::
-++  do-slam
-  |=  [gat=vase sam=vase]
-  =/  m  (fume ,vase)
-  ^-  form:m
-  ::%+  with-cache-key  [%slam gat sam]
-  ;<  sit=vase  bind:m
-    ::%+  with-cache-key  [%slit p.gat p.sam]
-    %+  on-fail:m  |.([leaf+"ford: slit-fail"]~)
-    =/  lap  (mule |.((slit p.gat p.sam)))
-    ?-  -.lap
-      %&  (pure:m !>(p.lap))
-      %|  (fail:m p.lap)
-    ==
-  =+  !<(gol=type sit)
-  =/  vap  (mong [q.gat q.sam] (sloy scry))
-  ?-  -.vap
-    %0  (pure:m [gol p.vap])
-    %1  (fail:m leaf+"ford: scry-block {<p.vap>}" ~)
-    %2  (fail:m leaf+"ford: call-fail" p.vap)
-  ==
-::
-++  run-cast
-  |=  [new=mark =plan]
-  =/  m  (fume ,cage)
-  ^-  form:m
-  ;<  [old=mark arg=vase]  bind:m  (run-plan plan)
-  %+  on-fail:m  |.([leaf+"ford: cast-fail {<old>} -> {<new>}"]~)
-  ;<  cor=vase  bind:m  (load-mark new)
-  =/  rab  (mule |.((slap cor (ream (cat 3 'grab:' old)))))
-  ?:  ?=(%& -.rab)
-    %+  on-fail:m  |.([leaf+"ford: grab-fail {<old>} -> {<new>}"]~)
-    ;<  pro=vase  bind:m  (do-slam p.rab arg)
-    (pure:m [new pro])
-  %+  on-fail:m  |.([leaf+"ford: grow-fail {<old>} -> {<new>}"]~)
-  ;<  roc=vase  bind:m  (load-mark old)
-  =/  row  (mule |.((slap roc (ream (cat 3 'grow:' new)))))
-  ?-  -.row
-    %|  (fail:m p.row)
-    %&  ;<  pro=vase  bind:m  (do-slam p.row arg)
-        (pure:m [new pro])
-  ==
-::
-++  run-diff
-  |=  [start=plan end=plan]
-  =*  loop  $
-  =/  m  (fume ,cage)
-  ^-  form:m
-  ;<  uno=cage  bind:m  (run-plan start)
-  ;<  dos=cage  bind:m  (run-plan end)
-  ?:  =([p q.q]:uno [p q.q]:dos)
-    (pure:m [%null !>(~)])
-  ;<  cor=vase  bind:m  (load-mark p.uno)
-  ;<  deg=(each mark vase)  bind:m  (run-grad cor)
-  ?:  ?=(%& -.deg)
-    loop(start [%cast p.deg $+uno], end [%cast p.deg $+dos])
-  =/  sut=vase  (slop p.deg q.uno)
-  =/  gat  (mule |.((slap sut ^~((ream 'diff:~(grad - +)')))))
-  ?:  ?=(%| -.gat)
-    (fail:m leaf+"ford: grad-diff {<p.uno>}" p.gat)
-  ;<  fom=mark  bind:m  (run-form p.deg)
-  ;<  dif=vase  bind:m  (do-slam p.gat q.dos)
-  (pure:m [fom dif])
-::
-++  run-file
-  |=  =path
-  =/  m  (fume ,vase)
-  ^-  form:m
-  ;<  [mark xet=vase]  bind:m  (load-spar %x path)
-  =/  tex=tape  (trip !<(@t xet))
-  ;<  =pile  bind:m  (parse-pile path tex)
-  ;<  sut=vase  bind:m  run-reef
-  ;<  sut=vase  bind:m  (run-tauts sut %sur sur.mont.pile)
-  ;<  sut=vase  bind:m  (run-tauts sut %lib lib.mont.pile)
-  ;<  sut=vase  bind:m  (run-raws sut raw.mont.pile)
-  (run-slap sut hoon.pile)
 ::
 ++  run-tauts
   |=  [sut=vase wer=?(%lib %sur) taz=(list taut)]
@@ -420,30 +333,6 @@
   =.  p.pin  [%face face.i.raw p.pin]
   loop(sut (slop pin sut), raw t.raw)
 ::
-++  run-join
-  |=  [=mark one=plan two=plan]
-  =*  loop  $
-  =/  m  (fume ,cage)
-  ^-  form:m
-  ;<  cor=vase  bind:m  (load-mark mark)
-  ;<  gad=(each @tas vase)  bind:m  (run-grad cor)
-  ?:  ?=(%& -.gad)
-    loop(mark p.gad)
-  ;<  uno=cage  bind:m  (run-plan one)
-  ;<  dos=cage  bind:m  (run-plan two)
-  ;<  fom=@tas  bind:m  (run-form p.gad)
-  ?.  &(=(fom p.uno) =(fom p.dos))
-    (fail:m leaf+"ford: join-mark" ~)
-  ?:  =(q.q.uno q.q.dos)
-    (pure:m uno)
-  =/  gat  (mule |.((slap p.gad ^~((ream 'join')))))
-  ?:  ?=(%| -.gat)
-    (fail:m leaf+"ford: join-gate" p.gat)
-  ;<  dif=vase  bind:m  (do-slam p.gat (slop q.uno q.dos))
-  ?~  q.dif
-    (pure:m [%null dif])
-  (pure:m [fom dif])
-::
 ++  load-spar
   |=  =spar
   =/  m  (fume ,cage)
@@ -457,26 +346,29 @@
     [s.fin1 %fail ~[leaf+"ford: load-fail {<spar>}"]]
   [s.fin1 %done u.u.in.fin1]
 ::
-++  run-pact
-  |=  [sut=plan dif=plan]
-  =*  loop  $
-  =/  m  (fume ,cage)
+++  load-fit
+  |=  pax=path
+  =/  m  (fume ,vase)
   ^-  form:m
-  ;<  sot=cage  bind:m  (run-plan sut)
-  ;<  cor=vase  bind:m  (load-mark p.sot)
-  ;<  gad=(each mark vase)  bind:m  (run-grad cor)
-  ?:  ?=(%& -.gad)
-    (run-plan %cast p.sot %pact [%cast p.gad $+sot] dif)
-  ;<  fom=mark  bind:m  (run-form p.gad)
-  ;<  fid=cage  bind:m  (run-plan dif)
-  ?.  =(fom p.fid)
-    (fail:m leaf+"ford: pact-mark" ~)
-  =/  sit=vase  (slop cor q.sot)
-  =/  gat  (mule |.((slap sit ^~((ream 'pact:~(grad - +)')))))
-  ?:  ?=(%| -.gat)
-    (fail:m leaf+"ford: grad-pact {<p.sot>}" p.gat)
-  ;<  pac=vase  bind:m  (do-slam p.gat q.fid)
-  (pure:m [p.sot pac])
+  ;<  [mark pox=vase]  bind:m  (load-spar %s pax)
+  (run-file !<(path pox))
+::
+++  with-cache-key
+  =/  m  (fume ,vase)
+  |=  [key=hoon-cache-key run=form:m]
+  ^-  form:m
+  |=  in=fume-input
+  =*  this  .
+  =/  ca  (by-clock hoon-cache-key vase)
+  =^  val  s.in  (get:ca key)
+  ?^  val
+    [s.in %done u.val]
+  =/  ran  (run in)
+  ?-  -.o.ran
+    %fail  ran
+    %done  ran(s (~(put ca s.ran) key value.o.ran))
+    %load  ran(on-load.o this(run on-load.o.ran))
+  ==
 ::
 ++  run-reef
   =/  m  (fume ,vase)
@@ -510,10 +402,124 @@
   =+  !<([gol=type fol=nock] sim)
   =/  nap  (mock [q.sut fol] (sloy scry))
   ?-  -.nap
-    %0  (pure:m [gol p.nap])
-    %1  (fail:m leaf+"ford: scry-block {<p.nap>}" ~)
-    %2  (fail:m leaf+"ford: slap-fail" p.nap)
+      %0  (pure:m [gol p.nap])
+      %1  (fail:m leaf+"ford: scry-block {<;;((list path) p.nap)>}" ~)
+      %2  (fail:m leaf+"ford: slap-fail" p.nap)
   ==
+--
+=>
+::  %mark execution routines
+::
+|%
+++  run-plan
+  |=  =plan
+  =/  m  (fume ,cage)
+  ^-  form:m
+  ?-  -.plan
+    %$     (pure:m cage.plan)
+    %bunt  (run-bunt +.plan)
+    %cast  (run-cast +.plan)
+    %diff  (run-diff +.plan)
+    %join  (run-join +.plan)
+    %mash  !!  ::  TODO: write this
+    %pact  (run-pact +.plan)
+    %vale  (run-vale +.plan)
+    %volt  (run-volt +.plan)
+  ==
+::
+++  run-bunt
+  |=  =mark
+  =/  m  (fume ,cage)
+  ^-  form:m
+  ;<  cor=vase  bind:m  (load-mark mark)
+  (pure:m [mark (slap cor ^~((ream '+<')))])
+::
+++  run-cast
+  |=  [new=mark =plan]
+  =/  m  (fume ,cage)
+  ^-  form:m
+  ;<  [old=mark arg=vase]  bind:m  (run-plan plan)
+  %+  on-fail:m  |.([leaf+"ford: cast-fail {<old>} -> {<new>}"]~)
+  ;<  cor=vase  bind:m  (load-mark new)
+  =/  rab  (mule |.((slap cor (ream (cat 3 'grab:' old)))))
+  ?:  ?=(%& -.rab)
+    %+  on-fail:m  |.([leaf+"ford: grab-fail {<old>} -> {<new>}"]~)
+    =/  pro=vase  (slam p.rab arg)
+    (pure:m [new pro])
+  %+  on-fail:m  |.([leaf+"ford: grow-fail {<old>} -> {<new>}"]~)
+  ;<  roc=vase  bind:m  (load-mark old)
+  =/  row  (mule |.((slap roc (ream (cat 3 'grow:' new)))))
+  ?-  -.row
+    %|  (fail:m p.row)
+    %&  =/  pro=vase  (slam p.row arg)
+        (pure:m [new pro])
+  ==
+::
+++  run-diff
+  |=  [start=plan end=plan]
+  =*  loop  $
+  =/  m  (fume ,cage)
+  ^-  form:m
+  ;<  uno=cage  bind:m  (run-plan start)
+  ;<  dos=cage  bind:m  (run-plan end)
+  ?:  =([p q.q]:uno [p q.q]:dos)
+    (pure:m [%null !>(~)])
+  ;<  cor=vase  bind:m  (load-mark p.uno)
+  ;<  deg=(each mark vase)  bind:m  (run-grad cor)
+  ?:  ?=(%& -.deg)
+    loop(start [%cast p.deg $+uno], end [%cast p.deg $+dos])
+  =/  sut=vase  (slop p.deg q.uno)
+  =/  gat  (mule |.((slap sut ^~((ream 'diff:~(grad - +)')))))
+  ?:  ?=(%| -.gat)
+    (fail:m leaf+"ford: grad-diff {<p.uno>}" p.gat)
+  ;<  fom=mark  bind:m  (run-form p.deg)
+  =/  dif=vase  (slam p.gat q.dos)
+  (pure:m [fom dif])
+::
+++  run-join
+  |=  [=mark one=plan two=plan]
+  =*  loop  $
+  =/  m  (fume ,cage)
+  ^-  form:m
+  ;<  cor=vase  bind:m  (load-mark mark)
+  ;<  gad=(each @tas vase)  bind:m  (run-grad cor)
+  ?:  ?=(%& -.gad)
+    loop(mark p.gad)
+  ;<  uno=cage  bind:m  (run-plan one)
+  ;<  dos=cage  bind:m  (run-plan two)
+  ;<  fom=@tas  bind:m  (run-form p.gad)
+  ?.  &(=(fom p.uno) =(fom p.dos))
+    (fail:m leaf+"ford: join-mark" ~)
+  ?:  =(q.q.uno q.q.dos)
+    (pure:m uno)
+  =/  gat  (mule |.((slap p.gad ^~((ream 'join')))))
+  ?:  ?=(%| -.gat)
+    (fail:m leaf+"ford: join-gate" p.gat)
+  =/  dif=vase  (slam p.gat (slop q.uno q.dos))
+  ?~  q.dif
+    (pure:m [%null dif])
+  (pure:m [fom dif])
+::
+++  run-pact
+  |=  [sut=plan dif=plan]
+  =*  loop  $
+  =/  m  (fume ,cage)
+  ^-  form:m
+  ;<  sot=cage  bind:m  (run-plan sut)
+  ;<  cor=vase  bind:m  (load-mark p.sot)
+  ;<  gad=(each mark vase)  bind:m  (run-grad cor)
+  ?:  ?=(%& -.gad)
+    (run-plan %cast p.sot %pact [%cast p.gad $+sot] dif)
+  ;<  fom=mark  bind:m  (run-form p.gad)
+  ;<  fid=cage  bind:m  (run-plan dif)
+  ?.  =(fom p.fid)
+    (fail:m leaf+"ford: pact-mark" ~)
+  =/  sit=vase  (slop cor q.sot)
+  =/  gat  (mule |.((slap sit ^~((ream 'pact:~(grad - +)')))))
+  ?:  ?=(%| -.gat)
+    (fail:m leaf+"ford: grad-pact {<p.sot>}" p.gat)
+  =/  pac=vase  (slam p.gat q.fid)
+  (pure:m [p.sot pac])
 ::
 ++  run-vale
   |=  [=mark =noun]
@@ -522,7 +528,7 @@
   ;<  cor=vase  bind:m  (load-mark mark)
   =/  gat=vase  (slap cor ^~((ream 'noun:grab')))
   =/  sam=vase  !>(noun)
-  ;<  pro=vase  bind:m  (do-slam gat sam)
+  =/  pro=vase  (slam gat sam)
   (pure:m [mark pro])
 ::
 ++  run-volt
@@ -560,35 +566,14 @@
   ^-  form:m
   %+  on-fail:m  |.([leaf+"ford: load-mark {(trip mark)}"]~)
   (load-fit /[mark])
-::
-++  load-fit
-  |=  pax=path
-  =/  m  (fume ,vase)
-  ^-  form:m
-  ;<  [mark pox=vase]  bind:m  (load-spar %s pax)
-  (run-file !<(path pox))
-::
-++  with-cache-key
-  =/  m  (fume ,vase)
-  |=  [key=hoon-cache-key run=form:m]
-  ^-  form:m
-  |=  in=fume-input
-  =*  this  .
-  =/  ca  (by-clock hoon-cache-key vase)
-  =^  val  s.in  (get:ca key)
-  ?^  val
-    [s.in %done u.val]
-  =/  ran  (run in)
-  ?-  -.o.ran
-    %fail  ran
-    %done  ran(s (~(put ca s.ran) key value.o.ran))
-    %load  ran(on-load.o this(run on-load.o.ran))
-  ==
-::
-++  scry-for-spar
-  |=  =spar
-  ^-  (unit (unit cage))
-  =/  =term  (cat 3 %c care.spar)
-  =/  =beam  [[our desk da+now] (flop path.spar)]
-  (scry ** ~ term beam)
+--
+=|  hoon-cache
+|=  pit=vase
+|=  [our=ship now=@da eny=@ scry-gate=sley]
+|%
+++  call  !!
+++  take  !!
+++  load  !!
+++  stay  !!
+++  scry  !!
 --
