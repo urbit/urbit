@@ -18,12 +18,12 @@ export default class Home extends Component {
     let keys = [...this.props.keys];
     let tileElems = keys.map((tile) => {
       let tileData = {};
-      if (tile in this.props.data && tile !== "invite-initial") {
+      if (tile in this.props.data && tile !== "invites") {
         tileData = this.props.data[tile] !== null
           ? this.props.data[tile] : {};
 
-        tileData["invites"] = ("invite-initial" in this.props.data)
-        ? this.props.data["invite-initial"] : {};
+        tileData["invites"] = ("invites" in this.props.data)
+        ? this.props.data["invites"] : {};
       }
       return <Tile key={tile} type={tile} data={tileData} />;
     });
