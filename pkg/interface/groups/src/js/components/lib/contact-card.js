@@ -482,7 +482,7 @@ export class ContactCard extends Component {
     let editInfoText =
       state.edit ? "Finish" : "Edit";
     if (props.share && state.edit) {
-      editInfoText = "Share with Group";
+      editInfoText = "Share";
     }
 
     let ourOpt = (props.ship === window.ship) ? "dib" : "dn";
@@ -495,13 +495,21 @@ export class ContactCard extends Component {
         !(props.path.includes('/~/default'))
       ) ? "dib" : "dn";
 
+    let hiddenonMe = (props.path === "/~/default")
+      ? "dn" : "";
+
     let card = state.edit ? this.renderEditCard() : this.renderCard();
     return (
       <div className="w-100 h-100 overflow-hidden">
-        <div className={"flex justify-between w-100 bg-white bg-gray0-d "  +
-        "bb b--gray4 b--gray2-d "}>
-          <div className="ml3 f9 pt4 w-100">
-            <Link to={"/~groups/detail" + props.path}>{"⟵ Channels"}</Link>
+        <div
+          className={
+            "flex justify-between w-100 bg-white bg-gray0-d " +
+            "bb b--gray4 b--gray2-d "
+          }>
+          <div className="f9 mv4 mh3 pt1 dib w-100">
+            <Link className={hiddenonMe} to={"/~groups/detail" + props.path}>
+              {"⟵ Channels"}
+            </Link>
           </div>
           <div className="flex">
             <button
@@ -512,19 +520,21 @@ export class ContactCard extends Component {
                   this.editToggle();
                 }
               }}
-              className={`white-d bg-gray0-d ml3 mt2 mb2 f9 pa1 pointer flex-shrink-0 ` + ourOpt}>
+              className={
+                `white-d bg-gray0-d mv4 mh3 f9 pa1 pointer flex-shrink-0 ` +
+                ourOpt
+              }>
               {editInfoText}
             </button>
           </div>
           <button
             className={
-              `bg-gray0-d ph4 mt4 mb4 f9 red2 pointer flex-shrink-0 ` + adminOpt
+              `bg-gray0-d mv4 mh3 pa1 f9 red2 pointer flex-shrink-0 ` + adminOpt
             }
             onClick={this.removeFromGroup}>
-            {(
-              props.ship === window.ship && props.path.includes(window.ship)
-                ? "Leave Group" : "Remove from Group"
-            )}
+            {props.ship === window.ship && props.path.includes(window.ship)
+              ? "Leave Group"
+              : "Remove from Group"}
           </button>
         </div>
         <div className="h-100 w-100 overflow-x-hidden pb8 white-d">{card}</div>
