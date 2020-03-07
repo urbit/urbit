@@ -1,43 +1,159 @@
 {-# OPTIONS_GHC -Wall -Werror #-}
+{-# OPTIONS_GHC -Werror #-}
 
-module Urbit.Uruk.Refr.RawParse where
+{-
+  # Persistence
+
+  - Implement serialization for `Exp`.
+
+  - Implement persistance API
+
+    - load :: IO (Map Text ByteString)
+    - fech :: Text -> IO (Maybe ByteString)
+    - stor :: Text -> ByteString -> IO ()
+
+  - Implement Unix persistence driver.
+
+    - Files go to ~/.uruk/raw/
+    - `=x K` becomes `writeFile "~/.uruk/raw/x" (dump k)`
+    - `!x` becomes `unlinkFile "~/.uruk/raw/x"`
+
+  - Implement Javascript persistence driver.
+
+  # REPL
+
+  - Parse decl or undecl or expression.
+
+  - if decl
+    - evaluate
+    - print
+    - add to environment
+    - write to disk
+  - if undecl
+    - remove from environment
+    - remove from disk
+  - otherwise
+    - evaluate
+    - print
+
+  # Dash
+
+  - Make bindings available for display.
+
+  - Make last execution trace available for display.
+
+  - What do I want to display in the UI?
+
+    - Current list of bindings.
+
+      - Data associated with each binding.
+
+      - List of commands, their results, and their execution traces.
+-}
+
+module Urbit.Uruk.UrukDemo where
 
 import ClassyPrelude hiding (exp, init, last, many, some, try)
 
-import Control.Lens
 import Control.Monad.State.Lazy
 import Text.Megaparsec
 import Text.Megaparsec.Char
 import Data.Tree
 
-import Control.Arrow ((>>>))
-import Data.Void     (Void)
-
-import qualified Urbit.Uruk.Refr.Demo as R
+import Control.Arrow    ((>>>))
+import Data.Bits        (shiftL, (.|.))
+import Data.Function    ((&))
+import Data.Void        (Void)
+import Numeric.Natural  (Natural)
 
 
 -- Types -----------------------------------------------------------------------
 
 infixl 5 :@;
 
-data AST = N Text | AST :@ AST
- deriving (Eq, Ord)
+data Ur = J | K | S | D | V Text deriving (Eq, Ord)
 
-tree ∷ AST → Tree Text
+data Exp = N Ur | Exp :@ Exp deriving (Eq, Ord)
+
+data Dec = Dec Text Exp
+  deriving (Eq, Ord, Show)
+
+type Env = Map Text Exp
+
+-- type Exec a = ExecptT Text (StateT Env IO a)
+
+
+-- Instances -------------------------------------------------------------------
+
+instance Show Ur where
+  show = \case { J→"J"; K→"K"; S→"S"; D→"D"; V v→unpack v }
+
+tree ∷ Exp → Tree Ur
 tree = go [] where go a = \case { N n → Node n a; x :@ y → go (tree y:a) x }
 
-unTree ∷ Tree Text → AST
+unTree ∷ Tree Ur → Exp
 unTree (Node n xs) = foldl' (:@) (N n) (unTree <$> xs)
 
-showTree ∷ Tree Text -> String
-showTree (Node n []) = unpack n
-showTree (Node n xs) = "(" <> intercalate " " (unpack n : fmap showTree xs) <> ")"
+showTree ∷ Tree Ur -> String
+showTree (Node n []) = show n
+showTree (Node n xs) = "(" <> intercalate " " (show n : fmap showTree xs) <> ")"
 
-instance Show AST where
-  show = showTree . tree
+instance Show Exp where show = showTree . tree
+
+eval ∷ (Text → Maybe Exp) → Exp → Exp
+eval env = \case { (reduce env → Just x) → eval env x; x → x }
+
+exec ∷ (Text → Maybe Exp) → Exp → [Exp]
+exec env x = x : fromMaybe [] (fmap (exec env) (reduce env x))
+
+reduce ∷ (Text → Maybe Exp) → Exp → Maybe Exp
+reduce env = go
+ where
+  go = \case
+    N (V x)               → env x
+    N K :@ x :@ _         → Just x
+    (go→Just xv) :@ y     → Just (xv :@ y)
+    x :@ (go→Just yv)     → Just (x :@ yv)
+    N S :@ x :@ y :@ z    → Just (x :@ z :@ (y :@ z))
+    N D :@ x              → Just (jam x)
+    (jetRule→Just(b,xs))  → Just (foldl' (:@) b xs)
+    _                     → Nothing
+
+jetRule ∷ Exp → Maybe (Exp, [Exp])
+jetRule x = do
+  (n, rest) ← jetHead (tree x)
+  (b, xs)   ← case rest of { _:b:xs → Just (b,xs); _ → Nothing }
+  guard (fromIntegral n == length xs)
+  Just (unTree b, unTree <$> xs)
+
+jetHead :: Tree Ur -> Maybe (Natural, [Tree Ur])
+jetHead = \(Node n xs) -> guard (n == J) $> go 1 xs
+ where
+  go n (Node J [] : xs) = go (succ n) xs
+  go n xs               = (n, xs)
+
+jam ∷ Exp → Exp
+jam = (N J :@ N J :@ N K :@) . enc . snd . go
+ where
+  enc 0 = N S :@ N K
+  enc n = N S :@ (N S :@ (N K :@ N S) :@ N K) :@ enc (pred n)
+
+  urEnum :: Ur -> Natural
+  urEnum J     = 0
+  urEnum K     = 1
+  urEnum S     = 2
+  urEnum D     = 3
+  urEnum (V v) = error ("undefined variable" <> unpack v)
+
+  go (N n)    = (3, urEnum n*2)
+  go (x :@ y) = (rBits ∷ Int, rNum ∷ Natural)
+   where
+    ((xBits, xNum), (yBits, yNum)) = (go x, go y)
+    rBits = 1 + xBits + yBits
+    rNum  = 1 .|. shiftL xNum 1 .|. shiftL yNum (1 + xBits)
 
 
--- Parser Monad ----------------------------------------------------------------
+-- Parsing Types ---------------------------------------------------------------
 
 data Mode = Wide | Tall
 
@@ -77,10 +193,10 @@ bind = fmap pack $ some $ oneOf ("$" <> ['a' .. 'z'])
 
 -- Grammar ---------------------------------------------------------------------
 
-exp :: Parser AST
+exp :: Parser Exp
 exp = try rune <|> irregular
 
-apN :: [AST] -> AST
+apN :: [Exp] -> Exp
 apN []       = error "empty function application"
 apN [x     ] = x
 apN (x : xs) = go x xs
@@ -88,22 +204,29 @@ apN (x : xs) = go x xs
   go acc []       = acc
   go acc (y : ys) = go (acc :@ y) ys
 
-ap3 :: AST -> AST -> AST -> AST
+ap3 :: Exp -> Exp -> Exp -> Exp
 ap3 x y z = apN [x, y, z]
 
-ap4 :: AST -> AST -> AST -> AST -> AST
+ap4 :: Exp -> Exp -> Exp -> Exp -> Exp
 ap4 x y z p = apN [x, y, z, p]
 
-irregular :: Parser AST
-irregular = inWideMode $ choice
-  [ apN <$> grouped "(" " " ")" exp
-  , N <$> sym
+ur :: Parser Ur
+ur = choice
+  [ S <$ char 'S'
+  , K <$ char 'K'
+  , J <$ char 'J'
+  , D <$ char 'D'
+  , V <$> sym
   ]
+
+irregular :: Parser Exp
+irregular = inWideMode (call <|> N <$> ur)
+  where call = apN <$> grouped "(" " " ")" exp
 
 sig :: Parser [Text]
 sig = grouped "(" " " ")" sym <|> (: []) <$> sym
 
-rune :: Parser AST
+rune :: Parser Exp
 rune = choice
   [ string "%-" *> rune2 (:@) exp exp
   , string "%+" *> rune3 ap3 exp exp exp
@@ -157,9 +280,6 @@ rune4 node x y z g = parseRune tall wide
 
 -- Entry Point -----------------------------------------------------------------
 
-data Dec = Dec Text AST
-  deriving (Show)
-
 decl :: Parser Dec
 decl = do
   char '='
@@ -180,7 +300,7 @@ file x = eaten x <* eof
 decls :: Parser [Dec]
 decls = (:) <$> decl <*> many (try (gap *> decl))
 
-expFile :: Parser AST
+expFile :: Parser Exp
 expFile = file exp
 
 dashFile :: Parser [Dec]
@@ -192,8 +312,8 @@ doParse act txt =
     Left  e → Left (pack $ errorBundlePretty e)
     Right x → pure x
 
-parseAST ∷ Text → Either Text AST
-parseAST = doParse (file exp)
+parseExp ∷ Text → Either Text Exp
+parseExp = doParse (file exp)
 
 parseDecl ∷ Text → Either Text Dec
 parseDecl = doParse (file decl)
@@ -201,7 +321,7 @@ parseDecl = doParse (file decl)
 parseDecls ∷ Text → Either Text [Dec]
 parseDecls = doParse (file decls)
 
-declExp ∷ Parser (Dec, AST)
+declExp ∷ Parser (Dec, Exp)
 declExp = do
   d <- decl
   gap
@@ -211,50 +331,31 @@ declExp = do
 
 --------------------------------------------------------------------------------
 
-toUruk :: AST -> R.Exp
-toUruk = go
- where
-  go :: AST -> R.Exp
-  go = \case
-    N "S"   -> R.N R.S
-    N "K"   -> R.N R.K
-    N "J"   -> R.N R.J
-    N "D"   -> R.N R.D
-    N v     -> R.N (R.V v)
-    x :@ y  -> go x R.:@ go y
-
-type Env = Map Text R.Exp
-
 globals :: Env
-globals = mapFromList
-  [ ("S", R.N R.S)
-  , ("K", R.N R.K)
-  , ("J", R.N R.J)
-  , ("D", R.N R.D)
-  ]
+globals = mempty
 
-tryExp :: Text -> IO R.Exp
-tryExp = (fmap toUruk <$> parseAST) >>> \case
+tryExp :: Text -> IO Exp
+tryExp = parseExp >>> \case
   Left err -> putStrLn err >> error ""
-  Right ur -> pure ur
+  Right x  -> pure x
 
-tryDecl :: Text -> IO (Text, R.Exp)
+tryDecl :: Text -> IO (Text, Exp)
 tryDecl = parseDecl >>> \case
   Left err        -> error (unpack err)
-  Right (Dec n (toUruk -> v)) -> do
+  Right (Dec n v) -> do
     putStrLn (n <> "=")
     res <- tryExec (`lookup` globals) v
     pure (n, res)
 
-tryExec :: (Text -> Maybe R.Exp) -> R.Exp -> IO R.Exp
-tryExec env = R.exec env >>> go
+tryExec :: (Text -> Maybe Exp) -> Exp -> IO Exp
+tryExec env = exec env >>> go
  where
   go []     = error "impossible"
   go [x]    = print x >> pure x
   go (x:xs) = print x >> go xs
 
-tryExecBind :: (Text -> Maybe R.Exp) -> Text -> R.Exp -> IO R.Exp
-tryExecBind env nm = R.exec env >>> go
+tryExecBind :: (Text -> Maybe Exp) -> Text -> Exp -> IO Exp
+tryExecBind env nm = exec env >>> go
  where
   go []     = error "impossible"
   go [x]    = out x >> pure x
@@ -262,16 +363,16 @@ tryExecBind env nm = R.exec env >>> go
 
   out x = putStrLn ("=" <> nm <> " " <> tshow x)
 
-noFree :: R.Exp -> IO R.Exp
+noFree :: Exp -> IO Exp
 noFree = \case
-  R.N (R.V v) -> error ("undefined variable: " <> unpack v)
-  R.N x       -> pure (R.N x)
-  x R.:@ y    -> (R.:@) <$> noFree x <*> noFree y
+  N (V v) -> error ("undefined variable: " <> unpack v)
+  N x       -> pure (N x)
+  x :@ y    -> (:@) <$> noFree x <*> noFree y
 
-tryDeclExp :: Text -> IO R.Exp
+tryDeclExp :: Text -> IO Exp
 tryDeclExp txt = doParse (file declExp) txt & \case
   Left  err             -> error (unpack err)
-  Right (Dec n (toUruk -> v), toUruk -> body) -> do
+  Right (Dec n v, body) -> do
     dvl <- tryExecBind (`lookup` globals) n v
     noFree dvl
     putStrLn ""
