@@ -119,7 +119,7 @@ export class NewScreen extends Component {
               "focus-b--black focus-b--white-d"
             }
             rows={1}
-            placeholder="Two trumpeteers and a microphone"
+            placeholder="Two trumpeters and a microphone"
             style={{
               resize: "none",
               height: 48,
