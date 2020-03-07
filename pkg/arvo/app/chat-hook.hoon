@@ -13,8 +13,14 @@
       state-1
   ==
 ::
-+$  state-1  [%1 state-base]
++$  state-1  [%1 new-state]
 +$  state-0  [%0 state-base]
++$  new-state
+  $:  synced=(map path ship)
+      invite-created=_|
+      allow-history=(map path ?)
+      loaded-cards=(list card)
+  ==
 +$  state-base
   $:  synced=(map path ship)
       invite-created=_|
@@ -35,7 +41,7 @@
 =|  state-1
 =*  state  -
 ::
-%+  verb  |
+%+  verb  &
 %-  agent:dbug
 ^-  agent:gall
 =<
@@ -54,27 +60,27 @@
     ==
   ++  on-save   !>(state)
   ++  on-load
-    |=  =old=vase
+    |=  old-vase=vase
+    |^
     =/  old  !<(versioned-state old-vase)
     ?:  ?=(%1 -.old)
       [~ this(state old)]
     ::  path structure ugprade logic
     ::
-    :_  this(state [%1 +.old])
+    :_  this(state [%1 +.old ~])
     %-  zing
-    %+  turn
-      %~  tap  in
-      %^  scry:cc  (set path)
-        %chat-store
-      /keys
-    |^  |=  chat=path
-        ^-  (list card)
-        =/  host=ship  (slav %p (snag 0 chat))
-        =/  newp=permission  (unify-permissions chat)
-        =/  old-group=path  [%chat chat]
-        =/  new-group=path  [%'~' chat]
-        ;:  weld
-          :~  (delete-group host (snoc old-group %read))
+    %+  turn  ~(tap in (scry:cc (set path) %chat-store /keys))
+    generate-cards
+    ::
+    ++  generate-cards
+      |=  old-chat=path
+      ^-  (list card)
+      =/  host=ship  (slav %p (snag 0 old-chat))
+      =/  new-chat  [%'~' old-chat]
+      =/  newp=permission  (unify-permissions old-chat)
+      =/  old-group=path  [%chat old-chat]
+      %-  zing
+      :~  :~  (delete-group host (snoc old-group %read))
               (delete-group host (snoc old-group %write))
           ==
         ::
@@ -85,6 +91,12 @@
           ?.  &(=(our.bol host) ?=(%white kind.newp))  ~
           (send-invites chat who.newp)
         ==
+          ?.  =(our.bol host)  ~
+          ?:  ?=(%white kind.newp)
+            (send-invites new-chat ~(tap in who.newp))
+          %+  send-invites  new-chat
+          (parse-subscribers wex.bol old-chat)
+      ==
     ::
     ++  unify-permissions
       |=  chat=path
@@ -208,9 +220,16 @@
     ^-  (quip card _this)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
-        %json              (poke-json:cc !<(json vase))
-        %chat-action       (poke-chat-action:cc !<(chat-action vase))
-        %chat-hook-action  (poke-chat-hook-action:cc !<(chat-hook-action vase))
+          %json              (poke-json:cc !<(json vase))
+          %chat-action       (poke-chat-action:cc !<(chat-action vase))
+          %noun
+        ?:  =(%store-load q.vase)
+          ~&  loaded+loaded-cards.state
+          [loaded-cards.state state(loaded-cards ~)]
+        [~ state]
+      ::
+          %chat-hook-action
+        (poke-chat-hook-action:cc !<(chat-hook-action vase))
       ==
     [cards this]
   ::
@@ -580,6 +599,7 @@
 ++  chat-poke
   |=  act=chat-action
   ^-  card
+  ~&  act
   [%pass / %agent [our.bol %chat-store] %poke %chat-action !>(act)]
 ::
 ++  chat-view-poke

@@ -5,12 +5,11 @@
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-zero
+      state-one
   ==
 ::
-+$  state-zero
-  $:  %0
-      =inbox
-  ==
++$  state-zero  [%0 =inbox]
++$  state-one   [%1 =inbox]
 ::
 +$  diff
   $%  [%chat-initial inbox]
@@ -19,11 +18,11 @@
   ==
 --
 ::
-=|  state-zero
+=|  state-one
 =*  state  -
 ::
 %-  agent:dbug
-%+  verb  |
+%+  verb  &
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -32,12 +31,17 @@
       cc         ~(. chat-core bowl)
       def        ~(. (default-agent this %|) bowl)
   ::
+
   ++  on-init   on-init:def
   ++  on-save   !>(state)
   ++  on-load
-    |=  old=vase
-    `this(state !<(state-zero old))
-  ::
+    |=  old-vase=vase
+    =/  old  !<(versioned-state old-vase)
+    ?:  ?=(%1 -.old)
+      [~ this(state old)]
+    :_  this(state [%1 inbox.old])
+    [%pass /lo-chst %agent [our.bowl %chat-hook] %poke %fact !>(%store-load)]~
+      ::
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
@@ -52,8 +56,8 @@
   ++  on-watch
     |=  =path
     ^-  (quip card _this)
-    ?>  (team:title our.bowl src.bowl)
     |^
+    ?>  (team:title our.bowl src.bowl)
     =/  cards=(list card)
       ?+    path  (on-watch:def path)
           [%keys ~]     (give %chat-update !>([%keys ~(key by inbox)]))
@@ -166,8 +170,7 @@
   |=  act=chat-action
   ^-  (quip card _state)
   ?>  ?=(%create -.act)
-  ?:  (~(has by inbox) path.act)
-    [~ state]
+  ?:  (~(has by inbox) path.act)  [~ state]
   :-  (send-diff path.act act)
   state(inbox (~(put by inbox) path.act *mailbox))
 ::
@@ -176,8 +179,7 @@
   ^-  (quip card _state)
   ?>  ?=(%delete -.act)
   =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
-  ?~  mailbox
-    [~ state]
+  ?~  mailbox  [~ state]
   :-  (send-diff path.act act)
   state(inbox (~(del by inbox) path.act))
 ::
