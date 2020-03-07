@@ -1,4 +1,4 @@
-module Urbit.Uruk.Refr.Raw (Exp(..), Ur(..), reduce, eval) where
+module Urbit.Uruk.Refr.Raw (Exp(..), Ur(..), reduce, eval, exec) where
 
 import ClassyPrelude
 import GHC.Natural
@@ -23,6 +23,9 @@ instance Show Exp where show = showTree . tree
 
 eval ∷ Exp → Exp
 eval = \case { (reduce→Just x) → eval x; x → x }
+
+exec ∷ Exp → [Exp]
+exec x = x : fromMaybe [] (fmap exec (reduce x))
 
 reduce ∷ Exp → Maybe Exp
 reduce = \case
