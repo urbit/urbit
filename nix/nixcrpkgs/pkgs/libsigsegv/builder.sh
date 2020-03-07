@@ -5,10 +5,10 @@ tar -xf $src
 mkdir build
 cd build
 
-# Hack to get this building on ARM
+# Hack
 if [ $host = armv6-linux-musleabi ]
 then
-  sed -i 's/fault-linux-arm-old.h/fault-linux-arm.h/' \
+  sed -i 's/^CFG_FAULT=$/CFG_FAULT=fault-linux-arm.h/' \
     ../libsigsegv-$version/configure
 fi
 
