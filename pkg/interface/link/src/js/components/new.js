@@ -217,6 +217,7 @@ export class NewScreen extends Component {
             Selected entities will be able to post to the collection
           </p>
           <InviteSearch
+            associations={props.associations.contacts}
             groups={props.groups}
             contacts={props.contacts}
             groupResults={true}
