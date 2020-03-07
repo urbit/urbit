@@ -13,7 +13,7 @@ import Data.Tree
 import Control.Arrow ((>>>))
 import Data.Void     (Void)
 
-import qualified Urbit.Uruk.Refr.Raw as R
+import qualified Urbit.Uruk.Refr.Demo as R
 
 
 -- Types -----------------------------------------------------------------------
@@ -211,13 +211,17 @@ declExp = do
 
 --------------------------------------------------------------------------------
 
-toUruk :: Map Text R.Exp -> AST -> Either Text R.Exp
-toUruk env = go
+toUruk :: AST -> R.Exp
+toUruk = go
  where
-  undef = Left . ("Undefined variable: " <>)
+  go :: AST -> R.Exp
   go = \case
-    N v -> lookup v env & maybe (undef v) Right
-    x :@ y  -> (R.:@) <$> go x <*> go y
+    N "S"   -> R.N R.S
+    N "K"   -> R.N R.K
+    N "J"   -> R.N R.J
+    N "D"   -> R.N R.D
+    N v     -> R.N (R.V v)
+    x :@ y  -> go x R.:@ go y
 
 type Env = Map Text R.Exp
 
@@ -230,30 +234,27 @@ globals = mapFromList
   ]
 
 tryExp :: Text -> IO R.Exp
-tryExp = (parseAST >=> toUruk globals) >>> \case
+tryExp = (fmap toUruk <$> parseAST) >>> \case
   Left err -> putStrLn err >> error ""
   Right ur -> pure ur
 
 tryDecl :: Text -> IO (Text, R.Exp)
 tryDecl = parseDecl >>> \case
   Left err        -> error (unpack err)
-  Right (Dec n v) -> do
+  Right (Dec n (toUruk -> v)) -> do
     putStrLn (n <> "=")
-    toUruk globals v & \case
-      Left err  -> error (unpack err)
-      Right ex  -> do
-        res <- tryExec ex
-        pure (n, res)
+    res <- tryExec (`lookup` globals) v
+    pure (n, res)
 
-tryExec :: R.Exp -> IO R.Exp
-tryExec = R.exec >>> go
+tryExec :: (Text -> Maybe R.Exp) -> R.Exp -> IO R.Exp
+tryExec env = R.exec env >>> go
  where
   go []     = error "impossible"
   go [x]    = print x >> pure x
   go (x:xs) = print x >> go xs
 
-tryExecBind :: Text -> R.Exp -> IO R.Exp
-tryExecBind nm = R.exec >>> go
+tryExecBind :: (Text -> Maybe R.Exp) -> Text -> R.Exp -> IO R.Exp
+tryExecBind env nm = R.exec env >>> go
  where
   go []     = error "impossible"
   go [x]    = out x >> pure x
@@ -261,22 +262,23 @@ tryExecBind nm = R.exec >>> go
 
   out x = putStrLn ("=" <> nm <> " " <> tshow x)
 
+noFree :: R.Exp -> IO R.Exp
+noFree = \case
+  R.N (R.V v) -> error ("undefined variable: " <> unpack v)
+  R.N x       -> pure (R.N x)
+  x R.:@ y    -> (R.:@) <$> noFree x <*> noFree y
+
 tryDeclExp :: Text -> IO R.Exp
 tryDeclExp txt = doParse (file declExp) txt & \case
   Left  err             -> error (unpack err)
-  Right (Dec n v, body) -> do
-    exP <- toUruk globals v & \case
-      Left  e -> error (unpack e)
-      Right r -> pure r
-    dvl <- tryExecBind n exP
+  Right (Dec n (toUruk -> v), toUruk -> body) -> do
+    dvl <- tryExecBind (`lookup` globals) n v
+    noFree dvl
     putStrLn ""
-    res <- toUruk (insertMap n dvl globals) body & \case
-      Left  err -> error (unpack err)
-      Right r   -> pure r
-    tryExec res
+    let env = insertMap n dvl globals
+    tryExec (`lookup` env) body
 
 main :: IO ()
 main = do
   [txt] <- getArgs
-  tryDeclExp txt >>= print
-  -- void (tryExp txt >>= tryExec)
+  void (tryDeclExp txt)
