@@ -116,7 +116,7 @@
   |*  a=mold
   $~  [*fume-state %done *a]
   $:  s=fume-state
-      $=  next
+      $=  o
       $%  [%done value=a]
           [%fail =tang]
           [%load =spar on-load=(fume-form-raw a)]
@@ -148,10 +148,10 @@
     |=  in=fume-input
     =*  this  .
     =/  res  (run in)
-    ?-  -.next.res
+    ?-  -.o.res
       %done  res
-      %fail  res(tang.next (welp (print) tang.next.res))
-      %load  res(on-load.next this(run on-load.next.res))
+      %fail  res(tang.o (welp (print) tang.o.res))
+      %load  res(on-load.o this(run on-load.o.res))
     ==
   ::
   ++  bind
@@ -162,10 +162,10 @@
     =*  this  .
     =/  b-res  (m-b fin)
     ^-  output
-    ?-    -.next.b-res
+    ?-    -.o.b-res
       %fail  b-res
-      %load  b-res(on-load.next this(m-b on-load.next.b-res))
-      %done  ((fun value.next.b-res) [in.fin s.b-res])
+      %load  b-res(on-load.o this(m-b on-load.o.b-res))
+      %done  ((fun value.o.b-res) [in.fin s.b-res])
     ==
   ::
   ++  fmap
@@ -175,24 +175,65 @@
     ;<  res=b  bind  m-b
     (pure (fun res))
   ::
-  ++  try
-    |=  [x=form y=form]
-    ^-  form
-    |=  in=fume-input
-    =*  this  .
-    =/  x-res  (x in)
-    ?-    -.next.x-res
-        %done  x-res
-        %load  x-res(on-load.next this(x on-load.next.x-res))
-        %fail
-      =/  y-res  (y in)
-      :-  s.y-res
-      ?-  -.next.y-res
-        %done  next.y-res
-        %fail  [%fail (welp tang.next.x-res tang.next.y-res)]
-        %load  next.y-res(on-load this(y on-load.next.y-res))
-      ==
+  +$  eval-state
+    $:  nex=(unit [=spar on-load=form])
+        sky=(map spar (unit cage))
     ==
+  +$  eval-output
+    $%  [%done value=a]
+        [%fail =tang]
+        [%load =spar]
+    ==
+  ++  eval
+    |=  [our=ship =desk now=@da scry=sley]
+    |=  $:  cache=hoon-cache
+            state=eval-state
+            fun=form
+            fil=(unit (unit cage))
+        ==
+    ^-  [out=eval-output state=eval-state cache=hoon-cache] 
+    ::  fresh build should have no response; rerun must have one
+    ::
+    ?>  =(=(~ nex.state) =(~ fil))
+    ::  if no attempt has been made already, try to run the build
+    ::
+    =^  pro=output  fil
+      ?~  nex.state
+        [(fun fil cache) ~]
+      [[cache %load u.nex.state] fil]
+    ::  loop until %done, %fail, or blocking resource request
+    ::
+    |^  ^+  [*eval-output state cache]
+        =.  cache  s.pro
+        ?-    -.o.pro
+            %done  [[%done value.o.pro] state cache]
+            %fail  [[%fail tang.o.pro] state cache]
+            %load
+          ::  run .on-load on clay response if we have one
+          ::
+          ?^  fil
+            =.  sky.state  (~(put by sky.state) spar.o.pro u.fil)
+            $(pro (on-load.o.pro fil cache), fil ~)
+          ::  run .on-load on previously loaded resource if we have one
+          ::
+          ?^  got=(~(get by sky.state) spar.o.pro)
+            $(pro (on-load.o.pro got cache))
+          ::  run .on-load on result of scry if it completes synchronously
+          ::
+          ?^  res=(scry-for-spar spar.o.pro)
+            =.  sky.state  (~(put by sky.state) spar.o.pro u.res)
+            $(pro (on-load.o.pro res cache))
+          ::  block on asynchronous clay request, storing .on-load
+          ::
+          [[%load spar.o.pro] state(nex `[spar on-load]:o.pro) cache]
+        ==
+    ++  scry-for-spar
+      |=  =spar
+      ^-  (unit (unit cage))
+      =/  =term  (cat 3 %c care.spar)
+      =/  =beam  [[our desk da+now] (flop path.spar)]
+      (scry ** ~ term beam)
+    --
   --
 ::
 ++  lift-vase
@@ -259,62 +300,23 @@
 =|  =hoon-cache
 |=  [our=ship =desk now=@da scry=sley]
 |%
-++  run-root-build
-  |=  [=build state=build-state in=(unit (unit cage))]
-  ^-  [=product =build-state =^hoon-cache]
-  =/  m  (fume ,cage)
-  ::  fresh build should have no response; rerun must have one
-  ::
-  ?>  =(=(~ fum.state) =(~ in))
-  ::  if no attempt has been made already, try to run the build
-  ::
-  =^  pro=output:m  in
-    ?^  fum.state
-      [[hoon-cache %load u.fum.state] in]
-    [((make plan.build) in hoon-cache) ~]
-  ::
-  |-  ^-  [product build-state ^hoon-cache]
-  =.  hoon-cache  s.pro
-  ?-    -.next.pro
-      %done  [`&+value.next.pro state hoon-cache]
-      %fail  [`|+tang.next.pro state hoon-cache]
-      %load
-    ::  run .on-load on clay response if we have one
-    ::
-    ?^  in
-      =.  cur.state  (~(put by cur.state) spar.next.pro u.in)
-      $(pro (on-load.next.pro in hoon-cache), in ~)
-    ::  run .on-load on previously loaded resource if we have one
-    ::
-    ?^  got=(~(get by cur.state) spar.next.pro)
-      $(pro (on-load.next.pro got hoon-cache))
-    ::  run .on-load on result of scry if it completes synchronously
-    ::
-    ?^  res=(scry-for-spar spar.next.pro)
-      =.  cur.state  (~(put by cur.state) spar.next.pro u.res)
-      $(pro (on-load.next.pro res hoon-cache))
-    ::  block, storing .on-load in .fum.state
-    ::
-    [~ state(fum `[spar on-load]:next.pro) hoon-cache]
-  ==
-::
-++  make
+++  run-plan
   |=  =plan
   =/  m  (fume ,cage)
   ^-  form:m
   ?-  -.plan
     %$     (pure:m cage.plan)
-    %bunt  (make-bunt +.plan)
-    %cast  (make-cast +.plan)
-    %diff  (make-diff +.plan)
-    %join  (make-join +.plan)
+    %bunt  (run-bunt +.plan)
+    %cast  (run-cast +.plan)
+    %diff  (run-diff +.plan)
+    %join  (run-join +.plan)
     %mash  !!  ::  TODO: write this
-    %pact  (make-pact +.plan)
-    %vale  (make-vale +.plan)
-    %volt  (make-volt +.plan)
+    %pact  (run-pact +.plan)
+    %vale  (run-vale +.plan)
+    %volt  (run-volt +.plan)
   ==
 ::
-++  make-bunt
+++  run-bunt
   |=  =mark
   =/  m  (fume ,cage)
   ^-  form:m
@@ -343,11 +345,11 @@
     %2  (fail:m leaf+"ford: call-fail" p.vap)
   ==
 ::
-++  make-cast
+++  run-cast
   |=  [new=mark =plan]
   =/  m  (fume ,cage)
   ^-  form:m
-  ;<  [old=mark arg=vase]  bind:m  (make plan)
+  ;<  [old=mark arg=vase]  bind:m  (run-plan plan)
   %+  on-fail:m  |.([leaf+"ford: cast-fail {<old>} -> {<new>}"]~)
   ;<  cor=vase  bind:m  (load-mark new)
   =/  rab  (mule |.((slap cor (ream (cat 3 'grab:' old)))))
@@ -364,13 +366,13 @@
         (pure:m [new pro])
   ==
 ::
-++  make-diff
+++  run-diff
   |=  [start=plan end=plan]
   =*  loop  $
   =/  m  (fume ,cage)
   ^-  form:m
-  ;<  uno=cage  bind:m  (make start)
-  ;<  dos=cage  bind:m  (make end)
+  ;<  uno=cage  bind:m  (run-plan start)
+  ;<  dos=cage  bind:m  (run-plan end)
   ?:  =([p q.q]:uno [p q.q]:dos)
     (pure:m [%null !>(~)])
   ;<  cor=vase  bind:m  (load-mark p.uno)
@@ -418,7 +420,7 @@
   =.  p.pin  [%face face.i.raw p.pin]
   loop(sut (slop pin sut), raw t.raw)
 ::
-++  make-join
+++  run-join
   |=  [=mark one=plan two=plan]
   =*  loop  $
   =/  m  (fume ,cage)
@@ -427,8 +429,8 @@
   ;<  gad=(each @tas vase)  bind:m  (run-grad cor)
   ?:  ?=(%& -.gad)
     loop(mark p.gad)
-  ;<  uno=cage  bind:m  (make one)
-  ;<  dos=cage  bind:m  (make two)
+  ;<  uno=cage  bind:m  (run-plan one)
+  ;<  dos=cage  bind:m  (run-plan two)
   ;<  fom=@tas  bind:m  (run-form p.gad)
   ?.  &(=(fom p.uno) =(fom p.dos))
     (fail:m leaf+"ford: join-mark" ~)
@@ -455,18 +457,18 @@
     [s.fin1 %fail ~[leaf+"ford: load-fail {<spar>}"]]
   [s.fin1 %done u.u.in.fin1]
 ::
-++  make-pact
+++  run-pact
   |=  [sut=plan dif=plan]
   =*  loop  $
   =/  m  (fume ,cage)
   ^-  form:m
-  ;<  sot=cage  bind:m  (make sut)
+  ;<  sot=cage  bind:m  (run-plan sut)
   ;<  cor=vase  bind:m  (load-mark p.sot)
   ;<  gad=(each mark vase)  bind:m  (run-grad cor)
   ?:  ?=(%& -.gad)
-    (make %cast p.sot %pact [%cast p.gad $+sot] dif)
+    (run-plan %cast p.sot %pact [%cast p.gad $+sot] dif)
   ;<  fom=mark  bind:m  (run-form p.gad)
-  ;<  fid=cage  bind:m  (make dif)
+  ;<  fid=cage  bind:m  (run-plan dif)
   ?.  =(fom p.fid)
     (fail:m leaf+"ford: pact-mark" ~)
   =/  sit=vase  (slop cor q.sot)
@@ -513,7 +515,7 @@
     %2  (fail:m leaf+"ford: slap-fail" p.nap)
   ==
 ::
-++  make-vale
+++  run-vale
   |=  [=mark =noun]
   =/  m  (fume ,cage)
   ^-  form:m
@@ -523,11 +525,11 @@
   ;<  pro=vase  bind:m  (do-slam gat sam)
   (pure:m [mark pro])
 ::
-++  make-volt
+++  run-volt
   |=  [=mark =noun]
   =/  m  (fume ,cage)
   ^-  form:m
-  ;<  cag=cage  bind:m  (make-bunt mark)
+  ;<  cag=cage  bind:m  (run-bunt mark)
   (pure:m cag(q.q noun))
 ::
 ++  run-form
@@ -577,10 +579,10 @@
   ?^  val
     [s.in %done u.val]
   =/  ran  (run in)
-  ?-  -.next.ran
+  ?-  -.o.ran
     %fail  ran
-    %done  ran(s (~(put ca s.ran) key value.next.ran))
-    %load  ran(on-load.next this(run on-load.next.ran))
+    %done  ran(s (~(put ca s.ran) key value.o.ran))
+    %load  ran(on-load.o this(run on-load.o.ran))
   ==
 ::
 ++  scry-for-spar
