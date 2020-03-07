@@ -71,6 +71,9 @@ whitespace = gap <|> ace
 sym :: Parser Text
 sym = fmap pack $ some $ oneOf ("$" <> ['a' .. 'z'] <> ['A' .. 'Z'])
 
+bind :: Parser Text
+bind = fmap pack $ some $ oneOf ("$" <> ['a' .. 'z'])
+
 
 -- Grammar ---------------------------------------------------------------------
 
@@ -159,31 +162,51 @@ data Dec = Dec Text AST
 
 decl :: Parser Dec
 decl = do
-  (n, b) <- string "++" *> rune2 (,) sym exp
+  char '='
+  n <- bind
+  ace
+  b <- exp
   pure (Dec n b)
 
 eat :: Parser ()
 eat = option () whitespace
 
+eaten :: Parser a -> Parser a
+eaten x = eat *> x <* eat
+
+file :: Parser a -> Parser a
+file x = eaten x <* eof
+
+decls :: Parser [Dec]
+decls = (:) <$> decl <*> many (try (gap *> decl))
+
+expFile :: Parser AST
+expFile = file exp
+
 dashFile :: Parser [Dec]
-dashFile = do
-  hed <- eat *> decl
-  tel <- many (try (gap *> decl))
-  eat
-  eof
-  pure (hed : tel)
+dashFile = file decls
+
+doParse :: Parser a -> Text -> Either Text a
+doParse act txt =
+  runParser (evalStateT act Tall) "stdin" txt & \case
+    Left  e → Left (pack $ errorBundlePretty e)
+    Right x → pure x
 
 parseAST ∷ Text → Either Text AST
-parseAST txt =
-  runParser (evalStateT exp Tall) "stdin" txt & \case
-    Left  e → Left (pack $ errorBundlePretty e)
-    Right x → pure x
+parseAST = doParse (file exp)
 
-parseDecs ∷ Text → Either Text [Dec]
-parseDecs txt =
-  runParser (evalStateT dashFile Tall) "stdin" txt & \case
-    Left  e → Left (pack $ errorBundlePretty e)
-    Right x → pure x
+parseDecl ∷ Text → Either Text Dec
+parseDecl = doParse (file decl)
+
+parseDecls ∷ Text → Either Text [Dec]
+parseDecls = doParse (file decls)
+
+declExp ∷ Parser (Dec, AST)
+declExp = do
+  d <- decl
+  gap
+  b <- exp
+  pure (d, b)
 
 
 --------------------------------------------------------------------------------
@@ -196,7 +219,9 @@ toUruk env = go
     N v -> lookup v env & maybe (undef v) Right
     x :@ y  -> (R.:@) <$> go x <*> go y
 
-globals :: Map Text R.Exp
+type Env = Map Text R.Exp
+
+globals :: Env
 globals = mapFromList
   [ ("S", R.N R.S)
   , ("K", R.N R.K)
@@ -209,6 +234,17 @@ tryExp = (parseAST >=> toUruk globals) >>> \case
   Left err -> putStrLn err >> error ""
   Right ur -> pure ur
 
+tryDecl :: Text -> IO (Text, R.Exp)
+tryDecl = parseDecl >>> \case
+  Left err        -> error (unpack err)
+  Right (Dec n v) -> do
+    putStrLn (n <> "=")
+    toUruk globals v & \case
+      Left err  -> error (unpack err)
+      Right ex  -> do
+        res <- tryExec ex
+        pure (n, res)
+
 tryExec :: R.Exp -> IO R.Exp
 tryExec = R.exec >>> go
  where
@@ -216,7 +252,31 @@ tryExec = R.exec >>> go
   go [x]    = print x >> pure x
   go (x:xs) = print x >> go xs
 
+tryExecBind :: Text -> R.Exp -> IO R.Exp
+tryExecBind nm = R.exec >>> go
+ where
+  go []     = error "impossible"
+  go [x]    = out x >> pure x
+  go (x:xs) = out x >> go xs
+
+  out x = putStrLn ("=" <> nm <> " " <> tshow x)
+
+tryDeclExp :: Text -> IO R.Exp
+tryDeclExp txt = doParse (file declExp) txt & \case
+  Left  err             -> error (unpack err)
+  Right (Dec n v, body) -> do
+    exP <- toUruk globals v & \case
+      Left  e -> error (unpack e)
+      Right r -> pure r
+    dvl <- tryExecBind n exP
+    putStrLn ""
+    res <- toUruk (insertMap n dvl globals) body & \case
+      Left  err -> error (unpack err)
+      Right r   -> pure r
+    tryExec res
+
 main :: IO ()
 main = do
   [txt] <- getArgs
-  void (tryExp txt >>= tryExec)
+  tryDeclExp txt >>= print
+  -- void (tryExp txt >>= tryExec)
