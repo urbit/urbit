@@ -50,6 +50,12 @@ import qualified Foreign.ForeignPtr.Unsafe as Ptr
 #error WORD_SIZE_IN_BITS must be either 32 or 64
 #endif
 
+bit :: Word
+bit = BIT
+
+byt :: Word
+byt = BYT
+
 
 --------------------------------------------------------------------------------
 
