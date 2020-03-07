@@ -22,7 +22,7 @@
 =*  state  -
 ::
 %-  agent:dbug
-%+  verb  &
+%+  verb  |
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -31,7 +31,6 @@
       cc         ~(. chat-core bowl)
       def        ~(. (default-agent this %|) bowl)
   ::
-
   ++  on-init   on-init:def
   ++  on-save   !>(state)
   ++  on-load
@@ -41,7 +40,7 @@
       [~ this(state old)]
     :_  this(state [%1 inbox.old])
     [%pass /lo-chst %agent [our.bowl %chat-hook] %poke %noun !>(%store-load)]~
-      ::
+  ::
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)

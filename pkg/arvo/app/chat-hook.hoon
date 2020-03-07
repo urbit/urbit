@@ -41,7 +41,7 @@
 =|  state-1
 =*  state  -
 ::
-%+  verb  &
+%+  verb  |
 %-  agent:dbug
 ^-  agent:gall
 =<
@@ -97,9 +97,6 @@
           (hookup-group new-group kind.newp)
           [(record-group new-group chat)]~
         ::
-          ?.  &(=(our.bol host) ?=(%white kind.newp))  ~
-          (send-invites chat who.newp)
-        ==
           ?.  =(our.bol host)  ~
           ?:  ?=(%white kind.newp)
             (send-invites new-chat ~(tap in who.newp))
@@ -233,7 +230,6 @@
           %chat-action       (poke-chat-action:cc !<(chat-action vase))
           %noun
         ?:  =(%store-load q.vase)
-          ~&  loaded+loaded-cards.state
           [loaded-cards.state state(loaded-cards ~)]
         [~ state]
       ::
@@ -608,7 +604,6 @@
 ++  chat-poke
   |=  act=chat-action
   ^-  card
-  ~&  act
   [%pass / %agent [our.bol %chat-store] %poke %chat-action !>(act)]
 ::
 ++  chat-view-poke
