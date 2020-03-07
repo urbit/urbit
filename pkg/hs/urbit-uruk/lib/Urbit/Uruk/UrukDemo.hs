@@ -51,7 +51,7 @@
       - List of commands, their results, and their execution traces.
 -}
 
-module Urbit.Uruk.UrukDemo where
+module Urbit.Uruk.UrukDemo (main) where
 
 import ClassyPrelude hiding (exp, init, last, many, some, try)
 
@@ -100,9 +100,6 @@ showTree (Node n xs) = "(" <> intercalate " " (show n : fmap showTree xs) <> ")"
 
 instance Show Exp where show = showTree . tree
 
-eval ∷ (Text → Maybe Exp) → Exp → Exp
-eval env = \case { (reduce env → Just x) → eval env x; x → x }
-
 exec ∷ (Text → Maybe Exp) → Exp → [Exp]
 exec env x = x : fromMaybe [] (fmap (exec env) (reduce env x))
 
@@ -110,7 +107,7 @@ reduce ∷ (Text → Maybe Exp) → Exp → Maybe Exp
 reduce env = go
  where
   go = \case
-    N (V x)               → env x
+    N (V x) :@ r          → (:@) <$> env x <*> pure r
     N K :@ x :@ _         → Just x
     (go→Just xv) :@ y     → Just (xv :@ y)
     x :@ (go→Just yv)     → Just (x :@ yv)
@@ -185,7 +182,8 @@ whitespace :: Parser ()
 whitespace = gap <|> ace
 
 sym :: Parser Text
-sym = fmap pack $ some $ oneOf ("$" <> ['a' .. 'z'] <> ['A' .. 'Z'])
+sym = fmap pack $ some $ oneOf
+  ("$-%" <> ['a' .. 'z'] <> ['A' .. 'Z'] <> ['0' .. '9'])
 
 bind :: Parser Text
 bind = fmap pack $ some $ oneOf ("$" <> ['a' .. 'z'])
@@ -223,14 +221,13 @@ irregular :: Parser Exp
 irregular = inWideMode (call <|> N <$> ur)
   where call = apN <$> grouped "(" " " ")" exp
 
-sig :: Parser [Text]
-sig = grouped "(" " " ")" sym <|> (: []) <$> sym
-
 rune :: Parser Exp
 rune = choice
-  [ string "%-" *> rune2 (:@) exp exp
+  [ string "%." *> rune2 (flip (:@)) exp exp
+  , string "%-" *> rune2 (:@) exp exp
   , string "%+" *> rune3 ap3 exp exp exp
   , string "%^" *> rune4 ap4 exp exp exp exp
+  , string "%*" *> runeN apN exp
   ]
 
 
@@ -257,11 +254,6 @@ parseRune tall wide = get >>= \case
   Wide → wide
   Tall → tall <|> inWideMode wide
 
-rune1 ∷ (a→b) → Parser a → Parser b
-rune1 node x = parseRune tall wide
-  where tall = do gap; p←x;      pure (node p)
-        wide = do pal; p←x; par; pure (node p)
-
 rune2 ∷ (a→b→c) → Parser a → Parser b → Parser c
 rune2 node x y = parseRune tall wide
   where tall = do gap; p←x; gap; q←y;      pure (node p q)
@@ -277,6 +269,15 @@ rune4 node x y z g = parseRune tall wide
   where tall = do gap; p←x; gap; q←y; gap; r←z; gap; s←g; pure (node p q r s)
         wide = do pal; p←x; ace; q←y; ace; r←z; ace; s←g; pure (node p q r s)
 
+runeN ∷ ([a]→b) → Parser a → Parser b
+runeN node x = node <$> parseRune tall wide
+  where tall = gap >> elems
+                 where elems   = term <|> elemAnd
+                       elemAnd = do v ← x; gap; vs ← elems; pure (v:vs)
+                       term    = string "==" $> []
+        wide = pal *> option [] elems <* par
+                 where elems = (:) <$> x <*> many (ace >> x)
+
 
 -- Entry Point -----------------------------------------------------------------
 
@@ -288,6 +289,18 @@ decl = do
   b <- exp
   pure (Dec n b)
 
+unbind :: Parser Text
+unbind = char '=' *> bind
+
+data Inp
+  = Decl Dec
+  | Expr Exp
+  | Wipe Text
+ deriving (Eq, Ord, Show)
+
+inp :: Parser Inp
+inp = choice [ Decl <$> decl, Expr <$> exp, Wipe <$> unbind ]
+
 eat :: Parser ()
 eat = option () whitespace
 
@@ -297,14 +310,8 @@ eaten x = eat *> x <* eat
 file :: Parser a -> Parser a
 file x = eaten x <* eof
 
-decls :: Parser [Dec]
-decls = (:) <$> decl <*> many (try (gap *> decl))
-
-expFile :: Parser Exp
-expFile = file exp
-
-dashFile :: Parser [Dec]
-dashFile = file decls
+inps :: Parser [Inp]
+inps = (:) <$> inp <*> many (try (gap *> inp))
 
 doParse :: Parser a -> Text -> Either Text a
 doParse act txt =
@@ -312,40 +319,8 @@ doParse act txt =
     Left  e → Left (pack $ errorBundlePretty e)
     Right x → pure x
 
-parseExp ∷ Text → Either Text Exp
-parseExp = doParse (file exp)
-
-parseDecl ∷ Text → Either Text Dec
-parseDecl = doParse (file decl)
-
-parseDecls ∷ Text → Either Text [Dec]
-parseDecls = doParse (file decls)
-
-declExp ∷ Parser (Dec, Exp)
-declExp = do
-  d <- decl
-  gap
-  b <- exp
-  pure (d, b)
-
 
 --------------------------------------------------------------------------------
-
-globals :: Env
-globals = mempty
-
-tryExp :: Text -> IO Exp
-tryExp = parseExp >>> \case
-  Left err -> putStrLn err >> error ""
-  Right x  -> pure x
-
-tryDecl :: Text -> IO (Text, Exp)
-tryDecl = parseDecl >>> \case
-  Left err        -> error (unpack err)
-  Right (Dec n v) -> do
-    putStrLn (n <> "=")
-    res <- tryExec (`lookup` globals) v
-    pure (n, res)
 
 tryExec :: (Text -> Maybe Exp) -> Exp -> IO Exp
 tryExec env = exec env >>> go
@@ -363,23 +338,33 @@ tryExecBind env nm = exec env >>> go
 
   out x = putStrLn ("=" <> nm <> " " <> tshow x)
 
-noFree :: Exp -> IO Exp
-noFree = \case
-  N (V v) -> error ("undefined variable: " <> unpack v)
-  N x       -> pure (N x)
-  x :@ y    -> (:@) <$> noFree x <*> noFree y
+noFree :: Env -> Exp -> IO Exp
+noFree env = \case
+  N (V ((`lookup` env) -> Just x)) -> pure x
+  N (V v                         ) -> error ("undefined variable: " <> unpack v)
+  N x                              -> pure (N x)
+  x :@ y                           -> (:@) <$> noFree env x <*> noFree env y
 
-tryDeclExp :: Text -> IO Exp
-tryDeclExp txt = doParse (file declExp) txt & \case
-  Left  err             -> error (unpack err)
-  Right (Dec n v, body) -> do
-    dvl <- tryExecBind (`lookup` globals) n v
-    noFree dvl
-    putStrLn ""
-    let env = insertMap n dvl globals
-    tryExec (`lookup` env) body
+tryInps :: Env -> Text -> IO Env
+tryInps initEnv txt = doParse (file inps) txt & \case
+  Left  err -> error (unpack err)
+  Right ips -> go initEnv ips
+ where
+  go :: Env -> [Inp] -> IO Env
+  go env []       = pure env
+  go env (e : es) = do
+    case e of
+      Wipe v -> go (deleteMap v env) es
+      Expr x -> do
+        tryExec (`lookup` env) x
+        putStrLn ""
+        go env es
+      Decl (Dec v x) -> do
+        x' <- tryExecBind (`lookup` env) v x >>= noFree env
+        putStrLn ""
+        go (insertMap v x' env) es
 
 main :: IO ()
 main = do
   [txt] <- getArgs
-  void (tryDeclExp txt)
+  void (tryInps mempty txt)
