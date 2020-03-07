@@ -93,15 +93,32 @@
               (delete-group host (snoc old-group %write))
           ==
         ::
-          (create-group new-group who.newp)
-          (hookup-group new-group kind.newp)
-          [(record-group new-group chat)]~
+          (create-group new-chat who.newp)
+          (hookup-group new-chat kind.newp)
+          [(record-group new-chat new-chat)]~
+          (recreate-chat host old-chat new-chat)
         ::
           ?.  =(our.bol host)  ~
           ?:  ?=(%white kind.newp)
             (send-invites new-chat ~(tap in who.newp))
           %+  send-invites  new-chat
           (parse-subscribers wex.bol old-chat)
+      ==
+    ::
+    ++  recreate-chat
+      |=  [host=ship chat=path new-chat=path]
+      ^-  (list card)
+      =/  old-mailbox=mailbox
+        (need (scry:cc (unit mailbox) %chat-store [%mailbox chat]))
+      =*  enves  envelopes.old-mailbox
+      :~  (chat-poke [%delete chat])
+          (chat-poke [%create new-chat])
+          (chat-poke [%messages new-chat enves])
+          (chat-poke [%read new-chat])
+          %^  make-poke  %chat-hook  %chat-hook-action
+          !>  ^-  chat-hook-action
+          ?:  =(our.bol host)  [%add-owned new-chat %.y]
+          [%add-synced host new-chat %.y]
       ==
     ::
     ++  unify-permissions
@@ -195,9 +212,9 @@
       =/  =metadata
         ~|  [%weird-chat-path chat]
         %*  .  *metadata
-          title         (snag 1 chat)
+          title         (snag 2 chat)
           date-created  now.bol
-          creator       (slav %p (snag 0 chat))
+          creator       (slav %p (snag 1 chat))
         ==
       %^  make-poke  %metadata-store
         %metadata-action
@@ -205,9 +222,9 @@
       [%add group [%chat chat] metadata]
     ::
     ++  send-invites
-      |=  [chat=path who=(set ship)]
+      |=  [chat=path who=(list ship)]
       ^-  (list card)
-      %+  murn  ~(tap in who)
+      %+  murn  who
       |=  =ship
       ^-  (unit card)
       ?:  =(our.bol ship)  ~
@@ -219,6 +236,15 @@
         =+  (crip "upgrade {(spud chat)} (please accept in OS1)")
         [our.bol %chat-hook chat ship -]
       [%invite /chat (sham chat ship eny.bol) invite]
+    ::
+    ++  parse-subscribers
+      |=  [=boat:agent:gall old-chat=path]
+      ^-  (list ship)
+      %+  murn  ~(tap in boat)
+      |=  [[=wire sub=ship app=term] [acked=? =path]]
+      ^-  (unit ship)
+      ?.  =(old-chat path)  ~
+      `sub
     --
   ::
   ++  on-poke
