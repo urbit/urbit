@@ -16,7 +16,7 @@
   ::    %drop: cancel build
   ::
   +$  task
-    $%  [%make =desk case=(unit case:clay) all=(set path)]
+    $%  [%make =desk case=(unit case) all=(set path)]
         [%mark =desk all=(map path plan)]
         [%drop ~]
     ==
@@ -53,6 +53,31 @@
       [%vale =mark =noun]
       [%volt =mark =noun]
   ==
+::  TODO: fill in
+::
++$  move  *
++$  sign  *
++$  axle
+  $:  %0
+      =state
+  ==
++$  state
+  $:  makes=(map duct [live=? job=make-build])
+      marks=(map duct mark-build)
+      =hoon-cache
+  ==
+++  make-build
+  =/  m  (fume ,vase)
+  $:  =desk
+      =case
+      states=(map path [out=eval-output:m state=eval-state:m])
+  ==
+++  mark-build
+  =/  m  (fume ,cage)
+  $:  =desk
+      =case
+      states=(map path [out=eval-output:m state=eval-state:m])
+  ==
 ::  $pile: preprocessed hoon source file
 ::
 +$  pile
@@ -76,7 +101,7 @@
 ::  $hoon-cache: cache for compiler operations
 ::
 +$  hoon-cache  (clock hoon-cache-key vase)
-::  $make-cache-key: unique cache key for part of a %make build
+::  $hoon-cache-key: cache key for a compiler operation
 ::
 ::    %slap: eval (+slap) a hoon against a subject vase
 ::    %mint: compile (+mint) a hoon against a subject type
@@ -91,17 +116,10 @@
       [%rain pax=path =nail]
   ==
 ::
-+$  product  (unit (each cage tang))
-+$  build
-  $:  live=?
-      =desk
-      =case
-      =plan
-  ==
 +$  build-state
   $:  fum=(unit [=spar on-load=(fume-form-raw ,cage)])
       cur=(map spar (unit cage))
-      pre=(unit [=case:clay resources=(map spar (unit cage))])
+      pre=(unit [=case resources=(map spar (unit cage))])
   ==
 ::  $spar: clay scry request on unspecified $beak
 ::
@@ -185,13 +203,13 @@
         [%load =spar]
     ==
   ++  eval
-    |=  [our=ship =desk now=@da scry=sley]
+    |=  [our=ship =desk =case scry=sley]
     |=  $:  cache=hoon-cache
             state=eval-state
             fun=form
             fil=(unit (unit cage))
         ==
-    ^-  [out=eval-output state=eval-state cache=hoon-cache] 
+    ^-  [[out=eval-output state=eval-state] cache=hoon-cache] 
     ::  fresh build should have no response; rerun must have one
     ::
     ?>  =(=(~ nex.state) =(~ fil))
@@ -203,11 +221,11 @@
       [[cache %load u.nex.state] fil]
     ::  loop until %done, %fail, or blocking resource request
     ::
-    |^  ^+  [*eval-output state cache]
+    |^  ^+  [[*eval-output state] cache]
         =.  cache  s.pro
         ?-    -.o.pro
-            %done  [[%done value.o.pro] state cache]
-            %fail  [[%fail tang.o.pro] state cache]
+            %done  [[[%done value.o.pro] state] cache]
+            %fail  [[[%fail tang.o.pro] state] cache]
             %load
           ::  run .on-load on clay response if we have one
           ::
@@ -225,13 +243,13 @@
             $(pro (on-load.o.pro res cache))
           ::  block on asynchronous clay request, storing .on-load
           ::
-          [[%load spar.o.pro] state(nex `[spar on-load]:o.pro) cache]
+          [[[%load spar.o.pro] state(nex `[spar on-load]:o.pro)] cache]
         ==
     ++  scry-for-spar
       |=  =spar
       ^-  (unit (unit cage))
       =/  =term  (cat 3 %c care.spar)
-      =/  =beam  [[our desk da+now] (flop path.spar)]
+      =/  =beam  [[our desk case] (flop path.spar)]
       (scry ** ~ term beam)
     --
   --
@@ -246,6 +264,8 @@
 ++  vase-to-cage  (bake (with-mark %noun) vase)
 ++  with-mark  |=(=mark |*(* [mark +<]))
 --
+=>
+=-  [at=- .]
 |=  [our=ship =desk scry=sley]
 =>
 ::  %make execution routines
@@ -407,7 +427,6 @@
       %2  (fail:m leaf+"ford: slap-fail" p.nap)
   ==
 --
-=>
 ::  %mark execution routines
 ::
 |%
@@ -586,15 +605,102 @@
   =/  m  (fume ,vase)
   ^-  form:m
   %+  on-fail:m  |.([leaf+"ford: load-mark {(trip mark)}"]~)
-  (load-fit /[mark])
+  (load-fit /mar/[mark])
 --
-=|  hoon-cache
 |=  pit=vase
+=|  ax=axle
 |=  [our=ship now=@da eny=@ scry-gate=sley]
+=*  ford-gate  .
 |%
-++  call  !!
-++  take  !!
-++  load  !!
-++  stay  !!
-++  scry  !!
+++  call
+  |=  [=duct type=* wrapped-task=(hobo task:able)]
+  ^-  [(list move) _ford-gate]
+  =|  fex=(list move)
+  =/  =task:able  ((harden task:able) wrapped-task)
+  ?-    -.task
+      %make
+    =/  live=?  =(~ case.task)
+    =/  =case  (fall case.task da+now)
+    =/  m  (fume ,vase)
+    =|  states=(map path [out=eval-output:m state=eval-state:m])
+    =/  paz  ~(tap in all.task)
+    =/  dun=?  %.y
+    ::  run each file build as far until done or blocked on resource
+    ::
+    |-  ^+  [fex ford-gate]
+    ?~  paz
+      ::  we've tried all paths; store if live or unfinished
+      ::
+      =?  makes.state.ax  |(live !dun)
+        %+  ~(put by makes.state.ax)  duct
+        [live desk.task case states]
+      ::  if not live, delete build on completion
+      ::
+      =?  makes.state.ax  &(dun !live)
+        (~(del by makes.state.ax) duct)
+      ::  send result if done
+      ::
+      =?  fex  dun
+        :_  fex
+        :^  %give  duct  %make
+        %-  ~(gas by *(map path (each vase tang)))
+        %+  turn  ~(tap by states)
+        |=  [=path out=eval-output:m state=eval-state:m]
+        ?-  -.out
+          %done  [path &+value.out]
+          %fail  [path |+tang.out]
+          %load  ~|(ford-not-done+path !!)
+        ==
+      ::  subscribe to dependencies each time a live build completes
+      ::
+      =?  fex  &(dun live)
+        :_  fex
+        =/  sky=(set spar)
+          %+  roll  ~(val by states)
+          |=  [[* * sky=(map spar (unit cage))] acc=(set spar)]
+          (~(uni in acc) ~(key by sky))
+        =/  mood  [%mult case.task sky]
+        [%pass /live duct %c %warp our desk.task `mood]
+      [fex ford-gate]
+    ::  run the build on this path, .i.paz
+    ::
+    =^  res  hoon-cache.state.ax
+      %:  (eval:m our desk.task case scry-gate)
+        hoon-cache.state.ax
+        *eval-state:m
+        fun=(run-file:(at our desk scry-gate) i.paz)
+        fil=~
+      ==
+    ::  accumulate result; clear the .dun flag if blocked
+    ::
+    =.  states  (~(put by states) i.paz res)
+    =?  dun  ?=(%load -.out.res)  %.n
+    ::  request the resource the build blocked on
+    ::
+    =?  fex  ?=(%load -.out.res)
+      :_  fex
+      =/  =wire  load+path.spar.out.res
+      =/  mood  [%sing care.spar case.task path.spar]
+      [%pass wire duct %c %warp our desk.task `mood]
+    ::  recurse on next path
+    ::
+    $(paz t.paz)
+  ::
+      %mark
+    !!
+  ::
+      %drop
+    =.  makes.state.ax  (~(del by makes.state.ax) duct)
+    =.  marks.state.ax  (~(del by marks.state.ax) duct)
+    [~ ford-gate]
+  ==
+++  take
+  |=  [=wire =duct type=* wrapped-sign=(hobo sign)]
+  ^-  [(list move) _ford-gate]
+  !!
+++  load
+  |=  old=axle
+  ford-gate(ax axle)
+++  stay  ax
+++  scry  |=(* [~ ~])
 --
