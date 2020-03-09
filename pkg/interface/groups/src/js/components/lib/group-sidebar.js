@@ -62,6 +62,7 @@ export class GroupSidebar extends Component {
         let groupChannel = `${path}/contacts${path}`
         if (
           props.associations[path] &&
+          props.associations[path][groupChannel] &&
           props.associations[path][groupChannel].metadata
         ) {
           name =
