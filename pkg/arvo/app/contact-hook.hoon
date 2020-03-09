@@ -423,5 +423,5 @@
   ?~  shp  ~
   ?:  =(u.shp our.bol)
     [%pass pax %agent [our.bol %contact-store] %leave ~]~
-  [%pass pax %agent [u.shp %contadt-hook] %leave ~]~
+  [%pass pax %agent [u.shp %contact-hook] %leave ~]~
 --
