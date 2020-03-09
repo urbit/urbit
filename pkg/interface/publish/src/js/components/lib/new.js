@@ -184,8 +184,9 @@ export class NewScreen extends Component {
             (Optional)
           </span>
           </p>
-          <p className="f9 gray2 db mb2 pt1">Select an initial read-only audience for your notebook</p>
+          <p className="f9 gray2 db mb2 pt1">Selected ships will be invited to read your notebook. Selected groups will be invited to read and write notes.</p>
           <InviteSearch
+            associations={this.props.associations}
             groupResults={true}
             groups={this.props.groups}
             contacts={this.props.contacts}

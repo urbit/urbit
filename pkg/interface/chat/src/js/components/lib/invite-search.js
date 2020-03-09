@@ -31,7 +31,20 @@ export class InviteSearch extends Component {
 
   peerUpdate() {
     let groups = Array.from(Object.keys(this.props.groups));
-    groups = groups.filter(e => !e.startsWith("/~/"));
+    groups = groups.filter(e => !e.startsWith("/~/"))
+    .map(e => {
+      let eachGroup = new Set();
+      eachGroup.add(e);
+      if (this.props.associations) {
+        let name = e;
+        if (e in this.props.associations) {
+          name = (this.props.associations[e].metadata.title !== "")
+            ? this.props.associations[e].metadata.title : e;
+        }
+        eachGroup.add(name);
+      }
+      return Array.from(eachGroup);
+    });
 
     let peers = [],
       peerSet = new Set(),
@@ -79,7 +92,7 @@ export class InviteSearch extends Component {
       let groupMatches = [];
       if (this.props.groupResults) {
         groupMatches = this.state.groups.filter(e => {
-          return e.includes(searchTerm);
+          return (e[0].includes(searchTerm) || e[1].includes(searchTerm));
         });
       }
 
@@ -220,13 +233,14 @@ export class InviteSearch extends Component {
       let groupResults = state.searchResults.groups.map(group => {
         return (
           <li
-            key={group}
+            key={group[0]}
             className={
-              "list mono white-d f8 pv2 ph3 pointer" +
-              " hover-bg-gray4 hover-bg-gray1-d"
+              "list white-d f8 pv2 ph3 pointer" +
+              " hover-bg-gray4 hover-bg-gray1-d " +
+              ((group[1]) ? "inter" : "mono")
             }
-            onClick={() => this.addGroup(group)}>
-            <span className="mix-blend-diff white">{group}</span>
+            onClick={() => this.addGroup(group[0])}>
+            <span className="mix-blend-diff white">{(group[1]) ? group[1] : group[0]}</span>
           </li>
         );
       });

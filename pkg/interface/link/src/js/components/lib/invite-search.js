@@ -8,7 +8,7 @@ export class InviteSearch extends Component {
     this.state = {
       groups: [],
       peers: [],
-      contacts: new Map,
+      contacts: new Map(),
       searchValue: "",
       searchResults: {
         groups: [],
@@ -31,11 +31,27 @@ export class InviteSearch extends Component {
 
   peerUpdate() {
     let groups = Array.from(Object.keys(this.props.groups));
-    groups = groups.filter(e => !e.startsWith("/~/"));
+    groups = groups
+      .filter(e => !e.startsWith("/~/"))
+      .map(e => {
+        let eachGroup = new Set();
+        eachGroup.add(e);
+        if (this.props.associations) {
+          let name = e;
+          if (e in this.props.associations) {
+            name =
+              this.props.associations[e].metadata.title !== ""
+                ? this.props.associations[e].metadata.title
+                : e;
+          }
+          eachGroup.add(name);
+        }
+        return Array.from(eachGroup);
+      });
 
     let peers = [],
       peerSet = new Set(),
-      contacts = new Map;
+      contacts = new Map();
     Object.keys(this.props.groups).map(group => {
       if (this.props.groups[group].size > 0) {
         let groupEntries = this.props.groups[group].values();
@@ -48,10 +64,13 @@ export class InviteSearch extends Component {
         for (let member of groupEntries) {
           if (this.props.contacts[group][member]) {
             if (contacts.has(member)) {
-              contacts.get(member).push(this.props.contacts[group][member].nickname);
-            }
-            else {
-              contacts.set(member, [this.props.contacts[group][member].nickname]);
+              contacts
+                .get(member)
+                .push(this.props.contacts[group][member].nickname);
+            } else {
+              contacts.set(member, [
+                this.props.contacts[group][member].nickname
+              ]);
             }
           }
         }
@@ -79,7 +98,7 @@ export class InviteSearch extends Component {
       let groupMatches = [];
       if (this.props.groupResults) {
         groupMatches = this.state.groups.filter(e => {
-          return e.includes(searchTerm);
+          return e[0].includes(searchTerm) || e[1].includes(searchTerm);
         });
       }
 
@@ -220,27 +239,35 @@ export class InviteSearch extends Component {
       let groupResults = state.searchResults.groups.map(group => {
         return (
           <li
-            key={group}
+            key={group[0]}
             className={
-              "list mono white-d f8 pv2 ph3 pointer" +
-              " hover-bg-gray4 hover-black-d"
+              "list white-d f8 pv2 ph3 pointer" +
+              " hover-bg-gray4 hover-bg-gray1-d " +
+              (group[1] ? "inter" : "mono")
             }
-            onClick={e => this.addGroup(group)}>
-            <span className="mix-blend-diff black">{group}</span>
+            onClick={() => this.addGroup(group[0])}>
+            <span className="mix-blend-diff white">
+              {group[1] ? group[1] : group[0]}
+            </span>
           </li>
         );
       });
 
       let shipResults = state.searchResults.ships.map(ship => {
-        let nicknames = (this.state.contacts.has(ship))
-          ? this.state.contacts.get(ship).join(", ")
+        let nicknames = this.state.contacts.has(ship)
+          ? this.state.contacts
+              .get(ship)
+              .filter(e => {
+                return !(e === "");
+              })
+              .join(", ")
           : "";
         return (
           <li
             key={ship}
             className={
               "list mono white-d f8 pv1 ph3 pointer" +
-              " hover-bg-gray4 hover-black-d relative"
+              " hover-bg-gray4 hover-bg-gray1-d relative"
             }
             onClick={e => this.addShip(ship)}>
             <Sigil
@@ -249,8 +276,12 @@ export class InviteSearch extends Component {
               color="#000000"
               classes="mix-blend-diff v-mid"
             />
-            <span className="v-mid ml2 mw5 truncate dib">{"~" + ship}</span>
-            <span className="absolute right-1 di truncate mw4 inter f9 pt1">{nicknames}</span>
+            <span className="v-mid ml2 mw5 truncate dib mix-blend-diff white">
+              {"~" + ship}
+            </span>
+            <span className="absolute right-1 di truncate mw4 inter f9 pt1 mix-blend-diff white">
+              {nicknames}
+            </span>
           </li>
         );
       });

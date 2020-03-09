@@ -214,9 +214,10 @@ export class NewScreen extends Component {
             <span className="gray3"> (Optional)</span>
           </p>
           <p className="f9 gray2 db mb2 pt1">
-            Selected entities will be able to post to the collection
+            Selected groups or ships will be able to post to collection
           </p>
           <InviteSearch
+            associations={props.associations.contacts}
             groups={props.groups}
             contacts={props.contacts}
             groupResults={true}
