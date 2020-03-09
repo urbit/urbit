@@ -28,9 +28,14 @@ export default class Home extends Component {
       return <Tile key={tile} type={tile} data={tileData} />;
     });
 
+    let headerData = {};
+    if ("invites" in this.props.data) {
+      headerData["invites"] = this.props.data["invites"];
+    }
+
     return (
       <div className="fl w-100 h-100 bg-white bg-gray0-d center">
-        <Header />
+        <Header data={headerData}/>
         <div className={"v-mid pa2 dtc-m dtc-l dtc-xl " +
         "flex justify-between flex-wrap"}
         style={{maxWidth: "40rem"}}>
