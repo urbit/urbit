@@ -257,13 +257,7 @@
   ++  create-group
     |=  [=path app-path=path sec=rw-security ships=(set ship) title=@t desc=@t]
     ^-  (list card)
-    =/  group  (group-scry path)
-    ?^  group
-      %-  zing
-      %+  turn  ~(tap in u.group)
-      |=  =ship
-      ?:  =(ship our.bol)  ~
-      [(send-invite app-path ship)]~
+    ?^  (group-scry path)  ~
     ::  do not create a managed group if this is a sig path or a blacklist
     ::
     ?:  =(sec %channel)
@@ -273,11 +267,17 @@
       ==
     ?:  (is-managed path)
       ~[(contact-view-poke [%create path ships title desc])]
-    :~  (group-poke [%bundle path])
-        (group-poke [%add ships path])
-        (create-security path sec)
-        (permission-hook-poke [%add-owned path path])
-    ==
+    %+  welp
+      :~  (group-poke [%bundle path])
+          (group-poke [%add ships path])
+          (create-security path sec)
+          (permission-hook-poke [%add-owned path path])
+      ==
+    %-  zing
+    %+  turn  ~(tap in ships)
+    |=  =ship
+    ?:  =(ship our.bol)  ~
+    [(send-invite app-path ship)]~
   ::
   ++  create-security
     |=  [pax=path sec=rw-security]

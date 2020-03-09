@@ -482,7 +482,7 @@
     %+  turn  ~(tap in who)
     |=  =ship
     ?:  (is-permitted ship chat)
-      ?:  ?|(=(kind %remove) =(ship our.bol))  ~
+      ?:  ?|(=(kind %remove) =(ship our.bol) (is-managed pax))  ~
       ::  if ship has just been added to the permitted group,
       ::  send them an invite
       ~[(send-invite chat ship)]
@@ -495,6 +495,12 @@
     =/  =invite  [our.bol %chat-hook path ship '']
     =/  act=invite-action  [%invite /chat (shaf %msg-uid eny.bol) invite]
     [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
+  ::
+  ++  is-managed
+    |=  =path
+    ^-  ?
+    ?>  ?=(^ path)
+    !=(i.path '~')
   --
 ::
 ++  fact-chat-update
