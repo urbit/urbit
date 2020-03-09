@@ -256,7 +256,7 @@ export class NewScreen extends Component {
             <span className="gray3"> (Optional)</span>
           </p>
           <p className="f9 gray2 db mb2 pt1">
-            Selected entities will be able to post to chat
+            Selected groups or ships will be able to post to chat
           </p>
           <InviteSearch
             groups={props.groups}
