@@ -13,14 +13,12 @@
       state-1
   ==
 ::
-+$  state-1  [%1 new-state]
-+$  state-0  [%0 state-base]
-+$  new-state
-  $:  synced=(map path ship)
-      invite-created=_|
-      allow-history=(map path ?)
++$  state-1
+  $:  %1
       loaded-cards=(list card)
+      state-base
   ==
++$  state-0  [%0 state-base]
 +$  state-base
   $:  synced=(map path ship)
       invite-created=_|
@@ -79,7 +77,7 @@
           ^-  (list (list card))
           %+  turn  ~(tap in keys)  generate-cards
         ==
-    [~ this(state upgraded-state)]
+    [loaded-cards.upgraded-state this(state upgraded-state)]
     ::
     ++  generate-cards
       |=  old-chat=path
