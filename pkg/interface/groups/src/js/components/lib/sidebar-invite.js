@@ -20,7 +20,7 @@ export class SidebarInvite extends Component {
     return (
       <div className='pa3'>
         <div className='w-100 v-mid'>
-          <p className="dib f8 mono">
+          <p className="dib f8 mono white-d">
             You have been invited to join {props.invite.path}
           </p>
         </div>
