@@ -207,7 +207,7 @@
       ~&  %chat-already-exists
       ~
     %-  zing
-    :~  (create-chat app-path.act security.act allow-history.act)
+    :~  (create-chat app-path.act allow-history.act)
         %-  create-group
         :*  group-path.act
             app-path.act
@@ -248,10 +248,10 @@
   ==
   ::
   ++  create-chat
-    |=  [=path security=rw-security history=?]
+    |=  [=path history=?]
     ^-  (list card)
     :~  (chat-poke [%create path])
-        (chat-hook-poke [%add-owned path security history])
+        (chat-hook-poke [%add-owned path history])
     ==
   ::
   ++  create-group
