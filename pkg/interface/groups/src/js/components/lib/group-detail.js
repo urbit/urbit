@@ -125,7 +125,7 @@ export class GroupDetail extends Component {
           <Link
             className="absolute right-1 f9"
             to={"/~groups/settings" + props.path}>Group Settings</Link>
-          <p className="f9">{title}</p>
+          <p className="f9 mw5 mw3-m mw4-l">{title}</p>
           <p className="f9 gray2">{description}</p>
           <p className="f9">
             {props.group.size + " participant" +
