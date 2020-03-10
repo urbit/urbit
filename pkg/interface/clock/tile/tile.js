@@ -18,6 +18,11 @@ let text = "#000000", background = "#ffffff";
 
 let dark = window.matchMedia('(prefers-color-scheme: dark)');
 
+if (dark.matches) {
+  text = "#7f7f7f";
+  background = "#333";
+}
+
 function darkColors(dark) {
   if (dark.matches) {
     text = "#7f7f7f";
@@ -28,7 +33,7 @@ function darkColors(dark) {
   }
  }
 
-dark.addListener(darkColors)
+dark.addListener(darkColors);
 
 
 const toRelativeTime = (date, referenceTime, unit) => moment(date)
