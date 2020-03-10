@@ -147,6 +147,7 @@ export class Root extends Component {
                 selected={resourcePath}
                 rightPanelHide={true}
                 sidebarShown={state.sidebarShown}
+                popout={popout}
                 links={links}>
                 <SettingsScreen
                   sidebarShown={state.sidebarShown}
