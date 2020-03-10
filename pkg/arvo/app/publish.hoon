@@ -536,7 +536,7 @@
     =/  note-name  i.t.t.t.t.pax
     =/  book  (~(get by books.sty) book-name)
     ?~  book
-      [~ sty]
+      [cad sty]
     =.  notes.u.book  (~(del by notes.u.book) note-name)
     =/  delta=notebook-delta  [%del-note our.bol book-name note-name]
     =^  cards  sty  (handle-notebook-delta delta sty)
@@ -547,7 +547,7 @@
     =/  note-name  i.t.t.t.t.pax
     =/  comment-date  (slaw %da i.t.t.t.t.t.pax)
     ?~  comment-date
-      [~ sty]
+      [cad sty]
     =/  delta=notebook-delta
       [%del-comment our.bol book-name note-name u.comment-date]
     =^  cards  sty  (handle-notebook-delta delta sty)
