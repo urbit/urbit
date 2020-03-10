@@ -60,17 +60,12 @@ export function writeText(str) {
       e.preventDefault();
       success = true;
     }
+    document.addEventListener("copy", listener);
+    document.execCommand("copy");
+    document.removeEventListener("copy", listener);
 
-    let copyListener = new Promise(function () {
-      document.addEventListener("copy", listener);
-      document.execCommand("copy");
-      document.removeEventListener("copy", listener);
+    document.getSelection().removeAllRanges();
 
-      document.getSelection().removeAllRanges();
-    })
-
-    copyListener.then(() => {
-      return success ? resolve() : reject();
-    })
+    success ? resolve() : reject();
   });
 };
