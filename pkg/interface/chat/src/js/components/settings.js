@@ -85,7 +85,7 @@ export class SettingsScreen extends Component {
 
     let chatOwner = (deSig(props.match.params.ship) === window.ship);
 
-    let deleteButtonClasses = (chatOwner) ? 'b--red2 red2 pointer bg-gray0-d' : 'b--grey3 grey3 bg-gray0-d c-default';
+    let deleteButtonClasses = (chatOwner) ? 'b--red2 red2 pointer bg-gray0-d' : 'b--gray3 gray3 bg-gray0-d c-default';
     let leaveButtonClasses = (!chatOwner) ? "pointer" : "c-default";
 
     return (
@@ -94,7 +94,7 @@ export class SettingsScreen extends Component {
         <p className="f8 mt3 lh-copy db">Leave Chat</p>
         <p className="f9 gray2 db mb4">Remove this chat from your chat list. You will need to request for access again.</p>
         <a onClick={(!chatOwner) ? this.deleteChat.bind(this) : null}
-           className={"dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray0-d " + leaveButtonClasses}>Leave this chat</a>
+           className={"dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d " + leaveButtonClasses}>Leave this chat</a>
       </div>
         <div className={"w-100 fl mt3 " + ((!chatOwner) ? 'o-30' : '')}>
         <p className="f8 mt3 lh-copy db">Delete Chat</p>
