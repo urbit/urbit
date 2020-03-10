@@ -749,7 +749,7 @@
   |=  who=@p
   ?.  (allowed who %read u.book)
     [%give %kick [/notebook/[u.book]]~ `who]~
-  ?:  ?=(%remove -.upd)
+  ?:  ?|(?=(%remove -.upd) (is-managed path.upd))
     ~
   =/  uid  (sham %publish who u.book eny.bol)
   =/  inv=invite
@@ -961,18 +961,14 @@
   ?:  use-preexisting.group
     ?~  grp  !!
     ?.  (is-managed group-path.group)  !!
-    :_  [group-path.group group-path.group]
-    (generate-invites book (~(del in u.grp) our.bol))
+    [~ [group-path.group group-path.group]]
   ::
   ?:  make-managed.group
     ?^  grp  [~ group-path.group group-path.group]
     ?.  (is-managed group-path.group)  !!
     =/  whole-grp  (~(put in invitees.group) our.bol)
     :_  [group-path.group group-path.group]
-    %-  zing
-    :~  [(contact-view-create [group-path.group whole-grp title about])]~
-        (generate-invites book (~(del in invitees.group) our.bol))
-    ==
+    [(contact-view-create [group-path.group whole-grp title about])]~
   ::  make unmanaged group
   =*  write-path  group-path.group
   =/  read-path   (weld write-path /read)
@@ -1315,7 +1311,7 @@
   ++  metadata-poke
     |=  act=metadata-action
     ^-  card
-    [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
+    [%pass / %agent [our.bol %metadata-hook] %poke %metadata-action !>(act)]
   ::
   ++  metadata-scry
     |=  [group-path=path app-path=path]
