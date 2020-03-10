@@ -1101,11 +1101,12 @@
             complete=%.y
         ==
       ::
+      =/  actual-redirect  ?:(=(u.redirect '') '/' u.redirect)
       %-  handle-response
       :*  %start
           :-  status-code=307
           ^=  headers
-            :~  ['location' u.redirect]
+            :~  ['location' actual-redirect]
                 ['set-cookie' cookie-line]
             ==
           data=~
