@@ -1,10 +1,11 @@
+::  TODO: apply changes to +clay in zuse
+::
+/-  clay=clay-pinto
 =,  contain
+=*  care  care:clay
 =*  case  case:clay
 =>
 |%
-::  TODO: use $care:clay
-::
-+$  care  ?(%s %t %u %v %w %x %y %z)
 ::  TODO: move to zuse
 ::
 ++  able
@@ -55,8 +56,20 @@
   ==
 ::  TODO: fill in
 ::
-+$  move  *
-+$  sign  *
++$  move  [=duct =card]
++$  card  (wind note gift:able)
++$  note
+  $~  [%c %warp *@p *riff:clay]
+  $%  $:  %c
+          $>(%warp task:able:clay)
+      ==
+  ==
++$  sign
+  $~  [%c %writ *riot:clay]
+  $%  $:  ?(%b %c)
+          $>(?(%writ %wris) gift:able:clay)
+      ==
+  ==
 +$  axle
   $:  %0
       =state
@@ -293,7 +306,7 @@
     ((most gap tall:(vang & path)) nail)
   ?^  res
     (pure:m [mont tssg+src.u.res])
-  (fail:m leaf+"syntax error {<hair>}" ~)
+  (fail:m leaf+"ford: syntax error {<hair>}" ~)
 ::
 ++  parse-mont
   |=  tex=tape
@@ -302,24 +315,24 @@
   =/  [=hair res=(unit [=mont =nail])]  (mont-rule [1 1] tex)
   ?^  res
     (pure:m u.res)
-  (fail:m leaf+"syntax error {<hair>}" ~)
+  (fail:m leaf+"ford: mont syntax error {<hair>}" ~)
 ::
 ++  mont-rule
   %+  ifix  [gay gay]
   %+  cook  |=(mont +<)
   ;~  plug
     %+  cook  |=((list (list taut)) (zing +<))
-    %+  most  gap
+    %+  more  gap
     %+  ifix  [;~(plug net hep gap) gap]
     (most ;~(plug com gaw) taut-rule)
   ::
     %+  cook  |=((list (list taut)) (zing +<))
-    %+  most  gap
+    %+  more  gap
     %+  ifix  [;~(plug net lus gap) gap]
     (most ;~(plug com gaw) taut-rule)
   ::
     %+  cook  |=((list [face=term =path]) +<)
-    %+  most  gap
+    %+  more  gap
     %+  ifix  [;~(plug net tis gap) gap]
     %+  cook  |=([term path] +<)
     ;~(plug sym ;~(pfix ;~(plug gap net) (more net urs:ab)))
@@ -642,7 +655,7 @@
       ::
       =?  fex  dun
         :_  fex
-        :^  %give  duct  %make
+        :^  duct  %give  %make
         %-  ~(gas by *(map path (each vase tang)))
         %+  turn  ~(tap by states)
         |=  [=path out=eval-output:m state=eval-state:m]
@@ -659,8 +672,8 @@
           %+  roll  ~(val by states)
           |=  [[* * sky=(map spar (unit cage))] acc=(set spar)]
           (~(uni in acc) ~(key by sky))
-        =/  mood  [%mult case.task sky]
-        [%pass /live duct %c %warp our desk.task `mood]
+        =/  =rave:clay  [%mult case sky]
+        [duct %pass /live %c %warp our desk.task `rave]
       [fex ford-gate]
     ::  run the build on this path, .i.paz
     ::
@@ -680,8 +693,8 @@
     =?  fex  ?=(%load -.out.res)
       :_  fex
       =/  =wire  load+path.spar.out.res
-      =/  mood  [%sing care.spar case.task path.spar]
-      [%pass wire duct %c %warp our desk.task `mood]
+      =/  =rave:clay  [%sing care.spar.out.res case path.spar.out.res]
+      [duct %pass wire %c %warp our desk.task `rave]
     ::  recurse on next path
     ::
     $(paz t.paz)
