@@ -17,8 +17,15 @@
 ::
 |%
 +$  card  card:agent:gall
+::
 +$  state
-  $:  grams=(list mail)                             ::  all messages
+  $%  state-1
+      state-0
+  ==
+::
++$  state-1
+  $:  %1
+      grams=(list mail)                             ::  all messages
       known=(set [target serial])                   ::  known message lookup
       count=@ud                                     ::  (lent grams)
       bound=(map target glyph)                      ::  bound circle glyphs
@@ -31,14 +38,27 @@
       eny=@uvJ                                      ::  entropy
   ==
 ::
++$  state-0
+  $:  grams=(list [[=ship =path] envelope])         ::  all messages
+      known=(set [[=ship =path] serial])            ::  known message lookup
+      count=@ud                                     ::  (lent grams)
+      bound=(map [=ship =path] glyph)               ::  bound circle glyphs
+      binds=(jug glyph [=ship =path])               ::  circle glyph lookup
+      audience=(set [=ship =path])                  ::  active targets
+      settings=(set term)                           ::  frontend flags
+      width=@ud                                     ::  display width
+      timez=(pair ? @ud)                            ::  timezone adjustment
+      cli=state=sole-share:sole-sur                 ::  console state
+      eny=@uvJ                                      ::  entropy
+  ==
+::
 +$  mail  [source=target envelope]
-+$  target  [=ship =path]
++$  target  [in-group=? =ship =path]
 ::
 +$  glyph  char
-++  glyphs  "!@#$%^&()-=_+[]\{};'\\:\",.<>?"
+++  glyphs  "!@#$%^&()-=_+[]\{}'\\:\",.<>?"
 ::
-::NOTE  only the "simple" modes from rw-security
-+$  nu-security  ?(%channel %village)
++$  nu-security  ?(%channel %village %village-with-group)
 ::
 +$  command
   $%  [%target (set target)]                        ::  set messaging target
@@ -47,10 +67,10 @@
     ::
       ::
       ::  create chat
-      ::[%create nu-security path (unit glyph) (unit ?)]
+      [%create nu-security path (unit glyph) (unit ?)]
       [%delete path]                                ::  delete chat
-      [%invite path (set ship)]                     ::  allow
-      [%banish path (set ship)]                     ::  disallow
+      [%invite [? path] (set ship)]                   ::  allow
+      [%banish [? path] (set ship)]                   ::  disallow
     ::
       [%join target (unit glyph) (unit ?)]          ::  join target
       [%leave target]                               ::  nuke target
@@ -71,7 +91,7 @@
   ==                                                ::
 ::
 --
-=|  state
+=|  state-1
 =*  all-state  -
 ::
 %-  agent:dbug
@@ -86,12 +106,8 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    :-  [connect:tc]~
-    %_  this
-      audience  [[our-self:tc /] ~ ~]
-      settings  (sy %showtime %notify ~)
-      width  80
-    ==
+    =^  cards  all-state  (prep:tc ~)
+    [cards this]
   ::
   ++  on-save  !>(all-state)
   ::
@@ -144,19 +160,56 @@
 ::
 ++  prep
   |=  old=(unit state)
-  ^-  (quip card state)
-  ?^  old
-    :_  u.old
-    ?:  (~(has by wex.bowl) [/chat-store our-self %chat-store])
-      ~
-    ~[connect]
-  =^  cards  all-state
-    %_  catch-up
-      audience  [[our-self /] ~ ~]
-      settings  (sy %showtime %notify ~)
-      width  80
+  ^-  (quip card _all-state)
+  ?~  old
+    =^  cards  all-state
+      %_  catch-up
+        audience  [[| our-self /] ~ ~]
+        settings  (sy %showtime %notify ~)
+        width     80
+      ==
+    [[connect cards] all-state]
+  :-  ?:  (~(has by wex.bowl) [/chat-store our-self %chat-store])
+        ~
+      ~[connect]
+  ::
+  ^-  state-1
+  ?-  -.u.old
+    %1  u.old(width 80)
+  ::
+      ?(~ ^)
+    :-  %1
+    %=  u.old
+      grams  ~  ::NOTE  this only impacts historic message lookup in chat-cli
+    ::
+        known
+      ^-  (set [target serial])
+      %-  ~(run in known.u.old)
+      |=  [t=[ship path] s=serial]
+      [`target`[| t] s]
+    ::
+        bound
+      ^-  (map target glyph)
+      %-  ~(gas in *(map target glyph))
+      %+  turn  ~(tap by bound.u.old)
+      |=  [t=[ship path] g=glyph]
+      [`target`[| t] g]
+    ::
+        binds
+      ^-  (jug glyph target)
+      %-  ~(run by binds.u.old)
+      |=  s=(set [ship path])
+      %-  ~(run in s)
+      |=  t=[ship path]
+      `target`[| t]
+    ::
+        audience
+      ^-  (set target)
+      %-  ~(run in audience.u.old)
+      |=  t=[ship path]
+      `target`[| t]
     ==
-  [[connect cards] all-state]
+  ==
 ::  +catch-up: process all chat-store state
 ::
 ++  catch-up
@@ -189,12 +242,19 @@
 ::
 ++  target-to-path
   |=  target
+  %+  weld
+    ?:(in-group ~ /~)
   [(scot %p ship) path]
 ::  +path-to-target: deduces a target from a mailbox path
 ::
 ++  path-to-target
   |=  =path
   ^-  target
+  =^  in-group  path
+    ?.  ?=([%'~' *] path)
+      [& path]
+    [| t.path]
+  :-  in-group
   ?.  ?=([@ @ *] path)
     ::TODO  can we safely assert the above?
     ~&  [%path-without-host path]
@@ -368,7 +428,7 @@
       [%join leaf+";join ~ship/chat-name (glyph)"]
       [%leave leaf+";leave ~ship/chat-name"]
       ::
-      ::[%create leaf+";create [type] /chat-name (glyph)"]
+      [%create leaf+";create [type] /chat-name (glyph)"]
       [%delete leaf+";delete /chat-name"]
       [%invite leaf+";invite /chat-name ~ships"]
       [%banish leaf+";banish /chat-name ~ships"]
@@ -477,18 +537,18 @@
       ;~  pose
         (stag %target tars)
       ::
-      ::  ;~  (glue ace)
-      ::    (tag %create)
-      ::    security
-      ::    ;~  plug
-      ::      path
-      ::      (punt ;~(pfix ace glyph))
-      ::      (punt ;~(pfix ace (fuss 'y' 'n')))
-      ::    ==
-      ::  ==
-      ::  ;~((glue ace) (tag %delete) path)
-      ::  ;~((glue ace) (tag %invite) path ships)
-      ::  ;~((glue ace) (tag %banish) path ships)
+        ;~  (glue ace)
+          (tag %create)
+          security
+          ;~  plug
+            path
+            (punt ;~(pfix ace glyph))
+            (punt ;~(pfix ace (fuss 'y' 'n')))
+          ==
+        ==
+        ;~((glue ace) (tag %delete) path)
+        ;~((glue ace) (tag %invite) tarx ships)
+        ;~((glue ace) (tag %banish) tarx ships)
       ::
         ;~  (glue ace)
           (tag %join)
@@ -508,6 +568,7 @@
         ;~((glue ace) (tag %set) flag)
         ;~((glue ace) (tag %unset) flag)
         ;~(plug (cold %width (jest 'set width ')) dem:ag)
+      ::
         ;~  plug
           (cold %timezone (jest 'set timezone '))
           ;~  pose
@@ -554,10 +615,13 @@
     ::
     ++  tag   |*(a=@tas (cold a (jest a)))  ::TODO  into stdlib
     ++  ship  ;~(pfix sig fed:ag)
-    ++  path  ;~(pfix net (most net urs:ab))
+    ++  path  ;~(pfix net ;~(plug urs:ab (easy ~)))  ::NOTE  short only, tmp
     ::  +tarl: local target, as /path
     ::
     ++  tarl  (stag our-self path)
+    ::  +tarx: local target, maybe group
+    ::
+    ++  tarx  ;~(plug (fuss 'group ' '') path)
     ::  +tarp: sponsor target, as ^/path
     ::
     ++  tarp
@@ -567,9 +631,14 @@
     ::
     ++  targ
       ;~  pose
-        tarl
-        tarp
-        ;~(plug ship path)
+        ;~  plug
+          (fuss 'group ' '')
+          ;~  pose
+            tarl
+            tarp
+            ;~(plug ship path)
+          ==
+        ==
         (sear decode-glyph glyph)
       ==
     ::  +tars: set of comma-separated targs
@@ -586,7 +655,7 @@
     ::  +security: security mode
     ::
     ++  security
-      (perk %channel %village ~)
+      (perk %channel %village-with-group %village ~)
     ::
     ::  +glyph: shorthand character
     ::
@@ -683,7 +752,7 @@
           %say       (say +.job)
           %eval      (eval +.job)
         ::
-        ::  %create    (create +.job)
+          %create    (create +.job)
           %delete    (delete +.job)
           %invite    (change-permission & +.job)
           %banish    (change-permission | +.job)
@@ -739,7 +808,7 @@
           %-  crip
           %+  weld
             "You have been invited to chat at "
-          ~(full tr [our-self where])
+          ~(full tr [| our-self where])
       ==
     ::  +set-target: set audience, update prompt
     ::
@@ -750,30 +819,38 @@
       [[prompt:sh-out ~] all-state]
     ::  +create: new local mailbox
     ::
-    ::++  create
-    ::  |=  [security=nu-security =path gyf=(unit char) allow-history=(unit ?)]
-    ::  ^-  (quip card state)
-    ::  ::TODO  check if already exists
-    ::  =/  =target  [our-self path]
-    ::  =.  audience  [target ~ ~]
-    ::  =^  moz  all-state
-    ::    ?.  ?=(^ gyf)  [~ all-state]
-    ::    (bind-glyph u.gyf target)
-    ::  =-  [[- moz] all-state]
-    ::  %^  act  %do-create  %chat-view
-    ::  :-  %chat-view-action
-    ::  !>  ^-  chat-view-action
-    ::  :*  %create
-    ::      path
-    ::      security
-    ::      ::  ensure we can read from/write to our own chats
-    ::      ::
-    ::      ?-  security
-    ::        %channel  ~
-    ::        %village  [our-self ~ ~]
-    ::      ==
-    ::      (fall allow-history %.y)
-    ::  ==
+    ++  create
+      |=  [security=nu-security =path gyf=(unit char) allow-history=(unit ?)]
+      ^-  (quip card _all-state)
+      =/  with-group=?     ?=(%village-with-group security)
+      =/  =target          [with-group our-self path]
+      =/  real-path=^path  (target-to-path target)
+      =/  =rw-security
+        ?-  security
+          %channel                         %channel
+          ?(%village %village-with-group)  %village
+        ==
+      ?^  (scry-for (unit mailbox) %chat-store [%mailbox real-path])
+        =-  [[- ~] all-state]
+        %-  print:sh-out
+        "{(spud path)} already exists!"
+      =.  audience  [target ~ ~]
+      =^  moz  all-state
+        ?.  ?=(^ gyf)  [~ all-state]
+        (bind-glyph u.gyf target)
+      =-  [[- moz] all-state]
+      %^  act  %do-create  %chat-view
+      :-  %chat-view-action
+      !>  ^-  chat-view-action
+      :*  %create
+          (rsh 3 1 (spat path))
+          ''
+          real-path  ::  chat
+          real-path  ::  group
+          rw-security
+          ~
+          (fall allow-history %.y)
+      ==
     ::  +delete: delete local chats
     ::
     ++  delete
@@ -783,20 +860,30 @@
       %^  act  %do-delete  %chat-view
       :-  %chat-view-action
       !>  ^-  chat-view-action
-      [%delete (target-to-path our-self path)]
+      [%delete (target-to-path | our-self path)]
     ::  +change-permission: modify permissions on a local chat
     ::
     ++  change-permission
-      |=  [allow=? =path ships=(set ship)]
+      |=  [allow=? [group=? =path] ships=(set ship)]
       ^-  (quip card _all-state)
       :_  all-state
-      =;  card=(unit card)
-        %+  weld  (drop card)
+      =/  real-path=^path
+        (target-to-path group our-self path)
+      =;  permit=(unit card)
+        %+  weld  (drop permit)
         ?.  allow  ~
-        %+  turn  ~(tap in ships)
-        (cury invite-card path)
-      =.  path
-        [%chat (target-to-path our-self path)]
+        ^-  (list card)
+        %+  murn  ~(tap in ships)
+        |=  =ship
+        ^-  (unit card)
+        ::  if they weren't permitted before, some hook will send an invite.
+        ::  but if they already were, we want to send an invite ourselves.
+        ::
+        ?.  %^  scry-for  ?
+              %permission-store
+            [%permitted (scot %p ship) real-path]
+          ~
+        `(invite-card real-path ship)
       ::  whitelist: empty if no matching permission, else true if whitelist
       ::
       =/  whitelist=(unit ?)
@@ -805,17 +892,17 @@
         ::TODO  +permission-of-target?
         %^  scry-for  (unit permission)
           %permission-store
-        [%permission path]
+        [%permission real-path]
       ?~  whitelist
-        ~&  [%weird-no-permission path]
+        ~&  [%weird-no-permission real-path]
         ~
       %-  some
       %^  act  %do-permission  %group-store
       :-  %group-action
       !>  ^-  group-action
       ?:  =(u.whitelist allow)
-        [%add ships path]
-      [%remove ships path]
+        [%add ships real-path]
+      [%remove ships real-path]
     ::  +join: sync with remote mailbox
     ::
     ++  join
@@ -832,7 +919,7 @@
       %^  act  %do-join  %chat-view
       :-  %chat-view-action
       !>  ^-  chat-view-action
-      [%join ship.target path.target (fall ask-history %.y)]
+      [%join ship.target (target-to-path target) (fall ask-history %.y)]
     ::  +leave: unsync & destroy mailbox
     ::
     ::TODO  allow us to "mute" local chats using this
@@ -1156,17 +1243,21 @@
   ::
   ++  full
     ^-  tape
-    (weld (scow %p ship.one) (spud path.one))
+    ;:  weld
+      ?:(in-group.one "g " "")
+      (scow %p ship.one)
+      (spud path.one)
+    ==
   ::  +phat: render target with local shorthand
   ::
   ::    renders as ~ship/path.
   ::    for local mailboxes, renders just /path.
   ::    for sponsor's mailboxes, renders ^/path.
   ::
-  ::NOTE  but, given current implementation, all will be local
-  ::
   ++  phat
     ^-  tape
+    %+  weld
+      ?:(in-group.one "g " "")
     %+  weld
       ?:  =(our-self ship.one)  ~
       ?:  =((sein:title our.bowl now.bowl our-self) ship.one)  "^"
