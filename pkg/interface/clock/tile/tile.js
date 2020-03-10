@@ -199,7 +199,7 @@ class Clock extends Component {
       ctr,
       -1,
       2 * Math.PI,
-      'rgba(0,0,0,0)'
+      background
     )
 
     // Day
