@@ -93,10 +93,11 @@ export class NewScreen extends Component {
         group: groupInfo
       }
     }
-
+    props.api.setSpinner(true);
     this.setState({awaiting: bookId, disabled: true}, () => {
-      props.api.setSpinner(true);
-      props.api.action("publish", "publish-action", action);
+      props.api.action("publish", "publish-action", action).then(() => {
+        props.api.setSpinner(false);
+      });
     });
   }
 
