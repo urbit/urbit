@@ -85,12 +85,17 @@ export function writeText(str) {
       e.preventDefault();
       success = true;
     }
-    document.addEventListener("copy", listener);
-    document.execCommand("copy");
-    document.removeEventListener("copy", listener);
 
-    document.getSelection().removeAllRanges();
+    let copyListener = new Promise(function() {
+      document.addEventListener("copy", listener);
+      document.execCommand("copy");
+      document.removeEventListener("copy", listener);
 
-    success ? resolve() : reject();
+      document.getSelection().removeAllRanges();
+    })
+
+    copyListener.then(() => {
+      return success ? resolve() : reject();
+    })
   });
 };
