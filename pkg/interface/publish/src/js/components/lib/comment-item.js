@@ -53,7 +53,7 @@ export class CommentItem extends Component {
 
     return (
       <div>
-        <div className="flex mv3 bg-white bg-gray0-d">
+        <div className="flex mv3 bg-white bg-gray0-d w-50 w-100-m center">
         <Sigil
           ship={commentData.author}
           size={24}
@@ -66,7 +66,7 @@ export class CommentItem extends Component {
           </div>
           <div className="f9 gray3 pt1">{date}</div>
         </div>
-        <div className="f8 lh-solid mb8 mb2">
+        <div className="f8 lh-solid mb8 mb2 w-50 w-100-m w-100-s center">
           {content}
         </div>
       </div>

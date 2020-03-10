@@ -22,14 +22,14 @@ export class NoteNavigation extends Component {
       nextComponent =
       <Link to={nextUrl} className="di flex-column flex-auto tr w-100 pv6 bt bb b--gray3">
         <div className="f9 gray2 mb2">Next</div>
-        <div className="f9 mb1 truncate">{this.props.next.title}</div>
+        <div className="f9 mb1 ml3 truncate">{this.props.next.title}</div>
         <div className="f9 gray2">{this.props.next.date}</div>
       </Link>
 
       prevComponent =
       <Link to={prevUrl} className="di flex-column flex-auto w-100 pv6 bt br bb b--gray3">
         <div className="f9 gray2 mb2">Previous</div>
-        <div className="f9 mb1 truncate">{this.props.prev.title}</div>
+        <div className="f9 mb1 mr3 truncate">{this.props.prev.title}</div>
         <div className="f9 gray2">{this.props.prev.date}</div>
       </Link>
 
@@ -38,7 +38,7 @@ export class NoteNavigation extends Component {
       prevComponent =
       <Link to={prevUrl} className="di flex-column flex-auto w-100 pv6 bt bb b--gray3">
         <div className="f9 gray2 mb2">Previous</div>
-        <div className="f9 mb1 truncate">{this.props.prev.title}</div>
+        <div className="f9 mb1 mr3 truncate">{this.props.prev.title}</div>
         <div className="f9 gray2">{this.props.prev.date}</div>
       </Link>
     } else if (this.props.next) {
@@ -46,14 +46,14 @@ export class NoteNavigation extends Component {
       nextComponent =
       <Link to={nextUrl} className="di flex-column flex-auto tr w-100 pv6 bt bb b--gray3">
         <div className="f9 gray2 mb2">Next</div>
-        <div className="f9 mb1 truncate">{this.props.next.title}</div>
+        <div className="f9 mb1 ml3 truncate">{this.props.next.title}</div>
         <div className="f9 gray2">{this.props.next.date}</div>
       </Link>
 
     }
 
     return (
-        <div className="flex pt4">
+        <div className="flex pt4 w-50 w-100-m w-100-s center">
           {prevComponent}
           {nextComponent}
         </div>

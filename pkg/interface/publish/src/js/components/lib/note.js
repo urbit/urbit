@@ -165,7 +165,7 @@ export class Note extends Component {
               popout={props.popout}
               sidebarShown={props.sidebarShown}
             />
-            <Link className="f9 w-100 w-90-m w-90-l mw6 tl" to={baseUrl}>
+            <Link className="f9 w-50 w-100-m w-100-s center tl" to={baseUrl}>
               {"<- Notebook index"}
             </Link>
             <Link
@@ -178,8 +178,8 @@ export class Note extends Component {
               />
             </Link>
           </div>
-          <div className="w-100 mw6 overflow-container">
-            <div className="flex flex-column">
+          <div className="w-100 center overflow-container">
+            <div className="w-50 w-100-m w-100-s center flex flex-column">
               <div className="f9 mb1"
               style={{overflowWrap: "break-word"}}>{title}</div>
               <div className="flex mb6">
@@ -193,7 +193,7 @@ export class Note extends Component {
                   <span className="f9 gray2">{date}</span><span className="ml2">{editPost}</span></div>
               </div>
             </div>
-            <div className="md"
+            <div className="md w-50 w-100-m w-100-s center"
             style={{overflowWrap: "break-word"}}>
               <ReactMarkdown source={newfile} />
             </div>
