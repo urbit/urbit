@@ -27,7 +27,7 @@ export class SettingsScreen extends Component {
   }
 
   componentDidMount() {
-    if (this.props.resource) {
+    if ((this.props.resource) && ("metadata" in this.props.resource)) {
       this.setState({
         title: this.props.resource.metadata.title,
         description: this.props.resource.metadata.description,
@@ -47,7 +47,8 @@ export class SettingsScreen extends Component {
       });
     }
 
-    if (props.resource && (prevProps !== props)) {
+    if (((this.props.resource) && ("metadata" in this.props.resource))
+      && (prevProps !== props)) {
       this.setState({
         title: props.resource.metadata.title,
         description: props.resource.metadata.description,
@@ -106,6 +107,10 @@ export class SettingsScreen extends Component {
   renderMetadataSettings() {
     const { props, state } = this;
     const { resource } = props;
+
+    if (!("metadata" in resource)) {
+      resource.metadata = {};
+    }
 
     return(
       <div>
