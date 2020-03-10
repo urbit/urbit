@@ -84,10 +84,7 @@ export class SettingsScreen extends Component {
 
     const isManaged = ('/~/' !== props.groupPath.slice(0,3));
 
-    let deleteButtonClasses = (props.amOwner) ? 'b--red2 red2 pointer bg-gray0-d' : 'b--grey3 grey3 bg-gray0-d c-default';
-    let leaveButtonClasses = (!props.amOwner) ? "pointer" : "c-default";
-
-    let deleteClasses = 'dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray0-d pointer';
+    let deleteClasses = 'dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer';
     let deleteText = 'Remove this collection from your collection list.';
     let deleteAction = 'Remove';
     if (props.amOwner && isManaged) {
@@ -135,9 +132,9 @@ export class SettingsScreen extends Component {
                   props.resourcePath,
                   props.groupPath,
                   state.title,
-                  props.resource.metadata.description,
-                  props.resource.metadata['date-created'],
-                  uxToHex(props.resource.metadata.color)
+                  resource.metadata.description,
+                  resource.metadata['date-created'],
+                  uxToHex(resource.metadata.color)
                 ).then(() => {
                   api.setSpinner(false);
                   this.refs.rename.innerText = "Saved";
@@ -170,10 +167,10 @@ export class SettingsScreen extends Component {
                   api.metadataAdd(
                     props.resourcePath,
                     props.groupPath,
-                    props.resource.metadata.title,
+                    resource.metadata.title,
                     state.description,
-                    props.resource['date-created'],
-                    uxToHex(props.resource.color)
+                    resource['date-created'],
+                    uxToHex(resource.color)
                   ).then(() => {
                     api.setSpinner(false);
                     this.refs.description.innerText = "Saved";
@@ -204,9 +201,9 @@ export class SettingsScreen extends Component {
                   api.metadataAdd(
                     props.resourcePath,
                     props.groupPath,
-                    props.resource.metadata.title,
-                    props.resource.metadata.description,
-                    props.resource.metadata['date-created'],
+                    resource.metadata.title,
+                    resource.metadata.description,
+                    resource.metadata['date-created'],
                     state.color
                   ).then(() => {
                     api.setSpinner(false);
@@ -281,7 +278,7 @@ export class SettingsScreen extends Component {
           <Link to={makeRoutePath(props.resourcePath, props.popout)}
           className="pt2">
             <h2
-              className="dib f9 fw4 v-top"
+              className="dib f9 fw4 lh-solid v-top"
               style={{ width: "max-content" }}>
               {props.resource.metadata.title}
             </h2>
