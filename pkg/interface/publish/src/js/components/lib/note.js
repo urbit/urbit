@@ -190,7 +190,7 @@ export class Note extends Component {
                   {name}
                 </div>
                 <div className="di">
-                  <span className="f9 gray2">{date}</span><span className="ml2">{editPost}</span></div>
+                  <span className="f9 gray2 dib">{date}</span><span className="ml2 dib">{editPost}</span></div>
               </div>
             </div>
             <div className="md"
