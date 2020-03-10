@@ -160,7 +160,7 @@
 ::  +catch-up: process all chat-store state
 ::
 ++  catch-up
-  ^-  (quip card state)
+  ^-  (quip card _all-state)
   =/  =inbox
     .^  inbox
         %gx
@@ -169,7 +169,7 @@
         (scot %da now.bowl)
         /all/noun
     ==
-  |-  ^-  (quip card state)
+  |-  ^-  (quip card _all-state)
   ?~  inbox  [~ all-state]
   =*  path  p.n.inbox
   =*  mailbox  q.n.inbox
@@ -206,7 +206,7 @@
 ::
 ++  poke-noun
   |=  a=*
-  ^-  (quip card state)
+  ^-  (quip card _all-state)
   ?:  ?=(%connect a)
     [[connect ~] all-state]
   ?:  ?=(%catch-up a)
@@ -217,13 +217,13 @@
 ++  poke-sole-action
   ::TODO  use id.act to support multiple separate sessions
   |=  [act=sole-action:sole-sur]
-  ^-  (quip card state)
+  ^-  (quip card _all-state)
   (sole:sh-in act)
 ::  +peer: accept only cli subscriptions from ourselves
 ::
 ++  peer
   |=  =path
-  ^-  (quip card state)
+  ^-  (quip card _all-state)
   ?.  (team:title our-self src.bowl)
     ~|  [%peer-talk-stranger src.bowl]
     !!
@@ -238,7 +238,7 @@
 ::
 ++  diff-chat-update
   |=  [=wire upd=chat-update]
-  ^-  (quip card state)
+  ^-  (quip card _all-state)
   ?+  -.upd  [~ all-state]
     %create    (notice-create (path-to-target path.upd))
     %delete    [[(show-delete:sh-out (path-to-target path.upd)) ~] all-state]
@@ -248,7 +248,7 @@
 ::
 ++  read-envelopes
   |=  [=target envs=(list envelope)]
-  ^-  (quip card state)
+  ^-  (quip card _all-state)
   ?~  envs  [~ all-state]
   =^  cards-i  all-state  (read-envelope target i.envs)
   =^  cards-t  all-state  $(envs t.envs)
@@ -256,7 +256,7 @@
 ::
 ++  notice-create
   |=  =target
-  ^-  (quip card state)
+  ^-  (quip card _all-state)
   =^  cards  all-state
     ?:  (~(has by bound) target)
       [~ all-state]
@@ -266,7 +266,7 @@
 ::
 ++  bind-default-glyph
   |=  =target
-  ^-  (quip card state)
+  ^-  (quip card _all-state)
   =;  =glyph  (bind-glyph glyph target)
   |^  =/  g=glyph  (choose glyphs)
       ?.  (~(has by binds) g)  g
@@ -284,7 +284,7 @@
 ::
 ++  bind-glyph
   |=  [=glyph =target]
-  ^-  (quip card state)
+  ^-  (quip card _all-state)
   ::TODO  should send these to settings store eventually
   ::  if the target was already bound to another glyph, un-bind that
   ::
@@ -297,7 +297,7 @@
 ::
 ++  unbind-glyph
   |=  [=glyph targ=(unit target)]
-  ^-  (quip card state)
+  ^-  (quip card _all-state)
   ?^  targ
     =.  binds  (~(del ju binds) glyph u.targ)
     =.  bound  (~(del by bound) u.targ)
@@ -334,7 +334,7 @@
 ::
 ++  read-envelope
   |=  [=target =envelope]
-  ^-  (quip card state)
+  ^-  (quip card _all-state)
   ?:  (~(has in known) [target uid.envelope])
     ::NOTE  we no-op only because edits aren't possible
     [~ all-state]
@@ -354,7 +354,7 @@
   ::
   ++  sole
     |=  act=sole-action:sole-sur
-    ^-  (quip card state)
+    ^-  (quip card _all-state)
     ?-  -.dat.act
       %det  (edit +.dat.act)
       %clr  [~ all-state]
@@ -386,7 +386,7 @@
     ==
   ++  tab
     |=  pos=@ud
-    ^-  (quip card state)
+    ^-  (quip card _all-state)
     ?:  ?|  =(~ buf.state.cli)
             !=(';' -.buf.state.cli)
         ==
@@ -410,7 +410,7 @@
     =?  moves  ?=(^ options)
       [(tab:sh-out options) moves]
     =|  fxs=(list sole-effect:sole-sur)
-    |-  ^-  (quip card state)
+    |-  ^-  (quip card _all-state)
     ?~  to-send
       [(flop moves) all-state]
     =^  char  state.cli
@@ -427,7 +427,7 @@
   ::
   ++  edit
     |=  cal=sole-change:sole-sur
-    ^-  (quip card state)
+    ^-  (quip card _all-state)
     =^  inv  state.cli  (~(transceive sole-lib state.cli) cal)
     =+  fix=(sanity inv buf.state.cli)
     ?~  lit.fix
@@ -454,7 +454,7 @@
   ::
   ++  slug
     |=  [lit=(list sole-edit:sole-sur) err=(unit @u)]
-    ^-  (quip card state)
+    ^-  (quip card _all-state)
     ?~  lit  [~ all-state]
     =^  lic  state.cli
       %-  ~(transmit sole-lib state.cli)
@@ -653,7 +653,7 @@
   ::    the command (if any) gets echoed to the user.
   ::
   ++  obey
-    ^-  (quip card state)
+    ^-  (quip card _all-state)
     =+  buf=buf.state.cli
     =+  fix=(sanity [%nop ~] buf)
     ?^  lit.fix
@@ -677,7 +677,7 @@
   ::
   ++  work
     |=  job=command
-    ^-  (quip card state)
+    ^-  (quip card _all-state)
     |^  ?-  -.job
           %target    (set-target +.job)
           %say       (say +.job)
@@ -745,7 +745,7 @@
     ::
     ++  set-target
       |=  tars=(set target)
-      ^-  (quip card state)
+      ^-  (quip card _all-state)
       =.  audience  tars
       [[prompt:sh-out ~] all-state]
     ::  +create: new local mailbox
@@ -778,7 +778,7 @@
     ::
     ++  delete
       |=  =path
-      ^-  (quip card state)
+      ^-  (quip card _all-state)
       =-  [[- ~] all-state]
       %^  act  %do-delete  %chat-view
       :-  %chat-view-action
@@ -788,7 +788,7 @@
     ::
     ++  change-permission
       |=  [allow=? =path ships=(set ship)]
-      ^-  (quip card state)
+      ^-  (quip card _all-state)
       :_  all-state
       =;  card=(unit card)
         %+  weld  (drop card)
@@ -820,7 +820,7 @@
     ::
     ++  join
       |=  [=target gyf=(unit char) ask-history=(unit ?)]
-      ^-  (quip card state)
+      ^-  (quip card _all-state)
       =^  moz  all-state
         ?.  ?=(^ gyf)  [~ all-state]
         (bind-glyph u.gyf target)
@@ -850,7 +850,7 @@
     ::
     ++  say
       |=  =letter
-      ^-  (quip card state)
+      ^-  (quip card _all-state)
       ~!  bowl
       =/  =serial  (shaf %msg-uid eny.bowl)
       :_  all-state(eny (shax eny.bowl))
@@ -873,7 +873,7 @@
     ::
     ++  lookup-glyph
       |=  qur=(unit $@(glyph target))
-      ^-  (quip card state)
+      ^-  (quip card _all-state)
       =-  [[- ~] all-state]
       ?^  qur
         ?^  u.qur
@@ -898,7 +898,7 @@
     ::  +show-settings: print enabled flags, timezone and width settings
     ::
     ++  show-settings
-      ^-  (quip card state)
+      ^-  (quip card _all-state)
       :_  all-state
       :~  %-  print:sh-out
           %-  zing
@@ -919,13 +919,13 @@
     ::
     ++  set-setting
       |=  =term
-      ^-  (quip card state)
+      ^-  (quip card _all-state)
       [~ all-state(settings (~(put in settings) term))]
     ::  +unset-setting: disable settings flag
     ::
     ++  unset-setting
       |=  =term
-      ^-  (quip card state)
+      ^-  (quip card _all-state)
       [~ all-state(settings (~(del in settings) term))]
     ::  +set-width: configure cli printing width
     ::
@@ -945,7 +945,7 @@
       ::      (with leading zeros used for precision)
       ::
       |=  num=$@(rel=@ud [zeros=@u abs=@ud])
-      ^-  (quip card state)
+      ^-  (quip card _all-state)
       |^  ?@  num
             =+  tum=(scow %s (new:si | +(num)))
             ?:  (gte rel.num count)
@@ -977,7 +977,7 @@
       ::
       ++  activate
         |=  [number=tape index=@ud]
-        ^-  (quip card state)
+        ^-  (quip card _all-state)
         =+  gam=(snag index grams)
         =.  audience  [source.gam ~ ~]
         :_  all-state
@@ -990,7 +990,7 @@
     ::  +chats: display list of local mailboxes
     ::
     ++  chats
-      ^-  (quip card state)
+      ^-  (quip card _all-state)
       :_  all-state
       :_  ~
       %-  print-more:sh-out
@@ -1005,7 +1005,7 @@
     ::  +help: print (link to) usage instructions
     ::
     ++  help
-      ^-  (quip card state)
+      ^-  (quip card _all-state)
       =-  [[- ~] all-state]
       (print:sh-out "see https://urbit.org/using/operations/using-your-ship/#messaging")
     --
