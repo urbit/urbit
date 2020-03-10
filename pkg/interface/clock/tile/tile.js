@@ -18,20 +18,17 @@ let text = "#000000", background = "#ffffff";
 
 let dark = window.matchMedia('(prefers-color-scheme: dark)');
 
-if (dark.matches) {
-  text = "#7f7f7f";
-  background = "#333";
-}
-
-dark.addEventListener("change", (e) => {
-  if (e.matches) {
+function darkColors(dark) {
+  if (dark.matches) {
     text = "#7f7f7f";
     background = "#333";
   } else {
     text = "#000000";
     background = "#ffffff"
   }
-})
+ }
+
+dark.addListener(darkColors)
 
 
 const toRelativeTime = (date, referenceTime, unit) => moment(date)
