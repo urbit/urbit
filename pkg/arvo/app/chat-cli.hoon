@@ -803,14 +803,9 @@
         =;  perm=(unit permission)
           ?~(perm ~ `?=(%white kind.u.perm))
         ::TODO  +permission-of-target?
-        .^  (unit permission)
-            %gx
-            (scot %p our-self)
-            %permission-store
-            (scot %da now.bowl)
-            %permission
-            (snoc path %noun)
-        ==
+        %^  scry-for  (unit permission)
+          %permission-store
+        [%permission path]
       ?~  whitelist
         ~&  [%weird-no-permission path]
         ~
@@ -1000,12 +995,9 @@
       :_  ~
       %-  print-more:sh-out
       =/  all
-        ::TODO  refactor
-        ::TODO  remote scries fail... but moon support?
-        .^  (set path)
-            %gx
-            /(scot %p our-self)/chat-store/(scot %da now.bowl)/keys/noun
-        ==
+        %^  scry-for  (set path)
+          %chat-store
+        /keys
       %+  turn  ~(tap in all)
       %+  cork  path-to-target
       |=  target
@@ -1379,4 +1371,16 @@
     [(sub wid u.ace) &]
   :-  (tufa (scag end `(list @)`txt))
   $(txt (slag ?:(nex +(end) end) `tape`txt))
+::
+::NOTE  anything that uses this breaks moons support, because moons don't sync
+::      full app state rn
+++  scry-for
+  |*  [=mold app=term =path]
+  .^  mold
+    %gx
+    (scot %p our.bowl)
+    app
+    (scot %da now.bowl)
+    (snoc `^path`path %noun)
+  ==
 --
