@@ -97,12 +97,12 @@ export class Note extends Component {
 
   render() {
     const { props } = this;
-    let notebook = props.notebooks[props.ship][props.book];
-    let comments = notebook.notes[props.note].comments;
-    let title = notebook.notes[props.note].title;
-    let author = notebook.notes[props.note].author;
-    let file = notebook.notes[props.note].file;
-    let date = moment(notebook.notes[props.note]["date-created"]).fromNow();
+    let notebook = props.notebooks[props.ship][props.book] || {};
+    let comments = notebook.notes[props.note].comments || false;
+    let title = notebook.notes[props.note].title || "";
+    let author = notebook.notes[props.note].author || "";
+    let file = notebook.notes[props.note].file || "";
+    let date = moment(notebook.notes[props.note]["date-created"]).fromNow() || 0;
 
     let contact = !!(author.substr(1) in props.contacts)
       ? props.contacts[author.substr(1)] : false;
@@ -118,8 +118,8 @@ export class Note extends Component {
     }
 
     let newfile = file.slice(file.indexOf(';>')+2);
-    let prevId = notebook.notes[props.note]["prev-note"];
-    let nextId = notebook.notes[props.note]["next-note"];
+    let prevId = notebook.notes[props.note]["prev-note"] || null;
+    let nextId = notebook.notes[props.note]["next-note"] || null;
 
     let prev = (prevId === null)
       ?  null
