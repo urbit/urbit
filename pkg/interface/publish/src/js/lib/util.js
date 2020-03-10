@@ -46,3 +46,26 @@ export function uxToHex(ux) {
   let value = ux.replace('.', '').padStart(6, '0');
   return value;
 }
+
+export function writeText(str) {
+  return new Promise(function (resolve, reject) {
+
+    var range = document.createRange();
+    range.selectNodeContents(document.body);
+    document.getSelection().addRange(range);
+
+    var success = false;
+    function listener(e) {
+      e.clipboardData.setData("text/plain", str);
+      e.preventDefault();
+      success = true;
+    }
+    document.addEventListener("copy", listener);
+    document.execCommand("copy");
+    document.removeEventListener("copy", listener);
+
+    document.getSelection().removeAllRanges();
+
+    success ? resolve() : reject();
+  });
+};

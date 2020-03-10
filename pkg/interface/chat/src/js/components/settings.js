@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { deSig, uxToHex } from '/lib/util';
+import { deSig, uxToHex, writeText } from '/lib/util';
 import { Route, Link } from "react-router-dom";
 
 
@@ -333,7 +333,7 @@ export class SettingsScreen extends Component {
                 style={{right: 12, top: 1}}
                 ref="copy"
                 onClick={() => {
-                  navigator.clipboard.writeText(props.station.substr(1));
+                  writeText(props.station.substr(1));
                   this.refs.copy.innerText = "Copied";
                 }}>
                 Copy
