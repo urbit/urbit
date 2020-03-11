@@ -119,11 +119,9 @@
 ::
 ::  arbitrary compose
 ++  comp
-  ~/  %comp
   =+  raq=|*({a/* b/*} [a b])
   |@
   ++  $
-    ~/  %fun
     |*  {vex/edge sab/rule}
     ?~  q.vex
       vex

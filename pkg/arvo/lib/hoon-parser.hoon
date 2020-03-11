@@ -1,20 +1,9 @@
+/-  *hoon-parser
 /+  *recoverable-parser
 |%
 ::  $rune-kind: kind of rune
 ::
 ::    Either %t (tall), %w (wide) or %i (irregular)
-+$  rune-kind
-  ?(%t %w %i)
-::
-::  $hast: Hoon AST node
-+$  hast
-  $%
-    [%core name=@ta head=(unit hast) arms=(list hast)]
-    [%core-arm kind=@ta name=tape arm=hast]
-    [%rune =rune-kind name=@ta children=(list hast)]
-    [%irregular-adjacent =tape child=hast]
-    [%irregular =tape]
-  ==
 ++  main
   |=  =path
   ^-  (like hast)
@@ -139,13 +128,13 @@
     ==
   ==
 ::  +rune: rune parser
+::    TODO: variadic runes
 ++  rune
   ;~  pose
     (make-rune bar tis %brts 2)
     (make-rune ket hep %kthp 2)
     (make-rune tis fas %tsnt 3)
     (make-rune cen lus %cnls 3)
-    (make-rune mic sig %mcsg 10)
     (make-rune wut dot %wtdt 3)
     (make-rune wut sig %wtsg 3)
     (make-rune wut col %wtcl 3)
@@ -166,7 +155,9 @@
     (cold %lsls ;~(plug gap (jest '++')))
     ;~  pfix
       gap
-      ;~(plug arm-name tall)
+      ;~  plug
+        arm-name
+        tall
     ==
   ==
 ::  +core-arm: parse core arm
