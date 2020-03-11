@@ -109,10 +109,10 @@
       =/  old-mailbox=mailbox
         (need (scry:cc (unit mailbox) %chat-store [%mailbox chat]))
       =*  enves  envelopes.old-mailbox
-      :~  (chat-poke [%delete chat])
-          (chat-poke [%create new-chat])
-          (chat-poke [%messages new-chat enves])
-          (chat-poke [%read new-chat])
+      :~  (chat-poke:cc [%delete chat])
+          (chat-poke:cc [%create new-chat])
+          (chat-poke:cc [%messages new-chat enves])
+          (chat-poke:cc [%read new-chat])
           %^  make-poke  %chat-hook  %chat-hook-action
           !>  ^-  chat-hook-action
           ?:  =(our.bol host)  [%add-owned new-chat %.y]
@@ -366,8 +366,11 @@
       =/  chat-path  [%mailbox path.act]
       :_  state
       [%pass chat-path %agent [ship.act %chat-hook] %watch chat-path]~
-    ::  TODO: only ask for backlog from previous point
-    =/  chat-history  [%backlog (weld path.act /0)]
+    =/  mailbox=(unit mailbox)  (chat-scry path.act)
+    =/  chat-history=path
+      :-  %backlog
+      %+  weld  path.act
+      ?~(mailbox /0 /(scot %ud (lent envelopes.u.mailbox)))
     :_  state
     [%pass chat-history %agent [ship.act %chat-hook] %watch chat-history]~
   ::
