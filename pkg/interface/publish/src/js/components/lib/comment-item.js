@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import { Sigil } from './icons/sigil';
-import { uxToHex } from '../../lib/util';
+import { uxToHex, cite } from '../../lib/util';
 
 export class CommentItem extends Component {
   constructor(props){
@@ -50,6 +50,9 @@ export class CommentItem extends Component {
       classes = "";
     }
 
+    if (name === commentData.author) {
+      name = cite(commentData.author);
+    }
 
     return (
       <div>
@@ -60,8 +63,9 @@ export class CommentItem extends Component {
           color={color}
           classes={classes}
         />
-          <div className={"f9 mh2 pt1" +
-          ((name === commentData.author) ? " mono" : "")}>
+          <div className={"f9 mh2 pt1 " +
+            (contact.nickname ? null : "mono")}
+            title={commentData.author}>
             {name}
           </div>
           <div className="f9 gray3 pt1">{date}</div>

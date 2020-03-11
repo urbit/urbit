@@ -5,6 +5,7 @@ import { NotebookPosts } from './notebook-posts';
 import { Subscribers } from './subscribers';
 import { Settings } from './settings';
 import Sidebar from './sidebar';
+import { cite } from '../../lib/util';
 
 export class Notebook extends Component {
   constructor(props){
@@ -133,6 +134,10 @@ export class Notebook extends Component {
         ? contact.nickname : props.ship;
     }
 
+    if (name === props.ship) {
+      name = cite(props.ship);
+    }
+
     let popout = (props.popout) ? "popout/" : "";
     let base = `/~publish/${popout}notebook/${props.ship}/${props.book}`;
     let about = base + '/about';
@@ -204,7 +209,8 @@ export class Notebook extends Component {
               <div className="mb1">{notebook.title}</div>
               <span>
                 <span className="gray3 mr1">by</span>
-                <span className={props.ship === name ? "mono" : ""}>
+                <span className={contact.nickname ? null : "mono"}
+                title={props.ship}>
                   {name}
                 </span>
               </span>

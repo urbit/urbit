@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Dropdown } from './dropdown';
+import { cite } from '../../lib/util';
 
 export class Subscribers extends Component {
   constructor(props){
@@ -68,7 +69,7 @@ export class Subscribers extends Component {
         }
         return (
           <div className="flex justify-between" key={i}>
-            <div className="f9 mono mr2">{`~${who}`}</div>
+            <div className="f9 mono mr2">{`${cite(who)}`}</div>
             <Dropdown
               options={options}
               width={width}
@@ -103,7 +104,7 @@ export class Subscribers extends Component {
           ];
           return (
             <div className="flex justify-between" key={i}>
-              <div className="f9 mono mr2">{who}</div>
+              <div className="f9 mono mr2">{cite(who)}</div>
               <Dropdown
                 options={options}
                 width={width}
@@ -168,7 +169,7 @@ export class Subscribers extends Component {
         <div className="flex flex-column">
           <div className="f9 gray2">Host</div>
           <div className="flex justify-between mt3">
-            <div className="f9 mono mr2">{this.props.host}</div>
+            <div className="f9 mono mr2">{cite(this.props.host)}</div>
           </div>
         </div>
         <div className="flex flex-column">

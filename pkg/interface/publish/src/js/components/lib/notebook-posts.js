@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown'
+import { cite } from '../../lib/util';
 
 export class NotebookPosts extends Component {
   constructor(props){
@@ -48,6 +49,9 @@ export class NotebookPosts extends Component {
         name = (contact.nickname.length > 0)
           ? contact.nickname : note.author;
       }
+      if (name === note.author) {
+        name = cite(note.author);
+      }
       let comment = "No Comments";
       if (note["num-comments"] == 1) {
         comment = "1 Comment";
@@ -70,8 +74,9 @@ export class NotebookPosts extends Component {
               {note.snippet}
             </p>
             <div className="flex">
-              <div className={((note.author === name) ? "mono" : "") +
-               " gray2 mr3"}>{name}</div>
+              <div className={(contact.nickname ? null : "mono") +
+               " gray2 mr3"}
+               title={note.author}>{name}</div>
               <div className="gray2 mr3">{date}</div>
               <div className="gray2">{comment}</div>
             </div>
