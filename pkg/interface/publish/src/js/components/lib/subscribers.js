@@ -92,11 +92,11 @@ export class Subscribers extends Component {
         let width = 162;
         subscribers = this.props.notebook.subscribers.map((who, i) => {
           let options = [
-            { cls: "tl pointer w-100 db hover-bg-gray4 ph2 pv3",
+            { cls: "white-d tl pointer w-100 db hover-bg-gray4 hover-bg-gray1-d bg-transparent ph2 pv3",
               txt: "Promote to participant",
               action: () => {this.addUser(who, writePath)}
             },
-            { cls: "tl red2 pointer w-100 db hover-bg-gray4 ph2 pv3",
+            { cls: "tl red2 pointer w-100 db hover-bg-gray4 hover-bg-gray1-d bg-transparent ph2 pv3",
               txt: "Ban",
               action: () => {this.addUser(who, readPath)}
             },
