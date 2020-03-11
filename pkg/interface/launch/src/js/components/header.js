@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Sigil } from './sigil';
+import { cite } from '../lib/util';
 import _ from 'lodash';
 
 export default class Header extends Component {
@@ -67,7 +68,7 @@ export default class Header extends Component {
             size={16} color={"#000000"}
             classes="mix-blend-diff v-mid" />
           <span className="mono white-d f9 ml2">
-            {"~" + window.ship}
+            {cite(window.ship)}
           </span>
         </div>
       </header>
