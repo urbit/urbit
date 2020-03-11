@@ -230,7 +230,10 @@ export class PrimaryReducer {
         state.notebooks[host][book].notes &&
         state.notebooks[host][book].notes[noteId])
     {
-      state.notebooks[host][book].notes[noteId]["read"] = true;
+      if (!state.notebooks[host][book].notes[noteId]["read"]) {
+        state.notebooks[host][book].notes[noteId]["read"] = true;
+        state.notebooks[host][book]["num-unread"] -= 1;
+      }
     }
   }
 

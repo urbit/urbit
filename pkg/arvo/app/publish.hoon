@@ -536,7 +536,7 @@
     =/  note-name  i.t.t.t.t.pax
     =/  book  (~(get by books.sty) book-name)
     ?~  book
-      [~ sty]
+      [cad sty]
     =.  notes.u.book  (~(del by notes.u.book) note-name)
     =/  delta=notebook-delta  [%del-note our.bol book-name note-name]
     =^  cards  sty  (handle-notebook-delta delta sty)
@@ -547,7 +547,7 @@
     =/  note-name  i.t.t.t.t.pax
     =/  comment-date  (slaw %da i.t.t.t.t.t.pax)
     ?~  comment-date
-      [~ sty]
+      [cad sty]
     =/  delta=notebook-delta
       [%del-comment our.bol book-name note-name u.comment-date]
     =^  cards  sty  (handle-notebook-delta delta sty)
@@ -691,7 +691,7 @@
   =/  snippet=@t  (of-wain:format (scag 1 (to-wain:format body)))
   =/  meta=(each (map term knot) tang)
     %-  mule  |.
-    %-  ~(run by inf:(static:cram (ream udon)))
+    %-  ~(run by inf:(static:cram (ream front-matter)))
     |=  a=dime  ^-  cord
     ?+  (end 3 1 p.a)  (scot a)
       %t  q.a
@@ -1030,7 +1030,6 @@
           date-created+(scot %da now.bol)
           last-modified+(scot %da now.bol)
       ==
-    =.  body.act  (cat 3 body.act '\0a')
     =/  file=@t   (add-front-matter front body.act)
     :_  state
     [(write-file pax %udon !>(file))]~
@@ -1106,7 +1105,6 @@
           date-created+(scot %da date-created.u.note)
           last-modified+(scot %da now.bol)
       ==
-    =.  body.act  (cat 3 body.act '\0a')
     =/  file=@t   (add-front-matter front body.act)
     :_  state
     [(write-file pax %udon !>(file))]~
