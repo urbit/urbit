@@ -92,5 +92,7 @@ export function writeText(str) {
     document.getSelection().removeAllRanges();
 
     success ? resolve() : reject();
-  });
+  }).catch(function (error) {
+    console.error(error);
+  });;
 };
