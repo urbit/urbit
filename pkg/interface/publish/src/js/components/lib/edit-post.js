@@ -98,7 +98,7 @@ export class EditPost extends Component {
             popout={props.popout}
           />
           <button
-            className="v-mid w-100 mw6 tl h1 pl4"
+            className="v-mid bg-transparent w-100 mw6 tl h1 pl4"
             disabled={!state.submit}
             style={submitStyle}
             onClick={this.postSubmit}>
