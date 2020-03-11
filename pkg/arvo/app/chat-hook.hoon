@@ -397,7 +397,6 @@
 ++  watch-synced
   |=  pax=path
   ^-  (list card)
-  ~&  %watch-synced
   ?>  (team:title our.bol src.bol)
   [%give %fact ~ %chat-hook-update !>([%initial synced])]~
 ::
@@ -417,7 +416,6 @@
   ^-  (list card)
   ?>  ?=(^ pax)
   =/  last  (dec (lent pax))
-  ~&  pax
   =/  backlog-start=(unit @ud)
     %+  rush
       (snag last `(list @ta)`pax)
@@ -437,12 +435,10 @@
 ++  paginate-messages
   |=  [=path =mailbox start=@ud]
   ^-  (list card)
-  ~&  [path start]
   =/  cards=(list card)  ~
   =/  end  (lent envelopes.mailbox)
   ?:  |((gte start end) =(end 0))
     cards
-  ~&  (slag start `(list envelope)`envelopes.mailbox)
   =.  envelopes.mailbox  (slag start `(list envelope)`envelopes.mailbox)
   |-  ^-  (list card)
   ?~  envelopes.mailbox
