@@ -125,12 +125,7 @@ export class SettingsScreen extends Component {
             value={this.state.title}
             disabled={!props.amOwner}
             onChange={this.changeTitle}
-          />
-          <span className={"f8 absolute pa3 inter " +
-          ((props.amOwner) ? "pointer" : "")}
-            style={{ right: 12, top: 1 }}
-            ref="rename"
-            onClick={() => {
+            onBlur={() => {
               if (props.amOwner) {
                 api.setSpinner(true);
                 api.metadataAdd(
@@ -142,12 +137,10 @@ export class SettingsScreen extends Component {
                   uxToHex(resource.metadata.color)
                 ).then(() => {
                   api.setSpinner(false);
-                  this.refs.rename.innerText = "Saved";
                 });
               }
-            }}>
-            Save
-            </span>
+            }}
+          />
           </div>
           <p className="f8 mt3 lh-copy">Change description</p>
           <p className="f9 gray2 db mb4">
@@ -161,12 +154,7 @@ export class SettingsScreen extends Component {
               value={this.state.description}
               disabled={!props.amOwner}
               onChange={this.changeDescription}
-            />
-            <span className={"f8 absolute pa3 inter " +
-              ((props.amOwner) ? "pointer" : "")}
-              style={{ right: 12, top: 1 }}
-              ref="description"
-              onClick={() => {
+              onBlur={() => {
                 if (props.amOwner) {
                   api.setSpinner(true);
                   api.metadataAdd(
@@ -178,12 +166,10 @@ export class SettingsScreen extends Component {
                     uxToHex(resource.color)
                   ).then(() => {
                     api.setSpinner(false);
-                    this.refs.description.innerText = "Saved";
                   });
                 }
-              }}>
-              Save
-            </span>
+              }}
+            />
           </div>
           <p className="f8 mt3 lh-copy">Change color</p>
           <p className="f9 gray2 db mb4">Give this collection a color when viewing group channels</p>
@@ -195,12 +181,7 @@ export class SettingsScreen extends Component {
               value={this.state.color}
               disabled={!props.amOwner}
               onChange={this.changeColor}
-            />
-            <span className={"f8 absolute pa3 inter " +
-              ((props.amOwner) ? "pointer" : "")}
-              style={{ right: 12, top: 1 }}
-              ref="color"
-              onClick={() => {
+              onBlur={() => {
                 if (props.amOwner && state.color.match(/[0-9A-F]{6}/i)) {
                   api.setSpinner(true);
                   api.metadataAdd(
@@ -212,12 +193,10 @@ export class SettingsScreen extends Component {
                     state.color
                   ).then(() => {
                     api.setSpinner(false);
-                    this.refs.color.innerText = "Saved";
                   });
                 }
-              }}>
-              Save
-            </span>
+              }}
+            />
           </div>
         </div>
       </div>

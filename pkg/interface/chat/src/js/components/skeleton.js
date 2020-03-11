@@ -37,10 +37,9 @@ export class Skeleton extends Component {
         <div className={
             `cf w-100 flex ` +
             popoutBorder +
-            (this.props.chatHideonMobile ? "h-100 " : "h-100-minus-40-s ") +
             (this.props.popout
               ? "h-100"
-              : "h-100-minus-40-m h-100-minus-40-l h-100-minus-40-xl")
+              : "h-100 h-100-minus-40-m h-100-minus-40-l h-100-minus-40-xl")
           }>
           {/* sidebar skeleton, hidden on mobile when in chat panel */}
           <div
@@ -57,7 +56,7 @@ export class Skeleton extends Component {
               <a className="pl3 pb6" href="/">
                 {"⟵ Landscape"}
               </a>
-              <div className="bb b--gray4 white-d inter f8 pl3 pt6 pb3">
+              <div className="bb b--gray4 b--gray1-d white-d inter f8 pl3 pt6 pb3">
                 All Chats
               </div>
             </div>

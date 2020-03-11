@@ -19,7 +19,7 @@ export class NewScreen extends Component {
       idError: false,
       inviteError: false,
       allowHistory: true,
-      createGroup: true
+      createGroup: false
     };
 
     this.titleChange = this.titleChange.bind(this);

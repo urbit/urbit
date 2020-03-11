@@ -16,7 +16,7 @@ export class NewScreen extends Component {
       ships: [],
       idError: false,
       inviteError: false,
-      createGroup: true
+      createGroup: false
     };
 
     this.titleChange = this.titleChange.bind(this);

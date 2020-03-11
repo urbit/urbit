@@ -495,8 +495,8 @@ export class ContactCard extends Component {
         !(props.path.includes('/~/default'))
       ) ? "dib" : "dn";
 
-    let hiddenonMe = (props.path === "/~/default")
-      ? "dn" : "";
+    let meLink = (props.path === "/~/default")
+      ? `/~groups` : `/~groups/detail${props.path}`;
 
     let card = state.edit ? this.renderEditCard() : this.renderCard();
     return (
@@ -507,8 +507,8 @@ export class ContactCard extends Component {
             "bb b--gray4 b--gray2-d "
           }>
           <div className="f9 mv4 mh3 pt1 dib w-100">
-            <Link className={hiddenonMe} to={"/~groups/detail" + props.path}>
-              {"⟵ Channels"}
+            <Link to={meLink}>
+              {"⟵"}
             </Link>
           </div>
           <div className="flex">

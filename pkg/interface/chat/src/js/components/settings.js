@@ -127,12 +127,7 @@ export class SettingsScreen extends Component {
             value={this.state.title}
             disabled={!chatOwner}
             onChange={this.changeTitle}
-          />
-          <span className={"f8 absolute pa3 inter " +
-          ((chatOwner) ? "pointer" : "")}
-            style={{ right: 12, top: 1 }}
-            ref="rename"
-            onClick={() => {
+            onBlur={() => {
               if (chatOwner) {
                 props.api.setSpinner(true);
                 props.api.metadataAdd(
@@ -143,13 +138,11 @@ export class SettingsScreen extends Component {
                   association.metadata['date-created'],
                   uxToHex(association.metadata.color)
                 ).then(() => {
-                  this.refs.rename.innerText = "Saved";
                   props.api.setSpinner(false);
                 })
               }
-            }}>
-            Save
-            </span>
+            }}
+          />
           </div>
           <p className="f8 mt3 lh-copy">Change description</p>
           <p className="f9 gray2 db mb4">Change the description of this chat</p>
@@ -161,12 +154,7 @@ export class SettingsScreen extends Component {
               value={this.state.description}
               disabled={!chatOwner}
               onChange={this.changeDescription}
-            />
-            <span className={"f8 absolute pa3 inter " +
-              ((chatOwner) ? "pointer" : "")}
-              style={{ right: 12, top: 1 }}
-              ref="description"
-              onClick={() => {
+              onBlur={() => {
                 if (chatOwner) {
                   props.api.setSpinner(true);
                   props.api.metadataAdd(
@@ -177,13 +165,11 @@ export class SettingsScreen extends Component {
                     association.metadata['date-created'],
                     uxToHex(association.metadata.color)
                   ).then(() => {
-                    this.refs.description.innerText = "Saved";
                     props.api.setSpinner(false);
                   })
                 }
-              }}>
-              Save
-            </span>
+              }}
+            />
           </div>
           <p className="f8 mt3 lh-copy">Change color</p>
           <p className="f9 gray2 db mb4">Give this chat a color when viewing group channels</p>
@@ -195,12 +181,7 @@ export class SettingsScreen extends Component {
               value={this.state.color}
               disabled={!chatOwner}
               onChange={this.changeColor}
-            />
-            <span className={"f8 absolute pa3 inter " +
-              ((chatOwner) ? "pointer" : "")}
-              style={{ right: 12, top: 1 }}
-              ref="color"
-              onClick={() => {
+              onBlur={() => {
                 if ((chatOwner) && (this.state.color.match(/[0-9A-F]{6}/i))) {
                   props.api.setSpinner(true);
                   props.api.metadataAdd(
@@ -211,13 +192,11 @@ export class SettingsScreen extends Component {
                     association.metadata['date-created'],
                     this.state.color
                   ).then(() => {
-                    this.refs.color.innerText = "Saved";
                     props.api.setSpinner(false);
                   })
                 }
-              }}>
-              Save
-            </span>
+              }}
+            />
           </div>
         </div>
       </div>
