@@ -190,7 +190,7 @@ export class Note extends Component {
               />
             </Link>
           </div>
-          <div className="w-100 mw6 overflow-container">
+          <div className="w-100 mw6">
             <div className="flex flex-column">
               <div className="f9 mb1"
               style={{overflowWrap: "break-word"}}>{title}</div>

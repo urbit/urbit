@@ -31,7 +31,7 @@ export class Skeleton extends Component {
             path={props.path}
             invites={props.invites}
             />
-          <div className={"h-100 w-100 relative white-d " + rightPanelHide} style={{
+          <div className={"h-100 w-100 relative white-d overflow-y-scroll " + rightPanelHide} style={{
             flexGrow: 1,
           }}>
             {props.children}

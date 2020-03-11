@@ -114,7 +114,7 @@ export class EditPost extends Component {
           />
         </Link>
         </div>
-        <div className="overflow-container mw6 center">
+        <div className="mw6 center">
         <div className="pl4">
           <div className="gray2">{date}</div>
         </div>

@@ -123,7 +123,7 @@ export class NewPost extends Component {
             />
           </Link>
         </div>
-        <div className="overflow-container mw6 center">
+        <div className="mw6 center">
           <div className="pa4">
             <input
               autoFocus
