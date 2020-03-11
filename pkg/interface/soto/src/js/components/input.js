@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { store } from '../store';
 import { api } from '../api';
+import { cite } from '../lib/util';
 
 export class Input extends Component {
   constructor(props) {
@@ -66,7 +67,7 @@ export class Input extends Component {
 render() {
   return (
     <div className="flex flex-row flex-grow-1">
-      <div className="flex-shrink-0">~{this.props.ship}:dojo
+      <div className="flex-shrink-0">{cite(this.props.ship)}:dojo
       </div>
       <span id="prompt">
         {this.props.prompt}
