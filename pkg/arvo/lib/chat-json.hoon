@@ -1,4 +1,4 @@
-/-  *chat-store, *chat-view
+/-  *chat-store, *chat-hook, *chat-view
 /+  chat-eval
 |%
 ::
@@ -118,6 +118,17 @@
       [%config (conf config.mailbox)]
   ==
 ::
+++  hook-update-to-json
+  |=  upd=chat-hook-update
+  =,  enjs:format
+  ^-  json
+  %+  frond  %chat-hook-update
+  %-  pairs
+  %+  turn  ~(tap by synced.upd)
+  |=  [pax=^path shp=^ship]
+  ^-  [cord json]
+  [(spat pax) s+(scot %p shp)]
+::
 ++  update-to-json
   |=  upd=chat-update
   =,  enjs:format
@@ -207,6 +218,33 @@
         [%me so]
     ==
   ::
+  --
+::
+++  json-to-hook-action
+  |=  jon=json
+  ^-  chat-hook-action
+  =,  dejs:format
+  =<  (parse-json jon)
+  |%
+  ++  parse-json
+    %-  of
+    :~  [%add-owned add-owned]
+        [%add-synced add-synced]
+        [%remove pa]
+    ==
+  ::
+  ++  add-owned
+    %-  ot
+    :~  [%path pa]
+        [%allow-history bo]
+    ==
+  ::
+  ++  add-synced
+    %-  ot
+    :~  [%ship (su ;~(pfix sig fed:ag))]
+        [%path pa]
+        [%ask-history bo]
+    ==
   --
 ::
 ++  json-to-view-action

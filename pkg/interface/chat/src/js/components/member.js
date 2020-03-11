@@ -88,7 +88,9 @@ export class MemberScreen extends Component {
             station={props.station}
             numPeers={perm.length}
             isOwner={deSig(props.match.params.ship) === window.ship}
+            host={props.match.params.ship}
             popout={this.props.popout}
+            api={props.api}
           />
         </div>
         <div className="w-100 pl3 mt0 mt4-m mt4-l mt4-xl cf pr6">

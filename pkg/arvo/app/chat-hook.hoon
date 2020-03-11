@@ -20,7 +20,7 @@
   ==
 +$  state-0  [%0 state-base]
 +$  state-base
-  $:  synced=(map path ship)
+  $:  =synced
       invite-created=_|
       allow-history=(map path ?)
   ==
@@ -268,6 +268,7 @@
     ?+  path          (on-watch:def path)
         [%backlog *]  [(watch-backlog:cc t.path) this]
         [%mailbox *]  [(watch-mailbox:cc t.path) this]
+        [%synced *]   [(watch-synced:cc t.path) this]
     ==
   ::
   ++  on-agent
@@ -387,6 +388,13 @@
     ==
   ==
 ::
+++  watch-synced
+  |=  pax=path
+  ^-  (list card)
+  ~&  %watch-synced
+  ?>  (team:title our.bol src.bol)
+  [%give %fact ~ %chat-hook-update !>([%initial synced])]~
+::
 ++  watch-mailbox
   |=  pax=path
   ^-  (list card)
@@ -403,6 +411,7 @@
   ^-  (list card)
   ?>  ?=(^ pax)
   =/  last  (dec (lent pax))
+  ~&  pax
   =/  backlog-start=(unit @ud)
     %+  rush
       (snag last `(list @ta)`pax)
@@ -422,10 +431,12 @@
 ++  paginate-messages
   |=  [=path =mailbox start=@ud]
   ^-  (list card)
+  ~&  [path start]
   =/  cards=(list card)  ~
   =/  end  (lent envelopes.mailbox)
   ?:  |((gte start end) =(end 0))
     cards
+  ~&  (slag start `(list envelope)`envelopes.mailbox)
   =.  envelopes.mailbox  (slag start `(list envelope)`envelopes.mailbox)
   |-  ^-  (list card)
   ?~  envelopes.mailbox
@@ -605,13 +616,16 @@
   |=  [wir=wire saw=(unit tang)]
   ^-  (quip card _state)
   ?~  saw  [~ state]
-  ?>  ?=(^ wir)
-  :_  state(synced (~(del by synced) t.wir))
-  %.  ~
-  %-  slog
-  :*  leaf+"chat-hook failed subscribe on {(spud t.wir)}"
-      leaf+"stack trace:"
-      u.saw
+  ?+  wir  [~ state]
+      [%backlog @ @ @ *]
+    =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
+    :_  state(synced (~(del by synced) pax))
+    %.  ~
+    %-  slog
+    :*  leaf+"chat-hook failed subscribe on {(spud pax)}"
+        leaf+"stack trace:"
+        u.saw
+    ==
   ==
 ::
 ++  chat-poke
