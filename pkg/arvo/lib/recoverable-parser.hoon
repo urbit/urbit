@@ -308,4 +308,37 @@
         ^-  (like _gar)
         ((sef) tub)
   --
+::  Bound the possible parsing range of context to resync
+++  resync-context
+  |*  [context=rule resync=rule fallback=*]
+  |=  tub=nail
+  =/  marker
+    (resync tub)
+  =/  content
+    (context tub)
+  ?~  q.marker
+    :: Shouldn't happen
+    [p=p.marker q=~ r=[[[p.tub p.marker] %resync-failed] ~]]
+  =/  marker-pos
+    p.q.u.q.marker
+  ?~  q.content
+    [p=p.marker q=[~ u=[p=fallback q=q.u.q.marker]] r=[[[p.tub p.marker] %resync-failed] ~]]
+  =/  content-pos
+    p.q.u.q.content
+  =/  last-pos
+    (last content-pos marker-pos)
+  ~&  marker
+  ~&  content
+  ?.  =(last-pos marker-pos)
+    ::  content has overflowed its resync marker
+    :+  p=p.marker
+      q=[~ u=[p=fallback q=q.u.q.marker]]
+    r=[[[marker-pos marker-pos] %resync-overflow] r.content]
+  ?:  =(last-pos content-pos)
+    :: do nothing marker and content align
+    content
+  ::  content has underflowed its resync marker
+  :+  p=p.marker
+    q=[~ u=[p=p.u.q.content q=q.u.q.marker]]
+  r=[[[content-pos marker-pos] %resync-underflow] r.content]
 --

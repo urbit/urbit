@@ -53,6 +53,7 @@
     lit
     rit
     ;~(plug hep hep)
+    (jest '++')
     lac
     rac
     prn
@@ -146,19 +147,29 @@
   ==
 ::  +arm-name: parse arm name
 ++  arm-name
+  %+  nest-rule  *tape
   ;~(sfix ;~(plug low (star ;~(pose nud low hep))) gap)
 
 ::  +luslus-arm: parse luslus arm
 ++  luslus-arm
   %+  stag  %core-arm
   ;~  plug
-    (cold %lsls ;~(plug gap (jest '++')))
+    (cold %lsls (jest '++'))
     ;~  pfix
       gap
       ;~  plug
         arm-name
-        tall
+        (resync-context ;~(sfix tall gap) resync-arm [%irregular ""])
+      ==
     ==
+  ==
+:: TODO: only works at one core deep
+++  resync-arm
+  %-  star
+  ;~  less
+    (jest '++')
+    (jest '--')
+    next
   ==
 ::  +core-arm: parse core arm
 ++  core-arm
@@ -172,7 +183,7 @@
   %+  stag  %brcn
   %+  stag  ~
   %+  ifix
-    [;~(plug bar cen) ;~(plug gap hep hep)]
+    [;~(plug bar cen gap) ;~(plug hep hep)]
   (star core-arm)
 
 ::  +tall: parse tall form hoon expression
