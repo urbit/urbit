@@ -115,7 +115,7 @@ export class Links extends Component {
           page={props.page}
           resourcePath={props.resourcePath}/>
         </div>
-        <div className="w-100 mt2 flex justify-center overflow-y-scroll ph4 pb4">
+        <div className="w-100 mt6 flex justify-center overflow-y-scroll ph4 pb4">
           <div className="w-100 mw7">
             <div className="flex">
               <LinkSubmit resourcePath={props.resourcePath}/>

@@ -99,8 +99,13 @@ export class NewPost extends Component {
     let hiddenOnPopout = (props.popout)
       ? "" : "dib-m dib-l dib-xl";
 
+    let newIndex = props.location.pathname.indexOf("/new");
+    let backHref = props.location.pathname.slice(0, newIndex);
     return (
       <div className="f9 h-100 relative">
+        <div className="w-100 dn-m dn-l dn-xl inter pt4 pb4 f9 pl4">
+          <Link to={backHref}>{"<- Back"}</Link>
+        </div>
         <div className="w-100 tl pv4 flex justify-center">
           <SidebarSwitcher
             sidebarShown={props.sidebarShown}
@@ -123,7 +128,7 @@ export class NewPost extends Component {
             />
           </Link>
         </div>
-        <div className="overflow-container mw6 center">
+        <div className="mw6 center">
           <div className="pa4">
             <input
               autoFocus

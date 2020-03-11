@@ -192,7 +192,7 @@ export class Notebook extends Component {
           />
         </Link>
         <div
-          className="h-100 pt0 pt8-m pt8-l pt8-xl overflow-container no-scrollbar"
+          className="h-100 pt0 pt8-m pt8-l pt8-xl no-scrollbar"
           onScroll={this.onScroll}
           ref={el => {
             this.scrollElement = el;

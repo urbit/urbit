@@ -130,32 +130,25 @@ export class Settings extends Component {
               value={this.state.title}
               onChange={this.changeTitle}
               disabled={this.state.disabled}
+              onBlur={() => {
+                this.setState({ disabled: true });
+                window.api.setSpinner(true);
+                window.api
+                  .action("publish", "publish-action", {
+                    "edit-book": {
+                      book: this.props.book,
+                      title: this.state.title,
+                      about: this.props.notebook.about,
+                      coms: this.props.notebook.comments,
+                      group: null
+                    }
+                  })
+                  .then(() => {
+                    this.setState({ disabled: false })
+                    window.api.setSpinner(false);
+                  });
+              }}
             />
-            <span
-              className="f8 absolute pa3 inter pointer"
-              style={{ right: 12, top: 1 }}
-              ref="rename"
-              onClick={() => {
-                  this.setState({disabled: true});
-                  window.api.setSpinner(true);
-                  window.api
-                    .action("publish", "publish-action", {
-                      "edit-book": {
-                        book: this.props.book,
-                        title: this.state.title,
-                        about: this.props.notebook.about,
-                        coms: this.props.notebook.comments,
-                        group: null
-                      }
-                    })
-                    .then(() => {
-                      this.setState({disabled: false})
-                      this.refs.rename.innerText = "Saved";
-                      window.api.setSpinner(false);
-                    });
-              }}>
-              Save
-            </span>
           </div>
           <p className="f9 mt6 lh-copy">Change description</p>
           <p className="f9 gray2 db mb4">Change the description of this notebook</p>
@@ -167,32 +160,25 @@ export class Settings extends Component {
               }
               value={this.state.description}
               onChange={this.changeDescription}
-            />
-            <span
-              className="f8 absolute pa3 inter pointer"
-              style={{ right: 12, top: 1 }}
-              ref="description"
-              onClick={() => {
+              onBlur={() => {
                 this.setState({ disabled: true });
-                  window.api.setSpinner(true);
-                  window.api
-                    .action("publish", "publish-action", {
-                      "edit-book": {
-                        book: this.props.book,
-                        title: this.props.notebook.title,
-                        about: this.state.description,
-                        coms: this.props.notebook.comments,
-                        group: null
-                      }
-                    })
-                    .then(() => {
-                      this.setState({ disabled: false });
-                      this.refs.description.innerText = "Saved";
-                      window.api.setSpinner(false);
-                    });
-              }}>
-              Save
-            </span>
+                window.api.setSpinner(true);
+                window.api
+                  .action("publish", "publish-action", {
+                    "edit-book": {
+                      book: this.props.book,
+                      title: this.props.notebook.title,
+                      about: this.state.description,
+                      coms: this.props.notebook.comments,
+                      group: null
+                    }
+                  })
+                  .then(() => {
+                    this.setState({ disabled: false });
+                    window.api.setSpinner(false);
+                  });
+              }}
+            />
           </div>
           <div className="mv6">
             <input
