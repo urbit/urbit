@@ -357,7 +357,9 @@
         allow-history  (~(put by allow-history) path.act allow-history.act)
     ==
     :_  state
-    [%pass chat-path %agent [our.bol %chat-store] %watch chat-path]~
+    :~  [%pass chat-path %agent [our.bol %chat-store] %watch chat-path]
+        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
+    ==
   ::
       %add-synced
     ?>  (team:title our.bol src.bol)
@@ -373,18 +375,22 @@
       %+  weld  path.act
       ?~(mailbox /0 /(scot %ud (lent envelopes.u.mailbox)))
     :_  state
-    [%pass chat-history %agent [ship.act %chat-hook] %watch chat-history]~
+    :~  [%pass chat-history %agent [ship.act %chat-hook] %watch chat-history]
+        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
+    ==
   ::
       %remove
     =/  ship  (~(get by synced) path.act)
     ?~  ship  [~ state]
     ?:  &(!=(u.ship src.bol) ?!((team:title our.bol src.bol)))
       [~ state]
-    :_  state(synced (~(del by synced) path.act))
+    =.  synced  (~(del by synced) path.act)
+    :_  state
     %-  zing
     :~  (pull-wire [%backlog (weld path.act /0)])
         (pull-wire [%mailbox path.act])
         [%give %kick ~[[%mailbox path.act]] ~]~
+        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]~
     ==
   ==
 ::
@@ -530,8 +536,11 @@
   ?+  -.fact     [~ state]
       %delete
     ?.  (~(has by synced) path.fact)  [~ state]
-    :_  state(synced (~(del by synced) path.fact))
-    [%pass [%mailbox path.fact] %agent [our.bol %chat-store] %leave ~]~
+    =.  synced  (~(del by synced) path.fact)
+    :_  state
+    :~  [%pass [%mailbox path.fact] %agent [our.bol %chat-store] %leave ~]
+        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
+    ==
   ::
       %message
     :_  state
@@ -559,9 +568,12 @@
     =/  shp  (~(get by synced) path.fact)
     ?~  shp  [~ state]
     ?.  =(u.shp src.bol)  [~ state]
-    :_  state(synced (~(del by synced) path.fact))
+    =.  synced  (~(del by synced) path.fact)
+    :_  state
     :-  (chat-poke [%delete path.fact])
-    [%pass [%mailbox path.fact] %agent [src.bol %chat-hook] %leave ~]~
+    :~  [%pass [%mailbox path.fact] %agent [src.bol %chat-hook] %leave ~]
+        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
+    ==
   ::
       %message
     :_  state
@@ -619,7 +631,9 @@
   ?+  wir  [~ state]
       [%backlog @ @ @ *]
     =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
-    :_  state(synced (~(del by synced) pax))
+    =.  synced  (~(del by synced) pax)
+    :_  state
+    :-  [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
     %.  ~
     %-  slog
     :*  leaf+"chat-hook failed subscribe on {(spud pax)}"
