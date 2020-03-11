@@ -14,31 +14,33 @@ export default class Header extends Component {
 
     let numNotificationsElem =
       inviteNum > 0 ? (
-        <a href="/~groups">
+        <a href="/~groups" className="absolute bn no-underline"
+        style={{left: "-32"}}>
           <p
-            className="absolute ph1 br2 ba b--gray2 green2 white-d f9 lh-solid"
+            className="ph1 br2 ba b--gray2 green2 white-d f9 lh-solid"
             title={"Invitations to new groups"}
             style={{
               bottom: "-2",
               fontWeight: 600,
               fontSize: "8pt",
-              padding: "0.15rem 0.4rem",
-              right: 64
+              lineHeight: "1.25",
+              padding: "0.2rem 0.4rem"
             }}>
             {inviteNum > 99 ? "99+" : inviteNum}
           </p>
         </a>
       ) : (
-        <a href="/~groups">
+          <a href="/~groups" className="absolute bn no-underline"
+            style={{left: "-32"}}>
           <p
-            className="absolute ph1 br2 ba b--gray2 gray2 white-d f9 lh-solid"
+            className="ph1 br2 ba b--gray2 gray2 white-d f9 lh-solid"
             title={"No new invitations to new groups"}
             style={{
               bottom: "-2",
               fontWeight: 600,
               fontSize: "8pt",
-              padding: "0.15rem 0.4rem",
-              right: 64
+              lineHeight: "1.25",
+              padding: "0.2rem 0.4rem"
             }}>
             0
             </p>
@@ -57,7 +59,7 @@ export default class Header extends Component {
           }}>
           Home
         </span>
-        <div className="absolute right-1 lh-copy" style={{ top: 12 }}>
+        <div className="absolute relative right-1 lh-copy" style={{ top: 12 }}>
           {numNotificationsElem}
           <Sigil
             ship={"~" + window.ship}
