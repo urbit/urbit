@@ -29,7 +29,7 @@ export class EditPost extends Component {
       let notebook = props.notebooks[props.ship][props.book];
       let note = notebook.notes[props.note];
       let file = note.file;
-      let body = file.slice(file.indexOf(';>') + 2);
+      let body = file.slice(file.indexOf(';>') + 3);
       this.setState({body: body});
     }
   }

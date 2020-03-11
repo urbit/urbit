@@ -54,6 +54,18 @@ export class Note extends Component {
     {
       window.api.fetchNote(this.props.ship, this.props.book, this.props.note);
     }
+    if ((prevProps.book !== this.props.book) ||
+        (prevProps.note !== this.props.note) ||
+        (prevProps.ship !== this.props.ship)) {
+      let readAction = {
+        read: {
+          who: this.props.ship.slice(1),
+          book: this.props.book,
+          note: this.props.note,
+        }
+      }
+      window.api.action("publish", "publish-action", readAction);
+    }
   }
 
   onScroll() {
