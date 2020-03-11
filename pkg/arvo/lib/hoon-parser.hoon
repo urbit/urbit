@@ -11,7 +11,7 @@
     [%core name=@ta head=(unit hast) arms=(list hast)]
     [%core-arm kind=@ta name=tape arm=hast]
     [%rune =rune-kind name=@ta children=(list hast)]
-    [%irregular-adjacent =tape rune=hast]
+    [%irregular-adjacent =tape child=hast]
     [%irregular =tape]
   ==
 ++  main
@@ -27,11 +27,6 @@
   (sef tub)
 ++  irregular-adjacent
   %+  stag  %irregular-adjacent
-  %+  cook
-    |=  [a=tape rune=hast]
-    ~&  a
-    ~&  rune
-    [a rune]
   ;~  plug
     irregular-unknown-core
     ;~  pose
@@ -143,7 +138,7 @@
   ;~  pose
     (make-rune bar tis %brts 2)
     (make-rune ket hep %kthp 2)
-    (make-rune tis fas %tsfs 3)
+    (make-rune tis fas %tsnt 3)
     (make-rune cen lus %cnls 3)
     (make-rune mic sig %mcsg 10)
     (make-rune wut dot %wtdt 3)
