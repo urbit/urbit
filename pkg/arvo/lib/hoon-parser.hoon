@@ -1,3 +1,4 @@
+/+  *recoverable-parser
 |%
 ::  $rune-kind: kind of rune
 ::
@@ -25,6 +26,10 @@
   |=  tub=nail
   ^-  (like _gar)
   (sef tub)
+::
+:: gap, but using an ace accidentally is unambigous
+++  gai
+;~(pose gap (parse-with-error 'Incorrect whitespace' ace))
 ++  irregular-adjacent
   %+  stag  %irregular-adjacent
   ;~  plug
@@ -118,7 +123,7 @@
   |*  arity=@ud
   %+  stun
     [0 arity]
-  ;~(pfix ;~(pose gap (easy ~)) tall)
+  ;~(pfix gai tall)
 ::  +make-runechildren-tall: build parser for a rune
 ++  make-rune
   |*  [a=rule b=rule name=@ta arity=@ud]
