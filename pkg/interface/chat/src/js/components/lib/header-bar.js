@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import classnames from "classnames";
+import { cite } from '../../lib/util';
 import { IconHome } from "/components/lib/icons/icon-home";
 import { Sigil } from "/components/lib/icons/sigil";
 
@@ -50,7 +50,7 @@ export class HeaderBar extends Component {
             size={16}
             color={"#000000"}
           />
-          <span className="mono white-d f9 ml2">{"~" + window.ship}</span>
+          <span className="mono white-d f9 ml2 c-default">{cite(window.ship)}</span>
         </div>
       </div>
     );
