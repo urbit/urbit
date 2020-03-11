@@ -141,12 +141,20 @@
     ^-  (quip card _this)
     =^  cards  state
       ?-    -.sign
-          %poke-ack   [- state]:(on-agent:def wire sign)
-          %watch-ack  [- state]:(on-agent:def wire sign)
-          %kick       [?:(?=([%chat-store ~] wire) ~[connect:tc] ~) state]
+        %poke-ack   [- state]:(on-agent:def wire sign)
+        %watch-ack  [- state]:(on-agent:def wire sign)
+      ::
+          %kick
+        :_  state
+        ?+  wire  ~
+          [%chat-store ~]  ~[connect:tc]
+          [%invites ~]     ~[connect-invites:tc]
+        ==
+      ::
           %fact
         ?+  p.cage.sign  ~|([%chat-cli-bad-sub-mark wire p.cage.sign] !!)
-          %chat-update  (diff-chat-update:tc wire !<(chat-update q.cage.sign))
+          %chat-update    (diff-chat-update:tc wire !<(chat-update q.cage.sign))
+          %invite-update  (handle-invite-update:tc !<(invite-update q.cage.sign))
         ==
       ==
     [cards this]
@@ -168,9 +176,11 @@
         settings  (sy %showtime %notify ~)
         width     80
       ==
-    [[connect cards] state]
-  :-  ?:  (~(has by wex.bowl) [/chat-store our-self %chat-store])
-        ~
+    [[connect connect-invites cards] state]
+  :-  %+  weld
+        ?:  (~(has by wex.bowl) [/invites our-self %invite-store])  ~
+        ~[connect-invites]
+      ?:  (~(has by wex.bowl) [/chat-store our-self %chat-store])  ~
       ~[connect]
   ::
   ^-  state-1
@@ -215,13 +225,7 @@
 ++  catch-up
   ^-  (quip card _state)
   =/  =inbox
-    .^  inbox
-        %gx
-        (scot %p our.bowl)
-        %chat-store
-        (scot %da now.bowl)
-        /all/noun
-    ==
+    (scry-for inbox %chat-store /all)
   |-  ^-  (quip card _state)
   ?~  inbox  [~ state]
   =*  path  p.n.inbox
@@ -236,6 +240,10 @@
 ++  connect
   ^-  card
   [%pass /chat-store %agent [our-self %chat-store] %watch /updates]
+::
+++  connect-invites
+  ^-  card
+  [%pass /invites %agent [our.bowl %invite-store] %watch /invitatory/chat]
 ::
 ++  our-self  (name:title our.bowl)
 ::  +target-to-path: prepend ship to the path
@@ -294,6 +302,14 @@
   :-  [prompt:sh-out ~]
   ::  start with fresh sole state
   state(state.cli *sole-share:sole-sur)
+::  +handle-invite-update: get new invites
+::
+++  handle-invite-update
+  |=  upd=invite-update
+  ^-  (quip card _state)
+  ?+  -.upd  [~ state]
+    %invite  [[(show-invite:sh-out invite.upd) ~] state]
+  ==
 ::  +diff-chat-update: get new mailboxes & messages
 ::
 ++  diff-chat-update
@@ -803,12 +819,7 @@
           :^  %invite  /chat
             (shax (jam [our-self where] who))
           ^-  invite
-          =;  desc=cord
-            [our-self %chat-hook where who desc]
-          %-  crip
-          %+  weld
-            "You have been invited to chat at "
-          ~(full tr [| our-self where])
+          [our-self %chat-hook where who '']
       ==
     ::  +set-target: set audience, update prompt
     ::
@@ -1210,6 +1221,14 @@
     %+  weld  "set: {[glyph ~]} "
     ?~  target  "unbound"
     ~(phat tr u.target)
+  ::  +show-invite: print incoming invite notification
+  ::
+  ++  show-invite
+    |=  invite
+    ^-  card
+    %-  note
+    %+  weld  "invited to: "
+    ~(phat tr (path-to-target path))
   --
 ::
 ::  +tr: render targets
