@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
 import { Sigil } from '../lib/icons/sigil';
-import { uxToHex } from '../../lib/util';
+import { uxToHex, cite } from '../../lib/util';
 
 
 export class ContactItem extends Component {
@@ -10,7 +10,7 @@ export class ContactItem extends Component {
 
     let selectedClass = (props.selected) ? "bg-gray4 bg-gray1-d" : "";
     let hexColor = uxToHex(props.color);
-    let name = (props.nickname) ? props.nickname : "~" + props.ship;
+    let name = (props.nickname) ? props.nickname : cite(props.ship);
 
     let prefix = props.share ? 'share' : 'view';
     let suffix = !props.share ? `/${props.ship}` : '';
@@ -28,7 +28,8 @@ export class ContactItem extends Component {
             className={
               "f9 w-70 dib v-mid ml2 nowrap " +
               ((props.nickname) ? "" : "mono")}
-            style={{ paddingTop: 6 }}>
+            style={{ paddingTop: 6 }}
+            title={props.ship}>
             {name}
           </p>
         </div>
