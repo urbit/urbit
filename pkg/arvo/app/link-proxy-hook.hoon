@@ -274,10 +274,10 @@
     [%give %fact ~ %link-initial !>(initial)]
   ?+  path  !!
       [%local-pages ^]
-    [%local-pages .^((map ^path pages) %gx path)]
+    [%local-pages (scry-for (map ^path pages) %link-store path)]
   ::
       [%annotations %$ ^]
-    [%annotations .^((per-path-url notes) %gx %$ t.t.path)]
+    [%annotations (scry-for (per-path-url notes) %link-store path)]
   ==
 ::
 ++  start-proxy
