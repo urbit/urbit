@@ -23,7 +23,6 @@ export class ChatScreen extends Component {
 
    this.hasAskedForMessages = false;
    this.onScroll = this.onScroll.bind(this);
-   this.messages = this.messagesWithPending.bind(this);
 
    this.updateReadInterval = setInterval(
      this.updateReadNumber.bind(this),
@@ -33,7 +32,6 @@ export class ChatScreen extends Component {
 
  componentDidMount() {
    this.updateReadNumber();
-   this.scrollToBottom("auto");
  }
 
  componentWillUnmount() {
@@ -51,7 +49,6 @@ export class ChatScreen extends Component {
      `/${props.match.params.ship}/${props.match.params.station}` :
      `/${props.match.params[1]}/${props.match.params.ship}/${props.match.params.station}`;
 
-   // Switched chats
    if (
      prevProps.match.params.station !== props.match.params.station ||
      prevProps.match.params.ship !== props.match.params.ship
@@ -66,7 +63,7 @@ export class ChatScreen extends Component {
          scrollLocked: false
        },
        () => {
-         this.scrollToBottom("auto");
+         this.scrollToBottom();
          this.updateReadInterval = setInterval(
            this.updateReadNumber.bind(this),
            1000
@@ -74,18 +71,13 @@ export class ChatScreen extends Component {
          this.updateReadNumber();
        }
      );
-   // Switched to chat
    } else if (props.chatInitialized && !(station in props.inbox)) {
      props.history.push("/~chat");
-   // A new message came in, other cases
-   } else {
-    this.scrollToBottom("auto");
-    if (
+   } else if (
      props.envelopes.length - prevProps.envelopes.length >=
      200
-    ) {
+   ) {
      this.hasAskedForMessages = false;
-    }
    }
  }
 
@@ -122,9 +114,9 @@ export class ChatScreen extends Component {
    }
  }
 
- scrollToBottom(behavior = 'smooth') {
+ scrollToBottom() {
    if (!this.state.scrollLocked && this.scrollElement) {
-     this.scrollElement.scrollIntoView({ behavior });
+     this.scrollElement.scrollIntoView({ behavior: "smooth" });
    }
  }
 
@@ -179,9 +171,12 @@ export class ChatScreen extends Component {
    }
  }
 
- messagesWithPending() {
+ render() {
    const { props, state } = this;
+
    let messages = props.envelopes.slice(0);
+
+   let lastMsgNum = messages.length > 0 ? messages.length : 0;
 
    if (messages.length > 100 * state.numPages) {
      messages = messages.slice(
@@ -198,24 +193,18 @@ export class ChatScreen extends Component {
      return (value.pending = true);
    });
 
-   return messages.concat(pendingMessages);
- }
+   let reversedMessages = messages.concat(pendingMessages);
+   reversedMessages = reversedMessages.reverse();
 
- render() {
-   const { props } = this;
-
-   const lastMsgNum = props.envelopes.slice(0) > 0 ? props.envelopes.slice(0) : 0
-   const messages = this.messagesWithPending();
-
-   const messagesFragment = messages.map((msg, i) => {
+   reversedMessages = reversedMessages.map((msg, i) => {
      // Render sigil if previous message is not by the same sender
      let aut = ["author"];
      let renderSigil =
-       _.get(messages[i - 1], aut) !==
+       _.get(reversedMessages[i + 1], aut) !==
        _.get(msg, aut, msg.author);
      let paddingTop = renderSigil;
      let paddingBot =
-       _.get(messages[i - 1], aut) !==
+       _.get(reversedMessages[i - 1], aut) !==
        _.get(msg, aut, msg.author);
 
      return (
@@ -231,7 +220,7 @@ export class ChatScreen extends Component {
      );
    });
 
-   const group = Array.from(props.group.values());
+   let group = Array.from(props.group.values());
 
    const isinPopout = props.popout ? "popout/" : "";
 
@@ -282,14 +271,14 @@ export class ChatScreen extends Component {
          />
        </div>
        <div
-         className="overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex flex-column"
+         className="overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex flex-column-reverse"
          style={{ height: "100%", resize: "vertical" }}
          onScroll={this.onScroll}>
-         {messagesFragment}
          <div
            ref={el => {
              this.scrollElement = el;
            }}></div>
+         {reversedMessages}
        </div>
        <ChatInput
          api={props.api}
