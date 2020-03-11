@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { writeText } from '../../lib/util';
 
 export class Settings extends Component {
   constructor(props){
@@ -96,7 +97,7 @@ export class Settings extends Component {
           style={{ right: 12, top: 1 }}
           ref="copy"
           onClick={() => {
-            navigator.clipboard.writeText(`${this.props.host}/${this.props.book}`);
+            writeText(`${this.props.host}/${this.props.book}`);
             this.refs.copy.innerText = "Copied"
           }}>
             Copy

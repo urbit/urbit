@@ -23,15 +23,17 @@ if (dark.matches) {
   background = "#333";
 }
 
-dark.addEventListener("change", (e) => {
-  if (e.matches) {
+function darkColors(dark) {
+  if (dark.matches) {
     text = "#7f7f7f";
     background = "#333";
   } else {
     text = "#000000";
     background = "#ffffff"
   }
-})
+ }
+
+dark.addListener(darkColors);
 
 
 const toRelativeTime = (date, referenceTime, unit) => moment(date)
@@ -202,7 +204,7 @@ class Clock extends Component {
       ctr,
       -1,
       2 * Math.PI,
-      'rgba(0,0,0,0)'
+      background
     )
 
     // Day

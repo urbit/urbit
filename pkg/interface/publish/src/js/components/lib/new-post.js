@@ -14,6 +14,7 @@ export class NewPost extends Component {
       title: '',
       submit: false,
       awaiting: null,
+      disabled: false
     }
 
     this.postSubmit = this.postSubmit.bind(this);
@@ -33,13 +34,14 @@ export class NewPost extends Component {
     }
 
       window.api.setSpinner(true);
+      this.setState({ disabled: true });
       window.api.action("publish", "publish-action", newNote).then(() =>{
-        this.setState({ awaiting: newNote["new-note"].note });
+        this.setState({ awaiting: newNote["new-note"].note, disabled: false });
       }).catch((err) => {
         if (err.includes("note already exists")) {
           let timestamp = Math.floor(Date.now() / 1000);
           newNote["new-note"].note += "-" + timestamp;
-          this.setState({awaiting: newNote["new-note"].note});
+          this.setState({awaiting: newNote["new-note"].note, disabled: false});
           window.api.action("publish", "publish-action", newNote);
         }
       });
@@ -86,7 +88,7 @@ export class NewPost extends Component {
 
     let date = dateToDa(new Date()).slice(1, -10);
 
-    let submitStyle = (state.submit)
+    let submitStyle = ((!state.disabled && state.submit) && (state.awaiting === null))
       ? { color: '#2AA779', cursor: "pointer" }
       : { color: '#B1B2B3', cursor: "auto" };
 
@@ -106,7 +108,7 @@ export class NewPost extends Component {
           />
           <button
             className={"bg-transparent v-mid w-100 mw6 tl h1 pl4"}
-            disabled={!state.submit}
+            disabled={(!state.submit && state.disabled) || (state.awaiting !== null)}
             style={submitStyle}
             onClick={this.postSubmit}>
             Publish To {notebook.title}
