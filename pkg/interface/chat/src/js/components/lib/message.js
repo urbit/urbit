@@ -100,7 +100,7 @@ export class Message extends Component {
           rel="noopener noreferrer">
             {letter.url}
         </a>
-        <a className="f7 pointer lh-copy v-top"
+        <a className="ml2 f7 pointer lh-copy v-top"
         onClick={e => this.unFoldEmbed()}>
           [embed]
           </a>

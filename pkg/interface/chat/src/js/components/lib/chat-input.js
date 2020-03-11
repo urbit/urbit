@@ -133,12 +133,11 @@ export class ChatInput extends Component {
 
   isUrl(string) {
     try {
-      const urlObject = new URL(string);
-      //NOTE we check for a host to ensure a url is actually being posted
-      //     to combat false positives for things like "marzod: ur cool".
-      //     this does mean you can't send "mailto:e@ma.il" as %url message,
-      //     but the desirability of that seems questionable anyway.
-      return (urlObject.host !== '');
+      let websiteTest = new RegExp(''
+        + /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}/.source
+        + /\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.source
+      );
+      return websiteTest.test(string);
     } catch (e) {
       return false;
     }
@@ -151,7 +150,18 @@ export class ChatInput extends Component {
       return;
     }
 
-    let letter = this.getLetterType(state.message);
+    let URLs = [];
+    let letter = state.message.split(" ").map((each) => {
+      if (this.isUrl(each)) {
+        let URL = this.getLetterType(each);
+        URLs.push(URL);
+      }
+      else {
+        return each;
+      }
+    }).join(" ");
+
+    letter = this.getLetterType(letter);
 
     props.api.chat.message(
       props.station,
@@ -159,6 +169,16 @@ export class ChatInput extends Component {
       Date.now(),
       letter
     );
+
+    for (let each of URLs) {
+      props.api.chat.message(
+        props.station,
+        `~${window.ship}`,
+        Date.now(),
+        each
+      );
+    }
+
     // perf: setTimeout(this.closure, 2000);
 
     this.setState({
