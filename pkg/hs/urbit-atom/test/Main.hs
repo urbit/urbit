@@ -5,14 +5,15 @@ module Main (main) where
 
 --------------------------------------------------------------------------------
 
-import ClassyPrelude         hiding (Vector)
+import Prelude
 import Numeric.Natural
 import Test.QuickCheck       hiding ((.&.))
 import Test.Tasty
 import Test.Tasty.QuickCheck
 import Test.Tasty.TH
 
-import Data.Vector.Primitive (Vector)
+import Data.ByteString       (ByteString)
+import Data.Vector.Primitive (Vector, Prim)
 
 import qualified Data.ByteString        as BS
 import qualified Data.ByteString.Unsafe as BS

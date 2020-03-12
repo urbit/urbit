@@ -29,7 +29,6 @@ tests:
     dependencies:
       - base
       - bytestring
-      - classy-prelude
       - QuickCheck
       - tasty
       - tasty-hunit
@@ -45,7 +44,6 @@ executables:
     ghc-options: "-threaded -rtsopts -with-rtsopts=-N"
     dependencies:
       - base
-      - classy-prelude
       - urbit-atom
 
 default-extensions:
