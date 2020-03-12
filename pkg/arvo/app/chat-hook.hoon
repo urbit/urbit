@@ -604,6 +604,9 @@
   ^-  (quip card _state)
   ?~  saw  [~ state]
   ?+  wir  [~ state]
+      [%store @ *]
+    [~ state(synced (~(del by synced) t.wir))]
+  ::
       [%backlog @ @ @ *]
     =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
     =.  synced  (~(del by synced) pax)
