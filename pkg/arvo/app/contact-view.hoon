@@ -9,7 +9,7 @@
     *metadata-hook,
     *permission-group-hook,
     *permission-hook
-/+  *server, *contact-json, default-agent
+/+  *server, *contact-json, default-agent, dbug
 /=  index
   /^  octs
   /;  as-octs:mimes:html
@@ -46,6 +46,7 @@
 +$  card  card:agent:gall
 --
 ::
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  =bowl:gall

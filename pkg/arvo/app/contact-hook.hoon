@@ -6,7 +6,7 @@
     *invite-store,
     *metadata-hook,
     *metadata-store
-/+  *contact-json, default-agent
+/+  *contact-json, default-agent, dbug
 |%
 +$  card  card:agent:gall
 ::
@@ -22,6 +22,7 @@
 --
 =|  state-zero
 =*  state  -
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  bol=bowl:gall
