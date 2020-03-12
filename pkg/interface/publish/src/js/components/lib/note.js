@@ -5,6 +5,7 @@ import { Comments } from './comments';
 import { NoteNavigation } from './note-navigation';
 import moment from 'moment';
 import ReactMarkdown from 'react-markdown';
+import { cite } from '../../lib/util';
 
 export class Note extends Component {
   constructor(props){
@@ -125,6 +126,10 @@ export class Note extends Component {
         ? contact.nickname : author;
     }
 
+    if (name === author) {
+      name = cite(author);
+    }
+
     if (!file) {
       return null;
     }
@@ -197,8 +202,9 @@ export class Note extends Component {
               <div className="flex mb6">
                 <div
                   className={
-                    "di f9 gray2 mr2 " + (name === author ? "mono" : "")
-                  }>
+                    "di f9 gray2 mr2 " + (contact.nickname ? null : "mono")
+                  }
+                  title={author}>
                   {name}
                 </div>
                 <div className="di">

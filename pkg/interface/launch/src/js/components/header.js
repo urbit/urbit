@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Sigil } from './sigil';
+import { cite } from '../lib/util';
 import _ from 'lodash';
 
 export default class Header extends Component {
@@ -49,10 +50,11 @@ export default class Header extends Component {
 
     return (
       <header
-        className="bg-white bg-gray0-d w-100 justify-between relative tc pt3"
+        className={"bg-white bg-gray0-d w-100 justify-between relative " +
+        "tl tc-m tc-l tc-xl pt3"}
         style={{ height: 40 }}>
         <span
-          className="f9 white-d inter dib"
+          className="f9 white-d inter dib ml4 ml0-m ml0-l ml0-xl"
           style={{
             verticalAlign: "text-top",
             paddingTop: 3
@@ -66,7 +68,7 @@ export default class Header extends Component {
             size={16} color={"#000000"}
             classes="mix-blend-diff v-mid" />
           <span className="mono white-d f9 ml2">
-            {"~" + window.ship}
+            {cite(window.ship)}
           </span>
         </div>
       </header>

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { IconHome } from '/components/lib/icons/icon-home';
 import { Sigil } from '/components/lib/icons/sigil';
+import { cite } from '../../lib/util';
 
 export class HeaderBar extends Component {
   render() {
@@ -41,7 +42,7 @@ export class HeaderBar extends Component {
             verticalAlign: "text-top",
             paddingTop: 3
           }}>{title}</span>
-        <div className="absolute right-1 lh-copy"
+        <div className="absolute right-1 lh-copy flex"
           style={{ top: 12 }}>
           <Sigil
             ship={"~" + window.ship}
@@ -49,7 +50,9 @@ export class HeaderBar extends Component {
             color={"#000000"}
             classes="mix-blend-diff"
           />
-          <span className="mono black white-d f9 ml2 v-top">{"~" + window.ship}</span>
+          <span className="mono black white-d f9 ml2 v-top c-default flex-shrink-0">
+            {cite(window.ship)}
+          </span>
         </div>
       </div>
     );

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Link } from "react-router-dom";
-import { makeRoutePath } from "../../lib/util";
+import { makeRoutePath, cite } from "../../lib/util";
 import moment from "moment";
 
 export class LinkPreview extends Component {
@@ -107,8 +107,9 @@ export class LinkPreview extends Component {
             <span className="gray2 ml2 f8 dib v-btm flex-shrink-0">{hostname} ↗</span>
           </a>
           <div className="w-100 pt1">
-            <span className={"f9 pr2 white-d v-mid " + nameClass}>
-              {props.nickname ? props.nickname : "~" + props.ship}
+            <span className={"f9 pr2 white-d v-mid " + nameClass}
+            title={props.ship}>
+              {props.nickname ? props.nickname : cite(props.ship)}
             </span>
             <span className="f9 inter gray2 pr3 v-mid">
               {this.state.timeSinceLinkPost}

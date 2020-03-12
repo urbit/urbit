@@ -3,6 +3,7 @@ import { Route, Link } from 'react-router-dom';
 import { ContactItem } from '/components/lib/contact-item';
 import { ShareSheet } from '/components/lib/share-sheet';
 import { Sigil } from '../lib/icons/sigil';
+import { cite } from '../../lib/util';
 
 export class ContactSidebar extends Component {
   render() {
@@ -60,8 +61,9 @@ export class ContactSidebar extends Component {
               classes="mix-blend-diff"
               />
             <p className="f9 w-70 dib v-mid ml2 nowrap mono"
-              style={{ paddingTop: 6, color: '#aaaaaa' }}>
-              ~{member}
+              style={{ paddingTop: 6, color: '#aaaaaa' }}
+              title={member}>
+              {cite(member)}
             </p>
           </div>
         );
