@@ -21,6 +21,15 @@ library:
     - text == 1.2.3.1
     - vector == 0.12.0.3
 
+executables:
+  urbit-atom:
+    source-dirs: app
+    main: Main.hs
+    ghc-options: "-threaded -rtsopts -with-rtsopts=-N"
+    dependencies:
+      - base
+      - urbit-atom
+
 tests:
   urbit-atom-tests:
     source-dirs: test
@@ -33,15 +42,6 @@ tests:
       - text
       - urbit-atom
       - vector
-
-executables:
-  urbit-atom:
-    source-dirs: app
-    main: Main.hs
-    ghc-options: "-threaded -rtsopts -with-rtsopts=-N"
-    dependencies:
-      - base
-      - urbit-atom
 
 default-extensions:
   - ApplicativeDo

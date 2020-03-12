@@ -7,7 +7,15 @@
     TODO Support Big Endian.
 -}
 
-module Urbit.Atom.Fast where
+module Urbit.Atom.Fast
+  ( wordsAtom
+  , bytesAtom
+  , atomBytes
+  , atomWords
+  , bit
+  , byt
+  )
+where
 
 import Prelude
 
@@ -162,12 +170,12 @@ wordsBigNat' v = case VP.length v of
 --------------------------------------------------------------------------------
 
 -- | Cast a nat to a vector (no copy)
-natWords :: Natural -> Vector Word
-natWords = bigNatWords . natBigNat
+atomWords :: Natural -> Vector Word
+atomWords = bigNatWords . natBigNat
 
 -- | Cast a vector to a nat (no copy)
-wordsNat :: Vector Word -> Natural
-wordsNat = bigNatNat . wordsBigNat
+wordsAtom :: Vector Word -> Natural
+wordsAtom = bigNatNat . wordsBigNat
 
 -- | Cast a Nat to a BigNat (no copy).
 natBigNat :: Natural -> BigNat
@@ -242,7 +250,16 @@ bytesVec bs = VP.generate (BS.length bs) (BS.index bs)
 --------------------------------------------------------------------------------
 
 natPill :: Natural -> Pill
-natPill = wordsPill . natWords
+natPill = wordsPill . atomWords
 
-pillNat :: Pill -> Natural
-pillNat = wordsNat . bsToWords . pillBytes
+pillAtom :: Pill -> Natural
+pillAtom = wordsAtom . bsToWords . pillBytes
+
+-- | Dump an atom to a bytestring.
+atomBytes :: Natural -> ByteString
+atomBytes = pillBytes . natPill
+
+-- | Load a bytestring into an atom.
+bytesAtom :: ByteString -> Natural
+bytesAtom = pillAtom . bytesPill
+

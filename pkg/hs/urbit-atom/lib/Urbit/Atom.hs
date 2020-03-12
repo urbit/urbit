@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP #-}
+
 {-|
     Atom implementation with fast conversions between bytestrings
     and atoms.
@@ -22,10 +24,21 @@ import Data.ByteString       (ByteString)
 import Data.Vector.Primitive (Vector)
 import GHC.Natural           (Natural)
 
+#if defined(__GHCJS__)
+import Urbit.Atom.Slow       (atomBytes, bytesAtom)
+#else
+import Urbit.Atom.Fast       (atomBytes, bytesAtom)
+#endif
+
 import qualified Data.Text                as T
 import qualified Data.Text.Encoding       as T
 import qualified Data.Text.Encoding.Error as T
-import qualified Urbit.Atom.Fast          as A
+
+#if defined(__GHCJS__)
+import qualified Urbit.Atom.Slow as A
+#else
+import qualified Urbit.Atom.Fast as A
+#endif
 
 
 --------------------------------------------------------------------------------
@@ -36,23 +49,15 @@ type Atom = Natural
 
 -- | Cast an atom to a vector. Does not copy.
 atomWords :: Atom -> Vector Word
-atomWords = A.natWords
+atomWords = A.atomWords
 
 -- | Cast a vector to an atom. Does not copy unless given a slice.
 wordsAtom :: Vector Word -> Atom
-wordsAtom = A.wordsNat
-
--- | Dump an atom to a bytestring.
-atomBytes :: Atom -> ByteString
-atomBytes = A.pillBytes . A.natPill
-
--- | Load a bytestring into an atom.
-bytesAtom :: ByteString -> Atom
-bytesAtom = A.pillNat . A.bytesPill
+wordsAtom = A.wordsAtom
 
 -- | Encode a utf8-encoded atom from text.
 utf8Atom :: T.Text -> Atom
-utf8Atom = bytesAtom . T.encodeUtf8
+utf8Atom = A.bytesAtom . T.encodeUtf8
 
 -- | Interpret an atom as utf8 text.
 atomUtf8 :: Atom -> Either T.UnicodeException T.Text

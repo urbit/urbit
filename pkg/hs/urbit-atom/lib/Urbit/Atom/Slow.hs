@@ -1,16 +1,18 @@
 {-# LANGUAGE CPP #-}
 
 module Urbit.Atom.Slow
-  ( wordsNat
-  , natWords
-  , natBytes
-  , bytesNat
+  ( wordsAtom
+  , atomWords
+  , atomBytes
+  , bytesAtom
+  , bit
+  , byt
   )
 where
 
 import Numeric.Natural
 import Prelude
-import Data.Bits
+import Data.Bits hiding (bit)
 import Data.Word
 
 import Data.ByteString (ByteString)
@@ -34,14 +36,20 @@ import qualified Data.Vector.Primitive as VP
 #error WORD_SIZE_IN_BITS must be either 32 or 64
 #endif
 
+bit :: Word
+bit = BIT
+
+byt :: Word
+byt = BYT
+
 
 --------------------------------------------------------------------------------
 
 {-|
   Natural number to LSB-ByteString.
 -}
-natBytes :: Natural -> ByteString
-natBytes = BS.pack . go []
+atomBytes :: Natural -> ByteString
+atomBytes = BS.pack . go []
  where
   go acc 0 = reverse acc
   go acc n = go (fromIntegral n : acc) (shiftR n 8)
@@ -49,8 +57,8 @@ natBytes = BS.pack . go []
 {-|
   LSB-first ByteString to Natural number.
 -}
-bytesNat :: ByteString -> Natural
-bytesNat = BS.foldr' go 0
+bytesAtom :: ByteString -> Natural
+bytesAtom = BS.foldr' go 0
  where
   go :: Word8 -> Natural -> Natural
   go byt acc = shiftL acc 8 .|. fromIntegral byt
@@ -61,8 +69,8 @@ bytesNat = BS.foldr' go 0
 {-|
   LSW-first Word Vector to Natural number.
 -}
-wordsNat :: Vector Word -> Natural
-wordsNat = VP.foldr' go 0
+wordsAtom :: Vector Word -> Natural
+wordsAtom = VP.foldr' go 0
  where
   go :: Word -> Natural -> Natural
   go wor acc = shiftL acc BIT .|. fromIntegral wor
@@ -70,8 +78,8 @@ wordsNat = VP.foldr' go 0
 {-|
   Natural number to LSW-first Word Vector.
 -}
-natWords :: Natural -> Vector Word
-natWords = VP.fromList . go []
+atomWords :: Natural -> Vector Word
+atomWords = VP.fromList . go []
  where
   go acc 0 = reverse acc
   go acc n = go (fromIntegral n : acc) (shiftR n BIT)

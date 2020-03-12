@@ -64,16 +64,16 @@ loadDump load dump norm x = norm x == dump (load x)
 -- Test Reference Implementation -----------------------------------------------
 
 prop_atom_bytes_roundtrip :: Natural -> Bool
-prop_atom_bytes_roundtrip = dumpLoad S.natBytes S.bytesNat
+prop_atom_bytes_roundtrip = dumpLoad S.atomBytes S.bytesAtom
 
 prop_atom_words_roundtrip :: Natural -> Bool
-prop_atom_words_roundtrip = dumpLoad S.natWords S.wordsNat
+prop_atom_words_roundtrip = dumpLoad S.atomWords S.wordsAtom
 
 prop_bytes_atom_roundtrip :: ByteString -> Bool
-prop_bytes_atom_roundtrip = loadDump S.bytesNat S.natBytes stripBytes
+prop_bytes_atom_roundtrip = loadDump S.bytesAtom S.atomBytes stripBytes
 
 prop_words_atom_roundtrip :: Vector Word -> Bool
-prop_words_atom_roundtrip = loadDump S.wordsNat S.natWords stripWords
+prop_words_atom_roundtrip = loadDump S.wordsAtom S.atomWords stripWords
 
 
 -- Test Fast Implementation ----------------------------------------------------
@@ -94,16 +94,16 @@ prop_fast_words_atom_roundtrip = loadDump F.wordsAtom F.atomWords stripWords
 -- Fast and Reference Implementations are the Same -----------------------------
 
 prop_fast_words_atom_correct :: Vector Word -> Bool
-prop_fast_words_atom_correct x = F.wordsAtom x == S.wordsNat x
+prop_fast_words_atom_correct x = F.wordsAtom x == S.wordsAtom x
 
 prop_fast_atom_words_correct :: Natural -> Bool
-prop_fast_atom_words_correct x = F.atomWords x == S.natWords x
+prop_fast_atom_words_correct x = F.atomWords x == S.atomWords x
 
 prop_fast_bytes_atom_correct :: ByteString -> Bool
-prop_fast_bytes_atom_correct x = F.bytesAtom x == S.bytesNat x
+prop_fast_bytes_atom_correct x = F.bytesAtom x == S.bytesAtom x
 
 prop_fast_atom_bytes_correct :: Natural -> Bool
-prop_fast_atom_bytes_correct x = F.atomBytes x == S.natBytes x
+prop_fast_atom_bytes_correct x = F.atomBytes x == S.atomBytes x
 
 
 --------------------------------------------------------------------------------
