@@ -8,7 +8,7 @@
     *invite-store,
     *metadata-store,
     *metadata-hook
-/+  *server, *publish, cram, default-agent
+/+  *server, *publish, cram, default-agent, dbug
 ::
 /=  index
   /^  $-(json manx)
@@ -75,6 +75,7 @@
 ::
 =|  versioned-state
 =*  state  -
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  bol=bowl:gall

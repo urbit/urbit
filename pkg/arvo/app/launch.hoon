@@ -1,5 +1,5 @@
 /-  launch
-/+  *server, default-agent
+/+  *server, default-agent, dbug
 ::
 /=  index
   /^  $-(marl manx)
@@ -38,6 +38,7 @@
 ::
 =|  state-zero
 =*  state  -
+%-  agent:dbug
 ^-  agent:gall
 |_  bol=bowl:gall
 +*  this  .
