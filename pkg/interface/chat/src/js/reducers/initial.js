@@ -35,6 +35,11 @@ export class InitialReducer {
     if (data) {
       state.contacts = data;
     }
+
+    data = _.get(json, 'chat-hook-update', false);
+    if (data) {
+      state.chatSynced = data;
+    }
   }
 }
 

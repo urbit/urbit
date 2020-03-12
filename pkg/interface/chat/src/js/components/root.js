@@ -181,6 +181,7 @@ export class Root extends Component {
                   sidebar={renderChannelSidebar(props, station)}
                 >
                   <ChatScreen
+                    chatSynced={state.chatSynced}
                     station={station}
                     association={association}
                     api={api}
