@@ -7,7 +7,7 @@
     TODO Support Big Endian.
 -}
 
-module Urbit.Atom.Internal where
+module Urbit.Atom.Fast where
 
 import Prelude
 
@@ -19,7 +19,7 @@ import Data.Word                 (Word8)
 import GHC.Exts                  (Ptr(Ptr), sizeofByteArray#)
 import GHC.Exts                  (Int(..))
 import GHC.Integer.GMP.Internals (BigNat(..), bigNatToWord, sizeofBigNat#)
-import GHC.Integer.GMP.Internals (indexBigNat#)
+import GHC.Integer.GMP.Internals (isZeroBigNat, indexBigNat#)
 import GHC.Integer.GMP.Internals (byteArrayToBigNat#, wordToBigNat, zeroBigNat)
 import GHC.Natural               (Natural(..))
 import GHC.Prim                  (Int#, clz#, minusWord#, plusWord#)
@@ -123,7 +123,8 @@ bytesPill = Pill . strip
     Cast a BigNat to a vector without a copy.
 -}
 bigNatWords :: BigNat -> Vector Word
-bigNatWords (BN# bArr) =
+bigNatWords bn | isZeroBigNat bn = mempty
+bigNatWords bn@(BN# bArr) =
   Vector 0 (I# (sizeofByteArray# bArr) `div` BYT) (Prim.ByteArray bArr)
 
 {-|

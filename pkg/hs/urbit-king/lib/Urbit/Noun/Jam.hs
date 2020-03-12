@@ -10,7 +10,7 @@ module Urbit.Noun.Jam (jam, jamBS) where
 import ClassyPrelude hiding (hash)
 
 import Urbit.Atom
-import Urbit.Atom.Internal
+import Urbit.Atom.Fast
 import Urbit.Noun.Core
 
 import Data.Bits                 (clearBit, setBit, shiftL, shiftR, (.|.))

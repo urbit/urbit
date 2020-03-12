@@ -1,74 +1,106 @@
+{-# OPTIONS_GHC -Wno-deprecations #-}
+
+
 module Main (main) where
 
 --------------------------------------------------------------------------------
 
-tryLoadPill :: PillFile -> IO Atom
-tryLoadPill pill = do
-    a@(MkAtom nat) <- loadAtom (show pill)
-    putStrLn "loaded"
-    print (a > 0)
-    putStrLn "evaled"
-    print (take 10 $ VP.toList $ nat ^. natWords)
-    pure a
+import ClassyPrelude         hiding (Vector)
+import Numeric.Natural
+import Test.QuickCheck       hiding ((.&.))
+import Test.Tasty
+import Test.Tasty.QuickCheck
+import Test.Tasty.TH
 
-tryPackPill :: PillFile -> IO ()
-tryPackPill pf = do
-  atm <- tryLoadPill pf
-  print $ length (atm ^. pill . pillBS)
+import Data.Vector.Primitive (Vector)
+
+import qualified Data.ByteString        as BS
+import qualified Data.ByteString.Unsafe as BS
+import qualified Data.Vector.Primitive  as VP
+import qualified Urbit.Atom             as F
+import qualified Urbit.Atom.Slow        as S
 
 
--- Tests -----------------------------------------------------------------------
+-- Instances -------------------------------------------------------------------
+
+instance Arbitrary Natural where
+  arbitrary = fromInteger . abs <$> arbitrary
 
 instance Arbitrary ByteString where
-  arbitrary = fromList <$> arbitrary
+  arbitrary = BS.pack <$> arbitrary
 
-instance Arbitrary Pill where
-  arbitrary = Pill <$> arbitrary
+instance (Prim a, Arbitrary a) => Arbitrary (Vector a) where
+  arbitrary = VP.fromList <$> arbitrary
 
-instance Arbitrary BigNat where
-  arbitrary = view naturalBigNat <$> arbitrary
 
-instance Show BigNat where
-  show = show . NatJ#
+-- Utils -----------------------------------------------------------------------
 
---------------------------------------------------------------------------------
+stripBytes :: ByteString -> ByteString
+stripBytes buf = BS.take (len - go 0 (len - 1)) buf
+ where
+  len = BS.length buf
+  go n i | i < 0                     = n
+         | 0 == BS.unsafeIndex buf i = go (n + 1) (i - 1)
+         | otherwise                 = n
 
-testIso :: Eq a => Iso' a b -> a -> Bool
-testIso iso x = x == (x ^. iso . from iso)
+stripWords :: Vector Word -> Vector Word
+stripWords vec = VP.take (len - go 0 (len - 1)) vec
+ where
+  len = VP.length vec
+  go n i | i < 0                     = n
+         | 0 == VP.unsafeIndex vec i = go (n + 1) (i - 1)
+         | otherwise                 = n
 
-roundTrip :: Eq a => (a -> b) -> (b -> a) -> (a -> Bool)
-roundTrip dump load x = x == load (dump x)
+dumpLoad :: Eq i => (i -> o) -> (o -> i) -> (i -> Bool)
+dumpLoad dump load x = x == load (dump x)
 
-equiv :: Eq b => (a -> b) -> (a -> b) -> (a -> Bool)
-equiv f g x = f x == g x
+loadDump :: Eq o => (o -> i) -> (i -> o) -> (o -> o) -> (o -> Bool)
+loadDump load dump norm x = norm x == dump (load x)
 
-check :: Atom -> Atom
-check = toAtom . (id :: Integer -> Integer) . fromAtom
 
---------------------------------------------------------------------------------
+-- Test Reference Implementation -----------------------------------------------
 
-prop_packWordSane = equiv (view packedWord) dumbPackWord . fromList
-prop_packWord     = testIso (from packedWord)
-prop_unpackWord   = roundTrip (view packedWord)
-                              (strip . view (from packedWord))
-                  . strip
-                  . take 8
+prop_atom_bytes_roundtrip :: Natural -> Bool
+prop_atom_bytes_roundtrip = dumpLoad S.natBytes S.bytesNat
 
-prop_unpackBigNat = testIso bigNatWords
+prop_atom_words_roundtrip :: Natural -> Bool
+prop_atom_words_roundtrip = dumpLoad S.natWords S.wordsNat
 
-prop_packBigNat   = roundTrip (view (from bigNatWords) . VP.fromList)
-                              (strip . VP.toList . view bigNatWords)
-                  . strip
+prop_bytes_atom_roundtrip :: ByteString -> Bool
+prop_bytes_atom_roundtrip = loadDump S.bytesNat S.natBytes stripBytes
 
-prop_implodeBytes = roundTrip (view pillWords) (view (from pillWords))
+prop_words_atom_roundtrip :: Vector Word -> Bool
+prop_words_atom_roundtrip = loadDump S.wordsNat S.natWords stripWords
 
-prop_explodeBytes = roundTrip (view (from pillWords) . VP.fromList)
-                              (strip . VP.toList . view pillWords)
-                  . strip
 
-prop_packAtomSane = equiv (view (from pill)) dumbPackAtom . Pill . fromList
-prop_unpackAtom   = roundTrip (view pill) (view (from pill))
-prop_packAtom     = roundTrip (view (from pill)) (view pill) . Pill . strip
+-- Test Fast Implementation ----------------------------------------------------
+
+prop_fast_atom_bytes_roundtrip :: Natural -> Bool
+prop_fast_atom_bytes_roundtrip = dumpLoad F.atomBytes F.bytesAtom
+
+prop_fast_atom_words_roundtrip :: Natural -> Bool
+prop_fast_atom_words_roundtrip = dumpLoad F.atomWords F.wordsAtom
+
+prop_fast_bytes_atom_roundtrip :: ByteString -> Bool
+prop_fast_bytes_atom_roundtrip = loadDump F.bytesAtom F.atomBytes stripBytes
+
+prop_fast_words_atom_roundtrip :: Vector Word -> Bool
+prop_fast_words_atom_roundtrip = loadDump F.wordsAtom F.atomWords stripWords
+
+
+-- Fast and Reference Implementations are the Same -----------------------------
+
+prop_fast_words_atom_correct :: Vector Word -> Bool
+prop_fast_words_atom_correct x = F.wordsAtom x == S.wordsNat x
+
+prop_fast_atom_words_correct :: Natural -> Bool
+prop_fast_atom_words_correct x = F.atomWords x == S.natWords x
+
+prop_fast_bytes_atom_correct :: ByteString -> Bool
+prop_fast_bytes_atom_correct x = F.bytesAtom x == S.bytesNat x
+
+prop_fast_atom_bytes_correct :: Natural -> Bool
+prop_fast_atom_bytes_correct x = F.atomBytes x == S.natBytes x
 
 
 --------------------------------------------------------------------------------

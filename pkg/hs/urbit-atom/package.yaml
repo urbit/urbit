@@ -3,36 +3,50 @@ version: 0.10.1
 license: MIT
 license-file: LICENSE
 
+ghc-options:
+  # -fwarn-incomplete-patterns
+  # -fwarn-unused-binds
+  # -fwarn-unused-imports
+  - -Werror
+  - -O2
+
 library:
   source-dirs: lib
-  ghc-options:
-    - -fwarn-incomplete-patterns
-    - -fwarn-unused-binds
-    - -fwarn-unused-imports
-    - -Werror
-    - -O2
+  dependencies:
+    - base == 4.12.0.0
+    - bytestring == 0.10.8.2
+    - ghc-prim == 0.5.3
+    - integer-gmp == 1.0.2.0
+    - primitive == 0.6.4.0
+    - text == 1.2.3.1
+    - vector == 0.12.0.3
+
+tests:
+  urbit-atom-tests:
+    source-dirs: test
+    main: Main.hs
+    ghc-options: "-threaded -rtsopts -with-rtsopts=-N"
+    dependencies:
+      - base
+      - bytestring
+      - classy-prelude
+      - QuickCheck
+      - tasty
+      - tasty-hunit
+      - tasty-quickcheck
+      - tasty-th
+      - urbit-atom
+      - vector
 
 executables:
   urbit-atom:
     source-dirs: app
     main: Main.hs
+    ghc-options: "-threaded -rtsopts -with-rtsopts=-N"
     dependencies:
+      - base
+      - classy-prelude
       - urbit-atom
-    ghc-options:
-      - -threaded
-      - -rtsopts
-      - -static
-      - -O2
-      - "-with-rtsopts=-N"
-
-dependencies:
-  - base == 4.12.0.0
-  - bytestring == 0.10.8.2
-  - ghc-prim == 0.5.3
-  - integer-gmp == 1.0.2.0
-  - primitive == 0.6.4.0
-  - text == 1.2.3.1
-  - vector == 0.12.0.3
 
 default-extensions:
   - ApplicativeDo

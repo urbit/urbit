@@ -2,7 +2,7 @@ module Main where
 
 import Prelude
 import Urbit.Atom
-import Urbit.Atom.Internal (bit, byt)
+import Urbit.Atom.Fast (bit, byt)
 
 main :: IO ()
 main = do
