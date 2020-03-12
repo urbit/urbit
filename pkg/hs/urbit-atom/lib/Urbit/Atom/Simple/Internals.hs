@@ -3,7 +3,7 @@
 
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Urbit.Integer.Simple.Internals
+-- Module      :  Urbit.Atom.Simple.Internals
 -- Copyright   :  (c) Ian Lynagh 2007-2008
 -- License     :  BSD3
 --
@@ -15,9 +15,9 @@
 --
 -----------------------------------------------------------------------------
 
-module Urbit.Integer.Simple.Internals (
-    module Urbit.Integer.Type
+module Urbit.Atom.Simple.Internals (
+    module Urbit.Atom.Simple.Type
  ) where
 
-import Urbit.Integer.Type
+import Urbit.Atom.Simple.Type
 

@@ -10,7 +10,7 @@
 -- Since they are needed in Urbit.Float, we must expose this
 -- module, but it should not show up in the docs.
 
-module Urbit.Integer.Logarithms.Internals
+module Urbit.Atom.Simple.Logarithms.Internals
     ( integerLog2#
     , integerLog2IsPowerOf2#
     , wordLog2#
@@ -18,7 +18,7 @@ module Urbit.Integer.Logarithms.Internals
     ) where
 
 import GHC.Prim
-import Urbit.Integer.Type
+import Urbit.Atom.Simple.Type
 import GHC.Types
 
 default ()

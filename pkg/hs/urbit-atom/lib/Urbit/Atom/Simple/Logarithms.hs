@@ -1,13 +1,13 @@
 {-# LANGUAGE MagicHash, UnboxedTuples, NoImplicitPrelude #-}
-module Urbit.Integer.Logarithms
+module Urbit.Atom.Simple.Logarithms
     ( integerLogBase#
     , integerLog2#
     , wordLog2#
     ) where
 
 import GHC.Prim
-import Urbit.Integer
-import qualified Urbit.Integer.Logarithms.Internals as I
+import Urbit.Atom.Simple
+import qualified Urbit.Atom.Simple.Logarithms.Internals as I
 
 -- | Calculate the integer logarithm for an arbitrary base.
 --   The base must be greater than 1, the second argument, the number

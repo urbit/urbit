@@ -16,7 +16,7 @@
 
 #include "MachDeps.h"
 
-module Urbit.Integer (
+module Urbit.Atom.Simple (
     Integer, mkInteger,
     smallInteger, wordToInteger, integerToWord, integerToInt,
 #if WORD_SIZE_IN_BITS < 64
@@ -38,5 +38,5 @@ module Urbit.Integer (
     hashInteger,
  ) where
 
-import Urbit.Integer.Type
+import Urbit.Atom.Simple.Type
 

@@ -24,7 +24,7 @@
 
 #include "MachDeps.h"
 
-module Urbit.Integer.Type where
+module Urbit.Atom.Simple.Type where
 
 import GHC.Prim
 import GHC.Classes
