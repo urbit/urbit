@@ -103,7 +103,8 @@
       =/  old-mailbox=mailbox
         (need (scry:cc (unit mailbox) %chat-store [%mailbox chat]))
       =*  enves  envelopes.old-mailbox
-      :~  (chat-poke:cc [%delete chat])
+      :~  (chat-poke:cc [%delete new-chat])
+          (chat-poke:cc [%delete chat])
           (chat-poke:cc [%create new-chat])
           (chat-poke:cc [%messages new-chat enves])
           (chat-poke:cc [%read new-chat])
