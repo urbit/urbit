@@ -20,7 +20,7 @@
   ==
 +$  state-0  [%0 state-base]
 +$  state-base
-  $:  synced=(map path ship)
+  $:  =synced
       invite-created=_|
       allow-history=(map path ?)
   ==
@@ -95,12 +95,6 @@
           (hookup-group new-chat kind.newp)
           [(record-group new-chat new-chat)]~
           (recreate-chat host old-chat new-chat)
-        ::
-          ?.  =(our.bol host)  ~
-          ?:  ?=(%white kind.newp)
-            (send-invites new-chat ~(tap in who.newp))
-          %+  send-invites  new-chat
-          (parse-subscribers wex.bol old-chat)
       ==
     ::
     ++  recreate-chat
@@ -109,7 +103,8 @@
       =/  old-mailbox=mailbox
         (need (scry:cc (unit mailbox) %chat-store [%mailbox chat]))
       =*  enves  envelopes.old-mailbox
-      :~  (chat-poke:cc [%delete chat])
+      :~  (chat-poke:cc [%delete new-chat])
+          (chat-poke:cc [%delete chat])
           (chat-poke:cc [%create new-chat])
           (chat-poke:cc [%messages new-chat enves])
           (chat-poke:cc [%read new-chat])
@@ -218,31 +213,6 @@
         %metadata-action
       !>  ^-  metadata-action
       [%add group [%chat chat] metadata]
-    ::
-    ++  send-invites
-      |=  [chat=path who=(list ship)]
-      ^-  (list card)
-      %+  murn  who
-      |=  =ship
-      ^-  (unit card)
-      ?:  =(our.bol ship)  ~
-      %-  some
-      %^  make-poke  %invite-hook
-        %invite-action
-      !>  ^-  invite-action
-      =/  =invite
-        =+  (crip "upgrade {(spud chat)} (please accept in OS1)")
-        [our.bol %chat-hook chat ship -]
-      [%invite /chat (sham chat ship eny.bol) invite]
-    ::
-    ++  parse-subscribers
-      |=  [=boat:agent:gall old-chat=path]
-      ^-  (list ship)
-      %+  murn  ~(tap in boat)
-      |=  [[=wire sub=ship app=term] [acked=? =path]]
-      ^-  (unit ship)
-      ?.  =(old-chat path)  ~
-      `sub
     --
   ::
   ++  on-poke
@@ -268,6 +238,7 @@
     ?+  path          (on-watch:def path)
         [%backlog *]  [(watch-backlog:cc t.path) this]
         [%mailbox *]  [(watch-mailbox:cc t.path) this]
+        [%synced *]   [(watch-synced:cc t.path) this]
     ==
   ::
   ++  on-agent
@@ -351,12 +322,15 @@
       %add-owned
     ?>  (team:title our.bol src.bol)
     =/  chat-path  [%mailbox path.act]
+    =/  chat-wire  [%store path.act]
     ?:  (~(has by synced) path.act)  [~ state]
     =:  synced  (~(put by synced) path.act our.bol)
         allow-history  (~(put by allow-history) path.act allow-history.act)
     ==
     :_  state
-    [%pass chat-path %agent [our.bol %chat-store] %watch chat-path]~
+    :~  [%pass chat-wire %agent [our.bol %chat-store] %watch chat-path]
+        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
+    ==
   ::
       %add-synced
     ?>  (team:title our.bol src.bol)
@@ -372,20 +346,30 @@
       %+  weld  path.act
       ?~(mailbox /0 /(scot %ud (lent envelopes.u.mailbox)))
     :_  state
-    [%pass chat-history %agent [ship.act %chat-hook] %watch chat-history]~
+    :~  [%pass chat-history %agent [ship.act %chat-hook] %watch chat-history]
+        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
+    ==
   ::
       %remove
     =/  ship  (~(get by synced) path.act)
     ?~  ship  [~ state]
     ?:  &(!=(u.ship src.bol) ?!((team:title our.bol src.bol)))
       [~ state]
-    :_  state(synced (~(del by synced) path.act))
+    =.  synced  (~(del by synced) path.act)
+    :_  state
     %-  zing
     :~  (pull-wire [%backlog (weld path.act /0)])
         (pull-wire [%mailbox path.act])
         [%give %kick ~[[%mailbox path.act]] ~]~
+        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]~
     ==
   ==
+::
+++  watch-synced
+  |=  pax=path
+  ^-  (list card)
+  ?>  (team:title our.bol src.bol)
+  [%give %fact ~ %chat-hook-update !>([%initial synced])]~
 ::
 ++  watch-mailbox
   |=  pax=path
@@ -519,8 +503,11 @@
   ?+  -.fact     [~ state]
       %delete
     ?.  (~(has by synced) path.fact)  [~ state]
-    :_  state(synced (~(del by synced) path.fact))
-    [%pass [%mailbox path.fact] %agent [our.bol %chat-store] %leave ~]~
+    =.  synced  (~(del by synced) path.fact)
+    :_  state
+    :~  [%pass [%mailbox path.fact] %agent [our.bol %chat-store] %leave ~]
+        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
+    ==
   ::
       %message
     :_  state
@@ -548,9 +535,12 @@
     =/  shp  (~(get by synced) path.fact)
     ?~  shp  [~ state]
     ?.  =(u.shp src.bol)  [~ state]
-    :_  state(synced (~(del by synced) path.fact))
+    =.  synced  (~(del by synced) path.fact)
+    :_  state
     :-  (chat-poke [%delete path.fact])
-    [%pass [%mailbox path.fact] %agent [src.bol %chat-hook] %leave ~]~
+    :~  [%pass [%mailbox path.fact] %agent [src.bol %chat-hook] %leave ~]
+        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
+    ==
   ::
       %message
     :_  state
@@ -577,6 +567,14 @@
     [%pass /permissions %agent [our.bol %permission-store] %watch /updates]~
   ::
   ?+  wir  !!
+      [%store @ *]
+    ~&  store-kick+wir
+    ?.  (~(has by synced) t.wir)  [~ state]
+    ~&  %chat-store-resubscribe
+    =/  mailbox=(unit mailbox)  (chat-scry t.wir)
+    :_  state
+    [%pass wir %agent [our.bol %chat-store] %watch [%mailbox t.wir]]~
+  ::
       [%mailbox @ *]
     ~&  mailbox-kick+wir
     ?.  (~(has by synced) t.wir)  [~ state]
@@ -605,13 +603,21 @@
   |=  [wir=wire saw=(unit tang)]
   ^-  (quip card _state)
   ?~  saw  [~ state]
-  ?>  ?=(^ wir)
-  :_  state(synced (~(del by synced) t.wir))
-  %.  ~
-  %-  slog
-  :*  leaf+"chat-hook failed subscribe on {(spud t.wir)}"
-      leaf+"stack trace:"
-      u.saw
+  ?+  wir  [~ state]
+      [%store @ *]
+    [~ state(synced (~(del by synced) t.wir))]
+  ::
+      [%backlog @ @ @ *]
+    =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
+    =.  synced  (~(del by synced) pax)
+    :_  state
+    :-  [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
+    %.  ~
+    %-  slog
+    :*  leaf+"chat-hook failed subscribe on {(spud pax)}"
+        leaf+"stack trace:"
+        u.saw
+    ==
   ==
 ::
 ++  chat-poke

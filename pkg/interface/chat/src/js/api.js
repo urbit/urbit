@@ -26,6 +26,10 @@ class UrbitApi {
       join: this.chatViewJoin.bind(this),
     };
 
+    this.chatHook = {
+      addSynced: this.chatHookAddSynced.bind(this)
+    };
+
     this.invite = {
       accept: this.inviteAccept.bind(this),
       decline: this.inviteDecline.bind(this)
@@ -122,6 +126,17 @@ class UrbitApi {
 
   chatRead(path, read) {
     this.chatAction({ read: { path } });
+  }
+
+
+  chatHookAddSynced(ship, path, askHistory) {
+    return this.action("chat-hook", "chat-hook-action", {
+      'add-synced': {
+        ship,
+        path,
+        'ask-history': askHistory
+      }
+    });
   }
 
   chatViewAction(data) {

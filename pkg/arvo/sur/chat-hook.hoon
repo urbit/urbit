@@ -1,5 +1,6 @@
 /-  *rw-security
 |%
++$  synced  (map path ship)
 +$  chat-hook-action
   $%  ::  %add-owned: make a chatroom accessible to foreign ships
       ::
@@ -12,4 +13,6 @@
       ::
       [%remove =path]
   ==
+::
++$  chat-hook-update  [%initial =synced]
 --

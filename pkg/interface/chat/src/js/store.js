@@ -12,6 +12,7 @@ class Store {
   constructor() {
     this.state = {
       inbox: {},
+      chatSynced: {},
       groups: {},
       contacts: {},
       permissions: {},

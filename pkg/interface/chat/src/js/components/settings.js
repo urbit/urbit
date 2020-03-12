@@ -249,6 +249,8 @@ export class SettingsScreen extends Component {
               {...props}
               station={props.station}
               numPeers={writeGroup.length}
+              host={props.match.params.ship}
+              api={props.api}
             />
           </div>
           <div className="w-100 pl3 mt4 cf">

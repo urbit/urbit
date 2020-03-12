@@ -5,6 +5,7 @@ import _ from 'lodash';
 import { Route, Link } from "react-router-dom";
 import { store } from "/store";
 
+import { ResubscribeElement } from '/components/lib/resubscribe-element';
 import { Message } from '/components/lib/message';
 import { SidebarSwitcher } from '/components/lib/icons/icon-sidebar-switch.js';
 import { ChatTabBar } from '/components/lib/chat-tabbar';
@@ -44,11 +45,6 @@ export class ChatScreen extends Component {
  componentDidUpdate(prevProps, prevState) {
    const { props, state } = this;
 
-   const station =
-     props.match.params[1] === undefined ?
-     `/${props.match.params.ship}/${props.match.params.station}` :
-     `/${props.match.params[1]}/${props.match.params.ship}/${props.match.params.station}`;
-
    if (
      prevProps.match.params.station !== props.match.params.station ||
      prevProps.match.params.ship !== props.match.params.ship
@@ -58,10 +54,7 @@ export class ChatScreen extends Component {
      clearInterval(this.updateReadInterval);
 
      this.setState(
-       {
-         station: station,
-         scrollLocked: false
-       },
+       { scrollLocked: false },
        () => {
          this.scrollToBottom();
          this.updateReadInterval = setInterval(
@@ -71,7 +64,7 @@ export class ChatScreen extends Component {
          this.updateReadNumber();
        }
      );
-   } else if (props.chatInitialized && !(station in props.inbox)) {
+   } else if (props.chatInitialized && !(props.station in props.inbox)) {
      props.history.push("/~chat");
    } else if (
      props.envelopes.length - prevProps.envelopes.length >=
@@ -268,6 +261,7 @@ export class ChatScreen extends Component {
            numPeers={group.length}
            isOwner={deSig(props.match.params.ship) === window.ship}
            popout={this.props.popout}
+           api={props.api}
          />
        </div>
        <div
@@ -278,7 +272,17 @@ export class ChatScreen extends Component {
            ref={el => {
              this.scrollElement = el;
            }}></div>
-         {reversedMessages}
+           { (
+               !(props.station in props.chatSynced) &&
+               (reversedMessages.length > 0)
+             ) ? (
+                 <ResubscribeElement
+                   api={props.api}
+                   host={props.match.params.ship}
+                   station={props.station} />
+               ) : (<div/>)
+           }
+           {reversedMessages}
        </div>
        <ChatInput
          api={props.api}
