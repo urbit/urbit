@@ -1,0 +1,23 @@
+name:           urbit-integer-simple
+version:        0.1.1.1
+license:        BSD3
+license-file:   LICENSE
+maintainer:     igloo@earth.li
+synopsis:       Simple Integer library
+description:
+    This package contains an simple Integer library.
+cabal-version:  >=1.10
+build-type: Simple
+
+Library
+    default-language: Haskell2010
+
+    build-depends: ghc-prim
+    exposed-modules: Urbit.Integer
+                     Urbit.Integer.Simple.Internals
+                     Urbit.Integer.Logarithms
+                     Urbit.Integer.Logarithms.Internals
+    other-modules: Urbit.Integer.Type
+    default-extensions: CPP, MagicHash, BangPatterns, UnboxedTuples,
+                UnliftedFFITypes, NoImplicitPrelude
+    ghc-options: -Wall
