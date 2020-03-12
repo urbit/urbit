@@ -2,7 +2,7 @@
 
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Urbit.Integer
+-- Module      :  Urbit.Atom.Simple
 -- Copyright   :  (c) Ian Lynagh 2007-2012
 -- License     :  BSD3
 --
@@ -10,32 +10,32 @@
 -- Stability   :  internal
 -- Portability :  non-portable (GHC Extensions)
 --
--- An simple definition of the 'Integer' type.
+-- An simple definition of the 'Atom' type.
 --
 -----------------------------------------------------------------------------
 
 #include "MachDeps.h"
 
 module Urbit.Atom.Simple (
-    Integer, mkInteger,
-    smallInteger, wordToInteger, integerToWord, integerToInt,
+    Atom, mkAtom,
+    smallAtom, wordToAtom, integerToWord, integerToInt,
 #if WORD_SIZE_IN_BITS < 64
-    integerToWord64, word64ToInteger,
-    integerToInt64, int64ToInteger,
+    integerToWord64, word64ToAtom,
+    integerToInt64, int64ToAtom,
 #endif
-    plusInteger, minusInteger, timesInteger, negateInteger,
-    eqInteger, neqInteger, absInteger, signumInteger,
-    leInteger, gtInteger, ltInteger, geInteger, compareInteger,
-    eqInteger#, neqInteger#,
-    leInteger#, gtInteger#, ltInteger#, geInteger#,
-    divInteger, modInteger,
-    divModInteger, quotRemInteger, quotInteger, remInteger,
-    encodeFloatInteger, decodeFloatInteger, floatFromInteger,
-    encodeDoubleInteger, decodeDoubleInteger, doubleFromInteger,
-    -- gcdInteger, lcmInteger, -- XXX
-    andInteger, orInteger, xorInteger, complementInteger,
-    shiftLInteger, shiftRInteger, testBitInteger,
-    hashInteger,
+    plusAtom, minusAtom, timesAtom, negateAtom,
+    eqAtom, neqAtom, absAtom, signumAtom,
+    leAtom, gtAtom, ltAtom, geAtom, compareAtom,
+    eqAtom#, neqAtom#,
+    leAtom#, gtAtom#, ltAtom#, geAtom#,
+    divAtom, modAtom,
+    divModAtom, quotRemAtom, quotAtom, remAtom,
+    encodeFloatAtom, decodeFloatAtom, floatFromAtom,
+    encodeDoubleAtom, decodeDoubleAtom, doubleFromAtom,
+    -- gcdAtom, lcmAtom, -- XXX
+    andAtom, orAtom, xorAtom, complementAtom,
+    shiftLAtom, shiftRAtom, testBitAtom,
+    hashAtom,
  ) where
 
 import Urbit.Atom.Simple.Type

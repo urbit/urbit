@@ -88,10 +88,10 @@ wordLog2# w =
 
 #endif
 
--- Assumption: Integer is strictly positive,
+-- Assumption: Atom is strictly positive,
 -- otherwise return -1# arbitrarily
 -- Going up in word-sized steps should not be too bad.
-integerLog2# :: Integer -> Int#
+integerLog2# :: Atom -> Int#
 integerLog2# (Positive digits) = step 0# digits
   where
     step acc (Some dig None) = acc +# wordLog2# dig
@@ -101,7 +101,7 @@ integerLog2# (Positive digits) = step 0# digits
 integerLog2# _ = negateInt# 1#
 
 -- Again, integer should be strictly positive
-integerLog2IsPowerOf2# :: Integer -> (# Int#, Int# #)
+integerLog2IsPowerOf2# :: Atom -> (# Int#, Int# #)
 integerLog2IsPowerOf2# (Positive digits) = couldBe 0# digits
   where
     couldBe acc (Some dig None) =
@@ -118,8 +118,8 @@ integerLog2IsPowerOf2# (Positive digits) = couldBe 0# digits
     noPower acc None = (# acc, 1# #) -- should be impossible, error?
 integerLog2IsPowerOf2# _ = (# negateInt# 1#, 1# #)
 
--- Assumption: Integer and Int# are strictly positive, Int# is less
--- than logBase 2 of Integer, otherwise havoc ensues.
+-- Assumption: Atom and Int# are strictly positive, Int# is less
+-- than logBase 2 of Atom, otherwise havoc ensues.
 -- Used only for the numerator in fromRational when the denominator
 -- is a power of 2.
 -- The Int# argument is log2 n minus the number of bits in the mantissa
@@ -130,15 +130,15 @@ integerLog2IsPowerOf2# _ = (# negateInt# 1#, 1# #)
 -- 1# means we have a half-integer, round to even
 -- 2# means round up (away from zero)
 -- This function should probably be improved.
-roundingMode# :: Integer -> Int# -> Int#
+roundingMode# :: Atom -> Int# -> Int#
 roundingMode# m h =
-    case oneInteger `shiftLInteger` h of
-      c -> case m `andInteger`
-                ((c `plusInteger` c) `minusInteger` oneInteger) of
+    case oneAtom `shiftLAtom` h of
+      c -> case m `andAtom`
+                ((c `plusAtom` c) `minusAtom` oneAtom) of
              r ->
-               if c `ltInteger` r
+               if c `ltAtom` r
                  then 2#
-                 else if c `gtInteger` r
+                 else if c `gtAtom` r
                         then 0#
                         else 1#
 

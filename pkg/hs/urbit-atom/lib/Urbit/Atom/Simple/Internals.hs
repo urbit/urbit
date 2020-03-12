@@ -11,7 +11,7 @@
 -- Stability   :  internal
 -- Portability :  non-portable (GHC Extensions)
 --
--- An simple definition of the 'Integer' type.
+-- An simple definition of the 'Atom' type.
 --
 -----------------------------------------------------------------------------
 

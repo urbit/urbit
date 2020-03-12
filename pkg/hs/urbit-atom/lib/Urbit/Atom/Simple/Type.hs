@@ -18,7 +18,7 @@
 -- Stability   :  internal
 -- Portability :  non-portable (GHC Extensions)
 --
--- An simple definition of the 'Integer' type.
+-- An simple definition of the 'Atom' type.
 --
 -----------------------------------------------------------------------------
 
@@ -34,7 +34,7 @@ import GHC.Tuple ()
 import GHC.IntWord64
 #endif
 
-data Integer = Positive !Positive | Negative !Positive | Naught
+data Atom = Positive !Positive | Negative !Positive | Naught
 
 -------------------------------------------------------------------
 -- The hard work is done on positive numbers
@@ -53,68 +53,68 @@ type Digit = Word#
 -- XXX Could move [] above us
 data List a = Nil | Cons a (List a)
 
-mkInteger :: Bool   -- non-negative?
+mkAtom :: Bool   -- non-negative?
           -> [Int]  -- absolute value in 31 bit chunks, least significant first
                     -- ideally these would be Words rather than Ints, but
                     -- we don't have Word available at the moment.
-          -> Integer
-mkInteger nonNegative is = let abs = f is
-                           in if nonNegative then abs else negateInteger abs
+          -> Atom
+mkAtom nonNegative is = let abs = f is
+                           in if nonNegative then abs else negateAtom abs
     where f [] = Naught
-          f (I# i : is') = smallInteger i `orInteger` shiftLInteger (f is') 31#
+          f (I# i : is') = smallAtom i `orAtom` shiftLAtom (f is') 31#
 
-errorInteger :: Integer
-errorInteger = Positive errorPositive
+errorAtom :: Atom
+errorAtom = Positive errorPositive
 
 errorPositive :: Positive
 errorPositive = Some 47## None -- Random number
 
-{-# NOINLINE smallInteger #-}
-smallInteger :: Int# -> Integer
-smallInteger i = if isTrue# (i >=# 0#) then wordToInteger (int2Word# i)
+{-# NOINLINE smallAtom #-}
+smallAtom :: Int# -> Atom
+smallAtom i = if isTrue# (i >=# 0#) then wordToAtom (int2Word# i)
                  else -- XXX is this right for -minBound?
-                      negateInteger (wordToInteger (int2Word# (negateInt# i)))
+                      negateAtom (wordToAtom (int2Word# (negateInt# i)))
 
-{-# NOINLINE wordToInteger #-}
-wordToInteger :: Word# -> Integer
-wordToInteger w = if isTrue# (w `eqWord#` 0##)
+{-# NOINLINE wordToAtom #-}
+wordToAtom :: Word# -> Atom
+wordToAtom w = if isTrue# (w `eqWord#` 0##)
                   then Naught
                   else Positive (Some w None)
 
 {-# NOINLINE integerToWord #-}
-integerToWord :: Integer -> Word#
+integerToWord :: Atom -> Word#
 integerToWord (Positive (Some w _)) = w
 integerToWord (Negative (Some w _)) = 0## `minusWord#` w
 -- Must be Naught by the invariant:
 integerToWord _ = 0##
 
 {-# NOINLINE integerToInt #-}
-integerToInt :: Integer -> Int#
+integerToInt :: Atom -> Int#
 integerToInt i = word2Int# (integerToWord i)
 
 #if WORD_SIZE_IN_BITS == 64
 -- Nothing
 #elif WORD_SIZE_IN_BITS == 32
 {-# NOINLINE integerToWord64 #-}
-integerToWord64 :: Integer -> Word64#
+integerToWord64 :: Atom -> Word64#
 integerToWord64 i = int64ToWord64# (integerToInt64 i)
 
-{-# NOINLINE word64ToInteger #-}
-word64ToInteger:: Word64# -> Integer
-word64ToInteger w = if isTrue# (w `eqWord64#` wordToWord64# 0##)
+{-# NOINLINE word64ToAtom #-}
+word64ToAtom:: Word64# -> Atom
+word64ToAtom w = if isTrue# (w `eqWord64#` wordToWord64# 0##)
                     then Naught
                     else Positive (word64ToPositive w)
 
 {-# NOINLINE integerToInt64 #-}
-integerToInt64 :: Integer -> Int64#
+integerToInt64 :: Atom -> Int64#
 integerToInt64 Naught = intToInt64# 0#
 integerToInt64 (Positive p) = word64ToInt64# (positiveToWord64 p)
 integerToInt64 (Negative p)
     = negateInt64# (word64ToInt64# (positiveToWord64 p))
 
-{-# NOINLINE int64ToInteger #-}
-int64ToInteger :: Int64# -> Integer
-int64ToInteger i
+{-# NOINLINE int64ToAtom #-}
+int64ToAtom :: Int64# -> Atom
+int64ToAtom i
  = if isTrue# (i `eqInt64#` intToInt64# 0#)
    then Naught
    else if isTrue# (i `gtInt64#` intToInt64# 0#)
@@ -124,82 +124,82 @@ int64ToInteger i
 #error WORD_SIZE_IN_BITS not supported
 #endif
 
-oneInteger :: Integer
-oneInteger = Positive onePositive
+oneAtom :: Atom
+oneAtom = Positive onePositive
 
-negativeOneInteger :: Integer
-negativeOneInteger = Negative onePositive
+negativeOneAtom :: Atom
+negativeOneAtom = Negative onePositive
 
-twoToTheThirtytwoInteger :: Integer
-twoToTheThirtytwoInteger = Positive twoToTheThirtytwoPositive
+twoToTheThirtytwoAtom :: Atom
+twoToTheThirtytwoAtom = Positive twoToTheThirtytwoPositive
 
-{-# NOINLINE encodeDoubleInteger #-}
-encodeDoubleInteger :: Integer -> Int# -> Double#
-encodeDoubleInteger (Positive ds0) e0 = f 0.0## ds0 e0
+{-# NOINLINE encodeDoubleAtom #-}
+encodeDoubleAtom :: Atom -> Int# -> Double#
+encodeDoubleAtom (Positive ds0) e0 = f 0.0## ds0 e0
     where f !acc None        (!_) = acc
           f !acc (Some d ds) !e   = f (acc +## encodeDouble# d e)
                                       ds
                                       -- XXX We assume that this adding to e
                                       -- isn't going to overflow
                                       (e +# WORD_SIZE_IN_BITS#)
-encodeDoubleInteger (Negative ds) e
-    = negateDouble# (encodeDoubleInteger (Positive ds) e)
-encodeDoubleInteger Naught _ = 0.0##
+encodeDoubleAtom (Negative ds) e
+    = negateDouble# (encodeDoubleAtom (Positive ds) e)
+encodeDoubleAtom Naught _ = 0.0##
 
 foreign import ccall unsafe "__word_encodeDouble"
         encodeDouble# :: Word# -> Int# -> Double#
 
-{-# NOINLINE encodeFloatInteger #-}
-encodeFloatInteger :: Integer -> Int# -> Float#
-encodeFloatInteger (Positive ds0) e0 = f 0.0# ds0 e0
+{-# NOINLINE encodeFloatAtom #-}
+encodeFloatAtom :: Atom -> Int# -> Float#
+encodeFloatAtom (Positive ds0) e0 = f 0.0# ds0 e0
     where f !acc None        (!_) = acc
           f !acc (Some d ds) !e   = f (acc `plusFloat#` encodeFloat# d e)
                                       ds
                                       -- XXX We assume that this adding to e
                                       -- isn't going to overflow
                                       (e +# WORD_SIZE_IN_BITS#)
-encodeFloatInteger (Negative ds) e
-    = negateFloat# (encodeFloatInteger (Positive ds) e)
-encodeFloatInteger Naught _ = 0.0#
+encodeFloatAtom (Negative ds) e
+    = negateFloat# (encodeFloatAtom (Positive ds) e)
+encodeFloatAtom Naught _ = 0.0#
 
 foreign import ccall unsafe "__word_encodeFloat"
     encodeFloat# :: Word# -> Int# -> Float#
 
-{-# NOINLINE decodeFloatInteger #-}
-decodeFloatInteger :: Float# -> (# Integer, Int# #)
-decodeFloatInteger f = case decodeFloat_Int# f of
-                       (# mant, exp #) -> (# smallInteger mant, exp #)
+{-# NOINLINE decodeFloatAtom #-}
+decodeFloatAtom :: Float# -> (# Atom, Int# #)
+decodeFloatAtom f = case decodeFloat_Int# f of
+                       (# mant, exp #) -> (# smallAtom mant, exp #)
 
 -- XXX This could be optimised better, by either (word-size dependent)
 -- using single 64bit value for the mantissa, or doing the multiplication
 -- by just building the Digits directly
-{-# NOINLINE decodeDoubleInteger #-}
-decodeDoubleInteger :: Double# -> (# Integer, Int# #)
-decodeDoubleInteger d
+{-# NOINLINE decodeDoubleAtom #-}
+decodeDoubleAtom :: Double# -> (# Atom, Int# #)
+decodeDoubleAtom d
  = case decodeDouble_2Int# d of
    (# mantSign, mantHigh, mantLow, exp #) ->
-       (# (smallInteger mantSign) `timesInteger`
-          (  (wordToInteger mantHigh `timesInteger` twoToTheThirtytwoInteger)
-             `plusInteger` wordToInteger mantLow),
+       (# (smallAtom mantSign) `timesAtom`
+          (  (wordToAtom mantHigh `timesAtom` twoToTheThirtytwoAtom)
+             `plusAtom` wordToAtom mantLow),
           exp #)
 
-{-# NOINLINE doubleFromInteger #-}
-doubleFromInteger :: Integer -> Double#
-doubleFromInteger Naught = 0.0##
-doubleFromInteger (Positive p) = doubleFromPositive p
-doubleFromInteger (Negative p) = negateDouble# (doubleFromPositive p)
+{-# NOINLINE doubleFromAtom #-}
+doubleFromAtom :: Atom -> Double#
+doubleFromAtom Naught = 0.0##
+doubleFromAtom (Positive p) = doubleFromPositive p
+doubleFromAtom (Negative p) = negateDouble# (doubleFromPositive p)
 
-{-# NOINLINE floatFromInteger #-}
-floatFromInteger :: Integer -> Float#
-floatFromInteger Naught = 0.0#
-floatFromInteger (Positive p) = floatFromPositive p
-floatFromInteger (Negative p) = negateFloat# (floatFromPositive p)
+{-# NOINLINE floatFromAtom #-}
+floatFromAtom :: Atom -> Float#
+floatFromAtom Naught = 0.0#
+floatFromAtom (Positive p) = floatFromPositive p
+floatFromAtom (Negative p) = negateFloat# (floatFromPositive p)
 
-{-# NOINLINE andInteger #-}
-andInteger :: Integer -> Integer -> Integer
-Naught     `andInteger` (!_)       = Naught
-(!_)       `andInteger` Naught     = Naught
-Positive x `andInteger` Positive y = digitsToInteger (x `andDigits` y)
+{-# NOINLINE andAtom #-}
+andAtom :: Atom -> Atom -> Atom
+Naught     `andAtom` (!_)       = Naught
+(!_)       `andAtom` Naught     = Naught
+Positive x `andAtom` Positive y = digitsToAtom (x `andDigits` y)
 {-
 To calculate x & -y we need to calculate
     x & twosComplement y
@@ -209,10 +209,10 @@ Note that
 has infinitely many 1s, but x has a finite number of digits, so andDigits
 will return a finite result.
 -}
-Positive x `andInteger` Negative y = let y' = twosComplementPositive y
-                                         z = y' `andDigitsOnes` x
-                                     in digitsToInteger z
-Negative x `andInteger` Positive y = Positive y `andInteger` Negative x
+Positive x `andAtom` Negative y = let y' = twosComplementPositive y
+                                      z = y' `andDigitsOnes` x
+                                  in digitsToAtom z
+Negative x `andAtom` Positive y = Positive y `andAtom` Negative x
 {-
 To calculate -x & -y, naively we need to calculate
     twosComplement (twosComplement x & twosComplement y)
@@ -232,18 +232,18 @@ this in order to get the magnitude of the result.
 -}
 -- We don't know that x and y are /strictly/ greater than 1, but
 -- minusPositive gives us the required answer anyway.
-Negative x `andInteger` Negative y = let x' = x `minusPositive` onePositive
-                                         y' = y `minusPositive` onePositive
-                                         z = x' `orDigits` y'
-                                         -- XXX Cheating the precondition:
-                                         z' = succPositive z
-                                     in digitsToNegativeInteger z'
+Negative x `andAtom` Negative y = let x' = x `minusPositive` onePositive
+                                      y' = y `minusPositive` onePositive
+                                      z = x' `orDigits` y'
+                                      -- XXX Cheating the precondition:
+                                      z' = succPositive z
+                                  in digitsToNegativeAtom z'
 
-{-# NOINLINE orInteger #-}
-orInteger :: Integer -> Integer -> Integer
-Naught     `orInteger` (!i)       = i
-(!i)       `orInteger` Naught     = i
-Positive x `orInteger` Positive y = Positive (x `orDigits` y)
+{-# NOINLINE orAtom #-}
+orAtom :: Atom -> Atom -> Atom
+Naught     `orAtom` (!i)       = i
+(!i)       `orAtom` Naught     = i
+Positive x `orAtom` Positive y = Positive (x `orDigits` y)
 {-
 x | -y = - (twosComplement (x | twosComplement y))
        = - (twosComplement !(!x & !(twosComplement y)))
@@ -251,12 +251,12 @@ x | -y = - (twosComplement (x | twosComplement y))
        = - (twosComplement !(!x & (y - 1)))
        = - ((!x & (y - 1)) + 1)
 -}
-Positive x `orInteger` Negative y = let x' = flipBits x
-                                        y' = y `minusPositive` onePositive
-                                        z = x' `andDigitsOnes` y'
-                                        z' = succPositive z
-                                    in digitsToNegativeInteger z'
-Negative x `orInteger` Positive y = Positive y `orInteger` Negative x
+Positive x `orAtom` Negative y = let x' = flipBits x
+                                     y' = y `minusPositive` onePositive
+                                     z = x' `andDigitsOnes` y'
+                                     z' = succPositive z
+                                 in digitsToNegativeAtom z'
+Negative x `orAtom` Positive y = Positive y `orAtom` Negative x
 {-
 -x | -y = - (twosComplement (twosComplement x | twosComplement y))
         = - (twosComplement !(!(twosComplement x) & !(twosComplement y)))
@@ -264,17 +264,17 @@ Negative x `orInteger` Positive y = Positive y `orInteger` Negative x
         = - (twosComplement !((x - 1) & (y - 1)))
         = - (((x - 1) & (y - 1)) + 1)
 -}
-Negative x `orInteger` Negative y = let x' = x `minusPositive` onePositive
-                                        y' = y `minusPositive` onePositive
-                                        z = x' `andDigits` y'
-                                        z' = succPositive z
-                                    in digitsToNegativeInteger z'
+Negative x `orAtom` Negative y = let x' = x `minusPositive` onePositive
+                                     y' = y `minusPositive` onePositive
+                                     z = x' `andDigits` y'
+                                     z' = succPositive z
+                                 in digitsToNegativeAtom z'
 
-{-# NOINLINE xorInteger #-}
-xorInteger :: Integer -> Integer -> Integer
-Naught     `xorInteger` (!i)       = i
-(!i)       `xorInteger` Naught     = i
-Positive x `xorInteger` Positive y = digitsToInteger (x `xorDigits` y)
+{-# NOINLINE xorAtom #-}
+xorAtom :: Atom -> Atom -> Atom
+Naught     `xorAtom` (!i)       = i
+(!i)       `xorAtom` Naught     = i
+Positive x `xorAtom` Positive y = digitsToAtom (x `xorDigits` y)
 {-
 x ^ -y = - (twosComplement (x ^ twosComplement y))
        = - (twosComplement !(x ^ !(twosComplement y)))
@@ -282,11 +282,11 @@ x ^ -y = - (twosComplement (x ^ twosComplement y))
        = - (twosComplement !(x ^ (y - 1)))
        = - ((x ^ (y - 1)) + 1)
 -}
-Positive x `xorInteger` Negative y = let y' = y `minusPositive` onePositive
-                                         z = x `xorDigits` y'
-                                         z' = succPositive z
-                                     in digitsToNegativeInteger z'
-Negative x `xorInteger` Positive y = Positive y `xorInteger` Negative x
+Positive x `xorAtom` Negative y = let y' = y `minusPositive` onePositive
+                                      z = x `xorDigits` y'
+                                      z' = succPositive z
+                                  in digitsToNegativeAtom z'
+Negative x `xorAtom` Positive y = Positive y `xorAtom` Negative x
 {-
 -x ^ -y = twosComplement x ^ twosComplement y
         = (!x + 1) ^ (!y + 1)
@@ -294,34 +294,34 @@ Negative x `xorInteger` Positive y = Positive y `xorInteger` Negative x
         = !(!x + 1) ^ !(!y + 1)
         = (x - 1) ^ (y - 1)
 -}
-Negative x `xorInteger` Negative y = let x' = x `minusPositive` onePositive
-                                         y' = y `minusPositive` onePositive
-                                         z = x' `xorDigits` y'
-                                     in digitsToInteger z
+Negative x `xorAtom` Negative y = let x' = x `minusPositive` onePositive
+                                      y' = y `minusPositive` onePositive
+                                      z = x' `xorDigits` y'
+                                  in digitsToAtom z
 
-{-# NOINLINE complementInteger #-}
-complementInteger :: Integer -> Integer
-complementInteger x = negativeOneInteger `minusInteger` x
+{-# NOINLINE complementAtom #-}
+complementAtom :: Atom -> Atom
+complementAtom x = negativeOneAtom `minusAtom` x
 
-{-# NOINLINE shiftLInteger #-}
-shiftLInteger :: Integer -> Int# -> Integer
-shiftLInteger (Positive p) i = Positive (shiftLPositive p i)
-shiftLInteger (Negative n) i = Negative (shiftLPositive n i)
-shiftLInteger Naught       _ = Naught
+{-# NOINLINE shiftLAtom #-}
+shiftLAtom :: Atom -> Int# -> Atom
+shiftLAtom (Positive p) i = Positive (shiftLPositive p i)
+shiftLAtom (Negative n) i = Negative (shiftLPositive n i)
+shiftLAtom Naught       _ = Naught
 
-{-# NOINLINE shiftRInteger #-}
-shiftRInteger :: Integer -> Int# -> Integer
-shiftRInteger (Positive p)   i = shiftRPositive p i
-shiftRInteger j@(Negative _) i
-    = complementInteger (shiftRInteger (complementInteger j) i)
-shiftRInteger Naught         _ = Naught
+{-# NOINLINE shiftRAtom #-}
+shiftRAtom :: Atom -> Int# -> Atom
+shiftRAtom (Positive p)   i = shiftRPositive p i
+shiftRAtom j@(Negative _) i
+    = complementAtom (shiftRAtom (complementAtom j) i)
+shiftRAtom Naught         _ = Naught
 
 -- XXX this could be a lot more efficient, but this is a quick
 -- reimplementation of the default Data.Bits instance, so that we can
--- implement the Integer interface
-testBitInteger :: Integer -> Int# -> Bool
-testBitInteger x i = (x `andInteger` (oneInteger `shiftLInteger` i))
-        `neqInteger` Naught
+-- implement the Atom interface
+testBitAtom :: Atom -> Int# -> Bool
+testBitAtom x i = (x `andAtom` (oneAtom `shiftLAtom` i))
+        `neqAtom` Naught
 
 twosComplementPositive :: Positive -> DigitsOnes
 twosComplementPositive p = flipBits (p `minusPositive` onePositive)
@@ -333,176 +333,176 @@ flipBitsDigits :: Digits -> Digits
 flipBitsDigits None = None
 flipBitsDigits (Some w ws) = Some (not# w) (flipBitsDigits ws)
 
-{-# NOINLINE negateInteger #-}
-negateInteger :: Integer -> Integer
-negateInteger (Positive p) = Negative p
-negateInteger (Negative p) = Positive p
-negateInteger Naught       = Naught
+{-# NOINLINE negateAtom #-}
+negateAtom :: Atom -> Atom
+negateAtom (Positive p) = Negative p
+negateAtom (Negative p) = Positive p
+negateAtom Naught       = Naught
 
 -- Note [Avoid patError]
-{-# NOINLINE plusInteger #-}
-plusInteger :: Integer -> Integer -> Integer
-Positive p1    `plusInteger` Positive p2 = Positive (p1 `plusPositive` p2)
-Negative p1    `plusInteger` Negative p2 = Negative (p1 `plusPositive` p2)
-Positive p1    `plusInteger` Negative p2
+{-# NOINLINE plusAtom #-}
+plusAtom :: Atom -> Atom -> Atom
+Positive p1    `plusAtom` Positive p2 = Positive (p1 `plusPositive` p2)
+Negative p1    `plusAtom` Negative p2 = Negative (p1 `plusPositive` p2)
+Positive p1    `plusAtom` Negative p2
     = case p1 `comparePositive` p2 of
       GT -> Positive (p1 `minusPositive` p2)
       EQ -> Naught
       LT -> Negative (p2 `minusPositive` p1)
-Negative p1    `plusInteger` Positive p2
-    = Positive p2 `plusInteger` Negative p1
-Naught         `plusInteger` Naught         = Naught
-Naught         `plusInteger` i@(Positive _) = i
-Naught         `plusInteger` i@(Negative _) = i
-i@(Positive _) `plusInteger` Naught         = i
-i@(Negative _) `plusInteger` Naught         = i
+Negative p1    `plusAtom` Positive p2
+    = Positive p2 `plusAtom` Negative p1
+Naught         `plusAtom` Naught         = Naught
+Naught         `plusAtom` i@(Positive _) = i
+Naught         `plusAtom` i@(Negative _) = i
+i@(Positive _) `plusAtom` Naught         = i
+i@(Negative _) `plusAtom` Naught         = i
 
-{-# NOINLINE minusInteger #-}
-minusInteger :: Integer -> Integer -> Integer
-i1 `minusInteger` i2 = i1 `plusInteger` negateInteger i2
+{-# NOINLINE minusAtom #-}
+minusAtom :: Atom -> Atom -> Atom
+i1 `minusAtom` i2 = i1 `plusAtom` negateAtom i2
 
-{-# NOINLINE timesInteger #-}
-timesInteger :: Integer -> Integer -> Integer
-Positive p1 `timesInteger` Positive p2 = Positive (p1 `timesPositive` p2)
-Negative p1 `timesInteger` Negative p2 = Positive (p1 `timesPositive` p2)
-Positive p1 `timesInteger` Negative p2 = Negative (p1 `timesPositive` p2)
-Negative p1 `timesInteger` Positive p2 = Negative (p1 `timesPositive` p2)
-(!_)        `timesInteger` (!_)        = Naught
+{-# NOINLINE timesAtom #-}
+timesAtom :: Atom -> Atom -> Atom
+Positive p1 `timesAtom` Positive p2 = Positive (p1 `timesPositive` p2)
+Negative p1 `timesAtom` Negative p2 = Positive (p1 `timesPositive` p2)
+Positive p1 `timesAtom` Negative p2 = Negative (p1 `timesPositive` p2)
+Negative p1 `timesAtom` Positive p2 = Negative (p1 `timesPositive` p2)
+(!_)        `timesAtom` (!_)        = Naught
 
-{-# NOINLINE divModInteger #-}
-divModInteger :: Integer -> Integer -> (# Integer, Integer #)
-n `divModInteger` d =
-    case n `quotRemInteger` d of
+{-# NOINLINE divModAtom #-}
+divModAtom :: Atom -> Atom -> (# Atom, Atom #)
+n `divModAtom` d =
+    case n `quotRemAtom` d of
         (# q, r #) ->
-            if signumInteger r `eqInteger`
-               negateInteger (signumInteger d)
-            then (# q `minusInteger` oneInteger, r `plusInteger` d #)
+            if signumAtom r `eqAtom`
+               negateAtom (signumAtom d)
+            then (# q `minusAtom` oneAtom, r `plusAtom` d #)
             else (# q, r #)
 
-{-# NOINLINE divInteger #-}
-divInteger :: Integer -> Integer -> Integer
-n `divInteger` d = quotient
-    where (# quotient, _ #) = n `divModInteger` d
+{-# NOINLINE divAtom #-}
+divAtom :: Atom -> Atom -> Atom
+n `divAtom` d = quotient
+    where (# quotient, _ #) = n `divModAtom` d
 
-{-# NOINLINE modInteger #-}
-modInteger :: Integer -> Integer -> Integer
-n `modInteger` d = modulus
-    where (# _, modulus #) = n `divModInteger` d
+{-# NOINLINE modAtom #-}
+modAtom :: Atom -> Atom -> Atom
+n `modAtom` d = modulus
+    where (# _, modulus #) = n `divModAtom` d
 
-{-# NOINLINE quotRemInteger #-}
-quotRemInteger :: Integer -> Integer -> (# Integer, Integer #)
-Naught      `quotRemInteger` (!_)        = (# Naught, Naught #)
-(!_)        `quotRemInteger` Naught
-    = (# errorInteger, errorInteger #) -- XXX Can't happen
--- XXX _            `quotRemInteger` Naught     = error "Division by zero"
-Positive p1 `quotRemInteger` Positive p2 = p1 `quotRemPositive` p2
-Negative p1 `quotRemInteger` Positive p2 = case p1 `quotRemPositive` p2 of
+{-# NOINLINE quotRemAtom #-}
+quotRemAtom :: Atom -> Atom -> (# Atom, Atom #)
+Naught      `quotRemAtom` (!_)        = (# Naught, Naught #)
+(!_)        `quotRemAtom` Naught
+    = (# errorAtom, errorAtom #) -- XXX Can't happen
+-- XXX _            `quotRemAtom` Naught     = error "Division by zero"
+Positive p1 `quotRemAtom` Positive p2 = p1 `quotRemPositive` p2
+Negative p1 `quotRemAtom` Positive p2 = case p1 `quotRemPositive` p2 of
                                            (# q, r #) ->
-                                               (# negateInteger q,
-                                                  negateInteger r #)
-Positive p1 `quotRemInteger` Negative p2 = case p1 `quotRemPositive` p2 of
+                                               (# negateAtom q,
+                                                  negateAtom r #)
+Positive p1 `quotRemAtom` Negative p2 = case p1 `quotRemPositive` p2 of
                                            (# q, r #) ->
-                                               (# negateInteger q, r #)
-Negative p1 `quotRemInteger` Negative p2 = case p1 `quotRemPositive` p2 of
+                                               (# negateAtom q, r #)
+Negative p1 `quotRemAtom` Negative p2 = case p1 `quotRemPositive` p2 of
                                            (# q, r #) ->
-                                               (# q, negateInteger r #)
+                                               (# q, negateAtom r #)
 
-{-# NOINLINE quotInteger #-}
-quotInteger :: Integer -> Integer -> Integer
-x `quotInteger` y = case x `quotRemInteger` y of
+{-# NOINLINE quotAtom #-}
+quotAtom :: Atom -> Atom -> Atom
+x `quotAtom` y = case x `quotRemAtom` y of
                     (# q, _ #) -> q
 
-{-# NOINLINE remInteger #-}
-remInteger :: Integer -> Integer -> Integer
-x `remInteger` y = case x `quotRemInteger` y of
+{-# NOINLINE remAtom #-}
+remAtom :: Atom -> Atom -> Atom
+x `remAtom` y = case x `quotRemAtom` y of
                    (# _, r #) -> r
 
-{-# NOINLINE compareInteger #-}
-compareInteger :: Integer -> Integer -> Ordering
-Positive x `compareInteger` Positive y = x `comparePositive` y
-Positive _ `compareInteger` (!_)       = GT
-Naught     `compareInteger` Naught     = EQ
-Naught     `compareInteger` Negative _ = GT
-Negative x `compareInteger` Negative y = y `comparePositive` x
-(!_)       `compareInteger` (!_)       = LT
+{-# NOINLINE compareAtom #-}
+compareAtom :: Atom -> Atom -> Ordering
+Positive x `compareAtom` Positive y = x `comparePositive` y
+Positive _ `compareAtom` (!_)       = GT
+Naught     `compareAtom` Naught     = EQ
+Naught     `compareAtom` Negative _ = GT
+Negative x `compareAtom` Negative y = y `comparePositive` x
+(!_)       `compareAtom` (!_)       = LT
 
-{-# NOINLINE eqInteger# #-}
-eqInteger# :: Integer -> Integer -> Int#
-x `eqInteger#` y = case x `compareInteger` y of
+{-# NOINLINE eqAtom# #-}
+eqAtom# :: Atom -> Atom -> Int#
+x `eqAtom#` y = case x `compareAtom` y of
                         EQ -> 1#
                         _  -> 0#
 
-{-# NOINLINE neqInteger# #-}
-neqInteger# :: Integer -> Integer -> Int#
-x `neqInteger#` y = case x `compareInteger` y of
+{-# NOINLINE neqAtom# #-}
+neqAtom# :: Atom -> Atom -> Int#
+x `neqAtom#` y = case x `compareAtom` y of
                          EQ -> 0#
                          _  -> 1#
 
-{-# INLINE eqInteger  #-}
-{-# INLINE neqInteger #-}
-eqInteger, neqInteger :: Integer -> Integer -> Bool
-eqInteger  a b = isTrue# (a `eqInteger#`  b)
-neqInteger a b = isTrue# (a `neqInteger#` b)
+{-# INLINE eqAtom  #-}
+{-# INLINE neqAtom #-}
+eqAtom, neqAtom :: Atom -> Atom -> Bool
+eqAtom  a b = isTrue# (a `eqAtom#`  b)
+neqAtom a b = isTrue# (a `neqAtom#` b)
 
-instance  Eq Integer  where
-    (==) = eqInteger
-    (/=) = neqInteger
+instance  Eq Atom  where
+    (==) = eqAtom
+    (/=) = neqAtom
 
-{-# NOINLINE ltInteger# #-}
-ltInteger# :: Integer -> Integer -> Int#
-x `ltInteger#` y = case x `compareInteger` y of
+{-# NOINLINE ltAtom# #-}
+ltAtom# :: Atom -> Atom -> Int#
+x `ltAtom#` y = case x `compareAtom` y of
                         LT -> 1#
                         _  -> 0#
 
-{-# NOINLINE gtInteger# #-}
-gtInteger# :: Integer -> Integer -> Int#
-x `gtInteger#` y = case x `compareInteger` y of
+{-# NOINLINE gtAtom# #-}
+gtAtom# :: Atom -> Atom -> Int#
+x `gtAtom#` y = case x `compareAtom` y of
                         GT -> 1#
                         _  -> 0#
 
-{-# NOINLINE leInteger# #-}
-leInteger# :: Integer -> Integer -> Int#
-x `leInteger#` y = case x `compareInteger` y of
+{-# NOINLINE leAtom# #-}
+leAtom# :: Atom -> Atom -> Int#
+x `leAtom#` y = case x `compareAtom` y of
                         GT -> 0#
                         _  -> 1#
 
-{-# NOINLINE geInteger# #-}
-geInteger# :: Integer -> Integer -> Int#
-x `geInteger#` y = case x `compareInteger` y of
+{-# NOINLINE geAtom# #-}
+geAtom# :: Atom -> Atom -> Int#
+x `geAtom#` y = case x `compareAtom` y of
                         LT -> 0#
                         _  -> 1#
 
-{-# INLINE leInteger #-}
-{-# INLINE ltInteger #-}
-{-# INLINE geInteger #-}
-{-# INLINE gtInteger #-}
-leInteger, gtInteger, ltInteger, geInteger :: Integer -> Integer -> Bool
-leInteger a b = isTrue# (a `leInteger#` b)
-gtInteger a b = isTrue# (a `gtInteger#` b)
-ltInteger a b = isTrue# (a `ltInteger#` b)
-geInteger a b = isTrue# (a `geInteger#` b)
+{-# INLINE leAtom #-}
+{-# INLINE ltAtom #-}
+{-# INLINE geAtom #-}
+{-# INLINE gtAtom #-}
+leAtom, gtAtom, ltAtom, geAtom :: Atom -> Atom -> Bool
+leAtom a b = isTrue# (a `leAtom#` b)
+gtAtom a b = isTrue# (a `gtAtom#` b)
+ltAtom a b = isTrue# (a `ltAtom#` b)
+geAtom a b = isTrue# (a `geAtom#` b)
 
-instance Ord Integer where
-    (<=) = leInteger
-    (>)  = gtInteger
-    (<)  = ltInteger
-    (>=) = geInteger
-    compare = compareInteger
+instance Ord Atom where
+    (<=) = leAtom
+    (>)  = gtAtom
+    (<)  = ltAtom
+    (>=) = geAtom
+    compare = compareAtom
 
-{-# NOINLINE absInteger #-}
-absInteger :: Integer -> Integer
-absInteger (Negative x) = Positive x
-absInteger x = x
+{-# NOINLINE absAtom #-}
+absAtom :: Atom -> Atom
+absAtom (Negative x) = Positive x
+absAtom x = x
 
-{-# NOINLINE signumInteger #-}
-signumInteger :: Integer -> Integer
-signumInteger (Negative _) = negativeOneInteger
-signumInteger Naught       = Naught
-signumInteger (Positive _) = oneInteger
+{-# NOINLINE signumAtom #-}
+signumAtom :: Atom -> Atom
+signumAtom (Negative _) = negativeOneAtom
+signumAtom Naught       = Naught
+signumAtom (Positive _) = oneAtom
 
-{-# NOINLINE hashInteger #-}
-hashInteger :: Integer -> Int#
-hashInteger = integerToInt
+{-# NOINLINE hashAtom #-}
+hashAtom :: Atom -> Int#
+hashAtom = integerToInt
 
 -------------------------------------------------------------------
 -- The hard work is done on positive numbers
@@ -530,17 +530,17 @@ twoToTheThirtytwoPositive = Some 0## (Some 1## None)
 #error Unhandled WORD_SIZE_IN_BITS
 #endif
 
-digitsMaybeZeroToInteger :: Digits -> Integer
-digitsMaybeZeroToInteger None = Naught
-digitsMaybeZeroToInteger ds = Positive ds
+digitsMaybeZeroToAtom :: Digits -> Atom
+digitsMaybeZeroToAtom None = Naught
+digitsMaybeZeroToAtom ds = Positive ds
 
-digitsToInteger :: Digits -> Integer
-digitsToInteger ds = case removeZeroTails ds of
+digitsToAtom :: Digits -> Atom
+digitsToAtom ds = case removeZeroTails ds of
                      None -> Naught
                      ds' -> Positive ds'
 
-digitsToNegativeInteger :: Digits -> Integer
-digitsToNegativeInteger ds = case removeZeroTails ds of
+digitsToNegativeAtom :: Digits -> Atom
+digitsToNegativeAtom ds = case removeZeroTails ds of
                              None -> Naught
                              ds' -> Negative ds'
 
@@ -750,7 +750,7 @@ smallShiftLPositive (!p) (!i) =
          in f 0## p
 
 -- Assumes 0 <= i
-shiftRPositive :: Positive -> Int# -> Integer
+shiftRPositive :: Positive -> Int# -> Atom
 shiftRPositive None _ = Naught
 shiftRPositive p@(Some _ q) i
     = if isTrue# (i >=# WORD_SIZE_IN_BITS#)
@@ -758,7 +758,7 @@ shiftRPositive p@(Some _ q) i
       else smallShiftRPositive p i
 
 -- Assumes 0 <= i < WORD_SIZE_IN_BITS#
-smallShiftRPositive :: Positive -> Int# -> Integer
+smallShiftRPositive :: Positive -> Int# -> Atom
 smallShiftRPositive (!p) (!i) =
     if isTrue# (i ==# 0#)
     then Positive p
@@ -767,11 +767,11 @@ smallShiftRPositive (!p) (!i) =
          _                    -> Naught
 
 -- Long division
-quotRemPositive :: Positive -> Positive -> (# Integer, Integer #)
+quotRemPositive :: Positive -> Positive -> (# Atom, Atom #)
 (!xs) `quotRemPositive` (!ys)
     = case f xs of
-      (# d, m #) -> (# digitsMaybeZeroToInteger d,
-                       digitsMaybeZeroToInteger m #)
+      (# d, m #) -> (# digitsMaybeZeroToAtom d,
+                       digitsMaybeZeroToAtom m #)
     where
           subtractors :: Positives
           subtractors = mkSubtractors (WORD_SIZE_IN_BITS# -# 1#)
