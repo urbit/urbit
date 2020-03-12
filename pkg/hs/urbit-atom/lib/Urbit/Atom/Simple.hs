@@ -23,7 +23,7 @@ module Urbit.Atom.Simple (
     integerToWord64, word64ToAtom,
     integerToInt64, int64ToAtom,
 #endif
-    plusAtom, minusAtom, timesAtom, negateAtom,
+    plusAtom, minusAtom, timesAtom,
     eqAtom, neqAtom, absAtom, signumAtom,
     leAtom, gtAtom, ltAtom, geAtom, compareAtom,
     eqAtom#, neqAtom#,
@@ -33,7 +33,7 @@ module Urbit.Atom.Simple (
     encodeFloatAtom, decodeFloatAtom, floatFromAtom,
     encodeDoubleAtom, decodeDoubleAtom, doubleFromAtom,
     -- gcdAtom, lcmAtom, -- XXX
-    andAtom, orAtom, xorAtom, complementAtom,
+    andAtom, orAtom, xorAtom,
     shiftLAtom, shiftRAtom, testBitAtom,
     hashAtom,
  ) where
