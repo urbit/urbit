@@ -69,8 +69,8 @@ bigNatBitWidth# :: BigNat -> Word#
 bigNatBitWidth# nat =
   lswBits `plusWord#` ((int2Word# lastIdx) `timesWord#` BIT##)
  where
-  (# lastIdx, _ #) = subIntC# (sizeofBigNat# nat) 1#
-  lswBits          = wordBitWidth# (indexBigNat# nat lastIdx)
+  I# lastIdx = (I# (sizeofBigNat# nat)) - 1
+  lswBits    = wordBitWidth# (indexBigNat# nat lastIdx)
 
 atomBitWidth# :: Natural -> Word#
 atomBitWidth# (NatS# gl) = wordBitWidth# gl
