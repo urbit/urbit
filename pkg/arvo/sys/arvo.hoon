@@ -624,7 +624,6 @@
     ::
     ++  loop
       ^+  this
-      ~>  %mean.'arvo: loop crashed'
       ?~  run
         this
       ?:  =(~ q.i.run)    :: XX TMI
