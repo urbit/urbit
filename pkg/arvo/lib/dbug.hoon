@@ -3,11 +3,11 @@
 ::    usage: %-(agent:dbug your-agent)
 ::
 |%
-+$  what
-  $?  %bowl
-      %state
-      %incoming
-      %outgoing
++$  poke
+  $%  [%bowl ~]
+      [%state grab=cord]
+      [%incoming =about]
+      [%outgoing =about]
   ==
 ::
 +$  about
@@ -31,12 +31,17 @@
       =^  cards  agent  (on-poke:ag mark vase)
       [cards this]
     =/  dbug
-      !<([=what =about] vase)
+      !<(poke vase)
     =;  out=^vase
       ((slog (sell out) ~) [~ this])
-    ?-  what.dbug
+    ?-  -.dbug
       %bowl   !>(bowl)
-      %state  on-save:ag
+    ::
+        %state
+      =?  grab.dbug  =('' grab.dbug)  '-'
+      %+  slap
+        (slop on-save:ag !>([bowl=bowl ..zuse]))
+      (ream grab.dbug)
     ::
         %incoming
       !>
