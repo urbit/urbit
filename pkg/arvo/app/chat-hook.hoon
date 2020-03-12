@@ -322,12 +322,13 @@
       %add-owned
     ?>  (team:title our.bol src.bol)
     =/  chat-path  [%mailbox path.act]
+    =/  chat-wire  [%store path.act]
     ?:  (~(has by synced) path.act)  [~ state]
     =:  synced  (~(put by synced) path.act our.bol)
         allow-history  (~(put by allow-history) path.act allow-history.act)
     ==
     :_  state
-    :~  [%pass chat-path %agent [our.bol %chat-store] %watch chat-path]
+    :~  [%pass chat-wire %agent [our.bol %chat-store] %watch chat-path]
         [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
     ==
   ::
@@ -566,6 +567,14 @@
     [%pass /permissions %agent [our.bol %permission-store] %watch /updates]~
   ::
   ?+  wir  !!
+      [%store @ *]
+    ~&  store-kick+wir
+    ?.  (~(has by synced) t.wir)  [~ state]
+    ~&  %chat-store-resubscribe
+    =/  mailbox=(unit mailbox)  (chat-scry t.wir)
+    :_  state
+    [%pass wir %agent [our.bol %chat-store] %watch [%mailbox t.wir]]~
+  ::
       [%mailbox @ *]
     ~&  mailbox-kick+wir
     ?.  (~(has by synced) t.wir)  [~ state]
