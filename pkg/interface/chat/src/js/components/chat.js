@@ -5,6 +5,7 @@ import _ from 'lodash';
 import { Route, Link } from "react-router-dom";
 import { store } from "/store";
 
+import { ResubscribeElement } from '/components/lib/resubscribe-element';
 import { Message } from '/components/lib/message';
 import { SidebarSwitcher } from '/components/lib/icons/icon-sidebar-switch.js';
 import { ChatTabBar } from '/components/lib/chat-tabbar';
@@ -259,9 +260,7 @@ export class ChatScreen extends Component {
            station={props.station}
            numPeers={group.length}
            isOwner={deSig(props.match.params.ship) === window.ship}
-           host={props.match.params.ship}
            popout={this.props.popout}
-           chatSynced={this.props.chatSynced}
            api={props.api}
          />
        </div>
@@ -273,7 +272,17 @@ export class ChatScreen extends Component {
            ref={el => {
              this.scrollElement = el;
            }}></div>
-         {reversedMessages}
+           { (
+               !(props.station in props.chatSynced) &&
+               (reversedMessages.length > 0)
+             ) ? (
+                 <ResubscribeElement
+                   api={props.api}
+                   host={props.match.params.ship}
+                   station={props.station} />
+               ) : (<div/>)
+           }
+           {reversedMessages}
        </div>
        <ChatInput
          api={props.api}

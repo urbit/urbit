@@ -5,13 +5,6 @@ import classnames from 'classnames';
 
 export class ChatTabBar extends Component {
   
-  onClickResubscribe() {
-    this.props.api.chatHook.addSynced(
-      this.props.host,
-      this.props.station,
-      true);
-  }
-
   render() {
     let props = this.props;
 
@@ -56,18 +49,6 @@ export class ChatTabBar extends Component {
             Settings
           </Link>
         </div>
-        {!(props.station in props.chatSynced) ? (
-          <div className={"dib pt2 f9 pl6 pr6 lh-solid red"}>
-            <button
-              onClick={this.onClickResubscribe.bind(this)}
-              className={"no-underline " + setColor}>
-              Looks like you've been unsubscribed from this chat. Click here to
-              resubscribe.
-            </button>
-          </div>
-        ) : (
-          <div className="dib" style={{ width: 0 }}></div>
-        )}
         <a href={`/~chat/popout/room` + props.station} target="_blank"
         className="dib fr pt2 pr1">
           <img

@@ -88,7 +88,6 @@ export class MemberScreen extends Component {
             station={props.station}
             numPeers={perm.length}
             isOwner={deSig(props.match.params.ship) === window.ship}
-            host={props.match.params.ship}
             popout={this.props.popout}
             api={props.api}
           />
