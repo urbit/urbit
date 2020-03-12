@@ -101,7 +101,10 @@
         [duct card]
       =/  =tang
         (weld u.error `tang`[leaf/"drip failed" ~])
-      [duct %hurl fail/tang card]
+      ::  XX should be
+      ::  [duct %hurl fail/tang card]
+      ::
+      [duct %pass /drip-slog %d %flog %crud %drip-fail tang]
     event-core(moves [move moves])
   ::  +trim: in response to memory pressue
   ::
