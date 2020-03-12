@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
+import { cite } from '../../lib/util';
 
 export class NotebookItem extends Component {
   render() {
@@ -24,13 +25,18 @@ export class NotebookItem extends Component {
         ? contact.nickname : props.author;
     }
 
+    if (name === props.author) {
+      name = cite(props.author);
+    }
+
     return (
       <Link
       to={"/~publish/notebook/" + props.path}>
         <div className={"w-100 v-mid f9 pl4 bb " + selectedClass}>
           <p className="f9 pt1">{props.title}</p>
           <p className="f9 gray2">by
-            <span className={"pl1 " + ((name === props.author) ? "mono" : "")}>
+            <span className={"pl1 " + (contact.nickname ? null : "mono")}
+              title={props.author}>
               {name}
             </span>
           </p>

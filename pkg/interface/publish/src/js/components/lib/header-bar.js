@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { IconHome } from '/components/lib/icons/icon-home';
 import { Sigil } from '/components/lib/icons/sigil';
+import { cite } from '../../lib/util';
 
 export class HeaderBar extends Component {
   constructor(props) {
@@ -52,7 +53,7 @@ export class HeaderBar extends Component {
           size={16}
           color={"#000000"}
         />
-          <span className="mono f9 ml2">{"~" + window.ship}</span>
+          <span className="mono f9 ml2 c-default">{cite(window.ship)}</span>
         </div>
       </div>
     );

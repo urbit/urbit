@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Sigil } from './icons/sigil';
+import { cite } from '../../lib/util';
 import moment from 'moment';
 
 export class CommentItem extends Component {
@@ -44,8 +45,9 @@ export class CommentItem extends Component {
           classes={(member ? "mix-blend-diff" : "")}
           />
           <p className="gray2 f9 flex items-center ml2">
-            <span className={"black white-d " + props.nameClass}>
-            {props.nickname ? props.nickname : '~'+props.ship}
+            <span className={"black white-d " + props.nameClass}
+            title={props.ship}>
+              {props.nickname ? props.nickname : cite(props.ship)}
             </span>
             <span className="ml2">
               {this.state.timeSinceComment}
