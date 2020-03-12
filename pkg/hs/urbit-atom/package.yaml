@@ -30,10 +30,7 @@ tests:
       - base
       - bytestring
       - QuickCheck
-      - tasty
-      - tasty-hunit
-      - tasty-quickcheck
-      - tasty-th
+      - text
       - urbit-atom
       - vector
 

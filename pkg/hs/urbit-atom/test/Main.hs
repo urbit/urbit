@@ -7,13 +7,15 @@ module Main (main) where
 
 import Prelude
 import Numeric.Natural
-import Test.QuickCheck       hiding ((.&.))
-import Test.Tasty
-import Test.Tasty.QuickCheck
-import Test.Tasty.TH
+import Test.QuickCheck
+import Data.IORef
+import System.IO.Unsafe
+import System.Exit
 
+import Control.Monad         (when)
 import Data.ByteString       (ByteString)
-import Data.Vector.Primitive (Vector, Prim)
+import Data.Text             (Text)
+import Data.Vector.Primitive (Prim, Vector)
 
 import qualified Data.ByteString        as BS
 import qualified Data.ByteString.Unsafe as BS
@@ -106,5 +108,59 @@ prop_fast_atom_bytes_correct x = F.atomBytes x == S.natBytes x
 
 --------------------------------------------------------------------------------
 
+failed :: IORef Int
+failed = unsafePerformIO (newIORef 0)
+
+checkProp :: (Show x, Arbitrary x) => String -> (x -> Bool) -> IO ()
+checkProp nm chk = do
+  putStrLn nm
+  res <- quickCheckResult chk
+  putStrLn ""
+
+  case res of
+    Success{} -> pure ()
+    _         -> modifyIORef' failed succ
+
 main :: IO ()
-main = $(defaultMainGenerator)
+main = do
+  checkProp "Reference: Atom <-> ByteString roundtrip"
+    prop_atom_bytes_roundtrip
+
+  checkProp "Reference: Atom <-> Vector Word roundtrip"
+    prop_atom_words_roundtrip
+
+  checkProp "Reference: ByteString <-> Atom roundtrip"
+    prop_bytes_atom_roundtrip
+
+  checkProp "Reference: Vector Word <-> Atom roundtrip"
+    prop_words_atom_roundtrip
+
+  checkProp "Fast: Atom <-> ByteString roundtrip"
+    prop_fast_atom_bytes_roundtrip
+
+  checkProp "Fast: Atom <-> Vector Word roundtrip"
+    prop_fast_atom_words_roundtrip
+
+  checkProp "Fast: Bytestring <-> Atom roundtrip"
+    prop_fast_bytes_atom_roundtrip
+
+  checkProp "Fast: Vector Word <-> Atom roundtrip"
+    prop_fast_words_atom_roundtrip
+
+  checkProp "Fast matches reference: Vector Words -> Atom"
+    prop_fast_words_atom_correct
+
+  checkProp "Fast matches reference: Atom -> Vector Word"
+    prop_fast_atom_words_correct
+
+  checkProp "Fast matches reference: ByteString -> Atom"
+    prop_fast_bytes_atom_correct
+
+  checkProp "Fast matches reference: Atom -> ByteString"
+    prop_fast_atom_bytes_correct
+
+  res <- readIORef failed
+  when (res /= 0) $ do
+    putStrLn $ "FAILURE: " <> show res <> " tests failed."
+    exitWith (ExitFailure 1)
+  putStrLn $ "SUCCESS: All tests passed"
