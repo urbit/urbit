@@ -95,12 +95,6 @@
           (hookup-group new-chat kind.newp)
           [(record-group new-chat new-chat)]~
           (recreate-chat host old-chat new-chat)
-        ::
-          ?.  =(our.bol host)  ~
-          ?:  ?=(%white kind.newp)
-            (send-invites new-chat ~(tap in who.newp))
-          %+  send-invites  new-chat
-          (parse-subscribers wex.bol old-chat)
       ==
     ::
     ++  recreate-chat
@@ -218,31 +212,6 @@
         %metadata-action
       !>  ^-  metadata-action
       [%add group [%chat chat] metadata]
-    ::
-    ++  send-invites
-      |=  [chat=path who=(list ship)]
-      ^-  (list card)
-      %+  murn  who
-      |=  =ship
-      ^-  (unit card)
-      ?:  =(our.bol ship)  ~
-      %-  some
-      %^  make-poke  %invite-hook
-        %invite-action
-      !>  ^-  invite-action
-      =/  =invite
-        =+  (crip "upgrade {(spud chat)} (please accept in OS1)")
-        [our.bol %chat-hook chat ship -]
-      [%invite /chat (sham chat ship eny.bol) invite]
-    ::
-    ++  parse-subscribers
-      |=  [=boat:agent:gall old-chat=path]
-      ^-  (list ship)
-      %+  murn  ~(tap in boat)
-      |=  [[=wire sub=ship app=term] [acked=? =path]]
-      ^-  (unit ship)
-      ?.  =(old-chat path)  ~
-      `sub
     --
   ::
   ++  on-poke
