@@ -9,8 +9,12 @@ library
                , common
                , obelisk-frontend
                , obelisk-route
+               , urbit-atom
                , jsaddle
                , reflex-dom
+               , reflex
+               , reflex-dom-core
+               , classy-prelude
                , obelisk-executable-config-lookup
                , obelisk-generated-static
                , text
@@ -23,6 +27,7 @@ executable frontend
   hs-source-dirs: src-bin
   build-depends: base
                , common
+               , urbit-atom
                , obelisk-frontend
                , obelisk-route
                , reflex-dom

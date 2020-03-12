@@ -9,6 +9,7 @@ library
                , bound
                , bytestring
                , integer-gmp
+               , urbit-atom
                , classy-prelude
                , containers
                , deriving-compat
@@ -26,14 +27,11 @@ library
                , text
                , vector
 
-
   exposed-modules:
     Common.Api
     Common.Route
-    Urbit.Atom
     Urbit.Uruk.Refr.Raw
     Urbit.Moon.Repl
-    Urbit.Atom.Internal
     Urbit.Moon.AST
     Urbit.Moon.LambdaToUruk
     Urbit.Moon.MoonToUruk

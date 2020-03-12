@@ -4,11 +4,17 @@
 -}
 
 module Urbit.Atom
-    ( Atom
-    , atomBytes, bytesAtom
-    , atomWords, wordsAtom
-    , utf8Atom, atomUtf8, atomUtf8Exn, atomUtf8Lenient
-    ) where
+  ( Atom
+  , atomBytes
+  , bytesAtom
+  , atomWords
+  , wordsAtom
+  , utf8Atom
+  , atomUtf8
+  , atomUtf8Exn
+  , atomUtf8Lenient
+  )
+where
 
 import Prelude
 
@@ -19,7 +25,7 @@ import GHC.Natural           (Natural)
 import qualified Data.Text                as T
 import qualified Data.Text.Encoding       as T
 import qualified Data.Text.Encoding.Error as T
-import qualified Urbit.Atom.Internal      as I
+import qualified Urbit.Atom.Fast          as A
 
 
 --------------------------------------------------------------------------------
@@ -30,19 +36,19 @@ type Atom = Natural
 
 -- | Cast an atom to a vector. Does not copy.
 atomWords :: Atom -> Vector Word
-atomWords = I.natWords
+atomWords = A.natWords
 
 -- | Cast a vector to an atom. Does not copy unless given a slice.
 wordsAtom :: Vector Word -> Atom
-wordsAtom = I.wordsNat
+wordsAtom = A.wordsNat
 
 -- | Dump an atom to a bytestring.
 atomBytes :: Atom -> ByteString
-atomBytes = I.pillBytes . I.natPill
+atomBytes = A.pillBytes . A.natPill
 
 -- | Load a bytestring into an atom.
 bytesAtom :: ByteString -> Atom
-bytesAtom = I.pillNat . I.bytesPill
+bytesAtom = A.pillNat . A.bytesPill
 
 -- | Encode a utf8-encoded atom from text.
 utf8Atom :: T.Text -> Atom

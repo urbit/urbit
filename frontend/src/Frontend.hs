@@ -112,7 +112,6 @@ slow = do
 
   el "pre" (dynText res)
 
-
 fast
   :: ( Monad m
      , MonadSample s m
