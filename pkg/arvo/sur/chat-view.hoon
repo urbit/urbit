@@ -12,5 +12,12 @@
       ==
       [%delete app-path=path]
       [%join =ship app-path=path ask-history=?]
+      ::  %groupify: for unmanaged %village chats: recreate as group-based chat
+      ::
+      ::    will delete the old chat, recreate it based on a proper group,
+      ::    and invite the current whitelist to that group.
+      ::    existing messages get moved over.
+      ::
+      [%groupify app-path=path]
   ==
 --

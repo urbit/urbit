@@ -258,6 +258,7 @@
     :~  [%create create]
         [%delete delete]
         [%join join]
+        [%groupify groupify]
     ==
   ::
   ++  create
@@ -280,6 +281,9 @@
         [%app-path pa]
         [%ask-history bo]
     ==
+  ::
+  ++  groupify
+    (ot [%app-path pa] ~)
   ::
   ++  sec
     =,  dejs:format
