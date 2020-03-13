@@ -23,6 +23,7 @@ export default class WeatherTile extends Component {
       }, { maximumAge: Infinity, timeout: 10000 });
       api.action("clock", "json", latlng);
       api.action('weather', 'json', latlng);
+      this.setState({ manualEntry: !this.state.manualEntry });
     });
   }
 
