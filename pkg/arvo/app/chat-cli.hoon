@@ -185,7 +185,7 @@
   ::
   ^-  state-1
   ?-  -.u.old
-    %1  u.old(width 80)
+    %1  u.old(bound (~(gas by *(map target glyph)) ~(tap by bound.u.old)))
   ::
       ?(~ ^)
     :-  %1
@@ -200,7 +200,7 @@
     ::
         bound
       ^-  (map target glyph)
-      %-  ~(gas in *(map target glyph))
+      %-  ~(gas by *(map target glyph))
       %+  turn  ~(tap by bound.u.old)
       |=  [t=[ship path] g=glyph]
       [`target`[| t] g]
