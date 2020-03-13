@@ -3,19 +3,19 @@
 ::
 ++  sym-tape
   ;~(plug low (star ;~(pose nud low hep)))
-
-++  transform-skin
+::
+++  all-skin
   |=  =hast
   ^-  skin
-  ?+  -.hast  ~|('bad skin node' !!)
+  ?+  -.hast  ~|('bad skin node' !!) :: skins don't have regular syntax
       %irregular-adjacent
-    (transform-irregular-adjacent-skin hast)
+    (irregular-adjacent-skin hast)
   ::
       %irregular
-    (transform-irregular-skin hast)
+    (irregular-skin hast)
   ::
   ==
-++  transform-irregular-adjacent-skin
+++  irregular-adjacent-skin
   |=  =hast
   ^-  skin
   ?>  ?=(%irregular-adjacent -.hast)
@@ -29,16 +29,16 @@
       %+  bind  ~(autoname ax & spec)
       |=  =term
       [%name term %spec spec %base %noun]
-    (cold (transform-spec child.hast) (full tis))
+    (cold (all-spec child.hast) (full tis))
   ::
     %+  cook
       |=  =term
       ^-  skin
-      [%name term %spec (transform-spec child.hast) %base %noun]
+      [%name term %spec (all-spec child.hast) %base %noun]
     ;~(sfix sym ;~(pose net tis))
   ::
   ==
-++  transform-irregular-skin
+++  irregular-skin
   |=  =hast
   ^-  skin
   ?>  ?=(%irregular -.hast)
@@ -61,7 +61,7 @@
       ?~  unit
         term
       =/  =spec
-        (transform-irregular-spec [%irregular u.unit])
+        (irregular-spec [%irregular u.unit])
       [%name term %spec spec %base %noun]
     %-  full
     ;~  plug  sym
@@ -73,122 +73,115 @@
       |=  =tape
       ^-  skin
       =/  =spec
-        (transform-irregular-spec [%irregular tape])
+        (irregular-spec [%irregular tape])
       [%spec spec %base %noun]
     sym-tape
   ==
 
 
 ::
-++  transform-spec
+++  all-spec
   |=  =hast
   ^-  spec
   ?+  -.hast  ~|('bad node in spec' !!)
       %rune
-    (transform-rune-spec hast)
+    (rune-spec hast)
       %irregular
-    (transform-irregular-spec hast)
+    (irregular-spec hast)
   ==
 
-++  transform-rune-spec
+++  rune-spec
   |=  =hast
   ^-  spec
   ?>  ?=(%rune -.hast)
   |^
-  ?+  name.hast  ~|('bad rune in spec' !!)
-      ::  %cnkt
-    ::  (build-make children.hast 4)
-      ::  %cnls
-    ::  (build-make children.hast 3)
-      ::  %cnhp
-    ::  (build-make children.hast 2)
+  ?+  name.hast  !!
+      %cnkt
+    (make 4)
+      %cnls
+    (make 3)
+      %cnhp
+    (make 2)
       %cncl
     ?~  children.hast  !!
-    [%make (transform i.children.hast) (turn t.children.hast transform-spec)]
+    [%make (all i.children.hast) (turn t.children.hast all-spec)]
       ::
       %cltr
     ?~  children.hast  !!
-    [%bscl (transform-spec i.children.hast) (turn t.children.hast transform-spec)]
-
+    [%bscl (all-spec i.children.hast) (turn t.children.hast all-spec)]
   ==
-  ++  abc  %foo
   ::
-  ::  ++  build-make
-  ::    |=  [children=(list hast) arity=@]
-  ::    ^-  spec
-  ::    ?>  =((lent children) arity)
-  ::    ?~  children  !!
-  ::    [%make (transform i.children) (turn t.children.hast transform-spec)]
+  ++  make
+    |=  arity=@ud
+    ^-  spec
+    ?>  =(arity (lent children.hast))
+    ?~  children.hast  !!
+    [%make (all i.children.hast) `(list spec)`(turn t.children.hast all-spec)]
   --
 
 
-++  transform-irregular
+++  irregular
   |=  =hast
   ^-  hoon
   ?>  ?=(%irregular -.hast)
   (scan tape.hast scat:vast)
 
-++  transform-irregular-spec
+++  irregular-spec
   |=  =hast
   ^-  spec
   ?>  ?=(%irregular -.hast)
   (scan tape.hast scad:vast)
-++  transform-cncl
+++  cncl
   |=  =hast
   ^-  hoon
   ?>  ?=(%rune -.hast)
   ?~  children.hast
     !!
-  [%cncl (transform i.children.hast) (turn t.children.hast transform)]
-
-:: The following rule is used for the naming of the transform functions
-:: transform-
-++  transform-brts
+  [%cncl (all i.children.hast) (turn t.children.hast all)]
+::
+++  brts
   |=  =hast
   ^-  hoon
   ?>  ?=(%rune -.hast)
   ?.  =((lent children.hast) 2)
     !!
   =/  sample=spec
-    (transform-spec (snag 0 children.hast))
+    (all-spec (snag 0 children.hast))
   =/  product=hoon
-    (transform (snag 1 children.hast))
+    (all (snag 1 children.hast))
   [%brts sample product]
-++  transform-tsnt
+++  tsnt
   |=  =hast
   ^-  hoon
   ?>  ?=(%rune -.hast)
   ?.  =((lent children.hast) 3)
     !!
   =/  =skin
-    (transform-skin (snag 0 children.hast))
+    (all-skin (snag 0 children.hast))
   =/  value=hoon
-    (transform (snag 1 children.hast))
+    (all (snag 1 children.hast))
   =/  rest=hoon
-    (transform (snag 2 children.hast))
+    (all (snag 2 children.hast))
   [%tsnt skin value rest]
 ::
-++  transform-rune
+++  rune
   |=  =hast
   ^-  hoon
   ?>  ?=(%rune -.hast)
   ?+  name.hast  !!
-      %brts
-    (transform-brts hast)
-      %cncl
-    (transform-cncl hast)
-      %tsnt
-    (transform-tsnt hast)
+      %brts   (brts hast)
+      %cncl   (cncl hast)
+      %tsnt   (tsnt hast)
   ==
 
-++  transform
+++  all
   |=  =hast
   ^-  hoon
-  ?+  -.hast  ~|(<hast> !!)
+  ?+  -.hast  !!
     %rune
-      (transform-rune hast)
+      (rune hast)
     %irregular
-      (transform-irregular hast)
+      (irregular hast)
   ==
 
 

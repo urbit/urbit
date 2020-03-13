@@ -1,9 +1,8 @@
 /-  *hoon-parser
 /+  *recoverable-parser
 |%
-::  $rune-kind: kind of rune
 ::
-::    Either %t (tall), %w (wide) or %i (irregular)
+++  bug  %.y
 ++  main
   |=  =path
   ^-  (like hast)
@@ -185,10 +184,16 @@
   %+  ifix
     [;~(plug bar cen gap) ;~(plug hep hep)]
   (star core-arm)
-
+++  wart
+  |*  =rule
+  %+  here
+    |=  [a=pint b=hast]
+    ?:(bug [%trace a b] b)
+  rule
 ::  +tall: parse tall form hoon expression
 ++  tall
   %+  knee  *hast  |.  ~+
+  %-  wart
   ;~  pose
     core
     rune

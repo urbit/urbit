@@ -341,4 +341,15 @@
   :+  p=p.marker
     q=[~ u=[p=p.u.q.content q=q.u.q.marker]]
   r=[[[content-pos marker-pos] %resync-underflow] r.content]
+::
+++  here                                                ::  place-based apply
+  =+  [hez=|=({a/pint b/*} [a b]) sef=*rule]
+  |@
+  ++  $
+    |=  tub/nail
+    =+  vex=(sef tub)
+    ?~  q.vex
+      vex
+    [p=p.vex q=[~ u=[p=(hez [p.tub p.q.u.q.vex] p.u.q.vex) q=q.u.q.vex]] r=r.vex]
+  --
 --
