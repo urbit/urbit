@@ -13,47 +13,42 @@
   ::  $task: build request
   ::
   ::    %make: build hoon files
-  ::    %mark: perform a mark operation
+  ::    %mark: build mark cores
+  ::    %cast: build mark-conversion gates
   ::    %drop: cancel build
   ::
   +$  task
-    $%  [%make =desk case=(unit case) all=(set path)]
-        [%mark =desk all=(map path plan)]
+    $%  [%make =desk case=(unit case:clay) all=(set path)]
+        [%mark =desk case=(unit case:clay) all=(set mark)]
+        [%cast =desk case=(unit case:clay) all=(set [a=mark b=mark])]
         [%drop ~]
     ==
   ::  $gift: build result
   ::
-  ::    %made: %make build results
-  ::    %mark: %mark build results
+  ::    %made: a vase for each filepath
+  ::    %mark: a $dais for each mark
+  ::    %cast: a gate for each pair of marks
   ::
   +$  gift
-    $%  [%make all=(map path (each vase tang))]
-        [%mark all=(map path (each cage tang))]
+    $%  [%make =cass:clay all=(map path (each vase tang))]
+        [%mark =cass:clay all=(map mark (each dais tang))]
+        [%cast =cass:clay all=(map [a=mark b=mark] (each $-(vase vase) tang))]
     ==
   --
-::  $plan: mark-related build plan
+::  $dais: processed mark core
 ::
-::    %$:    literal $cage
-::    %bunt: default value for mark
-::    %cast: convert .arg from mark .a to .b
-::    %diff: calculate diff from .old to .new
-::    %join: merge two diffs into one
-::    %mash: annotate merge conflicts
-::    %pact: apply a diff
-::    %vale: validate .noun to .mark
-::    %volt: .noun as .mark, unvalidated
-::
-+$  plan
-  $%  [%$ =cage]
-      [%bunt =mark]
-      [%cast =mark =plan]
-      [%diff start=plan end=plan]
-      [%join =mark one=plan two=plan]
-      [%mash =mark a=[=desk =plan] b=[=desk =plan]]
-      [%pact sut=plan dif=plan]
-      [%vale =mark =noun]
-      [%volt =mark =noun]
-  ==
++$  dais
+  $_  ^|
+  |_  sam=vase
+  ++  bunt  sam
+  ++  diff  |~(new=_sam [form=form diff=*vase])
+  ++  form  *mark
+  ++  join  |~([a=vase b=vase] *(unit [form=_form diff=vase]))
+  ++  mash  |~([a=[ship desk diff=vase] b=[ship desk diff=vase]] diff=*vase)
+  ++  pact  |~(diff=vase sam)
+  ++  vale  |~(noun sam)
+  ++  volt  |~(noun sam)
+  --
 ::  TODO: fill in
 ::
 +$  move  [=duct =card]
@@ -83,12 +78,14 @@
   =/  m  (fume ,vase)
   $:  =desk
       =case
+      left=@ud
       states=(map path [out=eval-output:m state=eval-state:m])
   ==
 ++  mark-build
   =/  m  (fume ,cage)
   $:  =desk
       =case
+      left=@ud
       states=(map path [out=eval-output:m state=eval-state:m])
   ==
 ::  $pile: preprocessed hoon source file
@@ -620,6 +617,7 @@
   %+  on-fail:m  |.([leaf+"ford: load-mark {(trip mark)}"]~)
   (load-fit /mar/[mark])
 --
+=<
 |=  pit=vase
 =|  ax=axle
 |=  [our=ship now=@da eny=@ scry-gate=sley]
@@ -710,10 +708,56 @@
 ++  take
   |=  [=wire =duct type=* wrapped-sign=(hobo sign)]
   ^-  [(list move) _ford-gate]
-  !!
+  =/  =sign  ((harden sign) wrapped-sign)
+  |^  ^-  [(list move) _ford-gate]
+      ?>  ?=(^ wire)
+      ?+    i.wire  ~(ford-bad-wire+wire !!)
+          %load
+        ?>  ?=(%writ -.sign)
+        =/  =make-build  (~(got by makes.state.ax) duct)
+        (on-load t.wire p.sign make-build)
+      ::
+          %live
+        (on-live t.wire)
+      ==
+  ++  on-load
+    |=  [=path =riot =make-build]
+    ^-  [(list move _ford-gate]
+    =/  m  (fume ,vase)
+    =/  fil=(unit cage)  ?~(riot ~ `r.u.riot)
+    =/  state  (~(got by states.make-build) path)
+    ?>  ?=(%load -.out.eval-output.state)
+    ?>  ?=(^ nex.eval-state.state)
+    =/  [=spar on-load=form:m]  u.nex.eval-state.state
+    ?>  =(path path.spar)
+    ::  run the continuation for the file
+    ::
+    =^  res  hoon-cache.state.ax
+      %:  (eval:m our desk.task case scry-gate)
+        hoon-cache.state.ax
+        eval-state.state
+        fun=on-load
+        fil
+      ==
+    =.  states.make-build  (~(put by states.make-build) path res)
+
+  ++  on-live
+    |=  id=wire
+    ^-  [(list move _ford-gate]
+    !!
+  --
 ++  load
   |=  old=axle
   ford-gate(ax axle)
 ++  stay  ax
 ++  scry  |=(* [~ ~])
+--
+|%
+++  per-event
+  |=  [our=ship =desk =case:clay =duct scry=sley]
+  |%
+  +*  event-core  .
+  ++  on-make-done
+    !!
+  --
 --
