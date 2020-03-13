@@ -150,33 +150,43 @@ export class ChatInput extends Component {
       return;
     }
 
-    let URLs = [];
-    let letter = state.message.split(" ").map((each) => {
+    let message = [];
+    state.message.split(" ").map((each) => {
       if (this.isUrl(each)) {
+        if (message.length > 0) {
+          message = message.join(" ");
+          message = this.getLetterType(message);
+          props.api.chat.message(
+            props.station,
+            `~${window.ship}`,
+            Date.now(),
+            message
+          );
+          message = [];
+        }
         let URL = this.getLetterType(each);
-        URLs.push(URL);
+        props.api.chat.message(
+          props.station,
+          `~${window.ship}`,
+          Date.now(),
+          URL
+        );
       }
       else {
-        return each;
+        return message.push(each);
       }
-    }).join(" ");
+    })
 
-    letter = this.getLetterType(letter);
-
-    props.api.chat.message(
-      props.station,
-      `~${window.ship}`,
-      Date.now(),
-      letter
-    );
-
-    for (let each of URLs) {
+    if (message.length > 0) {
+      message = message.join(" ");
+      message = this.getLetterType(message);
       props.api.chat.message(
         props.station,
         `~${window.ship}`,
         Date.now(),
-        each
+        message
       );
+      message = [];
     }
 
     // perf: setTimeout(this.closure, 2000);
