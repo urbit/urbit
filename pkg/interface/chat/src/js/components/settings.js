@@ -76,7 +76,22 @@ export class SettingsScreen extends Component {
     props.api.setSpinner(true);
 
     this.setState({
-      isLoading: true
+      isLoading: true,
+      loadingText: (deSig(props.match.params.ship) === window.ship)
+        ? 'Deleting...'
+        : 'Leaving...'
+    });
+  }
+
+  groupifyChat() {
+    const { props, state } = this;
+
+    props.api.chatView.groupify(props.station);
+    props.api.setSpinner(true);
+
+    this.setState({
+      isLoading: true,
+      loadingText: 'Converting...'
     });
   }
 
@@ -104,6 +119,33 @@ export class SettingsScreen extends Component {
       </div>
       </div>
     );
+  }
+
+  renderGroupify() {
+    const { props, state } = this;
+
+    const chatOwner = (deSig(props.match.params.ship) === window.ship);
+    console.log(chatOwner, props.match.params.ship, window.ship);
+
+    const ownedUnmanagedVillage =
+      chatOwner &&
+      props.station.slice(0, 3) === '/~/' &&
+      props.permission.kind === 'white';
+
+    if (!ownedUnmanagedVillage) {
+      return null;
+    } else {
+      return (
+        <div>
+          <div className={"w-100 fl mt3 "}>
+            <p className="f8 mt3 lh-copy db">Convert Chat</p>
+            <p className="f9 gray2 db mb4">Convert this chat into a group + associated chat.</p>
+            <a onClick={this.groupifyChat.bind(this)}
+               className={"dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer"}>Convert to group</a>
+          </div>
+        </div>
+      );
+    }
   }
 
   renderMetadataSettings() {
@@ -210,10 +252,7 @@ export class SettingsScreen extends Component {
     let writeGroup = Array.from(props.group.values());
 
     if (!!state.isLoading) {
-      let text = "Deleting...";
-      if (deSig(props.match.params.ship) !== window.ship) {
-        text = "Leaving...";
-      }
+      let text = state.loadingText || 'Working...';
 
       let title = props.station.substr(1);
 
@@ -321,6 +360,7 @@ export class SettingsScreen extends Component {
               </span>
             </div>
           </div>
+          {this.renderGroupify()}
           {this.renderDelete()}
           {this.renderMetadataSettings()}
         </div>
