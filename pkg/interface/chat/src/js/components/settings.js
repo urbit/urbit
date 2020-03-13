@@ -139,7 +139,9 @@ export class SettingsScreen extends Component {
         <div>
           <div className={"w-100 fl mt3 "}>
             <p className="f8 mt3 lh-copy db">Convert Chat</p>
-            <p className="f9 gray2 db mb4">Convert this chat into a group + associated chat.</p>
+            <p className="f9 gray2 db mb4">
+              Convert this chat into a group with associated chat.
+            </p>
             <a onClick={this.groupifyChat.bind(this)}
                className={"dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer"}>Convert to group</a>
           </div>
