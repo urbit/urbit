@@ -79,7 +79,16 @@ render() {
         cursor={this.props.cursor}
         onClick={e => store.setState({ cursor: e.target.selectionEnd })}
         onKeyDown={this.keyPress}
-        onPaste={e => {e.preventDefault()}}
+        onPaste={e => {
+          let clipboardData = e.clipboardData || window.clipboardData;
+          let paste = Array.from(clipboardData.getData('Text'));
+          paste.reduce(async (previous, next) => {
+            await previous;
+            this.setState({cursor: this.props.cursor + 1});
+            return store.doEdit({ ins: { cha: next, at: this.props.cursor } });
+          }, Promise.resolve());
+          e.preventDefault();
+          }}
         ref={this.inputRef}
         defaultValue={this.props.input}
       />
