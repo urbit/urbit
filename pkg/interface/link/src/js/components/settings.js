@@ -31,13 +31,14 @@ export class SettingsScreen extends Component {
       this.setState({
         title: this.props.resource.metadata.title,
         description: this.props.resource.metadata.description,
-        color: uxToHex(this.props.resource.metadata.color || '0x0')
+        color: `#${uxToHex(this.props.resource.metadata.color || '0x0')}`
       });
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
+
     if (!!state.isLoading && !props.resource) {
       this.setState({
         isLoading: false
@@ -47,13 +48,48 @@ export class SettingsScreen extends Component {
       });
     }
 
-    if (((this.props.resource) && ("metadata" in this.props.resource))
+    if (((props.resource) && ("metadata" in props.resource))
       && (prevProps !== props)) {
       this.setState({
         title: props.resource.metadata.title,
         description: props.resource.metadata.description,
-        color: uxToHex(props.resource.metadata.color || '0x0')
+        color: `#${uxToHex(this.props.resource.metadata.color || '0x0')}`
       });
+    }
+
+    if (state.color !== prevState.color) {
+      const { resource } = props;
+
+      if (!("metadata" in resource)) {
+        resource.metadata = {};
+      }
+
+      //submit color if valid
+      let color = state.color;
+      if (color.startsWith("#")) {
+        color = state.color.substr(1);
+      }
+      let hexExp = /([0-9A-Fa-f]{6})/
+      let hexTest = hexExp.exec(color);
+      let currentColor = "000000";
+      if (props.resource && "metadata" in props.resource) {
+        currentColor = uxToHex(props.resource.metadata.color);
+      }
+      if (hexTest && (hexTest[1] !== currentColor)) {
+        if (props.amOwner) {
+          api.setSpinner(true);
+          api.metadataAdd(
+            props.resourcePath,
+            props.groupPath,
+            resource.metadata.title,
+            resource.metadata.description,
+            resource.metadata['date-created'],
+            color
+          ).then(() => {
+            api.setSpinner(false);
+          });
+        }
+      }
     }
   }
 
@@ -174,28 +210,21 @@ export class SettingsScreen extends Component {
           <p className="f8 mt3 lh-copy">Change color</p>
           <p className="f9 gray2 db mb4">Give this collection a color when viewing group channels</p>
           <div className="relative w-100 flex"
-            style={{ maxWidth: "20rem" }}>
+            style={{ maxWidth: "10rem" }}>
+            <div className="absolute"
+              style={{
+                height: 16,
+                width: 16,
+                backgroundColor: state.color,
+                top: 13,
+                left: 11
+              }} />
             <input
-              className={"f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
+              className={"pl7 f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
                 "focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3"}
               value={this.state.color}
               disabled={!props.amOwner}
               onChange={this.changeColor}
-              onBlur={() => {
-                if (props.amOwner && state.color.match(/[0-9A-F]{6}/i)) {
-                  api.setSpinner(true);
-                  api.metadataAdd(
-                    props.resourcePath,
-                    props.groupPath,
-                    resource.metadata.title,
-                    resource.metadata.description,
-                    resource.metadata['date-created'],
-                    state.color
-                  ).then(() => {
-                    api.setSpinner(false);
-                  });
-                }
-              }}
             />
           </div>
         </div>
