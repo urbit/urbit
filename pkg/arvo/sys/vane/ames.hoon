@@ -3226,6 +3226,10 @@
   ++  on-done
     |=  ok=?
     ^+  message-sink
+    ::  no-op on spurious response from vane due to gall breach bug
+    ::
+    ?:  =(~ pending-vane-ack.state)
+      message-sink
     ::
     =^  pending  pending-vane-ack.state  ~(get to pending-vane-ack.state)
     =/  =message-num  message-num.p.pending
