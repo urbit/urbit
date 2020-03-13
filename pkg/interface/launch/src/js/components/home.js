@@ -22,8 +22,8 @@ export default class Home extends Component {
         tileData = this.props.data[tile] !== null
           ? this.props.data[tile] : {};
 
-        tileData["invites"] = ("invites" in this.props.data)
-        ? this.props.data["invites"] : {};
+        // tileData["invites"] = ("invites" in this.props.data)
+        // ? this.props.data["invites"] : {};
       }
       return <Tile key={tile} type={tile} data={tileData} />;
     });
