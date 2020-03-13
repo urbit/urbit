@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP, UnliftedFFITypes #-}
 
 {-|
     Atom implementation with fast conversions between bytestrings
@@ -12,6 +12,8 @@ module Urbit.Atom.Fast
   , bytesAtom
   , atomBytes
   , atomWords
+  , exportBytes
+  , importBytes
   , bit
   , byt
   )
@@ -26,12 +28,10 @@ import Data.Vector.Primitive     (Vector(..))
 import Data.Word                 (Word8)
 import GHC.Exts                  (Ptr(Ptr), sizeofByteArray#)
 import GHC.Exts                  (Int(..))
-import GHC.Integer.GMP.Internals (BigNat(..), bigNatToWord, sizeofBigNat#)
-import GHC.Integer.GMP.Internals (isZeroBigNat, indexBigNat#)
-import GHC.Integer.GMP.Internals (byteArrayToBigNat#, wordToBigNat, zeroBigNat)
+import GHC.Integer.GMP.Internals (BigNat(..))
 import GHC.Natural               (Natural(..))
 import GHC.Prim                  (Int#, clz#, minusWord#, plusWord#)
-import GHC.Prim                  (Word#, int2Word#, subIntC#, timesWord#)
+import GHC.Prim                  (Word#, Addr#, int2Word#, subIntC#, timesWord#)
 import GHC.Prim                  (copyByteArrayToAddr#)
 import GHC.Word                  (Word(..))
 import System.IO.Unsafe          (unsafePerformIO)
@@ -41,7 +41,9 @@ import qualified Data.ByteString.Internal  as BS
 import qualified Data.ByteString.Unsafe    as BS
 import qualified Data.Primitive.ByteArray  as Prim
 import qualified Data.Vector.Primitive     as VP
+import qualified Foreign.ForeignPtr        as Ptr
 import qualified Foreign.ForeignPtr.Unsafe as Ptr
+import qualified GHC.Integer.GMP.Internals as G
 
 
 -- Setup BIT and BYT macros. ---------------------------------------------------
@@ -77,8 +79,8 @@ bigNatBitWidth# :: BigNat -> Word#
 bigNatBitWidth# nat =
   lswBits `plusWord#` ((int2Word# lastIdx) `timesWord#` BIT##)
  where
-  I# lastIdx = (I# (sizeofBigNat# nat)) - 1
-  lswBits    = wordBitWidth# (indexBigNat# nat lastIdx)
+  I# lastIdx = (I# (G.sizeofBigNat# nat)) - 1
+  lswBits    = wordBitWidth# (G.indexBigNat# nat lastIdx)
 
 atomBitWidth# :: Natural -> Word#
 atomBitWidth# (NatS# gl) = wordBitWidth# gl
@@ -131,7 +133,7 @@ bytesPill = Pill . strip
     Cast a BigNat to a vector without a copy.
 -}
 bigNatWords :: BigNat -> Vector Word
-bigNatWords bn | isZeroBigNat bn = mempty
+bigNatWords bn | G.isZeroBigNat bn = mempty
 bigNatWords bn@(BN# bArr) =
   Vector 0 (I# (sizeofByteArray# bArr) `div` BYT) (Prim.ByteArray bArr)
 
@@ -142,11 +144,12 @@ bigNatWords bn@(BN# bArr) =
 -}
 wordsBigNat :: Vector Word -> BigNat
 wordsBigNat v@(Vector off (I# len) (Prim.ByteArray buf)) = case VP.length v of
-  0 -> zeroBigNat
+  0 -> G.zeroBigNat
   1 -> case VP.unsafeIndex v 0 of
-    W# w -> wordToBigNat w
-  n ->
-    if off /= 0 then error "words2Nat: bad-vec" else byteArrayToBigNat# buf len
+    W# w -> G.wordToBigNat w
+  n -> if off /= 0
+    then error "words2Nat: bad-vec"
+    else G.byteArrayToBigNat# buf len
 
 {-|
     More careful version of `wordsBigNat`, but not yet tested.
@@ -158,13 +161,14 @@ wordsBigNat v@(Vector off (I# len) (Prim.ByteArray buf)) = case VP.length v of
 -}
 wordsBigNat' :: Vector Word -> BigNat
 wordsBigNat' v = case VP.length v of
-  0 -> zeroBigNat
-  1 -> wordToBigNat w where W# w = VP.unsafeIndex v 0
+  0 -> G.zeroBigNat
+  1 -> G.wordToBigNat w where W# w = VP.unsafeIndex v 0
   n -> if offset v == 0 then extract v else extract (VP.force v)
  where
   offset (Vector off _ _) = off
 
-  extract (Vector _ (I# len) (Prim.ByteArray buf)) = byteArrayToBigNat# buf len
+  extract (Vector _ (I# len) (Prim.ByteArray buf)) =
+    G.byteArrayToBigNat# buf len
 
 
 --------------------------------------------------------------------------------
@@ -179,14 +183,14 @@ wordsAtom = bigNatNat . wordsBigNat
 
 -- | Cast a Nat to a BigNat (no copy).
 natBigNat :: Natural -> BigNat
-natBigNat (NatS# w ) = wordToBigNat w
+natBigNat (NatS# w ) = G.wordToBigNat w
 natBigNat (NatJ# bn) = bn
 
 -- | Cast a BigNat to a Nat (no copy).
 bigNatNat :: BigNat -> Natural
-bigNatNat bn = case sizeofBigNat# bn of
+bigNatNat bn = case G.sizeofBigNat# bn of
   0# -> 0
-  1# -> NatS# (bigNatToWord bn)
+  1# -> NatS# (G.bigNatToWord bn)
   _  -> NatJ# bn
 
 
@@ -263,3 +267,60 @@ atomBytes = pillBytes . natPill
 bytesAtom :: ByteString -> Natural
 bytesAtom = pillAtom . bytesPill
 
+-- Try using GMPs `input/export` feature. --------------------------------------
+
+-- sizeInBaseInteger i 256#
+-- sz = sizeInBaseNatural wor 256#
+-- exportBigNatToAddr :: BigNat -> Addr# -> Int# -> IO Word Source#
+-- exportWordToAddr :: Word -> Addr# -> Int# -> IO Word
+
+-- Use "sizeInBaseInteger i 256#" to compute the exact number
+-- of bytes written in advance for i /= 0. In case of i == 0,
+-- exportIntegerToMutableByteArray will write and report zero bytes written,
+-- whereas sizeInBaseInteger report one byte.
+
+sizeInBaseNatural :: Natural -> Int# -> Word#
+{-# INLINE sizeInBaseNatural #-}
+sizeInBaseNatural (NatS# w) base = G.sizeInBaseWord# w base
+sizeInBaseNatural (NatJ# n) base = G.sizeInBaseBigNat n base
+
+exportNaturalToAddr :: Natural -> Addr# -> Int# -> IO Word
+exportNaturalToAddr (NatS# w) = G.exportWordToAddr (W# w)
+exportNaturalToAddr (NatJ# n) = G.exportBigNatToAddr n
+
+exportNaturalToByteString :: Natural -> Int -> ByteString
+exportNaturalToByteString nat (I# i#) = unsafePerformIO $ do
+  let sz# = sizeInBaseNatural nat 256#
+  let szi = fromIntegral (W# sz#)
+  fp <- BS.mallocByteString szi
+  let Ptr a = Ptr.unsafeForeignPtrToPtr fp
+  exportNaturalToAddr nat a i#
+  pure (BS.PS fp 0 szi)
+
+exportBytes :: Natural -> ByteString
+exportBytes 0 = mempty
+exportBytes n = exportNaturalToByteString n 0
+
+bigNatNatural :: BigNat -> Natural
+bigNatNatural big =
+  case G.sizeofBigNat# big of
+    0# -> 0
+    1# -> NatS# (G.bigNatToWord big)
+    _  -> NatJ# big
+
+stripBytes :: ByteString -> ByteString
+stripBytes buf = BS.take (len - go 0 (len - 1)) buf
+ where
+  len = BS.length buf
+  go n i | i < 0                     = n
+         | 0 == BS.unsafeIndex buf i = go (n + 1) (i - 1)
+         | otherwise                 = n
+
+
+importBytes :: ByteString -> Natural
+importBytes (stripBytes -> BS.PS fp 0 sz) = unsafePerformIO $ do
+  let Ptr a  = Ptr.unsafeForeignPtrToPtr fp -- TODO Not safe!
+  let W# sz# = fromIntegral sz
+  res <- bigNatNatural <$> G.importBigNatFromAddr a sz# 0#
+  Ptr.touchForeignPtr fp
+  pure res

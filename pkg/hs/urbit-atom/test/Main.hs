@@ -20,7 +20,7 @@ import Data.Vector.Primitive (Prim, Vector)
 import qualified Data.ByteString        as BS
 import qualified Data.ByteString.Unsafe as BS
 import qualified Data.Vector.Primitive  as VP
-import qualified Urbit.Atom             as F
+import qualified Urbit.Atom.Fast        as F
 import qualified Urbit.Atom.Slow        as S
 
 
@@ -102,8 +102,14 @@ prop_fast_atom_words_correct x = F.atomWords x == S.atomWords x
 prop_fast_bytes_atom_correct :: ByteString -> Bool
 prop_fast_bytes_atom_correct x = F.bytesAtom x == S.bytesAtom x
 
+prop_fast_atom_import_correct :: ByteString -> Bool
+prop_fast_atom_import_correct x = F.importBytes x == S.bytesAtom x
+
 prop_fast_atom_bytes_correct :: Natural -> Bool
 prop_fast_atom_bytes_correct x = F.atomBytes x == S.atomBytes x
+
+prop_fast_atom_export_correct :: Natural -> Bool
+prop_fast_atom_export_correct x = F.exportBytes x == S.atomBytes x
 
 
 --------------------------------------------------------------------------------
@@ -111,7 +117,7 @@ prop_fast_atom_bytes_correct x = F.atomBytes x == S.atomBytes x
 failed :: IORef Int
 failed = unsafePerformIO (newIORef 0)
 
-checkProp :: (Show x, Arbitrary x) => String -> (x -> Bool) -> IO ()
+checkProp :: Testable prop => String -> prop -> IO ()
 checkProp nm chk = do
   putStrLn nm
   res <- quickCheckResult chk
@@ -144,20 +150,32 @@ main = do
   checkProp "Fast: Bytestring <-> Atom roundtrip"
     prop_fast_bytes_atom_roundtrip
 
+  checkProp "Fast: Export->Import roundtrip" $ do
+    withMaxSuccess 100000 (dumpLoad F.exportBytes F.importBytes)
+
+  checkProp "Fast: Import->Export roundtrip" $ do
+    withMaxSuccess 10000 (loadDump F.importBytes F.exportBytes stripBytes)
+
   checkProp "Fast: Vector Word <-> Atom roundtrip"
     prop_fast_words_atom_roundtrip
 
   checkProp "Fast matches reference: Vector Words -> Atom"
-    prop_fast_words_atom_correct
+    (withMaxSuccess 10000 prop_fast_words_atom_correct)
 
   checkProp "Fast matches reference: Atom -> Vector Word"
-    prop_fast_atom_words_correct
+    (withMaxSuccess 10000 prop_fast_atom_words_correct)
 
   checkProp "Fast matches reference: ByteString -> Atom"
-    prop_fast_bytes_atom_correct
+    (withMaxSuccess 10000 prop_fast_bytes_atom_correct)
 
   checkProp "Fast matches reference: Atom -> ByteString"
-    prop_fast_atom_bytes_correct
+    (withMaxSuccess 10000 prop_fast_atom_bytes_correct)
+
+  checkProp "Fast matches reference: Atom Import"
+    (withMaxSuccess 10000 prop_fast_atom_import_correct)
+
+  checkProp "Fast matches reference: Atom Export"
+    (withMaxSuccess 10000 prop_fast_atom_export_correct)
 
   res <- readIORef failed
   when (res /= 0) $ do
