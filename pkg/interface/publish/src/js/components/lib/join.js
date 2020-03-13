@@ -159,7 +159,7 @@ export class JoinScreen extends Component {
             disabled={(this.state.disable) || (!state.book) || (state.book === "/")}
             onClick={this.onClickJoin.bind(this)}
             className={joinClasses}
-          >Join Chat</button>
+          >Join Notebook</button>
         </div>
       </div>
     );
