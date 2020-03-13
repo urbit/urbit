@@ -3229,6 +3229,8 @@
     ::  no-op on spurious response from vane due to gall breach bug
     ::
     ?:  =(~ pending-vane-ack.state)
+      =/  dat  ok^her.channel^her-life.channel
+      ~>  %slog.0^leaf/"ames: ignoring spurious %done {<dat>}"
       message-sink
     ::
     =^  pending  pending-vane-ack.state  ~(get to pending-vane-ack.state)
