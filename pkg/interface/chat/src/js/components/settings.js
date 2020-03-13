@@ -23,6 +23,7 @@ export class SettingsScreen extends Component {
     this.changeTitle = this.changeTitle.bind(this);
     this.changeDescription = this.changeDescription.bind(this);
     this.changeColor = this.changeColor.bind(this);
+    this.submitColor = this.submitColor.bind(this);
   }
 
   componentDidMount() {
@@ -31,7 +32,7 @@ export class SettingsScreen extends Component {
       this.setState({
         title: props.association.metadata.title,
         description: props.association.metadata.description,
-        color: uxToHex(props.association.metadata.color)
+        color: `#${uxToHex(props.association.metadata.color)}`
       });
     }
   }
@@ -47,12 +48,12 @@ export class SettingsScreen extends Component {
       });
     }
 
-    if ((this.state.title === "") && (prevProps !== this.props)) {
+    if ((state.title === "") && (prevProps !== props)) {
       if (props.association && "metadata" in props.association)
         this.setState({
           title: props.association.metadata.title,
           description: props.association.metadata.description,
-          color: uxToHex(props.association.metadata.color)
+          color: `#${uxToHex(props.association.metadata.color)}`
         });
     }
   }
@@ -67,6 +68,41 @@ export class SettingsScreen extends Component {
 
   changeColor() {
     this.setState({color: event.target.value});
+  }
+
+  submitColor() {
+    let { props, state } = this;
+
+    let color = state.color;
+    if (color.startsWith("#")) {
+      color = state.color.substr(1);
+    }
+    let hexExp = /([0-9A-Fa-f]{6})/
+    let hexTest = hexExp.exec(color);
+    let currentColor = "000000";
+    if (props.association && "metadata" in props.association) {
+      currentColor = uxToHex(props.association.metadata.color);
+    }
+    if (hexTest && (hexTest[1] !== currentColor)) {
+      let chatOwner = (deSig(props.match.params.ship) === window.ship);
+      let association =
+        (props.association) && ("metadata" in props.association)
+          ? props.association : {};
+
+      if (chatOwner) {
+        props.api.setSpinner(true);
+        props.api.metadataAdd(
+          association['app-path'],
+          association['group-path'],
+          association.metadata.title,
+          association.metadata.description,
+          association.metadata['date-created'],
+          color
+        ).then(() => {
+          props.api.setSpinner(false);
+        })
+      }
+    }
   }
 
   deleteChat() {
@@ -174,28 +210,22 @@ export class SettingsScreen extends Component {
           <p className="f8 mt3 lh-copy">Change color</p>
           <p className="f9 gray2 db mb4">Give this chat a color when viewing group channels</p>
           <div className="relative w-100 flex"
-            style={{ maxWidth: "20rem" }}>
+            style={{ maxWidth: "10rem" }}>
+            <div className="absolute"
+              style={{
+                height: 16,
+                width: 16,
+                backgroundColor: state.color,
+                top: 13,
+                left: 11
+                }}/>
             <input
-              className={"f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
+              className={"pl7 f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
                 "focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3"}
               value={this.state.color}
               disabled={!chatOwner}
               onChange={this.changeColor}
-              onBlur={() => {
-                if ((chatOwner) && (this.state.color.match(/[0-9A-F]{6}/i))) {
-                  props.api.setSpinner(true);
-                  props.api.metadataAdd(
-                    association['app-path'],
-                    association['group-path'],
-                    association.metadata.title,
-                    association.metadata.description,
-                    association.metadata['date-created'],
-                    this.state.color
-                  ).then(() => {
-                    props.api.setSpinner(false);
-                  })
-                }
-              }}
+              onBlur={this.submitColor}
             />
           </div>
         </div>
