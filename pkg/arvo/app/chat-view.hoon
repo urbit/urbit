@@ -440,16 +440,24 @@
 ++  envelope-scry
   |=  pax=path
   ^-  (list envelope)
-  =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/envelopes pax /noun)
-  .^((list envelope) %gx pax)
+  (scry-for (list envelope) %chat-store [%envelopes pax])
 ::
 ++  configs-scry
   ^-  chat-configs
-  .^(chat-configs %gx /=chat-store/(scot %da now.bol)/configs/noun)
+  (scry-for chat-configs %chat-store /configs)
 ::
 ++  group-scry
   |=  pax=path
   ^-  (unit group)
-  .^((unit group) %gx ;:(weld /=group-store/(scot %da now.bol) pax /noun))
+  (scry-for (unit group) %group-store pax)
 ::
+++  scry-for
+  |*  [=mold app=term =path]
+  .^  mold
+    %gx
+    (scot %p our.bol)
+    app
+    (scot %da now.bol)
+    (snoc `^path`path %noun)
+  ==
 --
