@@ -23,6 +23,7 @@ export class SettingsScreen extends Component {
     this.changeTitle = this.changeTitle.bind(this);
     this.changeDescription = this.changeDescription.bind(this);
     this.changeColor = this.changeColor.bind(this);
+    this.submitColor = this.submitColor.bind(this);
   }
 
   componentDidMount() {
@@ -55,40 +56,6 @@ export class SettingsScreen extends Component {
           color: `#${uxToHex(props.association.metadata.color)}`
         });
     }
-
-    if (state.color !== prevState.color) {
-      //submit color if valid
-      let color = state.color;
-      if (color.startsWith("#")) {
-        color = state.color.substr(1);
-      }
-      let hexExp = /([0-9A-Fa-f]{6})/
-      let hexTest = hexExp.exec(color);
-      let currentColor = "000000";
-      if (props.association && "metadata" in props.association) {
-        currentColor = uxToHex(props.association.metadata.color);
-      }
-      if (hexTest && (hexTest[1] !== currentColor)) {
-        let chatOwner = (deSig(props.match.params.ship) === window.ship);
-        let association =
-          (props.association) && ("metadata" in props.association)
-            ? props.association : {};
-
-        if (chatOwner) {
-          props.api.setSpinner(true);
-          props.api.metadataAdd(
-            association['app-path'],
-            association['group-path'],
-            association.metadata.title,
-            association.metadata.description,
-            association.metadata['date-created'],
-            color
-          ).then(() => {
-            props.api.setSpinner(false);
-          })
-        }
-      }
-    }
   }
 
   changeTitle() {
@@ -101,6 +68,41 @@ export class SettingsScreen extends Component {
 
   changeColor() {
     this.setState({color: event.target.value});
+  }
+
+  submitColor() {
+    let { props, state } = this;
+
+    let color = state.color;
+    if (color.startsWith("#")) {
+      color = state.color.substr(1);
+    }
+    let hexExp = /([0-9A-Fa-f]{6})/
+    let hexTest = hexExp.exec(color);
+    let currentColor = "000000";
+    if (props.association && "metadata" in props.association) {
+      currentColor = uxToHex(props.association.metadata.color);
+    }
+    if (hexTest && (hexTest[1] !== currentColor)) {
+      let chatOwner = (deSig(props.match.params.ship) === window.ship);
+      let association =
+        (props.association) && ("metadata" in props.association)
+          ? props.association : {};
+
+      if (chatOwner) {
+        props.api.setSpinner(true);
+        props.api.metadataAdd(
+          association['app-path'],
+          association['group-path'],
+          association.metadata.title,
+          association.metadata.description,
+          association.metadata['date-created'],
+          color
+        ).then(() => {
+          props.api.setSpinner(false);
+        })
+      }
+    }
   }
 
   deleteChat() {
@@ -223,6 +225,7 @@ export class SettingsScreen extends Component {
               value={this.state.color}
               disabled={!chatOwner}
               onChange={this.changeColor}
+              onBlur={this.submitColor}
             />
           </div>
         </div>
