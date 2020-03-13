@@ -25,7 +25,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem. If possible, please also screenshot your browser's dev console. Here are [Chrome's docs](https://developers.google.com/web/tools/chrome-devtools/open) for using this feature.
 
 **Desktop (please complete the following information):**
- - OS: [e.g. iOS]
+ - OS: [e.g. MacOS 10.15.3]
  - Browser [e.g. chrome, safari]
  - Base hash of your urbit ship. Run ` .^(@uv %cz /=base=)` in Dojo to see this.
 
