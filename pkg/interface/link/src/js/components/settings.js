@@ -22,6 +22,7 @@ export class SettingsScreen extends Component {
     this.changeTitle = this.changeTitle.bind(this);
     this.changeDescription = this.changeDescription.bind(this);
     this.changeColor = this.changeColor.bind(this);
+    this.submitColor = this.submitColor.bind(this);
     this.renderDelete = this.renderDelete.bind(this);
     this.renderMetadataSettings = this.renderMetadataSettings.bind(this);
   }
@@ -56,41 +57,6 @@ export class SettingsScreen extends Component {
         color: `#${uxToHex(this.props.resource.metadata.color || '0x0')}`
       });
     }
-
-    if (state.color !== prevState.color) {
-      const { resource } = props;
-
-      if (!("metadata" in resource)) {
-        resource.metadata = {};
-      }
-
-      //submit color if valid
-      let color = state.color;
-      if (color.startsWith("#")) {
-        color = state.color.substr(1);
-      }
-      let hexExp = /([0-9A-Fa-f]{6})/
-      let hexTest = hexExp.exec(color);
-      let currentColor = "000000";
-      if (props.resource && "metadata" in props.resource) {
-        currentColor = uxToHex(props.resource.metadata.color);
-      }
-      if (hexTest && (hexTest[1] !== currentColor)) {
-        if (props.amOwner) {
-          api.setSpinner(true);
-          api.metadataAdd(
-            props.resourcePath,
-            props.groupPath,
-            resource.metadata.title,
-            resource.metadata.description,
-            resource.metadata['date-created'],
-            color
-          ).then(() => {
-            api.setSpinner(false);
-          });
-        }
-      }
-    }
   }
 
   changeTitle() {
@@ -103,6 +69,42 @@ export class SettingsScreen extends Component {
 
   changeColor() {
     this.setState({color: event.target.value});
+  }
+
+  submitColor() {
+    const { props, state } = this;
+    const { resource } = props;
+
+    if (!("metadata" in resource)) {
+      resource.metadata = {};
+    }
+
+    //submit color if valid
+    let color = state.color;
+    if (color.startsWith("#")) {
+      color = state.color.substr(1);
+    }
+    let hexExp = /([0-9A-Fa-f]{6})/
+    let hexTest = hexExp.exec(color);
+    let currentColor = "000000";
+    if (props.resource && "metadata" in props.resource) {
+      currentColor = uxToHex(props.resource.metadata.color);
+    }
+    if (hexTest && (hexTest[1] !== currentColor)) {
+      if (props.amOwner) {
+        api.setSpinner(true);
+        api.metadataAdd(
+          props.resourcePath,
+          props.groupPath,
+          resource.metadata.title,
+          resource.metadata.description,
+          resource.metadata['date-created'],
+          color
+        ).then(() => {
+          api.setSpinner(false);
+        });
+      }
+    }
   }
 
   deleteCollection() {
@@ -225,6 +227,7 @@ export class SettingsScreen extends Component {
               value={this.state.color}
               disabled={!props.amOwner}
               onChange={this.changeColor}
+              onBlur={this.submitColor}
             />
           </div>
         </div>
