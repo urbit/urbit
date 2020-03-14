@@ -136,6 +136,7 @@
 ++  brts  (rch-1sp-1h %brts)
 ++  tsnt  (rch-1sk-2h %tsnt)
 ++  kthp  (rch-1sp-1h %kthp)
+++  cltr  (rch-lh %cltr)
 
 ++  rune
   |=  =hast
@@ -146,6 +147,7 @@
      %cncl   (cncl hast)
      %tsnt   (tsnt hast)
      %kthp   (kthp hast)
+     %cltr   (cltr hast)
    ==
 
 ++  all
@@ -207,4 +209,11 @@
     !!
   [tag (all i.children.hast) (turn t.children.hast all)]
 
++$  rch-lh-tags  ?(%clsg %cltr %wtbr %wtpd)
+++  rch-lh
+  |*  tag=rch-lh-tags
+  |=  =hast
+  ^-  hoon
+  ?>  ?=(%rune -.hast)
+  [tag (turn children.hast all)]
 --
