@@ -59,9 +59,18 @@ wordsAtom =
   A.wordsAtom
 #endif
 
+-- My export routine is faster but doesn't work in GHCJS.
+-- TODO: It also doesn't work on big-endian machines.
 atomBytes :: Atom -> ByteString
-atomBytes = A.exportBytes
+atomBytes =
+#if defined(__GHCJS__)
+  A.exportBytes
+#else
+  A.atomBytes
+#endif
 
+
+-- GMP's import is always faster than my loading routine.
 bytesAtom :: ByteString -> Atom
 bytesAtom = A.importBytes
 
