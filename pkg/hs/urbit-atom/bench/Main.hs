@@ -36,8 +36,7 @@ main = defaultMain
                       , bench "mai" $ whnf maiDump a64
                       ]
 
-  , bgroup "big-dump" [ bench "slo" $ whnf sloDump a32768
-                      , bench "gmp" $ whnf gmpDump a32768
+  , bgroup "big-dump" [ bench "gmp" $ whnf gmpDump a32768
                       , bench "mai" $ whnf maiDump a32768
                       ]
 
@@ -46,8 +45,7 @@ main = defaultMain
                       , bench "mai" $ whnf maiLoad bDog
                       ]
 
-  , bgroup "big-load" [ bench "slo" $ whnf sloLoad bBigDog
-                      , bench "gmp" $ whnf gmpLoad bBigDog
+  , bgroup "big-load" [ bench "gmp" $ whnf gmpLoad bBigDog
                       , bench "mai" $ whnf maiLoad bBigDog
                       ]
   ]
