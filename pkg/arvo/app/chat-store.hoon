@@ -190,8 +190,8 @@
   ?~  mailbox
     [~ state]
   =.  letter.envelope.act  (evaluate-letter [author letter]:envelope.act)
-  =.  u.mailbox  (append-envelope u.mailbox envelope.act)
-  :-  (send-diff path.act act)
+  =^  envelope  u.mailbox  (append-envelope u.mailbox envelope.act)
+  :-  (send-diff path.act act(envelope envelope))
   state(inbox (~(put by inbox) path.act u.mailbox))
 ::
 ++  handle-messages
@@ -213,8 +213,8 @@
         evaluated-envelopes
     ==
   =.  letter.i.envelopes.act  (evaluate-letter [author letter]:i.envelopes.act)
-  =.  evaluated-envelopes  (snoc evaluated-envelopes i.envelopes.act)
-  =.  u.mailbox  (append-envelope u.mailbox i.envelopes.act)
+  =^  envelope  u.mailbox  (append-envelope u.mailbox i.envelopes.act)
+  =.  evaluated-envelopes  (snoc evaluated-envelopes envelope)
   $(envelopes.act t.envelopes.act)
 ::
 ++  handle-read
@@ -242,12 +242,12 @@
 ::
 ++  append-envelope
   |=  [=mailbox =envelope]
-  ^-  ^mailbox
+  ^+  [envelope mailbox]
   =.  number.envelope  +(length.config.mailbox)
   =:  length.config.mailbox  +(length.config.mailbox)
       envelopes.mailbox  (snoc envelopes.mailbox envelope)
   ==
-  mailbox
+  [envelope mailbox]
 ::
 ++  update-subscribers
   |=  [pax=path update=chat-update]
