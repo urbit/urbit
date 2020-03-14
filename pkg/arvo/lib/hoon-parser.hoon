@@ -2,7 +2,7 @@
 /+  *recoverable-parser
 |%
 ::
-++  bug  %.y
+++  bug  %.n
 ++  main
   |=  =path
   ^-  (like hast)

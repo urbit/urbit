@@ -40,8 +40,8 @@
   ==
 ++  irregular-skin
   |=  =hast
-  ^-  skin
   ?>  ?=(%irregular -.hast)
+  ^-  skin
   %+  scan
     tape.hast
   ;~  pose
@@ -131,48 +131,22 @@
   ^-  spec
   ?>  ?=(%irregular -.hast)
   (scan tape.hast scad:vast)
-++  cncl
-  |=  =hast
-  ^-  hoon
-  ?>  ?=(%rune -.hast)
-  ?~  children.hast
-    !!
-  [%cncl (all i.children.hast) (turn t.children.hast all)]
 ::
-++  brts
-  |=  =hast
-  ^-  hoon
-  ?>  ?=(%rune -.hast)
-  ?.  =((lent children.hast) 2)
-    !!
-  =/  sample=spec
-    (all-spec (snag 0 children.hast))
-  =/  product=hoon
-    (all (snag 1 children.hast))
-  [%brts sample product]
-++  tsnt
-  |=  =hast
-  ^-  hoon
-  ?>  ?=(%rune -.hast)
-  ?.  =((lent children.hast) 3)
-    !!
-  =/  =skin
-    (all-skin (snag 0 children.hast))
-  =/  value=hoon
-    (all (snag 1 children.hast))
-  =/  rest=hoon
-    (all (snag 2 children.hast))
-  [%tsnt skin value rest]
-::
+++  cncl  (rch-1h-lh %cncl)
+++  brts  (rch-1sp-1h %brts)
+++  tsnt  (rch-1sk-2h %tsnt)
+++  kthp  (rch-1sp-1h %kthp)
+
 ++  rune
   |=  =hast
   ^-  hoon
   ?>  ?=(%rune -.hast)
-  ?+  name.hast  !!
-      %brts   (brts hast)
-      %cncl   (cncl hast)
-      %tsnt   (tsnt hast)
-  ==
+  ?+  name.hast  ~|('bad rune' !!)
+     %brts   (brts hast)
+     %cncl   (cncl hast)
+     %tsnt   (tsnt hast)
+     %kthp   (kthp hast)
+   ==
 
 ++  all
   |=  =hast
@@ -183,33 +157,54 @@
     %irregular
       (irregular hast)
   ==
-
-
-
-::  |_  [errors=(list @t) ~]
-::  ++  transform
-::    |=  =hast
-::    ?+  -.hast  !!
-::        ::
-::        %rune
-
-
-
-
-::  ++  check-rune-children
-::    |=  [name=@ta children=(list hast)]
-
-::  ++  get-core-arms
-::    |=  arms=(list hast)
-::    =|  tail=(map term hoon)
-::    |-  ^-  [tail=(map term hoon)]
-::    ?~  arms
-::      ~
-::    ?.  ?=(%core-arm -.i.arm)
-::      =.  errors  ['Not arm' errors]
-::      []
-
-
-  
+::  ++  rc-single
+::    |*  kind=node-kind
+::    ^-  $>(kind
+::    ?-  kind
+::  +$  to-hoon  $-(hast hoon)
+::  +$  to-spec  $-(hast spec)
+::  +$  to-skin  $-(hast skin)
+:: Runechildren name layout:
+:: rch -> runechildren returning hoon
+:: 1sp -> 1 spec followed by
+:: 1h ->  1 hoon
++$  rch-1sp-1h-tags  ?(%kthp %brts %mcmc %tsbr %zpld)
+++  rch-1sp-1h
+  |*  name=rch-1sp-1h-tags
+  |=  =hast
+  ^-  hoon
+  ?>  ?=(%rune -.hast)
+  ?.  =((lent children.hast) 2)
+    !!
+  =/  first=spec
+    (all-spec (snag 0 children.hast))
+  =/  second=hoon
+    (all (snag 1 children.hast))
+  [name first second]
++$  rch-1sk-2h-tags  ?(%tsnt %tsmc)
+++  rch-1sk-2h
+  |*  tag=rch-1sk-2h-tags
+  |=  =hast
+  ^-  hoon
+  ?>  ?=(%rune -.hast)
+  ?.  =((lent children.hast) 3)
+    !!
+  =/  first=skin
+    (all-skin (snag 0 children.hast))
+  =/  second=hoon
+    (all (snag 1 children.hast))
+  =/  third=hoon
+    (all (snag 2 children.hast))
+  [tag first second third]
+::  lh - list of hoons
++$  rch-1h-lh-tags  ?(%cncl %mccl %mcsg)
+++  rch-1h-lh
+  |*  tag=rch-1h-lh-tags
+  |=  =hast
+  ^-  hoon
+  ?>  ?=(%rune -.hast)
+  ?~  children.hast
+    !!
+  [tag (all i.children.hast) (turn t.children.hast all)]
 
 --
