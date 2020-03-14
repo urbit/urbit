@@ -134,8 +134,7 @@ export class ChatInput extends Component {
   isUrl(string) {
     try {
       let websiteTest = new RegExp(''
-        + /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}/.source
-        + /\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.source
+      + /((\w+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+)/.source
       );
       return websiteTest.test(string);
     } catch (e) {
