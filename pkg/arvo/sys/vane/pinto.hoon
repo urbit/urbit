@@ -70,24 +70,22 @@
       =state
   ==
 +$  state
-  $:  makes=(map duct [live=? job=make-build])
-      marks=(map duct mark-build)
-      =hoon-cache
+  $:  builds=(map duct build-state)
+      cache=hoon-cache
   ==
-++  make-build
-  =/  m  (fume ,vase)
-  $:  =desk
-      =case
+++  build-state
+  =/  m-make  (fume ,vase)
+  =/  m-mark  (fume ,dais)
+  =/  m-cast  (fume ,$-(vase vase))
+  $:  build-meta
       left=@ud
-      states=(map path [out=eval-output:m state=eval-state:m])
-  ==
-++  mark-build
-  =/  m  (fume ,cage)
-  $:  =desk
-      =case
-      left=@ud
-      states=(map path [out=eval-output:m state=eval-state:m])
-  ==
+      $=  states
+      $%  [%make all=(map path eval-res:m-make)]
+          [%mark all=(map mark eval-res:m-mark)]
+          [%cast all=(map [a=mark b=mark] eval-res:m-cast)]
+  ==  ==
+::
++$  build-meta  [live=? =desk =case]
 ::  $pile: preprocessed hoon source file
 ::
 +$  pile
@@ -202,6 +200,8 @@
     ^-  form
     ;<  res=b  bind  m-b
     (pure (fun res))
+  ::
+  +$  eval-res  [out=eval-output state=eval-state]
   ::
   +$  eval-state
     $:  nex=(unit [=spar on-load=form])
@@ -701,8 +701,7 @@
     !!
   ::
       %drop
-    =.  makes.state.ax  (~(del by makes.state.ax) duct)
-    =.  marks.state.ax  (~(del by marks.state.ax) duct)
+    =.  builds.state.ax  (~(del by builds.state.ax) duct)
     [~ ford-gate]
   ==
 ++  take
