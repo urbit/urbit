@@ -1,0 +1,13 @@
+{
+  "name": "Landscape",
+  "short_name": "Landscape",
+  "description": "A graphical web interface for your Urbit ship.",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#000000",
+  "icons": [{
+    "src": "/~launch/img/Favicon.png",
+    "sizes": "128x128",
+    "type": "image/png"
+  }]
+}
