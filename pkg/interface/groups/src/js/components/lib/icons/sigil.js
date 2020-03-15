@@ -17,12 +17,12 @@ export class Sigil extends Component {
       return (
         <div
           className={"dib " + classes}
-          style={{ flexBasis: 32, backgroundColor: props.color }}>
+          style={{ flexBasis: 32, backgroundColor: props.backgroundColor }}>
           {sigil({
             patp: props.ship,
             renderer: reactRenderer,
             size: props.size,
-            colors: [props.color, "white"]
+            colors: [props.backgroundColor, props.foregroundColor]
           })}
         </div>
       );

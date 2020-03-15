@@ -38,7 +38,8 @@
       [%phone s+phone.con]
       [%website s+website.con]
       [%notes s+notes.con]
-      [%color s+(scot %ux color.con)]
+      [%'foregroundColor' s+(scot %ux foreground-color.con)]
+      [%'backgroundColor' s+(scot %ux background-color.con)]
       [%avatar s+'TODO']
   ==
 ::
@@ -46,15 +47,15 @@
   |=  edit=edit-field
   ^-  json
   =,  enjs:format
-  %+  frond  -.edit
   ?-  -.edit
-    %nickname  s+nickname.edit
-    %email     s+email.edit
-    %phone     s+phone.edit
-    %website   s+website.edit
-    %notes     s+notes.edit
-    %color     s+(scot %ux color.edit)
-    %avatar    s+'TODO'
+    %nickname          (frond %nickname s+nickname.edit)
+    %email             (frond %email s+email.edit)
+    %phone             (frond %phone s+phone.edit)
+    %website           (frond %website s+website.edit)
+    %notes             (frond %notes s+notes.edit)
+    %foreground-color  (frond 'foregroundColor' s+(scot %ux foreground-color.edit))
+    %background-color  (frond 'backgroundColor' s+(scot %ux background-color.edit))
+    %avatar            (frond %avatar s+'TODO')
   ==
 ::
 ++  update-to-json
@@ -191,7 +192,8 @@
       [%phone so:dejs:format]
       [%website so:dejs:format]
       [%notes so:dejs:format]
-      [%color nu]
+      [%foreground-color nu]
+      [%background-color nu]
       [%avatar (mu:dejs:format avat)]
   ==
 ::
@@ -202,7 +204,8 @@
       [%phone so:dejs:format]
       [%website so:dejs:format]
       [%notes so:dejs:format]
-      [%color nu]
+      [%foreground-color nu]
+      [%background-color nu]
       [%avatar (mu:dejs:format avat)]
   ==
 --

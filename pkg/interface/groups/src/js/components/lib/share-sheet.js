@@ -9,7 +9,6 @@ export class ShareSheet extends Component {
   render() {
     const { props } = this;
     let selectedClass = (props.selected) ? "bg-gray4" : "";
-    let hexColor = uxToHex(props.color);
 
     return (
       <div>
@@ -18,7 +17,8 @@ export class ShareSheet extends Component {
           key={props.ship}
           ship={props.ship}
           nickname={props.nickname}
-          color={props.color}
+          backgroundColor={props.backgroundColor}
+          foregroundColor={props.foregroundColor}
           path={props.path}
           selected={props.selected}
           share={true} />

@@ -14,14 +14,16 @@ export class ContactSidebar extends Component {
       props.activeDrawer === "contacts" ? "db" : "dn db-ns";
 
     let me = (window.ship in props.defaultContacts) ?
-      props.defaultContacts[window.ship] : { color: '0x0', nickname: null};
+      props.defaultContacts[window.ship] :
+      {foregroundColor: '0xff.ffff', backgroundColor: '0x0', nickname: null};
 
     let shareSheet =
       !(window.ship in props.contacts) ?
       ( <ShareSheet
           ship={window.ship}
           nickname={me.nickname}
-          color={me.color}
+          foregroundColor={me.foregroundColor}
+          backgroundColor={me.backgroundColor}
           path={props.path}
           selected={props.path + "/" + window.ship === props.selectedContact}
         />
@@ -39,7 +41,8 @@ export class ContactSidebar extends Component {
             key={contact}
             ship={contact}
             nickname={obj.nickname}
-            color={obj.color}
+            foregroundColor={obj.foregroundColor}
+            backgroundColor={obj.backgroundColor}
             path={props.path}
             selected={path === props.selectedContact}
             share={false}
@@ -56,7 +59,8 @@ export class ContactSidebar extends Component {
             "bg-white bg-gray0-d"}>
             <Sigil
               ship={member}
-              color="#000000"
+              foregroundColor="#FFFFFF"
+              backgroundColor="#000000"
               size={32}
               classes="mix-blend-diff"
               />

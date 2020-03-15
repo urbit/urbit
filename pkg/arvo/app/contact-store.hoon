@@ -5,10 +5,15 @@
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-zero
+      state-one
   ==
 ::
 +$  state-zero
   $:  %0
+      rolodex=rolodex-old
+  ==
++$  state-one
+  $:  %1
       =rolodex
   ==
 +$  diff
@@ -16,7 +21,7 @@
   ==
 --
 ::
-=|  state-zero
+=|  state-one
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -31,8 +36,7 @@
   ++  on-save   !>(state)
   ++  on-load
     |=  old=vase
-    `this(state !<(state-zero old))
-  ::
+    `this(state (upgrade-state !<(versioned-state old)))
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
@@ -161,13 +165,14 @@
   |=  [con=contact edit=edit-field]
   ^-  contact
   ?-  -.edit
-      %nickname  con(nickname nickname.edit)
-      %email     con(email email.edit)
-      %phone     con(phone phone.edit)
-      %website   con(website website.edit)
-      %notes     con(notes notes.edit)
-      %color     con(color color.edit)
-      %avatar    con(avatar avatar.edit)
+      %nickname          con(nickname nickname.edit)
+      %email             con(email email.edit)
+      %phone             con(phone phone.edit)
+      %website           con(website website.edit)
+      %notes             con(notes notes.edit)
+      %background-color  con(background-color background-color.edit)
+      %foreground-color  con(foreground-color foreground-color.edit)
+      %avatar            con(avatar avatar.edit)
   ==
 ::
 ++  send-diff
@@ -178,4 +183,28 @@
     ~[/all /updates [%contacts pax]]
     %contact-update  !>(upd)
   ==  ==
+++  upgrade-state
+  |=  old=versioned-state
+  =?  old  ?=(%0 -.old)
+    (state-0-to-1 old)
+  ?>  ?=(%1 -.old)
+  old
+++  state-0-to-1
+  |=  s=state-zero
+  ^-  state-one
+  :-  %1
+  %-  ~(run by rolodex.s)
+  |=  c=contacts-old
+  %-  ~(run by c)
+  |=  old=contact-old
+  ^-  contact
+  :*  nickname.old
+      email.old
+      phone.old
+      website.old
+      notes.old
+      0xff.ffff
+      color.old
+      avatar.old
+  ==
 --

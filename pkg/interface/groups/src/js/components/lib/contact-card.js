@@ -11,7 +11,8 @@ export class ContactCard extends Component {
     super(props);
     this.state = {
       edit: props.share,
-      colorToSet: null,
+      foregroundColorToSet: null,
+      backgroundColorToSet: null,
       nickNameToSet: null,
       emailToSet: null,
       phoneToSet: null,
@@ -19,7 +20,8 @@ export class ContactCard extends Component {
       notesToSet: null
     };
     this.editToggle = this.editToggle.bind(this);
-    this.sigilColorSet = this.sigilColorSet.bind(this);
+    this.sigilForegroundColorSet = this.sigilForegroundColorSet.bind(this);
+    this.sigilBackgroundColorSet = this.sigilBackgroundColorSet.bind(this);
     this.nickNameToSet = this.nickNameToSet.bind(this);
     this.emailToSet = this.emailToSet.bind(this);
     this.phoneToSet = this.phoneToSet.bind(this);
@@ -35,7 +37,8 @@ export class ContactCard extends Component {
     if (props.ship !== prevProps.ship) {
       this.setState({
         edit: props.share,
-        colorToSet: null,
+        foregroundColorToSet: null,
+        backgroundColorToSet: null,
         nickNameToSet: null,
         emailToSet: null,
         phoneToSet: null,
@@ -46,13 +49,22 @@ export class ContactCard extends Component {
     }
     // sigil color updates are done by keystroke parsing on update
     // other field edits are exclusively handled by setField()
-    let currentColor = (props.contact.color) ? props.contact.color : "000000";
-    currentColor = uxToHex(currentColor);
+    let currentBackgroundColor = (props.contact.backgroundColor) ?
+      props.contact.backgroundColor : "FFFFFF";
+    currentBackgroundColor = uxToHex(currentBackgroundColor);
     let hexExp = /([0-9A-Fa-f]{6})/
-    let hexTest = hexExp.exec(this.state.colorToSet);
+    let backgroundHexTest = hexExp.exec(this.state.backgroundColorToSet);
 
-    if (hexTest && (hexTest[1] !== currentColor) && !props.share) {
-      api.contactEdit(props.path, `~${props.ship}`, {color: hexTest[1]});
+    let currentForegroundColor = (props.contact.foregroundColor) ?
+      props.contact.foregroundColor : "000000";
+    currentForegroundColor = uxToHex(currentForegroundColor);
+    let foregroundHexTest = hexExp.exec(this.state.foregroundColorToSet);
+
+    if (backgroundHexTest && (backgroundHexTest[1] !== currentBackgroundColor) && !props.share) {
+      api.contactEdit(props.path, `~${props.ship}`, {"background-color": backgroundHexTest[1]});
+    }
+    if (foregroundHexTest && (foregroundHexTest[1] !== currentForegroundColor) && !props.share) {
+      api.contactEdit(props.path, `~${props.ship}`, {"foreground-color": foregroundHexTest[1]});
     }
   }
 
@@ -83,8 +95,12 @@ export class ContactCard extends Component {
     this.setState({ websiteToSet: value });
   }
 
-  sigilColorSet(event) {
-    this.setState({ colorToSet: event.target.value });
+  sigilForegroundColorSet(event) {
+    this.setState({ foregroundColorToSet: event.target.value.toLowerCase() });
+  }
+
+  sigilBackgroundColorSet(event) {
+    this.setState({ backgroundColorToSet: event.target.value.toLowerCase() });
   }
 
   shipParser(ship) {
@@ -222,14 +238,16 @@ export class ContactCard extends Component {
       phone: props.rootIdentity.phone,
       website: props.rootIdentity.website,
       notes: props.rootIdentity.notes,
-      color: uxToHex(props.rootIdentity.color)
+      foregroundColor: uxToHex(props.rootIdentity.foregroundColor),
+      backgroundColor: uxToHex(props.rootIdentity.backgroundColor)
     } : {
       nickname: props.contact.nickname,
       email: props.contact.email,
       phone: props.contact.phone,
       website: props.contact.website,
       notes: props.contact.notes,
-      color: props.contact.color
+      foregroundColor: props.contact.foregroundColor,
+      backgroundColor: props.contact.backgroundColor
     };
 
     let contact = {
@@ -238,7 +256,8 @@ export class ContactCard extends Component {
       phone: this.pickFunction(state.phoneToSet, defaultVal.phone),
       website: this.pickFunction(state.websiteToSet, defaultVal.website),
       notes: this.pickFunction(state.notesToSet, defaultVal.notes),
-      color: this.pickFunction(state.colorToSet, defaultVal.color),
+      "foreground-color": this.pickFunction(state.foregroundColorToSet, defaultVal.foregroundColor),
+      "background-color": this.pickFunction(state.backgroundColorToSet, defaultVal.backgroundColor),
       avatar: null
     };
     api.setSpinner(true);
@@ -260,7 +279,8 @@ export class ContactCard extends Component {
       phone: "",
       website: "",
       notes: "",
-      color: "000000",
+      "foreground-color": "FFFFFF",
+      "background-color": "000000",
       avatar: null
     };
 
@@ -286,22 +306,33 @@ export class ContactCard extends Component {
       phone: props.rootIdentity.phone,
       website: props.rootIdentity.website,
       notes: props.rootIdentity.notes,
-      color: props.rootIdentity.color
+      foregroundColor: props.rootIdentity.foregroundColor,
+      backgroundColor: props.rootIdentity.backgroundColor
     } : {
       nickname: props.contact.nickname,
       email: props.contact.email,
       phone: props.contact.phone,
       website: props.contact.website,
       notes: props.contact.notes,
-      color: props.contact.color
+      foregroundColor: props.contact.foregroundColor,
+      backgroundColor: props.contact.backgroundColor
     };
 
     let shipType = this.shipParser(props.ship);
 
-    let defaultColor = !!defaultValue.color ? defaultValue.color : "000000";
-    defaultColor = uxToHex(defaultColor);
-    let currentColor = !!state.colorToSet ? state.colorToSet : defaultColor;
-    currentColor = uxToHex(currentColor);
+    let defaultForegroundColor = !!defaultValue.foregroundColor ?
+      defaultValue.foregroundColor : "000000";
+    defaultForegroundColor = uxToHex(defaultForegroundColor);
+    let currentForegroundColor = !!state.foregroundColorToSet ?
+      state.foregroundColorToSet : defaultForegroundColor;
+    currentForegroundColor = uxToHex(currentForegroundColor);
+
+    let defaultBackgroundColor = !!defaultValue.backgroundColor ?
+      defaultValue.backgroundColor : "FFFFFF";
+    defaultBackgroundColor = uxToHex(defaultBackgroundColor);
+    let currentBackgroundColor = !!state.backgroundColorToSet ?
+      state.backgroundColorToSet : defaultBackgroundColor;
+    currentBackgroundColor = uxToHex(currentBackgroundColor);
 
     let sigilColor = "";
     let hasAvatar =
@@ -311,13 +342,27 @@ export class ContactCard extends Component {
       sigilColor = (
         <div className="tl mt4 mb4 w-auto ml-auto mr-auto"
           style={{ width: "fit-content" }}>
-          <p className="f9 gray2 lh-copy">Sigil Color</p>
+          <p className="f9 gray2 lh-copy">Sigil Foreground Color</p>
+          <textarea
+            className={"b--gray4 b--gray2-d black white-d bg-gray0-d f7 ba db pl2 " +
+                       "focus-b--black focus-b--white-d"}
+            onChange={this.sigilForegroundColorSet}
+            defaultValue={defaultForegroundColor}
+            key={"fg" + defaultForegroundColor}
+            style={{
+              resize: "none",
+              height: 40,
+              paddingTop: 10,
+              width: 114
+            }}>
+          </textarea>
+          <p className="f9 gray2 lh-copy">Sigil Background Color</p>
           <textarea
             className={"b--gray4 b--gray2-d black white-d bg-gray0-d f7 ba db pl2 " +
             "focus-b--black focus-b--white-d"}
-            onChange={this.sigilColorSet}
-            defaultValue={defaultColor}
-            key={"default" + defaultColor}
+            onChange={this.sigilBackgroundColorSet}
+            defaultValue={defaultBackgroundColor}
+            key={"bg" + defaultBackgroundColor}
             style={{
               resize: "none",
               height: 40,
@@ -343,8 +388,9 @@ export class ContactCard extends Component {
       : <Sigil
           ship={props.ship}
           size={128}
-          color={"#" + currentColor}
-          key={"avatar" + currentColor} />;
+          foregroundColor={"#" + currentForegroundColor}
+          backgroundColor={"#" + currentBackgroundColor}
+          key={"avatar" + currentBackgroundColor} />;
 
     return (
       <div className="w-100 mt8 flex justify-center pa4 pt8 pt0-l pa0-xl pt4-xl pb8">
@@ -403,8 +449,14 @@ export class ContactCard extends Component {
   renderCard() {
     const { props } = this;
     let shipType = this.shipParser(props.ship);
-    let currentColor = props.contact.color ? props.contact.color : "0x0";
-    let hexColor = uxToHex(currentColor);
+
+    let currentForegroundColor = props.contact.foregroundColor ?
+      props.contact.foregroundColor : "0xff.ffff";
+    let hexForegroundColor = uxToHex(currentForegroundColor);
+
+    let currentBackgroundColor = props.contact.backgroundColor ?
+      props.contact.backgroundColor : "0x0";
+    let hexBackgroundColor = uxToHex(currentBackgroundColor);
 
     let avatar =
       ('avatar' in props.contact && props.contact.avatar !== "TODO") ?
@@ -412,8 +464,9 @@ export class ContactCard extends Component {
       <Sigil
         ship={props.ship}
         size={128}
-        color={"#" + hexColor}
-        key={hexColor} />;
+        foregroundColor={"#" + hexForegroundColor}
+        backgroundColor={"#" + hexBackgroundColor}
+        key={hexBackgroundColor} />;
 
     let websiteHref =
       (props.contact.website && props.contact.website.includes("://")) ?

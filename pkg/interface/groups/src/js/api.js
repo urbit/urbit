@@ -116,7 +116,8 @@ class UrbitApi {
     {phone: ''}
     {website: ''}
     {notes: ''}
-    {color: 'fff'}  // with no 0x prefix
+    {background-color: 'fff'}  // with no 0x prefix
+    {foreground-color: 'fff'}  // with no 0x prefix
     {avatar: null}
     {avatar: {p: length, q: bytestream}}
     */

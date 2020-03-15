@@ -23,7 +23,8 @@ export class GroupSidebar extends Component {
                 selectedClass}>
               <Sigil
               ship={window.ship}
-              color="#000000"
+              foregroundColor="#FFFFFF"
+              backgroundColor="#000000"
               classes="mix-blend-diff"
               size={32}/>
               <p

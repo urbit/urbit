@@ -9,7 +9,8 @@ export class ContactItem extends Component {
     const { props } = this;
 
     let selectedClass = (props.selected) ? "bg-gray4 bg-gray1-d" : "";
-    let hexColor = uxToHex(props.color);
+    let hexBackgroundColor = uxToHex(props.backgroundColor);
+    let hexForegroundColor = uxToHex(props.foregroundColor);
     let name = (props.nickname) ? props.nickname : cite(props.ship);
 
     let prefix = props.share ? 'share' : 'view';
@@ -21,9 +22,10 @@ export class ContactItem extends Component {
         >
           <Sigil
             ship={props.ship}
-            color={"#" + hexColor}
+            backgroundColor={"#" + hexBackgroundColor}
+            foregroundColor={"#" + hexForegroundColor}
             size={32}
-            key={`${props.ship}.sidebar.${hexColor}`} />
+            key={`${props.ship}.sidebar.${hexBackgroundColor}`} />
           <p
             className={
               "f9 w-70 dib v-mid ml2 nowrap " +

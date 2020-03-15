@@ -1,5 +1,18 @@
 /-  *identity
 |%
++$  rolodex-old  (map path contacts-old)
+::
++$  contacts-old  (map ship contact-old)
+::
++$  contact-old
+  $:  nickname=@t
+      email=@t
+      phone=@t
+      website=@t
+      notes=@t
+      color=@ux
+      avatar=(unit avatar)
+  ==
 +$  rolodex  (map path contacts)
 ::
 +$  contacts  (map ship contact)
@@ -12,7 +25,8 @@
       phone=@t
       website=@t
       notes=@t
-      color=@ux
+      foreground-color=$~(0xff.ffff @ux)
+      background-color=@ux
       avatar=(unit avatar)
   ==
 ::
@@ -22,7 +36,8 @@
       [%phone phone=@t]
       [%website website=@t]
       [%notes notes=@t]
-      [%color color=@ux]
+      [%foreground-color foreground-color=@ux]
+      [%background-color background-color=@ux]
       [%avatar avatar=(unit avatar)]
   ==
 ::
