@@ -199,7 +199,7 @@ export class ChatInput extends Component {
   readOnlyRender() {
     const { props } = this;
     let color = !!props.ownerContact
-      ? uxToHex(props.ownerContact.color) : '#000000';
+      ? uxToHex(props.ownerContact.color) : '000000';
 
     let sigilClass = !!props.ownerContact
       ? "" : "mix-blend-diff";
@@ -229,7 +229,7 @@ export class ChatInput extends Component {
     const { props, state } = this;
 
     let color = !!props.ownerContact
-      ? uxToHex(props.ownerContact.color) : '#000000';
+      ? uxToHex(props.ownerContact.color) : '000000';
 
     let sigilClass = !!props.ownerContact
       ? "" : "mix-blend-diff";
