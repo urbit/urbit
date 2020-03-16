@@ -605,7 +605,7 @@
   ?~  saw  [~ state]
   ?+  wir  [~ state]
       [%store @ *]
-    [~ state(synced (~(del by synced) t.wir))]
+    (poke-chat-hook-action %remove t.wir)
   ::
       [%backlog @ @ @ *]
     =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
