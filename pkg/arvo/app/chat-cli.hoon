@@ -185,7 +185,9 @@
   ::
   ^-  state-1
   ?-  -.u.old
-    %1  u.old(bound (~(gas by *(map target glyph)) ~(tap by bound.u.old)))
+      %1
+    =?  width.u.old  =(0 width.u.old)  80
+    u.old(bound (~(gas by *(map target glyph)) ~(tap by bound.u.old)))
   ::
       ?(~ ^)
     :-  %1
