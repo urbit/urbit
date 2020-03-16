@@ -259,6 +259,11 @@ export class Root extends Component {
 
               let popout = props.match.url.includes("/popout/");
 
+              let permission = state.permissions[station] || {
+                kind: "",
+                who: new Set([])
+              };
+              
               let association =
                 station in associations["chat"] ? associations.chat[station] : {};
 
@@ -274,6 +279,7 @@ export class Root extends Component {
                     {...props}
                     station={station}
                     association={association}
+                    permission={permission}
                     api={api}
                     station={station}
                     group={group}

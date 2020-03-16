@@ -245,6 +245,46 @@
         (permission-hook-poke [%add-synced ship.act group-path])
         (metadata-hook-poke [%add-synced ship.act group-path])
     ==
+  ::
+      %groupify
+    ?>  ?=([%'~' ^] app-path.act)
+    =/  data=(unit mailbox)
+      (scry-for (unit mailbox) %chat-store [%mailbox app-path.act])
+    ?~  data
+      ~&  [%cannot-groupify-nonexistent app-path.act]
+      ~
+    =/  permission=(unit permission)
+      (scry-for (unit permission) %permission-store [%permission app-path.act])
+    ?:  |(?=(~ permission) ?=(%black kind.u.permission))
+      ~&  [%cannot-groupify-blacklist app-path.act]
+      ~
+    =/  =metadata
+      =-  (fall - *metadata)
+      %^  scry-for  (unit metadata)
+        %metadata-store
+      =/  encoded-path=@ta
+        (scot %t (spat app-path.act))
+      /metadata/[encoded-path]/chat/[encoded-path]
+    =/  new-path=^path  (slag 1 `path`app-path.act)
+    =/  members=(set ship)
+      %+  fall
+        (group-scry app-path.act)
+      *(set ship)
+    =/  cards-1=(list card)
+        (poke-chat-view-action %delete app-path.act)
+    =/  cards-2=(list card)
+      %-  poke-chat-view-action
+      :*  %create
+          title.metadata
+          description.metadata
+          new-path
+          new-path
+          %village
+          members
+          &
+      ==
+    %+  snoc  (weld cards-1 cards-2)
+    (chat-poke %messages new-path envelopes.u.data)
   ==
   ::
   ++  create-chat
@@ -440,16 +480,24 @@
 ++  envelope-scry
   |=  pax=path
   ^-  (list envelope)
-  =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/envelopes pax /noun)
-  .^((list envelope) %gx pax)
+  (scry-for (list envelope) %chat-store [%envelopes pax])
 ::
 ++  configs-scry
   ^-  chat-configs
-  .^(chat-configs %gx /=chat-store/(scot %da now.bol)/configs/noun)
+  (scry-for chat-configs %chat-store /configs)
 ::
 ++  group-scry
   |=  pax=path
   ^-  (unit group)
-  .^((unit group) %gx ;:(weld /=group-store/(scot %da now.bol) pax /noun))
+  (scry-for (unit group) %group-store pax)
 ::
+++  scry-for
+  |*  [=mold app=term =path]
+  .^  mold
+    %gx
+    (scot %p our.bol)
+    app
+    (scot %da now.bol)
+    (snoc `^path`path %noun)
+  ==
 --

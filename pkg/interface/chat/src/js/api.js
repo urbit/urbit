@@ -24,6 +24,7 @@ class UrbitApi {
       create: this.chatViewCreate.bind(this),
       delete: this.chatViewDelete.bind(this),
       join: this.chatViewJoin.bind(this),
+      groupify: this.chatViewGroupify.bind(this)
     };
 
     this.chatHook = {
@@ -172,6 +173,10 @@ class UrbitApi {
         'ask-history': askHistory
       }
     });
+  }
+
+  chatViewGroupify(path) {
+    return this.chatViewAction({ groupify: { 'app-path': path } });
   }
 
   inviteAction(data) {
