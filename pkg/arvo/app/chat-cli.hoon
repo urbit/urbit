@@ -185,7 +185,9 @@
   ::
   ^-  state-1
   ?-  -.u.old
-    %1  u.old(bound (~(gas by *(map target glyph)) ~(tap by bound.u.old)))
+      %1
+    =?  width.u.old  =(0 width.u.old)  80
+    u.old(bound (~(gas by *(map target glyph)) ~(tap by bound.u.old)))
   ::
       ?(~ ^)
     :-  %1
@@ -632,12 +634,19 @@
     ++  tag   |*(a=@tas (cold a (jest a)))  ::TODO  into stdlib
     ++  ship  ;~(pfix sig fed:ag)
     ++  path  ;~(pfix net ;~(plug urs:ab (easy ~)))  ::NOTE  short only, tmp
+    ::  +mang: un/managed indicator prefix
+    ::
+    ++  mang
+      ;~  pose
+        (cold %| (jest '~/'))
+        (cold %& (easy ~))
+      ==
     ::  +tarl: local target, as /path
     ::
     ++  tarl  (stag our-self path)
-    ::  +tarx: local target, maybe group
+    ::  +tarx: local target, maybe managed
     ::
-    ++  tarx  ;~(plug (fuss 'group ' '') path)
+    ++  tarx  ;~(plug mang path)
     ::  +tarp: sponsor target, as ^/path
     ::
     ++  tarp
@@ -648,7 +657,8 @@
     ++  targ
       ;~  pose
         ;~  plug
-          (fuss 'group ' '')
+          mang
+        ::
           ;~  pose
             tarl
             tarp
@@ -1263,7 +1273,7 @@
   ++  full
     ^-  tape
     ;:  weld
-      ?:(in-group.one "g " "")
+      ?:(in-group.one "" "~/")
       (scow %p ship.one)
       (spud path.one)
     ==
@@ -1276,7 +1286,7 @@
   ++  phat
     ^-  tape
     %+  weld
-      ?:(in-group.one "g " "")
+      ?:(in-group.one "" "~/")
     %+  weld
       ?:  =(our-self ship.one)  ~
       ?:  =((sein:title our.bowl now.bowl our-self) ship.one)  "^"
