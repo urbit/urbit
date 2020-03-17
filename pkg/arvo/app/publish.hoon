@@ -112,7 +112,7 @@
     ?:  ?=(%& -.old-state)
       ?-  -.p.old-state
           %1
-        :_  this(state p.old-state)
+        :_  this(state [%2 +.p.old-state])
         %-  zing
         %+  turn  ~(tap by books.p.old-state)
         |=  [name=@tas book=notebook]
@@ -124,8 +124,10 @@
         ?:  =(u.group-host our.bol)  ~
         :~  %-  perm-group-hook-poke:main
             [%associate writers.book [[writers.book %white] ~ ~]]
+          ::
             (perm-hook-poke:main [%add-owned writers.book writers.book])
         ==
+      ::
           %2
         [~ this(state p.old-state)]
       ==
@@ -975,6 +977,7 @@
     :_  [group-path.group group-path.group]
     :~  %-  perm-group-hook-poke
         [%associate group-path.group [[group-path.group %white] ~ ~]]
+      ::
         (perm-hook-poke [%add-owned group-path.group group-path.group])
     ==
   ::
