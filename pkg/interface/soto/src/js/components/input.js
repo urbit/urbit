@@ -15,6 +15,11 @@ export class Input extends Component {
     }
 
   keyPress = (e) => {
+    if ((e.getModifierState("Control") || event.getModifierState("Meta"))
+       && e.key === "v") {
+      return;
+    }
+
     e.preventDefault();
 
     let ignoredKeys = ["Meta", "Alt", "Control", "Escape", "Shift",
