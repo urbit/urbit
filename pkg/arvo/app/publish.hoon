@@ -49,7 +49,7 @@
       *
   ==
 ::
-+$  state-one
++$  state-two
   $:  our-paths=(list path)
       books=(map @tas notebook)
       subs=(map [@p @tas] notebook)
@@ -57,7 +57,8 @@
   ==
 ::
 +$  versioned-state
-  $%  [%1 state-one]
+  $%  [%1 state-two]
+      [%2 state-two]
   ==
 ::
 +$  metadata-delta
@@ -109,17 +110,28 @@
     =/  old-state=(each versioned-state tang)
       (mule |.(!<(versioned-state old)))
     ?:  ?=(%& -.old-state)
-      [~ this(state p.old-state)]
+      ?-  -.p.old-state
+          %1
+        :_  this(state [%2 +.p.old-state])
+        %-  zing
+        %+  turn  ~(tap by books.p.old-state)
+        |=  [name=@tas book=notebook]
+        ^-  (list card)
+        =/  group-host=(unit @p)
+          ?>  ?=(^ writers.book)
+          (slaw %p i.writers.book)
+        ?~  group-host  ~
+        ?:  =(u.group-host our.bol)  ~
+        :~  %-  perm-group-hook-poke:main
+            [%associate writers.book [[writers.book %white] ~ ~]]
+          ::
+            (perm-hook-poke:main [%add-owned writers.book writers.book])
+        ==
+      ::
+          %2
+        [~ this(state p.old-state)]
+      ==
     =/  zero  !<(state-zero old)
-    ::  kill all ford builds
-    ::  flush all state
-    ::  detect files in /web/publish
-    ::    move to /app/publish/notebooks
-    ::    for each notebook
-    ::      kick all subscribers
-    ::      make a group for it
-    ::      send invites to all previously subscribed ships
-    ::
     |^
     =/  rav  [%next %t [%da now.bol] /app/publish/notebooks]
     =/  tile-json
@@ -139,10 +151,10 @@
     =/  inv-scry-pax
       /(scot %p our.bol)/invite-store/(scot %da now.bol)/invitatory/publish/noun
     =/  inv=(unit invitatory)  .^((unit invitatory) %gx inv-scry-pax)
-    =|  new-state=state-one
+    =|  new-state=state-two
     =?  tile-num.new-state  ?=(^ inv)
       ~(wyt by u.inv)
-    :_  this(state [%1 new-state])
+    :_  this(state [%2 new-state])
     ;:  weld
       kill-builds
       kick-cards
@@ -962,7 +974,12 @@
   ?:  use-preexisting.group
     ?~  grp  !!
     ?.  (is-managed group-path.group)  !!
-    [~ [group-path.group group-path.group]]
+    :_  [group-path.group group-path.group]
+    :~  %-  perm-group-hook-poke
+        [%associate group-path.group [[group-path.group %white] ~ ~]]
+      ::
+        (perm-hook-poke [%add-owned group-path.group group-path.group])
+    ==
   ::
   ?:  make-managed.group
     ?^  grp  [~ group-path.group group-path.group]
