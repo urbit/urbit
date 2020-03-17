@@ -318,6 +318,10 @@
     (context tub)
   ?~  q.marker
     :: Shouldn't happen
+    ~&  >>  %resync-failed
+    ~&  p.tub
+    ~&  p.marker
+    ~&  p.content
     [p=p.marker q=~ r=[[[p.tub p.marker] %resync-failed] ~]]
   =/  marker-pos
     p.q.u.q.marker
@@ -327,8 +331,6 @@
     p.q.u.q.content
   =/  last-pos
     (last content-pos marker-pos)
-  ~&  marker
-  ~&  content
   ?.  =(last-pos marker-pos)
     ::  content has overflowed its resync marker
     :+  p=p.marker
@@ -352,4 +354,23 @@
       vex
     [p=p.vex q=[~ u=[p=(hez [p.tub p.q.u.q.vex] p.u.q.vex) q=q.u.q.vex]] r=r.vex]
   --
+++  cook                                                ::  apply gate
+  |*  {poq/gate sef/rule}
+  |=  tub/nail
+  =+  vex=(sef tub)
+  ?~  q.vex
+    vex
+  [p=p.vex q=[~ u=[p=(poq p.u.q.vex) q=q.u.q.vex]] r=r.vex]
+::
+++  inspect
+  |*  [message=tape sef=rule]
+  |=  tub=nail
+  =+  vex=(sef tub)
+  ?~  q.vex
+    ::  ~&  "Failed @ {message}: {<p.vex>}"
+    vex
+  ::  ~&  "Success @ {message}: {<p.u.q.vex>}"
+  vex
+
+
 --
