@@ -3141,7 +3141,7 @@
         message-sink
       ::  ack all other packets
       ::
-      %-  (trace rcv.veb |.("send ack {<seq^fragment-num>}"))
+      %-  (trace rcv.veb |.("send ack-1 {<seq^fragment-num^num-fragments>}"))
       (give %send seq %& fragment-num)
     ::  last-heard<seq<10+last-heard; this is a packet in a live message
     ::
@@ -3182,7 +3182,7 @@
     ::  ack any packet other than the last one, and continue either way
     ::
     =?  message-sink  !is-last-fragment
-      %-  (trace rcv.veb |.("send ack {<seq^fragment-num>}"))
+      %-  (trace rcv.veb |.("send ack-2 {<seq^fragment-num^num-fragments>}"))
       (give %send seq %& fragment-num)
     ::  enqueue all completed messages starting at +(last-heard.state)
     ::
