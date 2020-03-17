@@ -7,7 +7,8 @@ export class LinkPreview extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      timeSinceLinkPost: this.getTimeSinceLinkPost()
+      timeSinceLinkPost: this.getTimeSinceLinkPost(),
+      embed: ""
     };
   }
 
@@ -67,6 +68,12 @@ export class LinkPreview extends Component {
         /(?:(?:(?:(?:watch\?)?(?:time_continue=(?:[0-9]+))?.+v=)?([a-zA-Z0-9_-]+))(?:\?t\=(?:[0-9a-zA-Z]+))?)/.source // id
     );
 
+    let soundcloudRegex = new RegExp('' +
+      /(https?:\/\/(?:www.)?soundcloud.com\/[\w-]+\/?(?:sets\/)?[\w-]+)/.source
+    );
+
+    let isSoundcloud = soundcloudRegex.exec(props.url);
+
     let ytMatch = youTubeRegex.exec(props.url);
 
     let embed = "";
@@ -91,13 +98,26 @@ export class LinkPreview extends Component {
       );
     }
 
+    if (isSoundcloud && this.state.embed === "") {
+      fetch(
+        'https://soundcloud.com/oembed?format=json&url=' +
+        encodeURIComponent(props.url))
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        console.log(json)
+        this.setState({embed: json.html})
+      })
+    }
+
     let nameClass = props.nickname ? "inter" : "mono";
 
     return (
       <div className="pb6 w-100">
         <div
           className={"w-100 tc " + (ytMatch ? "embed-container" : "")}>
-          {embed}
+          {embed || <div dangerouslySetInnerHTML={{__html: this.state.embed}}/>}
         </div>
         <div className="flex flex-column ml2 pt6 flex-auto">
           <a href={props.url} className="w-100 flex" target="_blank">
