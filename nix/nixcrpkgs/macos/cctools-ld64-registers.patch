@@ -1,0 +1,299 @@
+diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/parsers/libunwind/Registers.hpp cctools-port-patched/cctools/ld64/src/ld/parsers/libunwind/Registers.hpp
+--- cctools-port-c1cc758/cctools/ld64/src/ld/parsers/libunwind/Registers.hpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-patched/cctools/ld64/src/ld/parsers/libunwind/Registers.hpp	2017-10-29 10:12:23.150301208 -0700
+@@ -72,22 +72,22 @@
+ 	const char*		getRegisterName(int num);
+ 	void			jumpto();
+ 	
+-	uint32_t		getSP() const			{ return fRegisters.__esp; }
+-	void			setSP(uint32_t value)	{ fRegisters.__esp = value; }
+-	uint32_t		getIP()	const			{ return fRegisters.__eip; }
+-	void			setIP(uint32_t value)	{ fRegisters.__eip = value; }
+-	uint32_t		getEBP() const			{ return fRegisters.__ebp; }
+-	void			setEBP(uint32_t value)	{ fRegisters.__ebp = value; }
+-	uint32_t		getEBX() const			{ return fRegisters.__ebx; }
+-	void			setEBX(uint32_t value)	{ fRegisters.__ebx = value; }
+-	uint32_t		getECX() const			{ return fRegisters.__ecx; }
+-	void			setECX(uint32_t value)	{ fRegisters.__ecx = value; }
+-	uint32_t		getEDX() const			{ return fRegisters.__edx; }
+-	void			setEDX(uint32_t value)	{ fRegisters.__edx = value; }
+-	uint32_t		getESI() const			{ return fRegisters.__esi; }
+-	void			setESI(uint32_t value)	{ fRegisters.__esi = value; }
+-	uint32_t		getEDI() const			{ return fRegisters.__edi; }
+-	void			setEDI(uint32_t value)	{ fRegisters.__edi = value; }
++	uint32_t		getSP() const			{ return fRegisters.esp; }
++	void			setSP(uint32_t value)	{ fRegisters.esp = value; }
++	uint32_t		getIP()	const			{ return fRegisters.eip; }
++	void			setIP(uint32_t value)	{ fRegisters.eip = value; }
++	uint32_t		getEBP() const			{ return fRegisters.ebp; }
++	void			setEBP(uint32_t value)	{ fRegisters.ebp = value; }
++	uint32_t		getEBX() const			{ return fRegisters.ebx; }
++	void			setEBX(uint32_t value)	{ fRegisters.ebx = value; }
++	uint32_t		getECX() const			{ return fRegisters.ecx; }
++	void			setECX(uint32_t value)	{ fRegisters.ecx = value; }
++	uint32_t		getEDX() const			{ return fRegisters.edx; }
++	void			setEDX(uint32_t value)	{ fRegisters.edx = value; }
++	uint32_t		getESI() const			{ return fRegisters.esi; }
++	void			setESI(uint32_t value)	{ fRegisters.esi = value; }
++	uint32_t		getEDI() const			{ return fRegisters.edi; }
++	void			setEDI(uint32_t value)	{ fRegisters.edi = value; }
+ 	
+ private:
+ 	i386_thread_state_t  fRegisters;
+@@ -122,25 +122,25 @@
+ {
+ 	switch ( regNum ) {
+ 		case UNW_REG_IP:
+-			return fRegisters.__eip;
++			return fRegisters.eip;
+ 		case UNW_REG_SP:
+-			return fRegisters.__esp;
++			return fRegisters.esp;
+ 		case UNW_X86_EAX:
+-			return fRegisters.__eax;
++			return fRegisters.eax;
+ 		case UNW_X86_ECX:
+-			return fRegisters.__ecx;
++			return fRegisters.ecx;
+ 		case UNW_X86_EDX:
+-			return fRegisters.__edx;
++			return fRegisters.edx;
+ 		case UNW_X86_EBX:
+-			return fRegisters.__ebx;
++			return fRegisters.ebx;
+ 		case UNW_X86_EBP:
+-			return fRegisters.__ebp;
++			return fRegisters.ebp;
+ 		case UNW_X86_ESP:
+-			return fRegisters.__esp;
++			return fRegisters.esp;
+ 		case UNW_X86_ESI:
+-			return fRegisters.__esi;
++			return fRegisters.esi;
+ 		case UNW_X86_EDI:
+-			return fRegisters.__edi;
++			return fRegisters.edi;
+ 	}
+ 	ABORT("unsupported x86 register");
+ }
+@@ -149,34 +149,34 @@
+ {
+ 	switch ( regNum ) {
+ 		case UNW_REG_IP:
+-			fRegisters.__eip = value;
++			fRegisters.eip = value;
+ 			return;
+ 		case UNW_REG_SP:
+-			fRegisters.__esp = value;
++			fRegisters.esp = value;
+ 			return;
+ 		case UNW_X86_EAX:
+-			fRegisters.__eax = value;
++			fRegisters.eax = value;
+ 			return;
+ 		case UNW_X86_ECX:
+-			fRegisters.__ecx = value;
++			fRegisters.ecx = value;
+ 			return;
+ 		case UNW_X86_EDX:
+-			fRegisters.__edx = value;
++			fRegisters.edx = value;
+ 			return;
+ 		case UNW_X86_EBX:
+-			fRegisters.__ebx = value;
++			fRegisters.ebx = value;
+ 			return;
+ 		case UNW_X86_EBP:
+-			fRegisters.__ebp = value;
++			fRegisters.ebp = value;
+ 			return;
+ 		case UNW_X86_ESP:
+-			fRegisters.__esp = value;
++			fRegisters.esp = value;
+ 			return;
+ 		case UNW_X86_ESI:
+-			fRegisters.__esi = value;
++			fRegisters.esi = value;
+ 			return;
+ 		case UNW_X86_EDI:
+-			fRegisters.__edi = value;
++			fRegisters.edi = value;
+ 			return;
+ 	}
+ 	ABORT("unsupported x86 register");
+@@ -253,22 +253,22 @@
+ 	void			setVectorRegister(int num, v128 value);
+ 	const char*		getRegisterName(int num);
+ 	void			jumpto();
+-	uint64_t		getSP()	const			{ return fRegisters.__rsp; }
+-	void			setSP(uint64_t value)	{ fRegisters.__rsp = value; }
+-	uint64_t		getIP()	const			{ return fRegisters.__rip; }
+-	void			setIP(uint64_t value)	{ fRegisters.__rip = value; }
+-	uint64_t		getRBP() const			{ return fRegisters.__rbp; }
+-	void			setRBP(uint64_t value)	{ fRegisters.__rbp = value; }
+-	uint64_t		getRBX() const			{ return fRegisters.__rbx; }
+-	void			setRBX(uint64_t value)	{ fRegisters.__rbx = value; }
+-	uint64_t		getR12() const			{ return fRegisters.__r12; }
+-	void			setR12(uint64_t value)	{ fRegisters.__r12 = value; }
+-	uint64_t		getR13() const			{ return fRegisters.__r13; }
+-	void			setR13(uint64_t value)	{ fRegisters.__r13 = value; }
+-	uint64_t		getR14() const			{ return fRegisters.__r14; }
+-	void			setR14(uint64_t value)	{ fRegisters.__r14 = value; }
+-	uint64_t		getR15() const			{ return fRegisters.__r15; }
+-	void			setR15(uint64_t value)	{ fRegisters.__r15 = value; }
++	uint64_t		getSP()	const			{ return fRegisters.rsp; }
++	void			setSP(uint64_t value)	{ fRegisters.rsp = value; }
++	uint64_t		getIP()	const			{ return fRegisters.rip; }
++	void			setIP(uint64_t value)	{ fRegisters.rip = value; }
++	uint64_t		getRBP() const			{ return fRegisters.rbp; }
++	void			setRBP(uint64_t value)	{ fRegisters.rbp = value; }
++	uint64_t		getRBX() const			{ return fRegisters.rbx; }
++	void			setRBX(uint64_t value)	{ fRegisters.rbx = value; }
++	uint64_t		getR12() const			{ return fRegisters.r12; }
++	void			setR12(uint64_t value)	{ fRegisters.r12 = value; }
++	uint64_t		getR13() const			{ return fRegisters.r13; }
++	void			setR13(uint64_t value)	{ fRegisters.r13 = value; }
++	uint64_t		getR14() const			{ return fRegisters.r14; }
++	void			setR14(uint64_t value)	{ fRegisters.r14 = value; }
++	uint64_t		getR15() const			{ return fRegisters.r15; }
++	void			setR15(uint64_t value)	{ fRegisters.r15 = value; }
+ private:
+ 	x86_thread_state64_t fRegisters;
+ };
+@@ -302,41 +302,41 @@
+ {
+ 	switch ( regNum ) {
+ 		case UNW_REG_IP:
+-			return fRegisters.__rip;
++			return fRegisters.rip;
+ 		case UNW_REG_SP:
+-			return fRegisters.__rsp;
++			return fRegisters.rsp;
+ 		case UNW_X86_64_RAX:
+-			return fRegisters.__rax;
++			return fRegisters.rax;
+ 		case UNW_X86_64_RDX:
+-			return fRegisters.__rdx;
++			return fRegisters.rdx;
+ 		case UNW_X86_64_RCX:
+-			return fRegisters.__rcx;
++			return fRegisters.rcx;
+ 		case UNW_X86_64_RBX:
+-			return fRegisters.__rbx;
++			return fRegisters.rbx;
+ 		case UNW_X86_64_RSI:
+-			return fRegisters.__rsi;
++			return fRegisters.rsi;
+ 		case UNW_X86_64_RDI:
+-			return fRegisters.__rdi;
++			return fRegisters.rdi;
+ 		case UNW_X86_64_RBP:
+-			return fRegisters.__rbp;
++			return fRegisters.rbp;
+ 		case UNW_X86_64_RSP:
+-			return fRegisters.__rsp;
++			return fRegisters.rsp;
+ 		case UNW_X86_64_R8:
+-			return fRegisters.__r8;
++			return fRegisters.r8;
+ 		case UNW_X86_64_R9:
+-			return fRegisters.__r9;
++			return fRegisters.r9;
+ 		case UNW_X86_64_R10:
+-			return fRegisters.__r10;
++			return fRegisters.r10;
+ 		case UNW_X86_64_R11:
+-			return fRegisters.__r11;
++			return fRegisters.r11;
+ 		case UNW_X86_64_R12:
+-			return fRegisters.__r12;
++			return fRegisters.r12;
+ 		case UNW_X86_64_R13:
+-			return fRegisters.__r13;
++			return fRegisters.r13;
+ 		case UNW_X86_64_R14:
+-			return fRegisters.__r14;
++			return fRegisters.r14;
+ 		case UNW_X86_64_R15:
+-			return fRegisters.__r15;
++			return fRegisters.r15;
+ 	}
+ 	ABORT("unsupported x86_64 register");
+ }
+@@ -345,58 +345,58 @@
+ {
+ 	switch ( regNum ) {
+ 		case UNW_REG_IP:
+-			fRegisters.__rip = value;
++			fRegisters.rip = value;
+ 			return;
+ 		case UNW_REG_SP:
+-			fRegisters.__rsp = value;
++			fRegisters.rsp = value;
+ 			return;
+ 		case UNW_X86_64_RAX:
+-			fRegisters.__rax = value;
++			fRegisters.rax = value;
+ 			return;
+ 		case UNW_X86_64_RDX:
+-			fRegisters.__rdx = value;
++			fRegisters.rdx = value;
+ 			return;
+ 		case UNW_X86_64_RCX:
+-			fRegisters.__rcx = value;
++			fRegisters.rcx = value;
+ 			return;
+ 		case UNW_X86_64_RBX:
+-			fRegisters.__rbx = value;
++			fRegisters.rbx = value;
+ 			return;
+ 		case UNW_X86_64_RSI:
+-			fRegisters.__rsi = value;
++			fRegisters.rsi = value;
+ 			return;
+ 		case UNW_X86_64_RDI:
+-			fRegisters.__rdi = value;
++			fRegisters.rdi = value;
+ 			return;
+ 		case UNW_X86_64_RBP:
+-			fRegisters.__rbp = value;
++			fRegisters.rbp = value;
+ 			return;
+ 		case UNW_X86_64_RSP:
+-			fRegisters.__rsp = value;
++			fRegisters.rsp = value;
+ 			return;
+ 		case UNW_X86_64_R8:
+-			fRegisters.__r8 = value;
++			fRegisters.r8 = value;
+ 			return;
+ 		case UNW_X86_64_R9:
+-			fRegisters.__r9 = value;
++			fRegisters.r9 = value;
+ 			return;
+ 		case UNW_X86_64_R10:
+-			fRegisters.__r10 = value;
++			fRegisters.r10 = value;
+ 			return;
+ 		case UNW_X86_64_R11:
+-			fRegisters.__r11 = value;
++			fRegisters.r11 = value;
+ 			return;
+ 		case UNW_X86_64_R12:
+-			fRegisters.__r12 = value;
++			fRegisters.r12 = value;
+ 			return;
+ 		case UNW_X86_64_R13:
+-			fRegisters.__r13 = value;
++			fRegisters.r13 = value;
+ 			return;
+ 		case UNW_X86_64_R14:
+-			fRegisters.__r14 = value;
++			fRegisters.r14 = value;
+ 			return;
+ 		case UNW_X86_64_R15:
+-			fRegisters.__r15 = value;
++			fRegisters.r15 = value;
+ 			return;
+ 	}
+ 	ABORT("unsupported x86_64 register");

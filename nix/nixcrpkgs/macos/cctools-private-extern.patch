@@ -1,0 +1,271 @@
+diff -ur cctools-port-c1cc758/cctools/include/foreign/extern.h cctools-port-private-extern/cctools/include/foreign/extern.h
+--- cctools-port-c1cc758/cctools/include/foreign/extern.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/foreign/extern.h	2017-11-10 18:32:37.035890924 -0800
+@@ -1 +1,2 @@
++#pragma once
+ #define __private_extern__ __attribute__((visibility("hidden")))
+diff -ur cctools-port-c1cc758/cctools/include/mach-o/dyld.h cctools-port-private-extern/cctools/include/mach-o/dyld.h
+--- cctools-port-c1cc758/cctools/include/mach-o/dyld.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/mach-o/dyld.h	2017-11-10 18:32:37.035890924 -0800
+@@ -27,9 +27,7 @@
+ extern "C" {
+ #endif /* __cplusplus */
+ 
+-#if defined(__MWERKS__) && !defined(__private_extern__)
+-#define __private_extern__ __declspec(private_extern)
+-#endif
++#include <extern.h>
+ 
+ #include <mach-o/loader.h>
+ #include <AvailabilityMacros.h>
+diff -ur cctools-port-c1cc758/cctools/include/stuff/allocate.h cctools-port-private-extern/cctools/include/stuff/allocate.h
+--- cctools-port-c1cc758/cctools/include/stuff/allocate.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/allocate.h	2017-11-10 18:33:52.006780029 -0800
+@@ -20,9 +20,8 @@
+  * 
+  * @APPLE_LICENSE_HEADER_END@
+  */
+-#if defined(__MWERKS__) && !defined(__private_extern__)
+-#define __private_extern__ __declspec(private_extern)
+-#endif
++
++#include <extern.h>
+ 
+ /* defined in allocate.c */
+ 
+diff -ur cctools-port-c1cc758/cctools/include/stuff/arch.h cctools-port-private-extern/cctools/include/stuff/arch.h
+--- cctools-port-c1cc758/cctools/include/stuff/arch.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/arch.h	2017-11-10 18:34:36.487305108 -0800
+@@ -23,9 +23,8 @@
+ #ifndef _STUFF_ARCH_H_
+ #define _STUFF_ARCH_H_
+ 
+-#if defined(__MWERKS__) && !defined(__private_extern__)
+-#define __private_extern__ __declspec(private_extern)
+-#endif
++#include <extern.h>
++
+ /*
+  * This file contains the current known set of flags and constants for the
+  * known architectures.
+diff -ur cctools-port-c1cc758/cctools/include/stuff/best_arch.h cctools-port-private-extern/cctools/include/stuff/best_arch.h
+--- cctools-port-c1cc758/cctools/include/stuff/best_arch.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/best_arch.h	2017-11-10 18:34:48.764116432 -0800
+@@ -20,9 +20,8 @@
+  * 
+  * @APPLE_LICENSE_HEADER_END@
+  */
+-#if defined(__MWERKS__) && !defined(__private_extern__)
+-#define __private_extern__ __declspec(private_extern)
+-#endif
++
++#include <extern.h>
+ 
+ #include <mach/machine.h>
+ #include <stuff/bool.h>
+diff -ur cctools-port-c1cc758/cctools/include/stuff/breakout.h cctools-port-private-extern/cctools/include/stuff/breakout.h
+--- cctools-port-c1cc758/cctools/include/stuff/breakout.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/breakout.h	2017-11-10 18:35:04.334299743 -0800
+@@ -20,9 +20,8 @@
+  * 
+  * @APPLE_LICENSE_HEADER_END@
+  */
+-#if defined(__MWERKS__) && !defined(__private_extern__)
+-#define __private_extern__ __declspec(private_extern)
+-#endif
++
++#include <extern.h>
+ 
+ #import "stuff/ofile.h"
+ 
+diff -ur cctools-port-c1cc758/cctools/include/stuff/bytesex.h cctools-port-private-extern/cctools/include/stuff/bytesex.h
+--- cctools-port-c1cc758/cctools/include/stuff/bytesex.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/bytesex.h	2017-11-10 18:35:12.637730768 -0800
+@@ -29,9 +29,7 @@
+ #ifndef _STUFF_BYTESEX_H_
+ #define _STUFF_BYTESEX_H_
+ 
+-#if defined(__MWERKS__) && !defined(__private_extern__)
+-#define __private_extern__ __declspec(private_extern)
+-#endif
++#include <extern.h>
+ 
+ #include <mach-o/fat.h>
+ #include <mach-o/loader.h>
+diff -ur cctools-port-c1cc758/cctools/include/stuff/execute.h cctools-port-private-extern/cctools/include/stuff/execute.h
+--- cctools-port-c1cc758/cctools/include/stuff/execute.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/execute.h	2017-11-10 18:35:34.417986815 -0800
+@@ -20,9 +20,8 @@
+  * 
+  * @APPLE_LICENSE_HEADER_END@
+  */
+-#if defined(__MWERKS__) && !defined(__private_extern__)
+-#define __private_extern__ __declspec(private_extern)
+-#endif
++
++#include <extern.h>
+ 
+ /*
+  * execute() does an execvp using the argv passed to it.  If the parameter
+diff -ur cctools-port-c1cc758/cctools/include/stuff/guess_short_name.h cctools-port-private-extern/cctools/include/stuff/guess_short_name.h
+--- cctools-port-c1cc758/cctools/include/stuff/guess_short_name.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/guess_short_name.h	2017-11-10 18:40:11.801171715 -0800
+@@ -22,6 +22,8 @@
+  */
+ #include "stuff/bool.h"
+ 
++#include <extern.h>
++
+ __private_extern__ char * guess_short_name(
+     char *name,
+     enum bool *is_framework,
+diff -ur cctools-port-c1cc758/cctools/include/stuff/hash_string.h cctools-port-private-extern/cctools/include/stuff/hash_string.h
+--- cctools-port-c1cc758/cctools/include/stuff/hash_string.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/hash_string.h	2017-11-10 18:35:43.698095826 -0800
+@@ -20,9 +20,8 @@
+  * 
+  * @APPLE_LICENSE_HEADER_END@
+  */
+-#if defined(__MWERKS__) && !defined(__private_extern__)
+-#define __private_extern__ __declspec(private_extern)
+-#endif
++
++#include <extern.h>
+ 
+ __private_extern__ int32_t hash_string(
+     char *key);
+diff -ur cctools-port-c1cc758/cctools/include/stuff/hppa.h cctools-port-private-extern/cctools/include/stuff/hppa.h
+--- cctools-port-c1cc758/cctools/include/stuff/hppa.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/hppa.h	2017-11-10 18:36:01.414970472 -0800
+@@ -20,9 +20,8 @@
+  * 
+  * @APPLE_LICENSE_HEADER_END@
+  */
+-#if defined(__MWERKS__) && !defined(__private_extern__)
+-#define __private_extern__ __declspec(private_extern)
+-#endif
++
++#include <extern.h>
+ 
+ __private_extern__ void calc_hppa_HILO(
+     uint32_t base,
+diff -ur cctools-port-c1cc758/cctools/include/stuff/lto.h cctools-port-private-extern/cctools/include/stuff/lto.h
+--- cctools-port-c1cc758/cctools/include/stuff/lto.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/lto.h	2017-11-10 18:40:27.811342692 -0800
+@@ -3,6 +3,8 @@
+ 
+ #include "stuff/arch.h"
+ 
++#include <extern.h>
++
+ #ifdef LTO_SUPPORT
+ 
+ __private_extern__ int is_llvm_bitcode_from_memory(
+diff -ur cctools-port-c1cc758/cctools/include/stuff/macosx_deployment_target.h cctools-port-private-extern/cctools/include/stuff/macosx_deployment_target.h
+--- cctools-port-c1cc758/cctools/include/stuff/macosx_deployment_target.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/macosx_deployment_target.h	2017-11-10 18:39:47.814249693 -0800
+@@ -22,6 +22,8 @@
+  */
+ #include <mach/mach.h>
+ 
++#include <extern.h>
++
+ struct macosx_deployment_target {
+     uint32_t major;	/* major version */
+     uint32_t minor;	/* minor version (if any or zero) */
+diff -ur cctools-port-c1cc758/cctools/include/stuff/ofile.h cctools-port-private-extern/cctools/include/stuff/ofile.h
+--- cctools-port-c1cc758/cctools/include/stuff/ofile.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/ofile.h	2017-11-10 18:36:14.268454589 -0800
+@@ -24,9 +24,7 @@
+ #ifndef _STUFF_OFILE_H_
+ #define _STUFF_OFILE_H_
+ 
+-#if defined(__MWERKS__) && !defined(__private_extern__)
+-#define __private_extern__ __declspec(private_extern)
+-#endif
++#include <extern.h>
+ 
+ #import <ar.h>
+ #ifndef AR_EFMT1
+diff -ur cctools-port-c1cc758/cctools/include/stuff/print.h cctools-port-private-extern/cctools/include/stuff/print.h
+--- cctools-port-c1cc758/cctools/include/stuff/print.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/print.h	2017-11-10 18:36:24.805244801 -0800
+@@ -20,9 +20,8 @@
+  * 
+  * @APPLE_LICENSE_HEADER_END@
+  */
+-#if defined(__MWERKS__) && !defined(__private_extern__)
+-#define __private_extern__ __declspec(private_extern)
+-#endif
++
++#include <extern.h>
+ 
+ #import <stdarg.h>
+ 
+diff -ur cctools-port-c1cc758/cctools/include/stuff/reloc.h cctools-port-private-extern/cctools/include/stuff/reloc.h
+--- cctools-port-c1cc758/cctools/include/stuff/reloc.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/reloc.h	2017-11-10 18:36:31.878661041 -0800
+@@ -20,9 +20,8 @@
+  * 
+  * @APPLE_LICENSE_HEADER_END@
+  */
+-#if defined(__MWERKS__) && !defined(__private_extern__)
+-#define __private_extern__ __declspec(private_extern)
+-#endif
++
++#include <extern.h>
+ 
+ #import <mach/machine.h>
+ #import "stuff/bool.h"
+diff -ur cctools-port-c1cc758/cctools/include/stuff/rnd.h cctools-port-private-extern/cctools/include/stuff/rnd.h
+--- cctools-port-c1cc758/cctools/include/stuff/rnd.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/rnd.h	2017-11-10 18:36:39.068745293 -0800
+@@ -27,9 +27,7 @@
+  */
+ #include <stdint.h>
+ 
+-#if defined(__MWERKS__) && !defined(__private_extern__)
+-#define __private_extern__ __declspec(private_extern)
+-#endif
++#include <extern.h>
+ 
+ /*
+  * rnd() rounds v to a multiple of r.
+diff -ur cctools-port-c1cc758/cctools/include/stuff/symbol_list.h cctools-port-private-extern/cctools/include/stuff/symbol_list.h
+--- cctools-port-c1cc758/cctools/include/stuff/symbol_list.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/symbol_list.h	2017-11-10 18:37:11.605792928 -0800
+@@ -23,6 +23,8 @@
+ #include <mach-o/nlist.h>
+ #include <stuff/bool.h>
+ 
++#include <extern.h>
++
+ /*
+  * Data structures to perform selective stripping of symbol table entries.
+  */
+diff -ur cctools-port-c1cc758/cctools/include/stuff/unix_standard_mode.h cctools-port-private-extern/cctools/include/stuff/unix_standard_mode.h
+--- cctools-port-c1cc758/cctools/include/stuff/unix_standard_mode.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/unix_standard_mode.h	2017-11-10 18:37:42.596155389 -0800
+@@ -22,5 +22,7 @@
+  */
+ #include "stuff/bool.h"
+ 
++#include <extern.h>
++
+ __private_extern__ enum bool get_unix_standard_mode(
+     void);
+diff -ur cctools-port-c1cc758/cctools/include/stuff/vm_flush_cache.h cctools-port-private-extern/cctools/include/stuff/vm_flush_cache.h
+--- cctools-port-c1cc758/cctools/include/stuff/vm_flush_cache.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-private-extern/cctools/include/stuff/vm_flush_cache.h	2017-11-10 18:37:59.973025145 -0800
+@@ -20,9 +20,8 @@
+  * 
+  * @APPLE_LICENSE_HEADER_END@
+  */
+-#if defined(__MWERKS__) && !defined(__private_extern__)
+-#define __private_extern__ __declspec(private_extern)
+-#endif
++
++#include <extern.h>
+ 
+ #import <mach/mach.h>
+ __private_extern__ kern_return_t vm_flush_cache(

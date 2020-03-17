@@ -1,0 +1,107 @@
+diff -ur usbview-orig/usbdesc.h usbview/usbdesc.h
+--- usbview-orig/usbdesc.h	2017-04-01 16:00:09.314007997 -0700
++++ usbview/usbdesc.h	2017-04-01 16:10:23.667341332 -0700
+@@ -81,7 +81,7 @@
+ #define USB_OTHER_SPEED_CONFIGURATION_DESCRIPTOR_TYPE  0x07
+ #define USB_INTERFACE_POWER_DESCRIPTOR_TYPE            0x08
+ #define USB_OTG_DESCRIPTOR_TYPE                        0x09
+-#define USB_DEBUG_DESCRIPTOR_TYPE                      0x0A
++//#define USB_DEBUG_DESCRIPTOR_TYPE                      0x0A
+ #define USB_IAD_DESCRIPTOR_TYPE                        0x0B
+ 
+ //
+diff -ur usbview-orig/uvcdesc.h usbview/uvcdesc.h
+--- usbview-orig/uvcdesc.h	2017-04-01 16:00:09.314007997 -0700
++++ usbview/uvcdesc.h	2017-04-01 17:43:09.134007999 -0700
+@@ -15,7 +15,7 @@
+ 
+ 
+ // USB Video Device Class Code
+-#define USB_DEVICE_CLASS_VIDEO     0x0E 
++//#define USB_DEVICE_CLASS_VIDEO     0x0E 
+ 
+ // Video sub-classes
+ #define SUBCLASS_UNDEFINED              0x00
+diff -ur usbview-orig/uvcview.h usbview/uvcview.h
+--- usbview-orig/uvcview.h	2017-04-01 16:00:09.314007997 -0700
++++ usbview/uvcview.h	2017-04-03 20:25:08.145676664 -0700
+@@ -34,10 +33,10 @@
+ #include <usbioctl.h>
+ #include <usbiodef.h>
+ #include <intsafe.h>
+-#include <strsafe.h>
+ #include <specstrings.h>
+ #include <usb.h>
+ #include <usbuser.h>
++#include <usbspec.h>
+ #include <basetyps.h>
+ #include <wtypes.h>
+ #include <objbase.h>
+@@ -50,6 +49,8 @@
+ #include <winioctl.h>
+ #include <devpkey.h>
+ #include <math.h>
++#include <strsafe.h>
++#include <sal.h>
+ 
+ // This is mostly a private USB Audio descriptor header
+ #include "usbdesc.h"
+@@ -381,7 +382,7 @@
+ // ENUM.C
+ //
+ 
+-PCHAR ConnectionStatuses[];
++extern PCHAR ConnectionStatuses[];
+ 
+ //
+ // DISPVID.C
+Only in usbview: uvcview.h.orig
+diff -ur usbview-orig/uvcview.rc usbview/uvcview.rc
+--- usbview-orig/uvcview.rc	2017-04-01 16:00:09.314007997 -0700
++++ usbview/uvcview.rc	2017-04-01 16:04:07.210674665 -0700
+@@ -22,19 +22,19 @@
+ //
+ // ICON
+ //
+-IDI_ICON                ICON    DISCARDABLE     "USB.ICO"
+-IDI_BADICON             ICON    DISCARDABLE     "BANG.ICO"
+-IDI_COMPUTER            ICON    DISCARDABLE     "MONITOR.ICO"
+-IDI_HUB                 ICON    DISCARDABLE     "HUB.ICO"
+-IDI_NODEVICE            ICON    DISCARDABLE     "PORT.ICO"
+-IDI_NOSSDEVICE          ICON    DISCARDABLE     "SSPORT.ICO"
+-IDI_SSICON              ICON    DISCARDABLE     "SSUSB.ICO"
++IDI_ICON                ICON    DISCARDABLE     "usb.ico"
++IDI_BADICON             ICON    DISCARDABLE     "bang.ico"
++IDI_COMPUTER            ICON    DISCARDABLE     "monitor.ico"
++IDI_HUB                 ICON    DISCARDABLE     "hub.ico"
++IDI_NODEVICE            ICON    DISCARDABLE     "port.ico"
++IDI_NOSSDEVICE          ICON    DISCARDABLE     "ssport.ico"
++IDI_SSICON              ICON    DISCARDABLE     "ssusb.ico"
+ 
+ //////////////////////////////////////////////////////////////////////////////
+ //
+ // Cursor
+ //
+-IDC_SPLIT               CURSOR  DISCARDABLE     "SPLIT.CUR"
++IDC_SPLIT               CURSOR  DISCARDABLE     "split.cur"
+ 
+ /////////////////////////////////////////////////////////////////////////////
+ //
+@@ -84,7 +84,7 @@
+     BEGIN
+         MENUITEM "&Refresh\tF5",        ID_REFRESH
+         MENUITEM SEPARATOR
+-        MENUITEM "Save Current &View ..."        ID_SAVE
++        MENUITEM "Save Current &View ...",  ID_SAVE
+         MENUITEM "Save As (&txt) ...",      ID_SAVEALL
+         MENUITEM "Save As (&xml) ...\tF2",  ID_SAVEXML
+         MENUITEM SEPARATOR
+@@ -130,7 +130,7 @@
+ BEGIN
+     IDS_STANDARD_FONT           "Courier"
+     IDS_STANDARD_FONT_HEIGHT    "\13"
+-    IDS_STANDARD_FONT_WIDTH     "\8"
++    IDS_STANDARD_FONT_WIDTH     "\08"
+ END
+ 
+ STRINGTABLE DISCARDABLE
