@@ -22,12 +22,13 @@ export class Input extends Component {
 
     e.preventDefault();
 
-    let ignoredKeys = ["Meta", "Alt", "Control", "Escape", "Shift",
-                       "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8",
-                       "F9", "F10", "F11", "F12", "Backspace", "Unidentified",
-                       "Delete", "Insert", "Home", "PageUp", "PageDown", "End",
-                       "Dead", "CapsLock"
-                      ];
+    let allowedKeys = [
+      "Enter", "Backspace", "ArrowLeft", "ArrowRight", "Tab"
+    ];
+
+    if ((e.key.length > 1) && (!(allowedKeys.includes(e.key)))) {
+      return;
+    }
 
   // submit on enter
   if (e.key === "Enter") {
@@ -63,7 +64,7 @@ export class Input extends Component {
   }
 
   // capture and transmit most characters
-  else if (ignoredKeys.indexOf(e.key) === -1) {
+  else {
     store.doEdit({ ins: { cha: e.key, at: this.props.cursor } });
     store.setState({ cursor: this.props.cursor + 1 });
   }
