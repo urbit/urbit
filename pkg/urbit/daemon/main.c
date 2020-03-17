@@ -678,7 +678,20 @@ main(c3_i   argc,
   }
   // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
-  u3K.certs_c = strdup("/tmp/urbit-ca-cert-XXXXXX");
+  char *tmpdir = getenv("TMPDIR");
+
+  if (tmpdir == NULL) {
+    tmpdir = "/tmp";
+  }
+
+  char *tmpl = "urbit-ca-cert-XXXXXX";
+
+  int sz = strlen(tmpdir) + strlen(tmpl) + 2;
+
+  u3K.certs_c = malloc(sz);
+
+  snprintf(u3K.certs_c, sz, "%s/%s", tmpdir, tmpl);
+
   _setup_cert_store(u3K.certs_c);
 
   if ( c3y == u3_Host.ops_u.dem ) {
