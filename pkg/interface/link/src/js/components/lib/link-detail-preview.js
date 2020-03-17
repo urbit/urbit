@@ -28,6 +28,27 @@ export class LinkPreview extends Component {
         timeSinceLinkPost: this.getTimeSinceLinkPost()
       });
     }, 60000);
+
+    // check for soundcloud for fetching embed
+    let soundcloudRegex = new RegExp('' +
+      /(https?:\/\/(?:www.)?soundcloud.com\/[\w-]+\/?(?:sets\/)?[\w-]+)/.source
+    );
+
+    let isSoundcloud = soundcloudRegex.exec(this.props.url);
+
+    if (isSoundcloud && this.state.embed === "") {
+      fetch(
+        'https://soundcloud.com/oembed?format=json&url=' +
+        encodeURIComponent(this.props.url))
+        .then((response) => {
+          return response.json();
+        })
+        .then((json) => {
+          this.setState({ embed: json.html })
+        });
+    } else if (!isSoundcloud) {
+      this.setState({ embed: "" });
+    }
   }
 
   componentWillUnmount() {
@@ -68,12 +89,6 @@ export class LinkPreview extends Component {
         /(?:(?:(?:(?:watch\?)?(?:time_continue=(?:[0-9]+))?.+v=)?([a-zA-Z0-9_-]+))(?:\?t\=(?:[0-9a-zA-Z]+))?)/.source // id
     );
 
-    let soundcloudRegex = new RegExp('' +
-      /(https?:\/\/(?:www.)?soundcloud.com\/[\w-]+\/?(?:sets\/)?[\w-]+)/.source
-    );
-
-    let isSoundcloud = soundcloudRegex.exec(props.url);
-
     let ytMatch = youTubeRegex.exec(props.url);
 
     let embed = "";
@@ -96,19 +111,6 @@ export class LinkPreview extends Component {
           frameBorder="0"
           allow="picture-in-picture, fullscreen"></iframe>
       );
-    }
-
-    if (isSoundcloud && this.state.embed === "") {
-      fetch(
-        'https://soundcloud.com/oembed?format=json&url=' +
-        encodeURIComponent(props.url))
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        console.log(json)
-        this.setState({embed: json.html})
-      })
     }
 
     let nameClass = props.nickname ? "inter" : "mono";
