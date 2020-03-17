@@ -931,10 +931,25 @@ u3_daemon_commence()
   //  listen on command socket
   //
   {
-    c3_c buf_c[256];
+    char *tmpd = getenv("TMPDIR");
+    char *midl = "/urbit-sock-";
+    char pids[256] = {0};
 
-    sprintf(buf_c, "/tmp/urbit-sock-%d", getpid());
-    u3K.soc_c = strdup(buf_c);
+    if (tmpd == NULL) {
+      tmpd = "/tmp";
+    }
+
+    if (snprintf(pids, 256, "%d", getpid()) >= 256) {
+      u3m_error("bad snprintf: getpid");
+    }
+
+    int sz = strlen(tmpd) + strlen(midl) + strlen(pids) + 1;
+
+    u3K.soc_c = malloc(sz);
+
+    if (snprintf(u3K.soc_c, sz, "%s%s%s", tmpd, midl, pids) >= sz) {
+      u3m_error("bad snprintf: u3K.soc_c");
+    }
   }
 
   uv_timer_init(u3L, &u3K.tim_u);

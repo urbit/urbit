@@ -690,7 +690,9 @@ main(c3_i   argc,
 
   u3K.certs_c = malloc(sz);
 
-  snprintf(u3K.certs_c, sz, "%s/%s", tmpdir, tmpl);
+  if (snprintf(u3K.certs_c, sz, "%s/%s", tmpdir, tmpl) >= sz) {
+    u3m_error("bad snprintf: u3K.certs_c");
+  }
 
   _setup_cert_store(u3K.certs_c);
 
