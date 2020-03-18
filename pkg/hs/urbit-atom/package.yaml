@@ -21,15 +21,6 @@ library:
     - text
     - vector
 
-executables:
-  urbit-atom:
-    source-dirs: app
-    main: Main.hs
-    ghc-options: "-threaded -rtsopts -with-rtsopts=-N"
-    dependencies:
-      - base
-      - urbit-atom
-
 tests:
   urbit-atom-tests:
     source-dirs: test
