@@ -33,7 +33,7 @@ export class ChannelsSidebar extends Component {
           <ChannelsItem
             key={path}
             link={path}
-            memberList={props.groups[meta.group]}
+            memberList={props.groups[meta["group-path"]]}
             selected={selected}
             linkCount={linkCount}
             unseenCount={unseenCount}
