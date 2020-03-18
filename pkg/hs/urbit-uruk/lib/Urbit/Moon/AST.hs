@@ -1,5 +1,6 @@
 module Urbit.Moon.AST where
 
+import Prelude ()
 import Bound
 import ClassyPrelude
 import GHC.Natural

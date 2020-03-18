@@ -10,6 +10,7 @@ library
                , obelisk-frontend
                , obelisk-route
                , urbit-atom
+               , urbit-uruk
                , jsaddle
                , reflex-dom
                , reflex
@@ -28,6 +29,7 @@ executable frontend
   build-depends: base
                , common
                , urbit-atom
+               , urbit-uruk
                , obelisk-frontend
                , obelisk-route
                , reflex-dom

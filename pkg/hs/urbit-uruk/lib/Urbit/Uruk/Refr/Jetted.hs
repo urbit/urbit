@@ -63,6 +63,7 @@
 
 module Urbit.Uruk.Refr.Jetted where
 
+import Prelude ()
 import ClassyPrelude
 import Data.Bits
 import Data.Void

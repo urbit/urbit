@@ -6,84 +6,9 @@ build-type: Simple
 library
   hs-source-dirs: src
   build-depends: base
-               , bound
-               , bytestring
-               , integer-gmp
-               , urbit-atom
-               , classy-prelude
-               , containers
-               , deriving-compat
-               , ghc-prim
-               , hashable
-               , lens
-               , megaparsec
-               , mtl
-               , multimap
                , obelisk-route
-               , para
-               , positive
-               , pretty-show
-               , primitive
+               , mtl
                , text
-               , vector
-
   exposed-modules:
     Common.Api
     Common.Route
-    Urbit.Uruk.Refr.Raw
-    Urbit.Moon.Repl
-    Urbit.Moon.AST
-    Urbit.Moon.LambdaToUruk
-    Urbit.Moon.MoonToUruk
-    Urbit.Moon.Parser
-    Urbit.Uruk.Class
-    Urbit.Uruk.Fast
-    Urbit.Uruk.Fast.JetOptimize
-    Urbit.Uruk.Fast.OptToFast
-    Urbit.Uruk.Fast.Types
-    Urbit.Uruk.Refr.Jetted
-
-  default-extensions:
-    ApplicativeDo
-    BangPatterns
-    BlockArguments
-    DataKinds
-    DefaultSignatures
-    DeriveAnyClass
-    DeriveDataTypeable
-    DeriveFoldable
-    DeriveGeneric
-    DeriveTraversable
-    DerivingStrategies
-    EmptyCase
-    EmptyDataDecls
-    FlexibleContexts
-    FlexibleInstances
-    FunctionalDependencies
-    GADTs
-    GeneralizedNewtypeDeriving
-    LambdaCase
-    MagicHash
-    MultiParamTypeClasses
-    NamedFieldPuns
-    NoImplicitPrelude
-    NumericUnderscores
-    OverloadedStrings
-    PackageImports
-    PartialTypeSignatures
-    PatternGuards
-    PatternSynonyms
-    QuasiQuotes
-    Rank2Types
-    RankNTypes
-    RecordWildCards
-    ScopedTypeVariables
-    StandaloneDeriving
-    TemplateHaskell
-    TupleSections
-    TypeApplications
-    TypeFamilies
-    TypeOperators
-    UnboxedTuples
-    UnicodeSyntax
-    ViewPatterns
