@@ -210,7 +210,8 @@
     %kiln-keep-ford          =;(f (f !<(_+<.f vase)) poke-keep-ford)
     %kiln-autoload           =;(f (f !<(_+<.f vase)) poke-autoload)
     %kiln-overload           =;(f (f !<(_+<.f vase)) poke-overload)
-    %kiln-goad-gall          =;(f (f !<(_+<.f vase)) poke-overload)
+    %kiln-goad-gall          =;(f (f !<(_+<.f vase)) poke-goad-gall)
+    %kiln-gall-sear          =;(f (f !<(_+<.f vase)) poke-gall-sear)
     %kiln-wash-gall          =;(f (f !<(_+<.f vase)) poke-wash-gall)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
@@ -313,6 +314,10 @@
 ++  poke-goad-gall
   |=  [force=? agent=(unit dude:gall)]
   abet:(emit %pass /kiln %arvo %g %goad force agent)
+::
+++  poke-gall-sear
+  |=  =ship
+  abet:(emit %pass /kiln %arvo %g %sear ship)
 ::
 ++  poke-wash-gall  |=(* abet:(emit %pass /kiln %arvo %g [%wash ~]))
 ::
