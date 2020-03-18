@@ -85,6 +85,12 @@ class UrbitApi {
     });
   }
 
+  groupRemove(path, ships) {
+    return this.action("group-store", "group-action", {
+      remove: { members: ships, path }
+    })
+  }
+
   contactShare(recipient, path, ship, contact) {
     return this.contactViewAction({
       share: {
