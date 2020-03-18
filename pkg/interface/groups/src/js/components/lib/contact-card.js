@@ -423,7 +423,7 @@ export class ContactCard extends Component {
       <div className="w-100 mt8 flex justify-center pa4 pt8 pt0-l pa0-xl pt4-xl">
         <div className="w-100 mw6 tc">
           {avatar}
-          <div className="w-100 pt8 lh-copy tl">
+          <div className="w-100 pv8 lh-copy tl">
             <p className="f9 gray2">Ship Name</p>
             <p className="f8 mono">~{props.ship}</p>
             <p className="f9 gray2 mt3">Ship Type</p>
