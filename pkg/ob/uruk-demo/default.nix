@@ -10,7 +10,7 @@
 with obelisk;
 project ./. ({ ... }: {
   packages = {
-    urbit-atom = ../urbit/pkg/hs/urbit-atom;
+    urbit-atom = ../../hs/urbit-atom;
   };
   android.applicationId = "systems.obsidian.obelisk.examples.minimal";
   android.displayName = "Obelisk Minimal Example";
