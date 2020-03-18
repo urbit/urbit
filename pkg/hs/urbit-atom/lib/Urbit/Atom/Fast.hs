@@ -14,6 +14,13 @@ module Urbit.Atom.Fast
   , atomWords
   , exportBytes
   , importBytes
+  , wordBitWidth#
+  , wordBitWidth
+  , atomBitWidth#
+  , atomBitWidth
+  , takeBitsWord
+  , bigNatWords
+  , wordsBigNat
   , bit
   , byt
   )
@@ -31,7 +38,7 @@ import GHC.Exts                  (Int(..))
 import GHC.Integer.GMP.Internals (BigNat(..))
 import GHC.Natural               (Natural(..))
 import GHC.Prim                  (Int#, clz#, minusWord#, plusWord#)
-import GHC.Prim                  (Word#, Addr#, int2Word#, subIntC#, timesWord#)
+import GHC.Prim                  (Word#, Addr#, int2Word#, timesWord#)
 import GHC.Prim                  (copyByteArrayToAddr#)
 import GHC.Word                  (Word(..))
 import System.IO.Unsafe          (unsafePerformIO)
@@ -86,8 +93,8 @@ atomBitWidth# :: Natural -> Word#
 atomBitWidth# (NatS# gl) = wordBitWidth# gl
 atomBitWidth# (NatJ# bn) = bigNatBitWidth# bn
 
-bitWidth :: Num a => Natural -> a
-bitWidth a = fromIntegral (W# (atomBitWidth# a))
+atomBitWidth :: Num a => Natural -> a
+atomBitWidth a = fromIntegral (W# (atomBitWidth# a))
 
 --------------------------------------------------------------------------------
 
@@ -159,8 +166,8 @@ wordsBigNat v@(Vector off (I# len) (Prim.ByteArray buf)) = case VP.length v of
     Note that the length of the vector is in words, and the length passed
     to `byteArrayToBigNat#` is also in words.
 -}
-wordsBigNat' :: Vector Word -> BigNat
-wordsBigNat' v = case VP.length v of
+_wordsBigNat :: Vector Word -> BigNat
+_wordsBigNat v = case VP.length v of
   0 -> G.zeroBigNat
   1 -> G.wordToBigNat w where W# w = VP.unsafeIndex v 0
   n -> if offset v == 0 then extract v else extract (VP.force v)
@@ -196,8 +203,8 @@ bigNatNat bn = case G.sizeofBigNat# bn of
 
 --------------------------------------------------------------------------------
 
-wordBytes :: Word -> ByteString
-wordBytes wor = BS.reverse $ BS.pack $ go 0 []
+_wordBytes :: Word -> ByteString
+_wordBytes wor = BS.reverse $ BS.pack $ go 0 []
  where
   go i acc | i >= BYT  = acc
   go i acc | otherwise = go (i + 1) (fromIntegral (shiftR wor (i * BYT)) : acc)
@@ -213,8 +220,8 @@ bytesFirstWord buf = go 0 0
 
 --------------------------------------------------------------------------------
 
-pillWords :: Pill -> Vector Word
-pillWords = bsToWords . pillBytes
+_pillWords :: Pill -> Vector Word
+_pillWords = bsToWords . pillBytes
 
 wordsPill :: Vector Word -> Pill
 wordsPill = bytesPill . vecBytes . wordsToBytes
@@ -247,8 +254,8 @@ vecBytes (Vector off sz buf) = unsafePerformIO $ do
   copyByteArrayToAddr dst# (Prim.ByteArray src#) soff sz =
     primitive_ (copyByteArrayToAddr# src# (unI# soff) dst# (unI# sz))
 
-bytesVec :: ByteString -> Vector Word8
-bytesVec bs = VP.generate (BS.length bs) (BS.index bs)
+_bytesVec :: ByteString -> Vector Word8
+_bytesVec bs = VP.generate (BS.length bs) (BS.index bs)
 
 
 --------------------------------------------------------------------------------
@@ -318,9 +325,15 @@ stripBytes buf = BS.take (len - go 0 (len - 1)) buf
 
 
 importBytes :: ByteString -> Natural
-importBytes (stripBytes -> BS.PS fp 0 sz) = unsafePerformIO $ do
-  let Ptr a  = Ptr.unsafeForeignPtrToPtr fp -- TODO Not safe!
-  let W# sz# = fromIntegral sz
-  res <- bigNatNatural <$> G.importBigNatFromAddr a sz# 0#
-  Ptr.touchForeignPtr fp
-  pure res
+importBytes = go . stripBytes
+ where
+  go (BS.PS fp 0 sz) = unsafePerformIO $ do
+    let Ptr a  = Ptr.unsafeForeignPtrToPtr fp -- TODO Not safe!
+    let W# sz# = fromIntegral sz
+    res <- bigNatNatural <$> G.importBigNatFromAddr a sz# 0#
+    Ptr.touchForeignPtr fp
+    pure res
+
+  -- TODO Avoid this extra copy when given a slice. Should be able to
+  -- just offset the raw pointer.
+  go bs = importBytes (BS.copy bs)

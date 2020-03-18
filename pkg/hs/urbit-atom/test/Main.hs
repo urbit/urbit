@@ -5,16 +5,15 @@ module Main (main) where
 
 --------------------------------------------------------------------------------
 
-import Prelude
-import Numeric.Natural
-import Test.QuickCheck
 import Data.IORef
-import System.IO.Unsafe
+import Numeric.Natural
+import Prelude
 import System.Exit
+import System.IO.Unsafe
+import Test.QuickCheck
 
 import Control.Monad         (when)
 import Data.ByteString       (ByteString)
-import Data.Text             (Text)
 import Data.Vector.Primitive (Prim, Vector)
 
 import qualified Data.ByteString        as BS
