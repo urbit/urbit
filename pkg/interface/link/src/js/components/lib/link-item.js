@@ -3,7 +3,7 @@ import moment from 'moment';
 
 import { Sigil } from '/components/lib/icons/sigil';
 import { Route, Link } from 'react-router-dom';
-import { makeRoutePath } from '../../lib/util';
+import { makeRoutePath, cite } from '../../lib/util';
 
 export class LinkItem extends Component {
   constructor(props) {
@@ -79,9 +79,12 @@ export class LinkItem extends Component {
             <span className="gray2 dib v-btm ml2 f8 flex-shrink-0">{hostname} ↗</span>
           </a>
           <div className="w-100 pt1">
-            <span className={"f9 pr2 v-mid " + mono}>{(props.nickname)
-            ? props.nickname
-            : "~" + props.ship}</span>
+            <span className={"f9 pr2 v-mid " + mono}
+            title={props.ship}>
+            {(props.nickname)
+              ? props.nickname
+              : cite(props.ship)}
+            </span>
           <span
             className={seenState + " f9 inter pr3 v-mid"}
             onClick={this.markPostAsSeen}>

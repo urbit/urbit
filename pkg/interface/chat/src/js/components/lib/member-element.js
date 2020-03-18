@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { Sigil } from '/components/lib/icons/sigil';
-import { uxToHex } from '/lib/util';
+import { uxToHex, cite } from '/lib/util';
 
 
 export class MemberElement extends Component {
@@ -35,7 +35,7 @@ export class MemberElement extends Component {
     }
 
     let name = !!props.contact
-      ? `${props.contact.nickname} (~${props.ship})` : `~${props.ship}`;
+      ? `${props.contact.nickname} (${cite(props.ship)})` : `${cite(props.ship)}`;
     let color = !!props.contact ? uxToHex(props.contact.color) : '000000';
 
     return (

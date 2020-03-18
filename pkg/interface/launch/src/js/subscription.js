@@ -26,7 +26,11 @@ export class Subscription {
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       ship);
-  }
+    api.bind("invite-view", '/primary',
+      this.handleEvent.bind(this),
+      this.handleError.bind(this),
+      ship);
+    }
 
   handleEvent(diff) {
     store.handleEvent(diff);

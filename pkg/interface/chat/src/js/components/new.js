@@ -19,7 +19,7 @@ export class NewScreen extends Component {
       idError: false,
       inviteError: false,
       allowHistory: true,
-      createGroup: true
+      createGroup: false
     };
 
     this.titleChange = this.titleChange.bind(this);
@@ -256,11 +256,12 @@ export class NewScreen extends Component {
             <span className="gray3"> (Optional)</span>
           </p>
           <p className="f9 gray2 db mb2 pt1">
-            Selected entities will be able to post to chat
+            Selected groups or ships will be able to post to chat
           </p>
           <InviteSearch
             groups={props.groups}
             contacts={props.contacts}
+            associations={props.associations}
             groupResults={true}
             invites={{
               groups: state.groups,

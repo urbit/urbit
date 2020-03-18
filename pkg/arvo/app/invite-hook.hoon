@@ -4,7 +4,7 @@
 ::    can be poked by the host team to send an invite out to someone.
 ::    can be poked by foreign ships to send an invite to us.
 ::
-/+  *invite-json, default-agent, verb
+/+  *invite-json, default-agent, verb, dbug
 ::
 |%
 +$  state-0  [%0 ~]
@@ -16,6 +16,7 @@
 =*  state  -
 ::
 %+  verb  |
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  =bowl:gall

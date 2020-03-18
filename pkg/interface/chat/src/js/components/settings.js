@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { deSig, uxToHex } from '/lib/util';
+import { deSig, uxToHex, writeText } from '/lib/util';
 import { Route, Link } from "react-router-dom";
 
 
@@ -23,6 +23,7 @@ export class SettingsScreen extends Component {
     this.changeTitle = this.changeTitle.bind(this);
     this.changeDescription = this.changeDescription.bind(this);
     this.changeColor = this.changeColor.bind(this);
+    this.submitColor = this.submitColor.bind(this);
   }
 
   componentDidMount() {
@@ -31,7 +32,7 @@ export class SettingsScreen extends Component {
       this.setState({
         title: props.association.metadata.title,
         description: props.association.metadata.description,
-        color: uxToHex(props.association.metadata.color)
+        color: `#${uxToHex(props.association.metadata.color)}`
       });
     }
   }
@@ -47,12 +48,12 @@ export class SettingsScreen extends Component {
       });
     }
 
-    if ((this.state.title === "") && (prevProps !== this.props)) {
+    if ((state.title === "") && (prevProps !== props)) {
       if (props.association && "metadata" in props.association)
         this.setState({
           title: props.association.metadata.title,
           description: props.association.metadata.description,
-          color: uxToHex(props.association.metadata.color)
+          color: `#${uxToHex(props.association.metadata.color)}`
         });
     }
   }
@@ -69,6 +70,41 @@ export class SettingsScreen extends Component {
     this.setState({color: event.target.value});
   }
 
+  submitColor() {
+    let { props, state } = this;
+
+    let color = state.color;
+    if (color.startsWith("#")) {
+      color = state.color.substr(1);
+    }
+    let hexExp = /([0-9A-Fa-f]{6})/
+    let hexTest = hexExp.exec(color);
+    let currentColor = "000000";
+    if (props.association && "metadata" in props.association) {
+      currentColor = uxToHex(props.association.metadata.color);
+    }
+    if (hexTest && (hexTest[1] !== currentColor)) {
+      let chatOwner = (deSig(props.match.params.ship) === window.ship);
+      let association =
+        (props.association) && ("metadata" in props.association)
+          ? props.association : {};
+
+      if (chatOwner) {
+        props.api.setSpinner(true);
+        props.api.metadataAdd(
+          association['app-path'],
+          association['group-path'],
+          association.metadata.title,
+          association.metadata.description,
+          association.metadata['date-created'],
+          color
+        ).then(() => {
+          props.api.setSpinner(false);
+        })
+      }
+    }
+  }
+
   deleteChat() {
     const { props, state } = this;
 
@@ -76,7 +112,22 @@ export class SettingsScreen extends Component {
     props.api.setSpinner(true);
 
     this.setState({
-      isLoading: true
+      isLoading: true,
+      loadingText: (deSig(props.match.params.ship) === window.ship)
+        ? 'Deleting...'
+        : 'Leaving...'
+    });
+  }
+
+  groupifyChat() {
+    const { props, state } = this;
+
+    props.api.chatView.groupify(props.station);
+    props.api.setSpinner(true);
+
+    this.setState({
+      isLoading: true,
+      loadingText: 'Converting...'
     });
   }
 
@@ -85,7 +136,7 @@ export class SettingsScreen extends Component {
 
     let chatOwner = (deSig(props.match.params.ship) === window.ship);
 
-    let deleteButtonClasses = (chatOwner) ? 'b--red2 red2 pointer bg-gray0-d' : 'b--grey3 grey3 bg-gray0-d c-default';
+    let deleteButtonClasses = (chatOwner) ? 'b--red2 red2 pointer bg-gray0-d' : 'b--gray3 gray3 bg-gray0-d c-default';
     let leaveButtonClasses = (!chatOwner) ? "pointer" : "c-default";
 
     return (
@@ -94,7 +145,7 @@ export class SettingsScreen extends Component {
         <p className="f8 mt3 lh-copy db">Leave Chat</p>
         <p className="f9 gray2 db mb4">Remove this chat from your chat list. You will need to request for access again.</p>
         <a onClick={(!chatOwner) ? this.deleteChat.bind(this) : null}
-           className={"dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray0-d " + leaveButtonClasses}>Leave this chat</a>
+           className={"dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d " + leaveButtonClasses}>Leave this chat</a>
       </div>
         <div className={"w-100 fl mt3 " + ((!chatOwner) ? 'o-30' : '')}>
         <p className="f8 mt3 lh-copy db">Delete Chat</p>
@@ -104,6 +155,35 @@ export class SettingsScreen extends Component {
       </div>
       </div>
     );
+  }
+
+  renderGroupify() {
+    const { props, state } = this;
+
+    const chatOwner = (deSig(props.match.params.ship) === window.ship);
+    console.log(chatOwner, props.match.params.ship, window.ship);
+
+    const ownedUnmanagedVillage =
+      chatOwner &&
+      props.station.slice(0, 3) === '/~/' &&
+      props.permission.kind === 'white';
+
+    if (!ownedUnmanagedVillage) {
+      return null;
+    } else {
+      return (
+        <div>
+          <div className={"w-100 fl mt3 "}>
+            <p className="f8 mt3 lh-copy db">Convert Chat</p>
+            <p className="f9 gray2 db mb4">
+              Convert this chat into a group with associated chat.
+            </p>
+            <a onClick={this.groupifyChat.bind(this)}
+               className={"dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer"}>Convert to group</a>
+          </div>
+        </div>
+      );
+    }
   }
 
   renderMetadataSettings() {
@@ -127,12 +207,7 @@ export class SettingsScreen extends Component {
             value={this.state.title}
             disabled={!chatOwner}
             onChange={this.changeTitle}
-          />
-          <span className={"f8 absolute pa3 inter " +
-          ((chatOwner) ? "pointer" : "")}
-            style={{ right: 12, top: 1 }}
-            ref="rename"
-            onClick={() => {
+            onBlur={() => {
               if (chatOwner) {
                 props.api.setSpinner(true);
                 props.api.metadataAdd(
@@ -143,13 +218,11 @@ export class SettingsScreen extends Component {
                   association.metadata['date-created'],
                   uxToHex(association.metadata.color)
                 ).then(() => {
-                  this.refs.rename.innerText = "Saved";
                   props.api.setSpinner(false);
                 })
               }
-            }}>
-            Save
-            </span>
+            }}
+          />
           </div>
           <p className="f8 mt3 lh-copy">Change description</p>
           <p className="f9 gray2 db mb4">Change the description of this chat</p>
@@ -161,12 +234,7 @@ export class SettingsScreen extends Component {
               value={this.state.description}
               disabled={!chatOwner}
               onChange={this.changeDescription}
-            />
-            <span className={"f8 absolute pa3 inter " +
-              ((chatOwner) ? "pointer" : "")}
-              style={{ right: 12, top: 1 }}
-              ref="description"
-              onClick={() => {
+              onBlur={() => {
                 if (chatOwner) {
                   props.api.setSpinner(true);
                   props.api.metadataAdd(
@@ -177,47 +245,32 @@ export class SettingsScreen extends Component {
                     association.metadata['date-created'],
                     uxToHex(association.metadata.color)
                   ).then(() => {
-                    this.refs.description.innerText = "Saved";
                     props.api.setSpinner(false);
                   })
                 }
-              }}>
-              Save
-            </span>
+              }}
+            />
           </div>
           <p className="f8 mt3 lh-copy">Change color</p>
           <p className="f9 gray2 db mb4">Give this chat a color when viewing group channels</p>
           <div className="relative w-100 flex"
-            style={{ maxWidth: "20rem" }}>
+            style={{ maxWidth: "10rem" }}>
+            <div className="absolute"
+              style={{
+                height: 16,
+                width: 16,
+                backgroundColor: state.color,
+                top: 13,
+                left: 11
+                }}/>
             <input
-              className={"f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
+              className={"pl7 f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
                 "focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3"}
               value={this.state.color}
               disabled={!chatOwner}
               onChange={this.changeColor}
+              onBlur={this.submitColor}
             />
-            <span className={"f8 absolute pa3 inter " +
-              ((chatOwner) ? "pointer" : "")}
-              style={{ right: 12, top: 1 }}
-              ref="color"
-              onClick={() => {
-                if ((chatOwner) && (this.state.color.match(/[0-9A-F]{6}/i))) {
-                  props.api.setSpinner(true);
-                  props.api.metadataAdd(
-                    association['app-path'],
-                    association['group-path'],
-                    association.metadata.title,
-                    association.metadata.description,
-                    association.metadata['date-created'],
-                    this.state.color
-                  ).then(() => {
-                    this.refs.color.innerText = "Saved";
-                    props.api.setSpinner(false);
-                  })
-                }
-              }}>
-              Save
-            </span>
           </div>
         </div>
       </div>
@@ -231,10 +284,7 @@ export class SettingsScreen extends Component {
     let writeGroup = Array.from(props.group.values());
 
     if (!!state.isLoading) {
-      let text = "Deleting...";
-      if (deSig(props.match.params.ship) !== window.ship) {
-        text = "Leaving...";
-      }
+      let text = state.loadingText || 'Working...';
 
       let title = props.station.substr(1);
 
@@ -270,6 +320,8 @@ export class SettingsScreen extends Component {
               {...props}
               station={props.station}
               numPeers={writeGroup.length}
+              host={props.match.params.ship}
+              api={props.api}
             />
           </div>
           <div className="w-100 pl3 mt4 cf">
@@ -333,13 +385,14 @@ export class SettingsScreen extends Component {
                 style={{right: 12, top: 1}}
                 ref="copy"
                 onClick={() => {
-                  navigator.clipboard.writeText(props.station.substr(1));
+                  writeText(props.station.substr(1));
                   this.refs.copy.innerText = "Copied";
                 }}>
                 Copy
               </span>
             </div>
           </div>
+          {this.renderGroupify()}
           {this.renderDelete()}
           {this.renderMetadataSettings()}
         </div>

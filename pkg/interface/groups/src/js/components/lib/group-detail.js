@@ -125,7 +125,7 @@ export class GroupDetail extends Component {
           <Link
             className="absolute right-1 f9"
             to={"/~groups/settings" + props.path}>Group Settings</Link>
-          <p className="f9">{title}</p>
+          <p className="f9 mw5 mw3-m mw4-l">{title}</p>
           <p className="f9 gray2">{description}</p>
           <p className="f9">
             {props.group.size + " participant" +
@@ -151,7 +151,7 @@ export class GroupDetail extends Component {
 
     return (
       <div className="pa4 w-100 h-100 white-d">
-        <div className="f9 w-100">
+        <div className="f8 f9-m f9-l f9-xl w-100">
           <Link to={"/~groups/detail" + props.path}>{"⟵ Channels"}</Link>
         </div>
         <div className={(groupOwner) ? "" : "o-30"}>
@@ -165,26 +165,22 @@ export class GroupDetail extends Component {
               value={this.state.title}
               disabled={!groupOwner}
               onChange={this.changeTitle}
+              onBlur={() => {
+                if (groupOwner) {
+                  props.api.setSpinner(true);
+                  props.api.metadataAdd(
+                    association['app-path'],
+                    association['group-path'],
+                    this.state.title,
+                    association.metadata.description,
+                    association.metadata['date-created'],
+                    uxToHex(association.metadata.color)
+                  ).then(() => {
+                    props.api.setSpinner(false);
+                  })
+                }
+              }}
             />
-            <span className={"f8 absolute pa3 inter " + ((groupOwner) ? "pointer" : "")}
-            style={{right: 12, top: 1}}
-            ref="rename"
-            onClick={() => {
-              if (groupOwner) {
-                props.api.setSpinner(true);
-                props.api.metadataAdd(
-                  association['app-path'],
-                  association['group-path'],
-                  this.state.title,
-                  association.metadata.description,
-                  association.metadata['date-created'],
-                  uxToHex(association.metadata.color)
-                ).then(() => {
-                  this.refs.rename.innerText = "Saved";
-                  props.api.setSpinner(false);
-                })
-              }
-            }}>Save</span>
           </div>
           <p className="f8 mt3 lh-copy">Change description</p>
           <p className="f9 gray2 mb4">Change the description of this group</p>
@@ -196,11 +192,7 @@ export class GroupDetail extends Component {
               value={this.state.description}
               disabled={!groupOwner}
               onChange={this.changeDescription}
-            />
-            <span className={"f8 absolute pa3 inter " + ((groupOwner) ? "pointer" : "")}
-              style={{ right: 12, top: 1 }}
-              ref="description"
-              onClick={() => {
+              onBlur={() => {
                 if (groupOwner) {
                   props.api.setSpinner(true);
                   props.api.metadataAdd(
@@ -211,11 +203,11 @@ export class GroupDetail extends Component {
                     association.metadata['date-created'],
                     uxToHex(association.metadata.color)
                   ).then(() => {
-                    this.refs.description.innerText = "Saved";
                     props.api.setSpinner(false);
                   })
                 }
-              }}>Save</span>
+              }}
+            />
           </div>
         </div>
       </div>

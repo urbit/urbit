@@ -93,10 +93,11 @@ export class NewScreen extends Component {
         group: groupInfo
       }
     }
-
+    props.api.setSpinner(true);
     this.setState({awaiting: bookId, disabled: true}, () => {
-      props.api.setSpinner(true);
-      props.api.action("publish", "publish-action", action);
+      props.api.action("publish", "publish-action", action).then(() => {
+        props.api.setSpinner(false);
+      });
     });
   }
 
@@ -184,8 +185,9 @@ export class NewScreen extends Component {
             (Optional)
           </span>
           </p>
-          <p className="f9 gray2 db mb2 pt1">Select an initial read-only audience for your notebook</p>
+          <p className="f9 gray2 db mb2 pt1">Selected ships will be invited to read your notebook. Selected groups will be invited to read and write notes.</p>
           <InviteSearch
+            associations={this.props.associations}
             groupResults={true}
             groups={this.props.groups}
             contacts={this.props.contacts}

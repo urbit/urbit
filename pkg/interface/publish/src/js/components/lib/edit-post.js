@@ -29,7 +29,7 @@ export class EditPost extends Component {
       let notebook = props.notebooks[props.ship][props.book];
       let note = notebook.notes[props.note];
       let file = note.file;
-      let body = file.slice(file.indexOf(';>') + 2);
+      let body = file.slice(file.indexOf(';>') + 3);
       this.setState({body: body});
     }
   }
@@ -98,7 +98,7 @@ export class EditPost extends Component {
             popout={props.popout}
           />
           <button
-            className="v-mid w-100 mw6 tl h1 pl4"
+            className="v-mid bg-transparent w-100 w-80-m w-90-l mw6 tl h1 pl4"
             disabled={!state.submit}
             style={submitStyle}
             onClick={this.postSubmit}>
@@ -114,7 +114,7 @@ export class EditPost extends Component {
           />
         </Link>
         </div>
-        <div className="overflow-container mw6 center">
+        <div className="mw6 center">
         <div className="pl4">
           <div className="gray2">{date}</div>
         </div>

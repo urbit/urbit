@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Sigil } from '/components/lib/icons/sigil';
 import classnames from 'classnames';
 import { Route, Link } from 'react-router-dom'
-import { uxToHex } from '/lib/util';
+import { uxToHex, cite } from '/lib/util';
 import urbitOb from 'urbit-ob';
 import moment from 'moment';
 import _ from 'lodash';
@@ -100,7 +100,7 @@ export class Message extends Component {
           rel="noopener noreferrer">
             {letter.url}
         </a>
-        <a className="f7 pointer lh-copy v-top"
+        <a className="ml2 f7 pointer lh-copy v-top"
         onClick={e => this.unFoldEmbed()}>
           [embed]
           </a>
@@ -124,29 +124,12 @@ export class Message extends Component {
         </p>
       );
     } else {
-      let chatroom = letter.text.match(
-        /([~][/])?(~[a-z]{3,6})(-[a-z]{6})?([/])(([a-z])+([/-])?)+/
-        );
-      if ((chatroom !== null) // matched possible chatroom
-        && (chatroom[2].length > 2) // possible ship?
-        && (urbitOb.isValidPatp(chatroom[2]) // valid patp?
-        && (chatroom[0] === letter.text))) { // entire message is room name?
-          return (
-            <Link
-            className="bb b--black b--white-d f7 mono lh-copy v-top"
-            to={"/~chat/join/" + chatroom.input}>
-              {letter.text}
-            </Link>
-          );
-        }
-      else {
         let text = letter.text.split ('\n').map ((item, i) => <p className='f7 lh-copy v-top' key={i}>{item}</p>);
         return (
           <section>
             {text}
           </section>
         );
-      }
     }
   }
 
@@ -171,6 +154,11 @@ export class Message extends Component {
         color = `#${uxToHex(contact.color)}`;
         sigilClass = "";
       }
+
+      if (`~${props.msg.author}` === name) {
+        name = cite(props.msg.author);
+      }
+
       return (
         <div
           className={
@@ -191,8 +179,12 @@ export class Message extends Component {
             className="fr clamp-message white-d"
             style={{ flexGrow: 1, marginTop: -8 }}>
             <div className="hide-child" style={paddingTop}>
-              <p className="v-mid f9 gray2 dib mr3">
-                <span className={contact.nickname ? null : "mono"}>{name}</span>
+              <p className="v-mid f9 gray2 dib mr3 c-default">
+                <span
+                  className={contact.nickname ? null : "mono"}
+                  title={`~${props.msg.author}`}>
+                    {name}
+                </span>
               </p>
               <p className="v-mid mono f9 gray2 dib">{timestamp}</p>
               <p className="v-mid mono f9 ml2 gray2 dib child dn-s">{datestamp}</p>

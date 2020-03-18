@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { cite } from '../../lib/util';
 import classnames from 'classnames';
 import moment from 'moment';
 
@@ -62,13 +63,15 @@ export class SidebarItem extends Component {
 
     let latest = this.getLetter(props.latest);
 
-    let selectedCss = !!props.selected ? 'bg-gray5 bg-gray1-d gray3-d' : 'bg-white bg-gray0-d gray3-d pointer';
+    let selectedCss = !!props.selected
+      ? 'bg-gray5 bg-gray1-d gray3-d c-default'
+      : 'bg-white bg-gray0-d gray3-d pointer';
 
     let authorCss = (props.nickname === props.ship)
       ? "mono" : "";
 
     let author = (props.nickname === props.ship)
-      ? `~${props.ship}` : props.nickname;
+      ? cite(props.ship) : props.nickname;
 
     return (
       <div
@@ -82,7 +85,8 @@ export class SidebarItem extends Component {
         </div>
         <div className="w-100 pt3">
           <p className={((unreadElem === "") ? "black white-d" : "") +
-          unreadElem + " dib f9 mr3 mw4 truncate v-mid " + authorCss}>
+          unreadElem + " dib f9 mr3 mw4 truncate v-mid " + authorCss}
+          title={props.ship || ""}>
             {(author === "~") ? "" : author}
           </p>
           <p className="dib mono f9 gray3 v-mid">{state.timeSinceNewestMessage}</p>

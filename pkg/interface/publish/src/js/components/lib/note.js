@@ -5,6 +5,7 @@ import { Comments } from './comments';
 import { NoteNavigation } from './note-navigation';
 import moment from 'moment';
 import ReactMarkdown from 'react-markdown';
+import { cite } from '../../lib/util';
 
 export class Note extends Component {
   constructor(props){
@@ -54,6 +55,18 @@ export class Note extends Component {
     {
       window.api.fetchNote(this.props.ship, this.props.book, this.props.note);
     }
+    if ((prevProps.book !== this.props.book) ||
+        (prevProps.note !== this.props.note) ||
+        (prevProps.ship !== this.props.ship)) {
+      let readAction = {
+        read: {
+          who: this.props.ship.slice(1),
+          book: this.props.book,
+          note: this.props.note,
+        }
+      }
+      window.api.action("publish", "publish-action", readAction);
+    }
   }
 
   onScroll() {
@@ -97,12 +110,12 @@ export class Note extends Component {
 
   render() {
     const { props } = this;
-    let notebook = props.notebooks[props.ship][props.book];
-    let comments = notebook.notes[props.note].comments;
-    let title = notebook.notes[props.note].title;
-    let author = notebook.notes[props.note].author;
-    let file = notebook.notes[props.note].file;
-    let date = moment(notebook.notes[props.note]["date-created"]).fromNow();
+    let notebook = props.notebooks[props.ship][props.book] || {};
+    let comments = notebook.notes[props.note].comments || false;
+    let title = notebook.notes[props.note].title || "";
+    let author = notebook.notes[props.note].author || "";
+    let file = notebook.notes[props.note].file || "";
+    let date = moment(notebook.notes[props.note]["date-created"]).fromNow() || 0;
 
     let contact = !!(author.substr(1) in props.contacts)
       ? props.contacts[author.substr(1)] : false;
@@ -113,13 +126,17 @@ export class Note extends Component {
         ? contact.nickname : author;
     }
 
+    if (name === author) {
+      name = cite(author);
+    }
+
     if (!file) {
       return null;
     }
 
     let newfile = file.slice(file.indexOf(';>')+2);
-    let prevId = notebook.notes[props.note]["prev-note"];
-    let nextId = notebook.notes[props.note]["next-note"];
+    let prevId = notebook.notes[props.note]["prev-note"] || null;
+    let nextId = notebook.notes[props.note]["next-note"] || null;
 
     let prev = (prevId === null)
       ?  null
@@ -154,7 +171,7 @@ export class Note extends Component {
     let baseUrl = `/~publish/${popout}notebook/${props.ship}/${props.book}`;
     return (
       <div
-        className="h-100 no-scrollbar"
+        className="h-100 overflow-y-scroll"
         onScroll={this.onScroll}
         ref={el => {
           this.scrollElement = el;
@@ -178,19 +195,20 @@ export class Note extends Component {
               />
             </Link>
           </div>
-          <div className="w-100 mw6 overflow-container">
+          <div className="w-100 mw6">
             <div className="flex flex-column">
               <div className="f9 mb1"
               style={{overflowWrap: "break-word"}}>{title}</div>
               <div className="flex mb6">
                 <div
                   className={
-                    "di f9 gray2 mr2 " + (name === author ? "mono" : "")
-                  }>
+                    "di f9 gray2 mr2 " + (contact.nickname ? null : "mono")
+                  }
+                  title={author}>
                   {name}
                 </div>
                 <div className="di">
-                  <span className="f9 gray2">{date}</span><span className="ml2">{editPost}</span></div>
+                  <span className="f9 gray2 dib">{date}</span><span className="ml2 dib">{editPost}</span></div>
               </div>
             </div>
             <div className="md"

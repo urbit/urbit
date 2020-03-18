@@ -6,22 +6,25 @@
     *invite-store,
     *metadata-hook,
     *metadata-store
-/+  *contact-json, default-agent
+/+  *contact-json, default-agent, dbug
 |%
 +$  card  card:agent:gall
 ::
 +$  versioned-state
   $%  state-zero
+      state-one
   ==
 ::
-+$  state-zero
-  $:  %0
-      synced=(map path ship)
++$  state-zero  [%0 state-base]
++$  state-one   [%1 state-base]
++$  state-base
+  $:  synced=(map path ship)
       invite-created=_|
   ==
 --
-=|  state-zero
+=|  state-one
 =*  state  -
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  bol=bowl:gall
@@ -39,8 +42,18 @@
     ==
   ++  on-save   !>(state)
   ++  on-load
-    |=  old=vase
-    `this(state !<(state-zero old))
+    |=  old-vase=vase
+    ^-  (quip card _this)
+    =/  old  !<(versioned-state old-vase)
+    ?:  ?=(%1 -.old)
+      [~ this(state old)]
+    =/  upgraded-state
+      %*  .  *state-one
+          synced  synced
+          invite-created  invite-created
+      ==
+    :_  this(state upgraded-state)
+    [%pass /group %agent [our.bol %group-store] %watch /updates]~
   ::
   ++  on-poke
     |=  [=mark =vase]
@@ -422,6 +435,6 @@
   =/  shp  (~(get by synced) t.pax)
   ?~  shp  ~
   ?:  =(u.shp our.bol)
-    [%pass pax %agent [our.bol %chat-store] %leave ~]~
-  [%pass pax %agent [u.shp %chat-hook] %leave ~]~
+    [%pass pax %agent [our.bol %contact-store] %leave ~]~
+  [%pass pax %agent [u.shp %contact-hook] %leave ~]~
 --

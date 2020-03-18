@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { store } from '../store';
 import { api } from '../api';
+import { cite } from '../lib/util';
 
 export class Input extends Component {
   constructor(props) {
@@ -14,14 +15,20 @@ export class Input extends Component {
     }
 
   keyPress = (e) => {
+    if ((e.getModifierState("Control") || event.getModifierState("Meta"))
+       && e.key === "v") {
+      return;
+    }
+
     e.preventDefault();
 
-    let ignoredKeys = ["Meta", "Alt", "Control", "Escape", "Shift",
-                       "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8",
-                       "F9", "F10", "F11", "F12", "Backspace", "Unidentified",
-                       "Delete", "Insert", "Home", "PageUp", "PageDown", "End",
-                       "Dead"
-                      ];
+    let allowedKeys = [
+      "Enter", "Backspace", "ArrowLeft", "ArrowRight", "Tab"
+    ];
+
+    if ((e.key.length > 1) && (!(allowedKeys.includes(e.key)))) {
+      return;
+    }
 
   // submit on enter
   if (e.key === "Enter") {
@@ -57,7 +64,7 @@ export class Input extends Component {
   }
 
   // capture and transmit most characters
-  else if (ignoredKeys.indexOf(e.key) === -1) {
+  else {
     store.doEdit({ ins: { cha: e.key, at: this.props.cursor } });
     store.setState({ cursor: this.props.cursor + 1 });
   }
@@ -66,7 +73,7 @@ export class Input extends Component {
 render() {
   return (
     <div className="flex flex-row flex-grow-1">
-      <div className="flex-shrink-0">~{this.props.ship}:dojo
+      <div className="flex-shrink-0">{cite(this.props.ship)}:dojo
       </div>
       <span id="prompt">
         {this.props.prompt}
@@ -78,7 +85,16 @@ render() {
         cursor={this.props.cursor}
         onClick={e => store.setState({ cursor: e.target.selectionEnd })}
         onKeyDown={this.keyPress}
-        onPaste={e => {e.preventDefault()}}
+        onPaste={e => {
+          let clipboardData = e.clipboardData || window.clipboardData;
+          let paste = Array.from(clipboardData.getData('Text'));
+          paste.reduce(async (previous, next) => {
+            await previous;
+            this.setState({cursor: this.props.cursor + 1});
+            return store.doEdit({ ins: { cha: next, at: this.props.cursor } });
+          }, Promise.resolve());
+          e.preventDefault();
+          }}
         ref={this.inputRef}
         defaultValue={this.props.input}
       />

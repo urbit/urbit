@@ -119,7 +119,7 @@ export class NewScreen extends Component {
               "focus-b--black focus-b--white-d"
             }
             rows={1}
-            placeholder="Two trumpeteers and a microphone"
+            placeholder="Two trumpeters and a microphone"
             style={{
               resize: "none",
               height: 48,
@@ -127,8 +127,8 @@ export class NewScreen extends Component {
             }}
             onChange={this.descriptionChange}
           />
-          <h2 className="f8 pt6">Add Group Members</h2>
-          <p className="f9 gray2 lh-copy">Invite ships to your group</p>
+          <h2 className="f8 pt6">Invite <span className="gray2">(Optional)</span></h2>
+          <p className="f9 gray2 lh-copy">Selected ships will be invited to your group</p>
           <div className="relative pb6 mt2">
             <InviteSearch
               groups={this.props.groups}

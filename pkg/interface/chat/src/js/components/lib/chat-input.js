@@ -133,12 +133,10 @@ export class ChatInput extends Component {
 
   isUrl(string) {
     try {
-      const urlObject = new URL(string);
-      //NOTE we check for a host to ensure a url is actually being posted
-      //     to combat false positives for things like "marzod: ur cool".
-      //     this does mean you can't send "mailto:e@ma.il" as %url message,
-      //     but the desirability of that seems questionable anyway.
-      return (urlObject.host !== '');
+      let websiteTest = new RegExp(''
+      + /((\w+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+)/.source
+      );
+      return websiteTest.test(string);
     } catch (e) {
       return false;
     }
@@ -151,14 +149,45 @@ export class ChatInput extends Component {
       return;
     }
 
-    let letter = this.getLetterType(state.message);
+    let message = [];
+    state.message.split(" ").map((each) => {
+      if (this.isUrl(each)) {
+        if (message.length > 0) {
+          message = message.join(" ");
+          message = this.getLetterType(message);
+          props.api.chat.message(
+            props.station,
+            `~${window.ship}`,
+            Date.now(),
+            message
+          );
+          message = [];
+        }
+        let URL = this.getLetterType(each);
+        props.api.chat.message(
+          props.station,
+          `~${window.ship}`,
+          Date.now(),
+          URL
+        );
+      }
+      else {
+        return message.push(each);
+      }
+    })
 
-    props.api.chat.message(
-      props.station,
-      `~${window.ship}`,
-      Date.now(),
-      letter
-    );
+    if (message.length > 0) {
+      message = message.join(" ");
+      message = this.getLetterType(message);
+      props.api.chat.message(
+        props.station,
+        `~${window.ship}`,
+        Date.now(),
+        message
+      );
+      message = [];
+    }
+
     // perf: setTimeout(this.closure, 2000);
 
     this.setState({
@@ -170,7 +199,7 @@ export class ChatInput extends Component {
   readOnlyRender() {
     const { props } = this;
     let color = !!props.ownerContact
-      ? uxToHex(props.ownerContact.color) : '#000000';
+      ? uxToHex(props.ownerContact.color) : '000000';
 
     let sigilClass = !!props.ownerContact
       ? "" : "mix-blend-diff";
@@ -200,7 +229,7 @@ export class ChatInput extends Component {
     const { props, state } = this;
 
     let color = !!props.ownerContact
-      ? uxToHex(props.ownerContact.color) : '#000000';
+      ? uxToHex(props.ownerContact.color) : '000000';
 
     let sigilClass = !!props.ownerContact
       ? "" : "mix-blend-diff";

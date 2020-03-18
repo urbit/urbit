@@ -23,6 +23,7 @@ export class Root extends Component {
     const { props, state } = this;
 
     let contacts = !!state.contacts ? state.contacts : {};
+    let associations = !!state.associations ? state.associations : {contacts: {}}
 
     return (
       <BrowserRouter>
@@ -63,6 +64,7 @@ export class Root extends Component {
             notebooks={state.notebooks}
             contacts={contacts}>
               <NewScreen
+                associations={associations.contacts}
                 notebooks={state.notebooks}
                 groups={state.groups}
                 contacts={contacts}

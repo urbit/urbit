@@ -64,10 +64,10 @@ export class Dropdown extends Component {
     });
 
     return (
-      <div className={"options relative dib " + optionsClass}
-           ref={(el) => {this.optsButton = el}}>
-        <button className="bg-transparent white-d pr3 mb1 pointer br2 pa2 pr4"
-                onClick={this.toggleDropdown}>
+      <div className={"options relative dib pr3 pointer " + optionsClass}
+        ref={(el) => {this.optsButton = el}}
+        onClick={this.toggleDropdown}>
+        <button className="bg-transparent white-d pointer mb1 br2 pa2 pr4">
           {this.props.buttonText}
         </button>
         <div className="absolute flex flex-column pv2 ba b--gray4 br2 z-1 bg-white bg-gray0-d"

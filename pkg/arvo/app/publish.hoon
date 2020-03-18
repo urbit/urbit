@@ -8,7 +8,7 @@
     *invite-store,
     *metadata-store,
     *metadata-hook
-/+  *server, *publish, cram, default-agent
+/+  *server, *publish, cram, default-agent, dbug
 ::
 /=  index
   /^  $-(json manx)
@@ -49,7 +49,7 @@
       *
   ==
 ::
-+$  state-one
++$  state-two
   $:  our-paths=(list path)
       books=(map @tas notebook)
       subs=(map [@p @tas] notebook)
@@ -57,7 +57,8 @@
   ==
 ::
 +$  versioned-state
-  $%  [%1 state-one]
+  $%  [%1 state-two]
+      [%2 state-two]
   ==
 ::
 +$  metadata-delta
@@ -75,6 +76,7 @@
 ::
 =|  versioned-state
 =*  state  -
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  bol=bowl:gall
@@ -108,17 +110,28 @@
     =/  old-state=(each versioned-state tang)
       (mule |.(!<(versioned-state old)))
     ?:  ?=(%& -.old-state)
-      [~ this(state p.old-state)]
+      ?-  -.p.old-state
+          %1
+        :_  this(state [%2 +.p.old-state])
+        %-  zing
+        %+  turn  ~(tap by books.p.old-state)
+        |=  [name=@tas book=notebook]
+        ^-  (list card)
+        =/  group-host=(unit @p)
+          ?>  ?=(^ writers.book)
+          (slaw %p i.writers.book)
+        ?~  group-host  ~
+        ?:  =(u.group-host our.bol)  ~
+        :~  %-  perm-group-hook-poke:main
+            [%associate writers.book [[writers.book %white] ~ ~]]
+          ::
+            (perm-hook-poke:main [%add-owned writers.book writers.book])
+        ==
+      ::
+          %2
+        [~ this(state p.old-state)]
+      ==
     =/  zero  !<(state-zero old)
-    ::  kill all ford builds
-    ::  flush all state
-    ::  detect files in /web/publish
-    ::    move to /app/publish/notebooks
-    ::    for each notebook
-    ::      kick all subscribers
-    ::      make a group for it
-    ::      send invites to all previously subscribed ships
-    ::
     |^
     =/  rav  [%next %t [%da now.bol] /app/publish/notebooks]
     =/  tile-json
@@ -138,10 +151,10 @@
     =/  inv-scry-pax
       /(scot %p our.bol)/invite-store/(scot %da now.bol)/invitatory/publish/noun
     =/  inv=(unit invitatory)  .^((unit invitatory) %gx inv-scry-pax)
-    =|  new-state=state-one
+    =|  new-state=state-two
     =?  tile-num.new-state  ?=(^ inv)
       ~(wyt by u.inv)
-    :_  this(state [%1 new-state])
+    :_  this(state [%2 new-state])
     ;:  weld
       kill-builds
       kick-cards
@@ -536,7 +549,7 @@
     =/  note-name  i.t.t.t.t.pax
     =/  book  (~(get by books.sty) book-name)
     ?~  book
-      [~ sty]
+      [cad sty]
     =.  notes.u.book  (~(del by notes.u.book) note-name)
     =/  delta=notebook-delta  [%del-note our.bol book-name note-name]
     =^  cards  sty  (handle-notebook-delta delta sty)
@@ -547,7 +560,7 @@
     =/  note-name  i.t.t.t.t.pax
     =/  comment-date  (slaw %da i.t.t.t.t.t.pax)
     ?~  comment-date
-      [~ sty]
+      [cad sty]
     =/  delta=notebook-delta
       [%del-comment our.bol book-name note-name u.comment-date]
     =^  cards  sty  (handle-notebook-delta delta sty)
@@ -691,7 +704,7 @@
   =/  snippet=@t  (of-wain:format (scag 1 (to-wain:format body)))
   =/  meta=(each (map term knot) tang)
     %-  mule  |.
-    %-  ~(run by inf:(static:cram (ream udon)))
+    %-  ~(run by inf:(static:cram (ream front-matter)))
     |=  a=dime  ^-  cord
     ?+  (end 3 1 p.a)  (scot a)
       %t  q.a
@@ -749,7 +762,7 @@
   |=  who=@p
   ?.  (allowed who %read u.book)
     [%give %kick [/notebook/[u.book]]~ `who]~
-  ?:  ?=(%remove -.upd)
+  ?:  ?|(?=(%remove -.upd) (is-managed path.upd))
     ~
   =/  uid  (sham %publish who u.book eny.bol)
   =/  inv=invite
@@ -962,17 +975,18 @@
     ?~  grp  !!
     ?.  (is-managed group-path.group)  !!
     :_  [group-path.group group-path.group]
-    (generate-invites book (~(del in u.grp) our.bol))
+    :~  %-  perm-group-hook-poke
+        [%associate group-path.group [[group-path.group %white] ~ ~]]
+      ::
+        (perm-hook-poke [%add-owned group-path.group group-path.group])
+    ==
   ::
   ?:  make-managed.group
     ?^  grp  [~ group-path.group group-path.group]
     ?.  (is-managed group-path.group)  !!
     =/  whole-grp  (~(put in invitees.group) our.bol)
     :_  [group-path.group group-path.group]
-    %-  zing
-    :~  [(contact-view-create [group-path.group whole-grp title about])]~
-        (generate-invites book (~(del in invitees.group) our.bol))
-    ==
+    [(contact-view-create [group-path.group whole-grp title about])]~
   ::  make unmanaged group
   =*  write-path  group-path.group
   =/  read-path   (weld write-path /read)
@@ -1034,7 +1048,6 @@
           date-created+(scot %da now.bol)
           last-modified+(scot %da now.bol)
       ==
-    =.  body.act  (cat 3 body.act '\0a')
     =/  file=@t   (add-front-matter front body.act)
     :_  state
     [(write-file pax %udon !>(file))]~
@@ -1110,7 +1123,6 @@
           date-created+(scot %da date-created.u.note)
           last-modified+(scot %da now.bol)
       ==
-    =.  body.act  (cat 3 body.act '\0a')
     =/  file=@t   (add-front-matter front body.act)
     :_  state
     [(write-file pax %udon !>(file))]~
@@ -1315,7 +1327,7 @@
   ++  metadata-poke
     |=  act=metadata-action
     ^-  card
-    [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
+    [%pass / %agent [our.bol %metadata-hook] %poke %metadata-action !>(act)]
   ::
   ++  metadata-scry
     |=  [group-path=path app-path=path]

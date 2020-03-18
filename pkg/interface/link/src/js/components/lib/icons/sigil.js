@@ -10,7 +10,7 @@ export class Sigil extends Component {
     if (props.ship.length > 14) {
       return (
         <div
-          className="bg-black dib"
+          className={"bg-black dib " + classes}
           style={{ width: props.size, height: props.size }}></div>
       );
     } else {

@@ -22,22 +22,24 @@ export class SettingsScreen extends Component {
     this.changeTitle = this.changeTitle.bind(this);
     this.changeDescription = this.changeDescription.bind(this);
     this.changeColor = this.changeColor.bind(this);
+    this.submitColor = this.submitColor.bind(this);
     this.renderDelete = this.renderDelete.bind(this);
     this.renderMetadataSettings = this.renderMetadataSettings.bind(this);
   }
 
   componentDidMount() {
-    if (this.props.resource) {
+    if ((this.props.resource) && ("metadata" in this.props.resource)) {
       this.setState({
         title: this.props.resource.metadata.title,
         description: this.props.resource.metadata.description,
-        color: uxToHex(this.props.resource.metadata.color || '0x0')
+        color: `#${uxToHex(this.props.resource.metadata.color || '0x0')}`
       });
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
+
     if (!!state.isLoading && !props.resource) {
       this.setState({
         isLoading: false
@@ -47,11 +49,12 @@ export class SettingsScreen extends Component {
       });
     }
 
-    if (props.resource && (prevProps !== props)) {
+    if (((props.resource) && ("metadata" in props.resource))
+      && (prevProps !== props)) {
       this.setState({
         title: props.resource.metadata.title,
         description: props.resource.metadata.description,
-        color: uxToHex(props.resource.metadata.color || '0x0')
+        color: `#${uxToHex(this.props.resource.metadata.color || '0x0')}`
       });
     }
   }
@@ -66,6 +69,42 @@ export class SettingsScreen extends Component {
 
   changeColor() {
     this.setState({color: event.target.value});
+  }
+
+  submitColor() {
+    const { props, state } = this;
+    const { resource } = props;
+
+    if (!("metadata" in resource)) {
+      resource.metadata = {};
+    }
+
+    //submit color if valid
+    let color = state.color;
+    if (color.startsWith("#")) {
+      color = state.color.substr(1);
+    }
+    let hexExp = /([0-9A-Fa-f]{6})/
+    let hexTest = hexExp.exec(color);
+    let currentColor = "000000";
+    if (props.resource && "metadata" in props.resource) {
+      currentColor = uxToHex(props.resource.metadata.color);
+    }
+    if (hexTest && (hexTest[1] !== currentColor)) {
+      if (props.amOwner) {
+        api.setSpinner(true);
+        api.metadataAdd(
+          props.resourcePath,
+          props.groupPath,
+          resource.metadata.title,
+          resource.metadata.description,
+          resource.metadata['date-created'],
+          color
+        ).then(() => {
+          api.setSpinner(false);
+        });
+      }
+    }
   }
 
   deleteCollection() {
@@ -84,10 +123,7 @@ export class SettingsScreen extends Component {
 
     const isManaged = ('/~/' !== props.groupPath.slice(0,3));
 
-    let deleteButtonClasses = (props.amOwner) ? 'b--red2 red2 pointer bg-gray0-d' : 'b--grey3 grey3 bg-gray0-d c-default';
-    let leaveButtonClasses = (!props.amOwner) ? "pointer" : "c-default";
-
-    let deleteClasses = 'dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray0-d pointer';
+    let deleteClasses = 'dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer';
     let deleteText = 'Remove this collection from your collection list.';
     let deleteAction = 'Remove';
     if (props.amOwner && isManaged) {
@@ -110,6 +146,10 @@ export class SettingsScreen extends Component {
     const { props, state } = this;
     const { resource } = props;
 
+    if (!("metadata" in resource)) {
+      resource.metadata = {};
+    }
+
     return(
       <div>
         <div className={"w-100 pb6 fl mt3 " + ((props.amOwner) ? '' : 'o-30')}>
@@ -123,29 +163,22 @@ export class SettingsScreen extends Component {
             value={this.state.title}
             disabled={!props.amOwner}
             onChange={this.changeTitle}
-          />
-          <span className={"f8 absolute pa3 inter " +
-          ((props.amOwner) ? "pointer" : "")}
-            style={{ right: 12, top: 1 }}
-            ref="rename"
-            onClick={() => {
+            onBlur={() => {
               if (props.amOwner) {
                 api.setSpinner(true);
                 api.metadataAdd(
                   props.resourcePath,
                   props.groupPath,
                   state.title,
-                  props.resource.metadata.description,
-                  props.resource.metadata['date-created'],
-                  uxToHex(props.resource.metadata.color)
+                  resource.metadata.description,
+                  resource.metadata['date-created'],
+                  uxToHex(resource.metadata.color)
                 ).then(() => {
                   api.setSpinner(false);
-                  this.refs.rename.innerText = "Saved";
                 });
               }
-            }}>
-            Save
-            </span>
+            }}
+          />
           </div>
           <p className="f8 mt3 lh-copy">Change description</p>
           <p className="f9 gray2 db mb4">
@@ -159,63 +192,43 @@ export class SettingsScreen extends Component {
               value={this.state.description}
               disabled={!props.amOwner}
               onChange={this.changeDescription}
-            />
-            <span className={"f8 absolute pa3 inter " +
-              ((props.amOwner) ? "pointer" : "")}
-              style={{ right: 12, top: 1 }}
-              ref="description"
-              onClick={() => {
+              onBlur={() => {
                 if (props.amOwner) {
                   api.setSpinner(true);
                   api.metadataAdd(
                     props.resourcePath,
                     props.groupPath,
-                    props.resource.metadata.title,
+                    resource.metadata.title,
                     state.description,
-                    props.resource['date-created'],
-                    uxToHex(props.resource.color)
+                    resource['date-created'],
+                    uxToHex(resource.color)
                   ).then(() => {
                     api.setSpinner(false);
-                    this.refs.description.innerText = "Saved";
                   });
                 }
-              }}>
-              Save
-            </span>
+              }}
+            />
           </div>
           <p className="f8 mt3 lh-copy">Change color</p>
           <p className="f9 gray2 db mb4">Give this collection a color when viewing group channels</p>
           <div className="relative w-100 flex"
-            style={{ maxWidth: "20rem" }}>
+            style={{ maxWidth: "10rem" }}>
+            <div className="absolute"
+              style={{
+                height: 16,
+                width: 16,
+                backgroundColor: state.color,
+                top: 13,
+                left: 11
+              }} />
             <input
-              className={"f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
+              className={"pl7 f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
                 "focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3"}
               value={this.state.color}
               disabled={!props.amOwner}
               onChange={this.changeColor}
+              onBlur={this.submitColor}
             />
-            <span className={"f8 absolute pa3 inter " +
-              ((props.amOwner) ? "pointer" : "")}
-              style={{ right: 12, top: 1 }}
-              ref="color"
-              onClick={() => {
-                if (props.amOwner && state.color.match(/[0-9A-F]{6}/i)) {
-                  api.setSpinner(true);
-                  api.metadataAdd(
-                    props.resourcePath,
-                    props.groupPath,
-                    props.resource.metadata.title,
-                    props.resource.metadata.description,
-                    props.resource.metadata['date-created'],
-                    state.color
-                  ).then(() => {
-                    api.setSpinner(false);
-                    this.refs.color.innerText = "Saved";
-                  });
-                }
-              }}>
-              Save
-            </span>
           </div>
         </div>
       </div>
@@ -281,7 +294,7 @@ export class SettingsScreen extends Component {
           <Link to={makeRoutePath(props.resourcePath, props.popout)}
           className="pt2">
             <h2
-              className="dib f9 fw4 v-top"
+              className="dib f9 fw4 lh-solid v-top"
               style={{ width: "max-content" }}>
               {props.resource.metadata.title}
             </h2>

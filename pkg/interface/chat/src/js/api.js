@@ -24,6 +24,11 @@ class UrbitApi {
       create: this.chatViewCreate.bind(this),
       delete: this.chatViewDelete.bind(this),
       join: this.chatViewJoin.bind(this),
+      groupify: this.chatViewGroupify.bind(this)
+    };
+
+    this.chatHook = {
+      addSynced: this.chatHookAddSynced.bind(this)
     };
 
     this.invite = {
@@ -124,6 +129,17 @@ class UrbitApi {
     this.chatAction({ read: { path } });
   }
 
+
+  chatHookAddSynced(ship, path, askHistory) {
+    return this.action("chat-hook", "chat-hook-action", {
+      'add-synced': {
+        ship,
+        path,
+        'ask-history': askHistory
+      }
+    });
+  }
+
   chatViewAction(data) {
     return this.action("chat-view", "json", data);
   }
@@ -157,6 +173,10 @@ class UrbitApi {
         'ask-history': askHistory
       }
     });
+  }
+
+  chatViewGroupify(path) {
+    return this.chatViewAction({ groupify: { 'app-path': path } });
   }
 
   inviteAction(data) {

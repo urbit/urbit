@@ -9,7 +9,7 @@
     *metadata-hook,
     *permission-group-hook,
     *permission-hook
-/+  *server, *contact-json, base64, default-agent
+/+  *server, *contact-json, default-agent, dbug
 /=  index
   /^  octs
   /;  as-octs:mimes:html
@@ -46,6 +46,7 @@
 +$  card  card:agent:gall
 --
 ::
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -180,21 +181,21 @@
   ::
   ::  avatar images
   ::
-      [%'~groups' %avatar @ *]
-    =/  pax=path  `path`t.t.site.url
-    ?~  pax  not-found:gen
-    =/  pas  `path`(flop pax)
-    ?~  pas  not-found:gen
-    =/  pav  `path`(flop t.pas)
-    ~&  pav+pav
-    ~&  name+name
-    =/  contact  (contact-scry `path`(weld pav [name]~))
-    ?~  contact  not-found:gen
-    ?~  avatar.u.contact  not-found:gen
-    =*  avatar  u.avatar.u.contact
-    =/  decoded  (de:base64 q.octs.avatar)
-    ?~  decoded  not-found:gen
-    [[200 ['content-type' content-type.avatar]~] `u.decoded]
+::      [%'~groups' %avatar @ *]
+::    =/  pax=path  `path`t.t.site.url
+::    ?~  pax  not-found:gen
+::    =/  pas  `path`(flop pax)
+::    ?~  pas  not-found:gen
+::    =/  pav  `path`(flop t.pas)
+::    ~&  pav+pav
+::    ~&  name+name
+::    =/  contact  (contact-scry `path`(weld pav [name]~))
+::    ?~  contact  not-found:gen
+::    ?~  avatar.u.contact  not-found:gen
+::    =*  avatar  u.avatar.u.contact
+::    =/  decoded  (de:base64 q.octs.avatar)
+::    ?~  decoded  not-found:gen
+::    [[200 ['content-type' content-type.avatar]~] `u.decoded]
   ::
       [%'~groups' *]  (html-response:gen index)
   ==

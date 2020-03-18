@@ -4,7 +4,7 @@ import { Route, Link } from 'react-router-dom';
 import { GroupItem } from '/components/lib/group-item';
 import { Sigil } from '/components/lib/icons/sigil';
 import { SidebarInvite } from '/components/lib/sidebar-invite';
-import { uxToHex } from '/lib/util';
+import { cite } from '/lib/util';
 
 export class GroupSidebar extends Component {
   // drawer to the left
@@ -29,7 +29,7 @@ export class GroupSidebar extends Component {
               <p
                 className="f9 w-70 dib v-mid ml2 nowrap mono"
                 style={{paddingTop: 6}}>
-                ~{window.ship}
+                {cite(window.ship)}
               </p>
             </div>
           </Link>
@@ -62,6 +62,7 @@ export class GroupSidebar extends Component {
         let groupChannel = `${path}/contacts${path}`
         if (
           props.associations[path] &&
+          props.associations[path][groupChannel] &&
           props.associations[path][groupChannel].metadata
         ) {
           name =

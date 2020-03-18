@@ -21,7 +21,6 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =>
 |%
-::
 +|  %global
 ::
 ::  $arch: fundamental node
@@ -531,10 +530,10 @@
   ::
   ++  le
     =>  |%
-        ::  $germ: worklist source and stack depth
+        ::  $germ: worklist source and bar stack
         ::  $plan: worklist
         ::
-        +$  germ  [vane=term depth=@ud]
+        +$  germ  [vane=term bars=(list duct)]
         +$  plan  (pair germ (list move))
         --
     ::
@@ -569,9 +568,8 @@
     ::  +emit: enqueue a worklist with source
     ::
     ++  emit
-      |=  [src=term moz=(list move)]
-      =/  =plan  [[src +(depth.gem)] moz]
-      this(run [plan run])
+      |=  pan=plan
+      this(run [pan run])
     ::  +poke: prepare a worklist-of-one from outside
     ::
     ++  poke
@@ -586,7 +584,7 @@
         ~|  [%bad-wire wire.ovum]
         ?>  ?=([%$ *] wire.ovum)
         [duct=~ %pass t.wire.ovum vane maze]
-      (emit %$ move ~)
+      (emit [%$ ~] move ~)
     ::  +crud: prepare a worklist-of-one with error report from outside
     ::
     ++  crud
@@ -601,7 +599,7 @@
         ~|  [%bad-wire wire.ovum]
         ?>  ?=([%$ *] wire.ovum)
         [duct=~ %hurl goof %pass t.wire.ovum vane maze]
-      (emit %$ move ~)
+      (emit [%$ ~] move ~)
     ::  +spam: prepare a worklist for all targets
     ::
     ++  spam
@@ -624,7 +622,6 @@
     ::
     ++  loop
       ^+  this
-      ~>  %mean.'arvo: loop crashed'
       ?~  run
         this
       ?:  =(~ q.i.run)    :: XX TMI
@@ -652,7 +649,7 @@
         =*  task  task.note.ball.move
         ::
         ~?  &(!lac !=(%$ vane.gem))
-          :-  (runt [(dec depth.gem) '|'] "")
+          :-  (runt [(lent bars.gem) '|'] "")
           :^  %pass  [vane.gem vane]
             ?:  ?=(?(%deal %deal-gall) +>-.task)
               :-  :-  +>-.task
@@ -673,7 +670,7 @@
         =*  task  task.note.ball.move
         ::
         ~?  !lac
-          :-  (runt [(dec depth.gem) '|'] "")
+          :-  (runt [(lent bars.gem) '|'] "")
           [%slip vane.gem (symp +>-.task) duct]
         ::
         (call duct vane task)
@@ -703,7 +700,7 @@
           ?>(?=(^ wire) wire)
         ::
         ~?  &(!lac |(!=(%blit +>-.gift) !=(%d vane.gem)))
-          :-  (runt [(dec depth.gem) '|'] "")
+          :-  (runt [(lent bars.gem) '|'] "")
           :^  %give  vane.gem
             ?:  ?=(%unto +>-.gift)
               [+>-.gift (symp +>+<.gift)]
@@ -749,7 +746,8 @@
     ++  call
       |=  [=duct way=term task=maze]
       ^+  this
-      %+  push  way
+      %+  push  [way duct bars.gem]
+      ~|  bar-stack=`(list ^duct)`[duct bars.gem]
       %.  task
       call:(spin:(plow way) duct eny dud)
     ::  +take: retreat along call-stack
@@ -757,21 +755,23 @@
     ++  take
       |=  [=duct =wire way=term gift=maze]
       ^+  this
-      %+  push  way
+      %+  push  [way duct bars.gem]
       ::
       ::  cons source onto .gift to make a $sign
       ::
+      ~|  wire=wire
+      ~|  bar-stack=`(list ^duct)`[duct bars.gem]
       %.  [wire [vane.gem gift]]
       take:(spin:(plow way) duct eny dud)
     ::  +push: finalize an individual step
     ::
     ++  push
-      |=  [way=term [zom=vase vax=vase] sac=worm]
+      |=  [gum=germ [zom=vase vax=vase] sac=worm]
       ^+  this
       =^  moz  sac
         (~(refine-moves me sac vil) zom)
-      =.  van  (~(put by van) way [vax sac])
-      (emit way moz)
+      =.  van  (~(put by van) vane.gum [vax sac])
+      (emit `plan`[`germ`gum `(list move)`moz])
     ::  +plow: operate on a vane, in time and space
     ::
     ++  plow
