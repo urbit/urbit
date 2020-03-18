@@ -248,6 +248,8 @@
   ::
       %groupify
     ?>  ?=([%'~' ^] app-path.act)
+    ::  retrieve old data
+    ::
     =/  data=(unit mailbox)
       (scry-for (unit mailbox) %chat-store [%mailbox app-path.act])
     ?~  data
@@ -265,26 +267,52 @@
       =/  encoded-path=@ta
         (scot %t (spat app-path.act))
       /metadata/[encoded-path]/chat/[encoded-path]
-    =/  new-path=^path  (slag 1 `path`app-path.act)
-    =/  members=(set ship)
-      %+  fall
-        (group-scry app-path.act)
-      *(set ship)
-    =/  cards-1=(list card)
-        (poke-chat-view-action %delete app-path.act)
-    =/  cards-2=(list card)
+    ::  figure out new data
+    ::
+    =/  chat-path=^path      (slag 1 `path`app-path.act)
+    ::  group-path: the group to associate with the chat
+    ::  members: members of group, if it's new
+    ::  new-members: new members of group, if it already exists
+    ::
+    =/  [group-path=path members=(set ship) new-members=(set ship)]
+      ?~  existing.act
+        [chat-path who.u.permission ~]
+      :+  group-path.u.existing.act
+        ~
+      ?.  inclusive.u.existing.act  ~
+      %-  ~(dif in who.u.permission)
+      ~|  [%groupifying-with-nonexistent-group group-path.u.existing.act]
+      %-  need
+      (group-scry group-path.u.existing.act)
+    ::  make changes
+    ::
+    ;:  weld
+      ::  delete the old chat
+      ::
+      (poke-chat-view-action %delete app-path.act)
+    ::
+      ::  create the new chat. if needed, creates the new group.
+      ::
       %-  poke-chat-view-action
       :*  %create
           title.metadata
           description.metadata
-          new-path
-          new-path
+          chat-path
+          group-path
           %village
           members
           &
       ==
-    %+  snoc  (weld cards-1 cards-2)
-    (chat-poke %messages new-path envelopes.u.data)
+    ::
+      ::  if needed, add members to the existing group
+      ::
+      ?~  new-members  ~
+      [(group-poke [%add new-members group-path])]~
+    ::
+      ::  import messages into the new chat
+      ::
+      [(chat-poke %messages chat-path envelopes.u.data)]~
+    ==
   ==
   ::
   ++  create-chat
