@@ -1,7 +1,14 @@
-name: proto
+name: urbit-uruk
 version: 0.1.0
 license: MIT
 license-file: LICENSE
+
+library:
+  source-dirs: lib
+  ghc-options:
+    - -static
+    - -O2
+    - -fwarn-incomplete-patterns
 
 dependencies:
   - base
@@ -9,28 +16,35 @@ dependencies:
   - classy-prelude
   - containers
   - deriving-compat
+  - flat
+  - ghc-prim
+  - hashable
+  - haskeline
   - lens
   - megaparsec
   - mtl
   - multimap
   - para
+  - positive
   - pretty-show
+  - primitive
   - text
-  - transformers
-  - transformers-compat
-  - unordered-containers
-  - urbit-king
+  - urbit-atom
+  - vector
 
 default-extensions:
   - ApplicativeDo
   - BangPatterns
   - BlockArguments
+  - DataKinds
+  - DefaultSignatures
   - DeriveAnyClass
   - DeriveDataTypeable
   - DeriveFoldable
   - DeriveGeneric
   - DeriveTraversable
   - DerivingStrategies
+  - EmptyCase
   - EmptyDataDecls
   - FlexibleContexts
   - FlexibleInstances
@@ -38,11 +52,13 @@ default-extensions:
   - GADTs
   - GeneralizedNewtypeDeriving
   - LambdaCase
+  - MagicHash
   - MultiParamTypeClasses
   - NamedFieldPuns
   - NoImplicitPrelude
   - NumericUnderscores
   - OverloadedStrings
+  - PackageImports
   - PartialTypeSignatures
   - PatternSynonyms
   - QuasiQuotes
@@ -55,37 +71,21 @@ default-extensions:
   - TupleSections
   - TypeApplications
   - TypeFamilies
+  - TypeOperators
+  - UnboxedTuples
   - UnicodeSyntax
   - ViewPatterns
 
-library:
-  source-dirs: lib
-  ghc-options:
-    - -fwarn-incomplete-patterns
-    - -fwarn-unused-binds
-    - -fwarn-unused-imports
-    - -O2
-
 executables:
-  proto:
+  moon:
     main: Main.hs
     source-dirs: app
     dependencies:
-      - proto
+      - urbit-uruk
     ghc-options:
       - -threaded
       - -rtsopts
+      - -static
       - -O2
       - "-with-rtsopts=-N"
       - -fwarn-incomplete-patterns
-
-tests:
-  proto-test:
-    main: Spec.hs
-    source-dirs: test
-    dependencies:
-      - proto
-    ghc-options:
-      - -threaded
-      - -rtsopts
-      - -with-rtsopts=-N

@@ -21,6 +21,7 @@ data Exp a
   = Var a
   | App (Exp a) (Exp a)
   | Lam (Scope () Exp a)
+  | Axs Atom (Exp a)
   | Atm Atom
   | Cel (Exp a) (Exp a)
   | IsC (Exp a)
@@ -64,6 +65,7 @@ data CExp a
   | CSef a
   | CApp (CExp a) (CExp a)
   | CLam [a] (CExp (Var () Int))
+  | CAxs Atom (CExp a)
   | CAtm Atom
   | CCel (CExp a) (CExp a)
   | CIsC (CExp a)
@@ -107,6 +109,7 @@ toCopy = fst . runWriter . go \v -> error "toCopy: free variable"
           Direct  v' -> pure (CVar v')
           Selfish v' -> pure (CSef v')
       App e f   -> CApp <$> go env e <*> go env f
+      Axs a e   -> CAxs a <$> go env e
       Atm a     -> pure (CAtm a)
       Cel e f   -> CCel <$> go env e <*> go env f
       IsC e     -> CIsC <$> go env e
@@ -162,6 +165,7 @@ copyToNock = go \v -> error "copyToNock: free variable"
       CVar v     -> N0 (toAxis $ env v)
       CSef v     -> N2 (N0 $ toAxis $ env v) (N0 $ toAxis $ env v)
       CApp e f   -> N2 (go env f) (go env e)
+      CAxs a e   -> N7 (go env e) (N0 a)
       CAtm a     -> N1 (A a)
       CCel e f   -> cell (go env e) (go env f)
       CIsC e     -> N3 (go env e)
