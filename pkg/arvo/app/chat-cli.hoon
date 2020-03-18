@@ -226,6 +226,8 @@
 ::
 ++  catch-up
   ^-  (quip card _state)
+  ?.  .^(? %gu /(scot %p our.bowl)/chat-store/(scot %da now.bowl))
+    [~ state]
   =/  =inbox
     (scry-for inbox %chat-store /all)
   |-  ^-  (quip card _state)
