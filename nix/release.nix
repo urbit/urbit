@@ -30,7 +30,7 @@ let
   builds-for-platform = plat:
     plat.deps // {
       inherit (plat.env) curl libgmp libsigsegv ncurses openssl zlib lmdb;
-      inherit (plat.env) cmake_toolchain;
+      inherit (plat.env) cmake_toolchain hello;
       ent          = ent          plat;
       ge-additions = ge-additions plat;
       urbit        = urbit { env = plat; debug = false; };
