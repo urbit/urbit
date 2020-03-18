@@ -22,7 +22,8 @@ class UrbitApi {
     };
 
     this.group = {
-      add: this.groupAdd.bind(this)
+      add: this.groupAdd.bind(this),
+      delete: this.groupRemove.bind(this)
     };
 
     this.invite = {
