@@ -1,0 +1,8 @@
+dist-newstyle
+result
+result-*
+result-android
+result-ios
+result-exe
+.attr-cache
+ghcid-output.txt
