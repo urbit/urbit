@@ -171,7 +171,7 @@ export class Note extends Component {
     let baseUrl = `/~publish/${popout}notebook/${props.ship}/${props.book}`;
     return (
       <div
-        className="h-100 no-scrollbar"
+        className="h-100 overflow-y-scroll"
         onScroll={this.onScroll}
         ref={el => {
           this.scrollElement = el;
