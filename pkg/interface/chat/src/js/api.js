@@ -175,8 +175,15 @@ class UrbitApi {
     });
   }
 
-  chatViewGroupify(path) {
-    return this.chatViewAction({ groupify: { 'app-path': path } });
+  chatViewGroupify(path, group = null, inclusive = false) {
+    let action = { groupify: { 'app-path': path, existing: null } };
+    if (group) {
+      action.groupify.existing = {
+        'group-path': group,
+        inclusive: inclusive
+      }
+    }
+    return this.chatViewAction(action);
   }
 
   inviteAction(data) {
