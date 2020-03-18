@@ -181,7 +181,6 @@ export class SettingsScreen extends Component {
     const { props, state } = this;
 
     const chatOwner = (deSig(props.match.params.ship) === window.ship);
-    console.log(chatOwner, props.match.params.ship, window.ship);
 
     const ownedUnmanagedVillage =
       chatOwner &&
@@ -192,9 +191,8 @@ export class SettingsScreen extends Component {
       return null;
     } else {
       let inclusiveToggle = <div/>
-      console.log('tg', state.targetGroup);
       if (state.targetGroup) {
-        //TODO toggle component
+        //TODO toggle component into /lib
         let inclusiveClasses = state.inclusive
           ? "relative checked bg-green2 br3 h1 toggle v-mid z-0"
           : "relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0";
@@ -207,7 +205,7 @@ export class SettingsScreen extends Component {
               onChange={this.changeInclusive}
             />
             <span className="dib f9 white-d inter ml3">
-              Inclusive
+              Add all members to group
             </span>
             <p className="f9 gray2 pt1" style={{ paddingLeft: 40 }}>
               Add chat members to the group if they aren't in it yet
