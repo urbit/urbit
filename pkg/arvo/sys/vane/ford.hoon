@@ -173,15 +173,11 @@
   ==  ==
 --
 |%
-::  +axle: overall ford state
+::  +axle: overall ford state, tagged by version
 ::
 +=  axle
-  $:  ::  date: date at which ford's state was updated to this data structure
-      ::
-      date=%~2018.12.13
-      ::  state: all persistent state
-      ::
-      state=ford-state
+  $%  [%~2018.12.13 state=ford-state]
+      [%~2020.2.21 state=ford-state]
   ==
 ::  +ford-state: all state that ford maintains
 ::
@@ -4658,22 +4654,21 @@
       ::
       ?.  ?=([~ %success %scry *] zuse-scry-result)
         (wrap-error zuse-scry-result)
-      ::  short-circuit to :pit if asked for current %home desk
+      ::
+      ::  short-circuit to .pit during boot
       ::
       ::    This avoids needing to recompile the kernel if we're asked
-      ::    for the kernel we're already running. Note that this fails
-      ::    referential transparency if |autoload is turned off.
+      ::    to build %hoon one the home desk, at revision 1 or 2.
       ::
-      ?:  ?&  |(=(disc [our %home]) =(disc [our %base]))
-              ::  is :date.build the latest commit on the %home desk?
-              ::
-              ?|  =(now date.build)
-                  ::
-                  =/  =beam  [[our %home [%da date.build]] /hoon/hoon/sys]
-                  ::
-                  .=  (scry [%141 %noun] ~ %cw beam)
-                  (scry [%141 %noun] ~ %cw beam(r [%da now]))
-          ==  ==
+      ?:  ?&  =(our ship.disc)
+              ?=(?(%base %home) desk.disc)
+          ::
+              =/  =beam
+                [[ship.disc desk.disc [%da date.build]] /hoon/hoon/sys]
+              =/  cass
+                (scry [%141 %noun] [~ %cw beam])
+              ?=([~ ~ %cass * ?(%1 %2) *] cass)
+          ==
         ::
         (return-result %success %reef pit)
       ::  omit case from path to prevent cache misses
@@ -5572,7 +5567,7 @@
     %-  sloy  ^-  slyd
     ~/  %intercepted-scry
     |=  [ref=* (unit (set monk)) =term =beam]
-    ^-  (unit (unit (cask milt)))
+    ^-  (unit (unit (cask meta)))
     ::  if the actual scry produces a value, use that value; otherwise use local
     ::
     =/  scry-response  (scry +<.$)
@@ -6129,8 +6124,10 @@
 ::    the +per-event core, which is Ford's main build engine.
 ::
 ++  call
-  |=  [=duct type=* wrapped-task=(hobo task:able)]
+  |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task:able)]
   ^-  [(list move) _ford-gate]
+  ?^  dud
+    ~|(%ford-call-dud (mean tang.u.dud))
   ::
   =/  task=task:able  ((harden task:able) wrapped-task)
   ::  we wrap +per-event with a call that binds our event args
@@ -6242,8 +6239,10 @@
 ::    the +per-event core, which is Ford's main build engine.
 ::
 ++  take
-  |=  [=wire =duct wrapped-sign=(hypo sign)]
+  |=  [=wire =duct dud=(unit goof) wrapped-sign=(hypo sign)]
   ^-  [(list move) _ford-gate]
+  ?^  dud
+    ~|(%ford-take-dud (mean tang.u.dud))
   ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
   ::
   =/  =sign  q.wrapped-sign
@@ -6336,17 +6335,25 @@
       ::
       $(ducts t.ducts, moves (weld moves duct-moves))
   --
-::  +load: migrate old state to new state (called on vane reload)
+::  +load: either flush or migrate old state (called on vane reload)
 ::
-::    Trim builds completely in case a change to our code invalidated an
-::    old build result.
+::    If it has the old state version, flush the ford state. Otherwise trim
+::    build results in case a change to our code invalidated an old build
+::    result.
+::
+::    Flushing state of the old version is a temporary measure for the OS1
+::    %publish update. We can flush all build state like this because only gall
+::    and %publish use ford live builds currently. :goad will handle remaking
+::    builds for gall, and the new %publish does not use ford.
 ::
 ++  load
   |=  old=axle
   ^+  ford-gate
-  ::
-  =.  ax  old
-  =.  ford-gate  +:(call ~[/ford-load-self] *type %trim 0)
+  ?:  =(%~2018.12.13 -.old)
+    =.  -.ax  %~2020.2.21
+    ford-gate
+  =.  ax  [%~2020.2.21 state.old]
+  =.  ford-gate  +:(call ~[/ford-load-self] ~ *type %trim 0)
   ford-gate
 ::  +stay: produce current state
 ::

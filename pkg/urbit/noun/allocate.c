@@ -2017,7 +2017,7 @@ u3a_slab(c3_w len_w)
   return pug_u->buf_w;
 }
 
-/* u3a_slaq(): u3a_slaq() with a defined blocksize.
+/* u3a_slaq(): u3a_slab() with a defined blocksize.
 */
 c3_w*
 u3a_slaq(c3_g met_g, c3_w len_w)

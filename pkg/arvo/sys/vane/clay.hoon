@@ -535,6 +535,7 @@
           $>(%crud vane-task)                           ::  XX strange
   ==  ==                                                ::
 --  =>
+~%  %clay-utilities  ..is  ~
 ::  %utilities
 ::
 |%
@@ -587,6 +588,7 @@
   ~|  [%expected-writ got=+<.sign]
   !!
 --  =>
+~%  %clay  +  ~
 |%
 ::  Printable form of a wove; useful for debugging
 ::
@@ -4063,12 +4065,21 @@
 |%                                                    ::
 ++  call                                              ::  handle request
   |=  $:  hen=duct
+          dud=(unit goof)
           type=*
           wrapped-task=(hobo task:able)
       ==
   ^-  [(list move) _..^$]
   ::
   =/  req=task:able  ((harden task:able) wrapped-task)
+  ::
+  ::  error notifications "downcast" to %crud
+  ::
+  =?  req  ?=(^ dud)
+    ~|  %crud-in-crud
+    ?<  ?=(%crud -.req)
+    [%crud -.req tang.u.dud]
+  ::
   ::  only one of these should be going at once, so queue
   ::
   ?:  ?=(?(%info %merg %mont) -.req)
@@ -4398,8 +4409,11 @@
 ::
 ++  stay  [ver ruf]
 ++  take                                              ::  accept response
-  |=  [tea=wire hen=duct hin=(hypo sign)]
+  |=  [tea=wire hen=duct dud=(unit goof) hin=(hypo sign)]
   ^+  [*(list move) ..^$]
+  ?^  dud
+    ~|(%clay-take-dud (mean tang.u.dud))
+  ::
   ?:  ?=([%commit @ *] tea)
     =*  syd  i.t.tea
     =^  mos  ruf

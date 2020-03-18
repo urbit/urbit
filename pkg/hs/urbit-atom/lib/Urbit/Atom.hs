@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP #-}
+
 {-|
     Atom implementation with fast conversions between bytestrings
     and atoms.
@@ -25,30 +27,78 @@ import GHC.Natural           (Natural)
 import qualified Data.Text                as T
 import qualified Data.Text.Encoding       as T
 import qualified Data.Text.Encoding.Error as T
-import qualified Urbit.Atom.Internal      as I
+
+#if defined(__GHCJS__)
+import qualified Urbit.Atom.Slow as Slow
+#endif
+
+import qualified Urbit.Atom.Fast as A
 
 
 --------------------------------------------------------------------------------
 
 type Atom = Natural
 
---------------------------------------------------------------------------------
 
--- | Cast an atom to a vector. Does not copy.
-atomWords :: Atom -> Vector Word
-atomWords = I.natWords
+-- Choose Implementation Based on Platform -------------------------------------
 
--- | Cast a vector to an atom. Does not copy unless given a slice.
-wordsAtom :: Vector Word -> Atom
-wordsAtom = I.wordsNat
+{- |
+  Convert an Atom to a bytestring. O(n), copies.
 
--- | Dump an atom to a bytestring.
+  My hand-rolled implementation is faster, but doesn't work on GHCJS. So,
+  on GHCJS use GMP's `export` routine.
+
+  TODO GMP's `export` routine also handles big endian machines, so use
+  in that case too.
+-}
 atomBytes :: Atom -> ByteString
-atomBytes = I.pillBytes . I.natPill
+atomBytes =
+#if defined(__GHCJS__)
+  A.exportBytes
+#else
+  A.atomBytes
+#endif
 
--- | Load a bytestring into an atom.
+{- |
+  Convert a bytestring to an Atom. O(n), copies.
+
+  This always uses GMP's `export` routine, since it's portable and faster
+  than my hand-rolled implementation.
+-}
 bytesAtom :: ByteString -> Atom
-bytesAtom = I.pillNat . I.bytesPill
+bytesAtom = A.importBytes
+
+{- |
+  Cast an atom to a vector. O(1), does not copy.
+
+  My fast implementation doesn't work on GHCJS, so fallback to the naive
+  implementation on that platform for now.
+-}
+atomWords :: Atom -> Vector Word
+atomWords =
+#if defined(__GHCJS__)
+  Slow.atomWords
+#else
+  A.atomWords
+#endif
+
+{- |
+  Cast a vector to an atom. O(1), does not copy unless given a slice,
+  then O(n).
+
+  My fast implementation doesn't work on GHCJS, so fallback to the naive
+  implementation on that platform for now.
+-}
+wordsAtom :: Vector Word -> Atom
+wordsAtom =
+#if defined(__GHCJS__)
+  Slow.wordsAtom
+#else
+  A.wordsAtom
+#endif
+
+
+-- String/Cord Conversion ------------------------------------------------------
 
 -- | Encode a utf8-encoded atom from text.
 utf8Atom :: T.Text -> Atom

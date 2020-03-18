@@ -16,10 +16,10 @@ export class SidebarInvite extends Component {
     const { props } = this;
 
     return (
-      <div className='pa3'>
+      <div className='w-100 bg-transparent pa4 bb b--gray4 b--gray1-d'>
         <div className='w-100 v-mid'>
           <p className="dib f8 mono gray4-d">
-            {props.invite.text}
+            {props.invite.path}
           </p>
         </div>
         <a

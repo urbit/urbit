@@ -139,7 +139,9 @@
 ::                                                      ::::
 ::::                    #  heavy                        ::  heavy engines
   ::                                                    ::::
-=>  |%
+=>
+~%  %jael  ..is  ~
+|%
 ::                                                      ::  ++of
 ::::                    ## main^heavy                   ::  main engine
   ::                                                    ::::
@@ -965,9 +967,13 @@
           ::  hic: event data
           ::
           hen/duct
+          dud=(unit goof)
           hic/(hypo (hobo task:able))
       ==
   ^-  [(list move) _..^$]
+  ?^  dud
+    ~|(%jael-call-dud (mean tang.u.dud))
+  ::
   =/  =task:able  ((harden task:able) q.hic)
   =^  did  lex
     abet:(~(call of [our now eny] lex) hen task)
@@ -1194,9 +1200,13 @@
           ::
           tea/wire
           hen/duct
+          dud=(unit goof)
           hin/(hypo sign)
       ==
   ^-  [(list move) _..^$]
+  ?^  dud
+    ~|(%jael-take-dud (mean tang.u.dud))
+  ::
   =^  did  lex  abet:(~(take of [our now eny] lex) tea hen q.hin)
   [did ..^$]
 --

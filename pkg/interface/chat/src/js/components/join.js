@@ -18,20 +18,29 @@ export class JoinScreen extends Component {
   }
 
   componentDidMount() {
-    if (this.props.autoJoin !== "undefined/undefined") {
-      let station = this.props.autoJoin.split('/');
-      let ship = station[0];
-      station.splice(0, 1);
-      station = '/' + station.join('/');
+    const { props } = this;
+    if (props.autoJoin !== "/undefined/undefined" &&
+        props.autoJoin !== "/~/undefined/undefined") {
+      let station = props.autoJoin.split('/');
+      let sig = props.autoJoin.includes("/~/");
 
-      if (station.length < 2 || !urbitOb.isValidPatp(ship)) {
+      let ship = !!sig ? station[2] : station[1];
+      station = station.join('/');
+      if (
+        station.length < 2 ||
+        (!!sig && station.length < 3) ||
+        !urbitOb.isValidPatp(ship)
+      ) {
         this.setState({
           error: true,
         });
         return;
       }
-      this.props.api.chatView.join(ship, station, true);
-      this.props.history.push('/~chat');
+      this.setState({
+        station
+      }, () => {
+        props.api.chatView.join(ship, station, true);
+      });
     }
   }
 
@@ -55,20 +64,23 @@ export class JoinScreen extends Component {
     }
 
     let station = text.split('/');
-    let ship = station[0];
-    station.splice(0, 1);
-    station = '/' + station.join('/');
+    let sig = state.station.includes("~/");
+    let ship = !!sig ? station[1] : station[0];
 
-    if (station.length < 2 || !urbitOb.isValidPatp(ship)) {
+    station = station.join('/');
+
+    if (
+      (!sig && station.split('/').length < 2) ||
+      (!!sig && station.split('/').length < 3) ||
+      !urbitOb.isValidPatp(ship)
+    ) {
       this.setState({
         error: true,
       });
       return;
     }
 
-    // TODO: askHistory setting
-    props.api.chatView.join(ship, station, true);
-    this.props.history.push('/~chat');
+    props.api.chatView.join(ship, `/${station}`, true);
   }
 
   stationChange(event) {
@@ -78,15 +90,15 @@ export class JoinScreen extends Component {
   }
 
   render() {
-    const { props } = this;
+    const { props, state } = this;
 
     let joinClasses = "db f9 green2 ba pa2 b--green2 bg-gray0-d pointer";
-    if ((!this.state.station) || (this.state.station === "/")) {
+    if ((!state.station) || (state.station === "/")) {
       joinClasses = 'db f9 gray2 ba pa2 b--gray3 bg-gray0-d pointer';
     }
 
     let errElem = (<span />);
-    if (this.state.error) {
+    if (state.error) {
       errElem = (
         <span className="f9 inter red2 db">
           Chat must have a valid name.
@@ -96,18 +108,19 @@ export class JoinScreen extends Component {
 
     return (
       <div className={`h-100 w-100 pa3 pt2 overflow-x-hidden flex flex-column
-      bg-black-d white-d`}>
+      bg-gray0-d white-d`}>
         <div
           className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
           <Link to="/~chat/">{"⟵ All Chats"}</Link>
         </div>
         <h2 className="mb3 f8">Join Existing Chat</h2>
         <div className="w-100">
-          <p className="f8 lh-copy mt3 db">Enter a <span className="mono">~ship/chat-name</span></p>
+          <p className="f8 lh-copy mt3 db">Enter a <span className="mono">~ship/chat-name</span> or <span className="mono">~/~ship/chat-name</span></p>
           <p className="f9 gray2 mb4">Chat names use lowercase, hyphens, and slashes.</p>
           <textarea
             ref={ e => { this.textarea = e; } }
-            className="f7 mono ba b--gray3 b--gray0-d bg-black-d white-d pa3 mb2 db"
+            className={"f7 mono ba bg-gray0-d white-d pa3 mb2 db " +
+            "focus-b--black focus-b--white-d b--gray3 b--gray2-d"}
             placeholder="~zod/chatroom"
             spellCheck="false"
             rows={1}

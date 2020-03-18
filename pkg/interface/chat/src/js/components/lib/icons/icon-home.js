@@ -1,9 +1,15 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 export class IconHome extends Component {
   render() {
+    let classes = !!this.props.classes ? this.props.classes : "";
     return (
-      <img src="/~launch/img/Home.png" width={32} height={32} />
+      <img
+        className={"invert-d " + classes}
+        src="/~chat/img/Home.png"
+        width={16}
+        height={16}
+      />
     );
   }
 }

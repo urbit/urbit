@@ -371,7 +371,7 @@ _worker_pack(void)
 static void
 _worker_fail(void* vod_p, const c3_c* wut_c)
 {
-  u3l_log("work: fail: %s\r\n", wut_c);
+  fprintf(stderr, "work: fail: %s\r\n", wut_c);
   exit(1);
 }
 
@@ -434,28 +434,17 @@ _worker_lame(u3_noun now, u3_noun ovo, u3_noun why, u3_noun tan)
 
   u3x_trel(ovo, &wir, &tag, &cad);
 
-  //  a deterministic error (%exit) in a network packet (%hear)
-  //  generates a negative-acknowlegement attempt (%hole).
-  //
-  //    A comment from the old implementation:
-  //      There should be a separate path for crypto failures,
-  //      to prevent timing attacks, but isn't right now.  To deal
-  //      with a crypto failure, just drop the packet.
-  //
-  if ( (c3__hear == tag) && (c3__exit == why) ) {
-    rep = u3nt(u3k(wir), c3__hole, u3k(cad));
-  }
   //  failed event notifications (%crud) are replaced with
   //  an even more generic notifications, on a generic arvo wire.
   //  N.B this must not be allowed to fail!
   //
   //    [%warn original-event-tag=@tas combined-trace=(list tank)]
   //
-  else if ( c3__crud == tag ) {
+  if ( c3__crud == tag ) {
     u3_noun lef = u3nc(c3__leaf, u3i_tape("crude crashed!"));
-    u3_noun nat = u3kb_weld(u3k(u3t(cad)), u3nc(lef, u3k(tan)));
+    u3_noun nat = u3kb_weld(u3k(u3t(u3h(cad))), u3nc(lef, u3k(tan)));
     rep = u3nc(u3nt(u3_blip, c3__arvo, u3_nul),
-               u3nt(c3__warn, u3k(u3h(cad)), nat));
+               u3nt(c3__warn, u3k(u3h(u3t(cad))), nat));
   }
   //  failed failure failing fails
   //
@@ -465,7 +454,7 @@ _worker_lame(u3_noun now, u3_noun ovo, u3_noun why, u3_noun tan)
   }
   //  failure notifications are sent on the same wire
   //
-  //    [%crud event-tag=@tas event-trace=(list tank)]
+  //    [%crud =goof =ovum]
   //
   else {
     //  prepend failure mote to tank
@@ -473,7 +462,9 @@ _worker_lame(u3_noun now, u3_noun ovo, u3_noun why, u3_noun tan)
     u3_noun lef = u3nc(c3__leaf, u3kb_weld(u3i_tape("bail: "),
                                            u3qc_rip(3, why)));
     u3_noun nat = u3kb_weld(u3k(tan), u3nc(lef, u3_nul));
-    rep = u3nc(u3k(wir), u3nt(c3__crud, u3k(tag), nat));
+    rep = u3nc(u3k(wir), u3nt(c3__crud,
+                             u3nc(u3k(why), nat),
+                             u3nc(u3k(tag), u3k(cad))));
   }
 
   pac_o = _(c3__meme == why);

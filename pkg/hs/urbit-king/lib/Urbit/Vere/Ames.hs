@@ -124,10 +124,10 @@ ames inst who isFake enqueueEv stderr =
     netMode = do
       if isFake
       then pure Fake
-      else getNetworkingType >>= \case
-        NetworkNormal -> pure Real
-        NetworkLocalhost -> pure Localhost
-        NetworkNone -> pure NoNetwork
+      else view (networkConfigL . ncNetMode) >>= \case
+        NMNormal -> pure Real
+        NMLocalhost -> pure Localhost
+        NMNone -> pure NoNetwork
 
     stop :: AmesDrv -> RIO e ()
     stop AmesDrv{..} = do
@@ -151,7 +151,7 @@ ames inst who isFake enqueueEv stderr =
            doBindSocket Nothing = pure Nothing
            doBindSocket (Just bindAddr) = do
              mode <- netMode
-             mPort <- getAmesPort
+             mPort <- view (networkConfigL . ncAmesPort)
              let ourPort = maybe (listenPort mode who) fromIntegral mPort
              s  <- io $ socket AF_INET Datagram defaultProtocol
 
