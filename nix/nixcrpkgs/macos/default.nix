@@ -139,14 +139,55 @@ let
     inherit host;
   };
 
-  sdk = native.make_derivation rec {
-    name = "macos-sdk";
-    builder = ./sdk_builder.sh;
-    src = ./MacOSX.sdk.tar.xz;
-    native_inputs = [ nixpkgs.ruby ];
-  } // {
-    version = builtins.readFile "${sdk}/version.txt";
+  sdk11 = {
+    version = "10.11";
+    src = builtins.fetchurl {
+      sha256 = "1qvxlrcgnwf97z542zdmic307pg1mwf4apra87c8rxkycgj6apzz";
+      url = "https://github.com/phracker/MacOSX-SDKs/releases/download/10.15/MacOSX10.11.sdk.tar.xz";
+    };
   };
+
+  sdk12 = {
+    version = "10.12";
+    src = builtins.fetchurl {
+      sha256 = "0x37j9ab75k4h6ik85a3nqjhk42akjp00pd5k4sik6a3z6574lk8";
+      url = "https://github.com/phracker/MacOSX-SDKs/releases/download/10.15/MacOSX10.12.sdk.tar.xz";
+    };
+  };
+
+  sdk13 = {
+    version = "10.13";
+    src = builtins.fetchurl {
+      sha256 = "1r61h9bwfc067vh1b9wxh4m0nwiavzn9hb4ydxy9l0q5a8w7g853";
+      url = "https://github.com/phracker/MacOSX-SDKs/releases/download/10.15/MacOSX10.13.sdk.tar.xz";
+    };
+  };
+
+  sdk14 = {
+    version = "10.14";
+    src = builtins.fetchurl {
+      sha256 = "0pvi50xj9vckyl12clb0w6s9xdymgns1f1ci6aw0b1yzfagqc0qg";
+      url = "https://github.com/phracker/MacOSX-SDKs/releases/download/10.15/MacOSX10.14.sdk.tar.xz";
+    };
+  };
+
+  sdk15 = {
+    version = "10.15";
+    src = builtins.fetchurl {
+      sha256 = "0qivx56wrpr4z5lkk2i1gic9kflhv6k8b1c1xazd697kyxyx0214";
+      url = "https://github.com/phracker/MacOSX-SDKs/releases/download/10.15/MacOSX10.15.sdk.tar.xz";
+    };
+  };
+
+  mksdk = {version, src}:
+    native.make_derivation rec {
+      inherit src;
+      name = "macos-sdk";
+      builder = ./sdk_builder.sh;
+      native_inputs = [ nixpkgs.ruby ];
+    } // { inherit version; };
+
+  sdk = mksdk sdk14;
 
   # Note: compiler-rt actually builds itself for three different architectures:
   # i386, x86_64, x86_64h.  It uses lipo to create fat archives that hold
