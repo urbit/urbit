@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# OPTIONS_GHC -funbox-strict-fields -Werror #-}
 
 {-
@@ -22,7 +23,9 @@ import System.IO.Unsafe
 import Control.Arrow          ((>>>))
 import Control.Exception      (throw, try)
 import Data.Bits              (shiftL, (.|.))
+#if !defined(__GHCJS__)
 import Data.Flat
+#endif
 import Data.Function          ((&))
 import Numeric.Natural        (Natural)
 import Prelude                ((!!))

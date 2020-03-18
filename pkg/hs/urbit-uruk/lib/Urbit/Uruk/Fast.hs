@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# OPTIONS_GHC -funbox-strict-fields -Werror #-}
 
 {-
@@ -69,7 +70,9 @@ module Urbit.Uruk.Fast where
 
 import ClassyPrelude             hiding (evaluate, fromList, seq, toList, try)
 import Control.Monad.Primitive
+#if !defined(__GHCJS__)
 import Data.Flat
+#endif
 import Data.Primitive.Array
 import Data.Primitive.SmallArray
 import GHC.Prim                  hiding (seq)
@@ -150,14 +153,27 @@ type Bol = Bool
 
 data Pri = J | K | S | D
   deriving stock    (Eq, Ord, Show, Generic)
+#if defined(__GHCJS__)
+  deriving anyclass (NFData)
+#else
   deriving anyclass (Flat, NFData)
+#endif
 
 data Raw = Raw !Pri ![Raw]
   deriving stock    (Eq, Ord, Show, Generic)
+#if defined(__GHCJS__)
+  deriving anyclass (NFData)
+#else
   deriving anyclass (Flat, NFData)
+#endif
 
 jamRaw :: Raw -> Val
-jamRaw = VNat . Atom.bytesAtom . flat
+jamRaw =
+#if defined(__GHCJS__)
+  error "jamRaw depends on `flat`. Get it working in GHCJS."
+#else
+  VNat . Atom.bytesAtom . flat
+#endif
 
 {-
     Note that it's safe for `app` to simply append arguments without

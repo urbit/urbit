@@ -1,12 +1,19 @@
+{-# LANGUAGE CPP #-}
+
 module Urbit.Moon.Repl
-  ( repl
-  , replFast
-  , runFile
+  ( runFile
   , runFileFast
   , runText
+#if !defined(__GHCJS__)
+  , repl
+  , replFast
+#endif
+  , evalText
+  , evalTextFast
   )
 where
 
+import Prelude ()
 import Bound
 import ClassyPrelude
 import Control.Monad.Except
@@ -19,7 +26,9 @@ import System.IO.Unsafe          (unsafePerformIO)
 import Text.Show.Pretty          (ppShow)
 import Urbit.Uruk.Fast.OptToFast (optToFast)
 
+#if !defined(__GHCJS__)
 import qualified System.Console.Haskeline    as HL
+#endif
 import qualified Urbit.Atom                  as Atom
 import qualified Urbit.Moon.LambdaToUruk     as Lamb
 import qualified Urbit.Moon.MoonToUruk       as MU
@@ -43,6 +52,14 @@ runText' go txt = do
     Left  err -> putStrLn err
     Right res -> putStrLn $ pack $ show res
 
+evalText' :: Show a => (Text -> IO (Either Text a)) -> Text -> IO Text
+evalText' go txt = do
+  res <- go txt
+  res & \case
+    Left  err -> pure err
+    Right res -> pure (pack (show res))
+
+#if !defined(__GHCJS__)
 repl' :: Show a => (Text -> IO (Either Text a)) -> IO ()
 repl' go = HL.runInputT HL.defaultSettings loop
  where
@@ -59,6 +76,7 @@ repl' go = HL.runInputT HL.defaultSettings loop
               Right res -> show res
         HL.outputStrLn resStr
         loop
+#endif
 
 --------------------------------------------------------------------------------
 
@@ -73,14 +91,22 @@ goFast = runExceptT . MU.gogogoFast
 runText :: Text -> IO ()
 runText = runText' goSlow
 
+#if !defined(__GHCJS__)
 replFast :: IO ()
 replFast = repl' goFast
 
 repl :: IO ()
 repl = repl' goSlow
+#endif
 
 runFile :: FilePath -> IO ()
 runFile = runFile' goSlow
 
 runFileFast :: FilePath -> IO ()
 runFileFast = runFile' goFast
+
+evalText :: Text -> IO Text
+evalText = evalText' goSlow
+
+evalTextFast :: Text -> IO Text
+evalTextFast = evalText' goFast

@@ -2,6 +2,7 @@
 
 module Urbit.Moon.LambdaToUruk where
 
+import Prelude ()
 import ClassyPrelude hiding (try)
 
 import Control.Arrow          ((>>>))

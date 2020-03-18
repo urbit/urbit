@@ -16,10 +16,8 @@ dependencies:
   - classy-prelude
   - containers
   - deriving-compat
-  - flat
   - ghc-prim
   - hashable
-  - haskeline
   - lens
   - megaparsec
   - mtl
@@ -31,6 +29,12 @@ dependencies:
   - text
   - urbit-atom
   - vector
+
+when:
+  - condition: "! impl(ghcjs)"
+    dependencies:
+    - flat
+    - haskeline
 
 default-extensions:
   - ApplicativeDo

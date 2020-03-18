@@ -1,5 +1,6 @@
 module Urbit.Moon.MoonToUruk where
 
+import Prelude ()
 import Bound
 import ClassyPrelude
 import GHC.Natural
