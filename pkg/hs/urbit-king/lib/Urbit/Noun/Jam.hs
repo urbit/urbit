@@ -10,7 +10,6 @@ module Urbit.Noun.Jam (jam, jamBS) where
 import ClassyPrelude hiding (hash)
 
 import Urbit.Atom
-import Urbit.Atom.Internal
 import Urbit.Noun.Core
 
 import Data.Bits                 (clearBit, setBit, shiftL, shiftR, (.|.))
@@ -25,6 +24,7 @@ import GHC.Prim                  (Word#, plusWord#, word2Int#)
 import GHC.Word                  (Word(W#))
 import System.IO.Unsafe          (unsafePerformIO)
 
+import qualified Urbit.Atom.Fast        as Atom
 import qualified Data.ByteString.Unsafe as BS
 import qualified Data.HashTable.IO      as H
 import qualified Data.Vector.Primitive  as VP
@@ -154,7 +154,7 @@ writeWord wor = do
 {-# INLINE writeBitsFromWord #-}
 writeBitsFromWord :: Int -> Word -> Put ()
 writeBitsFromWord wid wor = do
-    wor <- pure (takeBitsWord wid wor)
+    wor <- pure (Atom.takeBitsWord wid wor)
 
     oldSt <- getS
 
@@ -175,7 +175,7 @@ writeBitsFromWord wid wor = do
 {-# INLINE writeAtomWord# #-}
 writeAtomWord# :: Word# -> Put ()
 writeAtomWord# w = do
-    writeBitsFromWord (I# (word2Int# (wordBitWidth# w))) (W# w)
+    writeBitsFromWord (I# (word2Int# (Atom.wordBitWidth# w))) (W# w)
 
 {-# INLINE writeAtomWord #-}
 writeAtomWord :: Word -> Put ()
@@ -188,7 +188,7 @@ writeAtomWord (W# w) = writeAtomWord# w
 -}
 {-# INLINE writeAtomBigNat #-}
 writeAtomBigNat :: BigNat -> Put ()
-writeAtomBigNat !(bigNatWords -> words) = do
+writeAtomBigNat !(Atom.bigNatWords -> words) = do
   let lastIdx = VP.length words - 1
   for_ [0..(lastIdx-1)] $ \i ->
       writeWord (words ! i)
@@ -276,8 +276,8 @@ writeMat atm = do
     writeBitsFromWord (preWid-1) atmWid
     writeAtomBits atm
   where
-    atmWid = bitWidth atm
-    preWid = fromIntegral (wordBitWidth atmWid)
+    atmWid = Atom.atomBitWidth atm
+    preWid = fromIntegral (Atom.wordBitWidth atmWid)
 
 {-# INLINE writeCell #-}
 writeCell :: Noun -> Noun -> Put ()
@@ -313,8 +313,8 @@ matSz# :: Atom -> Word#
 matSz# 0 = 1##
 matSz# a = preW `plusWord#` preW `plusWord#` atmW
   where
-    atmW = atomBitWidth# a
-    preW = wordBitWidth# atmW
+    atmW = Atom.atomBitWidth# a
+    preW = Atom.wordBitWidth# atmW
 
 {-# INLINE atomSz #-}
 atomSz :: Atom -> Word
@@ -329,8 +329,8 @@ jamWordSz :: Word -> Word
 jamWordSz 0      = 2
 jamWordSz (W# w) = 1 + 2*(W# preW) + (W# atmW)
   where
-    atmW = wordBitWidth# w
-    preW = wordBitWidth# atmW
+    atmW = Atom.wordBitWidth# w
+    preW = Atom.wordBitWidth# atmW
 
 compress :: Noun -> IO (Word, H.CuckooHashTable Word Word)
 compress !top = do
