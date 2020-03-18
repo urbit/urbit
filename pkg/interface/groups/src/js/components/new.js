@@ -134,6 +134,7 @@ export class NewScreen extends Component {
               groups={this.props.groups}
               contacts={this.props.contacts}
               groupResults={false}
+              shipResults={true}
               invites={this.state.invites}
               setInvite={this.invChange}
             />

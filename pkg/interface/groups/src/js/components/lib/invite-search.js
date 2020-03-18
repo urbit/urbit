@@ -102,37 +102,37 @@ export class InviteSearch extends Component {
         });
       }
 
-      let shipMatches = this.state.peers.filter(e => {
-        return e.includes(searchTerm) && !this.props.invites.ships.includes(e);
-      });
-
-      for (let contact of this.state.contacts.keys()) {
-        let thisContact = this.state.contacts.get(contact);
-        let match = thisContact.filter(e => {
-          return e.toLowerCase().includes(searchTerm);
+      let shipMatches = [];
+      if (this.props.shipResults) {
+        shipMatches = this.state.peers.filter(e => {
+          return e.includes(searchTerm) && !this.props.invites.ships.includes(e);
         });
-        if (match.length > 0) {
-          if (!(contact in shipMatches)) {
-            shipMatches.push(contact);
+
+        for (let contact of this.state.contacts.keys()) {
+          let thisContact = this.state.contacts.get(contact);
+          let match = thisContact.filter(e => {
+            return e.toLowerCase().includes(searchTerm);
+          });
+          if (match.length > 0) {
+            if (!(contact in shipMatches)) {
+              shipMatches.push(contact);
+            }
           }
+        }
+
+        let isValid = true;
+        if (!urbitOb.isValidPatp("~" + searchTerm)) {
+          isValid = false;
+        }
+
+        if (shipMatches.length === 0 && isValid) {
+          shipMatches.push(searchTerm);
         }
       }
 
       this.setState({
         searchResults: { groups: groupMatches, ships: shipMatches }
       });
-
-      let isValid = true;
-      if (!urbitOb.isValidPatp("~" + searchTerm)) {
-        isValid = false;
-      }
-
-      if (shipMatches.length === 0 && isValid) {
-        shipMatches.push(searchTerm);
-        this.setState({
-          searchResults: { groups: groupMatches, ships: shipMatches }
-        });
-      }
     }
   }
 
@@ -208,6 +208,18 @@ export class InviteSearch extends Component {
 
     let participants = <div />;
     let searchResults = <div />;
+
+    let placeholder = '';
+    if (props.shipResults) {
+      placeholder = 'ships';
+    }
+    if (props.groupResults) {
+      if (placeholder.length > 0) {
+        placeholder = placeholder + ' or ';
+      }
+      placeholder = placeholder + 'existing groups';
+    }
+    placeholder = 'Search for ' + placeholder;
 
     let invErrElem = <span />;
     if (state.inviteError) {
@@ -372,7 +384,7 @@ export class InviteSearch extends Component {
             "f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 w-100" +
             " db focus-b--black focus-b--white-d"
           }
-          placeholder="Search for ships or existing groups"
+          placeholder={placeholder}
           disabled={searchDisabled}
           rows={1}
           spellCheck={false}

@@ -73,6 +73,7 @@ export class AddScreen extends Component {
             groups={props.groups}
             contacts={props.contacts}
             groupResults={false}
+            shipResults={true}
             invites={this.state.invites}
             setInvite={this.invChange}
           />
