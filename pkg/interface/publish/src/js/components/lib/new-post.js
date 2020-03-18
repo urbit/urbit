@@ -112,7 +112,7 @@ export class NewPost extends Component {
             popout={props.popout}
           />
           <button
-            className={"bg-transparent v-mid w-100 mw6 tl h1 pl4"}
+            className={"bg-transparent v-mid w-100 w-90-l w-80-m mw6 tl h1 pl4"}
             disabled={(!state.submit && state.disabled) || (state.awaiting !== null)}
             style={submitStyle}
             onClick={this.postSubmit}>
