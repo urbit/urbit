@@ -2,56 +2,19 @@
 {-# OPTIONS_GHC -Werror #-}
 
 {-
+  DONE Make REPL flow available to caller.
+  TODO Implement an actual REPL with bindings.
+  TODO Add persistance to REPL.
+  TODO Add persistance to REPL.
+
   # Persistence
 
-  - Implement serialization for `Exp`.
-
-  - Implement persistance API
-
-    - load :: IO (Map Text ByteString)
-    - fech :: Text -> IO (Maybe ByteString)
-    - stor :: Text -> ByteString -> IO ()
-
-  - Implement Unix persistence driver.
-
-    - Files go to ~/.uruk/raw/
-    - `=x K` becomes `writeFile "~/.uruk/raw/x" (dump k)`
-    - `!x` becomes `unlinkFile "~/.uruk/raw/x"`
-
-  - Implement Javascript persistence driver.
-
-  # REPL
-
-  - Parse decl or undecl or expression.
-
-  - if decl
-    - evaluate
-    - print
-    - add to environment
-    - write to disk
-  - if undecl
-    - remove from environment
-    - remove from disk
-  - otherwise
-    - evaluate
-    - print
-
-  # Dash
-
-  - Make bindings available for display.
-
-  - Make last execution trace available for display.
-
-  - What do I want to display in the UI?
-
-    - Current list of bindings.
-
-      - Data associated with each binding.
-
-      - List of commands, their results, and their execution traces.
+  TODO Serialization for `Exp`.
+  TODO Unix persistance.
+  TODO Web (Local Storage) persistance.
 -}
 
-module Urbit.Uruk.UrukDemo (main) where
+module Urbit.Uruk.UrukDemo (main, EvalResult(..), InpResult(..)) where
 
 import ClassyPrelude hiding (exp, init, last, many, some, try)
 
@@ -60,11 +23,10 @@ import Text.Megaparsec
 import Text.Megaparsec.Char
 import Data.Tree
 
-import Control.Arrow    ((>>>))
-import Data.Bits        (shiftL, (.|.))
-import Data.Function    ((&))
-import Data.Void        (Void)
-import Numeric.Natural  (Natural)
+import Data.Bits       (shiftL, (.|.))
+import Data.Function   ((&))
+import Data.Void       (Void)
+import Numeric.Natural (Natural)
 
 
 -- Types -----------------------------------------------------------------------
@@ -290,7 +252,7 @@ decl = do
   pure (Dec n b)
 
 unbind :: Parser Text
-unbind = char '=' *> bind
+unbind = char '!' *> bind
 
 data Inp
   = Decl Dec
@@ -322,26 +284,10 @@ doParse act txt =
 
 --------------------------------------------------------------------------------
 
-tryExec :: (Text -> Maybe Exp) -> Exp -> IO Exp
-tryExec env = exec env >>> go
- where
-  go []     = error "impossible"
-  go [x]    = print x >> pure x
-  go (x:xs) = print x >> go xs
-
-tryExecBind :: (Text -> Maybe Exp) -> Text -> Exp -> IO Exp
-tryExecBind env nm = exec env >>> go
- where
-  go []     = error "impossible"
-  go [x]    = out x >> pure x
-  go (x:xs) = out x >> go xs
-
-  out x = putStrLn ("=" <> nm <> " " <> tshow x)
-
-noFree :: Env -> Exp -> IO Exp
+noFree :: Env -> Exp -> Either Text Exp
 noFree env = \case
   N (V ((`lookup` env) -> Just x)) -> pure x
-  N (V v                         ) -> error ("undefined variable: " <> unpack v)
+  N (V v                         ) -> Left ("undefined variable: " <> v)
   N x                              -> pure (N x)
   x :@ y                           -> (:@) <$> noFree env x <*> noFree env y
 
@@ -353,18 +299,54 @@ tryInps initEnv txt = doParse (file inps) txt & \case
   go :: Env -> [Inp] -> IO Env
   go env []       = pure env
   go env (e : es) = do
-    case e of
-      Wipe v -> go (deleteMap v env) es
-      Expr x -> do
-        tryExec (`lookup` env) x
-        putStrLn ""
-        go env es
-      Decl (Dec v x) -> do
-        x' <- tryExecBind (`lookup` env) v x >>= noFree env
-        putStrLn ""
-        go (insertMap v x' env) es
+    case execInp env e of
+      Left err -> error (unpack err)
+      Right (env', res) -> do
+        case res of
+          InpWipe v     -> putStrLn ("!" <> v)
+          InpExpr _ r   -> printEvalResult Nothing r
+          InpDecl v _ r -> printEvalResult (Just v) r
+        go env' es
+
+printEvalResult :: Maybe Text -> EvalResult -> IO ()
+printEvalResult mTxt (EvalResult _ trac) = do
+  for_ trac $ \x -> do
+    case mTxt of
+      Nothing -> print x
+      Just nm -> putStrLn ("=" <> nm <> " " <> tshow x)
 
 main :: IO ()
 main = do
+  void $ pure $ execInp mempty (Wipe "K")
   [txt] <- getArgs
   void (tryInps mempty txt)
+
+--------------------------------------------------------------------------------
+
+data EvalResult = EvalResult { erExp :: Exp, erTrace :: [Exp] }
+
+data InpResult
+  = InpWipe Text
+  | InpExpr Exp EvalResult
+  | InpDecl Text Exp EvalResult
+
+doEval :: Env -> Exp -> Either Text EvalResult
+doEval e v = do
+  let trac = exec (`lookup` e) v
+  res <- lastEit trac
+  pure (EvalResult res trac)
+ where
+  lastEit []     = Left "doEval: empty trace (This should not be possible)"
+  lastEit [x]    = Right x
+  lastEit (_:xs) = lastEit xs
+
+execInp :: Env -> Inp -> Either Text (Env, InpResult)
+execInp env = \case
+  Wipe v -> Right (deleteMap v env, InpWipe v)
+  Expr x -> do
+    res <- doEval env x
+    pure (env, InpExpr x res)
+  Decl (Dec v x) -> do
+    res <- doEval env x
+    noFree env (erExp res)
+    pure (insertMap v (erExp res) env, InpDecl v x res)
