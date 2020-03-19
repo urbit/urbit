@@ -93,7 +93,14 @@ a {
 
 .NewPost {
   width: 100%;
-  height: calc(100% - 115px);
+  height: calc(100vh - 174px);
+  display: flex;
+  padding-top: 8px;
+}
+
+.EditPost {
+  width: 100%;
+  height: calc(100vh - 120px);
   display: flex;
   padding-top: 8px;
 }

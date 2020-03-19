@@ -118,7 +118,7 @@ export class EditPost extends Component {
         <div className="pl4">
           <div className="gray2">{date}</div>
         </div>
-        <div className="NewPost">
+        <div className="EditPost">
           <CodeMirror
             value={state.body}
             options={options}
