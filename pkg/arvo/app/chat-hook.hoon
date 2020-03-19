@@ -605,14 +605,11 @@
   ?~  saw  [~ state]
   ?+  wir  [~ state]
       [%store @ *]
-    [~ state(synced (~(del by synced) t.wir))]
+    (poke-chat-hook-action %remove t.wir)
   ::
       [%backlog @ @ @ *]
     =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
-    =.  synced  (~(del by synced) pax)
-    :_  state
-    :-  [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
-    %.  ~
+    %.  (poke-chat-hook-action %remove pax)
     %-  slog
     :*  leaf+"chat-hook failed subscribe on {(spud pax)}"
         leaf+"stack trace:"
