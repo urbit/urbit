@@ -491,9 +491,9 @@ export class ContactCard extends Component {
       ? "dib" : "dn";
 
     let adminOpt =
-      ( (props.path.includes(window.ship) || (props.ship === window.ship)) &&
-        !(props.path.includes('/~/default'))
-      ) ? "dib" : "dn";
+       ((props.path.includes(`~${window.ship}/`)) || ((props.ship === window.ship) &&
+        !(props.path.includes('/~/default'))))
+       ? "dib" : "dn";
 
     let meLink = (props.path === "/~/default")
       ? `/~groups` : `/~groups/detail${props.path}`;
