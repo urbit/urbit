@@ -61,13 +61,9 @@ export class Sidebar extends Component {
         notebooks = new Map(
           [...notebooks.entries()].sort((a, b) => {
             if ((a[1]) && (b[1])) {
-              if (a[1]["title"].toLowerCase() < b[1]["title"].toLowerCase()) {
-                return -1;
-              }
-              if (a[1]["title"].toLowerCase() > b[1]["title"].toLowerCase()) {
-                return 1;
-              }
-              return 0;
+              return a[1]["title"].toLowerCase().localeCompare(
+                b[1]["title"].toLowerCase()
+                );
             }
           })
         );
@@ -76,13 +72,9 @@ export class Sidebar extends Component {
         notebooks = new Map(
           [...notebooks.entries()].sort((a, b) => {
             if ((a[1]) && (b[1])) {
-              if (a[1]["title"].toLowerCase() > b[1]["title"].toLowerCase()) {
-                return -1;
-              }
-              if (a[1]["title"].toLowerCase() < b[1]["title"].toLowerCase()) {
-                return 1;
-              }
-              return 0;
+              return b[1]["title"].toLowerCase().localeCompare(
+                a[1]["title"].toLowerCase()
+              );
             }
           })
         );
