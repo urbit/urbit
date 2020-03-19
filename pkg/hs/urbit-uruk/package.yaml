@@ -29,6 +29,8 @@ dependencies:
   - text
   - urbit-atom
   - vector
+  - serialise
+  - directory
 
 when:
   - condition: "! impl(ghcjs)"

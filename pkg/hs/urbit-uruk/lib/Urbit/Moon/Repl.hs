@@ -19,13 +19,17 @@ import ClassyPrelude
 import Control.Monad.Except
 import GHC.Natural
 import Urbit.Moon.AST
+import Codec.Serialise
 
 import Control.Arrow             ((>>>))
 import Data.Function             ((&))
+import System.Directory          (createDirectoryIfMissing, getHomeDirectory,
+                                  listDirectory, removeFile)
 import System.IO.Unsafe          (unsafePerformIO)
 import Text.Show.Pretty          (ppShow)
 import Urbit.Uruk.Fast.OptToFast (optToFast)
-import Urbit.Uruk.UrukDemo       (Env, Inp(..), InpResult(..), execInp, parseInps, execText, printInpResult)
+import Urbit.Uruk.UrukDemo       (Env, EvalResult(..), Inp(..), InpResult(..))
+import Urbit.Uruk.UrukDemo       (execInp, execText, parseInps, printInpResult)
 
 #if !defined(__GHCJS__)
 import qualified System.Console.Haskeline    as HL
@@ -37,6 +41,8 @@ import qualified Urbit.Moon.Parser           as Parser
 import qualified Urbit.Uruk.Fast             as F
 import qualified Urbit.Uruk.Fast.Types       as F
 import qualified Urbit.Uruk.Refr.Jetted      as Ur
+
+import qualified Urbit.Uruk.UrukDemo as Dem
 
 --------------------------------------------------------------------------------
 
@@ -98,8 +104,8 @@ replFast = repl' goFast
 
 repl :: IO ()
 repl = do
-   vEnv <- newIORef mempty
-   HL.runInputT HL.defaultSettings (loop vEnv)
+  vEnv <- readUrukDemoEnv >>= newIORef
+  HL.runInputT HL.defaultSettings (loop vEnv)
  where
   loop :: IORef Env -> HL.InputT IO ()
   loop vEnv = do
@@ -125,6 +131,7 @@ repl = do
       Right (env', res) -> do
         writeIORef vEnv env'
         printInpResult res
+        persistInpResu res
         doInps vEnv is
 #endif
 
@@ -139,3 +146,55 @@ evalText = evalText' goSlow
 
 evalTextFast :: Text -> IO Text
 evalTextFast = evalText' goFast
+
+
+-- Types -----------------------------------------------------------------------
+
+-- | Identifier, should match /[a-zA-Z0-9$-]+/
+type Ident = Text
+
+
+-- Read/Write + Serialise/Deserialise ------------------------------------------
+
+persistInpResu :: InpResult -> IO ()
+persistInpResu = \case
+  InpExpr _ _                  -> pure ()
+  InpWipe n                    -> writeUrukDemoBind n Nothing
+  InpDecl n _ (EvalResult r _) -> writeUrukDemoBind n (Just r)
+
+writeUrukDemoBind :: Ident -> Maybe Dem.Exp -> IO ()
+writeUrukDemoBind iden mExp =
+  writeUrukDemoBindBytes iden (toStrict . serialise <$> mExp)
+
+--  Throws `DeserialiseFailure` exception on decode failure.
+readUrukDemoEnv :: IO (Map Ident Dem.Exp)
+readUrukDemoEnv = readUrukDemoEnvBytes >>= traverse cvt
+ where
+  cvt :: ByteString -> IO Dem.Exp
+  cvt byt = evaluate $ force $ deserialise $ fromStrict byt
+
+
+-- Reading and writing bind files ----------------------------------------------
+
+readUrukDemoEnvBytes :: IO (Map Ident ByteString)
+readUrukDemoEnvBytes = do
+  hom <- getHomeDirectory
+  let dir = hom <> "/.uruk/uruk-demo/"
+  createDirectoryIfMissing True dir
+  fmap mapFromList $ listDirectory dir >>= traverse (loadEnt dir)
+ where
+  loadEnt :: FilePath -> String -> IO (Ident, ByteString)
+  loadEnt dir ent = do
+    let pax = dir <> "/" <> ent
+    byt <- readFile pax
+    pure (pack ent, byt)
+
+writeUrukDemoBindBytes :: Ident -> Maybe ByteString -> IO ()
+writeUrukDemoBindBytes iden mByt = do
+  hom <- getHomeDirectory
+  let dir = hom <> "/.uruk/uruk-demo/"
+  let pax = dir <> unpack iden
+  createDirectoryIfMissing True dir
+  case mByt of
+    Just bytz -> writeFile pax bytz
+    Nothing   -> removeFile pax

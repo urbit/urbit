@@ -16,6 +16,7 @@
 
 module Urbit.Uruk.UrukDemo
   ( main
+  , Exp
   , Env
   , Inp(..)
   , EvalResult(..)
@@ -34,6 +35,7 @@ import Control.Monad.State.Lazy
 import Text.Megaparsec
 import Text.Megaparsec.Char
 import Data.Tree
+import Codec.Serialise (Serialise)
 
 import Data.Bits       (shiftL, (.|.))
 import Data.Function   ((&))
@@ -46,8 +48,12 @@ import Numeric.Natural (Natural)
 infixl 5 :@;
 
 data Ur = J | K | S | D | V Text deriving (Eq, Ord)
+  deriving (Generic)
+  deriving anyclass (NFData, Serialise)
 
 data Exp = N Ur | Exp :@ Exp deriving (Eq, Ord)
+  deriving (Generic)
+  deriving anyclass (NFData, Serialise)
 
 data Dec = Dec Text Exp
   deriving (Eq, Ord, Show)
@@ -298,7 +304,7 @@ doParse act txt =
 
 noFree :: Env -> Exp -> Either Text Exp
 noFree env = \case
-  N (V ((`lookup` env) -> Just x)) -> pure x
+  N (V ((`lookup` env) -> Just x)) -> noFree env x
   N (V v                         ) -> Left ("undefined variable: " <> v)
   N x                              -> pure (N x)
   x :@ y                           -> (:@) <$> noFree env x <*> noFree env y
