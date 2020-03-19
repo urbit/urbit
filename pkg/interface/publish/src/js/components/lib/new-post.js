@@ -23,28 +23,31 @@ export class NewPost extends Component {
   }
 
   postSubmit() {
-    let newNote = {
-      "new-note": {
-        who: this.props.ship.slice(1),
-        book: this.props.book,
-        note: stringToSymbol(this.state.title),
-        title: this.state.title,
-        body: this.state.body,
+    const { state, props } = this;
+    if (state.submit && !state.disabled) {
+      let newNote = {
+        "new-note": {
+          who: this.props.ship.slice(1),
+          book: this.props.book,
+          note: stringToSymbol(this.state.title),
+          title: this.state.title,
+          body: this.state.body,
+        }
       }
-    }
 
       window.api.setSpinner(true);
       this.setState({ disabled: true });
-      window.api.action("publish", "publish-action", newNote).then(() =>{
+      window.api.action("publish", "publish-action", newNote).then(() => {
         this.setState({ awaiting: newNote["new-note"].note, disabled: false });
       }).catch((err) => {
         if (err.includes("note already exists")) {
           let timestamp = Math.floor(Date.now() / 1000);
           newNote["new-note"].note += "-" + timestamp;
-          this.setState({awaiting: newNote["new-note"].note, disabled: false});
+          this.setState({ awaiting: newNote["new-note"].note, disabled: false });
           window.api.action("publish", "publish-action", newNote);
         }
       });
+    }
   }
 
   componentWillMount() {
@@ -112,7 +115,7 @@ export class NewPost extends Component {
             popout={props.popout}
           />
           <button
-            className={"bg-transparent v-mid w-100 mw6 tl h1 pl4"}
+            className={"bg-transparent v-mid w-100 w-90-l w-80-m mw6 tl h1 pl4"}
             disabled={(!state.submit && state.disabled) || (state.awaiting !== null)}
             style={submitStyle}
             onClick={this.postSubmit}>
