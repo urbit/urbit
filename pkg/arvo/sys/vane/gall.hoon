@@ -744,8 +744,6 @@
         new-agents  (~(put by new-agents) name.i.agents new-blocked)
       ==
     =^  mov  blocked.i.agents  ~(get to blocked.i.agents)
-    ~!  mov
-    ~&  >  [blocked=[p q]:p.mov ship]
     =?  new-blocked  !=(ship attributing.q.p.mov)
       (~(put to new-blocked) mov)
     $
