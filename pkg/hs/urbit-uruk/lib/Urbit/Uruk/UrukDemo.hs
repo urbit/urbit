@@ -14,7 +14,19 @@
   TODO Web (Local Storage) persistance.
 -}
 
-module Urbit.Uruk.UrukDemo (main, EvalResult(..), InpResult(..)) where
+module Urbit.Uruk.UrukDemo
+  ( main
+  , Env
+  , Inp(..)
+  , EvalResult(..)
+  , execInp
+  , InpResult(..)
+  , parseInps
+  , execText
+  , printEvalResult
+  , printInpResult
+  )
+where
 
 import ClassyPrelude hiding (exp, init, last, many, some, try)
 
@@ -302,18 +314,25 @@ tryInps initEnv txt = doParse (file inps) txt & \case
     case execInp env e of
       Left err -> error (unpack err)
       Right (env', res) -> do
-        case res of
-          InpWipe v     -> putStrLn ("!" <> v)
-          InpExpr _ r   -> printEvalResult Nothing r
-          InpDecl v _ r -> printEvalResult (Just v) r
+        printInpResult res
         go env' es
 
+printInpResult :: InpResult -> IO ()
+printInpResult = \case
+  InpWipe v     -> putStrLn ("!" <> v)
+  InpExpr _ r   -> printEvalResult Nothing r
+  InpDecl v _ r -> printEvalResult (Just v) r
+
 printEvalResult :: Maybe Text -> EvalResult -> IO ()
-printEvalResult mTxt (EvalResult _ trac) = do
+printEvalResult mTxt (EvalResult val trac) = do
   for_ trac $ \x -> do
     case mTxt of
-      Nothing -> print x
+      Nothing -> putStrLn (".. " <> tshow x)
       Just nm -> putStrLn ("=" <> nm <> " " <> tshow x)
+
+  case mTxt of
+    Nothing -> print val
+    Just nm -> putStrLn ("=" <> nm <> " " <> tshow val)
 
 main :: IO ()
 main = do
@@ -345,8 +364,25 @@ execInp env = \case
   Wipe v -> Right (deleteMap v env, InpWipe v)
   Expr x -> do
     res <- doEval env x
-    pure (env, InpExpr x res)
+    let val = case noFree env (erExp res) of
+                Left _  -> erExp res
+                Right v -> v
+    pure (env, InpExpr x res{erExp=val})
   Decl (Dec v x) -> do
     res <- doEval env x
-    noFree env (erExp res)
-    pure (insertMap v (erExp res) env, InpDecl v x res)
+    val <- noFree env (erExp res)
+    pure (insertMap v (erExp res) env, InpDecl v x res{erExp=val})
+
+parseInps :: Text -> Either Text [Inp]
+parseInps = doParse (file inps)
+
+execText :: Env -> Text -> Either Text (Env, [InpResult])
+execText initEnv txt = do
+  ips <- doParse (file inps) txt
+  go initEnv [] ips
+ where
+  go :: Env -> [InpResult] -> [Inp] -> Either Text (Env, [InpResult])
+  go env acc []       = pure (env, reverse acc)
+  go env acc (e : es) = do
+    (env', res) <- execInp env e
+    go env' (res : acc) es

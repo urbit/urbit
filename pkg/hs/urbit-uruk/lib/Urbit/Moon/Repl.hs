@@ -25,6 +25,7 @@ import Data.Function             ((&))
 import System.IO.Unsafe          (unsafePerformIO)
 import Text.Show.Pretty          (ppShow)
 import Urbit.Uruk.Fast.OptToFast (optToFast)
+import Urbit.Uruk.UrukDemo       (Env, Inp(..), InpResult(..), execInp, parseInps, execText, printInpResult)
 
 #if !defined(__GHCJS__)
 import qualified System.Console.Haskeline    as HL
@@ -96,7 +97,35 @@ replFast :: IO ()
 replFast = repl' goFast
 
 repl :: IO ()
-repl = repl' goSlow
+repl = do
+   vEnv <- newIORef mempty
+   HL.runInputT HL.defaultSettings (loop vEnv)
+ where
+  loop :: IORef Env -> HL.InputT IO ()
+  loop vEnv = do
+    minput <- HL.getInputLine "uruk> "
+    case minput of
+      Nothing    -> return ()
+      Just "!!"  -> return ()
+      Just input -> do
+        parseInps (pack input) & \case
+          Left err -> do
+            liftIO $ putStrLn err
+            loop vEnv
+          Right inps -> do
+            liftIO $ doInps vEnv inps
+            loop vEnv
+
+  doInps :: IORef Env -> [Inp] -> IO ()
+  doInps vEnv []     = pure ()
+  doInps vEnv (i:is) = do
+    env <- readIORef vEnv
+    case execInp env i of
+      Left err -> putStrLn err
+      Right (env', res) -> do
+        writeIORef vEnv env'
+        printInpResult res
+        doInps vEnv is
 #endif
 
 runFile :: FilePath -> IO ()
