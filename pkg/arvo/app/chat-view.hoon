@@ -220,20 +220,29 @@
     ==
   ::
       %delete
-    =/  group-path  (group-from-chat app-path.act)
     ?>  ?=(^ app-path.act)
+    ::  always just delete the chat from chat-store
+    ::
+    :+  (chat-hook-poke [%remove app-path.act])
+      (chat-poke [%delete app-path.act])
+    ::  if we still have metadata for the chat, remove it, and the associated
+    ::  group if it's unmanaged
+    ::
+    ::    we aren't guaranteed to have metadata: the chat might have been
+    ::    deleted by the host, which pushes metadata deletion down to us.
+    ::
+    =/  group-path=(unit path)
+      (maybe-group-from-chat app-path.act)
+    ?~  group-path  ~
+    =*  group  u.group-path
     %-  zing
-    :~  :~  (chat-hook-poke [%remove app-path.act])
-            (chat-poke [%delete app-path.act])
-        ==
+    :~  ?.  (is-creator group %chat app-path.act)  ~
+        [(metadata-poke [%remove group [%chat app-path.act]])]~
       ::
-        ?.  (is-creator group-path %chat app-path.act)  ~
-        [(metadata-poke [%remove group-path [%chat app-path.act]])]~
-      ::
-        ?:  (is-managed group-path)  ~
-        :~  (group-poke [%unbundle group-path])
-            (metadata-hook-poke [%remove group-path])
-            (metadata-store-poke [%remove group-path [%chat app-path.act]])
+        ?:  (is-managed group)  ~
+        :~  (group-poke [%unbundle group])
+            (metadata-hook-poke [%remove group])
+            (metadata-store-poke [%remove group [%chat app-path.act]])
         ==
     ==
   ::
@@ -415,13 +424,13 @@
     =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
     .^((unit mailbox) %gx pax)
   ::
-  ++  group-from-chat
+  ++  maybe-group-from-chat
     |=  app-path=path
-    ^-  path
+    ^-  (unit path)
     ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)
       ?:  ?=([@ ^] app-path)
         ~&  [%assuming-ported-legacy-chat app-path]
-        [%'~' app-path]
+        `[%'~' app-path]
       ~&  [%weird-chat app-path]
       !!
     =/  resource-indices
@@ -432,8 +441,15 @@
         (scot %da now.bol)
         /resource-indices
       ==
-    =/  groups=(set path)  (~(got by resource-indices) [%chat app-path])
-    (snag 0 ~(tap in groups))
+    =/  groups=(set path)
+      %+  fall
+        (~(get by resource-indices) [%chat app-path])
+      *(set path)
+    ?~  groups  ~
+    `n.groups
+  ::
+  ++  group-from-chat
+    (cork maybe-group-from-chat need)
   ::
   ++  is-managed
     |=  =path
