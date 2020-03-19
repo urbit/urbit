@@ -111,6 +111,7 @@ export class Root extends Component {
                     defaultContacts={defaultContacts}
                     group={group}
                     activeDrawer={(detail || settings) ? "detail" : "contacts"}
+                    api={api}
                     path={groupPath}
                     {...props}
                   />
@@ -151,6 +152,7 @@ export class Root extends Component {
                     group={group}
                     activeDrawer="rightPanel"
                     path={groupPath}
+                    api={api}
                     {...props}
                   />
                   <AddScreen
@@ -193,6 +195,7 @@ export class Root extends Component {
                     defaultContacts={defaultContacts}
                     group={group}
                     path={groupPath}
+                    api={api}
                     selectedContact={shipPath}
                     {...props}
                   />
@@ -241,6 +244,7 @@ export class Root extends Component {
                     defaultContacts={defaultContacts}
                     group={group}
                     path={groupPath}
+                    api={api}
                     selectedContact={shipPath}
                     {...props}
                   />

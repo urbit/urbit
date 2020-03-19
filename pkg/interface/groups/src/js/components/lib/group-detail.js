@@ -149,6 +149,9 @@ export class GroupDetail extends Component {
     let association = ((props.association) && (props.association[channelPath]))
       ? props.association[channelPath] : {};
 
+    let deleteButtonClasses = (groupOwner) ? 'b--red2 red2 pointer bg-gray0-d' : 'b--gray3 gray3 bg-gray0-d c-default';
+
+
     return (
       <div className="pa4 w-100 h-100 white-d">
         <div className="f8 f9-m f9-l f9-xl w-100">
@@ -209,6 +212,20 @@ export class GroupDetail extends Component {
               }}
             />
           </div>
+          <p className="f8 mt3 lh-copy">Delete Group</p>
+          <p className="f9 gray2 mb4">
+          Permanently delete this group. All current members will no longer see this group.
+          </p>
+          <a className={"dib f9 ba pa2 " + deleteButtonClasses}
+          onClick={() => {
+            if (groupOwner) {
+              props.api.setSpinner(true);
+              props.api.contactView.delete(props.path).then(() => {
+                props.api.setSpinner(false);
+                props.history.push("/~groups");
+              })
+            }
+          }}>Delete this group</a>
         </div>
       </div>
     )

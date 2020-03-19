@@ -22,7 +22,8 @@ class UrbitApi {
     };
 
     this.group = {
-      add: this.groupAdd.bind(this)
+      add: this.groupAdd.bind(this),
+      delete: this.groupRemove.bind(this)
     };
 
     this.invite = {
@@ -83,6 +84,12 @@ class UrbitApi {
     return this.action("group-store", "group-action", {
       add: { members: ships, path }
     });
+  }
+
+  groupRemove(path, ships) {
+    return this.action("group-store", "group-action", {
+      remove: { members: ships, path }
+    })
   }
 
   contactShare(recipient, path, ship, contact) {

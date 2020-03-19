@@ -53,17 +53,28 @@ export class ContactSidebar extends Component {
           <div
           key={member}
           className={"pl4 pt1 pb1 f9 flex justify-start content-center " +
-            "bg-white bg-gray0-d"}>
+            "bg-white bg-gray0-d relative"}>
             <Sigil
               ship={member}
               color="#000000"
               size={32}
               classes="mix-blend-diff"
               />
-            <p className="f9 w-70 dib v-mid ml2 nowrap mono"
+            <p className="f9 w-70 dib v-mid ml2 nowrap mono truncate"
               style={{ paddingTop: 6, color: '#aaaaaa' }}
               title={member}>
               {cite(member)}
+            </p>
+            <p className="dib v-mid f9 mh2 red2 pointer"
+              style={{paddingTop: 6}}
+              onClick={() => {
+                props.api.setSpinner(true);
+                props.api.groupRemove(props.path, [`~${member}`])
+                .then(() => {
+                  props.api.setSpinner(false);
+                })
+              }}>
+              Remove
             </p>
           </div>
         );
