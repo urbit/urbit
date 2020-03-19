@@ -40,6 +40,7 @@ export class Sidebar extends Component {
         let when = !!msg ? msg.when : 0;
 
         let title = box.substr(1);
+        let associatedGroup = box;
         if (
           box in props.associations["chat"] &&
           props.associations.chat[box].metadata
@@ -47,13 +48,17 @@ export class Sidebar extends Component {
           title = props.associations.chat[box].metadata.title
             ? props.associations.chat[box].metadata.title
             : box.substr(1);
+          associatedGroup = props.associations.chat[box]["group-path"]
+            ? props.associations.chat[box]["group-path"]
+            : box;
         }
 
         let nickname = author;
-        if (box in props.contacts && author in props.contacts[box]) {
-          nickname = props.contacts[box][author].nickname
-            ? props.contacts[box][author].nickname
-            : author;
+        if (associatedGroup in props.contacts &&
+          author in props.contacts[associatedGroup]) {
+            nickname = props.contacts[associatedGroup][author].nickname
+              ? props.contacts[associatedGroup][author].nickname
+              : author;
         }
 
         return {
