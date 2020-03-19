@@ -219,8 +219,7 @@ export class SettingsScreen extends Component {
           <div className={"w-100 fl mt3"} style={{maxWidth: "29rem"}}>
             <p className="f8 mt3 lh-copy db">Convert Chat</p>
             <p className="f9 gray2 db mb4">
-              Convert this chat into a group with associated chat, or select a
-              group to add this chat to.
+              Convert this chat into a group with associated chat.
             </p>
             {/*
             <InviteSearch
