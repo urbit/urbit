@@ -263,6 +263,7 @@ export class NewScreen extends Component {
             contacts={props.contacts}
             associations={props.associations}
             groupResults={true}
+            shipResults={true}
             invites={{
               groups: state.groups,
               ships: state.ships

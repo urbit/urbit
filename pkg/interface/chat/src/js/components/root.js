@@ -280,6 +280,9 @@ export class Root extends Component {
                     station={station}
                     association={association}
                     permission={permission}
+                    groups={state.groups || {}}
+                    contacts={state.contacts || {}}
+                    associations={associations.contacts}
                     api={api}
                     station={station}
                     group={group}

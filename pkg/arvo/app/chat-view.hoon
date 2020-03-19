@@ -220,20 +220,29 @@
     ==
   ::
       %delete
-    =/  group-path  (group-from-chat app-path.act)
     ?>  ?=(^ app-path.act)
+    ::  always just delete the chat from chat-store
+    ::
+    :+  (chat-hook-poke [%remove app-path.act])
+      (chat-poke [%delete app-path.act])
+    ::  if we still have metadata for the chat, remove it, and the associated
+    ::  group if it's unmanaged
+    ::
+    ::    we aren't guaranteed to have metadata: the chat might have been
+    ::    deleted by the host, which pushes metadata deletion down to us.
+    ::
+    =/  group-path=(unit path)
+      (maybe-group-from-chat app-path.act)
+    ?~  group-path  ~
+    =*  group  u.group-path
     %-  zing
-    :~  :~  (chat-hook-poke [%remove app-path.act])
-            (chat-poke [%delete app-path.act])
-        ==
+    :~  ?.  (is-creator group %chat app-path.act)  ~
+        [(metadata-poke [%remove group [%chat app-path.act]])]~
       ::
-        ?.  (is-creator group-path %chat app-path.act)  ~
-        [(metadata-poke [%remove group-path [%chat app-path.act]])]~
-      ::
-        ?:  (is-managed group-path)  ~
-        :~  (group-poke [%unbundle group-path])
-            (metadata-hook-poke [%remove group-path])
-            (metadata-store-poke [%remove group-path [%chat app-path.act]])
+        ?:  (is-managed group)  ~
+        :~  (group-poke [%unbundle group])
+            (metadata-hook-poke [%remove group])
+            (metadata-store-poke [%remove group [%chat app-path.act]])
         ==
     ==
   ::
@@ -248,6 +257,8 @@
   ::
       %groupify
     ?>  ?=([%'~' ^] app-path.act)
+    ::  retrieve old data
+    ::
     =/  data=(unit mailbox)
       (scry-for (unit mailbox) %chat-store [%mailbox app-path.act])
     ?~  data
@@ -265,26 +276,52 @@
       =/  encoded-path=@ta
         (scot %t (spat app-path.act))
       /metadata/[encoded-path]/chat/[encoded-path]
-    =/  new-path=^path  (slag 1 `path`app-path.act)
-    =/  members=(set ship)
-      %+  fall
-        (group-scry app-path.act)
-      *(set ship)
-    =/  cards-1=(list card)
-        (poke-chat-view-action %delete app-path.act)
-    =/  cards-2=(list card)
+    ::  figure out new data
+    ::
+    =/  chat-path=^path      (slag 1 `path`app-path.act)
+    ::  group-path: the group to associate with the chat
+    ::  members: members of group, if it's new
+    ::  new-members: new members of group, if it already exists
+    ::
+    =/  [group-path=path members=(set ship) new-members=(set ship)]
+      ?~  existing.act
+        [chat-path who.u.permission ~]
+      :+  group-path.u.existing.act
+        ~
+      ?.  inclusive.u.existing.act  ~
+      %-  ~(dif in who.u.permission)
+      ~|  [%groupifying-with-nonexistent-group group-path.u.existing.act]
+      %-  need
+      (group-scry group-path.u.existing.act)
+    ::  make changes
+    ::
+    ;:  weld
+      ::  delete the old chat
+      ::
+      (poke-chat-view-action %delete app-path.act)
+    ::
+      ::  create the new chat. if needed, creates the new group.
+      ::
       %-  poke-chat-view-action
       :*  %create
           title.metadata
           description.metadata
-          new-path
-          new-path
+          chat-path
+          group-path
           %village
           members
           &
       ==
-    %+  snoc  (weld cards-1 cards-2)
-    (chat-poke %messages new-path envelopes.u.data)
+    ::
+      ::  if needed, add members to the existing group
+      ::
+      ?~  new-members  ~
+      [(group-poke [%add new-members group-path])]~
+    ::
+      ::  import messages into the new chat
+      ::
+      [(chat-poke %messages chat-path envelopes.u.data)]~
+    ==
   ==
   ::
   ++  create-chat
@@ -387,13 +424,13 @@
     =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
     .^((unit mailbox) %gx pax)
   ::
-  ++  group-from-chat
+  ++  maybe-group-from-chat
     |=  app-path=path
-    ^-  path
+    ^-  (unit path)
     ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)
       ?:  ?=([@ ^] app-path)
         ~&  [%assuming-ported-legacy-chat app-path]
-        [%'~' app-path]
+        `[%'~' app-path]
       ~&  [%weird-chat app-path]
       !!
     =/  resource-indices
@@ -404,8 +441,15 @@
         (scot %da now.bol)
         /resource-indices
       ==
-    =/  groups=(set path)  (~(got by resource-indices) [%chat app-path])
-    (snag 0 ~(tap in groups))
+    =/  groups=(set path)
+      %+  fall
+        (~(get by resource-indices) [%chat app-path])
+      *(set path)
+    ?~  groups  ~
+    `n.groups
+  ::
+  ++  group-from-chat
+    (cork maybe-group-from-chat need)
   ::
   ++  is-managed
     |=  =path

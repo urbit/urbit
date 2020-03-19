@@ -57,6 +57,7 @@ export class InviteElement extends Component {
           groups={{}}
           contacts={props.contacts}
           groupResults={false}
+          shipResults={true}
           invites={{
             groups: [],
             ships: this.state.members

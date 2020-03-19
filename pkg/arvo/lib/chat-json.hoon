@@ -283,7 +283,8 @@
     ==
   ::
   ++  groupify
-    (ot [%app-path pa] ~)
+    =-  (ot [%app-path pa] [%existing -] ~)
+    (mu (ot [%group-path pa] [%inclusive bo] ~))
   ::
   ++  sec
     =,  dejs:format
