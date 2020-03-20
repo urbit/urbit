@@ -75,7 +75,7 @@ export class Comments extends Component {
         [da]: {
           author: this.props.ship,
           content: com["new-comment"].body,
-          "date-created": Math.round(new Date().getTime() / 1000)
+          "date-created": Math.round(new Date().getTime())
         }
       }
       return (
