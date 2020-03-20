@@ -10,8 +10,12 @@ import { uuid, uxToHex } from '/lib/util';
 
 const DEFAULT_INPUT_HEIGHT = 28;
 
+
 function getAdvance(a, b) {
   let res = '';
+  if(!a) {
+    return b;
+  }
   for (let i = 0; i < Math.min(a.length, b.length); i++) {
     if (a[i] !== b[i]) {
       return res;
@@ -29,26 +33,23 @@ function ChatInputSuggestions({ suggestions, onSelect, selected }) {
         left: '48px'
       }}
       className={
-        'absolute bg-white bg-gray0-d ' +
-        'w7 pv3 z-1 mt1 ba b--white-d overflow-y-scroll'
+        'absolute black white-d bg-white bg-gray0-d ' +
+        'w7 pv1 z-1 mt1 ba b--gray1-d b--gray4'
       }
     >
       {suggestions.map(ship => (
         <div
           className={cn(
-            'list mono f8 pv1 ph3 pointer' + ' hover-bg-gray4 relative',
+            'list mono f8 pv1 ph3 pointer' + ' hover-bg-gray4 relative bb b--gray1-d b--gray4',
             {
               'white-d': ship !== selected,
               'black-d': ship === selected,
               'bg-gray0-d': ship !== selected,
-              'bg-gray1-d': ship === selected
+              'bg-white': ship !== selected,
+              'bg-gray1-d': ship === selected,
+              'bg-gray5': ship === selected
             }
           )}
-          style={{
-            borderBottom: '1px solid #4d4d4d',
-            zIndex: '99',
-            fontFamily: 'monospace'
-          }}
           key={ship}
         >
           <Sigil
@@ -57,7 +58,7 @@ function ChatInputSuggestions({ suggestions, onSelect, selected }) {
             color="#000000"
             classes="mix-blend-diff v-mid"
           />
-          <span className="v-mid ml2 mw5 truncate dib mix-blend-diff">
+          <span className="v-mid ml2 mw5 truncate dib">
             {'~' + ship}
           </span>
         </div>
@@ -139,21 +140,20 @@ export class ChatInput extends Component {
     const match = /~([a-z\-]*)$/.exec(message);
 
     if (!match) {
-      return null;
+      this.setState({ patpSuggestions: [] })
     }
 
-    const envelopes = ['hastuc', 'hastuc-dibtux', 'hasfun'];
 
-    // const suggestions = _.chain(props.envelopes)
-    // .map("author")
-    // .uniq()
-    const suggestions = _.chain(envelopes)
+    const suggestions = _.chain(this.props.envelopes)
+      .map("author")
+      .uniq()
       .filter(s => s.startsWith(match[1]))
+      .take(3)
       .value();
 
     const advance = _.chain(suggestions)
       .map(s => s.replace(match[0], ''))
-      .reduce(getAdvance)
+      .reduce(getAdvance, )
       .value();
 
     let newState = {
