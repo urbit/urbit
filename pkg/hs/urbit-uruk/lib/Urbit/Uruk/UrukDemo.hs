@@ -26,6 +26,7 @@ module Urbit.Uruk.UrukDemo
   , execText
   , printEvalResult
   , printInpResult
+  , prettyInpResult
   )
 where
 
@@ -81,13 +82,32 @@ showTree (Node n xs) = "(" <> intercalate " " (show n : fmap showTree xs) <> ")"
 instance Show Exp where show = showTree . tree
 
 exec ∷ (Text → Maybe Exp) → Exp → [Exp]
-exec env x = x : fromMaybe [] (fmap (exec env) (reduce env x))
+exec env = go
+ where
+  go :: Exp -> [Exp]
+  go x = (maybe (goNm x) (x:) . fmap go . reduce env) x
+
+  goNm :: Exp -> [Exp]
+  goNm x = (maybe [x] (x:) . fmap goNm . reduceVars env) x
 
 reduce ∷ (Text → Maybe Exp) → Exp → Maybe Exp
 reduce env = go
  where
   go = \case
     N (V x) :@ r          → (:@) <$> env x <*> pure r
+    N K :@ x :@ _         → Just x
+    (go→Just xv) :@ y     → Just (xv :@ y)
+    x :@ (go→Just yv)     → Just (x :@ yv)
+    N S :@ x :@ y :@ z    → Just (x :@ z :@ (y :@ z))
+    N D :@ x              → Just (jam x)
+    (jetRule→Just(b,xs))  → Just (foldl' (:@) b xs)
+    _                     → Nothing
+
+reduceVars ∷ (Text → Maybe Exp) → Exp → Maybe Exp
+reduceVars env = go
+ where
+  go = \case
+    N (V x)               → env x
     N K :@ x :@ _         → Just x
     (go→Just xv) :@ y     → Just (xv :@ y)
     x :@ (go→Just yv)     → Just (x :@ yv)
@@ -329,6 +349,24 @@ printInpResult = \case
   InpExpr _ r   -> printEvalResult Nothing r
   InpDecl v _ r -> printEvalResult (Just v) r
 
+prettyInpResult :: InpResult -> (Text, Text)
+prettyInpResult = \case
+  InpWipe v     -> ("!" <> v, "")
+  InpExpr _ r   -> prettyEvalResult Nothing r
+  InpDecl v _ r -> prettyEvalResult (Just v) r
+
+prettyEvalResult :: Maybe Text -> EvalResult -> (Text, Text)
+prettyEvalResult mTxt (EvalResult val trac) =
+  (resultStr, unlines $ reverse traceStrs)
+ where
+  resultStr = case mTxt of
+    Nothing -> tshow val
+    Just nm -> "=" <> nm <> " " <> tshow val
+
+  traceStrs = case mTxt of
+    Nothing -> trac <&> \x -> ".. " <> tshow x
+    Just nm -> trac <&> \x -> "=" <> nm <> " " <> tshow x
+
 printEvalResult :: Maybe Text -> EvalResult -> IO ()
 printEvalResult mTxt (EvalResult val trac) = do
   for_ trac $ \x -> do
@@ -349,11 +387,13 @@ main = do
 --------------------------------------------------------------------------------
 
 data EvalResult = EvalResult { erExp :: Exp, erTrace :: [Exp] }
+ deriving (Eq, Ord, Show)
 
 data InpResult
   = InpWipe Text
   | InpExpr Exp EvalResult
   | InpDecl Text Exp EvalResult
+ deriving (Eq, Ord, Show)
 
 doEval :: Env -> Exp -> Either Text EvalResult
 doEval e v = do

@@ -10,6 +10,7 @@ module Urbit.Moon.Repl
 #endif
   , evalText
   , evalTextFast
+  , evalTextUruk
   )
 where
 
@@ -93,6 +94,9 @@ goSlow = fmap (fmap Ur.unClose) . runExceptT . MU.gogogo'
 goFast :: Text -> IO (Either Text F.Val)
 goFast = runExceptT . MU.gogogoFast
 
+goInp :: Text -> IO (Either Text [Inp])
+goInp = pure . parseInps
+
 --------------------------------------------------------------------------------
 
 runText :: Text -> IO ()
@@ -140,6 +144,9 @@ runFile = runFile' goSlow
 
 runFileFast :: FilePath -> IO ()
 runFileFast = runFile' goFast
+
+evalTextUruk :: Text -> IO Text
+evalTextUruk = evalText' goInp
 
 evalText :: Text -> IO Text
 evalText = evalText' goSlow
