@@ -219,9 +219,9 @@ export class SettingsScreen extends Component {
           <div className={"w-100 fl mt3"} style={{maxWidth: "29rem"}}>
             <p className="f8 mt3 lh-copy db">Convert Chat</p>
             <p className="f9 gray2 db mb4">
-              Convert this chat into a group with associated chat.
+              Convert this chat into a group with associated chat, or select a
+              group to add this chat to.
             </p>
-            {/*
             <InviteSearch
               groups={props.groups}
               contacts={props.contacts}
@@ -235,9 +235,8 @@ export class SettingsScreen extends Component {
               setInvite={this.changeTargetGroup}
             />
             {inclusiveToggle}
-            */}
             <a onClick={this.groupifyChat.bind(this)}
-               className={"dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer"}>
+               className={"dib f9 black gray4-d bg-gray0-d ba pa2 mt4 b--black b--gray1-d pointer"}>
               Convert to group
             </a>
           </div>
