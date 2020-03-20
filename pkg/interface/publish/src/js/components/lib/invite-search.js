@@ -121,7 +121,10 @@ export class InviteSearch extends Component {
         }
 
         let isValid = true;
-        if (!urbitOb.isValidPatp("~" + searchTerm)) {
+        //  isValidPatp doesn't check formatting
+        if (!urbitOb.isValidPatp("~" + searchTerm)
+            || urbitOb.patp(urbitOb.patp2dec("~" + searchTerm)).slice(1) !==
+               searchTerm) {
           isValid = false;
         }
 
