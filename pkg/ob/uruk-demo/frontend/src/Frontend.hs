@@ -1,37 +1,39 @@
-{-# OPTIONS_GHC -Wno-unused-imports #-}
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecursiveDo #-}
 {-# LANGUAGE TupleSections #-}
 {-# LANGUAGE TypeApplications #-}
-{-# LANGUAGE FlexibleContexts #-}
+{-# OPTIONS_GHC -Wno-unused-imports #-}
 
 module Frontend where
 
 import ClassyPrelude
-import Prelude ()
-import Control.Monad
-import qualified Data.Text as T
-import qualified Data.Text.Encoding as T
-import Language.Javascript.JSaddle (eval, liftJSM)
-import Urbit.Atom
-import Reflex.Dom.Widget.Input
-import Reflex.Host.Class
-
-import Obelisk.Frontend
-import Obelisk.Configs
-import Obelisk.Route
-import Obelisk.Generated.Static
-
-import Reflex.Dom.Core
-
 import Common.Api
 import Common.Route
+import Control.Monad
+import Obelisk.Configs
+import Obelisk.Frontend
+import Obelisk.Generated.Static
+import Obelisk.Route
+import Reflex.Dom.Core
+import Reflex.Dom.Widget.Input
+import Reflex.Host.Class
+import Urbit.Atom
 
-import System.IO.Unsafe    (unsafePerformIO)
-import Urbit.Moon.Repl     (evalTextFast, evalText)
-import Urbit.Uruk.UrukDemo (Env, EvalResult(..), Inp(..), InpResult(..), Exp)
-import Urbit.Uruk.UrukDemo (execInp, execText, parseInps, prettyInpResult)
+import Control.Monad.Fix           (MonadFix)
+import Language.Javascript.JSaddle (eval, liftJSM)
+import Prelude                     ()
+import System.IO.Unsafe            (unsafePerformIO)
+import Urbit.Moon.Repl             (evalText, evalTextFast)
+import Urbit.Uruk.UrukDemo         (Env, EvalResult(..), Exp, Inp(..),
+                                    InpResult(..))
+import Urbit.Uruk.UrukDemo         (execInp, execText, parseInps,
+                                    prettyInpResult)
+
+import qualified Data.Text          as T
+import qualified Data.Text.Encoding as T
 
 --------------------------------------------------------------------------------
 
@@ -75,16 +77,18 @@ urukResult
      , PerformEvent t m
      , MonadIO (Performable m)
      )
-  => Dynamic t Text
-  -> m (Dynamic t (Either Text [InpResult]))
-urukResult txt = do
+  => Dynamic t (Env, Text)
+  -> m (Dynamic t (Either Text (Env, [InpResult])))
+urukResult envTxt = do
   (e, f) <- newTriggerEvent
   let think = Left thinking
-  performEvent_ $ fmap (compute urukBrain think f (pure . goInp)) $ updated txt
+
+  let goInp :: (Env, Text) -> Either Text (Env, [InpResult])
+      goInp (env, txt) = parseInps txt >>= inpSeq env
+
+  performEvent_ (compute urukBrain think f (pure . goInp) <$> updated envTxt)
+
   holdDyn think e
- where
-  goInp :: Text -> Either Text [InpResult]
-  goInp txt = parseInps txt >>= fmap snd . inpSeq mempty
 
 inpSeq :: Env -> [Inp] -> Either Text (Env, [InpResult])
 inpSeq initEnv = go initEnv []
@@ -171,10 +175,12 @@ inpResultW = \case
   hdr = el "h4" (text "Result")
 
 showTrace :: (Monad m, Reflex t, DomBuilder t m) => [Exp] -> m ()
-showTrace = traverse_ showExp
+showTrace = el "pre" . text . intercalate "\n" . fmap tshow
 
 showDeclTrace :: (Monad m, Reflex t, DomBuilder t m) => Text -> [Exp] -> m ()
-showDeclTrace v = traverse_ (showDecl v)
+showDeclTrace v = el "pre" . text . intercalate "\n" . fmap declShow
+ where
+  declShow exp = "=" <> v <> " " <> tshow exp
 
 inpTraceW :: (Reflex s, DomBuilder s m, Monad m) => InpResult -> m ()
 inpTraceW = \case
@@ -185,15 +191,7 @@ inpTraceW = \case
   hdr = el "h4"  (text "Reductions")
 
 resultPreview
-  :: ( Monad m
-     , Reflex t
-     , DomBuilder t m
-     , MonadSample t m
-     , MonadHold t m
-     , PostBuild t m
-     )
-  => Either Text [InpResult]
-  -> m ()
+  :: (Monad m, Reflex t, DomBuilder t m) => Either Text [InpResult] -> m ()
 resultPreview eRes = do
   case eRes of
     Left  err     -> el "pre" (text err)
@@ -203,6 +201,13 @@ resultPreview eRes = do
         InpExpr _ (EvalResult x _)   -> showExp x
         InpDecl _ _ (EvalResult x _) -> showExp x
 
+inpEnvW :: (Monad m, Reflex t, DomBuilder t m) => Env -> m ()
+inpEnvW env = do
+  unless (null env) $ do
+    el "h3" (text "Environment")
+    el "pre" $ text $ intercalate "\n" $ mapToList env <&> \(k,v) ->
+      "=" <> k <> " " <> tshow v
+
 prettyInpResultW
   :: ( Monad m
      , Reflex t
@@ -211,17 +216,18 @@ prettyInpResultW
      , MonadHold t m
      , PostBuild t m
      )
-  => Either Text [InpResult]
+  => Either Text (Env, [InpResult])
   -> m ()
 prettyInpResultW res = do
   el "h3" (text "Execution Results")
   case res of
     Left  err     -> el "pre" (text err)
-    Right results -> do
+    Right (env, results) -> do
       for_ results $ \res -> do
         inpInputW res
         inpResultW res
         inpTraceW res
+      inpEnvW env
 
 prettyInpWaiting :: (Monad m, Reflex t, DomBuilder t m) => m ()
 prettyInpWaiting = do
@@ -238,9 +244,10 @@ urukW
      , MonadHold s m
      , TriggerEvent s m
      , MonadIO (Performable m)
+     , MonadFix m
      )
   => m ()
-urukW = do
+urukW = mdo
   el "h2" (text "Demo")
 
   val <-
@@ -248,17 +255,32 @@ urukW = do
     $  inputElement
     $  (def & inputElementConfig_initialValue .~ "(K K K)")
 
-  resD <- urukResult val
+  envD <- holdDyn (mempty :: Env) evEnvUpdate
 
-  el "h3" (text "Preview")
+  resD <- urukResult (zipDyn envD val)
 
-  void $ widgetHold (pure ()) (resultPreview <$> updated resD)
+  press <- button "Execute"
 
-  press   <- button "Execute"
+  void $ widgetHold (pure ()) (resultPreview <$> updated (fmap snd <$> resD))
+
+  el "hr" (pure ())
 
   let execRes = current resD <@ press
 
+  let evEnvUpdate = evJustOnly (foo <$> execRes)
+
   void $ widgetHold prettyInpWaiting (prettyInpResultW <$> execRes)
+
+ where
+  foo :: Either Text (Env, a) -> Maybe Env
+  foo (Left _)         = Nothing
+  foo (Right (env, _)) = Just env
+
+  evJustOnly :: Reflex t => Event t (Maybe a) -> Event t a
+  evJustOnly = fmap fromJust . ffilter isJust
+   where
+    fromJust (Just x) = x
+    fromJust _        = error "evJustOnly: Impossible case"
 
 fast
   :: ( Monad m

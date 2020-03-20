@@ -311,7 +311,10 @@ file :: Parser a -> Parser a
 file x = eaten x <* eof
 
 inps :: Parser [Inp]
-inps = (:) <$> inp <*> many (try (gap *> inp))
+inps = noInps <|> someInps
+ where
+  noInps = (eat >> eof) $> []
+  someInps = (:) <$> inp <*> many (try (gap *> inp))
 
 doParse :: Parser a -> Text -> Either Text a
 doParse act txt =
