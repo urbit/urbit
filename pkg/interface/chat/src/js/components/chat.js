@@ -291,6 +291,7 @@ export class ChatScreen extends Component {
          owner={deSig(props.match.params.ship)}
          ownerContact={ownerContact}
          permissions={props.permissions}
+         envelopes={props.envelopes}
          placeholder="Message..."
        />
      </div>

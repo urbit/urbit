@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 import Mousetrap from 'mousetrap';
-import classnames from 'classnames';
+import cn from 'classnames';
 
 import { Sigil } from '/components/lib/icons/sigil';
 
@@ -10,21 +10,83 @@ import { uuid, uxToHex } from '/lib/util';
 
 const DEFAULT_INPUT_HEIGHT = 28;
 
-export class ChatInput extends Component {
+function getAdvance(a, b) {
+  let res = '';
+  for (let i = 0; i < Math.min(a.length, b.length); i++) {
+    if (a[i] !== b[i]) {
+      return res;
+    }
+    res = res.concat(a[i]);
+  }
+  return res;
+}
 
+function ChatInputSuggestions({ suggestions, onSelect, selected }) {
+  return (
+    <div
+      style={{
+        bottom: '100%',
+        left: '48px'
+      }}
+      className={
+        'absolute bg-white bg-gray0-d ' +
+        'w7 pv3 z-1 mt1 ba b--white-d overflow-y-scroll'
+      }
+    >
+      {suggestions.map(ship => (
+        <div
+          className={cn(
+            'list mono f8 pv1 ph3 pointer' + ' hover-bg-gray4 relative',
+            {
+              'white-d': ship !== selected,
+              'black-d': ship === selected,
+              'bg-gray0-d': ship !== selected,
+              'bg-gray1-d': ship === selected
+            }
+          )}
+          style={{
+            borderBottom: '1px solid #4d4d4d',
+            zIndex: '99',
+            fontFamily: 'monospace'
+          }}
+          key={ship}
+        >
+          <Sigil
+            ship={'~' + ship}
+            size={24}
+            color="#000000"
+            classes="mix-blend-diff v-mid"
+          />
+          <span className="v-mid ml2 mw5 truncate dib mix-blend-diff">
+            {'~' + ship}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export class ChatInput extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       message: '',
-      textareaHeight: DEFAULT_INPUT_HEIGHT
+      textareaHeight: DEFAULT_INPUT_HEIGHT,
+      patpSuggestions: [],
+      selectedSuggestion: null
     };
 
     this.textareaRef = React.createRef();
 
     this.messageSubmit = this.messageSubmit.bind(this);
     this.messageChange = this.messageChange.bind(this);
-                         // Call once per frame @ 60hz
+
+    this.onEnter = this.onEnter.bind(this);
+
+    this.patpAutocomplete = this.patpAutocomplete.bind(this);
+
+    // Call once per frame @ 60hz
     this.textareaInput = _.debounce(this.textareaInput.bind(this), 16);
 
     // perf testing:
@@ -69,19 +131,101 @@ export class ChatInput extends Component {
     });
   }
 
+  componentDidMount() {
+    this.bindShortcuts();
+  }
+
+  patpAutocomplete(message, shouldAdvance = false) {
+    const match = /~([a-z\-]*)$/.exec(message);
+
+    if (!match) {
+      return null;
+    }
+
+    const envelopes = ['hastuc', 'hastuc-dibtux', 'hasfun'];
+
+    // const suggestions = _.chain(props.envelopes)
+    // .map("author")
+    // .uniq()
+    const suggestions = _.chain(envelopes)
+      .filter(s => s.startsWith(match[1]))
+      .value();
+
+    const advance = _.chain(suggestions)
+      .map(s => s.replace(match[0], ''))
+      .reduce(getAdvance)
+      .value();
+
+    let newState = {
+      patpSuggestions: suggestions
+    };
+    if(shouldAdvance) {
+      newState.message = message.replace(/[a-z\-]*$/, advance);
+    }
+    // If no new suggestions, select next suggestion
+    if (
+      advance === match[1] &&
+      suggestions.length === this.state.patpSuggestions.length
+    ) {
+      let idx = suggestions.findIndex(s => s === this.state.selectedSuggestion);
+      idx = idx + 1 === suggestions.length || idx === -1 ? 0 : idx + 1;
+
+      newState.selectedSuggestion = suggestions[idx];
+    }
+
+    // hide suggestions if only one
+    if (newState.patpSuggestions.length === 1) {
+      newState.patpSuggestions = [];
+    }
+
+    this.setState(newState);
+  }
+
+  completePatp() {
+    this.setState({
+      message: this.state.message.replace(
+        /[a-z\-]*$/,
+        this.state.selectedSuggestion
+      ),
+      patpSuggestions: []
+    });
+  }
+
+  onEnter(e) {
+    if (this.state.patpSuggestions.length !== 0) {
+      this.completePatp();
+    } else {
+      this.messageSubmit(e);
+    }
+  }
+
   bindShortcuts() {
-    Mousetrap(this.textareaRef.current).bind('enter', e => {
+    let mousetrap = Mousetrap(this.textareaRef.current);
+    mousetrap.bind('enter', e => {
       e.preventDefault();
       e.stopPropagation();
 
-      this.messageSubmit(e);
+      this.onEnter(e);
+    });
+    mousetrap.bind('tab', e => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      this.patpAutocomplete(this.state.message, true);
     });
   }
 
   messageChange(event) {
+    const message = event.target.value;
     this.setState({
-      message: event.target.value
+      message
     });
+
+    const { patpSuggestions } = this.state;
+    if(patpSuggestions.length !== 0) {
+      this.patpAutocomplete(message, false);
+    }
+
   }
 
   textareaInput() {
@@ -234,11 +378,16 @@ export class ChatInput extends Component {
     let sigilClass = !!props.ownerContact
       ? "" : "mix-blend-diff";
 
-    this.bindShortcuts();
-
     return (
-      <div className="pa3 cf flex black white-d bt b--gray4 b--gray1-d bg-white bg-gray0-d"
+      <div className="pa3 cf flex black white-d bt b--gray4 b--gray1-d bg-white bg-gray0-d relative"
       style={{ flexGrow: 1 }}>
+        {state.patpSuggestions.length !== 0 && (
+          <ChatInputSuggestions
+            suggestions={this.state.patpSuggestions}
+            selected={this.state.selectedSuggestion}
+          />
+        )}
+
         <div
           className="fl"
           style={{
