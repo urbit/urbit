@@ -486,14 +486,11 @@ export class ContactCard extends Component {
     }
 
     let ourOpt = (props.ship === window.ship) ? "dib" : "dn";
-    let localOpt =
-      ((props.ship === window.ship) && (props.path === "/~/default"))
-      ? "dib" : "dn";
 
     let adminOpt =
-      ( (props.path.includes(window.ship) || (props.ship === window.ship)) &&
-        !(props.path.includes('/~/default'))
-      ) ? "dib" : "dn";
+       ((props.path.includes(`~${window.ship}/`)) || ((props.ship === window.ship) &&
+        !(props.path.includes('/~/default'))))
+       ? "dib" : "dn";
 
     let meLink = (props.path === "/~/default")
       ? `/~groups` : `/~groups/detail${props.path}`;
@@ -532,7 +529,7 @@ export class ContactCard extends Component {
               `bg-gray0-d mv4 mh3 pa1 f9 red2 pointer flex-shrink-0 ` + adminOpt
             }
             onClick={this.removeFromGroup}>
-            {props.ship === window.ship && props.path.includes(window.ship)
+            {props.ship === window.ship
               ? "Leave Group"
               : "Remove from Group"}
           </button>
