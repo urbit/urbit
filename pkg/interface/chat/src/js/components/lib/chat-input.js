@@ -147,13 +147,13 @@ export class ChatInput extends Component {
     const suggestions = _.chain(this.props.envelopes)
       .map("author")
       .uniq()
-      .filter(s => s.startsWith(match[1]))
+      .filter(s => s.startsWith(match[1]) && s.length < 28)  // exclude comets
       .take(3)
       .value();
 
     const advance = _.chain(suggestions)
       .map(s => s.replace(match[0], ''))
-      .reduce(getAdvance, )
+      .reduce(getAdvance)
       .value();
 
     let newState = {
