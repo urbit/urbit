@@ -30,7 +30,7 @@ import Common.Route
 
 import System.IO.Unsafe    (unsafePerformIO)
 import Urbit.Moon.Repl     (evalTextFast, evalText)
-import Urbit.Uruk.UrukDemo (Env, EvalResult(..), Inp(..), InpResult(..))
+import Urbit.Uruk.UrukDemo (Env, EvalResult(..), Inp(..), InpResult(..), Exp)
 import Urbit.Uruk.UrukDemo (execInp, execText, parseInps, prettyInpResult)
 
 --------------------------------------------------------------------------------
@@ -76,31 +76,15 @@ urukResult
      , MonadIO (Performable m)
      )
   => Dynamic t Text
-  -> m (Dynamic t (Text, Text))
+  -> m (Dynamic t (Either Text [InpResult]))
 urukResult txt = do
   (e, f) <- newTriggerEvent
-  let think = (thinking, thinking)
-  performEvent_ $ fmap (compute urukBrain think f evalTextUruk) $ updated txt
+  let think = Left thinking
+  performEvent_ $ fmap (compute urukBrain think f (pure . goInp)) $ updated txt
   holdDyn think e
-
-evalTextUruk :: Text -> IO (Text, Text)
-evalTextUruk txt = evalText' goInp txt
-
-goInp :: Text -> IO (Either Text (Text, Text))
-goInp txt = pure $ do
-  inps <- parseInps txt
-
-  (_, rels) <- inpSeq mempty inps
-
-  let pretty = prettyInpResult <$> rels
-
-  let results = intercalate "\n" (fst <$> pretty)
-
-  let traces = intercalate "\n" $ filter (not . null) $ fmap snd pretty
-
-  if null (T.strip traces)
-    then pure (results, "")
-    else pure (results, traces)
+ where
+  goInp :: Text -> Either Text [InpResult]
+  goInp txt = parseInps txt >>= fmap snd . inpSeq mempty
 
 inpSeq :: Env -> [Inp] -> Either Text (Env, [InpResult])
 inpSeq initEnv = go initEnv []
@@ -109,12 +93,6 @@ inpSeq initEnv = go initEnv []
   go env acc (x:xs) = do
     (env', r) <- execInp env x
     go env' (r:acc) xs
-
-evalText' :: Monoid a => (Text -> IO (Either a (a, a))) -> Text -> IO (a, a)
-evalText' go txt = do
-  go txt >>= \case
-    Left  err -> pure (err, mempty)
-    Right res -> pure res
 
 fastBrain :: MVar (Maybe (Async ()))
 fastBrain = unsafePerformIO (newMVar Nothing)
@@ -163,6 +141,93 @@ slow = do
 
   el "pre" (dynText res)
 
+inpInputW :: (Reflex s, DomBuilder s m, Monad m) => InpResult -> m ()
+inpInputW res = do
+  el "h4" (text "Input")
+  case res of
+    InpWipe v     -> el "pre" (text ("!" <> v))
+    InpExpr e _   -> el "pre" (text $ tshow e)
+    InpDecl v e _ -> el "pre" (text $ "=" <> v <> " " <> tshow e)
+
+showExp :: (Monad m, Reflex t, DomBuilder t m) => Exp -> m ()
+showExp = el "pre" . text . tshow
+
+showDecl :: (Monad m, Reflex t, DomBuilder t m) => Text -> Exp -> m ()
+showDecl nm exp = do
+  el "pre" (text ("=" <> nm <> " " <> tshow exp))
+
+inpResultEvalResult :: InpResult -> Maybe EvalResult
+inpResultEvalResult = \case
+  InpWipe _     -> Nothing
+  InpExpr _ r   -> pure r
+  InpDecl _ _ r -> pure r
+
+inpResultW :: (Reflex s, DomBuilder s m, Monad m) => InpResult -> m ()
+inpResultW = \case
+  InpWipe _                    -> pure ()
+  InpExpr _ (EvalResult x _)   -> hdr >> showExp x
+  InpDecl v _ (EvalResult x _) -> hdr >> showDecl v x
+ where
+  hdr = el "h4" (text "Result")
+
+showTrace :: (Monad m, Reflex t, DomBuilder t m) => [Exp] -> m ()
+showTrace = traverse_ showExp
+
+showDeclTrace :: (Monad m, Reflex t, DomBuilder t m) => Text -> [Exp] -> m ()
+showDeclTrace v = traverse_ (showDecl v)
+
+inpTraceW :: (Reflex s, DomBuilder s m, Monad m) => InpResult -> m ()
+inpTraceW = \case
+  InpWipe _                    -> pure ()
+  InpExpr _ (EvalResult _ t)   -> hdr >> showTrace (reverse t)
+  InpDecl v _ (EvalResult _ t) -> hdr >> showDeclTrace v (reverse t)
+ where
+  hdr = el "h4"  (text "Reductions")
+
+resultPreview
+  :: ( Monad m
+     , Reflex t
+     , DomBuilder t m
+     , MonadSample t m
+     , MonadHold t m
+     , PostBuild t m
+     )
+  => Either Text [InpResult]
+  -> m ()
+resultPreview eRes = do
+  case eRes of
+    Left  err     -> el "pre" (text err)
+    Right results -> do
+      for_ results $ \case
+        InpWipe _                    -> pure ()
+        InpExpr _ (EvalResult x _)   -> showExp x
+        InpDecl _ _ (EvalResult x _) -> showExp x
+
+prettyInpResultW
+  :: ( Monad m
+     , Reflex t
+     , DomBuilder t m
+     , MonadSample t m
+     , MonadHold t m
+     , PostBuild t m
+     )
+  => Either Text [InpResult]
+  -> m ()
+prettyInpResultW res = do
+  el "h3" (text "Execution Results")
+  case res of
+    Left  err     -> el "pre" (text err)
+    Right results -> do
+      for_ results $ \res -> do
+        inpInputW res
+        inpResultW res
+        inpTraceW res
+
+prettyInpWaiting :: (Monad m, Reflex t, DomBuilder t m) => m ()
+prettyInpWaiting = do
+  el "h3" (text "Execution Results")
+  el "pre" (text "Waiting for input")
+
 urukW
   :: ( Monad m
      , MonadSample s m
@@ -183,34 +248,17 @@ urukW = do
     $  inputElement
     $  (def & inputElementConfig_initialValue .~ "(K K K)")
 
-  resTracD <- urukResult val
+  resD <- urukResult val
 
-  let resD  = fst <$> resTracD
-  let tracD = snd <$> resTracD
+  el "h3" (text "Preview")
 
-  el "h4" (text "Preview")
+  void $ widgetHold (pure ()) (resultPreview <$> updated resD)
 
-  el "pre" (dynText resD)
+  press   <- button "Execute"
 
-  ev <- button "Execute"
+  let execRes = current resD <@ press
 
-  executeResult <- holdDyn Nothing (Just <$> current resD <@ ev)
-
-  traceResult <- holdDyn Nothing (Just <$> current tracD <@ ev)
-
-  -- _but <- elAttr' "button" mempty
-
-  el "h4" $ do
-    text "Execution Result"
-
-  el "pre" $ do
-    dynText $ fromMaybe "" <$> executeResult
-
-  el "h4" $ do
-    text "Execution Trace"
-
-  el "pre" $ do
-    dynText $ fromMaybe "" <$> traceResult
+  void $ widgetHold prettyInpWaiting (prettyInpResultW <$> execRes)
 
 fast
   :: ( Monad m
