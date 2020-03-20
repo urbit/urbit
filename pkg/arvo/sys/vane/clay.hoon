@@ -1931,6 +1931,7 @@
   ?-    p.p.rand
       $d  ~|  %totally-temporary-error-please-replace-me  !!
       $p  ~|  %requesting-foreign-permissions-is-invalid  !!
+      $s  ~|  %please-dont-get-your-takos-over-a-network  !!
       $t  ~|  %requesting-foreign-directory-is-vaporware  !!
       $u  ~|  %prolly-poor-idea-to-get-rang-over-network  !!
       $v  ~|  %weird-shouldnt-get-v-request-from-network  !!
@@ -2901,6 +2902,39 @@
       ==
     ==
   ::
+  ::  Plumbing commit
+  ::
+  ::    Guaranteed to finish in one event.
+  ::
+  ::    XX  needs to check that head is ancestor of tako
+  ::    XX  needs to check tako in rang
+  ::
+  ++  park
+    |=  [=tako =rang =ankh mim=(map path (unit mime))]
+    |^
+    ^+  ..park
+    =:  ank.dom  ankh
+        let.dom  +(let.dom)
+        hit.dom  (~(put by hit.dom) +(let.dom) tako)
+        mim.dom  (apply-changes-to-mim:util mim.dom mim)
+        hut.ran  (~(uni by hut.rang) hut.ran)
+        lat.ran  (~(uni by lat.rang) lat.ran)
+      ==
+    ergo
+    ::
+    ++  ergo
+      ^+  ..park
+      =/  must  (must-ergo:util her syd mon (turn ~(tap by mim) head))
+      %-  emil
+      %+  turn  ~(tap by must)
+      |=  [pot=term len=@ud pak=(set path)]
+      :*  (need hez)  %give  %ergo  pot
+          %+  turn  ~(tap in pak)
+          |=  pax=path
+          [(slag len pax) (~(got by mim) pax)]
+      ==
+    --
+  ::
   ::  Set permissions for a node.
   ::
   ++  perm
@@ -3856,6 +3890,17 @@
       ?:  =(%black mod.rul)
         !in-list
       in-list
+    ::  +read-s: produce yaki for given tako
+    ::
+    ++  read-s
+      |=  [yon=aeon pax=path]
+      ^-  (unit (unit [%yaki (hypo yaki)]))
+      ?.  ?=([* ~] pax)
+        `~
+      =/  yak=(unit yaki)  (~(get by hut.ran) (slav %uv i.pax))
+      ?~  yak
+        ~
+      ``yaki+`(hypo yaki)`[-:!>(*yaki) u.yak]
     ::  +read-t: produce the list of paths within a yaki with :pax as prefix
     ::
     ++  read-t
@@ -4031,6 +4076,7 @@
         [~ ~ %& %noun !>(~(key by dos.rom.ruf))]
       ::
         %p  (read-p path.mun)
+        %s  (bind (read-s yon path.mun) (lift |=(a=cage [%& a])))
         %t  (bind (read-t yon path.mun) (lift |=(a=cage [%& a])))
         %u  (read-u yon path.mun)
         %v  (bind (read-v yon path.mun) (lift |=(a/cage [%& a])))
@@ -4315,6 +4361,12 @@
       (skim ~(tap by mon.ruf) (corl (cury test pot) tail))
     |=  {pon/term bem/beam}
     [u.hez.ruf %give %ogre pon]
+  ::
+      %park
+    =^  mos  ruf
+      =/  den  ((de our now ski hen ruf) our des.req)
+      abet:(park:den [tak ran ank mim]:req)
+    [mos ..^$]
   ::
       %perm
     =^  mos  ruf

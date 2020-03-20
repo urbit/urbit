@@ -7,7 +7,7 @@
 |^
 =/  m  (strand ,vase)
 ^-  form:m
-;<  apps=(map term vase)  bind:m  load-apps
+;<  apps=(map path vase)  bind:m  load-apps
 (pure:m !>((~(run by apps) mug)))
 ::
 ++  scratch-path
@@ -15,7 +15,7 @@
   (weld /(scot %p our.bowl)/[scratch]/(scot %da now.bowl) path)
 ::
 ++  load-apps
-  =/  m  (strand ,(map term vase))
+  =/  m  (strand ,(map path vase))
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl:strandio
   =+  .^(=arch %cy (scratch-path bowl /app))
@@ -28,6 +28,6 @@
     =+  .^(=app=^arch %cy (scratch-path bowl /app/[term]))
     ?.  (~(has by dir.app-arch) %hoon)
       ~
-    `[term our.bowl^scratch /hoon/[term]/app]
+    `[/[term] our.bowl^scratch /hoon/[term]/app]
   (build-cores:strandio rails)
 --

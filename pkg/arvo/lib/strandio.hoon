@@ -410,29 +410,49 @@
 ::  Run several taggged ford builds
 ::
 ++  build-map
-  |=  builds=(map term schematic:ford)
-  =/  m  (strand ,(map term build-result:ford))
+  |=  builds=(map path schematic:ford)
+  =/  m  (strand ,(map path build-result:ford))
   ^-  form:m
   =/  schematics=(list schematic:ford)
     %+  turn  ~(tap by builds)
-    |=  [=term =schematic:ford]
-    [[%$ %noun !>(term)] schematic]
+    |=  [=path =schematic:ford]
+    [[%$ %noun !>(path)] schematic]
   ::
   ;<  =build-result:ford  bind:m  (ford-build %list schematics)
   ?:  ?=(%error -.build-result)
     (strand-fail %ford-error message.build-result)
   ?>  ?=(%list -.+.build-result)
   ::
-  =|  produce=(map term build-result:ford)
+  =|  produce=(map path build-result:ford)
   |-  ^-  form:m
   =*  loop  $
   ?^  results.build-result
     ?>  ?=([[%success %$ %noun *] *] +.i.results.build-result)
     =.  produce
       %+  ~(put by produce)
-        !<(term q.cage.head.i.results.build-result)
+        !<(path q.cage.head.i.results.build-result)
       tail.i.results.build-result
     loop(results.build-result t.results.build-result)
+  (pure:m produce)
+::
+::  Run several taggged ford builds
+::
+++  build-cages
+  |=  builds=(map path schematic:ford)
+  =/  m  (strand ,(map path cage))
+  ^-  form:m
+  ;<  result-map=(map path build-result:ford)  bind:m  (build-map builds)
+  =/  results=(list [=path =build-result:ford])  ~(tap by result-map)
+  =|  produce=(map path cage)
+  |-  ^-  form:m
+  =*  loop  $
+  ?^  results
+    ?:  ?=(%error -.build-result.i.results)
+      (strand-fail %ford-error message.build-result.i.results)
+    =.  produce
+      %+  ~(put by produce)  path.i.results
+      (result-to-cage:ford build-result.i.results)
+    loop(results t.results)
   (pure:m produce)
 ::
 ::  Run ford %core build
@@ -450,17 +470,17 @@
 ::  Run ford %core builds
 ::
 ++  build-cores
-  |=  rails=(map term rail:ford)
-  =/  m  (strand ,(map term vase))
+  |=  rails=(map path rail:ford)
+  =/  m  (strand ,(map path vase))
   ^-  form:m
   =/  builds
     %-  ~(run by rails)
     |=  =rail:ford
     [%core rail]
   ::
-  ;<  result-map=(map term build-result:ford)  bind:m  (build-map builds)
-  =/  results=(list [=term =build-result:ford])  ~(tap by result-map)
-  =|  produce=(map term vase)
+  ;<  result-map=(map path build-result:ford)  bind:m  (build-map builds)
+  =/  results=(list [=path =build-result:ford])  ~(tap by result-map)
+  =|  produce=(map path vase)
   |-  ^-  form:m
   =*  loop  $
   ?^  results
@@ -468,7 +488,7 @@
       (strand-fail %ford-error message.build-result.i.results)
     ?>  ?=(%core -.+.build-result.i.results)
     =.  produce
-      (~(put by produce) term.i.results vase.build-result.i.results)
+      (~(put by produce) path.i.results vase.build-result.i.results)
     loop(results t.results)
   (pure:m produce)
 ::

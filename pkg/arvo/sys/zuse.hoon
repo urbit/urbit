@@ -567,6 +567,8 @@
           {$mont des/desk bem/beam}                     ::  mount to unix
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
+          {$park des/desk tak/tako ran/rang ank/ankh mim/(map path (unit mime))}
+                                                        ::  plumbing commit
           {$perm des/desk pax/path rit/rite}            ::  change permissions
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
@@ -591,7 +593,7 @@
     $%  {$delta p/lobe q/{p/mark q/lobe} r/page}        ::  delta on q
         {$direct p/lobe q/page}                         ::  immediate
     ==                                                  ::
-  ++  care  ?($d $p $t $u $v $w $x $y $z)               ::  clay submode
+  ++  care  ?($d $p $s $t $u $v $w $x $y $z)            ::  clay submode
   ++  case                                              ::  ship desk case spur
     $%  {$da p/@da}                                     ::  date
         {$tas p/@tas}                                   ::  label
@@ -697,6 +699,20 @@
         r/tako                                          ::  self-reference
         t/@da                                           ::  date
     ==                                                  ::
+  ::
+  ::  +page-to-lobe: hash a page to get a lobe.
+  ::
+  ++  page-to-lobe  |=(page (shax (jam +<)))
+  ::
+  ::  +make-yaki: make commit out of a list of parents, content, and date.
+  ::
+  ++  make-yaki
+    |=  {p/(list tako) q/(map path lobe) t/@da}
+    ^-  yaki
+    =+  ^=  has
+        %^  cat  7  (sham [%yaki (roll p add) q t])
+        (sham [%tako (roll p add) q t])
+    [p q has t]
   --  ::clay
 ::                                                      ::::
 ::::                    ++dill                            ::  (1d) console
