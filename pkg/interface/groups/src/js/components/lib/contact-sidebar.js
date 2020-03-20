@@ -47,6 +47,9 @@ export class ContactSidebar extends Component {
         );
       });
 
+    let adminOpt = (props.path.includes(`~${window.ship}/`))
+      ? "dib" : "dn";
+
     let groupItems =
       Array.from(group).map((member) => {
         return (
@@ -65,7 +68,7 @@ export class ContactSidebar extends Component {
               title={member}>
               {cite(member)}
             </p>
-            <p className="dib v-mid f9 mh2 red2 pointer"
+            <p className={"v-mid f9 mh2 red2 pointer " + adminOpt}
               style={{paddingTop: 6}}
               onClick={() => {
                 props.api.setSpinner(true);
