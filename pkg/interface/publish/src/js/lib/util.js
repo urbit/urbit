@@ -1,3 +1,10 @@
+import urbitOb from 'urbit-ob';
+
+export function isValidPatp(patp) {
+  return (urbitOb.isValidPatp(patp) &&
+          urbitOb.patp(urbitOb.patp2dec(patp)) === patp)
+}
+
 export function stringToSymbol(str) {
   let result = '';
   for (var i=0; i<str.length; i++){

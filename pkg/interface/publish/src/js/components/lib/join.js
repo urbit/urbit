@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import classnames from 'classnames';
 import { Route, Link } from 'react-router-dom';
-import urbitOb from 'urbit-ob';
+import { isValidPatp } from '../../lib/util';
 
 export class JoinScreen extends Component {
   constructor(props) {
@@ -76,7 +76,7 @@ export class JoinScreen extends Component {
       return props.history.push(href);
     }
 
-    if (book.length < 2 || !urbitOb.isValidPatp(ship)) {
+    if (book.length < 2 || !isValidPatp(ship)) {
       this.setState({
         error: true,
       });

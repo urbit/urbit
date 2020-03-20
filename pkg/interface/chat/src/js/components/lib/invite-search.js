@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import urbitOb from "urbit-ob";
 import { Sigil } from "../lib/icons/sigil";
+import { isValidPatp } from '../../lib/util';
 
 export class InviteSearch extends Component {
   constructor(props) {
@@ -115,10 +116,7 @@ export class InviteSearch extends Component {
         }
 
         let isValid = true;
-        //  isValidPatp doesn't check formatting
-        if (!urbitOb.isValidPatp("~" + searchTerm)
-            || urbitOb.patp(urbitOb.patp2dec("~" + searchTerm)).slice(1) !==
-               searchTerm) {
+        if (!isValidPatp("~" + searchTerm)) {
           isValid = false;
         }
 
@@ -184,7 +182,7 @@ export class InviteSearch extends Component {
       .replace("~", "")
       .trim();
     let isValid = true;
-    if (!urbitOb.isValidPatp("~" + searchTerm)) {
+    if (!isValidPatp("~" + searchTerm)) {
       isValid = false;
     }
     if (!isValid) {

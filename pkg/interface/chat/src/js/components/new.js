@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { InviteSearch } from './lib/invite-search';
 import { Route, Link } from 'react-router-dom';
-import { uuid, isPatTa, deSig } from '/lib/util';
+import { uuid, isPatTa, deSig, isValidPatp } from '/lib/util';
 import urbitOb from 'urbit-ob';
 
 export class NewScreen extends Component {
@@ -116,7 +116,7 @@ export class NewScreen extends Component {
     let isValid = true;
     let aud = state.ships.map(mem => `~${deSig(mem.trim())}`);
     aud.forEach((mem) => {
-      if (!urbitOb.isValidPatp(mem)) {
+      if (!isValidPatp(mem)) {
         isValid = false;
       }
     });

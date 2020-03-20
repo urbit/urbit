@@ -1,6 +1,11 @@
 import _ from 'lodash';
 import classnames from 'classnames';
+import urbitOb from 'urbit-ob';
 
+export function isValidPatp(patp) {
+  return (urbitOb.isValidPatp(patp) &&
+          urbitOb.patp(urbitOb.patp2dec(patp)) === patp)
+}
 
 export function uuid() {
   let str = "0v"

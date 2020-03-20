@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { Route, Link } from 'react-router-dom';
-import urbitOb from 'urbit-ob';
+import { isValidPatp } from '../lib/util';
 
 
 export class JoinScreen extends Component {
@@ -29,7 +29,7 @@ export class JoinScreen extends Component {
       if (
         station.length < 2 ||
         (!!sig && station.length < 3) ||
-        !urbitOb.isValidPatp(ship)
+        !isValidPatp(ship)
       ) {
         this.setState({
           error: true,
@@ -72,7 +72,7 @@ export class JoinScreen extends Component {
     if (
       (!sig && station.split('/').length < 2) ||
       (!!sig && station.split('/').length < 3) ||
-      !urbitOb.isValidPatp(ship)
+      !isValidPatp(ship)
     ) {
       this.setState({
         error: true,
