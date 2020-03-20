@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
 import { ChannelsItem } from '/components/lib/channels-item';
 import { SidebarInvite } from '/components/lib/sidebar-invite';
+import { Welcome } from '/components/lib/welcome';
 
 export class ChannelsSidebar extends Component {
   // drawer to the left
@@ -69,6 +70,7 @@ export class ChannelsSidebar extends Component {
               New Collection
             </Link>
           </div>
+          <Welcome associations={props.associations}/>
           {sidebarInvites}
           {channelItems}
         </div>
