@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import classnames from 'classnames';
 import _ from 'lodash';
 
+import Welcome from '/components/lib/welcome.js';
 import { SidebarInvite } from '/components/lib/sidebar-invite';
 import { SidebarItem } from '/components/lib/sidebar-item';
 
@@ -111,6 +112,7 @@ export class Sidebar extends Component {
           </a>
         </div>
         <div className="overflow-y-auto h-100">
+          <Welcome inbox={props.inbox}/>
           {sidebarInvites}
           {sidebarItems}
         </div>
