@@ -15,13 +15,15 @@ export class Comments extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.comments && (
-      Object.keys(prevProps.comments[0]) !==
-      Object.keys(this.props.comments[0]))
-      ) {
+    let previousComments = prevProps.comments[0] || {};
+    let currentComments = this.props.comments[0] || {};
+    let previous = Object.keys(previousComments) || [];
+    let current = Object.keys(currentComments) || [];
+    if ((prevProps.comments && this.props.comments) &&
+      (previous !== current)) {
         let pendingSet = this.state.pending;
-        Object.keys(this.props.comments[0]).map((com) => {
-          let obj = this.props.comments[0][com];
+        Object.keys(currentComments).map((com) => {
+          let obj = currentComments[com];
           for (let each of pendingSet.values()) {
             if (obj.content === each["new-comment"].body) {
               pendingSet.delete(each);
