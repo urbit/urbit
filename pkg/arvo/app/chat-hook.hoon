@@ -63,7 +63,13 @@
     |^
     =/  old  !<(versioned-state old-vase)
     ?:  ?=(%1 -.old)
-      [~ this(state old)]
+      :_  this(state old)
+      %+  murn  ~(tap by wex.bol)
+      |=  [[=wire =ship =term] *]
+      ^-  (unit card)
+      ?.  &(?=([%mailbox *] wire) =(our.bol ship) =(%chat-store term))
+        ~
+      `[%pass wire %agent [our.bol %chat-store] %leave ~]
     ::  path structure ugprade logic
     ::
     =/  keys=(set path)  (scry:cc (set path) %chat-store /keys)
