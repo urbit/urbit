@@ -3,6 +3,7 @@ import { Route, Link } from 'react-router-dom';
 import { Dropdown } from './dropdown';
 import { NotebookItem } from './notebook-item';
 import { SidebarInvite } from './sidebar-invite';
+import { Welcome } from './welcome';
 
 export class Sidebar extends Component {
   constructor(props) {
@@ -179,6 +180,7 @@ export class Sidebar extends Component {
         </div>
         <div className="overflow-y-auto pb1"
         style={{height: "calc(100% - 82px)"}}>
+          <Welcome notebooks={props.notebooks}/>
           {sidebarInvites}
           {notebookItems}
         </div>
