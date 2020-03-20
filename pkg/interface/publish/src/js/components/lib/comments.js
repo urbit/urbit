@@ -1,17 +1,40 @@
 import React, { Component } from 'react'
 import { CommentItem } from './comment-item';
+import { dateToDa } from '/lib/util';
 
 export class Comments extends Component {
   constructor(props){
     super(props);
     this.state = {
       commentBody: '',
-      disabled: false
+      disabled: false,
+      pending: new Set()
     }
     this.commentSubmit = this.commentSubmit.bind(this);
     this.commentChange = this.commentChange.bind(this);
   }
- commentSubmit(evt){
+
+  componentDidUpdate(prevProps) {
+    let previousComments = prevProps.comments[0] || {};
+    let currentComments = this.props.comments[0] || {};
+    let previous = Object.keys(previousComments) || [];
+    let current = Object.keys(currentComments) || [];
+    if ((prevProps.comments && this.props.comments) &&
+      (previous !== current)) {
+        let pendingSet = this.state.pending;
+        Object.keys(currentComments).map((com) => {
+          let obj = currentComments[com];
+          for (let each of pendingSet.values()) {
+            if (obj.content === each["new-comment"].body) {
+              pendingSet.delete(each);
+              this.setState({ pending: pendingSet });
+            }
+          }
+        })
+      }
+    }
+
+  commentSubmit(evt){
    let comment = {
      "new-comment": {
        who: this.props.ship.slice(1),
@@ -21,13 +44,17 @@ export class Comments extends Component {
      }
    };
 
+   let pendingState = this.state.pending;
+   pendingState.add(comment);
+   this.setState({pending: pendingState});
+
    this.textArea.value = '';
    window.api.setSpinner(true);
-   this.setState({disabled: true});
+   this.setState({commentBody: ""});
    let submit = window.api.action("publish", "publish-action", comment);
    submit.then(() => {
      window.api.setSpinner(false);
-     this.setState({ disabled: false, commentBody: "" });
+     this.setState({ disabled: false });
     })
    }
 
@@ -41,6 +68,26 @@ export class Comments extends Component {
     if (!this.props.enabled) {
       return null;
     }
+
+    let pendingArray = Array.from(this.state.pending).map((com, i) => {
+      let da = dateToDa(new Date);
+      let comment = {
+        [da]: {
+          author: this.props.ship,
+          content: com["new-comment"].body,
+          "date-created": Math.round(new Date().getTime())
+        }
+      }
+      return (
+        <CommentItem
+          comment={comment}
+          key={i}
+          contacts={this.props.contacts}
+          pending={true}
+        />
+      )
+    });
+
     let commentArray = this.props.comments.map((com, i) => {
       return (
         <CommentItem
@@ -78,6 +125,7 @@ export class Comments extends Component {
             Add comment
           </button>
         </div>
+        {pendingArray}
         {commentArray}
       </div>
     )
