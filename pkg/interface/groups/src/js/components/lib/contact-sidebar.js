@@ -68,7 +68,7 @@ export class ContactSidebar extends Component {
               title={member}>
               {cite(member)}
             </p>
-            <p className={"v-mid f9 mh2 red2 pointer " + adminOpt}
+            <p className={"v-mid f9 mh3 red2 pointer " + adminOpt}
               style={{paddingTop: 6}}
               onClick={() => {
                 props.api.setSpinner(true);
