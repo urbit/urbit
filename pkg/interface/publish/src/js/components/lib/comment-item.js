@@ -29,6 +29,7 @@ export class CommentItem extends Component {
     });
   }
   render() {
+    let pending = !!this.props.pending ? "o-60" : "";
     let commentData = this.props.comment[Object.keys(this.props.comment)[0]];
     let content = commentData.content.split("\n").map((line, i)=> {
       return (
@@ -55,7 +56,7 @@ export class CommentItem extends Component {
     }
 
     return (
-      <div>
+      <div className={pending}>
         <div className="flex mv3 bg-white bg-gray0-d">
         <Sigil
           ship={commentData.author}
