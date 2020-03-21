@@ -25,7 +25,56 @@ function getAdvance(a, b) {
   return res;
 }
 
-function ChatInputSuggestions({ suggestions, onSelect, selected }) {
+function ChatInputSuggestion({ ship, contacts, selected, onSelect }) {
+  let contact = contacts[ship];
+  let color = "#000000";
+  let sigilClass = "v-mid mix-blend-diff"
+  let nickname;
+  let nameStyle = {};
+  if (contact) {
+    color = `#${uxToHex(contact.color)}`;
+    nameStyle.color = color;
+    sigilClass = "v-mid";
+    nickname = contact.nickname;
+  }
+
+  return (
+    <div
+      onClick={() => onSelect(ship)}
+      className={cn(
+        'f8 pv1 ph3 pointer' + ' hover-bg-gray4 relative bb b--gray1-d b--gray4 flex items-center',
+        {
+          'white-d': ship !== selected,
+          'black-d': ship === selected,
+          'bg-gray0-d': ship !== selected,
+          'bg-white': ship !== selected,
+          'bg-gray1-d': ship === selected,
+          'bg-gray5': ship === selected
+        }
+      )}
+      key={ship}
+    >
+      <Sigil
+        ship={'~' + ship}
+        size={24}
+        color={color}
+        classes={sigilClass}
+      />
+      { nickname && (
+        <p style={nameStyle} className="dib ml4 b" >{nickname}</p>)
+      }
+      <div className="mono gray2 ml4">
+        {'~' + ship}
+      </div>
+      <p className="nowrap ml4">
+        {status}
+      </p>
+    </div>
+  );
+
+}
+
+function ChatInputSuggestions({ suggestions, onSelect, selected, contacts }) {
   return (
     <div
       style={{
@@ -35,34 +84,15 @@ function ChatInputSuggestions({ suggestions, onSelect, selected }) {
       className={
         'absolute black white-d bg-white bg-gray0-d ' +
         'w7 pv1 z-1 mt1 ba b--gray1-d b--gray4'
-      }
-    >
-      {suggestions.map(ship => (
-        <div
-          className={cn(
-            'list mono f8 pv1 ph3 pointer' + ' hover-bg-gray4 relative bb b--gray1-d b--gray4',
-            {
-              'white-d': ship !== selected,
-              'black-d': ship === selected,
-              'bg-gray0-d': ship !== selected,
-              'bg-white': ship !== selected,
-              'bg-gray1-d': ship === selected,
-              'bg-gray5': ship === selected
-            }
-          )}
-          key={ship}
-        >
-          <Sigil
-            ship={'~' + ship}
-            size={24}
-            color="#000000"
-            classes="mix-blend-diff v-mid"
-          />
-          <span className="v-mid ml2 mw5 truncate dib">
-            {'~' + ship}
-          </span>
-        </div>
-      ))}
+      }>
+      {suggestions.map(ship =>
+        (<ChatInputSuggestion
+           onSelect={onSelect}
+           key={ship}
+           selected={selected}
+           contacts={contacts}
+           ship={ship} />)
+      )}
     </div>
   );
 }
@@ -86,6 +116,10 @@ export class ChatInput extends Component {
     this.onEnter = this.onEnter.bind(this);
 
     this.patpAutocomplete = this.patpAutocomplete.bind(this);
+    this.nextAutocompleteSuggestion = this.nextAutocompleteSuggestion.bind(this);
+    this.completePatp = this.completePatp.bind(this);
+
+    this.clearSuggestions = this.clearSuggestions.bind(this);
 
     // Call once per frame @ 60hz
     this.textareaInput = _.debounce(this.textareaInput.bind(this), 16);
@@ -136,56 +170,76 @@ export class ChatInput extends Component {
     this.bindShortcuts();
   }
 
-  patpAutocomplete(message, shouldAdvance = false) {
-    const match = /~([a-z\-]*)$/.exec(message);
+  nextAutocompleteSuggestion(backward = false) {
+    const { patpSuggestions } = this.state;
+    let idx = patpSuggestions.findIndex(s => s === this.state.selectedSuggestion);
 
-    if (!match) {
+    idx = backward ? idx - 1 : idx + 1;
+    idx = idx % patpSuggestions.length;
+    if(idx < 0) {
+      idx = patpSuggestions.length - 1;
+    }
+
+    this.setState({ selectedSuggestion: patpSuggestions[idx] });
+  }
+
+
+  patpAutocomplete(message, fresh = false) {
+    const match = /~([a-zA-Z\-]*)$/.exec(message);
+
+    if (!match ) {
       this.setState({ patpSuggestions: [] })
+      return;
     }
 
 
+    const needle = match[1].toLowerCase();
+
+    const matchString = hay => {
+      hay = hay.toLowerCase();
+
+      return hay.startsWith(needle)
+        || _.some(_.words(hay), s => s.startsWith(needle));
+    };
+
+
+    const contacts = _.chain(this.props.contacts)
+      .defaultTo({})
+      .map((details, ship) => ({...details, ship }))
+      .filter(({ nickname, ship }) => matchString(nickname) || matchString(ship))
+      .map('ship')
+      .value()
+
     const suggestions = _.chain(this.props.envelopes)
+      .defaultTo([])
       .map("author")
       .uniq()
-      .filter(s => s.startsWith(match[1]) && s.length < 28)  // exclude comets
-      .take(3)
-      .value();
-
-    const advance = _.chain(suggestions)
-      .map(s => s.replace(match[0], ''))
-      .reduce(getAdvance)
+      .reverse()
+      .filter(matchString)
+      .union(contacts)
+      .filter(s => s.length < 28) // exclude comets
+      .take(5)
       .value();
 
     let newState = {
-      patpSuggestions: suggestions
+      patpSuggestions: suggestions,
+      selectedSuggestion: suggestions[0]
     };
-    if(shouldAdvance) {
-      newState.message = message.replace(/[a-z\-]*$/, advance);
-    }
-    // If no new suggestions, select next suggestion
-    if (
-      advance === match[1] &&
-      suggestions.length === this.state.patpSuggestions.length
-    ) {
-      let idx = suggestions.findIndex(s => s === this.state.selectedSuggestion);
-      idx = idx + 1 === suggestions.length || idx === -1 ? 0 : idx + 1;
-
-      newState.selectedSuggestion = suggestions[idx];
-    }
-
-    // hide suggestions if only one
-    if (newState.patpSuggestions.length === 1) {
-      newState.patpSuggestions = [];
-    }
 
     this.setState(newState);
   }
 
-  completePatp() {
+  clearSuggestions() {
+    this.setState({
+      patpSuggestions: []
+    })
+  }
+
+  completePatp(suggestion) {
     this.setState({
       message: this.state.message.replace(
-        /[a-z\-]*$/,
-        this.state.selectedSuggestion
+        /[a-zA-Z\-]*$/,
+        suggestion
       ),
       patpSuggestions: []
     });
@@ -193,7 +247,7 @@ export class ChatInput extends Component {
 
   onEnter(e) {
     if (this.state.patpSuggestions.length !== 0) {
-      this.completePatp();
+      this.completePatp(this.state.selectedSuggestion);
     } else {
       this.messageSubmit(e);
     }
@@ -207,12 +261,38 @@ export class ChatInput extends Component {
 
       this.onEnter(e);
     });
+
+
     mousetrap.bind('tab', e => {
       e.preventDefault();
       e.stopPropagation();
-
-      this.patpAutocomplete(this.state.message, true);
+      if(this.state.patpSuggestions.length === 0) {
+        this.patpAutocomplete(this.state.message, true);
+      } else {
+        this.nextAutocompleteSuggestion(false);
+      }
     });
+    mousetrap.bind(['up', 'shift+tab'], e => {
+      if(this.state.patpSuggestions.length !== 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.nextAutocompleteSuggestion(true)
+      }
+
+    });
+    mousetrap.bind('down', e => {
+      if(this.state.patpSuggestions.length !== 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.nextAutocompleteSuggestion(false)
+      }
+    });
+    mousetrap.bind('esc', e => {
+      if(this.state.patpSuggestions.length !== 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.clearSuggestions();
+      }})
   }
 
   messageChange(event) {
@@ -383,8 +463,10 @@ export class ChatInput extends Component {
       style={{ flexGrow: 1 }}>
         {state.patpSuggestions.length !== 0 && (
           <ChatInputSuggestions
-            suggestions={this.state.patpSuggestions}
-            selected={this.state.selectedSuggestion}
+            onSelect={this.completePatp}
+            suggestions={state.patpSuggestions}
+            selected={state.selectedSuggestion}
+            contacts={props.contacts}
           />
         )}
 

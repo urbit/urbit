@@ -292,6 +292,7 @@ export class ChatScreen extends Component {
          ownerContact={ownerContact}
          permissions={props.permissions}
          envelopes={props.envelopes}
+         contacts={props.contacts}
          placeholder="Message..."
        />
      </div>

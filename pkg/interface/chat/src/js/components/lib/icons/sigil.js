@@ -17,7 +17,7 @@ export class Sigil extends Component {
       );
     } else {
       return (
-        <div className={"dib " + classes} style={{ flexBasis: 32, backgroundColor: props.color }}>
+        <div className={"dib " + classes} style={{ flexBasis: props.size, backgroundColor: props.color }}>
           {sigil({
             patp: props.ship,
             renderer: reactRenderer,
