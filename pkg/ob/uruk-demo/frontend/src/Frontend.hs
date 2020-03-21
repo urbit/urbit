@@ -9,7 +9,7 @@
 
 module Frontend where
 
-import ClassyPrelude
+import ClassyPrelude hiding (exp)
 import Common.Api
 import Common.Route
 import Control.Monad
@@ -115,9 +115,9 @@ compute
   -> (a -> IO b)             --  Action
   -> a                       --  Argument
   -> m ()
-compute ref thinking cb exec txt = do
+compute ref thinkVal cb exec txt = do
   takeMVar ref >>= maybe (pure ()) cancel
-  liftIO (cb thinking)
+  liftIO (cb thinkVal)
   tid <- liftIO $ async $ (exec txt >>= liftIO . cb)
   putMVar ref (Just tid)
 
@@ -136,14 +136,14 @@ slow
 slow = do
   el "h3" (text "Slow")
 
-  val <-
+  valu <-
     fmap _inputElement_value
     $  inputElement
     $  (def & inputElementConfig_initialValue .~ "(K K K)")
 
-  res <- slowResult val
+  resu <- slowResult valu
 
-  el "pre" (dynText res)
+  el "pre" (dynText resu)
 
 inpInputW :: (Reflex s, DomBuilder s m, Monad m) => InpResult -> m ()
 inpInputW res = do
@@ -218,10 +218,10 @@ prettyInpResultW
      )
   => Either Text (Env, [InpResult])
   -> m ()
-prettyInpResultW res = do
+prettyInpResultW eRes = do
   el "h3" (text "Execution Results")
-  case res of
-    Left  err     -> el "pre" (text err)
+  case eRes of
+    Left  err            -> el "pre" (text err)
     Right (env, results) -> do
       for_ results $ \res -> do
         inpInputW res
@@ -297,12 +297,12 @@ fast
 fast = do
   el "h3" (text "Fast")
 
-  val <-
+  valu <-
     fmap _inputElement_value
     $  inputElement
     $  (def & inputElementConfig_initialValue .~ "(K K K)")
 
-  res <- fastResult val
+  res <- fastResult valu
 
   el "pre" $ dynText res
 
@@ -386,11 +386,12 @@ frontend = Frontend
     el "hr" $ pure ()
     el "hr" $ pure ()
 
-    el "h2" $ text "Old Stuff"
+    when False $ do
+      el "h2" $ text "Old Stuff"
 
-    fast
+      fast
 
-    slow
+      slow
 
     return ()
   }
