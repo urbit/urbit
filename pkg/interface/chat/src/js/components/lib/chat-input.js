@@ -42,14 +42,14 @@ function ChatInputSuggestion({ ship, contacts, selected, onSelect }) {
     <div
       onClick={() => onSelect(ship)}
       className={cn(
-        'f8 pv1 ph3 pointer' + ' hover-bg-gray4 relative bb b--gray1-d b--gray4 flex items-center',
+        'f8 pv1 ph3 pointer hover-bg-gray4 relative hover-bg-gray1-d flex items-center',
         {
           'white-d': ship !== selected,
           'black-d': ship === selected,
           'bg-gray0-d': ship !== selected,
           'bg-white': ship !== selected,
           'bg-gray1-d': ship === selected,
-          'bg-gray5': ship === selected
+          'bg-gray4': ship === selected
         }
       )}
       key={ship}
@@ -78,12 +78,12 @@ function ChatInputSuggestions({ suggestions, onSelect, selected, contacts }) {
   return (
     <div
       style={{
-        bottom: '100%',
+        bottom: '90%',
         left: '48px'
       }}
       className={
         'absolute black white-d bg-white bg-gray0-d ' +
-        'w7 pv1 z-1 mt1 ba b--gray1-d b--gray4'
+        'w7 pv3 z-1 mt1 ba b--gray1-d b--gray4'
       }>
       {suggestions.map(ship =>
         (<ChatInputSuggestion
