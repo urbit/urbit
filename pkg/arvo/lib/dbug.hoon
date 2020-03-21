@@ -11,6 +11,7 @@
   ==
 ::
 +$  about
+  $@  ~
   $%  [%ship =ship]
       [%path =path]
       [%wire =wire]
@@ -54,6 +55,7 @@
       =;  relevant=?
         ?.  relevant  ~
         `>[path=path from=ship duct=duct]<
+      ?:  ?=(~ about.dbug)  &
       ?-  -.about.dbug
         %ship  =(ship ship.about.dbug)
         %path  ?=(^ (find path.about.dbug path))
@@ -72,6 +74,7 @@
       =;  relevant=?
         ?.  relevant  ~
         `>[wire=wire agnt=[ship term] path=path ackd=acked]<
+      ?:  ?=(~ about.dbug)  &
       ?-  -.about.dbug
         %ship  =(ship ship.about.dbug)
         %path  ?=(^ (find path.about.dbug path))
