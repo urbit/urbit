@@ -20,6 +20,7 @@ import Control.Monad.Trans.Maybe
 import Data.Text              (append)
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.King.App         (HasConfigDir(..), HasStderrLogFunc(..))
+import Urbit.TermSize         (TermSize(..))
 import Urbit.Vere.Ames        (ames)
 import Urbit.Vere.Behn        (behn)
 import Urbit.Vere.Clay        (clay)
@@ -28,15 +29,14 @@ import Urbit.Vere.Http.Server (serv)
 import Urbit.Vere.Log         (EventLog)
 import Urbit.Vere.Serf        (Serf, SerfState(..), doJob, sStderr)
 
-import qualified System.Entropy         as Ent
-import qualified Urbit.King.API         as King
-import qualified Urbit.Time             as Time
-import qualified Urbit.Vere.Log         as Log
-import qualified Urbit.Vere.Serf        as Serf
-import qualified Urbit.Vere.Term        as Term
-import qualified Urbit.Vere.Term.API    as Term
-import qualified Urbit.Vere.Term.Demux  as Term
-import qualified Urbit.Vere.Term.Render as Term
+import qualified System.Entropy        as Ent
+import qualified Urbit.King.API        as King
+import qualified Urbit.Time            as Time
+import qualified Urbit.Vere.Log        as Log
+import qualified Urbit.Vere.Serf       as Serf
+import qualified Urbit.Vere.Term       as Term
+import qualified Urbit.Vere.Term.API   as Term
+import qualified Urbit.Vere.Term.Demux as Term
 
 
 --------------------------------------------------------------------------------
@@ -225,7 +225,7 @@ pier (serf, log, ss) mStart = do
             drivers inst ship (isFake logId)
                 (writeTQueue computeQ)
                 shutdownEvent
-                (Term.TSize{tsWide=80, tsTall=24}, muxed)
+                (TermSize{tsWide=80, tsTall=24}, muxed)
                 showErr
 
     io $ atomically $ for_ bootEvents (writeTQueue computeQ)
@@ -286,7 +286,7 @@ data Drivers e = Drivers
 drivers :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
         => KingId -> Ship -> Bool -> (Ev -> STM ())
         -> STM()
-        -> (Term.TSize, Term.Client)
+        -> (TermSize, Term.Client)
         -> (Text -> RIO e ())
         -> ([Ev], RAcquire e (Drivers e))
 drivers inst who isFake plan shutdownSTM termSys stderr =

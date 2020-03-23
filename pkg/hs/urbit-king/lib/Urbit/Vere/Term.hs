@@ -27,10 +27,12 @@ import Data.List           ((!!))
 import RIO.Directory       (createDirectoryIfMissing)
 import Urbit.King.API      (readPortsFile)
 import Urbit.King.App      (HasConfigDir(..))
+import Urbit.TermSize      (TermSize(TermSize))
 import Urbit.Vere.Term.API (Client(Client))
 
 import qualified Data.ByteString.Internal as BS
 import qualified Data.ByteString.UTF8     as BS
+import qualified Urbit.TermSize           as T
 import qualified Urbit.Vere.NounServ      as Serv
 import qualified Urbit.Vere.Term.API      as Term
 import qualified Urbit.Vere.Term.Render   as T
@@ -158,10 +160,10 @@ runTerminalClient pier = runRAcquire $ do
 -}
 localClient :: ∀e. HasLogFunc e
             => STM ()
-            -> RAcquire e (T.TSize, Client)
+            -> RAcquire e (TermSize, Client)
 localClient doneSignal = fst <$> mkRAcquire start stop
   where
-    start :: HasLogFunc e => RIO e ((T.TSize, Client), Private)
+    start :: HasLogFunc e => RIO e ((TermSize, Client), Private)
     start = do
       tsWriteQueue  <- newTQueueIO
       spinnerMVar   <- newEmptyTMVarIO
@@ -187,12 +189,12 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                           , give = writeTQueue tsWriteQueue
                           }
 
-      tsize <- io $ T.tsize
+      tsize <- io $ T.termSize
 
       pure ((tsize, client), Private{..})
 
     stop :: HasLogFunc e
-         => ((T.TSize, Client), Private) -> RIO e ()
+         => ((TermSize, Client), Private) -> RIO e ()
     stop ((_, Client{..}), Private{..}) = do
       -- Note that we don't `cancel pReaderThread` here. This is a deliberate
       -- decision because fdRead calls into a native function which the runtime
@@ -495,7 +497,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
     Terminal Driver
 -}
 term :: forall e. (HasPierConfig e, HasLogFunc e)
-     => (T.TSize, Client)
+     => (TermSize, Client)
      -> (STM ())
      -> KingId
      -> QueueEv
@@ -503,7 +505,7 @@ term :: forall e. (HasPierConfig e, HasLogFunc e)
 term (tsize, Client{..}) shutdownSTM king enqueueEv =
     (initialEvents, runTerm)
   where
-    T.TSize wi hi = tsize
+    TermSize wi hi = tsize
 
     initialEvents = [initialBlew wi hi, initialHail]
 
