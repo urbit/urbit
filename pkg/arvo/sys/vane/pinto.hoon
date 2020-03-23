@@ -679,32 +679,32 @@
     =/  fil=(unit cage)  ?~(p.sign ~ `r.u.p.sign)
     =/  =build-state  (~(got by builds.state.ax) duct)
     =/  build-core  (per-build scry-gate cache.state.ax duct build-state)
-  =.  build-core
-    ?-    -.line
-        %fiz
-      =/  m  (fume ,vase)
-      =/  [=spar on-load=form:m]
-        (need (~(got by fiz.build-state) path.line))
-      =.  sky.build-state  (~(put by sky.build-state) spar fil)
-      =/  =eval-state:m  [`[spar on-load] sky.build-state]
-      (make-file:build-core path.line eval-state `fil)
-    ::
-        %maz
-      =/  m  (fume ,dais)
-      =/  [=spar on-load=form:m]
-        (need (~(got by maz.build-state) mark.line))
-      =.  sky.build-state  (~(put by sky.build-state) spar fil)
-      =/  =eval-state:m  [`[spar on-load] sky.build-state]
-      (make-mark:build-core mark.line eval-state `fil)
-    ::
-        %caz
-      =/  m  (fume ,$-(vase vase))
-      =/  [=spar on-load=form:m]
-        (need (~(got by caz.build-state) [a b]:line))
-      =.  sky.build-state  (~(put by sky.build-state) spar fil)
-      =/  =eval-state:m  [`[spar on-load] sky.build-state]
-      (make-cast:build-core [a b]:line eval-state `fil)
-    ==
+    =.  build-core
+      ?-    -.line
+          %fiz
+        =/  m  (fume ,vase)
+        =/  [=spar on-load=form:m]
+          (need (~(got by fiz.build-state) path.line))
+        =.  sky.build-state  (~(put by sky.build-state) spar fil)
+        =/  =eval-state:m  [`[spar on-load] sky.build-state]
+        (make-file:build-core path.line eval-state `fil)
+      ::
+          %maz
+        =/  m  (fume ,dais)
+        =/  [=spar on-load=form:m]
+          (need (~(got by maz.build-state) mark.line))
+        =.  sky.build-state  (~(put by sky.build-state) spar fil)
+        =/  =eval-state:m  [`[spar on-load] sky.build-state]
+        (make-mark:build-core mark.line eval-state `fil)
+      ::
+          %caz
+        =/  m  (fume ,$-(vase vase))
+        =/  [=spar on-load=form:m]
+          (need (~(got by caz.build-state) [a b]:line))
+        =.  sky.build-state  (~(put by sky.build-state) spar fil)
+        =/  =eval-state:m  [`[spar on-load] sky.build-state]
+        (make-cast:build-core [a b]:line eval-state `fil)
+      ==
     =^  remove  build-core  finalize:build-core
     =.  cache.state.ax  cache.build-core
     =.  builds.state.ax
@@ -714,8 +714,27 @@
     [fex.build-core ford-gate]
   ::
       %live
-    ?>  ?=(%wris -.sign)
-    !!
+    ?>  ?=([@tas %wris *] sign)
+    =/  =build-state  (~(got by builds.state.ax) duct)
+    =.  build-state
+      %_  build-state
+        case  p.sign
+        sky  ~
+        fiz  (~(run by fiz.build-state) |=(* ~))
+        fuz  ~
+        maz  (~(run by maz.build-state) |=(* ~))
+        muz  ~
+        caz  (~(run by caz.build-state) |=(* ~))
+        cuz  ~
+      ==
+    =/  build-core  (per-build scry-gate cache.state.ax duct build-state)
+    =^  remove  build-core  make:build-core
+    =.  cache.state.ax  cache.build-core
+    =.  builds.state.ax
+      ?:  remove
+        (~(del by builds.state.ax) duct)
+      (~(put by builds.state.ax) duct build-state:build-core)
+    [fex.build-core ford-gate]
   ==
 ++  load
   |=  old=axle
