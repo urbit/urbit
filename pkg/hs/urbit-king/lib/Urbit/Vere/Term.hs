@@ -505,7 +505,7 @@ term (tsize, Client{..}) shutdownSTM king enqueueEv =
   where
     T.TSize wi hi = tsize
 
-    initialEvents = [(initialBlew wi hi), initialHail]
+    initialEvents = [initialBlew wi hi, initialHail]
 
     runTerm :: RAcquire e (EffCb e TermEf)
     runTerm = do
