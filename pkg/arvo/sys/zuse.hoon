@@ -8171,15 +8171,18 @@
     =>  |%
         ::  solidity types. integer bitsizes ignored
         ++  etyp
+          $@  $?  ::  static
+                  %address  %bool
+                  %int      %uint
+                  %real     %ureal
+                  ::  dynamic
+                  %bytes    %string
+              ==
           $%  ::  static
-              %address  %bool
-              %int      %uint
-              %real     %ureal
               [%bytes-n n=@ud]
               ::  dynamic
               [%array-n t=etyp n=@ud]
               [%array t=etyp]
-              %bytes    %string
           ==
         ::
         ::  solidity-style typed data. integer bitsizes ignored
