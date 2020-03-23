@@ -1,9 +1,9 @@
 let
 
-  rev  = "61c3169a0e17d789c566d5b241bfe309ce4a6275";
-  hash = "0qbycg7wkb71v20rchlkafrjfpbk2fnlvvbh3ai9pyfisci5wxvq";
+  rev  = "19.09";
+  hash = "0mhqhq21y5vrr1f30qd2bvydv4bbbslvyzclhw0kdxmkgg3z4c92";
   pkgs = builtins.fetchTarball {
-    name = "nixpkgs-2019-01-15";
+    name = "nixpkgs-19.09";
     url = "https://github.com/nixos/nixpkgs/archive/${rev}.tar.gz";
     sha256 = hash;
   };
