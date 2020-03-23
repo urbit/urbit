@@ -109,6 +109,8 @@
       [[%give %fact ~ %json !>(*json)]~ this]
     (on-watch:def path)
     ::
+    ++  message-limit  25
+    ::
     ++  truncated-inbox-scry
       ^-  inbox
       =/  =inbox  .^(inbox %gx /=chat-store/(scot %da now.bol)/all/noun)
@@ -121,9 +123,9 @@
       |=  envelopes=(list envelope)
       ^-  (list envelope)
       =/  length  (lent envelopes)
-      ?:  (lth length 100)
+      ?:  (lth length message-limit)
         envelopes
-      (swag [(sub length 100) 100] envelopes)
+      (slag (sub length message-limit) envelopes)
     --
   ::
   ++  on-agent
