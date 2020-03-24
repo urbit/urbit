@@ -498,6 +498,9 @@
               ==                                        ::
           task:able:ford                                ::
       ==                                                ::
+      $:  %g                                            ::  to %gall
+          $>(%deal task:able:gall)                      ::
+      ==                                                ::
       $:  %j                                            ::  by %jael
           $>(%public-keys task:able:jael)               ::
   ==  ==                                                ::
@@ -527,6 +530,9 @@
       ==                                                ::
       $:  %f                                            ::  by %ford
           $>(%made gift:able:ford)                      ::
+      ==                                                ::
+      $:  %g                                            ::  by %gall
+          $>(%unto gift:able:gall)                      ::
       ==                                                ::
       $:  %j                                            ::  by %jael
           $>(%public-keys gift:able:jael)               ::
@@ -2920,7 +2926,7 @@
         hut.ran  (~(uni by hut.rang) hut.ran)
         lat.ran  (~(uni by lat.rang) lat.ran)
       ==
-    ergo
+    wake:ergo
     ::
     ++  ergo
       ^+  ..park
@@ -4279,8 +4285,12 @@
           [hen %pass /two %c %info q.bem %& two]
       ==
     =+  yak=(~(got by hut.ran.ruf) (~(got by hit.dom.u.dos) let.dom.u.dos))
-    =+  cos=(mode-to-soba q.yak (flop s.bem) all.req fis.req)
-    [hen %pass /both %c %info q.bem %& cos]~
+    =+  cos=(mode-to-commit q.yak (flop s.bem) all.req fis.req)
+    =+  tid=:((cury cat 3) 'clay--' des.req '--' (scot %uv eny))
+    =+  arg=[~ `tid %commit !>([q.bem [- + ~]:cos])]
+    :~  [hen %pass /both %g %deal [our our] %spider %watch /thread-result/[tid]]
+        [hen %pass /both %g %deal [our our] %spider %poke %spider-start !>(arg)]
+    ==
   ::
       %merg                                               ::  direct state up
     ?:  =(%$ des.req)
@@ -4614,6 +4624,29 @@
     [~ ..^$]
   ::
       %note  [[hen %give +.q.hin]~ ..^$]
+      %unto
+    ?-    -.p.q.hin
+        %kick  [~ ..^$]
+        %poke-ack
+      ?~  p.p.q.hin
+        [~ ..^$]
+      [[hen %slip %d %flog %crud %into u.p.p.q.hin]~ ..^$]
+    ::
+        %watch-ack
+      ?~  p.p.q.hin
+        [~ ..^$]
+      [[hen %slip %d %flog %crud %into u.p.p.q.hin]~ ..^$]
+    ::
+        %fact
+      :_  ..^$
+      ?+    p.cage.p.q.hin  [hen %slip %d %flog %crud %into >%strange-into< ~]~
+          %thread-done  ~
+          %thread-fail
+        =+  !<([=term =tang] q.cage.p.q.hin)
+        [hen %slip %d %flog %crud %into >term< tang]~
+      ==
+    ==
+  ::
       %wake
     ::  TODO: handle behn errors
     ::
@@ -4660,6 +4693,53 @@
   |=  rant
   ^-  rand
   [p q [p q.q]:r]
+::
+::  By convention: paf == (weld pax pat)
+::
+++  mode-to-commit
+  |=  [hat=(map path lobe) pax=path all=? mod=mode]
+  ^-  [deletes=(set path) changes=(map path cage)]
+  =/  deletes
+    %-  silt
+    %+  turn
+      ^-  (list path)
+      %+  weld
+        ^-  (list path)
+        %+  murn  mod
+        |=  [pat=path mim=(unit mime)]
+        ^-  (unit path)
+        ?^  mim
+          ~
+        `pat
+      ^-  (list path)
+      ?.  all
+        ~
+      =+  mad=(malt mod)
+      =+  len=(lent pax)
+      =/  descendants=(list path)
+        %+  turn
+          %+  skim  ~(tap by hat)
+          |=  [paf=path lob=lobe]
+          =(pax (scag len paf))
+        |=  [paf=path lob=lobe]
+        (slag len paf)
+      %+  skim
+        descendants
+      |=  pat=path
+      (~(has by mad) pat)
+    |=  pat=path
+    (weld pax pat)
+  ::
+  =/  changes
+    %-  malt
+    %+  murn  mod
+    |=  [pat=path mim=(unit mime)]
+    ^-  (unit [path cage])
+    ?~  mim
+      ~
+    `[(weld pax pat) %mime !>(u.mim)]
+  ::
+  [deletes changes]
 ::
 ++  mode-to-soba
   |=  {hat/(map path lobe) pax/path all/? mod/mode}
