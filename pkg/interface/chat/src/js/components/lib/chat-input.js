@@ -6,7 +6,7 @@ import cn from 'classnames';
 
 import { Sigil } from '/components/lib/icons/sigil';
 
-import { uuid, uxToHex } from '/lib/util';
+import { uuid, uxToHex, hexToRgba } from '/lib/util';
 
 const DEFAULT_INPUT_HEIGHT = 28;
 
@@ -31,9 +31,13 @@ function ChatInputSuggestion({ ship, contacts, selected, onSelect }) {
   let sigilClass = "v-mid mix-blend-diff"
   let nickname;
   let nameStyle = {};
+  const isSelected = ship === selected;
   if (contact) {
-    color = `#${uxToHex(contact.color)}`;
-    nameStyle.color = color;
+    const hex = uxToHex(contact.color);
+    color = `#${hex}`;
+    nameStyle.color = hexToRgba(hex, .7);
+    nameStyle.textShadow = '0px 0px 0px #000';
+    nameStyle.filter = 'contrast(1.3) saturate(1.5)';
     sigilClass = "v-mid";
     nickname = contact.nickname;
   }
@@ -42,14 +46,10 @@ function ChatInputSuggestion({ ship, contacts, selected, onSelect }) {
     <div
       onClick={() => onSelect(ship)}
       className={cn(
-        'f8 pv1 ph3 pointer hover-bg-gray4 relative hover-bg-gray1-d flex items-center',
+        'f8 pv1 ph3 pointer hover-bg-gray1-d hover-bg-gray4 relative flex items-center',
         {
-          'white-d': ship !== selected,
-          'black-d': ship === selected,
-          'bg-gray0-d': ship !== selected,
-          'bg-white': ship !== selected,
-          'bg-gray1-d': ship === selected,
-          'bg-gray4': ship === selected
+          'white-d bg-gray0-d bg-white': !isSelected,
+          'black-d bg-gray1-d bg-gray4': isSelected,
         }
       )}
       key={ship}
