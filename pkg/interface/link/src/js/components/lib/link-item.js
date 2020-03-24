@@ -65,7 +65,7 @@ export class LinkItem extends Component {
       <div className="w-100 pv3 flex bg-white bg-gray0-d">
         <Sigil
           ship={"~" + props.ship}
-          size={36}
+          size={38}
           color={"#" + props.color}
           classes={(member ? "mix-blend-diff" : "")}
             />
