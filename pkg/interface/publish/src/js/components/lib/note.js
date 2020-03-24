@@ -213,7 +213,7 @@ export class Note extends Component {
             </div>
             <div className="md"
             style={{overflowWrap: "break-word"}}>
-              <ReactMarkdown source={newfile} />
+              <ReactMarkdown source={newfile} linkTarget={"_blank"} />
             </div>
             <NoteNavigation
               popout={props.popout}
