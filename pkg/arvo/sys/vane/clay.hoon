@@ -4175,7 +4175,11 @@
     ~?  ?=(^ act.ruf)
       [%clay-cancelling hen -.req -.eval-data]:u.act.ruf
     =.  act.ruf  ~
-    ?~  cue.ruf
+    ?:  =(~ cue.ruf)
+      [~ ..^$]
+    ?:  =(%force des.req)
+      =^  queued  cue.ruf  ~(get to cue.ruf)
+      ~&  [%dropping-hard [duct -.task]:p.queued cue-length=~(wyt in cue.ruf)]
       [~ ..^$]
     =/  =duct  duct:(need ~(top to cue.ruf))
     [[duct %pass /queued-request %b %wait now]~ ..^$]
