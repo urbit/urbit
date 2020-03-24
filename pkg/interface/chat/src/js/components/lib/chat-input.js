@@ -125,7 +125,7 @@ export class ChatInput extends Component {
     this.textareaInput = _.debounce(this.textareaInput.bind(this), 16);
 
     // perf testing:
-    /*let closure = () => {
+    let closure = () => {
       let x = 0;
       for (var i = 0; i < 30; i++) {
         x++;
@@ -140,7 +140,7 @@ export class ChatInput extends Component {
       }
       setTimeout(closure, 1000);
     };
-    this.closure = closure.bind(this);*/
+    this.closure = closure.bind(this);
 
     moment.updateLocale('en', {
         relativeTime : {
@@ -400,6 +400,7 @@ export class ChatInput extends Component {
       }
     })
 
+
     if (message.length > 0) {
       message = message.join(" ");
       message = this.getLetterType(message);
@@ -412,7 +413,8 @@ export class ChatInput extends Component {
       message = [];
     }
 
-    // perf: setTimeout(this.closure, 2000);
+    // perf: 
+    setTimeout(this.closure, 2000);
 
     this.setState({
       message: '',
