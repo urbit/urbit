@@ -27,11 +27,11 @@ export class Welcome extends Component {
     let associations = !!this.props.associations ? this.props.associations : {};
 
     return ((!wasWelcomed && this.state.show) && (associations.length !== 0)) ? (
-      <div className="ma4 pa2 ba bg-gray5 b--gray4 bg-gray0-d b--gray1-d white-d">
-        <p className="f9 lh-copy">Links are for collecting and discussing outside content. Each post is a URL and a comment thread.</p>
-        <p className="f9 pt2 dib fw6 pointer"
+      <div className="ma4 pa2 bg-welcome-green bg-gray1-d white-d">
+        <p className="f8 lh-copy">Links are for collecting and discussing outside content. Each post is a URL and a comment thread.</p>
+        <p className="f8 pt2 dib bb pointer"
           onClick={(() => this.disableWelcome())}>
-          Close this message
+          Close this
       </p>
       </div>
     ) : <div />

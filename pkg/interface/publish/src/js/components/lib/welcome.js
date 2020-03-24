@@ -27,11 +27,11 @@ export class Welcome extends Component {
     let notebooks = !!this.props.notebooks ? this.props.notebooks : {};
 
     return ((!wasWelcomed && this.state.show) && (notebooks.length !== 0)) ? (
-      <div className="ma4 pa2 ba bg-gray5 b--gray4 bg-gray0-d b--gray2-d white-d">
-        <p className="f9 lh-copy">Notebooks are for longer-form writing and discussion. Each Notebook is a collection of Markdown-formatted notes with optional comments.</p>
-        <p className="f9 pt2 dib fw6 pointer"
+      <div className="ma4 pa2 white-d bg-welcome-green bg-gray1-d">
+        <p className="f8 lh-copy">Notebooks are for longer-form writing and discussion. Each Notebook is a collection of Markdown-formatted notes with optional comments.</p>
+        <p className="f8 pt2 dib pointer bb"
           onClick={(() => this.disableWelcome())}>
-          Close this message
+          Close this
       </p>
       </div>
     ) : <div />

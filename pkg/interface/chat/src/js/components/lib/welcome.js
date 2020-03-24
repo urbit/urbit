@@ -27,11 +27,11 @@ export class Welcome extends Component {
     let inbox = !!this.props.inbox ? this.props.inbox : {};
 
     return ((!wasWelcomed && this.state.show) && (inbox.length !== 0)) ? (
-      <div className="ma4 pa2 ba bg-gray5 b--gray4 bg-gray0-d b--gray1-d white-d">
-        <p className="f9 lh-copy">Chats are instant, linear modes of conversation. Many chats can be bundled under one group.</p>
-        <p className="f9 pt2 dib fw6 pointer"
+      <div className="ma4 pa2 bg-welcome-green bg-gray1-d white-d">
+        <p className="f8 lh-copy">Chats are instant, linear modes of conversation. Many chats can be bundled under one group.</p>
+        <p className="f8 pt2 dib pointer bb"
           onClick={(() => this.disableWelcome())}>
-          Close this message
+          Close this
         </p>
       </div>
     ) : <div/>

@@ -27,11 +27,11 @@ export class Welcome extends Component {
     let contacts = !!this.props.contacts ? this.props.contacts : {};
 
     return ((!wasWelcomed && this.state.show) && (contacts.length !== 0)) ? (
-      <div className="ma4 pa2 ba bg-gray5 b--gray4 bg-gray0-d b--gray2-d white-d">
-        <p className="f9 lh-copy">Each Group is a list of other Urbit IDs that share some set of modules: chats, links and notebooks.</p>
-        <p className="f9 pt2 dib fw6 pointer"
+      <div className="ma4 pa2 bg-welcome-green bg-gray1-d white-d">
+        <p className="f8 lh-copy">Each Group is a list of other Urbit IDs that share some set of modules: chats, links and notebooks.</p>
+        <p className="f8 pt2 dib pointer bb"
           onClick={(() => this.disableWelcome())}>
-          Close this message
+          Close this
       </p>
       </div>
     ) : <div />

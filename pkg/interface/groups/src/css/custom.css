@@ -55,6 +55,10 @@ a {
   line-height: 16px;
 }
 
+.bg-welcome-green {
+  background-color: #ECF6F2;
+}
+
 .mono {
   font-family: "Source Code Pro", monospace;
 }

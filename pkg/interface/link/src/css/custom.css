@@ -64,6 +64,10 @@ a {
   line-height: 2.2;
 }
 
+.bg-welcome-green {
+  background-color: #ECF6F2;
+}
+
 .c-default {
   cursor: default;
 }

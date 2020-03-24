@@ -84,6 +84,10 @@ h2 {
   font-family: "Source Code Pro", monospace;
 }
 
+.bg-welcome-green {
+  background-color: #ECF6F2;
+}
+
 .list-ship {
   line-height: 2.2;
 }

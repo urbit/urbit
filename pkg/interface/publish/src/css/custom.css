@@ -46,6 +46,10 @@ a {
   font-family: 'Source Code Pro', monospace;
 }
 
+.bg-welcome-green {
+  background-color: #ECF6F2;
+}
+
 @media all and (max-width: 34.375em) {
   .dn-s {
     display: none;
