@@ -1,10 +1,11 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE DataKinds         #-}
+{-# LANGUAGE FlexibleContexts  #-}
+{-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecursiveDo #-}
-{-# LANGUAGE TupleSections #-}
-{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE RecursiveDo       #-}
+{-# LANGUAGE TupleSections     #-}
+{-# LANGUAGE TypeApplications  #-}
+{-# LANGUAGE ViewPatterns      #-}
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
 module Frontend where
@@ -145,6 +146,13 @@ slow = do
 
   el "pre" (dynText resu)
 
+
+showWipeW :: (Reflex s, DomBuilder s m) => Text -> m ()
+showWipeW = el "pre" . text . showWipe
+
+showWipe :: Text -> Text
+showWipe = ("!" <>)
+
 inpInputW :: (Reflex s, DomBuilder s m, Monad m) => InpResult -> m ()
 inpInputW res = do
   el "h4" (text "Input")
@@ -153,24 +161,26 @@ inpInputW res = do
     InpExpr e _   -> el "pre" (text $ tshow e)
     InpDecl v e _ -> el "pre" (text $ "=" <> v <> " " <> tshow e)
 
-showExp :: (Monad m, Reflex t, DomBuilder t m) => Exp -> m ()
-showExp = el "pre" . text . tshow
+showExpW :: (Monad m, Reflex t, DomBuilder t m) => Exp -> m ()
+showExpW = el "pre" . text . tshow
 
-showDecl :: (Monad m, Reflex t, DomBuilder t m) => Text -> Exp -> m ()
-showDecl nm exp = do
-  el "pre" (text ("=" <> nm <> " " <> tshow exp))
+showDeclW :: (Monad m, Reflex t, DomBuilder t m) => Text -> Exp -> m ()
+showDeclW nm exp = el "pre" $ text $ showDecl nm exp
+
+showDecl :: Text -> Exp -> Text
+showDecl nm exp = "=" <> nm <> " " <> tshow exp
 
 inpResultEvalResult :: InpResult -> Maybe EvalResult
 inpResultEvalResult = \case
   InpWipe _     -> Nothing
-  InpExpr _ r   -> pure r
-  InpDecl _ _ r -> pure r
+  InpExpr _ r   -> Just r
+  InpDecl _ _ r -> Just r
 
 inpResultW :: (Reflex s, DomBuilder s m, Monad m) => InpResult -> m ()
 inpResultW = \case
   InpWipe _                    -> pure ()
-  InpExpr _ (EvalResult x _)   -> hdr >> showExp x
-  InpDecl v _ (EvalResult x _) -> hdr >> showDecl v x
+  InpExpr _ (EvalResult x _)   -> hdr >> showExpW x
+  InpDecl v _ (EvalResult x _) -> hdr >> showDeclW v x
  where
   hdr = el "h4" (text "Result")
 
@@ -185,21 +195,40 @@ showDeclTrace v = el "pre" . text . intercalate "\n" . fmap declShow
 inpTraceW :: (Reflex s, DomBuilder s m, Monad m) => InpResult -> m ()
 inpTraceW = \case
   InpWipe _                    -> pure ()
-  InpExpr _ (EvalResult _ t)   -> hdr >> showTrace (reverse t)
-  InpDecl v _ (EvalResult _ t) -> hdr >> showDeclTrace v (reverse t)
+  InpExpr _ (EvalResult _ t)   -> hdr >> showTrace (tal $ reverse t)
+  InpDecl v _ (EvalResult _ t) -> hdr >> showDeclTrace v (tal $ reverse t)
  where
-  hdr = el "h4"  (text "Reductions")
+  hdr = pure () -- el "h4"  (text "Reductions")
+
+  tal []       = []
+  tal (_ : xs) = xs
 
 resultPreview
   :: (Monad m, Reflex t, DomBuilder t m) => Either Text [InpResult] -> m ()
 resultPreview eRes = do
   case eRes of
-    Left  err     -> el "pre" (text err)
+    Left err -> do
+      elAttr "p" ("class" =: "noresult") $ do
+        el "pre" (text "ERROR")
+      elAttr "p" ("class" =: "error") $ do
+        el "pre" (text err)
     Right results -> do
-      for_ results $ \case
-        InpWipe _                    -> pure ()
-        InpExpr _ (EvalResult x _)   -> showExp x
-        InpDecl _ _ (EvalResult x _) -> showExp x
+      elAttr "p" ("class" =: "result") $ do
+        for_ results $ \case
+          InpWipe v                    -> showWipeW v
+          InpExpr _ (EvalResult x _)   -> showExpW x
+          InpDecl v _ (EvalResult x _) -> showDeclW v x
+      elAttr "p" ("class" =: "trace") $ do
+        traverse_ inpTraceW results
+
+showHistory :: [InpResult] -> Text
+showHistory = unlines . fmap doit
+ where
+  doit :: InpResult -> Text
+  doit = \case
+    InpWipe v                    -> showWipe v
+    InpExpr _ (EvalResult x _)   -> tshow x
+    InpDecl v _ (EvalResult x _) -> showDecl v x
 
 inpEnvW :: (Monad m, Reflex t, DomBuilder t m) => Env -> m ()
 inpEnvW env = do
@@ -216,18 +245,15 @@ prettyInpResultW
      , MonadHold t m
      , PostBuild t m
      )
-  => Either Text (Env, [InpResult])
+  => (Env, [InpResult])
   -> m ()
-prettyInpResultW eRes = do
+prettyInpResultW (env, results) = do
   el "h3" (text "Execution Results")
-  case eRes of
-    Left  err            -> el "pre" (text err)
-    Right (env, results) -> do
-      for_ results $ \res -> do
-        inpInputW res
-        inpResultW res
-        inpTraceW res
-      inpEnvW env
+  for_ results $ \res -> do
+    inpInputW res
+    inpResultW res
+    inpTraceW res
+  inpEnvW env
 
 prettyInpWaiting :: (Monad m, Reflex t, DomBuilder t m) => m ()
 prettyInpWaiting = do
@@ -250,37 +276,50 @@ urukW
 urukW = mdo
   el "h2" (text "Demo")
 
+  void $ widgetHold (pure ()) (prettyHistoryW <$> updated history)
+
   val <-
     fmap _inputElement_value
     $  inputElement
     $  (def & inputElementConfig_initialValue .~ "(K K K)")
 
-  envD <- holdDyn (mempty :: Env) evEnvUpdate
-
-  resD <- urukResult (zipDyn envD val)
-
+  envD  <- holdDyn (mempty :: Env) evEnvUpdate
+  resD  <- urukResult (zipDyn envD val)
   press <- button "Execute"
 
   void $ widgetHold (pure ()) (resultPreview <$> updated (fmap snd <$> resD))
 
-  el "hr" (pure ())
+  let execRes     = onlyRights (current resD <@ press)
+      evEnvUpdate = fst <$> execRes
 
-  let execRes = current resD <@ press
+  history <- foldDyn (flip snoc) [] (snd <$> execRes)
 
-  let evEnvUpdate = evJustOnly (foo <$> execRes)
-
-  void $ widgetHold prettyInpWaiting (prettyInpResultW <$> execRes)
+  when False $ do
+    void $ widgetHold prettyInpWaiting (prettyInpResultW <$> execRes)
 
  where
-  foo :: Either Text (Env, a) -> Maybe Env
-  foo (Left _)         = Nothing
-  foo (Right (env, _)) = Just env
+  onlyRights :: Reflex t => Event t (Either a b) -> Event t b
+  onlyRights = fmapMaybe $ \case
+    Left  _ -> Nothing
+    Right x -> Just x
 
-  evJustOnly :: Reflex t => Event t (Maybe a) -> Event t a
-  evJustOnly = fmap fromJust . ffilter isJust
-   where
-    fromJust (Just x) = x
-    fromJust _        = error "evJustOnly: Impossible case"
+prettyHistoryW :: (Reflex t, DomBuilder t m) => [[InpResult]] -> m ()
+prettyHistoryW (mconcat -> results) = do
+  el "pre" $ do
+    text (showHistory results)
+  -- for_ results $ \case
+    -- InpWipe v                    -> showWipeW v
+    -- InpExpr _ (EvalResult x _)   -> showExpW x
+    -- InpDecl v _ (EvalResult x _) -> showDeclW v x
+
+-- showHistory :: [InpResult] -> Text
+-- showHistory = unlines . fmap doit
+ -- where
+  -- doit :: InpResult -> Text
+  -- doit = \case
+    -- InpWipe v                    -> showWipe v
+    -- InpExpr _ (EvalResult x _)   -> tshow x
+    -- InpDecl v _ (EvalResult x _) -> showDecl v x
 
 fast
   :: ( Monad m
@@ -332,12 +371,11 @@ frontend = Frontend
     el "h3" $ do
       text "Quick Reference"
 
-    el "pre" $ do
+    elAttr "pre" ("class" =: "docs") $ do
       text $ unlines
         [ "Command Syntax:"
         , "    EXPR     ::  Evaluate EXPR"
         , "    =x EXPR  ::  Bind `x` to result of evaluating EXPR"
-        , "    !x       ::  Unbind `x`"
         , "    !x       ::  Unbind `x`"
         , ""
         , "Syntax:"
@@ -380,17 +418,15 @@ frontend = Frontend
 
     urukW
 
-    el "hr" $ pure ()
-    el "hr" $ pure ()
-    el "hr" $ pure ()
-    el "hr" $ pure ()
-    el "hr" $ pure ()
-
     when False $ do
+      el "hr" $ pure ()
+      el "hr" $ pure ()
+      el "hr" $ pure ()
+      el "hr" $ pure ()
+      el "hr" $ pure ()
+
       el "h2" $ text "Old Stuff"
-
       fast
-
       slow
 
     return ()
