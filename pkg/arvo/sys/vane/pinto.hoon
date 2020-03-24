@@ -48,14 +48,18 @@
   --
 ::  $dais: processed mark core
 ::
+::    TODO: separate +grad core to simplify delegation?
+::
 +$  dais
   $_  ^|
   |_  sam=vase
   ++  bunt  sam
-  ++  diff  |~(new=_sam [form=form diff=*vase])
+  ++  diff  |~(new=_sam *vase)
   ++  form  *mark
-  ++  join  |~([a=vase b=vase] *(unit [form=_form diff=vase]))
-  ++  mash  |~([a=[ship desk diff=vase] b=[ship desk diff=vase]] diff=*vase)
+  ++  join  |~([a=vase b=vase] *(unit (unit vase)))
+  ++  mash
+    |~  [a=[ship desk diff=vase] b=[ship desk diff=vase]]
+    *(unit vase)
   ++  pact  |~(diff=vase sam)
   ++  vale  |~(noun sam)
   ++  volt  |~(noun sam)
@@ -289,6 +293,15 @@
 ::
 ++  vase-to-cage  (bake (with-mark %noun) vase)
 ++  with-mark  |=(=mark |*(* [mark +<]))
+++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
+++  with-faces
+  =|  res=(unit vase)
+  |=  vaz=(list [face=@tas =vase])
+  ^-  vase
+  ?~  vaz  (need res)
+  =/  faz  (with-face i.vaz)
+  =.  res  `?~(res faz (slop faz u.res))
+  $(vaz t.vaz)
 --
 =>
 =-  [at=- .]
@@ -460,19 +473,95 @@
   |=  =mark
   =/  m  (fume ,dais)
   ^-  form:m
-  !!
+  ;<  cor=vase  bind:m  (load-mark mark)
+  ;<  gad=(each ^mark vase)  bind:m  (run-grad cor)
+  ?:  ?=(%& -.gad)
+    ;<  deg=dais  bind:m  (run-mark p.gad)
+    ;<  cas=$-(vase vase)  bind:m  (run-cast mark p.gad)
+    ;<  sac=$-(vase vase)  bind:m  (run-cast p.gad mark)
+    %-  pure:m
+    ^-  dais
+    |_  sam=vase
+    ++  bunt  (slap cor ^~((ream '+<')))
+    ++  diff
+      |=  new=vase
+      ^-  vase
+      (~(diff deg (cas sam)) (cas new))
+    ::
+    ++  form  form:deg
+    ++  join  join:deg
+    ++  mash  mash:deg
+    ++  pact
+      |=  diff=vase
+      ^+  sam
+      (sac (~(pact deg (cas sam)) diff))
+    ::
+    ++  vale
+      |=  =noun
+      ^+  sam
+      (slam (slap cor ^~((ream 'noun:grab'))) !>(noun))
+    ::
+    ++  volt
+      |=  =noun
+      ^+  sam
+      [p:bunt noun]
+    --
+  ;<  fom=^mark  bind:m  (run-form p.gad)
+  %-  pure:m
+  ^-  dais
+  |_  sam=vase
+  ++  bunt  (slap cor ^~((ream '+<')))
+  ++  diff
+    |=  new=vase
+    ^-  vase
+    %+  slap
+      (with-faces cor+cor sam+sam new+new ~)
+    ^~((ream '(diff:~(grad cor sam) new)'))
+  ::
+  ++  form  fom
+  ::
+  ++  join
+    |=  [a=vase b=vase]
+    ^-  (unit (unit vase))
+    ?:  =(q.a q.b)
+      ~
+    =;  res  `?~(q.res ~ `(slap res ^~((ream '?~(. !! u)'))))
+    (slam (slap cor ^~((ream 'join:grad'))) (slop a b))
+  ::
+  ++  mash
+    |=  [a=[=ship =^desk diff=vase] b=[=ship =^desk diff=vase]]
+    ^-  (unit vase)
+    ?:  =(q.diff.a q.diff.b)
+      ~
+    :-  ~
+    %+  slam  (slap cor ^~((ream 'mash:grad')))
+    %+  slop
+      :(slop !>(ship.a) !>(desk.a) diff.a)
+    :(slop !>(ship.b) !>(desk.b) diff.b)
+  ::
+  ++  pact
+    |=  diff=vase
+    ^+  sam
+    %+  slap
+      (with-faces cor+cor sam+sam diff+diff ~)
+    ^~((ream '(pact:~(grad cor sam) diff)'))
+  ::
+  ++  vale
+    |=  =noun
+    ^+  sam
+    (slam (slap cor ^~((ream 'noun:grab'))) !>(noun))
+  ::
+  ++  volt
+    |=  =noun
+    ^+  sam
+    [p:bunt noun]
+  --
+::
 ++  run-cast
   |=  [a=mark b=mark]
   =/  m  (fume ,$-(vase vase))
   ^-  form:m
   !!
-::
-++  run-bunt
-  |=  =mark
-  =/  m  (fume ,cage)
-  ^-  form:m
-  ;<  cor=vase  bind:m  (load-mark mark)
-  (pure:m [mark (slap cor ^~((ream '+<')))])
 ::
 ++  run-cast-old
   |=  [new=mark old=mark arg=vase]
@@ -493,102 +582,6 @@
     %&  =/  pro=vase  (slam p.row arg)
         (pure:m [new pro])
   ==
-::
-::++  run-diff
-::  |=  [uno=cage dos=cage]
-::  =*  loop  $
-::  =/  m  (fume ,cage)
-::  ^-  form:m
-::  ?:  =([p q.q]:uno [p q.q]:dos)
-::    (pure:m [%null !>(~)])
-::  ;<  cor=vase  bind:m  (load-mark p.uno)
-::  ;<  deg=(each mark vase)  bind:m  (run-grad cor)
-::  ?:  ?=(%& -.deg)
-::    loop(start [%cast p.deg $+uno], end [%cast p.deg $+dos])
-::  =/  sut=vase  (slop p.deg q.uno)
-::  =/  gat  (mule |.((slap sut ^~((ream 'diff:~(grad - +)')))))
-::  ?:  ?=(%| -.gat)
-::    (fail:m leaf+"ford: grad-diff {<p.uno>}" p.gat)
-::  ;<  fom=mark  bind:m  (run-form p.deg)
-::  =/  dif=vase  (slam p.gat q.dos)
-::  (pure:m [fom dif])
-::
-++  run-join
-  |=  [=mark uno=cage dos=cage]
-  =*  loop  $
-  =/  m  (fume ,cage)
-  ^-  form:m
-  ;<  cor=vase  bind:m  (load-mark mark)
-  ;<  gad=(each @tas vase)  bind:m  (run-grad cor)
-  ?:  ?=(%& -.gad)
-    loop(mark p.gad)
-  ;<  fom=@tas  bind:m  (run-form p.gad)
-  ?.  &(=(fom p.uno) =(fom p.dos))
-    (fail:m leaf+"ford: join-mark" ~)
-  ?:  =(q.q.uno q.q.dos)
-    (pure:m uno)
-  =/  gat  (mule |.((slap p.gad ^~((ream 'join')))))
-  ?:  ?=(%| -.gat)
-    (fail:m leaf+"ford: join-gate" p.gat)
-  =/  dif=vase  (slam p.gat (slop q.uno q.dos))
-  ?~  q.dif
-    (pure:m [%null dif])
-  (pure:m [fom dif])
-::
-++  run-mash
-  |=  [=mark a=[=^desk =cage] b=[=^desk =cage]]
-  =*  loop  $
-  =/  m  (fume ,cage)
-  ;<  cor=vase  bind:m  (load-mark mark)
-  ;<  gad=(each ^mark vase)  bind:m  (run-grad cor)
-  ?:  ?=(%& -.gad)
-    loop(mark p.gad)
-  ;<  fom=@tas  bind:m  (run-form p.gad)
-  ?.  &(=(fom p.cage.a) =(fom p.cage.b))
-    (fail:m leaf+"ford: mash-mark {<[mark p.cage.a p.cage.a]>}" ~)
-  ?:  =(q.q.cage.a q.q.cage.a)
-    (pure:m null+!>(~))
-  %+  pure:m  fom
-  %+  slam  (slap p.gad ^~((ream 'mash')))
-  %+  slop
-    :(slop !>(our) !>(desk.a) q.cage.a)
-  :(slop !>(our) !>(desk.b) q.cage.a)
-::
-::++  run-pact
-::  |=  [sot=cage fid=cage]
-::  =*  loop  $
-::  =/  m  (fume ,cage)
-::  ^-  form:m
-::  ;<  cor=vase  bind:m  (load-mark p.sot)
-::  ;<  gad=(each mark vase)  bind:m  (run-grad cor)
-::  ?:  ?=(%& -.gad)
-::    (run-plan %cast p.sot %pact [%cast p.gad $+sot] dif)
-::  ;<  fom=mark  bind:m  (run-form p.gad)
-::  ?.  =(fom p.fid)
-::    (fail:m leaf+"ford: pact-mark" ~)
-::  =/  sit=vase  (slop cor q.sot)
-::  =/  gat  (mule |.((slap sit ^~((ream 'pact:~(grad - +)')))))
-::  ?:  ?=(%| -.gat)
-::    (fail:m leaf+"ford: grad-pact {<p.sot>}" p.gat)
-::  =/  pac=vase  (slam p.gat q.fid)
-::  (pure:m [p.sot pac])
-::
-++  run-vale
-  |=  [=mark =noun]
-  =/  m  (fume ,cage)
-  ^-  form:m
-  ;<  cor=vase  bind:m  (load-mark mark)
-  =/  gat=vase  (slap cor ^~((ream 'noun:grab')))
-  =/  sam=vase  !>(noun)
-  =/  pro=vase  (slam gat sam)
-  (pure:m [mark pro])
-::
-++  run-volt
-  |=  [=mark =noun]
-  =/  m  (fume ,cage)
-  ^-  form:m
-  ;<  cag=cage  bind:m  (run-bunt mark)
-  (pure:m cag(q.q noun))
 ::
 ++  run-form
   |=  gad=vase
