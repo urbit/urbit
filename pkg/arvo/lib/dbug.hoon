@@ -40,7 +40,7 @@
     ::
         %state
       =?  grab.dbug  =('' grab.dbug)  '-'
-      =-  [(sell !>(-))]~
+      =-  [(sell -)]~
       %+  slap
         (slop on-save:ag !>([bowl=bowl ..zuse]))
       (ream grab.dbug)
