@@ -72,6 +72,23 @@ export function uxToHex(ux) {
   return value;
 }
 
+function hexToDec(hex) {
+  const alphabet = '0123456789ABCDEF'.split('');
+  return hex.reverse().reduce((acc, digit, idx) => {
+    const dec = alphabet.findIndex(a => a === digit.toUpperCase());
+    if(dec < 0) {
+      console.log(hex);
+      throw new Error("Incorrect hex formatting");
+    }
+    return acc + dec * (16 ** idx);
+  }, 0);
+}
+
+export function hexToRgba(hex, a) {
+  const [r,g,b] = _.chunk(hex, 2).map(hexToDec);
+  return `rgba(${r}, ${g}, ${b}, ${a})`;
+}
+
 export function writeText(str) {
   return new Promise(function (resolve, reject) {
 
