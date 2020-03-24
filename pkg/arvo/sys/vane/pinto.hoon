@@ -557,32 +557,6 @@
     [p:bunt noun]
   --
 ::
-++  run-cast
-  |=  [a=mark b=mark]
-  =/  m  (fume ,$-(vase vase))
-  ^-  form:m
-  !!
-::
-++  run-cast-old
-  |=  [new=mark old=mark arg=vase]
-  =/  m  (fume ,cage)
-  ^-  form:m
-  %+  on-fail:m  |.([leaf+"ford: cast-fail {<old>} -> {<new>}"]~)
-  ;<  cor=vase  bind:m  (load-mark new)
-  =/  rab  (mule |.((slap cor (ream (cat 3 'grab:' old)))))
-  ?:  ?=(%& -.rab)
-    %+  on-fail:m  |.([leaf+"ford: grab-fail {<old>} -> {<new>}"]~)
-    =/  pro=vase  (slam p.rab arg)
-    (pure:m [new pro])
-  %+  on-fail:m  |.([leaf+"ford: grow-fail {<old>} -> {<new>}"]~)
-  ;<  roc=vase  bind:m  (load-mark old)
-  =/  row  (mule |.((slap roc (ream (cat 3 'grow:' new)))))
-  ?-  -.row
-    %|  (fail:m p.row)
-    %&  =/  pro=vase  (slam p.row arg)
-        (pure:m [new pro])
-  ==
-::
 ++  run-form
   |=  gad=vase
   =/  m  (fume ,mark)
@@ -604,6 +578,27 @@
   ?~  deg=((sand %tas) q.p.gad)
     (fail:m leaf+"ford: grad-type" ~)
   (pure:m &+u.deg)
+::
+++  run-cast
+  |=  [a=mark b=mark]
+  =/  m  (fume ,$-(vase vase))
+  ^-  form:m
+  ;<  new=vase  bind:m  (load-mark b)
+  =/  rab  (mule |.((slap new (ream (cat 3 'grab:' a)))))
+  ?:  ?=(%& -.rab)
+    %-  pure:m
+    |=  sam=vase
+    ^-  vase
+    (slam p.rab sam)
+  ;<  old=vase  bind:m  (load-mark a)
+  ?.  (slob b (~(play ut p.old) ^~((ream 'grow'))))
+    (fail:m leaf+"ford: no-cast {<a>} -> {<b>}" ~)
+  %-  pure:m
+  |=  sam=vase
+  ^-  vase
+  %+  slap
+    (with-faces old+old sam+sam ~)
+  (ream (cat 3 b ':~(grow old sam)'))
 ::
 ++  load-mark
   |=  =mark
