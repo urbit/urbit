@@ -33,6 +33,7 @@ export class Note extends Component {
     });
     this.scrollElement = React.createRef();
     this.onScroll = this.onScroll.bind(this);
+    this.deletePost = this.deletePost.bind(this);
   }
 
   componentWillMount() {
@@ -45,6 +46,16 @@ export class Note extends Component {
     }
     window.api.action("publish", "publish-action", readAction);
     window.api.fetchNote(this.props.ship, this.props.book, this.props.note);
+  }
+
+  componentDidMount() {
+    if (!(this.props.notebooks[this.props.ship]) ||
+      !(this.props.notebooks[this.props.ship][this.props.book]) ||
+      !(this.props.notebooks[this.props.ship][this.props.book].notes[this.props.note]) ||
+      !(this.props.notebooks[this.props.ship][this.props.book].notes[this.props.note].file)) {
+      window.api.fetchNote(this.props.ship, this.props.book, this.props.note);
+    }
+    this.onScroll();
   }
 
   componentDidUpdate(prevProps) {
@@ -97,15 +108,23 @@ export class Note extends Component {
     }
   }
 
-  componentDidMount() {
-    if (!(this.props.notebooks[this.props.ship]) ||
-        !(this.props.notebooks[this.props.ship][this.props.book]) ||
-        !(this.props.notebooks[this.props.ship][this.props.book].notes[this.props.note]) ||
-        !(this.props.notebooks[this.props.ship][this.props.book].notes[this.props.note].file))
-    {
-      window.api.fetchNote(this.props.ship, this.props.book, this.props.note);
+  deletePost() {
+    const { props } = this;
+    let deleteAction = {
+      "del-note": {
+        who: this.props.ship.slice(1),
+        book: this.props.book,
+        note: this.props.note,
+      }
     }
-    this.onScroll();
+    let popout = (props.popout) ? "popout/" : "";
+    let baseUrl = `/~publish/${popout}notebook/${props.ship}/${props.book}`;
+    window.api.setSpinner(true);
+    window.api.action("publish", "publish-action", deleteAction)
+    .then(() => {
+      window.api.setSpinner(false);
+      props.history.push(baseUrl);
+    });
   }
 
   render() {
@@ -156,8 +175,11 @@ export class Note extends Component {
     let editPost = null;
     let editUrl = props.location.pathname + "/edit";
     if (`~${window.ship}` === author) {
-        editPost =
+        editPost = <div className="dib">
         <Link className="green2 f9" to={editUrl}>Edit</Link>
+        <p className="dib f9 red2 ml2 pointer"
+          onClick={(() => this.deletePost())}>Delete</p>
+        </div>
     }
 
     let popout = (props.popout) ? "popout/" : "";
