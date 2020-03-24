@@ -1,3 +1,4 @@
+::  Print the output of a ph command
 /-  ph
 :-  %say
 |=  [* ~ ~]

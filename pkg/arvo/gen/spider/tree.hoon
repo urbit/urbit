@@ -1,3 +1,4 @@
+::  List running threads
 /-  spider
 :-  %say
 |=  [[now=@da *] ~ *]

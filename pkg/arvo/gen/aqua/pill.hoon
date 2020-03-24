@@ -1,3 +1,4 @@
+::  Produce a pill using aqua
 /+  pill
 ::
 :-  %say

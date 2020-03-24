@@ -1,3 +1,4 @@
+::  Cancel a ph command
 /-  ph
 :-  %say
 |=  [* ~ ~]

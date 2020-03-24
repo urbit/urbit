@@ -1,3 +1,4 @@
+::  Run a ph command
 /-  ph
 :-  %say
 |=  [* [lab=term ~] ~]

@@ -1,3 +1,4 @@
+::  Initialize ph
 /-  ph
 :-  %say
 |=  [* ~ ~]
