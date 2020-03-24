@@ -7,7 +7,14 @@ export class Welcome extends Component {
     this.state = {
       show: true
     }
+    this.disableWelcome = this.disableWelcome.bind(this);
   }
+
+  disableWelcome() {
+    this.setState({ show: false });
+    localStorage.setItem("urbit-publish:wasWelcomed", JSON.stringify(true));
+  }
+
   render() {
     let wasWelcomed = localStorage.getItem("urbit-publish:wasWelcomed");
     if (wasWelcomed === null) {
@@ -21,12 +28,9 @@ export class Welcome extends Component {
 
     return ((!wasWelcomed && this.state.show) && (notebooks.length !== 0)) ? (
       <div className="ma4 pa2 ba bg-gray5 b--gray4 bg-gray0-d b--gray2-d white-d">
-        <p className="f9 lh-copy">Notebooks are best used for longer-form writing and text editing. Notes accept Markdown for formatting.</p>
+        <p className="f9 lh-copy">Notebooks are for longer-form writing and discussion. Each Notebook is a collection of Markdown-formatted notes with optional comments.</p>
         <p className="f9 pt2 dib fw6 pointer"
-          onClick={(() => {
-            localStorage.setItem("urbit-publish:wasWelcomed", JSON.stringify(true));
-            this.setState({ show: false })
-          })}>
+          onClick={(() => this.disableWelcome())}>
           Close this message
       </p>
       </div>

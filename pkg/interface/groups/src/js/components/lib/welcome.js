@@ -7,7 +7,14 @@ export class Welcome extends Component {
     this.state = {
       show: true
     }
+    this.disableWelcome = this.disableWelcome.bind(this);
   }
+
+  disableWelcome() {
+    this.setState({ show: false });
+    localStorage.setItem("urbit-groups:wasWelcomed", JSON.stringify(true));
+  }
+
   render() {
     let wasWelcomed = localStorage.getItem("urbit-groups:wasWelcomed");
     if (wasWelcomed === null) {
@@ -21,12 +28,9 @@ export class Welcome extends Component {
 
     return ((!wasWelcomed && this.state.show) && (contacts.length !== 0)) ? (
       <div className="ma4 pa2 ba bg-gray5 b--gray4 bg-gray0-d b--gray2-d white-d">
-        <p className="f9 lh-copy">Groups are private spaces you inhabit with other ships. Modules can be shared with members of a group.</p>
+        <p className="f9 lh-copy">Each Group is a list of other Urbit IDs that share some set of modules: chats, links and notebooks.</p>
         <p className="f9 pt2 dib fw6 pointer"
-          onClick={(() => {
-            localStorage.setItem("urbit-groups:wasWelcomed", JSON.stringify(true));
-            this.setState({ show: false })
-          })}>
+          onClick={(() => this.disableWelcome())}>
           Close this message
       </p>
       </div>

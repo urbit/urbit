@@ -7,7 +7,14 @@ export class Welcome extends Component {
     this.state = {
       show: true
     }
+    this.disableWelcome = this.disableWelcome.bind(this);
   }
+
+  disableWelcome() {
+    this.setState({ show: false });
+    localStorage.setItem("urbit-link:wasWelcomed", JSON.stringify(true));
+  }
+
   render() {
     let wasWelcomed = localStorage.getItem("urbit-link:wasWelcomed");
     if (wasWelcomed === null) {
@@ -21,12 +28,9 @@ export class Welcome extends Component {
 
     return ((!wasWelcomed && this.state.show) && (associations.length !== 0)) ? (
       <div className="ma4 pa2 ba bg-gray5 b--gray4 bg-gray0-d b--gray1-d white-d">
-        <p className="f9 lh-copy">For now, collections only hold links. In the future, they'll be able to organize and display rich varieties of content.</p>
+        <p className="f9 lh-copy">Links are for collecting and discussing outside content. Each post is a URL and a comment thread.</p>
         <p className="f9 pt2 dib fw6 pointer"
-          onClick={(() => {
-            localStorage.setItem("urbit-link:wasWelcomed", JSON.stringify(true));
-            this.setState({ show: false })
-          })}>
+          onClick={(() => this.disableWelcome())}>
           Close this message
       </p>
       </div>

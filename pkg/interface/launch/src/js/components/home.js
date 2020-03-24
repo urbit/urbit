@@ -41,8 +41,8 @@ export default class Home extends Component {
         <div className={"v-mid pa2 dtc-m dtc-l dtc-xl " +
         "flex justify-between flex-wrap"}
         style={{maxWidth: "40rem"}}>
+          <Welcome />
           {tileElems}
-          <Welcome/>
         </div>
       </div>
     );
