@@ -39,6 +39,8 @@ export class Input extends Component {
   else if ((e.key === "Backspace") && (this.props.cursor > 0)) {
     store.doEdit({ del: this.props.cursor - 1});
     return store.setState({ cursor: this.props.cursor - 1});
+  } else if (e.key === "Backspace") {
+    return;
   }
 
   else if (e.key.startsWith("Arrow")) {
