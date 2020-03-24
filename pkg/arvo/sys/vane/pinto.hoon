@@ -18,7 +18,7 @@
   ::      fiz: hoon files to build
   ::      maz: marks to build into $dais's
   ::      caz: mark conversion gates to construct
-  ::    %drop: cancel build
+  ::    %kill: cancel build
   ::
   +$  task
     $%  $:  %make
@@ -28,7 +28,7 @@
             maz=(set mark)
             caz=(set [a=mark b=mark])
         ==
-        [%drop ~]
+        [%kill ~]
     ==
   ::  $gift: response from ford
   ::
@@ -214,13 +214,6 @@
       %done  ((fun value.o.b-res) [in.fin s.b-res])
     ==
   ::
-  ++  fmap
-    |*  b=mold
-    |=  [fun=$-(b a) m-b=(fume-form-raw b)]
-    ^-  form
-    ;<  res=b  bind  m-b
-    (pure (fun res))
-  ::
   +$  eval-res  [out=eval-output state=eval-state]
   ::
   +$  eval-state
@@ -283,16 +276,6 @@
       (scry ** ~ term beam)
     --
   --
-::
-++  lift-vase
-  =/  mc  (fume ,cage)
-  =/  mv  (fume ,vase)
-  |=  run=form:mv
-  ^-  form:mc
-  ((fmap:mc ,vase) vase-to-cage run)
-::
-++  vase-to-cage  (bake (with-mark %noun) vase)
-++  with-mark  |=(=mark |*(* [mark +<]))
 ++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
 ++  with-faces
   =|  res=(unit vase)
@@ -307,7 +290,7 @@
 =-  [at=- .]
 |=  [our=ship =desk scry=sley]
 =>
-::  %make execution routines
+::  file execution routines
 ::
 |%
 ++  run-file
@@ -466,7 +449,7 @@
       %2  (fail:m leaf+"ford: slap-fail" p.nap)
   ==
 --
-::  %mark execution routines
+::  mark execution routines
 ::
 |%
 ++  run-mark
@@ -613,6 +596,17 @@
 |=  [our=ship now=@da eny=@ scry-gate=sley]
 =*  ford-gate  .
 |%
++*  finalize
+  |=  build-core=per-build
+  ^-  [(list move) _ford-gate]
+  =^  remove  build-core  finalize:build-core 
+  =.  cache.state.ax  cache.build-core
+  =.  builds.state.ax
+    ?:  remove
+      (~(del by builds.state.ax) duct)
+    (~(put by builds.state.ax) duct build-state:build-core) 
+  [fex.build-core ford-gate]
+::
 ++  call
   |=  [=duct type=* wrapped-task=(hobo task:able)]
   ^-  [(list move) _ford-gate]
@@ -640,17 +634,9 @@
         |=  [[a=mark b=mark] acc=(map [mark mark] (unit [spar form:m]))]
         (~(put by acc) [a b] ~)
       [[live desk.task case] sky=~ [[fiz fuz=~] [maz muz=~] [caz cuz=~]]]
-    =.  builds.state.ax  (~(put by builds.state.ax) duct build-state)
-    =/  build-core  (per-build scry-gate cache.state.ax duct build-state)
-    =^  remove  build-core  make:build-core 
-    =.  cache.state.ax  cache.build-core
-    =.  builds.state.ax
-      ?:  remove
-        (~(del by builds.state.ax) duct)
-      (~(put by builds.state.ax) duct build-state:build-core) 
-    [fex.build-core ford-gate]
+    (finalize make:(per-build scry-gate cache.state.ax duct build-state))
   ::
-      %drop
+      %kill
     =.  builds.state.ax  (~(del by builds.state.ax) duct)
     [~ ford-gate]
   ==
@@ -667,39 +653,32 @@
     =/  fil=(unit cage)  ?~(p.sign ~ `r.u.p.sign)
     =/  =build-state  (~(got by builds.state.ax) duct)
     =/  build-core  (per-build scry-gate cache.state.ax duct build-state)
-    =.  build-core
-      ?-    -.line
-          %fiz
-        =/  m  (fume ,vase)
-        =/  [=spar on-load=form:m]
-          (need (~(got by fiz.build-state) path.line))
-        =.  sky.build-state  (~(put by sky.build-state) spar fil)
-        =/  =eval-state:m  [`[spar on-load] sky.build-state]
-        (make-file:build-core path.line eval-state `fil)
-      ::
-          %maz
-        =/  m  (fume ,dais)
-        =/  [=spar on-load=form:m]
-          (need (~(got by maz.build-state) mark.line))
-        =.  sky.build-state  (~(put by sky.build-state) spar fil)
-        =/  =eval-state:m  [`[spar on-load] sky.build-state]
-        (make-mark:build-core mark.line eval-state `fil)
-      ::
-          %caz
-        =/  m  (fume ,$-(vase vase))
-        =/  [=spar on-load=form:m]
-          (need (~(got by caz.build-state) [a b]:line))
-        =.  sky.build-state  (~(put by sky.build-state) spar fil)
-        =/  =eval-state:m  [`[spar on-load] sky.build-state]
-        (make-cast:build-core [a b]:line eval-state `fil)
-      ==
-    =^  remove  build-core  finalize:build-core
-    =.  cache.state.ax  cache.build-core
-    =.  builds.state.ax
-      ?:  remove
-        (~(del by builds.state.ax) duct)
-      (~(put by builds.state.ax) duct build-state:build-core) 
-    [fex.build-core ford-gate]
+    %-  finalize
+    ?-    -.line
+        %fiz
+      =/  m  (fume ,vase)
+      =/  [=spar on-load=form:m]
+        (need (~(got by fiz.build-state) path.line))
+      =.  sky.build-state  (~(put by sky.build-state) spar fil)
+      =/  =eval-state:m  [`[spar on-load] sky.build-state]
+      (make-file:build-core path.line eval-state `fil)
+    ::
+        %maz
+      =/  m  (fume ,dais)
+      =/  [=spar on-load=form:m]
+        (need (~(got by maz.build-state) mark.line))
+      =.  sky.build-state  (~(put by sky.build-state) spar fil)
+      =/  =eval-state:m  [`[spar on-load] sky.build-state]
+      (make-mark:build-core mark.line eval-state `fil)
+    ::
+        %caz
+      =/  m  (fume ,$-(vase vase))
+      =/  [=spar on-load=form:m]
+        (need (~(got by caz.build-state) [a b]:line))
+      =.  sky.build-state  (~(put by sky.build-state) spar fil)
+      =/  =eval-state:m  [`[spar on-load] sky.build-state]
+      (make-cast:build-core [a b]:line eval-state `fil)
+    ==
   ::
       %live
     ?>  ?=([@tas %wris *] sign)
@@ -715,14 +694,7 @@
         caz  (~(run by caz.build-state) |=(* ~))
         cuz  ~
       ==
-    =/  build-core  (per-build scry-gate cache.state.ax duct build-state)
-    =^  remove  build-core  make:build-core
-    =.  cache.state.ax  cache.build-core
-    =.  builds.state.ax
-      ?:  remove
-        (~(del by builds.state.ax) duct)
-      (~(put by builds.state.ax) duct build-state:build-core)
-    [fex.build-core ford-gate]
+    (finalize make:(per-build scry-gate cache.state.ax duct build-state))
   ==
 ++  load
   |=  old=axle
@@ -741,7 +713,7 @@
   |%
   ++  build-core  .
   ++  build-state  |3.+<.$
-  ++  make  =~(make-files make-marks make-casts finalize)
+  ++  make  =~(make-files make-marks make-casts)
   ::
   ++  finalize
     ^+  [remove=*? build-core]
