@@ -183,15 +183,15 @@ export class Notebook extends Component {
         ref={el => {
           this.scrollElement = el;
         }}>
+        <div className="w-100 dn-m dn-l dn-xl inter pt4 pb6 f9">
+          <Link to="/~publish">{"<- All Notebooks"}</Link>
+        </div>
         <div className="center mw6 f9 h-100"
           style={{ paddingLeft: 16, paddingRight: 16 }}>
           <SidebarSwitcher
             popout={props.popout}
             sidebarShown={props.sidebarShown}
           />
-          <div className="w-100 dn-m dn-l dn-xl inter pt4 pb6 f9">
-            <Link to="/~publish">{"<- All Notebooks"}</Link>
-          </div>
           <Link
           className={"dn absolute right-1 top-1 " + hiddenOnPopout}
           to={popoutHref}
