@@ -569,6 +569,18 @@
   ++  loop
     =/  m  (fume ,[sin=_sin cas=$-(vase vase)])
     ^-  form:m
+    ;<  old=vase  bind:m  (load-mark a)
+    =/  row  (mule |.((slap old (ream (cat 3 b ':grow')))))
+    ?:  ?=(%& -.row)
+      ?@  q.p.row
+        (compose-casts a !<(mark p.row) b)
+      ;<  san=_sin  bind:m  (check-for-cycle a b)
+      %+  pure:m  san
+      |=  sam=vase
+      ^-  vase
+      %+  slap
+        (with-faces old+old sam+sam ~)
+      (ream (cat 3 b ':~(grow old sam)'))
     ;<  new=vase  bind:m  (load-mark b)
     =/  rab  (mule |.((slap new (ream (cat 3 a ':grab')))))
     ?:  ?=(%& -.rab)
@@ -579,19 +591,10 @@
       |=  sam=vase
       ^-  vase
       (slam p.rab sam)
-    ;<  old=vase  bind:m  (load-mark a)
-    =/  row  (mule |.((slap old (ream (cat 3 b ':grow')))))
-    ?:  ?=(%| -.row)
-      (fail:m leaf+"ford: no +grab or +grow {<a>} -> {<b>}" ~)
-    ?@  q.p.row
-      (compose-casts a !<(mark p.row) b)
-    ;<  san=_sin  bind:m  (check-for-cycle a b)
-    %+  pure:m  san
-    |=  sam=vase
-    ^-  vase
-    %+  slap
-      (with-faces old+old sam+sam ~)
-    (ream (cat 3 b ':~(grow old sam)'))
+    =/  jum  (mule |.((slap old (ream (cat 3 b ':jump')))))
+    ?:  ?=(%& -.jum)
+      (compose-casts a !<(mark p.jum) b)
+    (fail:m leaf+"ford: no cast from {<a>} to {<b>}" ~)
   ::
   ++  check-for-cycle
     |=  [x=mark y=mark]
