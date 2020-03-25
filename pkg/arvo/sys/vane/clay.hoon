@@ -2919,6 +2919,7 @@
     |=  [=tako =rang =ankh mim=(map path (unit mime))]
     |^
     ^+  ..park
+    =.  ..park  print
     =:  ank.dom  ankh
         let.dom  +(let.dom)
         hit.dom  (~(put by hit.dom) +(let.dom) tako)
@@ -2939,6 +2940,31 @@
           |=  pax=path
           [(slag len pax) (~(got by mim) pax)]
       ==
+    ::
+    ++  print
+      ^+  ..park
+      ~&  >  %print
+      ?~  hun
+        ..park
+      %-  emil
+      %+  turn  ~(tap by mim)
+      |=  [=path change=(unit mime)]
+      =/  car=@tD
+        ?~  change
+          '-'
+        ?:  (~(has by mim.dom) path)
+          ':'
+        '+'
+      =/  =tank
+        =/  pre=^path  ~[(scot %p our) syd (scot %ud +(let.dom))]
+        :+  %rose  ["/" "/" ~]
+        %+  turn  (weld pre path)
+        |=  a=cord
+        ^-  tank
+        ?:  ((sane %ta) a)
+          [%leaf (trip a)]
+        [%leaf (dash:us (trip a) '\'' ~)]
+      [u.hun %give %note car tank]
     --
   ::
   ::  Set permissions for a node.
