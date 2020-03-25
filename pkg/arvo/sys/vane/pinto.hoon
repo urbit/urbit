@@ -596,8 +596,8 @@
 |=  [our=ship now=@da eny=@ scry-gate=sley]
 =*  ford-gate  .
 |%
-+*  finalize
-  |=  build-core=per-build
+++  finalize
+  |=  [=duct build-core=per-build]
   ^-  [(list move) _ford-gate]
   =^  remove  build-core  finalize:build-core 
   =.  cache.state.ax  cache.build-core
@@ -634,7 +634,7 @@
         |=  [[a=mark b=mark] acc=(map [mark mark] (unit [spar form:m]))]
         (~(put by acc) [a b] ~)
       [[live desk.task case] sky=~ [[fiz fuz=~] [maz muz=~] [caz cuz=~]]]
-    (finalize make:(per-build scry-gate cache.state.ax duct build-state))
+    (finalize duct make:(per-build scry-gate cache.state.ax duct build-state))
   ::
       %kill
     =.  builds.state.ax  (~(del by builds.state.ax) duct)
@@ -653,7 +653,7 @@
     =/  fil=(unit cage)  ?~(p.sign ~ `r.u.p.sign)
     =/  =build-state  (~(got by builds.state.ax) duct)
     =/  build-core  (per-build scry-gate cache.state.ax duct build-state)
-    %-  finalize
+    %+  finalize  duct
     ?-    -.line
         %fiz
       =/  m  (fume ,vase)
@@ -694,7 +694,7 @@
         caz  (~(run by caz.build-state) |=(* ~))
         cuz  ~
       ==
-    (finalize make:(per-build scry-gate cache.state.ax duct build-state))
+    (finalize duct make:(per-build scry-gate cache.state.ax duct build-state))
   ==
 ++  load
   |=  old=axle
