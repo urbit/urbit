@@ -560,24 +560,56 @@
 ::
 ++  run-cast
   |=  [a=mark b=mark]
-  =/  m  (fume ,$-(vase vase))
-  ^-  form:m
-  ;<  new=vase  bind:m  (load-mark b)
-  =/  rab  (mule |.((slap new (ream (cat 3 'grab:' a)))))
-  ?:  ?=(%& -.rab)
-    %-  pure:m
+  =|  sin=(set [mark mark])
+  |^  =/  m  (fume ,$-(vase vase))
+      ^-  form:m
+      ;<  [sin=_sin cas=$-(vase vase)]  bind:m  loop
+      (pure:m cas)
+  ::
+  ++  loop
+    =/  m  (fume ,[sin=_sin cas=$-(vase vase)])
+    ^-  form:m
+    ;<  new=vase  bind:m  (load-mark b)
+    =/  rab  (mule |.((slap new (ream (cat 3 a ':grab')))))
+    ?:  ?=(%& -.rab)
+      ?@  q.p.rab
+        (compose-casts a !<(mark p.rab) b)
+      ;<  san=_sin  bind:m  (check-for-cycle a b)
+      %+  pure:m  san
+      |=  sam=vase
+      ^-  vase
+      (slam p.rab sam)
+    ;<  old=vase  bind:m  (load-mark a)
+    =/  row  (mule |.((slap old (ream (cat 3 b ':grow')))))
+    ?:  ?=(%| -.row)
+      (fail:m leaf+"ford: no +grab or +grow {<a>} -> {<b>}" ~)
+    ?@  q.p.row
+      (compose-casts a !<(mark p.row) b)
+    ;<  san=_sin  bind:m  (check-for-cycle a b)
+    %+  pure:m  san
     |=  sam=vase
     ^-  vase
-    (slam p.rab sam)
-  ;<  old=vase  bind:m  (load-mark a)
-  ?.  (slob b (~(play ut p.old) ^~((ream 'grow'))))
-    (fail:m leaf+"ford: no-cast {<a>} -> {<b>}" ~)
-  %-  pure:m
-  |=  sam=vase
-  ^-  vase
-  %+  slap
-    (with-faces old+old sam+sam ~)
-  (ream (cat 3 b ':~(grow old sam)'))
+    %+  slap
+      (with-faces old+old sam+sam ~)
+    (ream (cat 3 b ':~(grow old sam)'))
+  ::
+  ++  check-for-cycle
+    |=  [x=mark y=mark]
+    =/  m  (fume ,_sin)
+    ?:  (~(has in sin) [x y])
+      (fail:m leaf+"ford: mark cycle including {<x>}" ~)
+    (pure:m (~(put in sin) [x y]))
+  ::
+  ++  compose-casts
+    |=  [x=mark y=mark z=mark]
+    =/  m  (fume ,[sin=_sin cas=$-(vase vase)])
+    ^-  form:m
+    ;<  uno=[sin=_sin cas=$-(vase vase)]  bind:m  loop(a x, b y)
+    =.  sin  sin.uno
+    ;<  dos=[sin=_sin cas=$-(vase vase)]  bind:m  loop(a y, b z)
+    =.  sin  sin.dos
+    (pure:m sin |=(sam=vase (cas.dos (cas.uno sam))))
+  --
 ::
 ++  load-mark
   |=  =mark
