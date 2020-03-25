@@ -33,6 +33,7 @@ export class ChatScreen extends Component {
  
   componentDidMount() {
     this.updateReadNumber();
+    this.askForMessages();
   }
  
   componentWillUnmount() {
@@ -50,6 +51,10 @@ export class ChatScreen extends Component {
       prevProps.match.params.ship !== props.match.params.ship
     ) {
       this.hasAskedForMessages = false;
+      
+      if (props.envelopes.length < 100) {
+        this.askForMessages();
+      }
  
       clearInterval(this.updateReadInterval);
  
@@ -84,26 +89,32 @@ export class ChatScreen extends Component {
   askForMessages() {
     const { props, state } = this;
 
+    if (props.envelopes.length === 0) {
+      setTimeout(() => {
+        this.askForMessages();
+      }, 500);
+      return;
+    }
+
     if (
       state.numPages * 100 > props.length - 400 ||
-      this.hasAskedForMessages
+      this.hasAskedForMessages ||
+      props.length <= 0
     ) {
       return;
     }
 
-    if (props.length > 0) {
-      let end = props.envelopes[0].number;
-      if (end > 0) {
-        let start = end - 400 > 0 ? end - 400 : 0;
- 
-        if (start === 0 && end === 1) {
-          return;
-        }
- 
-        this.hasAskedForMessages = true;
- 
-        props.subscription.fetchMessages(start, end - 1, props.station);
+    let end = props.envelopes[0].number;
+    if (end > 0) {
+      let start = end - 400 > 0 ? end - 400 : 0;
+
+      if (start === 0 && end === 1) {
+        return;
       }
+
+      this.hasAskedForMessages = true;
+
+      props.subscription.fetchMessages(start, end - 1, props.station);
     }
   }
  
