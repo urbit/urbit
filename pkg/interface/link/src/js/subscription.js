@@ -36,6 +36,13 @@ export class Subscription {
       this.handleQuitAndResubscribe.bind(this)
     );
 
+    // open a subscription for what collections we're listening to
+    api.bind('/listening', 'PUT', api.authTokens.ship, 'link-listen-hook',
+      this.handleEvent.bind(this),
+      this.handleError.bind(this),
+      this.handleQuitAndResubscribe.bind(this)
+    );
+
     // open a subscription for all submissions
     api.getPage('', 0);
 
