@@ -244,37 +244,33 @@
       [[cache %load u.nex.state] fil]
     ::  loop until %done, %fail, or blocking resource request
     ::
-    |^  ^+  [[*eval-output state] cache]
-        =.  cache  s.pro
-        ?-    -.o.pro
-            %done  [[[%done value.o.pro] state] cache]
-            %fail  [[[%fail tang.o.pro] state] cache]
-            %load
-          ::  run .on-load on clay response if we have one
-          ::
-          ?^  fil
-            =.  sky.state  (~(put by sky.state) spar.o.pro u.fil)
-            $(pro (on-load.o.pro fil cache), fil ~)
-          ::  run .on-load on previously loaded resource if we have one
-          ::
-          ?^  got=(~(get by sky.state) spar.o.pro)
-            $(pro (on-load.o.pro got cache))
-          ::  run .on-load on synchronous scry result
-          ::
-          ?^  res=(scry-for-spar spar.o.pro)
-            =.  sky.state  (~(put by sky.state) spar.o.pro u.res)
-            $(pro (on-load.o.pro res cache))
-          ::  block on asynchronous clay request, storing .on-load
-          ::
-          [[[%load spar.o.pro] state(nex `[spar on-load]:o.pro)] cache]
-        ==
-    ++  scry-for-spar
-      |=  =spar
-      ^-  (unit (unit cage))
-      =/  =term  (cat 3 %c care.spar)
-      =/  =beam  [[our desk case] (flop path.spar)]
-      (scry ** ~ term beam)
-    --
+    |-  ^+  [[*eval-output state] cache]
+    =.  cache  s.pro
+    ?-    -.o.pro
+        %done  [[[%done value.o.pro] state] cache]
+        %fail  [[[%fail tang.o.pro] state] cache]
+        %load
+      =/  spa=spar  spar.o.pro
+      ::  run .on-load on clay response if we have one
+      ::
+      ?^  fil
+        =.  sky.state  (~(put by sky.state) spa u.fil)
+        $(pro (on-load.o.pro fil cache), fil ~)
+      ::  run .on-load on previously loaded resource if we have one
+      ::
+      ?^  got=(~(get by sky.state) spa)
+        $(pro (on-load.o.pro got cache))
+      ::  run .on-load on scry result if scry completes synchronously
+      ::
+      =/  tem=term  (cat 3 %c care.spa)
+      =/  bem=beam  [[our desk case] (flop path.spa)]
+      ?^  res=(scry ** ~ tem bem)
+        =.  sky.state  (~(put by sky.state) spa u.res)
+        $(pro (on-load.o.pro res cache))
+      ::  block on asynchronous clay request, storing .on-load
+      ::
+      [[[%load spa] state(nex `[spa on-load.o.pro])] cache]
+    ==
   --
 ++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
 ++  with-faces
