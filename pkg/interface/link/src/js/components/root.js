@@ -54,7 +54,8 @@ export class Root extends Component {
                 groups={groups}
                 rightPanelHide={true}
                 sidebarShown={state.sidebarShown}
-                links={links}>
+                links={links}
+                listening={state.listening}>
                 <div className="h-100 w-100 overflow-x-hidden bg-white bg-gray0-d dn db-ns">
                 <div className="pl3 pr3 pt2 dt pb3 w-100 h-100">
                       <p className="f8 pt3 gray2 w-100 h-100 dtc v-mid tc">
@@ -75,7 +76,8 @@ export class Root extends Component {
                 groups={groups}
                 rightPanelHide={true}
                 sidebarShown={state.sidebarShown}
-                links={links}>
+                links={links}
+                listening={state.listening}>
                 <NewScreen
                   associations={associations}
                   groups={groups}
@@ -89,6 +91,7 @@ export class Root extends Component {
         <Route exact path="/~link/join/:resource"
           render={ (props) => {
             const resourcePath = '/' + props.match.params.resource;
+            api.joinCollection(resourcePath);
             props.history.push(makeRoutePath(resourcePath));
           }}
         />
@@ -111,7 +114,8 @@ export class Root extends Component {
                 selected={resourcePath}
                 rightPanelHide={true}
                 sidebarShown={state.sidebarShown}
-                links={links}>
+                links={links}
+                listening={state.listening}>
                 <MemberScreen
                   sidebarShown={state.sidebarShown}
                   resource={resource}
@@ -148,7 +152,8 @@ export class Root extends Component {
                 rightPanelHide={true}
                 sidebarShown={state.sidebarShown}
                 popout={popout}
-                links={links}>
+                links={links}
+                listening={state.listening}>
                 <SettingsScreen
                   sidebarShown={state.sidebarShown}
                   resource={resource}
@@ -200,7 +205,8 @@ export class Root extends Component {
                   sidebarShown={state.sidebarShown}
                   sidebarHideMobile={true}
                   popout={popout}
-                  links={links}>
+                  links={links}
+                  listening={state.listening}>
                   <Links
                   {...props}
                   contacts={contactDetails}
@@ -254,7 +260,8 @@ export class Root extends Component {
                   sidebarShown={state.sidebarShown}
                   sidebarHideMobile={true}
                   popout={popout}
-                  links={links}>
+                  links={links}
+                  listening={state.listening}>
                   <LinkDetail
                   {...props}
                   resource={resource}

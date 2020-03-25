@@ -21,8 +21,9 @@ export class ChannelsSidebar extends Component {
       });
 
     const channelItems =
-      Object.keys(props.associations).map((path) => {
+      [...props.listening].map((path) => {
         const meta = props.associations[path];
+        if (!meta) return null;
         const selected = (props.selected === path);
         const linkCount = !!props.links[path] ? props.links[path].totalItems : 0;
         const unseenCount = !!props.links[path]
