@@ -8,7 +8,8 @@ export class LinkSubmit extends Component {
       linkValue: "",
       linkTitle: "",
       linkValid: false,
-      submitFocus: false
+      submitFocus: false,
+      disabled: false
     };
     this.setLinkValue = this.setLinkValue.bind(this);
     this.setLinkTitle = this.setLinkTitle.bind(this);
@@ -20,9 +21,15 @@ export class LinkSubmit extends Component {
       ? this.state.linkTitle
       : this.state.linkValue;
       api.setSpinner(true);
+      this.setState({disabled: true})
     api.postLink(this.props.resourcePath, link, title).then(r => {
       api.setSpinner(false);
-      this.setState({ linkValue: "", linkTitle: "" });
+      this.setState({
+        disabled: false,
+        linkValue: "",
+        linkTitle: "",
+        linkValid: false
+      });
     });
   }
 
@@ -56,7 +63,8 @@ export class LinkSubmit extends Component {
   }
 
   render() {
-    let activeClasses = this.state.linkValid ? "green2 pointer" : "gray2";
+    let activeClasses = (this.state.linkValid && !this.state.disabled)
+      ? "green2 pointer" : "gray2";
 
     let focus = (this.state.submitFocus)
       ? "b--black b--white-d"
@@ -110,7 +118,7 @@ export class LinkSubmit extends Component {
           className={
             "absolute bg-gray0-d f8 ml2 flex-shrink-0 " + activeClasses
           }
-          disabled={!this.state.linkValid}
+          disabled={!this.state.linkValid || this.state.disabled}
           onClick={this.onClickPost.bind(this)}
           style={{
             bottom: 12,
