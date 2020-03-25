@@ -69,7 +69,6 @@ export class Subscription {
     fetch(`/~chat/paginate/${start}/${end}${path}`)
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
         store.handleEvent({
           data: json
         });
