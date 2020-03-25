@@ -5,7 +5,7 @@ import classnames from 'classnames';
 
 import Header from '/components/header';
 import Tile from '/components/tile';
-
+import Welcome from '/components/welcome';
 
 export default class Home extends Component {
 
@@ -41,6 +41,7 @@ export default class Home extends Component {
         <div className={"v-mid pa2 dtc-m dtc-l dtc-xl " +
         "flex justify-between flex-wrap"}
         style={{maxWidth: "40rem"}}>
+          <Welcome />
           {tileElems}
         </div>
       </div>

@@ -1,4 +1,4 @@
-|=  scripts=marl
+|=  [startup=json scripts=marl]
 ;html
   ;head
     ;title: Home
@@ -15,5 +15,6 @@
     ;script@"/~modulo/session.js";
     ;*  scripts
     ;script@"/~launch/js/index.js";
+    ;script: window.startupMessage = {(en-json:html startup)}
   ==
 ==

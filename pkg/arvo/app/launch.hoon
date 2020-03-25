@@ -2,7 +2,7 @@
 /+  *server, default-agent, dbug
 ::
 /=  index
-  /^  $-(marl manx)
+  /^  $-([json marl] manx)
   /:  /===/app/launch/index  /!noun/
 /=  script
   /^  octs
@@ -25,6 +25,7 @@
 |%
 +$  versioned-state
   $%  state-zero
+      state-one
   ==
 +$  state-zero
   $:  %0
@@ -32,11 +33,18 @@
       data=tile-data:launch
       path-to-tile=(map path @tas)
   ==
++$  state-one
+  $:  %1
+      tiles=(set tile:launch)
+      data=tile-data:launch
+      path-to-tile=(map path @tas)
+      first-time=?
+  ==
 ::
 +$  card  card:agent:gall
 --
 ::
-=|  state-zero
+=|  state-one
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -45,19 +53,36 @@
     def   ~(. (default-agent this %|) bol)
 ++  on-init
   ^-  (quip card _this)
-  :_  this
+  :_  this(state *state-one)
   [%pass / %arvo %e %connect [~ /] %launch]~
 ::
 ++  on-save  !>(state)
 ::
 ++  on-load
   |=  old=vase
-  `this(state !<(state-zero old))
+  ^-  (quip card _this)
+  =/  old-state  !<(versioned-state old)
+  :-  ~
+  ?-    -.old-state
+      %0
+    %=  this
+      state  [%1 tiles.old-state data.old-state path-to-tile.old-state %.n]
+    ==
+  ::
+      %1  this(state old-state)
+  ==
 ::
 ++  on-poke
   |=  [mar=mark vas=vase]
   ^-  (quip card _this)
   ?+    mar  (on-poke:def mar vas)
+      %json
+    ?>  (team:title our.bol src.bol)
+    =/  jon  !<(json vas)
+    :-  ~
+    ?.  =(jon [%s 'disable welcome message'])
+      this
+    this(first-time %.n)
   ::
       %launch-action
     =/  act  !<(action:launch vas)
@@ -92,7 +117,8 @@
     ::
         ~
       =/  hym=manx
-        %-  index
+        %+  index
+          [%b first-time]
         ^-  marl
         %+  turn  ~(tap by data)
         |=  [key=@tas [jon=json url=@t]]

@@ -4,6 +4,7 @@ import { Route, Link } from 'react-router-dom';
 import { GroupItem } from '/components/lib/group-item';
 import { Sigil } from '/components/lib/icons/sigil';
 import { SidebarInvite } from '/components/lib/sidebar-invite';
+import { Welcome } from '/components/lib/welcome';
 import { cite } from '/lib/util';
 
 export class GroupSidebar extends Component {
@@ -93,6 +94,7 @@ export class GroupSidebar extends Component {
           <Link to="/~groups/new" className="dib">
             <p className="f9 pt4 pl4 green2 bn">Create Group</p>
           </Link>
+          <Welcome contacts={props.contacts}/>
           <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Your Identity</h2>
           {rootIdentity}
           {inviteItems}
