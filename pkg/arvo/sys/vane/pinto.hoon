@@ -570,10 +570,10 @@
     =/  m  (fume ,[sin=_sin cas=$-(vase vase)])
     ^-  form:m
     ;<  old=vase  bind:m  (load-mark a)
+    ::  try +grow
+    ::
     =/  row  (mule |.((slap old (ream (cat 3 b ':grow')))))
     ?:  ?=(%& -.row)
-      ?@  q.p.row
-        (compose-casts a !<(mark p.row) b)
       ;<  san=_sin  bind:m  (check-for-cycle a b)
       %+  pure:m  san
       |=  sam=vase
@@ -581,19 +581,25 @@
       %+  slap
         (with-faces old+old sam+sam ~)
       (ream (cat 3 b ':~(grow old sam)'))
+    ::  try direct +grab
+    ::
     ;<  new=vase  bind:m  (load-mark b)
     =/  rab  (mule |.((slap new (ream (cat 3 a ':grab')))))
-    ?:  ?=(%& -.rab)
-      ?@  q.p.rab
-        (compose-casts a !<(mark p.rab) b)
+    ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
       ;<  san=_sin  bind:m  (check-for-cycle a b)
       %+  pure:m  san
       |=  sam=vase
       ^-  vase
       (slam p.rab sam)
+    ::  try +jump
+    ::
     =/  jum  (mule |.((slap old (ream (cat 3 b ':jump')))))
     ?:  ?=(%& -.jum)
       (compose-casts a !<(mark p.jum) b)
+    ::  try indirect +grab
+    ::
+    ?:  ?=(%& -.rab)
+      (compose-casts a !<(mark p.rab) b)
     (fail:m leaf+"ford: no cast from {<a>} to {<b>}" ~)
   ::
   ++  check-for-cycle
