@@ -86,18 +86,29 @@
   ::
       %launch-action
     =/  act  !<(action:launch vas)
-    =/  beforedata  (~(get by data) name.act)
-    =/  newdata
-      ?~  beforedata
-        (~(put by data) name.act [*json url.act])
-      (~(put by data) name.act [jon.u.beforedata url.act])
-    =/  new-tile  `tile:launch`[`@tas`name.act `path`subscribe.act]
-    :-  [%pass subscribe.act %agent [our.bol name.act] %watch subscribe.act]~
-    %=  this
-      tiles         (~(put in tiles) new-tile)
-      data          newdata
-      path-to-tile  (~(put by path-to-tile) subscribe.act name.act)
-    ==
+    ?-  -.act
+        %add
+      =/  beforedata  (~(get by data) name.act)
+      =/  newdata
+        ?~  beforedata
+          (~(put by data) name.act [*json url.act])
+        (~(put by data) name.act [jon.u.beforedata url.act])
+      =/  new-tile  `tile:launch`[`@tas`name.act `path`subscribe.act]
+      :-  [%pass subscribe.act %agent [our.bol name.act] %watch subscribe.act]~
+      %=  this
+        tiles         (~(put in tiles) new-tile)
+        data          newdata
+        path-to-tile  (~(put by path-to-tile) subscribe.act name.act)
+      ==
+::
+        %remove
+      :-  [%pass subscribe.act %agent [our.bol name.act] %leave ~]~
+      %=  this
+        tiles         (~(del in tiles) [name.act subscribe.act])
+        data          (~(del by data) name.act)
+        path-to-tile  (~(del by path-to-tile) subscribe.act)
+      ==
+      ==
   ::
       %handle-http-request
     =+  !<([eyre-id=@ta =inbound-request:eyre] vas)

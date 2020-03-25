@@ -60,7 +60,6 @@
     :_  this
     :~  [%pass /updates %agent [our.bowl %contact-store] %watch /updates]
         [%pass / %arvo %e %connect [~ /'~groups'] %contact-view]
-        (launch-poke:cc [%contact-view /primary '/~groups/js/tile.js'])
         (contact-poke:cc [%create /~/default])
         (group-poke:cc [%bundle /~/default])
         (contact-poke:cc [%add /~/default our.bowl *contact])
@@ -69,6 +68,7 @@
   ::
   ++  on-save   on-save:def
   ++  on-load   on-load:def
+  :: (launch-poke:cc [%remove %contact-view /primary '/~groups/js/tile.js'])
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)

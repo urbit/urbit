@@ -66,7 +66,7 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    =/  launcha  [%launch-action !>([%chat-view /configs '/~chat/js/tile.js'])]
+    =/  launcha  [%launch-action !>([%add %chat-view /configs '/~chat/js/tile.js'])]
     :_  this
     :~  [%pass /updates %agent [our.bol %chat-store] %watch /updates]
         [%pass / %arvo %e %connect [~ /'~chat'] %chat-view]
