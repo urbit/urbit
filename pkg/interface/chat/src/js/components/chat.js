@@ -84,24 +84,18 @@ export class ChatScreen extends Component {
   askForMessages() {
     const { props, state } = this;
 
-    console.log('askForMessages');
     if (
-      state.numPages * 100 < props.length - 400 ||
+      state.numPages * 100 > props.length - 400 ||
       this.hasAskedForMessages
     ) {
-      console.log('condition 1: ', state.numPages * 100 < props.length - 400);
-      console.log('condition 2: ', this.hasAskedForMessages);
       return;
     }
 
-    console.log('length: ', props.length);
     if (props.length > 0) {
       let end = props.envelopes[0].number;
-      console.log('end: ', end);
       if (end > 0) {
         let start = end - 400 > 0 ? end - 400 : 0;
  
-        console.log('start: ', start);
         if (start === 0 && end === 1) {
           return;
         }
@@ -125,9 +119,7 @@ export class ChatScreen extends Component {
       navigator.userAgent.includes("Chrome")
     ) {
       // Google Chrome
-      console.log('scrollTop: ', e.target.scrollTop);
       if (e.target.scrollTop === 0) {
-        console.log('google chrome');
         this.setState(
           {
             numPages: this.state.numPages + 1,
@@ -148,7 +140,6 @@ export class ChatScreen extends Component {
       }
     } else if (navigator.userAgent.includes("Safari")) {
       // Safari
-      console.log('safari');
       if (e.target.scrollTop === 0) {
         this.setState({
           numPages: 1,

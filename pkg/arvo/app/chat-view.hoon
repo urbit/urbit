@@ -109,7 +109,7 @@
       [[%give %fact ~ %json !>(*json)]~ this]
     (on-watch:def path)
     ::
-    ++  message-limit  25
+    ++  message-limit  50
     ::
     ++  truncated-inbox-scry
       ^-  inbox
