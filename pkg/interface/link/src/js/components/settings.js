@@ -107,39 +107,74 @@ export class SettingsScreen extends Component {
     }
   }
 
-  deleteCollection() {
+  removeCollection() {
     const { props, state } = this;
 
-    api.deleteCollection(props.resourcePath);
     api.setSpinner(true);
-
     this.setState({
       isLoading: true
     });
+    api.removeCollection(props.resourcePath)
+    .then(() => {
+      this.setState({
+        isLoading: false
+      });
+      api.setSpinner(false);
+    });
+  }
+
+  deleteCollection() {
+    const { props, state } = this;
+
+    api.setSpinner(true);
+    this.setState({
+      isLoading: true
+    });
+    api.deleteCollection(props.resourcePath)
+    .then(() => {
+      this.setState({
+        isLoading: false
+      });
+      api.setSpinner(false);
+    });
+  }
+
+  renderRemove() {
+    const { props, state } = this;
+
+    return (
+      <div className="w-100 fl mt3">
+        <p className="f8 mt3 lh-copy db">Remove Collection</p>
+        <p className="f9 gray2 db mb4">
+          Remove this collection from your collection list.
+        </p>
+        <a onClick={this.removeCollection.bind(this)}
+           className="dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer">
+          Remove collection
+        </a>
+      </div>
+    );
   }
 
   renderDelete() {
     const { props, state } = this;
 
-    const isManaged = ('/~/' !== props.groupPath.slice(0,3));
-
-    let deleteClasses = 'dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer';
-    let deleteText = 'Remove this collection from your collection list.';
-    let deleteAction = 'Remove';
-    if (props.amOwner && isManaged) {
-      deleteText = 'Delete this collection. (All group members will no longer see this chat.)';
-      deleteAction = 'Delete';
-      deleteClasses = 'dib f9 ba pa2 b--red2 red2 pointer bg-gray0-d';
+    if (!props.amOwner) {
+      return null;
+    } else {
+      return (
+        <div className="w-100 fl mt3">
+          <p className="f8 mt3 lh-copy db">Delete Collection</p>
+          <p className="f9 gray2 db mb4">
+            Delete this collection, for you and all group members.
+          </p>
+          <a onClick={this.deleteCollection.bind(this)}
+             className="dib f9 ba pa2 b--red2 red2 pointer bg-gray0-d">
+            Delete collection
+          </a>
+        </div>
+      );
     }
-
-    return (
-      <div className="w-100 fl mt3">
-        <p className="f8 mt3 lh-copy db">Delete Collection</p>
-        <p className="f9 gray2 db mb4">{deleteText}</p>
-        <a onClick={this.deleteCollection.bind(this)}
-           className={deleteClasses}>{deleteAction + ' collection'}</a>
-      </div>
-    );
   }
 
   renderMetadataSettings() {
@@ -303,6 +338,7 @@ export class SettingsScreen extends Component {
         </div>
         <div className="w-100 pl3 mt4 cf">
           <h2 className="f8 pb2">Collection Settings</h2>
+          {this.renderRemove()}
           {this.renderDelete()}
           {this.renderMetadataSettings()}
         </div>
