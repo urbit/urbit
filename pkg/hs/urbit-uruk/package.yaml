@@ -85,7 +85,20 @@ default-extensions:
 executables:
   moon:
     main: Main.hs
-    source-dirs: app
+    source-dirs: app/moon
+    dependencies:
+      - urbit-uruk
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -static
+      - -O2
+      - "-with-rtsopts=-N"
+      - -fwarn-incomplete-patterns
+
+  uruk-dash:
+    main: Main.hs
+    source-dirs: app/dash
     dependencies:
       - urbit-uruk
     ghc-options:
