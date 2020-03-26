@@ -2,7 +2,7 @@
 ::  else.
 ::
 /-  spider
-/+  strandio
+/+  strandio, clay-commit
 =,  strand=strand:spider
 =,  clay
 ^-  thread:spider
@@ -35,8 +35,8 @@
 ::
 =/  parent-tako=tako  (~(got by hit.dome) let.dome)
 =/  all-lobes=(map path lobe)
-  =+  .^  parent-yaki=yaki  %cs
-          /(scot %p our)/[desk]/(scot %da now)/(scot %uv parent-tako)
+  =+  .^  =parent=yaki  %cs
+          /(scot %p our)/[desk]/(scot %da now)/yaki/(scot %uv parent-tako)
       ==
   =/  after-deletes
     %-  ~(dif by q.parent-yaki)
@@ -44,7 +44,7 @@
   %-  ~(uni by after-deletes)
   (~(run by new-blobs) |=(=blob p.blob))
 ::
-::  XX should we get getting the time later, after all async?
+::  XX should we be getting the time later, after all async?
 ;<  now=@da  bind:m  get-time:strandio
 =/  new-yaki=yaki  (make-yaki ~[parent-tako] all-lobes now)
 ::
@@ -54,72 +54,13 @@
   :-  (~(put by hut:*rang) r.new-yaki new-yaki)
   (malt (turn ~(tap by new-blobs) |=([=path =blob] [p.blob blob])))
 ::
-::  Checkout ankh
+::  Checkout ankh and mime cache (derived state)
 ::
-=/  =ankh  ank.dome
-=.  ankh
-  =/  dels  ~(tap in deletes)
-  |-  ^-  ^ankh
-  =*  outer-loop  $
-  ?~  dels
-    ankh
-  |-  ^-  ^ankh
-  =*  inner-loop  $
-  ?~  i.dels
-    outer-loop(dels t.dels, fil.ankh ~)
-  %=    ankh
-      dir
-    %+  ~(put by dir.ankh)  i.i.dels
-    %=  inner-loop
-      i.dels  t.i.dels
-      ankh    (~(gut by dir.ankh) i.i.dels *^ankh)
-    ==
-  ==
-=.  ankh
-  =/  blobs=(list [=path =blob])  ~(tap by new-blobs)
-  |-  ^-  ^ankh
-  =*  outer-loop  $
-  ?~  blobs
-    ankh
-  =/  orig-path  path.i.blobs
-  |-  ^-  ^ankh
-  =*  inner-loop  $
-  ?~  path.i.blobs
-    %=    outer-loop
-        blobs     t.blobs
-        fil.ankh
-      ?>  ?=(%direct -.blob.i.blobs)
-      :+  ~  p.blob.i.blobs
-      (~(got by cast-results) orig-path)
-    ==
-  %=    ankh
-      dir
-    %+  ~(put by dir.ankh)  i.path.i.blobs
-    %=  inner-loop
-      path.i.blobs  t.path.i.blobs
-      ankh          (~(gut by dir.ankh) i.path.i.blobs *^ankh)
-    ==
-  ==
-::
-::  Checkout cache
-::
-=/  mim-builds=(map path schematic:ford)
-  %-  ~(run by cast-results)
-  |=  =cage
-  [%cast [our desk] %mime %$ cage]
-;<  mim-results=(map path cage)  bind:m  (build-cages:strandio mim-builds)
-=/  can-mim=(map path (unit mime))
-  %-  ~(run by mim-results)
-  |=  =cage
-  ?>  ?=(%mime p.cage)
-  `!<(mime q.cage)
-=/  del-mim=(map path (unit mime))
-  (malt (turn ~(tap in deletes) |=(=path [path ~])))
-=/  new-mim=(map path (unit mime))
-  (~(uni by del-mim) can-mim)
-::
+=/  =ankh  (checkout:clay-commit ank.dome deletes cast-results)
+;<  mim=(map path (unit mime))  bind:m
+  (checkout-cache:clay-commit desk deletes cast-results)
 ::  Send to clay
 ::
-=/  args  [desk r.new-yaki rang ankh new-mim]
+=/  args  [desk r.new-yaki rang ankh mim]
 ;<  ~  bind:m  (send-raw-card:strandio %pass /commit/[desk] %arvo %c %park args)
 (pure:m !>(~))

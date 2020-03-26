@@ -2341,7 +2341,7 @@
   $%  {$a gift:able:ames}
       $:  $b
           $%  gift:able:behn
-              [%writ riot:clay]
+              [%writ p=riot:clay]
               $>(%mere gift:able:clay)
               $>(%unto gift:able:gall)
           ==

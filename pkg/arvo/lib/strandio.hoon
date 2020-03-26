@@ -492,6 +492,29 @@
     loop(results t.results)
   (pure:m produce)
 ::
+::  Read from Clay
+::
+++  warp
+  |=  [=ship =riff:clay]
+  =/  m  (strand ,riot:clay)
+  ;<  ~  bind:m  (send-raw-card %pass /warp %arvo %c %warp ship riff)
+  (take-writ /warp)
+::
+::  Take Clay read result
+::
+++  take-writ
+  |=  =wire
+  =/  m  (strand ,riot:clay)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+  in.tin  `[%skip ~]
+      ~  `[%wait ~]
+      [~ %sign * %b %writ *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done +>.sign-arvo.u.in.tin]
+  ==
+::
 ::  Queue on skip, try next on fail %ignore
 ::
 ++  main-loop

@@ -1122,6 +1122,7 @@
   ::
   =/  ford-disc=disc:ford
     ?:  =(p.ali-disc p.bob-disc)
+
       ali-disc
     bob-disc
   |^
@@ -2943,7 +2944,6 @@
     ::
     ++  print
       ^+  ..park
-      ~&  >  %print
       ?~  hun
         ..park
       %-  emil
@@ -3922,17 +3922,22 @@
       ?:  =(%black mod.rul)
         !in-list
       in-list
-    ::  +read-s: produce yaki for given tako
+    ::  +read-s: produce yaki or blob for given tako or lobe
     ::
     ++  read-s
       |=  [yon=aeon pax=path]
-      ^-  (unit (unit [%yaki (hypo yaki)]))
-      ?.  ?=([* ~] pax)
+      ^-  (unit (unit $%([%yaki (hypo yaki)] [%blob (hypo blob)])))
+      ?.  ?=([?(%yaki %blob) * ~] pax)
         `~
-      =/  yak=(unit yaki)  (~(get by hut.ran) (slav %uv i.pax))
-      ?~  yak
+      ?:  ?=(%yaki i.pax)
+        =/  yak=(unit yaki)  (~(get by hut.ran) (slav %uv i.t.pax))
+        ?~  yak
+          ~
+        ``yaki+[-:!>(*yaki) u.yak]
+      =/  bol=(unit blob)  (~(get by lat.ran) (slav %uv i.t.pax))
+      ?~  bol
         ~
-      ``yaki+`(hypo yaki)`[-:!>(*yaki) u.yak]
+      ``blob+[-:!>(*blob) u.bol]
     ::  +read-t: produce the list of paths within a yaki with :pax as prefix
     ::
     ++  read-t
