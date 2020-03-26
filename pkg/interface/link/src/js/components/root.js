@@ -49,7 +49,7 @@ export class Root extends Component {
               <Skeleton
                 active="collections"
                 spinner={state.spinner}
-                associations={associations.link}
+                associations={associations}
                 invites={invites}
                 groups={groups}
                 rightPanelHide={true}
@@ -71,7 +71,7 @@ export class Root extends Component {
             return (
               <Skeleton
                 spinner={state.spinner}
-                associations={associations.link}
+                associations={associations}
                 invites={invites}
                 groups={groups}
                 rightPanelHide={true}
@@ -108,7 +108,7 @@ export class Root extends Component {
             return (
               <Skeleton
                 spinner={state.spinner}
-                associations={associations.link}
+                associations={associations}
                 invites={invites}
                 groups={groups}
                 selected={resourcePath}
@@ -145,7 +145,7 @@ export class Root extends Component {
             return (
               <Skeleton
                 spinner={state.spinner}
-                associations={associations.link}
+                associations={associations}
                 invites={invites}
                 groups={groups}
                 selected={resourcePath}
@@ -198,7 +198,7 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={state.spinner}
-                  associations={associations.link}
+                  associations={associations}
                   invites={invites}
                   groups={groups}
                   selected={resourcePath}
@@ -253,7 +253,7 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={state.spinner}
-                  associations={associations.link}
+                  associations={associations}
                   invites={invites}
                   groups={groups}
                   selected={resourcePath}
