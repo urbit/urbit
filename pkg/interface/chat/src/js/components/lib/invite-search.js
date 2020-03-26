@@ -30,7 +30,7 @@ export class InviteSearch extends Component {
   }
 
   peerUpdate() {
-    let groups = Array.from(Object.keys(this.props.groups));
+    let groups = Array.from(Object.keys(this.props.permissions));
     groups = groups.filter(e => !e.startsWith("/~/"))
     .map(e => {
       let eachGroup = new Set();
@@ -49,15 +49,17 @@ export class InviteSearch extends Component {
     let peers = [],
       peerSet = new Set(),
       contacts = new Map;
-    Object.keys(this.props.groups).map(group => {
-      if (this.props.groups[group].size > 0) {
-        let groupEntries = this.props.groups[group].values();
+
+    Object.keys(this.props.permissions).map(group => {
+      if (this.props.permissions[group].who.size > 0) {
+        let groupEntries = this.props.permissions[group].who.values();
         for (let member of groupEntries) {
           peerSet.add(member);
         }
       }
+
       if (this.props.contacts[group]) {
-        let groupEntries = this.props.groups[group].values();
+        let groupEntries = this.props.permissions[group].who.values();
         for (let member of groupEntries) {
           if (this.props.contacts[group][member]) {
             if (contacts.has(member)) {

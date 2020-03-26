@@ -5,28 +5,32 @@ import urbitOb from 'urbit-ob';
 
 
 export class Subscription {
+
+  constructor() {
+    this.firstRoundSubscriptionComplete = false;
+  }
+
   start() {
     if (api.authTokens) {
-      this.initializeChat();
+      this.firstRoundSubscription();
     } else {
       console.error("~~~ ERROR: Must set api.authTokens before operation ~~~");
     }
   }
 
-  initializeChat() {
+  firstRoundSubscription() {
     api.bind('/primary', 'PUT', api.authTokens.ship, 'chat-view',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this));
+  }
+
+  secondRoundSubscriptions() {
     api.bind('/synced', 'PUT', api.authTokens.ship, 'chat-hook',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this));
     api.bind('/primary', 'PUT', api.authTokens.ship, 'invite-view',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/all', 'PUT', api.authTokens.ship, 'group-store',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this));
@@ -49,6 +53,10 @@ export class Subscription {
   }
 
   handleEvent(diff) {
+    if (!this.firstRoundSubscriptionComplete) {
+      this.firstRoundSubscriptionComplete = true;
+      this.secondRoundSubscriptions();
+    }
     store.handleEvent(diff);
   }
 

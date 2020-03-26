@@ -1,5 +1,4 @@
 import { InitialReducer } from '/reducers/initial';
-import { GroupUpdateReducer } from '/reducers/group-update';
 import { ContactUpdateReducer } from '/reducers/contact-update';
 import { ChatUpdateReducer } from '/reducers/chat-update';
 import { InviteUpdateReducer } from '/reducers/invite-update';
@@ -13,7 +12,6 @@ class Store {
     this.state = {
       inbox: {},
       chatSynced: {},
-      groups: {},
       contacts: {},
       permissions: {},
       invites: {},
@@ -28,7 +26,6 @@ class Store {
     };
 
     this.initialReducer = new InitialReducer();
-    this.groupUpdateReducer = new GroupUpdateReducer();
     this.permissionUpdateReducer = new PermissionUpdateReducer();
     this.contactUpdateReducer = new ContactUpdateReducer();
     this.chatUpdateReducer = new ChatUpdateReducer();
@@ -47,7 +44,6 @@ class Store {
 
     console.log(json);
     this.initialReducer.reduce(json, this.state);
-    this.groupUpdateReducer.reduce(json, this.state);
     this.permissionUpdateReducer.reduce(json, this.state);
     this.contactUpdateReducer.reduce(json, this.state);
     this.chatUpdateReducer.reduce(json, this.state);

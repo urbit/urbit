@@ -99,7 +99,7 @@ export class Root extends Component {
                   <NewScreen
                     api={api}
                     inbox={state.inbox || {}}
-                    groups={state.groups || {}}
+                    permissions={state.permissions || {}}
                     contacts={state.contacts || {}}
                     associations={associations.contacts}
                     {...props}
@@ -118,7 +118,6 @@ export class Root extends Component {
               if (sig) {
                 station = '/~' + station;
               }
-
 
               return (
                 <Skeleton
@@ -168,8 +167,11 @@ export class Root extends Component {
               let association =
                 station in associations["chat"] ? associations.chat[station] : {};
 
-
-              let group = state.groups[station] || new Set([]);
+              let permission = 
+                station in state.permissions ? state.permissions[station] : {
+                  who: new Set([]),
+                  kind: 'white'
+                };
               let popout = props.match.url.includes("/popout/");
 
               return (
@@ -190,9 +192,8 @@ export class Root extends Component {
                     length={mailbox.config.length}
                     envelopes={mailbox.envelopes}
                     inbox={state.inbox}
-                    group={group}
                     contacts={roomContacts}
-                    permissions={state.permissions}
+                    permission={permission}
                     pendingMessages={state.pendingMessages}
                     popout={popout}
                     sidebarShown={state.sidebarShown}
@@ -255,7 +256,6 @@ export class Root extends Component {
               if (sig) {
                 station = '/~' + station;
               }
-              let group = state.groups[station] || new Set([]);
 
               let popout = props.match.url.includes("/popout/");
 
@@ -280,12 +280,11 @@ export class Root extends Component {
                     station={station}
                     association={association}
                     permission={permission}
-                    groups={state.groups || {}}
+                    permissions={state.permissions || {}}
                     contacts={state.contacts || {}}
                     associations={associations.contacts}
                     api={api}
                     station={station}
-                    group={group}
                     inbox={state.inbox}
                     popout={popout}
                     sidebarShown={state.sidebarShown}

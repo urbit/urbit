@@ -259,7 +259,7 @@ export class NewScreen extends Component {
             Selected groups or ships will be able to post to chat
           </p>
           <InviteSearch
-            groups={props.groups}
+            permissions={props.permissions}
             contacts={props.contacts}
             associations={props.associations}
             groupResults={true}

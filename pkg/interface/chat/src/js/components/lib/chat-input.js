@@ -422,36 +422,7 @@ export class ChatInput extends Component {
     });
   }
 
-  readOnlyRender() {
-    const { props } = this;
-    let color = !!props.ownerContact
-      ? uxToHex(props.ownerContact.color) : '000000';
-
-    let sigilClass = !!props.ownerContact
-      ? "" : "mix-blend-diff";
-
-    return (
-      <div className="pa3 cf flex black bt b--gray4 o-50">
-        <div className="fl" style={{
-          marginTop: 4,
-          flexBasis: 24,
-          height: 24
-        }}>
-          <Sigil
-            ship={window.ship}
-            size={24}
-            color={`#${color}`}
-            classes={sigilClass}
-          />
-        </div>
-        <div className="fr h-100 flex" style={{ flexGrow: 1, height: 28, paddingTop: 6, resize: "none" }}>
-          <p className="pl3">This chat is read only and you cannot post.</p>
-        </div>
-      </div>
-    );
-  }
-
-  writeAccessRender() {
+  render() {
     const { props, state } = this;
 
     let color = !!props.ownerContact
@@ -504,30 +475,5 @@ export class ChatInput extends Component {
         </div>
       </div>
     );
-  }
-
-  render() {
-    const { props, state } = this;
-
-    let writePermission = props.permissions[`/chat${props.station}/write`];
-    if (writePermission) {
-      if (writePermission.kind === 'black') {
-        // black
-        if (writePermission.who.has(window.ship)) {
-          return this.readOnlyRender();
-        } else {
-          return this.writeAccessRender();
-        }
-      } else if (writePermission.kind === 'white') {
-        // white
-        if (writePermission.who.has(window.ship)) {
-          return this.writeAccessRender();
-        } else {
-          return this.readOnlyRender();
-        }
-      }
-    } else {
-      return this.writeAccessRender();
-    }
   }
 }
