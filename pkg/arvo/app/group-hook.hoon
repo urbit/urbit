@@ -34,7 +34,22 @@
   ++  on-save  !>(state)
   ++  on-load
     |=  old=vase
-    `this(state !<(state-zero old))
+    ^-  (quip card _this)
+    :_  this(state !<(state-zero old))
+    %+  murn
+      ~(tap by synced)
+    |=  [=path =ship]
+    ^-  (unit card)
+    =/  =wire
+      [(scot %p ship) %group path]
+    =/  =term
+      ?:  =(our.bowl ship)
+        %group-store
+      %group-hook
+    ?:  (~(has by wex.bowl) [wire ship term])
+      ~
+    `[%pass wire %agent [ship term] %watch [%group path]]
+  ::
   ++  on-leave  on-leave:def
   ++  on-peek   on-peek:def
   ++  on-arvo   on-arvo:def
