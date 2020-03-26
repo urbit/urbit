@@ -11,6 +11,8 @@ import Text.Megaparsec.Char
 
 import Bound            (abstract1)
 import Data.Void        (Void, absurd)
+import Numeric.Natural  (Natural)
+import Prelude          (read)
 import Text.Show.Pretty (pPrint)
 import Urbit.Atom       (Atom)
 
@@ -66,7 +68,8 @@ whitespace :: Parser ()
 whitespace = gap <|> ace
 
 sym :: Parser Text
-sym = fmap pack $ some $ oneOf ("$" <> ['a' .. 'z'] <> ['A' .. 'Z'])
+sym =
+  fmap pack $ some $ oneOf ("$" <> ['a' .. 'z'] <> ['A' .. 'Z'] <> ['0' .. '9'])
 
 
 -- Grammar ---------------------------------------------------------------------
@@ -119,8 +122,21 @@ rune = choice
   , string "%-" *> rune2 (:@) exp exp
   , string "%+" *> rune3 ap3 exp exp exp
   , string "%^" *> rune4 ap4 exp exp exp exp
+  , string "~/" *> rune3 jet nat sym exp
   ]
 
+jet :: Natural -> Text -> AST -> AST
+jet arity name expr = go j arity :@ Tag name :@ expr
+ where
+  j = Var "J"
+
+  go :: AST -> Natural -> AST
+  go _   0 = error "jet: go: bad-arity: 0"
+  go acc 1 = acc
+  go acc n = go (acc :@ j) (pred n)
+
+nat :: Parser Natural
+nat = read <$> some (oneOf ['0' .. '9'])
 
 -- Groups and binders ----------------------------------------------------------
 
@@ -180,12 +196,11 @@ eat :: Parser ()
 eat = option () whitespace
 
 dashFile :: Parser [Dec]
-dashFile = do
-  hed <- eat *> decl
-  tel <- many (try (gap *> decl))
-  eat
-  eof
-  pure (hed : tel)
+dashFile = go []
+ where
+  go acc = do
+    eat
+    (eof $> reverse acc <|> (decl >>= go . (: acc)))
 
 parseAST ∷ Text → Either Text AST
 parseAST txt =
@@ -198,6 +213,7 @@ parseDecs txt =
   runParser (evalStateT dashFile Tall) "stdin" txt & \case
     Left  e → Left (pack $ errorBundlePretty e)
     Right x → pure x
+
 
 -- AST to SK -------------------------------------------------------------------
 
@@ -241,3 +257,10 @@ tryIt txt = do
   tryExp txt & \case
     Left err -> putStrLn err
     Right rs -> pPrint rs
+
+tryDash :: IO ()
+tryDash = do
+  txt <- readFileUtf8 "urbit-uruk/jets.dash"
+  parseDecs txt & \case
+    Left err -> putStrLn err
+    Right ds -> pPrint ds

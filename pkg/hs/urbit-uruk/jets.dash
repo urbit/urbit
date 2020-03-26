@@ -1,0 +1,61 @@
+++  (I x)      x
+++  (B f g x)  (f (g x))
+++  (C f g x)  (f x g)
+
+++  (yes t f)  t
+++  (nah t f)  f
+
+++  skzer  <f x x>
+++  sksuc  <n f x (f (n f x))>
+
+++  (pak n)  (J J K (n sksuc skzer))
+++  (inc x)  (pak <i z (i (n i z))>)
+
+++  0  (pak skzer)
+++  1  (inc 0)
+++  2  (inc 1)
+
+++  (seq x y)    y
+++  (yet f x y)  (f x y)
+
+++  zee
+  |=  f
+  %-  <x (f <v (yet x x v)>)>
+  <x (f <v (yet x x v)>)>
+
+++  fix
+  ~/  2  fix
+  %-  zee
+  |=  $
+  %-  (yet (J J %fix))
+  |=  (f x)
+  (f ($ f) x)
+
+++  (ded e)  (fix I e)
+
+++  (uni x)  (ded %baduni)
+
+++  (con h t f)  (f h t)
+++  (car p)      (p <h t h>)
+++  (cdr p)      (p <h t t>)
+
+++  (lef x l r)  (l x)
+++  (rit x l r)  (r x)
+++  (cas b l r)  (b l r)
+
+++  (dec n)
+  %+  n
+    |=  x
+    %+  (cas x)
+      <y (rit 0)>
+    <y (rit (inc y))>
+  (lef uni)
+
+++  (fec n)    (cas (dec n) (K 0) I)
+++  (add x y)  (pak <i z (x i (y i z))>)
+++  (mul x y)  (pak <i z (x (y i) z)>)
+++  (sub x y)  (y <z (cas z lef dec)> (rit x))
+++  (zer z)    (n (K nah) yea)
+++  (eql x y)  (cas (sub x y) (K nah) zer)
+++  (bex x)    (x (mul 2) 1)
+++  (lsh x n)  (mul (bex x) n)
