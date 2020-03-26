@@ -30,6 +30,7 @@ export class Skeleton extends Component {
             contacts={props.contacts}
             path={props.path}
             invites={props.invites}
+            associations={props.associations}
             />
           <div className={"h-100 w-100 relative white-d flex-auto " + rightPanelHide} style={{
             flexGrow: 1,
