@@ -33,7 +33,7 @@ export class Welcome extends Component {
         </p>
       </div>
     )
-    : ( <div/>)
+    : ( null)
   }
 }
 
