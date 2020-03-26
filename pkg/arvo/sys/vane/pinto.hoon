@@ -283,7 +283,7 @@
   $(vaz t.vaz)
 --
 =>
-=-  [at=- .]
+=-  [at=- +]
 |=  [our=ship =desk scry=sley]
 =>
 ::  file execution routines
@@ -665,7 +665,8 @@
         |=  [[a=mark b=mark] acc=(map [mark mark] (unit [spar form:m]))]
         (~(put by acc) [a b] ~)
       [[live desk.task case] sky=~ [[fiz fuz=~] [maz muz=~] [caz cuz=~]]]
-    (finalize duct make:(per-build scry-gate cache.state.ax duct build-state))
+    %+  finalize  duct
+    make:(per-build our scry-gate cache.state.ax duct build-state)
   ::
       %kill
     =.  builds.state.ax  (~(del by builds.state.ax) duct)
@@ -683,7 +684,7 @@
     ?>  ?=([%c %writ *] sign)
     =/  fil=(unit cage)  ?~(p.sign ~ `r.u.p.sign)
     =/  =build-state  (~(got by builds.state.ax) duct)
-    =/  build-core  (per-build scry-gate cache.state.ax duct build-state)
+    =/  build-core  (per-build our scry-gate cache.state.ax duct build-state)
     %+  finalize  duct
     ?-    -.line
         %fiz
@@ -725,7 +726,8 @@
         caz  (~(run by caz.build-state) |=(* ~))
         cuz  ~
       ==
-    (finalize duct make:(per-build scry-gate cache.state.ax duct build-state))
+    %+  finalize  duct
+    make:(per-build our scry-gate cache.state.ax duct build-state)
   ==
 ++  load
   |=  old=axle
@@ -736,14 +738,15 @@
 |%
 ++  per-build
   =|  fex=(list move)
-  |=  $:  scry=sley
+  |=  $:  our=ship
+          scry=sley
           cache=hoon-cache
           =duct
           build-state
       ==
   |%
   ++  build-core  .
-  ++  build-state  |3.+<.$
+  ++  build-state  |4.+<.$
   ++  make  =~(make-files make-marks make-casts)
   ::
   ++  finalize

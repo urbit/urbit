@@ -25,24 +25,27 @@
 =/  ford-core  (ford-gate ~nul ~1234.5.6 0xdead.beef scry)
 |%
 ++  test-make-one-file  ^-  tang
-  ::
   =^  fex  ford-gate
     %:  call:ford-core
       *duct  *type
       %make
       desk=%home
       case=`da+~1234.5.6
-      all=(sy /lib/foo/hoon ~)
+      fiz=(sy /lib/foo/hoon ~)
+      maz=~
+      caz=~
     ==
   %+  expect-eq
     !>  %bar
     =/  cad  card:(head fex)
     ?>  ?=(%give -.cad)
     =/  gif  p.cad
-    ?>  ?=(%make -.gif)
-    =/  all  all.gif
-    ?>  ?=([* ~ ~] all)
-    =/  [key=path val=(each vase tang)]  n.all
+    ?>  ?=(%made -.gif)
+    ?>  =(~ maz.gif)
+    ?>  =(~ caz.gif)
+    =/  fiz  fiz.gif
+    ?>  ?=([* ~ ~] fiz)
+    =/  [key=path val=(each vase tang)]  n.fiz
     ?>  =(/lib/foo/hoon key)
     ?>  ?=(%& -.val)
     p.val
