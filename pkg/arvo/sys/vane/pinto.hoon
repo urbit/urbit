@@ -569,13 +569,15 @@
   ++  loop
     =/  m  (fume ,[sin=_sin cas=$-(vase vase)])
     ^-  form:m
+    ?:  (~(has in sin) [a b])
+      (fail:m leaf+"ford: mark cycle including {<[a b]>}" ~)
+    =.  sin  (~(put in sin) [a b])
     ;<  old=vase  bind:m  (load-mark a)
     ::  try +grow
     ::
     =/  row  (mule |.((slap old (ream (cat 3 b ':grow')))))
     ?:  ?=(%& -.row)
-      ;<  san=_sin  bind:m  (check-for-cycle a b)
-      %+  pure:m  san
+      %+  pure:m  sin
       |=  sam=vase
       ^-  vase
       %+  slap
@@ -586,8 +588,7 @@
     ;<  new=vase  bind:m  (load-mark b)
     =/  rab  (mule |.((slap new (ream (cat 3 a ':grab')))))
     ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
-      ;<  san=_sin  bind:m  (check-for-cycle a b)
-      %+  pure:m  san
+      %+  pure:m  sin
       |=  sam=vase
       ^-  vase
       (slam p.rab sam)
@@ -601,13 +602,6 @@
     ?:  ?=(%& -.rab)
       (compose-casts a !<(mark p.rab) b)
     (fail:m leaf+"ford: no cast from {<a>} to {<b>}" ~)
-  ::
-  ++  check-for-cycle
-    |=  [x=mark y=mark]
-    =/  m  (fume ,_sin)
-    ?:  (~(has in sin) [x y])
-      (fail:m leaf+"ford: mark cycle including {<x>}" ~)
-    (pure:m (~(put in sin) [x y]))
   ::
   ++  compose-casts
     |=  [x=mark y=mark z=mark]
