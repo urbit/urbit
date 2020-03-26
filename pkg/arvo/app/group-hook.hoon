@@ -33,11 +33,12 @@
   ++  on-init  on-init:def
   ++  on-save  !>(state)
   ++  on-load
-    |=  old=vase
+    |=  =vase
     ^-  (quip card _this)
-    :_  this(state !<(state-zero old))
+    =/  old  !<(state-zero vase)
+    :_  this(state old)
     %+  murn
-      ~(tap by synced)
+      ~(tap by synced.old)
     |=  [=path =ship]
     ^-  (unit card)
     =/  =wire
