@@ -74,20 +74,26 @@
       ?~  p.sign
         [~ this]
       %-  (slog u.p.sign)
-      ?>  ?=([@ @ *] wire)
-      =/  =ship   (slav %p i.wire)
-      =.  synced.state  (~(del by synced.state) t.t.wire)
+      ?>  ?=([@ %group ^] wire)
+      =/  =ship  (slav %p i.wire)
+      =*  group  t.t.wire
+      ::  only remove from synced if this watch-nack came from the ship we
+      ::  thought we were actively syncing from
+      ::
+      =?  synced.state
+          =(ship (~(gut by synced.state) group ship))
+        (~(del by synced.state) group)
       [~ this]
     ::
         %kick
-      ?>  ?=([@ @ *] wire)
+      ?>  ?=([@ %group ^] wire)
       =/  =ship  (slav %p i.wire)
-      ?.  (~(has by synced.state) t.t.wire)
+      =*  group  t.t.wire
+      ?.  (~(has by synced.state) group)
         [~ this]
-      =/  group-path  [%group t.t.wire]
-      =/  group-wire  [i.wire group-path]
+      =*  group-path  t.wire
       :_  this
-      [%pass group-wire %agent [ship %group-hook] %watch group-path]~
+      [%pass wire %agent [ship %group-hook] %watch group-path]~
     ::
         %fact
       ?.  ?=(%group-update p.cage.sign)
