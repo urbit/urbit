@@ -400,6 +400,7 @@ export class ChatInput extends Component {
       }
     })
 
+
     if (message.length > 0) {
       message = message.join(" ");
       message = this.getLetterType(message);
@@ -412,7 +413,8 @@ export class ChatInput extends Component {
       message = [];
     }
 
-    // perf: setTimeout(this.closure, 2000);
+    // perf: 
+    //setTimeout(this.closure, 2000);
 
     this.setState({
       message: '',

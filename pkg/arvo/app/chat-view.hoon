@@ -101,7 +101,7 @@
     ?:  ?=([%http-response *] path)
       [~ this]
     ?:  =(/primary path)
-      ::  create inbox with 100 messages max per mailbox and send that along
+      ::  create inbox with 20 messages max per mailbox and send that along
       ::  then quit the subscription
       :_  this
       [%give %fact ~ %json !>((inbox-to-json truncated-inbox-scry))]~
@@ -109,7 +109,7 @@
       [[%give %fact ~ %json !>(*json)]~ this]
     (on-watch:def path)
     ::
-    ++  message-limit  25
+    ++  message-limit  20
     ::
     ++  truncated-inbox-scry
       ^-  inbox
