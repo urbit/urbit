@@ -190,8 +190,8 @@ h2 {
 }
 
 @media all and (min-width: 34.375em) and (max-width: 46.875em) {
-  .flex-basis-300-m {
-    flex-basis: 300px;
+  .flex-basis-250-m {
+    flex-basis: 250px;
   }
   .h-100-minus-40-m {
     height: calc(100% - 40px);
@@ -202,8 +202,8 @@ h2 {
 }
 
 @media all and (min-width: 46.875em) and (max-width: 60em) {
-  .flex-basis-300-l {
-    flex-basis: 300px;
+  .flex-basis-250-l {
+    flex-basis: 250px;
   }
   .h-100-minus-40-l {
     height: calc(100% - 40px);
@@ -214,8 +214,8 @@ h2 {
 }
 
 @media all and (min-width: 60em) {
-  .flex-basis-300-xl {
-    flex-basis: 300px;
+  .flex-basis-250-xl {
+    flex-basis: 250px;
   }
   .h-100-minus-40-xl {
     height: calc(100% - 40px);

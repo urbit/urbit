@@ -45,8 +45,8 @@ export class Skeleton extends Component {
           <div
             className={
               `fl h-100 br b--gray4 b--gray1-d overflow-x-hidden
-              flex-basis-full-s flex-basis-300-m flex-basis-300-l
-              flex-basis-300-xl ` +
+              flex-basis-full-s flex-basis-250-m flex-basis-250-l
+              flex-basis-250-xl ` +
               sidebarHide +
               " " +
               sidebarHideOnMobile

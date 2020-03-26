@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
-import { Link } from "react-router-dom";
-import classnames from 'classnames';
 import _ from 'lodash';
 
 import Welcome from '/components/lib/welcome.js';
+import { alphabetiseAssociations } from '../lib/util';
 import { SidebarInvite } from '/components/lib/sidebar-invite';
-import { SidebarItem } from '/components/lib/sidebar-item';
+import { GroupItem } from '/components/lib/group-item';
 
 
 export class Sidebar extends Component {
-
   onClickNew() {
     this.props.history.push('/~chat/new');
   }
@@ -21,6 +19,32 @@ export class Sidebar extends Component {
   render() {
     const { props, state } = this;
 
+    let associations = alphabetiseAssociations(props.associations.contacts);
+
+    let groupedChannels = {};
+    Object.keys(props.inbox).map((box) => {
+      if (box.startsWith("/~/")) {
+        if (groupedChannels["/~/"]) {
+          let array = groupedChannels["/~/"];
+          array.push(box);
+          groupedChannels["/~/"] = array;
+        } else {
+          groupedChannels["/~/"] = [box]
+        };
+      };
+      let path = !!props.associations.chat[box]
+        ? props.associations.chat[box]["group-path"] : box;
+      if (path in associations) {
+        if (groupedChannels[path]) {
+          let array = groupedChannels[path];
+          array.push(box);
+          groupedChannels[path] = array;
+        } else {
+          groupedChannels[path] = [box];
+        }
+      }
+    });
+
     let sidebarInvites = Object.keys(props.invites)
       .map((uid) => {
         return (
@@ -31,75 +55,48 @@ export class Sidebar extends Component {
         );
       });
 
-    let sidebarItems = Object.keys(props.inbox)
-      .map((box) => {
-        let msg = props.messagePreviews[box];
-        let letter = _.has(msg, 'letter')
-          ? msg.letter
-          : {text: 'No messages yet'};
-        let author = !!msg ? msg.author : '';
-        let when = !!msg ? msg.when : 0;
-
-        let title = box.substr(1);
-        let associatedGroup = box;
-        if (
-          box in props.associations["chat"] &&
-          props.associations.chat[box].metadata
-        ) {
-          title = props.associations.chat[box].metadata.title
-            ? props.associations.chat[box].metadata.title
-            : box.substr(1);
-          associatedGroup = props.associations.chat[box]["group-path"]
-            ? props.associations.chat[box]["group-path"]
-            : box;
+    let groupedItems = Object.keys(associations)
+      .map((each, i) => {
+        let channels = groupedChannels[each];
+        if (channels.length === 0) return;
+        if (groupedChannels["/~/"] && groupedChannels["/~/"].length !== 0) {
+          i = i + 1;
         }
-
-        let nickname = author;
-        if (associatedGroup in props.contacts &&
-          author in props.contacts[associatedGroup]) {
-            nickname = props.contacts[associatedGroup][author].nickname
-              ? props.contacts[associatedGroup][author].nickname
-              : author;
-        }
-
-        return {
-          msg,
-          when,
-          author,
-          nickname,
-          letter,
-          box,
-          title: title,
-          selected: props.station === box
-        };
-      })
-      .sort((a, b) => {
-        return b.when - a.when;
-      })
-      .map((obj) => {
-        let unread = props.unreads[obj.box];
-        return (
-          <SidebarItem
-            key={obj.box + '/' + obj.when}
-            title={obj.title}
-            latest={obj.letter}
-            box={obj.box}
-            when={obj.when}
-            ship={obj.author}
-            nickname={obj.nickname}
-            selected={obj.selected}
-            unread={unread}
-            history={props.history}
+        return(
+          <GroupItem
+            key={i}
+            index={i}
+            association={associations[each]}
+            chatMetadata={props.associations["chat"]}
+            channels={channels}
+            inbox={props.inbox}
+            station={props.station}
+            unreads={props.unreads}
+            {...props}
           />
-        );
+        )
       });
+      if (groupedChannels["/~/"] && groupedChannels["/~/"].length !== 0) {
+        groupedItems.unshift(
+          <GroupItem
+            association={"/~/"}
+            chatMetadata={props.associations["chat"]}
+            channels={groupedChannels["/~/"]}
+            inbox={props.inbox}
+            station={props.station}
+            unreads={props.unreads}
+            index={0}
+            key={"/~/"}
+            {...props}
+          />
+        )
+      }
 
     return (
       <div
         className={`h-100-minus-96-s h-100 w-100 overflow-x-hidden flex
       bg-gray0-d flex-column relative z1`}>
-        <div className="w-100 bg-transparent pa4 bb b--gray4 b--gray1-d"
-        style={{paddingBottom: 13}}>
+        <div className="w-100 bg-transparent pa4">
           <a
             className="dib f9 pointer green2 gray4-d mr4"
             onClick={this.onClickNew.bind(this)}>
@@ -114,7 +111,7 @@ export class Sidebar extends Component {
         <div className="overflow-y-auto h-100">
           <Welcome inbox={props.inbox}/>
           {sidebarInvites}
-          {sidebarItems}
+          {groupedItems}
         </div>
       </div>
     );
