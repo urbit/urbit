@@ -705,7 +705,7 @@
             ?:  ?=(%unto +>-.gift)
               [+>-.gift (symp +>+<.gift)]
             (symp +>-.gift)
-          duct
+          duct.move
         ::
         (take duct wire vane gift)
       ::
