@@ -82,9 +82,9 @@
         %kick
       ?>  ?=([@ @ *] wire)
       =/  =ship  (slav %p i.wire)
-      ?.  (~(has by synced.state) wire)
+      ?.  (~(has by synced.state) t.t.wire)
         [~ this]
-      =/  group-path  [%group wire]
+      =/  group-path  [%group t.t.wire]
       =/  group-wire  [i.wire group-path]
       :_  this
       [%pass group-wire %agent [ship %group-hook] %watch group-path]~
