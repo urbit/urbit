@@ -107,9 +107,9 @@ export class ChatScreen extends Component {
       return;
     }
 
-    let end = props.envelopes[0].number;
+    let start = props.envelopes[props.envelopes.length - 1].number;
     if (end > 0) {
-      let start = end - 400 > 0 ? end - 400 : 0;
+      let end = start + 400 < props.length ? start + 400 : props.length;
 
       if (start === 0 && end === 1) {
         return;
@@ -182,36 +182,29 @@ export class ChatScreen extends Component {
     const { props, state } = this;
  
     let messages = props.envelopes.slice(0);
- 
     let lastMsgNum = messages.length > 0 ? messages.length : 0;
  
     if (messages.length > 100 * state.numPages) {
-      messages = messages.slice(
-        messages.length - 100 * state.numPages,
-        messages.length
-      );
+      messages = messages.slice(0, 100 * state.numPages);
     }
  
     let pendingMessages = props.pendingMessages.has(props.station)
-      ? props.pendingMessages.get(props.station)
+      ? props.pendingMessages.get(props.station).reverse()
       : [];
  
     pendingMessages.map(function(value) {
       return (value.pending = true);
     });
  
-    let reversedMessages = messages.concat(pendingMessages);
-    reversedMessages = reversedMessages.reverse();
- 
-    reversedMessages = reversedMessages.map((msg, i) => {
+    let messageElements = pendingMessages.concat(messages).map((msg, i) => {
       // Render sigil if previous message is not by the same sender
       let aut = ["author"];
       let renderSigil =
-        _.get(reversedMessages[i + 1], aut) !==
+        _.get(messages[i + 1], aut) !==
         _.get(msg, aut, msg.author);
       let paddingTop = renderSigil;
       let paddingBot =
-        _.get(reversedMessages[i - 1], aut) !==
+        _.get(messages[i - 1], aut) !==
         _.get(msg, aut, msg.author);
  
       return (
@@ -288,7 +281,7 @@ export class ChatScreen extends Component {
             }}></div>
             { (
                 !(props.station in props.chatSynced) &&
-                (reversedMessages.length > 0)
+                (messages.length > 0)
               ) ? (
                   <ResubscribeElement
                     api={props.api}
@@ -296,7 +289,7 @@ export class ChatScreen extends Component {
                     station={props.station} />
                 ) : (<div/>)
             }
-            {reversedMessages}
+            {messageElements}
         </div>
         <ChatInput
           api={props.api}

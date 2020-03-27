@@ -408,40 +408,14 @@
   ?>  (~(has by synced) pas)
   ::  check if read is permitted
   ?>  (is-permitted src.bol pas)
+  =/  =mailbox  (need (chat-scry pas))
+  =*  envs  envelopes.mailbox
   %-  zing
   :~  [%give %fact ~ %chat-update !>([%create pas])]~
       ?.  ?&(?=(^ backlog-start) (~(has by allow-history) pas))  ~
-      (paginate-messages pas (need (chat-scry pas)) u.backlog-start)
+      [%give %fact ~ %chat-update !>([%messages pas 0 (lent envs) envs])]~
       [%give %kick [%backlog pax]~ `src.bol]~
   ==
-::
-++  paginate-messages
-  |=  [=path =mailbox start=@ud]
-  ^-  (list card)
-  =/  cards=(list card)  ~
-  =/  end  (lent envelopes.mailbox)
-  ?:  |((gte start end) =(end 0))
-    cards
-  =.  envelopes.mailbox  (slag start `(list envelope)`envelopes.mailbox)
-  |-  ^-  (list card)
-  ?~  envelopes.mailbox
-    cards
-  ?:  (lte end 5.000)
-    =.  cards
-      %+  snoc  cards
-      %-  messages-fact
-      [path start (lent envelopes.mailbox) envelopes.mailbox]
-    $(envelopes.mailbox ~)
-  =.  cards
-    %+  snoc  cards
-    %-  messages-fact
-    :^  path  start
-    (add start 5.000)
-    (scag 5.000 `(list envelope)`envelopes.mailbox)
-  =:  start  (add start 5.000)
-      end    (sub end 5.000)
-  ==
-  $(envelopes.mailbox (slag 5.000 `(list envelope)`envelopes.mailbox))
 ::
 ++  fact-invite-update
   |=  [wir=wire fact=invite-update]
@@ -643,11 +617,6 @@
   |=  act=invite-action
   ^-  card
   [%pass / %agent [our.bol %invite-store] %poke %invite-action !>(act)]
-::
-++  messages-fact
-  |=  [=path start=@ud end=@ud envelopes=(list envelope)]
-  ^-  card
-  [%give %fact ~ %chat-update !>([%messages path start end envelopes])]
 ::
 ++  sec-to-perm
   |=  [pax=path =kind]

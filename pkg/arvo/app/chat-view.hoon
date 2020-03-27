@@ -126,10 +126,9 @@
     ++  truncate-envelopes
       |=  envelopes=(list envelope)
       ^-  (list envelope)
-      =/  length  (lent envelopes)
-      ?:  (lth length message-limit)
+      ?:  (lth (lent envelopes) message-limit)
         envelopes
-      (slag (sub length message-limit) envelopes)
+      (scag message-limit envelopes)
     --
   ::
   ++  on-agent

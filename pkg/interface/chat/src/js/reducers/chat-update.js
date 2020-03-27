@@ -17,7 +17,7 @@ export class ChatUpdateReducer {
   message(json, state) {
     let data = _.get(json, 'message', false);
     if (data) {
-      state.inbox[data.path].envelopes.push(data.envelope);
+      state.inbox[data.path].envelopes.unshift(data.envelope);
       state.inbox[data.path].config.length
         = state.inbox[data.path].config.length + 1;
     }
@@ -27,7 +27,7 @@ export class ChatUpdateReducer {
     let data = _.get(json, 'messages', false);
     if (data) {
       state.inbox[data.path].envelopes =
-        data.envelopes.concat(state.inbox[data.path].envelopes);
+        state.inbox[data.path].envelopes.concat(data.envelopes);
       state.inbox[data.path].config.length =
         state.inbox[data.path].config.length + data.envelopes.length;
     }
