@@ -191,10 +191,23 @@
     =/  ship  (~(get by synced.state) pax.diff)
     ?~  ship  ~
     ?.  =(src.bol u.ship)  ~
-    :~  (group-poke pax.diff [%unbundle pax.diff])
-        (group-poke pax.diff [%bundle pax.diff])
-        (group-poke pax.diff [%add members.diff pax.diff])
-    ==
+    =/  have-group=(unit group)
+      (group-scry pax.diff)
+    ?~  have-group
+      ::  if we don't have the group yet, create it
+      ::
+      :~  (group-poke pax.diff [%bundle pax.diff])
+          (group-poke pax.diff [%add members.diff pax.diff])
+      ==
+    ::  if we already have the group, calculate and apply the diff
+    ::
+    =/  added=group    (~(dif in members.diff) u.have-group)
+    =/  removed=group  (~(dif in u.have-group) members.diff)
+    %+  weld
+      ?~  added  ~
+      [(group-poke pax.diff [%add added pax.diff])]~
+    ?~  removed  ~
+    [(group-poke pax.diff [%remove removed pax.diff])]~
   ::
       %add
     :_  state
