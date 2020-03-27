@@ -66,7 +66,7 @@ export class Sidebar extends Component {
         return selectedPaths.includes(each)
       })
       .map((each, i) => {
-        let channels = groupedChannels[each];
+        let channels = groupedChannels[each] || [];
         if (channels.length === 0) return;
         if (groupedChannels["/~/"] && groupedChannels["/~/"].length !== 0) {
           i = i + 1;
