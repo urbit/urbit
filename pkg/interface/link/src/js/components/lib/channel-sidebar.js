@@ -29,9 +29,6 @@ export class ChannelsSidebar extends Component {
       let groupPath = !!props.associations.link[path] ?
         props.associations.link[path]["group-path"] : "";
 
-        console.log(path);
-        console.log(groupPath);
-
       if (groupPath.startsWith("/~/")) {
         if (groupedChannels["/~/"]) {
           let array = groupedChannels["/~/"];
@@ -52,12 +49,23 @@ export class ChannelsSidebar extends Component {
       }
     });
 
+    let selectedGroups = !!props.selectedGroups ? props.selectedGroups : [];
     let i = -1;
-    const groupedItems = Object.keys(associations).map((each) => {
+    const groupedItems = Object.keys(associations)
+    .filter((each) => {
+      if (selectedGroups.length === 0) {
+        return true;
+      };
+      let selectedPaths = selectedGroups.map((e) => {
+        return e[0];
+      });
+      return selectedPaths.includes(each);
+    })
+    .map((each) => {
       let channels = groupedChannels[each];
       if (!channels || channels.length === 0) return;
       i++;
-      if (groupedChannels["/~/"] && groupedChannels["/~/"].length !== 0) {
+      if ((selectedGroups.length === 0) && groupedChannels["/~/"] && groupedChannels["/~/"].length !== 0) {
         i++;
       }
 
@@ -73,7 +81,7 @@ export class ChannelsSidebar extends Component {
         />
       )
     });
-    if (groupedChannels["/~/"] && groupedChannels["/~/"].length !== 0) {
+    if ((selectedGroups.length === 0) && groupedChannels["/~/"] && groupedChannels["/~/"].length !== 0) {
       groupedItems.unshift(
         <GroupItem
           key={"/~/"}

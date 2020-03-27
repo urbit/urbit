@@ -38,8 +38,10 @@ export class Root extends Component {
     let comments = !!state.comments ? state.comments : {};
     const seen = !!state.seen ? state.seen : {};
 
-    const invites = '/link' in state.invites ?
-      state.invites['/link'] : {};
+    const invites = state.invites ?
+      state.invites : {};
+
+    let selectedGroups = !!state.selected ? state.selected : [];
 
     return (
       <BrowserRouter><Switch>
@@ -54,6 +56,7 @@ export class Root extends Component {
                 groups={groups}
                 rightPanelHide={true}
                 sidebarShown={state.sidebarShown}
+                selectedGroups={selectedGroups}
                 links={links}
                 listening={state.listening}>
                 <div className="h-100 w-100 overflow-x-hidden bg-white bg-gray0-d dn db-ns">
@@ -76,6 +79,7 @@ export class Root extends Component {
                 groups={groups}
                 rightPanelHide={true}
                 sidebarShown={state.sidebarShown}
+                selectedGroups={selectedGroups}
                 links={links}
                 listening={state.listening}>
                 <NewScreen
@@ -114,6 +118,7 @@ export class Root extends Component {
                 selected={resourcePath}
                 rightPanelHide={true}
                 sidebarShown={state.sidebarShown}
+                selectedGroups={selectedGroups}
                 links={links}
                 listening={state.listening}>
                 <MemberScreen
@@ -151,6 +156,7 @@ export class Root extends Component {
                 selected={resourcePath}
                 rightPanelHide={true}
                 sidebarShown={state.sidebarShown}
+                selectedGroups={selectedGroups}
                 popout={popout}
                 links={links}
                 listening={state.listening}>
@@ -203,6 +209,7 @@ export class Root extends Component {
                   groups={groups}
                   selected={resourcePath}
                   sidebarShown={state.sidebarShown}
+                  selectedGroups={selectedGroups}
                   sidebarHideMobile={true}
                   popout={popout}
                   links={links}
@@ -258,6 +265,7 @@ export class Root extends Component {
                   groups={groups}
                   selected={resourcePath}
                   sidebarShown={state.sidebarShown}
+                  selectedGroups={selectedGroups}
                   sidebarHideMobile={true}
                   popout={popout}
                   links={links}
