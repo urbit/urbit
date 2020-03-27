@@ -1,4 +1,4 @@
-::  Add a new url to the watch list
+::  Change node url for azimuth-tracker
 :-  %say
 |=  [* [url=@ta ~] ~]
 [%azimuth-tracker-poke %watch url]
