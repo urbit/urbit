@@ -1,5 +1,6 @@
 module Urbit.Uruk.Bracket
   ( Exp(..)
+  , Out
   , SK(..)
   , naiveBracket
   , johnTrompBracket

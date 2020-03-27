@@ -241,6 +241,13 @@ astExp = \case
   x :@ y  -> astExp x B.:@ astExp y
   Lam n b -> B.Lam () (abstract1 (Right n) (astExp b))
 
+decExp :: Dec -> (Text, B.Exp () (Either Atom Text))
+decExp (Dec nm jetArgs e) = (nm, body)
+ where
+  body = fromIntegral (length jetArgs) & \case
+    0 -> astExp e
+    n -> astExp (jet n nm (lam jetArgs e))
+
 expErr :: B.Exp b (Either Atom Text) -> Either Text (B.Exp b Atom)
 expErr = traverse $ \case
   Left atom  -> Right atom
@@ -252,15 +259,40 @@ tryExp txt = do
   resu <- expErr (astExp expr)
   pure (skag (B.johnTrompBracket resu), skag (B.naiveBracket resu))
 
+
+-- Texting ---------------------------------------------------------------------
+
 tryIt :: Text -> IO ()
 tryIt txt = do
   tryExp txt & \case
     Left err -> putStrLn err
     Right rs -> pPrint rs
 
+prettyThing :: Text -> B.Out (B.SK (Either Atom Text)) -> IO ()
+prettyThing nm topExpr = do
+  putStrLn ("++  " <> nm)
+  putStr "  "
+  putStr (go topExpr)
+  putStrLn ""
+ where
+  go = \case
+    B.Lam v _            -> absurd v
+    B.Var B.S            -> "S"
+    B.Var B.K            -> "K"
+    B.Var (B.V (Left a)) -> Atom.atomUtf8 a & \case
+      Left  _ -> tshow a
+      Right t -> "%" <> t
+    B.Var (B.V (Right t)) -> t
+    x B.:@ y -> "(" <> intercalate " " (go <$> flatten x [y]) <> ")"
+
+  flatten (x B.:@ y) acc = flatten x (y : acc)
+  flatten x          acc = (x : acc)
+
+
 tryDash :: IO ()
 tryDash = do
   txt <- readFileUtf8 "urbit-uruk/jets.dash"
   parseDecs txt & \case
     Left err -> putStrLn err
-    Right ds -> pPrint ds
+    Right ds ->
+      traverse_ (uncurry prettyThing) (fmap B.johnTrompBracket . decExp <$> ds)
