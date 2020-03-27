@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -Wall -Werror #-}
+{-- OPTIONS_GHC -Wall -Werror --}
 
 module Urbit.Uruk.DashParser where
 
@@ -12,12 +12,13 @@ import Text.Megaparsec.Char
 import Bound            (abstract1)
 import Data.Void        (Void, absurd)
 import Numeric.Natural  (Natural)
-import Prelude          (read)
+import Prelude          (read, last)
 import Text.Show.Pretty (pPrint)
-import Urbit.Atom       (Atom)
+import Urbit.Atom       (Atom, atomUtf8Exn)
 
-import qualified Urbit.Atom         as Atom
-import qualified Urbit.Uruk.Bracket as B
+import qualified Urbit.Atom          as Atom
+import qualified Urbit.Uruk.Bracket  as B
+import qualified Urbit.Uruk.UrukDemo as UD
 
 
 -- Types -----------------------------------------------------------------------
@@ -288,11 +289,44 @@ prettyThing nm topExpr = do
   flatten (x B.:@ y) acc = flatten x (y : acc)
   flatten x          acc = (x : acc)
 
-
 tryDash :: IO ()
 tryDash = do
   txt <- readFileUtf8 "urbit-uruk/jets.dash"
   parseDecs txt & \case
     Left err -> putStrLn err
-    Right ds ->
-      traverse_ (uncurry prettyThing) (fmap B.johnTrompBracket . decExp <$> ds)
+    Right ds -> do
+      resolv (fmap B.johnTrompBracket . decExp <$> ds) & \case
+        Left err -> putStrLn err
+        Right ev -> pPrint (mapToList ev)
+
+type Env = Map Text UD.Exp
+
+resolv :: [(Text, B.Out (B.SK (Either Atom Text)))] -> Either Text Env
+resolv = go initialEnv
+ where
+  initialEnv :: Env
+  initialEnv = mapFromList
+    [("S", UD.N UD.S), ("K", UD.N UD.K), ("J", UD.N UD.J), ("D", UD.N UD.D)]
+
+  go :: Env -> [(Text, B.Out (B.SK (Either Atom Text)))] -> Either Text Env
+  go acc []            = pure acc
+  go acc ((n, e) : xs) = do
+    traceM (unpack n)
+    e' <- udEval <$> cvt n acc e
+    go (insertMap n e' acc) xs
+
+udEval :: UD.Exp -> UD.Exp
+udEval = last . UD.exec (pure Nothing)
+
+cvt :: Text -> Env -> B.Out (B.SK (Either Atom Text)) -> Either Text UD.Exp
+cvt bind env = go
+ where
+  go = \case
+    B.Lam v _               -> absurd v
+    B.Var B.S               -> pure $ UD.N $ UD.S
+    B.Var B.K               -> pure $ UD.N $ UD.K
+    B.Var (B.V (Left atom)) -> pure $ UD.N $ UD.V ("_" <> atomUtf8Exn atom)
+    x B.:@ y                -> (UD.:@) <$> go x <*> go y
+    B.Var (B.V (Right txt)) -> lookup txt env & \case
+      Nothing -> Left ("Undefined variable: " <> txt <> " (in " <> bind <> ")")
+      Just v  -> pure v

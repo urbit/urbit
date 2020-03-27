@@ -16,7 +16,8 @@
 
 module Urbit.Uruk.UrukDemo
   ( main
-  , Exp
+  , Exp(..)
+  , Ur(..)
   , Env
   , Inp(..)
   , EvalResult(..)
@@ -24,6 +25,7 @@ module Urbit.Uruk.UrukDemo
   , InpResult(..)
   , parseInps
   , execText
+  , exec
   , printEvalResult
   , printInpResult
   , prettyInpResult
