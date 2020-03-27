@@ -15,6 +15,7 @@ class Store {
       associations: {},
       permissions: {},
       invites: {},
+      selected: [],
       spinner: false
     };
 

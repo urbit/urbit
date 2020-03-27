@@ -5,6 +5,7 @@ export class LocalReducer {
     let data = _.get(json, 'local', false);
     if (data) {
       this.setSpinner(data, state);
+      this.setSelected(data, state);
     }
   }
 
@@ -12,6 +13,12 @@ export class LocalReducer {
     let data = _.has(json, 'spinner', false);
     if (data) {
       state.spinner = json.spinner;
+    }
+  }
+  setSelected(json, state) {
+    let data = _.has(json, 'selected', false);
+    if (data) {
+      state.selected = json.selected;
     }
   }
 }

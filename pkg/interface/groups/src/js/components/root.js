@@ -34,7 +34,8 @@ export class Root extends Component {
     let invites =
       (!!state.invites && '/contacts' in state.invites) ?
       state.invites['/contacts'] : {};
-    let associations = !! state.associations ? state.associations : {};
+    let associations = !!state.associations ? state.associations : {};
+    let selectedGroups = !!state.selected ? state.selected : [];
 
     return (
       <BrowserRouter>
@@ -45,6 +46,7 @@ export class Root extends Component {
               <Skeleton
                 activeDrawer="groups"
                 spinner={state.spinner}
+                selectedGroups={selectedGroups}
                 history={props.history}
                 api={api}
                 contacts={contacts}
@@ -67,6 +69,7 @@ export class Root extends Component {
                 <Skeleton
                   spinner={state.spinner}
                   history={props.history}
+                  selectedGroups={selectedGroups}
                   api={api}
                   contacts={contacts}
                   groups={groups}
@@ -99,6 +102,7 @@ export class Root extends Component {
                 <Skeleton
                   spinner={state.spinner}
                   history={props.history}
+                  selectedGroups={selectedGroups}
                   api={api}
                   contacts={contacts}
                   invites={invites}
@@ -139,6 +143,7 @@ export class Root extends Component {
                 <Skeleton
                   spinner={state.spinner}
                   history={props.history}
+                  selectedGroups={selectedGroups}
                   api={api}
                   contacts={contacts}
                   groups={groups}
@@ -183,6 +188,7 @@ export class Root extends Component {
                   spinner={state.spinner}
                   history={props.history}
                   api={api}
+                  selectedGroups={selectedGroups}
                   contacts={contacts}
                   groups={groups}
                   invites={invites}
@@ -232,6 +238,7 @@ export class Root extends Component {
                   spinner={state.spinner}
                   history={props.history}
                   api={api}
+                  selectedGroups={selectedGroups}
                   contacts={contacts}
                   groups={groups}
                   invites={invites}
@@ -267,6 +274,7 @@ export class Root extends Component {
                   spinner={state.spinner}
                   history={props.history}
                   api={api}
+                  selectedGroups={selectedGroups}
                   contacts={contacts}
                   groups={groups}
                   invites={invites}
