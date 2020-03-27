@@ -11,7 +11,7 @@
   ==
   ;body
     ;div#root;
-    ;script@"/~/channel/channel.js";
+    ;script@"/~channel/channel.js";
     ;script@"/~modulo/session.js";
     ;*  scripts
     ;script@"/~launch/js/index.js";
