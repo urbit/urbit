@@ -1,6 +1,6 @@
-++  (I x)      x
-++  (B f g x)  (f (g x))
-++  (C f g x)  (f x g)
+++  (eye x)      x
+++  (bee f g x)  (f (g x))
+++  (sea f g x)  (f x g)
 
 ++  (yes t f)  t
 ++  (nah t f)  f
@@ -31,7 +31,7 @@
   |=  (f x)
   (f ($ f) x)
 
-++  (ded e)  (fix I e)
+++  (ded e)  (fix eye e)
 
 ++  (uni x)  (ded x)
 
@@ -51,7 +51,7 @@
     <y (rit (inc y))>
   (lef uni)
 
-++  (fec n)    (cas (dec n) (K 0) I)
+++  (fec n)    (cas (dec n) (K 0) eye)
 ++  (add x y)  (pak <i z (x i (y i z))>)
 ++  (mul x y)  (pak <i z (x (y i) z)>)
 ++  (sub x y)  (y <z (cas z lef dec)> (rit x))
@@ -59,3 +59,5 @@
 ++  (eql x y)  (cas (sub x y) (K nah) zer)
 ++  (bex x)    (x (mul 2) 1)
 ++  (lsh x n)  (mul (bex x) n)
+
+++  (iff c t e)  (c t e uni)
