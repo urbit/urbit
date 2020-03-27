@@ -19,6 +19,10 @@ a:-webkit-any-link {
 
 textarea, select, input, button { outline: none; }
 
+.c-default {
+  cursor: default;
+}
+
 .mono {
   font-family: "Source Code Pro", monospace;
 }
@@ -35,6 +39,12 @@ textarea, select, input, button { outline: none; }
   .bg-gray0-d {
     background-color: #333;
   }
+  .bg-gray1-d {
+    background-color: #4d4d4d;
+  }
+  .bg-gray2-d {
+    background-color: #7f7f7f;
+  }
   .b--gray1-d {
     border-color: #4d4d4d;
   }
@@ -43,5 +53,8 @@ textarea, select, input, button { outline: none; }
   }
   .invert-d {
     filter: invert(1);
+  }
+  .hover-bg-gray1-d:hover {
+    background-color: #4d4d4d;
   }
 }

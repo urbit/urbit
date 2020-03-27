@@ -25,7 +25,7 @@ export default class Home extends Component {
         // tileData["invites"] = ("invites" in this.props.data)
         // ? this.props.data["invites"] : {};
       }
-      if (tile !== "invites") {
+      if ((tile !== "invites") && (tile !== "associations")) {
         return <Tile key={tile} type={tile} data={tileData} />;
       }
     });
@@ -37,7 +37,7 @@ export default class Home extends Component {
 
     return (
       <div className="fl w-100 h-100 bg-white bg-gray0-d center">
-        <Header data={headerData}/>
+        <Header data={headerData} associations={this.props.data.associations} invites={this.props.data.invites}/>
         <div className={"v-mid pa2 dtc-m dtc-l dtc-xl " +
         "flex justify-between flex-wrap"}
         style={{maxWidth: "40rem"}}>
