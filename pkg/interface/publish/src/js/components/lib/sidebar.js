@@ -61,11 +61,21 @@ export class Sidebar extends Component {
       }
     });
 
+    let selectedGroups = !!props.selectedGroups ? props.selectedGroups: [];
     let groupedItems = Object.keys(associations)
+      .filter((each) => {
+        if (selectedGroups.length === 0) {
+          return true;
+        }
+        let selectedPaths = selectedGroups.map((e) => { return e[0] });
+        return (selectedPaths.includes(each));
+      })
       .map((each, i) => {
         let books = groupedNotebooks[each];
         if (books.length === 0) return;
-        if (groupedNotebooks["/~/"] && groupedNotebooks["/~/"].length !== 0) {
+        if ((selectedGroups.length === 0) &&
+        groupedNotebooks["/~/"] &&
+        groupedNotebooks["/~/"].length !== 0) {
           i = i + 1;
         }
         return(
@@ -79,7 +89,9 @@ export class Sidebar extends Component {
           />
         )
       })
-      if (groupedNotebooks["/~/"] && groupedNotebooks["/~/"].length !== 0) {
+    if ((selectedGroups.length === 0) &&
+      groupedNotebooks["/~/"] &&
+      groupedNotebooks["/~/"].length !== 0) {
         groupedItems.unshift(
           <GroupItem
             key={"/~/"}
