@@ -411,6 +411,9 @@
 ++  run-reef
   =/  m  (fume ,vase)
   ^-  form:m
+  ::  TODO: HACK replace with arvo check
+  ::
+  ?:  %&  (pure:m !>(..zuse))
   ;<  hun=vase  bind:m  (load-hoon-raw /sys/hoon/hoon !>(~))
   ;<  rav=vase  bind:m  (load-hoon-raw /sys/arvo/hoon (slot 7 hun))
   (load-hoon-raw /sys/zuse/hoon (slap rav ^~((ream '..is'))))
