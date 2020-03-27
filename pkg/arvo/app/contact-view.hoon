@@ -8,7 +8,8 @@
     *metadata-store,
     *metadata-hook,
     *permission-group-hook,
-    *permission-hook
+    *permission-hook,
+    launch
 /+  *server, *contact-json, default-agent, dbug
 /=  index
   /^  octs
@@ -44,7 +45,13 @@
 ::
 |%
 +$  card  card:agent:gall
++$  state-zero  [%0 ~]
++$  versioned-state
+  $%  state-zero
+  ==
 --
+=|  state-zero
+=*  state  -
 ::
 %-  agent:dbug
 ^-  agent:gall
@@ -66,9 +73,19 @@
         (group-poke:cc [%add [our.bowl ~ ~] /~/default])
     ==
   ::
-  ++  on-save   on-save:def
-  ++  on-load   on-load:def
-  :: (launch-poke:cc [%remove %contact-view /primary '/~groups/js/tile.js'])
+  ++  on-save   !>(state)
+  ++  on-load
+    |=  old=vase
+    =/  pre-versioned=(each ~ tang)
+      (mule |.(!<(~ old)))
+    ?:  ?=(%.y -.pre-versioned)
+      :_  this(state [%0 ~])
+      [(launch-poke:cc [%remove %contact-view /primary])]~
+    =/  versioned=versioned-state
+      !<(versioned-state old)
+    ?-  -.versioned
+      %0  [~ this]
+    ==
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
@@ -218,9 +235,9 @@
   [%pass / %agent [ship %contact-hook] %poke %contact-action !>(act)]
 ::
 ++  launch-poke
-  |=  act=[@tas path @t]
+  |=  act=action:launch
   ^-  card
-   [%pass / %agent [our.bol %launch] %poke %launch-action !>(act)]
+  [%pass / %agent [our.bol %launch] %poke %launch-action !>(act)]
 ::
 ++  group-poke
   |=  act=group-action
