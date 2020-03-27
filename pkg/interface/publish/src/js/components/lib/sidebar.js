@@ -71,7 +71,7 @@ export class Sidebar extends Component {
         return (selectedPaths.includes(each));
       })
       .map((each, i) => {
-        let books = groupedNotebooks[each];
+        let books = groupedNotebooks[each] || [];
         if (books.length === 0) return;
         if ((selectedGroups.length === 0) &&
         groupedNotebooks["/~/"] &&
