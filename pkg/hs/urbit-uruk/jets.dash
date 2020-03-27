@@ -33,7 +33,7 @@
 
 ++  (ded e)  (fix I e)
 
-++  (uni x)  (ded %baduni)
+++  (uni x)  (ded x)
 
 ++  (con h t f)  (f h t)
 ++  (car p)      (p <h t h>)

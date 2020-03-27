@@ -311,9 +311,14 @@ resolv = go initialEnv
   go :: Env -> [(Text, B.Out (B.SK (Either Atom Text)))] -> Either Text Env
   go acc []            = pure acc
   go acc ((n, e) : xs) = do
-    traceM (unpack n)
-    e' <- udEval <$> cvt n acc e
-    go (insertMap n e' acc) xs
+    --  traceM (unpack n)
+    e' <- cvt n acc e
+    --  traceM (show e')
+    e'' <- case udEval e' of
+                UD.N n -> pure (UD.N n)
+                x UD.:@ y -> pure (x UD.:@ y)
+    --  traceM (show e'')
+    go (insertMap n e'' acc) xs
 
 udEval :: UD.Exp -> UD.Exp
 udEval = last . UD.exec (pure Nothing)
@@ -325,7 +330,7 @@ cvt bind env = go
     B.Lam v _               -> absurd v
     B.Var B.S               -> pure $ UD.N $ UD.S
     B.Var B.K               -> pure $ UD.N $ UD.K
-    B.Var (B.V (Left atom)) -> pure $ UD.N $ UD.V ("_" <> atomUtf8Exn atom)
+    B.Var (B.V (Left atom)) -> pure $ UD.N $ UD.V ("\"" <> atomUtf8Exn atom <> "\"")
     x B.:@ y                -> (UD.:@) <$> go x <*> go y
     B.Var (B.V (Right txt)) -> lookup txt env & \case
       Nothing -> Left ("Undefined variable: " <> txt <> " (in " <> bind <> ")")
