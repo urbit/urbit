@@ -19,6 +19,8 @@ export class Sidebar extends Component {
   render() {
     const { props, state } = this;
 
+    let selectedGroups = !!props.selectedGroups ? props.selectedGroups : [];
+
     let associations = alphabetiseAssociations(props.associations.contacts);
 
     let groupedChannels = {};
@@ -56,6 +58,13 @@ export class Sidebar extends Component {
       });
 
     let groupedItems = Object.keys(associations)
+      .filter((each) => {
+        if (selectedGroups.length === 0) {
+          return true;
+        }
+        let selectedPaths = selectedGroups.map((e) => {return e[0]});
+        return selectedPaths.includes(each)
+      })
       .map((each, i) => {
         let channels = groupedChannels[each];
         if (channels.length === 0) return;

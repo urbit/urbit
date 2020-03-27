@@ -22,6 +22,7 @@ class Store {
         contacts: {}
       },
       spinner: false,
+      selected: [],
       sidebarShown: true,
       pendingMessages: new Map([]),
       chatInitialized: false
