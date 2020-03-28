@@ -16,6 +16,7 @@ dependencies:
   - classy-prelude
   - containers
   - deriving-compat
+  - directory
   - ghc-prim
   - hashable
   - lens
@@ -26,11 +27,11 @@ dependencies:
   - positive
   - pretty-show
   - primitive
+  - serialise
+  - template-haskell
   - text
   - urbit-atom
   - vector
-  - serialise
-  - directory
 
 when:
   - condition: "! impl(ghcjs)"
