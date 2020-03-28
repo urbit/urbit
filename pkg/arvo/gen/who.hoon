@@ -19,4 +19,10 @@
   [[%404 ~] ~]
 =/  response=json
   (frond:enjs:format %who (ship:enjs:format p.bek))
-(json-response:gen (json-to-octs response))
+:-
+  :-  %200
+  :~
+    ['content-type' 'application/json']
+    ['access-control-allow-origin' 'https://bridge.urbit.org']
+  ==
+`(json-to-octs response)
