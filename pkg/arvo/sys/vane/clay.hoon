@@ -3922,22 +3922,57 @@
       ?:  =(%black mod.rul)
         !in-list
       in-list
+    ::  +content-hash: get hash of contents (%cz hash)
+    ::
+    ++  content-hash
+      |=  [=yaki pax=path]
+      ^-  @uvI
+      =+  len=(lent pax)
+      :: ~&  read-z+[yon=yon qyt=~(wyt by q.yaki) pax=pax]
+      =/  descendants/(list (pair path lobe))
+          ::  ~&  %turning
+          ::  =-  ~&  %turned  -
+          %+  turn
+            ::  ~&  %skimming
+            ::  =-  ~&  %skimmed  -
+            %+  skim  ~(tap by (~(del by q.yaki) pax))
+            |=  {paf/path lob/lobe}
+            =(pax (scag len paf))
+          |=  {paf/path lob/lobe}
+          [(slag len paf) lob]
+      =+  us=(~(get by q.yaki) pax)
+      ?:  &(?=(~ descendants) ?=(~ us))
+        *@uvI
+      %+  roll
+        ^-  (list (pair path lobe))
+        [[~ ?~(us *lobe u.us)] descendants]
+      |=({{path lobe} @uvI} (shax (jam +<)))
     ::  +read-s: produce yaki or blob for given tako or lobe
     ::
     ++  read-s
       |=  [yon=aeon pax=path]
-      ^-  (unit (unit $%([%yaki (hypo yaki)] [%blob (hypo blob)])))
-      ?.  ?=([?(%yaki %blob) * ~] pax)
+      ^-  (unit (unit cage))
+      ?.  ?=([?(%yaki %blob %hash) * ~] pax)
         `~
-      ?:  ?=(%yaki i.pax)
+      ?-    i.pax
+          %yaki
         =/  yak=(unit yaki)  (~(get by hut.ran) (slav %uv i.t.pax))
         ?~  yak
           ~
         ``yaki+[-:!>(*yaki) u.yak]
-      =/  bol=(unit blob)  (~(get by lat.ran) (slav %uv i.t.pax))
-      ?~  bol
-        ~
-      ``blob+[-:!>(*blob) u.bol]
+      ::
+          %blob
+        =/  bol=(unit blob)  (~(get by lat.ran) (slav %uv i.t.pax))
+        ?~  bol
+          ~
+        ``blob+[-:!>(*blob) u.bol]
+      ::
+          %hash
+        =/  yak=(unit yaki)  (~(get by hut.ran) (slav %uv i.t.pax))
+        ?~  yak
+          ~
+        ``uvi+[-:!>(*@uvI) (content-hash u.yak /)]
+      ==
     ::  +read-t: produce the list of paths within a yaki with :pax as prefix
     ::
     ++  read-t
@@ -4065,30 +4100,7 @@
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
         ~
-      =+  yak=(tako-to-yaki u.tak)
-      =+  len=(lent pax)
-      :: ~&  read-z+[yon=yon qyt=~(wyt by q.yak) pax=pax]
-      =/  descendants/(list (pair path lobe))
-          ::  ~&  %turning
-          ::  =-  ~&  %turned  -
-          %+  turn
-            ::  ~&  %skimming
-            ::  =-  ~&  %skimmed  -
-            %+  skim  ~(tap by (~(del by q.yak) pax))
-            |=  {paf/path lob/lobe}
-            =(pax (scag len paf))
-          |=  {paf/path lob/lobe}
-          [(slag len paf) lob]
-      =+  us=(~(get by q.yak) pax)
-      ^-  (unit (unit {$uvi (hypo @uvI)}))
-      :^  ~  ~  %uvi
-      :-  -:!>(*@uvI)
-      ?:  &(?=(~ descendants) ?=(~ us))
-        *@uvI
-      %+  roll
-        ^-  (list (pair path lobe))
-        [[~ ?~(us *lobe u.us)] descendants]
-      |=({{path lobe} @uvI} (shax (jam +<)))
+      [~ ~ %uvi -:!>(*@uvI) (content-hash (tako-to-yaki u.tak) pax)]
     ::
     ::  Get a value at an aeon.
     ::
