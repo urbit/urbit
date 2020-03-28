@@ -10,13 +10,13 @@ import qualified Urbit.Uruk.DashParser as Dash
 --------------------------------------------------------------------------------
 
 jetArity :: SingJet -> Pos
-jetArity = $(Dash.jetArity)
+jetArity = $(pure Dash.jetArity)
 
 jetTag :: SingJet -> Val
-jetTag = $(Dash.jetTag)
+jetTag = $(pure Dash.jetTag)
 
 jetBody :: SingJet -> Val
-jetBody = $(Dash.jetBody)
+jetBody = $(pure Dash.jetBody)
 
 jetMatch :: (Pos, Val, Val) -> Maybe SingJet
-jetMatch = $(Dash.jetMatch)
+jetMatch = $(pure Dash.jetMatch)

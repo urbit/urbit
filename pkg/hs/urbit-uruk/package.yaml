@@ -17,6 +17,7 @@ dependencies:
   - containers
   - deriving-compat
   - directory
+  - file-embed
   - ghc-prim
   - hashable
   - lens

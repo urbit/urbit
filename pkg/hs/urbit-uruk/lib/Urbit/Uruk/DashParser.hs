@@ -1,8 +1,4 @@
-{-- OPTIONS_GHC -Wall -Werror #-}
-
-{-
-  TODO Generate `match` function.
--}
+{-# OPTIONS_GHC -Wall -Werror #-}
 
 module Urbit.Uruk.DashParser where
 
@@ -14,13 +10,14 @@ import Text.Megaparsec hiding (Pos)
 import Text.Megaparsec.Char
 import Data.Tree
 
-import Bound            (abstract1)
-import Data.Void        (Void, absurd)
-import Numeric.Natural  (Natural)
-import Numeric.Positive (Positive)
-import Prelude          (read)
-import Text.Show.Pretty (pPrint)
-import Urbit.Atom       (Atom)
+import Bound              (abstract1)
+import Data.Void          (Void, absurd)
+import Numeric.Natural    (Natural)
+import Numeric.Positive   (Positive)
+import Prelude            (read)
+import Text.Show.Pretty   (pPrint)
+import Urbit.Atom         (Atom)
+import Urbit.Uruk.JetSpec (jetSpec)
 
 import qualified Language.Haskell.TH as TH
 import qualified Urbit.Atom          as Atom
@@ -373,16 +370,6 @@ tryDash = do
           pPrint (mapToList ev)
           pPrint (mapToList rg)
 
-loadReg :: IO Reg
-loadReg = do
-  txt <- readFileUtf8 "urbit-uruk/jets.dash"
-  parseDecs txt & \case
-    Left err -> error (unpack err)
-    Right ds -> do
-      resolv (fmap B.johnTrompBracket . decExp <$> ds) & \case
-        Left err -> error (unpack err)
-        Right (_, rg) -> pure rg
-
 cvt :: Text -> Env -> B.Out (B.SK (Either Atom Text)) -> Either Text Exp
 cvt bind env = go
  where
@@ -455,18 +442,26 @@ resolv = go (initialEnv, mempty)
     e'' <- pure (eval e')
     case jetExp n e'' of
       Nothing -> do
-        traceM $ unpack (n <> " is not a jet")
+        -- traceM $ unpack (n <> " is not a jet")
         go (insertMap n e'' env, reg) xs
       Just (sj, (arity, nm, val)) -> do
-        traceM (unpack n <> " is a jet:")
-        traceM ("  " <> show sj)
-        traceM ("  " <> show arity)
-        traceM ("  " <> show nm)
-        traceM ("  " <> show val)
-        traceM ""
+        -- traceM (unpack n <> " is a jet:")
+        -- traceM ("  " <> show sj)
+        -- traceM ("  " <> show arity)
+        -- traceM ("  " <> show nm)
+        -- traceM ("  " <> show val)
+        -- traceM ""
         let env' = insertMap n (N $ SingJet sj) env
         let reg' = insertMap sj (arity, nm, val) reg
         go (env', reg') xs
+
+jetsMap :: Reg
+jetsMap = parseDecs jetSpec & \case
+  Left  err -> error (unpack err)
+  Right ds  -> do
+    resolv (fmap B.johnTrompBracket . decExp <$> ds) & \case
+      Left  err     -> error (unpack err)
+      Right (_, rg) -> rg
 
 
 -- Template Haskell ------------------------------------------------------------
@@ -534,35 +529,29 @@ valPat = \case
 
 --------------------------------------------------------------------------------
 
-jetArity :: TH.Q TH.Exp
-jetArity = do
-  regs <- liftIO loadReg
-  pure $ TH.LamCaseE $ matches $ mapToList regs
+jetArity :: TH.Exp
+jetArity = TH.LamCaseE $ matches $ mapToList jetsMap
  where
-  matches = fmap \(jet, (ari, _, _)) ->
-    TH.Match (sjPat jet) (TH.NormalB $ intLit ari) []
+  matches = fmap \(sj, (ari, _, _)) ->
+    TH.Match (sjPat sj) (TH.NormalB $ intLit ari) []
 
-jetTag :: TH.Q TH.Exp
-jetTag = TH.LamCaseE . matches . mapToList <$> liftIO loadReg
+jetTag :: TH.Exp
+jetTag = TH.LamCaseE $ matches $ mapToList jetsMap
  where
-  matches = fmap \(jet, (_, tag, _)) ->
-    TH.Match (sjPat jet) (TH.NormalB $ valExp tag) []
+  matches = fmap \(sj, (_, tag, _)) ->
+    TH.Match (sjPat sj) (TH.NormalB $ valExp tag) []
 
-jetBody :: TH.Q TH.Exp
-jetBody = TH.LamCaseE . matches . mapToList <$> liftIO loadReg
+jetBody :: TH.Exp
+jetBody = TH.LamCaseE $ matches $ mapToList jetsMap
  where
-  matches = fmap $ \case
-    (jet, (_, _, bod)) -> TH.Match (sjPat jet) (TH.NormalB $ valExp bod) []
+  matches =
+    fmap \(sj, (_, _, bod)) -> TH.Match (sjPat sj) (TH.NormalB $ valExp bod) []
 
-jetMatch :: TH.Q TH.Exp
-jetMatch = TH.LamCaseE . flip snoc fb . mxs . mapToList <$> liftIO loadReg
+jetMatch :: TH.Exp
+jetMatch = TH.LamCaseE $ flip snoc fb $ mxs $ mapToList jetsMap
  where
   fb  = TH.Match TH.WildP (TH.NormalB (TH.ConE 'Nothing)) []
-
-  mxs = fmap \case
-    (jet, (ari, tag, bod)) -> TH.Match pat thBod []
-     where
-      pat = TH.TupP
-        [TH.LitP (TH.IntegerL (fromIntegral ari)), valPat tag, valPat bod]
-      thBod =
-        TH.NormalB $ TH.AppE (TH.ConE 'Just) $ TH.ConE $ TH.mkName $ show jet
+  mxs = fmap \(sj, (ari, tag, bod)) -> TH.Match
+    (TH.TupP [TH.LitP (TH.IntegerL (fromIntegral ari)), valPat tag, valPat bod])
+    (TH.NormalB (TH.AppE (TH.ConE 'Just) (TH.ConE (TH.mkName (show sj)))))
+    []
