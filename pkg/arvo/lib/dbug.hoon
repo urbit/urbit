@@ -21,6 +21,7 @@
 ++  agent
   |=  =agent:gall
   ^-  agent:gall
+  !.
   |_  =bowl:gall
   +*  this  .
       ag    ~(. agent bowl)
