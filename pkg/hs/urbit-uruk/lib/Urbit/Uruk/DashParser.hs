@@ -8,7 +8,7 @@ module Urbit.Uruk.DashParser where
 
 import ClassyPrelude hiding (exp, init, many, some, try)
 
-import Control.Lens
+import Control.Lens hiding (snoc)
 import Control.Monad.State.Lazy
 import Text.Megaparsec hiding (Pos)
 import Text.Megaparsec.Char
@@ -111,7 +111,7 @@ data SingJet
   | CON
   | CAR
   | CDR
- deriving (Eq, Ord, Read, Show, Generic)
+ deriving (Eq, Ord, Read, Show, Enum, Bounded, Generic)
  deriving anyclass NFData
 
 data DataJet
@@ -474,6 +474,9 @@ resolv = go (initialEnv, mempty)
 intLit :: Integral i => i -> TH.Exp
 intLit = TH.LitE . TH.IntegerL . fromIntegral
 
+intLitPat :: Integral i => i -> TH.Pat
+intLitPat = TH.LitP . TH.IntegerL . fromIntegral
+
 sjExp :: SingJet -> TH.Exp
 sjExp = TH.ConE . TH.mkName . show
 
@@ -500,35 +503,66 @@ valExp = \case
  where
   app = TH.ConE (TH.mkName ":&")
 
-sjPat :: SingJet -> TH.Pat
-sjPat sj = TH.ConP (sjName sj) []
+--------------------------------------------------------------------------------
+
+djPat :: DataJet -> TH.Pat
+djPat = \case
+  Sn  p -> TH.ConP 'Sn [intLitPat p]
+  Bn  p -> TH.ConP 'Bn [intLitPat p]
+  Cn  p -> TH.ConP 'Cn [intLitPat p]
+  NAT n -> TH.ConP 'NAT [intLitPat n]
 
 sjName :: SingJet -> TH.Name
 sjName = TH.mkName . show
+
+sjPat :: SingJet -> TH.Pat
+sjPat sj = TH.ConP (sjName sj) []
+
+urPat :: Ur -> TH.Pat
+urPat = \case
+  S          -> TH.ConP 'S []
+  K          -> TH.ConP 'K []
+  J          -> TH.ConP 'J []
+  D          -> TH.ConP 'D []
+  SingJet sj -> TH.ConP 'SingJet [sjPat sj]
+  DataJet dj -> TH.ConP 'DataJet [djPat dj]
+
+valPat :: Val -> TH.Pat
+valPat = \case
+  N n    -> TH.ConP 'N [urPat n]
+  x :& y -> TH.ConP '(:&) [valPat x, valPat y]
+
+--------------------------------------------------------------------------------
 
 jetArity :: TH.Q TH.Exp
 jetArity = do
   regs <- liftIO loadReg
   pure $ TH.LamCaseE $ matches $ mapToList regs
  where
-  matches regs = regs <&> \case
-    (jet, (ari, _tag, _bod)) ->
-      TH.Match (sjPat jet) (TH.NormalB $ intLit ari) []
+  matches = fmap \(jet, (ari, _, _)) ->
+    TH.Match (sjPat jet) (TH.NormalB $ intLit ari) []
 
 jetTag :: TH.Q TH.Exp
-jetTag = do
-  regs <- liftIO loadReg
-  pure $ TH.LamCaseE $ matches $ mapToList regs
+jetTag = TH.LamCaseE . matches . mapToList <$> liftIO loadReg
  where
-  matches regs = regs <&> \case
-    (jet, (_ari, tag, _bod)) ->
-      TH.Match (sjPat jet) (TH.NormalB $ valExp tag) []
+  matches = fmap \(jet, (_, tag, _)) ->
+    TH.Match (sjPat jet) (TH.NormalB $ valExp tag) []
 
 jetBody :: TH.Q TH.Exp
-jetBody = do
-  regs <- liftIO loadReg
-  pure $ TH.LamCaseE $ matches $ mapToList regs
+jetBody = TH.LamCaseE . matches . mapToList <$> liftIO loadReg
  where
-  matches regs = regs <&> \case
-    (jet, (_, _, bod)) ->
-      TH.Match (sjPat jet) (TH.NormalB $ valExp bod) []
+  matches = fmap $ \case
+    (jet, (_, _, bod)) -> TH.Match (sjPat jet) (TH.NormalB $ valExp bod) []
+
+jetMatch :: TH.Q TH.Exp
+jetMatch = TH.LamCaseE . flip snoc fb . mxs . mapToList <$> liftIO loadReg
+ where
+  fb  = TH.Match TH.WildP (TH.NormalB (TH.ConE 'Nothing)) []
+
+  mxs = fmap \case
+    (jet, (ari, tag, bod)) -> TH.Match pat thBod []
+     where
+      pat = TH.TupP
+        [TH.LitP (TH.IntegerL (fromIntegral ari)), valPat tag, valPat bod]
+      thBod =
+        TH.NormalB $ TH.AppE (TH.ConE 'Just) $ TH.ConE $ TH.mkName $ show jet
