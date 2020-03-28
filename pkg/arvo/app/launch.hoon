@@ -57,10 +57,14 @@
 |_  bol=bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bol)
+    launch-who  [%pass /who %arvo %e %serve [~ /who] q.byk.bol /gen/who/hoon ~]
 ++  on-init
   ^-  (quip card _this)
   :_  this(state *[%2 state-two])
-  [%pass / %arvo %e %connect [~ /] %launch]~
+  :~
+    launch-who
+    [%pass / %arvo %e %connect [~ /] %launch]
+  ==
 ::
 ++  on-save  !>(state)
 ::
@@ -68,6 +72,7 @@
   |=  old=vase
   ^-  (quip card _this)
   =/  old-state  !<(versioned-state old)
+  =|  cards=(list card)
   |-
   ?-    -.old-state
       %0
@@ -80,9 +85,9 @@
           (~(del by path-to-tile.old-state) /primary)
           first-time.old-state
       ==
-    $(old-state [%2 new-state])
+    $(old-state [%2 new-state], cards [launch-who cards])
   ::
-      %2  [~ this(state old-state)]
+      %2  [(flop cards) this(state old-state)]
   ==
 ::
 ++  on-poke
