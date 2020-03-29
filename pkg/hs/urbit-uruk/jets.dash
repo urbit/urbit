@@ -2,7 +2,7 @@
 ++  (bee f g x)  (f (g x))
 ++  (sea f g x)  (f x g)
 
-++  skzer  <f x x>
+++  skzer  (S K)
 ++  sksuc  (S (S (K S) K))
 
 ++  (pak n)  (J J K (n sksuc skzer))
