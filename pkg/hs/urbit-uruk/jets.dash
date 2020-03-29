@@ -2,18 +2,15 @@
 ++  (bee f g x)  (f (g x))
 ++  (sea f g x)  (f x g)
 
-++  (yes t f)  t
-++  (nah t f)  f
-
 ++  skzer  <f x x>
 ++  sksuc  (S (S (K S) K))
 
 ++  (pak n)  (J J K (n sksuc skzer))
 ++  (inc n)  (pak <i z (i (n i z))>)
 
-++  0  (pak skzer)
-++  1  (inc 0)
-++  2  (inc 1)
+++  0  (J J K skzer)
+++  1  (J J K (sksuc skzer))
+++  2  (J J K (sksuc (sksuc skzer)))
 
 ++  (seq x y)    y
 ++  (yet f x y)  (f x y)
@@ -33,15 +30,17 @@
 
 ++  (ded e)  (fix eye e)
 
-++  (uni x)  (ded x)
-
+++  (uni x)      (ded x)
 ++  (con h t f)  (f h t)
 ++  (car p)      (p <h t h>)
 ++  (cdr p)      (p <h t t>)
-
 ++  (lef x l r)  (l x)
 ++  (rit x l r)  (r x)
 ++  (cas b l r)  (b l r)
+
+++  (yes t f)    t
+++  (nah t f)    f
+++  (iff c t e)  (c t e uni)
 
 ++  (dec n)
   %+  n
@@ -59,5 +58,3 @@
 ++  (eql x y)  (cas (sub x y) (K nah) zer)
 ++  (bex x)    (x (mul 2) 1)
 ++  (lsh x n)  (mul (bex x) n)
-
-++  (iff c t e)  (c t e uni)
