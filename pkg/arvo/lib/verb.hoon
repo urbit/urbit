@@ -3,7 +3,7 @@
 |=  [loud=? =agent:gall]
 =|  bowl-print=_|
 ^-  agent:gall
-|^
+|^  !.
 |_  =bowl:gall
 +*  this  .
     ag    ~(. agent bowl)
