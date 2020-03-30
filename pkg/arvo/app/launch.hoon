@@ -61,9 +61,8 @@
 ++  on-init
   ^-  (quip card _this)
   :_  this(state *[%2 state-two])
-  :~
-    launch-who
-    [%pass / %arvo %e %connect [~ /] %launch]
+  :~  launch-who
+      [%pass / %arvo %e %connect [~ /] %launch]
   ==
 ::
 ++  on-save  !>(state)
@@ -76,14 +75,15 @@
   |-
   ?-    -.old-state
       %0
-    $(old-state [%1 tiles.old-state data.old-state path-to-tile.old-state %.n])
+    $(old-state [%1 tiles data path-to-tile %.n]:old-state)
   ::
       %1
     =/  new-state=state-two
-      :*  (~(del in tiles.old-state) [%contact-view /primary])
-          (~(del by data.old-state) %contact-view)
-          (~(del by path-to-tile.old-state) /primary)
-          first-time.old-state
+      =>  [old-state .]
+      :*  (~(del in tiles) [%contact-view /primary])
+          (~(del by data) %contact-view)
+          (~(del by path-to-tile) /primary)
+          first-time
       ==
     $(old-state [%2 new-state], cards [launch-who cards])
   ::
