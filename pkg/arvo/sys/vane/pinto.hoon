@@ -128,6 +128,7 @@
 ::  $hoon-cache: cache for compiler operations
 ::
 +$  hoon-cache  (clock hoon-cache-key vase)
+++  by-hoon-cache  (by-clock hoon-cache-key vase)
 ::  $hoon-cache-key: cache key for a compiler operation
 ::
 ::    %slap: eval (+slap) a hoon against a subject vase
@@ -397,14 +398,13 @@
   ^-  form:m
   |=  in=fume-input
   =*  this  .
-  =/  ca  (by-clock hoon-cache-key vase)
-  =^  val  s.in  (get:ca key)
+  =^  val  s.in  (~(get by-hoon-cache s.in) key)
   ?^  val
     [s.in %done u.val]
   =/  ran  (run in)
   ?-  -.o.ran
     %fail  ran
-    %done  ran(s (~(put ca s.ran) key value.o.ran))
+    %done  ran(s (~(put by-hoon-cache s.ran) key value.o.ran))
     %load  ran(on-load.o this(run on-load.o.ran))
   ==
 ::
