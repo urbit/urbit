@@ -5,7 +5,7 @@ module Main (main) where
 import ClassyPrelude
 
 import Prelude         (read)
-import Urbit.Moon.Repl (runFile, runFileFast, runText)
+import Urbit.Moon.Repl (runFileSlow, runFileFast, runText)
 #if !defined(__GHCJS__)
 import Urbit.Moon.Repl (replSlow, replFast)
 #endif
@@ -19,6 +19,7 @@ main = do
     ["repl"]               -> replSlow
     ["repl", "--fast"]     -> replFast
 #endif
+    ["exec", fn]           -> runFileSlow (unpack fn)
     ["exec", "--fast", fn] -> runFileFast (unpack fn)
     _                      -> do
       putStrLn "usage: urbit-uruk repl [--fast]"

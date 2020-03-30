@@ -1,7 +1,7 @@
 {-# LANGUAGE CPP #-}
 
 module Urbit.Moon.Repl
-  ( runFile
+  ( runFileSlow
   , runFileFast
   , runText
 #if !defined(__GHCJS__)
@@ -143,8 +143,8 @@ replRefr = do
         doInps vEnv is
 #endif
 
-runFile :: FilePath -> IO ()
-runFile = runFile' goSlow
+runFileSlow :: FilePath -> IO ()
+runFileSlow = runFile' goSlow
 
 runFileFast :: FilePath -> IO ()
 runFileFast = runFile' goFast
