@@ -18,6 +18,9 @@
       :-  cs+[[~nul %home da+~1234.5.6] /int/mar]
       `path+!>(/mar/int/hoon)
   ::
+      :-  cs+[[~nul %home da+~1234.5.6] /hex/mar]
+      `path+!>(/mar/hex/hoon)
+  ::
       :-  ax+[[~nul %home da+~1234.5.6] /hoon/hoon/sys]
       `hoon+!>(hun)
   ::
@@ -73,6 +76,20 @@
             %|  (sub sam val.dif)
           ==
         --
+      --
+      '''
+  ::
+      :-  cx+[[~nul %home da+~1234.5.6] /hoon/hex/mar]
+      :+  ~  %hoon
+      !>
+      '''
+      !:
+      |_  sam=@ux
+      ++  grow
+        |%
+        ++  noun  !!
+        --
+      ++  grad  %foo
       --
       '''
   ==
@@ -168,4 +185,33 @@
   %+  expect-eq
     !>  0xa
     (cas !>(10))
+::
+++  test-cast-grab  ^-  tang
+  =^  fex  ford-gate
+    %:  call:ford-core
+      *duct  *type
+      %make
+      desk=%home
+      case=`da+~1234.5.6
+      fiz=~
+      maz=~
+      caz=(sy [%hex %int] ~)
+    ==
+  =/  cas=$-(vase vase)
+    =/  cad  card:(head fex)
+    ~|  fex
+    ?>  ?=(%give -.cad)
+    =/  gif  p.cad
+    ?>  ?=(%made -.gif)
+    ?>  =(~ fiz.gif)
+    ?>  =(~ maz.gif)
+    =/  caz  caz.gif
+    ?>  ?=([* ~ ~] caz)
+    =/  [key=[mark mark] val=(each $-(vase vase) tang)]  n.caz
+    ?>  =([%hex %int] key)
+    ?>  ?=(%& -.val)
+    p.val
+  %+  expect-eq
+    !>  10
+    (cas !>(0xa))
 --
