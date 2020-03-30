@@ -5,7 +5,8 @@ module Urbit.Moon.Repl
   , runFileFast
   , runText
 #if !defined(__GHCJS__)
-  , repl
+  , replRefr
+  , replSlow
   , replFast
 #endif
   , evalText
@@ -106,8 +107,11 @@ runText = runText' goSlow
 replFast :: IO ()
 replFast = repl' goFast
 
-repl :: IO ()
-repl = do
+replSlow :: IO ()
+replSlow = repl' goSlow
+
+replRefr :: IO ()
+replRefr = do
   vEnv <- readUrukDemoEnv >>= newIORef
   HL.runInputT HL.defaultSettings (loop vEnv)
  where
