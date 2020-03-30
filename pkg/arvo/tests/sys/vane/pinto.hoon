@@ -46,6 +46,14 @@
           +$  dif  [pos=? val=int]
           --
       |_  sam=int
+      ++  grow
+        |%
+        ++  hex  `@ux`sam
+        --
+      ++  grab
+        |%
+        ++  hex  |=(@ux `int``@`+<)
+        --
       ++  grad
         |%
         ++  diff
@@ -131,4 +139,33 @@
       !>  [`?`& 4]
       (~(diff dais !>(13)) !>(17))
   ==
+::
+++  test-cast-grow  ^-  tang
+  =^  fex  ford-gate
+    %:  call:ford-core
+      *duct  *type
+      %make
+      desk=%home
+      case=`da+~1234.5.6
+      fiz=~
+      maz=~
+      caz=(sy [%int %hex] ~)
+    ==
+  =/  cas=$-(vase vase)
+    =/  cad  card:(head fex)
+    ~|  fex
+    ?>  ?=(%give -.cad)
+    =/  gif  p.cad
+    ?>  ?=(%made -.gif)
+    ?>  =(~ fiz.gif)
+    ?>  =(~ maz.gif)
+    =/  caz  caz.gif
+    ?>  ?=([* ~ ~] caz)
+    =/  [key=[mark mark] val=(each $-(vase vase) tang)]  n.caz
+    ?>  =([%int %hex] key)
+    ?>  ?=(%& -.val)
+    p.val
+  %+  expect-eq
+    !>  0xa
+    (cas !>(10))
 --
