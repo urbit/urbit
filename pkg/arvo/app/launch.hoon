@@ -108,7 +108,7 @@
         data          (~(del by data) name.act)
         path-to-tile  (~(del by path-to-tile) subscribe.act)
       ==
-      ==
+    ==
   ::
       %handle-http-request
     =+  !<([eyre-id=@ta =inbound-request:eyre] vas)
