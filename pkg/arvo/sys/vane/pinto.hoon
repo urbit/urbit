@@ -156,9 +156,9 @@
       [%maz =mark ~]
       [%caz a=mark b=mark ~]
   ==
-::  $spar: clay scry request on unspecified $beak
+::  $spar: clay scry request on unspecified $beak, or arvo scry request
 ::
-+$  spar  [=care =path]
++$  spar  $@(?(%hoon %arvo %zuse) [=care =path])
 ::  $fume-input: input to a monadic build operation
 ::
 ::    in: ~ if initial input to kick off computation
@@ -267,10 +267,13 @@
       ::
       ?^  got=(~(get by sky.state) spa)
         $(pro (on-load.o.pro got cache))
+      =/  [tem=term bem=beam]
+        =*  bek=beak  [our desk case]
+        ?@  spa
+          [%ax bek /hoon/[spa]/sys]
+        [(cat 3 %c care.spa) bek (flop path.spa)]
       ::  run .on-load on scry result if scry completes synchronously
       ::
-      =/  tem=term  (cat 3 %c care.spa)
-      =/  bem=beam  [[our desk case] (flop path.spa)]
       ?^  res=(scry ** ~ tem bem)
         =.  sky.state  (~(put by sky.state) spa u.res)
         $(pro (on-load.o.pro res cache))
@@ -417,12 +420,22 @@
 ++  run-reef
   =/  m  (fume ,vase)
   ^-  form:m
-  ::  TODO: HACK replace with arvo check
-  ::
-  ?:  %&  (pure:m !>(..zuse))
-  ;<  hun=vase  bind:m  (load-hoon-raw /sys/hoon/hoon !>(~))
-  ;<  rav=vase  bind:m  (load-hoon-raw /sys/arvo/hoon (slot 7 hun))
-  (load-hoon-raw /sys/zuse/hoon (slap rav ^~((ream '..is'))))
+  ;<  [mark hex=vase]  bind:m  (load-spar %hoon)
+  ;<  [mark tex=vase]  bind:m  (load-spar %x /sys/hoon/hoon)
+  ?.  =(hex tex)
+    ;<  hun=vase  bind:m  (load-hoon-raw /sys/hoon/hoon !>(~))
+    ;<  rav=vase  bind:m  (load-hoon-raw /sys/arvo/hoon (slot 7 hun))
+    (load-hoon-raw /sys/zuse/hoon (slap rav ^~((ream '..is'))))
+  ;<  [mark rex=vase]  bind:m  (load-spar %arvo)
+  ;<  [mark tex=vase]  bind:m  (load-spar %x /sys/arvo/hoon)
+  ?.  =(rex tex)
+    ;<  rav=vase  bind:m  (load-hoon-raw /sys/arvo/hoon !>(..ride))
+    (load-hoon-raw /sys/zuse/hoon (slap rav ^~((ream '..is'))))
+  ;<  [mark zex=vase]  bind:m  (load-spar %zuse)
+  ;<  [mark tex=vase]  bind:m  (load-spar %x /sys/zuse/hoon)
+  ?.  =(zex tex)
+    (load-hoon-raw /sys/zuse/hoon !>(..is))
+  (pure:m !>(..zuse))
 ::
 ++  load-hoon-raw
   |=  [=path sut=vase]
@@ -795,7 +808,8 @@
     =.  fex  :_(fex [duct %give %made case fuz muz cuz])
     =?  fex  live
       :_  fex
-      =/  =rave:clay  [%mult case ~(key by sky)]
+      =/  ska  (~(run in ~(key by sky)) |=(spar ?@(+< !! +<)))
+      =/  =rave:clay  [%mult case ska]
       [duct %pass /live %c %warp our desk `rave]
     [!live build-core]
   ::
@@ -903,6 +917,7 @@
   ++  pass-load
     |=  [=line =spar]
     ^-  move
+    ?>  ?=(^ spar)
     =/  =rave:clay  [%sing care.spar case path.spar]
     [duct %pass line %c %warp our desk `rave]
   --

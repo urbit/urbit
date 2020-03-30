@@ -1,4 +1,7 @@
 /+  *test, pinto
+/=  hun  /:  /===/sys/hoon  /hoon/
+/=  rav  /:  /===/sys/arvo  /hoon/
+/=  zus  /:  /===/sys/zuse  /hoon/
 ::/=  pinto  /:  /===/sys/vane/pinto  /!noun/
 ::
 =/  scry=sley
@@ -14,6 +17,24 @@
   ::
       :-  cs+[[~nul %home da+~1234.5.6] /int/mar]
       `path+!>(/mar/int/hoon)
+  ::
+      :-  ax+[[~nul %home da+~1234.5.6] /hoon/hoon/sys]
+      `hoon+!>(hun)
+  ::
+      :-  ax+[[~nul %home da+~1234.5.6] /hoon/arvo/sys]
+      `hoon+!>(rav)
+  ::
+      :-  ax+[[~nul %home da+~1234.5.6] /hoon/zuse/sys]
+      `hoon+!>(zus)
+  ::
+      :-  cx+[[~nul %home da+~1234.5.6] /hoon/hoon/sys]
+      `hoon+!>(hun)
+  ::
+      :-  cx+[[~nul %home da+~1234.5.6] /hoon/arvo/sys]
+      `hoon+!>(rav)
+  ::
+      :-  cx+[[~nul %home da+~1234.5.6] /hoon/zuse/sys]
+      `hoon+!>(zus)
   ::
       :-  cx+[[~nul %home da+~1234.5.6] /hoon/int/mar]
       :+  ~  %hoon
@@ -46,15 +67,6 @@
         --
       --
       '''
-  ::
-      :-  cx+[[~nul %home da+~1234.5.6] /hoon/hoon/sys]
-      `hoon+!>('=<  |=(* ~)  |%  ++  one  1  --')
-  ::
-      :-  cx+[[~nul %home da+~1234.5.6] /hoon/arvo/sys]
-      `hoon+!>('|%  ++  is  one  --')
-  ::
-      :-  cx+[[~nul %home da+~1234.5.6] /hoon/zuse/sys]
-      `hoon+!>('|%  ++  aint  is  --')
   ==
 =/  ford-gate  (pinto !>(..zuse))
 =/  ford-core  (ford-gate ~nul ~1234.5.6 0xdead.beef scry)
