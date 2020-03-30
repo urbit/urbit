@@ -7,4 +7,4 @@ import Data.Text      (Text)
 -- Numbers ---------------------------------------------------------------------
 
 jetSpec :: Text
-jetSpec = $(embedStringFile "urbit-uruk/jets.dash")
+jetSpec = $(embedStringFile "jets.dash")
