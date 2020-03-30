@@ -28,11 +28,11 @@
       ++  grad
         |%
         ++  diff
-          |=  [old=int new=int]
+          |=  new=int
           ^-  dif
-          ?:  (gte new old)
-            &+(sub new old)
-          |+(sub old new)
+          ?:  (gte new sam)
+            &+(sub new sam)
+          |+(sub sam new)
         ++  form  %int-diff
         ++  join  |=([a=dif b=dif] (some b))
         ++  mash  |=([a=[=ship =desk =dif] b=[=ship =desk =dif]] (some dif.b))
@@ -111,7 +111,12 @@
     ?>  =(%int key)
     ?>  ?=(%& -.val)
     p.val
-  %+  expect-eq
-    !>  13
-    (~(pact dais !>(17)) !>(|+4))
+  ;:  weld
+    %+  expect-eq
+      !>  13
+      (~(pact dais !>(17)) !>(|+4))
+    %+  expect-eq
+      !>  [`?`& 4]
+      (~(diff dais !>(13)) !>(17))
+  ==
 --
