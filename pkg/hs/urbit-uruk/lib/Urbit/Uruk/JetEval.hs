@@ -21,7 +21,7 @@ data Match
   = MD !Dash.DataJet
   | MS !Dash.SingJet
   | MU !Pos !Val !Val
- deriving (Eq, Ord, Generic)
+ deriving (Eq, Ord, Show, Generic)
  deriving anyclass NFData
 
 data Ur
@@ -30,7 +30,7 @@ data Ur
   | J !Pos
   | D
   | M Match !Natural ![Val]
- deriving (Eq, Ord, Generic)
+ deriving (Eq, Ord, Show, Generic)
  deriving anyclass NFData
 
 pattern NS = N S
@@ -38,6 +38,20 @@ pattern NK = N K
 pattern NJ n = N (J n)
 pattern ND = N D
 pattern NM x y z = N (M x y z)
+
+pattern Nat n = N (M (MD (NAT n)) 2 [])
+
+pattern Yes = N (M (MS YES) 2 [])
+pattern Nah = N (M (MS NAH) 2 [])
+
+pattern Uni = N (M (MS UNI) 1 [])
+
+pattern Rit x = N (M (MS RIT) 2 [x])
+pattern Lef x = N (M (MS LEF) 2 [x])
+
+pattern Con h t = N (M (MS CON) 1 [h,t])
+
+pattern Fix = N (M (MS FIX) 2 [])
 
 type Exp = Dash.ExpTree Ur
 type Val = Exp
@@ -54,40 +68,45 @@ reduce = \case
     ND :& x                 → Just $ dump x
     NJ n :& NJ 1            → Just $ NJ (succ n)
     NJ n :& t :& b          → Just $ NM (match n t b) (fromIntegral n) []
-    NM m 0 xs               → Just $ runJet m xs
+    NM m 0 xs               → Just $ fromMaybe (jetFallback m xs) (runJet m xs)
     NM m n xs :& x          → Just $ NM m (pred n) (xs <> [x])
     _                       → Nothing
 
 match :: Pos -> Val -> Val -> Match
-match n t b = Jets.jetMatch (n, dashVal t, dashVal b) & \case
+match n t b = Jets.jetMatch (n, valDash t, valDash b) & \case
   Nothing         -> MU n t b
   Just (Left  dj) -> MD dj
   Just (Right sj) -> MS sj
 
-dashUr :: Ur -> Dash.Val
-dashUr = \case
+urDash :: Ur -> Dash.Val
+urDash = \case
   S                 -> Jets.NS
   K                 -> Jets.NK
   J n               -> Jets.NJ
   D                 -> Jets.ND
   M (MD dj   ) _ xs -> go (N (Dash.DataJet dj)) xs
   M (MS sj   ) _ xs -> go (N (Dash.SingJet sj)) xs
-  M (MU n t b) _ xs -> go (Jets.jn n :& dashVal t :& dashVal b) xs
+  M (MU n t b) _ xs -> go (Jets.jn n :& valDash t :& valDash b) xs
  where
   go :: Dash.Val -> [Val] -> Dash.Val
   go x []       = x
-  go x (y : ys) = go (x :& dashVal y) ys
+  go x (y : ys) = go (x :& valDash y) ys
 
-dashVal :: Val -> Dash.Val
+valDash :: Val -> Dash.Val
+valDash = \case
+  N n    -> urDash n
+  x :& y -> valDash x :& valDash y
+
+dashUr :: Dash.Ur -> Exp
+dashUr = error "TODO"
+
+dashVal :: Dash.Val -> Exp
 dashVal = \case
   N n    -> dashUr n
   x :& y -> dashVal x :& dashVal y
 
-mkNat :: Natural -> Val
-mkNat n = N $ M (MD (NAT n)) 2 []
-
 dump :: Val -> Val
-dump = mkNat . snd . go . dashVal
+dump = Nat . snd . go . valDash
  where
   go :: Dash.Val -> (Int, Natural)
   go = \case
@@ -104,39 +123,96 @@ dump = mkNat . snd . go . dashVal
       rBits         = 1 + xBits + yBits
       rNum          = 1 .|. shiftL xNum 1 .|. shiftL yNum (1 + xBits)
 
-runJet :: Match -> [Val] -> Val
+jetFallback :: Match -> [Val] -> Exp
+jetFallback (MU n t b) xs = foldl' (:&) b xs
+jetFallback (MD dj)    xs = foldl' (:&) (dashVal $ Jets.djBody dj) xs
+jetFallback (MS sj)    xs = foldl' (:&) (dashVal $ Jets.sjBody sj) xs
+
+runJet :: Match -> [Val] -> Maybe Exp
 runJet = curry \case
-  (MU _ _ b  , xs       ) -> foldl' (:&) b xs
-  (MD (NAT n), [x, y]   ) -> error "TODO"
-  (MD (Bn  n), xs       ) -> error "TODO: Bn"
-  (MD (Cn  n), xs       ) -> error "TODO: Cn"
-  (MD (Sn  n), xs       ) -> error "TODO: Sn"
-  (MS EYE    , [x]      ) -> x
-  (MS BEE    , xs       ) -> error "TODO: BEE"
-  (MS SEA    , xs       ) -> error "TODO: SEA"
-  (MS SEQ    , xs       ) -> error "TODO: SEQ"
-  (MS YET    , [f, x, y]) -> f :& x :& y
-  (MS FIX    , xs       ) -> error "TODO: FIX"
-  (MS IFF    , xs       ) -> error "TODO: IFF"
-  (MS PAK    , xs       ) -> error "TODO: PAK"
-  (MS ZER    , xs       ) -> error "TODO: ZER"
-  (MS EQL    , xs       ) -> error "TODO: EQL"
-  (MS ADD    , xs       ) -> error "TODO: ADD"
-  (MS INC    , xs       ) -> error "TODO: INC"
-  (MS DEC    , xs       ) -> error "TODO: DEC"
-  (MS FEC    , xs       ) -> error "TODO: FEC"
-  (MS MUL    , xs       ) -> error "TODO: MUL"
-  (MS BEX    , xs       ) -> error "TODO: BEX"
-  (MS LSH    , xs       ) -> error "TODO: LSH"
-  (MS SUB    , xs       ) -> error "TODO: SUB"
-  (MS DED    , xs       ) -> error "TODO: DED"
-  (MS UNI    , xs       ) -> error "TODO: UNI"
-  (MS YES    , xs       ) -> error "TODO: YES"
-  (MS NAH    , xs       ) -> error "TODO: NAH"
-  (MS LEF    , xs       ) -> error "TODO: LEF"
-  (MS RIT    , xs       ) -> error "TODO: RIT"
-  (MS CAS    , xs       ) -> error "TODO: CAS"
-  (MS CON    , xs       ) -> error "TODO: CON"
-  (MS CAR    , xs       ) -> error "TODO: CAR"
-  (MS CDR    , xs       ) -> error "TODO: CDR"
-  _                       -> error "runJet: Bad jet arity"
+  (MU _ _ b  , xs       ) -> Just (foldl' (:&) b xs)
+  (MD (NAT n), [x, y]   ) -> Just (goNat n x y)
+  (MD (Bn  n), f:g:xs   ) -> Just (f :& foldl' (:&) g xs)
+  (MD (Cn  n), f:g:xs   ) -> Just (foldl' (:&) f xs :& g)
+  (MD (Sn  n), f:g:xs   ) -> Just (foldl' (:&) f xs :& foldl' (:&) g xs)
+  (MS EYE    , [x]      ) -> Just x
+  (MS BEE    , [f, g, x]) -> Just (f :& (g :& x))
+  (MS SEA    , [f, g, x]) -> Just (f :& x :& g)
+  (MS SEQ    , [x, y]   ) -> Just y
+  (MS YET    , [f, x, y]) -> Just (f :& x :& y)
+  (MS FIX    , [f,x]    ) -> Just (f :& (Fix :& f) :& x)
+  (MS IFF    , [c,t,e]  ) -> goIff c t e
+  (MS PAK    , [_]      ) -> Nothing
+  (MS ZER    , [x]      ) -> goZer x
+  (MS EQL    , [x,y]    ) -> goEql x y
+  (MS ADD    , [x,y]    ) -> goAdd x y
+  (MS INC    , [x]      ) -> goInc x
+  (MS DEC    , [x]      ) -> goDec x
+  (MS FEC    , [x]      ) -> goFec x
+  (MS MUL    , [x,y]    ) -> mul x y
+  (MS BEX    , [x]      ) -> goBex x
+  (MS LSH    , [x,n]    ) -> goLsh x n
+  (MS SUB    , [x,y]    ) -> goSub x y
+  (MS DED    , [x]      ) -> error ("DED: " <> show x)
+  (MS UNI    , [_]      ) -> Nothing
+  (MS YES    , [y,_]    ) -> Just y
+  (MS NAH    , [_,n]    ) -> Just n
+  (MS LEF    , [x, l, _]) -> Just (l :& x)
+  (MS RIT    , [x, _, r]) -> Just (r :& x)
+  (MS CAS    , [s, l, r]) -> goCas s l r
+  (MS CON    , [x, y, f]) -> Just (f :& x :& y)
+  (MS CAR    , [p]      ) -> goCar p
+  (MS CDR    , [p]      ) -> goCdr p
+  (j         , xs       ) -> error "arity mismatch in jet execution"
+ where
+  goIff Yes t _ = Just (t :& Uni)
+  goIff Nah _ e = Just (e :& Uni)
+  goIff _   _ _ = Nothing
+
+  goZer (Nat 0) = Just Yes
+  goZer (Nat n) = Just Nah
+  goZer _       = Nothing
+
+  goEql (Nat x) (Nat y) = Just (if x==y then Yes else Nah)
+  goEql _       _       = Nothing
+
+  goAdd (Nat x) (Nat y) = Just $ Nat (x+y)
+  goAdd _       _       = Nothing
+
+  goInc (Nat n) = Just $ Nat $ succ n
+  goInc _       = Nothing
+
+  goDec (Nat 0) = Just $ Lef Uni
+  goDec (Nat n) = Just $ Rit $ Nat (n-1)
+  goDec _       = Nothing
+
+  goFec (Nat 0) = Just (Nat 0)
+  goFec (Nat n) = Just (Nat $ pred n)
+  goFec _       = Nothing
+
+  goBex (Nat n) = Just $ Nat $ 2 ^ n
+  goBex _       = Nothing
+
+  mul (Nat x) (Nat y) = Just (Nat (x*y))
+  mul _       _       = Nothing
+
+  goCdr (Con _ t) = Just t
+  goCdr _         = Nothing
+
+  goCar (Con h _) = Just h
+  goCar _         = Nothing
+
+  goCas (N (M (MS LEF) _ [x])) l _ = Just (l :& x)
+  goCas (N (M (MS RIT) _ [x])) _ r = Just (r :& x)
+  goCas _                      _ _ = Nothing
+
+  goLsh (Nat x) (Nat n) = Just $ Nat $ shiftL n (fromIntegral x)
+  goLsh _       _       = Nothing
+
+  goSub (Nat x) (Nat y) | y > x = Just (Lef Uni)
+  goSub (Nat x) (Nat y)         = Just (Rit (Nat (x-y)))
+  goSub _       _               = Nothing
+
+  goNat :: Natural -> Val -> Val -> Exp
+  goNat 0 i z = z
+  goNat n i z = i :& goNat (pred n) i z
