@@ -41,7 +41,7 @@ export class Root extends Component {
     const invites = state.invites ?
       state.invites : {};
 
-    let selectedGroups = !!state.selected ? state.selected : [];
+    let selectedGroups = !!state.selectedGroups ? state.selectedGroups : [];
 
     return (
       <BrowserRouter><Switch>

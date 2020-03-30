@@ -214,7 +214,7 @@ export class ResponseReducer {
   setSelected(json, state) {
     let data = _.has(json.data, 'selected', false);
     if (data) {
-      state.selected = json.data.selected;
+      state.selectedGroups = json.data.selected;
     }
   }
 

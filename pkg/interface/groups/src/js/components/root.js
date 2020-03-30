@@ -35,7 +35,7 @@ export class Root extends Component {
       (!!state.invites && '/contacts' in state.invites) ?
       state.invites['/contacts'] : {};
     let associations = !!state.associations ? state.associations : {};
-    let selectedGroups = !!state.selected ? state.selected : [];
+    let selectedGroups = !!state.selectedGroups ? state.selectedGroups : [];
 
     return (
       <BrowserRouter>

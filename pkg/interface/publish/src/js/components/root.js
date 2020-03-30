@@ -24,7 +24,7 @@ export class Root extends Component {
 
     let contacts = !!state.contacts ? state.contacts : {};
     let associations = !!state.associations ? state.associations : {contacts: {}}
-    let selectedGroups = !!state.selected ? state.selected : [];
+    let selectedGroups = !!state.selectedGroups ? state.selectedGroups : [];
 
     return (
       <BrowserRouter>

@@ -26,7 +26,7 @@ export class LocalReducer {
     setSelected(obj, state) {
       let data = _.has(obj, 'selected', false);
       if (data) {
-        state.selected = obj.selected;
+        state.selectedGroups = obj.selected;
       }
     }
 }

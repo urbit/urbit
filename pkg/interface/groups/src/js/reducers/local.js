@@ -18,7 +18,7 @@ export class LocalReducer {
   setSelected(json, state) {
     let data = _.has(json, 'selected', false);
     if (data) {
-      state.selected = json.selected;
+      state.selectedGroups = json.selected;
     }
   }
 }

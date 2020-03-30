@@ -52,7 +52,7 @@ export class Root extends Component {
         inbox={state.inbox}
         messagePreviews={messagePreviews}
         associations={associations}
-        selectedGroups={state.selected}
+        selectedGroups={state.selectedGroups}
         contacts={contacts}
         invites={invites}
         unreads={unreads}
