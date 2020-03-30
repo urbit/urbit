@@ -57,7 +57,8 @@ infixl 5 :&;
 data ExpTree n
   = N n
   | ExpTree n :& ExpTree n
- deriving (Eq, Ord)
+ deriving (Eq, Ord, Generic)
+ deriving anyclass NFData
 
 tree :: ExpTree a -> Tree a
 tree = go [] where
@@ -442,15 +443,8 @@ resolv = go (initialEnv, mempty)
     e'' <- pure (eval e')
     case jetExp n e'' of
       Nothing -> do
-        -- traceM $ unpack (n <> " is not a jet")
         go (insertMap n e'' env, reg) xs
       Just (sj, (arity, nm, val)) -> do
-        -- traceM (unpack n <> " is a jet:")
-        -- traceM ("  " <> show sj)
-        -- traceM ("  " <> show arity)
-        -- traceM ("  " <> show nm)
-        -- traceM ("  " <> show val)
-        -- traceM ""
         let env' = insertMap n (N $ SingJet sj) env
         let reg' = insertMap sj (arity, nm, val) reg
         go (env', reg') xs

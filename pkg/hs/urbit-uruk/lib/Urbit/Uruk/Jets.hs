@@ -21,6 +21,8 @@ import qualified Urbit.Uruk.DashParser as Dash
 
 pattern NS = N S
 pattern NK = N K
+pattern NJ = N J
+pattern ND = N D
 pattern NB = N (SingJet BEE)
 pattern NC = N (SingJet SEA)
 
@@ -43,6 +45,7 @@ sjArity = $(pure Dash.jetArity)
 jetArity :: Either DataJet SingJet -> Pos
 jetArity = either djArity sjArity
 
+
 --------------------------------------------------------------------------------
 
 sjTag :: SingJet -> Val
@@ -63,11 +66,11 @@ sjBody :: SingJet -> Val
 sjBody = $(pure Dash.jetBody)
 
 skSucc :: Val
-skSucc = N S :& (N S :& (N K :& N S) :& N K)
+skSucc = NS :& (NS :& (NK :& NS) :& NK)
 
 djBody :: DataJet -> Val
 djBody = \case
-  NAT 0 -> N S :& N K
+  NAT 0 -> NS :& NK
   NAT n -> skSucc :& djBody (NAT $ pred n)
   Sn  n -> iterate (NB :& (NB :& NS) :& NB :&) NS !! (fromIntegral n - 1)
   Bn  n -> iterate (NB :& NB :&)               NB !! (fromIntegral n - 1)
@@ -126,7 +129,7 @@ djMatch (r, CnTag, cnMatch -> Just p) | r == p + 2 = Just (Cn p)
 djMatch _                            = Nothing
 
 jetMatch :: (Pos, Val, Val) -> Maybe (Either DataJet SingJet)
-jetMatch tup =  (Right <$> sjMatch tup) <|> (Left <$> djMatch tup)
+jetMatch tup = (Right <$> sjMatch tup) <|> (Left <$> djMatch tup)
 
 
 --------------------------------------------------------------------------------
