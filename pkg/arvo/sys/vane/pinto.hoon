@@ -783,7 +783,8 @@
   ==
 ++  load
   |=  old=axle
-  ford-gate(ax axle)
+  =.  cache.state.old  ~(purge by-hoon-cache cache.state.old)
+  ford-gate(ax old)
 ++  stay  ax
 ++  scry  |=(* [~ ~])
 --
