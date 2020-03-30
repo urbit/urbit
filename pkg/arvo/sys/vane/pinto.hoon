@@ -28,7 +28,11 @@
             maz=(set mark)
             caz=(set [a=mark b=mark])
         ==
+        [%keep hoon-cache-size=@ud]
         [%kill ~]
+        [%trim p=@ud]
+        [%vega ~]
+        [%wegh ~]
     ==
   ::  $gift: response from ford
   ::
@@ -44,7 +48,9 @@
             fiz=(map path (each vase tang))
             maz=(map mark (each dais tang))
             caz=(map [a=mark b=mark] (each $-(vase vase) tang))
-    ==  ==
+        ==
+        [%mass p=mass]
+    ==
   --
 ::  $dais: processed mark core
 ::
@@ -671,9 +677,39 @@
     %+  finalize  duct
     make:(per-build our scry-gate cache.state.ax duct build-state)
   ::
+      %keep
+    =.  cache.state.ax
+      (~(resize by-hoon-cache cache.state.ax) hoon-cache-size.task)
+    [~ ford-gate]
+  ::
       %kill
     =.  builds.state.ax  (~(del by builds.state.ax) duct)
     [~ ford-gate]
+  ::
+      %vega
+    ::  TODO: clear cache?
+    ::
+    [~ ford-gate]
+  ::
+      %trim
+    =.  cache.state.ax
+      ?:  =(0 p.task)
+        ~(purge by-hoon-cache cache.state.ax)
+      =/  syz  size.cache.state.ax
+      =/  haf  (sub syz (div syz 2))
+      (~(trim by-hoon-cache cache.state.ax) haf)
+    [~ ford-gate]
+  ::
+      %wegh
+    :_  ford-gate
+    :_  ~
+    :^  duct  %give  %mass
+    ^-  mass
+    :+  %ford  %|
+    :~  builds+&+builds.state.ax
+        cache+&+cache.state.ax
+        dot+&+ax
+    ==
   ==
 ++  take
   |=  [=wire =duct type=* wrapped-sign=(hobo sign)]
