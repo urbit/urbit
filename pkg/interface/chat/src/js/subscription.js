@@ -18,38 +18,26 @@ export class Subscription {
     }
   }
 
-  firstRoundSubscription() {
-    api.bind('/primary', 'PUT', api.authTokens.ship, 'chat-view',
+  subscribe(path, app) {
+    api.bind(path, 'PUT', api.authTokens.ship, app,
       this.handleEvent.bind(this),
       this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
+      () => {
+        this.subscribe(path, app);
+      });
+  }
+
+  firstRoundSubscription() {
+    this.subscribe('/primary', 'chat-view');
   }
 
   secondRoundSubscriptions() {
-    api.bind('/synced', 'PUT', api.authTokens.ship, 'chat-hook',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/primary', 'PUT', api.authTokens.ship, 'invite-view',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/all', 'PUT', api.authTokens.ship, 'permission-store',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/primary', 'PUT', api.authTokens.ship, 'contact-view',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/app-name/chat', 'PUT', api.authTokens.ship, 'metadata-store',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/app-name/contacts', 'PUT', api.authTokens.ship, 'metadata-store',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
+    this.subscribe('/synced', 'chat-hook');
+    this.subscribe('/primary', 'invite-view');
+    this.subscribe('/all', 'permission-store');
+    this.subscribe('/primary', 'contact-view');
+    this.subscribe('/app-name/chat', 'metadata-store');
+    this.subscribe('/app-name/contacts', 'metadata-store');
   }
 
   handleEvent(diff) {
@@ -62,14 +50,6 @@ export class Subscription {
 
   handleError(err) {
     console.error(err);
-  }
-
-  handleQuitSilently(quit) {
-    // no-op
-  }
-
-  handleQuitAndResubscribe(quit) {
-    // TODO: resubscribe
   }
 
   fetchMessages(start, end, path) {
