@@ -27,9 +27,10 @@ data Match
 
 instance Show Match where
   show = \case
-   MD dj    -> show dj
-   MS sj    -> show sj
-   MU n t v -> "J_" <> show t
+    MD dj    -> show dj
+    MS sj    -> show sj
+    MU n (Nat (Atom.atomUtf8 -> Right txt)) v -> "J_" <> unpack txt
+    MU n t v -> "J_" <> show t
 
 data Ur
   = S
@@ -75,6 +76,8 @@ pattern Fix = N (M (MS FIX) 2 [])
 pattern Lth = N (M (MS LTH) 2 [])
 
 pattern Sub = N (M (MS SUB) 2 [])
+
+pattern Div = N (M (MS DIV) 2 [])
 
 pattern Eye = N (M (MS EYE) 1 [])
 pattern Cas = N (M (MS CAS) 3 [])
@@ -191,6 +194,7 @@ runJet = curry \case
   (MS BEX    , [x]      ) -> goBex x
   (MS LSH    , [x,n]    ) -> goLsh x n
   (MS SUB    , [x,y]    ) -> goSub x y
+  (MS FUB    , [x,y]    ) -> goFub x y
   (MS DED    , [x]      ) -> error ("DED: " <> show x)
   (MS UNI    , [_]      ) -> Nothing
   (MS YES    , [y,_]    ) -> Just y
@@ -226,6 +230,7 @@ runJet = curry \case
   (MS BEX    , _        ) -> badArgs
   (MS LSH    , _        ) -> badArgs
   (MS SUB    , _        ) -> badArgs
+  (MS FUB    , _        ) -> badArgs
   (MS DED    , _        ) -> badArgs
   (MS UNI    , _        ) -> badArgs
   (MS YES    , _        ) -> badArgs
@@ -287,6 +292,9 @@ runJet = curry \case
   goSub (Nat x) (Nat y) | y > x = Just (Lef Uni)
   goSub (Nat x) (Nat y)         = Just (Rit (Nat (x-y)))
   goSub _       _               = Nothing
+
+  goFub (Nat x) (Nat y) | y > x = Just (Nat (if y > x then 0 else (x-y)))
+  goFub _       _               = Nothing
 
   goNat :: Natural -> Val -> Val -> Exp
   goNat 0 i z = z

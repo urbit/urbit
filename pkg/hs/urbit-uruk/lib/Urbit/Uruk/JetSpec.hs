@@ -26,6 +26,7 @@ data SingJet
   | MUL
   | DIV
   | SUB
+  | FUB
   | BEX
   | LSH
   | DED
@@ -99,9 +100,7 @@ jetSpec = [r|
 ++  (add x y)  (pak <i z (x i (y i z))>)
 ++  (mul x y)  (pak <i z (x (y i) z)>)
 ++  (sub x y)  (y <z (cas z lef dec)> (rit x))
-
-++  lessthan
-  (J J %lsh (S (S (K S) (S (S (K S) (S (K (S (K cas))) sub)) (K (K (K yes))))) (K (K (K nah)))))
+++  (fub x y)  (cas (sub x y) (K 0) eye)
 
 ++  (zer n)    (n (K nah) yes)
 ++  (eql x y)  (cas (sub x y) (K nah) zer)
@@ -110,15 +109,13 @@ jetSpec = [r|
 ++  (bex x)    (x (mul 2) 1)
 ++  (lsh x n)  (mul (bex x) n)
 
-++  (div y x)  (x y)
+++  (divloop $ sor n x)
+  %+  (iff (lth x sor))
+    (K n)
+  <u (seq u $ sor (inc n) (fub x sor))>
 
-++  (realdiv end sor)
-  %^    fix
-      |=  ($ n x)
-      %^    iff
-          (lth x sor)
-        <x n>
-      <x (seq x $ (inc n) (sub x sor))>
-    0
-  sor
+++  (div end sor)
+  %+  (iff (zer sor))
+    <u (seq u ded %dividebyzero)>
+  <u (seq u fix divloop sor 0 end)>
 |]

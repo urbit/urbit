@@ -119,7 +119,7 @@ pattern CB b <- (isComb -> Just b)
           outer lambdas.
         - Then, use `abs` to get rid of the lambda binding itself.
 
-  - `sk` takes a lambda body that has already been transformed
+  - `abs` takes a lambda body that has already been transformed
     (contains no lambda expressions), and converts a single binding into
     SK combinators:
 
