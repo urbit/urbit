@@ -273,13 +273,38 @@
         %contacts
       =/  owner  (~(got by synced) path.fact)
       ?>  =(owner src.bol)
-      %+  weld
-      :~  (contact-poke [%delete path.fact])
-          (contact-poke [%create path.fact])
+      =/  have-contacts=(unit contacts)
+        (contacts-scry path.fact)
+      ?~  have-contacts
+        ::  if we don't have any contacts yet,
+        ::  create the entry, and %add every contact
+        ::
+        :-  (contact-poke [%create path.fact])
+        %+  turn  ~(tap by contacts.fact)
+        |=  [=ship =contact]
+        (contact-poke [%add path.fact ship contact])
+      ::  if we already have some, decide between %add, %remove and recreate
+      ::  on a per-contact basis
+      ::
+      %-  zing
+      %+  turn
+        %~  tap  in
+        %-  ~(uni in ~(key by contacts.fact))
+        ~(key by u.have-contacts)
+      |=  =ship
+      ^-  (list card)
+      =/  have=(unit contact)  (~(get by u.have-contacts) ship)
+      =/  want=(unit contact)  (~(get by contacts.fact) ship)
+      ?~  have
+        [(contact-poke %add path.fact ship (need want))]~
+      ?~  want
+        [(contact-poke %remove path.fact ship)]~
+      ?:  =(u.want u.have)  ~
+      ::TODO  probably want an %all edit-field that resolves to more granular
+      ::      updates within the contact-store?
+      :~  (contact-poke %remove path.fact ship)
+          (contact-poke %add path.fact ship u.want)
       ==
-      %+  turn  ~(tap by contacts.fact)
-      |=  [=ship =contact]
-      (contact-poke [%add path.fact ship contact])
     ::
         %add
       =/  owner  (~(got by synced) path.fact)

@@ -33,8 +33,24 @@
   ++  on-init  on-init:def
   ++  on-save  !>(state)
   ++  on-load
-    |=  old=vase
-    `this(state !<(state-zero old))
+    |=  =vase
+    ^-  (quip card _this)
+    =/  old  !<(state-zero vase)
+    :_  this(state old)
+    %+  murn
+      ~(tap by synced.old)
+    |=  [=path =ship]
+    ^-  (unit card)
+    =/  =wire
+      [(scot %p ship) %group path]
+    =/  =term
+      ?:  =(our.bowl ship)
+        %group-store
+      %group-hook
+    ?:  (~(has by wex.bowl) [wire ship term])
+      ~
+    `[%pass wire %agent [ship term] %watch [%group path]]
+  ::
   ++  on-leave  on-leave:def
   ++  on-peek   on-peek:def
   ++  on-arvo   on-arvo:def
@@ -74,20 +90,26 @@
       ?~  p.sign
         [~ this]
       %-  (slog u.p.sign)
-      ?>  ?=([@ @ *] wire)
-      =/  =ship   (slav %p i.wire)
-      =.  synced.state  (~(del by synced.state) t.t.wire)
+      ?>  ?=([@ %group ^] wire)
+      =/  =ship  (slav %p i.wire)
+      =*  group  t.t.wire
+      ::  only remove from synced if this watch-nack came from the ship we
+      ::  thought we were actively syncing from
+      ::
+      =?  synced.state
+          =(ship (~(gut by synced.state) group ship))
+        (~(del by synced.state) group)
       [~ this]
     ::
         %kick
-      ?>  ?=([@ @ *] wire)
+      ?>  ?=([@ %group ^] wire)
       =/  =ship  (slav %p i.wire)
-      ?.  (~(has by synced.state) wire)
+      =*  group  t.t.wire
+      ?.  (~(has by synced.state) group)
         [~ this]
-      =/  group-path  [%group wire]
-      =/  group-wire  [i.wire group-path]
+      =*  group-path  t.wire
       :_  this
-      [%pass group-wire %agent [ship %group-hook] %watch group-path]~
+      [%pass wire %agent [ship %group-hook] %watch group-path]~
     ::
         %fact
       ?.  ?=(%group-update p.cage.sign)
@@ -169,10 +191,23 @@
     =/  ship  (~(get by synced.state) pax.diff)
     ?~  ship  ~
     ?.  =(src.bol u.ship)  ~
-    :~  (group-poke pax.diff [%unbundle pax.diff])
-        (group-poke pax.diff [%bundle pax.diff])
-        (group-poke pax.diff [%add members.diff pax.diff])
-    ==
+    =/  have-group=(unit group)
+      (group-scry pax.diff)
+    ?~  have-group
+      ::  if we don't have the group yet, create it
+      ::
+      :~  (group-poke pax.diff [%bundle pax.diff])
+          (group-poke pax.diff [%add members.diff pax.diff])
+      ==
+    ::  if we already have the group, calculate and apply the diff
+    ::
+    =/  added=group    (~(dif in members.diff) u.have-group)
+    =/  removed=group  (~(dif in u.have-group) members.diff)
+    %+  weld
+      ?~  added  ~
+      [(group-poke pax.diff [%add added pax.diff])]~
+    ?~  removed  ~
+    [(group-poke pax.diff [%remove removed pax.diff])]~
   ::
       %add
     :_  state
