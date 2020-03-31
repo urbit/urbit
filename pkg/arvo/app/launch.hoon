@@ -11,6 +11,13 @@
   /|  /js/
       /~  ~
   ==
+/=  channel-js
+  /^  octs
+  /;  as-octs:mimes:html
+  /:  /===/app/launch/js/channel
+  /|  /js/
+      /~  ~
+  ==
 /=  style
   /^  octs
   /;  as-octs:mimes:html
@@ -146,6 +153,9 @@
             "window.urb = new Channel();"
         ==
       (js-response:gen session-js)
+    ::
+        [%'~channel' %channel ~]
+      (js-response:gen channel-js)
     ==
   ==
 ::
