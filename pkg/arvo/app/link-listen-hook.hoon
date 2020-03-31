@@ -22,7 +22,9 @@
 +$  versioned-state
   $%  [%0 state-0]
       [%1 state-1]
+      [%2 state-2]
   ==
++$  state-2  state-1
 +$  state-1
   $:  listening=(set app-path)
       state-0
@@ -59,7 +61,7 @@
 +$  card  card:agent:gall
 --
 ::
-=|  [%1 state-1]
+=|  [%2 state-2]
 =*  state  -
 ::
 %-  agent:dbug
@@ -84,7 +86,41 @@
       !<(versioned-state vase)
     |-
     ?-  -.old
-      %1  [~ this(state old)]
+      %2  [~ this(state old)]
+    ::
+        %1
+      ::  the upgrade from 0 left out local-only collections.
+      ::  here, we pull those back in.
+      ::
+      =.  state  [%2 +.old]
+      =.  listening.state
+        (~(run in ~(key by reasoning.old)) tail)
+      =/  resources=(list [=group-path =app-path])
+        %~  tap  in
+        %.  %link
+        %~  get  ju
+        .^  (jug app-name [group-path app-path])
+          %gy
+          (scot %p our.bowl)
+          %metadata-store
+          (scot %da now.bowl)
+          /app-indices
+        ==
+      =|  cards=(list card)
+      |-
+      ?~  resources  [cards this]
+      =,  i.resources
+      =/  =group:group-store
+        =-  (fall - *group:group-store)
+        (scry-for:do (unit group:group-store) %group-store group-path)
+      ::  if we're the only group member, this got incorrectly ignored
+      ::  during 0's upgrade logic. watch it now.
+      ::
+      ?.  &(=(1 ~(wyt in group)) (~(has in group) our.bowl))
+        $(resources t.resources)
+      =^  more-cards  state
+        (handle-listen-action:do %watch app-path)
+      $(resources t.resources, cards (weld more-cards cards))
     ::
         %0
       =/  listening=(set app-path)
