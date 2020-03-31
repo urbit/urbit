@@ -24,18 +24,17 @@
 ::
 |%
 +$  versioned-state
-  $%  state-zero
-      state-one
+  $%  [%0 state-zero]
+      [%1 state-two]
+      [%2 state-two]
   ==
 +$  state-zero
-  $:  %0
-      tiles=(set tile:launch)
+  $:  tiles=(set tile:launch)
       data=tile-data:launch
       path-to-tile=(map path @tas)
   ==
-+$  state-one
-  $:  %1
-      tiles=(set tile:launch)
++$  state-two
+  $:  tiles=(set tile:launch)
       data=tile-data:launch
       path-to-tile=(map path @tas)
       first-time=?
@@ -44,7 +43,7 @@
 +$  card  card:agent:gall
 --
 ::
-=|  state-one
+=|  [%2 state-two]
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -53,7 +52,7 @@
     def   ~(. (default-agent this %|) bol)
 ++  on-init
   ^-  (quip card _this)
-  :_  this(state *state-one)
+  :_  this(state *[%2 state-two])
   [%pass / %arvo %e %connect [~ /] %launch]~
 ::
 ++  on-save  !>(state)
@@ -62,14 +61,21 @@
   |=  old=vase
   ^-  (quip card _this)
   =/  old-state  !<(versioned-state old)
-  :-  ~
+  |-
   ?-    -.old-state
       %0
-    %=  this
-      state  [%1 tiles.old-state data.old-state path-to-tile.old-state %.n]
-    ==
+    $(old-state [%1 tiles.old-state data.old-state path-to-tile.old-state %.n])
   ::
-      %1  this(state old-state)
+      %1
+    =/  new-state=state-two
+      :*  (~(del in tiles.old-state) [%contact-view /primary])
+          (~(del by data.old-state) %contact-view)
+          (~(del by path-to-tile.old-state) /primary)
+          first-time.old-state
+      ==
+    $(old-state [%2 new-state])
+  ::
+      %2  [~ this(state old-state)]
   ==
 ::
 ++  on-poke

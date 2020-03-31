@@ -7,8 +7,7 @@ export default class Header extends Component {
   render() {
 
     let invites = (this.props.invites && this.props.invites.contacts)
-    ? this.props.invites.contacts
-    : {};
+      ? this.props.invites.contacts : {};
 
     return (
       <header
