@@ -109,13 +109,16 @@ jetSpec = [r|
 ++  (bex x)    (x (mul 2) 1)
 ++  (lsh x n)  (mul (bex x) n)
 
-++  (divloop $ sor n x)
-  %+  (iff (lth x sor))
-    (K n)
-  <u (seq u $ sor (inc n) (fub x sor))>
+++  divlop
+  %-  (J J J %divlop)
+  %-  fix
+  |=  ($ divisor count remain)
+  %+  (iff (lth remain divisor))
+    <u count>
+  <u (seq u $ divisor (inc count) (fub remain divisor))>
 
-++  (div end sor)
-  %+  (iff (zer sor))
-    <u (seq u ded %dividebyzero)>
-  <u (seq u fix divloop sor 0 end)>
+++  (div dividend divisor)
+  %+  (iff (zer divisor))
+    <u (seq u ded %divide-by-zero)>
+  <u (seq u divlop divisor 0 dividend)>
 |]

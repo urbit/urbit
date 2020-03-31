@@ -2,7 +2,7 @@
 
 module Urbit.Uruk.DashParser where
 
-import ClassyPrelude hiding (exp, init, many, some, try)
+import ClassyPrelude hiding (exp, init, many, some, try, elem)
 
 import Control.Lens hiding (snoc)
 import Control.Monad.State.Lazy
@@ -102,10 +102,11 @@ type Exp = ExpTree Ur
 
 instance Show DataJet where
   show = \case
-    Sn  n     -> 'S' : show n
-    Bn  n     -> 'B' : show n
-    Cn  n     -> 'C' : show n
-    NAT n     -> show n
+    Sn  n                            -> 'S' : show n
+    Bn  n                            -> 'B' : show n
+    Cn  n                            -> 'C' : show n
+    NAT (Atom.atomUtf8 -> Right txt) -> "'" <> unpack txt <> "'"
+    NAT n                            -> show n
 
 instance Show Ur where
   show = \case
@@ -159,8 +160,8 @@ whitespace :: Parser ()
 whitespace = gap <|> ace
 
 sym :: Parser Text
-sym =
-  fmap pack $ some $ oneOf ("$" <> ['a' .. 'z'] <> ['A' .. 'Z'] <> ['0' .. '9'])
+sym = fmap pack $ some $ oneOf
+  ("$-" <> ['a' .. 'z'] <> ['A' .. 'Z'] <> ['0' .. '9'])
 
 
 -- Grammar ---------------------------------------------------------------------
@@ -213,6 +214,7 @@ rune = choice
   , string "%-" *> rune2 (:@) exp exp
   , string "%+" *> rune3 ap3 exp exp exp
   , string "%^" *> rune4 ap4 exp exp exp exp
+  , string "%*" *> runeN apN exp
   , string "~/" *> rune3 jet nat sym exp
   ]
 
@@ -271,6 +273,15 @@ rune4 ∷ (a→b→c→d→e) → Parser a → Parser b → Parser c → Parser 
 rune4 node x y z g = parseRune tall wide
   where tall = do gap; p←x; gap; q←y; gap; r←z; gap; s←g; pure (node p q r s)
         wide = do pal; p←x; ace; q←y; ace; r←z; ace; s←g; pure (node p q r s)
+
+runeN ∷ ([a]→b) → Parser a → Parser b
+runeN node elem = node <$> parseRune tall wide
+  where tall = gap >> elems
+                 where elems   = term <|> elemAnd
+                       elemAnd = do x ← elem; gap; xs ← elems; pure (x:xs)
+                       term    = string "==" $> []
+        wide = pal *> option [] elems <* par
+                 where elems = (:) <$> elem <*> many (ace >> elem)
 
 
 -- Entry Point -----------------------------------------------------------------
