@@ -17,7 +17,7 @@ import Numeric.Positive   (Positive)
 import Prelude            (read)
 import Text.Show.Pretty   (pPrint)
 import Urbit.Atom         (Atom)
-import Urbit.Uruk.JetSpec (jetSpec)
+import Urbit.Uruk.JetSpec (jetSpec, SingJet(..))
 
 import qualified Language.Haskell.TH as TH
 import qualified Urbit.Atom          as Atom
@@ -79,38 +79,6 @@ instance Show a => Show (ExpTree a) where
 
 
 -- Jetted Uruk Expressions -----------------------------------------------------
-
-data SingJet
-  = EYE -- I
-  | BEE -- B
-  | SEA -- C
-  | SEQ
-  | YET
-  | FIX
-  | IFF
-  | PAK
-  | ZER
-  | EQL
-  | ADD
-  | INC
-  | DEC
-  | FEC
-  | MUL
-  | BEX
-  | LSH
-  | SUB
-  | DED
-  | UNI
-  | YES
-  | NAH
-  | LEF
-  | RIT
-  | CAS
-  | CON
-  | CAR
-  | CDR
- deriving (Eq, Ord, Read, Show, Enum, Bounded, Generic)
- deriving anyclass NFData
 
 data DataJet
   = Sn !Pos

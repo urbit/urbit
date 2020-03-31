@@ -6,7 +6,8 @@ import Data.Bits             (shiftL, (.|.))
 import Data.Function         ((&))
 import Data.List             (iterate, (!!))
 import Numeric.Natural       (Natural)
-import Urbit.Uruk.DashParser (DataJet(..), ExpTree(..), Pos, SingJet(..))
+import Urbit.Uruk.DashParser (DataJet(..), ExpTree(..), Pos)
+import Urbit.Uruk.JetSpec    (SingJet(..))
 
 import qualified Urbit.Atom            as Atom
 import qualified Urbit.Uruk.DashParser as Dash
@@ -18,11 +19,17 @@ import Data.Tree
 -- Typse -----------------------------------------------------------------------
 
 data Match
-  = MD !Dash.DataJet
-  | MS !Dash.SingJet
+  = MD !DataJet
+  | MS !SingJet
   | MU !Pos !Val !Val
- deriving (Eq, Ord, Show, Generic)
+ deriving (Eq, Ord, Generic)
  deriving anyclass NFData
+
+instance Show Match where
+  show = \case
+   MD dj    -> show dj
+   MS sj    -> show sj
+   MU n t v -> "J_" <> show t
 
 data Ur
   = S
@@ -30,8 +37,17 @@ data Ur
   | J !Pos
   | D
   | M Match !Natural ![Val]
- deriving (Eq, Ord, Show, Generic)
+ deriving (Eq, Ord, Generic)
  deriving anyclass NFData
+
+instance Show Ur where
+  show = \case
+    S        -> "S"
+    K        -> "K"
+    J n      -> replicate (fromIntegral n) 'J'
+    D        -> "D"
+    M m n [] -> show m
+    M m n xs -> "(" <> intercalate " " (show m : fmap show xs) <> ")"
 
 pattern NS = N S
 pattern NK = N K
@@ -46,6 +62,9 @@ pattern Nah = N (M (MS NAH) 2 [])
 
 pattern Uni = N (M (MS UNI) 1 [])
 
+pattern LefC = N (M (MS LEF) 3 [])
+pattern RitC = N (M (MS RIT) 3 [])
+
 pattern Rit x = N (M (MS RIT) 2 [x])
 pattern Lef x = N (M (MS LEF) 2 [x])
 
@@ -53,11 +72,24 @@ pattern Con h t = N (M (MS CON) 1 [h,t])
 
 pattern Fix = N (M (MS FIX) 2 [])
 
+pattern Lth = N (M (MS LTH) 2 [])
+
+pattern Sub = N (M (MS SUB) 2 [])
+
+pattern Eye = N (M (MS EYE) 1 [])
+pattern Cas = N (M (MS CAS) 3 [])
+
 type Exp = Dash.ExpTree Ur
 type Val = Exp
 
 
 --------------------------------------------------------------------------------
+
+eval :: Exp -> Val
+eval x = maybe x eval (reduce x)
+
+exec :: Exp -> [Exp]
+exec x = x : fromMaybe [] (exec <$> reduce x)
 
 reduce :: Exp -> Maybe Exp
 reduce = \case
@@ -98,7 +130,13 @@ valDash = \case
   x :& y -> valDash x :& valDash y
 
 dashUr :: Dash.Ur -> Exp
-dashUr = error "TODO"
+dashUr = \case
+  Dash.S -> NS
+  Dash.K -> NK
+  Dash.J -> NJ 1
+  Dash.D -> ND
+  Dash.DataJet dj -> N $ M (MD dj) (fromIntegral $ Jets.djArity dj) []
+  Dash.SingJet sj -> N $ M (MS sj) (fromIntegral $ Jets.sjArity sj) []
 
 dashVal :: Dash.Val -> Exp
 dashVal = \case
@@ -163,8 +201,45 @@ runJet = curry \case
   (MS CON    , [x, y, f]) -> Just (f :& x :& y)
   (MS CAR    , [p]      ) -> goCar p
   (MS CDR    , [p]      ) -> goCdr p
-  (j         , xs       ) -> error "arity mismatch in jet execution"
+  (MS LTH    , [_,_]    ) -> Nothing
+  (MS DIV    , [_,_]    ) -> Nothing
+
+  (MD (NAT n), _        ) -> badArgs
+  (MD (Bn  n), _        ) -> badArgs
+  (MD (Cn  n), _        ) -> badArgs
+  (MD (Sn  n), _        ) -> badArgs
+  (MS EYE    , _        ) -> badArgs
+  (MS BEE    , _        ) -> badArgs
+  (MS SEA    , _        ) -> badArgs
+  (MS SEQ    , _        ) -> badArgs
+  (MS YET    , _        ) -> badArgs
+  (MS FIX    , _        ) -> badArgs
+  (MS IFF    , _        ) -> badArgs
+  (MS PAK    , _        ) -> badArgs
+  (MS ZER    , _        ) -> badArgs
+  (MS EQL    , _        ) -> badArgs
+  (MS ADD    , _        ) -> badArgs
+  (MS INC    , _        ) -> badArgs
+  (MS DEC    , _        ) -> badArgs
+  (MS FEC    , _        ) -> badArgs
+  (MS MUL    , _        ) -> badArgs
+  (MS BEX    , _        ) -> badArgs
+  (MS LSH    , _        ) -> badArgs
+  (MS SUB    , _        ) -> badArgs
+  (MS DED    , _        ) -> badArgs
+  (MS UNI    , _        ) -> badArgs
+  (MS YES    , _        ) -> badArgs
+  (MS NAH    , _        ) -> badArgs
+  (MS LEF    , _        ) -> badArgs
+  (MS RIT    , _        ) -> badArgs
+  (MS CAS    , _        ) -> badArgs
+  (MS CON    , _        ) -> badArgs
+  (MS CAR    , _        ) -> badArgs
+  (MS CDR    , _        ) -> badArgs
+  (MS LTH    , _        ) -> badArgs
+  (MS DIV    , _        ) -> badArgs
  where
+  badArgs = error "arity mismatch in jet execution"
   goIff Yes t _ = Just (t :& Uni)
   goIff Nah _ e = Just (e :& Uni)
   goIff _   _ _ = Nothing

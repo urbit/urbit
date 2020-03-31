@@ -14,6 +14,7 @@ import Data.Void
 import Data.Deriving        (deriveEq1, deriveShow1)
 import Data.Functor.Classes (eq1, showsPrec1)
 
+
 -- Types -----------------------------------------------------------------------
 
 infixl 5 :@;

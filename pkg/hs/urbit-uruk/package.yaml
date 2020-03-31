@@ -28,6 +28,7 @@ dependencies:
   - positive
   - pretty-show
   - primitive
+  - raw-strings-qq
   - serialise
   - template-haskell
   - text
