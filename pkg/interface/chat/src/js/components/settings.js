@@ -214,6 +214,11 @@ export class SettingsScreen extends Component {
         );
       }
 
+      let groups = {};
+      Object.keys(props.permissions).forEach((pem) => {
+        groups[pem] = props.permissions[pem].who;
+      });
+
       return (
         <div>
           <div className={"w-100 fl mt3"} style={{maxWidth: "29rem"}}>
@@ -223,7 +228,7 @@ export class SettingsScreen extends Component {
               group to add this chat to.
             </p>
             <InviteSearch
-              permissions={props.permissions}
+              groups={groups}
               contacts={props.contacts}
               associations={props.associations}
               groupResults={true}
