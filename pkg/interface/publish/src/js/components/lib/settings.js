@@ -29,13 +29,19 @@ export class Settings extends Component {
 
   componentDidUpdate(prevProps) {
     const { props } = this;
-    if (prevProps !== this.props) {
+    if (prevProps !== props) {
       if (props.notebook) {
-        this.setState({
-          title: props.notebook.title,
-          description: props.notebook.about,
-          comments: props.notebook.comments
-        })
+        if (prevProps.notebook && prevProps.notebook !== props.notebook) {
+          if (prevProps.notebook.title !== props.notebook.title) {
+            this.setState({title: props.notebook.title});
+          }
+          if (prevProps.notebook.about !== props.notebook.about) {
+            this.setState({description: props.notebook.about});
+          }
+          if (prevProps.notebook.comments !== props.notebook.comments) {
+            this.setState({comments: props.notebook.comments})
+          }
+        }
       }
     }
   }
