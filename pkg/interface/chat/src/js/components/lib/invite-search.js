@@ -49,6 +49,7 @@ export class InviteSearch extends Component {
     let peers = [],
       peerSet = new Set(),
       contacts = new Map;
+
     Object.keys(this.props.groups).map(group => {
       if (this.props.groups[group].size > 0) {
         let groupEntries = this.props.groups[group].values();
@@ -56,6 +57,7 @@ export class InviteSearch extends Component {
           peerSet.add(member);
         }
       }
+
       if (this.props.contacts[group]) {
         let groupEntries = this.props.groups[group].values();
         for (let member of groupEntries) {

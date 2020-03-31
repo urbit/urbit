@@ -223,7 +223,7 @@ export class SettingsScreen extends Component {
               group to add this chat to.
             </p>
             <InviteSearch
-              groups={props.groups}
+              permissions={props.permissions}
               contacts={props.contacts}
               associations={props.associations}
               groupResults={true}
@@ -340,7 +340,7 @@ export class SettingsScreen extends Component {
     const { props, state } = this;
     const isinPopout = this.props.popout ? "popout/" : "";
 
-    let writeGroup = Array.from(props.group.values());
+    let permission = Array.from(props.permission.who.values());
 
     if (!!state.isLoading) {
       let text = state.loadingText || 'Working...';
@@ -378,7 +378,7 @@ export class SettingsScreen extends Component {
             <ChatTabBar
               {...props}
               station={props.station}
-              numPeers={writeGroup.length}
+              numPeers={permission.length}
               host={props.match.params.ship}
               api={props.api}
             />
@@ -423,7 +423,7 @@ export class SettingsScreen extends Component {
           <ChatTabBar
             {...props}
             station={props.station}
-            numPeers={writeGroup.length}
+            numPeers={permission.length}
             isOwner={deSig(props.match.params.ship) === window.ship}
             popout={this.props.popout}
           />

@@ -224,7 +224,7 @@ export class ChatScreen extends Component {
       );
     });
  
-    let group = Array.from(props.group.values());
+    let group = Array.from(props.permission.who.values());
  
     const isinPopout = props.popout ? "popout/" : "";
  
@@ -301,7 +301,6 @@ export class ChatScreen extends Component {
           station={props.station}
           owner={deSig(props.match.params.ship)}
           ownerContact={ownerContact}
-          permissions={props.permissions}
           envelopes={props.envelopes}
           contacts={props.contacts}
           placeholder="Message..."
