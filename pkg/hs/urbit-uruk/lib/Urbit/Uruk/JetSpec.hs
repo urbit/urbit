@@ -47,15 +47,15 @@ jetSpec = [r|
 ++  (bee f g x)  (f (g x))
 ++  (sea f g x)  (f x g)
 
-++  skzer  (S K)
-++  sksuc  (S (S (K S) K))
+++  lamzero  <f x x>
+++  lamsucc  <n f x (f (n f x))>
 
-++  (pak n)  (J J K (n sksuc skzer))
+++  (pak n)  (J J K (n lamsucc lamzero))
 ++  (inc n)  (pak <i z (i (n i z))>)
 
-++  0  (J J K skzer)
-++  1  (J J K (sksuc skzer))
-++  2  (J J K (sksuc (sksuc skzer)))
+++  0  (J J K lamzero)
+++  1  (J J K (lamsucc lamzero))
+++  2  (J J K (lamsucc (lamsucc lamzero)))
 
 ++  (seq x y)    y
 ++  (yet f x y)  (f x y)
