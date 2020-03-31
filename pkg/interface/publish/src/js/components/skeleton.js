@@ -21,7 +21,6 @@ export class Skeleton extends Component {
     return (
       <div className={"absolute h-100 w-100 " + popoutWindow}>
       <HeaderBar
-        spinner={props.spinner}
         invites={props.invites}
         associations={props.associations} />
         <div className={`cf w-100 h-100 flex ` + popoutBorder}>

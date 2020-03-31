@@ -19,6 +19,11 @@ export class Root extends Component {
     store.setStateHandler(this.setState.bind(this));
   }
 
+  componentDidMount() {
+    //preload spinner asset
+    new Image().src = "/~publish/Spinner.png";
+  }
+
   render() {
     const { props, state } = this;
 
@@ -36,7 +41,6 @@ export class Root extends Component {
               active={"sidebar"}
               rightPanelHide={true}
               sidebarShown={true}
-              spinner={state.spinner}
               invites={state.invites}
               notebooks={state.notebooks}
               associations={associations}
@@ -62,7 +66,6 @@ export class Root extends Component {
             active={"rightPanel"}
             rightPanelHide={false}
             sidebarShown={state.sidebarShown}
-            spinner={state.spinner}
             invites={state.invites}
             notebooks={state.notebooks}
             associations={associations}
@@ -89,7 +92,6 @@ export class Root extends Component {
                   active={"rightPanel"}
                   rightPanelHide={false}
                   sidebarShown={state.sidebarShown}
-                  spinner={state.spinner}
                   invites={state.invites}
                   notebooks={state.notebooks}
                   associations={associations}
@@ -128,7 +130,6 @@ export class Root extends Component {
                 active={"rightPanel"}
                 rightPanelHide={false}
                 sidebarShown={state.sidebarShown}
-                spinner={state.spinner}
                 invites={state.invites}
                 notebooks={state.notebooks}
                 associations={associations}
@@ -153,7 +154,6 @@ export class Root extends Component {
                 active={"rightPanel"}
                 rightPanelHide={false}
                 sidebarShown={state.sidebarShown}
-                spinner={state.spinner}
                 invites={state.invites}
                 notebooks={state.notebooks}
                 associations={associations}
@@ -199,7 +199,6 @@ export class Root extends Component {
               active={"rightPanel"}
               rightPanelHide={false}
               sidebarShown={state.sidebarShown}
-              spinner={state.spinner}
               invites={state.invites}
               notebooks={state.notebooks}
               selectedGroups={selectedGroups}
@@ -224,7 +223,6 @@ export class Root extends Component {
                 active={"rightPanel"}
                 rightPanelHide={false}
                 sidebarShown={state.sidebarShown}
-                spinner={state.spinner}
                 invites={state.invites}
                 notebooks={state.notebooks}
                 associations={associations}

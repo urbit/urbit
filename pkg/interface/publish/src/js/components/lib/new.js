@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { InviteSearch } from './invite-search';
+import { Spinner } from './icons/icon-spinner';
 import { Route, Link } from 'react-router-dom';
 import { uuid, isPatTa, deSig, stringToSymbol } from "/lib/util";
 import urbitOb from 'urbit-ob';
@@ -30,7 +31,6 @@ export class NewScreen extends Component {
     const { props, state } = this;
     if (props.notebooks && (("~" + window.ship) in props.notebooks)) {
       if (state.awaiting in props.notebooks["~" + window.ship]) {
-        props.api.setSpinner(false);
         let notebook = `/~${window.ship}/${state.awaiting}`;
         props.history.push("/~publish/notebook" + notebook);
       }
@@ -93,10 +93,8 @@ export class NewScreen extends Component {
         group: groupInfo
       }
     }
-    props.api.setSpinner(true);
     this.setState({awaiting: bookId, disabled: true}, () => {
       props.api.action("publish", "publish-action", action).then(() => {
-        props.api.setSpinner(false);
       });
     });
   }
@@ -135,7 +133,7 @@ export class NewScreen extends Component {
           Notebook must have a valid name.
         </span>
       );
-    }
+      }
 
     return (
       <div
@@ -202,6 +200,7 @@ export class NewScreen extends Component {
           className={createClasses}>
           Create Notebook
           </button>
+          <Spinner awaiting={this.state.awaiting} classes="mt3" text="Creating notebook..."/>
         </div>
       </div>
     );
