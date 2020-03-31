@@ -121,14 +121,7 @@
       %-  ~(run by inbox)
       |=  =mailbox
       ^-  ^mailbox
-      [config.mailbox (truncate-envelopes envelopes.mailbox)]
-    ::
-    ++  truncate-envelopes
-      |=  envelopes=(list envelope)
-      ^-  (list envelope)
-      ?:  (lth (lent envelopes) message-limit)
-        envelopes
-      (scag message-limit envelopes)
+      [config.mailbox (scag message-limit envelopes.mailbox)]
     --
   ::
   ++  on-agent

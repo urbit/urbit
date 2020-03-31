@@ -400,16 +400,14 @@
   ?>  ?=(^ pax)
   =/  last  (dec (lent pax))
   =/  backlog-start=(unit @ud)
-    %+  rush
-      (snag last `(list @ta)`pax)
-    dem:ag
+    (rush (snag last `(list @ta)`pax) dem:ag)
   =/  pas  `path`(oust [last 1] `(list @ta)`pax)
   ?>  ?=([* ^] pas)
   ?>  (~(has by synced) pas)
   ::  check if read is permitted
   ?>  (is-permitted src.bol pas)
-  =/  =mailbox  (need (chat-scry pas))
-  =*  envs  envelopes.mailbox
+  =/  backlog-limit  10.000
+  =/  envs  (scag backlog-limit envelopes:(need (chat-scry pas)))
   %-  zing
   :~  [%give %fact ~ %chat-update !>([%create pas])]~
       ?.  ?&(?=(^ backlog-start) (~(has by allow-history) pas))  ~
