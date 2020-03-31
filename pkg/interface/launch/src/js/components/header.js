@@ -14,8 +14,8 @@ export default class Header extends Component {
       <header
         className={"bg-white bg-gray0-d w-100 justify-between relative " +
         "tl pt3"}
-        style={{ height: 40 }}>
-        <div className="fl lh-copy absolute left-1" style={{top: 12}}>
+        style={{ height: 37 }}>
+        <div className="fl lh-copy absolute left-1" style={{top: 9}}>
           <a href="/~groups/me"><Sigil
             ship={"~" + window.ship}
             size={16} color={"#000000"}
@@ -24,7 +24,7 @@ export default class Header extends Component {
           <GroupFilter invites={invites} associations={this.props.associations}/>
         <span
           className="f9 white-d inter dib ml1 c-default">
-          <span className="inter gray2 f9 dib mr1">/</span> Home
+          <span className="inter gray2 f9 dib mr2">/</span> Home
         </span>
         </div>
       </header>

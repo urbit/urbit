@@ -24,7 +24,7 @@ export class HeaderBar extends Component {
         className={
           "bg-white bg-gray1-d w-100 justify-between relative tc pt3 " + popout
         }
-        style={{ height: 40 }}>
+        style={{ height: 45 }}>
         <div className="fl lh-copy absolute left-1" style={{ top: 8 }}>
           <a href="/~groups/me" className="dib v-top inter">
             <Sigil
@@ -35,10 +35,10 @@ export class HeaderBar extends Component {
             />
           </a>
           <a
-            className="dib f9 v-mid inter ml1"
+            className="dib f9 v-mid inter ml2"
             href="/"
             style={{ top: 14 }}>
-            ⟵ Dojo</a>
+            ⟵</a> <p className="dib f9 v-mid inter ml2">Dojo</p>
         </div>
       </div>
     );

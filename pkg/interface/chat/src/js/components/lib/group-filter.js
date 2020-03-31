@@ -193,7 +193,7 @@ export class GroupFilter extends Component {
         <div className={
           "f9 gray2 bb bl br b--gray3 b--gray2-d bg-gray0-d " +
           "white-d pa3 db w-100 inter bg-gray5 lh-solid tl"
-        } style={{width: 253}}>
+        } style={{width: 251}}>
         {allSelected}
         </div>
       )
@@ -204,7 +204,7 @@ export class GroupFilter extends Component {
         <div className={buttonOpened}
         onClick={() => this.toggleOpen()}
         ref={(el) => this.toggleButton = el}>
-        <p className="dib f9 pointer pa1 mw5 truncate v-mid">{currentGroup}</p>
+        <p className="dib f9 pointer pv1 ph2 mw5 truncate v-mid">{currentGroup}</p>
         </div>
         <div className={dropdownClass}
           style={{ maxHeight: "24rem", width: 285 }}
@@ -214,7 +214,7 @@ export class GroupFilter extends Component {
           {inviteCount}
           </a>
           <p className="pt4 gray3 f9 tl mh4">Filter Groups</p>
-          <div className="relative pb6 w-100 ph4 pt2">
+          <div className="relative w-100 ph4 pt2 pb4">
             <input className="ba b--gray3 white-d bg-gray0-d inter w-100 f9 pa2" style={{boxSizing: "border-box"}} placeholder="Group name..."
           onChange={this.search}
           value={state.searchTerm}

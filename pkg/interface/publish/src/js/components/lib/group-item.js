@@ -34,7 +34,7 @@ export class GroupItem extends Component {
     })
     return (
       <div className={first}>
-      <p className="f9 ph4 fw6 gray3">{title}</p>
+      <p className="f9 ph4 pb2 fw6 gray3">{title}</p>
       {notebookItems}
       </div>
     )

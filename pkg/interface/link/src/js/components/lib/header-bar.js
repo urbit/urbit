@@ -25,7 +25,7 @@ export class HeaderBar extends Component {
         className={
           "bg-white bg-gray0-d w-100 justify-between relative tc pt3 " + popout
         }
-        style={{ height: 40 }}>
+        style={{ height: 45 }}>
         <div className="fl lh-copy absolute left-0" style={{ top: 8 }}>
           <a href="/~groups/me" className="dib v-top">
             <Sigil
@@ -38,10 +38,10 @@ export class HeaderBar extends Component {
           <GroupFilter invites={invites} associations={this.props.associations} />
           <span className="dib f9 v-mid gray2 ml1 mr1 c-default inter">/</span>
           <a
-            className="dib f9 v-mid inter ml1"
+            className="dib f9 v-mid inter ml2"
             href="/"
             style={{ top: 14 }}>
-            ⟵ Links</a>
+            ⟵</a> <p className="dib f9 v-mid inter ml2">Links</p>
         </div>
       </div>
     );
