@@ -45,6 +45,7 @@
 |%
 +$  card  card:agent:gall
 --
+=*  state  -
 ::
 %-  agent:dbug
 ^-  agent:gall
@@ -60,7 +61,6 @@
     :_  this
     :~  [%pass /updates %agent [our.bowl %contact-store] %watch /updates]
         [%pass / %arvo %e %connect [~ /'~groups'] %contact-view]
-        (launch-poke:cc [%contact-view /primary '/~groups/js/tile.js'])
         (contact-poke:cc [%create /~/default])
         (group-poke:cc [%bundle /~/default])
         (contact-poke:cc [%add /~/default our.bowl *contact])
@@ -216,11 +216,6 @@
   |=  [=ship act=contact-action]
   ^-  card
   [%pass / %agent [ship %contact-hook] %poke %contact-action !>(act)]
-::
-++  launch-poke
-  |=  act=[@tas path @t]
-  ^-  card
-   [%pass / %agent [our.bol %launch] %poke %launch-action !>(act)]
 ::
 ++  group-poke
   |=  act=group-action

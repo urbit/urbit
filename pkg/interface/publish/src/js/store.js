@@ -17,6 +17,7 @@ class Store {
       },
       permissions: {},
       invites: {},
+      selectedGroups: [],
       spinner: false,
       sidebarShown: true
     }

@@ -139,6 +139,15 @@ class UrbitApi {
     });
   }
 
+  setSelected(selected) {
+    store.handleEvent({
+      type: "local",
+      data: {
+        selected: selected
+      }
+    })
+  }
+
 }
 
 export let api = new UrbitApi();

@@ -20,6 +20,7 @@ class Store {
         contacts: {}
       },
       invites: {},
+      selectedGroups: [],
       links: {},
       listening: new Set(),
       comments: {},

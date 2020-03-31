@@ -214,4 +214,7 @@ a {
   a {
     color: #fff;
   }
+  .hover-bg-gray1-d:hover {
+    background-color: #4d4d4d;
+  }
 }

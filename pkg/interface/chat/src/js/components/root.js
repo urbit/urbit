@@ -52,6 +52,7 @@ export class Root extends Component {
         inbox={state.inbox}
         messagePreviews={messagePreviews}
         associations={associations}
+        selectedGroups={state.selectedGroups}
         contacts={contacts}
         invites={invites}
         unreads={unreads}
@@ -70,6 +71,8 @@ export class Root extends Component {
             render={props => {
               return (
                 <Skeleton
+                  associations={associations}
+                  invites={invites}
                   chatHideonMobile={true}
                   sidebarShown={state.sidebarShown}
                   sidebar={renderChannelSidebar(props)}
@@ -91,6 +94,8 @@ export class Root extends Component {
             render={props => {
               return (
                 <Skeleton
+                  associations={associations}
+                  invites={invites}
                   sidebarHideOnMobile={true}
                   spinner={state.spinner}
                   sidebar={renderChannelSidebar(props)}
@@ -121,6 +126,8 @@ export class Root extends Component {
 
               return (
                 <Skeleton
+                  associations={associations}
+                  invites={invites}
                   spinner={state.spinner}
                   sidebarHideOnMobile={true}
                   sidebar={renderChannelSidebar(props)}
@@ -176,6 +183,8 @@ export class Root extends Component {
 
               return (
                 <Skeleton
+                  associations={associations}
+                  invites={invites}
                   sidebarHideOnMobile={true}
                   spinner={state.spinner}
                   popout={popout}
@@ -225,6 +234,8 @@ export class Root extends Component {
 
               return (
                 <Skeleton
+                  associations={associations}
+                  invites={invites}
                   sidebarHideOnMobile={true}
                   spinner={state.spinner}
                   sidebarShown={state.sidebarShown}
@@ -263,12 +274,14 @@ export class Root extends Component {
                 kind: "",
                 who: new Set([])
               };
-              
+
               let association =
                 station in associations["chat"] ? associations.chat[station] : {};
 
               return (
                 <Skeleton
+                  associations={associations}
+                  invites={invites}
                   sidebarHideOnMobile={true}
                   spinner={state.spinner}
                   popout={popout}

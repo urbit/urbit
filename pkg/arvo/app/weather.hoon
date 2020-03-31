@@ -33,7 +33,7 @@
     :_  this
     :~  [%pass /bind/weather %arvo %e %connect [~ /'~weather'] %weather]
         :*  %pass  /launch/weather  %agent  [our.bol %launch]  %poke
-            %launch-action  !>([%weather /weathertile '/~weather/js/tile.js'])
+            %launch-action  !>([%add %weather /weathertile '/~weather/js/tile.js'])
         ==
     ==
   ++  on-save  !>(state)

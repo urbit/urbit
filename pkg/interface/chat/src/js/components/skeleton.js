@@ -32,7 +32,7 @@ export class Skeleton extends Component {
     return (
       // app outer skeleton
       <div className={"absolute h-100 w-100 bg-gray0-d " + popoutWindow}>
-      <HeaderBar spinner={this.props.spinner} />
+      <HeaderBar spinner={this.props.spinner} associations={this.props.associations} invites={this.props.invites} />
       {/* app window borders */}
         <div className={
             `cf w-100 flex ` +
@@ -45,8 +45,8 @@ export class Skeleton extends Component {
           <div
             className={
               `fl h-100 br b--gray4 b--gray1-d overflow-x-hidden
-              flex-basis-full-s flex-basis-300-m flex-basis-300-l
-              flex-basis-300-xl ` +
+              flex-basis-full-s flex-basis-250-m flex-basis-250-l
+              flex-basis-250-xl ` +
               sidebarHide +
               " " +
               sidebarHideOnMobile

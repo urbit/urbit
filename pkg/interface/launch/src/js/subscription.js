@@ -30,6 +30,10 @@ export class Subscription {
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       ship);
+    api.bind("metadata-store", "/app-name/contacts",
+    this.handleEvent.bind(this),
+    this.handleError.bind(this),
+    ship);
     }
 
   handleEvent(diff) {

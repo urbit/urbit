@@ -132,3 +132,25 @@ export function cite(ship) {
   }
   return `~${patp}`;
 }
+
+export function alphabetiseAssociations(associations) {
+  let result = {};
+  Object.keys(associations).sort((a, b) => {
+    let aName = a.substr(1);
+    let bName = b.substr(1);
+    if (a.metadata && a.metadata.title) {
+      aName = a.metadata.title !== ""
+        ? a.metadata.title
+        : a.substr(1);
+    }
+    if (b.metadata && b.metadata.title) {
+      bName = b.metadata.title !== ""
+        ? b.metadata.title
+        : b.substr(1);
+    }
+    return aName.toLowerCase().localeCompare(bName.toLowerCase());
+  }).map((each) => {
+    result[each] = associations[each];
+  })
+  return result;
+}

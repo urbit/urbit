@@ -45,7 +45,7 @@
         [%pass /discussions %agent [our.bowl %link-store] %watch /discussions]
         [%pass /seen %agent [our.bowl %link-store] %watch /seen]
       ::
-        =+  [dap.bowl /tile '/~link/js/tile.js']
+        =+  [%add dap.bowl /tile '/~link/js/tile.js']
         [%pass /launch %agent [our.bowl %launch] %poke %launch-action !>(-)]
       ::
         =+  [%invite-action !>([%create /link])]

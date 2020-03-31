@@ -86,7 +86,7 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    =/  lac  [%publish /publishtile '/~publish/tile.js']
+    =/  lac  [%add %publish /publishtile '/~publish/tile.js']
     =/  rav  [%sing %t [%da now.bol] /app/publish/notebooks]
     :_  this
     :~  [%pass /bind %arvo %e %connect [~ /'~publish'] %publish]

@@ -24,6 +24,7 @@ export class Root extends Component {
 
     let contacts = !!state.contacts ? state.contacts : {};
     let associations = !!state.associations ? state.associations : {contacts: {}}
+    let selectedGroups = !!state.selectedGroups ? state.selectedGroups : [];
 
     return (
       <BrowserRouter>
@@ -38,6 +39,8 @@ export class Root extends Component {
               spinner={state.spinner}
               invites={state.invites}
               notebooks={state.notebooks}
+              associations={associations}
+              selectedGroups={selectedGroups}
               contacts={contacts}>
                 <div className={`h-100 w-100 overflow-x-hidden flex flex-column
                  bg-white bg-gray0-d dn db-ns`}>
@@ -62,6 +65,8 @@ export class Root extends Component {
             spinner={state.spinner}
             invites={state.invites}
             notebooks={state.notebooks}
+            associations={associations}
+            selectedGroups={selectedGroups}
             contacts={contacts}>
               <NewScreen
                 associations={associations.contacts}
@@ -87,6 +92,8 @@ export class Root extends Component {
                   spinner={state.spinner}
                   invites={state.invites}
                   notebooks={state.notebooks}
+                  associations={associations}
+                  selectedGroups={selectedGroups}
                   contacts={contacts}>
                     <JoinScreen
                     notebooks={state.notebooks}
@@ -124,6 +131,8 @@ export class Root extends Component {
                 spinner={state.spinner}
                 invites={state.invites}
                 notebooks={state.notebooks}
+                associations={associations}
+                selectedGroups={selectedGroups}
                 contacts={contacts}
                 path={path}>
                 <NewPost
@@ -147,7 +156,9 @@ export class Root extends Component {
                 spinner={state.spinner}
                 invites={state.invites}
                 notebooks={state.notebooks}
+                associations={associations}
                 contacts={contacts}
+                selectedGroups={selectedGroups}
                 path={path}>
                 <Notebook
                   notebooks={state.notebooks}
@@ -191,6 +202,8 @@ export class Root extends Component {
               spinner={state.spinner}
               invites={state.invites}
               notebooks={state.notebooks}
+              selectedGroups={selectedGroups}
+              associations={associations}
               contacts={contacts}
               path={path}>
               <EditPost
@@ -214,6 +227,8 @@ export class Root extends Component {
                 spinner={state.spinner}
                 invites={state.invites}
                 notebooks={state.notebooks}
+                associations={associations}
+                selectedGroups={selectedGroups}
                 contacts={contacts}
                 path={path}>
                 <Note
@@ -236,4 +251,4 @@ export class Root extends Component {
   }
 }
 
-export default Root
+export default Root;

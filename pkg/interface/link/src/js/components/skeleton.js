@@ -19,17 +19,25 @@ export class Skeleton extends Component {
     let popoutBorder = (popout)
       ? "" : "ba-m ba-l ba-xl b--gray2 br1"
 
+      let linkInvites = ('/link' in this.props.invites)
+      ? this.props.invites['/link'] : {};
+
     return (
       <div className={"absolute h-100 w-100 " + popoutWindow}>
-      <HeaderBar spinner={this.props.spinner} />
+        <HeaderBar
+          spinner={this.props.spinner}
+          invites={this.props.invites}
+          associations={this.props.associations}
+        />
         <div className={`cf w-100 h-100 flex ` + popoutBorder}>
         <ChannelsSidebar
             active={this.props.active}
             popout={popout}
             associations={this.props.associations}
-            invites={this.props.invites}
+            invites={linkInvites}
             groups={this.props.groups}
             selected={this.props.selected}
+            selectedGroups={this.props.selectedGroups}
             sidebarShown={this.props.sidebarShown}
             links={this.props.links}
             listening={this.props.listening}/>
