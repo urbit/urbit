@@ -359,4 +359,59 @@ md img {
     background: #333;
     color: #fff;
   }
+  .CodeMirror-selected {
+    background: #4d4d4d !important;
+    color: white;
+  }
+
+  .cm-s-tlon span.cm-def {
+    color: white;
+  }
+
+  .cm-s-tlon span.cm-variable {
+    color: white;
+  }
+
+  .cm-s-tlon span.cm-variable-2 {
+    color: white;
+  }
+
+  .cm-s-tlon span.cm-variable-3,
+  .cm-s-tlon span.cm-type {
+    color: white;
+  }
+
+  .cm-s-tlon span.cm-property {
+    color: white;
+  }
+
+  .cm-s-tlon span.cm-operator {
+    color: white;
+  }
+
+  .cm-s-tlon span.cm-comment {
+    color: black;
+    background-color: var(--gray);
+    padding: 2px;
+    border-radius: 2px;
+  }
+  .cm-s-tlon span.cm-string {
+    color: var(--gray);
+  }
+
+  .cm-s-tlon span.cm-string-2 {
+    color: var(--gray);
+  }
+
+  .cm-s-tlon span.cm-attribute {
+    color: var(--gray);
+  }
+
+  .cm-s-tlon span.cm-tag {
+    color: var(--gray);
+  }
+
+  .cm-s-tlon span.cm-link {
+    color: var(--gray);
+  }
 }
