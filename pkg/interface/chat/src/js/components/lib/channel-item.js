@@ -14,9 +14,7 @@ export class ChannelItem extends Component {
   render() {
     const { props, state } = this;
 
-    let unreadElem = !!props.unread
-                     ? "fw6"
-                     : "";
+    let unreadElem = !!props.unread ? "fw6" : "";
 
     let title = props.title;
 

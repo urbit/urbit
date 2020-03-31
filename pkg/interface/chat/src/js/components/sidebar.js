@@ -32,8 +32,8 @@ export class Sidebar extends Component {
           groupedChannels["/~/"] = array;
         } else {
           groupedChannels["/~/"] = [box]
-        };
-      };
+        }
+      }
       let path = !!props.associations.chat[box]
         ? props.associations.chat[box]["group-path"] : box;
       if (path in associations) {
