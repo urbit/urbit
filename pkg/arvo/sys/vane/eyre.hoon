@@ -496,7 +496,7 @@
             ;input
               =type  "password"
               =name  "password"
-              =placeholder  "~sampel-ticlyt-migfun-falmel"
+              =placeholder  "sampel-ticlyt-migfun-falmel"
               =class  "mono"
               =autofocus  "true";
             ;input(type "hidden", name "redirect", value redirect-str);
