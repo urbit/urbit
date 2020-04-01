@@ -387,7 +387,7 @@
 
 ::  a list containing just the space character
 =/  space    (cons ' ' null)
-=/  newline  (cons '\n' null)
+=/  newline  (cons 10 null)
 
 ::  renders three integers as a space deliminated tape.
 =/  nums
@@ -404,18 +404,23 @@
 =/  build-ppm
   |=  (w h)
   =/  mandelbrot-data  (mandelbrot w h)
+  %-  crip
+  %+  weld  (cons 'P' (cons '3' (cons 10 null)))
   %+  weld
-    %+  cons  'P3'
-    %+  cons  (crip (zing (cons (ntot w) (cons space (cons (ntot h) null)))))
-    (cons '255' null)
+    (zing (cons (ntot w) (cons space (cons (ntot h) (cons newline null)))))
+  %+  weld  (cons '2' (cons '5' (cons '5' (cons 10 null))))
+  %-  zing
   %+  turn  mandelbrot-data
   |=  y
-  %-  crip
-  %-  zing
-  %+  turn  y  nums
+  %+  weld
+    %-  zing
+    %+  turn  y  nums
+  newline
 
-:: 
 (build-ppm 10 10)
+
+:: Doing a 20x20 render takes 4m40s.
+::(build-ppm 20 20)
 
 :: TODO: The following should run in a reasonable amount of time
 ::(build-ppm 1000 1000)
