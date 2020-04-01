@@ -12,6 +12,7 @@ import Control.Arrow             ((>>>))
 import Data.Function             ((&))
 import System.IO.Unsafe          (unsafePerformIO)
 import Text.Show.Pretty          (ppShow)
+import Urbit.Moon.MakeStrict     (makeStrict)
 import Urbit.Moon.MoonToLambda   (moonToLambda)
 import Urbit.Uruk.Fast.OptToFast (optToFast)
 
@@ -146,7 +147,7 @@ gogogoTromp text = do
   ast <- ExceptT $ pure $ Parser.parseAST text
   let expr = bind ast
   let lamb = moonToLambda expr :: B.Exp () (Either Text p)
-  ExceptT $ B.outToUruk $ B.johnTrompBracket lamb
+  ExceptT $ B.outToUruk $ B.johnTrompBracket $ makeStrict Right lamb
 
 gogogoLazyTromp :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
 gogogoLazyTromp text = do
