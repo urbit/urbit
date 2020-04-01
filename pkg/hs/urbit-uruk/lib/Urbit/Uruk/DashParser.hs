@@ -19,6 +19,7 @@ import Text.Show.Pretty   (pPrint)
 import Urbit.Atom         (Atom)
 import Urbit.Uruk.JetSpec (jetSpec, SingJet(..))
 
+import qualified Data.Char           as C
 import qualified Language.Haskell.TH as TH
 import qualified Urbit.Atom          as Atom
 import qualified Urbit.Uruk.Bracket  as B
@@ -105,7 +106,7 @@ instance Show DataJet where
     Sn  n                            -> 'S' : show n
     Bn  n                            -> 'B' : show n
     Cn  n                            -> 'C' : show n
-    NAT (Atom.atomUtf8 -> Right txt) -> "'" <> unpack txt <> "'"
+    NAT (Atom.atomUtf8 -> Right txt) | all C.isPrint txt -> "'" <> unpack txt <> "'"
     NAT n                            -> show n
 
 instance Show Ur where
