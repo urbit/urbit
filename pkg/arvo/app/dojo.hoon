@@ -1230,12 +1230,12 @@
     ::
     ++  complete-gen-poke-to-app
       |=  [app=term gen=term]
+      =.  app
+        ?:(?=(%$ app) %hood app)
       %+  complete
         ?:  =(%hood app)
           (cat 3 '|' gen)
         :((cury cat 3) ':' app '|' gen)
-      =.  app
-        ?:(?=(%$ app) %hood app)
       =/  pfix=path
         /(scot %p our.hid)/[q.byk.hid]/(scot %da now.hid)/gen/[app]
       ::
