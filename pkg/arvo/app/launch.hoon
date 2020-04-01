@@ -48,6 +48,9 @@
   ==
 ::
 +$  card  card:agent:gall
+++  launch-who
+  |=  =desk
+  [%pass /who %arvo %e %serve [~ /who] desk /gen/who/hoon ~]
 --
 ::
 =|  [%2 state-two]
@@ -57,11 +60,10 @@
 |_  bol=bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bol)
-    launch-who  [%pass /who %arvo %e %serve [~ /who] q.byk.bol /gen/who/hoon ~]
 ++  on-init
   ^-  (quip card _this)
   :_  this(state *[%2 state-two])
-  :~  launch-who
+  :~  (launch-who q.byk.bol)
       [%pass / %arvo %e %connect [~ /] %launch]
   ==
 ::
@@ -85,7 +87,7 @@
           (~(del by path-to-tile) /primary)
           first-time
       ==
-    $(old-state [%2 new-state], cards [launch-who cards])
+    $(old-state [%2 new-state], cards [(launch-who q.byk.bol) cards])
   ::
       %2  [(flop cards) this(state old-state)]
   ==
