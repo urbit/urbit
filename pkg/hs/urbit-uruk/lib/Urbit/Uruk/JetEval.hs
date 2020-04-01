@@ -93,11 +93,20 @@ pattern Fix = N (M (MS FIX) 2 [])
 pattern Lth = N (M (MS LTH) 2 [])
 
 pattern Sub = N (M (MS SUB) 2 [])
+pattern Fub = N (M (MS FUB) 2 [])
 
 pattern Div = N (M (MS DIV) 2 [])
+pattern Mod = N (M (MS MOD) 2 [])
+
+pattern Bex = N (M (MS BEX) 1 [])
+pattern Lsh = N (M (MS LSH) 2 [])
+pattern Not = N (M (MS NOT) 1 [])
+pattern Xor = N (M (MS XOR) 2 [])
 
 pattern Eye = N (M (MS EYE) 1 [])
 pattern Cas = N (M (MS CAS) 3 [])
+
+pattern Trace = N (M (MS TRACE) 2 [])
 
 type Exp = Dash.ExpTree Ur
 type Val = Exp
@@ -137,7 +146,15 @@ instance Uruk Exp where
   uAdd = Add
   uSub = Sub
   uMul = Mul
+  uFub = Just Fub
+  uLth = Just Lth
   uDiv = Just Div
+  uMod = Just Mod
+  uBex = Just Bex
+  uLsh = Just Lsh
+  uNot = Just Not
+  uXor = Just Xor
+  uTrace = Just Trace
   uFix = Fix
   uDed = Ded
   uUni = Uni
@@ -255,6 +272,8 @@ runJet = curry \case
   (MS LSH    , [x,n]    ) -> goLsh x n
   (MS SUB    , [x,y]    ) -> goSub x y
   (MS FUB    , [x,y]    ) -> goFub x y
+  (MS NOT    , [x]      ) -> goNot x
+  (MS XOR    , [x,y]    ) -> goXor x y
   (MS DED    , [x]      ) -> error ("DED: " <> show x)
   (MS UNI    , [_]      ) -> Nothing
   (MS YES    , [y,_]    ) -> Just y
@@ -265,8 +284,10 @@ runJet = curry \case
   (MS CON    , [x, y, f]) -> Just (f :& x :& y)
   (MS CAR    , [p]      ) -> goCar p
   (MS CDR    , [p]      ) -> goCdr p
-  (MS LTH    , [_,_]    ) -> Nothing
-  (MS DIV    , [_,_]    ) -> Nothing
+  (MS LTH    , [x, y]   ) -> goLth x y
+  (MS DIV    , [x, y]   ) -> goDiv x y
+  (MS MOD    , [x, y]   ) -> goMod x y
+  (MS TRACE  , [x, y]   ) -> goTrace x y
 
   (MD (NAT n), _        ) -> badArgs
   (MD (Bn  n), _        ) -> badArgs
@@ -291,6 +312,8 @@ runJet = curry \case
   (MS LSH    , _        ) -> badArgs
   (MS SUB    , _        ) -> badArgs
   (MS FUB    , _        ) -> badArgs
+  (MS NOT    , _        ) -> badArgs
+  (MS XOR    , _        ) -> badArgs
   (MS DED    , _        ) -> badArgs
   (MS UNI    , _        ) -> badArgs
   (MS YES    , _        ) -> badArgs
@@ -303,6 +326,8 @@ runJet = curry \case
   (MS CDR    , _        ) -> badArgs
   (MS LTH    , _        ) -> badArgs
   (MS DIV    , _        ) -> badArgs
+  (MS MOD    , _        ) -> badArgs
+  (MS TRACE  , _        ) -> badArgs
  where
   badArgs = error "arity mismatch in jet execution"
   goIff Yes t _ = Just (t :& Uni)
@@ -342,6 +367,15 @@ runJet = curry \case
   goCar (Con h _) = Just h
   goCar _         = Nothing
 
+  goLth (Nat x) (Nat y) = Just (if x<y then Yes else Nah)
+  goLth _       _       = Nothing
+
+  goDiv (Nat x) (Nat y) = Just (Nat (x `div` y))
+  goDiv _       _       = Nothing
+
+  goMod (Nat x) (Nat y) = Just (Nat (x `mod` y))
+  goMod _       _       = Nothing
+
   goCas (N (M (MS LEF) _ [x])) l _ = Just (l :& x)
   goCas (N (M (MS RIT) _ [x])) _ r = Just (r :& x)
   goCas _                      _ _ = Nothing
@@ -356,6 +390,18 @@ runJet = curry \case
   goFub (Nat x) (Nat y) | y > x = Just (Nat (if y > x then 0 else (x-y)))
   goFub _       _               = Nothing
 
+  goNot Yes = Just Nah
+  goNot Nah = Just Yes
+  goNot _   = Nothing
+
+  goXor Yes Yes = Just Nah
+  goXor Yes Nah = Just Yes
+  goXor Nah Yes = Just Yes
+  goXor Nah Nah = Just Nah
+  goXor _   _   = Nothing
+
   goNat :: Natural -> Val -> Val -> Exp
   goNat 0 i z = z
   goNat n i z = i :& goNat (pred n) i z
+
+  goTrace x y = trace ("Trace: " ++ (show x)) (Just (y :& Uni))

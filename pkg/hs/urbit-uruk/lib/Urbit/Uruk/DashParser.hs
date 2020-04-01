@@ -105,6 +105,7 @@ instance Show DataJet where
     Sn  n                            -> 'S' : show n
     Bn  n                            -> 'B' : show n
     Cn  n                            -> 'C' : show n
+    NAT n | n < 2048                 -> show n
     NAT (Atom.atomUtf8 -> Right txt) -> "'" <> unpack txt <> "'"
     NAT n                            -> show n
 

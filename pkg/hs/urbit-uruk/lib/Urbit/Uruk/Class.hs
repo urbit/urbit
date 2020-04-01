@@ -49,9 +49,32 @@ class Uruk p where
   uCar :: p
   uCdr :: p
 
+  uFub :: Maybe p
+  uFub = Nothing
+
+  uLth :: Maybe p
+  uLth = Nothing
+
   uDiv :: Maybe p
   uDiv = Nothing
 
+  uMod :: Maybe p
+  uMod = Nothing
+
+  uBex :: Maybe p
+  uBex = Nothing
+
+  uLsh :: Maybe p
+  uLsh = Nothing
+
+  uNot :: Maybe p
+  uNot = Nothing
+
+  uXor :: Maybe p
+  uXor = Nothing
+
+  uTrace :: Maybe p
+  uTrace = Nothing
 
 instance Uruk p => Uruk (Either a p) where
   uApp x y = sequence $ uApp <$> x <*> y
@@ -94,4 +117,12 @@ instance Uruk p => Uruk (Either a p) where
   uCar = pure uCar
   uCdr = pure uCdr
 
+  uFub = sequence (pure uFub)
+  uLth = sequence (pure uLth)
   uDiv = sequence (pure uDiv)
+  uMod = sequence (pure uMod)
+  uBex = sequence (pure uBex)
+  uLsh = sequence (pure uLsh)
+  uNot = sequence (pure uNot)
+  uXor = sequence (pure uXor)
+  uTrace = sequence (pure uTrace)

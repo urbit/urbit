@@ -1,11 +1,11 @@
 module Urbit.Moon.MoonToUruk where
 
-import Prelude ()
 import Bound
 import ClassyPrelude
-import GHC.Natural
-import Urbit.Moon.AST
 import Control.Monad.Except
+import GHC.Natural
+import Prelude              ()
+import Urbit.Moon.AST
 import Urbit.Uruk.Class
 
 import Control.Arrow             ((>>>))
@@ -56,7 +56,15 @@ getGlobal str = str & \case
   "con"   -> Right uCon
   "car"   -> Right uCar
   "cdr"   -> Right uCdr
+  "lth"   -> may uLth
+  "fub"   -> may uFub
   "div"   -> may uDiv
+  "mod"   -> may uMod
+  "bex"   -> may uBex
+  "lsh"   -> may uLsh
+  "not"   -> may uNot
+  "xor"   -> may uXor
+  "trace" -> may uTrace
   str     -> may Nothing
  where
   may Nothing  = Left ("Error: undefined variable:\n\n  " <> str <> "\n")
