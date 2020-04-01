@@ -106,6 +106,12 @@ goOleg = runExceptT . MU.gogogoOleg
 goLazyOleg :: Text -> IO (Either Text Ur.Ur)
 goLazyOleg = runExceptT . MU.gogogoLazyOleg
 
+goTromp :: Text -> IO (Either Text Ur.Ur)
+goTromp = runExceptT . MU.gogogoTromp
+
+goLazyTromp :: Text -> IO (Either Text Ur.Ur)
+goLazyTromp = runExceptT . MU.gogogoLazyTromp
+
 goInp :: Text -> IO (Either Text [Inp])
 goInp = pure . parseInps
 
@@ -125,10 +131,13 @@ replNew :: IO ()
 replNew = repl' "slow" goNew
 
 replOleg :: IO ()
-replOleg = repl'' "oleg" goAll
+replOleg = repl'' "oleg" goAll -- TODO XX NASTY HACK
 
-replTromp = replOleg
-replLazyTromp = replLazyOleg
+replTromp :: IO ()
+replTromp = repl' "oleg" goTromp
+
+replLazyTromp :: IO ()
+replLazyTromp = repl' "lazytromp" goLazyTromp
 
 replLazyOleg :: IO ()
 replLazyOleg = repl' "compile" goLazyOleg
@@ -168,24 +177,22 @@ replRefr = do
 
 runFileTromp = runFileOleg
 runFileLazyTromp = runFileLazyOleg
-goTromp = goOleg
-goLazyTromp = goLazyOleg
 
 goAll :: Text -> IO (Either Text Text)
 goAll = runExceptT . bar
  where
   bar :: Text -> ExceptT Text IO Text
   bar txt = do
-    oleg      <- pack . ppShow <$> liftIO (goOleg txt)
-    lazyoleg  <- pack . ppShow <$> liftIO (goLazyOleg txt)
-    tromp     <- pack . ppShow <$> liftIO (goTromp txt)
-    lazyTromp <- pack . ppShow <$> liftIO (goLazyTromp txt)
+    oleg      <- ExceptT (goOleg txt)
+    lazyoleg  <- ExceptT (goLazyOleg txt)
+    tromp     <- ExceptT (goTromp txt)
+    lazyTromp <- ExceptT (goLazyTromp txt)
 
     pure $ unlines
-      [ "", "[oleg]", oleg
-      , "", "[lazyoleg]", lazyoleg
-      , "", "[tromp]", tromp
-      , "", "[lazytromp]", lazyTromp
+      [ "", "[oleg]", "", pack (ppShow oleg), ""
+      , "", "[lazyoleg]", "", pack (ppShow lazyoleg), ""
+      , "", "[tromp]", "", pack (ppShow tromp), ""
+      , "", "[lazytromp]", "", pack (ppShow lazyTromp), ""
       ]
 
 runFileSlow :: FilePath -> IO ()

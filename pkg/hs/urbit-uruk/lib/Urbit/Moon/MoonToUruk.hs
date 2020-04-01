@@ -140,6 +140,25 @@ gogogoLazyOleg text = do
   ExceptT (pure resu)
 
 
+gogogoTromp :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoTromp text = do
+  ast <- ExceptT $ pure $ Parser.parseAST text
+  let expr = bind ast
+  let lamb = toLC expr
+  resu <- liftIO $ Lamb.trompStrict lamb
+  ExceptT (pure resu)
+
+
+gogogoLazyTromp :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoLazyTromp text = do
+  ast <- ExceptT $ pure $ Parser.parseAST text
+  let expr = bind ast
+  let lamb = toLC expr
+  resu <- liftIO $ Lamb.trompLazy lamb
+  ExceptT (pure resu)
+
+
+
 bindLC :: Uruk p => Lamb.Exp (Either Text p) -> Either Text (Lamb.Exp p)
 bindLC = traverse (either getGlobal Right)
 

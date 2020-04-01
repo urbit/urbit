@@ -11,6 +11,7 @@ import Numeric.Positive       (Positive)
 import Urbit.Uruk.Class
 import Urbit.Uruk.Refr.Jetted (Ur, UrPoly((:@), Fast))
 
+import qualified Urbit.Uruk.Bracket     as B
 import qualified Urbit.Uruk.Fast.Types  as F
 import qualified Urbit.Uruk.Refr.Jetted as Ur
 
@@ -97,6 +98,17 @@ moonLazy = comToUruk . snd . ski . expDeb
 
 moonStrict :: (Eq p, Show p, Uruk p) => Exp p -> IO p
 moonStrict = comToUruk . snd . ski . strict . expDeb
+
+--  TODO Neet to use my `Bracket` compiler instead of the one in here.
+trompLazy ∷ (Eq p, Show p, Uruk p) => Exp p -> IO p
+trompLazy = comToUruk . snd . ski . expDeb
+
+--  TODO Neet to use my `Bracket` compiler instead of the one in here.
+--  TODO Need to re-implement my `strict` transformation since this wont
+--    use `Deb`.
+trompStrict :: (Eq p, Show p, Uruk p) => Exp p -> IO p
+trompStrict = comToUruk . snd . ski . strict . expDeb
+
 
 --------------------------------------------------------------------------------
 

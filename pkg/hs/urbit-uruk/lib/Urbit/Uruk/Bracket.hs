@@ -1,3 +1,6 @@
+{- |
+  Compile lambda calculus to SK combinators using "bracket abstraction".
+-}
 module Urbit.Uruk.Bracket
   ( Exp(..)
   , Out
