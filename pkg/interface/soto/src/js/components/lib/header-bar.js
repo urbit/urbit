@@ -26,7 +26,7 @@ export class HeaderBar extends Component {
             />
           </a>
           <a
-            className="dib f9 v-mid inter ml2"
+            className="dib f9 v-mid inter ml2 black white-d"
             href="/"
             style={{ top: 14 }}>
             ⟵</a> <p className="dib f9 v-mid inter ml2 white-d">Dojo</p>
