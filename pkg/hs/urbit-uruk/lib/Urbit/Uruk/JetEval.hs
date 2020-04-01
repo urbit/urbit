@@ -6,6 +6,7 @@ import Data.Bits             (shiftL, (.|.))
 import Data.Function         ((&))
 import Data.List             (iterate, (!!))
 import Numeric.Natural       (Natural)
+import Urbit.Uruk.Class      (Uruk(..))
 import Urbit.Uruk.DashParser (DataJet(..), ExpTree(..), Pos)
 import Urbit.Uruk.JetSpec    (SingJet(..))
 
@@ -70,6 +71,22 @@ pattern Rit x = N (M (MS RIT) 2 [x])
 pattern Lef x = N (M (MS LEF) 2 [x])
 
 pattern Con h t = N (M (MS CON) 1 [h,t])
+pattern ConC = N (M (MS CON) 3 [])
+
+pattern Car = N (M (MS CAR) 1 [])
+pattern Cdr = N (M (MS CDR) 1 [])
+
+pattern Ded = N (M (MS DED) 1 [])
+pattern Add = N (M (MS ADD) 2 [])
+pattern Mul = N (M (MS MUL) 2 [])
+pattern Dec = N (M (MS DEC) 1 [])
+pattern Fec = N (M (MS FEC) 1 [])
+pattern Inc = N (M (MS INC) 1 [])
+pattern Eql = N (M (MS EQL) 2 [])
+pattern Zer = N (M (MS ZER) 1 [])
+pattern Pak = N (M (MS PAK) 1 [])
+pattern Seq = N (M (MS SEQ) 2 [])
+pattern Iff = N (M (MS IFF) 3 [])
 
 pattern Fix = N (M (MS FIX) 2 [])
 
@@ -84,6 +101,48 @@ pattern Cas = N (M (MS CAS) 3 [])
 
 type Exp = Dash.ExpTree Ur
 type Val = Exp
+
+instance Uruk Exp where
+  uApp x y = pure (x :& y)
+
+  uJay p = NJ (fromIntegral p)
+  uKay = NK
+  uEss = NS
+  uDee = ND
+
+  uBee = N $ M (MS BEE) 3 []
+  uSea = N $ M (MS SEA) 3 []
+  uEye = N $ M (MS EYE) 1 []
+
+  uBen p = N $ M (MD $ Bn $ fromIntegral p) (fromIntegral $ p+2) []
+  uSen p = N $ M (MD $ Sn $ fromIntegral p) (fromIntegral $ p+2) []
+  uCen p = N $ M (MD $ Cn $ fromIntegral p) (fromIntegral $ p+2) []
+
+  uNat n = N $ M (MD $ NAT n) 2 []
+
+  uBol True  = Yes
+  uBol False = Nah
+
+  uCas = Cas
+  uLef = LefC
+  uRit = RitC
+  uIff = Iff
+  uSeq = Seq
+  uPak = Pak
+  uZer = Zer
+  uEql = Eql
+  uInc = Inc
+  uDec = Dec
+  uFec = Fec
+  uAdd = Add
+  uSub = Sub
+  uMul = Mul
+  uFix = Fix
+  uDed = Ded
+  uUni = Uni
+  uCon = ConC
+  uCar = Car
+  uCdr = Cdr
 
 
 --------------------------------------------------------------------------------

@@ -18,6 +18,7 @@ import qualified Urbit.Atom              as Atom
 import qualified Urbit.Moon.LambdaToUruk as Lamb
 import qualified Urbit.Moon.Parser       as Parser
 import qualified Urbit.Uruk.Fast         as F
+import qualified Urbit.Uruk.JetEval      as JetEval
 import qualified Urbit.Uruk.Refr.Jetted  as Ur
 
 --------------------------------------------------------------------------------
@@ -93,6 +94,33 @@ gogogo' text = do
 
   pure (Ur.simp cplx)
 
+
+gogogo'new :: Text -> ExceptT Text IO JetEval.Exp
+gogogo'new text = do
+  ast <- ExceptT $ pure $ Parser.parseAST text
+
+  traceM ""
+  traceM (show ast)
+  traceM ""
+
+  let !expr = bind ast
+      !lamb = toLC expr
+
+  bound <- ExceptT $ pure (bindLC lamb)
+
+  cplx <- liftIO (Lamb.moonStrict bound)
+
+  traceM ""
+  traceM (show lamb)
+  traceM ""
+
+  traceM ""
+  traceM (ppShow cplx)
+  traceM ""
+
+  pure (JetEval.eval cplx)
+
+
 gogogoFast :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
 gogogoFast text = do
   ast <- ExceptT $ pure $ Parser.parseAST text
@@ -104,6 +132,17 @@ gogogoFast text = do
   cplx  <- liftIO $ Lamb.moonStrict bound
 
   pure cplx
+
+
+gogogoCompile :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
+gogogoCompile text = do
+  ast <- ExceptT $ pure $ Parser.parseAST text
+
+  let expr = bind ast
+      lamb = toLC expr
+
+  ExceptT $ liftIO $ Lamb.moonStrict lamb
+
 
 bindLC :: Uruk p => Lamb.Exp (Either Text p) -> Either Text (Lamb.Exp p)
 bindLC = traverse (either getGlobal Right)

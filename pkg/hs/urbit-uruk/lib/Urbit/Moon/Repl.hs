@@ -3,11 +3,15 @@
 module Urbit.Moon.Repl
   ( runFileSlow
   , runFileFast
+  , runFileCompile
+  , runFileNew
   , runText
 #if !defined(__GHCJS__)
   , replRefr
   , replSlow
   , replFast
+  , replCompile
+  , replNew
 #endif
   , evalText
   , evalTextFast
@@ -34,15 +38,16 @@ import Urbit.Uruk.UrukDemo       (Env, EvalResult(..), Inp(..), InpResult(..))
 import Urbit.Uruk.UrukDemo       (execInp, execText, parseInps, printInpResult)
 
 #if !defined(__GHCJS__)
-import qualified System.Console.Haskeline    as HL
+import qualified System.Console.Haskeline as HL
 #endif
-import qualified Urbit.Atom                  as Atom
-import qualified Urbit.Moon.LambdaToUruk     as Lamb
-import qualified Urbit.Moon.MoonToUruk       as MU
-import qualified Urbit.Moon.Parser           as Parser
-import qualified Urbit.Uruk.Fast             as F
-import qualified Urbit.Uruk.Fast.Types       as F
-import qualified Urbit.Uruk.Refr.Jetted      as Ur
+import qualified Urbit.Atom               as Atom
+import qualified Urbit.Moon.LambdaToUruk  as Lamb
+import qualified Urbit.Moon.MoonToUruk    as MU
+import qualified Urbit.Moon.Parser        as Parser
+import qualified Urbit.Uruk.Fast          as F
+import qualified Urbit.Uruk.Fast.Types    as F
+import qualified Urbit.Uruk.JetEval       as JetEval
+import qualified Urbit.Uruk.Refr.Jetted   as Ur
 
 import qualified Urbit.Uruk.UrukDemo as Dem
 
@@ -70,12 +75,12 @@ evalText' go txt = do
     Right res -> pure (pack (show res))
 
 #if !defined(__GHCJS__)
-repl' :: Show a => (Text -> IO (Either Text a)) -> IO ()
-repl' go = HL.runInputT HL.defaultSettings loop
+repl' :: Show a => Text -> (Text -> IO (Either Text a)) -> IO ()
+repl' prompt go = HL.runInputT HL.defaultSettings loop
  where
   loop :: HL.InputT IO ()
   loop = do
-    minput <- HL.getInputLine "moon> "
+    minput <- HL.getInputLine ps1
     case minput of
       Nothing    -> return ()
       Just "!!"  -> return ()
@@ -86,6 +91,7 @@ repl' go = HL.runInputT HL.defaultSettings loop
               Right res -> show res
         HL.outputStrLn resStr
         loop
+  ps1 = unpack prompt <> "> "
 #endif
 
 --------------------------------------------------------------------------------
@@ -93,8 +99,14 @@ repl' go = HL.runInputT HL.defaultSettings loop
 goSlow :: Text -> IO (Either Text Ur.Ur)
 goSlow = fmap (fmap Ur.unClose) . runExceptT . MU.gogogo'
 
+goNew :: Text -> IO (Either Text JetEval.Exp)
+goNew = runExceptT . MU.gogogo'new
+
 goFast :: Text -> IO (Either Text F.Val)
 goFast = runExceptT . MU.gogogoFast
+
+goCompile :: Text -> IO (Either Text Ur.Ur)
+goCompile = runExceptT . MU.gogogoCompile
 
 goInp :: Text -> IO (Either Text [Inp])
 goInp = pure . parseInps
@@ -106,10 +118,16 @@ runText = runText' goSlow
 
 #if !defined(__GHCJS__)
 replFast :: IO ()
-replFast = repl' goFast
+replFast = repl' "fast" goFast
 
 replSlow :: IO ()
-replSlow = repl' goSlow
+replSlow = repl' "slow" goSlow
+
+replNew :: IO ()
+replNew = repl' "slow" goNew
+
+replCompile :: IO ()
+replCompile = repl' "compile" goCompile
 
 replRefr :: IO ()
 replRefr = do
@@ -147,8 +165,14 @@ replRefr = do
 runFileSlow :: FilePath -> IO ()
 runFileSlow = runFile' goSlow
 
+runFileNew :: FilePath -> IO ()
+runFileNew = runFile' goNew
+
 runFileFast :: FilePath -> IO ()
 runFileFast = runFile' goFast
+
+runFileCompile :: FilePath -> IO ()
+runFileCompile = runFile' goCompile
 
 evalTextUruk :: Text -> IO Text
 evalTextUruk = evalText' goInp
