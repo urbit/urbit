@@ -218,7 +218,6 @@
 =/  bottom-edge  (snew %.n 15.000)
 
 =/  max-iterations  254
-:: =/  max-iterations  32
 
 ::  Normal natural number to signed fixed-point representation.
 =/  to-fp

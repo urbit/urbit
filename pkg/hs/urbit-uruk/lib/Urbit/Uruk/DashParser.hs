@@ -101,13 +101,18 @@ data Ur
 
 type Exp = ExpTree Ur
 
+
+isValidChar :: Char -> Bool
+isValidChar c = or [C.isPrint c, c == '\n']
+
 instance Show DataJet where
   show = \case
     Sn  n                            -> 'S' : show n
     Bn  n                            -> 'B' : show n
     Cn  n                            -> 'C' : show n
     NAT n | n < 2048                 -> show n
-    NAT (Atom.atomUtf8 -> Right txt) | all C.isPrint txt -> "'" <> unpack txt <> "'"
+    NAT (Atom.atomUtf8 -> Right txt)
+        | all isValidChar txt        -> "'" <> unpack txt <> "'"
     NAT n                            -> show n
 
 instance Show Ur where
