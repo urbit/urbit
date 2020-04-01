@@ -19,7 +19,6 @@ class Store {
         chat: {},
         contacts: {}
       },
-      spinner: false,
       selectedGroups: [],
       sidebarShown: true,
       pendingMessages: new Map([]),
