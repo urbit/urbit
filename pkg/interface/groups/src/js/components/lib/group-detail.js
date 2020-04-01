@@ -57,7 +57,15 @@ export class GroupDetail extends Component {
 
     let channelList = (<div />);
 
-    channelList = Object.keys(props.association).map((key) => {
+    channelList = Object.keys(props.association).sort((a, b) => {
+      let aChannel = props.association[a];
+      let bChannel = props.association[b];
+
+      let aTitle = aChannel.metadata.title || a;
+      let bTitle = bChannel.metadata.title || b;
+
+      return aTitle.toLowerCase().localeCompare(bTitle.toLowerCase());
+    }).map((key) => {
       let channel = props.association[key];
       if (!('metadata' in channel)) {
         return <div key={channel} />;
@@ -75,20 +83,23 @@ export class GroupDetail extends Component {
       app = app.charAt(0).toUpperCase() + app.slice(1)
 
       return (
-        <li key={channelPath} className="f9 list flex pv2 w-100">
-          <div className="dib"
-            style={{ backgroundColor: `#${color}`, height: 32, width: 32 }}
-          ></div>
+        <li key={channelPath} className="f9 list flex pv1 w-100">
+          <img
+            src={`/~groups/img/${app}.png`}
+            className="dib ba pa1"
+            style={{ borderColor: `#${color}`, height: 24, width: 24 }}
+          />
           <div className="flex flex-column flex-auto">
             <p className="f9 inter ml2 w-100">{title}</p>
-            <p className="f9 inter ml2 w-100"
-              style={{ marginTop: "0.35rem" }}>
+            <p className="f9 inter ml2 w-100" style={{ marginTop: "0.35rem" }}>
               <span className="f9 di mr2 inter">{app}</span>
-              <a className="f9 di green2" href={link}>Open</a>
+              <a className="f9 di green2" href={link}>
+                Open
+              </a>
             </p>
           </div>
         </li>
-      )
+      );
     })
 
     let backLink = props.location.pathname;
