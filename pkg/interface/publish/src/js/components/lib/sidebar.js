@@ -107,7 +107,7 @@ export class Sidebar extends Component {
     return (
       <div
         className={
-          "bn br-m br-l br-xl b--gray4 b--gray2-d lh-copy h-100 " +
+          "bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100 " +
           "flex-shrink-0 pt3 pt0-m pt0-l pt0-xl relative " +
           "overflow-y-hidden " + activeClasses +
           (hiddenClasses ? "flex-basis-100-s flex-basis-250-ns" : "dn")
