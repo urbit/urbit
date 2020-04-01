@@ -239,8 +239,8 @@ export class SettingsScreen extends Component {
                     props.groupPath,
                     resource.metadata.title,
                     state.description,
-                    resource['date-created'],
-                    uxToHex(resource.color)
+                    resource.metadata['date-created'],
+                    uxToHex(resource.metadata.color)
                   ).then(() => {
                     api.setSpinner(false);
                   });
