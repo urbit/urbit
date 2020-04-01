@@ -53,7 +53,7 @@ export class ContactCard extends Component {
 
     if (hexTest && (hexTest[1] !== currentColor) && !props.share) {
       api.contactEdit(props.path, `~${props.ship}`, {color: hexTest[1]});
-    }
+  }
   }
 
   editToggle() {
@@ -116,6 +116,18 @@ export class ContactCard extends Component {
     );
 
     switch (field) {
+      case "color": {
+        let currentColor = (props.contact.color) ? props.contact.color : "000000";
+        currentColor = uxToHex(currentColor);
+        let hexExp = /([0-9A-Fa-f]{6})/
+        let hexTest = hexExp.exec(this.state.colorToSet);
+
+        if (hexTest && (hexTest[1] !== currentColor) && !props.share) {
+            api.contactEdit(props.path, `~${props.ship}`, { color: hexTest[1] }).then(() => {
+            });
+        }
+        break;
+      }
       case "email": {
         if (
           (state.emailToSet === "") ||
@@ -318,6 +330,7 @@ export class ContactCard extends Component {
             onChange={this.sigilColorSet}
             defaultValue={defaultColor}
             key={"default" + defaultColor}
+            onBlur={(() => this.setField("color"))}
             style={{
               resize: "none",
               height: 40,
