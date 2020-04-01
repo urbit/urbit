@@ -53,7 +53,7 @@ export class Sidebar extends Component {
       if (path in associations) {
         if (groupedNotebooks[path]) {
           let array = groupedNotebooks[path];
-          array.push[book];
+          array.push(book);
           groupedNotebooks[path] = array;
         } else {
           groupedNotebooks[path] = [book];
