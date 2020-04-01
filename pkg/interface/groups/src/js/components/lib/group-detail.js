@@ -80,15 +80,23 @@ export class GroupDetail extends Component {
       let app = channel["app-name"] || "Unknown";
       let channelPath = channel["app-path"];
       let link = `/~${app}/join${channelPath}`
-      app = app.charAt(0).toUpperCase() + app.slice(1)
+      app = app.charAt(0).toUpperCase() + app.slice(1);
+
+      let tile = (app === "Unknown")
+        ? <div className="dib ba pa1" style={{
+        backgroundColor: `#${color}`,
+        borderColor: `#${color}`,
+        height: 24,
+        width: 24}}/>
+        : <img
+          src={`/~groups/img/${app}.png`}
+          className="dib ba pa1"
+          style={{ borderColor: `#${color}`, height: 24, width: 24 }}
+        />
 
       return (
         <li key={channelPath} className="f9 list flex pv1 w-100">
-          <img
-            src={`/~groups/img/${app}.png`}
-            className="dib ba pa1"
-            style={{ borderColor: `#${color}`, height: 24, width: 24 }}
-          />
+          {tile}
           <div className="flex flex-column flex-auto">
             <p className="f9 inter ml2 w-100">{title}</p>
             <p className="f9 inter ml2 w-100" style={{ marginTop: "0.35rem" }}>
