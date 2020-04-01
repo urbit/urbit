@@ -1,4 +1,4 @@
-/+  *server, *server, default-agent, dbug
+/+  *server, *server, default-agent, verb, dbug
 /=  tile-js
   /^  octs
   /;  as-octs:mimes:html
@@ -21,6 +21,7 @@
 --
 =|  state-zero
 =*  state  -
+%+  verb  |
 %-  agent:dbug
 ^-  agent:gall
 =<
