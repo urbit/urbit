@@ -41,7 +41,7 @@ export class ChannelsSidebar extends Component {
       if (groupPath in associations) {
         if (groupedChannels[groupPath]) {
           let array = groupedChannels[groupPath];
-          array.push[path];
+          array.push(path);
           groupedChannels[groupPath] = array;
         } else {
           groupedChannels[groupPath] = [path];
