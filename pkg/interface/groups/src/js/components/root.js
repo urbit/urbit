@@ -22,6 +22,10 @@ export class Root extends Component {
     store.setStateHandler(this.setState.bind(this));
   }
 
+  componentDidMount() {
+    new Image().src = "/~groups/img/Spinner.png";
+  }
+
   render() {
     const { props, state } = this;
 
