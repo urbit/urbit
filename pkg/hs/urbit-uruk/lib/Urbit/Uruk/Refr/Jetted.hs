@@ -225,10 +225,10 @@ showNat n = Atom.atomUtf8 n & \case
   validSym (x:xs) = headChr x && all bodyChr xs
 
   headChr :: Char -> Bool
-  headChr = flip elem (lower <> upper)
+  headChr = flip elem (lower <> upper <> digit)
 
   bodyChr :: Char -> Bool
-  bodyChr = flip elem (lower <> upper <> digit <> "-")
+  bodyChr = flip elem (lower <> upper <> digit <> "-" <> " ")
 
   lower = ['a'..'z']
   upper = ['A'..'Z']

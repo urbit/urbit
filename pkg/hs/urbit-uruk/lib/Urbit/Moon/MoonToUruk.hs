@@ -1,11 +1,11 @@
 module Urbit.Moon.MoonToUruk where
 
-import Prelude ()
 import Bound
 import ClassyPrelude
-import GHC.Natural
-import Urbit.Moon.AST
 import Control.Monad.Except
+import GHC.Natural
+import Prelude              ()
+import Urbit.Moon.AST
 import Urbit.Uruk.Class
 
 import Control.Arrow             ((>>>))

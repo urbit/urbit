@@ -1,7 +1,7 @@
 module Urbit.Uruk.JetSpec (SingJet(..), jetSpec) where
 
 import ClassyPrelude
-import Data.FileEmbed (embedStringFile)
+import Data.FileEmbed    (embedStringFile)
 import Text.RawString.QQ
 
 
@@ -25,8 +25,11 @@ data SingJet
   | FEC
   | MUL
   | DIV
+  | MOD
   | SUB
   | FUB
+  | NOT
+  | XOR
   | BEX
   | LSH
   | DED
@@ -39,6 +42,7 @@ data SingJet
   | CON
   | CAR
   | CDR
+  | TRACE
  deriving (Eq, Ord, Read, Show, Enum, Bounded, Generic)
  deriving anyclass NFData
 
@@ -102,6 +106,9 @@ jetSpec = [r|
 ++  (sub x y)  (y <z (cas z lef dec)> (rit x))
 ++  (fub x y)  (cas (sub x y) (K 0) eye)
 
+++  (not x)    (x (K nah) (K yes) uni)
+++  (xor x y)  (x (y (K nah) (K yes) uni) (y (K yes) (K nah) uni))
+
 ++  (zer n)    (n (K nah) yes)
 ++  (eql x y)  (cas (sub x y) (K nah) zer)
 ++  (lth x y)  (cas (sub x y) (K yes) (K nah))
@@ -121,4 +128,8 @@ jetSpec = [r|
   %+  (iff (zer divisor))
     <u (seq u ded %divide-by-zero)>
   <u (seq u divlop divisor 0 dividend)>
+
+++  (mod a b)  (fub a (mul b (div a b)))
+
+++  (trace x y)  (y uni)
 |]
