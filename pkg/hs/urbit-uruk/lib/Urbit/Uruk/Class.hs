@@ -12,9 +12,9 @@ import Numeric.Positive (Positive)
 class Uruk p where
   uApp :: p -> p -> IO p
 
-  uJay :: Positive -> p
-  uKay :: p
   uEss :: p
+  uKay :: p
+  uJay :: Positive -> p
   uDee :: p
 
   uBee :: p
@@ -28,39 +28,23 @@ class Uruk p where
   uNat :: Natural -> p
   uBol :: Bool -> p
 
-  uCas :: p
-  uLef :: p
-  uRit :: p
-  uIff :: p
-  uSeq :: p
-  uPak :: p
-  uZer :: p
-  uEql :: p
-  uInc :: p
-  uDec :: p
-  uFec :: p
-  uAdd :: p
-  uSub :: p
-  uMul :: p
-  uFix :: p
-  uDed :: p
   uUni :: p
   uCon :: p
-  uCar :: p
-  uCdr :: p
+  uSeq :: p
+  uCas :: p
+  uFix :: p
+  uIff :: p
 
-  uDiv :: Maybe p
-  uDiv = Nothing
-
+  uGlobal :: Text -> Maybe p
+  uGlobal = const Nothing
 
 instance Uruk p => Uruk (Either a p) where
   uApp x y = sequence $ uApp <$> x <*> y
 
+  uEss   = pure uEss
+  uKay   = pure uKay
   uJay p = pure (uJay p)
-
-  uKay = pure uKay
-  uEss = pure uEss
-  uDee = pure uDee
+  uDee   = pure uDee
 
   uBee = pure uBee
   uSea = pure uSea
@@ -73,25 +57,12 @@ instance Uruk p => Uruk (Either a p) where
   uNat n = pure (uNat n)
   uBol b = pure (uBol b)
 
-  uCas = pure uCas
-  uLef = pure uLef
-  uRit = pure uRit
-  uIff = pure uIff
-  uSeq = pure uSeq
-  uPak = pure uPak
-  uZer = pure uZer
-  uEql = pure uEql
-  uInc = pure uInc
-  uDec = pure uDec
-  uFec = pure uFec
-  uAdd = pure uAdd
-  uSub = pure uSub
-  uMul = pure uMul
-  uFix = pure uFix
-  uDed = pure uDed
   uUni = pure uUni
   uCon = pure uCon
-  uCar = pure uCar
-  uCdr = pure uCdr
 
-  uDiv = sequence (pure uDiv)
+  uSeq = pure uSeq
+  uCas = pure uCas
+  uFix = pure uFix
+  uIff = pure uIff
+
+  uGlobal = sequence . pure . uGlobal
