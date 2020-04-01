@@ -6,6 +6,7 @@ import ClassyPrelude
 
 import Numeric.Natural  (Natural)
 import Numeric.Positive (Positive)
+import Urbit.Atom       (utf8Atom)
 
 --------------------------------------------------------------------------------
 
@@ -38,8 +39,14 @@ class Uruk p where
   uGlobal :: Text -> Maybe p
   uGlobal = const Nothing
 
-instance Uruk p => Uruk (Either a p) where
-  uApp x y = sequence $ uApp <$> x <*> y
+mkAtom :: Uruk p => Either Text p -> p
+mkAtom (Left t)  = uNat (utf8Atom t)
+mkAtom (Right x) = x
+
+instance Uruk p => Uruk (Either Text p) where
+  uApp x y = do
+    res <- uApp (mkAtom x) (mkAtom y)
+    pure (Right res)
 
   uEss   = pure uEss
   uKay   = pure uKay

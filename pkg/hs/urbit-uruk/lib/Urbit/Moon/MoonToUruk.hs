@@ -110,7 +110,7 @@ gogogo'new text = do
   pure (JetEval.eval cplx)
 
 
-gogogoFast :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
+gogogoFast :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
 gogogoFast text = do
   ast <- ExceptT $ pure $ Parser.parseAST text
 
@@ -122,15 +122,22 @@ gogogoFast text = do
 
   pure cplx
 
-
-gogogoCompile :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
-gogogoCompile text = do
+gogogoOleg :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoOleg text = do
   ast <- ExceptT $ pure $ Parser.parseAST text
-
   let expr = bind ast
-      lamb = toLC expr
+  let lamb = toLC expr
+  resu <- liftIO $ Lamb.moonStrict lamb
+  ExceptT (pure resu)
 
-  ExceptT $ liftIO $ Lamb.moonStrict lamb
+
+gogogoLazyOleg :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoLazyOleg text = do
+  ast <- ExceptT $ pure $ Parser.parseAST text
+  let expr = bind ast
+  let lamb = toLC expr
+  resu <- liftIO $ Lamb.moonLazy lamb
+  ExceptT (pure resu)
 
 
 bindLC :: Uruk p => Lamb.Exp (Either Text p) -> Either Text (Lamb.Exp p)

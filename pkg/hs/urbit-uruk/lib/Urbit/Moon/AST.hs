@@ -5,6 +5,7 @@ import Bound
 import ClassyPrelude
 import GHC.Natural
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
+import Data.Functor.Classes (showsPrec1)
 
 
 -- Types -----------------------------------------------------------------------
@@ -49,6 +50,8 @@ deriveEq1   ''Exp
 deriveOrd1  ''Exp
 deriveRead1 ''Exp
 deriveShow1 ''Exp
+
+instance Show a => Show (Exp a) where showsPrec = showsPrec1
 
 instance Applicative Exp where
   pure = Var
