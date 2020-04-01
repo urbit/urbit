@@ -7,6 +7,7 @@ module Urbit.Uruk.Bracket
   , SK(..)
   , naiveBracket
   , johnTrompBracket
+  , outToUruk
   )
 where
 
@@ -16,6 +17,7 @@ import Data.Void
 
 import Data.Deriving        (deriveEq1, deriveShow1)
 import Data.Functor.Classes (eq1, showsPrec1)
+import Urbit.Uruk.Class     (Uruk(..))
 
 
 -- Types -----------------------------------------------------------------------
@@ -225,3 +227,13 @@ johnTrompBracket = go
     (CB m :@ n)   :@ CB l             -> abs (FS :@ m :@ lam l :@ n)
     (CB m :@ b) :@ (CB n :@ p) | b==p -> abs (FS :@ m :@ n :@ b)
     x   :@ y                          -> VS :@ abs x :@ abs y
+
+outToUruk :: Uruk p => Out (SK p) -> IO p
+outToUruk = go
+ where
+  go = \case
+    Lam b _   -> absurd b
+    Var S     -> pure uEss
+    Var K     -> pure uKay
+    Var (V p) -> pure p
+    x :@ y    -> join (uApp <$> go x <*> go y)

@@ -19,8 +19,8 @@ import qualified Urbit.Uruk.Bracket as B
 {- |
     Compile Moon expressions to Enriched Lambda Calculus.
 -}
-moonToLambda :: forall p. Uruk p => M.Exp Text -> B.Exp () (Either p Text)
-moonToLambda = go
+moonToLambda :: forall p. Uruk p => M.Exp Text -> B.Exp () (Either Text p)
+moonToLambda = twist . go
  where
   go :: M.Exp a -> B.Exp () (Either p a)
   go = \case
@@ -36,6 +36,9 @@ moonToLambda = go
     M.Cas x l r -> pri uCas :@ go x :@ go (M.Lam l) :@ go (M.Lam r)
     M.Iff c t e -> pri uIff :@ go c :@ lam t :@ lam e
     M.Jet n t b -> jay n :@ tag t :@ go b
+
+  twist :: Functor f => f (Either a b) -> f (Either b a)
+  twist = fmap (either Right Left)
 
   pri :: p -> B.Exp b (Either p a)
   pri = B.Var . Left

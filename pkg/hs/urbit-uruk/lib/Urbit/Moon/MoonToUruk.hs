@@ -12,11 +12,13 @@ import Control.Arrow             ((>>>))
 import Data.Function             ((&))
 import System.IO.Unsafe          (unsafePerformIO)
 import Text.Show.Pretty          (ppShow)
+import Urbit.Moon.MoonToLambda   (moonToLambda)
 import Urbit.Uruk.Fast.OptToFast (optToFast)
 
 import qualified Urbit.Atom              as Atom
 import qualified Urbit.Moon.LambdaToUruk as Lamb
 import qualified Urbit.Moon.Parser       as Parser
+import qualified Urbit.Uruk.Bracket      as B
 import qualified Urbit.Uruk.Fast         as F
 import qualified Urbit.Uruk.JetEval      as JetEval
 import qualified Urbit.Uruk.Refr.Jetted  as Ur
@@ -139,25 +141,19 @@ gogogoLazyOleg text = do
   resu <- liftIO $ Lamb.moonLazy lamb
   ExceptT (pure resu)
 
-
-gogogoTromp :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoTromp :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
 gogogoTromp text = do
   ast <- ExceptT $ pure $ Parser.parseAST text
   let expr = bind ast
-  let lamb = toLC expr
-  resu <- liftIO $ Lamb.trompStrict lamb
-  ExceptT (pure resu)
+  let lamb = moonToLambda expr :: B.Exp () (Either Text p)
+  ExceptT $ B.outToUruk $ B.johnTrompBracket lamb
 
-
-gogogoLazyTromp :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoLazyTromp :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
 gogogoLazyTromp text = do
   ast <- ExceptT $ pure $ Parser.parseAST text
   let expr = bind ast
-  let lamb = toLC expr
-  resu <- liftIO $ Lamb.trompLazy lamb
-  ExceptT (pure resu)
-
-
+  let lamb = moonToLambda expr :: B.Exp () (Either Text p)
+  ExceptT $ B.outToUruk $ B.johnTrompBracket lamb
 
 bindLC :: Uruk p => Lamb.Exp (Either Text p) -> Either Text (Lamb.Exp p)
 bindLC = traverse (either getGlobal Right)
