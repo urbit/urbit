@@ -34,6 +34,7 @@
   $%  [%0 state-zero]
       [%1 state-two]
       [%2 state-two]
+      [%3 state-two]
   ==
 +$  state-zero
   $:  tiles=(set tile:launch)
@@ -53,7 +54,7 @@
   [%pass /who %arvo %e %serve [~ /who] desk /gen/who/hoon ~]
 --
 ::
-=|  [%2 state-two]
+=|  [%3 state-two]
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -62,7 +63,7 @@
     def   ~(. (default-agent this %|) bol)
 ++  on-init
   ^-  (quip card _this)
-  :_  this(state *[%2 state-two])
+  :_  this(state *[%3 state-two])
   :~  (launch-who q.byk.bol)
       [%pass / %arvo %e %connect [~ /] %launch]
   ==
@@ -81,15 +82,19 @@
   ::
       %1
     =/  new-state=state-two
-      =>  [old-state .]
+      =,  old-state
       :*  (~(del in tiles) [%contact-view /primary])
           (~(del by data) %contact-view)
           (~(del by path-to-tile) /primary)
           first-time
       ==
-    $(old-state [%2 new-state], cards [(launch-who q.byk.bol) cards])
+    $(old-state [%2 new-state])
   ::
-      %2  [(flop cards) this(state old-state)]
+      %2
+    $(old-state [%3 +.old-state], cards [(launch-who q.byk.bol) cards])
+  ::
+      %3
+    [(flop cards) this(state old-state)]
   ==
 ::
 ++  on-poke
