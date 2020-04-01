@@ -1,23 +1,6 @@
 {-# LANGUAGE CPP #-}
 
-module Urbit.Moon.Repl
-  ( runFileSlow
-  , runFileFast
-  , runFileCompile
-  , runFileNew
-  , runText
-#if !defined(__GHCJS__)
-  , replRefr
-  , replSlow
-  , replFast
-  , replCompile
-  , replNew
-#endif
-  , evalText
-  , evalTextFast
-  , evalTextUruk
-  )
-where
+module Urbit.Moon.Repl where
 
 import Prelude ()
 import Bound
@@ -60,12 +43,21 @@ runFile' go fp = do
   _   <- runText' go (decodeUtf8 txt)
   pure ()
 
+runFile'' :: (Text -> IO (Either Text Text)) -> FilePath -> IO ()
+runFile'' go fp = do
+  txt <- readFile fp
+  _   <- runText'' go (decodeUtf8 txt)
+  pure ()
+
 runText' :: Show a => (Text -> IO (Either Text a)) -> Text -> IO ()
 runText' go txt = do
   res <- go txt
   res & \case
     Left  err -> putStrLn err
     Right res -> putStrLn $ pack $ show res
+
+runText'' :: (Text -> IO (Either Text Text)) -> Text -> IO ()
+runText'' go txt = go txt >>= either putStrLn putStrLn
 
 evalText' :: Show a => (Text -> IO (Either Text a)) -> Text -> IO Text
 evalText' go txt = do
@@ -76,7 +68,10 @@ evalText' go txt = do
 
 #if !defined(__GHCJS__)
 repl' :: Show a => Text -> (Text -> IO (Either Text a)) -> IO ()
-repl' prompt go = HL.runInputT HL.defaultSettings loop
+repl' prompt go = repl'' prompt ((fmap . fmap . fmap $ tshow) go)
+
+repl'' :: Text -> (Text -> IO (Either Text Text)) -> IO ()
+repl'' prompt go = HL.runInputT HL.defaultSettings loop
  where
   loop :: HL.InputT IO ()
   loop = do
@@ -88,7 +83,7 @@ repl' prompt go = HL.runInputT HL.defaultSettings loop
         res <- liftIO $ go (pack input)
         let !resStr = res & \case
               Left  err -> unpack err
-              Right res -> show res
+              Right res -> unpack res
         HL.outputStrLn resStr
         loop
   ps1 = unpack prompt <> "> "
@@ -105,8 +100,11 @@ goNew = runExceptT . MU.gogogo'new
 goFast :: Text -> IO (Either Text F.Val)
 goFast = runExceptT . MU.gogogoFast
 
-goCompile :: Text -> IO (Either Text Ur.Ur)
-goCompile = runExceptT . MU.gogogoCompile
+goOleg :: Text -> IO (Either Text Ur.Ur)
+goOleg = runExceptT . MU.gogogoOleg
+
+goLazyOleg :: Text -> IO (Either Text Ur.Ur)
+goLazyOleg = runExceptT . MU.gogogoLazyOleg
 
 goInp :: Text -> IO (Either Text [Inp])
 goInp = pure . parseInps
@@ -126,8 +124,14 @@ replSlow = repl' "slow" goSlow
 replNew :: IO ()
 replNew = repl' "slow" goNew
 
-replCompile :: IO ()
-replCompile = repl' "compile" goCompile
+replOleg :: IO ()
+replOleg = repl'' "oleg" goAll
+
+replTromp = replOleg
+replLazyTromp = replLazyOleg
+
+replLazyOleg :: IO ()
+replLazyOleg = repl' "compile" goLazyOleg
 
 replRefr :: IO ()
 replRefr = do
@@ -162,6 +166,28 @@ replRefr = do
         doInps vEnv is
 #endif
 
+runFileTromp = runFileOleg
+runFileLazyTromp = runFileLazyOleg
+goTromp = goOleg
+goLazyTromp = goLazyOleg
+
+goAll :: Text -> IO (Either Text Text)
+goAll = runExceptT . bar
+ where
+  bar :: Text -> ExceptT Text IO Text
+  bar txt = do
+    oleg      <- pack . ppShow <$> liftIO (goOleg txt)
+    lazyoleg  <- pack . ppShow <$> liftIO (goLazyOleg txt)
+    tromp     <- pack . ppShow <$> liftIO (goTromp txt)
+    lazyTromp <- pack . ppShow <$> liftIO (goLazyTromp txt)
+
+    pure $ unlines
+      [ "", "[oleg]", oleg
+      , "", "[lazyoleg]", lazyoleg
+      , "", "[tromp]", tromp
+      , "", "[lazytromp]", lazyTromp
+      ]
+
 runFileSlow :: FilePath -> IO ()
 runFileSlow = runFile' goSlow
 
@@ -171,8 +197,11 @@ runFileNew = runFile' goNew
 runFileFast :: FilePath -> IO ()
 runFileFast = runFile' goFast
 
-runFileCompile :: FilePath -> IO ()
-runFileCompile = runFile' goCompile
+runFileOleg :: FilePath -> IO ()
+runFileOleg = runFile'' goAll
+
+runFileLazyOleg :: FilePath -> IO ()
+runFileLazyOleg = runFile' goLazyOleg
 
 evalTextUruk :: Text -> IO Text
 evalTextUruk = evalText' goInp

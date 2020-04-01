@@ -135,15 +135,9 @@ type Ur = UrPoly Jet
 instance Uruk Ur where
   uApp x y = pure (x :@ y)
 
-  uCas = Cas
-  uIff = Iff
-  uFix = Fix
   uJay = J
   uNat = Nat
   uBol = Bol
-  uUni = Uni
-  uCon = Con
-  uSeq = Seq
 
   uKay = K
   uEss = S
@@ -153,25 +147,32 @@ instance Uruk Ur where
   uSea = C
   uEye = I
 
-  uAdd = Add
+  uUni = Uni
+  uCon = Con
+  uSeq = Seq
+  uCas = Cas
+  uFix = Fix
+  uIff = Iff
 
   uBen n = Fast (fromIntegral $ n+2) (Bn n) []
   uSen n = Fast (fromIntegral $ n+2) (Sn n) []
   uCen n = Fast (fromIntegral $ n+2) (Cn n) []
 
-  uLef = Lef
-  uRit = Rit
-  uPak = Pak
-  uZer = Zer
-  uEql = Eql
-  uInc = Inc
-  uDec = Dec
-  uFec = Fec
-  uSub = Sub
-  uMul = Mul
-  uDed = Ded
-  uCar = Car
-  uCdr = Cdr
+  uGlobal "lef" = Just Lef
+  uGlobal "rit" = Just Rit
+  uGlobal "pak" = Just Pak
+  uGlobal "zer" = Just Zer
+  uGlobal "eql" = Just Eql
+  uGlobal "inc" = Just Inc
+  uGlobal "dec" = Just Dec
+  uGlobal "fec" = Just Fec
+  uGlobal "add" = Just Add
+  uGlobal "sub" = Just Sub
+  uGlobal "mul" = Just Mul
+  uGlobal "car" = Just Car
+  uGlobal "cdr" = Just Cdr
+  uGlobal "ded" = Just Ded
+  uGlobal _     = Nothing
 
 jetExpand ∷ Positive → Ur
 jetExpand = go

@@ -24,7 +24,7 @@ import qualified Urbit.Uruk.Refr.Jetted  as Ur
 --------------------------------------------------------------------------------
 
 getGlobal :: Uruk p => Text -> Either Text p
-getGlobal str = str & \case
+getGlobal = \case
   "S"     -> Right uEss
   "K"     -> Right uKay
   "J"     -> Right (uJay 1)
@@ -37,38 +37,15 @@ getGlobal str = str & \case
   "C"     -> Right uSea
   "flip"  -> Right uSea
   "cas"   -> Right uCas
-  "lef"   -> Right uLef
-  "rit"   -> Right uRit
   "iff"   -> Right uIff
   "seq"   -> Right uSeq
-  "pak"   -> Right uPak
-  "zer"   -> Right uZer
-  "eql"   -> Right uEql
-  "inc"   -> Right uInc
-  "dec"   -> Right uDec
-  "fec"   -> Right uFec
-  "add"   -> Right uAdd
-  "sub"   -> Right uSub
-  "mul"   -> Right uMul
   "fix"   -> Right uFix
-  "ded"   -> Right uDed
   "uni"   -> Right uUni
   "con"   -> Right uCon
-  "car"   -> Right uCar
-  "cdr"   -> Right uCdr
-  "lth"   -> may uLth
-  "fub"   -> may uFub
-  "div"   -> may uDiv
-  "mod"   -> may uMod
-  "bex"   -> may uBex
-  "lsh"   -> may uLsh
-  "not"   -> may uNot
-  "xor"   -> may uXor
-  "trace" -> may uTrace
-  str     -> may Nothing
+  str     -> may str (uGlobal str)
  where
-  may Nothing  = Left ("Error: undefined variable:\n\n  " <> str <> "\n")
-  may (Just x) = Right x
+  may str Nothing  = Left ("Error: undefined variable:\n\n  " <> str <> "\n")
+  may _   (Just x) = Right x
 
 toUruk :: Exp Text -> IO (Either Text Ur.Ur)
 toUruk = sequence . fmap Lamb.moonStrict . bindLC . toLC
@@ -133,7 +110,7 @@ gogogo'new text = do
   pure (JetEval.eval cplx)
 
 
-gogogoFast :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
+gogogoFast :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
 gogogoFast text = do
   ast <- ExceptT $ pure $ Parser.parseAST text
 
@@ -145,15 +122,22 @@ gogogoFast text = do
 
   pure cplx
 
-
-gogogoCompile :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
-gogogoCompile text = do
+gogogoOleg :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoOleg text = do
   ast <- ExceptT $ pure $ Parser.parseAST text
-
   let expr = bind ast
-      lamb = toLC expr
+  let lamb = toLC expr
+  resu <- liftIO $ Lamb.moonStrict lamb
+  ExceptT (pure resu)
 
-  ExceptT $ liftIO $ Lamb.moonStrict lamb
+
+gogogoLazyOleg :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoLazyOleg text = do
+  ast <- ExceptT $ pure $ Parser.parseAST text
+  let expr = bind ast
+  let lamb = toLC expr
+  resu <- liftIO $ Lamb.moonLazy lamb
+  ExceptT (pure resu)
 
 
 bindLC :: Uruk p => Lamb.Exp (Either Text p) -> Either Text (Lamb.Exp p)

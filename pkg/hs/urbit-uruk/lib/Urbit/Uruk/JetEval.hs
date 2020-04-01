@@ -132,35 +132,37 @@ instance Uruk Exp where
   uBol True  = Yes
   uBol False = Nah
 
-  uCas = Cas
-  uLef = LefC
-  uRit = RitC
-  uIff = Iff
-  uSeq = Seq
-  uPak = Pak
-  uZer = Zer
-  uEql = Eql
-  uInc = Inc
-  uDec = Dec
-  uFec = Fec
-  uAdd = Add
-  uSub = Sub
-  uMul = Mul
-  uFub = Just Fub
-  uLth = Just Lth
-  uDiv = Just Div
-  uMod = Just Mod
-  uBex = Just Bex
-  uLsh = Just Lsh
-  uNot = Just Not
-  uXor = Just Xor
-  uTrace = Just Trace
-  uFix = Fix
-  uDed = Ded
   uUni = Uni
   uCon = ConC
-  uCar = Car
-  uCdr = Cdr
+  uSeq = Seq
+  uCas = Cas
+  uFix = Fix
+  uIff = Iff
+
+  uGlobal "lef" = Just LefC
+  uGlobal "rit" = Just RitC
+  uGlobal "pak" = Just Pak
+  uGlobal "zer" = Just Zer
+  uGlobal "eql" = Just Eql
+  uGlobal "inc" = Just Inc
+  uGlobal "dec" = Just Dec
+  uGlobal "fec" = Just Fec
+  uGlobal "add" = Just Add
+  uGlobal "ded" = Just Ded
+  uGlobal "div" = Just Div
+  uGlobal "sub" = Just Sub
+  uGlobal "fub" = Just Fub
+  uGlobal "mul" = Just Mul
+  uGlobal "car" = Just Car
+  uGlobal "cdr" = Just Cdr
+  uGlobal "mod" = Just Mod
+  uGlobal "bex" = Just Bex
+  uGlobal "lsh" = Just Lsh
+  uGlobal "lth" = Just Lth
+  uGlobal "not" = Just Not
+  uGlobal "xor" = Just Xor
+  uGlobal "trace" = Just Trace
+  uGlobal _     = Nothing
 
 
 --------------------------------------------------------------------------------

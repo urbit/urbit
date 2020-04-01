@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -Werror #-}
+{-- OPTIONS_GHC -Werror #-}
 
 module Urbit.Moon.LambdaToUruk where
 
@@ -40,7 +40,7 @@ instance Num (Exp p) where
     signum      = error "hack"
 
 data Deb p = Zero | Succ (Deb p) | DPrim p | Abs (Deb p) | App (Deb p) (Deb p)
-  deriving Eq
+  deriving (Eq, Show)
 
 infixl 5 :#
 
@@ -92,11 +92,11 @@ plus x y = Prim Ur.Add % x % y
 mul ∷ Exp Ur → Exp Ur → Exp Ur
 mul x y = Prim Ur.Mul % x % y
 
-moon ∷ Exp Ur → IO Ur
-moon = toUruk . snd . ski . expDeb
+moonLazy ∷ (Eq p, Show p, Uruk p) => Exp p -> IO p
+moonLazy = comToUruk . snd . ski . expDeb
 
-moonStrict :: (Eq p, Uruk p) => Exp p -> IO p
-moonStrict = toUruk . snd . ski . strict . expDeb
+moonStrict :: (Eq p, Show p, Uruk p) => Exp p -> IO p
+moonStrict = comToUruk . snd . ski . strict . expDeb
 
 --------------------------------------------------------------------------------
 
@@ -162,21 +162,24 @@ ski deb = case deb of
 
 {-
   Compile Oleg's combinators to jetted Ur combinators.  -}
-toUruk :: Uruk p => Com p -> IO p
-toUruk = \case
+comToUruk :: Uruk p => Com p -> IO p
+comToUruk = \case
     Bn 1        -> pure uBee
     Cn 1        -> pure uSea
     Sn 1        -> pure uEss
     Bn n        -> pure (uBen n)
     Cn n        -> pure (uCen n)
     Sn n        -> pure (uSen n)
-    x :# y      -> join (uApp <$> toUruk x <*> toUruk y)
     B           -> pure uBee
     C           -> pure uSea
     S           -> pure uEss
     I           -> pure uEye
     K           -> pure uKay
     P p         -> pure p
+    x :# y      -> do
+      xv <- comToUruk x
+      yv <- comToUruk y
+      uApp xv yv
 
 
 -- Strict ----------------------------------------------------------------------

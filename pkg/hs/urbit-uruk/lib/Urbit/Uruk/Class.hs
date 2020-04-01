@@ -6,15 +6,16 @@ import ClassyPrelude
 
 import Numeric.Natural  (Natural)
 import Numeric.Positive (Positive)
+import Urbit.Atom       (utf8Atom)
 
 --------------------------------------------------------------------------------
 
 class Uruk p where
   uApp :: p -> p -> IO p
 
-  uJay :: Positive -> p
-  uKay :: p
   uEss :: p
+  uKay :: p
+  uJay :: Positive -> p
   uDee :: p
 
   uBee :: p
@@ -28,62 +29,29 @@ class Uruk p where
   uNat :: Natural -> p
   uBol :: Bool -> p
 
-  uCas :: p
-  uLef :: p
-  uRit :: p
-  uIff :: p
-  uSeq :: p
-  uPak :: p
-  uZer :: p
-  uEql :: p
-  uInc :: p
-  uDec :: p
-  uFec :: p
-  uAdd :: p
-  uSub :: p
-  uMul :: p
-  uFix :: p
-  uDed :: p
   uUni :: p
   uCon :: p
-  uCar :: p
-  uCdr :: p
+  uSeq :: p
+  uCas :: p
+  uFix :: p
+  uIff :: p
 
-  uFub :: Maybe p
-  uFub = Nothing
+  uGlobal :: Text -> Maybe p
+  uGlobal = const Nothing
 
-  uLth :: Maybe p
-  uLth = Nothing
+mkAtom :: Uruk p => Either Text p -> p
+mkAtom (Left t)  = uNat (utf8Atom t)
+mkAtom (Right x) = x
 
-  uDiv :: Maybe p
-  uDiv = Nothing
+instance Uruk p => Uruk (Either Text p) where
+  uApp x y = do
+    res <- uApp (mkAtom x) (mkAtom y)
+    pure (Right res)
 
-  uMod :: Maybe p
-  uMod = Nothing
-
-  uBex :: Maybe p
-  uBex = Nothing
-
-  uLsh :: Maybe p
-  uLsh = Nothing
-
-  uNot :: Maybe p
-  uNot = Nothing
-
-  uXor :: Maybe p
-  uXor = Nothing
-
-  uTrace :: Maybe p
-  uTrace = Nothing
-
-instance Uruk p => Uruk (Either a p) where
-  uApp x y = sequence $ uApp <$> x <*> y
-
+  uEss   = pure uEss
+  uKay   = pure uKay
   uJay p = pure (uJay p)
-
-  uKay = pure uKay
-  uEss = pure uEss
-  uDee = pure uDee
+  uDee   = pure uDee
 
   uBee = pure uBee
   uSea = pure uSea
@@ -96,33 +64,12 @@ instance Uruk p => Uruk (Either a p) where
   uNat n = pure (uNat n)
   uBol b = pure (uBol b)
 
-  uCas = pure uCas
-  uLef = pure uLef
-  uRit = pure uRit
-  uIff = pure uIff
-  uSeq = pure uSeq
-  uPak = pure uPak
-  uZer = pure uZer
-  uEql = pure uEql
-  uInc = pure uInc
-  uDec = pure uDec
-  uFec = pure uFec
-  uAdd = pure uAdd
-  uSub = pure uSub
-  uMul = pure uMul
-  uFix = pure uFix
-  uDed = pure uDed
   uUni = pure uUni
   uCon = pure uCon
-  uCar = pure uCar
-  uCdr = pure uCdr
 
-  uFub = sequence (pure uFub)
-  uLth = sequence (pure uLth)
-  uDiv = sequence (pure uDiv)
-  uMod = sequence (pure uMod)
-  uBex = sequence (pure uBex)
-  uLsh = sequence (pure uLsh)
-  uNot = sequence (pure uNot)
-  uXor = sequence (pure uXor)
-  uTrace = sequence (pure uTrace)
+  uSeq = pure uSeq
+  uCas = pure uCas
+  uFix = pure uFix
+  uIff = pure uIff
+
+  uGlobal = sequence . pure . uGlobal

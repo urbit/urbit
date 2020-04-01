@@ -100,15 +100,12 @@ mkNode :: Int -> Node -> Val
 mkNode n c = VFun (Fun n c mempty)
 
 instance Uruk Val where
-  uCas = mkNode 3 Cas
-  uIff = mkNode 3 Iff
-  uFix = mkNode 2 Fix
+  uApp x y = kVV x y
+
+  uEss = mkNode 3 Ess
+  uKay = mkNode 2 Kay
   uJay = \n -> mkNode 2 $ Jay $ fromIntegral n
-  uNat = \n -> VNat n
-  uBol = \b -> VBol b
-  uUni = mkNode 1 Uni
-  uCon = mkNode 3 Con
-  uSeq = mkNode 2 Seq
+  uDee = mkNode 1 Dee
 
   uBen 1 = mkNode 3 Bee
   uBen n = mkNode (fromIntegral $ 2 + n) (Ben (fromIntegral n))
@@ -119,28 +116,36 @@ instance Uruk Val where
   uSen 1 = mkNode 3 Ess
   uSen n = mkNode (fromIntegral $ 2 + n) (Sen (fromIntegral n))
 
-  uApp x y = kVV x y
+  uEye = mkNode 1 Eye
+
+  uNat = \n -> VNat n
+  uBol = \b -> VBol b
+
+  uUni = mkNode 1 Uni
+  uCon = mkNode 3 Con
+  uSeq = mkNode 2 Seq
+  uCas = mkNode 3 Cas
+  uFix = mkNode 2 Fix
+  uIff = mkNode 3 Iff
 
   uBee = mkNode 3 Bee
   uSea = mkNode 3 Sea
-  uEss = mkNode 3 Ess
-  uDee = mkNode 1 Dee
-  uEye = mkNode 1 Eye
-  uKay = mkNode 2 Kay
-  uAdd = mkNode 2 Add
-  uLef = mkNode 2 Lef
-  uRit = mkNode 2 Rit
-  uPak = mkNode 1 Pak
-  uZer = mkNode 1 Zer
-  uEql = mkNode 2 Eql
-  uInc = mkNode 1 Inc
-  uDec = mkNode 1 Dec
-  uFec = mkNode 1 Fec
-  uSub = mkNode 2 Sub
-  uMul = mkNode 2 Mul
-  uDed = mkNode 1 Ded
-  uCar = mkNode 1 Car
-  uCdr = mkNode 1 Cdr
+
+  uGlobal "add" = Just $ mkNode 2 Add
+  uGlobal "lef" = Just $ mkNode 2 Lef
+  uGlobal "rit" = Just $ mkNode 2 Rit
+  uGlobal "pak" = Just $ mkNode 1 Pak
+  uGlobal "zer" = Just $ mkNode 1 Zer
+  uGlobal "eql" = Just $ mkNode 2 Eql
+  uGlobal "inc" = Just $ mkNode 1 Inc
+  uGlobal "dec" = Just $ mkNode 1 Dec
+  uGlobal "fec" = Just $ mkNode 1 Fec
+  uGlobal "ded" = Just $ mkNode 1 Ded
+  uGlobal "car" = Just $ mkNode 1 Car
+  uGlobal "cdr" = Just $ mkNode 1 Cdr
+  uGlobal "sub" = Just $ mkNode 2 Sub
+  uGlobal "mul" = Just $ mkNode 2 Mul
+  uGlobal _     = Nothing
 
 
 -- Useful Types ----------------------------------------------------------------
