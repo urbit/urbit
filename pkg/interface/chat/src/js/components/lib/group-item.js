@@ -17,7 +17,30 @@ export class GroupItem extends Component {
     let first = (props.index === 0) ? "pt1" : "pt4"
 
 
-    let channelItems = channels.map((each, i) => {
+    let channelItems = channels.sort((a, b) => {
+      if (props.index === "/~/") {
+        let aPreview = props.messagePreviews[a];
+        let bPreview = props.messagePreviews[b];
+        let aWhen = !!aPreview ? aPreview.when : 0;
+        let bWhen = !!bPreview ? bPreview.when : 0;
+
+        return bWhen - aWhen;
+      } else {
+      let aAssociation = a in props.chatMetadata ? props.chatMetadata[a] : {};
+      let bAssociation = b in props.chatMetadata ? props.chatMetadata[b] : {};
+      let aTitle = a;
+      let bTitle = b;
+      if (aAssociation.metadata && aAssociation.metadata.title) {
+        aTitle = (aAssociation.metadata.title !== "")
+          ? aAssociation.metadata.title : a;
+        }
+      if (bAssociation.metadata && bAssociation.metadata.title) {
+        bTitle =
+          bAssociation.metadata.title !== "" ? bAssociation.metadata.title : b;
+        }
+      return aTitle.toLowerCase().localeCompare(bTitle.toLowerCase());
+      }
+    }).map((each, i) => {
       let unread = props.unreads[each];
       let title = each.substr(1);
       if (
