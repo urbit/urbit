@@ -1226,7 +1226,7 @@
       ^-  (unit [term tank])
       ?.  =(variable (end 3 (met 3 variable) name))
         ~
-      `[name (xsell q.cage)]
+      `[name (sell q.cage)]
     ::
     ++  complete-gen-poke-to-app
       |=  [app=term gen=term]
