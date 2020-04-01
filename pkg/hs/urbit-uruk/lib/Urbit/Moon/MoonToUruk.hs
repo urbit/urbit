@@ -156,6 +156,21 @@ gogogoLazyTromp text = do
   let lamb = moonToLambda expr :: B.Exp () (Either Text p)
   ExceptT $ B.outToUruk $ B.johnTrompBracket lamb
 
+gogogoNaive :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoNaive text = do
+  ast <- ExceptT $ pure $ Parser.parseAST text
+  let expr = bind ast
+  let lamb = moonToLambda expr :: B.Exp () (Either Text p)
+  ExceptT $ B.outToUruk $ B.naiveBracket $ makeStrict Right lamb
+
+gogogoLazyNaive :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoLazyNaive text = do
+  ast <- ExceptT $ pure $ Parser.parseAST text
+  let expr = bind ast
+  let lamb = moonToLambda expr :: B.Exp () (Either Text p)
+  ExceptT $ B.outToUruk $ B.naiveBracket lamb
+
+
 bindLC :: Uruk p => Lamb.Exp (Either Text p) -> Either Text (Lamb.Exp p)
 bindLC = traverse (either getGlobal Right)
 

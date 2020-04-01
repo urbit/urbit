@@ -109,8 +109,14 @@ goLazyOleg = runExceptT . MU.gogogoLazyOleg
 goTromp :: Text -> IO (Either Text Ur.Ur)
 goTromp = runExceptT . MU.gogogoTromp
 
+goNaive :: Text -> IO (Either Text Ur.Ur)
+goNaive = runExceptT . MU.gogogoNaive
+
 goLazyTromp :: Text -> IO (Either Text Ur.Ur)
 goLazyTromp = runExceptT . MU.gogogoLazyTromp
+
+goLazyNaive :: Text -> IO (Either Text Ur.Ur)
+goLazyNaive = runExceptT . MU.gogogoLazyNaive
 
 goInp :: Text -> IO (Either Text [Inp])
 goInp = pure . parseInps
@@ -183,16 +189,20 @@ goAll = runExceptT . bar
  where
   bar :: Text -> ExceptT Text IO Text
   bar txt = do
-    oleg      <- ExceptT (goOleg txt)
-    lazyoleg  <- ExceptT (goLazyOleg txt)
+    naive     <- ExceptT (goNaive txt)
+    lazyNaive <- ExceptT (goLazyNaive txt)
     tromp     <- ExceptT (goTromp txt)
     lazyTromp <- ExceptT (goLazyTromp txt)
+    oleg      <- ExceptT (goOleg txt)
+    lazyoleg  <- ExceptT (goLazyOleg txt)
 
     pure $ unlines
-      [ "", "[oleg]", "", pack (ppShow oleg), ""
-      , "", "[lazyoleg]", "", pack (ppShow lazyoleg), ""
+      [ "", "[naive]", "", pack (ppShow naive), ""
+      , "", "[lazynaive]", "", pack (ppShow lazyNaive), ""
       , "", "[tromp]", "", pack (ppShow tromp), ""
       , "", "[lazytromp]", "", pack (ppShow lazyTromp), ""
+      , "", "[oleg]", "", pack (ppShow oleg), ""
+      , "", "[lazyoleg]", "", pack (ppShow lazyoleg), ""
       ]
 
 runFileSlow :: FilePath -> IO ()

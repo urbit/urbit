@@ -1,4 +1,4 @@
-{-- OPTIONS_GHC -Werror #-}
+{-# OPTIONS_GHC -Werror #-}
 
 {- |
     Uses `seq` to prevent overly-eager evaluation.
@@ -15,6 +15,8 @@
     TODO Optimize using function arity.
         `(kk)` doesn't need to become `Q0kk` since the head (`k`)
         is undersaturated.
+
+
 -}
 
 module Urbit.Moon.MakeStrict (makeStrict) where
@@ -36,7 +38,7 @@ import qualified Urbit.Uruk.Refr.Jetted as Ur
 --------------------------------------------------------------------------------
 
 makeStrict :: (Uruk p, Eq a, Show a) => (p -> a) -> Exp () a -> Exp () a
-makeStrict initF = traceShowId . top initF . traceShowId
+makeStrict initF = top initF
  where
   top :: (Uruk p, Eq a) => (p -> a) -> Exp () a -> Exp () a
   top f = \case
