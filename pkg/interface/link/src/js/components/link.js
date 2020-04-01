@@ -7,6 +7,7 @@ import { Route, Link } from 'react-router-dom';
 import { Comments } from './lib/comments';
 import { LoadingScreen } from './loading';
 import { makeRoutePath, getContactDetails } from '../lib/util';
+import CommentItem from './lib/comment-item';
 
 export class LinkDetail extends Component {
   constructor(props) {
@@ -14,7 +15,9 @@ export class LinkDetail extends Component {
     this.state = {
       comment: "",
       data: props.data,
-      commentFocus: false
+      commentFocus: false,
+      pending: new Set(),
+      disabled: false
     };
 
     this.setComment = this.setComment.bind(this);
@@ -39,12 +42,30 @@ export class LinkDetail extends Component {
     if (this.props.url !== prevProps.url) {
       this.updateData(this.props.data);
     }
+    if (prevProps.comments && prevProps.comments["0"] &&
+      this.props.comments && this.props.comments["0"]) {
+        let prevFirstComment = prevProps.comments["0"][0];
+        let thisFirstComment = this.props.comments["0"][0];
+        if ((prevFirstComment && prevFirstComment.udon) &&
+          (thisFirstComment && thisFirstComment.udon)) {
+          if (this.state.pending.has(thisFirstComment.udon)) {
+            let pending = this.state.pending;
+            pending.delete(thisFirstComment.udon);
+            this.setState({
+              pending: pending
+            });
+          }
+        }
+    }
   }
 
   onClickPost() {
     let url = this.props.url || "";
 
     api.setSpinner(true);
+    let pending = this.state.pending;
+    pending.add(this.state.comment);
+    this.setState({ pending: pending, disabled: true  });
 
     api.postComment(
       this.props.resourcePath,
@@ -52,7 +73,7 @@ export class LinkDetail extends Component {
       this.state.comment
     ).then(() => {
       api.setSpinner(false);
-      this.setState({ comment: "" });
+      this.setState({ comment: "", disabled: false });
     });
 
   }
@@ -88,7 +109,24 @@ export class LinkDetail extends Component {
 
     let focus = (this.state.commentFocus)
       ? "b--black b--white-d"
-      : "b--gray4 b--gray2-d"
+      : "b--gray4 b--gray2-d";
+
+    let our = getContactDetails(props.contacts[window.ship]);
+
+    let pendingArray = Array.from(this.state.pending).map((com, i) => {
+      return(
+        <CommentItem
+          key={i}
+          color={our.color}
+          nickname={our.nickname}
+          ship={window.ship}
+          pending={true}
+          content={com}
+          member={our.member}
+          time={new Date().getTime()}
+        />
+      )
+    })
 
     return (
       <div className="h-100 w-100 overflow-hidden flex flex-column">
@@ -144,7 +182,7 @@ export class LinkDetail extends Component {
                 className={
                   "f8 bg-gray0-d ml2 absolute " + activeClasses
                 }
-                disabled={!this.state.comment}
+                disabled={!this.state.comment || this.state.disabled}
                 onClick={this.onClickPost.bind(this)}
                 style={{
                   bottom: 12,
@@ -153,6 +191,7 @@ export class LinkDetail extends Component {
                 Post
               </button>
             </div>
+            {pendingArray}
             <Comments
               resourcePath={props.resourcePath}
               key={props.resourcePath + props.commentPage}
