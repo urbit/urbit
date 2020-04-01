@@ -49,6 +49,10 @@ class Uruk p where
   uCar :: p
   uCdr :: p
 
+  uDiv :: Maybe p
+  uDiv = Nothing
+
+
 instance Uruk p => Uruk (Either a p) where
   uApp x y = sequence $ uApp <$> x <*> y
 
@@ -89,3 +93,5 @@ instance Uruk p => Uruk (Either a p) where
   uCon = pure uCon
   uCar = pure uCar
   uCdr = pure uCdr
+
+  uDiv = sequence (pure uDiv)

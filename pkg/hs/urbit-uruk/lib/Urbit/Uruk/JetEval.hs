@@ -137,6 +137,7 @@ instance Uruk Exp where
   uAdd = Add
   uSub = Sub
   uMul = Mul
+  uDiv = Just Div
   uFix = Fix
   uDed = Ded
   uUni = Uni

@@ -24,7 +24,7 @@ import qualified Urbit.Uruk.Refr.Jetted  as Ur
 --------------------------------------------------------------------------------
 
 getGlobal :: Uruk p => Text -> Either Text p
-getGlobal = \case
+getGlobal str = str & \case
   "S"     -> Right uEss
   "K"     -> Right uKay
   "J"     -> Right (uJay 1)
@@ -56,7 +56,11 @@ getGlobal = \case
   "con"   -> Right uCon
   "car"   -> Right uCar
   "cdr"   -> Right uCdr
-  str     -> Left ("Error: undefined variable:\n\n  " <> str <> "\n")
+  "div"   -> may uDiv
+  str     -> may Nothing
+ where
+  may Nothing  = Left ("Error: undefined variable:\n\n  " <> str <> "\n")
+  may (Just x) = Right x
 
 toUruk :: Exp Text -> IO (Either Text Ur.Ur)
 toUruk = sequence . fmap Lamb.moonStrict . bindLC . toLC
