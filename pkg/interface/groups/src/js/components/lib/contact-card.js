@@ -4,6 +4,7 @@ import { Sigil } from './icons/sigil';
 import { api } from '/api';
 import { Route, Link } from 'react-router-dom';
 import { EditElement } from '/components/lib/edit-element';
+import { Spinner } from './icons/icon-spinner';
 import { uxToHex } from '/lib/util';
 
 export class ContactCard extends Component {
@@ -16,7 +17,9 @@ export class ContactCard extends Component {
       emailToSet: null,
       phoneToSet: null,
       websiteToSet: null,
-      notesToSet: null
+      notesToSet: null,
+      awaiting: false,
+      type: "Saving to group"
     };
     this.editToggle = this.editToggle.bind(this);
     this.sigilColorSet = this.sigilColorSet.bind(this);
@@ -44,16 +47,6 @@ export class ContactCard extends Component {
       });
       return;
     }
-    // sigil color updates are done by keystroke parsing on update
-    // other field edits are exclusively handled by setField()
-    let currentColor = (props.contact.color) ? props.contact.color : "000000";
-    currentColor = uxToHex(currentColor);
-    let hexExp = /([0-9A-Fa-f]{6})/
-    let hexTest = hexExp.exec(this.state.colorToSet);
-
-    if (hexTest && (hexTest[1] !== currentColor) && !props.share) {
-      api.contactEdit(props.path, `~${props.ship}`, {color: hexTest[1]});
-  }
   }
 
   editToggle() {
@@ -123,8 +116,11 @@ export class ContactCard extends Component {
         let hexTest = hexExp.exec(this.state.colorToSet);
 
         if (hexTest && (hexTest[1] !== currentColor) && !props.share) {
+          this.setState({ awaiting: true, type: "Saving to group" }, (() => {
             api.contactEdit(props.path, `~${props.ship}`, { color: hexTest[1] }).then(() => {
+              this.setState({ awaiting: false });
             });
+          }))
         }
         break;
       }
@@ -137,7 +133,11 @@ export class ContactCard extends Component {
         }
         let emailTestResult = emailTest.exec(state.emailToSet);
         if (emailTestResult) {
-          api.contactEdit(props.path, ship, { email: state.emailToSet });
+          this.setState({ awaiting: true, type: "Saving to group" }, (() => {
+            api.contactEdit(props.path, ship, { email: state.emailToSet }).then(() => {
+              this.setState({awaiting: false});
+            });
+          }))
         }
         break;
       }
@@ -148,7 +148,12 @@ export class ContactCard extends Component {
         ) {
           return false;
         }
-        api.contactEdit(props.path, ship, { nickname: state.nickNameToSet });
+        this.setState({ awaiting: true, type: "Saving to group" }, (() => {
+          api.contactEdit(props.path, ship, { nickname: state.nickNameToSet }).then(() => {
+            this.setState({ awaiting: false });
+          });
+        }))
+
         break;
       }
       case "notes": {
@@ -158,7 +163,11 @@ export class ContactCard extends Component {
         ) {
           return false;
         }
-        api.contactEdit(props.path, ship, { notes: state.notesToSet });
+        this.setState({ awaiting: true, type: "Saving to group" }, (() => {
+          api.contactEdit(props.path, ship, { notes: state.notesToSet }).then(() => {
+            this.setState({ awaiting: false });
+          });
+        }))
         break;
       }
       case "phone": {
@@ -170,7 +179,11 @@ export class ContactCard extends Component {
         }
         let phoneTestResult = phoneTest.exec(state.phoneToSet);
         if (phoneTestResult) {
-          api.contactEdit(props.path, ship, { phone: state.phoneToSet });
+          this.setState({ awaiting: true, type: "Saving to group" }, (() => {
+            api.contactEdit(props.path, ship, { phone: state.phoneToSet }).then(() => {
+              this.setState({ awaiting: false });
+            });
+          }))
         }
         break;
       }
@@ -183,37 +196,60 @@ export class ContactCard extends Component {
         }
         let websiteTestResult = websiteTest.exec(state.websiteToSet);
         if (websiteTestResult) {
-          api.contactEdit(props.path, ship, { website: state.websiteToSet });
+          this.setState({ awaiting: true, type: "Saving to group" }, (() => {
+            api.contactEdit(props.path, ship, { website: state.websiteToSet }).then(() => {
+              this.setState({ awaiting: false });
+            });
+          }))
         }
         break;
       }
       case "removeAvatar": {
-        api.contactEdit(props.path, ship, { avatar: null });
+        this.setState({ awaiting: true, type: "Removing from group" }, (() => {
+            api.contactEdit(props.path, ship, { avatar: null }).then(() => {
+              this.setState({ awaiting: false });
+            });
+        }))
         break;
       }
       case "removeEmail": {
-        this.setState({ emailToSet: "" });
-        api.contactEdit(props.path, ship, { email: "" });
+        this.setState({ emailToSet: "", awaiting: true, type: "Removing from group" }, (() => {
+          api.contactEdit(props.path, ship, { email: "" }).then(() => {
+            this.setState({awaiting: false});
+          });
+        }));
         break;
       }
       case "removeNickname": {
-        this.setState({ nicknameToSet: "" });
-        api.contactEdit(props.path, ship, { nickname: "" });
+        this.setState({ nicknameToSet: "", awaiting: true, type: "Removing from group" }, (() => {
+          api.contactEdit(props.path, ship, { nickname: "" }).then(() => {
+            this.setState({awaiting: false});
+          });
+        }));
         break;
       }
       case "removePhone": {
-        this.setState({ phoneToSet: "" });
-        api.contactEdit(props.path, ship, { phone: "" });
+        this.setState({ phoneToSet: "", awaiting: true, type: "Removing from group" }, (() => {
+          api.contactEdit(props.path, ship, { phone: "" }).then(() => {
+            this.setState({awaiting: false});
+          });
+        }));
         break;
       }
       case "removeWebsite": {
-        this.setState({ websiteToSet: "" });
-        api.contactEdit(props.path, ship, { website: "" });
+        this.setState({ websiteToSet: "", awaiting: true, type: "Removing from group" }, (() => {
+          api.contactEdit(props.path, ship, { website: "" }).then(() => {
+            this.setState({awaiting: false});
+          });
+        }));
         break;
       }
       case "removeNotes": {
-        this.setState({ notesToSet: "" });
-        api.contactEdit(props.path, ship, { notes: "" });
+        this.setState({ notesToSet: "", awaiting: true, type: "Removing from group" }, (() => {
+          api.contactEdit(props.path, ship, { notes: "" }).then(() => {
+            this.setState({awaiting: false});
+          });
+        }));
         break;
       }
     }
@@ -253,13 +289,13 @@ export class ContactCard extends Component {
       color: this.pickFunction(state.colorToSet, defaultVal.color),
       avatar: null
     };
-    api.setSpinner(true);
-    api.contactView.share(
-      `~${props.ship}`, props.path, `~${window.ship}`, contact
-    ).then(() => {
-      api.setSpinner(false);
-      props.history.push(`/~groups/view${props.path}/${window.ship}`)
-    });
+    this.setState({awaiting: true, type: "Sharing with group"}, (() => {
+      api.contactView.share(
+        `~${props.ship}`, props.path, `~${window.ship}`, contact
+      ).then(() => {
+        props.history.push(`/~groups/view${props.path}/${window.ship}`)
+      });
+    }))
   }
 
   removeFromGroup() {
@@ -280,13 +316,14 @@ export class ContactCard extends Component {
       `~${props.ship}`, props.path, `~${window.ship}`, contact
     );
 
-    api.setSpinner(true);
-    api.contactHook.remove(props.path, `~${props.ship}`).then(() => {
-      api.setSpinner(false);
-      let destination = (props.ship === window.ship)
-        ? "" : props.path;
-      props.history.push(`/~groups${destination}`);
-    });
+    this.setState({awaiting: true, type: "Removing from group"}, (() => {
+      api.contactHook.remove(props.path, `~${props.ship}`).then(() => {
+        let destination = (props.ship === window.ship)
+          ? "" : props.path;
+        this.setState({awaiting: false});
+        props.history.push(`/~groups${destination}`);
+      });
+    }))
   }
 
   renderEditCard() {
@@ -548,6 +585,7 @@ export class ContactCard extends Component {
           </button>
         </div>
         <div className="h-100 w-100 overflow-x-hidden pb8 white-d">{card}</div>
+        <Spinner awaiting={this.state.awaiting} text={`${this.state.type}...`} classes="absolute right-1 bottom-1 ba pa2 b--gray1-d" />
       </div>
     );
   }

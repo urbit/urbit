@@ -45,7 +45,6 @@ export class Root extends Component {
             return (
               <Skeleton
                 activeDrawer="groups"
-                spinner={state.spinner}
                 selectedGroups={selectedGroups}
                 history={props.history}
                 api={api}
@@ -67,7 +66,6 @@ export class Root extends Component {
             render={ (props) => {
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
                   selectedGroups={selectedGroups}
                   api={api}
@@ -100,7 +98,6 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
                   selectedGroups={selectedGroups}
                   api={api}
@@ -141,7 +138,6 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
                   selectedGroups={selectedGroups}
                   api={api}
@@ -185,7 +181,6 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
                   api={api}
                   selectedGroups={selectedGroups}
@@ -235,7 +230,6 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
                   api={api}
                   selectedGroups={selectedGroups}
@@ -271,7 +265,6 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
                   api={api}
                   selectedGroups={selectedGroups}
