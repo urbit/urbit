@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import classnames from 'classnames';
 import { deSig, uxToHex } from '/lib/util';
 import { Route, Link } from "react-router-dom";
 
 import { LoadingScreen } from './loading';
+import { Spinner } from './lib/icons/icon-spinner';
 import { LinksTabBar } from '/components/lib/links-tabbar';
 import SidebarSwitcher from './lib/icons/icon-sidebar-switch';
 import { makeRoutePath } from '../lib/util';
@@ -16,7 +16,9 @@ export class SettingsScreen extends Component {
       isLoading: false,
       title: "",
       description: "",
-      color: ""
+      color: "",
+      disabled: false,
+      type: "Editing"
     };
 
     this.changeTitle = this.changeTitle.bind(this);
@@ -44,7 +46,6 @@ export class SettingsScreen extends Component {
       this.setState({
         isLoading: false
       }, () => {
-        api.setSpinner(false);
         props.history.push('/~link');
       });
     }
@@ -92,7 +93,7 @@ export class SettingsScreen extends Component {
     }
     if (hexTest && (hexTest[1] !== currentColor)) {
       if (props.amOwner) {
-        api.setSpinner(true);
+        this.setState({disabled: true});
         api.metadataAdd(
           props.resourcePath,
           props.groupPath,
@@ -101,7 +102,7 @@ export class SettingsScreen extends Component {
           resource.metadata['date-created'],
           color
         ).then(() => {
-          api.setSpinner(false);
+          this.setState({disabled: false});
         });
       }
     }
@@ -110,32 +111,32 @@ export class SettingsScreen extends Component {
   removeCollection() {
     const { props, state } = this;
 
-    api.setSpinner(true);
     this.setState({
-      isLoading: true
+      isLoading: true,
+      disabled: true,
+      type: "Removing"
     });
     api.removeCollection(props.resourcePath)
     .then(() => {
       this.setState({
         isLoading: false
       });
-      api.setSpinner(false);
     });
   }
 
   deleteCollection() {
     const { props, state } = this;
 
-    api.setSpinner(true);
     this.setState({
-      isLoading: true
+      isLoading: true,
+      disabled: true,
+      type: "Deleting"
     });
     api.deleteCollection(props.resourcePath)
     .then(() => {
       this.setState({
         isLoading: false
       });
-      api.setSpinner(false);
     });
   }
 
@@ -200,11 +201,11 @@ export class SettingsScreen extends Component {
             className={"f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
             "focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3"}
             value={this.state.title}
-            disabled={!props.amOwner}
+            disabled={!props.amOwner || this.state.disabled}
             onChange={this.changeTitle}
             onBlur={() => {
               if (props.amOwner) {
-                api.setSpinner(true);
+                this.setState({ disabled: true });
                 api.metadataAdd(
                   props.resourcePath,
                   props.groupPath,
@@ -213,7 +214,7 @@ export class SettingsScreen extends Component {
                   resource.metadata['date-created'],
                   uxToHex(resource.metadata.color)
                 ).then(() => {
-                  api.setSpinner(false);
+                  this.setState({ disabled: false });
                 });
               }
             }}
@@ -229,11 +230,11 @@ export class SettingsScreen extends Component {
               className={"f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
                 "focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3"}
               value={this.state.description}
-              disabled={!props.amOwner}
+              disabled={!props.amOwner || this.state.disabled}
               onChange={this.changeDescription}
               onBlur={() => {
                 if (props.amOwner) {
-                  api.setSpinner(true);
+                  this.setState({ disabled: true });
                   api.metadataAdd(
                     props.resourcePath,
                     props.groupPath,
@@ -242,7 +243,7 @@ export class SettingsScreen extends Component {
                     resource.metadata['date-created'],
                     uxToHex(resource.metadata.color)
                   ).then(() => {
-                    api.setSpinner(false);
+                    this.setState({ disabled: false });
                   });
                 }
               }}
@@ -264,7 +265,7 @@ export class SettingsScreen extends Component {
               className={"pl7 f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
                 "focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3"}
               value={this.state.color}
-              disabled={!props.amOwner}
+              disabled={!props.amOwner || this.state.disabled}
               onChange={this.changeColor}
               onBlur={this.submitColor}
             />
@@ -351,6 +352,11 @@ export class SettingsScreen extends Component {
           {this.renderRemove()}
           {this.renderDelete()}
           {this.renderMetadataSettings()}
+          <Spinner
+            awaiting={this.state.disabled}
+            classes="absolute right-1 bottom-1 pa2 ba b--black b--gray0-d white-d"
+            text={`${this.state.type} collection...`}
+          />
         </div>
       </div>
     );

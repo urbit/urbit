@@ -35,8 +35,10 @@ export class CommentItem extends Component {
 
     let member = this.props.member || false;
 
+    let pending = !!this.props.pending ? "o-60" : "";
+
     return (
-      <div className="w-100 pv3">
+      <div className={"w-100 pv3 " + pending}>
         <div className="flex bg-white bg-gray0-d">
           <Sigil
           ship={"~" + props.ship}

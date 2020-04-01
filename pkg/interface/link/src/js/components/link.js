@@ -5,6 +5,7 @@ import { SidebarSwitcher } from '/components/lib/icons/icon-sidebar-switch.js';
 import { api } from '../api';
 import { Route, Link } from 'react-router-dom';
 import { Comments } from './lib/comments';
+import { Spinner } from './lib/icons/icon-spinner';
 import { LoadingScreen } from './loading';
 import { makeRoutePath, getContactDetails } from '../lib/util';
 import CommentItem from './lib/comment-item';
@@ -62,7 +63,6 @@ export class LinkDetail extends Component {
   onClickPost() {
     let url = this.props.url || "";
 
-    api.setSpinner(true);
     let pending = this.state.pending;
     pending.add(this.state.comment);
     this.setState({ pending: pending, disabled: true  });
@@ -72,7 +72,6 @@ export class LinkDetail extends Component {
       url,
       this.state.comment
     ).then(() => {
-      api.setSpinner(false);
       this.setState({ comment: "", disabled: false });
     });
 
@@ -159,39 +158,36 @@ export class LinkDetail extends Component {
               linkIndex={props.linkIndex}
               time={this.state.data.time}
             />
-            <div className={"relative ba br1 mt6 mb6 " + focus}>
-              <textarea
-                className="w-100 bg-gray0-d white-d f8 pa2 pr8"
-                style={{
-                  resize: "none",
-                  height: 75
-                }}
-                placeholder="Leave a comment on this link"
-                onChange={this.setComment}
-                onKeyPress={(e) => {
-                  if ((e.getModifierState("Control") || event.getModifierState("Meta"))
-                    && e.key === "Enter") {
-                    this.onClickPost();
+            <div className="relative">
+              <div className={"relative ba br1 mt6 mb6 " + focus}>
+                <textarea
+                  className="w-100 bg-gray0-d white-d f8 pa2 pr8"
+                  style={{
+                    resize: "none",
+                    height: 75
+                  }}
+                  placeholder="Leave a comment on this link"
+                  onChange={this.setComment}
+                  onFocus={() => this.setState({commentFocus: true})}
+                  onBlur={() => this.setState({commentFocus: false})}
+                  value={this.state.comment}
+                />
+                <button
+                  className={
+                    "f8 bg-gray0-d ml2 absolute " + activeClasses
                   }
-                }}
-                onFocus={() => this.setState({commentFocus: true})}
-                onBlur={() => this.setState({commentFocus: false})}
-                value={this.state.comment}
-              />
-              <button
-                className={
-                  "f8 bg-gray0-d ml2 absolute " + activeClasses
-                }
-                disabled={!this.state.comment || this.state.disabled}
-                onClick={this.onClickPost.bind(this)}
-                style={{
-                  bottom: 12,
-                  right: 8
-                }}>
-                Post
-              </button>
+                  disabled={!this.state.comment || this.state.disabled}
+                  onClick={this.onClickPost.bind(this)}
+                  style={{
+                    bottom: 12,
+                    right: 8
+                  }}>
+                  Post
+                </button>
+              </div>
+              <Spinner awaiting={this.state.disabled} classes="absolute pt5 right-0" text="Posting comment..." />
+              {pendingArray}
             </div>
-            {pendingArray}
             <Comments
               resourcePath={props.resourcePath}
               key={props.resourcePath + props.commentPage}
