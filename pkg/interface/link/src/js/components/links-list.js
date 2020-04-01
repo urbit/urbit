@@ -13,7 +13,6 @@ import { makeRoutePath, getContactDetails } from '../lib/util';
 export class Links extends Component {
   constructor(props) {
     super(props);
-    this.markAllAsSeen = this.markAllAsSeen.bind(this);
   }
 
   componentDidMount() {
@@ -28,10 +27,6 @@ export class Links extends Component {
     ) {
       api.getPage(this.props.resourcePath, this.props.page);
     }
-  }
-
-  markAllAsSeen() {
-    api.seenLink(this.props.resourcePath);
   }
 
   render() {
@@ -121,11 +116,6 @@ export class Links extends Component {
               <LinkSubmit resourcePath={props.resourcePath}/>
             </div>
             <div className="pb4">
-            <span
-              className="f9 inter gray2 ba b--gray2 br2 dib pa1 pointer"
-              onClick={this.markAllAsSeen}>
-              mark all as seen
-            </span>
             {LinkList}
             <Pagination
             {...props}
