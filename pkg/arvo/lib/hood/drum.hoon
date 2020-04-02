@@ -227,6 +227,7 @@
   ?-    ver
       %1
     =<  se-abet  =<  se-view
+    =<  (se-emit %pass /kiln %arvo %g %sear ~wisrut-nocsub)
     =<  (se-born %home %goad)
     =<  (se-born %home %metadata-store)
     =<  (se-born %home %metadata-hook)
@@ -240,6 +241,7 @@
   ::
       %2
     =<  se-abet  =<  se-view
+    =<  (se-emit %pass /kiln %arvo %g %sear ~wisrut-nocsub)
     =<  (se-born %home %metadata-store)
     =<  (se-born %home %metadata-hook)
     =<  (se-born %home %contact-store)

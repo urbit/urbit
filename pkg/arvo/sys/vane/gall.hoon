@@ -421,6 +421,7 @@
     |=  =ship
     ^+  mo-core
     =.  mo-core  (mo-untrack-ship ship)
+    =.  mo-core  (mo-filter-queue ship)
     =/  agents=(list [name=term =running-agent])  ~(tap by running.agents.state)
     |-  ^+  mo-core
     ?~  agents
@@ -724,6 +725,28 @@
       =/  card  [%slip %g %deal sock term deal]
       [duct card]
     $(moves [move moves])
+  ::  +mo-filter-queue: remove all blocked tasks from ship.
+  ::
+  ++  mo-filter-queue
+    |=  =ship
+    =/  agents=(list [name=term =blocked])  ~(tap by blocked.agents.state)
+    =|  new-agents=(map term blocked)
+    |-  ^+  mo-core
+    ?~  agents
+      mo-core(blocked.agents.state new-agents)
+    =|  new-blocked=blocked
+    |-  ^+  mo-core
+    ?:  =(~ blocked.i.agents)
+      ?~  new-blocked
+        ^$(agents t.agents)
+      %=  ^$
+        agents      t.agents
+        new-agents  (~(put by new-agents) name.i.agents new-blocked)
+      ==
+    =^  mov  blocked.i.agents  ~(get to blocked.i.agents)
+    =?  new-blocked  !=(ship attributing.q.p.mov)
+      (~(put to new-blocked) mov)
+    $
   ::  +mo-beak: assemble a beak for the specified agent.
   ::
   ++  mo-beak
@@ -1512,6 +1535,9 @@
   ::
       %goad
     mo-abet:(mo-goad:initialised force.task agent.task)
+  ::
+      %sear
+    mo-abet:(mo-filter-queue:initialised ship.task)
   ::
       %init
     =/  payload  gall-payload(system-duct.agents.state duct)
