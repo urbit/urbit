@@ -16,8 +16,8 @@ export class HeaderBar extends Component {
     //   spinnerClasses = "spin-active";
     // }
 
-    let invites = (this.props.invites && this.props.invites.contacts)
-      ? this.props.invites.contacts
+    let invites = (this.props.invites)
+      ? this.props.invites
       : {};
 
     return (
