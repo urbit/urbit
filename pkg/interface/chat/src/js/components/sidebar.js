@@ -68,9 +68,6 @@ export class Sidebar extends Component {
       .map((each, i) => {
         let channels = groupedChannels[each] || [];
         if (channels.length === 0) return;
-        if (groupedChannels["/~/"] && groupedChannels["/~/"].length !== 0) {
-          i = i + 1;
-        }
         return(
           <GroupItem
             key={i}
@@ -86,7 +83,7 @@ export class Sidebar extends Component {
         )
       });
       if (groupedChannels["/~/"] && groupedChannels["/~/"].length !== 0) {
-        groupedItems.unshift(
+        groupedItems.push(
           <GroupItem
             association={"/~/"}
             chatMetadata={props.associations["chat"]}
@@ -94,7 +91,7 @@ export class Sidebar extends Component {
             inbox={props.inbox}
             station={props.station}
             unreads={props.unreads}
-            index={0}
+            index={"/~/"}
             key={"/~/"}
             {...props}
           />
