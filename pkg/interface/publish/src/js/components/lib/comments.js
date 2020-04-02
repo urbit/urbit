@@ -116,7 +116,13 @@ export class Comments extends Component {
               "b--gray2-d mb2 focus-b--black focus-b--white-d white-d bg-gray0-d"}
               aria-describedby="comment-desc"
               style={{height: "4rem"}}
-              onChange={this.commentChange}>
+              onChange={this.commentChange}
+              onKeyPress={(e) => {
+                if ((e.getModifierState("Control") || event.getModifierState("Meta"))
+                  && e.key === "Enter") {
+                    this.commentSubmit();
+                  }
+              }}>
             </textarea>
           </div>
           <button disabled={disableComment}
