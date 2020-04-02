@@ -125,7 +125,6 @@ module Urbit.Moon.MakeStrict (makeStrict, makeJetStrict) where
 import ClassyPrelude hiding (try)
 
 import Bound
-import Urbit.Uruk.Class
 import Urbit.Uruk.Bracket
 
 import Control.Arrow          ((>>>), (<<<))
@@ -198,16 +197,16 @@ recur (s,k,f) = \case
 
 -- Entry-Point for Normal Functions --------------------------------------------
 
-makeStrict :: (Eq p, Uruk p) => Exp () p -> Exp () p
-makeStrict = go
+makeStrict :: Eq p => (p, p, p -> Int) -> Exp () p -> Exp () p
+makeStrict (s,k,arity) = go
  where
   go = \case
     x   :@ y -> go x :@ go y
-    Lam () b -> Lam () $ toScope $ snd . recur (s, k, r) $ fromScope b
+    Lam () b -> Lam () $ toScope $ snd . recur (sv, kv, r) $ fromScope b
     Var v    -> Var v
-  s = Var (F uEss)
-  k = Var (F uKay)
-  r = \x -> (x == uKay, uArity x)
+  sv = Var (F s)
+  kv = Var (F k)
+  r = \x -> (x == k, arity x)
 
 
 -- Optimized Entry-Point for Jetted Functions ----------------------------------
@@ -221,18 +220,18 @@ makeStrict = go
     It's the same as `makeStrict` except that it treats the first `n`
     bindings as having arity `0`.
 -}
-makeJetStrict :: (Eq p, Uruk p) => Int -> Exp () p -> Exp () p
-makeJetStrict n topExp = top n topExp
+makeJetStrict :: Eq p => (p, p, p -> Int) -> Int -> Exp () p -> Exp () p
+makeJetStrict (s,k,arity) n topExp = top n topExp
  where
-  top 0 e = makeStrict e
-  top n (Var v) = makeStrict (Var v)
-  top n (x :@ y) = makeStrict (x :@ y)
+  top 0 e = makeStrict (s,k,arity) e
+  top n (Var v) = makeStrict (s,k,arity) (Var v)
+  top n (x :@ y) = makeStrict (s,k,arity) (x :@ y)
   top n (Lam () b) = Lam () $ toScope $ go initTup (n-1) $ fromScope b
 
-  initTup = (,,,) (Var (F uEss))
-                  (Var (F uKay))
-                  (\x -> (x == uKay, uArity x))
-                  (\x -> (x == uKay, uArity x))
+  initTup = (,,,) (Var (F s))
+                  (Var (F k))
+                  (\x -> (x == k, arity x))
+                  (\x -> (x == k, arity x))
 
   go :: (ExpV a, ExpV a, a -> (Bool, Int), a -> (Bool, Int)) -> Int -> ExpV a -> ExpV a
   go (s,k,f,j) 0 b          = snd $ jetRecur (s,k,f,j) b

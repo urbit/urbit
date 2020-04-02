@@ -17,7 +17,6 @@ import Data.Void
 
 import Data.Deriving        (deriveEq1, deriveShow1)
 import Data.Functor.Classes (eq1, showsPrec1)
-import Urbit.Uruk.Class     (Uruk(..))
 
 
 -- Types -----------------------------------------------------------------------
@@ -228,12 +227,12 @@ johnTrompBracket = go
     (CB m :@ b) :@ (CB n :@ p) | b==p -> abs (FS :@ m :@ n :@ b)
     x   :@ y                          -> VS :@ abs x :@ abs y
 
-outToUruk :: Uruk p => Out (SK p) -> IO p
-outToUruk = go
+outToUruk :: (p, p, p -> p -> IO p) -> Out (SK p) -> IO p
+outToUruk (s,k,app)= go
  where
   go = \case
     Lam b _   -> absurd b
-    Var S     -> pure uEss
-    Var K     -> pure uKay
+    Var S     -> pure s
+    Var K     -> pure k
     Var (V p) -> pure p
-    x :@ y    -> join (uApp <$> go x <*> go y)
+    x :@ y    -> join (app <$> go x <*> go y)

@@ -144,31 +144,37 @@ gogogoLazyOleg text = do
 
 gogogoTromp :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
 gogogoTromp text = do
+  let tup = (uEss, uKay, uApp)
+  let tud = (uEss, uKay, uArity)
   ast <- ExceptT $ pure $ Parser.parseAST text
   let expr = bind ast
   let lamb = moonToLambda expr :: B.Exp () (Either Text p)
-  ExceptT $ B.outToUruk $ B.johnTrompBracket $ makeStrict lamb
+  ExceptT $ B.outToUruk tup $ B.johnTrompBracket $ makeStrict tud lamb
 
 gogogoLazyTromp :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
 gogogoLazyTromp text = do
+  let tup = (uEss, uKay, uApp)
   ast <- ExceptT $ pure $ Parser.parseAST text
   let expr = bind ast
   let lamb = moonToLambda expr :: B.Exp () (Either Text p)
-  ExceptT $ B.outToUruk $ B.johnTrompBracket lamb
+  ExceptT $ B.outToUruk tup $ B.johnTrompBracket lamb
 
 gogogoNaive :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
 gogogoNaive text = do
+  let tup = (uEss, uKay, uApp)
+  let tud = (uEss, uKay, uArity)
   ast <- ExceptT $ pure $ Parser.parseAST text
   let expr = bind ast
   let lamb = moonToLambda expr :: B.Exp () (Either Text p)
-  ExceptT $ B.outToUruk $ B.naiveBracket $ makeStrict lamb
+  ExceptT $ B.outToUruk tup $ B.naiveBracket $ makeStrict tud lamb
 
 gogogoLazyNaive :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
 gogogoLazyNaive text = do
+  let tup = (uEss, uKay, uApp)
   ast <- ExceptT $ pure $ Parser.parseAST text
   let expr = bind ast
   let lamb = moonToLambda expr :: B.Exp () (Either Text p)
-  ExceptT $ B.outToUruk $ B.naiveBracket lamb
+  ExceptT $ B.outToUruk tup $ B.naiveBracket lamb
 
 
 bindLC :: Uruk p => Lamb.Exp (Either Text p) -> Either Text (Lamb.Exp p)
