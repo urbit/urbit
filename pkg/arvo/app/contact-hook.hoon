@@ -7,6 +7,7 @@
     *metadata-hook,
     *metadata-store
 /+  *contact-json, default-agent, dbug
+~%  %contact-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
 ::

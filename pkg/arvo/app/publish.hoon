@@ -39,6 +39,7 @@
   /^  (map knot @)
   /:  /===/app/publish/img  /_  /png/
 ::
+~%  %publish  ..is  ~
 |%
 +$  card  card:agent:gall
 ::

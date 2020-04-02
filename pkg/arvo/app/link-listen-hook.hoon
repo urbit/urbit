@@ -18,6 +18,7 @@
 /-  link-listen-hook, *metadata-store, *link, group-store
 /+  mdl=metadata, default-agent, verb, dbug
 ::
+~%  %link-listen-hook-top  ..is  ~
 |%
 +$  versioned-state
   $%  [%0 state-0]

@@ -21,6 +21,7 @@
 ::
 /-  group-store, *metadata-store
 /+  *link, metadata, default-agent, verb, dbug
+~%  %link-proxy-hook-top  ..is  ~
 |%
 +$  state-0
   $:  %0
