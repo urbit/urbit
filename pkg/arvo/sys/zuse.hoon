@@ -6643,7 +6643,7 @@
     ::                                                  ::  ++apat:de-purl:html
     ++  apat                                            ::  2396 abs_path
       %+  cook  deft
-      (ifix [net ;~(pose net (easy ~))] (more net smeg))
+      ;~(pfix net (more net smeg))
     ::                                                  ::  ++aurf:de-purl:html
     ++  aurf                                            ::  2396 with fragment
       %+  cook  |~(a/purf a)
@@ -6727,7 +6727,7 @@
       ;~(plug alf (star ;~(pose aln lus hep dot)))
     ::                                                  ::  ++smeg:de-purl:html
     ++  smeg                                            ::  2396 segment
-      (cook crip (plus pcar))
+      (cook crip (star pcar))
     ::                                                  ::  ++tock:de-purl:html
     ++  tock                                            ::  6265 raw value
       (cook crip (plus pcok))
