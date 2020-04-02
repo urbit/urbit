@@ -75,7 +75,7 @@
       *(eₙeₙ) -> ee
 -}
 
-module Urbit.Moon.MakeStrict (makeStrict) where
+module Urbit.Moon.MakeStrict (makeStrict, makeStrict') where
 
 import ClassyPrelude hiding (try)
 
@@ -83,7 +83,7 @@ import Bound
 import Urbit.Uruk.Class
 import Urbit.Uruk.Bracket
 
-import Control.Arrow          ((>>>))
+import Control.Arrow          ((>>>), (<<<))
 import Numeric.Natural        (Natural)
 import Numeric.Positive       (Positive)
 
@@ -93,7 +93,90 @@ import qualified Urbit.Uruk.Refr.Jetted as Ur
 
 --------------------------------------------------------------------------------
 
-makeStrict :: (Uruk p, Eq a, Show a) => (p -> a) -> Exp () a -> Exp () a
+{-
+      *S      -> 3
+      *K      -> 2
+      *J      -> 2
+      *Jⁿ     -> 2
+      *Jⁿtb   -> n
+      *D      -> 1
+
+      *x      -> 0 (most recently bound, or all from jet arguments)
+      *f      -> 1 (free variable, arity statically unknowable)
+
+      *(λv.B) -> (*B)+1
+
+      *(Keₙ)  -> n+1
+      *(e₀eₙ) -> 0
+      *(eₙe₀) -> 0
+      *(eₙeₘ) -> n-1
+-}
+
+type ExpV a = Exp () (Var () a)
+
+{-
+    [eₙe₀] -> ee
+    [e₁eₙ] -> SKxee
+    [eₙeₙ] -> ee
+-}
+fixApp :: (ExpV a, ExpV a) -> (Int, ExpV a) -> (Int, ExpV a) -> ExpV a
+fixApp (s, k) (_xArgs, x) (0, y)      = x :@ y
+fixApp (s, k) (1, x)      (_yArgs, y) = s :@ k :@ Var (B ()) :@ x :@ y
+fixApp (s, k) (_, x)      (_yArgs, y) = x :@ y
+
+{-
+    *(Keₙ)  -> n+1
+    *(e₀eₙ) -> 0
+    *(eₙe₀) -> 0
+    *(eₙeₘ) -> n-1
+-}
+appArity :: Bool -> Int -> Int -> Int
+appArity True  _     yArgs = yArgs+1
+appArity _xIsK 0     _     = 0
+appArity _xIsK _     0     = 0
+appArity _xIsK xArgs _     = xArgs-1
+
+{- |
+    Returns the arity of an expression and transform it if necessary.
+
+    `f x` should return `(x == K, arity x)`.
+-}
+recur :: (ExpV a, ExpV a, a -> (Bool, Int)) -> ExpV a -> ((Bool, Int), ExpV a)
+recur (s,k,f) = \case
+  Var v -> case v of
+    B () -> ((False, 0), Var (B ()))
+    F v  -> (f v, Var (F v))
+
+  Lam () b ->
+    let ((_, arity), bodExp) = recur (F <$> s, F <$> k, wrap f) $ fromScope b
+    in ((False, arity+1), Lam () (toScope bodExp))
+
+  x :@ y ->
+    let
+      ((xIsK, xArgs), xVal) = recur (s,k,f) x
+      ((yIsK, yArgs), yVal) = recur (s,k,f) y
+      resVal = fixApp (s,k) (xArgs, xVal) (yArgs, yVal)
+      resArgs = appArity xIsK xArgs yArgs
+      resIsK = False
+    in
+      ((resIsK, resArgs), resVal)
+ where
+  wrap :: (a -> (Bool, Int)) -> Var () a -> (Bool, Int)
+  wrap f (B ()) = (False, 1)
+  wrap f (F v)  = f v
+
+makeStrict' :: forall p . (Eq p, Uruk p) => Exp () p -> Exp () p
+makeStrict' = go
+ where
+  go = \case
+    x   :@ y -> go x :@ go y
+    Lam () b -> Lam () $ toScope $ snd . recur (s, k, r) $ fromScope b
+    Var v    -> Var v
+  s = Var (F uEss)
+  k = Var (F uKay)
+  r = \x -> (x == uKay, uArity x)
+
+makeStrict :: (Uruk p, Eq a) => (p -> a) -> Exp () a -> Exp () a
 makeStrict initF = top initF
  where
   top :: (Uruk p, Eq a) => (p -> a) -> Exp () a -> Exp () a
@@ -123,6 +206,6 @@ hasDep = go (B ())
   go :: Eq a => Var () a -> Exp () (Var () a) -> Bool
   go v = \case
     Var x | x == v -> True
-    Var x          -> False
+    Var _          -> False
     Lam () b       -> go (F v) (fromScope b)
     x   :@ y       -> go v x || go v y

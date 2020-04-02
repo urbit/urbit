@@ -197,12 +197,12 @@ goAll = runExceptT . bar
     lazyoleg  <- ExceptT (goLazyOleg txt)
 
     pure $ unlines
-      [ "", "[naive]", "", pack (ppShow naive), ""
-      , "", "[lazynaive]", "", pack (ppShow lazyNaive), ""
-      , "", "[tromp]", "", pack (ppShow tromp), ""
+   -- [ "", "[naive]", "", pack (ppShow naive), ""
+   -- , "", "[lazynaive]", "", pack (ppShow lazyNaive), ""
+      [ "", "[tromp]", "", pack (ppShow tromp), ""
       , "", "[lazytromp]", "", pack (ppShow lazyTromp), ""
-      , "", "[oleg]", "", pack (ppShow oleg), ""
-      , "", "[lazyoleg]", "", pack (ppShow lazyoleg), ""
+   -- , "", "[oleg]", "", pack (ppShow oleg), ""
+   -- , "", "[lazyoleg]", "", pack (ppShow lazyoleg), ""
       ]
 
 runFileSlow :: FilePath -> IO ()

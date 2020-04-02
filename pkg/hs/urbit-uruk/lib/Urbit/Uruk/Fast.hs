@@ -131,6 +131,8 @@ instance Uruk Val where
   uBee = mkNode 3 Bee
   uSea = mkNode 3 Sea
 
+  uArity = fNeed . valFun
+
   uGlobal "add" = Just $ mkNode 2 Add
   uGlobal "lef" = Just $ mkNode 2 Lef
   uGlobal "rit" = Just $ mkNode 2 Rit

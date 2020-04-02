@@ -36,6 +36,8 @@ class Uruk p where
   uFix :: p
   uIff :: p
 
+  uArity :: p -> Int
+
   uGlobal :: Text -> Maybe p
   uGlobal = const Nothing
 
@@ -71,5 +73,8 @@ instance Uruk p => Uruk (Either Text p) where
   uCas = pure uCas
   uFix = pure uFix
   uIff = pure uIff
+
+  uArity (Left _)  = 1 -- Free
+  uArity (Right x) = uArity x
 
   uGlobal = sequence . pure . uGlobal
