@@ -116,8 +116,8 @@ export class Comments extends Component {
               aria-describedby="comment-desc"
               style={{height: "4rem"}}
               onChange={this.commentChange}
-              onKeyPress={(e) => {
-                if ((e.getModifierState("Control") || event.getModifierState("Meta"))
+              onKeyDown={(e) => {
+                if ((e.getModifierState("Control") || event.metaKey)
                   && e.key === "Enter") {
                     this.commentSubmit();
                   }
