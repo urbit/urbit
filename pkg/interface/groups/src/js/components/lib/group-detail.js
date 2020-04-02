@@ -82,17 +82,27 @@ export class GroupDetail extends Component {
       let link = `/~${app}/join${channelPath}`
       app = app.charAt(0).toUpperCase() + app.slice(1);
 
+      let overlay = {
+        r: parseInt(color.slice(0, 2), 16),
+        g: parseInt(color.slice(2, 4), 16),
+        b: parseInt(color.slice(4, 6), 16)
+      };
+
       let tile = (app === "Unknown")
         ? <div className="dib ba pa1" style={{
         backgroundColor: `#${color}`,
         borderColor: `#${color}`,
         height: 24,
         width: 24}}/>
-        : <img
-          src={`/~groups/img/${app}.png`}
-          className="dib ba pa1"
-          style={{ borderColor: `#${color}`, height: 24, width: 24 }}
-        />
+        : <div className="ba" style={{
+          borderColor: `#${color}`,
+          backgroundColor: `rgba(${overlay.r}, ${overlay.g}, ${overlay.b}, 0.25)`
+          }}>
+            <img
+            src={`/~groups/img/${app}.png`}
+            className="dib invert-d pa1 v-mid"
+            style={{ height: 26, width: 26 }}/>
+        </div>
 
       return (
         <li key={channelPath} className="f9 list flex pv1 w-100">
