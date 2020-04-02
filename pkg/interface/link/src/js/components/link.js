@@ -168,8 +168,16 @@ export class LinkDetail extends Component {
                   }}
                   placeholder="Leave a comment on this link"
                   onChange={this.setComment}
-                  onFocus={() => this.setState({commentFocus: true})}
-                  onBlur={() => this.setState({commentFocus: false})}
+                  onKeyDown={e => {
+                    if (
+                      (e.getModifierState("Control") || e.metaKey) &&
+                      e.key === "Enter"
+                    ) {
+                      this.onClickPost();
+                    }
+                  }}
+                  onFocus={() => this.setState({ commentFocus: true })}
+                  onBlur={() => this.setState({ commentFocus: false })}
                   value={this.state.comment}
                 />
                 <button
