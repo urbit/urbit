@@ -40,9 +40,7 @@
     We treat the most recently bound variable as having arity 0, which is
     treated differently. Expressions of arity 0 do not need to be changed,
     since their evaluation already depends on the most-recently-bound
-    variable. Additionally, in the body of a jet that takes `n`
-    arguments. All `n` of those variables should have arity `0`, since
-    they are all made available at the same time.
+    variable.
 
     The arity of combinators:
 
@@ -73,9 +71,56 @@
 
       *(e₁eₙ) -> SKxee
       *(eₙeₙ) -> ee
+
+    ## Better Output for Jets
+
+    - Let's look at an example:
+
+      - `λx.λy.λz.xyz`
+
+    - Without this trasnformation, this compiles to:
+
+      - `SKK`
+
+    - But that doesn't preserve evaluation order.
+
+      - `(λx.λy.λz.xyz) ded %too-early` evaluates to:
+
+         `(λz. ded %too-early z)`
+
+      - But `SKK ded %too-early` evaluates to:
+
+        `(ded %too-early)`
+
+    - The transformation above soves the problem, by instead producing:
+
+      ```
+      (S (S (K S)
+         (S (K (S (K S)))
+            (S (K (S S (K K))) (S (K (S (K K) S)) (S (K (S (S K))) K)))))
+      (K (S K)))
+      ```
+
+    - However, this is large. To solve this problem, we can take advantage
+      of the jet system. Let's look at the same example, jetted:
+
+       ```
+       J J J K (λx.λy.λz.xyz)
+       ```
+
+    - Because the jet system will delay evaluation until all three
+      arguments have been passed, the transformation is not necessary for
+      those arguments.
+
+    - So, we can recover our nice output:
+
+      ```
+      J J J K (S K K)
+      ```
+
 -}
 
-module Urbit.Moon.MakeStrict (makeStrict, makeStrict') where
+module Urbit.Moon.MakeStrict (makeStrict, makeJetStrict) where
 
 import ClassyPrelude hiding (try)
 
@@ -91,28 +136,12 @@ import qualified Urbit.Uruk.Fast.Types  as F
 import qualified Urbit.Uruk.Refr.Jetted as Ur
 
 
---------------------------------------------------------------------------------
-
-{-
-      *S      -> 3
-      *K      -> 2
-      *J      -> 2
-      *Jⁿ     -> 2
-      *Jⁿtb   -> n
-      *D      -> 1
-
-      *x      -> 0 (most recently bound, or all from jet arguments)
-      *f      -> 1 (free variable, arity statically unknowable)
-
-      *(λv.B) -> (*B)+1
-
-      *(Keₙ)  -> n+1
-      *(e₀eₙ) -> 0
-      *(eₙe₀) -> 0
-      *(eₙeₘ) -> n-1
--}
+-- Types -----------------------------------------------------------------------
 
 type ExpV a = Exp () (Var () a)
+
+
+-- Utils -----------------------------------------------------------------------
 
 {-
     [eₙe₀] -> ee
@@ -135,6 +164,11 @@ appArity True  _     yArgs = yArgs+1
 appArity _xIsK 0     _     = 0
 appArity _xIsK _     0     = 0
 appArity _xIsK xArgs _     = xArgs-1
+
+wrap :: (a -> (Bool, Int)) -> Var () a -> (Bool, Int)
+wrap f = \case
+  B () -> (False, 1)
+  F v  -> f v
 
 {- |
     Returns the arity of an expression and transform it if necessary.
@@ -160,13 +194,12 @@ recur (s,k,f) = \case
       resIsK = False
     in
       ((resIsK, resArgs), resVal)
- where
-  wrap :: (a -> (Bool, Int)) -> Var () a -> (Bool, Int)
-  wrap f (B ()) = (False, 1)
-  wrap f (F v)  = f v
 
-makeStrict' :: forall p . (Eq p, Uruk p) => Exp () p -> Exp () p
-makeStrict' = go
+
+-- Entry-Point for Normal Functions --------------------------------------------
+
+makeStrict :: (Eq p, Uruk p) => Exp () p -> Exp () p
+makeStrict = go
  where
   go = \case
     x   :@ y -> go x :@ go y
@@ -176,36 +209,70 @@ makeStrict' = go
   k = Var (F uKay)
   r = \x -> (x == uKay, uArity x)
 
-makeStrict :: (Uruk p, Eq a) => (p -> a) -> Exp () a -> Exp () a
-makeStrict initF = top initF
- where
-  top :: (Uruk p, Eq a) => (p -> a) -> Exp () a -> Exp () a
-  top f = \case
-    Lam () x -> Lam () (toScope $ go f $ fromScope x)
-    Var v    -> Var v
-    x :@ y   -> top f x :@ top f y
 
-  go :: (Uruk p, Eq a) => (p -> a) -> Exp () (Var () a) -> Exp () (Var () a)
-  go f = \case
-    Lam () x -> Lam () (toScope $ top (F . F . f) $ fromScope x)
-    Var v    -> Var v
-    x :@ y   -> case (go f x, go f y) of
-      (fv, xv) | hasDep fv || hasDep xv -> fv :@ xv
-      (fv, xv)                          -> addDep f fv :@ xv
+-- Optimized Entry-Point for Jetted Functions ----------------------------------
 
-addDep :: Uruk p => (p -> a) -> Exp () (Var () a) -> Exp () (Var () a)
-addDep prim = go
- where
-  go = \case
-    f :@ x -> go f :@ x
-    exp    -> Var (F $ prim uSeq) :@ Var (B ()) :@ exp
+{-
+    TODO This is very complicated code to do something simple. Clean up!
 
-hasDep :: Eq a => Exp () (Var () a) -> Bool
-hasDep = go (B ())
+    This expects it's input to be of the form `λx.λy.[...]b`. `n`
+    bindings folloed by an expressions.
+
+    It's the same as `makeStrict` except that it treats the first `n`
+    bindings as having arity `0`.
+-}
+makeJetStrict :: (Eq p, Uruk p) => Int -> Exp () p -> Exp () p
+makeJetStrict n topExp = top n topExp
  where
-  go :: Eq a => Var () a -> Exp () (Var () a) -> Bool
-  go v = \case
-    Var x | x == v -> True
-    Var _          -> False
-    Lam () b       -> go (F v) (fromScope b)
-    x   :@ y       -> go v x || go v y
+  top 0 e = makeStrict e
+  top n (Var v) = makeStrict (Var v)
+  top n (x :@ y) = makeStrict (x :@ y)
+  top n (Lam () b) = Lam () $ toScope $ go initTup (n-1) $ fromScope b
+
+  initTup = (,,,) (Var (F uEss))
+                  (Var (F uKay))
+                  (\x -> (x == uKay, uArity x))
+                  (\x -> (x == uKay, uArity x))
+
+  go :: (ExpV a, ExpV a, a -> (Bool, Int), a -> (Bool, Int)) -> Int -> ExpV a -> ExpV a
+  go (s,k,f,j) 0 b          = snd $ jetRecur (s,k,f,j) b
+  go (s,k,f,j) n b@(Var _)  = snd $ recur (s,k,f) b
+  go (s,k,f,j) n b@(_ :@ _) = snd $ recur (s,k,f) b
+  go (s, k, f, j) n (Lam () b) =
+    Lam ()
+      $ toScope
+      $ go (F <$> s, F <$> k, wrap f, wrapJet j) (n - 1)
+      $ fromScope b
+
+  wrapJet :: (a -> (Bool, Int)) -> Var () a -> (Bool, Int)
+  wrapJet f = \case
+    B () -> (False, 0)
+    F v  -> f v
+
+{- |
+    Returns the arity of an expression and transform it if necessary.
+
+    `f x` should return `(x == K, arity x)`.
+-}
+jetRecur
+  :: (ExpV a, ExpV a, a -> (Bool, Int), a -> (Bool, Int))
+  -> ExpV a
+  -> ((Bool, Int), ExpV a)
+jetRecur (s,k,f,j) = \case
+  Var v -> case v of
+    B () -> ((False, 0), Var (B ()))
+    F v  -> (j v, Var (F v))
+
+  Lam () b ->
+    let ((_, arity), bodExp) = recur (F <$> s, F <$> k, wrap f) $ fromScope b
+    in ((False, arity+1), Lam () (toScope bodExp))
+
+  x :@ y ->
+    let
+      ((xIsK, xArgs), xVal) = jetRecur (s,k,f,j) x
+      ((yIsK, yArgs), yVal) = jetRecur (s,k,f,j) y
+      resVal = fixApp (s,k) (xArgs, xVal) (yArgs, yVal)
+      resArgs = appArity xIsK xArgs yArgs
+      resIsK = False
+    in
+      ((resIsK, resArgs), resVal)
