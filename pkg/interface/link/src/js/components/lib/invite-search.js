@@ -31,20 +31,17 @@ export class InviteSearch extends Component {
 
   peerUpdate() {
     let groups = Array.from(Object.keys(this.props.groups));
-    groups = groups
-      .filter(e => !e.startsWith("/~/"))
+    groups = groups.filter(e => !e.startsWith("/~/"))
       .map(e => {
-        let eachGroup = new Set();
-        eachGroup.add(e);
+        let eachGroup = [];
+        eachGroup.push(e);
         if (this.props.associations) {
           let name = e;
           if (e in this.props.associations) {
-            name =
-              this.props.associations[e].metadata.title !== ""
-                ? this.props.associations[e].metadata.title
-                : e;
+            name = (this.props.associations[e].metadata.title !== "")
+              ? this.props.associations[e].metadata.title : e;
           }
-          eachGroup.add(name);
+          eachGroup.push(name);
         }
         return Array.from(eachGroup);
       });
