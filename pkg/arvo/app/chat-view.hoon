@@ -42,6 +42,7 @@
   /^  (map knot @)
   /:  /===/app/chat/img  /_  /png/
 ::
+~%  %chat-view-top  ..is  ~
 |%
 +$  card  card:agent:gall
 ::
@@ -58,6 +59,7 @@
 %-  agent:dbug
 ^-  agent:gall
 =<
+  ~%  %chat-view-agent-core  ..poke-handle-http-request  ~
   |_  bol=bowl:gall
   +*  this       .
       chat-core  +>
@@ -73,6 +75,7 @@
         [%pass /chat-view %agent [our.bol %launch] %poke launcha]
     ==
   ++  on-poke
+    ~/  %chat-view-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
     ?>  (team:title our.bol src.bol)
@@ -94,6 +97,7 @@
     ==
   ::
   ++  on-watch
+    ~/  %chat-view-watch
     |=  =path
     ^-  (quip card _this)
     ?>  (team:title our.bol src.bol)
@@ -129,6 +133,7 @@
     --
   ::
   ++  on-agent
+    ~/  %chat-view-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
     ?+    -.sign  (on-agent:def wire sign)
@@ -145,6 +150,7 @@
     ==
   ::
   ++  on-arvo
+    ~/  %chat-view-arvo
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
     ?.  ?=(%bound +<.sign-arvo)
@@ -159,6 +165,7 @@
   --
 ::
 ::
+~%  %chat-view-library  ..card  ~
 |_  bol=bowl:gall
 ::
 ++  poke-handle-http-request
