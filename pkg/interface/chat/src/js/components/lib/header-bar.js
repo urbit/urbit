@@ -41,7 +41,7 @@ export class HeaderBar extends Component {
             className="dib f9 v-mid inter ml2"
             href="/"
             style={{ top: 14 }}>
-            ⟵</a> <p className="dib f9 v-mid inter ml2">Messaging</p>
+            ⟵</a> <p className="dib f9 v-mid inter ml2 white-d">Messaging</p>
         </div>
       </div>
     );
