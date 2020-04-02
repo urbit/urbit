@@ -17,7 +17,7 @@ export class Skeleton extends Component {
       ? "" : "h-100-m-40-ns ph4-m ph4-l ph4-xl pb4-m pb4-l pb4-xl"
 
     let popoutBorder = (popout)
-      ? "" : "ba-m ba-l ba-xl b--gray2 br1"
+      ? "" : "ba-m ba-l ba-xl b--gray4 b--gray1-d br1"
 
       let linkInvites = ('/link' in this.props.invites)
       ? this.props.invites['/link'] : {};
