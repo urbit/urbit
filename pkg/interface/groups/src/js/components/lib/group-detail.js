@@ -57,7 +57,15 @@ export class GroupDetail extends Component {
 
     let channelList = (<div />);
 
-    channelList = Object.keys(props.association).map((key) => {
+    channelList = Object.keys(props.association).sort((a, b) => {
+      let aChannel = props.association[a];
+      let bChannel = props.association[b];
+
+      let aTitle = aChannel.metadata.title || a;
+      let bTitle = bChannel.metadata.title || b;
+
+      return aTitle.toLowerCase().localeCompare(bTitle.toLowerCase());
+    }).map((key) => {
       let channel = props.association[key];
       if (!('metadata' in channel)) {
         return <div key={channel} />;
@@ -72,23 +80,44 @@ export class GroupDetail extends Component {
       let app = channel["app-name"] || "Unknown";
       let channelPath = channel["app-path"];
       let link = `/~${app}/join${channelPath}`
-      app = app.charAt(0).toUpperCase() + app.slice(1)
+      app = app.charAt(0).toUpperCase() + app.slice(1);
+
+      let overlay = {
+        r: parseInt(color.slice(0, 2), 16),
+        g: parseInt(color.slice(2, 4), 16),
+        b: parseInt(color.slice(4, 6), 16)
+      };
+
+      let tile = (app === "Unknown")
+        ? <div className="dib ba pa1" style={{
+        backgroundColor: `#${color}`,
+        borderColor: `#${color}`,
+        height: 24,
+        width: 24}}/>
+        : <div className="ba" style={{
+          borderColor: `#${color}`,
+          backgroundColor: `rgba(${overlay.r}, ${overlay.g}, ${overlay.b}, 0.25)`
+          }}>
+            <img
+            src={`/~groups/img/${app}.png`}
+            className="dib invert-d pa1 v-mid"
+            style={{ height: 26, width: 26 }}/>
+        </div>
 
       return (
-        <li key={channelPath} className="f9 list flex pv2 w-100">
-          <div className="dib"
-            style={{ backgroundColor: `#${color}`, height: 32, width: 32 }}
-          ></div>
+        <li key={channelPath} className="f9 list flex pv1 w-100">
+          {tile}
           <div className="flex flex-column flex-auto">
             <p className="f9 inter ml2 w-100">{title}</p>
-            <p className="f9 inter ml2 w-100"
-              style={{ marginTop: "0.35rem" }}>
+            <p className="f9 inter ml2 w-100" style={{ marginTop: "0.35rem" }}>
               <span className="f9 di mr2 inter">{app}</span>
-              <a className="f9 di green2" href={link}>Open</a>
+              <a className="f9 di green2" href={link}>
+                Open
+              </a>
             </p>
           </div>
         </li>
-      )
+      );
     })
 
     let backLink = props.location.pathname;
