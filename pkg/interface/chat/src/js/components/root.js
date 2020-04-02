@@ -41,8 +41,7 @@ export class Root extends Component {
         state.inbox[stat].config.length > state.inbox[stat].config.read;
     });
 
-    let invites = '/chat' in state.invites ?
-      state.invites['/chat'] : {};
+    let invites = !!state.invites ? state.invites : {'/chat': {}, '/contacts': {}};
 
     let contacts = !!state.contacts ? state.contacts : {};
     let associations = !!state.associations ? state.associations : {chat: {}, contacts: {}};
@@ -54,7 +53,7 @@ export class Root extends Component {
         associations={associations}
         selectedGroups={state.selectedGroups}
         contacts={contacts}
-        invites={invites}
+        invites={invites["/chat"] || {}}
         unreads={unreads}
         api={api}
         station={station}
@@ -174,7 +173,7 @@ export class Root extends Component {
               let association =
                 station in associations["chat"] ? associations.chat[station] : {};
 
-              let permission = 
+              let permission =
                 station in state.permissions ? state.permissions[station] : {
                   who: new Set([]),
                   kind: 'white'
