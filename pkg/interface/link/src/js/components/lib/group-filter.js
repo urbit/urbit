@@ -128,10 +128,10 @@ export class GroupFilter extends Component {
       ? "absolute db z-2 bg-white bg-gray0-d white-d ba b--gray3 b--gray1-d"
       : "dn";
 
-    let inviteCount = (props.invites && props.invites.length > 0)
+    let inviteCount = (props.invites && Object.keys(props.invites).length > 0)
       ? <template className="dib fr">
         <p className="dib bg-green2 bg-gray2-d white fw6 ph1 br1 v-mid" style={{ marginBottom: 2 }}>
-          {props.invites.length}
+          {Object.keys(props.invites).length}
         </p>
         <span className="dib v-mid ml1">
           <img
