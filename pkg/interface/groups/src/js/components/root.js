@@ -22,6 +22,10 @@ export class Root extends Component {
     store.setStateHandler(this.setState.bind(this));
   }
 
+  componentDidMount() {
+    new Image().src = "/~groups/img/Spinner.png";
+  }
+
   render() {
     const { props, state } = this;
 
@@ -45,7 +49,6 @@ export class Root extends Component {
             return (
               <Skeleton
                 activeDrawer="groups"
-                spinner={state.spinner}
                 selectedGroups={selectedGroups}
                 history={props.history}
                 api={api}
@@ -67,7 +70,6 @@ export class Root extends Component {
             render={ (props) => {
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
                   selectedGroups={selectedGroups}
                   api={api}
@@ -100,7 +102,6 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
                   selectedGroups={selectedGroups}
                   api={api}
@@ -141,7 +142,6 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
                   selectedGroups={selectedGroups}
                   api={api}
@@ -185,7 +185,6 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
                   api={api}
                   selectedGroups={selectedGroups}
@@ -235,7 +234,6 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
                   api={api}
                   selectedGroups={selectedGroups}
@@ -271,7 +269,6 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
                   api={api}
                   selectedGroups={selectedGroups}

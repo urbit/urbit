@@ -15,8 +15,7 @@ class Store {
       associations: {},
       permissions: {},
       invites: {},
-      selectedGroups: [],
-      spinner: false
+      selectedGroups: []
     };
 
     this.initialReducer = new InitialReducer();

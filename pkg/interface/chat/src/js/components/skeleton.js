@@ -32,7 +32,7 @@ export class Skeleton extends Component {
     return (
       // app outer skeleton
       <div className={"absolute h-100 w-100 bg-gray0-d " + popoutWindow}>
-      <HeaderBar spinner={this.props.spinner} associations={this.props.associations} invites={this.props.invites} />
+      <HeaderBar associations={this.props.associations} invites={this.props.invites} />
       {/* app window borders */}
         <div className={
             `cf w-100 flex ` +

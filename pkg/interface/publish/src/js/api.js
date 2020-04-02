@@ -130,15 +130,6 @@ class UrbitApi {
     });
   }
 
-  setSpinner(boolean) {
-    store.handleEvent({
-      type: "local",
-      data: {
-        'spinner': boolean
-      }
-    });
-  }
-
   setSelected(selected) {
     store.handleEvent({
       type: "local",

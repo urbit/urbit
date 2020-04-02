@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { CommentItem } from './comment-item';
 import { dateToDa } from '/lib/util';
+import { Spinner } from './icons/icon-spinner';
 
 export class Comments extends Component {
   constructor(props){
@@ -49,11 +50,9 @@ export class Comments extends Component {
    this.setState({pending: pendingState});
 
    this.textArea.value = '';
-   window.api.setSpinner(true);
-   this.setState({commentBody: ""});
+   this.setState({commentBody: "", disabled: true});
    let submit = window.api.action("publish", "publish-action", comment);
    submit.then(() => {
-     window.api.setSpinner(false);
      this.setState({ disabled: false });
     })
    }
@@ -105,7 +104,7 @@ export class Comments extends Component {
 
     return (
       <div>
-        <div className="mv8">
+        <div className="mv8 relative">
           <div>
             <textarea style={{resize:'vertical'}}
               ref={(el) => {this.textArea = el}}
@@ -117,8 +116,8 @@ export class Comments extends Component {
               aria-describedby="comment-desc"
               style={{height: "4rem"}}
               onChange={this.commentChange}
-              onKeyPress={(e) => {
-                if ((e.getModifierState("Control") || event.getModifierState("Meta"))
+              onKeyDown={(e) => {
+                if ((e.getModifierState("Control") || event.metaKey)
                   && e.key === "Enter") {
                     this.commentSubmit();
                   }
@@ -130,6 +129,7 @@ export class Comments extends Component {
             className={commentClass}>
             Add comment
           </button>
+          <Spinner text="Posting comment..." awaiting={this.state.disabled} classes="absolute bottom-0 right-0 pb2"/>
         </div>
         {pendingArray}
         {commentArray}

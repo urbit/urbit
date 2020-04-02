@@ -26,8 +26,7 @@ class Store {
       comments: {},
       seen: {},
       permissions: {},
-      sidebarShown: true,
-      spinner: false
+      sidebarShown: true
     };
 
     this.initialReducer = new InitialReducer();
