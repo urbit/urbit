@@ -86,9 +86,9 @@ export class ContactSidebar extends Component {
     let detailHref = `/~groups/detail${props.path}`
 
     return (
-      <div className={`bn br-m br-l br-xl b--gray2 lh-copy h-100 flex-shrink-0
-      flex-basis-100-s flex-basis-30-ns mw5-m mw5-l mw5-xl relative
-      overflow-hidden ` + responsiveClasses}>
+      <div className={"bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100 " +
+      "flex-basis-100-s flex-basis-30-ns mw5-m mw5-l mw5-xl relative " +
+      "overflow-hidden flex-shrink-0 " + responsiveClasses}>
         <div className="pt3 pb5 pl3 f8 db dn-m dn-l dn-xl">
           <Link to="/~groups/">{"⟵ All Groups"}</Link>
         </div>
