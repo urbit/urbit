@@ -106,7 +106,7 @@ export class ChannelsSidebar extends Component {
     }
 
     return (
-      <div className={`bn br-m br-l br-xl b--gray4 b--gray2-d lh-copy h-100
+      <div className={`bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100
        flex-shrink-0 mw5-m mw5-l mw5-xl pt3 pt0-m pt0-l pt0-xl
         relative ` + activeClasses + ((hiddenClasses)
         ? "flex-basis-100-s flex-basis-30-ns"
