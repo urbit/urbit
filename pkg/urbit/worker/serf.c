@@ -884,45 +884,6 @@ _serf_live_walk(c3_d evt_d)
   u3V.sen_d = u3V.dun_d = evt_d;
 }
 
-// XX move to u3r
-//
-
-static c3_o
-_r_safe_byte(u3_noun dat, c3_y* out_y) {
-  if ( (c3n == u3a_is_atom(dat)) ||
-       (1 < u3r_met(3, dat)) )
-  {
-    return c3n;
-  }
-
-  *out_y = u3r_byte(0, dat);
-  return c3y;
-}
-
-static c3_o
-_r_safe_word(u3_noun dat, c3_w* out_w) {
-  if ( (c3n == u3a_is_atom(dat)) ||
-       (1 < u3r_met(5, dat)) )
-  {
-    return c3n;
-  }
-
-  *out_w = u3r_word(0, dat);
-  return c3y;
-}
-
-static c3_o
-_r_safe_chub(u3_noun dat, c3_d* out_d) {
-  if ( (c3n == u3a_is_atom(dat)) ||
-       (1 < u3r_met(6, dat)) )
-  {
-    return c3n;
-  }
-
-  *out_d = u3r_chub(0, dat);
-  return c3y;
-}
-
 /* _serf_step_trace(): initialize or rotate trace file.
 */
 static void
@@ -972,7 +933,7 @@ _serf_newt_poke(void* vod_p, u3_noun mat)
         case c3__exit: {
           c3_y cod_y;
 
-          if ( c3n == _r_safe_byte(dat, &cod_y) ) {
+          if ( c3n == u3r_safe_byte(dat, &cod_y) ) {
             goto error;
           }
 
@@ -984,7 +945,7 @@ _serf_newt_poke(void* vod_p, u3_noun mat)
         case c3__save: {
           c3_d evt_d;
 
-          if ( c3n == _r_safe_chub(dat, &evt_d) ) {
+          if ( c3n == u3r_safe_chub(dat, &evt_d) ) {
             goto error;
           }
 
@@ -996,7 +957,7 @@ _serf_newt_poke(void* vod_p, u3_noun mat)
         case c3__walk: {
           c3_d evt_d;
 
-          if ( c3n == _r_safe_chub(dat, &evt_d) ) {
+          if ( c3n == u3r_safe_chub(dat, &evt_d) ) {
             goto error;
           }
 
@@ -1030,7 +991,7 @@ _serf_newt_poke(void* vod_p, u3_noun mat)
 
       if ( (c3n == u3r_trel(jar, 0, &evt, &lit)) ||
            (c3n == u3a_is_cell(lit)) ||
-           (c3n == _r_safe_chub(evt, &evt_d)) )
+           (c3n == u3r_safe_chub(evt, &evt_d)) )
       {
         goto error;
       }
@@ -1048,7 +1009,7 @@ _serf_newt_poke(void* vod_p, u3_noun mat)
 
       if ( (c3n == u3r_trel(jar, 0, &evt, &job)) ||
            (c3n == u3a_is_cell(job)) ||
-           (c3n == _r_safe_chub(evt, &evt_d)) )
+           (c3n == u3r_safe_chub(evt, &evt_d)) )
       {
         goto error;
       }

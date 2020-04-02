@@ -1198,6 +1198,51 @@ u3r_chubs(c3_w    a_w,
   u3r_words(a_w * 2, b_w * 2, (c3_w *)c_d, d);
 }
 
+/* u3r_safe_byte(): validate and retrieve byte.
+*/
+c3_o
+u3r_safe_byte(u3_noun dat, c3_y* out_y)
+{
+  if (  (c3n == u3a_is_atom(dat))
+     || (1 < u3r_met(3, dat)) )
+  {
+    return c3n;
+  }
+
+  *out_y = u3r_byte(0, dat);
+  return c3y;
+}
+
+/* u3r_safe_word(): validate and retrieve word.
+*/
+c3_o
+u3r_safe_word(u3_noun dat, c3_w* out_w)
+{
+  if (  (c3n == u3a_is_atom(dat))
+     || (1 < u3r_met(5, dat)) )
+  {
+    return c3n;
+  }
+
+  *out_w = u3r_word(0, dat);
+  return c3y;
+}
+
+/* u3r_safe_chub(): validate and retrieve chub.
+*/
+c3_o
+u3r_safe_chub(u3_noun dat, c3_d* out_d)
+{
+  if (  (c3n == u3a_is_atom(dat))
+     || (1 < u3r_met(6, dat)) )
+  {
+    return c3n;
+  }
+
+  *out_d = u3r_chub(0, dat);
+  return c3y;
+}
+
 /* u3r_chop():
 **
 **   Into the bloq space of `met`, from position `fum` for a
