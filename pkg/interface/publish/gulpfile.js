@@ -15,6 +15,7 @@ var commonjs = require('rollup-plugin-commonjs');
 var rootImport = require('rollup-plugin-root-import');
 var globals = require('rollup-plugin-node-globals');
 
+
 /***
   Main config options
 ***/
@@ -58,8 +59,11 @@ gulp.task('js-imports', function(cb) {
       plugins: [
         commonjs({
           namedExports: {
-            'node_modules/react/index.js': [ 'Component' ],
-            'node_modules/react-is/index.js': [ 'isValidElementType' ],
+            'node_modules/react/index.js': ['Component', 'cloneElement', 
+            'createContext', 'createElement', 'useState', 'useRef', 
+            'useLayoutEffect', 'useMemo', 'useEffect', 'forwardRef', 'useContext', 'Children' ],
+            'node_modules/react-is/index.js': [ 'isValidElementType', 'isElement', 'ForwardRef' ],
+            'node_modules/react-dom/index.js': [ 'createPortal' ]
           }
         }),
         rootImport({
@@ -95,6 +99,37 @@ gulp.task('tile-js-imports', function(cb) {
           extensions: '.js'
         }),
         json(),
+        globals(),
+        resolve()
+      ]
+    }, 'umd'))
+    .on('error', function(e){
+      console.log(e);
+      cb();
+    })
+    .pipe(gulp.dest('../../arvo/app/publish/js/'))
+    .on('end', cb);
+});
+
+gulp.task('js-imports-prod', function(cb) {
+  return gulp.src('dist/index.js')
+    .pipe(rollup({
+      plugins: [
+        rollupReplace({'process.env.NODE_ENV': JSON.stringify('production')}),
+        commonjs({
+          namedExports: {
+            'node_modules/react/index.js': ['Component', 'cloneElement', 
+            'createContext', 'createElement', 'useState', 'useRef', 
+            'useLayoutEffect', 'useMemo', 'useEffect', 'forwardRef', 'useContext', 'Children' ],
+            'node_modules/react-is/index.js': [ 'isValidElementType', 'isElement', 'ForwardRef' ],
+            'node_modules/react-dom/index.js': [ 'createPortal' ]
+          }
+        }),
+        rootImport({
+          root: `${__dirname}/dist/js`,
+          useEntry: 'prepend',
+          extensions: '.js'
+        }),
         globals(),
         resolve()
       ]
@@ -148,8 +183,8 @@ gulp.task('urbit-copy', function () {
 
 gulp.task('js-bundle-dev', gulp.series('jsx-transform', 'js-imports'));
 gulp.task('tile-js-bundle-dev', gulp.series('tile-jsx-transform', 'tile-js-imports'));
-gulp.task('js-bundle-prod', gulp.series('jsx-transform', 'js-imports', 'js-minify'))
-gulp.task('tile-js-bundle-prod',
+gulp.task('js-bundle-prod', gulp.series('jsx-transform', 'js-imports-prod', 'js-minify'))
+gulp.task('tile-js-bundle-prod', 
   gulp.series('tile-jsx-transform', 'tile-js-imports', 'tile-js-minify'));
 
 gulp.task('bundle-dev',
