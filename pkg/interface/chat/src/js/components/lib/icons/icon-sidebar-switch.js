@@ -7,7 +7,7 @@ export class SidebarSwitcher extends Component {
     let popoutSwitcher = this.props.popout
       ? "dn-m dn-l dn-xl"
       : "dib-m dib-l dib-xl";
-    
+
     return (
       <div className="pt2">
         <a
@@ -24,6 +24,9 @@ export class SidebarSwitcher extends Component {
             }
             height="16"
             width="16"
+            style={{
+              maxWidth: 16
+            }}
           />
         </a>
       </div>

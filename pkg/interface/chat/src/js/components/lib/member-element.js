@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { Sigil } from '/components/lib/icons/sigil';
+import { uxToHex, cite } from '/lib/util';
 
 
 export class MemberElement extends Component {
@@ -16,14 +17,14 @@ export class MemberElement extends Component {
     let actionElem;
     if (props.ship === props.owner) {
       actionElem = (
-        <p className="w-20 dib list-ship black f8 c-default">
+        <p className="w-20 dib list-ship black white-d f8 c-default">
           Host
         </p>
       );
     } else if (window.ship !== props.ship && window.ship === props.owner) {
       actionElem = (
         <a onClick={this.onRemove.bind(this)}
-           className="w-20 dib list-ship black f8 pointer">
+           className="w-20 dib list-ship black white-d f8 pointer">
            Ban
         </a>
       );
@@ -33,15 +34,16 @@ export class MemberElement extends Component {
       );
     }
 
+    let name = !!props.contact
+      ? `${props.contact.nickname} (${cite(props.ship)})` : `${cite(props.ship)}`;
+    let color = !!props.contact ? uxToHex(props.contact.color) : '000000';
+
     return (
       <div className="flex mb2">
-        <Sigil ship={props.ship} size={32} />
-        <p
-          className={
-            "w-70 mono list-ship dib v-mid black ml2 nowrap f8"
-          }>
-          ~{props.ship}
-        </p>
+        <Sigil ship={props.ship} size={32} color={`#${color}`} />
+        <p className={
+            "w-70 mono list-ship dib v-mid black white-d ml2 nowrap f8"
+           }>{name}</p>
         {actionElem}
       </div>
     );

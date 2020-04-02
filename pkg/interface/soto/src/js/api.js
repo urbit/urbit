@@ -1,5 +1,3 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
 import _ from 'lodash';
 
 class UrbitApi {
@@ -11,7 +9,7 @@ class UrbitApi {
   bind(path, method, ship = this.authTokens.ship, appl = "dojo", success, fail) {
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
-    window.subscriptionId = window.urb.subscribe(ship, appl, path, 
+    window.subscriptionId = window.urb.subscribe(ship, appl, path,
       (err) => {
         fail(err);
       },
@@ -30,7 +28,7 @@ class UrbitApi {
   }
 
   soto(data) {
-    this.action("dojo", "sole-action", 
+    this.action("dojo", "sole-action",
       {id: this.authTokens.dojoId, dat: data}
     );
   }
@@ -40,7 +38,7 @@ class UrbitApi {
       window.urb.poke(ship, appl, mark, data,
         (json) => {
           resolve(json);
-        }, 
+        },
         (err) => {
           reject(err);
         });

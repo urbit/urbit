@@ -86,6 +86,17 @@
   =/  recur  ~s1
   =.  commit-timer
     [/kiln/autocommit (add now recur) recur mon]
+    (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
+::
+++  poke-autocommit
+  |=  [mon/kiln-commit auto=?]
+  =<  abet
+  =.  +>.$  (emit %pass /commit %arvo %c [%dirk mon])
+  ?.  auto
+    +>.$
+  =/  recur  ~s1
+  =.  commit-timer
+    [/kiln/autocommit (add now recur) recur mon]
   (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
 ::
 ++  poke-cancel-autocommit
@@ -143,8 +154,8 @@
   abet:abet:(merge:(work syd) ali sud cas gim)
 ::
 ++  poke-cancel
-  |=  ~
-  abet:(emit %pass /cancel %arvo %c [%drop %foo])
+  |=  a=@tas
+  abet:(emit %pass /cancel %arvo %c [%drop a])
 ::
 ++  poke-info
   |=  {mez/tape tor/(unit toro)}
@@ -185,6 +196,7 @@
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-kiln-bad-mark mark] !!)
     %kiln-commit             =;(f (f !<(_+<.f vase)) poke-commit)
+    %kiln-autocommit         =;(f (f !<(_+<.f vase)) poke-autocommit)
     %kiln-info               =;(f (f !<(_+<.f vase)) poke-info)
     %kiln-label              =;(f (f !<(_+<.f vase)) poke-label)
     %kiln-cancel             =;(f (f !<(_+<.f vase)) poke-cancel)
@@ -312,11 +324,11 @@
 ++  take-agent
   |=  [=wire =sign:agent:gall]
   ?+  wire  ~|([%kiln-bad-take-agent wire -.sign] !!)
-    [%kiln %fancy *]   ?>  ?=(%poke-ack -.sign) 
+    [%kiln %fancy *]   ?>  ?=(%poke-ack -.sign)
                        (take-coup-fancy t.t.wire p.sign)
     [%kiln %reload *]  ?>  ?=(%poke-ack -.sign)
                        (take-coup-reload t.t.wire p.sign)
-    [%kiln %spam *]    ?>  ?=(%poke-ack -.sign) 
+    [%kiln %spam *]    ?>  ?=(%poke-ack -.sign)
                        (take-coup-spam t.t.wire p.sign)
   ==
 ::

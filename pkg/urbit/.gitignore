@@ -8,17 +8,7 @@ include/config.h
 #
 *.o
 /build/*
-/tags
 #
 # Editor Bullshit
 #
-.tags
-TAGS
 cscope.*
-.DS_Store
-/.etags
-GPATH
-GRTAGS
-GTAGS
-*.swo
-*.swp

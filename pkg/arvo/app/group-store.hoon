@@ -1,7 +1,7 @@
-::  group-store: data store for groups of ships 
+::  group-store: data store for groups of ships
 ::
 /-  *group-store
-/+  default-agent
+/+  default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
 ::
@@ -22,12 +22,15 @@
 ::
 =|  state-zero
 =*  state  -
+::
+%-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 =<
   |_  =bowl:gall
   +*  this        .
       group-core  +>
-      gc          ~(. group-core bowl)   
+      gc          ~(. group-core bowl)
       def         ~(. (default-agent this %|) bowl)
   ::
   ++  on-init            on-init:def
@@ -54,6 +57,7 @@
     =/  cards=(list card)
       ?+    path  (on-watch:def path)
           [%all ~]   (give %group-initial !>(groups))
+          [%updates ~]  ~
           [%keys ~]  (give %group-update !>([%keys ~(key by groups)]))
           [%group *]
         (give %group-update !>([%path (~(got by groups) t.path) t.path]))
@@ -75,9 +79,9 @@
       [%x *]  ``noun+!>((~(get by groups) t.path))
     ==
   ::
-  ++  on-agent  on-agent:def 
-  ++  on-arvo   on-arvo:def 
-  ++  on-fail   on-fail:def 
+  ++  on-agent  on-agent:def
+  ++  on-arvo   on-arvo:def
+  ++  on-fail   on-fail:def
   --
 ::
 |_  bol=bowl:gall
@@ -148,13 +152,14 @@
 ++  update-subscribers
   |=  [pax=path act=group-action]
   ^-  (list card)
-  [%give %fact `pax %group-update !>(act)]~
+  [%give %fact ~[pax] %group-update !>(act)]~
 ::
 ++  send-diff
   |=  [pax=path act=group-action]
   ^-  (list card)
   %-  zing
   :~  (update-subscribers /all act)
+      (update-subscribers /updates act)
       (update-subscribers [%group pax] act)
       ?.  |(=(%bundle -.act) =(%unbundle -.act))
         ~

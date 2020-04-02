@@ -58,8 +58,8 @@
   [%known peer-state]
 ::  metamorphose
 ::
-=>  .(nec +:(call:(nec) ~[//unix] ** %born ~))
-=>  .(bud +:(call:(bud) ~[//unix] ** %born ~))
+=>  .(nec +:(call:(nec) ~[//unix] ~ ** %born ~))
+=>  .(bud +:(call:(bud) ~[//unix] ~ ** %born ~))
 ::  helper core
 ::
 =>
@@ -90,7 +90,7 @@
   ::
   =/  vane-core  (vane(now `@da`(add ~s1 now.vane)))
   ::
-  (call:vane-core duct ** task)
+  (call:vane-core duct ~ ** task)
 ::
 ++  take
   |=  [vane=_nec =wire =duct =sign:ames]
@@ -98,7 +98,7 @@
   ::
   =/  vane-core  (vane(now `@da`(add ~s1 now.vane)))
   ::
-  (take:vane-core wire duct ** sign)
+  (take:vane-core wire duct ~ ** sign)
 --
 ::  test core
 ::

@@ -13,9 +13,9 @@ export default class Tile extends Component {
     let SpecificTile = window[this.props.type + 'Tile'];
 
     return (
-      <div className="fl ma2 bg-white overflow-hidden"
-           style={{ height: '234px', width: '234px' }}>
-        { !!SpecificTile ? 
+      <div className="fl ma2 bg-white bg-gray0-d overflow-hidden"
+           style={{ height: '126px', width: '126px' }}>
+        { !!SpecificTile ?
           <SpecificTile data={this.props.data} />
           : <div></div>
         }

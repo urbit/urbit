@@ -303,14 +303,18 @@
 ~%  %http-client  ..is  ~
 |%
 ++  call
-  |=  [=duct type=* wrapped-task=(hobo task:able)]
+  |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task:able)]
   ^-  [(list move) _light-gate]
   ::
-  =/  task=task:able
-    ?.  ?=(%soft -.wrapped-task)
-      wrapped-task
-    ~|  [%p-wrapped-task p.wrapped-task]
-    ;;(task:able p.wrapped-task)
+  =/  task=task:able  ((harden task:able) wrapped-task)
+  ::
+  ::  error notifications "downcast" to %crud
+  ::
+  =?  task  ?=(^ dud)
+    ~|  %crud-in-crud
+    ?<  ?=(%crud -.task)
+    [%crud -.task tang.u.dud]
+  ::
   ::  %crud: notifies us of an event failure
   ::
   ?:  ?=(%crud -.task)
@@ -380,8 +384,9 @@
 ::  http-client issues no requests to other vanes
 ::
 ++  take
-  |=  [=wire =duct wrapped-sign=*]
+  |=  [=wire =duct dud=(unit goof) wrapped-sign=*]
   ^-  [(list move) _light-gate]
+  ?<  ?=(^ dud)
   !!
 ::
 ++  light-gate  ..$

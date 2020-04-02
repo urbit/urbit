@@ -109,6 +109,15 @@
       %chat-view
       %chat-cli
       %soto
+      %contact-store
+      %contact-hook
+      %contact-view
+      %link-store
+      %link-proxy-hook
+      %link-listen-hook
+      %link-view
+      %metadata-store
+      %metadata-hook
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -214,9 +223,33 @@
   ==
 ::
 ++  on-load
-  |=  %1
-  =<  se-abet  =<  se-view
-  (se-born %home %goad)
+  |=  ver=?(%1 %2)
+  ?-    ver
+      %1
+    =<  se-abet  =<  se-view
+    =<  (se-born %home %goad)
+    =<  (se-born %home %metadata-store)
+    =<  (se-born %home %metadata-hook)
+    =<  (se-born %home %contact-store)
+    =<  (se-born %home %contact-hook)
+    =<  (se-born %home %contact-view)
+    =<  (se-born %home %link-store)
+    =<  (se-born %home %link-proxy-hook)
+    =<  (se-born %home %link-listen-hook)
+    (se-born %home %link-view)
+  ::
+      %2
+    =<  se-abet  =<  se-view
+    =<  (se-born %home %metadata-store)
+    =<  (se-born %home %metadata-hook)
+    =<  (se-born %home %contact-store)
+    =<  (se-born %home %contact-hook)
+    =<  (se-born %home %contact-view)
+    =<  (se-born %home %link-store)
+    =<  (se-born %home %link-proxy-hook)
+    =<  (se-born %home %link-listen-hook)
+    (se-born %home %link-view)
+  ==
 ::
 ++  reap-phat                                         ::  ack connect
   |=  {way/wire saw/(unit tang)}
@@ -291,7 +324,7 @@
   ?~  biz  (flop moz)
   :_  (flop moz)
   =/  =dill-blit:dill  ?~(t.biz i.biz [%mor (flop biz)])
-  [%give %fact `/drum %dill-blit !>(dill-blit)]
+  [%give %fact ~[/drum] %dill-blit !>(dill-blit)]
 ::
 ++  se-adit                                           ::  update servers
   ^+  .
@@ -478,7 +511,7 @@
 ::
 ++  se-blit-sys                                       ::  output to system
   |=  bil/dill-blit:dill  ^+  +>
-  (se-emit %give %fact `/drum %dill-blit !>(bil))
+  (se-emit %give %fact ~[/drum] %dill-blit !>(bil))
 ::
 ++  se-show                                           ::  show buffer, raw
   |=  lin/(pair @ud stub)

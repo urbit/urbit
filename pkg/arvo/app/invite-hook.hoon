@@ -4,7 +4,7 @@
 ::    can be poked by the host team to send an invite out to someone.
 ::    can be poked by foreign ships to send an invite to us.
 ::
-/+  *invite-json, default-agent, verb
+/+  *invite-json, default-agent, verb, dbug
 ::
 |%
 +$  state-0  [%0 ~]
@@ -16,6 +16,7 @@
 =*  state  -
 ::
 %+  verb  |
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -49,12 +50,10 @@
         %invite-action
       =/  act=invite-action  !<(invite-action vase)
       ?.  ?=(%invite -.act)  ~
-      ::  if the sender is us,
-      ::
       ?:  (team:title our.bowl src.bowl)
         ::  outgoing. we must be inviting another ship. send them the invite.
         ::
-        ?>  !(team:title our.bowl ship.invite.act)
+        ?<  (team:title our.bowl recipient.invite.act)
         [(invite-hook-poke:do recipient.invite.act act)]~
       ::  else incoming. ensure invitatory exists and invite is not a duplicate.
       ::

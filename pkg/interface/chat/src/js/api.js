@@ -14,7 +14,7 @@ class UrbitApi {
       add: this.groupAdd.bind(this),
       remove: this.groupRemove.bind(this)
     };
-    
+
     this.chat = {
       message: this.chatMessage.bind(this),
       read: this.chatRead.bind(this)
@@ -24,19 +24,23 @@ class UrbitApi {
       create: this.chatViewCreate.bind(this),
       delete: this.chatViewDelete.bind(this),
       join: this.chatViewJoin.bind(this),
+      groupify: this.chatViewGroupify.bind(this)
     };
-    
+
+    this.chatHook = {
+      addSynced: this.chatHookAddSynced.bind(this)
+    };
+
     this.invite = {
       accept: this.inviteAccept.bind(this),
-      decline: this.inviteDecline.bind(this),
-      invite: this.inviteInvite.bind(this)
+      decline: this.inviteDecline.bind(this)
     };
   }
 
   bind(path, method, ship = this.authTokens.ship, app, success, fail, quit) {
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
-    window.subscriptionId = window.urb.subscribe(ship, app, path, 
+    window.subscriptionId = window.urb.subscribe(ship, app, path,
       (err) => {
         fail(err);
       },
@@ -59,7 +63,7 @@ class UrbitApi {
       window.urb.poke(ship, appl, mark, data,
         (json) => {
           resolve(json);
-        }, 
+        },
         (err) => {
           reject(err);
         });
@@ -79,11 +83,11 @@ class UrbitApi {
   }
 
   groupsAction(data) {
-    this.action("group-store", "group-action", data);
+    return this.action("group-store", "group-action", data);
   }
 
   groupAdd(members, path) {
-    this.groupsAction({
+    return this.groupsAction({
       add: {
         members, path
       }
@@ -117,6 +121,7 @@ class UrbitApi {
     };
 
     this.action("chat-hook", "json", data);
+    data.message.envelope.author = data.message.envelope.author.substr(1);
     this.addPendingMessage(data.message);
   }
 
@@ -124,52 +129,65 @@ class UrbitApi {
     this.chatAction({ read: { path } });
   }
 
-  chatViewAction(data) {
-    this.action("chat-view", "json", data);
+
+  chatHookAddSynced(ship, path, askHistory) {
+    return this.action("chat-hook", "chat-hook-action", {
+      'add-synced': {
+        ship,
+        path,
+        'ask-history': askHistory
+      }
+    });
   }
 
-  chatViewCreate(path, security, read, write, allowHistory) {
-    this.chatViewAction({
+  chatViewAction(data) {
+    return this.action("chat-view", "json", data);
+  }
+
+  chatViewCreate(
+    title, description, appPath, groupPath,
+    security, members, allowHistory
+  ) {
+    return this.chatViewAction({
       create: {
-        path, security, read, write,
+        title,
+        description,
+        'app-path': appPath,
+        'group-path': groupPath,
+        security,
+        members,
         'allow-history': allowHistory
       }
     });
   }
 
   chatViewDelete(path) {
-    this.chatViewAction({ delete: { path } });
+    this.chatViewAction({ delete: { 'app-path': path } });
   }
 
   chatViewJoin(ship, path, askHistory) {
-    this.chatViewAction({ 
+    this.chatViewAction({
       join: {
-        ship, path,
+        ship,
+        'app-path': path,
         'ask-history': askHistory
       }
     });
   }
 
+  chatViewGroupify(path, group = null, inclusive = false) {
+    let action = { groupify: { 'app-path': path, existing: null } };
+    if (group) {
+      action.groupify.existing = {
+        'group-path': group,
+        inclusive: inclusive
+      }
+    }
+    return this.chatViewAction(action);
+  }
+
   inviteAction(data) {
     this.action("invite-store", "json", data);
-  }
-  
-  inviteInvite(path, ship) {
-    this.action("invite-hook", "json", 
-      {
-        invite: {
-          path: '/chat',
-          invite: {
-            path,
-            ship: `~${window.ship}`,
-            recipient: ship,
-            app: 'chat-hook',
-            text: `~${window.ship}${path}`,
-          },
-          uid: uuid()
-        }
-      }
-    );
   }
 
   inviteAccept(uid) {
@@ -180,7 +198,7 @@ class UrbitApi {
       }
     });
   }
-  
+
   inviteDecline(uid) {
     this.inviteAction({
       decline: {
@@ -188,6 +206,30 @@ class UrbitApi {
         uid
       }
     });
+  }
+
+  metadataAction(data) {
+    return this.action("metadata-hook", "metadata-action", data);
+  }
+
+  metadataAdd(appPath, groupPath, title, description, dateCreated, color) {
+    let creator = `~${window.ship}`
+    return this.metadataAction({
+      add: {
+        "group-path": groupPath,
+        resource: {
+          "app-path": appPath,
+          "app-name": "chat"
+        },
+        metadata: {
+          title,
+          description,
+          color,
+          'date-created': dateCreated,
+          creator
+        }
+      }
+    })
   }
 
   sidebarToggle() {
@@ -202,6 +244,26 @@ class UrbitApi {
         }
       }
     });
+  }
+
+  setSpinner(boolean) {
+    store.handleEvent({
+      data: {
+        local: {
+          spinner: boolean
+        }
+      }
+    })
+  }
+
+  setSelected(selected) {
+    store.handleEvent({
+      data: {
+        local: {
+          selected: selected
+        }
+      }
+    })
   }
 }
 

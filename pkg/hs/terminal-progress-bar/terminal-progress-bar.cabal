@@ -1,0 +1,72 @@
+name:          terminal-progress-bar
+version:       0.4.1
+cabal-version: >=1.10
+build-type:    Simple
+author:        Roel van Dijk <roel@lambdacube.nl>
+maintainer:    Roel van Dijk <roel@lambdacube.nl>
+copyright:     2012–2019 Roel van Dijk <roel@lambdacube.nl>
+license:       BSD3
+-- ense-file:  LICENSE
+category:      System, User Interfaces
+homepage:      https://github.com/roelvandijk/terminal-progress-bar
+bug-reports:   https://github.com/roelvandijk/terminal-progress-bar/issues
+synopsis:      A progress bar in the terminal
+description:
+  A progress bar conveys the progress of a task. This package
+  implements a progress bar that is displayed in a terminal.
+  .
+  See the module 'System.ProgressBar' to get started or look at the
+  terminal-progress-bar-example package.
+  .
+  The animated progress bar depends entirely on the interpretation of
+  the carriage return character (\'\\r\'). If your terminal interprets
+  it as something else than \"move cursor to beginning of line\", the
+  animation won't work.
+
+-- ra-source-files: LICENSE, README.markdown, changelog.md
+
+source-repository head
+  type:     git
+  location: git://github.com/roelvandijk/terminal-progress-bar.git
+
+library
+    hs-source-dirs: src
+    build-depends:
+        base          >= 4.5 && < 5
+      , deepseq       >= 1.4.3
+      , terminal-size >= 0.3.2
+      , text          >= 1.2
+      , time          >= 1.8
+      , rio
+      , classy-prelude
+    exposed-modules: System.ProgressBar
+    ghc-options: -Wall
+    default-language: Haskell2010
+
+test-suite test-terminal-progress-bar
+    type: exitcode-stdio-1.0
+    main-is: test.hs
+    hs-source-dirs: test
+    ghc-options: -Wall
+    build-depends:
+        base                 >= 4.5 && < 5
+      , HUnit                >= 1.2.4.2
+      , terminal-progress-bar
+      , test-framework       >= 0.3.3
+      , test-framework-hunit >= 0.2.6
+      , text                 >= 1.2
+      , time                 >= 1.8
+    default-language: Haskell2010
+
+benchmark bench-terminal-progress-bar
+    type: exitcode-stdio-1.0
+    main-is: bench.hs
+    hs-source-dirs: bench
+
+    build-depends:
+        base      >= 4.5 && < 5
+      , criterion >= 1.1.4
+      , terminal-progress-bar
+      , time      >= 1.8
+    ghc-options: -Wall -O2
+    default-language: Haskell2010

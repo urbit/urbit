@@ -44,12 +44,13 @@
 ::
 ::  Type of request.
 ::
-::  %d produces a set of desks, %p gets file permissions, %u checks for
-::  existence, %v produces a ++dome of all desk data, %w gets @ud and @da
-::  variants for the given case, %x gets file contents, %y gets a directory
-::  listing, and %z gets a recursive hash of the file contents and children.
+::  %d produces a set of desks, %p gets file permissions, %t gets all paths
+::  with the specified prefix, %u checks for existence, %v produces a ++dome
+::  of all desk data, %w gets @ud and @da variants for the given case, %x
+::  gets file contents, %y gets a directory listing, and %z gets a recursive
+::  hash of the file contents and children.
 ::
-:: ++  care  ?($d $p $u $v $w $x $y $z)
+:: ++  care  ?($d $p $t $u $v $w $x $y $z)
 ::
 ::  Keeps track of subscribers.
 ::
@@ -534,6 +535,7 @@
           $>(%crud vane-task)                           ::  XX strange
   ==  ==                                                ::
 --  =>
+~%  %clay-utilities  ..is  ~
 ::  %utilities
 ::
 |%
@@ -586,6 +588,7 @@
   ~|  [%expected-writ got=+<.sign]
   !!
 --  =>
+~%  %clay  +  ~
 |%
 ::  Printable form of a wove; useful for debugging
 ::
@@ -2560,6 +2563,8 @@
       =+  dif=;;((urge cord) q.r.bol)
       =,  format
       =+  pac=(of-wain (lurk:differ (to-wain (cat 3 txt '\0a')) dif))
+      ?~  pac
+        ''
       (end 3 (dec (met 3 pac)) pac)
     ::
     ::  Traverse an ankh.
@@ -4062,15 +4067,20 @@
 |%                                                    ::
 ++  call                                              ::  handle request
   |=  $:  hen=duct
+          dud=(unit goof)
           type=*
           wrapped-task=(hobo task:able)
       ==
   ^-  [(list move) _..^$]
   ::
-  =/  req=task:able
-    ?.  ?=(%soft -.wrapped-task)
-      wrapped-task
-    ;;(task:able p.wrapped-task)
+  =/  req=task:able  ((harden task:able) wrapped-task)
+  ::
+  ::  error notifications "downcast" to %crud
+  ::
+  =?  req  ?=(^ dud)
+    ~|  %crud-in-crud
+    ?<  ?=(%crud -.req)
+    [%crud -.req tang.u.dud]
   ::
   ::  only one of these should be going at once, so queue
   ::
@@ -4167,7 +4177,11 @@
     ~?  ?=(^ act.ruf)
       [%clay-cancelling hen -.req -.eval-data]:u.act.ruf
     =.  act.ruf  ~
-    ?~  cue.ruf
+    ?:  =(~ cue.ruf)
+      [~ ..^$]
+    ?:  =(%force des.req)
+      =^  queued  cue.ruf  ~(get to cue.ruf)
+      ~&  [%dropping-hard [duct -.task]:p.queued cue-length=~(wyt in cue.ruf)]
       [~ ..^$]
     =/  =duct  duct:(need ~(top to cue.ruf))
     [[duct %pass /queued-request %b %wait now]~ ..^$]
@@ -4401,8 +4415,11 @@
 ::
 ++  stay  [ver ruf]
 ++  take                                              ::  accept response
-  |=  [tea=wire hen=duct hin=(hypo sign)]
+  |=  [tea=wire hen=duct dud=(unit goof) hin=(hypo sign)]
   ^+  [*(list move) ..^$]
+  ?^  dud
+    ~|(%clay-take-dud (mean tang.u.dud))
+  ::
   ?:  ?=([%commit @ *] tea)
     =*  syd  i.t.tea
     =^  mos  ruf

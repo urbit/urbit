@@ -1,4 +1,4 @@
-/+  *invite-json, default-agent
+/+  *invite-json, default-agent, dbug
 |%
 +$  card  card:agent:gall
 ::
@@ -14,6 +14,7 @@
 ::
 =|  state-zero
 =*  state  -
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  bol=bowl:gall
@@ -169,7 +170,7 @@
 ++  update-subscribers
   |=  [pax=path upd=invite-update]
   ^-  card
-  [%give %fact `pax %invite-update !>(upd)]
+  [%give %fact ~[pax] %invite-update !>(upd)]
 ::
 ++  send-diff
   |=  [pax=path upd=invite-update]

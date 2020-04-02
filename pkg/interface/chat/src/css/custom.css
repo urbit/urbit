@@ -3,6 +3,11 @@
   -webkit-touch-callout: none;
 }
 
+html, body {
+  height: 100%;
+  width: 100%;
+}
+
 p, h1, h2, h3, h4, h5, h6, a, input, textarea, button {
   margin-block-end: unset;
   margin-block-start: unset;
@@ -17,14 +22,6 @@ textarea, input, button {
   -webkit-appearance: none;
   border: none;
   background-color: #fff;
-}
-
-.dropdown::after {
-  content: "⌃";
-  transform: rotate(180deg);
-  position: absolute;
-  right: 12px;
-  top: 8px;
 }
 
 a {
@@ -87,6 +84,10 @@ h2 {
   font-family: "Source Code Pro", monospace;
 }
 
+.bg-welcome-green {
+  background-color: #ECF6F2;
+}
+
 .list-ship {
   line-height: 2.2;
 }
@@ -99,6 +100,75 @@ h2 {
   word-break: break-all;
 }
 
+.focus-b--black:focus {
+  border-color: #000;
+}
+
+.mix-blend-diff {
+  mix-blend-mode: difference;
+}
+
+.placeholder-inter::placeholder {
+  font-family: "Inter", sans-serif;
+}
+
+/* spinner */
+
+.spin-active {
+  animation: spin 2s infinite;
+}
+
+@keyframes spin {
+  0% {transform: rotate(0deg);}
+  25% {transform: rotate(90deg);}
+  50% {transform: rotate(180deg);}
+  75% {transform: rotate(270deg);}
+  100% {transform: rotate(360deg);}
+}
+
+/* embeds */
+.embed-container {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 28.125%;
+}
+
+.embed-container iframe, .embed-container object, .embed-container embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.mh-16 {
+  max-height: 16rem;
+}
+
+/* toggler checkbox */
+.toggle::after {
+  content: "";
+  height: 12px;
+  width: 12px;
+  background: white;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  border-radius: 100%;
+}
+
+.toggle.checked::after {
+  content: "";
+  height: 12px;
+  width: 12px;
+  background: white;
+  position: absolute;
+  top: 2px;
+  left: 14px;
+  border-radius: 100%;
+}
+
 /* responsive */
 
 @media all and (max-width: 34.375em) {
@@ -108,37 +178,109 @@ h2 {
   .flex-basis-full-s {
     flex-basis: 100%;
   }
-  .h-100-minus-48-s {
-    height: calc(100% - 48px);
+  .h-100-minus-40-s {
+    height: calc(100% - 40px);
   }
   .h-100-minus-96-s {
     height: calc(100% - 96px);
   }
+  .embed-container {
+    padding-bottom: 56.25%;
+  }
 }
 
 @media all and (min-width: 34.375em) and (max-width: 46.875em) {
-  .flex-basis-300-m {
-    flex-basis: 300px;
+  .flex-basis-250-m {
+    flex-basis: 250px;
   }
-  .h-100-minus-48-m {
-    height: calc(100% - 48px);
+  .h-100-minus-40-m {
+    height: calc(100% - 40px);
+  }
+  .embed-container {
+    padding-bottom: 56.25%;
   }
 }
 
 @media all and (min-width: 46.875em) and (max-width: 60em) {
-  .flex-basis-300-l {
-    flex-basis: 300px;
+  .flex-basis-250-l {
+    flex-basis: 250px;
   }
-  .h-100-minus-48-l {
-    height: calc(100% - 48px);
+  .h-100-minus-40-l {
+    height: calc(100% - 40px);
+  }
+  .embed-container {
+    padding-bottom: 37.5%;
   }
 }
 
 @media all and (min-width: 60em) {
-  .flex-basis-300-xl {
-    flex-basis: 300px;
+  .flex-basis-250-xl {
+    flex-basis: 250px;
   }
-  .h-100-minus-48-xl {
-    height: calc(100% - 48px);
+  .h-100-minus-40-xl {
+    height: calc(100% - 40px);
+  }
+}
+
+/* dark */
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #333;
+  }
+  .bg-black-d {
+    background-color: black;
+  }
+  .white-d {
+    color: white;
+  }
+  .gray1-d {
+    color: #4d4d4d;
+  }
+  .gray2-d {
+    color: #7f7f7f;
+  }
+  .gray3-d {
+    color: #b1b2b3;
+  }
+  .gray4-d {
+    color: #e6e6e6;
+  }
+  .bg-gray0-d {
+    background-color: #333;
+  }
+  .bg-gray1-d {
+    background-color: #4d4d4d;
+  }
+  .b--gray0-d {
+    border-color: #333;
+  }
+  .b--gray1-d {
+    border-color: #4d4d4d;
+  }
+  .b--gray2-d {
+    border-color: #7f7f7f;
+  }
+  .b--white-d {
+    border-color: #fff;
+  }
+  .bb-d {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+  }
+  .invert-d {
+    filter: invert(1);
+  }
+  .o-80-d {
+    opacity: .8;
+  }
+  .focus-b--white-d:focus {
+    border-color: #fff;
+  }
+  a {
+    color: #fff;
+  }
+  .hover-bg-gray1-d:hover {
+    background-color: #4d4d4d;
   }
 }

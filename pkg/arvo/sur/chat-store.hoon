@@ -31,7 +31,7 @@
 +$  chat-configs  (map path config)
 ::
 +$  chat-base
-  $%  [%create =ship =path]         ::  %create: create a mailbox at ~ship/path
+  $%  [%create =path]               ::  %create: create a mailbox at path
       [%delete =path]               ::  %delete: delete a mailbox at path
       [%message =path =envelope]    ::  %message: append a message to mailbox
       [%read =path]                 ::  %read: set mailbox to read

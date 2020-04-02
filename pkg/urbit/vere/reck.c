@@ -135,7 +135,9 @@ _reck_kick_term(u3_pier* pir_u, u3_noun pox, c3_l tid_l, u3_noun fav)
 
       //  gc the daemon area
       //
-      uv_timer_start(&u3K.tim_u, (uv_timer_cb)u3_daemon_grab, 0, 0);
+      //    XX disabled due to known leaks; uncomment for dev
+      //
+      // uv_timer_start(&u3K.tim_u, (uv_timer_cb)u3_daemon_grab, 0, 0);
       return c3y;
     } break;
 

@@ -59,7 +59,7 @@
       :_  this  :_  ~
       [%pass /dill %arvo %d %flog %crud %goad-fail u.error.sign-arvo]
     %-  (slog leaf+"goad: recompiling all apps" ~)
-    [(goad |) this]
+    [(goad &) this]
   ==
 ::
 ++  on-fail   on-fail:def

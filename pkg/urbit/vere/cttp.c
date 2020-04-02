@@ -529,7 +529,7 @@ _cttp_creq_free(u3_creq* ceq_u)
   c3_free(ceq_u);
 }
 
-/* _cttp_creq_new(): create a u3_creq from an +http-request 
+/* _cttp_creq_new(): create a u3_creq from an +http-request
  *
  *   If we were rewriting all of this from scratch, this isn't how we'd do it.
  *
@@ -835,7 +835,7 @@ _cttp_creq_connect(u3_creq* ceq_u)
                ( c3y == ceq_u->sec ) ? 443 : 80;
 
   // connect by IP
-  h2o_http1client_connect(&ceq_u->cli_u, ceq_u, u3_Host.ctp_u.ctx_u, ipf_u,
+  h2o_http1client_connect(&ceq_u->cli_u, ceq_u, &u3_Host.ctp_u.ctx_u, ipf_u,
                           por_s, c3y == ceq_u->sec, _cttp_creq_on_connect);
 
   // set hostname for TLS handshake
@@ -947,22 +947,6 @@ _cttp_init_tls()
   return tls_u;
 }
 
-/* _cttp_init_h2o: initialize h2o client ctx and timeout
-*/
-static h2o_http1client_ctx_t*
-_cttp_init_h2o()
-{
-  h2o_timeout_t* tim_u = c3_malloc(sizeof(*tim_u));
-
-  h2o_timeout_init(u3L, tim_u, 300 * 1000);
-
-  h2o_http1client_ctx_t* ctx_u = c3_calloc(sizeof(*ctx_u));
-  ctx_u->loop = u3L;
-  ctx_u->io_timeout = tim_u;
-
-  return ctx_u;
-};
-
 /* u3_cttp_ef_http_client(): send an %http-client (outgoing request) to cttp.
 */
 void
@@ -1011,9 +995,26 @@ u3_cttp_ef_bake()
 void
 u3_cttp_io_init()
 {
+  //  zero-initialize h2o ctx
+  //
+  memset(&u3_Host.ctp_u.ctx_u, 0, sizeof(u3_Host.ctp_u.ctx_u));
+
+  //  link to event loop
+  //
+  u3_Host.ctp_u.ctx_u.loop = u3L;
+
+  //  link to initialized request timeout
+  //
+  h2o_timeout_init(u3L, &u3_Host.ctp_u.tim_u, 300 * 1000);
+  u3_Host.ctp_u.ctx_u.io_timeout = &u3_Host.ctp_u.tim_u;
+
+  //  link to initialized tls ctx
+  //
   u3_Host.ctp_u.tls_u = _cttp_init_tls();
-  u3_Host.ctp_u.ctx_u = _cttp_init_h2o();
-  u3_Host.ctp_u.ctx_u->ssl_ctx = u3_Host.ctp_u.tls_u;
+  u3_Host.ctp_u.ctx_u.ssl_ctx = u3_Host.ctp_u.tls_u;
+
+  //  zero-initialize request list
+  //
   u3_Host.ctp_u.ceq_u = 0;
 }
 
@@ -1022,7 +1023,19 @@ u3_cttp_io_init()
 void
 u3_cttp_io_exit(void)
 {
-    SSL_CTX_free(u3_Host.ctp_u.tls_u);
-    c3_free(u3_Host.ctp_u.ctx_u->io_timeout);
-    c3_free(u3_Host.ctp_u.ctx_u);
+  //  cancel requests
+  //
+  {
+    u3_creq* ceq_u = u3_Host.ctp_u.ceq_u;
+
+    while ( ceq_u ) {
+      _cttp_creq_quit(ceq_u);
+      ceq_u = ceq_u->nex_u;
+    }
+  }
+
+  //  dispose of global resources
+  //
+  h2o_timeout_dispose(u3L, &u3_Host.ctp_u.tim_u);
+  SSL_CTX_free(u3_Host.ctp_u.tls_u);
 }

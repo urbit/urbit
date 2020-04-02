@@ -6,13 +6,7 @@ export class InitialReducer {
     let data = _.get(json, 'chat-initial', false);
     if (data) {
       state.inbox = data;
-    }
-
-    data = _.get(json, 'group-initial', false);
-    if (data) {
-      for (let group in data) {
-        state.groups[group] = new Set(data[group]);
-      }
+      state.chatInitialized = true;
     }
 
     data = _.get(json, 'permission-initial', false);
@@ -28,6 +22,16 @@ export class InitialReducer {
     data = _.get(json, 'invite-initial', false);
     if (data) {
       state.invites = data;
+    }
+
+    data = _.get(json, 'contact-initial', false);
+    if (data) {
+      state.contacts = data;
+    }
+
+    data = _.get(json, 'chat-hook-update', false);
+    if (data) {
+      state.chatSynced = data;
     }
   }
 }

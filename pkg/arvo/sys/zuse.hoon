@@ -1887,8 +1887,8 @@
           [%poke-as =mark =cage]
       ==
     +$  gift
-      $%  [%fact path=(unit path) =cage]
-          [%kick path=(unit path) ship=(unit ship)]
+      $%  [%fact paths=(list path) =cage]
+          [%kick paths=(list path) ship=(unit ship)]
           [%watch-ack p=(unit tang)]
           [%poke-ack p=(unit tang)]
       ==
@@ -3357,7 +3357,7 @@
         ~/  %en
         |=  txt/@
         ^-  (trel @uxH @ud @ux)
-        =+  [k1=(rsh 5 3 key) k2=(end 5 3 key)]
+        =+  [k1=(rsh 6 3 key) k2=(end 6 3 key)]
         =+  iv=(s2vb k1 (weld vec (limo ~[txt])))
         =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
         =+  len=(met 3 txt)
@@ -3369,7 +3369,7 @@
         ~/  %de
         |=  {iv/@H len/@ txt/@}
         ^-  (unit @ux)
-        =+  [k1=(rsh 5 3 key) k2=(end 5 3 key)]
+        =+  [k1=(rsh 6 3 key) k2=(end 6 3 key)]
         =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
         =+  ^=  pln
           (~(de ctrb k2 7 len hib) txt)
@@ -6705,7 +6705,7 @@
       ;~(pose pcar net wut)
     ::                                                  ::  ++pquo:de-purl:html
     ++  pquo                                            ::  normal query char
-      ;~(pose pure pesc pold net wut col)
+      ;~(pose pure pesc pold net wut col com)
     ::                                                  ::  ++pure:de-purl:html
     ++  pure                                            ::  2396 unreserved
       ;~(pose aln hep dot cab sig)
@@ -8171,15 +8171,18 @@
     =>  |%
         ::  solidity types. integer bitsizes ignored
         ++  etyp
+          $@  $?  ::  static
+                  %address  %bool
+                  %int      %uint
+                  %real     %ureal
+                  ::  dynamic
+                  %bytes    %string
+              ==
           $%  ::  static
-              %address  %bool
-              %int      %uint
-              %real     %ureal
               [%bytes-n n=@ud]
               ::  dynamic
               [%array-n t=etyp n=@ud]
               [%array t=etyp]
-              %bytes    %string
           ==
         ::
         ::  solidity-style typed data. integer bitsizes ignored

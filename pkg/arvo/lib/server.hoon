@@ -49,23 +49,26 @@
       [%http-response-header !>(response-header.simple-payload)]
     =/  data-cage
       [%http-response-data !>(data.simple-payload)]
-    :~  [%give %fact `/http-response/[eyre-id] header-cage]
-        [%give %fact `/http-response/[eyre-id] data-cage]
-        [%give %kick `/http-response/[eyre-id] ~]
+    :~  [%give %fact ~[/http-response/[eyre-id]] header-cage]
+        [%give %fact ~[/http-response/[eyre-id]] data-cage]
+        [%give %kick ~[/http-response/[eyre-id]] ~]
     ==
   --
 ++  gen
   |%
   ::
+  ++  max-1-da  ['cache-control' 'max-age=86400']
+  ++  max-1-wk  ['cache-control' 'max-age=604800']
+  ::
   ++  html-response
     |=  =octs
     ^-  simple-payload:http
-    [[200 ['content-type' 'text/html']~] `octs]
+    [[200 [['content-type' 'text/html'] max-1-wk ~]] `octs]
   ::
   ++  js-response
     |=  =octs
     ^-  simple-payload:http
-    [[200 ['content-type' 'text/javascript']~] `octs]
+    [[200 [['content-type' 'text/javascript'] max-1-da ~]] `octs]
   ::
   ++  json-response
     |=  =octs
@@ -75,7 +78,7 @@
   ++  css-response
     |=  =octs
     ^-  simple-payload:http
-    [[200 ['content-type' 'text/css']~] `octs]
+    [[200 [['content-type' 'text/css'] max-1-da ~]] `octs]
   ::
   ++  manx-response
     |=  man=manx
@@ -85,12 +88,12 @@
   ++  png-response
     |=  =octs
     ^-  simple-payload:http
-    [[200 ['content-type' 'image/png']~] `octs]
+    [[200 [['content-type' 'image/png'] max-1-wk ~]] `octs]
   ::
   ++  woff2-response
     |=  =octs
     ^-  simple-payload:http
-    [[200 ['content-type' 'font/woff2']~] `octs]
+    [[200 [['content-type' 'font/woff2'] max-1-wk ~]] `octs]
   ::
   ++  not-found
     ^-  simple-payload:http

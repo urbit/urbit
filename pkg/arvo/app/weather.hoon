@@ -1,4 +1,4 @@
-/+  *server, *server, default-agent
+/+  *server, *server, default-agent, verb, dbug
 /=  tile-js
   /^  octs
   /;  as-octs:mimes:html
@@ -21,6 +21,8 @@
 --
 =|  state-zero
 =*  state  -
+%+  verb  |
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  bol=bowl:gall
@@ -32,7 +34,7 @@
     :_  this
     :~  [%pass /bind/weather %arvo %e %connect [~ /'~weather'] %weather]
         :*  %pass  /launch/weather  %agent  [our.bol %launch]  %poke
-            %launch-action  !>([%weather /weathertile '/~weather/js/tile.js'])
+            %launch-action  !>([%add %weather /weathertile '/~weather/js/tile.js'])
         ==
     ==
   ++  on-save  !>(state)
@@ -101,7 +103,7 @@
   =/  lismov  [%pass /[(scot %da now.bol)] %arvo %i %request req out]~
   ?~  timer
     :-  [[%pass /timer %arvo %b %wait (add now.bol ~h3)] lismov]
-    %=  state 
+    %=  state
       location  str
       timer    `(add now.bol ~h3)
     ==
@@ -135,7 +137,7 @@
     currently+(~(got by p.u.ujon) 'currently')
     daily+(~(got by p.u.ujon) 'daily')
   ==
-  :-  [%give %fact `/weathertile %json !>(jon)]~
+  :-  [%give %fact ~[/weathertile] %json !>(jon)]~
   %=  state
     data  jon
     time  now.bol

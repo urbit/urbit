@@ -1535,6 +1535,7 @@ _cm_limits(void)
 
   // Moar core.
   //
+# ifndef ASAN_ENABLED
   {
     getrlimit(RLIMIT_CORE, &rlm);
     rlm.rlim_cur = RLIM_INFINITY;
@@ -1545,6 +1546,7 @@ _cm_limits(void)
       u3l_log("boot: core limit: %s\r\n", strerror(errno));
     }
   }
+# endif
 }
 
 /* _cm_signals(): set up interrupts, etc.

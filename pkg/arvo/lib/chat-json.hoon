@@ -1,4 +1,4 @@
-/-  *chat-store, *chat-view
+/-  *chat-store, *chat-hook, *chat-view
 /+  chat-eval
 |%
 ::
@@ -118,6 +118,17 @@
       [%config (conf config.mailbox)]
   ==
 ::
+++  hook-update-to-json
+  |=  upd=chat-hook-update
+  =,  enjs:format
+  ^-  json
+  %+  frond  %chat-hook-update
+  %-  pairs
+  %+  turn  ~(tap by synced.upd)
+  |=  [pax=^path shp=^ship]
+  ^-  [cord json]
+  [(spat pax) s+(scot %p shp)]
+::
 ++  update-to-json
   |=  upd=chat-update
   =,  enjs:format
@@ -142,11 +153,7 @@
     ?:  ?=(%read -.upd)
       [%read (pairs [%path (path path.upd)]~)]
     ?:  ?=(%create -.upd)
-      :-  %create
-      %-  pairs
-      :~  [%ship (ship ship.upd)]
-          [%path (path path.upd)]
-      ==
+      [%create (pairs [%path (path path.upd)]~)]
     ?:  ?=(%delete -.upd)
       [%delete (pairs [%path (path path.upd)]~)]
     ?:  ?=(%config -.upd)
@@ -174,10 +181,7 @@
     ==
   ::
   ++  create
-    %-  ot
-    :~  [%ship (su ;~(pfix sig fed:ag))]
-        [%path pa]
-    ==
+    (ot [%path pa]~)
   ::
   ++  delete
     (ot [%path pa]~)
@@ -216,6 +220,33 @@
   ::
   --
 ::
+++  json-to-hook-action
+  |=  jon=json
+  ^-  chat-hook-action
+  =,  dejs:format
+  =<  (parse-json jon)
+  |%
+  ++  parse-json
+    %-  of
+    :~  [%add-owned add-owned]
+        [%add-synced add-synced]
+        [%remove pa]
+    ==
+  ::
+  ++  add-owned
+    %-  ot
+    :~  [%path pa]
+        [%allow-history bo]
+    ==
+  ::
+  ++  add-synced
+    %-  ot
+    :~  [%ship (su ;~(pfix sig fed:ag))]
+        [%path pa]
+        [%ask-history bo]
+    ==
+  --
+::
 ++  json-to-view-action
   |=  jon=json
   ^-  chat-view-action
@@ -227,26 +258,33 @@
     :~  [%create create]
         [%delete delete]
         [%join join]
+        [%groupify groupify]
     ==
   ::
   ++  create
     %-  ot
-    :~  [%path pa]
+    :~  [%title so]
+        [%description so]
+        [%app-path pa]
+        [%group-path pa]
         [%security sec]
-        [%read (as (su ;~(pfix sig fed:ag)))]
-        [%write (as (su ;~(pfix sig fed:ag)))]
+        [%members (as (su ;~(pfix sig fed:ag)))]
         [%allow-history bo]
     ==
   ::
   ++  delete
-    (ot [%path pa]~)
+    (ot [%app-path pa]~)
   ::
   ++  join
     %-  ot
     :~  [%ship (su ;~(pfix sig fed:ag))]
-        [%path pa]
+        [%app-path pa]
         [%ask-history bo]
     ==
+  ::
+  ++  groupify
+    =-  (ot [%app-path pa] [%existing -] ~)
+    (mu (ot [%group-path pa] [%inclusive bo] ~))
   ::
   ++  sec
     =,  dejs:format
