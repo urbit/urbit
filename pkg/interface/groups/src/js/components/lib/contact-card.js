@@ -501,7 +501,7 @@ export class ContactCard extends Component {
         <div
           className={
             "flex justify-between w-100 bg-white bg-gray0-d " +
-            "bb b--gray4 b--gray2-d "
+            "bb b--gray4 b--gray1-d "
           }>
           <div className="f9 mv4 mh3 pt1 dib w-100">
             <Link to={meLink}>

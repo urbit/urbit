@@ -148,6 +148,9 @@ a {
   .b--gray0-d {
     border-color: #333;
   }
+  .b--gray1-d {
+    border-color: #4d4d4d;
+  }
   .b--gray2-d {
     border-color: #7f7f7f;
   }
