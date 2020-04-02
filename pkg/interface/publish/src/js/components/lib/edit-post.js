@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { SidebarSwitcher } from './icons/icon-sidebar-switch';
+import { Spinner } from './icons/icon-spinner';
 import { Route, Link } from 'react-router-dom';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { dateToDa } from '/lib/util';
@@ -11,7 +12,8 @@ export class EditPost extends Component {
     super(props);
     this.state = {
       body: '',
-      submit: false
+      submit: false,
+      awaiting: false
     }
     this.postSubmit = this.postSubmit.bind(this);
     this.bodyChange = this.bodyChange.bind(this);
@@ -48,11 +50,11 @@ export class EditPost extends Component {
         body: state.body
       }
     }
-    window.api.setSpinner(true);
+    this.setState({awaiting: true});
     window.api.action("publish", "publish-action", editNote).then(() => {
       let editIndex = props.location.pathname.indexOf("/edit");
       let noteHref = props.location.pathname.slice(0, editIndex);
-      window.api.setSpinner(false);
+      this.setState({awaiting: false});
       props.history.push(noteHref);
     });
   }
@@ -125,6 +127,7 @@ export class EditPost extends Component {
             onBeforeChange={(e, d, v) => this.bodyChange(e, d, v)}
             onChange={(editor, data, value) => {}}
           />
+            <Spinner text="Editing post..." awaiting={this.state.awaiting} classes="absolute bottom-1 right-1 ba b--gray1-d pa2"/>
         </div>
         </div>
       </div>

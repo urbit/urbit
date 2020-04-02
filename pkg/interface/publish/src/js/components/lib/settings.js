@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { writeText } from '../../lib/util';
+import { Spinner } from './icons/icon-spinner';
 
 export class Settings extends Component {
   constructor(props){
@@ -8,7 +9,8 @@ export class Settings extends Component {
       title: "",
       description: "",
       comments: false,
-      disabled: false
+      disabled: false,
+      type: "Editing"
     }
     this.deleteNotebook = this.deleteNotebook.bind(this);
     this.changeTitle = this.changeTitle.bind(this);
@@ -29,13 +31,19 @@ export class Settings extends Component {
 
   componentDidUpdate(prevProps) {
     const { props } = this;
-    if (prevProps !== this.props) {
+    if (prevProps !== props) {
       if (props.notebook) {
-        this.setState({
-          title: props.notebook.title,
-          description: props.notebook.about,
-          comments: props.notebook.comments
-        })
+        if (prevProps.notebook && prevProps.notebook !== props.notebook) {
+          if (prevProps.notebook.title !== props.notebook.title) {
+            this.setState({title: props.notebook.title});
+          }
+          if (prevProps.notebook.about !== props.notebook.about) {
+            this.setState({description: props.notebook.about});
+          }
+          if (prevProps.notebook.comments !== props.notebook.comments) {
+            this.setState({comments: props.notebook.comments})
+          }
+        }
       }
     }
   }
@@ -49,8 +57,7 @@ export class Settings extends Component {
   }
 
   changeComments() {
-    this.setState({comments: !this.state.comments}, (() => {
-      window.api.setSpinner(true);
+    this.setState({comments: !this.state.comments, disabled: true}, (() => {
       window.api.action("publish", "publish-action", {
         "edit-book": {
           book: this.props.book,
@@ -60,7 +67,7 @@ export class Settings extends Component {
           group: null
         }
       }).then(() => {
-        window.api.setSpinner(false);
+        this.setState({disabled: false});
       })
     }));
   }
@@ -71,9 +78,8 @@ export class Settings extends Component {
         book: this.props.book
       }
     }
-    window.api.setSpinner(true);
+    this.setState({ disabled: true, type: "Deleting" });
     window.api.action("publish", "publish-action", action).then(() => {
-      window.api.setSpinner(false);
       this.props.history.push("/~publish");
     });
   }
@@ -132,7 +138,6 @@ export class Settings extends Component {
               disabled={this.state.disabled}
               onBlur={() => {
                 this.setState({ disabled: true });
-                window.api.setSpinner(true);
                 window.api
                   .action("publish", "publish-action", {
                     "edit-book": {
@@ -145,7 +150,6 @@ export class Settings extends Component {
                   })
                   .then(() => {
                     this.setState({ disabled: false })
-                    window.api.setSpinner(false);
                   });
               }}
             />
@@ -162,7 +166,6 @@ export class Settings extends Component {
               onChange={this.changeDescription}
               onBlur={() => {
                 this.setState({ disabled: true });
-                window.api.setSpinner(true);
                 window.api
                   .action("publish", "publish-action", {
                     "edit-book": {
@@ -175,7 +178,6 @@ export class Settings extends Component {
                   })
                   .then(() => {
                     this.setState({ disabled: false });
-                    window.api.setSpinner(false);
                   });
               }}
             />
@@ -192,6 +194,11 @@ export class Settings extends Component {
             Subscribers may comment when enabled
             </p>
           </div>
+          <Spinner
+            awaiting={this.state.disabled}
+            classes="absolute right-1 bottom-1 pa2 ba b--black b--gray0-d white-d"
+            text={`${this.state.type} notebook...`}
+          />
         </div>
       );
     } else {

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { SidebarSwitcher } from './icons/icon-sidebar-switch';
+import { Spinner } from './icons/icon-spinner';
 import { Route, Link } from 'react-router-dom';
 import { Controlled as CodeMirror } from 'react-codemirror2'
 import { dateToDa, stringToSymbol } from '/lib/util';
@@ -35,7 +36,6 @@ export class NewPost extends Component {
         }
       }
 
-      window.api.setSpinner(true);
       this.setState({ disabled: true });
       window.api.action("publish", "publish-action", newNote).then(() => {
         this.setState({ awaiting: newNote["new-note"].note, disabled: false });
@@ -57,7 +57,6 @@ export class NewPost extends Component {
   componentDidUpdate(prevProps, prevState) {
     let notebook = this.props.notebooks[this.props.ship][this.props.book];
     if (notebook.notes[this.state.awaiting]) {
-      window.api.setSpinner(false);
       let popout = (this.props.popout) ? "popout/" : "";
       let redirect =
      `/~publish/${popout}note/${this.props.ship}/${this.props.book}/${this.state.awaiting}`;
@@ -151,6 +150,7 @@ export class NewPost extends Component {
               onBeforeChange={(e, d, v) => this.bodyChange(e, d, v)}
               onChange={(editor, data, value) => {}}
             />
+            <Spinner text="Creating post..." awaiting={this.state.disabled} classes="absolute bottom-1 right-1 ba b--gray1-d pa2" />
           </div>
         </div>
       </div>

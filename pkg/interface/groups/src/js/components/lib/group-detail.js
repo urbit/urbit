@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
+import { Spinner } from './icons/icon-spinner';
 import { deSig, uxToHex } from '/lib/util.js';
 
 export class GroupDetail extends Component {
@@ -8,6 +9,8 @@ export class GroupDetail extends Component {
     this.state = {
       title: "",
       description: "",
+      awaiting: false,
+      type: "Editing"
     }
     this.changeTitle = this.changeTitle.bind(this);
     this.changeDescription = this.changeDescription.bind(this);
@@ -199,17 +202,18 @@ export class GroupDetail extends Component {
               onChange={this.changeTitle}
               onBlur={() => {
                 if (groupOwner) {
-                  props.api.setSpinner(true);
-                  props.api.metadataAdd(
-                    association['app-path'],
-                    association['group-path'],
-                    this.state.title,
-                    association.metadata.description,
-                    association.metadata['date-created'],
-                    uxToHex(association.metadata.color)
-                  ).then(() => {
-                    props.api.setSpinner(false);
-                  })
+                  this.setState({awaiting: true}, (() => {
+                    props.api.metadataAdd(
+                      association['app-path'],
+                      association['group-path'],
+                      this.state.title,
+                      association.metadata.description,
+                      association.metadata['date-created'],
+                      uxToHex(association.metadata.color)
+                    ).then(() => {
+                      this.setState({awaiting: false})
+                    })
+                  }))
                 }
               }}
             />
@@ -226,17 +230,18 @@ export class GroupDetail extends Component {
               onChange={this.changeDescription}
               onBlur={() => {
                 if (groupOwner) {
-                  props.api.setSpinner(true);
-                  props.api.metadataAdd(
-                    association['app-path'],
-                    association['group-path'],
-                    association.metadata.title,
-                    this.state.description,
-                    association.metadata['date-created'],
-                    uxToHex(association.metadata.color)
-                  ).then(() => {
-                    props.api.setSpinner(false);
-                  })
+                  this.setState({awaiting: true}, (() => {
+                    props.api.metadataAdd(
+                      association['app-path'],
+                      association['group-path'],
+                      association.metadata.title,
+                      this.state.description,
+                      association.metadata['date-created'],
+                      uxToHex(association.metadata.color)
+                    ).then(() => {
+                      this.setState({awaiting: false})
+                    })
+                  }))
                 }
               }}
             />
@@ -248,14 +253,15 @@ export class GroupDetail extends Component {
           <a className={"dib f9 ba pa2 " + deleteButtonClasses}
           onClick={() => {
             if (groupOwner) {
-              props.api.setSpinner(true);
-              props.api.contactView.delete(props.path).then(() => {
-                props.api.setSpinner(false);
-                props.history.push("/~groups");
-              })
+              this.setState({awaiting: true, type: "Deleting"}, (() => {
+                props.api.contactView.delete(props.path).then(() => {
+                  props.history.push("/~groups");
+                })
+              }))
             }
           }}>Delete this group</a>
         </div>
+        <Spinner awaiting={this.state.awaiting} text={`${this.state.type} group...`} classes="pa2 ba absolute right-1 bottom-1 b--gray1-d"/>
       </div>
     )
   }

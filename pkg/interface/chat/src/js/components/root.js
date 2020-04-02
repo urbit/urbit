@@ -23,6 +23,11 @@ export class Root extends Component {
     store.setStateHandler(this.setState.bind(this));
   }
 
+  componentDidMount() {
+    //preload spinner asset
+    new Image().src = "/~chat/img/Spinner.png";
+  }
+
   render() {
     const { props, state } = this;
 
@@ -96,7 +101,6 @@ export class Root extends Component {
                   associations={associations}
                   invites={invites}
                   sidebarHideOnMobile={true}
-                  spinner={state.spinner}
                   sidebar={renderChannelSidebar(props)}
                   sidebarShown={state.sidebarShown}
                 >
@@ -127,7 +131,6 @@ export class Root extends Component {
                 <Skeleton
                   associations={associations}
                   invites={invites}
-                  spinner={state.spinner}
                   sidebarHideOnMobile={true}
                   sidebar={renderChannelSidebar(props)}
                   sidebarShown={state.sidebarShown}
@@ -185,7 +188,6 @@ export class Root extends Component {
                   associations={associations}
                   invites={invites}
                   sidebarHideOnMobile={true}
-                  spinner={state.spinner}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
                   sidebar={renderChannelSidebar(props, station)}
@@ -236,7 +238,6 @@ export class Root extends Component {
                   associations={associations}
                   invites={invites}
                   sidebarHideOnMobile={true}
-                  spinner={state.spinner}
                   sidebarShown={state.sidebarShown}
                   popout={popout}
                   sidebar={renderChannelSidebar(props, station)}
@@ -282,7 +283,6 @@ export class Root extends Component {
                   associations={associations}
                   invites={invites}
                   sidebarHideOnMobile={true}
-                  spinner={state.spinner}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
                   sidebar={renderChannelSidebar(props, station)}

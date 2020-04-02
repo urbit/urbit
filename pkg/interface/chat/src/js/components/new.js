@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { InviteSearch } from './lib/invite-search';
+import { Spinner } from './lib/icons/icon-spinner';
 import { Route, Link } from 'react-router-dom';
 import { uuid, isPatTa, deSig } from '/lib/util';
 import urbitOb from 'urbit-ob';
@@ -19,7 +20,8 @@ export class NewScreen extends Component {
       idError: false,
       inviteError: false,
       allowHistory: true,
-      createGroup: false
+      createGroup: false,
+      awaiting: false
     };
 
     this.titleChange = this.titleChange.bind(this);
@@ -138,9 +140,9 @@ export class NewScreen extends Component {
       error: false,
       success: true,
       group: [],
-      ships: []
+      ships: [],
+      awaiting: true
     }, () => {
-      props.api.setSpinner(true);
       // if we want a "proper group" that can be managed from the contacts UI,
       // we make a path of the form /~zod/cool-group
       // if not, we make a path of the form /~/~zod/free-chat
@@ -162,7 +164,7 @@ export class NewScreen extends Component {
         state.allowHistory
       );
       submit.then(() => {
-        props.api.setSpinner(false);
+        this.setState({awaiting: false});
         props.history.push(`/~chat/room${appPath}`);
       })
     });
@@ -293,6 +295,7 @@ export class NewScreen extends Component {
             className={createClasses}>
             Start Chat
           </button>
+          <Spinner awaiting={this.state.awaiting} classes="mt4" text="Creating chat..." />
         </div>
       </div>
     );

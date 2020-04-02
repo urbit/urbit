@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
 import { SidebarSwitcher } from './icons/icon-sidebar-switch';
+import { Spinner } from './icons/icon-spinner';
 import { Comments } from './comments';
 import { NoteNavigation } from './note-navigation';
 import moment from 'moment';
@@ -8,8 +9,11 @@ import ReactMarkdown from 'react-markdown';
 import { cite } from '../../lib/util';
 
 export class Note extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
+    this.state = {
+      deleting: false
+    }
     moment.updateLocale('en', {
       relativeTime: {
         past: function(input) {
@@ -119,10 +123,9 @@ export class Note extends Component {
     }
     let popout = (props.popout) ? "popout/" : "";
     let baseUrl = `/~publish/${popout}notebook/${props.ship}/${props.book}`;
-    window.api.setSpinner(true);
+    this.setState({deleting: true});
     window.api.action("publish", "publish-action", deleteAction)
     .then(() => {
-      window.api.setSpinner(false);
       props.history.push(baseUrl);
     });
   }
@@ -251,6 +254,7 @@ export class Note extends Component {
               comments={comments}
               contacts={props.contacts}
             />
+            <Spinner text="Deleting post..." awaiting={this.state.deleting} classes="absolute bottom-1 right-1 ba b--gray1-d pa2" />
           </div>
         </div>
       </div>

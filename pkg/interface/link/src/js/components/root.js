@@ -27,6 +27,11 @@ export class Root extends Component {
     store.setStateHandler(this.setState.bind(this));
   }
 
+  componentDidMount() {
+    //preload spinner asset
+    new Image().src = "/~link/img/Spinner.png";
+  }
+
   render() {
     const { state } = this;
 
@@ -50,7 +55,6 @@ export class Root extends Component {
             return (
               <Skeleton
                 active="collections"
-                spinner={state.spinner}
                 associations={associations}
                 invites={invites}
                 groups={groups}
@@ -73,7 +77,6 @@ export class Root extends Component {
           render={(props) => {
             return (
               <Skeleton
-                spinner={state.spinner}
                 associations={associations}
                 invites={invites}
                 groups={groups}
@@ -111,7 +114,6 @@ export class Root extends Component {
 
             return (
               <Skeleton
-                spinner={state.spinner}
                 associations={associations}
                 invites={invites}
                 groups={groups}
@@ -149,7 +151,6 @@ export class Root extends Component {
 
             return (
               <Skeleton
-                spinner={state.spinner}
                 associations={associations}
                 invites={invites}
                 groups={groups}
@@ -203,7 +204,6 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   associations={associations}
                   invites={invites}
                   groups={groups}
@@ -259,7 +259,6 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   associations={associations}
                   invites={invites}
                   groups={groups}

@@ -3,9 +3,16 @@ import { Route, Link } from 'react-router-dom';
 import { ContactItem } from '/components/lib/contact-item';
 import { ShareSheet } from '/components/lib/share-sheet';
 import { Sigil } from '../lib/icons/sigil';
+import { Spinner } from '../lib/icons/icon-spinner';
 import { cite } from '../../lib/util';
 
 export class ContactSidebar extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      awaiting: false
+    }
+  }
   render() {
     const { props } = this;
 
@@ -71,11 +78,12 @@ export class ContactSidebar extends Component {
             <p className={"v-mid f9 mh3 red2 pointer " + adminOpt}
               style={{paddingTop: 6}}
               onClick={() => {
-                props.api.setSpinner(true);
-                props.api.groupRemove(props.path, [`~${member}`])
-                .then(() => {
-                  props.api.setSpinner(false);
-                })
+                this.setState({awaiting: true}, (() => {
+                  props.api.groupRemove(props.path, [`~${member}`])
+                    .then(() => {
+                      this.setState({awaiting: false})
+                    })
+                }))
               }}>
               Remove
             </p>
@@ -86,9 +94,9 @@ export class ContactSidebar extends Component {
     let detailHref = `/~groups/detail${props.path}`
 
     return (
-      <div className={`bn br-m br-l br-xl b--gray2 lh-copy h-100 flex-shrink-0
-      flex-basis-100-s flex-basis-30-ns mw5-m mw5-l mw5-xl relative
-      overflow-hidden ` + responsiveClasses}>
+      <div className={"bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100 " +
+      "flex-basis-100-s flex-basis-30-ns mw5-m mw5-l mw5-xl relative " +
+      "overflow-hidden flex-shrink-0 " + responsiveClasses}>
         <div className="pt3 pb5 pl3 f8 db dn-m dn-l dn-xl">
           <Link to="/~groups/">{"⟵ All Groups"}</Link>
         </div>
@@ -107,6 +115,7 @@ export class ContactSidebar extends Component {
           {contactItems}
           {groupItems}
         </div>
+        <Spinner awaiting={this.state.awaiting} text="Removing from group..." classes="pa2 ba absolute right-1 bottom-1 b--gray1-d" />
         </div>
     );
   }

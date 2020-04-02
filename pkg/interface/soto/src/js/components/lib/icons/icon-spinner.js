@@ -11,7 +11,7 @@ export class Spinner extends Component {
       return (
         <div className={classes + " z-2 bg-white bg-gray0-d white-d"}>
           <img className="invert-d spin-active v-mid"
-            src="/~groups/img/Spinner.png"
+            src="/~dojo/img/Spinner.png"
             width={16}
             height={16} />
           <p className="dib f9 ml2 v-mid inter">{text}</p>
