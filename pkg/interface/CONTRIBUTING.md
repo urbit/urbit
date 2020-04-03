@@ -17,17 +17,77 @@ when you want to make a change to it, `|commit %home`.
 
 ## Contributing to Landscape applications
 
-If you'd like to contribute to the core set of Landscape applications in this
-repository, clone this repository and start by creating an `urbitrc` file in
-this folder, [pkg/interface][interface]. You can find an `urbitrc-sample` here
-for reference. Then `cd` into the application's folder and `npm install` the
-dependencies, then `gulp watch` to watch for changes.
+[nix](https://github.com/NixOS/nix) and `git-lfs` should be installed at
+this point, and have been used to `make build` the project.
 
-On your development ship, ensure you `|commit %home` to apply your changes.
-Once you're done and ready to make a pull request, running `gulp bundle-prod`
-will make the production files and deposit them in [pkg/arvo][arvo]. Create a
-pull request with both the production files, and the source code you were
-working on in the interface directory.
+Designing interfaces within urbit/urbit additionally requires that the [instructions](https://urbit.org/using/develop/#creating-a-development-ship) for fake `~zod` initialization have been followed. 
+
+Once your fake ship is running and you see
+```
+~zod:dojo>
+```
+in your console, be sure to 'mount' your ship's working state (what we call 'desks') to your local machine via the 
+`|mount %` command. This will ensure that code you modify locally can be 
+committed to your ship and initialized.
+
+To begin developing Urbit's frontend, you'll need to sync your 
+currently-running fake ship with the urbit/urbit repo's code. Find the 
+`urbitrc-sample` file found at `urbit/pkg/interface/urbitrc-sample` (in this folder). Open it 
+using your preferred code editor and you should see the following:
+
+```
+module.exports = {
+  URBIT_PIERS: [
+    "/Users/user/ships/zod/home",
+  ]
+};
+```
+
+Edit the path between quotes `/Users/user/ships/zod/home` with wherever your 
+fake ship is located on your machine. This zod location path *must* end in `../home` to correctly intitalize 
+any code you write. Any code edited within the `urbit/urbit`will now be able to be synced to your running 
+ship, and previewed in the browser.
+
+To set up urbit's Javascript environment, you'll need node (ideally installed
+via [nvm](https://github.com/nvm-sh/nvm)) and gulp, which will be installed 
+via node.
+
+Perform the following steps to get the above set up for urbit's apps:
+
+```
+## go to urbit's interface directory and install the required tooling
+cd urbit/pkg/interface
+npm install
+npm install -g gulp
+
+## assuming you are still in `urbit/pkg/interface`,
+## open a single app directory, and watch it for changes
+cd contacts/
+gulp watch
+```
+
+Any changes made to any files within the `/contacts` directory will now 
+trigger a gulp rebuild when saved. To sync these changes to your running 
+ship, enter dojo and input the following:
+
+```
+|commit %home
+```
+
+Your urbit should take a moment to process the changes, and will emit a
+`>=`. Refreshing your browser will display the newly-rendered interface.
+
+Once you are done editing code, and wish to commit changes to git, stop
+`gulp watch` and run `gulp bundle-prod` to ensure you are only 
+committing 1 minified line of compiled js and not 3000+.
+
+An additional note:
+
+As compiled Javascript is not present in the urbit/urbit repository,
+you'll need to run `.sh/build-interface` in order to see changes that
+have been committed to any given branch you might be working on. It's
+always a good idea to run the above command before starting development
+to ensure you can see collaborators' changes.
 
 Please also ensure your pull request fits our standards for
 [Git hygiene][contributing].
