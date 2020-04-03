@@ -471,6 +471,34 @@ compileDemo inputLines = do
     res <- fastResult val
     el "pre" $ dynText res
 
+storageDemo
+  :: ( Monad m
+     , MonadSample s m
+     , Reflex s
+     , DomBuilder s m
+     , PostBuild s m
+     , PerformEvent s m
+     , MonadHold s m
+     , TriggerEvent s m
+     , MonadIO (Performable m)
+     , MonadFix m
+     )
+  => [Text] -> m ()
+storageDemo inputLines = do
+  let input = unlines inputLines
+
+  elAttr "div" ("class" =: "demo") $ mdo
+    el "h5" (text $ "TODO: " ++ input)
+
+    val <-
+      fmap _textAreaElement_value
+      $  textAreaElement
+      $  (def & textAreaElementConfig_initialValue .~ input)
+
+    el "pre" $ text "TODO: Table of hash to serialized Uruk value"
+
+
+
 
 paragraph :: (DomBuilder t m) => [Text] -> m ()
 paragraph x = el "p" (text $ unlines x)
@@ -592,6 +620,15 @@ frontend = Frontend
         "allocating closures in the common case."
         ]
 
+      paragraph [
+        "In Nock 4K, the hint tag annotates the return value of an expression,",
+        " so if an expression returns a gate, the interpreter must remember ",
+        "an extra bit of matching information. In Uruk, there's no need to ",
+        "do that because the jet matching happens at reduction time."
+        ]
+
+    ---------------------------------------------------------------------------
+
     urdocSection "Compiling Hoonish Expressions" "hoon-expressions" $ do
       paragraph [
         "Building a new high performance functional VM is nice, but we also ",
@@ -652,6 +689,70 @@ frontend = Frontend
       -- TODO: This could be a lot better of a tutorial if I wasn't a talentless
       -- hack.
       el "h4" $ (text "<dog>I have no idea what I'm doing.</dog>")
+
+    ---------------------------------------------------------------------------
+
+    urdocSection "Storage and Snapshot Strategy" "storage" $ do
+      paragraph [
+        "So we've gone over the low level details of the reduction rules, and ",
+        "shown how we can compile a hoon-like language to Uruk. But Urbit as ",
+        "a complete system implies you have one giant function which contains ",
+        "everything in your system. The move to Uruk doesn't change the fact ",
+        "that the value of your Urbit is an arvo-like function which takes an ",
+        "event and returns a pair of effects and a new arvo function."
+        ]
+
+      paragraph [
+        "How do you make that fast?"
+        ]
+
+      paragraph [
+        "Vere maps a 2 gigabyte loom directly to disk, which is fast but ",
+        "limits the size of the image. Jaque serializes the entire arvo state ",
+        "on each save, but this is slow and costly. Can we do better?"
+        ]
+
+      paragraph [
+        "Nock has unifying equality on all nouns, meaning there wasn't a ",
+        "principled place to break the noun tree up into units. The way Uruk ",
+        "does jets gives us an easy way to break up the memory state: we ",
+        "treat jet boundaries as points where we break the state up. We can ",
+        "securely hash these values and form an entire Merkle tree."
+        ]
+
+      -- TODO: Unlike the other demos, what this should output is a set of
+      -- decomposed hash references: it should contain the
+      --
+      storageDemo  [
+        "=/  id  (J K S K K)",
+        "=/  rawzer  (S K)",
+        "=/  rawsuc  (S (S (K S) K))",
+        "",
+        "=/  pak  (J K (S (K (J J K)) (S (S id (K rawsuc)) (K rawzer))))",
+        "=/  inc  (J K (S (K pak) (S (S (K S) K))))",
+        "=/  add  (J J K (S (K (S (K pak))) (S (K S) (S (K (S (K S) K))))))",
+        "=/  zer  (pak rawzer)",
+        "=/  one  (inc zer)",
+        "=/  two  (inc one)",
+        "(add two)"
+        ]
+
+      paragraph [
+        "[TODO] You can see above that the state has been chopped up into a ",
+        "set of pieces which are refereed to by hashref. Writing a snapshot ",
+        "of this value means writing the hashref/value pairs to a database ",
+        "and keeping track of the hash of the toplevel."
+        ]
+
+      paragraph [
+        "This also gives us a path towards dealing with piers which are larger",
+        " than the physical memory on the current machine: since all pieces ",
+        "are stored hash referenced in a key-value store, we can lazily page ",
+        "values into memory when they are referenced and unload values we ",
+        "know are on disk during memory pressure events."
+        ]
+
+    el "hr" $ pure ()
 
     urdocSection "The Old Demo" "the-old-demo" $ do
       el "h3" $ do
