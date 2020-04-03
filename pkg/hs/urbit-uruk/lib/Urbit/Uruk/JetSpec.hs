@@ -74,11 +74,11 @@ jetSpec = [r|
   %^    zee
       |=  $
       %-  (J J %fix)
-      <f x (f ($ f) x)>
+      <f (f ($ f))>
     fun
   arg
 
-++  fix
+++  oldfix
   ~/  2  fix
   %-  zee
   |=  $

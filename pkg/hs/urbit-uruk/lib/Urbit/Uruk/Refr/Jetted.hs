@@ -89,6 +89,7 @@ data Jet
     | Sn !Positive
     | Bn !Positive
     | Cn !Positive
+    | In !Positive
     | JSeq
     | Yet !Natural
     | JFix
@@ -157,6 +158,7 @@ instance Uruk Ur where
   uBen n = Fast (fromIntegral $ n+2) (Bn n) []
   uSen n = Fast (fromIntegral $ n+2) (Sn n) []
   uCen n = Fast (fromIntegral $ n+2) (Cn n) []
+  uYet n = Fast (fromIntegral $ n+0) (In n) []
 
   uGlobal "lef" = Just Lef
   uGlobal "rit" = Just Rit

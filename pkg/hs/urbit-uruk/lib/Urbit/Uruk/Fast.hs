@@ -124,6 +124,7 @@ instance Uruk Val where
   uUni = mkNode 1 Uni
   uCon = mkNode 3 Con
   uSeq = mkNode 2 Seq
+  uYet n = mkNode (fromIntegral n) (Yet $ fromIntegral n)
   uCas = mkNode 3 Cas
   uFix = mkNode 2 Fix
   uIff = mkNode 3 Iff
@@ -204,7 +205,7 @@ nodeRaw = \case
 
 priFun :: Pri -> (Int, Node)
 priFun = \case
-  S -> (3, Seq)
+  S -> (3, Ess)
   K -> (2, Kay)
   J -> (1, Jay 1)
   D -> (1, Dee)

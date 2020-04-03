@@ -86,6 +86,7 @@ data DataJet
   = Sn !Pos
   | Bn !Pos
   | Cn !Pos
+  | In !Pos
   | NAT !Nat
  deriving (Eq, Ord, Generic)
  deriving anyclass NFData
@@ -109,6 +110,7 @@ isValidChar c = or [C.isPrint c, c == '\n']
 instance Show DataJet where
   show = \case
     Sn  n                            -> 'S' : show n
+    In  n                            -> 'I' : show n
     Bn  n                            -> 'B' : show n
     Cn  n                            -> 'C' : show n
     NAT n | n < 2048                 -> show n
@@ -477,8 +479,11 @@ jetArityVal = go (N J)
 seqJet :: Exp
 seqJet = N $ SingJet SEQ
 
-tup :: Reg -> (Exp, Exp, Exp -> Exp -> Exp, Exp -> Int)
-tup reg = (seqJet, k, (:&), r)
+yetJet :: Int -> Exp
+yetJet = N . DataJet . In . fromIntegral
+
+tup :: Reg -> (Exp, Int -> Exp, Exp, Exp -> Exp -> Exp, Exp -> Int)
+tup reg = (seqJet, yetJet, k, (:&), r)
  where
   k = N K
   r = \case
@@ -501,6 +506,7 @@ urArity _ J                 = 2
 urArity _ D                 = 1
 urArity _ (DataJet (NAT _)) = 2
 urArity _ (DataJet (Sn  n)) = fromIntegral (2 + n)
+urArity _ (DataJet (In  n)) = fromIntegral n
 urArity _ (DataJet (Bn  n)) = fromIntegral (2 + n)
 urArity _ (DataJet (Cn  n)) = fromIntegral (2 + n)
 urArity r (SingJet sj     ) = case lookup sj r of
@@ -537,6 +543,7 @@ sjExp = TH.ConE . TH.mkName . show
 djExp :: DataJet -> TH.Exp
 djExp = \case
   Sn  p -> TH.ConE 'Sn `TH.AppE` intLit p
+  In  p -> TH.ConE 'In `TH.AppE` intLit p
   Bn  p -> TH.ConE 'Bn `TH.AppE` intLit p
   Cn  p -> TH.ConE 'Cn `TH.AppE` intLit p
   NAT n -> TH.ConE 'NAT `TH.AppE` intLit n
@@ -562,6 +569,7 @@ valExp = \case
 djPat :: DataJet -> TH.Pat
 djPat = \case
   Sn  p -> TH.ConP 'Sn [intLitPat p]
+  In  p -> TH.ConP 'In [intLitPat p]
   Bn  p -> TH.ConP 'Bn [intLitPat p]
   Cn  p -> TH.ConP 'Cn [intLitPat p]
   NAT n -> TH.ConP 'NAT [intLitPat n]

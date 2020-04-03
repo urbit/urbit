@@ -25,6 +25,7 @@ class Uruk p where
   uBen :: Positive -> p
   uSen :: Positive -> p
   uCen :: Positive -> p
+  uYet :: Positive -> p
 
   uNat :: Natural -> p
   uBol :: Bool -> p
@@ -62,6 +63,7 @@ instance Uruk p => Uruk (Either Text p) where
   uBen p = pure (uBen p)
   uSen p = pure (uSen p)
   uCen p = pure (uCen p)
+  uYet p = pure (uYet p)
 
   uNat n = pure (uNat n)
   uBol b = pure (uBol b)

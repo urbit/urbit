@@ -36,6 +36,7 @@ jn n = jn (n-1) :& N J
 djArity :: DataJet -> Pos
 djArity (NAT _) = 2
 djArity (Sn n)  = 2 + n
+djArity (In n)  = n
 djArity (Bn n)  = 2 + n
 djArity (Cn n)  = 2 + n
 
@@ -53,6 +54,7 @@ sjTag = $(pure Dash.jetTag)
 
 djTag (NAT _) = N K
 djTag (Sn _)  = N (DataJet $ NAT $ Atom.utf8Atom "sn")
+djTag (In _)  = N (DataJet $ NAT $ Atom.utf8Atom "in")
 djTag (Bn _)  = N (DataJet $ NAT $ Atom.utf8Atom "bn")
 djTag (Cn _)  = N (DataJet $ NAT $ Atom.utf8Atom "cn")
 
@@ -73,6 +75,7 @@ djBody = \case
   NAT 0 -> NS :& NK
   NAT n -> skSucc :& djBody (NAT $ pred n)
   Sn  n -> iterate (NB :& (NB :& NS) :& NB :&) NS !! (fromIntegral n - 1)
+  In  n -> NS :& NK :& NK
   Bn  n -> iterate (NB :& NB :&)               NB !! (fromIntegral n - 1)
   Cn  n -> iterate (NB :& (NB :& NC) :& NB :&) NC !! (fromIntegral n - 1)
 
