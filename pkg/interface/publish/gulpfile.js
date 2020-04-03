@@ -8,6 +8,7 @@ var minify = require('gulp-minify');
 var rename = require('gulp-rename');
 var del = require('del');
 var json = require('rollup-plugin-json');
+var rollupReplace = require("@rollup/plugin-replace");
 
 
 var resolve = require('rollup-plugin-node-resolve');
@@ -59,8 +60,8 @@ gulp.task('js-imports', function(cb) {
       plugins: [
         commonjs({
           namedExports: {
-            'node_modules/react/index.js': ['Component', 'cloneElement', 
-            'createContext', 'createElement', 'useState', 'useRef', 
+            'node_modules/react/index.js': ['Component', 'cloneElement',
+            'createContext', 'createElement', 'useState', 'useRef',
             'useLayoutEffect', 'useMemo', 'useEffect', 'forwardRef', 'useContext', 'Children' ],
             'node_modules/react-is/index.js': [ 'isValidElementType', 'isElement', 'ForwardRef' ],
             'node_modules/react-dom/index.js': [ 'createPortal' ]
@@ -118,8 +119,8 @@ gulp.task('js-imports-prod', function(cb) {
         rollupReplace({'process.env.NODE_ENV': JSON.stringify('production')}),
         commonjs({
           namedExports: {
-            'node_modules/react/index.js': ['Component', 'cloneElement', 
-            'createContext', 'createElement', 'useState', 'useRef', 
+            'node_modules/react/index.js': ['Component', 'cloneElement',
+            'createContext', 'createElement', 'useState', 'useRef',
             'useLayoutEffect', 'useMemo', 'useEffect', 'forwardRef', 'useContext', 'Children' ],
             'node_modules/react-is/index.js': [ 'isValidElementType', 'isElement', 'ForwardRef' ],
             'node_modules/react-dom/index.js': [ 'createPortal' ]
@@ -184,7 +185,7 @@ gulp.task('urbit-copy', function () {
 gulp.task('js-bundle-dev', gulp.series('jsx-transform', 'js-imports'));
 gulp.task('tile-js-bundle-dev', gulp.series('tile-jsx-transform', 'tile-js-imports'));
 gulp.task('js-bundle-prod', gulp.series('jsx-transform', 'js-imports-prod', 'js-minify'))
-gulp.task('tile-js-bundle-prod', 
+gulp.task('tile-js-bundle-prod',
   gulp.series('tile-jsx-transform', 'tile-js-imports', 'tile-js-minify'));
 
 gulp.task('bundle-dev',
