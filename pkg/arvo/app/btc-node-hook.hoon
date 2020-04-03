@@ -171,8 +171,7 @@
       ::  considered here explicitly for proper format printing or
       ::  for being passed on to the store app.
       ::
-      ~&  btc-resp
-      ~
+      ~&(btc-resp ~)
   ::
       :: %abandon-transaction
       :: %abort-rescan
@@ -180,7 +179,6 @@
       :: %backup-wallet
       :: %bump-fee
       %create-wallet
-    ^-  (list card)
     =/  btc-store-req=btc-node-store-action
       :+  %add-wallet   name.btc-resp
       ?:(=('' warning.btc-resp) ~ (some warning.btc-resp))
@@ -192,14 +190,10 @@
       :: %get-addresses-by-label
   ::
       %get-address-info
-    ^-  (list card)
-    ~&  [%address-info +.btc-resp]
-    ~
+    ~&([%address-info +.btc-resp] ~)
   ::
       %get-balance
-    ^-  (list card)
-    ~&  [%amount (trip +.btc-resp)]
-    ~
+    ~&([%amount (trip +.btc-resp)] ~)
   ::
       :: %get-balance
       :: %get-new-address
@@ -230,18 +224,21 @@
       :: %lists-in-ceblock
   ::
       %list-transactions
-    ^-  (list card)
-    ~&  [%transactions +.btc-resp]
-    ~
+    ~&([%transactions +.btc-resp] ~)
   ::
       :: %list-unspent
       :: %list-wallet-dir
   ::
       %list-wallets
     ^-  (list card)
-    [(btc-node-store-poke /list [%list-wallets ~])]~
+    :~  (btc-node-store-poke /list [%list-wallets ~])
+        :*  %pass  /  %arvo  %d  %flog
+            %text  "remote-wallets={<`wain`wallets.btc-resp>}"
+    ==  ==
   ::
-      :: %load-wallet
+      %load-wallet
+    [(btc-node-store-poke /load [%load-wallet name.btc-resp])]~
+  ::
       :: %lock-unspent
       :: %remove-pruned-funds
       :: %rescan-blockchain
@@ -288,6 +285,7 @@
 ::
 ++  endpoint-url
   |=  [act=btc-node-hook-action]
+  ^-  @t
   ?.  ?|  ?=(%abandon-transaction -.act)
           ?=(%abort-rescan -.act)
           ?=(%add-multisig-address -.act)
@@ -339,31 +337,12 @@
           ?=(%wallet-process-psbt -.act)
       ==
     endpoint
-  ?:  ?=([?(%dump-wallet %import-wallet) filename=@t] act)
-    (crip "{(trip endpoint)}wallet/{(trip filename.act)}")
-  ::  FIXME: fails when default-wallet is '' and more than 1 wallet
-  ::  has been created
-  ::
-  ::    url='http://127.0.0.1:18443/wallet/'
-  ::
-  ::  although this example works with curl:
-  ::
-  :: curl --user XXX:YYY
-  ::      --data-binary '{
-  ::        "jsonrpc": "1.0",
-  ::        "id":"curltest",
-  ::        "method": "getwalletinfo",
-  ::        "params": []
-  ::      }'
-  ::      -H 'content-type: text/plain;'
-  ::      http://127.0.0.1:18443/wallet/
-  ::
-  ::  A %switch-wallet command needs to be issued against the store app
-  ::  after a wallet is created, in order to use it.
-  ::
-  ::  e.g.  > :btc-node-store|command [%switch-wallet 'local']
-  ::
-  ?:  (lte n-wallets 1)
-    endpoint
-  :((cury cat 3) endpoint 'wallet/' default-wallet)
+  ;:  (cury cat 3)
+      endpoint
+      'wallet/'
+    ::
+      ?:  ?=([?(%dump-wallet %import-wallet) filename=@t] act)
+        filename.act
+      default-wallet
+  ==
 --

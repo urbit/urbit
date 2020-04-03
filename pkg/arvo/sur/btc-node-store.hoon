@@ -102,7 +102,7 @@
         :: [%list-unspent]
         :: [%list-wallet-dir ~]
         [%list-wallets ~]
-        :: [%load-wallet ~]
+        [%load-wallet name=@t]
         :: [%lock-unspent]
         :: [%remove-pruned-funds ~]
         :: [%rescan-blockchain ~]

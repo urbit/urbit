@@ -52,7 +52,6 @@
     ++  on-poke
       |=  [=mark =vase]
       ^-  (quip card _this)
-      ~&  got-poked-with-data=mark
       |^
       ?+    mark    (on-poke:def mark vase)
           %btc-node-store-action
@@ -68,6 +67,7 @@
         =^  cards  state
           ?+  -.action  ~|([%unsupported-action -.action] !!)
             %add-wallet     (handle-add:bc +.action)
+            %load-wallet    (handle-switch:bc +.action)
             %list-wallets   handle-list-wallet:bc
             %update-wallet  (handle-update-wallet:bc +.action)
           ==
@@ -122,7 +122,7 @@
   :_  state
   :_  ~
   :*  %pass  /  %arvo  %d  %flog
-      %text  "wallets={<`wain`wallet-names>}"
+      %text  "local-wallets={<`wain`wallet-names>}"
   ==
 ::
 ++  handle-update-wallet
@@ -143,11 +143,14 @@
 ++  handle-switch
   |=  name=@t
   ^-  (quip card _state)
-  :-  ~
-  ?.  (~(has by wallets) name)
-    ~&  "The wallet doesn't exist..."
-    state
-  ~&  "New default-wallet: {<name>}"
-  state(default-wallet name)
-::
+  :_  state(default-wallet name)
+  :_  ~
+  :*  %pass  /  %arvo  %d  %flog
+      %text
+      %+  weld
+        "New default-wallet: {<name>}"
+      ?:  (~(has by wallets) name)
+        ""
+      " (wallet is not local)"
+  ==
 --
