@@ -194,7 +194,6 @@
   :-  (send-diff path.act act)
   state(inbox (~(del by inbox) path.act))
 ::
-
 ++  handle-message
   |=  act=chat-action
   ^-  (quip card _state)

@@ -399,19 +399,23 @@
   ^-  (list card)
   ?>  ?=(^ pax)
   =/  last  (dec (lent pax))
-  =/  backlog-start=(unit @ud)
-    (rush (snag last `(list @ta)`pax) dem:ag)
+  =/  backlog-latest=(unit @ud)  (rush (snag last `(list @ta)`pax) dem:ag)
   =/  pas  `path`(oust [last 1] `(list @ta)`pax)
   ?>  ?=([* ^] pas)
   ?>  (~(has by synced) pas)
-  ::  check if read is permitted
   ?>  (is-permitted src.bol pas)
-  =/  backlog-limit  10.000
-  =/  envs  (scag backlog-limit envelopes:(need (chat-scry pas)))
+  =/  envs  envelopes:(need (chat-scry pas))
+  =/  length  (lent envs)
+  =/  latest
+    ?~  backlog-latest  length
+    ?:  (gth u.backlog-latest length)  length
+    (sub length u.backlog-latest)
+  =.  envs  (scag latest envs)
+  =/  =vase  !>([%messages pas 0 latest envs])
   %-  zing
   :~  [%give %fact ~ %chat-update !>([%create pas])]~
-      ?.  ?&(?=(^ backlog-start) (~(has by allow-history) pas))  ~
-      [%give %fact ~ %chat-update !>([%messages pas 0 (lent envs) envs])]~
+      ?.  ?&(?=(^ backlog-latest) (~(has by allow-history) pas))  ~
+      [%give %fact ~ %chat-update vase]~
       [%give %kick [%backlog pax]~ `src.bol]~
   ==
 ::
@@ -420,7 +424,6 @@
   ^-  (quip card _state)
   :_  state
   ?+  -.fact  ~
-  ::
       %accepted
     =/  ask-history  ?~((chat-scry path.invite.fact) %.y %.n)
     =*  shp       ship.invite.fact
