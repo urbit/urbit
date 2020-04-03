@@ -132,6 +132,7 @@ gulp.task('js-imports-prod', function(cb) {
           extensions: '.js'
         }),
         globals(),
+        json(),
         resolve()
       ]
     }, 'umd'))
