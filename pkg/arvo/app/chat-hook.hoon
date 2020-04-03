@@ -5,6 +5,7 @@
 /-  *permission-store, *chat-hook, *invite-store, *metadata-store,
     *permission-hook, *group-store, *permission-group-hook  ::TMP  for upgrade
 /+  *chat-json, *chat-eval, default-agent, verb, dbug
+~%  %chat-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
 ::
@@ -39,10 +40,11 @@
 =|  state-1
 =*  state  -
 ::
-%+  verb  |
 %-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 =<
+  ~%  %chat-hook-agent-core  ..poke-json  ~
   |_  bol=bowl:gall
   +*  this       .
       chat-core  +>
@@ -222,6 +224,7 @@
     --
   ::
   ++  on-poke
+    ~/  %chat-hook-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
     =^  cards  state
@@ -239,6 +242,7 @@
     [cards this]
   ::
   ++  on-watch
+    ~/  %chat-hook-watch
     |=  =path
     ^-  (quip card _this)
     ?+  path          (on-watch:def path)
@@ -248,6 +252,7 @@
     ==
   ::
   ++  on-agent
+    ~/  %chat-hook-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
     ?+  -.sign  (on-agent:def wire sign)
@@ -287,6 +292,7 @@
   --
 ::
 ::
+~%  %chat-hook-library  ..card  ~
 |_  bol=bowl:gall
 ::
 ++  poke-json

@@ -5,6 +5,7 @@
 ::
 /-  *metadata-store, *metadata-hook
 /+  default-agent, dbug
+~%  %metadata-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state

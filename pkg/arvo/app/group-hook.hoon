@@ -2,6 +2,7 @@
 ::
 /-  *group-store, *group-hook
 /+  default-agent, verb, dbug
+~%  %group-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
 ::

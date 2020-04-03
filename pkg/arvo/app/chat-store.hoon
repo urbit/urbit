@@ -1,6 +1,7 @@
 :: chat-store: data store that holds linear sequences of chat messages
 ::
 /+  *chat-json, *chat-eval, default-agent, verb, dbug
+~%  %chat-store-top  ..is  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -25,6 +26,7 @@
 %+  verb  |
 ^-  agent:gall
 =<
+  ~%  %chat-store-agent-core  ..peek-x-envelopes  ~
   |_  =bowl:gall
   +*  this       .
       chat-core  +>
@@ -42,6 +44,7 @@
     [%pass /lo-chst %agent [our.bowl %chat-hook] %poke %noun !>(%store-load)]~
   ::
   ++  on-poke
+    ~/  %chat-store-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
     ?>  (team:title our.bowl src.bowl)
@@ -53,6 +56,7 @@
     [cards this]
   ::
   ++  on-watch
+    ~/  %chat-store-watch
     |=  =path
     ^-  (quip card _this)
     |^
@@ -77,6 +81,7 @@
   ::
   ++  on-leave  on-leave:def
   ++  on-peek
+    ~/  %chat-store-peek
     |=  =path
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
@@ -104,6 +109,7 @@
   --
 ::
 ::
+~%  %chat-store-library  ..card  ~
 |_  bol=bowl:gall
 ::
 ++  peek-x-envelopes
