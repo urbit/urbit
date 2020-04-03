@@ -214,6 +214,7 @@
   =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
   ?~  mailbox
     [~ state]
+  =.  envelopes.act  (flop envelopes.act)
   =/  evaluated-envelopes=(list envelope)  ~
   |-  ^-  (quip card _state)
   ?~  envelopes.act
