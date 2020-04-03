@@ -49,6 +49,7 @@ data SingJet
 jetSpec :: Text
 jetSpec = [r|
 ++  (seq x y)    y
+++  (yet f x y)  (f x y)
 
 ++  (eye x)      x
 ++  (bee f g x)  (f (g x))
@@ -57,6 +58,8 @@ jetSpec = [r|
 ++  skzero  (S K)
 ++  sksucc  (S (S (K S) K))
 
+++  (pak n)    (J J K (n sksucc skzero))
+++  (inc n)    (pak <i z (i (n i z))>)
 
 ++  0  (J J K skzero)
 ++  1  (J J K (sksucc skzero))
@@ -67,11 +70,19 @@ jetSpec = [r|
   %-  <x (f <v (x x v)>)>
   <x (f <v (x x v)>)>
 
+++  (fix fun arg)
+  %^    zee
+      |=  $
+      %-  (J J %fix)
+      <f x (f ($ f) x)>
+    fun
+  arg
+
 ++  fix
   ~/  2  fix
   %-  zee
   |=  $
-  %-  (yet (J J %fix))
+  %-  (J J %fix)
   |=  (f x)
   (f ($ f) x)
 
@@ -99,8 +110,6 @@ jetSpec = [r|
 
 ++  (fec n)    (cas (dec n) (K 0) eye)
 
-++  (pak n)    (J J K (n sksucc skzero))
-++  (inc n)    (pak <i z (i (n i z))>)
 ++  (add x y)  (pak <i z (x i (y i z))>)
 ++  (mul x y)  (pak <i z (x (y i) z)>)
 

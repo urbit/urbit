@@ -423,11 +423,15 @@ resolv = go (initialEnv, mempty)
 
   one :: (Env, Reg) -> Dec -> Either Text (Env, Reg)
   one (env, reg) (Dec n args ast) = do
+    traceM ("[" <> unpack n <> "]")
+
     bodExp <- resolveNames n env (astExp (lam args ast))
 
     let eagExp = makeJetStrict (tup reg) (length args) bodExp
     let skiExp = eval $ ski $ B.johnTrompBracket eagExp
-    let fulExp = jetWrap n (length args) skiExp
+    let fulExr = jetWrap n (length args) skiExp
+
+    fulExp <- Right $! force fulExr
 
     case jetExp n fulExp of
       Nothing -> do
@@ -473,17 +477,22 @@ jetArityVal = go (N J)
 seqJet :: Exp
 seqJet = N $ SingJet SEQ
 
-tup :: Reg -> (Exp, Exp, Exp -> Int)
-tup reg = (seqJet,k,r)
+tup :: Reg -> (Exp, Exp, Exp -> Exp -> Exp, Exp -> Int)
+tup reg = (seqJet, k, (:&), r)
  where
   k = N K
   r = \case
     N n -> urArity reg n
-    -- TODO More stuff
+    N K :& x -> 1 + r x
+    (jetArity -> Just n) -> 2
+    (jetArity -> Just n) :& t :& b -> n
     x :& _ -> case r x of
       0 -> 1
       1 -> 1
-      n -> n-1
+      n -> n - 1
+
+  jetArity :: Exp -> Maybe Int
+  jetArity = fmap (fromIntegral . fst) . jetHead . tree
 
 urArity :: Reg -> Ur -> Int
 urArity _ S                 = 3

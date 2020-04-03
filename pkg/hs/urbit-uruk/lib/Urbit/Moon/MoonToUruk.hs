@@ -142,10 +142,13 @@ gogogoLazyOleg text = do
   resu <- liftIO $ Lamb.moonLazy lamb
   ExceptT (pure resu)
 
+usApp :: Uruk p => p -> p -> p
+usApp x y = unsafePerformIO (uApp x y)
+
 gogogoTromp :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
 gogogoTromp text = do
   let tup = (uEss, uKay, uApp)
-  let tud = (uSeq, uKay, uArity)
+  let tud = (uSeq, uKay, usApp, uArity)
   ast <- ExceptT $ pure $ Parser.parseAST text
   let expr = bind ast
   let lamb = moonToLambda expr :: B.Exp () (Either Text p)
@@ -162,7 +165,7 @@ gogogoLazyTromp text = do
 gogogoNaive :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
 gogogoNaive text = do
   let tup = (uEss, uKay, uApp)
-  let tud = (uSeq, uKay, uArity)
+  let tud = (uSeq, uKay, usApp, uArity)
   ast <- ExceptT $ pure $ Parser.parseAST text
   let expr = bind ast
   let lamb = moonToLambda expr :: B.Exp () (Either Text p)
