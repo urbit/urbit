@@ -331,7 +331,7 @@ recur' (seq,k,f) = \case
   Lam () b ->
     let ((_, funArity), refs, bodExp) = recur (F <$> seq, F <$> k, wrap f) $ fromScope b
         ourRefs = cvt refs
-        arity = if elem (B ()) ourRefs then 0 else funArity+1
+        arity = if any ((== 0) . varArity) ourRefs then 0 else funArity+1
     in ((False, arity), ourRefs, Lam () (toScope bodExp))
 
   x :@ y ->
@@ -345,11 +345,13 @@ recur' (seq,k,f) = \case
       ((resIsK, resArgs), nub (xRefs<>yRefs), resVal)
 
  where
+  varArity = unvar (const 0) (snd . f)
+
   cvt :: [Var () (Var () a)] -> [Var () a]
   cvt = mapMaybe (unvar (const Nothing) Just)
 
 recur :: Show a => Eq a => (ExpV a, ExpV a, a -> (Bool, Int)) -> ExpV a -> ((Bool, Int), [Var () a], ExpV a)
-recur tup x = trace msg result
+recur tup x = result -- trace msg result
  where
   result@((_, arity), free, exp) = recur' tup x
   msg = unlines
@@ -417,9 +419,9 @@ makeJetStrict
 makeJetStrict (seq, k, app, arity) n topExp =
   top n (foldConstantValues app topExp)
  where
-  top 0 e          = makeStrict (seq, k, app, arity) e
-  top n (Var v   ) = makeStrict (seq, k, app, arity) (Var v)
-  top n (x   :@ y) = makeStrict (seq, k, app, arity) (x :@ y)
+  top 0 e          = makeStrict (seq, k, app, arity) e  -- bad jet
+  top n (Var v   ) = trace "bad-jet" $ makeStrict (seq, k, app, arity) (Var v)  -- bad jet
+  top n (x   :@ y) = trace "bad-jet" $ makeStrict (seq, k, app, arity) (x :@ y)  -- bad jet
   top n (Lam () b) = Lam () $ toScope $ go initTup (n - 1) $ fromScope b
 
   initTup = (,,,) (Var (F seq))
@@ -435,8 +437,8 @@ makeJetStrict (seq, k, app, arity) n topExp =
     -> ExpV a
     -> ExpV a
   go (seq, k, f, j) 0 b          = getExp $ jetRecur (seq, k, f, j) b
-  go (seq, k, f, j) n b@(Var _ ) = getExp $ recur (seq, k, f) b
-  go (seq, k, f, j) n b@(_ :@ _) = getExp $ recur (seq, k, f) b
+  go (seq, k, f, j) n b@(Var _ ) = trace "bad-jet" $ getExp $ recur (seq, k, f) b
+  go (seq, k, f, j) n b@(_ :@ _) = trace "bad-jet" $ getExp $ recur (seq, k, f) b
   go (seq, k, f, j) n (Lam () b) =
     Lam ()
       $ toScope
@@ -457,12 +459,12 @@ jetRecur'
   -> ExpV a
   -> ((Bool, Int), [Var () a], ExpV a)
 jetRecur' (seq,k,f,j) = \case
-  Var v -> (unvar (const (False, 0)) f v, [v], Var v)
+  Var v -> (unvar (const (False, 0)) j v, [v], Var v)
 
   Lam () b ->
     let ((_, funArity), refs, bodExp) = recur (F <$> seq, F <$> k, wrap f) $ fromScope b
         ourRefs = cvt refs
-        arity = if elem (B ()) ourRefs then 0 else funArity+1
+        arity = if any ((== 0) . varArity) ourRefs then 0 else funArity+1
     in ((False, arity), ourRefs, Lam () (toScope bodExp))
 
   x :@ y ->
@@ -477,6 +479,8 @@ jetRecur' (seq,k,f,j) = \case
       ((resIsK, resArgs), resRefs, resVal)
 
  where
+  varArity = unvar (const 0) (snd . j)
+
   cvt :: [Var () (Var () a)] -> [Var () a]
   cvt = mapMaybe (unvar (const Nothing) Just)
 
@@ -485,7 +489,7 @@ jetRecur
   => (ExpV a, ExpV a, a -> (Bool, Int), a -> (Bool, Int))
   -> ExpV a
   -> ((Bool, Int), [Var () a], ExpV a)
-jetRecur tup x = trace msg result
+jetRecur tup x = result -- trace msg result
  where
   result@((_, arity), free, exp) = jetRecur' tup x
   msg = unlines
