@@ -12,7 +12,7 @@ import Control.Arrow             ((>>>))
 import Data.Function             ((&))
 import System.IO.Unsafe          (unsafePerformIO)
 import Text.Show.Pretty          (ppShow)
-import Urbit.Moon.MakeStrict     (makeStrict, makeJetStrict)
+import Urbit.Moon.MakeStrict     (makeStrict)
 import Urbit.Moon.MoonToLambda   (moonToLambda)
 import Urbit.Uruk.Fast.OptToFast (optToFast)
 
@@ -145,7 +145,7 @@ gogogoLazyOleg text = do
 gogogoTromp :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
 gogogoTromp text = do
   let tup = (uEss, uKay, uApp)
-  let tud = (uEss, uKay, uArity)
+  let tud = (uSeq, uKay, uArity)
   ast <- ExceptT $ pure $ Parser.parseAST text
   let expr = bind ast
   let lamb = moonToLambda expr :: B.Exp () (Either Text p)
@@ -162,7 +162,7 @@ gogogoLazyTromp text = do
 gogogoNaive :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
 gogogoNaive text = do
   let tup = (uEss, uKay, uApp)
-  let tud = (uEss, uKay, uArity)
+  let tud = (uSeq, uKay, uArity)
   ast <- ExceptT $ pure $ Parser.parseAST text
   let expr = bind ast
   let lamb = moonToLambda expr :: B.Exp () (Either Text p)

@@ -147,10 +147,10 @@ type ExpV a = Exp () (Var () a)
     [e₁eₙ] -> SKxee
     [eₙeₙ] -> ee
 -}
-fixApp :: (ExpV a, ExpV a) -> (Int, ExpV a) -> (Int, ExpV a) -> ExpV a
-fixApp (s, k) (_xArgs, x) (0, y)      = x :@ y
-fixApp (s, k) (1, x)      (_yArgs, y) = s :@ k :@ Var (B ()) :@ x :@ y
-fixApp (s, k) (_, x)      (_yArgs, y) = x :@ y
+fixApp :: ExpV a -> (Int, ExpV a) -> (Int, ExpV a) -> ExpV a
+fixApp seq (_xArgs, x) (0, y)      = x :@ y
+fixApp seq (1, x)      (_yArgs, y) = seq :@ Var (B ()) :@ x :@ y
+fixApp seq (_, x)      (_yArgs, y) = x :@ y
 
 {-
     *(Keₙ)  -> n+1
@@ -175,20 +175,20 @@ wrap f = \case
     `f x` should return `(x == K, arity x)`.
 -}
 recur :: (ExpV a, ExpV a, a -> (Bool, Int)) -> ExpV a -> ((Bool, Int), ExpV a)
-recur (s,k,f) = \case
+recur (seq,k,f) = \case
   Var v -> case v of
     B () -> ((False, 0), Var (B ()))
     F v  -> (f v, Var (F v))
 
   Lam () b ->
-    let ((_, arity), bodExp) = recur (F <$> s, F <$> k, wrap f) $ fromScope b
+    let ((_, arity), bodExp) = recur (F <$> seq, F <$> k, wrap f) $ fromScope b
     in ((False, arity+1), Lam () (toScope bodExp))
 
   x :@ y ->
     let
-      ((xIsK, xArgs), xVal) = recur (s,k,f) x
-      ((yIsK, yArgs), yVal) = recur (s,k,f) y
-      resVal = fixApp (s,k) (xArgs, xVal) (yArgs, yVal)
+      ((xIsK, xArgs), xVal) = recur (seq,k,f) x
+      ((yIsK, yArgs), yVal) = recur (seq,k,f) y
+      resVal = fixApp seq (xArgs, xVal) (yArgs, yVal)
       resArgs = appArity xIsK xArgs yArgs
       resIsK = False
     in
@@ -198,13 +198,13 @@ recur (s,k,f) = \case
 -- Entry-Point for Normal Functions --------------------------------------------
 
 makeStrict :: Eq p => (p, p, p -> Int) -> Exp () p -> Exp () p
-makeStrict (s,k,arity) = go
+makeStrict (seq,k,arity) = go
  where
   go = \case
     x   :@ y -> go x :@ go y
     Lam () b -> Lam () $ toScope $ snd . recur (sv, kv, r) $ fromScope b
     Var v    -> Var v
-  sv = Var (F s)
+  sv = Var (F seq)
   kv = Var (F k)
   r = \x -> (x == k, arity x)
 
@@ -221,26 +221,26 @@ makeStrict (s,k,arity) = go
     bindings as having arity `0`.
 -}
 makeJetStrict :: Eq p => (p, p, p -> Int) -> Int -> Exp () p -> Exp () p
-makeJetStrict (s,k,arity) n topExp = top n topExp
+makeJetStrict (seq,k,arity) n topExp = top n topExp
  where
-  top 0 e = makeStrict (s,k,arity) e
-  top n (Var v) = makeStrict (s,k,arity) (Var v)
-  top n (x :@ y) = makeStrict (s,k,arity) (x :@ y)
+  top 0 e = makeStrict (seq,k,arity) e
+  top n (Var v) = makeStrict (seq,k,arity) (Var v)
+  top n (x :@ y) = makeStrict (seq,k,arity) (x :@ y)
   top n (Lam () b) = Lam () $ toScope $ go initTup (n-1) $ fromScope b
 
-  initTup = (,,,) (Var (F s))
+  initTup = (,,,) (Var (F seq))
                   (Var (F k))
                   (\x -> (x == k, arity x))
                   (\x -> (x == k, arity x))
 
   go :: (ExpV a, ExpV a, a -> (Bool, Int), a -> (Bool, Int)) -> Int -> ExpV a -> ExpV a
-  go (s,k,f,j) 0 b          = snd $ jetRecur (s,k,f,j) b
-  go (s,k,f,j) n b@(Var _)  = snd $ recur (s,k,f) b
-  go (s,k,f,j) n b@(_ :@ _) = snd $ recur (s,k,f) b
-  go (s, k, f, j) n (Lam () b) =
+  go (seq,k,f,j) 0 b          = snd $ jetRecur (seq,k,f,j) b
+  go (seq,k,f,j) n b@(Var _)  = snd $ recur (seq,k,f) b
+  go (seq,k,f,j) n b@(_ :@ _) = snd $ recur (seq,k,f) b
+  go (seq, k, f, j) n (Lam () b) =
     Lam ()
       $ toScope
-      $ go (F <$> s, F <$> k, wrap f, wrapJet j) (n - 1)
+      $ go (F <$> seq, F <$> k, wrap f, wrapJet j) (n - 1)
       $ fromScope b
 
   wrapJet :: (a -> (Bool, Int)) -> Var () a -> (Bool, Int)
@@ -257,20 +257,20 @@ jetRecur
   :: (ExpV a, ExpV a, a -> (Bool, Int), a -> (Bool, Int))
   -> ExpV a
   -> ((Bool, Int), ExpV a)
-jetRecur (s,k,f,j) = \case
+jetRecur (seq,k,f,j) = \case
   Var v -> case v of
     B () -> ((False, 0), Var (B ()))
     F v  -> (j v, Var (F v))
 
   Lam () b ->
-    let ((_, arity), bodExp) = recur (F <$> s, F <$> k, wrap f) $ fromScope b
+    let ((_, arity), bodExp) = recur (F <$> seq, F <$> k, wrap f) $ fromScope b
     in ((False, arity+1), Lam () (toScope bodExp))
 
   x :@ y ->
     let
-      ((xIsK, xArgs), xVal) = jetRecur (s,k,f,j) x
-      ((yIsK, yArgs), yVal) = jetRecur (s,k,f,j) y
-      resVal = fixApp (s,k) (xArgs, xVal) (yArgs, yVal)
+      ((xIsK, xArgs), xVal) = jetRecur (seq,k,f,j) x
+      ((yIsK, yArgs), yVal) = jetRecur (seq,k,f,j) y
+      resVal = fixApp seq (xArgs, xVal) (yArgs, yVal)
       resArgs = appArity xIsK xArgs yArgs
       resIsK = False
     in

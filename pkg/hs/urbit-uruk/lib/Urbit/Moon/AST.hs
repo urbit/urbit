@@ -92,7 +92,7 @@ instance Show AST where
     ALit n     -> show n
     ABol True  -> "%.y"
     ABol False -> "%.n"
-    AStr n     -> "'" <> unpack n <> "'"
+    AStr n     -> "\"" <> unpack n <> "\""
     ACon h t   -> "[" <> show h <> " " <> show t <> "]"
     ALam v b   -> mconcat ["|=(", unpack v <> " ", show b <> ")"]
     AJet r n b -> "~/(" <> show r <> " '" <> unpack n <> "' " <> show b <> ")"

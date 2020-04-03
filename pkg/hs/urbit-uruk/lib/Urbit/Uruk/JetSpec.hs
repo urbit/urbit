@@ -48,27 +48,24 @@ data SingJet
 
 jetSpec :: Text
 jetSpec = [r|
+++  (seq x y)    y
+
 ++  (eye x)      x
 ++  (bee f g x)  (f (g x))
 ++  (sea f g x)  (f x g)
 
-++  lamzero  <f x x>
-++  lamsucc  <n f x (f (n f x))>
+++  skzero  (S K)
+++  sksucc  (S (S (K S) K))
 
-++  (pak n)  (J J K (n lamsucc lamzero))
-++  (inc n)  (pak <i z (i (n i z))>)
 
-++  0  (J J K lamzero)
-++  1  (J J K (lamsucc lamzero))
-++  2  (J J K (lamsucc (lamsucc lamzero)))
-
-++  (seq x y)    y
-++  (yet f x y)  (f x y)
+++  0  (J J K skzero)
+++  1  (J J K (sksucc skzero))
+++  2  (J J K (sksucc (sksucc skzero)))
 
 ++  zee
   |=  f
-  %-  <x (f <v (yet x x v)>)>
-  <x (f <v (yet x x v)>)>
+  %-  <x (f <v (x x v)>)>
+  <x (f <v (x x v)>)>
 
 ++  fix
   ~/  2  fix
@@ -101,8 +98,12 @@ jetSpec = [r|
   (lef uni)
 
 ++  (fec n)    (cas (dec n) (K 0) eye)
+
+++  (pak n)    (J J K (n sksucc skzero))
+++  (inc n)    (pak <i z (i (n i z))>)
 ++  (add x y)  (pak <i z (x i (y i z))>)
 ++  (mul x y)  (pak <i z (x (y i) z)>)
+
 ++  (sub x y)  (y <z (cas z lef dec)> (rit x))
 ++  (fub x y)  (cas (sub x y) (K 0) eye)
 
@@ -122,12 +123,12 @@ jetSpec = [r|
   |=  ($ divisor count remain)
   %+  (iff (lth remain divisor))
     <u count>
-  <u (seq u $ divisor (inc count) (fub remain divisor))>
+  <u (divisor (inc count) (fub remain divisor))>
 
 ++  (div dividend divisor)
   %+  (iff (zer divisor))
-    <u (seq u ded %divide-by-zero)>
-  <u (seq u divlop divisor 0 dividend)>
+    <u (ded %divide-by-zero)>
+  <u (divlop divisor 0 dividend)>
 
 ++  (mod a b)  (fub a (mul b (div a b)))
 
