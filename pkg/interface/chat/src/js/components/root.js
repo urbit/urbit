@@ -110,6 +110,7 @@ export class Root extends Component {
                     permissions={state.permissions || {}}
                     contacts={state.contacts || {}}
                     associations={associations.contacts}
+                    chatSynced={state.chatSynced || {}}
                     {...props}
                   />
                 </Skeleton>
@@ -139,6 +140,7 @@ export class Root extends Component {
                     api={api}
                     inbox={state.inbox}
                     autoJoin={station}
+                    chatSynced={state.chatSynced || {}}
                     {...props} />
                 </Skeleton>
               );

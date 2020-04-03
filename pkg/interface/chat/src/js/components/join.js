@@ -46,7 +46,8 @@ export class JoinScreen extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
-    if (state.station in props.inbox) {
+    if (state.station in props.inbox ||
+        props.chatSynced !== prevProps.chatSynced) {
       props.history.push(`/~chat/room${state.station}`);
     }
   }
