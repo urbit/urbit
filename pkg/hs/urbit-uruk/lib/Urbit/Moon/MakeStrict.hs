@@ -272,13 +272,14 @@ import ClassyPrelude hiding (try)
 import Bound
 import Urbit.Uruk.Bracket
 
-import Data.List (nub)
+import Data.List (nub, iterate, (!!))
 
-import Text.Show.Pretty (ppShow)
 import Bound.Var        (unvar)
 import Control.Arrow    ((<<<), (>>>))
+import Data.Function    ((&))
 import Numeric.Natural  (Natural)
 import Numeric.Positive (Positive)
+import Text.Show.Pretty (ppShow)
 
 import qualified Urbit.Uruk.Fast.Types  as F
 import qualified Urbit.Uruk.Refr.Jetted as Ur
@@ -286,7 +287,7 @@ import qualified Urbit.Uruk.Refr.Jetted as Ur
 
 -- Types -----------------------------------------------------------------------
 
-type ExpV a = Exp () (Var () a)
+type ExpV v a = Exp () (Var v a)
 
 
 -- Utils -----------------------------------------------------------------------
@@ -297,9 +298,16 @@ type ExpV a = Exp () (Var () a)
     [eₙeₙ] -> ee
 -}
 fixApp
-  :: Show a => ExpV a -> (Int -> ExpV a) -> (Int, ExpV a) -> (Int, ExpV a) -> Maybe Int -> ExpV a
-fixApp seq yet (_xArgs, x) (0, y)      _ = x :@ y
-fixApp seq yet (1, x)      (_yArgs, y) (Just n) = trace msg $ yet (n+1) :@ x :@ y
+  :: (Show a, Show v)
+  => v
+  -> ExpV v a
+  -> (Int -> ExpV v a)
+  -> (Int, ExpV v a)
+  -> (Int, ExpV v a)
+  -> Maybe Int
+  -> ExpV v a
+fixApp b0 seq yet (_xArgs, x) (0, y)      _ = x :@ y
+fixApp b0 seq yet (1, x)      (_yArgs, y) (Just n) = trace msg $ yet (n+1) :@ x :@ y
  where msg = force $ indent $ unlines $
          [ "[delay]:"
          , ""
@@ -308,7 +316,7 @@ fixApp seq yet (1, x)      (_yArgs, y) (Just n) = trace msg $ yet (n+1) :@ x :@ 
          , ppShow ((1, x), (_yArgs, y))
          , ""
          ]
-fixApp seq yet (1, x)      (_yArgs, y) ritDist = trace msg $ seq :@ Var (B ()) :@ x :@ y
+fixApp b0 seq yet (1, x)      (_yArgs, y) ritDist = trace msg $ seq :@ Var (B b0) :@ x :@ y
  where msg = force $ indent $ unlines $
          [ "[delay]:"
          , ""
@@ -317,7 +325,7 @@ fixApp seq yet (1, x)      (_yArgs, y) ritDist = trace msg $ seq :@ Var (B ()) :
          , ppShow ((1, x), (_yArgs, y))
          , ""
          ]
-fixApp seq yet (_, x)      (_yArgs, y) _ = x :@ y
+fixApp b0 seq yet (_, x)      (_yArgs, y) _ = x :@ y
 
 {-
     *(Keₙ)  -> n+1
@@ -331,10 +339,10 @@ appArity _xIsK 0     _     = 0
 appArity _xIsK _     0     = 0
 appArity _xIsK xArgs _     = xArgs-1
 
-wrap :: (a -> (Bool, Int)) -> Var () a -> (Bool, Int)
+wrap :: (a -> (Bool, Int)) -> Var v a -> (Bool, Int)
 wrap f = \case
-  B () -> (False, 1)
-  F v  -> f v
+  B v -> (False, 1)
+  F v -> f v
 
 {- |
     Returns the arity of an expression and transform it if necessary.
@@ -342,26 +350,27 @@ wrap f = \case
     `f x` should return `(x == K, arity x)`.
 -}
 recur'
-  :: (Show a, Eq a)
-  => (ExpV a, Int -> ExpV a, ExpV a, a -> (Bool, Int))
+  :: (Show a, Eq a, Show v, Eq v)
+  => v
+  -> (ExpV v a, Int -> ExpV v a, ExpV v a, a -> (Bool, Int))
   -> Maybe Int
-  -> ExpV a
-  -> ((Bool, Int), [Var () a], ExpV a)
-recur' (seq,yet,k,f) mRit = \case
+  -> ExpV v a
+  -> ((Bool, Int), [Var v a], ExpV v a)
+recur' b0 (seq,yet,k,f) mRit = \case
   Var v -> (unvar (const (False, 0)) f v, [v], Var v)
   Lam () b ->
-    let ((_, funArity), refs, bodExp) = recur (F <$> seq, fmap F <$> yet, F <$> k, wrap f) Nothing $ fromScope b
+    let ((_, funArity), refs, bodExp) = recur () (F <$> seq, fmap F <$> yet, F <$> k, wrap f) Nothing $ fromScope b
         ourRefs = cvt refs
         arity = if any ((== 0) . varArity) ourRefs then 0 else funArity+1
     in ((False, arity), ourRefs, Lam () (toScope bodExp))
 
   x :@ y ->
     let
-      ((yIsK, yArgs), yRefs, yVal) = recur (seq,yet,k,f) Nothing y
+      ((yIsK, yArgs), yRefs, yVal) = recur b0 (seq,yet,k,f) Nothing y
       ritDist = if (yArgs == 0) then (Just 1) else ((+1) <$> mRit)
-      ((xIsK, xArgs), xRefs, xVal) = recur (seq,yet,k,f) ritDist x
+      ((xIsK, xArgs), xRefs, xVal) = recur b0 (seq,yet,k,f) ritDist x
 
-      resVal = fixApp seq yet (xArgs, xVal) (yArgs, yVal) ritDist
+      resVal = fixApp b0 seq yet (xArgs, xVal) (yArgs, yVal) ritDist
       resArgs = appArity xIsK xArgs yArgs
       resIsK = False
     in
@@ -370,18 +379,19 @@ recur' (seq,yet,k,f) mRit = \case
  where
   varArity = unvar (const 0) (snd . f)
 
-  cvt :: [Var () (Var () a)] -> [Var () a]
+  cvt :: [Var v (Var w a)] -> [Var w a]
   cvt = mapMaybe (unvar (const Nothing) Just)
 
 recur
-  :: (Show a, Eq a)
-  => (ExpV a, Int -> ExpV a, ExpV a, a -> (Bool, Int))
+  :: (Show a, Eq a, Show v, Eq v)
+  => v
+  -> (ExpV v a, Int -> ExpV v a, ExpV v a, a -> (Bool, Int))
   -> Maybe Int
-  -> ExpV a
-  -> ((Bool, Int), [Var () a], ExpV a)
-recur tup x mRit = result -- trace msg result
+  -> ExpV v a
+  -> ((Bool, Int), [Var v a], ExpV v a)
+recur b0 tup x mRit = result -- trace msg result
  where
-  result@((_, arity), free, exp) = recur' tup x mRit
+  result@((_, arity), free, exp) = recur' b0 tup x mRit
   msg = unlines
     [ "[recur]"
     , ""
@@ -393,7 +403,7 @@ recur tup x mRit = result -- trace msg result
     ]
 
 
-getExp :: ((Bool, Int), [Var () a], ExpV a) -> ExpV a
+getExp :: ((Bool, Int), [Var v a], ExpV v a) -> ExpV v a
 getExp (_,_,e) = e
 
 {-
@@ -424,7 +434,7 @@ makeStrict (seq,yet,k,app,arity) = go . foldConstantValues app
  where
   go = \case
     x   :@ y -> go x :@ go y
-    Lam () b -> Lam () $ toScope $ getExp . recur (sv, yv, kv, r) Nothing $ fromScope b
+    Lam () b -> Lam () $ toScope $ getExp . recur () (sv, yv, kv, r) Nothing $ fromScope b
     Var v    -> Var v
   sv = Var (F seq)
   yv = Var . F <$> yet
@@ -432,106 +442,72 @@ makeStrict (seq,yet,k,app,arity) = go . foldConstantValues app
   r = \x -> (x == k, arity x)
 
 
--- Optimized Entry-Point for Jetted Functions ----------------------------------
+-- Convert between N nested lambdas and One lambda with debruijn indicies. -----
 
-{-
-    TODO This is very complicated code to do something simple. Clean up!
+type Nat = Natural
 
-    This expects it's input to be of the form `λx.λy.[...]b`. `n`
-    bindings folloed by an expressions.
+smoosh :: Nat -> Exp () a -> Maybe (Exp () (Var Nat a))
+smoosh 0    _      = Nothing
+smoosh topN topExp = top topExp >>= doTimesM (pred topN) succ
+ where
+  top :: Exp () a -> Maybe (Exp () (Var Nat a))
+  top = fromLam >=> pure . fmap (unvar (B . const 0) F)
 
-    It's the same as `makeStrict` except that it treats the first `n`
-    bindings as having arity `0`.
--}
+  succ :: Exp () (Var Nat a) -> Maybe (Exp () (Var Nat a))
+  succ = fromLam >=> pure . fmap (unvar (B . const 0) (unvar (B . (+1)) F))
+
+  fromLam :: Exp () a -> Maybe (Exp () (Var () a))
+  fromLam = \case
+    Lam () x -> pure (fromScope x)
+    _        -> Nothing
+
+unSmoosh :: Nat -> Exp () (Var Nat a) -> Exp () a
+unSmoosh 0 _ = error "unSmoosh: bad arity"
+unSmoosh n x = one $ doTimes (n-1) pred x
+ where
+  one :: Exp () (Var Nat a) -> Exp () a
+  one = Lam () . toScope . fmap (unvar (B . const ()) F)
+
+  pred :: Exp () (Var Nat a) -> Exp () (Var Nat a)
+  pred = Lam () . toScope . fmap (unvar unwrap (F . F))
+
+  unwrap :: Nat -> Var () (Var Nat a)
+  unwrap 0 = B ()
+  unwrap n = F (B (n-1))
+
+doTimes :: Nat -> (a -> a) -> a -> a
+doTimes 0 _ z = z
+doTimes n f z = doTimes (pred n) f (f z)
+
+doTimesM :: Monad m => Nat -> (a -> m a) -> a -> m a
+doTimesM 0 _ z = pure z
+doTimesM n f z = f z >>= doTimesM (pred n) f
+
+
+-- Using the above to implement proper arity handling for jets. ----------------
+
 makeJetStrict
-  :: Show p => Eq p => (p, Int -> p, p, p -> p -> p, p -> Int) -> Int -> Exp () p -> Exp () p
-makeJetStrict (seq, yet, k, app, arity) n topExp =
-  top n (foldConstantValues app topExp)
+  :: forall p
+   . (Show p, Eq p)
+  => (p, Int -> p, p, p -> p -> p, p -> Int)
+  -> Int
+  -> Exp () p
+  -> Exp () p
+makeJetStrict tup@(seq, yet, k, app, arity) n = \e ->
+  fromMaybe (makeStrict tup e) $ go $ foldConstantValues app e
  where
-  top 0 e          = makeStrict (seq, yet, k, app, arity) e  -- bad jet
-  top n (Var v   ) = trace "bad-jet" $ makeStrict (seq, yet, k, app, arity) (Var v)  -- bad jet
-  top n (x   :@ y) = trace "bad-jet" $ makeStrict (seq, yet, k, app, arity) (x :@ y)  -- bad jet
-  top n (Lam () b) = Lam () $ toScope $ go initTup (n - 1) $ fromScope b
+  go :: Exp () p -> Maybe (Exp () p)
+  go e = do
+    let depth = fromIntegral n
+    let seqV  = Var (F seq)
+    let yetV  = Var . F <$> yet
+    let kV    = Var (F k)
+    let r     = \x -> (x == k, arity x)
+    e' <- smoosh depth e
+    pure $ unSmoosh depth $ getExp $ recur 0 (seqV, yetV, kV, r) Nothing e'
 
-  initTup = (,,,,) (Var (F seq))
-                   (Var . F <$> yet)
-                   (Var (F k))
-                   (\x -> (x == k, arity x))
-                   (\x -> (x == k, arity x))
 
-  go
-    :: Show a
-    => Eq a
-    => (ExpV a, Int -> ExpV a, ExpV a, a -> (Bool, Int), a -> (Bool, Int))
-    -> Int
-    -> ExpV a
-    -> ExpV a
-  go (seq, yet, k, f, j) 0 b          = getExp $ jetRecur (seq, yet, k, f, j) Nothing b
-  go (seq, yet, k, f, j) n b@(Var _ ) = trace "bad-jet" $ getExp $ recur (seq, yet, k, f) Nothing b
-  go (seq, yet, k, f, j) n b@(_ :@ _) = trace "bad-jet" $ getExp $ recur (seq, yet, k, f) Nothing b
-  go (seq, yet, k, f, j) n (Lam () b) =
-    Lam ()
-      $ toScope
-      $ go (F <$> seq, fmap F <$> yet, F <$> k, wrap f, wrapJet j) (n - 1)
-      $ fromScope b
-
-  wrapJet :: (a -> (Bool, Int)) -> Var () a -> (Bool, Int)
-  wrapJet = unvar (const (False, 0))
-
-{- |
-    Returns the arity of an expression and transform it if necessary.
-
-    `f x` should return `(x == K, arity x)`.
--}
-jetRecur'
-  :: (Show a, Eq a)
-  => (ExpV a, Int -> ExpV a, ExpV a, a -> (Bool, Int), a -> (Bool, Int))
-  -> Maybe Int
-  -> ExpV a
-  -> ((Bool, Int), [Var () a], ExpV a)
-jetRecur' (seq,yet,k,f,j) mRit = \case
-  Var v -> (unvar (const (False, 0)) j v, [v], Var v)
-
-  Lam () b ->
-    let ((_, funArity), refs, bodExp) = recur (F <$> seq, fmap F <$> yet, F <$> k, wrap f) Nothing $ fromScope b
-        ourRefs = cvt refs
-        arity = if any ((== 0) . varArity) ourRefs then 0 else funArity+1
-    in ((False, arity), ourRefs, Lam () (toScope bodExp))
-
-  x :@ y ->
-    let
-      ((yIsK, yArgs), yRefs, yVal) = jetRecur (seq,yet,k,f,j) Nothing y
-      ritDist = if (yArgs == 0) then (Just 1) else ((+1) <$> mRit)
-      ((xIsK, xArgs), xRefs, xVal) = jetRecur (seq,yet,k,f,j) ritDist x
-      resVal = fixApp seq yet (xArgs, xVal) (yArgs, yVal) ritDist
-      resArgs = appArity xIsK xArgs yArgs
-      resRefs = nub (xRefs <> yRefs)
-      resIsK = False
-    in
-      ((resIsK, resArgs), resRefs, resVal)
-
- where
-  varArity = unvar (const 0) (snd . j)
-
-  cvt :: [Var () (Var () a)] -> [Var () a]
-  cvt = mapMaybe (unvar (const Nothing) Just)
-
-jetRecur
-  :: (Show a, Eq a)
-  => (ExpV a, Int -> ExpV a, ExpV a, a -> (Bool, Int), a -> (Bool, Int))
-  -> Maybe Int
-  -> ExpV a
-  -> ((Bool, Int), [Var () a], ExpV a)
-jetRecur tup mRit x = result -- trace msg result
- where
-  result@((_, arity), free, exp) = jetRecur' tup mRit x
-  msg = unlines
-    [ "jetRecur:"
-    , "  arity: " <> show arity
-    , "  free: " <> show free
-    , "  exp:"
-    , indent (indent (ppShow exp))
-    ]
+-- Testing ---------------------------------------------------------------------
 
 indent :: String -> String
 indent = unlines . fmap ("  " <>) . lines
@@ -544,7 +520,6 @@ testTup = ("Q", (("I" <>) . show), "K", (<>), const 1)
 testStrict = makeJetStrict testTup
 
 instance IsString (Exp () String) where fromString = Var
-
 
 {-
   (1,'inc',(S (K PAK) (S (K (S (S (K S) K))) (S (S (K S) (S (K (S (K S))) (S (K (S S (K K))) (S (K (S (K K) S)) (S (K (S SE
