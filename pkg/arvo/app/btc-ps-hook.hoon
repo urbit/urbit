@@ -125,9 +125,9 @@
   |=  ent=@uv
   ^-  @t
   =/  bip32-core=_bip32  (from-seed:bip32 [64 ent])
-  :: yo what up with dis chain code?
-  ~&  chain-code.bip32-core
-  private-key.bip32-core
+  ~&  (crip prv-extended.bip32-core)
+  :: todo ~ change private-key.state to a tape
+  (crip prv-extended.bip32-core)
 ++  get-rates
   |=  [currency-pair=@t store-id=@t token=@t]
   ^-  card
@@ -148,13 +148,16 @@
   |=  msg=@t
   ^-  (list [@t @t])
   =,  secp:crypto
-  :: =/  bip32-core=_bip32  (from-private:bip32 [private-key chain-code???])
-
+  =/  bip32-core=_bip32  (from-extended:bip32 (trip private-key))
+  
   :: msg need to be base32 :(
-  :: ~&  ecdsa-raw-sign:secp256k1(msg private-key)
+  :: =.  msg  `@uvI`msg
+  :: =/  signed-msg
+  ::   ecdsa-raw-sign:secp256k1(msg private-key.bip32-core)
+  ::   return type: [v=@ r=@ s=@]
   :~
     ::  derive public key from private-key
-    ['X-Identity' '0248f52ea311dec78bbab32a2f9f1a1bd2358b36271c832ba6b482523c21713fd2']
+    ['X-Identity' public-key.bip32-core]
     ::  sign msg with private-key
     ['X-Signature' msg]
   ==
