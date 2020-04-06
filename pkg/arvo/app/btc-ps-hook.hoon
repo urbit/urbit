@@ -1,6 +1,5 @@
-
 /-  *btc-ps-hook
-/+  *server, default-agent, dbug
+/+  bip32, *server, default-agent, dbug
 |%
 +$  card  card:agent:gall
 ::
@@ -41,7 +40,7 @@
     ^-  (quip card _this)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
-          %btc-ps-admin-action  (poke-btc-ps-admin-action !<(btc-ps-admin-action vase))
+          %btc-ps-admin-action  (poke-btc-ps-admin-action:ac !<(btc-ps-admin-action vase))
           %btc-ps-action        (poke-btc-ps-action:ac !<(btc-ps-action vase))
       ==
     [cards this]
@@ -83,6 +82,8 @@
   ?>  (team:title our.bol src.bol)
   ?-  -.act
       %set-store-id  [~ state(store-id store-id.act)]
+      %generate-private-key
+    [~ state(private-key (generate-private-key eny.bol))]
   ==
 ::
 ++  poke-btc-ps-action
@@ -90,7 +91,7 @@
   ^-  (quip card _state)
   ?-  -.act
       %get-rates
-    [[(get-rates currency-pair.act store-id token)]~ state]
+    [[(get-rates currency-pair.act store-id '4AEuwNXZt9jNbPYFf9W8Nh8mjVVQME9kQV7rD45RXfsp')]~ state]
   ==
 ::
 ++  http-response
@@ -120,6 +121,13 @@
 ::
 ::  +utilities
 ::
+++  generate-private-key
+  |=  ent=@uv
+  ^-  @t
+  =/  bip32-core=_bip32  (from-seed:bip32 [64 ent])
+  :: yo what up with dis chain code?
+  ~&  chain-code.bip32-core
+  private-key.bip32-core
 ++  get-rates
   |=  [currency-pair=@t store-id=@t token=@t]
   ^-  card
@@ -137,12 +145,18 @@
   [%pass wire %arvo %i %request request outbound-config]
 ::
 ++  create-signed-headers
-  |=  [uri=@t payload=@t]
+  |=  msg=@t
+  ^-  (list [@t @t])
+  =,  secp:crypto
+  :: =/  bip32-core=_bip32  (from-private:bip32 [private-key chain-code???])
+
+  :: msg need to be base32 :(
+  :: ~&  ecdsa-raw-sign:secp256k1(msg private-key)
   :~
-    ::  derive public key from private-key.state
+    ::  derive public key from private-key
     ['X-Identity' '0248f52ea311dec78bbab32a2f9f1a1bd2358b36271c832ba6b482523c21713fd2']
-    ::  sign (weld uri payload) with private key
-    ['X-Signature' '3046022100d4ded275aa88068a2e2a738246a14d8f4c50bebe0081cc0d0021913a830a6f04022100b19b3c672e831eb6829e182a1d31f574dc1d553eaddf1e71db8d9fe0424c1896']
+    ::  sign msg with private-key
+    ['X-Signature' msg]
   ==
 ::
 ++  signed-get-request
@@ -158,7 +172,7 @@
   =/  qs  (stringify params)
   =/  url
     (crip (weld (weld base-url (trip endpoint)) (trip qs)))
-  =/  signed-hed  (weld hed (create-signed-headers url qs))
+  =/  signed-hed  (weld hed (create-signed-headers url))
   ~&  signed-hed
   [%'GET' url hed *(unit octs)]
 ::
@@ -174,17 +188,15 @@
   ^-  @t
   =/  query-string=tape  ""
   |-
-  =*  loop  $
+  ^-  @t
   ?~  params  (crip query-string)
-  =/  item  i.params
   =.  query-string
-    ;:  weld
+    %-  zing
     :~  query-string
         ?:(=(query-string "") "?" "&")
-        -.item
+        (trip -.i.params)
         "="
-        +.item
+        (trip +.i.params)
     ==
-  loop
-  --
+  $(params t.params)
 --

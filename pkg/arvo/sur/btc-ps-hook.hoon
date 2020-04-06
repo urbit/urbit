@@ -7,5 +7,6 @@
 +$  btc-ps-admin-action
   $%
       [%set-store-id store-id=@t]
+      [%generate-private-key ~]
   ==
 --
