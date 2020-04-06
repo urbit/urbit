@@ -1088,7 +1088,7 @@
       =/  max-age=tape  (format-ud-as-integer `@ud`(div (msec:milly expires-in) 1.000))
       =/  cookie-line
         %-  crip
-        "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}"
+        "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}; SameSite=Strict"
       ::
       ?~  redirect=(get-header:http 'redirect' u.parsed)
         %-  handle-response
