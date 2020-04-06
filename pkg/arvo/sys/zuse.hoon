@@ -5836,6 +5836,7 @@
       |*  wil/(pole fist)
       |=  jon/json
       ?.  ?=({$a *} jon)  ~
+      ?.  =((lent wil) (lent p.jon))  ~
       =+  raw=((at-raw wil) p.jon)
       ?.((za raw) ~ (some (zp raw)))
     ::
