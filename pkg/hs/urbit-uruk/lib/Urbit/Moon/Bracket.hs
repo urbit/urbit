@@ -1,7 +1,7 @@
 {- |
   Compile lambda calculus to SK combinators using "bracket abstraction".
 -}
-module Urbit.Uruk.Bracket
+module Urbit.Moon.Bracket
   ( Exp(..)
   , Out
   , SK(..)
@@ -23,57 +23,56 @@ import Data.Functor.Classes (eq1, showsPrec1)
 
 infixl 5 :@;
 
-data Exp b a
-  = Lam b (Scope b (Exp b) a)
+data Exp p b a
+  = Lam b (Scope b (Exp p b) a)
+  | Exp p b a :@ Exp p b a
+  | Pri p
   | Var a
-  | Exp b a :@ Exp b a
  deriving (Functor, Foldable, Traversable)
 
-data SK a = S | K | V a
- deriving (Functor, Foldable, Traversable)
+data SK a = S | K | P a
+ deriving (Eq, Ord, Show)
 
-type Out = Exp Void
+type Unit = ()
+
+type Inp p a = Exp p Unit a
+type Out p a = Exp p Void a
 
 
 -- Instances -------------------------------------------------------------------
 
 deriveEq1 ''Exp
-deriveEq1 ''SK
-
 deriveShow1 ''Exp
-deriveShow1 ''SK
 
-instance Eq a => Eq (SK a) where (==) = eq1
-instance (Eq a, Eq b) => Eq (Exp a b) where (==) = eq1
+instance (Eq p, Eq b, Eq a) => Eq (Exp p b a) where
+  (==) = eq1
 
-instance Show a => Show (SK a) where showsPrec = showsPrec1
-instance (Show a, Show b) => Show (Exp a b) where showsPrec = showsPrec1
+instance (Show p, Show b, Show a) => Show (Exp p b a) where
+  showsPrec = showsPrec1
 
-instance Applicative (Exp b) where
-  pure  = Var
-  (<*>) = ap
-
-instance Monad (Exp b) where
+instance Monad (Exp p b) where
   return = Var
   Var a    >>= f = f a
+  Pri p    >>= _ = Pri p
   Lam  v b >>= f = Lam v (b >>>= f)
   (:@) x y >>= f = (:@) (x >>= f) (y >>= f)
 
-instance Applicative SK where
-  pure  = V
+instance Applicative (Exp p b) where
+  pure  = Var
   (<*>) = ap
-
-instance Monad SK where
-  return = V
-  V a >>= f = f a
-  S   >>= _ = S
-  K   >>= _ = K
 
 
 -- Patterns --------------------------------------------------------------------
 
-pattern VS = Var S
-pattern VK = Var K
+pattern PS = Pri S
+pattern PK = Pri K
+
+wrapSK :: Exp p b a -> Exp (SK p) b a
+wrapSK = \case
+  Pri p   -> Pri (P p)
+  Var v   -> Var v
+  x :@ y  -> wrapSK x :@ wrapSK y
+  Lam b x -> Lam b $ toScope $ wrapSK $ fromScope x
 
 strip :: Traversable f => f (Var b a) -> Maybe (f a)
 strip = traverse $ \case
@@ -90,17 +89,13 @@ strip = traverse $ \case
 pattern Cns b <- (strip -> Just b)
   where Cns = error "hack"
 
-pattern FS = Var (F S)
-pattern FK = Var (F K)
 pattern VB a = Var (B a)
 
-isComb :: Exp b (Var v (SK a)) -> Maybe (Exp b (Var v (SK z)))
-isComb = strip >=> \case
-  Var (V _) -> Nothing
-  Var S     -> Just (Var (F S))
-  Var K     -> Just (Var (F K))
-  Lam _ _   -> Nothing
-  _ :@ _    -> Nothing
+isComb :: Exp (SK p) c a -> Maybe (SK q)
+isComb = \case
+  Pri S -> Just S
+  Pri K -> Just K
+  _     -> Nothing
 
 pattern CB b <- (isComb -> Just b)
   where CB = error "hack"
@@ -158,22 +153,24 @@ pattern CB b <- (isComb -> Just b)
     (S(K(S(SKK)))(S(KK)(SKK)))
     ```
 -}
-naiveBracket :: Exp b a -> Out (SK a)
-naiveBracket = go
+naiveBracket :: forall p f. Eq f => Inp p f -> Out (SK p) f
+naiveBracket = go . wrapSK
  where
-  go :: Exp b a -> Out (SK a)
+  go :: Eq a => Inp (SK p) a -> Out (SK p) a
   go = \case
-    Var x    -> Var (V x)
+    Var x    -> Var x
+    Pri p    -> Pri p
     (:@) x y -> go x :@ go y
-    Lam  _ b -> abs $ fmap sequence $ go $ fromScope b
+    Lam  _ b -> abs $ go $ fromScope b
 
-  abs :: Out (Var b (SK a)) -> Out (SK a)
+  abs :: Eq a => Out (SK p) (Var () a) -> Out (SK p) a
   abs = \case
-    Lam b  _  -> absurd b
-    Var (B _) -> VS :@ VK :@ VK
-    Var (F v) -> VK :@ Var v -- Same as below but makes match exhaustive.
-    Cns b     -> VK :@ b
-    x   :@ y  -> VS :@ abs x :@ abs y
+    Lam b  _   -> absurd b
+    Pri p      -> Pri p
+    Var (B ()) -> PS :@ PK :@ PK
+    Var (F v)  -> PK :@ Var v -- Same as below but makes match exhaustive.
+    Cns b      -> PK :@ b
+    x   :@ y   -> PS :@ abs x :@ abs y
 
 
 -- John Tromp's Bracket Abtraction Approach ------------------------------------
@@ -198,41 +195,38 @@ naiveBracket = go
     9) [λx.mn]     -> S[λx.m][λx.n]
     ```
 -}
-johnTrompBracket :: (Eq b, Eq a) => Exp b a -> Out (SK a)
-johnTrompBracket = go
+johnTrompBracket :: forall p f. (Eq p, Eq f) => Inp p f -> Out (SK p) f
+johnTrompBracket = go . wrapSK
  where
-  go :: (Eq a, Eq b) => Exp b a -> Out (SK a)
+  go :: Eq a => Inp (SK p) a -> Out (SK p) a
   go = \case
-    Var x    -> Var (V x)
+    Var x    -> Var x
+    Pri p    -> Pri p
     x   :@ y -> go x :@ go y
-    Lam _  b -> abs $ fmap sequence $ go $ fromScope b
+    Lam () b -> abs $ go $ fromScope b
 
-  lam :: (Eq a, Eq v, Eq w) => Out (Var v (SK a)) -> Out (Var w (SK a))
-  lam = fF . abs
-
-  fF :: Functor f => f a -> f (Var b a)
-  fF = fmap F
-
-  abs :: (Eq a, Eq b) => Out (Var b (SK a)) -> Out (SK a)
+  abs :: Eq a => Out (SK p) (Var () a) -> Out (SK p) a
   abs = \case
     Lam b  _                          -> absurd b
-    FS :@ FK :@ _                     -> VS :@ VK
-    Var (B _)                         -> VS :@ VK :@ VK
-    Var (F v)                         -> VK :@ Var v
-    Cns b                             -> VK :@ b
-    Cns m :@ VB _                     -> m
-    VB v :@ m :@ VB _                 -> abs (FS :@ FS :@ FK :@ VB v :@ m)
-    CB m          :@ (CB n :@ l)      -> abs (FS :@ lam m :@ n :@ l)
-    (CB m :@ n)   :@ CB l             -> abs (FS :@ m :@ lam l :@ n)
-    (CB m :@ b) :@ (CB n :@ p) | b==p -> abs (FS :@ m :@ n :@ b)
-    x   :@ y                          -> VS :@ abs x :@ abs y
+    PS :@ PK :@ _                     -> PS :@ PK
+    Var (B ())                        -> PS :@ PK :@ PK
+    Var (F v)                         -> PK :@ Var v
+    Pri p                             -> PK :@ Pri p
+    Cns b                             -> PK :@ b
+    Cns m :@ VB ()                    -> m
+    VB v :@ m :@ VB ()                -> abs (PS :@ PS :@ PK :@ VB v :@ m)
+    CB m          :@ (CB n :@ l)      -> abs (PS :@ abs (Pri m) :@ Pri n :@ l)
+    (CB m :@ n)   :@ CB l             -> abs (PS :@ Pri m :@ abs (Pri l) :@ n)
+    (CB m :@ b) :@ (CB n :@ p) | b==p -> abs (PS :@ Pri m :@ Pri n :@ b)
+    x   :@ y                          -> PS :@ abs x :@ abs y
 
-outToUruk :: (p, p, p -> p -> IO p) -> Out (SK p) -> IO p
-outToUruk (s,k,app)= go
+outToUruk :: (p, p, p -> p -> p) -> Out (SK p) Void -> p
+outToUruk (s,k,app) = go
  where
   go = \case
     Lam b _   -> absurd b
-    Var S     -> pure s
-    Var K     -> pure k
-    Var (V p) -> pure p
-    x :@ y    -> join (app <$> go x <*> go y)
+    Var v     -> absurd v
+    Pri S     -> s
+    Pri K     -> k
+    Pri (P p) -> p
+    x :@ y    -> app (go x) (go y)

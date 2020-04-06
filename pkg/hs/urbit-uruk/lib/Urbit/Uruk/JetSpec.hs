@@ -74,7 +74,7 @@ jetSpec = [r|
   %^    zee
       |=  $
       %-  (J J %fix)
-      <f (f ($ f))>
+      <f x (f ($ f) x)>
     fun
   arg
 

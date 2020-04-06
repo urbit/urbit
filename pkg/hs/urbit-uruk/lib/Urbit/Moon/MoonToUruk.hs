@@ -4,12 +4,12 @@ import Bound
 import ClassyPrelude
 import Control.Monad.Except
 import GHC.Natural
-import Prelude              ()
 import Urbit.Moon.AST
 import Urbit.Uruk.Class
 
 import Control.Arrow             ((>>>))
 import Data.Function             ((&))
+import Data.Void                 (Void)
 import System.IO.Unsafe          (unsafePerformIO)
 import Text.Show.Pretty          (ppShow)
 import Urbit.Moon.MakeStrict     (makeStrict)
@@ -19,7 +19,8 @@ import Urbit.Uruk.Fast.OptToFast (optToFast)
 import qualified Urbit.Atom              as Atom
 import qualified Urbit.Moon.LambdaToUruk as Lamb
 import qualified Urbit.Moon.Parser       as Parser
-import qualified Urbit.Uruk.Bracket      as B
+import qualified Urbit.Moon.Bracket      as B
+import qualified Urbit.Moon.MakeStrict   as B
 import qualified Urbit.Uruk.Fast         as F
 import qualified Urbit.Uruk.JetEval      as JetEval
 import qualified Urbit.Uruk.Refr.Jetted  as Ur
@@ -145,40 +146,42 @@ gogogoLazyOleg text = do
 usApp :: Uruk p => p -> p -> p
 usApp x y = unsafePerformIO (uApp x y)
 
-gogogoTromp :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoTromp :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO (Either Text p)
 gogogoTromp text = do
-  let tup = (uEss, uKay, uApp)
-  let tud = (uSeq, uYet . fromIntegral, uKay, usApp, uArity)
   ast <- ExceptT $ pure $ Parser.parseAST text
   let expr = bind ast
-  let lamb = moonToLambda expr :: B.Exp () (Either Text p)
-  ExceptT $ B.outToUruk tup $ B.johnTrompBracket $ makeStrict tud lamb
+  let lamb = mix (moonToLambda expr) :: B.Exp (Either Text p) () Void
+  let tup = (uEss, uKay, usApp)
+  let tud = B.Prim uSeq (uYet . fromIntegral) uKay usApp uArity (const Nothing)
+  pure $ B.outToUruk tup $ B.johnTrompBracket $ makeStrict tud lamb
 
-gogogoLazyTromp :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoLazyTromp :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO (Either Text p)
 gogogoLazyTromp text = do
-  let tup = (uEss, uKay, uApp)
   ast <- ExceptT $ pure $ Parser.parseAST text
   let expr = bind ast
-  let lamb = moonToLambda expr :: B.Exp () (Either Text p)
-  ExceptT $ B.outToUruk tup $ B.johnTrompBracket lamb
+  let lamb = mix (moonToLambda expr) :: B.Exp (Either Text p) () Void
+  let tup = (uEss, uKay, usApp)
+  pure $ B.outToUruk tup $ B.johnTrompBracket lamb
 
-gogogoNaive :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoNaive :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO (Either Text p)
 gogogoNaive text = do
-  let tup = (uEss, uKay, uApp)
-  let tud = (uSeq, uYet . fromIntegral, uKay, usApp, uArity)
   ast <- ExceptT $ pure $ Parser.parseAST text
   let expr = bind ast
-  let lamb = moonToLambda expr :: B.Exp () (Either Text p)
-  ExceptT $ B.outToUruk tup $ B.naiveBracket $ makeStrict tud lamb
+  let lamb = mix (moonToLambda expr) :: B.Exp (Either Text p) () Void
+  let tup = (uEss, uKay, usApp)
+  let tud = B.Prim uSeq (uYet . fromIntegral) uKay usApp uArity (const Nothing)
+  pure $ B.outToUruk tup $ B.naiveBracket $ makeStrict tud lamb
 
-gogogoLazyNaive :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoLazyNaive :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO (Either Text p)
 gogogoLazyNaive text = do
-  let tup = (uEss, uKay, uApp)
   ast <- ExceptT $ pure $ Parser.parseAST text
   let expr = bind ast
-  let lamb = moonToLambda expr :: B.Exp () (Either Text p)
-  ExceptT $ B.outToUruk tup $ B.naiveBracket lamb
+  let lamb = mix (moonToLambda expr) :: B.Exp (Either Text p) () Void
+  let tup = (uEss, uKay, usApp)
+  pure $ B.outToUruk tup $ B.naiveBracket lamb
 
+mix :: B.Exp p () Text -> B.Exp (Either Text p) () Void
+mix = undefined
 
 bindLC :: Uruk p => Lamb.Exp (Either Text p) -> Either Text (Lamb.Exp p)
 bindLC = traverse (either getGlobal Right)

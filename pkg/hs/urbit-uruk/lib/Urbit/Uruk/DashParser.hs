@@ -2,7 +2,7 @@
 
 module Urbit.Uruk.DashParser where
 
-import ClassyPrelude hiding (exp, init, many, some, try, elem)
+import ClassyPrelude hiding (exp, init, many, some, try, elem, Prim)
 
 import Control.Lens hiding (snoc)
 import Control.Monad.State.Lazy
@@ -10,7 +10,8 @@ import Text.Megaparsec hiding (Pos)
 import Text.Megaparsec.Char
 import Data.Tree
 
-import Bound                 (abstract1)
+import Bound                 (abstract1, toScope, fromScope)
+import Bound.Var             (Var(..))
 import Data.Void             (Void, absurd)
 import Numeric.Natural       (Natural)
 import Numeric.Positive      (Positive)
@@ -18,12 +19,12 @@ import Prelude               (read)
 import Text.Show.Pretty      (pPrint, ppShow)
 import Urbit.Atom            (Atom)
 import Urbit.Uruk.JetSpec    (SingJet(..), jetSpec)
-import Urbit.Moon.MakeStrict (makeJetStrict)
+import Urbit.Moon.MakeStrict (makeJetStrict, Prim(..))
 
 import qualified Data.Char           as C
 import qualified Language.Haskell.TH as TH
 import qualified Urbit.Atom          as Atom
-import qualified Urbit.Uruk.Bracket  as B
+import qualified Urbit.Moon.Bracket  as B
 
 
 -- Numbers ---------------------------------------------------------------------
@@ -326,17 +327,12 @@ parseDecs txt =
 
 -- AST to SK -------------------------------------------------------------------
 
-astExp :: AST -> B.Exp () (Either Atom Text)
+astExp :: AST -> B.Exp Atom () Text
 astExp = \case
-  Var t   -> B.Var $ Right t
-  Tag t   -> B.Var $ Left $ Atom.utf8Atom t
+  Var t   -> B.Var t
+  Tag t   -> B.Pri $ Atom.utf8Atom t
   x :@ y  -> astExp x B.:@ astExp y
-  Lam n b -> B.Lam () (abstract1 (Right n) (astExp b))
-
-expErr :: B.Exp b (Either Atom Text) -> Either Text (B.Exp b Atom)
-expErr = traverse $ \case
-  Left atom  -> Right atom
-  Right free -> Left ("Undefined Variable: " <> free)
+  Lam n b -> B.Lam () (abstract1 n (astExp b))
 
 
 -- Texting ---------------------------------------------------------------------
@@ -353,16 +349,16 @@ tryDash = do
           pPrint (mapToList ev)
           pPrint (mapToList rg)
 
-cvt :: Text -> Env -> B.Out (B.SK (Either Atom Text)) -> Either Text Exp
+cvt :: Text -> Env -> B.Out (B.SK Atom) Text -> Either Text Exp
 cvt bind env = go
  where
   go = \case
-    B.Lam v _               -> absurd v
-    B.Var B.S               -> pure (N S)
-    B.Var B.K               -> pure (N K)
-    B.Var (B.V (Left atom)) -> pure $ N $ DataJet $ NAT atom
-    x B.:@ y                -> (:&) <$> go x <*> go y
-    B.Var (B.V (Right txt)) -> lookup txt env & \case
+    B.Lam v _      -> absurd v
+    B.Pri B.S      -> pure (N S)
+    B.Pri B.K      -> pure (N K)
+    B.Pri (B.P at) -> pure $ N $ DataJet $ NAT at
+    x B.:@ y       -> (:&) <$> go x <*> go y
+    B.Var txt      -> lookup txt env & \case
       Nothing -> Left ("Undefined variable: " <> txt <> " (in " <> bind <> ")")
       Just v  -> pure v
 
@@ -443,12 +439,13 @@ resolv = go (initialEnv, mempty)
         let reg' = insertMap sj (arity, nm, val) reg
         pure (env', reg')
 
-  ski :: B.Out (B.SK Exp) -> Exp
+  ski :: B.Out (B.SK Exp) Void -> Exp
   ski = \case
     B.Lam b _     -> absurd b
-    B.Var B.S     -> N S
-    B.Var B.K     -> N K
-    B.Var (B.V v) -> v
+    B.Var v       -> absurd v
+    B.Pri B.S     -> N S
+    B.Pri B.K     -> N K
+    B.Pri (B.P v) -> v
     x B.:@ y      -> ski x :& ski y
 
   jetWrap :: Text -> Int -> Val -> Val
@@ -482,16 +479,20 @@ seqJet = N $ SingJet SEQ
 yetJet :: Int -> Exp
 yetJet = N . DataJet . In . fromIntegral
 
-tup :: Reg -> (Exp, Int -> Exp, Exp, Exp -> Exp -> Exp, Exp -> Int)
-tup reg = (seqJet, yetJet, k, (:&), r)
+tup :: Reg -> Prim Exp -- (Exp, Int -> Exp, Exp, Exp -> Exp -> Exp, Exp -> Int)
+tup reg = Prim{..}
  where
-  k = N K
-  r = \case
+  pSeq = seqJet
+  pYet = yetJet
+  pKay = N K
+  pApp = (:&)
+  pHdr = pure Nothing
+  pArg = \case
     N n -> urArity reg n
-    N K :& x -> 1 + r x
+    N K :& x -> 1 + pArg x
     (jetArity -> Just n) -> 2
     (jetArity -> Just n) :& t :& b -> n
-    x :& _ -> case r x of
+    x :& _ -> case pArg x of
       0 -> 1
       1 -> 1
       n -> n - 1
@@ -513,15 +514,27 @@ urArity r (SingJet sj     ) = case lookup sj r of
   Nothing        -> error ("Reference to undefined jet: " <> show sj)
   Just (n, _, _) -> fromIntegral n
 
-resolveNames :: Text -> Env -> B.Exp () (Either Atom Text) -> Either Text (B.Exp () Exp)
-resolveNames bind env = traverse go
+resolveNames
+  :: Text -> Env -> B.Exp Atom () Text -> Either Text (B.Exp Exp () Void)
+resolveNames bind env = fmap (go Left) . traverse res
  where
-  go :: Either Atom Text -> Either Text Exp
-  go = \case
-    Left atom -> pure $ N $ DataJet $ NAT atom
-    Right nam -> case lookup nam env of
-      Nothing -> Left ("Undefined variable: " <> nam <> " (in " <> bind <> ")")
-      Just v  -> pure $ v
+  go :: (a -> Either Exp b) -> B.Exp Atom () a -> B.Exp Exp () b
+  go f = \case
+    B.Pri at     -> B.Pri $ N $ DataJet $ NAT at
+    x     B.:@ y -> go f x B.:@ go f y
+    B.Lam ()   x -> B.Lam () $ toScope $ go (wrap f) $ fromScope x
+    B.Var v      -> f v & \case
+      Left  e -> B.Pri e
+      Right v -> B.Var v
+
+  wrap :: (a -> Either Exp b) -> Var () a -> Either Exp (Var () b)
+  wrap f (B ()) = Right (B ())
+  wrap f (F fv) = F <$> f fv
+
+  res :: Text -> Either Text Exp
+  res = \nam -> case lookup nam env of
+    Nothing -> Left ("Undefined variable: " <> nam <> " (in " <> bind <> ")")
+    Just v  -> Right v
 
 dashEnv :: Env
 jetsMap :: Reg

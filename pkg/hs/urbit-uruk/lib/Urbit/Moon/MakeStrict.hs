@@ -1,4 +1,4 @@
-{-- OPTIONS_GHC -Werror #-}
+{-# OPTIONS_GHC -Wall -Werror #-}
 
 {- |
     # The Problem
@@ -223,9 +223,7 @@
     arity 1 against an expression of arity 0, which is safe.
 
     This approach seems to work.
--}
 
-{-
   Thinking out loud:
 
     What does MakeStrict operate on?
@@ -263,69 +261,83 @@
       given value-arity machinery knows this. So, actually, yes: I think
       combining applications of values into values will give correct
       arity information.
+
+  ## TODO Automatic Recognition of Jet Literals
+
+  ```
+  J [^J] (λx.B)
+  J J [^J] (λx.λy.B)
+  J J J [^J] (λx.λy.λz.B)
+  ...
+  ```
+
+  Any expression of the above shape can use the optimized jet rules
+  automatically. This avoids the need for a second entry-point.
 -}
 
-module Urbit.Moon.MakeStrict (makeStrict, makeJetStrict) where
+module Urbit.Moon.MakeStrict (makeStrict, makeJetStrict, Prim(..)) where
 
-import ClassyPrelude hiding (try)
+import ClassyPrelude hiding (try, Prim)
 
-import Bound
-import Urbit.Uruk.Bracket
-
-import Data.List (nub, iterate, (!!))
-
-import Bound.Var        (unvar)
-import Control.Arrow    ((<<<), (>>>))
-import Data.Function    ((&))
-import Numeric.Natural  (Natural)
-import Numeric.Positive (Positive)
-import Text.Show.Pretty (ppShow)
-
-import qualified Urbit.Uruk.Fast.Types  as F
-import qualified Urbit.Uruk.Refr.Jetted as Ur
+import Bound.Scope          (fromScope, toScope)
+import Bound.Var            (Var(..), unvar)
+import Data.List            (nub)
+import Urbit.Moon.Bracket   (Exp(..))
+import Urbit.Moon.FoldPrims (foldPrims)
+import Urbit.Moon.Smoosh    (smoosh, unSmoosh)
 
 
 -- Types -----------------------------------------------------------------------
 
-type ExpV v a = Exp () (Var v a)
+type ExpV p v a = Exp p () (Var v a)
+
+data RecSt p v = RecSt
+  { rsMRB :: v
+  , rsSeq :: p
+  , rsKay :: p
+  , rsYet :: Int -> p
+  , rsArg :: p -> Int
+  , rsRit :: Maybe Int
+  }
+
+data RecRes p v a = RecRes
+  { rrArg :: Int
+  , rrRef :: [Var v a]
+  , rrExp :: ExpV p v a
+  }
+
+data Prim p = Prim
+  { pSeq :: p
+  , pYet :: Int -> p
+  , pKay :: p
+  , pApp :: p -> p -> p
+  , pArg :: p -> Int
+  , pHdr :: p -> Maybe Int
+  }
 
 
--- Utils -----------------------------------------------------------------------
+-- Delay Application -----------------------------------------------------------
 
 {-
     [eₙe₀] -> ee
     [e₁eₙ] -> SKxee
     [eₙeₙ] -> ee
 -}
-fixApp
-  :: (Show a, Show v)
-  => v
-  -> ExpV v a
-  -> (Int -> ExpV v a)
-  -> (Int, ExpV v a)
-  -> (Int, ExpV v a)
-  -> Maybe Int
-  -> ExpV v a
-fixApp b0 seq yet (_xArgs, x) (0, y)      _ = x :@ y
-fixApp b0 seq yet (1, x)      (_yArgs, y) (Just n) = trace msg $ yet (n+1) :@ x :@ y
- where msg = force $ indent $ unlines $
-         [ "[delay]:"
-         , ""
-         , show (Just n) <> " USING YET!"
-         , ""
-         , ppShow ((1, x), (_yArgs, y))
-         , ""
-         ]
-fixApp b0 seq yet (1, x)      (_yArgs, y) ritDist = trace msg $ seq :@ Var (B b0) :@ x :@ y
- where msg = force $ indent $ unlines $
-         [ "[delay]:"
-         , ""
-         , show ritDist
-         , ""
-         , ppShow ((1, x), (_yArgs, y))
-         , ""
-         ]
-fixApp b0 seq yet (_, x)      (_yArgs, y) _ = x :@ y
+safeApp
+  :: RecSt p v
+  -> (Int, ExpV p v a)
+  -> (Int, ExpV p v a)
+  -> ExpV p v a
+safeApp _  (_,x) (0,y) = x :@ y
+safeApp rs (1,x) (_,y) = delay rs x y
+safeApp _  (_,x) (_,y) = x :@ y
+
+delay :: RecSt p v -> ExpV p v a -> ExpV p v a -> ExpV p v a
+delay (RecSt { rsRit = Just rd, .. }) x y = Pri (rsYet (rd+2)) :@ x :@ y
+delay (RecSt { rsRit = Nothing, .. }) x y = Pri rsSeq :@ Var (B rsMRB) :@ x :@ y
+
+
+-- Application Arity -----------------------------------------------------------
 
 {-
     *(Keₙ)  -> n+1
@@ -334,198 +346,99 @@ fixApp b0 seq yet (_, x)      (_yArgs, y) _ = x :@ y
     *(eₙeₘ) -> n-1
 -}
 appArity :: Bool -> Int -> Int -> Int
-appArity True  _     yArgs = yArgs+1
-appArity _xIsK 0     _     = 0
-appArity _xIsK _     0     = 0
-appArity _xIsK xArgs _     = xArgs-1
+appArity True _ y = y+1
+appArity _    0 _ = 0
+appArity _    _ 0 = 0
+appArity _    x _ = x-1
 
-wrap :: (a -> (Bool, Int)) -> Var v a -> (Bool, Int)
-wrap f = \case
-  B v -> (False, 1)
-  F v -> f v
+
+-- Core Loop -------------------------------------------------------------------
 
 {- |
     Returns the arity of an expression and transform it if necessary.
 
     `f x` should return `(x == K, arity x)`.
 -}
-recur'
-  :: (Show a, Eq a, Show v, Eq v)
-  => v
-  -> (ExpV v a, Int -> ExpV v a, ExpV v a, a -> (Bool, Int))
-  -> Maybe Int
-  -> ExpV v a
-  -> ((Bool, Int), [Var v a], ExpV v a)
-recur' b0 (seq,yet,k,f) mRit = \case
-  Var v -> (unvar (const (False, 0)) f v, [v], Var v)
+loop
+  :: forall p v a
+   . (Eq p, Eq v, Eq a)
+  => RecSt p v
+  -> ExpV p v a
+  -> RecRes p v a
+loop st@RecSt {..} = \case
+  Pri p -> RecRes (rsArg p) [] (Pri p)
+  Var v -> RecRes (unvar (const 0) (const 1) v) [v] (Var v)
   Lam () b ->
-    let ((_, funArity), refs, bodExp) = recur () (F <$> seq, fmap F <$> yet, F <$> k, wrap f) Nothing $ fromScope b
-        ourRefs = cvt refs
-        arity = if any ((== 0) . varArity) ourRefs then 0 else funArity+1
-    in ((False, arity), ourRefs, Lam () (toScope bodExp))
+    let boSt = st { rsMRB = (), rsRit = Nothing }
+        body = loop boSt (fromScope b)
+        refs = mapMaybe (unvar (const Nothing) Just) (rrRef body)
+        args = if any isBound refs then 0 else (rrArg body + 1)
+    in  RecRes args refs (Lam () $ toScope $ rrExp body)
 
   x :@ y ->
-    let
-      ((yIsK, yArgs), yRefs, yVal) = recur b0 (seq,yet,k,f) Nothing y
-      ritDist = if (yArgs == 0) then (Just 1) else ((+1) <$> mRit)
-      ((xIsK, xArgs), xRefs, xVal) = recur b0 (seq,yet,k,f) ritDist x
+    let rit = loop (st { rsRit = Nothing }) y
 
-      resVal = fixApp b0 seq yet (xArgs, xVal) (yArgs, yVal) ritDist
-      resArgs = appArity xIsK xArgs yArgs
-      resIsK = False
-    in
-      ((resIsK, resArgs), nub (xRefs<>yRefs), resVal)
+        dis = case (rrArg rit, rsRit) of
+          (0, _      ) -> Just 1
+          (_, Just n ) -> Just (n + 1)
+          (_, Nothing) -> Nothing
+
+        lef = loop (st { rsRit = dis }) x
+    in  RecRes
+          { rrArg = appArity (isKay $ rrExp lef) (rrArg lef) (rrArg rit)
+          , rrExp = safeApp st (rrArg lef, rrExp lef) (rrArg rit, rrExp rit)
+          , rrRef = nub (rrRef lef <> rrRef rit)
+          }
 
  where
-  varArity = unvar (const 0) (snd . f)
+  isKay :: Exp p x y -> Bool
+  isKay (Pri p) = p == rsKay
+  isKay _       = False
 
-  cvt :: [Var v (Var w a)] -> [Var w a]
-  cvt = mapMaybe (unvar (const Nothing) Just)
+  isBound :: Var x y -> Bool
+  isBound = \case
+    B _ -> True
+    F _ -> False
 
-recur
-  :: (Show a, Eq a, Show v, Eq v)
+
+-- Loop Entry Point ------------------------------------------------------------
+
+enter
+  :: (Eq p, Eq v, Eq a)
   => v
-  -> (ExpV v a, Int -> ExpV v a, ExpV v a, a -> (Bool, Int))
-  -> Maybe Int
-  -> ExpV v a
-  -> ((Bool, Int), [Var v a], ExpV v a)
-recur b0 tup x mRit = result -- trace msg result
+  -> Prim p
+  -> ExpV p v a
+  -> ExpV p v a
+enter v0 Prim{..} = rrExp . loop st
  where
-  result@((_, arity), free, exp) = recur' b0 tup x mRit
-  msg = unlines
-    [ "[recur]"
-    , ""
-    , ppShow exp
-    , ""
-    , "  free: " <> show free
-    , "  arity: " <> show arity
-    , ""
-    ]
+  st = RecSt { rsMRB = v0
+             , rsSeq = pSeq
+             , rsKay = pKay
+             , rsYet = pYet
+             , rsArg = pArg
+             , rsRit = Nothing
+             }
 
 
-getExp :: ((Bool, Int), [Var v a], ExpV v a) -> ExpV v a
-getExp (_,_,e) = e
+-- Unjetted Entry Point --------------------------------------------------------
 
-{-
-  foldValues turns any application of constant values into a single
-  constant value. This allows us to make use of the given `arity`
-  function to get better arity information for more complicated constant
-  expressions.
--}
-foldConstantValues :: forall b p . (p -> p -> p) -> Exp b p -> Exp b p
-foldConstantValues app = go Just id
- where
-  go :: (v -> Maybe p) -> (p -> v) -> Exp b v -> Exp b v
-  go val unval = \case
-    Var v -> Var v
-    Var (val -> Just x) :@ Var (val -> Just y) -> Var (unval $ app x y)
-    x :@ y -> go val unval x :@ go val unval y
-    Lam bi b ->
-      Lam bi
-        $ toScope
-        $ go (unvar (const Nothing) val) (fmap F unval)
-        $ fromScope b
-
-
--- Entry-Point for Normal Functions --------------------------------------------
-
-makeStrict :: Show p => Eq p => (p, Int -> p, p, p -> p -> p, p -> Int) -> Exp () p -> Exp () p
-makeStrict (seq,yet,k,app,arity) = go . foldConstantValues app
+makeStrict :: (Eq p, Eq a) => Prim p -> Exp p () a -> Exp p () a
+makeStrict p = go . foldPrims (pApp p)
  where
   go = \case
-    x   :@ y -> go x :@ go y
-    Lam () b -> Lam () $ toScope $ getExp . recur () (sv, yv, kv, r) Nothing $ fromScope b
+    Pri x    -> Pri x
     Var v    -> Var v
-  sv = Var (F seq)
-  yv = Var . F <$> yet
-  kv = Var (F k)
-  r = \x -> (x == k, arity x)
+    x   :@ y -> go x :@ go y
+    Lam bi b -> Lam bi $ toScope $ enter () p $ fromScope b
 
 
--- Convert between N nested lambdas and One lambda with debruijn indicies. -----
+-- Jetted Entry Point ----------------------------------------------------------
 
-type Nat = Natural
-
-smoosh :: Nat -> Exp () a -> Maybe (Exp () (Var Nat a))
-smoosh 0    _      = Nothing
-smoosh topN topExp = top topExp >>= doTimesM (pred topN) succ
+makeJetStrict :: (Eq p, Eq a) => Prim p -> Int -> Exp p () a -> Exp p () a
+makeJetStrict pri n expr = do
+  fromMaybe (makeStrict pri expr) $ go $ foldPrims (pApp pri) expr
  where
-  top :: Exp () a -> Maybe (Exp () (Var Nat a))
-  top = fromLam >=> pure . fmap (unvar (B . const 0) F)
-
-  succ :: Exp () (Var Nat a) -> Maybe (Exp () (Var Nat a))
-  succ = fromLam >=> pure . fmap (unvar (B . const 0) (unvar (B . (+1)) F))
-
-  fromLam :: Exp () a -> Maybe (Exp () (Var () a))
-  fromLam = \case
-    Lam () x -> pure (fromScope x)
-    _        -> Nothing
-
-unSmoosh :: Nat -> Exp () (Var Nat a) -> Exp () a
-unSmoosh 0 _ = error "unSmoosh: bad arity"
-unSmoosh n x = one $ doTimes (n-1) pred x
- where
-  one :: Exp () (Var Nat a) -> Exp () a
-  one = Lam () . toScope . fmap (unvar (B . const ()) F)
-
-  pred :: Exp () (Var Nat a) -> Exp () (Var Nat a)
-  pred = Lam () . toScope . fmap (unvar unwrap (F . F))
-
-  unwrap :: Nat -> Var () (Var Nat a)
-  unwrap 0 = B ()
-  unwrap n = F (B (n-1))
-
-doTimes :: Nat -> (a -> a) -> a -> a
-doTimes 0 _ z = z
-doTimes n f z = doTimes (pred n) f (f z)
-
-doTimesM :: Monad m => Nat -> (a -> m a) -> a -> m a
-doTimesM 0 _ z = pure z
-doTimesM n f z = f z >>= doTimesM (pred n) f
-
-
--- Using the above to implement proper arity handling for jets. ----------------
-
-makeJetStrict
-  :: forall p
-   . (Show p, Eq p)
-  => (p, Int -> p, p, p -> p -> p, p -> Int)
-  -> Int
-  -> Exp () p
-  -> Exp () p
-makeJetStrict tup@(seq, yet, k, app, arity) n = \e ->
-  fromMaybe (makeStrict tup e) $ go $ foldConstantValues app e
- where
-  go :: Exp () p -> Maybe (Exp () p)
   go e = do
     let depth = fromIntegral n
-    let seqV  = Var (F seq)
-    let yetV  = Var . F <$> yet
-    let kV    = Var (F k)
-    let r     = \x -> (x == k, arity x)
     e' <- smoosh depth e
-    pure $ unSmoosh depth $ getExp $ recur 0 (seqV, yetV, kV, r) Nothing e'
-
-
--- Testing ---------------------------------------------------------------------
-
-indent :: String -> String
-indent = unlines . fmap ("  " <>) . lines
-
-l n b = Lam () (abstract1 n b)
-
-testTup :: (String, Int -> String, String, String -> String -> String, String -> Int)
-testTup = ("Q", (("I" <>) . show), "K", (<>), const 1)
-
-testStrict = makeJetStrict testTup
-
-instance IsString (Exp () String) where fromString = Var
-
-{-
-  (1,'inc',(S (K PAK) (S (K (S (S (K S) K))) (S (S (K S) (S (K (S (K S))) (S (K (S S (K K))) (S (K (S (K K) S)) (S (K (S SE
-  Q)) K))))) (K (S K))))))
-
-  (2,'add',(S (K (S (S SEQ (K PAK)))) (S (S (K (S (K S) K)) (S (K S) (S (K (S (K S))) (S (K (S S (K K))) (S (K (S (K K) S))
-   (S (K (S SEQ)) K)))))) (K (S (S (K S) (S (K (S (K S))) (S (K (S S (K K))) (S (K (S (K K) S)) (S (K (S SEQ)) K))))) (K (S
-   K)))))))
--}
+    pure $ unSmoosh depth $ enter 0 pri e'

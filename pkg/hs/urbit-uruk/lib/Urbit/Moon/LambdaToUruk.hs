@@ -11,7 +11,7 @@ import Numeric.Positive       (Positive)
 import Urbit.Uruk.Class
 import Urbit.Uruk.Refr.Jetted (Ur, UrPoly((:@), Fast))
 
-import qualified Urbit.Uruk.Bracket     as B
+import qualified Urbit.Moon.Bracket     as B
 import qualified Urbit.Uruk.Fast.Types  as F
 import qualified Urbit.Uruk.Refr.Jetted as Ur
 

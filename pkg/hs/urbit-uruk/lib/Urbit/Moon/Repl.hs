@@ -98,25 +98,28 @@ goNew :: Text -> IO (Either Text JetEval.Exp)
 goNew = runExceptT . MU.gogogo'new
 
 goFast :: Text -> IO (Either Text F.Val)
-goFast = runExceptT . MU.gogogoFast
+goFast = runExceptT . ExceptT . fmap join . unExceptT . MU.gogogoFast
 
 goOleg :: Text -> IO (Either Text Ur.Ur)
-goOleg = runExceptT . MU.gogogoOleg
+goOleg = runExceptT . ExceptT . fmap join . unExceptT . MU.gogogoOleg
 
 goLazyOleg :: Text -> IO (Either Text Ur.Ur)
-goLazyOleg = runExceptT . MU.gogogoLazyOleg
+goLazyOleg = runExceptT . ExceptT . fmap join . unExceptT . MU.gogogoLazyOleg
 
 goTromp :: Text -> IO (Either Text Ur.Ur)
-goTromp = runExceptT . MU.gogogoTromp
+goTromp = runExceptT . ExceptT . fmap join . unExceptT . MU.gogogoTromp
 
 goNaive :: Text -> IO (Either Text Ur.Ur)
-goNaive = runExceptT . MU.gogogoNaive
+goNaive = runExceptT . ExceptT . fmap join . unExceptT . MU.gogogoNaive
 
 goLazyTromp :: Text -> IO (Either Text Ur.Ur)
-goLazyTromp = runExceptT . MU.gogogoLazyTromp
+goLazyTromp = runExceptT . ExceptT . fmap join . unExceptT . MU.gogogoLazyTromp
 
 goLazyNaive :: Text -> IO (Either Text Ur.Ur)
-goLazyNaive = runExceptT . MU.gogogoLazyNaive
+goLazyNaive = runExceptT . ExceptT . fmap join . unExceptT . MU.gogogoLazyNaive
+
+unExceptT :: ExceptT t m a -> m (Either t a)
+unExceptT (ExceptT a) = a
 
 goInp :: Text -> IO (Either Text [Inp])
 goInp = pure . parseInps
