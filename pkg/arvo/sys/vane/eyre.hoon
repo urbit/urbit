@@ -1222,7 +1222,7 @@
       ::  lookup the session id by duct
       ::
       ?~  maybe-channel-id=(~(get by duct-to-key.channel-state.state) duct)
-        ~&  [%canceling-nonexistant-channel duct]
+        ~&  [%canceling-nonexistent-channel duct]
         [~ state]
       ::
       ~&  [%canceling-cancel duct]
