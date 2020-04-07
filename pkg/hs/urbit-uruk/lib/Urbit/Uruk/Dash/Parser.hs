@@ -405,7 +405,6 @@ tup reg = Prim{..}
   pYet = yetJet
   pKay = N K
   pApp = (:&)
-  pHdr = pure Nothing
   pArg = expArity reg
 
 expArity :: Reg -> Exp -> Maybe Arity

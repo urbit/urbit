@@ -302,7 +302,6 @@ data Prim p = Prim
   , pKay :: p
   , pApp :: p -> p -> p
   , pArg :: p -> Maybe Arity
-  , pHdr :: p -> Maybe Int
   }
 
 data RecSt p v = RecSt
