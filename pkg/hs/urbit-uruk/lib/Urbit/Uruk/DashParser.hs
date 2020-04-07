@@ -9,18 +9,18 @@ import Control.Monad.State.Lazy
 import Text.Megaparsec hiding (Pos)
 import Text.Megaparsec.Char
 import Data.Tree
+import Urbit.Pos
+import Urbit.Moon.Arity
 
 import Bound                 (abstract1, toScope, fromScope)
 import Bound.Var             (Var(..))
 import Data.Void             (Void, absurd)
 import Numeric.Natural       (Natural)
-import Numeric.Positive      (Positive)
 import Prelude               (read)
 import Text.Show.Pretty      (pPrint, ppShow)
 import Urbit.Atom            (Atom)
 import Urbit.Uruk.JetSpec    (SingJet(..), jetSpec)
 import Urbit.Moon.MakeStrict (makeJetStrict, Prim(..))
-
 import qualified Data.Char           as C
 import qualified Language.Haskell.TH as TH
 import qualified Urbit.Atom          as Atom
@@ -30,12 +30,6 @@ import qualified Urbit.Moon.Bracket  as B
 -- Numbers ---------------------------------------------------------------------
 
 type Nat = Natural
-
-newtype Pos = MkPos Positive
- deriving newtype (Eq, Ord, Show, Num, Enum, Real, Integral)
-
-instance NFData Pos where
-  rnf (MkPos !_) = ()
 
 
 -- Syntax Tree -----------------------------------------------------------------
@@ -488,6 +482,7 @@ tup reg = Prim{..}
     N K :& x -> 1 + pArg x
     (jetArity -> Just n) -> 2
     (jetArity -> Just n) :& t :& b -> n
+
     x :& _ -> case pArg x of
       0 -> 1
       1 -> 1
@@ -495,6 +490,27 @@ tup reg = Prim{..}
 
   jetArity :: Exp -> Maybe Int
   jetArity = fmap (fromIntegral . fst) . jetHead . tree
+
+expArity :: Reg -> Exp -> Maybe Arity
+expArity reg = go
+ where
+  go = \case
+    N n    -> Just (urArity' reg n)
+    x :& y -> join (appArity <$> go x <*> go y)
+
+urArity' :: Reg -> Ur -> Arity
+urArity' _ S = AriEss
+urArity' _ K = AriKay
+urArity' _ J = AriJay 1
+urArity' _ D = AriDee
+urArity' _ (DataJet (NAT _)) = AriOth 2
+urArity' _ (DataJet (Sn  n)) = AriOth (2 + n)
+urArity' _ (DataJet (In  n)) = AriOth n
+urArity' _ (DataJet (Bn  n)) = AriOth (2 + n)
+urArity' _ (DataJet (Cn  n)) = AriOth (2 + n)
+urArity' r (SingJet sj     ) = case lookup sj r of
+  Nothing        -> error ("Reference to undefined jet: " <> show sj)
+  Just (n, _, _) -> AriOth n
 
 urArity :: Reg -> Ur -> Int
 urArity _ S                 = 3

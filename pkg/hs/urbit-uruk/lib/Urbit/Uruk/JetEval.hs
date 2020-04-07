@@ -6,8 +6,9 @@ import Data.Bits             (shiftL, (.|.))
 import Data.Function         ((&))
 import Data.List             (iterate, (!!))
 import Numeric.Natural       (Natural)
+import Urbit.Pos             (Pos)
 import Urbit.Uruk.Class      (Uruk(..))
-import Urbit.Uruk.DashParser (DataJet(..), ExpTree(..), Pos)
+import Urbit.Uruk.DashParser (DataJet(..), ExpTree(..))
 import Urbit.Uruk.JetSpec    (SingJet(..))
 
 import qualified Urbit.Atom            as Atom

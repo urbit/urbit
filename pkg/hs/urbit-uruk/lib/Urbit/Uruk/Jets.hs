@@ -10,8 +10,9 @@ import ClassyPrelude
 
 import Data.List             (iterate, (!!))
 import Numeric.Natural       (Natural)
+import Urbit.Pos             (Pos)
+import Urbit.Uruk.DashParser (DataJet(..), ExpTree(..), Ur(..), Val)
 import Urbit.Uruk.JetSpec    (SingJet(..))
-import Urbit.Uruk.DashParser (DataJet(..), ExpTree(..), Pos, Ur(..), Val)
 
 import qualified Urbit.Atom            as Atom
 import qualified Urbit.Uruk.DashParser as Dash

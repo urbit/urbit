@@ -233,6 +233,7 @@
     What is an uruk value?
 
       An application of two uruk values
+
       S, K, J, D, or a jet.
 
     In the `pak` example:
