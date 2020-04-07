@@ -7,6 +7,7 @@ import ClassyPrelude
 import Numeric.Natural  (Natural)
 import Numeric.Positive (Positive)
 import Urbit.Atom       (utf8Atom)
+import Urbit.Moon.Arity (Arity)
 
 --------------------------------------------------------------------------------
 
@@ -37,7 +38,7 @@ class Uruk p where
   uFix :: p
   uIff :: p
 
-  uArity :: p -> Int
+  uArity :: p -> Maybe Arity
 
   uGlobal :: Text -> Maybe p
   uGlobal = const Nothing
@@ -76,7 +77,7 @@ instance Uruk p => Uruk (Either Text p) where
   uFix = pure uFix
   uIff = pure uIff
 
-  uArity (Left _)  = 1 -- Free
+  uArity (Left _)  = Nothing
   uArity (Right x) = uArity x
 
   uGlobal = sequence . pure . uGlobal

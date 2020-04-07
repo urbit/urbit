@@ -79,6 +79,7 @@ import GHC.Prim                  hiding (seq)
 import System.IO.Unsafe
 import Urbit.Uruk.Class
 import Urbit.Uruk.Fast.Types
+import Urbit.Moon.Arity
 
 import Control.Arrow     ((>>>))
 import Control.Exception (throw, try)
@@ -132,7 +133,8 @@ instance Uruk Val where
   uBee = mkNode 3 Bee
   uSea = mkNode 3 Sea
 
-  uArity = fNeed . valFun
+  -- TODO XX HACK (Need to classify nodes)
+  uArity = Just . AriOth . fromIntegral . fNeed . valFun
 
   uGlobal "add" = Just $ mkNode 2 Add
   uGlobal "lef" = Just $ mkNode 2 Lef

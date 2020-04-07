@@ -280,11 +280,12 @@ module Urbit.Moon.MakeStrict (makeStrict, makeJetStrict, Prim(..)) where
 
 import ClassyPrelude hiding (try, Prim)
 
-import Bound.Scope          (fromScope, toScope)
-import Bound.Var            (Var(..), unvar)
-import Data.List            (nub)
-import Urbit.Moon.Bracket   (Exp(..))
-import Urbit.Moon.Smoosh    (smoosh, unSmoosh)
+import Bound.Scope        (fromScope, toScope)
+import Bound.Var          (Var(..), unvar)
+import Data.List          (nub)
+import Urbit.Moon.Arity   (Arity(..), appArity, arityPos)
+import Urbit.Moon.Bracket (Exp(..))
+import Urbit.Moon.Smoosh  (smoosh, unSmoosh)
 
 
 -- Types -----------------------------------------------------------------------
@@ -296,12 +297,12 @@ data RecSt p v = RecSt
   , rsSeq :: p
   , rsKay :: p
   , rsYet :: Int -> p
-  , rsArg :: p -> Int
+  , rsArg :: p -> Maybe Arity
   , rsRit :: Maybe Int
   }
 
 data RecRes p v a = RecRes
-  { rrArg :: Int
+  { rrArg :: Maybe Arity
   , rrRef :: [Var v a]
   , rrExp :: ExpV p v a
   }
@@ -311,45 +312,37 @@ data Prim p = Prim
   , pYet :: Int -> p
   , pKay :: p
   , pApp :: p -> p -> p
-  , pArg :: p -> Int
+  , pArg :: p -> Maybe Arity
   , pHdr :: p -> Maybe Int
   }
 
 
--- Delay Application -----------------------------------------------------------
+-- Calculate Application Arity and Delay if necessary --------------------------
 
 {-
-    [eₙe₀] -> ee
-    [e₁eₙ] -> SKxee
-    [eₙeₙ] -> ee
+    [e₀e₀]     -> (e e)₀
+    [eₙe₀]     -> (e e)₀
+    [e₁eₙ]     -> (SEQ x e e)₀
+    [e₁eₙ]e₀   -> (I3 e e)₁
+    [e₁eₙ]eₙe₀ -> (I4 e e)₂
+    [eₙeₙ]     -> [ee]{n-1}
 -}
 safeApp
   :: RecSt p v
-  -> (Int, ExpV p v a)
-  -> (Int, ExpV p v a)
-  -> ExpV p v a
-safeApp _  (_,x) (0,y) = x :@ y
-safeApp rs (1,x) (_,y) = delay rs x y
-safeApp _  (_,x) (_,y) = x :@ y
-
-delay :: RecSt p v -> ExpV p v a -> ExpV p v a -> ExpV p v a
-delay (RecSt { rsRit = Just rd, .. }) x y = Pri (rsYet (rd+2)) :@ x :@ y
-delay (RecSt { rsRit = Nothing, .. }) x y = Pri rsSeq :@ Var (B rsMRB) :@ x :@ y
-
-
--- Application Arity -----------------------------------------------------------
-
-{-
-    *(Keₙ)  -> n+1
-    *(e₀eₙ) -> 0
-    *(eₙe₀) -> 0
-    *(eₙeₘ) -> n-1
--}
-appArity :: Bool -> Int -> Int -> Int
-appArity True _ y = y+1
-appArity _    0 _ = 0
-appArity _    _ 0 = 0
-appArity _    x _ = x-1
+  -> (Maybe Arity, ExpV p v a)
+  -> (Maybe Arity, ExpV p v a)
+  -> (Maybe Arity, ExpV p v a)
+safeApp _ (Nothing, x) (_      , y) = (Nothing, x :@ y)
+safeApp _ (_      , x) (Nothing, y) = (Nothing, x :@ y)
+safeApp RecSt { rsRit, rsSeq, rsYet, rsMRB } (Just arX, x) (Just arY, y) =
+  case (appArity arX arY, rsRit) of
+    (Just ar, _      ) -> (Just ar, x :@ y)
+    (Nothing, Nothing) -> (Nothing, seqHed :@ x :@ y)
+    (Nothing, Just n ) -> (Just (yetAri n), yetHed (n + 2) :@ x :@ y)
+ where
+  seqHed = Pri rsSeq :@ Var (B rsMRB)
+  yetHed n = Pri (rsYet n)
+  yetAri n = AriOth (fromIntegral n)
 
 
 -- Core Loop -------------------------------------------------------------------
@@ -362,36 +355,45 @@ loop
   -> RecRes p v a
 loop st@RecSt {..} = \case
   Pri p -> RecRes (rsArg p) [] (Pri p)
-  Var v -> RecRes (unvar (const 0) (const 1) v) [v] (Var v)
+  Var v -> RecRes (varArity v) [v] (Var v)
   Lam () b ->
     let boSt = st { rsMRB = (), rsRit = Nothing }
         body = loop boSt (fromScope b)
         refs = mapMaybe (unvar (const Nothing) Just) (rrRef body)
-        args = if any isBound refs then 0 else (rrArg body + 1)
+        args = do
+          guard (not $ any isBoundVar refs)
+          incArity (rrArg body)
     in  RecRes args refs (Lam () $ toScope $ rrExp body)
 
   x :@ y ->
     let rit = loop (st { rsRit = Nothing }) y
 
         dis = case (rrArg rit, rsRit) of
-          (0, _      ) -> Just 1
-          (_, Just n ) -> Just (n + 1)
-          (_, Nothing) -> Nothing
+          (Nothing, _      ) -> Just 1
+          (_,       Just n ) -> Just (n + 1)
+          (_,       Nothing) -> Nothing
 
         lef = loop (st { rsRit = dis }) x
+
+        (rArg, rExp) = safeApp st (rrArg lef, rrExp lef) (rrArg rit, rrExp rit)
+
     in  RecRes
-          { rrArg = appArity (isKay $ rrExp lef) (rrArg lef) (rrArg rit)
-          , rrExp = safeApp st (rrArg lef, rrExp lef) (rrArg rit, rrExp rit)
+          { rrArg = rArg
+          , rrExp = rExp
           , rrRef = nub (rrRef lef <> rrRef rit)
           }
 
  where
-  isKay :: Exp p x y -> Bool
-  isKay (Pri p) = p == rsKay
-  isKay _       = False
+  incArity :: Maybe Arity -> Maybe Arity
+  incArity Nothing  = Just (AriOth 1)
+  incArity (Just a) = Just (AriOth $ succ $ arityPos a)
 
-  isBound :: Var x y -> Bool
-  isBound = \case
+  varArity :: Var v a -> Maybe Arity
+  varArity (B _) = Nothing
+  varArity (F _) = Just (AriOth 1)
+
+  isBoundVar :: Var x y -> Bool
+  isBoundVar = \case
     B _ -> True
     F _ -> False
 

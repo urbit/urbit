@@ -400,9 +400,7 @@ tup reg = Prim{..}
   pKay = N K
   pApp = (:&)
   pHdr = pure Nothing
-  pArg = fromMaybe 1 . fmap arityInt . expArity reg
-    -- TODO XX HACK HACK HACK @ arityInt
-    -- TODO XX HACK HACK HACK @ fromMaybe 1
+  pArg = expArity reg
 
 expArity :: Reg -> Exp -> Maybe Arity
 expArity reg = go
