@@ -844,7 +844,12 @@
         (mo-pass path note-arvo)
       ::
           %chat-action
-        =/  =cage  [%chat-action !>(;;(chat-action noun.deal))]
+        =/  chat-act=(unit chat-action)
+          ((soft chat-action) ;;(chat-action noun.deal))
+        ?~  chat-act
+          ~&  %gall-raw-poke-chat-action-failed
+          mo-core
+        =/  =cage  [%chat-action !>(u.chat-act)]
         =/  new-deal=^deal  [%poke cage]
         =/  app  (ap-abed:ap agent routes)
         =.  app  (ap-apply:app new-deal)
@@ -909,61 +914,6 @@
   ++  mo-handle-ames-response
     |=  =ames-response
     ^+  mo-core
-    ::  TODO: Remove this horrific hack when ford pinto comes!
-    =>  |%
-        +$  serial  @uvH
-        ::
-        +$  letter
-          $%  [%text text=cord]
-              [%url url=cord]
-              [%code expression=cord output=(list tank)]
-              [%me narrative=cord]
-          ==
-        ::
-        +$  envelope
-          $:  uid=serial
-              number=@
-              author=ship
-              when=time
-              =letter
-          ==
-        ::
-        +$  config
-          $:  length=@
-              read=@
-          ==
-        ::
-        +$  mailbox
-          $:  =config
-              envelopes=(list envelope)
-          ==
-        ::
-        +$  inbox  (map path mailbox)
-        ::
-        +$  chat-configs  (map path config)
-        ::
-        +$  chat-base
-          $%  [%create =path]
-              [%delete =path]
-              [%message =path =envelope]
-              [%read =path]
-          ==
-        ::
-        +$  chat-action
-          $%  ::  %messages: append a list of messages to mailbox
-              ::
-              [%messages =path envelopes=(list envelope)]
-              chat-base
-          ==
-        ::
-        +$  chat-update
-          $%  [%keys keys=(set path)]
-              [%config =path =config]
-              [%messages =path start=@ud end=@ud envelopes=(list envelope)]
-              chat-base
-          ==
-        --
-    ::
     ?-    -.ames-response
         ::  %d: diff; ask ford to validate .noun as .mark
         ::
@@ -972,17 +922,10 @@
       ::  agents load their code from the %home desk, including marks
       ::
       ::
-      ::  TODO: Remove this hack when we get Ford pinto!!!
-      ?+  mark.ames-response
-        =/  =note-arvo
-          =/  =disc:ford  [our %home]
-          [%f %build live=%.n %vale disc [mark noun]:ames-response]
-        (mo-pass wire note-arvo)
-      ::
-          %chat-update
-        =/  =cage  [%chat-update !>(;;(chat-update noun:ames-response))]
-        (mo-give %unto %fact cage)
-      ==
+      =/  =note-arvo
+        =/  =disc:ford  [our %home]
+        [%f %build live=%.n %vale disc [mark noun]:ames-response]
+      (mo-pass wire note-arvo)
     ::
         ::  %x: kick; tell agent the publisher canceled the subscription
         ::
