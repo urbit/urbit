@@ -283,6 +283,7 @@ import ClassyPrelude hiding (try, Prim)
 import Bound.Scope        (fromScope, toScope)
 import Bound.Var          (Var(..), unvar)
 import Data.List          (nub)
+import Numeric.Natural    (Natural)
 import Urbit.Moon.Arity   (Arity(..), appArity, arityPos)
 import Urbit.Moon.Bracket (Exp(..))
 import Urbit.Moon.Smoosh  (smoosh, unSmoosh)
@@ -290,6 +291,8 @@ import Urbit.Pos          (Pos)
 
 
 -- Types -----------------------------------------------------------------------
+
+type Nat = Natural
 
 type ExpV p v a = Exp p () (Var v a)
 
@@ -399,7 +402,7 @@ loop st@RecSt {..} = \case
   doJetLit p expr = (ari, res)
    where
     ari = if any isBoundVar fre then Nothing else Just (AriOth p)
-    (res, _, fre) = makeJetStrict' rsPri (fromIntegral p) expr
+    (res, _, fre) = makeJetStrict rsPri (fromIntegral p) expr
 
   varArity :: Var v a -> Maybe Arity
   varArity (B _) = Nothing
@@ -429,17 +432,6 @@ enter v0 pri = (\RecRes{..} -> (rrExp, rrArg, rrFre)) . loop st
 
 -- Unjetted Entry Point --------------------------------------------------------
 
-{-
-  TODO
-
-  When compiling jet literals, the usually appear not in any enclosing
-  scope.
-
-  Therefore, the entry level loop here needs to also handle the case
-  where the LHS of an application has arity `AriHdr`.
-
-  Once that's done, the `makeJetStrict` entry point can be deleted.
--}
 makeStrict' :: (Eq p, Eq a) => Prim p -> Exp p () a -> (Exp p () a, Maybe Arity, [a])
 makeStrict' p = go
  where
@@ -451,7 +443,7 @@ makeStrict' p = go
       in
         case xa of
           Just (AriHdr n) ->
-            let (yv, ya, yf) = makeJetStrict' p (fromIntegral n) y
+            let (yv, ya, yf) = makeJetStrict p (fromIntegral n) y
                 ra = join (appArity <$> xa <*> ya)
             in (xv :@ yv, ra, nub (xf <> yf))
           _ ->
@@ -463,27 +455,22 @@ makeStrict' p = go
           (bv, ba, bf) = enter () p bo
       in  (Lam bi (toScope bv), incArity ba, bf)
 
+makeJetStrict
+  :: (Eq p, Eq a)
+  => Prim p
+  -> Int
+  -> Exp p () a
+  -> (Exp p () a, Maybe Arity, [a])
+makeJetStrict pri n expr = fromMaybe (makeStrict' pri expr) $ go expr
+ where
+  go e = do
+    let depth = fromIntegral n :: Nat
+    e' <- smoosh depth e
+    let (re, _, rf) = enter 0 pri e'
+    pure (unSmoosh depth re, Just (AriOth (fromIntegral n)), rf)
+
 resExp :: (e, a, b) -> e
 resExp (x, _, _) = x
 
 makeStrict :: (Eq p, Eq a) => Prim p -> Exp p () a -> Exp p () a
 makeStrict p = resExp . makeStrict' p
-
-
--- Jetted Entry Point ----------------------------------------------------------
-
-makeJetStrict'
-  :: (Eq p, Eq a) => Prim p -> Int -> Exp p () a -> (Exp p () a, Maybe Arity, [a])
-makeJetStrict' pri n expr =
-  trace "JET!" $
-  trace ("  arity: " <> show n) $
-  fromMaybe (makeStrict' pri expr) $ go expr
- where
-  go e = do
-    let depth = fromIntegral n
-    e' <- smoosh depth e
-    let (re, _, rf) = enter 0 pri e'
-    pure (unSmoosh depth re, Just (AriOth (fromIntegral n)), rf)
-
-_makeJetStrict :: (Eq p, Eq a) => Prim p -> Int -> Exp p () a -> Exp p () a
-_makeJetStrict pri n = resExp . makeJetStrict' pri n
