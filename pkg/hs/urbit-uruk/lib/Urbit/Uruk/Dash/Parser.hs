@@ -1,6 +1,6 @@
 {-- OPTIONS_GHC -Wall -Werror #-}
 
-module Urbit.Uruk.DashParser where
+module Urbit.Uruk.Dash.Parser where
 
 import ClassyPrelude hiding (exp, init, many, some, try, elem, Prim)
 
@@ -11,6 +11,7 @@ import Text.Megaparsec.Char
 import Data.Tree
 import Urbit.Pos
 import Urbit.Moon.Arity
+import Urbit.Uruk.Dash.Exp
 
 import Bound                 (abstract1, toScope, fromScope)
 import Bound.Var             (Var(..))
@@ -19,7 +20,7 @@ import Numeric.Natural       (Natural)
 import Prelude               (read)
 import Text.Show.Pretty      (pPrint, ppShow)
 import Urbit.Atom            (Atom)
-import Urbit.Uruk.JetSpec    (SingJet(..), jetSpec)
+import Urbit.Uruk.JetSpec    (jetSpec)
 import Urbit.Moon.MakeStrict (makeJetStrict, Prim(..))
 import qualified Data.Char           as C
 import qualified Language.Haskell.TH as TH
@@ -47,82 +48,6 @@ data Dec = Dec Text [Text] AST
   deriving (Show)
 
 
--- Combinator Trees ------------------------------------------------------------
-
-infixl 5 :&;
-
-data ExpTree n
-  = N n
-  | ExpTree n :& ExpTree n
- deriving (Eq, Ord, Generic)
- deriving anyclass NFData
-
-tree :: ExpTree a -> Tree a
-tree = go [] where
-  go a = \case
-    N n    -> Node n a
-    x :& y -> go (tree y : a) x
-
-unTree :: Tree a -> ExpTree a
-unTree (Node n xs) = foldl' (:&) (N n) (unTree <$> xs)
-
-showTree :: Show a => Tree a -> String
-showTree (Node n []) = show n
-showTree (Node n xs) =
-  '(' : intercalate " " (show n : fmap showTree xs) <> ")"
-
-instance Show a => Show (ExpTree a) where
-  show = showTree . tree
-
-
--- Jetted Uruk Expressions -----------------------------------------------------
-
-data DataJet
-  = Sn !Pos
-  | Bn !Pos
-  | Cn !Pos
-  | In !Pos
-  | NAT !Nat
- deriving (Eq, Ord, Generic)
- deriving anyclass NFData
-
-data Ur
-  = S
-  | K
-  | J
-  | D
-  | DataJet DataJet
-  | SingJet SingJet
- deriving (Eq, Ord, Generic)
- deriving anyclass NFData
-
-type Exp = ExpTree Ur
-
-
-isValidChar :: Char -> Bool
-isValidChar c = or [C.isPrint c, c == '\n']
-
-instance Show DataJet where
-  show = \case
-    Sn  n                            -> 'S' : show n
-    In  n                            -> 'I' : show n
-    Bn  n                            -> 'B' : show n
-    Cn  n                            -> 'C' : show n
-    NAT n | n < 2048                 -> show n
-    NAT (Atom.atomUtf8 -> Right txt)
-        | all isValidChar txt        -> "'" <> unpack txt <> "'"
-    NAT n                            -> show n
-
-instance Show Ur where
-  show = \case
-    S          -> "S"
-    K          -> "K"
-    J          -> "J"
-    D          -> "D"
-    DataJet dj -> show dj
-    SingJet sj -> show sj
-
-
 -- Parser Monad ----------------------------------------------------------------
 
 data Mode = Wide | Tall
@@ -142,8 +67,6 @@ inWideMode = withLocalState Wide
 -- Dashboard Processing --------------------------------------------------------
 
 type Env = Map Text Exp
-
-type Val = Exp
 
 type Reg = Map SingJet (Pos, Val, Val)
 
@@ -477,54 +400,30 @@ tup reg = Prim{..}
   pKay = N K
   pApp = (:&)
   pHdr = pure Nothing
-  pArg = \case
-    N n -> urArity reg n
-    N K :& x -> 1 + pArg x
-    (jetArity -> Just n) -> 2
-    (jetArity -> Just n) :& t :& b -> n
-
-    x :& _ -> case pArg x of
-      0 -> 1
-      1 -> 1
-      n -> n - 1
-
-  jetArity :: Exp -> Maybe Int
-  jetArity = fmap (fromIntegral . fst) . jetHead . tree
+  pArg = fromMaybe 1 . fmap arityInt . expArity reg
+    -- TODO XX HACK HACK HACK @ arityInt
+    -- TODO XX HACK HACK HACK @ fromMaybe 1
 
 expArity :: Reg -> Exp -> Maybe Arity
 expArity reg = go
  where
   go = \case
-    N n    -> Just (urArity' reg n)
+    N n    -> Just (urArity reg n)
     x :& y -> join (appArity <$> go x <*> go y)
 
-urArity' :: Reg -> Ur -> Arity
-urArity' _ S = AriEss
-urArity' _ K = AriKay
-urArity' _ J = AriJay 1
-urArity' _ D = AriDee
-urArity' _ (DataJet (NAT _)) = AriOth 2
-urArity' _ (DataJet (Sn  n)) = AriOth (2 + n)
-urArity' _ (DataJet (In  n)) = AriOth n
-urArity' _ (DataJet (Bn  n)) = AriOth (2 + n)
-urArity' _ (DataJet (Cn  n)) = AriOth (2 + n)
-urArity' r (SingJet sj     ) = case lookup sj r of
-  Nothing        -> error ("Reference to undefined jet: " <> show sj)
-  Just (n, _, _) -> AriOth n
-
-urArity :: Reg -> Ur -> Int
-urArity _ S                 = 3
-urArity _ K                 = 2
-urArity _ J                 = 2
-urArity _ D                 = 1
-urArity _ (DataJet (NAT _)) = 2
-urArity _ (DataJet (Sn  n)) = fromIntegral (2 + n)
-urArity _ (DataJet (In  n)) = fromIntegral n
-urArity _ (DataJet (Bn  n)) = fromIntegral (2 + n)
-urArity _ (DataJet (Cn  n)) = fromIntegral (2 + n)
+urArity :: Reg -> Ur -> Arity
+urArity _ S = AriEss
+urArity _ K = AriKay
+urArity _ J = AriJay 1
+urArity _ D = AriDee
+urArity _ (DataJet (NAT _)) = AriOth 2
+urArity _ (DataJet (Sn  n)) = AriOth (2 + n)
+urArity _ (DataJet (In  n)) = AriOth n
+urArity _ (DataJet (Bn  n)) = AriOth (2 + n)
+urArity _ (DataJet (Cn  n)) = AriOth (2 + n)
 urArity r (SingJet sj     ) = case lookup sj r of
   Nothing        -> error ("Reference to undefined jet: " <> show sj)
-  Just (n, _, _) -> fromIntegral n
+  Just (n, _, _) -> AriOth n
 
 resolveNames
   :: Text -> Env -> B.Exp Atom () Text -> Either Text (B.Exp Exp () Void)

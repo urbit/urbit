@@ -1,21 +1,21 @@
 module Urbit.Uruk.JetEval where
 
 import ClassyPrelude
-
-import Data.Bits             (shiftL, (.|.))
-import Data.Function         ((&))
-import Data.List             (iterate, (!!))
-import Numeric.Natural       (Natural)
-import Urbit.Pos             (Pos)
-import Urbit.Uruk.Class      (Uruk(..))
-import Urbit.Uruk.DashParser (DataJet(..), ExpTree(..))
-import Urbit.Uruk.JetSpec    (SingJet(..))
-
-import qualified Urbit.Atom            as Atom
-import qualified Urbit.Uruk.DashParser as Dash
-import qualified Urbit.Uruk.Jets       as Jets
-
 import Data.Tree
+
+import Data.Bits           (shiftL, (.|.))
+import Data.Function       ((&))
+import Data.List           (iterate, (!!))
+import Numeric.Natural     (Natural)
+import Urbit.Pos           (Pos)
+import Urbit.Uruk.Class    (Uruk(..))
+import Urbit.Uruk.Dash.Exp (DataJet(..), SingJet(..), ExpTree(..))
+
+import qualified Urbit.Atom              as Atom
+import qualified Urbit.Uruk.Dash.DataJet as Jets
+import qualified Urbit.Uruk.Dash.Exp     as Dash
+import qualified Urbit.Uruk.Dash.Parser  as Dash
+import qualified Urbit.Uruk.Jets         as Jets
 
 
 -- Typse -----------------------------------------------------------------------

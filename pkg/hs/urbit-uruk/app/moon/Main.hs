@@ -5,9 +5,9 @@ module Main (main) where
 import ClassyPrelude
 import Urbit.Moon.Repl
 
-import Prelude               (read)
-import Text.Show.Pretty      (pPrint)
-import Urbit.Uruk.DashParser (dashEnv, jetsMap)
+import Prelude                (read)
+import Text.Show.Pretty       (pPrint)
+import Urbit.Uruk.Dash.Parser (dashEnv, jetsMap)
 
 --------------------------------------------------------------------------------
 

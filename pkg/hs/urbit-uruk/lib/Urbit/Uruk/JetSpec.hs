@@ -1,50 +1,12 @@
-module Urbit.Uruk.JetSpec (SingJet(..), jetSpec) where
+module Urbit.Uruk.JetSpec (jetSpec) where
 
 import ClassyPrelude
+import Urbit.Uruk.Dash.Exp (SingJet(..))
 import Data.FileEmbed    (embedStringFile)
 import Text.RawString.QQ
 
 
 --------------------------------------------------------------------------------
-
-data SingJet
-  = EYE -- I
-  | BEE -- B
-  | SEA -- C
-  | SEQ
-  | YET
-  | FIX
-  | IFF
-  | PAK
-  | ZER
-  | EQL
-  | LTH
-  | ADD
-  | INC
-  | DEC
-  | FEC
-  | MUL
-  | DIV
-  | MOD
-  | SUB
-  | FUB
-  | NOT
-  | XOR
-  | BEX
-  | LSH
-  | DED
-  | UNI
-  | YES
-  | NAH
-  | LEF
-  | RIT
-  | CAS
-  | CON
-  | CAR
-  | CDR
-  | TRACE
- deriving (Eq, Ord, Read, Show, Enum, Bounded, Generic)
- deriving anyclass NFData
 
 jetSpec :: Text
 jetSpec = [r|

@@ -1,9 +1,10 @@
 module Main where
 
 import ClassyPrelude
-import Urbit.Uruk.DashParser
+import Urbit.Uruk.Dash.Parser
+
+import Data.Text        (stripEnd)
 import Text.Show.Pretty (pPrint, ppShow)
-import Data.Text (stripEnd)
 
 --------------------------------------------------------------------------------
 
