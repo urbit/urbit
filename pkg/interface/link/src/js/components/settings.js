@@ -27,6 +27,7 @@ export class SettingsScreen extends Component {
     this.submitColor = this.submitColor.bind(this);
     this.renderDelete = this.renderDelete.bind(this);
     this.renderMetadataSettings = this.renderMetadataSettings.bind(this);
+    this.markAllAsSeen = this.markAllAsSeen.bind(this);
   }
 
   componentDidMount() {
@@ -346,7 +347,7 @@ export class SettingsScreen extends Component {
           <p className="f8 mt3 lh-copy db">Mark all links as read</p>
           <p className="f9 gray2 db mb4">Mark all links in this collection as read.</p>
           <a className="dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer"
-            onClick={() => this.markAllAsSeen}>
+            onClick={this.markAllAsSeen}>
               Mark all as read
             </a>
           {this.renderRemove()}
