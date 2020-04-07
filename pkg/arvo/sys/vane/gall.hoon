@@ -190,66 +190,19 @@
     ::
     =/  resolved  (flop moves)
     [resolved gall-payload]
-  ::
-  ::  +mo-boot: ask %ford to build us a core for the specified agent.
+  ::  +mo-boot: start new agent
   ::
   ++  mo-boot
-    |=  [=term =ship =desk]
+    |=  dap=term
     ^+  mo-core
-    ::
-    =/  =case  [%da now]
-    =/  =wire
-      =/  ship  (scot %p ship)
-      =/  case  (scot case)
-      /sys/cor/[term]/[ship]/[desk]/[case]
-    ::
-    =/  =note-arvo
-      =/  =schematic:ford  [%core [ship desk] /hoon/[term]/app]
-      [%f %build live=%.y schematic]
-    ::
-    (mo-pass wire note-arvo)
-  ::
-  ::  +mo-reboot: ask %ford to rebuild the specified agent
-  ::
-  ++  mo-reboot
-    |=  [force=? =term =ship]
-    ^+  mo-core
-    =/  gent  (~(got by running.agents.state) term)
-    =.  hen  control-duct.gent
-    =*  desk  q.beak.gent
-    ::  if we're forcing a reboot, we don't try to %kill the old build
-    ::
-    ?:  force
-      (mo-boot term ship desk)
-    ::
-    =/  =wire
-      =/  ship  (scot %p ship)
-      =/  case  (scot r.beak.gent)
-      /sys/cor/[term]/[ship]/[desk]/[case]
-    %.  [term ship desk]
-    =<  mo-boot
-    =/  =note-arvo  [%f %kill ~]
-    (mo-pass wire note-arvo)
-  ::
-  ::  +mo-goad: rebuild agent(s)
-  ::
-  ++  mo-goad
-    |=  [force=? agent=(unit dude)]
-    ^+  mo-core
-    ?^  agent
-      ~|  goad-gone+u.agent
-      (mo-reboot force u.agent our)
-    ::
-    =/  agents=(list term)
-      ~(tap in ~(key by running.agents.state))
-    |-  ^+  mo-core
-    ?~  agents
+    =/  daz  ~(key by running.agents.state)
+    ?:  (~(has in daz) dap)
+      %-  (slog leaf+"gall: already running {<dap>}" ~)
       mo-core
-    %=  $
-      agents     t.agents
-      ..mo-core  (mo-reboot force i.agents our)
-    ==
-  ::
+    =.  hen  ~[/gall]
+    =?  mo-core  ?=(^ daz)  (mo-pass /sys/lyv %kill ~)
+    =/  fiz  (~(run in (~(put in daz) dap)) |=(d=term /app/[d]/hoon))
+    (mo-pass /sys/lyv %f %make %home case=~ fiz maz=~ caz=~)
   ::  +mo-pass: prepend a standard %pass to the current list of moves.
   ::
   ++  mo-pass
@@ -278,8 +231,8 @@
   ::    track of, and then do more or less the same procedure as we did for the
   ::    running agent case.
   ::
-  ++  mo-receive-core
-    ~/  %mo-receive-core
+  ++  mo-take-agent
+    ~/  %mo-take-agent
     |=  [=term =beak =made-result:ford]
     ^+  mo-core
     ::
@@ -441,7 +394,7 @@
     ::
     ?+  -.path  !!
       %era  (mo-handle-sys-era path sign-arvo)
-      %cor  (mo-handle-sys-cor path sign-arvo)
+      %cor  (mo-handle-sys-lyv path sign-arvo)
       %lag  (mo-handle-sys-lag path sign-arvo)
       %pel  (mo-handle-sys-pel path sign-arvo)
       %rep  (mo-handle-sys-rep path sign-arvo)
@@ -459,9 +412,9 @@
     ?.  ?=(%breach -.public-keys-result.sign-arvo)
       mo-core
     (mo-breach who.public-keys-result.sign-arvo)
-  ::  +mo-handle-sys-cor: receive a cor from %ford.
+  ::  +mo-handle-sys-lyv: receive a live build result from %ford
   ::
-  ++  mo-handle-sys-cor
+  ++  mo-handle-sys-lyv
     |=  [=path =sign-arvo]
     ^+  mo-core
     ::
@@ -1486,16 +1439,7 @@
   ::
   =/  initialised  (mo-abed:mo duct)
   ?-    -.task
-      %conf
-    =/  =dock  p.task
-    =/  =ship  p.dock
-    ?.  =(our ship)
-      ~&  [%gall-not-ours ship]
-      [~ gall-payload]
-    ::
-    =>  (mo-boot:initialised q.dock q.task)
-    mo-abet
-  ::
+      %conf  mo-abet:(mo-boot:initialised dap.task)
       %deal
     =/  =sock  p.task
     =/  =term  q.task
@@ -1507,9 +1451,6 @@
     ::
     =>  (mo-handle-local:initialised p.sock term deal)
     mo-abet
-  ::
-      %goad
-    mo-abet:(mo-goad:initialised force.task agent.task)
   ::
       %init
     =/  payload  gall-payload(system-duct.agents.state duct)
