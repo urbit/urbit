@@ -72,7 +72,8 @@ import Urbit.Uruk.Class
 import Data.Function    ((&))
 import Data.List        (iterate, (!!))
 import Numeric.Natural  (Natural)
-import Numeric.Positive (Positive)
+import Urbit.Moon.Arity (Arity(..), appArity)
+import Urbit.Pos        (Pos)
 
 import qualified Urbit.Atom as Atom
 
@@ -82,14 +83,14 @@ import qualified Urbit.Atom as Atom
 infixl 5 :@;
 
 data Jet
-    = Slow !Positive !Ur !Ur -- unmatched jet: arity, tag, body
+    = Slow !Pos !Ur !Ur -- unmatched jet: arity, tag, body
     | Eye
     | Bee
     | Sea
-    | Sn !Positive
-    | Bn !Positive
-    | Cn !Positive
-    | In !Positive
+    | Sn !Pos
+    | Bn !Pos
+    | Cn !Pos
+    | In !Pos
     | JSeq
     | Yet !Natural
     | JFix
@@ -120,7 +121,7 @@ data Jet
 
 data UrPoly j
     = UrPoly j :@ UrPoly j
-    | J Positive
+    | J Pos
     | K
     | S
     | D
@@ -128,15 +129,12 @@ data UrPoly j
   deriving (Eq, Ord, Generic) -- , Show)
   deriving anyclass NFData
 
-instance NFData Positive where
-  rnf !x = ()
-
 type Ur = UrPoly Jet
 
 instance Uruk Ur where
   uApp x y = pure (x :@ y)
 
-  uJay = J
+  uJay = J . fromIntegral
   uNat = Nat
   uBol = Bol
 
@@ -155,10 +153,10 @@ instance Uruk Ur where
   uFix = Fix
   uIff = Iff
 
-  uBen n = Fast (fromIntegral $ n+2) (Bn n) []
-  uSen n = Fast (fromIntegral $ n+2) (Sn n) []
-  uCen n = Fast (fromIntegral $ n+2) (Cn n) []
-  uYet n = Fast (fromIntegral $ n+0) (In n) []
+  uBen n = Fast (fromIntegral $ n+2) (Bn $ fromIntegral n) []
+  uSen n = Fast (fromIntegral $ n+2) (Sn $ fromIntegral n) []
+  uCen n = Fast (fromIntegral $ n+2) (Cn $ fromIntegral n) []
+  uYet n = Fast (fromIntegral $ n+0) (In $ fromIntegral n) []
 
   uGlobal "lef" = Just Lef
   uGlobal "rit" = Just Rit
@@ -176,7 +174,14 @@ instance Uruk Ur where
   uGlobal "ded" = Just Ded
   uGlobal _     = Nothing
 
-jetExpand ∷ Positive → Ur
+  uArity (J n)        = pure (AriJay n)
+  uArity K            = pure AriKay
+  uArity S            = pure AriEss
+  uArity D            = pure AriDee
+  uArity (Fast n _ _) = pure (AriOth (fromIntegral n))
+  uArity (x :@ y)     = join (appArity <$> uArity x <*> uArity y)
+
+jetExpand ∷ Pos → Ur
 jetExpand = go
   where go = \case { 1 → J 1; n → go (pred n) :@ J 1 }
 
@@ -248,6 +253,7 @@ instance Show Jet where
         Bn n       → "B" <> show n
         Cn n       → "C" <> show n
         Sn n       → "S" <> show n
+        In n       → "I" <> show n
         JSeq       → "Seq"
         JBol True  → "Yes"
         JBol False → "Nop"
@@ -298,21 +304,21 @@ instance Show (Named a) where
 
 data Match = MkMatch
     { mFast ∷ Jet
-    , mArgs ∷ Positive
+    , mArgs ∷ Pos
     , mName ∷ Val
     , mBody ∷ Val
     }
   deriving (Show)
 
-match ∷ Jet → Positive → Ur → Ur → Match
+match ∷ Jet → Pos → Ur → Ur → Match
 match j n t b = MkMatch j n (urVal t) (urVal b)
 
-type Check = Named (Positive → JetTag → Val → Maybe Jet)
+type Check = Named (Pos → JetTag → Val → Maybe Jet)
 
 type DashEntry = Either Match Check
 
 type JetTag  = Val
-type Matches = Map (Positive, JetTag, Val) Jet
+type Matches = Map (Pos, JetTag, Val) Jet
 
 data Dash = Dash Matches [Check]
   deriving (Show)
@@ -331,7 +337,7 @@ mkDash = foldl' go (Dash mempty [])
         Left (MkMatch{..}) → Dash (insertMap (mArgs,mName,mBody) mFast ms) cs
         Right chk          → Dash ms (chk : cs)
 
-dashLookup ∷ Positive → Ur → Ur → Maybe Jet
+dashLookup ∷ Pos → Ur → Ur → Maybe Jet
 dashLookup n t b = findMatch <|> passCheck
   where
     (tv,bv)    = (urVal t, urVal b)
@@ -389,6 +395,7 @@ dash = mkDash
     , predikEnt j_nat
     , predikEnt j_bol
     , predikEnt j_cn
+    , predikEnt j_in
     , predikEnt (manyJet mjSn)
     , predikEnt j_bn
     , predikEnt j_yet
@@ -443,7 +450,7 @@ reduce = \case
     Fast n u us :@ x        → Just $ Fast (pred n) u (us <> [x])
     _                       → Nothing
   where
-    match ∷ Positive → Ur → Ur → Jet
+    match ∷ Pos → Ur → Ur → Jet
     -- ch n t b = Slow n t b
     match n t b = fromMaybe (Slow n t b) $ dashLookup n t b
     -- ch n t b = fromMaybe (error $ show (n,t,b)) $ dashLookup n t b
@@ -531,6 +538,7 @@ unMatch = go
         Sn n       → mjBody mjSn (Sn n)
         Bn n       → bnJet n
         Cn n       → cnJet n
+        In n       → inJet n
 
         Slow n t b → J n :@ t :@ b
 
@@ -579,7 +587,7 @@ jam = Nat . snd . go
 
 data SingJet = SingJet
   { sjFast ∷ Jet
-  , sjArgs ∷ Positive
+  , sjArgs ∷ Pos
   , sjName ∷ Val
   , sjBody ∷ Val
   , sjExec ∷ [Ur] → Maybe Ur
@@ -603,9 +611,9 @@ runSingJet SingJet{..} xs =
 data ManyJet = ManyJet
     { mjDbug ∷ String
     , mjName ∷ Val
-    , mjArgs ∷ Jet → Positive
+    , mjArgs ∷ Jet → Pos
     , mjBody ∷ Jet → Ur
-    , mjRead ∷ Positive → Val → Maybe Jet
+    , mjRead ∷ Pos → Val → Maybe Jet
     , mjExec ∷ Jet → [Ur] → Maybe Ur
     }
 
@@ -685,10 +693,10 @@ sjC = SingJet{..}
 
 -- Bulk Flip -------------------------------------------------------------------
 
-cn ∷ Positive → Ur
+cn ∷ Pos → Ur
 cn n = iterate ((B:@(B:@C):@B):@) C !! (fromIntegral n - 1)
 
-cnJet ∷ Positive → Ur
+cnJet ∷ Pos → Ur
 cnJet n = J (n+2) :@ K :@ cn n
 
 j_cn ∷ Check
@@ -699,6 +707,22 @@ j_cn = Named "cn" chk
     go 3 C                                             = Just 1
     go n (Fast 1 Bee [C, Fast 2 Bee [go(n-1)→Just r]]) = Just (r+1)
     go n _                                             = Nothing
+
+
+-- Bulk Identity ---------------------------------------------------------------
+
+u_in ∷ Pos → Ur
+u_in _ = S :@ K :@ K
+
+inJet ∷ Pos → Ur
+inJet n = J n :@ K :@ u_in n
+
+j_in ∷ Check
+j_in = Named "in" chk
+  where
+    chk :: Pos -> Val -> Val -> Maybe Jet
+    chk n (MkVal K) (MkVal (S :@ K :@ K)) = Just (In n)
+    chk _ _         _                     = Nothing
 
 
 -- Function Composition --------------------------------------------------------
@@ -718,10 +742,10 @@ sjB = SingJet{..}
 
 -- Bulk Composition ------------------------------------------------------------
 
-bnJet ∷ Positive → Ur
+bnJet ∷ Pos → Ur
 bnJet n = J (n+2) :@ K :@ bn n
 
-bn ∷ Positive → Ur
+bn ∷ Pos → Ur
 bn n = iterate ((B:@B):@) B !! (fromIntegral n - 1)
 
 j_bn ∷ Check
@@ -786,7 +810,7 @@ pattern Ya = Bol True
 
 j_bol ∷ Check
 j_bol = Named "bol" chk
-  where chk ∷ Positive → JetTag → Val → Maybe Jet
+  where chk ∷ Pos → JetTag → Val → Maybe Jet
         chk 2 (MkVal S) (MkVal K)        = Just (JBol True)
         chk 2 (MkVal S) (MkVal (S :@ K)) = Just (JBol False)
         chk n t         b                = Nothing
@@ -1091,7 +1115,7 @@ pattern Nat n = Fast 2 (JNat n) []
 
 j_nat ∷ Check
 j_nat = Named "nat" chk
-  where chk ∷ Positive → JetTag → Val → Maybe Jet
+  where chk ∷ Pos → JetTag → Val → Maybe Jet
         chk 2 (MkVal K) u = JNat <$> unChurch (valUr u)
         chk n t         b = Nothing
 
@@ -1133,7 +1157,7 @@ sjPak = SingJet{..}
 yetJet ∷ Natural → Ur
 yetJet n = J (fromIntegral $ n+1) :@ I :@ I
 
-yetArity ∷ Natural → Positive
+yetArity ∷ Natural → Pos
 yetArity n = fromIntegral (n+1)
 
 yetExec ∷ Natural → [Ur] → Maybe Ur
@@ -1144,7 +1168,7 @@ yetExec _ (u:us) = Just (go u us)
 
 j_yet ∷ Check
 j_yet = Named "yet" chk
-  where chk ∷ Positive → JetTag → Val → Maybe Jet
+  where chk ∷ Pos → JetTag → Val → Maybe Jet
         chk n (MkVal I) (MkVal I) = Just $ Yet (fromIntegral n - 1)
         chk _ _         _         = Nothing
 

@@ -30,15 +30,6 @@ import qualified Urbit.Uruk.Refr.Jetted  as Ur
 
 --------------------------------------------------------------------------------
 
--- Parser.parseAST :: Text -> AST.AST
--- AST.bind :: AST.AST -> AST.Exp Text
--- moonToLambda :: AST.Exp Text -> B.Exp p () Text
--- resolve :: B.Exp p () Text -> Either Text (B.Exp p () Void)
--- makeStrict :: Exp p () Void -> Exp p () Void
--- bracket :: Exp p () Void -> p
--- tromp :: Exp p () Void -> p
--- oleg :: Exp p () Void -> p
-
 data CompileTrace p = CompileTrace
   { ctInpu :: Text
   , ctTree :: AST
@@ -83,6 +74,9 @@ compile lkup strict comp ctInpu = do
   let ctDone = comp ctStik
   pure (CompileTrace{..})
 
+usApp :: Uruk p => p -> p -> p
+usApp x y = unsafePerformIO (uApp x y)
+
 urukPrim :: Uruk p => B.Prim p
 urukPrim = B.Prim
   { pSeq = uSeq
@@ -92,11 +86,11 @@ urukPrim = B.Prim
   , pArg = uArity
   }
 
-
--- Examples --------------------------------------------------------------------
-
 urukOut :: Uruk p => (p, p, p -> p -> p)
 urukOut = (uEss, uKay, usApp)
+
+
+-- Examples --------------------------------------------------------------------
 
 strictBracket :: (Uruk p, Eq p) => Text -> Either Text (CompileTrace p)
 strictBracket =
@@ -120,7 +114,7 @@ lazyOleg :: (Uruk p, Eq p) => Text -> Either Text (CompileTrace p)
 lazyOleg = compile getGlobal id oleg
 
 
---------------------------------------------------------------------------------
+-- Entry Points ----------------------------------------------------------------
 
 getGlobal :: Uruk p => Text -> Either Text p
 getGlobal = \case
@@ -146,176 +140,31 @@ getGlobal = \case
   may str Nothing  = Left ("Error: undefined variable:\n\n  " <> str <> "\n")
   may _   (Just x) = Right x
 
-toUruk :: Exp Text -> IO (Either Text Ur.Ur)
-toUruk = sequence . fmap Lamb.moonStrict . bindLC . toLC
-
-forceParse :: Text -> AST
-forceParse = Parser.parseAST >>> \case
-  Left  err -> error (show err)
-  Right ex  -> ex
-
-forceParseExp ∷ Text → Exp Text
-forceParseExp = bind . forceParse
-
-gogogo' :: Text -> ExceptT Text IO Ur.Ur
-gogogo' text = do
-  ast <- ExceptT $ pure $ Parser.parseAST text
-
-  traceM ""
-  traceM (show ast)
-  traceM ""
-
-  let !expr = bind ast
-      !lamb = toLC expr
-
-  bound <- ExceptT $ pure (bindLC lamb)
-
-  cplx <- liftIO (Lamb.moonStrict bound)
-
-  traceM ""
-  traceM (show lamb)
-  traceM ""
-
-  traceM ""
-  traceM (ppShow cplx)
-  traceM ""
-
-  pure (Ur.simp cplx)
-
-
-gogogo'new :: Text -> ExceptT Text IO JetEval.Exp
-gogogo'new text = do
-  ast <- ExceptT $ pure $ Parser.parseAST text
-
-  traceM ""
-  traceM (show ast)
-  traceM ""
-
-  let !expr = bind ast
-      !lamb = toLC expr
-
-  bound <- ExceptT $ pure (bindLC lamb)
-
-  cplx <- liftIO (Lamb.moonStrict bound)
-
-  traceM ""
-  traceM (show lamb)
-  traceM ""
-
-  traceM ""
-  traceM (ppShow cplx)
-  traceM ""
-
-  pure (JetEval.eval cplx)
-
-
-gogogoFast :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
-gogogoFast text = do
-  ast <- ExceptT $ pure $ Parser.parseAST text
-
-  let expr = bind ast
-      lamb = toLC expr
-
-  bound <- ExceptT $ pure (bindLC lamb)
-  cplx  <- liftIO $ Lamb.moonStrict bound
-
-  pure cplx
+-- Entry Points ----------------------------------------------------------------
 
 gogogoOleg :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
-gogogoOleg text = do
-  ast <- ExceptT $ pure $ Parser.parseAST text
-  let expr = bind ast
-  let lamb = toLC expr
-  resu <- liftIO $ Lamb.moonStrict lamb
-  ExceptT (pure resu)
-
+gogogoOleg = fmap ctDone . ExceptT . pure . strictOleg
 
 gogogoLazyOleg :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
-gogogoLazyOleg text = do
-  ast <- ExceptT $ pure $ Parser.parseAST text
-  let expr = bind ast
-  let lamb = toLC expr
-  resu <- liftIO $ Lamb.moonLazy lamb
-  ExceptT (pure resu)
+gogogoLazyOleg = fmap ctDone . ExceptT . pure . lazyOleg
 
-usApp :: Uruk p => p -> p -> p
-usApp x y = unsafePerformIO (uApp x y)
+gogogoTromp :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoTromp = fmap ctDone . ExceptT . pure . strictTromp
 
-gogogoTromp :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO (Either Text p)
-gogogoTromp text = do
-  ast <- ExceptT $ pure $ Parser.parseAST text
-  let expr = bind ast
-  let lamb = mix (moonToLambda expr) :: B.Exp (Either Text p) () Void
-  let tup = (uEss, uKay, usApp)
-  let tud = B.Prim uSeq (uYet . fromIntegral) uKay usApp uArity
-  pure $ B.outToUruk tup $ B.johnTrompBracket $ makeStrict tud lamb
+gogogoLazyTromp :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoLazyTromp = fmap ctDone . ExceptT . pure . lazyTromp
 
-gogogoLazyTromp :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO (Either Text p)
-gogogoLazyTromp text = do
-  ast <- ExceptT $ pure $ Parser.parseAST text
-  let expr = bind ast
-  let lamb = mix (moonToLambda expr) :: B.Exp (Either Text p) () Void
-  let tup = (uEss, uKay, usApp)
-  pure $ B.outToUruk tup $ B.johnTrompBracket lamb
+gogogoNaive :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoNaive = fmap ctDone . ExceptT . pure . strictBracket
 
-gogogoNaive :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO (Either Text p)
-gogogoNaive text = do
-  ast <- ExceptT $ pure $ Parser.parseAST text
-  let expr = bind ast
-  let lamb = mix (moonToLambda expr) :: B.Exp (Either Text p) () Void
-  let tup = (uEss, uKay, usApp)
-  let tud = B.Prim uSeq (uYet . fromIntegral) uKay usApp uArity
-  pure $ B.outToUruk tup $ B.naiveBracket $ makeStrict tud lamb
+gogogoLazyNaive :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoLazyNaive =  fmap ctDone . ExceptT . pure . lazyBracket
 
-gogogoLazyNaive :: forall p. (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO (Either Text p)
-gogogoLazyNaive text = do
-  ast <- ExceptT $ pure $ Parser.parseAST text
-  let expr = bind ast
-  let lamb = mix (moonToLambda expr) :: B.Exp (Either Text p) () Void
-  let tup = (uEss, uKay, usApp)
-  pure $ B.outToUruk tup $ B.naiveBracket lamb
+gogogo' :: Text -> ExceptT Text IO Ur.Ur
+gogogo' = ExceptT . pure . fmap (Ur.simp . ctDone) . strictOleg
 
-mix :: B.Exp p () Text -> B.Exp (Either Text p) () Void
-mix = undefined
+gogogo'new :: Text -> ExceptT Text IO JetEval.Exp
+gogogo'new = ExceptT . pure . fmap (JetEval.eval . ctDone) . strictOleg
 
-bindLC :: Uruk p => Lamb.Exp (Either Text p) -> Either Text (Lamb.Exp p)
-bindLC = traverse (either getGlobal Right)
-
-toLC :: forall p. Uruk p => Exp Text -> Lamb.Exp (Either Text p)
-toLC = go Left
- where
-  go :: (a -> Either Text Nat) -> Exp a -> Lamb.Exp (Either Text p)
-  go f = \case
-    Var a     -> var f a
-    Lam b     -> lam f b
-    App x y   -> Lamb.Go (go f x) (go f y)
-    Jet r n b -> Lamb.Jet (fromIntegral r) (Atom.utf8Atom n) (go f b)
-    Fix b     -> Lamb.Loop (enter f b)
-    Sig       -> Lamb.Prim (Right uUni)
-    Con x y   -> con f x y
-    Cas x l r -> cas f x l r
-    Iff c t e -> Lamb.If (go f c) (go f t) (go f e)
-    Lit n     -> Lamb.Prim $ Right $ uNat n
-    Bol b     -> Lamb.Prim $ Right $ uBol b
-    Str n     -> Lamb.Prim $ Right $ uNat $ Atom.utf8Atom n
-
-  enter :: (a -> Either Text Nat) -> Scope () Exp a -> Lamb.Exp (Either Text p)
-  enter f b = go f' (fromScope b) where f' = wrap f
-
-  lam :: (a -> Either Text Nat) -> Scope () Exp a -> Lamb.Exp (Either Text p)
-  lam f b = Lamb.Lam (enter f b)
-
-  var f a = f a & \case
-    Left  e -> Lamb.Prim (Left e)
-    Right v -> Lamb.Var v
-
-  cas :: (a -> Either Text Nat) -> Exp a -> Scope () Exp a -> Scope () Exp a -> Lamb.Exp (Either Text p)
-  cas f x l r = Lamb.Case (go f x) (enter f l) (enter f r)
-
-  con :: (a -> Either Text Nat) -> Exp a -> Exp a -> Lamb.Exp (Either Text p)
-  con f x y = Lamb.Prim (Right uCon) `Lamb.Go` go f x `Lamb.Go` go f y
-
-  wrap :: (a -> Either Text Nat) -> Var () a -> Either Text Nat
-  wrap f = \case
-    B () -> Right 0
-    F x  -> succ <$> f x
+gogogoFast :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoFast = gogogoOleg

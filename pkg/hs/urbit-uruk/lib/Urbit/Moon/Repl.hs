@@ -193,19 +193,19 @@ goAll = runExceptT . bar
   bar :: Text -> ExceptT Text IO Text
   bar txt = do
     naive     <- ExceptT (goNaive txt)
-    lazyNaive <- ExceptT (goLazyNaive txt)
+--  lazyNaive <- ExceptT (goLazyNaive txt)
     tromp     <- ExceptT (goTromp txt)
-    lazyTromp <- ExceptT (goLazyTromp txt)
+--  lazyTromp <- ExceptT (goLazyTromp txt)
     oleg      <- ExceptT (goOleg txt)
-    lazyoleg  <- ExceptT (goLazyOleg txt)
+--  lazyoleg  <- ExceptT (goLazyOleg txt)
 
     pure $ unlines
-   -- [ "", "[naive]", "", pack (ppShow naive), ""
-   -- , "", "[lazynaive]", "", pack (ppShow lazyNaive), ""
-      [ "", "[tromp]", "", pack (ppShow tromp), ""
-      , "", "[lazytromp]", "", pack (ppShow lazyTromp), ""
-   -- , "", "[oleg]", "", pack (ppShow oleg), ""
-   -- , "", "[lazyoleg]", "", pack (ppShow lazyoleg), ""
+      [ "", "[naive]", "", pack (ppShow naive), ""
+--    , "", "[lazynaive]", "", pack (ppShow lazyNaive), ""
+      , "", "[tromp]", "", pack (ppShow tromp), ""
+--    , "", "[lazytromp]", "", pack (ppShow lazyTromp), ""
+      , "", "[oleg]", "", pack (ppShow oleg), ""
+--    , "", "[lazyoleg]", "", pack (ppShow lazyoleg), ""
       ]
 
 runFileSlow :: FilePath -> IO ()

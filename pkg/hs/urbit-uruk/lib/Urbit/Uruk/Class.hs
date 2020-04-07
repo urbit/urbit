@@ -1,11 +1,11 @@
-{-# OPTIONS_GHC -Werror #-}
+{-# OPTIONS_GHC -Wall -Werror #-}
 
 module Urbit.Uruk.Class where
 
 import ClassyPrelude
 
 import Numeric.Natural  (Natural)
-import Numeric.Positive (Positive)
+import Urbit.Pos        (Pos)
 import Urbit.Atom       (utf8Atom)
 import Urbit.Moon.Arity (Arity)
 
@@ -16,17 +16,17 @@ class Uruk p where
 
   uEss :: p
   uKay :: p
-  uJay :: Positive -> p
+  uJay :: Pos -> p
   uDee :: p
 
   uBee :: p
   uSea :: p
   uEye :: p
 
-  uBen :: Positive -> p
-  uSen :: Positive -> p
-  uCen :: Positive -> p
-  uYet :: Positive -> p
+  uBen :: Pos -> p
+  uSen :: Pos -> p
+  uCen :: Pos -> p
+  uYet :: Pos -> p
 
   uNat :: Natural -> p
   uBol :: Bool -> p

@@ -340,13 +340,13 @@ resolv = go (initialEnv, mempty)
 
     let eagExp = makeStrict (tup reg) (jetWrap n (length args) bodExp)
 
-    traceM ""
-    traceM "[input]"
-    traceM (ppShow bodExp)
-    traceM ""
-    traceM "[eager]"
-    traceM (ppShow eagExp)
-    traceM ""
+    -- traceM ""
+    -- traceM "[input]"
+    -- traceM (ppShow bodExp)
+    -- traceM ""
+    -- traceM "[eager]"
+    -- traceM (ppShow eagExp)
+    -- traceM ""
 
     fulExp <- Right $! force $ eval $ ski $ B.johnTrompBracket eagExp
 

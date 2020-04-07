@@ -7,8 +7,8 @@ import ClassyPrelude hiding (try)
 
 import Control.Arrow          ((>>>))
 import Numeric.Natural        (Natural)
-import Numeric.Positive       (Positive)
-import Urbit.Uruk.Class
+import Urbit.Pos              (Pos)
+import Urbit.Uruk.Class       (Uruk(..))
 import Urbit.Uruk.Refr.Jetted (Ur, UrPoly((:@), Fast))
 
 import qualified Urbit.Moon.Bracket     as B
@@ -19,7 +19,6 @@ import qualified Urbit.Uruk.Refr.Jetted as Ur
 -- Types -----------------------------------------------------------------------
 
 type Nat = Natural
-type Pos = Positive
 
 data Exp p
   = Lam (Exp p)
@@ -169,7 +168,7 @@ ski deb = case deb of
            | n < m     ->                 Bn(p(m-n)) :# (Sn (p n) :# x) :# y
            | otherwise -> Cn (p(n-m)) :# (Bn(p(n-m)) :#  Sn (p m) :# x) :# y
 
-  p ∷ Natural → Positive
+  p ∷ Natural → Pos
   p = fromIntegral
 
 {-

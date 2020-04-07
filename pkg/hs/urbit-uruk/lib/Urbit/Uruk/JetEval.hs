@@ -7,10 +7,12 @@ import Data.Bits           (shiftL, (.|.))
 import Data.Function       ((&))
 import Data.List           (iterate, (!!))
 import Numeric.Natural     (Natural)
+import Urbit.Moon.Arity    (Arity(..), appArity)
 import Urbit.Pos           (Pos)
 import Urbit.Uruk.Class    (Uruk(..))
-import Urbit.Uruk.Dash.Exp (DataJet(..), SingJet(..), ExpTree(..))
+import Urbit.Uruk.Dash.Exp (DataJet(..), ExpTree(..), SingJet(..))
 
+import qualified Debug.Trace             as Debug.Trace
 import qualified Urbit.Atom              as Atom
 import qualified Urbit.Uruk.Dash.DataJet as Jets
 import qualified Urbit.Uruk.Dash.Exp     as Dash
@@ -127,6 +129,7 @@ instance Uruk Exp where
   uBen p = N $ M (MD $ Bn $ fromIntegral p) (fromIntegral $ p+2) []
   uSen p = N $ M (MD $ Sn $ fromIntegral p) (fromIntegral $ p+2) []
   uCen p = N $ M (MD $ Cn $ fromIntegral p) (fromIntegral $ p+2) []
+  uYet p = N $ M (MD $ In $ fromIntegral p) (fromIntegral $ p+0) []
 
   uNat n = N $ M (MD $ NAT n) 2 []
 
@@ -164,6 +167,13 @@ instance Uruk Exp where
   uGlobal "xor" = Just Xor
   uGlobal "trace" = Just Trace
   uGlobal _     = Nothing
+
+  uArity (N (J n))     = pure $ AriJay n
+  uArity (N K)         = pure $ AriKay
+  uArity (N S)         = pure $ AriEss
+  uArity (N D)         = pure $ AriDee
+  uArity (N (M _ n _)) = pure $ AriOth (fromIntegral n)
+  uArity (x :& y)      = join $ appArity <$> uArity x <*> uArity y
 
 
 --------------------------------------------------------------------------------
@@ -256,6 +266,8 @@ runJet = curry \case
   (MD (Bn  n), f:g:xs   ) -> Just (f :& foldl' (:&) g xs)
   (MD (Cn  n), f:g:xs   ) -> Just (foldl' (:&) f xs :& g)
   (MD (Sn  n), f:g:xs   ) -> Just (foldl' (:&) f xs :& foldl' (:&) g xs)
+  (MD (In  n), [f]      ) -> Just f
+  (MD (In  n), f:xs     ) -> Just (foldl' (:&) f xs)
   (MS EYE    , [x]      ) -> Just x
   (MS BEE    , [f, g, x]) -> Just (f :& (g :& x))
   (MS SEA    , [f, g, x]) -> Just (f :& x :& g)
@@ -292,10 +304,11 @@ runJet = curry \case
   (MS MOD    , [x, y]   ) -> goMod x y
   (MS TRACE  , [x, y]   ) -> goTrace x y
 
-  (MD (NAT n), _        ) -> badArgs
-  (MD (Bn  n), _        ) -> badArgs
-  (MD (Cn  n), _        ) -> badArgs
-  (MD (Sn  n), _        ) -> badArgs
+  (MD (NAT _), _        ) -> badArgs
+  (MD (Bn  _), _        ) -> badArgs
+  (MD (Cn  _), _        ) -> badArgs
+  (MD (Sn  _), _        ) -> badArgs
+  (MD (In  _), _        ) -> badArgs
   (MS EYE    , _        ) -> badArgs
   (MS BEE    , _        ) -> badArgs
   (MS SEA    , _        ) -> badArgs
@@ -407,4 +420,4 @@ runJet = curry \case
   goNat 0 i z = z
   goNat n i z = i :& goNat (pred n) i z
 
-  goTrace x y = trace ("Trace: " ++ (show x)) (Just (y :& Uni))
+  goTrace x y = Debug.Trace.trace ("Trace: " ++ (show x)) (Just (y :& Uni))
