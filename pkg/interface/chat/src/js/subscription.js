@@ -21,7 +21,10 @@ export class Subscription {
   subscribe(path, app) {
     api.bind(path, 'PUT', api.authTokens.ship, app,
       this.handleEvent.bind(this),
-      this.handleError.bind(this),
+      (err) => {
+        console.log(err);
+        this.subscribe(path, app);
+      },
       () => {
         this.subscribe(path, app);
       });
@@ -46,10 +49,6 @@ export class Subscription {
       this.secondRoundSubscriptions();
     }
     store.handleEvent(diff);
-  }
-
-  handleError(err) {
-    console.error(err);
   }
 
   fetchMessages(start, end, path) {
