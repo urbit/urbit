@@ -21,7 +21,6 @@ import Numeric.Natural       (Natural)
 import Prelude               (read)
 import Text.Show.Pretty      (pPrint, ppShow)
 import Urbit.Atom            (Atom)
-import Urbit.Moon.MakeStrict (Prim(..), makeJetStrict)
 import Urbit.Uruk.JetSpec    (jetSpec)
 
 import qualified Data.Char           as C

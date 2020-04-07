@@ -21,7 +21,7 @@ import Prelude               (read)
 import Text.Show.Pretty      (pPrint, ppShow)
 import Urbit.Atom            (Atom)
 import Urbit.Uruk.JetSpec    (jetSpec)
-import Urbit.Moon.MakeStrict (makeJetStrict, Prim(..))
+import Urbit.Moon.MakeStrict (makeStrict, Prim(..))
 import qualified Data.Char           as C
 import qualified Language.Haskell.TH as TH
 import qualified Urbit.Atom          as Atom
@@ -338,11 +338,17 @@ resolv = go (initialEnv, mempty)
   one (env, reg) (Dec n args ast) = do
     bodExp <- resolveNames n env (astExp (lam args ast))
 
-    let eagExp = makeJetStrict (tup reg) (length args) bodExp
-    let skiExp = eval $ ski $ B.johnTrompBracket eagExp
-    let fulExr = jetWrap n (length args) skiExp
+    let eagExp = makeStrict (tup reg) (jetWrap n (length args) bodExp)
 
-    fulExp <- Right $! force fulExr
+    traceM ""
+    traceM "[input]"
+    traceM (ppShow bodExp)
+    traceM ""
+    traceM "[eager]"
+    traceM (ppShow eagExp)
+    traceM ""
+
+    fulExp <- Right $! force $ eval $ ski $ B.johnTrompBracket eagExp
 
     case jetExp n fulExp of
       Nothing -> do
@@ -361,10 +367,10 @@ resolv = go (initialEnv, mempty)
     B.Pri (B.P v) -> v
     x B.:@ y      -> ski x :& ski y
 
-  jetWrap :: Text -> Int -> Val -> Val
+  jetWrap :: Text -> Int -> B.Exp Exp () Void -> B.Exp Exp () Void
   jetWrap _  0       body = body
   jetWrap nm numArgs body =
-    jetArityVal (fromIntegral numArgs) :& jetTagVal nm :& body
+    B.Pri (jetArityVal (fromIntegral numArgs)) B.:@ jetTagVal nm B.:@ body
 
 -- jet :: Natural -> Text -> AST -> AST
 -- jet arity name expr = go j arity :@ Tag name :@ expr
@@ -376,8 +382,8 @@ resolv = go (initialEnv, mempty)
   -- go acc 1 = acc
   -- go acc n = go (acc :@ j) (pred n)
 
-jetTagVal :: Text -> Val
-jetTagVal = N . DataJet . NAT . Atom.utf8Atom
+jetTagVal :: Text -> B.Exp Val v a
+jetTagVal = B.Pri . N . DataJet . NAT . Atom.utf8Atom
 
 jetArityVal :: Natural -> Val
 jetArityVal = go (N J)

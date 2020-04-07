@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -Wall -Werror #-}
+{-- OPTIONS_GHC -Wall -Werror #-}
 
 {- |
     # The Problem
@@ -276,7 +276,7 @@
   automatically. This avoids the need for a second entry-point.
 -}
 
-module Urbit.Moon.MakeStrict (makeStrict, makeJetStrict, Prim(..)) where
+module Urbit.Moon.MakeStrict (makeStrict, Prim(..)) where
 
 import ClassyPrelude hiding (try, Prim)
 
@@ -286,26 +286,12 @@ import Data.List          (nub)
 import Urbit.Moon.Arity   (Arity(..), appArity, arityPos)
 import Urbit.Moon.Bracket (Exp(..))
 import Urbit.Moon.Smoosh  (smoosh, unSmoosh)
+import Urbit.Pos          (Pos)
 
 
 -- Types -----------------------------------------------------------------------
 
 type ExpV p v a = Exp p () (Var v a)
-
-data RecSt p v = RecSt
-  { rsMRB :: v
-  , rsSeq :: p
-  , rsKay :: p
-  , rsYet :: Int -> p
-  , rsArg :: p -> Maybe Arity
-  , rsRit :: Maybe Int
-  }
-
-data RecRes p v a = RecRes
-  { rrArg :: Maybe Arity
-  , rrRef :: [Var v a]
-  , rrExp :: ExpV p v a
-  }
 
 data Prim p = Prim
   { pSeq :: p
@@ -315,6 +301,21 @@ data Prim p = Prim
   , pArg :: p -> Maybe Arity
   , pHdr :: p -> Maybe Int
   }
+
+data RecSt p v = RecSt
+  { rsPri :: Prim p
+  , rsMRB :: v
+  , rsRit :: Maybe Int
+  }
+
+data RecRes p v a = RecRes
+  { rrArg :: Maybe Arity
+  , rrFre :: [a]
+  , rrExp :: ExpV p v a
+  }
+
+rsArg :: RecSt p v -> p -> Maybe Arity
+rsArg = pArg . rsPri
 
 
 -- Calculate Application Arity and Delay if necessary --------------------------
@@ -334,18 +335,25 @@ safeApp
   -> (Maybe Arity, ExpV p v a)
 safeApp _ (Nothing, x) (_      , y) = (Nothing, x :@ y)
 safeApp _ (_      , x) (Nothing, y) = (Nothing, x :@ y)
-safeApp RecSt { rsRit, rsSeq, rsYet, rsMRB } (Just arX, x) (Just arY, y) =
+safeApp RecSt { rsRit, rsPri, rsMRB } (Just arX, x) (Just arY, y) =
   case (appArity arX arY, rsRit) of
     (Just ar, _      ) -> (Just ar, x :@ y)
     (Nothing, Nothing) -> (Nothing, seqHed :@ x :@ y)
     (Nothing, Just n ) -> (Just (yetAri n), yetHed (n + 2) :@ x :@ y)
  where
-  seqHed = Pri rsSeq :@ Var (B rsMRB)
-  yetHed n = Pri (rsYet n)
+  seqHed = Pri (pSeq rsPri) :@ Var (B rsMRB)
+  yetHed n = Pri (pYet rsPri $ n)
   yetAri n = AriOth (fromIntegral n)
 
 
 -- Core Loop -------------------------------------------------------------------
+
+onlyFree :: [Var v x] -> [x]
+onlyFree = mapMaybe (unvar (const Nothing) Just)
+
+incArity :: Maybe Arity -> Maybe Arity
+incArity Nothing  = Just (AriOth 1)
+incArity (Just a) = Just (AriOth $ succ $ arityPos a)
 
 loop
   :: forall p v a
@@ -354,16 +362,16 @@ loop
   -> ExpV p v a
   -> RecRes p v a
 loop st@RecSt {..} = \case
-  Pri p -> RecRes (rsArg p) [] (Pri p)
-  Var v -> RecRes (varArity v) [v] (Var v)
+  Pri p -> RecRes (rsArg st p) [] (Pri p)
+  Var v@(B _) -> RecRes (varArity v) [] (Var v)
+  Var v@(F f) -> RecRes (varArity v) [f] (Var v)
   Lam () b ->
     let boSt = st { rsMRB = (), rsRit = Nothing }
         body = loop boSt (fromScope b)
-        refs = mapMaybe (unvar (const Nothing) Just) (rrRef body)
         args = do
-          guard (not $ any isBoundVar refs)
+          guard (not $ any isBoundVar $ rrFre body)
           incArity (rrArg body)
-    in  RecRes args refs (Lam () $ toScope $ rrExp body)
+    in  RecRes args (onlyFree $ rrFre body) (Lam () $ toScope $ rrExp body)
 
   x :@ y ->
     let rit = loop (st { rsRit = Nothing }) y
@@ -375,18 +383,23 @@ loop st@RecSt {..} = \case
 
         lef = loop (st { rsRit = dis }) x
 
-        (rArg, rExp) = safeApp st (rrArg lef, rrExp lef) (rrArg rit, rrExp rit)
+        (rArg, rExp) =
+          case rrArg lef of
+            Just (AriHdr n) -> doJetLit n y
+            _ -> safeApp st (rrArg lef, rrExp lef) (rrArg rit, rrExp rit)
 
     in  RecRes
           { rrArg = rArg
           , rrExp = rExp
-          , rrRef = nub (rrRef lef <> rrRef rit)
+          , rrFre = nub (rrFre lef <> rrFre rit)
           }
 
  where
-  incArity :: Maybe Arity -> Maybe Arity
-  incArity Nothing  = Just (AriOth 1)
-  incArity (Just a) = Just (AriOth $ succ $ arityPos a)
+  doJetLit :: Pos -> ExpV p v a -> (Maybe Arity, ExpV p v a)
+  doJetLit p expr = (ari, res)
+   where
+    ari = if any isBoundVar fre then Nothing else Just (AriOth p)
+    (res, _, fre) = makeJetStrict' rsPri (fromIntegral p) expr
 
   varArity :: Var v a -> Maybe Arity
   varArity (B _) = Nothing
@@ -405,37 +418,72 @@ enter
   => v
   -> Prim p
   -> ExpV p v a
-  -> ExpV p v a
-enter v0 Prim{..} = rrExp . loop st
+  -> (ExpV p v a, Maybe Arity, [a])
+enter v0 pri = (\RecRes{..} -> (rrExp, rrArg, rrFre)) . loop st
  where
   st = RecSt { rsMRB = v0
-             , rsSeq = pSeq
-             , rsKay = pKay
-             , rsYet = pYet
-             , rsArg = pArg
+             , rsPri = pri
              , rsRit = Nothing
              }
 
 
 -- Unjetted Entry Point --------------------------------------------------------
 
-makeStrict :: (Eq p, Eq a) => Prim p -> Exp p () a -> Exp p () a
-makeStrict p = go
+{-
+  TODO
+
+  When compiling jet literals, the usually appear not in any enclosing
+  scope.
+
+  Therefore, the entry level loop here needs to also handle the case
+  where the LHS of an application has arity `AriHdr`.
+
+  Once that's done, the `makeJetStrict` entry point can be deleted.
+-}
+makeStrict' :: (Eq p, Eq a) => Prim p -> Exp p () a -> (Exp p () a, Maybe Arity, [a])
+makeStrict' p = go
  where
   go = \case
-    Pri x    -> Pri x
-    Var v    -> Var v
-    x   :@ y -> go x :@ go y
-    Lam bi b -> Lam bi $ toScope $ enter () p $ fromScope b
+    Pri x -> (Pri x, pArg p x, [])
+    Var v -> (Var v, Just (AriOth 1), [v])
+    x :@ y ->
+      let (xv, xa, xf) = go x
+      in
+        case xa of
+          Just (AriHdr n) ->
+            let (yv, ya, yf) = makeJetStrict' p (fromIntegral n) y
+                ra = join (appArity <$> xa <*> ya)
+            in (xv :@ yv, ra, nub (xf <> yf))
+          _ ->
+            let (yv, ya, yf) = go y
+                ra = join (appArity <$> xa <*> ya)
+            in (xv :@ yv, ra, nub (xf <> yf))
+    Lam bi b ->
+      let bo           = fromScope b
+          (bv, ba, bf) = enter () p bo
+      in  (Lam bi (toScope bv), incArity ba, bf)
+
+resExp :: (e, a, b) -> e
+resExp (x, _, _) = x
+
+makeStrict :: (Eq p, Eq a) => Prim p -> Exp p () a -> Exp p () a
+makeStrict p = resExp . makeStrict' p
 
 
 -- Jetted Entry Point ----------------------------------------------------------
 
-makeJetStrict :: (Eq p, Eq a) => Prim p -> Int -> Exp p () a -> Exp p () a
-makeJetStrict pri n expr = do
-  fromMaybe (makeStrict pri expr) $ go expr
+makeJetStrict'
+  :: (Eq p, Eq a) => Prim p -> Int -> Exp p () a -> (Exp p () a, Maybe Arity, [a])
+makeJetStrict' pri n expr =
+  trace "JET!" $
+  trace ("  arity: " <> show n) $
+  fromMaybe (makeStrict' pri expr) $ go expr
  where
   go e = do
     let depth = fromIntegral n
     e' <- smoosh depth e
-    pure $ unSmoosh depth $ enter 0 pri e'
+    let (re, _, rf) = enter 0 pri e'
+    pure (unSmoosh depth re, Just (AriOth (fromIntegral n)), rf)
+
+_makeJetStrict :: (Eq p, Eq a) => Prim p -> Int -> Exp p () a -> Exp p () a
+_makeJetStrict pri n = resExp . makeJetStrict' pri n
