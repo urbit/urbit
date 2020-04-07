@@ -99,9 +99,9 @@ executables:
       - "-with-rtsopts=-N"
       - -fwarn-incomplete-patterns
 
-  uruk-dash:
+  uruk-jets:
     main: Main.hs
-    source-dirs: app/dash
+    source-dirs: app/jets
     dependencies:
       - urbit-uruk
     ghc-options:

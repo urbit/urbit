@@ -405,8 +405,6 @@ jetExp nm vl = do
     (jname, body) <- case args of { [n, b] -> Just (n, b); _ -> Nothing }
     pure (fromIntegral arity, unTree jname, unTree body)
 
- -- resolv (fmap B.johnTrompBracket . decExp <$> ds) & \case
-
 resolv :: [Dec] -> Either Text (Env, Reg)
 resolv = go (initialEnv, mempty)
  where
@@ -421,8 +419,6 @@ resolv = go (initialEnv, mempty)
 
   one :: (Env, Reg) -> Dec -> Either Text (Env, Reg)
   one (env, reg) (Dec n args ast) = do
-    traceM ("[" <> unpack n <> "]")
-
     bodExp <- resolveNames n env (astExp (lam args ast))
 
     let eagExp = makeJetStrict (tup reg) (length args) bodExp

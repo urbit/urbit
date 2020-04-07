@@ -13,17 +13,6 @@ import Urbit.Uruk.DashParser (dashEnv, jetsMap)
 
 main :: IO ()
 main = do
-  putStrLn ""
-  for_ (mapToList dashEnv) $ \(k,v) -> do
-    putStrLn ("[" <> k <> "]")
-    pPrint v
-    putStrLn ""
-
-  for_ (mapToList jetsMap) $ \(k,v) -> do
-    putStrLn ("[" <> tshow k <> "]")
-    pPrint v
-    putStrLn ""
-
   getArgs >>= \case
 #if !defined(__GHCJS__)
     ["repl"]                    -> replSlow

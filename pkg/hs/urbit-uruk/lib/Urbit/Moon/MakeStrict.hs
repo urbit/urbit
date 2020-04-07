@@ -283,7 +283,6 @@ import Bound.Scope          (fromScope, toScope)
 import Bound.Var            (Var(..), unvar)
 import Data.List            (nub)
 import Urbit.Moon.Bracket   (Exp(..))
-import Urbit.Moon.FoldPrims (foldPrims)
 import Urbit.Moon.Smoosh    (smoosh, unSmoosh)
 
 
@@ -354,11 +353,6 @@ appArity _    x _ = x-1
 
 -- Core Loop -------------------------------------------------------------------
 
-{- |
-    Returns the arity of an expression and transform it if necessary.
-
-    `f x` should return `(x == K, arity x)`.
--}
 loop
   :: forall p v a
    . (Eq p, Eq v, Eq a)
@@ -423,7 +417,7 @@ enter v0 Prim{..} = rrExp . loop st
 -- Unjetted Entry Point --------------------------------------------------------
 
 makeStrict :: (Eq p, Eq a) => Prim p -> Exp p () a -> Exp p () a
-makeStrict p = go . foldPrims (pApp p)
+makeStrict p = go
  where
   go = \case
     Pri x    -> Pri x
@@ -436,7 +430,7 @@ makeStrict p = go . foldPrims (pApp p)
 
 makeJetStrict :: (Eq p, Eq a) => Prim p -> Int -> Exp p () a -> Exp p () a
 makeJetStrict pri n expr = do
-  fromMaybe (makeStrict pri expr) $ go $ foldPrims (pApp pri) expr
+  fromMaybe (makeStrict pri expr) $ go expr
  where
   go e = do
     let depth = fromIntegral n
