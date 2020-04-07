@@ -171,14 +171,14 @@ export function alphabetiseAssociations(associations) {
   Object.keys(associations).sort((a, b) => {
     let aName = a.substr(1);
     let bName = b.substr(1);
-    if (a.metadata && a.metadata.title) {
-      aName = a.metadata.title !== ""
-        ? a.metadata.title
+    if (associations[a].metadata && associations[a].metadata.title) {
+      aName = associations[a].metadata.title !== ""
+        ? associations[a].metadata.title
         : a.substr(1);
     }
-    if (b.metadata && b.metadata.title) {
-      bName = b.metadata.title !== ""
-        ? b.metadata.title
+    if (associations[b].metadata && associations[b].metadata.title) {
+      bName = associations[b].metadata.title !== ""
+        ? associations[b].metadata.title
         : b.substr(1);
     }
     return aName.toLowerCase().localeCompare(bName.toLowerCase());
