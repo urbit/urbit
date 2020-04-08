@@ -1,30 +1,24 @@
+{-# OPTIONS_GHC -Wall -Werror #-}
+
 module Urbit.Moon.MoonToUruk where
 
 import Bound
 import ClassyPrelude
 import Control.Monad.Except
-import GHC.Natural
 import Urbit.Moon.AST
 import Urbit.Uruk.Class
 
-import Control.Arrow             ((>>>))
-import Data.Function             ((&))
+import Bound.Var                 (unvar)
 import Data.Void                 (Void)
 import System.IO.Unsafe          (unsafePerformIO)
-import Text.Show.Pretty          (ppShow)
-import Urbit.Moon.Arity          (Arity)
 import Urbit.Moon.MakeStrict     (makeStrict)
 import Urbit.Moon.MoonToLambda   (moonToLambda)
 import Urbit.Moon.Oleg           (oleg)
-import Urbit.Uruk.Fast.OptToFast (optToFast)
 
-import qualified Urbit.Atom              as Atom
 import qualified Urbit.Moon.AST          as AST
 import qualified Urbit.Moon.Bracket      as B
-import qualified Urbit.Moon.LambdaToUruk as Lamb
 import qualified Urbit.Moon.MakeStrict   as B
 import qualified Urbit.Moon.Parser       as Parser
-import qualified Urbit.Uruk.Fast         as F
 import qualified Urbit.Uruk.JetEval      as JetEval
 import qualified Urbit.Uruk.Refr.Jetted  as Ur
 
@@ -55,8 +49,7 @@ mergePrim = go B.Pri
     B.Lam b    x -> B.Lam b $ toScope $ go (wrap f) $ fromScope x
 
   wrap :: (a -> B.Exp p b c) -> Var b a -> B.Exp p b (Var b c)
-  wrap f (B b) = B.Var (B b)
-  wrap f (F v) = F <$> f v
+  wrap g = unvar (B.Var . B) (fmap F . g)
 
 compile
   :: Uruk p
