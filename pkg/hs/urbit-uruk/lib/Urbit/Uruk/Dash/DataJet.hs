@@ -75,7 +75,7 @@ djBody = \case
   NAT n -> skSucc :& djBody (NAT $ pred n)
   In  _ -> NS :& NK :& NK
   Bn  1 -> NS :& (NK :& NS) :& NK
-  Cn  1 -> NK :& (NK :& (NS :& (NS :& NI :& NI) :& NI))
+  Cn  1 -> NS :& (NK :& (NS :& NS :& (NK :& NK))) :& (NS :& (NK :& NK) :& NS)
   Sn  n -> iterate (NB :& (NB :& NS) :& NB :&) NS !! (fromIntegral n - 1)
   Bn  n -> iterate (NB :& NB :&)               NB !! (fromIntegral n - 1)
   Cn  n -> iterate (NB :& (NB :& NC) :& NB :&) NC !! (fromIntegral n - 1)

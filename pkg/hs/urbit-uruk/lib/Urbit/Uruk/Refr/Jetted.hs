@@ -682,7 +682,7 @@ j_cn = Named "cn" chk
   where
     chk n (MkVal K) (MkVal b)                                = Cn <$> go n b
     chk n _         k                                        = Nothing
-    go 3 C                                                   = Just 1
+    go 3 (S:@(K:@(S:@S:@(K:@K))):@(S:@(K:@K):@S))            = Just 1
     go n (Fast 1 (Bn 1) [C, Fast 2 (Bn 1) [go(n-1)→Just r]]) = Just (r+1)
     go n _                                                   = Nothing
 
