@@ -89,11 +89,11 @@ export class InviteSearch extends Component {
 
     this.setState({ searchValue: event.target.value });
 
-    if (searchTerm.length < 2) {
+    if (searchTerm.length < 1) {
       this.setState({ searchResults: { groups: [], ships: [] } });
     }
 
-    if (searchTerm.length > 2) {
+    if (searchTerm.length > 0) {
       if (this.state.inviteError === true) {
         this.setState({ inviteError: false });
       }
@@ -101,7 +101,7 @@ export class InviteSearch extends Component {
       let groupMatches = [];
       if (this.props.groupResults) {
         groupMatches = this.state.groups.filter(e => {
-          return e[0].includes(searchTerm) || e[1].includes(searchTerm);
+          return e[0].includes(searchTerm) || e[1].toLowerCase().includes(searchTerm);
         });
       }
 
@@ -140,6 +140,14 @@ export class InviteSearch extends Component {
       if(!selected || staleSelection) {
         const newSelection = _.get(groupMatches, '[0][0]') || shipMatches[0];
         this.setState({ selected: newSelection })
+      }
+
+      if(searchTerm.length < 3) {
+        groupMatches = groupMatches.filter(([, name]) =>
+          name.toLowerCase().split(' ').some(s => s.startsWith(searchTerm))
+        ).sort((a,b) => a[1].length - b[1].length);
+
+        shipMatches = shipMatches.slice(0,3);
       }
 
       this.setState({
