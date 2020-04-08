@@ -25,11 +25,12 @@ import qualified Urbit.Uruk.Refr.Jetted as Ur
 type Nat = Natural
 
 data Deb p = Zero | Succ (Deb p) | DPrim p | Abs (Deb p) | App (Deb p) (Deb p)
-  deriving (Eq, Show)
+  deriving (Eq, Show, Generic, NFData)
 
 infixl 5 :#
 
 data Com p = Com p :# Com p | P p | I | K | S | Sn Pos | C | Cn Pos | B | Bn Pos
+ deriving (Generic, NFData)
 
 instance Show p => Show (Com p) where
   show = \case

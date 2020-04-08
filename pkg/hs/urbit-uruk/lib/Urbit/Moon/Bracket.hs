@@ -44,6 +44,13 @@ type Out p a = Exp p Void a
 deriveEq1 ''Exp
 deriveShow1 ''Exp
 
+instance (NFData p, NFData b, NFData a) => NFData (Exp p b a) where
+ rnf = \case
+   Lam b s -> rnf b `seq` rnf s
+   x :@ y -> rnf x `seq` rnf y
+   Pri p -> rnf p
+   Var a -> rnf a
+
 instance (Eq p, Eq b, Eq a) => Eq (Exp p b a) where
   (==) = eq1
 

@@ -135,22 +135,22 @@ getGlobal = \case
 
 -- Entry Points ----------------------------------------------------------------
 
-gogogoOleg :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoOleg :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
 gogogoOleg = fmap ctDone . ExceptT . pure . strictOleg
 
-gogogoLazyOleg :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoLazyOleg :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
 gogogoLazyOleg = fmap ctDone . ExceptT . pure . lazyOleg
 
-gogogoTromp :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoTromp :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
 gogogoTromp = fmap ctDone . ExceptT . pure . strictTromp
 
-gogogoLazyTromp :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoLazyTromp :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
 gogogoLazyTromp = fmap ctDone . ExceptT . pure . lazyTromp
 
-gogogoNaive :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoNaive :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
 gogogoNaive = fmap ctDone . ExceptT . pure . strictBracket
 
-gogogoLazyNaive :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoLazyNaive :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
 gogogoLazyNaive =  fmap ctDone . ExceptT . pure . lazyBracket
 
 gogogo' :: Text -> ExceptT Text IO Ur.Ur
@@ -159,5 +159,5 @@ gogogo' = ExceptT . pure . fmap (Ur.simp . ctDone) . strictOleg
 gogogo'new :: Text -> ExceptT Text IO JetEval.Exp
 gogogo'new = ExceptT . pure . fmap (JetEval.eval . ctDone) . strictOleg
 
-gogogoFast :: (Eq p, Show p, Uruk p) => Text -> ExceptT Text IO p
+gogogoFast :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
 gogogoFast = gogogoOleg

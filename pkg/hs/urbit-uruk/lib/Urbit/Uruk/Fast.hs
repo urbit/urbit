@@ -108,7 +108,7 @@ instance Uruk Val where
   uJay = \n -> mkNode 2 $ Jay $ fromIntegral n
   uDee = mkNode 1 Dee
 
-  uEye n = mkNode (fromIntegral $ 0 + n) (Eye $ fromIntegral n)
+  uEye n = mkNode (fromIntegral $ n) (Eye $ fromIntegral n)
   uBee n = mkNode (fromIntegral $ 2 + n) (Bee $ fromIntegral n)
   uSea n = mkNode (fromIntegral $ 2 + n) (Sea $ fromIntegral n)
   uSen n = mkNode (fromIntegral $ 2 + n) (Sen $ fromIntegral n)

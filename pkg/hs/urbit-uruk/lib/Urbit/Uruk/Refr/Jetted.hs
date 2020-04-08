@@ -139,7 +139,7 @@ instance Uruk Ur where
   uSen n = Fast (fromIntegral $ n+2) (Sn $ fromIntegral n) []
   uBee n = Fast (fromIntegral $ n+2) (Bn $ fromIntegral n) []
   uSea n = Fast (fromIntegral $ n+2) (Cn $ fromIntegral n) []
-  uEye n = Fast (fromIntegral $ n+0) (In $ fromIntegral n) []
+  uEye n = Fast (fromIntegral $ n) (In $ fromIntegral n) []
 
   uNat = Nat
   uBol = Bol

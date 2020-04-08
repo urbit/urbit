@@ -203,6 +203,16 @@ data Val
   | VFun !Fun
  deriving (Eq, Ord, Generic, Hashable)
 
+instance NFData Val where
+  rnf = \case
+    VUni     -> ()
+    VCon _ _ -> ()
+    VLef _   -> ()
+    VRit _   -> ()
+    VNat _   -> ()
+    VBol _   -> ()
+    VFun _   -> ()
+
 instance Show Val where
   show = \case
     VUni       -> "~"

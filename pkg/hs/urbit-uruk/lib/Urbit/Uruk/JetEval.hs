@@ -125,7 +125,7 @@ instance Uruk Exp where
   uBee p = N $ M (MD $ Bn $ fromIntegral p) (fromIntegral $ p+2) []
   uSen p = N $ M (MD $ Sn $ fromIntegral p) (fromIntegral $ p+2) []
   uSea p = N $ M (MD $ Cn $ fromIntegral p) (fromIntegral $ p+2) []
-  uEye p = N $ M (MD $ In $ fromIntegral p) (fromIntegral $ p+0) []
+  uEye p = N $ M (MD $ In $ fromIntegral p) (fromIntegral $ p) []
 
   uNat n = N $ M (MD $ NAT n) 2 []
 
