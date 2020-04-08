@@ -55,10 +55,11 @@ expDeb = go absurd
  where
   go :: (a -> Deb p) -> B.Exp p () a -> Deb p
   go f = \case
-    B.Pri p      -> DPrim p
-    B.Var v      -> f v
-    x     B.:@ y -> go f x `App` go f y
-    B.Lam ()   b -> Abs $ go (Bound.unvar (const Zero) f) $ Bound.fromScope b
+    B.Pri p  -> DPrim p
+    B.Var v  -> f v
+    x B.:@ y -> go f x `App` go f y
+    B.Lam () b ->
+      Abs $ go (Bound.unvar (const Zero) (Succ . f)) $ Bound.fromScope b
 
 _debExp :: forall p f . Show p => Deb p -> B.Exp p () Void
 _debExp = go (error . ("bad-deb: free variable: " <>) . show)
@@ -98,32 +99,55 @@ ski deb = case deb of
   where
   f (a, x) (b, y) = case (a, b) of
     (0, 0)             ->         x :# y
-    (0, n)             -> Bn (p n) :# x :# y
-    (n, 0)             -> Cn (p n) :# x :# y
-    (n, m) | n == m    -> Sn (p n) :# x :# y
-           | n < m     ->                 Bn(p(m-n)) :# (Sn (p n) :# x) :# y
-           | otherwise -> Cn (p(n-m)) :# (Bn(p(n-m)) :#  Sn (p m) :# x) :# y
+    (0, n)             -> bn n :# x :# y
+    (n, 0)             -> cn n :# x :# y
+    (n, m) | n == m    -> sn n :# x :# y
+           | n < m     ->              bn (m-n) :# (sn n :# x) :# y
+           | otherwise -> cn (n-m) :# (bn (n-m) :#  sn m :# x) :# y
 
-  p ∷ Nat → Pos
-  p = fromIntegral
+  bn = Bn . o
+  sn = Sn . o
+  cn = Cn . o
+
+  o ∷ Nat → Pos
+  o 0 = error "Urbit.Moon.Oleg.ski: Bad bulk combinator param: 0"
+  o n = fromIntegral n
 
 
 -- Convert to Uruk -------------------------------------------------------------
 
 comToUruk :: Uruk p => Com p -> p
 comToUruk = \case
-  Bn n        -> uBee (fromIntegral n)
-  Cn n        -> uSea (fromIntegral n)
-  Sn n        -> uSen (fromIntegral n)
-  B           -> uBee 1
-  C           -> uSea 1
-  S           -> uEss
-  I           -> uEye 1
-  K           -> uKay
   P p         -> p
+  K           -> uKay
+  S           -> uEss
+  Sn 1        -> uEss
+  Sn n        -> uSen n
+  I           -> uEye 1
+  B           -> uBee 1
+  Bn n        -> uBee n
+  C           -> uSea 1
+  Cn n        -> uSea n
   x :# y      -> unsafePerformIO (uApp (comToUruk x) (comToUruk y))
 
 -- Entry Point -----------------------------------------------------------------
 
 oleg :: Uruk p => B.Exp p () Void -> p
 oleg = comToUruk . snd . ski . expDeb
+
+instance IsString (B.Exp p () String)
+ where
+  fromString = B.Var
+
+l :: Eq a => a -> B.Exp p () a -> B.Exp p () a
+l nm = B.Lam () . Bound.abstract1 nm
+
+try :: B.Exp p () String -> Deb p
+try = expDeb . resolve
+ where
+  resolve :: B.Exp p () String -> (B.Exp p () Void)
+  resolve = fromRight . traverse (Left . ("unbound variable: " <>))
+
+  fromRight :: Either String b -> b
+  fromRight (Left err) = error err
+  fromRight (Right vl) = vl
