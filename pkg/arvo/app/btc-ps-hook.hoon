@@ -1,5 +1,5 @@
 /-  *btc-ps-hook
-/+  bip32, *server, default-agent, dbug
+/+  bip32, bip39, *server, default-agent, dbug
 |%
 +$  card  card:agent:gall
 ::
@@ -9,7 +9,7 @@
 ::
 +$  state-zero  [%0 base-state]
 +$  base-state
-  $:  private-key=@t
+  $:  entropy=byts
       store-id=@t
       token=@t
   ==
@@ -81,9 +81,15 @@
   ^-  (quip card _state)
   ?>  (team:title our.bol src.bol)
   ?-  -.act
-      %set-store-id  [~ state(store-id store-id.act)]
-      %generate-private-key
-    [~ state(private-key (generate-private-key eny.bol))]
+      %set-store-id
+    [~ state(store-id store-id.act)]
+      %pair-client
+    [[(pair-client pairing-code.act)]~ state]
+      %get-mnemonic
+    :_  state
+    [%give %fact [/primary]~ %btc-ps-update !>([%mnemonic mnemonic])]~
+    ::   %generate-private-key
+    :: [~ state(entropy `byts`[64 eny.bol])]
   ==
 ::
 ++  poke-btc-ps-action
@@ -121,13 +127,23 @@
 ::
 ::  +utilities
 ::
-++  generate-private-key
-  |=  ent=@uv
-  ^-  @t
-  =/  bip32-core=_bip32  (from-seed:bip32 [64 ent])
-  ~&  (crip prv-extended.bip32-core)
-  :: todo ~ change private-key.state to a tape
-  (crip prv-extended.bip32-core)
+++  bip32-core
+  ~+  ^+  bip32
+  (from-seed:bip32 entropy)
+::
+++  mnemonic  (crip (from-entropy:bip39 entropy))
+::
+++  pair-client
+  |=  pairing-code=@t
+  =/  =request:http
+    %+  post-request  'tokens'
+    %-  json-to-octs
+    %-  pairs:enjs:format
+    :~  [%id s+identity:bip32]
+        [%pairingCode s+pairing-code]
+    ==
+  (http-request /token/(scot %da now.bol) request *outbound-config:iris)
+::
 ++  get-rates
   |=  [currency-pair=@t store-id=@t token=@t]
   ^-  card
@@ -147,17 +163,16 @@
 ++  create-signed-headers
   |=  msg=@t
   ^-  (list [@t @t])
-  =,  secp:crypto
-  =/  bip32-core=_bip32  (from-extended:bip32 (trip private-key))
-  
-  :: msg need to be base32 :(
-  :: =.  msg  `@uvI`msg
-  :: =/  signed-msg
-  ::   ecdsa-raw-sign:secp256k1(msg private-key.bip32-core)
+  =,  crypto
+
+  =/  msg-sha=@uvI  (hmac-sha256t:hmac (met 3 msg) msg)
+  =/  signed-msg
+    (ecdsa-raw-sign:secp256k1:secp msg-sha private-key:bip32-core)
   ::   return type: [v=@ r=@ s=@]
+  ~&  signed-msg
   :~
     ::  derive public key from private-key
-    ['X-Identity' public-key.bip32-core]
+    ['X-Identity' public-key:bip32-core]
     ::  sign msg with private-key
     ['X-Signature' msg]
   ==
@@ -179,10 +194,16 @@
   ~&  signed-hed
   [%'GET' url hed *(unit octs)]
 ::
-++  signed-post-request
-  |=  [endpoint=@t hed=header-list:http body-octs=octs]
+++  post-request
+  |=  [endpoint=@t body-octs=octs]
   ^-  request:http
-  =/  base-url  "https://btcpay464279.lndyn.com/"
+  =/  hed=header-list:http
+    :~  ['accept' 'application/json']
+        ['content-type' 'application/json']
+        ['User-Agent' 'urbit-btcpay']
+        ['X-Accept-Version' '2.0.0']
+    ==
+  =/  base-url  "https://btcpay464279.lndyn.com/" :: base url need to be in state
   =/  url  (crip (weld base-url (trip endpoint)))
   [%'POST' url hed [~ body-octs]]
 ::
