@@ -395,14 +395,14 @@ jetArityVal = go (N J)
 seqJet :: Exp
 seqJet = N $ SingJet SEQ
 
-yetJet :: Int -> Exp
-yetJet = N . DataJet . In . fromIntegral
+eyeJet :: Int -> Exp
+eyeJet = N . DataJet . In . fromIntegral
 
 tup :: Reg -> Prim Exp -- (Exp, Int -> Exp, Exp, Exp -> Exp -> Exp, Exp -> Int)
 tup reg = Prim{..}
  where
   pSeq = seqJet
-  pYet = yetJet
+  pEye = eyeJet
   pKay = N K
   pApp = (:&)
   pArg = expArity reg

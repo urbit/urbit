@@ -37,8 +37,9 @@ pattern NS = N S
 pattern NK = N K
 pattern NJ = N J
 pattern ND = N D
-pattern NB = N (SingJet BEE)
-pattern NC = N (SingJet SEA)
+pattern NB = N (DataJet (Bn 1))
+pattern NC = N (DataJet (Cn 1))
+pattern NI = N (DataJet (In 1))
 
 pattern SnTag = N (DataJet (NAT 28275))
 pattern BnTag = N (DataJet (NAT 28258))
@@ -72,8 +73,10 @@ djBody :: DataJet -> Val
 djBody = \case
   NAT 0 -> NS :& NK
   NAT n -> skSucc :& djBody (NAT $ pred n)
-  Sn  n -> iterate (NB :& (NB :& NS) :& NB :&) NS !! (fromIntegral n - 1)
   In  _ -> NS :& NK :& NK
+  Bn  1 -> NS :& (NK :& NS) :& NK
+  Cn  1 -> NK :& (NK :& (NS :& (NS :& NI :& NI) :& NI))
+  Sn  n -> iterate (NB :& (NB :& NS) :& NB :&) NS !! (fromIntegral n - 1)
   Bn  n -> iterate (NB :& NB :&)               NB !! (fromIntegral n - 1)
   Cn  n -> iterate (NB :& (NB :& NC) :& NB :&) NC !! (fromIntegral n - 1)
 

@@ -175,16 +175,13 @@ ski deb = case deb of
   Compile Oleg's combinators to jetted Ur combinators.  -}
 comToUruk :: Uruk p => Com p -> IO p
 comToUruk = \case
-    Bn 1        -> pure uBee
-    Cn 1        -> pure uSea
-    Sn 1        -> pure uEss
-    Bn n        -> pure (uBen n)
-    Cn n        -> pure (uCen n)
+    Bn n        -> pure (uBee n)
+    Cn n        -> pure (uSea n)
     Sn n        -> pure (uSen n)
-    B           -> pure uBee
-    C           -> pure uSea
+    B           -> pure (uBee 1)
+    C           -> pure (uSea 1)
     S           -> pure uEss
-    I           -> pure uEye
+    I           -> pure (uEye 1)
     K           -> pure uKay
     P p         -> pure p
     x :# y      -> do

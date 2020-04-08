@@ -73,7 +73,7 @@ usApp x y = unsafePerformIO (uApp x y)
 urukPrim :: Uruk p => B.Prim p
 urukPrim = B.Prim
   { pSeq = uSeq
-  , pYet = uYet . fromIntegral
+  , pEye = uEye . fromIntegral
   , pKay = uKay
   , pApp = usApp
   , pArg = uArity
@@ -116,12 +116,12 @@ getGlobal = \case
   "J"     -> Right (uJay 1)
   "const" -> Right uKay
   "D"     -> Right uDee
-  "I"     -> Right uEye
-  "id"    -> Right uEye
-  "B"     -> Right uBee
-  "dot"   -> Right uBee
-  "C"     -> Right uSea
-  "flip"  -> Right uSea
+  "I"     -> Right (uEye 1)
+  "id"    -> Right (uEye 1)
+  "B"     -> Right (uBee 1)
+  "dot"   -> Right (uBee 1)
+  "C"     -> Right (uSea 1)
+  "flip"  -> Right (uSea 1)
   "cas"   -> Right uCas
   "iff"   -> Right uIff
   "seq"   -> Right uSeq

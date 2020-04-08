@@ -21,33 +21,30 @@ type Pos = Positive
 
 data Node
     = VSeq
-    | VYet Nat
     | VS
     | VK
-    | VB
-    | VC
-    | VI
-    | VIff
-    | VCas
-    | VSn Pos
+    | VIn Pos
     | VBn Pos
     | VCn Pos
+    | VSn Pos
+    | VIff
+    | VCas
   deriving stock (Eq, Ord, Generic)
 
 instance Show Node where
   show = \case
-    VSeq   -> "Q"
-    VS     -> "S"
-    VK     -> "K"
-    VB     -> "B"
-    VC     -> "C"
-    VI     -> "I"
-    VSn  n -> "S" <> show n
-    VBn  n -> "B" <> show n
-    VCn  n -> "C" <> show n
-    VYet n -> "W" <> show n
-    VIff   -> "Iff"
-    VCas   -> "Cas"
+    VSeq  -> "Q"
+    VS    -> "S"
+    VK    -> "K"
+    VIn 1 -> "I"
+    VBn 1 -> "B"
+    VCn 1 -> "C"
+    VIn n -> "I" <> show n
+    VSn n -> "S" <> show n
+    VBn n -> "B" <> show n
+    VCn n -> "C" <> show n
+    VIff  -> "Iff"
+    VCas  -> "Cas"
 
 data Code = Code
     { cArgs :: Pos
@@ -190,18 +187,15 @@ infixl 5 %;
 
 simplify :: Node -> [Exp] -> Exp
 simplify = curry $ \case
-  (VSeq  , [x, y]    ) -> y
-  (VYet _, f : xs    ) -> go f xs
   (VS    , [x, y, z] ) -> (x % z) % (y % z)
   (VK    , [x, y]    ) -> x
-  (VB    , [f, g, x] ) -> f % (g % x)
-  (VC    , [f, g, x] ) -> (f % x) % g
-  (VI    , [x]       ) -> x
-  (VIff  , [c, t, e] ) -> Iff c (t % unit) (e % unit) []
-  (VCas  , [x, l, r] ) -> Cas x (abst l % ref 0) (abst r % ref 0) []
-  (VSn _ , f : g : xs) -> go f xs % go g xs
+  (VSeq  , [x, y]    ) -> y
+  (VIn _ , f : xs    ) -> go f xs
   (VBn _ , f : g : xs) -> f % go g xs
   (VCn _ , f : g : xs) -> go f xs % g
+  (VSn _ , f : g : xs) -> go f xs % go g xs
+  (VIff  , [c, t, e] ) -> Iff c (t % unit) (e % unit) []
+  (VCas  , [x, l, r] ) -> Cas x (abst l % ref 0) (abst r % ref 0) []
   (n     , xs        ) -> error ("simplify: bad arity (" <> show n <> " " <> show xs <> ")")
  where
   go acc = \case
@@ -301,20 +295,17 @@ eval exp = do
         Nothing → pure exp
         Just e' → eval e'
 
-nodeRaw ∷ Nat → Node → F.Node
+nodeRaw :: Nat -> Node -> F.Node
 nodeRaw arity = \case
-  VSeq → F.Seq
-  VYet n → F.Yet (fromIntegral n)
-  VS → F.Ess
-  VK → F.Kay
-  VB → F.Bee
-  VC → F.Sea
-  VI → F.Eye
-  VIff → F.Iff
-  VCas → F.Cas
-  VSn n → F.Sen (fromIntegral n)
-  VBn n → F.Ben (fromIntegral n)
-  VCn n → F.Cen (fromIntegral n)
+  VS    -> F.Ess
+  VK    -> F.Kay
+  VIn n -> F.Eye (fromIntegral n)
+  VBn n -> F.Bee (fromIntegral n)
+  VCn n -> F.Sea (fromIntegral n)
+  VSn n -> F.Sen (fromIntegral n)
+  VSeq  -> F.Seq
+  VIff  -> F.Iff
+  VCas  -> F.Cas
 
 evaluate ∷ Exp → IO Val
 evaluate = fmap go . eval
@@ -379,9 +370,9 @@ fastVal = funVal . F.valFun
     F.Sea        -> F.Sea
     F.Sn n       -> F.Sen n
     F.Bn n       -> F.Ben n
-    F.Cn n       -> F.Cen n
+    F.Cn n       -> F.Sea n
     F.JSeq       -> F.Seq
-    F.Yet n      -> F.Yet n
+    F.Eye n      -> F.Eye n
     F.JFix       -> F.Fix
     F.JNat n     -> F.Nat n
     F.JBol b     -> F.Bol b
@@ -420,14 +411,11 @@ valExp = go
   rawExp rn xs = rn & \case
     F.Kay   -> clo 2 VK
     F.Ess   -> clo 3 VS
-    F.Eye   -> clo 1 VI
-    F.Bee   -> clo 3 VB
-    F.Sea   -> clo 3 VC
+    F.Eye n -> clo (int n + 1) (VIn $ fromIntegral n)
+    F.Bee n -> clo (int n + 2) (VBn $ fromIntegral n)
+    F.Sea n -> clo (int n + 2) (VCn $ fromIntegral n)
     F.Sen n -> clo (int n + 2) (VSn $ fromIntegral n)
-    F.Ben n -> clo (int n + 2) (VBn $ fromIntegral n)
-    F.Cen n -> clo (int n + 2) (VCn $ fromIntegral n)
     F.Seq   -> clo 2 VSeq
-    F.Yet n -> clo (int n + 1) (VYet $ fromIntegral n)
     F.Iff   -> clo 3 VIff
     F.Cas   -> clo 3 VCas
     other  -> kal other

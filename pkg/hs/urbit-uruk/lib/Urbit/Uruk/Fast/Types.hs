@@ -114,14 +114,11 @@ data Node
   | Ess
   | Dee
   | Jut Jet
-  | Eye
-  | Bee
-  | Sea
+  | Eye Int
+  | Bee Int --  Always >=  1
+  | Sea Int --  Always >=  1
   | Sen Int --  Always >=  1
-  | Ben Int --  Always >=  1
-  | Cen Int --  Always >=  1
   | Seq
-  | Yet Nat
   | Fix
   | Nat Nat
   | Bol Bool
@@ -152,14 +149,14 @@ instance Show Node where
     Ess       -> "S"
     Dee       -> "D"
     Jut j     -> show j
-    Eye       -> "I"
-    Bee       -> "B"
-    Sea       -> "C"
+    Eye 1     -> "I"
+    Bee 1     -> "B"
+    Sea 1     -> "C"
+    Eye n     -> "I" <> show n
+    Bee n     -> "B" <> show n
+    Sea n     -> "C" <> show n
     Sen n     -> "S" <> show n
-    Ben n     -> "B" <> show n
-    Cen n     -> "C" <> show n
     Seq       -> "SEQ"
-    Yet n     -> "YET" <> show n
     Fix       -> "FIX"
     Nat n     -> show n
     Bol True  -> "%.y"
@@ -297,14 +294,11 @@ nodeArity = \case
   Ess   -> 3
   Dee   -> 1
   Jut j -> jArgs j
-  Eye   -> 1
-  Bee   -> 3
-  Sea   -> 3
+  Eye n -> 0+n
+  Bee n -> 2+n
+  Sea n -> 2+n
   Sen n -> 2+n
-  Ben n -> 2+n
-  Cen n -> 2+n
   Seq   -> 2
-  Yet n -> fromIntegral (1+n)
   Fix   -> 2
   Nat n -> 2
   Bol b -> 2

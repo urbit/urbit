@@ -84,9 +84,6 @@ infixl 5 :@;
 
 data Jet
     = Slow !Pos !Ur !Ur -- unmatched jet: arity, tag, body
-    | Eye
-    | Bee
-    | Sea
     | Sn !Pos
     | Bn !Pos
     | Cn !Pos
@@ -134,17 +131,18 @@ type Ur = UrPoly Jet
 instance Uruk Ur where
   uApp x y = pure (x :@ y)
 
-  uJay = J . fromIntegral
-  uNat = Nat
-  uBol = Bol
-
-  uKay = K
   uEss = S
+  uKay = K
+  uJay = J . fromIntegral
   uDee = D
 
-  uBee = B
-  uSea = C
-  uEye = I
+  uSen n = Fast (fromIntegral $ n+2) (Sn $ fromIntegral n) []
+  uBee n = Fast (fromIntegral $ n+2) (Bn $ fromIntegral n) []
+  uSea n = Fast (fromIntegral $ n+2) (Cn $ fromIntegral n) []
+  uEye n = Fast (fromIntegral $ n+0) (In $ fromIntegral n) []
+
+  uNat = Nat
+  uBol = Bol
 
   uUni = Uni
   uCon = Con
@@ -152,11 +150,6 @@ instance Uruk Ur where
   uCas = Cas
   uFix = Fix
   uIff = Iff
-
-  uBen n = Fast (fromIntegral $ n+2) (Bn $ fromIntegral n) []
-  uSen n = Fast (fromIntegral $ n+2) (Sn $ fromIntegral n) []
-  uCen n = Fast (fromIntegral $ n+2) (Cn $ fromIntegral n) []
-  uYet n = Fast (fromIntegral $ n+0) (In $ fromIntegral n) []
 
   uGlobal "lef" = Just Lef
   uGlobal "rit" = Just Rit
@@ -242,41 +235,41 @@ showNat n = Atom.atomUtf8 n & \case
   digit = ['0'..'9']
 
 instance Show Jet where
-    show = \case
-        Slow n t b → show (J n :@ t :@ b)
-        JNat n     → showNat n
-        JPak       → "Pak"
-        JFix       → "Fix"
-        Eye        → "I"
-        Bee        → "B"
-        Sea        → "C"
-        Bn n       → "B" <> show n
-        Cn n       → "C" <> show n
-        Sn n       → "S" <> show n
-        In n       → "I" <> show n
-        JSeq       → "Seq"
-        JBol True  → "Yes"
-        JBol False → "Nop"
-        JIff       → "Iff"
-        JAdd       → "Add"
-        JEql       → "Eql"
-        JZer       → "Zer"
-        JInc       → "Inc"
-        JDec       → "Dec"
-        JFec       → "Fec"
-        JMul       → "Mul"
-        JBex       -> "Bex"
-        JLsh       -> "Lsh"
-        JSub       → "Sub"
-        JLef       → "Lef"
-        JRit       → "Rit"
-        JCas       → "Cas"
-        JCon       → "Con"
-        JCar       → "Car"
-        JCdr       → "Cdr"
-        JDed       → "Err"
-        JUni       → "Uni"
-        Yet n      → "W" <> show n
+  show = \case
+    Slow n t b -> show (J n :@ t :@ b)
+    JNat n     -> showNat n
+    JPak       -> "Pak"
+    JFix       -> "Fix"
+    In 1       -> "I"
+    Bn 1       -> "B"
+    Cn 1       -> "C"
+    Bn n       -> "B" <> show n
+    Cn n       -> "C" <> show n
+    Sn n       -> "S" <> show n
+    In n       -> "I" <> show n
+    JSeq       -> "Seq"
+    JBol True  -> "Yes"
+    JBol False -> "Nop"
+    JIff       -> "Iff"
+    JAdd       -> "Add"
+    JEql       -> "Eql"
+    JZer       -> "Zer"
+    JInc       -> "Inc"
+    JDec       -> "Dec"
+    JFec       -> "Fec"
+    JMul       -> "Mul"
+    JBex       -> "Bex"
+    JLsh       -> "Lsh"
+    JSub       -> "Sub"
+    JLef       -> "Lef"
+    JRit       -> "Rit"
+    JCas       -> "Cas"
+    JCon       -> "Con"
+    JCar       -> "Car"
+    JCdr       -> "Cdr"
+    JDed       -> "Err"
+    JUni       -> "Uni"
+    Yet n      -> "W" <> show n
 
 
 -- Normalized Values -----------------------------------------------------------
@@ -369,10 +362,7 @@ yet n = Fast (n + 1) (Yet n) []
 
 dash ∷ Dash
 dash = mkDash
-    [ simpleEnt (singJet sjI)
-    , simpleEnt (singJet sjB)
-    , simpleEnt (singJet sjC)
-    , simpleEnt (singJet sjSeq)
+    [ simpleEnt (singJet sjSeq)
     , simpleEnt (singJet sjFix)
     , simpleEnt (singJet sjInc)
     , simpleEnt (singJet sjAdd)
@@ -466,9 +456,6 @@ runJet = curry \case
     (JInc, xs) → runSingJet sjInc xs
     (JEql, xs) → runSingJet sjEql xs
     (JZer, xs) → runSingJet sjZer xs
-    (Eye,  xs) → runSingJet sjI   xs
-    (Bee,  xs) → runSingJet sjB   xs
-    (Sea,  xs) → runSingJet sjC   xs
     (JIff, xs) → runSingJet sjIff xs
     (JSeq, xs) → runSingJet sjSeq xs
     (JFix, xs) → runSingJet sjFix xs
@@ -485,7 +472,7 @@ runJet = curry \case
     (JCdr, xs) → runSingJet sjCdr xs
 
     ( Slow n t b,  us      ) → go b us
-    ( Yet _,       u:us    ) → go u us
+    ( In _,        f:xs    ) → go f xs
     ( Bn _,        f:g:xs  ) → f :@ go g xs
     ( Cn _,        f:g:xs  ) → go f xs :@ g
     ( Sn _,        f:g:xs  ) → go f xs :@ go g xs
@@ -506,9 +493,6 @@ unMatch = go
   where
     go ∷ Jet → Ur
     go = \case
-        Eye        → sjExp sjI
-        Bee        → sjExp sjB
-        Sea        → sjExp sjC
         JSeq       → sjExp sjSeq
         JFix       → sjExp sjFix
         JIff       → sjExp sjIff
@@ -633,9 +617,16 @@ runManyJet ManyJet{..} jet xs =
     fallback = Fast 0 (Slow (mjArgs jet) (valUr mjName) (mjBody jet)) xs
 
 
+-- Shorthand for Bulk Combinators ----------------------------------------------
+
+pattern Bee = Bn 1
+pattern Sea = Cn 1
+pattern Sen = Sn 1
+pattern Eye = In 1
+
 -- Identity  -------------------------------------------------------------------
 
-pattern I = Fast 1 Eye []
+pattern I = Fast 1 (In 1) []
 
 {-
     id = \x -> x
@@ -667,9 +658,9 @@ mjSn = ManyJet{..}
 
     mjRead n (MkVal b) = Sn <$> go n b
       where
-        go 3 S                                             = Just 1
-        go n (Fast 1 Bee [s, Fast 2 Bee [go(n-1)→Just r]]) = Just (r+1)
-        go n _                                             = Nothing
+        go 3 S                                                   = Just 1
+        go n (Fast 1 (Bn 1) [s, Fast 2 (Bn 1) [go(n-1)→Just r]]) = Just (r+1)
+        go n _                                                   = Nothing
 
     mjExec ∷ Jet → [Ur] → Maybe Ur
     mjExec (Sn _) (f:g:xs) = Just (foldl' (:@) f xs :@ foldl' (:@) g xs)
@@ -678,20 +669,7 @@ mjSn = ManyJet{..}
 
 -- Flip ------------------------------------------------------------------------
 
-pattern C = Fast 3 Sea []
-
-sjC ∷ SingJet
-sjC = SingJet{..}
-  where
-    sjFast = Sea
-    sjArgs = 3
-    sjName = MkVal K
-    sjExec = \case [f,g,x] → Just (f :@ x :@ g)
-                   _       → error "bad-C"
-    sjBody = MkVal (S :@ (K :@ (S :@ (K :@ (S :@ S :@ (K :@ K))) :@ K)) :@ S)
-
-
--- Bulk Flip -------------------------------------------------------------------
+pattern C = Fast 3 (Cn 1) []
 
 cn ∷ Pos → Ur
 cn n = iterate ((B:@(B:@C):@B):@) C !! (fromIntegral n - 1)
@@ -702,11 +680,11 @@ cnJet n = J (n+2) :@ K :@ cn n
 j_cn ∷ Check
 j_cn = Named "cn" chk
   where
-    chk n (MkVal K) (MkVal b)                          = Cn <$> go n b
-    chk n _         k                                  = Nothing
-    go 3 C                                             = Just 1
-    go n (Fast 1 Bee [C, Fast 2 Bee [go(n-1)→Just r]]) = Just (r+1)
-    go n _                                             = Nothing
+    chk n (MkVal K) (MkVal b)                                = Cn <$> go n b
+    chk n _         k                                        = Nothing
+    go 3 C                                                   = Just 1
+    go n (Fast 1 (Bn 1) [C, Fast 2 (Bn 1) [go(n-1)→Just r]]) = Just (r+1)
+    go n _                                                   = Nothing
 
 
 -- Bulk Identity ---------------------------------------------------------------
@@ -727,20 +705,7 @@ j_in = Named "in" chk
 
 -- Function Composition --------------------------------------------------------
 
-pattern B = Fast 3 Bee []
-
-sjB ∷ SingJet
-sjB = SingJet{..}
-  where
-    sjFast = Bee
-    sjArgs = 3
-    sjName = MkVal K
-    sjExec = \case [f,g,x] → Just (f :@ (g :@ x))
-                   _       → error "bad-B"
-    sjBody = MkVal (S :@ (K :@ S) :@ K)
-
-
--- Bulk Composition ------------------------------------------------------------
+pattern B = Fast 3 (Bn 1) []
 
 bnJet ∷ Pos → Ur
 bnJet n = J (n+2) :@ K :@ bn n
@@ -751,11 +716,11 @@ bn n = iterate ((B:@B):@) B !! (fromIntegral n - 1)
 j_bn ∷ Check
 j_bn = Named "bn" chk
   where
-    chk n (MkVal K) (MkVal b)               = Bn <$> go n b
-    chk n _         k                       = Nothing
-    go 3 B                                  = Just 1
-    go n (Fast 1 Bee [B, go(n-1) → Just r]) = Just (r+1)
-    go n e                                  = Nothing
+    chk n (MkVal K) (MkVal b)                  = Bn <$> go n b
+    chk n _         k                          = Nothing
+    go 3 (S :@ (K :@ S) :@ K)                  = Just 1
+    go n (Fast 1 (Bn 1) [B, go(n-1) → Just r]) = Just (r+1)
+    go n e                                     = Nothing
 
 
 -- Seq -------------------------------------------------------------------------

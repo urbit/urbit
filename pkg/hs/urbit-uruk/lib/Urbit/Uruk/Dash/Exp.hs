@@ -32,11 +32,7 @@ type Nat = Natural
 infixl 5 :&;
 
 data SingJet
-  = EYE -- I
-  | BEE -- B
-  | SEA -- C
-  | SEQ
-  | YET
+  = SEQ
   | FIX
   | IFF
   | PAK

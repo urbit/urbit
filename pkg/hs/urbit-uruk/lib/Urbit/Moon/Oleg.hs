@@ -112,16 +112,13 @@ ski deb = case deb of
 
 comToUruk :: Uruk p => Com p -> p
 comToUruk = \case
-  Bn 1        -> uBee
-  Cn 1        -> uSea
-  Sn 1        -> uEss
-  Bn n        -> uBen (fromIntegral n)
-  Cn n        -> uCen (fromIntegral n)
+  Bn n        -> uBee (fromIntegral n)
+  Cn n        -> uSea (fromIntegral n)
   Sn n        -> uSen (fromIntegral n)
-  B           -> uBee
-  C           -> uSea
+  B           -> uBee 1
+  C           -> uSea 1
   S           -> uEss
-  I           -> uEye
+  I           -> uEye 1
   K           -> uKay
   P p         -> p
   x :# y      -> unsafePerformIO (uApp (comToUruk x) (comToUruk y))

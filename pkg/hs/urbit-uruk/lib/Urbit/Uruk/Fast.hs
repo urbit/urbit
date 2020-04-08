@@ -108,16 +108,10 @@ instance Uruk Val where
   uJay = \n -> mkNode 2 $ Jay $ fromIntegral n
   uDee = mkNode 1 Dee
 
-  uBen 1 = mkNode 3 Bee
-  uBen n = mkNode (fromIntegral $ 2 + n) (Ben (fromIntegral n))
-
-  uCen 1 = mkNode 3 Sea
-  uCen n = mkNode (fromIntegral $ 2 + n) (Cen (fromIntegral n))
-
-  uSen 1 = mkNode 3 Ess
-  uSen n = mkNode (fromIntegral $ 2 + n) (Sen (fromIntegral n))
-
-  uEye = mkNode 1 Eye
+  uEye n = mkNode (fromIntegral $ 0 + n) (Eye $ fromIntegral n)
+  uBee n = mkNode (fromIntegral $ 2 + n) (Bee $ fromIntegral n)
+  uSea n = mkNode (fromIntegral $ 2 + n) (Sea $ fromIntegral n)
+  uSen n = mkNode (fromIntegral $ 2 + n) (Sen $ fromIntegral n)
 
   uNat = \n -> VNat n
   uBol = \b -> VBol b
@@ -125,13 +119,9 @@ instance Uruk Val where
   uUni = mkNode 1 Uni
   uCon = mkNode 3 Con
   uSeq = mkNode 2 Seq
-  uYet n = mkNode (fromIntegral n) (Yet $ fromIntegral n)
   uCas = mkNode 3 Cas
   uFix = mkNode 2 Fix
   uIff = mkNode 3 Iff
-
-  uBee = mkNode 3 Bee
-  uSea = mkNode 3 Sea
 
   -- TODO XX HACK (Need to classify nodes)
   uArity = Just . AriOth . fromIntegral . fNeed . valFun
@@ -298,19 +288,19 @@ reduce !no !xs = do
       let args = drop 2 $ toList xs
       kVA x (kVVn y args)
 
-    Ben n -> do
+    Bee n -> do
       let args = drop 2 $ toList xs
       xArgs <- kVVn x args
       kVV xArgs y
 
-    Cen n -> do
+    Sea n -> do
       let args = drop 2 $ toList xs
       xArgs <- kVVn x args
       kVA xArgs (kVVn y args)
 
-    Yet _ -> toList xs & \case
+    Eye _ -> toList xs & \case
       []     -> error "impossible"
-      [ v ]  -> pure v -- impossible?
+      [ v ]  -> pure v
       v : vs -> kVVn v vs
 
     Pak   -> pak x
@@ -318,14 +308,11 @@ reduce !no !xs = do
 
     Ded   -> throwIO (Crash x)
     Fix   -> fix x y
-    Sea   -> kVVV x z y
-    Bee   -> kVA x (kVV y z)
 
     Zer   -> zer x
 
     Iff   -> iff x y z
 
-    Eye   -> pure x
     Jut j -> execJetN j xs
 
   putStrLn ("  in: ")

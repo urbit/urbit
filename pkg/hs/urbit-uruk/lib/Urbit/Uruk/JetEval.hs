@@ -106,7 +106,7 @@ pattern Lsh = N (M (MS LSH) 2 [])
 pattern Not = N (M (MS NOT) 1 [])
 pattern Xor = N (M (MS XOR) 2 [])
 
-pattern Eye = N (M (MS EYE) 1 [])
+pattern Eye = N (M (MD (In 1)) 1 [])
 pattern Cas = N (M (MS CAS) 3 [])
 
 pattern Trace = N (M (MS TRACE) 2 [])
@@ -117,19 +117,15 @@ type Val = Exp
 instance Uruk Exp where
   uApp x y = pure (x :& y)
 
-  uJay p = NJ (fromIntegral p)
-  uKay = NK
   uEss = NS
+  uKay = NK
+  uJay p = NJ (fromIntegral p)
   uDee = ND
 
-  uBee = N $ M (MS BEE) 3 []
-  uSea = N $ M (MS SEA) 3 []
-  uEye = N $ M (MS EYE) 1 []
-
-  uBen p = N $ M (MD $ Bn $ fromIntegral p) (fromIntegral $ p+2) []
+  uBee p = N $ M (MD $ Bn $ fromIntegral p) (fromIntegral $ p+2) []
   uSen p = N $ M (MD $ Sn $ fromIntegral p) (fromIntegral $ p+2) []
-  uCen p = N $ M (MD $ Cn $ fromIntegral p) (fromIntegral $ p+2) []
-  uYet p = N $ M (MD $ In $ fromIntegral p) (fromIntegral $ p+0) []
+  uSea p = N $ M (MD $ Cn $ fromIntegral p) (fromIntegral $ p+2) []
+  uEye p = N $ M (MD $ In $ fromIntegral p) (fromIntegral $ p+0) []
 
   uNat n = N $ M (MD $ NAT n) 2 []
 
@@ -268,11 +264,7 @@ runJet = curry \case
   (MD (Sn  n), f:g:xs   ) -> Just (foldl' (:&) f xs :& foldl' (:&) g xs)
   (MD (In  n), [f]      ) -> Just f
   (MD (In  n), f:xs     ) -> Just (foldl' (:&) f xs)
-  (MS EYE    , [x]      ) -> Just x
-  (MS BEE    , [f, g, x]) -> Just (f :& (g :& x))
-  (MS SEA    , [f, g, x]) -> Just (f :& x :& g)
   (MS SEQ    , [x, y]   ) -> Just y
-  (MS YET    , [f, x, y]) -> Just (f :& x :& y)
   (MS FIX    , [f,x]    ) -> Just (f :& (Fix :& f) :& x)
   (MS IFF    , [c,t,e]  ) -> goIff c t e
   (MS PAK    , [_]      ) -> Nothing
@@ -309,11 +301,7 @@ runJet = curry \case
   (MD (Cn  _), _        ) -> badArgs
   (MD (Sn  _), _        ) -> badArgs
   (MD (In  _), _        ) -> badArgs
-  (MS EYE    , _        ) -> badArgs
-  (MS BEE    , _        ) -> badArgs
-  (MS SEA    , _        ) -> badArgs
   (MS SEQ    , _        ) -> badArgs
-  (MS YET    , _        ) -> badArgs
   (MS FIX    , _        ) -> badArgs
   (MS IFF    , _        ) -> badArgs
   (MS PAK    , _        ) -> badArgs

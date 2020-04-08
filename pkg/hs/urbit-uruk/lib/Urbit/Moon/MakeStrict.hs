@@ -298,7 +298,7 @@ type ExpV p v a = Exp p () (Var v a)
 
 data Prim p = Prim
   { pSeq :: p
-  , pYet :: Int -> p
+  , pEye :: Int -> p
   , pKay :: p
   , pApp :: p -> p -> p
   , pArg :: p -> Maybe Arity
@@ -344,7 +344,7 @@ safeApp RecSt { rsRit, rsPri, rsMRB } (Just arX, x) (Just arY, y) =
     (Nothing, Just n ) -> (Just (yetAri n), yetHed (n + 2) :@ x :@ y)
  where
   seqHed = Pri (pSeq rsPri) :@ Var (B rsMRB)
-  yetHed n = Pri (pYet rsPri $ n)
+  yetHed n = Pri (pEye rsPri $ n)
   yetAri n = AriOth (fromIntegral n)
 
 

@@ -19,14 +19,10 @@ class Uruk p where
   uJay :: Pos -> p
   uDee :: p
 
-  uBee :: p
-  uSea :: p
-  uEye :: p
-
-  uBen :: Pos -> p
   uSen :: Pos -> p
-  uCen :: Pos -> p
-  uYet :: Pos -> p
+  uBee :: Pos -> p
+  uSea :: Pos -> p
+  uEye :: Pos -> p
 
   uNat :: Natural -> p
   uBol :: Bool -> p
@@ -57,14 +53,10 @@ instance Uruk p => Uruk (Either Text p) where
   uJay p = pure (uJay p)
   uDee   = pure uDee
 
-  uBee = pure uBee
-  uSea = pure uSea
-  uEye = pure uEye
-
-  uBen p = pure (uBen p)
   uSen p = pure (uSen p)
-  uCen p = pure (uCen p)
-  uYet p = pure (uYet p)
+  uBee p = pure (uBee p)
+  uSea p = pure (uSea p)
+  uEye p = pure (uEye p)
 
   uNat n = pure (uNat n)
   uBol b = pure (uBol b)
