@@ -122,6 +122,22 @@ compile arity = go
   kal F.Sub     [x, y] = F.SUB (go x) (go y)
   kal F.Mul     [x, y] = F.MUL (go x) (go y)
 
+  kal (F.Jut (j@F.Jet{ jArgs = 1 })) [x]
+    = F.JET1 j (go x)
+
+  kal (F.Jut (j@F.Jet{ jArgs = 2 })) [x,y]
+    = F.JET2 j (go x) (go y)
+
+  kal (F.Jut (j@F.Jet{ jArgs = 3 })) [x,y,z]
+    = F.JET3 j (go x) (go y) (go z)
+
+  kal (F.Jut (j@F.Jet{ jArgs = 4 })) [x,y,z,p]
+    = F.JET4 j (go x) (go y) (go z) (go p)
+
+  kal (F.Jut j) xs
+    | F.jArgs j == length xs
+    = F.JETN j (fromList (go <$> xs))
+
   kal f          xs    = F.CALN (rawExp f) (goArgs xs)
 
   con (F.VAL x) (F.VAL y) = F.VAL (F.VCon x y)

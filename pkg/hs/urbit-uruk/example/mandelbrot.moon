@@ -474,7 +474,7 @@
 :: (foo (lef (lef 3)))
 
 :: Doing a 20x20 render takes 4m40s.
-(build-ppm 40 40)
+(build-ppm 100 100)
 
 :: TODO: The following should run in a reasonable amount of time
 ::(build-ppm 1000 1000)
