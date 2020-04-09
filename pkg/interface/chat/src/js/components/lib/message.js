@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Sigil } from '/components/lib/icons/sigil';
 import classnames from 'classnames';
 import { Route, Link } from 'react-router-dom'
-import { uxToHex, cite } from '/lib/util';
+import { uxToHex, cite, writeText } from '/lib/util';
 import urbitOb from 'urbit-ob';
 import moment from 'moment';
 import _ from 'lodash';
@@ -181,7 +181,15 @@ export class Message extends Component {
             <div className="hide-child" style={paddingTop}>
               <p className="v-mid f9 gray2 dib mr3 c-default">
                 <span
-                  className={contact.nickname ? null : "mono"}
+                  className={"pointer " + (contact.nickname ? null : "mono")}
+                  ref="author"
+                  onClick={() => {
+                    writeText(props.msg.author);
+                    this.refs.author.innerText = "Copied";
+                    setTimeout(() => {
+                      this.refs.author.innerText = name;
+                    }, 800);
+                  }}
                   title={`~${props.msg.author}`}>
                     {name}
                 </span>
