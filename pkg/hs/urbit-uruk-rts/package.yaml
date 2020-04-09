@@ -10,6 +10,21 @@ library:
     - -O2
     - -fwarn-incomplete-patterns
 
+executables:
+  supermoon:
+    main: Main.hs
+    source-dirs: app/supermoon
+    dependencies:
+      - urbit-uruk
+      - urbit-uruk-rts
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -static
+      - -O2
+      - "-with-rtsopts=-N"
+      - -fwarn-incomplete-patterns
+
 dependencies:
   - base
   - bound
