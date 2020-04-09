@@ -58,6 +58,7 @@ export class Sidebar extends Component {
       });
 
     let groupedItems = Object.keys(associations)
+      .filter((each) => (groupedChannels[each] || []).length !== 0)
       .filter((each) => {
         if (selectedGroups.length === 0) {
           return true;
@@ -67,7 +68,6 @@ export class Sidebar extends Component {
       })
       .map((each, i) => {
         let channels = groupedChannels[each] || [];
-        if (channels.length === 0) return;
         return(
           <GroupItem
             key={i}
