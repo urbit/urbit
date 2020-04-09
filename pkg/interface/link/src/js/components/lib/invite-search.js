@@ -30,7 +30,7 @@ export class InviteSearch extends Component {
   }
 
   peerUpdate() {
-    let groups = Array.from(Object.keys(this.props.groups));
+    let groups = Array.from(Object.keys(this.props.contacts));
     groups = groups.filter(e => !e.startsWith("/~/"))
       .map(e => {
         let eachGroup = [];
