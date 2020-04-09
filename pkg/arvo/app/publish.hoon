@@ -52,14 +52,25 @@
 ::
 +$  state-two
   $:  our-paths=(list path)
-      books=(map @tas notebook)
-      subs=(map [@p @tas] notebook)
+      books=(map @tas notebook-2)
+      subs=(map [@p @tas] notebook-2)
       tile-num=@ud
+  ==
+::
++$  state-three
+  $:  our-paths=(list path)
+      books=(map [@p @tas] notebook)
+      tile-num=@ud
+      $=  limbo
+      $:  notes=(map [@p @tas @tas] note)
+          comments=(map [@p @tas @tas @da] comment)
+      ==
   ==
 ::
 +$  versioned-state
   $%  [%1 state-two]
       [%2 state-two]
+      [%3 state-three]
   ==
 ::
 +$  metadata-delta
@@ -75,7 +86,7 @@
   ==
 --
 ::
-=|  versioned-state
+=|  [%3 state-three]
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -108,15 +119,18 @@
   ++  on-load
     |=  old=vase
     ^-  (quip card _this)
-    =/  old-state=(each versioned-state tang)
-      (mule |.(!<(versioned-state old)))
-    ?:  ?=(%& -.old-state)
-      ?-  -.p.old-state
-          %1
-        :_  this(state [%2 +.p.old-state])
+    =/  old-state=versioned-state  !<(versioned-state old)
+    =|  cards=(list card)
+    |^
+    ?-  -.old-state
+        %1
+      %=  $
+          -.old-state  %2
+      ::
+          cards
         %-  zing
-        %+  turn  ~(tap by books.p.old-state)
-        |=  [name=@tas book=notebook]
+        %+  turn  ~(tap by books.old-state)
+        |=  [name=@tas book=notebook-2]
         ^-  (list card)
         =/  group-host=(unit @p)
           ?>  ?=(^ writers.book)
@@ -128,135 +142,55 @@
           ::
             (perm-hook-poke:main [%add-owned writers.book writers.book])
         ==
-      ::
-          %2
-        [~ this(state p.old-state)]
       ==
-    =/  zero  !<(state-zero old)
-    |^
-    =/  rav  [%next %t [%da now.bol] /app/publish/notebooks]
-    =/  tile-json
-      (frond:enjs:format %notifications (numb:enjs:format 0))
-    =/  init-cards=(list card)
-      :~  [%pass /read/paths %arvo %c %warp our.bol q.byk.bol `rav]
-          :*  %pass  /permissions  %agent  [our.bol %permission-store]  %watch
-              /updates
-          ==
-          (invite-poke:main [%create /publish])
-          :*  %pass  /invites  %agent  [our.bol %invite-store]  %watch
-              /invitatory/publish
-          ==
-          [%give %fact [/publishtile]~ %json !>(tile-json)]
+    ::
+        %2
+      %=  $
+          old-state
+        =/  new-books=(map [@p @tas] notebook)
+          %-  %~  uni  by
+            %-  ~(run by subs.old-state)
+            |=  old-notebook=notebook-2
+            ^-  notebook-3
+            (convert-notebook-2-3 old-notebook)
+          ^-  (map [@p @tas] notebook)
+          %-  ~(rep by books.old-state)
+          |=  [[key=@tas val=notebook-2] out=(map [@p @tas] notebook)]
+          ^-  (map [@p @tas] notebook)
+          %+  ~(put by out)
+            [our.bol key]
+          (convert-notebook-2-3 val)
+        [%3 our-paths.old-state new-books tile-num.old-state [~ ~]]
       ==
-    =+  ^-  [kick-cards=(list card) old-subs=(jug @tas @p)]  kick-subs
-    =/  inv-scry-pax
-      /(scot %p our.bol)/invite-store/(scot %da now.bol)/invitatory/publish/noun
-    =/  inv=(unit invitatory)  .^((unit invitatory) %gx inv-scry-pax)
-    =|  new-state=state-two
-    =?  tile-num.new-state  ?=(^ inv)
-      ~(wyt by u.inv)
-    :_  this(state [%2 new-state])
-    ;:  weld
-      kill-builds
-      kick-cards
-      init-cards
-      (move-files old-subs)
+    ::
+        %3
+      [cards this(state old-state)]
     ==
     ::
-    ++  kick-subs
-      ^-  [(list card) (jug @tas @p)]
-      =+  ^-  [paths=(list path) subs=(jug @tas @p)]
-        %+  roll  ~(tap by sup.bol)
-        |=  [[duct [who=@p pax=path]] paths=(list path) subs=(jug @tas @p)]
-        ^-  [(list path) (jug @tas @p)]
-        ?.  ?=([%collection @ ~] pax)
-          [paths subs]
-        =/  book-name  i.t.pax
-        :-  [pax paths]
-        (~(put ju subs) book-name who)
-      ?~  paths
-        [~ subs]
-      [[%give %kick paths ~]~ subs]
-    ::
-    ++  kill-builds
-      ^-  (list card)
-      %-  zing
-      %+  turn  ~(tap by pubs.zero)
-      |=  [col-name=@tas col-data=collection-zero]
-      ^-  (list card)
-      :-  [%pass /collection/[col-name] %arvo %f %kill ~]
-      %-  zing
-      %+  turn  ~(tap by pos.col-data)
-      |=  [pos-name=@tas *]
-      :~  [%pass /post/[col-name]/[pos-name] %arvo %f %kill ~]
-          [%pass /comments/[col-name]/[pos-name] %arvo %f %kill ~]
+    ++  convert-comment-2-3
+      |=  prev=comment-2
+      ^-  comment-3
+      %=  prev
+        content  [content.prev %.n]
       ==
     ::
-    ++  send-invites
-      |=  [book=@tas subscribers=(set @p)]
-      ^-  (list card)
-      %+  turn  ~(tap in subscribers)
-      |=  who=@p
-      ^-  card
-      =/  uid  (sham %publish who book eny.bol)
-      =/  inv=invite
-        :*  our.bol  %publish  /notebook/[book]  who
-            (crip "invite for notebook {<our.bol>}/{(trip book)}")
-        ==
-      =/  act=invite-action  [%invite /publish uid inv]
-      [%pass /invite %agent [who %invite-hook] %poke %invite-action !>(act)]
+    ++  convert-note-2-3
+      |=  prev=note-2
+      ^-  note-3
+      %=    prev
+          comments
+        [(~(run by comments.prev) convert-comment-2-3) %.n]
+      ==
     ::
-    ++  move-files
-      |=  old-subs=(jug @tas @p)
-      ^-  (list card)
-      =+  ^-  [cards=(list card) sob=soba:clay]
-        %+  roll  .^((list path) %ct (weld our-beak:main /web/publish))
-        |=  [pax=path car=(list card) sob=soba:clay]
-        ^-  [(list card) soba:clay]
-        ?+    pax
-            [car sob]
-        ::
-            [%web %publish @ %publish-info ~]
-          =/  book-name  i.t.t.pax
-          =/  old=old-info  .^(old-info %cx (welp our-beak:main pax))
-          =/  group-pax  /~/(scot %p our.bol)/[book-name]
-          =/  book=notebook-info
-            [title.old '' =(%open comments.old) / /]
-          =+  ^-  [grp-car=(list card) write-pax=path read-pax=path]
-            (make-groups:main book-name [group-pax ~ %.n %.n] title.old '')
-          =.  writers.book      write-pax
-          =.  subscribers.book  read-pax
-          =/  inv-car  (send-invites book-name (~(get ju old-subs) book-name))
-          :-  :(weld car grp-car inv-car)
-          ^-  soba:clay
-          :+  [pax %del ~]
-            :-  /app/publish/notebooks/[book-name]/publish-info
-            [%ins %publish-info !>(book)]
-          sob
-        ::
-            [%web %publish @ @ %udon ~]
-          =/  book  i.t.t.pax
-          =/  note  i.t.t.t.pax
-          :-  car
-          :+  [pax %del ~]
-            :-  /app/publish/notebooks/[book]/[note]/udon
-            [%ins %udon !>(.^(@t %cx (welp our-beak:main pax)))]
-          sob
-        ::
-            [%web %publish @ @ @ %publish-comment ~]
-          =/  book  i.t.t.pax
-          =/  note  i.t.t.t.pax
-          =/  comm  i.t.t.t.t.pax
-          =/  old=old-comment  .^(old-comment %cx (welp our-beak:main pax))
-          =/  new=comment  [creator.old date-created.old content.old]
-          :-  car
-
-          :+  [pax %del ~]
-            :-  /app/publish/notebooks/[book]/[note]/[comm]/publish-comment
-            [%ins %publish-comment !>(new)]
-          sob
-        ==
-      [[%pass /move-files %arvo %c %info q.byk.bol %& sob] cards]
+    ++  convert-notebook-2-3
+      |=  prev=notebook-2
+      ^-  notebook-3
+      %=    prev
+          notes
+        %-  ~(run by notes.prev)
+        |=  =note-2
+        (convert-note-2-3 note-2)
+      ==
     --
   ::
   ++  on-poke
@@ -324,7 +258,7 @@
       =/  who=@p     (slav %p i.t.wir)
       =/  book=@tas  i.t.t.wir
       =/  del  [%del-book who book]
-      :_  this(subs (~(del by subs) who book))
+      :_  this(books (~(del by books) who book))
       [%give %fact [/primary]~ %publish-primary-delta !>(del)]~
     ::  Resubscribe to any subscription we get kicked from. The case of actually
     ::  getting banned from a notebook is handled by %watch-ack
@@ -470,7 +404,7 @@
   ?>  ?=([%app %publish %notebooks @ @ %udon ~] pax)
   =/  book-name  i.t.t.t.pax
   =/  note-name  i.t.t.t.t.pax
-  =/  book  (~(get by books) book-name)
+  =/  book  (~(get by books) our.bol book-name)
   ?~  book
     [~ state]
   =/  old-note  (~(get by notes.u.book) note-name)
@@ -548,7 +482,7 @@
       [%app %publish %notebooks @ @ %udon ~]
     =/  book-name  i.t.t.t.pax
     =/  note-name  i.t.t.t.t.pax
-    =/  book  (~(get by books.sty) book-name)
+    =/  book  (~(get by books.sty) our.bol book-name)
     ?~  book
       [cad sty]
     =.  notes.u.book  (~(del by notes.u.book) note-name)
@@ -751,10 +685,12 @@
     [~ state]
   =/  book=(unit @tas)
     %+  roll  ~(tap by books)
-    |=  [[nom=@tas book=notebook] out=(unit @tas)]
-    ?:  =(path.upd subscribers.book)
-      `nom
-    out
+    |=  [[[who=@p nom=@tas] book=notebook] out=(unit @tas)]
+    ?.  =(who our.bol)
+      out
+    ?.  =(path.upd subscribers.book)
+      out
+    `nom
   ?~  book
     [~ state]
   :_  state
@@ -822,7 +758,7 @@
   =/  book-name  i.t.pax
   ?.  (allowed src.bol %read book-name)
     ~|("not permitted" !!)
-  =/  book  (~(got by books) book-name)
+  =/  book  (~(got by books) our.bol book-name)
   =/  delta=notebook-delta
     [%add-book our.bol book-name book]
   :_  state
@@ -834,7 +770,7 @@
   |=  [who=@p mod=?(%read %write) book=@tas]
   ^-  ?
   =/  scry-bek  /(scot %p our.bol)/permission-store/(scot %da now.bol)
-  =/  book=notebook  (~(got by books) book)
+  =/  book=notebook  (~(got by books) our.bol book)
   =/  scry-pax
     ?:  =(%read mod)
       subscribers.book
@@ -1013,7 +949,7 @@
       %new-book
     ?.  (team:title our.bol src.bol)
       ~|("action not permitted" !!)
-    ?:  (~(has by books) book.act)
+    ?:  (~(has by books) our.bol book.act)
       ~|("notebook already exists: {<book.act>}" !!)
     =+  ^-  [cards=(list card) write-pax=path read-pax=path]
       (make-groups book.act group.act title.act about.act)
@@ -1232,7 +1168,7 @@
     ?>  (team:title our.bol src.bol)
     =/  wir=wire  /subscribe/(scot %p who.act)/[book.act]
     =/  del=primary-delta  [%del-book who.act book.act]
-    :_  state(subs (~(del by subs) who.act book.act))
+    :_  state(books (~(del by books) who.act book.act))
     :~  `card`[%pass wir %agent [who.act %publish] %leave ~]
         `card`[%give %fact [/primary]~ %publish-primary-delta !>(del)]
     ==
@@ -1240,9 +1176,7 @@
       %read
     ?>  (team:title our.bol src.bol)
     =/  book=(unit notebook)
-      ?:  =(our.bol who.act)
-        (~(get by books) book.act)
-      (~(get by subs) who.act book.act)
+      (~(get by books) who.act book.act)
     ?~  book
       ~|("nonexistent notebook: {<book.act>}" !!)
     =/  not=(unit note)  (~(get by notes.u.book) note.act)
@@ -1252,10 +1186,7 @@
       (dec tile-num)
     =.  read.u.not  %.y
     =.  notes.u.book  (~(put by notes.u.book) note.act u.not)
-    =?  books  =(our.bol who.act)
-      (~(put by books) book.act u.book)
-    =?  subs   !=(our.bol who.act)
-      (~(put by subs) [who.act book.act] u.book)
+    =.  books  (~(put by books) [who.act book.act] u.book)
     =/  jon=json
       (frond:enjs:format %notifications (numb:enjs:format tile-num))
     :_  state
@@ -1267,9 +1198,7 @@
 ++  get-notebook
   |=  [host=@p book-name=@tas sty=_state]
   ^-  (unit notebook)
-  ?:  =(our.bol host)
-    (~(get by books.sty) book-name)
-  (~(get by subs.sty) host book-name)
+  (~(get by books.sty) host book-name)
 ::
 ++  get-unread
   |=  book=notebook
@@ -1283,14 +1212,13 @@
 ++  emit-updates-and-state
   |=  [host=@p book-name=@tas book=notebook del=notebook-delta sty=_state]
   ^-  (quip card _state)
+  :_  sty(books (~(put by books.sty) [host book-name] book))
   ?:  =(our.bol host)
-    :_  sty(books (~(put by books.sty) book-name book))
     :~  [%give %fact [/notebook/[book-name]]~ %publish-notebook-delta !>(del)]
         [%give %fact [/primary]~ %publish-primary-delta !>(del)]
     ==
   =/  jon=json
     (frond:enjs:format %notifications (numb:enjs:format tile-num))
-  :_  sty(subs (~(put by subs.sty) [host book-name] book))
   :~  [%give %fact [/primary]~ %publish-primary-delta !>(del)]
       [%give %fact [/publishtile]~ %json !>(jon)]
   ==
@@ -1489,20 +1417,19 @@
     =/  book=(unit notebook)
       (get-notebook host.del book.del sty)
     ?~  book  [~ sty]
+    :_  sty(books (~(del by books.sty) host.del book.del))
     ?.  =(our.bol host.del)
       =.  tile-num
         %+  sub  tile-num
-        (get-unread (~(got by subs) host.del book.del))
+        (get-unread (~(got by books) host.del book.del))
       =/  jon=json
         (frond:enjs:format %notifications (numb:enjs:format tile-num.sty))
-      :_  sty(subs (~(del by subs.sty) host.del book.del))
       %+  welp
         :~  [%give %fact [/primary]~ %publish-primary-delta !>(del)]
             [%give %fact [/publishtile]~ %json !>(jon)]
         ==
       ?:  (is-managed writers.u.book)  ~
       [(metadata-hook-poke [%remove writers.u.book])]~
-    :_  sty(books (~(del by books.sty) book.del))
     %-  zing
     :~  [%give %fact [/notebook/[book.del]]~ %publish-notebook-delta !>(del)]~
         [%give %fact [/primary]~ %publish-primary-delta !>(del)]~
@@ -1551,10 +1478,7 @@
   |=  [host=@p book-name=@tas]
   ^-  (unit json)
   =,  enjs:format
-  =/  book=(unit notebook)
-    ?:  =(our.bol host)
-      (~(get by books) book-name)
-    (~(get by subs) host book-name)
+  =/  book=(unit notebook)  (~(get by books) host book-name)
   ?~  book
     ~
   =/  notebook-json  (notebook-full-json host book-name u.book)
@@ -1563,7 +1487,7 @@
     (~(uni by p.notebook-json) (notes-page notes.u.book 0 50))
   =.  p.notebook-json
     (~(put by p.notebook-json) %subscribers (get-subscribers-json book-name))
-  =/  notebooks-json  (notebooks-map-json our.bol books subs)
+  =/  notebooks-json  (notebooks-map-json our.bol books)
   ?>  ?=(%o -.notebooks-json)
   =/  host-books-json  (~(got by p.notebooks-json) (scot %p host))
   ?>  ?=(%o -.host-books-json)
@@ -1576,10 +1500,7 @@
   |=  [host=@p book-name=@tas note-name=@tas]
   ^-  (unit json)
   =,  enjs:format
-  =/  book=(unit notebook)
-    ?:  =(our.bol host)
-      (~(get by books) book-name)
-    (~(get by subs) host book-name)
+  =/  book=(unit notebook)  (~(get by books) host book-name)
   ?~  book
     ~
   =/  note=(unit note)  (~(get by notes.u.book) note-name)
@@ -1589,7 +1510,7 @@
   ?>  ?=(%o -.notebook-json)
   =/  note-json  (note-presentation-json u.book note-name u.note)
   =.  p.notebook-json  (~(uni by p.notebook-json) note-json)
-  =/  notebooks-json  (notebooks-map-json our.bol books subs)
+  =/  notebooks-json  (notebooks-map-json our.bol books)
   ?>  ?=(%o -.notebooks-json)
   =/  host-books-json  (~(got by p.notebooks-json) (scot %p host))
   ?>  ?=(%o -.host-books-json)
@@ -1633,7 +1554,7 @@
       [[[~ %json] [%'~publish' %notebooks ~]] ~]
     %-  json-response:gen
     %-  json-to-octs
-    (notebooks-map-json our.bol books subs)
+    (notebooks-map-json our.bol books)
   ::
   ::  notes pagination
       [[[~ %json] [%'~publish' %notes @ @ @ @ ~]] ~]
@@ -1641,10 +1562,7 @@
     ?~  host
       not-found:gen
     =/  book-name  i.t.t.t.site.url
-    =/  book=(unit notebook)
-      ?:  =(our.bol u.host)
-        (~(get by books) book-name)
-      (~(get by subs) u.host book-name)
+    =/  book=(unit notebook)  (~(get by books) u.host book-name)
     ?~  book
       not-found:gen
     =/  start  (rush i.t.t.t.t.site.url dem)
@@ -1664,10 +1582,7 @@
     ?~  host
       not-found:gen
     =/  book-name  i.t.t.t.site.url
-    =/  book=(unit notebook)
-      ?:  =(our.bol u.host)
-        (~(get by books) book-name)
-      (~(get by subs) u.host book-name)
+    =/  book=(unit notebook)  (~(get by books) u.host book-name)
     ?~  book
       not-found:gen
     =/  note-name  i.t.t.t.t.site.url
@@ -1691,10 +1606,7 @@
     ?~  host
       not-found:gen
     =/  book-name  i.t.t.site.url
-    =/  book=(unit notebook)
-      ?:  =(our.bol u.host)
-        (~(get by books) book-name)
-      (~(get by subs) u.host book-name)
+    =/  book=(unit notebook)  (~(get by books) u.host book-name)
     ?~  book
       not-found:gen
     =/  notebook-json  (notebook-full-json u.host book-name u.book)
@@ -1713,10 +1625,7 @@
     ?~  host
       not-found:gen
     =/  book-name  i.t.t.site.url
-    =/  book=(unit notebook)
-      ?:  =(our.bol u.host)
-        (~(get by books) book-name)
-      (~(get by subs) u.host book-name)
+    =/  book=(unit notebook)  (~(get by books) u.host book-name)
     ?~  book
       not-found:gen
     =/  note-name  i.t.t.t.site.url
@@ -1731,7 +1640,7 @@
   ::  all notebooks, short form, wrapped in html
       [[~ [%'~publish' ?(~ [%join *] [%new ~])]] ~]
     =,  enjs:format
-    =/  jon=json  (pairs notebooks+(notebooks-map-json our.bol books subs) ~)
+    =/  jon=json  (pairs notebooks+(notebooks-map-json our.bol books) ~)
     (manx-response:gen (index jon))
   ::
   ::  single notebook, with initial 50 notes in short form, wrapped in html
