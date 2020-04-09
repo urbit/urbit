@@ -38,13 +38,15 @@ export class NewPost extends Component {
 
       this.setState({ disabled: true });
       window.api.action("publish", "publish-action", newNote).then(() => {
-        this.setState({ awaiting: newNote["new-note"].note, disabled: false });
+        this.setState({ awaiting: newNote['new-note'].note });
       }).catch((err) => {
         if (err.includes("note already exists")) {
           let timestamp = Math.floor(Date.now() / 1000);
           newNote["new-note"].note += "-" + timestamp;
-          this.setState({ awaiting: newNote["new-note"].note, disabled: false });
+          this.setState({ awaiting: newNote['new-note'].note });
           window.api.action("publish", "publish-action", newNote);
+        } else {
+          this.setState({ disabled: false, awaiting: null })
         }
       });
     }
@@ -57,6 +59,7 @@ export class NewPost extends Component {
   componentDidUpdate(prevProps, prevState) {
     let notebook = this.props.notebooks[this.props.ship][this.props.book];
     if (notebook.notes[this.state.awaiting]) {
+      this.setState({ disabled: false, awaiting: null });
       let popout = (this.props.popout) ? "popout/" : "";
       let redirect =
      `/~publish/${popout}note/${this.props.ship}/${this.props.book}/${this.state.awaiting}`;
