@@ -629,14 +629,20 @@
   =/  udon=@t  .^(@t %cx (welp our-beak pax))
   (form-note note-name udon)
 ::
+++  form-snippet
+  |=  file=@t
+  ^-  @t
+  =/  front-idx     (add 3 (need (find ";>" (trip file))))
+  =/  front-matter  (cat 3 (end 3 front-idx file) 'dummy text\0a')
+  =/  body  (cut 3 [front-idx (met 3 file)] file)
+  (of-wain:format (scag 1 (to-wain:format body)))
+::
 ++  form-note
-  |=  [note-name=@tas udon=@t]
+  |=  [note-name=@tas file=@t]
   ^-  note
-  =/  front-idx  (add 3 (need (find ";>" (trip udon))))
-  =/  front-matter
-    (cat 3 (end 3 front-idx udon) 'dummy text\0a')
-  =/  body  (cut 3 [front-idx (met 3 udon)] udon)
-  =/  snippet=@t  (of-wain:format (scag 1 (to-wain:format body)))
+  =/  snippet=@t  (form-snippet file)
+  =/  front-idx     (add 3 (need (find ";>" (trip file))))
+  =/  front-matter  (cat 3 (end 3 front-idx file) 'dummy text\0a')
   =/  meta=(each (map term knot) tang)
     %-  mule  |.
     %-  ~(run by inf:(static:cram (ream front-matter)))
@@ -673,9 +679,10 @@
       date-created
       last-modified
       %.y
-      udon
+      file
       snippet
       ~
+      %.n
   ==
 ::
 ++  handle-permission-update
@@ -829,6 +836,11 @@
     ['    ==' ~]
   ==
 ::
+++  give-primary-delta
+  |=  del=primary-delta
+  ^-  card
+  [%give %fact [/primary]~ %publish-primary-delta !>(del)]
+::
 ++  group-poke
   |=  act=group-action
   ^-  card
@@ -946,6 +958,8 @@
   |=  act=action
   ^-  (quip card _state)
   ?-    -.act
+  ::  %new-book
+  ::
       %new-book
     ?.  (team:title our.bol src.bol)
       ~|("action not permitted" !!)
@@ -963,21 +977,14 @@
     =/  pax=path  /app/publish/notebooks/[book.act]/publish-info
     :_  state
     [(write-file pax %publish-info !>(new-book)) cards]
+  ::  %new-note
   ::
       %new-note
-    ?:  &(=(src.bol our.bol) !=(our.bol who.act))
-      :_  state
-      [%pass /forward %agent [who.act %publish] %poke %publish-action !>(act)]~
-    =/  book=(unit notebook)  (~(get by books) book.act)
+    =/  book=(unit notebook)  (~(get by books) who.act book.act)
     ?~  book
       ~|("nonexistent notebook {<book.act>}" !!)
     ?:  (~(has by notes.u.book) note.act)
       ~|("note already exists: {<note.act>}" !!)
-    ?.  ?|  (team:title our.bol src.bol)
-            (allowed src.bol %write book.act)
-        ==
-      ~|("action not permitted" !!)
-    =/  pax=path  /app/publish/notebooks/[book.act]/[note.act]/udon
     =/  front=(map knot cord)
       %-  my
       :~  title+title.act
@@ -985,19 +992,83 @@
           date-created+(scot %da now.bol)
           last-modified+(scot %da now.bol)
       ==
-    =/  file=@t   (add-front-matter front body.act)
+    =/  file=@t  (add-front-matter front body.act)
+    ::
+    =^  cards  books
+      ?.  =(src.bol our.bol)
+        [~ books]
+      =/  new-note=note
+        :*  src.bol
+            title.act
+            note.act
+            now.bol
+            now.bol
+            %.y
+            file
+            (form-snippet file)
+            ~
+            %.y
+        ==
+      =/  del=primary-delta  [%add-note who.act book.act note.act new-note]
+      :-  [(give-primary-delta del)]~
+      %+  ~(put by books)
+        [who.act book.act]
+      u.book(notes (~(put by notes.u.book) note.act new-note))
+    ::
     :_  state
-    [(write-file pax %udon !>(file))]~
+    ?.  =(who.act our.bol)
+      =/  poke-wir=wire
+        /forward/new-note/(scot %p who.act)/[book.act]/[note.act]
+      :_  cards
+      [%pass poke-wir %agent [who.act %publish] %poke %publish-action !>(act)]
+    ?.  ?|  (team:title our.bol src.bol)
+            (allowed src.bol %write book.act)
+        ==
+      ~|("action not permitted" !!)
+    =/  pax=path  /app/publish/notebooks/[book.act]/[note.act]/udon
+    :_  cards
+    [(write-file pax %udon !>(file))]
+  ::  %new-comment
   ::
       %new-comment
-    ?:  &(=(src.bol our.bol) !=(our.bol who.act))
-      :_  state
-      [%pass /forward %agent [who.act %publish] %poke %publish-action !>(act)]~
-    =/  book=(unit notebook)  (~(get by books) book.act)
+    =/  book=(unit notebook)  (~(get by books) who.act book.act)
     ?~  book
       ~|("nonexistent notebook {<book.act>}" !!)
-    ?.  (~(has by notes.u.book) note.act)
+    =/  note=(unit note)  (~(get by notes.u.book) note.act)
+    ?~  note
       ~|("nonexistent note {<note.act>}" !!)
+    =/  new-comment=comment
+      :*  author=src.bol
+          date-created=now.bol
+          content=body.act
+          %.y
+      ==
+    ::
+    =^  cards  books
+      ?.  =(src.bol our.bol)
+        [~ books]
+      =/  new-note
+        %=  u.note
+          comments  (~(put by comments.u.note) now.bol new-comment)
+        ==
+      =/  del=primary-delta
+        [%add-comment who.act book.act note.act now.bol new-comment]
+      :-  [(give-primary-delta del)]~
+      %+  ~(put by books)
+        [who.act book.act]
+      u.book(notes (~(put by notes.u.book) note.act new-note))
+    :_  state
+    ?.  =(who.act our.bol)
+      =/  poke-wir=wire
+        :~  %forward
+            %new-comment
+            (scot %p who.act)
+            book.act
+            note.act
+            (scot %da now.bol)
+        ==
+      :_  cards
+      [%pass poke-wir %agent [who.act %publish] %poke %publish-action !>(act)]
     ?.  ?&  ?|  (team:title our.bol src.bol)
                 (allowed src.bol %read book.act)
             ==
@@ -1007,18 +1078,13 @@
     =/  pax=path
       %+  weld  /app/publish/notebooks
       /[book.act]/[note.act]/(scot %da now.bol)/publish-comment
-    =/  new-comment=comment
-      :*  author=src.bol
-          date-created=now.bol
-          content=body.act
-      ==
-    :_  state
-    [(write-file pax %publish-comment !>(new-comment))]~
+    [(write-file pax %publish-comment !>(new-comment(pending %.n)))]~
+  ::  %edit-book
   ::
       %edit-book
     ?.  (team:title our.bol src.bol)
       ~|("action not permitted" !!)
-    =/  book  (~(get by books) book.act)
+    =/  book  (~(get by books) our.bol book.act)
     ?~  book
       ~|("nonexistent notebook" !!)
     =+  ^-  [cards=(list card) write-pax=path read-pax=path]
@@ -1035,24 +1101,15 @@
     =/  pax=path  /app/publish/notebooks/[book.act]/publish-info
     :_  state
     [(write-file pax %publish-info !>(new-info)) cards]
+  ::  %edit-note
   ::
       %edit-note
-    ?:  &(=(src.bol our.bol) !=(our.bol who.act))
-      :_  state
-      [%pass /forward %agent [who.act %publish] %poke %publish-action !>(act)]~
-    =/  book=(unit notebook)  (~(get by books) book.act)
+    =/  book=(unit notebook)  (~(get by books) who.act book.act)
     ?~  book
       ~|("nonexistent notebook {<book.act>}" !!)
     =/  note=(unit note)  (~(get by notes.u.book) note.act)
     ?~  note
       ~|("nonexistent note: {<note.act>}" !!)
-    ?.  ?|  (team:title our.bol src.bol)
-            ?&  =(author.u.note src.bol)
-                (allowed src.bol %write book.act)
-            ==
-        ==
-      ~|("action not permitted" !!)
-    =/  pax=path  /app/publish/notebooks/[book.act]/[note.act]/udon
     =/  front=(map knot cord)
       %-  my
       :~  title+title.act
@@ -1061,25 +1118,97 @@
           last-modified+(scot %da now.bol)
       ==
     =/  file=@t   (add-front-matter front body.act)
+    ::
+    =^  cards  state
+      ?.  =(src.bol our.bol)
+        [~ state]
+      =/  new-note
+        %=  u.note
+          author     src.bol
+          title      title.act
+          last-edit  now.bol
+          file       file
+          snippet    (form-snippet file)
+          pending    %.y
+        ==
+      =/  del=primary-delta  [%edit-note who.act book.act note.act new-note]
+      :-  [(give-primary-delta del)]~
+      %=  state
+          notes.limbo
+        (~(put by notes.limbo) [who.act book.act note.act] u.note)
+      ::
+          books
+        %+  ~(put by books)
+          [who.act book.act]
+        u.book(notes (~(put by notes.u.book) note.act new-note))
+      ==
+    ::
     :_  state
+    ?.  =(who.act our.bol)
+      =/  poke-wir=wire
+        /forward/edit-note/(scot %p who.act)/[book.act]/[note.act]
+      :_  cards
+      [%pass poke-wir %agent [who.act %publish] %poke %publish-action !>(act)]
+    ?.  ?|  (team:title our.bol src.bol)
+            ?&  =(author.u.note src.bol)
+                (allowed src.bol %write book.act)
+            ==
+        ==
+      ~|("action not permitted" !!)
+    =/  pax=path  /app/publish/notebooks/[book.act]/[note.act]/udon
     [(write-file pax %udon !>(file))]~
   ::
       %edit-comment
-    ?:  &(=(src.bol our.bol) !=(our.bol who.act))
-      :_  state
-      [%pass /forward %agent [who.act %publish] %poke %publish-action !>(act)]~
-    =/  book=(unit notebook)  (~(get by books) book.act)
+    =/  book=(unit notebook)  (~(get by books) who.act book.act)
     ?~  book
       ~|("nonexistent notebook {<book.act>}" !!)
-    =/  not=(unit note)  (~(get by notes.u.book) note.act)
-    ?~  not
+    =/  note=(unit note)  (~(get by notes.u.book) note.act)
+    ?~  note
       ~|("nonexistent note {<note.act>}" !!)
-    =/  com=(unit comment)
-      (~(get by comments.u.not) (slav %da comment.act))
-    ?~  com
+    =/  comment-date  (slav %da comment.act)
+    =/  comment=(unit comment)  (~(get by comments.u.note) comment-date)
+    ?~  comment
       ~|("nonexistent comment {<comment.act>}" !!)
+    =/  new-comment
+      u.comment(content body.act, pending %.y)
+    ::
+    =^  cards  state
+      ?.  =(src.bol our.bol)
+        [~ state]
+      =/  new-note
+        %=  u.note
+            comments
+          (~(put by comments.u.note) comment-date new-comment)
+        ==
+      =/  del=primary-delta
+        [%edit-comment who.act book.act note.act comment-date new-comment]
+      :-  [(give-primary-delta del)]~
+      %=  state
+          books
+        %+  ~(put by books)
+          [who.act book.act]
+        u.book(notes (~(put by notes.u.book) note.act new-note))
+      ::
+          comments.limbo
+        %+  ~(put by comments.limbo)
+          [who.act book.act note.act comment-date]
+        u.comment
+      ==
+    ::
+    :_  state
+    ?.  =(who.act our.bol)
+      =/  poke-wir
+        :~  %forward
+            %edit-comment
+            (scot %p who.act)
+            book.act
+            note.act
+            comment.act
+        ==
+      :_  cards
+      [%pass poke-wir %agent [who.act %publish] %poke %publish-action !>(act)]
     ?.  ?|  (team:title our.bol src.bol)
-            ?&  =(author.u.com src.bol)
+            ?&  =(author.u.comment src.bol)
                 (allowed src.bol %read book.act)
             ==
         ==
@@ -1087,15 +1216,12 @@
     =/  pax=path
       %+  weld  /app/publish/notebooks
       /[book.act]/[note.act]/[comment.act]/publish-comment
-    =/  new-comment  .^(comment %cx (weld our-beak pax))
-    =.  content.new-comment    body.act
-    :_  state
-    [(write-file pax %publish-comment !>(new-comment))]~
+    [(write-file pax %publish-comment !>(new-comment(pending %.n)))]~
   ::
       %del-book
     ?.  (team:title our.bol src.bol)
       ~|("action not permitted" !!)
-    =/  book=(unit notebook)  (~(get by books) book.act)
+    =/  book=(unit notebook)  (~(get by books) our.bol book.act)
     ?~  book
       ~|("nonexistent notebook {<book.act>}" !!)
     =/  pax=path  /app/publish/notebooks/[book.act]
@@ -1111,17 +1237,33 @@
     =?  cards  =('~' i.subscribers.u.book)
       [(group-poke [%unbundle subscribers.u.book]) cards]
     [cards state]
+  ::  %del-note
   ::
       %del-note
-    ?:  &(=(src.bol our.bol) !=(our.bol who.act))
-      :_  state
-      [%pass /forward %agent [who.act %publish] %poke %publish-action !>(act)]~
-    =/  book=(unit notebook)  (~(get by books) book.act)
+    =/  book=(unit notebook)  (~(get by books) who.act book.act)
     ?~  book
       ~|("nonexistent notebook {<book.act>}" !!)
     =/  note=(unit note)  (~(get by notes.u.book) note.act)
     ?~  note
       ~|("nonexistent note: {<note.act>}" !!)
+    ::
+    =^  cards  state
+      ?.  =(src.bol our.bol)
+        [~ state]
+      =/  del=primary-delta  [%del-note who.act book.act note.act]
+      =.  notes.u.book  (~(del by notes.u.book) note.act)
+      :-  [(give-primary-delta del)]~
+      %=  state
+        books        (~(put by books) [who.act book.act] u.book)
+        notes.limbo  (~(put by notes.limbo) [who.act book.act note.act] u.note)
+      ==
+    ::
+    :_  state
+    ?.  =(who.act our.bol)
+      =/  poke-wir=wire
+        /forward/del-note/(scot %p who.act)/[book.act]/[note.act]
+      :_  cards
+      [%pass poke-wir %agent [who.act %publish] %poke %publish-action !>(act)]
     ?.  ?|  (team:title our.bol src.bol)
             ?&  =(author.u.note src.bol)
                 (allowed src.bol %write book.act)
@@ -1129,23 +1271,51 @@
         ==
       ~|("action not permitted" !!)
     =/  pax=path  /app/publish/notebooks/[book.act]/[note.act]/udon
-    :_  state
     [(delete-file pax)]~
+  ::  %del-comment
   ::
       %del-comment
-    ?:  &(=(src.bol our.bol) !=(our.bol who.act))
-      :_  state
-      [%pass /forward %agent [who.act %publish] %poke %publish-action !>(act)]~
-    =/  book=(unit notebook)  (~(get by books) book.act)
+    =/  book=(unit notebook)  (~(get by books) who.act book.act)
     ?~  book
       ~|("nonexistent notebook {<book.act>}" !!)
     =/  note=(unit note)  (~(get by notes.u.book) note.act)
     ?~  note
       ~|("nonexistent note {<note.act>}" !!)
-    =/  comment=(unit comment)
-      (~(get by comments.u.note) (slav %da comment.act))
+    =/  comment-date  (slav %da comment.act)
+    =/  comment=(unit comment)  (~(get by comments.u.note) comment-date)
     ?~  comment
       ~|("nonexistent comment {<comment.act>}" !!)
+    ::
+    =^  cards  state
+      ?.  =(src.bol our.bol)
+        [~ state]
+      =/  del=primary-delta
+        [%del-comment who.act book.act note.act comment-date]
+      =.  comments.u.note  (~(del by comments.u.note) comment-date)
+      =.  notes.u.book     (~(put by notes.u.book) note.act u.note)
+      :-  [(give-primary-delta del)]~
+      %=  state
+          books
+        (~(put by books) [who.act book.act] u.book)
+      ::
+          comments.limbo
+        %+  ~(put by comments.limbo)
+          [who.act book.act note.act comment-date]
+        u.comment
+      ==
+    ::
+    :_  state
+    ?.  =(who.act our.bol)
+      =/  poke-wir=wire
+        :~  %forward
+            %del-comment
+            (scot %p who.act)
+            book.act
+            note.act
+            comment.act
+        ==
+      :_  cards
+      [%pass poke-wir %agent [who.act %publish] %poke %publish-action !>(act)]
     ?.  ?|  (team:title our.bol src.bol)
             ?&  =(author.u.comment src.bol)
                 (allowed src.bol %read book.act)
@@ -1155,7 +1325,6 @@
     =/  pax=path
       %+  weld  /app/publish/notebooks
       /[book.act]/[note.act]/[comment.act]/publish-comment
-    :_  state
     [(delete-file pax)]~
   ::
       %subscribe
