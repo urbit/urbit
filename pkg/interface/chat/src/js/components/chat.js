@@ -69,7 +69,10 @@ export class ChatScreen extends Component {
           this.updateReadNumber();
         }
       );
-    } else if (props.chatInitialized && !(props.station in props.inbox)) {
+    } else if (props.chatInitialized &&
+               !(props.station in props.inbox) &&
+               !(props.station in props.chatSynced) ) {
+
       props.history.push("/~chat");
     } else if (
       props.envelopes.length - prevProps.envelopes.length >=

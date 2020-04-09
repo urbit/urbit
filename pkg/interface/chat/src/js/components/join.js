@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { Route, Link } from 'react-router-dom';
+import { Spinner } from './lib/icons/icon-spinner';
 import urbitOb from 'urbit-ob';
 
 
@@ -11,7 +12,8 @@ export class JoinScreen extends Component {
 
     this.state = {
       station: '/',
-      error: false
+      error: false,
+      awaiting: false,
     };
 
     this.stationChange = this.stationChange.bind(this);
@@ -36,11 +38,12 @@ export class JoinScreen extends Component {
         });
         return;
       }
+
+
       this.setState({
-        station
-      }, () => {
-        props.api.chatView.join(ship, station, true);
-      });
+        station,
+        awaiting: true
+      }, () => props.api.chatView.join(ship, station, true))
     }
   }
 
@@ -48,6 +51,7 @@ export class JoinScreen extends Component {
     const { props, state } = this;
     if (state.station in props.inbox ||
         props.chatSynced !== prevProps.chatSynced) {
+      this.setState({ awaiting: false });
       props.history.push(`/~chat/room${state.station}`);
     }
   }
@@ -81,7 +85,10 @@ export class JoinScreen extends Component {
       return;
     }
 
-    props.api.chatView.join(ship, `/${station}`, true);
+    this.setState({
+      awaiting: true,
+      station: `/${station}`
+    }, () => props.api.chatView.join(ship, `/${station}`, true))
   }
 
   stationChange(event) {
@@ -140,6 +147,7 @@ export class JoinScreen extends Component {
             onClick={this.onClickJoin.bind(this)}
             className={joinClasses}
           >Join Chat</button>
+          <Spinner awaiting={this.state.awaiting} classes="mt4" text="Joining chat..." />
         </div>
       </div>
     );
