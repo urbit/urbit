@@ -8,19 +8,19 @@ import Control.Monad.Except
 import Urbit.Moon.AST
 import Urbit.Uruk.Class
 
-import Bound.Var                 (unvar)
-import Data.Void                 (Void)
-import System.IO.Unsafe          (unsafePerformIO)
-import Urbit.Moon.MakeStrict     (makeStrict)
-import Urbit.Moon.MoonToLambda   (moonToLambda)
-import Urbit.Moon.Oleg           (oleg)
-import Text.Show.Pretty (ppShow)
+import Bound.Var               (unvar)
+import Data.Void               (Void)
+import System.IO.Unsafe        (unsafePerformIO)
+import Text.Show.Pretty        (ppShow)
+import Urbit.Moon.MakeStrict   (makeStrict)
+import Urbit.Moon.MoonToLambda (moonToLambda)
+import Urbit.Moon.Oleg         (oleg)
 
-import qualified Urbit.Moon.AST          as AST
-import qualified Urbit.Moon.Bracket      as B
-import qualified Urbit.Moon.MakeStrict   as B
-import qualified Urbit.Moon.Parser       as Parser
-import qualified Urbit.Uruk.JetEval      as JetEval
+import qualified Urbit.Moon.AST        as AST
+import qualified Urbit.Moon.Bracket    as B
+import qualified Urbit.Moon.MakeStrict as B
+import qualified Urbit.Moon.Parser     as Parser
+import qualified Urbit.Uruk.JetEval    as JetEval
 
 
 --------------------------------------------------------------------------------
@@ -176,6 +176,9 @@ lazyTrompFile =
 
 strictOlegFile :: (Uruk p, Eq p) => (p -> p) -> Text -> Either Text p
 strictOlegFile = compileFile getGlobal (makeStrict urukPrim) oleg
+
+strictOlegFile' :: (Uruk p, Eq p) => (p -> p) -> Text -> Either Text p
+strictOlegFile' = compileFile getGlobal (makeStrict urukPrim) oleg
 
 lazyOlegFile :: (Uruk p, Eq p) => (p -> p) -> Text -> Either Text p
 lazyOlegFile = compileFile getGlobal id oleg

@@ -88,7 +88,7 @@ import Data.Function     ((&))
 import GHC.Exts          (fromList, toList)
 import Numeric.Natural   (Natural)
 import Prelude           ((!!))
-import Text.Show.Pretty  (ppShow)
+import Text.Show.Pretty  (pPrint, ppShow)
 
 import qualified Urbit.Atom                as Atom
 import qualified Urbit.UrukRTS.JetOptimize as Opt
@@ -140,6 +140,16 @@ instance Uruk Val where
   uGlobal "cdr" = Just $ mkNode 1 Cdr
   uGlobal "sub" = Just $ mkNode 2 Sub
   uGlobal "mul" = Just $ mkNode 2 Mul
+
+  uGlobal "lsh"   = Just $ mkNode 2 Lsh
+  uGlobal "lth"   = Just $ mkNode 2 Lth
+  uGlobal "fub"   = Just $ mkNode 2 Fub
+  uGlobal "not"   = Just $ mkNode 1 Not
+  uGlobal "xor"   = Just $ mkNode 2 Xor
+  uGlobal "div"   = Just $ mkNode 2 Div
+  uGlobal "trace" = Just $ mkNode 2 Tra
+  uGlobal "mod"   = Just $ mkNode 2 Mod
+
   uGlobal _     = Nothing
 
 
@@ -193,7 +203,7 @@ nodeRaw = \case
   Kay   -> Raw K []
   Ess   -> Raw S []
   Dee   -> Raw D []
-  _     -> error "TODO"
+  n     -> error ("TODO: nodeRaw." <> show n)
 
 priFun :: Pri -> (Int, Node)
 priFun = \case
@@ -268,7 +278,18 @@ reduce !no !xs = do
 
     Add       -> add x y
     Mul       -> mul x y
+    Lsh       -> dLsh x y
+
+    Lth       -> dLth x y
     Sub       -> sub x y
+    Fub       -> dFub x y
+    Not       -> dNot x
+    Xor       -> dXor x y
+    Div       -> dDiv x y
+    Tra       -> dTra x y
+    Mod       -> dMod x y
+
+
     Inc       -> inc x
     Dec       -> dec x
     Fec       -> fec x
@@ -297,6 +318,7 @@ reduce !no !xs = do
       let args = drop 2 $ toList xs
       xArgs <- kVVn x args
       kVA xArgs (kVVn y args)
+
 
     Eye _ -> toList xs & \case
       []     -> error "impossible"
@@ -498,7 +520,9 @@ cas :: Val -> Val -> Val -> IO Val
 {-# INLINE cas #-}
 cas (VLef x) l r = kVV l x
 cas (VRit x) l r = kVV r x
-cas _        _ _ = throwIO (TypeError "cas-not-sum")
+cas c        _ _ = do
+  pPrint c
+  throwIO (TypeError "cas-not-sum")
 
 seq :: Val -> Val -> IO Val
 {-# INLINE seq #-}
@@ -544,11 +568,56 @@ mul :: Val -> Val -> IO Val
 mul (VNat x) (VNat y) = pure (VNat (x * y))
 mul _        _        = throwIO (TypeError "mul-not-nat")
 
+dLsh :: Val -> Val -> IO Val
+{-# INLINE dLsh #-}
+dLsh (VNat x) (VNat n) = pure (VNat $ shiftL n $ fromIntegral x)
+dLsh _        _        = throwIO (TypeError "lsh-not-nat")
+
+dLth :: Val -> Val -> IO Val
+{-# INLINE dLth #-}
+dLth (VNat x) (VNat y) = pure (VBol (x < y))
+dLth _        _        = throwIO (TypeError "lth-not-nat")
+
+dNot :: Val -> IO Val
+{-# INLINE dNot #-}
+dNot (VBol b) = pure (VBol $ not b)
+dNot _        = throwIO (TypeError "not-not-bol")
+
+dMod :: Val -> Val -> IO Val
+{-# INLINE dMod #-}
+dMod (VNat x) (VNat y) = pure (VNat (x `mod` y))
+dMod _        _        = throwIO (TypeError "mod-not-nat")
+
+dXor :: Val -> Val -> IO Val
+{-# INLINE dXor #-}
+dXor (VBol True ) (VBol True ) = pure (VBol False)
+dXor (VBol False) (VBol True ) = pure (VBol True)
+dXor (VBol True ) (VBol False) = pure (VBol True)
+dXor (VBol False) (VBol False) = pure (VBol False)
+dXor _            _            = throwIO (TypeError "xor-not-bol")
+
+dDiv :: Val -> Val -> IO Val
+{-# INLINE dDiv #-}
+dDiv (VNat x) (VNat y) = pure (VNat (x `div` y))
+dDiv _        _        = throwIO (TypeError "div-not-nat")
+
+dTra :: Val -> Val -> IO Val
+{-# INLINE dTra #-}
+dTra x y = do
+  putStrLn ("TRACE: " <> tshow x)
+  kVV y VUni
+
 sub :: Val -> Val -> IO Val
 {-# INLINE sub #-}
 sub (VNat x) (VNat y) | y > x = pure (VLef VUni)
 sub (VNat x) (VNat y)         = pure (VRit (VNat (x - y)))
 sub _        _                = throwIO (TypeError "sub-not-nat")
+
+dFub :: Val -> Val -> IO Val
+{-# INLINE dFub #-}
+dFub (VNat x) (VNat y) | y > x = pure (VNat 0)
+dFub (VNat x) (VNat y)         = pure (VNat (x - y))
+dFub _        _                = throwIO (TypeError "fub-not-nat")
 
 zer :: Val -> IO Val
 {-# INLINE zer #-}
@@ -619,6 +688,16 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     JETN j xs      -> join (execJetN j <$> traverse go xs)
     ADD  x y       -> join (add <$> go x <*> go y)
     MUL  x y       -> join (mul <$> go x <*> go y)
+
+    LTH  x y       -> join (dLth <$> go x <*> go y)
+    LSH  x y       -> join (dLsh <$> go x <*> go y)
+    FUB  x y       -> join (dFub <$> go x <*> go y)
+    NOT  x         -> join (dNot <$> go x)
+    XOR  x y       -> join (dXor <$> go x <*> go y)
+    DIV  x y       -> join (dDiv <$> go x <*> go y)
+    TRA  x y       -> join (dTra <$> go x <*> go y)
+    MOD  x y       -> join (dMod <$> go x <*> go y)
+
     SUB  x y       -> join (sub <$> go x <*> go y)
     ZER x          -> join (zer <$> go x)
     EQL x y        -> join (eql <$> go x <*> go y)
@@ -671,6 +750,16 @@ execJetBodyR !j !ref = go (jFast j)
     JETN j xs      -> join (execJetN j <$> traverse go xs)
     ADD  x y       -> join (add <$> go x <*> go y)
     MUL  x y       -> join (mul <$> go x <*> go y)
+
+    LTH  x y       -> join (dLth <$> go x <*> go y)
+    LSH  x y       -> join (dLsh <$> go x <*> go y)
+    FUB  x y       -> join (dFub <$> go x <*> go y)
+    NOT  x         -> join (dNot <$> go x)
+    XOR  x y       -> join (dXor <$> go x <*> go y)
+    DIV  x y       -> join (dDiv <$> go x <*> go y)
+    TRA  x y       -> join (dTra <$> go x <*> go y)
+    MOD  x y       -> join (dMod <$> go x <*> go y)
+
     SUB  x y       -> join (sub <$> go x <*> go y)
     ZER x          -> join (zer <$> go x)
     EQL x y        -> join (eql <$> go x <*> go y)

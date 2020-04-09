@@ -216,7 +216,7 @@ abst = g 0
         Ref n xs        → Ref n (g d <$> xs)
         Iff c t e xs    → Iff (g d c) (g d t) (g d e) (g d <$> xs)
         Cas x l r xs    → Cas (g d x) (g (d+1) l) (g (d+1) r) (g d <$> xs)
-        App x y         → error "TODO"
+        App x y         → error "TODO: Handle `App` in `abst`"
 
 unit ∷ Exp
 unit = Kal F.Uni []
@@ -251,6 +251,7 @@ nok = \case
     Rec xs       :@ x → Just $ Rec (snoc xs x)
     Iff c t e xs :@ x → Just $ Iff c t e (snoc xs x)
     Cas v l r xs :@ x → Just $ Cas v l r (snoc xs x)
+    Ref n xs     :@ x → Just $ Ref n (snoc xs x)
 
     _ → Nothing
 
@@ -286,7 +287,7 @@ call f x = f & \case
     Ref n xs     → Ref n (snoc xs x)
     Iff c t e xs → Iff c t e (snoc xs x)
     Cas x l r xs → Cas x l r (snoc xs x)
-    App x y      → error "TODO"
+    App x y      → error "TODO: Handle `App` in `call` (?)"
 
 eval ∷ Exp → IO Exp
 eval exp = do
@@ -317,7 +318,9 @@ evaluate = fmap go . eval
         Ref n xs     → ValRef n (go <$> xs)
         Iff c t e xs → ValIff (go c) (go t) (go e) (go <$> xs)
         Cas v l r xs → ValCas (go v) (go l) (go r) (go <$> xs)
-        App x y      → error "This should not happen"
+        App x y      → trace (show x) $
+                       trace (show y) $
+                       error "This should not happen"
 
 {-
     If jet has shape `(fix body)`
@@ -343,7 +346,7 @@ jetCode arity nm bod =
 funCode ∷ F.Val → IO Code
 funCode body = Code 1 fak fak <$> evaluate (fastExp body % ref 0)
  where
-  fak = error "TODO"
+  fak = error "TODO: funCode.fak"
 
 compile ∷ Int → F.Val → F.Val → IO Code
 compile n t b = jetCode (fromIntegral n) t b

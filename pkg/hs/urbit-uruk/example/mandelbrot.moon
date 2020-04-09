@@ -178,7 +178,7 @@
   ~/  2  smul
   |=  (a b)
   (snew (not (xor (ssign a) (ssign b))) (mul (sabs a) (sabs b)))
-  
+
 :: Division (+fra:si)
 =/  sdiv
   ~/  2  sdiv

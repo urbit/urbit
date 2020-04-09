@@ -140,6 +140,16 @@ data Node
   | Con
   | Car
   | Cdr
+
+  | Lsh
+  | Lth
+  | Fub
+  | Not
+  | Xor
+  | Div
+  | Tra
+  | Mod
+
  deriving (Eq, Ord, Generic, Hashable)
 
 instance Show Node where
@@ -179,6 +189,15 @@ instance Show Node where
     Con       -> "CON"
     Car       -> "CAR"
     Cdr       -> "CDR"
+
+    Lsh       -> "LSH"
+    Lth       -> "LTH"
+    Fub       -> "FUB"
+    Not       -> "NOT"
+    Xor       -> "XOR"
+    Div       -> "DIV"
+    Tra       -> "TRA"
+    Mod       -> "MOD"
 
 data Fun = Fun
   { fNeed :: !Int
@@ -251,6 +270,16 @@ data Exp
   | FEC !Exp                      --  Fast decrement
   | ADD !Exp !Exp                 --  Add
   | MUL !Exp !Exp                 --  Multiply
+
+  | LSH !Exp !Exp                 --  Left Shift
+  | LTH !Exp !Exp                 --  Less-Than
+  | FUB !Exp !Exp                 --  Fast Subtract
+  | NOT !Exp                      --  Boolean Not
+  | XOR !Exp !Exp                 --  (?) XOR
+  | DIV !Exp !Exp                 --  Atom division
+  | TRA !Exp !Exp                 --  Execution Trace
+  | MOD !Exp !Exp                 --  Atom Modulus
+
   | SUB !Exp !Exp                 --  Subtract
   | ZER !Exp                      --  Is Zero?
   | EQL !Exp !Exp                 --  Atom equality.
@@ -330,3 +359,12 @@ nodeArity = \case
   Con   -> 3
   Car   -> 1
   Cdr   -> 1
+
+  Lsh   -> 2
+  Lth   -> 2
+  Fub   -> 2
+  Not   -> 1
+  Xor   -> 2
+  Div   -> 2
+  Tra   -> 2
+  Mod   -> 2

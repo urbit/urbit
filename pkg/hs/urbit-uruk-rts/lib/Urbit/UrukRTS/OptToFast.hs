@@ -52,7 +52,10 @@ compile arity = go
     O.ValRef n xs     -> F.CALN (F.REF (fromIntegral n)) (goArgs xs)
     O.ValIff i t e [] -> F.IFF (go i) (go t) (go e)
     O.ValIff i t e xs -> F.CALN (F.IFF (go i) (go t) (go e)) (goArgs xs)
-    O.ValCas x l r xs -> error "TODO"
+
+    -- TODO Register Allocation.
+    O.ValCas x l r [] -> F.CAS 0 (go x) (go l) (go r)
+    O.ValCas x l r xs -> F.CALN (F.CAS 0 (go x) (go l) (go r)) (goArgs xs)
     O.ValKal ur xs    -> kal ur xs
 
   rec xs =
