@@ -169,6 +169,14 @@ h2 {
   border-radius: 100%;
 }
 
+.shadow-6 {
+  box-shadow: 2px 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.brt2 {
+  border-radius: 0.25rem 0.25rem 0 0;
+}
+
 /* responsive */
 
 @media all and (max-width: 34.375em) {

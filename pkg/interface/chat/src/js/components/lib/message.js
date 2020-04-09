@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Sigil } from '/components/lib/icons/sigil';
+import { ProfileOverlay } from '/components/lib/profile-overlay';
 import classnames from 'classnames';
 import { Route, Link } from 'react-router-dom'
 import { uxToHex, cite, writeText } from '/lib/util';
@@ -163,11 +164,12 @@ export class Message extends Component {
       return (
         <div
           className={
-            "w-100 f8 pl3 pt4 pr3 cf flex lh-copy " + " " + pending
+            "relative w-100 f8 pl3 pt4 pr3 cf flex lh-copy " + " " + pending
           }
           style={{
             minHeight: "min-content"
           }}>
+          <ProfileOverlay ship={props.msg.author} name={contact.nickname} color={color} />
           <div className="fl mr3 v-top bg-white bg-gray0-d">
             <Sigil
               ship={props.msg.author}
