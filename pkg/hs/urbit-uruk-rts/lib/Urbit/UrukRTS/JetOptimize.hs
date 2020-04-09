@@ -1,4 +1,4 @@
-module Urbit.Uruk.Fast.JetOptimize where
+module Urbit.UrukRTS.JetOptimize where
 
 import ClassyPrelude hiding (try, evaluate)
 import System.IO.Unsafe
@@ -9,8 +9,8 @@ import Numeric.Natural  (Natural)
 import Numeric.Positive (Positive)
 import Prelude          ((!!))
 
-import qualified GHC.Exts as GHC
-import qualified Urbit.Uruk.Fast.Types as F
+import qualified GHC.Exts            as GHC
+import qualified Urbit.UrukRTS.Types as F
 
 --------------------------------------------------------------------------------
 

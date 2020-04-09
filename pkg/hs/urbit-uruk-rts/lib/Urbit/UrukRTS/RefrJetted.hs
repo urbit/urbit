@@ -61,7 +61,7 @@
       - Right now, jets are just defined as a big pile of S and K.
 -}
 
-module Urbit.Uruk.Refr.Jetted where
+module Urbit.UrukRTS.RefrJetted where
 
 import Prelude ()
 import ClassyPrelude

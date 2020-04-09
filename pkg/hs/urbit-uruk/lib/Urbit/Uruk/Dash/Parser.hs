@@ -372,16 +372,6 @@ resolv = go (initialEnv, mempty)
   jetWrap nm numArgs body =
     B.Pri (jetArityVal (fromIntegral numArgs)) B.:@ jetTagVal nm B.:@ body
 
--- jet :: Natural -> Text -> AST -> AST
--- jet arity name expr = go j arity :@ Tag name :@ expr
- -- where
-  -- j = Var "J"
---
-  -- go :: AST -> Natural -> AST
-  -- go _   0 = error "jet: go: bad-arity: 0"
-  -- go acc 1 = acc
-  -- go acc n = go (acc :@ j) (pred n)
-
 jetTagVal :: Text -> B.Exp Val v a
 jetTagVal = B.Pri . N . DataJet . NAT . Atom.utf8Atom
 

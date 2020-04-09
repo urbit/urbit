@@ -1,4 +1,4 @@
-module Urbit.Uruk.Fast.OptToFast (optToFast) where
+module Urbit.UrukRTS.OptToFast (optToFast) where
 
 import ClassyPrelude    hiding (evaluate, try, fromList)
 import System.IO.Unsafe
@@ -11,9 +11,9 @@ import Numeric.Natural  (Natural)
 import Numeric.Positive (Positive)
 import Prelude          ((!!))
 
-import qualified Urbit.Moon.LambdaToUruk     as C
-import qualified Urbit.Uruk.Fast.JetOptimize as O
-import qualified Urbit.Uruk.Fast.Types       as F
+import qualified Urbit.UrukRTS.JetOptimize  as O
+import qualified Urbit.UrukRTS.LambdaToUruk as C
+import qualified Urbit.UrukRTS.Types        as F
 
 --------------------------------------------------------------------------------
 

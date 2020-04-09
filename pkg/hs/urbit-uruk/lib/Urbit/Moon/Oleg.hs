@@ -1,23 +1,20 @@
-{-# OPTIONS_GHC -Werror #-}
+{-# OPTIONS_GHC -Wall -Werror #-}
 
 module Urbit.Moon.Oleg (oleg) where
 
 import Prelude ()
 import ClassyPrelude hiding (try)
 
-import Control.Arrow          ((>>>))
-import Data.Void              (Void, absurd)
-import Numeric.Natural        (Natural)
-import System.IO.Unsafe       (unsafePerformIO)
-import Urbit.Pos              (Pos)
-import Urbit.Uruk.Class       (Uruk(..))
-import Urbit.Uruk.Refr.Jetted (Ur, UrPoly((:@), Fast))
+import Bound.Scope        (fromScope, toScope)
+import Bound.Var          (unvar)
+import Data.Void          (Void, absurd)
+import Numeric.Natural    (Natural)
+import System.IO.Unsafe   (unsafePerformIO)
+import Urbit.Moon.Bracket (Exp(..))
+import Urbit.Pos          (Pos)
+import Urbit.Uruk.Class   (Uruk(..))
 
-import qualified Bound.Scope            as Bound
-import qualified Bound.Var              as Bound
-import qualified Urbit.Moon.Bracket     as B
-import qualified Urbit.Uruk.Fast.Types  as F
-import qualified Urbit.Uruk.Refr.Jetted as Ur
+import qualified Bound as Bound
 
 
 -- Types -----------------------------------------------------------------------
@@ -51,29 +48,29 @@ instance Show p => Show (Com p) where
 
 -- Exp <-> Deb -----------------------------------------------------------------
 
-expDeb :: forall p f . B.Exp p () Void -> Deb p
+expDeb :: forall p . Exp p () Void -> Deb p
 expDeb = go absurd
  where
-  go :: (a -> Deb p) -> B.Exp p () a -> Deb p
+  go :: (a -> Deb p) -> Exp p () a -> Deb p
   go f = \case
-    B.Pri p  -> DPrim p
-    B.Var v  -> f v
-    x B.:@ y -> go f x `App` go f y
-    B.Lam () b ->
-      Abs $ go (Bound.unvar (const Zero) (Succ . f)) $ Bound.fromScope b
+    Pri p  -> DPrim p
+    Var v  -> f v
+    x :@ y -> go f x `App` go f y
+    Lam () b ->
+      Abs $ go (unvar (const Zero) (Succ . f)) $ fromScope b
 
-_debExp :: forall p f . Show p => Deb p -> B.Exp p () Void
+_debExp :: forall p . Show p => Deb p -> Exp p () Void
 _debExp = go (error . ("bad-deb: free variable: " <>) . show)
  where
-  go :: (Nat -> a) -> Deb p -> B.Exp p () a
+  go :: (Nat -> a) -> Deb p -> Exp p () a
   go f = \case
-    Zero     -> B.Var $ f $ debRef Zero
-    Succ  d  -> B.Var $ f $ debRef $ Succ d
-    DPrim p  -> B.Pri p
-    App x y  -> go f x B.:@ go f y
-    Abs b    -> B.Lam () $ Bound.toScope $ go (wrap f) b
+    Zero     -> Var $ f $ debRef Zero
+    Succ  d  -> Var $ f $ debRef $ Succ d
+    DPrim p  -> Pri p
+    App x y  -> go f x :@ go f y
+    Abs b    -> Lam () $ toScope $ go (wrap f) b
 
-  wrap f 0 = Bound.B ()
+  wrap _ 0 = Bound.B ()
   wrap f n = Bound.F $ f $ pred n
 
   debRef :: Deb p -> Nat
@@ -133,22 +130,24 @@ comToUruk = \case
 
 -- Entry Point -----------------------------------------------------------------
 
-oleg :: Uruk p => B.Exp p () Void -> p
+oleg :: Uruk p => Exp p () Void -> p
 oleg = comToUruk . snd . ski . expDeb
 
-instance IsString (B.Exp p () String)
+{-
+instance IsString (Exp p () String)
  where
-  fromString = B.Var
+  fromString = Var
 
-l :: Eq a => a -> B.Exp p () a -> B.Exp p () a
-l nm = B.Lam () . Bound.abstract1 nm
+l :: Eq a => a -> Exp p () a -> Exp p () a
+l nm = Lam () . Bound.abstract1 nm
 
-try :: B.Exp p () String -> Deb p
+try :: Exp p () String -> Deb p
 try = expDeb . resolve
  where
-  resolve :: B.Exp p () String -> (B.Exp p () Void)
+  resolve :: Exp p () String -> (Exp p () Void)
   resolve = fromRight . traverse (Left . ("unbound variable: " <>))
 
   fromRight :: Either String b -> b
   fromRight (Left err) = error err
   fromRight (Right vl) = vl
+-}

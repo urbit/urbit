@@ -66,7 +66,7 @@
         `callN :: Val -> Array (IO Val) -> Val`
 -}
 
-module Urbit.Uruk.Fast where
+module Urbit.UrukRTS where
 
 import ClassyPrelude             hiding (evaluate, fromList, seq, toList, try)
 import Control.Monad.Primitive
@@ -77,9 +77,9 @@ import Data.Primitive.Array
 import Data.Primitive.SmallArray
 import GHC.Prim                  hiding (seq)
 import System.IO.Unsafe
-import Urbit.Uruk.Class
-import Urbit.Uruk.Fast.Types
 import Urbit.Moon.Arity
+import Urbit.Uruk.Class
+import Urbit.UrukRTS.Types
 
 import Control.Arrow     ((>>>))
 import Control.Exception (throw, try)
@@ -90,9 +90,9 @@ import Numeric.Natural   (Natural)
 import Prelude           ((!!))
 import Text.Show.Pretty  (ppShow)
 
-import qualified Urbit.Atom                  as Atom
-import qualified Urbit.Uruk.Fast.JetOptimize as Opt
-import qualified Urbit.Uruk.Fast.OptToFast   as Opt
+import qualified Urbit.Atom                as Atom
+import qualified Urbit.UrukRTS.JetOptimize as Opt
+import qualified Urbit.UrukRTS.OptToFast   as Opt
 
 
 --------------------------------------------------------------------------------

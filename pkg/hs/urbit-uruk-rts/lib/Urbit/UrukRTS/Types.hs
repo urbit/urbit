@@ -11,7 +11,7 @@
     frequently pattern matched on should have at most 7 branches.
 -}
 
-module Urbit.Uruk.Fast.Types where
+module Urbit.UrukRTS.Types where
 
 import ClassyPrelude             hiding (evaluate, fromList, try, seq)
 import Control.Monad.Primitive
@@ -26,14 +26,14 @@ import Data.Bits              (shiftL, (.|.))
 #if !defined(__GHCJS__)
 import Data.Flat
 #endif
-import Data.Function          ((&))
-import Numeric.Natural        (Natural)
-import Prelude                ((!!))
-import Urbit.Uruk.Refr.Jetted (Ur, UrPoly(Fast))
+import Data.Function            ((&))
+import Numeric.Natural          (Natural)
+import Prelude                  ((!!))
+import Urbit.UrukRTS.RefrJetted (Ur, UrPoly(Fast))
 
-import qualified GHC.Exts
-import qualified Urbit.Atom             as Atom
-import qualified Urbit.Uruk.Refr.Jetted as Ur
+import qualified GHC.Exts                 as GHC.Exts
+import qualified Urbit.Atom               as Atom
+import qualified Urbit.UrukRTS.RefrJetted as Ur
 
 
 -- Useful Types ----------------------------------------------------------------

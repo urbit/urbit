@@ -1,0 +1,87 @@
+name: urbit-uruk-rts
+version: 0.1.0
+license: MIT
+license-file: LICENSE
+
+library:
+  source-dirs: lib
+  ghc-options:
+    - -static
+    - -O2
+    - -fwarn-incomplete-patterns
+
+dependencies:
+  - base
+  - bound
+  - classy-prelude
+  - containers
+  - deriving-compat
+  - directory
+  - file-embed
+  - ghc-prim
+  - hashable
+  - lens
+  - megaparsec
+  - mtl
+  - multimap
+  - para
+  - positive
+  - pretty-show
+  - primitive
+  - raw-strings-qq
+  - serialise
+  - template-haskell
+  - text
+  - urbit-atom
+  - urbit-uruk
+  - vector
+
+when:
+  - condition: "! impl(ghcjs)"
+    dependencies:
+    - flat
+    - haskeline
+
+default-extensions:
+  - ApplicativeDo
+  - BangPatterns
+  - BlockArguments
+  - DataKinds
+  - DefaultSignatures
+  - DeriveAnyClass
+  - DeriveDataTypeable
+  - DeriveFoldable
+  - DeriveGeneric
+  - DeriveTraversable
+  - DerivingStrategies
+  - EmptyCase
+  - EmptyDataDecls
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GADTs
+  - GeneralizedNewtypeDeriving
+  - LambdaCase
+  - MagicHash
+  - MultiParamTypeClasses
+  - NamedFieldPuns
+  - NoImplicitPrelude
+  - NumericUnderscores
+  - OverloadedStrings
+  - PackageImports
+  - PartialTypeSignatures
+  - PatternSynonyms
+  - QuasiQuotes
+  - Rank2Types
+  - RankNTypes
+  - RecordWildCards
+  - ScopedTypeVariables
+  - StandaloneDeriving
+  - TemplateHaskell
+  - TupleSections
+  - TypeApplications
+  - TypeFamilies
+  - TypeOperators
+  - UnboxedTuples
+  - UnicodeSyntax
+  - ViewPatterns

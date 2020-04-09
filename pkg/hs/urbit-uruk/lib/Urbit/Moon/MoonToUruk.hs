@@ -20,7 +20,6 @@ import qualified Urbit.Moon.Bracket      as B
 import qualified Urbit.Moon.MakeStrict   as B
 import qualified Urbit.Moon.Parser       as Parser
 import qualified Urbit.Uruk.JetEval      as JetEval
-import qualified Urbit.Uruk.Refr.Jetted  as Ur
 
 --------------------------------------------------------------------------------
 
@@ -152,9 +151,6 @@ gogogoNaive = fmap ctDone . ExceptT . pure . strictBracket
 
 gogogoLazyNaive :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
 gogogoLazyNaive =  fmap ctDone . ExceptT . pure . lazyBracket
-
-gogogo' :: Text -> ExceptT Text IO Ur.Ur
-gogogo' = ExceptT . pure . fmap (Ur.simp . ctDone) . strictOleg
 
 gogogo'new :: Text -> ExceptT Text IO JetEval.Exp
 gogogo'new = ExceptT . pure . fmap (JetEval.eval . ctDone) . strictOleg
