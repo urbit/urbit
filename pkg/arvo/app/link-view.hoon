@@ -12,6 +12,7 @@
 ::
 /-  *link-view,
     *invite-store, group-store,
+    link-listen-hook,
     group-hook, permission-hook, permission-group-hook,
     metadata-hook, contact-view
 /+  *link, metadata, *server, default-agent, verb, dbug
@@ -311,6 +312,13 @@
           %metadata-hook-action
         !>  ^-  metadata-hook-action:metadata-hook
         [%add-owned group-path]
+      ::
+        ::  watch the collection ourselves
+        ::
+        %^  do-poke  %link-listen-hook
+          %link-listen-action
+        !>  ^-  action:link-listen-hook
+        [%watch path]
     ==
   ?:  ?=(%group -.members)  ~
   ::  if the group is "real", make contact-view do the heavy lifting
