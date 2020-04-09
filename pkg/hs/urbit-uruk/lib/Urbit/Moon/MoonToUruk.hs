@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -Wall -Werror #-}
+{-- OPTIONS_GHC -Wall -Werror #-}
 
 module Urbit.Moon.MoonToUruk where
 
@@ -14,6 +14,7 @@ import System.IO.Unsafe          (unsafePerformIO)
 import Urbit.Moon.MakeStrict     (makeStrict)
 import Urbit.Moon.MoonToLambda   (moonToLambda)
 import Urbit.Moon.Oleg           (oleg)
+import Text.Show.Pretty (ppShow)
 
 import qualified Urbit.Moon.AST          as AST
 import qualified Urbit.Moon.Bracket      as B
@@ -21,11 +22,11 @@ import qualified Urbit.Moon.MakeStrict   as B
 import qualified Urbit.Moon.Parser       as Parser
 import qualified Urbit.Uruk.JetEval      as JetEval
 
+
 --------------------------------------------------------------------------------
 
 data CompileTrace p = CompileTrace
-  { ctInpu :: Text
-  , ctTree :: AST
+  { ctTree :: AST
   , ctBind :: AST.Exp Text
   , ctLamb :: B.Exp p () Text
   , ctMuck :: B.Exp p () Void
@@ -50,6 +51,24 @@ mergePrim = go B.Pri
   wrap :: (a -> B.Exp p b c) -> Var b a -> B.Exp p b (Var b c)
   wrap g = unvar (B.Var . B) (fmap F . g)
 
+compileAST
+  :: Uruk p
+  => (Text -> Either Text p)
+  -> (B.Exp p () Void -> B.Exp p () Void)
+  -> (B.Exp p () Void -> p)
+  -> AST
+  -> Either Text (CompileTrace p)
+compileAST lkup strict comp ctTree = do
+  let ctBind = AST.bind ctTree
+  let ctLamb = moonToLambda ctBind
+  ctMuck <- resolve lkup ctLamb
+  let ctStik = strict ctMuck
+  let ctDone = comp ctStik
+  pure (CompileTrace{..})
+
+
+-- Compile Expression ----------------------------------------------------------
+
 compile
   :: Uruk p
   => (Text -> Either Text p)
@@ -57,14 +76,46 @@ compile
   -> (B.Exp p () Void -> p)
   -> Text
   -> Either Text (CompileTrace p)
-compile lkup strict comp ctInpu = do
-  ctTree <- Parser.parseAST ctInpu
-  let ctBind = AST.bind ctTree
-  let ctLamb = moonToLambda ctBind
-  ctMuck <- resolve lkup ctLamb
-  let ctStik = strict ctMuck
-  let ctDone = comp ctStik
-  pure (CompileTrace{..})
+compile lkup strict comp inpu = do
+  ctTree <- Parser.parseAST inpu
+  compileAST lkup strict comp ctTree
+
+
+-- Compile File ----------------------------------------------------------------
+
+compileFile
+  :: forall p
+   . Uruk p
+  => (Text -> Either Text p)
+  -> (B.Exp p () Void -> B.Exp p () Void)
+  -> (B.Exp p () Void -> p)
+  -> (p -> p)
+  -> Text
+  -> Either Text p
+compileFile lkup strict comp eval inpu = do
+  tree <- Parser.parseAST inpu
+  let AST.File ds e = AST.astFile tree
+  go mempty ds e
+ where
+  go :: Map Text p -> [AST.Decl] -> AST -> Either Text p
+  go env []              e = doOne env e
+  go env (Decl n v : ds) e = do
+    traceM ("[" <> unpack n <> "]")
+    val <- doOne env v
+    traceM (ppShow val)
+    traceM ""
+    go (insertMap n val env) ds e
+
+  doOne :: Map Text p -> AST -> Either Text p
+  doOne env = fmap (eval . ctDone) . compileAST (get env) strict comp
+
+  get :: Map Text p -> Text -> Either Text p
+  get env k = case lookup k env of
+    Just xv -> pure xv
+    Nothing -> lkup k
+
+
+
 
 usApp :: Uruk p => p -> p -> p
 usApp x y = unsafePerformIO (uApp x y)
@@ -105,6 +156,31 @@ strictOleg = compile getGlobal (makeStrict urukPrim) oleg
 lazyOleg :: (Uruk p, Eq p) => Text -> Either Text (CompileTrace p)
 lazyOleg = compile getGlobal id oleg
 
+strictBracketFile :: (Uruk p, Eq p) => (p -> p) -> Text -> Either Text p
+strictBracketFile = compileFile getGlobal
+                                (makeStrict urukPrim)
+                                (B.outToUruk urukOut . B.naiveBracket)
+
+lazyBracketFile :: (Uruk p, Eq p) => (p -> p) -> Text -> Either Text p
+lazyBracketFile =
+  compileFile getGlobal id (B.outToUruk urukOut . B.naiveBracket)
+
+strictTrompFile :: (Uruk p, Eq p) => (p -> p) -> Text -> Either Text p
+strictTrompFile = compileFile getGlobal
+                              (makeStrict urukPrim)
+                              (B.outToUruk urukOut . B.johnTrompBracket)
+
+lazyTrompFile :: (Uruk p, Eq p) => (p -> p) -> Text -> Either Text p
+lazyTrompFile =
+  compileFile getGlobal id (B.outToUruk urukOut . B.johnTrompBracket)
+
+strictOlegFile :: (Uruk p, Eq p) => (p -> p) -> Text -> Either Text p
+strictOlegFile = compileFile getGlobal (makeStrict urukPrim) oleg
+
+lazyOlegFile :: (Uruk p, Eq p) => (p -> p) -> Text -> Either Text p
+lazyOlegFile = compileFile getGlobal id oleg
+
+
 
 -- Entry Points ----------------------------------------------------------------
 
@@ -135,25 +211,22 @@ getGlobal = \case
 -- Entry Points ----------------------------------------------------------------
 
 gogogoOleg :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
-gogogoOleg = fmap ctDone . ExceptT . pure . strictOleg
+gogogoOleg = ExceptT . pure . strictOlegFile id
 
 gogogoLazyOleg :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
-gogogoLazyOleg = fmap ctDone . ExceptT . pure . lazyOleg
+gogogoLazyOleg = ExceptT . pure . lazyOlegFile id
 
 gogogoTromp :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
-gogogoTromp = fmap ctDone . ExceptT . pure . strictTromp
+gogogoTromp = ExceptT . pure . strictTrompFile id
 
 gogogoLazyTromp :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
-gogogoLazyTromp = fmap ctDone . ExceptT . pure . lazyTromp
+gogogoLazyTromp = ExceptT . pure . lazyTrompFile id
 
 gogogoNaive :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
-gogogoNaive = fmap ctDone . ExceptT . pure . strictBracket
+gogogoNaive = ExceptT . pure . strictBracketFile id
 
 gogogoLazyNaive :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
-gogogoLazyNaive =  fmap ctDone . ExceptT . pure . lazyBracket
+gogogoLazyNaive = ExceptT . pure . lazyBracketFile id
 
 gogogo'new :: Text -> ExceptT Text IO JetEval.Exp
-gogogo'new = ExceptT . pure . fmap (JetEval.eval . ctDone) . strictOleg
-
-gogogoFast :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
-gogogoFast = gogogoOleg
+gogogo'new = ExceptT . pure . strictOlegFile JetEval.eval

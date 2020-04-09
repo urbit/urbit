@@ -11,7 +11,7 @@ import Urbit.Moon.Arity (Arity)
 
 --------------------------------------------------------------------------------
 
-class Uruk p where
+class Show p => Uruk p where
   uApp :: p -> p -> IO p
 
   uEss :: p

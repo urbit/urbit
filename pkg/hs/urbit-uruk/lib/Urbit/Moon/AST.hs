@@ -132,3 +132,17 @@ bind = go
     AStr s                 -> Str s
 
   cas x ln l rn r = Cas (go x) (abstract1 ln (go l)) (abstract1 rn (go r))
+
+
+--------------------------------------------------------------------------------
+
+data Decl = Decl Text AST
+
+data File = File [Decl] AST
+
+astFile :: AST -> File
+astFile = go []
+ where
+  go acc = \case
+    ALet n v body -> go (Decl n v : acc) body
+    exp           -> File (reverse acc) exp
