@@ -1,8 +1,7 @@
 ::  link-listen-hook: get your friends' bookmarks
 ::
-::    keeps track of a listening=(set app-path). automatically adds to that
-::    whenever new %link resources get added in the metadata-store. users
-::    can manually remove from and add back to this set.
+::    keeps track of a listening=(set app-path). users can manually add to and
+::    remove from this set.
 ::
 ::    for all ships in groups associated with those resources, we subscribe to
 ::    their link's local-pages and annotations at the resource path (through
@@ -289,40 +288,12 @@
 ++  handle-metadata-update
   |=  upd=metadata-update
   ^-  (quip card _state)
-  ?+  -.upd  [~ state]
-      %associations
-    =/  socs=(list [=group-path resource])
-      ~(tap in ~(key by associations.upd))
-    =|  cards=(list card)
-    |-  ::TODO  try for +roll maybe?
-    ?~  socs  [cards state]
-    =^  more-cards  state
-      =,  i.socs
-      ?.  =(%link app-name)  [~ state]
-      %-  handle-metadata-update
-      [%add group-path [%link app-path] *metadata]
-    $(socs t.socs, cards (weld cards more-cards))
-  ::
-      %add
-    ?>  =(%link app-name.resource.upd)
-    =,  resource.upd
-    =^  update  listening
-      ^-  (quip card _listening)
-      ?:  (~(has in listening) app-path)
-        [~ listening]
-      :-  [(send-update %watch app-path)]~
-      (~(put in listening) app-path)
-    =^  cards  state
-      (listen-to-group app-path group-path.upd)
-    [(weld update cards) state]
-  ::
-      %remove
-    ?>  =(%link app-name.resource.upd)
-    =?  listening
-        ?=(~ (groups-from-resource:md %link app-path.resource.upd))
-      (~(del in listening) app-path.resource.upd)
-    (leave-from-group app-path.resource.upd group-path.upd)
-  ==
+  ?.  ?=(%remove -.upd)  [~ state]
+  ?>  =(%link app-name.resource.upd)
+  =?  listening
+      ?=(~ (groups-from-resource:md %link app-path.resource.upd))
+    (~(del in listening) app-path.resource.upd)
+  (leave-from-group app-path.resource.upd group-path.upd)
 ::
 ::  groups subscriptions
 ::
