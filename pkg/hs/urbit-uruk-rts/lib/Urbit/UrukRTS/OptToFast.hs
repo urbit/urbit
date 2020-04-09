@@ -57,6 +57,7 @@ numReg = go 0
       JETN !Jet !(SmallArray Exp)   --  Fully saturated call
       JET2 !Jet !Exp !Exp           --  Fully saturated call
 -}
+
 compile :: Int -> O.Val -> F.Exp
 compile arity = go
  where
@@ -74,6 +75,7 @@ compile arity = go
     O.ValCas x l r xs -> F.CALN (F.CAS 0 (go x) (go l) (go r)) (goArgs xs)
     O.ValKal ur xs    -> kal ur xs
 
+  rec [] = F.SLF
   rec xs =
     --  TODO Optimize for case with no registers.
     let len = length xs
@@ -108,7 +110,7 @@ compile arity = go
   kal F.Eql     [x, y] = F.EQL (go x) (go y)
   kal F.Add     [x, y] = F.ADD (go x) (go y)
 
-  kal F.Lth     [x, y] = F.LSH (go x) (go y)
+  kal F.Lth     [x, y] = F.LTH (go x) (go y)
   kal F.Lsh     [x, y] = F.LSH (go x) (go y)
   kal F.Fub     [x, y] = F.FUB (go x) (go y)
   kal F.Not     [x]    = F.NOT (go x)

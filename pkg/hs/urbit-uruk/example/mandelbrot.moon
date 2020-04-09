@@ -142,30 +142,37 @@
     pos  %.y
   ==
 
+=/  ssum-aneg
+  ~/  2  ssum-aneg
+  |=  (aneg b)
+  ?-  b
+    bneg
+      (snew %.n (add aneg bneg))
+    bpos
+      ?:  (lth aneg bpos)
+        (snew %.n (fub bpos aneg))
+      (snew %.y (fub aneg bpos))
+  ==
+
+=/  ssum-apos
+  ~/  2  ssum-apos
+  |=  (apos b)
+  ?-  b
+    bneg
+      ?:  (lth apos bneg)
+        (snew %.n (fub bneg apos))
+      (snew %.y (fub apos bneg))
+    bpos
+      (snew %.y (add apos bpos))
+  ==
+
 ::  Addition (+sum:si)
 =/  ssum
   ~/  2  ssum
   |=  (a b)
   ?-    a
-    aneg  ?-    b
-              bneg
-            (snew %.n (add aneg bneg))
-          ::
-              bpos
-            ?:  (lth aneg bpos)
-              (snew %.n (fub bpos aneg))
-            (snew %.y (fub aneg bpos))
-          ==
-  ::
-    apos  ?-    b
-              bneg
-            ?:  (lth apos bneg)
-              (snew %.n (fub bneg apos))
-            (snew %.y (fub apos bneg))
-          ::
-              bpos
-            (snew %.y (add apos bpos))
-          ==
+    aneg  (ssum-aneg aneg b)
+    apos  (ssum-apos apos b)
   ==
 
 :: Subtraction (+dif:si)
@@ -426,10 +433,61 @@
   %+  turn  (mandelbrot w h)
   build-ppm-inner
 
-(build-ppm 10 10)
+::  Takes a list and a function
+=/  list-id
+  ~/  1  list-id
+  ..  $
+  |=  data
+  ?-  data
+    p  (cons (I (car p)) ($ (cdr p)))
+    y  null
+  ==
+
+::  ~/  2  asdfasdf
+::  ..  $
+::  |=  (x y)
+::  ?-  x
+  ::  p  (y p)
+  ::  p  (y p)
+::  ==
+
+::  (build-ppm 10 10)
+
+::(turn (cons 3 (cons 4 null)) <x (div x 2)>)
+
+:: =/  foo
+  :: ~/  1  foo
+  :: |=  x
+  :: ?-  (lef x)
+    :: l
+      :: ?-  l
+        :: ll  [l ll]
+        :: lr  [l lr]
+      :: ==
+    :: r
+      :: ?-  r
+        :: rl  [r rl]
+        :: rr  [r rr]
+      :: ==
+  :: ==
+
+:: (foo (lef (lef 3)))
 
 :: Doing a 20x20 render takes 4m40s.
-::(build-ppm 20 20)
+(build-ppm 40 40)
 
 :: TODO: The following should run in a reasonable amount of time
 ::(build-ppm 1000 1000)
+
+::
+::  | CAS
+::  |   0
+::  |   (REF 0)
+::  |   (CALN
+::  |      (VAL J2_cons_65331)
+::  |      (fromListN
+::  |         2
+::  |         [ CALN (REF 0) (fromListN 1 [ CAR (REG 0) ])
+::  |         , REC2 (CDR (REG 0)) (REF 0)
+::  |         ]))
+::  |   (VAL RU)

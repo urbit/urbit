@@ -306,20 +306,21 @@ reduce !no !xs = do
     Cas       -> cas x y z
     Nat n     -> nat n x y
 
-    Sen n     -> do
-      let args = drop 2 $ toList xs
-      kVA x (kVVn y args)
+    --  S₁fgx   = (fx)(gx)
+    --  S₂fgxy  = (fxy)(gxy)
+    --  S₃fgxyz = (fxyz)(gxyz)
+    Sen n     -> join (kVA <$> kVVn x args <*> pure (kVVn y args))
+     where args = drop 2 $ toList xs
 
-    Bee n -> do
-      let args = drop 2 $ toList xs
-      xArgs <- kVVn x args
-      kVV xArgs y
+    --  B₁fgx   = f(gx)
+    --  B₂fgxy  = f(gxy)
+    --  B₃fgxyz = f(gxyz)
+    Bee n -> kVA x (kVVn y (drop 2 $ toList xs))
 
-    Sea n -> do
-      let args = drop 2 $ toList xs
-      xArgs <- kVVn x args
-      kVA xArgs (kVVn y args)
-
+    --  C₁fgx   = (fx)g
+    --  C₂fgxy  = (fxy)g
+    --  C₃fgxyz = (fxyz)g
+    Sea n -> join (kVV <$> (kVVn x (drop 2 $ toList xs)) <*> pure y)
 
     Eye _ -> toList xs & \case
       []     -> error "impossible"
@@ -334,7 +335,7 @@ reduce !no !xs = do
 
     Zer   -> zer x
 
-    Iff   -> iff x y z
+    Iff   -> dIff x y z
 
     Jut j -> execJetN j xs
 
@@ -411,7 +412,7 @@ withFallback :: Jet -> CloN -> IO Val -> IO Val
 {-# INLINE withFallback #-}
 withFallback j args act = do
   res <- act
-  traceResu j (toList args) res
+  -- traceResu j (toList args) res
   pure res
 
 
@@ -435,7 +436,7 @@ traceResu j xs val = putStrLn ("RETR (" <> body <> ")\n  ==>  " <> tshow val)
 
 execJet1 :: Jet -> Val -> IO Val
 execJet1 !j !x = do
-  traceCall j [x] False
+  -- traceCall j [x] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x]
   let refr = \case
@@ -445,7 +446,7 @@ execJet1 !j !x = do
 
 execJet1R :: Jet -> Val -> IO Val
 execJet1R !j !x = do
-  traceCall j [x] True
+  -- traceCall j [x] True
   let args = fromList [x]
   let refr = \case
         0 -> pure x
@@ -454,7 +455,7 @@ execJet1R !j !x = do
 
 execJet2 :: Jet -> Val -> Val -> IO Val
 execJet2 !j !x !y = do
-  traceCall j [x,y] False
+  -- traceCall j [x,y] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y]
   let refr = \case
@@ -465,7 +466,7 @@ execJet2 !j !x !y = do
 
 execJet2R :: Jet -> Val -> Val -> IO Val
 execJet2R !j !x !y = do
-  traceCall j [x,y] True
+  -- traceCall j [x,y] True
   let args = fromList [x, y]
   let refr = \case
         0 -> pure x
@@ -475,7 +476,7 @@ execJet2R !j !x !y = do
 
 execJet3 :: Jet -> Val -> Val -> Val -> IO Val
 execJet3 !j !x !y !z = do
-  traceCall j [x,y,z] False
+  -- traceCall j [x,y,z] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y, z]
       refr = \case
@@ -487,7 +488,7 @@ execJet3 !j !x !y !z = do
 
 execJet3R :: Jet -> Val -> Val -> Val -> IO Val
 execJet3R !j !x !y !z = do
-  traceCall j [x,y,z] True
+  -- traceCall j [x,y,z] True
   let args = fromList [x, y, z]
   let refr = \case
         0 -> pure x
@@ -498,7 +499,7 @@ execJet3R !j !x !y !z = do
 
 execJet4 :: Jet -> Val -> Val -> Val -> Val -> IO Val
 execJet4 !j !x !y !z !p = do
-  traceCall j [x,y,z,p] False
+  -- traceCall j [x,y,z,p] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y, z, p]
   let refr = \case
@@ -511,7 +512,7 @@ execJet4 !j !x !y !z !p = do
 
 execJet4R :: Jet -> Val -> Val -> Val -> Val -> IO Val
 execJet4R !j !x !y !z !p = do
-  traceCall j [x,y,z,p] True
+  -- traceCall j [x,y,z,p] True
   let args = fromList [x, y, z, p]
   let refr = \case
         0 -> pure x
@@ -523,14 +524,14 @@ execJet4R !j !x !y !z !p = do
 
 execJetN :: Jet -> CloN -> IO Val
 execJetN !j !xs = do
-  traceCall j (toList xs) (jRegs j /= 0)
+  -- traceCall j (toList xs) (jRegs j /= 0)
   (reg, setReg) <- mkRegs (jRegs j)
   let refr = pure . indexSmallArray xs
   withFallback j xs (execJetBody j refr reg setReg)
 
 execJetNR :: Jet -> CloN -> IO Val
 execJetNR !j !xs = do
-  traceCall j (toList xs) (jRegs j /= 0)
+  -- traceCall j (toList xs) (jRegs j /= 0)
   let refr = pure . indexSmallArray xs
   withFallback j xs (execJetBodyR j refr)
 
@@ -541,11 +542,13 @@ fix :: Val -> Val -> IO Val
 {-# INLINE fix #-}
 fix x y = kVVV x (fixClo x) y
 
-iff :: Val -> Val -> Val -> IO Val
-{-# INLINE iff #-}
-iff (VBol True)  t e = kVV t VUni
-iff (VBol False) t e = kVV e VUni
-iff _            _ _ = throwIO (TypeError "iff-not-bol")
+dIff :: Val -> Val -> Val -> IO Val
+{-# INLINE dIff #-}
+dIff (VBol True)  t e = kVV t VUni
+dIff (VBol False) t e = kVV e VUni
+dIff c            t e = do
+  print ("dIff", c, t, e)
+  throwIO (TypeError "iff-not-bol")
 
 cas :: Val -> Val -> Val -> IO Val
 {-# INLINE cas #-}
@@ -630,7 +633,9 @@ dXor _            _            = throwIO (TypeError "xor-not-bol")
 dDiv :: Val -> Val -> IO Val
 {-# INLINE dDiv #-}
 dDiv (VNat x) (VNat y) = pure (VNat (x `div` y))
-dDiv _        _        = throwIO (TypeError "div-not-nat")
+dDiv x        y        = do
+  print ("div",x,y)
+  throwIO (TypeError "div-not-nat")
 
 dTra :: Val -> Val -> IO Val
 {-# INLINE dTra #-}
@@ -744,7 +749,10 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     IFF c t e      -> go c >>= \case
       VBol True  -> go t
       VBol False -> go e
-      _          -> throwIO (TypeError "iff-not-bol")
+      cv         -> do
+        print ("iff", cv, t, e)
+        print ("iff.cond", c)
+        throwIO (TypeError "iff-not-bol")
     CAS i x l r -> go x >>= \case
       VLef lv -> setReg i lv >> go l
       VRit rv -> setReg i rv >> go r
@@ -806,4 +814,7 @@ execJetBodyR !j !ref = go (jFast j)
     IFF c t e      -> go c >>= \case
       VBol True  -> go t
       VBol False -> go e
-      _          -> throwIO (TypeError "iff-not-bol")
+      cv         -> do
+        print ("iff", cv, t, e)
+        print ("iff.cond", c)
+        throwIO (TypeError "iff-not-bol")

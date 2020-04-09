@@ -196,17 +196,17 @@ simplify = curry $ \case
   (VS    , [x, y, z] ) -> (x % z) % (y % z)
   (VK    , [x, y]    ) -> x
   (VSeq  , [x, y]    ) -> y
-  (VIn _ , f : xs    ) -> go f xs
-  (VBn _ , f : g : xs) -> f % go g xs
-  (VCn _ , f : g : xs) -> go f xs % g
-  (VSn _ , f : g : xs) -> go f xs % go g xs
+  (VIn _ , f : xs    ) -> app f xs
+  (VBn _ , f : g : xs) -> f % app g xs
+  (VCn _ , f : g : xs) -> app f xs % g
+  (VSn _ , f : g : xs) -> app f xs % app g xs
   (VIff  , [c, t, e] ) -> Iff c (t % unit) (e % unit) []
-  (VCas  , [x, l, r] ) -> Cas x (abst l % reg 0) (abst r % reg 0) []
+  (VCas  , [x, l, r] ) -> Cas x (l % reg 0) (r % reg 0) []
   (n     , xs        ) -> error ("simplify: bad arity (" <> show n <> " " <> show xs <> ")")
  where
-  go acc = \case
+  app acc = \case
     []     -> acc
-    x : xs -> go (acc % x) xs
+    x : xs -> app (acc % x) xs
 
 reg ∷ Nat → Exp
 reg n = Reg n []

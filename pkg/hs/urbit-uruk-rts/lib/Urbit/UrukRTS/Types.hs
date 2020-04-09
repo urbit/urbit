@@ -20,12 +20,14 @@ import Data.Primitive.SmallArray
 import GHC.Prim                  hiding (seq)
 import System.IO.Unsafe
 
-import Control.Arrow          ((>>>))
-import Control.Exception      (throw, try)
-import Data.Bits              (shiftL, (.|.))
 #if !defined(__GHCJS__)
 import Data.Flat
 #endif
+
+import Control.Arrow            ((>>>))
+import Control.Exception        (throw, try)
+import Data.Bits                (shiftL, (.|.))
+import Data.Char                (isPrint, isSpace)
 import Data.Function            ((&))
 import Numeric.Natural          (Natural)
 import Prelude                  ((!!))
@@ -241,10 +243,18 @@ instance Show Val where
     VCon x y   -> "[" <> show x <> ", " <> show y <> "]"
     VLef x     -> "L" <> show x
     VRit x     -> "R" <> show x
-    VNat n     -> show n
+    VNat n     -> showNat n
     VBol True  -> "Y"
     VBol False -> "N"
     VFun f     -> show f
+
+showNat :: Nat -> String
+showNat at@(Atom.atomUtf8 -> Right nm) =
+  let okChar c = isPrint c || isSpace c
+  in  if all okChar nm
+      then "'" <> (unpack $ intercalate "\\n" $ lines nm) <> "'"
+      else show at
+showNat at = show at
 
 data Exp
   = VAL   !Val                    --  Constant Value
