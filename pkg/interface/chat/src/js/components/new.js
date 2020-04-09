@@ -95,6 +95,7 @@ export class NewScreen extends Component {
 
   onClickCreate() {
     const { props, state } = this;
+    let grouped = (this.state.createGroup || (this.state.groups.length > 0));
 
     if (!state.title) {
       this.setState({
@@ -104,7 +105,7 @@ export class NewScreen extends Component {
       return;
     }
 
-    let station = `/${state.idName}`;
+    let station = `/${state.idName}` + (grouped ? `-${Math.floor(Math.random() * 10000)}` : "");
 
     if (station in props.inbox) {
       this.setState({
