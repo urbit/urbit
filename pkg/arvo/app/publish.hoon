@@ -196,15 +196,8 @@
   ++  on-poke
     |=  [mar=mark vas=vase]
     ^-  (quip card _this)
-    ?+  mar  (on-poke:def mar vas)
-        %noun
-      ?:  =(%print-state q.vas)
-        ~&  state
-        [~ this]
-      ?:  =(%print-bowl q.vas)
-        ~&  bol
-        [~ this]
-      [~ this]
+    ?+  mar
+      (on-poke:def mar vas)
     ::
         %handle-http-request
       =+  !<([id=@ta req=inbound-request:eyre] vas)
@@ -246,7 +239,12 @@
     |=  [wir=wire sin=sign:agent:gall]
     ^-  (quip card _this)
     ?-    -.sin
-        %poke-ack   (on-agent:def wir sin)
+        %poke-ack
+      ?~  p.sin
+        (on-agent:def wir sin)
+      =^  cards  state
+        (handle-poke-fail:main wir)
+      [cards this]
     ::  If our subscribe failed, delete notebook associated with subscription if
     ::  it exists
     ::
@@ -954,6 +952,151 @@
       (generate-invites book (~(del in invitees.group) our.bol))
   ==
 ::
+++  handle-poke-fail
+  |=  wir=wire
+  ^-  (quip card _state)
+  ?+  wir
+    [~ state]
+  ::  new note failed, stash it in limbo
+  ::
+      [%forward %new-note @ @ @ ~]
+    =/  host=@p  (slav %p i.t.t.wir)
+    =/  book-name  i.t.t.t.wir
+    =/  note-name  i.t.t.t.t.wir
+    =/  book  (~(get by books) [host book-name])
+    ?~  book
+      [~ state]
+    =/  note  (~(get by notes.u.book) note-name)
+    ?~  note
+      [~ state]
+    =.  notes.limbo   (~(put by notes.limbo) [host book-name note-name] u.note)
+    =.  notes.u.book  (~(del by notes.u.book) note-name)
+    =/  del  [%del-note host book-name note-name]
+    :-  [(give-primary-delta del)]~
+    state(books (~(put by books) [host book-name] u.book))
+  ::  new comment failed, stash it in limbo
+  ::
+      [%forward %new-comment @ @ @ @ ~]
+    =/  host=@p  (slav %p i.t.t.wir)
+    =/  book-name  i.t.t.t.wir
+    =/  note-name  i.t.t.t.t.wir
+    =/  comment-date=@da  (slav %da i.t.t.t.t.t.wir)
+    =/  book  (~(get by books) [host book-name])
+    ?~  book
+      [~ state]
+    =/  note  (~(get by notes.u.book) note-name)
+    ?~  note
+      [~ state]
+    =/  comment  (~(get by comments.u.note) comment-date)
+    ?~  comment
+      [~ state]
+    =.  comments.limbo
+      %+  ~(put by comments.limbo)
+        [host book-name note-name comment-date]
+      u.comment
+    =.  comments.u.note  (~(del by comments.u.note) comment-date)
+    =.  notes.u.book  (~(put by notes.u.book) note-name u.note)
+    =/  del  [%del-comment host book-name note-name comment-date]
+    :-  [(give-primary-delta del)]~
+    state(books (~(put by books) [host book-name] u.book))
+  ::  edit note failed, restore old version
+  ::
+      [%forward %edit-note @ @ @ ~]
+    =/  host=@p  (slav %p i.t.t.wir)
+    =/  book-name  i.t.t.t.wir
+    =/  note-name  i.t.t.t.t.wir
+    =/  book  (~(get by books) [host book-name])
+    ?~  book
+      [~ state]
+    =/  note  (~(get by notes.limbo) host book-name note-name)
+    ?~  note
+      [~ state]
+    =.  notes.u.book  (~(put by notes.u.book) note-name u.note)
+    =/  del  [%edit-note host book-name note-name u.note]
+    :-  [(give-primary-delta del)]~
+    %=  state
+      books        (~(put by books) [host book-name] u.book)
+      notes.limbo  (~(del by notes.limbo) host book-name note-name)
+    ==
+  ::  edit comment failed, restore old version
+  ::
+      [%forward %new-comment @ @ @ @ ~]
+    =/  host=@p  (slav %p i.t.t.wir)
+    =/  book-name  i.t.t.t.wir
+    =/  note-name  i.t.t.t.t.wir
+    =/  comment-date=@da  (slav %da i.t.t.t.t.t.wir)
+    =/  book  (~(get by books) [host book-name])
+    ?~  book
+      [~ state]
+    =/  note  (~(get by notes.u.book) note-name)
+    ?~  note
+      [~ state]
+    =/  comment
+      (~(get by comments.limbo) host book-name note-name comment-date)
+    ?~  comment
+      [~ state]
+    =.  comments.u.note  (~(put by comments.u.note) comment-date u.comment)
+    =.  notes.u.book  (~(put by notes.u.book) note-name u.note)
+    =/  del  [%edit-comment host book-name note-name comment-date u.comment]
+    :-  [(give-primary-delta del)]~
+    %=  state
+        books  (~(put by books) [host book-name] u.book)
+    ::
+        comments.limbo
+      %+  ~(del by comments.limbo)
+        [host book-name note-name comment-date]
+      u.comment
+    ==
+  ::  delete note failed, restore old version
+  ::
+      [%forward %del-note @ @ @ ~]
+    =/  host=@p  (slav %p i.t.t.wir)
+    =/  book-name  i.t.t.t.wir
+    =/  note-name  i.t.t.t.t.wir
+    =/  book  (~(get by books) [host book-name])
+    ?~  book
+      [~ state]
+    =/  note  (~(get by notes.limbo) host book-name note-name)
+    ?~  note
+      [~ state]
+    =.  notes.u.book  (~(put by notes.u.book) note-name u.note)
+    =/  del  [%add-note host book-name note-name u.note]
+    :-  [(give-primary-delta del)]~
+    %=  state
+      books        (~(put by books) [host book-name] u.book)
+      notes.limbo  (~(del by notes.limbo) host book-name note-name)
+    ==
+  ::  delete comment failed, restore old version
+  ::
+      [%forward %del-comment @ @ @ @ ~]
+    =/  host=@p  (slav %p i.t.t.wir)
+    =/  book-name  i.t.t.t.wir
+    =/  note-name  i.t.t.t.t.wir
+    =/  comment-date=@da  (slav %da i.t.t.t.t.t.wir)
+    =/  book  (~(get by books) [host book-name])
+    ?~  book
+      [~ state]
+    =/  note  (~(get by notes.u.book) note-name)
+    ?~  note
+      [~ state]
+    =/  comment
+      (~(get by comments.limbo) host book-name note-name comment-date)
+    ?~  comment
+      [~ state]
+    =.  comments.u.note  (~(put by comments.u.note) comment-date u.comment)
+    =.  notes.u.book  (~(put by notes.u.book) note-name u.note)
+    =/  del  [%add-comment host book-name note-name comment-date u.comment]
+    :-  [(give-primary-delta del)]~
+    %=  state
+        books  (~(put by books) [host book-name] u.book)
+    ::
+        comments.limbo
+      %+  ~(del by comments.limbo)
+        [host book-name note-name comment-date]
+      u.comment
+    ==
+  ==
+::
 ++  poke-publish-action
   |=  act=action
   ^-  (quip card _state)
@@ -1524,6 +1667,17 @@
     =/  note  (~(get by notes.u.book) note.del)
     ?~  note
       [~ sty]
+    =/  limbo-comment=(unit @da)
+      %-  ~(rep by comments.u.note)
+      |=  [[date=@da com=comment] out=(unit @da)]
+      ?:  ?&  =(author.com author.data.del)
+              =(content.com content.data.del)
+              =(%.y pending.com)
+          ==
+        `date
+      out
+    =?  comments.u.note  ?=(^ limbo-comment)
+      (~(del by comments.u.note) u.limbo-comment)
     =.  comments.u.note  (~(put by comments.u.note) comment-date.del data.del)
     =.  notes.u.book  (~(put by notes.u.book) note.del u.note)
     (emit-updates-and-state host.del book.del u.book del sty)
@@ -1554,6 +1708,7 @@
     ==
   ::
       %edit-note
+    =.  notes.limbo.sty  (~(del by notes.limbo.sty) host.del book.del note.del)
     =/  book=(unit notebook)
       (get-notebook host.del book.del sty)
     ?~  book
@@ -1571,6 +1726,9 @@
     (emit-updates-and-state host.del book.del u.book del sty)
   ::
       %edit-comment
+    =.  comments.limbo.sty
+      %-  ~(del by comments.limbo.sty)
+      [host.del book.del note.del comment-date.del]
     =/  book=(unit notebook)
       (get-notebook host.del book.del sty)
     ?~  book
@@ -1609,17 +1767,23 @@
     ==
   ::
       %del-note
+    =.  notes.limbo.sty  (~(del by notes.limbo.sty) host.del book.del note.del)
     =/  book=(unit notebook)
       (get-notebook host.del book.del sty)
     ?~  book
       [~ sty]
-    =/  not=note  (~(got by notes.u.book) note.del)
-    =?  tile-num  &(!read.not (gth tile-num 0))
+    =/  not=(unit note)  (~(get by notes.u.book) note.del)
+    ?~  not
+      [~ sty]
+    =?  tile-num  &(!read.u.not (gth tile-num 0))
       (dec tile-num)
     =.  notes.u.book  (~(del by notes.u.book) note.del)
     (emit-updates-and-state host.del book.del u.book del sty)
   ::
       %del-comment
+    =.  comments.limbo.sty
+      %-  ~(del by comments.limbo.sty)
+      [host.del book.del note.del comment.del]
     =/  book=(unit notebook)
       (get-notebook host.del book.del sty)
     ?~  book
