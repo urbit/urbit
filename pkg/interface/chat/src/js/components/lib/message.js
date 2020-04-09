@@ -12,7 +12,8 @@ export class Message extends Component {
   constructor() {
     super();
     this.state = {
-      unfold: false
+      unfold: false,
+      copied: false,
     };
     this.unFoldEmbed = this.unFoldEmbed.bind(this);
   }
@@ -134,7 +135,7 @@ export class Message extends Component {
   }
 
   render() {
-    const { props } = this;
+    const { props, state } = this;
     let pending = !!props.msg.pending ? ' o-40' : '';
     let datestamp = "~" + moment.unix(props.msg.when / 1000).format('YYYY.M.D');
 
@@ -181,17 +182,16 @@ export class Message extends Component {
             <div className="hide-child" style={paddingTop}>
               <p className="v-mid f9 gray2 dib mr3 c-default">
                 <span
-                  className={"pointer " + (contact.nickname ? null : "mono")}
-                  ref="author"
+                  className={"pointer " + (contact.nickname || state.copied ? null : "mono")}
                   onClick={() => {
                     writeText(props.msg.author);
-                    this.refs.author.innerText = "Copied";
+                    this.setState({ copied: true })
                     setTimeout(() => {
-                      this.refs.author.innerText = name;
-                    }, 800);
+                      this.setState({ copied: false });
+                    }, 800)
                   }}
                   title={`~${props.msg.author}`}>
-                    {name}
+                  {state.copied && 'Copied' || name}
                 </span>
               </p>
               <p className="v-mid mono f9 gray2 dib">{timestamp}</p>
