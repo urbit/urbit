@@ -99,7 +99,7 @@ instance Hashable Jet where
     hashWithSalt i (a,n,b)
 
 instance Show Jet where
-  show (Jet{..}) =
+  show (Jet{..}) = muck $
     case jName of
       VNat (Atom.atomUtf8 -> Right nm) ->
         "J" <> show jArgs <> "_" <> unpack nm <> "_" <> has
@@ -107,6 +107,9 @@ instance Show Jet where
         "J" <> show jArgs <> "_" <> show jName <> "_" <> has
    where
      has = (take 5 $ show $ abs $ hash jBody)
+     muck = fmap $ \case
+       '-' -> '_'
+       x   -> x
 
 data Node
   = Jay Int -- Always >= 1
@@ -169,8 +172,8 @@ instance Show Node where
     Seq       -> "SEQ"
     Fix       -> "FIX"
     Nat n     -> show n
-    Bol True  -> "%.y"
-    Bol False -> "%.n"
+    Bol True  -> "YES"
+    Bol False -> "NAH"
     Iff       -> "IFF"
     Pak       -> "PAK"
     Zer       -> "ZER"
@@ -234,13 +237,13 @@ instance NFData Val where
 
 instance Show Val where
   show = \case
-    VUni       -> "~"
-    VCon x y   -> "[" <> show x <> " " <> show y <> "]"
+    VUni       -> "U"
+    VCon x y   -> "[" <> show x <> ", " <> show y <> "]"
     VLef x     -> "L" <> show x
     VRit x     -> "R" <> show x
     VNat n     -> show n
-    VBol True  -> "%.y"
-    VBol False -> "%.n"
+    VBol True  -> "Y"
+    VBol False -> "N"
     VFun f     -> show f
 
 data Exp
@@ -321,7 +324,7 @@ valFun = \case
   VUni     -> Fun 1 Uni mempty
   VCon h t -> Fun 1 Con (fromList [h, t])
   VLef l   -> Fun 2 Lef (fromList [l])
-  VRit r   -> Fun 2 Lef (fromList [r])
+  VRit r   -> Fun 2 Rit (fromList [r])
   VNat n   -> Fun 2 (Nat n) mempty
   VBol b   -> Fun 2 (Bol b) mempty
   VFun f   -> f
@@ -353,10 +356,10 @@ nodeArity = \case
   Sub   -> 2
   Ded   -> 1
   Uni   -> 1
-  Lef   -> 1
-  Rit   -> 1
+  Lef   -> 1 -- Hack to convert to value after first arg, actually 3.
+  Rit   -> 1 -- Hack to convert to value after first arg, actually 3.
   Cas   -> 4
-  Con   -> 3
+  Con   -> 2 -- Hack to convert to value after two args, actually 3.
   Car   -> 1
   Cdr   -> 1
 

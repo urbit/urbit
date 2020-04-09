@@ -97,6 +97,7 @@ data Exp
     | Kal F.Node [Exp]
     | Rec [Exp]
     | Ref Nat [Exp]
+    | Reg Nat [Exp]
     | Iff Exp Exp Exp [Exp]
     | Cas Exp Exp Exp [Exp]
     | App Exp Exp
@@ -117,6 +118,7 @@ data Val
     = ValKal F.Node [Val]
     | ValRec [Val]
     | ValRef Nat [Val]
+    | ValReg Nat [Val]
     | ValIff Val Val Val [Val]
     | ValCas Val Val Val [Val]
   deriving stock (Eq, Ord, Generic)
@@ -127,6 +129,7 @@ instance Show Exp where
         Kal u xs     → sexp "[" "]" [show u] xs
         Rec xs       → sexp "(" ")" ["Rec"] xs
         Ref n xs     → sexp "(" ")" ["V" <> show n] xs
+        Reg n xs     → sexp "(" ")" ["R" <> show n] xs
         Iff c t e xs → sexp "(" ")" ["If", show c, show t, show e] xs
         Cas x l r xs → sexp "(" ")" ["Case", show x, show l, show r] xs
         App x y      → sexp "(" ")" [] [x,y]
@@ -144,6 +147,7 @@ prettyExp = go
         Kal u xs     → sexp "("   ")" [show u] (go <$> xs)
         Rec xs       → sexp "("   ")" ["$"] (go <$> xs)
         Ref n xs     → sexp "("   ")" [sym (fromIntegral n)] (go <$> xs)
+        Reg n xs     → sexp "("   ")" ["R" <> show n] (go <$> xs)
         Iff c t e [] → sexp "?:(" ")" [go c, go t, go e] []
         Iff c t e xs → sexp "("   ")" [go $ Iff c t e []] (go <$> xs)
         Cas x l r [] → sexp "?-(" ")" [go x, go l, go r] []
@@ -161,6 +165,7 @@ instance Show Val where
         ValKal u xs     → sexp "[" "]" [show u] xs
         ValRec xs       → sexp "(" ")" ["Rec"] xs
         ValRef n xs     → sexp "(" ")" ["V" <> show n] xs
+        ValReg n xs     → sexp "(" ")" ["R" <> show n] xs
         ValIff c t e xs → sexp "(" ")" ["If", show c, show t, show e] xs
         ValCas x l r xs → sexp "(" ")" ["Case", show x, show l, show r] xs
       where
@@ -176,6 +181,7 @@ recursive (Code _ _ _ v) = go v
     go = \case
         ValRec _        → True
         ValRef _ vs     → any go vs
+        ValReg _ vs     → any go vs
         ValKal _ vs     → any go vs
         ValIff c t e xs → any go ([c,t,e] <> xs)
         ValCas x l r xs → any go ([x,l,r] <> xs)
@@ -195,12 +201,15 @@ simplify = curry $ \case
   (VCn _ , f : g : xs) -> go f xs % g
   (VSn _ , f : g : xs) -> go f xs % go g xs
   (VIff  , [c, t, e] ) -> Iff c (t % unit) (e % unit) []
-  (VCas  , [x, l, r] ) -> Cas x (abst l % ref 0) (abst r % ref 0) []
+  (VCas  , [x, l, r] ) -> Cas x (abst l % reg 0) (abst r % reg 0) []
   (n     , xs        ) -> error ("simplify: bad arity (" <> show n <> " " <> show xs <> ")")
  where
   go acc = \case
     []     -> acc
     x : xs -> go (acc % x) xs
+
+reg ∷ Nat → Exp
+reg n = Reg n []
 
 ref ∷ Nat → Exp
 ref n = Ref n []
@@ -214,6 +223,7 @@ abst = g 0
         Rec xs          → Rec (g d <$> xs)
         Ref n xs | n>=d → Ref (n+1) (g d <$> xs)
         Ref n xs        → Ref n (g d <$> xs)
+        Reg n xs        → Reg n (g d <$> xs) -- TODO
         Iff c t e xs    → Iff (g d c) (g d t) (g d e) (g d <$> xs)
         Cas x l r xs    → Cas (g d x) (g (d+1) l) (g (d+1) r) (g d <$> xs)
         App x y         → error "TODO: Handle `App` in `abst`"
@@ -252,6 +262,7 @@ nok = \case
     Iff c t e xs :@ x → Just $ Iff c t e (snoc xs x)
     Cas v l r xs :@ x → Just $ Cas v l r (snoc xs x)
     Ref n xs     :@ x → Just $ Ref n (snoc xs x)
+    Reg n xs     :@ x → Just $ Reg n (snoc xs x)
 
     _ → Nothing
 
@@ -285,6 +296,7 @@ call f x = f & \case
     Kal f xs     → Kal f (snoc xs x)
     Rec xs       → Rec (snoc xs x)
     Ref n xs     → Ref n (snoc xs x)
+    Reg n xs     → Reg n (snoc xs x)
     Iff c t e xs → Iff c t e (snoc xs x)
     Cas x l r xs → Cas x l r (snoc xs x)
     App x y      → error "TODO: Handle `App` in `call` (?)"
@@ -316,6 +328,7 @@ evaluate = fmap go . eval
         Kal u xs     → ValKal u (go <$> xs)
         Rec xs       → ValRec (go <$> xs)
         Ref n xs     → ValRef n (go <$> xs)
+        Reg n xs     → ValReg n (go <$> xs)
         Iff c t e xs → ValIff (go c) (go t) (go e) (go <$> xs)
         Cas v l r xs → ValCas (go v) (go l) (go r) (go <$> xs)
         App x y      → trace (show x) $
@@ -407,6 +420,7 @@ valExp = go
     ValKal rn xs    -> rawExp rn (go <$> xs)
     ValRec xs       -> Rec (go <$> xs)
     ValRef n xs     -> Ref n (go <$> xs)
+    ValReg n xs     -> Reg n (go <$> xs)
     ValIff c t e xs -> Iff (go c) (go t) (go e) (go <$> xs)
     ValCas x l r xs -> Cas (go x) (go l) (go r) (go <$> xs)
 

@@ -30,6 +30,7 @@
 
 ::  Left tagged cons cell
 =/  cons
+  ~/  2  cons
   |=  (head tail)
   (lef [head tail])
 
@@ -119,8 +120,9 @@
 
 ::  Natural to Signed (+sun:si)
 =/  snat
-  ~/  2  snat
-  (snew %.y)
+  ~/  1  snat
+  |=  n
+  (snew %.y n)
 
 ::  Absolute value (+abs:si)
 =/  sabs
@@ -251,6 +253,7 @@
 ::  returns a fraction where when over=0, fp-fraction=0 and when over=under,
 ::  fp-fraction=--10.000
 =/  fraction-fp
+  ~/  2  fraction-fp
   |=  (over under)
   (sdiv (smul over (snat 10.000)) under)
 
@@ -376,16 +379,14 @@
   ~/  2  ntot-loop
   ..  $
   |=  (num list)
-  ?:  (not (eql 0 num))
-    =/  rem  (mod num 10)
-    ($ (div num 10) (cons (add rem '0') list))
-  list
+  ?:  (zer num)  list
+  ($ (div num 10) (cons (add (mod num 10) '0') list))
 
 ::  renders a natural as a tape, in the spirit of itoa
 =/  ntot
   ~/  1  ntot
   |=  num
-  ?:  (eql num 0)
+  ?:  (zer num)
     (cons '0' null)
   (ntot-loop num null)
 
@@ -395,6 +396,7 @@
 
 ::  renders three integers as a space deliminated tape.
 =/  nums
+  ~/  1  nums
   |=  triple
   =/  a  (car triple)
   =/  b  (car (cdr triple))
@@ -403,23 +405,26 @@
   %+  cons  (ntot a)
   %+  cons  space
   (cons (ntot b) (cons space (cons (ntot c) (cons space null))))
-
+::
+=/  build-ppm-inner
+  ~/  1  build-ppm-inner
+  |=  y
+  %+  weld
+    %-  zing
+    %+  turn  y  nums
+  newline
 ::
 =/  build-ppm
+  ~/  2  build-ppm
   |=  (w h)
-  =/  mandelbrot-data  (mandelbrot w h)
   %-  crip
   %+  weld  (cons 'P' (cons '3' (cons 10 null)))
   %+  weld
     (zing (cons (ntot w) (cons space (cons (ntot h) (cons newline null)))))
   %+  weld  (cons '2' (cons '5' (cons '5' (cons 10 null))))
   %-  zing
-  %+  turn  mandelbrot-data
-  |=  y
-  %+  weld
-    %-  zing
-    %+  turn  y  nums
-  newline
+  %+  turn  (mandelbrot w h)
+  build-ppm-inner
 
 (build-ppm 10 10)
 

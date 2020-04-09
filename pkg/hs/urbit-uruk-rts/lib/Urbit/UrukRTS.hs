@@ -117,18 +117,19 @@ instance Uruk Val where
   uBol = \b -> VBol b
 
   uUni = mkNode 1 Uni
-  uCon = mkNode 3 Con
+  uCon = mkNode 2 Con -- hack, actually 3
   uSeq = mkNode 2 Seq
   uCas = mkNode 3 Cas
   uFix = mkNode 2 Fix
   uIff = mkNode 3 Iff
 
   -- TODO XX HACK (Need to classify nodes)
+  -- TODO XX HACK Need to fix arities for value constructors (con/lef/rit)
   uArity = Just . AriOth . fromIntegral . fNeed . valFun
 
   uGlobal "add" = Just $ mkNode 2 Add
-  uGlobal "lef" = Just $ mkNode 2 Lef
-  uGlobal "rit" = Just $ mkNode 2 Rit
+  uGlobal "lef" = Just $ mkNode 1 Lef -- hack, actually 3
+  uGlobal "rit" = Just $ mkNode 1 Rit -- hack, actually 3
   uGlobal "pak" = Just $ mkNode 1 Pak
   uGlobal "zer" = Just $ mkNode 1 Zer
   uGlobal "eql" = Just $ mkNode 2 Eql
@@ -238,21 +239,21 @@ indent = unlines . fmap ("    | " <>) . lines
 jetRegister :: Int -> Val -> Val -> IO Val
 jetRegister args name body = do
   putStrLn "JET REGISTRATION"
+
+  cod <- Opt.compile args name body
+  let jet = Opt.optToFast cod
+
   putStrLn ("  args: " <> tshow args)
-  putStrLn ("  name: " <> tshow name)
+  putStrLn ("  name: " <> tshow jet)
 
   putStrLn ("  body:")
   putStrLn (indent $ pack $ ppShow body)
 
-  cod <- Opt.compile args name body
-
   putStrLn "  code:"
-  putStrLn (indent (tshow cod))
-
-  let jet = Opt.optToFast cod
+  putStrLn (indent (pack $ ppShow cod))
 
   putStrLn "  fast:"
-  putStrLn (indent (tshow (jFast jet)))
+  putStrLn (indent $ pack $ ppShow $ jFast jet)
 
   pure (VFun (Fun args (Jut jet) mempty))
 
@@ -265,7 +266,7 @@ reduce :: Node -> CloN -> IO Val
 reduce !no !xs = do
   let fun = Fun 0 no xs
 
-  print no
+  -- print no
 
   res <- no & \case
     Ess   -> kVVA x z (kVV y z)
@@ -337,10 +338,10 @@ reduce !no !xs = do
 
     Jut j -> execJetN j xs
 
-  putStrLn ("  in: ")
-  putStrLn (indent (pack (ppShow fun)))
-  putStrLn ("  out:")
-  putStrLn (indent (pack (ppShow res)))
+  -- putStrLn ("  in: ")
+  -- putStrLn (indent (pack (ppShow fun)))
+  -- putStrLn ("  out:")
+  -- putStrLn (indent (pack (ppShow res)))
 
   pure res
  where
@@ -408,12 +409,33 @@ mkRegs n = do
 
 withFallback :: Jet -> CloN -> IO Val -> IO Val
 {-# INLINE withFallback #-}
-withFallback j args act = catch act $ \(TypeError why) -> do
+withFallback j args act = do
+  res <- act
+  traceResu j (toList args) res
+  pure res
+
+
+{- catch act $ \(TypeError why) -> do
   putStrLn ("FALLBACK: " <> why)
   callFunFull (valFun $ jBody j) args
+-}
+
+traceCall :: Jet -> [Val] -> Bool -> IO ()
+traceCall j xs reg = putStrLn ("CALL (" <> body <> ")")
+ where
+  body = intercalate " " (tshow j <> note : fmap tshow xs)
+  note = if reg && jRegs j /= 0
+         then "{" <> tshow (jRegs j) <> "}"
+         else ""
+
+traceResu :: Jet -> [Val] -> Val -> IO ()
+traceResu j xs val = putStrLn ("RETR (" <> body <> ")\n  ==>  " <> tshow val)
+ where
+  body = intercalate " " (tshow j : fmap tshow xs)
 
 execJet1 :: Jet -> Val -> IO Val
 execJet1 !j !x = do
+  traceCall j [x] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x]
   let refr = \case
@@ -423,6 +445,7 @@ execJet1 !j !x = do
 
 execJet1R :: Jet -> Val -> IO Val
 execJet1R !j !x = do
+  traceCall j [x] True
   let args = fromList [x]
   let refr = \case
         0 -> pure x
@@ -431,6 +454,7 @@ execJet1R !j !x = do
 
 execJet2 :: Jet -> Val -> Val -> IO Val
 execJet2 !j !x !y = do
+  traceCall j [x,y] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y]
   let refr = \case
@@ -441,6 +465,7 @@ execJet2 !j !x !y = do
 
 execJet2R :: Jet -> Val -> Val -> IO Val
 execJet2R !j !x !y = do
+  traceCall j [x,y] True
   let args = fromList [x, y]
   let refr = \case
         0 -> pure x
@@ -450,6 +475,7 @@ execJet2R !j !x !y = do
 
 execJet3 :: Jet -> Val -> Val -> Val -> IO Val
 execJet3 !j !x !y !z = do
+  traceCall j [x,y,z] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y, z]
       refr = \case
@@ -461,6 +487,7 @@ execJet3 !j !x !y !z = do
 
 execJet3R :: Jet -> Val -> Val -> Val -> IO Val
 execJet3R !j !x !y !z = do
+  traceCall j [x,y,z] True
   let args = fromList [x, y, z]
   let refr = \case
         0 -> pure x
@@ -471,6 +498,7 @@ execJet3R !j !x !y !z = do
 
 execJet4 :: Jet -> Val -> Val -> Val -> Val -> IO Val
 execJet4 !j !x !y !z !p = do
+  traceCall j [x,y,z,p] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y, z, p]
   let refr = \case
@@ -483,6 +511,7 @@ execJet4 !j !x !y !z !p = do
 
 execJet4R :: Jet -> Val -> Val -> Val -> Val -> IO Val
 execJet4R !j !x !y !z !p = do
+  traceCall j [x,y,z,p] True
   let args = fromList [x, y, z, p]
   let refr = \case
         0 -> pure x
@@ -494,12 +523,14 @@ execJet4R !j !x !y !z !p = do
 
 execJetN :: Jet -> CloN -> IO Val
 execJetN !j !xs = do
+  traceCall j (toList xs) (jRegs j /= 0)
   (reg, setReg) <- mkRegs (jRegs j)
   let refr = pure . indexSmallArray xs
   withFallback j xs (execJetBody j refr reg setReg)
 
 execJetNR :: Jet -> CloN -> IO Val
 execJetNR !j !xs = do
+  traceCall j (toList xs) (jRegs j /= 0)
   let refr = pure . indexSmallArray xs
   withFallback j xs (execJetBodyR j refr)
 
@@ -633,7 +664,9 @@ eql _        _        = throwIO (TypeError "eql-not-nat")
 car :: Val -> IO Val
 {-# INLINE car #-}
 car (VCon x _) = pure x
-car _          = throwIO (TypeError "car-not-con")
+car v          = do
+  print v
+  throwIO (TypeError "car-not-con")
 
 cdr :: Val -> IO Val
 {-# INLINE cdr #-}
@@ -723,8 +756,8 @@ execJetBodyR !j !ref = go (jFast j)
  where
   go :: Exp -> IO Val
   go = \case
-    REG i          -> error "no-reg"
-    CAS i x l r    -> error "no-reg"
+    REG i          -> error "execJetBodyR: unexpected register read"
+    CAS i x l r    -> error "execJetBodyR: unexpected register write"
     VAL   v        -> pure v
     REF   i        -> ref i
     REC1  x        -> join (execJet1 j <$> go x)

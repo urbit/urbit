@@ -25,8 +25,23 @@ optToFast (O.Code args nm bod exp) = F.Jet{..}
   jFast = compile jArgs exp
   jRegs = numReg exp
 
-numReg ∷ O.Val → Int
-numReg = const 0 -- TODO
+numReg :: O.Val -> Int
+numReg = go 0
+ where
+  maxi :: [Int] -> Int
+  maxi []       = 0
+  maxi (x:xs)   = max x (maxi xs)
+
+  go :: Int -> O.Val -> Int
+  go acc = \case
+    O.ValKal _ vs -> maxi (acc : fmap (go acc) vs)
+    O.ValRec _    -> acc
+    O.ValRef _ vs -> maxi (acc : fmap (go acc) vs)
+    O.ValReg n vs -> maxi (fromIntegral (n+1) : acc : fmap (go acc) vs)
+    O.ValIff c t e xs ->
+      maxi (acc : go acc c : go acc t : go acc e : fmap (go acc) xs)
+    O.ValCas c l r xs ->
+      maxi (acc : go acc c : go (acc + 1) l : go (acc + 1) r : fmap (go acc) xs)
 
 {-
     TODO CAS !Int !Exp !Exp !Exp  --  Pattern Match
@@ -48,7 +63,9 @@ compile arity = go
   go = \case
     O.ValRec xs       -> rec xs
     O.ValRef n []     -> F.REF ((arity - 1) - fromIntegral n)
-    O.ValRef n xs     -> F.CALN (F.REF (fromIntegral n)) (goArgs xs)
+    O.ValRef n xs     -> F.CALN (F.REF ((arity - 1) - fromIntegral n)) (goArgs xs)
+    O.ValReg n []     -> F.REG (fromIntegral n)
+    O.ValReg n xs     -> F.CALN (F.REG (fromIntegral n)) (goArgs xs)
     O.ValIff i t e [] -> F.IFF (go i) (go t) (go e)
     O.ValIff i t e xs -> F.CALN (F.IFF (go i) (go t) (go e)) (goArgs xs)
 
@@ -58,10 +75,11 @@ compile arity = go
     O.ValKal ur xs    -> kal ur xs
 
   rec xs =
+    --  TODO Optimize for case with no registers.
     let len = length xs
     in  case (compare len arity, xs) of
-          (EQ, [x]         ) -> F.REC1R (go x)
-          (EQ, [x, y]      ) -> F.REC2R (go x) (go y)
+          (EQ, [x]         ) -> F.REC1 (go x)
+          (EQ, [x, y]      ) -> F.REC2 (go x) (go y)
           (EQ, [x, y, z]   ) -> F.REC3 (go x) (go y) (go z)
           (EQ, [x, y, z, p]) -> F.REC4 (go x) (go y) (go z) (go p)
           (EQ, xs          ) -> F.RECN (goArgs xs)
