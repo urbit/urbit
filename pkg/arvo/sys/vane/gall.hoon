@@ -844,10 +844,9 @@
         (mo-pass path note-arvo)
       ::
           %chat-action
-        =/  chat-act=(unit chat-action)
-          ((soft chat-action) ;;(chat-action noun.deal))
+        =/  chat-act=(unit chat-action)  ((soft chat-action) noun.deal)
         ?~  chat-act
-          ~&  %gall-raw-poke-chat-action-failed
+          ~&  gall-raw-chat-poke-failed+[agent attributing.routes]
           mo-core
         =/  =cage  [%chat-action !>(u.chat-act)]
         =/  new-deal=^deal  [%poke cage]
@@ -920,7 +919,6 @@
         %d
       =/  =wire  /sys/rep
       ::  agents load their code from the %home desk, including marks
-      ::
       ::
       =/  =note-arvo
         =/  =disc:ford  [our %home]
