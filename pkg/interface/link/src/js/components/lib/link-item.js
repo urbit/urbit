@@ -79,22 +79,21 @@ export class LinkItem extends Component {
             <span className="gray2 dib v-btm ml2 f8 flex-shrink-0">{hostname} ↗</span>
           </a>
           <div className="w-100 pt1">
-            <span className={"f9 pr2 v-mid " + mono}
+            <span className={"f9 pr2 dib " + mono}
             title={props.ship}>
             {(props.nickname)
               ? props.nickname
               : cite(props.ship)}
             </span>
           <span
-            className={seenState + " f9 inter pr3 v-mid"}
+            className={seenState + " f9 inter pr3 dib"}
             onClick={this.markPostAsSeen}>
             {this.state.timeSinceLinkPost}
           </span>
           <Link to=
             {makeRoutePath(props.resourcePath, props.popout, props.page, props.url, props.linkIndex)}
-          className="v-top"
           onClick={this.markPostAsSeen}>
-            <span className="f9 inter gray2">
+            <span className="f9 inter gray2 dib">
                 {comments}
               </span>
             </Link>
