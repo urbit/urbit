@@ -19,7 +19,7 @@
 =/  cat
   ~/  3  cat
   |=  (a b c)
-  :: think this through 
+  :: think this through
   (add (lsh a c) b)
 
 ::
@@ -312,6 +312,7 @@
 
 ::  look through the con list above for index idx.
 =/  ur-snag
+  ~/  2  ur-snag
   ..  $
   |=  (idx l)
   ?:  (eql idx 0)
@@ -325,6 +326,25 @@
     [0 0 0]
   (ur-snag o plasma-colors)
 
+::  Compiler should do this automatically (lambda lifting)
+=/  calc-pixel-loop
+  ~/  5  calc-pixel-loop
+  ..  $
+  |=  (cr ci i x0 y0)
+  ?:  (not (lth i max-iterations))
+    (calculate-color-for 255)
+  ::
+  =/  xx  (mul-fp x0 x0)
+  =/  yy  (mul-fp y0 y0)
+  ::
+  ?:  (not (slth (add-fp xx yy) (snew %.y 40.000)))
+    (calculate-color-for i)
+  ::
+  =/  nu-x0  (add-fp (sub-fp xx yy) cr)
+  =/  nu-y0  (add-fp (smul (snat 2) (mul-fp x0 y0)) ci)
+  ::
+  ($ cr ci (inc i) nu-x0 nu-y0)
+
 =/  calc-pixel
   ~/  4  calc-pixel
   |=  (scr-x scr-y width height)
@@ -332,24 +352,7 @@
   =/  cr   (sub-fp (mul-fp (fraction-fp scr-x width) (snat 25.000)) (snat 20.000))
   =/  ci   (sub-fp (mul-fp (fraction-fp scr-y height) (snat 25.000)) (snat 12.500))
   ::
-  =/  loop
-    ..  $
-    |=  (i x0 y0)
-    ?:  (not (lth i max-iterations))
-      (calculate-color-for 255)
-    ::
-    =/  xx  (mul-fp x0 x0)
-    =/  yy  (mul-fp y0 y0)
-    ::
-    ?:  (not (slth (add-fp xx yy) (snew %.y 40.000)))
-      (calculate-color-for i)
-    ::
-    =/  nu-x0  (add-fp (sub-fp xx yy) cr)
-    =/  nu-y0  (add-fp (smul (snat 2) (mul-fp x0 y0)) ci)
-    ::
-    ($ (inc i) nu-x0 nu-y0)
-  ::    
-  (loop 0 (snat 0) (snat 0))
+  (calc-pixel-loop cr ci 0 (snat 0) (snat 0))
 
 =/  mandelbrot
   ~/  2  mandelbrot
@@ -369,20 +372,22 @@
 
 ::(mandelbrot 5 5)
 
+=/  ntot-loop
+  ~/  2  ntot-loop
+  ..  $
+  |=  (num list)
+  ?:  (not (eql 0 num))
+    =/  rem  (mod num 10)
+    ($ (div num 10) (cons (add rem '0') list))
+  list
+
 ::  renders a natural as a tape, in the spirit of itoa
 =/  ntot
   ~/  1  ntot
   |=  num
   ?:  (eql num 0)
     (cons '0' null)
-  =/  loop
-    ..  $
-    |=  (num list)
-    ?:  (not (eql 0 num))
-      =/  rem  (mod num 10)
-      ($ (div num 10) (cons (add rem '0') list))
-    list
-  (loop num null)
+  (ntot-loop num null)
 
 ::  a list containing just the space character
 =/  space    (cons ' ' null)

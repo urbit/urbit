@@ -414,7 +414,7 @@ valExp = go
   rawExp rn xs = rn & \case
     F.Kay   -> clo 2 VK
     F.Ess   -> clo 3 VS
-    F.Eye n -> clo (int n + 1) (VIn $ fromIntegral n)
+    F.Eye n -> clo (int n)     (VIn $ fromIntegral n)
     F.Bee n -> clo (int n + 2) (VBn $ fromIntegral n)
     F.Sea n -> clo (int n + 2) (VCn $ fromIntegral n)
     F.Sen n -> clo (int n + 2) (VSn $ fromIntegral n)

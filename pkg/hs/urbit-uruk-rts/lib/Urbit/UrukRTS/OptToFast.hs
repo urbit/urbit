@@ -11,9 +11,8 @@ import Numeric.Natural  (Natural)
 import Numeric.Positive (Positive)
 import Prelude          ((!!))
 
-import qualified Urbit.UrukRTS.JetOptimize  as O
-import qualified Urbit.UrukRTS.LambdaToUruk as C
-import qualified Urbit.UrukRTS.Types        as F
+import qualified Urbit.UrukRTS.JetOptimize as O
+import qualified Urbit.UrukRTS.Types       as F
 
 --------------------------------------------------------------------------------
 
@@ -90,6 +89,16 @@ compile arity = go
   kal F.Zer     [x]    = F.ZER (go x)
   kal F.Eql     [x, y] = F.EQL (go x) (go y)
   kal F.Add     [x, y] = F.ADD (go x) (go y)
+
+  kal F.Lth     [x, y] = F.LSH (go x) (go y)
+  kal F.Lsh     [x, y] = F.LSH (go x) (go y)
+  kal F.Fub     [x, y] = F.FUB (go x) (go y)
+  kal F.Not     [x]    = F.NOT (go x)
+  kal F.Xor     [x,y]  = F.XOR (go x) (go y)
+  kal F.Div     [x,y]  = F.DIV (go x) (go y)
+  kal F.Tra     [x,y]  = F.TRA (go x) (go y)
+  kal F.Mod     [x,y]  = F.MOD (go x) (go y)
+
   kal F.Sub     [x, y] = F.SUB (go x) (go y)
   kal F.Mul     [x, y] = F.MUL (go x) (go y)
 

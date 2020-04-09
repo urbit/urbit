@@ -715,7 +715,7 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     CAS i x l r -> go x >>= \case
       VLef lv -> setReg i lv >> go l
       VRit rv -> setReg i rv >> go r
-      _       -> throwIO (TypeError "cas-no-sum")
+      _       -> throwIO (TypeError "cas-not-sum")
 
 execJetBodyR :: Jet -> (Int -> IO Val) -> IO Val
 {-# INLINE execJetBodyR #-}
