@@ -32,6 +32,7 @@ export class ChatScreen extends Component {
   }
 
   componentDidMount() {
+    this.scrollToBottom();
     this.updateReadNumber();
     this.askForMessages();
   }
