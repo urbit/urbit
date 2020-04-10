@@ -522,6 +522,34 @@ execJet4R !j !x !y !z !p = do
         n -> throwIO (BadRef j n)
   withFallback j args (execJetBodyR j refr)
 
+execJet5 :: Jet -> Val -> Val -> Val -> Val -> Val -> IO Val
+execJet5 !j !x !y !z !p !q = do
+  -- traceCall j [x,y,z,p] False
+  (reg, setReg) <- mkRegs (jRegs j)
+  let args = fromList [x, y, z, p, q]
+  let refr = \case
+        0 -> pure x
+        1 -> pure y
+        2 -> pure z
+        3 -> pure p
+        4 -> pure q
+        n -> throwIO (BadRef j n)
+  withFallback j args (execJetBody j refr reg setReg)
+
+execJet5R :: Jet -> Val -> Val -> Val -> Val -> Val -> IO Val
+execJet5R !j !x !y !z !p !q = do
+  -- traceCall j [x,y,z,p] True
+  let args = fromList [x, y, z, p, q]
+  let refr = \case
+        0 -> pure x
+        1 -> pure y
+        2 -> pure z
+        3 -> pure p
+        4 -> pure q
+        n -> throwIO (BadRef j n)
+  withFallback j args (execJetBodyR j refr)
+
+
 execJetN :: Jet -> CloN -> IO Val
 execJetN !j !xs = do
   -- traceCall j (toList xs) (jRegs j /= 0)
@@ -700,53 +728,58 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
  where
   go :: Exp -> IO Val
   go = \case
-    VAL   v        -> pure v
-    REF   i        -> ref i
-    REG   i        -> reg i
-    REC1  x        -> join (execJet1 j <$> go x)
-    REC1R x        -> join (execJet1R j <$> go x)
-    REC2  x y      -> join (execJet2 j <$> go x <*> go y)
-    REC2R x y      -> join (execJet2R j <$> go x <*> go y)
-    REC3  x y z    -> join (execJet3 j <$> go x <*> go y <*> go z)
-    REC3R x y z    -> join (execJet3R j <$> go x <*> go y <*> go z)
-    REC4  x y z p  -> join (execJet4 j <$> go x <*> go y <*> go z <*> go p)
-    REC4R x y z p  -> join (execJet4R j <$> go x <*> go y <*> go z <*> go p)
-    RECN  xs       -> join (execJetN j <$> traverse go xs)
-    RECNR xs       -> join (execJetNR j <$> traverse go xs)
-    SLF            -> pure (jetVal j)
-    SEQ x y        -> go x >> go y
-    DED x          -> throwIO . Crash =<< go x
-    INC x          -> join (inc <$> go x)
-    DEC x          -> join (dec <$> go x)
-    FEC x          -> join (fec <$> go x)
-    JET1 j x       -> join (execJet1 j <$> go x)
-    JET2 j x y     -> join (execJet2 j <$> go x <*> go y)
-    JET3 j x y z   -> join (execJet3 j <$> go x <*> go y <*> go z)
-    JET4 j x y z p -> join (execJet4 j <$> go x <*> go y <*> go z <*> go p)
-    JETN j xs      -> join (execJetN j <$> traverse go xs)
-    ADD  x y       -> join (add <$> go x <*> go y)
-    MUL  x y       -> join (mul <$> go x <*> go y)
+    VAL   v         -> pure v
+    REF   i         -> ref i
+    REG   i         -> reg i
+    REC1  x         -> join (execJet1 j <$> go x)
+    REC1R x         -> join (execJet1R j <$> go x)
+    REC2  x y       -> join (execJet2 j <$> go x <*> go y)
+    REC2R x y       -> join (execJet2R j <$> go x <*> go y)
+    REC3  x y z     -> join (execJet3 j <$> go x <*> go y <*> go z)
+    REC3R x y z     -> join (execJet3R j <$> go x <*> go y <*> go z)
+    REC4  x y z p   -> join (execJet4 j <$> go x <*> go y <*> go z <*> go p)
+    REC4R x y z p   -> join (execJet4R j <$> go x <*> go y <*> go z <*> go p)
+    REC5  x y z p q -> join (execJet5 j <$> go x <*> go y <*> go z <*> go p <*> go q)
+    REC5R x y z p q -> join (execJet5R j <$> go x <*> go y <*> go z <*> go p <*> go q)
+    RECN  xs        -> join (execJetN j <$> traverse go xs)
+    RECNR xs        -> join (execJetNR j <$> traverse go xs)
+    SLF             -> pure (jetVal j)
+    SEQ x y         -> go x >> go y
+    DED x           -> throwIO . Crash =<< go x
+    INC x           -> join (inc <$> go x)
+    DEC x           -> join (dec <$> go x)
+    FEC x           -> join (fec <$> go x)
 
-    LTH  x y       -> join (dLth <$> go x <*> go y)
-    LSH  x y       -> join (dLsh <$> go x <*> go y)
-    FUB  x y       -> join (dFub <$> go x <*> go y)
-    NOT  x         -> join (dNot <$> go x)
-    XOR  x y       -> join (dXor <$> go x <*> go y)
-    DIV  x y       -> join (dDiv <$> go x <*> go y)
-    TRA  x y       -> join (dTra <$> go x <*> go y)
-    MOD  x y       -> join (dMod <$> go x <*> go y)
+    JET1 j x        -> join (execJet1 j <$> go x)
+    JET2 j x y      -> join (execJet2 j <$> go x <*> go y)
+    JET3 j x y z    -> join (execJet3 j <$> go x <*> go y <*> go z)
+    JET4 j x y z p  -> join (execJet4 j <$> go x <*> go y <*> go z <*> go p)
+    JET5 j x y z p q -> join (execJet5 j <$> go x <*> go y <*> go z <*> go p <*> go q)
+    JETN j xs       -> join (execJetN j <$> traverse go xs)
 
-    SUB  x y       -> join (sub <$> go x <*> go y)
-    ZER x          -> join (zer <$> go x)
-    EQL x y        -> join (eql <$> go x <*> go y)
-    CAR x          -> join (car <$> go x)
-    CDR x          -> join (cdr <$> go x)
-    CLON f xs      -> cloN f <$> traverse go xs
-    CALN f xs      -> do { f <- go f; kVAn f (go <$> xs) }
-    LEF x          -> VLef <$> go x
-    RIT x          -> VRit <$> go x
-    CON x y        -> VCon <$> go x <*> go y
-    IFF c t e      -> go c >>= \case
+    ADD  x y        -> join (add <$> go x <*> go y)
+    MUL  x y        -> join (mul <$> go x <*> go y)
+
+    LTH  x y        -> join (dLth <$> go x <*> go y)
+    LSH  x y        -> join (dLsh <$> go x <*> go y)
+    FUB  x y        -> join (dFub <$> go x <*> go y)
+    NOT  x          -> join (dNot <$> go x)
+    XOR  x y        -> join (dXor <$> go x <*> go y)
+    DIV  x y        -> join (dDiv <$> go x <*> go y)
+    TRA  x y        -> join (dTra <$> go x <*> go y)
+    MOD  x y        -> join (dMod <$> go x <*> go y)
+
+    SUB  x y        -> join (sub <$> go x <*> go y)
+    ZER x           -> join (zer <$> go x)
+    EQL x y         -> join (eql <$> go x <*> go y)
+    CAR x           -> join (car <$> go x)
+    CDR x           -> join (cdr <$> go x)
+    CLON f xs       -> cloN f <$> traverse go xs
+    CALN f xs       -> do { f <- go f; kVAn f (go <$> xs) }
+    LEF x           -> VLef <$> go x
+    RIT x           -> VRit <$> go x
+    CON x y         -> VCon <$> go x <*> go y
+    IFF c t e       -> go c >>= \case
       VBol True  -> go t
       VBol False -> go e
       cv         -> do
@@ -764,33 +797,36 @@ execJetBodyR !j !ref = go (jFast j)
  where
   go :: Exp -> IO Val
   go = \case
-    REG i          -> error "execJetBodyR: unexpected register read"
-    CAS i x l r    -> error "execJetBodyR: unexpected register write"
-    VAL   v        -> pure v
-    REF   i        -> ref i
-    REC1  x        -> join (execJet1 j <$> go x)
-    REC1R x        -> join (execJet1R j <$> go x)
-    REC2  x y      -> join (execJet2 j <$> go x <*> go y)
-    REC2R x y      -> join (execJet2R j <$> go x <*> go y)
-    REC3  x y z    -> join (execJet3 j <$> go x <*> go y <*> go z)
-    REC3R x y z    -> join (execJet3R j <$> go x <*> go y <*> go z)
-    REC4  x y z p  -> join (execJet4 j <$> go x <*> go y <*> go z <*> go p)
-    REC4R x y z p  -> join (execJet4R j <$> go x <*> go y <*> go z <*> go p)
-    RECN  xs       -> join (execJetN j <$> traverse go xs)
-    RECNR xs       -> join (execJetNR j <$> traverse go xs)
-    SLF            -> pure (jetVal j)
-    SEQ x y        -> go x >> go y
-    DED x          -> throwIO . Crash =<< go x
-    INC x          -> join (inc <$> go x)
-    DEC x          -> join (dec <$> go x)
-    FEC x          -> join (fec <$> go x)
-    JET1 j x       -> join (execJet1 j <$> go x)
-    JET2 j x y     -> join (execJet2 j <$> go x <*> go y)
-    JET3 j x y z   -> join (execJet3 j <$> go x <*> go y <*> go z)
-    JET4 j x y z p -> join (execJet4 j <$> go x <*> go y <*> go z <*> go p)
-    JETN j xs      -> join (execJetN j <$> traverse go xs)
-    ADD  x y       -> join (add <$> go x <*> go y)
-    MUL  x y       -> join (mul <$> go x <*> go y)
+    REG i           -> error "execJetBodyR: unexpected register read"
+    CAS i x l r     -> error "execJetBodyR: unexpected register write"
+    VAL   v         -> pure v
+    REF   i         -> ref i
+    REC1  x         -> join (execJet1 j <$> go x)
+    REC1R x         -> join (execJet1R j <$> go x)
+    REC2  x y       -> join (execJet2 j <$> go x <*> go y)
+    REC2R x y       -> join (execJet2R j <$> go x <*> go y)
+    REC3  x y z     -> join (execJet3 j <$> go x <*> go y <*> go z)
+    REC3R x y z     -> join (execJet3R j <$> go x <*> go y <*> go z)
+    REC4  x y z p   -> join (execJet4 j <$> go x <*> go y <*> go z <*> go p)
+    REC4R x y z p   -> join (execJet4R j <$> go x <*> go y <*> go z <*> go p)
+    REC5  x y z p q -> join (execJet5 j <$> go x <*> go y <*> go z <*> go p <*> go q)
+    REC5R x y z p q -> join (execJet5R j <$> go x <*> go y <*> go z <*> go p <*> go q)
+    RECN  xs        -> join (execJetN j <$> traverse go xs)
+    RECNR xs        -> join (execJetNR j <$> traverse go xs)
+    SLF             -> pure (jetVal j)
+    SEQ x y         -> go x >> go y
+    DED x           -> throwIO . Crash =<< go x
+    INC x           -> join (inc <$> go x)
+    DEC x           -> join (dec <$> go x)
+    FEC x           -> join (fec <$> go x)
+    JET1 j x        -> join (execJet1 j <$> go x)
+    JET2 j x y      -> join (execJet2 j <$> go x <*> go y)
+    JET3 j x y z    -> join (execJet3 j <$> go x <*> go y <*> go z)
+    JET4 j x y z p  -> join (execJet4 j <$> go x <*> go y <*> go z <*> go p)
+    JET5 j x y z p q -> join (execJet5 j <$> go x <*> go y <*> go z <*> go p <*> go q)
+    JETN j xs       -> join (execJetN j <$> traverse go xs)
+    ADD  x y        -> join (add <$> go x <*> go y)
+    MUL  x y        -> join (mul <$> go x <*> go y)
 
     LTH  x y       -> join (dLth <$> go x <*> go y)
     LSH  x y       -> join (dLsh <$> go x <*> go y)

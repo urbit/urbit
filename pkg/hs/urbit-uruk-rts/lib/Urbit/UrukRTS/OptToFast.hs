@@ -22,7 +22,7 @@ optToFast (O.Code args nm bod exp) = F.Jet{..}
   jArgs = fromIntegral args
   jName = nm
   jBody = bod
-  jFast = compile jArgs exp
+  jFast = compile jArgs jRegs exp
   jRegs = numReg exp
 
 numReg :: O.Val -> Int
@@ -58,8 +58,8 @@ numReg = go 0
       JET2 !Jet !Exp !Exp           --  Fully saturated call
 -}
 
-compile :: Int -> O.Val -> F.Exp
-compile arity = go
+compile :: Int -> Int -> O.Val -> F.Exp
+compile arity numRegs = go
  where
   go = \case
     O.ValRec xs       -> rec xs
@@ -77,16 +77,26 @@ compile arity = go
 
   rec [] = F.SLF
   rec xs =
-    --  TODO Optimize for case with no registers.
     let len = length xs
-    in  case (compare len arity, xs) of
-          (EQ, [x]         ) -> F.REC1 (go x)
-          (EQ, [x, y]      ) -> F.REC2 (go x) (go y)
-          (EQ, [x, y, z]   ) -> F.REC3 (go x) (go y) (go z)
-          (EQ, [x, y, z, p]) -> F.REC4 (go x) (go y) (go z) (go p)
-          (EQ, xs          ) -> F.RECN (goArgs xs)
-          (LT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
-          (GT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
+    in  if 0 == numRegs
+        then case (compare len arity, xs) of
+               (EQ, [x]         ) -> F.REC1R (go x)
+               (EQ, [x, y]      ) -> F.REC2R (go x) (go y)
+               (EQ, [x, y, z]   ) -> F.REC3R (go x) (go y) (go z)
+               (EQ, [x, y, z, p]) -> F.REC4R (go x) (go y) (go z) (go p)
+               (EQ, [x, y, z, p, q]) -> F.REC5R (go x) (go y) (go z) (go p) (go q)
+               (EQ, xs          ) -> F.RECNR (goArgs xs)
+               (LT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
+               (GT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
+        else case (compare len arity, xs) of
+               (EQ, [x]         ) -> F.REC1 (go x)
+               (EQ, [x, y]      ) -> F.REC2 (go x) (go y)
+               (EQ, [x, y, z]   ) -> F.REC3 (go x) (go y) (go z)
+               (EQ, [x, y, z, p]) -> F.REC4 (go x) (go y) (go z) (go p)
+               (EQ, [x, y, z, p, q]) -> F.REC5 (go x) (go y) (go z) (go p) (go q)
+               (EQ, xs          ) -> F.RECN (goArgs xs)
+               (LT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
+               (GT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
 
   kal F.Seq     [x, y] = F.SEQ (go x) (go y)
   kal F.Ded     [x]    = F.DED (go x)
@@ -134,10 +144,14 @@ compile arity = go
   kal (F.Jut (j@F.Jet{ jArgs = 4 })) [x,y,z,p]
     = F.JET4 j (go x) (go y) (go z) (go p)
 
+  kal (F.Jut (j@F.Jet{ jArgs = 5 })) [x,y,z,p,q]
+    = F.JET5 j (go x) (go y) (go z) (go p) (go q)
+
   kal (F.Jut j) xs
     | F.jArgs j == length xs
     = F.JETN j (fromList (go <$> xs))
 
+  kal f          []    = rawExp f
   kal f          xs    = F.CALN (rawExp f) (goArgs xs)
 
   con (F.VAL x) (F.VAL y) = F.VAL (F.VCon x y)

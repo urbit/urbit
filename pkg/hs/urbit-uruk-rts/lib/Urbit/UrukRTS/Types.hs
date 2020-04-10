@@ -31,11 +31,9 @@ import Data.Char                (isPrint, isSpace)
 import Data.Function            ((&))
 import Numeric.Natural          (Natural)
 import Prelude                  ((!!))
-import Urbit.UrukRTS.RefrJetted (Ur, UrPoly(Fast))
 
 import qualified GHC.Exts                 as GHC.Exts
 import qualified Urbit.Atom               as Atom
-import qualified Urbit.UrukRTS.RefrJetted as Ur
 
 
 -- Useful Types ----------------------------------------------------------------
@@ -272,6 +270,8 @@ data Exp
   | REC3R !Exp !Exp !Exp          --  Recursive Call (No Registers)
   | REC4  !Exp !Exp !Exp !Exp     --  Recursive Call
   | REC4R !Exp !Exp !Exp !Exp     --  Recursive Call (No Registers)
+  | REC5  !Exp !Exp !Exp !Exp !Exp --  Recursive Call
+  | REC5R !Exp !Exp !Exp !Exp !Exp --  Recursive Call (No Registers)
   | RECN  !(SmallArray Exp)       --  Recursive Call
   | RECNR !(SmallArray Exp)       --  Recursive Call (No Registers)
 
@@ -307,6 +307,7 @@ data Exp
   | JET2 !Jet !Exp !Exp           --  Fully saturated jet call.
   | JET3 !Jet !Exp !Exp !Exp      --  Fully saturated jet call.
   | JET4 !Jet !Exp !Exp !Exp !Exp --  Fully saturated jet call.
+  | JET5 !Jet !Exp !Exp !Exp !Exp !Exp --  Fully saturated jet call.
   | JETN !Jet !(SmallArray Exp)   --  Fully saturated jet call.
 
   | CLON !Fun !(SmallArray Exp)   --  Undersaturated call
