@@ -100,7 +100,7 @@ export class ChatScreen extends Component {
     }
 
     if (
-      state.numPages * 100 >= props.length ||
+      props.envelopes.length >= props.length ||
       this.hasAskedForMessages ||
       props.length <= 0
     ) {
@@ -108,16 +108,10 @@ export class ChatScreen extends Component {
     }
 
     let start = props.envelopes[props.envelopes.length - 1].number;
-    if (end > 0) {
-      let end = start + 400 < props.length ? start + 400 : props.length;
-
-      if (start === 0 && end === 1) {
-        return;
-      }
-
+    if (start > 0) {
+      let end = start + 200 < props.length ? start + 200 : props.length;
       this.hasAskedForMessages = true;
-
-      props.subscription.fetchMessages(start, end - 1, props.station);
+      props.subscription.fetchMessages(start, end, props.station);
     }
   }
  
